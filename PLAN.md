@@ -28,14 +28,14 @@ Uncommitted draft modules are not credited as checked proof components.
 | Composition, loops, frames, elementary streams | §2 | 🟡 (163/164) | 🟡 (145/156) |
 | Finite networks with a rank saving | §3 | ✅ (66/66) | 🟡 (1/42) |
 | Faster interchange of address chunks | §4 | ✅ (129/129) | 🟡 (125/126) |
-| Simultaneous butterfly layers with compact control | §5, §11, CrocSwap | ✅ (1599/1599) | 🟡 (1255/1257) |
+| Simultaneous butterfly layers with compact control | §5, §11, CrocSwap | ✅ (1601/1601) | 🟡 (1255/1257) |
 | Synthetic transforms and their tape layout | §6 | ✅ (5/5) | ⬜ (0/3) |
 | Gaussian resampling | §7 | ✅ (17/17) | 🟡 (7/9) |
 | Fast multiplication subroutine | Schönhage–Strassen | ✅ (20/20) | 🟡 (10/12) |
 | Exact multiplication, parameters, time bound | §8 | 🟡 (5/7) | ⬜ (0/2) |
 | End-to-end theorem `EndToEnd` | — | 🟡 (5/8) | 🟡 (5/8) |
 
-Component accounting: mathematics **2012/2018**, tape **1550/1617**.
+Component accounting: mathematics **2014/2020**, tape **1550/1617**.
 Each numerator counts only ✅ rows; partial and unstarted rows remain in the
 denominator, and — entries are excluded. These counts measure checklist rows,
 not remaining effort or end-to-end completion. In particular, Section 5 remains
@@ -2028,6 +2028,9 @@ The main binary interchange theorem is proved in `BinaryInterchangeRun.runs` and
 | Row layout and reservation capacities | `CompactRowReservationEndpoint`, `ActivePrefixEarlySequenceOriginalRun` | ✅ | 🟡 | Original-array padding/role splitting, compact reservation capacities and the exact unchanged active-target address layout are proved. The full early schedule derives every consumer header and varying offset from original reservation/stage widths and cleans up all generated storage; only nb compact fields fit H and the wide nq target stays active. Wiring the generated original-array reservation widths and stage coordinate ranges into this caller, original packing parameter synthesis and complete early/later permutation/repair assembly remain open. |
 | Extract, sort, reinsert repair records | `Partition`, `Reinsert`, `StripPrefix`, `ReturnOrigin`, `RepairStage`, `FlagCopy`, `MarkedReturn`, `LoopChain`, `RepairScan` | ✅ | ✅ | Extraction/sorting/reinsertion primitives done; the list-level composition is `RepairPipeline`; one fixed fourteen-tape machine scans the stream with a binary rank counter, flags each record from a key tape, extracts flagged records in the raw keyed format, returns both heads, then sorts, strips and reinserts, with an exact-run contract; the per-record key routine (membership test and destination-rank bits) is a program parameter with a per-rank contract, and the whole costs its key cost plus ten per record, three stream volumes, `74k+5` extracted volumes, `2k+3` per extracted record and `k+14` |
 | Assembled repair pipeline with cost | `ActiveRepairLayoutRecordsAssemblyCleanEarly`, `ActiveRepairLayoutRecordsAssemblyCleanLateAfter`, `ActiveRepairLayoutRecordsCleanAlphabet` | ✅ | ✅ | Both actual original-fourteen-input full-width repair pipelines physically prepare every numeric descriptor/count, format raw bits, scan/sort/repair, decode ideal raw output and erase all generated producer/consumer metadata and private storage. Exact whole-bank endpoints and uniform linear original-volume runtime are proved under explicit original width/density inequalities, including prime-alphabet execution and paid copy-back. Original parameter synthesis and whole butterfly assembly are tracked separately. |
+
+| CompactComplexSourceReadyCompletedChildBoundary | `CompactComplexSourceReadyCompletedChildBoundary` | ✅ | — | Derives the completed nonroot sink/orientation endpoint directly from the actual reached bank: raw source and headers, scalar frame, all controller and storage projections, exponent, blank count and controls, advanced live ledger, blank target and retained pre-pop saved-call association. Exact endpoint identity links the paid aligned final path to these ports. Dormant saved-frame equality follows from explicit Settled conditions; recursive preservation, PC pop and whole joined return execution remain open. |
+| CompactComplexActualBasisCoordinates | `CompactComplexActualBasisCoordinates` | ✅ | — | The computed native row destination has the exact original ambient basis coordinate map in every parent column, and its inverse recovers the input coordinates. The literal selected-role basisArray preserves stored coefficients and their decoded values at that actual destination, retaining the polynomial index and inherited denominator. No supplied local input-alignment premise is used. Full slice/pullback identification and recursive child-factor execution remain to connect. |
 
 ## 6. Synthetic transforms and their tape layout (§6)
 

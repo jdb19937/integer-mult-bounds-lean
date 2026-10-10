@@ -54,7 +54,12 @@ have local preservation rules through scalar/basis execution and actual
 stack/payload saves and restores. Recursive induction must still prove their
 settled completion conditions. Actual corrected source setup now both runs in
 the aligned table and establishes the concrete reached event invariant from
-original source words, grids, ledger and saved calls.
+original source words, grids, ledger and saved calls. Completed nonroot sink
+endpoints now derive the actual physical return ports and pre-pop saved call
+association; dormant restoration still needs recursively proved settled frames.
+Computed native basis destinations now have the original ambient coordinate
+map and retain exact stored and decoded coefficients at every polynomial index.
+Full slice alignment and joined recursive execution remain open.
 
 Complete boundary and event allowances pay classification, corrections,
 contraction, genuine return dispatch, both basis passes and their joins. The

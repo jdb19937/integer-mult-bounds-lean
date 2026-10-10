@@ -4680,6 +4680,10 @@ Machine model, execution, composition, and tape routines.
 
 - `Machine/CompactComplexAlignedReachedInitial.lean`: Actual corrected source setup executes in the aligned table and simultaneously establishes the concrete canonical Reached event invariant from original source words, inherited Grid, dependency Path, live ledger and saved call history. The literal table path includes target generation, role split, source correction and paid joins, with no supplied execution callback. Exact full/canonical geometry connects the physical endpoint to the next event bank. Whole event induction and recursive execution remain open.
 
+- `Machine/CompactComplexSourceReadyCompletedChildBoundary.lean`: Derives the completed nonroot sink/orientation endpoint directly from the actual reached bank: raw source and headers, scalar frame, all controller and storage projections, exponent, blank count and controls, advanced live ledger, blank target and retained pre-pop saved-call association. Exact endpoint identity links the paid aligned final path to these ports. Dormant saved-frame equality follows from explicit Settled conditions; recursive preservation, PC pop and whole joined return execution remain open.
+
+- `Machine/CompactComplexActualBasisCoordinates.lean`: The computed native row destination has the exact original ambient basis coordinate map in every parent column, and its inverse recovers the input coordinates. The literal selected-role basisArray preserves stored coefficients and their decoded values at that actual destination, retaining the polynomial index and inherited denominator. No supplied local input-alignment premise is used. Full slice/pullback identification and recursive child-factor execution remain to connect.
+
 ## Compact
 
 Compact packed controls, repair, and density bounds.
