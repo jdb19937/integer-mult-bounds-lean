@@ -12,30 +12,30 @@ open CompactComplexScheduledPCLayout (originalCount eventPC nextPC callNextPC fi
 open CompactComplexScheduledPCDecode (decodeCall callAddress)
 attribute [local irreducible] ComplexRank25.program ComplexRecursiveCallSchema.sites
   schedule CompactComplexScalarSegmentRows.block
-variable {t N length : ℕ}
+variable {t N length a : ℕ}
 
-def tableProgramsWith (returns : Fin N → Σ q,Program t q 2)
-    (controls : Fin 4 → Σ q,Program t q 2) (events : Fin length → Σ q,Program t q 2) :
-    Fin (N+(4+length)) → Σ q,Program t q 2 :=
+def tableProgramsWith (returns : Fin N → Σ q,Program t q a)
+    (controls : Fin 4 → Σ q,Program t q a) (events : Fin length → Σ q,Program t q a) :
+    Fin (N+(4+length)) → Σ q,Program t q a :=
   Fin.addCases returns (Fin.addCases controls events)
 
 def returnPrograms (ht : 0<t)
-    (childReturn : ComplexRecursiveCallSchema.Call → Σ q,Program t q 2)
-    (address : Fin originalCount) : Σ q,Program t q 2 :=
+    (childReturn : ComplexRecursiveCallSchema.Call → Σ q,Program t q a)
+    (address : Fin originalCount) : Σ q,Program t q a :=
   match decodeCall address with
   | some c => childReturn c
-  | none => ⟨1,skip t 2 ht⟩
+  | none => ⟨1,skip t a ht⟩
 
 /-- Original padded return slots, then the four controls, then real events. -/
 def tablePrograms (ht : 0<t)
-    (childReturn : ComplexRecursiveCallSchema.Call → Σ q,Program t q 2)
-    (controls : Fin 4 → Σ q,Program t q 2)
-    (event : Event → Σ q,Program t q 2) :=
+    (childReturn : ComplexRecursiveCallSchema.Call → Σ q,Program t q a)
+    (controls : Fin 4 → Σ q,Program t q a)
+    (event : Event → Σ q,Program t q a) :=
   tableProgramsWith (returnPrograms ht childReturn) controls (fun i => event (schedule.get i))
 
 theorem table_return (ht : 0<t)
-    (childReturn : ComplexRecursiveCallSchema.Call → Σ q,Program t q 2)
-    (controls : Fin 4 → Σ q,Program t q 2) (event : Event → Σ q,Program t q 2)
+    (childReturn : ComplexRecursiveCallSchema.Call → Σ q,Program t q a)
+    (controls : Fin 4 → Σ q,Program t q a) (event : Event → Σ q,Program t q a)
     (c : ComplexRecursiveCallSchema.Call) :
     tablePrograms ht childReturn controls event (Fin.castAdd (4+schedule.length) (callAddress c))=
       childReturn c := by
@@ -43,23 +43,23 @@ theorem table_return (ht : 0<t)
     CompactComplexScheduledPCDecode.decodeCall_actual]
 
 theorem table_event (ht : 0<t)
-    (childReturn : ComplexRecursiveCallSchema.Call → Σ q,Program t q 2)
-    (controls : Fin 4 → Σ q,Program t q 2) (event : Event → Σ q,Program t q 2)
+    (childReturn : ComplexRecursiveCallSchema.Call → Σ q,Program t q a)
+    (controls : Fin 4 → Σ q,Program t q a) (event : Event → Σ q,Program t q a)
     (i : Fin schedule.length) :
     tablePrograms ht childReturn controls event (Fin.natAdd originalCount (Fin.natAdd 4 i))=
       event (schedule.get i) := by
   simp only [tablePrograms,tableProgramsWith,Fin.addCases_right]
 
 theorem table_control (ht : 0<t)
-    (childReturn : ComplexRecursiveCallSchema.Call → Σ q,Program t q 2)
-    (controls : Fin 4 → Σ q,Program t q 2) (event : Event → Σ q,Program t q 2)
+    (childReturn : ComplexRecursiveCallSchema.Call → Σ q,Program t q a)
+    (controls : Fin 4 → Σ q,Program t q a) (event : Event → Σ q,Program t q a)
     (tag : Fin 4) :
     tablePrograms ht childReturn controls event
       (Fin.natAdd originalCount (Fin.castAdd schedule.length tag))=controls tag := by
   simp only [tablePrograms,tableProgramsWith,Fin.addCases_right,Fin.addCases_left]
 
-def tableEdgesWith (returns : Fin N → Σ q,Program t q 2)
-    (controls : Fin 4 → Σ q,Program t q 2) (events : Fin length → Σ q,Program t q 2)
+def tableEdgesWith (returns : Fin N → Σ q,Program t q a)
+    (controls : Fin 4 → Σ q,Program t q a) (events : Fin length → Σ q,Program t q a)
     (returnEdges : ∀ pc,Fin (returns pc).1 → Option (Fin (N+(4+length)+2)))
     (controlEdges : ∀ pc,Fin (controls pc).1 → Option (Fin (N+(4+length)+2)))
     (eventEdges : ∀ pc,Fin (events pc).1 → Option (Fin (N+(4+length)+2))) :
@@ -82,7 +82,7 @@ private def firstPCFor (N length : ℕ) : Fin (N+(4+length)+2) :=
 
 /-- Only the terminal entry classifier is variable; the other control edges
 are fixed: stopped/final-return to the guard and nonleaf setup to first event. -/
-def controlEdgesWith (controls : Fin 4 → Σ q,Program t q 2)
+def controlEdgesWith (controls : Fin 4 → Σ q,Program t q a)
     (isStopped : Fin (controls 0).1 → Bool) :
     ∀ tag,Fin (controls tag).1 → Option (Fin (N+(4+length)+2)) :=
   Fin.cases (fun st => some (if isStopped st then controlPCFor N length 1 else controlPCFor N length 2))
@@ -120,17 +120,17 @@ theorem eventDestination_child (i : Fin schedule.length)
     eventDestination i=some (controlPCFor originalCount schedule.length 0) :=
   congrArg (fun e => destinationWith e (nextPC i) (controlPCFor originalCount schedule.length 0)) hi
 
-theorem stopped_edge (controls : Fin 4 → Σ q,Program t q 2)
+theorem stopped_edge (controls : Fin 4 → Σ q,Program t q a)
     (isStopped : Fin (controls 0).1 → Bool) (st : Fin (controls 1).1) :
     controlEdgesWith (N:=N) (length:=length) controls isStopped 1 st=some 0 := rfl
 
-theorem final_return_edge (controls : Fin 4 → Σ q,Program t q 2)
+theorem final_return_edge (controls : Fin 4 → Σ q,Program t q a)
     (isStopped : Fin (controls 0).1 → Bool) (st : Fin (controls 3).1) :
     controlEdgesWith (N:=N) (length:=length) controls isStopped 3 st=some 0 := rfl
 
 def fixedProgramWith {k : ℕ} (hN : N≤2^k) (stack : Fin t)
-    (returns : Fin N → Σ q,Program t q 2)
-    (controls : Fin 4 → Σ q,Program t q 2) (events : Fin length → Σ q,Program t q 2)
+    (returns : Fin N → Σ q,Program t q a)
+    (controls : Fin 4 → Σ q,Program t q a) (events : Fin length → Σ q,Program t q a)
     (returnEdges : ∀ pc,Fin (returns pc).1 → Option (Fin (N+(4+length)+2)))
     (isStopped : Fin (controls 0).1 → Bool)
     (eventEdges : ∀ pc,Fin (events pc).1 → Option (Fin (N+(4+length)+2))) :=
@@ -143,8 +143,8 @@ def fixedProgramWith {k : ℕ} (hN : N≤2^k) (stack : Fin t)
     (controlPCFor N length 0)
 
 def fixedProgram (ht : 0<t) (stack : Fin t)
-    (childReturn : ComplexRecursiveCallSchema.Call → Σ q,Program t q 2)
-    (controls : Fin 4 → Σ q,Program t q 2) (event : Event → Σ q,Program t q 2)
+    (childReturn : ComplexRecursiveCallSchema.Call → Σ q,Program t q a)
+    (controls : Fin 4 → Σ q,Program t q a) (event : Event → Σ q,Program t q a)
     (isStopped : Fin (controls 0).1 → Bool) :=
   fixedProgramWith (N:=originalCount) (length:=schedule.length)
     (CompactComplexCallReturn.roomFor ComplexRecursiveCallSchema.sites.length (25^3)) stack
