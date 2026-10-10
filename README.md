@@ -42,7 +42,9 @@ both basis passes. Actual quotient-row serializers now supply basis input
 readiness, and exact basis permutations preserve the reached parent invariant.
 Actual reached scalar events and basis-aligned child-entry prefixes now run in
 the aligned table, with literal next banks and every transition paid.
-Aligned child returns and the complete reached event induction remain open.
+Actual corrected source setup and sink finalization also have paid aligned
+table paths, preserving the blank basis workspace. Aligned child returns and
+the complete reached event induction remain open.
 
 Complete boundary and event allowances pay classification, corrections,
 contraction, genuine return dispatch, both basis passes and their joins. The

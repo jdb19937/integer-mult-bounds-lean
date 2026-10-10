@@ -4668,6 +4668,8 @@ Machine model, execution, composition, and tape routines.
 
 - `Machine/CompactComplexAlignedChildEntryPath.lean`: The genuine native witness executes a selected-role basis pass with quotient-row headers, restores canonical original parent metadata and follows actual child entry into the aligned fixed table. Readiness and literal replacement are derived from the reached parent, and every basis, entry and table join is charged, retaining one positive universal stage-scale coefficient. Complete child execution and aligned return remain open.
 
+- `Machine/CompactComplexAlignedBoundaryPaths.lean`: Actual corrected nonleaf source setup and sink finalization execute in the prime-alphabet aligned table with exact original endpoints and every table edge paid. Both public paths derive physical runs from original tape, grid and dependency premises, encode the entire caller and preserve all appended basis workspace blank. Source signs, target installation, split, sink correction, contraction, rejoin and orientation retain their original runtime allowances. Whole reached recursive execution remains open.
+
 ## Compact
 
 Compact packed controls, repair, and density bounds.
