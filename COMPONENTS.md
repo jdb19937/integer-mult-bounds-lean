@@ -4636,6 +4636,8 @@ Machine model, execution, composition, and tape routines.
 
 - `Machine/CompactComplexActualScalarNetworkPrefix.lean`: Each genuine guarded integer scalar block advances the literal original complex framed-network compiler prefix, following its actual group alignment and exact gate order. Original network splitting retains sink and scratch incidences; integer scalar values match the named FramedCircuit instructions and the next compiled prefix. This proves the real scalar semantic induction step. Recursive coordinate-call correspondence and complete node correctness remain open.
 
+- `Machine/CompactComplexActualCallFrameEdge.lean`: The actual schema-chosen residual coordinates, in their original call order, factor the named original complex frame edge. Each coordinate retains its own positive or negative fourth-root weight and the edge orientation; the actual child inverse flag realizes that signed weight. The original all-column frame instruction equals the product over these same call kernels. Physical coordinate-tensor correspondence, basis alignment and complete recursive execution remain open.
+
 ## Compact
 
 Compact packed controls, repair, and density bounds.
@@ -5608,7 +5610,7 @@ Bit and complex networks.
 
 - `Networks/ComplexPhaseRowSchedule.lean`: Every actual fixed complex25 edge internally supplies orientation, transported nondegeneracy, comparable labels and its zero-or-unit residual witness, generating its own ambient row-addition word; the original phase difference retains descending-edge sign and original edge order.
 
-- `Networks/ComplexRecursiveCallSchema.lean`: The actual complex update trace determines occurrence-indexed child calls with original wire roles, ordered residual slots and inverse flags, preserving repeated equal edge sites. Its exact child count equals the proved rank sum and its integer stop predicate matches the manuscript; physical child-header updates, role/return stack and stop-test execution remain separate.
+- `Networks/ComplexRecursiveCallSchema.lean`: The actual complex update trace determines occurrence-indexed child calls with original wire roles, ordered residual slots and coordinate-weighted inverse flags, preserving repeated equal edge sites. Each actual chosen residual basis weight combines with the original edge orientation to select the proved signed child transform. Its exact child count equals the proved rank sum and its integer stop predicate matches the manuscript; physical child-header updates, role/return stack and stop-test execution remain separate.
 
 - `Networks/GaussianBoundedArithmetic.lean`: Derives exact bounded Gaussian addition, multiplication, precision raising and finite-list sums, including inherited numerator growth.
 

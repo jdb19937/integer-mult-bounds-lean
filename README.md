@@ -31,6 +31,8 @@ Actual child entry derives its canonical input readiness and saved call frame.
 Reached stopped calls and scalar events preserve the associated call stack.
 The original interleaved schedule has a checked runtime allowance.
 Actual scalar blocks advance the original named-network compiler prefixes.
+Actual coordinate-weighted child directions now factor the original frame edges;
+physical coordinate alignment and recursive execution remain to connect.
 Unstopped recursive bank/grid invariants, the complete reached execution and
 its total runtime recurrence still require integration.
 
