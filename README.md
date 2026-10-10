@@ -37,7 +37,8 @@ Actual coordinate-weighted child directions now factor the original frame edges;
 Actual child address tensors and literal basis conjugation now match those
 same original residual factors; A selected-role basis pass now has a checked permanent-bank execution with
 restored headers and workspace. Full source-ready placement retains original
-tape indices; joined reached call paths remain open.
+tape indices. One fixed aligned table now wraps actual child entry and decoded
+parent return with these basis passes; reached recursive closure remains open.
 The concrete reached scalar bank/grid/call invariant now initializes from
 corrected entry and is preserved by paid actual scalar table steps.
 Unstopped recursive child invariants, the complete reached execution and

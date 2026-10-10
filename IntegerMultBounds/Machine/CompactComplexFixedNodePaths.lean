@@ -13,21 +13,21 @@ open CompactComplexScheduledPCLayout (originalCount eventPC nextPC callNextPC)
 open CompactComplexScheduledPCDecode (callAddress savedPC)
 attribute [local irreducible] ComplexRank25.program ComplexRecursiveCallSchema.sites schedule
   CompactComplexCallReturn.addressCount CompactComplexCallReturn.addressWidth
-variable {t : ℕ}
+variable {t a : ℕ}
 
 def nodeStates (ht : 0<t)
-    (childReturn : ComplexRecursiveCallSchema.Call → Σ q,Program t q 2)
-    (controls : Fin 4 → Σ q,Program t q 2) (event : Event → Σ q,Program t q 2) :=
+    (childReturn : ComplexRecursiveCallSchema.Call → Σ q,Program t q a)
+    (controls : Fin 4 → Σ q,Program t q a) (event : Event → Σ q,Program t q a) :=
   fun pc => (tablePrograms ht childReturn controls event pc).1
 
 def nodeBlocks (ht : 0<t)
-    (childReturn : ComplexRecursiveCallSchema.Call → Σ q,Program t q 2)
-    (controls : Fin 4 → Σ q,Program t q 2) (event : Event → Σ q,Program t q 2) :=
+    (childReturn : ComplexRecursiveCallSchema.Call → Σ q,Program t q a)
+    (controls : Fin 4 → Σ q,Program t q a) (event : Event → Σ q,Program t q a) :=
   fun pc => (tablePrograms ht childReturn controls event pc).2
 
 def nodeEdges (ht : 0<t)
-    (childReturn : ComplexRecursiveCallSchema.Call → Σ q,Program t q 2)
-    (controls : Fin 4 → Σ q,Program t q 2) (event : Event → Σ q,Program t q 2)
+    (childReturn : ComplexRecursiveCallSchema.Call → Σ q,Program t q a)
+    (controls : Fin 4 → Σ q,Program t q a) (event : Event → Σ q,Program t q a)
     (isStopped : Fin (controls 0).1 → Bool) :=
   tableEdgesWith (returnPrograms ht childReturn)
     controls (fun i => event (schedule.get i))
@@ -36,25 +36,25 @@ def nodeEdges (ht : 0<t)
     (fun i _ => eventDestination i)
 
 private def familyWith {N extra k : ℕ} (stack : Fin t)
-    (programs : Fin (N+extra) → Σ q,Program t q 2) :=
+    (programs : Fin (N+extra) → Σ q,Program t q a) :=
   GuardedFiniteReturnExtraFlow.family (k:=k) stack
     (fun i => (programs i).1) (fun i => (programs i).2)
 
 private def nextWith {N extra k : ℕ} (hN : N≤2^k)
-    (programs : Fin (N+extra) → Σ q,Program t q 2)
+    (programs : Fin (N+extra) → Σ q,Program t q a)
     (edges : ∀ pc,Fin (programs pc).1 → Option (Fin (N+extra+2))) :=
   GuardedFiniteReturnExtraFlow.next hN (fun i => (programs i).1) edges
 
 private def pathWith {N extra k : ℕ} (hN : N≤2^k) (stack : Fin t)
-    (programs : Fin (N+extra) → Σ q,Program t q 2)
+    (programs : Fin (N+extra) → Σ q,Program t q a)
     (edges : ∀ pc,Fin (programs pc).1 → Option (Fin (N+extra+2))) :=
   FiniteFlowPath.Path (familyWith (k:=k) stack programs) (nextWith hN programs edges)
 
 /-- One locally valid halted block plus its actual edge costs one paid join. -/
 theorem guarded_local_path {N extra k : ℕ} (hN : N≤2^k) (stack : Fin t)
-    (programs : Fin (N+extra) → Σ q,Program t q 2)
+    (programs : Fin (N+extra) → Σ q,Program t q a)
     (edges : ∀ pc,Fin (programs pc).1 → Option (Fin (N+extra+2)))
-    (pc : Fin (N+extra)) (dest : Fin (N+extra+2)) (before after : Tapes t 2) (B : ℕ)
+    (pc : Fin (N+extra)) (dest : Fin (N+extra+2)) (before after : Tapes t a) (B : ℕ)
     (hlocal : HoareTime (programs pc).2 (fun v => v=before) (fun v => v=after) B)
     (hedge : ∀ st,edges pc st=some dest) :
     ∃ n≤B+1,pathWith hN stack programs edges pc.succ.succ before n dest after := by
@@ -80,22 +80,22 @@ theorem guarded_local_path {N extra k : ℕ} (hN : N≤2^k) (stack : Fin t)
 
 /-- The family and next relation used by the actual fixed cyclic program. -/
 def nodeFamily (ht : 0<t) (stack : Fin t)
-    (childReturn : ComplexRecursiveCallSchema.Call → Σ q,Program t q 2)
-    (controls : Fin 4 → Σ q,Program t q 2) (event : Event → Σ q,Program t q 2) :=
+    (childReturn : ComplexRecursiveCallSchema.Call → Σ q,Program t q a)
+    (controls : Fin 4 → Σ q,Program t q a) (event : Event → Σ q,Program t q a) :=
   familyWith (N:=originalCount) (extra:=4+schedule.length) (k:=CompactComplexCallReturn.addressWidth ComplexRecursiveCallSchema.sites.length (25^3)) stack
     (tableProgramsWith (returnPrograms ht childReturn) controls (fun i => event (schedule.get i)))
 
 def nodeNext (ht : 0<t)
-    (childReturn : ComplexRecursiveCallSchema.Call → Σ q,Program t q 2)
-    (controls : Fin 4 → Σ q,Program t q 2) (event : Event → Σ q,Program t q 2)
+    (childReturn : ComplexRecursiveCallSchema.Call → Σ q,Program t q a)
+    (controls : Fin 4 → Σ q,Program t q a) (event : Event → Σ q,Program t q a)
     (isStopped : Fin (controls 0).1 → Bool) :=
   nextWith (N:=originalCount) (extra:=4+schedule.length)
     (CompactComplexCallReturn.roomFor ComplexRecursiveCallSchema.sites.length (25^3))
     (tableProgramsWith (returnPrograms ht childReturn) controls (fun i => event (schedule.get i))) (nodeEdges ht childReturn controls event isStopped)
 
 theorem fixedProgramWith_eq {N length k : ℕ} (hN : N≤2^k) (stack : Fin t)
-    (returns : Fin N → Σ q,Program t q 2)
-    (controls : Fin 4 → Σ q,Program t q 2) (events : Fin length → Σ q,Program t q 2)
+    (returns : Fin N → Σ q,Program t q a)
+    (controls : Fin 4 → Σ q,Program t q a) (events : Fin length → Σ q,Program t q a)
     (re : ∀ pc,Fin (returns pc).1 → Option (Fin (N+(4+length)+2)))
     (isStopped : Fin (controls 0).1 → Bool)
     (ee : ∀ pc,Fin (events pc).1 → Option (Fin (N+(4+length)+2))) :
@@ -109,8 +109,8 @@ theorem fixedProgramWith_eq {N length k : ℕ} (hN : N≤2^k) (stack : Fin t)
 attribute [local irreducible] fixedProgramWith familyWith nextWith FiniteFlow.program
 
 theorem fixedProgram_eq (ht : 0<t) (stack : Fin t)
-    (childReturn : ComplexRecursiveCallSchema.Call → Σ q,Program t q 2)
-    (controls : Fin 4 → Σ q,Program t q 2) (event : Event → Σ q,Program t q 2)
+    (childReturn : ComplexRecursiveCallSchema.Call → Σ q,Program t q a)
+    (controls : Fin 4 → Σ q,Program t q a) (event : Event → Σ q,Program t q a)
     (isStopped : Fin (controls 0).1 → Bool) :
     fixedProgram ht stack childReturn controls event isStopped=
       FiniteFlow.program (nodeFamily ht stack childReturn controls event)
@@ -123,8 +123,8 @@ theorem fixedProgram_eq (ht : 0<t) (stack : Fin t)
 
 /-- Reachability in the family of the actual fixed cyclic table. -/
 def nodePath (ht : 0<t) (stack : Fin t)
-    (childReturn : ComplexRecursiveCallSchema.Call → Σ q,Program t q 2)
-    (controls : Fin 4 → Σ q,Program t q 2) (event : Event → Σ q,Program t q 2)
+    (childReturn : ComplexRecursiveCallSchema.Call → Σ q,Program t q a)
+    (controls : Fin 4 → Σ q,Program t q a) (event : Event → Σ q,Program t q a)
     (isStopped : Fin (controls 0).1 → Bool) :=
   pathWith (N:=originalCount) (extra:=4+schedule.length)
     (CompactComplexCallReturn.roomFor ComplexRecursiveCallSchema.sites.length (25^3)) stack
@@ -132,16 +132,16 @@ def nodePath (ht : 0<t) (stack : Fin t)
     (nodeEdges ht childReturn controls event isStopped)
 
 theorem nodePath_iff (ht : 0<t) (stack : Fin t)
-    (childReturn : ComplexRecursiveCallSchema.Call → Σ q,Program t q 2)
-    (controls : Fin 4 → Σ q,Program t q 2) (event : Event → Σ q,Program t q 2)
+    (childReturn : ComplexRecursiveCallSchema.Call → Σ q,Program t q a)
+    (controls : Fin 4 → Σ q,Program t q a) (event : Event → Σ q,Program t q a)
     (isStopped : Fin (controls 0).1 → Bool)
-    (pc last : Fin (originalCount+(4+schedule.length)+2)) (before after : Tapes t 2) (n : ℕ) :
+    (pc last : Fin (originalCount+(4+schedule.length)+2)) (before after : Tapes t a) (n : ℕ) :
     nodePath ht stack childReturn controls event isStopped pc before n last after ↔
       FiniteFlowPath.Path (nodeFamily ht stack childReturn controls event)
         (nodeNext ht childReturn controls event isStopped) pc before n last after := Iff.rfl
 
-private theorem hoare_program_eq {P Q : Σ q,Program t q 2} (he : P=Q)
-    {before after : Tapes t 2} {B : ℕ}
+private theorem hoare_program_eq {P Q : Σ q,Program t q a} (he : P=Q)
+    {before after : Tapes t a} {B : ℕ}
     (h : HoareTime Q.2 (fun v => v=before) (fun v => v=after) B) :
     HoareTime P.2 (fun v => v=before) (fun v => v=after) B := by
   cases he
@@ -157,8 +157,8 @@ private theorem mpr_constant {q r P : ℕ}
   exact hf st
 
 private theorem event_edge {N length : ℕ}
-    (returns : Fin N → Σ q,Program t q 2)
-    (controls : Fin 4 → Σ q,Program t q 2) (events : Fin length → Σ q,Program t q 2)
+    (returns : Fin N → Σ q,Program t q a)
+    (controls : Fin 4 → Σ q,Program t q a) (events : Fin length → Σ q,Program t q a)
     (re : ∀ pc,Fin (returns pc).1 → Option (Fin (N+(4+length)+2)))
     (ce : ∀ pc,Fin (controls pc).1 → Option (Fin (N+(4+length)+2)))
     (ee : ∀ pc,Fin (events pc).1 → Option (Fin (N+(4+length)+2)))
@@ -172,8 +172,8 @@ private theorem event_edge {N length : ℕ}
   exact mpr_constant h (by simp only [tableProgramsWith,Fin.addCases_right]) _ dest he st
 
 private theorem return_edge {N length : ℕ}
-    (returns : Fin N → Σ q,Program t q 2)
-    (controls : Fin 4 → Σ q,Program t q 2) (events : Fin length → Σ q,Program t q 2)
+    (returns : Fin N → Σ q,Program t q a)
+    (controls : Fin 4 → Σ q,Program t q a) (events : Fin length → Σ q,Program t q a)
     (re : ∀ pc,Fin (returns pc).1 → Option (Fin (N+(4+length)+2)))
     (ce : ∀ pc,Fin (controls pc).1 → Option (Fin (N+(4+length)+2)))
     (ee : ∀ pc,Fin (events pc).1 → Option (Fin (N+(4+length)+2)))
@@ -187,8 +187,8 @@ private theorem return_edge {N length : ℕ}
   exact mpr_constant h (by simp only [tableProgramsWith,Fin.addCases_left]) _ dest he st
 
 private theorem control_edge {N length : ℕ}
-    (returns : Fin N → Σ q,Program t q 2)
-    (controls : Fin 4 → Σ q,Program t q 2) (events : Fin length → Σ q,Program t q 2)
+    (returns : Fin N → Σ q,Program t q a)
+    (controls : Fin 4 → Σ q,Program t q a) (events : Fin length → Σ q,Program t q a)
     (re : ∀ pc,Fin (returns pc).1 → Option (Fin (N+(4+length)+2)))
     (ce : ∀ pc,Fin (controls pc).1 → Option (Fin (N+(4+length)+2)))
     (ee : ∀ pc,Fin (events pc).1 → Option (Fin (N+(4+length)+2)))
@@ -202,12 +202,12 @@ private theorem control_edge {N length : ℕ}
   exact mpr_constant h (by simp only [tableProgramsWith,Fin.addCases_right,Fin.addCases_left]) _ dest he st
 
 theorem event_local_path {N length k : ℕ} (hN : N≤2^k) (stack : Fin t)
-    (returns : Fin N → Σ q,Program t q 2)
-    (controls : Fin 4 → Σ q,Program t q 2) (events : Fin length → Σ q,Program t q 2)
+    (returns : Fin N → Σ q,Program t q a)
+    (controls : Fin 4 → Σ q,Program t q a) (events : Fin length → Σ q,Program t q a)
     (re : ∀ pc,Fin (returns pc).1 → Option (Fin (N+(4+length)+2)))
     (ce : ∀ pc,Fin (controls pc).1 → Option (Fin (N+(4+length)+2)))
     (ee : ∀ pc,Fin (events pc).1 → Option (Fin (N+(4+length)+2)))
-    (i : Fin length) (dest : Fin (N+(4+length)+2)) (before after : Tapes t 2) (B : ℕ)
+    (i : Fin length) (dest : Fin (N+(4+length)+2)) (before after : Tapes t a) (B : ℕ)
     (hlocal : HoareTime (events i).2 (fun v => v=before) (fun v => v=after) B)
     (he : ∀ st,ee i st=some dest) :
     ∃ n≤B+1,pathWith hN stack (tableProgramsWith returns controls events)
@@ -219,12 +219,12 @@ theorem event_local_path {N length k : ℕ} (hN : N≤2^k) (stack : Fin t)
   · exact event_edge returns controls events re ce ee i dest he
 
 theorem return_local_path {N length k : ℕ} (hN : N≤2^k) (stack : Fin t)
-    (returns : Fin N → Σ q,Program t q 2)
-    (controls : Fin 4 → Σ q,Program t q 2) (events : Fin length → Σ q,Program t q 2)
+    (returns : Fin N → Σ q,Program t q a)
+    (controls : Fin 4 → Σ q,Program t q a) (events : Fin length → Σ q,Program t q a)
     (re : ∀ pc,Fin (returns pc).1 → Option (Fin (N+(4+length)+2)))
     (ce : ∀ pc,Fin (controls pc).1 → Option (Fin (N+(4+length)+2)))
     (ee : ∀ pc,Fin (events pc).1 → Option (Fin (N+(4+length)+2)))
-    (i : Fin N) (dest : Fin (N+(4+length)+2)) (before after : Tapes t 2) (B : ℕ)
+    (i : Fin N) (dest : Fin (N+(4+length)+2)) (before after : Tapes t a) (B : ℕ)
     (hlocal : HoareTime (returns i).2 (fun v => v=before) (fun v => v=after) B)
     (he : ∀ st,re i st=some dest) :
     ∃ n≤B+1,pathWith hN stack (tableProgramsWith returns controls events)
@@ -236,12 +236,12 @@ theorem return_local_path {N length k : ℕ} (hN : N≤2^k) (stack : Fin t)
   · exact return_edge returns controls events re ce ee i dest he
 
 theorem control_local_path {N length k : ℕ} (hN : N≤2^k) (stack : Fin t)
-    (returns : Fin N → Σ q,Program t q 2)
-    (controls : Fin 4 → Σ q,Program t q 2) (events : Fin length → Σ q,Program t q 2)
+    (returns : Fin N → Σ q,Program t q a)
+    (controls : Fin 4 → Σ q,Program t q a) (events : Fin length → Σ q,Program t q a)
     (re : ∀ pc,Fin (returns pc).1 → Option (Fin (N+(4+length)+2)))
     (ce : ∀ pc,Fin (controls pc).1 → Option (Fin (N+(4+length)+2)))
     (ee : ∀ pc,Fin (events pc).1 → Option (Fin (N+(4+length)+2)))
-    (i : Fin 4) (dest : Fin (N+(4+length)+2)) (before after : Tapes t 2) (B : ℕ)
+    (i : Fin 4) (dest : Fin (N+(4+length)+2)) (before after : Tapes t a) (B : ℕ)
     (hlocal : HoareTime (controls i).2 (fun v => v=before) (fun v => v=after) B)
     (he : ∀ st,ce i st=some dest) :
     ∃ n≤B+1,pathWith hN stack (tableProgramsWith returns controls events)
@@ -253,7 +253,7 @@ theorem control_local_path {N length k : ℕ} (hN : N≤2^k) (stack : Fin t)
   · exact control_edge returns controls events re ce ee i dest he
 
 private theorem terminal_edge {N length : ℕ}
-    (controls : Fin 4 → Σ q,Program t q 2)
+    (controls : Fin 4 → Σ q,Program t q a)
     (isStopped : Fin (controls 0).1 → Bool) (tag : Fin 4) (htag : tag=1 ∨ tag=3) :
     ∀ st,controlEdgesWith (N:=N) (length:=length) controls isStopped tag st=some 0 := by
   rcases htag with rfl | rfl
@@ -261,14 +261,14 @@ private theorem terminal_edge {N length : ℕ}
   · exact final_return_edge controls isStopped
 
 variable (ht : 0<t) (stack : Fin t)
-    (childReturn : ComplexRecursiveCallSchema.Call → Σ q,Program t q 2)
-    (controls : Fin 4 → Σ q,Program t q 2) (event : Event → Σ q,Program t q 2)
+    (childReturn : ComplexRecursiveCallSchema.Call → Σ q,Program t q a)
+    (controls : Fin 4 → Σ q,Program t q a) (event : Event → Σ q,Program t q a)
     (isStopped : Fin (controls 0).1 → Bool)
 
 /-- A scalar contract at this reachable bank advances to its actual successor. -/
 theorem scalar_path (i : Fin schedule.length)
     (g : CompactComplexScalarIntegerRows.GroupIndex) (hi : schedule.get i=Event.scalar g)
-    (before after : Tapes t 2) (B : ℕ)
+    (before after : Tapes t a) (B : ℕ)
     (hlocal : HoareTime (event (Event.scalar g)).2
       (fun v => v=before) (fun v => v=after) B) :
     ∃ n≤B+1,nodePath ht stack childReturn controls event isStopped (eventPC i) before n (nextPC i) after := by
@@ -284,7 +284,7 @@ theorem scalar_path (i : Fin schedule.length)
 
 /-- A locally executed child prefix re-enters the same shared fixed table. -/
 theorem child_prefix_path (i : Fin schedule.length) (c : ComplexRecursiveCallSchema.Call)
-    (hi : schedule.get i=Event.child c) (before after : Tapes t 2) (B : ℕ)
+    (hi : schedule.get i=Event.child c) (before after : Tapes t a) (B : ℕ)
     (hlocal : HoareTime (event (Event.child c)).2
       (fun v => v=before) (fun v => v=after) B) :
     ∃ n≤B+1,nodePath ht stack childReturn controls event isStopped
@@ -301,7 +301,7 @@ theorem child_prefix_path (i : Fin schedule.length) (c : ComplexRecursiveCallSch
 
 /-- A genuine decoded child return enters the unique next original event. -/
 theorem decoded_return_path (c : ComplexRecursiveCallSchema.Call)
-    (before after : Tapes t 2) (B : ℕ)
+    (before after : Tapes t a) (B : ℕ)
     (hlocal : HoareTime (childReturn c).2
       (fun v => v=before) (fun v => v=after) B) :
     ∃ n≤B+1,nodePath ht stack childReturn controls event isStopped (savedPC c) before n (callNextPC c) after := by
@@ -318,7 +318,7 @@ theorem decoded_return_path (c : ComplexRecursiveCallSchema.Call)
 
 /-- Either terminal control returns to the genuine stack guard. -/
 theorem terminal_control_path (tag : Fin 4) (htag : tag=1 ∨ tag=3)
-    (before after : Tapes t 2) (B : ℕ)
+    (before after : Tapes t a) (B : ℕ)
     (hlocal : HoareTime (controls tag).2
       (fun v => v=before) (fun v => v=after) B) :
     ∃ n≤B+1,nodePath ht stack childReturn controls event isStopped
