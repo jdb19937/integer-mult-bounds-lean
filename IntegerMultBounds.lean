@@ -2608,3 +2608,7 @@ import IntegerMultBounds.Machine.CompactComplexCorrectedNonleafBoundaryBudget
 import IntegerMultBounds.Machine.CompactComplexBasisTensorConjugation
 import IntegerMultBounds.Machine.CompactComplexChildTensorCoordinateFactor
 import IntegerMultBounds.Machine.CompactComplexActualCallAlignment
+import IntegerMultBounds.Schoenhage.Chunk
+import IntegerMultBounds.Schoenhage.Seal
+import IntegerMultBounds.Schoenhage.RingBridgeMath
+import IntegerMultBounds.Schoenhage.RingRecord

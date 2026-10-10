@@ -6494,6 +6494,18 @@ Schönhage–Strassen multiplication, the fast multiplier used for the packed pr
   doubling loop turns them into unary (`runs_decodeOne`); the transform header
   gives `p`, `log₂ r` and `w` (`runs_decodeHeader`).
 
+- `Schoenhage/Chunk.lean`: a three-tape primitive cutting the current word
+  into pieces of a register's width (`runs_chunkw`).
+- `Schoenhage/Seal.lean`: literal one-tape programs turning a raw bit string
+  into a sealed word tape and back, placed on any tape of a bank
+  (`sealAt_hoare`, `unsealAt_hoare`).
+- `Schoenhage/RingBridgeMath.lean`: the ring product's least-significant-first
+  output words, reversed, are the paper's record of `Q_p(fg/r)` for disk grid
+  operands (`ringOut_records`).
+- `Schoenhage/RingRecord.lean`: the loop over record pairs: each record's
+  words move in reversed, the ring product runs, its words come back reversed
+  onto one output string (`runs_recStep`, `runs_recLoop`).
+
 ## Top-level
 
 - `ExactRecoveryOutput.lean`: Turns the actual recovered coefficients into exactly twice the input length in bits by proving that excess leading padding is zero. Covers nondivisible chunk widths, directly instantiates `ExactRecovery.exact_product`, and identifies the literal machine output contract once the word is installed. Carry compilation, physical installation and runtime are separate obligations.
