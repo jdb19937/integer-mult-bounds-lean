@@ -189,6 +189,43 @@ theorem child_path {sh : Shape} {rows ell q left e levels frames returned : ℕ}
   exact ⟨t+1,Nat.add_le_add_right ht 1,Marker.endpoint _ hp hpost⟩
 
 
+/-- Width-only actual classifier path, with cost paid by the original visit. -/
+theorem child_path_width {sh : Shape} {rows ell q left e levels frames returned : ℕ}
+    (headerStack pcStack liveStack : Fin s) (call : ComplexRecursiveCallSchema.Call)
+    (v : Tapes (publicTapes s RC) 2) (leaf : Tapes leafTapes 2) (work : Tapes 10 2)
+    (scalar : Tapes CompactComplexSourceReadyScalarWorkspace.scratch 2)
+    (older : ℤ → Fin 6) (origin : ℤ)
+    (hstack : Placement.active (FiniteReturnStackAt.placement (savedSlot pcStack)) (bank v leaf work)=
+      FiniteReturnStack.bank (FiniteReturnStack.wordPart older origin (CompactComplexCallReturn.code call)
+        (CompactComplexCallReturn.addressWidth ComplexRecursiveCallSchema.sites.length (25^3)) le_rfl)
+        (origin+CompactComplexCallReturn.addressWidth ComplexRecursiveCallSchema.sites.length (25^3)))
+    (dependency : CompactRecursiveDependencyBudget.Path sh.active left e levels frames returned)
+    (hr : 0<rows) (hG : 0<sh.guard) (hA : 0<sh.axes) (hactive : sh.active≤sh.axes)
+    (f : Array sh rows ell) (hw : CompactSpectatorInheritedGrid.Width sh rows ell q f)
+    (hs : v.tape CompactComplexSourceReadyOrientedControlsFrame.source=
+      NativeZeroPadding.word (NativeZeroPaddingArray.word f))
+    (hh : v.head CompactComplexSourceReadyOrientedControlsFrame.source=0)
+    (hready : CompactComplexSourceReadyGuard.Ready v)
+    (hd : v.head CompactComplexSourceReadyGuard.dimension=1 ∧
+      v.tape CompactComplexSourceReadyGuard.dimension=RadixZeroFill.encodedBinary (bits sh.axes))
+    (he : v.head CompactComplexSourceReadyGuard.exponent=1 ∧
+      v.tape CompactComplexSourceReadyGuard.exponent=RadixZeroFill.encodedBinary (bits e)) :
+    ∃ t≤(CompactComplexSourceReadyOrientationInvariants.constant+
+        4*CompactComplexSourceReadyGuard.guardConstant+1)*
+        CompactNativeRoleTransferBudget.volume rows sh ell (ButterflyIndependentGuardHeaders.reservation sh.bits q)+1,path headerStack pcStack liveStack
+      (controlPCFor originalCount schedule.length 0) ((bank v leaf work).append scalar) t
+      (controlPCFor originalCount schedule.length (if ComplexRecursiveCallSchema.stopped sh.axes e then 1 else 2)) ((bank (CompactComplexSourceReadyOrientedControlsFrame.output call v f) leaf work).append scalar) := by
+  obtain ⟨t,ht,out,hrun,hhalt,hpost,hclass⟩ := CompactComplexSourceReadyOrientedControlsEntry.runs_width
+    pcStack call v leaf work scalar older origin hstack dependency hr hG hA hactive f hw hs hh hready hd he
+  have hp := Marker.canonical_path (positive pcStack) (savedStackSlot pcStack)
+    (CompactComplexSourceReadyActualTable.childReturn headerStack liveStack)
+    (controls pcStack) (CompactComplexSourceReadyActualTable.event headerStack pcStack liveStack) (classify pcStack)
+    ((bank v leaf work).append scalar) t out hrun hhalt (ComplexRecursiveCallSchema.stopped sh.axes e) hclass
+  change path headerStack pcStack liveStack (controlPCFor originalCount schedule.length 0)
+    ((bank v leaf work).append scalar) (t+1) (controlPCFor originalCount schedule.length (if ComplexRecursiveCallSchema.stopped sh.axes e then 1 else 2)) out.tapes at hp
+  exact ⟨t+1,Nat.add_le_add_right ht 1,Marker.endpoint _ hp hpost⟩
+
+
 theorem root_path (headerStack pcStack liveStack : Fin s) (v : Tapes (publicTapes s RC) 2)
     (leaf : Tapes leafTapes 2) (work : Tapes 10 2)
     (scalar : Tapes CompactComplexSourceReadyScalarWorkspace.scratch 2)

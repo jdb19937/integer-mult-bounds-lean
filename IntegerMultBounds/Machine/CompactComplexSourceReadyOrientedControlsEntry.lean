@@ -128,6 +128,76 @@ theorem runs_from_path {sh : Shape} {rows ell q left e levels frames returned : 
   · exact hft.trans (congrArg (fun w => w.append scalar) hbt)
   · exact hfc.trans hbc
 
+/-- Physical classifier runtime uses actual retained width and the genuine
+visit for guard cost, independently of any numerical grid premise. -/
+theorem runs_width {sh : Shape} {rows ell q left e levels frames returned : ℕ}
+    (pcStack : Fin s) (call : ComplexRecursiveCallSchema.Call)
+    (v : Tapes (publicTapes s c) 2) (leaf : Tapes leafTapes 2) (work : Tapes 10 2)
+    (scalar : Tapes CompactComplexSourceReadyScalarWorkspace.scratch 2)
+    (older : ℤ → Fin 6) (origin : ℤ)
+    (hstack : Placement.active (FiniteReturnStackAt.placement (savedSlot pcStack)) (bank v leaf work)=
+      FiniteReturnStack.bank (FiniteReturnStack.wordPart older origin (CompactComplexCallReturn.code call)
+        (CompactComplexCallReturn.addressWidth ComplexRecursiveCallSchema.sites.length (25^3)) le_rfl)
+        (origin+CompactComplexCallReturn.addressWidth ComplexRecursiveCallSchema.sites.length (25^3)))
+    (path : CompactRecursiveDependencyBudget.Path sh.active left e levels frames returned)
+    (hr : 0<rows) (hG : 0<sh.guard) (hA : 0<sh.axes) (hactive : sh.active≤sh.axes)
+    (f : Array sh rows ell) (hw : CompactSpectatorInheritedGrid.Width sh rows ell q f)
+    (hs : v.tape CompactComplexSourceReadyOrientedControlsFrame.source=
+      NativeZeroPadding.word (NativeZeroPaddingArray.word f))
+    (hh : v.head CompactComplexSourceReadyOrientedControlsFrame.source=0)
+    (hready : CompactComplexSourceReadyGuard.Ready v)
+    (hd : v.head CompactComplexSourceReadyGuard.dimension=1 ∧
+      v.tape CompactComplexSourceReadyGuard.dimension=RadixZeroFill.encodedBinary (bits sh.axes))
+    (he : v.head CompactComplexSourceReadyGuard.exponent=1 ∧
+      v.tape CompactComplexSourceReadyGuard.exponent=RadixZeroFill.encodedBinary (bits e)) :
+    ∃ t≤(CompactComplexSourceReadyOrientationInvariants.constant+
+        4*CompactComplexSourceReadyGuard.guardConstant+1)*
+        CompactNativeRoleTransferBudget.volume rows sh ell (ButterflyIndependentGuardHeaders.reservation sh.bits q),
+      ∃ out : Config (CompactComplexSourceReadyScalarWorkspace.tapes s c) (entry (c:=c) pcStack).1 2,
+        run (entry pcStack).2 t (((bank v leaf work).append scalar).start (entry pcStack).2)=some out ∧
+        step (entry pcStack).2 out=none ∧
+        out.tapes=(bank (CompactComplexSourceReadyOrientedControlsFrame.output call v f) leaf work).append scalar ∧
+        isStopped pcStack out.state=ComplexRecursiveCallSchema.stopped sh.axes e := by
+  have ho := CompactComplexSourceReadyOrientationInvariants.runs_linear (savedSlot pcStack) call
+    (bank v leaf work) older origin hstack sh rows ell
+    (ButterflyIndependentGuardHeaders.reservation sh.bits q) hr f hw
+    (by simpa only [CompactComplexSourceReadyOrientation.source,NativePolynomialConjugationWorkspace.source,
+      CompactComplexSourceReadyOrientedControlsFrame.source,bank,Tapes.append,Fin.addCases_left] using hs)
+    (by simpa only [CompactComplexSourceReadyOrientation.source,NativePolynomialConjugationWorkspace.source,
+      CompactComplexSourceReadyOrientedControlsFrame.source,bank,Tapes.append,Fin.addCases_left] using hh)
+  obtain ⟨a,mid,ha,har,hah,hmid⟩ := ho (bank v leaf work) rfl
+  rw [CompactComplexSourceReadyOrientedControlsFrame.node_output] at hmid
+  have hd' := hd
+  have he' := he
+  rw [←(CompactComplexSourceReadyOrientedControlsFrame.frame call v f _
+    CompactComplexSourceReadyOrientedControlsFrame.dimension_ne).1,
+    ←(CompactComplexSourceReadyOrientedControlsFrame.frame call v f _
+    CompactComplexSourceReadyOrientedControlsFrame.dimension_ne).2] at hd'
+  rw [←(CompactComplexSourceReadyOrientedControlsFrame.frame call v f _
+    CompactComplexSourceReadyOrientedControlsFrame.exponent_ne).1,
+    ←(CompactComplexSourceReadyOrientedControlsFrame.frame call v f _
+    CompactComplexSourceReadyOrientedControlsFrame.exponent_ne).2] at he'
+  obtain ⟨b,hb,out,hbr,hbh,hbt,hbc⟩ := guard_marker
+    (CompactComplexSourceReadyOrientedControlsFrame.output call v f) leaf work sh.axes e hA
+    (CompactComplexSourceReadyOrientedControlsFrame.ready call v f hready) hd' he'
+  have hgRun : run CompactComplexSourceReadyNodeControls.entry.2 b
+      (mid.tapes.start CompactComplexSourceReadyNodeControls.entry.2)=some out := by
+    rw [hmid]
+    exact hbr
+  obtain ⟨final,hfr,hfh,hft,hfc⟩ := sequence_widen_marker (orientation (c:=c) pcStack)
+    CompactComplexSourceReadyNodeControls.entry.2 (bank v leaf work) mid out a b har hah hgRun hbh
+    scalar CompactComplexSourceReadyNodeControls.isStopped
+  refine ⟨a+1+b,?_,final,hfr,hfh,?_,?_⟩
+  · have hguard := CompactComplexSourceReadyStoppedNodePath.guard_cost_from_visit path.visit hactive
+      rows ell (ButterflyIndependentGuardHeaders.reservation sh.bits q) hr hG
+    have hv := Nat.mul_pos hr (CompactNativeRoleTransferBudget.symbols_pos sh ell
+      (ButterflyIndependentGuardHeaders.reservation sh.bits q))
+    change 0<CompactNativeRoleTransferBudget.volume rows sh ell
+      (ButterflyIndependentGuardHeaders.reservation sh.bits q) at hv
+    exact paid_cost _ _ _ _ _ _ ha hb hguard hv
+  · exact hft.trans (congrArg (fun w => w.append scalar) hbt)
+  · exact hfc.trans hbc
+
 /-- Empty original root stacks select forward identity before the real guard. -/
 theorem root_runs (pcStack : Fin s) (v : Tapes (publicTapes s c) 2)
     (leaf : Tapes leafTapes 2) (work : Tapes 10 2)

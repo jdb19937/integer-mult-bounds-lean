@@ -4626,6 +4626,8 @@ Machine model, execution, composition, and tape routines.
 
 - `Machine/CompactComplexSourceReadyReachedStoppedChildRun.lean`: A reached nonempty semantic call stack supplies the real top call code and older blank tail internally. Actual corrected classification, stopped leaf and decoded return form a paid path to that call continuation, with literal installed output, tensor semantics, output grid and older associated call list physically restored. No occupied-word, blank-tail, pre-orientation or execution callback premises are used; unstopped recursive induction remains open.
 
+- `Machine/CompactComplexCorrectedStoppedClassifierGuarded.lean`: Actual corrected classification, stopped tensor leaf and saved return now execute from any genuinely guarded input grid, including framed scalar prefixes. Width-only classifier contracts separate physical runtime from numerical readout. All descriptor preservation, literal restored source, exact stopped output grid and forward/inverse tensor action derive from the physical paths and supplied genuine signed guard; no pre-orientation or execution callbacks are used.
+
 ## Compact
 
 Compact packed controls, repair, and density bounds.
