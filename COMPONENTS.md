@@ -4640,6 +4640,10 @@ Machine model, execution, composition, and tape routines.
 
 - `Machine/CompactComplexCorrectedNonleafBoundaryBudget.lean`: Complete corrected nonleaf boundary allowances include the actual classifier, source entry, sink corrections, contraction/rejoin, child orientation and genuine root halt or saved-PC guard/pop. A dependency Path pays root classification; one fixed local coefficient covers root or child boundaries plus the actual interleaved event allowance and original recursive child budgets. This proves full local budget arithmetic; assembled recursive execution and its actual runtime recurrence remain open.
 
+- `Machine/CompactComplexBasisTensorConjugation.lean`: The literal chosen ambient basis word has its exact linear coordinate map. Conjugating the signed tensor at the actual child slot by that same map gives the original residual vector kernel, retaining every column spectator. This proves the exact local basis algebra used by recursive calls; physical basis execution and complete recursion are separate.
+
+- `Machine/CompactComplexChildTensorCoordinateFactor.lean`: The real ChildAddress interval identifies the actual call slot across all parent columns. Full native forward or inverse child tensors at those literal addresses equal the signed canonical parent coordinate factor, retaining spectators. With the proved local basis permutation, the actual child endpoint equals the original signed residual frame kernel; only local input alignment is assumed, not whole-network correctness. Physical alignment and recursive execution remain open.
+
 ## Compact
 
 Compact packed controls, repair, and density bounds.

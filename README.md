@@ -34,7 +34,8 @@ Complete nonleaf boundary allowances now include classification, corrections,
 contraction and the genuine root halt or child saved-PC pop.
 Actual scalar blocks advance the original named-network compiler prefixes.
 Actual coordinate-weighted child directions now factor the original frame edges;
-physical coordinate alignment and recursive execution remain to connect.
+Actual child address tensors and literal basis conjugation now match those
+same original residual factors; physical alignment and recursion remain to connect.
 Unstopped recursive bank/grid invariants, the complete reached execution and
 its total runtime recurrence still require integration.
 
