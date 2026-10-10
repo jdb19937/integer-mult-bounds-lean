@@ -35,7 +35,8 @@ contraction and the genuine root halt or child saved-PC pop.
 Actual scalar blocks advance the original named-network compiler prefixes.
 Actual coordinate-weighted child directions now factor the original frame edges;
 Actual child address tensors and literal basis conjugation now match those
-same original residual factors; physical alignment and recursion remain to connect.
+same original residual factors; A selected-role basis pass now has a checked permanent-bank execution with
+restored headers and workspace; full recursive event placement remains open.
 Unstopped recursive bank/grid invariants, the complete reached execution and
 its total runtime recurrence still require integration.
 

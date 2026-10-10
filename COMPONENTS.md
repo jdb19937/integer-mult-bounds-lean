@@ -4644,6 +4644,8 @@ Machine model, execution, composition, and tape routines.
 
 - `Machine/CompactComplexChildTensorCoordinateFactor.lean`: The real ChildAddress interval identifies the actual call slot across all parent columns. Full native forward or inverse child tensors at those literal addresses equal the signed canonical parent coordinate factor, retaining spectators. With the proved local basis permutation, the actual child endpoint equals the original signed residual frame kernel; only local input alignment is assumed, not whole-network correctness. Physical alignment and recursive execution remain open.
 
+- `Machine/CompactComplexActualCallAlignment.lean`: One fixed selected-role forward or reverse original basis pass physically synthesizes numeric43 headers, shares the native source, executes the literal basis word and restores every header and private tape on the prime alphabet. Exact original-coordinate destinations and reverse restoration are proved. A permanent-bank placement preserves controller, queue, scalar, storage and every spectator, returns its appended fixed workspace blank and pays the actual stage-exponent cost. Placement into full recursive events and complete aligned table execution remain separate.
+
 ## Compact
 
 Compact packed controls, repair, and density bounds.
