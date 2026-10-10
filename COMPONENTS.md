@@ -4622,6 +4622,10 @@ Machine model, execution, composition, and tape routines.
 
 - `Machine/CompactComplexSourceReadySavedCallHistory.lean`: The reached saved stack now carries a newest-first list of genuine recursive calls with exact physical call codes. Its association derives ordinary stack History and blank tails, exposes the true top call, extends through complete actual child entry, and is restored by the corrected decoder. Nonempty return paths need no supplied occupied-word equality or blank-tail callback. Geometry, grids and complete recursive execution remain separate reached-invariant obligations.
 
+- `Machine/CompactComplexCorrectedStoppedClassifierTensor.lean`: The actual corrected tag0 classifier derives the selected call orientation from the original input, retains its literal descriptors, and composes the stopped leaf with the genuine saved-PC return. Paid real table paths restore the installed source with full forward/inverse tensor semantics and the exact stopped output grid; no pre-oriented-source or execution callback is assumed.
+
+- `Machine/CompactComplexSourceReadyReachedStoppedChildRun.lean`: A reached nonempty semantic call stack supplies the real top call code and older blank tail internally. Actual corrected classification, stopped leaf and decoded return form a paid path to that call continuation, with literal installed output, tensor semantics, output grid and older associated call list physically restored. No occupied-word, blank-tail, pre-orientation or execution callback premises are used; unstopped recursive induction remains open.
+
 ## Compact
 
 Compact packed controls, repair, and density bounds.
