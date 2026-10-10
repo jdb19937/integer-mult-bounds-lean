@@ -6559,6 +6559,15 @@ Schönhage–Strassen multiplication, the fast multiplier used for the packed pr
   (`pointwiseTime_le`), so the step meets `pointwisePolylogTarget 1`
   (`pointwise_polylog`).
 
+- `Spec/SyntheticTransform.lean`: the statement of the paper's synthetic
+  transforms in its formats: exact counterparts `L B F⁻` and `F⁺ B⁻¹ L⁻¹`,
+  per-coefficient error `√2 ℓ 2^(-p)`, disk grid outputs, the paper's cost
+  (`MeetsForward`, `MeetsOpposite`, `transformTarget`). Definitions only.
+- `Spec/SyntheticTransformFacts.lean`: the conventions are consistent:
+  mixed-radix addresses and per-axis bit reversal are bijections, `F⁺F⁻ = I/M`
+  (`oppT_fwdT`), and the opposite exact map undoes the forward one in the
+  stored order for every layout (`oppExact_fwdExact`).
+
 ## Top-level
 
 - `ExactRecoveryOutput.lean`: Turns the actual recovered coefficients into exactly twice the input length in bits by proving that excess leading padding is zero. Covers nondivisible chunk widths, directly instantiates `ExactRecovery.exact_product`, and identifies the literal machine output contract once the word is installed. Carry compilation, physical installation and runtime are separate obligations.
