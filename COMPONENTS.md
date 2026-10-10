@@ -4632,6 +4632,8 @@ Machine model, execution, composition, and tape routines.
 
 - `Machine/CompactComplexSourceReadyScalarSavedCallHistory.lean`: Actual grouped scalar events in the corrected cyclic table preserve the full associated saved-call list. The canonical live7-only update and literal emitted role payload derive unchanged saved-PC tape/head on the complete controller bank, alongside the paid actual event-to-next-event path. No execution or desired endpoint equality callback is assumed; full reached schedule induction remains open.
 
+- `Machine/CompactComplexScheduleRuntimeBudget.lean`: The literal interleaved event schedule has an exact weighted sum over every scalar group and each original child occurrence. Actual scalar lifecycle allowances and table joins, certified child entry/return coefficients and recursive child budgets yield the RuntimeSum successor-shaped allowance at the genuine role-volume quotient. This is an unconditional schedule budget identity and bound, not an execution theorem; node boundary control costs and the reached recursive run remain to compose.
+
 ## Compact
 
 Compact packed controls, repair, and density bounds.
