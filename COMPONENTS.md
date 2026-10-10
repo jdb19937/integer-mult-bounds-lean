@@ -4664,6 +4664,10 @@ Machine model, execution, composition, and tape routines.
 
 - `Machine/CompactComplexSourceReadyReachedBasisInvariant.lean`: The reached parent determines the real quotient-row expanded polynomial codec and actual basis-permuted role array. Native input/output serializers match the literal selected tape, and widths and the genuine prefix Grid are preserved. Exact selected-bank replacement yields a central Reached invariant after either original basis pass with original total rows, all spectators, target/live/exponent/ledger and associated calls unchanged. This supplies actual basis input readiness and semantic preservation; joined aligned child execution remains separate.
 
+- `Machine/CompactComplexAlignedScalarEventPath.lean`: A reached original scalar event executes in the actual prime-alphabet aligned table, retaining the full encoded caller and blank basis workspace. The public successor derives scalar readiness from the concrete Reached invariant and proves the exact next Reached bank with the scalar lifecycle and table jump paid. Recursive child returns and whole event induction remain open.
+
+- `Machine/CompactComplexAlignedChildEntryPath.lean`: The genuine native witness executes a selected-role basis pass with quotient-row headers, restores canonical original parent metadata and follows actual child entry into the aligned fixed table. Readiness and literal replacement are derived from the reached parent, and every basis, entry and table join is charged, retaining one positive universal stage-scale coefficient. Complete child execution and aligned return remain open.
+
 ## Compact
 
 Compact packed controls, repair, and density bounds.

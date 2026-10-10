@@ -40,7 +40,9 @@ prime-alphabet table contains those passes around actual child entry and return.
 Selected-role quotient headers now prepare and restore parent geometry around
 both basis passes. Actual quotient-row serializers now supply basis input
 readiness, and exact basis permutations preserve the reached parent invariant.
-Joined reached child paths remain to compose.
+Actual reached scalar events and basis-aligned child-entry prefixes now run in
+the aligned table, with literal next banks and every transition paid.
+Aligned child returns and the complete reached event induction remain open.
 
 Complete boundary and event allowances pay classification, corrections,
 contraction, genuine return dispatch, both basis passes and their joins. The
