@@ -2612,3 +2612,4 @@ import IntegerMultBounds.Schoenhage.Chunk
 import IntegerMultBounds.Schoenhage.Seal
 import IntegerMultBounds.Schoenhage.RingBridgeMath
 import IntegerMultBounds.Schoenhage.RingRecord
+import IntegerMultBounds.Machine.CompactComplexSourceReadyReachedEventInvariant

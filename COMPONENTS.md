@@ -4646,6 +4646,8 @@ Machine model, execution, composition, and tape routines.
 
 - `Machine/CompactComplexActualCallAlignment.lean`: One fixed selected-role forward or reverse original basis pass physically synthesizes numeric43 headers, shares the native source, executes the literal basis word and restores every header and private tape on the prime alphabet. Exact original-coordinate destinations and reverse restoration are proved. A permanent-bank placement preserves controller, queue, scalar, storage and every spectator, returns its appended fixed workspace blank and pays the actual stage-exponent cost. Placement into full recursive events and complete aligned table execution remain separate.
 
+- `Machine/CompactComplexSourceReadyReachedEventInvariant.lean`: A concrete reached-event record retains the actual canonical raw Stage and child-entry bank, literal role arrays and widths/support, blank count and source storage, physical node exponent, target8 readiness/growth, denominator/grid/upper ledger and genuine associated saved-call list. Corrected original entry initializes the record; actual scalar execution and paid corrected-table jumps construct its literal successor. Child-input readiness derives from the record. A separate conditional aligned-prefix refinement advances the original compiler prefix; physical child basis alignment and complete recursive closure remain open.
+
 ## Compact
 
 Compact packed controls, repair, and density bounds.
