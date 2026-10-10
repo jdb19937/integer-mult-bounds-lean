@@ -4620,6 +4620,8 @@ Machine model, execution, composition, and tape routines.
 
 - `Machine/CompactComplexSourceReadyFullChildSavedStackHistory.lean`: The complete original source preparation, quotient and child-header entry preserves the actual saved-PC bank and physically appends the genuine call code. Distinct PC/header/live ports derive the exact public output bank from the implemented updates; genuine History extends by that call with no assumed endpoint equality. Top-call semantic association and full reached recursive invariants still require integration.
 
+- `Machine/CompactComplexSourceReadySavedCallHistory.lean`: The reached saved stack now carries a newest-first list of genuine recursive calls with exact physical call codes. Its association derives ordinary stack History and blank tails, exposes the true top call, extends through complete actual child entry, and is restored by the corrected decoder. Nonempty return paths need no supplied occupied-word equality or blank-tail callback. Geometry, grids and complete recursive execution remain separate reached-invariant obligations.
+
 ## Compact
 
 Compact packed controls, repair, and density bounds.
