@@ -49,7 +49,10 @@ ledgers, actual decoded-return execution and inverse basis restoration now
 have checked adapters. Completed-child frame preservation and local restored
 tape premises remain explicit obligations. Actual aligned root finalization
 now reaches its proved empty-stack cell and genuinely halts in the same table;
-the preceding full recursive execution remains open.
+the preceding full recursive execution remains open. Saved caller prefixes now
+have local preservation rules through scalar/basis execution and actual
+stack/payload saves and restores. Recursive induction must still prove their
+settled completion conditions.
 
 Complete boundary and event allowances pay classification, corrections,
 contraction, genuine return dispatch, both basis passes and their joins. The

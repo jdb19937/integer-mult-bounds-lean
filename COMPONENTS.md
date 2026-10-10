@@ -4676,6 +4676,8 @@ Machine model, execution, composition, and tape routines.
 
 - `Machine/CompactComplexAlignedRootFinal.lean`: Actual root sink correction, contraction, rejoin and identity post-orientation execute in the unchanged prime-alphabet aligned table. Exact encoded output retains a genuinely empty saved-PC cell, and the final path composes with the two physical guard steps into an actual halting trace on this same table. Every boundary and table/guard transition is charged and basis workspace stays blank. The preceding reachable recursive execution and total runtime remain open.
 
+- `Machine/CompactComplexSourceReadyReachedDormantFrameInvariant.lean`: Literal saved storage and auxiliary snapshots protect tape prefixes below the actual caller heads. Scalar and basis endpoints, header/descriptor/PC saves and restores, and payload parking/recovery preserve those prefixes; real descriptor Hoare executions retain exact paid runtimes. Local clean-tail lemmas and settled heads derive exact individual saved tape restoration and the literal seven-frame projection. Completed recursive execution must still establish the Settled boundary conditions; this is local frame induction machinery rather than a completed return or recursive theorem.
+
 ## Compact
 
 Compact packed controls, repair, and density bounds.

@@ -2631,3 +2631,4 @@ import IntegerMultBounds.Machine.CompactComplexAlignedChildReturnPath
 import IntegerMultBounds.Machine.CompactComplexAlignedRootFinal
 import IntegerMultBounds.Schoenhage.RingPointwiseBound
 import IntegerMultBounds.Schoenhage.RingPointwiseTarget
+import IntegerMultBounds.Machine.CompactComplexSourceReadyReachedDormantFrameInvariant
