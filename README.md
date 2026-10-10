@@ -30,6 +30,8 @@ The scalar lifecycle now checks directly on the original payload bank.
 Actual child entry derives its canonical input readiness and saved call frame.
 Reached stopped calls and scalar events preserve the associated call stack.
 The original interleaved schedule has a checked runtime allowance.
+Complete nonleaf boundary allowances now include classification, corrections,
+contraction and the genuine root halt or child saved-PC pop.
 Actual scalar blocks advance the original named-network compiler prefixes.
 Actual coordinate-weighted child directions now factor the original frame edges;
 physical coordinate alignment and recursive execution remain to connect.
