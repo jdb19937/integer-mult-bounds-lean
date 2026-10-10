@@ -4658,6 +4658,8 @@ Machine model, execution, composition, and tape routines.
 
 - `Machine/CompactComplexActualCallOrder.lean`: Concrete all-column vector factors commute by the proved translation-kernel identities. Reversing their End product and evaluating their chronological fold give the same operator. Actual callsAt in original coordinate order therefore execute exactly the original source-to-target rational frame edge. This closes actual call-order algebra without assuming commutativity; physical joined call execution remains separate.
 
+- `Machine/CompactComplexSourceReadyReachedChildInvariant.lean`: The concrete reached parent derives its literal selected role array, widths, guarded prefix grid and descendant numerical budget. Actual child entry installs that source with canonical headers, blank work and roles, physical dimension/live/target/exponent, a genuine child Path and ledger and the pushed associated call frame. The real paid original child-entry execution discharges all target/live/exponent/source/header readiness from the parent invariant. Original basis-permutation adaptation and aligned-table recursive closure remain open.
+
 ## Compact
 
 Compact packed controls, repair, and density bounds.

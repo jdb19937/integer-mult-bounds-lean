@@ -18,33 +18,33 @@ chosen before quantifying over inputs.
 
 ## Status
 
-Section 5 remains open. Actual corrected source entry, sink corrections and
-contraction/rejoin now compose on canonical banks with paid linear-volume costs.
-The fixed corrected controller table, actual corrected entry to the first event,
-and nonleaf finalization through the genuine saved-PC pop are checked.
-The stopping branches and corrected root finalization also have checked table paths.
-The stopped leaf now has full tensor semantics on every data and dirty wire.
-The complete stopped-root run includes classification, installed output, a genuine
-halt and its paid runtime.
-The scalar lifecycle now checks directly on the original payload bank.
-Actual child entry derives its canonical input readiness and saved call frame.
-Reached stopped calls and scalar events preserve the associated call stack.
-The original interleaved schedule has a checked runtime allowance.
-Complete nonleaf boundary allowances now include classification, corrections,
-contraction and the genuine root halt or child saved-PC pop. The aligned
-schedule also pays both actual basis passes and joins at every call, retaining
-their explicit stage-scale term alongside recursive child budgets.
-Actual scalar blocks advance the original named-network compiler prefixes.
-Actual coordinate-weighted child directions now factor the original frame edges;
-Actual child address tensors and literal basis conjugation now match those
-same original residual factors; A selected-role basis pass now has a checked permanent-bank execution with
-restored headers and workspace. Full source-ready placement retains original
-tape indices. One fixed aligned table now wraps actual child entry and decoded
-parent return with these basis passes; reached recursive closure remains open.
-The concrete reached scalar bank/grid/call invariant now initializes from
-corrected entry and is preserved by paid actual scalar table steps.
-Unstopped recursive child invariants, the complete reached execution and
-its total runtime recurrence still require integration.
+Section 5 remains open. Complete stopped-root execution, full stopped-leaf
+tensor semantics, genuine halting and paid runtime are checked. Corrected
+source entry, sink corrections, contraction/rejoin and saved-PC dispatch also
+have checked local paths.
+
+The concrete reached-event invariant now retains actual raw banks and arrays,
+physical node exponent, target readiness/growth, numerical grids, live ledger
+and associated saved-call list. Corrected entry initializes it, and paid actual
+scalar table steps preserve it. Genuine child input readiness, the child Path
+and ledger, pushed call frame and paid original child-entry execution derive
+from that parent invariant.
+
+Actual coordinate-weighted directions and child address tensors, conjugated by
+the literal basis word, match the original residual frame factors. The complete
+original array network now has a certificate from the same actual call list,
+including chronological coordinate order and exact rank-sum factor count.
+Selected-role forward/reverse basis routines have checked permanent and full
+source-ready placements with restored headers and private workspace. One fixed
+prime-alphabet table contains those passes around actual child entry and return.
+The selected-role count-header adapter and exact basis-array readiness still
+need to connect these routines to reached parent inputs.
+
+Complete boundary and event allowances pay classification, corrections,
+contraction, genuine return dispatch, both basis passes and their joins. The
+basis stage-scale term remains explicit alongside original recursive budgets.
+Joined aligned child paths, complete nonleaf recursive correctness and
+termination, and the actual total runtime recurrence remain open.
 
 The machine model, the target statement, and a growing set of algorithmic and
 analytic components are formalized and checked. See
