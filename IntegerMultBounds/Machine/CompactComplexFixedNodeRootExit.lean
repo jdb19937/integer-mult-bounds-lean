@@ -1,7 +1,7 @@
 import IntegerMultBounds.Machine.CompactComplexFixedNodePaths
 
 /-! A reached empty-stack return guard genuinely halts the original fixed node
-controller. The two physical guard steps preserve the complete computed bank;
+controller. The arbitrary shared finite alphabet is retained. The two physical guard steps preserve the complete computed bank;
 this lemma does not supply the preceding recursive execution path. -/
 namespace IntegerMultBounds.Machine.CompactComplexFixedNodeRootExit
 noncomputable section
@@ -10,13 +10,13 @@ open CompactComplexFixedNodeTable
 open CompactComplexFixedNodePaths
 open CompactComplexScheduledPCLayout (originalCount)
 open CompactComplexCompletedLiveLower (schedule Event)
-variable {t : ℕ}
+variable {t a : ℕ}
 attribute [local irreducible] ComplexRank25.program ComplexRecursiveCallSchema.sites schedule
   CompactComplexCallReturn.addressCount CompactComplexCallReturn.addressWidth
 
 private theorem root_trace_with {N extra k : ℕ} (hN : N≤2^k) (stack : Fin t)
-    (programs : Fin (N+extra) → Σ q,Program t q 2)
-    (edges : ∀ pc,Fin (programs pc).1 → Option (Fin (N+extra+2))) (v : Tapes t 2)
+    (programs : Fin (N+extra) → Σ q,Program t q a)
+    (edges : ∀ pc,Fin (programs pc).1 → Option (Fin (N+extra+2))) (v : Tapes t a)
     (hb : v.tape stack (v.head stack-1)=blank) :
     ∃ c,FiniteFlow.Trace
       (GuardedFiniteReturnExtraFlow.family (k:=k) stack (fun pc => (programs pc).1) (fun pc => (programs pc).2))
@@ -28,9 +28,9 @@ private theorem root_trace_with {N extra k : ℕ} (hN : N≤2^k) (stack : Fin t)
     (FiniteReturnGuard.terminal_halt stack v true) rfl,rfl⟩
 
 theorem root_trace (ht : 0<t) (stack : Fin t)
-    (childReturn : ComplexRecursiveCallSchema.Call → Σ q,Program t q 2)
-    (controls : Fin 4 → Σ q,Program t q 2) (event : Event → Σ q,Program t q 2)
-    (isStopped : Fin (controls 0).1 → Bool) (v : Tapes t 2)
+    (childReturn : ComplexRecursiveCallSchema.Call → Σ q,Program t q a)
+    (controls : Fin 4 → Σ q,Program t q a) (event : Event → Σ q,Program t q a)
+    (isStopped : Fin (controls 0).1 → Bool) (v : Tapes t a)
     (hb : v.tape stack (v.head stack-1)=blank) :
     ∃ c,FiniteFlow.Trace (nodeFamily ht stack childReturn controls event)
       (nodeNext ht childReturn controls event isStopped) 0 v 2 0 c ∧ c.tapes=v :=
@@ -43,9 +43,9 @@ theorem root_trace (ht : 0<t) (stack : Fin t)
 /-- Once the actual root path reaches its empty guard, no execution oracle is
 needed to obtain genuine halting on the original fixed transition table. -/
 theorem path_halts (ht : 0<t) (stack : Fin t)
-    (childReturn : ComplexRecursiveCallSchema.Call → Σ q,Program t q 2)
-    (controls : Fin 4 → Σ q,Program t q 2) (event : Event → Σ q,Program t q 2)
-    (isStopped : Fin (controls 0).1 → Bool) (before after : Tapes t 2) (n : ℕ)
+    (childReturn : ComplexRecursiveCallSchema.Call → Σ q,Program t q a)
+    (controls : Fin 4 → Σ q,Program t q a) (event : Event → Σ q,Program t q a)
+    (isStopped : Fin (controls 0).1 → Bool) (before after : Tapes t a) (n : ℕ)
     (hp : nodePath ht stack childReturn controls event isStopped
       (controlPCFor originalCount schedule.length 0) before n 0 after)
     (hb : after.tape stack (after.head stack-1)=blank) :

@@ -4588,7 +4588,7 @@ Machine model, execution, composition, and tape routines.
 
 - `Machine/CompactComplexSourceReadyCorrectedRootFinal.lean`: Actual root sink signs, phase, negation and exchange feed contraction, row rejoin and physical empty-stack post-orientation. The unchanged corrected final program yields the literal root output with an exact paid cost and fixed linear-volume bound; table and full recursive execution integration remain separate.
 
-- `Machine/CompactComplexFixedNodeRootExit.lean`: A reached empty-stack guard genuinely halts the original fixed node controller in exactly two physical steps while retaining the complete bank. A proved root-entry path composes with this terminal trace to obtain actual HoareTime; the preceding recursive path is still required.
+- `Machine/CompactComplexFixedNodeRootExit.lean`: A reached empty-stack guard genuinely halts the original fixed node controller over any shared finite alphabet in exactly two physical steps while retaining the complete bank. A proved root-entry path composes with this terminal trace to obtain actual HoareTime; the preceding recursive path is still required.
 
 - `Machine/CompactComplexSourceReadyCorrectedRootTablePath.lean`: Actual corrected root tag3 executes sink correction, contraction, rejoin and empty-stack identity orientation, then reaches guard zero through the paid original table edge. Literal saved-stack retention proves the reached guard cell remains empty; preceding recursive schedule correctness is still required.
 
@@ -4673,6 +4673,8 @@ Machine model, execution, composition, and tape routines.
 - `Machine/CompactComplexSourceReadyReachedReturnInvariant.lean`: The literal normalized spectator return preserves stored widths, the original scalar-prefix Grid and decoded spectator values, and advances the true returned-child ledger. Original dependency Paths derive promotion guards. Exact restored control, storage, auxiliary and saved-call port facts construct a canonical parent Reached with unchanged target and scalar prefix. These Restored physical premises still require completed-child frame preservation; this is numerical closure rather than closed recursive execution.
 
 - `Machine/CompactComplexAlignedChildReturnPath.lean`: The actual normalized decoded-return program lifts unchanged to the prime-alphabet full aligned bank with scratch and basis workspace framed. The original-cardinality basis codec has a literal reverse/forward identity, and restored parent grids supply real inverse quotient-row basis execution with a positive universal stage-scale coefficient and exact final Reached/data update. Completed-child frame, local Restored ports and payload linkage remain explicit prerequisites; full joined recursive return closure remains open.
+
+- `Machine/CompactComplexAlignedRootFinal.lean`: Actual root sink correction, contraction, rejoin and identity post-orientation execute in the unchanged prime-alphabet aligned table. Exact encoded output retains a genuinely empty saved-PC cell, and the final path composes with the two physical guard steps into an actual halting trace on this same table. Every boundary and table/guard transition is charged and basis workspace stays blank. The preceding reachable recursive execution and total runtime remain open.
 
 ## Compact
 

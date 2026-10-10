@@ -47,7 +47,9 @@ table paths, preserving the blank basis workspace. Aligned child returns and
 the complete reached event induction remain open. Numerical return grids and
 ledgers, actual decoded-return execution and inverse basis restoration now
 have checked adapters. Completed-child frame preservation and local restored
-tape premises remain explicit obligations.
+tape premises remain explicit obligations. Actual aligned root finalization
+now reaches its proved empty-stack cell and genuinely halts in the same table;
+the preceding full recursive execution remains open.
 
 Complete boundary and event allowances pay classification, corrections,
 contraction, genuine return dispatch, both basis passes and their joins. The
