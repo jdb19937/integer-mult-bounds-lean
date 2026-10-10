@@ -4630,6 +4630,8 @@ Machine model, execution, composition, and tape routines.
 
 - `Machine/CompactComplexChildInputReadiness.lean`: The actual full child-entry endpoint derives canonical raw headers, exact selected source, all ten blank stopping scratch tapes, immutable dimension, unchanged incoming live denominator, vacant child target and physically decremented exponent. Generic physical bank projection and frame lemmas prove these from the installed raw bank and implemented controller updates; no child readiness or desired endpoint equality callbacks are assumed. Literal vacant roles and selected-source support also derive from the physical endpoint and retained widths. Recursive grids and reached schedule induction remain to integrate.
 
+- `Machine/CompactComplexSourceReadyScalarSavedCallHistory.lean`: Actual grouped scalar events in the corrected cyclic table preserve the full associated saved-call list. The canonical live7-only update and literal emitted role payload derive unchanged saved-PC tape/head on the complete controller bank, alongside the paid actual event-to-next-event path. No execution or desired endpoint equality callback is assumed; full reached schedule induction remains open.
+
 ## Compact
 
 Compact packed controls, repair, and density bounds.
