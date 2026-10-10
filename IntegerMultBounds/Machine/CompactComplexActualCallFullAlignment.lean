@@ -1,4 +1,4 @@
-import IntegerMultBounds.Machine.CompactComplexActualCallAlignment
+import IntegerMultBounds.Machine.CompactComplexActualCallRoleAlignment
 import IntegerMultBounds.Machine.CompactComplexSourceReadyActualTable
 
 /-! Physical basis passes on the complete original source-ready scalar bank.
@@ -83,6 +83,14 @@ theorem caller_view (control : Tapes 43 2) (queue : Tapes 1 2)
 def program {q : ℕ} (P : Program ActivePrefixStageNative.tapes q prime)
     (s c : ℕ) (j : Fin c) (pc : Fin count) (reverse : Bool) :=
   Placement.placed (CompactComplexActualCallAlignment.program P 44 c j pc reverse)
+    (CleanSubbank.placement (Fin.castAdd CompactNativeConjugatedHeaderBank.tapes)
+      (common (s:=s) (c:=c)) common_injective)
+
+/-- Real named roles contain rows/roles records. The quotient adapter restores
+parent rows before either physical entry or parent continuation proceeds. -/
+def roleProgram {q : ℕ} (P : Program ActivePrefixStageNative.tapes q prime)
+    (s c : ℕ) (j : Fin c) (pc : Fin count) (reverse : Bool) :=
+  Placement.placed (CompactComplexActualCallRoleAlignment.program P 44 c j pc reverse)
     (CleanSubbank.placement (Fin.castAdd CompactNativeConjugatedHeaderBank.tapes)
       (common (s:=s) (c:=c)) common_injective)
 
@@ -183,11 +191,77 @@ theorem exists_program (D : ℕ) :
     exact h
   · exact hbound
 
+/-- Genuine quotient-role full-bank wrapper and paid cleanup. -/
+theorem exists_role_program (D c : ℕ) (hc : 0<c) :
+    ∃ q, ∃ P : Program ActivePrefixStageNative.tapes q prime, ∃ C : ℝ,0<C ∧
+    ∀ (s : ℕ) (control : Tapes 43 2) (queue : Tapes 1 2)
+      (scalar : ActiveRepairRankHeadersCommands.State) (tail : Tapes 22 2)
+      (storage : Tapes (10+s) 2) (payload : Tapes (1+c) 2) (j : Fin c)
+      (frame : Tapes 9 2) (leaf : Tapes CompactComplexSourceReadyWorkspace.leafTapes 2)
+      (work : Tapes 10 2) (scratch : Tapes CompactComplexSourceReadyScalarWorkspace.scratch 2)
+      (sh : Shape) (v : Stage sh) (rowsCount ell p : ℕ)
+      (hG : 1≤sh.guard) (hGK : sh.guard+1≤sh.chunk) (hr : 0<rowsCount) (hgroup : 0<rowsCount/c) (hd : c∣rowsCount)
+      (hpay : sh.payload=1) (hslots : v.slots=25^3) (pc : Fin count) (reverse : Bool)
+      (hp : ∀ op,1<v.f → ActivePrefixStageRuntimeData.Packed
+        (ActivePrefixStagePairData.changePair (NativePolynomialStageShape.inputs v (rowsCount/c) ell p hG hGK hgroup) op) D)
+      (xs : Fin (ActivePrefixStageTripleWords.count (NativePolynomialStageShape.inputs v (rowsCount/c) ell p hG hGK hgroup)) →
+        Fin (2^ell) → Coefficient)
+      (hw : ∀ i k,(xs i k).1.length=NativePolynomialStageShape.width sh p ∧
+        (xs i k).2.length=NativePolynomialStageShape.width sh p)
+      (hword : payload.tape ⟨j.val+1,by omega⟩=SymbolTripleClean.word
+        (List.ofFn (ActivePrefixStageNativeRows.flat (rows (NativePolynomialStageShape.inputs v (rowsCount/c) ell p hG hGK hgroup) xs hw))))
+      (hhead : payload.head ⟨j.val+1,by omega⟩=0),
+      let d := NativePolynomialStageShape.inputs v (rowsCount/c) ell p hG hGK hgroup
+      let raw := CompactNativeRoleConjugatedLifecycle.rawState v rowsCount ell p
+      let before := bank (CompactComplexNativeCodecFrame.bank control queue scalar raw tail storage payload)
+        frame leaf work scratch
+      let returned := SymbolTripleClean.word (List.ofFn (ActivePrefixStageNativeRows.flat
+        (rows d (coefficients d hslots pc reverse xs) (coefficients_width d hslots pc reverse xs hw))))
+      let passTime := CompactNativeConjugatedSharedCaller.cost (callerTapes 44 c) d ell
+        (nativeCost D d hslots pc reverse (symbols (2^ell) (NativePolynomialStageShape.width sh p)) hp)
+      HoareTime (roleProgram P s c j pc reverse)
+        (fun z => z=CleanSubbank.bank (Alphabet.mapTapes encoding before))
+        (fun z => z=CleanSubbank.bank (Alphabet.mapTapes encoding
+          (SharedPlacementAlphabet.setTape before
+            (prefixSlot (s:=s) (c:=c) (CompactComplexNativeRoleBridge.roleSlot (s:=10+s+43) j)) returned 0)))
+        (CompactComplexActualCallRoleAlignment.cost c v rowsCount ell p passTime) ∧
+      (CompactComplexActualCallRoleAlignment.cost c v rowsCount ell p passTime : ℝ)≤
+        C*ActivePrefixStageInverseBudget.scale d := by
+  obtain ⟨q,P,C,hC,hP⟩ := CompactComplexActualCallRoleAlignment.exists_program D c hc
+  refine ⟨q,P,C,hC,?_⟩
+  intro s control queue scalar tail storage payload j frame leaf work scratch sh v rowsCount ell p hG hGK hr hgroup hd hpay hslots pc reverse hp xs hw hword hhead
+  obtain ⟨hrun,hbound⟩ := hP 44 (CompactComplexNativeRoleBridge.old control payload) (by decide)
+    payload j sh v rowsCount ell p hG hGK hr hgroup hd hpay hslots pc reverse hp xs hw hword hhead
+  constructor
+  · rw [CompactNativeRoleConjugatedOutput.external_set,AlphabetTapeReplacement.map_setTape] at hrun
+    have hv := caller_view control queue scalar
+      (CompactNativeRoleConjugatedLifecycle.rawState v rowsCount ell p) tail storage payload frame leaf work scratch
+    have h := CleanSubbank.realizes (CompactComplexActualCallRoleAlignment.program P 44 c j pc reverse)
+      (Fin.castAdd CompactNativeConjugatedHeaderBank.tapes) (common (s:=s) (c:=c))
+      (Fin.castAdd_injective _ _) common_injective
+      (Alphabet.mapTapes encoding (bank
+        (CompactComplexNativeCodecFrame.bank control queue scalar
+          (CompactNativeRoleConjugatedLifecycle.rawState v rowsCount ell p) tail storage payload)
+        frame leaf work scratch))
+      (SharedPlacementAlphabet.setTape (Alphabet.mapTapes encoding (bank
+        (CompactComplexNativeCodecFrame.bank control queue scalar
+          (CompactNativeRoleConjugatedLifecycle.rawState v rowsCount ell p) tail storage payload)
+        frame leaf work scratch)) (common (selected 44 j)) _ 0) _ _ _
+      (by rw [payload_append,hv])
+      (by rw [payload_append,payload_set _ _ common_injective,hv])
+      (strip_append _) (strip_append _) (strip_set _ _ _ _).symm hrun
+    have he : common (s:=s) (c:=c) (selected 44 j)=prefixSlot
+        (CompactComplexNativeRoleBridge.roleSlot (s:=10+s+43) j) :=
+      congrArg prefixSlot (CompactComplexNativeRoleBridge.role_slot j)
+    rw [he,←AlphabetTapeReplacement.map_setTape] at h
+    exact h
+  · exact hbound
+
 /-- Fixed concrete recursive call blocks retain every original tape index. -/
 def child {q : ℕ} (P : Program ActivePrefixStageNative.tapes q prime)
     (headerStack pcStack liveStack : Fin s) (call : Networks.ComplexRecursiveCallSchema.Call) :
     Σ r,Program (tapes s CompactComplexSourceReadyScalarWorkspace.roles) r prime :=
-  ⟨_,seq (program P s CompactComplexSourceReadyScalarWorkspace.roles
+  ⟨_,seq (roleProgram P s CompactComplexSourceReadyScalarWorkspace.roles
       (CompactComplexRolePhaseSite.role call.site) (CompactComplexRolePhaseSite.pc call.site) false)
     (extend (Alphabet.program encoding (CompactComplexSourceReadyActualTable.child headerStack pcStack liveStack call).2)
       (localTapes CompactComplexSourceReadyScalarWorkspace.roles))⟩
@@ -200,7 +274,7 @@ def childReturn {q : ℕ} (P : Program ActivePrefixStageNative.tapes q prime)
   ⟨_,seq (extend (Alphabet.program encoding
       (CompactComplexSourceReadyActualTable.childReturn headerStack liveStack call).2)
       (localTapes CompactComplexSourceReadyScalarWorkspace.roles))
-    (program P s CompactComplexSourceReadyScalarWorkspace.roles
+    (roleProgram P s CompactComplexSourceReadyScalarWorkspace.roles
       (CompactComplexRolePhaseSite.role call.site) (CompactComplexRolePhaseSite.pc call.site) true)⟩
 
 end
