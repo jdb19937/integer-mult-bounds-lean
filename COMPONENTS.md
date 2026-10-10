@@ -6546,6 +6546,11 @@ Schönhage–Strassen multiplication, the fast multiplier used for the packed pr
   unseal, data tapes relabelled to 0–3; it meets the statement
   (`pointwise_meets`) within `pointwiseTime`.
 
+- `Schoenhage/RingPointwiseBound.lean`, `RingPointwiseTarget.lean`: the
+  pointwise program's time is `O(T p log (r p) log log (r p))` plus the header
+  (`pointwiseTime_le`), so the step meets `pointwisePolylogTarget 1`
+  (`pointwise_polylog`).
+
 ## Top-level
 
 - `ExactRecoveryOutput.lean`: Turns the actual recovered coefficients into exactly twice the input length in bits by proving that excess leading padding is zero. Covers nondivisible chunk widths, directly instantiates `ExactRecovery.exact_product`, and identifies the literal machine output contract once the word is installed. Carry compilation, physical installation and runtime are separate obligations.
