@@ -4662,6 +4662,8 @@ Machine model, execution, composition, and tape routines.
 
 - `Machine/CompactComplexActualCallRoleAlignment.lean`: An actual selected-role basis pass now temporarily synthesizes quotient row headers from original parent rows, executes the genuine selected-count lifecycle and restores the exact parent count and raw numeric bank using divisibility. Forward and reverse passes preserve every other role, descriptor and private tape. The strengthened fixed stage-scale coefficient pays both physical header lifecycles and joins. Full-bank child and return blocks use this adapter; reached basis-array and joined child execution remain separate.
 
+- `Machine/CompactComplexSourceReadyReachedBasisInvariant.lean`: The reached parent determines the real quotient-row expanded polynomial codec and actual basis-permuted role array. Native input/output serializers match the literal selected tape, and widths and the genuine prefix Grid are preserved. Exact selected-bank replacement yields a central Reached invariant after either original basis pass with original total rows, all spectators, target/live/exponent/ledger and associated calls unchanged. This supplies actual basis input readiness and semantic preservation; joined aligned child execution remains separate.
+
 ## Compact
 
 Compact packed controls, repair, and density bounds.

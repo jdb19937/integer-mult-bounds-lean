@@ -38,8 +38,9 @@ Selected-role forward/reverse basis routines have checked permanent and full
 source-ready placements with restored headers and private workspace. One fixed
 prime-alphabet table contains those passes around actual child entry and return.
 Selected-role quotient headers now prepare and restore parent geometry around
-both basis passes. Exact basis-array readiness and joined reached child paths
-remain to connect these routines to reached parent inputs.
+both basis passes. Actual quotient-row serializers now supply basis input
+readiness, and exact basis permutations preserve the reached parent invariant.
+Joined reached child paths remain to compose.
 
 Complete boundary and event allowances pay classification, corrections,
 contraction, genuine return dispatch, both basis passes and their joins. The
