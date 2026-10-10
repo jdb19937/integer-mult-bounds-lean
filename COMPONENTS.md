@@ -6522,6 +6522,11 @@ Schönhage–Strassen multiplication, the fast multiplier used for the packed pr
   words move in reversed, the ring product runs, its words come back reversed
   onto one output string (`runs_recStep`, `runs_recLoop`).
 
+- `Schoenhage/RingPointwise.lean`: the pointwise-product step on word tapes:
+  decode the header, build the constants, cut both arrays into their words,
+  multiply record by record and clean up; the output string is the array of
+  `Q_p(fᵢ gᵢ / r)` records (`runs_pwCore`), within `pwCost` steps.
+
 ## Top-level
 
 - `ExactRecoveryOutput.lean`: Turns the actual recovered coefficients into exactly twice the input length in bits by proving that excess leading padding is zero. Covers nondivisible chunk widths, directly instantiates `ExactRecovery.exact_product`, and identifies the literal machine output contract once the word is installed. Carry compilation, physical installation and runtime are separate obligations.
