@@ -4628,6 +4628,8 @@ Machine model, execution, composition, and tape routines.
 
 - `Machine/CompactComplexCorrectedStoppedClassifierGuarded.lean`: Actual corrected classification, stopped tensor leaf and saved return now execute from any genuinely guarded input grid, including framed scalar prefixes. Width-only classifier contracts separate physical runtime from numerical readout. All descriptor preservation, literal restored source, exact stopped output grid and forward/inverse tensor action derive from the physical paths and supplied genuine signed guard; no pre-orientation or execution callbacks are used.
 
+- `Machine/CompactComplexChildInputReadiness.lean`: The actual full child-entry endpoint derives canonical raw headers, exact selected source, all ten blank stopping scratch tapes, immutable dimension, unchanged incoming live denominator, vacant child target and physically decremented exponent. Generic physical bank projection and frame lemmas prove these from the installed raw bank and implemented controller updates; no child readiness or desired endpoint equality callbacks are assumed. Literal vacant roles and selected-source support also derive from the physical endpoint and retained widths. Recursive grids and reached schedule induction remain to integrate.
+
 ## Compact
 
 Compact packed controls, repair, and density bounds.
