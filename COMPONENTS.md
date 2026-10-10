@@ -6441,7 +6441,7 @@ Schönhage–Strassen multiplication, the fast multiplier used for the packed pr
 - `Schoenhage/SSClean.lean`: the multiplier's final state tape by tape (a
   decidable check shows the tapes it never names are unchanged) and a wipe,
   so it ends with the product alone on its input tape (`runs_ssClean`).
-- `Schoenhage/RingBank.lean`, `RingMul.lean`, `RingAlu.lean`: the 87-tape
+- `Schoenhage/RingBank.lean`, `RingMul.lean`, `RingAlu.lean`: the 91-tape
   bank of the ring product; one product modulo `2^N + 1` between registers of
   its own (`runs_mulStep`); the residue unit switched on and off around
   modular subtraction and addition (`runs_aluOp`).
@@ -6454,7 +6454,7 @@ Schönhage–Strassen multiplication, the fast multiplier used for the packed pr
   (`runs_unpack`, `outWord_eq`).
 - `Schoenhage/RingProduct.lean`, `RingSpec.lean`, `RingProgram.lean`: the whole
   ring product (`runs_ringProd`), its output equal to the truncated
-  negacyclic Gaussian product (`outs_eq`), as a literal 87-tape program
+  negacyclic Gaussian product (`outs_eq`), as a literal 91-tape program
   (`ringProgram_spec`) within `O(N log N log log N)` steps (`ringCost_le`).
 
 - `Spec/SignedRingProduct.lean`: the exact statement of the paper's
@@ -6480,6 +6480,11 @@ Schönhage–Strassen multiplication, the fast multiplier used for the packed pr
   built on tapes from `p`, `ℓ` and `w` in unary: digit width
   `W = 2^(size (2p + ℓ + 2w))`, size `W 2^ℓ`, ruler, offset words, half and
   rounding words (`runs_constAll`), in `O(W 2^ℓ)` steps.
+
+- `Schoenhage/RingHeader.lean`: the `Γ` header decoded on tapes: a streaming
+  rule counts a code's leading zeros, `take` and `drop` cut its digits, and a
+  doubling loop turns them into unary (`runs_decodeOne`); the transform header
+  gives `p`, `log₂ r` and `w` (`runs_decodeHeader`).
 
 ## Top-level
 
