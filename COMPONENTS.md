@@ -4670,6 +4670,10 @@ Machine model, execution, composition, and tape routines.
 
 - `Machine/CompactComplexAlignedBoundaryPaths.lean`: Actual corrected nonleaf source setup and sink finalization execute in the prime-alphabet aligned table with exact original endpoints and every table edge paid. Both public paths derive physical runs from original tape, grid and dependency premises, encode the entire caller and preserve all appended basis workspace blank. Source signs, target installation, split, sink correction, contraction, rejoin and orientation retain their original runtime allowances. Whole reached recursive execution remains open.
 
+- `Machine/CompactComplexSourceReadyReachedReturnInvariant.lean`: The literal normalized spectator return preserves stored widths, the original scalar-prefix Grid and decoded spectator values, and advances the true returned-child ledger. Original dependency Paths derive promotion guards. Exact restored control, storage, auxiliary and saved-call port facts construct a canonical parent Reached with unchanged target and scalar prefix. These Restored physical premises still require completed-child frame preservation; this is numerical closure rather than closed recursive execution.
+
+- `Machine/CompactComplexAlignedChildReturnPath.lean`: The actual normalized decoded-return program lifts unchanged to the prime-alphabet full aligned bank with scratch and basis workspace framed. The original-cardinality basis codec has a literal reverse/forward identity, and restored parent grids supply real inverse quotient-row basis execution with a positive universal stage-scale coefficient and exact final Reached/data update. Completed-child frame, local Restored ports and payload linkage remain explicit prerequisites; full joined recursive return closure remains open.
+
 ## Compact
 
 Compact packed controls, repair, and density bounds.

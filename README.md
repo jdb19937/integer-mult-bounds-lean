@@ -44,7 +44,10 @@ Actual reached scalar events and basis-aligned child-entry prefixes now run in
 the aligned table, with literal next banks and every transition paid.
 Actual corrected source setup and sink finalization also have paid aligned
 table paths, preserving the blank basis workspace. Aligned child returns and
-the complete reached event induction remain open.
+the complete reached event induction remain open. Numerical return grids and
+ledgers, actual decoded-return execution and inverse basis restoration now
+have checked adapters. Completed-child frame preservation and local restored
+tape premises remain explicit obligations.
 
 Complete boundary and event allowances pay classification, corrections,
 contraction, genuine return dispatch, both basis passes and their joins. The
