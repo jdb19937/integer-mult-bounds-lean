@@ -4654,6 +4654,10 @@ Machine model, execution, composition, and tape routines.
 
 - `Machine/CompactComplexAlignedScheduleRuntimeBudget.lean`: Both actual basis passes and their two sequence joins are charged once for every original call occurrence. The exact additional schedule sum is rankSum times twice basisCost plus two. Rounded actual wrapper costs yield an explicit rankSum times fixed coefficient times expanded parent stage scale, alongside corrected boundary/native-volume costs and original recursive child budgets. The basis term is not falsely absorbed into a linear native-volume allowance. This proves complete allowance arithmetic, not actual recursive execution.
 
+- `Machine/CompactComplexActualCallLoweredNetwork.lean`: The complete original lowered network now has a factor certificate from the same occurrence-indexed actual child call list used by the recursive controller. Signed directions and edge operators are proved for this literal family, without selecting an unrelated existential factorization. Its full array execution retains original scalar gates and every dirty scratch incidence, and its exact factor count is the original rank sum. This is complete array semantics; physical aligned recursive execution remains open.
+
+- `Machine/CompactComplexActualCallOrder.lean`: Concrete all-column vector factors commute by the proved translation-kernel identities. Reversing their End product and evaluating their chronological fold give the same operator. Actual callsAt in original coordinate order therefore execute exactly the original source-to-target rational frame edge. This closes actual call-order algebra without assuming commutativity; physical joined call execution remains separate.
+
 ## Compact
 
 Compact packed controls, repair, and density bounds.
