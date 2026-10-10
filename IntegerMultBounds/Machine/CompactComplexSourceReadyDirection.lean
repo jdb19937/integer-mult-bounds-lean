@@ -164,7 +164,16 @@ theorem width_eq : width=CompactComplexCallReturn.addressWidth ComplexRecursiveC
 theorem room : CompactComplexScheduledPCLayout.originalCount≤2^width := by
   rw [width_eq]
   exact CompactComplexCallReturn.roomFor ComplexRecursiveCallSchema.sites.length (25^3)
-def directionTag (call : ComplexRecursiveCallSchema.Call) : Fin 2 := if call.inverse then 1 else 0
+/-- Keep the actual finite direction symbolic during kernel conversion of
+large dispatcher state types, as with the symbolic saved-address width. -/
+def directionTag (call : ComplexRecursiveCallSchema.Call) : Fin 2 :=
+  Classical.choose (show ∃ tag : Fin 2, tag = if call.inverse then 1 else 0 from
+    ⟨if call.inverse then 1 else 0,rfl⟩)
+
+theorem directionTag_eq (call : ComplexRecursiveCallSchema.Call) :
+    directionTag call = if call.inverse then 1 else 0 :=
+  Classical.choose_spec (show ∃ tag : Fin 2, tag = if call.inverse then 1 else 0 from
+    ⟨if call.inverse then 1 else 0,rfl⟩)
 def addressDirection (address : Fin CompactComplexScheduledPCLayout.originalCount) :=
   (decodeCall address).map directionTag
 

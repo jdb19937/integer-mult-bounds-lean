@@ -76,12 +76,12 @@ theorem child_runs (stack : Fin (tapes s c)) (call : ComplexRecursiveCallSchema.
       (fun w => w=v) (fun w => w=output call v f)
       (5*CompactNativeRoleTransferBudget.volume rows sh ell precision) := by
     cases hi : call.inverse
-    · have ht : directionTag call=0 := by unfold directionTag; rw [hi]; rfl
+    · have ht : directionTag call=0 := by rw [CompactComplexSourceReadyDirection.directionTag_eq,hi]; rfl
       rw [ht]
       simpa [hi,Bool.false_eq_true,↓reduceIte,branchFamily,branchPrograms,
         Matrix.cons_val_zero,output] using
         (skip_hoare positive v).consequence (fun _ h => h) (fun _ h => h) (by omega : 0≤5*CompactNativeRoleTransferBudget.volume rows sh ell precision)
-    · have ht : directionTag call=1 := by unfold directionTag; rw [hi]; rfl
+    · have ht : directionTag call=1 := by rw [CompactComplexSourceReadyDirection.directionTag_eq,hi]; rfl
       rw [ht]
       simpa [hi,↓reduceIte,branchFamily,branchPrograms,Matrix.cons_val_one,
         Matrix.cons_val_zero,output,source,NativePolynomialConjugationWorkspace.program] using

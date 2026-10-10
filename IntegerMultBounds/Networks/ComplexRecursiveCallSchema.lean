@@ -38,13 +38,23 @@ def Call.slot (call : Call) : Fin (25 ^ 3) := ComplexPhaseRowSchedule.slot (edge
 /-- The actual chosen residual coordinate carries its own fourth-root phase.
 Orthonormality ensures this is positive or negative one, rather than fixing
 the sign uniformly across all coordinates of an edge. -/
-def Call.phaseWeight (call : Call) : ZMod 4 :=
+def Call.phaseWeightValue (call : Call) : ZMod 4 :=
   BinaryPhase.weightPhase
     (BinaryPhaseResidualRowProgram.basis ComplexPhaseBudget.coordinateSymm
       (low (edge call.site)) (high (edge call.site))
       (low_nondegenerate (edge call.site)) (high_nondegenerate (edge call.site))
       (comparable (edge call.site)) (residual_good (edge call.site)) call.coordinate :
         Fin (25 ^ 3) → ZMod 2)
+
+/-- Symbolic storage avoids reducing the full chosen basis when checking
+fixed dispatcher state types; its exact original value is proved below. -/
+def Call.phaseWeight (call : Call) : ZMod 4 :=
+  Classical.choose (show ∃ weight : ZMod 4, weight=call.phaseWeightValue from
+    ⟨call.phaseWeightValue,rfl⟩)
+
+theorem Call.phaseWeight_eq (call : Call) : call.phaseWeight=call.phaseWeightValue :=
+  Classical.choose_spec (show ∃ weight : ZMod 4, weight=call.phaseWeightValue from
+    ⟨call.phaseWeightValue,rfl⟩)
 
 /-- Recursive direction realizes the signed residual phase of this actual
 coordinate, combining its basis weight with the original edge direction. -/

@@ -55,7 +55,10 @@ theorem requiredInverse_of_negative (call : Call)
   exact ite_eq_right hn
 
 /-- The actual schema now uses precisely the proved coordinate direction. -/
-theorem inverse_eq_required (call : Call) : call.inverse=requiredInverse call := rfl
+theorem inverse_eq_required (call : Call) : call.inverse=requiredInverse call := by
+  unfold Call.inverse
+  rw [Call.phaseWeight_eq]
+  rfl
 
 theorem inverse_signedWeight (call : Call) :
     signedWeight (edge call.site) call.coordinate=if call.inverse then -1 else 1 := by
