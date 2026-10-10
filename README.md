@@ -31,7 +31,9 @@ Actual child entry derives its canonical input readiness and saved call frame.
 Reached stopped calls and scalar events preserve the associated call stack.
 The original interleaved schedule has a checked runtime allowance.
 Complete nonleaf boundary allowances now include classification, corrections,
-contraction and the genuine root halt or child saved-PC pop.
+contraction and the genuine root halt or child saved-PC pop. The aligned
+schedule also pays both actual basis passes and joins at every call, retaining
+their explicit stage-scale term alongside recursive child budgets.
 Actual scalar blocks advance the original named-network compiler prefixes.
 Actual coordinate-weighted child directions now factor the original frame edges;
 Actual child address tensors and literal basis conjugation now match those

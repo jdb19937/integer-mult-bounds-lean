@@ -4652,6 +4652,8 @@ Machine model, execution, composition, and tape routines.
 
 - `Machine/CompactComplexSourceReadyAlignedActualTable.lean`: One fixed prime-alphabet corrected recursive table includes the actual forward basis pass before every real child entry and the reversed original word after decoded parent return. Original corrected control and scalar blocks are encoded and extended on the same fixed bank with unchanged runtimes and literal appended workspace preservation. Exact child/scalar/return table lookups retain the original saved-address encoding. This identifies the actual aligned table; reached recursive execution and total runtime remain open.
 
+- `Machine/CompactComplexAlignedScheduleRuntimeBudget.lean`: Both actual basis passes and their two sequence joins are charged once for every original call occurrence. The exact additional schedule sum is rankSum times twice basisCost plus two. Rounded actual wrapper costs yield an explicit rankSum times fixed coefficient times expanded parent stage scale, alongside corrected boundary/native-volume costs and original recursive child budgets. The basis term is not falsely absorbed into a linear native-volume allowance. This proves complete allowance arithmetic, not actual recursive execution.
+
 ## Compact
 
 Compact packed controls, repair, and density bounds.
