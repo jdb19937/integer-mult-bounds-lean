@@ -4648,6 +4648,8 @@ Machine model, execution, composition, and tape routines.
 
 - `Machine/CompactComplexSourceReadyReachedEventInvariant.lean`: A concrete reached-event record retains the actual canonical raw Stage and child-entry bank, literal role arrays and widths/support, blank count and source storage, physical node exponent, target8 readiness/growth, denominator/grid/upper ledger and genuine associated saved-call list. Corrected original entry initializes the record; actual scalar execution and paid corrected-table jumps construct its literal successor. Child-input readiness derives from the record. A separate conditional aligned-prefix refinement advances the original compiler prefix; physical child basis alignment and complete recursive closure remain open.
 
+- `Machine/CompactComplexActualCallFullAlignment.lean`: The actual selected-role basis lifecycle is placed on the full source-ready/scalar bank, retaining every original controller, frame, leaf, work and scalar-scratch index and appending only fixed private workspace. Exact literal bank endpoints and cleanup hold for forward or reversed original basis words with paid stage-scale cost. Concrete child and decoded-return blocks compose these passes with the alphabet-lifted real entry and parent-return programs. Joined reached table paths remain open.
+
 ## Compact
 
 Compact packed controls, repair, and density bounds.
