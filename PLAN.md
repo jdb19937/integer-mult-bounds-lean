@@ -8,6 +8,18 @@ See [COMPONENTS.md](COMPONENTS.md) for what each file proves.
 
 ✅ done · 🟡 partial · ⬜ not started · 🚧 drafted, not yet in the build. Overview counts are done subcomponents out of the section total.
 
+## Completion checklist
+
+- [x] Schönhage–Strassen core multiplier: literal execution, correctness and quasi-linear bound.
+- [x] Paper-format pointwise products: literal `MeetsPointwise` program and polylogarithmic runtime target.
+- [ ] Standalone signed-ring-product interface: prove `Meets` for the three-field header.
+- [ ] Full transform integration: install the multiplier and charge its actual calls to the packed-products cost row.
+- [ ] Section 5: join reached child returns, original event/network semantics and complete recursive execution on the fixed aligned table; prove termination and its total runtime.
+- [ ] Fast `EndToEnd`: assemble the remaining transforms, resampling, exact output recovery and uniform sub–n log n bound.
+
+These are completion obligations, separate from the component counts below.
+Uncommitted draft modules are not credited as checked proof components.
+
 ## Overview
 
 | Part of the proof | Source | Mathematics | Tape |
@@ -22,6 +34,12 @@ See [COMPONENTS.md](COMPONENTS.md) for what each file proves.
 | Fast multiplication subroutine | Schönhage–Strassen | ✅ (20/20) | 🟡 (10/12) |
 | Exact multiplication, parameters, time bound | §8 | 🟡 (5/7) | ⬜ (0/2) |
 | End-to-end theorem `EndToEnd` | — | 🟡 (5/8) | 🟡 (5/8) |
+
+Component accounting: mathematics **2012/2018**, tape **1550/1617**.
+Each numerator counts only ✅ rows; partial and unstarted rows remain in the
+denominator, and — entries are excluded. These counts measure checklist rows,
+not remaining effort or end-to-end completion. In particular, Section 5 remains
+open despite its many checked local components, and fast `EndToEnd` is unproved.
 
 ## 1. Machine model and target statement (§2)
 
