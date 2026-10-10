@@ -4678,6 +4678,8 @@ Machine model, execution, composition, and tape routines.
 
 - `Machine/CompactComplexSourceReadyReachedDormantFrameInvariant.lean`: Literal saved storage and auxiliary snapshots protect tape prefixes below the actual caller heads. Scalar and basis endpoints, header/descriptor/PC saves and restores, and payload parking/recovery preserve those prefixes; real descriptor Hoare executions retain exact paid runtimes. Local clean-tail lemmas and settled heads derive exact individual saved tape restoration and the literal seven-frame projection. Completed recursive execution must still establish the Settled boundary conditions; this is local frame induction machinery rather than a completed return or recursive theorem.
 
+- `Machine/CompactComplexAlignedReachedInitial.lean`: Actual corrected source setup executes in the aligned table and simultaneously establishes the concrete canonical Reached event invariant from original source words, inherited Grid, dependency Path, live ledger and saved call history. The literal table path includes target generation, role split, source correction and paid joins, with no supplied execution callback. Exact full/canonical geometry connects the physical endpoint to the next event bank. Whole event induction and recursive execution remain open.
+
 ## Compact
 
 Compact packed controls, repair, and density bounds.

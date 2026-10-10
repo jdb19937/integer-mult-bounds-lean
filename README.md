@@ -52,7 +52,9 @@ now reaches its proved empty-stack cell and genuinely halts in the same table;
 the preceding full recursive execution remains open. Saved caller prefixes now
 have local preservation rules through scalar/basis execution and actual
 stack/payload saves and restores. Recursive induction must still prove their
-settled completion conditions.
+settled completion conditions. Actual corrected source setup now both runs in
+the aligned table and establishes the concrete reached event invariant from
+original source words, grids, ledger and saved calls.
 
 Complete boundary and event allowances pay classification, corrections,
 contraction, genuine return dispatch, both basis passes and their joins. The
