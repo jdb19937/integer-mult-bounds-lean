@@ -4634,6 +4634,8 @@ Machine model, execution, composition, and tape routines.
 
 - `Machine/CompactComplexScheduleRuntimeBudget.lean`: The literal interleaved event schedule has an exact weighted sum over every scalar group and each original child occurrence. Actual scalar lifecycle allowances and table joins, certified child entry/return coefficients and recursive child budgets yield the RuntimeSum successor-shaped allowance at the genuine role-volume quotient. This is an unconditional schedule budget identity and bound, not an execution theorem; node boundary control costs and the reached recursive run remain to compose.
 
+- `Machine/CompactComplexActualScalarNetworkPrefix.lean`: Each genuine guarded integer scalar block advances the literal original complex framed-network compiler prefix, following its actual group alignment and exact gate order. Original network splitting retains sink and scratch incidences; integer scalar values match the named FramedCircuit instructions and the next compiled prefix. This proves the real scalar semantic induction step. Recursive coordinate-call correspondence and complete node correctness remain open.
+
 ## Compact
 
 Compact packed controls, repair, and density bounds.

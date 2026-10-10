@@ -27,9 +27,12 @@ The stopped leaf now has full tensor semantics on every data and dirty wire.
 The complete stopped-root run includes classification, installed output, a genuine
 halt and its paid runtime.
 The scalar lifecycle now checks directly on the original payload bank.
-Saved-PC history and its physical empty-stack guard now have checked invariants.
-Reached recursive bank/grid/stack invariants, child-return semantics, full
-recursive correctness and the total runtime recurrence still require integration.
+Actual child entry derives its canonical input readiness and saved call frame.
+Reached stopped calls and scalar events preserve the associated call stack.
+The original interleaved schedule has a checked runtime allowance.
+Actual scalar blocks advance the original named-network compiler prefixes.
+Unstopped recursive bank/grid invariants, the complete reached execution and
+its total runtime recurrence still require integration.
 
 The machine model, the target statement, and a growing set of algorithmic and
 analytic components are formalized and checked. See
