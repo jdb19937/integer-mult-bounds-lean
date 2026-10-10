@@ -321,6 +321,27 @@ theorem runs_decodeOne {v : ℕ} (hv : 1 ≤ v) {rest : List Bool} (τ : Fin �
     generalize (gamma v ++ rest).length = X at *
     nlinarith
 
+/-- Step past the code at the front of `tX` without reading its value. -/
+noncomputable def skipOne : Cmd 0 𝕌 := .seq codeA <| .seq (clear (ι sX)) (clear (ι tO2))
+
+theorem runs_skipOne {v : ℕ} (hv : 1 ≤ v) {rest : List Bool} (τ : Fin 𝕌 → WTape) (h1 : τ (ι c1) = reg [true])
+    (hX : τ (ι tX) = reg (gamma v ++ rest)) (hY : τ (ι tY) = emp) (hS : τ (ι sX) = emp) (hD : τ (ι tD) = emp)
+    (hO : τ (ι tO2) = emp) :
+    Runs skipOne τ (· = Function.update τ (ι tX) (reg rest)) (50 * (gamma v ++ rest).length + 320) := by
+  have s1 := runs_codeA hv τ h1 hX hY hS hD hO
+  have s2 := runs_clear (a := 0) (ι sX) (Function.update (Function.update (Function.update τ (ι tX) (reg rest))
+      (ι sX) (reg (ones (Nat.size v)))) (ι tO2) (reg (msbBits (Nat.size v) v)))
+  have s3 := runs_clear (a := 0) (ι tO2) (Function.update (Function.update (Function.update (Function.update τ
+    (ι tX) (reg rest)) (ι sX) (reg (ones (Nat.size v)))) (ι tO2) (reg (msbBits (Nat.size v) v))) (ι sX) ⟨[], []⟩)
+  refine (Runs.then s1 (Runs.then s2 s3)).mono (fun τ' h => ?_) ?_
+  · rw [h]; funext y
+    simp only [Function.update_apply]
+    split_ifs <;> (try subst_vars) <;> (try tsimp [hS, hO, emp]) <;> tsimp at *
+  · have hlg := length_gamma hv
+    have hb : (gamma v ++ rest).length = (gamma v).length + rest.length := List.length_append
+    tsimp [reg, WTape.words, clen_cons, clen_nil, length_ones]
+    omega
+
 /-! ### The header -/
 
 /-- Drop one from the bit length into `iL`. -/
@@ -381,15 +402,15 @@ noncomputable def hdrInit : Cmd 0 𝕌 :=
 noncomputable def decodeHeader : Cmd 0 𝕌 :=
   .seq hdrInit <|
   .seq decodeOne <| .seq (regMove (ι tL) iP (by decide)) <|
-  .seq decodeOne <| .seq (clear (ι tL)) <|
+  .seq skipOne <|
   .seq decodeOne <| .seq logOf <|
-  .seq decodeOne <| .seq (clear (ι tL)) <|
+  .seq skipOne <|
   .seq decodeOne <| .seq (regMove (ι tL) iW (by decide)) <| .seq (clear (ι tX)) (clear (ι c1))
 
 /-- A bound on decoding the header. -/
-def headerCost (p d r K w H : ℕ) : ℕ :=
-  5 * (40 * H + 600) + 42 * (Nat.size p * (Nat.size p + p + 10) + Nat.size d * (Nat.size d + d + 10) +
-    Nat.size r * (Nat.size r + r + 10) + Nat.size K * (Nat.size K + K + 10) + Nat.size w * (Nat.size w + w + 10)) +
+def headerCost (p r w H : ℕ) : ℕ :=
+  5 * (50 * H + 600) + 42 * (Nat.size p * (Nat.size p + p + 10) +
+    Nat.size r * (Nat.size r + r + 10) + Nat.size w * (Nat.size w + w + 10)) +
     200 * r + 10 * (p + w + H) + 2000
 
 theorem decode_pre (τ : Fin 𝕌 → WTape) (hz : ∀ i : Fin 𝕋, τ (ι i) = emp) (i : Fin 𝕋) : τ (ι i) = emp := hz i
@@ -400,7 +421,7 @@ theorem runs_decodeHeader {p d l K w : ℕ} {ts : List ℕ} (hp : 1 ≤ p) (hd :
     (hP : τ iP = emp) (hL : τ iL = emp) (hW : τ iW = emp) :
     Runs decodeHeader τ (· = Function.update (Function.update (Function.update τ iP (reg (ones p)))
       iL (reg (ones l))) iW (reg (ones w)))
-      (headerCost p d (2 ^ l) K w (transformHeader p d (2 ^ l) K w ts).length) := by
+      (headerCost p (2 ^ l) w (transformHeader p d (2 ^ l) K w ts).length) := by
   have hz : ∀ i : Fin 𝕋, τ (ι i) = emp := fun i => congrFun hc i
   have hr : 1 ≤ 2 ^ l := Nat.one_le_two_pow
   set hdr := transformHeader p d (2 ^ l) K w ts
@@ -431,65 +452,56 @@ theorem runs_decodeHeader {p d l K w : ℕ} {ts : List ℕ} (hp : 1 ≤ p) (hd :
     (by tsimp [τ₁, τ₀, hP])
   set τ₂ := Function.update (Function.update τ₁ (ι tL) emp) iP (reg (ones p))
   -- d
-  have s3 := runs_decodeOne hd (rest := R2) τ₂ (by tsimp [τ₂, τ₁, τ₀]) (by tsimp [τ₂, τ₁, R1])
+  have s3 := runs_skipOne hd (rest := R2) τ₂ (by tsimp [τ₂, τ₁, τ₀]) (by tsimp [τ₂, τ₁, R1])
     (by tsimp [τ₂, τ₁, τ₀, hz]) (by tsimp [τ₂, τ₁, τ₀, hz]) (by tsimp [τ₂, τ₁, τ₀, hz]) (by tsimp [τ₂, τ₁, τ₀, hz])
-    (by tsimp [τ₂, τ₁, τ₀, hz]) (by tsimp [τ₂]) (by tsimp [τ₂, τ₁, τ₀, hz]) (by tsimp [τ₂, τ₁, τ₀, hz])
-    (by tsimp [τ₂, τ₁, τ₀, hz]) (by tsimp [τ₂, τ₁, τ₀, hz])
-  set τ₃ := Function.update (Function.update τ₂ (ι tX) (reg R2)) (ι tL) (reg (ones d))
-  have s4 := runs_clear (a := 0) (ι tL) τ₃
-  set τ₄ := Function.update τ₃ (ι tL) ⟨[], []⟩
+  set τ₄ := Function.update τ₂ (ι tX) (reg R2)
   -- r
-  have s5 := runs_decodeOne (Nat.one_le_two_pow (n := l)) (rest := R3) τ₄ (by tsimp [τ₄, τ₃, τ₂, τ₁, τ₀])
-    (by tsimp [τ₄, τ₃, R2])
-    (by tsimp [τ₄, τ₃, τ₂, τ₁, τ₀, hz]) (by tsimp [τ₄, τ₃, τ₂, τ₁, τ₀, hz]) (by tsimp [τ₄, τ₃, τ₂, τ₁, τ₀, hz])
-    (by tsimp [τ₄, τ₃, τ₂, τ₁, τ₀, hz]) (by tsimp [τ₄, τ₃, τ₂, τ₁, τ₀, hz]) (by tsimp [τ₄, emp])
-    (by tsimp [τ₄, τ₃, τ₂, τ₁, τ₀, hz]) (by tsimp [τ₄, τ₃, τ₂, τ₁, τ₀, hz]) (by tsimp [τ₄, τ₃, τ₂, τ₁, τ₀, hz])
-    (by tsimp [τ₄, τ₃, τ₂, τ₁, τ₀, hz])
+  have s5 := runs_decodeOne (Nat.one_le_two_pow (n := l)) (rest := R3) τ₄ (by tsimp [τ₄, τ₂, τ₁, τ₀])
+    (by tsimp [τ₄, R2])
+    (by tsimp [τ₄, τ₂, τ₁, τ₀, hz]) (by tsimp [τ₄, τ₂, τ₁, τ₀, hz]) (by tsimp [τ₄, τ₂, τ₁, τ₀, hz])
+    (by tsimp [τ₄, τ₂, τ₁, τ₀, hz]) (by tsimp [τ₄, τ₂, τ₁, τ₀, hz]) (by tsimp [τ₄, τ₂, τ₁, τ₀, hz])
+    (by tsimp [τ₄, τ₂, τ₁, τ₀, hz]) (by tsimp [τ₄, τ₂, τ₁, τ₀, hz]) (by tsimp [τ₄, τ₂, τ₁, τ₀, hz])
+    (by tsimp [τ₄, τ₂, τ₁, τ₀, hz])
   set τ₅ := Function.update (Function.update τ₄ (ι tX) (reg R3)) (ι tL) (reg (ones (2 ^ l)))
-  have s6 := runs_logOf (r := 2 ^ l) τ₅ (by tsimp [τ₅]) (by tsimp [τ₅, τ₄, τ₃, τ₂, τ₁, τ₀, hz])
-    (by tsimp [τ₅, τ₄, τ₃, τ₂, τ₁, τ₀, hz]) (by tsimp [τ₅, τ₄, τ₃, τ₂, τ₁, τ₀, hz])
-    (by tsimp [τ₅, τ₄, τ₃, τ₂, τ₁, τ₀]) (by tsimp [τ₅, τ₄, τ₃, τ₂, τ₁, τ₀, hz])
-    (by tsimp [τ₅, τ₄, τ₃, τ₂, τ₁, τ₀, hz]) (by tsimp [τ₅, τ₄, τ₃, τ₂, τ₁, τ₀, hL])
+  have s6 := runs_logOf (r := 2 ^ l) τ₅ (by tsimp [τ₅]) (by tsimp [τ₅, τ₄, τ₂, τ₁, τ₀, hz])
+    (by tsimp [τ₅, τ₄, τ₂, τ₁, τ₀, hz]) (by tsimp [τ₅, τ₄, τ₂, τ₁, τ₀, hz])
+    (by tsimp [τ₅, τ₄, τ₂, τ₁, τ₀]) (by tsimp [τ₅, τ₄, τ₂, τ₁, τ₀, hz])
+    (by tsimp [τ₅, τ₄, τ₂, τ₁, τ₀, hz]) (by tsimp [τ₅, τ₄, τ₂, τ₁, τ₀, hL])
   rw [Nat.size_pow, Nat.add_sub_cancel] at s6
   set τ₆ := Function.update (Function.update τ₅ (ι tL) emp) iL (reg (ones l))
   -- K
-  have s7 := runs_decodeOne hK (rest := R4) τ₆ (by tsimp [τ₆, τ₅, τ₄, τ₃, τ₂, τ₁, τ₀]) (by tsimp [τ₆, τ₅, R3])
-    (by tsimp [τ₆, τ₅, τ₄, τ₃, τ₂, τ₁, τ₀, hz]) (by tsimp [τ₆, τ₅, τ₄, τ₃, τ₂, τ₁, τ₀, hz])
-    (by tsimp [τ₆, τ₅, τ₄, τ₃, τ₂, τ₁, τ₀, hz]) (by tsimp [τ₆, τ₅, τ₄, τ₃, τ₂, τ₁, τ₀, hz])
-    (by tsimp [τ₆, τ₅, τ₄, τ₃, τ₂, τ₁, τ₀, hz]) (by tsimp [τ₆])
-    (by tsimp [τ₆, τ₅, τ₄, τ₃, τ₂, τ₁, τ₀, hz]) (by tsimp [τ₆, τ₅, τ₄, τ₃, τ₂, τ₁, τ₀, hz])
-    (by tsimp [τ₆, τ₅, τ₄, τ₃, τ₂, τ₁, τ₀, hz]) (by tsimp [τ₆, τ₅, τ₄, τ₃, τ₂, τ₁, τ₀, hz])
-  set τ₇ := Function.update (Function.update τ₆ (ι tX) (reg R4)) (ι tL) (reg (ones K))
-  have s8 := runs_clear (a := 0) (ι tL) τ₇
-  set τ₈ := Function.update τ₇ (ι tL) ⟨[], []⟩
+  have s7 := runs_skipOne hK (rest := R4) τ₆ (by tsimp [τ₆, τ₅, τ₄, τ₂, τ₁, τ₀]) (by tsimp [τ₆, τ₅, R3])
+    (by tsimp [τ₆, τ₅, τ₄, τ₂, τ₁, τ₀, hz]) (by tsimp [τ₆, τ₅, τ₄, τ₂, τ₁, τ₀, hz])
+    (by tsimp [τ₆, τ₅, τ₄, τ₂, τ₁, τ₀, hz]) (by tsimp [τ₆, τ₅, τ₄, τ₂, τ₁, τ₀, hz])
+  set τ₈ := Function.update τ₆ (ι tX) (reg R4)
   -- w
-  have s9 := runs_decodeOne hw (rest := tsc) τ₈ (by tsimp [τ₈, τ₇, τ₆, τ₅, τ₄, τ₃, τ₂, τ₁, τ₀]) (by tsimp [τ₈, τ₇, R4])
-    (by tsimp [τ₈, τ₇, τ₆, τ₅, τ₄, τ₃, τ₂, τ₁, τ₀, hz]) (by tsimp [τ₈, τ₇, τ₆, τ₅, τ₄, τ₃, τ₂, τ₁, τ₀, hz])
-    (by tsimp [τ₈, τ₇, τ₆, τ₅, τ₄, τ₃, τ₂, τ₁, τ₀, hz]) (by tsimp [τ₈, τ₇, τ₆, τ₅, τ₄, τ₃, τ₂, τ₁, τ₀, hz])
-    (by tsimp [τ₈, τ₇, τ₆, τ₅, τ₄, τ₃, τ₂, τ₁, τ₀, hz]) (by tsimp [τ₈, emp])
-    (by tsimp [τ₈, τ₇, τ₆, τ₅, τ₄, τ₃, τ₂, τ₁, τ₀, hz]) (by tsimp [τ₈, τ₇, τ₆, τ₅, τ₄, τ₃, τ₂, τ₁, τ₀, hz])
-    (by tsimp [τ₈, τ₇, τ₆, τ₅, τ₄, τ₃, τ₂, τ₁, τ₀, hz]) (by tsimp [τ₈, τ₇, τ₆, τ₅, τ₄, τ₃, τ₂, τ₁, τ₀, hz])
+  have s9 := runs_decodeOne hw (rest := tsc) τ₈ (by tsimp [τ₈, τ₆, τ₅, τ₄, τ₂, τ₁, τ₀]) (by tsimp [τ₈, R4])
+    (by tsimp [τ₈, τ₆, τ₅, τ₄, τ₂, τ₁, τ₀, hz]) (by tsimp [τ₈, τ₆, τ₅, τ₄, τ₂, τ₁, τ₀, hz])
+    (by tsimp [τ₈, τ₆, τ₅, τ₄, τ₂, τ₁, τ₀, hz]) (by tsimp [τ₈, τ₆, τ₅, τ₄, τ₂, τ₁, τ₀, hz])
+    (by tsimp [τ₈, τ₆, τ₅, τ₄, τ₂, τ₁, τ₀, hz]) (by tsimp [τ₈, τ₆, τ₅, τ₄, τ₂, τ₁, τ₀, hz])
+    (by tsimp [τ₈, τ₆, τ₅, τ₄, τ₂, τ₁, τ₀, hz]) (by tsimp [τ₈, τ₆, τ₅, τ₄, τ₂, τ₁, τ₀, hz])
+    (by tsimp [τ₈, τ₆, τ₅, τ₄, τ₂, τ₁, τ₀, hz]) (by tsimp [τ₈, τ₆, τ₅, τ₄, τ₂, τ₁, τ₀, hz])
   set τ₉ := Function.update (Function.update τ₈ (ι tX) (reg tsc)) (ι tL) (reg (ones w))
   have s10 := runs_regMove (a := 0) (show ι tL ≠ iW by decide) τ₉ (w := ones w) (by tsimp [τ₉])
-    (by tsimp [τ₉, τ₈, τ₇, τ₆, τ₅, τ₄, τ₃, τ₂, τ₁, τ₀, hW])
+    (by tsimp [τ₉, τ₈, τ₆, τ₅, τ₄, τ₂, τ₁, τ₀, hW])
   set τ₁₀ := Function.update (Function.update τ₉ (ι tL) emp) iW (reg (ones w))
   have s11 := runs_clear (a := 0) (ι tX) τ₁₀
   have s12 := runs_clear (a := 0) (ι c1) (Function.update τ₁₀ (ι tX) ⟨[], []⟩)
-  refine (Runs.then s0 (Runs.then s1 (Runs.then s2 (Runs.then s3 (Runs.then s4 (Runs.then s5 (Runs.then s6
-    (Runs.then s7 (Runs.then s8 (Runs.then s9 (Runs.then s10 (Runs.then s11 s12)))))))))))).mono
+  refine (Runs.then s0 (Runs.then s1 (Runs.then s2 (Runs.then s3 (Runs.then s5 (Runs.then s6
+    (Runs.then s7 (Runs.then s9 (Runs.then s10 (Runs.then s11 s12)))))))))).mono
     (fun τ' h => ?_) ?_
-  · clear s0 s1 s2 s3 s4 s5 s6 s7 s8 s9 s10 s11 s12
+  · clear s0 s1 s2 s3 s5 s6 s7 s9 s10 s11 s12
     rw [h]; funext y
     by_cases hm : y ∈ [iP, iL, iW, ι c1, ι tX, ι tL]
     · simp only [List.mem_cons, List.not_mem_nil, or_false] at hm
       rcases hm with rfl | rfl | rfl | rfl | rfl | rfl <;>
-        simp only [τ₁₀, τ₉, τ₈, τ₇, τ₆, τ₅, τ₄, τ₃, τ₂, τ₁, τ₀] <;> tsimp [hz, emp]
+        simp only [τ₁₀, τ₉, τ₈, τ₆, τ₅, τ₄, τ₂, τ₁, τ₀] <;> tsimp [hz, emp]
     · simp only [List.mem_cons, List.not_mem_nil, or_false, not_or] at hm
       obtain ⟨n1, n2, n3, n4, n5, n6⟩ := hm
-      simp only [τ₁₀, τ₉, τ₈, τ₇, τ₆, τ₅, τ₄, τ₃, τ₂, τ₁, τ₀, Function.update_apply, n1, n2, n3, n4, n5, n6,
+      simp only [τ₁₀, τ₉, τ₈, τ₆, τ₅, τ₄, τ₂, τ₁, τ₀, Function.update_apply, n1, n2, n3, n4, n5, n6,
         if_false]
-  · clear s0 s1 s2 s3 s4 s5 s6 s7 s8 s9 s10 s11 s12
-    tsimp [τ₁₀, τ₉, τ₈, τ₇, τ₆, τ₅, τ₄, τ₃, τ₂, τ₁, τ₀, hz, emp, reg, WTape.words, clen_cons, clen_nil,
+  · clear s0 s1 s2 s3 s5 s6 s7 s9 s10 s11 s12
+    tsimp [τ₁₀, τ₉, τ₈, τ₆, τ₅, τ₄, τ₂, τ₁, τ₀, hz, emp, reg, WTape.words, clen_cons, clen_nil,
       length_ones]
     have l1 : (gamma p).length + R1.length = H := by simp [H, eh]
     have l2 : (gamma d).length + R2.length = R1.length := by simp [R1]

@@ -9,8 +9,10 @@ common retained order; the step multiplies corresponding records and returns
 header is the transform header `Γ(p)Γ(d)Γ(r)Γ(K)Γ(w)∏Γ(tᵢ)` of
 `lem:synthetic-transform-cost`.
 
-`MeetsPointwise M Cw T` says the program does this within `T` steps;
-`pointwisePaperTarget` is the paper's `O(T p log (r p))` with `T = r M`, and
+`MeetsPointwise M Cw T` says the program does this within `T` steps, a
+function of `T = r M`, `p`, `r` and the header's length (reading the header
+is charged to the transform in the paper; its length is `O(p)` there);
+`pointwisePaperTarget` is the paper's `O(T p log (r p))` plus the header, and
 `pointwisePolylogTarget k` allows an extra `(log log (r p))^k`. The header
 reads back as its parameters (`transformHeader_read`). -/
 
@@ -35,8 +37,9 @@ noncomputable def prodRec {r : ℕ} (p : ℕ) (f g : Rec r) : Rec r :=
 /-- Valid axis lengths: `d - 1` of them, each `2^(ℓ-1)` or `2^ℓ`. -/
 def AxisLengths (d ℓ : ℕ) (ts : List ℕ) : Prop := ts.length = d - 1 ∧ ∀ t ∈ ts, t = 2 ^ (ℓ - 1) ∨ t = 2 ^ ℓ
 
-/-- `M` meets the pointwise-product step for width constant `Cw` within `T (r M) p r` steps. -/
-def MeetsPointwise {t q a : ℕ} (M : Program t q a) (Cw : ℕ) (T : ℕ → ℕ → ℕ → ℕ) : Prop :=
+/-- `M` meets the pointwise-product step for width constant `Cw` within `T (r M) p r H` steps, `H` the
+header's length. -/
+def MeetsPointwise {t q a : ℕ} (M : Program t q a) (Cw : ℕ) (T : ℕ → ℕ → ℕ → ℕ → ℕ) : Prop :=
   ∀ (p d ℓ K w : ℕ) (ts : List ℕ) (fs gs : List (Rec (2 ^ ℓ))),
     1 ≤ ℓ → 2 ≤ p → 2 ^ ℓ < 2 ^ p → 2 ≤ d → 1 ≤ K → p + 2 ≤ w → w ≤ Cw * p → AxisLengths d ℓ ts →
     fs.length = ts.prod → gs.length = ts.prod →
@@ -44,18 +47,18 @@ def MeetsPointwise {t q a : ℕ} (M : Program t q a) (Cw : ℕ) (T : ℕ → ℕ
     HoareTime M (· = bank (transformHeader p d (2 ^ ℓ) K w ts) (array w fs) (array w gs) [])
       (· = bank (transformHeader p d (2 ^ ℓ) K w ts) (array w fs) (array w gs)
         (array w (List.zipWith (prodRec p) fs gs)))
-      (T (2 ^ ℓ * ts.prod) p (2 ^ ℓ))
+      (T (2 ^ ℓ * ts.prod) p (2 ^ ℓ) (transformHeader p d (2 ^ ℓ) K w ts).length)
 
 /-- The paper's bound `O(T p log (r p))`. -/
 def pointwisePaperTarget : Prop :=
   ∀ Cw : ℕ, 2 ≤ Cw → ∃ (t q a : ℕ) (M : Program t q a) (C : ℕ), 4 ≤ t ∧
-    MeetsPointwise M Cw fun T p r => C * (T * p) * (Nat.log 2 (r * p) + 1)
+    MeetsPointwise M Cw fun T p r H => C * ((T * p) * (Nat.log 2 (r * p) + 1) + H)
 
 /-- The bound with an extra `(log log (r p))^k` factor. -/
 def pointwisePolylogTarget (k : ℕ) : Prop :=
   ∀ Cw : ℕ, 2 ≤ Cw → ∃ (t q a : ℕ) (M : Program t q a) (C : ℕ), 4 ≤ t ∧
-    MeetsPointwise M Cw fun T p r =>
-      C * (T * p) * (Nat.log 2 (r * p) + 1) * (Nat.log 2 (Nat.log 2 (r * p) + 1) + 1) ^ k
+    MeetsPointwise M Cw fun T p r H =>
+      C * ((T * p) * (Nat.log 2 (r * p) + 1) * (Nat.log 2 (Nat.log 2 (r * p) + 1) + 1) ^ k + H)
 
 /-! ### Reading the header back -/
 

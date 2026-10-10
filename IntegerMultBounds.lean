@@ -2624,3 +2624,4 @@ import IntegerMultBounds.Schoenhage.RingPointwise
 import IntegerMultBounds.Machine.CompactComplexSourceReadyReachedBasisInvariant
 import IntegerMultBounds.Machine.CompactComplexAlignedScalarEventPath
 import IntegerMultBounds.Machine.CompactComplexAlignedChildEntryPath
+import IntegerMultBounds.Schoenhage.RingPointwiseProgram

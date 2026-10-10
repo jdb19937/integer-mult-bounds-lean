@@ -271,7 +271,7 @@ theorem clen_cut_le (w : ℕ) (hw : 1 ≤ w) : ∀ (n : ℕ) (x : List Bool), x.
 
 /-- A bound on the pointwise-product step on word tapes. -/
 def pwCost (p d l K w H M X : ℕ) : ℕ :=
-  headerCost p d (2 ^ l) K w H + constCost p l w +
+  headerCost p (2 ^ l) w H + constCost p l w +
     M * (2 ^ l * (56 * w + 400) + ringCost (wOf p l w) (2 ^ l) w (p + l) (wOf p l w * 2 ^ l) + 204) +
     50 * X + 100 * 2 ^ l + 60 * l + 10 * (p + l + w) + 6 * (wOf p l w * 2 ^ l) + 4 * 2 ^ l * (wOf p l w + 2) +
     10 * wOf p l w + 1000
@@ -377,7 +377,7 @@ theorem runs_pwCore {p d l K w : ℕ} {ts : List ℕ} {fs gs : List (Rec (2 ^ l)
     have lps : ps.length = fs.length := by simp [ps, hlen]
     rw [oF, oG, lps, rwd_length, rwd_length]
     unfold pwCost
-    generalize headerCost p d (2 ^ l) K w (transformHeader p d (2 ^ l) K w ts).length = A1 at *
+    generalize headerCost p (2 ^ l) w (transformHeader p d (2 ^ l) K w ts).length = A1 at *
     generalize constCost p l w = A2 at *
     generalize ringCost (wOf p l w) (2 ^ l) w (p + l) (wOf p l w * 2 ^ l) = A3 at *
     clear_value F G out' ps
