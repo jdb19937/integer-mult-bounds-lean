@@ -16,6 +16,16 @@ sees the finite state and scanned symbols. Each step writes at most one cell
 per tape and moves each head at most one cell. Constants and the machine are
 chosen before quantifying over inputs.
 
+## Mathlib statement
+
+`IntegerMultBounds/MathlibTM2/Statement.lean` states the target with Mathlib definitions only:
+`Turing.TM2ComputableInTime` with Mathlib's binary encodings `encodingProd` and
+`encodingNatBool`. `MathlibTM2.statement_of_endToEnd` proves `EndToEnd → MathlibTM2.Statement`,
+so an auditor of the final result reads only that statement and its axioms. Applied to the
+elementary multiplier, the same bridge gives the unconditional `MathlibTM2.mul_quadratic`, a
+quadratic-time Mathlib machine. [The note](docs/mathlib-tm2/mathlib-tm2.pdf) explains the
+statement and the simulation; `lake env lean MathlibTM2Check.lean` checks the axioms.
+
 ## Status
 
 Section 5 remains open. Complete stopped-root execution, full stopped-leaf

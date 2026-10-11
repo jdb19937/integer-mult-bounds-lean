@@ -1,0 +1,169 @@
+\documentclass[11pt]{amsart}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage[margin=1.1in]{geometry}
+\usepackage{newtxtext,newtxmath}
+\usepackage{microtype}
+\usepackage[colorlinks=true, linkcolor=blue, citecolor=blue, urlcolor=blue]{hyperref}
+\usepackage{listings}
+\usepackage{upquote}
+\lstdefinelanguage{Lean}{
+  morekeywords={def,theorem,abbrev,open,namespace,end},
+  sensitive=true,
+  morecomment=[l]{--},
+}
+\lstset{language=Lean, basicstyle=\small\fontfamily{lmtt}\selectfont\upshape, keywordstyle=\bfseries,
+  columns=fullflexible, keepspaces=true, breaklines=false,
+  xleftmargin=1em, aboveskip=6pt, belowskip=6pt,
+  literate={ℕ}{{$\mathbb{N}$}}1 {ℝ}{{$\mathbb{R}$}}1 {ℤ}{{$\mathbb{Z}$}}1
+    {→}{{$\rightarrow$}}1 {×}{{$\times$}}1 {∃}{{$\exists$}}1 {∀}{{$\forall$}}1
+    {κ}{{$\kappa$}}1 {≤}{{$\le$}}1 {≥}{{$\ge$}}1 {∧}{{$\wedge$}}1
+    {¬}{{$\neg$}}1 {∈}{{$\in$}}1 {₁}{{$_1$}}1 {₂}{{$_2$}}1 {⊕}{{$\oplus$}}1
+}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\begin{document}
+
+\title[Integer multiplication on Mathlib's Turing machines]{A Mathlib Turing-machine statement\\ for integer multiplication below $n\log n$}
+
+\author{Dan Brown$^*$}
+\email{jdb1729@gmail.com}
+\thanks{$^*$Author of \emph{The Da Vinci Code}.}
+
+\date{October 11, 2026}
+
+\begin{abstract}
+We state the target of the \texttt{integer-mult-bounds-lean} formalization, integer
+multiplication in time $O(n(\log n)^{1-\kappa})$ for some $\kappa>0$, using only
+definitions from Mathlib: the multi-stack machines \texttt{Turing.FinTM2}, the time-bounded
+computability predicate \texttt{Turing.TM2ComputableInTime}, and Mathlib's binary encodings
+of natural numbers. We prove in Lean that the repository's target proposition
+\texttt{Machine.EndToEnd} implies this statement. The proof compiles any multitape program of
+the repository's model into a Mathlib machine with linear time overhead. Applied to the
+repository's proved elementary multiplier, it gives an unconditional Mathlib machine that
+multiplies in quadratic time. All theorems depend only on the axioms \texttt{propext},
+\texttt{Classical.choice} and \texttt{Quot.sound}.
+\end{abstract}
+
+\maketitle
+
+\section{Why a Mathlib statement}
+
+A formal theorem certifies its statement, so a reader who wants to know what has been proved
+must read every definition the statement mentions. The target
+\texttt{Machine.EndToEnd} mentions the repository's machine model: \texttt{Program},
+\texttt{step}, \texttt{run}, the input convention \texttt{input}, the output convention
+\texttt{outputCorrect} with \texttt{wordTape} and \texttt{binaryValue}, and the time function
+\texttt{targetTime} with \texttt{lg}. These definitions are short and careful, and an auditor
+still has to check each of them: that a transition reads only scanned symbols, that heads move
+at most one cell, that the alphabet is finite, that the input and output conventions encode the
+intended problem, and that the time bound quantifies over all inputs of each length.
+
+The statement below mentions only Mathlib definitions together with one abbreviation for
+Mathlib's own pair encoding. Mathlib's Turing machines are maintained and reviewed by the
+Mathlib community independently of this project, and their conventions are fixed in advance of
+any particular algorithm. An auditor of the final theorem reads the statement, runs
+\verb|#print axioms|, and is done. The repository's machine model, the simulation, and every
+algorithmic construction become parts of the proof, which Lean's kernel checks. A defect in any
+of them would make the proof fail; it cannot make the statement weaker.
+
+\section{The statement}
+
+\begin{lstlisting}
+abbrev pairEnc : ℕ × ℕ → List (Bool ⊕ Bool) :=
+  (encodingProd encodingNatBool encodingNatBool).encode
+
+def MulInTime (κ : ℝ) : Prop :=
+  ∃ M : TM2ComputableInTime pairEnc encodingNatBool.encode
+      (fun p : ℕ × ℕ => p.1 * p.2),
+    (fun n : ℕ => (M.time n : ℝ)) =O[atTop]
+      fun n : ℕ => (n : ℝ) * Real.log n ^ (1 - κ)
+
+def Statement : Prop := ∃ κ : ℝ, 0 < κ ∧ MulInTime κ
+\end{lstlisting}
+
+The input of $(a,b)$ is the least-significant-first binary word of $a$ over the symbols
+\texttt{Sum.inl}, followed by that of $b$ over \texttt{Sum.inr}; its length is
+$n=\lceil\log_2(a+1)\rceil+\lceil\log_2(b+1)\rceil$. The machine must halt with the
+least-significant-first binary word of $ab$, without leading zeroes, on its output stack, every
+other stack empty, and its local state reset. \texttt{TM2ComputableInTime} requires
+\texttt{M.time n} to bound the number of steps on every input of length $n$, so the bound is a
+worst-case bound.
+
+\begin{remark}[The model]
+A \texttt{FinTM2} has finitely many stacks, a finite set of labels, a finite local state and a
+finite input alphabet; one step executes one label's loop-free statement, a bounded amount of
+work. Two stacks simulate one tape with constant overhead, and a stack is a restricted tape, so
+running times on \texttt{FinTM2} and on multitape Turing machines agree up to constant factors.
+Mathlib's single-tape models \texttt{TM0} and \texttt{TM1} would not do: multiplication on one
+tape takes $\Omega(n^2)$ steps.
+\end{remark}
+
+\section{The bridge}
+
+\subsection*{Structured programs}
+\texttt{MathlibTM2.Stack} is a small imperative language over a finite family of stacks with
+straight-line actions, sequencing, conditionals, \texttt{while} loops and calls to a finite table
+of possibly recursive procedures. Its big-step semantics carries an exact step count.
+A compiler produces a \texttt{FinTM2} with one extra stack of return labels, and
+\texttt{Exec.toOutputs} turns an execution of the main procedure into
+\texttt{TM2OutputsInTime} with the same count plus two.
+
+\subsection*{Simulation}
+Each tape of a \texttt{Machine.Program} with $t$ tapes is stored as two stacks: the cells left of
+the head, nearest first, and the cells from the head rightwards. One loop iteration reads every
+scanned symbol, looks up the transition, and writes and moves on each tape; it takes $t+5$
+machine steps. The representation invariant and its preservation under a transition are
+\texttt{rep\_step}.
+
+\subsection*{Input and output}
+The bridge program splits the input into the bits of $a$ and $b$, pads both to the common length
+$\max(\lceil\log_2(a+1)\rceil,\lceil\log_2(b+1)\rceil,1)$ most significant bit first, writes
+$x\#y$ on tape~0, runs the simulation, drains tape~0 from left to right keeping its bit symbols
+and dropping leading zeroes onto the output stack, and empties every other stack. Each phase is
+a loop proved by induction on the list it consumes, with an exact step count.
+
+\subsection*{Time}
+On inputs of length $N$ the bridge takes at most
+\[
+\mathrm{bridgeTime}(N) = (34t+102)(N+1) + (13t+5)\max_{n\le N+1}\lceil \mathrm{total}(n)\rceil
+\]
+steps, where $\mathrm{total}(n)$ bounds the multitape running time at padded length $n$.
+
+\section{Results}
+
+\begin{theorem}[\texttt{tm2\_of\_runsWithin}]
+If a \texttt{Machine.Program} $M$ with $t$ tapes satisfies \texttt{Assembly.RunsWithin M total},
+then there is a \texttt{TM2ComputableInTime pairEnc encodingNatBool.encode} machine for
+$(a,b)\mapsto ab$ whose time function is $\mathrm{bridgeTime}$.
+\end{theorem}
+
+\begin{theorem}[\texttt{mulInTime\_of\_computesWithin}, \texttt{statement\_of\_endToEnd}]
+If $0<\kappa\le1$ and $M$ satisfies \texttt{ComputesWithin M} $\kappa$, then
+\texttt{MulInTime} $\kappa$ holds. In particular \texttt{Machine.EndToEnd} implies
+\texttt{Statement}.
+\end{theorem}
+
+\begin{theorem}[\texttt{mul\_quadratic}]
+There is a \texttt{TM2ComputableInTime pairEnc encodingNatBool.encode} machine for
+$(a,b)\mapsto ab$ whose time function is $O(n^2)$.
+\end{theorem}
+
+The last theorem instantiates the first with the repository's
+\texttt{ElementaryMultiply.runsWithin} and is unconditional. It exercises every component of the
+bridge on a proved program.
+
+\section{Verification}
+
+The files are in \texttt{IntegerMultBounds/MathlibTM2/}. From the repository root,
+\begin{lstlisting}
+lake build IntegerMultBounds.MathlibTM2
+lake env lean MathlibTM2Check.lean
+\end{lstlisting}
+The check file asserts with \verb|#guard_msgs| that the four theorems above depend exactly on
+\texttt{propext}, \texttt{Classical.choice} and \texttt{Quot.sound}.
+
+\end{document}
