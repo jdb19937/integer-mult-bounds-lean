@@ -6567,6 +6567,11 @@ Schönhage–Strassen multiplication, the fast multiplier used for the packed pr
   mixed-radix addresses and per-axis bit reversal are bijections, `F⁺F⁻ = I/M`
   (`oppT_fwdT`), and the opposite exact map undoes the forward one in the
   stored order for every layout (`oppExact_fwdExact`).
+- `Spec/SyntheticConvolution.lean`: the statement of the paper's synthetic
+  convolution: the normalized convolution `ℳ_r(f, g) = (f * g)/(r M)` with cyclic
+  address subtraction, error `√2 M (3ℓ + 1) 2^(-p)`, output width `w + log₂ M`
+  with `Γ(w_M)` on a descriptor tape, the paper's cost (`MeetsConvolution`,
+  `convolutionTarget`). Definitions only.
 
 ## Top-level
 
