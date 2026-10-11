@@ -100,7 +100,8 @@ theorem valid_hoare (rs rps ls ds : List Bool) (R R' L : ℕ)
       (53*(R'*L)+28) := by
   apply placed_exact validPlacement _ _ _ _ _ _ _
     (BoundedProductDescriptor.construct_hoare ls rs R L R' hL hl hr hR wl wr)
-  all_goals apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  all_goals apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;>
+    first | (simp [bank, validPlacement]; done) | rfl
 
 theorem pad_hoare (rs rps ls ds : List Bool) (R R' L : ℕ)
     (hL : 0 < L) (hl : Counter.value ls = L) (hd : Counter.value ds = R'-R)
@@ -111,7 +112,10 @@ theorem pad_hoare (rs rps ls ds : List Bool) (R R' L : ℕ)
       (53*(R'*L)+28) := by
   apply placed_exact padPlacement _ _ _ _ _ _ _
     (BoundedProductDescriptor.construct_hoare ls ds (R'-R) L R' hL hl hd (Nat.sub_le _ _) wl wd)
-  all_goals apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  -- Normalize the frame slots by simp: a bare `rfl` makes the kernel retry the differing
+  -- padding slot at every level of the tape vector, which takes most of a minute.
+  all_goals apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;>
+    first | (simp [bank, padPlacement]; done) | rfl
 
 theorem clean_hoare (rs rps ls ds : List Bool) (R R' L : ℕ) :
     HoareTime (BinaryDescriptorCleanupList.oneProgram (a := q) (3 : Fin 9))
