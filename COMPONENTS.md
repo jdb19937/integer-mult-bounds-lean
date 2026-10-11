@@ -6604,6 +6604,11 @@ Schönhage–Strassen multiplication, the fast multiplier used for the packed pr
   one axis: half-sums and twisted half-differences slot by slot from the top
   compute `F⁻` with the output in bit-reversed order (`difAll_eq`).
 
+- `Schoenhage/DifAxes.lean`: the rounds on several axes: each axis's rounds act
+  on its own address bits (`difAllAt`, one-axis rounds on every slice), and
+  running all axes computes `F⁻` with every axis address bit-reversed
+  (`difAxes_eq`), by separability of the transform (`fwdT_cons`).
+
 - `Spec/SyntheticTransform.lean`: the statement of the paper's synthetic
   transforms in its formats: exact counterparts `L B F⁻` and `F⁺ B⁻¹ L⁻¹`,
   per-coefficient error `√2 ℓ 2^(-p)`, disk grid outputs, the paper's cost
