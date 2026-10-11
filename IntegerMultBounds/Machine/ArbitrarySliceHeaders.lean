@@ -46,7 +46,7 @@ private theorem frame_active (hs : Fin 6 → List Bool) (ts bs : List Bool) (st 
 private theorem frame_extra (hs hs' : Fin 6 → List Bool) (ts bs : List Bool) (st st' : Tapes 1 q) :
     Placement.extra framePlacement (canonical hs ts bs st) = Placement.extra framePlacement (canonical hs' ts bs st') := by
   apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;>
-    simp [framePlacement,canonical,ArbitrarySliceDimensions.input,ArbitrarySliceDimensions.bank,Tapes.append,Fin.addCases] <;> rfl
+    simp [framePlacement,canonical,ArbitrarySliceDimensions.input,ArbitrarySliceDimensions.bank,Tapes.append,Fin.addCases,Fin.castLT]
 
 theorem push_hoare (hs : Fin 6 → List Bool) (ts bs : List Bool) (st : Tapes 1 q) :
     HoareTime (pushProgram (q := q)) (fun z => z = canonical hs ts bs st)
