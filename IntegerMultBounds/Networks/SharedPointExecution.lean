@@ -20,6 +20,25 @@ def code : DAGAllocator.Code := DAGAllocator.compile circuit.nodes outputRefs
 def initial (input : Triple 50 → ZMod 2) : ℕ → ZMod 2 :=
   DAGValueTransfer.initial code.sources (DAGValueTransfer.sourceInput circuit.nodes input)
 
+/-- Index into a list of output references. Stated for an arbitrary list so that the kernel never
+compares lengths of the concrete fifty-copy lists, which it would do by evaluating them. -/
+theorem getElem_refs (outs : List Output) (refs : List ℕ) (h : refs = outs.map Output.ref) (i : ℕ)
+    (hi : i < refs.length) (hi' : i < outs.length) : refs[i] = outs[i].ref := by
+  subst h; simp
+
+/-- Output values for output references given as the references of a list of outputs, stated for
+arbitrary lists for the same reason. -/
+theorem value_at {ι : Type*} [DecidableEq ι] (nodes : List (Node ι)) (outs : List Output) (refs : List ℕ)
+    (h : refs = outs.map Output.ref) (input : ι → ZMod 2) (hv : Valid nodes)
+    (ho : ∀ i ∈ refs, i < nodes.length) (i : ℕ) (hi : i < refs.length) (hi' : i < outs.length)
+    (hb : outs[i].ref < nodes.length) :
+    Circuit.run (DAGAllocator.compile nodes refs).program
+      (DAGValueTransfer.initial (DAGAllocator.compile nodes refs).sources
+        (DAGValueTransfer.sourceInput nodes input))
+      ((DAGAllocator.compile nodes refs).outputSlot i) = supportSum input (nodes[outs[i].ref]'hb).support := by
+  subst h
+  simpa using DAGValueTransfer.compile_output_input_value nodes _ input hv ho i hi
+
 /-- Every physical output computes its certified lifted exclusion support. -/
 theorem run_output (input : Triple 50 → ZMod 2) (i : ℕ) (hi : i < circuit.outputs.length) :
     Circuit.run code.program (initial input) (code.outputSlot i) =
@@ -28,9 +47,7 @@ theorem run_output (input : Triple 50 → ZMod 2) (i : ℕ) (hi : i < circuit.ou
   have hb := output_bound circuit.outputs[i] (List.getElem_mem hi)
   have hs := output_support circuit.outputs[i] (List.getElem_mem hi)
   simp only [CorrectOutput, List.getElem?_map, List.getElem?_eq_getElem hb, Option.map_some] at hs
-  have hr := DAGValueTransfer.compile_output_input_value circuit.nodes outputRefs input
-    valid outputRefs_bounds i hi'
-  simp only [outputRefs, List.getElem_map] at hr
+  have hr := value_at circuit.nodes circuit.outputs outputRefs rfl input valid outputRefs_bounds i hi' hi hb
   exact hr.trans (congrArg (supportSum input) (Option.some.inj hs))
 
 /-- All pairs of a common point and a canonical local pair have designated

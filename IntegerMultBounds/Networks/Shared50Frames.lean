@@ -82,8 +82,7 @@ theorem final_support (i : ℕ) (hi : i < circuit.outputs.length) :
   have hs := SharedPointReplay.output_support circuit.outputs[i] (List.getElem_mem hi)
   simp only [CorrectOutput,List.getElem?_map,List.getElem?_eq_getElem hb,Option.map_some] at hs
   have hr := DAGSupportTrace.output_support circuit.nodes outputRefs valid outputRefs_bounds i hi'
-  simp only [outputRefs,List.getElem_map] at hr
-  rw [DAGSupportTrace.nodeSupport_get circuit.nodes _ hb] at hr
+  rw [SharedPointExecution.getElem_refs circuit.outputs outputRefs rfl i hi' hi, DAGSupportTrace.nodeSupport_get circuit.nodes _ hb] at hr
   exact hr.trans (Option.some.inj hs)
 
 theorem final_label_expected (i : ℕ) (hi : i < circuit.outputs.length) :
