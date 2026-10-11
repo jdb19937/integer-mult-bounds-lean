@@ -6,6 +6,9 @@ import IntegerMultBounds.Networks.DAGValueTransfer
 allocated program computes every common-point partial intersection sum and
 has an executable inverse on arbitrary register states. -/
 
+set_option profiler true
+set_option profiler.threshold 1000
+
 namespace IntegerMultBounds.Networks.SharedPointExecution
 
 open DisjointCircuit NeighborCounts SharedPointReplay

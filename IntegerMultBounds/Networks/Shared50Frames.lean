@@ -7,6 +7,9 @@ circuit. Node common-point properties, increasing edges, zero loss, and terminal
 partial-output labels are proved from the constructed DAG. Sink attachment,
 inverse schedules, and global rank assembly remain separate. -/
 
+set_option profiler true
+set_option profiler.threshold 1000
+
 namespace IntegerMultBounds.Networks.Shared50Frames
 
 open DisjointCircuit NeighborCounts SharedPointReplay
