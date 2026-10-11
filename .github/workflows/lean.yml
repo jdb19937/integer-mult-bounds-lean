@@ -23,7 +23,8 @@ jobs:
       # A timed-out build can leave Lean processes writing into .lake; stop them so the archive is consistent.
       - if: always()
         run: |
-          pkill -f 'lake|lean' || true
+          pkill -x lake || true
+          pkill -x lean || true
           sleep 5
       - if: always()
         uses: actions/cache/save@v4
