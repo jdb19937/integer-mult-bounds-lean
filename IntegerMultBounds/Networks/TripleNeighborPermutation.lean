@@ -1,5 +1,7 @@
 import IntegerMultBounds.Networks.NeighborCounts
 import Mathlib.Combinatorics.Hall.Finite
+import Mathlib.Algebra.Order.BigOperators.Group.Finset
+import Mathlib.Algebra.BigOperators.Ring.Finset
 
 /-! A neighbor permutation of finite triple banks. This is a finite Hall
 existence construction from the exact regular neighbor census. It supplies

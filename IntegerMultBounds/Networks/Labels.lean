@@ -1,7 +1,12 @@
 import IntegerMultBounds.Networks.Scalar
 import Mathlib.LinearAlgebra.BilinearForm.Properties
 import Mathlib.Data.ZMod.Basic
-import Mathlib.Tactic
+import Mathlib.Tactic.Ring
+import Mathlib.Tactic.NormNum
+import Mathlib.Tactic.Use
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.SimpRw
+import Mathlib.Algebra.Field.ZMod
 
 /-! The degree-one bilinear label spaces of the two finite motifs. These are
 label fields, distinct from the scalar rings on the circuit wires. Tensor-cube

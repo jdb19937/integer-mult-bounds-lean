@@ -1,6 +1,8 @@
 import IntegerMultBounds.Machine.ScalingPieces
 import Mathlib.Data.ZMod.Basic
-import Mathlib.Tactic
+import Mathlib.Tactic.Ring
+import Mathlib.Tactic.Set
+import Mathlib.Tactic.Linarith
 
 /-! Fixed-multiplier finite control for piece selection in unit scaling. The
 lookup has c possible modulus residues and c control states, independently of

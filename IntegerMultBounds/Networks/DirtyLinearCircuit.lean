@@ -1,4 +1,5 @@
 import IntegerMultBounds.Networks.GlobalCircuit
+import Mathlib.Data.ZMod.Basic
 
 /-! Dirty-scratch cancellation around an actual invertible scalar program. The
 wrapper executes literal embedded instruction lists; its semantic theorem makes

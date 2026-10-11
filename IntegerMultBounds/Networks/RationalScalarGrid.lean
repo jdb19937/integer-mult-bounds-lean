@@ -1,6 +1,7 @@
 import IntegerMultBounds.Networks.GaussianBoundedArithmetic
 import IntegerMultBounds.Networks.CircuitCoefficients
 import IntegerMultBounds.Networks.GroupedModuleFrames
+import Mathlib.Algebra.Algebra.Rat
 
 /-! Numerator certificates apply to the same rational module gate rows on
 complex arrays, preserving literal row order and source/target names. -/

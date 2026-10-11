@@ -1,4 +1,5 @@
 import IntegerMultBounds.Networks.NeighborCounts
+import Mathlib.Tactic.Ring
 
 /-! Explicit role sets for the full three-coordinate network layout. Each
 invocation has its own side and central wires, including across stages. This

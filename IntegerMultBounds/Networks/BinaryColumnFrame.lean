@@ -1,4 +1,5 @@
 import IntegerMultBounds.Networks.BinaryRankFactors
+import Mathlib.Algebra.Algebra.Rat
 
 /-! Genuine invertible frames on arrays with any number of binary columns.
 Their forward and inverse maps are the actual column operators. Restricting

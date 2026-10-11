@@ -1,6 +1,7 @@
 import IntegerMultBounds.Compact.ExactRepair
 import Mathlib.Data.Int.Interval
 import Mathlib.Data.Fintype.BigOperators
+import Mathlib.SetTheory.Cardinal.Finite
 
 /-! Exact finite counts for the actual packed-address predicates used by
 exceptional repair. The radix bijection transfers independent digit counts

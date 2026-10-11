@@ -1,6 +1,7 @@
 import IntegerMultBounds.Networks.Scalar
 import Mathlib.Data.List.FinRange
-import Mathlib.Tactic
+import Mathlib.Tactic.Abel
+import Mathlib.Algebra.BigOperators.Fin
 
 /-!
 Executable scalar circuits for the cancellation schedule in Section 3.

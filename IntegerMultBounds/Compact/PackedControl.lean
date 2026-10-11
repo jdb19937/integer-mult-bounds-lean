@@ -1,6 +1,8 @@
 import IntegerMultBounds.Compact.DirtyControl
 import IntegerMultBounds.Compact.Radix
-import Mathlib.Tactic
+import Mathlib.Tactic.Use
+import Mathlib.Tactic.Set
+import Mathlib.Tactic.LinearCombination
 
 /-!
 A packed implementation of the earlier-source four-update gadget. Every field

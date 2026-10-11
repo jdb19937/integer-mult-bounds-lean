@@ -1,5 +1,6 @@
 import IntegerMultBounds.Networks.CircuitRouting
 import IntegerMultBounds.Networks.Wires
+import Mathlib.Tactic.FinCases
 
 /-! A literal global scalar circuit with one dirty-scratch bank per invocation.
 The elementary lists preserve the eight-row order, including the reversed middle

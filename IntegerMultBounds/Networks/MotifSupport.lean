@@ -1,4 +1,5 @@
 import IntegerMultBounds.Networks.GroupedRouting
+import Mathlib.Tactic.Linarith
 
 /-! Exact sparse incidences of the local motif groups. In particular, no side
 wire disappears under its nonzero cancelling coefficient, and each side wire
