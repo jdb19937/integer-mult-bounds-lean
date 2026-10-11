@@ -6593,6 +6593,11 @@ Schönhage–Strassen multiplication, the fast multiplier used for the packed pr
   loops; from a record's component words the output gains those of `y^E`
   times the record (`runs_twist_record`), in `O(r w)` steps.
 
+- `Schoenhage/TwistArray.lean`: the monomial over a whole array: a
+  fifteen-tape loop loads each record's head and tail counts and sign flags
+  from descriptor lists and runs the monomial on the record's words
+  (`runs_twistArray`), in `O(M r w)` steps for `M` records.
+
 - `Spec/SyntheticTransform.lean`: the statement of the paper's synthetic
   transforms in its formats: exact counterparts `L B F⁻` and `F⁺ B⁻¹ L⁻¹`,
   per-coefficient error `√2 ℓ 2^(-p)`, disk grid outputs, the paper's cost

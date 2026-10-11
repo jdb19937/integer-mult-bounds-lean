@@ -275,16 +275,16 @@ noncomputable def moveAll : Cmd 0 11 :=
   .seq (tk wC (by decide)) <| .seq moveLoop <| .seq (clear wQ) (rewind wA)
 
 set_option maxHeartbeats 4000000 in
-theorem runs_moveAll {W : ℕ} (ws : List (List Bool)) (hW : ∀ x ∈ ws, x.length ≤ W) (τ : Fin 11 → WTape)
-    (hX : τ wX = ⟨[], ws⟩) (hA : τ wA = emp) (hC : τ wC = reg (ones ws.length)) (hQ : τ wQ = emp)
+theorem runs_moveAll {W : ℕ} (ws Ls R : List (List Bool)) (hW : ∀ x ∈ ws, x.length ≤ W) (τ : Fin 11 → WTape)
+    (hX : τ wX = ⟨Ls, ws ++ R⟩) (hA : τ wA = emp) (hC : τ wC = reg (ones ws.length)) (hQ : τ wQ = emp)
     (hJ : τ wJ = emp) :
-    Runs moveAll τ (· = Function.update (Function.update τ wX ⟨ws.reverse, []⟩) wA ⟨[], ws.map List.reverse⟩)
+    Runs moveAll τ (· = Function.update (Function.update τ wX ⟨ws.reverse ++ Ls, R⟩) wA ⟨[], ws.map List.reverse⟩)
       (ws.length * (4 * W + 30) + 30) := by
   have s1 := runs_tk (show wC ≠ wQ by decide) τ hC hQ
   set τ₁ := Function.update τ wQ ⟨[], List.replicate ws.length []⟩
-  have s2 := runs_moveLoop (W := W) ws τ₁ [] [] [] [] hW (by tsimp [τ₁, hX]) (by tsimp [τ₁, hA, emp])
+  have s2 := runs_moveLoop (W := W) ws τ₁ Ls R [] [] hW (by tsimp [τ₁, hX]) (by tsimp [τ₁, hA, emp])
     (by tsimp [τ₁]) (by tsimp [τ₁, hJ])
-  set τ₂ := Function.update (Function.update (Function.update τ₁ wX ⟨ws.reverse ++ [], []⟩)
+  set τ₂ := Function.update (Function.update (Function.update τ₁ wX ⟨ws.reverse ++ Ls, R⟩)
     wA ⟨(ws.map List.reverse).reverse ++ [], []⟩) wQ ⟨List.replicate ws.length [] ++ [], []⟩
   have s3 := runs_clear (a := 0) wQ τ₂
   set τ₃ := Function.update τ₂ wQ ⟨[], []⟩
@@ -349,18 +349,15 @@ theorem runs_emitTail {W : ℕ} (b : Bool) (xs L D : List (List Bool)) (hW : ∀
 
 /-- Rewind the buffer, emit the head words, and clean up. -/
 noncomputable def emitHead : Cmd 0 11 :=
-  .seq (rewind wA) <| .seq (tk wH (by decide)) <| .seq (emitLoop fH) <| .seq (clear wQ) <|
-    .seq (clear wA) (clear wX)
+  .seq (rewind wA) <| .seq (tk wH (by decide)) <| .seq (emitLoop fH) <| .seq (clear wQ) (clear wA)
 
 set_option maxHeartbeats 4000000 in
-theorem runs_emitHead {W : ℕ} (b : Bool) (hs tl D Xs : List (List Bool)) (hW : ∀ x ∈ hs ++ tl, x.length ≤ W)
-    (hX : ∀ x ∈ Xs, x.length ≤ W)
+theorem runs_emitHead {W : ℕ} (b : Bool) (hs tl D : List (List Bool)) (hW : ∀ x ∈ hs ++ tl, x.length ≤ W)
     (τ : Fin 11 → WTape) (hA : τ wA = ⟨tl.reverse ++ hs.reverse, []⟩) (hH : τ wH = reg (ones hs.length))
-    (hF : τ fH = reg [b]) (hw : τ wW = emp) (hO : τ wO = ⟨D, []⟩) (hQ : τ wQ = emp) (hJ : τ wJ = emp)
-    (hXt : τ wX = ⟨Xs, []⟩) :
-    Runs emitHead τ (· = Function.update (Function.update (Function.update τ wA emp)
-      wO ⟨(hs.map (outW b)).reverse ++ D, []⟩) wX emp)
-      ((hs.length + tl.length + Xs.length) * (10 * W + 60) + 60) := by
+    (hF : τ fH = reg [b]) (hw : τ wW = emp) (hO : τ wO = ⟨D, []⟩) (hQ : τ wQ = emp) (hJ : τ wJ = emp) :
+    Runs emitHead τ (· = Function.update (Function.update τ wA emp)
+      wO ⟨(hs.map (outW b)).reverse ++ D, []⟩)
+      ((hs.length + tl.length) * (10 * W + 60) + 60) := by
   have s0 := runs_rewind (a := 0) wA τ
   set τ₀ := Function.update τ wA ⟨[], hs ++ tl⟩
   have e0 : Function.update τ wA ⟨[], (τ wA).left.reverse ++ (τ wA).right⟩ = τ₀ := by simp [τ₀, hA]
@@ -376,18 +373,15 @@ theorem runs_emitHead {W : ℕ} (b : Bool) (hs tl D Xs : List (List Bool)) (hW :
   have s3 := runs_clear (a := 0) wQ τ₂
   set τ₃ := Function.update τ₂ wQ ⟨[], []⟩
   have s4 := runs_clear (a := 0) wA τ₃
-  set τ₄ := Function.update τ₃ wA ⟨[], []⟩
-  have s5 := runs_clear (a := 0) wX τ₄
-  refine (Runs.then s0 (Runs.then s1 (Runs.then s2 (Runs.then s3 (Runs.then s4 s5))))).mono
+  refine (Runs.then s0 (Runs.then s1 (Runs.then s2 (Runs.then s3 s4)))).mono
     (fun τ' h => ?_) ?_
   · rw [h]; funext y
-    simp only [τ₄, τ₃, τ₂, τ₁, τ₀, Function.update_apply]
+    simp only [τ₃, τ₂, τ₁, τ₀, Function.update_apply]
     split_ifs <;> (try subst_vars) <;> (try tsimp [hQ, emp]) <;> tsimp at *
   · have c1 : clen (hs ++ tl) ≤ (hs ++ tl).length * (W + 1) := clen_le hW
-    have c2 : clen Xs ≤ Xs.length * (W + 1) := clen_le hX
     have c3 : clen (tl.reverse ++ hs.reverse) = clen (hs ++ tl) := by
       rw [← List.reverse_append, clen_reverse]
-    tsimp [τ₄, τ₃, τ₂, τ₁, τ₀, hA, hXt, WTape.words, clen_replicate_nil, clen_reverse, clen_append] at c1 c3 ⊢
+    tsimp [τ₃, τ₂, τ₁, τ₀, hA, WTape.words, clen_replicate_nil, clen_reverse, clen_append] at c1 c3 ⊢
     nlinarith
 
 /-- The monomial on word tapes: move, skip the head, emit the tail, emit the head. -/
@@ -409,19 +403,20 @@ theorem twWords_out (n : ℕ) (e : Bool) (ws : List (List Bool)) :
 
 /-- `runs_twist`: from the record's words on `wX`, unary `N`, `n`, `N - n` and the two flags, the
 output tape gains `twWords n e ws`; the input words are consumed and every work tape is left empty. -/
-theorem runs_twist {W n : ℕ} (e : Bool) (ws D : List (List Bool)) (hn : n ≤ ws.length)
+theorem runs_twist {W n : ℕ} (e : Bool) (ws D Ls R : List (List Bool)) (hn : n ≤ ws.length)
     (hW : ∀ x ∈ ws, x.length ≤ W) (τ : Fin 11 → WTape)
-    (hX : τ wX = ⟨[], ws⟩) (hO : τ wO = ⟨D, []⟩) (hA : τ wA = emp)
+    (hX : τ wX = ⟨Ls, ws ++ R⟩) (hO : τ wO = ⟨D, []⟩) (hA : τ wA = emp)
     (hC : τ wC = reg (ones ws.length)) (hH : τ wH = reg (ones n)) (hT : τ wT = reg (ones (ws.length - n)))
     (hFT : τ fT = reg [!e]) (hFH : τ fH = reg [e]) (hQ : τ wQ = emp) (hJ : τ wJ = emp) (hw : τ wW = emp) :
-    Runs twistCmd τ (· = Function.update (Function.update τ wX emp) wO ⟨(twWords n e ws).reverse ++ D, []⟩)
-      (ws.length * (35 * W + 250) + 200) := by
+    Runs twistCmd τ (· = Function.update (Function.update τ wX ⟨ws.reverse ++ Ls, R⟩)
+      wO ⟨(twWords n e ws).reverse ++ D, []⟩)
+      (ws.length * (25 * W + 200) + 200) := by
   set rv := ws.map List.reverse
   have hrv : ∀ x ∈ rv, x.length ≤ W := fun x hx => by
     obtain ⟨y, hy, rfl⟩ := List.mem_map.mp hx; simpa using hW y hy
   have hlr : rv.length = ws.length := by simp [rv]
-  have s1 := runs_moveAll ws hW τ hX hA hC hQ hJ
-  set τ₁ := Function.update (Function.update τ wX ⟨ws.reverse, []⟩) wA ⟨[], rv⟩
+  have s1 := runs_moveAll ws Ls R hW τ hX hA hC hQ hJ
+  set τ₁ := Function.update (Function.update τ wX ⟨ws.reverse ++ Ls, R⟩) wA ⟨[], rv⟩
   have s2 := runs_skipHead (n := n) rv (by omega) hrv τ₁ (by tsimp [τ₁]) (by tsimp [τ₁, hH]) (by tsimp [τ₁, hQ])
     (by tsimp [τ₁, hJ])
   set τ₂ := Function.update τ₁ wA ⟨(rv.take n).reverse, rv.drop n⟩
@@ -433,11 +428,9 @@ theorem runs_twist {W n : ℕ} (e : Bool) (ws D : List (List Bool)) (hn : n ≤ 
     wO ⟨((rv.drop n).map (outW (!e))).reverse ++ D, []⟩
   have htl : (rv.take n).length = n := by simp [hlr]; omega
   have s4 := runs_emitHead (W := W) e (rv.take n) (rv.drop n) (((rv.drop n).map (outW (!e))).reverse ++ D)
-    ws.reverse
     (fun x hx => hrv x (by rw [List.take_append_drop] at hx; exact hx))
-    (fun x hx => hW x (List.mem_reverse.mp hx))
     τ₃ (by tsimp [τ₃]) (by tsimp [τ₃, τ₂, τ₁, hH, htl]) (by tsimp [τ₃, τ₂, τ₁, hFH]) (by tsimp [τ₃, τ₂, τ₁, hw])
-    (by tsimp [τ₃]) (by tsimp [τ₃, τ₂, τ₁, hQ]) (by tsimp [τ₃, τ₂, τ₁, hJ]) (by tsimp [τ₃, τ₂, τ₁])
+    (by tsimp [τ₃]) (by tsimp [τ₃, τ₂, τ₁, hQ]) (by tsimp [τ₃, τ₂, τ₁, hJ])
   have tw : (rv.drop n).map (outW (!e)) ++ (rv.take n).map (outW e) = twWords n e ws := twWords_out n e ws
   refine (Runs.then s1 (Runs.then s2 (Runs.then s3 s4))).mono (fun τ' h => ?_) ?_
   · rw [h, ← tw]; funext y
@@ -448,8 +441,8 @@ theorem runs_twist {W n : ℕ} (e : Bool) (ws D : List (List Bool)) (hn : n ≤ 
     have a1 : n * (W + 25) ≤ ws.length * (W + 25) := Nat.mul_le_mul_right _ hn
     have a2 : (ws.length - n) * (7 * W + 50) ≤ ws.length * (7 * W + 50) :=
       Nat.mul_le_mul_right _ (Nat.sub_le _ _)
-    have a3 : (n + (ws.length - n) + ws.length) * (10 * W + 60) = 2 * ws.length * (10 * W + 60) := by
-      rw [show n + (ws.length - n) = ws.length by omega]; ring
+    have a3 : (n + (ws.length - n)) * (10 * W + 60) = ws.length * (10 * W + 60) := by
+      rw [show n + (ws.length - n) = ws.length by omega]
     simp only [htl, hdl, List.length_reverse]
     nlinarith
 
@@ -461,17 +454,17 @@ theorem recordWords_lengths {r : ℕ} (w : ℕ) (re im : Fin r → ℤ) : ∀ x 
 /-- The monomial on a record: from its component words, the output tape gains the component words
 of `y^E` times the record (`twistRec`, exact on the grid by `gridPoly_twistRec`). -/
 theorem runs_twist_record {r : ℕ} [NeZero r] (w E : ℕ) (f : Spec.SignedRingProduct.Rec r)
-    (D : List (List Bool)) (τ : Fin 11 → WTape)
-    (hX : τ wX = ⟨[], recordWords w f.1 f.2⟩) (hO : τ wO = ⟨D, []⟩) (hA : τ wA = emp)
+    (D Ls R : List (List Bool)) (τ : Fin 11 → WTape)
+    (hX : τ wX = ⟨Ls, recordWords w f.1 f.2 ++ R⟩) (hO : τ wO = ⟨D, []⟩) (hA : τ wA = emp)
     (hC : τ wC = reg (ones (2 * r))) (hH : τ wH = reg (ones (2 * (r - E % r))))
     (hT : τ wT = reg (ones (2 * (E % r))))
     (hFT : τ fT = reg [!decide (E / r % 2 = 1)]) (hFH : τ fH = reg [decide (E / r % 2 = 1)])
     (hQ : τ wQ = emp) (hJ : τ wJ = emp) (hw : τ wW = emp) :
-    Runs twistCmd τ (· = Function.update (Function.update τ wX emp) wO
+    Runs twistCmd τ (· = Function.update (Function.update τ wX ⟨(recordWords w f.1 f.2).reverse ++ Ls, R⟩) wO
       ⟨(recordWords w (twistRec E f).1 (twistRec E f).2).reverse ++ D, []⟩)
-      (2 * r * (35 * w + 250) + 200) := by
+      (2 * r * (25 * w + 200) + 200) := by
   have hs : E % r < r := Nat.mod_lt _ (NeZero.pos r)
-  have h := runs_twist (W := w) (n := 2 * (r - E % r)) (decide (E / r % 2 = 1)) (recordWords w f.1 f.2) D
+  have h := runs_twist (W := w) (n := 2 * (r - E % r)) (decide (E / r % 2 = 1)) (recordWords w f.1 f.2) D Ls R
     (by simp) (recordWords_lengths w f.1 f.2) τ hX hO hA (by rw [hC, length_recordWords])
     hH (by rw [hT, length_recordWords]; congr 2; omega) hFT hFH hQ hJ hw
   rw [twWords_recordWords, length_recordWords] at h
