@@ -6600,6 +6600,10 @@ Schönhage–Strassen multiplication, the fast multiplier used for the packed pr
   from descriptor lists and runs the monomial on the record's words
   (`runs_twistArray`), in `O(M r w)` steps for `M` records.
 
+- `Schoenhage/Dif.lean`: the in-place decimation-in-frequency rounds of §6 on
+  one axis: half-sums and twisted half-differences slot by slot from the top
+  compute `F⁻` with the output in bit-reversed order (`difAll_eq`).
+
 - `Spec/SyntheticTransform.lean`: the statement of the paper's synthetic
   transforms in its formats: exact counterparts `L B F⁻` and `F⁺ B⁻¹ L⁻¹`,
   per-coefficient error `√2 ℓ 2^(-p)`, disk grid outputs, the paper's cost
