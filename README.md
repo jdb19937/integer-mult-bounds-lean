@@ -46,8 +46,9 @@ Actual corrected source setup and sink finalization also have paid aligned
 table paths, preserving the blank basis workspace. Aligned child returns and
 the complete reached event induction remain open. Numerical return grids and
 ledgers, actual decoded-return execution and inverse basis restoration now
-have checked adapters. Completed-child frame preservation and local restored
-tape premises remain explicit obligations. Actual aligned root finalization
+have checked adapters. Completed-child output width now follows from its reached stored widths
+through actual sink correction, contraction, rejoin and orientation. The return
+grid and recursive saved-frame preservation remain obligations. Actual aligned root finalization
 now reaches its proved empty-stack cell and genuinely halts in the same table;
 the preceding full recursive execution remains open. Saved caller prefixes now
 have local preservation rules through scalar/basis execution and actual

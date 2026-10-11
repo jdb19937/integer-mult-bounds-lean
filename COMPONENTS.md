@@ -4702,6 +4702,8 @@ Machine model, execution, composition, and tape routines.
 
 - `Machine/CompactComplexActualEventTrace.lean`: The actual site-major calls have exact group intervals, and every original edge occurrence retains its literal wire and both ordered compiler frames, including terminal sink incidences. Generic compiler trace extraction and a mapped raw-site trace avoid expanding the enormous concrete occurrence type. Child-block execution, interleaved event semantics and recursive execution remain open.
 
+- `Machine/CompactComplexSourceReadyCompletedChildWidth.lean`: The actual completed nonroot child preserves its Reached stored width through sink correction, contraction, cyclic role recombination and saved-call orientation. Inherited width and exact result lengths follow from stage arity, row divisibility and the metadata guard; no supplied output-width or recursive semantic equality is used. Returned numerical grid and recursive saved-frame preservation remain open.
+
 ## Compact
 
 Compact packed controls, repair, and density bounds.
