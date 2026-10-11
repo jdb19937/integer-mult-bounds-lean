@@ -6588,6 +6588,11 @@ Schönhage–Strassen multiplication, the fast multiplier used for the packed pr
   disk grids, and on component words is a split, swap and two's-complement
   negation (`twWords_recordWords`, `negW_compWord`).
 
+- `Schoenhage/TwistTape.lean`: the recordwise monomial on an eleven-tape word
+  program: a negation streaming rule, then move, skip, emit tail and emit head
+  loops; from a record's component words the output gains those of `y^E`
+  times the record (`runs_twist_record`), in `O(r w)` steps.
+
 - `Spec/SyntheticTransform.lean`: the statement of the paper's synthetic
   transforms in its formats: exact counterparts `L B F⁻` and `F⁺ B⁻¹ L⁻¹`,
   per-coefficient error `√2 ℓ 2^(-p)`, disk grid outputs, the paper's cost
