@@ -8,18 +8,6 @@ See [COMPONENTS.md](COMPONENTS.md) for what each file proves.
 
 ✅ done · 🟡 partial · ⬜ not started · 🚧 drafted, not yet in the build. Overview counts are done subcomponents out of the section total.
 
-## Completion checklist
-
-- [x] Schönhage–Strassen core multiplier: literal execution, correctness and quasi-linear bound.
-- [x] Paper-format pointwise products: literal `MeetsPointwise` program and polylogarithmic runtime target.
-- [ ] Standalone signed-ring-product interface: prove `Meets` for the three-field header.
-- [ ] Full transform integration: install the multiplier and charge its actual calls to the packed-products cost row.
-- [ ] Section 5: join reached child returns, original event/network semantics and complete recursive execution on the fixed aligned table; prove termination and its total runtime.
-- [ ] Fast `EndToEnd`: assemble the remaining transforms, resampling, exact output recovery and uniform sub–n log n bound.
-
-These are completion obligations, separate from the component counts below.
-Uncommitted draft modules are not credited as checked proof components.
-
 ## Overview
 
 | Part of the proof | Source | Mathematics | Tape |
