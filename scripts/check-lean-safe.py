@@ -11,6 +11,12 @@ import sys
 import tempfile
 import time
 
+# Mathlib's imports alone need about 2.4 GB; keep a hard ceiling well below system RAM.
+LEAN_MIB = 4096
+GUARD_MIB = 5120
+# Stop runaway elaboration (loops) rather than letting it grow.
+TIMEOUT_S = 1200
+
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
@@ -48,16 +54,21 @@ def main():
         libdirs.append(root / '.lake' / 'build' / 'lib' / 'lean')
         env = os.environ.copy()
         env['LEAN_PATH'] = os.pathsep.join(str(p) for p in libdirs)
-        proc = subprocess.Popen(['lean', '-M2048', '-j1', *args.lean_args],
+        proc = subprocess.Popen(['lean', f'-M{LEAN_MIB}', '-j1', *args.lean_args],
                                 cwd=root, env=env, start_new_session=True)
         peak = 0
         stopped = False
+        start = time.monotonic()
         try:
             while proc.poll() is None:
                 rss = usage(proc.pid)
                 peak = max(peak, rss)
-                if rss > 2560 * 1024:
-                    print('Stopping check: process group exceeded 2560 MiB RSS.', file=sys.stderr)
+                if rss > GUARD_MIB * 1024:
+                    print(f'Stopping check: process group exceeded {GUARD_MIB} MiB RSS.', file=sys.stderr)
+                    stopped = True
+                    break
+                if time.monotonic() - start > TIMEOUT_S:
+                    print(f'Stopping check: exceeded {TIMEOUT_S} s.', file=sys.stderr)
                     stopped = True
                     break
                 time.sleep(0.05)
