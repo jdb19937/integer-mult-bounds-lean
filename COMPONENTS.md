@@ -6615,6 +6615,12 @@ Schönhage–Strassen multiplication, the fast multiplier used for the packed pr
   schedule over all axes equals the axis-by-axis one and computes `F⁻` with
   every axis address bit-reversed (`slotMajor_eq`).
 
+- `Schoenhage/DifLayout.lean`: layouts as permutations of address bits
+  (`BitPerm`, logical and physical addresses); on the stored array a round
+  becomes a butterfly on the permuted bit with its twist reading the logical
+  address, so the schedule on physical bits leaves `(F⁻ z)_(B(logi y))` at
+  physical address `y` (`physSchedule_eq`).
+
 - `Spec/SyntheticTransform.lean`: the statement of the paper's synthetic
   transforms in its formats: exact counterparts `L B F⁻` and `F⁺ B⁻¹ L⁻¹`,
   per-coefficient error `√2 ℓ 2^(-p)`, disk grid outputs, the paper's cost
