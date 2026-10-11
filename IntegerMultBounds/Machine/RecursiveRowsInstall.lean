@@ -212,12 +212,10 @@ theorem initializes_hoare (payload : Tapes (1+c) q) (ws : Fin 2 → List Bool) :
           intro hz; subst z; rfl
         | right i => fin_cases i <;>
             simp [readyLocal,prepared,Tapes.append,CountedLoopReuseAlphabet.bank,descriptorPair,clock,
-              CountedLoopReuseAlphabet.controls,CountedLoopReuseAlphabet.empty,he] <;>
-              (intro hz; subst z; rfl)
+              CountedLoopReuseAlphabet.controls,CountedLoopReuseAlphabet.empty,he]; intro hz; subst z; rfl
       | right i => fin_cases i <;>
           simp [readyLocal,prepared,Tapes.append,CountedLoopReuseAlphabet.bank,descriptorPair,clock,
-            CountedLoopReuseAlphabet.controls,CountedLoopReuseAlphabet.empty,he,hn] <;>
-              (intro hz; subst z; rfl)
+            CountedLoopReuseAlphabet.controls,CountedLoopReuseAlphabet.empty,he,hn]; intro hz; subst z; rfl
   · simp [step,initProgram]
 
 end

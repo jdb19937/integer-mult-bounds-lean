@@ -54,7 +54,7 @@ theorem bit_step (f : ℤ → Fin (a + 4)) (p : ℤ) (s b : Bool) (hb : f p = bi
     funext i; simp [cfg, hb]
   unfold step
   rw [hsym]
-  cases s <;> cases b <;> simp [program, stN, isBit, bitSymbol, blank, cfg, Move.offset] <;>
+  cases s <;> cases b <;> simp [program, stN, isBit, bitSymbol, cfg, Move.offset] <;>
     (funext i j; by_cases hj : j = p
      · subst j; simp
      · simp [hj])

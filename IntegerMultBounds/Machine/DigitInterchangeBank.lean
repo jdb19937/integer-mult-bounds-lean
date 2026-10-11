@@ -153,13 +153,13 @@ theorem active_local (p : Pass q) (x : Array O q C E a) (bs gs es cs : List Bool
       induction i using Fin.addCases with
       | left i =>
         induction i using Fin.addCases with
-        | left z => fin_cases z; cases p <;> simp [activeName,localBank,CyclicRowSplit.bank,CyclicRowCopy.bank,CyclicRowCopy.payload,
+        | left z => fin_cases z; cases p <;> simp [activeName,CyclicRowCopy.bank,CyclicRowCopy.payload,
           CountedLoopReuseAlphabet.bank,CountedLoopReuseAlphabet.controls,Tapes.append,head,sourceName,roleName,word]
-        | right h => cases p <;> simp [activeName,localBank,CyclicRowSplit.bank,CyclicRowCopy.bank,CyclicRowCopy.payload,
+        | right h => cases p <;> simp [activeName,CyclicRowCopy.bank,CyclicRowCopy.payload,
           CountedLoopReuseAlphabet.bank,CountedLoopReuseAlphabet.controls,Tapes.append,head,sourceName,roleName,word]
-      | right z => fin_cases z <;> cases p <;> simp [activeName,localBank,CyclicRowSplit.bank,CyclicRowCopy.bank,CyclicRowCopy.payload,
+      | right z => fin_cases z <;> cases p <;> simp [activeName,CyclicRowCopy.bank,CyclicRowCopy.payload,
           CountedLoopReuseAlphabet.bank,CountedLoopReuseAlphabet.controls,Tapes.append,head,sourceName,roleName,word]
-    | right z => fin_cases z <;> cases p <;> simp [activeName,localBank,CyclicRowSplit.bank,CyclicRowCopy.bank,CyclicRowCopy.payload,
+    | right z => fin_cases z <;> cases p <;> simp [activeName,CyclicRowCopy.bank,CyclicRowCopy.payload,
           CountedLoopReuseAlphabet.bank,CountedLoopReuseAlphabet.controls,Tapes.append,head,sourceName,roleName,word]
 
 @[simp] theorem active_source (p : Pass q) : activeName p sourceIndex = sourceName p := by simp [activeName,sourceIndex]
@@ -184,20 +184,20 @@ private theorem word_frame (p : Pass q) (x : Array O q C E a) (bs gs es cs : Lis
     apply stable
     cases p with
     | mergeOuter => exact (hs rfl).elim
-    | splitOuter => simp [passIndex] <;> omega
+    | splitOuter => simp [passIndex]
     | splitInner h => simp only [passIndex]; have := h.isLt; omega
     | mergeInner h => simp only [passIndex]; have := h.isLt; omega
   | first h =>
     apply stable
     cases p with
     | splitOuter => exact (hr h rfl).elim
-    | splitInner j => simp [passIndex] <;> omega
-    | mergeInner j => simp [passIndex] <;> omega
-    | mergeOuter => simp [passIndex] <;> omega
+    | splitInner j => simp [passIndex]; omega
+    | mergeInner j => simp [passIndex]; omega
+    | mergeOuter => simp [passIndex]; omega
   | leaf h d =>
     apply stable
     cases p with
-    | splitOuter => simp [passIndex] <;> omega
+    | splitOuter => simp [passIndex]
     | splitInner j =>
       have hn : h ≠ j := by intro he; subst j; exact hr d rfl
       have hn' : h.val ≠ j.val := fun he => hn (Fin.ext he)
@@ -208,7 +208,7 @@ private theorem word_frame (p : Pass q) (x : Array O q C E a) (bs gs es cs : Lis
   | merged h =>
     apply stable
     cases p with
-    | splitOuter => simp [passIndex] <;> omega
+    | splitOuter => simp [passIndex]
     | splitInner j => simp only [passIndex]; have := j.isLt; omega
     | mergeInner j =>
       have hn : h ≠ j := by intro he; subst j; exact hs rfl

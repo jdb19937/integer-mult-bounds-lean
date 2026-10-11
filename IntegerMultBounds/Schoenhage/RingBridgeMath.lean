@@ -66,7 +66,7 @@ theorem sv_bits {n u : ℕ} (hu : u < 2 ^ (n + 1)) :
       have := Nat.div_pos h (by positivity); omega
     have hm : u % 2 ^ n = u - 2 ^ n := by
       rw [Nat.mod_eq_sub_mod h, Nat.mod_eq_of_lt (by omega)]
-    simp [h1, h, hm, h2]; push_cast [Nat.cast_sub h]; ring
+    simp [h1, h, hm]; ring
   · have h0 : u / 2 ^ n = 0 := Nat.div_eq_of_lt (by omega)
     simp [h0, h, Nat.mod_eq_of_lt (show u < 2 ^ n by omega)]
 
@@ -86,7 +86,7 @@ theorem sv_tw {w : ℕ} {z : ℤ} (hw : 1 ≤ w) (h1 : -2 ^ (w - 1) ≤ z) (h2 :
     have : ¬ 2 ^ n ≤ (z % 2 ^ (n + 1)).toNat := by
       rw [hzm]; intro h; have : ((2 ^ n : ℕ) : ℤ) ≤ (z.toNat : ℤ) := by exact_mod_cast h
       rw [Int.toNat_of_nonneg hz] at this; push_cast at this; omega
-    simp [this, hzm, Int.toNat_of_nonneg hz]
+    simp [hzm, Int.toNat_of_nonneg hz]
     try omega
   · have hzm : z % 2 ^ (n + 1) = z + 2 ^ (n + 1) := by
       rw [← Int.add_mul_emod_self_right z 1 (2 ^ (n + 1)), one_mul, Int.emod_eq_of_lt (by omega) (by omega)]
@@ -95,7 +95,7 @@ theorem sv_tw {w : ℕ} {z : ℤ} (hw : 1 ≤ w) (h1 : -2 ^ (w - 1) ≤ z) (h2 :
         rw [Int.toNat_of_nonneg hm0, hzm]; push_cast; omega
       exact_mod_cast this
     simp only [this, ↓reduceIte]
-    rw [Int.toNat_of_nonneg hm0, hzm]; push_cast; ring
+    rw [Int.toNat_of_nonneg hm0, hzm]; ring
 
 theorem lsbPairs_eq {r : ℕ} (w : ℕ) (f : Rec r) :
     lsbPairs w f = (List.finRange r).map fun j => (tw w (f.1 j), tw w (f.2 j)) := by
@@ -140,21 +140,21 @@ theorem ncCoef_fin {r : ℕ} (u v : Fin r → ℤ) (k : Fin r) :
   by_cases h : i ≤ k
   · have hl : (i : ℕ) ≤ k := h
     rw [Finset.sum_eq_single ((k : ℕ) - i)]
-    · rw [if_pos (by omega), getD_map_finRange v (by omega), if_pos h]
-      have : (⟨(k : ℕ) - i, by omega⟩ : Fin r) = k - i := Fin.ext (by rw [hsub, if_pos h])
+    · rw [ite_eq_left (by omega), getD_map_finRange v (by omega), ite_eq_left h]
+      have : (⟨(k : ℕ) - i, by omega⟩ : Fin r) = k - i := Fin.ext (by rw [hsub, ite_eq_left h])
       rw [this]; ring
     · intro j hj hne
       have := Finset.mem_range.mp hj
-      rw [if_neg (by omega), if_neg (by omega)]
+      rw [ite_eq_right (by omega), ite_eq_right (by omega)]
     · intro hn; exact absurd (Finset.mem_range.mpr (by omega)) hn
   · have hl : (k : ℕ) < i := by rw [Fin.le_def] at h; omega
     rw [Finset.sum_eq_single ((k : ℕ) + r - i)]
-    · rw [if_neg (by omega), if_pos (by omega), getD_map_finRange v (by omega), if_neg h]
-      have : (⟨(k : ℕ) + r - i, by omega⟩ : Fin r) = k - i := Fin.ext (by rw [hsub, if_neg h])
+    · rw [ite_eq_right (by omega), ite_eq_left (by omega), getD_map_finRange v (by omega), ite_eq_right h]
+      have : (⟨(k : ℕ) + r - i, by omega⟩ : Fin r) = k - i := Fin.ext (by rw [hsub, ite_eq_right h])
       rw [this]; ring
     · intro j hj hne
       have := Finset.mem_range.mp hj
-      rw [if_neg (by omega), if_neg (by omega)]
+      rw [ite_eq_right (by omega), ite_eq_right (by omega)]
     · intro hn; exact absurd (Finset.mem_range.mpr (by omega)) hn
 
 /-! ### Truncation -/
@@ -164,11 +164,11 @@ theorem rho0_div (s : ℕ) (n : ℤ) : rho0 ((n : ℝ) / 2 ^ s) = trunc0 s n := 
   have hp : (0 : ℝ) < 2 ^ s := by positivity
   unfold rho0 trunc0
   by_cases hn : 0 ≤ n
-  · rw [if_pos (div_nonneg (by exact_mod_cast hn) hp.le), if_pos hn, e, Int.floor_div_natCast, Int.floor_intCast]
+  · rw [ite_eq_left (div_nonneg (by exact_mod_cast hn) hp.le), ite_eq_left hn, e, Int.floor_div_natCast, Int.floor_intCast]
     push_cast; rfl
   · have hx : ¬ (0 : ℝ) ≤ (n : ℝ) / 2 ^ s := by
       rw [not_le]; exact div_neg_of_neg_of_pos (by exact_mod_cast not_le.mp hn) hp
-    rw [if_neg hx, if_neg hn]
+    rw [ite_eq_right hx, ite_eq_right hn]
     have : (n : ℝ) / 2 ^ s = -(((-n : ℤ) : ℝ) / ((2 ^ s : ℕ) : ℝ)) := by push_cast; ring
     rw [this, Int.ceil_neg, Int.floor_div_natCast, Int.floor_intCast]
     push_cast; rfl
@@ -188,11 +188,11 @@ theorem negacyclic_grid {r p : ℕ} (a b c e : Fin r → ℤ) (k : Fin r) :
   constructor
   · rw [← Finset.sum_sub_distrib]; push_cast; rw [Finset.sum_div]
     apply Finset.sum_congr rfl; intro i _
-    by_cases h : i ≤ k <;> simp [negaSign, negaIdx, h, gridPoly, Complex.mul_re, hp] <;> field_simp <;> ring
+    by_cases h : i ≤ k <;> simp [negaSign, negaIdx, h, gridPoly, Complex.mul_re, hp] <;> field_simp; ring
   · rw [← Finset.sum_add_distrib]; push_cast; rw [Finset.sum_div]
     apply Finset.sum_congr rfl; intro i _
-    by_cases h : i ≤ k <;> simp [negaSign, negaIdx, h, gridPoly, Complex.mul_im, Complex.mul_re, hp] <;>
-      field_simp <;> ring
+    by_cases h : i ≤ k <;> simp [negaSign, negaIdx, h, gridPoly, Complex.mul_im, hp] <;>
+      field_simp; ring
 
 theorem div_two_pow_re {p l : ℕ} (z : ℂ) (n : ℤ) (h : z.re = (n : ℝ) / 2 ^ (2 * p)) :
     2 ^ p * (z / ((2 ^ l : ℕ) : ℂ)).re = (n : ℝ) / 2 ^ (p + l) := by

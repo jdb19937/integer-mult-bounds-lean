@@ -141,7 +141,7 @@ theorem tape_eq (T : WTape) (j : ℤ) :
 /-- Reading the symbols from the head on. -/
 theorem tape_at_pos (T : WTape) (c : ℕ) :
     T.tape (a := a) (T.pos + c) = ((syms T.right)[c]?.map sym).getD blank := by
-  rw [tape_eq, if_pos (by unfold pos; omega)]
+  rw [tape_eq, ite_eq_left (by unfold pos; omega)]
   have h : (T.pos + c).toNat = clen T.left.reverse + c := by
     unfold pos; rw [clen_reverse]; omega
   rw [h, words, syms_append, ← length_syms, List.getElem?_append_right (by omega)]
@@ -162,7 +162,7 @@ theorem tape_end (T : WTape) (h : T.right = []) (c : ℕ) :
   rw [tape_at_pos, h]; simp
 
 theorem tape_neg (T : WTape) (j : ℤ) (h : j < 0) : T.tape (a := a) j = blank := by
-  rw [tape_eq, if_neg (by omega)]
+  rw [tape_eq, ite_eq_right (by omega)]
 
 theorem update_wordTape (A : List (Fin (a + 4))) (x : Fin (a + 4)) :
     Function.update (wordTape A) (A.length : ℤ) x = wordTape (A ++ [x]) := by

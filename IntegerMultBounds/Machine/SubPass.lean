@@ -63,7 +63,7 @@ theorem yt_left (vs es : List (List Bool)) (w i : ℕ) :
 
 theorem yt_step (vs es : List (List Bool)) (w W i : ℕ) (hiv : i < vs.length)
     (hvs : ∀ x ∈ vs, x.length = w) (hes : ∀ x ∈ es, x.length = W) (hlen : es.length = vs.length)
-    (hw : 1 ≤ w) (hwW : w ≤ W) :
+    (_hw : 1 ≤ w) (hwW : w ≤ W) :
     putWord (putWord (fun _ => blank) 0 (yt (a := a) vs es w i)) (↑(yt (a := a) vs es w i).length : ℤ)
       ((addMod (negWord ((es.getD i []).take w)) (vs.getD i [])).map bitSymbol) =
       putWord (fun _ => blank) 0 (yt (a := a) vs es w (i + 1)) ∧
@@ -209,7 +209,7 @@ def program := whileLoop (body (a := a)) (fun sy => decide (sy 0 ≠ blank))
 end Parts
 
 /-- The pass after `i` records. -/
-def X (vs es : List (List Bool)) (w W : ℕ) (pS pRw : ℤ) (hw : 1 ≤ w) (hwW : w ≤ W) (hvs : ∀ x ∈ vs, x.length = w) (hes : ∀ x ∈ es, x.length = W) (hlen : es.length = vs.length) (i : ℕ) : Tapes 5 a := bank (inTape (wordRecs (a := a) es)) (inTape (wordRecs (a := a) vs)) (putWord (fun _ => blank) 0 (yt (a := a) vs es w (i))) ((fun _ => blank)) (putWord (fun _ => blank) pRw (ruler w)) ((start (wordRecs (a := a) es) (i) : ℤ)) ((start (wordRecs (a := a) vs) (i) : ℤ)) ((↑(yt (a := a) vs es w (i)).length : ℤ)) (pS) (pRw)
+def X (vs es : List (List Bool)) (w W : ℕ) (pS pRw : ℤ) (_hw : 1 ≤ w) (_hwW : w ≤ W) (_hvs : ∀ x ∈ vs, x.length = w) (_hes : ∀ x ∈ es, x.length = W) (_hlen : es.length = vs.length) (i : ℕ) : Tapes 5 a := bank (inTape (wordRecs (a := a) es)) (inTape (wordRecs (a := a) vs)) (putWord (fun _ => blank) 0 (yt (a := a) vs es w (i))) ((fun _ => blank)) (putWord (fun _ => blank) pRw (ruler w)) ((start (wordRecs (a := a) es) (i) : ℤ)) ((start (wordRecs (a := a) vs) (i) : ℤ)) ((↑(yt (a := a) vs es w (i)).length : ℤ)) (pS) (pRw)
 
 theorem body_hoare (vs es : List (List Bool)) (w W : ℕ) (pS pRw : ℤ) (hw : 1 ≤ w) (hwW : w ≤ W) (hvs : ∀ x ∈ vs, x.length = w) (hes : ∀ x ∈ es, x.length = W) (hlen : es.length = vs.length) (i : ℕ) (hiv : i < vs.length) :
     ∃ c, HoareTime (body (a := a)) (fun v => v = bank (inTape (wordRecs (a := a) es)) (inTape (wordRecs (a := a) vs)) (putWord (fun _ => blank) 0 (yt (a := a) vs es w (i))) ((fun _ => blank)) (putWord (fun _ => blank) pRw (ruler w)) ((start (wordRecs (a := a) es) (i) : ℤ)) ((start (wordRecs (a := a) vs) (i) : ℤ)) ((↑(yt (a := a) vs es w (i)).length : ℤ)) (pS) (pRw))
@@ -229,11 +229,11 @@ theorem body_hoare (vs es : List (List Bool)) (w W : ℕ) (pS pRw : ℤ) (hw : 1
   have hdrop : (start (wordRecs (a := a) es) (i) : ℤ) + ↑w + ↑(((es.getD i []).drop w).map (bitSymbol (a := a))).length = (start (wordRecs (a := a) es) (i) : ℤ) + ↑W := by
     rw [List.length_map, List.length_drop, hAl]; push_cast [Nat.cast_sub hwW]; ring
   have hOend : (putWord (bg (wordRecs (a := a) es) i) (start (wordRecs (a := a) es) (i) : ℤ) (((es.getD i []).take w).map bitSymbol)) ((start (wordRecs (a := a) es) (i) : ℤ) + ↑w + ↑(((es.getD i []).drop w).map (bitSymbol (a := a))).length) = blank := by
-    rw [hdrop, putWord_outside _ _ _ _ (Or.inr (by rw [List.length_map, hTl]; push_cast; omega))]
+    rw [hdrop, putWord_outside _ _ _ _ (Or.inr (by rw [List.length_map, hTl]; omega))]
     exact bg_right _ _ hes _ hie
   have hYleft := yt_left (a := a) vs es w i
   have hYend : putWord (fun _ => blank) 0 (yt (a := a) vs es w i) ((↑(yt (a := a) vs es w i).length : ℤ) + ↑(vs.getD i []).length) = blank :=
-    putWord_outside _ _ _ _ (Or.inr (by push_cast; omega))
+    putWord_outside _ _ _ _ (Or.inr (by omega))
   have c1 := hoare_place (RulerCopy.copy_hoare (fun _ => blank) (inTape (wordRecs (a := a) es)) (fun _ => blank) pRw (start (wordRecs (a := a) es) (i) : ℤ) pS (ruler w) (ruler_nonblank _) rfl) E4_0_3
     (⟨fun z => if z = 0 then (start (wordRecs (a := a) vs) (i) : ℤ) else (↑(yt (a := a) vs es w (i)).length : ℤ), fun z => if z = 0 then inTape (wordRecs (a := a) vs) else putWord (fun _ => blank) 0 (yt (a := a) vs es w (i))⟩ : Tapes 2 a)
   simp only [RulerCopy.cfg, Config.tapes] at c1

@@ -104,12 +104,12 @@ private theorem reset_split {v : Descriptor} (hd : c ∣ v.rows) (x : Fin (volum
     induction i using Fin.addCases with
     | left i =>
       fin_cases i
-      simp only [CountedBankReset.restored,CountedBankReset.after,payloadMask,Fin.addCases_left,
-        RecursiveRowsConstruct.splitPayload,rolePayload,CyclicRowCopy.payload,Tapes.append,ite_true]
+      simp only [CountedBankReset.after,payloadMask,Fin.addCases_left,
+        RecursiveRowsConstruct.splitPayload,CyclicRowCopy.payload,Tapes.append,ite_true]
       simpa only [List.length_ofFn] using (show CountedBankReset.erased (RecursiveRowsConstruct.word x) 0 (List.ofFn x).length =
         fun _ => blank from CountedBankReset.erased_word _ _)
-    | right i => simp [CountedBankReset.restored,CountedBankReset.after,payloadMask,
-        RecursiveRowsConstruct.splitPayload,rolePayload,CyclicRowCopy.payload,Tapes.append]
+    | right i => simp [CountedBankReset.after,payloadMask,
+        RecursiveRowsConstruct.splitPayload,CyclicRowCopy.payload,Tapes.append]
 
 private theorem reset_merge {v : Descriptor} (rho : Equiv.Perm (Fin c)) (hd : c ∣ v.rows)
     (x : Fin (volume q v) → Fin (q+4)) :
@@ -119,11 +119,11 @@ private theorem reset_merge {v : Descriptor} (rho : Equiv.Perm (Fin c)) (hd : c 
   · rfl
   · funext i
     induction i using Fin.addCases with
-    | left i => simp [CountedBankReset.restored,CountedBankReset.after,payloadMask,
-        RecursiveRowsConstruct.mergePayload,RecursiveRowsConstruct.sourcePayload,CyclicRowCopy.payload,Tapes.append]
+    | left i => simp [CountedBankReset.after,payloadMask,
+        RecursiveRowsConstruct.mergePayload,CyclicRowCopy.payload,Tapes.append]
     | right i =>
-      simp only [CountedBankReset.restored,CountedBankReset.after,payloadMask,Fin.addCases_right,
-        RecursiveRowsConstruct.mergePayload,RecursiveRowsConstruct.sourcePayload,CyclicRowCopy.payload,Tapes.append,ite_true]
+      simp only [CountedBankReset.after,payloadMask,Fin.addCases_right,
+        RecursiveRowsConstruct.mergePayload,CyclicRowCopy.payload,Tapes.append,ite_true]
       simpa only [List.length_ofFn] using (show CountedBankReset.erased
         (RecursiveRowsConstruct.word (RecursiveInterchangeRows.roleArray q c v hd x (rho.symm i))) 0
         (List.ofFn (RecursiveInterchangeRows.roleArray q c v hd x (rho.symm i))).length = fun _ => blank from

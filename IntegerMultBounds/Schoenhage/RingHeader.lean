@@ -94,8 +94,7 @@ theorem runs_binA (τ : Fin 𝕌 → WTape) {b : Bool} {B : List Bool} {u : ℕ}
     simp only [Function.update_apply]
     split_ifs <;> (try subst_vars) <;> tsimp [h1, hB, hL, hE, hE2, hH, emp, reg, ones_append] at *
   · simp only [time_copy, length_ones, WTape.words, clen_cons, clen_nil, List.reverse_nil, List.nil_append,
-      List.length_cons, List.length_nil, List.length_singleton, List.length_drop, List.reverse_cons,
-      List.singleton_append, List.append_nil] at *
+      List.length_cons, List.length_nil, List.reverse_cons, List.append_nil] at *
     omega
 
 theorem ones_snoc (v : ℕ) : ones v ++ [true] = ones (v + 1) := by
@@ -266,8 +265,7 @@ theorem runs_codeA {v : ℕ} (hv : 1 ≤ v) {rest : List Bool} (τ : Fin 𝕌 �
     simp only [Function.update_apply]
     split_ifs <;> (try subst_vars) <;> tsimp [h1, hX, hY, hS, hD, hO, emp, reg] at *
   · simp only [time_copy, length_ones, WTape.words, clen_cons, clen_nil, List.reverse_nil, List.nil_append,
-      List.length_cons, List.length_nil, List.length_singleton, List.reverse_cons, List.singleton_append,
-      List.append_nil, length_msbBits, List.length_append] at *
+      List.length_cons, List.length_nil, length_msbBits, List.length_append] at *
     clear_value x n
     clear hz hd e1 e2 e3 hz' e4 h1 hX hY hS hD hO b1 b2 b3
     generalize x.length = X at *
@@ -444,8 +442,8 @@ theorem runs_decodeHeader {p d l K w : ℕ} {ts : List ℕ} (hp : 1 ≤ p) (hd :
     refine ⟨?_, ?_⟩
     · funext y
       simp only [Function.update_apply]
-      split_ifs <;> (try subst_vars) <;> (try tsimp [hz, hH, reg, emp]) <;> tsimp at *
-    · simp [time_copy, clen, WTape.words]; omega
+      split_ifs <;> (try subst_vars) <;> (try tsimp [hz, hH, reg, emp]); tsimp at *
+    · simp [time_copy]; omega
   set τ₀ := Function.update (Function.update τ (ι c1) (reg [true])) (ι tX) (reg hdr)
   -- p
   have s1 := runs_decodeOne hp (rest := R1) τ₀ (by tsimp [τ₀]) (by tsimp [τ₀, eh])
@@ -503,7 +501,7 @@ theorem runs_decodeHeader {p d l K w : ℕ} {ts : List ℕ} (hp : 1 ≤ p) (hd :
     · simp only [List.mem_cons, List.not_mem_nil, or_false, not_or] at hm
       obtain ⟨n1, n2, n3, n4, n5, n6⟩ := hm
       simp only [τ₁₀, τ₉, τ₈, τ₆, τ₅, τ₄, τ₂, τ₁, τ₀, Function.update_apply, n1, n2, n3, n4, n5, n6,
-        if_false]
+        ite_false]
   · clear s0 s1 s2 s3 s5 s6 s7 s9 s10 s11 s12
     tsimp [τ₁₀, τ₉, τ₈, τ₆, τ₅, τ₄, τ₂, τ₁, τ₀, hz, emp, reg, WTape.words, clen_cons, clen_nil,
       length_ones]

@@ -61,10 +61,10 @@ theorem step_write {q : ℕ} (M : Program 1 q a) (f : ℤ → Fin (a + 4)) (p : 
   simp only [Option.some.injEq, Move.offset]
   congr 1
   funext _ j
-  by_cases hj : j = p <;> simp [hj, Function.update_apply]
+  by_cases hj : j = p <;> simp [hj]
 
 theorem update_same (f : ℤ → Fin (a + 4)) (p : ℤ) : Function.update f p (f p) = f := by
-  funext j; by_cases hj : j = p <;> simp [hj, Function.update_apply]
+  funext j; by_cases hj : j = p <;> simp [hj]
 
 /-- Scanning a word of bits in a state that keeps its symbols. -/
 theorem scan_bits {q : ℕ} (M : Program 1 q a) (s : Fin q)
@@ -311,7 +311,7 @@ theorem split_pair_run (D F : List (Fin (a + 4))) (b c : Bool) (xs ys : List Boo
   have eC : (D ++ bitSymbol b :: xs.map bitSymbol) ++ blank :: (bitSymbol c :: (ys.map bitSymbol ++ blank :: F)) =
       ((D ++ bitSymbol b :: xs.map bitSymbol) ++ [blank]) ++ bitSymbol c :: (ys.map bitSymbol ++ blank :: F) := by simp
   have hpos1 : (((D ++ bitSymbol b :: xs.map bitSymbol).length : ℕ) : ℤ) + 1 =
-      ((((D ++ bitSymbol b :: xs.map bitSymbol) ++ [blank]).length : ℕ) : ℤ) := by simp <;> ring
+      ((((D ++ bitSymbol b :: xs.map bitSymbol) ++ [blank]).length : ℕ) : ℤ) := by simp; ring
   rw [run_add, run_one, hpos1, eC, step_write splitProgram _ _ 0 1 (bitSymbol c) (by rw [pw_at]; exact split_bit 0 c),
     pw_update]
   simp only [Option.bind_some]
@@ -319,7 +319,7 @@ theorem split_pair_run (D F : List (Fin (a + 4))) (b c : Bool) (xs ys : List Boo
       (((D ++ bitSymbol b :: xs.map bitSymbol) ++ [blank]) ++ [bitSymbol c]) ++ ys.map bitSymbol ++ (blank :: F) := by simp
   rw [run_add, eD, scan_bits splitProgram 1 split_t1 _ _ ys (fun k hk => by
       convert pw_bits (((D ++ bitSymbol b :: xs.map bitSymbol) ++ [blank]) ++ [bitSymbol c]) _ ys k hk using 2
-      simp <;> ring)]
+      simp; ring)]
   simp only [Option.bind_some]
   have hpos2 : ((((D ++ bitSymbol b :: xs.map bitSymbol) ++ [blank]).length : ℕ) : ℤ) + 1 + ys.length =
       (((((D ++ bitSymbol b :: xs.map bitSymbol) ++ [blank]) ++ [bitSymbol c]) ++ ys.map bitSymbol).length : ℕ) := by

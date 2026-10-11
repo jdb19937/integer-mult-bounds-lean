@@ -59,28 +59,28 @@ theorem copy_hoare (g : Bool) (source : ℤ → Fin (a+4)) (ss op oe : List Bool
   all_goals cases g
   · change (bank (q := q) source ss op oe none none none ctrl).tape (Fin.castAdd 2 RadixHighBlockJoinBank.originalPrefixSlot) = RadixZeroFill.encodedBinary op
     rw [read_tape]
-    simp (disch := omega) [RadixHighBlockJoinBank.originalPrefixSlot,optionHead,optionTape,encoded_binary,ite_eq_right,ite_eq_left]
+    simp (disch := omega) [RadixHighBlockJoinBank.originalPrefixSlot,optionTape,encoded_binary,ite_eq_right]
   · change (bank (q := q) source ss op oe none none none ctrl).tape (Fin.castAdd 2 RadixHighBlockJoinBank.originalSuffixSlot) = RadixZeroFill.encodedBinary oe
     rw [read_tape]
-    simp (disch := omega) [RadixHighBlockJoinBank.originalSuffixSlot,optionHead,optionTape,encoded_binary,ite_eq_right,ite_eq_left]
+    simp (disch := omega) [RadixHighBlockJoinBank.originalSuffixSlot,optionTape,encoded_binary,ite_eq_right]
   · change (bank (q := q) source ss op oe none none none ctrl).head (Fin.castAdd 2 RadixHighBlockJoinBank.originalPrefixSlot) = 1
     rw [read_head]
-    simp (disch := omega) [RadixHighBlockJoinBank.originalPrefixSlot,optionHead,optionTape,encoded_binary,ite_eq_right,ite_eq_left]
+    simp (disch := omega) [RadixHighBlockJoinBank.originalPrefixSlot,optionHead,ite_eq_right]
   · change (bank (q := q) source ss op oe none none none ctrl).head (Fin.castAdd 2 RadixHighBlockJoinBank.originalSuffixSlot) = 1
     rw [read_head]
-    simp (disch := omega) [RadixHighBlockJoinBank.originalSuffixSlot,optionHead,optionTape,encoded_binary,ite_eq_right,ite_eq_left]
+    simp (disch := omega) [RadixHighBlockJoinBank.originalSuffixSlot,optionHead,ite_eq_right]
   · change (bank (q := q) source ss op oe none none none ctrl).tape (Fin.castAdd 2 RadixHighBlockJoinBank.prefixSlot) = (fun _ => blank)
     rw [read_tape]
-    simp (disch := omega) [RadixHighBlockJoinBank.prefixSlot,optionHead,optionTape,encoded_binary,ite_eq_right,ite_eq_left]
+    simp (disch := omega) [RadixHighBlockJoinBank.prefixSlot,optionTape]
   · change (bank (q := q) source ss op oe none none none ctrl).tape (Fin.castAdd 2 RadixHighBlockJoinBank.suffixSlot) = (fun _ => blank)
     rw [read_tape]
-    simp (disch := omega) [RadixHighBlockJoinBank.suffixSlot,optionHead,optionTape,encoded_binary,ite_eq_right,ite_eq_left]
+    simp (disch := omega) [RadixHighBlockJoinBank.suffixSlot,optionTape]
   · change (bank (q := q) source ss op oe none none none ctrl).head (Fin.castAdd 2 RadixHighBlockJoinBank.prefixSlot) = 0
     rw [read_head]
-    simp (disch := omega) [RadixHighBlockJoinBank.prefixSlot,optionHead,optionTape,encoded_binary,ite_eq_right,ite_eq_left]
+    simp (disch := omega) [RadixHighBlockJoinBank.prefixSlot,optionHead]
   · change (bank (q := q) source ss op oe none none none ctrl).head (Fin.castAdd 2 RadixHighBlockJoinBank.suffixSlot) = 0
     rw [read_head]
-    simp (disch := omega) [RadixHighBlockJoinBank.suffixSlot,optionHead,optionTape,encoded_binary,ite_eq_right,ite_eq_left]
+    simp (disch := omega) [RadixHighBlockJoinBank.suffixSlot,optionHead]
 
 theorem base_hoare (source : ℤ → Fin (a+4)) (ss op oe : List Bool)
     (ps es : Option (List Bool)) (ctrl : Tapes 2 a) :
@@ -90,10 +90,7 @@ theorem base_hoare (source : ℤ → Fin (a+4)) (ss op oe : List Bool)
     (FiniteReturnStackAt.placement (baseSlot (q := q))) (bank source ss op oe ps es none ctrl) (by
       rw [FiniteReturnStackAt.active_bank]
       simp only [baseSlot,read_head,read_tape]
-      simp (disch := omega) [read_head,read_tape,optionHead,optionTape,
-      RadixHighBlockJoinBank.prefixSlot,RadixHighBlockJoinBank.suffixSlot,RadixHighBlockJoinBank.baseSlot,
-      RadixHighBlockJoinBank.spectatorSlot,RadixHighBlockJoinBank.originalPrefixSlot,RadixHighBlockJoinBank.originalSuffixSlot,
-      RadixHighBlockJoinBank.scratchSlot,-Fin.val_eq_zero_iff,ite_eq_right,ite_eq_left])
+      simp (disch := omega) [optionHead,optionTape,RadixHighBlockJoinBank.baseSlot,-Fin.val_eq_zero_iff,ite_eq_right])
   apply h.consequence (fun _ h => h) _ le_rfl
   rintro v ⟨small,rfl,rfl⟩
   rw [FiniteReturnStackAt.replace_bank,← encoded_descriptor]
@@ -111,7 +108,7 @@ private theorem scratch_view (source : ℤ → Fin (a+4)) (ss op oe : List Bool)
   have h4 : 2*q+18+i.val ≠ 2*q+14 := by omega
   have h5 : 2*q+18+i.val ≠ 2*q+32 := by omega
   have h6 : 2*q+18+i.val ≠ 2*q+33 := by omega
-  simp only [scratchSlot,read_head,read_tape,RadixHighBlockJoinBank.scratchSlot,Fin.val_mk,
+  simp only [scratchSlot,read_head,read_tape,RadixHighBlockJoinBank.scratchSlot,
     h0,h1,h2,h3,h4,h5,h6,ite_false,false_or,and_self]
 
 theorem active_power (source : ℤ → Fin (a+4)) (ss op oe rs : List Bool) (ps es ws : Option (List Bool))
@@ -120,7 +117,7 @@ theorem active_power (source : ℤ → Fin (a+4)) (ss op oe rs : List Bool) (ps 
       FixedBasePowerDescriptor.input rs := by
   apply congrArg₂ Tapes.mk
   · funext i
-    fin_cases i <;> simp only [Placement.active,powerPlacement_active]
+    fin_cases i <;> simp only [powerPlacement_active]
     · change (bank (q := q) source ss op oe ps es ws (controls clock p rs)).head (scratchSlot 1) = 0
       exact (scratch_view source ss op oe ps es ws (controls clock p rs) 1).1
     · change (bank (q := q) source ss op oe ps es ws (controls clock p rs)).head (scratchSlot 2) = 0
@@ -139,7 +136,7 @@ theorem active_power (source : ℤ → Fin (a+4)) (ss op oe rs : List Bool) (ps 
       simp only [bank,exponentSlot,Tapes.append,Fin.addCases_right]
       rfl
   · funext i
-    fin_cases i <;> simp only [Placement.active,powerPlacement_active]
+    fin_cases i <;> simp only [powerPlacement_active]
     · change (bank (q := q) source ss op oe ps es ws (controls clock p rs)).tape (scratchSlot 1) = (fun _ => blank)
       exact (scratch_view source ss op oe ps es ws (controls clock p rs) 1).2
     · change (bank (q := q) source ss op oe ps es ws (controls clock p rs)).tape (scratchSlot 2) = (fun _ => blank)
@@ -178,235 +175,187 @@ theorem active_product (g : Bool) (source : ℤ → Fin (a+4)) (ss op oe : List 
       BoundedProductDescriptor.input (powerBits (q := q) r) (selected g op oe) := by
   apply congrArg₂ Tapes.mk <;> funext i
   all_goals cases g <;> fin_cases i
-  all_goals simp only [Placement.active,productPlacement_active]
+  all_goals simp only [productPlacement_active]
   · change Function.update (bank (q := q) source ss op oe (some op) none (some (bits q)) ctrl).head (scratchSlot 0) 1 (scratchSlot 1) = 0
     rw [Function.update_of_ne (by
       intro he
       have hv := congrArg Fin.val he
-      simp [scratchSlot,prefixSlot,suffixSlot,originalPrefixSlot,originalSuffixSlot,
-        RadixHighBlockJoinBank.scratchSlot,RadixHighBlockJoinBank.prefixSlot,RadixHighBlockJoinBank.suffixSlot,
-        RadixHighBlockJoinBank.originalPrefixSlot,RadixHighBlockJoinBank.originalSuffixSlot] at hv <;> omega)]
+      simp [scratchSlot,
+        RadixHighBlockJoinBank.scratchSlot] at hv)]
     simp only [scratchSlot,read_head]
-    simp (disch := omega) [RadixHighBlockJoinBank.scratchSlot,RadixHighBlockJoinBank.prefixSlot,
-      RadixHighBlockJoinBank.suffixSlot,RadixHighBlockJoinBank.originalPrefixSlot,RadixHighBlockJoinBank.originalSuffixSlot,
-      optionHead,optionTape,ite_eq_right,ite_eq_left,encoded_binary,-Fin.val_eq_zero_iff]
+    simp (disch := omega) [RadixHighBlockJoinBank.scratchSlot,
+      optionHead,ite_eq_right,-Fin.val_eq_zero_iff]
   · change Function.update (bank (q := q) source ss op oe (some op) none (some (bits q)) ctrl).head (scratchSlot 0) 1 (suffixSlot) = 0
     rw [Function.update_of_ne (by
       intro he
       have hv := congrArg Fin.val he
-      simp [scratchSlot,prefixSlot,suffixSlot,originalPrefixSlot,originalSuffixSlot,
-        RadixHighBlockJoinBank.scratchSlot,RadixHighBlockJoinBank.prefixSlot,RadixHighBlockJoinBank.suffixSlot,
-        RadixHighBlockJoinBank.originalPrefixSlot,RadixHighBlockJoinBank.originalSuffixSlot] at hv <;> omega)]
+      simp [scratchSlot,suffixSlot,
+        RadixHighBlockJoinBank.scratchSlot,RadixHighBlockJoinBank.suffixSlot] at hv; omega)]
     simp only [suffixSlot,read_head]
-    simp (disch := omega) [RadixHighBlockJoinBank.scratchSlot,RadixHighBlockJoinBank.prefixSlot,
-      RadixHighBlockJoinBank.suffixSlot,RadixHighBlockJoinBank.originalPrefixSlot,RadixHighBlockJoinBank.originalSuffixSlot,
-      optionHead,optionTape,ite_eq_right,ite_eq_left,encoded_binary,-Fin.val_eq_zero_iff]
+    simp (disch := omega) [RadixHighBlockJoinBank.suffixSlot,
+      optionHead,-Fin.val_eq_zero_iff]
   · change Function.update (bank (q := q) source ss op oe (some op) none (some (bits q)) ctrl).head (scratchSlot 0) 1 (scratchSlot 2) = 0
     rw [Function.update_of_ne (by
       intro he
       have hv := congrArg Fin.val he
-      simp [scratchSlot,prefixSlot,suffixSlot,originalPrefixSlot,originalSuffixSlot,
-        RadixHighBlockJoinBank.scratchSlot,RadixHighBlockJoinBank.prefixSlot,RadixHighBlockJoinBank.suffixSlot,
-        RadixHighBlockJoinBank.originalPrefixSlot,RadixHighBlockJoinBank.originalSuffixSlot] at hv <;> omega)]
+      simp [scratchSlot,
+        RadixHighBlockJoinBank.scratchSlot] at hv)]
     simp only [scratchSlot,read_head]
-    simp (disch := omega) [RadixHighBlockJoinBank.scratchSlot,RadixHighBlockJoinBank.prefixSlot,
-      RadixHighBlockJoinBank.suffixSlot,RadixHighBlockJoinBank.originalPrefixSlot,RadixHighBlockJoinBank.originalSuffixSlot,
-      optionHead,optionTape,ite_eq_right,ite_eq_left,encoded_binary,-Fin.val_eq_zero_iff]
+    simp (disch := omega) [RadixHighBlockJoinBank.scratchSlot,
+      optionHead,ite_eq_right,-Fin.val_eq_zero_iff]
   · change Function.update (bank (q := q) source ss op oe (some op) none (some (bits q)) ctrl).head (scratchSlot 0) 1 (scratchSlot 0) = 1
     rw [Function.update_self]
   · change Function.update (bank (q := q) source ss op oe (some op) none (some (bits q)) ctrl).head (scratchSlot 0) 1 (scratchSlot 3) = 0
     rw [Function.update_of_ne (by
       intro he
       have hv := congrArg Fin.val he
-      simp [scratchSlot,prefixSlot,suffixSlot,originalPrefixSlot,originalSuffixSlot,
-        RadixHighBlockJoinBank.scratchSlot,RadixHighBlockJoinBank.prefixSlot,RadixHighBlockJoinBank.suffixSlot,
-        RadixHighBlockJoinBank.originalPrefixSlot,RadixHighBlockJoinBank.originalSuffixSlot] at hv <;> omega)]
+      simp [scratchSlot,
+        RadixHighBlockJoinBank.scratchSlot] at hv)]
     simp only [scratchSlot,read_head]
-    simp (disch := omega) [RadixHighBlockJoinBank.scratchSlot,RadixHighBlockJoinBank.prefixSlot,
-      RadixHighBlockJoinBank.suffixSlot,RadixHighBlockJoinBank.originalPrefixSlot,RadixHighBlockJoinBank.originalSuffixSlot,
-      optionHead,optionTape,ite_eq_right,ite_eq_left,encoded_binary,-Fin.val_eq_zero_iff]
+    simp (disch := omega) [RadixHighBlockJoinBank.scratchSlot,
+      optionHead,ite_eq_right,-Fin.val_eq_zero_iff]
   · change Function.update (bank (q := q) source ss op oe (some op) none (some (bits q)) ctrl).head (scratchSlot 0) 1 (originalSuffixSlot) = 1
     rw [Function.update_of_ne (by
       intro he
       have hv := congrArg Fin.val he
-      simp [scratchSlot,prefixSlot,suffixSlot,originalPrefixSlot,originalSuffixSlot,
-        RadixHighBlockJoinBank.scratchSlot,RadixHighBlockJoinBank.prefixSlot,RadixHighBlockJoinBank.suffixSlot,
-        RadixHighBlockJoinBank.originalPrefixSlot,RadixHighBlockJoinBank.originalSuffixSlot] at hv <;> omega)]
+      simp [scratchSlot,originalSuffixSlot,
+        RadixHighBlockJoinBank.scratchSlot,RadixHighBlockJoinBank.originalSuffixSlot] at hv)]
     simp only [originalSuffixSlot,read_head]
-    simp (disch := omega) [RadixHighBlockJoinBank.scratchSlot,RadixHighBlockJoinBank.prefixSlot,
-      RadixHighBlockJoinBank.suffixSlot,RadixHighBlockJoinBank.originalPrefixSlot,RadixHighBlockJoinBank.originalSuffixSlot,
-      optionHead,optionTape,ite_eq_right,ite_eq_left,encoded_binary,-Fin.val_eq_zero_iff]
+    simp (disch := omega) [RadixHighBlockJoinBank.originalSuffixSlot,
+      optionHead,ite_eq_right,-Fin.val_eq_zero_iff]
   · change Function.update (bank (q := q) source ss op oe none (some oe) (some (bits q)) ctrl).head (scratchSlot 0) 1 (scratchSlot 1) = 0
     rw [Function.update_of_ne (by
       intro he
       have hv := congrArg Fin.val he
-      simp [scratchSlot,prefixSlot,suffixSlot,originalPrefixSlot,originalSuffixSlot,
-        RadixHighBlockJoinBank.scratchSlot,RadixHighBlockJoinBank.prefixSlot,RadixHighBlockJoinBank.suffixSlot,
-        RadixHighBlockJoinBank.originalPrefixSlot,RadixHighBlockJoinBank.originalSuffixSlot] at hv <;> omega)]
+      simp [scratchSlot,
+        RadixHighBlockJoinBank.scratchSlot] at hv)]
     simp only [scratchSlot,read_head]
-    simp (disch := omega) [RadixHighBlockJoinBank.scratchSlot,RadixHighBlockJoinBank.prefixSlot,
-      RadixHighBlockJoinBank.suffixSlot,RadixHighBlockJoinBank.originalPrefixSlot,RadixHighBlockJoinBank.originalSuffixSlot,
-      optionHead,optionTape,ite_eq_right,ite_eq_left,encoded_binary,-Fin.val_eq_zero_iff]
+    simp (disch := omega) [RadixHighBlockJoinBank.scratchSlot,
+      optionHead,ite_eq_right,-Fin.val_eq_zero_iff]
   · change Function.update (bank (q := q) source ss op oe none (some oe) (some (bits q)) ctrl).head (scratchSlot 0) 1 (prefixSlot) = 0
     rw [Function.update_of_ne (by
       intro he
       have hv := congrArg Fin.val he
-      simp [scratchSlot,prefixSlot,suffixSlot,originalPrefixSlot,originalSuffixSlot,
-        RadixHighBlockJoinBank.scratchSlot,RadixHighBlockJoinBank.prefixSlot,RadixHighBlockJoinBank.suffixSlot,
-        RadixHighBlockJoinBank.originalPrefixSlot,RadixHighBlockJoinBank.originalSuffixSlot] at hv <;> omega)]
+      simp [scratchSlot,prefixSlot,
+        RadixHighBlockJoinBank.scratchSlot,RadixHighBlockJoinBank.prefixSlot] at hv; omega)]
     simp only [prefixSlot,read_head]
-    simp (disch := omega) [RadixHighBlockJoinBank.scratchSlot,RadixHighBlockJoinBank.prefixSlot,
-      RadixHighBlockJoinBank.suffixSlot,RadixHighBlockJoinBank.originalPrefixSlot,RadixHighBlockJoinBank.originalSuffixSlot,
-      optionHead,optionTape,ite_eq_right,ite_eq_left,encoded_binary,-Fin.val_eq_zero_iff]
+    simp (disch := omega) [RadixHighBlockJoinBank.prefixSlot,
+      optionHead,-Fin.val_eq_zero_iff]
   · change Function.update (bank (q := q) source ss op oe none (some oe) (some (bits q)) ctrl).head (scratchSlot 0) 1 (scratchSlot 2) = 0
     rw [Function.update_of_ne (by
       intro he
       have hv := congrArg Fin.val he
-      simp [scratchSlot,prefixSlot,suffixSlot,originalPrefixSlot,originalSuffixSlot,
-        RadixHighBlockJoinBank.scratchSlot,RadixHighBlockJoinBank.prefixSlot,RadixHighBlockJoinBank.suffixSlot,
-        RadixHighBlockJoinBank.originalPrefixSlot,RadixHighBlockJoinBank.originalSuffixSlot] at hv <;> omega)]
+      simp [scratchSlot,
+        RadixHighBlockJoinBank.scratchSlot] at hv)]
     simp only [scratchSlot,read_head]
-    simp (disch := omega) [RadixHighBlockJoinBank.scratchSlot,RadixHighBlockJoinBank.prefixSlot,
-      RadixHighBlockJoinBank.suffixSlot,RadixHighBlockJoinBank.originalPrefixSlot,RadixHighBlockJoinBank.originalSuffixSlot,
-      optionHead,optionTape,ite_eq_right,ite_eq_left,encoded_binary,-Fin.val_eq_zero_iff]
+    simp (disch := omega) [RadixHighBlockJoinBank.scratchSlot,
+      optionHead,ite_eq_right,-Fin.val_eq_zero_iff]
   · change Function.update (bank (q := q) source ss op oe none (some oe) (some (bits q)) ctrl).head (scratchSlot 0) 1 (scratchSlot 0) = 1
     rw [Function.update_self]
   · change Function.update (bank (q := q) source ss op oe none (some oe) (some (bits q)) ctrl).head (scratchSlot 0) 1 (scratchSlot 3) = 0
     rw [Function.update_of_ne (by
       intro he
       have hv := congrArg Fin.val he
-      simp [scratchSlot,prefixSlot,suffixSlot,originalPrefixSlot,originalSuffixSlot,
-        RadixHighBlockJoinBank.scratchSlot,RadixHighBlockJoinBank.prefixSlot,RadixHighBlockJoinBank.suffixSlot,
-        RadixHighBlockJoinBank.originalPrefixSlot,RadixHighBlockJoinBank.originalSuffixSlot] at hv <;> omega)]
+      simp [scratchSlot,
+        RadixHighBlockJoinBank.scratchSlot] at hv)]
     simp only [scratchSlot,read_head]
-    simp (disch := omega) [RadixHighBlockJoinBank.scratchSlot,RadixHighBlockJoinBank.prefixSlot,
-      RadixHighBlockJoinBank.suffixSlot,RadixHighBlockJoinBank.originalPrefixSlot,RadixHighBlockJoinBank.originalSuffixSlot,
-      optionHead,optionTape,ite_eq_right,ite_eq_left,encoded_binary,-Fin.val_eq_zero_iff]
+    simp (disch := omega) [RadixHighBlockJoinBank.scratchSlot,
+      optionHead,ite_eq_right,-Fin.val_eq_zero_iff]
   · change Function.update (bank (q := q) source ss op oe none (some oe) (some (bits q)) ctrl).head (scratchSlot 0) 1 (originalPrefixSlot) = 1
     rw [Function.update_of_ne (by
       intro he
       have hv := congrArg Fin.val he
-      simp [scratchSlot,prefixSlot,suffixSlot,originalPrefixSlot,originalSuffixSlot,
-        RadixHighBlockJoinBank.scratchSlot,RadixHighBlockJoinBank.prefixSlot,RadixHighBlockJoinBank.suffixSlot,
-        RadixHighBlockJoinBank.originalPrefixSlot,RadixHighBlockJoinBank.originalSuffixSlot] at hv <;> omega)]
+      simp [scratchSlot,originalPrefixSlot,
+        RadixHighBlockJoinBank.scratchSlot,
+        RadixHighBlockJoinBank.originalPrefixSlot] at hv)]
     simp only [originalPrefixSlot,read_head]
-    simp (disch := omega) [RadixHighBlockJoinBank.scratchSlot,RadixHighBlockJoinBank.prefixSlot,
-      RadixHighBlockJoinBank.suffixSlot,RadixHighBlockJoinBank.originalPrefixSlot,RadixHighBlockJoinBank.originalSuffixSlot,
-      optionHead,optionTape,ite_eq_right,ite_eq_left,encoded_binary,-Fin.val_eq_zero_iff]
+    simp (disch := omega) [RadixHighBlockJoinBank.originalPrefixSlot,
+      optionHead,ite_eq_right,-Fin.val_eq_zero_iff]
   · change Function.update (bank (q := q) source ss op oe (some op) none (some (bits q)) ctrl).tape (scratchSlot 0) (RadixZeroFill.encodedBinary (powerBits (q := q) r)) (scratchSlot 1) = (fun _ => blank)
     rw [Function.update_of_ne (by
       intro he
       have hv := congrArg Fin.val he
-      simp [scratchSlot,prefixSlot,suffixSlot,originalPrefixSlot,originalSuffixSlot,
-        RadixHighBlockJoinBank.scratchSlot,RadixHighBlockJoinBank.prefixSlot,RadixHighBlockJoinBank.suffixSlot,
-        RadixHighBlockJoinBank.originalPrefixSlot,RadixHighBlockJoinBank.originalSuffixSlot] at hv <;> omega)]
+      simp [scratchSlot,
+        RadixHighBlockJoinBank.scratchSlot] at hv)]
     simp only [scratchSlot,read_tape]
-    simp (disch := omega) [RadixHighBlockJoinBank.scratchSlot,RadixHighBlockJoinBank.prefixSlot,
-      RadixHighBlockJoinBank.suffixSlot,RadixHighBlockJoinBank.originalPrefixSlot,RadixHighBlockJoinBank.originalSuffixSlot,
-      optionHead,optionTape,ite_eq_right,ite_eq_left,encoded_binary,-Fin.val_eq_zero_iff]
+    simp (disch := omega) [RadixHighBlockJoinBank.scratchSlot,optionTape,ite_eq_right,-Fin.val_eq_zero_iff]
   · change Function.update (bank (q := q) source ss op oe (some op) none (some (bits q)) ctrl).tape (scratchSlot 0) (RadixZeroFill.encodedBinary (powerBits (q := q) r)) (suffixSlot) = (fun _ => blank)
     rw [Function.update_of_ne (by
       intro he
       have hv := congrArg Fin.val he
-      simp [scratchSlot,prefixSlot,suffixSlot,originalPrefixSlot,originalSuffixSlot,
-        RadixHighBlockJoinBank.scratchSlot,RadixHighBlockJoinBank.prefixSlot,RadixHighBlockJoinBank.suffixSlot,
-        RadixHighBlockJoinBank.originalPrefixSlot,RadixHighBlockJoinBank.originalSuffixSlot] at hv <;> omega)]
+      simp [scratchSlot,suffixSlot,
+        RadixHighBlockJoinBank.scratchSlot,RadixHighBlockJoinBank.suffixSlot] at hv; omega)]
     simp only [suffixSlot,read_tape]
-    simp (disch := omega) [RadixHighBlockJoinBank.scratchSlot,RadixHighBlockJoinBank.prefixSlot,
-      RadixHighBlockJoinBank.suffixSlot,RadixHighBlockJoinBank.originalPrefixSlot,RadixHighBlockJoinBank.originalSuffixSlot,
-      optionHead,optionTape,ite_eq_right,ite_eq_left,encoded_binary,-Fin.val_eq_zero_iff]
+    simp (disch := omega) [RadixHighBlockJoinBank.suffixSlot,optionTape,-Fin.val_eq_zero_iff]
   · change Function.update (bank (q := q) source ss op oe (some op) none (some (bits q)) ctrl).tape (scratchSlot 0) (RadixZeroFill.encodedBinary (powerBits (q := q) r)) (scratchSlot 2) = (fun _ => blank)
     rw [Function.update_of_ne (by
       intro he
       have hv := congrArg Fin.val he
-      simp [scratchSlot,prefixSlot,suffixSlot,originalPrefixSlot,originalSuffixSlot,
-        RadixHighBlockJoinBank.scratchSlot,RadixHighBlockJoinBank.prefixSlot,RadixHighBlockJoinBank.suffixSlot,
-        RadixHighBlockJoinBank.originalPrefixSlot,RadixHighBlockJoinBank.originalSuffixSlot] at hv <;> omega)]
+      simp [scratchSlot,
+        RadixHighBlockJoinBank.scratchSlot] at hv)]
     simp only [scratchSlot,read_tape]
-    simp (disch := omega) [RadixHighBlockJoinBank.scratchSlot,RadixHighBlockJoinBank.prefixSlot,
-      RadixHighBlockJoinBank.suffixSlot,RadixHighBlockJoinBank.originalPrefixSlot,RadixHighBlockJoinBank.originalSuffixSlot,
-      optionHead,optionTape,ite_eq_right,ite_eq_left,encoded_binary,-Fin.val_eq_zero_iff]
+    simp (disch := omega) [RadixHighBlockJoinBank.scratchSlot,optionTape,ite_eq_right,-Fin.val_eq_zero_iff]
   · change Function.update (bank (q := q) source ss op oe (some op) none (some (bits q)) ctrl).tape (scratchSlot 0) (RadixZeroFill.encodedBinary (powerBits (q := q) r)) (scratchSlot 0) = RadixZeroFill.encodedBinary (powerBits (q := q) r)
     rw [Function.update_self]
   · change Function.update (bank (q := q) source ss op oe (some op) none (some (bits q)) ctrl).tape (scratchSlot 0) (RadixZeroFill.encodedBinary (powerBits (q := q) r)) (scratchSlot 3) = (fun _ => blank)
     rw [Function.update_of_ne (by
       intro he
       have hv := congrArg Fin.val he
-      simp [scratchSlot,prefixSlot,suffixSlot,originalPrefixSlot,originalSuffixSlot,
-        RadixHighBlockJoinBank.scratchSlot,RadixHighBlockJoinBank.prefixSlot,RadixHighBlockJoinBank.suffixSlot,
-        RadixHighBlockJoinBank.originalPrefixSlot,RadixHighBlockJoinBank.originalSuffixSlot] at hv <;> omega)]
+      simp [scratchSlot,
+        RadixHighBlockJoinBank.scratchSlot] at hv)]
     simp only [scratchSlot,read_tape]
-    simp (disch := omega) [RadixHighBlockJoinBank.scratchSlot,RadixHighBlockJoinBank.prefixSlot,
-      RadixHighBlockJoinBank.suffixSlot,RadixHighBlockJoinBank.originalPrefixSlot,RadixHighBlockJoinBank.originalSuffixSlot,
-      optionHead,optionTape,ite_eq_right,ite_eq_left,encoded_binary,-Fin.val_eq_zero_iff]
+    simp (disch := omega) [RadixHighBlockJoinBank.scratchSlot,optionTape,ite_eq_right,-Fin.val_eq_zero_iff]
   · change Function.update (bank (q := q) source ss op oe (some op) none (some (bits q)) ctrl).tape (scratchSlot 0) (RadixZeroFill.encodedBinary (powerBits (q := q) r)) (originalSuffixSlot) = RadixZeroFill.encodedBinary oe
     rw [Function.update_of_ne (by
       intro he
       have hv := congrArg Fin.val he
-      simp [scratchSlot,prefixSlot,suffixSlot,originalPrefixSlot,originalSuffixSlot,
-        RadixHighBlockJoinBank.scratchSlot,RadixHighBlockJoinBank.prefixSlot,RadixHighBlockJoinBank.suffixSlot,
-        RadixHighBlockJoinBank.originalPrefixSlot,RadixHighBlockJoinBank.originalSuffixSlot] at hv <;> omega)]
+      simp [scratchSlot,originalSuffixSlot,
+        RadixHighBlockJoinBank.scratchSlot,RadixHighBlockJoinBank.originalSuffixSlot] at hv)]
     simp only [originalSuffixSlot,read_tape]
-    simp (disch := omega) [RadixHighBlockJoinBank.scratchSlot,RadixHighBlockJoinBank.prefixSlot,
-      RadixHighBlockJoinBank.suffixSlot,RadixHighBlockJoinBank.originalPrefixSlot,RadixHighBlockJoinBank.originalSuffixSlot,
-      optionHead,optionTape,ite_eq_right,ite_eq_left,encoded_binary,-Fin.val_eq_zero_iff]
+    simp (disch := omega) [RadixHighBlockJoinBank.originalSuffixSlot,optionTape,ite_eq_right,encoded_binary,-Fin.val_eq_zero_iff]
   · change Function.update (bank (q := q) source ss op oe none (some oe) (some (bits q)) ctrl).tape (scratchSlot 0) (RadixZeroFill.encodedBinary (powerBits (q := q) r)) (scratchSlot 1) = (fun _ => blank)
     rw [Function.update_of_ne (by
       intro he
       have hv := congrArg Fin.val he
-      simp [scratchSlot,prefixSlot,suffixSlot,originalPrefixSlot,originalSuffixSlot,
-        RadixHighBlockJoinBank.scratchSlot,RadixHighBlockJoinBank.prefixSlot,RadixHighBlockJoinBank.suffixSlot,
-        RadixHighBlockJoinBank.originalPrefixSlot,RadixHighBlockJoinBank.originalSuffixSlot] at hv <;> omega)]
+      simp [scratchSlot,
+        RadixHighBlockJoinBank.scratchSlot] at hv)]
     simp only [scratchSlot,read_tape]
-    simp (disch := omega) [RadixHighBlockJoinBank.scratchSlot,RadixHighBlockJoinBank.prefixSlot,
-      RadixHighBlockJoinBank.suffixSlot,RadixHighBlockJoinBank.originalPrefixSlot,RadixHighBlockJoinBank.originalSuffixSlot,
-      optionHead,optionTape,ite_eq_right,ite_eq_left,encoded_binary,-Fin.val_eq_zero_iff]
+    simp (disch := omega) [RadixHighBlockJoinBank.scratchSlot,optionTape,ite_eq_right,-Fin.val_eq_zero_iff]
   · change Function.update (bank (q := q) source ss op oe none (some oe) (some (bits q)) ctrl).tape (scratchSlot 0) (RadixZeroFill.encodedBinary (powerBits (q := q) r)) (prefixSlot) = (fun _ => blank)
     rw [Function.update_of_ne (by
       intro he
       have hv := congrArg Fin.val he
-      simp [scratchSlot,prefixSlot,suffixSlot,originalPrefixSlot,originalSuffixSlot,
-        RadixHighBlockJoinBank.scratchSlot,RadixHighBlockJoinBank.prefixSlot,RadixHighBlockJoinBank.suffixSlot,
-        RadixHighBlockJoinBank.originalPrefixSlot,RadixHighBlockJoinBank.originalSuffixSlot] at hv <;> omega)]
+      simp [scratchSlot,prefixSlot,
+        RadixHighBlockJoinBank.scratchSlot,RadixHighBlockJoinBank.prefixSlot] at hv; omega)]
     simp only [prefixSlot,read_tape]
-    simp (disch := omega) [RadixHighBlockJoinBank.scratchSlot,RadixHighBlockJoinBank.prefixSlot,
-      RadixHighBlockJoinBank.suffixSlot,RadixHighBlockJoinBank.originalPrefixSlot,RadixHighBlockJoinBank.originalSuffixSlot,
-      optionHead,optionTape,ite_eq_right,ite_eq_left,encoded_binary,-Fin.val_eq_zero_iff]
+    simp (disch := omega) [RadixHighBlockJoinBank.prefixSlot,optionTape,-Fin.val_eq_zero_iff]
   · change Function.update (bank (q := q) source ss op oe none (some oe) (some (bits q)) ctrl).tape (scratchSlot 0) (RadixZeroFill.encodedBinary (powerBits (q := q) r)) (scratchSlot 2) = (fun _ => blank)
     rw [Function.update_of_ne (by
       intro he
       have hv := congrArg Fin.val he
-      simp [scratchSlot,prefixSlot,suffixSlot,originalPrefixSlot,originalSuffixSlot,
-        RadixHighBlockJoinBank.scratchSlot,RadixHighBlockJoinBank.prefixSlot,RadixHighBlockJoinBank.suffixSlot,
-        RadixHighBlockJoinBank.originalPrefixSlot,RadixHighBlockJoinBank.originalSuffixSlot] at hv <;> omega)]
+      simp [scratchSlot,
+        RadixHighBlockJoinBank.scratchSlot] at hv)]
     simp only [scratchSlot,read_tape]
-    simp (disch := omega) [RadixHighBlockJoinBank.scratchSlot,RadixHighBlockJoinBank.prefixSlot,
-      RadixHighBlockJoinBank.suffixSlot,RadixHighBlockJoinBank.originalPrefixSlot,RadixHighBlockJoinBank.originalSuffixSlot,
-      optionHead,optionTape,ite_eq_right,ite_eq_left,encoded_binary,-Fin.val_eq_zero_iff]
+    simp (disch := omega) [RadixHighBlockJoinBank.scratchSlot,optionTape,ite_eq_right,-Fin.val_eq_zero_iff]
   · change Function.update (bank (q := q) source ss op oe none (some oe) (some (bits q)) ctrl).tape (scratchSlot 0) (RadixZeroFill.encodedBinary (powerBits (q := q) r)) (scratchSlot 0) = RadixZeroFill.encodedBinary (powerBits (q := q) r)
     rw [Function.update_self]
   · change Function.update (bank (q := q) source ss op oe none (some oe) (some (bits q)) ctrl).tape (scratchSlot 0) (RadixZeroFill.encodedBinary (powerBits (q := q) r)) (scratchSlot 3) = (fun _ => blank)
     rw [Function.update_of_ne (by
       intro he
       have hv := congrArg Fin.val he
-      simp [scratchSlot,prefixSlot,suffixSlot,originalPrefixSlot,originalSuffixSlot,
-        RadixHighBlockJoinBank.scratchSlot,RadixHighBlockJoinBank.prefixSlot,RadixHighBlockJoinBank.suffixSlot,
-        RadixHighBlockJoinBank.originalPrefixSlot,RadixHighBlockJoinBank.originalSuffixSlot] at hv <;> omega)]
+      simp [scratchSlot,
+        RadixHighBlockJoinBank.scratchSlot] at hv)]
     simp only [scratchSlot,read_tape]
-    simp (disch := omega) [RadixHighBlockJoinBank.scratchSlot,RadixHighBlockJoinBank.prefixSlot,
-      RadixHighBlockJoinBank.suffixSlot,RadixHighBlockJoinBank.originalPrefixSlot,RadixHighBlockJoinBank.originalSuffixSlot,
-      optionHead,optionTape,ite_eq_right,ite_eq_left,encoded_binary,-Fin.val_eq_zero_iff]
+    simp (disch := omega) [RadixHighBlockJoinBank.scratchSlot,optionTape,ite_eq_right,-Fin.val_eq_zero_iff]
   · change Function.update (bank (q := q) source ss op oe none (some oe) (some (bits q)) ctrl).tape (scratchSlot 0) (RadixZeroFill.encodedBinary (powerBits (q := q) r)) (originalPrefixSlot) = RadixZeroFill.encodedBinary op
     rw [Function.update_of_ne (by
       intro he
       have hv := congrArg Fin.val he
-      simp [scratchSlot,prefixSlot,suffixSlot,originalPrefixSlot,originalSuffixSlot,
-        RadixHighBlockJoinBank.scratchSlot,RadixHighBlockJoinBank.prefixSlot,RadixHighBlockJoinBank.suffixSlot,
-        RadixHighBlockJoinBank.originalPrefixSlot,RadixHighBlockJoinBank.originalSuffixSlot] at hv <;> omega)]
+      simp [scratchSlot,originalPrefixSlot,
+        RadixHighBlockJoinBank.scratchSlot,
+        RadixHighBlockJoinBank.originalPrefixSlot] at hv)]
     simp only [originalPrefixSlot,read_tape]
-    simp (disch := omega) [RadixHighBlockJoinBank.scratchSlot,RadixHighBlockJoinBank.prefixSlot,
-      RadixHighBlockJoinBank.suffixSlot,RadixHighBlockJoinBank.originalPrefixSlot,RadixHighBlockJoinBank.originalSuffixSlot,
-      optionHead,optionTape,ite_eq_right,ite_eq_left,encoded_binary,-Fin.val_eq_zero_iff]
+    simp (disch := omega) [RadixHighBlockJoinBank.originalPrefixSlot,optionTape,ite_eq_right,encoded_binary,-Fin.val_eq_zero_iff]
 
 theorem set_product (g : Bool) (source : ℤ → Fin (a+4)) (ss op oe : List Bool)
     (N r : ℕ) (ctrl : Tapes 2 a) :

@@ -33,6 +33,7 @@ theorem terminal_finrank (b : GlobalCircuit.Address B) : finrank K (terminal (K 
       mul_ne_zero (mul_ne_zero (ht b.2.2) (ht b.2.1)) (ht b.1)
   exact he (by rw [hz]; simp)
 
+omit [FiniteDimensional K F] in
 theorem ambient_finrank : finrank K (StageLabels.Ambient K F) = (finrank K F) ^ 3 := by
   simp only [StageLabels.Ambient, Module.finrank_tensorProduct]
   ring

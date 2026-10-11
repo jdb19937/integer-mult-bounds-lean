@@ -65,7 +65,7 @@ theorem runs_packBody {src : Fin 𝕌} (o : Own src) (odd : Bool) (τ : Fin 𝕌
       (by rw [Function.update_of_ne n3, Function.update_of_ne n2.symm, hU]; rfl)
     refine (Runs.then s1 s2).mono (fun τ' h => ?_) ?_
     · rw [h]; funext x
-      by_cases a1 : x = src <;> by_cases a2 : x = ι tC <;> simp_all [Function.update_apply, pick]
+      by_cases a1 : x = src <;> by_cases a2 : x = ι tC <;> simp_all [pick]
     · rw [Function.update_of_ne n1, Function.update_self]; simp; omega
   | true =>
     have s1 := runs_skp (a := 0) n2 τ (by simp [hs]) (by rw [hU]; rfl)
@@ -73,7 +73,7 @@ theorem runs_packBody {src : Fin 𝕌} (o : Own src) (odd : Bool) (τ : Fin 𝕌
       (by simp [hs]) h2 (by rw [Function.update_of_ne n1.symm, hC])
     refine (Runs.then s1 s2).mono (fun τ' h => ?_) ?_
     · rw [h]; funext x
-      by_cases a1 : x = src <;> by_cases a2 : x = ι tC <;> simp_all [Function.update_apply, pick]
+      by_cases a1 : x = src <;> by_cases a2 : x = ι tC <;> simp_all [pick]
     · simp [hs]; omega
 
 /-- Every pair of the source. -/
@@ -102,7 +102,7 @@ theorem runs_packLoop {src : Fin 𝕌} (o : Own src) (odd : Bool) {w : ℕ} :
     refine (Runs.loop_step (by simp [hs]) ((s1.mono (fun τ' h => by rw [h]; exact ih) le_rfl))).mono
       (fun τ' h => ?_) ?_
     · rw [h]; funext x
-      by_cases a1 : x = src <;> by_cases a2 : x = ι tC <;> simp_all [τ₁, Function.update_apply]
+      by_cases a1 : x = src <;> by_cases a2 : x = ι tC <;> simp_all [τ₁]
     · simp only [List.length_cons]; rw [hp.1, hp.2]; ring_nf; omega
 
 /-! ### The whole component -/
@@ -123,7 +123,7 @@ noncomputable def packA (src : Fin 𝕌) (o : Own src) (odd : Bool) : Cmd 0 𝕌
   .seq (packLoop src o odd) <| .seq (rewind src) <| .seq (rewind (ι tC)) <|
   .seq (regDup kW (ι cM) (by decide)) (regDup kW (ι cWA) (by decide))
 
-theorem runs_packA {src : Fin 𝕌} (o : Own src) (hW : src ≠ kW) (odd : Bool) {w Wd : ℕ}
+theorem runs_packA {src : Fin 𝕌} (o : Own src) (_hW : src ≠ kW) (odd : Bool) {w Wd : ℕ}
     (ps : List (List Bool × List Bool)) (hw : ∀ p ∈ ps, p.1.length = w ∧ p.2.length = w) (hw0 : 0 < w)
     (τ : Fin 𝕌 → WTape) (hs : τ src = ⟨[], flat ps⟩) (hC : τ (ι tC) = emp) (hU : τ (ι tU) = emp)
     (hM : τ (ι cM) = emp) (hA : τ (ι cWA) = emp) (hK : τ kW = reg (ones Wd)) :
@@ -154,7 +154,7 @@ theorem runs_packA {src : Fin 𝕌} (o : Own src) (hW : src ≠ kW) (odd : Bool)
     cases odd <;> simp [pick, length_flipLast h1, length_flipLast h2, this.1, this.2]
   have e : ps.length * (4 * w + 20) = ps.length * (2 * w + 15) + 2 * (ps.length * (w + 1)) + 3 * ps.length := by
     ring
-  simp [τ₁, clen_reverse, clen_append, c1, Function.update_of_ne (o.ne tC).symm,
+  simp [τ₁, clen_reverse, c1, Function.update_of_ne (o.ne tC).symm,
     Function.update_of_ne (o.ne tC)]
   omega
 
@@ -270,8 +270,7 @@ theorem runs_pack {src dst : Fin 𝕌} (o : Own src) (od : Own dst) (hsW : src �
     by_cases a1 : x = xP <;> by_cases a2 : x = dst <;> simp_all [τD, Function.update_apply, emp]
   · have c1 : clen ds = r * (w + 1) := by rw [clen_map_eq ps hfl, hl]
     have c2 : clen (cs.map (bits w)) = r * (w + 1) := by rw [← hds, c1]
-    simp only [Cw, τD, WTape.words, clen_append, clen_reverse, c1, hcl, Function.update_of_ne hdP,
-      Function.update_self, hz2, rwd_length, reg, clen_nil, List.reverse_nil, List.nil_append, List.append_nil,
+    simp only [Cw, τD, WTape.words, clen_append, clen_reverse, hcl, hz2, rwd_length, reg, clen_nil, List.reverse_nil, List.nil_append, List.append_nil,
       clen_cons, clen_nil, Rules.length_fit, length_ones]
     have c3 : (subRes N (Rules.fit (N + 1) zw) (rwd N Oin)).length = N + 1 := by simp [subRes]
     simp only [Function.update_of_ne hdP.symm, Function.update_self] at *

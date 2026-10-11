@@ -58,7 +58,7 @@ theorem runs_digitA (τ : Fin 𝕌 → WTape) {Dl Dr : List (List Bool)} {x hw :
   · funext i
     simp only [Function.update_apply]
     split_ifs <;> (try subst_vars) <;> tsimp [hD, hH, hU, emp, reg] at *
-  · simp [clen, WTape.words] at t1 ⊢; omega
+  · simp at t1 ⊢; omega
 
 theorem runs_digitB (τ : Fin 𝕌 → WTape) {x hw cw : List Bool} (hU : τ (ι tU) = ⟨[(Rules.subW false x hw).1],
     [[(Rules.subW false x hw).2]]⟩) (hC : τ kC = reg cw) (hV : τ (ι tV) = emp) :
@@ -77,7 +77,7 @@ theorem runs_digitB (τ : Fin 𝕌 → WTape) {x hw cw : List Bool} (hU : τ (ι
     · funext i
       simp only [Function.update_apply]
       split_ifs <;> (try subst_vars) <;> tsimp [hU, hV, hb, emp, reg] at *
-    · simp [clen, WTape.words, hl] at t1 ⊢; omega
+    · simp [hl] at t1 ⊢; omega
   · refine Runs.le (Runs.cond_true (B := 4 * x.length + 2 * cw.length + 29) (by rw [hU, hb, startsOne_mk]) ?_)
       (by omega)
     apply Runs.of_wp
@@ -88,7 +88,7 @@ theorem runs_digitB (τ : Fin 𝕌 → WTape) {x hw cw : List Bool} (hU : τ (ι
     · funext i
       simp only [Function.update_apply]
       split_ifs <;> (try subst_vars) <;> tsimp [hU, hV, hC, hb, emp, reg] at *
-    · simp [clen, WTape.words, hl, Rules.length_addW] at t1 ⊢; omega
+    · simp [hl, Rules.length_addW] at t1 ⊢; omega
 
 theorem runs_digitC {L : Fin 𝕌} (oL : Own L) (hL : kw ≠ L) (τ : Fin 𝕌 → WTape) {d y : List Bool} {b : Bool}
     {s w : ℕ} {Ll : List (List Bool)} (hU : τ (ι tU) = ⟨[d], [[b]]⟩) (hV : τ (ι tV) = reg y)
@@ -207,7 +207,7 @@ theorem runs_digitLoop {L : Fin 𝕌} (oL : Own L) (hL : kw ≠ L) {Wd s w : ℕ
   | [], τ, Dl, Ll, hD, _, _, _, _, _, _, _, hLt => by
     refine (Runs.loop_done (by simp [hD]) rfl).mono (fun τ' h => ?_) (by simp)
     rw [← h]; funext x
-    by_cases a1 : x = L <;> by_cases a2 : x = ι tD <;> simp_all [Function.update_apply]
+    by_cases a1 : x = L <;> by_cases a2 : x = ι tD <;> simp_all
   | e :: es, τ, Dl, Ll, hD, hH, hC, hS, hw, hU, hV, hO, hLt => by
     have n4 := oL.ne' tD
     have m1 : kH ≠ L := fun q => by rw [← q] at hLt; rw [hLt] at hH; cases hH
@@ -227,7 +227,7 @@ theorem runs_digitLoop {L : Fin 𝕌} (oL : Own L) (hL : kw ≠ L) {Wd s w : ℕ
     refine (Runs.loop_step (by simp [hD]) ((s1.mono (fun τ' h => by rw [h]; exact ih) le_rfl))).mono
       (fun τ' h => ?_) ?_
     · rw [h]; funext x
-      by_cases a1 : x = L <;> by_cases a2 : x = ι tD <;> simp_all [τ₁, Function.update_apply]
+      by_cases a1 : x = L <;> by_cases a2 : x = ι tD <;> simp_all [τ₁]
     · simp only [List.length_cons, length_bits]; nlinarith
 
 /-- A residue register to output words on `L`. -/

@@ -187,7 +187,7 @@ theorem ready_eq (x : DigitInterchangeRows.Array O q C E q) (ws : Fin 4 → List
   apply congrArg₂ Tapes.mk
   · rfl
   · funext i
-    cases hn : name i <;> simp only [DigitInterchangeClean.rawBank,DigitInterchangeClean.rawWord,hn,readyWord]
+    cases hn : name i <;> simp only [DigitInterchangeClean.rawWord,readyWord]
     rename_i j
     have he : DigitInterchangeBank.headerWord (ws 0) (ws 1) (ws 2) (ws 3) j = ws j := by fin_cases j <;> rfl
     rw [he]

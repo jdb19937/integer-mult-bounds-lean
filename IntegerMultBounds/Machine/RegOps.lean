@@ -87,7 +87,7 @@ theorem add_hoare (x y : ℕ) :
   have hall := (((a1.seq a2).seq a3).seq a4)
   refine ⟨_, hall, ?_⟩
   have := BinaryAccumulate.sumWord_length_le (canon x) (canon y)
-  simp only [BinaryAccumulate.width, List.length_map] at *
+  simp only [BinaryAccumulate.width] at *
   omega
 
 end RegAdd
@@ -160,7 +160,7 @@ theorem sub_hoare (x y : ℕ) (hxy : x ≤ y) :
   have hall := (((s1.seq s2).seq s3).seq s4)
   refine ⟨_, hall, ?_⟩
   have := BinaryDecrease.diffWord_length (canon x) (canon y)
-  simp only [BinaryCompare.width, List.length_map] at *
+  simp only [BinaryCompare.width] at *
   omega
 
 end RegSub
@@ -227,7 +227,7 @@ theorem copy_hoare (x : ℕ) :
   rw [E1_bank, E1_bank, List.length_map] at c3
   have hall := ((c1.seq c2).seq c3)
   refine ⟨_, hall, ?_⟩
-  simp only [List.length_map] at *
+  simp only [] at *
   omega
 
 end RegCopy
@@ -237,7 +237,7 @@ namespace RegClear
 variable {a : ℕ}
 
 def bank (f0 : ℤ → Fin (a + 4)) (p0 : ℤ) : Tapes 1 a :=
-  ⟨fun i => p0, fun i => f0⟩
+  ⟨fun _i => p0, fun _i => f0⟩
 
 def E0 : Fin (1 + 0) ≃ Fin 1 where
   toFun := fun i => 0
@@ -248,7 +248,7 @@ def E0 : Fin (1 + 0) ≃ Fin 1 where
 theorem E0_bank (f0 : ℤ → Fin (a + 4)) (p0 : ℤ) :
     ((⟨fun _ => p0, fun _ => f0⟩ : Tapes 1 a).append (⟨fun _ => 0, fun _ => 0⟩ : Tapes 0 a)).reindex E0 = bank f0 p0 := by
   unfold Tapes.reindex Tapes.append  bank E0
-  congr 1 <;> apply List.ofFn_injective <;> rfl
+  congr 1
 
 
 def p1 := reindex (extend (ScanEnd.program (a := a)) 0) E0
@@ -356,7 +356,7 @@ theorem mul_hoare (x y : ℕ) :
   refine ⟨_, hall, ?_⟩
   have := BinaryMultiply.cost_le (canon x) (canon y)
   have := BinaryMultiply.horner_length (canon x) (canon y)
-  simp only [List.length_map] at *
+  simp only [] at *
   omega
 
 end RegMul
@@ -483,7 +483,7 @@ theorem div_hoare (x y : ℕ) (hy : 0 < y) :
   have := BinaryDivide.cost_le (canon x) (canon y)
   have := BinaryDivide.quotient_length (canon y) (canon x)
   have := BinaryDivide.remainder_length (canon y) (canon x)
-  simp only [List.length_map] at *
+  simp only [] at *
   omega
 
 end RegDiv
@@ -566,7 +566,7 @@ theorem cmp_hoare (x y : ℕ) :
   rw [E2_bank, E2_bank, add_sub_cancel_right] at q4
   have hall := (((q1.seq q2).seq q3).seq q4)
   refine ⟨_, hall, ?_⟩
-  simp only [BinaryCompare.width, List.length_map] at *
+  simp only [BinaryCompare.width] at *
   omega
 
 end RegCmp

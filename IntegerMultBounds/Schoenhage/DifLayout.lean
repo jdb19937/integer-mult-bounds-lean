@@ -146,6 +146,7 @@ variable {r : ℕ} [NeZero r]
 /-- Two arrays agree on the first `2^n` entries. -/
 def Agree (n : ℕ) (w v : ℕ → Fin r → ℂ) : Prop := ∀ y < 2 ^ n, w y = v y
 
+omit [NeZero r] in
 theorem bfly_logi {n : ℕ} (π : BitPerm n) {P : ℕ} (hP : P < n) {w : ℕ → Fin r → ℂ} {z : ℕ → Fin r → ℂ}
     (h : Agree n w fun y => z (π.logi y)) : Agree n (bfly (π.σ P) w) fun y => bfly P z (π.logi y) := by
   intro y hy
@@ -181,7 +182,7 @@ theorem physRound_agree {n : ℕ} (π : BitPerm n) (ts : List ℕ) {i h : ℕ} (
   exact twist_logi π _ (bfly_logi π hih hw) y hy
 
 theorem run_physM {n : ℕ} (π : BitPerm n) (ts : List ℕ) (a : ℕ → ℕ) (hab : ∀ i < ts.length, ∀ h < a i, axOff ts i + h < n) :
-    ∀ (D H : ℕ), D ≤ ts.length → ∀ (sched : List (ℕ × ℕ)),
+    ∀ (D _H : ℕ), D ≤ ts.length → ∀ (sched : List (ℕ × ℕ)),
       (∀ p ∈ sched, p.1 < ts.length ∧ p.2 < a p.1) →
       ∀ (w z : ℕ → Fin r → ℂ), (Agree n w fun y => z (π.logi y)) →
         Agree n (run (sched.map fun p => physRound π ts p.1 p.2) w)

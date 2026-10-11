@@ -37,7 +37,7 @@ theorem writer_step (w : List Bool) (k : ℕ) (hk : k < w.length) (T : ℤ → F
   funext _ j
   by_cases hj : j = (k : ℤ)
   · subst hj; simp
-  · simp [hj, Function.update_of_ne hj]
+  · simp [hj]
 
 theorem writer_run (w : List Bool) (k : ℕ) (hk : k ≤ w.length) :
     run (writer (a := a) w) k ⟨0, fun _ => 0, fun _ => fun _ => blank⟩ =

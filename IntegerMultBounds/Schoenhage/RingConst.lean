@@ -55,7 +55,7 @@ theorem replicate_nil_append (n : ℕ) (Tl : List (List Bool)) :
   rw [← List.singleton_append, ← List.append_assoc, ← List.replicate_succ', List.replicate_succ]; rfl
 
 /-- Append the block made from `src` once per tick of `qT`. -/
-noncomputable def repeatLoop (R : Rule 0) (src dst : Fin 𝕌) (h1 : src ≠ dst) (h2 : src ≠ ι qT) : Cmd 0 𝕌 :=
+noncomputable def repeatLoop (R : Rule 0) (src dst : Fin 𝕌) (h1 : src ≠ dst) (_h2 : src ≠ ι qT) : Cmd 0 𝕌 :=
   .loop (ι qT) (.seq (op0 R true src dst h1) <| .seq (rewind src) (skp (ι qT) (ι tJ) (by decide)))
 
 theorem runs_repeatLoop (R : Rule 0) {src dst : Fin 𝕌} (h1 : src ≠ dst) (h2 : src ≠ ι qT) (h3 : dst ≠ ι qT)
@@ -69,7 +69,7 @@ theorem runs_repeatLoop (R : Rule 0) {src dst : Fin 𝕌} (h1 : src ≠ dst) (h2
   | 0, τ, Tl, acc, L, hs, hd, hT, _ => by
     refine (Runs.loop_done (by simp [hT]) rfl).mono (fun τ' h => ?_) (by simp)
     rw [← h]; funext y
-    by_cases a1 : y = dst <;> by_cases a2 : y = ι qT <;> simp_all [Function.update_apply]
+    by_cases a1 : y = dst <;> by_cases a2 : y = ι qT <;> simp_all
   | n + 1, τ, Tl, acc, L, hs, hd, hT, hJ => by
     have s1 := runs_op0 (a := 0) R true h1 τ (by simp [hs]) (by simp [hd]) [b] (by simpa [hs] using hb)
       (fun _ => ⟨by simp [hd], by simp⟩)
@@ -168,7 +168,7 @@ theorem runs_constB2 {b : ℕ} (τ : Fin 𝕌 → WTape) (hB : τ (ι qB) = reg 
     rw [length_ones, hb] at t1
     generalize time Rules.ticks (ones b) (fun j => j.elim0) = T at t1 ⊢
     simp only [WTape.words, clen_cons, clen_nil, clen_replicate_nil, length_ones, List.reverse_nil,
-      List.nil_append, reg, List.length_replicate]
+      List.nil_append]
     linarith
 
 /-- Ticks from a unary register `src` onto `qT`. -/
@@ -190,7 +190,7 @@ theorem runs_ticksFrom {src : Fin 𝕌} (h : src ≠ ι qT) {b : ℕ} (τ : Fin 
   refine ⟨?_, ?_⟩
   · funext x
     by_cases a1 : x = ι qT
-    · subst a1; simp [e4, hT, emp]
+    · subst a1; simp [hT, emp]
     · by_cases a2 : x = src
       · subst a2; simp [a1, hs, reg]
       · simp [a1, a2]
@@ -198,7 +198,7 @@ theorem runs_ticksFrom {src : Fin 𝕌} (h : src ≠ ι qT) {b : ℕ} (τ : Fin 
     have hb : Rules.ticks.B = 0 := rfl
     rw [length_ones, hb] at t1
     generalize time Rules.ticks (ones b) (fun j => j.elim0) = T at t1 ⊢
-    simp [e4, hs, hT, emp, reg, clen_replicate_nil, WTape.words]
+    simp [hs, hT, emp, reg, clen_replicate_nil]
     linarith
 
 /-- Multiply `qR` by two per tick of `qT`, then drop the ticks. -/
@@ -335,7 +335,7 @@ theorem runs_constC1 {r W : ℕ} (τ : Fin 𝕌 → WTape) (hR : τ (ι qR) = re
     split_ifs <;> (try subst_vars) <;> tsimp [hR, h1, hK, hS, hT, hU, hV, hO, hO2, hC, emp, reg, ones_append,
       ones, rep_tt] at *
   · simp only [time_copy, length_ones, clen_replicate_nil, List.length_cons, List.length_nil, WTape.words,
-      clen_cons, clen_nil, List.reverse_cons, List.reverse_nil, List.nil_append, List.append_nil, List.length_replicate]
+      clen_cons, clen_nil, List.reverse_cons, List.reverse_nil, List.nil_append, List.append_nil]
     omega
 
 /-- Move the ruler to `kR` and clear the drivers. -/
@@ -433,8 +433,7 @@ theorem runs_constD {W s : ℕ} (hW : 1 ≤ W) (hs : s ≤ W) (τ : Fin 𝕌 →
   · funext x
     simp only [Function.update_apply]
     split_ifs <;> (try subst_vars) <;> tsimp [hK, hS, h1, hT, hH, hC, emp, reg, ones, List.append_assoc] at *
-  · simp only [time_copy, length_ones, WTape.words, clen_cons, clen_nil, List.reverse_nil, List.nil_append,
-      List.length_replicate, List.length_append, List.length_cons, List.length_nil]
+  · simp only [time_copy, length_ones, WTape.words]
     have e : clen ([ones (W - s)].reverse ++ []) = W - s + 1 := by simp [clen]
     rw [e]
     simp only [List.length_singleton] at t2
@@ -534,8 +533,7 @@ theorem runs_constE2a {W w : ℕ} (hw : 1 ≤ w) (hwW : w ≤ W) (τ : Fin 𝕌 
   · funext x
     simp only [Function.update_apply]
     split_ifs <;> (try subst_vars) <;> tsimp [hI, hK, hU, hS, emp, reg, ones, List.append_assoc] at *
-  · simp only [WTape.words, clen_cons, clen_nil, List.reverse_nil, List.nil_append, List.length_replicate,
-      List.length_append, List.length_cons, List.length_nil, length_ones, List.reverse_cons]
+  · simp only [WTape.words, List.reverse_nil, List.nil_append, List.reverse_cons]
     have e : clen ([ones (W - w)] ++ []) = W - w + 1 := by simp [clen]
     simp only [e] at *
     have := hwW
@@ -586,8 +584,7 @@ theorem runs_constE2b {W r : ℕ} {b : List Bool} (hbl : b.length = W) (τ : Fin
       have b2 : (Rules.fill false).B = 1 := rfl
       rw [b2] at this; simpa using this
     tsimp [τ₇, τ₆, τ₅, τ₄, τ₃, τ₂, τ₁, h1, hI, hU, emp, reg, WTape.words, clen_replicate_nil, clen_reverse]
-    simp only [clen, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, List.length_append,
-      List.length_flatten, List.map_replicate, List.sum_replicate, hbl, List.length_singleton, smul_eq_mul]
+    simp only [hbl]
     nlinarith [tF]
 
 /-! ### All constants -/
@@ -671,7 +668,7 @@ theorem runs_constAll {p l w : ℕ} (hw : 1 ≤ w) (τ : Fin 𝕌 → WTape) (hc
     · simp only [List.mem_cons, List.not_mem_nil, or_false, not_or] at hm
       obtain ⟨n1, n2, n3, n4, n5, n6, n7, n8, n9, n10, n11, n12, n13, n14⟩ := hm
       simp only [constBank, τ₆, τ₅, τ₄, τ₃, τ₂, τ₁, Function.update_apply, n1, n2, n3, n4, n5, n6, n7, n8,
-        n9, n10, n11, n12, n13, n14, if_false]
+        n9, n10, n11, n12, n13, n14, ite_false]
   · clear s1 s2 s3 s4 s5 s6 s7 s8 s9
     tsimp [τ₇, τ₆, τ₅, τ₄, τ₃, τ₂, τ₁, reg, emp, WTape.words, clen_cons, clen_nil, length_ones]
     have hW' : wOf p l w = W := rfl

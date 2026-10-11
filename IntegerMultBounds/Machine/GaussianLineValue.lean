@@ -53,7 +53,7 @@ def termI (k j : ℕ) : ℤ :=
   (signed (wtWords.getD (k * (2 * m + 1) + j) []) *
     signed (uWords.getD (2 * centre s t k + 2 * j + 1) [])).tdiv (2 ^ p)
 
-include hwtl hst hs hul in
+include hwtl hs hul in
 theorem index_bounds (k j : ℕ) (hk : k < t) (hj : j < 2 * m + 1) :
     k * (2 * m + 1) + j < wtWords.length ∧ 2 * centre s t k + 2 * j + 1 < uWords.length := by
   have hcen : centre s t k < s := by
@@ -66,17 +66,17 @@ theorem getD_mem (ws : List (List Bool)) (i : ℕ) (hi : i < ws.length) : ws.get
   rw [List.getD_eq_getElem?_getD, List.getElem?_eq_getElem hi]
   exact List.getElem_mem hi
 
-include hw hwb hub hwtl hul hst hs in
+include hwb hub hwtl hul hs in
 theorem termR_bound (k j : ℕ) (hk : k < t) (hj : j < 2 * m + 1) :
     |termR wtWords uWords s t m p k j| ≤ 2 ^ p := by
-  obtain ⟨h1, h2⟩ := index_bounds wtWords uWords s t m hwtl hul hst hs k j hk hj
+  obtain ⟨h1, h2⟩ := index_bounds wtWords uWords s t m hwtl hul hs k j hk hj
   exact abs_tdiv_pow_le _ _ p (hwb _ (getD_mem _ _ h1))
     (hub _ (getD_mem uWords (2 * centre s t k + 2 * j) (by omega)))
 
-include hw hwb hub hwtl hul hst hs in
+include hwb hub hwtl hul hs in
 theorem termI_bound (k j : ℕ) (hk : k < t) (hj : j < 2 * m + 1) :
     |termI wtWords uWords s t m p k j| ≤ 2 ^ p := by
-  obtain ⟨h1, h2⟩ := index_bounds wtWords uWords s t m hwtl hul hst hs k j hk hj
+  obtain ⟨h1, h2⟩ := index_bounds wtWords uWords s t m hwtl hul hs k j hk hj
   exact abs_tdiv_pow_le _ _ p (hwb _ (getD_mem _ _ h1)) (hub _ (getD_mem _ _ h2))
 
 theorem signed_zero_word (W : ℕ) : signed (List.replicate W false) = 0 := by
@@ -99,7 +99,7 @@ theorem abs_sum_le (f : ℕ → ℤ) (n : ℕ) (B : ℤ) (h : ∀ j < n, |f j| �
       _ ≤ n * B + B := add_le_add (ih fun j hj => h j (by omega)) (h n (by omega))
       _ = ((n + 1 : ℕ) : ℤ) * B := by push_cast; ring
 
-include hw hwW hW hwt hu hwb hub hwtl hul hst hs in
+include hw hwW hW hwt hu hwb hub hwtl hul hs in
 /-- The real accumulator holds the exact partial sum. -/
 theorem accR_signed (k : ℕ) (hk : k < t) (i : ℕ) (hi : i ≤ 2 * m + 1) :
     signed (accR wtWords uWords s t m p w W k i) = ∑ j ∈ Finset.range i, termR wtWords uWords s t m p k j := by
@@ -109,15 +109,15 @@ theorem accR_signed (k : ℕ) (hk : k < t) (i : ℕ) (hi : i ≤ 2 * m + 1) :
     exact signed_zero_word W
   | succ i ih =>
     have hi' : i ≤ 2 * m + 1 := by omega
-    obtain ⟨h1, h2⟩ := index_bounds wtWords uWords s t m hwtl hul hst hs k i hk (by omega)
+    obtain ⟨h1, h2⟩ := index_bounds wtWords uWords s t m hwtl hul hs k i hk (by omega)
     have hwl := getD_length wtWords w hwt _ h1
     have hul' := getD_length uWords w hu _ (by omega : 2 * centre s t k + 2 * i < uWords.length)
     have hres := signed_result (wtWords.getD (k * (2 * m + 1) + i) []) (uWords.getD (2 * centre s t k + 2 * i) [])
       p w hwl hul' hw (hwb _ (getD_mem _ _ h1)) (hub _ (getD_mem uWords (2 * centre s t k + 2 * i) (by omega)))
     have hacc := ih hi'
     have hsum : |∑ j ∈ Finset.range i, termR wtWords uWords s t m p k j| ≤ (i : ℤ) * 2 ^ p :=
-      abs_sum_le _ _ _ fun j hj => termR_bound wtWords uWords s t m p w hw hwb hub hwtl hul hst hs k j hk (by omega)
-    have hterm := termR_bound wtWords uWords s t m p w hw hwb hub hwtl hul hst hs k i hk (by omega)
+      abs_sum_le _ _ _ fun j hj => termR_bound wtWords uWords s t m p hwb hub hwtl hul hs k j hk (by omega)
+    have hterm := termR_bound wtWords uWords s t m p hwb hub hwtl hul hs k i hk (by omega)
     have hfit : (i : ℤ) * 2 ^ p + 2 ^ p ≤ ((2 * m + 1 : ℕ) : ℤ) * 2 ^ p := by
       have : ((i : ℤ) + 1) ≤ ((2 * m + 1 : ℕ) : ℤ) := by exact_mod_cast (by omega : i + 1 ≤ 2 * m + 1)
       nlinarith [(by positivity : (0 : ℤ) < 2 ^ p)]
@@ -135,7 +135,7 @@ theorem accR_signed (k : ℕ) (hk : k < t) (i : ℕ) (hi : i ≤ 2 * m + 1) :
       hres, hacc, Finset.sum_range_succ]
     unfold termR; ring
 
-include hw hwW hW hwt hu hwb hub hwtl hul hst hs in
+include hw hwW hW hwt hu hwb hub hwtl hul hs in
 /-- The imaginary accumulator holds the exact partial sum. -/
 theorem accI_signed (k : ℕ) (hk : k < t) (i : ℕ) (hi : i ≤ 2 * m + 1) :
     signed (accI wtWords uWords s t m p w W k i) = ∑ j ∈ Finset.range i, termI wtWords uWords s t m p k j := by
@@ -145,15 +145,15 @@ theorem accI_signed (k : ℕ) (hk : k < t) (i : ℕ) (hi : i ≤ 2 * m + 1) :
     exact signed_zero_word W
   | succ i ih =>
     have hi' : i ≤ 2 * m + 1 := by omega
-    obtain ⟨h1, h2⟩ := index_bounds wtWords uWords s t m hwtl hul hst hs k i hk (by omega)
+    obtain ⟨h1, h2⟩ := index_bounds wtWords uWords s t m hwtl hul hs k i hk (by omega)
     have hwl := getD_length wtWords w hwt _ h1
     have hul' := getD_length uWords w hu _ h2
     have hres := signed_result (wtWords.getD (k * (2 * m + 1) + i) []) (uWords.getD (2 * centre s t k + 2 * i + 1) [])
       p w hwl hul' hw (hwb _ (getD_mem _ _ h1)) (hub _ (getD_mem _ _ h2))
     have hacc := ih hi'
     have hsum : |∑ j ∈ Finset.range i, termI wtWords uWords s t m p k j| ≤ (i : ℤ) * 2 ^ p :=
-      abs_sum_le _ _ _ fun j hj => termI_bound wtWords uWords s t m p w hw hwb hub hwtl hul hst hs k j hk (by omega)
-    have hterm := termI_bound wtWords uWords s t m p w hw hwb hub hwtl hul hst hs k i hk (by omega)
+      abs_sum_le _ _ _ fun j hj => termI_bound wtWords uWords s t m p hwb hub hwtl hul hs k j hk (by omega)
+    have hterm := termI_bound wtWords uWords s t m p hwb hub hwtl hul hs k i hk (by omega)
     have hfit : (i : ℤ) * 2 ^ p + 2 ^ p ≤ ((2 * m + 1 : ℕ) : ℤ) * 2 ^ p := by
       have : ((i : ℤ) + 1) ≤ ((2 * m + 1 : ℕ) : ℤ) := by exact_mod_cast (by omega : i + 1 ≤ 2 * m + 1)
       nlinarith [(by positivity : (0 : ℤ) < 2 ^ p)]

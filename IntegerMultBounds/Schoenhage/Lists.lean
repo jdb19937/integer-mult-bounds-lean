@@ -23,7 +23,7 @@ noncomputable def skp (s j : Fin t) (h : s ≠ j) : Cmd a t := op0 Rules.skip fa
 
 theorem time_copy (w : List Bool) (ws : Fin 0 → List Bool) : time Rules.copy w ws = w.length + 6 := by
   have h := (Rules.go_copy w ws).2
-  simp [time, rest, h]
+  simp [time, rest]
 
 theorem time_skip (w : List Bool) (ws : Fin 0 → List Bool) : time Rules.skip w ws = w.length + 5 := by
   simp [time, rest]
@@ -186,7 +186,7 @@ theorem runs_regIn {s r : Fin t} (h : s ≠ r) (σ : Fin t → WTape) {L R : Lis
     · by_cases hxs : x = s
       · subst hxs; simp [hx, hs, WTape.next]
       · simp [hx, hxs]
-  · simp [hs, hr, h.symm, time_copy, emp, clen]; omega
+  · simp [hs, hr, time_copy, emp, clen]; omega
 
 /-- Append the register `r` to `d` and empty `r`. -/
 noncomputable def regOut (r d : Fin t) (h : r ≠ d) : Cmd a t := .seq (cpy r d h) (clear r)

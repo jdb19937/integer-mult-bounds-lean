@@ -108,7 +108,7 @@ theorem scan_run (f : ℤ → Fin (a + 4)) (p : ℤ) (n : ℕ) (h : ∀ j : ℕ,
 /-- The exact contract: from the cell after the separator of a record whose
 left neighbour is blank, the head returns to the record's origin. -/
 theorem back_hoare (f : ℤ → Fin (a + 4)) (p : ℤ) (xs : List (Fin (a + 4)))
-    (hx : ∀ x ∈ xs, x ≠ blank) (hleft : f (p - 1) = blank) (hsep : f (p + xs.length) = blank) :
+    (hx : ∀ x ∈ xs, x ≠ blank) (hleft : f (p - 1) = blank) (_hsep : f (p + xs.length) = blank) :
     HoareTime program (fun v => v = (cfg (putWord f p xs) (p + xs.length + 1) 0).tapes)
       (fun v => v = (cfg (putWord f p xs) p 0).tapes) (xs.length + 3) := by
   rintro v rfl

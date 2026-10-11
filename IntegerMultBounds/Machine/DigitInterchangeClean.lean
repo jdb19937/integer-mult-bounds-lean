@@ -96,10 +96,10 @@ private theorem retained_output (x : Array O q C E a) (bs gs es cs : List Bool) 
   have hh : 1+q+q < 2*q+2 := by omega
   apply congrArg₂ Tapes.mk
   · funext i
-    cases hn : name i <;> simp [TrackedCleanupList.retained,keep,keepName,rawBank,rawHead,
+    cases hn : name i <;> simp [keep,keepName,rawHead,
       DigitInterchangeCompile.output,DigitInterchangeBank.bank,head,hn]
   · funext i
-    cases hn : name i <;> simp [TrackedCleanupList.retained,keep,keepName,rawBank,rawWord,
+    cases hn : name i <;> simp [keep,keepName,rawWord,
       DigitInterchangeCompile.output,DigitInterchangeBank.bank,word,hn,hh]
 
 /-- Same sole-payload bank before and after, with exact transpose semantics and
@@ -159,7 +159,7 @@ theorem payload (x : Array O q C E a) (bs gs es cs : List Bool) :
     SharedPayload.payload (bank x bs gs es cs)
       (Fin.castAdd (TapeCount q) (slot .source)) (Fin.castAdd (TapeCount q) (slot .dest)) = pair x := by
   apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;>
-    simp [SharedPayload.payload,bank,rawBank,Tapes.append,rawHead,rawWord,pair]
+    simp [bank,rawBank,Tapes.append,rawHead,rawWord]
 
 theorem bank_head (x : Array O q C E a) (bs gs es cs : List Bool) :
     (bank x bs gs es cs).head = Fin.addCases (TrackedInit.position right) (fun _ => 0) := by

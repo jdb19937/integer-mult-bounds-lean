@@ -33,7 +33,7 @@ theorem runs_moveRev {src dst : Fin 𝕌} (h : src ≠ dst) (h1 : src ≠ ι qT)
     refine (Runs.loop_done (by simp [hT]) rfl).mono (fun τ' e => ?_) (by simp)
     rw [← e]; funext y
     by_cases a1 : y = src <;> by_cases a2 : y = dst <;> by_cases a3 : y = ι qT <;>
-      simp_all [Function.update_apply]
+      simp_all
   | x :: ws, τ, Ls, R, D, Tl, hW, hs, hd, hT, hJ => by
     have hx := hW x (by simp)
     have s1 := runs_revw (a := 0) h τ (L := Ls) (R := ws ++ R) (w := x) (by simpa using hs) (by simp [hd])
@@ -93,7 +93,7 @@ theorem runs_gatherLoop {W : ℕ} : ∀ (os : List (List Bool)) (τ : Fin 𝕌 �
     refine (Runs.loop_done (by simp [hT]) rfl).mono (fun τ' e => ?_) (by simp)
     rw [← e]; funext y
     simp only [Function.update_apply]
-    split_ifs <;> (try subst_vars) <;> (try tsimp [hO, hZ, hT]) <;> tsimp at *
+    split_ifs <;> (try subst_vars) <;> (try tsimp [hO, hZ, hT])
   | o :: os, τ, acc, Lo, Ro, Tl, hW, hO, hU, hZ, hT, hJ => by
     have s1 := runs_gatherBody τ (o := o) (acc := acc) (Lo := Lo) (Ro := os ++ Ro) (Tl := Tl) (n := os.length)
       (by simpa using hO) hU hZ (by simpa using hT) hJ
@@ -105,7 +105,7 @@ theorem runs_gatherLoop {W : ℕ} : ∀ (os : List (List Bool)) (τ : Fin 𝕌 �
       (fun τ' e => ?_) ?_
     · rw [e]; funext y
       simp only [τ₁, Function.update_apply]
-      split_ifs <;> (try subst_vars) <;> (try tsimp [replicate_nil_append, List.replicate_succ]) <;> tsimp at *
+      split_ifs <;> (try subst_vars) <;> (try tsimp [replicate_nil_append, List.replicate_succ])
     · have := hW o (by simp); simp only [List.length_cons]; nlinarith
 
 /-! ### Ready for a record -/
@@ -191,7 +191,7 @@ theorem flat_lengths {w : ℕ} {ps : List (List Bool × List Bool)} (h : ∀ p �
     · exact ih (fun q hq => h q (by simp [hq])) hy
 
 set_option maxHeartbeats 16000000 in
-theorem runs_recIn {Wd r w s N : ℕ} (τ : Fin 𝕌 → WTape) (hc : Clean τ) (hW : τ iW = reg (ones (2 * r)))
+theorem runs_recIn {r w : ℕ} (τ : Fin 𝕌 → WTape) (hc : Clean τ) (hW : τ iW = reg (ones (2 * r)))
     (hF : τ rF = emp) (hG : τ rG = emp) {fs gs : List (List Bool × List Bool)} (hlf : fs.length = r)
     (hlg : gs.length = r) (hwf : ∀ p ∈ fs, p.1.length = w ∧ p.2.length = w)
     (hwg : ∀ p ∈ gs, p.1.length = w ∧ p.2.length = w) {Lf Rf Lg Rg : List (List Bool)}
@@ -239,7 +239,7 @@ theorem runs_recIn {Wd r w s N : ℕ} (τ : Fin 𝕌 → WTape) (hc : Clean τ) 
         simp only [τ₆, τ₅, τ₄, τ₂, τ₁] <;> tsimp [hz, emp, B, flat_reverse_reverse]
     · simp only [List.mem_cons, List.not_mem_nil, or_false, not_or] at hm
       obtain ⟨n1, n2, n3, n4, n5⟩ := hm
-      simp only [τ₆, τ₅, τ₄, τ₂, τ₁, Function.update_apply, n1, n2, n3, n4, n5, if_false]
+      simp only [τ₆, τ₅, τ₄, τ₂, τ₁, Function.update_apply, n1, n2, n3, n4, n5, ite_false]
   · clear s1 s2 s3 s4 s5 s6 s7 s8 e₄
     tsimp [τ₆, τ₅, τ₄, τ₂, τ₁, hz, hF, hG, emp, reg, WTape.words, clen_cons, clen_nil, length_ones,
       clen_replicate_nil, clen_reverse]
@@ -303,7 +303,7 @@ theorem runs_recOut {Wd r w s N : ℕ} {fs gs : List (List Bool × List Bool)} (
       rcases hm with rfl | rfl | rfl | rfl | rfl <;> simp only [τ₂, τ₁] <;> tsimp [hz, emp]
     · simp only [List.mem_cons, List.not_mem_nil, or_false, not_or] at hm
       obtain ⟨n1, n2, n3, n4, n5⟩ := hm
-      simp only [τ₂, τ₁, Function.update_apply, n1, n2, n3, n4, n5, if_false]
+      simp only [τ₂, τ₁, Function.update_apply, n1, n2, n3, n4, n5, ite_false]
   · clear s1 s2 s3 s4 s5 s6
     have cO : clen Os ≤ 2 * r * (w + 1) := by
       have := clen_le (W := w) (L := Os) ringWords_le; rwa [lO] at this
@@ -332,7 +332,7 @@ theorem runs_recStep {Wd r w s N : ℕ} (τ : Fin 𝕌 → WTape) (hR : RecReady
     rwa [comp_ι_update_own (show Own rG by unfold Own; decide), comp_ι_update_own (show Own rF by unfold Own; decide),
       comp_ι_update_own (show Own iL by unfold Own; decide), comp_ι_update_own (show Own iP by unfold Own; decide)]
       at this
-  have s1 := runs_recIn (Wd := Wd) (s := s) (N := N) τ hc hW hR.1 hR.2.1 hlf hlg hwf hwg hP hL
+  have s1 := runs_recIn τ hc hW hR.1 hR.2.1 hlf hlg hwf hwg hP hL
   have s2 := runs_ringProd hS
   set τ₁ := Function.update (Function.update τP rF ⟨[], flat fs⟩) rG ⟨[], flat gs⟩
   have s3 := runs_recOut (Wd := Wd) (r := r) (w := w) (s := s) (N := N) (fs := fs) (gs := gs) (acc := acc)
@@ -347,7 +347,7 @@ theorem runs_recStep {Wd r w s N : ℕ} (τ : Fin 𝕌 → WTape) (hR : RecReady
     rcases hm with rfl | rfl | rfl | rfl | rfl | rfl <;> simp only [τ₁, τP] <;> tsimp [hR.1, hR.2.1, hO, emp]
   · simp only [List.mem_cons, List.not_mem_nil, or_false, not_or] at hm
     obtain ⟨n1, n2, n3, n4, n5, n6⟩ := hm
-    simp only [τ₁, τP, Function.update_apply, n1, n2, n3, n4, n5, n6, if_false]
+    simp only [τ₁, τP, Function.update_apply, n1, n2, n3, n4, n5, n6, ite_false]
 
 /-! ### Every record -/
 
@@ -375,7 +375,7 @@ theorem runs_recLoop {Wd r w s N : ℕ} (hr : 1 ≤ r) :
     refine (Runs.loop_done (by simp [hP, opWords]) rfl).mono (fun τ' e => ?_) (by simp)
     rw [← e]; funext y
     simp only [Function.update_apply]
-    split_ifs <;> (try subst_vars) <;> (try tsimp [hP, hL, hZ, opWords]) <;> tsimp at *
+    split_ifs <;> (try subst_vars) <;> (try tsimp [hP, hL, hZ, opWords])
   | q :: ps, τ, Lf, Lg, acc, hq, hR, hW, hP, hL, hZ => by
     obtain ⟨h1, h2, h3, h4⟩ := hq q (by simp)
     have s1 := runs_recStep (Wd := Wd) (s := s) (N := N) τ hR hW h1 h2 h3 h4 (Lf := Lf) (Lg := Lg)
@@ -402,7 +402,7 @@ theorem runs_recLoop {Wd r w s N : ℕ} (hr : 1 ≤ r) :
     refine (Runs.loop_step hne (s1.mono (fun τ' e => by rw [e]; exact ih) le_rfl)).mono (fun τ' e => ?_) ?_
     · rw [e]; funext y
       simp only [τ₁, Function.update_apply]
-      split_ifs <;> (try subst_vars) <;> (try tsimp [opWords, List.append_assoc]) <;> tsimp [opWords] at *
+      split_ifs <;> (try subst_vars) <;> (try tsimp [opWords, List.append_assoc])
     · simp only [List.length_cons]; nlinarith
 
 end IntegerMultBounds.Schoenhage

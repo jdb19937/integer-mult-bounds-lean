@@ -184,7 +184,7 @@ theorem addMod_emod (xs acc : List Bool) (h : xs.length ≤ acc.length) :
   rw [hd', he, ← Int.emod_emod_of_dvd (signed xs + signed acc) (dvd_refl ((2 : ℤ) ^ acc.length)),
     Int.add_emod (signed xs), ← hs, ← Int.add_emod]
   cases xs.getLastD false <;> cases overflow false ((extTo xs acc.length).zip acc) <;>
-    simp [bitValue, Int.sub_emod, Int.add_emod, Int.emod_self]
+    simp [bitValue, Int.add_emod]
 
 /-- Without overflow the accumulator holds the exact signed sum. -/
 theorem signed_addMod (xs acc : List Bool) (h : xs.length ≤ acc.length) (hacc : acc ≠ [])

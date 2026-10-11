@@ -41,7 +41,7 @@ theorem AluReady.update {N : ℕ} {σ : Fin 𝕋 → WTape} (h : AluReady N σ) 
   simp only [List.mem_cons, List.not_mem_nil, or_false, not_or] at hi
   obtain ⟨n1, n2, n3, n4, n5, n6, n7, n8, n9, n10, n11, n12⟩ := hi
   refine ⟨⟨?_, ?_⟩, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;>
-    simp [Function.update_apply, Ne.symm n1, Ne.symm n2, Ne.symm n3, Ne.symm n4, Ne.symm n5,
+    simp [Ne.symm n1, Ne.symm n2, Ne.symm n3, Ne.symm n4, Ne.symm n5,
       Ne.symm n6, Ne.symm n7, Ne.symm n8, Ne.symm n9, Ne.symm n10, Ne.symm n11, Ne.symm n12, *]
 
 /-! ### The forward pair loop -/
@@ -243,7 +243,7 @@ theorem runs_blockF {N t : ℕ} (hN : 0 < N) (htN : t ≤ N) (σ : Fin 𝕋 → 
     funext i; fin_cases i <;> tsimp [hcT, htU, htV, h1, h2, emp]
   · have c1 := clen_le hTk
     simp only [length_rwds, bfS_length _ _ _ _ (hlU.trans hlV.symm), bfD_length _ _ _ _ (hlU.trans hlV.symm),
-      List.length_reverse, hlU, hlV, List.length_nil, add_zero, length_ones]
+      List.length_reverse, hlU, hlV, length_ones]
     nlinarith [c1, htN, Nat.zero_le Tk.length, Nat.zero_le N]
 
 /-! ### The block loop -/

@@ -72,7 +72,7 @@ theorem nc_term (X p : ℤ) {r i j : ℕ} (hi : i < r) (hj : j < r) :
   · rw [sum_eq_single (i + j - r)]
     · have h1 : ¬ i + j = i + j - r := by omega
       have h2 : i + j = i + j - r + r := by omega
-      rw [if_neg h1, if_pos h2]
+      rw [ite_eq_right h1, ite_eq_left h2]
       refine ⟨p * X ^ (i + j - r), ?_⟩
       have : X ^ (i + j) = X ^ (i + j - r) * X ^ r := by rw [← pow_add]; congr 1
       rw [this]; ring

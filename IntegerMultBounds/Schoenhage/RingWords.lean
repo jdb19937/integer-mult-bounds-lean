@@ -26,7 +26,7 @@ theorem length_flipLast {t : List Bool} (h : t ≠ []) : (flipLast t).length = t
   have := List.length_pos_of_ne_nil h
   simp [flipLast]; omega
 
-theorem bval_flipLast {t : List Bool} (h : t ≠ []) :
+theorem bval_flipLast {t : List Bool} (_h : t ≠ []) :
     (bval (flipLast t) : ℤ) = sv t + 2 ^ (t.length - 1) := by
   unfold flipLast sv
   rw [bval_append, List.length_dropLast]
@@ -63,7 +63,7 @@ theorem go_flip (c : Bool) (w : List Bool) (ws : Fin 0 → List Bool) :
     · simp only [Option.map_some, Option.toList_some, List.singleton_append] at h1 ⊢
       rw [h1]
       simp [List.dropLast_cons_of_ne_nil]
-    · rw [h2]; simp [List.getLastD_cons]
+    · rw [h2]; simp
 
 theorem output_flip (t : List Bool) (ws : Fin 0 → List Bool) (h : t ≠ []) :
     output flip t ws = syms [flipLast t] := by

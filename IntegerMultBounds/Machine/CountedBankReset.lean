@@ -59,7 +59,7 @@ theorem eraseCell_hoare (ht : 0 < t) (selected : Fin t → Bool) (v : Tapes t a)
     congr 1
     congr 1
     · funext i
-      cases hi : selected i <;> simp [after,hi,Move.offset] <;> omega
+      cases hi : selected i <;> simp [after,hi,Move.offset]; omega
     · funext i z
       cases hi : selected i
       · simp [after,hi]
@@ -80,7 +80,7 @@ theorem erase_hoare (ht : 0 < t) (selected : Fin t → Bool) (v : Tapes t a) (bs
   have hh := CountedLoopReuseAlphabet.loop_hoare (eraseCell ht selected) bs n
     (after selected v) (fun _ => 1) hn (fun i _ => eraseCell_hoare ht selected v i)
   have hz : after selected v 0 = v := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> simp [after]
+    apply congrArg₂ Tapes.mk <;> funext i <;> simp
   simpa only [eraseProgram,bank,hz,Finset.sum_const,Finset.card_range,smul_eq_mul,mul_one,
     show n+6*n = 7*n by omega] using hh
 
@@ -102,7 +102,7 @@ theorem rewindCell_hoare (ht : 0 < t) (selected : Fin t → Bool) (v : Tapes t a
     congr 1
     congr 1
     · funext i
-      cases hi : selected i <;> simp [rewound,hi,Move.offset] <;> omega
+      cases hi : selected i <;> simp [rewound,hi,Move.offset]; omega
     · funext i z
       cases hi : selected i <;> simp [rewound,hi] <;>
         (intro hz; subst z; rfl)
@@ -118,7 +118,7 @@ theorem rewind_hoare (ht : 0 < t) (selected : Fin t → Bool) (v : Tapes t a) (b
   have hh := CountedLoopReuseAlphabet.loop_hoare (rewindCell ht selected) bs n
     (rewound selected v) (fun _ => 1) hn (fun i _ => rewindCell_hoare ht selected v i)
   have hz : rewound selected v 0 = v := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> simp [rewound]
+    apply congrArg₂ Tapes.mk <;> funext i <;> simp
   simpa only [rewindProgram,bank,hz,Finset.sum_const,Finset.card_range,smul_eq_mul,mul_one,
     show n+6*n = 7*n by omega] using hh
 
@@ -132,7 +132,7 @@ theorem resets_hoare (ht : 0 < t) (selected : Fin t → Bool) (v : Tapes t a) (b
   have hh := (erase_hoare ht selected v bs n hn).seq (rewind_hoare ht selected (after selected v n) bs n hn)
   have he : rewound selected (after selected v n) n = restored selected v n := by
     apply congrArg₂ Tapes.mk
-    · funext i; cases hi : selected i <;> simp [rewound,after,restored,hi]
+    · funext i; cases hi : selected i <;> simp [after,hi]
     · rfl
   exact hh.consequence (fun _ h => h) (fun _ h => by simpa only [he] using h) (by omega)
 

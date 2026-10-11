@@ -41,8 +41,8 @@ theorem runs_decodeHeader3 {p l w : ℕ} (hp : 1 ≤ p) (hw : 1 ≤ w)
     refine ⟨?_, ?_⟩
     · funext y
       simp only [Function.update_apply]
-      split_ifs <;> (try subst_vars) <;> (try tsimp [hz, hH, reg, emp]) <;> tsimp at *
-    · simp [time_copy, clen, WTape.words]; omega
+      split_ifs <;> (try subst_vars) <;> (try tsimp [hz, hH, reg, emp]); tsimp at *
+    · simp [time_copy]; omega
   set τ₀ := Function.update (Function.update τ (ι c1) (reg [true])) (ι tX) (reg hdr)
   -- p
   have s1 := runs_decodeOne hp (rest := R2) τ₀ (by tsimp [τ₀]) (by tsimp [τ₀, eh])
@@ -91,7 +91,7 @@ theorem runs_decodeHeader3 {p l w : ℕ} (hp : 1 ≤ p) (hw : 1 ≤ w)
     · simp only [List.mem_cons, List.not_mem_nil, or_false, not_or] at hm
       obtain ⟨n1, n2, n3, n4, n5, n6⟩ := hm
       simp only [τ₁₀, τ₉, τ₆, τ₅, τ₂, τ₁, τ₀, Function.update_apply, n1, n2, n3, n4, n5, n6,
-        if_false]
+        ite_false]
   · clear s0 s1 s2 s5 s6 s9 s10 s11 s12
     tsimp [τ₁₀, τ₉, τ₆, τ₅, τ₂, τ₁, τ₀, hz, emp, reg, WTape.words, clen_cons, clen_nil,
       length_ones]

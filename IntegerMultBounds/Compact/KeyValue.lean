@@ -211,7 +211,7 @@ theorem flag_bridge (q b : ℕ) (hq1 : b + 3 ≤ q) (Zb cs C1 C2 C3 : List Bool)
     (Machine.GuardGadget.flagWordW q b Zb.length (Vw q Zb cs) (Ww q b Zb cs) C1 C2 C3 Zb.length).any id =
       rankFlag (rankEquiv q b Zb) (badSet q b Zb) j := by
   have hq : 1 ≤ q := by omega
-  rw [rankFlag, dif_pos hj, rank_split q b Zb cs hq j hj hcs hcsl]
+  rw [rankFlag, dite_eq_left hj, rank_split q b Zb cs hq j hj hcs hcsl]
   apply Bool.eq_iff_iff.mpr
   rw [decide_eq_true_iff]
   have := flags_any q b (controls Zb).length (Vw q Zb cs) (Ww q b Zb cs) C1 C2 C3
@@ -318,7 +318,7 @@ theorem bits_bridge (q b : ℕ) (hb : 1 ≤ b) (hbq1 : b + 1 ≤ q) (Zb cs : Lis
         Machine.PackedInverse.w q b hb hbq1 (Vw q Zb cs) (Ww q b Zb cs) Zb := by
   obtain ⟨_, _, _, _, _, _, _, hwl, _, hvl⟩ := Machine.PackedInverse.lengths q b hb hbq1 (Vw q Zb cs)
     (Ww q b Zb cs) Zb (Machine.Gather.field_length _ _ _) (Machine.Gather.field_length _ _ _)
-  rw [rankKey, dif_pos hj]
+  rw [rankKey, dite_eq_left hj]
   have h1 : destRank (rankEquiv q b Zb) (Sperm q b Zb) (Tperm q b Zb) ⟨j, hj⟩ =
       (rankEquiv q b Zb) (toggled q b hb hbq1 Zb cs hq) := by
     show (rankEquiv q b Zb) ((Tperm q b Zb) ((Sperm q b Zb).symm ((rankEquiv q b Zb).symm ⟨j, hj⟩))) = _

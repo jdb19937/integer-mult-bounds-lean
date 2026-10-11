@@ -48,7 +48,7 @@ theorem initializes_hoare (v : Tapes t a) (bs : List Bool) :
         intro hz; subst z; rfl
       | right i => fin_cases i <;>
           simp [rawBank,bank,CountedLoopReuseAlphabet.bank,CountedLoopReuseAlphabet.controls,
-            CountedLoopReuseAlphabet.empty,Tapes.append] <;> (intro hz; subst z; rfl)
+            CountedLoopReuseAlphabet.empty,Tapes.append]; (intro hz; subst z; rfl)
   · simp [step,initProgram]
 
 theorem distinct (src : Fin t) : Fin.castAdd 2 src ≠ Fin.natAdd t (1 : Fin 2) := by
@@ -73,9 +73,9 @@ theorem installs_hoare (src : Fin t) (v : Tapes t a) (bs : List Bool)
   have he : RadixZeroFill.encodedBinary bs = CountedLoopReuseAlphabet.binary (a := a) bs :=
     CountedLoopReuseAlphabet.encoding_binary bs
   apply congrArg₂ Tapes.mk <;> funext i <;> induction i using Fin.addCases with
-  | left i => simp [SharedPlacementAlphabet.setTape,rawBank,Tapes.append,Function.update_of_ne (distinct i)]
+  | left i => simp [Tapes.append,Function.update_of_ne (distinct i)]
   | right i => fin_cases i <;>
-      simp [SharedPlacementAlphabet.setTape,rawBank,Tapes.append,SharedBank.empty,he]
+      simp [Tapes.append,SharedBank.empty,he]
 
 def program (ht : 0 < t) (selected : Fin t → Bool) (src : Fin t) :=
   seq (seq (installProgram (a := a) src) initProgram) (CountedBankReset.program ht selected)

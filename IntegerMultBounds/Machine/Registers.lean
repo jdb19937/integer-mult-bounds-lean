@@ -28,7 +28,7 @@ theorem canon_canonical (n : ℕ) : Canonical (canon n) := GrowingCounterData.ad
 theorem value_snoc_true (ys : List Bool) : 0 < Counter.value (ys ++ [true]) := by
   induction ys with
   | nil => simp [Counter.value]
-  | cons b ys ih => cases b <;> simp [Counter.value] <;> omega
+  | cons b ys ih => cases b <;> simp [Counter.value]; omega
 
 theorem value_eq_zero_of_canonical (xs : List Bool) (h : Canonical xs) (hv : Counter.value xs = 0) : xs = [] := by
   rcases h with h | h
@@ -171,7 +171,7 @@ theorem erase_hoare (ys : List Bool) (n : ℕ) (hy : Canonical ys) :
         · subst h0; simp at h
         · simp at h; exact ⟨L, by rw [h]; simp⟩
       rw [show (((zs ++ [true]).length : ℕ) : ℤ) - 1 = ((zs.length : ℕ) : ℤ) by simp, pw_get]
-      simp [List.getD_append_right, bitSymbol]
+      simp [bitSymbol]
   simp [step, program, hnot]
 
 end EraseZeros

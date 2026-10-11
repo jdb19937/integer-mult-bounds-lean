@@ -87,7 +87,7 @@ theorem runs_tk {src : Fin 11} (h : src ≠ wQ) {b : ℕ} (τ : Fin 11 → WTape
   refine ⟨?_, ?_⟩
   · funext x
     by_cases a1 : x = wQ
-    · subst a1; simp [e4, hT, emp]
+    · subst a1; simp [hT, emp]
     · by_cases a2 : x = src
       · subst a2; simp [a1, hs, reg]
       · simp [a1, a2]
@@ -95,7 +95,7 @@ theorem runs_tk {src : Fin 11} (h : src ≠ wQ) {b : ℕ} (τ : Fin 11 → WTape
     have hb : Rules.ticks.B = 0 := rfl
     rw [length_ones, hb] at t1
     generalize time Rules.ticks (ones b) (fun j => j.elim0) = T at t1 ⊢
-    simp [e4, hs, hT, emp, reg, clen_replicate_nil, WTape.words]
+    simp [hs, hT, emp, reg, clen_replicate_nil]
     linarith
 
 /-- Negate (flag set) or copy the buffer's current word into `wW`. -/
@@ -161,7 +161,7 @@ theorem runs_emitW (F : Fin 11) (b : Bool) (σ : Fin 11 → WTape) {x : List Boo
         tsimp [σ₄, σ₃, σ₂, σ₁, hO, hQ, hW, emp, List.replicate_succ]
     · simp only [List.mem_cons, List.not_mem_nil, or_false, not_or] at hm
       obtain ⟨n1, n2, n3, n4⟩ := hm
-      simp only [σ₄, σ₃, σ₂, σ₁, Function.update_apply, n1, n2, n3, n4, if_false]
+      simp only [σ₄, σ₃, σ₂, σ₁, Function.update_apply, n1, n2, n3, n4, ite_false]
   · tsimp [σ₄, σ₃, σ₂, σ₁, hQ, hO, WTape.words, hy, List.replicate_succ]
     omega
 
@@ -180,7 +180,7 @@ theorem runs_moveLoop {W : ℕ} :
     refine (Runs.loop_done (by simp [hT]) rfl).mono (fun τ' e => ?_) (by simp)
     rw [← e]; funext y
     simp only [Function.update_apply]
-    split_ifs <;> (try subst_vars) <;> (try tsimp [hs, hd, hT]) <;> tsimp at *
+    split_ifs <;> (try subst_vars) <;> (try tsimp [hs, hd, hT])
   | x :: ws, τ, Ls, R, D, Tl, hW, hs, hd, hT, hJ => by
     have hx := hW x (by simp)
     have s1 := runs_revw (a := 0) (show wX ≠ wA by decide) τ (L := Ls) (R := ws ++ R) (w := x)
@@ -196,8 +196,7 @@ theorem runs_moveLoop {W : ℕ} :
       le_rfl)).mono (fun τ' e => ?_) ?_
     · rw [e]; funext y
       simp only [τ₂, τ₁, Function.update_apply]
-      split_ifs <;> (try subst_vars) <;> (try tsimp [hd, hT, replicate_nil_append, List.replicate_succ]) <;>
-        tsimp at *
+      split_ifs <;> (try subst_vars) <;> (try tsimp [hd, hT, replicate_nil_append, List.replicate_succ])
     · have hc : (τ₁ wQ).cur.length = 0 := by tsimp [τ₁, hT, List.replicate_succ]
       rw [hc]; simp only [List.length_cons]; nlinarith
 
@@ -215,7 +214,7 @@ theorem runs_skipLoop {W : ℕ} :
     refine (Runs.loop_done (by simp [hT]) rfl).mono (fun τ' e => ?_) (by simp)
     rw [← e]; funext y
     simp only [Function.update_apply]
-    split_ifs <;> (try subst_vars) <;> (try tsimp [hs, hT]) <;> tsimp at *
+    split_ifs <;> (try subst_vars) <;> (try tsimp [hs, hT])
   | x :: xs, τ, L, R, Tl, hW, hs, hT, hJ => by
     have hx := hW x (by simp)
     have s1 := runs_skp (a := 0) (show wA ≠ wJ by decide) τ (by simp [hs]) (by tsimp [hJ, emp])
@@ -230,8 +229,7 @@ theorem runs_skipLoop {W : ℕ} :
       le_rfl)).mono (fun τ' e => ?_) ?_
     · rw [e]; funext y
       simp only [τ₂, τ₁, Function.update_apply]
-      split_ifs <;> (try subst_vars) <;> (try tsimp [hs, hT, replicate_nil_append, List.replicate_succ]) <;>
-        tsimp at *
+      split_ifs <;> (try subst_vars) <;> (try tsimp [hs, hT, replicate_nil_append, List.replicate_succ])
     · have hc : (τ₁ wQ).cur.length = 0 := by tsimp [τ₁, hT, List.replicate_succ]
       have ha : (τ wA).cur = x := by rw [hs]; rfl
       rw [hc, ha]; simp only [List.length_cons]; nlinarith
@@ -253,7 +251,7 @@ theorem runs_emitLoop (F : Fin 11) (h1 : F ≠ wA) (h2 : F ≠ wO) (h3 : F ≠ w
     refine (Runs.loop_done (by simp [hT]) rfl).mono (fun τ' e => ?_) (by simp)
     rw [← e]; funext y
     simp only [Function.update_apply]
-    split_ifs <;> (try subst_vars) <;> (try tsimp [hs, hO, hT]) <;> tsimp at *
+    split_ifs <;> (try subst_vars) <;> (try tsimp [hs, hO, hT])
   | x :: xs, τ, L, R, D, Tl, hW, hF, hs, hw, hO, hT, hJ => by
     have hx := hW x (by simp)
     have s1 := runs_emitW F b τ (x := x) (L := L) (R := xs ++ R) (Tl := Tl) (D := D) (n := xs.length)
@@ -269,7 +267,7 @@ theorem runs_emitLoop (F : Fin 11) (h1 : F ≠ wA) (h2 : F ≠ wO) (h3 : F ≠ w
     · rw [e]; funext y
       simp only [τ₁, Function.update_apply]
       split_ifs <;> (try subst_vars) <;>
-        (try tsimp [hs, hO, hT, replicate_nil_append, List.replicate_succ]) <;> tsimp at *
+        (try tsimp [hs, hO, hT, replicate_nil_append, List.replicate_succ])
     · simp only [List.length_cons]; nlinarith
 
 /-! ### The whole monomial -/
@@ -324,7 +322,7 @@ theorem runs_skipHead {W n : ℕ} (rv : List (List Bool)) (hn : n ≤ rv.length)
   refine (Runs.then s1 (Runs.then s2 s3)).mono (fun τ' h => ?_) ?_
   · rw [h]; funext y
     simp only [τ₂, τ₁, Function.update_apply]
-    split_ifs <;> (try subst_vars) <;> (try tsimp [hQ, emp]) <;> tsimp at *
+    split_ifs <;> (try subst_vars) <;> (try tsimp [hQ, emp]); tsimp at *
   · tsimp [τ₂, WTape.words, clen_replicate_nil]
     nlinarith
 
@@ -439,7 +437,7 @@ theorem runs_twist {W n : ℕ} (e : Bool) (ws D Ls R : List (List Bool)) (hn : n
   refine (Runs.then s1 (Runs.then s2 (Runs.then s3 s4))).mono (fun τ' h => ?_) ?_
   · rw [h, ← tw]; funext y
     simp only [τ₃, τ₂, τ₁, Function.update_apply]
-    split_ifs <;> (try subst_vars) <;> (try tsimp [hA, emp]) <;> tsimp at *
+    split_ifs <;> (try subst_vars) <;> (try tsimp [hA, emp]); tsimp at *
   · have l1 : (rv.take n).length + (rv.drop n).length = ws.length := by
       rw [← List.length_append, List.take_append_drop, hlr]
     have a1 : n * (W + 25) ≤ ws.length * (W + 25) := Nat.mul_le_mul_right _ hn
@@ -447,7 +445,7 @@ theorem runs_twist {W n : ℕ} (e : Bool) (ws D Ls R : List (List Bool)) (hn : n
       Nat.mul_le_mul_right _ (Nat.sub_le _ _)
     have a3 : (n + (ws.length - n)) * (10 * W + 60) = ws.length * (10 * W + 60) := by
       rw [show n + (ws.length - n) = ws.length by omega]
-    simp only [htl, hdl, List.length_reverse]
+    simp only [htl, hdl]
     nlinarith
 
 theorem recordWords_lengths {r : ℕ} (w : ℕ) (re im : Fin r → ℤ) : ∀ x ∈ recordWords w re im, x.length ≤ w := by

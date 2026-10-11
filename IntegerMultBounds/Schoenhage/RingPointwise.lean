@@ -47,7 +47,7 @@ theorem runs_pwPrep {p l w : ℕ} (hw : 1 ≤ w) (τ : Fin 𝕌 → WTape) (hc :
     simp only [pwA, WP, wp_emit, wp_rewind]
     tsimp [hz, emp, reg, clen]
     funext y; simp only [Function.update_apply]
-    split_ifs <;> (try subst_vars) <;> (try tsimp [hz, emp, reg, ones]) <;> tsimp at *
+    split_ifs <;> (try subst_vars) <;> (try tsimp [hz, emp, reg, ones])
   set τ₁ := Function.update τ (ι qR) (reg (ones 2))
   have s2 := runs_ticksFrom (show iL ≠ ι qT by decide) τ₁ (b := l) (by tsimp [τ₁, hL]) (by tsimp [τ₁, hz])
   set τ₂ := Function.update τ₁ (ι qT) ⟨[], List.replicate l []⟩
@@ -61,7 +61,7 @@ theorem runs_pwPrep {p l w : ℕ} (hw : 1 ≤ w) (τ : Fin 𝕌 → WTape) (hc :
     tsimp [τ₃, τ₂, τ₁, hW, hP, hL, emp, reg, Rules.output_copy]
     refine ⟨?_, ?_⟩
     · funext y; simp only [Function.update_apply]
-      split_ifs <;> (try subst_vars) <;> (try tsimp [hz, emp, reg]) <;> tsimp at *
+      split_ifs <;> (try subst_vars) <;> (try tsimp [hz, emp, reg])
     · simp [time_copy, clen, WTape.words]; omega
   set τ₄ := Function.update (Function.update (Function.update (Function.update τ₃
       iW (reg (ones (2 * 2 ^ l)))) (ι qR) emp) iP emp) iL emp
@@ -88,7 +88,7 @@ theorem runs_pwPrep {p l w : ℕ} (hw : 1 ≤ w) (τ : Fin 𝕌 → WTape) (hc :
         simp only [τ₈, τ₇, τ₆, τ₅, τ₄, τ₃, τ₂, τ₁] <;> tsimp [hz, hO, emp]
     · simp only [List.mem_cons, List.not_mem_nil, or_false, not_or] at hm
       obtain ⟨n1, n2, n3, n4, n5, n6, n7, n8⟩ := hm
-      simp only [τ₈, τ₇, τ₆, τ₅, τ₄, τ₃, τ₂, τ₁, Function.update_apply, n1, n2, n3, n4, n5, n6, n7, n8, if_false]
+      simp only [τ₈, τ₇, τ₆, τ₅, τ₄, τ₃, τ₂, τ₁, Function.update_apply, n1, n2, n3, n4, n5, n6, n7, n8, ite_false]
   · clear s1 s2 s3 s4 s5 s6 s7 s8 s9
     tsimp [τ₇, τ₆, τ₅, τ₄, τ₃, τ₂, τ₁, hO, emp, clen_reverse]
     have : 2 * 2 ^ l - 2 ≤ 2 * 2 ^ l := Nat.sub_le _ _
@@ -284,7 +284,7 @@ theorem clen_cut_le (w : ℕ) (hw : 1 ≤ w) : ∀ (n : ℕ) (x : List Bool), x.
       omega
 
 /-- A bound on the pointwise-product step on word tapes. -/
-def pwCost (p d l K w H M X : ℕ) : ℕ :=
+def pwCost (p _d l _K w H M X : ℕ) : ℕ :=
   headerCost p (2 ^ l) w H + constCost p l w +
     M * (2 ^ l * (56 * w + 400) + ringCost (wOf p l w) (2 ^ l) w (p + l) (wOf p l w * 2 ^ l) + 204) +
     50 * X + 100 * 2 ^ l + 60 * l + 10 * (p + l + w) + 6 * (wOf p l w * 2 ^ l) + 4 * 2 ^ l * (wOf p l w + 2) +
@@ -375,7 +375,7 @@ theorem runs_pwCoreWith {dec : Cmd 0 𝕌} {hdr : List Bool} {p l w : ℕ} {fs g
     · simp only [List.mem_cons, List.not_mem_nil, or_false, not_or] at hm
       obtain ⟨n1, n2, n3, n4, n5, n6, n7, n8, n9, n10, n11, n12, n13, n14, n15⟩ := hm
       simp only [τ₄, τ₃, τ₂, constBank, τ₁, τ₀, startBank, Function.update_apply, n1, n2, n3, n4, n5, n6, n7, n8,
-        n9, n10, n11, n12, n13, n14, n15, if_false]
+        n9, n10, n11, n12, n13, n14, n15, ite_false]
   · clear s1 s2 s3 s4 s5
     simp only [finTapes, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil]
     tsimp [τ₄, τ₃, τ₂, constBank, reg, WTape.words, clen_cons, clen_nil, clen_reverse, clen_append]

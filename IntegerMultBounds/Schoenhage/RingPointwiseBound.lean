@@ -205,7 +205,7 @@ theorem term_le {Cw p l M H w : ℕ} (hp : 2 ≤ p) (hl : 1 ≤ l) (hlp : l < p)
 
 /-! ### Every width -/
 
-theorem pointwiseTime_le (Cw : ℕ) (hCw : 2 ≤ Cw) : ∃ C : ℕ, ∀ p l M H : ℕ, 1 ≤ l → 2 ≤ p → l < p → 1 ≤ M →
+theorem pointwiseTime_le (Cw : ℕ) (_hCw : 2 ≤ Cw) : ∃ C : ℕ, ∀ p l M H : ℕ, 1 ≤ l → 2 ≤ p → l < p → 1 ≤ M →
     pointwiseTime Cw (2 ^ l * M) p (2 ^ l) H ≤
       C * ((2 ^ l * M) * p * (Nat.log 2 (2 ^ l * p) + 1) * (Nat.log 2 (Nat.log 2 (2 ^ l * p) + 1) + 1) + H) := by
   refine ⟨ptC Cw, fun p l M H hl hp hlp hM => ?_⟩

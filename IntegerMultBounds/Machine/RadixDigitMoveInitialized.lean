@@ -110,11 +110,11 @@ private theorem retained_bank (source : ℤ → Fin (a+4)) (roles : Fin Q → �
     · intro j
       refine Fin.addCases (m := 1) (n := Q) ?_ ?_ j
       · intro k; fin_cases k
-        simp [TrackedCleanupList.retained,keep,RadixDigitMoveCore.bank,bank,Tapes.append,CyclicRowCopy.payload,Fin.ext_iff]
+        simp [keep,RadixDigitMoveCore.bank,Tapes.append,CyclicRowCopy.payload,Fin.ext_iff]
       · intro k
-        simp [TrackedCleanupList.retained,keep,RadixDigitMoveCore.bank,bank,Tapes.append,CyclicRowCopy.payload,Fin.ext_iff]
+        simp [keep,Tapes.append,CyclicRowCopy.payload,Fin.ext_iff]
     · intro j
-      simp only [TrackedCleanupList.retained,keep,RadixDigitMoveCore.bank,bank,Tapes.append,Fin.addCases_right]
+      simp only [keep,RadixDigitMoveCore.bank,Tapes.append,Fin.addCases_right]
       fin_cases j <;> rfl
 
 theorem redistribute_hoare (source : ℤ → Fin (a+4))

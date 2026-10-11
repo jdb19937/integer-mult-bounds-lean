@@ -217,7 +217,7 @@ theorem backV_hoare (k : ℕ) (T1 T2 T3 T4 T5 T6 : ℤ → Fin (a + 4)) (f0 : �
     (fun j => (StepLeft.cfg f0 (x - j) 0).tapes) 1 (fun j hj => by
       have h := StepLeft.step_hoare f0 (x - j)
       refine h.consequence (fun v hv => hv) (fun v hv => ?_) le_rfl
-      rw [hv]; congr 1; push_cast; ring)
+      rw [hv]; congr 1; push_cast; ring_nf)
   have hp := hoare_place hit oneV
     (⟨fun i => if i = 0 then p1 else if i = 1 then p2 else if i = 2 then p3 else if i = 3 then p4
         else if i = 4 then p5 else p6,

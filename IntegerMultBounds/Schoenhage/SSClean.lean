@@ -199,7 +199,7 @@ theorem runs_ssMain_end0 {N x y : ℕ} (hN : 0 < N) (hk : 2 ^ kOf N ∣ N) (hx :
         simp [pairsOf, rwds, ssMul_correct N x y hk hx hy]
       · rw [hP']
         simp only [WTape.words, List.reverse_nil, List.nil_append, List.append_nil, List.map_reverse,
-          List.reverse_reverse, clen_reverse]
+          List.reverse_reverse]
         omega
       · rw [hC']; simp [WTape.words, clen, List.map_replicate]; omega
       · rw [e3, hG]; simp [WTape.words, clen, List.map_replicate]

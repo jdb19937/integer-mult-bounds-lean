@@ -58,9 +58,9 @@ theorem active_bank (source : ℤ → Fin (a+4)) (ss ps : List Bool) (os ts : Op
       RadixDigitMoveCounts.bank ss ps os ts := by
   apply congrArg₂ Tapes.mk <;> funext i
   all_goals
-    simp only [Placement.active,active_slot]
+    simp only [active_slot]
     fin_cases i <;>
-      simp [slot,bank,Tapes.append,controls,RadixDigitMoveCounts.bank,
+      simp [slot,bank,Tapes.append,controls,
         RadixDigitMoveCounts.encoded_binary]
   all_goals cases os <;> cases ts <;> first | rfl | exact (RadixDigitMoveCounts.encoded_binary _).symm
 
@@ -95,7 +95,7 @@ theorem extra_bank (source : ℤ → Fin (a+4)) (ss ps : List Bool)
             exfalso
             first | exact hn 2 rfl | exact hn 3 rfl
       · intro k hn; simp only [bank,Tapes.append,Fin.addCases_left,Fin.addCases_right,and_self]
-    · intro j hn; simp only [bank,Tapes.append,Fin.addCases_left,Fin.addCases_right,and_self]
+    · intro j hn; simp only [bank,Tapes.append,Fin.addCases_right,and_self]
   apply congrArg₂ Tapes.mk
   · funext i
     exact (he _ (extra_ne i)).1

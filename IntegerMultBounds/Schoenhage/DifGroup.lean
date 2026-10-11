@@ -94,6 +94,7 @@ theorem difRoundAt_eq (o h : ℕ) (z : ℕ → Fin r → ℂ) :
 theorem twist_twist (f g : ℕ → ℕ) (z : ℕ → Fin r → ℂ) : twist f (twist g z) = twist (fun x => f x + g x) z := by
   funext x; simp [twist, shiftInv_add]
 
+omit [NeZero r] in
 theorem bfly_comm {P Q : ℕ} (hPQ : P ≠ Q) (z : ℕ → Fin r → ℂ) : bfly P (bfly Q z) = bfly Q (bfly P z) := by
   funext x
   unfold bfly

@@ -51,7 +51,7 @@ theorem gammaRead_gamma {v : ℕ} (hv : 1 ≤ v) (rest : List Bool) :
     rw [hg, hm]; simp
   unfold gammaRead
   simp only [ht, List.length_replicate, hdrop, List.length_append, length_msbBits]
-  rw [if_neg (by omega), ← hn, List.take_left' (length_msbBits _ _), List.drop_left' (length_msbBits _ _),
+  rw [ite_eq_right (by omega), ← hn, List.take_left' (length_msbBits _ _), List.drop_left' (length_msbBits _ _),
     binaryValue_msbBits, Nat.mod_eq_of_lt (Nat.lt_size_self v)]
 
 theorem header_read (p r w : ℕ) (hp : 1 ≤ p) (hr : 1 ≤ r) (hw : 1 ≤ w) :

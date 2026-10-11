@@ -99,8 +99,8 @@ private theorem source_dest_ne : (destSlot (q := q)) ≠ sourceSlot := by
 theorem input_payload {v : Descriptor} (hs : Fin 6 → List Bool) (x : Fin (volume q v) → Fin (q+4)) :
     SharedPayload.payload (input hs x) sourceSlot destSlot = pair x := by
   apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i
-  all_goals simp only [SharedPayload.payload,input,sourceSlot,destSlot,Tapes.append,Fin.addCases_right,
-    RecursiveDigitInstall.blankLocal,pair,Matrix.cons_val]
+  all_goals simp only [input,sourceSlot,destSlot,Tapes.append,Fin.addCases_right,
+    RecursiveDigitInstall.blankLocal]
   all_goals first | rfl | simp
   have hn : Fin.castAdd (DigitInterchangeBank.TapeCount q) (DigitInterchangeBank.slot .dest) ≠
       RecursiveDigitInstall.source (q := q) := by

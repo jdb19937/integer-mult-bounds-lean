@@ -93,7 +93,8 @@ theorem sum_Icc_eq_range (a : ℤ) (n : ℕ) (f : ℤ → ℂ) :
     · simp only [Finset.coe_range, Set.mem_Iio]; omega
     · simp only; omega
 
-theorem floor_centre (hst : s ≤ t) (k : ℕ) (hk : k < t) :
+omit [NeZero s] [NeZero t] in
+theorem floor_centre (_hst : s ≤ t) (k : ℕ) (hk : k < t) :
     ⌊resampCentre s t (k : ZMod t)⌋ = (centre s t k : ℤ) := by
   unfold resampCentre centre
   rw [ZMod.val_natCast_of_lt hk, show ((s : ℝ) * k / t) = ((s * k : ℕ) : ℝ) / ((t : ℕ) : ℝ) by push_cast; ring,
@@ -117,7 +118,8 @@ variable (wtWords uWords : List (List Bool)) (s t m p w W : ℕ) [NeZero s] [NeZ
   (hwtl : wtWords.length = t * (2 * m + 1)) (hul : 2 * (s + 2 * m + 1) ≤ uWords.length)
   (hst : s ≤ t) (hs : 0 < s)
 
-include hu hwt' hre hst hs hul in
+omit [NeZero s] [NeZero t] in
+include hu hwt' hre hst hs in
 /-- The real part of the window sum is the sum of the machine's real terms. -/
 theorem sum_re (k : ℕ) (hk : k < t) :
     (∑ j ∈ truncWindow s t m (k : ZMod t), termW p wf u (k : ZMod t) j).re =
@@ -136,7 +138,8 @@ theorem sum_re (k : ℕ) (hk : k < t) :
     hre (centre s t k + j) (by omega),
     show ((centre s t k + j : ℕ) : ℤ) - m = (centre s t k : ℤ) - m + j by push_cast; ring]
 
-include hu hwt' him hst hs hul in
+omit [NeZero s] [NeZero t] in
+include hu hwt' him hst hs in
 /-- The imaginary part of the window sum is the sum of the machine's imaginary terms. -/
 theorem sum_im (k : ℕ) (hk : k < t) :
     (∑ j ∈ truncWindow s t m (k : ZMod t), termW p wf u (k : ZMod t) j).im =
@@ -155,6 +158,7 @@ theorem sum_im (k : ℕ) (hk : k < t) :
     him (centre s t k + j) (by omega),
     show ((centre s t k + j : ℕ) : ℤ) - m = (centre s t k : ℤ) - m + j by push_cast; ring]
 
+omit [NeZero s] [NeZero t] in
 include hu hwt' hre him hw hwW hW hwt hul' hwb hub hwtl hul hst hs in
 /-- The accumulator words of output `k` are `2^(p+1)` times the parts of the
 numerical map `Ã` at `k`. -/
@@ -162,10 +166,10 @@ theorem accumulators_eq (k : ℕ) (hk : k < t) :
     resampANum s t m (termW p wf) u (k : ZMod t) =
       ⟨(signed (accR wtWords uWords s t m p w W k (2 * m + 1)) : ℝ) / 2 ^ (p + 1),
        (signed (accI wtWords uWords s t m p w W k (2 * m + 1)) : ℝ) / 2 ^ (p + 1)⟩ := by
-  rw [accR_signed wtWords uWords s t m p w W hw hwW hW hwt hul' hwb hub hwtl hul hst hs k hk _ le_rfl,
-    accI_signed wtWords uWords s t m p w W hw hwW hW hwt hul' hwb hub hwtl hul hst hs k hk _ le_rfl]
-  have hr := sum_re wtWords uWords s t m p wf u ar ai hu hwt' hre hul hst hs k hk
-  have hi := sum_im wtWords uWords s t m p wf u ar ai hu hwt' him hul hst hs k hk
+  rw [accR_signed wtWords uWords s t m p w W hw hwW hW hwt hul' hwb hub hwtl hul hs k hk _ le_rfl,
+    accI_signed wtWords uWords s t m p w W hw hwW hW hwt hul' hwb hub hwtl hul hs k hk _ le_rfl]
+  have hr := sum_re wtWords uWords s t m p wf u ar ai hu hwt' hre hst hs k hk
+  have hi := sum_im wtWords uWords s t m p wf u ar ai hu hwt' him hst hs k hk
   unfold resampANum
   rw [show (1 / 2 : ℂ) = ((1 / 2 : ℝ) : ℂ) by push_cast; rfl]
   apply Complex.ext

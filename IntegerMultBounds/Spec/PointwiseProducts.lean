@@ -85,7 +85,7 @@ theorem transformHeader_read {p d r K w : ℕ} {ts : List ℕ} (hp : 1 ≤ p) (h
     (hK : 1 ≤ K) (hw : 1 ≤ w) (hts : ∀ t ∈ ts, 1 ≤ t) :
     gammaReadN (5 + ts.length) (transformHeader p d r K w ts) = some ([p, d, r, K, w] ++ ts, []) := by
   have e : transformHeader p d r K w ts = ([p, d, r, K, w] ++ ts).flatMap gamma ++ [] := by
-    simp [transformHeader, List.flatMap_append]
+    simp [transformHeader]
   have l : 5 + ts.length = ([p, d, r, K, w] ++ ts).length := by simp; omega
   rw [e, l]
   exact gammaReadN_flatMap _ (fun v hv => by

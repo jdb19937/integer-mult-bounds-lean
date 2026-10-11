@@ -79,7 +79,7 @@ theorem seal_scan (stop put : Fin (a + 4)) (f : ℤ → Fin (a + 4)) :
   | 0, h, _, hb => by
     simp only [Nat.cast_zero, add_zero] at hb ⊢
     rw [FMachine.frun_one, step_write (sealMachine stop put) (s' := .back) put .left (by simp [hb])]
-    simp [Move.offset]; ring
+    simp [Move.offset]; ring_nf
   | n + 1, h, hnb, hb => by
     have h0 : f h ≠ stop := by simpa using hnb 0 (by omega)
     have ih := seal_scan stop put f n (h + 1) (fun c hc => by
@@ -91,7 +91,7 @@ theorem seal_scan (stop put : Fin (a + 4)) (f : ℤ → Fin (a + 4)) :
     convert ih using 4
     · simp [Move.offset]
     · push_cast; ring
-    · push_cast; ring
+    · push_cast; ring_nf
 
 theorem seal_back (stop put : Fin (a + 4)) (f : ℤ → Fin (a + 4)) :
     ∀ (n : ℕ) (h : ℤ), (∀ c : ℕ, c < n → f (h - c) ≠ blank) → f (h - n) = blank →

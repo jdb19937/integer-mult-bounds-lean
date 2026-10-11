@@ -63,7 +63,7 @@ private theorem column_step (c s : Bool) (x : Option Bool) (y : Bool)
           if x = none then Move.stay else Move.right)) := by
     cases c <;> cases s <;> rcases x with _ | x <;> (try cases x) <;> cases y <;>
       simp [program, cfg, st, carryBit, sumBit, isBit, hx, hy, inputSymbol, blank, bitSymbol]
-    all_goals (funext i; fin_cases i <;> simp [hx, hy, inputSymbol, isBit, blank, bitSymbol])
+    all_goals (funext i; fin_cases i <;> simp [hx, inputSymbol, blank, bitSymbol])
   unfold step
   simp only [cfg] at ht ⊢
   rw [ht]
@@ -79,7 +79,7 @@ private theorem column_step (c s : Bool) (x : Option Bool) (y : Bool)
 def ext : Bool → Bool → List Bool → List Bool → List Bool × Bool × Bool
   | c, s, _, [] => ([], c, s)
   | c, s, [], y :: acc => ((sumBit c s y) :: (ext (carryBit c s y) s [] acc).1, (ext (carryBit c s y) s [] acc).2)
-  | c, s, x :: xs, y :: acc => ((sumBit c x y) :: (ext (carryBit c x y) x xs acc).1, (ext (carryBit c x y) x xs acc).2)
+  | c, _s, x :: xs, y :: acc => ((sumBit c x y) :: (ext (carryBit c x y) x xs acc).1, (ext (carryBit c x y) x xs acc).2)
 
 theorem ext_digits (c s : Bool) (xs acc : List Bool) (h : xs.length ≤ acc.length) :
     (ext c s xs acc).1 = digits c ((xs ++ List.replicate (acc.length - xs.length) (xs.getLastD s)).zip acc) := by

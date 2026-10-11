@@ -27,7 +27,7 @@ theorem ringProgram_hoare {Wd r w s N : ℕ} {fs gs : List (List Bool × List Bo
   exact (compile_correct (by decide) hx).consequence (fun _ h => h) (fun _ h => h) hk
 
 /-- The step bound in the packed size alone. -/
-theorem ringCost_le {Wd r w s N : ℕ} (hr : 1 ≤ r) (hWd : w + 1 ≤ Wd) (hws : w + s ≤ Wd + 1) (hN : N = Wd * r) :
+theorem ringCost_le {Wd r w s N : ℕ} (_hr : 1 ≤ r) (hWd : w + 1 ≤ Wd) (hws : w + s ≤ Wd + 1) (hN : N = Wd * r) :
     ringCost Wd r w s N ≤
       4 * costC cA cB cC0 * (N + 1) * (bitlen N + 1) * (bitlen (bitlen N ^ 3) + 1) + 11000 * N + 250000 := by
   have hc := cost_le cA cB cC0 N

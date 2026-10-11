@@ -184,11 +184,11 @@ theorem bitrev_axis_lt {r : ℕ} {ts : List ℕ} (h : PowAxes r ts) {i : ℕ} (h
   rwa [ha, Nat.log_pow (by norm_num)] at this ⊢
 
 theorem bitrevAddr_lt {r : ℕ} {ts : List ℕ} (h : PowAxes r ts) (n : ℕ) : bitrevAddr ts n < ts.prod :=
-  undigits_lt ts _ fun i hi => bitrev_axis_lt h hi n
+  undigits_lt ts _ fun _i hi => bitrev_axis_lt h hi n
 
 theorem digit_bitrevAddr {r : ℕ} {ts : List ℕ} (h : PowAxes r ts) (n : ℕ) {i : ℕ} (hi : i < ts.length) :
     digit ts i (bitrevAddr ts n) = bitrev (Nat.log 2 (ts.getD i 1)) (digit ts i n) :=
-  digit_undigits ts _ (fun i hi => bitrev_axis_lt h hi n) i hi
+  digit_undigits ts _ (fun _i hi => bitrev_axis_lt h hi n) i hi
 
 theorem bitrevAddr_bitrevAddr {r : ℕ} {ts : List ℕ} (h : PowAxes r ts) {n : ℕ} (hn : n < ts.prod) :
     bitrevAddr ts (bitrevAddr ts n) = n := by
@@ -259,7 +259,7 @@ theorem sum_axisExp {r : ℕ} [NeZero r] : ∀ (ts : List ℕ), PowAxes r ts →
       rw [axisExp_cons r t ts D (Finset.mem_range.mp ha) (Finset.mem_range.mp hb), shiftNegZ_add]
     rw [Finset.sum_congr rfl e, sum_axisExp ts ht (fun i => D (i + 1)) v]
     by_cases hall : ∀ i < ts.length, D (i + 1) % ts.getD i 1 = 0
-    · rw [if_pos hall]
+    · rw [ite_eq_left hall]
       simp only [shiftNegZ_smul, ← Finset.smul_sum]
       by_cases h0 : D 0 % t = 0
       · have hc : ∀ i < (t :: ts).length, D i % (t :: ts).getD i 1 = 0 := by
@@ -267,7 +267,7 @@ theorem sum_axisExp {r : ℕ} [NeZero r] : ∀ (ts : List ℕ), PowAxes r ts →
           cases i with
           | zero => simpa using h0
           | succ i => simpa using hall i (by simpa using hi)
-        rw [if_pos hc]
+        rw [ite_eq_left hc]
         have hz : ∀ a ∈ Finset.range t, shiftNegZ (2 * r / t * D 0 * a) v = v := fun a _ => by
           rw [shiftNegZ_congr_mod (e₂ := 0) (by rw [exp_mod_axis hdvd, h0]; simp), shiftNegZ_zero]
         rw [Finset.sum_congr rfl hz, Finset.sum_const, Finset.card_range,
@@ -275,7 +275,7 @@ theorem sum_axisExp {r : ℕ} [NeZero r] : ∀ (ts : List ℕ), PowAxes r ts →
         congr 1; push_cast; ring
       · have hc : ¬ ∀ i < (t :: ts).length, D i % (t :: ts).getD i 1 = 0 := fun hc =>
           h0 (by simpa using hc 0 (by simp))
-        rw [if_neg hc]
+        rw [ite_eq_right hc]
         have hz : ∑ a ∈ Finset.range t, shiftNegZ (2 * r / t * D 0 * a) v =
             ∑ a : Fin t, shiftNegZ ((2 * r / t) * (D 0 % t) * a.val) v := by
           rw [Finset.sum_range]
@@ -285,7 +285,7 @@ theorem sum_axisExp {r : ℕ} [NeZero r] : ∀ (ts : List ℕ), PowAxes r ts →
         rw [hz, sum_shiftNegZ_eq_zero hdvd hf (Nat.pos_of_ne_zero h0) (Nat.mod_lt _ htp), smul_zero]
     · have hc : ¬ ∀ i < (t :: ts).length, D i % (t :: ts).getD i 1 = 0 := fun hc =>
         hall fun i hi => by simpa using hc (i + 1) (by simpa using hi)
-      rw [if_neg hall, if_neg hc]
+      rw [ite_eq_right hall, ite_eq_right hc]
       simp [shiftNegZ_zero_vec]
 
 theorem list_sum_map_sub {R : Type*} [AddCommGroup R] (L : List ℕ) (b c : ℕ → R) :
@@ -319,7 +319,7 @@ theorem exp_compose {r : ℕ} [NeZero r] {ts : List ℕ} (h : PowAxes r ts) (n k
   push_cast [Nat.cast_sub hm.le]
   linear_combination -(digit ts i k : ZMod (2 * r)) * hc'
 
-theorem digits_eq {ts : List ℕ} (h : ∀ t ∈ ts, 0 < t) {n m : ℕ} (hn : n < ts.prod) (hm : m < ts.prod)
+theorem digits_eq {ts : List ℕ} (_h : ∀ t ∈ ts, 0 < t) {n m : ℕ} (hn : n < ts.prod) (hm : m < ts.prod)
     (hd : ∀ i < ts.length, digit ts i n = digit ts i m) : n = m := by
   rw [← undigits_digit ts n hn, ← undigits_digit ts m hm]
   exact undigits_congr ts hd
@@ -355,7 +355,7 @@ theorem oppT_fwdT {r : ℕ} [NeZero r] {ts : List ℕ} (h : PowAxes r ts) (z : �
         ((diff_mod_eq_zero (digit_lt h.pos i n) (digit_lt h.pos i m)).mp (hc i hi)).symm)
     · rintro rfl i _
       exact (diff_mod_eq_zero (digit_lt h.pos i m) (digit_lt h.pos i m)).mpr rfl
-  rw [Finset.sum_congr rfl hterm, Finset.sum_ite_eq', if_pos (Finset.mem_range.mpr hn), smul_smul]
+  rw [Finset.sum_congr rfl hterm, Finset.sum_ite_eq', ite_eq_left (Finset.mem_range.mpr hn), smul_smul]
   congr 1
   field_simp
 
@@ -373,10 +373,10 @@ theorem oppExact_fwdExact {r : ℕ} [NeZero r] {ts : List ℕ} (h : PowAxes r ts
   intro j hj
   have hj' := Finset.mem_range.mp hj
   have hb := bitrevAddr_lt h j
-  rw [dif_pos (by rw [Nat.mod_eq_of_lt hb]; exact hb)]
+  rw [dite_eq_left (by rw [Nat.mod_eq_of_lt hb]; exact hb)]
   congr 1
   unfold fwdExact
-  rw [dif_pos (Lp ⟨bitrevAddr ts j % ts.prod, _⟩).isLt]
+  rw [dite_eq_left (Lp ⟨bitrevAddr ts j % ts.prod, _⟩).isLt]
   simp only [Fin.eta, Equiv.symm_apply_apply, Nat.mod_eq_of_lt hb, bitrevAddr_bitrevAddr h hj']
 
 end IntegerMultBounds.Spec.SignedRingProduct

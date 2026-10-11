@@ -63,10 +63,10 @@ theorem roles_putData {v : Descriptor} (wires : Fin (1+c) → Fin t) (data : Dat
     roles (putData wires data) = RecursiveRowsRoleBank.updated wires (SharedBank.empty t prime) (roles data) := by
   apply congrArg₂ Tapes.mk
   · funext i
-    simp only [roles,RecursiveRowsRoleBank.updated,SharedBank.empty]
+    simp only [roles,SharedBank.empty]
     split_ifs <;> rfl
   · funext i
-    simp only [roles,putData,RecursiveRowsRoleBank.updated,SharedBank.empty]
+    simp only [roles,putData,SharedBank.empty]
     split_ifs with h
     · rfl
     · exact source_blank v
@@ -97,7 +97,7 @@ theorem sourceLocal_tapes {v : Descriptor} (x : Fin (volume prime v) → Fin 4) 
     roles (sourceLocal (c := c) x) = RecursiveRowsConstruct.sourcePayload (c := c) (encodeArray x) := by
   apply congrArg₂ Tapes.mk
   · funext i
-    induction i using Fin.addCases <;> simp [roles,RecursiveRowsConstruct.sourcePayload,CyclicRowCopy.payload,Tapes.append]
+    induction i using Fin.addCases <;> simp
   · funext i
     induction i using Fin.addCases with
     | left i => simpa only [roles,sourceLocal,Fin.addCases_left,RecursiveRowsConstruct.sourcePayload,
@@ -110,7 +110,7 @@ theorem roleLocal_tapes {v : Descriptor} (rho : Equiv.Perm (Fin c)) (hd : c ∣ 
     roles (roleLocal rho hd x) = RecursiveRowsConstruct.mergePayload rho hd (encodeArray x) (fun _ => blank) := by
   apply congrArg₂ Tapes.mk
   · funext i
-    induction i using Fin.addCases <;> simp [roles,RecursiveRowsConstruct.mergePayload,CyclicRowCopy.payload,Tapes.append]
+    induction i using Fin.addCases <;> simp
   · funext i
     induction i using Fin.addCases with
     | left i => simpa only [roles,roleLocal,Fin.addCases_left,RecursiveRowsConstruct.mergePayload,

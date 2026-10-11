@@ -264,7 +264,7 @@ theorem moveLeft_hoare (k : ℕ) (f : ℤ → Fin (a + 4)) (p : ℤ) :
   have hit := iterate_hoare (StepLeft.program (a := a)) k (fun j => (StepLeft.cfg f (p - j) 0).tapes) 1
     (fun j hj => by
       refine (StepLeft.step_hoare f (p - j)).consequence (fun v hv => hv) (fun v hv => ?_) le_rfl
-      rw [hv]; congr 1; push_cast; ring)
+      rw [hv]; congr 1; push_cast; ring_nf)
   simpa using hit
 
 namespace EraseCell

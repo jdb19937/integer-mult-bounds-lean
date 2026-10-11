@@ -130,10 +130,10 @@ theorem runs_subMod {N : ℕ} (hN : 0 < N) (σ : Fin 𝕋 → WTape) (hc : AluCo
       have e1 : bval x + (2 ^ N + 1) - bval y = (bval x - bval y) + (2 ^ N + 1) := by omega
       rw [e1, Nat.add_mod_right, Nat.mod_eq_of_lt (by omega)]
       omega
-    simp only [Bool.false_eq_true, false_implies, not_false_eq_true, true_implies, true_and]
+    simp only [Bool.false_eq_true, false_implies, true_implies, true_and]
     refine ⟨?_, ?_⟩
     · rw [hres]; funext i; fin_cases i <;> tsimp [hO, h1, h2, emp]
-    · simp [WTape.words, clen, hdl, Rules.length_addW, fword_length] at t1 t2 t3 t4 ⊢; omega
+    · simp [WTape.words, clen, hdl] at t1 t2 t3 t4 ⊢; omega
   · dsimp only at *
     simp only [Bool.toNat_true, Bool.toNat_false, Nat.cast_one, Nat.cast_zero, mul_one, sub_zero] at key
     have hres : Rules.fit (N + 1) (Rules.addW false d (fword N)) = subRes N x y := by
@@ -148,8 +148,7 @@ theorem runs_subMod {N : ℕ} (hN : 0 < N) (σ : Fin 𝕋 → WTape) (hc : AluCo
       simp only [Bool.false_eq_true, ↓reduceIte, add_zero]
       rw [show bval x + 2 ^ N * 2 - bval y + (2 ^ N + 1) = (bval x + (2 ^ N + 1) - bval y) + 2 ^ N * 2 by
         omega, Nat.add_mod_right, Nat.mod_eq_of_lt (by omega)]
-    simp only [Bool.false_eq_true, false_implies, implies_true, true_implies, not_true_eq_false,
-      not_false_eq_true, and_true, true_and, not_true]
+    simp only [true_implies]
     simp only [hres]
     refine ⟨⟨?_, ?_⟩, ?_⟩
     · funext i; fin_cases i <;> tsimp [hO, h1, h2, hW, hF, emp, reg]
@@ -179,7 +178,7 @@ theorem runs_addMod {N : ℕ} (hN : 0 < N) (σ : Fin 𝕋 → WTape) (hc : AluCo
       (reg (addRes N x y))) (80 * N + 200) := by
   obtain ⟨hW, hF⟩ := hc
   apply Runs.of_wp
-  simp only [addMod, cleanup, WP, wp_op1, wp_op0, wp_back, wp_rewind, wp_clear]
+  simp only [addMod, cleanup, WP, wp_op1, wp_back, wp_rewind, wp_clear]
   tsimp [hx, hy, hO, h1, h2, hW, hF, emp, reg, Rules.output_sub, Rules.output_add,
     Rules.output_take, startsOne_mk]
   have hFv := bval_fword hN
@@ -213,14 +212,14 @@ theorem runs_addMod {N : ℕ} (hN : 0 < N) (σ : Fin 𝕋 → WTape) (hc : AluCo
       have e1 : bval x + bval y = (bval x + bval y - (2 ^ N + 1)) + (2 ^ N + 1) := by omega
       rw [e1, Nat.add_mod_right, Nat.mod_eq_of_lt (by omega)]
       omega
-    simp only [Bool.false_eq_true, false_implies, not_false_eq_true, true_implies, true_and, hres]
+    simp only [Bool.false_eq_true, false_implies, true_implies, true_and, hres]
     refine ⟨?_, ?_⟩
     · funext i; fin_cases i <;> tsimp [hO, h1, h2, hW, hF, emp, reg]
     · simp [WTape.words, clen, hdl, hsl, fword_length] at t1 t2 t3 t4 ⊢; omega
   · simp only [Bool.toNat_true, Bool.toNat_false, Nat.cast_one, Nat.cast_zero, mul_one, sub_zero] at key
     have hres : Rules.fit (N + 1) (Rules.addW false x y) = addRes N x y := by
       rw [Rules.fit_eq_bits, addRes, hsv, Nat.mod_eq_of_lt (by omega)]
-    simp only [Bool.false_eq_true, implies_true, true_implies, not_true_eq_false, and_true, hres]
+    simp only [true_implies, hres]
     refine ⟨⟨?_, ?_⟩, ?_⟩
     · funext i; fin_cases i <;> tsimp [hO, h1, h2, hW, hF, emp, reg]
     · simp [WTape.words, clen, hdl, hsl, fword_length] at t1 t2 t3 t4 ⊢; omega
@@ -275,7 +274,7 @@ theorem shift_values {N t : ℕ} (htN : t ≤ N) {v : List Bool} (hlv : v.length
     simp
   · rw [shiftHi, Rules.bval_fit _ _ (by simp; omega), bval_drop _ _ (by omega)]
 
-theorem shift_mod {N t : ℕ} (hN : 0 < N) (htN : t ≤ N) {v : List Bool} (hlv : v.length = N + 1)
+theorem shift_mod {N t : ℕ} (_hN : 0 < N) (htN : t ≤ N) {v : List Bool} (hlv : v.length = N + 1)
     (hv : bval v < 2 ^ N + 1) :
     subRes N (shiftLo N t v) (shiftHi N t v) = mulRes N t v := by
   obtain ⟨-, -, hlo, hhi⟩ := shift_values htN hlv

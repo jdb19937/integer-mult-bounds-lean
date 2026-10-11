@@ -42,7 +42,7 @@ theorem binaryValue_msbBits : ∀ n v : ℕ, binaryValue (msbBits n v) = v % 2 ^
   | 0, v => by simp [msbBits, binaryValue, Nat.mod_one]
   | n + 1, v => by
     rw [msbBits, binaryValue, length_msbBits, binaryValue_msbBits n v, pow_succ, Nat.mod_mul]
-    rcases Nat.mod_two_eq_zero_or_one (v / 2 ^ n) with h | h <;> simp [h] <;> ring
+    rcases Nat.mod_two_eq_zero_or_one (v / 2 ^ n) with h | h <;> simp [h]; ring
 
 /-! ### The self-delimiting code -/
 

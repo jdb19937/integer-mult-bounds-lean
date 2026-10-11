@@ -60,7 +60,7 @@ theorem runs_aluOn {N : ℕ} (hN : 0 < N) (τ : Fin 𝕌 → WTape) (hc : Clean 
       by_cases e3 : i = kN
       · subst e3; tsimp [hK, reg]
       · tsimp [e1, e2, e3]
-    · simp [clen] at t1 ⊢; omega
+    · simp at t1 ⊢; omega
   set τ₁ := Function.update (Function.update τ (ι c1) (reg [true])) (ι cU) (reg (ones N))
   have e₁ : τ₁ ∘ ι = Function.update (Function.update (fun _ => emp) c1 (reg [true])) cU (reg (ones N)) := by
     simp only [τ₁, comp_ι_update]; rw [hc]
@@ -107,7 +107,7 @@ theorem runs_aluOff {N : ℕ} (τ : Fin 𝕌 → WTape) (hA : τ ∘ ι = aluBan
   refine ⟨eq_ext (fun i => ?_) (fun x hx => ?_), ?_⟩
   · simp only [Function.update_apply, ι_injective.eq_iff]
     rw [h]; simp only [aluBank, Function.update_apply]
-    split_ifs <;> first | rfl | simp_all
+    split_ifs <;> rfl
   · have n : ∀ i : Fin 𝕋, x ≠ ι i := fun i q => by rw [q, ι_val] at hx; have := i.isLt; omega
     rw [Function.update_of_ne (n c1), Function.update_of_ne (n cF), Function.update_of_ne (n cW),
       Function.update_of_ne (n cN)]
@@ -120,7 +120,7 @@ noncomputable def aluOp (op : Cmd 0 𝕋) (s₁ s₂ d : Fin 𝕌) (o₁ : Own s
   .seq (up op) (regMove (ι aO) d (od.ne' aO))
 
 theorem runs_aluOp (op : Cmd 0 𝕋) {s₁ s₂ d : Fin 𝕌} (o₁ : Own s₁) (o₂ : Own s₂) (od : Own d)
-    (h12 : s₁ ≠ s₂) (hd1 : d ≠ s₁) (hd2 : d ≠ s₂) {N B : ℕ} {x y z : List Bool}
+    (_h12 : s₁ ≠ s₂) (_hd1 : d ≠ s₁) (_hd2 : d ≠ s₂) {N B : ℕ} {x y z : List Bool}
     (hop : Runs op (Function.update (Function.update (aluBank N) aX (reg x)) aY (reg y))
       (· = Function.update (aluBank N) aO (reg z)) B)
     (τ : Fin 𝕌 → WTape) (hA : τ ∘ ι = aluBank N) (hx : τ s₁ = reg x) (hy : τ s₂ = reg y)

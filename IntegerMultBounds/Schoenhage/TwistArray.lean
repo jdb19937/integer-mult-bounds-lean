@@ -105,7 +105,7 @@ theorem runs_load {s d : Fin 15} (h : s ≠ d) (σ : Fin 15 → WTape) {L R : Li
   have s2 := runs_rewind (a := 0) d (Function.update (Function.update σ s ⟨x :: L, R⟩) d ⟨[x], []⟩)
   refine (Runs.then s1 s2).mono (fun τ e => ?_) ?_
   · rw [e]; simp [reg]
-  · simp [hs] <;> omega
+  · simp [hs]; omega
 
 /-- The per-record descriptor words. -/
 def hdW (r E : ℕ) : List Bool := ones (2 * (r - E % r))
@@ -177,7 +177,7 @@ theorem runs_body {r : ℕ} [NeZero r] (w E : ℕ) (f : Rec r) (τ : Fin 15 → 
     · simp only [List.mem_cons, List.not_mem_nil, or_false, not_or] at hm
       obtain ⟨n1, n2, n3, n4, n5, n6, n7, n8, n9, n10⟩ := hm
       simp only [τ₅, τ₄, τ₃, τ₂, τ₁, Function.update_apply, n1, n2, n3, n4, n5, n6, n7, n8, n9, n10,
-        if_false]
+        ite_false]
   · clear s1 s2 s3 s4 s5 s6 s7 s8 s9 t5
     simp only [τ₅, τ₄, τ₃, τ₂, τ₁]
     tsimp [reg, WTape.words, hdW, tlW, hfW, tfW, length_ones]
@@ -205,7 +205,7 @@ theorem runs_twistArray {r : ℕ} [NeZero r] (w : ℕ) :
     refine (Runs.loop_done (by simp [hH]) rfl).mono (fun τ' e => ?_) (by simp)
     rw [← e]; funext y
     simp only [Function.update_apply]
-    split_ifs <;> (try subst_vars) <;> (try tsimp [hX, hO, hH, hT, hF, hG, arrWords]) <;> tsimp at *
+    split_ifs <;> (try subst_vars) <;> (try tsimp [hX, hO, hH, hT, hF, hG, arrWords])
   | (E, f) :: ps, τ, Lx, R, Lh, Lt, Lf, Lg, D, hI, hX, hO, hH, hT, hF, hG => by
     have s1 := runs_body w E f τ hI (Lx := Lx) (Lh := Lh) (Lt := Lt) (Lf := Lf) (Lg := Lg) (D := D)
       (R := arrWords w (ps.map Prod.snd) ++ R) (Hs := ps.map fun p => hdW r p.1)
@@ -227,7 +227,7 @@ theorem runs_twistArray {r : ℕ} [NeZero r] (w : ℕ) :
       (fun τ' e => ?_) ?_
     · rw [e]; funext y
       simp only [τ₁, Function.update_apply]
-      split_ifs <;> (try subst_vars) <;> (try tsimp [arrWords]) <;> tsimp at *
+      split_ifs <;> (try subst_vars) <;> (try tsimp [arrWords])
     · simp only [List.length_cons]; nlinarith
 
 end TwistArray

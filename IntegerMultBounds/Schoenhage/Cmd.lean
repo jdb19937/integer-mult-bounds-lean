@@ -105,7 +105,7 @@ theorem onWord_enc (σ : Fin t → WTape) (i : Fin t) :
   unfold onWord
   rw [reads_enc]
   rcases h : (σ i).right with _ | ⟨w, R⟩
-  · simp [syms_cons]
+  · simp
   · rcases w with _ | ⟨b, w⟩
     · simp [syms_cons, sym, separator, blank]
     · simp only [syms_cons, List.map_cons, List.cons_append, List.getElem?_cons_zero,
@@ -125,7 +125,7 @@ theorem onOne_enc_false (σ : Fin t → WTape) (i : Fin t) (h : ¬ StartsOne (σ
   unfold onOne StartsOne at *
   rw [reads_enc]
   rcases hr : (σ i).right with _ | ⟨w, R⟩
-  · simp [syms_cons, bitSymbol, blank, Fin.ext_iff]
+  · simp [bitSymbol, blank, Fin.ext_iff]
   · rcases w with _ | ⟨b, w⟩
     · simp [syms_cons, sym, separator, bitSymbol, Fin.ext_iff]
     · cases b

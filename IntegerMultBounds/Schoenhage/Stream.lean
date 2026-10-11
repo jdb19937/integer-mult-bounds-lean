@@ -78,7 +78,7 @@ theorem oth_ne_drv (j : Fin r) : oth j ≠ drv := by simp [oth, drv, Fin.ext_iff
 theorem advOf_oth (adv : Fin r → Bool) (j : Fin r) : advOf adv (oth j) = adv j := by
   unfold advOf
   have h : 0 < (oth j).val ∧ (oth j).val ≤ r := by simp [oth]
-  simp only [h, ↓reduceDIte]
+  simp only [h]
   congr 1
 
 /-- Every tape is the driver, another input or the output. -/
@@ -279,7 +279,7 @@ theorem run_step (R : Rule r) (ext : Bool) (v : Tapes (r + 2) a) (hd : Fin (r + 
         simp only
         by_cases hc : c = hd out
         · simp [hc]
-        · simp [hc, Function.update_of_ne hc]
+        · simp [hc]
     · simp only [hi, ↓reduceIte]
       split_ifs with hc <;> simp [hc]
 
@@ -345,7 +345,7 @@ theorem run_phase (R : Rule r) (ext : Bool) (v : Tapes (r + 2) a) (g0 : ℤ → 
       have := hd'inv j
       simp only [go, p] at this ⊢
       rw [this, show hd1 (oth j) = _ from adv_oth v hd p.2.1 p.2.2 j (rems j) (hoth j)]
-      cases hf : p.2.2 j <;> rcases rems j with _ | ⟨x, l⟩ <;> simp [hf] <;> ring
+      cases hf : p.2.2 j <;> rcases rems j with _ | ⟨x, l⟩ <;> simp; ring
     · simpa [go, p, List.append_assoc] using hd'out
 
 /-- The longest remainder. -/
@@ -423,7 +423,7 @@ theorem skip_phase (R : Rule r) (ext : Bool) (v : Tapes (r + 2) a) (g : ℤ → 
         · simp [hi, Move.offset]
         · simp only [hi, ↓reduceIte, ne_eq, not_false_eq_true, true_and]
           split_ifs <;> simp [Move.offset]
-      · funext c; simp only [tp]; split_ifs with h1 h2 <;> simp_all
+      · funext c; simp only [tp]; split_ifs with h1 <;> simp_all
     have hdrv0 : v.tape drv (hd drv) = separator := by simpa using hdrv.2
     have hd1drv : hd1 drv = hd drv := by simp [hd1, drv_ne_out, hdrv0]
     have hd1out : hd1 out = hd out := by simp [hd1]
@@ -524,7 +524,7 @@ theorem init_step (R : Rule r) (ext : Bool) (v : Tapes (r + 2) a) :
   simp only [machine]
   congr 2
   refine tapes_ext (funext fun i => ?_) (funext fun i => ?_)
-  · simp only [tp]; split_ifs <;> simp [Move.offset] <;> ring
+  · simp only [tp]; split_ifs <;> simp [Move.offset]; ring
   · funext c; simp only [tp]
     by_cases hi : i = out
     · subst hi; simp only [↓reduceIte]; split_ifs with hc <;> simp [hc]

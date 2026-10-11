@@ -220,7 +220,7 @@ theorem b0_hoare (win wtE wtH wtD zeros : List (List Bool)) (s t m p w W : ℕ) 
   rw [hwin] at l1
   rw [vsel_length] at l3
   rw [oneStep_eq, hV0l] at l5
-  simp only [Int.toNat_natCast, List.drop_zero] at *
+  simp only [Int.toNat_natCast] at *
   unfold b0Bound
   omega
 

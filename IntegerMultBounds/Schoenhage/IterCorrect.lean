@@ -223,7 +223,7 @@ theorem fwdB_layer (m : ℕ) : ∀ (es : List ℕ) (a : List R), a.length = es.l
 inverse of the parent blocks. -/
 theorem invB_layer (m : ℕ) : ∀ (es : List ℕ) (a : List R), a.length = es.length * 2 ^ (m + 1) →
     invB ψ K (m + 1) es a = combI ψ K (2 ^ m) es (invB ψ K m (kidsE K es) a)
-  | [], a, _ => by simp [kidsE, combI, invB]
+  | [], a, _ => by simp [combI, invB]
   | e :: es, a, h => by
     have hl : 2 ^ (m + 1) ≤ a.length := by
       rw [h]; simp only [List.length_cons]; nlinarith [Nat.one_le_two_pow (n := m + 1)]

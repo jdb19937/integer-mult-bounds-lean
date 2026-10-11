@@ -43,7 +43,7 @@ theorem ext_comp (τ : Fin 𝕌 → WTape) (σ : Fin 𝕋 → WTape) : ext τ σ
 
 theorem ext_own {x : Fin 𝕌} (o : Own x) (τ : Fin 𝕌 → WTape) (σ : Fin 𝕋 → WTape) : ext τ σ x = τ x := by
   unfold ext Own at *
-  rw [dif_neg (by omega)]
+  rw [dite_eq_right (by omega)]
 
 theorem clean_ext (τ : Fin 𝕌 → WTape) : Clean (ext τ (fun _ => emp)) := ext_comp τ _
 
@@ -214,7 +214,7 @@ theorem runs_phaseP {Wd r w s N fs gs τ} (h : RingSetup Wd r w s N fs gs τ) :
     simp only [τ₄, τ₃, τ₂, τ₁, τ₀, ext_update_own own_xA, ext_update_own own_xB, ext_update_own own_xC,
       ext_update_own own_xE, ext_ext, ext_clean h.clean, resid]
   · rw [cf, cg] at *
-    simp only [h.lf, h.lg, resid] at *
+    simp only [] at *
     omega
 
 /-! ### Combining two products -/

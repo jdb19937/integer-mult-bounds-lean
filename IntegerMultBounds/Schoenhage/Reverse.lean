@@ -43,7 +43,7 @@ theorem step_two (M : FMachine 2 a) {s s' : M.S} {h0 h1 : ℤ} {f0 f1 : ℤ → 
   simp only [two, act2, Tapes.mk.injEq]
   refine ⟨?_, ?_⟩
   · funext i; split_ifs <;> rfl
-  · funext i j; split_ifs <;> simp_all [Function.update_apply]
+  · funext i j; split_ifs <;> simp_all
 
 theorem halt_two (M : FMachine 2 a) {s : M.S} {v : Tapes 2 a}
     (hδ : ∀ syms, M.δ s syms = none) : M.fstep ⟨s, v⟩ = none := by
@@ -89,7 +89,7 @@ theorem scan_run (f0 f1 : ℤ → Fin (a + 4)) (h1 : ℤ) :
   | 0, h0, _, hs => by
     simp only [Nat.cast_zero, add_zero] at hs
     rw [FMachine.frun_one, step_two machine (s' := .back) (f0 h0) .left (f1 h1) .stay
-      (by simp [machine, rd0, rd1, hs])]
+      (by simp [machine, hs])]
     simp [Move.offset]; ring_nf
   | n + 1, h0, hns, hs => by
     have h0' : f0 h0 ≠ separator := by simpa using hns 0 (by omega)
@@ -98,7 +98,7 @@ theorem scan_run (f0 f1 : ℤ → Fin (a + 4)) (h1 : ℤ) :
       (by push_cast at hs; rwa [show h0 + 1 + n = h0 + (n + 1) by ring])
     rw [show n + 1 + 1 = 1 + (n + 1) by omega]
     refine FMachine.frun_trans _ (FMachine.frun_of_step _
-      (step_two machine (s' := .scan) (f0 h0) .right (f1 h1) .stay (by simp [machine, rd0, rd1, h0']))) ?_
+      (step_two machine (s' := .scan) (f0 h0) .right (f1 h1) .stay (by simp [machine, h0']))) ?_
     simp only [Function.update_eq_self, Move.offset, add_zero]
     convert ih using 4
     push_cast; ring
@@ -115,7 +115,7 @@ theorem back_run (f0 : ℤ → Fin (a + 4)) :
     simp only [List.length_nil, Nat.cast_zero, sub_zero] at hb
     simp only [List.length_nil, zero_add, Nat.cast_zero, sub_zero, add_zero]
     rw [FMachine.frun_one, step_two machine (s' := .fwd) (f0 h0) .right separator .right
-      (by simp [machine, rd0, rd1, hb])]
+      (by simp [machine, hb])]
     simp [Move.offset, putWord]
   | b :: bs, h0, h1, f1, hc, hb => by
     have e0 : f0 h0 = bitSymbol b := by
@@ -130,12 +130,12 @@ theorem back_run (f0 : ℤ → Fin (a + 4)) :
     rw [show (b :: bs).length + 1 = 1 + (bs.length + 1) by simp; omega]
     refine FMachine.frun_trans _ (FMachine.frun_of_step _
       (step_two machine (s' := .back) (f0 h0) .left (f0 h0) .right
-        (by simp [machine, rd0, rd1, e0, bit_ne_blank, bit_ne_sep]))) ?_
-    simp only [Function.update_eq_self, Move.offset, e0]
+        (by simp [machine, e0, bit_ne_blank, bit_ne_sep]))) ?_
+    simp only [Move.offset, e0]
     have eu : Function.update f0 h0 (bitSymbol b) = f0 := by rw [← e0]; exact Function.update_eq_self _ _
     rw [eu]
     convert ih using 4
-    all_goals first | (simp [putWord_cons]; done) | (simp; ring) | (push_cast; ring)
+    all_goals first | (simp [putWord_cons]; done) | (simp; ring) | ring
 
 /-- Scan right to the separator and step past it. -/
 theorem fwd_run (f0 f1 : ℤ → Fin (a + 4)) (h1 : ℤ) :
@@ -144,7 +144,7 @@ theorem fwd_run (f0 f1 : ℤ → Fin (a + 4)) (h1 : ℤ) :
   | 0, h0, _, hs => by
     simp only [Nat.cast_zero, add_zero] at hs
     rw [FMachine.frun_one, step_two machine (s' := .done) (f0 h0) .right (f1 h1) .stay
-      (by simp [machine, rd0, rd1, hs])]
+      (by simp [machine, hs])]
     simp [Move.offset]
   | n + 1, h0, hns, hs => by
     have h0' : f0 h0 ≠ separator := by simpa using hns 0 (by omega)
@@ -153,7 +153,7 @@ theorem fwd_run (f0 f1 : ℤ → Fin (a + 4)) (h1 : ℤ) :
       (by push_cast at hs; rwa [show h0 + 1 + n = h0 + (n + 1) by ring])
     rw [show n + 1 + 1 = 1 + (n + 1) by omega]
     refine FMachine.frun_trans _ (FMachine.frun_of_step _
-      (step_two machine (s' := .fwd) (f0 h0) .right (f1 h1) .stay (by simp [machine, rd0, rd1, h0']))) ?_
+      (step_two machine (s' := .fwd) (f0 h0) .right (f1 h1) .stay (by simp [machine, h0']))) ?_
     simp only [Function.update_eq_self, Move.offset, add_zero]
     convert ih using 4
     push_cast; ring
@@ -219,7 +219,7 @@ noncomputable abbrev prim : Prim a where
     rw [cells_single] at hput
     rw [hput]
     simp [two, WTape.pos, n]
-    ring
+    ring_nf
 
 end Reverse
 

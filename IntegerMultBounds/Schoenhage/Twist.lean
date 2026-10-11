@@ -160,7 +160,7 @@ theorem twWords_recordWords {r : ℕ} [NeZero r] (w E : ℕ) (f : Rec r) :
   have hs : E % r < r := Nat.mod_lt _ hr
   unfold twWords
   apply List.ext_getElem
-  · simp <;> omega
+  · simp
   intro m h1 h2
   have hm : m < 2 * r := by simpa using h2
   rw [recordWords_getElem w _ _ m hm]
@@ -182,7 +182,7 @@ theorem twWords_recordWords {r : ℕ} [NeZero r] (w E : ℕ) (f : Rec r) :
     simp only [twistRec, hpar]
     have e1 : (⟨(2 * (r - E % r) + m) / 2, by omega⟩ : Fin r) = shiftSrc r E ⟨m / 2, by omega⟩ :=
       Fin.ext hsrc.symm
-    split_ifs with hm2 he <;> simp only [e1, hk, sgnZ_mul_compWord, decide_eq_true_eq] <;> split_ifs <;>
+    split_ifs with hm2 he <;> simp only [e1, hk, sgnZ_mul_compWord] <;> split_ifs <;>
       first | rfl | (simp only [decide_eq_true_eq] at *; omega)
   · have hd : (((recordWords w f.1 f.2).drop (2 * (r - E % r))).map
         (fun x => if decide (E / r % 2 = 1) = true then x else negW x)).length ≤ m := by simp; omega
@@ -205,7 +205,7 @@ theorem twWords_recordWords {r : ℕ} [NeZero r] (w E : ℕ) (f : Rec r) :
     simp only [twistRec, hpar]
     have e1 : (⟨(m - 2 * (E % r)) / 2, by omega⟩ : Fin r) = shiftSrc r E ⟨m / 2, by omega⟩ :=
       Fin.ext hsrc.symm
-    split_ifs with hm2 he <;> simp only [e1, hk, sgnZ_mul_compWord, decide_eq_true_eq] <;> split_ifs <;>
+    split_ifs with hm2 he <;> simp only [e1, hk, sgnZ_mul_compWord] <;> split_ifs <;>
       first | rfl | (simp only [decide_eq_true_eq] at *; omega)
 
 end IntegerMultBounds.Schoenhage

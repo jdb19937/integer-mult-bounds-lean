@@ -110,8 +110,8 @@ theorem accumulators_eq (k : ℕ) (hk : k < s) :
     offDiagNum m (offTermW p ef) u (k : ZMod s) =
       ⟨(signed (accR wtWords uWords s s m p w W k (2 * m + 1)) : ℝ) / 2 ^ p,
        (signed (accI wtWords uWords s s m p w W k (2 * m + 1)) : ℝ) / 2 ^ p⟩ := by
-  rw [accR_signed wtWords uWords s s m p w W hw hwW hW hwt hul' hwb hub hwtl hul le_rfl hs k hk _ le_rfl,
-    accI_signed wtWords uWords s s m p w W hw hwW hW hwt hul' hwb hub hwtl hul le_rfl hs k hk _ le_rfl]
+  rw [accR_signed wtWords uWords s s m p w W hw hwW hW hwt hul' hwb hub hwtl hul hs k hk _ le_rfl,
+    accI_signed wtWords uWords s s m p w W hw hwW hW hwt hul' hwb hub hwtl hul hs k hk _ le_rfl]
   unfold offDiagNum
   rw [offDiag_sum_range]
   have ht := fun j (hj : j ∈ Finset.range (2 * m + 1)) =>

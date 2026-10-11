@@ -138,6 +138,7 @@ theorem difAxes_shift : ∀ (ts : List ℕ), PowAxes r ts → ∀ (m : ℕ), ts.
     rw [e]
     exact difAxes_shift ts (powAxes_cons h) m (dvd_trans (by simp [List.prod_cons]) hm) _ y
 
+omit [NeZero r] in
 theorem synthExpL_cons (t : ℕ) (ts : List ℕ) {J k K B : ℕ} (hJ : J < t) (hk : k < t) (hK : K < ts.prod)
     (hB : B < ts.prod) :
     synthExpL r (t :: ts) (J * ts.prod + K) (k * ts.prod + B) = 2 * r / t * J * k + synthExpL r ts K B := by
@@ -159,7 +160,7 @@ theorem shiftInv_sum {ι : Type*} (e : ℕ) (s : Finset ι) (f : ι → Fin r �
   simp only [shiftInv_clm, map_sum]
 
 /-- Separability: the transform over `t :: ts` is the length-`t` transform of the transforms over `ts`. -/
-theorem fwdT_cons (t : ℕ) (ts : List ℕ) (ht : 0 < t) (hP : 0 < ts.prod) (z : ℕ → Fin r → ℂ) {J K : ℕ}
+theorem fwdT_cons (t : ℕ) (ts : List ℕ) (_ht : 0 < t) (_hP : 0 < ts.prod) (z : ℕ → Fin r → ℂ) {J K : ℕ}
     (hJ : J < t) (hK : K < ts.prod) :
     fwdT (t :: ts) z (J * ts.prod + K) =
       fwdT ts (fun B => fwdT [t] (fun k => z (k * ts.prod + B)) J) K := by

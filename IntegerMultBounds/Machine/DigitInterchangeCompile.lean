@@ -105,7 +105,7 @@ theorem nextPass_cost (k : Fin (2*q+1)) (O C E : ℕ) (bs gs es cs : List Bool) 
       if k.val < 2*q then CyclicRowNormalized.cost q (O*C) E es cs
       else CyclicRowNormalized.cost q O (C*(q*E)) bs gs := by
   unfold nextPass
-  split_ifs <;> simp only [passCost] <;> first | rfl | omega
+  split_ifs <;> simp only [passCost]; first | rfl | omega
 
 def prefixStates (q : ℕ) : ℕ → ℕ
   | 0 => PassStates q

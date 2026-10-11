@@ -53,14 +53,14 @@ theorem oneStep_signed (k : ℕ) (hk : k < s) (r : ℕ) (hr : r < 2) :
     rcases (by omega : r = 0 ∨ r = 1) with rfl | rfl
     · simp only [hA, ite_true]
       rw [GaussianLine.accR_signed wt (ext s 0 y) s s 0 p w w (by omega) le_rfl hW hwt
-        (fun x hx => hyw x (hext x hx)) hwtb (fun x hx => hyb x (hext x hx)) hwtl hul le_rfl hs k hk _ le_rfl]
+        (fun x hx => hyw x (hext x hx)) hwtb (fun x hx => hyb x (hext x hx)) hwtl hul hs k hk _ le_rfl]
       rw [show 2 * 0 + 1 = 1 by norm_num, Finset.sum_range_one]
       unfold termR
       rw [hcen, show k * 1 + 0 = k by ring, show 2 * k + 2 * 0 = 2 * k + 0 by ring,
         ext_zero_get y s k hk 0 (by omega), add_zero]
     · simp only [hA, one_ne_zero, ite_false]
       rw [GaussianLine.accI_signed wt (ext s 0 y) s s 0 p w w (by omega) le_rfl hW hwt
-        (fun x hx => hyw x (hext x hx)) hwtb (fun x hx => hyb x (hext x hx)) hwtl hul le_rfl hs k hk _ le_rfl]
+        (fun x hx => hyw x (hext x hx)) hwtb (fun x hx => hyb x (hext x hx)) hwtl hul hs k hk _ le_rfl]
       rw [show 2 * 0 + 1 = 1 by norm_num, Finset.sum_range_one]
       unfold termI
       rw [hcen, show k * 1 + 0 = k by ring, show 2 * k + 2 * 0 + 1 = 2 * k + 1 by ring,

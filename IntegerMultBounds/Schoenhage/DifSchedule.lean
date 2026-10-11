@@ -30,7 +30,7 @@ theorem flatMap_ite_true (g : ℕ → α → α) (a : ℕ) :
     ∀ l : List ℕ, (∀ h ∈ l, h < a) → (l.flatMap fun h => if h < a then [g h] else []) = l.map g
   | [], _ => rfl
   | x :: l, hl => by
-    rw [List.flatMap_cons, if_pos (hl x (by simp)), List.map_cons, flatMap_ite_true g a l
+    rw [List.flatMap_cons, ite_eq_left (hl x (by simp)), List.map_cons, flatMap_ite_true g a l
       (fun h hh => hl h (by simp [hh]))]
     rfl
 
@@ -42,10 +42,10 @@ theorem flatMap_desc (g : ℕ → α → α) (a : ℕ) : ∀ H, a ≤ H →
     rcases Nat.lt_or_ge H a with hl | hl
     · have ha : a = H + 1 := by omega
       subst ha
-      rw [if_pos (by omega), flatMap_ite_true g (H + 1) _ (fun h hh => by simp at hh; omega),
+      rw [ite_eq_left (by omega), flatMap_ite_true g (H + 1) _ (fun h hh => by simp at hh; omega),
         List.range_succ, List.reverse_append, List.reverse_singleton]
       simp
-    · rw [if_neg (by omega), List.nil_append, flatMap_desc g a H hl]
+    · rw [ite_eq_right (by omega), List.nil_append, flatMap_desc g a H hl]
 
 theorem flatMap_nil' (l : List ℕ) : (l.flatMap fun _ => ([] : List (α → α))) = [] := by
   induction l <;> simp_all

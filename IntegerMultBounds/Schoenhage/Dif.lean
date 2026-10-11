@@ -138,6 +138,7 @@ theorem difAll_shift : ∀ (a m : ℕ), 2 ^ a ∣ m → ∀ (z : ℕ → Fin r �
 
 /-! ### The transform on one axis -/
 
+omit [NeZero r] in
 theorem synthExpL_single (t j k : ℕ) : synthExpL r [t] j k = 2 * r / t * (j % t) * (k % t) := by
   simp [synthExpL, digit]
 
@@ -178,7 +179,7 @@ theorem fwdT_dif (a : ℕ) (hr : 2 ^ (a + 1) ∣ 2 * r) (z : ℕ → Fin r → �
   unfold difRound
   rw [hb]
   interval_cases c
-  · simp only [pow_zero, one_smul, zero_mul, add_zero, mul_zero, ↓reduceIte]
+  · simp only [pow_zero, one_smul, zero_mul, add_zero, ↓reduceIte]
     rw [show k + N = N + k by ring, shiftInv_smul, shiftInv_add_vec]
     congr 2
     rw [show 2 * q * J * k = q * (2 * J) * k by ring]

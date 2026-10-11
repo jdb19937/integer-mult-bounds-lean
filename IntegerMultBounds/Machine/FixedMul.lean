@@ -402,15 +402,15 @@ end Parts
 
 section Bounds
 
-def prefix1_hoareBound (p w : ℕ) : ℕ := 7 * w + 20
-def sxTrue_hoareBound (p w : ℕ) : ℕ := 3 * w + 10
-def sxFalse_hoareBound (p w : ℕ) : ℕ := w + 10
-def prefix2_hoareBound (p w : ℕ) : ℕ := w + 5
-def syTrue_hoareBound (p w : ℕ) : ℕ := 3 * w + 10
-def syFalse_hoareBound (p w : ℕ) : ℕ := w + 10
+def prefix1_hoareBound (_p w : ℕ) : ℕ := 7 * w + 20
+def sxTrue_hoareBound (_p w : ℕ) : ℕ := 3 * w + 10
+def sxFalse_hoareBound (_p w : ℕ) : ℕ := w + 10
+def prefix2_hoareBound (_p w : ℕ) : ℕ := w + 5
+def syTrue_hoareBound (_p w : ℕ) : ℕ := 3 * w + 10
+def syFalse_hoareBound (_p w : ℕ) : ℕ := w + 10
 def core_hoareBound (p w : ℕ) : ℕ := w * (5 * w + 2 * w + 18) + 30 * w + 4 * p + 60
-def negChain_hoareBound (p w : ℕ) : ℕ := 2 * w + 5
-def cleanup_hoareBound (p w : ℕ) : ℕ := 4
+def negChain_hoareBound (_p w : ℕ) : ℕ := 2 * w + 5
+def cleanup_hoareBound (_p _w : ℕ) : ℕ := 4
 
 end Bounds
 
@@ -482,8 +482,8 @@ theorem prefix1_hoare (x y : List Bool) (p w : ℕ) (f g : ℤ → Fin (a + 4))
 
 theorem sxTrue_hoare (x y : List Bool) (p w : ℕ) (f g : ℤ → Fin (a + 4))
     (pX pY pXs pYs pP pP2 pO pRp pRw pR2 pF1 pF2 : ℤ) (hx : x.length = w) (hy : y.length = w)
-    (hw : 1 ≤ w) (hpw : p ≤ w) (hfl : f (pX - 1) = blank) (hfr : f (pX + w) = blank)
-    (hgl : g (pY - 1) = blank) (hgr : g (pY + w) = blank) :
+    (hw : 1 ≤ w) (hpw : p ≤ w) (_hfl : f (pX - 1) = blank) (hfr : f (pX + w) = blank)
+    (_hgl : g (pY - 1) = blank) (hgr : g (pY + w) = blank) :
     ∃ c, HoareTime (sxTrue) (fun v => v = bank (putWord f pX (x.map bitSymbol)) (putWord g pY (y.map bitSymbol)) (putWord (fun _ => blank) pXs ((x).map bitSymbol)) (putWord (fun _ => blank) pYs ((y).map bitSymbol)) ((fun _ => blank)) ((fun _ => blank)) ((fun _ => blank)) (putWord (fun _ => blank) pRp (ruler p)) (putWord (fun _ => blank) pRw (ruler w)) (putWord (fun _ => blank) pR2 (ruler (2 * w))) ((fun _ => blank)) ((fun _ => blank)) (pX) (pY) (pXs + ↑w - 1) (pYs) (pP) (pP2) (pO) (pRp) (pRw) (pR2) (pF1) (pF2))
       (fun v => v = bank (putWord f pX (x.map bitSymbol)) (putWord g pY (y.map bitSymbol)) (putWord (fun _ => blank) pXs ((negWord x).map bitSymbol)) (putWord (fun _ => blank) pYs ((y).map bitSymbol)) ((fun _ => blank)) ((fun _ => blank)) ((fun _ => blank)) (putWord (fun _ => blank) pRp (ruler p)) (putWord (fun _ => blank) pRw (ruler w)) (putWord (fun _ => blank) pR2 (ruler (2 * w))) (putWord (fun _ => blank) pF1 [bitSymbol true]) ((fun _ => blank)) (pX) (pY) (pXs) (pYs) (pP) (pP2) (pO) (pRp) (pRw) (pR2) (pF1) (pF2)) c ∧ c ≤ sxTrue_hoareBound p w := by
   have hx0 : x ≠ [] := by intro h0; rw [h0] at hx; simp at hx; omega
@@ -532,8 +532,8 @@ theorem sxTrue_hoare (x y : List Bool) (p w : ℕ) (f g : ℤ → Fin (a + 4))
 
 theorem sxFalse_hoare (x y : List Bool) (p w : ℕ) (f g : ℤ → Fin (a + 4))
     (pX pY pXs pYs pP pP2 pO pRp pRw pR2 pF1 pF2 : ℤ) (hx : x.length = w) (hy : y.length = w)
-    (hw : 1 ≤ w) (hpw : p ≤ w) (hfl : f (pX - 1) = blank) (hfr : f (pX + w) = blank)
-    (hgl : g (pY - 1) = blank) (hgr : g (pY + w) = blank) :
+    (hw : 1 ≤ w) (hpw : p ≤ w) (_hfl : f (pX - 1) = blank) (hfr : f (pX + w) = blank)
+    (_hgl : g (pY - 1) = blank) (hgr : g (pY + w) = blank) :
     ∃ c, HoareTime (sxFalse) (fun v => v = bank (putWord f pX (x.map bitSymbol)) (putWord g pY (y.map bitSymbol)) (putWord (fun _ => blank) pXs ((x).map bitSymbol)) (putWord (fun _ => blank) pYs ((y).map bitSymbol)) ((fun _ => blank)) ((fun _ => blank)) ((fun _ => blank)) (putWord (fun _ => blank) pRp (ruler p)) (putWord (fun _ => blank) pRw (ruler w)) (putWord (fun _ => blank) pR2 (ruler (2 * w))) ((fun _ => blank)) ((fun _ => blank)) (pX) (pY) (pXs + ↑w - 1) (pYs) (pP) (pP2) (pO) (pRp) (pRw) (pR2) (pF1) (pF2))
       (fun v => v = bank (putWord f pX (x.map bitSymbol)) (putWord g pY (y.map bitSymbol)) (putWord (fun _ => blank) pXs ((x).map bitSymbol)) (putWord (fun _ => blank) pYs ((y).map bitSymbol)) ((fun _ => blank)) ((fun _ => blank)) ((fun _ => blank)) (putWord (fun _ => blank) pRp (ruler p)) (putWord (fun _ => blank) pRw (ruler w)) (putWord (fun _ => blank) pR2 (ruler (2 * w))) (putWord (fun _ => blank) pF1 [bitSymbol false]) ((fun _ => blank)) (pX) (pY) (pXs) (pYs) (pP) (pP2) (pO) (pRp) (pRw) (pR2) (pF1) (pF2)) c ∧ c ≤ sxFalse_hoareBound p w := by
   have hx0 : x ≠ [] := by intro h0; rw [h0] at hx; simp at hx; omega
@@ -574,8 +574,8 @@ theorem sxFalse_hoare (x y : List Bool) (p w : ℕ) (f g : ℤ → Fin (a + 4))
 
 theorem prefix2_hoare (x y : List Bool) (p w : ℕ) (f g : ℤ → Fin (a + 4))
     (pX pY pXs pYs pP pP2 pO pRp pRw pR2 pF1 pF2 : ℤ) (hx : x.length = w) (hy : y.length = w)
-    (hw : 1 ≤ w) (hpw : p ≤ w) (hfl : f (pX - 1) = blank) (hfr : f (pX + w) = blank)
-    (hgl : g (pY - 1) = blank) (hgr : g (pY + w) = blank) :
+    (hw : 1 ≤ w) (hpw : p ≤ w) (_hfl : f (pX - 1) = blank) (hfr : f (pX + w) = blank)
+    (_hgl : g (pY - 1) = blank) (hgr : g (pY + w) = blank) :
     ∃ c, HoareTime (prefix2) (fun v => v = bank (putWord f pX (x.map bitSymbol)) (putWord g pY (y.map bitSymbol)) (putWord (fun _ => blank) pXs ((mag x).map bitSymbol)) (putWord (fun _ => blank) pYs ((y).map bitSymbol)) ((fun _ => blank)) ((fun _ => blank)) ((fun _ => blank)) (putWord (fun _ => blank) pRp (ruler p)) (putWord (fun _ => blank) pRw (ruler w)) (putWord (fun _ => blank) pR2 (ruler (2 * w))) (putWord (fun _ => blank) pF1 [bitSymbol (x.getLastD false)]) ((fun _ => blank)) (pX) (pY) (pXs) (pYs) (pP) (pP2) (pO) (pRp) (pRw) (pR2) (pF1) (pF2))
       (fun v => v = bank (putWord f pX (x.map bitSymbol)) (putWord g pY (y.map bitSymbol)) (putWord (fun _ => blank) pXs ((mag x).map bitSymbol)) (putWord (fun _ => blank) pYs ((y).map bitSymbol)) ((fun _ => blank)) ((fun _ => blank)) ((fun _ => blank)) (putWord (fun _ => blank) pRp (ruler p)) (putWord (fun _ => blank) pRw (ruler w)) (putWord (fun _ => blank) pR2 (ruler (2 * w))) (putWord (fun _ => blank) pF1 [bitSymbol (x.getLastD false)]) ((fun _ => blank)) (pX) (pY) (pXs) (pYs + ↑w - 1) (pP) (pP2) (pO) (pRp) (pRw) (pR2) (pF1) (pF2)) c ∧ c ≤ prefix2_hoareBound p w := by
   have hx0 : x ≠ [] := by intro h0; rw [h0] at hx; simp at hx; omega
@@ -616,8 +616,8 @@ theorem prefix2_hoare (x y : List Bool) (p w : ℕ) (f g : ℤ → Fin (a + 4))
 
 theorem syTrue_hoare (x y : List Bool) (p w : ℕ) (f g : ℤ → Fin (a + 4))
     (pX pY pXs pYs pP pP2 pO pRp pRw pR2 pF1 pF2 : ℤ) (hx : x.length = w) (hy : y.length = w)
-    (hw : 1 ≤ w) (hpw : p ≤ w) (hfl : f (pX - 1) = blank) (hfr : f (pX + w) = blank)
-    (hgl : g (pY - 1) = blank) (hgr : g (pY + w) = blank) :
+    (hw : 1 ≤ w) (hpw : p ≤ w) (_hfl : f (pX - 1) = blank) (hfr : f (pX + w) = blank)
+    (_hgl : g (pY - 1) = blank) (hgr : g (pY + w) = blank) :
     ∃ c, HoareTime (syTrue) (fun v => v = bank (putWord f pX (x.map bitSymbol)) (putWord g pY (y.map bitSymbol)) (putWord (fun _ => blank) pXs ((mag x).map bitSymbol)) (putWord (fun _ => blank) pYs ((y).map bitSymbol)) ((fun _ => blank)) ((fun _ => blank)) ((fun _ => blank)) (putWord (fun _ => blank) pRp (ruler p)) (putWord (fun _ => blank) pRw (ruler w)) (putWord (fun _ => blank) pR2 (ruler (2 * w))) (putWord (fun _ => blank) pF1 [bitSymbol (x.getLastD false)]) ((fun _ => blank)) (pX) (pY) (pXs) (pYs + ↑w - 1) (pP) (pP2) (pO) (pRp) (pRw) (pR2) (pF1) (pF2))
       (fun v => v = bank (putWord f pX (x.map bitSymbol)) (putWord g pY (y.map bitSymbol)) (putWord (fun _ => blank) pXs ((mag x).map bitSymbol)) (putWord (fun _ => blank) pYs ((negWord y).map bitSymbol)) ((fun _ => blank)) ((fun _ => blank)) ((fun _ => blank)) (putWord (fun _ => blank) pRp (ruler p)) (putWord (fun _ => blank) pRw (ruler w)) (putWord (fun _ => blank) pR2 (ruler (2 * w))) (putWord (fun _ => blank) pF1 [bitSymbol (x.getLastD false)]) (putWord (fun _ => blank) pF2 [bitSymbol true]) (pX) (pY) (pXs) (pYs) (pP) (pP2) (pO) (pRp) (pRw) (pR2) (pF1) (pF2)) c ∧ c ≤ syTrue_hoareBound p w := by
   have hx0 : x ≠ [] := by intro h0; rw [h0] at hx; simp at hx; omega
@@ -666,8 +666,8 @@ theorem syTrue_hoare (x y : List Bool) (p w : ℕ) (f g : ℤ → Fin (a + 4))
 
 theorem syFalse_hoare (x y : List Bool) (p w : ℕ) (f g : ℤ → Fin (a + 4))
     (pX pY pXs pYs pP pP2 pO pRp pRw pR2 pF1 pF2 : ℤ) (hx : x.length = w) (hy : y.length = w)
-    (hw : 1 ≤ w) (hpw : p ≤ w) (hfl : f (pX - 1) = blank) (hfr : f (pX + w) = blank)
-    (hgl : g (pY - 1) = blank) (hgr : g (pY + w) = blank) :
+    (hw : 1 ≤ w) (hpw : p ≤ w) (_hfl : f (pX - 1) = blank) (hfr : f (pX + w) = blank)
+    (_hgl : g (pY - 1) = blank) (hgr : g (pY + w) = blank) :
     ∃ c, HoareTime (syFalse) (fun v => v = bank (putWord f pX (x.map bitSymbol)) (putWord g pY (y.map bitSymbol)) (putWord (fun _ => blank) pXs ((mag x).map bitSymbol)) (putWord (fun _ => blank) pYs ((y).map bitSymbol)) ((fun _ => blank)) ((fun _ => blank)) ((fun _ => blank)) (putWord (fun _ => blank) pRp (ruler p)) (putWord (fun _ => blank) pRw (ruler w)) (putWord (fun _ => blank) pR2 (ruler (2 * w))) (putWord (fun _ => blank) pF1 [bitSymbol (x.getLastD false)]) ((fun _ => blank)) (pX) (pY) (pXs) (pYs + ↑w - 1) (pP) (pP2) (pO) (pRp) (pRw) (pR2) (pF1) (pF2))
       (fun v => v = bank (putWord f pX (x.map bitSymbol)) (putWord g pY (y.map bitSymbol)) (putWord (fun _ => blank) pXs ((mag x).map bitSymbol)) (putWord (fun _ => blank) pYs ((y).map bitSymbol)) ((fun _ => blank)) ((fun _ => blank)) ((fun _ => blank)) (putWord (fun _ => blank) pRp (ruler p)) (putWord (fun _ => blank) pRw (ruler w)) (putWord (fun _ => blank) pR2 (ruler (2 * w))) (putWord (fun _ => blank) pF1 [bitSymbol (x.getLastD false)]) (putWord (fun _ => blank) pF2 [bitSymbol false]) (pX) (pY) (pXs) (pYs) (pP) (pP2) (pO) (pRp) (pRw) (pR2) (pF1) (pF2)) c ∧ c ≤ syFalse_hoareBound p w := by
   have hx0 : x ≠ [] := by intro h0; rw [h0] at hx; simp at hx; omega
@@ -708,8 +708,8 @@ theorem syFalse_hoare (x y : List Bool) (p w : ℕ) (f g : ℤ → Fin (a + 4))
 
 theorem core_hoare (x y : List Bool) (p w : ℕ) (f g : ℤ → Fin (a + 4))
     (pX pY pXs pYs pP pP2 pO pRp pRw pR2 pF1 pF2 : ℤ) (hx : x.length = w) (hy : y.length = w)
-    (hw : 1 ≤ w) (hpw : p ≤ w) (hfl : f (pX - 1) = blank) (hfr : f (pX + w) = blank)
-    (hgl : g (pY - 1) = blank) (hgr : g (pY + w) = blank) :
+    (hw : 1 ≤ w) (hpw : p ≤ w) (_hfl : f (pX - 1) = blank) (hfr : f (pX + w) = blank)
+    (_hgl : g (pY - 1) = blank) (hgr : g (pY + w) = blank) :
     ∃ c, HoareTime (core) (fun v => v = bank (putWord f pX (x.map bitSymbol)) (putWord g pY (y.map bitSymbol)) (putWord (fun _ => blank) pXs ((mag x).map bitSymbol)) (putWord (fun _ => blank) pYs ((mag y).map bitSymbol)) ((fun _ => blank)) ((fun _ => blank)) ((fun _ => blank)) (putWord (fun _ => blank) pRp (ruler p)) (putWord (fun _ => blank) pRw (ruler w)) (putWord (fun _ => blank) pR2 (ruler (2 * w))) (putWord (fun _ => blank) pF1 [bitSymbol (x.getLastD false)]) (putWord (fun _ => blank) pF2 [bitSymbol (y.getLastD false)]) (pX) (pY) (pXs) (pYs) (pP) (pP2) (pO) (pRp) (pRw) (pR2) (pF1) (pF2))
       (fun v => v = bank (putWord f pX (x.map bitSymbol)) (putWord g pY (y.map bitSymbol)) ((fun _ => blank)) ((fun _ => blank)) ((fun _ => blank)) ((fun _ => blank)) (putWord (fun _ => blank) pO ((Gather.field (padProd x y w) p w).map bitSymbol)) (putWord (fun _ => blank) pRp (ruler p)) (putWord (fun _ => blank) pRw (ruler w)) (putWord (fun _ => blank) pR2 (ruler (2 * w))) (putWord (fun _ => blank) pF1 [bitSymbol (x.getLastD false)]) (putWord (fun _ => blank) pF2 [bitSymbol (y.getLastD false)]) (pX) (pY) (pXs) (pYs) (pP) (pP2) (pO) (pRp) (pRw) (pR2) (pF1) (pF2)) c ∧ c ≤ core_hoareBound p w := by
   have hx0 : x ≠ [] := by intro h0; rw [h0] at hx; simp at hx; omega
@@ -838,8 +838,8 @@ theorem core_hoare (x y : List Bool) (p w : ℕ) (f g : ℤ → Fin (a + 4))
 
 theorem negChain_hoare (x y : List Bool) (p w : ℕ) (f g : ℤ → Fin (a + 4))
     (pX pY pXs pYs pP pP2 pO pRp pRw pR2 pF1 pF2 : ℤ) (hx : x.length = w) (hy : y.length = w)
-    (hw : 1 ≤ w) (hpw : p ≤ w) (hfl : f (pX - 1) = blank) (hfr : f (pX + w) = blank)
-    (hgl : g (pY - 1) = blank) (hgr : g (pY + w) = blank) :
+    (hw : 1 ≤ w) (hpw : p ≤ w) (_hfl : f (pX - 1) = blank) (hfr : f (pX + w) = blank)
+    (_hgl : g (pY - 1) = blank) (hgr : g (pY + w) = blank) :
     ∃ c, HoareTime (negChain) (fun v => v = bank (putWord f pX (x.map bitSymbol)) (putWord g pY (y.map bitSymbol)) ((fun _ => blank)) ((fun _ => blank)) ((fun _ => blank)) ((fun _ => blank)) (putWord (fun _ => blank) pO ((Gather.field (padProd x y w) p w).map bitSymbol)) (putWord (fun _ => blank) pRp (ruler p)) (putWord (fun _ => blank) pRw (ruler w)) (putWord (fun _ => blank) pR2 (ruler (2 * w))) (putWord (fun _ => blank) pF1 [bitSymbol (x.getLastD false)]) (putWord (fun _ => blank) pF2 [bitSymbol (y.getLastD false)]) (pX) (pY) (pXs) (pYs) (pP) (pP2) (pO) (pRp) (pRw) (pR2) (pF1) (pF2))
       (fun v => v = bank (putWord f pX (x.map bitSymbol)) (putWord g pY (y.map bitSymbol)) ((fun _ => blank)) ((fun _ => blank)) ((fun _ => blank)) ((fun _ => blank)) (putWord (fun _ => blank) pO ((negWord (Gather.field (padProd x y w) p w)).map bitSymbol)) (putWord (fun _ => blank) pRp (ruler p)) (putWord (fun _ => blank) pRw (ruler w)) (putWord (fun _ => blank) pR2 (ruler (2 * w))) (putWord (fun _ => blank) pF1 [bitSymbol (x.getLastD false)]) (putWord (fun _ => blank) pF2 [bitSymbol (y.getLastD false)]) (pX) (pY) (pXs) (pYs) (pP) (pP2) (pO) (pRp) (pRw) (pR2) (pF1) (pF2)) c ∧ c ≤ negChain_hoareBound p w := by
   have hx0 : x ≠ [] := by intro h0; rw [h0] at hx; simp at hx; omega
@@ -880,8 +880,8 @@ theorem negChain_hoare (x y : List Bool) (p w : ℕ) (f g : ℤ → Fin (a + 4))
 
 theorem cleanup_hoare (x y : List Bool) (p w : ℕ) (f g : ℤ → Fin (a + 4))
     (pX pY pXs pYs pP pP2 pO pRp pRw pR2 pF1 pF2 : ℤ) (hx : x.length = w) (hy : y.length = w)
-    (hw : 1 ≤ w) (hpw : p ≤ w) (hfl : f (pX - 1) = blank) (hfr : f (pX + w) = blank)
-    (hgl : g (pY - 1) = blank) (hgr : g (pY + w) = blank) :
+    (hw : 1 ≤ w) (hpw : p ≤ w) (_hfl : f (pX - 1) = blank) (hfr : f (pX + w) = blank)
+    (_hgl : g (pY - 1) = blank) (hgr : g (pY + w) = blank) :
     ∃ c, HoareTime (cleanup) (fun v => v = bank (putWord f pX (x.map bitSymbol)) (putWord g pY (y.map bitSymbol)) ((fun _ => blank)) ((fun _ => blank)) ((fun _ => blank)) ((fun _ => blank)) (putWord (fun _ => blank) pO ((result x y p w).map bitSymbol)) (putWord (fun _ => blank) pRp (ruler p)) (putWord (fun _ => blank) pRw (ruler w)) (putWord (fun _ => blank) pR2 (ruler (2 * w))) (putWord (fun _ => blank) pF1 [bitSymbol (x.getLastD false)]) (putWord (fun _ => blank) pF2 [bitSymbol (y.getLastD false)]) (pX) (pY) (pXs) (pYs) (pP) (pP2) (pO) (pRp) (pRw) (pR2) (pF1) (pF2))
       (fun v => v = bank (putWord f pX (x.map bitSymbol)) (putWord g pY (y.map bitSymbol)) ((fun _ => blank)) ((fun _ => blank)) ((fun _ => blank)) ((fun _ => blank)) (putWord (fun _ => blank) pO ((result x y p w).map bitSymbol)) (putWord (fun _ => blank) pRp (ruler p)) (putWord (fun _ => blank) pRw (ruler w)) (putWord (fun _ => blank) pR2 (ruler (2 * w))) ((fun _ => blank)) ((fun _ => blank)) (pX) (pY) (pXs) (pYs) (pP) (pP2) (pO) (pRp) (pRw) (pR2) (pF1) (pF2)) c ∧ c ≤ cleanup_hoareBound p w := by
   have hx0 : x ≠ [] := by intro h0; rw [h0] at hx; simp at hx; omega

@@ -52,12 +52,12 @@ theorem local_payload (hs : Fin 6 → List Bool) (payload : Tapes (1+c) q) :
     SharedBank.payload (RecursiveRowsClean.bank hs payload) ports = payload.append (headers hs) := by
   apply congrArg₂ Tapes.mk <;> funext i <;> induction i using Fin.addCases with
   | left i =>
-    simp only [SharedBank.payload,ports,Tapes.append,Fin.addCases_left]
+    simp only [ports,Fin.addCases_left]
     first
     | exact (RecursiveRowsClean.payload hs payload i).1
     | exact (RecursiveRowsClean.payload hs payload i).2
   | right i =>
-    simp only [SharedBank.payload,ports,Tapes.append,Fin.addCases_right,headers]
+    simp only [ports,Fin.addCases_right,headers]
     first
     | exact (RecursiveRowsClean.headers hs payload i).1
     | exact (RecursiveRowsClean.headers hs payload i).2
@@ -95,11 +95,11 @@ theorem local_clean (hs : Fin 6 → List Bool) (payload : Tapes (1+c) q) :
   apply congrArg₂ Tapes.mk
   · funext i
     by_cases hi : ∃ j, ports j = i
-    · simp [SharedBank.strip,hi,SharedBank.empty]
+    · simp [hi]
     · simpa only [SharedBank.strip,hi,ite_false,SharedBank.empty] using (hblank i hi).1
   · funext i
     by_cases hi : ∃ j, ports j = i
-    · simp [SharedBank.strip,hi,SharedBank.empty]
+    · simp [hi]
     · simpa only [SharedBank.strip,hi,ite_false,SharedBank.empty] using (hblank i hi).2
 
 /-- The permanent bank convention shared by recursive shift/affine routines:
@@ -204,7 +204,7 @@ def updated (wires : Fin (1+c) → Fin t) (roles : Tapes t q) (payload : Tapes (
 theorem updated_payload (wires : Fin (1+c) → Fin t) (hw : Function.Injective wires)
     (roles : Tapes t q) (payload : Tapes (1+c) q) :
     SharedBank.payload (updated wires roles payload) wires = payload := by
-  apply congrArg₂ Tapes.mk <;> funext j <;> simp only [SharedBank.payload,updated]
+  apply congrArg₂ Tapes.mk <;> funext j <;> simp only [updated]
   all_goals split_ifs with h
   all_goals first | (rw [hw h.choose_spec]) | exact (h ⟨j,rfl⟩).elim
 
@@ -218,9 +218,9 @@ theorem common_frame (wires : Fin (1+c) → Fin t) (roles : Tapes t q) (payload 
     · obtain ⟨j,hj⟩ := hi
       have hsel : ∃ z, commonPorts (u := u) wires z = Fin.castAdd (7+u) i :=
         ⟨Fin.castAdd 6 j,by simp only [commonPorts,Fin.addCases_left,hj]⟩
-      simp only [SharedBank.strip,hsel,ite_true]
-    · simp only [SharedBank.strip,common,Tapes.append,Fin.addCases_left,updated,hi,↓reduceDIte]
-  | right i => simp only [SharedBank.strip,common,Tapes.append,Fin.addCases_right]
+      simp only [hsel,ite_true]
+    · simp only [common,Tapes.append,Fin.addCases_left,updated,hi,↓reduceDIte]
+  | right i => simp only [common,Tapes.append,Fin.addCases_right]
 
 /-- Deterministic whole-bank result: only the selected source and roles change.
 No output-bank or frame certificate needs to be supplied by the caller. -/

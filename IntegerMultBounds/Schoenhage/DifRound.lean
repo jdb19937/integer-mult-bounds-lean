@@ -36,6 +36,7 @@ def axExp {n : ℕ} (π : BitPerm n) (r : ℕ) (ts : List ℕ) (i h y : ℕ) : �
 def slotExp {n : ℕ} (π : BitPerm n) (r : ℕ) (ts : List ℕ) (Is : List ℕ) (h y : ℕ) : ℕ :=
   (Is.map fun i => axExp π r ts i h y).sum
 
+omit [NeZero r] in
 /-- An axis's exponent ignores the slot bits of the other axes. -/
 theorem axExp_flip {n : ℕ} (π : BitPerm n) {ts : List ℕ} (hts : PowAxes r ts) (hn : ts.prod = 2 ^ n)
     {i j h : ℕ} (hi : i < ts.length) (hj : j < ts.length) (hij : i ≠ j) (hhi : h < axLen ts i)

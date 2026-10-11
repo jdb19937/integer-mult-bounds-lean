@@ -50,7 +50,7 @@ def growProgram (g : Bool) := Placement.placed (FixedBasePowerStep.program (q :=
 private def restrict (v : Tapes (count q+2) a) : Tapes (count q) a :=
   ⟨fun i => v.head (Fin.castAdd 2 i),fun i => v.tape (Fin.castAdd 2 i)⟩
 private theorem restrict_append (v : Tapes (count q) a) (c : Tapes 2 a) : restrict (v.append c) = v := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> simp only [restrict,Tapes.append,Fin.addCases_left]
+  apply congrArg₂ Tapes.mk <;> funext i <;> simp only [Tapes.append,Fin.addCases_left]
 
 private theorem set_working (g : Bool) (source : ℤ → Fin (a+4)) (ss op oe ps es ws bs : List Bool) :
     setTape (bank (q := q) source ss op oe (some ps) (some es) (some ws)) (workingSlot g)
@@ -78,7 +78,7 @@ private theorem grow_active (g : Bool) (source : ℤ → Fin (a+4)) (ss op oe ps
   rw [InjectivePlacement.active_bank]
   apply congrArg₂ Tapes.mk <;> funext i <;> cases g <;> fin_cases i
   all_goals simp (disch := omega) [growSlots,workingSlot,bank,prefixSlot,suffixSlot,baseSlot,scratchSlot,
-    spectatorSlot,originalPrefixSlot,originalSuffixSlot,DimensionProductDescriptor.input,
+    spectatorSlot,originalPrefixSlot,originalSuffixSlot,
     RadixHighBlockJoinSetup.encoded_binary]
   all_goals (try split_ifs) <;> first | contradiction | omega | rfl
 
@@ -93,17 +93,16 @@ private theorem shrink_active (g : Bool) (source : ℤ → Fin (a+4)) (ss op oe 
     simp only [shrinkSlots,Fin.addCases_left]
     fin_cases i
     all_goals cases g <;>
-      simp (disch := omega) [workingSlot,bank,prefixSlot,suffixSlot,baseSlot,scratchSlot,
-        spectatorSlot,originalPrefixSlot,originalSuffixSlot,ArbitraryWidthPieceCounter.input,
-        SharedBank.empty,setTape,Function.update_apply,Fin.ext_iff,
-        RadixHighBlockJoinSetup.encoded_binary,RadixHighBlockJoinSetup.encoded_descriptor] <;>
-      (try split_ifs) <;> first | contradiction | omega | rfl | exact (RadixHighBlockJoinSetup.encoded_binary _).symm.trans (RadixHighBlockJoinSetup.encoded_descriptor _)
+      simp (disch := omega) [workingSlot,bank,prefixSlot,suffixSlot,baseSlot,
+        spectatorSlot,originalPrefixSlot,originalSuffixSlot,
+        SharedBank.empty] <;>
+      first | contradiction | omega | rfl | exact (RadixHighBlockJoinSetup.encoded_binary _).symm.trans (RadixHighBlockJoinSetup.encoded_descriptor _)
   | right i =>
     simp only [shrinkSlots,Fin.addCases_right]
     fin_cases i
     all_goals simp (disch := omega) [bank,prefixSlot,suffixSlot,baseSlot,scratchSlot,
-      spectatorSlot,originalPrefixSlot,originalSuffixSlot,ArbitraryWidthPieceCounter.input,
-      SharedBank.empty,setTape,Function.update_apply,Fin.ext_iff]
+      spectatorSlot,originalPrefixSlot,originalSuffixSlot,
+      SharedBank.empty]
     all_goals (try split_ifs) <;> first | contradiction | omega | rfl
 
 /-- The only modified tape is the chosen working header. Every arithmetic
@@ -145,12 +144,12 @@ theorem shrink_hoare (g : Bool) (source : ℤ → Fin (a+4)) (ss op oe ps es ws 
       setTape (ArbitraryWidthPieceCounter.input (a := a) (if g then ps else es)) 0
         (RadixZeroFill.encodedBinary (RecursiveChildQuotientsConstant.bits (Counter.value (if g then ps else es)/q))) 1 := by
     apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;>
-      simp [ArbitraryWidthPieceCounter.input,setTape,Function.update_apply,SharedBank.empty,
+      simp [ArbitraryWidthPieceCounter.input,setTape,SharedBank.empty,
         RadixHighBlockJoinSetup.encoded_descriptor]
   apply h.consequence (fun _ hh => hh) _ le_rfl
   rintro v ⟨small,rfl,rfl⟩
   rw [he,← shrink_active g source ss op oe ps es ws,PlacedDescriptorConstruction.replace_setTape]
-  simp only [shrinkPlacement,InjectivePlacement.active_slot,shrinkSlots,Fin.addCases_left]
+  simp only [shrinkPlacement,InjectivePlacement.active_slot,shrinkSlots]
   have hh := set_working (q := q) g source ss op oe ps es ws
     (RecursiveChildQuotientsConstant.bits (Counter.value (if g then ps else es)/q))
   cases g <;> exact hh

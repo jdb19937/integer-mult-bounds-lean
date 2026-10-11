@@ -34,8 +34,7 @@ theorem powerSlots_injective : Function.Injective (powerSlots (q := q)) := by
   intro i j h
   have hv := congrArg Fin.val h
   fin_cases i <;> fin_cases j
-  all_goals simp [powerSlots,scratchSlot,exponentSlot,RadixHighBlockJoinBank.scratchSlot,
-    Fin.val_castAdd,Fin.val_natAdd] at hv
+  all_goals simp [powerSlots,scratchSlot,exponentSlot,RadixHighBlockJoinBank.scratchSlot,Fin.val_natAdd] at hv
   all_goals first | rfl | (have hc := RadixHighBlockJoinBank.count_eq q; omega)
 
 def powerPlacement : Fin (8+(total q-8)) ≃ Fin (total q) :=
@@ -62,7 +61,7 @@ theorem productSlots_injective (growPrefix : Bool) : Function.Injective (product
   all_goals simp [productSlots,workingSlot,originalSlot,prefixSlot,suffixSlot,originalPrefixSlot,
     originalSuffixSlot,scratchSlot,RadixHighBlockJoinBank.prefixSlot,RadixHighBlockJoinBank.suffixSlot,
     RadixHighBlockJoinBank.originalPrefixSlot,RadixHighBlockJoinBank.originalSuffixSlot,
-    RadixHighBlockJoinBank.scratchSlot,Fin.val_castAdd] at hv
+    RadixHighBlockJoinBank.scratchSlot] at hv
   all_goals first | rfl | omega
 
 def productPlacement (growPrefix : Bool) : Fin (6+(total q-6)) ≃ Fin (total q) :=
@@ -162,18 +161,18 @@ theorem set_prefix (source : ℤ → Fin (a+4)) (ss op oe bs : List Bool)
   apply congrArg₂ Tapes.mk
   · funext i
     by_cases hi : i.val = q+4
-    all_goals simp (disch := omega) [setTape,Function.update_apply,RadixHighBlockJoinBank.bank,
+    all_goals simp (disch := omega) [Function.update_apply,RadixHighBlockJoinBank.bank,
       RadixHighBlockJoinBank.prefixSlot,RadixHighBlockJoinBank.suffixSlot,
       RadixHighBlockJoinBank.baseSlot,RadixHighBlockJoinBank.spectatorSlot,
       RadixHighBlockJoinBank.originalPrefixSlot,RadixHighBlockJoinBank.originalSuffixSlot,
-      Fin.ext_iff,hi] <;> (try split_ifs) <;> first | omega | rfl
+      Fin.ext_iff,hi] <;> first | omega | rfl
   · funext i
     by_cases hi : i.val = q+4
-    all_goals simp (disch := omega) [setTape,Function.update_apply,RadixHighBlockJoinBank.bank,
+    all_goals simp (disch := omega) [Function.update_apply,RadixHighBlockJoinBank.bank,
       RadixHighBlockJoinBank.prefixSlot,RadixHighBlockJoinBank.suffixSlot,
       RadixHighBlockJoinBank.baseSlot,RadixHighBlockJoinBank.spectatorSlot,
       RadixHighBlockJoinBank.originalPrefixSlot,RadixHighBlockJoinBank.originalSuffixSlot,
-      Fin.ext_iff,hi,encoded_binary] <;> (try split_ifs) <;> first | omega | rfl
+      Fin.ext_iff,hi,encoded_binary] <;> first | omega | rfl
 
 theorem set_suffix (source : ℤ → Fin (a+4)) (ss op oe bs : List Bool)
     (ps es ws : Option (List Bool)) (ctrl : Tapes 2 a) :
@@ -186,18 +185,18 @@ theorem set_suffix (source : ℤ → Fin (a+4)) (ss op oe bs : List Bool)
   apply congrArg₂ Tapes.mk
   · funext i
     by_cases hi : i.val = q+5
-    all_goals simp (disch := omega) [setTape,Function.update_apply,RadixHighBlockJoinBank.bank,
+    all_goals simp (disch := omega) [Function.update_apply,RadixHighBlockJoinBank.bank,
       RadixHighBlockJoinBank.prefixSlot,RadixHighBlockJoinBank.suffixSlot,
       RadixHighBlockJoinBank.baseSlot,RadixHighBlockJoinBank.spectatorSlot,
       RadixHighBlockJoinBank.originalPrefixSlot,RadixHighBlockJoinBank.originalSuffixSlot,
-      Fin.ext_iff,hi] <;> (try split_ifs) <;> first | omega | rfl
+      Fin.ext_iff,hi] <;> first | omega | rfl
   · funext i
     by_cases hi : i.val = q+5
-    all_goals simp (disch := omega) [setTape,Function.update_apply,RadixHighBlockJoinBank.bank,
+    all_goals simp (disch := omega) [Function.update_apply,RadixHighBlockJoinBank.bank,
       RadixHighBlockJoinBank.prefixSlot,RadixHighBlockJoinBank.suffixSlot,
       RadixHighBlockJoinBank.baseSlot,RadixHighBlockJoinBank.spectatorSlot,
       RadixHighBlockJoinBank.originalPrefixSlot,RadixHighBlockJoinBank.originalSuffixSlot,
-      Fin.ext_iff,hi,encoded_binary] <;> (try split_ifs) <;> first | omega | rfl
+      Fin.ext_iff,hi,encoded_binary] <;> first | omega | rfl
 
 theorem clear_prefix (source : ℤ → Fin (a+4)) (ss op oe : List Bool)
     (ps es ws : Option (List Bool)) (ctrl : Tapes 2 a) :
@@ -210,18 +209,18 @@ theorem clear_prefix (source : ℤ → Fin (a+4)) (ss op oe : List Bool)
   apply congrArg₂ Tapes.mk
   · funext i
     by_cases hi : i.val = q+4
-    all_goals simp (disch := omega) [setTape,Function.update_apply,RadixHighBlockJoinBank.bank,
+    all_goals simp (disch := omega) [Function.update_apply,RadixHighBlockJoinBank.bank,
       RadixHighBlockJoinBank.prefixSlot,RadixHighBlockJoinBank.suffixSlot,
       RadixHighBlockJoinBank.baseSlot,RadixHighBlockJoinBank.spectatorSlot,
       RadixHighBlockJoinBank.originalPrefixSlot,RadixHighBlockJoinBank.originalSuffixSlot,
-      Fin.ext_iff,hi] <;> (try split_ifs) <;> first | omega | rfl
+      Fin.ext_iff,hi] <;> first | omega | rfl
   · funext i
     by_cases hi : i.val = q+4
-    all_goals simp (disch := omega) [setTape,Function.update_apply,RadixHighBlockJoinBank.bank,
+    all_goals simp (disch := omega) [Function.update_apply,RadixHighBlockJoinBank.bank,
       RadixHighBlockJoinBank.prefixSlot,RadixHighBlockJoinBank.suffixSlot,
       RadixHighBlockJoinBank.baseSlot,RadixHighBlockJoinBank.spectatorSlot,
       RadixHighBlockJoinBank.originalPrefixSlot,RadixHighBlockJoinBank.originalSuffixSlot,
-      Fin.ext_iff,hi,encoded_binary] <;> (try split_ifs) <;> first | omega | rfl
+      Fin.ext_iff,hi] <;> first | omega | rfl
 
 theorem clear_suffix (source : ℤ → Fin (a+4)) (ss op oe : List Bool)
     (ps es ws : Option (List Bool)) (ctrl : Tapes 2 a) :
@@ -234,18 +233,18 @@ theorem clear_suffix (source : ℤ → Fin (a+4)) (ss op oe : List Bool)
   apply congrArg₂ Tapes.mk
   · funext i
     by_cases hi : i.val = q+5
-    all_goals simp (disch := omega) [setTape,Function.update_apply,RadixHighBlockJoinBank.bank,
+    all_goals simp (disch := omega) [Function.update_apply,RadixHighBlockJoinBank.bank,
       RadixHighBlockJoinBank.prefixSlot,RadixHighBlockJoinBank.suffixSlot,
       RadixHighBlockJoinBank.baseSlot,RadixHighBlockJoinBank.spectatorSlot,
       RadixHighBlockJoinBank.originalPrefixSlot,RadixHighBlockJoinBank.originalSuffixSlot,
-      Fin.ext_iff,hi] <;> (try split_ifs) <;> first | omega | rfl
+      Fin.ext_iff,hi] <;> first | omega | rfl
   · funext i
     by_cases hi : i.val = q+5
-    all_goals simp (disch := omega) [setTape,Function.update_apply,RadixHighBlockJoinBank.bank,
+    all_goals simp (disch := omega) [Function.update_apply,RadixHighBlockJoinBank.bank,
       RadixHighBlockJoinBank.prefixSlot,RadixHighBlockJoinBank.suffixSlot,
       RadixHighBlockJoinBank.baseSlot,RadixHighBlockJoinBank.spectatorSlot,
       RadixHighBlockJoinBank.originalPrefixSlot,RadixHighBlockJoinBank.originalSuffixSlot,
-      Fin.ext_iff,hi,encoded_binary] <;> (try split_ifs) <;> first | omega | rfl
+      Fin.ext_iff,hi] <;> first | omega | rfl
 
 theorem set_base (source : ℤ → Fin (a+4)) (ss op oe bs : List Bool)
     (ps es ws : Option (List Bool)) (ctrl : Tapes 2 a) :
@@ -258,14 +257,14 @@ theorem set_base (source : ℤ → Fin (a+4)) (ss op oe bs : List Bool)
   apply congrArg₂ Tapes.mk
   · funext i
     by_cases hi : i.val = 2*q+31
-    all_goals simp (disch := omega) [setTape,Function.update_apply,RadixHighBlockJoinBank.bank,
+    all_goals simp (disch := omega) [Function.update_apply,RadixHighBlockJoinBank.bank,
       RadixHighBlockJoinBank.prefixSlot,RadixHighBlockJoinBank.suffixSlot,
       RadixHighBlockJoinBank.baseSlot,RadixHighBlockJoinBank.spectatorSlot,
       RadixHighBlockJoinBank.originalPrefixSlot,RadixHighBlockJoinBank.originalSuffixSlot,
       Fin.ext_iff,hi] <;> (try split_ifs) <;> first | omega | rfl
   · funext i
     by_cases hi : i.val = 2*q+31
-    all_goals simp (disch := omega) [setTape,Function.update_apply,RadixHighBlockJoinBank.bank,
+    all_goals simp (disch := omega) [Function.update_apply,RadixHighBlockJoinBank.bank,
       RadixHighBlockJoinBank.prefixSlot,RadixHighBlockJoinBank.suffixSlot,
       RadixHighBlockJoinBank.baseSlot,RadixHighBlockJoinBank.spectatorSlot,
       RadixHighBlockJoinBank.originalPrefixSlot,RadixHighBlockJoinBank.originalSuffixSlot,
@@ -282,18 +281,18 @@ theorem clear_base (source : ℤ → Fin (a+4)) (ss op oe : List Bool)
   apply congrArg₂ Tapes.mk
   · funext i
     by_cases hi : i.val = 2*q+31
-    all_goals simp (disch := omega) [setTape,Function.update_apply,RadixHighBlockJoinBank.bank,
+    all_goals simp (disch := omega) [Function.update_apply,RadixHighBlockJoinBank.bank,
       RadixHighBlockJoinBank.prefixSlot,RadixHighBlockJoinBank.suffixSlot,
       RadixHighBlockJoinBank.baseSlot,RadixHighBlockJoinBank.spectatorSlot,
       RadixHighBlockJoinBank.originalPrefixSlot,RadixHighBlockJoinBank.originalSuffixSlot,
       Fin.ext_iff,hi] <;> (try split_ifs) <;> first | omega | rfl
   · funext i
     by_cases hi : i.val = 2*q+31
-    all_goals simp (disch := omega) [setTape,Function.update_apply,RadixHighBlockJoinBank.bank,
+    all_goals simp (disch := omega) [Function.update_apply,RadixHighBlockJoinBank.bank,
       RadixHighBlockJoinBank.prefixSlot,RadixHighBlockJoinBank.suffixSlot,
       RadixHighBlockJoinBank.baseSlot,RadixHighBlockJoinBank.spectatorSlot,
       RadixHighBlockJoinBank.originalPrefixSlot,RadixHighBlockJoinBank.originalSuffixSlot,
-      Fin.ext_iff,hi,encoded_binary] <;> (try split_ifs) <;> first | omega | rfl
+      Fin.ext_iff,hi] <;> (try split_ifs) <;> first | omega | rfl
 
 end
 end IntegerMultBounds.Machine.RadixHighBlockJoinSetup

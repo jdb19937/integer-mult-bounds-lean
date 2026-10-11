@@ -84,7 +84,7 @@ noncomputable abbrev streamPrim (R : Rule r) (ext : Bool) : Prim a where
         simpa [enc, WTape.cur, hw'] using (σ (oth j)).Rd_of (a := a) hw'
     obtain ⟨v', hrun, hhalt, htape, hhdrv, hhoth, hhout⟩ := stream_run R ext (enc σ) _ _ hRd hRo
     refine ⟨_, _, le_rfl, hrun, hhalt, ?_⟩
-    simp only [FMachine.Cfg.tapes]
+    simp only []
     rw [hvs] at htape hhout
     have hsem_out : streamSem R ext σ out = (σ out).put ext vs := by
       simp [streamSem, hvs, parse_syms]

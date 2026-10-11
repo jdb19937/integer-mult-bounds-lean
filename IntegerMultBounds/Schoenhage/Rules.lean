@@ -132,7 +132,7 @@ theorem go_copy (w : List Bool) (ws : Fin 0 → List Bool) :
   | cons b w ih => simp [go, ih]
 
 theorem output_copy (w : List Bool) (ws : Fin 0 → List Bool) : output copy w ws = syms [w] := by
-  simp [output, syms_cons, (go_copy w ws).1, (go_copy w ws).2]
+  simp [output, syms_cons, (go_copy w ws).1]
 
 /-- Emit the constant `c` once per driver bit. -/
 abbrev fill (c : Bool) : Rule 0 where
@@ -232,8 +232,8 @@ theorem fit_eq_bits (n : ℕ) (x : List Bool) : fit n x = bits n (bval x) := by
       rw [ih]; simp
     · simp only [fit, List.headD_cons, List.tail_cons, bval_cons, bits, ih]
       congr 1
-      · cases b <;> simp <;> omega
-      · congr 1; cases b <;> simp <;> omega
+      · cases b <;> simp
+      · congr 1; cases b <;> simp; omega
 
 theorem bval_fit_mod (n : ℕ) (x : List Bool) : bval (fit n x) = bval x % 2 ^ n := by
   rw [fit_eq_bits, bval_bits]
@@ -263,7 +263,7 @@ theorem go_take (w : List Bool) (ws : Fin 1 → List Bool) :
   | cons b w ih =>
     simp only [go, List.length_cons, fit]
     rw [ih]
-    rcases h : ws 0 with _ | ⟨x, xs⟩ <;> simp [h]
+    rcases h : ws 0 with _ | ⟨x, xs⟩ <;> simp
 
 theorem output_take (w : List Bool) (ws : Fin 1 → List Bool) :
     output take w ws = syms [fit w.length (ws 0)] := by
@@ -290,7 +290,7 @@ theorem go_drop (w : List Bool) (ws : Fin 1 → List Bool) :
   | nil => simp [go]
   | cons b w ih =>
     obtain ⟨l, hl⟩ : ∃ l, ws 0 = l := ⟨_, rfl⟩
-    simp only [go, drop_step, ↓reduceIte]
+    simp only [go, ↓reduceIte]
     rw [ih]
     rcases l with _ | ⟨x, xs⟩ <;> simp [hl]
 

@@ -21,10 +21,10 @@ variable {a t : ℕ}
 
 /-- Consecutive pieces of width `w` (the last may be shorter); empty for the empty word. -/
 def cut (w : ℕ) (x : List Bool) : List (List Bool) :=
-  if hx : x = [] then [] else if hw : w = 0 then [x] else x.take w :: cut w (x.drop w)
+  if _hx : x = [] then [] else if _hw : w = 0 then [x] else x.take w :: cut w (x.drop w)
 termination_by x.length
 decreasing_by
-  have : 0 < x.length := List.length_pos_of_ne_nil hx
+  have : 0 < x.length := List.length_pos_of_ne_nil (by assumption)
   simp; omega
 
 @[simp] theorem cut_nil (w : ℕ) : cut w [] = [] := by rw [cut]; simp
@@ -119,7 +119,7 @@ theorem step_three (M : FMachine 3 a) {s s' : M.S} {h0 h1 h2 : ℤ} {f0 f1 f2 : 
   simp only [three, act3, Tapes.mk.injEq]
   refine ⟨?_, ?_⟩
   · funext i; split_ifs <;> rfl
-  · funext i j; split_ifs <;> simp_all [Function.update_apply]
+  · funext i j; split_ifs <;> simp_all
 
 theorem halt_three (M : FMachine 3 a) {s : M.S} {v : Tapes 3 a}
     (hδ : ∀ syms, M.δ s syms = none) : M.fstep ⟨s, v⟩ = none := by
@@ -303,7 +303,7 @@ theorem main_run (f0 f1 : ℤ → Fin (a + 4)) {w : ℕ} (hw : 1 ≤ w)
     simp only [Bool.false_eq_true, ite_false]
     congr 3; ring
 termination_by x.length
-decreasing_by simp [z]; omega
+decreasing_by simp; omega
 
 /-- Chunk: the source's current word, cut into pieces of the register's width, as new words of
 the destination. -/
@@ -344,12 +344,12 @@ noncomputable abbrev prim : Prim a where
     have c0 : ((0 : Fin 3) : ℕ) = 0 := rfl
     have c1 : ((1 : Fin 3) : ℕ) = 1 := rfl
     have c2 : ((2 : Fin 3) : ℕ) = 2 := rfl
-    simp only [c0, c1, c2, ↓reduceIte, one_ne_zero, OfNat.ofNat_ne_zero, hcur, T0.next_pos hr, T0.next_tape hr,
+    simp only [c0, c1, c2, ↓reduceIte, one_ne_zero, hcur, T0.next_pos hr, T0.next_tape hr,
       show (2 : ℕ) ≠ 1 by decide, show (2 : ℕ) ≠ 0 by decide]
     have hput := T2.put_end (a := a) h2 (cut W x)
     rw [hput, h1p]
     simp [three, WTape.pos, clen_append, clen_reverse]
-    ring
+    ring_nf
 
 end Chunk
 
@@ -361,7 +361,7 @@ theorem slot3_inj {s r d : Fin t} (h1 : s ≠ r) (h2 : s ≠ d) (h3 : r ≠ d) :
   simp only [slot3] at hij
   apply Fin.ext
   have hi := i.isLt; have hj := j.isLt
-  split_ifs at hij <;> first | omega | (exfalso; simp_all)
+  split_ifs at hij <;> omega
 
 /-- Cut the current word of `s` into pieces of the width in `r`, appended to `d`. -/
 noncomputable def chunkw (s r d : Fin t) (h1 : s ≠ r) (h2 : s ≠ d) (h3 : r ≠ d) : Cmd a t :=

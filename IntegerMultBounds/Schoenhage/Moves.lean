@@ -25,13 +25,13 @@ namespace WTape
 
 theorem tape_nonblank (T : WTape) (j : ℤ) (h0 : 0 ≤ j) (h1 : j < clen T.words) :
     T.tape (a := a) j ≠ blank := by
-  rw [tape_eq, if_pos h0]
+  rw [tape_eq, ite_eq_left h0]
   have : j.toNat < (syms T.words).length := by rw [length_syms]; omega
   rw [List.getElem?_eq_getElem this]
   exact sym_ne_blank _
 
 theorem tape_blank_ge (T : WTape) (j : ℤ) (h : clen T.words ≤ j) : T.tape (a := a) j = blank := by
-  rw [tape_eq, if_pos (by have := Nat.zero_le (clen T.words); omega)]
+  rw [tape_eq, ite_eq_left (by have := Nat.zero_le (clen T.words); omega)]
   rw [List.getElem?_eq_none (by rw [length_syms]; omega)]
   rfl
 
@@ -125,7 +125,7 @@ noncomputable abbrev prim : Prim a where
       convert this using 3
       · simp [one]; rfl
       · simp [WTape.pos]
-    · simp only [FMachine.Cfg.tapes]
+    · simp only []
       rw [enc_one]
       simp [one, WTape.pos, WTape.tape, WTape.words]
 
@@ -251,7 +251,7 @@ theorem scan_run (f : ℤ → Fin (a + 4)) :
     simp only [Nat.cast_zero, add_zero] at hb
     rw [FMachine.frun_one, step_write machine (s' := .erase) blank .left (by simp [machine, hb])]
     have : Function.update f h blank = f := by rw [← hb]; simp
-    simp [this, Move.offset]; ring
+    simp [this, Move.offset]; ring_nf
   | n + 1, h, hnb, hb => by
     have h0 : f h ≠ blank := by simpa using hnb 0 (by omega)
     have ih := scan_run f n (h + 1) (fun c hc => by

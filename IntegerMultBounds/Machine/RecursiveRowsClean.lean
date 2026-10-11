@@ -86,22 +86,21 @@ private theorem retained_eq (target : RecursiveRowsResetCount.Target) (hs : Fin 
   | left i =>
     induction i using Fin.addCases with
     | left i =>
-      simp only [TrackedCleanupList.retained,keep,RecursiveRowsMove.output,CountedBankReset.bank,
-        CountedLoopReuseAlphabet.bank,RecursiveRowsMove.counted,RecursiveRowsMove.input,RecursiveRowsConstruct.input,
+      simp only [keep,RecursiveRowsMove.output,CountedBankReset.bank,
+        CountedLoopReuseAlphabet.bank,RecursiveRowsMove.counted,RecursiveRowsConstruct.input,
         Tapes.append,Fin.addCases_left]
       fin_cases i <;> first | rfl | exact (BinaryDescriptorStackRoundtrip.descriptor_encoded _).symm
     | right i =>
       induction i using Fin.addCases with
       | left i =>
         induction i using Fin.addCases with
-        | left i => simp [TrackedCleanupList.retained,keep,localKeep,RecursiveRowsMove.output,RecursiveRowsMove.counted,
-            RecursiveRowsMove.input,RecursiveRowsConstruct.input,RecursiveRowsInstall.blankLocal,RecursiveRowsInstall.prepared,
+        | left i => simp [keep,localKeep,RecursiveRowsMove.output,RecursiveRowsMove.counted,RecursiveRowsConstruct.input,RecursiveRowsInstall.blankLocal,RecursiveRowsInstall.prepared,
             CountedBankReset.bank,CountedLoopReuseAlphabet.bank,Tapes.append]
-        | right i => simp [TrackedCleanupList.retained,keep,localKeep,RecursiveRowsMove.input,
+        | right i => simp [keep,localKeep,
             RecursiveRowsConstruct.input,RecursiveRowsInstall.blankLocal,Tapes.append,SharedBank.empty]
-      | right i => simp [TrackedCleanupList.retained,keep,localKeep,RecursiveRowsMove.input,
+      | right i => simp [keep,localKeep,
           RecursiveRowsConstruct.input,RecursiveRowsInstall.blankLocal,Tapes.append,SharedBank.empty]
-  | right i => simp [TrackedCleanupList.retained,keep,RecursiveRowsMove.input,Tapes.append,SharedBank.empty]
+  | right i => simp [keep,SharedBank.empty]
 
 private theorem payload_head (f : ℤ → Fin (q+4)) (roles : Fin c → ℤ → Fin (q+4)) :
     (CyclicRowCopy.payload f roles 0 (fun _ => 0)).head = fun _ => 0 := by

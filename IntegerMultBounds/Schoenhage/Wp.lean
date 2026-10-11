@@ -42,13 +42,13 @@ theorem wp_sound : ∀ (c : Cmd a t) (σ : Fin t → WTape) (Q : (Fin t → WTap
 
 theorem wp_mono : ∀ (c : Cmd a t) (σ : Fin t → WTape) (Q Q' : (Fin t → WTape) → ℕ → Prop),
     (∀ σ' k, Q σ' k → Q' σ' k) → WP c σ Q → WP c σ Q'
-  | .prim P slot hinj, σ, Q, Q', hQ, ⟨hp, hq⟩ => ⟨hp, hQ _ _ hq⟩
-  | .seq c d, σ, Q, Q', hQ, h =>
-    wp_mono c σ _ _ (fun σ₁ k₁ h₁ => wp_mono d σ₁ _ _ (fun σ₂ k₂ h₂ => hQ _ _ h₂) h₁) h
-  | .cond i c d, σ, Q, Q', hQ, ⟨ht, hf⟩ =>
+  | .prim _P _slot _hinj, _σ, _Q, _Q', hQ, ⟨hp, hq⟩ => ⟨hp, hQ _ _ hq⟩
+  | .seq c d, σ, _Q, _Q', hQ, h =>
+    wp_mono c σ _ _ (fun σ₁ _k₁ h₁ => wp_mono d σ₁ _ _ (fun _σ₂ _k₂ h₂ => hQ _ _ h₂) h₁) h
+  | .cond _i c d, σ, _Q, _Q', hQ, ⟨ht, hf⟩ =>
     ⟨fun hs => wp_mono c σ _ _ (fun _ _ h => hQ _ _ h) (ht hs),
      fun hs => wp_mono d σ _ _ (fun _ _ h => hQ _ _ h) (hf hs)⟩
-  | .loop i b, σ, Q, Q', hQ, ⟨σ', k, he, hq⟩ => ⟨σ', k, he, hQ _ _ hq⟩
+  | .loop _i _b, _σ, _Q, _Q', hQ, ⟨σ', k, he, hq⟩ => ⟨σ', k, he, hQ _ _ hq⟩
 
 /-- A weakest precondition with a bounded cost gives `Runs`. -/
 theorem Runs.of_wp {c : Cmd a t} {σ} {Q : (Fin t → WTape) → Prop} {B : ℕ}
@@ -161,7 +161,7 @@ theorem wp_op1 (R : Rule 1) (ext : Bool) {d e o : Fin t} (h1 : d ≠ e) (h2 : d 
     simp only [Function.comp_apply, sd, hz]
   rw [e1, e2, e3, ec]
   apply and_congr_left'
-  simp only [StreamPre, Function.comp_apply, sd, so, se, hz]
+  simp only [StreamPre, Function.comp_apply, sd, so, se]
   constructor
   · rintro ⟨h1, h2, h3, vs, h4, h5⟩
     refine ⟨h1, h2 0, h3, by rw [h4, parse_syms], fun he => ?_⟩

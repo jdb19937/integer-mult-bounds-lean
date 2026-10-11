@@ -23,7 +23,7 @@ def expTerm (X : ℤ) (q : ℕ) : ℕ → ℤ
 /-- The integer approximation of `2^q exp (X / 2^q)`. -/
 def expApprox (X : ℤ) (q N : ℕ) : ℤ := ∑ n ∈ range N, expTerm X q n
 
-theorem ediv_err (a b : ℤ) (hb : 0 < b) (ha : 0 ≤ a) : |((a / b : ℤ) : ℝ) - (a : ℝ) / b| ≤ 1 := by
+theorem ediv_err (a b : ℤ) (hb : 0 < b) (_ha : 0 ≤ a) : |((a / b : ℤ) : ℝ) - (a : ℝ) / b| ≤ 1 := by
   have hbr : (0 : ℝ) < b := by exact_mod_cast hb
   have h1 := Int.mul_ediv_add_emod a b
   have h2 := Int.emod_nonneg a hb.ne'
@@ -92,7 +92,6 @@ theorem expTerm_err (X : ℤ) (q : ℕ) (n : ℕ) :
     calc _ ≤ |((expTerm X q n * X).tdiv (2 ^ q * (n + 1)) : ℝ) - (expTerm X q n : ℝ) * x / (n + 1)| +
           |(expTerm X q n : ℝ) * x / (n + 1) - 2 ^ q * x ^ (n + 1) / ((n + 1)! : ℝ)| := abs_sub_le _ _ _
       _ ≤ 1 + ∑ i ∈ range n, |x| ^ (i + 1) / ((i + 1)! : ℝ) := by
-          push_cast at h1
           linarith
       _ = _ := by ring
 
