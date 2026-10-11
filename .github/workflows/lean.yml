@@ -1,8 +1,12 @@
 name: Lean
 on: [push, pull_request]
+concurrency:
+  group: lean-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   check:
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
       - uses: leanprover/lean-action@v1
