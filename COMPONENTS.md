@@ -6621,6 +6621,11 @@ Schönhage–Strassen multiplication, the fast multiplier used for the packed pr
   address, so the schedule on physical bits leaves `(F⁻ z)_(B(logi y))` at
   physical address `y` (`physSchedule_eq`).
 
+- `Schoenhage/DifRound.lean`: one slot's round over several axes in a layout
+  is all their butterflies followed by one twist by the summed exponent
+  (`run_group`, `slotExp`), the per-record exponent the twist descriptors
+  encode.
+
 - `Spec/SyntheticTransform.lean`: the statement of the paper's synthetic
   transforms in its formats: exact counterparts `L B F⁻` and `F⁺ B⁻¹ L⁻¹`,
   per-coefficient error `√2 ℓ 2^(-p)`, disk grid outputs, the paper's cost
