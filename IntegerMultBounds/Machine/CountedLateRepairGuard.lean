@@ -29,20 +29,20 @@ def after (q b : ℕ) (V W U X : List Bool) (hs : Fin 3 → List Bool) : Tapes 3
 def wPlace : Fin (15+15) ≃ Fin 30 where
   toFun := ![0,1,14,15,16,17,18,19,20,12,21,22,13,11,28,2,3,4,5,6,7,8,9,10,23,24,25,26,27,29]
   invFun := ![0,1,15,16,17,18,19,20,21,22,23,13,9,12,2,3,4,5,6,7,8,10,11,24,25,26,27,28,14,29]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def uPlace : Fin (15+15) ≃ Fin 30 where
   toFun := ![0,2,14,15,16,17,18,19,20,12,21,22,13,11,29,1,3,4,5,6,7,8,9,10,23,24,25,26,27,28]
   invFun := ![0,15,1,16,17,18,19,20,21,22,23,13,9,12,2,3,4,5,6,7,8,10,11,24,25,26,27,28,29,14]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def flagPlace : Fin (2+28) ≃ Fin 30 where
   toFun := ![28,29,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27]
   invFun := ![2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,0,1]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 theorem wPlace_extra_index (i : Fin 15) :
     wPlace (Fin.natAdd 15 i) = ![2,3,4,5,6,7,8,9,10,23,24,25,26,27,29] i := by

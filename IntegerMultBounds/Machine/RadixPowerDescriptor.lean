@@ -34,8 +34,8 @@ def output (bs : List Bool) (b : ℕ) : Tapes 4 q :=
 def conversionPlacement : Fin (3+1) ≃ Fin 4 where
   toFun := fun i => ![3,1,0,2] i
   invFun := fun i => ![2,1,3,0] i
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 private theorem conversion_hoare (bs : List Bool) (b : ℕ) :
     HoareTime (Placement.placed (RadixToBinary.convertProgram hq) conversionPlacement)

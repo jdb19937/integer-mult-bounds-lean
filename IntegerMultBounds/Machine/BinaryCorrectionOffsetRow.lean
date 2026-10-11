@@ -17,18 +17,18 @@ def bank (f g out left right : ℤ → Fin 4) (p q r x y : ℤ) (ws : List Bool)
 def leftPlace : Fin (4+3) ≃ Fin 7 where
   toFun := ![0,3,5,6,1,2,4]
   invFun := ![0,4,5,1,6,2,3]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 def rightPlace : Fin (4+3) ≃ Fin 7 where
   toFun := ![1,4,5,6,0,2,3]
   invFun := ![4,0,5,6,1,2,3]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 def subPlace : Fin (3+4) ≃ Fin 7 where
   toFun := ![3,4,2,0,1,5,6]
   invFun := ![3,4,2,0,1,5,6]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def copyLeft := Placement.placed CountedCopyReuse.program leftPlace
 def copyRight := Placement.placed CountedCopyReuse.program rightPlace

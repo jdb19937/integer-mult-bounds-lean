@@ -30,14 +30,14 @@ private theorem active_bank (ds : Fin 3 → List Bool) (bs qs as : List Bool) (d
     Placement.active rotationPlacement (bank ds bs qs as diff r source dest p q) =
       CountedRotate.bank source dest (ds 0) (ds 1) (ds 2) p q := by
   unfold Placement.active
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 private theorem extra_bank (ds : Fin 3 → List Bool) (bs qs as : List Bool) (diff : ℤ → Fin 4) (r : ℤ)
     (source dest source' dest' : ℤ → Fin 4) (p q p' q' : ℤ) :
     Placement.extra rotationPlacement (bank ds bs qs as diff r source dest p q) =
       Placement.extra rotationPlacement (bank ds bs qs as diff r source' dest' p' q') := by
   unfold Placement.extra
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 private theorem replace_bank (ds : Fin 3 → List Bool) (bs qs as : List Bool) (diff : ℤ → Fin 4) (r : ℤ)
     (source dest source' dest' : ℤ → Fin 4) (p q p' q' : ℤ) :

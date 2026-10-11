@@ -19,7 +19,7 @@ private theorem local_active (source payload : ℤ → Fin 4) (p q : ℤ) (bs : 
       (CountedCopyReuse.bank source payload CountedCopyReuse.empty
         (CountedCopyReuse.binary bs) p q 1 1) = ScratchReset.bank payload q bs := by
   unfold Placement.active ScalingSplitRewind.localSlots CountedCopyReuse.bank ScratchReset.bank CountedSeek.bank
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 private theorem local_replace (source payload payload' : ℤ → Fin 4) (p q r : ℤ) (bs : List Bool) :
     Placement.replace ScalingSplitRewind.localSlots
@@ -29,7 +29,7 @@ private theorem local_replace (source payload payload' : ℤ → Fin 4) (p q r :
         (CountedCopyReuse.binary bs) p r 1 1 := by
   unfold Placement.replace Placement.combine Placement.extra ScalingSplitRewind.localSlots
     Tapes.reindex Tapes.append CountedCopyReuse.bank ScratchReset.bank CountedSeek.bank
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 private theorem local_hoare (source background : ℤ → Fin 4) (p q : ℤ)
     (xs : List (Fin 4)) (bs : List Bool) (hcount : Counter.value bs = xs.length)

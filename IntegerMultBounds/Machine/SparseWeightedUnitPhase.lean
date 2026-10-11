@@ -27,8 +27,8 @@ def output (ws : List (ZMod 4)) (addr : List Bool) (hs : Fin 3 → List Bool) (q
 def placement : Fin (9+7) ≃ Fin 16 where
   toFun := ![8,9,1,10,11,12,13,14,15,0,2,3,4,5,6,7]
   invFun := ![9,2,10,11,12,13,14,15,0,1,3,4,5,6,7,8]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 def extractor := extend (SparseSourceBitsRun.program (a := 2)) 8
 def multiplier (ws : List (ZMod 4)) := Placement.placed (WeightedUnitPhase.program ws) placement
 def program (ws : List (ZMod 4)) := seq extractor (multiplier ws)

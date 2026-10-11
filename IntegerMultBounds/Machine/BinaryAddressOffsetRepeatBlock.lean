@@ -14,14 +14,14 @@ def bank (f g scratch : ℤ → Fin 4) (p q r : ℤ) (ws ls : List Bool) : Tapes
 def copyPlace : Fin (4+3) ≃ Fin 7 where
   toFun := ![0,2,3,4,1,5,6]
   invFun := ![0,4,1,2,3,5,6]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def repeatPlace : Fin (4+3) ≃ Fin 7 where
   toFun := ![2,1,5,6,0,3,4]
   invFun := ![4,1,0,5,6,2,3]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def copyProgram := Placement.placed CountedCopyReuse.program copyPlace
 def rewindProgram := Placement.placed (ReturnOrigin.program (a := 0)) (FiniteReturnStackAt.placement (2 : Fin 7))

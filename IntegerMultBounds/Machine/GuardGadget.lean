@@ -24,101 +24,101 @@ def bank (f0 f1 f2 f3 f4 f5 f6 : ℤ → Fin (a + 4)) (p0 p1 p2 p3 p4 p5 p6 : �
 def cmpV1 : Fin (3 + 4) ≃ Fin 7 where
   toFun := fun i => if i = 0 then 0 else if i = 1 then 2 else if i = 2 then 5 else if i = 3 then 1 else if i = 4 then 3 else if i = 5 then 4 else 6
   invFun := fun i => if i = 0 then 0 else if i = 1 then 3 else if i = 2 then 1 else if i = 3 then 4 else if i = 4 then 5 else if i = 5 then 2 else 6
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def cmpV2 : Fin (3 + 4) ≃ Fin 7 where
   toFun := fun i => if i = 0 then 0 else if i = 1 then 3 else if i = 2 then 5 else if i = 3 then 1 else if i = 4 then 2 else if i = 5 then 4 else 6
   invFun := fun i => if i = 0 then 0 else if i = 1 then 3 else if i = 2 then 4 else if i = 3 then 1 else if i = 4 then 5 else if i = 5 then 2 else 6
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def cmpW : Fin (3 + 4) ≃ Fin 7 where
   toFun := fun i => if i = 0 then 1 else if i = 1 then 4 else if i = 2 then 5 else if i = 3 then 0 else if i = 4 then 2 else if i = 5 then 3 else 6
   invFun := fun i => if i = 0 then 3 else if i = 1 then 0 else if i = 2 then 4 else if i = 3 then 5 else if i = 4 then 1 else if i = 5 then 2 else 6
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def flagP : Fin (2 + 5) ≃ Fin 7 where
   toFun := fun i => if i = 0 then 5 else if i = 1 then 6 else if i = 2 then 0 else if i = 3 then 1 else if i = 4 then 2 else if i = 5 then 3 else 4
   invFun := fun i => if i = 0 then 2 else if i = 1 then 3 else if i = 2 then 4 else if i = 3 then 5 else if i = 4 then 6 else if i = 5 then 0 else 1
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def oneV : Fin (1 + 6) ≃ Fin 7 where
   toFun := fun i => if i = 0 then 0 else if i = 1 then 1 else if i = 2 then 2 else if i = 3 then 3 else if i = 4 then 4 else if i = 5 then 5 else 6
   invFun := fun i => if i = 0 then 0 else if i = 1 then 1 else if i = 2 then 2 else if i = 3 then 3 else if i = 4 then 4 else if i = 5 then 5 else 6
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def oneC1 : Fin (1 + 6) ≃ Fin 7 where
   toFun := fun i => if i = 0 then 2 else if i = 1 then 0 else if i = 2 then 1 else if i = 3 then 3 else if i = 4 then 4 else if i = 5 then 5 else 6
   invFun := fun i => if i = 0 then 1 else if i = 1 then 2 else if i = 2 then 0 else if i = 3 then 3 else if i = 4 then 4 else if i = 5 then 5 else 6
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def oneC2 : Fin (1 + 6) ≃ Fin 7 where
   toFun := fun i => if i = 0 then 3 else if i = 1 then 0 else if i = 2 then 1 else if i = 3 then 2 else if i = 4 then 4 else if i = 5 then 5 else 6
   invFun := fun i => if i = 0 then 1 else if i = 1 then 2 else if i = 2 then 3 else if i = 3 then 0 else if i = 4 then 4 else if i = 5 then 5 else 6
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def oneC3 : Fin (1 + 6) ≃ Fin 7 where
   toFun := fun i => if i = 0 then 4 else if i = 1 then 0 else if i = 2 then 1 else if i = 3 then 2 else if i = 4 then 3 else if i = 5 then 5 else 6
   invFun := fun i => if i = 0 then 1 else if i = 1 then 2 else if i = 2 then 3 else if i = 3 then 4 else if i = 4 then 0 else if i = 5 then 5 else 6
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def oneF : Fin (1 + 6) ≃ Fin 7 where
   toFun := fun i => if i = 0 then 6 else if i = 1 then 0 else if i = 2 then 1 else if i = 3 then 2 else if i = 4 then 3 else if i = 5 then 4 else 5
   invFun := fun i => if i = 0 then 1 else if i = 1 then 2 else if i = 2 then 3 else if i = 3 then 4 else if i = 4 then 5 else if i = 5 then 6 else 0
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 theorem cmpV1_bank (f0 f1 f2 f3 f4 f5 f6 : ℤ → Fin (a + 4)) (p0 p1 p2 p3 p4 p5 p6 : ℤ) :
     ((GuardTest.bank f0 f2 f5 p0 p2 p5).append (⟨fun i => if i = 0 then p1 else if i = 1 then p3 else if i = 2 then p4 else p6, fun i => if i = 0 then f1 else if i = 1 then f3 else if i = 2 then f4 else f6⟩ : Tapes 4 a)).reindex cmpV1 = bank f0 f1 f2 f3 f4 f5 f6 p0 p1 p2 p3 p4 p5 p6 := by
   unfold Tapes.reindex Tapes.append GuardTest.bank bank cmpV1
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 theorem cmpV2_bank (f0 f1 f2 f3 f4 f5 f6 : ℤ → Fin (a + 4)) (p0 p1 p2 p3 p4 p5 p6 : ℤ) :
     ((GuardTest.bank f0 f3 f5 p0 p3 p5).append (⟨fun i => if i = 0 then p1 else if i = 1 then p2 else if i = 2 then p4 else p6, fun i => if i = 0 then f1 else if i = 1 then f2 else if i = 2 then f4 else f6⟩ : Tapes 4 a)).reindex cmpV2 = bank f0 f1 f2 f3 f4 f5 f6 p0 p1 p2 p3 p4 p5 p6 := by
   unfold Tapes.reindex Tapes.append GuardTest.bank bank cmpV2
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 theorem cmpW_bank (f0 f1 f2 f3 f4 f5 f6 : ℤ → Fin (a + 4)) (p0 p1 p2 p3 p4 p5 p6 : ℤ) :
     ((GuardTest.bank f1 f4 f5 p1 p4 p5).append (⟨fun i => if i = 0 then p0 else if i = 1 then p2 else if i = 2 then p3 else p6, fun i => if i = 0 then f0 else if i = 1 then f2 else if i = 2 then f3 else f6⟩ : Tapes 4 a)).reindex cmpW = bank f0 f1 f2 f3 f4 f5 f6 p0 p1 p2 p3 p4 p5 p6 := by
   unfold Tapes.reindex Tapes.append GuardTest.bank bank cmpW
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 theorem flagP_bank (f0 f1 f2 f3 f4 f5 f6 : ℤ → Fin (a + 4)) (p0 p1 p2 p3 p4 p5 p6 : ℤ) :
     ((GuardTest.bank2 f5 f6 p5 p6).append (⟨fun i => if i = 0 then p0 else if i = 1 then p1 else if i = 2 then p2 else if i = 3 then p3 else p4, fun i => if i = 0 then f0 else if i = 1 then f1 else if i = 2 then f2 else if i = 3 then f3 else f4⟩ : Tapes 5 a)).reindex flagP = bank f0 f1 f2 f3 f4 f5 f6 p0 p1 p2 p3 p4 p5 p6 := by
   unfold Tapes.reindex Tapes.append GuardTest.bank2 bank flagP
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 theorem oneV_bank (f0 f1 f2 f3 f4 f5 f6 : ℤ → Fin (a + 4)) (p0 p1 p2 p3 p4 p5 p6 : ℤ) :
     ((⟨fun _ => p0, fun _ => f0⟩ : Tapes 1 a).append (⟨fun i => if i = 0 then p1 else if i = 1 then p2 else if i = 2 then p3 else if i = 3 then p4 else if i = 4 then p5 else p6, fun i => if i = 0 then f1 else if i = 1 then f2 else if i = 2 then f3 else if i = 3 then f4 else if i = 4 then f5 else f6⟩ : Tapes 6 a)).reindex oneV = bank f0 f1 f2 f3 f4 f5 f6 p0 p1 p2 p3 p4 p5 p6 := by
   unfold Tapes.reindex Tapes.append  bank oneV
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 theorem oneC1_bank (f0 f1 f2 f3 f4 f5 f6 : ℤ → Fin (a + 4)) (p0 p1 p2 p3 p4 p5 p6 : ℤ) :
     ((⟨fun _ => p2, fun _ => f2⟩ : Tapes 1 a).append (⟨fun i => if i = 0 then p0 else if i = 1 then p1 else if i = 2 then p3 else if i = 3 then p4 else if i = 4 then p5 else p6, fun i => if i = 0 then f0 else if i = 1 then f1 else if i = 2 then f3 else if i = 3 then f4 else if i = 4 then f5 else f6⟩ : Tapes 6 a)).reindex oneC1 = bank f0 f1 f2 f3 f4 f5 f6 p0 p1 p2 p3 p4 p5 p6 := by
   unfold Tapes.reindex Tapes.append  bank oneC1
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 theorem oneC2_bank (f0 f1 f2 f3 f4 f5 f6 : ℤ → Fin (a + 4)) (p0 p1 p2 p3 p4 p5 p6 : ℤ) :
     ((⟨fun _ => p3, fun _ => f3⟩ : Tapes 1 a).append (⟨fun i => if i = 0 then p0 else if i = 1 then p1 else if i = 2 then p2 else if i = 3 then p4 else if i = 4 then p5 else p6, fun i => if i = 0 then f0 else if i = 1 then f1 else if i = 2 then f2 else if i = 3 then f4 else if i = 4 then f5 else f6⟩ : Tapes 6 a)).reindex oneC2 = bank f0 f1 f2 f3 f4 f5 f6 p0 p1 p2 p3 p4 p5 p6 := by
   unfold Tapes.reindex Tapes.append  bank oneC2
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 theorem oneC3_bank (f0 f1 f2 f3 f4 f5 f6 : ℤ → Fin (a + 4)) (p0 p1 p2 p3 p4 p5 p6 : ℤ) :
     ((⟨fun _ => p4, fun _ => f4⟩ : Tapes 1 a).append (⟨fun i => if i = 0 then p0 else if i = 1 then p1 else if i = 2 then p2 else if i = 3 then p3 else if i = 4 then p5 else p6, fun i => if i = 0 then f0 else if i = 1 then f1 else if i = 2 then f2 else if i = 3 then f3 else if i = 4 then f5 else f6⟩ : Tapes 6 a)).reindex oneC3 = bank f0 f1 f2 f3 f4 f5 f6 p0 p1 p2 p3 p4 p5 p6 := by
   unfold Tapes.reindex Tapes.append  bank oneC3
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 theorem oneF_bank (f0 f1 f2 f3 f4 f5 f6 : ℤ → Fin (a + 4)) (p0 p1 p2 p3 p4 p5 p6 : ℤ) :
     ((⟨fun _ => p6, fun _ => f6⟩ : Tapes 1 a).append (⟨fun i => if i = 0 then p0 else if i = 1 then p1 else if i = 2 then p2 else if i = 3 then p3 else if i = 4 then p4 else p5, fun i => if i = 0 then f0 else if i = 1 then f1 else if i = 2 then f2 else if i = 3 then f3 else if i = 4 then f4 else f5⟩ : Tapes 6 a)).reindex oneF = bank f0 f1 f2 f3 f4 f5 f6 p0 p1 p2 p3 p4 p5 p6 := by
   unfold Tapes.reindex Tapes.append  bank oneF
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 def cmpV1Part (d : ℕ) (a : ℕ) := reindex (extend (iterate (cmpCell a) d) 4) cmpV1
 def cmpV2Part (d : ℕ) (a : ℕ) := reindex (extend (iterate (cmpCell a) d) 4) cmpV2

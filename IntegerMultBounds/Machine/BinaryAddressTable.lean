@@ -30,14 +30,14 @@ def states (ws : List Bool) (w : ℕ) : Fin 9 → Tapes 9 0 :=
 def powerPlace : Fin (8+1) ≃ Fin 9 where
   toFun := ![0,2,4,6,7,3,8,5,1]
   invFun := ![0,8,1,5,2,7,3,4,6]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def fillPlace : Fin (3+6) ≃ Fin 9 where
   toFun := ![0,4,5,1,2,3,6,7,8]
   invFun := ![0,3,4,5,1,2,6,7,8]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def power := Placement.placed (FixedBasePowerDescriptor.program (q := 0) 2) powerPlace
 def fill := Placement.placed BinaryAddressTableFill.program fillPlace

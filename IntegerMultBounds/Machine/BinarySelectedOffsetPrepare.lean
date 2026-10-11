@@ -23,8 +23,8 @@ def output (hs : Fin 3 → List Bool) (Z : List Bool) (b n : ℕ) :=
 def repeatPlace : Fin (4+13) ≃ Fin 17 where
   toFun := ![16,7,9,4,0,1,2,3,5,6,8,10,11,12,13,14,15]
   invFun := ![4,5,6,7,3,8,9,1,10,2,11,12,13,14,15,16,0]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def tableProgram := extend (seq BinaryAddressOffsetHeaders.program BinaryAddressOffsetPrepare.tableProgram) 1
 def repeatProgram := Placement.placed CountedControlWordRepeat.program repeatPlace

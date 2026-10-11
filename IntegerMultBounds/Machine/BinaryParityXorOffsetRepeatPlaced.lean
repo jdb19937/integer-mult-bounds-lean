@@ -14,8 +14,8 @@ noncomputable section
 def roles : Fin 50 ≃ Fin (8+42) where
   toFun := fun i => ⟨if i.val<6 then i.val else if i.val<9 then i.val+2 else if i.val=9 then 7 else if i.val<18 then i.val+1 else if i.val=18 then 6 else i.val, by split_ifs <;> omega⟩
   invFun := fun i => ⟨if i.val<6 then i.val else if i.val=6 then 18 else if i.val=7 then 9 else if i.val<11 then i.val-2 else if i.val<19 then i.val-1 else i.val, by split_ifs <;> omega⟩
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def embed (focus : Fin 8 → Fin t) : Fin (8+42) → Fin (t+42) :=
   Fin.addCases (fun i => Fin.castAdd 42 (focus i)) (Fin.natAdd t)

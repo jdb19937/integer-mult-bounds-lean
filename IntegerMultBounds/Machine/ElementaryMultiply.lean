@@ -13,18 +13,18 @@ open ElementaryMultiplyCore (bank)
 def seekPlacement : Fin (2+2) ≃ Fin 4 where
   toFun := ![3,1,0,2]
   invFun := ![2,1,3,0]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 def accPlacement : Fin (1+3) ≃ Fin 4 where
   toFun := ![3,0,1,2]
   invFun := ![1,2,3,0]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 def copyPlacement : Fin (3+1) ≃ Fin 4 where
   toFun := ![3,1,0,2]
   invFun := ![2,1,3,0]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def scanPart := extend (MultiplicationInputSplit.scan (a := a) blank) 3
 def erasePart := extend (EraseBack.program (a := a)) 3
@@ -41,27 +41,27 @@ theorem source_bank (f x y acc : ℤ → Fin (a+4)) (p px py pa : ℤ) :
     ((⟨fun _ => p,fun _ => f⟩ : Tapes 1 a).append
       (MultiplicationInputSplit.bank x y acc px py pa)) = bank f x y acc p px py pa := by
   unfold MultiplicationInputSplit.bank ElementaryMultiplyCore.bank Tapes.append
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 theorem seek_bank (f x y acc : ℤ → Fin (a+4)) (p px py pa : ℤ) :
     ((DoubleClockReverseCopy.seekBank acc x pa px).append
       (MultiplicationInputSplit.pair f y p py)).reindex seekPlacement = bank f x y acc p px py pa := by
   unfold DoubleClockReverseCopy.seekBank MultiplicationInputSplit.pair ElementaryMultiplyCore.bank
     Tapes.append Tapes.reindex seekPlacement
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 theorem acc_bank (f x y acc : ℤ → Fin (a+4)) (p px py pa : ℤ) :
     ((⟨fun _ => pa,fun _ => acc⟩ : Tapes 1 a).append
       (MultiplicationInputSplit.bank f x y p px py)).reindex accPlacement = bank f x y acc p px py pa := by
   unfold MultiplicationInputSplit.bank ElementaryMultiplyCore.bank Tapes.append Tapes.reindex accPlacement
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 theorem copy_bank (f x y acc : ℤ → Fin (a+4)) (p px py pa : ℤ) :
     ((DoubleClockReverseCopy.copyBank acc x f pa px p).append
       (MultiplicationInputSplit.single y py)).reindex copyPlacement = bank f x y acc p px py pa := by
   unfold DoubleClockReverseCopy.copyBank MultiplicationInputSplit.single ElementaryMultiplyCore.bank
     Tapes.append Tapes.reindex copyPlacement
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 def out (n : ℕ) (x y : List Bool) := DoubleClockReverseCopy.copied
   (putWord (fun _ => (blank : Fin (a+4))) (-(n : ℤ))

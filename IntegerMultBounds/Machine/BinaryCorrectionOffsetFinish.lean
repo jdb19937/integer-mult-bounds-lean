@@ -15,14 +15,14 @@ def widthWord (q n : ℕ) := DimensionProductDescriptor.bits n q
 def widthPlace : Fin (6+25) ≃ Fin 31 where
   toFun := ![11,10,12,1,13,2,0,3,4,5,6,7,8,9,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30]
   invFun := ![6,3,5,7,8,9,10,11,12,13,1,0,2,4,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def subtractPlace : Fin (9+22) ≃ Fin 31 where
   toFun := ![9,8,14,11,12,13,10,15,4,0,1,2,3,5,6,7,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30]
   invFun := ![9,10,11,12,8,13,14,15,1,0,6,3,4,5,2,7,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def widthBank (hs : Fin 3 → List Bool) (Z : List Bool) (q b n : ℕ) (hb : 1≤b) (hbq : b+1≤q) :=
   setTape (BinaryCorrectionOffsetPrepare.output hs Z q b n hb hbq) 10 (binary (widthWord q n)) 1

@@ -127,50 +127,50 @@ def bank (f0 f1 f2 f3 f4 : ℤ → Fin (a + 4)) (p0 p1 p2 p3 p4 : ℤ) : Tapes 5
 def readPlace : Fin (2 + 3) ≃ Fin 5 where
   toFun := fun i => if i = 0 then 0 else if i = 1 then 2 else if i = 2 then 1 else if i = 3 then 3 else 4
   invFun := fun i => if i = 0 then 0 else if i = 1 then 2 else if i = 2 then 1 else if i = 3 then 3 else 4
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 /-- Remainder, divisor and flag at slots two, one and three. -/
 def comparePlace : Fin (3 + 2) ≃ Fin 5 where
   toFun := fun i => if i = 0 then 2 else if i = 1 then 1 else if i = 2 then 3 else if i = 3 then 0 else 4
   invFun := fun i => if i = 0 then 3 else if i = 1 then 1 else if i = 2 then 0 else if i = 3 then 2 else 4
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 /-- A one-tape routine at slot three. -/
 def flagPlace : Fin (1 + 4) ≃ Fin 5 where
   toFun := fun i => if i = 0 then 3 else if i = 1 then 0 else if i = 2 then 1 else if i = 3 then 2 else 4
   invFun := fun i => if i = 0 then 1 else if i = 1 then 2 else if i = 2 then 3 else if i = 3 then 0 else 4
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 /-- A one-tape routine at slot two. -/
 def remPlace : Fin (1 + 4) ≃ Fin 5 where
   toFun := fun i => if i = 0 then 2 else if i = 1 then 0 else if i = 2 then 1 else if i = 3 then 3 else 4
   invFun := fun i => if i = 0 then 1 else if i = 1 then 2 else if i = 2 then 0 else if i = 3 then 3 else 4
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 /-- A one-tape routine at slot one. -/
 def divPlace : Fin (1 + 4) ≃ Fin 5 where
   toFun := fun i => if i = 0 then 1 else if i = 1 then 0 else if i = 2 then 2 else if i = 3 then 3 else 4
   invFun := fun i => if i = 0 then 1 else if i = 1 then 0 else if i = 2 then 2 else if i = 3 then 3 else 4
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 /-- Divisor and remainder at slots one and two. -/
 def decreasePlace : Fin (2 + 3) ≃ Fin 5 where
   toFun := fun i => if i = 0 then 1 else if i = 1 then 2 else if i = 2 then 0 else if i = 3 then 3 else 4
   invFun := fun i => if i = 0 then 2 else if i = 1 then 0 else if i = 2 then 1 else if i = 3 then 3 else 4
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 /-- Flag and quotient at slots three and four. -/
 def quotPlace : Fin (2 + 3) ≃ Fin 5 where
   toFun := fun i => if i = 0 then 3 else if i = 1 then 4 else if i = 2 then 0 else if i = 3 then 1 else 2
   invFun := fun i => if i = 0 then 2 else if i = 1 then 3 else if i = 2 then 4 else if i = 3 then 0 else 1
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def readPart (a : ℕ) : Program 5 4 a :=
   reindex (extend (PrependRead.program (a := a) .left false) 3) readPlace
@@ -210,14 +210,14 @@ theorem read_bank (f0 f1 f2 f3 f4 : ℤ → Fin (a + 4)) (p0 p1 p2 p3 p4 : ℤ) 
         fun i => if i = 0 then f1 else if i = 1 then f3 else f4⟩ : Tapes 3 a)).reindex readPlace =
       bank f0 f1 f2 f3 f4 p0 p1 p2 p3 p4 := by
   unfold Tapes.reindex Tapes.append PrependRead.cfg Config.tapes bank readPlace
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 theorem compare_bank (f0 f1 f2 f3 f4 : ℤ → Fin (a + 4)) (p0 p1 p2 p3 p4 : ℤ) (s : Fin 4) :
     ((BinaryCompare.cfg f2 f1 f3 p2 p1 p3 s).tapes.append
       (⟨fun i => if i = 0 then p0 else p4, fun i => if i = 0 then f0 else f4⟩ : Tapes 2 a)).reindex
         comparePlace = bank f0 f1 f2 f3 f4 p0 p1 p2 p3 p4 := by
   unfold Tapes.reindex Tapes.append BinaryCompare.cfg Config.tapes bank comparePlace
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 theorem flag_bank (f0 f1 f2 f3 f4 : ℤ → Fin (a + 4)) (p0 p1 p2 p3 p4 : ℤ) :
     ((⟨fun _ => p3, fun _ => f3⟩ : Tapes 1 a).append
@@ -225,7 +225,7 @@ theorem flag_bank (f0 f1 f2 f3 f4 : ℤ → Fin (a + 4)) (p0 p1 p2 p3 p4 : ℤ) 
         fun i => if i = 0 then f0 else if i = 1 then f1 else if i = 2 then f2 else f4⟩ : Tapes 4 a)).reindex
         flagPlace = bank f0 f1 f2 f3 f4 p0 p1 p2 p3 p4 := by
   unfold Tapes.reindex Tapes.append bank flagPlace
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 theorem rem_bank (f0 f1 f2 f3 f4 : ℤ → Fin (a + 4)) (p0 p1 p2 p3 p4 : ℤ) :
     ((⟨fun _ => p2, fun _ => f2⟩ : Tapes 1 a).append
@@ -233,7 +233,7 @@ theorem rem_bank (f0 f1 f2 f3 f4 : ℤ → Fin (a + 4)) (p0 p1 p2 p3 p4 : ℤ) :
         fun i => if i = 0 then f0 else if i = 1 then f1 else if i = 2 then f3 else f4⟩ : Tapes 4 a)).reindex
         remPlace = bank f0 f1 f2 f3 f4 p0 p1 p2 p3 p4 := by
   unfold Tapes.reindex Tapes.append bank remPlace
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 theorem div_bank (f0 f1 f2 f3 f4 : ℤ → Fin (a + 4)) (p0 p1 p2 p3 p4 : ℤ) :
     ((⟨fun _ => p1, fun _ => f1⟩ : Tapes 1 a).append
@@ -241,7 +241,7 @@ theorem div_bank (f0 f1 f2 f3 f4 : ℤ → Fin (a + 4)) (p0 p1 p2 p3 p4 : ℤ) :
         fun i => if i = 0 then f0 else if i = 1 then f2 else if i = 2 then f3 else f4⟩ : Tapes 4 a)).reindex
         divPlace = bank f0 f1 f2 f3 f4 p0 p1 p2 p3 p4 := by
   unfold Tapes.reindex Tapes.append bank divPlace
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 theorem decrease_bank (f0 f1 f2 f3 f4 : ℤ → Fin (a + 4)) (p0 p1 p2 p3 p4 : ℤ) (s : Fin 2) :
     ((BinaryDecrease.cfg f1 f2 p1 p2 s).tapes.append
@@ -249,7 +249,7 @@ theorem decrease_bank (f0 f1 f2 f3 f4 : ℤ → Fin (a + 4)) (p0 p1 p2 p3 p4 : �
         fun i => if i = 0 then f0 else if i = 1 then f3 else f4⟩ : Tapes 3 a)).reindex decreasePlace =
       bank f0 f1 f2 f3 f4 p0 p1 p2 p3 p4 := by
   unfold Tapes.reindex Tapes.append BinaryDecrease.cfg Config.tapes bank decreasePlace
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 theorem quot_bank (f0 f1 f2 f3 f4 : ℤ → Fin (a + 4)) (p0 p1 p2 p3 p4 : ℤ) (s : Fin 4) :
     ((PrependRead.cfg f3 f4 p3 p4 s).tapes.append
@@ -257,7 +257,7 @@ theorem quot_bank (f0 f1 f2 f3 f4 : ℤ → Fin (a + 4)) (p0 p1 p2 p3 p4 : ℤ) 
         fun i => if i = 0 then f0 else if i = 1 then f1 else f2⟩ : Tapes 3 a)).reindex quotPlace =
       bank f0 f1 f2 f3 f4 p0 p1 p2 p3 p4 := by
   unfold Tapes.reindex Tapes.append PrependRead.cfg Config.tapes bank quotPlace
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 theorem bank_reads (f0 f1 f2 f3 f4 : ℤ → Fin (a + 4)) (p0 p1 p2 p3 p4 : ℤ) (i : Fin 5) :
     (bank f0 f1 f2 f3 f4 p0 p1 p2 p3 p4).reads i =

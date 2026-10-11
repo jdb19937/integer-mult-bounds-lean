@@ -11,8 +11,8 @@ noncomputable section
 def roles : Fin 30 ≃ Fin (4+26) where
   toFun := ![0,1,2,4,5,6,7,8,3,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29]
   invFun := ![0,1,2,8,3,4,5,6,7,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def embed (focus : Fin 4 → Fin t) : Fin (4+26) → Fin (t+26) :=
   Fin.addCases (fun i => Fin.castAdd 26 (focus i)) (Fin.natAdd t)

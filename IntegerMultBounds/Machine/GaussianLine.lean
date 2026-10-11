@@ -160,266 +160,266 @@ end Words
 def E0_1_2_3_4_5_6_8_9_10_11_12 : Fin (12 + 10) ≃ Fin 22 where
   toFun := fun i => if i = 0 then 0 else if i = 1 then 1 else if i = 2 then 2 else if i = 3 then 3 else if i = 4 then 4 else if i = 5 then 5 else if i = 6 then 6 else if i = 7 then 8 else if i = 8 then 9 else if i = 9 then 10 else if i = 10 then 11 else if i = 11 then 12 else if i = 12 then 7 else if i = 13 then 13 else if i = 14 then 14 else if i = 15 then 15 else if i = 16 then 16 else if i = 17 then 17 else if i = 18 then 18 else if i = 19 then 19 else if i = 20 then 20 else 21
   invFun := fun i => if i = 0 then 0 else if i = 1 then 1 else if i = 2 then 2 else if i = 3 then 3 else if i = 4 then 4 else if i = 5 then 5 else if i = 6 then 6 else if i = 7 then 12 else if i = 8 then 7 else if i = 9 then 8 else if i = 10 then 9 else if i = 11 then 10 else if i = 12 then 11 else if i = 13 then 13 else if i = 14 then 14 else if i = 15 then 15 else if i = 16 then 16 else if i = 17 then 17 else if i = 18 then 18 else if i = 19 then 19 else if i = 20 then 20 else 21
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 theorem E0_1_2_3_4_5_6_8_9_10_11_12_bank (f0 f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12 f13 f14 f15 f16 f17 f18 f19 f20 f21 : ℤ → Fin (a + 4)) (p0 p1 p2 p3 p4 p5 p6 p7 p8 p9 p10 p11 p12 p13 p14 p15 p16 p17 p18 p19 p20 p21 : ℤ) :
     ((FixedMul.bank f0 f1 f2 f3 f4 f5 f6 f8 f9 f10 f11 f12 p0 p1 p2 p3 p4 p5 p6 p8 p9 p10 p11 p12).append (⟨fun i => if i = 0 then p7 else if i = 1 then p13 else if i = 2 then p14 else if i = 3 then p15 else if i = 4 then p16 else if i = 5 then p17 else if i = 6 then p18 else if i = 7 then p19 else if i = 8 then p20 else p21, fun i => if i = 0 then f7 else if i = 1 then f13 else if i = 2 then f14 else if i = 3 then f15 else if i = 4 then f16 else if i = 5 then f17 else if i = 6 then f18 else if i = 7 then f19 else if i = 8 then f20 else f21⟩ : Tapes 10 a)).reindex E0_1_2_3_4_5_6_8_9_10_11_12 = bank f0 f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12 f13 f14 f15 f16 f17 f18 f19 f20 f21 p0 p1 p2 p3 p4 p5 p6 p7 p8 p9 p10 p11 p12 p13 p14 p15 p16 p17 p18 p19 p20 p21 := by
   unfold Tapes.reindex Tapes.append FixedMul.bank bank E0_1_2_3_4_5_6_8_9_10_11_12
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 def E1 : Fin (1 + 21) ≃ Fin 22 where
   toFun := fun i => if i = 0 then 1 else if i = 1 then 0 else if i = 2 then 2 else if i = 3 then 3 else if i = 4 then 4 else if i = 5 then 5 else if i = 6 then 6 else if i = 7 then 7 else if i = 8 then 8 else if i = 9 then 9 else if i = 10 then 10 else if i = 11 then 11 else if i = 12 then 12 else if i = 13 then 13 else if i = 14 then 14 else if i = 15 then 15 else if i = 16 then 16 else if i = 17 then 17 else if i = 18 then 18 else if i = 19 then 19 else if i = 20 then 20 else 21
   invFun := fun i => if i = 0 then 1 else if i = 1 then 0 else if i = 2 then 2 else if i = 3 then 3 else if i = 4 then 4 else if i = 5 then 5 else if i = 6 then 6 else if i = 7 then 7 else if i = 8 then 8 else if i = 9 then 9 else if i = 10 then 10 else if i = 11 then 11 else if i = 12 then 12 else if i = 13 then 13 else if i = 14 then 14 else if i = 15 then 15 else if i = 16 then 16 else if i = 17 then 17 else if i = 18 then 18 else if i = 19 then 19 else if i = 20 then 20 else 21
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 theorem E1_bank (f0 f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12 f13 f14 f15 f16 f17 f18 f19 f20 f21 : ℤ → Fin (a + 4)) (p0 p1 p2 p3 p4 p5 p6 p7 p8 p9 p10 p11 p12 p13 p14 p15 p16 p17 p18 p19 p20 p21 : ℤ) :
     ((⟨fun _ => p1, fun _ => f1⟩ : Tapes 1 a).append (⟨fun i => if i = 0 then p0 else if i = 1 then p2 else if i = 2 then p3 else if i = 3 then p4 else if i = 4 then p5 else if i = 5 then p6 else if i = 6 then p7 else if i = 7 then p8 else if i = 8 then p9 else if i = 9 then p10 else if i = 10 then p11 else if i = 11 then p12 else if i = 12 then p13 else if i = 13 then p14 else if i = 14 then p15 else if i = 15 then p16 else if i = 16 then p17 else if i = 17 then p18 else if i = 18 then p19 else if i = 19 then p20 else p21, fun i => if i = 0 then f0 else if i = 1 then f2 else if i = 2 then f3 else if i = 3 then f4 else if i = 4 then f5 else if i = 5 then f6 else if i = 6 then f7 else if i = 7 then f8 else if i = 8 then f9 else if i = 9 then f10 else if i = 10 then f11 else if i = 11 then f12 else if i = 12 then f13 else if i = 13 then f14 else if i = 14 then f15 else if i = 15 then f16 else if i = 16 then f17 else if i = 17 then f18 else if i = 18 then f19 else if i = 19 then f20 else f21⟩ : Tapes 21 a)).reindex E1 = bank f0 f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12 f13 f14 f15 f16 f17 f18 f19 f20 f21 p0 p1 p2 p3 p4 p5 p6 p7 p8 p9 p10 p11 p12 p13 p14 p15 p16 p17 p18 p19 p20 p21 := by
   unfold Tapes.reindex Tapes.append  bank E1
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 def E0_1_2_3_4_5_7_8_9_10_11_12 : Fin (12 + 10) ≃ Fin 22 where
   toFun := fun i => if i = 0 then 0 else if i = 1 then 1 else if i = 2 then 2 else if i = 3 then 3 else if i = 4 then 4 else if i = 5 then 5 else if i = 6 then 7 else if i = 7 then 8 else if i = 8 then 9 else if i = 9 then 10 else if i = 10 then 11 else if i = 11 then 12 else if i = 12 then 6 else if i = 13 then 13 else if i = 14 then 14 else if i = 15 then 15 else if i = 16 then 16 else if i = 17 then 17 else if i = 18 then 18 else if i = 19 then 19 else if i = 20 then 20 else 21
   invFun := fun i => if i = 0 then 0 else if i = 1 then 1 else if i = 2 then 2 else if i = 3 then 3 else if i = 4 then 4 else if i = 5 then 5 else if i = 6 then 12 else if i = 7 then 6 else if i = 8 then 7 else if i = 9 then 8 else if i = 10 then 9 else if i = 11 then 10 else if i = 12 then 11 else if i = 13 then 13 else if i = 14 then 14 else if i = 15 then 15 else if i = 16 then 16 else if i = 17 then 17 else if i = 18 then 18 else if i = 19 then 19 else if i = 20 then 20 else 21
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 theorem E0_1_2_3_4_5_7_8_9_10_11_12_bank (f0 f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12 f13 f14 f15 f16 f17 f18 f19 f20 f21 : ℤ → Fin (a + 4)) (p0 p1 p2 p3 p4 p5 p6 p7 p8 p9 p10 p11 p12 p13 p14 p15 p16 p17 p18 p19 p20 p21 : ℤ) :
     ((FixedMul.bank f0 f1 f2 f3 f4 f5 f7 f8 f9 f10 f11 f12 p0 p1 p2 p3 p4 p5 p7 p8 p9 p10 p11 p12).append (⟨fun i => if i = 0 then p6 else if i = 1 then p13 else if i = 2 then p14 else if i = 3 then p15 else if i = 4 then p16 else if i = 5 then p17 else if i = 6 then p18 else if i = 7 then p19 else if i = 8 then p20 else p21, fun i => if i = 0 then f6 else if i = 1 then f13 else if i = 2 then f14 else if i = 3 then f15 else if i = 4 then f16 else if i = 5 then f17 else if i = 6 then f18 else if i = 7 then f19 else if i = 8 then f20 else f21⟩ : Tapes 10 a)).reindex E0_1_2_3_4_5_7_8_9_10_11_12 = bank f0 f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12 f13 f14 f15 f16 f17 f18 f19 f20 f21 p0 p1 p2 p3 p4 p5 p6 p7 p8 p9 p10 p11 p12 p13 p14 p15 p16 p17 p18 p19 p20 p21 := by
   unfold Tapes.reindex Tapes.append FixedMul.bank bank E0_1_2_3_4_5_7_8_9_10_11_12
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 def E0 : Fin (1 + 21) ≃ Fin 22 where
   toFun := fun i => if i = 0 then 0 else if i = 1 then 1 else if i = 2 then 2 else if i = 3 then 3 else if i = 4 then 4 else if i = 5 then 5 else if i = 6 then 6 else if i = 7 then 7 else if i = 8 then 8 else if i = 9 then 9 else if i = 10 then 10 else if i = 11 then 11 else if i = 12 then 12 else if i = 13 then 13 else if i = 14 then 14 else if i = 15 then 15 else if i = 16 then 16 else if i = 17 then 17 else if i = 18 then 18 else if i = 19 then 19 else if i = 20 then 20 else 21
   invFun := fun i => if i = 0 then 0 else if i = 1 then 1 else if i = 2 then 2 else if i = 3 then 3 else if i = 4 then 4 else if i = 5 then 5 else if i = 6 then 6 else if i = 7 then 7 else if i = 8 then 8 else if i = 9 then 9 else if i = 10 then 10 else if i = 11 then 11 else if i = 12 then 12 else if i = 13 then 13 else if i = 14 then 14 else if i = 15 then 15 else if i = 16 then 16 else if i = 17 then 17 else if i = 18 then 18 else if i = 19 then 19 else if i = 20 then 20 else 21
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 theorem E0_bank (f0 f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12 f13 f14 f15 f16 f17 f18 f19 f20 f21 : ℤ → Fin (a + 4)) (p0 p1 p2 p3 p4 p5 p6 p7 p8 p9 p10 p11 p12 p13 p14 p15 p16 p17 p18 p19 p20 p21 : ℤ) :
     ((⟨fun _ => p0, fun _ => f0⟩ : Tapes 1 a).append (⟨fun i => if i = 0 then p1 else if i = 1 then p2 else if i = 2 then p3 else if i = 3 then p4 else if i = 4 then p5 else if i = 5 then p6 else if i = 6 then p7 else if i = 7 then p8 else if i = 8 then p9 else if i = 9 then p10 else if i = 10 then p11 else if i = 11 then p12 else if i = 12 then p13 else if i = 13 then p14 else if i = 14 then p15 else if i = 15 then p16 else if i = 16 then p17 else if i = 17 then p18 else if i = 18 then p19 else if i = 19 then p20 else p21, fun i => if i = 0 then f1 else if i = 1 then f2 else if i = 2 then f3 else if i = 3 then f4 else if i = 4 then f5 else if i = 5 then f6 else if i = 6 then f7 else if i = 7 then f8 else if i = 8 then f9 else if i = 9 then f10 else if i = 10 then f11 else if i = 11 then f12 else if i = 12 then f13 else if i = 13 then f14 else if i = 14 then f15 else if i = 15 then f16 else if i = 16 then f17 else if i = 17 then f18 else if i = 18 then f19 else if i = 19 then f20 else f21⟩ : Tapes 21 a)).reindex E0 = bank f0 f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12 f13 f14 f15 f16 f17 f18 f19 f20 f21 p0 p1 p2 p3 p4 p5 p6 p7 p8 p9 p10 p11 p12 p13 p14 p15 p16 p17 p18 p19 p20 p21 := by
   unfold Tapes.reindex Tapes.append  bank E0
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 def E6_13 : Fin (2 + 20) ≃ Fin 22 where
   toFun := fun i => if i = 0 then 6 else if i = 1 then 13 else if i = 2 then 0 else if i = 3 then 1 else if i = 4 then 2 else if i = 5 then 3 else if i = 6 then 4 else if i = 7 then 5 else if i = 8 then 7 else if i = 9 then 8 else if i = 10 then 9 else if i = 11 then 10 else if i = 12 then 11 else if i = 13 then 12 else if i = 14 then 14 else if i = 15 then 15 else if i = 16 then 16 else if i = 17 then 17 else if i = 18 then 18 else if i = 19 then 19 else if i = 20 then 20 else 21
   invFun := fun i => if i = 0 then 2 else if i = 1 then 3 else if i = 2 then 4 else if i = 3 then 5 else if i = 4 then 6 else if i = 5 then 7 else if i = 6 then 0 else if i = 7 then 8 else if i = 8 then 9 else if i = 9 then 10 else if i = 10 then 11 else if i = 11 then 12 else if i = 12 then 13 else if i = 13 then 1 else if i = 14 then 14 else if i = 15 then 15 else if i = 16 then 16 else if i = 17 then 17 else if i = 18 then 18 else if i = 19 then 19 else if i = 20 then 20 else 21
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 theorem E6_13_bank (f0 f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12 f13 f14 f15 f16 f17 f18 f19 f20 f21 : ℤ → Fin (a + 4)) (p0 p1 p2 p3 p4 p5 p6 p7 p8 p9 p10 p11 p12 p13 p14 p15 p16 p17 p18 p19 p20 p21 : ℤ) :
     ((⟨fun i => if i = 0 then p6 else p13, fun i => if i = 0 then f6 else f13⟩ : Tapes 2 a).append (⟨fun i => if i = 0 then p0 else if i = 1 then p1 else if i = 2 then p2 else if i = 3 then p3 else if i = 4 then p4 else if i = 5 then p5 else if i = 6 then p7 else if i = 7 then p8 else if i = 8 then p9 else if i = 9 then p10 else if i = 10 then p11 else if i = 11 then p12 else if i = 12 then p14 else if i = 13 then p15 else if i = 14 then p16 else if i = 15 then p17 else if i = 16 then p18 else if i = 17 then p19 else if i = 18 then p20 else p21, fun i => if i = 0 then f0 else if i = 1 then f1 else if i = 2 then f2 else if i = 3 then f3 else if i = 4 then f4 else if i = 5 then f5 else if i = 6 then f7 else if i = 7 then f8 else if i = 8 then f9 else if i = 9 then f10 else if i = 10 then f11 else if i = 11 then f12 else if i = 12 then f14 else if i = 13 then f15 else if i = 14 then f16 else if i = 15 then f17 else if i = 16 then f18 else if i = 17 then f19 else if i = 18 then f20 else f21⟩ : Tapes 20 a)).reindex E6_13 = bank f0 f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12 f13 f14 f15 f16 f17 f18 f19 f20 f21 p0 p1 p2 p3 p4 p5 p6 p7 p8 p9 p10 p11 p12 p13 p14 p15 p16 p17 p18 p19 p20 p21 := by
   unfold Tapes.reindex Tapes.append  bank E6_13
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 def E13 : Fin (1 + 21) ≃ Fin 22 where
   toFun := fun i => if i = 0 then 13 else if i = 1 then 0 else if i = 2 then 1 else if i = 3 then 2 else if i = 4 then 3 else if i = 5 then 4 else if i = 6 then 5 else if i = 7 then 6 else if i = 8 then 7 else if i = 9 then 8 else if i = 10 then 9 else if i = 11 then 10 else if i = 12 then 11 else if i = 13 then 12 else if i = 14 then 14 else if i = 15 then 15 else if i = 16 then 16 else if i = 17 then 17 else if i = 18 then 18 else if i = 19 then 19 else if i = 20 then 20 else 21
   invFun := fun i => if i = 0 then 1 else if i = 1 then 2 else if i = 2 then 3 else if i = 3 then 4 else if i = 4 then 5 else if i = 5 then 6 else if i = 6 then 7 else if i = 7 then 8 else if i = 8 then 9 else if i = 9 then 10 else if i = 10 then 11 else if i = 11 then 12 else if i = 12 then 13 else if i = 13 then 0 else if i = 14 then 14 else if i = 15 then 15 else if i = 16 then 16 else if i = 17 then 17 else if i = 18 then 18 else if i = 19 then 19 else if i = 20 then 20 else 21
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 theorem E13_bank (f0 f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12 f13 f14 f15 f16 f17 f18 f19 f20 f21 : ℤ → Fin (a + 4)) (p0 p1 p2 p3 p4 p5 p6 p7 p8 p9 p10 p11 p12 p13 p14 p15 p16 p17 p18 p19 p20 p21 : ℤ) :
     ((⟨fun _ => p13, fun _ => f13⟩ : Tapes 1 a).append (⟨fun i => if i = 0 then p0 else if i = 1 then p1 else if i = 2 then p2 else if i = 3 then p3 else if i = 4 then p4 else if i = 5 then p5 else if i = 6 then p6 else if i = 7 then p7 else if i = 8 then p8 else if i = 9 then p9 else if i = 10 then p10 else if i = 11 then p11 else if i = 12 then p12 else if i = 13 then p14 else if i = 14 then p15 else if i = 15 then p16 else if i = 16 then p17 else if i = 17 then p18 else if i = 18 then p19 else if i = 19 then p20 else p21, fun i => if i = 0 then f0 else if i = 1 then f1 else if i = 2 then f2 else if i = 3 then f3 else if i = 4 then f4 else if i = 5 then f5 else if i = 6 then f6 else if i = 7 then f7 else if i = 8 then f8 else if i = 9 then f9 else if i = 10 then f10 else if i = 11 then f11 else if i = 12 then f12 else if i = 13 then f14 else if i = 14 then f15 else if i = 15 then f16 else if i = 16 then f17 else if i = 17 then f18 else if i = 18 then f19 else if i = 19 then f20 else f21⟩ : Tapes 21 a)).reindex E13 = bank f0 f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12 f13 f14 f15 f16 f17 f18 f19 f20 f21 p0 p1 p2 p3 p4 p5 p6 p7 p8 p9 p10 p11 p12 p13 p14 p15 p16 p17 p18 p19 p20 p21 := by
   unfold Tapes.reindex Tapes.append  bank E13
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 def E6 : Fin (1 + 21) ≃ Fin 22 where
   toFun := fun i => if i = 0 then 6 else if i = 1 then 0 else if i = 2 then 1 else if i = 3 then 2 else if i = 4 then 3 else if i = 5 then 4 else if i = 6 then 5 else if i = 7 then 7 else if i = 8 then 8 else if i = 9 then 9 else if i = 10 then 10 else if i = 11 then 11 else if i = 12 then 12 else if i = 13 then 13 else if i = 14 then 14 else if i = 15 then 15 else if i = 16 then 16 else if i = 17 then 17 else if i = 18 then 18 else if i = 19 then 19 else if i = 20 then 20 else 21
   invFun := fun i => if i = 0 then 1 else if i = 1 then 2 else if i = 2 then 3 else if i = 3 then 4 else if i = 4 then 5 else if i = 5 then 6 else if i = 6 then 0 else if i = 7 then 7 else if i = 8 then 8 else if i = 9 then 9 else if i = 10 then 10 else if i = 11 then 11 else if i = 12 then 12 else if i = 13 then 13 else if i = 14 then 14 else if i = 15 then 15 else if i = 16 then 16 else if i = 17 then 17 else if i = 18 then 18 else if i = 19 then 19 else if i = 20 then 20 else 21
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 theorem E6_bank (f0 f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12 f13 f14 f15 f16 f17 f18 f19 f20 f21 : ℤ → Fin (a + 4)) (p0 p1 p2 p3 p4 p5 p6 p7 p8 p9 p10 p11 p12 p13 p14 p15 p16 p17 p18 p19 p20 p21 : ℤ) :
     ((⟨fun _ => p6, fun _ => f6⟩ : Tapes 1 a).append (⟨fun i => if i = 0 then p0 else if i = 1 then p1 else if i = 2 then p2 else if i = 3 then p3 else if i = 4 then p4 else if i = 5 then p5 else if i = 6 then p7 else if i = 7 then p8 else if i = 8 then p9 else if i = 9 then p10 else if i = 10 then p11 else if i = 11 then p12 else if i = 12 then p13 else if i = 13 then p14 else if i = 14 then p15 else if i = 15 then p16 else if i = 16 then p17 else if i = 17 then p18 else if i = 18 then p19 else if i = 19 then p20 else p21, fun i => if i = 0 then f0 else if i = 1 then f1 else if i = 2 then f2 else if i = 3 then f3 else if i = 4 then f4 else if i = 5 then f5 else if i = 6 then f7 else if i = 7 then f8 else if i = 8 then f9 else if i = 9 then f10 else if i = 10 then f11 else if i = 11 then f12 else if i = 12 then f13 else if i = 13 then f14 else if i = 14 then f15 else if i = 15 then f16 else if i = 16 then f17 else if i = 17 then f18 else if i = 18 then f19 else if i = 19 then f20 else f21⟩ : Tapes 21 a)).reindex E6 = bank f0 f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12 f13 f14 f15 f16 f17 f18 f19 f20 f21 p0 p1 p2 p3 p4 p5 p6 p7 p8 p9 p10 p11 p12 p13 p14 p15 p16 p17 p18 p19 p20 p21 := by
   unfold Tapes.reindex Tapes.append  bank E6
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 def E7_14 : Fin (2 + 20) ≃ Fin 22 where
   toFun := fun i => if i = 0 then 7 else if i = 1 then 14 else if i = 2 then 0 else if i = 3 then 1 else if i = 4 then 2 else if i = 5 then 3 else if i = 6 then 4 else if i = 7 then 5 else if i = 8 then 6 else if i = 9 then 8 else if i = 10 then 9 else if i = 11 then 10 else if i = 12 then 11 else if i = 13 then 12 else if i = 14 then 13 else if i = 15 then 15 else if i = 16 then 16 else if i = 17 then 17 else if i = 18 then 18 else if i = 19 then 19 else if i = 20 then 20 else 21
   invFun := fun i => if i = 0 then 2 else if i = 1 then 3 else if i = 2 then 4 else if i = 3 then 5 else if i = 4 then 6 else if i = 5 then 7 else if i = 6 then 8 else if i = 7 then 0 else if i = 8 then 9 else if i = 9 then 10 else if i = 10 then 11 else if i = 11 then 12 else if i = 12 then 13 else if i = 13 then 14 else if i = 14 then 1 else if i = 15 then 15 else if i = 16 then 16 else if i = 17 then 17 else if i = 18 then 18 else if i = 19 then 19 else if i = 20 then 20 else 21
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 theorem E7_14_bank (f0 f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12 f13 f14 f15 f16 f17 f18 f19 f20 f21 : ℤ → Fin (a + 4)) (p0 p1 p2 p3 p4 p5 p6 p7 p8 p9 p10 p11 p12 p13 p14 p15 p16 p17 p18 p19 p20 p21 : ℤ) :
     ((⟨fun i => if i = 0 then p7 else p14, fun i => if i = 0 then f7 else f14⟩ : Tapes 2 a).append (⟨fun i => if i = 0 then p0 else if i = 1 then p1 else if i = 2 then p2 else if i = 3 then p3 else if i = 4 then p4 else if i = 5 then p5 else if i = 6 then p6 else if i = 7 then p8 else if i = 8 then p9 else if i = 9 then p10 else if i = 10 then p11 else if i = 11 then p12 else if i = 12 then p13 else if i = 13 then p15 else if i = 14 then p16 else if i = 15 then p17 else if i = 16 then p18 else if i = 17 then p19 else if i = 18 then p20 else p21, fun i => if i = 0 then f0 else if i = 1 then f1 else if i = 2 then f2 else if i = 3 then f3 else if i = 4 then f4 else if i = 5 then f5 else if i = 6 then f6 else if i = 7 then f8 else if i = 8 then f9 else if i = 9 then f10 else if i = 10 then f11 else if i = 11 then f12 else if i = 12 then f13 else if i = 13 then f15 else if i = 14 then f16 else if i = 15 then f17 else if i = 16 then f18 else if i = 17 then f19 else if i = 18 then f20 else f21⟩ : Tapes 20 a)).reindex E7_14 = bank f0 f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12 f13 f14 f15 f16 f17 f18 f19 f20 f21 p0 p1 p2 p3 p4 p5 p6 p7 p8 p9 p10 p11 p12 p13 p14 p15 p16 p17 p18 p19 p20 p21 := by
   unfold Tapes.reindex Tapes.append  bank E7_14
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 def E14 : Fin (1 + 21) ≃ Fin 22 where
   toFun := fun i => if i = 0 then 14 else if i = 1 then 0 else if i = 2 then 1 else if i = 3 then 2 else if i = 4 then 3 else if i = 5 then 4 else if i = 6 then 5 else if i = 7 then 6 else if i = 8 then 7 else if i = 9 then 8 else if i = 10 then 9 else if i = 11 then 10 else if i = 12 then 11 else if i = 13 then 12 else if i = 14 then 13 else if i = 15 then 15 else if i = 16 then 16 else if i = 17 then 17 else if i = 18 then 18 else if i = 19 then 19 else if i = 20 then 20 else 21
   invFun := fun i => if i = 0 then 1 else if i = 1 then 2 else if i = 2 then 3 else if i = 3 then 4 else if i = 4 then 5 else if i = 5 then 6 else if i = 6 then 7 else if i = 7 then 8 else if i = 8 then 9 else if i = 9 then 10 else if i = 10 then 11 else if i = 11 then 12 else if i = 12 then 13 else if i = 13 then 14 else if i = 14 then 0 else if i = 15 then 15 else if i = 16 then 16 else if i = 17 then 17 else if i = 18 then 18 else if i = 19 then 19 else if i = 20 then 20 else 21
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 theorem E14_bank (f0 f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12 f13 f14 f15 f16 f17 f18 f19 f20 f21 : ℤ → Fin (a + 4)) (p0 p1 p2 p3 p4 p5 p6 p7 p8 p9 p10 p11 p12 p13 p14 p15 p16 p17 p18 p19 p20 p21 : ℤ) :
     ((⟨fun _ => p14, fun _ => f14⟩ : Tapes 1 a).append (⟨fun i => if i = 0 then p0 else if i = 1 then p1 else if i = 2 then p2 else if i = 3 then p3 else if i = 4 then p4 else if i = 5 then p5 else if i = 6 then p6 else if i = 7 then p7 else if i = 8 then p8 else if i = 9 then p9 else if i = 10 then p10 else if i = 11 then p11 else if i = 12 then p12 else if i = 13 then p13 else if i = 14 then p15 else if i = 15 then p16 else if i = 16 then p17 else if i = 17 then p18 else if i = 18 then p19 else if i = 19 then p20 else p21, fun i => if i = 0 then f0 else if i = 1 then f1 else if i = 2 then f2 else if i = 3 then f3 else if i = 4 then f4 else if i = 5 then f5 else if i = 6 then f6 else if i = 7 then f7 else if i = 8 then f8 else if i = 9 then f9 else if i = 10 then f10 else if i = 11 then f11 else if i = 12 then f12 else if i = 13 then f13 else if i = 14 then f15 else if i = 15 then f16 else if i = 16 then f17 else if i = 17 then f18 else if i = 18 then f19 else if i = 19 then f20 else f21⟩ : Tapes 21 a)).reindex E14 = bank f0 f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12 f13 f14 f15 f16 f17 f18 f19 f20 f21 p0 p1 p2 p3 p4 p5 p6 p7 p8 p9 p10 p11 p12 p13 p14 p15 p16 p17 p18 p19 p20 p21 := by
   unfold Tapes.reindex Tapes.append  bank E14
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 def E7 : Fin (1 + 21) ≃ Fin 22 where
   toFun := fun i => if i = 0 then 7 else if i = 1 then 0 else if i = 2 then 1 else if i = 3 then 2 else if i = 4 then 3 else if i = 5 then 4 else if i = 6 then 5 else if i = 7 then 6 else if i = 8 then 8 else if i = 9 then 9 else if i = 10 then 10 else if i = 11 then 11 else if i = 12 then 12 else if i = 13 then 13 else if i = 14 then 14 else if i = 15 then 15 else if i = 16 then 16 else if i = 17 then 17 else if i = 18 then 18 else if i = 19 then 19 else if i = 20 then 20 else 21
   invFun := fun i => if i = 0 then 1 else if i = 1 then 2 else if i = 2 then 3 else if i = 3 then 4 else if i = 4 then 5 else if i = 5 then 6 else if i = 6 then 7 else if i = 7 then 0 else if i = 8 then 8 else if i = 9 then 9 else if i = 10 then 10 else if i = 11 then 11 else if i = 12 then 12 else if i = 13 then 13 else if i = 14 then 14 else if i = 15 then 15 else if i = 16 then 16 else if i = 17 then 17 else if i = 18 then 18 else if i = 19 then 19 else if i = 20 then 20 else 21
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 theorem E7_bank (f0 f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12 f13 f14 f15 f16 f17 f18 f19 f20 f21 : ℤ → Fin (a + 4)) (p0 p1 p2 p3 p4 p5 p6 p7 p8 p9 p10 p11 p12 p13 p14 p15 p16 p17 p18 p19 p20 p21 : ℤ) :
     ((⟨fun _ => p7, fun _ => f7⟩ : Tapes 1 a).append (⟨fun i => if i = 0 then p0 else if i = 1 then p1 else if i = 2 then p2 else if i = 3 then p3 else if i = 4 then p4 else if i = 5 then p5 else if i = 6 then p6 else if i = 7 then p8 else if i = 8 then p9 else if i = 9 then p10 else if i = 10 then p11 else if i = 11 then p12 else if i = 12 then p13 else if i = 13 then p14 else if i = 14 then p15 else if i = 15 then p16 else if i = 16 then p17 else if i = 17 then p18 else if i = 18 then p19 else if i = 19 then p20 else p21, fun i => if i = 0 then f0 else if i = 1 then f1 else if i = 2 then f2 else if i = 3 then f3 else if i = 4 then f4 else if i = 5 then f5 else if i = 6 then f6 else if i = 7 then f8 else if i = 8 then f9 else if i = 9 then f10 else if i = 10 then f11 else if i = 11 then f12 else if i = 12 then f13 else if i = 13 then f14 else if i = 14 then f15 else if i = 15 then f16 else if i = 16 then f17 else if i = 17 then f18 else if i = 18 then f19 else if i = 19 then f20 else f21⟩ : Tapes 21 a)).reindex E7 = bank f0 f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12 f13 f14 f15 f16 f17 f18 f19 f20 f21 p0 p1 p2 p3 p4 p5 p6 p7 p8 p9 p10 p11 p12 p13 p14 p15 p16 p17 p18 p19 p20 p21 := by
   unfold Tapes.reindex Tapes.append  bank E7
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 def E16 : Fin (1 + 21) ≃ Fin 22 where
   toFun := fun i => if i = 0 then 16 else if i = 1 then 0 else if i = 2 then 1 else if i = 3 then 2 else if i = 4 then 3 else if i = 5 then 4 else if i = 6 then 5 else if i = 7 then 6 else if i = 8 then 7 else if i = 9 then 8 else if i = 10 then 9 else if i = 11 then 10 else if i = 12 then 11 else if i = 13 then 12 else if i = 14 then 13 else if i = 15 then 14 else if i = 16 then 15 else if i = 17 then 17 else if i = 18 then 18 else if i = 19 then 19 else if i = 20 then 20 else 21
   invFun := fun i => if i = 0 then 1 else if i = 1 then 2 else if i = 2 then 3 else if i = 3 then 4 else if i = 4 then 5 else if i = 5 then 6 else if i = 6 then 7 else if i = 7 then 8 else if i = 8 then 9 else if i = 9 then 10 else if i = 10 then 11 else if i = 11 then 12 else if i = 12 then 13 else if i = 13 then 14 else if i = 14 then 15 else if i = 15 then 16 else if i = 16 then 0 else if i = 17 then 17 else if i = 18 then 18 else if i = 19 then 19 else if i = 20 then 20 else 21
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 theorem E16_bank (f0 f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12 f13 f14 f15 f16 f17 f18 f19 f20 f21 : ℤ → Fin (a + 4)) (p0 p1 p2 p3 p4 p5 p6 p7 p8 p9 p10 p11 p12 p13 p14 p15 p16 p17 p18 p19 p20 p21 : ℤ) :
     ((⟨fun _ => p16, fun _ => f16⟩ : Tapes 1 a).append (⟨fun i => if i = 0 then p0 else if i = 1 then p1 else if i = 2 then p2 else if i = 3 then p3 else if i = 4 then p4 else if i = 5 then p5 else if i = 6 then p6 else if i = 7 then p7 else if i = 8 then p8 else if i = 9 then p9 else if i = 10 then p10 else if i = 11 then p11 else if i = 12 then p12 else if i = 13 then p13 else if i = 14 then p14 else if i = 15 then p15 else if i = 16 then p17 else if i = 17 then p18 else if i = 18 then p19 else if i = 19 then p20 else p21, fun i => if i = 0 then f0 else if i = 1 then f1 else if i = 2 then f2 else if i = 3 then f3 else if i = 4 then f4 else if i = 5 then f5 else if i = 6 then f6 else if i = 7 then f7 else if i = 8 then f8 else if i = 9 then f9 else if i = 10 then f10 else if i = 11 then f11 else if i = 12 then f12 else if i = 13 then f13 else if i = 14 then f14 else if i = 15 then f15 else if i = 16 then f17 else if i = 17 then f18 else if i = 18 then f19 else if i = 19 then f20 else f21⟩ : Tapes 21 a)).reindex E16 = bank f0 f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12 f13 f14 f15 f16 f17 f18 f19 f20 f21 p0 p1 p2 p3 p4 p5 p6 p7 p8 p9 p10 p11 p12 p13 p14 p15 p16 p17 p18 p19 p20 p21 := by
   unfold Tapes.reindex Tapes.append  bank E16
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 def E13_15 : Fin (2 + 20) ≃ Fin 22 where
   toFun := fun i => if i = 0 then 13 else if i = 1 then 15 else if i = 2 then 0 else if i = 3 then 1 else if i = 4 then 2 else if i = 5 then 3 else if i = 6 then 4 else if i = 7 then 5 else if i = 8 then 6 else if i = 9 then 7 else if i = 10 then 8 else if i = 11 then 9 else if i = 12 then 10 else if i = 13 then 11 else if i = 14 then 12 else if i = 15 then 14 else if i = 16 then 16 else if i = 17 then 17 else if i = 18 then 18 else if i = 19 then 19 else if i = 20 then 20 else 21
   invFun := fun i => if i = 0 then 2 else if i = 1 then 3 else if i = 2 then 4 else if i = 3 then 5 else if i = 4 then 6 else if i = 5 then 7 else if i = 6 then 8 else if i = 7 then 9 else if i = 8 then 10 else if i = 9 then 11 else if i = 10 then 12 else if i = 11 then 13 else if i = 12 then 14 else if i = 13 then 0 else if i = 14 then 15 else if i = 15 then 1 else if i = 16 then 16 else if i = 17 then 17 else if i = 18 then 18 else if i = 19 then 19 else if i = 20 then 20 else 21
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 theorem E13_15_bank (f0 f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12 f13 f14 f15 f16 f17 f18 f19 f20 f21 : ℤ → Fin (a + 4)) (p0 p1 p2 p3 p4 p5 p6 p7 p8 p9 p10 p11 p12 p13 p14 p15 p16 p17 p18 p19 p20 p21 : ℤ) :
     ((⟨fun i => if i = 0 then p13 else p15, fun i => if i = 0 then f13 else f15⟩ : Tapes 2 a).append (⟨fun i => if i = 0 then p0 else if i = 1 then p1 else if i = 2 then p2 else if i = 3 then p3 else if i = 4 then p4 else if i = 5 then p5 else if i = 6 then p6 else if i = 7 then p7 else if i = 8 then p8 else if i = 9 then p9 else if i = 10 then p10 else if i = 11 then p11 else if i = 12 then p12 else if i = 13 then p14 else if i = 14 then p16 else if i = 15 then p17 else if i = 16 then p18 else if i = 17 then p19 else if i = 18 then p20 else p21, fun i => if i = 0 then f0 else if i = 1 then f1 else if i = 2 then f2 else if i = 3 then f3 else if i = 4 then f4 else if i = 5 then f5 else if i = 6 then f6 else if i = 7 then f7 else if i = 8 then f8 else if i = 9 then f9 else if i = 10 then f10 else if i = 11 then f11 else if i = 12 then f12 else if i = 13 then f14 else if i = 14 then f16 else if i = 15 then f17 else if i = 16 then f18 else if i = 17 then f19 else if i = 18 then f20 else f21⟩ : Tapes 20 a)).reindex E13_15 = bank f0 f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12 f13 f14 f15 f16 f17 f18 f19 f20 f21 p0 p1 p2 p3 p4 p5 p6 p7 p8 p9 p10 p11 p12 p13 p14 p15 p16 p17 p18 p19 p20 p21 := by
   unfold Tapes.reindex Tapes.append  bank E13_15
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 def E15 : Fin (1 + 21) ≃ Fin 22 where
   toFun := fun i => if i = 0 then 15 else if i = 1 then 0 else if i = 2 then 1 else if i = 3 then 2 else if i = 4 then 3 else if i = 5 then 4 else if i = 6 then 5 else if i = 7 then 6 else if i = 8 then 7 else if i = 9 then 8 else if i = 10 then 9 else if i = 11 then 10 else if i = 12 then 11 else if i = 13 then 12 else if i = 14 then 13 else if i = 15 then 14 else if i = 16 then 16 else if i = 17 then 17 else if i = 18 then 18 else if i = 19 then 19 else if i = 20 then 20 else 21
   invFun := fun i => if i = 0 then 1 else if i = 1 then 2 else if i = 2 then 3 else if i = 3 then 4 else if i = 4 then 5 else if i = 5 then 6 else if i = 6 then 7 else if i = 7 then 8 else if i = 8 then 9 else if i = 9 then 10 else if i = 10 then 11 else if i = 11 then 12 else if i = 12 then 13 else if i = 13 then 14 else if i = 14 then 15 else if i = 15 then 0 else if i = 16 then 16 else if i = 17 then 17 else if i = 18 then 18 else if i = 19 then 19 else if i = 20 then 20 else 21
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 theorem E15_bank (f0 f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12 f13 f14 f15 f16 f17 f18 f19 f20 f21 : ℤ → Fin (a + 4)) (p0 p1 p2 p3 p4 p5 p6 p7 p8 p9 p10 p11 p12 p13 p14 p15 p16 p17 p18 p19 p20 p21 : ℤ) :
     ((⟨fun _ => p15, fun _ => f15⟩ : Tapes 1 a).append (⟨fun i => if i = 0 then p0 else if i = 1 then p1 else if i = 2 then p2 else if i = 3 then p3 else if i = 4 then p4 else if i = 5 then p5 else if i = 6 then p6 else if i = 7 then p7 else if i = 8 then p8 else if i = 9 then p9 else if i = 10 then p10 else if i = 11 then p11 else if i = 12 then p12 else if i = 13 then p13 else if i = 14 then p14 else if i = 15 then p16 else if i = 16 then p17 else if i = 17 then p18 else if i = 18 then p19 else if i = 19 then p20 else p21, fun i => if i = 0 then f0 else if i = 1 then f1 else if i = 2 then f2 else if i = 3 then f3 else if i = 4 then f4 else if i = 5 then f5 else if i = 6 then f6 else if i = 7 then f7 else if i = 8 then f8 else if i = 9 then f9 else if i = 10 then f10 else if i = 11 then f11 else if i = 12 then f12 else if i = 13 then f13 else if i = 14 then f14 else if i = 15 then f16 else if i = 16 then f17 else if i = 17 then f18 else if i = 18 then f19 else if i = 19 then f20 else f21⟩ : Tapes 21 a)).reindex E15 = bank f0 f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12 f13 f14 f15 f16 f17 f18 f19 f20 f21 p0 p1 p2 p3 p4 p5 p6 p7 p8 p9 p10 p11 p12 p13 p14 p15 p16 p17 p18 p19 p20 p21 := by
   unfold Tapes.reindex Tapes.append  bank E15
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 def E14_15 : Fin (2 + 20) ≃ Fin 22 where
   toFun := fun i => if i = 0 then 14 else if i = 1 then 15 else if i = 2 then 0 else if i = 3 then 1 else if i = 4 then 2 else if i = 5 then 3 else if i = 6 then 4 else if i = 7 then 5 else if i = 8 then 6 else if i = 9 then 7 else if i = 10 then 8 else if i = 11 then 9 else if i = 12 then 10 else if i = 13 then 11 else if i = 14 then 12 else if i = 15 then 13 else if i = 16 then 16 else if i = 17 then 17 else if i = 18 then 18 else if i = 19 then 19 else if i = 20 then 20 else 21
   invFun := fun i => if i = 0 then 2 else if i = 1 then 3 else if i = 2 then 4 else if i = 3 then 5 else if i = 4 then 6 else if i = 5 then 7 else if i = 6 then 8 else if i = 7 then 9 else if i = 8 then 10 else if i = 9 then 11 else if i = 10 then 12 else if i = 11 then 13 else if i = 12 then 14 else if i = 13 then 15 else if i = 14 then 0 else if i = 15 then 1 else if i = 16 then 16 else if i = 17 then 17 else if i = 18 then 18 else if i = 19 then 19 else if i = 20 then 20 else 21
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 theorem E14_15_bank (f0 f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12 f13 f14 f15 f16 f17 f18 f19 f20 f21 : ℤ → Fin (a + 4)) (p0 p1 p2 p3 p4 p5 p6 p7 p8 p9 p10 p11 p12 p13 p14 p15 p16 p17 p18 p19 p20 p21 : ℤ) :
     ((⟨fun i => if i = 0 then p14 else p15, fun i => if i = 0 then f14 else f15⟩ : Tapes 2 a).append (⟨fun i => if i = 0 then p0 else if i = 1 then p1 else if i = 2 then p2 else if i = 3 then p3 else if i = 4 then p4 else if i = 5 then p5 else if i = 6 then p6 else if i = 7 then p7 else if i = 8 then p8 else if i = 9 then p9 else if i = 10 then p10 else if i = 11 then p11 else if i = 12 then p12 else if i = 13 then p13 else if i = 14 then p16 else if i = 15 then p17 else if i = 16 then p18 else if i = 17 then p19 else if i = 18 then p20 else p21, fun i => if i = 0 then f0 else if i = 1 then f1 else if i = 2 then f2 else if i = 3 then f3 else if i = 4 then f4 else if i = 5 then f5 else if i = 6 then f6 else if i = 7 then f7 else if i = 8 then f8 else if i = 9 then f9 else if i = 10 then f10 else if i = 11 then f11 else if i = 12 then f12 else if i = 13 then f13 else if i = 14 then f16 else if i = 15 then f17 else if i = 16 then f18 else if i = 17 then f19 else if i = 18 then f20 else f21⟩ : Tapes 20 a)).reindex E14_15 = bank f0 f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12 f13 f14 f15 f16 f17 f18 f19 f20 f21 p0 p1 p2 p3 p4 p5 p6 p7 p8 p9 p10 p11 p12 p13 p14 p15 p16 p17 p18 p19 p20 p21 := by
   unfold Tapes.reindex Tapes.append  bank E14_15
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 def E17_4_13 : Fin (3 + 19) ≃ Fin 22 where
   toFun := fun i => if i = 0 then 17 else if i = 1 then 4 else if i = 2 then 13 else if i = 3 then 0 else if i = 4 then 1 else if i = 5 then 2 else if i = 6 then 3 else if i = 7 then 5 else if i = 8 then 6 else if i = 9 then 7 else if i = 10 then 8 else if i = 11 then 9 else if i = 12 then 10 else if i = 13 then 11 else if i = 14 then 12 else if i = 15 then 14 else if i = 16 then 15 else if i = 17 then 16 else if i = 18 then 18 else if i = 19 then 19 else if i = 20 then 20 else 21
   invFun := fun i => if i = 0 then 3 else if i = 1 then 4 else if i = 2 then 5 else if i = 3 then 6 else if i = 4 then 1 else if i = 5 then 7 else if i = 6 then 8 else if i = 7 then 9 else if i = 8 then 10 else if i = 9 then 11 else if i = 10 then 12 else if i = 11 then 13 else if i = 12 then 14 else if i = 13 then 2 else if i = 14 then 15 else if i = 15 then 16 else if i = 16 then 17 else if i = 17 then 0 else if i = 18 then 18 else if i = 19 then 19 else if i = 20 then 20 else 21
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 theorem E17_4_13_bank (f0 f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12 f13 f14 f15 f16 f17 f18 f19 f20 f21 : ℤ → Fin (a + 4)) (p0 p1 p2 p3 p4 p5 p6 p7 p8 p9 p10 p11 p12 p13 p14 p15 p16 p17 p18 p19 p20 p21 : ℤ) :
     ((⟨fun i => if i = 0 then p17 else if i = 1 then p4 else p13, fun i => if i = 0 then f17 else if i = 1 then f4 else f13⟩ : Tapes 3 a).append (⟨fun i => if i = 0 then p0 else if i = 1 then p1 else if i = 2 then p2 else if i = 3 then p3 else if i = 4 then p5 else if i = 5 then p6 else if i = 6 then p7 else if i = 7 then p8 else if i = 8 then p9 else if i = 9 then p10 else if i = 10 then p11 else if i = 11 then p12 else if i = 12 then p14 else if i = 13 then p15 else if i = 14 then p16 else if i = 15 then p18 else if i = 16 then p19 else if i = 17 then p20 else p21, fun i => if i = 0 then f0 else if i = 1 then f1 else if i = 2 then f2 else if i = 3 then f3 else if i = 4 then f5 else if i = 5 then f6 else if i = 6 then f7 else if i = 7 then f8 else if i = 8 then f9 else if i = 9 then f10 else if i = 10 then f11 else if i = 11 then f12 else if i = 12 then f14 else if i = 13 then f15 else if i = 14 then f16 else if i = 15 then f18 else if i = 16 then f19 else if i = 17 then f20 else f21⟩ : Tapes 19 a)).reindex E17_4_13 = bank f0 f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12 f13 f14 f15 f16 f17 f18 f19 f20 f21 p0 p1 p2 p3 p4 p5 p6 p7 p8 p9 p10 p11 p12 p13 p14 p15 p16 p17 p18 p19 p20 p21 := by
   unfold Tapes.reindex Tapes.append  bank E17_4_13
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 def E17_4 : Fin (2 + 20) ≃ Fin 22 where
   toFun := fun i => if i = 0 then 17 else if i = 1 then 4 else if i = 2 then 0 else if i = 3 then 1 else if i = 4 then 2 else if i = 5 then 3 else if i = 6 then 5 else if i = 7 then 6 else if i = 8 then 7 else if i = 9 then 8 else if i = 10 then 9 else if i = 11 then 10 else if i = 12 then 11 else if i = 13 then 12 else if i = 14 then 13 else if i = 15 then 14 else if i = 16 then 15 else if i = 17 then 16 else if i = 18 then 18 else if i = 19 then 19 else if i = 20 then 20 else 21
   invFun := fun i => if i = 0 then 2 else if i = 1 then 3 else if i = 2 then 4 else if i = 3 then 5 else if i = 4 then 1 else if i = 5 then 6 else if i = 6 then 7 else if i = 7 then 8 else if i = 8 then 9 else if i = 9 then 10 else if i = 10 then 11 else if i = 11 then 12 else if i = 12 then 13 else if i = 13 then 14 else if i = 14 then 15 else if i = 15 then 16 else if i = 16 then 17 else if i = 17 then 0 else if i = 18 then 18 else if i = 19 then 19 else if i = 20 then 20 else 21
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 theorem E17_4_bank (f0 f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12 f13 f14 f15 f16 f17 f18 f19 f20 f21 : ℤ → Fin (a + 4)) (p0 p1 p2 p3 p4 p5 p6 p7 p8 p9 p10 p11 p12 p13 p14 p15 p16 p17 p18 p19 p20 p21 : ℤ) :
     ((⟨fun i => if i = 0 then p17 else p4, fun i => if i = 0 then f17 else f4⟩ : Tapes 2 a).append (⟨fun i => if i = 0 then p0 else if i = 1 then p1 else if i = 2 then p2 else if i = 3 then p3 else if i = 4 then p5 else if i = 5 then p6 else if i = 6 then p7 else if i = 7 then p8 else if i = 8 then p9 else if i = 9 then p10 else if i = 10 then p11 else if i = 11 then p12 else if i = 12 then p13 else if i = 13 then p14 else if i = 14 then p15 else if i = 15 then p16 else if i = 16 then p18 else if i = 17 then p19 else if i = 18 then p20 else p21, fun i => if i = 0 then f0 else if i = 1 then f1 else if i = 2 then f2 else if i = 3 then f3 else if i = 4 then f5 else if i = 5 then f6 else if i = 6 then f7 else if i = 7 then f8 else if i = 8 then f9 else if i = 9 then f10 else if i = 10 then f11 else if i = 11 then f12 else if i = 12 then f13 else if i = 13 then f14 else if i = 14 then f15 else if i = 15 then f16 else if i = 16 then f18 else if i = 17 then f19 else if i = 18 then f20 else f21⟩ : Tapes 20 a)).reindex E17_4 = bank f0 f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12 f13 f14 f15 f16 f17 f18 f19 f20 f21 p0 p1 p2 p3 p4 p5 p6 p7 p8 p9 p10 p11 p12 p13 p14 p15 p16 p17 p18 p19 p20 p21 := by
   unfold Tapes.reindex Tapes.append  bank E17_4
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 def E17_4_14 : Fin (3 + 19) ≃ Fin 22 where
   toFun := fun i => if i = 0 then 17 else if i = 1 then 4 else if i = 2 then 14 else if i = 3 then 0 else if i = 4 then 1 else if i = 5 then 2 else if i = 6 then 3 else if i = 7 then 5 else if i = 8 then 6 else if i = 9 then 7 else if i = 10 then 8 else if i = 11 then 9 else if i = 12 then 10 else if i = 13 then 11 else if i = 14 then 12 else if i = 15 then 13 else if i = 16 then 15 else if i = 17 then 16 else if i = 18 then 18 else if i = 19 then 19 else if i = 20 then 20 else 21
   invFun := fun i => if i = 0 then 3 else if i = 1 then 4 else if i = 2 then 5 else if i = 3 then 6 else if i = 4 then 1 else if i = 5 then 7 else if i = 6 then 8 else if i = 7 then 9 else if i = 8 then 10 else if i = 9 then 11 else if i = 10 then 12 else if i = 11 then 13 else if i = 12 then 14 else if i = 13 then 15 else if i = 14 then 2 else if i = 15 then 16 else if i = 16 then 17 else if i = 17 then 0 else if i = 18 then 18 else if i = 19 then 19 else if i = 20 then 20 else 21
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 theorem E17_4_14_bank (f0 f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12 f13 f14 f15 f16 f17 f18 f19 f20 f21 : ℤ → Fin (a + 4)) (p0 p1 p2 p3 p4 p5 p6 p7 p8 p9 p10 p11 p12 p13 p14 p15 p16 p17 p18 p19 p20 p21 : ℤ) :
     ((⟨fun i => if i = 0 then p17 else if i = 1 then p4 else p14, fun i => if i = 0 then f17 else if i = 1 then f4 else f14⟩ : Tapes 3 a).append (⟨fun i => if i = 0 then p0 else if i = 1 then p1 else if i = 2 then p2 else if i = 3 then p3 else if i = 4 then p5 else if i = 5 then p6 else if i = 6 then p7 else if i = 7 then p8 else if i = 8 then p9 else if i = 9 then p10 else if i = 10 then p11 else if i = 11 then p12 else if i = 12 then p13 else if i = 13 then p15 else if i = 14 then p16 else if i = 15 then p18 else if i = 16 then p19 else if i = 17 then p20 else p21, fun i => if i = 0 then f0 else if i = 1 then f1 else if i = 2 then f2 else if i = 3 then f3 else if i = 4 then f5 else if i = 5 then f6 else if i = 6 then f7 else if i = 7 then f8 else if i = 8 then f9 else if i = 9 then f10 else if i = 10 then f11 else if i = 11 then f12 else if i = 12 then f13 else if i = 13 then f15 else if i = 14 then f16 else if i = 15 then f18 else if i = 16 then f19 else if i = 17 then f20 else f21⟩ : Tapes 19 a)).reindex E17_4_14 = bank f0 f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12 f13 f14 f15 f16 f17 f18 f19 f20 f21 p0 p1 p2 p3 p4 p5 p6 p7 p8 p9 p10 p11 p12 p13 p14 p15 p16 p17 p18 p19 p20 p21 := by
   unfold Tapes.reindex Tapes.append  bank E17_4_14
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 def E19_18 : Fin (2 + 20) ≃ Fin 22 where
   toFun := fun i => if i = 0 then 19 else if i = 1 then 18 else if i = 2 then 0 else if i = 3 then 1 else if i = 4 then 2 else if i = 5 then 3 else if i = 6 then 4 else if i = 7 then 5 else if i = 8 then 6 else if i = 9 then 7 else if i = 10 then 8 else if i = 11 then 9 else if i = 12 then 10 else if i = 13 then 11 else if i = 14 then 12 else if i = 15 then 13 else if i = 16 then 14 else if i = 17 then 15 else if i = 18 then 16 else if i = 19 then 17 else if i = 20 then 20 else 21
   invFun := fun i => if i = 0 then 2 else if i = 1 then 3 else if i = 2 then 4 else if i = 3 then 5 else if i = 4 then 6 else if i = 5 then 7 else if i = 6 then 8 else if i = 7 then 9 else if i = 8 then 10 else if i = 9 then 11 else if i = 10 then 12 else if i = 11 then 13 else if i = 12 then 14 else if i = 13 then 15 else if i = 14 then 16 else if i = 15 then 17 else if i = 16 then 18 else if i = 17 then 19 else if i = 18 then 1 else if i = 19 then 0 else if i = 20 then 20 else 21
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 theorem E19_18_bank (f0 f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12 f13 f14 f15 f16 f17 f18 f19 f20 f21 : ℤ → Fin (a + 4)) (p0 p1 p2 p3 p4 p5 p6 p7 p8 p9 p10 p11 p12 p13 p14 p15 p16 p17 p18 p19 p20 p21 : ℤ) :
     ((⟨fun i => if i = 0 then p19 else p18, fun i => if i = 0 then f19 else f18⟩ : Tapes 2 a).append (⟨fun i => if i = 0 then p0 else if i = 1 then p1 else if i = 2 then p2 else if i = 3 then p3 else if i = 4 then p4 else if i = 5 then p5 else if i = 6 then p6 else if i = 7 then p7 else if i = 8 then p8 else if i = 9 then p9 else if i = 10 then p10 else if i = 11 then p11 else if i = 12 then p12 else if i = 13 then p13 else if i = 14 then p14 else if i = 15 then p15 else if i = 16 then p16 else if i = 17 then p17 else if i = 18 then p20 else p21, fun i => if i = 0 then f0 else if i = 1 then f1 else if i = 2 then f2 else if i = 3 then f3 else if i = 4 then f4 else if i = 5 then f5 else if i = 6 then f6 else if i = 7 then f7 else if i = 8 then f8 else if i = 9 then f9 else if i = 10 then f10 else if i = 11 then f11 else if i = 12 then f12 else if i = 13 then f13 else if i = 14 then f14 else if i = 15 then f15 else if i = 16 then f16 else if i = 17 then f17 else if i = 18 then f20 else f21⟩ : Tapes 20 a)).reindex E19_18 = bank f0 f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12 f13 f14 f15 f16 f17 f18 f19 f20 f21 p0 p1 p2 p3 p4 p5 p6 p7 p8 p9 p10 p11 p12 p13 p14 p15 p16 p17 p18 p19 p20 p21 := by
   unfold Tapes.reindex Tapes.append  bank E19_18
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 def E19 : Fin (1 + 21) ≃ Fin 22 where
   toFun := fun i => if i = 0 then 19 else if i = 1 then 0 else if i = 2 then 1 else if i = 3 then 2 else if i = 4 then 3 else if i = 5 then 4 else if i = 6 then 5 else if i = 7 then 6 else if i = 8 then 7 else if i = 9 then 8 else if i = 10 then 9 else if i = 11 then 10 else if i = 12 then 11 else if i = 13 then 12 else if i = 14 then 13 else if i = 15 then 14 else if i = 16 then 15 else if i = 17 then 16 else if i = 18 then 17 else if i = 19 then 18 else if i = 20 then 20 else 21
   invFun := fun i => if i = 0 then 1 else if i = 1 then 2 else if i = 2 then 3 else if i = 3 then 4 else if i = 4 then 5 else if i = 5 then 6 else if i = 6 then 7 else if i = 7 then 8 else if i = 8 then 9 else if i = 9 then 10 else if i = 10 then 11 else if i = 11 then 12 else if i = 12 then 13 else if i = 13 then 14 else if i = 14 then 15 else if i = 15 then 16 else if i = 16 then 17 else if i = 17 then 18 else if i = 18 then 19 else if i = 19 then 0 else if i = 20 then 20 else 21
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 theorem E19_bank (f0 f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12 f13 f14 f15 f16 f17 f18 f19 f20 f21 : ℤ → Fin (a + 4)) (p0 p1 p2 p3 p4 p5 p6 p7 p8 p9 p10 p11 p12 p13 p14 p15 p16 p17 p18 p19 p20 p21 : ℤ) :
     ((⟨fun _ => p19, fun _ => f19⟩ : Tapes 1 a).append (⟨fun i => if i = 0 then p0 else if i = 1 then p1 else if i = 2 then p2 else if i = 3 then p3 else if i = 4 then p4 else if i = 5 then p5 else if i = 6 then p6 else if i = 7 then p7 else if i = 8 then p8 else if i = 9 then p9 else if i = 10 then p10 else if i = 11 then p11 else if i = 12 then p12 else if i = 13 then p13 else if i = 14 then p14 else if i = 15 then p15 else if i = 16 then p16 else if i = 17 then p17 else if i = 18 then p18 else if i = 19 then p20 else p21, fun i => if i = 0 then f0 else if i = 1 then f1 else if i = 2 then f2 else if i = 3 then f3 else if i = 4 then f4 else if i = 5 then f5 else if i = 6 then f6 else if i = 7 then f7 else if i = 8 then f8 else if i = 9 then f9 else if i = 10 then f10 else if i = 11 then f11 else if i = 12 then f12 else if i = 13 then f13 else if i = 14 then f14 else if i = 15 then f15 else if i = 16 then f16 else if i = 17 then f17 else if i = 18 then f18 else if i = 19 then f20 else f21⟩ : Tapes 21 a)).reindex E19 = bank f0 f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12 f13 f14 f15 f16 f17 f18 f19 f20 f21 p0 p1 p2 p3 p4 p5 p6 p7 p8 p9 p10 p11 p12 p13 p14 p15 p16 p17 p18 p19 p20 p21 := by
   unfold Tapes.reindex Tapes.append  bank E19
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 def E18 : Fin (1 + 21) ≃ Fin 22 where
   toFun := fun i => if i = 0 then 18 else if i = 1 then 0 else if i = 2 then 1 else if i = 3 then 2 else if i = 4 then 3 else if i = 5 then 4 else if i = 6 then 5 else if i = 7 then 6 else if i = 8 then 7 else if i = 9 then 8 else if i = 10 then 9 else if i = 11 then 10 else if i = 12 then 11 else if i = 13 then 12 else if i = 14 then 13 else if i = 15 then 14 else if i = 16 then 15 else if i = 17 then 16 else if i = 18 then 17 else if i = 19 then 19 else if i = 20 then 20 else 21
   invFun := fun i => if i = 0 then 1 else if i = 1 then 2 else if i = 2 then 3 else if i = 3 then 4 else if i = 4 then 5 else if i = 5 then 6 else if i = 6 then 7 else if i = 7 then 8 else if i = 8 then 9 else if i = 9 then 10 else if i = 10 then 11 else if i = 11 then 12 else if i = 12 then 13 else if i = 13 then 14 else if i = 14 then 15 else if i = 15 then 16 else if i = 16 then 17 else if i = 17 then 18 else if i = 18 then 0 else if i = 19 then 19 else if i = 20 then 20 else 21
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 theorem E18_bank (f0 f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12 f13 f14 f15 f16 f17 f18 f19 f20 f21 : ℤ → Fin (a + 4)) (p0 p1 p2 p3 p4 p5 p6 p7 p8 p9 p10 p11 p12 p13 p14 p15 p16 p17 p18 p19 p20 p21 : ℤ) :
     ((⟨fun _ => p18, fun _ => f18⟩ : Tapes 1 a).append (⟨fun i => if i = 0 then p0 else if i = 1 then p1 else if i = 2 then p2 else if i = 3 then p3 else if i = 4 then p4 else if i = 5 then p5 else if i = 6 then p6 else if i = 7 then p7 else if i = 8 then p8 else if i = 9 then p9 else if i = 10 then p10 else if i = 11 then p11 else if i = 12 then p12 else if i = 13 then p13 else if i = 14 then p14 else if i = 15 then p15 else if i = 16 then p16 else if i = 17 then p17 else if i = 18 then p19 else if i = 19 then p20 else p21, fun i => if i = 0 then f0 else if i = 1 then f1 else if i = 2 then f2 else if i = 3 then f3 else if i = 4 then f4 else if i = 5 then f5 else if i = 6 then f6 else if i = 7 then f7 else if i = 8 then f8 else if i = 9 then f9 else if i = 10 then f10 else if i = 11 then f11 else if i = 12 then f12 else if i = 13 then f13 else if i = 14 then f14 else if i = 15 then f15 else if i = 16 then f16 else if i = 17 then f17 else if i = 18 then f19 else if i = 19 then f20 else f21⟩ : Tapes 21 a)).reindex E18 = bank f0 f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12 f13 f14 f15 f16 f17 f18 f19 f20 f21 p0 p1 p2 p3 p4 p5 p6 p7 p8 p9 p10 p11 p12 p13 p14 p15 p16 p17 p18 p19 p20 p21 := by
   unfold Tapes.reindex Tapes.append  bank E18
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 def E18_20_21 : Fin (3 + 19) ≃ Fin 22 where
   toFun := fun i => if i = 0 then 18 else if i = 1 then 20 else if i = 2 then 21 else if i = 3 then 0 else if i = 4 then 1 else if i = 5 then 2 else if i = 6 then 3 else if i = 7 then 4 else if i = 8 then 5 else if i = 9 then 6 else if i = 10 then 7 else if i = 11 then 8 else if i = 12 then 9 else if i = 13 then 10 else if i = 14 then 11 else if i = 15 then 12 else if i = 16 then 13 else if i = 17 then 14 else if i = 18 then 15 else if i = 19 then 16 else if i = 20 then 17 else 19
   invFun := fun i => if i = 0 then 3 else if i = 1 then 4 else if i = 2 then 5 else if i = 3 then 6 else if i = 4 then 7 else if i = 5 then 8 else if i = 6 then 9 else if i = 7 then 10 else if i = 8 then 11 else if i = 9 then 12 else if i = 10 then 13 else if i = 11 then 14 else if i = 12 then 15 else if i = 13 then 16 else if i = 14 then 17 else if i = 15 then 18 else if i = 16 then 19 else if i = 17 then 20 else if i = 18 then 0 else if i = 19 then 21 else if i = 20 then 1 else 2
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 theorem E18_20_21_bank (f0 f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12 f13 f14 f15 f16 f17 f18 f19 f20 f21 : ℤ → Fin (a + 4)) (p0 p1 p2 p3 p4 p5 p6 p7 p8 p9 p10 p11 p12 p13 p14 p15 p16 p17 p18 p19 p20 p21 : ℤ) :
     ((⟨fun i => if i = 0 then p18 else if i = 1 then p20 else p21, fun i => if i = 0 then f18 else if i = 1 then f20 else f21⟩ : Tapes 3 a).append (⟨fun i => if i = 0 then p0 else if i = 1 then p1 else if i = 2 then p2 else if i = 3 then p3 else if i = 4 then p4 else if i = 5 then p5 else if i = 6 then p6 else if i = 7 then p7 else if i = 8 then p8 else if i = 9 then p9 else if i = 10 then p10 else if i = 11 then p11 else if i = 12 then p12 else if i = 13 then p13 else if i = 14 then p14 else if i = 15 then p15 else if i = 16 then p16 else if i = 17 then p17 else p19, fun i => if i = 0 then f0 else if i = 1 then f1 else if i = 2 then f2 else if i = 3 then f3 else if i = 4 then f4 else if i = 5 then f5 else if i = 6 then f6 else if i = 7 then f7 else if i = 8 then f8 else if i = 9 then f9 else if i = 10 then f10 else if i = 11 then f11 else if i = 12 then f12 else if i = 13 then f13 else if i = 14 then f14 else if i = 15 then f15 else if i = 16 then f16 else if i = 17 then f17 else f19⟩ : Tapes 19 a)).reindex E18_20_21 = bank f0 f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12 f13 f14 f15 f16 f17 f18 f19 f20 f21 p0 p1 p2 p3 p4 p5 p6 p7 p8 p9 p10 p11 p12 p13 p14 p15 p16 p17 p18 p19 p20 p21 := by
   unfold Tapes.reindex Tapes.append  bank E18_20_21
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 def E20 : Fin (1 + 21) ≃ Fin 22 where
   toFun := fun i => if i = 0 then 20 else if i = 1 then 0 else if i = 2 then 1 else if i = 3 then 2 else if i = 4 then 3 else if i = 5 then 4 else if i = 6 then 5 else if i = 7 then 6 else if i = 8 then 7 else if i = 9 then 8 else if i = 10 then 9 else if i = 11 then 10 else if i = 12 then 11 else if i = 13 then 12 else if i = 14 then 13 else if i = 15 then 14 else if i = 16 then 15 else if i = 17 then 16 else if i = 18 then 17 else if i = 19 then 18 else if i = 20 then 19 else 21
   invFun := fun i => if i = 0 then 1 else if i = 1 then 2 else if i = 2 then 3 else if i = 3 then 4 else if i = 4 then 5 else if i = 5 then 6 else if i = 6 then 7 else if i = 7 then 8 else if i = 8 then 9 else if i = 9 then 10 else if i = 10 then 11 else if i = 11 then 12 else if i = 12 then 13 else if i = 13 then 14 else if i = 14 then 15 else if i = 15 then 16 else if i = 16 then 17 else if i = 17 then 18 else if i = 18 then 19 else if i = 19 then 20 else if i = 20 then 0 else 21
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 theorem E20_bank (f0 f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12 f13 f14 f15 f16 f17 f18 f19 f20 f21 : ℤ → Fin (a + 4)) (p0 p1 p2 p3 p4 p5 p6 p7 p8 p9 p10 p11 p12 p13 p14 p15 p16 p17 p18 p19 p20 p21 : ℤ) :
     ((⟨fun _ => p20, fun _ => f20⟩ : Tapes 1 a).append (⟨fun i => if i = 0 then p0 else if i = 1 then p1 else if i = 2 then p2 else if i = 3 then p3 else if i = 4 then p4 else if i = 5 then p5 else if i = 6 then p6 else if i = 7 then p7 else if i = 8 then p8 else if i = 9 then p9 else if i = 10 then p10 else if i = 11 then p11 else if i = 12 then p12 else if i = 13 then p13 else if i = 14 then p14 else if i = 15 then p15 else if i = 16 then p16 else if i = 17 then p17 else if i = 18 then p18 else if i = 19 then p19 else p21, fun i => if i = 0 then f0 else if i = 1 then f1 else if i = 2 then f2 else if i = 3 then f3 else if i = 4 then f4 else if i = 5 then f5 else if i = 6 then f6 else if i = 7 then f7 else if i = 8 then f8 else if i = 9 then f9 else if i = 10 then f10 else if i = 11 then f11 else if i = 12 then f12 else if i = 13 then f13 else if i = 14 then f14 else if i = 15 then f15 else if i = 16 then f16 else if i = 17 then f17 else if i = 18 then f18 else if i = 19 then f19 else f21⟩ : Tapes 21 a)).reindex E20 = bank f0 f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12 f13 f14 f15 f16 f17 f18 f19 f20 f21 p0 p1 p2 p3 p4 p5 p6 p7 p8 p9 p10 p11 p12 p13 p14 p15 p16 p17 p18 p19 p20 p21 := by
   unfold Tapes.reindex Tapes.append  bank E20
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 def E21 : Fin (1 + 21) ≃ Fin 22 where
   toFun := fun i => if i = 0 then 21 else if i = 1 then 0 else if i = 2 then 1 else if i = 3 then 2 else if i = 4 then 3 else if i = 5 then 4 else if i = 6 then 5 else if i = 7 then 6 else if i = 8 then 7 else if i = 9 then 8 else if i = 10 then 9 else if i = 11 then 10 else if i = 12 then 11 else if i = 13 then 12 else if i = 14 then 13 else if i = 15 then 14 else if i = 16 then 15 else if i = 17 then 16 else if i = 18 then 17 else if i = 19 then 18 else if i = 20 then 19 else 20
   invFun := fun i => if i = 0 then 1 else if i = 1 then 2 else if i = 2 then 3 else if i = 3 then 4 else if i = 4 then 5 else if i = 5 then 6 else if i = 6 then 7 else if i = 7 then 8 else if i = 8 then 9 else if i = 9 then 10 else if i = 10 then 11 else if i = 11 then 12 else if i = 12 then 13 else if i = 13 then 14 else if i = 14 then 15 else if i = 15 then 16 else if i = 16 then 17 else if i = 17 then 18 else if i = 18 then 19 else if i = 19 then 20 else if i = 20 then 21 else 0
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 theorem E21_bank (f0 f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12 f13 f14 f15 f16 f17 f18 f19 f20 f21 : ℤ → Fin (a + 4)) (p0 p1 p2 p3 p4 p5 p6 p7 p8 p9 p10 p11 p12 p13 p14 p15 p16 p17 p18 p19 p20 p21 : ℤ) :
     ((⟨fun _ => p21, fun _ => f21⟩ : Tapes 1 a).append (⟨fun i => if i = 0 then p0 else if i = 1 then p1 else if i = 2 then p2 else if i = 3 then p3 else if i = 4 then p4 else if i = 5 then p5 else if i = 6 then p6 else if i = 7 then p7 else if i = 8 then p8 else if i = 9 then p9 else if i = 10 then p10 else if i = 11 then p11 else if i = 12 then p12 else if i = 13 then p13 else if i = 14 then p14 else if i = 15 then p15 else if i = 16 then p16 else if i = 17 then p17 else if i = 18 then p18 else if i = 19 then p19 else p20, fun i => if i = 0 then f0 else if i = 1 then f1 else if i = 2 then f2 else if i = 3 then f3 else if i = 4 then f4 else if i = 5 then f5 else if i = 6 then f6 else if i = 7 then f7 else if i = 8 then f8 else if i = 9 then f9 else if i = 10 then f10 else if i = 11 then f11 else if i = 12 then f12 else if i = 13 then f13 else if i = 14 then f14 else if i = 15 then f15 else if i = 16 then f16 else if i = 17 then f17 else if i = 18 then f18 else if i = 19 then f19 else f20⟩ : Tapes 21 a)).reindex E21 = bank f0 f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12 f13 f14 f15 f16 f17 f18 f19 f20 f21 p0 p1 p2 p3 p4 p5 p6 p7 p8 p9 p10 p11 p12 p13 p14 p15 p16 p17 p18 p19 p20 p21 := by
   unfold Tapes.reindex Tapes.append  bank E21
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 def E20_18 : Fin (2 + 20) ≃ Fin 22 where
   toFun := fun i => if i = 0 then 20 else if i = 1 then 18 else if i = 2 then 0 else if i = 3 then 1 else if i = 4 then 2 else if i = 5 then 3 else if i = 6 then 4 else if i = 7 then 5 else if i = 8 then 6 else if i = 9 then 7 else if i = 10 then 8 else if i = 11 then 9 else if i = 12 then 10 else if i = 13 then 11 else if i = 14 then 12 else if i = 15 then 13 else if i = 16 then 14 else if i = 17 then 15 else if i = 18 then 16 else if i = 19 then 17 else if i = 20 then 19 else 21
   invFun := fun i => if i = 0 then 2 else if i = 1 then 3 else if i = 2 then 4 else if i = 3 then 5 else if i = 4 then 6 else if i = 5 then 7 else if i = 6 then 8 else if i = 7 then 9 else if i = 8 then 10 else if i = 9 then 11 else if i = 10 then 12 else if i = 11 then 13 else if i = 12 then 14 else if i = 13 then 15 else if i = 14 then 16 else if i = 15 then 17 else if i = 16 then 18 else if i = 17 then 19 else if i = 18 then 1 else if i = 19 then 20 else if i = 20 then 0 else 21
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 theorem E20_18_bank (f0 f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12 f13 f14 f15 f16 f17 f18 f19 f20 f21 : ℤ → Fin (a + 4)) (p0 p1 p2 p3 p4 p5 p6 p7 p8 p9 p10 p11 p12 p13 p14 p15 p16 p17 p18 p19 p20 p21 : ℤ) :
     ((⟨fun i => if i = 0 then p20 else p18, fun i => if i = 0 then f20 else f18⟩ : Tapes 2 a).append (⟨fun i => if i = 0 then p0 else if i = 1 then p1 else if i = 2 then p2 else if i = 3 then p3 else if i = 4 then p4 else if i = 5 then p5 else if i = 6 then p6 else if i = 7 then p7 else if i = 8 then p8 else if i = 9 then p9 else if i = 10 then p10 else if i = 11 then p11 else if i = 12 then p12 else if i = 13 then p13 else if i = 14 then p14 else if i = 15 then p15 else if i = 16 then p16 else if i = 17 then p17 else if i = 18 then p19 else p21, fun i => if i = 0 then f0 else if i = 1 then f1 else if i = 2 then f2 else if i = 3 then f3 else if i = 4 then f4 else if i = 5 then f5 else if i = 6 then f6 else if i = 7 then f7 else if i = 8 then f8 else if i = 9 then f9 else if i = 10 then f10 else if i = 11 then f11 else if i = 12 then f12 else if i = 13 then f13 else if i = 14 then f14 else if i = 15 then f15 else if i = 16 then f16 else if i = 17 then f17 else if i = 18 then f19 else f21⟩ : Tapes 20 a)).reindex E20_18 = bank f0 f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12 f13 f14 f15 f16 f17 f18 f19 f20 f21 p0 p1 p2 p3 p4 p5 p6 p7 p8 p9 p10 p11 p12 p13 p14 p15 p16 p17 p18 p19 p20 p21 := by
   unfold Tapes.reindex Tapes.append  bank E20_18
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 section Parts
 

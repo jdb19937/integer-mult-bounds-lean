@@ -34,20 +34,20 @@ def output (hs : Fin 4 → List Bool) (P w G : ℕ) :=
 def powerPlacement : Fin (8+5) ≃ Fin 13 where
   toFun := ![7,8,9,10,11,5,12,3,0,1,2,4,6]
   invFun := ![8,9,10,7,11,5,12,0,1,2,3,4,6]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def firstPlacement : Fin (6+7) ≃ Fin 13 where
   toFun := ![7,6,8,5,9,0,1,2,3,4,10,11,12]
   invFun := ![5,6,7,8,9,3,1,0,2,4,10,11,12]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def secondPlacement : Fin (6+7) ≃ Fin 13 where
   toFun := ![7,4,8,1,9,6,0,2,3,5,10,11,12]
   invFun := ![6,3,7,8,1,9,5,0,2,4,10,11,12]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def powerProgram : Program 13 101 a := Placement.placed (FixedBasePowerDescriptor.program (q := a) 2) powerPlacement
 def firstProgram : Program 13 40 a := Placement.placed (DimensionProductDescriptor.program (q := a)) firstPlacement

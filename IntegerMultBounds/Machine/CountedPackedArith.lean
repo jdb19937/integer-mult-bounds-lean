@@ -16,8 +16,8 @@ def bank (payload : Tapes 9 a) (hs : Fin 3 → List Bool) : Tapes 26 a := payloa
 def shuffle : Fin (22+4) ≃ Fin (9+17) where
   toFun := ![0,1,2,3,4,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,5,6,7,8]
   invFun := ![0,1,2,3,4,22,23,24,25,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def liftL (L : Fin 9 ≃ Fin 9) : Fin (9+17) ≃ Fin (9+17) where
   toFun := fun j => Fin.addCases (fun i => Fin.castAdd 17 (L i)) (Fin.natAdd 9) j

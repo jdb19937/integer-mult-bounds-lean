@@ -26,14 +26,14 @@ def seekProgram : Program 4 16 0 := Placement.placed (u := 1) CountedSeek.progra
 private theorem active_seek (f g : ℤ → Fin 4) (bs : List Bool) (p q : ℤ) :
     Placement.active (s := 3) seekSlots (bank f g bs p q) = CountedSeek.bank f p bs := by
   unfold Placement.active bank CountedCopyReuse.bank CountedSeek.bank
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 private theorem replace_seek (f g f' : ℤ → Fin 4) (bs : List Bool) (p q p' : ℤ) :
     Placement.replace (s := 3) seekSlots (bank f g bs p q) (CountedSeek.bank f' p' bs) =
       bank f' g bs p' q := by
   unfold Placement.replace Placement.combine Placement.extra Tapes.reindex Tapes.append
     bank CountedCopyReuse.bank CountedSeek.bank
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 private theorem seek_hoare (f g : ℤ → Fin 4) (bs : List Bool) (p q : ℤ) :
     HoareTime seekProgram (fun v => v = bank f g bs p q)

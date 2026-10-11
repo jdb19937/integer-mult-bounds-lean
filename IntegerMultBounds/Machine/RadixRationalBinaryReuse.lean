@@ -31,12 +31,12 @@ private theorem reset_binary (old : List Bool) :
 private theorem input_frame (old : List Bool) (xs : List (Fin q)) :
     (RadixToBinary.binaryState q old).append (frame xs) = input old xs := by
   unfold Tapes.append frame input RadixRationalBinary.bank
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 private theorem blank_frame (xs : List (Fin q)) :
     (MarkedWordCleanup.one (fun _ => (blank : Fin (q+4))) 0).append (frame xs) = RadixRationalBinary.input xs := by
   unfold Tapes.append frame MarkedWordCleanup.one RadixRationalBinary.input RadixRationalBinary.bank
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 theorem reset_hoare (old : List Bool) (xs : List (Fin q)) :
     HoareTime resetProgram (fun v => v = input old xs) (fun v => v = RadixRationalBinary.input xs)

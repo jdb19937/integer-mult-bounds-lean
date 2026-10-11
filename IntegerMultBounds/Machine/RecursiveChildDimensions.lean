@@ -72,8 +72,8 @@ private theorem placed_exact {t u n r a cost : ℕ} {M : Program t r a}
 def placement1 : Fin (4+15) ≃ Fin 19 where
   toFun := ![0,1,9,11,2,3,4,5,6,7,8,10,12,13,14,15,16,17,18]
   invFun := ![0,1,4,5,6,7,8,9,10,2,11,3,12,13,14,15,16,17,18]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def program1 (k : ℕ) := Placement.placed (RadixPowerMultipleDescriptor.program hq k) placement1
 
@@ -88,8 +88,8 @@ private theorem frame1 (hs : Fin 6 → List Bool) (bs rs : List Bool) (xs : Fin 
 def placement2 : Fin (4+15) ≃ Fin 19 where
   toFun := ![0,1,9,12,2,3,4,5,6,7,8,10,11,13,14,15,16,17,18]
   invFun := ![0,1,4,5,6,7,8,9,10,2,11,12,3,13,14,15,16,17,18]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def program2 (k : ℕ) := Placement.placed (RadixPowerMultipleDescriptor.program hq k) placement2
 
@@ -104,8 +104,8 @@ private theorem frame2 (hs : Fin 6 → List Bool) (bs rs : List Bool) (xs : Fin 
 def placement3 : Fin (4+15) ≃ Fin 19 where
   toFun := ![0,1,9,13,2,3,4,5,6,7,8,10,11,12,14,15,16,17,18]
   invFun := ![0,1,4,5,6,7,8,9,10,2,11,12,13,3,14,15,16,17,18]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def program3 (k : ℕ) := Placement.placed (RadixPowerMultipleDescriptor.program hq k) placement3
 
@@ -120,8 +120,8 @@ private theorem frame3 (hs : Fin 6 → List Bool) (bs rs : List Bool) (xs : Fin 
 def placement4 : Fin (4+15) ≃ Fin 19 where
   toFun := ![0,1,9,14,2,3,4,5,6,7,8,10,11,12,13,15,16,17,18]
   invFun := ![0,1,4,5,6,7,8,9,10,2,11,12,13,14,3,15,16,17,18]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def program4 (k : ℕ) := Placement.placed (RadixPowerMultipleDescriptor.program hq k) placement4
 
@@ -136,8 +136,8 @@ private theorem frame4 (hs : Fin 6 → List Bool) (bs rs : List Bool) (xs : Fin 
 def placement5 : Fin (6+13) ≃ Fin 19 where
   toFun := ![0,15,1,11,2,5,3,4,6,7,8,9,10,12,13,14,16,17,18]
   invFun := ![0,2,4,6,7,5,8,9,10,11,12,3,13,14,15,1,16,17,18]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def program5 : Program 19 40 q := Placement.placed DimensionProductDescriptor.program placement5
 
@@ -152,8 +152,8 @@ private theorem frame5 (hs : Fin 6 → List Bool) (bs rs : List Bool) (xs : Fin 
 def placement6 : Fin (6+13) ≃ Fin 19 where
   toFun := ![0,16,1,7,2,12,3,4,5,6,8,9,10,11,13,14,15,17,18]
   invFun := ![0,2,4,6,7,8,9,3,10,11,12,13,5,14,15,16,1,17,18]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def program6 : Program 19 40 q := Placement.placed DimensionProductDescriptor.program placement6
 
@@ -168,8 +168,8 @@ private theorem frame6 (hs : Fin 6 → List Bool) (bs rs : List Bool) (xs : Fin 
 def placement7 : Fin (6+13) ≃ Fin 19 where
   toFun := ![0,17,1,13,2,16,3,4,5,6,7,8,9,10,11,12,14,15,18]
   invFun := ![0,2,4,6,7,8,9,10,11,12,13,14,15,3,16,17,5,1,18]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def program7 : Program 19 40 q := Placement.placed DimensionProductDescriptor.program placement7
 
@@ -184,8 +184,8 @@ private theorem frame7 (hs : Fin 6 → List Bool) (bs rs : List Bool) (xs : Fin 
 def placement8 : Fin (6+13) ≃ Fin 19 where
   toFun := ![0,18,1,8,2,14,3,4,5,6,7,9,10,11,12,13,15,16,17]
   invFun := ![0,2,4,6,7,8,9,10,3,11,12,13,14,15,5,16,17,18,1]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def program8 : Program 19 40 q := Placement.placed DimensionProductDescriptor.program placement8
 

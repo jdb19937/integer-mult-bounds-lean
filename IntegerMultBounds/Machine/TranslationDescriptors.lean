@@ -162,7 +162,7 @@ private theorem active_subtraction (ds : Fin 3 → List Bool) (bs qs as : List B
   unfold Placement.active subtractionPlacement bank extras TranslationProduct.bank ScalingDescriptors.innerBank
     ScalingDescriptors.counters CountedLoopReuse.bank CountedLoopReuse.controls Tapes.append
     BinarySubReuse.bank BinarySubReuse.cfg BinarySub.cfg Config.tapes
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 private theorem replace_subtraction (ds : Fin 3 → List Bool) (bs qs as : List Bool)
     (diff diff' : ℤ → Fin 4) (r r' : ℤ) :

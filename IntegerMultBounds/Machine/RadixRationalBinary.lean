@@ -185,14 +185,14 @@ omit [Fact q.Prime] in
 private theorem conversion_input (xs ys : List (Fin q)) :
     (RadixToBinary.input ys).append (one (source xs) 1) = bank (fun _ => blank) 0 xs ys := by
   unfold Tapes.append bank one RadixToBinary.input
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 omit [Fact q.Prime] in
 private theorem conversion_output (xs ys : List (Fin q)) :
     (RadixToBinary.output ys).append (one (source xs) 1) =
       bank ((RadixToBinary.binaryState q (RadixToBinaryData.output ys)).tape 0) 1 xs ys := by
   unfold Tapes.append bank one RadixToBinary.output
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 private theorem conversion_at (xs ys : List (Fin q)) :
     HoareTime (extend (RadixToBinary.convertProgram (Fact.out : q.Prime).two_le) 1)

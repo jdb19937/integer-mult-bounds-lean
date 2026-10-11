@@ -41,24 +41,24 @@ private theorem placed_exact {t u n r a cost : ℕ} {M : Program t r a}
 def qePlacement : Fin (6+10) ≃ Fin 16 where
   toFun := ![0,13,1,8,2,9,3,4,5,6,7,10,11,12,14,15]
   invFun := ![0,2,4,6,7,8,9,10,3,5,11,12,13,1,14,15]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def qeProgram : Program 16 40 q := Placement.placed DimensionProductDescriptor.program qePlacement
 
 def cqePlacement : Fin (6+10) ≃ Fin 16 where
   toFun := ![0,14,1,13,2,7,3,4,5,6,8,9,10,11,12,15]
   invFun := ![0,2,4,6,7,8,9,5,10,11,12,13,14,3,1,15]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def cqeProgram : Program 16 40 q := Placement.placed DimensionProductDescriptor.program cqePlacement
 
 def ncPlacement : Fin (6+10) ≃ Fin 16 where
   toFun := ![0,15,1,7,2,12,3,4,5,6,8,9,10,11,13,14]
   invFun := ![0,2,4,6,7,8,9,3,10,11,12,13,5,14,15,1]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def ncProgram : Program 16 40 q := Placement.placed DimensionProductDescriptor.program ncPlacement
 

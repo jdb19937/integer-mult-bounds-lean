@@ -95,90 +95,90 @@ end Bounds
 def E4_0_3 : Fin (3 + 2) ≃ Fin 5 where
   toFun := fun i => if i = 0 then 4 else if i = 1 then 0 else if i = 2 then 3 else if i = 3 then 1 else 2
   invFun := fun i => if i = 0 then 1 else if i = 1 then 3 else if i = 2 then 4 else if i = 3 then 2 else 0
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 theorem E4_0_3_bank (f0 f1 f2 f3 f4 : ℤ → Fin (a + 4)) (p0 p1 p2 p3 p4 : ℤ) :
     ((⟨fun i => if i = 0 then p4 else if i = 1 then p0 else p3, fun i => if i = 0 then f4 else if i = 1 then f0 else f3⟩ : Tapes 3 a).append (⟨fun i => if i = 0 then p1 else p2, fun i => if i = 0 then f1 else f2⟩ : Tapes 2 a)).reindex E4_0_3 = bank f0 f1 f2 f3 f4 p0 p1 p2 p3 p4 := by
   unfold Tapes.reindex Tapes.append  bank E4_0_3
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 def E4_3 : Fin (2 + 3) ≃ Fin 5 where
   toFun := fun i => if i = 0 then 4 else if i = 1 then 3 else if i = 2 then 0 else if i = 3 then 1 else 2
   invFun := fun i => if i = 0 then 2 else if i = 1 then 3 else if i = 2 then 4 else if i = 3 then 1 else 0
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 theorem E4_3_bank (f0 f1 f2 f3 f4 : ℤ → Fin (a + 4)) (p0 p1 p2 p3 p4 : ℤ) :
     ((⟨fun i => if i = 0 then p4 else p3, fun i => if i = 0 then f4 else f3⟩ : Tapes 2 a).append (⟨fun i => if i = 0 then p0 else if i = 1 then p1 else p2, fun i => if i = 0 then f0 else if i = 1 then f1 else f2⟩ : Tapes 3 a)).reindex E4_3 = bank f0 f1 f2 f3 f4 p0 p1 p2 p3 p4 := by
   unfold Tapes.reindex Tapes.append  bank E4_3
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 def E3 : Fin (1 + 4) ≃ Fin 5 where
   toFun := fun i => if i = 0 then 3 else if i = 1 then 0 else if i = 2 then 1 else if i = 3 then 2 else 4
   invFun := fun i => if i = 0 then 1 else if i = 1 then 2 else if i = 2 then 3 else if i = 3 then 0 else 4
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 theorem E3_bank (f0 f1 f2 f3 f4 : ℤ → Fin (a + 4)) (p0 p1 p2 p3 p4 : ℤ) :
     ((⟨fun _ => p3, fun _ => f3⟩ : Tapes 1 a).append (⟨fun i => if i = 0 then p0 else if i = 1 then p1 else if i = 2 then p2 else p4, fun i => if i = 0 then f0 else if i = 1 then f1 else if i = 2 then f2 else f4⟩ : Tapes 4 a)).reindex E3 = bank f0 f1 f2 f3 f4 p0 p1 p2 p3 p4 := by
   unfold Tapes.reindex Tapes.append  bank E3
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 def E1_2 : Fin (2 + 3) ≃ Fin 5 where
   toFun := fun i => if i = 0 then 1 else if i = 1 then 2 else if i = 2 then 0 else if i = 3 then 3 else 4
   invFun := fun i => if i = 0 then 2 else if i = 1 then 0 else if i = 2 then 1 else if i = 3 then 3 else 4
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 theorem E1_2_bank (f0 f1 f2 f3 f4 : ℤ → Fin (a + 4)) (p0 p1 p2 p3 p4 : ℤ) :
     ((⟨fun i => if i = 0 then p1 else p2, fun i => if i = 0 then f1 else f2⟩ : Tapes 2 a).append (⟨fun i => if i = 0 then p0 else if i = 1 then p3 else p4, fun i => if i = 0 then f0 else if i = 1 then f3 else f4⟩ : Tapes 3 a)).reindex E1_2 = bank f0 f1 f2 f3 f4 p0 p1 p2 p3 p4 := by
   unfold Tapes.reindex Tapes.append  bank E1_2
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 def E2 : Fin (1 + 4) ≃ Fin 5 where
   toFun := fun i => if i = 0 then 2 else if i = 1 then 0 else if i = 2 then 1 else if i = 3 then 3 else 4
   invFun := fun i => if i = 0 then 1 else if i = 1 then 2 else if i = 2 then 0 else if i = 3 then 3 else 4
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 theorem E2_bank (f0 f1 f2 f3 f4 : ℤ → Fin (a + 4)) (p0 p1 p2 p3 p4 : ℤ) :
     ((⟨fun _ => p2, fun _ => f2⟩ : Tapes 1 a).append (⟨fun i => if i = 0 then p0 else if i = 1 then p1 else if i = 2 then p3 else p4, fun i => if i = 0 then f0 else if i = 1 then f1 else if i = 2 then f3 else f4⟩ : Tapes 4 a)).reindex E2 = bank f0 f1 f2 f3 f4 p0 p1 p2 p3 p4 := by
   unfold Tapes.reindex Tapes.append  bank E2
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 def E3_2 : Fin (2 + 3) ≃ Fin 5 where
   toFun := fun i => if i = 0 then 3 else if i = 1 then 2 else if i = 2 then 0 else if i = 3 then 1 else 4
   invFun := fun i => if i = 0 then 2 else if i = 1 then 3 else if i = 2 then 1 else if i = 3 then 0 else 4
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 theorem E3_2_bank (f0 f1 f2 f3 f4 : ℤ → Fin (a + 4)) (p0 p1 p2 p3 p4 : ℤ) :
     ((⟨fun i => if i = 0 then p3 else p2, fun i => if i = 0 then f3 else f2⟩ : Tapes 2 a).append (⟨fun i => if i = 0 then p0 else if i = 1 then p1 else p4, fun i => if i = 0 then f0 else if i = 1 then f1 else f4⟩ : Tapes 3 a)).reindex E3_2 = bank f0 f1 f2 f3 f4 p0 p1 p2 p3 p4 := by
   unfold Tapes.reindex Tapes.append  bank E3_2
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 def E1 : Fin (1 + 4) ≃ Fin 5 where
   toFun := fun i => if i = 0 then 1 else if i = 1 then 0 else if i = 2 then 2 else if i = 3 then 3 else 4
   invFun := fun i => if i = 0 then 1 else if i = 1 then 0 else if i = 2 then 2 else if i = 3 then 3 else 4
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 theorem E1_bank (f0 f1 f2 f3 f4 : ℤ → Fin (a + 4)) (p0 p1 p2 p3 p4 : ℤ) :
     ((⟨fun _ => p1, fun _ => f1⟩ : Tapes 1 a).append (⟨fun i => if i = 0 then p0 else if i = 1 then p2 else if i = 2 then p3 else p4, fun i => if i = 0 then f0 else if i = 1 then f2 else if i = 2 then f3 else f4⟩ : Tapes 4 a)).reindex E1 = bank f0 f1 f2 f3 f4 p0 p1 p2 p3 p4 := by
   unfold Tapes.reindex Tapes.append  bank E1
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 def E0 : Fin (1 + 4) ≃ Fin 5 where
   toFun := fun i => if i = 0 then 0 else if i = 1 then 1 else if i = 2 then 2 else if i = 3 then 3 else 4
   invFun := fun i => if i = 0 then 0 else if i = 1 then 1 else if i = 2 then 2 else if i = 3 then 3 else 4
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 theorem E0_bank (f0 f1 f2 f3 f4 : ℤ → Fin (a + 4)) (p0 p1 p2 p3 p4 : ℤ) :
     ((⟨fun _ => p0, fun _ => f0⟩ : Tapes 1 a).append (⟨fun i => if i = 0 then p1 else if i = 1 then p2 else if i = 2 then p3 else p4, fun i => if i = 0 then f1 else if i = 1 then f2 else if i = 2 then f3 else f4⟩ : Tapes 4 a)).reindex E0 = bank f0 f1 f2 f3 f4 p0 p1 p2 p3 p4 := by
   unfold Tapes.reindex Tapes.append  bank E0
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 
 section Parts

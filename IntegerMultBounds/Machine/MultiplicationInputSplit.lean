@@ -126,19 +126,19 @@ def single (f : ℤ → Fin (a+4)) (p : ℤ) : Tapes 1 a := ⟨fun _ => p,fun _ 
 theorem single_bank (f g h : ℤ → Fin (a+4)) (p q r : ℤ) :
     (⟨fun _ => p,fun _ => f⟩ : Tapes 1 a).append (pair g h q r) = bank f g h p q r := by
   unfold pair bank Tapes.append
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 theorem copy_bank (f g h : ℤ → Fin (a+4)) (p q r : ℤ) :
     (Copy.tapes f g p q).append (single h r) = bank f g h p q r := by
   unfold Copy.tapes Copy.cfg Config.tapes single bank Tapes.append
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 def yPlacement : Fin (2+1) ≃ Fin 3 := Equiv.swap 1 2
 
 theorem y_bank (f g h : ℤ → Fin (a+4)) (p q r : ℤ) :
     ((Copy.tapes f h p r).append (single g q)).reindex yPlacement = bank f g h p q r := by
   unfold Copy.tapes Copy.cfg Config.tapes single bank Tapes.append Tapes.reindex yPlacement
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 def scanPart (stop : Fin (a+4)) := extend (scan stop) 2
 def shiftPart (m : Move) := extend (shift (a := a) m) 2

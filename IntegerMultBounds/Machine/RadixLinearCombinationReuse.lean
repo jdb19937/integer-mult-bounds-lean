@@ -26,7 +26,7 @@ private theorem bank_pair (e : Expr c) (old : ℕ → List (Fin q)) (f : ℤ →
   unfold RadixLinearCombinationBinary.bank
   congr 1
   unfold one Tapes.append
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 private theorem clear_binary_hoare (e : Expr c) (old : ℕ → List (Fin q)) (bs : List Bool) :
     HoareTime (clearBinary e)

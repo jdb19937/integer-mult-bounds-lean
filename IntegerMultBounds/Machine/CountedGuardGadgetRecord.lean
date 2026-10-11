@@ -19,26 +19,26 @@ def bank (V W C1 C2 C3 : List Bool) (F : ℤ → Fin (a+4))
 def cmpV1Place : Fin (6+5) ≃ Fin 11 where
   toFun := ![0,2,6,5,7,8,1,3,4,9,10]
   invFun := ![0,6,1,7,8,3,2,4,5,9,10]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def cmpV2Place : Fin (6+5) ≃ Fin 11 where
   toFun := ![0,3,6,5,7,8,1,2,4,9,10]
   invFun := ![0,6,7,1,8,3,2,4,5,9,10]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def cmpWPlace : Fin (6+5) ≃ Fin 11 where
   toFun := ![1,4,6,5,7,9,0,2,3,8,10]
   invFun := ![6,0,7,8,1,3,2,4,9,5,10]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def replayPlace : Fin (3+8) ≃ Fin 11 where
   toFun := ![0,10,8,1,2,3,4,5,6,7,9]
   invFun := ![0,3,4,5,6,7,8,9,2,10,1]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def compareV1 := Placement.placed (CountedGuardTest.program (a := a) .lt) cmpV1Place
 def compareV2 := Placement.placed (CountedGuardTest.program (a := a) .gt) cmpV2Place

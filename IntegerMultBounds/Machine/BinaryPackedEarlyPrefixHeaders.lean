@@ -22,8 +22,8 @@ def output (hs : Fin 5 → List Bool) (Z : List Bool) (q b n : ℕ) :=
 def widthPlace : Fin (6+13) ≃ Fin 19 where
   toFun := ![9,6,10,1,11,2,0,3,4,5,7,8,12,13,14,15,16,17,18]
   invFun := ![6,3,5,7,8,9,1,10,11,0,2,4,12,13,14,15,16,17,18]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def prepare := extend BinaryAddressOffsetHeaders.program 3
 def widthProgram := Placement.placed (DimensionProductDescriptor.program (q := 0)) widthPlace

@@ -92,7 +92,7 @@ private theorem copy_controls (source dest : ℤ → Fin 4) (p q : ℤ) (bs : Li
     (CountedLoopReuse.controls source dest p q).append (CountedLoopReuse.controls empty (binary bs) 1 1) =
       CountedCopyReuse.bank source dest empty (binary bs) p q 1 1 := by
   unfold CountedLoopReuse.controls CountedCopyReuse.bank Tapes.append
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 private theorem forward_aux {c : ℕ} (f : ℤ → Fin 4) (p : ℤ) (bs ns : List Bool) (m k : Tapes c 0) :
     ScalingExecutionReuse.auxiliary f p bs ns m k =
@@ -126,7 +126,7 @@ private theorem copy_source_set (source dest newSource : ℤ → Fin 4) (p q new
     setTape (CountedCopyReuse.bank source dest empty (binary bs) p q 1 1) 0 newSource newHead =
       CountedCopyReuse.bank newSource dest empty (binary bs) newHead q 1 1 := by
   unfold setTape CountedCopyReuse.bank
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 private theorem ready_inverse {d : ℕ} (hd : 0 < d) (Q B : ℕ) (D : Setup d)
     (middle : ℤ → Fin 4) (r : ℤ) (dest : ℤ → Fin 4) (q : ℤ) (payload : ℕ → List (Fin 4)) :

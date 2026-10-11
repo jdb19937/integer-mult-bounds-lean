@@ -27,7 +27,7 @@ def cost (S : Gather.Shape) (n m : ℕ) (hs : Fin 6 → List Bool) :=
 theorem append_assoc (v : Tapes 5 a) (w z : Tapes 6 a) :
     (v.append w).append z = v.append (w.append z) := by
   unfold Tapes.append
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 theorem result_bank (f0 f1 f2 f3 f4 target : ℤ → Fin (a+4))
     (p0 p1 p2 p3 p4 px pz pt : ℤ) (hs : Fin 6 → List Bool) :
@@ -36,7 +36,7 @@ theorem result_bank (f0 f1 f2 f3 f4 target : ℤ → Fin (a+4))
       caller (PackedLine.bank f0 f1 target f3 f4 px pz pt p3 p4) hs := by
   unfold CountedGatherOriginalRun.result SharedPlacementAlphabet.setTape caller
     PackedLine.bank Tapes.append focus
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 theorem original_tapes (v : Tapes 5 a) (hs : Fin 6 → List Bool) (i : Fin 6) :
     (caller v hs).tape (focus (Fin.natAdd 3 i)) = RadixZeroFill.encodedBinary (hs i) := by

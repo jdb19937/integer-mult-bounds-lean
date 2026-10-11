@@ -111,22 +111,22 @@ def bank (f g h : ℤ → Fin (a + 4)) (px py pacc : ℤ) : Tapes 3 a :=
 def accPlace : Fin (2 + 1) ≃ Fin 3 where
   toFun := fun i => if i = 0 then 0 else if i = 1 then 2 else 1
   invFun := fun i => if i = 0 then 0 else if i = 1 then 2 else 1
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 /-- A one-tape routine at slot two. -/
 def accOnly : Fin (1 + 2) ≃ Fin 3 where
   toFun := fun i => if i = 0 then 2 else if i = 1 then 0 else 1
   invFun := fun i => if i = 0 then 1 else if i = 1 then 2 else 0
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 /-- A one-tape routine at slot one. -/
 def yOnly : Fin (1 + 2) ≃ Fin 3 where
   toFun := fun i => if i = 0 then 1 else if i = 1 then 0 else 2
   invFun := fun i => if i = 0 then 1 else if i = 1 then 0 else 2
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def accumulatePart (a : ℕ) : Program 3 3 a := reindex (extend (BinaryAccumulate.program a) 1) accPlace
 def returnX (a : ℕ) : Program 3 3 a := extend (ReturnOrigin.program (a := a)) 2
@@ -151,28 +151,28 @@ theorem acc_bank (f g h : ℤ → Fin (a + 4)) (px py pacc : ℤ) (s : Fin 3) :
     ((BinaryAccumulate.cfg f h px pacc s).tapes.append
       (⟨fun _ => py, fun _ => g⟩ : Tapes 1 a)).reindex accPlace = bank f g h px py pacc := by
   unfold Tapes.reindex Tapes.append BinaryAccumulate.cfg Config.tapes bank accPlace
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 theorem x_bank (f g h : ℤ → Fin (a + 4)) (px py pacc : ℤ) :
     (⟨fun _ => px, fun _ => f⟩ : Tapes 1 a).append
       (⟨fun i => if i = 0 then py else pacc, fun i => if i = 0 then g else h⟩ : Tapes 2 a) =
       bank f g h px py pacc := by
   unfold Tapes.append bank
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 theorem acc_only_bank (f g h : ℤ → Fin (a + 4)) (px py pacc : ℤ) :
     ((⟨fun _ => pacc, fun _ => h⟩ : Tapes 1 a).append
       (⟨fun i => if i = 0 then px else py, fun i => if i = 0 then f else g⟩ : Tapes 2 a)).reindex
         accOnly = bank f g h px py pacc := by
   unfold Tapes.reindex Tapes.append bank accOnly
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 theorem y_bank (f g h : ℤ → Fin (a + 4)) (px py pacc : ℤ) :
     ((⟨fun _ => py, fun _ => g⟩ : Tapes 1 a).append
       (⟨fun i => if i = 0 then px else pacc, fun i => if i = 0 then f else h⟩ : Tapes 2 a)).reindex
         yOnly = bank f g h px py pacc := by
   unfold Tapes.reindex Tapes.append bank yOnly
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 theorem bank_reads (f g h : ℤ → Fin (a + 4)) (px py pacc : ℤ) :
     (bank f g h px py pacc).reads 1 = g py := by

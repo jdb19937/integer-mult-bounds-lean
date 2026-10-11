@@ -14,8 +14,8 @@ def focus : Fin 8 → Fin 17 := ![0,1,2,3,4,7,9,15]
 def placement : Fin (8+9) ≃ Fin 17 where
   toFun := ![0,1,2,3,4,7,9,15,5,6,8,10,11,12,13,14,16]
   invFun := ![0,1,2,3,4,8,9,5,10,6,11,12,13,14,15,7,16]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def program := Placement.placed (FixedBasePowerDescriptor.program (q := a) 2) placement
 

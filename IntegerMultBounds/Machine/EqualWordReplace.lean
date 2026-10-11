@@ -22,8 +22,8 @@ theorem overwrite (f : ℤ → Fin (a+4)) (p : ℤ) (xs ys : List (Fin (a+4)))
 def swap : Fin (1+1) ≃ Fin 2 where
   toFun := ![1,0]
   invFun := ![1,0]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def program (a : ℕ) : Program 2 7 a :=
   seq (seq CopyWord.program (extend ReturnOrigin.program 1))

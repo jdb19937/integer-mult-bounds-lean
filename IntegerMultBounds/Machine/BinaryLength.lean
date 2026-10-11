@@ -23,13 +23,13 @@ def incrementProgram : Program 2 3 0 := Placement.placed GrowingCounter.program 
 private theorem active_bank (source : ℤ → Fin 4) (p : ℤ) (bs : List Bool) :
     Placement.active counterPlacement (bank source p bs) = GrowingCounter.clock bs := by
   unfold Placement.active counterPlacement bank GrowingCounter.clock GrowingCounter.tapes
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 private theorem replace_bank (source : ℤ → Fin 4) (p : ℤ) (bs cs : List Bool) :
     Placement.replace counterPlacement (bank source p bs) (GrowingCounter.clock cs) = bank source p cs := by
   unfold Placement.replace Placement.combine Placement.extra Tapes.append Tapes.reindex
     counterPlacement bank GrowingCounter.clock GrowingCounter.tapes
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 private theorem increment_exact (source : ℤ → Fin 4) (p : ℤ) (bs : List Bool) :
     ExactRun incrementProgram (2*carrySteps bs) (bank source p bs) (bank source p (increment bs)) := by

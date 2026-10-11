@@ -21,8 +21,8 @@ def output (hs : Fin 6 → List Bool) (v : Descriptor) : Tapes 17 q :=
 def placement : Fin (6+11) ≃ Fin 17 where
   toFun := ![0,16,1,7,2,11,3,4,5,6,8,9,10,12,13,14,15]
   invFun := ![0,2,4,6,7,8,9,3,10,11,12,5,13,14,15,16,1]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def productProgram : Program 17 40 q := Placement.placed DimensionProductDescriptor.program placement
 

@@ -23,46 +23,46 @@ def bank (f0 f1 f2 f3 f4 : ℤ → Fin (a + 4)) (p0 p1 p2 p3 p4 : ℤ) : Tapes 5
 def tPlace : Fin (3 + 2) ≃ Fin 5 where
   toFun := fun i => if i = 0 then 3 else if i = 1 then 2 else if i = 2 then 4 else if i = 3 then 0 else 1
   invFun := fun i => if i = 0 then 3 else if i = 1 then 4 else if i = 2 then 1 else if i = 3 then 0 else 2
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def r1 : Fin (1 + 4) ≃ Fin 5 where
   toFun := fun i => if i = 0 then 1 else if i = 1 then 0 else if i = 2 then 2 else if i = 3 then 3 else 4
   invFun := fun i => if i = 0 then 1 else if i = 1 then 0 else if i = 2 then 2 else if i = 3 then 3 else 4
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def r2 : Fin (1 + 4) ≃ Fin 5 where
   toFun := fun i => if i = 0 then 2 else if i = 1 then 0 else if i = 2 then 1 else if i = 3 then 3 else 4
   invFun := fun i => if i = 0 then 1 else if i = 1 then 2 else if i = 2 then 0 else if i = 3 then 3 else 4
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def r3 : Fin (1 + 4) ≃ Fin 5 where
   toFun := fun i => if i = 0 then 3 else if i = 1 then 0 else if i = 2 then 1 else if i = 3 then 2 else 4
   invFun := fun i => if i = 0 then 1 else if i = 1 then 2 else if i = 2 then 3 else if i = 3 then 0 else 4
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def r4 : Fin (1 + 4) ≃ Fin 5 where
   toFun := fun i => if i = 0 then 4 else if i = 1 then 0 else if i = 2 then 1 else if i = 3 then 2 else 3
   invFun := fun i => if i = 0 then 1 else if i = 1 then 2 else if i = 2 then 3 else if i = 3 then 4 else 0
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 theorem gather_bank (f0 f1 f2 f3 f4 : ℤ → Fin (a + 4)) (p0 p1 p2 p3 p4 : ℤ) :
     (Gather.bank f0 f1 f2 p0 p1 p2).append
       (⟨fun i => if i = 0 then p3 else p4, fun i => if i = 0 then f3 else f4⟩ : Tapes 2 a) =
       bank f0 f1 f2 f3 f4 p0 p1 p2 p3 p4 := by
   unfold Tapes.append Gather.bank bank
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 theorem trans_bank {s : ℕ} (f0 f1 f2 f3 f4 : ℤ → Fin (a + 4)) (p0 p1 p2 p3 p4 : ℤ) (st : Fin (s + 1)) :
     ((ColumnTransducer.cfg f3 f2 f4 p3 p2 p4 st).tapes.append
       (⟨fun i => if i = 0 then p0 else p1, fun i => if i = 0 then f0 else f1⟩ : Tapes 2 a)).reindex
         tPlace = bank f0 f1 f2 f3 f4 p0 p1 p2 p3 p4 := by
   unfold Tapes.reindex Tapes.append ColumnTransducer.cfg Config.tapes bank tPlace
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 theorem r0_bank (f0 f1 f2 f3 f4 : ℤ → Fin (a + 4)) (p0 p1 p2 p3 p4 : ℤ) :
     (⟨fun _ => p0, fun _ => f0⟩ : Tapes 1 a).append
@@ -70,27 +70,27 @@ theorem r0_bank (f0 f1 f2 f3 f4 : ℤ → Fin (a + 4)) (p0 p1 p2 p3 p4 : ℤ) :
         fun i => if i = 0 then f1 else if i = 1 then f2 else if i = 2 then f3 else f4⟩ : Tapes 4 a) =
       bank f0 f1 f2 f3 f4 p0 p1 p2 p3 p4 := by
   unfold Tapes.append bank
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 theorem r1_bank (f0 f1 f2 f3 f4 : ℤ → Fin (a + 4)) (p0 p1 p2 p3 p4 : ℤ) :
     ((⟨fun _ => p1, fun _ => f1⟩ : Tapes 1 a).append (⟨fun i => if i = 0 then p0 else if i = 1 then p2 else if i = 2 then p3 else p4, fun i => if i = 0 then f0 else if i = 1 then f2 else if i = 2 then f3 else f4⟩ : Tapes 4 a)).reindex r1 = bank f0 f1 f2 f3 f4 p0 p1 p2 p3 p4 := by
   unfold Tapes.reindex Tapes.append bank r1
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 theorem r2_bank (f0 f1 f2 f3 f4 : ℤ → Fin (a + 4)) (p0 p1 p2 p3 p4 : ℤ) :
     ((⟨fun _ => p2, fun _ => f2⟩ : Tapes 1 a).append (⟨fun i => if i = 0 then p0 else if i = 1 then p1 else if i = 2 then p3 else p4, fun i => if i = 0 then f0 else if i = 1 then f1 else if i = 2 then f3 else f4⟩ : Tapes 4 a)).reindex r2 = bank f0 f1 f2 f3 f4 p0 p1 p2 p3 p4 := by
   unfold Tapes.reindex Tapes.append bank r2
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 theorem r3_bank (f0 f1 f2 f3 f4 : ℤ → Fin (a + 4)) (p0 p1 p2 p3 p4 : ℤ) :
     ((⟨fun _ => p3, fun _ => f3⟩ : Tapes 1 a).append (⟨fun i => if i = 0 then p0 else if i = 1 then p1 else if i = 2 then p2 else p4, fun i => if i = 0 then f0 else if i = 1 then f1 else if i = 2 then f2 else f4⟩ : Tapes 4 a)).reindex r3 = bank f0 f1 f2 f3 f4 p0 p1 p2 p3 p4 := by
   unfold Tapes.reindex Tapes.append bank r3
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 theorem r4_bank (f0 f1 f2 f3 f4 : ℤ → Fin (a + 4)) (p0 p1 p2 p3 p4 : ℤ) :
     ((⟨fun _ => p4, fun _ => f4⟩ : Tapes 1 a).append (⟨fun i => if i = 0 then p0 else if i = 1 then p1 else if i = 2 then p2 else p3, fun i => if i = 0 then f0 else if i = 1 then f1 else if i = 2 then f2 else f3⟩ : Tapes 4 a)).reindex r4 = bank f0 f1 f2 f3 f4 p0 p1 p2 p3 p4 := by
   unfold Tapes.reindex Tapes.append bank r4
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 def gatherPart (op : Bool → Bool → Bool) (S : Gather.Shape) (n : ℕ) (a : ℕ) :=
   extend (Gather.program op S n a) 2

@@ -22,7 +22,7 @@ private theorem bits_word (f : ℤ → Fin 4) (p : ℤ) (bs : List Bool) :
 private theorem copy_controls (source dest : ℤ → Fin 4) (p r : ℤ) :
     (Copy.tapes source dest p r).reindex (Equiv.swap 0 1) = controls dest source r p := by
   unfold Copy.tapes Copy.cfg Config.tapes Tapes.reindex controls
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 private theorem copy_hoare (bs : List Bool) :
     HoareTime CountedLoopReuse.copyProgram

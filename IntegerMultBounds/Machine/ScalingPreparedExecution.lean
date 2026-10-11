@@ -241,7 +241,7 @@ private theorem split_merge_controls (source dest : ℤ → Fin 4) (p q : ℤ) (
     (CountedLoopReuse.controls source dest p q).append (CountedLoopReuse.controls empty (binary bs) 1 1) =
       CountedCopyReuse.bank source dest empty (binary bs) p q 1 1 := by
   unfold CountedLoopReuse.controls CountedCopyReuse.bank Tapes.append
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 /-- The synthesized physical descriptor cells are exactly the cells used by
 splitting and subsequent reusable scaling, with no descriptor copying oracle. -/

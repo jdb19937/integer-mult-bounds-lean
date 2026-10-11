@@ -195,7 +195,7 @@ private theorem inverse_hoare {Q d B : ℕ} (hQ : 0 < Q) (hd : 0 < d) (hcop : d.
 private theorem span_set (f g : ℤ → Fin 4) (p q : ℤ) (bs ns : List Bool) :
     setTape (CountedSpanSeek.bank f p bs ns) 0 g q = CountedSpanSeek.bank g q bs ns := by
   unfold setTape CountedSpanSeek.bank CountedLoopReuse.bank CountedLoopReuse.controls CountedSeek.bank Tapes.append
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 private theorem span_tape (f : ℤ → Fin 4) (p : ℤ) (bs ns : List Bool) :
     (CountedSpanSeek.bank f p bs ns).tape 0 = f := rfl

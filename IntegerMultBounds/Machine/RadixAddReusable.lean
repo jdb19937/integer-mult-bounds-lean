@@ -148,7 +148,7 @@ private theorem bank_group (xs ys zs : List (Fin q)) :
         (MarkedWordCleanup.one (word (ys.map digitSymbol)) 0)).append
         (MarkedWordCleanup.one (word (zs.map digitSymbol)) 0) := by
   unfold bank MarkedWordCleanup.one Tapes.append
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 /-- Accumulate two temporary words, then erase and restore both source tapes. -/
 def consumeProgram (q : ℕ) (hq : 2 ≤ q) : Program 3 18 q :=

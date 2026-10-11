@@ -25,7 +25,7 @@ private theorem active_bank (source dest : ℤ → Fin 4) (p q : ℤ) (bs qs old
   unfold Placement.active placement bank supplied TranslationExecutionReuse.bank
     TranslationPreparedExecution.bank TranslationDescriptors.bank BinaryReplace.bank
     CountedLoopReuse.controls Tapes.append
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 private theorem frame_bank (source dest : ℤ → Fin 4) (p q : ℤ) (bs qs old next : List Bool) :
     Placement.extra placement (bank source dest p q bs qs old next) =

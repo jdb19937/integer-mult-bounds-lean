@@ -15,13 +15,13 @@ def bank (source dest scratch : ℤ → Fin 4) (p q r : ℤ) (ws : List Bool) : 
 def copyPlace : Fin (4+1) ≃ Fin 5 where
   toFun := ![0,2,3,4,1]
   invFun := ![0,4,1,2,3]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 def emitPlace : Fin (2+3) ≃ Fin 5 where
   toFun := ![2,1,0,3,4]
   invFun := ![2,1,0,3,4]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def copyProgram := Placement.placed CountedCopyReuse.program copyPlace
 def rewindProgram := Placement.placed (ReturnOrigin.program (a := 0)) (FiniteReturnStackAt.placement (2 : Fin 5))

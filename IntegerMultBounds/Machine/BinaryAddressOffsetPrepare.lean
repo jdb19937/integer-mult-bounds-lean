@@ -19,14 +19,14 @@ def output (hs : Fin 3 → List Bool) (q n : ℕ) :=
 def tablePlace : Fin (9+7) ≃ Fin 16 where
   toFun := ![9,6,10,11,12,3,13,14,15,0,1,2,4,5,7,8]
   invFun := ![9,10,11,5,12,13,1,14,15,0,2,3,4,6,7,8]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def fillPlace : Fin (3+13) ≃ Fin 16 where
   toFun := ![7,9,5,0,1,2,3,4,6,8,10,11,12,13,14,15]
   invFun := ![3,4,5,6,7,2,8,0,9,1,10,11,12,13,14,15]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def tableProgram := Placement.placed BinaryAddressTable.program tablePlace
 def fillProgram := Placement.placed BinaryAddressTableFill.program fillPlace

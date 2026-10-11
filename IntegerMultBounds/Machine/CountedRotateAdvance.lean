@@ -18,14 +18,14 @@ def program : Program 6 80 0 := seq CountedRotate.program seekSuffix
 private theorem active_suffix (f g : ℤ → Fin 4) (b c d : List Bool) (p q : ℤ) :
     Placement.active (s := 3) suffixSlots (bank f g b c d p q) = CountedSeek.bank f p c := by
   unfold Placement.active bank CountedSeek.bank
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 private theorem replace_suffix (f g f' : ℤ → Fin 4) (b c d : List Bool) (p q p' : ℤ) :
     Placement.replace (s := 3) suffixSlots (bank f g b c d p q) (CountedSeek.bank f' p' c) =
       bank f' g b c d p' q := by
   unfold Placement.replace Placement.combine Placement.extra Tapes.reindex Tapes.append
     bank CountedSeek.bank
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 private theorem seek_suffix_hoare (f g : ℤ → Fin 4) (b c d : List Bool) (p q : ℤ) :
     HoareTime seekSuffix (fun v => v = bank f g b c d p q)

@@ -19,38 +19,38 @@ def input (qs bs : List Bool) : Tapes 8 a := setTape (bank qs bs [] (fun _ => bl
 def headerPlace : Fin (3+5) ≃ Fin 8 where
   toFun := ![0,6,5,1,2,3,4,7]
   invFun := ![0,3,4,5,6,2,1,7]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def fill1Place : Fin (3+5) ≃ Fin 8 where
   toFun := ![2,7,5,0,1,3,4,6]
   invFun := ![3,4,0,5,6,2,7,1]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def fill2Place : Fin (3+5) ≃ Fin 8 where
   toFun := ![3,7,5,0,1,2,4,6]
   invFun := ![3,4,5,0,6,2,7,1]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def fill3Place : Fin (3+5) ≃ Fin 8 where
   toFun := ![4,7,1,0,2,3,5,6]
   invFun := ![3,2,4,5,0,6,7,1]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def edit1Place : Fin (3+5) ≃ Fin 8 where
   toFun := ![2,7,1,0,3,4,5,6]
   invFun := ![3,2,0,4,5,6,7,1]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def edit2Place : Fin (3+5) ≃ Fin 8 where
   toFun := ![3,7,1,0,2,4,5,6]
   invFun := ![3,2,4,0,5,6,7,1]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def setup := Placement.placed (CountedGuardGadgetHeaders.program (a := a)) headerPlace
 def cleanup := BinaryDescriptorCleanupList.oneProgram (a := a) (5 : Fin 8)

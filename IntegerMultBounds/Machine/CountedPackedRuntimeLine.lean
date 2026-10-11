@@ -22,15 +22,15 @@ def extra (hs : Fin 3 → List Bool) : Tapes 5 a :=
 def placement : Fin (17+5) ≃ Fin 22 where
   toFun := ![0,1,2,3,4,10,11,12,13,14,15,16,17,18,19,20,21,5,6,7,8,9]
   invFun := ![0,1,2,3,4,17,18,19,20,21,5,6,7,8,9,10,11,12,13,14,15,16]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 theorem placed_bank (payload : Tapes 5 a) (kind : Fin 3) (hs : Fin 3 → List Bool) :
     ((CountedPackedOriginalLine.bank payload (words kind hs)).append (extra hs)).reindex placement =
       ready payload kind hs := by
   unfold CountedPackedOriginalLine.bank CountedPackedOriginalLine.caller CountedGatherOriginalRun.input
     ready caller extra CountedPackedShapeHeaders.output Tapes.append Tapes.reindex placement
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 theorem source_tapes (payload : Tapes 5 a) (hs : Fin 3 → List Bool) (i : Fin 3) :
     (caller payload hs).tape (source i) = RadixZeroFill.encodedBinary (hs i) := by

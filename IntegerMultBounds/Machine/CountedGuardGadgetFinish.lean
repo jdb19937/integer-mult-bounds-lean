@@ -45,8 +45,8 @@ theorem erases (v : Tapes 15 a) (i : Fin 15) (xs : List Bool)
 def anyPlace : Fin (2+13) ≃ Fin 15 where
   toFun := ![5,14,0,1,2,3,4,6,7,8,9,10,11,12,13]
   invFun := ![2,3,4,5,6,0,7,8,9,10,11,12,13,14,1]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def key (fl : List Bool) : ℤ → Fin (a+4) := Function.update (fun _ => blank) 0 (bitSymbol (fl.any id))
 def anyProgram := Placement.placed (AnyFlag.program (a := a)) anyPlace

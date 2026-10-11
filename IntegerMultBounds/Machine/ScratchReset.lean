@@ -13,7 +13,7 @@ theorem erase_bank (f : ℤ → Fin 4) (p : ℤ) (bs : List Bool) :
   unfold bank
   unfold CountedErase.bank CountedLoopReuse.bank CountedLoopReuse.controls
     CountedErase.one Tapes.append CountedSeek.bank
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 /-- Rewind from the end, erase forward, and rewind the clean segment. -/
 def program : Program 3 50 0 :=

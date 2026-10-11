@@ -30,8 +30,8 @@ def output (q b n : ℕ) (V W C1 C2 C3 : List Bool) (bs ns qs : List Bool) : Tap
 def headerPlace : Fin (3+12) ≃ Fin 15 where
   toFun := ![13,14,8,0,1,2,3,4,5,6,7,9,10,11,12]
   invFun := ![3,4,5,6,7,8,9,10,2,11,12,13,14,0,1]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def setup := Placement.placed (CountedGuardGadgetHeaders.program (a := a)) headerPlace
 def loops := extend (CountedGuardGadgetArray.program (a := a)) 2

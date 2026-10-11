@@ -108,8 +108,8 @@ def input (f g : ℤ → Fin 4) (p q : ℤ) (bs ns : List Bool) : Tapes 7 0 :=
 def clocks : Fin (2+5) ≃ Fin 7 where
   toFun := ![2,5,0,1,3,4,6]
   invFun := ![2,3,0,4,5,1,6]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def initProgram := Placement.placed (CountedGatherClockPair.init 0) clocks
 def clearProgram := Placement.placed (CountedGatherClockPair.clear 0) clocks

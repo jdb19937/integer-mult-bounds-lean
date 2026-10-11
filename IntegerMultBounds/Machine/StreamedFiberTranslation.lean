@@ -53,8 +53,8 @@ theorem stream_delimiter (ws : List (List Bool)) (f : ℤ → Fin 4) (r : ℤ)
 def placement : Fin (2+11) ≃ Fin 13 where
   toFun := ![12,8,0,1,2,3,4,5,6,7,9,10,11]
   invFun := ![2,3,4,5,6,7,8,9,1,10,11,12,0]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def readProgram : Program 13 10 0 := Placement.placed BinaryOffsetStreamRead.program placement
 def program : Program 15 243 0 := TranslationPreparedFamily.program (s := 1) readProgram

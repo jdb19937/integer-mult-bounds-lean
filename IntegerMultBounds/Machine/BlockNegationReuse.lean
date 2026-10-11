@@ -22,26 +22,26 @@ def bank (source dest scratch : ℤ → Fin 4) (bs tailBits countBits : List Boo
 def copySlots : Fin (4+4) ≃ Fin 8 where
   toFun := ![0,1,3,4,2,5,6,7]
   invFun := ![0,1,4,2,3,5,6,7]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def reverseSlots : Fin (4+4) ≃ Fin 8 where
   toFun := ![0,2,3,5,1,4,6,7]
   invFun := ![0,4,1,2,5,3,6,7]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def seekSlots : Fin (3+5) ≃ Fin 8 where
   toFun := ![2,3,5,0,1,4,6,7]
   invFun := ![3,4,0,1,5,2,6,7]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def correctSlots : Fin (6+2) ≃ Fin 8 where
   toFun := ![2,1,3,4,6,7,0,5]
   invFun := ![6,1,0,2,3,7,4,5]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def copyFirst : Program 8 16 0 := Placement.placed (u := 4) CountedCopyReuse.program copySlots
 
@@ -55,7 +55,7 @@ private theorem active_copy (f g h : ℤ → Fin 4) (b d c : List Bool) (p q r :
     Placement.active (s := 4) copySlots (bank f g h b d c p q r) =
       CountedCopyReuse.bank f g CountedCopyReuse.empty (CountedCopyReuse.binary b) p q 1 1 := by
   unfold Placement.active bank CountedCopyReuse.bank
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 private theorem replace_copy (f g h f' g' : ℤ → Fin 4) (b d c : List Bool) (p q r p' q' : ℤ) :
     Placement.replace (s := 4) copySlots (bank f g h b d c p q r)
@@ -63,7 +63,7 @@ private theorem replace_copy (f g h f' g' : ℤ → Fin 4) (b d c : List Bool) (
       bank f' g' h b d c p' q' r := by
   unfold Placement.replace Placement.combine Placement.extra Tapes.reindex Tapes.append
     bank CountedCopyReuse.bank
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 private theorem copy_hoare (f g h : ℤ → Fin 4) (b d c : List Bool) (p q r : ℤ)
     (xs : List (Fin 4)) (hb : Counter.value b = xs.length) :
@@ -81,14 +81,14 @@ private theorem active_reverse (f g h : ℤ → Fin 4) (b d c : List Bool) (p q 
     Placement.active (s := 4) reverseSlots (bank f g h b d c p q r) =
       BlockReverseAdvance.bank f h d p r := by
   unfold Placement.active bank BlockReverseAdvance.bank CountedCopyReuse.bank
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 private theorem replace_reverse (f g h f' h' : ℤ → Fin 4) (b d c : List Bool) (p q r p' r' : ℤ) :
     Placement.replace (s := 4) reverseSlots (bank f g h b d c p q r)
       (BlockReverseAdvance.bank f' h' d p' r') = bank f' g h' b d c p' q r' := by
   unfold Placement.replace Placement.combine Placement.extra Tapes.reindex Tapes.append
     bank BlockReverseAdvance.bank CountedCopyReuse.bank
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 private theorem reverse_hoare (f g h : ℤ → Fin 4) (b d c : List Bool) (p q r : ℤ)
     (xs : List (Fin 4)) (hd : Counter.value d = xs.length) :
@@ -105,13 +105,13 @@ private theorem reverse_hoare (f g h : ℤ → Fin 4) (b d c : List Bool) (p q r
 private theorem active_seek (f g h : ℤ → Fin 4) (b d c : List Bool) (p q r : ℤ) :
     Placement.active (s := 3) seekSlots (bank f g h b d c p q r) = CountedSeek.bank h r d := by
   unfold Placement.active bank CountedSeek.bank
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 private theorem replace_seek (f g h h' : ℤ → Fin 4) (b d c : List Bool) (p q r r' : ℤ) :
     Placement.replace (s := 3) seekSlots (bank f g h b d c p q r) (CountedSeek.bank h' r' d) =
       bank f g h' b d c p q r' := by
   unfold Placement.replace Placement.combine Placement.extra Tapes.reindex Tapes.append bank CountedSeek.bank
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 private theorem seek_hoare (f g h : ℤ → Fin 4) (b d c : List Bool) (p q r : ℤ) :
     HoareTime seekTail (fun v => v = bank f g h b d c p q r)
@@ -126,7 +126,7 @@ private theorem active_correct (f g h : ℤ → Fin 4) (b d c : List Bool) (p q 
     Placement.active (s := 6) correctSlots (bank f g h b d c p q r) =
       CountedLoopReuse.bank (BlockReverseAdvance.bank h g b r q) CountedCopyReuse.empty (CountedCopyReuse.binary c) 1 1 := by
   unfold Placement.active bank CountedLoopReuse.bank CountedLoopReuse.controls BlockReverseAdvance.bank CountedCopyReuse.bank Tapes.append
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 private theorem replace_correct (f g h g' h' : ℤ → Fin 4) (b d c : List Bool)
     (p q r q' r' : ℤ) :
@@ -135,7 +135,7 @@ private theorem replace_correct (f g h g' h' : ℤ → Fin 4) (b d c : List Bool
       bank f g' h' b d c p q' r' := by
   unfold Placement.replace Placement.combine Placement.extra Tapes.reindex Tapes.append
     bank CountedLoopReuse.bank CountedLoopReuse.controls BlockReverseAdvance.bank CountedCopyReuse.bank
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 private theorem correct_hoare (f g h : ℤ → Fin 4) (b d c : List Bool) (p q r : ℤ)
     (blocks : List (List (Fin 4))) (B : ℕ) (hu : BlockRotationData.Uniform B blocks)

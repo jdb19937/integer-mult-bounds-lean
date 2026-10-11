@@ -12,8 +12,8 @@ open CountedLoopReuseAlphabet (empty binary)
 private def basePlacement : Fin (6+10) ≃ Fin 16 where
   toFun := ![11,10,4,5,6,7,0,1,2,3,8,9,12,13,14,15]
   invFun := ![6,7,8,9,2,3,4,5,10,11,1,0,12,13,14,15]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 private def bodyPlacement (c : ℕ) : Fin (6+(10+c)) ≃ Fin (16+c) :=
   FamilyPlacement.pair basePlacement (finCongr (by omega) : Fin (0+c) ≃ Fin c)
@@ -54,7 +54,7 @@ theorem active_bank (source dest : ℤ → Fin 4) (p q : ℤ) (bs qs ps old : Li
   rw [FamilyPlacementAlphabet.active_pair,base_active]
   unfold Placement.active
   simp only [FlatArrayNormalize.bank,CountedVolumeLoop.bank,CountedLoopReuseAlphabet.bank,Tapes.append]
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 private theorem extra_bank (source dest source' dest' : ℤ → Fin 4) (p q p' q' : ℤ)
     (bs qs ps old : List Bool) (fields : Fin (c+1) → List (Fin radix)) :
@@ -66,7 +66,7 @@ private theorem extra_bank (source dest source' dest' : ℤ → Fin 4) (p q p' q
   rw [FamilyPlacementAlphabet.extra_pair,FamilyPlacementAlphabet.extra_pair]
   congr 1
   unfold Placement.extra basePlacement
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 def normalizeProgram : Program ((16+c)+2) 150 radix :=
   Placement.placed FlatArrayNormalize.program (placement c)

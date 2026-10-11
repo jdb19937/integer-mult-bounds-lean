@@ -81,7 +81,7 @@ private theorem normalize_bank (f g : ℤ → Fin 4) (p q : ℤ) (bs qs ps : Lis
         CountedLoopReuseAlphabet.empty,CountedLoopReuseAlphabet.binary qs,
         CountedLoopReuseAlphabet.empty,CountedLoopReuseAlphabet.binary ps]⟩ : Tapes 8 0) := by
   unfold FlatArrayNormalize.bank CountedVolumeLoop.bank CountedLoopReuseAlphabet.bank Tapes.append
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 private theorem local_active {a d : ℕ} (ha : 0 < a) (hd : 0 < d) (neg : Bool)
     (A : SignedScalingExecution.Controls a) (D : SignedScalingExecution.Controls d) (S : SignedScalingSign.SignControls)

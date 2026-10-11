@@ -39,13 +39,13 @@ private theorem copy_set_source (f g clock desc newSource : ℤ → Fin 4) (p q 
     setTape (CountedCopyReuse.bank f g clock desc p q a b) 0 newSource newHead =
       CountedCopyReuse.bank newSource g clock desc newHead q a b := by
   unfold setTape CountedCopyReuse.bank
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 private theorem copy_set_dest (f g clock desc newDest : ℤ → Fin 4) (p q a b newHead : ℤ) :
     setTape (CountedCopyReuse.bank f g clock desc p q a b) 1 newDest newHead =
       CountedCopyReuse.bank f newDest clock desc p newHead a b := by
   unfold setTape CountedCopyReuse.bank
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 private def forwardBank {a : ℕ} (A : Controls a) (source : ℤ → Fin 4) (p : ℤ)
     (middle : ℤ → Fin 4) (r : ℤ) : Tapes (ScalingExecution.TapeCount a) 0 :=

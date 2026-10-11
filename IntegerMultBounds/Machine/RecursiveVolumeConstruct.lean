@@ -34,8 +34,8 @@ def bank (hs : Fin 6 → List Bool) (v : Descriptor) (bs : Option (List Bool)) :
 def productPlacement : Fin (6+11) ≃ Fin 17 where
   toFun := ![0,16,1,14,2,12,3,4,5,6,7,8,9,10,11,13,15]
   invFun := ![0,2,4,6,7,8,9,10,11,12,13,14,5,15,3,16,1]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def productProgram : Program 17 40 q := Placement.placed DimensionProductDescriptor.program productPlacement
 

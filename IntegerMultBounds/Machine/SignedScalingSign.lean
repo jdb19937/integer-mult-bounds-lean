@@ -57,12 +57,12 @@ private theorem bank_set (source dest scratch newSource : ℤ → Fin 4) (b dt c
     setTape (BlockNegationReuse.bank source dest scratch b dt ct p q r) 0 newSource newHead =
       BlockNegationReuse.bank newSource dest scratch b dt ct newHead q r := by
   unfold setTape BlockNegationReuse.bank
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 private theorem span_set (f g : ℤ → Fin 4) (p q : ℤ) (bs ns : List Bool) :
     setTape (CountedSpanSeek.bank f p bs ns) 0 g q = CountedSpanSeek.bank g q bs ns := by
   unfold setTape CountedSpanSeek.bank CountedLoopReuse.bank CountedLoopReuse.controls CountedSeek.bank Tapes.append
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 private theorem span_shared_hoare {t states : ℕ} {M : Program 5 states 0}
     {f g : ℤ → Fin 4} {p q : ℤ} {bs ns : List Bool} {cost : ℕ}

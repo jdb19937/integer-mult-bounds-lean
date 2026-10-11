@@ -38,7 +38,7 @@ private theorem active_bank (old next : List Bool) (xs : List (Fin q)) :
       Alphabet.mapTapes (RadixToBinary.binaryEncoding (q := q)) (BinaryReplace.bank old next) := by
   unfold Placement.active replacementPlacement bank descriptor RadixRationalBinaryReuse.input
     RadixRationalBinary.bank BinaryReplace.bank CountedLoopReuse.controls Alphabet.mapTapes Tapes.append
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 private theorem extra_bank (old next : List Bool) (xs : List (Fin q)) :
     Placement.extra replacementPlacement (bank next old xs) = Placement.extra replacementPlacement (bank next next xs) := by

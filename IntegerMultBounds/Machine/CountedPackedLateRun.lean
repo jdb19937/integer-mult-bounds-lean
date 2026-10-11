@@ -25,20 +25,20 @@ def bn (hs : Fin 3 → List Bool) : Fin 2 → List Bool := ![hs 1,hs 2]
 def parityPlace : Fin (19+9) ≃ Fin 28 where
   toFun := ![2,3,4,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,0,1,5,6,7,8,9,10,11]
   invFun := ![19,20,0,1,2,21,22,23,24,25,26,27,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def earlyPlace : Fin (26+2) ≃ Fin 28 where
   toFun := ![0,1,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,2,3]
   invFun := ![0,1,26,27,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def loadPlace : Fin (21+7) ≃ Fin 28 where
   toFun := ![5,3,6,2,7,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,0,1,4,8,9,10,11]
   invFun := ![21,22,3,1,23,0,2,4,24,25,26,27,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def parityExtra (V W : List Bool) (f g : ℤ → Fin (a+4)) (pv pw : ℤ) (hs : Fin 3 → List Bool) : Tapes 9 a :=
   ⟨![pv,pw,0,0,0,0,0,0,1],![putWord f pv (V.map bitSymbol),putWord g pw (W.map bitSymbol),

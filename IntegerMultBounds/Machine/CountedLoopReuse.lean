@@ -115,24 +115,24 @@ private def atControl {k : ℕ} (M : Program 1 k 0) (i : Fin 2) : Program 2 k 0 
 private theorem active_clock (clock descriptor : ℤ → Fin 4) (r s : ℤ) :
     Placement.active (s := 1) (u := 1) (Equiv.swap 0 (0 : Fin 2)) (controls clock descriptor r s) = one clock r := by
   unfold Placement.active controls one
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 private theorem active_descriptor (clock descriptor : ℤ → Fin 4) (r s : ℤ) :
     Placement.active (s := 1) (u := 1) (Equiv.swap 0 (1 : Fin 2)) (controls clock descriptor r s) = one descriptor s := by
   unfold Placement.active controls one
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 private theorem replace_clock (clock descriptor newClock : ℤ → Fin 4) (r s r' : ℤ) :
     Placement.replace (u := 1) (Equiv.swap 0 (0 : Fin 2)) (controls clock descriptor r s) (one newClock r') =
       controls newClock descriptor r' s := by
   unfold Placement.replace Placement.combine Placement.extra controls one Tapes.reindex Tapes.append
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 private theorem replace_descriptor (clock descriptor newDescriptor : ℤ → Fin 4) (r s s' : ℤ) :
     Placement.replace (u := 1) (Equiv.swap 0 (1 : Fin 2)) (controls clock descriptor r s) (one newDescriptor s') =
       controls clock newDescriptor r s' := by
   unfold Placement.replace Placement.combine Placement.extra controls one Tapes.reindex Tapes.append
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 private theorem reset_clock (cs ds : List Bool) (s : ℤ) (n : ℕ) :
     ExactRun (atControl resetProgram 0) (n+2)
@@ -163,7 +163,7 @@ def copyProgram : Program 2 1 0 := reindex (Copy.program blank false) (Equiv.swa
 private theorem copy_controls (source dest : ℤ → Fin 4) (p r : ℤ) :
     (Copy.tapes source dest p r).reindex (Equiv.swap 0 1) = controls dest source r p := by
   unfold Copy.tapes Copy.cfg Config.tapes Tapes.reindex controls
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 private theorem copy_exact (bs : List Bool) :
     ExactRun copyProgram bs.length (controls empty (binary bs) 1 1)

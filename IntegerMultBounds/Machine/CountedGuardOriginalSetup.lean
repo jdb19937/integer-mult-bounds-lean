@@ -18,8 +18,8 @@ def prepared (q b : ℕ) (V W : List Bool) (bs ns qs : List Bool) : Tapes 15 a :
 def constantsPlace : Fin (8+7) ≃ Fin 15 where
   toFun := ![13,9,2,3,4,8,14,7,0,1,5,6,10,11,12]
   invFun := ![8,9,2,3,4,10,11,7,5,1,12,13,14,0,6]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def program := Placement.placed (CountedGuardConstants.program (a := a)) constantsPlace
 

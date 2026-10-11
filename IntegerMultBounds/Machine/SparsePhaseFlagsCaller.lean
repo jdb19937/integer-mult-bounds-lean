@@ -42,8 +42,8 @@ def output (order : Order) (v : Stage s) (rows : ℕ) (axis : Fin v.f) (m : ℕ)
 def placement : Fin (16+40) ≃ Fin 56 where
   toFun := ![43,44,45,22,46,23,47,24,48,49,50,51,52,53,54,55,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42]
   invFun := ![16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,3,5,7,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,0,1,2,4,6,8,9,10,11,12,13,14,15]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 def derive (m : ℕ) := extend (CompactChildHeadersArithmetic.compile (a := 2) (SparsePhaseHeadersData.schedule m)).2 13
 def multiplier (ws : List (ZMod 4)) := Placement.placed (extend (SparsePhaseFlags.program ws) 6) placement
 def program (m : ℕ) (ws : List (ZMod 4)) := seq (derive m) (multiplier ws)

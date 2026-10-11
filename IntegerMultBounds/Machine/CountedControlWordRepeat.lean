@@ -22,8 +22,8 @@ def cleanup := extend (ArbitraryWidthZeroHeaderShared.cleanup (a := 0) (t := 2))
 def rewindPlacement : Fin (1+3) ≃ Fin 4 where
   toFun := ![1,0,2,3]
   invFun := ![1,0,2,3]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 def rewind := reindex (extend (ReturnOrigin.program (a := 0)) 3) rewindPlacement
 def program := seq (seq (seq setup
   (CountedLoopReuseAlphabet.program BinaryAddressOffsetRepeatCopy.program)) rewind) cleanup

@@ -49,20 +49,20 @@ def toggled (q b : ℕ) (hb : 1≤b) (hbq : b+1≤q) (V W Z cs : List Bool) (hs 
 def rankPlace : Fin (12+18) ≃ Fin 30 where
   toFun := ![26,0,1,9,10,11,12,13,14,15,16,17,2,3,4,5,6,7,8,18,19,20,21,22,23,24,25,27,28,29]
   invFun := ![1,2,12,13,14,15,16,17,18,3,4,5,6,7,8,9,10,11,19,20,21,22,23,24,25,26,0,27,28,29]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def guardPlace : Fin (15+15) ≃ Fin 30 where
   toFun := ![0,1,12,13,14,15,16,17,18,10,19,20,11,9,28,2,3,4,5,6,7,8,21,22,23,24,25,26,27,29]
   invFun := ![0,1,15,16,17,18,19,20,21,13,9,12,2,3,4,5,6,7,8,10,11,22,23,24,25,26,27,28,14,29]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def togglePlace : Fin (22+8) ≃ Fin 30 where
   toFun := ![6,2,7,8,29,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,0,1,3,4,5,26,27,28]
   invFun := ![22,23,1,24,25,26,0,2,3,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,27,28,29,4]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def rankProgram := Placement.placed (CountedRankSplitRun.program (a := 1)) rankPlace
 def inverseProgram := extend (CountedPackedInverse.program 1) 4

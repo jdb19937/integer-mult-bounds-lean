@@ -38,52 +38,52 @@ def program : Program 6 64 0 := seq (seq (seq seekPrefix copySuffix) seekTotal) 
 private theorem active_seek_prefix (f g : ℤ → Fin 4) (b c d : List Bool) (p q : ℤ) :
     Placement.active (s := 3) seekPrefixSlots (bank f g b c d p q) = CountedSeek.bank f p b := by
   unfold Placement.active bank CountedSeek.bank
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 private theorem active_seek_total (f g : ℤ → Fin 4) (b c d : List Bool) (p q : ℤ) :
     Placement.active (s := 3) seekTotalSlots (bank f g b c d p q) = CountedSeek.bank f p d := by
   unfold Placement.active bank CountedSeek.bank
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 private theorem active_copy_suffix (f g : ℤ → Fin 4) (b c d : List Bool) (p q : ℤ) :
     Placement.active (s := 4) copySuffixSlots (bank f g b c d p q) =
       CountedCopyReuse.bank f g empty (binary c) p q 1 1 := by
   unfold Placement.active bank CountedCopyReuse.bank
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 private theorem active_copy_prefix (f g : ℤ → Fin 4) (b c d : List Bool) (p q : ℤ) :
     Placement.active (s := 4) copyPrefixSlots (bank f g b c d p q) =
       CountedCopyReuse.bank f g empty (binary b) p q 1 1 := by
   unfold Placement.active bank CountedCopyReuse.bank
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 private theorem replace_seek_prefix (f g f' : ℤ → Fin 4) (b c d : List Bool) (p q p' : ℤ) :
     Placement.replace (s := 3) seekPrefixSlots (bank f g b c d p q) (CountedSeek.bank f' p' b) =
       bank f' g b c d p' q := by
   unfold Placement.replace Placement.combine Placement.extra Tapes.reindex Tapes.append
     bank CountedSeek.bank
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 private theorem replace_seek_total (f g f' : ℤ → Fin 4) (b c d : List Bool) (p q p' : ℤ) :
     Placement.replace (s := 3) seekTotalSlots (bank f g b c d p q) (CountedSeek.bank f' p' d) =
       bank f' g b c d p' q := by
   unfold Placement.replace Placement.combine Placement.extra Tapes.reindex Tapes.append
     bank CountedSeek.bank
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 private theorem replace_copy_suffix (f g f' g' : ℤ → Fin 4) (b c d : List Bool) (p q p' q' : ℤ) :
     Placement.replace (s := 4) copySuffixSlots (bank f g b c d p q)
       (CountedCopyReuse.bank f' g' empty (binary c) p' q' 1 1) = bank f' g' b c d p' q' := by
   unfold Placement.replace Placement.combine Placement.extra Tapes.reindex Tapes.append
     bank CountedCopyReuse.bank
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 private theorem replace_copy_prefix (f g f' g' : ℤ → Fin 4) (b c d : List Bool) (p q p' q' : ℤ) :
     Placement.replace (s := 4) copyPrefixSlots (bank f g b c d p q)
       (CountedCopyReuse.bank f' g' empty (binary b) p' q' 1 1) = bank f' g' b c d p' q' := by
   unfold Placement.replace Placement.combine Placement.extra Tapes.reindex Tapes.append
     bank CountedCopyReuse.bank
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 private theorem seek_prefix_hoare (f g : ℤ → Fin 4) (b c d : List Bool) (p q : ℤ) :
     HoareTime seekPrefix (fun v => v = bank f g b c d p q)

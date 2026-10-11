@@ -47,8 +47,8 @@ theorem set_offsets (payload control offsets offsets' : ℤ → Fin 4) (p r s s'
 def generatorPlacement : Fin (7+10) ≃ Fin 17 where
   toFun := ![16,0,1,15,12,2,14,3,4,5,6,7,8,9,10,11,13]
   invFun := ![1,2,5,7,8,9,10,11,12,13,14,15,4,16,6,3,0]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def generator := Placement.placed PackedOffsetStream.program generatorPlacement
 

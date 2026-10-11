@@ -88,15 +88,15 @@ def bank (f g h : ℤ → Fin (a + 4)) (px pz pt : ℤ) : Tapes 3 a :=
 def tPlace : Fin (1 + 2) ≃ Fin 3 where
   toFun := fun i => if i = 0 then 2 else if i = 1 then 0 else 1
   invFun := fun i => if i = 0 then 1 else if i = 1 then 2 else 0
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 /-- A one-tape routine at the control slot. -/
 def zPlace : Fin (1 + 2) ≃ Fin 3 where
   toFun := fun i => if i = 0 then 1 else if i = 1 then 0 else 2
   invFun := fun i => if i = 0 then 1 else if i = 1 then 0 else 2
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def skipX (a : ℕ) : Program 3 2 a := extend (StepRight.program (a := a)) 2
 def zeroT (a : ℕ) : Program 3 2 a := reindex (extend (WriteZero.program (a := a)) 2) tPlace
@@ -137,21 +137,21 @@ theorem x_bank (f g h : ℤ → Fin (a + 4)) (px pz pt : ℤ) (s : Fin 2) :
       (⟨fun i => if i = 0 then pz else pt, fun i => if i = 0 then g else h⟩ : Tapes 2 a) =
       bank f g h px pz pt := by
   unfold Tapes.append StepRight.cfg Config.tapes bank
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 theorem t_bank (f g h : ℤ → Fin (a + 4)) (px pz pt : ℤ) :
     ((⟨fun _ => pt, fun _ => h⟩ : Tapes 1 a).append
       (⟨fun i => if i = 0 then px else pz, fun i => if i = 0 then f else g⟩ : Tapes 2 a)).reindex
         tPlace = bank f g h px pz pt := by
   unfold Tapes.reindex Tapes.append bank tPlace
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 theorem z_bank (f g h : ℤ → Fin (a + 4)) (px pz pt : ℤ) :
     ((⟨fun _ => pz, fun _ => g⟩ : Tapes 1 a).append
       (⟨fun i => if i = 0 then px else pt, fun i => if i = 0 then f else h⟩ : Tapes 2 a)).reindex
         zPlace = bank f g h px pz pt := by
   unfold Tapes.reindex Tapes.append bank zPlace
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 theorem skipX_hoare (f g h : ℤ → Fin (a + 4)) (px pz pt : ℤ) :
     HoareTime (skipX a) (fun v => v = bank f g h px pz pt)

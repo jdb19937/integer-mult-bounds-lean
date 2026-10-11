@@ -38,8 +38,8 @@ theorem mark_hoare (v : Tapes 6 a) (ht : v.tape 4=fun _ => blank) (hh : v.head 4
 def flagPlace : Fin (2+4) ≃ Fin 6 where
   toFun := ![2,3,0,1,4,5]
   invFun := ![2,3,0,1,4,5]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def compareProgram := CountedLoopReuseAlphabet.program (extend (GuardTest.cmpCell a) 1)
 def flagProgram (target : Ordering) := Placement.placed (GuardTest.flagCell target a) flagPlace

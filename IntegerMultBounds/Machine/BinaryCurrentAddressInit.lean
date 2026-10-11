@@ -19,8 +19,8 @@ def output (ws : List Bool) (W : ℕ) :=
 def placement : Fin (3+1) ≃ Fin 4 where
   toFun := ![0,2,3,1]
   invFun := ![0,3,1,2]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 def fill := Placement.placed (Alphabet.program (encoding a) BinaryAddressTableFill.program) placement
 def readout := extend (BinaryCurrentAddress.copyProgram (a := a)) 2
 def program := seq (fill (a := a)) readout

@@ -20,8 +20,8 @@ def placement : Fin (11+2) ≃ Fin 13 where
     if h' : i.val < 11 then ⟨i.val+2,by omega⟩ else ⟨i.val-8,by omega⟩
   invFun := fun i => if h : i.val < 3 then ⟨i.val,by omega⟩ else
     if h' : i.val < 5 then ⟨i.val+8,by omega⟩ else ⟨i.val-2,by omega⟩
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 theorem gather_bank (f0 f1 f2 f3 f4 : ℤ → Fin (a+4))
     (p0 p1 p2 p3 p4 : ℤ) (hs : Fin 5 → List Bool) (ns : List Bool) :
@@ -31,7 +31,7 @@ theorem gather_bank (f0 f1 f2 f3 f4 : ℤ → Fin (a+4))
   unfold bank controls CountedGatherRun.bank CountedGatherDigit.bank CountedGatherDigit.descriptors
     CountedLoopReuseAlphabet.bank CountedLoopReuseAlphabet.controls Tapes.reindex Tapes.append
     Gather.bank PackedLine.bank placement
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 def gatherPart (op : Bool → Bool → Bool) (a : ℕ) :=
   reindex (extend (CountedGatherRun.program op a) 2) placement

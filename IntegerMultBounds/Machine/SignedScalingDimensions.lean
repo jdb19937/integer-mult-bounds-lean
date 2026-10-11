@@ -32,8 +32,8 @@ theorem generated_valid (S : Scratch) (Q B : ℕ)
 def signPlacement : Fin (8+9) ≃ Fin (11+6) where
   toFun := ![11,12,13,14,15,1,16,10,0,2,3,4,5,6,7,8,9]
   invFun := ![8,5,9,10,11,12,13,14,15,16,7,0,1,2,3,4,6]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 private def signFrame (S : Scratch) (bs : List Bool) (dest : ℤ → Fin 4) (q : ℤ) : Tapes 6 0 :=
   ⟨![0,q,S.origin,1,1,1],![empty,dest,S.tape,empty,binary bs,empty]⟩

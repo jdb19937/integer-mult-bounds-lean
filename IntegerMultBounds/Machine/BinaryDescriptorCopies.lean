@@ -76,7 +76,7 @@ private theorem active_before (q n : ℕ) (xs : List Bool) :
 private theorem active_after (q n : ℕ) (xs : List Bool) :
     Placement.active (placement n) (output q (n+1) xs) = BinaryDescriptorCopy.encodedOutput q xs := by
   unfold Placement.active output BinaryDescriptorCopy.encodedOutput Copy.tapes Copy.cfg Config.tapes
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 private theorem extra_unchanged (q n : ℕ) (xs : List Bool) :
     Placement.extra (placement n) ((output q n xs).append (empty q)) =

@@ -54,8 +54,8 @@ theorem normalizes (xs : List Bool) :
 def emitPlacement : Fin (2+3) ≃ Fin 5 where
   toFun := ![1,4,0,2,3]
   invFun := ![2,0,3,4,1]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 def emitProgram := Placement.placed PackedOffsetStreamEmit.program emitPlacement
 
 theorem emits (xs : List Bool) (f g : ℤ → Fin 4) (p q : ℤ) (bs : List Bool) :

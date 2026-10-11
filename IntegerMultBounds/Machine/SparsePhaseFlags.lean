@@ -25,13 +25,13 @@ def output (ws : List (ZMod 4)) (addr : List Bool) (hs : Fin 3 → List Bool) (q
 def flagsPlacement : Fin (2+8) ≃ Fin 10 where
   toFun := ![8,9,0,1,2,3,4,5,6,7]
   invFun := ![2,3,4,5,6,7,8,9,0,1]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 def placement : Fin (3+7) ≃ Fin 10 where
   toFun := ![8,9,1,0,2,3,4,5,6,7]
   invFun := ![3,2,4,5,6,7,8,9,0,1]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def prepare := Placement.placed UnitPhaseFlagsLifecycle.prepare flagsPlacement
 def extractor := extend (SparseSourceBitsRun.program (a := 2)) 2

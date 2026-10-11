@@ -23,20 +23,20 @@ def output (hs : Fin 3 → List Bool) (q n : ℕ) := setTape (rangeBank hs q n) 
 def widthPlace : Fin (6+10) ≃ Fin 16 where
   toFun := ![9,3,10,0,11,2,1,4,5,6,7,8,12,13,14,15]
   invFun := ![3,6,5,1,7,8,9,10,11,0,2,4,12,13,14,15]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def rangePlace : Fin (8+8) ≃ Fin 16 where
   toFun := ![9,10,11,12,13,4,14,3,0,1,2,5,6,7,8,15]
   invFun := ![8,9,10,7,5,11,12,13,14,0,1,2,3,4,6,15]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def countPlace : Fin (6+10) ≃ Fin 16 where
   toFun := ![9,5,10,4,11,2,0,1,3,6,7,8,12,13,14,15]
   invFun := ![6,7,5,8,3,1,9,10,11,0,2,4,12,13,14,15]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def widthProgram := Placement.placed (DimensionProductDescriptor.program (q := 0)) widthPlace
 def rangeProgram := Placement.placed (FixedBasePowerDescriptor.program (q := 0) 2) rangePlace

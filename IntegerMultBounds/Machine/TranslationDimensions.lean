@@ -125,8 +125,8 @@ private def afterS (p s b : ℕ) : Fin 4 → Option (List Bool) :=
 private def productPlacement : Fin (6+3) ≃ Fin 9 where
   toFun := fun i => ![0,7,1,3,8,6,2,4,5] i
   invFun := fun i => ![0,2,6,3,7,8,5,1,4] i
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 private theorem product_active_input (p s : ℕ) (bs ws : List Bool) (b : ℕ) :
     Placement.active productPlacement (bank (q := q) bs ws (afterS hq p s b)) =

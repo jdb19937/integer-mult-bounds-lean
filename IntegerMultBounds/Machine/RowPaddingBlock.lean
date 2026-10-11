@@ -14,8 +14,8 @@ def bank (source dest : ℤ → Fin 4) (p q : ℤ) (valid padding : List Bool) :
 def fillPlacement : Fin (3+2) ≃ Fin 5 where
   toFun := ![1,2,4,0,3]
   invFun := ![3,0,1,4,2]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def spectators (source : ℤ → Fin 4) (p : ℤ) (valid : List Bool) : Tapes 2 0 :=
   ⟨![p,1],![source,CountedCopyReuse.binary valid]⟩
@@ -34,8 +34,8 @@ def program : Program 5 (18+18) 0 :=
 def erasePlacement : Fin (3+2) ≃ Fin 5 where
   toFun := ![0,2,4,1,3]
   invFun := ![0,3,1,4,2]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 theorem erase_endpoint (source dest : ℤ → Fin 4) (p q : ℤ) (valid padding : List Bool) :
     ((CountedRawFill.bank source p padding).append (spectators dest q valid)).reindex erasePlacement =

@@ -50,26 +50,26 @@ private theorem placed_exact {t u n r a cost : ℕ} {M : Program t r a}
 def powerPlacement : Fin (4+9) ≃ Fin 13 where
   toFun := ![0,1,6,9,2,3,4,5,7,8,10,11,12]
   invFun := ![0,1,4,5,6,7,2,8,9,3,10,11,12]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def arPlacement : Fin (6+7) ≃ Fin 13 where
   toFun := ![0,10,1,4,2,3,5,6,7,8,9,11,12]
   invFun := ![0,2,4,5,3,6,7,8,9,10,1,11,12]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def arbPlacement : Fin (6+7) ≃ Fin 13 where
   toFun := ![0,11,1,5,2,10,3,4,6,7,8,9,12]
   invFun := ![0,2,4,6,7,3,8,9,10,11,5,1,12]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def nPlacement : Fin (6+7) ≃ Fin 13 where
   toFun := ![0,12,1,9,2,11,3,4,5,6,7,8,10]
   invFun := ![0,2,4,6,7,8,9,10,11,3,12,5,1]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def powerProgram := Placement.placed (RadixPowerDescriptor.program hq) powerPlacement
 def arProgram : Program 13 40 q := Placement.placed DimensionProductDescriptor.program arPlacement

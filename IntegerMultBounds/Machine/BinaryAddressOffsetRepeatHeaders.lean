@@ -35,43 +35,43 @@ def output (hs : Fin 6 → List Bool) (q b n P H : ℕ) :=
 def widthPlace : Fin (6+12) ≃ Fin 18 where
   toFun := ![12,6,13,1,14,2,0,3,4,5,7,8,9,10,11,15,16,17]
   invFun := ![6,3,5,7,8,9,1,10,11,12,13,14,0,2,4,15,16,17]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 def widthProgram := Placement.placed (DimensionProductDescriptor.program (q := 0)) widthPlace
 
 def sourcePlace : Fin (6+12) ≃ Fin 18 where
   toFun := ![12,7,13,0,14,2,1,3,4,5,6,8,9,10,11,15,16,17]
   invFun := ![3,6,5,7,8,9,10,1,11,12,13,14,0,2,4,15,16,17]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 def sourceProgram := Placement.placed (DimensionProductDescriptor.program (q := 0)) sourcePlace
 
 def rangePlace : Fin (8+10) ≃ Fin 18 where
   toFun := ![12,13,14,15,16,8,17,7,0,1,2,3,4,5,6,9,10,11]
   invFun := ![8,9,10,11,12,13,14,7,5,15,16,17,0,1,2,3,4,6]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 def rangeProgram := Placement.placed (FixedBasePowerDescriptor.program (q := 0) 2) rangePlace
 
 def targetPlace : Fin (8+10) ≃ Fin 18 where
   toFun := ![12,13,14,15,16,9,17,6,0,1,2,3,4,5,7,8,10,11]
   invFun := ![8,9,10,11,12,13,7,14,15,5,16,17,0,1,2,3,4,6]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 def targetProgram := Placement.placed (FixedBasePowerDescriptor.program (q := 0) 2) targetPlace
 
 def prefixPlace : Fin (6+12) ≃ Fin 18 where
   toFun := ![12,10,13,4,14,3,0,1,2,5,6,7,8,9,11,15,16,17]
   invFun := ![6,7,8,5,3,9,10,11,12,13,1,14,0,2,4,15,16,17]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 def prefixProgram := Placement.placed (DimensionProductDescriptor.program (q := 0)) prefixPlace
 
 def repeatPlace : Fin (6+12) ≃ Fin 18 where
   toFun := ![12,11,13,9,14,10,0,1,2,3,4,5,6,7,8,15,16,17]
   invFun := ![6,7,8,9,10,11,12,13,14,3,5,1,0,2,4,15,16,17]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 def repeatProgram := Placement.placed (DimensionProductDescriptor.program (q := 0)) repeatPlace
 
 def cleanupProgram := BinaryDescriptorCleanupList.program (a := 0) (by decide : 0<18) cleanupSlots

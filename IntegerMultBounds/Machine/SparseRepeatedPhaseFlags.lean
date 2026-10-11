@@ -31,8 +31,8 @@ def output (ws : List (ZMod 4)) (addr : List Bool) (hs : Fin 3 → List Bool)
 def placement : Fin (5+7) ≃ Fin 12 where
   toFun := ![8,9,1,10,11,0,2,3,4,5,6,7]
   invFun := ![5,2,6,7,8,9,10,11,0,1,3,4]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def accumulator (ws : List (ZMod 4)) :=
   Placement.placed (RepeatedWeightedPhaseAccumulator.program ws) placement

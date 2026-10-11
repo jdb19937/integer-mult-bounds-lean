@@ -20,7 +20,7 @@ private theorem active_copy (dest source : ℤ → Fin 4) (q p : ℤ) (bs : List
       (CountedCopyReuse.bank dest source CountedCopyReuse.empty (CountedCopyReuse.binary bs) q p 1 1) =
       CountedCopyReuse.bank source dest CountedCopyReuse.empty (CountedCopyReuse.binary bs) p q 1 1 := by
   unfold Placement.active reverseSlots CountedCopyReuse.bank
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 private theorem replace_copy (dest source dest' : ℤ → Fin 4) (q p q' p' : ℤ) (bs : List Bool) :
     Placement.replace reverseSlots
@@ -29,7 +29,7 @@ private theorem replace_copy (dest source dest' : ℤ → Fin 4) (q p q' p' : �
       CountedCopyReuse.bank dest' source CountedCopyReuse.empty (CountedCopyReuse.binary bs) q' p' 1 1 := by
   unfold Placement.replace Placement.combine Placement.extra reverseSlots Tapes.reindex Tapes.append
     CountedCopyReuse.bank
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 private theorem copy_hoare (dest source : ℤ → Fin 4) (q p : ℤ) (bs : List Bool)
     (xs : List (Fin 4)) (hb : Counter.value bs = xs.length) :

@@ -33,26 +33,26 @@ def output (source dest : ℤ → Fin 4) (p q : ℤ) (bs qs cs ns ws : List Bool
 def placement : Fin (3+18) ≃ Fin 21 where
   toFun := ![15,18,20,3,4,5,6,7,8,9,10,11,12,13,14,0,16,17,1,19,2]
   invFun := ![15,18,20,3,4,5,6,7,8,9,10,11,12,13,14,0,16,17,1,19,2]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 omit [Fact radix.Prime] in
 private theorem active_input (source dest : ℤ → Fin 4) (p q : ℤ) (bs qs cs ns ws : List Bool) :
     Placement.active placement (input (radix := radix) source dest p q bs qs cs ns ws) = RadixZeroFill.input ws := by
   unfold Placement.active placement input raw workspace widthTape
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 private theorem active_filled (source dest : ℤ → Fin 4) (p q : ℤ) (bs qs cs ns ws : List Bool) (b : ℕ) :
     Placement.active placement (filled (radix := radix) source dest p q bs qs cs ns ws b) =
       RadixZeroFill.output (Fact.out : radix.Prime).two_le ws b := by
   unfold Placement.active placement filled input raw workspace widthTape
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 private theorem extra_filled (source dest : ℤ → Fin 4) (p q : ℤ) (bs qs cs ns ws : List Bool) (b : ℕ) :
     Placement.extra placement (input (radix := radix) source dest p q bs qs cs ns ws) =
       Placement.extra placement (filled (radix := radix) source dest p q bs qs cs ns ws b) := by
   unfold Placement.extra placement filled
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 def fillProgram : Program 21 23 radix := Placement.placed (RadixZeroFill.program (Fact.out : radix.Prime).two_le) placement
 

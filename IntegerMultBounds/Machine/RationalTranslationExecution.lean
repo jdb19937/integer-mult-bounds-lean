@@ -20,8 +20,8 @@ def bank (source dest : ℤ → Fin 4) (p q : ℤ) (bs qs supplied offset : List
 private def prepPlacement : Fin (5+11) ≃ Fin 16 where
   toFun := ![12,13,14,15,8,5,6,7,4,9,10,11,0,1,2,3]
   invFun := ![12,13,14,15,8,5,6,7,4,9,10,11,0,1,2,3]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 private theorem active_bank (source dest : ℤ → Fin 4) (p q : ℤ) (bs qs supplied offset : List Bool)
     (xs : List (Fin radix)) :
@@ -29,7 +29,7 @@ private theorem active_bank (source dest : ℤ → Fin 4) (p q : ℤ) (bs qs sup
       RationalOffsetPrepare.bank supplied offset xs := by
   unfold Placement.active prepPlacement bank RationalOffsetPrepare.bank RationalOffsetPrepare.descriptor
     Tapes.append Alphabet.mapTapes
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 private theorem extra_bank (source dest : ℤ → Fin 4) (p q : ℤ) (bs qs supplied offset new : List Bool)
     (xs : List (Fin radix)) :

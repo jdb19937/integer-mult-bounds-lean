@@ -24,13 +24,13 @@ def rewindPlacement : Fin (1+3) ≃ Fin 4 := Equiv.swap 0 1
 def shiftPlacement : Fin (1+3) ≃ Fin 4 where
   toFun := ![2,0,1,3]
   invFun := ![1,2,0,3]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 def multiplyPlacement : Fin (3+1) ≃ Fin 4 where
   toFun := ![1,2,3,0]
   invFun := ![3,0,1,2]
-  left_inv := by intro i; fin_cases i <;> rfl
-  right_inv := by intro i; fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def rewindPart := reindex (extend (ReturnOrigin.program (a := a)) 3) rewindPlacement
 def shiftPart := reindex (extend (MultiplicationInputSplit.shift (a := a) .left) 3) shiftPlacement
@@ -46,25 +46,25 @@ theorem split_bank (f x y acc : ℤ → Fin (a+4)) (p px py pa : ℤ) :
     (MultiplicationInputSplit.bank f x y p px py).append (MultiplicationInputSplit.single acc pa) =
       bank f x y acc p px py pa := by
   unfold MultiplicationInputSplit.bank MultiplicationInputSplit.single bank Tapes.append
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 theorem rewind_bank (f x y acc : ℤ → Fin (a+4)) (p px py pa : ℤ) :
     ((⟨fun _ => px,fun _ => x⟩ : Tapes 1 a).append (MultiplicationInputSplit.bank f y acc p py pa)).reindex
       rewindPlacement = bank f x y acc p px py pa := by
   unfold MultiplicationInputSplit.bank bank Tapes.append Tapes.reindex rewindPlacement
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 theorem shift_bank (f x y acc : ℤ → Fin (a+4)) (p px py pa : ℤ) :
     ((⟨fun _ => py,fun _ => y⟩ : Tapes 1 a).append (MultiplicationInputSplit.bank f x acc p px pa)).reindex
       shiftPlacement = bank f x y acc p px py pa := by
   unfold MultiplicationInputSplit.bank bank Tapes.append Tapes.reindex shiftPlacement
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 theorem multiply_bank (f x y acc : ℤ → Fin (a+4)) (p px py pa : ℤ) :
     ((BinaryMultiply.bank x y acc px py pa).append (MultiplicationInputSplit.single f p)).reindex
       multiplyPlacement = bank f x y acc p px py pa := by
   unfold BinaryMultiply.bank MultiplicationInputSplit.single bank Tapes.append Tapes.reindex multiplyPlacement
-  congr 1 <;> funext i <;> fin_cases i <;> rfl
+  congr 1 <;> apply List.ofFn_injective <;> rfl
 
 theorem runs (x y : List Bool) :
     HoareTime (program a) (fun v => v = input (a := a) x y)
