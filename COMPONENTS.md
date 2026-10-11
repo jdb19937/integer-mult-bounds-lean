@@ -4700,6 +4700,8 @@ Machine model, execution, composition, and tape routines.
 
 - `Machine/CompactComplexAlignedSavedReturnPath.lean`: The actual prime-alphabet aligned table performs the genuine saved guard and pop from Associated physical call history, restores the older associated stack, and preserves all other tapes and basis workspace. Exact runtime is saved-address width plus five; the joined recursive return remains open.
 
+- `Machine/CompactComplexActualEventTrace.lean`: The actual site-major calls have exact group intervals, and every original edge occurrence retains its literal wire and both ordered compiler frames, including terminal sink incidences. Generic compiler trace extraction and a mapped raw-site trace avoid expanding the enormous concrete occurrence type. Child-block execution, interleaved event semantics and recursive execution remain open.
+
 ## Compact
 
 Compact packed controls, repair, and density bounds.

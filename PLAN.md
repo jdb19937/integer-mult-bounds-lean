@@ -16,14 +16,14 @@ See [COMPONENTS.md](COMPONENTS.md) for what each file proves.
 | Composition, loops, frames, elementary streams | §2 | 🟡 (163/164) | 🟡 (145/156) |
 | Finite networks with a rank saving | §3 | ✅ (66/66) | 🟡 (1/42) |
 | Faster interchange of address chunks | §4 | ✅ (129/129) | 🟡 (125/126) |
-| Simultaneous butterfly layers with compact control | §5, §11, CrocSwap | ✅ (1609/1609) | 🟡 (1256/1258) |
+| Simultaneous butterfly layers with compact control | §5, §11, CrocSwap | ✅ (1610/1610) | 🟡 (1256/1258) |
 | Synthetic transforms and their tape layout | §6 | ✅ (5/5) | ⬜ (0/3) |
 | Gaussian resampling | §7 | ✅ (17/17) | 🟡 (7/9) |
 | Fast multiplication subroutine | Schönhage–Strassen | ✅ (23/23) | 🟡 (11/15) |
 | Exact multiplication, parameters, time bound | §8 | 🟡 (5/7) | ⬜ (0/2) |
 | End-to-end theorem `EndToEnd` | — | 🟡 (5/8) | 🟡 (5/8) |
 
-Component accounting: mathematics **2025/2031**, tape **1552/1621**.
+Component accounting: mathematics **2026/2032**, tape **1552/1621**.
 Each numerator counts only ✅ rows; partial and unstarted rows remain in the
 denominator, and — entries are excluded. These counts measure checklist rows,
 not remaining effort or end-to-end completion. In particular, Section 5 remains
@@ -2029,6 +2029,8 @@ The main binary interchange theorem is proved in `BinaryInterchangeRun.runs` and
 | CompactComplexAlignedReturnedCallerPayload | `CompactComplexAlignedReturnedCallerPayload` | ✅ | — | The concrete reached parent derives the selected-role overwrite payload and exact caller auxiliary tapes from its physical words. No whole payload or auxiliary equality is supplied; recursive child execution remains open. |
 | CompactComplexAlignedReturnedCanonical | `CompactComplexAlignedReturnedCanonical` | ✅ | — | The genuine mid-frame identity derives the canonical returned caller after normalized spectator handoff. Entry geometry and auxiliary restoration follow from the reached parent; executing and joining the whole recursive return remains open. |
 | CompactComplexAlignedSavedReturnPath | `CompactComplexAlignedSavedReturnPath` | ✅ | ✅ | The actual prime-alphabet aligned table performs the genuine saved guard and pop from Associated physical call history, restores the older associated stack, and preserves all other tapes and basis workspace. Exact runtime is saved-address width plus five; the joined recursive return remains open. |
+
+| CompactComplexActualEventTrace | `CompactComplexActualEventTrace` | ✅ | — | The actual site-major calls have exact group intervals, and every original edge occurrence retains its literal wire and both ordered compiler frames, including terminal sink incidences. Generic compiler trace extraction and a mapped raw-site trace avoid expanding the enormous concrete occurrence type. Child-block execution, interleaved event semantics and recursive execution remain open. |
 
 ## 6. Synthetic transforms and their tape layout (§6)
 

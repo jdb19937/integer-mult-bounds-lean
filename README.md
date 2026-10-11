@@ -63,7 +63,9 @@ Full slice alignment and the original child factor are now derived.
 Actual return geometry derives restored ports, the selected-role payload and
 the canonical returned caller from the reached parent. The aligned table also
 pops the genuine associated saved call with its exact runtime. Joined recursive
-return execution and whole event induction remain open.
+return execution and whole event induction remain open. The actual ordered
+site trace now retains every original compiler wire and both frames, including
+terminal sink incidences; full interleaved event execution remains open.
 
 Complete boundary and event allowances pay classification, corrections,
 contraction, genuine return dispatch, both basis passes and their joins. The
