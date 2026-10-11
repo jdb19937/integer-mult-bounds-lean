@@ -48,7 +48,7 @@ def main():
         libdirs.append(root / '.lake' / 'build' / 'lib' / 'lean')
         env = os.environ.copy()
         env['LEAN_PATH'] = os.pathsep.join(str(p) for p in libdirs)
-        proc = subprocess.Popen(['lean', '-M1024', '-j1', *args.lean_args],
+        proc = subprocess.Popen(['lean', '-M2048', '-j1', *args.lean_args],
                                 cwd=root, env=env, start_new_session=True)
         peak = 0
         stopped = False
@@ -56,8 +56,8 @@ def main():
             while proc.poll() is None:
                 rss = usage(proc.pid)
                 peak = max(peak, rss)
-                if rss > 1536 * 1024:
-                    print('Stopping check: process group exceeded 1536 MiB RSS.', file=sys.stderr)
+                if rss > 2560 * 1024:
+                    print('Stopping check: process group exceeded 2560 MiB RSS.', file=sys.stderr)
                     stopped = True
                     break
                 time.sleep(0.05)
