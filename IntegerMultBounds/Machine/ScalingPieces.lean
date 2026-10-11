@@ -1,6 +1,7 @@
 import Mathlib.Data.Nat.ModEq
 import Mathlib.Data.Fintype.EquivFin
-import Mathlib.Tactic
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.Ext
 
 /-! Arithmetic and stream semantics of splitting a positive unit scaling into
 monotone pieces. For modulus Q and fixed positive multiplier c coprime to Q,

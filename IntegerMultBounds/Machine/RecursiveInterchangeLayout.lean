@@ -1,5 +1,7 @@
 import Mathlib.Data.Nat.Basic
-import Mathlib.Tactic
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.Ring
+import Lean.Elab.Tactic.Omega
 
 /-! Fixed-size child descriptors for manuscript §4, “Power-width interchange
 with rows” and “A fixed-tape depth-first schedule” (04-swap.tex, lines129–267).

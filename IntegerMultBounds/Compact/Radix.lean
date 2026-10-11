@@ -1,4 +1,8 @@
-import Mathlib.Tactic
+import Mathlib.Data.Nat.Basic
+import Mathlib.Data.Finset.Basic
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.Ring
+import Lean.Elab.Tactic.Omega
 
 /-! Packed integer addresses, with signed offsets and explicit no-carry bounds.
 The least significant digit is first. These lemmas quantify over all list

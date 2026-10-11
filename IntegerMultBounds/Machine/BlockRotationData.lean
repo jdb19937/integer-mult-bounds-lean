@@ -1,5 +1,5 @@
 import Mathlib.Data.List.Rotate
-import Mathlib.Tactic
+import Lean.Elab.Tactic.Omega
 
 /-! Pure block semantics of controlled cyclic shifts. A fiber is split before
 its final a blocks and rejoined suffix first. Payload indices move forward by

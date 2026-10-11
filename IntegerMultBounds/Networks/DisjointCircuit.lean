@@ -1,6 +1,5 @@
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 import Mathlib.Data.List.Basic
-import Mathlib.Tactic
 
 /-! Finite cancellation-free addition DAGs with explicit source supports.
 A structural checker validates backward references and disjoint unions.

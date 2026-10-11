@@ -1,6 +1,8 @@
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 import Mathlib.Data.Finset.Card
-import Mathlib.Tactic
+import Aesop
+import Mathlib.Tactic.Ext
+import Lean.Elab.Tactic.Omega
 
 /-! Actual weighted-graph source partitions behind paired exclusion. Vertex
 weights and edge weights are distinct source atoms. Groups of at most two

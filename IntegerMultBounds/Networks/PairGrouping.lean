@@ -1,7 +1,8 @@
 import Mathlib.Data.List.Nodup
 import Mathlib.Data.Finset.Disjoint
 import Mathlib.Data.Finset.Card
-import Mathlib.Tactic
+import Aesop
+import Lean.Elab.Tactic.Omega
 
 /-! Literal consecutive-pair grouping for the paired exclusion recursion.
 The last group is a singleton for odd input lengths. The list and finite-set

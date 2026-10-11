@@ -1,4 +1,11 @@
-import Mathlib.Tactic
+import Mathlib.Basic.Real.Basic
+import Mathlib.Tactic.NormNum
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.Ring
+import Mathlib.Tactic.Positivity
+import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.GCongr
+import Lean.Elab.Tactic.Omega
 
 /-! Uniform numerical bounds used in the local exceptional-record repair cost.
 `Counting.lean` and `Density.lean` connect these estimates to the actual

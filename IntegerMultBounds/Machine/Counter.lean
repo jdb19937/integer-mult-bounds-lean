@@ -1,4 +1,6 @@
-import Mathlib.Tactic
+import Mathlib.Data.List.Basic
+import Mathlib.Algebra.GroupWithZero.Nat
+import Lean.Elab.Tactic.Omega
 
 /-! A finite-width ripple counter and its amortized flip bound.
 `Machine/CounterTape.lean` implements this increment on literal tapes and

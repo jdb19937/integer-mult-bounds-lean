@@ -1,6 +1,8 @@
-import Mathlib.Analysis.SpecialFunctions.Pow.Real
-import Mathlib.Data.Nat.Log
-import Mathlib.Tactic
+module
+
+public import Mathlib.Analysis.SpecialFunctions.Pow.Real
+public import Mathlib.Data.Nat.Log
+import Lean.Elab.Tactic.Omega
 
 /-!
 A literal fixed-finite-alphabet, fixed-multitape machine model. One transition
@@ -10,6 +12,8 @@ one. In particular, arithmetic on an unbounded register is not a primitive.
 `EndToEnd` is the target proposition, NOT a proved theorem. No complexity
 contract or oracle is built into the machine definition.
 -/
+
+@[expose] public section
 
 namespace IntegerMultBounds
 namespace Machine

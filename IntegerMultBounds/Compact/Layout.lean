@@ -1,6 +1,7 @@
 import Mathlib.Logic.Equiv.Fin.Basic
 import Mathlib.Data.Fintype.Prod
-import Mathlib.Tactic
+import Mathlib.Tactic.Ring
+import Lean.Elab.Tactic.Omega
 
 /-!
 The complete-field part of the reservation invariant. A role split changes

@@ -1,5 +1,6 @@
 import Mathlib.Data.Int.Basic
-import Mathlib.Tactic
+import Mathlib.Algebra.Ring.Int.Defs
+import Lean.Elab.Tactic.Omega
 
 /-!
 The four *integer* updates in compact-control-movement.tex. These statements
