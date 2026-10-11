@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactActualPairSchedule
-import IntegerMultBounds.Machine.ActivePrefixStagePairBudget
+module
+
+public import IntegerMultBounds.Machine.CompactActualPairSchedule
+public import IntegerMultBounds.Machine.ActivePrefixStagePairBudget
 
 /-! Actual scalar/global-row choices yield a uniform certified runtime for a
 fixed literal binary schedule, including all pair backup, rewrite and restore
 work. Its static instruction count is the only schedule factor. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactActualPairScheduleBudget
 noncomputable section
 open CompactGadgetReservationShape (Shape)

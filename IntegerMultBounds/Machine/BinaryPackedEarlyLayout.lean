@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.BinaryPackedEarlyData
-import IntegerMultBounds.Machine.CompactGadgetReservationHeadersCarvedData
+module
+
+public import IntegerMultBounds.Machine.BinaryPackedEarlyData
+public import IntegerMultBounds.Machine.CompactGadgetReservationHeadersCarvedData
 
 /-! One unchanged serialized reservation for all four early updates. The target
 occupies the leading n*q bits of temp; its dirty temporary occupies the leading
 n*b bits of control. All remaining reserved/back/active/payload bits stay literal. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryPackedEarlyLayout
 open CompactGadgetReservationShape
 open RecursiveInterchangeRows (pack pack_val)

@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CountedPackedReusable
-import IntegerMultBounds.Compact.ToggleValue
+module
+
+public import IntegerMultBounds.Machine.CountedPackedReusable
+public import IntegerMultBounds.Compact.ToggleValue
 
 /-! Exact word semantics of the fixed runtime-driven early packed gadget on
 its guarded set. The temporary word is restored literally, and the target
 word changes only at the selected low bits. The unguarded arithmetic machine
 is unchanged; this theorem supplies the guarded contract used by repair. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedPackedGuarded
 noncomputable section
 open Compact Compact.Radix Compact.PowerTwo

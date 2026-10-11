@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.AllAxisPhaseFlagsEndpoint
+module
+
+public import IntegerMultBounds.Machine.AllAxisPhaseFlagsEndpoint
 
 /-! The reused scanner clocks and immutable f descriptor return to their exact
 caller cells, leaving only the control head and two retained flags changed. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.AllAxisPhaseFlagsNormalize
 noncomputable section
 open AllAxisPhaseFlagsCaller (scanSlots scanInjective scanPlacement)

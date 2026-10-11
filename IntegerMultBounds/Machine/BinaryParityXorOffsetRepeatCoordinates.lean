@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.BinaryParityXorOffsetRepeatBudget
-import IntegerMultBounds.Machine.BinaryAddressOffsetRepeatCoordinates
+module
+
+public import IntegerMultBounds.Machine.BinaryParityXorOffsetRepeatBudget
+public import IntegerMultBounds.Machine.BinaryAddressOffsetRepeatCoordinates
 
 /-! Each complete physical row contains the modular negative of packed source
 parity XOR original controls, independently of its dirty-back and spectator coordinates. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryParityXorOffsetRepeatCoordinates
 open BinaryParityXorOffsetRepeatData
 

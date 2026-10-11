@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactActualStageRuntime
-import IntegerMultBounds.Machine.ActivePrefixStageRuntimeInverseBudget
+module
+
+public import IntegerMultBounds.Machine.CompactActualStageRuntime
+public import IntegerMultBounds.Machine.ActivePrefixStageRuntimeInverseBudget
 
 /-! Actual choices provide a physical reverse and round trip for every
 positive runtime width, with complete caller/private-bank restoration. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactActualStageRuntimeInverse
 noncomputable section
 open CompactGadgetReservationShape (Shape)

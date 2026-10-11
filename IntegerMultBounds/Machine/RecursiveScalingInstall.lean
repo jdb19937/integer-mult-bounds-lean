@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.FlatAffineScalingInputLayout
-import IntegerMultBounds.Machine.RecursiveInterchangeScaling
-import IntegerMultBounds.Machine.BinaryDescriptorInstallList
+module
+
+public import IntegerMultBounds.Machine.FlatAffineScalingInputLayout
+public import IntegerMultBounds.Machine.RecursiveInterchangeScaling
+public import IntegerMultBounds.Machine.BinaryDescriptorInstallList
 
 /-! Physical installation of all affine-scaling dimension descriptors from one
 preserved sixteen-tape dimension bank. The copy schedule depends only on coefficient. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveScalingInstall
 open FlatAffineScalingInputLayout (Kind kinds bank word)
 open BinaryDescriptorInstallList

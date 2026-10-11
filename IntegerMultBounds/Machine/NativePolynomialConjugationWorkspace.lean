@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.NativePolynomialConjugationRows
-import IntegerMultBounds.Machine.CompactComplexSourceReadyWorkspace
+module
+
+public import IntegerMultBounds.Machine.NativePolynomialConjugationRows
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyWorkspace
 
 /-! The native row conjugation scan on the genuine source65 caller port,
 including its Entry7, leaf and work10 suffix. Every other physical port is
 retained automatically by one-tape placement. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.NativePolynomialConjugationWorkspace
 noncomputable section
 open CompactGadgetReservationShape (Shape)

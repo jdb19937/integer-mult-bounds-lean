@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.CompactComplexNonleafEventProgress
-import IntegerMultBounds.Machine.CompactComplexStoppedPrefixAlignedCall
-import IntegerMultBounds.Machine.CompactComplexChildAlignmentBudget
+module
+
+public import IntegerMultBounds.Machine.CompactComplexNonleafEventProgress
+public import IntegerMultBounds.Machine.CompactComplexStoppedPrefixAlignedCall
+public import IntegerMultBounds.Machine.CompactComplexChildAlignmentBudget
 
 /-! Actual spectator promotion after an arbitrary normalized nonleaf result.
 The old parent denominator and the actual returned target are retained while
 the volume header is generated, the spectators are shifted and metadata is
 erased. The common denominator must be committed only after this execution. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexNonleafSpectatorHandoff
 noncomputable section
 open CompactGadgetReservationShape (Shape)

@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactNativeRoleReservedCaller
+module
+
+public import IntegerMultBounds.Machine.CompactNativeRoleReservedCaller
 
 /-! Literal reservation-padding bank adaptation to the native role caller.
 All port relabelling preserves physical indices, especially source43; no native
 word is copied. Retained runtime controller words are explicit six input tapes. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactNativeRolePaddingCaller
 noncomputable section
 open CompactNativeRoleReservedCaller (original originalTapes single)

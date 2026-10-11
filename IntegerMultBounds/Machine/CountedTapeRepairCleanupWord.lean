@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.CountedTapeRepairRun
+module
+
+public import IntegerMultBounds.Machine.CountedTapeRepairRun
 
 /-! Physical removal of complete marked and unmarked stage words, including
 left sentinels, with literal return to the blank origin. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedTapeRepairCleanupWord
 noncomputable section
 open SharedPlacementAlphabet

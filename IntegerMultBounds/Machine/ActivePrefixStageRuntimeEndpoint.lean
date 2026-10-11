@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActivePrefixStageRuntimeBudget
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStageRuntimeBudget
 
 /-! Both runtime flags and all generated/private tapes are physically blank at
 stage boundaries. Original descriptors remain in place and raw data stays65. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixStageRuntimeEndpoint
 noncomputable section
 open CompactGadgetReservationShape (Shape)

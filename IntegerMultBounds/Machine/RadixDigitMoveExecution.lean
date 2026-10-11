@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.RadixDigitMovePlacement
+module
+
+public import IntegerMultBounds.Machine.RadixDigitMovePlacement
 
 /-! Complete physical fixed-radix digit movement and its inverse. Only canonical
 P/S descriptors and the payload are supplied; constant/product construction,
 all streaming passes, head restoration and scratch erasure are charged. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RadixDigitMoveExecution
 variable {P Q S a : ℕ}
 noncomputable section

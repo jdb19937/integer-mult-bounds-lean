@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.UnitPhaseNumerator
+module
+
+public import IntegerMultBounds.Machine.UnitPhaseNumerator
 
 /-! A physical two-bit modulo-four accumulator scans literal Boolean controls.
 Static weights belong to finite control, and each control is consumed in one
 transition. Both flag tapes are literal one-cell words used by the unit kernel. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.WeightedPhaseAccumulator
 noncomputable section
 open UnitPhaseNumerator (low high flags)

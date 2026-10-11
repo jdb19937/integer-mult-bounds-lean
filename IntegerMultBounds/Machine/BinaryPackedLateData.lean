@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.BinaryPackedEarlyData
-import IntegerMultBounds.Machine.CountedPackedParityValue
-import IntegerMultBounds.Machine.CountedPackedControlLoadValue
-import IntegerMultBounds.Compact.PackedInverseValue
+module
+
+public import IntegerMultBounds.Machine.BinaryPackedEarlyData
+public import IntegerMultBounds.Machine.CountedPackedParityValue
+public import IntegerMultBounds.Machine.CountedPackedControlLoadValue
+public import IntegerMultBounds.Compact.PackedInverseValue
 
 /-! Actual fixed-width parity and load words compose two early row actions.
 The dirty control is independent of both early fields and all spectators;
 no initial zero contents are required. Physical placement is separate. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryPackedLateData
 noncomputable section
 open BinaryPackedEarlyData (Target Temp)

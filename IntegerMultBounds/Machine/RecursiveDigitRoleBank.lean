@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.RecursiveShiftRoleBank
-import IntegerMultBounds.Machine.RecursiveDigitInterchangeClean
+module
+
+public import IntegerMultBounds.Machine.RecursiveShiftRoleBank
+public import IntegerMultBounds.Machine.RecursiveDigitInterchangeClean
 
 /-! Place the fully initialized, physically cleaned width-one interchange on
 one permanent role, retaining the common six headers and every spectator. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveDigitRoleBank
 noncomputable section
 open Networks

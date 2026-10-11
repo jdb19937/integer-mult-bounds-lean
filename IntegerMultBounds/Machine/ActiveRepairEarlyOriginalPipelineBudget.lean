@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActiveRepairEarlyOriginalPipelineBudgetArithmetic
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairEarlyOriginalPipelineBudgetArithmetic
 
 /-! Full paid budgets for the actual original-input early repair endpoint.
 Sparse-count absorption includes preparation, sorting, reinsertion and every
 cleanup word. Flags and keys are the literal current-rank key computation. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairEarlyOriginalPipelineBudget
 noncomputable section
 open ActiveRepairEarlyKeyOriginalData ActiveRepairEarlyKeyOriginalValid

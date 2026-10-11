@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActivePrefixStagePairCoordinates
-import IntegerMultBounds.Machine.CompactComplexPhaseSchedule
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStagePairCoordinates
+public import IntegerMultBounds.Machine.CompactComplexPhaseSchedule
 
 /-! The actual complex25 phase compiler's literal row word is implemented by
 physical compact stages. Controls are original-address bilinear coordinates;
 ordered descending edges retain their negative phase. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexPhasePhysical
 noncomputable section
 open CompactGadgetReservationShape (Shape)

@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactNativeRoleChildPrecisionSaved
+module
+
+public import IntegerMultBounds.Machine.CompactNativeRoleChildPrecisionSaved
 
 /-! Actual guarded forward/inverse leaf execution on a split native role.
 Its baseline18 is derived from corrected precision; saved corrected21 and
 payload26, other roles, and the persistent controller/stack are all framed. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactNativeRoleChildGuardRuns
 noncomputable section
 open CompactGadgetReservationShape (Shape)

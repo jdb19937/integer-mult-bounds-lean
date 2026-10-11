@@ -1,6 +1,11 @@
-import IntegerMultBounds.Machine.CompactGadgetReservationHeadersCarvedSchedule
+module
+
+public import IntegerMultBounds.Machine.CompactGadgetReservationHeadersCarvedSchedule
 
 /-! Physical carved-header routing through the unchanged spectator bank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactGadgetReservationHeadersCarvedRouting
 noncomputable section
 open CompactGadgetReservationShape

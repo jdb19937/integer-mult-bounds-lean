@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ArbitraryWidthPieceLoop
-import IntegerMultBounds.Machine.ArbitrarySliceRepeat
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthPieceLoop
+public import IntegerMultBounds.Machine.ArbitrarySliceRepeat
 
 /-! The runtime base-digit driver has an exact semantic prefix invariant.
 Its cumulative offset plus the unprocessed quotient contribution is the full
 width. Consecutive counted slice calls realize precisely the prefix schedule. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthPiecePrefix
 noncomputable section
 open Networks

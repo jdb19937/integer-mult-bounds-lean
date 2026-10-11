@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsPermutation
-import IntegerMultBounds.Machine.ActiveRepairLayoutKeysPipelineCommon
-import IntegerMultBounds.Machine.ActiveRepairRankHeadersEndpoint
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsPermutation
+public import IntegerMultBounds.Machine.ActiveRepairLayoutKeysPipelineCommon
+public import IntegerMultBounds.Machine.ActiveRepairRankHeadersEndpoint
 
 /-! The payload-one rank indexes one entire original-width bit record. The
 flattened records are exactly the physical unchanged row-major bit array. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLayoutRecordsData
 noncomputable section
 open CompactGadgetReservationShape CompactActiveTargetLayout

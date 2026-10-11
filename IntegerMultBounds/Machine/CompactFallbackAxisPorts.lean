@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ButterflyIndependentGuardRoundtrip
+module
+
+public import IntegerMultBounds.Machine.ButterflyIndependentGuardRoundtrip
 
 /-! The full original-header butterfly has only five public ports: its four
 numeric inputs and sole native coefficient stream. All remaining local tapes
 are physically blank, allowing a sparse-axis caller to install derived headers. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactFallbackAxisPorts
 noncomputable section
 

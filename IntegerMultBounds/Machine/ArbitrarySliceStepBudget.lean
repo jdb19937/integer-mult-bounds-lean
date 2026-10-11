@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ArbitrarySliceStep
-import IntegerMultBounds.Machine.ArbitraryWidthPieceBudget
+module
+
+public import IntegerMultBounds.Machine.ArbitrarySliceStep
+public import IntegerMultBounds.Machine.ArbitraryWidthPieceBudget
 
 /-! The fully paid slice step, including preparation, header restoration and
 offset advancement, retains the certified sublinear width exponent. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitrarySliceStepBudget
 noncomputable section
 open Networks

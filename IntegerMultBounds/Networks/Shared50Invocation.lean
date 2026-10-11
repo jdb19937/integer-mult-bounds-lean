@@ -1,10 +1,14 @@
-import IntegerMultBounds.Networks.Shared50Dirty
-import IntegerMultBounds.Networks.CircuitBits
-import Mathlib.Tactic.LinearCombination
+module
+
+public import IntegerMultBounds.Networks.Shared50Dirty
+public import IntegerMultBounds.Networks.CircuitBits
+public import Mathlib.Tactic.LinearCombination
 
 /-! The literal twelve-block optimized invocation. The actual shared DAG
 implements the side map; the fifty central sums complete the identity. Every
 side and central scratch value is restored. Frame and tape costs are separate. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.Shared50Invocation
 

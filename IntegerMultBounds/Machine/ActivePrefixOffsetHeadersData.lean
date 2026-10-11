@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.CompactGadgetReservationHeadersPowerRound
+module
+
+public import IntegerMultBounds.Machine.CompactGadgetReservationHeadersPowerRound
 
 /-! Original descriptor order is W/q/b/n/f. Derived output order is
 P=2^W, f*q, n*b, n*P, n*q; every derived port initially is blank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixOffsetHeadersData
 noncomputable section
 open SharedPlacementAlphabet (setTape)

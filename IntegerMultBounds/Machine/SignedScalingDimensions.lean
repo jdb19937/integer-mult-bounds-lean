@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.SignedScalingPrepared
-import IntegerMultBounds.Machine.NegationDescriptors
+module
+
+public import IntegerMultBounds.Machine.SignedScalingPrepared
+public import IntegerMultBounds.Machine.NegationDescriptors
 
 /-! Signed rational scaling from canonical Q/B descriptors. A literal bootstrap
 writes its own one and derives canonical negation-tail metadata; the two piece
 families are then synthesized by the prepared signed executor. Every descriptor
 handoff is fixed transition-table wiring, with generated metadata retained. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.SignedScalingDimensions
 
 open CountedCopyReuse (empty binary)
@@ -35,7 +40,7 @@ def signPlacement : Fin (8+9) ≃ Fin (11+6) where
   left_inv := by decide +kernel
   right_inv := by decide +kernel
 
-private def signFrame (S : Scratch) (bs : List Bool) (dest : ℤ → Fin 4) (q : ℤ) : Tapes 6 0 :=
+def signFrame (S : Scratch) (bs : List Bool) (dest : ℤ → Fin 4) (q : ℤ) : Tapes 6 0 :=
   ⟨![0,q,S.origin,1,1,1],![empty,dest,S.tape,empty,binary bs,empty]⟩
 
 def ready (Q B : ℕ) (bs qs : List Bool) : Tapes 11 0 :=
@@ -60,7 +65,7 @@ private theorem sign_handoff (S : Scratch) (Q B : ℕ) (bs qs : List Bool) (dest
   simpa only [ha,he] using (Placement.view signPlacement ((ready Q B bs qs).append (signFrame S bs dest q))).symm
 
 /-- Preserve a whole active prefix while placing a following bank. -/
-private def withLeft {s u t r : ℕ} (e : Fin (s+u) ≃ Fin t) : Fin ((r+s)+u) ≃ Fin (r+t) where
+def withLeft {s u t r : ℕ} (e : Fin (s+u) ≃ Fin t) : Fin ((r+s)+u) ≃ Fin (r+t) where
   toFun := Fin.addCases (Fin.addCases (Fin.castAdd t) (fun i => Fin.natAdd r (e (Fin.castAdd u i))))
     (fun i => Fin.natAdd r (e (Fin.natAdd s i)))
   invFun := Fin.addCases (fun i => Fin.castAdd u (Fin.castAdd s i))
@@ -94,20 +99,20 @@ abbrev TapeCount (a d : ℕ) := (FrontTapes a d+(11+6))+5
 def executionPlacement (a d : ℕ) : Fin (SignedScalingPrepared.TapeCount a d+9) ≃ Fin (TapeCount a d) :=
   FamilyPlacement.withFrame (withLeft (r := FrontTapes a d) signPlacement)
 
-private def coefficientInput {c : ℕ} (C : Setup c) (f : ℤ → Fin 4) (p : ℤ) (left : Tapes 2 0) :
+def coefficientInput {c : ℕ} (C : Setup c) (f : ℤ → Fin 4) (p : ℤ) (left : Tapes 2 0) :
     Tapes (ScalingPreparedExecution.TapeCount c) 0 :=
   (ScalingDescriptors.initial C.blockBits C.countBits C.modulus C.current).append
     (((CountedCopyReuse.bank f (fun _ => blank) empty (fun _ => blank) p 0 1 0).append
       (⟨C.origins,C.background⟩ : Tapes c 0)).append left)
 
-private def front {a d : ℕ} (negative : Bool) (A : Setup a) (D : Setup d) (Q : ℕ)
+def front {a d : ℕ} (negative : Bool) (A : Setup a) (D : Setup d) (Q : ℕ)
     (source : ℤ → Fin 4) (p : ℤ) (middle : ℤ → Fin 4) (r : ℤ) (signMiddle : ℤ → Fin 4) (t : ℤ)
     (dest : ℤ → Fin 4) (q : ℤ) (payload : ℕ → List (Fin 4)) : Tapes (FrontTapes a d) 0 :=
   ((coefficientInput A (putWord source p (ScalingExecution.inputWord Q payload)) p (CountedLoopReuse.controls empty middle 0 r)).append
     (coefficientInput D (if negative then signMiddle else dest) (if negative then t else q)
       (CountedLoopReuse.controls empty empty 0 0))).append (CountedSpanSeek.bank empty 0 A.blockBits A.countBits)
 
-private def selectedFrame (negative : Bool) (S : Scratch) (bs : List Bool) (dest : ℤ → Fin 4) (q : ℤ) : Tapes 6 0 :=
+def selectedFrame (negative : Bool) (S : Scratch) (bs : List Bool) (dest : ℤ → Fin 4) (q : ℤ) : Tapes 6 0 :=
   signFrame S bs (if negative then dest else empty) (if negative then q else 0)
 
 /-- All derived sign lengths and their helper constant start blank. The only

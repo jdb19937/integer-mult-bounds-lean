@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActiveRepairLateKeyOriginal
-import IntegerMultBounds.Machine.RepairScan
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairLateKeyOriginal
+public import IntegerMultBounds.Machine.RepairScan
 
 /-! Every physical scan record generates its own field headers, parses its
 genuine growing original rank, writes the full later key, and erases headers.
 No parser or destination descriptor is part of the initial metadata bank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLateOriginalScan
 noncomputable section
 open ActiveRepairLateKeyOriginalData ActiveRepairLateKeyOriginalValid

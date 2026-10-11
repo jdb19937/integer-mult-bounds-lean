@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.PackedEarlyRepeatHeadersPlaced
+module
+
+public import IntegerMultBounds.Machine.PackedEarlyRepeatHeadersPlaced
 
 /-! The shared early repetition-header lifecycle has a paid linear bound
 in the actual reserved role volume, including erasure of both generated factors. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.PackedEarlyRepeatHeadersBudget
 noncomputable section
 open CompactGadgetReservationShape

@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActiveRepairRankHeadersArithmetic
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairRankHeadersArithmetic
 
 /-! A finite descriptor-arithmetic schedule compiles to actual copy, addition,
 subtraction, constant-initialization and erase machines with clean workspace. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairRankHeadersCommands
 noncomputable section
 open SharedPlacementAlphabet (setTape)

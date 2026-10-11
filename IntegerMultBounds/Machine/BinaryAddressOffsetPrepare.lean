@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.BinaryAddressOffsetData
+module
+
+public import IntegerMultBounds.Machine.BinaryAddressOffsetData
 
 /-! Physically build the source address table and the literal dummy-control
 word used by the uniform gather. No complete table or repeated control stream
 is part of the input contract. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryAddressOffsetPrepare
 open SharedPlacementAlphabet (setTape)
 open BinaryAddressOffsetHeaders

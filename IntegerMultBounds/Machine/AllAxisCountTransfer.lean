@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.AllAxisCountHeaders
-import IntegerMultBounds.Machine.AllAxisPhaseStreamInit
-import IntegerMultBounds.Machine.BinaryDescriptorCopyPlaced
+module
+
+public import IntegerMultBounds.Machine.AllAxisCountHeaders
+public import IntegerMultBounds.Machine.AllAxisPhaseStreamInit
+public import IntegerMultBounds.Machine.BinaryDescriptorCopyPlaced
 
 /-! Physically transfer derived coefficient count24 to persistent count59,
 then erase24 so sparse phase offset derivation may reuse it. All other tapes,
 including original rows4 and complete width22, are retained. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.AllAxisCountTransfer
 noncomputable section
 open CompactGadgetReservationShape (Shape)

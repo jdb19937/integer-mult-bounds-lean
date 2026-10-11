@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlLoad
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlNegativePureData
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlLoad
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlNegativePureData
 
 /-! Source-unload path inserts real rowwise negation after the pure-parity
 producer and dimension construction. Positive, negative and repeated streams
 reuse two work tapes; both are erased after rotation. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixDirtyControlNegativePureLoadData
 noncomputable section
 open ActivePrefixDirtyControlLoadProducer (width values)

@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.UnitPhasePolynomialMultiplicity
-import IntegerMultBounds.Machine.AllAxisFullStreamInit
-import IntegerMultBounds.Machine.AllAxisPolynomialStreamClean
+module
+
+public import IntegerMultBounds.Machine.UnitPhasePolynomialMultiplicity
+public import IntegerMultBounds.Machine.AllAxisFullStreamInit
+public import IntegerMultBounds.Machine.AllAxisPolynomialStreamClean
 
 /-! Initialize all polynomial traversal controls from physical immutable
 headers. The external ell scalar65 yields2^ell on60; original row/header
 arithmetic yields rows*2^bits on59 and initializes the live address counter.
 All six temporary numeric tapes are restored before traversal. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.AllAxisPolynomialStreamInit
 noncomputable section
 open CompactGadgetReservationShape (Shape)

@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlConjugationBudget
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlConjugationBudget
 
 /-! Concrete compact conjugations on arbitrary seventeen-port caller banks.
 All sixteen supplied original/prepared descriptors survive; only the full
 array changes and every native private tape returns blank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixDirtyControlConjugationPlaced
 noncomputable section
 open ActivePrefixDirtyControlConjugationData

@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexChildGridAlignment
+module
+
+public import IntegerMultBounds.Machine.CompactComplexChildGridAlignment
 
 /-! Shared-grid promotion after a stopped child fits the actual sibling
 return ledger. The denominator increases by the child axis count; the
 numerator budget reserves two butterfly contributions per returned sibling
 axis, independently of that denominator. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexChildGridReturnBudget
 noncomputable section
 open CompactGadgetReservationShape (Shape)

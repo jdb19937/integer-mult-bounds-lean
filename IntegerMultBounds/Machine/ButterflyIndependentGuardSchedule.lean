@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ButterflyIndependentGuardSemantics
+module
+
+public import IntegerMultBounds.Machine.ButterflyIndependentGuardSemantics
 
 /-! A shared independent guard validates consecutive forward and inverse runs
 at their real accrued precisions. No normalization hypothesis is reintroduced
 between phases; the prior phase's proved grid is the next phase's input. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ButterflyIndependentGuardSchedule
 noncomputable section
 open ButterflyAxisArray (Array)

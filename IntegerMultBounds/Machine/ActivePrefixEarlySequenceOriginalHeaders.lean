@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActivePrefixEarlySequenceOriginalInputs
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixEarlySequenceOriginalInputs
 
 /-! Both numeric header banks are actual producer outputs and are erased
 physically after the four-load action, with all original words retained. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixEarlySequenceOriginalHeaders
 noncomputable section
 open ActivePrefixEarlySequenceOriginalData ActivePrefixEarlySequenceOriginalInputs

@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactComplexPhasePhysical
-import IntegerMultBounds.Machine.ActivePrefixStageNativePairBudget
+module
+
+public import IntegerMultBounds.Machine.CompactComplexPhasePhysical
+public import IntegerMultBounds.Machine.ActivePrefixStageNativePairBudget
 
 /-! The actual complex25 basis word compiles independently of runtime geometry.
 Changing the finite slot type preserves the entire compiled machine, including
 its state count: only the original numerical source and target indices are
 used by the physical header writers. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexPhaseFixedWord
 noncomputable section
 open Networks.BinaryRowProgram (Op)

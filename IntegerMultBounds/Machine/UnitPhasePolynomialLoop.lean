@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.UnitPhaseSharedCoefficient
-import IntegerMultBounds.Machine.CountedLoopHeaderClean
+module
+
+public import IntegerMultBounds.Machine.UnitPhaseSharedCoefficient
+public import IntegerMultBounds.Machine.CountedLoopHeaderClean
 
 /-! A polynomial row shares one retained physical phase across its counted
 coefficient stream. Persistent multiplicity on60 is read and preserved; two
 loop-work tapes61/62 are physically erased afterwards. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.UnitPhasePolynomialLoop
 noncomputable section
 open UnitPhaseNumerator (flags)

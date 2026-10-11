@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.CompactComplexScalarIntegerRows
-import IntegerMultBounds.Machine.RawLinearCombinationComplexEmit
-import IntegerMultBounds.Machine.CompactNativeRoleHeaders
+module
+
+public import IntegerMultBounds.Machine.CompactComplexScalarIntegerRows
+public import IntegerMultBounds.Machine.RawLinearCombinationComplexEmit
+public import IntegerMultBounds.Machine.CompactNativeRoleHeaders
 
 /-! Actual complex25 scalar-row output expressions, in the original named wire
 ordering. The target executes its literal integer sparse expression; every
 other stored wire executes an actual doubling kernel, so the common dyadic
 denominator advances once on all real and imaginary output fields. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexScalarWireEmit
 noncomputable section
 open CompactComplexScalarIntegerRows

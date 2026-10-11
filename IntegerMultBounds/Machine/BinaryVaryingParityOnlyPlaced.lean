@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.BinaryVaryingParityOnlyGather
-import IntegerMultBounds.Machine.BinaryVaryingOffsetGatherPlaced
+module
+
+public import IntegerMultBounds.Machine.BinaryVaryingParityOnlyGather
+public import IntegerMultBounds.Machine.BinaryVaryingOffsetGatherPlaced
 
 /-! The pure-parity gather on six arbitrary caller ports. Its physical Boolean
 transition uses only the target bit; controls are still scanned and retained. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryVaryingParityOnlyPlaced
 noncomputable section
 variable {t a : ℕ}

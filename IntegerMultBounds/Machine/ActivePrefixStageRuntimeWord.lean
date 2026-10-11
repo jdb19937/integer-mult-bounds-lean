@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixStageRuntimeSelected
-import IntegerMultBounds.Machine.ActivePrefixSelectedOffsetData
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStageRuntimeSelected
+public import IntegerMultBounds.Machine.ActivePrefixSelectedOffsetData
 
 /-! Literal complete active words and bits of the physically selected stage.
 The source control and target mask are extracted from original addresses. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixStageRuntimeWord
 noncomputable section
 open CompactGadgetReservationShape (Shape)

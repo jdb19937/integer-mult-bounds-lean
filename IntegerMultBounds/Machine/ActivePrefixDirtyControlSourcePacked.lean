@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlGlobalCoordinates
-import IntegerMultBounds.Machine.BinaryPackedLatePermutation
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlGlobalCoordinates
+public import IntegerMultBounds.Machine.BinaryPackedLatePermutation
 
 /-! The physical compact source offsets are the exact load/unload arithmetic
 of the packed late permutation, including modular carry and borrow. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixDirtyControlSourcePacked
 open CompactGadgetReservationShape (Shape)
 open ActivePrefixLayoutShapes

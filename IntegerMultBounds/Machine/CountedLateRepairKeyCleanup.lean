@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.CountedLateRepairKeyWrite
+module
+
+public import IntegerMultBounds.Machine.CountedLateRepairKeyWrite
 
 /-! Physically erase every generated later-key word and the consumed flag.
 The original controls, descriptors, scan counter and marked key are retained. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedLateRepairKeyCleanup
 noncomputable section
 open CountedLateRepairKeyBank

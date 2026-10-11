@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActivePrefixEarlySequenceRun
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixEarlySequenceRun
 
 /-! Certified width-exponent cost for the actual four-call shared schedule.
 Every producer, repeated offset, swap, rotation, cleanup and join is charged. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixEarlySequenceBudget
 open CompactGadgetReservationShape
 open ActivePrefixLayoutShapes

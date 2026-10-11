@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ArbitraryWidthHighPrepare
-import IntegerMultBounds.Swap.Recurrence
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthHighPrepare
+public import IntegerMultBounds.Swap.Recurrence
 
 /-! The concrete runtime high-row selector agrees with the manuscript's
 large-width branch. The complementary widths form a bounded fallback set. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthHighGuard
 open ArbitraryWidthHighPrepare
 

@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactComplexScalarCountHeaders
+module
+
+public import IntegerMultBounds.Machine.CompactComplexScalarCountHeaders
 
 /-! Count construction runs directly on original caller descriptors and one
 fresh permanent count port. Every other caller tape and all private storage
 are retained or restored, with no copied count supplied to the constructor. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexScalarCountPlaced
 noncomputable section
 open CompactGadgetReservationShape (Shape)

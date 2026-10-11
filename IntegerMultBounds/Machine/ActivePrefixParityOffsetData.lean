@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.ActivePrefixSelectedOffsetData
-import IntegerMultBounds.Machine.BinaryVaryingParityOffsetGather
-import IntegerMultBounds.Machine.GatherStreamData
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixSelectedOffsetData
+public import IntegerMultBounds.Machine.BinaryVaryingParityOffsetGather
+public import IntegerMultBounds.Machine.GatherStreamData
 
 /-! Literal parity-XOR offsets from the current full prefix-address target
 field and physically extracted source controls. These positive offsets feed
 the paid rowwise negation stage for the final compact load. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixParityOffsetData
 
 def offsets (W startT startX q b rho n f : ℕ) (hT : startT+n*q≤W) (hX : startX+f*q≤W)

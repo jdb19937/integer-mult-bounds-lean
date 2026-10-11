@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactGadgetReservationPlacement
-import IntegerMultBounds.Machine.PlacedDescriptorConstruction
-import IntegerMultBounds.Machine.BinaryDescriptorDifference
-import IntegerMultBounds.Machine.RoundedRowDescriptor
+module
+
+public import IntegerMultBounds.Machine.CompactGadgetReservationPlacement
+public import IntegerMultBounds.Machine.PlacedDescriptorConstruction
+public import IntegerMultBounds.Machine.BinaryDescriptorDifference
+public import IntegerMultBounds.Machine.RoundedRowDescriptor
 
 /-! Fixed clean descriptor primitives share one fifteen-tape private bank.
 Every operand is a physical marked word; every output begins blank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactGadgetReservationHeadersCore
 noncomputable section
 open SharedPlacementAlphabet (setTape)

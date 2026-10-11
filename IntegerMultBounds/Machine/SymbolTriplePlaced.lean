@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.SymbolTripleClean
-import IntegerMultBounds.Machine.Alphabet
-import IntegerMultBounds.Machine.TwoTapeAt
-import IntegerMultBounds.Machine.ActiveTargetRotation
+module
+
+public import IntegerMultBounds.Machine.SymbolTripleClean
+public import IntegerMultBounds.Machine.Alphabet
+public import IntegerMultBounds.Machine.TwoTapeAt
+public import IntegerMultBounds.Machine.ActiveTargetRotation
 
 /-! Clean physical conversion at arbitrary distinct caller slots and in the
 stage alphabet. Only the two selected tapes are active, so arbitrary original
 headers, controller registers and all other tapes are retained literally. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.SymbolTriplePlaced
 noncomputable section
 variable {a t B : ℕ}

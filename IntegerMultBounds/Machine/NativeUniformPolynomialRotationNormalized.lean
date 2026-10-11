@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.NativeUniformPolynomialRotationSemantics
-import IntegerMultBounds.Machine.UnitPhasePolynomialRestore
-import IntegerMultBounds.Machine.BlankWordOverwriteAt
-import IntegerMultBounds.Machine.UnitPhaseFullStreamNormalized
+module
+
+public import IntegerMultBounds.Machine.NativeUniformPolynomialRotationSemantics
+public import IntegerMultBounds.Machine.UnitPhasePolynomialRestore
+public import IntegerMultBounds.Machine.BlankWordOverwriteAt
+public import IntegerMultBounds.Machine.UnitPhaseFullStreamNormalized
 
 /-! Actual uniform-phase stream results are rewound, overwritten back onto
 native source56 and erased on output58. The retained count/columns headers
 and every other tape are unchanged at the reusable endpoint. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.NativeUniformPolynomialRotationNormalized
 noncomputable section
 open NativeUniformPolynomialRotation (bank phase flagged cleared)

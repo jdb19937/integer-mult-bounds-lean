@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.CompactComplexRootDigitRound
-import IntegerMultBounds.Machine.BinaryDescriptorQueueEmit
-import IntegerMultBounds.Machine.LoopChain
-import Mathlib.Data.Nat.Digits.Lemmas
+module
+
+public import IntegerMultBounds.Machine.CompactComplexRootDigitRound
+public import IntegerMultBounds.Machine.BinaryDescriptorQueueEmit
+public import IntegerMultBounds.Machine.LoopChain
+public import Mathlib.Data.Nat.Digits.Lemmas
 
 /-! A fixed while controller physically enumerates all low-to-high base digits
 of the original active-prefix word, writing a forward binary-field queue.
 Neither the digits nor root-path descriptors enter its finite control. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexRootDigits
 noncomputable section
 open SharedPlacementAlphabet (setTape)

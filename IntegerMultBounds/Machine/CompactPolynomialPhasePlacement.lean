@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.CompactPolynomialPhaseDispatch
-import IntegerMultBounds.Machine.ActivePrefixStageNativePolynomial
-import IntegerMultBounds.Machine.SharedPlacementAlphabet
+module
+
+public import IntegerMultBounds.Machine.CompactPolynomialPhaseDispatch
+public import IntegerMultBounds.Machine.ActivePrefixStageNativePolynomial
+public import IntegerMultBounds.Machine.SharedPlacementAlphabet
 
 /-! Place the actual fixed phase-family call on the caller's native source.
 The numeric phase bank is outside the entire caller bank; all other caller
 cells, including appended native workspace and persistent storage, are framed.
 Metadata preparation and all-axis phase aggregation remain separate. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactPolynomialPhasePlacement
 noncomputable section
 open CompactGadgetReservationShape (Shape)

@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ButterflyInverseAxisArray
+module
+
+public import IntegerMultBounds.Machine.ButterflyInverseAxisArray
 
 /-! A fixed runtime-counted schedule executes successive selected axes. Every
 iteration constructs its own powers and geometry from original D,t,R,p, runs the
 physical native inverse butterfly and erases all derived state before the next axis.
 The cost is uniform linear volume times the number of actually processed axes. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ButterflyInverseAxisSchedule
 noncomputable section
 open ButterflyAxisArray (Array Width)

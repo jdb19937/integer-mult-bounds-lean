@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.ArbitraryWidthHighCommonSelector
-import IntegerMultBounds.Machine.ArbitraryWidthHighBranchComposition
-import IntegerMultBounds.Machine.ArbitraryWidthHighCommonHighBody
-import IntegerMultBounds.Machine.ArbitraryWidthHighFramedFallback
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthHighCommonSelector
+public import IntegerMultBounds.Machine.ArbitraryWidthHighBranchComposition
+public import IntegerMultBounds.Machine.ArbitraryWidthHighCommonHighBody
+public import IntegerMultBounds.Machine.ArbitraryWidthHighFramedFallback
 
 /-! One actual runtime selector chooses the proved high body or elementary
 fallback, both on the same bank with identical exact transpose endpoints. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthHighCommonDispatch
 noncomputable section
 open Networks

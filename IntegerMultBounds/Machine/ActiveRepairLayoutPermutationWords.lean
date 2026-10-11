@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.BinaryAddressTableData
-import IntegerMultBounds.Machine.ActiveRepairLayoutPermutationFields
+module
+
+public import IntegerMultBounds.Machine.BinaryAddressTableData
+public import IntegerMultBounds.Machine.ActiveRepairLayoutPermutationFields
 
 /-! The real recovered machine words are the local permutation destination,
 including unrestricted bad addresses. Concatenation is mathematical only. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLayoutPermutationWords
 noncomputable section
 open ActiveRepairLayoutPermutationFields

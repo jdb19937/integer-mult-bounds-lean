@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.RecursiveDigitInstall
-import IntegerMultBounds.Machine.RecursiveDigitLayout
+module
+
+public import IntegerMultBounds.Machine.RecursiveDigitInstall
+public import IntegerMultBounds.Machine.RecursiveDigitLayout
 
 /-! Width-one base interchange from six original recursive headers and a sole
 flat array: actual dimension arithmetic, marked descriptor installation, then
 initialized/clean digit interchange. The outer cleanup remains a separate layer. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveDigitInterchangeConstruct
 open RecursiveInterchangeLayout (Descriptor volume)
 open RecursiveDigitLayout (outer view array)

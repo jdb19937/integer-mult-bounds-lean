@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexControllerHeaderStack
-import IntegerMultBounds.Machine.CompactComplexCallReturn
+module
+
+public import IntegerMultBounds.Machine.CompactComplexControllerHeaderStack
+public import IntegerMultBounds.Machine.CompactComplexCallReturn
 
 /-! Packed occurrence/coordinate return PCs live on a chosen appended storage
 tape. Actual binary-pop dispatch selects the continuation, restoring exactly
 the older complete stack while framing the native66 and root controller. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexControllerReturnStack
 noncomputable section
 open CompactComplexControllerNativeFrame

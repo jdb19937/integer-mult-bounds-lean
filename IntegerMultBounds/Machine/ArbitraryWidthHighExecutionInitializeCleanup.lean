@@ -1,6 +1,11 @@
-import IntegerMultBounds.Machine.ArbitraryWidthHighExecutionInitialize
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthHighExecutionInitialize
 
 /-! Reverse physical erasure of all three high-execution private header banks. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthHighExecutionInitializeCleanup
 noncomputable section
 open Networks

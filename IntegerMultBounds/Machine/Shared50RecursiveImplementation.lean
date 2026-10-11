@@ -1,13 +1,18 @@
-import IntegerMultBounds.Machine.Shared50RecursiveBankNodes
-import IntegerMultBounds.Machine.Shared50RecursiveCallLayout
-import IntegerMultBounds.Machine.Shared50RecursiveNodeLayout
-import IntegerMultBounds.Machine.Shared50RecursiveControl
-import IntegerMultBounds.Machine.RecursiveDigitRoleBank
-import IntegerMultBounds.Machine.RecursiveChildReturnRoleBank
+module
+
+public import IntegerMultBounds.Machine.Shared50RecursiveBankNodes
+public import IntegerMultBounds.Machine.Shared50RecursiveCallLayout
+public import IntegerMultBounds.Machine.Shared50RecursiveNodeLayout
+public import IntegerMultBounds.Machine.Shared50RecursiveControl
+public import IntegerMultBounds.Machine.RecursiveDigitRoleBank
+public import IntegerMultBounds.Machine.RecursiveChildReturnRoleBank
 
 /-! One concrete fixed recursive graph: all implementation fields are actual
 physical programs on the common bank. No runtime width or recursion depth is a
 program parameter. Correctness of the whole recursive execution is separate. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.Shared50RecursiveImplementation
 noncomputable section
 open Networks

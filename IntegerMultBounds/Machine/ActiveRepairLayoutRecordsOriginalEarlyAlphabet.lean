@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsAssemblyOriginalEarly
-import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsAlphabet
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsAssemblyOriginalEarly
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsAlphabet
 
 /-! The complete original-input early repair executes in the fixed prime
 alphabet with literal binary tapes and unchanged runtime. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLayoutRecordsOriginalEarlyAlphabet
 noncomputable section
 open CompactGadgetReservationShape (Shape)

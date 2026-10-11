@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexRolePhaseContinuation
-import IntegerMultBounds.Machine.CompactNativeRoleConjugatedActual
+module
+
+public import IntegerMultBounds.Machine.CompactComplexRolePhaseContinuation
+public import IntegerMultBounds.Machine.CompactNativeRoleConjugatedActual
 
 /-! Actual multiplier geometry supplies readiness and packed repair for every
 real complex25 occurrence's original named role. Retained stored width and
 literal coefficient word/head remain explicit controller invariants. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexRolePhaseActual
 noncomputable section
 open Sizes

@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlLoadPlaced
-import IntegerMultBounds.Machine.BinaryPackedFieldSwap
-import IntegerMultBounds.Machine.ActiveTargetHighestLaterValue
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlLoadPlaced
+public import IntegerMultBounds.Machine.BinaryPackedFieldSwap
+public import IntegerMultBounds.Machine.ActiveTargetHighestLaterValue
 
 /-! Two literal one-bit fields in the original array with arbitrary outer
 rows. Numeric coordinates are inputs; the actual pure offset producer reads
 the earlier bit and all generated streams are physically erased. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveTargetHighestPairData
 noncomputable section
 open Networks.Shared50ModularControl (prime)

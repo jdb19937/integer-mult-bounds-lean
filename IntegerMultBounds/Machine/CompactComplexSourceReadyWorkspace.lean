@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyStoppedLeaf
-import IntegerMultBounds.Machine.CompactComplexSourceReadyGuard
-import IntegerMultBounds.Machine.CompactComplexNonleafSpectatorPlacement
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyStoppedLeaf
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyGuard
+public import IntegerMultBounds.Machine.CompactComplexNonleafSpectatorPlacement
 
 /-! One fixed shared source-ready bank for node execution. Public routines
 preserve the leaf and denominator suffix; spectator handoffs borrow only its
 last ten tapes. Neither tape layout nor any lifted state count depends on depth. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyWorkspace
 noncomputable section
 variable {s c q b : ℕ}

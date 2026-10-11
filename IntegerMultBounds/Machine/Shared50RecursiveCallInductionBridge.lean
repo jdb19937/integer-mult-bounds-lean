@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.Shared50RecursiveCallReady
+module
+
+public import IntegerMultBounds.Machine.Shared50RecursiveCallReady
 
 /-! Exact canonical-bank adapters for applying the recursive induction to an
 actual entered call and returning to the physical recovery block. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.Shared50RecursiveCallInductionBridge
 noncomputable section
 open Networks

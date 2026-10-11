@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActiveTargetHighestRun
+module
+
+public import IntegerMultBounds.Machine.ActiveTargetHighestRun
 
 /-! The actual rational coefficient-one one-bit rotation is the elementary
 highest selected XOR, with every prefix/intervening/suffix coordinate fixed. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveTargetHighestValue
 noncomputable section
 open ActiveTargetHighestRun

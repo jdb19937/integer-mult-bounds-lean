@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActivePrefixCorrectionLoadData
-import IntegerMultBounds.Machine.ActivePrefixLayoutFields
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixCorrectionLoadData
+public import IntegerMultBounds.Machine.ActivePrefixLayoutFields
 
 /-! Every original row receives this address's freshly computed modular
 control-minus-selected correction. Repetition preserves prefix order exactly,
 including the empty target-width case. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixCorrectionLoadValue
 open ActivePrefixCorrectionLoadData
 open ActivePrefixSelectedOffsetBank (Shape)

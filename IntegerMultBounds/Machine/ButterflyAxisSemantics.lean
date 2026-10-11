@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ButterflyAxisSchedule
+module
+
+public import IntegerMultBounds.Machine.ButterflyAxisSchedule
 
 /-! The actual global coefficient arrays retain a bounded Gaussian grid through
 all counted axes. The precision increases once per pass; one fixed signed word
 width suffices for the whole schedule, including every intermediate state. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ButterflyAxisSemantics
 noncomputable section
 open ButterflyAxisArray ButterflyAxisSchedule ButterflyStreamSemantics

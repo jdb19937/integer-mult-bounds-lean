@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.BinaryAddressOffsetHeaders
-import IntegerMultBounds.Machine.BinaryParityXorOffsetPlaced
+module
+
+public import IntegerMultBounds.Machine.BinaryAddressOffsetHeaders
+public import IntegerMultBounds.Machine.BinaryParityXorOffsetPlaced
 
 /-! Paid width/range setup for source-prefix repetition. The child-stage ports
 are original q/b/n and physical L/K descriptors; original controls are retained.
 No source field is moved: L is the exact trailing rotation-row multiplicity. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryPackedEarlyPrefixHeaders
 open SharedPlacementAlphabet (setTape)
 open BinaryAddressOffsetHeaders (binary widthBits rangeBits countBits)

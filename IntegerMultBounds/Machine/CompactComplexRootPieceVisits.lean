@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactComplexRecursiveGeometry
+module
+
+public import IntegerMultBounds.Machine.CompactComplexRecursiveGeometry
 
 /-! The runtime digit-clock boundaries are exactly the canonical root Visits.
 Each digit produces that many consecutive equal-width pieces; the next digit
 increments the exponent and grows width by the actual fixed arity. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexRootPieceVisits
 noncomputable section
 open CompactComplexRecursiveGeometry

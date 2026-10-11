@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlLoad
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlLoad
 
 /-! The complete original-input dirty-U load actions on arbitrary caller
 tapes. Eight original headers and the array are permanent; all private storage
 starts and returns blank, with arbitrary caller spectators unchanged. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixDirtyControlLoadPlaced
 noncomputable section
 open ActivePrefixDirtyControlLoadData

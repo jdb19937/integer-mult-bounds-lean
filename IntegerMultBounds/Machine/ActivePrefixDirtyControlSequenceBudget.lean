@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlSequenceRun
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlSequenceRun
 
 /-! End-to-end cost of the prepared later-source schedule, including its
 twelve compact swaps, ten full rotations, generated streams and all cleanup. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixDirtyControlSequenceBudget
 open ActivePrefixDirtyControlSequenceData ActivePrefixDirtyControlSequenceStages ActivePrefixDirtyControlSequenceRun
 open CompactGadgetReservationShape

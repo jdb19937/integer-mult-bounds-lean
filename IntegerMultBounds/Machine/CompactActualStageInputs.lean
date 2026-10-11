@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactActualStageGeometry
-import IntegerMultBounds.Machine.ActivePrefixStageFullData
+module
+
+public import IntegerMultBounds.Machine.CompactActualStageGeometry
+public import IntegerMultBounds.Machine.ActivePrefixStageFullData
 
 /-! Actual scalar/row readiness fills the original-input physical stage
 record. Its repair allowances follow at density constant one for both source
 orders; no derived descriptor word or per-node width allowance is supplied. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactActualStageInputs
 noncomputable section
 open CompactGadgetReservationShape (Shape)

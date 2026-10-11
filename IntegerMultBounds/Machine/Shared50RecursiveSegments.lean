@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.RecursiveScalarSchedule
-import IntegerMultBounds.Machine.Shared50OrderedPieces
+module
+
+public import IntegerMultBounds.Machine.RecursiveScalarSchedule
+public import IntegerMultBounds.Machine.Shared50OrderedPieces
 
 /-! Complete nonrecursive pieces of the actual fixed Shared50 control on the
 heterogeneous recursive role bank. Scalar stages construct their own varying
 views and restore the original six headers and blank stack. No regrouped
 headers, initialized scratch or replacement schedule are supplied. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.Shared50RecursiveSegments
 noncomputable section
 open Networks

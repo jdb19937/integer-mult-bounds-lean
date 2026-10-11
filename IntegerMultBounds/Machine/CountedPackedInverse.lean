@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CountedPackedArith
-import IntegerMultBounds.Compact.PackedInverseValue
+module
+
+public import IntegerMultBounds.Machine.CountedPackedArith
+public import IntegerMultBounds.Compact.PackedInverseValue
 
 /-! Actual fixed-control inverse packed arithmetic from the original runtime
 q/b/count headers. All fourteen private tapes are blank at both endpoints. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedPackedInverse
 noncomputable section
 variable {a : ℕ}

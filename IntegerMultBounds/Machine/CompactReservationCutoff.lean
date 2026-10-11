@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.CompactReservationGrowth
-import IntegerMultBounds.Machine.CompactGlobalRowInitialEndpoint
+module
+
+public import IntegerMultBounds.Machine.CompactReservationGrowth
+public import IntegerMultBounds.Machine.CompactGlobalRowInitialEndpoint
 
 /-! Honest fallback and nonfallback split for the actual original selected
 axes. D≤Q0 uses individual kernels only. D>Q0 admits the proved reservation;
 the quantitative cutoff 2Q0 preserves at least half the selected active axes.
 This module supplies axis counts and padding costs, not a free implementation
 of those individual kernels or of the full recursive layer. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactReservationCutoff
 noncomputable section
 open Filter Asymptotics Sizes

@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactComplexControllerNativeFrame
+module
+
+public import IntegerMultBounds.Machine.CompactComplexControllerNativeFrame
 
 /-! Persistent descriptor frames live on appended recursion-storage tapes,
 strictly after the complete native66 bank. Saving/restoring them retains the
 whole controller, native payload and every other persistent storage tape. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexControllerHeaderStack
 noncomputable section
 open CompactComplexControllerNativeFrame

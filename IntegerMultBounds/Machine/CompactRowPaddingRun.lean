@@ -1,16 +1,21 @@
-import IntegerMultBounds.Machine.CompactRowPaddingRound
-import IntegerMultBounds.Machine.RowPaddingConstructedAlphabet
+module
+
+public import IntegerMultBounds.Machine.CompactRowPaddingRound
+public import IntegerMultBounds.Machine.RowPaddingConstructedAlphabet
 
 /-! Actual whole-record binary padding from original row/record-width runtime
 headers. The fixed role count, enclosing row count, group-one and both span
 counts are physically constructed; every generated tape is erased. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactRowPaddingRun
 noncomputable section
 variable {a : ℕ}
 open IntegerMultBounds.Compact.Layout (paddedRows)
 
-private def head : Option (List Bool) → ℤ | none => 0 | some _ => 1
-private def tape : Option (List Bool) → ℤ → Fin (a+4)
+def head : Option (List Bool) → ℤ | none => 0 | some _ => 1
+def tape : Option (List Bool) → ℤ → Fin (a+4)
   | none => fun _ => blank
   | some bs => RadixZeroFill.encodedBinary bs
 

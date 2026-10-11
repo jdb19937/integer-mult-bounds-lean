@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyOrientedStoppedTablePath
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyOrientedStoppedTablePath
 
 /-! Actual pre-orientation and stopping-test marker selects canonical tag1 or
 tag2. Only the real halted marker is classified; no outcome oracle is assumed. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyOrientedEntryTablePath
 noncomputable section
 open Networks

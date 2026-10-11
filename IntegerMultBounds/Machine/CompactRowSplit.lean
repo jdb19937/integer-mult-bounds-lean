@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactRowHeaders
-import IntegerMultBounds.Machine.RecursiveRowsRoleBank
+module
+
+public import IntegerMultBounds.Machine.CompactRowHeaders
+public import IntegerMultBounds.Machine.RecursiveRowsRoleBank
 
 /-! Complete-row cyclic splitting from original runtime dimensions. Physical
 role ports are fixed; every record cell, including its dirty suffix, is moved
 literally. Divisibility and positive row dimensions remain explicit. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactRowSplit
 noncomputable section
 variable {a c : ℕ}

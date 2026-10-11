@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.BinaryVaryingControlOffsetGather
-import IntegerMultBounds.Machine.BinaryVaryingSelectedOffsetData
-import IntegerMultBounds.Compact.ToggleValue
+module
+
+public import IntegerMultBounds.Machine.BinaryVaryingControlOffsetGather
+public import IntegerMultBounds.Machine.BinaryVaryingSelectedOffsetData
+public import IntegerMultBounds.Compact.ToggleValue
 
 /-! Literal varying control masks for the third early load. Combined with
 the varying selected offsets, these are the two physical inputs to the
 existing rowwise modular subtraction machine. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryVaryingControlOffsetData
 open BinaryVaryingSelectedOffsetData (stream)
 

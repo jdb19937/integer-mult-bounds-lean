@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.RecursiveVolumeClean
-import IntegerMultBounds.Machine.RecursiveXorRoleBank
+module
+
+public import IntegerMultBounds.Machine.RecursiveVolumeClean
+public import IntegerMultBounds.Machine.RecursiveXorRoleBank
 
 /-! Physical preparation of the mixed-operation permanent bank. Two initially
 blank auxiliary tapes become the empty XOR clock and the complete stream-volume
 descriptor, while every role, scratch tape, header and spectator is retained.
 All private constructor/tracker tapes are returned blank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveVolumeRoleBank
 noncomputable section
 open Networks
@@ -13,7 +18,7 @@ open RecursiveInterchangeLayout (Descriptor volume)
 open RecursiveShiftRoleBank (common headers)
 variable {t u : ℕ}
 
-private theorem prime_ge : 2 ≤ prime := Shared50ModularControl.prime_prime.two_le
+theorem prime_ge : 2 ≤ prime := Shared50ModularControl.prime_prime.two_le
 
 def controls : Option (List Bool) → Tapes 2 prime
   | none => SharedBank.empty 2 prime

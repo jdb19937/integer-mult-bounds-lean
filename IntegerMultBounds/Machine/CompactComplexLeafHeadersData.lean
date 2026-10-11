@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactComplexChildHeadersData
+module
+
+public import IntegerMultBounds.Machine.CompactComplexChildHeadersData
 
 /-! Exponent-zero children are scalar leaves, not internal arity-slot stages.
 Their thirteen-header bank records one selected coordinate, retaining the
 parent arity and pair labels; no fictitious zero-width Stage is introduced. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexLeafHeadersData
 noncomputable section
 open CompactChildHeadersArithmetic CompactComplexRecursiveGeometry

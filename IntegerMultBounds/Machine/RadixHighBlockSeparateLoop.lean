@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.RadixHighBlockJoinLoop
-import IntegerMultBounds.Machine.RadixHighBlockSeparateSemantics
+module
+
+public import IntegerMultBounds.Machine.RadixHighBlockJoinLoop
+public import IntegerMultBounds.Machine.RadixHighBlockSeparateSemantics
 
 /-! Actual inverse ordered high-block separation by a paid counted loop.
 Every body removes the trailing prefix digit and restores it after S. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RadixHighBlockSeparateLoop
 noncomputable section
 open RadixHighBlockJoinBank
@@ -19,8 +24,8 @@ def finalBank (P S E r : ℕ) (source : ℤ → Fin (a+4)) (ss op oe : List Bool
     (x : Fin (P*S*q^r*E) → Fin (a+4)) :=
   bank (q := q) (word source x) ss op oe (some (bits P)) (some (bits (q^r*E))) (some (bits q))
 
-private theorem input_succ (P S q r E : ℕ) : (P*q^r)*q*(S*E) = P*q^(r+1)*(S*E) := by rw [pow_succ]; ring
-private theorem middle_succ (P S q r E : ℕ) : P*q^r*(S*(q*E)) = (P*q^r)*S*q*E := by ring
+theorem input_succ (P S q r E : ℕ) : (P*q^r)*q*(S*E) = P*q^(r+1)*(S*E) := by rw [pow_succ]; ring
+theorem middle_succ (P S q r E : ℕ) : P*q^r*(S*(q*E)) = (P*q^r)*S*q*E := by ring
 private theorem output_succ (P S q r E : ℕ) : P*S*q^(r+1)*E = P*S*q^r*(q*E) := by rw [pow_succ]; ring
 
 def nextArray (P S E r : ℕ) (x : Fin (P*q^(r+1)*(S*E)) → Fin (a+4)) :

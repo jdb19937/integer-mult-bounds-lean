@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadySinkCorrections
-import IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedRoleRejoin
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadySinkCorrections
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedRoleRejoin
 
 /-! The actual sink corrections feed physical contraction, rejoining and
 saved-call orientation on the same source-ready bank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedFinal
 noncomputable section
 open CompactGadgetReservationShape (Shape)

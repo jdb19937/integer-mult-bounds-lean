@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlLayoutFields
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlLoadData
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlLayoutFields
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlLoadData
 
 /-! The later source-loading conjugation uses the selected source bits in the
 actual active-after field and the retained compact T field as controls. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixDirtyControlSourceGeometry
 open CompactGadgetReservationShape CompactActiveTargetGeometry
 open ActivePrefixLayoutShapes ActivePrefixLayoutGeometry

@@ -1,13 +1,18 @@
-import IntegerMultBounds.Networks.GroupedCoefficients
-import IntegerMultBounds.Networks.RationalScalarGrid
-import IntegerMultBounds.Networks.GaussianFrameGrid
-import IntegerMultBounds.Networks.GaussianBoundedMotif
-import IntegerMultBounds.Networks.ComplexFramedExecution
-import IntegerMultBounds.Machine.ActivePrefixStageParameters
+module
+
+public import IntegerMultBounds.Networks.GroupedCoefficients
+public import IntegerMultBounds.Networks.RationalScalarGrid
+public import IntegerMultBounds.Networks.GaussianFrameGrid
+public import IntegerMultBounds.Networks.GaussianBoundedMotif
+public import IntegerMultBounds.Networks.ComplexFramedExecution
+public import IntegerMultBounds.Machine.ActivePrefixStageParameters
 
 /-! Exact scalar-prefix grids for the actual labeled complex25 grouped
 network. Prefix states retain their true role frames; the frame's own grid
 budget is derived from the finite Walsh definition, not a supplied contract. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactFramedScalarGrid
 noncomputable section
 attribute [local irreducible] IntegerMultBounds.Networks.ComplexRank25.program

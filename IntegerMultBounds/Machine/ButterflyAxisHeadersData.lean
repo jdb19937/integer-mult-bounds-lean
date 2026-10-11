@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.ButterflyAxisHeadersArithmetic
-import IntegerMultBounds.Machine.ButterflyGuard
-import IntegerMultBounds.Machine.CompactRowHeaders
+module
+
+public import IntegerMultBounds.Machine.ButterflyAxisHeadersArithmetic
+public import IntegerMultBounds.Machine.ButterflyGuard
+public import IntegerMultBounds.Machine.CompactRowHeaders
 
 /-! Actual selected-axis header synthesis from original dimension D, selected
 position t, polynomial multiplicity R and initial precision p. Signed coefficient
 width, binary powers, row dimensions and paired-loop counts are physically
 constructed by a fixed arithmetic schedule; no derived descriptor is preloaded. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ButterflyAxisHeadersData
 noncomputable section
 open ButterflyAxisHeadersArithmetic

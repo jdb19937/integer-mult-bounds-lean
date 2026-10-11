@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.RadixHighBlockJoinSetup
-import IntegerMultBounds.Machine.RadixHighBlockJoinPlacement
+module
+
+public import IntegerMultBounds.Machine.RadixHighBlockJoinSetup
+public import IntegerMultBounds.Machine.RadixHighBlockJoinPlacement
 
 /-! Reusable physical prefix/suffix arithmetic inside ordered high-digit
 movement. Fixed-base multiplication and exact quotient share thirteen blank
 tapes, preserve every spectator and retain the supplied base descriptor. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RadixHighBlockJoinArithmetic
 noncomputable section
 open RadixHighBlockJoinBank

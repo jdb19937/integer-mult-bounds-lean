@@ -1,12 +1,17 @@
-import IntegerMultBounds.Machine.BinaryVaryingSelectedOffsetGather
-import IntegerMultBounds.Machine.BinaryVaryingControlOffsetGather
-import IntegerMultBounds.Machine.BinaryVaryingParityOffsetGather
-import IntegerMultBounds.Machine.CleanSubbank
-import IntegerMultBounds.Machine.SharedBankFrames
+module
+
+public import IntegerMultBounds.Machine.BinaryVaryingSelectedOffsetGather
+public import IntegerMultBounds.Machine.BinaryVaryingControlOffsetGather
+public import IntegerMultBounds.Machine.BinaryVaryingParityOffsetGather
+public import IntegerMultBounds.Machine.CleanSubbank
+public import IntegerMultBounds.Machine.SharedBankFrames
 
 /-! All three runtime varying-control gathers on six arbitrary caller ports.
 The original headers and physical streams remain on caller tapes; each native
 scratch tape is blank again and every complementary caller tape is framed. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryVaryingOffsetGatherPlaced
 noncomputable section
 variable {t a : ℕ}

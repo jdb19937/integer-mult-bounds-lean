@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactComplexNonleafRoleMergeReturn
-import IntegerMultBounds.Machine.CompactComplexNonleafRoleTransferBudget
-import IntegerMultBounds.Machine.CompactComplexNonleafRoleReturnBudget
+module
+
+public import IntegerMultBounds.Machine.CompactComplexNonleafRoleMergeReturn
+public import IntegerMultBounds.Machine.CompactComplexNonleafRoleTransferBudget
+public import IntegerMultBounds.Machine.CompactComplexNonleafRoleReturnBudget
 
 /-! Complete physical merge-and-parent-recovery costs are linear in the
 parent native volume. The bound belongs to the actual composed tape program;
 recursive child computation and common-grid alignment remain separate. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexNonleafRoleMergeReturnBudget
 noncomputable section
 open CompactGadgetReservationShape (Shape)

@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedRootFinal
-import IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedActualTable
-import IntegerMultBounds.Machine.CompactComplexFixedNodePaths
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedRootFinal
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedActualTable
+public import IntegerMultBounds.Machine.CompactComplexFixedNodePaths
 
 /-! Actual corrected root finalization reaches its empty return guard,
 preserving the computed result and saved-stack bank with the table join paid. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedRootTablePath
 noncomputable section
 open CompactGadgetReservationShape (Shape)

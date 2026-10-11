@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.ActivePrefixSelectedOffsetPlaced
-import IntegerMultBounds.Machine.ActivePrefixOffsetRepeatPlaced
-import IntegerMultBounds.Machine.ActiveTargetRotation
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixSelectedOffsetPlaced
+public import IntegerMultBounds.Machine.ActivePrefixOffsetRepeatPlaced
+public import IntegerMultBounds.Machine.ActiveTargetRotation
 
 /-! One fixed caller bank for a complete original-input selected load. Only
 original descriptors and the array are supplied; all offset words and rotation
 metadata begin blank and are physically constructed. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixSelectedLoadData
 noncomputable section
 open ActivePrefixSelectedOffsetBank (Shape offsetWord values)

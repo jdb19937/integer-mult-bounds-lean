@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.CompactSpectatorLeafCountBudget
-import IntegerMultBounds.Machine.CompactSpectatorLeafGuardBudget
-import IntegerMultBounds.Machine.CompactSpectatorLeafCutoffBudget
+module
+
+public import IntegerMultBounds.Machine.CompactSpectatorLeafCountBudget
+public import IntegerMultBounds.Machine.CompactSpectatorLeafGuardBudget
+public import IntegerMultBounds.Machine.CompactSpectatorLeafCutoffBudget
 
 /-! The stopped-node leaf physically expands original header7 by original
 slots6, executes the actual guarded butterfly pair at native65/global109,
 then restores the original node headers. The scalar branch keeps count1.
 An appended clean43-tape arithmetic workspace frames every original tape. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactSpectatorStoppedLeafCaller
 noncomputable section
 open CompactSpectatorLeafOriginal

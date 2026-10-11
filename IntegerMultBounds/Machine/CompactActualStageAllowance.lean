@@ -1,12 +1,17 @@
-import IntegerMultBounds.Machine.CompactScalarAllowances
-import IntegerMultBounds.Machine.ActiveRepairLayoutGlobalAllowance
-import IntegerMultBounds.Machine.ActivePrefixStageParameters
+module
+
+public import IntegerMultBounds.Machine.CompactScalarAllowances
+public import IntegerMultBounds.Machine.ActiveRepairLayoutGlobalAllowance
+public import IntegerMultBounds.Machine.ActivePrefixStageParameters
 
 /-! Every actual original-slot stage uses density constant one. Complete
 repair address width, guard size and selected-count allowances follow from
 multiplier scalar choices and once-padded descendant rows, rather than free
 consumer-width hypotheses. Reservation-axis fit remains the nonfallback
 condition; the polynomial-record width is the original input contract. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactActualStageAllowance
 noncomputable section
 open Sizes TimeBound

@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActiveTargetHighestLaterAlphabet
+module
+
+public import IntegerMultBounds.Machine.ActiveTargetHighestLaterAlphabet
 
 /-! Literal payload replacement interface, leaving all stage descriptors and
 blank work cells unchanged, for physically composing the later-source gadget. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveTargetHighestLaterBank
 noncomputable section
 open ActiveTargetHighestRun

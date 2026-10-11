@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlSequenceData
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlSequenceData
 
 /-! Six concrete original-input primitives on a single thirty-port bank.
 Every target load and compact conjugation is a real paid machine call. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixDirtyControlSequenceStages
 noncomputable section
 open ActivePrefixDirtyControlSequenceData

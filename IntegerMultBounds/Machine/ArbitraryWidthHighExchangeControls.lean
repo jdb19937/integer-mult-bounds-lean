@@ -1,17 +1,22 @@
-import IntegerMultBounds.Machine.ArbitrarySliceRepeat
-import IntegerMultBounds.Machine.BinaryDescriptorInstall
+module
+
+public import IntegerMultBounds.Machine.ArbitrarySliceRepeat
+public import IntegerMultBounds.Machine.BinaryDescriptorInstall
 
 /-! Physical controls for high-prefix exchange. Only rho is supplied; offset0,
 width1 and depth0 are written, rho is copied into the consumed digit, and every
 created descriptor is erased after the counted slice calls. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthHighExchangeControls
 noncomputable section
 variable {a : ℕ}
 open RecursiveChildQuotientsConstant (bits)
 open SharedPlacementAlphabet (setTape)
 
-private def hd : Option (List Bool) → ℤ | none => 0 | some _ => 1
-private def tp : Option (List Bool) → ℤ → Fin (a+4)
+def hd : Option (List Bool) → ℤ | none => 0 | some _ => 1
+def tp : Option (List Bool) → ℤ → Fin (a+4)
   | none => fun _ => blank
   | some xs => BinaryDescriptorStack.descriptor xs
 

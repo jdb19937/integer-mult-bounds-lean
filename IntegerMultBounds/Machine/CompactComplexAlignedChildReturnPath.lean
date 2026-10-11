@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactComplexAlignedChildEntryPath
-import IntegerMultBounds.Machine.CompactComplexSourceReadyNormalizedChildReturnPath
-import IntegerMultBounds.Machine.CompactComplexSourceReadyReachedReturnInvariant
+module
+
+public import IntegerMultBounds.Machine.CompactComplexAlignedChildEntryPath
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyNormalizedChildReturnPath
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyReachedReturnInvariant
 
 /-! The actual decoded return restores parent numerical metadata before
 the inverse original selected-role basis word. All fixed table edges and
 the sequence join are charged separately from the recursive child. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexAlignedChildReturnPath
 noncomputable section
 open Networks.Shared50ModularControl (prime)

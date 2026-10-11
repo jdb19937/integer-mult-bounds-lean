@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ButterflyStreamSemantics
-import IntegerMultBounds.Machine.RecursiveRowsFromWords
+module
+
+public import IntegerMultBounds.Machine.ButterflyStreamSemantics
+public import IntegerMultBounds.Machine.RecursiveRowsFromWords
 
 /-! Clean selected-bit splitting and inverse merging of actual delimited
 complex coefficients. The generic row array is constructed from literal input
 words, so the endpoints have no caller-provided codec or per-record oracle. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ButterflyAxisRouting
 noncomputable section
 open ButterflyStreamData ButterflyAxisSerialization

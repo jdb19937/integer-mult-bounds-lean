@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactSpectatorStoppedLeafCaller
-import IntegerMultBounds.Machine.Branch
-import IntegerMultBounds.Machine.BinaryCanonicalData
+module
+
+public import IntegerMultBounds.Machine.CompactSpectatorStoppedLeafCaller
+public import IntegerMultBounds.Machine.Branch
+public import IntegerMultBounds.Machine.BinaryCanonicalData
 
 /-! The stopped leaf reads the live canonical controller exponent at global1.
 Exponent0 executes the actual scalar phase; a positive exponent physically
 expands/restores the parent slot count around the actual guarded phase. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactSpectatorStoppedLeafDispatch
 noncomputable section
 open CompactSpectatorStoppedLeafCaller

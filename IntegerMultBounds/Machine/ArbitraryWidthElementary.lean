@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ArbitraryWidthHighExchange
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthHighExchange
 
 /-! A uniform elementary-width fallback from sole original shape headers.
 The width is physically copied into a digit count, every corresponding pair
 is swapped by the proved fixed machine, and the copy is erased afterwards. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthElementary
 noncomputable section
 open Networks

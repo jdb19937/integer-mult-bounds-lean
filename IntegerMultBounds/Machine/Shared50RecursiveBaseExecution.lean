@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.Shared50RecursiveImplementation
-import IntegerMultBounds.Machine.Shared50RecursiveRoot
-import IntegerMultBounds.Machine.Shared50RecursiveBlockExecution
-import IntegerMultBounds.Machine.Shared50RecursiveReturnExecution
-import IntegerMultBounds.Machine.Shared50RecursiveBankReturn
+module
+
+public import IntegerMultBounds.Machine.Shared50RecursiveImplementation
+public import IntegerMultBounds.Machine.Shared50RecursiveRoot
+public import IntegerMultBounds.Machine.Shared50RecursiveBlockExecution
+public import IntegerMultBounds.Machine.Shared50RecursiveReturnExecution
+public import IntegerMultBounds.Machine.Shared50RecursiveBankReturn
 
 /-! Actual base-case trace through the concrete cyclic machine: interchange,
 shared header restoration, physical PC pop and the charged return edge. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.Shared50RecursiveBaseExecution
 noncomputable section
 open Networks

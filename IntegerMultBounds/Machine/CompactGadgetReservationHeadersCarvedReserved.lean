@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactGadgetReservationHeadersCarvedCaller
-import IntegerMultBounds.Machine.CompactGadgetReservationHeadersReserved
+module
+
+public import IntegerMultBounds.Machine.CompactGadgetReservationHeadersCarvedCaller
+public import IntegerMultBounds.Machine.CompactGadgetReservationHeadersReserved
 
 /-! Complete synthesized-shape load on the actual reservation endpoint.
 Only original global layout headers and a physical offset word are inputs. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactGadgetReservationHeadersCarvedReserved
 noncomputable section
 open Networks.Shared50ModularControl (prime)

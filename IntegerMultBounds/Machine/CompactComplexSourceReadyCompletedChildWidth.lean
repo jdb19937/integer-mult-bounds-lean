@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyCompletedChildBoundary
-import IntegerMultBounds.Machine.CompactComplexSourceReadyReachedReturnInvariant
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyCompletedChildBoundary
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyReachedReturnInvariant
 
 /-! Stored widths of the actual completed nonroot child. The sink corrections,
 contraction, cyclic recombination and saved-call orientation preserve the width
 already present in the child's Reached certificate. No output-width hypothesis
 or recursive semantic equality is supplied. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyCompletedChildWidth
 noncomputable section
 open CompactGadgetReservationShape (Shape)

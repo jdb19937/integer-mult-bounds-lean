@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactSpectatorLeafGuardBudget
-import IntegerMultBounds.Parameters
-import IntegerMultBounds.Networks.ComplexRecursiveCallSchema
-import Mathlib.Analysis.SpecialFunctions.Pow.Real
+module
+
+public import IntegerMultBounds.Machine.CompactSpectatorLeafGuardBudget
+public import IntegerMultBounds.Parameters
+public import IntegerMultBounds.Networks.ComplexRecursiveCallSchema
+public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 /-! The actual integer stopping test bounds the literal guarded leaf visit
 count by the original global axis dimension to beta. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactSpectatorLeafCutoffBudget
 noncomputable section
 open CompactComplexRecursiveGeometry

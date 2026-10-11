@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.AllAxisPhaseOriginalScalar
+module
+
+public import IntegerMultBounds.Machine.AllAxisPhaseOriginalScalar
 
 /-! Binary endpoint-character scratch preparation from retained physical
 original geometry and immutable polynomial precision. Every caller tape is
 framed; all copied and computed descriptors are physically erased. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.NativeEndpointCharacterHeaders
 noncomputable section
 open CompactGadgetReservationShape (Shape)

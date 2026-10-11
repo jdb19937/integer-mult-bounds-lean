@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexNonleafSpectatorPlacement
-import IntegerMultBounds.Machine.CompactComplexNonleafRoleTargetRestore
+module
+
+public import IntegerMultBounds.Machine.CompactComplexNonleafSpectatorPlacement
+public import IntegerMultBounds.Machine.CompactComplexNonleafRoleTargetRestore
 
 /-! The saved parent node target is popped only after actual spectator promotion
 and shared-live commit. The advanced live word, aligned payloads and all nineteen
 fixed frame/work tapes survive this final boundary. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexNonleafSpectatorTargetRestore
 noncomputable section
 open CompactGadgetReservationShape (Shape)
@@ -20,7 +25,7 @@ open SharedPlacementAlphabet (setTape)
 open RecursiveChildQuotientsConstant (bits)
 variable {s c : ℕ}
 
-private theorem entry_count : CompactComplexNonleafRoleChildBank.tapes s c=permanentTapes (10+s) c+9 := by
+theorem entry_count : CompactComplexNonleafRoleChildBank.tapes s c=permanentTapes (10+s) c+9 := by
   unfold CompactComplexNonleafRoleChildBank.tapes CompactComplexNonleafRoleSplit.tapes
     CompactComplexNonleafRoleEntry.tapes
   omega

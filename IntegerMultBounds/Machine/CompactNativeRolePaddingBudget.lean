@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactNativeRoleScalarBudget
-import IntegerMultBounds.Machine.CompactNativeRolePaddingCaller
-import IntegerMultBounds.Machine.CompactNativeRoleMetadataBudget
+module
+
+public import IntegerMultBounds.Machine.CompactNativeRoleScalarBudget
+public import IntegerMultBounds.Machine.CompactNativeRolePaddingCaller
+public import IntegerMultBounds.Machine.CompactNativeRoleMetadataBudget
 
 /-! Entire paid reservation, native padding and role preparation/split budget,
 with actual Stage controller fields. The reverse arbitrary-result merge includes
 copied metadata reclamation and is paid from the original native volume. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactNativeRolePaddingBudget
 noncomputable section
 open CompactGlobalRowPadding (initialRows)

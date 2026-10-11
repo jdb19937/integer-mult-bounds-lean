@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactComplexScalarCountRootBank
-import IntegerMultBounds.Machine.SharedBankFamily
+module
+
+public import IntegerMultBounds.Machine.CompactComplexScalarCountRootBank
+public import IntegerMultBounds.Machine.SharedBankFamily
 
 /-! Original-header count setup, actual scalar row execution, and physical
 count erasure form one clean fixed block on the same permanent caller bank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexScalarCountLifecycle
 noncomputable section
 open SharedBankStageInput (raw)
@@ -16,7 +21,7 @@ attribute [local irreducible] Networks.ComplexRank25.program CompactComplexScala
   CompactComplexScalarCountRootBank.roleProgram
 
 
-private def assemble {k x y q r t : ℕ} (setup : Program (k+x) q 2)
+def assemble {k x y q r t : ℕ} (setup : Program (k+x) q 2)
     (scalar : Program (k+y) r 2) (erase : Program k t 2) :=
   seq (seq (SharedBankFamily.padProgram setup (by omega : k+x≤k+x+y))
     (SharedBankFamily.padProgram scalar (by omega : k+y≤k+x+y)))
@@ -54,12 +59,12 @@ theorem liveProof (hs : 7<s) : 7<s+43 := by omega
 def storedHeader (header : Fin s) : Fin (s+43) := Fin.castAdd 43 header
 theorem header_ne_live (header : Fin s) (hh : header.val≠7) : (storedHeader header).val≠7 := hh
 
-private def assembled {k x y : ℕ}
+def assembled {k x y : ℕ}
     (setup : Σ q,Program (k+x) q 2) (scalar : Σ q,Program (k+y) q 2)
     (erase : Σ q,Program k q 2) : Σ q,Program (k+x+y) q 2 :=
   ⟨_,assemble setup.2 scalar.2 erase.2⟩
 
-private def setupProgram (header : Fin s) : Σ q,Program (publicTapes s+43) q 2 :=
+def setupProgram (header : Fin s) : Σ q,Program (publicTapes s+43) q 2 :=
   ⟨_,CompactComplexScalarCountRootBank.program (c:=CompactComplexRolePhaseSite.roleCount) header⟩
 
 def eraseProgram (header : Fin s) : Σ q,Program (publicTapes s) q 2 :=

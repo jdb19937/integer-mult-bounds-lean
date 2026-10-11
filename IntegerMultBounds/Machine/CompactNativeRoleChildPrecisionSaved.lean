@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactNativeRoleChildPrecision
+module
+
+public import IntegerMultBounds.Machine.CompactNativeRoleChildPrecision
 
 /-! Payload reinterpretation may retain original header5 at numeric26. All
 baseline conversion commands frame this saved descriptor literally, including
 its marked binary word; its value does not affect the actual runtime. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactNativeRoleChildPrecisionSaved
 noncomputable section
 open ButterflyAxisHeadersArithmetic

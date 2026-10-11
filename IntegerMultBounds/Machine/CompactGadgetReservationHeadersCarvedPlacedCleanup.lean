@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactGadgetReservationHeadersCarvedPlacedRun
-import IntegerMultBounds.Machine.BinaryDescriptorCleanupList
+module
+
+public import IntegerMultBounds.Machine.CompactGadgetReservationHeadersCarvedPlacedRun
+public import IntegerMultBounds.Machine.BinaryDescriptorCleanupList
 
 /-! Erase four physically supplied shape outputs after their last use. Every
 bit, sentinel and sequential join is charged; all other caller tapes are fixed. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactGadgetReservationHeadersCarvedPlacedCleanup
 noncomputable section
 open SharedPlacementAlphabet (setTape)

@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActivePrefixStageRuntimeSelected
-import IntegerMultBounds.Machine.ActivePrefixStageSlotRewrite
-import IntegerMultBounds.Networks.BinaryRowProgram
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStageRuntimeSelected
+public import IntegerMultBounds.Machine.ActivePrefixStageSlotRewrite
+public import IntegerMultBounds.Networks.BinaryRowProgram
 
 /-! A literal binary row addition changes only original source/target header
 words. All node geometry and the complete raw array remain in place. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixStagePairData
 noncomputable section
 open CompactGadgetReservationShape (Shape)

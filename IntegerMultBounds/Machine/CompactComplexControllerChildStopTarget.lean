@@ -1,12 +1,17 @@
-import IntegerMultBounds.Machine.CompactComplexControllerDenominatorTarget
-import IntegerMultBounds.Machine.CompactComplexControllerStopCleanup
-import IntegerMultBounds.Machine.Branch
+module
+
+public import IntegerMultBounds.Machine.CompactComplexControllerDenominatorTarget
+public import IntegerMultBounds.Machine.CompactComplexControllerStopCleanup
+public import IntegerMultBounds.Machine.Branch
 
 /-! A fresh stop workspace follows the entire existing root bank, including
 all its old stacks. The machine copies the real parent geometric exponent,
 physically decrements only the copy, and computes the genuine child stop
 flag. It then selects and constructs the child return target from actual
 input-denominator and full-child-volume words, erasing all stop storage. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexControllerChildStopTarget
 noncomputable section
 open CompactComplexControllerDenominator (size)
@@ -25,7 +30,7 @@ def exponentSource : Fin (size s) := controllerSlot 1
 
 def copySlots (src : Fin (size s)) (dst : Fin 10) : Fin 2 → Fin (total s) :=
   ![Fin.castAdd (10+0) src,stopSlot dst]
-private theorem copy_injective (src : Fin (size s)) (dst : Fin 10) :
+theorem copy_injective (src : Fin (size s)) (dst : Fin 10) :
     Function.Injective (copySlots src dst) := by
   intro i j h
   fin_cases i <;> fin_cases j
@@ -95,7 +100,7 @@ theorem initialize_runs (caller : Tapes (size s) 2) (D e : ℕ)
   exact h.consequence (fun _ h => h) (fun _ h => h) (by omega)
 
 def decrementSlots : Fin 3 → Fin 10 := ![9,0,1]
-private theorem decrement_injective : Function.Injective decrementSlots := by decide
+theorem decrement_injective : Function.Injective decrementSlots := by decide
 def decrementPlacement : Fin (3+7) ≃ Fin 10 :=
   InjectivePlacement.placement decrementSlots decrement_injective rfl
 def decrementProgram := Placement.placed (CompactComplexExponentStep.program (a:=2)) decrementPlacement

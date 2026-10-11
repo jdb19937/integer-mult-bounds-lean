@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActiveRepairLateKeyOriginalRun
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairLateKeyOriginalRun
 
 /-! Both original source geometries imply every generated descriptor fit.
 No runtime field start or prefix-dependent source-control word is supplied. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLateKeyOriginalGeometry
 noncomputable section
 open ActiveRepairLateKeyOriginalData ActiveRepairLateKeyOriginalValid

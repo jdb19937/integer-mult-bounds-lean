@@ -1,10 +1,14 @@
-import IntegerMultBounds.Schoenhage.RingPointwiseBound
+module
+
+public import IntegerMultBounds.Schoenhage.RingPointwiseBound
 
 /-! The pointwise-product step of the synthetic convolution meets its
 statement in the paper's formats within `O(T p log (r p) log log (r p))`
 steps plus the header (`pointwise_polylog : pointwisePolylogTarget 1`). The
 extra `log log` factor is the Schönhage–Strassen overhead, absorbed by the
 packed-product margin of the cost table. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Schoenhage
 

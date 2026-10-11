@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.WordBankSwap
-import IntegerMultBounds.Machine.NativePolynomialConjugationRows
+module
+
+public import IntegerMultBounds.Machine.WordBankSwap
+public import IntegerMultBounds.Machine.NativePolynomialConjugationRows
 
 /-! Actual exchange of two complete native role arrays on fixed caller ports.
 Uniform record widths derive equal serialized lengths; encoded nonblank
 interiors and blank exteriors discharge the physical scanner requirements. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.NativeRoleWordSwap
 noncomputable section
 open CompactGadgetReservationShape (Shape)

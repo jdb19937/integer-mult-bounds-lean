@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.CountedTapeRepairCleanup
+module
+
+public import IntegerMultBounds.Machine.CountedTapeRepairCleanup
 
 /-! Concrete final cleanup of the actual repair endpoint, including all sort
 markers, unary metadata and counter, retaining only caller inputs and output. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedTapeRepairCleanupRun
 noncomputable section
 open SharedPlacementAlphabet

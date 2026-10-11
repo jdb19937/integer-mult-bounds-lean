@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.Shared50RecursiveInductionBase
-import IntegerMultBounds.Machine.Shared50RecursiveNodeExecution
-import IntegerMultBounds.Machine.Shared50RecursiveCallInductionBridge
-import IntegerMultBounds.Machine.Shared50RecursiveBudgetAssembly
+module
+
+public import IntegerMultBounds.Machine.Shared50RecursiveInductionBase
+public import IntegerMultBounds.Machine.Shared50RecursiveNodeExecution
+public import IntegerMultBounds.Machine.Shared50RecursiveCallInductionBridge
+public import IntegerMultBounds.Machine.Shared50RecursiveBudgetAssembly
 
 /-! Depth induction for one actual fixed recursive graph. Every child call
 uses the graph's physical entry and decoded recovery edge, with the exact
 logical-volume budget and the allocated nested stack invariants. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.Shared50RecursiveInduction
 noncomputable section
 open Networks

@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixEarlySequenceOriginalInputs
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixEarlySequenceOriginalInputs
 
 /-! The actual four-load machine selects its twenty-eight inputs from the
 physically constructed forty-three-tape caller. The unused duplicate row word
 and all original (layout d) words are framed. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixEarlySequenceOriginalPayload
 noncomputable section
 open ActivePrefixEarlySequenceOriginalData ActivePrefixEarlySequenceOriginalInputs

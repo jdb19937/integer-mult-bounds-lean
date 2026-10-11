@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.NativeRoleWordSwap
+module
+
+public import IntegerMultBounds.Machine.NativeRoleWordSwap
 
 /-! Physical exchange of the two named banks of a finite role family. All
 non-role words and all heads remain literal; no complete enumeration is reduced. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.NamedRoleWordExchange
 noncomputable section
 open CompactGadgetReservationShape (Shape)

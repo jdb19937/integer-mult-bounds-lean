@@ -1,6 +1,11 @@
-import IntegerMultBounds.Machine.ArbitraryWidthHighExchangeJoinEncoding
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthHighExchangeJoinEncoding
 
 /-! Paid physical separation realizes the manuscript's final high-row view. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthHighSeparateShared
 noncomputable section
 open Networks

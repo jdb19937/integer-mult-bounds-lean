@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ArbitraryWidthPieceRun
-import Mathlib.Tactic.IrreducibleDef
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthPieceRun
+public import Mathlib.Tactic.IrreducibleDef
 
 /-! The real dispatcher adds only linear-width physical control overhead to
 the fully paid power-piece slice budgets. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthPieceCost
 noncomputable section
 open Networks

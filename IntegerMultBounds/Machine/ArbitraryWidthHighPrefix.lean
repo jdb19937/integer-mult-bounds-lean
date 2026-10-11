@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ArbitraryWidthHighDimensions
-import IntegerMultBounds.Machine.ArbitraryWidthHighLayout
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthHighDimensions
+public import IntegerMultBounds.Machine.ArbitraryWidthHighLayout
 
 /-! Physically fold the three original prefix headers, retaining the inputs
 and erasing the intermediate product and all arithmetic workspace. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthHighPrefix
 noncomputable section
 variable {a : ℕ}

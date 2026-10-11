@@ -1,14 +1,18 @@
-import IntegerMultBounds.Networks.Shared50StageFrames
-import IntegerMultBounds.Networks.Shared50OutputRoles
-import IntegerMultBounds.Networks.Shared50SparseIO
-import IntegerMultBounds.Networks.Shared50SparseCentral
-import IntegerMultBounds.Networks.LabeledMotif
+module
+
+public import IntegerMultBounds.Networks.Shared50StageFrames
+public import IntegerMultBounds.Networks.Shared50OutputRoles
+public import IntegerMultBounds.Networks.Shared50SparseIO
+public import IntegerMultBounds.Networks.Shared50SparseCentral
+public import IntegerMultBounds.Networks.LabeledMotif
 
 /-! Concrete frame profiles at the sparse optimized invocation's scalar block
 boundaries. Explicit alignments allow early mixers to use the common frame,
 actual DAG events to use their source spans, and cleanup to use the full frame.
 Only the central return decreases; all source/readout attachment premises are
 proved from the actual compiled physical roles. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.Shared50LabeledInvocation
 

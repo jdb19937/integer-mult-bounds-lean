@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.BinaryParityXorOffsetFinish
+module
+
+public import IntegerMultBounds.Machine.BinaryParityXorOffsetFinish
 
 /-! Complete fourth-line negative parity-XOR table from original q/b/n and the
 original control word, with explicit paid source scans, per-row negation reset,
 derived metadata construction, cleanup, and a uniform linear allowance bound. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryParityXorOffset
 open BinaryAddressOffsetHeaders (widthBits rangeBits countBits)
 open BinaryParityXorOffsetFinish (widthWord)

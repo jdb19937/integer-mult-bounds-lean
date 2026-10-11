@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.RecursiveScalarCoordinates
+module
+
+public import IntegerMultBounds.Machine.RecursiveScalarCoordinates
 
 /-! Actual viewed shift/scaling transport back to the original heterogeneous
 field coordinates. The physical wrapper restores the original headers; these
 lemmas identify its output permutation with the original ordered instruction. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveScalarTransport
 noncomputable section
 open Networks

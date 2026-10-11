@@ -1,12 +1,17 @@
-import IntegerMultBounds.Machine.ActivePrefixCompactSwapPlaced
-import IntegerMultBounds.Machine.ActivePrefixCompactParityLoadPlaced
-import IntegerMultBounds.Machine.ActivePrefixCompactNegativeLoadPlaced
-import IntegerMultBounds.Machine.BinaryPackedOffsetData
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixCompactSwapPlaced
+public import IntegerMultBounds.Machine.ActivePrefixCompactParityLoadPlaced
+public import IntegerMultBounds.Machine.ActivePrefixCompactNegativeLoadPlaced
+public import IntegerMultBounds.Machine.BinaryPackedOffsetData
 
 /-! Common physical bank for compact swap/load/swap. The eight original swap
 geometry words and ten load-input words are supplied canonically. In particular,
 preparation of the load prefix/source coordinates from stage controls is a
 separate obligation; no offset table or interchange descriptor is supplied. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixCompactConjugationData
 noncomputable section
 open Networks.Shared50ModularControl (prime)

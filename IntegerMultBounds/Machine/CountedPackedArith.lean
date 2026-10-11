@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CountedPackedRuntimeLine
-import IntegerMultBounds.Compact.PackedArithValue
+module
+
+public import IntegerMultBounds.Machine.CountedPackedRuntimeLine
+public import IntegerMultBounds.Compact.PackedArithValue
 
 /-! Five genuine packed arithmetic lines with fixed control, using only
 runtime q/b/count headers and returning all fourteen private tapes blank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedPackedArith
 noncomputable section
 variable {a : ℕ}

@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixCompactParityLoadCleanup
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixCompactParityLoadCleanup
 
 /-! Complete compact parity load from original prefix/gadget descriptors, original
 rows and suffix width, and the original full array. Offset production, repeat,
 rotation, all descriptor synthesis and all cleanup are real paid executions. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixCompactParityLoad
 noncomputable section
 open ActivePrefixCompactParityLoadData

@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.NativePolynomialStageShape
-import IntegerMultBounds.Machine.CompactSpectatorLeafSetupBudget
-import IntegerMultBounds.Machine.CompactNativeRoleHeaders
+module
+
+public import IntegerMultBounds.Machine.NativePolynomialStageShape
+public import IntegerMultBounds.Machine.CompactSpectatorLeafSetupBudget
+public import IntegerMultBounds.Machine.CompactNativeRoleHeaders
 
 /-! The genuine native polynomial codec payload is computed from original
 shape headers and retained ell/precision. Its original payload word is saved,
 all arithmetic work is reclaimed, and the exact old caller can be restored.
 No source coefficient is read, copied or changed by this numeric adapter. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.NativePolynomialStageHeaders
 noncomputable section
 open CompactGadgetReservationShape (Shape)

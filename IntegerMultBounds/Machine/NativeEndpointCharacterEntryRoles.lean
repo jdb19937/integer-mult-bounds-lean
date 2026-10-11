@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.NativeEndpointCharacterCanonicalSourceReady
-import IntegerMultBounds.Machine.CompactNativeRoleReservedBridge
+module
+
+public import IntegerMultBounds.Machine.NativeEndpointCharacterCanonicalSourceReady
+public import IntegerMultBounds.Machine.CompactNativeRoleReservedBridge
 
 /-! Current-row splitting produces precisely the original named role family
 consumed by the canonical source character boundary. The fixed opaque role
 divisor changes only cardinality casts, never serialized coefficient order. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.NativeEndpointCharacterEntryRoles
 noncomputable section
 open CompactGadgetReservationShape (Shape)

@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActiveRepairLayoutKeysPipelineBudgetCommon
-import IntegerMultBounds.Machine.ActiveRepairLayoutKeysPipelineLate
-import IntegerMultBounds.Machine.ActiveRepairLateOriginalPipelineBudget
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairLayoutKeysPipelineBudgetCommon
+public import IntegerMultBounds.Machine.ActiveRepairLayoutKeysPipelineLate
+public import IntegerMultBounds.Machine.ActiveRepairLateOriginalPipelineBudget
 
 /-! Linear runtime for the concrete ideal-output repair endpoint. The sparse
 holes are counted from the physical flags and the complete global layout. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLayoutKeysPipelineBudgetLate
 noncomputable section
 attribute [local instance] Classical.propDecidable

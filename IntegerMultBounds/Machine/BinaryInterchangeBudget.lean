@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.BinaryInterchangeRun
+module
+
+public import IntegerMultBounds.Machine.BinaryInterchangeRun
 
 /-! Uniform certified time bound for the concrete width-selecting binary
 interchange, including both physical comparisons and the selected branch. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryInterchangeRun
 noncomputable section
 

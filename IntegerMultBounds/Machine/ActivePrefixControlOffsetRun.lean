@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixControlOffsetBank
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixControlOffsetBank
 
 /-! Actual original-header setup, both generated prefix projections, batch
 source-bit extraction and control-mask gather share one unchanged caller bank and
 twenty-four blank private tapes. No intermediate stream is a stage input. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixControlOffsetRun
 noncomputable section
 open ActivePrefixControlOffsetBank

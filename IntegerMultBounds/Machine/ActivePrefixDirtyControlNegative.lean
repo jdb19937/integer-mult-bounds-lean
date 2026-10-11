@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlNegativeRun
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlNegativeRun
 
 /-! Clean negative parity-XOR producer from the six original compact-source layout
 headers, including real parity production and all physical negation costs. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixDirtyControlNegative
 noncomputable section
 open ActivePrefixDirtyControlData (Shape values)

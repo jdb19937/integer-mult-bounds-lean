@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyLeafCodec
-import IntegerMultBounds.Machine.NativePolynomialStageHeaders
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyLeafCodec
+public import IntegerMultBounds.Machine.NativePolynomialStageHeaders
 
 /-! Complete source-ready directional leaf lifecycle. Polynomial codec width
 and baseline precision are genuinely computed from retained raw metadata, the
 actual source executes the leaf, and all original node descriptors are restored.
 There is no role selection, row division, row multiplication or source merge. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyLeaf
 noncomputable section
 open CompactGadgetReservationShape (Shape)

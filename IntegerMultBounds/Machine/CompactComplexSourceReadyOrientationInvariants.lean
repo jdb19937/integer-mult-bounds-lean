@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyOrientation
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyOrientation
 
 /-! Both placements of the orientation selector retain the original saved
 frame. Width, inherited dyadic grid and source readiness propagate through
 its actual conditional array transform; the fixed decoder cost is paid by
 the complete native volume. Post-orientation runs before any return-PC pop. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyOrientationInvariants
 noncomputable section
 open Networks

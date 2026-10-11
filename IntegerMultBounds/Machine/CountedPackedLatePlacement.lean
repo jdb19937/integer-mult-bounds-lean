@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CountedPackedLateRun
-import IntegerMultBounds.Machine.PlacementBank
+module
+
+public import IntegerMultBounds.Machine.CountedPackedLateRun
+public import IntegerMultBounds.Machine.PlacementBank
 
 /-! Reusable early and late gadgets placed in arbitrary fixed injective tape
 slots. Their literal word update, clean active workspace, original descriptor
 retention, and the complete complementary frame are all tracked together. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedPackedLatePlacement
 noncomputable section
 variable {a t s u : ℕ}

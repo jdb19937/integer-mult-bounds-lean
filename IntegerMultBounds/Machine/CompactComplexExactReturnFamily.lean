@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.NativeSignedGapHeadersReturn
-import IntegerMultBounds.Machine.SignedRadixExactReturn
-import IntegerMultBounds.Machine.CompactComplexSpectatorPromoteFamily
+module
+
+public import IntegerMultBounds.Machine.NativeSignedGapHeadersReturn
+public import IntegerMultBounds.Machine.SignedRadixExactReturn
+public import IntegerMultBounds.Machine.CompactComplexSpectatorPromoteFamily
 
 /-! Exact precision contraction of a fixed role family on retained true
 current/target denominator ports. The machine constructs every gap itself,
 changes only listed role words and restores all private tapes. Semantic
 coarser-grid certificates justify the literal signed-field divisions. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexExactReturnFamily
 noncomputable section
 open RadixSignedShiftRight (Word)

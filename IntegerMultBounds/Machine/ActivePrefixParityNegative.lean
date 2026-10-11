@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActivePrefixParityNegativeRun
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixParityNegativeRun
 
 /-! Complete clean negative parity-XOR stream, synthesized only from the
 original eight descriptors. Every original prefix uses its own current row. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixParityNegative
 noncomputable section
 open ActivePrefixParityOffsetBank (Shape values)

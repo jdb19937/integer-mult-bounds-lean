@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactNativeRoleConjugatedBudget
-import IntegerMultBounds.Machine.CompactNativeConjugatedPhaseFamily
+module
+
+public import IntegerMultBounds.Machine.CompactNativeRoleConjugatedBudget
+public import IntegerMultBounds.Machine.CompactNativeConjugatedPhaseFamily
 
 /-! One actual native basis witness discharges every selected-role conjugated
 phase. Original13 and ell are copied from generated numeric43, the genuine
 six-symbol role source is shared through explicit alphabet encoding, and all
 copied controls are erased. Packed repair geometry remains a genuine premise. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactNativeRoleConjugatedCaller
 noncomputable section
 open CompactGadgetReservationShape (Shape)

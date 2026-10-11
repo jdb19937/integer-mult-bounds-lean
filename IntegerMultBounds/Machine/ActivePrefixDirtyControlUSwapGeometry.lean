@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlUSwapPlaced
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlUSwapPlaced
 
 /-! Literal compact U/back interchange on the unchanged full-array address.
 Every coordinate apart from U and the high back field remains in place. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixDirtyControlUSwapGeometry
 noncomputable section
 open ActivePrefixDirtyControlUSwapData

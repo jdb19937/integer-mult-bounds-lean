@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.CompactNativeRoleReservedBridge
-import IntegerMultBounds.Machine.CompactComplexChildGridPromoted
-import IntegerMultBounds.Machine.CompactFramedScalarGrid
-import IntegerMultBounds.Machine.CompactComplexScalarPathGuard
+module
+
+public import IntegerMultBounds.Machine.CompactNativeRoleReservedBridge
+public import IntegerMultBounds.Machine.CompactComplexChildGridPromoted
+public import IntegerMultBounds.Machine.CompactFramedScalarGrid
+public import IntegerMultBounds.Machine.CompactComplexScalarPathGuard
 
 /-! Reconstruct the genuine globally reserved coefficient array from current
 role streams. Stopped child arithmetic retains the exact scalar prefix rather
 than replacing it by a fresh whole-network growth allowance. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexStoppedEventProgress
 noncomputable section
 open CompactGadgetReservationShape (Shape)

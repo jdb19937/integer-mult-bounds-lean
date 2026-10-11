@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActiveRepairLateOriginalPipelineCleanup
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairLateOriginalPipelineCleanup
 
 /-! Actual original-input later repair from literal source and blank scan
 workspace through preparation, varying-rank scan, sort/reinsert and complete
 final cleanup. Only original source, metadata and repaired output survive. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLateOriginalPipelineEndpoint
 noncomputable section
 open ActiveRepairLateKeyOriginalData ActiveRepairLateKeyOriginalValid

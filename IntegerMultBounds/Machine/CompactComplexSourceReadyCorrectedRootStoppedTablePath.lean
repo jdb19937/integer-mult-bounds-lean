@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedStoppedTablePath
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedStoppedTablePath
 
 /-! Actual positive and scalar stopped roots follow corrected control1 to
 the return guard. Their real empty saved stack selects identity, with the
 physical leaf, orientation and table transition all paid. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedRootStoppedTablePath
 noncomputable section
 open Networks

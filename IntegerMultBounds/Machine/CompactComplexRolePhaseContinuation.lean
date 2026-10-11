@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexRolePhaseSite
-import IntegerMultBounds.Machine.FiniteFlow
+module
+
+public import IntegerMultBounds.Machine.CompactComplexRolePhaseSite
+public import IntegerMultBounds.Machine.FiniteFlow
 
 /-! A real original-role phase block enters a fixed continuation with one
 physical tape-preserving transition. No continuation execution contract is
 needed to prove arrival at its actual start state. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexRolePhaseContinuation
 noncomputable section
 open Networks.Shared50ModularControl (prime)

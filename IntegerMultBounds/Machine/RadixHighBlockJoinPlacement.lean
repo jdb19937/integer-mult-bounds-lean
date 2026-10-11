@@ -1,4 +1,9 @@
-import IntegerMultBounds.Machine.RadixHighBlockJoinBank
+module
+
+public import IntegerMultBounds.Machine.RadixHighBlockJoinBank
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RadixHighBlockJoinBank
 noncomputable section
 variable {q a : ℕ}

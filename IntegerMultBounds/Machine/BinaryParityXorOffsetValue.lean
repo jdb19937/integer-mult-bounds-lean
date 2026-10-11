@@ -1,4 +1,8 @@
-import IntegerMultBounds.Machine.BinaryParityXorOffsetPositive
+module
+
+public import IntegerMultBounds.Machine.BinaryParityXorOffsetPositive
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.BinaryParityXorOffsetValue
 open BinaryParityXorOffsetData

@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexChildHeadersData
-import IntegerMultBounds.Machine.CompactChildHeadersStack
+module
+
+public import IntegerMultBounds.Machine.CompactComplexChildHeadersData
+public import IntegerMultBounds.Machine.CompactChildHeadersStack
 
 /-! The concrete original sixty-six-tape caller saves exactly its three
 changed child-node headers, using tape sixty-four for generic binary frames.
 The raw payload at sixty-five and every other tape are preserved. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexChildHeaderFrames
 noncomputable section
 open SharedPlacementAlphabet ActivePrefixStageParameters

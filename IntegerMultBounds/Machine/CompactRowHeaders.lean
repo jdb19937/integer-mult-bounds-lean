@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.RecursiveDimensionBank
-import IntegerMultBounds.Machine.ArbitraryWidthZeroHeaderShared
-import IntegerMultBounds.Machine.BinaryRadixRootHeadersShared
+module
+
+public import IntegerMultBounds.Machine.RecursiveDimensionBank
+public import IntegerMultBounds.Machine.ArbitraryWidthZeroHeaderShared
+public import IntegerMultBounds.Machine.BinaryRadixRootHeadersShared
 
 /-! Physical complete-row dimensions from retained row, role and record-width headers. All generated storage is erased after use. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactRowHeaders
 noncomputable section
 variable {a t : ℕ}

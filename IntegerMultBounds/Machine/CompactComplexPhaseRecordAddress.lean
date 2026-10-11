@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactActualSparseUnitPhase
-import IntegerMultBounds.Machine.BinaryCurrentAddress
+module
+
+public import IntegerMultBounds.Machine.CompactActualSparseUnitPhase
+public import IntegerMultBounds.Machine.BinaryCurrentAddress
 
 /-! Sparse phase controls are fields of the live complete record address.
 The counter may wrap across global rows; its literal fixed-width word still
 contains exactly the active coordinates used by the compiled phase. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexPhaseRecordAddress
 noncomputable section
 open CompactGadgetReservationShape (Shape)

@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.RawLinearCombinationComplexDenominatorSequence
-import IntegerMultBounds.Machine.CleanSubbank
+module
+
+public import IntegerMultBounds.Machine.RawLinearCombinationComplexDenominatorSequence
+public import IntegerMultBounds.Machine.CleanSubbank
 
 /-! Fixed polynomial scalar row sequences run at actual selected permanent
 source/count/denominator ports. Every local work slot is initially blank and
 returns blank, and the arbitrary complementary caller frame is preserved.
 Input requirements are literal source words, heads and marked descriptors. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RawLinearCombinationComplexDenominatorPlaced
 noncomputable section
 open ButterflyStreamData (Coefficient full)

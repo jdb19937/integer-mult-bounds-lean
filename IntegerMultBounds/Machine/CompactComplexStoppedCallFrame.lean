@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexNativeRoleBridge
-import IntegerMultBounds.Machine.CompactComplexStoppedCallSite
+module
+
+public import IntegerMultBounds.Machine.CompactComplexNativeRoleBridge
+public import IntegerMultBounds.Machine.CompactComplexStoppedCallSite
 
 /-! Actual stopped Call execution on the controller/native65 bank. The exact
 raw codec headers and genuine once-padded pre-split rows are tracked explicitly;
 installation of ell/precision into an initial13 controller bank remains separate. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexStoppedCallFrame
 noncomputable section
 open CompactComplexRecursiveGeometry

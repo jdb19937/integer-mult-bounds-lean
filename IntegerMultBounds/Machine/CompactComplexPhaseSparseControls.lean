@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactComplexPhaseControlCodec
-import IntegerMultBounds.Machine.SparseSourceBitsRun
-import IntegerMultBounds.Machine.BinaryAddressTable
+module
+
+public import IntegerMultBounds.Machine.CompactComplexPhaseControlCodec
+public import IntegerMultBounds.Machine.SparseSourceBitsRun
+public import IntegerMultBounds.Machine.BinaryAddressTable
 
 /-! Literal sparse controls extracted from the complete runtime destination
 address word. Low-first address scanning reverses the residual slot order;
 the weight reversal is explicit. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexPhaseSparseControls
 noncomputable section
 open CompactGadgetReservationShape (Shape)

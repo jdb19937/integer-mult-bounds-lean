@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactGlobalRowPadding
-import IntegerMultBounds.Machine.CompactGadgetReservationShape
+module
+
+public import IntegerMultBounds.Machine.CompactGlobalRowPadding
+public import IntegerMultBounds.Machine.CompactGadgetReservationShape
 
 /-! Original global parameters determine the complete reserved layout. Rows
 use only the original first q0 axes; all three compact fields, unused bits,
 active axes and payload remain in every row and hence in every role. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactGlobalReservation
 open CompactGlobalRowPadding
 open CompactGadgetReservationCapacity

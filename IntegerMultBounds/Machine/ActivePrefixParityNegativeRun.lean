@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActivePrefixParityNegativeBank
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixParityNegativeBank
 
 /-! Complete original-input production and rowwise negation. Header arithmetic,
 positive offsets, negation, cleanup and every sequential join are paid. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixParityNegativeRun
 noncomputable section
 open ActivePrefixParityOffsetBank (Shape values)

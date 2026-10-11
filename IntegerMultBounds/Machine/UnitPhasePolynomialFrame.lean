@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.UnitPhasePolynomialLoop
+module
+
+public import IntegerMultBounds.Machine.UnitPhasePolynomialLoop
 
 /-! Polynomial iteration changes only the physical input/output streams.
 All immutable phase descriptors, raw addresses, counters and caller metadata
 are retained exactly until the paid once-per-address cleanup. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.UnitPhasePolynomialFrame
 noncomputable section
 open UnitPhasePolynomialLoop (state flagsAt coreBlank)

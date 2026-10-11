@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.ArbitraryWidthPieceCost
-import IntegerMultBounds.Machine.ArbitraryWidthHighPrepare
-import IntegerMultBounds.Machine.ArbitraryWidthHighLayout
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthPieceCost
+public import IntegerMultBounds.Machine.ArbitraryWidthHighPrepare
+public import IntegerMultBounds.Machine.ArbitraryWidthHighLayout
 
 /-! The actual high-row rounding increases payload volume by at most two.
 The complete physical low-width dispatcher therefore retains its certified
 exponent when paid against the original unpadded full-width array. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthHighPaddedBudget
 noncomputable section
 open Networks

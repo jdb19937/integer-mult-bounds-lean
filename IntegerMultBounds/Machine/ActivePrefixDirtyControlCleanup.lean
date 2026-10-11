@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlRun
-import IntegerMultBounds.Machine.ActivePrefixOffsetStreamsCleanup
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlRun
+public import IntegerMultBounds.Machine.ActivePrefixOffsetStreamsCleanup
 
 /-! Erase all generated metadata and source streams, including the real clock
 used by compact-U parity extraction. Only the original six descriptors and the
 rewound offset output remain. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixDirtyControlCleanup
 noncomputable section
 open ActivePrefixDirtyControlData ActivePrefixDirtyControlBank

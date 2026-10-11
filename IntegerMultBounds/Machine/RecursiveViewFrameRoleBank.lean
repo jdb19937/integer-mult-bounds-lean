@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.RecursiveViewFrame
-import IntegerMultBounds.Machine.RecursiveViewRoleBank
-import IntegerMultBounds.Machine.SharedBankRawCompose
+module
+
+public import IntegerMultBounds.Machine.RecursiveViewFrame
+public import IntegerMultBounds.Machine.RecursiveViewRoleBank
+public import IntegerMultBounds.Machine.SharedBankRawCompose
 
 /-! Save and restore six headers on the permanent role bank. The first auxiliary
 tape is the dedicated descriptor stack; all remaining auxiliaries are exact
 spectators. Both adapters leave all seven private placement tapes blank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveViewFrameRoleBank
 noncomputable section
 open Networks

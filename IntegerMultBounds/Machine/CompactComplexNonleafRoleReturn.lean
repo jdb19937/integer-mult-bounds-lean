@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactComplexNonleafRoleEntry
+module
+
+public import IntegerMultBounds.Machine.CompactComplexNonleafRoleEntry
 
 /-! Actual reverse payload boundary on the same depth-independent bank as
 NonleafRoleEntry. Both volume counts are regenerated from raw numeric geometry:
 parent inactive arrays are popped before the retained master source, and every
 generated word is erased. Child-result semantics and recursive execution remain
 separate from this exact physical payload-frame recovery. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexNonleafRoleReturn
 noncomputable section
 open CompactComplexNonleafRoleEntry

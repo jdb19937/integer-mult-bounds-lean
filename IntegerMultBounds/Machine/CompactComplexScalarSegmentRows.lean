@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexScalarSequenceSemantics
-import IntegerMultBounds.Machine.CompactComplexScalarLifecycleGrid
+module
+
+public import IntegerMultBounds.Machine.CompactComplexScalarSequenceSemantics
+public import IntegerMultBounds.Machine.CompactComplexScalarLifecycleGrid
 
 /-! Literal named scalar blocks at actual grouped-network boundaries. Their
 prefix and suffix are generated from the original vertex list, rather than
 supplied through a segment equality or recomputed by concrete enumeration. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexScalarSegmentRows
 noncomputable section
 open Networks

@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActiveTargetHighestLayoutHeadersGeometry
-import IntegerMultBounds.Machine.ActivePrefixLayoutHeadersEndpoint
-import IntegerMultBounds.Machine.ActiveTargetHighestPairOriginalPlaced
+module
+
+public import IntegerMultBounds.Machine.ActiveTargetHighestLayoutHeadersGeometry
+public import IntegerMultBounds.Machine.ActivePrefixLayoutHeadersEndpoint
+public import IntegerMultBounds.Machine.ActiveTargetHighestPairOriginalPlaced
 
 /-! Highest-bit action starts with the unchanged original fourteen words
 and full array; its five pair descriptors and all work tapes begin blank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveTargetHighestLayoutOriginalData
 noncomputable section
 open ActiveTargetHighestPairData (Geometry Array)

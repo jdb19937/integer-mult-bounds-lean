@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.NativePolynomialConjugationWorkspace
-import IntegerMultBounds.Machine.CompactComplexSourceReadyDirection
-import IntegerMultBounds.Machine.FiniteReturnGuard
+module
+
+public import IntegerMultBounds.Machine.NativePolynomialConjugationWorkspace
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyDirection
+public import IntegerMultBounds.Machine.FiniteReturnGuard
 
 /-! A fixed physical orientation selector reads the genuine saved call frame.
 Empty root stacks select identity; saved inverse calls select native source65
 conjugation. The guard and decoder restore the stack before either branch. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyOrientation
 noncomputable section
 open Networks

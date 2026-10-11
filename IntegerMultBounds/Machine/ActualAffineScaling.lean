@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.SignedScalingSign
+module
+
+public import IntegerMultBounds.Machine.SignedScalingSign
 
 /-! Literal scaling for coefficients that actually occur in the fixed Shared50
 ordered-affine schedules. Schedule membership discharges positivity and unit
 conditions at every prime-power width. Program size depends only on the fixed
 rational coefficient; prepared descriptors and scratch conditions remain explicit. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActualAffineScaling
 
 open Networks

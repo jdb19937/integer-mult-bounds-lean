@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActiveRepairEarlyOriginalPipelinePrepare
-import IntegerMultBounds.Machine.CountedTapeRepairCleanupRun
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairEarlyOriginalPipelinePrepare
+public import IntegerMultBounds.Machine.CountedTapeRepairCleanupRun
 
 /-! Erase the actual sorted-key words, all scan sentinels/pass metadata and
 counter, and return original source and repaired output to their origins. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairEarlyOriginalPipelineCleanup
 noncomputable section
 open ActiveRepairEarlyKeyOriginalData

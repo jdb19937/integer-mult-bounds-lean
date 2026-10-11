@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.ActivePrefixStagePairSchedule
-import IntegerMultBounds.Machine.ActivePrefixStageRuntimeInverseRun
-import IntegerMultBounds.Machine.ActivePrefixStagePairBudget
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStagePairSchedule
+public import IntegerMultBounds.Machine.ActivePrefixStageRuntimeInverseRun
+public import IntegerMultBounds.Machine.ActivePrefixStagePairBudget
 
 /-! Reverse the actual literal stage list to undo a basis-word execution.
 Original pair restoration in every instruction makes the common caller bank
 identical throughout; the reverse costs exactly the forward charged sum. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixStagePairInverse
 noncomputable section
 open CompactGadgetReservationShape (Shape)

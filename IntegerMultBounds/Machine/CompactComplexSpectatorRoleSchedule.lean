@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexStoppedCodecCaller
+module
+
+public import IntegerMultBounds.Machine.CompactComplexStoppedCodecCaller
 
 /-! The fixed finite spectator list excludes the selected child role. Its
 successive whole-tape replacements preserve source65 and the selected role,
 and normalize every changed head. This is the bank algebra used by physical
 promotion composition; it does not assume a tape execution callback. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSpectatorRoleSchedule
 noncomputable section
 open CompactNativeRoleGuardedChildCaller (setRole)

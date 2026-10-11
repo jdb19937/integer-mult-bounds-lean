@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.Shared50RecursivePieceExecution
-import IntegerMultBounds.Machine.Shared50RecursiveDepth
-import IntegerMultBounds.Machine.Shared50RecursiveNodeBoundary
+module
+
+public import IntegerMultBounds.Machine.Shared50RecursivePieceExecution
+public import IntegerMultBounds.Machine.Shared50RecursiveDepth
+public import IntegerMultBounds.Machine.Shared50RecursiveNodeBoundary
 
 /-! Charged coefficients and a natural-valued budget for the actual recursive
 machine. Each child receives logical parent volume/W; parked ancestor storage
 never enters the recursive argument. Execution must establish this budget. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.Shared50RecursiveBudget
 noncomputable section
 open Networks

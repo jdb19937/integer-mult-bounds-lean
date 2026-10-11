@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActivePrefixStageHeadersOps
-import IntegerMultBounds.Machine.ActivePrefixStageGeometry
-import IntegerMultBounds.Machine.ActivePrefixLayoutHeadersGeometry
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStageHeadersOps
+public import IntegerMultBounds.Machine.ActivePrefixStageGeometry
+public import IntegerMultBounds.Machine.ActivePrefixLayoutHeadersGeometry
 
 /-! Thirteen original shape/node/slot numbers are the complete numeric input.
 Every layout width and source offset is generated rather than supplied. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixStageHeadersData
 noncomputable section
 open CompactGadgetReservationShape (Shape)

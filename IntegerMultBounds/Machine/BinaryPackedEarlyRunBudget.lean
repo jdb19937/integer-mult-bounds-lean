@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.BinaryPackedEarlyRun
-import IntegerMultBounds.Machine.BinaryPackedEarlyPrefixLoadBudget
+module
+
+public import IntegerMultBounds.Machine.BinaryPackedEarlyRun
+public import IntegerMultBounds.Machine.BinaryPackedEarlyPrefixLoadBudget
 
 /-! The complete four actual loads retain a uniform common-volume bound and
 the certified interchange exponent. Both output-width setup allowances are
 explicitly absorbed by the physical suffixes of the same reservation. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryPackedEarlyRunBudget
 open CompactGadgetReservationShape
 open BinaryPackedEarlyGeometry

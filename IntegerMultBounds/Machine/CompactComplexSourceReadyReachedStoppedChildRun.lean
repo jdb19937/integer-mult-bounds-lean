@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactComplexCorrectedStoppedClassifierTensor
-import IntegerMultBounds.Machine.CompactComplexSourceReadySavedCallHistory
+module
+
+public import IntegerMultBounds.Machine.CompactComplexCorrectedStoppedClassifierTensor
+public import IntegerMultBounds.Machine.CompactComplexSourceReadySavedCallHistory
 
 /-! A reached semantic call stack supplies the true top call and older bank.
 The actual classifier, stopped tensor leaf and corrected decoded return then
 reach the saved continuation with the older call list physically restored;
 no occupied-word, pre-orientation or blank-tail premise is supplied. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyReachedStoppedChildRun
 noncomputable section
 open Networks

@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.Shared50RecursiveNodeSemantics
+module
+
+public import IntegerMultBounds.Machine.Shared50RecursiveNodeSemantics
 
 /-! The cyclic proof covers every original row, not merely a supplied subset.
 The final word interchanges H/D at every seven-factor address. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.Shared50RecursiveNodeTranspose
 noncomputable section
 open Networks

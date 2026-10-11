@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.PackedPrefixRepeatHeadersBudget
-import IntegerMultBounds.Machine.CompactGadgetReservationHeadersCarvedData
+module
+
+public import IntegerMultBounds.Machine.PackedPrefixRepeatHeadersBudget
+public import IntegerMultBounds.Machine.CompactGadgetReservationHeadersCarvedData
 
 /-! The prefix-source setup cost in the actual unchanged global reservation.
 The gap is the real carved control gap; every intermediate header and L fit
 within the complete reserved array. No setup-volume oracle is assumed. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.PackedPrefixRepeatHeadersReserved
 noncomputable section
 open CompactGadgetReservationShape

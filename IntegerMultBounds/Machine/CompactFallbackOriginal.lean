@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactFallbackSchedule
+module
+
+public import IntegerMultBounds.Machine.CompactFallbackSchedule
 
 /-! The full small-dimension fallback starts with only five original numeric
 headers and its native stream. It physically seeds the chunk ordinal,
 counts the original dimension D, visits exactly rho+i*K once per chunk and
 erases the ordinal. All derived descriptors and private storage return blank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactFallbackOriginal
 noncomputable section
 open CompactFallbackHeaders CompactFallbackAxisRun

@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.BinaryCorrectionOffsetRepeatBudget
-import IntegerMultBounds.Machine.BinaryAddressOffsetRepeatCoordinates
+module
+
+public import IntegerMultBounds.Machine.BinaryCorrectionOffsetRepeatBudget
+public import IntegerMultBounds.Machine.BinaryAddressOffsetRepeatCoordinates
 
 /-! The correction offset for a complete physical rotation row is precisely
 the packed controls minus packed 2*z*w modulo2^(n*q), where w is that row's regular temporary address and z is the
 retained original control word. Dirty-back and spectator fields only repeat it. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryCorrectionOffsetRepeatCoordinates
 open BinaryCorrectionOffsetRepeatData
 

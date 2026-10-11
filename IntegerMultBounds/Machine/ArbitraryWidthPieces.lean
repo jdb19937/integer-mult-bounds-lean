@@ -1,10 +1,15 @@
-import IntegerMultBounds.Swap.Recurrence
-import IntegerMultBounds.Machine.Shared50RecursiveDepth
-import IntegerMultBounds.Machine.FlatCoordinateLayout
+module
+
+public import IntegerMultBounds.Swap.Recurrence
+public import IntegerMultBounds.Machine.Shared50RecursiveDepth
+public import IntegerMultBounds.Machine.FlatCoordinateLayout
 
 /-! The manuscript's arbitrary-width partition into consecutive power-width
 pieces. This is executable shape data and address semantics, not an assertion
 that partition construction or tape views have already been implemented. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthPieces
 noncomputable section
 open Networks

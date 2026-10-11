@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActiveRepairDestinationPatchGeometry
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairDestinationPatchGeometry
 
 /-! Full physical destination-rank endpoint, from the real short record counter.
 The record's physical payload width is separate from this payload-one address. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairDestinationPatchEndpoint
 noncomputable section
 open CompactGadgetReservationShape CompactActiveTargetLayout

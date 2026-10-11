@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActiveRepairLateKeyData
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairLateKeyData
 
 /-! One fixed machine computes a conditional full later-repair key from the
 genuine short original rank, then erases all ten generated caller words. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLateKeyRun
 noncomputable section
 open ActiveRepairLateKeyData

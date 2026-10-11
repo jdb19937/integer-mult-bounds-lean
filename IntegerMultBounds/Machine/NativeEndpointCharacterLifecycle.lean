@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.NativeEndpointCharacterHeaders
-import IntegerMultBounds.Machine.AllAxisPolynomialPlacement
+module
+
+public import IntegerMultBounds.Machine.NativeEndpointCharacterHeaders
+public import IntegerMultBounds.Machine.AllAxisPolynomialPlacement
 
 /-! Literal aggregate sign-character traversal from the caller's original
 numeric descriptors, with complete private-workspace cleanup. The fixed
 weight list is compiled; polynomial multiplicity and address width are read
 from retained runtime headers. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.NativeEndpointCharacterLifecycle
 noncomputable section
 open CompactGadgetReservationShape (Shape)

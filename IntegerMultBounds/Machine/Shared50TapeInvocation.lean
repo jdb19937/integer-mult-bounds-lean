@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.Shared50XorLists
+module
+
+public import IntegerMultBounds.Machine.Shared50XorLists
 
 /-! Actual fixed tape machines for the certified Shared50 sparse invocation and
 local exchange. Every scalar role is an encoded bit stream, with a shared
 canonical length descriptor. Arbitrary dirty scratch streams are restored. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.Shared50TapeInvocation
 open Networks Circuit NeighborCounts
 variable {a n s L : ℕ}

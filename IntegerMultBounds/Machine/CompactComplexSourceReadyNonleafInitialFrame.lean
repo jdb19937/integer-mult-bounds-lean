@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyNonleafTargetSplit
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyNonleafTargetSplit
 
 /-! Actual current-row splitting retains the generated nonleaf target and
 incoming live header. These are literal physical frame identities, so later
 scalar and child events need not reconstruct a target from an advanced live. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyNonleafInitialFrame
 noncomputable section
 open CompactComplexSourceReadyWorkspace (publicTapes)

@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixCorrectionLoadData
-import IntegerMultBounds.Machine.ActivePrefixOffsetHeadersCleanup
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixCorrectionLoadData
+public import IntegerMultBounds.Machine.ActivePrefixOffsetHeadersCleanup
 
 /-! Paid construction of P=rows times two-to-W and target width n*q from
 original descriptors, in the same blank workspace used by offset production. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixCorrectionLoadHeaders
 noncomputable section
 open ActivePrefixCorrectionLoadData

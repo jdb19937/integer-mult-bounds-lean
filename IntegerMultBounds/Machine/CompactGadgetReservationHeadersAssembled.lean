@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactGadgetReservationHeadersEndpoint
-import IntegerMultBounds.Machine.CompactGadgetReservationEndpoint
+module
+
+public import IntegerMultBounds.Machine.CompactGadgetReservationHeadersEndpoint
+public import IntegerMultBounds.Machine.CompactGadgetReservationEndpoint
 
 /-! Paid original-row reservation followed by the actual reserved load.
 The load theorem is instantiated internally from physical source tapes. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactGadgetReservationHeadersAssembled
 noncomputable section
 open Networks.Shared50ModularControl (prime)

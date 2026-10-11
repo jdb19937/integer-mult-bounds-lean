@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.BinaryPrefixFieldTablePrimitives
-import IntegerMultBounds.Machine.BinaryDescriptorInstall
+module
+
+public import IntegerMultBounds.Machine.BinaryPrefixFieldTablePrimitives
+public import IntegerMultBounds.Machine.BinaryDescriptorInstall
 
 /-! Only W/start/d are initially present. The power/count descriptor, zero,
 second d descriptor, complete address table and dummy controls are constructed
 physically in one shared clean workspace. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryPrefixFieldTableSetup
 noncomputable section
 open SharedPlacementAlphabet (setTape)

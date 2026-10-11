@@ -1,10 +1,14 @@
-import IntegerMultBounds.Networks.Shared50FiniteInterchange
-import IntegerMultBounds.Machine.RadixRational
+module
+
+public import IntegerMultBounds.Networks.Shared50FiniteInterchange
+public import IntegerMultBounds.Machine.RadixRational
 
 /-! Literal coefficient machines for the actual fixed rational control lists.
 All coefficient denominators are certified by the already chosen schedule
 prime; no extra denominator or implementation contract is assumed. These are
 individual arithmetic kernels, not yet a tape implementation of a matrix sweep. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.Shared50CoefficientMachines
 

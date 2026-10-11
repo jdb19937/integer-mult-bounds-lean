@@ -1,8 +1,12 @@
-import IntegerMultBounds.Networks.Shared50Certificate
-import IntegerMultBounds.Networks.DAGFiniteCompile
+module
+
+public import IntegerMultBounds.Networks.Shared50Certificate
+public import IntegerMultBounds.Networks.DAGFiniteCompile
 
 /-! One concrete finite-register program realizes the optimized shared-point
 map within its certified storage and scalar-instruction budgets. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.Shared50Finite
 
@@ -10,7 +14,7 @@ open DisjointCircuit NeighborCounts SharedPointReplay
 
 attribute [local irreducible] SharedPointReplay.circuit
 
-private theorem capacity_bound :
+theorem capacity_bound :
     (DAGAllocator.compile circuit.nodes outputRefs).state.next ≤ 509194 :=
   Shared50Certificate.role_bound
 

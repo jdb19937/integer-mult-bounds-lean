@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActiveTargetHighestPairSemantics
+module
+
+public import IntegerMultBounds.Machine.ActiveTargetHighestPairSemantics
 
 /-! Both actual highest-bit source orders run on arbitrary caller banks,
 change only the array and preserve all original/prepared metadata. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveTargetHighestPairPlaced
 noncomputable section
 open ActiveTargetHighestPairData

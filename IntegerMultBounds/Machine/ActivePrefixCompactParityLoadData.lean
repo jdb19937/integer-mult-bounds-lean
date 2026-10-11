@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.ActivePrefixParityOnlyPlaced
-import IntegerMultBounds.Machine.ActivePrefixOffsetRepeatPlaced
-import IntegerMultBounds.Machine.ActiveTargetRotation
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixParityOnlyPlaced
+public import IntegerMultBounds.Machine.ActivePrefixOffsetRepeatPlaced
+public import IntegerMultBounds.Machine.ActiveTargetRotation
 
 /-! One fixed caller bank for a complete original-input compact parity load. Only
 original descriptors and the array are supplied; all offset words and rotation
 metadata begin blank and are physically constructed. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixCompactParityLoadData
 noncomputable section
 open ActivePrefixParityOnlyBank (Shape offsetWord values)

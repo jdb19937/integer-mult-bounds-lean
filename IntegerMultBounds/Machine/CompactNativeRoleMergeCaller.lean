@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactNativeRoleMetadataCleanup
+module
+
+public import IntegerMultBounds.Machine.CompactNativeRoleMetadataCleanup
 
 /-! Arbitrary native descendant results are physically joined at source43,
 then the copied original13/ell/p metadata is erased. The original scalar caller
 and unrelated streams remain framed; role streams and all scratch finish blank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactNativeRoleMergeCaller
 noncomputable section
 open CompactNativeRoleSourcePorts

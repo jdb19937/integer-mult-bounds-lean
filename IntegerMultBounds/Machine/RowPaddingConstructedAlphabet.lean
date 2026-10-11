@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.RowCropAny
-import IntegerMultBounds.Machine.CountedLoopReuseAlphabet
+module
+
+public import IntegerMultBounds.Machine.RowCropAny
+public import IntegerMultBounds.Machine.CountedLoopReuseAlphabet
 
 /-! Concrete alphabet lift of the actual twelve-tape row pad/crop machine.
 Encoded binary payload and backgrounds have literal target-cell endpoints;
 every generated span is still physically constructed and erased. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RowPaddingConstructedAlphabet
 noncomputable section
 variable {a : ℕ}

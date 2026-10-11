@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexCallerReturnFlow
+module
+
+public import IntegerMultBounds.Machine.CompactComplexCallerReturnFlow
 
 /-! The fixed guarded return controller on the literal caller plus blank workspace.
 Every permanent role and the immutable original scalar43 bank remain present
 through PC decoding. Continuation blocks may back-edge into the same entry;
 this placement alone does not establish the complete recursive execution. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexCallerWorkingReturnFlow
 noncomputable section
 open CompactComplexNativeCodecFrame (permanentTapes)

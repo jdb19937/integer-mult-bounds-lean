@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.BinaryAddressOffsetRepeat
+module
+
+public import IntegerMultBounds.Machine.BinaryAddressOffsetRepeat
 
 /-! Uniform linear cost in the number and width of emitted offset rows.
 Positive repetition counts are the actual rectangular-layout condition;
 zero offset width remains supported. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryAddressOffsetRepeatBudget
 
 private theorem canonical_length (xs : List Bool) (v : ℕ) (hv : Counter.value xs=v)

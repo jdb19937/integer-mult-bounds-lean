@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.BinarySelectedOffsetRepeatData
-import IntegerMultBounds.Machine.BinarySelectedOffsetPlaced
-import IntegerMultBounds.Machine.BinaryAddressOffsetRepeatConstructBudget
+module
+
+public import IntegerMultBounds.Machine.BinarySelectedOffsetRepeatData
+public import IntegerMultBounds.Machine.BinarySelectedOffsetPlaced
+public import IntegerMultBounds.Machine.BinaryAddressOffsetRepeatConstructBudget
 
 /-! Complete selected-mask-shift repetition from original b/q/n/P/H/L and the
 original control word. The exchanged width/range metadata uses the existing
 physical descriptor constructor; all private storage is erased on return. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinarySelectedOffsetRepeatConstruct
 open SharedPlacementAlphabet (setTape)
 open BinaryAddressOffsetRepeatHeaders

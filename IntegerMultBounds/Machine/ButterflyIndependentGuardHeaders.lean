@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ButterflyInverseAxisCorrect
+module
+
+public import IntegerMultBounds.Machine.ButterflyInverseAxisCorrect
 
 /-! Physically reserve an independent two-pass guard from original D and actual
 input precision q. The temporary width parameter q+2D is computed by two charged
 additions and restored by charged subtraction and erasure. No prebuilt enlarged
 precision header is assumed, and the mathematical precision remains q. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ButterflyIndependentGuardHeaders
 noncomputable section
 open ActiveRepairRankHeadersCommands

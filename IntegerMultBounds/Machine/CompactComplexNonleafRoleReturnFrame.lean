@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexNonleafRoleReturn
+module
+
+public import IntegerMultBounds.Machine.CompactComplexNonleafRoleReturn
 
 /-! Parametric controller-frame preservation at the actual nonleaf payload
 return. A child may advance an old permanent live-denominator slot while its
 selected result remains at source65. The reverse generated-count boundary keeps
 that advanced header and restores the original ancestor payload frame. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexNonleafRoleReturnFrame
 noncomputable section
 open CompactComplexNonleafRoleEntry

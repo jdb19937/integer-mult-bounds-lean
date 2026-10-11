@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.NativeUniformPolynomialRotation
-import IntegerMultBounds.Machine.UnitPhaseSigned
+module
+
+public import IntegerMultBounds.Machine.NativeUniformPolynomialRotation
+public import IntegerMultBounds.Machine.UnitPhaseSigned
 
 /-! Exact native word and guarded signed semantics of the runtime-column
 uniform correction. This concerns the actual emitted polynomial stream and
 includes private-flag cleanup and a uniform linear physical-cost bound. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.NativeUniformPolynomialRotationSemantics
 noncomputable section
 open ButterflyStreamData (Coefficient)

@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.CountedLateRepairKeyBank
+module
+
+public import IntegerMultBounds.Machine.CountedLateRepairKeyBank
 
 /-! Paid later inverse, ideal toggle, dirty-word concatenation and conditional
 key writing, all on the common fixed34 bank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedLateRepairKeyPrefix
 noncomputable section
 open CountedLateRepairKeyBank

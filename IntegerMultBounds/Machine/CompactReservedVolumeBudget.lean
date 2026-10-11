@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactReservedHeaderBudget
+module
+
+public import IntegerMultBounds.Machine.CompactReservedHeaderBudget
 
 /-! All derived controls are bounded by the actual binary address dimension.
 Their quadratic descriptor work is absorbed by the existing native volume;
 no new coefficient coordinates or width conversion are charged implicitly. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactReservedVolumeBudget
 noncomputable section
 open CompactReservedHeaders

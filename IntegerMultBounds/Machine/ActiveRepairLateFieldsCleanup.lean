@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActiveRepairLateFieldsRun
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairLateFieldsRun
 
 /-! Physically erase the recovered pre-toggle target; retain only the actual
 repair destination words and flag, originals, headers and full scan counter. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLateFieldsCleanup
 noncomputable section
 open ActiveRepairLateFieldsBank

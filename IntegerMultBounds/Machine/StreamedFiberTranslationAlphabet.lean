@@ -1,12 +1,17 @@
-import IntegerMultBounds.Machine.StreamedFiberTranslationArray
-import IntegerMultBounds.Machine.CountedLoopReuseAlphabet
-import IntegerMultBounds.Machine.RowPaddingConstructedAlphabet
+module
+
+public import IntegerMultBounds.Machine.StreamedFiberTranslationArray
+public import IntegerMultBounds.Machine.CountedLoopReuseAlphabet
+public import IntegerMultBounds.Machine.RowPaddingConstructedAlphabet
 
 /-! Literal binary payload rotations on any larger finite alphabet. This
 embeds the actual four-symbol streamed reader/rotation machine, preserving its
 runtime and exact cell semantics. Marked-workspace inputs and the retained final
 offset remain explicit; this lift does not assume free initialization or reset.
 -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.StreamedFiberTranslationAlphabet
 noncomputable section
 variable {a : ℕ}

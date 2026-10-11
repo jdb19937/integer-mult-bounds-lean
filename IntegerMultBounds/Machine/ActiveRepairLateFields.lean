@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActiveRepairLateFieldsCleanup
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairLateFieldsCleanup
 
 /-! One fixed extracted-field later repair machine. No local rank or prepared
 key sentinel is supplied; copies, inverse, guard, toggle and erasure are paid. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLateFields
 noncomputable section
 

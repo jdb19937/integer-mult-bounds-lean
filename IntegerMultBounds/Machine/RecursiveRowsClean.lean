@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.RecursiveRowsMove
-import IntegerMultBounds.Machine.CleanExecution
+module
+
+public import IntegerMultBounds.Machine.RecursiveRowsMove
+public import IntegerMultBounds.Machine.CleanExecution
 
 /-! Clean destructive cyclic split/permuted merge from six original headers.
 The same permanent payload bank is used at both boundaries; every generated
 counter, arithmetic workspace, installed loop marker and tracker is erased.
 Split clears the common source, and merge clears every physical role source. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveRowsClean
 open RecursiveInterchangeLayout (Descriptor volume)
 open RecursiveRowsInstall (LocalTapes TotalTapes)

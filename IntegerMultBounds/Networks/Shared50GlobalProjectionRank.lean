@@ -1,10 +1,14 @@
-import IntegerMultBounds.Networks.Shared50GlobalTraceStages
-import IntegerMultBounds.Networks.Shared50InvocationProjectionRank
+module
+
+public import IntegerMultBounds.Networks.Shared50GlobalTraceStages
+public import IntegerMultBounds.Networks.Shared50InvocationProjectionRank
 
 /-! Actual projector-difference ranks of the optimized reused two-bank trace.
 Every local and global loss, nesting, and nondegeneracy premise is discharged.
 The corrected budget includes one source-dimension contribution; its realization
 as the signed first boundary is supplied by Shared50SignedBoundary. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.Shared50GlobalProjectionRank
 

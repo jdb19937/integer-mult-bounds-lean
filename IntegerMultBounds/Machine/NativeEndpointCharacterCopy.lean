@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.NativeEndpointCharacterPrepare
+module
+
+public import IntegerMultBounds.Machine.NativeEndpointCharacterPrepare
 
 /-! Copy the actual raw geometry and immutable ell/precision into private
 endpoint-character storage. The caller, including every unrelated role and
 controller tape, remains literally unchanged. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.NativeEndpointCharacterCopy
 noncomputable section
 open CompactGadgetReservationShape (Shape)

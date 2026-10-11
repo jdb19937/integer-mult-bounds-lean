@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.Shared50PieceSchedule
-import IntegerMultBounds.Networks.AffineFieldBijective
+module
+
+public import IntegerMultBounds.Machine.Shared50PieceSchedule
+public import IntegerMultBounds.Networks.AffineFieldBijective
 
 /-! Exact semantic execution of the actual fixed piece list. Segment expansion,
 literal recursive interchanges and pointwise gates retain their original order;
 flattening back to fixed control yields its full routed-transpose identity. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.Shared50PieceSemantics
 noncomputable section
 open Networks

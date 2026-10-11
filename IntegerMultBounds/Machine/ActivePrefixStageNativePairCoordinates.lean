@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActivePrefixStageNativePairSchedule
-import IntegerMultBounds.Machine.ActivePrefixStagePairCoordinates
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStageNativePairSchedule
+public import IntegerMultBounds.Machine.ActivePrefixStagePairCoordinates
 
 /-! Canonical native rows use the original serialized address ordinals. Each
 physical native instruction therefore has exactly the original Boolean basis
 word's address semantics, including all spectators and payload record starts. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixStageNativePairCoordinates
 noncomputable section
 open CompactGadgetReservationShape (Shape)

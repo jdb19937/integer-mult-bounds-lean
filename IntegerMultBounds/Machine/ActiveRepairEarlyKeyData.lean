@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActiveRepairEarlyKeyPatch
-import IntegerMultBounds.Machine.ActiveRepairEarlyKeyAppend
-import IntegerMultBounds.Machine.ActiveRepairEarlyKeyCleanup
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairEarlyKeyPatch
+public import IntegerMultBounds.Machine.ActiveRepairEarlyKeyAppend
+public import IntegerMultBounds.Machine.ActiveRepairEarlyKeyCleanup
 
 /-! The actual full-rank early key bank. Only original counter and runtime
 descriptors are inputs; every address-dependent word is computed internally. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairEarlyKeyData
 noncomputable section
 open SharedPlacementAlphabet (setTape)

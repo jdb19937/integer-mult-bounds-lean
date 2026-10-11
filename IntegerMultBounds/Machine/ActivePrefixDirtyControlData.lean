@@ -1,12 +1,17 @@
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlParityPlaced
-import IntegerMultBounds.Machine.ActivePrefixSelectedOffsetData
-import IntegerMultBounds.Machine.BinaryVaryingOffsetGatherPlaced
-import IntegerMultBounds.Machine.BinaryPrefixFieldTablePlaced
-import IntegerMultBounds.Machine.CompactGadgetReservationHeadersCarvedPlacedCleanup
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlParityPlaced
+public import IntegerMultBounds.Machine.ActivePrefixSelectedOffsetData
+public import IntegerMultBounds.Machine.BinaryVaryingOffsetGatherPlaced
+public import IntegerMultBounds.Machine.BinaryPrefixFieldTablePlaced
+public import IntegerMultBounds.Machine.CompactGadgetReservationHeadersCarvedPlacedCleanup
 
 /-! Dirty compact U supplies exactly one parity bit per b-bit digit. Prefix
 projection and actual block-parity extraction produce the entire control stream;
 there is no extra source digit and no assumed q-stride source field. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixDirtyControlData
 noncomputable section
 open BinaryVaryingOffsetGatherPlaced (Kind sourceWidth outputWidth)

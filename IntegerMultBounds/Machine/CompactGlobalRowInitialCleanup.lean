@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.CompactGlobalRowInitialData
+module
+
+public import IntegerMultBounds.Machine.CompactGlobalRowInitialData
 
 /-! All seven generated global headers are physically erased after padding.
 The four original public words and arbitrary payload tapes are retained. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactGlobalRowInitialCleanup
 noncomputable section
 open CompactGlobalRowHeaderOps

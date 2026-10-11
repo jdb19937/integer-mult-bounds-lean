@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexRootPieceEntry
-import IntegerMultBounds.Machine.CompactChildHeadersStack
+module
+
+public import IntegerMultBounds.Machine.CompactComplexRootPieceEntry
+public import IntegerMultBounds.Machine.CompactChildHeadersStack
 
 /-! Place the complete original native66 bank between the forty-four root
 controller tapes and arbitrary persistent recursion storage. Native routines
 frame every controller cell/head and every appended stack cell/head exactly. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexControllerNativeFrame
 noncomputable section
 open SharedPlacementAlphabet (setTape)

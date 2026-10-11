@@ -1,5 +1,9 @@
-import IntegerMultBounds.Machine.CompactComplexNonleafRoleSplit
-import IntegerMultBounds.Machine.CompactComplexNonleafSpectatorTargetRestore
+module
+
+public import IntegerMultBounds.Machine.CompactComplexNonleafRoleSplit
+public import IntegerMultBounds.Machine.CompactComplexNonleafSpectatorTargetRestore
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.NativeEndpointCharacterSplitCaller
 noncomputable section

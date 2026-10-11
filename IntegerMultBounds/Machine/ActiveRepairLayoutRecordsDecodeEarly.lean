@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsDecodeCommon
-import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsPipelineEarly
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsDecodeCommon
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsPipelineEarly
 
 /-! Actual repair followed by the literal raw decoder. Decoding destroys the
 repaired record buffer, emits ideal payload bits in a clean auxiliary port,
 and restores its appended private bank without changing caller metadata. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLayoutRecordsDecodeEarly
 noncomputable section
 open SharedPlacementAlphabet (setTape)

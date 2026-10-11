@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActivePrefixStageHeadersBudget
-import IntegerMultBounds.Machine.BinaryDescriptorCompare
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStageHeadersBudget
+public import IntegerMultBounds.Machine.BinaryDescriptorCompare
 
 /-! Runtime f=1 versus f≥2 selection from the retained original f word.
 The literal one descriptor is physically written and erased; only the
 comparison bit survives until its separately paid selecting cleanup. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixStageWidthSelector
 noncomputable section
 open RecursiveChildQuotientsConstant (bits)

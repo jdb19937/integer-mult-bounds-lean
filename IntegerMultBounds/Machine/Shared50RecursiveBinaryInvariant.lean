@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.Shared50RecursiveChildPermutation
+module
+
+public import IntegerMultBounds.Machine.Shared50RecursiveChildPermutation
 
 /-! Binary World payloads and blank shared I/O are the invariant of recursive
 piece boundaries. Dirty World workspaces may contain arbitrary bits. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.Shared50RecursiveBinaryInvariant
 noncomputable section
 open Networks

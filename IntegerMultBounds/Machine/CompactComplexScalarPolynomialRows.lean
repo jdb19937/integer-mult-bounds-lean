@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.RawLinearCombinationComplexArray
-import IntegerMultBounds.Machine.CompactComplexScalarPathGuard
+module
+
+public import IntegerMultBounds.Machine.RawLinearCombinationComplexArray
+public import IntegerMultBounds.Machine.CompactComplexScalarPathGuard
 
 /-! Actual complex25 scalar rows execute on every literal polynomial
 coefficient, with one unchanged denominator for the whole input array and
 one common next denominator for the whole output. The actual expression
 family and every read, loop, cleanup and join cost are included. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexScalarPolynomialRows
 noncomputable section
 open CompactComplexScalarIntegerRows (RowIndex Wire wireIndex signedRows gate)
@@ -18,7 +23,7 @@ abbrev program (r : RowIndex) := RawLinearCombinationComplexArray.program wires_
 def result {n : ℕ} (r : RowIndex) (data : Fin wireCount → Fin n → Coefficient) :=
   RawLinearCombinationComplexArray.result wires_pos (expressions r) data
 
-private opaque budgetWires : {c : ℕ // c=wireCount} := ⟨wireCount,rfl⟩
+opaque budgetWires : {c : ℕ // c=wireCount} := ⟨wireCount,rfl⟩
 @[irreducible] def timeConstant := CompactComplexScalarRowBlock.timeConstant+24*budgetWires.val+21
 
 private theorem body_allowance (c R F w : ℕ) (h : 2*F+1≤R*(w+1)) :

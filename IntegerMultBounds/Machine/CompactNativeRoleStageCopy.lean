@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactNativeRoleScalarHeaders
-import IntegerMultBounds.Machine.BinaryDescriptorInstallMarkedList
+module
+
+public import IntegerMultBounds.Machine.CompactNativeRoleScalarHeaders
+public import IntegerMultBounds.Machine.BinaryDescriptorInstallMarkedList
 
 /-! The reservation-derived nine words and six actual retained controller
 ports are physically copied into fresh original13+ell/p storage. Controller
 ports are slots,count,left,right,source,target; copies preserve every caller
 word and no runtime value is built into the finite control. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactNativeRoleStageCopy
 noncomputable section
 open BinaryDescriptorInstallMarkedList

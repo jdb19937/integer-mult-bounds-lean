@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.GuardedFiniteReturnExtraPath
-import IntegerMultBounds.Machine.CompactComplexFixedNodePaths
+module
+
+public import IntegerMultBounds.Machine.GuardedFiniteReturnExtraPath
+public import IntegerMultBounds.Machine.CompactComplexFixedNodePaths
 
 /-! The original fixed cyclic node table physically decodes its genuine saved
 PC from guard0 and enters the original call's continuation. Only the saved
 stack changes; its guard/pop transitions and both table joins are paid. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexFixedNodeSavedReturnPath
 noncomputable section
 open Networks

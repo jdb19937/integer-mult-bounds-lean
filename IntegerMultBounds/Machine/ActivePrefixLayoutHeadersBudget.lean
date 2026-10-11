@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixLayoutHeadersRun
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixLayoutHeadersRun
 
 /-! Every copy, arithmetic pass, power construction, multiplication and
 cleanup is bounded linearly by any positive containing volume that bounds
 original descriptors and the produced suffix. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixLayoutHeadersBudget
 open ActivePrefixLayoutHeadersData ActivePrefixLayoutHeadersRun ActiveRepairRankHeadersCommands
 

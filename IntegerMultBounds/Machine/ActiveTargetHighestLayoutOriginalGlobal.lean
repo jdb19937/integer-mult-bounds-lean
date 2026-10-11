@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActiveTargetHighestLayoutGlobal
-import IntegerMultBounds.Machine.ActiveTargetHighestLayoutOriginalPlaced
+module
+
+public import IntegerMultBounds.Machine.ActiveTargetHighestLayoutGlobal
+public import IntegerMultBounds.Machine.ActiveTargetHighestLayoutOriginalPlaced
 
 /-! Original14-header physical highest-bit execution, expressed on the
 literal original full-array type rather than a separately supplied rectangle. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveTargetHighestLayoutOriginalGlobal
 noncomputable section
 open CompactGadgetReservationShape (Shape)

@@ -1,6 +1,11 @@
-import IntegerMultBounds.Machine.ArbitraryWidthPaddedPieceRun
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthPaddedPieceRun
 
 /-! Place the complete physical padding/piece/crop wrapper on a caller's tape. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthPaddedPieceShared
 noncomputable section
 open Networks

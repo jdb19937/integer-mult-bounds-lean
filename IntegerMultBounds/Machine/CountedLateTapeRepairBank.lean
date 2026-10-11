@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.CountedLateRepairPrepare
-import IntegerMultBounds.Compact.LatePowerTwoWords
+module
+
+public import IntegerMultBounds.Machine.CountedLateRepairPrepare
+public import IntegerMultBounds.Compact.LatePowerTwoWords
 
 /-! Literal input, output and charged costs for the uniform repair pipeline. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedLateTapeRepairBank
 noncomputable section
 open IntegerMultBounds.Compact

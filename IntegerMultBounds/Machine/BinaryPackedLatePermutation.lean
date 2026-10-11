@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.BinaryPackedLateData
-import IntegerMultBounds.Machine.ActiveRepairLayoutPermutationFields
+module
+
+public import IntegerMultBounds.Machine.BinaryPackedLateData
+public import IntegerMultBounds.Machine.ActiveRepairLayoutPermutationFields
 
 /-! The actual fixed-width late word arithmetic realizes the exact permutation
 used by the global repair theorem, including exceptional packed addresses. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryPackedLatePermutation
 noncomputable section
 open Compact Compact.PowerTwo

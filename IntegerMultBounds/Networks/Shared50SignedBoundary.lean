@@ -1,11 +1,15 @@
-import IntegerMultBounds.Networks.Shared50GlobalTrace
-import IntegerMultBounds.Networks.SignedProjection
-import IntegerMultBounds.Networks.ShearFrame
-import IntegerMultBounds.Networks.FramedEdgeTrace
+module
+
+public import IntegerMultBounds.Networks.Shared50GlobalTrace
+public import IntegerMultBounds.Networks.SignedProjection
+public import IntegerMultBounds.Networks.ShearFrame
+public import IntegerMultBounds.Networks.FramedEdgeTrace
 
 /-! The actual first boundary admits the rational negative-source correction.
 Its operators are genuine projector sums, and their ranks exceed the ordinary
 boundary ranks by exactly the physical source dimension total. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.Shared50SignedBoundary
 

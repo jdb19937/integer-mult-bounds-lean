@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyStoppedReturnPrefix
-import IntegerMultBounds.Machine.CompactComplexSourceReadyOrientationInvariants
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyStoppedReturnPrefix
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyOrientationInvariants
 
 /-! Prefix-preserving stopped semantics for the actual pre/post-oriented leaf.
 The installed array is the literal forward leaf on the oriented selected input,
 followed by the same saved-call orientation. No coarse replacement grid is used. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyOrientedStoppedReturnPrefix
 noncomputable section
 open CompactGadgetReservationShape (Shape)

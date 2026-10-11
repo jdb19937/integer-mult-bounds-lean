@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActiveTargetHighestBits
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlGlobalSwap
+module
+
+public import IntegerMultBounds.Machine.ActiveTargetHighestBits
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlGlobalSwap
 
 /-! On every original address, the highest later-source action changes just
 the lowest activeBefore bit, controlled by the highest selected activeAfter
 bit. All low target bits, source bits, and spectators are literal frames. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveTargetHighestLayoutLateCoordinates
 noncomputable section
 open CompactGadgetReservationShape (Shape)

@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.NativeEndpointCharacterCanonicalRoles
-import IntegerMultBounds.Machine.NativeEndpointCharacterNamedBank
+module
+
+public import IntegerMultBounds.Machine.NativeEndpointCharacterCanonicalRoles
+public import IntegerMultBounds.Machine.NativeEndpointCharacterNamedBank
 
 /-! The actual original named sign loop uses private source/target normalization
 and fixed early metadata. No runtime order parameter or ordering premise is supplied. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.NativeEndpointCharacterCanonicalNamedRoles
 noncomputable section
 open CompactGadgetReservationShape (Shape)

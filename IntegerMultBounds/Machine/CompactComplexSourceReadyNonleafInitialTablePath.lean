@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyNonleafTargetSplit
-import IntegerMultBounds.Machine.CompactComplexFixedNodePaths
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyNonleafTargetSplit
+public import IntegerMultBounds.Machine.CompactComplexFixedNodePaths
 
 /-! The actual target-and-current-row-split block takes the real nonleaf setup
 edge to the first original event, with its execution and edge both paid. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyNonleafInitialTablePath
 noncomputable section
 open CompactComplexSourceReadyNonleafTargetSplit

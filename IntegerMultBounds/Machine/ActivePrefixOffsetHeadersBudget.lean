@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActivePrefixOffsetHeadersRun
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixOffsetHeadersRun
 
 /-! Degree-one full-prefix bound for actual descriptor synthesis. Both field
 fit hypotheses remain explicit; the n*P product is charged, never supplied. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixOffsetHeadersBudget
 noncomputable section
 open ActivePrefixOffsetHeadersData

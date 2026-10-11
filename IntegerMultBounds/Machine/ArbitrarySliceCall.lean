@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.SliceHeaderPlacement
-import IntegerMultBounds.Machine.ArbitraryWidthSchedule
+module
+
+public import IntegerMultBounds.Machine.SliceHeaderPlacement
+public import IntegerMultBounds.Machine.ArbitraryWidthSchedule
 
 /-! One actual arbitrary-offset power-width call. The machine constructs and
 installs slice headers, runs the fixed recursive root program, restores the old
 headers, and halts with exactly the selected-window permutation of the I/O word. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitrarySliceCall
 noncomputable section
 open Networks
@@ -22,24 +27,24 @@ abbrev rootCount := Shared50RecursiveRoot.tapeCount
 abbrev commonCount := Shared50RecursiveImplementation.commonCount
 abbrev tapeCount := rootCount+12
 
-private theorem common_le : commonCount ≤ rootCount :=
+theorem common_le : commonCount ≤ rootCount :=
   SharedBankFamily.common_le_tapeCount
     (Shared50RecursiveControl.block Shared50RecursiveImplementation.returnCapacity
       Shared50RecursiveImplementation.width Shared50RecursiveImplementation.pcStack
       (Shared50RecursiveImplementation.implementation Shared50RecursiveImplementation.returnWidth))
 
-private def commonHeader (i : Fin 6) : Fin commonCount := RecursiveCallBank.headerSlot i
+def commonHeader (i : Fin 6) : Fin commonCount := RecursiveCallBank.headerSlot i
 
 def headerSlot (i : Fin 6) : Fin rootCount := Fin.castLE common_le (commonHeader i)
 
-private theorem header_injective : Function.Injective headerSlot := by
+theorem header_injective : Function.Injective headerSlot := by
   intro i j he
   have hv := congrArg Fin.val he
   simp only [headerSlot,commonHeader,RecursiveCallBank.headerSlot,Fin.val_castLE,Fin.val_natAdd,Fin.val_castAdd] at hv
   apply Fin.ext
   omega
 
-private theorem root_six_le : 6 ≤ rootCount := by
+theorem root_six_le : 6 ≤ rootCount := by
   have h := common_le
   change payloadCount+(7+((3+(1+(1+0)))+2)) ≤ rootCount at h
   omega

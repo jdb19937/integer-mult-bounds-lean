@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.RecursiveRowsInstall
-import IntegerMultBounds.Machine.CyclicRowPermutedMerge
+module
+
+public import IntegerMultBounds.Machine.RecursiveRowsInstall
+public import IntegerMultBounds.Machine.CyclicRowPermutedMerge
 
 /-! Physically initialize and run normalized recursive cyclic transfers on one
 fixed bank from six original headers. These transfer contracts retain the copied
 sources; the separately charged erasure layer is needed for destructive moves. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveRowsConstruct
 open RecursiveInterchangeLayout (Descriptor volume role)
 open RecursiveInterchangeRows (roleArray rowLength groups rows rows_length source_word role_word)

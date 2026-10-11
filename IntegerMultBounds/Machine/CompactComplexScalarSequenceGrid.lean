@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactComplexScalarSequenceSemantics
-import IntegerMultBounds.Machine.CompactComplexScalarRoleSemantics
+module
+
+public import IntegerMultBounds.Machine.CompactComplexScalarSequenceSemantics
+public import IntegerMultBounds.Machine.CompactComplexScalarRoleSemantics
 
 /-! Literal scalar-array sequences preserve the dynamic Gaussian grid, with
 an explicit numerator bound from the actual listed sparse gates. A genuine contiguous
 scalar segment inherits the whole finite network's growth allowance. Intermediate
 signed guards still follow from the single stored-field reserve, not callbacks. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexScalarSequenceGrid
 noncomputable section
 open Networks Networks.GaussianPrecision

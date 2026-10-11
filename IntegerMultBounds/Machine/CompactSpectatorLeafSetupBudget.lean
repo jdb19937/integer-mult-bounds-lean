@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactSpectatorLeafOriginal
+module
+
+public import IntegerMultBounds.Machine.CompactSpectatorLeafOriginal
 
 /-! Paid setup and copies are charged to the original numeric descriptors.
 This bound is valid even before those descriptors are instantiated with native
 payload and fixed recursive arity; it does not hide unbounded caller metadata. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactSpectatorLeafSetupBudget
 noncomputable section
 open CompactGadgetReservationShape (Shape)

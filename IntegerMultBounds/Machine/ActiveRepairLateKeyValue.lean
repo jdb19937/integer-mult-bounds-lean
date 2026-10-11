@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActiveRepairLateKeyRun
-import IntegerMultBounds.Machine.ActiveRepairLateFieldsValue
-import IntegerMultBounds.Machine.ActiveRepairDestinationPatchEndpoint
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairLateKeyRun
+public import IntegerMultBounds.Machine.ActiveRepairLateFieldsValue
+public import IntegerMultBounds.Machine.ActiveRepairDestinationPatchEndpoint
 
 /-! Exact guard classification and complete original-layout destination of
 the physical later-key writer. Local concatenation appears only in the proof. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLateKeyValue
 noncomputable section
 open ActiveRepairLateKeyData ActiveRepairLateKeyData.Data ActiveRepairLateKeyRun

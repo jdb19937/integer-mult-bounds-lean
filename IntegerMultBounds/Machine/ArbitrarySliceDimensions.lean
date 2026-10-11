@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.SliceExponentPowers
-import IntegerMultBounds.Machine.ArbitraryWidthPieces
-import IntegerMultBounds.Machine.RecursiveHeaderBounds
+module
+
+public import IntegerMultBounds.Machine.SliceExponentPowers
+public import IntegerMultBounds.Machine.ArbitraryWidthPieces
+public import IntegerMultBounds.Machine.RecursiveHeaderBounds
 
 /-! Runtime construction of the enlarged spectator dimensions for an arbitrary
 digit interval. All powers, differences and products are computed on tape;
 the only retained new descriptors are the three actual slice dimensions. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitrarySliceDimensions
 open RecursiveInterchangeLayout (Descriptor volume)
 variable {q : ℕ} (hq : 2 ≤ q)
@@ -81,7 +86,7 @@ def afterPlacement : Fin (6+11) ≃ Fin 17 where
 
 def afterProgram := Placement.placed (DimensionProductDescriptor.program (q := q)) afterPlacement
 
-private def cleanSlots : List (Fin 17) := [8,9,11]
+def cleanSlots : List (Fin 17) := [8,9,11]
 def cleanProgram := BinaryDescriptorCleanupList.program (a := q) (by decide : 0 < 17) cleanSlots
 
 def program := seq (seq (seq (seq (seq (powersProgram hq) beforeProgram) middleProgram) betweenProgram) afterProgram) cleanProgram

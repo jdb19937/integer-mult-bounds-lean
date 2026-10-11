@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ButterflyAxisDecoded
+module
+
+public import IntegerMultBounds.Machine.ButterflyAxisDecoded
 
 /-! Literal signed butterflies at an inherited denominator and numerator
 budget, independently of the metadata controlling the fixed stored width. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ButterflyInheritedStream
 noncomputable section
 open Networks.GaussianPrecision ButterflyStreamSemantics ButterflyStreamData

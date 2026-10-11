@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyChildReturnPath
-import IntegerMultBounds.Machine.CompactComplexCorrectedChildGridSemantics
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyChildReturnPath
+public import IntegerMultBounds.Machine.CompactComplexCorrectedChildGridSemantics
 
 /-! Corrected child tensor semantics supplies the original parent return grid
 and ledger, while the literal promotion/live commit/target restoration retains
 its genuine physical cost. Child tensor correctness remains an induction premise. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexCorrectedChildReturnPrefix
 noncomputable section
 open CompactGadgetReservationShape (Shape)

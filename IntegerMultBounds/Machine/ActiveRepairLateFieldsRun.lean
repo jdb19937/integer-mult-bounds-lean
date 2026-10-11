@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActiveRepairLateFieldsBank
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairLateFieldsBank
 
 /-! Actual paid copies, later exceptional guard, unrestricted inverse and
 ideal toggle, retaining the genuine full scan counter throughout. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLateFieldsRun
 noncomputable section
 open ActiveRepairLateFieldsBank

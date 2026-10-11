@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactAllAxisPhaseDispatch
-import IntegerMultBounds.Machine.AllAxisPolynomialNativeBudget
+module
+
+public import IntegerMultBounds.Machine.CompactAllAxisPhaseDispatch
+public import IntegerMultBounds.Machine.AllAxisPolynomialNativeBudget
 
 /-! Actual finite edge selection contributes a fixed constant, while the
 complete polynomial phase body has its proved linear-volume cost. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactAllAxisPhaseDispatchBudget
 open CompactGadgetReservationShape (Shape)
 open ActivePrefixStageParameters

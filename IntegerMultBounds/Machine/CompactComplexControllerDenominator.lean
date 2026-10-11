@@ -1,13 +1,18 @@
-import IntegerMultBounds.Machine.CompactComplexControllerNativeFrame
-import IntegerMultBounds.Machine.CompactComplexExponentStep
-import IntegerMultBounds.Machine.BinaryDescriptorStackAt
-import IntegerMultBounds.Machine.NativeSignedGapHeadersReturn
+module
+
+public import IntegerMultBounds.Machine.CompactComplexControllerNativeFrame
+public import IntegerMultBounds.Machine.CompactComplexExponentStep
+public import IntegerMultBounds.Machine.BinaryDescriptorStackAt
+public import IntegerMultBounds.Machine.NativeSignedGapHeadersReturn
 
 /-! True coefficient denominator storage, separate from geometric controller k
 and signed-width metadata. Storage7 is live, storage8 is the certified return
 target, and storage9 is its nested stack. Slots0..8 exactly match the source43
 return adapter suffix. Target policy must come from an actual Grid theorem;
 saving parent input precision alone is not generally a valid return policy. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexControllerDenominator
 noncomputable section
 open CompactComplexControllerNativeFrame (tapes storageSlot nativeSlot)
@@ -23,7 +28,7 @@ private theorem current_target : (current : Fin (size s))≠target := by
   intro h
   have hh := congrArg Fin.val h
   simp [current,target,storageSlot] at hh
-private theorem target_stack : (target : Fin (size s))≠stack := by
+theorem target_stack : (target : Fin (size s))≠stack := by
   intro h
   have hh := congrArg Fin.val h
   simp [target,stack,storageSlot] at hh
@@ -72,7 +77,7 @@ theorem restore (v : Tapes (size s) 2) (f : ℤ → Fin 6) (p : ℤ) (n : ℕ)
   BinaryDescriptorStackAt.pop_hoare stack target (Ne.symm target_stack) v f p (bits n) ht hh hd hp hf
 
 def copySlots : Fin 2 → Fin (size s) := ![target,current]
-private theorem copy_injective : Function.Injective (copySlots (s:=s)) := by
+theorem copy_injective : Function.Injective (copySlots (s:=s)) := by
   intro i j h
   fin_cases i <;> fin_cases j <;> simp_all [copySlots,current_target,Ne.symm current_target]
 def commitProgram := seq (BinaryDescriptorCleanupList.oneProgram (a:=2) (current (s:=s)))
@@ -107,7 +112,7 @@ theorem commit (v : Tapes (size s) 2) (n targetN : ℕ)
 native source and storage7/8. Storage9 and all older stacks are outside it. -/
 def returnSlots : Fin 10 → Fin (size s) := fun i =>
   if i.val=0 then nativeSlot 43 else storageSlot ⟨i.val-1,by have := i.isLt; omega⟩
-private theorem return_injective : Function.Injective (returnSlots (s:=s)) := by
+theorem return_injective : Function.Injective (returnSlots (s:=s)) := by
   intro i j h
   have hv := congrArg Fin.val h
   unfold returnSlots at hv

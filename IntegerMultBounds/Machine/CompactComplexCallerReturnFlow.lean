@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactComplexControllerFlow
-import IntegerMultBounds.Machine.CompactComplexSpectatorTargetBank
+module
+
+public import IntegerMultBounds.Machine.CompactComplexControllerFlow
+public import IntegerMultBounds.Machine.CompactComplexSpectatorTargetBank
 
 /-! The fixed guarded return controller on the literal scalar/native caller.
 Every permanent role and the immutable original scalar43 bank remain present
 through PC decoding. Continuation blocks may back-edge into the same entry;
 this placement alone does not establish the complete recursive execution. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexCallerReturnFlow
 noncomputable section
 open CompactComplexNativeCodecFrame (bank permanentTapes)

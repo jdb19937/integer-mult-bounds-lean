@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.ActivePrefixParityNegativeData
-import IntegerMultBounds.Machine.ActivePrefixParityNegativeNegate
-import IntegerMultBounds.Machine.ActivePrefixParityOffsetPlaced
-import IntegerMultBounds.Machine.ActivePrefixOffsetHeadersCleanup
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixParityNegativeData
+public import IntegerMultBounds.Machine.ActivePrefixParityNegativeNegate
+public import IntegerMultBounds.Machine.ActivePrefixParityOffsetPlaced
+public import IntegerMultBounds.Machine.ActivePrefixOffsetHeadersCleanup
 
 /-! Original eight descriptors, a consumed positive stream, the final negative
 stream and five genuinely synthesized headers share one permanent caller bank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixParityNegativeBank
 noncomputable section
 open ActivePrefixParityOffsetBank (Shape values)

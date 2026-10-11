@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactNativeRoleControllerBudget
-import IntegerMultBounds.Machine.CompactReservationPaddingHeaderBudget
+module
+
+public import IntegerMultBounds.Machine.CompactNativeRoleControllerBudget
+public import IntegerMultBounds.Machine.CompactReservationPaddingHeaderBudget
 
 /-! Physical corrected-precision and reservation-shape scalar synthesis have a
 uniform original native-volume budget. The two genuine binary divisions are
 absorbed through the existing original dimension-square volume inequality. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactNativeRoleScalarBudget
 noncomputable section
 open RecursiveChildQuotientsConstant (bits)

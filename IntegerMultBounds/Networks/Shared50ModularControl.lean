@@ -1,10 +1,14 @@
-import IntegerMultBounds.Networks.Shared50ModularSchedule
-import IntegerMultBounds.Networks.ModularProgramShape
+module
+
+public import IntegerMultBounds.Networks.Shared50ModularSchedule
+public import IntegerMultBounds.Networks.ModularProgramShape
 
 /-! Canonical finite control for every modular edge in the actual signed
 schedule. A single chosen prime works for every width, and the operation lists
 are reductions of fixed rational lists. Counts here concern abstract shear
 operations, including whole-matrix transformations, not tape transitions. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.Shared50ModularControl
 

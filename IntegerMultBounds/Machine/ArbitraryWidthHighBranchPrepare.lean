@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.ArbitraryWidthHighDimensionsAndSuffixShared
-import IntegerMultBounds.Machine.ArbitraryWidthJoinedHeadersShared
-import IntegerMultBounds.Machine.ArbitraryWidthZeroHeaderShared
-import IntegerMultBounds.Machine.ArbitraryWidthHighPaddedBudget
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthHighDimensionsAndSuffixShared
+public import IntegerMultBounds.Machine.ArbitraryWidthJoinedHeadersShared
+public import IntegerMultBounds.Machine.ArbitraryWidthZeroHeaderShared
+public import IntegerMultBounds.Machine.ArbitraryWidthHighPaddedBudget
 
 /-! Physically prepare all high-branch arithmetic, joined-root and zero-clock
 banks from retained caller sources, then erase them in reverse order. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthHighBranchPrepare
 noncomputable section
 variable {a t : ℕ}

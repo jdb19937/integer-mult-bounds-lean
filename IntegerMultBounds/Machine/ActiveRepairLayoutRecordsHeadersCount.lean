@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsHeadersRun
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsHeadersRun
 
 /-! The actual forward record formatter's count is generated from original
 rows and the derived address exponent. No full record count is supplied. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLayoutRecordsHeadersCount
 noncomputable section
 open CompactGadgetReservationShape (Shape)

@@ -1,5 +1,7 @@
-import IntegerMultBounds.Schoenhage.RingLemmaHeader
-import IntegerMultBounds.Schoenhage.RingPointwiseTarget
+module
+
+public import IntegerMultBounds.Schoenhage.RingLemmaHeader
+public import IntegerMultBounds.Schoenhage.RingPointwiseTarget
 
 /-! The signed ring product lemma (`lem:signed-ring-product`) on its own
 interface: header `Γ(p)Γ(r)Γ(w)` on tape 0, the two records on tapes 1 and 2,
@@ -7,6 +9,8 @@ the record `Q_p(fg/r)` written on tape 3 (`ring_meets : Meets`), within
 `O(r p log (r p) log log (r p))` steps (`ring_polylog : polylogTarget 1`).
 The program is the pointwise-product program with the three-code header
 decoder, run on a single record. -/
+
+@[expose] public section
 
 set_option maxRecDepth 10000
 

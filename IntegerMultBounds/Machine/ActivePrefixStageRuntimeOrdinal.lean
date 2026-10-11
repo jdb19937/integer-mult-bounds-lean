@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActivePrefixStageRuntimeCoordinates
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStageRuntimeCoordinates
 
 /-! The complete active word is recoverable from the original serialized
 ordinal, independently of the source/target dependent address decomposition. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixStageRuntimeOrdinal
 noncomputable section
 open CompactGadgetReservationShape (Shape)

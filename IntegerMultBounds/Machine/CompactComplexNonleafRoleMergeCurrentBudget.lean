@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactComplexNonleafRoleMergeCurrent
-import IntegerMultBounds.Machine.CompactNativeRoleOriginalBudget
-import IntegerMultBounds.Machine.CompactRecursiveDependencyBudget
+module
+
+public import IntegerMultBounds.Machine.CompactComplexNonleafRoleMergeCurrent
+public import IntegerMultBounds.Machine.CompactNativeRoleOriginalBudget
+public import IntegerMultBounds.Machine.CompactRecursiveDependencyBudget
 
 /-! The actual unchanged-row node merger has a uniform native-volume bound.
 The true dependency Path derives legal grouping from the one original row pad;
 the complete generated-header/merge/cleanup runtime is paid by OriginalBudget. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexNonleafRoleMergeCurrentBudget
 noncomputable section
 open CompactGadgetReservationShape (Shape)

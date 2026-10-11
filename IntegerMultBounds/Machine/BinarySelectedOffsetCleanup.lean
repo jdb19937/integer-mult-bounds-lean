@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.BinarySelectedOffsetGather
+module
+
+public import IntegerMultBounds.Machine.BinarySelectedOffsetGather
 
 /-! Paid cleanup of both generated input streams and all three derived
 headers. The packed output is physically rewound to its origin, and the only
 remaining tapes are the original b/q/n descriptors, original control and actual offset word. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinarySelectedOffsetCleanup
 open SharedPlacementAlphabet (setTape)
 open BinarySelectedOffsetData

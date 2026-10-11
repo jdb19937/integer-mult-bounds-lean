@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ArbitraryWidthHighExecutionInitializeCleanup
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthHighExecutionInitializeCleanup
 
 /-! The high-width execution from wholly blank private banks: construct all
 headers, run the actual high body, and erase every private header afterwards. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthHighInitializedRun
 noncomputable section
 open Networks

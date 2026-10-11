@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.UnitPhasePolynomialNative
-import IntegerMultBounds.Machine.UnitPhasePolynomialBudget
+module
+
+public import IntegerMultBounds.Machine.UnitPhasePolynomialNative
+public import IntegerMultBounds.Machine.UnitPhasePolynomialBudget
 
 /-! Linear-volume budget for the fully normalized polynomial phase machine,
 including immutable-ell synthesis, both counted loops, every control erase,
 stream rewinds, destructive overwrite and source-head return. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.UnitPhasePolynomialNativeBudget
 open CompactGadgetReservationShape (Shape)
 open ActivePrefixStageParameters

@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActivePrefixLayoutHeadersPlaced
-import IntegerMultBounds.Machine.ActivePrefixLayoutHeadersGeometry
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixLayoutHeadersPlaced
+public import IntegerMultBounds.Machine.ActivePrefixLayoutHeadersGeometry
 
 /-! Physical caller-placed layout-header preparation with its cost absorbed
 by the original full array volume. Computed starts, n+1 and suffix begin blank.
 Original H/B/F reservation-width synthesis remains upstream. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixLayoutHeadersLayout
 noncomputable section
 open ActivePrefixLayoutHeadersData ActivePrefixLayoutHeadersGeometry

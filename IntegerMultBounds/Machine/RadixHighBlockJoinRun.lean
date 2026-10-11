@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.RadixHighBlockJoinLoop
-import IntegerMultBounds.Machine.RadixHighBlockJoinInitialize
-import IntegerMultBounds.Machine.RadixHighBlockJoinCleanup
-import IntegerMultBounds.Machine.ArbitraryWidthHighBudget
+module
+
+public import IntegerMultBounds.Machine.RadixHighBlockJoinLoop
+public import IntegerMultBounds.Machine.RadixHighBlockJoinInitialize
+public import IntegerMultBounds.Machine.RadixHighBlockJoinCleanup
+public import IntegerMultBounds.Machine.ArbitraryWidthHighBudget
 
 /-! Sole-header execution of ordered high-block joining, including all
 physical setup, actual counted digit movements and private cleanup. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RadixHighBlockJoinRun
 noncomputable section
 open RecursiveChildQuotientsConstant (bits)

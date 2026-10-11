@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlPlaced
-import IntegerMultBounds.Machine.GatherStreamData
-import IntegerMultBounds.Machine.CountedPackedParityValue
-import IntegerMultBounds.Machine.BinaryVaryingControlOffsetData
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlPlaced
+public import IntegerMultBounds.Machine.GatherStreamData
+public import IntegerMultBounds.Machine.CountedPackedParityValue
+public import IntegerMultBounds.Machine.BinaryVaryingControlOffsetData
 
 /-! The generated control stream reads precisely bit zero of each compact
 b-bit U digit in each original prefix row. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixDirtyControlSemantics
 open ActivePrefixDirtyControlData
 open BinaryVaryingSelectedOffsetData (stream)

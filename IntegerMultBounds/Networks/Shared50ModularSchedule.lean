@@ -1,11 +1,15 @@
-import IntegerMultBounds.Networks.Shared50ModularOperators
-import IntegerMultBounds.Networks.Shared50OperatorPairs
-import IntegerMultBounds.Networks.ModularFrameSchedule
+module
+
+public import IntegerMultBounds.Networks.Shared50ModularOperators
+public import IntegerMultBounds.Networks.Shared50OperatorPairs
+public import IntegerMultBounds.Networks.ModularFrameSchedule
 
 /-! One simultaneous good prime for the actual signed physical matrix-pair
 schedule and every routed source/sink endpoint. All ordered edge programs keep
 the certified total rank, and their reduced endpoint contract is the identity.
 This is the modular field schedule, not its execution by a tape machine. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.Shared50ModularSchedule
 

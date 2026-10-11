@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.BinaryVaryingSelectedOffsetData
-import IntegerMultBounds.Machine.ActivePrefixSelectedOffsetData
+module
+
+public import IntegerMultBounds.Machine.BinaryVaryingSelectedOffsetData
+public import IntegerMultBounds.Machine.ActivePrefixSelectedOffsetData
 
 /-! Gathering from concatenated source and control rows preserves the original
 row boundaries. Both inputs may vary independently with the physical rank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.GatherStreamData
 open BinaryVaryingSelectedOffsetData (stream stream_length stream_entry)
 

@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ButterflyAxisHeadersData
+module
+
+public import IntegerMultBounds.Machine.ButterflyAxisHeadersData
 
 /-! Every physically synthesized descriptor is charged to the actual full
 coefficient stream. The budget is uniform in selected bit t and initial p. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ButterflyAxisHeadersBudget
 noncomputable section
 open ButterflyAxisHeadersData ButterflyAxisHeadersArithmetic

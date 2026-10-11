@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlSequenceData
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlSourceGeometry
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlSequenceData
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlSourceGeometry
 
 /-! The prepared later sequence's complete geometry is obtained from the
 original unchanged array and compact parameters, including all absorption. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixDirtyControlSequenceGeometry
 open CompactGadgetReservationShape CompactActiveTargetGeometry
 open ActivePrefixLayoutShapes ActivePrefixLayoutGeometry

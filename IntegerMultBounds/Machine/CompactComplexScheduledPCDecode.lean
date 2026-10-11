@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactComplexScheduledPCLayout
+module
+
+public import IntegerMultBounds.Machine.CompactComplexScheduledPCLayout
 
 /-! The original packed saved address is cast by its literal cardinality
 identity, without changing its value or any saved bit. Unused padded slots
 have no child continuation, while every real saved PC decodes exactly. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexScheduledPCDecode
 noncomputable section
 open Networks CompactComplexScheduledPCLayout CompactComplexCompletedLiveLower

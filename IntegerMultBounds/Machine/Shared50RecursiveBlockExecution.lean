@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.Shared50RecursiveExecution
+module
+
+public import IntegerMultBounds.Machine.Shared50RecursiveExecution
 
 /-! Physical block contracts lift to actual cyclic graph traces. Padding and
 the controller edge retain the exact bank, and the edge costs one transition. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.Shared50RecursiveBlockExecution
 noncomputable section
 open Shared50RecursiveControl SharedBankStageInput

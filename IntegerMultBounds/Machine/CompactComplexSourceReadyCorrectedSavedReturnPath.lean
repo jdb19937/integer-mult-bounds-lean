@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexFixedNodeSavedReturnPath
-import IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedActualTable
+module
+
+public import IntegerMultBounds.Machine.CompactComplexFixedNodeSavedReturnPath
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedActualTable
 
 /-! The actual corrected table pops a literal saved frame from the public
 storage bank. All source, role, controller and private suffix tapes retain
 exactly their original contents and heads; no continuation run is assumed. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedSavedReturnPath
 noncomputable section
 open Networks

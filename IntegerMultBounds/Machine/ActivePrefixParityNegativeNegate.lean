@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.BinaryParityXorOffsetNegate
-import IntegerMultBounds.Machine.RowPaddingConstructedAlphabet
-import IntegerMultBounds.Machine.CompactGadgetReservationPlacement
+module
+
+public import IntegerMultBounds.Machine.BinaryParityXorOffsetNegate
+public import IntegerMultBounds.Machine.RowPaddingConstructedAlphabet
+public import IntegerMultBounds.Machine.CompactGadgetReservationPlacement
 
 /-! Paid rowwise modular negation on caller-selected tapes. The positive stream
 is physically erased and the negative stream rewound; all private cells erase. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixParityNegativeNegate
 noncomputable section
 open SharedPlacementAlphabet (setTape)

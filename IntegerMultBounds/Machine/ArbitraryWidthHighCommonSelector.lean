@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ArbitraryWidthHighCommonPrepare
-import IntegerMultBounds.Machine.ArbitraryWidthHighBranchPlacement
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthHighCommonPrepare
+public import IntegerMultBounds.Machine.ArbitraryWidthHighBranchPlacement
 
 /-! The runtime branch selector reads actual common metadata. Its scratch
 flag is the unused, blank private width slot of the preparation bank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthHighCommonSelector
 noncomputable section
 variable {a t : ℕ}

@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActivePrefixStageWidthSelector
-import IntegerMultBounds.Machine.CompactGadgetReservationPlacement
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStageWidthSelector
+public import IntegerMultBounds.Machine.CompactGadgetReservationPlacement
 
 /-! Width selection exposes just the original f word and one blank result
 flag on an arbitrary caller. The physically constructed one lives in the
 clean private bank; every other caller tape is framed. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixStageWidthPlaced
 noncomputable section
 open SharedPlacementAlphabet (setTape)

@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActiveRepairEarlyFieldsCleanup
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairEarlyFieldsCleanup
 
 /-! Reusable early repair calculation from actual extracted fields and their
 current source controls. Full original-layout rank patching is separate. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairEarlyFields
 noncomputable section
 open ActiveRepairEarlyFieldsBank

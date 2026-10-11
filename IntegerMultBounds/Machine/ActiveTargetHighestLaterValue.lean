@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.BinaryPackedFieldSwap
-import IntegerMultBounds.Machine.ActiveTargetHighestValue
+module
+
+public import IntegerMultBounds.Machine.BinaryPackedFieldSwap
+public import IntegerMultBounds.Machine.ActiveTargetHighestValue
 
 /-! Exact conjugation for a highest target bit preceding its source. The two
 one-bit fields are exchanged physically by the eventual caller machine. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveTargetHighestLaterValue
 noncomputable section
 open RadixRangePadding (volume index coordinates transpose)

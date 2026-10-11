@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.CountedGatherMetadata
-import IntegerMultBounds.Machine.PackedArith
-import IntegerMultBounds.Machine.ArbitraryWidthZeroHeaderShared
-import IntegerMultBounds.Machine.BinaryRadixRootHeadersShared
+module
+
+public import IntegerMultBounds.Machine.CountedGatherMetadata
+public import IntegerMultBounds.Machine.PackedArith
+public import IntegerMultBounds.Machine.ArbitraryWidthZeroHeaderShared
+public import IntegerMultBounds.Machine.BinaryRadixRootHeadersShared
 
 /-! Construct six original gather dimensions for one of three static packed
 line shapes from only the retained runtime q/b/n headers. Zero and one are
 physically written, copied, and erased. All eight private tapes are reusable. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedPackedShapeHeaders
 noncomputable section
 variable {a t : ℕ}

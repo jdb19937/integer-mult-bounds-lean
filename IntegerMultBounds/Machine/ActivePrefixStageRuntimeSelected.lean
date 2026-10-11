@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixStageRuntimeEndpoint
-import IntegerMultBounds.Machine.ActivePrefixStageSingletonSelected
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStageRuntimeEndpoint
+public import IntegerMultBounds.Machine.ActivePrefixStageSingletonSelected
 
 /-! The single runtime stage has an exact entrywise selected-address endpoint
 for every positive width, including the physically highest-only singleton. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixStageRuntimeSelected
 noncomputable section
 open CompactGadgetReservationShape (Shape)

@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.Shared50RecursiveChildPermutation
+module
+
+public import IntegerMultBounds.Machine.Shared50RecursiveChildPermutation
 
 /-! Exact row-major zero extension and cropping, retaining every prefix and
 within-row suffix. These operations commute with the proved chunk transpose;
 physical movement and generated span counts are separate charged subroutines. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveRowPadding
 noncomputable section
 open Networks

@@ -1,8 +1,12 @@
-import IntegerMultBounds.Networks.Shared50FiniteTrace
+module
+
+public import IntegerMultBounds.Networks.Shared50FiniteTrace
 
 /-! The exact complementary reverse stage trace on the certified finite bank.
 All reversed frame incidences are retained, with the same endpoint labels and
 ordered edges as the actual natural-register complementary schedule. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.Shared50FiniteReverseTrace
 

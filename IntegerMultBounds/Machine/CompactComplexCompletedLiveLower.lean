@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexRecursiveLiveProgress
-import IntegerMultBounds.Machine.CompactComplexScalarSegmentRows
+module
+
+public import IntegerMultBounds.Machine.CompactComplexRecursiveLiveProgress
+public import IntegerMultBounds.Machine.CompactComplexScalarSegmentRows
 
 /-! The actual named group/call schedule counts completed physical denominator
 advances. Header folds here are projections of completed scalar/child endpoints,
 not a replacement for coefficient execution or its still-open recursive proof. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexCompletedLiveLower
 noncomputable section
 open Networks

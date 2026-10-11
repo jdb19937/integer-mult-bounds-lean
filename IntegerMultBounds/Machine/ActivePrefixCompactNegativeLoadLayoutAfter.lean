@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActivePrefixCompactNegativeLoad
-import IntegerMultBounds.Machine.ActivePrefixLayoutSwap
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixCompactNegativeLoad
+public import IntegerMultBounds.Machine.ActivePrefixLayoutSwap
 
 /-! The physical compact negative parity-XOR action is the literal back-fiber rotation in
 the unchanged full array. These views are ordinal casts only, and their offset
 lookup is the actual current target parity after the compact T/back exchange. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixCompactNegativeLoadLayoutAfter
 open CompactGadgetReservationShape (Shape)
 open CompactActiveTargetGeometry

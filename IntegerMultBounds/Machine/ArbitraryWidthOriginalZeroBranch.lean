@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.ArbitraryWidthHighFramedFallback
-import IntegerMultBounds.Machine.Branch
-import IntegerMultBounds.Machine.BinaryCanonicalData
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthHighFramedFallback
+public import IntegerMultBounds.Machine.Branch
+public import IntegerMultBounds.Machine.BinaryCanonicalData
 
 /-! The zero-width outer branch runs the actual elementary fallback on the
 full blank global workspace. A one-step read of the retained canonical width
 header distinguishes zero before positive-width metadata preparation. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthOriginalZeroBranch
 noncomputable section
 open Networks

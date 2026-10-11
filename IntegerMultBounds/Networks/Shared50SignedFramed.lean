@@ -1,9 +1,13 @@
-import IntegerMultBounds.Networks.Shared50GlobalShear
+module
+
+public import IntegerMultBounds.Networks.Shared50GlobalShear
 
 /-! The actual reused physical schedule with arbitrary initial frames over any
 binary module. Only its first alignment changes; all local physical programs
 and subsequent boundaries are the existing ones. This isolates the generic
 physical semantics needed by finite-modulus frame implementations. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.Shared50SignedFramed
 

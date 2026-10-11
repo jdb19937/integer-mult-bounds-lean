@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactLiteralUnitPhase
+module
+
+public import IntegerMultBounds.Machine.CompactLiteralUnitPhase
 
 /-! Zero residual dimension has identically zero ordered phase and is compiled
 as a tape-preserving halted program. It requires no fabricated sparse offset,
 control record, or coefficient output stream. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactZeroUnitPhase
 noncomputable section
 open CompactGadgetReservationShape (Shape)

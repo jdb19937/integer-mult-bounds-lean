@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlCorrectionData
-import IntegerMultBounds.Machine.ActivePrefixCorrectionOffsetSubtract
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlCorrectionData
+public import IntegerMultBounds.Machine.ActivePrefixCorrectionOffsetSubtract
 
 /-! Six original descriptors and five initially empty tapes suffice for the
 correction's two real operands, output, and synthesized width/count headers. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixDirtyControlCorrectionBank
 noncomputable section
 open ActivePrefixDirtyControlData (Shape values)

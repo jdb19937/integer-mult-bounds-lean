@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.BinaryCorrectionOffsetData
+module
+
+public import IntegerMultBounds.Machine.BinaryCorrectionOffsetData
 
 /-! Every correction row is the integer residue of the packed original
 controls minus the selected mask-shift offset, modulo its own n*q-bit width. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryCorrectionOffsetValue
 open BinaryCorrectionOffsetData
 

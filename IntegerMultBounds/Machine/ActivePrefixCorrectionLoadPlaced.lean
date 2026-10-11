@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixCorrectionLoad
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixCorrectionLoad
 
 /-! The complete original-input correction load on arbitrary caller
 tapes. Ten original headers and the array are permanent; all private storage
 starts and returns blank, with arbitrary caller spectators unchanged. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixCorrectionLoadPlaced
 noncomputable section
 open ActivePrefixCorrectionLoadData

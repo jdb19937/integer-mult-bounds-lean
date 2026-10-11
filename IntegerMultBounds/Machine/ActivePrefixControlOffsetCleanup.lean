@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.ActivePrefixControlOffsetRun
-import IntegerMultBounds.Machine.ActivePrefixOffsetStreamsCleanup
-import IntegerMultBounds.Machine.ActivePrefixOffsetHeadersCleanup
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixControlOffsetRun
+public import IntegerMultBounds.Machine.ActivePrefixOffsetStreamsCleanup
+public import IntegerMultBounds.Machine.ActivePrefixOffsetHeadersCleanup
 
 /-! Generated source/temp/control streams and all five derived descriptors
 are actually erased. Only the original eight words and generated offsets
 remain, with every head restored and shared workspace blank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixControlOffsetCleanup
 noncomputable section
 open ActivePrefixControlOffsetBank

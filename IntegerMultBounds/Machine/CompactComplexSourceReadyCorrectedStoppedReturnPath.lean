@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedStoppedTablePath
-import IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedSavedReturnPath
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedStoppedTablePath
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedSavedReturnPath
 
 /-! The genuine stopped branch installs its oriented result, then physically pops
 the retained saved frame and reaches the original saved call continuation.
 Its exact time includes the stopped depth factor and the actual guard/pop. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedStoppedReturnPath
 noncomputable section
 open Networks

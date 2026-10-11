@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActiveRepairEarlyOriginalPipelinePrepareCount
-import IntegerMultBounds.Machine.ActiveRepairLateOriginalPipelineRun
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairEarlyOriginalPipelinePrepareCount
+public import IntegerMultBounds.Machine.ActiveRepairLateOriginalPipelineRun
 
 /-! Literal source stream plus original metadata prepares all scan sentinels,
 the unary pass width, and an actual zero rank counter. No sentinel/counter is
 an input. The counter width is the original geometric addressBits. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLateOriginalPipelinePrepare
 noncomputable section
 open ActiveRepairLateKeyOriginalData ActiveRepairLateKeyOriginalValid

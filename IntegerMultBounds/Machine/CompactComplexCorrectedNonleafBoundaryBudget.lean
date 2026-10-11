@@ -1,14 +1,19 @@
-import IntegerMultBounds.Machine.CompactComplexCorrectedStoppedRootBudget
-import IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedEntryTablePath
-import IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedRootFinal
-import IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedFinal
-import IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedClassifierTablePath
-import IntegerMultBounds.Machine.CompactComplexScheduleRuntimeBudget
+module
+
+public import IntegerMultBounds.Machine.CompactComplexCorrectedStoppedRootBudget
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedEntryTablePath
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedRootFinal
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedFinal
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedClassifierTablePath
+public import IntegerMultBounds.Machine.CompactComplexScheduleRuntimeBudget
 
 /-! Complete corrected nonleaf boundary allowances charge classification,
 source entry, sink corrections, contraction/rejoin, post-orientation and the
 true root halt or saved-PC guard/pop. These are arithmetic budgets, not an
 assertion that the interleaved recursive execution has been constructed. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexCorrectedNonleafBoundaryBudget
 noncomputable section
 open CompactGadgetReservationShape (Shape)
@@ -44,14 +49,14 @@ def childFinalCost (V : ℕ) := sinkCost V+1+
   CompactComplexSourceReadyNonleafOrientedFinal.constant roleCount*V+1+
   (CompactComplexCallReturn.addressWidth Networks.ComplexRecursiveCallSchema.sites.length (25^3)+5)
 
-private def rootExpression (_G S A B C D V setup cleanup : ℕ) :=
+def rootExpression (_G S A B C D V setup cleanup : ℕ) :=
   (setup+cleanup+7+1)+(S*V+1+A*V+1)+
     ((A*V+1+(B*V+1+(B*V+1+C*V)))+1+(D*V+4)+1+2)
-private def rootFactor (G S A B C D : ℕ) := (3*G+5)+(S+A+2)+(A+2*B+C+D+11)
-private def childExpression (O G S A B C D W V : ℕ) :=
+def rootFactor (G S A B C D : ℕ) := (3*G+5)+(S+A+2)+(A+2*B+C+D+11)
+def childExpression (O G S A B C D W V : ℕ) :=
   ((O+4*G+1)*V+1)+(S*V+1+A*V+1)+
     ((A*V+1+(B*V+1+(B*V+1+C*V)))+1+D*V+1+(W+5))
-private def childFactor (O G S A B C D W : ℕ) :=
+def childFactor (O G S A B C D W : ℕ) :=
   (O+4*G+2)+(S+A+2)+(A+2*B+C+D+W+10)
 
 def rootCoefficient := rootFactor guardConstant

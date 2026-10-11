@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActiveRepairDestinationPatchOverwrite
-import IntegerMultBounds.Machine.CountedRankSplitEndpoint
-import IntegerMultBounds.Machine.CompactGadgetReservationPlacement
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairDestinationPatchOverwrite
+public import IntegerMultBounds.Machine.CountedRankSplitEndpoint
+public import IntegerMultBounds.Machine.CompactGadgetReservationPlacement
 
 /-! Runtime replacement writes on caller-selected tapes, sharing nine blank
 private slots with field parsing and preserving the replacement word and headers. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairDestinationPatchPlaced
 noncomputable section
 open SharedPlacementAlphabet (setTape)

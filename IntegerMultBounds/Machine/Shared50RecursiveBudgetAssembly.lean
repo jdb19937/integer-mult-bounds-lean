@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.Shared50RecursiveBudget
+module
+
+public import IntegerMultBounds.Machine.Shared50RecursiveBudget
 
 /-! Absorb the fully charged physical node trace into the recursive budget.
 Arithmetic is checked symbolically before specializing the fixed coefficients. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.Shared50RecursiveBudgetAssembly
 noncomputable section
 open Networks

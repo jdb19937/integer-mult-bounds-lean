@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.RowPaddingExecution
-import IntegerMultBounds.Machine.RowPaddingSpanCounts
-import IntegerMultBounds.Machine.RowPaddingWord
+module
+
+public import IntegerMultBounds.Machine.RowPaddingExecution
+public import IntegerMultBounds.Machine.RowPaddingSpanCounts
+public import IntegerMultBounds.Machine.RowPaddingWord
 
 /-! Paid descriptor construction, physical row padding/cropping, and disposal
 of both generated span descriptors. Only the four immutable dimensions are
 inputs; no generated span count is supplied to the contract. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RowPaddingConstructed
 noncomputable section
 
@@ -12,8 +17,8 @@ theorem encoded_zero (bs : List Bool) : RadixZeroFill.encodedBinary (q := 0) bs 
     CountedCopyReuse.binary bs := by
   funext z; rfl
 
-private def head : Option (List Bool) → ℤ | none => 0 | some _ => 1
-private def tape : Option (List Bool) → ℤ → Fin 4
+def head : Option (List Bool) → ℤ | none => 0 | some _ => 1
+def tape : Option (List Bool) → ℤ → Fin 4
   | none => fun _ => blank
   | some bs => CountedCopyReuse.binary bs
 

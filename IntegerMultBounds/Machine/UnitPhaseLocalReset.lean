@@ -1,12 +1,17 @@
-import IntegerMultBounds.Machine.UnitPhaseFlagsLifecycle
-import IntegerMultBounds.Machine.RawBitWordReset
-import IntegerMultBounds.Machine.UnitPhaseCoreReset
-import IntegerMultBounds.Machine.TwoTapeAt
-import IntegerMultBounds.Machine.BinaryDescriptorCleanupList
+module
+
+public import IntegerMultBounds.Machine.UnitPhaseFlagsLifecycle
+public import IntegerMultBounds.Machine.RawBitWordReset
+public import IntegerMultBounds.Machine.UnitPhaseCoreReset
+public import IntegerMultBounds.Machine.TwoTapeAt
+public import IntegerMultBounds.Machine.BinaryDescriptorCleanupList
 
 /-! Paid reset of the sixty-tape phase record caller after emission. Numerator
 sources, extracted controls, flags and all three generated sparse descriptors
 are physically erased; every address, stream and controller tape is framed. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.UnitPhaseLocalReset
 noncomputable section
 open SharedPlacementAlphabet (setTape)

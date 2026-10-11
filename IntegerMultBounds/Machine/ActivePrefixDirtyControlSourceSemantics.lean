@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlSourceGeometry
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlNegativePureData
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlSourceGeometry
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlNegativePureData
 
 /-! The actual shifted source projection emits precisely the selected X bits
 in compact b-bit digits. The source-load and unload streams are evaluated at
 every serialized row, including addresses outside the guarded region. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixDirtyControlSourceSemantics
 open CompactGadgetReservationShape (Shape)
 open ActivePrefixLayoutShapes ActivePrefixLayoutFields ActivePrefixLayoutBack

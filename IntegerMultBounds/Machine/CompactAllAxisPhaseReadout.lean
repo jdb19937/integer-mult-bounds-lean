@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactAllAxisPhaseControls
-import IntegerMultBounds.Machine.RepeatedWeightedPhaseTensor
-import IntegerMultBounds.Machine.UnitPhaseSigned
+module
+
+public import IntegerMultBounds.Machine.CompactAllAxisPhaseControls
+public import IntegerMultBounds.Machine.RepeatedWeightedPhaseTensor
+public import IntegerMultBounds.Machine.UnitPhaseSigned
 
 /-! The one-traversal all-axis accumulator computes the complete tensor phase
 of an actual complex25 edge, rather than the phase of a single axis. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactAllAxisPhaseReadout
 noncomputable section
 open CompactGadgetReservationShape (Shape)

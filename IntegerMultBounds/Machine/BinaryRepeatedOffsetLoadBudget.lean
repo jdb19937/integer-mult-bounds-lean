@@ -1,12 +1,17 @@
-import IntegerMultBounds.Machine.BinaryParityOffsetLoad
-import IntegerMultBounds.Machine.BinarySelectedOffsetLoad
-import IntegerMultBounds.Machine.BinaryCorrectionOffsetLoad
-import IntegerMultBounds.Machine.BinaryParityXorOffsetLoad
-import IntegerMultBounds.Machine.BinaryPackedOffsetOriginalBudget
+module
+
+public import IntegerMultBounds.Machine.BinaryParityOffsetLoad
+public import IntegerMultBounds.Machine.BinarySelectedOffsetLoad
+public import IntegerMultBounds.Machine.BinaryCorrectionOffsetLoad
+public import IntegerMultBounds.Machine.BinaryParityXorOffsetLoad
+public import IntegerMultBounds.Machine.BinaryPackedOffsetOriginalBudget
 
 /-! Original-input offset production, action and physical offset erasure
 retain the certified interchange exponent. The producer's explicit allowance
 is charged to actual suffix width, not treated as a free setup assumption. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryRepeatedOffsetLoadBudget
 open RadixRangePadding (volume)
 

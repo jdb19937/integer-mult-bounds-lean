@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CountedPackedLateData
-import IntegerMultBounds.Machine.CountedPackedParityRun
-import IntegerMultBounds.Machine.CountedPackedReusable
-import IntegerMultBounds.Machine.CountedPackedControlLoadValue
+module
+
+public import IntegerMultBounds.Machine.CountedPackedLateData
+public import IntegerMultBounds.Machine.CountedPackedParityRun
+public import IntegerMultBounds.Machine.CountedPackedReusable
+public import IntegerMultBounds.Machine.CountedPackedControlLoadValue
 
 /-! Entire fixed-control late gadget on a common bank, sharing physically
 blank metadata and recycling the parity word between the two early calls. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedPackedLateRun
 noncomputable section
 variable {a : ℕ}

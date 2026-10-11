@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.CompactNativeRoleSourceRuns
+module
+
+public import IntegerMultBounds.Machine.CompactNativeRoleSourceRuns
 
 /-! Final paid removal of the physically copied original13 plus ell/p bank.
 These are copies; the global original scalar bank and native result are framed. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactNativeRoleMetadataCleanup
 noncomputable section
 open CompactChildHeadersArithmetic

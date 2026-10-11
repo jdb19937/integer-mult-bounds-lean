@@ -1,11 +1,15 @@
-import IntegerMultBounds.Networks.Shared50SparseIO
-import IntegerMultBounds.Networks.Shared50SparseCentral
-import IntegerMultBounds.Networks.Shared50Exchange
+module
+
+public import IntegerMultBounds.Networks.Shared50SparseIO
+public import IntegerMultBounds.Networks.Shared50SparseCentral
+public import IntegerMultBounds.Networks.Shared50Exchange
 
 /-! The actual sparse twelve-block shared invocation and its local exchange.
 All IO and central updates are one-source XORs. The certified finite DAG and
 its literal reversal provide the four scratch-computation blocks. Scalar
 execution and instruction counts below make no tape-time claim. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.Shared50SparseInvocation
 

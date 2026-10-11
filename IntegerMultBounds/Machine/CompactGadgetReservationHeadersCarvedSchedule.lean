@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactGadgetReservationHeadersOps
-import IntegerMultBounds.Machine.CompactGadgetReservationHeadersCarvedData
+module
+
+public import IntegerMultBounds.Machine.CompactGadgetReservationHeadersOps
+public import IntegerMultBounds.Machine.CompactGadgetReservationHeadersCarvedData
 
 /-! Actual finite descriptor schedule from seven retained original headers
 and the physically installed carved width. The complete caller constructs
 that width from original n and packing-width descriptors. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactGadgetReservationHeadersCarvedSchedule
 noncomputable section
 open CompactGadgetReservationShape

@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixStageRuntimeOrdinal
-import IntegerMultBounds.Machine.ActivePrefixStagePairSchedule
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStageRuntimeOrdinal
+public import IntegerMultBounds.Machine.ActivePrefixStagePairSchedule
 
 /-! Literal physical row-addition lists act on original serialized addresses
 exactly as the Boolean binary basis word, despite changing target splits. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixStagePairCoordinates
 noncomputable section
 open CompactGadgetReservationShape (Shape)

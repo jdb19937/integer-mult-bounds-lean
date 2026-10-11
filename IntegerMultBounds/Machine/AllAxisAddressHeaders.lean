@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.AllAxisPhaseHeadersData
-import IntegerMultBounds.Machine.UnitPhaseStreamLoop
+module
+
+public import IntegerMultBounds.Machine.AllAxisPhaseHeadersData
+public import IntegerMultBounds.Machine.UnitPhaseStreamLoop
 
 /-! Derive the complete global address width from original geometric headers
 and the already-paid H/B/F stage headers. This width is produced on actual
 header22; it is not supplied as a numeric descriptor by the final caller. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.AllAxisAddressHeaders
 noncomputable section
 open CompactGadgetReservationShape (Shape)

@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.WordBankCleanup
-import IntegerMultBounds.Machine.ActiveTargetRotation
+module
+
+public import IntegerMultBounds.Machine.WordBankCleanup
+public import IntegerMultBounds.Machine.ActiveTargetRotation
 
 /-! Physically return a repaired full-width array to its original caller tape,
 erase the separate raw output, and restore both heads with a linear cost. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairArrayRecycle
 noncomputable section
 open WordBankCleanup

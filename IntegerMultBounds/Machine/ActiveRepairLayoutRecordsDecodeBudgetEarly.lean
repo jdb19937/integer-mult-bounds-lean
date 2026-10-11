@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsDecodeEarly
-import IntegerMultBounds.Machine.ActiveRepairLayoutKeysPipelineBudgetEarly
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsDecodeEarly
+public import IntegerMultBounds.Machine.ActiveRepairLayoutKeysPipelineBudgetEarly
 
 /-! The actual wide-array repair and decoder together have linear physical
 payload-volume cost under the manuscript sparse-hole inequalities. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLayoutRecordsDecodeBudgetEarly
 noncomputable section
 open ActiveRepairEarlyKeyOriginalData ActiveRepairEarlyKeyOriginalValid

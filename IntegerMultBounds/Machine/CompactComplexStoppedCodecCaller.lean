@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactComplexNativeCodecFrame
-import IntegerMultBounds.Machine.CompactComplexStoppedCallFrame
-import IntegerMultBounds.Machine.SharedBankFrames
+module
+
+public import IntegerMultBounds.Machine.CompactComplexNativeCodecFrame
+public import IntegerMultBounds.Machine.CompactComplexStoppedCallFrame
+public import IntegerMultBounds.Machine.SharedBankFrames
 
 /-! Actual retained-original codec preparation, stopped child execution and
 codec erasure form one fixed caller. The original13 child metadata, immutable
 original scalar bank and all existing controller/stack tapes are restored. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexStoppedCodecCaller
 noncomputable section
 open CompactComplexRolePhaseSite (roleCount role)

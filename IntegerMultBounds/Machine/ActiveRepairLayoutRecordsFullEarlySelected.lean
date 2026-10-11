@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsFullEarlyBudget
-import IntegerMultBounds.Machine.ActiveTargetHighestLayoutFullSelected
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsFullEarlyBudget
+public import IntegerMultBounds.Machine.ActiveTargetHighestLayoutFullSelected
 
 /-! The actual complete early low/high machine has the full-selected address
 destination. Its literal forward array equation covers every original address;
 source retention carries the real interval-disjointness hypothesis. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLayoutRecordsFullEarlySelected
 noncomputable section
 open CompactGadgetReservationShape (Shape)

@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActivePrefixStageDispatchCommon
-import IntegerMultBounds.Machine.ActivePrefixStageFullEarlyRun
-import IntegerMultBounds.Machine.ActivePrefixStageFullLateRun
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStageDispatchCommon
+public import IntegerMultBounds.Machine.ActivePrefixStageFullEarlyRun
+public import IntegerMultBounds.Machine.ActivePrefixStageFullLateRun
 
 /-! A separate permanent flag follows original thirteen numeric words and raw
 array. Its bit is computed from source/target words, never supplied as input. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixStageDispatchData
 noncomputable section
 open CompactGadgetReservationShape (Shape)

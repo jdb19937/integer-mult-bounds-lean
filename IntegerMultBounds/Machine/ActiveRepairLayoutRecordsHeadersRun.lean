@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsHeadersSchedule
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsHeadersSchedule
 
 /-! Physical metadata bootstrap from the original fourteen early headers:
 measure the original row word, initialize one, then run retained arithmetic.
 All descriptor starts and field widths for the repair caller are generated. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLayoutRecordsHeadersRun
 noncomputable section
 open CompactGadgetReservationShape (Shape)

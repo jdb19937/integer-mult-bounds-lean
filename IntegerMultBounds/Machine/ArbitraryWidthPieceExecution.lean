@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ArbitraryWidthPieceConsume
-import IntegerMultBounds.Machine.ArbitraryWidthPiecePrefix
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthPieceConsume
+public import IntegerMultBounds.Machine.ArbitraryWidthPiecePrefix
 
 /-! A concrete fixed digit dispatcher: its body executes actual runtime-counted
 slice calls and advances the physical depth and width, with no callback trace
 supplied as a hypothesis. Initialization and final control erasure are separate. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthPieceExecution
 noncomputable section
 open Networks

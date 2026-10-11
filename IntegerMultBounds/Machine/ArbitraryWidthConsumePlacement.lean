@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.ArbitrarySliceRepeat
-import IntegerMultBounds.Machine.ArbitraryWidthLevelAdvance
-import IntegerMultBounds.Machine.ArbitraryWidthPieceLoop
+module
+
+public import IntegerMultBounds.Machine.ArbitrarySliceRepeat
+public import IntegerMultBounds.Machine.ArbitraryWidthLevelAdvance
+public import IntegerMultBounds.Machine.ArbitraryWidthPieceLoop
 
 /-! Concrete placement of slice repetition and level advancement in the
 digit-driver bank. Runtime digit/count and width are shared physical tapes.
 Level metadata occupies six separate slots outside the slice scratch bank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthConsumePlacement
 noncomputable section
 open Networks
@@ -23,7 +28,7 @@ def repeatSlot : Fin (S+2) → Fin T := Fin.addCases
   (fun i => Fin.natAdd 14 (Fin.castAdd 6 i))
   (fun i => Fin.castAdd (S+6) (if i = 0 then (1 : Fin 14) else 6))
 
-private theorem repeat_injective : Function.Injective repeatSlot := by
+theorem repeat_injective : Function.Injective repeatSlot := by
   intro i j he
   induction i using Fin.addCases with
   | left i =>

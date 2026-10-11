@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.Shared50RecursiveNodeBinary
-import IntegerMultBounds.Machine.RecursiveScalarIndex
-import IntegerMultBounds.Machine.Shared50NodePieceTransport
+module
+
+public import IntegerMultBounds.Machine.Shared50RecursiveNodeBinary
+public import IntegerMultBounds.Machine.RecursiveScalarIndex
+public import IntegerMultBounds.Machine.Shared50NodePieceTransport
 
 /-! Actual segment/gate/recursive-call array execution produces the exact node
 merge input. The only recursive premise is the explicit child interchange
 contract at its selected wire; no replacement schedule or frame oracle. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.Shared50RecursiveNodePieces
 noncomputable section
 open Networks

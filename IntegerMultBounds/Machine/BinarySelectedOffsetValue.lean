@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.BinarySelectedOffset
-import IntegerMultBounds.Compact.PackedArithValue
+module
+
+public import IntegerMultBounds.Machine.BinarySelectedOffset
+public import IntegerMultBounds.Compact.PackedArithValue
 
 /-! The physically generated selected offset row is exactly the packed
 2*z*w load from the first line of the early-source gadget. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinarySelectedOffsetValue
 open BinarySelectedOffsetData BinaryAddressTableData
 open BinaryAddressOffsetRepeatData (copies)

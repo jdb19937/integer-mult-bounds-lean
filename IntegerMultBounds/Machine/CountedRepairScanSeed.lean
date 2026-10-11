@@ -1,6 +1,11 @@
-import IntegerMultBounds.Machine.CountedRepairScanMetadataRun
+module
+
+public import IntegerMultBounds.Machine.CountedRepairScanMetadataRun
 
 /-! Physical sentinel initialization for the fixed fourteen-tape scan bank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedRepairScanSeed
 noncomputable section
 

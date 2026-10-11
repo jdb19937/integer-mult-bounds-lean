@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActiveRepairRankHeadersCommands
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairRankHeadersCommands
 
 /-! Fixed arithmetic schedules for rank parser and destination patch headers.
 Only original widths are supplied; starts are actual runtime arithmetic outputs. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairRankHeadersData
 noncomputable section
 open ActiveRepairRankHeadersCommands

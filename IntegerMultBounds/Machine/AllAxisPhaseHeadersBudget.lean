@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.AllAxisPhaseHeadersData
+module
+
+public import IntegerMultBounds.Machine.AllAxisPhaseHeadersData
 
 /-! Descriptor setup for the single all-axis address scan is linear in the
 full address width, with no coefficient-volume or axis-pass multiplier. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.AllAxisPhaseHeadersBudget
 open CompactGadgetReservationShape (Shape)
 open ActivePrefixStageParameters

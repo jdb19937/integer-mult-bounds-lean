@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.ActiveRepairLayoutPermutationFields
-import IntegerMultBounds.Machine.CompactActiveTargetLayout
-import IntegerMultBounds.Machine.SelectedSourceBitsData
-import IntegerMultBounds.Machine.BinaryAddressTableData
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairLayoutPermutationFields
+public import IntegerMultBounds.Machine.CompactActiveTargetLayout
+public import IntegerMultBounds.Machine.SelectedSourceBitsData
+public import IntegerMultBounds.Machine.BinaryAddressTableData
 
 /-! The actual unchanged active-target address is a complete varying-source
 fiber: both source coordinates and all unused tails/slack/back/payload bits
 are retained, and only target and compact dirty fields enter the local map. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLayoutPermutationFiber
 noncomputable section
 open CompactGadgetReservationShape CompactActiveTargetLayout

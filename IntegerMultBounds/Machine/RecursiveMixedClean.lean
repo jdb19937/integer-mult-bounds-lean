@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.RecursiveMixedInitialized
-import IntegerMultBounds.Machine.BinaryDescriptorCleanupList
+module
+
+public import IntegerMultBounds.Machine.RecursiveMixedInitialized
+public import IntegerMultBounds.Machine.BinaryDescriptorCleanupList
 
 /-! Physically erase the generated XOR clock and volume descriptor after an
 initialized same-view operation sequence. The controls start and end wholly
 blank, while all role data, headers, scratch and auxiliary tapes are exact. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveMixedClean
 noncomputable section
 open Networks

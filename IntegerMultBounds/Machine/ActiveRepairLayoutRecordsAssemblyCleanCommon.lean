@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsAssemblyOriginalLate
-import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsAssemblyOriginalLateAfter
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsAssemblyOriginalLate
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsAssemblyOriginalLateAfter
 
 /-! Real fixed-many erasure of the retained consumer metadata. Placement
 preserves every whole unselected tape; lengths are paid by original volume. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLayoutRecordsAssemblyCleanCommon
 noncomputable section
 open CompactGadgetReservationShape (Shape)

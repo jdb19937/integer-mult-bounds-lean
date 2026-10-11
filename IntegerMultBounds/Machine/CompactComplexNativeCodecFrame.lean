@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactComplexNativeCodec
-import IntegerMultBounds.Machine.CompactComplexNativeRoleBridge
-import IntegerMultBounds.Machine.CompactComplexControllerChildPrefix
+module
+
+public import IntegerMultBounds.Machine.CompactComplexNativeCodec
+public import IntegerMultBounds.Machine.CompactComplexNativeRoleBridge
+public import IntegerMultBounds.Machine.CompactComplexControllerChildPrefix
 
 /-! Install and remove raw codec headers on the real native66 controller bank.
 An immutable original43 descriptor bank occupies the fresh appended storage block;
 controller, source65, roles and later recursion storage are framed exactly. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexNativeCodecFrame
 noncomputable section
 open CompactComplexNativeRoleBridge (publicTapes)

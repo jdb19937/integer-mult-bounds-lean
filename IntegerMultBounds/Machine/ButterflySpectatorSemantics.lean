@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.ButterflyInverseSpectatorGeometry
-import IntegerMultBounds.Machine.ButterflyIndependentGuardSemantics
+module
+
+public import IntegerMultBounds.Machine.ButterflyInverseSpectatorGeometry
+public import IntegerMultBounds.Machine.ButterflyIndependentGuardSemantics
 
 /-! Every full-address row-major spectator axis has exact complex semantics.
 The baseline precision q advances once per executed axis; a single two-pass
 reservation fixes all signed record widths. Prefix grids propagate without
 renormalization, including from forward output into the inverse pass. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ButterflySpectatorSemantics
 noncomputable section
 open ButterflySpectatorGeometry

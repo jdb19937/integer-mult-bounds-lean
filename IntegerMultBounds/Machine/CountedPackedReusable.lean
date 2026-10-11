@@ -1,6 +1,11 @@
-import IntegerMultBounds.Machine.CountedPackedRecycle
+module
+
+public import IntegerMultBounds.Machine.CountedPackedRecycle
 
 /-! Reusable fixed-control packed arithmetic with physical cleanup. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedPackedReusable
 noncomputable section
 variable {a : ℕ}

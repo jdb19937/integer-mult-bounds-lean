@@ -1,10 +1,14 @@
-import IntegerMultBounds.Networks.Shared50GlobalShear
-import IntegerMultBounds.Swap.Interchange
+module
+
+public import IntegerMultBounds.Networks.Shared50GlobalShear
+public import IntegerMultBounds.Swap.Interchange
 
 /-! Fixed finite coordinates and modular field programs for every actual signed
 global edge operator. One prime works for all digit widths, with exactly the
 proved global rank budget many recursive interchange operations. This does not
 yet transport the complete routed network to modular addresses or tapes. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.Shared50ModularOperators
 

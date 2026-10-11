@@ -1,9 +1,13 @@
-import IntegerMultBounds.Networks.Shared50LabeledInvocation
-import IntegerMultBounds.Networks.Shared50FiniteReverseTrace
+module
+
+public import IntegerMultBounds.Networks.Shared50LabeledInvocation
+public import IntegerMultBounds.Networks.Shared50FiniteReverseTrace
 
 /-! Actual boundary profiles for the opposite, reversed twelve-block invocation.
 Output slots first share their physical X target's middle line, then enter the
 complemented reverse DAG; original source slots end at their physical Y frames. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.Shared50OppositeLabels
 

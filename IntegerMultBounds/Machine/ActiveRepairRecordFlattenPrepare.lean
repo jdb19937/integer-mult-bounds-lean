@@ -1,6 +1,11 @@
-import IntegerMultBounds.Machine.ActiveRepairRecordFlattenEndpoint
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairRecordFlattenEndpoint
 
 /-! Physical left-marker installation for raw repaired record streams. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairRecordFlattenPrepare
 open CountedTapeRepairCleanupWord
 

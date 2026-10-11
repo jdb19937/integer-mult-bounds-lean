@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.CompactComplexStoppedEventProgress
-import IntegerMultBounds.Machine.CompactComplexDenominatorPolicy
+module
+
+public import IntegerMultBounds.Machine.CompactComplexStoppedEventProgress
+public import IntegerMultBounds.Machine.CompactComplexDenominatorPolicy
 
 /-! A normalized nonleaf child advances the denominator by twice its volume,
 but advances the parent's returned-child ledger by its volume only. Exact
 network semantics supply the selected grid; literal spectator promotion then
 preserves the original scalar prefix without charging another scalar-growth
 constant. Physical recursive execution and its address maps remain obligations. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexNonleafEventProgress
 noncomputable section
 open CompactGadgetReservationShape (Shape)

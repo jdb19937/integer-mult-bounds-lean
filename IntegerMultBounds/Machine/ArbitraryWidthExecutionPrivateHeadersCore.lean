@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ArbitraryWidthPaddedPieceShared
-import IntegerMultBounds.Machine.ArbitraryWidthElementaryShared
-import IntegerMultBounds.Machine.FixedHeaderSparseBankCopy
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthPaddedPieceShared
+public import IntegerMultBounds.Machine.ArbitraryWidthElementaryShared
+public import IntegerMultBounds.Machine.FixedHeaderSparseBankCopy
 
 /-! Literal blank-ready recursive banks and their six retained headers. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthExecutionPrivateHeadersCore
 noncomputable section
 open Networks

@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.ActivePrefixLayoutShapes
-import IntegerMultBounds.Machine.ActiveTargetHighestPairLayoutGeometry
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixLayoutShapes
+public import IntegerMultBounds.Machine.ActiveTargetHighestPairLayoutGeometry
 
 /-! Original consecutive stage slots determine the active-target geometry.
 A node consists of M equal f-axis slots between unchanged active spectators;
 source and target are distinct original slots, numbered from left to right.
 All Parameters proof fields are derived from this actual decomposition. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixStageParameters
 open CompactGadgetReservationShape (Shape)
 open ActivePrefixLayoutShapes (Parameters)

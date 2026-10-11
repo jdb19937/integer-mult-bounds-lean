@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.ArbitraryWidthHighCost
-import IntegerMultBounds.Machine.ArbitraryWidthPaddedPieceShared
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthHighCost
+public import IntegerMultBounds.Machine.ArbitraryWidthPaddedPieceShared
 
 /-! One actual high-width execution: exchange and join, physical row padding,
 complete low-width dispatch, physical crop, and final inverse separation.
 Every private execution bank is restored. Runtime metadata construction is
 separate; no execution callback or recursion-depth oracle enters this proof. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthHighRun
 noncomputable section
 open Networks

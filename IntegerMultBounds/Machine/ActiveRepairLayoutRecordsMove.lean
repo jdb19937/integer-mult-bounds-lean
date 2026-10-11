@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsData
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsData
 
 /-! Record-level ideal output serializes to the original-width physical bit
 array. This is semantic serialization; no formatting machine is assumed. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLayoutRecordsMove
 noncomputable section
 open CompactGadgetReservationShape CompactActiveTargetLayout

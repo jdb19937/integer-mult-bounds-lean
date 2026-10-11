@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ArbitraryWidthHighCommonDispatch
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthHighCommonDispatch
 
 /-! The genuine high/fallback runtime dispatch preserves the certified
 exponent uniformly; a fixed mathematical cutoff bounds the fallback widths. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthHighCommonDispatchCost
 noncomputable section
 open Networks

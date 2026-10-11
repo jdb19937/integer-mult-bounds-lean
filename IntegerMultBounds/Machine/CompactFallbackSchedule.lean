@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactFallbackAxisBudget
+module
+
+public import IntegerMultBounds.Machine.CompactFallbackAxisBudget
 
 /-! A fixed original-dimension loop visits one selected bit in each original
 chunk, physically regenerating rho+i*K from the retained ordinal. Its count is
 D, not D*K; all other chunk bits remain spectators in the same native stream. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactFallbackSchedule
 noncomputable section
 open CompactFallbackHeaders CompactFallbackAxisRun

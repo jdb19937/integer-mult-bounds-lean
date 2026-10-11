@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.NativeEndpointCharacterCanonicalNamedRoles
-import IntegerMultBounds.Machine.NativeEndpointCharacterSourceReady
-import IntegerMultBounds.Machine.NativeEndpointSourceReadyPlacement
+module
+
+public import IntegerMultBounds.Machine.NativeEndpointCharacterCanonicalNamedRoles
+public import IntegerMultBounds.Machine.NativeEndpointCharacterSourceReady
+public import IntegerMultBounds.Machine.NativeEndpointSourceReadyPlacement
 
 /-! The complete actual source/sink character boundary on the original recursive
 caller bank, with parent-volume cost and all shared private storage reclaimed. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.NativeEndpointCharacterCanonicalSourceReady
 noncomputable section
 open CompactGadgetReservationShape (Shape)

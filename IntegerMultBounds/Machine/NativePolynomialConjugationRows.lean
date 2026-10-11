@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.NativePolynomialConjugation
-import IntegerMultBounds.Machine.FiniteReturnStackAt
-import IntegerMultBounds.Machine.CompactNativeRoleTransferBudget
-import IntegerMultBounds.Machine.CompactSpectatorInheritedGrid
+module
+
+public import IntegerMultBounds.Machine.NativePolynomialConjugation
+public import IntegerMultBounds.Machine.FiniteReturnStackAt
+public import IntegerMultBounds.Machine.CompactNativeRoleTransferBudget
+public import IntegerMultBounds.Machine.CompactSpectatorInheritedGrid
 
 /-! Physical native-row conjugation on any literal caller slot. The scanner
 changes only that tape, returns its head to zero and pays a uniform full-row
 volume bound. Actual inherited-grid guards certify signed complex semantics. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.NativePolynomialConjugationRows
 noncomputable section
 open ButterflyStreamData (Coefficient)

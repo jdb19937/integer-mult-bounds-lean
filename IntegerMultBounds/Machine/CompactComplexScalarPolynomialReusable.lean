@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactComplexScalarPolynomialRows
-import IntegerMultBounds.Machine.RawLinearCombinationComplexArrayReusable
+module
+
+public import IntegerMultBounds.Machine.CompactComplexScalarPolynomialRows
+public import IntegerMultBounds.Machine.RawLinearCombinationComplexArrayReusable
 
 /-! Complete actual scalar polynomial row execution, including physical
 copy-back, head normalization and erasure of every generated stream. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexScalarPolynomialReusable
 noncomputable section
 open CompactComplexScalarIntegerRows (RowIndex)
@@ -17,7 +22,7 @@ abbrev bank {n : ℕ} (r : RowIndex) (data : Fin wireCount → Fin n → Coeffic
   RawLinearCombinationComplexArrayReusable.bank
     (S:=CompactComplexScalarRowBlock.scratch r) data (bits n)
 
-private opaque budgetWires : {c : ℕ // c=wireCount} := ⟨wireCount,rfl⟩
+opaque budgetWires : {c : ℕ // c=wireCount} := ⟨wireCount,rfl⟩
 @[irreducible] def timeConstant :=
   CompactComplexScalarPolynomialRows.timeConstant+31*budgetWires.val+47
 

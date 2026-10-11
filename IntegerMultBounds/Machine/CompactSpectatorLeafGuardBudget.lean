@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactSpectatorLeafGuardPlacement
-import IntegerMultBounds.Machine.CompactSpectatorLeafSetupBudget
-import IntegerMultBounds.Machine.CompactSpectatorLeafLoopBudget
+module
+
+public import IntegerMultBounds.Machine.CompactSpectatorLeafGuardPlacement
+public import IntegerMultBounds.Machine.CompactSpectatorLeafSetupBudget
+public import IntegerMultBounds.Machine.CompactSpectatorLeafLoopBudget
 
 /-! The actual retained native payload and fixed recursive pair bounds charge
 all original metadata to the complete native word. Paid guard synthesis and
 both descriptor lifecycles preserve a uniform volume-times-visit-count bound. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactSpectatorLeafGuardBudget
 noncomputable section
 open CompactGadgetReservationShape (Shape)

@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ArbitraryWidthHighCommonPrepare
-import IntegerMultBounds.Machine.ArbitraryWidthHighRuntimeHeaderWiring
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthHighCommonPrepare
+public import IntegerMultBounds.Machine.ArbitraryWidthHighRuntimeHeaderWiring
 
 /-! Concrete high-branch sources from the common physical folding and
 high-row metadata output, starting with only the original six shape words. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthHighCommonHeaderWiring
 noncomputable section
 open Networks

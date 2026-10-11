@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixStageDispatchBudget
-import IntegerMultBounds.Machine.ActivePrefixStageFullEndpoint
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStageDispatchBudget
+public import IntegerMultBounds.Machine.ActivePrefixStageFullEndpoint
 
 /-! The dispatched caller retains original thirteen numeric words and raw65;
 every generated descriptor, runtime flag and private tape is physically blank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixStageDispatchEndpoint
 noncomputable section
 open CompactGadgetReservationShape (Shape)

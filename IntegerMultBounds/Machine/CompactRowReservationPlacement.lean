@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactRowArray
-import IntegerMultBounds.Machine.CompactRowPaddingRun
+module
+
+public import IntegerMultBounds.Machine.CompactRowArray
+public import IntegerMultBounds.Machine.CompactRowPaddingRun
 
 /-! Place the complete-row split onto the padded destination and role tapes,
 using the physically retained rounded/c/width headers. Original R is framed. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactRowReservationPlacement
 noncomputable section
 variable {a c : ℕ}
@@ -11,8 +16,8 @@ abbrev NativeTapes (c : ℕ) := CompactRowSplit.CommonTapes c+CompactRowSplit.Lo
 abbrev CommonTapes (c : ℕ) := 25+c
 abbrev Ports (c : ℕ) := CompactRowSplit.CallerTapes c
 
-private def head : Option (List Bool) → ℤ | none => 0 | some _ => 1
-private def tape : Option (List Bool) → ℤ → Fin (a+4)
+def head : Option (List Bool) → ℤ | none => 0 | some _ => 1
+def tape : Option (List Bool) → ℤ → Fin (a+4)
   | none => fun _ => blank
   | some xs => RadixZeroFill.encodedBinary xs
 

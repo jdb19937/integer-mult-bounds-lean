@@ -1,12 +1,17 @@
-import IntegerMultBounds.Machine.Shared50RecursiveBudget
-import IntegerMultBounds.Swap.Recurrence
-import IntegerMultBounds.Shared50Parameters
-import Mathlib.Data.Nat.Cast.Order.Field
+module
+
+public import IntegerMultBounds.Machine.Shared50RecursiveBudget
+public import IntegerMultBounds.Swap.Recurrence
+public import IntegerMultBounds.Shared50Parameters
+public import Mathlib.Data.Nat.Cast.Order.Field
 
 /-! Analytic bound for the concrete natural recursive budget. The exact fixed
 Shared50 branching count and World count give the certified exponent saving;
 natural floor division only decreases the bound. This module bounds the budget,
 not the execution time of a machine whose trace has not yet been established. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.Shared50RecursiveBudgetBound
 noncomputable section
 open Networks

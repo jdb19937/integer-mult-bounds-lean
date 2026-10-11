@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.UnitPhaseCountPower
+module
+
+public import IntegerMultBounds.Machine.UnitPhaseCountPower
 
 /-! Read immutable external ell65 and physically construct the polynomial
 coefficient count2^ell on60. Six temporary tapes are restored blank, every
 other tape (including ell) is retained, and no payload inference is used. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.UnitPhasePolynomialMultiplicity
 noncomputable section
 open SharedPlacementAlphabet (setTape)

@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.BinaryCorrectionOffsetFinish
+module
+
+public import IntegerMultBounds.Machine.BinaryCorrectionOffsetFinish
 
 /-! Complete third-line correction offset table from original b/q/n and the
 original control word, with explicit paid source scans, per-row borrow reset,
 derived metadata construction, cleanup, and a uniform linear allowance bound. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryCorrectionOffset
 open BinaryAddressOffsetHeaders (widthBits rangeBits countBits)
 open BinaryCorrectionOffsetFinish (widthWord)

@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlSequenceOriginalHeaders
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlSequenceOriginalPayload
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlSequenceOriginalHeaders
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlSequenceOriginalPayload
 
 /-! Original-input later execution: physically synthesize three header banks,
 perform the full dirty-control schedule, then erase every generated word. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixDirtyControlSequenceOriginalRun
 noncomputable section
 open ActivePrefixDirtyControlSequenceOriginalData ActivePrefixDirtyControlSequenceOriginalInputs

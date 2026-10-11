@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActiveRepairRankFieldsGeometry
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairRankFieldsGeometry
 
 /-! Actual original-layout parsing endpoint: V/T/U/full source and selected
 source bits are physically extracted from the genuine short record counter.
 Record payload width is separate; the address shape has payload one. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairRankFieldsEndpoint
 noncomputable section
 open CompactGadgetReservationShape CompactActiveTargetLayout

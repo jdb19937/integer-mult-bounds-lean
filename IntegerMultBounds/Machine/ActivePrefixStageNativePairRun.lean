@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActivePrefixStageNativePairData
-import IntegerMultBounds.Machine.BinaryPairFrame
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStageNativePairData
+public import IntegerMultBounds.Machine.BinaryPairFrame
 
 /-! A literal basis instruction saves its incoming headers, rewrites the pair,
 runs the real native stage, and physically restores the incoming pair. The
 native payload is canonical row-major throughout; no view equality is assumed. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixStageNativePairRun
 noncomputable section
 open CompactGadgetReservationShape (Shape)

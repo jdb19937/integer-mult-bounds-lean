@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.RecursiveRowsDimensions
-import IntegerMultBounds.Machine.RecursiveInterchangeRowsNormalized
-import IntegerMultBounds.Machine.BinaryDescriptorInstallMarkedList
+module
+
+public import IntegerMultBounds.Machine.RecursiveRowsDimensions
+public import IntegerMultBounds.Machine.RecursiveInterchangeRowsNormalized
+public import IntegerMultBounds.Machine.BinaryDescriptorInstallMarkedList
 
 /-! Install the two generated cyclic row counters into a blank transfer bank.
 Both copies and the two loop sentinel initializations are actual charged steps. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveRowsInstall
 open BinaryDescriptorInstallMarkedList
 variable {q c : ℕ}

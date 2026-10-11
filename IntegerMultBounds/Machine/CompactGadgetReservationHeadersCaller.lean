@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactGadgetReservationHeadersRouting
-import IntegerMultBounds.Machine.BinaryPackedOffsetOriginalPlaced
+module
+
+public import IntegerMultBounds.Machine.CompactGadgetReservationHeadersRouting
+public import IntegerMultBounds.Machine.BinaryPackedOffsetOriginalPlaced
 
 /-! The original row descriptor and six original layout descriptors physically
 produce every shape input consumed by the real packed action. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactGadgetReservationHeadersCaller
 noncomputable section
 open CompactGadgetReservationShape

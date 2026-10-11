@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.BinaryCorrectionOffsetGather
+module
+
+public import IntegerMultBounds.Machine.BinaryCorrectionOffsetGather
 
 /-! Paid prefix rewinds preserve the unread suffix of a full generated word.
 This is needed because controlsAt reads one source bit per digit, rather than
 the full b-bit address stride. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryCorrectionOffsetRewind
 open SharedPlacementAlphabet (setTape)
 variable {t : ℕ}

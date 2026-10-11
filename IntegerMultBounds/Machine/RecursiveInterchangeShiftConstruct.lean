@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.RecursiveShiftInitialize
-import IntegerMultBounds.Machine.RecursiveInterchangeShift
+module
+
+public import IntegerMultBounds.Machine.RecursiveShiftInitialize
+public import IntegerMultBounds.Machine.RecursiveInterchangeShift
 
 /-! A complete initialized and normalized seven-factor H-controlled D shift.
 Only six canonical layout headers and one array are supplied. All products,
 control digits, markers, copies, joins, and payload head restoration are real
 machine operations. Generated metadata remains explicit at the output. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveInterchangeShiftConstruct
 open RecursiveInterchangeLayout (Descriptor volume)
 open Networks

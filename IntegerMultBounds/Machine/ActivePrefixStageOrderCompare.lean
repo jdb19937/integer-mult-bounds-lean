@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActivePrefixStageHeadersBudget
-import IntegerMultBounds.Machine.BinaryDescriptorCompare
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStageHeadersBudget
+public import IntegerMultBounds.Machine.BinaryDescriptorCompare
 
 /-! The source order used by the two original-slot stages is physically
 computed from their original binary source/target slot words. Comparison
 retains both words and heads; its single-bit flag has paid cleanup. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixStageOrderCompare
 noncomputable section
 open CompactGadgetReservationShape (Shape)

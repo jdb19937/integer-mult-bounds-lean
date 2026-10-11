@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ArbitraryWidthPieceExecution
-import IntegerMultBounds.Machine.ArbitraryWidthPieceCleanup
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthPieceExecution
+public import IntegerMultBounds.Machine.ArbitraryWidthPieceCleanup
 
 /-! The entire runtime piece dispatcher, including physical control synthesis
 from retained parent headers and complete private-control erasure. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthPieceRun
 noncomputable section
 open Networks

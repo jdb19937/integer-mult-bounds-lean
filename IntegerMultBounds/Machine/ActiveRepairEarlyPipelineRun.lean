@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActiveRepairEarlyKeyScan
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairEarlyKeyScan
 
 /-! Actual varying-address early scan, stable radix sort, prefix stripping
 and reinsertion. These endpoints start with the physical scan bank prepared;
 original header initialization, global ideal-permutation identification and
 final working-tape cleanup remain separate. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairEarlyPipelineRun
 noncomputable section
 open ActiveRepairEarlyKeyData ActiveRepairEarlyKeyRun

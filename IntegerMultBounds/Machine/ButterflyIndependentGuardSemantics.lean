@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ButterflyIndependentGuardHeaders
+module
+
+public import IntegerMultBounds.Machine.ButterflyIndependentGuardHeaders
 
 /-! The physically derived reservation q+2D gives signed width q+4D+4, while
 actual arithmetic starts at precision q. Its semantic guard budget is 2D, so a
 full forward pass and a full inverse pass share one unchanged record width. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ButterflyIndependentGuardSemantics
 noncomputable section
 open ButterflyAxisArray (Array Size)

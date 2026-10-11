@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.CountedLateRepairKeyValue
-import IntegerMultBounds.Machine.CountedLateRepairScanBank
+module
+
+public import IntegerMultBounds.Machine.CountedLateRepairKeyValue
+public import IntegerMultBounds.Machine.CountedLateRepairScanBank
 
 /-! Exact scan key contract for the actual original-header later key machine. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedLateRepairScan
 noncomputable section
 open CountedLateRepairScanBank

@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActiveRepairRankFieldsBank
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairRankFieldsBank
 
 /-! Four literal field extractions reuse one counter and scratch bank, then
 actual selected-source extraction reads the fourth full source word. All
 runtime offsets, widths and original selection headers are retained. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairRankFieldsRun
 noncomputable section
 open ActiveRepairRankFieldsBank

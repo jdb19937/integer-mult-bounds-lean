@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.Shared50RecursiveNodePieces
+module
+
+public import IntegerMultBounds.Machine.Shared50RecursiveNodePieces
 
 /-! A recursive full H/D swap in the physically identical cross-field view is
 exactly the original selected scalar interchange. No data transposition is used
 to enter or leave the view, and every other World/I/O role is retained. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.Shared50RecursiveChildPermutation
 noncomputable section
 open Networks

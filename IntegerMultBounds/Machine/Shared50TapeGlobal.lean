@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.Shared50TapeInvocation
+module
+
+public import IntegerMultBounds.Machine.Shared50TapeInvocation
 
 /-! The actual Shared50 three-coordinate reused-world scalar list compiled to
 one fixed multitape program. This establishes exact stream-bank exchange and
 restoration of arbitrary dirty scratch at linear stream-volume cost; affine
 routing and recursive interchange composition remain separate operations. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.Shared50TapeGlobal
 open Networks
 open Shared50GlobalBudget (Address Scratch World)

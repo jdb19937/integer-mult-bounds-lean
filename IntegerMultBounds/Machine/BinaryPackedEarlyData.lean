@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.BinaryRepeatedOffsetAction
-import IntegerMultBounds.Machine.BinaryParityXorOffsetRepeatCoordinates
-import IntegerMultBounds.Compact.Permutations
+module
+
+public import IntegerMultBounds.Machine.BinaryRepeatedOffsetAction
+public import IntegerMultBounds.Machine.BinaryParityXorOffsetRepeatCoordinates
+public import IntegerMultBounds.Compact.Permutations
 
 /-! The four actual produced offsets acting on one unchanged pair of packed
 fields. Each offset is read from the current source field. The independent
 spectator component can contain all dirty back, unused and payload coordinates. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryPackedEarlyData
 open Compact (Field)
 open Compact.Radix (pack digits)

@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.SparsePhaseHeadersBudget
-import IntegerMultBounds.Machine.SparsePhaseFlags
-import IntegerMultBounds.Machine.SparsePhaseUnitCaller
+module
+
+public import IntegerMultBounds.Machine.SparsePhaseHeadersBudget
+public import IntegerMultBounds.Machine.SparsePhaseFlags
+public import IntegerMultBounds.Machine.SparsePhaseUnitCaller
 
 /-! The physical sparse header outputs are shared directly with the complete
 address-to-phase kernel. No stride, offset, control word or phase flag is
 supplied to this fifty-six-tape caller. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.SparsePhaseFlagsCaller
 noncomputable section
 open CompactGadgetReservationShape (Shape)

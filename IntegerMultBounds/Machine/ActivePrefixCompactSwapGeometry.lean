@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActivePrefixCompactSwapRun
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixCompactSwapRun
 
 /-! Exact physical interchange geometry for compact T in the unchanged active
 layout. Only compact n*b fits H; the target n*q remains in the active block. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixCompactSwapGeometry
 noncomputable section
 open ActivePrefixCompactSwapData

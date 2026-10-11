@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.BinaryPackedEarlyPrefixParity
-import IntegerMultBounds.Machine.BinaryPackedEarlyPrefixNegative
+module
+
+public import IntegerMultBounds.Machine.BinaryPackedEarlyPrefixParity
+public import IntegerMultBounds.Machine.BinaryPackedEarlyPrefixNegative
 
 /-! Both current-source-prefix constructors include physical metadata, source
 production, repeated copying and full cleanup within the rotation volume. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryPackedEarlyPrefixBudget
 open BinaryAddressOffsetHeaders (widthBits rangeBits countBits)
 open BinaryPackedEarlyPrefixNegative (descriptors cleanupSlots cleanupBits)

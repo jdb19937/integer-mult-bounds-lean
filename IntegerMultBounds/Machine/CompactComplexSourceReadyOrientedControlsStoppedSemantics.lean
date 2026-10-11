@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyOrientedControlsStopped
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyOrientedControlsStopped
 
 /-! Safety and exact decoded semantics of stopped post-orientation follow
 from the original recursive Path and input inherited grid, including every
 executed forward butterfly and the true committed leafTarget precision. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyOrientedControlsStoppedSemantics
 noncomputable section
 open Networks

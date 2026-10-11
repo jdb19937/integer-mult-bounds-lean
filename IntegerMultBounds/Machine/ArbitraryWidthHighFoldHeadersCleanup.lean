@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ArbitraryWidthHighFoldHeaders
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthHighFoldHeaders
 
 /-! Erase all six physically generated folded root headers while retaining
 all original headers and restoring the exact original blank workspace. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthHighFoldHeadersCleanup
 noncomputable section
 variable {a : ℕ}

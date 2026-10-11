@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActivePrefixStageSingletonData
-import IntegerMultBounds.Machine.ActivePrefixStageFullCompose
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStageSingletonData
+public import IntegerMultBounds.Machine.ActivePrefixStageFullCompose
 
 /-! Both ordered singleton stages are actual fixed finite programs: generate
 all consumer words from the original thirteen, execute the single highest
 selected-bit operation, then erase every generated consumer word. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixStageSingletonRun
 noncomputable section
 open CompactGadgetReservationShape (Shape)

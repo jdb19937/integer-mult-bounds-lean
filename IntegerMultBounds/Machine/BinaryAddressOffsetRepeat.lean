@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.BinaryAddressOffsetRepeatLoop
+module
+
+public import IntegerMultBounds.Machine.BinaryAddressOffsetRepeatLoop
 
 /-! Complete fixed-control offset expansion. All four countdown sentinels
 start blank and are erased; the base table is consumed and erased, output is
 rewound, and all original W/L/N/K descriptors remain intact. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryAddressOffsetRepeat
 open SharedPlacementAlphabet (setTape)
 open CountedCopyReuse (empty binary)

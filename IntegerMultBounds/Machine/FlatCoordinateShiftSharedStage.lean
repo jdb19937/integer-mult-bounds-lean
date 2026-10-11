@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.FlatCoordinateShiftSharedBank
-import IntegerMultBounds.Machine.SharedBankSkeleton
+module
+
+public import IntegerMultBounds.Machine.FlatCoordinateShiftSharedBank
+public import IntegerMultBounds.Machine.SharedBankSkeleton
 
 /-! A completely initialized controlled shift as a four-common-tape stage.
 The payload pair and sole b/W pair are permanent; every private input tape is
 blank. A finite schedule can therefore share its two original headers directly. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.FlatCoordinateShiftSharedStage
 open Networks
 open Networks.Shared50ModularControl (prime)

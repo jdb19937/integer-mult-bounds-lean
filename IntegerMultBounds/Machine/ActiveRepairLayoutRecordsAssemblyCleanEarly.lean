@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsAssemblyCleanCommon
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsAssemblyCleanCommon
 
 /-! Original-header raw repair with actual final erasure of every copied
 consumer descriptor. Only the original headers and two raw array tapes remain. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLayoutRecordsAssemblyCleanEarly
 noncomputable section
 open CompactGadgetReservationShape (Shape)

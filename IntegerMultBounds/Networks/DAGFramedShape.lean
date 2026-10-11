@@ -1,8 +1,13 @@
-import IntegerMultBounds.Networks.FramedControlShape
-import IntegerMultBounds.Networks.Shared50FiniteFramed
+module
+
+public import IntegerMultBounds.Networks.FramedControlShape
+public import IntegerMultBounds.Networks.Shared50FiniteFramed
 
 /-! Exact role-and-gate shape independence for physical DAG schedules, including
 complemented reversal and finite-bank restriction. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Networks.DAGFramedShape
 open FramedCircuit FramedControlShape
 variable {α L E F : Type*} {h : ℕ} [AddCommGroup E] [Module (ZMod 2) E]

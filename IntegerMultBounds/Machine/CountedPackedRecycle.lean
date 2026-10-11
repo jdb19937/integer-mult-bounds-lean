@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.WordBankCleanup
-import IntegerMultBounds.Machine.CountedPackedInverse
+module
+
+public import IntegerMultBounds.Machine.WordBankCleanup
+public import IntegerMultBounds.Machine.CountedPackedInverse
 
 /-! Recycle the five packed intermediate words, copying the result back to
 its original pair of payload tapes and physically erasing every intermediate. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedPackedRecycle
 noncomputable section
 variable {a : ℕ}

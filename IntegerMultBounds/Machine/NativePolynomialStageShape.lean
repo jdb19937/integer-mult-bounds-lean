@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.ActivePrefixStageNativePolynomial
-import IntegerMultBounds.Machine.CompactSpectatorLeafSetup
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStageNativePolynomial
+public import IntegerMultBounds.Machine.CompactSpectatorLeafSetup
 
 /-! A native polynomial row is encoded as three bits per native symbol by the
 physical stage converters. Its stage payload descriptor is therefore three
 times the entire serialized polynomial row, rather than the reservation's
 single coordinate payload. Address geometry and original role rows are retained. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.NativePolynomialStageShape
 noncomputable section
 open CompactGadgetReservationShape (Shape)

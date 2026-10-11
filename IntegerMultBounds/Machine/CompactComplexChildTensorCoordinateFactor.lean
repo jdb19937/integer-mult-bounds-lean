@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactComplexStoppedLeafTensorSemantics
-import IntegerMultBounds.Machine.CompactComplexActualCallFrameEdge
-import IntegerMultBounds.Machine.CompactComplexBasisTensorConjugation
+module
+
+public import IntegerMultBounds.Machine.CompactComplexStoppedLeafTensorSemantics
+public import IntegerMultBounds.Machine.CompactComplexActualCallFrameEdge
+public import IntegerMultBounds.Machine.CompactComplexBasisTensorConjugation
 
 /-! Child-selected native coordinates are precisely one parent slot across
 all parent columns. Their genuine forward/inverse tensor is the corresponding
 coordinate vector factor, retaining every surrounding native spectator. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexChildTensorCoordinateFactor
 noncomputable section
 open Networks

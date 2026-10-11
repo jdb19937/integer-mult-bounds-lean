@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.UnitPhaseFullStreamInitBudget
-import IntegerMultBounds.Machine.UnitPhaseFullStreamLoop
+module
+
+public import IntegerMultBounds.Machine.UnitPhaseFullStreamInitBudget
+public import IntegerMultBounds.Machine.UnitPhaseFullStreamLoop
 
 /-! Complete physical full-address coefficient phase stream. Original rows4
 and geometric headers produce the actual count rows*2^bits on59 and initialize
 the live counter; every actual coefficient is processed and all generated
 numeric/count/loop controls are erased, with a linear paid runtime bound. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.UnitPhaseFullStream
 noncomputable section
 open CompactGadgetReservationShape (Shape)

@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixControlOffsetCleanup
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixControlOffsetCleanup
 
 /-! Complete control-mask offset producer from original prefix/source/gadget
 descriptors, including all tables, varying controls, arithmetic and cleanup.
 Every derived word and temporary stream is physically generated and erased. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixControlOffset
 noncomputable section
 open ActivePrefixControlOffsetBank

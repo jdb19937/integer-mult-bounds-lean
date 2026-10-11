@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlLoadCleanup
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlLoadCleanup
 
 /-! Four complete dirty-U physical load modes. Only original layout, row and
 suffix descriptors and the full array enter; all offset streams and dimensions
 are physically produced and erased. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixDirtyControlLoad
 noncomputable section
 open ActivePrefixDirtyControlLoadProducer (Mode Shape values width word)

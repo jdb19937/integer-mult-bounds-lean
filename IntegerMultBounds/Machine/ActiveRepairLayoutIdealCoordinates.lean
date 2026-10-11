@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActiveRepairLayoutPermutation
-import IntegerMultBounds.Machine.ActiveRepairLayoutPermutationWords
-import IntegerMultBounds.Machine.ActiveRepairEarlyKeyValue
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairLayoutPermutation
+public import IntegerMultBounds.Machine.ActiveRepairLayoutPermutationWords
+public import IntegerMultBounds.Machine.ActiveRepairEarlyKeyValue
 
 /-! Global repaired low-bit ideals change precisely the target row by the
 literal selected XOR mask; every other original address coordinate survives. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLayoutIdealCoordinates
 noncomputable section
 open CompactGadgetReservationShape CompactActiveTargetLayout

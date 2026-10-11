@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactNativeRoleGuardedChildCaller
-import IntegerMultBounds.Machine.CompactSpectatorLeafCountBudget
+module
+
+public import IntegerMultBounds.Machine.CompactNativeRoleGuardedChildCaller
+public import IntegerMultBounds.Machine.CompactSpectatorLeafCountBudget
 
 /-! Actual stopped positive node descriptors contain per-slot child width.
 Expand header7 by real slots6, run the complete guarded role child, then
 restore header7 exactly while preserving its derived native output. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactNativeRoleStoppedChildCaller
 noncomputable section
 open CompactComplexRecursiveGeometry

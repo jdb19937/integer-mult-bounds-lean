@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.AllAxisCountPower
+module
+
+public import IntegerMultBounds.Machine.AllAxisCountPower
 
 /-! Derive the complete coefficient count rows*2^bits from original rows4
 and derived width22. Power23 is constructed from tape, multiplied with rows,
 then erased; generated count24 remains and original rows4 is retained. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.AllAxisCountHeaders
 noncomputable section
 open CompactGadgetReservationShape (Shape)

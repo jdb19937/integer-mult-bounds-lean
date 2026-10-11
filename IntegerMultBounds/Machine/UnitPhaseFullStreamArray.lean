@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.UnitPhaseStreamEndpoint
-import IntegerMultBounds.Machine.ButterflyStreamEndpoint
+module
+
+public import IntegerMultBounds.Machine.UnitPhaseStreamEndpoint
+public import IntegerMultBounds.Machine.ButterflyStreamEndpoint
 
 /-! Full phase stream theorem on literal finite coefficient arrays. The
 input tape and all record contexts are derived from one serialized array;
 the output is exactly its pointwise runtime-address phase serialization. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.UnitPhaseFullStreamArray
 noncomputable section
 open CompactGadgetReservationShape (Shape)

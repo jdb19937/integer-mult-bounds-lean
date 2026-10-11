@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.ButterflySpectatorBudget
-import IntegerMultBounds.Machine.CompactSpectatorInverseLeafAxis
-import IntegerMultBounds.Machine.CompactSpectatorLeafAxis
+module
+
+public import IntegerMultBounds.Machine.ButterflySpectatorBudget
+public import IntegerMultBounds.Machine.CompactSpectatorInverseLeafAxis
+public import IntegerMultBounds.Machine.CompactSpectatorLeafAxis
 
 /-! Every actual leaf-body descriptor is bounded by the immutable full address
 geometry, including the final selected position. Both forward and inverse
 native bodies have a uniform linear whole-word bound with paid scalar work. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactSpectatorLeafAxisBudget
 noncomputable section
 open CompactGadgetReservationShape (Shape)

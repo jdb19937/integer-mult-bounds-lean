@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.AllAxisPolynomialStreamInit
+module
+
+public import IntegerMultBounds.Machine.AllAxisPolynomialStreamInit
 
 /-! A complete prepared-stage polynomial phase traversal on66 tapes:
 physical immutable ell/header initialization, full-address outer counting,
 shared phase coefficient inner counting, and paid final control erasure.
 The streams remain serialized with their heads at the actual endpoints. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.AllAxisPolynomialStream
 noncomputable section
 open CompactGadgetReservationShape (Shape)

@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.AllAxisPolynomialRecord
-import IntegerMultBounds.Machine.AllAxisPhaseFlagsNormalize
+module
+
+public import IntegerMultBounds.Machine.AllAxisPolynomialRecord
+public import IntegerMultBounds.Machine.AllAxisPhaseFlagsNormalize
 
 /-! The full polynomial body restores its original prepared caller bank.
 Only source/output stream heads and cells advance; raw address and live
 counter are preserved. This is the reusable boundary for the outer loop. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.AllAxisPolynomialRestore
 noncomputable section
 open SharedPlacementAlphabet (setTape)

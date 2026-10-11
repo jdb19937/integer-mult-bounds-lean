@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyStoppedLeafDispatch
-import IntegerMultBounds.Machine.CompactComplexSourceReadyStoppedLeafCountBudget
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyStoppedLeafDispatch
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyStoppedLeafCountBudget
 
 /-! One fixed runtime exponent dispatcher pays all positive count traffic,
 scalar execution and branch overhead from the true Path and input live ledger. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyStoppedLeafDispatchBudget
 noncomputable section
 open CompactGadgetReservationShape (Shape)

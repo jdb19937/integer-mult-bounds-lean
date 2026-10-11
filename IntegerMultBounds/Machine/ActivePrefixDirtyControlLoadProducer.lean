@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlPureSemantics
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlCorrectionPlaced
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlNegativePlaced
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlPureSemantics
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlCorrectionPlaced
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlNegativePlaced
 
 /-! The four real dirty-U offset producers share a fixed fifty-one-tape private
 workspace. Modes are fixed finite-control choices, never supplied streams. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixDirtyControlLoadProducer
 noncomputable section
 open SharedPlacementAlphabet (setTape)

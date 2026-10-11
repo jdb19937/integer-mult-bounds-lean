@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactComplexNonleafRoleParentBank
-import IntegerMultBounds.Machine.CompactComplexNonleafRoleParentRows
+module
+
+public import IntegerMultBounds.Machine.CompactComplexNonleafRoleParentBank
+public import IntegerMultBounds.Machine.CompactComplexNonleafRoleParentRows
 
 /-! A physical decoded-parent continuation restores the actual saved geometry
 and exponent, then multiplies only the parent's row descriptor. Payloads remain
 literal and arbitrary. Live-grid promotion and full recursive correctness are
 later obligations, not assumptions of this physical composition. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexNonleafRoleParentContinuation
 noncomputable section
 open CompactGadgetReservationShape (Shape)

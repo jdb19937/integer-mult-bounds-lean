@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.CompactComplexNonleafRoleMerge
-import IntegerMultBounds.Machine.CompactComplexNonleafRoleReturnFrame
-import IntegerMultBounds.Machine.CompactReservationNativePaddingBudget
+module
+
+public import IntegerMultBounds.Machine.CompactComplexNonleafRoleMerge
+public import IntegerMultBounds.Machine.CompactComplexNonleafRoleReturnFrame
+public import IntegerMultBounds.Machine.CompactReservationNativePaddingBudget
 
 /-! Actual nonleaf child-role merge and parent payload return on one unchanged
 fixed bank. Returned source support follows from literal coefficient widths;
 advanced live-denominator words are retained while parent and ancestor payload
 frames are restored. No recursive run or numerical child semantics is supplied. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexNonleafRoleMergeReturn
 noncomputable section
 open CompactGadgetReservationShape (Shape)

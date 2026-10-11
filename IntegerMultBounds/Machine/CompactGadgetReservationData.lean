@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactGadgetReservationShape
-import IntegerMultBounds.Machine.CompactRowReservationEndpoint
+module
+
+public import IntegerMultBounds.Machine.CompactGadgetReservationShape
+public import IntegerMultBounds.Machine.CompactRowReservationEndpoint
 
 /-! The physically produced role word is the concrete temp/control/back
 rectangle. The conversion below changes types, never tape cells or their order. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactGadgetReservationData
 noncomputable section
 open CompactGadgetReservationShape

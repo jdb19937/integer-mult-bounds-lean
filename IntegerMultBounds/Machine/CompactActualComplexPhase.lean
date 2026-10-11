@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.CompactComplexPhasePhysicalBudget
+module
+
+public import IntegerMultBounds.Machine.CompactComplexPhasePhysicalBudget
 
 /-! Actual scalar/cutoff/global-row choices compile each fixed complex edge
 with a uniform certified machine bound and exact original-address controls. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactActualComplexPhase
 noncomputable section
 open CompactGadgetReservationShape (Shape)

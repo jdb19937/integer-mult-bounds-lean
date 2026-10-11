@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactReservationNativePaddingBudget
-import IntegerMultBounds.Machine.CompactReservedActualBudget
+module
+
+public import IntegerMultBounds.Machine.CompactReservationNativePaddingBudget
+public import IntegerMultBounds.Machine.CompactReservedActualBudget
 
 /-! The actual scalar endpoint pays original reservation, adapter headers,
 genuine native zero padding and all cleanup, with the certified saving. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactReservationNativePaddingActualBudget
 noncomputable section
 open Filter Sizes Parameters

@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyStoppedLeafCount
-import IntegerMultBounds.Machine.Branch
-import IntegerMultBounds.Machine.BinaryCanonicalData
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyStoppedLeafCount
+public import IntegerMultBounds.Machine.Branch
+public import IntegerMultBounds.Machine.BinaryCanonicalData
 
 /-! One fixed stopped-node body reads the actual exponent word before choosing
 scalar execution or physical per-child count expansion and restoration. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyStoppedLeafDispatch
 noncomputable section
 open CompactGadgetReservationShape (Shape)

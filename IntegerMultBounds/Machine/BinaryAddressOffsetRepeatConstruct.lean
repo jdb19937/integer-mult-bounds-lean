@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.BinaryAddressOffsetRepeatHeaders
-import IntegerMultBounds.Machine.BinaryAddressOffsetPlaced
-import IntegerMultBounds.Machine.BinaryAddressOffsetRepeatPlaced
-import IntegerMultBounds.Machine.BinaryAddressOffsetRepeatValue
+module
+
+public import IntegerMultBounds.Machine.BinaryAddressOffsetRepeatHeaders
+public import IntegerMultBounds.Machine.BinaryAddressOffsetPlaced
+public import IntegerMultBounds.Machine.BinaryAddressOffsetRepeatPlaced
+public import IntegerMultBounds.Machine.BinaryAddressOffsetRepeatValue
 
 /-! The complete repeated parity-offset constructor starts with only the six
 original dimension descriptors. All derived counts and the base address table
 are constructed, copied, rewound, and erased by fixed-control programs. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryAddressOffsetRepeatConstruct
 open SharedPlacementAlphabet (setTape)
 open BinaryAddressOffsetRepeatHeaders

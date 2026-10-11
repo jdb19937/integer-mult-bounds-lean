@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.AllAxisAddressHeaders
+module
+
+public import IntegerMultBounds.Machine.AllAxisAddressHeaders
 
 /-! Physical complete-address initialization costs linear reserved payload,
 including full width-header derivation, counter filling and header erasure. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.AllAxisAddressInitBudget
 open CompactGadgetReservationShape (Shape)
 open ActivePrefixStageParameters

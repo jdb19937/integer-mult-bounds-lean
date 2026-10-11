@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactComplexNonleafRolePreparation
-import IntegerMultBounds.Machine.CompactComplexControllerStopBranch
+module
+
+public import IntegerMultBounds.Machine.CompactComplexNonleafRolePreparation
+public import IntegerMultBounds.Machine.CompactComplexControllerStopBranch
 
 /-! The actual runtime stop decision on the unchanged Entry+7 bank. Seven
 appended scratch tapes and three blank native-header scratch tapes form one
 fixed stop10 workspace. Both branches reclaim all ten before touching the
 intact selected source, raw geometry, live descriptors or controller stacks. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyGuard
 noncomputable section
 open SharedPlacementAlphabet (setTape)
@@ -40,7 +45,7 @@ theorem scratch_injective : Function.Injective (scratch (s:=s) (c:=c)) := by
   apply Fin.ext
   split_ifs at hv <;> omega
 
-def placement := InjectivePlacement.placement (scratch (s:=s) (c:=c)) scratch_injective
+def placement := InjectivePlacement.placement (u := permanent s c+7-10) (scratch (s:=s) (c:=c)) scratch_injective
   (by have h := permanent_eq (s:=s) (c:=c); change 10+(permanent s c+7-10)=permanent s c+7; omega)
 
 @[simp] theorem placement_scratch (i : Fin 10) :
@@ -50,7 +55,7 @@ def placement := InjectivePlacement.placement (scratch (s:=s) (c:=c)) scratch_in
 def dimension : Fin (tapes s c) := Fin.castAdd 7 (CompactComplexNonleafRoleEntry.numeric 1)
 def exponent : Fin (tapes s c) := CompactComplexNonleafRoleChildBank.control 1
 
-private theorem dimension_scratch (i : Fin 10) : dimension (s:=s) (c:=c)≠scratch i := by
+theorem dimension_scratch (i : Fin 10) : dimension (s:=s) (c:=c)≠scratch i := by
   intro h
   have hv := congrArg Fin.val h
   have hi := i.isLt
@@ -60,7 +65,7 @@ private theorem dimension_scratch (i : Fin 10) : dimension (s:=s) (c:=c)≠scrat
   rw [scratch_val,permanent_eq] at hv
   split_ifs at hv <;> omega
 
-private theorem exponent_scratch (i : Fin 10) : exponent (s:=s) (c:=c)≠scratch i := by
+theorem exponent_scratch (i : Fin 10) : exponent (s:=s) (c:=c)≠scratch i := by
   intro h
   have hv := congrArg Fin.val h
   have hi := i.isLt
@@ -77,16 +82,16 @@ theorem ready_active (v : Tapes (tapes s c) 2) (h : Ready v) :
   · simpa only [placement_scratch] using (h i).1
   · simpa only [placement_scratch] using (h i).2
 
-private def copyFocus (src : Fin (tapes s c)) (dst : Fin 10) := ![src,scratch dst]
-private theorem copy_injective (src : Fin (tapes s c)) (dst : Fin 10) (hne : src≠scratch dst) :
+def copyFocus (src : Fin (tapes s c)) (dst : Fin 10) := ![src,scratch dst]
+theorem copy_injective (src : Fin (tapes s c)) (dst : Fin 10) (hne : src≠scratch dst) :
     Function.Injective (copyFocus src dst) := by
   intro i j h
   fin_cases i <;> fin_cases j <;> simp_all [copyFocus]
 
-private def copyProgram (src : Fin (tapes s c)) (dst : Fin 10) (hne : src≠scratch dst) :=
+def copyProgram (src : Fin (tapes s c)) (dst : Fin 10) (hne : src≠scratch dst) :=
   BinaryDescriptorCopyPlaced.program (a:=2) (copyFocus src dst) (copy_injective src dst hne)
 
-private theorem copy_runs (v : Tapes (tapes s c) 2) (src : Fin (tapes s c)) (dst : Fin 10)
+theorem copy_runs (v : Tapes (tapes s c) 2) (src : Fin (tapes s c)) (dst : Fin 10)
     (hne : src≠scratch dst) (n : ℕ)
     (hs : v.head src=1 ∧ v.tape src=RadixZeroFill.encodedBinary (bits n))
     (hd : v.head (scratch dst)=0 ∧ v.tape (scratch dst)=fun _ => blank) :

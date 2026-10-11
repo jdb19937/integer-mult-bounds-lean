@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactSpectatorInheritedGrid
-import IntegerMultBounds.Machine.SignedRadixExactReturn
+module
+
+public import IntegerMultBounds.Machine.CompactSpectatorInheritedGrid
+public import IntegerMultBounds.Machine.SignedRadixExactReturn
 
 /-! The shared dyadic grid after a selected-role child is established by
 actual numerator promotion of every spectator. Equal record widths alone
 do not establish this handoff. The physical promotion machine supplies the
 signed-numerator equations consumed here. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexChildGridAlignment
 noncomputable section
 open CompactGadgetReservationShape (Shape)

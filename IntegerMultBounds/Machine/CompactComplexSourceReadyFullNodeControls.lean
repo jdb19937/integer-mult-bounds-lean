@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyNodeControls
-import IntegerMultBounds.Machine.CompactComplexSourceReadyScalarWorkspace
-import IntegerMultBounds.Machine.FiniteFlowFrames
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyNodeControls
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyScalarWorkspace
+public import IntegerMultBounds.Machine.FiniteFlowFrames
 
 /-! Actual source-ready node controls on the complete fixed scalar workspace.
 Return and scalar event blocks may use the full bank; the physical entry,
 stopped leaf, split and merge preserve its arbitrary added suffix. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyFullNodeControls
 noncomputable section
 open CompactComplexSourceReadyScalarWorkspace (tapes nodeTapes scratch)

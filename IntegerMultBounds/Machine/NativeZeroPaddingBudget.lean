@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.NativeZeroPaddingArray
-import IntegerMultBounds.Machine.CompactGlobalReservation
+module
+
+public import IntegerMultBounds.Machine.NativeZeroPaddingArray
+public import IntegerMultBounds.Machine.CompactGlobalReservation
 
 /-! One genuine native zero pad is uniformly linear in the original complete
 native word. The factor-two row allowance is charged once, before role descent. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.NativeZeroPaddingBudget
 noncomputable section
 open NativeZeroPaddingHeaders

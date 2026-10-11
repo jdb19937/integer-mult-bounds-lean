@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.CompactAllAxisPhaseDispatchBudget
-import IntegerMultBounds.Machine.AllAxisPhaseGeometry
-import IntegerMultBounds.Machine.CompactNativeTensorPhaseCoordinates
-import IntegerMultBounds.Machine.UnitPhaseGuard
+module
+
+public import IntegerMultBounds.Machine.CompactAllAxisPhaseDispatchBudget
+public import IntegerMultBounds.Machine.AllAxisPhaseGeometry
+public import IntegerMultBounds.Machine.CompactNativeTensorPhaseCoordinates
+public import IntegerMultBounds.Machine.UnitPhaseGuard
 
 /-! Actual complex25 edges instantiate the executable whole-array aggregate
 phase and its volume bound. At native basis-word destinations its coefficient
 operation is the complete tensor phase, guarded by the existing bounded grid. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.AllAxisPolynomialActual
 noncomputable section
 open CompactGadgetReservationShape (Shape)

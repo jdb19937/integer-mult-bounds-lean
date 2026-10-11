@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsBankPlaced
-import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsHeadersErase
-import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsHeadersBudget
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsBankPlaced
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsHeadersErase
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsHeadersBudget
 
 /-! The real original-header consumer installation and the final generated
 header erasure both have paid linear original payload-volume contracts. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLayoutRecordsBankBudget
 noncomputable section
 open CompactGadgetReservationShape (Shape)

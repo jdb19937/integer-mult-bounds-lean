@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActiveTargetHighestLayoutHeadersData
-import IntegerMultBounds.Machine.ActiveTargetHighestPairHeadersAtomic
+module
+
+public import IntegerMultBounds.Machine.ActiveTargetHighestLayoutHeadersData
+public import IntegerMultBounds.Machine.ActiveTargetHighestPairHeadersAtomic
 
 /-! Charged physical construction and erasure of the highest-bit pair's
 five original words from the existing fourteen layout headers. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveTargetHighestLayoutHeadersRun
 noncomputable section
 open ActiveRepairRankHeadersCommands

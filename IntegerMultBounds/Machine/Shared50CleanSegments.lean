@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.Shared50InitializedSegments
-import IntegerMultBounds.Machine.FlatCoordinateCleanSchedule
+module
+
+public import IntegerMultBounds.Machine.Shared50InitializedSegments
+public import IntegerMultBounds.Machine.FlatCoordinateCleanSchedule
 
 /-! Actual nonrecursive Shared50 segments with physically restored workspace.
 The exact field-program run is realized on the common payload, b/W headers are
 preserved, and every other input and output tape is blank at head zero.
 Recursive interchange execution remains a separate obligation. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.Shared50CleanSegments
 open Networks
 open Shared50ModularSchedule (Index)

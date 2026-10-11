@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CountedLateRepairToggle
-import IntegerMultBounds.Machine.CountedLateRepairConcat
+module
+
+public import IntegerMultBounds.Machine.CountedLateRepairToggle
+public import IntegerMultBounds.Machine.CountedLateRepairConcat
 
 /-! Fixed34 common bank for later destination keys. The three rank words,
 original controls and headers, exception flag and literal destination words
 share recycled blank arithmetic workspace. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedLateRepairKeyBank
 noncomputable section
 open CountedGuardGadgetRecord (word)

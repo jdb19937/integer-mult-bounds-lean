@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.RadixHighBlockJoinBody
-import IntegerMultBounds.Machine.BinaryCanonicalData
+module
+
+public import IntegerMultBounds.Machine.RadixHighBlockJoinBody
+public import IntegerMultBounds.Machine.BinaryCanonicalData
 
 /-! An actual counted loop executes every ordered high-digit join. Its exact
 state arrays are computed from the literal single-digit movement, not supplied
 execution callbacks. Runtime work is bounded by the original payload volume. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RadixHighBlockJoinLoop
 noncomputable section
 open RadixHighBlockJoinBank
@@ -29,8 +34,8 @@ def finalBank (P S E r : ℕ) (source : ℤ → Fin (a+4)) (ss op oe : List Bool
     (x : Fin (P*q^r*(S*E)) → Fin (a+4)) :=
   bank (q := q) (word source x) ss op oe (some (bits (P*q^r))) (some (bits E)) (some (bits q))
 
-private theorem input_succ (P S q r E : ℕ) : P*S*q*(q^r*E) = P*S*q^(r+1)*E := by rw [pow_succ]; ring
-private theorem middle_succ (P S q r E : ℕ) : (P*q)*S*q^r*E = P*q*(S*(q^r*E)) := by ring
+theorem input_succ (P S q r E : ℕ) : P*S*q*(q^r*E) = P*S*q^(r+1)*E := by rw [pow_succ]; ring
+theorem middle_succ (P S q r E : ℕ) : (P*q)*S*q^r*E = P*q*(S*(q^r*E)) := by ring
 private theorem output_succ (P S q r E : ℕ) : P*q^(r+1)*(S*E) = (P*q)*q^r*(S*E) := by rw [pow_succ]; ring
 
 def nextArray (P S E r : ℕ) (x : Fin (P*S*q^(r+1)*E) → Fin (a+4)) :

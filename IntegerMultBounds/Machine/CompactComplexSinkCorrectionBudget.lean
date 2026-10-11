@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadySinkCorrections
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadySinkCorrections
 
 /-! Every physical sink-correction join is absorbed by positive original volume.
 The bound is stated with its literal static coefficient to keep proof checking
 independent of unfolding the compiled machine. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSinkCorrectionBudget
 noncomputable section
 open CompactGadgetReservationShape (Shape)

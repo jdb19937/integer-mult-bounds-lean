@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactComplexNonleafRoleReturn
-import IntegerMultBounds.Machine.CompactComplexNonleafRoleEntryBudget
+module
+
+public import IntegerMultBounds.Machine.CompactComplexNonleafRoleReturn
+public import IntegerMultBounds.Machine.CompactComplexNonleafRoleEntryBudget
 
 /-! Both generated-count recovery lifecycles have a uniform native-volume
 runtime bound, paying selected-result recovery, spectator pops, master-source
 restoration, metadata cleanup and every assembly join. Recursive child
 execution, reverse child merge and controller handoff remain separate. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexNonleafRoleReturnBudget
 noncomputable section
 open CompactGadgetReservationShape (Shape)

@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.CompactComplexPhaseFixedWord
-import IntegerMultBounds.Machine.ActivePrefixStageNativePolynomialWord
-import IntegerMultBounds.Machine.AllAxisNativePolynomialCaller
+module
+
+public import IntegerMultBounds.Machine.CompactComplexPhaseFixedWord
+public import IntegerMultBounds.Machine.ActivePrefixStageNativePolynomialWord
+public import IntegerMultBounds.Machine.AllAxisNativePolynomialCaller
 
 /-! Physical forward basis, aggregate tensor phase and reversed basis on the
 original native polynomial source. Both basis machines are fixed per finite
 edge; every original header, immutable ell and private phase tape is restored.
 The runtime includes all three machines and both sequencing transitions. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactNativeConjugatedPhase
 noncomputable section
 open CompactGadgetReservationShape (Shape)

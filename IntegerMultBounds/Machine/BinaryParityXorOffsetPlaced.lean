@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.BinaryParityXorOffset
-import IntegerMultBounds.Machine.PlacementBank
-import IntegerMultBounds.Machine.PackedOffsetPayloadAlphabet
+module
+
+public import IntegerMultBounds.Machine.BinaryParityXorOffset
+public import IntegerMultBounds.Machine.PlacementBank
+public import IntegerMultBounds.Machine.PackedOffsetPayloadAlphabet
 
 /-! Place the complete fourth-line parity-XOR producer using only caller-owned q/b/n, original controls
 and one blank destination. All 26 appended private tapes are returned blank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryParityXorOffsetPlaced
 open SharedPlacementAlphabet (setTape)
 variable {a t : ℕ}

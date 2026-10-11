@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.RecursiveDigitRoleBank
-import IntegerMultBounds.Machine.Shared50RecursiveCallReady
+module
+
+public import IntegerMultBounds.Machine.RecursiveDigitRoleBank
+public import IntegerMultBounds.Machine.Shared50RecursiveCallReady
 
 /-! The actual width-one digit machine produces precisely the same full-field
 transpose as the recursive node contract, on arbitrary four-symbol payloads. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.Shared50RecursiveBasePermutation
 noncomputable section
 open Networks
@@ -10,7 +15,7 @@ open Shared50ModularControl (prime)
 open RecursiveInterchangeLayout (Descriptor volume)
 variable {v : Descriptor}
 
-private theorem width_modulus (hw : v.width = 1) : ActualAffineScaling.modulus v.width = prime := by
+theorem width_modulus (hw : v.width = 1) : ActualAffineScaling.modulus v.width = prime := by
   simp only [ActualAffineScaling.modulus,hw,pow_one]
 
 def outerAddress (a : RecursiveInterchangeScaling.Address v) : Fin (RecursiveDigitLayout.outer v) :=

@@ -1,13 +1,17 @@
-import IntegerMultBounds.Networks.Shared50GlobalFramed
-import IntegerMultBounds.Networks.Shared50GlobalProjectionRank
-import IntegerMultBounds.Networks.Shared50SignedBoundary
-import IntegerMultBounds.Networks.Shared50ShearEndpoints
+module
+
+public import IntegerMultBounds.Networks.Shared50GlobalFramed
+public import IntegerMultBounds.Networks.Shared50GlobalProjectionRank
+public import IntegerMultBounds.Networks.Shared50SignedBoundary
+public import IntegerMultBounds.Networks.Shared50ShearEndpoints
 
 /-! Full signed physical optimized network, with actual shear-operator ranks.
 The first boundary uses the negative source frames. Every subsequent physical
 instruction is the existing optimized reused-world program. All binary arrays,
 including arbitrary dirty scratch arrays, undergo a uniform full address shear
 after the exact data-bank exchange. Finite-radix and tape realization are separate. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.Shared50GlobalShear
 

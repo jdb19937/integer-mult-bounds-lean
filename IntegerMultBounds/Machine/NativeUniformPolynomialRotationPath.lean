@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.NativeUniformPolynomialRotationSemantics
-import IntegerMultBounds.Machine.CompactSpectatorInheritedGrid
-import IntegerMultBounds.Networks.ComplexEndpointGrid
+module
+
+public import IntegerMultBounds.Machine.NativeUniformPolynomialRotationSemantics
+public import IntegerMultBounds.Machine.CompactSpectatorInheritedGrid
+public import IntegerMultBounds.Networks.ComplexEndpointGrid
 
 /-! Runtime column phase and fixed negation inherit their strict signed
 reserve from the original recursive Path. They preserve the exact denominator,
 numerator bound and literal word widths without further precision growth. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.NativeUniformPolynomialRotationPath
 noncomputable section
 open CompactGadgetReservationShape (Shape)

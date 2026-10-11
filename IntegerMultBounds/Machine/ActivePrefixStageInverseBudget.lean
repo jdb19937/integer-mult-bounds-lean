@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActivePrefixStageDispatchInverseRun
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStageDispatchInverseRun
 
 /-! A reverse stage has the forward cost. Paying two complete runs and their
 join also preserves the same uniform compact-width exponent. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixStageInverseBudget
 noncomputable section
 open CompactGadgetReservationShape (Shape)

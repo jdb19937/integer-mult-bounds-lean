@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.RecursiveScalingDimensions
-import IntegerMultBounds.Machine.SharedPlacementAlphabet
+module
+
+public import IntegerMultBounds.Machine.RecursiveScalingDimensions
+public import IntegerMultBounds.Machine.SharedPlacementAlphabet
 
 /-! A fixed physical constructor for the entire seven-factor stream volume.
 The existing H-scaling dimensions produce N=A*rows*B*Q and C*Q*E; one actual
 product emits their product V, then a one-step program initializes the XOR clock.
 Six original canonical headers are retained. Private generated dimensions are
 still present here and are erased by the separate clean wrapper. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveVolumeConstruct
 open RecursiveInterchangeLayout (Descriptor volume)
 variable {q : ℕ} (hq : 2 ≤ q)

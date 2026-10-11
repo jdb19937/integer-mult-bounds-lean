@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.CompactComplexChildHeadersBudget
-import IntegerMultBounds.Machine.CompactComplexLeafHeadersData
-import IntegerMultBounds.Machine.CompactComplexChildHeaderFrames
-import IntegerMultBounds.Networks.ComplexRecursiveCallSchema
+module
+
+public import IntegerMultBounds.Machine.CompactComplexChildHeadersBudget
+public import IntegerMultBounds.Machine.CompactComplexLeafHeadersData
+public import IntegerMultBounds.Machine.CompactComplexChildHeaderFrames
+public import IntegerMultBounds.Networks.ComplexRecursiveCallSchema
 
 /-! Every literal residual-coordinate call uses its actual schema slot for
 paid physical child-header preparation. Internal and scalar children have
 separate contracts, and both retain the selected role's row count. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexRecursiveChildHeaders
 noncomputable section
 open CompactComplexRecursiveGeometry

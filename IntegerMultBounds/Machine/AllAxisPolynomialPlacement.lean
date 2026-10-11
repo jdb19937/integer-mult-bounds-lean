@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.AllAxisPolynomialNative
-import IntegerMultBounds.Machine.SharedPlacementAlphabet
-import IntegerMultBounds.Machine.SymbolTriplePlaced
+module
+
+public import IntegerMultBounds.Machine.AllAxisPolynomialNative
+public import IntegerMultBounds.Machine.SharedPlacementAlphabet
+public import IntegerMultBounds.Machine.SymbolTriplePlaced
 
 /-! The actual aggregate polynomial phase traversal shares the native source
 of an arbitrary caller and frames every other complete tape. The appended
 phase source slot remains blank; original phase metadata and immutable ell
 are retained. Original metadata preparation is a separate physical stage. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.AllAxisPolynomialPlacement
 noncomputable section
 open CompactGadgetReservationShape (Shape)

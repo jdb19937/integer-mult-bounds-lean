@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.CountedLateRepairGuard
+module
+
+public import IntegerMultBounds.Machine.CountedLateRepairGuard
 
 /-! The actual later repair prefix first classifies the original address,
 then physically executes the unrestricted inverse while retaining its flag. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedLateRepairPrefix
 noncomputable section
 variable {a : ℕ}

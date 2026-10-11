@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyReachedBasisInvariant
-import IntegerMultBounds.Machine.CompactComplexSourceReadyNormalizedChildReturnPath
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyReachedBasisInvariant
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyNormalizedChildReturnPath
 
 /-! Numerical return preservation for the literal normalized spectator
 payload. A returned child's grid is a recursive invariant, not a completed
 network equality. The original scalar prefix, node target and saved calls are
 retained, while the actual live advance is charged to the returned ledger. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyReachedReturnInvariant
 noncomputable section
 open ActivePrefixStageParameters (Stage)

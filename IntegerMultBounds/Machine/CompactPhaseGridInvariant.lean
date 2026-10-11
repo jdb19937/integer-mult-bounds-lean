@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.AllAxisPolynomialTensorResult
-import IntegerMultBounds.Machine.CompactComplexScalarGrid
+module
+
+public import IntegerMultBounds.Machine.AllAxisPolynomialTensorResult
+public import IntegerMultBounds.Machine.CompactComplexScalarGrid
 
 /-! Actual aggregate signed phase execution preserves its incoming precision
 and numerator budget. Role selection, copying and zero padding also preserve
 that invariant; arithmetic growth is accounted separately by scalar prefixes. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactPhaseGridInvariant
 noncomputable section
 open Networks Networks.GaussianPrecision

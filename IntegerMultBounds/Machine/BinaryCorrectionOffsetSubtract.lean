@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.BinaryCorrectionOffsetLoop
-import IntegerMultBounds.Machine.BinaryAddressOffsetRepeat
+module
+
+public import IntegerMultBounds.Machine.BinaryCorrectionOffsetLoop
+public import IntegerMultBounds.Machine.BinaryAddressOffsetRepeat
 
 /-! Complete physical rowwise subtraction with blank initial workspace.
 Both operand tables are consumed and erased; only the output table and the
 original runtime width/count descriptors remain, all heads restored. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryCorrectionOffsetSubtract
 open SharedPlacementAlphabet (setTape)
 open CountedCopyReuse (empty binary)

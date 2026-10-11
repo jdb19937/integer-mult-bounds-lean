@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.BinaryPackedEarlyGeometry
+module
+
+public import IntegerMultBounds.Machine.BinaryPackedEarlyGeometry
 
 /-! The four actual produced-table permutations act on the same complete
 serialized reservation. These are the array functions computed by the real
 swap/rotation/swap machines, with no supplied action oracle. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryPackedEarlyArray
 noncomputable section
 open CompactGadgetReservationShape

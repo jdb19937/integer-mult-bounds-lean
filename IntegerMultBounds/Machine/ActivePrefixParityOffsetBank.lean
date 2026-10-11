@@ -1,12 +1,17 @@
-import IntegerMultBounds.Machine.ActivePrefixParityOffsetData
-import IntegerMultBounds.Machine.ActivePrefixOffsetHeadersBudget
-import IntegerMultBounds.Machine.BinaryPrefixFieldTablePlaced
-import IntegerMultBounds.Machine.SelectedSourceBitsStreamPlaced
-import IntegerMultBounds.Machine.BinaryVaryingOffsetGatherPlaced
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixParityOffsetData
+public import IntegerMultBounds.Machine.ActivePrefixOffsetHeadersBudget
+public import IntegerMultBounds.Machine.BinaryPrefixFieldTablePlaced
+public import IntegerMultBounds.Machine.SelectedSourceBitsStreamPlaced
+public import IntegerMultBounds.Machine.BinaryVaryingOffsetGatherPlaced
 
 /-! One permanent caller bank for the original-input varying parity-XOR load.
 The wide target is not placed in a compact front field: this bank only
 produces its actual offset word from current prefix-address coordinates. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixParityOffsetBank
 noncomputable section
 open SharedPlacementAlphabet (setTape)

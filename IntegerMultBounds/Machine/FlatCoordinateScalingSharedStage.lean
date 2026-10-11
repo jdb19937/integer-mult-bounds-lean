@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.FlatCoordinateScalingSharedBank
-import IntegerMultBounds.Machine.SharedBankSkeleton
+module
+
+public import IntegerMultBounds.Machine.FlatCoordinateScalingSharedBank
+public import IntegerMultBounds.Machine.SharedBankSkeleton
 
 /-! A fully initialized actual affine scaling as a four-common-tape stage.
 The sole original payload and b/W tapes are shared, with blank private input. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.FlatCoordinateScalingSharedStage
 open Networks
 open Networks.Shared50ModularControl (prime)

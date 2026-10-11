@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlNegativeData
-import IntegerMultBounds.Machine.ActivePrefixParityNegativeNegate
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlNegativeData
+public import IntegerMultBounds.Machine.ActivePrefixParityNegativeNegate
 
 /-! Original descriptor bank for real dirty-U parity-XOR generation and
 rowwise negation, with only compact width and prefix count synthesized. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixDirtyControlNegativeBank
 noncomputable section
 open ActivePrefixDirtyControlData (Shape values offsetWord)

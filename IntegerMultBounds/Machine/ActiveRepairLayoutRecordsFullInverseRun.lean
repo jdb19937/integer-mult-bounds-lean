@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsFullInverseData
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsFullInverseData
 
 /-! Two actual full low/high executions restore the entire caller and its
 blank private bank, with both native runtimes and the sequence join paid. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLayoutRecordsFullInverseRun
 noncomputable section
 open CompactGadgetReservationShape (Shape)

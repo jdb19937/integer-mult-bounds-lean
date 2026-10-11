@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.BinaryPackedEarlyPrefixBudget
-import IntegerMultBounds.Machine.BinaryPackedOffsetData
-import IntegerMultBounds.Machine.BinaryPackedEarlyData
+module
+
+public import IntegerMultBounds.Machine.BinaryPackedEarlyPrefixBudget
+public import IntegerMultBounds.Machine.BinaryPackedOffsetData
+public import IntegerMultBounds.Machine.BinaryPackedEarlyData
 
 /-! The source is in the existing prefix of the translated front. Offsets are
 repeated across unused source-tail bits, dirty back and the entire gap, in their
 actual physical rotation-row order. No source permutation is used. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryPackedEarlyPrefixAction
 open RadixRangePadding (volume index)
 open RecursiveInterchangeRows (pack pack_val)

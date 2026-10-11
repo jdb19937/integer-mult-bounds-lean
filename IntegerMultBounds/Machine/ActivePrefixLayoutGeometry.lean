@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActivePrefixLayoutFields
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixLayoutFields
 
 /-! Exact bit locations in the literal target and back-rotation prefixes of
 the unchanged active-target layout. Payload and dirty spectators are arbitrary. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixLayoutGeometry
 open CompactGadgetReservationShape CompactActiveTargetLayout CompactActiveTargetGeometry
 open RecursiveInterchangeRows (pack pack_val)

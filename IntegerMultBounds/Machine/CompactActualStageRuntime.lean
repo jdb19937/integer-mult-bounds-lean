@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactActualStageInputs
-import IntegerMultBounds.Machine.ActivePrefixStageRuntimeSelected
+module
+
+public import IntegerMultBounds.Machine.CompactActualStageInputs
+public import IntegerMultBounds.Machine.ActivePrefixStageRuntimeSelected
 
 /-! Actual scalar choices, cutoff and global row padding supply every premise
 of the fixed width-and-direction stage at density one. Every positive runtime
 width is covered, including singleton stages, with no supplied branch. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactActualStageRuntime
 noncomputable section
 open CompactGadgetReservationShape (Shape)

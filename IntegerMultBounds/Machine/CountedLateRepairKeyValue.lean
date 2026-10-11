@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.CountedLateRepairKeyRun
-import IntegerMultBounds.Compact.LatePowerTwoBridges
+module
+
+public import IntegerMultBounds.Machine.CountedLateRepairKeyRun
+public import IntegerMultBounds.Compact.LatePowerTwoBridges
 
 /-! Semantic rank membership for the physically generated later key. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedLateRepairKeyValue
 noncomputable section
 open CountedLateRepairKeyRun (V W U)

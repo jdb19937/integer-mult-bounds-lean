@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyScalarGeometryLifecycle
-import IntegerMultBounds.Machine.CompactComplexSourceReadyChildEntryPath
-import IntegerMultBounds.Machine.CompactComplexSourceReadyChildReturnPath
-import IntegerMultBounds.Machine.CompactComplexRecursiveRuntimeSum
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyScalarGeometryLifecycle
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyChildEntryPath
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyChildReturnPath
+public import IntegerMultBounds.Machine.CompactComplexRecursiveRuntimeSum
 
 /-! Actual interleaved scalar groups and original child occurrences have a
 concrete weighted runtime allowance. Every table join is charged; recursive
 child budgets remain separate. This does not assert recursive execution. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexScheduleRuntimeBudget
 noncomputable section
 open Networks
@@ -18,7 +23,7 @@ open CompactNativeRoleTransferBudget (volume)
 attribute [local irreducible] CompactComplexRolePhaseSite.roleCount
   ComplexRank25.program ComplexRank25.rankSum ComplexRecursiveCallSchema.calls groups schedule
 
-private def weight (scalar : GroupIndex → ℕ) (child : ComplexRecursiveCallSchema.Call → ℕ) : Event → ℕ
+def weight (scalar : GroupIndex → ℕ) (child : ComplexRecursiveCallSchema.Call → ℕ) : Event → ℕ
   | .scalar g => scalar g
   | .child c => child c
 

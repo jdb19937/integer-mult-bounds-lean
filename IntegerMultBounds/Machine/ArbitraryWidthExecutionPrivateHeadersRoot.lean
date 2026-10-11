@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ArbitraryWidthExecutionPrivateHeadersCore
-import IntegerMultBounds.Machine.ArbitraryWidthExecutionPrivateHeadersAppend
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthExecutionPrivateHeadersCore
+public import IntegerMultBounds.Machine.ArbitraryWidthExecutionPrivateHeadersAppend
 
 /-! Sparse initialized header banks for high exchange and elementary fallback. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthExecutionPrivateHeadersRoot
 noncomputable section
 open Networks

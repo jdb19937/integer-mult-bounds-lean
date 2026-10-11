@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactSpectatorLeafHeaders
-import IntegerMultBounds.Machine.ButterflySpectatorSemantics
+module
+
+public import IntegerMultBounds.Machine.CompactSpectatorLeafHeaders
+public import IntegerMultBounds.Machine.ButterflySpectatorSemantics
 
 /-! The immutable scalar remains baseline q. Twice the physically generated
 full global bit dimension is added only to the private precision reservation.
 The source must already contain the explicitly enlarged signed fields; this
 machine neither resizes nor renormalizes coefficients between arithmetic axes. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactSpectatorLeafGuardHeaders
 noncomputable section
 open CompactGadgetReservationShape (Shape)

@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.ActivePrefixCorrectionOffsetPlaced
-import IntegerMultBounds.Machine.ActivePrefixOffsetRepeatPlaced
-import IntegerMultBounds.Machine.ActiveTargetRotation
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixCorrectionOffsetPlaced
+public import IntegerMultBounds.Machine.ActivePrefixOffsetRepeatPlaced
+public import IntegerMultBounds.Machine.ActiveTargetRotation
 
 /-! One fixed caller bank for a complete original-input correction load. Only
 original descriptors and the array are supplied; all offset words and rotation
 metadata begin blank and are physically constructed. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixCorrectionLoadData
 noncomputable section
 open ActivePrefixSelectedOffsetBank (Shape values)

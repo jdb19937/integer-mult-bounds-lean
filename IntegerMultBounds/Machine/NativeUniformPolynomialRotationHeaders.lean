@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.NativeEndpointCharacterCopy
-import IntegerMultBounds.Machine.CompactComplexScalarCountLifecycle
+module
+
+public import IntegerMultBounds.Machine.NativeEndpointCharacterCopy
+public import IntegerMultBounds.Machine.CompactComplexScalarCountLifecycle
 
 /-! Uniform endpoint rotation reuses the character adapter's private original
 raw header copy. The actual opaque role divisor computes full polynomial
 coefficient count27; parent row descriptors remain retained. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.NativeUniformPolynomialRotationHeaders
 noncomputable section
 open CompactGadgetReservationShape (Shape)

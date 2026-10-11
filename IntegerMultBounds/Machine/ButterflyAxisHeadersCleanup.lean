@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ButterflyAxisHeadersBudget
+module
+
+public import IntegerMultBounds.Machine.ButterflyAxisHeadersBudget
 
 /-! After an axis finishes, increment the actual selected-position header and
 physically erase every generated power, product, guard-width and constant word.
 The four original shape headers and the clean shared scratch bank remain. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ButterflyAxisHeadersCleanup
 noncomputable section
 open ButterflyAxisHeadersData ButterflyAxisHeadersArithmetic ButterflyAxisHeadersBudget

@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.RecursiveCrossPrepare
-import IntegerMultBounds.Machine.RecursiveRoleSerialization
+module
+
+public import IntegerMultBounds.Machine.RecursiveCrossPrepare
+public import IntegerMultBounds.Machine.RecursiveRoleSerialization
 
 /-! Paid coordinate-view changes on the exact permanent role/scratch/header bank.
 A fixed selector handles cross-group fields or two ordered fields within H/D.
 Only six occupied headers change; payloads, scratch and every auxiliary tape
 (including initialized XOR controls) are retained, and all private work is blank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveViewRoleBank
 noncomputable section
 open Networks
@@ -25,7 +30,7 @@ def constant : Selection m → ℕ
   | .cross _ _ => RecursiveCrossPrepare.constant m
   | .within _ _ _ _ => RecursiveAffinePrepare.constant m
 
-private theorem prime_ge : 2 ≤ prime := Shared50ModularControl.prime_prime.two_le
+theorem prime_ge : 2 ≤ prime := Shared50ModularControl.prime_prime.two_le
 
 structure Block where
   states : ℕ

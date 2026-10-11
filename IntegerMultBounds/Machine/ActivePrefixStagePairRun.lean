@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActivePrefixStagePairData
-import IntegerMultBounds.Machine.BinaryPairFrame
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStagePairData
+public import IntegerMultBounds.Machine.BinaryPairFrame
 
 /-! Each fixed literal binary instruction saves its incoming pair, physically
 rewrites the original headers, executes the complete runtime stage, and restores
 the incoming descriptors. One private stack is blank at both endpoints. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixStagePairRun
 noncomputable section
 open CompactGadgetReservationShape (Shape)

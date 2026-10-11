@@ -1,11 +1,16 @@
-import IntegerMultBounds.Networks.Shared50FixedControl
-import IntegerMultBounds.Machine.Shared50CleanSegments
-import IntegerMultBounds.Machine.Shared50TapeGlobal
+module
+
+public import IntegerMultBounds.Networks.Shared50FixedControl
+public import IntegerMultBounds.Machine.Shared50CleanSegments
+public import IntegerMultBounds.Machine.Shared50TapeGlobal
 
 /-! Fixed physical implementations of pieces of the actual interleaved Shared50
 control. Segment certificates retain their original role and parent schedule;
 scalar gates use the same fixed global role enumeration as the tape circuit.
 This does not supply recursive interchange continuations or a whole-bank join. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.Shared50OrderedPieces
 noncomputable section
 open Networks Shared50OrderedControl

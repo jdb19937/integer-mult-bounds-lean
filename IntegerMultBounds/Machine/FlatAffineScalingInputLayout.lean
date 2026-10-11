@@ -1,14 +1,19 @@
-import IntegerMultBounds.Machine.FlatAffineScalingPayload
-import IntegerMultBounds.Machine.BinaryDescriptorInstallRaw
+module
+
+public import IntegerMultBounds.Machine.FlatAffineScalingPayload
+public import IntegerMultBounds.Machine.BinaryDescriptorInstallRaw
 
 /-! Fixed physical descriptor positions in the marker-free affine scaling input. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.FlatAffineScalingInputLayout
 
 inductive Kind where
   | work | payload | block | count | prefix
   deriving DecidableEq
 
-private def join {m n : ℕ} (x : Fin m → Kind) (y : Fin n → Kind) : Fin (m+n) → Kind :=
+def join {m n : ℕ} (x : Fin m → Kind) (y : Fin n → Kind) : Fin (m+n) → Kind :=
   Fin.addCases x y
 
 /-- Coefficient-dependent workspace contains just one B and one Q input. -/

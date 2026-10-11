@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActivePrefixLayoutHeadersBudget
-import IntegerMultBounds.Machine.ActivePrefixLayoutAbsorption
-import IntegerMultBounds.Machine.ActivePrefixParityOnlyBank
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixLayoutHeadersBudget
+public import IntegerMultBounds.Machine.ActivePrefixLayoutAbsorption
+public import IntegerMultBounds.Machine.ActivePrefixParityOnlyBank
 
 /-! The constructed numeric headers are exactly those used by the unchanged
 active-prefix selected/correction and compact parity/negative consumers. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixLayoutHeadersGeometry
 open ActivePrefixLayoutHeadersData
 open CompactGadgetReservationShape (Shape)

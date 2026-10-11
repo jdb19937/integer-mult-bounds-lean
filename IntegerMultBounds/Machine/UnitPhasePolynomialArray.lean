@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.UnitPhasePolynomialLoop
-import IntegerMultBounds.Machine.UnitPhaseStreamData
-import IntegerMultBounds.Machine.ButterflyStreamEndpoint
+module
+
+public import IntegerMultBounds.Machine.UnitPhasePolynomialLoop
+public import IntegerMultBounds.Machine.UnitPhaseStreamData
+public import IntegerMultBounds.Machine.ButterflyStreamEndpoint
 
 /-! Exact literal serialization for a polynomial coefficient array whose
 phase flags are shared. Contexts are readable only below the real count;
 there is no read of a fictitious terminal coefficient. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.UnitPhasePolynomialArray
 noncomputable section
 open ButterflyStreamData (Coefficient full prefixTape position)

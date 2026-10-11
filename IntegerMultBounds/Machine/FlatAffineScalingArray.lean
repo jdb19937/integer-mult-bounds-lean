@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.FlatAffineScalingReady
+module
+
+public import IntegerMultBounds.Machine.FlatAffineScalingReady
 
 /-! Canonical finite-array output for actual initialized and normalized affine
 scaling. The next operation may refactor the same literal source word into a
 different prefix/target/suffix split without copying it or adding address keys. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.FlatAffineScalingArray
 open Networks
 open ActualAffineScaling (modulus)

@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexActualCallAlignment
-import IntegerMultBounds.Machine.CompactNativeRoleChildLifecycleBudget
+module
+
+public import IntegerMultBounds.Machine.CompactComplexActualCallAlignment
+public import IntegerMultBounds.Machine.CompactNativeRoleChildLifecycleBudget
 
 /-! Selected role arrays have the genuine parent-row quotient. Each physical
 basis pass temporarily computes that quotient in numeric43, executes the
 selected-count codec lifecycle, and restores the original parent row count. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexActualCallRoleAlignment
 noncomputable section
 open CompactComplexActualCallAlignment (coefficients coefficients_width nativeCost)

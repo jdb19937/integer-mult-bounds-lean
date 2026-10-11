@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyScalarGeometryEventPath
-import IntegerMultBounds.Machine.CompactComplexSourceReadySavedCallHistory
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyScalarGeometryEventPath
+public import IntegerMultBounds.Machine.CompactComplexSourceReadySavedCallHistory
 
 /-! Actual scalar events retain the semantic saved-call stack. The canonical
 caller output changes storage7 and emitted role words only, so the physical
 saved-PC port and its associated call list survive the paid scalar node path. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyScalarSavedCallHistory
 noncomputable section
 open Networks
@@ -26,7 +31,7 @@ open ButterflyStreamData (Coefficient)
 namespace Actual
 export CompactComplexSourceReadyActualTable (countHeader countHeader_ne_live scalar event childReturn)
 end Actual
-private theorem liveProof : 7<10+s := by omega
+theorem liveProof : 7<10+s := by omega
 open SharedPlacementAlphabet (setTape)
 attribute [local irreducible] ComplexRank25.program CompactComplexRolePhaseSite.roleCount
   CompactComplexCompletedLiveLower.schedule CompactComplexScalarIntegerRows.gates

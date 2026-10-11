@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.ActivePrefixLayoutShapes
-import IntegerMultBounds.Machine.ActivePrefixParityOnlyBank
-import IntegerMultBounds.Machine.ActivePrefixParityNegativeData
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixLayoutShapes
+public import IntegerMultBounds.Machine.ActivePrefixParityOnlyBank
+public import IntegerMultBounds.Machine.ActivePrefixParityNegativeData
 
 /-! Compact back-fiber offsets read the current active target and the complete
 source slot on either side of it. Outer repetition is arbitrary and every
 lookup uses the actual serialized back-prefix rank modulo its inner range. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixLayoutBack
 open ActivePrefixLayoutShapes ActivePrefixLayoutFields
 open BinaryAddressTableData (row)

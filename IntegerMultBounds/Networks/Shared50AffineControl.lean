@@ -1,10 +1,14 @@
-import IntegerMultBounds.Networks.AffineFieldProgram
-import IntegerMultBounds.Networks.Shared50FiniteInterchange
+module
+
+public import IntegerMultBounds.Networks.AffineFieldProgram
+public import IntegerMultBounds.Networks.Shared50FiniteInterchange
 
 /-! The actual complete shared interchange compiled to scalar ordered-affine
 control. Its fixed rational schedule specializes at every prime-power width;
 all diagonal scalings remain units because the same prime protects factor
 inverses. The exact recursive interchange count remains s. No tape time claim. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.Shared50AffineControl
 

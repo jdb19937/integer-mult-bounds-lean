@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.CompactComplexCallerWorkingReturnFlow
-import IntegerMultBounds.Machine.GuardedFiniteReturnExtraFlow
+module
+
+public import IntegerMultBounds.Machine.CompactComplexCallerWorkingReturnFlow
+public import IntegerMultBounds.Machine.GuardedFiniteReturnExtraFlow
 
 /-! The fixed guarded return controller on the literal caller plus blank workspace.
 Extra entry/branch blocks are reached by direct control edges and keep the
 original saved PC width and bits. Every permanent role and scalar43 bank remain present
 through PC decoding. Continuation blocks may back-edge into the same entry;
 this placement alone does not establish the complete recursive execution. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexCallerWorkingExtraFlow
 noncomputable section
 open CompactComplexNativeCodecFrame (permanentTapes)

@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactComplexNonleafRoleParentPayloadContinuation
-import IntegerMultBounds.Machine.CompactComplexNonleafSpectatorTargetPrefix
-import IntegerMultBounds.Machine.CompactComplexSourceReadyWorkspace
-import IntegerMultBounds.Machine.CompactComplexRolePhaseSite
+module
+
+public import IntegerMultBounds.Machine.CompactComplexNonleafRoleParentPayloadContinuation
+public import IntegerMultBounds.Machine.CompactComplexNonleafSpectatorTargetPrefix
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyWorkspace
+public import IntegerMultBounds.Machine.CompactComplexRolePhaseSite
 
 /-! Full physical decoded-child continuation on the common source-ready bank.
 Parent geometry/live/payload restoration supplies the literal spectator input. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyChildReturnPath
 noncomputable section
 open CompactGadgetReservationShape (Shape)

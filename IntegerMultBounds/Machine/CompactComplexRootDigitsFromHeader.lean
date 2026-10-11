@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactComplexRootDigits
+module
+
+public import IntegerMultBounds.Machine.CompactComplexRootDigits
 
 /-! Enter root enumeration by physically copying the original active-prefix
 header into appended controller tapes. No root exponent, piece boundary,
 base-digit list or path descriptor is an input to this entry routine. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexRootDigitsFromHeader
 noncomputable section
 open SharedPlacementAlphabet (setTape)

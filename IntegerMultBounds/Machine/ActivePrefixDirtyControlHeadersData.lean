@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixLayoutHeadersEndpoint
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixLayoutHeadersEndpoint
 
 /-! Dirty-control layout headers are physically derived from the original
 fourteen numeric words. U and the later-source T starts are retained-word
 subtractions/additions on the genuine constructed prefix widths. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixDirtyControlHeadersData
 noncomputable section
 open ActiveRepairRankHeadersCommands ActivePrefixLayoutHeadersData

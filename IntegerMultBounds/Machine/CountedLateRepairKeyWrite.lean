@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.CountedLateRepairKeyPrefix
+module
+
+public import IntegerMultBounds.Machine.CountedLateRepairKeyPrefix
 
 /-! The conditional writer physically emits the later destination bits,
 using the paid concatenation of its two recovered dirty words. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedLateRepairKeyWrite
 noncomputable section
 open CountedLateRepairKeyBank

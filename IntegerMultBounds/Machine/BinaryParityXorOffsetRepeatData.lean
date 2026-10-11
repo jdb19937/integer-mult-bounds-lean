@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.BinaryParityXorOffsetValue
-import IntegerMultBounds.Machine.BinaryAddressOffsetRepeatValue
+module
+
+public import IntegerMultBounds.Machine.BinaryParityXorOffsetValue
+public import IntegerMultBounds.Machine.BinaryAddressOffsetRepeatValue
 
 /-! Literal independently negated parity-XOR offsets in regular address order. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryParityXorOffsetRepeatData
 open BinaryAddressOffsetRepeatData (copies expanded)
 

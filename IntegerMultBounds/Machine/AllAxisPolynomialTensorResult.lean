@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.AllAxisPolynomialActual
-import IntegerMultBounds.Machine.ActivePrefixStageNativePolynomial
+module
+
+public import IntegerMultBounds.Machine.AllAxisPolynomialActual
+public import IntegerMultBounds.Machine.ActivePrefixStageNativePolynomial
 
 /-! The literal polynomial array quotient is the actual native row ordinal.
 This connects the physical whole-stream result with the native tensor phase
 at every polynomial spectator, without a row-address compatibility premise. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.AllAxisPolynomialTensorResult
 noncomputable section
 open CompactGadgetReservationShape (Shape)

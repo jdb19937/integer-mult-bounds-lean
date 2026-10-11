@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.AllAxisFullStreamInit
-import IntegerMultBounds.Machine.AllAxisAddressInitBudget
+module
+
+public import IntegerMultBounds.Machine.AllAxisFullStreamInit
+public import IntegerMultBounds.Machine.AllAxisAddressInitBudget
 
 /-! Full coefficient count and counter preparation is linear in the actual
 coefficient count times reserved payload, including generated descriptor
 synthesis and physical transfer/erasure. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.AllAxisFullStreamInitBudget
 open CompactGadgetReservationShape (Shape)
 open ActivePrefixStageParameters

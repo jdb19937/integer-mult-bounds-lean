@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactComplexNonleafRoleSplit
-import IntegerMultBounds.Machine.CompactComplexNonleafRoleMerge
-import IntegerMultBounds.Machine.CompactComplexControllerDenominatorEntry
-import IntegerMultBounds.Machine.CompactComplexParentLiveStack
+module
+
+public import IntegerMultBounds.Machine.CompactComplexNonleafRoleSplit
+public import IntegerMultBounds.Machine.CompactComplexNonleafRoleMerge
+public import IntegerMultBounds.Machine.CompactComplexControllerDenominatorEntry
+public import IntegerMultBounds.Machine.CompactComplexParentLiveStack
 
 /-! Paid original-header child setup retains polynomial metadata and the true
 inherited live denominator. No target is installed as live before the child. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexNonleafRoleChildBank
 noncomputable section
 open CompactGadgetReservationShape (Shape)
@@ -88,7 +93,7 @@ private theorem storage_injective : Function.Injective (storage (s:=s) (c:=c)) :
     CompactComplexControllerNativeFrame.storageSlot,Fin.val_castAdd,Fin.val_natAdd] at hv
   omega
 
-private theorem target_ne_stack : target (s:=s) (c:=c)≠targetStack := by
+theorem target_ne_stack : target (s:=s) (c:=c)≠targetStack := by
   intro h
   have hh := storage_injective h
   have hv := congrArg Fin.val hh
@@ -163,7 +168,7 @@ theorem target_saved_active (v : Tapes (tapes s c) 2) (parentTarget : ℕ) :
   rw [active_setTape,active_setTape]
 
 def headerFocus (i : Fin 3) : Fin (tapes s c) := numeric (![7,8,9] i)
-private theorem header_distinct (stack : Fin s) :
+theorem header_distinct (stack : Fin s) :
     ∀ i : Fin 3,headerFocus (s:=s) (c:=c) i≠storage (Fin.natAdd 10 stack) := by
   intro i h
   have hv := congrArg Fin.val h
@@ -216,13 +221,13 @@ theorem pc_saved_active (v : Tapes (tapes s c) 2) (stack : Fin s) (site : Fin si
   rw [active_setTape]
 
 def exponentFocus (i : Fin 3) : Fin (tapes s c) := control (![1,28,29] i)
-private theorem exponentFocus_injective : Function.Injective (exponentFocus (s:=s) (c:=c)) := by
+theorem exponentFocus_injective : Function.Injective (exponentFocus (s:=s) (c:=c)) := by
   intro i j h
   have hv := congrArg Fin.val h
   simp only [exponentFocus,control] at hv
   fin_cases i <;> fin_cases j <;> simp_all
 
-private theorem exponent_size : 3+(tapes s c-3)=tapes s c := by
+theorem exponent_size : 3+(tapes s c-3)=tapes s c := by
   unfold tapes CompactComplexNonleafRoleSplit.tapes CompactComplexNonleafRoleEntry.tapes
     CompactComplexNativeCodecFrame.permanentTapes CompactComplexNativeRoleBridge.publicTapes
     CompactComplexControllerNativeFrame.tapes

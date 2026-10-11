@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.BinaryDescriptorQueueRead
-import IntegerMultBounds.Machine.CompactComplexRootDigits
-import IntegerMultBounds.Machine.CompactComplexRootPieceNumbers
+module
+
+public import IntegerMultBounds.Machine.BinaryDescriptorQueueRead
+public import IntegerMultBounds.Machine.CompactComplexRootDigits
+public import IntegerMultBounds.Machine.CompactComplexRootPieceNumbers
 
 /-! Paid reading of the generated root-digit queue into the numeric piece
 clock. The source delimiter is tested by the actual fixed reader; no digit
 value or field length is supplied to its finite control. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexRootPieceQueue
 noncomputable section
 open ActiveRepairRankHeadersCommands (State bank put)

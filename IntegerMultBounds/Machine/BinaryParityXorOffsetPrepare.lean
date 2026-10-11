@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.BinaryCorrectionOffsetRewind
-import IntegerMultBounds.Machine.BinaryParityXorOffsetGather
+module
+
+public import IntegerMultBounds.Machine.BinaryCorrectionOffsetRewind
+public import IntegerMultBounds.Machine.BinaryParityXorOffsetGather
 
 /-! Construct the positive parity-XOR table from original q/b/n and controls,
 with every gather and all three payload rewinds charged. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryParityXorOffsetPrepare
 open SharedPlacementAlphabet (setTape)
 open BinaryParityXorOffsetData (source controls)

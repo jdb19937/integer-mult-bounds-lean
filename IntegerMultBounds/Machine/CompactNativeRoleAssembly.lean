@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactNativeRoleOriginal
+module
+
+public import IntegerMultBounds.Machine.CompactNativeRoleOriginal
 
 /-! Reassembly accepts arbitrary descendant results on the fixed role tapes,
 not only the untouched input. Joining is a cardinality-preserving row-major
 index definition, and the actual merge performs every payload transfer. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactNativeRoleAssembly
 noncomputable section
 open CompactNativeRoleGeometry (Array role)

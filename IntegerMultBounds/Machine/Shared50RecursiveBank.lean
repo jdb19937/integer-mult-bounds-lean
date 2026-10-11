@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.RecursiveCallProtocol
-import IntegerMultBounds.Machine.RecursiveRowsNode
-import IntegerMultBounds.Machine.Shared50NodeSegments
-import IntegerMultBounds.Machine.Shared50NodeGates
+module
+
+public import IntegerMultBounds.Machine.RecursiveCallProtocol
+public import IntegerMultBounds.Machine.RecursiveRowsNode
+public import IntegerMultBounds.Machine.Shared50NodeSegments
+public import IntegerMultBounds.Machine.Shared50NodeGates
 
 /-! One permanent bank for calls, node frames and scalar views. Adapters rename
 fixed physical tape indices in transition tables; they do not move any data. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.Shared50RecursiveBank
 noncomputable section
 open Networks

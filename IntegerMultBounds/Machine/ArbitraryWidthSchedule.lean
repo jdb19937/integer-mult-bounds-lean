@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ArbitraryWidthSliceTranspose
-import IntegerMultBounds.Machine.Shared50RecursiveRootExecution
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthSliceTranspose
+public import IntegerMultBounds.Machine.Shared50RecursiveRootExecution
 
 /-! The literal consecutive power-piece slice-array fold has exact full H/D
 transpose semantics. Every piece uses the proved fixed root machine; construction
 of a runtime list/controller for the whole wrapper is a separate obligation. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthSchedule
 noncomputable section
 open Networks
@@ -13,9 +18,9 @@ open ArbitraryWidthSliceTranspose (array windowAddress)
 variable {v : Descriptor}
 local instance : NeZero prime := ⟨ne_of_gt Shared50ModularControl.prime_prime.pos⟩
 
-private theorem first_fit (start w : ℕ) (ws : List ℕ) (h : start+(w::ws).sum ≤ v.width) :
+theorem first_fit (start w : ℕ) (ws : List ℕ) (h : start+(w::ws).sum ≤ v.width) :
     start+w ≤ v.width := by simp only [List.sum_cons] at h; omega
-private theorem rest_fit (start w : ℕ) (ws : List ℕ) (h : start+(w::ws).sum ≤ v.width) :
+theorem rest_fit (start w : ℕ) (ws : List ℕ) (h : start+(w::ws).sum ≤ v.width) :
     (start+w)+ws.sum ≤ v.width := by simpa only [List.sum_cons,Nat.add_assoc] using h
 
 /-- Actual mathematical slice actions in the literal consecutive piece order. -/

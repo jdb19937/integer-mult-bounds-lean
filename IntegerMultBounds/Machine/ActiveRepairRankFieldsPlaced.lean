@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.ActiveRepairRankFieldsField
-import IntegerMultBounds.Machine.CountedRankSplitEndpoint
-import IntegerMultBounds.Machine.CompactGadgetReservationPlacement
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairRankFieldsField
+public import IntegerMultBounds.Machine.CountedRankSplitEndpoint
+public import IntegerMultBounds.Machine.CompactGadgetReservationPlacement
 
 /-! Caller-shared rank-field extraction on the real scan counter. Nine blank
 private slots are reused by all field copies and subsequent source selection;
 the five-tape field machine uses just its one clock slot within that bank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairRankFieldsPlaced
 noncomputable section
 open SharedPlacementAlphabet (setTape)

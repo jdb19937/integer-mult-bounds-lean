@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsFullLateSelected
-import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsFullPlacedCommon
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsFullLateSelected
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsFullPlacedCommon
 
 /-! Complete later low/high action placed on arbitrary original twenty-three
 ports. Original numeric words and all unselected caller tapes are retained;
 only the genuine raw array changes and every private tape is blank again. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLayoutRecordsFullLatePlaced
 noncomputable section
 open CompactGadgetReservationShape (Shape)

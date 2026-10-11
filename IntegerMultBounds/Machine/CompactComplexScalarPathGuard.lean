@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactComplexScalarRowBlock
-import IntegerMultBounds.Machine.CompactSpectatorInheritedGrid
+module
+
+public import IntegerMultBounds.Machine.CompactComplexScalarRowBlock
+public import IntegerMultBounds.Machine.CompactSpectatorInheritedGrid
 
 /-! Actual dependency growth pays the signed guard of the complete scalar row
 machine on unchanged retained-role fields. The denominator is independent of
 baseline width metadata. Current scalar-prefix growth and pending axis work
 are included; physical precision propagation remains separate. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexScalarPathGuard
 noncomputable section
 open CompactGadgetReservationShape (Shape)

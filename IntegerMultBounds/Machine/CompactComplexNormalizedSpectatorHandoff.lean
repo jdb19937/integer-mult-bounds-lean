@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactComplexNonleafEventProgress
-import IntegerMultBounds.Machine.CompactComplexStoppedPrefixAlignedCall
-import IntegerMultBounds.Machine.CompactComplexChildAlignmentBudget
+module
+
+public import IntegerMultBounds.Machine.CompactComplexNonleafEventProgress
+public import IntegerMultBounds.Machine.CompactComplexStoppedPrefixAlignedCall
+public import IntegerMultBounds.Machine.CompactComplexChildAlignmentBudget
 
 /-! The existing header-driven spectator machine accepts any genuine normalized
 return gap. It excludes the selected child result, derives volume metadata from
 original geometry, restores private storage and commits the target live word. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexNormalizedSpectatorHandoff
 noncomputable section
 open CompactGadgetReservationShape (Shape)

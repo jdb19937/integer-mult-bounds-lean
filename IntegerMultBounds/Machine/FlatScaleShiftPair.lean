@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.FlatAffineScalingPayload
-import IntegerMultBounds.Machine.FlatControlledShiftMetadata
-import IntegerMultBounds.Machine.SharedPayloadPair
+module
+
+public import IntegerMultBounds.Machine.FlatAffineScalingPayload
+public import IntegerMultBounds.Machine.FlatControlledShiftMetadata
+public import IntegerMultBounds.Machine.SharedPayloadPair
 
 /-! A concrete initialized scale followed by an initialized controlled shift.
 There are only two physical payload tapes. Each operation has its own metadata
 bank, with its unused payload slots blank. Equal-volume reframing changes only
 finite indices, never the word on the common tape. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.FlatScaleShiftPair
 open Networks
 open Shared50ModularControl (prime)

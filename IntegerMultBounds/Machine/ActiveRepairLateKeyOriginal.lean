@@ -1,6 +1,11 @@
-import IntegerMultBounds.Machine.ActiveRepairLateKeyOriginalPlaced
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairLateKeyOriginalPlaced
 
 /-! Complete original-descriptor later key execution and paid cleanup. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLateKeyOriginal
 noncomputable section
 abbrev Data := ActiveRepairLateKeyOriginalData.Data

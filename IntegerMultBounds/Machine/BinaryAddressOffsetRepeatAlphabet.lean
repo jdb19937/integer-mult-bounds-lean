@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.BinaryAddressOffsetRepeatValue
-import IntegerMultBounds.Machine.PackedOffsetPayloadAlphabet
+module
+
+public import IntegerMultBounds.Machine.BinaryAddressOffsetRepeatValue
+public import IntegerMultBounds.Machine.PackedOffsetPayloadAlphabet
 
 /-! The physically initialized repetition machine on any larger fixed
 alphabet, with identical runtime and literal binary output. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryAddressOffsetRepeatAlphabet
 open BinaryAddressOffsetRepeatData
 open StreamedFiberTranslationAlphabet (encoding mapTape)

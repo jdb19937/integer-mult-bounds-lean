@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CountedPackedParityRun
-import IntegerMultBounds.Compact.PackedArithValue
+module
+
+public import IntegerMultBounds.Machine.CountedPackedParityRun
+public import IntegerMultBounds.Compact.PackedArithValue
 
 /-! The physically extracted dirty-control bits are exactly the parities of
 the base-two-power digits in the compact later-source arithmetic specification.
 This connects literal control tapes to packedLate without an oracle input. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedPackedParityValue
 noncomputable section
 open Compact Compact.PowerTwo Compact.Radix

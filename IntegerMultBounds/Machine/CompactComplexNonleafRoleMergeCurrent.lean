@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactComplexNonleafRoleMerge
+module
+
+public import IntegerMultBounds.Machine.CompactComplexNonleafRoleMerge
 
 /-! Physically merge a completed node's actual Original role arrays without
 changing its retained row descriptor. This is the source-ready node endpoint,
 including the root; restoration of a parent's geometry is a separate boundary. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexNonleafRoleMergeCurrent
 noncomputable section
 open CompactGadgetReservationShape (Shape)

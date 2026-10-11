@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.BinaryPrefixFieldTableSetup
-import IntegerMultBounds.Machine.CountedGatherOriginalRun
+module
+
+public import IntegerMultBounds.Machine.BinaryPrefixFieldTableSetup
+public import IntegerMultBounds.Machine.CountedGatherOriginalRun
 
 /-! The actual runtime gather consumes the generated full-address table and
 generated dummy stream. Six physical shape headers include a paid duplicate d
 and a generated zero; all gather-private metadata is erased. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryPrefixFieldTableGather
 noncomputable section
 open SharedPlacementAlphabet (setTape)

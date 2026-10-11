@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.BinaryPackedFieldSwap
-import IntegerMultBounds.Machine.PackedOffsetPayloadArray
+module
+
+public import IntegerMultBounds.Machine.BinaryPackedFieldSwap
+public import IntegerMultBounds.Machine.PackedOffsetPayloadArray
 
 /-! Literal coordinate semantics for swapping a dirty front field to the back,
 rotating it using packed source words, then swapping it back. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryPackedOffsetData
 noncomputable section
 open RadixRangePadding (volume index transpose)

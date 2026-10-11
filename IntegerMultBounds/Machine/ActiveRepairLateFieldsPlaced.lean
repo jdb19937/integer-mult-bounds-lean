@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.ActiveRepairLateFields
-import IntegerMultBounds.Machine.CleanSubbank
-import IntegerMultBounds.Machine.CompactGadgetReservationPlacement
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairLateFields
+public import IntegerMultBounds.Machine.CleanSubbank
+public import IntegerMultBounds.Machine.CompactGadgetReservationPlacement
 
 /-! Clean placement of the actual later extracted-field computation. Original
 fields, current controls, headers and full rank are retained; only recovered
 destination fields and guard flag are installed in the caller. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLateFieldsPlaced
 noncomputable section
 open SharedPlacementAlphabet (setTape)

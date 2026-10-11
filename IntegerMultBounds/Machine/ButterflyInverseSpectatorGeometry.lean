@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ButterflySpectatorGeometry
-import IntegerMultBounds.Machine.ButterflyInverseAxisArray
+module
+
+public import IntegerMultBounds.Machine.ButterflySpectatorGeometry
+public import IntegerMultBounds.Machine.ButterflyInverseAxisArray
 
 /-! An actual inverse axis keeps every outer-row spectator and global coordinate.
 Its output exchanges physical butterfly roles during the paid merge. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ButterflyInverseSpectatorGeometry
 noncomputable section
 open ButterflySpectatorGeometry

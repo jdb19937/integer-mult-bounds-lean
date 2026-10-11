@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.UnitPhaseFullStreamArray
-import IntegerMultBounds.Machine.UnitPhaseStreamAddressReset
+module
+
+public import IntegerMultBounds.Machine.UnitPhaseFullStreamArray
+public import IntegerMultBounds.Machine.UnitPhaseStreamAddressReset
 
 /-! Full literal-array phase stream with final live address/counter erasure.
 At the endpoint every generated phase/count/address workspace is blank;
 streams remain available for the enclosing native coefficient converter. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.UnitPhaseFullStreamClean
 noncomputable section
 open CompactGadgetReservationShape (Shape)

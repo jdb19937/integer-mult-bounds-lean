@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixEarlySequencePacked
-import IntegerMultBounds.Machine.ActiveRepairLayoutPermutation
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixEarlySequencePacked
+public import IntegerMultBounds.Machine.ActiveRepairLayoutPermutation
 
 /-! The physically implemented early four-load schedule is the complete
 varying-source permutation of the unchanged full array. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixEarlySequenceGlobal
 noncomputable section
 open CompactGadgetReservationShape (Shape)

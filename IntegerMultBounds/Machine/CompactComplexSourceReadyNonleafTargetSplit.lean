@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyNonleafTarget
-import IntegerMultBounds.Machine.CompactComplexNonleafRolePreparationBudget
-import IntegerMultBounds.Machine.CompactComplexSourceReadyScalarWorkspace
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyNonleafTarget
+public import IntegerMultBounds.Machine.CompactComplexNonleafRolePreparationBudget
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyScalarWorkspace
 
 /-! Actual tag2 body: synthesize the original full-node return target before
 splitting the current rows. The split retains the stored target literally. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyNonleafTargetSplit
 noncomputable section
 open CompactGadgetReservationShape (Shape)

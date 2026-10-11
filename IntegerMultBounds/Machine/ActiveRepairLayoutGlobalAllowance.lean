@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactGlobalReservationRoles
-import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsAllowance
+module
+
+public import IntegerMultBounds.Machine.CompactGlobalReservationRoles
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsAllowance
 
 /-! The original D-axis layout bounds repair addresses at every recursive
 row depth after the single global pad. The row and within-row contributions
 recombine to D*K, so neither a free row-header width nor a per-node address
 allowance is needed. Precision and polynomial-record sizing remain explicit. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLayoutGlobalAllowance
 noncomputable section
 open CompactGlobalRowPadding CompactGlobalReservation

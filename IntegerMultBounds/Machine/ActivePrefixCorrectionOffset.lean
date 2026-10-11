@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixCorrectionOffsetRun
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixCorrectionOffsetRun
 
 /-! Complete original-descriptor correction producer: every current prefix
 supplies its own source controls and temporary, all arithmetic is rowwise,
 and every intermediate table/header is physically erased. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixCorrectionOffset
 noncomputable section
 open ActivePrefixSelectedOffsetBank (Shape values)

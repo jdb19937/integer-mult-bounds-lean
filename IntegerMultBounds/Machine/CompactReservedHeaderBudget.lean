@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.CompactReservedRoundtrip
+module
+
+public import IntegerMultBounds.Machine.CompactReservedRoundtrip
 
 /-! Uniform charged budgets for the actual reservation synthesis and lifecycle.
 The quotient routines are bounded by their proved descriptor runtimes. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactReservedHeaderBudget
 noncomputable section
 open CompactReservedHeaders

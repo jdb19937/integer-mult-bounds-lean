@@ -1,12 +1,17 @@
-import IntegerMultBounds.Machine.CompactComplexControllerNativeFrame
-import IntegerMultBounds.Machine.CompactNativeRoleGuardedChildCaller
-import IntegerMultBounds.Machine.PlacementBank
-import IntegerMultBounds.Machine.CompactNativeRoleStoppedChildCaller
+module
+
+public import IntegerMultBounds.Machine.CompactComplexControllerNativeFrame
+public import IntegerMultBounds.Machine.CompactNativeRoleGuardedChildCaller
+public import IntegerMultBounds.Machine.PlacementBank
+public import IntegerMultBounds.Machine.CompactNativeRoleStoppedChildCaller
 
 /-! A physical placement identifies original-role source43 with native source65
 and selects the original native numeric43 bank. Controller, queue and recursion
 storage stay separate. Raw codec metadata is explicit; it is not the controller
 initial13 bank whose ell17 and precision18 are blank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexNativeRoleBridge
 noncomputable section
 open CompactComplexControllerNativeFrame

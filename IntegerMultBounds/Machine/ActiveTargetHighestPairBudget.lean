@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActiveTargetHighestPairRun
+module
+
+public import IntegerMultBounds.Machine.ActiveTargetHighestPairRun
 
 /-! Highest-bit setup and execution is linear in the original full volume;
 width-one interchanges introduce no residual fractional-power factor. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveTargetHighestPairBudget
 open ActiveTargetHighestPairData ActiveTargetHighestPairRun
 

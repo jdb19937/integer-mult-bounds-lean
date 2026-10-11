@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyOrientedControlsStopped
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyOrientedControlsStopped
 
 /-! Empty roots execute the true forward stopped body and the same physical
 post selector, whose retained empty stack chooses literal identity. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyOrientedControlsStoppedRoot
 noncomputable section
 open Networks

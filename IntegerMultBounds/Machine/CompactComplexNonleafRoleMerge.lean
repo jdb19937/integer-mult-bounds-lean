@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactComplexNonleafRoleSplit
+module
+
+public import IntegerMultBounds.Machine.CompactComplexNonleafRoleSplit
 
 /-! The physical inverse child payload boundary: merge the actual returned
 child role arrays, compute the original parent row header, and clean all generated
 headers. The returned array is arbitrary and need not equal the array at entry. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexNonleafRoleMerge
 noncomputable section
 open CompactGadgetReservationShape (Shape)

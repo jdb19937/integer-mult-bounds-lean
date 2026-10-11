@@ -1,12 +1,17 @@
-import IntegerMultBounds.Machine.FlatCoordinateScalingSharedStage
-import IntegerMultBounds.Machine.FlatCoordinateShiftSharedStage
-import IntegerMultBounds.Machine.SharedBankStageInput
+module
+
+public import IntegerMultBounds.Machine.FlatCoordinateScalingSharedStage
+public import IntegerMultBounds.Machine.FlatCoordinateShiftSharedStage
+public import IntegerMultBounds.Machine.SharedBankStageInput
 
 /-! A fixed mixed affine coordinate schedule implemented from one input array,
 one exponent and one trailing-width descriptor, with all private storage blank.
 Four permanent tapes carry the payload pair and the sole preserved headers.
 All dimension generation, descriptor copies, actual operations and joins are
 charged, and the finite transition table is independent of variable dimensions. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.FlatCoordinateInitializedSchedule
 open Networks
 open Networks.Shared50ModularControl (prime)

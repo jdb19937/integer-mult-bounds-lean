@@ -1,6 +1,11 @@
-import IntegerMultBounds.Machine.Shared50NodePieceTransport
+module
+
+public import IntegerMultBounds.Machine.Shared50NodePieceTransport
 
 /-! Fixed original-World parking order for the actual recursive call sites. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.Shared50RecursiveCallLayout
 noncomputable section
 open Networks

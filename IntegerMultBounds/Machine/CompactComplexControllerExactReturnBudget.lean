@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactComplexControllerExactReturn
-import IntegerMultBounds.Machine.CompactComplexSpectatorVolumeBudget
-import IntegerMultBounds.Machine.CompactComplexDenominatorCapacity
+module
+
+public import IntegerMultBounds.Machine.CompactComplexControllerExactReturn
+public import IntegerMultBounds.Machine.CompactComplexSpectatorVolumeBudget
+public import IntegerMultBounds.Machine.CompactComplexDenominatorCapacity
 
 /-! All generated exact-return headers, all permanent-role contractions and
 the live commit have uniform original native and role-stream costs. The upper
 true-live ledger supplies capacity; completed-network semantics remains honest. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexControllerExactReturnBudget
 noncomputable section
 open CompactGadgetReservationShape (Shape)

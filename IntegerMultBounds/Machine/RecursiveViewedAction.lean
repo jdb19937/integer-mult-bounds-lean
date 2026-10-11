@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.RecursiveViewFrameRoleBank
-import IntegerMultBounds.Machine.RecursiveScalingRoleBank
+module
+
+public import IntegerMultBounds.Machine.RecursiveViewFrameRoleBank
+public import IntegerMultBounds.Machine.RecursiveScalingRoleBank
 
 /-! A concrete scalar shift or scaling wrapped in physical parent-header save,
 coordinate-view construction, occupied-header cleanup and parent restoration.
 The fixed machine changes the selected role data, preserves all auxiliaries,
 and returns its dedicated descriptor stack and private work tapes blank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveViewedAction
 noncomputable section
 open Networks

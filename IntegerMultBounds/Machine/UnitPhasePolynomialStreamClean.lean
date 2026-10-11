@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.UnitPhasePolynomialStreamLoop
-import IntegerMultBounds.Machine.UnitPhaseStreamAddressReset
+module
+
+public import IntegerMultBounds.Machine.UnitPhasePolynomialStreamLoop
+public import IntegerMultBounds.Machine.UnitPhaseStreamAddressReset
 
 /-! Physically close a polynomial phase traversal: erase raw address/live
 counter, generated full-address count, and polynomial multiplicity. All
 inner and outer loop work is already blank; coefficient streams persist. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.UnitPhasePolynomialStreamClean
 noncomputable section
 open CompactGadgetReservationShape (Shape)

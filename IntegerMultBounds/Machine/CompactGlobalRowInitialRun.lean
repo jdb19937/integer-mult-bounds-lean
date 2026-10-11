@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactGlobalRowInitialCleanup
+module
+
+public import IntegerMultBounds.Machine.CompactGlobalRowInitialCleanup
 
 /-! Exact complete execution of global row padding from the four original
 public numbers. Every computed header and private tape is erased. Only the
 source interval is consumed and the complete padded destination is written. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactGlobalRowInitialRun
 noncomputable section
 open CompactGlobalRowHeaders (initial recordWidth)

@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.RecursiveRowPadding
+module
+
+public import IntegerMultBounds.Machine.RecursiveRowPadding
 
 /-! Numerical range padding of both chunk coordinates is two ordinary
 grouped row extensions. The intervening regrouping preserves the literal
 flat word. Cropping after the padded transpose is the original transpose. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RadixRangePadding
 open RecursiveInterchangeRows (pack pack_val)
 variable {P N G B : ℕ} {α : Type*}

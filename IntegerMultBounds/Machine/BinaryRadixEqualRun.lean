@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.ArbitraryWidthOriginalTotalRun
-import IntegerMultBounds.Machine.BinaryRadixRootHeadersShared
-import IntegerMultBounds.Machine.BinaryRadixRootEncoding
-import IntegerMultBounds.Machine.BinaryRadixRangeRuntimeBudget
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthOriginalTotalRun
+public import IntegerMultBounds.Machine.BinaryRadixRootHeadersShared
+public import IntegerMultBounds.Machine.BinaryRadixRootEncoding
+public import IntegerMultBounds.Machine.BinaryRadixRangeRuntimeBudget
 
 /-! Complete equal-width binary H/D interchange through radix padding. Every
 conversion, root header, recursive branch, crop and erasure is physically run. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryRadixEqualRun
 noncomputable section
 open Networks

@@ -1,10 +1,14 @@
-import IntegerMultBounds.Networks.Shared50GlobalTrace
-import IntegerMultBounds.Networks.ShearFrame
-import IntegerMultBounds.Networks.GroupedModuleFrames
+module
+
+public import IntegerMultBounds.Networks.Shared50GlobalTrace
+public import IntegerMultBounds.Networks.ShearFrame
+public import IntegerMultBounds.Networks.GroupedModuleFrames
 
 /-! The actual two-bank data exchange has a uniform rational address shear
 between its negative source frames and sink frames, including every dirty
 scratch wire. This is an exact array identity, not a finite-radix tape cost. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.Shared50ShearEndpoints
 

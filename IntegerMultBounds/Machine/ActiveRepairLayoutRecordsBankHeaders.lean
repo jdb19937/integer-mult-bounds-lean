@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsHeadersCount
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsHeadersCount
 
 /-! The actual producer's fifteen retained descriptors are exactly the repair
 caller's original geometry, source and radix metadata. Actual fixed-many copies
 install them on blank output tapes, preserving the complete producer bank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLayoutRecordsBankHeaders
 noncomputable section
 open CompactGadgetReservationShape (Shape)

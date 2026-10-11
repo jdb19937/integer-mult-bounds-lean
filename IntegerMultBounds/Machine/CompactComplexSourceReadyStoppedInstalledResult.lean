@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyOrientedControlsStoppedSemantics
-import IntegerMultBounds.Machine.CompactComplexSourceReadyOrientedStoppedReturnPrefix
-import IntegerMultBounds.Machine.CompactComplexSourceReadyInstalledPayload
-import IntegerMultBounds.Machine.CompactComplexSourceReadyOrientedStoppedTablePath
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyOrientedControlsStoppedSemantics
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyOrientedStoppedReturnPrefix
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyInstalledPayload
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyOrientedStoppedTablePath
 
 /-! Literal reached stopped endpoints identify the genuine installed oriented
 leaf result, including polynomial-shape transport and exact restored caller
 source. The numerical prefix is proved separately on that same result. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyStoppedInstalledResult
 noncomputable section
 open CompactGadgetReservationShape (Shape)

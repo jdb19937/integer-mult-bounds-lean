@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.CountedTapeRepairDensity
+module
+
+public import IntegerMultBounds.Machine.CountedTapeRepairDensity
 
 /-! Complete reusable fixed-control repair endpoint: physical metadata setup,
 keyed scan, radix sort, reinsertion, and physical removal of all stage work. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedTapeRepairEndpoint
 noncomputable section
 open SharedPlacementAlphabet

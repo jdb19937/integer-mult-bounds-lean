@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.CompactRowSplit
+module
+
+public import IntegerMultBounds.Machine.CompactRowSplit
 
 /-! Clean whole-row native-alphabet reassembly from the retained row/role/width
 words. Every role source and all derived counters are physically erased. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactNativeRowMerge
 noncomputable section
 variable {a c : ℕ}

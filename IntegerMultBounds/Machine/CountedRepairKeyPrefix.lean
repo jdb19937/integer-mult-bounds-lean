@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.CountedRepairKeyBank
+module
+
+public import IntegerMultBounds.Machine.CountedRepairKeyBank
 
 /-! Fixed-control rank splitting, inverse, original guard and ideal toggle on
 one thirty-tape bank. The actual growing counter may have a short blank tail. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedRepairKeyPrefix
 noncomputable section
 open CountedRepairKeyBank

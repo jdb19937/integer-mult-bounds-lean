@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyScalarWorkspace
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyScalarWorkspace
 
 /-! Scalar count construction, actual role arithmetic and count erasure use
 the original retained Stage and literal polynomial role arrays. No capacity
 assumption from the full address-repair codec is needed, and the physical raw
 payload descriptor is never replaced by an expanded codec shape. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyScalarGeometryLifecycle
 noncomputable section
 open CompactGadgetReservationShape (Shape)

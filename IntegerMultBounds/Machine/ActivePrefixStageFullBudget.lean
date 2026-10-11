@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixStageFullEarlyRun
-import IntegerMultBounds.Machine.ActivePrefixStageFullLateRun
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStageFullEarlyRun
+public import IntegerMultBounds.Machine.ActivePrefixStageFullLateRun
 
 /-! Original-only full selected stages retain the certified compact-width
 exponent after paying descriptor synthesis, copying, erasure and both joins. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixStageFullBudget
 open CompactGadgetReservationShape (Shape)
 open ActivePrefixStageParameters ActivePrefixStageGeometry

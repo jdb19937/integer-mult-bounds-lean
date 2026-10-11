@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.RecursiveMixedRoleBank
-import IntegerMultBounds.Machine.Shared50OrderedPieces
+module
+
+public import IntegerMultBounds.Machine.RecursiveMixedRoleBank
+public import IntegerMultBounds.Machine.Shared50OrderedPieces
 
 /-! Actual fixed Shared50 gate pieces on the recursive permanent bank, starting
 with only the six layout headers. The stream-volume controls are constructed,
 used, and physically erased. Arbitrary original dirty temporary values are
 included in the exact module-gate semantics rather than assumed zero. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.Shared50RecursiveGates
 noncomputable section
 open Networks
@@ -20,7 +25,7 @@ variable {u : ℕ} {v : Descriptor}
 attribute [local irreducible] Shared50FixedControl.control Shared50GlobalCircuit.program50
   Shared50Finite.program SharedPointReplay.circuit SharedPointExecution.code
 
-private theorem witness (g : Gate) :
+theorem witness (g : Gate) :
     ∃ dst src, dst ≠ src ∧ g.scalar = ReversibleFanout.add dst src :=
   gate_xor g g.scalar List.mem_cons_self
 

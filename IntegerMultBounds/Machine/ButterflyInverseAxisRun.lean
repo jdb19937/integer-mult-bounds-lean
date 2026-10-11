@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ButterflyInverseAxisRouting
+module
+
+public import IntegerMultBounds.Machine.ButterflyInverseAxisRouting
 
 /-! Physical inverse selected-axis execution. Its charged merge reads the two
 computed role streams in exchanged order, giving inverse complex butterfly
 outputs with exactly the forward tape count, cleanup and linear cost. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ButterflyInverseAxisRun
 noncomputable section
 open ButterflyStreamData ButterflyAxisBank

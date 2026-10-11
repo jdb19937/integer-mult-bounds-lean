@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActivePrefixCompactSwapRun
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixCompactSwapRun
 
 /-! Certified full-volume sublinear-width bound including physical descriptor
 construction and cleanup around the complete binary interchange machine. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixCompactSwapBudget
 open ActivePrefixCompactSwapData ActivePrefixCompactSwapRun
 open CompactGadgetReservationShape

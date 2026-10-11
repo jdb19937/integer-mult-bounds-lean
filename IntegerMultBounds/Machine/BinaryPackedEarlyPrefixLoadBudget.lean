@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.BinaryPackedEarlyPrefixParityLoad
-import IntegerMultBounds.Machine.BinaryPackedEarlyPrefixNegativeLoad
-import IntegerMultBounds.Machine.BinaryRepeatedOffsetLoadBudget
+module
+
+public import IntegerMultBounds.Machine.BinaryPackedEarlyPrefixParityLoad
+public import IntegerMultBounds.Machine.BinaryPackedEarlyPrefixNegativeLoad
+public import IntegerMultBounds.Machine.BinaryRepeatedOffsetLoadBudget
 
 /-! Source-prefix generation, real interchange action and offset erasure retain
 the uniform interchange exponent, with setup absorbed by actual suffix width. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryPackedEarlyPrefixLoadBudget
 open RadixRangePadding (volume)
 

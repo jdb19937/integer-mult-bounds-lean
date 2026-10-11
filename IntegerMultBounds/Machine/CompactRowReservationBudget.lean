@@ -1,6 +1,11 @@
-import IntegerMultBounds.Machine.CompactRowReservationRun
+module
+
+public import IntegerMultBounds.Machine.CompactRowReservationRun
 
 /-! Paid complete reservation layout bounds, including R<c. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactRowReservationBudget
 noncomputable section
 variable {a c : ℕ}

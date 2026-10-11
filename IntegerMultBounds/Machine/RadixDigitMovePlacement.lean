@@ -1,16 +1,21 @@
-import IntegerMultBounds.Machine.RadixDigitMovePrepared
-import IntegerMultBounds.Machine.RadixDigitMoveCounts
-import IntegerMultBounds.Machine.InjectivePlacement
+module
+
+public import IntegerMultBounds.Machine.RadixDigitMovePrepared
+public import IntegerMultBounds.Machine.RadixDigitMoveCounts
+public import IntegerMultBounds.Machine.InjectivePlacement
 
 /-! The four digit-move descriptors share their existing physical tapes with
 one product/constant constructor. Three appended scratch tapes are blank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RadixDigitMovePlacement
 variable {Q a : ℕ}
 noncomputable section
 open RadixDigitMoveCore (count)
 
-private def hd : Option (List Bool) → ℤ | none => 0 | some _ => 1
-private def tp : Option (List Bool) → ℤ → Fin (a+4)
+def hd : Option (List Bool) → ℤ | none => 0 | some _ => 1
+def tp : Option (List Bool) → ℤ → Fin (a+4)
   | none => fun _ => blank
   | some bs => CountedLoopReuseAlphabet.binary bs
 

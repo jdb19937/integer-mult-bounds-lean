@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.RecursiveChildSetupRoleBank
-import IntegerMultBounds.Machine.RecursiveChildCallReturn
-import IntegerMultBounds.Machine.RecursiveHeaderRestore
+module
+
+public import IntegerMultBounds.Machine.RecursiveChildSetupRoleBank
+public import IntegerMultBounds.Machine.RecursiveChildCallReturn
+public import IntegerMultBounds.Machine.RecursiveHeaderRestore
 
 /-! Physical ancestor-header restoration and decoded PC return on permanent
 role tapes. Exact continuation terminal states remain visible for finite flow. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveChildReturnRoleBank
 noncomputable section
 open Networks

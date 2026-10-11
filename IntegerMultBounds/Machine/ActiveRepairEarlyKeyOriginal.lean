@@ -1,6 +1,11 @@
-import IntegerMultBounds.Machine.ActiveRepairEarlyKeyOriginalPlaced
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairEarlyKeyOriginalPlaced
 
 /-! Complete original-descriptor early key execution and paid cleanup. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairEarlyKeyOriginal
 noncomputable section
 abbrev Data := ActiveRepairEarlyKeyOriginalData.Data

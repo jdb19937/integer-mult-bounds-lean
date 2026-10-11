@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActiveRepairDestinationPatchRun
-import IntegerMultBounds.Machine.ActiveRepairRankFieldsGeometry
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairDestinationPatchRun
+public import IntegerMultBounds.Machine.ActiveRepairRankFieldsGeometry
 
 /-! Destination ranks in the unchanged active-target layout. The full word
 includes row, unused front bits, all source/spectator bits and dirty back bits. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairDestinationPatchGeometry
 noncomputable section
 open CompactGadgetReservationShape CompactActiveTargetLayout

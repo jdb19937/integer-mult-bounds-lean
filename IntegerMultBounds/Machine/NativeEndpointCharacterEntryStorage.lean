@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyNonleafTargetSplit
-import IntegerMultBounds.Machine.CompactComplexSourceReadyNonleafContraction
-import IntegerMultBounds.Machine.CompactComplexSourceReadyScalarChildReadiness
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyNonleafTargetSplit
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyNonleafContraction
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyScalarChildReadiness
 
 /-! Actual tag2 target generation updates only original storage8 in the
 canonical source-ready caller. No descriptor, role, or saved frame moves. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.NativeEndpointCharacterEntryStorage
 noncomputable section
 open CompactComplexNativeCodecFrame (bank permanentTapes)

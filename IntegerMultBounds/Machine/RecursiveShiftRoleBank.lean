@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CleanSubbank
-import IntegerMultBounds.Machine.RecursiveInterchangeShiftClean
+module
+
+public import IntegerMultBounds.Machine.CleanSubbank
+public import IntegerMultBounds.Machine.RecursiveInterchangeShiftClean
 
 /-! Concrete placement of the clean heterogeneous seven-factor shift at one
 permanent role tape. Six supplied canonical headers, one blank scratch tape,
 all other roles, and an arbitrary auxiliary bank survive exactly. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveShiftRoleBank
 noncomputable section
 open Networks

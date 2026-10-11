@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActiveRepairDestinationPatchData
-import IntegerMultBounds.Machine.ActiveRepairDestinationPatchPlaced
-import IntegerMultBounds.Machine.ActiveRepairRankFieldsPlaced
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairDestinationPatchData
+public import IntegerMultBounds.Machine.ActiveRepairDestinationPatchPlaced
+public import IntegerMultBounds.Machine.ActiveRepairRankFieldsPlaced
 
 /-! Full-width rank reconstruction from the genuine short counter, followed by
 three runtime field replacements. Twelve caller slots share nine erased slots. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairDestinationPatchRun
 noncomputable section
 open SharedPlacementAlphabet (setTape)

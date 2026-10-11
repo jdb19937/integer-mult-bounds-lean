@@ -1,4 +1,8 @@
-import IntegerMultBounds.Machine.ActiveRepairRecordFlattenPlaced
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairRecordFlattenPlaced
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.ActiveRepairLayoutRecordsDecodeCommon
 noncomputable section

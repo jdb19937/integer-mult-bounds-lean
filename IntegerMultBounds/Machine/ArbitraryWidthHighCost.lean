@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.ArbitraryWidthHighExchangeJoin
-import IntegerMultBounds.Machine.ArbitraryWidthHighSeparateShared
-import IntegerMultBounds.Machine.ArbitraryWidthHighPaddedBudget
-import IntegerMultBounds.Machine.ArbitraryWidthHighBudget
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthHighExchangeJoin
+public import IntegerMultBounds.Machine.ArbitraryWidthHighSeparateShared
+public import IntegerMultBounds.Machine.ArbitraryWidthHighPaddedBudget
+public import IntegerMultBounds.Machine.ArbitraryWidthHighBudget
 
 /-! Arithmetic assembly of the fully paid high-width stage budgets. This is
 not an execution oracle: physical stage composition is a separate theorem.
 The complete actual piece cost appears literally, including its controls. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthHighCost
 noncomputable section
 open Networks

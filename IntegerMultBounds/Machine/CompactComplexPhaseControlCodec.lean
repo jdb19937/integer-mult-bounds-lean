@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexPhasePhysical
-import IntegerMultBounds.Machine.WeightedUnitPhase
+module
+
+public import IntegerMultBounds.Machine.CompactComplexPhasePhysical
+public import IntegerMultBounds.Machine.WeightedUnitPhase
 
 /-! Actual residual weights and physically computed address controls determine
 a literal Boolean control word. Its machine computes the modulo-four phase
 and applies that phase to centered signed Gaussian dyadic numerator records. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexPhaseControlCodec
 noncomputable section
 open CompactGadgetReservationShape (Shape)

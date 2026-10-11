@@ -1,9 +1,13 @@
-import IntegerMultBounds.Networks.Shared50GlobalTrace
-import IntegerMultBounds.Networks.Shared50OppositeRank
+module
+
+public import IntegerMultBounds.Networks.Shared50GlobalTrace
+public import IntegerMultBounds.Networks.Shared50OppositeRank
 
 /-! Place local label updates on the actual sparse global invocation embeddings.
 The local profiles are restrictions of the concrete stage profiles. Trace
 premises remain explicit until the corresponding local histories are supplied. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.Shared50GlobalTracePlacement
 

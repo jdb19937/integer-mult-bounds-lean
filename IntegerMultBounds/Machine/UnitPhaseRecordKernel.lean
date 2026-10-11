@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.SparsePhaseUnitCaller
-import IntegerMultBounds.Machine.UnitPhaseRecordIO
-import IntegerMultBounds.Machine.UnitPhaseLocalReset
+module
+
+public import IntegerMultBounds.Machine.SparsePhaseUnitCaller
+public import IntegerMultBounds.Machine.UnitPhaseRecordIO
+public import IntegerMultBounds.Machine.UnitPhaseLocalReset
 
 /-! Physical phase application, emission and complete local workspace reset
 for one sixty-tape coefficient record. Numeric sparse descriptors are derived
 inside the caller, and the emitted phase result is consumed before cleanup. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.UnitPhaseRecordKernel
 noncomputable section
 open CompactGadgetReservationShape (Shape)

@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActiveRepairRankHeadersEndpoint
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairRankHeadersEndpoint
 
 /-! Physical repair-header generation and erasure on arbitrary caller ports.
 Ten originals and fifteen generated outputs are selected; all private native
 storage returns blank, and arbitrary caller spectators retain tape and head. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairRankHeadersPlaced
 noncomputable section
 open ActiveRepairRankHeadersCommands ActiveRepairRankHeadersData

@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyAlignedActualTable
-import IntegerMultBounds.Machine.CompactComplexSourceReadyReachedEventInvariant
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyAlignedActualTable
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyReachedEventInvariant
 
 /-! Actual reached scalar steps execute inside the final shared-alphabet table,
 with identical literal arrays and numerical/call invariants. No local execution
 callback is supplied: the original reached scalar lifecycle provides its run. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexAlignedScalarEventPath
 noncomputable section
 open Networks.Shared50ModularControl (prime)

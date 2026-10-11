@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactNativeRolePrecisionHeaders
+module
+
+public import IntegerMultBounds.Machine.CompactNativeRolePrecisionHeaders
 
 /-! Original reservation scalars physically generate the role shape, current
 root row count and corrected precision. Recursive controller fields remain
 separate retained runtime words on an explicit six-port interface. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactNativeRoleScalarHeaders
 noncomputable section
 open ActiveRepairRankHeadersCommands (State)

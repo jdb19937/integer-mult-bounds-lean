@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.RecursiveRowsResetCount
-import IntegerMultBounds.Machine.CountedBankResetHeader
+module
+
+public import IntegerMultBounds.Machine.RecursiveRowsResetCount
+public import IntegerMultBounds.Machine.CountedBankResetHeader
 
 /-! Destructive recursive cyclic transfers. After copying, the common source
 is physically erased and reset; after merging, all role sources are physically
 erased and reset. Derived erase lengths are produced by actual products. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveRowsMove
 open RecursiveInterchangeLayout (Descriptor volume role)
 open RecursiveRowsResetCount (Target)

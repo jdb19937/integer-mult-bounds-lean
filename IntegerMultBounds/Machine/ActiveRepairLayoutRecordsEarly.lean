@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsMove
-import IntegerMultBounds.Machine.ActivePrefixEarlySequenceGlobal
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsMove
+public import IntegerMultBounds.Machine.ActivePrefixEarlySequenceGlobal
 
 /-! Grouping the actual early four-load output into original-width records
 supplies exactly the payload-one global repair input, retaining wide physical
 reservations and their absorption hypotheses. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLayoutRecordsEarly
 noncomputable section
 open CompactGadgetReservationShape (Shape)

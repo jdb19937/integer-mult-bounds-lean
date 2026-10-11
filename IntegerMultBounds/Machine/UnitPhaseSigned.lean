@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.UnitPhaseNumerator
-import IntegerMultBounds.Machine.ButterflySigned
+module
+
+public import IntegerMultBounds.Machine.UnitPhaseNumerator
+public import IntegerMultBounds.Machine.ButterflySigned
 
 /-! Exact centered signed and Gaussian dyadic semantics of the physical unit
 phase multiplier. A strict guard excludes the unrepresentable negation of the
 most negative word; numerator width and denominator precision are retained. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.UnitPhaseSigned
 noncomputable section
 open UnitPhaseNumerator

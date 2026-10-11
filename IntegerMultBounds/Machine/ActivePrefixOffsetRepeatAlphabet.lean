@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixOffsetRepeatRun
-import IntegerMultBounds.Machine.PackedOffsetPayloadAlphabet
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixOffsetRepeatRun
+public import IntegerMultBounds.Machine.PackedOffsetPayloadAlphabet
 
 /-! Repetition in the caller alphabet, retaining the complete base word and
 original row descriptor and restoring the private countdown tape blank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixOffsetRepeatAlphabet
 noncomputable section
 open StreamedFiberTranslationAlphabet (encoding mapTape)

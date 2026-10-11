@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyActualTable
-import IntegerMultBounds.Machine.CompactComplexScalarGroupProgress
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyActualTable
+public import IntegerMultBounds.Machine.CompactComplexScalarGroupProgress
 
 /-! Genuine original grouped scalar events on the full source-ready fixed
 node table, retaining the next scalar-prefix grid and true live ledger. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyScalarEventPath
 noncomputable section
 open CompactComplexScalarIntegerRows (GroupIndex gates guardBits)
@@ -25,7 +30,7 @@ attribute [local irreducible] Networks.ComplexRank25.program CompactComplexScala
   Networks.ComplexFramedExecution.rows CompactComplexRolePhaseSite.roleCount
   CompactComplexCompletedLiveLower.schedule
 
-private theorem liveProof : 7<10+s := by omega
+theorem liveProof : 7<10+s := by omega
 
 theorem group_step {sh : CompactGadgetReservationShape.Shape}
     {left k levels frames returned : ℕ}

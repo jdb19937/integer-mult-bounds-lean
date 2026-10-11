@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.PackedEarlyRepeatHeaders
+module
+
+public import IntegerMultBounds.Machine.PackedEarlyRepeatHeaders
 
 /-! Both early repetition factors share nine actual caller ports. The two
 generated words are retained for all four loads; their final erasure restores
 the literal original caller, including every unselected tape and head. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.PackedEarlyRepeatHeadersPlaced
 noncomputable section
 open CompactGadgetReservationHeadersWords

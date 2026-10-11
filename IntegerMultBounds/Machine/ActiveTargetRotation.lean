@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.PackedOffsetPayloadPlaced
+module
+
+public import IntegerMultBounds.Machine.PackedOffsetPayloadPlaced
 
 /-! A direct controlled rotation of an active target field. Target width is
 unrestricted by the compact reservation capacity: only rotations use it, and
 the complete physical runtime is linear in the original containing volume.
 The offset table is an explicit physical stage input, not a semantic oracle. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveTargetRotation
 noncomputable section
 open SharedPlacementAlphabet (setTape)

@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActiveTargetHighestLayoutHeadersRun
-import IntegerMultBounds.Machine.ActivePrefixLayoutHeadersBudget
+module
+
+public import IntegerMultBounds.Machine.ActiveTargetHighestLayoutHeadersRun
+public import IntegerMultBounds.Machine.ActivePrefixLayoutHeadersBudget
 
 /-! Paid linear bounds for deriving the highest-bit geometry from the same
 original layout words used by the compact low-bit schedules. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveTargetHighestLayoutHeadersBudget
 open ActivePrefixLayoutHeadersData (Inputs originalValues seeded)
 open ActiveTargetHighestLayoutHeadersData

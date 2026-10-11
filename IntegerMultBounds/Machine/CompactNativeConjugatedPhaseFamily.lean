@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactNativeConjugatedPhaseZero
+module
+
+public import IntegerMultBounds.Machine.CompactNativeConjugatedPhaseZero
 
 /-! One native basis program supplies every physical complex25 phase edge,
 including zero-dimensional edges. A finite word budget absorbs both basis
 passes, actual phase metadata and all joins into one stage-scale constant. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactNativeConjugatedPhaseFamily
 noncomputable section
 open CompactGadgetReservationShape (Shape)
@@ -21,7 +26,7 @@ private theorem term_le_total {N : ℕ} (f : Fin N → ℕ) (pc : Fin N) :
   Finset.single_le_sum (s:=Finset.univ) (f:=f)
     (fun _ _ => Nat.zero_le _) (Finset.mem_univ pc)
 
-private opaque wordBudgetData :
+opaque wordBudgetData :
     {n : ℕ // n=∑ pc : Fin count, (Networks.ComplexPhaseRowSchedule.word (edge pc)).length} :=
   ⟨∑ pc : Fin count, (Networks.ComplexPhaseRowSchedule.word (edge pc)).length,rfl⟩
 def wordBudget : ℕ := wordBudgetData.val
@@ -35,7 +40,7 @@ theorem word_le (pc : Fin count) :
   rw [wordBudget_literal]
   exact term_le_total (fun pc : Fin count => (Networks.ComplexPhaseRowSchedule.word (edge pc)).length) pc
 
-private opaque phaseConstantData :
+opaque phaseConstantData :
     {n : ℕ // n=804304+(2*FixedBasePowerDescriptor.constant 2+15000)+(2*count+3)} :=
   ⟨804304+(2*FixedBasePowerDescriptor.constant 2+15000)+(2*count+3),rfl⟩
 def phaseConstant : ℕ := phaseConstantData.val

@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedFinal
-import IntegerMultBounds.Machine.CompactComplexSourceReadyReachedDormantFrameInvariant
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedFinal
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyReachedDormantFrameInvariant
 
 /-! Physical projections of the actual nonroot sink, contraction, merge and
 orientation endpoint. The saved call remains on its stack here; its decoded
 pop is a separate controller transition. No restored-parent bank equality or
 recursive semantic execution is postulated. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyCompletedChildBoundary
 noncomputable section
 open CompactGadgetReservationShape (Shape)

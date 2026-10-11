@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexScalarSegmentRows
+module
+
+public import IntegerMultBounds.Machine.CompactComplexScalarSegmentRows
 
 /-! Actual scalar group completion preserves the tighter next-prefix grid,
 so subsequent groups consume the remaining single node allowance. The full
 Path budget supplies overflow guards but is not substituted for the prefix
 postcondition required by the next interleaved event. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexScalarPrefixAdvance
 noncomputable section
 open Networks Networks.GaussianPrecision

@@ -1,6 +1,11 @@
-import IntegerMultBounds.Machine.CountedTapeRepairCleanupWord
+module
+
+public import IntegerMultBounds.Machine.CountedTapeRepairCleanupWord
 
 /-! Fixed-slot literal final cleanup, retaining the complete complementary bank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedLateTapeRepairCleanupAt
 noncomputable section
 open SharedPlacementAlphabet

@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActiveRepairLayoutPermutationFiber
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairLayoutPermutationFiber
 
 /-! Concrete global permutations of the actual unchanged active-target
 address. Source coordinates choose the local packed operation at every fiber;
 the ideal preserves the bad set and the actual agrees off that set. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLayoutPermutation
 noncomputable section
 attribute [local instance] Classical.propDecidable
@@ -10,7 +15,7 @@ open CompactGadgetReservationShape CompactActiveTargetLayout
 open ActiveRepairLayoutPermutationFiber
 open IntegerMultBounds.Compact IntegerMultBounds.Compact.PowerTwo
 
-private def lift {A B : Type*} (e : A ≃ B) (p : Equiv.Perm B) : Equiv.Perm A :=
+def lift {A B : Type*} (e : A ≃ B) (p : Equiv.Perm B) : Equiv.Perm A :=
   e.trans (p.trans e.symm)
 private theorem lift_eval {A B : Type*} (e : A ≃ B) (p : Equiv.Perm B) (x : A) :
     e (lift e p x)=p (e x) := e.apply_symm_apply _

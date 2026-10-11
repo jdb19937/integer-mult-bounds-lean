@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactComplexNonleafRoleMerge
+module
+
+public import IntegerMultBounds.Machine.CompactComplexNonleafRoleMerge
 
 /-! Physical child splitting and reverse merging have uniform parent-volume
 costs. Both actual row arithmetic schedules and every join are included.
 These are local transfer bounds, not a recursive execution assumption. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexNonleafRoleTransferBudget
 noncomputable section
 open CompactGadgetReservationShape (Shape)

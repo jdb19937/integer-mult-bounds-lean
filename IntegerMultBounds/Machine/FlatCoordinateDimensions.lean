@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.TranslationDimensions
-import IntegerMultBounds.Machine.FlatCoordinateSchedule
+module
+
+public import IntegerMultBounds.Machine.TranslationDimensions
+public import IntegerMultBounds.Machine.FlatCoordinateSchedule
 
 /-! Physically construct the canonical dimensions of a chosen coordinate from
 one exponent and one trailing width. The finite machine depends only on target. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.FlatCoordinateDimensions
 open Networks.Shared50ModularControl (prime)
 open ActualAffineScaling (modulus)
@@ -11,7 +16,7 @@ open FlatCoordinateSchedule (bits)
 noncomputable section
 variable {d : ℕ}
 
-private theorem hprime : 2 ≤ prime := Networks.Shared50ModularControl.prime_prime.two_le
+theorem hprime : 2 ≤ prime := Networks.Shared50ModularControl.prime_prime.two_le
 
 def program (t : Fin d) := TranslationDimensions.program hprime t.val (suffixFields t)
 

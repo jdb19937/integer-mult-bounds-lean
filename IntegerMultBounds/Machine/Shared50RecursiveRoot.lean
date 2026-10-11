@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.Shared50RecursiveImplementation
-import IntegerMultBounds.Machine.Shared50RecursiveBankReturn
+module
+
+public import IntegerMultBounds.Machine.Shared50RecursiveImplementation
+public import IntegerMultBounds.Machine.Shared50RecursiveBankReturn
 
 /-! Paid root frame creation agrees exactly with the recursive call frame. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.Shared50RecursiveRoot
 noncomputable section
 open Networks

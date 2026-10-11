@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.AllAxisPhaseFlagsCaller
-import IntegerMultBounds.Machine.CompactAllAxisPhaseReadout
+module
+
+public import IntegerMultBounds.Machine.AllAxisPhaseFlagsCaller
+public import IntegerMultBounds.Machine.CompactAllAxisPhaseReadout
 
 /-! Physical all-axis header arithmetic starts at exactly the original tensor
 control bit selected by the compact complex25 address compiler. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.AllAxisPhaseGeometry
 noncomputable section
 open CompactGadgetReservationShape (Shape)

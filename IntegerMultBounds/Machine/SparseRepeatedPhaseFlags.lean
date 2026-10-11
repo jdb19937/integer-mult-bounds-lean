@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.SparsePhaseFlags
-import IntegerMultBounds.Machine.RepeatedWeightedPhaseAccumulator
+module
+
+public import IntegerMultBounds.Machine.SparsePhaseFlags
+public import IntegerMultBounds.Machine.RepeatedWeightedPhaseAccumulator
 
 /-! A single full-address extraction followed by a runtime-axis weighted scan.
 The resulting phase flags are retained for all coefficients at that address;
 no coefficient traversal is repeated for each coordinate axis. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.SparseRepeatedPhaseFlags
 noncomputable section
 open UnitPhaseNumerator (flags)

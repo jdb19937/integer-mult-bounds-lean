@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixLayoutHeadersData
-import IntegerMultBounds.Machine.ActiveTargetHighestPairLayoutGeometry
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixLayoutHeadersData
+public import IntegerMultBounds.Machine.ActiveTargetHighestPairLayoutGeometry
 
 /-! The highest-bit geometry is computed from the same fourteen original
 layout descriptors as the low selected-bit sequences. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveTargetHighestLayoutHeadersData
 noncomputable section
 open ActiveRepairRankHeadersCommands

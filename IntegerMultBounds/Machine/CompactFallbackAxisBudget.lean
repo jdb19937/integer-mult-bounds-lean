@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactFallbackAxisRun
-import IntegerMultBounds.Machine.CompactFallbackBudget
-import IntegerMultBounds.Machine.CompactFallbackScalars
+module
+
+public import IntegerMultBounds.Machine.CompactFallbackAxisRun
+public import IntegerMultBounds.Machine.CompactFallbackBudget
+public import IntegerMultBounds.Machine.CompactFallbackScalars
 
 /-! The fallback cost row is supplied by a genuine original-input coefficient
 machine. Header construction, the whole selected-bit split/arithmetic/merge,
 cleanup and original ordinal advancement are all charged per selected axis. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactFallbackAxisBudget
 noncomputable section
 open CompactFallbackHeaders CompactFallbackAxisRun

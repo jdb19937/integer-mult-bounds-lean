@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.BinaryPackedFieldSwap
-import IntegerMultBounds.Machine.CompactGadgetReservationHeadersCarvedPlacedCleanup
-import IntegerMultBounds.Machine.ActivePrefixLayoutSwap
+module
+
+public import IntegerMultBounds.Machine.BinaryPackedFieldSwap
+public import IntegerMultBounds.Machine.CompactGadgetReservationHeadersCarvedPlacedCleanup
+public import IntegerMultBounds.Machine.ActivePrefixLayoutSwap
 
 /-! Literal compact-T/back interchange with original geometry descriptors.
 Permanent ports are chunk/axes/global-guard/n/active/rows/payload/b, four blank
 computed headers, and the full unchanged array. No P/G/B/width is supplied. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixCompactSwapData
 noncomputable section
 open CompactGadgetReservationShape

@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ArbitraryWidthHighExchangeControls
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthHighExchangeControls
 
 /-! Static regrouping of the shared root bank and the sixteen physical
 high-exchange controls. This changes only compile-time tape placement. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthHighExchangePlacement
 noncomputable section
 variable {T a : ℕ}

@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixSelectedLoadHeaders
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixSelectedLoadHeaders
 
 /-! Actual original-input selected offset production, original-row repetition
 and containing-target rotation, without supplied derived descriptors or tables.
 All stages reuse the same fixed blank forty-one-tape workspace. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixSelectedLoadRun
 noncomputable section
 open ActivePrefixSelectedLoadData

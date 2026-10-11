@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyReachedReturnInvariant
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyReachedReturnInvariant
 
 /-! Saved caller frames are protected tape prefixes, rather than a claimed
 equality of whole dormant banks. Nested saves may write above their boundary;
 nested restores may erase above it. Local scalar and basis endpoints retain
 the designated stack cells. Recursive induction must retain these propositions
 through every child event before the final caller frame is consumed. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyReachedDormantFrameInvariant
 noncomputable section
 open SharedPlacementAlphabet (setTape)

@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyReachedBasisInvariant
-import IntegerMultBounds.Machine.CompactComplexBasisTensorConjugation
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyReachedBasisInvariant
+public import IntegerMultBounds.Machine.CompactComplexBasisTensorConjugation
 
 /-! The actual selected-role coefficient permutation and its decoded values
 follow the literal ambient basis coordinate map. All equalities below use the
 computed native row destination; no local input-alignment premise is supplied. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexActualBasisCoordinates
 noncomputable section
 open CompactGadgetReservationShape (Shape)

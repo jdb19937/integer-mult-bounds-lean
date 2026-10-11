@@ -1,12 +1,17 @@
-import IntegerMultBounds.Machine.SharedPayloadStage
-import IntegerMultBounds.Machine.FlatCoordinateScaling
-import IntegerMultBounds.Machine.FlatCoordinateShift
-import IntegerMultBounds.Machine.FlatAffineScalingMetadata
-import IntegerMultBounds.Machine.FlatControlledShiftMetadata
+module
+
+public import IntegerMultBounds.Machine.SharedPayloadStage
+public import IntegerMultBounds.Machine.FlatCoordinateScaling
+public import IntegerMultBounds.Machine.FlatCoordinateShift
+public import IntegerMultBounds.Machine.FlatAffineScalingMetadata
+public import IntegerMultBounds.Machine.FlatControlledShiftMetadata
 
 /-! Concrete shared-alphabet stages for the common ordered-coordinate array.
 Each stage contains an actual program and discharged payload, metadata and time
 contracts, ready for finite-list physical assembly. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.FlatCoordinateStages
 open Networks
 open ActualAffineScaling (modulus)

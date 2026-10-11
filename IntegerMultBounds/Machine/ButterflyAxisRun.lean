@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ButterflyAxisBank
+module
+
+public import IntegerMultBounds.Machine.ButterflyAxisBank
 
 /-! One actual selected-axis machine: clean native-symbol split, all paired
 coefficient arithmetic, paid normalization, and destructive merge. Every
 private bank is blank at both boundaries, and the sole common stream contains
 the exact transformed records. Original count and shape headers are retained. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ButterflyAxisRun
 noncomputable section
 open ButterflyStreamData ButterflyAxisBank

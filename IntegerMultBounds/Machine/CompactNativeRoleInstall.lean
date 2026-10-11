@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactNativeRoleDestructive
-import IntegerMultBounds.Machine.BinaryDescriptorInstallMarkedList
-import IntegerMultBounds.Machine.RecursiveRowsInstall
+module
+
+public import IntegerMultBounds.Machine.CompactNativeRoleDestructive
+public import IntegerMultBounds.Machine.BinaryDescriptorInstallMarkedList
+public import IntegerMultBounds.Machine.RecursiveRowsInstall
 
 /-! Actual installation of generated row/group/erase lengths into a blank
 native role-transfer workspace; the two loop markers are initialized by a paid
 step, and all five installed words are erased after the destructive transfer. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactNativeRoleInstall
 noncomputable section
 open BinaryDescriptorInstallMarkedList

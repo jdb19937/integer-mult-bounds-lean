@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.NativeColumnPhaseFlags
-import IntegerMultBounds.Machine.InjectivePlacement
-import IntegerMultBounds.Machine.SharedPlacementAlphabet
+module
+
+public import IntegerMultBounds.Machine.NativeColumnPhaseFlags
+public import IntegerMultBounds.Machine.InjectivePlacement
+public import IntegerMultBounds.Machine.SharedPlacementAlphabet
 
 /-! Place the runtime column-phase reader on an original caller header and
 two private flags, retaining every other complete tape and head. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.NativeColumnPhaseFlagsPlaced
 noncomputable section
 variable {u t : ℕ}

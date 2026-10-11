@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyNonleafFinalPath
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyNonleafFinalPath
 
 /-! Exact semantic endpoint of the array physically emitted by tag3's actual
 contraction and current-row merger; divisibility comes from the completed full
 framed network and capacity from the real upper Path ledger. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyNonleafFinalSemantics
 noncomputable section
 open CompactGadgetReservationShape (Shape)

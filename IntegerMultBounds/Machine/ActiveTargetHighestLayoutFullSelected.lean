@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.ActiveTargetHighestLayoutCompose
-import IntegerMultBounds.Machine.ActiveTargetHighestLayoutSourceFrames
-import IntegerMultBounds.Machine.ActiveRepairLayoutIdealCoordinates
+module
+
+public import IntegerMultBounds.Machine.ActiveTargetHighestLayoutCompose
+public import IntegerMultBounds.Machine.ActiveTargetHighestLayoutSourceFrames
+public import IntegerMultBounds.Machine.ActiveRepairLayoutIdealCoordinates
 
 /-! Both complete repaired low-plus-high address destinations implement the
 full selected XOR mask, with no remaining conditional low-row specification.
 All compact fields and spectators survive; complete earlier-source retention
 uses the explicit disjointness of its interval from target-high bit zero. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveTargetHighestLayoutFullSelected
 noncomputable section
 open CompactGadgetReservationShape (Shape)

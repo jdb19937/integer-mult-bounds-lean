@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactActualPairSchedule
-import IntegerMultBounds.Machine.ActivePrefixStagePairInverse
+module
+
+public import IntegerMultBounds.Machine.CompactActualPairSchedule
+public import IntegerMultBounds.Machine.ActivePrefixStagePairInverse
 
 /-! Actual multiplier choices supply a complete physical reverse and round
 trip for every literal binary word, including the empty word. No individual
 readiness, allowance, direction or width-case proof is supplied. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactActualPairInverse
 noncomputable section
 open ActivePrefixStageParameters

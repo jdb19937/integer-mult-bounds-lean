@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActiveRepairRecordFormatEndpoint
-import IntegerMultBounds.Machine.RowPaddingConstructedAlphabet
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairRecordFormatEndpoint
+public import IntegerMultBounds.Machine.RowPaddingConstructedAlphabet
 
 /-! Literal larger-alphabet execution of the complete raw record formatter.
 Flags, bits and delimiters retain their original codes; all clocks are paid. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairRecordFormatAlphabet
 noncomputable section
 variable (a : ℕ)

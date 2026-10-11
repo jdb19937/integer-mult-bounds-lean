@@ -1,6 +1,11 @@
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlHeaders
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlHeaders
 
 /-! Exact caller endpoints for the dirty-U controlled physical gather. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixDirtyControlBank
 noncomputable section
 open ActivePrefixDirtyControlData

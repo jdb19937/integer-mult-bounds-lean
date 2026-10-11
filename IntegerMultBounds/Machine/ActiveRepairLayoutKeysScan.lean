@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.ActiveRepairLayoutKeysEarly
-import IntegerMultBounds.Machine.ActiveRepairLayoutKeysLate
-import IntegerMultBounds.Machine.ActiveRepairEarlyOriginalScan
-import IntegerMultBounds.Machine.ActiveRepairLateOriginalScan
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairLayoutKeysEarly
+public import IntegerMultBounds.Machine.ActiveRepairLayoutKeysLate
+public import IntegerMultBounds.Machine.ActiveRepairEarlyOriginalScan
+public import IntegerMultBounds.Machine.ActiveRepairLateOriginalScan
 
 /-! Every genuine growing scan rank generates the concrete global membership
 flag and ideal-after-actual-inverse full destination, for both source cases. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLayoutKeysScanEarly
 noncomputable section
 attribute [local instance] Classical.propDecidable

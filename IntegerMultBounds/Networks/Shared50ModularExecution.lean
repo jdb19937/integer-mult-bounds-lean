@@ -1,11 +1,15 @@
-import IntegerMultBounds.Networks.Shared50ModularSchedule
-import IntegerMultBounds.Networks.Shared50SignedFramed
-import IntegerMultBounds.Networks.Shared50ModularControl
+module
+
+public import IntegerMultBounds.Networks.Shared50ModularSchedule
+public import IntegerMultBounds.Networks.Shared50SignedFramed
+public import IntegerMultBounds.Networks.Shared50ModularControl
 
 /-! The actual signed physical network over finite prime-power addresses.
 Every physical frame edge is implemented by its ordered modular address
 program. Arbitrary stored arrays undergo the routed full shear, with the exact
 certified interchange count. Tape layout and tape running time are separate. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.Shared50ModularExecution
 

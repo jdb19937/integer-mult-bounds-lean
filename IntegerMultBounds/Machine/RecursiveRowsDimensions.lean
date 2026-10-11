@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.RecursiveRowsQuotient
-import IntegerMultBounds.Machine.RecursiveScalingDimensions
-import IntegerMultBounds.Machine.RecursiveInterchangeRows
+module
+
+public import IntegerMultBounds.Machine.RecursiveRowsQuotient
+public import IntegerMultBounds.Machine.RecursiveScalingDimensions
+public import IntegerMultBounds.Machine.RecursiveInterchangeRows
 
 /-! Derive cyclic split/merge counters from six original recursive headers.
 The fixed role divisor is written on tape, divided, and erased; all products
 are produced by actual fixed programs. No derived counter is supplied. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveRowsDimensions
 open RecursiveInterchangeLayout (Descriptor volume)
 variable {q : ℕ} (hq : 2 ≤ q)

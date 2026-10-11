@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.RecursiveScalarTransport
+module
+
+public import IntegerMultBounds.Machine.RecursiveScalarTransport
 
 /-! Fixed finite varying-view scalar schedules on one permanent role bank.
 Every scalar stage physically saves, constructs and restores its descriptor
 view, so successive operations start with the identical original headers. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveScalarSchedule
 noncomputable section
 open Networks

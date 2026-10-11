@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactSpectatorLeafSetup
-import IntegerMultBounds.Machine.CompactSpectatorLeafLoop
-import IntegerMultBounds.Machine.BinaryDescriptorCopyPlaced
+module
+
+public import IntegerMultBounds.Machine.CompactSpectatorLeafSetup
+public import IntegerMultBounds.Machine.CompactSpectatorLeafLoop
+public import IntegerMultBounds.Machine.BinaryDescriptorCopyPlaced
 
 /-! A stopped-call leaf takes original thirteen native descriptors and immutable
 ell/p words at retained ports. Every leaf-private descriptor is physically copied
 or synthesized before the actual full-address native butterfly loop. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactSpectatorLeafOriginal
 noncomputable section
 open CompactGadgetReservationShape (Shape)

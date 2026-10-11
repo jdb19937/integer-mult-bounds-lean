@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.BinaryAddressOffsetRepeatCopy
-import IntegerMultBounds.Machine.Negate
+module
+
+public import IntegerMultBounds.Machine.BinaryAddressOffsetRepeatCopy
+public import IntegerMultBounds.Machine.Negate
 
 /-! Copy one runtime-width row into blank scratch, execute verified two's
 complement from its start state, emit the result, and erase scratch. The
 negation state is physically restarted for every row. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryParityXorOffsetRow
 open CountedCopyReuse (empty binary)
 open TwosComplement (negWord)

@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ButterflyAxisHeadersData
-import IntegerMultBounds.Machine.ButterflyAxisRun
+module
+
+public import IntegerMultBounds.Machine.ButterflyAxisHeadersData
+public import IntegerMultBounds.Machine.ButterflyAxisRun
 
 /-! The synthesized binary words name the exact shape and loop counts consumed
 by the native coefficient machine, including fixed signed guard width. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ButterflyAxisHeadersGeometry
 noncomputable section
 open ButterflyAxisHeadersData

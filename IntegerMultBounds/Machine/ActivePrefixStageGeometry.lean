@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActivePrefixStageParameters
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStageParameters
 
 /-! Physical offsets of the two distinct original slots. Early sources lie
 strictly above the target's retained highest bit; later sources lie wholly
 inside activeAfter. Selected positions are exactly rho+i*K within each
 original f*K-bit slot, including the final position omitted by the low map. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixStageGeometry
 open CompactGadgetReservationShape (Shape)
 open ActivePrefixStageParameters

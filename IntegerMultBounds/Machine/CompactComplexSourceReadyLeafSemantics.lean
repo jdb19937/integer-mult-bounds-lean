@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyLeaf
-import IntegerMultBounds.Machine.CompactSpectatorInheritedGrid
-import IntegerMultBounds.Machine.CompactComplexDenominatorPolicy
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyLeaf
+public import IntegerMultBounds.Machine.CompactSpectatorInheritedGrid
+public import IntegerMultBounds.Machine.CompactComplexDenominatorPolicy
 
 /-! The literal source-ready leaf result has its true normalized return grid.
 The actual dependency Path derives signed guards; the physical output widths
 remain the retained codec widths. The leaf return gap is exactly zero. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyLeafSemantics
 noncomputable section
 open CompactGadgetReservationShape (Shape)

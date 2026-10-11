@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActiveRepairLateFieldsPlaced
-import IntegerMultBounds.Machine.CountedLateRepairKeyValue
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairLateFieldsPlaced
+public import IntegerMultBounds.Machine.CountedLateRepairKeyValue
 
 /-! Identify the actual later guard and recovered destination with rankFlag
 and rankKey using only genuine extracted lengths. The concatenated local
 word is mathematical notation and is never supplied to the physical machine. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLateFieldsValue
 noncomputable section
 open IntegerMultBounds.Compact

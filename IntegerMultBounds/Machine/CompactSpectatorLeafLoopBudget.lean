@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactSpectatorLeafAxisBudget
-import IntegerMultBounds.Machine.CompactSpectatorLeafLoop
-import IntegerMultBounds.Machine.CompactSpectatorInverseLeafLoop
+module
+
+public import IntegerMultBounds.Machine.CompactSpectatorLeafAxisBudget
+public import IntegerMultBounds.Machine.CompactSpectatorLeafLoop
+public import IntegerMultBounds.Machine.CompactSpectatorInverseLeafLoop
 
 /-! The real counted sparse interval and its final eleven-descriptor erasure
 fit native serialized volume times the actual executed visit count. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactSpectatorLeafLoopBudget
 noncomputable section
 open CompactGadgetReservationShape (Shape)

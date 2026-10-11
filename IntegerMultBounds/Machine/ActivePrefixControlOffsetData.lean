@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.ActivePrefixSelectedOffsetData
-import IntegerMultBounds.Machine.BinaryVaryingControlOffsetGather
-import IntegerMultBounds.Machine.BinaryVaryingControlOffsetData
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixSelectedOffsetData
+public import IntegerMultBounds.Machine.BinaryVaryingControlOffsetGather
+public import IntegerMultBounds.Machine.BinaryVaryingControlOffsetData
 
 /-! Exact control-mask offset stream from physically projected source bits.
 The auxiliary width-n prefix projection is only a physical scan clock; every
 emitted bit depends on the current address's selected source control. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixControlOffsetData
 
 def offsets (W startT startX q b rho n f : ℕ) (hT : startT+n≤W) (hX : startX+f*q≤W)

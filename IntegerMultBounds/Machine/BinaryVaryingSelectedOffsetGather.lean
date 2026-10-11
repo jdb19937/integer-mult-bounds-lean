@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CountedPackedShapeHeaders
-import IntegerMultBounds.Machine.CountedGatherOriginalRun
+module
+
+public import IntegerMultBounds.Machine.CountedPackedShapeHeaders
+public import IntegerMultBounds.Machine.CountedGatherOriginalRun
 
 /-! Physically gather selected offsets from varying controls. Unlike the
 fixed-source table generator, each source digit has its own literal control
 bit. Only q/b/digit-count headers are supplied; derived headers and clocks are
 constructed and erased. Source/control stream generation remains separate. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryVaryingSelectedOffsetGather
 noncomputable section
 variable {a : ℕ}

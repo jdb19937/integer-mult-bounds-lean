@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActiveRepairRankHeadersCommands
-import IntegerMultBounds.Machine.CompactGadgetReservationHeadersPowerRound
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairRankHeadersCommands
+public import IntegerMultBounds.Machine.CompactGadgetReservationHeadersPowerRound
 
 /-! Paid physical multiplication and rounding extend the fixed stage-header
 arithmetic caller without changing its shared clean private workspace. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixStageHeadersOps
 noncomputable section
 open ActiveRepairRankHeadersCommands

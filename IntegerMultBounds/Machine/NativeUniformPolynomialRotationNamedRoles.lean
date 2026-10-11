@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.NativeUniformPolynomialRotationRoles
-import IntegerMultBounds.Machine.NativeEndpointNamedPorts
-import IntegerMultBounds.Machine.NativeEndpointCharacterLeafPlacement
+module
+
+public import IntegerMultBounds.Machine.NativeUniformPolynomialRotationRoles
+public import IntegerMultBounds.Machine.NativeEndpointNamedPorts
+public import IntegerMultBounds.Machine.NativeEndpointCharacterLeafPlacement
 
 /-! Actual named sink correction: runtime-column rotation visits every Y role,
 fixed negation visits every X role. The first67 borrowed leaf tapes return
 blank; all remaining leaf and scalar tapes and original descriptors are frame. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.NativeUniformPolynomialRotationNamedRoles
 noncomputable section
 open CompactGadgetReservationShape (Shape)

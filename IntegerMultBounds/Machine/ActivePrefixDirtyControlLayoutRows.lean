@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlLayoutFields
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlCorrectionData
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlNegativeData
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlPureSemantics
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlLayoutFields
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlCorrectionData
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlNegativeData
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlPureSemantics
 
 /-! Every generated early-load row is evaluated at the current compact U
 word and current target/T coordinates of the unchanged physical layout. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixDirtyControlLayoutRows
 open CompactGadgetReservationShape (Shape)
 open ActivePrefixLayoutShapes hiding targetShape

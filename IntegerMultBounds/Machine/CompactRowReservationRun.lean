@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactRowReservationData
+module
+
+public import IntegerMultBounds.Machine.CompactRowReservationData
 
 /-! Actual whole-row padding followed by cyclic role splitting. Only original
 R/L and binary records are runtime inputs; c is fixed control. Both generated
 c/rounded headers and every private workspace finish blank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactRowReservationRun
 noncomputable section
 variable {a c : ℕ}

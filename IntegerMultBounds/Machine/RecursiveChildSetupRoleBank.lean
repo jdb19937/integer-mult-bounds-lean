@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.RecursiveChildCallSetup
-import IntegerMultBounds.Machine.RecursiveShiftRoleBank
+module
+
+public import IntegerMultBounds.Machine.RecursiveChildCallSetup
+public import IntegerMultBounds.Machine.RecursiveShiftRoleBank
 
 /-! Physical child header/PC setup on the permanent role bank. The two stacks
 occupy a fixed suffix of the arbitrary auxiliary bank; every role, scratch tape
 and other auxiliary tape is preserved, and private workspace returns blank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveChildSetupRoleBank
 noncomputable section
 open Networks

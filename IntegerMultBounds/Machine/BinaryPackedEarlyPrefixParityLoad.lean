@@ -1,12 +1,17 @@
-import IntegerMultBounds.Machine.BinaryPackedOffsetOriginalPlaced
-import IntegerMultBounds.Machine.BinaryPackedEarlyPrefixPlaced
-import IntegerMultBounds.Machine.BinaryPackedEarlyPrefixAction
-import IntegerMultBounds.Machine.WordBankCleanup
+module
+
+public import IntegerMultBounds.Machine.BinaryPackedOffsetOriginalPlaced
+public import IntegerMultBounds.Machine.BinaryPackedEarlyPrefixPlaced
+public import IntegerMultBounds.Machine.BinaryPackedEarlyPrefixAction
+public import IntegerMultBounds.Machine.WordBankCleanup
 
 /-! Physical source-prefix parity offset production, packed-field action and offset erasure
 on one caller bank. The four action shape headers and five original generator
 headers and retained control word are literal retained inputs; no offset word or action oracle is supplied.
 Upstream reservation geometry construction remains a separate stage. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryPackedEarlyPrefixParityLoad
 noncomputable section
 open Networks.Shared50ModularControl (prime)

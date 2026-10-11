@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActivePrefixStageSingletonDispatch
-import IntegerMultBounds.Machine.ActivePrefixStageSingletonBudget
-import IntegerMultBounds.Machine.ActivePrefixStageDispatchBudget
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStageSingletonDispatch
+public import IntegerMultBounds.Machine.ActivePrefixStageSingletonBudget
+public import IntegerMultBounds.Machine.ActivePrefixStageDispatchBudget
 
 /-! The dynamic singleton direction test and its paid cleanup add only linear
 work to the complete singleton stage. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixStageSingletonDispatchBudget
 open CompactGadgetReservationShape (Shape)
 open ActivePrefixStageSingletonData (Inputs)

@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyScalarGeometryLifecycle
-import IntegerMultBounds.Machine.CompactComplexSourceReadyActualTable
-import IntegerMultBounds.Machine.CompactComplexScalarGroupProgress
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyScalarGeometryLifecycle
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyActualTable
+public import IntegerMultBounds.Machine.CompactComplexScalarGroupProgress
 
 /-! Genuine original grouped scalar events on the full source-ready fixed
 node table on plain original geometry and literal role arrays, retaining the
 next scalar-prefix grid and true live ledger. Payload one is permitted; the
 physical raw descriptor is unchanged. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyScalarGeometryEventPath
 noncomputable section
 open CompactComplexScalarIntegerRows (GroupIndex gates guardBits)
@@ -29,7 +34,7 @@ attribute [local irreducible] Networks.ComplexRank25.program CompactComplexScala
   Networks.ComplexFramedExecution.rows CompactComplexRolePhaseSite.roleCount
   CompactComplexCompletedLiveLower.schedule
 
-private theorem liveProof : 7<10+s := by omega
+theorem liveProof : 7<10+s := by omega
 
 /-- Literal emitted role words and the live-only storage update supply the
 source and blank-count premises of the following actual scalar group. -/

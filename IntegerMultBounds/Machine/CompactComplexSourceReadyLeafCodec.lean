@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyLeafPhase
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyLeafPhase
 
 /-! The source-ready leaf physically synthesizes its polynomial codec payload
 and baseline precision from retained raw metadata, then restores both. Numeric
 placement preserves the actual source, vacant roles and arbitrary controller. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyLeafCodec
 noncomputable section
 open CompactGadgetReservationShape (Shape)
@@ -15,7 +20,7 @@ open ActiveRepairRankHeadersCommands (State bank)
 variable {s c : ℕ}
 
 def slot (i : Fin 43) : Fin (publicTapes s c) := Fin.castAdd 7 (numeric i)
-private theorem slot_injective : Function.Injective (slot (s:=s) (c:=c)) := by
+theorem slot_injective : Function.Injective (slot (s:=s) (c:=c)) := by
   intro i j h
   apply Fin.ext
   have hv := congrArg Fin.val h

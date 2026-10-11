@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.RadixHighBlockJoinInitialize
+module
+
+public import IntegerMultBounds.Machine.RadixHighBlockJoinInitialize
 
 /-! Paid erasure of working high-block descriptors, preserving the source,
 original shape descriptors, rho, and the complete outer-loop clock. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RadixHighBlockJoinCleanup
 noncomputable section
 open RadixHighBlockJoinSetup

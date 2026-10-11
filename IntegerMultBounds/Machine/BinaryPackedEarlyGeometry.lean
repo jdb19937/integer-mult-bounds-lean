@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.BinaryPackedEarlyLayout
-import IntegerMultBounds.Machine.BinaryPackedEarlyPrefixAction
+module
+
+public import IntegerMultBounds.Machine.BinaryPackedEarlyLayout
+public import IntegerMultBounds.Machine.BinaryPackedEarlyPrefixAction
 
 /-! Literal array coordinates shared by all four packed early translations.
 The two rectangle decompositions change only types: dirty back bits and every
 unused front/middle/payload bit have the same serialized ordinal throughout. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryPackedEarlyGeometry
 open CompactGadgetReservationShape
 open BinaryPackedEarlyLayout

@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CountedControlWordRepeat
-import IntegerMultBounds.Machine.Branch
+module
+
+public import IntegerMultBounds.Machine.CountedControlWordRepeat
+public import IntegerMultBounds.Machine.Branch
 
 /-! Repeat a physically present generated offset word for an arbitrary original
 row count. The empty-source branch avoids iterating over zero-length rows;
 no power-of-two condition is imposed on the runtime repetition descriptor. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixOffsetRepeatRun
 noncomputable section
 open BinaryAddressOffsetRepeatData (copies)

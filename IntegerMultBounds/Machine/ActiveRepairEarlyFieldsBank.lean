@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.CountedRankSplitEndpoint
-import IntegerMultBounds.Machine.CountedPackedInverse
-import IntegerMultBounds.Machine.CountedGuardOriginal
-import IntegerMultBounds.Machine.CountedIdealToggle
+module
+
+public import IntegerMultBounds.Machine.CountedRankSplitEndpoint
+public import IntegerMultBounds.Machine.CountedPackedInverse
+public import IntegerMultBounds.Machine.CountedGuardOriginal
+public import IntegerMultBounds.Machine.CountedIdealToggle
 
 /-! Fixed extracted-field repair bank. Original V/T/current source controls,
 q/b/n and the full scan counter are retained. Inverse, guard and toggle share
 blank workspace; no prepared key sentinel or local rank is required. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairEarlyFieldsBank
 noncomputable section
 open SharedPlacementAlphabet

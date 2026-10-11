@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.RecursiveRowPadding
+module
+
+public import IntegerMultBounds.Machine.RecursiveRowPadding
 
 /-! Exact grouped words for the physical row padding and cropping streams.
 Each prefix group contains its original row span followed by zero padding. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RowPaddingWord
 open RecursiveInterchangeRows (pack)
 variable {A R L : ℕ} {α : Type*}

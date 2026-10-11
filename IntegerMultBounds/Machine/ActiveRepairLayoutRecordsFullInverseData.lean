@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsFullInvolution
-import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsFullEarlyPlaced
-import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsFullLatePlaced
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsFullInvolution
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsFullEarlyPlaced
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsFullLatePlaced
 
 /-! Actual complete low/high array transformations square to the identity,
 on every original address including all spectator and payload coordinates. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLayoutRecordsFullInverseData
 noncomputable section
 open CompactGadgetReservationShape (Shape)

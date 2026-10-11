@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.FlatCoordinateLayout
-import IntegerMultBounds.Machine.FlatAffineScalingArray
+module
+
+public import IntegerMultBounds.Machine.FlatCoordinateLayout
+public import IntegerMultBounds.Machine.FlatAffineScalingArray
 
 /-! Actual initialized affine scaling on the common ordered-coordinate layout.
 The returned source is a canonical array with the common physical volume. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.FlatCoordinateScaling
 open Networks
 open ActualAffineScaling (modulus)

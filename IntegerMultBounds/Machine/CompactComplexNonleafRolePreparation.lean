@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactComplexNonleafRoleChildBank
+module
+
+public import IntegerMultBounds.Machine.CompactComplexNonleafRoleChildBank
 
 /-! Shared child entry computes only its genuine row quotient. The stopped
 branch consumes that source directly; only a true nonleaf branch splits the
 already-quotiented child rows. There is no unconditional pre-guard split. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexNonleafRolePreparation
 noncomputable section
 open CompactGadgetReservationShape (Shape)

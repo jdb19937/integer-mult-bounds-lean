@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ArbitraryWidthHighMovementPlacement
-import IntegerMultBounds.Machine.FixedHeaderSparseBankCopy
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthHighMovementPlacement
+public import IntegerMultBounds.Machine.FixedHeaderSparseBankCopy
 
 /-! Literal five-header sparse bank for the physical join/separate engine.
 Its outer clock is a marked canonical zero, not a blank tape. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthExecutionPrivateHeadersMovement
 noncomputable section
 variable {q a : ℕ}

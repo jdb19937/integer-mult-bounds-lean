@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexActualBasisCoordinates
-import IntegerMultBounds.Machine.ActivePrefixStageUnselectedFrame
-import IntegerMultBounds.Machine.CompactComplexEndpointCoordinates
+module
+
+public import IntegerMultBounds.Machine.CompactComplexActualBasisCoordinates
+public import IntegerMultBounds.Machine.ActivePrefixStageUnselectedFrame
+public import IntegerMultBounds.Machine.CompactComplexEndpointCoordinates
 
 /-! Actual native row destinations act on the original recursive node
 coordinates and preserve every surrounding global address spectator. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexActualBasisSlice
 noncomputable section
 open CompactGadgetReservationShape (Shape)

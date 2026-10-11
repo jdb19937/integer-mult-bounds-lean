@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActivePrefixOffsetHeadersData
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixOffsetHeadersData
 
 /-! One power and four actual dimension products synthesize all original
 active-prefix offset descriptors in one reusable fifteen-tape workspace. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixOffsetHeadersRun
 noncomputable section
 open ActivePrefixOffsetHeadersData

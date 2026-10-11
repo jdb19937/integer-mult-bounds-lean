@@ -1,4 +1,8 @@
-import IntegerMultBounds.Machine.NativeEndpointCharacterOriginalBudget
+module
+
+public import IntegerMultBounds.Machine.NativeEndpointCharacterOriginalBudget
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.NativeEndpointCharacterCanonical
 noncomputable section

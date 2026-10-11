@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.CompactGadgetReservationHeadersCore
+module
+
+public import IntegerMultBounds.Machine.CompactGadgetReservationHeadersCore
 
 /-! Physical binary power and enclosing-multiple constructors, with the same
 shared fifteen private tapes as the immutable product/subtraction stages. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactGadgetReservationHeadersPowerRound
 noncomputable section
 open CompactGadgetReservationHeadersCore

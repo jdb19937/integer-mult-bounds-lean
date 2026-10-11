@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.NativeEndpointCharacterAddress
-import IntegerMultBounds.Machine.NativeEndpointCharacterTerminal
-import IntegerMultBounds.Machine.CompactComplexNonleafChildAddress
-import IntegerMultBounds.Machine.NativePolynomialStageShape
+module
+
+public import IntegerMultBounds.Machine.NativeEndpointCharacterAddress
+public import IntegerMultBounds.Machine.NativeEndpointCharacterTerminal
+public import IntegerMultBounds.Machine.CompactComplexNonleafChildAddress
+public import IntegerMultBounds.Machine.NativePolynomialStageShape
 
 /-! The endpoint character's serialized bit coordinates are the original
 recursive node coordinates. All row and polynomial positions are retained;
 the native codec changes only the trailing payload size. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexEndpointCoordinates
 noncomputable section
 open CompactGadgetReservationShape (Shape)

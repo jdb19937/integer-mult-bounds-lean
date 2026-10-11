@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.UnitPhaseRecordRestore
-import IntegerMultBounds.Machine.CountedLoopHeaderClean
+module
+
+public import IntegerMultBounds.Machine.UnitPhaseRecordRestore
+public import IntegerMultBounds.Machine.CountedLoopHeaderClean
 
 /-! Complete counted coefficient stream phase loop. The count is physically
 copied from original node header4; every iteration advances the live address
 counter and actual streams and restores all phase workspace. Generated loop
 controls are physically erased at the endpoint. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.UnitPhaseStreamLoop
 noncomputable section
 open CompactGadgetReservationShape (Shape)

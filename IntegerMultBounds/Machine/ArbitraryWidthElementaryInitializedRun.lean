@@ -1,6 +1,11 @@
-import IntegerMultBounds.Machine.ArbitraryWidthElementaryInitialize
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthElementaryInitialize
 
 /-! Actual fallback from blank private work, including all header copies. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthElementaryInitializedRun
 noncomputable section
 open Networks

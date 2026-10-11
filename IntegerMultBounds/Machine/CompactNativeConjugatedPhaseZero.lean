@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.CompactNativeConjugatedPhase
+module
+
+public import IntegerMultBounds.Machine.CompactNativeConjugatedPhase
 
 /-! Zero-dimensional edges execute the same physical conjugation table.
 The idle phase is paid, and the actual reverse basis restores every digit. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactNativeConjugatedPhaseZero
 noncomputable section
 open CompactGadgetReservationShape (Shape)

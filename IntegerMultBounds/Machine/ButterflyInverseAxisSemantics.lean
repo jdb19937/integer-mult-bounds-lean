@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ButterflyInverseAxisSchedule
+module
+
+public import IntegerMultBounds.Machine.ButterflyInverseAxisSchedule
 
 /-! The physically exchanged inverse merge realizes the inverse Walsh kernel.
 All arithmetic stages retain the same grid and signed-width guard; the counted
 inverse interval realizes the sign-negated list in the established semantics. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ButterflyInverseAxisSemantics
 noncomputable section
 open ButterflyAxisArray (Array Width Size)

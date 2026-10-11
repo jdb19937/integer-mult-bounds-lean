@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ArbitraryWidthLevelLifecycle
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthLevelLifecycle
 
 /-! Install the digit dispatcher's remaining-width and offset controls from
 retained parent headers and blank private storage. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthPieceSetup
 noncomputable section
 open Networks

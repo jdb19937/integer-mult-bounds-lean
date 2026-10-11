@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CountedLateTapeRepairDensity
-import IntegerMultBounds.Machine.CountedLateTapeRepairRun
+module
+
+public import IntegerMultBounds.Machine.CountedLateTapeRepairDensity
+public import IntegerMultBounds.Machine.CountedLateTapeRepairRun
 
 /-! Complete reusable fixed-control repair endpoint: physical metadata setup,
 keyed scan, radix sort, reinsertion, and physical removal of all stage work. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedLateTapeRepairEndpoint
 noncomputable section
 open SharedPlacementAlphabet

@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActivePrefixStageRuntimeData
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStageRuntimeData
 
 /-! One fixed tape bank and finite transition table for every positive stage
 width. The original width and source/target slots are read physically. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixStageRuntimeProgram
 noncomputable section
 open CompactGadgetReservationShape (Shape)

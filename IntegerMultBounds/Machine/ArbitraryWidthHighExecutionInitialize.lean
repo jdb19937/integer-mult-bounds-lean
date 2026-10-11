@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.ArbitraryWidthExecutionPrivateHeadersRoot
-import IntegerMultBounds.Machine.ArbitraryWidthExecutionPrivateHeadersPadding
-import IntegerMultBounds.Machine.ArbitraryWidthExecutionPrivateHeadersMovement
-import IntegerMultBounds.Machine.ArbitraryWidthHighRun
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthExecutionPrivateHeadersRoot
+public import IntegerMultBounds.Machine.ArbitraryWidthExecutionPrivateHeadersPadding
+public import IntegerMultBounds.Machine.ArbitraryWidthExecutionPrivateHeadersMovement
+public import IntegerMultBounds.Machine.ArbitraryWidthHighRun
 
 /-! Physical installation of all high-branch private execution headers from
 retained caller tapes, including the movement engine's canonical-zero clock. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthHighExecutionInitialize
 noncomputable section
 open Networks

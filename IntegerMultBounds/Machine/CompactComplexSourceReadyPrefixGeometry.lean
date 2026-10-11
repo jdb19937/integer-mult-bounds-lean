@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyPrefixReadiness
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyPrefixReadiness
 
 /-! Executed scalar polynomial rows are the genuine row-major arrays used by
 the next child entry. Cardinality casts retain literal native words, coefficient
 widths and the exact scalar-prefix grid; no physical execution is assumed. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyPrefixGeometry
 noncomputable section
 open ButterflyStreamData (Coefficient)

@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ButterflyAxisRun
+module
+
+public import IntegerMultBounds.Machine.ButterflyAxisRun
 
 /-! Only the sole common stream and eight original runtime headers are public
 ports of the complete axis machine. Every other tape is blank at both endpoints,
 so the whole routine can be lifted onto one shared counted-schedule caller. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ButterflyAxisPorts
 noncomputable section
 open ButterflyAxisBank

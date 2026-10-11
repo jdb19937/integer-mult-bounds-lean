@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixStageDispatchRun
-import IntegerMultBounds.Machine.ActivePrefixStageFullBudget
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStageDispatchRun
+public import IntegerMultBounds.Machine.ActivePrefixStageFullBudget
 
 /-! Reading source order and clearing its flag preserve the certified compact
 exponent. Only the actually selected original-input stage is charged. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixStageDispatchBudget
 open CompactGadgetReservationShape (Shape)
 open ActivePrefixStageFullData (Inputs)

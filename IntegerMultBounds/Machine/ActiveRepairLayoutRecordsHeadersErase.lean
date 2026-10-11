@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsHeadersCount
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsHeadersCount
 
 /-! Actual post-use erasure of all five generated repair/format descriptors.
 The fourteen original headers survive, and every auxiliary tape is blank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLayoutRecordsHeadersErase
 noncomputable section
 open CompactGadgetReservationShape (Shape)

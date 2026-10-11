@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactNativeRoleStageCopy
+module
+
+public import IntegerMultBounds.Machine.CompactNativeRoleStageCopy
 
 /-! Paid scalar-to-original13 preparation. The complementary caller bank is
 preserved literally, including the genuine native source at caller tape43.
 Six retained runtime controller ports occupy the end of that bank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactNativeRoleScalarProducer
 noncomputable section
 open ActiveRepairRankHeadersCommands (State bank caller)

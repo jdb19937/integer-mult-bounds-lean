@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.Shared50RecursivePieceExecution
-import IntegerMultBounds.Machine.Shared50RecursiveNodePieces
+module
+
+public import IntegerMultBounds.Machine.Shared50RecursivePieceExecution
+public import IntegerMultBounds.Machine.Shared50RecursiveNodePieces
 
 /-! A recursive node's real split, literal binary schedule, merge, ancestor
 header restoration and decoded return execute on one fixed cyclic graph.
 Only recursive child graph traces remain premises. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.Shared50RecursiveNodeExecution
 noncomputable section
 open Networks

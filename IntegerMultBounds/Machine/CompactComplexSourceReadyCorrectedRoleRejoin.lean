@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactNativeRoleRecombine
-import IntegerMultBounds.Machine.CompactComplexSourceReadyNonleafOrientedFinal
-import IntegerMultBounds.Machine.CompactComplexSourceReadyPrefixGeometry
+module
+
+public import IntegerMultBounds.Machine.CompactNativeRoleRecombine
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyNonleafOrientedFinal
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyPrefixGeometry
 
 /-! Corrected actual role families directly supply current-node contraction
 and row-major rejoining. The common whole array, widths and physical role words
 are derived internally; exact contraction retains the original Path reserve. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedRoleRejoin
 noncomputable section
 open CompactGadgetReservationShape (Shape)

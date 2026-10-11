@@ -1,4 +1,6 @@
-import IntegerMultBounds.Machine.BinaryRadixEqualShared
+module
+
+public import IntegerMultBounds.Machine.BinaryRadixEqualShared
 
 /-! Physical interchange of equally sized dirty address fields. The prefix,
 intervening coordinates and complete suffix records are retained. Both calls
@@ -6,6 +8,9 @@ of the roundtrip run the fixed binary interchange machine, including header
 copies, padding and cleanup; no payload permutation is a free tape reindexing.
 The conjugation lemma is the data interface for a later swap/load/swap gadget.
 -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryPackedFieldSwap
 noncomputable section
 open Networks.Shared50ModularControl (prime)

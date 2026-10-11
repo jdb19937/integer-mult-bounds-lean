@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlPackedEarly
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlSourcePacked
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlPackedEarly
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlSourcePacked
 
 /-! The actual prepared later coordinate action is the packed late word
 algorithm on every address, preserving the original source and spectators. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixDirtyControlPackedLate
 noncomputable section
 open CompactGadgetReservationShape (Shape)

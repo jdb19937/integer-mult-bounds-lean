@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActivePrefixStageRuntimeInverseRun
-import IntegerMultBounds.Machine.ActivePrefixStageRuntimeBudget
-import IntegerMultBounds.Machine.ActivePrefixStageInverseBudget
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStageRuntimeInverseRun
+public import IntegerMultBounds.Machine.ActivePrefixStageRuntimeBudget
+public import IntegerMultBounds.Machine.ActivePrefixStageInverseBudget
 
 /-! Complete width-and-direction round trips pay both physical runs and the
 join while retaining the certified exponent uniformly across all widths. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixStageRuntimeInverseBudget
 open CompactGadgetReservationShape (Shape)
 open ActivePrefixStageFullData (Inputs)

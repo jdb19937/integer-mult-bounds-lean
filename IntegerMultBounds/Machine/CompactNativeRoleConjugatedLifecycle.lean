@@ -1,12 +1,17 @@
-import IntegerMultBounds.Machine.CompactNativeRoleConjugatedCaller
-import IntegerMultBounds.Machine.CompactNativeRoleConjugatedOutput
-import IntegerMultBounds.Machine.CompactNativeRoleGuardedChildCaller
-import IntegerMultBounds.Machine.NativePolynomialStageHeaderBudget
+module
+
+public import IntegerMultBounds.Machine.CompactNativeRoleConjugatedCaller
+public import IntegerMultBounds.Machine.CompactNativeRoleConjugatedOutput
+public import IntegerMultBounds.Machine.CompactNativeRoleGuardedChildCaller
+public import IntegerMultBounds.Machine.NativePolynomialStageHeaderBudget
 
 /-! Original numeric43 role headers physically synthesize the native codec,
 execute a genuine conjugated phase, and restore all original metadata. The
 prime-alphabet output is exactly a mapped six-symbol role bank, so actual
 lifted binary restoration executes without a conversion or phase callback. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactNativeRoleConjugatedLifecycle
 noncomputable section
 open CompactGadgetReservationShape (Shape)

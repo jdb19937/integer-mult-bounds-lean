@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.RecursiveShiftRoleBank
-import IntegerMultBounds.Machine.RecursiveInterchangeScalingClean
+module
+
+public import IntegerMultBounds.Machine.RecursiveShiftRoleBank
+public import IntegerMultBounds.Machine.RecursiveInterchangeScalingClean
 
 /-! Concrete H/D scaling on exactly the shift adapter's permanent role/header
 bank. The standalone machine depends only on the fixed coefficient, target,
 and physical wire. Supplied runtime headers are read and preserved, not assumed
 regrouped or synthesized for free. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveScalingRoleBank
 noncomputable section
 open Networks

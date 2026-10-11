@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixEarlySequenceOriginalRun
-import IntegerMultBounds.Machine.ActivePrefixEarlySequenceBudget
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixEarlySequenceOriginalRun
+public import IntegerMultBounds.Machine.ActivePrefixEarlySequenceBudget
 
 /-! The original-input four-load machine retains the certified width exponent
 while paying both header constructions, both cleanups and all four joins. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixEarlySequenceOriginalBudget
 open ActivePrefixEarlySequenceOriginalRun
 open CompactGadgetReservationShape

@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactGadgetReservationHeadersPowerRound
-import IntegerMultBounds.Machine.FixedBasePowerUntilRange
+module
+
+public import IntegerMultBounds.Machine.CompactGadgetReservationHeadersPowerRound
+public import IntegerMultBounds.Machine.FixedBasePowerUntilRange
 
 /-! Fixed-base logarithm and power constructors on retained runtime binary
 headers. The least-power witness is actually erased after extracting its
 exponent. All routines share the existing fifteen private tapes. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactGlobalRowHeaderPrimitives
 noncomputable section
 open CompactGadgetReservationHeadersCore

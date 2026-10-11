@@ -1,6 +1,11 @@
-import IntegerMultBounds.Machine.CountedRepairKeyAppend
+module
+
+public import IntegerMultBounds.Machine.CountedRepairKeyAppend
 
 /-! The physical conditional key writer placed in the thirty-tape repair bank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedRepairKeyWrite
 noncomputable section
 open SharedPlacementAlphabet

@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactComplexScalarRolePorts
-import IntegerMultBounds.Machine.CompactComplexScalarSequenceSemantics
-import IntegerMultBounds.Machine.CompactComplexScalarPathGuard
+module
+
+public import IntegerMultBounds.Machine.CompactComplexScalarRolePorts
+public import IntegerMultBounds.Machine.CompactComplexScalarSequenceSemantics
+public import IntegerMultBounds.Machine.CompactComplexScalarPathGuard
 
 /-! Actual permanent-role scalar execution with its original complex circuit
 postcondition. The dependency Path and retained widths derive every intermediate
 signed guard; a single finite schedule reserve suffices for the entire block. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexScalarRoleSemantics
 noncomputable section
 open CompactComplexScalarRowBlock (wireCount)

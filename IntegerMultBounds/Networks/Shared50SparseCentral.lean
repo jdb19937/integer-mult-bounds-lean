@@ -1,10 +1,14 @@
-import IntegerMultBounds.Networks.Shared50Invocation
-import IntegerMultBounds.Networks.SparseCircuit
-import Mathlib.Data.Finset.Sort
+module
+
+public import IntegerMultBounds.Networks.Shared50Invocation
+public import IntegerMultBounds.Networks.SparseCircuit
+public import Mathlib.Data.Finset.Sort
 
 /-! Sparse central gather/scatter for the optimized invocation. Each emitted
 instruction has one source and coefficient one; each triple contributes exactly
 three instructions, and execution equals the existing central matrices. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.Shared50SparseCentral
 

@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.BinaryParityXorOffsetPrepare
-import IntegerMultBounds.Machine.BinaryParityXorOffsetValue
+module
+
+public import IntegerMultBounds.Machine.BinaryParityXorOffsetPrepare
+public import IntegerMultBounds.Machine.BinaryParityXorOffsetValue
 
 /-! Physically construct the row width, negate each independently reset
 row, then erase the full address table, repeated controls and every generated
 descriptor. Only original q/b/n, original controls, and negative parity-XOR output remain. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryParityXorOffsetFinish
 open SharedPlacementAlphabet (setTape)
 open BinaryParityXorOffsetData

@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixStageHeadersPlaced
-import IntegerMultBounds.Machine.ActivePrefixEarlySequenceOriginalInputs
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStageHeadersPlaced
+public import IntegerMultBounds.Machine.ActivePrefixEarlySequenceOriginalInputs
 
 /-! Physically generated separate descriptor words are the exact caller words
 accepted by the existing complete early and later stages. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixStageHeadersEndpoint
 noncomputable section
 open CompactGadgetReservationShape (Shape)

@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.CountedRepairKeyAppend
+module
+
+public import IntegerMultBounds.Machine.CountedRepairKeyAppend
 
 /-! Literal concatenation of the two recovered dirty words by actual scans.
 Both sources and the result are returned to their original zero heads. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedLateRepairConcat
 noncomputable section
 open CountedRepairKeyAppendMoves

@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlSequenceGeometry
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlLayoutRows
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlGlobalSwap
-import IntegerMultBounds.Machine.ActivePrefixLayoutTarget
-import IntegerMultBounds.Machine.BinaryPackedEarlyData
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlSequenceGeometry
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlLayoutRows
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlGlobalSwap
+public import IntegerMultBounds.Machine.ActivePrefixLayoutTarget
+public import IntegerMultBounds.Machine.BinaryPackedEarlyData
 
 /-! Physical target selected/correction loads at every original address,
 using the current compact U parity controls. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixDirtyControlGlobalTarget
 noncomputable section
 open CompactGadgetReservationShape (Shape)

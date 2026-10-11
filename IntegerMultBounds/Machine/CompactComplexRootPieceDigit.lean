@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexRootPieceClock
-import IntegerMultBounds.Machine.CompactComplexControllerTapeAssoc
+module
+
+public import IntegerMultBounds.Machine.CompactComplexRootPieceClock
+public import IntegerMultBounds.Machine.CompactComplexControllerTapeAssoc
 
 /-! One fixed original-queue digit body: read the physical field, invoke the
 piece clock, erase its canonical zero, and generate the next exponent/width.
 The full appended native/controller bank is separate from all forty-four controller tapes. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexRootPieceDigit
 noncomputable section
 open ActiveRepairRankHeadersCommands (State bank put)

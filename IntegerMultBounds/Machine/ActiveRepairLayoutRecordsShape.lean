@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActiveRepairLayoutPermutation
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairLayoutPermutation
 
 /-! Separate the actual physical record width from the payload-one address
 space used by repair keys. No physical shape or reservation is changed. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLayoutRecordsShape
 noncomputable section
 open CompactGadgetReservationShape CompactActiveTargetLayout

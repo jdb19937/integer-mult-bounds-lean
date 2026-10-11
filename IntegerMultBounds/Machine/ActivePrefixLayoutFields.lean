@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActiveRepairRankFieldsGeometry
-import IntegerMultBounds.Machine.ActivePrefixSelectedOffsetData
-import IntegerMultBounds.Machine.BinaryAddressOffsetRepeatValue
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairRankFieldsGeometry
+public import IntegerMultBounds.Machine.ActivePrefixSelectedOffsetData
+public import IntegerMultBounds.Machine.BinaryAddressOffsetRepeatValue
 
 /-! Low prefix ranks retain every field wholly inside the generated prefix.
 The outer row count is unrestricted; repeated tables use rank modulo 2^W. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixLayoutFields
 open BinaryAddressTableData (row)
 open RecursiveInterchangeRows (pack pack_val)

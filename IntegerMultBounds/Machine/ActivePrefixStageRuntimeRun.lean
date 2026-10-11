@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActivePrefixStageRuntimeProgram
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStageRuntimeProgram
 
 /-! Physical execution of the complete runtime-selected stage. The two branch
 proofs justify the same fixed program; no branch is supplied to its input. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixStageRuntimeRun
 noncomputable section
 open CompactGadgetReservationShape (Shape)

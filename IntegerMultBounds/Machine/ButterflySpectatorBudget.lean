@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ButterflyInverseSpectatorOriginal
-import IntegerMultBounds.Machine.ButterflyAxisHeadersBudget
+module
+
+public import IntegerMultBounds.Machine.ButterflyInverseSpectatorOriginal
+public import IntegerMultBounds.Machine.ButterflyAxisHeadersBudget
 
 /-! The actual spectator machine is linear in its entire serialized native
 word, uniformly in the selected original coordinate. All synthesized headers,
 physical copies, arithmetic, routing and erasure are included. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ButterflySpectatorBudget
 noncomputable section
 open ButterflyAxisHeadersData

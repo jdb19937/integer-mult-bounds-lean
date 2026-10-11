@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.ButterflyAxisPrepared
-import IntegerMultBounds.Machine.ButterflyAxisHeadersCleanup
+module
+
+public import IntegerMultBounds.Machine.ButterflyAxisPrepared
+public import IntegerMultBounds.Machine.ButterflyAxisHeadersCleanup
 
 /-! One whole native butterfly axis from original D,t,R,p and a sole coefficient
 stream. All derived headers, their copied ports and the axis work bank start
 blank and are physically erased. The actual selected-position header advances
 by one, enabling a fixed runtime-counted body across successive axes. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ButterflyAxisOriginal
 noncomputable section
 open ButterflyAxisHeadersData ButterflyAxisHeadersGeometry ButterflyAxisHeadersBudget

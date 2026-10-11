@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixStageDispatchPlaced
-import IntegerMultBounds.Machine.ActivePrefixStageSingletonRun
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStageDispatchPlaced
+public import IntegerMultBounds.Machine.ActivePrefixStageSingletonRun
 
 /-! One fixed physical program compares original slot numbers, reads its
 flag, executes the original-input early or late stage, and erases the flag. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixStageSingletonDispatch
 noncomputable section
 open CompactGadgetReservationShape (Shape)

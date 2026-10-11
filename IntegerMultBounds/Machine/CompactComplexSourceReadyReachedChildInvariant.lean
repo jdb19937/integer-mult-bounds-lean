@@ -1,12 +1,17 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyReachedEventInvariant
-import IntegerMultBounds.Machine.CompactComplexChildInputReadiness
-import IntegerMultBounds.Machine.CompactComplexStoppedEventProgress
-import IntegerMultBounds.Machine.CompactComplexChildTensorCoordinateFactor
-import IntegerMultBounds.Machine.CompactComplexActualCallAlignment
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyReachedEventInvariant
+public import IntegerMultBounds.Machine.CompactComplexChildInputReadiness
+public import IntegerMultBounds.Machine.CompactComplexStoppedEventProgress
+public import IntegerMultBounds.Machine.CompactComplexChildTensorCoordinateFactor
+public import IntegerMultBounds.Machine.CompactComplexActualCallAlignment
 
 /-! Original physical recursive child entry inherits its selected literal
 array, numerical budget, true live denominator and genuine associated call
 list. This is an entry invariant, not an assumption of child execution. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyReachedChildInvariant
 noncomputable section
 open CompactComplexSourceReadyScalarWorkspace (roles nodeTapes permanent ready)

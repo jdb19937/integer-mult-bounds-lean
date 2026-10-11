@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActiveRepairLayoutPermutation
-import IntegerMultBounds.Machine.ActiveRepairLayoutPermutationWords
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairLayoutPermutation
+public import IntegerMultBounds.Machine.ActiveRepairLayoutPermutationWords
 
 /-! Actual global inverse-then-ideal destinations change only the recovered
 V/T/U fields. The words computed on tapes identify those fields exactly. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLayoutPermutationDestination
 noncomputable section
 open CompactGadgetReservationShape CompactActiveTargetLayout

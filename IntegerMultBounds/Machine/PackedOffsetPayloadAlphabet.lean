@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.PackedOffsetPayloadArray
-import IntegerMultBounds.Machine.PackedOffsetPayloadOriginal
-import IntegerMultBounds.Machine.StreamedFiberTranslationAlphabet
+module
+
+public import IntegerMultBounds.Machine.PackedOffsetPayloadArray
+public import IntegerMultBounds.Machine.PackedOffsetPayloadOriginal
+public import IntegerMultBounds.Machine.StreamedFiberTranslationAlphabet
 
 /-! The original-header packed payload action on any larger fixed alphabet.
 The output is the literal canonical Boolean array needed by binary swaps. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.PackedOffsetPayloadAlphabet
 noncomputable section
 open StreamedFiberTranslationAlphabet (encoding mapTape)

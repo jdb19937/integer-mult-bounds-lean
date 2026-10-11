@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActiveTargetHighestLayoutOriginalRun
+module
+
+public import IntegerMultBounds.Machine.ActiveTargetHighestLayoutOriginalRun
 
 /-! Fifteen-port original-layout highest-bit execution on arbitrary caller banks.
 The array alone changes; original fourteen words, caller spectators, and all private
 blank tapes are retained exactly. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveTargetHighestLayoutOriginalPlaced
 noncomputable section
 open ActiveTargetHighestPairData

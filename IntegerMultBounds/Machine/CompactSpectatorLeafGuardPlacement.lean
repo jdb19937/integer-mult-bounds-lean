@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactSpectatorLeafPlacement
-import IntegerMultBounds.Machine.CompactSpectatorLeafGuardOriginal
-import IntegerMultBounds.Machine.CompactSpectatorLeafSemantics
+module
+
+public import IntegerMultBounds.Machine.CompactSpectatorLeafPlacement
+public import IntegerMultBounds.Machine.CompactSpectatorLeafGuardOriginal
+public import IntegerMultBounds.Machine.CompactSpectatorLeafSemantics
 
 /-! Both paid guarded leaf passes execute at original native65/global109.
 Original13 descriptors, immutable baseline q/ell, native-core workspace and all
 other caller tapes are retained; every appended private tape is physically blank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactSpectatorLeafGuardPlacement
 noncomputable section
 open CompactSpectatorLeafOriginal

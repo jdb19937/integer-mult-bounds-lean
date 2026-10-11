@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ArbitraryWidthHighExecutionInitialize
-import IntegerMultBounds.Machine.ArbitraryWidthHighPaddingSuffix
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthHighExecutionInitialize
+public import IntegerMultBounds.Machine.ArbitraryWidthHighPaddingSuffix
 
 /-! Every physically copied execution header is bounded by twice the original
 payload volume. Canonicality and numeric bounds follow from the real header
 contracts and the already proved dimension and padding volume bounds. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthHighHeaderBounds
 noncomputable section
 open Networks

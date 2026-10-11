@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixCompactNegativeLoadHeaders
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixCompactNegativeLoadHeaders
 
 /-! Actual original-input negative parity-XOR offset production, original-row repetition
 and compact-back rotation, without supplied derived descriptors or tables.
 All stages reuse the same fixed blank fifty-six-tape workspace. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixCompactNegativeLoadRun
 noncomputable section
 open ActivePrefixCompactNegativeLoadData

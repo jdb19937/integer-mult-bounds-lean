@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CountedPackedOriginalLine
-import IntegerMultBounds.Machine.CountedPackedShapeHeaders
+module
+
+public import IntegerMultBounds.Machine.CountedPackedOriginalLine
+public import IntegerMultBounds.Machine.CountedPackedShapeHeaders
 
 /-! A packed line from only the runtime q/b/n descriptors. All six shape
 headers, four derived descriptors and two clocks are physically synthesized
 and erased; none occur as initialized private state in the contract. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedPackedRuntimeLine
 noncomputable section
 variable {a : ℕ}

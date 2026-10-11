@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActiveRepairLateFieldsCopy
-import IntegerMultBounds.Machine.CountedLateRepairToggle
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairLateFieldsCopy
+public import IntegerMultBounds.Machine.CountedLateRepairToggle
 
 /-! Later extracted-field repair retains original V/T/Z/current controls,
 q/b/n and the full scan counter. All working copies are produced physically. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLateFieldsBank
 noncomputable section
 open SharedPlacementAlphabet

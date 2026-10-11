@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.RecursiveScalingRoleBank
-import IntegerMultBounds.Machine.RecursiveRoleSerialization
-import IntegerMultBounds.Machine.CleanSubbankCompile
+module
+
+public import IntegerMultBounds.Machine.RecursiveScalingRoleBank
+public import IntegerMultBounds.Machine.RecursiveRoleSerialization
+public import IntegerMultBounds.Machine.CleanSubbankCompile
 
 /-! One fixed physical mixed shift/scaling/XOR sequence on the permanent role
 bank. Six layout headers and the XOR volume descriptor are supplied and remain
 unchanged throughout this block. Applying different coordinate views requires
 separate paid header-regrouping code; recursive calls are not supplied here. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveMixedSchedule
 noncomputable section
 open Networks
@@ -50,7 +55,7 @@ def cost (v : Descriptor) (bs : List Bool) : Op t → ℕ
   | .scale _ r _ _ => RecursiveInterchangeScalingClean.bound r (volume prime v)
   | .xor _ => 14*volume prime v+14*bs.length+33
 
-private theorem single_hoare {v : Descriptor} (op : Op t) (hs : Fin 6 → List Bool)
+theorem single_hoare {v : Descriptor} (op : Op t) (hs : Fin 6 → List Bool)
     (bs : List Bool) (aux : Tapes u prime) (hv : RecursiveDimensionBank.Headers v hs)
     (hpos : v.Positive) (hn : Counter.value bs = volume prime v) (data : Data t v) :
     HoareTime (block (u := u) op).program

@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactComplexPhasePhysical
-import IntegerMultBounds.Machine.CompactActualPairScheduleBudget
+module
+
+public import IntegerMultBounds.Machine.CompactComplexPhasePhysical
+public import IntegerMultBounds.Machine.CompactActualPairScheduleBudget
 
 /-! One fixed complex-network compiler constant pays all literal row stages,
 including backup, rewritten pair words, flag cleanup and restored tapes. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexPhasePhysicalBudget
 noncomputable section
 open CompactGadgetReservationShape (Shape)

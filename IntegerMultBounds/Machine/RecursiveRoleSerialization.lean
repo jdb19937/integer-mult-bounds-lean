@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.RecursiveXorRoleBank
+module
+
+public import IntegerMultBounds.Machine.RecursiveXorRoleBank
 
 /-! The shift/scaling canonical four-symbol payload and the actual pointwise
 XOR streams share exactly the same physical word, with no conversion step. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveRoleSerialization
 noncomputable section
 open Networks

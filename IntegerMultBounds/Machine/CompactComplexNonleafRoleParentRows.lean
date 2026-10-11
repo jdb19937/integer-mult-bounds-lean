@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexNonleafRoleTransferBudget
+module
+
+public import IntegerMultBounds.Machine.CompactComplexNonleafRoleTransferBudget
 
 /-! Parent-only row restoration after a decoded child return. This block is
 separate from current-node role merging: a completed root must retain its own
 row count. The complete complementary bank, including source and live stacks,
 is preserved and every header-arithmetic transition is paid. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexNonleafRoleParentRows
 noncomputable section
 open CompactGadgetReservationShape (Shape)

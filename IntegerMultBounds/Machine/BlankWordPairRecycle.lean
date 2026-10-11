@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.BlankWordReturnAt
-import IntegerMultBounds.Machine.WordBankCleanup
+module
+
+public import IntegerMultBounds.Machine.BlankWordReturnAt
+public import IntegerMultBounds.Machine.WordBankCleanup
 
 /-! Recycle one computed blank-backed word into its original equal-width source
 port. Both EOF heads are physically rewound, output is copied back, and the
 private output tape is erased. Empty words are covered by the same program. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BlankWordPairRecycle
 noncomputable section
 open SharedPlacementAlphabet (setTape)

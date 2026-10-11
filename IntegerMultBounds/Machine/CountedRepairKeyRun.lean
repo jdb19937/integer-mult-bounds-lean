@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.CountedRepairKeyCleanup
+module
+
+public import IntegerMultBounds.Machine.CountedRepairKeyCleanup
 
 /-! A fixed-control repair key machine from the original headers and actual
 short scan counter, with all generated words erased at its endpoint. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedRepairKeyRun
 noncomputable section
 open CountedRepairKeyBank

@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixStageHeadersOps
-import IntegerMultBounds.Machine.CompactGadgetReservationHeadersDivision
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStageHeadersOps
+public import IntegerMultBounds.Machine.CompactGadgetReservationHeadersDivision
 
 /-! Fixed constants and exact quotients extend the original28 marked-header
 caller with the same physically clean15 private workspace. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactChildHeadersArithmetic
 noncomputable section
 open ActiveRepairRankHeadersCommands

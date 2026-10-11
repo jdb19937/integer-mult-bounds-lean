@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactGadgetReservationHeadersWords
+module
+
+public import IntegerMultBounds.Machine.CompactGadgetReservationHeadersWords
 
 /-! A finite instruction compiler for the concrete reservation headers.
 Instructions carry only static tape slots and fixed constants; every runtime
 quantity is read from a physical canonical descriptor. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactGadgetReservationHeadersOps
 noncomputable section
 open CompactGadgetReservationHeadersWords

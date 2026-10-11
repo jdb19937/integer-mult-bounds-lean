@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactFallbackAxisPorts
+module
+
+public import IntegerMultBounds.Machine.CompactFallbackAxisPorts
 
 /-! A sparse individual-axis call starts from original chunk count, chunk
 width, selected bit, polynomial exponent, actual precision and chunk ordinal.
 Its binary dimension, selected coordinate, polynomial count and independent
 signed-width reservation are all computed by an actual header schedule. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactFallbackHeaders
 noncomputable section
 open ButterflyAxisHeadersArithmetic

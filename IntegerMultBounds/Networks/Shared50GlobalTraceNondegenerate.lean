@@ -1,6 +1,11 @@
-import IntegerMultBounds.Networks.Shared50GlobalTracePlacement
+module
+
+public import IntegerMultBounds.Networks.Shared50GlobalTracePlacement
 
 /-! Nondegeneracy of the concrete transported local invocation histories. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Networks.Shared50GlobalTracePlacement
 set_option synthInstance.maxSize 2048
 

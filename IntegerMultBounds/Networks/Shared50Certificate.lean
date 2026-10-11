@@ -1,9 +1,13 @@
-import IntegerMultBounds.Networks.Certificates.Shared50.Sound
-import IntegerMultBounds.Networks.SharedPointOutputIndex
+module
+
+public import IntegerMultBounds.Networks.Certificates.Shared50.Sound
+public import IntegerMultBounds.Networks.SharedPointOutputIndex
 
 /-! The optimized fifty-copy witness, with every finite-count premise
 discharged by ordinary kernel checks. These are scalar circuit bounds;
 the rank-frame assembly and literal tape runtime remain separate obligations. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.Shared50Certificate
 

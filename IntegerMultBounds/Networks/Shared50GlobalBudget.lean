@@ -1,6 +1,8 @@
-import IntegerMultBounds.Networks.NetworkBudget
-import IntegerMultBounds.Networks.Shared50Certificate
-import IntegerMultBounds.Shared50Parameters
+module
+
+public import IntegerMultBounds.Networks.NetworkBudget
+public import IntegerMultBounds.Networks.Shared50Certificate
+public import IntegerMultBounds.Shared50Parameters
 
 /-! Terminal labels and dimensions for the optimized padded two-bank world.
 `GlobalCircuit.World` has three auxiliary banks and would have 601952597120000
@@ -9,6 +11,8 @@ as in stage-reuse-note.tex and paired-construction.tex: stages 1 and 3 share a
 bank while stage 2 remains separate. The certified local roles embed into each
 padded side bank. Constructing that reused global schedule, its frame joins and
 its loss estimate remains separate; all trace premises below are explicit. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.Shared50GlobalBudget
 

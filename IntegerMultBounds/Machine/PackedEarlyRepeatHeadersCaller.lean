@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.PackedEarlyRepeatHeadersBudget
-import IntegerMultBounds.Machine.CompactGadgetReservationHeadersCarvedCaller
+module
+
+public import IntegerMultBounds.Machine.PackedEarlyRepeatHeadersBudget
+public import IntegerMultBounds.Machine.CompactGadgetReservationHeadersCarvedCaller
 
 /-! Original row/width descriptors supply the actual carved control gap and
 role count; that paid endpoint supplies both early repetition factors. No gap,
 role-row or repetition word is assumed on the original caller. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.PackedEarlyRepeatHeadersCaller
 noncomputable section
 open CompactGadgetReservationShape

@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyNonleafContraction
-import IntegerMultBounds.Machine.CompactComplexSourceReadyNonleafFinalGeometry
-import IntegerMultBounds.Machine.CompactComplexSourceReadyNonleafFinalBank
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyNonleafContraction
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyNonleafFinalGeometry
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyNonleafFinalBank
 
 /-! Actual current-node all-role contraction and same-row cyclic merge on the
 fixed source-ready bank. All local machine specifications are derived internally. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyNonleafFinalPath
 noncomputable section
 open CompactComplexNativeCodecFrame (bank permanentTapes)

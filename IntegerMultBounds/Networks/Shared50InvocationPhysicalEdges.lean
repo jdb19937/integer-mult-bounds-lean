@@ -1,9 +1,13 @@
-import IntegerMultBounds.Networks.Shared50FramedInvocation
-import IntegerMultBounds.Networks.Shared50PhysicalEdges
+module
+
+public import IntegerMultBounds.Networks.Shared50FramedInvocation
+public import IntegerMultBounds.Networks.Shared50PhysicalEdges
 
 /-! The complete forward physical instruction list has exactly the ordered
 frame edges used in the proved local rank history. Scalar erasure, execution
 and rank accounting thus describe the same sparse invocation. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.Shared50InvocationPhysicalEdges
 

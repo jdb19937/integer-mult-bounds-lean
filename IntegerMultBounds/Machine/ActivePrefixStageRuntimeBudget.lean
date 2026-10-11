@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixStageRuntimeRun
-import IntegerMultBounds.Machine.ActivePrefixStageSingletonDispatchBudget
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStageRuntimeRun
+public import IntegerMultBounds.Machine.ActivePrefixStageSingletonDispatchBudget
 
 /-! Both physical runtime selectors and all singleton work are absorbed by
 the certified packed exponent, uniformly in the original stage width. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixStageRuntimeBudget
 open CompactGadgetReservationShape (Shape)
 open ActivePrefixStageFullData (Inputs)

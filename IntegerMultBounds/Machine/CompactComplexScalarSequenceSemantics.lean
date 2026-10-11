@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactComplexScalarPolynomialSequence
+module
+
+public import IntegerMultBounds.Machine.CompactComplexScalarPolynomialSequence
 
 /-! Literal complete scalar-array sequences have the original named complex
 circuit semantics. One initial numerator reserve pays every subsequent row;
 no intermediate signed guards or numerical stream callback are supplied. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexScalarSequenceSemantics
 noncomputable section
 open CompactComplexScalarIntegerRows (RowIndex Wire wireIndex gate guardBits)

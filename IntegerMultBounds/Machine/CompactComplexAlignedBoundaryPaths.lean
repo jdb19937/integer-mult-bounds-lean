@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexAlignedScalarEventPath
-import IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedEntryTablePath
-import IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedFinalTablePath
+module
+
+public import IntegerMultBounds.Machine.CompactComplexAlignedScalarEventPath
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedEntryTablePath
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedFinalTablePath
 
 /-! Actual corrected source and sink boundaries execute in the aligned table.
 Alphabet lifting preserves exact runtime and every appended basis tape. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexAlignedBoundaryPaths
 noncomputable section
 open Networks

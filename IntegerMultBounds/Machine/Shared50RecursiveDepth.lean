@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.Shared50RecursiveNodeLayout
-import IntegerMultBounds.Machine.RecursiveRoleChildCallSetup
+module
+
+public import IntegerMultBounds.Machine.Shared50RecursiveNodeLayout
+public import IntegerMultBounds.Machine.RecursiveRoleChildCallSetup
 
 /-! Dimension facts for the actual power-width recursion. Splitting the node's
 rows once, then entering a selected cross child with divisor one, consumes
 exactly one factor of the World count and one power of the width radix. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.Shared50RecursiveDepth
 noncomputable section
 open Networks

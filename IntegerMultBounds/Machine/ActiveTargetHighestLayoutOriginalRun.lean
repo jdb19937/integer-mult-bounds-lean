@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActiveTargetHighestLayoutOriginalData
+module
+
+public import IntegerMultBounds.Machine.ActiveTargetHighestLayoutOriginalData
 
 /-! The actual highest-bit machine now accepts only original14 layout words.
 Construction of both levels of headers, all scans and swaps, and all cleanup
 are included in its charged runtime. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveTargetHighestLayoutOriginalRun
 noncomputable section
 open ActiveTargetHighestPairData

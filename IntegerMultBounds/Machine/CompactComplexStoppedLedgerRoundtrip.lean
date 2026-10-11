@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactComplexControllerChildStopTarget
-import IntegerMultBounds.Machine.CompactComplexControllerDenominatorEntry
-import IntegerMultBounds.Machine.CompactComplexStoppedCodecCaller
+module
+
+public import IntegerMultBounds.Machine.CompactComplexControllerChildStopTarget
+public import IntegerMultBounds.Machine.CompactComplexControllerDenominatorEntry
+public import IntegerMultBounds.Machine.CompactComplexStoppedCodecCaller
 
 /-! Stopped calls on the permanent bank, with actual runtime target selection,
 physical entry, codec lifecycle and exact stack restoration. The old common
 live denominator is retained until the untouched roles have been promoted. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexStoppedLedgerRoundtrip
 noncomputable section
 open CompactComplexRolePhaseSite (roleCount role)
@@ -30,7 +35,7 @@ def ready (v : Tapes (CompactComplexStoppedCodecCaller.publicTapes (10+s)) 2) : 
 def rootSlots (i : Fin (rootTapes s)) : Fin (baseTapes s) :=
   Fin.castAdd (CompactComplexStoppedCodecCaller.childTapes (10+s))
     (Fin.castAdd 86 (Fin.castAdd roleCount i))
-private theorem rootSlots_injective : Function.Injective (rootSlots (s:=s)) :=
+theorem rootSlots_injective : Function.Injective (rootSlots (s:=s)) :=
   (Fin.castAdd_injective _ _).comp ((Fin.castAdd_injective _ _).comp (Fin.castAdd_injective _ _))
 
 def rootProgram {q : ℕ} (M : Program (rootTapes s) q 2) :=

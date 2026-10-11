@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactSpectatorLeafOriginal
-import IntegerMultBounds.Machine.CompactSpectatorInverseLeafOriginal
-import IntegerMultBounds.Machine.CompactSpectatorLeafGuardHeaders
+module
+
+public import IntegerMultBounds.Machine.CompactSpectatorLeafOriginal
+public import IntegerMultBounds.Machine.CompactSpectatorInverseLeafOriginal
+public import IntegerMultBounds.Machine.CompactSpectatorLeafGuardHeaders
 
 /-! Original immutable precision is baseline q. The full generated address
 width physically reserves both passes in private metadata before arithmetic.
 Every descriptor lifecycle and axis pass is paid, with no intermediate resizing. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactSpectatorLeafGuardOriginal
 noncomputable section
 open CompactGadgetReservationShape (Shape)

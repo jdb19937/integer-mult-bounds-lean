@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.SelectedSourceBitsRun
-import IntegerMultBounds.Machine.CompactGadgetReservationPlacement
+module
+
+public import IntegerMultBounds.Machine.SelectedSourceBitsRun
+public import IntegerMultBounds.Machine.CompactGadgetReservationPlacement
 
 /-! Selected bits are extracted from the actual complete caller source tape.
 Six caller ports are source/output/q/n/rho/f; the output starts blank. Source,
 original headers and arbitrary spectators are retained with their heads. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.SelectedSourceBitsPlaced
 noncomputable section
 open SelectedSourceBitsData

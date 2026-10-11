@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlSemantics
-import IntegerMultBounds.Machine.BinaryCorrectionOffsetSubtract
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlSemantics
+public import IntegerMultBounds.Machine.BinaryCorrectionOffsetSubtract
 
 /-! Independent modular correction rows subtract the selected offset from the
 control-mask offset computed at the same complete prefix address. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixDirtyControlCorrectionData
 open ActivePrefixDirtyControlData (Shape offsetWord)
 open BinaryVaryingSelectedOffsetData (stream)

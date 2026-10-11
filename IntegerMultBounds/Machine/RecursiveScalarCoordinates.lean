@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.RecursiveScalarSelection
-import IntegerMultBounds.Machine.RecursiveCoordinateDigits
+module
+
+public import IntegerMultBounds.Machine.RecursiveScalarSelection
+public import IntegerMultBounds.Machine.RecursiveCoordinateDigits
 
 /-! Typed coordinates for the original heterogeneous recursive layout and its
 paid scalar views. All spectators retain their original row-major positions. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveScalarCoordinates
 noncomputable section
 open Networks
@@ -24,7 +29,7 @@ structure Address (m b : ℕ) (v : Descriptor) where
   d : Fin m → ZMod (modulus b)
   after : Fin v.afterD
 
-private theorem power (b n : ℕ) : (modulus b)^n = prime^(n*b) := by
+theorem power (b n : ℕ) : (modulus b)^n = prime^(n*b) := by
   rw [modulus,← pow_mul,Nat.mul_comm]
 
 def packed (hw : v.width=m*b) (x : Address m b v) : RecursiveInterchangeScaling.Address v :=
@@ -80,14 +85,14 @@ def update (x : Address m b v) (i : Fin (m+m)) (z : ZMod (modulus b)) : Address 
         fun hh => he (Fin.natAdd_injective _ _ hh)
       simp only [Function.update_of_ne hn,Function.update_of_ne he,field_d]
 
-private def pack {a c : ℕ} (x : Fin a) (y : Fin c) : Fin (a*c) := finProdFinEquiv (x,y)
+def pack {a c : ℕ} (x : Fin a) (y : Fin c) : Fin (a*c) := finProdFinEquiv (x,y)
 private theorem pack_val {a c : ℕ} (x : Fin a) (y : Fin c) : (pack x y).val = x.val*c+y.val := by
   simp [pack,finProdFinEquiv]; ring
 
-private def digit (z : ZMod (modulus b)) : Fin (modulus b) := (ZMod.finEquiv _).symm z
+def digit (z : ZMod (modulus b)) : Fin (modulus b) := (ZMod.finEquiv _).symm z
 private theorem digit_val (z : ZMod (modulus b)) : (digit z).val = z.val :=
   FlatCoordinateLayout.finEquiv_symm_val z
-private def radixCast {n : ℕ} (x : Fin ((modulus b)^n)) : Fin (prime^(n*b)) := Fin.cast (power b n) x
+def radixCast {n : ℕ} (x : Fin ((modulus b)^n)) : Fin (prime^(n*b)) := Fin.cast (power b n) x
 
 /-- Regroup a cross-H/D pair without moving any array position. -/
 def crossAddress (x : Address m b v) (i j : Fin m) :

@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.CompactComplexNonleafRoleChildBank
-import IntegerMultBounds.Machine.CompactComplexNonleafRolePreparation
-import IntegerMultBounds.Machine.CompactComplexDenominatorCapacity
+module
+
+public import IntegerMultBounds.Machine.CompactComplexNonleafRoleChildBank
+public import IntegerMultBounds.Machine.CompactComplexNonleafRolePreparation
+public import IntegerMultBounds.Machine.CompactComplexDenominatorCapacity
 
 /-! Complete physical child-bank entry costs from the original retained
 geometry and a true denominator ledger on the actual parent dependency Path.
 Target/live saves, geometry/PC frames, exponent descent, child metadata and all
 joins are charged; no aggregate runtime or descriptor-length allowance is used. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexNonleafRoleChildBankBudget
 noncomputable section
 open CompactGadgetReservationShape (Shape)

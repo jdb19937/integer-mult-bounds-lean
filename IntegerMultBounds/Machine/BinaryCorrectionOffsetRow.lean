@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.BinaryAddressOffsetRepeatBlock
-import IntegerMultBounds.Machine.ColumnTransducer
+module
+
+public import IntegerMultBounds.Machine.BinaryAddressOffsetRepeatBlock
+public import IntegerMultBounds.Machine.ColumnTransducer
 
 /-! One physical modular subtraction row. Both packed operands are copied
 through the runtime width clock into blank-backed scratch. The transducer
 starts at borrow zero and halts at the scratch boundary, so no borrow can
 cross a row boundary. Both scratch tapes are physically erased on return. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryCorrectionOffsetRow
 open CountedCopyReuse (empty binary)
 noncomputable section

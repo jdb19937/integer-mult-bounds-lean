@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.Shared50RecursiveControl
-import IntegerMultBounds.Machine.SharedBankFamilyExact
+module
+
+public import IntegerMultBounds.Machine.Shared50RecursiveControl
+public import IntegerMultBounds.Machine.SharedBankFamilyExact
 
 /-! Actual entry transitions of the padded Shared50 cyclic machine. The width
 guard's terminal finite state selects the next block without changing any tape.
 The recursive and base implementations still require their own contracts. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.Shared50RecursiveExecution
 open Classical
 open Shared50RecursiveControl SharedBankFamilyExact SharedBankStageInput

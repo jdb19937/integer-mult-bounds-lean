@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.RadixHighBlockJoinArithmetic
-import IntegerMultBounds.Machine.RadixHighBlockJoinSemantics
+module
+
+public import IntegerMultBounds.Machine.RadixHighBlockJoinArithmetic
+public import IntegerMultBounds.Machine.RadixHighBlockJoinSemantics
 
 /-! Actual high-digit join/separate iteration. Each body performs paid exact
 quotient, a complete physical block-digit move, then paid prefix/suffix growth. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RadixHighBlockJoinBody
 noncomputable section
 open RadixHighBlockJoinBank

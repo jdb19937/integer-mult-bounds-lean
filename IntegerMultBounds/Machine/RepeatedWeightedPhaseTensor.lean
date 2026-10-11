@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.RepeatedWeightedPhaseAccumulator
+module
+
+public import IntegerMultBounds.Machine.RepeatedWeightedPhaseAccumulator
 
 /-! Algebraic interchange connects the single weight-block-major control scan
 to the product of the per-coordinate-axis phases. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RepeatedWeightedPhaseTensor
 noncomputable section
 open WeightedPhaseAccumulator (weightedSum)

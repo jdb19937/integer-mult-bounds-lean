@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactNativeConjugatedHeaderBank
+module
+
+public import IntegerMultBounds.Machine.CompactNativeConjugatedHeaderBank
 
 /-! Physically copy original13 and ell, run the actual conjugated native phase
 on one shared source, and erase every copied header. Arbitrary persistent
 caller tapes remain framed; the displaced private source stays blank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactNativeConjugatedSharedCaller
 noncomputable section
 open CompactGadgetReservationShape (Shape)

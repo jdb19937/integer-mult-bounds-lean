@@ -1,5 +1,9 @@
-import IntegerMultBounds.Machine.ActivePrefixStageFullData
-import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsFullInverseData
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStageFullData
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsFullInverseData
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.ActivePrefixStageFullInverseData
 open CompactGadgetReservationShape (Shape)

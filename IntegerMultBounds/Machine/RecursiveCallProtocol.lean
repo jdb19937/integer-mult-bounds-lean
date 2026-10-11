@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.RecursiveCallBank
+module
+
+public import IntegerMultBounds.Machine.RecursiveCallBank
 
 /-! Actual recursive call boundaries on the fixed permanent bank. Entry
 constructs/clears the payload count, parks/moves arrays, saves the role-parent
 headers/PC, and constructs the same-row child. Recovery is a separate block. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveCallProtocol
 noncomputable section
 open Networks
@@ -12,7 +17,7 @@ open RecursiveCallBank
 open SharedBankStageInput (raw)
 variable {t u m k : ℕ}
 
-private theorem mapped_ne (src dst : Fin t) (hne : src ≠ dst) :
+theorem mapped_ne (src dst : Fin t) (hne : src ≠ dst) :
     role (u := u) src ≠ role dst := fun h => hne (role_injective h)
 
 private theorem mapped_not_mem (ops : List (Fin t)) (src : Fin t) (hn : src ∉ ops) :

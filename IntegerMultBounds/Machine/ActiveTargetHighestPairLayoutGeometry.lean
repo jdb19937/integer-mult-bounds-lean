@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActiveTargetHighestPairSemantics
-import IntegerMultBounds.Machine.ActivePrefixLayoutShapes
+module
+
+public import IntegerMultBounds.Machine.ActiveTargetHighestPairSemantics
+public import IntegerMultBounds.Machine.ActivePrefixLayoutShapes
 
 /-! Exact highest-selected-bit split of the unchanged active layout.
 The omitted target bit is the least significant bit of activeBefore. No
 address bit, compact reservation, spectator, or payload is added or dropped. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveTargetHighestPairLayoutGeometry
 open CompactGadgetReservationShape
 open ActivePrefixLayoutShapes

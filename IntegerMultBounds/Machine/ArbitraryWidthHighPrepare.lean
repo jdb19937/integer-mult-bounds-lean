@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.RecursiveRowDivisor
-import IntegerMultBounds.Machine.FixedBasePowerUntilRange
-import IntegerMultBounds.Machine.RoundedRowDescriptor
+module
+
+public import IntegerMultBounds.Machine.RecursiveRowDivisor
+public import IntegerMultBounds.Machine.FixedBasePowerUntilRange
+public import IntegerMultBounds.Machine.RoundedRowDescriptor
 
 /-! Actual arbitrary-width high-row metadata construction. Only the runtime
 width is supplied. Depth, recursive divisor, minimal paired high-row range,
 and least enclosing divisible row count are synthesized and cleaned. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthHighPrepare
 noncomputable section
 variable {a : ℕ}
@@ -25,8 +30,8 @@ def rhoBits (q e : ℕ) := FixedBasePowerUntil.counter (highDepth q e)
 def rBits (q e : ℕ) := FixedBasePowerStep.bits (q*q) (highDepth q e)
 def roundedBits (q e : ℕ) := RoundedRowDescriptor.bits (rows q e) (divisor e)
 
-private def hd : Option (List Bool) → ℤ | none => 0 | some _ => 1
-private def tp : Option (List Bool) → ℤ → Fin (a+4)
+def hd : Option (List Bool) → ℤ | none => 0 | some _ => 1
+def tp : Option (List Bool) → ℤ → Fin (a+4)
   | none => fun _ => blank
   | some bs => RadixZeroFill.encodedBinary bs
 

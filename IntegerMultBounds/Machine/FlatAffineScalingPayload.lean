@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.FlatAffineScalingArray
-import IntegerMultBounds.Machine.SharedPayload
+module
+
+public import IntegerMultBounds.Machine.FlatAffineScalingArray
+public import IntegerMultBounds.Machine.SharedPayload
 
 /-! The actual affine scaler over the shared radix alphabet exposes precisely
 the permanent canonical source/scratch pair, with no duplicated payload tapes. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.FlatAffineScalingPayload
 open Networks
 open ActualAffineScaling (modulus)

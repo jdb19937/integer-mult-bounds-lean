@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ButterflyInverseAxisSemantics
+module
+
+public import IntegerMultBounds.Machine.ButterflyInverseAxisSemantics
 
 /-! Combined literal-machine, complexity and inverse-kernel correctness for
 runtime axis intervals. Every generated header and private tape is erased;
 only original headers and the exact inverse-transformed stream survive. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ButterflyInverseAxisCorrect
 noncomputable section
 open ButterflyAxisArray (Array Width)

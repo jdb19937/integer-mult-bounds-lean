@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.BinaryParityXorOffsetRow
-import IntegerMultBounds.Machine.BinaryAddressOffsetRepeatPass
+module
+
+public import IntegerMultBounds.Machine.BinaryParityXorOffsetRow
+public import IntegerMultBounds.Machine.BinaryAddressOffsetRepeatPass
 
 /-! Counted rowwise modular negation with a fresh two's-complement state for
 each row; the runtime width determines the copied blank-backed boundary. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryParityXorOffsetLoop
 open CountedCopyReuse (empty binary)
 open TwosComplement (negWord)

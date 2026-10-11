@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.SignedScalingSign
-import IntegerMultBounds.Machine.ScalingPreparedExecution
-import IntegerMultBounds.Machine.FamilyPlacement
+module
+
+public import IntegerMultBounds.Machine.SignedScalingSign
+public import IntegerMultBounds.Machine.ScalingPreparedExecution
+public import IntegerMultBounds.Machine.FamilyPlacement
 
 /-! Synthesize both coefficient-piece descriptor families before signed scaling.
 Generated descriptors are shared through static tape-bank wiring. Only canonical
 Q/B and, for the negative branch, sign-tail descriptors remain supplied. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.SignedScalingPrepared
 
 open CountedCopyReuse (empty binary)
@@ -59,12 +64,12 @@ private def localReady {c : ℕ} (hc : 0 < c) (Q B : ℕ) (C : Setup c)
     (OneHot.bank C.modulus (OneHot.residue hc Q)) (OneHot.bank C.current (OneHot.residue hc Q))
     (CountedLoopReuse.controls empty (binary C.countBits) 1 1)
 
-private def localInput {c : ℕ} (C : Setup c) (a : Tapes 4 0) (left : Tapes 2 0) :
+def localInput {c : ℕ} (C : Setup c) (a : Tapes 4 0) (left : Tapes 2 0) :
     Tapes (ScalingPreparedExecution.TapeCount c) 0 :=
   (ScalingDescriptors.initial C.blockBits C.countBits C.modulus C.current).append
     ((a.append (⟨C.origins,C.background⟩ : Tapes c 0)).append left)
 
-private def prepareProgram {c : ℕ} (hc : 0 < c) :
+def prepareProgram {c : ℕ} (hc : 0 < c) :
     Program (ScalingPreparedExecution.TapeCount c) (SynthesisStates c) 0 :=
   extend (ScalingDescriptors.program hc) (FrameTapes c)
 
@@ -85,7 +90,7 @@ private theorem prepare_hoare {Q c B : ℕ} (hc : 0 < c) (hB : 0 < B) (C : Setup
       (OneHot.bank C.modulus (OneHot.residue hc Q)) (OneHot.bank C.current (OneHot.residue hc Q))
       (CountedLoopReuse.controls empty (binary C.countBits) 1 1) ScalingPreparedExecution.spare
 
-private def dataControl (f : ℤ → Fin 4) (p : ℤ) : Tapes 4 0 :=
+def dataControl (f : ℤ → Fin 4) (p : ℤ) : Tapes 4 0 :=
   CountedCopyReuse.bank f (fun _ => blank) empty (fun _ => blank) p 0 1 0
 
 private theorem copy_controls (source dest : ℤ → Fin 4) (p q : ℤ) (bs : List Bool) :
@@ -151,13 +156,13 @@ def executionPlacement (a d : ℕ) : Fin (SignedScalingSign.TapeCount a d+2) ≃
     (FamilyPlacement.pair (ScalingPreparedExecution.executionPlacement a)
       (ScalingPreparedExecution.executionPlacement d))))
 
-private def firstControl (Q : ℕ) (source : ℤ → Fin 4) (p : ℤ) (payload : ℕ → List (Fin 4)) : Tapes 4 0 :=
+def firstControl (Q : ℕ) (source : ℤ → Fin 4) (p : ℤ) (payload : ℕ → List (Fin 4)) : Tapes 4 0 :=
   dataControl (putWord source p (ScalingExecution.inputWord Q payload)) p
 
-private def lastControl (negative : Bool) (signMiddle : ℤ → Fin 4) (t : ℤ) (dest : ℤ → Fin 4) (q : ℤ) : Tapes 4 0 :=
+def lastControl (negative : Bool) (signMiddle : ℤ → Fin 4) (t : ℤ) (dest : ℤ → Fin 4) (q : ℤ) : Tapes 4 0 :=
   if negative then dataControl signMiddle t else dataControl dest q
 
-private def signSide (negative : Bool) (S : SignControls) (bs : List Bool) (dest : ℤ → Fin 4) (q : ℤ) : Tapes 8 0 :=
+def signSide (negative : Bool) (S : SignControls) (bs : List Bool) (dest : ℤ → Fin 4) (q : ℤ) : Tapes 8 0 :=
   if negative then SignedScalingSign.signBank S bs dest q else SignedScalingSign.signBank S bs empty 0
 
 /-- No generated piece descriptor occurs in this initial physical bank. The

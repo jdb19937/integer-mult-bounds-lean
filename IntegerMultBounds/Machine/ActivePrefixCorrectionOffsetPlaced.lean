@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixCorrectionOffset
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixCorrectionOffset
 
 /-! Caller-placed complete correction producer. Only the eight original
 headers are inputs; the correction output starts blank. All private tapes
 return blank, original headers and spectators retain their exact positions. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixCorrectionOffsetPlaced
 noncomputable section
 open ActivePrefixSelectedOffsetBank (Shape values)

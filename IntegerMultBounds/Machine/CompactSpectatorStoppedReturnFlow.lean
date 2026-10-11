@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactSpectatorStoppedLeafFlow
+module
+
+public import IntegerMultBounds.Machine.CompactSpectatorStoppedLeafFlow
 
 /-! The actual occupied return guard and binary-pop block of the stopped-leaf
 cyclic table decode saved PCs into the continuation bank after four fixed PCs.
 The entire stack frame is erased before the continuation begins. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactSpectatorStoppedReturnFlow
 noncomputable section
 variable {k N w : ℕ}

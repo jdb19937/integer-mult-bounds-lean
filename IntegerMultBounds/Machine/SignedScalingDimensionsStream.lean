@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.SignedScalingDimensions
-import IntegerMultBounds.Machine.SignedScalingStream
+module
+
+public import IntegerMultBounds.Machine.SignedScalingDimensions
+public import IntegerMultBounds.Machine.SignedScalingStream
 
 /-! One physical synthesis of all signed-scaling descriptors followed by a
 literal counted stream of equal-size fibers. Only canonical Q/B/n words, the
 explicit inherited fixed sentinels, and declared scratch are inputs. Both nested
 placements wire the same physical tapes; no descriptor or payload transfer is
 assumed between setup and the reusable stream. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.SignedScalingDimensionsStream
 
 open SignedScalingPrepared (Setup prepared prepared_valid)
@@ -23,7 +28,7 @@ def innerPlacement (a d : ℕ) : Fin (SignedScalingStream.TapeCount a d+2) ≃ F
 def outerPlacement (a d : ℕ) : Fin ((SignedScalingPrepared.TapeCount a d+2)+9) ≃ Fin (TapeCount a d) :=
   FamilyPlacement.withFrame (SignedScalingDimensions.executionPlacement a d)
 
-private def spares : Tapes 2 0 := ScalingPreparedExecution.spare.append ScalingPreparedExecution.spare
+def spares : Tapes 2 0 := ScalingPreparedExecution.spare.append ScalingPreparedExecution.spare
 
 private theorem placed_hoare {s u t q : ℕ} {M : Program s q 0} {v w : Tapes s 0} {cost : ℕ}
     (h : HoareTime M (fun x => x = v) (fun x => x = w) cost) (e : Fin (s+u) ≃ Fin t) (frame : Tapes u 0) :

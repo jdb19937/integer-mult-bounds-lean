@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.RecursiveDigitInterchangeConstruct
+module
+
+public import IntegerMultBounds.Machine.RecursiveDigitInterchangeConstruct
 
 /-! Fully initialized width-one recursive base interchange on the same bank.
 Only six original canonical headers and the sole array are supplied. Generated
 dimensions, installed headers, every stream and every tracker are physically
 erased; the original source/scratch pair and six headers are reusable. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveDigitInterchangeClean
 open RecursiveInterchangeLayout (Descriptor volume)
 open RecursiveDigitLayout (outer array pack split_volume)

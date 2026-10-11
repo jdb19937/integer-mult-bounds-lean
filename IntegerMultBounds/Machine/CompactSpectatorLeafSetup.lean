@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactSpectatorLeafHeaders
-import IntegerMultBounds.Machine.ActivePrefixStageHeadersData
+module
+
+public import IntegerMultBounds.Machine.CompactSpectatorLeafHeaders
+public import IntegerMultBounds.Machine.ActivePrefixStageHeadersData
 
 /-! Leaf-private geometry is synthesized from copied original thirteen native
 headers plus immutable polynomial exponent and precision words. H, B, F and
 the complete global bit dimension are paid arithmetic outputs, not input oracles. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactSpectatorLeafSetup
 noncomputable section
 open CompactGadgetReservationShape (Shape)

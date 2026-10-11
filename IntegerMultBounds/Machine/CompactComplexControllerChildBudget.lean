@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactComplexControllerChildReturn
-import IntegerMultBounds.Machine.CompactComplexChildHeadersUniform
-import IntegerMultBounds.Machine.CompactNativeRoleTransferBudget
+module
+
+public import IntegerMultBounds.Machine.CompactComplexControllerChildReturn
+public import IntegerMultBounds.Machine.CompactComplexChildHeadersUniform
+public import IntegerMultBounds.Machine.CompactNativeRoleTransferBudget
 
 /-! The complete physical child-entry and return overhead is paid from
 original geometry: descriptor frames, actual return-address bits, exponent
 updates, child-header synthesis, erasure and joins are all included. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexControllerChildBudget
 noncomputable section
 open CompactComplexRecursiveGeometry

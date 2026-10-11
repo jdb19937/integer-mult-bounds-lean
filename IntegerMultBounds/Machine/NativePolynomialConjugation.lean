@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.NativePolynomialConjugationData
-import IntegerMultBounds.Machine.Negate
-import IntegerMultBounds.Machine.ReturnOrigin
-import IntegerMultBounds.Machine.NativeZeroPaddingArray
+module
+
+public import IntegerMultBounds.Machine.NativePolynomialConjugationData
+public import IntegerMultBounds.Machine.Negate
+public import IntegerMultBounds.Machine.ReturnOrigin
+public import IntegerMultBounds.Machine.NativeZeroPaddingArray
 
 /-! A fixed one-tape three-state scan conjugates native polynomial records
 in place. It skips real fields, negates imaginary two's-complement fields,
 retains every separator and restores the stream head with no private tapes. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.NativePolynomialConjugation
 noncomputable section
 open NativePolynomialConjugationData (digit digits bits negative coefficient array digits_bits)

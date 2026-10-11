@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActiveRepairRecordFormatAlphabet
-import IntegerMultBounds.Machine.CompactGadgetReservationPlacement
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairRecordFormatAlphabet
+public import IntegerMultBounds.Machine.CompactGadgetReservationPlacement
 
 /-! Caller placement for the real formatter: raw source, record output and
 original binary width/count are the only four permanent ports. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairRecordFormatPlaced
 noncomputable section
 open SharedPlacementAlphabet (setTape)

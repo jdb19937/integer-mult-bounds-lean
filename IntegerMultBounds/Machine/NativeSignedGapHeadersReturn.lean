@@ -1,12 +1,17 @@
-import IntegerMultBounds.Machine.NativeSignedGapReturn
-import IntegerMultBounds.Machine.CompactGadgetReservationHeadersCore
-import IntegerMultBounds.Machine.PlacedDescriptorConstruction
+module
+
+public import IntegerMultBounds.Machine.NativeSignedGapReturn
+public import IntegerMultBounds.Machine.CompactGadgetReservationHeadersCore
+public import IntegerMultBounds.Machine.PlacedDescriptorConstruction
 
 /-! Precision return from two physical retained denominator descriptors. The
 fixed machine subtracts current minus target into a blank private gap tape,
 executes one native stream return, then erases the synthesized gap descriptor.
 These are true denominator inputs, not the controller's geometric exponent k
 or the width baseline. Propagating them through recursive execution is separate. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.NativeSignedGapHeadersReturn
 noncomputable section
 open SharedPlacementAlphabet (setTape)

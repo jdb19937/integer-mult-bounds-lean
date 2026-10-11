@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ArbitrarySliceHeaders
-import IntegerMultBounds.Machine.InjectivePlacement
+module
+
+public import IntegerMultBounds.Machine.ArbitrarySliceHeaders
+public import IntegerMultBounds.Machine.InjectivePlacement
 
 /-! Fixed sharing of six existing header tapes with twelve appended controls,
 work tapes and a saved-header stack. All other original tapes are framed. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.SliceHeaderPlacement
 variable {T a : ℕ}
 noncomputable section

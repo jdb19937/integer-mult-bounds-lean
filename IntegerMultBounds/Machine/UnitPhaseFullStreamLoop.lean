@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.UnitPhaseStreamBudget
+module
+
+public import IntegerMultBounds.Machine.UnitPhaseStreamBudget
 
 /-! Count the entire coefficient stream using generated descriptor59, while
 preserving original node row header4. The supplied count is read physically;
 all loop controls and the generated count descriptor are erased afterwards. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.UnitPhaseFullStreamLoop
 noncomputable section
 open CompactGadgetReservationShape (Shape)

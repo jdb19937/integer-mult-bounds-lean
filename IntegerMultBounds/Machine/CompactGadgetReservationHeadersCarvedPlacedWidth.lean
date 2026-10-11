@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.CompactGadgetReservationHeadersCarvedPlaced
+module
+
+public import IntegerMultBounds.Machine.CompactGadgetReservationHeadersCarvedPlaced
 
 /-! Paid multiplication of two original physical descriptors, in the same
 forty-tape private bank used by carved-header synthesis. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactGadgetReservationHeadersCarvedPlacedWidth
 noncomputable section
 open SharedPlacementAlphabet (setTape)

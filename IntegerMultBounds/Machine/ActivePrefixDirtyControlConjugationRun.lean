@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlConjugationMiddle
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlConjugationMiddle
 
 /-! Physical T/back or U/back swap, actual compact load, and physical swap
 back. Original caller words survive and every private tape is restored blank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixDirtyControlConjugationRun
 noncomputable section
 open ActivePrefixDirtyControlConjugationData

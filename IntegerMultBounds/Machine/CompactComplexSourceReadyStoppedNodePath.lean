@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyNodeControls
-import IntegerMultBounds.Machine.CompactComplexSourceReadyStoppedLeafDispatchBudget
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyNodeControls
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyStoppedLeafDispatchBudget
 
 /-! Actual stopped arithmetic reaches the real return guard in the cyclic
 node table, preserving the source-ready endpoint and paying its table jump.
 Both zero and positive exponents derive their block runtime from the Path. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyStoppedNodePath
 noncomputable section
 open CompactGadgetReservationShape (Shape)
@@ -27,7 +32,7 @@ attribute [local irreducible] CompactComplexSourceReadyGuard.guardConstant
   CompactComplexSourceReadyStoppedLeafDispatchBudget.constant
   CompactComplexStopThreshold.base
 
-private def fixedSum (G C : ℕ) : ℕ :=
+def fixedSum (G C : ℕ) : ℕ :=
   Classical.choose (show ∃ n : ℕ,n=G+C+2 from ⟨G+C+2,rfl⟩)
 
 private theorem fixedSum_eq (G C : ℕ) : fixedSum G C=G+C+2 :=

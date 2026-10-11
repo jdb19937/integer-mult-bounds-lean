@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexScalarPolynomialSequence
-import IntegerMultBounds.Machine.RawLinearCombinationComplexDenominatorSequence
+module
+
+public import IntegerMultBounds.Machine.CompactComplexScalarPolynomialSequence
+public import IntegerMultBounds.Machine.RawLinearCombinationComplexDenominatorSequence
 
 /-! Actual complex25 polynomial scalar rows update their true live denominator
 only after complete source replacement and cleanup. The original coefficient
 count survives; one common physical denominator serves the whole array. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexScalarDenominatorSequence
 noncomputable section
 open CompactComplexScalarIntegerRows (RowIndex)
@@ -13,7 +18,7 @@ open ButterflyStreamData (Coefficient)
 open RecursiveChildQuotientsConstant (bits)
 attribute [local irreducible] Networks.ComplexRank25.program CompactComplexScalarIntegerRows.gates
 
-private def normalizedBank {c S n : ℕ} (data : Fin c → Fin n → Coefficient)
+def normalizedBank {c S n : ℕ} (data : Fin c → Fin n → Coefficient)
     (bs : List Bool) (d : ℕ) :
     Tapes (RawLinearCombinationComplexDenominatorSequence.count c S) 2 :=
   RawLinearCombinationComplexDenominatorSequence.bank (S:=S) data bs d

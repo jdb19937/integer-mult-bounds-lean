@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActiveRepairLateKeyValue
-import IntegerMultBounds.Machine.ActiveRepairLateKeyPlaced
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairLateKeyValue
+public import IntegerMultBounds.Machine.ActiveRepairLateKeyPlaced
 
 /-! Complete current-address later key production, from genuine short rank
 through exact full-rank reconstruction, conditional output and paid erasure. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLateKey
 noncomputable section
 abbrev Data := ActiveRepairLateKeyData.Data

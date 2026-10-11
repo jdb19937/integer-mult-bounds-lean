@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactGlobalRowHeaderOps
-import IntegerMultBounds.Machine.CompactGlobalRowPadding
+module
+
+public import IntegerMultBounds.Machine.CompactGlobalRowHeaderOps
+public import IntegerMultBounds.Machine.CompactGlobalRowPadding
 
 /-! The original public words K,d,D,payload determine every global row-padding
 header. The network constants c,m are fixed program parameters, never supplied
 as generated numeric descriptors. Private arithmetic scratch is erased. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactGlobalRowHeaders
 noncomputable section
 open CompactGlobalRowHeaderOps

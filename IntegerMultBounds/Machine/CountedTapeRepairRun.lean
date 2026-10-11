@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.CountedTapeRepairBank
+module
+
+public import IntegerMultBounds.Machine.CountedTapeRepairBank
 
 /-! The same finite machine repairs every admissible runtime q/b/n instance,
 starting without supplied sort width, zero counter, sentinels or constants. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedTapeRepairRun
 noncomputable section
 open IntegerMultBounds.Compact

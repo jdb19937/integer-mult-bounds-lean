@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.FixedHeaderSparseBankCopy
-import IntegerMultBounds.Machine.AllAxisPhaseStageMetadata
-import IntegerMultBounds.Machine.ActivePrefixStageNativePairSchedule
+module
+
+public import IntegerMultBounds.Machine.FixedHeaderSparseBankCopy
+public import IntegerMultBounds.Machine.AllAxisPhaseStageMetadata
+public import IntegerMultBounds.Machine.ActivePrefixStageNativePairSchedule
 
 /-! Physically copy the actual native caller's original13 descriptors into a
 fresh67-tape phase bank, preserving the full native source and workspace.
 Cleanup erases all copied originals after computed phase metadata is released.
 Coefficient sharing and immutable polynomial precision installation are separate. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.AllAxisPhaseOriginalPorts
 noncomputable section
 open CompactGadgetReservationShape (Shape)

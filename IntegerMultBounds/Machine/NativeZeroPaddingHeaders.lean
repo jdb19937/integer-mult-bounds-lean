@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ButterflyAxisHeadersData
-import IntegerMultBounds.Machine.NativeZeroPadding
+module
+
+public import IntegerMultBounds.Machine.ButterflyAxisHeadersData
+public import IntegerMultBounds.Machine.NativeZeroPadding
 
 /-! Actual arithmetic for the number of added native coefficient records.
 The row deficit multiplies immutable address volume and polynomial count;
 coefficient width is retained independently of either multiplicity. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.NativeZeroPaddingHeaders
 noncomputable section
 open ButterflyAxisHeadersArithmetic

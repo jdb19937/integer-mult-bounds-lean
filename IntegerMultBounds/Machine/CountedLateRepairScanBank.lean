@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.CountedLateRepairKeyRun
+module
+
+public import IntegerMultBounds.Machine.CountedLateRepairKeyRun
 
 /-! The fixed later repair scan bank: fourteen scan tapes and thirty-two
 retained scratch tapes, with the actual key machine placed on thirty-four. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedLateRepairScanBank
 noncomputable section
 

@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ArbitraryWidthHighExchangeShared
-import IntegerMultBounds.Machine.RowPaddingConstructedAlphabet
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthHighExchangeShared
+public import IntegerMultBounds.Machine.RowPaddingConstructedAlphabet
 
 /-! Literal binary words at the row-padding/piece-dispatcher boundary. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthPaddedPieceArrays
 noncomputable section
 open Networks

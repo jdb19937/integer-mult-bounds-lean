@@ -1,6 +1,11 @@
-import IntegerMultBounds.Machine.ArbitraryWidthPieceConsume
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthPieceConsume
 
 /-! Physical initialization and erasure of the shared width/depth controller. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthLevelLifecycle
 noncomputable section
 open Networks

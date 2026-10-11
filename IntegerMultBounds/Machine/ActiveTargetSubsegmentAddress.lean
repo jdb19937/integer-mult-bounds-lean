@@ -1,8 +1,13 @@
-import IntegerMultBounds.Compact.ActiveTargetSubsegmentWords
-import IntegerMultBounds.Machine.CompactActiveTargetLayout
+module
+
+public import IntegerMultBounds.Compact.ActiveTargetSubsegmentWords
+public import IntegerMultBounds.Machine.CompactActiveTargetLayout
 
 /-! The guarded active kernel lifted onto the complete unchanged reservation
 address: compact tails, active spectators, dirty back and payload retained. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveTargetSubsegmentAddress
 noncomputable section
 open CompactGadgetReservationShape

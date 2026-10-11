@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexControllerNativeFrame
-import IntegerMultBounds.Machine.CompactComplexExponentStep
+module
+
+public import IntegerMultBounds.Machine.CompactComplexControllerNativeFrame
+public import IntegerMultBounds.Machine.CompactComplexExponentStep
 
 /-! Physical recursive exponent bookkeeping on root controller1, with the
 two work tapes taken from its already blank arithmetic workspace28/29.
 Native66 and all persistent appended storage remain literally unchanged. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexControllerExponent
 noncomputable section
 open ActiveRepairRankHeadersCommands (State bank put)

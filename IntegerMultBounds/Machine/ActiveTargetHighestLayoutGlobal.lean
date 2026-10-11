@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActiveTargetHighestLayoutEarlyCoordinates
+module
+
+public import IntegerMultBounds.Machine.ActiveTargetHighestLayoutEarlyCoordinates
 
 /-! Full-array semantics of both physically executed highest-bit actions at
 every unchanged active-layout address, including all source and spectator
 coordinates. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveTargetHighestLayoutGlobal
 noncomputable section
 open CompactGadgetReservationShape (Shape)

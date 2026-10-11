@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.ActiveRepairEarlyFields
-import IntegerMultBounds.Machine.CleanSubbank
-import IntegerMultBounds.Machine.CompactGadgetReservationPlacement
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairEarlyFields
+public import IntegerMultBounds.Machine.CleanSubbank
+public import IntegerMultBounds.Machine.CompactGadgetReservationPlacement
 
 /-! Actual extracted-field early repair on arbitrary caller ports. Inputs are
 V/T/current controls, q/b/n and original rank; outputs are recovered T, ideal
 recovered target and the actual guard flag. No packed local rank is supplied. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairEarlyFieldsPlaced
 noncomputable section
 open SharedPlacementAlphabet (setTape)

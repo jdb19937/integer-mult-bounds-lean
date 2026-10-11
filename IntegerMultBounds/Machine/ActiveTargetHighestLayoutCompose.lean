@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActiveTargetHighestLayoutWords
+module
+
+public import IntegerMultBounds.Machine.ActiveTargetHighestLayoutWords
 
 /-! Composing a verified low selected-bit action with the physical highest
 bit action supplies every selected bit. The word theorem retains arbitrary
 low spectators and every unselected bit of the retained high interval. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveTargetHighestLayoutCompose
 noncomputable section
 open CompactGadgetReservationShape (Shape)

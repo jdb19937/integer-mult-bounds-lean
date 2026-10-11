@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CountedLateRepairInverse
-import IntegerMultBounds.Machine.CountedLateRepairFlag
-import IntegerMultBounds.Machine.CountedRepairKeyPrefix
+module
+
+public import IntegerMultBounds.Machine.CountedLateRepairInverse
+public import IntegerMultBounds.Machine.CountedLateRepairFlag
+public import IntegerMultBounds.Machine.CountedRepairKeyPrefix
 
 /-! A fixed later-address guard: the original-header early guard is run on
 V/W and V/U, and its two literal flags are combined and cleaned physically. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedLateRepairGuard
 noncomputable section
 variable {a : ℕ}

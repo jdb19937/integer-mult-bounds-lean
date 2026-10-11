@@ -1,6 +1,11 @@
-import IntegerMultBounds.Machine.CompactComplexSpectatorVolumeHeaders
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSpectatorVolumeHeaders
 
 /-! Physical stream-volume setup, spectator promotion and exact cleanup. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSpectatorVolumeHandoff
 noncomputable section
 open CompactGadgetReservationShape (Shape)

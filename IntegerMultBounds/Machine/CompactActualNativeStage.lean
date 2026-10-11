@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.ActivePrefixStageNative
-import IntegerMultBounds.Machine.CompactActualStageRuntimeBudget
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStageNative
+public import IntegerMultBounds.Machine.CompactActualStageRuntimeBudget
 
 /-! The multiplier's actual scalar choices discharge the native stage's
 readiness and packed-cost premises. A concrete triple-aligned payload reserves
 both signed coefficient fields and delimiters, satisfies the existing payload
 allowance, and grows by only a fixed factor. One fixed native machine serves
 all original node widths, slot orders and descendant row levels. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactActualNativeStage
 noncomputable section
 open Sizes

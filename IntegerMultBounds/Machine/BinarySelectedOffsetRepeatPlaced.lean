@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.BinarySelectedOffsetRepeatAlphabet
-import IntegerMultBounds.Machine.BinarySelectedOffsetRepeatCoordinates
+module
+
+public import IntegerMultBounds.Machine.BinarySelectedOffsetRepeatAlphabet
+public import IntegerMultBounds.Machine.BinarySelectedOffsetRepeatCoordinates
 
 /-! Arbitrary caller placement of the complete repeated-offset constructor.
 Eight shared tapes hold b/q/n/P/H/L, the original controls and blank destination. The 42 appended
 private tapes are all restored blank; every caller spectator is preserved. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinarySelectedOffsetRepeatPlaced
 open SharedPlacementAlphabet (setTape)
 open BinaryAddressOffsetRepeatAlphabet (word)

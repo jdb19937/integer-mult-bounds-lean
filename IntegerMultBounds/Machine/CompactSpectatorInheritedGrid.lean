@@ -1,13 +1,18 @@
-import IntegerMultBounds.Machine.ButterflyInheritedStream
-import IntegerMultBounds.Machine.CompactSpectatorLeafSemantics
-import IntegerMultBounds.Machine.CompactSpectatorLeafGuardOriginal
-import IntegerMultBounds.Machine.CompactRecursiveDependencyBudget
-import IntegerMultBounds.Machine.CompactNativeRoleChildPrecision
+module
+
+public import IntegerMultBounds.Machine.ButterflyInheritedStream
+public import IntegerMultBounds.Machine.CompactSpectatorLeafSemantics
+public import IntegerMultBounds.Machine.CompactSpectatorLeafGuardOriginal
+public import IntegerMultBounds.Machine.CompactRecursiveDependencyBudget
+public import IntegerMultBounds.Machine.CompactNativeRoleChildPrecision
 
 /-! Actual inherited dyadic precision is independent of the baseline metadata
 which fixes the stored signed width. Directional leaf arithmetic consumes the
 existing words without normalization or resizing. Controller propagation of
 the inherited precision and Path remains separate. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactSpectatorInheritedGrid
 noncomputable section
 open CompactGadgetReservationShape (Shape)

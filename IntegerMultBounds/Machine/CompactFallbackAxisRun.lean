@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactFallbackHeaders
+module
+
+public import IntegerMultBounds.Machine.CompactFallbackHeaders
 
 /-! One fixed sparse-axis fallback body computes its own original-header
 butterfly inputs, executes the complete native coefficient machine, erases all
 derived headers and increments the original chunk ordinal. Spectator bits and
 all polynomial coefficients remain in the same literal global stream. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactFallbackAxisRun
 noncomputable section
 open CompactFallbackHeaders

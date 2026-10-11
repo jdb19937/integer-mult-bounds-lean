@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixEarlySequenceData
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixEarlySequenceData
 
 /-! A fixed physical four-load early schedule on one unchanged original array.
 All offset generation, swaps and erasure are real calls. Prepared numeric
 stage headers are retained; their original-input synthesis remains separate. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixEarlySequenceRun
 noncomputable section
 open ActivePrefixEarlySequenceData

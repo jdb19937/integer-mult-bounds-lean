@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.RecursiveCountedCallBoundary
-import IntegerMultBounds.Machine.RecursiveRoleChildCallSetup
+module
+
+public import IntegerMultBounds.Machine.RecursiveCountedCallBoundary
+public import IntegerMultBounds.Machine.RecursiveRoleChildCallSetup
 
 /-! Fixed permanent recursive-call bank: roles, shared scratch, six headers,
 clock/count/payload-stack, auxiliary spectators, and descriptor/PC stacks. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveCallBank
 noncomputable section
 open Networks

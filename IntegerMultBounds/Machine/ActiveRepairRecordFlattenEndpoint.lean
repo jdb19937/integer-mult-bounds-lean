@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.ActiveRepairRecordFlatten
-import IntegerMultBounds.Machine.CountedTapeRepairCleanupWord
-import IntegerMultBounds.Machine.FiniteReturnStackAt
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairRecordFlatten
+public import IntegerMultBounds.Machine.CountedTapeRepairCleanupWord
+public import IntegerMultBounds.Machine.FiniteReturnStackAt
 
 /-! Complete two-tape flattening: arbitrary record flags and separators are
 removed, the source including its sentinel is erased, and raw output returns
 to origin. No input-dependent control states or supplied clocks are used. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairRecordFlattenEndpoint
 noncomputable section
 open ActiveRepairRecordFlatten

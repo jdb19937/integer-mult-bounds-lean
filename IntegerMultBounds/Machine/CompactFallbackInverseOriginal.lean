@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactFallbackInverseSchedule
-import IntegerMultBounds.Machine.CompactFallbackOriginal
+module
+
+public import IntegerMultBounds.Machine.CompactFallbackInverseSchedule
+public import IntegerMultBounds.Machine.CompactFallbackOriginal
 
 /-! Sparse inverse execution reuses the same paid original ordinal lifecycle
 and unchanged original chunk geometry, polynomial count and guard reservation. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactFallbackInverseOriginal
 noncomputable section
 open CompactFallbackHeaders

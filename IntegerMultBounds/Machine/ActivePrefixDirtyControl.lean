@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlCleanup
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlCleanup
 
 /-! Clean original-input dirty-U offset production. The volume includes the
 wide target width explicitly; compact-U fit alone does not imply n*q≤W. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixDirtyControl
 noncomputable section
 open ActivePrefixDirtyControlData

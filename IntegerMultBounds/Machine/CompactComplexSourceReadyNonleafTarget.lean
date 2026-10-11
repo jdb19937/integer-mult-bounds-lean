@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyStoppedLeafCountBudget
-import IntegerMultBounds.Machine.CompactComplexSourceReadyFullNodeControls
-import IntegerMultBounds.Machine.CompactComplexControllerExactReturnBudget
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyStoppedLeafCountBudget
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyFullNodeControls
+public import IntegerMultBounds.Machine.CompactComplexControllerExactReturnBudget
 
 /-! A genuine positive nonleaf constructs its fixed return target from the
 incoming live word and physical count. Count expansion/restoration retain the
 original child geometry; no final advanced-live value is mistaken for input. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyNonleafTarget
 noncomputable section
 open CompactGadgetReservationShape (Shape)

@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.AllAxisPhaseOriginalScalar
+module
+
+public import IntegerMultBounds.Machine.AllAxisPhaseOriginalScalar
 
 /-! Complete paid physical setup of the aggregate phase metadata from native
 original13 and retained ell. Numeric setup runs solely on the appended phase
 bank; the native coefficient source and full caller workspace remain framed.
 Cleanup erases computed headers, copied originals and copied ell. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.AllAxisPhaseOriginalMetadata
 noncomputable section
 open CompactGadgetReservationShape (Shape)

@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.NativeEndpointCharacterAddress
-import IntegerMultBounds.Networks.ComplexEndpoints
+module
+
+public import IntegerMultBounds.Machine.NativeEndpointCharacterAddress
+public import IntegerMultBounds.Networks.ComplexEndpoints
 
 /-! The literal low-first aggregate scanner computes the actual product of
 binary sign characters on every original runtime column. No address or
 phase compatibility assumption is supplied. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.NativeEndpointCharacterReadout
 noncomputable section
 open CompactGadgetReservationShape (Shape)

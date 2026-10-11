@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactComplexPhaseRecordAddress
+module
+
+public import IntegerMultBounds.Machine.CompactComplexPhaseRecordAddress
 
 /-! All residual-slot and coordinate-axis controls occupy one sparse chunk
 stream. Low-first scanning reverses both slots and axes; each static residual
 weight therefore applies to an adjacent runtime-width block. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactAllAxisPhaseControls
 noncomputable section
 open CompactGadgetReservationShape (Shape)

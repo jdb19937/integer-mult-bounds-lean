@@ -1,6 +1,11 @@
-import IntegerMultBounds.Machine.CompactRowReservationBudget
+module
+
+public import IntegerMultBounds.Machine.CompactRowReservationBudget
 
 /-! Literal cells of the complete reservation-layout endpoint. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactRowReservationEndpoint
 noncomputable section
 variable {a c r l : ℕ}

@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.RecursiveInterchangeScaling
-import IntegerMultBounds.Machine.FlatRepeatedControlArray
+module
+
+public import IntegerMultBounds.Machine.RecursiveInterchangeScaling
+public import IntegerMultBounds.Machine.FlatRepeatedControlArray
 
 /-! Actual normalized H-controlled D shifts on the seven-factor recursive
 layout. The four canonical dimension descriptors and prepared zero control are
 explicit inputs; they are not assumed to have been generated from blank tapes. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveInterchangeShift
 open RecursiveInterchangeLayout (Descriptor volume)
 open RecursiveInterchangeScaling (Address index)

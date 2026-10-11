@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlLoadPlaced
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlNegativePureLoadPlaced
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlUSwapPlaced
-import IntegerMultBounds.Machine.ActivePrefixCompactSwapPlaced
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlLoadPlaced
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlNegativePureLoadPlaced
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlUSwapPlaced
+public import IntegerMultBounds.Machine.ActivePrefixCompactSwapPlaced
 
 /-! Four concrete compact conjugations: pure/negative-XOR on T and
 pure/negative-pure on U. Every operation acts on the unchanged full-array type. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixDirtyControlConjugationData
 noncomputable section
 open Networks.Shared50ModularControl (prime)

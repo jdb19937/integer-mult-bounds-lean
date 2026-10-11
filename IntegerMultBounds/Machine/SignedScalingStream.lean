@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.SignedScalingSign
-import IntegerMultBounds.Machine.ScalingStream
+module
+
+public import IntegerMultBounds.Machine.SignedScalingSign
+public import IntegerMultBounds.Machine.ScalingStream
 
 /-! Repeated signed rational scaling on consecutive equal-size fibers. The
 prepared immutable dimension/piece/tail descriptors are shared across the actual
 counted loop. The boundary invariant restores all payload scratch and advances
 both external payload heads by the literal fiber volume. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.SignedScalingStream
 
 open SignedScalingExecution (Controls setTape setTape_append_left)
@@ -47,12 +52,12 @@ private theorem copy_set_dest (f g clock desc newDest : ℤ → Fin 4) (p q a b 
   unfold setTape CountedCopyReuse.bank
   congr 1 <;> apply List.ofFn_injective <;> rfl
 
-private def forwardBank {a : ℕ} (A : Controls a) (source : ℤ → Fin 4) (p : ℤ)
+def forwardBank {a : ℕ} (A : Controls a) (source : ℤ → Fin 4) (p : ℤ)
     (middle : ℤ → Fin 4) (r : ℤ) : Tapes (ScalingExecution.TapeCount a) 0 :=
   (ScalingSplit.bank source A.background A.descriptors p A.origins).append
     (ScalingExecutionReuse.auxiliary middle r A.blockBits A.countBits A.modulus A.current)
 
-private def inverseBank {d : ℕ} (D : Controls d) (dest : ℤ → Fin 4) (q : ℤ) :
+def inverseBank {d : ℕ} (D : Controls d) (dest : ℤ → Fin 4) (q : ℤ) :
     Tapes (ScalingExecution.TapeCount d) 0 :=
   (ScalingSplit.bank dest D.background D.descriptors q D.origins).append
     (ScalingInverseExecution.auxiliary empty 0 D.blockBits D.countBits D.modulus D.current)
@@ -86,7 +91,7 @@ private theorem forward_reset {a : ℕ} (ha : 0 < a) (A : Controls a) (Q B : ℕ
   simp only [forwardBank,advanced,Nat.cast_mul]
   rfl
 
-private def coreBank {a d : ℕ} (A : Controls a) (D : Controls d)
+def coreBank {a d : ℕ} (A : Controls a) (D : Controls d)
     (source : ℤ → Fin 4) (p : ℤ) (middle : ℤ → Fin 4) (r : ℤ) (dest : ℤ → Fin 4) (q : ℤ) :
     Tapes (SignedScalingExecution.TapeCount a d) 0 :=
   ((forwardBank A source p middle r).append (inverseBank D dest q)).append

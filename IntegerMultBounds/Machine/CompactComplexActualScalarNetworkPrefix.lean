@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactComplexScalarPrefixAdvance
+module
+
+public import IntegerMultBounds.Machine.CompactComplexScalarPrefixAdvance
 
 /-! Actual integer scalar blocks advance the literal original framed-network
 compiler networkPrefix. The input equality is the current aligned-networkPrefix invariant,
 not an assumed completed-network result. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexActualScalarNetworkPrefix
 noncomputable section
 open Networks

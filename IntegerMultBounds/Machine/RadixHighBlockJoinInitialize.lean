@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.RadixHighBlockJoinSetup
+module
+
+public import IntegerMultBounds.Machine.RadixHighBlockJoinSetup
 
 /-! Complete physical high-block join/separate preparation from sole original
 P/S/E descriptors and a retained rho. Every generated power/product is created
 on blank tape; the temporary q^rho is erased before the body begins. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RadixHighBlockJoinInitialize
 noncomputable section
 open RadixHighBlockJoinSetup
@@ -26,7 +31,7 @@ def prepared (growPrefix : Bool) (source : ℤ → Fin (a+4)) (ss op oe : List B
   bank (q := q) source ss op oe (if growPrefix then some (grownBits (q := q) N r) else some op)
     (if growPrefix then some oe else some (grownBits (q := q) N r)) (some (bits q)) ctrl
 
-private theorem copy_ne (g : Bool) : originalSlot (q := q) (!g) ≠ workingSlot (!g) := by
+theorem copy_ne (g : Bool) : originalSlot (q := q) (!g) ≠ workingSlot (!g) := by
   intro he
   have hv := congrArg Fin.val he
   cases g <;> simp [originalSlot,workingSlot,originalPrefixSlot,originalSuffixSlot,prefixSlot,suffixSlot,

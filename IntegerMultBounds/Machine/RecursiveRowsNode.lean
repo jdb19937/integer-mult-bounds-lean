@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.RecursiveRowsNodeRoleBank
-import IntegerMultBounds.Machine.RecursiveViewFrameRoleBank
-import IntegerMultBounds.Machine.SharedBankFamily
-import IntegerMultBounds.Machine.RecursiveStackAllocation
+module
+
+public import IntegerMultBounds.Machine.RecursiveRowsNodeRoleBank
+public import IntegerMultBounds.Machine.RecursiveViewFrameRoleBank
+public import IntegerMultBounds.Machine.SharedBankFamily
+public import IntegerMultBounds.Machine.RecursiveStackAllocation
 
 /-! Physical node boundaries: save the original six headers, split cyclic rows,
 and install the network descriptor; restore the saved headers before merging.
 Each fixed skeleton has a literal common-bank endpoint and blank private work. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveRowsNode
 noncomputable section
 open Networks

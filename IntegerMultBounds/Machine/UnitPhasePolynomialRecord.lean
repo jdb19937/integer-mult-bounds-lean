@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.SparsePhaseFlagsCaller
-import IntegerMultBounds.Machine.UnitPhasePolynomialFrame
-import IntegerMultBounds.Machine.UnitPhaseControlReset
-import IntegerMultBounds.Machine.UnitPhaseRecordKernel
+module
+
+public import IntegerMultBounds.Machine.SparsePhaseFlagsCaller
+public import IntegerMultBounds.Machine.UnitPhasePolynomialFrame
+public import IntegerMultBounds.Machine.UnitPhaseControlReset
+public import IntegerMultBounds.Machine.UnitPhaseRecordKernel
 
 /-! Actual once-per-address polynomial phase application: derive and scan
 one sparse address phase, apply its retained flags to a physically counted
 coefficient stream, then erase phase controls/descriptors once. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.UnitPhasePolynomialRecord
 noncomputable section
 open CompactGadgetReservationShape (Shape)

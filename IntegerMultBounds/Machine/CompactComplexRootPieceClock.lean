@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactComplexRootPieceQueue
-import IntegerMultBounds.Machine.LoopChain
+module
+
+public import IntegerMultBounds.Machine.CompactComplexRootPieceQueue
+public import IntegerMultBounds.Machine.LoopChain
 
 /-! A fixed runtime digit-clock loop invokes its callback once per generated
 root piece and advances the generated left boundary using paid arithmetic.
 The callback interface frames every numeric/queue cell; its own execution
 and cost remain explicit hypotheses until the recursive controller is wired. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexRootPieceClock
 noncomputable section
 open ActiveRepairRankHeadersCommands (State bank put)

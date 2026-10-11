@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixStagePairRun
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStagePairRun
 
 /-! A fixed chronological list of literal binary row additions is compiled to
 one finite machine. Every instruction restores the original pair and the one
 private stack, so list composition retains the exact common caller bank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixStagePairSchedule
 noncomputable section
 open CompactGadgetReservationShape (Shape)

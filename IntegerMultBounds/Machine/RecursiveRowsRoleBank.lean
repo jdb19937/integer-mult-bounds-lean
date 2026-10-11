@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.RecursiveRowsClean
-import IntegerMultBounds.Machine.CleanSubbank
+module
+
+public import IntegerMultBounds.Machine.RecursiveRowsClean
+public import IntegerMultBounds.Machine.CleanSubbank
 
 /-! Physical placement of clean cyclic moves onto permanent source/role tapes
 and the six shared headers. Every other permanent tape and the common scratch
 are framed, and all private tape space is blank again on return. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveRowsRoleBank
 open RecursiveInterchangeLayout (Descriptor volume)
 open RecursiveRowsMove (TapeCount)

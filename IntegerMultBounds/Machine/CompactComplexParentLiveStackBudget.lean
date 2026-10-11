@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactComplexParentLiveStack
-import IntegerMultBounds.Machine.CompactComplexChildAlignmentBudget
+module
+
+public import IntegerMultBounds.Machine.CompactComplexParentLiveStack
+public import IntegerMultBounds.Machine.CompactComplexChildAlignmentBudget
 
 /-! Actual parent-event live save and normalized-child denominator handoff have
 uniform native/fallback-volume costs. The two literal descriptor lengths are
 bounded by their genuine parent/child dependency Paths and true live ledgers;
 no independent header allowance or desired aggregate runtime is assumed. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexParentLiveStackBudget
 noncomputable section
 open CompactGadgetReservationShape (Shape)

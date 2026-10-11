@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactReservedVolumeBudget
+module
+
+public import IntegerMultBounds.Machine.CompactReservedVolumeBudget
 
 /-! The complete fixed nonfallback programs have the actual certified saving.
 These budgets include generated headers and all controls, not only abstract
 per-axis costs. Exact physical runtime bounds are used as the witnesses. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactReservedActualBudget
 noncomputable section
 open Filter Sizes Parameters

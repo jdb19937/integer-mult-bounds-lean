@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.UnitPhasePolynomialLiteralEndpoint
+module
+
+public import IntegerMultBounds.Machine.UnitPhasePolynomialLiteralEndpoint
 
 /-! The complete polynomial phase machine retains the literal source array
 and reaches its real EOF. The last-source proof refers only to the last
 actual coefficient, not the dummy context beyond the stream. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.UnitPhasePolynomialSourceEndpoint
 noncomputable section
 open CompactGadgetReservationShape (Shape)

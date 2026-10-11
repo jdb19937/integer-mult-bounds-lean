@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.RawLinearCombinationComplexRowSequence
-import IntegerMultBounds.Machine.CompactComplexExponentStep
+module
+
+public import IntegerMultBounds.Machine.RawLinearCombinationComplexRowSequence
+public import IntegerMultBounds.Machine.CompactComplexExponentStep
 
 /-! The true common denominator advances once at each completed whole scalar
 row. It is stored on a retained marked binary tape, separate from all geometry
 and field-width metadata. The coefficient loop never updates this descriptor;
 its real in-place increment executes only after copy-back and full cleanup. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RawLinearCombinationComplexDenominatorSequence
 noncomputable section
 open ButterflyStreamData (Coefficient)

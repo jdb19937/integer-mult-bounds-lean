@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActivePrefixStageHeadersData
-import IntegerMultBounds.Machine.CompactChildHeadersArithmetic
-import IntegerMultBounds.Machine.CompactComplexRecursiveGeometry
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStageHeadersData
+public import IntegerMultBounds.Machine.CompactChildHeadersArithmetic
+public import IntegerMultBounds.Machine.CompactComplexRecursiveGeometry
 
 /-! Paid child-node header arithmetic for an internal child. The row count
 belongs to the already selected role stream and is retained. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexChildHeadersData
 noncomputable section
 open CompactChildHeadersArithmetic

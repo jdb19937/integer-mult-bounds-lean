@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CountedPackedControlLoadRun
-import IntegerMultBounds.Compact.PackedArithValue
+module
+
+public import IntegerMultBounds.Machine.CountedPackedControlLoadRun
+public import IntegerMultBounds.Compact.PackedArithValue
 
 /-! The physically executed control loader adds or subtracts the packed
 control integers in the dirty-word modulus, including one-bit radix digits. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedPackedControlLoadRun
 open Counter (value)
 open Compact.PowerTwo (ctrl value_gather value_digitWord value_singleton list_eq_range addMod_value pow_blocks)

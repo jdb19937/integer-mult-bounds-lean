@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ButterflyAxisRouting
-import IntegerMultBounds.Machine.RecursiveRowsRoleBank
+module
+
+public import IntegerMultBounds.Machine.ButterflyAxisRouting
+public import IntegerMultBounds.Machine.RecursiveRowsRoleBank
 
 /-! One permanent bank shared by selected-bit split, paid paired arithmetic,
 and merge. The common source is slot 56; paired inputs are slots 0/1 and outputs
 2/3. Original count/length and six shape headers remain retained throughout. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ButterflyAxisBank
 noncomputable section
 open ButterflyStreamData

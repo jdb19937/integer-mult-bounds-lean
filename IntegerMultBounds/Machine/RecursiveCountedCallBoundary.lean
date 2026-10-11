@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.RecursiveCallCount
-import IntegerMultBounds.Machine.RoleArrayCallBoundary
-import IntegerMultBounds.Machine.SharedBankFamily
+module
+
+public import IntegerMultBounds.Machine.RecursiveCallCount
+public import IntegerMultBounds.Machine.RoleArrayCallBoundary
+public import IntegerMultBounds.Machine.SharedBankFamily
 
 /-! Actual count lifecycle around the separate payload-call blocks. Volume is
 computed from six canonical headers; both controls are blank at recursive
 boundaries. Recovery recomputes the count from the restored role-parent headers. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveCountedCallBoundary
 noncomputable section
 open RoleArrayFrames

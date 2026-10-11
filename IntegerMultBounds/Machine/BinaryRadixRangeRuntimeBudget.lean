@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ArbitraryWidthOriginalTotalRun
-import IntegerMultBounds.Machine.BinaryRadixRootEncoding
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthOriginalTotalRun
+public import IntegerMultBounds.Machine.BinaryRadixRootEncoding
 
 /-! Runtime-budget assembly for the actual radix machine and paid binary
 range wrapper. This module bounds costs; machine composition is separate. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryRadixRangeRuntimeBudget
 noncomputable section
 open Networks

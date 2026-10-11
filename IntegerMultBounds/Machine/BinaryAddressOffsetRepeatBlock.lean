@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.BinaryAddressOffsetRepeatCopy
+module
+
+public import IntegerMultBounds.Machine.BinaryAddressOffsetRepeatCopy
 
 /-! Load one runtime-width packed block into scratch, emit it L times using
 an actual countdown, then erase scratch. The original source advances one
 block and all three descriptor/work heads are restored. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryAddressOffsetRepeatBlock
 open CountedCopyReuse (empty binary)
 open BinaryAddressOffsetRepeatData

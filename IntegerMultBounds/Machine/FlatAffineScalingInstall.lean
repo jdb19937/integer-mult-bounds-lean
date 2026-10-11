@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.FlatAffineScalingInputLayout
-import IntegerMultBounds.Machine.BinaryDescriptorInstallList
+module
+
+public import IntegerMultBounds.Machine.FlatAffineScalingInputLayout
+public import IntegerMultBounds.Machine.BinaryDescriptorInstallList
 
 /-! Physical installation of all affine-scaling dimension descriptors from one
 preserved nine-tape dimension bank. The copy schedule depends only on coefficient. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.FlatAffineScalingInstall
 open FlatAffineScalingInputLayout (Kind kinds bank word)
 open BinaryDescriptorInstallList

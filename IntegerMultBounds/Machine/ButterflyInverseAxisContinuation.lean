@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ButterflyInverseAxisCorrect
+module
+
+public import IntegerMultBounds.Machine.ButterflyInverseAxisCorrect
 
 /-! Inverse execution can continue an existing arithmetic prefix. The machine
 keeps its original guard-width header p, while the semantic precision begins at
 p+j rather than requiring a fresh normalized input or free width conversion. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ButterflyInverseAxisContinuation
 noncomputable section
 open ButterflyAxisArray (Array Width)

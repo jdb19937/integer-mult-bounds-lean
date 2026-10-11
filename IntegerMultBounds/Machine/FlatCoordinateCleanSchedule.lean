@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.FlatCoordinateInitializedSchedule
-import IntegerMultBounds.Machine.CleanExecution
+module
+
+public import IntegerMultBounds.Machine.FlatCoordinateInitializedSchedule
+public import IntegerMultBounds.Machine.CleanExecution
 
 /-! Fully reusable mixed affine schedules. The only nonblank input and output
 are the permanent array/scratch/b/W bank; every generated work and tracking tape
 is physically erased and returned to head zero at a linear-volume total cost. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.FlatCoordinateCleanSchedule
 open Networks.Shared50ModularControl (prime)
 open ActualAffineScaling (modulus)

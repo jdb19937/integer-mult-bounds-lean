@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CountedRepairScanMetadataRun
+module
+
+public import IntegerMultBounds.Machine.CountedRepairScanMetadataRun
 
 /-! Runtime later sort width and zero rank counter. The original products
 n*q and n*b are physically synthesized; the latter is replayed twice, with
 all head returns and descriptor cleanup charged. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedLateRepairMetadata
 noncomputable section
 open CountedRankSplitBank

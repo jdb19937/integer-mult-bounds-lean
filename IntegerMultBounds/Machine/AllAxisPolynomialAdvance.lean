@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.AllAxisPolynomialFull
+module
+
+public import IntegerMultBounds.Machine.AllAxisPolynomialFull
 
 /-! Exact next-source and next-counter boundary of the actual polynomial
 body. The boundary uses the last real coefficient, never a terminal read. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.AllAxisPolynomialAdvance
 noncomputable section
 open CompactGadgetReservationShape (Shape)

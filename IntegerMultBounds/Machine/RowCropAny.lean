@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.RowPaddingConstructed
+module
+
+public import IntegerMultBounds.Machine.RowPaddingConstructed
 
 /-! The physical row crop also accepts arbitrary discarded row contents.
 No zero-padding promise is needed: every discarded cell is actually erased. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RowCropAny
 open CountedRawFill (filled)
 open RowPaddingStream (consumed consumed_step current_view)

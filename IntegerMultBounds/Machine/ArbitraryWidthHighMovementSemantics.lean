@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ArbitraryWidthHighExchangeSemantics
-import IntegerMultBounds.Machine.RadixHighBlockJoinSemantics
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthHighExchangeSemantics
+public import IntegerMultBounds.Machine.RadixHighBlockJoinSemantics
 
 /-! Exact serialized bridge between the paid high-prefix exchange, ordered
 high-block movement, and the manuscript's joined-row view. The actual exchange
 runs before joining. Every regrouping below is an explicit finite-index cast. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthHighMovementSemantics
 noncomputable section
 open Networks

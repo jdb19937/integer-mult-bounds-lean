@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ArbitraryWidthHighGuard
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthHighGuard
 
 /-! The actual high-digit count is bounded by every positive width power.
 This pays for high-prefix exchanges and ordered joining/separation without
 weakening the certified exponent of the recursive interchange. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthHighBudget
 noncomputable section
 open ArbitraryWidthHighPrepare

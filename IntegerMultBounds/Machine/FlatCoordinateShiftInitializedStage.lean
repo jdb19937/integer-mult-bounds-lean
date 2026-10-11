@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.FlatCoordinateShiftInput
+module
+
+public import IntegerMultBounds.Machine.FlatCoordinateShiftInput
 
 /-! The common-payload stage interface for a controlled shift whose complete
 private dimensions and width family are physically constructed from b and W. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.FlatCoordinateShiftInitializedStage
 open Networks
 open Networks.Shared50ModularControl (prime)

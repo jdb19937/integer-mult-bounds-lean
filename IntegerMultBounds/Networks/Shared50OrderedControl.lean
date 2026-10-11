@@ -1,11 +1,16 @@
-import IntegerMultBounds.Networks.FramedControlSchedule
-import IntegerMultBounds.Networks.Shared50AffineControl
-import IntegerMultBounds.Networks.AffineFieldSegments
+module
+
+public import IntegerMultBounds.Networks.FramedControlSchedule
+public import IntegerMultBounds.Networks.Shared50AffineControl
+public import IntegerMultBounds.Networks.AffineFieldSegments
 
 /-! Role-preserving attachment of the actual rational field schedules to the
 complete modular framed execution. Scalar gates remain at their original
 positions between edges. This exposes exact instruction order and semantics;
 it does not yet assert width independence of the interleaved control list. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Networks.Shared50OrderedControl
 noncomputable section
 attribute [local irreducible] Shared50Finite.program SharedPointReplay.circuit SharedPointExecution.code

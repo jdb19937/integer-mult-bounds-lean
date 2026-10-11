@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.CompactChildHeadersArithmetic
+module
+
+public import IntegerMultBounds.Machine.CompactChildHeadersArithmetic
 
 /-! Clean power-of-two synthesis extends the fixed header arithmetic compiler.
 Exponents are runtime descriptors; only the base two belongs to finite control. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ButterflyAxisHeadersArithmetic
 noncomputable section
 open ActiveRepairRankHeadersCommands

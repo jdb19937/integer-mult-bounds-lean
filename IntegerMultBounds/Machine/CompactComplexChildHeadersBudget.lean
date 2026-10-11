@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.CompactComplexChildHeadersData
+module
+
+public import IntegerMultBounds.Machine.CompactComplexChildHeadersData
 
 /-! A polynomial descriptor cost for the paid physical child-header schedule.
 This bound counts quotient, product, constant writing and all erasures. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexChildHeadersBudget
 open CompactChildHeadersArithmetic CompactComplexChildHeadersData
 open ActiveRepairRankHeadersCommands (State)

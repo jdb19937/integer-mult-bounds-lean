@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.BinaryPackedOffsetOriginalRun
-import IntegerMultBounds.Machine.BinaryPackedOffsetBudget
+module
+
+public import IntegerMultBounds.Machine.BinaryPackedOffsetOriginalRun
+public import IntegerMultBounds.Machine.BinaryPackedOffsetBudget
 
 /-! Original-header fiber-count construction and erasure preserve the
 certified interchange exponent in the complete physical action. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryPackedOffsetOriginalBudget
 open BinaryPackedOffsetOriginalRun (cost)
 open RadixRangePadding (volume)

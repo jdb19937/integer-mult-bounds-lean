@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixCompactNegativeLoad
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixCompactNegativeLoad
 
 /-! The complete original-input compact negative parity-XOR action on arbitrary caller
 tapes. Ten original headers and the array are permanent; all private storage
 starts and returns blank, with arbitrary caller spectators unchanged. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixCompactNegativeLoadPlaced
 noncomputable section
 open ActivePrefixCompactNegativeLoadData

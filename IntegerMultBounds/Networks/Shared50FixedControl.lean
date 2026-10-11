@@ -1,9 +1,14 @@
-import IntegerMultBounds.Networks.Shared50OrderedControl
-import IntegerMultBounds.Networks.Shared50FramedShape
+module
+
+public import IntegerMultBounds.Networks.Shared50OrderedControl
+public import IntegerMultBounds.Networks.Shared50FramedShape
 
 /-! One fixed interleaved rational control list for every runtime radix width.
 Frame realization changes neither physical roles, gate positions, nor which
 ordered rational field program is attached to each edge. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Networks.Shared50FixedControl
 noncomputable section
 open FramedControlShape Shared50OrderedControl

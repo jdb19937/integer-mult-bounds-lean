@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActiveTargetHighestLayoutLateCoordinates
+module
+
+public import IntegerMultBounds.Machine.ActiveTargetHighestLayoutLateCoordinates
 
 /-! Earlier-source highest action in the unchanged activeBefore field.
 Only its lowest bit changes; the source and all bits between them remain
 literal spectators, as do both dirty reservations and all target low bits. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveTargetHighestLayoutEarlyCoordinates
 noncomputable section
 open CompactGadgetReservationShape (Shape)

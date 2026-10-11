@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.ProgramPairSequence
-import IntegerMultBounds.Machine.NativeEndpointCharacterCanonicalSourceReady
-import IntegerMultBounds.Machine.NativeEndpointCharacterPath
-import IntegerMultBounds.Machine.NativeUniformPolynomialRotationSourceReady
-import IntegerMultBounds.Machine.CompactComplexSourceReadyEndpointRoleExchange
+module
+
+public import IntegerMultBounds.Machine.ProgramPairSequence
+public import IntegerMultBounds.Machine.NativeEndpointCharacterCanonicalSourceReady
+public import IntegerMultBounds.Machine.NativeEndpointCharacterPath
+public import IntegerMultBounds.Machine.NativeUniformPolynomialRotationSourceReady
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyEndpointRoleExchange
 
 /-! Fixed actual sink signs, column phase, X negation and named X/Y exchange
 compose on one recursive bank and reclaim the same borrowed leaf storage. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadySinkCorrections
 noncomputable section
 open CompactGadgetReservationShape (Shape)

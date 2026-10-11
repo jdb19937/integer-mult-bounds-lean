@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.BinarySelectedOffsetRepeatConstruct
+module
+
+public import IntegerMultBounds.Machine.BinarySelectedOffsetRepeatConstruct
 
 /-! Selected repetition has the same paid metadata/copying layout as parity
 repetition, with exchanged source/target widths and the selected producer's
 larger constant. Its allowance is explicitly charged to record width. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinarySelectedOffsetRepeatBudget
 
 def constant := BinaryAddressOffsetRepeatConstructBudget.constant+50

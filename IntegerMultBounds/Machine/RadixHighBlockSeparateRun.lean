@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.RadixHighBlockSeparateLoop
-import IntegerMultBounds.Machine.RadixHighBlockJoinInitialize
-import IntegerMultBounds.Machine.RadixHighBlockJoinCleanup
-import IntegerMultBounds.Machine.ArbitraryWidthHighBudget
+module
+
+public import IntegerMultBounds.Machine.RadixHighBlockSeparateLoop
+public import IntegerMultBounds.Machine.RadixHighBlockJoinInitialize
+public import IntegerMultBounds.Machine.RadixHighBlockJoinCleanup
+public import IntegerMultBounds.Machine.ArbitraryWidthHighBudget
 
 /-! Sole-header execution of inverse ordered high-block separation. All
 working descriptors are physically constructed, the actual counted inverse
 loop moves the block, and every private descriptor is physically erased. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RadixHighBlockSeparateRun
 noncomputable section
 open RecursiveChildQuotientsConstant (bits)

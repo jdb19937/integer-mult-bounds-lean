@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.RowCropAny
-import IntegerMultBounds.Machine.RangePaddingDimensions
-import IntegerMultBounds.Machine.RadixRangePadding
+module
+
+public import IntegerMultBounds.Machine.RowCropAny
+public import IntegerMultBounds.Machine.RangePaddingDimensions
+public import IntegerMultBounds.Machine.RadixRangePadding
 
 /-! Paid rectangular range padding and cropping from the five immutable
 canonical dimensions. Group prefix/suffix dimensions are synthesized on tape;
 every scan, rewind, generated descriptor and cleanup is charged. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RadixRangePaddingExecution
 noncomputable section
 open RangePaddingDimensions (bank input ready words values)

@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlNegativePureLoadData
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlNegativePureLoadData
 
 /-! Actual four-mode offset production, original-row repetition and full-array
 rotation. Every mode shares fifty-one clean private tapes. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixDirtyControlNegativePureLoadRun
 noncomputable section
 open ActivePrefixDirtyControlLoadData (Array base volume prefixCount dimensions)

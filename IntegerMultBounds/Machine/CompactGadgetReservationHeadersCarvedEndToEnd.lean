@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactGadgetReservationHeadersCarvedReservationRouting
+module
+
+public import IntegerMultBounds.Machine.CompactGadgetReservationHeadersCarvedReservationRouting
 
 /-! Original physical array through padding, role splitting, erased reservation
 work, original-row/packing-width header synthesis, and the actual carved load.
 The offset stream remains a physical explicit input; no derived descriptor or
 execution callback is supplied. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactGadgetReservationHeadersCarvedEndToEnd
 noncomputable section
 open CompactGadgetReservationShape

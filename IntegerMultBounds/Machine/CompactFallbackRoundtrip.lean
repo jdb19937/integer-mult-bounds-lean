@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactFallbackInverseSemantics
+module
+
+public import IntegerMultBounds.Machine.CompactFallbackInverseSemantics
 
 /-! Paid sparse forward/inverse roundtrip with actual chunk geometry and
 polynomial count unchanged. The independent reservation covers two sparse
 passes; actual final precision is q+2D, not q+2(DK). -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactFallbackRoundtrip
 noncomputable section
 open CompactFallbackHeaders

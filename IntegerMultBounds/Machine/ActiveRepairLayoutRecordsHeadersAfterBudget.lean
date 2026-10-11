@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsBankHeaders
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsBankHeaders
 
 /-! Original geometry pays the complete physical repair-header preparation,
 including measurement, arithmetic, record-count synthesis and metadata copies. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLayoutRecordsHeadersAfterBudget
 noncomputable section
 open CompactGadgetReservationShape (Shape)

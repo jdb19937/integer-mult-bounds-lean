@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexActualCallRoleAlignment
-import IntegerMultBounds.Machine.CompactComplexSourceReadyActualTable
+module
+
+public import IntegerMultBounds.Machine.CompactComplexActualCallRoleAlignment
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyActualTable
 
 /-! Physical basis passes on the complete original source-ready scalar bank.
 Every original tape keeps its position; the fixed local basis workspace is
 appended. Actual child entry and decoded return run between the two passes. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexActualCallFullAlignment
 noncomputable section
 open CompactComplexActualCallAlignment

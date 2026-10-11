@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.FlatAffineScaling
-import IntegerMultBounds.Machine.FlatArrayNormalize
-import IntegerMultBounds.Machine.InjectivePlacement
+module
+
+public import IntegerMultBounds.Machine.FlatAffineScaling
+public import IntegerMultBounds.Machine.FlatArrayNormalize
+public import IntegerMultBounds.Machine.InjectivePlacement
 
 /-! Normalize an actual affine-scale bank using its existing payload slots and
 its B/Q/P clocks and descriptors. Generated arithmetic metadata remains framed. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.FlatAffineScalingNormalize
 open Networks
 open SignedScalingPrepared (Setup)
@@ -11,7 +16,7 @@ open SignedScalingDimensions (Scratch)
 open ActualAffineScaling (modulus negative)
 noncomputable section
 
-private def localSource (a d : ℕ) : Fin (SignedScalingSign.TapeCount a d) :=
+def localSource (a d : ℕ) : Fin (SignedScalingSign.TapeCount a d) :=
   Fin.castAdd 5 (Fin.castAdd 8 (Fin.castAdd 5 (Fin.castAdd (ScalingExecution.TapeCount d)
     (Fin.castAdd (ScalingExecution.AuxTapes a) (Fin.castAdd (a+a) (0 : Fin 4))))))
 
@@ -43,7 +48,7 @@ theorem slots_injective (r : ℚ) : Function.Injective (slots r) :=
     ((SignedScalingDimensionsStream.innerPlacement _ _).injective.comp
       ((Fin.castAdd_injective _ _).comp (localSlots_injective _ _ _))))
 
-private theorem size (r : ℚ) : 8+(ActualAffineScalingStream.TapeCount r-8) = ActualAffineScalingStream.TapeCount r := by
+theorem size (r : ℚ) : 8+(ActualAffineScalingStream.TapeCount r-8) = ActualAffineScalingStream.TapeCount r := by
   rw [ActualAffineScalingStream.tapeCount_eq]
   omega
 

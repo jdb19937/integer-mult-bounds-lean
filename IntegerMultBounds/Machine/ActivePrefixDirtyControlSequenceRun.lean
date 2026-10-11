@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlSequenceStages
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlSequenceStages
 
 /-! The complete prepared later-source physical schedule: early4, source load
 through U/back, early4 using the updated U word, and source unload through
 U/back. This contains twelve real swaps and ten real full-array rotations. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixDirtyControlSequenceRun
 noncomputable section
 open ActivePrefixDirtyControlSequenceData ActivePrefixDirtyControlSequenceStages

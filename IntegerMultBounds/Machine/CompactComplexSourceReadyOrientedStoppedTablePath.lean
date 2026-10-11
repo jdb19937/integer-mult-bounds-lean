@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyOrientedActualTable
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyOrientedActualTable
 
 /-! Actual stopped control1 reaches the canonical return guard0 after the
 forward body and saved-call post orientation. Empty-root branches derive
 identity from the real empty saved stack. Every table join is charged. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyOrientedStoppedTablePath
 noncomputable section
 open Networks

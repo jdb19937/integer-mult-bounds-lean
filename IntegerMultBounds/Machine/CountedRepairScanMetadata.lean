@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CountedRepairKeyScan
-import IntegerMultBounds.Machine.CountedGuardConstantsFill
+module
+
+public import IntegerMultBounds.Machine.CountedRepairKeyScan
+public import IntegerMultBounds.Machine.CountedGuardConstantsFill
 
 /-! Runtime construction of the unary sort width and zero rank counter, using
 only original q/b/n headers and blank reusable product workspace. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedRepairScanMetadata
 noncomputable section
 open CountedRankSplitBank

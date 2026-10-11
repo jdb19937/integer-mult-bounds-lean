@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlData
-import IntegerMultBounds.Machine.ActivePrefixLayoutBack
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlLayoutAbsorption
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlData
+public import IntegerMultBounds.Machine.ActivePrefixLayoutBack
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlLayoutAbsorption
 
 /-! Compact U in the actual target and back prefixes, with no extra source
 digit or fictitious wide source slot. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixDirtyControlLayoutFields
 open CompactGadgetReservationShape CompactActiveTargetGeometry
 open ActivePrefixLayoutShapes ActivePrefixLayoutGeometry ActivePrefixLayoutFields

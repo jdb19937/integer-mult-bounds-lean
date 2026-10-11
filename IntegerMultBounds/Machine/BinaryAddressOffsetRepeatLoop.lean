@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.BinaryAddressOffsetRepeatPass
+module
+
+public import IntegerMultBounds.Machine.BinaryAddressOffsetRepeatPass
 
 /-! Runtime-counted replay of the whole expanded table. Every pass rereads
 and rewinds the actual base table; output copies occupy consecutive cells. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryAddressOffsetRepeatLoop
 open CountedCopyReuse (empty binary)
 open BinaryAddressOffsetRepeatData

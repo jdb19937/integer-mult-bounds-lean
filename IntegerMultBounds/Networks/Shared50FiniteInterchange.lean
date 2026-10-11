@@ -1,10 +1,14 @@
-import IntegerMultBounds.Networks.Shared50ModularExecution
+module
+
+public import IntegerMultBounds.Networks.Shared50ModularExecution
 
 /-! Full finite address interchange around the actual modular shared network.
 The two surrounding field programs update only the later group, contain no
 recursive interchange, and have a fixed shape independent of the radix width.
 The complete physical program swaps the address chunks on every routed array,
 including arbitrary scratch arrays. No tape-time claim is made here. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.Shared50FiniteInterchange
 

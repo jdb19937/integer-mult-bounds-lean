@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.NativePolynomialStageHeaders
-import IntegerMultBounds.Machine.CompactNativeRoleHeaderBudget
+module
+
+public import IntegerMultBounds.Machine.NativePolynomialStageHeaders
+public import IntegerMultBounds.Machine.CompactNativeRoleHeaderBudget
 
 /-! Codec payload synthesis and restoration are paid from the genuine native
 polynomial volume. All original controller allowances are derived from Stage;
 no already-expanded payload descriptor or metadata cost witness is assumed. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.NativePolynomialStageHeaderBudget
 noncomputable section
 open CompactGadgetReservationShape (Shape)

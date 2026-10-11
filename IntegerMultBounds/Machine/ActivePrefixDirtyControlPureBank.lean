@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlRun
-import IntegerMultBounds.Machine.BinaryVaryingParityOnlyPlaced
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlRun
+public import IntegerMultBounds.Machine.BinaryVaryingParityOnlyPlaced
 
 /-! Exact caller endpoints for the dirty-U controlled physical gather. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixDirtyControlPureBank
 noncomputable section
 open ActivePrefixDirtyControlData hiding offsetWord gathered offset_length

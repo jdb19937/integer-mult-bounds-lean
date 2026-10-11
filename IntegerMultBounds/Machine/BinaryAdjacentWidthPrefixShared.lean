@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.BinaryAdjacentWidthHeadersShared
-import IntegerMultBounds.Machine.BinaryRadixRootHeadersShared
+module
+
+public import IntegerMultBounds.Machine.BinaryAdjacentWidthHeadersShared
+public import IntegerMultBounds.Machine.BinaryRadixRootHeadersShared
 
 /-! Physically synthesize the doubled spectator prefix needed by the binary
 adjacent-width equal call. One is written, the dimension engine runs at fixed
 radix/width two/one, and every created tape is erased by the reverse machine. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryAdjacentWidthPrefixShared
 noncomputable section
 variable {a t : ℕ}

@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactComplexStoppedLeafTensorSemantics
-import IntegerMultBounds.Machine.CompactComplexCorrectedChildGridSemantics
-import IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedStoppedReturnPath
+module
+
+public import IntegerMultBounds.Machine.CompactComplexStoppedLeafTensorSemantics
+public import IntegerMultBounds.Machine.CompactComplexCorrectedChildGridSemantics
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedStoppedReturnPath
 
 /-! The actual stopped output has the corrected child tensor interface at
 the stopped denominator n+S. Its physical source is already pre-oriented
 by tag0; this equality remains explicit when connecting the tag1 endpoint. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexCorrectedStoppedChildGridSemantics
 noncomputable section
 open Networks

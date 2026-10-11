@@ -1,12 +1,17 @@
-import IntegerMultBounds.Machine.CompactComplexControllerHeaderReturn
-import IntegerMultBounds.Machine.CompactComplexControllerReturnStack
-import IntegerMultBounds.Machine.CompactComplexControllerExponent
-import IntegerMultBounds.Machine.CompactComplexChildHeadersData
+module
+
+public import IntegerMultBounds.Machine.CompactComplexControllerHeaderReturn
+public import IntegerMultBounds.Machine.CompactComplexControllerReturnStack
+public import IntegerMultBounds.Machine.CompactComplexControllerExponent
+public import IntegerMultBounds.Machine.CompactComplexChildHeadersData
 
 /-! Concrete internal-child call entry: save parent descriptors on appended
 storage, push the literal occurrence/coordinate PC, decrement the physical
 exponent and generate the actual selected child headers. No child descriptor
 or runtime return address is supplied as an input tape. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexControllerChildPrefix
 noncomputable section
 open CompactComplexControllerNativeFrame (tapes)

@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.BinaryAddressOffsetRepeatBudget
+module
+
+public import IntegerMultBounds.Machine.BinaryAddressOffsetRepeatBudget
 
 /-! Exact expansion lookup, including the dirty-back and spectator coordinates.
 These identities match the bytes emitted by the real counted copier. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryAddressOffsetRepeatValue
 open BinaryAddressOffsetRepeatData
 

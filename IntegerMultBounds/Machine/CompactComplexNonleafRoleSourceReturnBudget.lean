@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactComplexNonleafRoleSourceReturn
-import IntegerMultBounds.Machine.CompactComplexNonleafRoleReturnBudget
-import IntegerMultBounds.Machine.CompactComplexNonleafRoleMergeReturn
+module
+
+public import IntegerMultBounds.Machine.CompactComplexNonleafRoleSourceReturn
+public import IntegerMultBounds.Machine.CompactComplexNonleafRoleReturnBudget
+public import IntegerMultBounds.Machine.CompactComplexNonleafRoleMergeReturn
 
 /-! Complete generated-count payload recovery has a uniform native-volume
 bound on the actual shared bank. Returned source support follows from literal
 native coefficient widths, while arbitrary controller and private frames remain. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexNonleafRoleSourceReturnBudget
 noncomputable section
 open CompactComplexNonleafRoleEntry

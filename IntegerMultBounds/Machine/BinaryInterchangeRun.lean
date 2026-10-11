@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.BinaryRadixEqualShared
-import IntegerMultBounds.Machine.BinaryAdjacentWidthRun
-import IntegerMultBounds.Machine.BinaryAdjacentWidthPrefixShared
-import IntegerMultBounds.Machine.BinaryAdjacentWidthMovementShared
-import IntegerMultBounds.Machine.BinaryAdjacentWidthInterchange
-import IntegerMultBounds.Machine.BinaryAdjacentWidthSelectorDispatch
+module
+
+public import IntegerMultBounds.Machine.BinaryRadixEqualShared
+public import IntegerMultBounds.Machine.BinaryAdjacentWidthRun
+public import IntegerMultBounds.Machine.BinaryAdjacentWidthPrefixShared
+public import IntegerMultBounds.Machine.BinaryAdjacentWidthMovementShared
+public import IntegerMultBounds.Machine.BinaryAdjacentWidthInterchange
+public import IntegerMultBounds.Machine.BinaryAdjacentWidthSelectorDispatch
 
 /-! Physical binary rectangular interchange from five caller-owned headers. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryInterchangeRun
 noncomputable section
 open Networks.Shared50ModularControl (prime)

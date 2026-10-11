@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactFallbackInverseAxis
+module
+
+public import IntegerMultBounds.Machine.CompactFallbackInverseAxis
 
 /-! A fixed original-dimension loop visits one inverse selected bit in each original
 chunk, physically regenerating rho+i*K from the retained ordinal. Its count is
 D, not D*K; all other chunk bits remain spectators in the same native stream. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactFallbackInverseSchedule
 noncomputable section
 open CompactFallbackHeaders

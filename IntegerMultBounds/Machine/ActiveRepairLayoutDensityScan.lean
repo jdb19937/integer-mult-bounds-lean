@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActiveRepairLayoutDensity
-import IntegerMultBounds.Compact.TapeRepair
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairLayoutDensity
+public import IntegerMultBounds.Compact.TapeRepair
 
 /-! Bridge complete layout density to the literal position-indexed scan.
 Flag agreement is required only at the ranks actually visited. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLayoutDensityScan
 noncomputable section
 open Compact

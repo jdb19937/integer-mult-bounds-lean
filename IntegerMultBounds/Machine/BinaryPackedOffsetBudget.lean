@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.BinaryPackedOffsetRun
+module
+
+public import IntegerMultBounds.Machine.BinaryPackedOffsetRun
 
 /-! The actual swap/rotate/swap cost keeps the interchange width exponent.
 All power generation, rotations, erasure and sequencing transitions are paid. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryPackedOffsetBudget
 open BinaryPackedOffsetRun (rotationCost)
 open BinaryPackedOffsetData (rows)

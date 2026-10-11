@@ -1,6 +1,11 @@
-import IntegerMultBounds.Machine.CountedRepairScanPrepare
+module
+
+public import IntegerMultBounds.Machine.CountedRepairScanPrepare
 
 /-! Literal input, output and charged costs for the uniform repair pipeline. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedTapeRepairBank
 noncomputable section
 open IntegerMultBounds.Compact

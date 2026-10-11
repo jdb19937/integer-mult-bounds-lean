@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactNativeRoleGeometry
-import IntegerMultBounds.Machine.CyclicRowNormalized
-import IntegerMultBounds.Machine.CountedLoopHeaderClean
+module
+
+public import IntegerMultBounds.Machine.CompactNativeRoleGeometry
+public import IntegerMultBounds.Machine.CyclicRowNormalized
+public import IntegerMultBounds.Machine.CountedLoopHeaderClean
 
 /-! Native coefficient role copy contracts use complete physical records and
 paid origin rewinds; a clean counted source reset is reusable by the original
 header caller. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactNativeRoleTransfer
 noncomputable section
 open CompactNativeRoleGeometry

@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CountedRankSplitEndpoint
-import IntegerMultBounds.Machine.CountedPackedInverse
-import IntegerMultBounds.Machine.CountedGuardOriginal
-import IntegerMultBounds.Machine.CountedIdealToggle
+module
+
+public import IntegerMultBounds.Machine.CountedRankSplitEndpoint
+public import IntegerMultBounds.Machine.CountedPackedInverse
+public import IntegerMultBounds.Machine.CountedGuardOriginal
+public import IntegerMultBounds.Machine.CountedIdealToggle
 
 /-! A fixed thirty-tape repair-key bank. The original scan counter, control and
 q/b/n headers are retained; inverse, guard and toggle share blank workspace. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedRepairKeyBank
 noncomputable section
 open SharedPlacementAlphabet

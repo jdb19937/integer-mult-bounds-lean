@@ -1,4 +1,8 @@
-import IntegerMultBounds.Machine.ActivePrefixStageHeadersData
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStageHeadersData
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.ActivePrefixStageHeadersSchedule
 open ActivePrefixStageHeadersData ActivePrefixStageHeadersOps

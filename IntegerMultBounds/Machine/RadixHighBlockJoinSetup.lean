@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.RadixHighBlockJoinBank
-import IntegerMultBounds.Machine.PlacedDescriptorConstruction
-import IntegerMultBounds.Machine.BinaryDescriptorInstall
+module
+
+public import IntegerMultBounds.Machine.RadixHighBlockJoinBank
+public import IntegerMultBounds.Machine.PlacedDescriptorConstruction
+public import IntegerMultBounds.Machine.BinaryDescriptorInstall
 
 /-! Physical preparation of ordered high-block joining and separation.
 The exponent lives on the retained outer-loop descriptor; power and product
 construction reuse the thirteen blank arithmetic tapes. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RadixHighBlockJoinSetup
 noncomputable section
 open RadixHighBlockJoinBank (count)

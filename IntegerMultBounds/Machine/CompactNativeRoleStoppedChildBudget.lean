@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactNativeRoleChildLifecycleBudget
+module
+
+public import IntegerMultBounds.Machine.CompactNativeRoleChildLifecycleBudget
 
 /-! The complete actual stopped child caller pays all native metadata from
 the original serialized word. No decoder normalization follows from this cost
 or from matching the unchanged signed field width. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactNativeRoleStoppedChildBudget
 noncomputable section
 open CompactGadgetReservationShape (Shape)

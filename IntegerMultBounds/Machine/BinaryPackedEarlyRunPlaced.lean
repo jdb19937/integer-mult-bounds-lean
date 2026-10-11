@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.BinaryPackedEarlyRunBudget
+module
+
+public import IntegerMultBounds.Machine.BinaryPackedEarlyRunBudget
 
 /-! The complete early four-load machine on arbitrary caller-owned ports.
 The actual reserved array changes in place; all other caller tapes and heads
 are retained, and every native workspace tape returns wholly blank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryPackedEarlyRunPlaced
 noncomputable section
 open Networks.Shared50ModularControl (prime)

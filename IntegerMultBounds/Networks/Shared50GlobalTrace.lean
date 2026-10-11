@@ -1,11 +1,15 @@
-import IntegerMultBounds.Networks.Shared50GlobalCircuit
-import IntegerMultBounds.Networks.Shared50ReuseLabels
+module
+
+public import IntegerMultBounds.Networks.Shared50GlobalCircuit
+public import IntegerMultBounds.Networks.Shared50ReuseLabels
 
 /-! Concrete boundary profiles for the actual padded two-bank schedule.
 Unused outer-stage scratch retains its stage-one tail through the middle stage.
 The stage-three attachment uses the proved neighbor-permutation inclusion on
 the exact reused physical roles. These are endpoint and boundary-trace facts;
 local invocation traces and their scalar incidence connection remain separate. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.Shared50GlobalTrace
 

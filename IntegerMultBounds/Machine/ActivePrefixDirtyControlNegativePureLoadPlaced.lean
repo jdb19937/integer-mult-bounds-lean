@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlNegativePureLoad
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlNegativePureLoad
 
 /-! The complete original-input dirty-U load actions on arbitrary caller
 tapes. Eight original headers and the array are permanent; all private storage
 starts and returns blank, with arbitrary caller spectators unchanged. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixDirtyControlNegativePureLoadPlaced
 noncomputable section
 open ActivePrefixDirtyControlLoadData (Array base volume prefixCount)

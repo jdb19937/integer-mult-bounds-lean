@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactGlobalRowInitialBudget
-import IntegerMultBounds.Machine.CompactGlobalReservation
+module
+
+public import IntegerMultBounds.Machine.CompactGlobalRowInitialBudget
+public import IntegerMultBounds.Machine.CompactGlobalReservation
 
 /-! Original public-header and complete compact-field interfaces for the
 once-only global row-padding machine. The numeric and physical widths agree
 without an assumed derived row or record-width input. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactGlobalRowInitialEndpoint
 noncomputable section
 open CompactGlobalRowHeaders (initial originalValues recordWidth)

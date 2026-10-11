@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactComplexControllerDenominator
-import IntegerMultBounds.Machine.CompactComplexControllerChildBudget
+module
+
+public import IntegerMultBounds.Machine.CompactComplexControllerDenominator
+public import IntegerMultBounds.Machine.CompactComplexControllerChildBudget
 
 /-! Certified target-stack bookkeeping composed with the actual physical
 child-call prefix. The target descriptor must represent the return exponent
 established by a semantic Grid policy. Its physical synthesis from geometry
 and the numerical whole-stream child callback remain separate obligations. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexControllerDenominatorEntry
 noncomputable section
 open CompactComplexControllerNativeFrame (bank tapes storageSlot)

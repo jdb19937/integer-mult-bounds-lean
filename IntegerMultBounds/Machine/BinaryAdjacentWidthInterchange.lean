@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.RadixRangePadding
-import IntegerMultBounds.Machine.RadixDigitMoveBlockExecution
+module
+
+public import IntegerMultBounds.Machine.RadixRangePadding
+public import IntegerMultBounds.Machine.RadixDigitMoveBlockExecution
 
 /-! Exact rectangular interchange when binary coordinate widths differ by one.
 The long-H direction is an equal-width interchange followed by one fixed-radix
 binary digit move. The long-D direction reverses that order and movement.
 All casts preserve flat offsets; neither spectator coordinate is permuted. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryAdjacentWidthInterchange
 open RecursiveInterchangeRows (pack pack_val)
 variable {P H D N G B a : ℕ} {α : Type*}

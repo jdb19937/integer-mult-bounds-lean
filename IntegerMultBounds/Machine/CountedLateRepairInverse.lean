@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.CountedPackedLateRun
+module
+
+public import IntegerMultBounds.Machine.CountedPackedLateRun
 
 /-! Fixed-control reverse execution of the later packed gadget. All stages
 use the original three headers and restore their physical private tapes. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedLateRepairInverse
 noncomputable section
 open CountedPackedLateRun

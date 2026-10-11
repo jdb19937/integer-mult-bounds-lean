@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsHeadersData
-import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsHeadersLength
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsHeadersData
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsHeadersLength
 
 /-! A fixed retained-descriptor arithmetic schedule constructs n+1, full
 source width and complete record address width from original early headers. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLayoutRecordsHeadersSchedule
 noncomputable section
 open CompactGadgetReservationShape (Shape)

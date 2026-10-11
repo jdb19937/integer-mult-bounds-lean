@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsPayloadLatePlaced
-import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsCleanAlphabet
-import IntegerMultBounds.Machine.ActiveRepairArrayRecycle
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsPayloadLatePlaced
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsCleanAlphabet
+public import IntegerMultBounds.Machine.ActiveRepairArrayRecycle
 
 /-! Literal original caller and actual/ideal arrays for the later payload,
 repair and recycle stage. No formatted stream or generated header is supplied. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLayoutRecordsPayloadLateData
 noncomputable section
 open CompactGadgetReservationShape (Shape)

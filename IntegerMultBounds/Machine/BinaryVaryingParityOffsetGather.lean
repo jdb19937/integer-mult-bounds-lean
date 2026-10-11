@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CountedPackedShapeHeaders
-import IntegerMultBounds.Machine.CountedGatherOriginalRun
+module
+
+public import IntegerMultBounds.Machine.CountedPackedShapeHeaders
+public import IntegerMultBounds.Machine.CountedGatherOriginalRun
 
 /-! Physically gather parity-XOR offsets from the current target digits
 and independently varying source controls. Sole q/b/count headers initialize
 the machine; every derived header and clock is physically constructed and
 erased. This supplies the positive input to the final negative compact load. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryVaryingParityOffsetGather
 noncomputable section
 variable {a : ℕ}

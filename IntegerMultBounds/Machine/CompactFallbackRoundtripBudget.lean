@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactFallbackRoundtrip
-import IntegerMultBounds.Machine.CompactFallbackActualBudget
+module
+
+public import IntegerMultBounds.Machine.CompactFallbackRoundtrip
+public import IntegerMultBounds.Machine.CompactFallbackActualBudget
 
 /-! The complete physical sparse roundtrip, including both ordinal lifecycles,
 has the actual small-dimension cutoff saving at the original coefficient count. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactFallbackRoundtripBudget
 noncomputable section
 open Filter Sizes Parameters

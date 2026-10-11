@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ButterflyInverseAxisPrepared
+module
+
+public import IntegerMultBounds.Machine.ButterflyInverseAxisPrepared
 
 /-! A full inverse axis from the original D,t,R,p headers: physical header
 construction, inverse split/arithmetic/merge, copied-header cleanup and selected
 axis increment. Exactly the forward clean endpoint bank and cost are used. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ButterflyInverseAxisOriginal
 noncomputable section
 open ButterflyAxisHeadersData ButterflyAxisHeadersGeometry ButterflyAxisHeadersBudget

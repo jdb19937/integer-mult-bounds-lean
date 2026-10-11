@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.RawLinearCombinationComplexArray
-import IntegerMultBounds.Machine.BlankWordPairRecycleBank
+module
+
+public import IntegerMultBounds.Machine.RawLinearCombinationComplexArray
+public import IntegerMultBounds.Machine.BlankWordPairRecycleBank
 
 /-! The fixed polynomial scalar stream has normalized, reusable physical
 endpoints: computed records replace original source arrays, every head returns
 to zero, and every generated stream, control and arithmetic tape is blank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RawLinearCombinationComplexArrayReusable
 noncomputable section
 open ButterflyStreamData (Coefficient full prefixTape position encoded)

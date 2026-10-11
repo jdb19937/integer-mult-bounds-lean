@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyAlignedActualTable
-import IntegerMultBounds.Machine.CompactComplexSourceReadyReachedChildInvariant
-import IntegerMultBounds.Machine.CompactComplexSourceReadyNonleafFinalGeometry
-import IntegerMultBounds.Machine.CompactComplexSourceReadyReachedBasisInvariant
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyAlignedActualTable
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyReachedChildInvariant
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyNonleafFinalGeometry
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyReachedBasisInvariant
 
 /-! Actual aligned child-call prefixes in the fixed prime-alphabet table.
 The physical forward basis pass runs before literal original child entry;
 canonical raw parent metadata is restored between the two programs. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexAlignedChildEntryPath
 noncomputable section
 open Networks.Shared50ModularControl (prime)

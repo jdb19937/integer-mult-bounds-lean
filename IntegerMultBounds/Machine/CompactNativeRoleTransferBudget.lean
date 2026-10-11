@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.CompactNativeRolePaddingCaller
+module
+
+public import IntegerMultBounds.Machine.CompactNativeRolePaddingCaller
 
 /-! Uniform genuine-symbol budget for physical normalized role transfer and
 all destructive source resets. Header synthesis/copying is accounted separately. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactNativeRoleTransferBudget
 noncomputable section
 open CompactGadgetReservationShape (Shape)

@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactReservationPaddingHeaderBudget
-import IntegerMultBounds.Machine.CompactReservationNativePadding
-import IntegerMultBounds.Machine.NativeZeroPaddingBudget
+module
+
+public import IntegerMultBounds.Machine.CompactReservationPaddingHeaderBudget
+public import IntegerMultBounds.Machine.CompactReservationNativePadding
+public import IntegerMultBounds.Machine.NativeZeroPaddingBudget
 
 /-! Uniform original-volume budget for the fixed reservation machine, paid
 adapter synthesis, one genuine native zero pad and complete header cleanup. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactReservationNativePaddingBudget
 noncomputable section
 open CompactReservationPaddingHeaders

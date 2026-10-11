@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ArbitraryWidthPieces
-import IntegerMultBounds.Machine.Shared50RecursiveChildPermutation
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthPieces
+public import IntegerMultBounds.Machine.Shared50RecursiveChildPermutation
 
 /-! Literal slice transposes exchange the same consecutive digit window in
 the original full-width scalar fields, retaining all outside coordinates. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthSliceTranspose
 noncomputable section
 open Networks

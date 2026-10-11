@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactComplexRecursiveChildHeaders
+module
+
+public import IntegerMultBounds.Machine.CompactComplexRecursiveChildHeaders
 
 /-! The physical child-header costs are uniform over every canonical root and
 descendant, independently of the selected role's row count and payload size.
 Internal and scalar leaves are both paid from the original global dimension. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexChildHeadersUniform
 noncomputable section
 open CompactComplexRecursiveGeometry

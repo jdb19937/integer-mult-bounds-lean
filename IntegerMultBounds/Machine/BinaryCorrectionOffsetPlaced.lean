@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.BinaryCorrectionOffset
-import IntegerMultBounds.Machine.PlacementBank
-import IntegerMultBounds.Machine.PackedOffsetPayloadAlphabet
+module
+
+public import IntegerMultBounds.Machine.BinaryCorrectionOffset
+public import IntegerMultBounds.Machine.PlacementBank
+public import IntegerMultBounds.Machine.PackedOffsetPayloadAlphabet
 
 /-! Place the complete third-line correction producer using only caller-owned b/q/n, original controls
 and one blank destination. All 26 appended private tapes are returned blank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryCorrectionOffsetPlaced
 open SharedPlacementAlphabet (setTape)
 variable {a t : ℕ}

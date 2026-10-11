@@ -1,4 +1,8 @@
-import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsPayloadEarlyRun
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsPayloadEarlyRun
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.ActivePrefixStageFullCompose
 open ActiveRepairLayoutRecordsPayloadEarlyRun (two two_runs)

@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactRowSplit
-import IntegerMultBounds.Compact.Layout
+module
+
+public import IntegerMultBounds.Machine.CompactRowSplit
+public import IntegerMultBounds.Compact.Layout
 
 /-! The complete-record endpoint is the compact role equivalence, with the
 whole within-row suffix retained. Symbols need not be binary or clean. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactRowArray
 noncomputable section
 open CompactRowHeaders (descriptor)

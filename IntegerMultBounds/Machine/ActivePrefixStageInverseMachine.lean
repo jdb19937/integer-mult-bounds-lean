@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActivePrefixStageFullCompose
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStageFullCompose
 
 /-! A proved involutive array action gives the actual same-machine return
 execution and an exact paid round trip, for arbitrary physical caller banks. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixStageInverseMachine
 noncomputable section
 variable {t q a B : ℕ} {X : Type*}

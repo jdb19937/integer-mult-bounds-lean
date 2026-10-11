@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexRootPieceBudget
-import IntegerMultBounds.Machine.CompactComplexScalarPathGuard
-import IntegerMultBounds.Machine.NativePolynomialStageShape
+module
+
+public import IntegerMultBounds.Machine.CompactComplexRootPieceBudget
+public import IntegerMultBounds.Machine.CompactComplexScalarPathGuard
+public import IntegerMultBounds.Machine.NativePolynomialStageShape
 
 /-! Every genuine root queue and metadata operation is absorbed by the original
 native volume. Recursive callback costs remain their actual indexed sum. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexRootPieceVolume
 noncomputable section
 open CompactGadgetReservationShape (Shape)

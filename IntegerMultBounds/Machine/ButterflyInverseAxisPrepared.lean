@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ButterflyInverseAxisRun
+module
+
+public import IntegerMultBounds.Machine.ButterflyInverseAxisRun
 
 /-! The inverse axis uses the same physically installed runtime headers,
 private-bank cleanliness, and exact volume as the forward implementation. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ButterflyInverseAxisPrepared
 noncomputable section
 open ButterflyAxisHeadersData ButterflyAxisHeadersGeometry ButterflyAxisHeadersBudget

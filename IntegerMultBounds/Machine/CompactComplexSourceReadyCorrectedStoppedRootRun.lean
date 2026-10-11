@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedRootStoppedTablePath
-import IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedClassifierTablePath
-import IntegerMultBounds.Machine.CompactComplexFixedNodeRootExit
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedRootStoppedTablePath
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedClassifierTablePath
+public import IntegerMultBounds.Machine.CompactComplexFixedNodeRootExit
 
 /-! The complete actual corrected stopped-root machine classifies its literal
 input, computes and installs the genuine leaf, and halts at the empty root
 guard. Concrete tape readiness is supplied at entry; no execution callback
 or preceding node path is assumed. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedStoppedRootRun
 noncomputable section
 open Networks

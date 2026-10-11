@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactGadgetReservationData
-import IntegerMultBounds.Machine.BinaryPackedOffsetOriginalRun
-import IntegerMultBounds.Machine.PlacementBank
+module
+
+public import IntegerMultBounds.Machine.CompactGadgetReservationData
+public import IntegerMultBounds.Machine.BinaryPackedOffsetOriginalRun
+public import IntegerMultBounds.Machine.PlacementBank
 
 /-! Actual compact-front/back load on each physically reserved role stream.
 The original shape headers and packed offset word remain explicit physical
 inputs. No header installer or offset computation is assumed by this module. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactGadgetReservationRun
 noncomputable section
 open Networks.Shared50ModularControl (prime)

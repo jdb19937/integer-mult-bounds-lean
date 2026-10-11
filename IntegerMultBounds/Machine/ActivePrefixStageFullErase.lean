@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActivePrefixStageFullData
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStageFullData
 
 /-! Paid physical erasure of every copied consumer descriptor after the full
 stage. The original thirteen words and transformed raw array survive. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixStageFullErase
 noncomputable section
 open ActivePrefixStageFullData

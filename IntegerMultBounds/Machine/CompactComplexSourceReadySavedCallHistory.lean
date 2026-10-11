@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyFullChildSavedStackHistory
-import IntegerMultBounds.Machine.CompactComplexSourceReadyReachedSavedStackHistory
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyFullChildSavedStackHistory
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyReachedSavedStackHistory
 
 /-! The physical saved-PC stack is associated with a list of genuine calls.
 Each frame contains the original code of its call, so a reached nonempty
 stack supplies both its exact top call and its older semantic stack. Actual
 full child entry pushes this list; the actual corrected decoder restores it. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadySavedCallHistory
 noncomputable section
 open Networks

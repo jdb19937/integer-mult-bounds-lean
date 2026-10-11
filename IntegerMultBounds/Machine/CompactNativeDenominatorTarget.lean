@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.CompactComplexControllerDenominator
-import IntegerMultBounds.Machine.CompactComplexDenominatorPolicy
+module
+
+public import IntegerMultBounds.Machine.CompactComplexControllerDenominator
+public import IntegerMultBounds.Machine.CompactComplexDenominatorPolicy
 
 /-! Physical semantic-target construction from retained input-denominator and
 child-volume descriptors. Two fixed bodies construct n+volume for a stopped
 leaf and n+2*volume for an actual completed network. They retain the originals
 and clear their work clock. Choosing the body must use the actual stop branch;
 no target word or arithmetic result is supplied to either body. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactNativeDenominatorTarget
 noncomputable section
 open SharedPlacementAlphabet (setTape)
@@ -18,11 +23,11 @@ def bank (n volume : ℕ) (t : Option ℕ) : Tapes 4 2 :=
 def input (n volume : ℕ) := bank n volume none
 
 def copySlots : Fin 2 → Fin 4 := ![0,2]
-private theorem copy_injective : Function.Injective copySlots := by decide
+theorem copy_injective : Function.Injective copySlots := by decide
 def copyProgram := BinaryDescriptorCopyPlaced.program (a:=2) copySlots copy_injective
 
 def addSlots : Fin 3 → Fin 4 := ![2,3,1]
-private theorem add_injective : Function.Injective addSlots := by decide
+theorem add_injective : Function.Injective addSlots := by decide
 def addPlacement : Fin (3+1) ≃ Fin 4 := InjectivePlacement.placement addSlots add_injective rfl
 def addProgram := Placement.placed (BinaryDescriptorAdvance.program (q:=2)) addPlacement
 

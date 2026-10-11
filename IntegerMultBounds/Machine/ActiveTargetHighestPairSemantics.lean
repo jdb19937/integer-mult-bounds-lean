@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActiveTargetHighestPairBudget
-import IntegerMultBounds.Machine.ActivePrefixLayoutFields
+module
+
+public import IntegerMultBounds.Machine.ActiveTargetHighestPairBudget
+public import IntegerMultBounds.Machine.ActivePrefixLayoutFields
 
 /-! Exact XOR of the two physical one-bit fields. The source bit, arbitrary
 outer rows, intervening bits and suffix remain literal spectators. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveTargetHighestPairSemantics
 noncomputable section
 open ActiveTargetHighestPairData

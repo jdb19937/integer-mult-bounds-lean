@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactChildHeadersArithmetic
+module
+
+public import IntegerMultBounds.Machine.CompactChildHeadersArithmetic
 
 /-! Paid generation of the root enumerator's numeric state: exponent zero,
 left boundary zero and width one are written, each selected piece advances
 the generated boundary and decrements its digit clock, and each next base
 digit increments the exponent and multiplies the generated width. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexRootPieceNumbers
 noncomputable section
 open CompactChildHeadersArithmetic

@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactNativeRoleReservedBridge
-import IntegerMultBounds.Machine.CompactReservationPaddingHeaderBudget
+module
+
+public import IntegerMultBounds.Machine.CompactNativeRoleReservedBridge
+public import IntegerMultBounds.Machine.CompactReservationPaddingHeaderBudget
 
 /-! The corrected role precision is physically computed from original scalar
 q,D,K and the paid original row-axis reservation. Its value is not preloaded
 or inferred from a width equality; all generated fields are erased afterwards. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactNativeRolePrecisionHeaders
 noncomputable section
 open CompactGlobalRowHeaderOps

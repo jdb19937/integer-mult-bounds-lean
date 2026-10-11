@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.CompactGadgetReservationHeadersBudget
+module
+
+public import IntegerMultBounds.Machine.CompactGadgetReservationHeadersBudget
 
 /-! Arbitrary carved width in one unchanged global reservation. Every unused
 front/back bit, the active axis bits, and all slack/payload bits remain present. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactGadgetReservationHeadersCarvedData
 noncomputable section
 open CompactGadgetReservationShape

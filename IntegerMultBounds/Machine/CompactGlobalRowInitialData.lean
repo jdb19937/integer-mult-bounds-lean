@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactGlobalRowHeaders
-import IntegerMultBounds.Machine.RowPaddingConstructedAlphabet
+module
+
+public import IntegerMultBounds.Machine.CompactGlobalRowHeaders
+public import IntegerMultBounds.Machine.RowPaddingConstructedAlphabet
 
 /-! Once-only complete-row padding on forty-five fixed tapes. Its only public
 numeric inputs are K,d,D,payload; no divisor, row or record-width header is
 assumed. The arithmetic header bank is preserved during the actual padding. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactGlobalRowInitialData
 noncomputable section
 open CompactGlobalRowHeaders

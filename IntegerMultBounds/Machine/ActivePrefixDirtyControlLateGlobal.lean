@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlPackedLate
-import IntegerMultBounds.Machine.BinaryPackedLatePermutation
-import IntegerMultBounds.Machine.ActiveRepairLayoutPermutation
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlPackedLate
+public import IntegerMultBounds.Machine.BinaryPackedLatePermutation
+public import IntegerMultBounds.Machine.ActiveRepairLayoutPermutation
 
 /-! The actual twelve-swap, ten-rotation later schedule realizes the exact
 global permutation consumed by repair, on every original array address. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixDirtyControlLateGlobal
 noncomputable section
 open CompactGadgetReservationShape (Shape)

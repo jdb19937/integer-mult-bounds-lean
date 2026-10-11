@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactComplexAlignedChildReturnPath
-import IntegerMultBounds.Machine.CompactComplexSourceReadyReachedDormantFrameInvariant
+module
+
+public import IntegerMultBounds.Machine.CompactComplexAlignedChildReturnPath
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyReachedDormantFrameInvariant
 
 /-! Literal return-fragment preservation for the reached child-return path.
 The original parent continuation supplies the actual advanced live word,
 restored target and exponent; dormant completion supplies only saved prefixes.
 No whole returned-bank equality or recursive execution is assumed. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexAlignedReachedChildReturnPath
 noncomputable section
 open CompactComplexNonleafRoleChildBank (tapes storage)

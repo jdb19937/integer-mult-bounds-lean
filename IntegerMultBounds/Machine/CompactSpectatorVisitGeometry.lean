@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactComplexRecursiveGeometry
-import IntegerMultBounds.Machine.ButterflySpectatorOriginal
+module
+
+public import IntegerMultBounds.Machine.CompactComplexRecursiveGeometry
+public import IntegerMultBounds.Machine.ButterflySpectatorOriginal
 
 /-! Recursive intervals select original immutable address positions. Arbitrary
 role rows remain outer spectators and the serialized dimension stays Shape.bits. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactSpectatorVisitGeometry
 open CompactGadgetReservationShape (Shape)
 open CompactComplexRecursiveGeometry

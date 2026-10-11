@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlConjugationSwap
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlConjugationSwap
 
 /-! Real compact rotations for the four conjugations, padded into the same
 bank as both physical interchange machines. No callback supplies a load. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixDirtyControlConjugationMiddle
 noncomputable section
 open ActivePrefixDirtyControlConjugationData

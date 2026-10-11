@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.ActiveRepairLateSourceRun
-import IntegerMultBounds.Machine.ActiveRepairLateKeyPatch
-import IntegerMultBounds.Machine.ActiveRepairLateKeyAppend
-import IntegerMultBounds.Machine.ActiveRepairLateKeyCleanup
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairLateSourceRun
+public import IntegerMultBounds.Machine.ActiveRepairLateKeyPatch
+public import IntegerMultBounds.Machine.ActiveRepairLateKeyAppend
+public import IntegerMultBounds.Machine.ActiveRepairLateKeyCleanup
 
 /-! The actual full-rank later key bank. Only original counter and runtime
 descriptors are inputs; every address-dependent word is computed internally. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLateKeyData
 noncomputable section
 open SharedPlacementAlphabet (setTape)

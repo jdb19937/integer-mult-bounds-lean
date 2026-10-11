@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactFallbackOriginal
+module
+
+public import IntegerMultBounds.Machine.CompactFallbackOriginal
 
 /-! Exact binary-Walsh semantics of the actual sparse fallback. Each original
 chunk contributes its single bit rho+i*K; all other address bits and trailing
 polynomial coefficients remain spectators. The physically computed independent
 reservation validates every actual prefix at precision q+j. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactFallbackSemantics
 noncomputable section
 open CompactFallbackHeaders CompactFallbackAxisRun

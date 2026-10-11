@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.SparsePhaseHeadersData
+module
+
+public import IntegerMultBounds.Machine.SparsePhaseHeadersData
 
 /-! One all-axis sparse control stream: stride is the chunk width, count is
 residual dimension times runtime axis width, and offset starts at the lowest
 address bit of the last residual slot. Descriptors are synthesized physically
 from original headers, with both arithmetic temporaries restored. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.AllAxisPhaseHeadersData
 noncomputable section
 open CompactGadgetReservationShape (Shape)

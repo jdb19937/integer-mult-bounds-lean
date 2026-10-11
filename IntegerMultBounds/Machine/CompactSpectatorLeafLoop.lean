@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactSpectatorLeafAxis
-import IntegerMultBounds.Machine.BinaryDescriptorCleanupList
+module
+
+public import IntegerMultBounds.Machine.CompactSpectatorLeafAxis
+public import IntegerMultBounds.Machine.BinaryDescriptorCleanupList
 
 /-! A literal counted leaf interval over the immutable global coefficient word.
 Every axis body is proved by native execution, the actual count is read from
 the retained width header, and all loop and leaf-local numeric tapes are erased. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactSpectatorLeafLoop
 noncomputable section
 open CompactGadgetReservationShape (Shape)

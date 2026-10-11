@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactComplexCompletedLiveLower
+module
+
+public import IntegerMultBounds.Machine.CompactComplexCompletedLiveLower
 
 /-! The true denominator at every event prefix stays inside its counted ledger.
 This complements the completed lower bound needed for exact nonleaf return.
 Local scalar/child endpoint equalities remain execution obligations. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexCompletedLiveUpper
 noncomputable section
 open CompactComplexCompletedLiveLower

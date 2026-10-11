@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactGuardGrowth
-import IntegerMultBounds.Machine.CompactGlobalReservation
+module
+
+public import IntegerMultBounds.Machine.CompactGuardGrowth
+public import IntegerMultBounds.Machine.CompactGlobalReservation
 
 /-! The manuscript's actual original-axis reservation is sublinear in the
 actual dimension. This never asserts that a small selected-axis set contains
 the full reservation; the fallback decision is formalized separately. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactReservationGrowth
 noncomputable section
 open Filter Asymptotics Sizes CompactScalarAllowances

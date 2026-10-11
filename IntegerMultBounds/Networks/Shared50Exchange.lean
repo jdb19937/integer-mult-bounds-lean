@@ -1,8 +1,12 @@
-import IntegerMultBounds.Networks.Shared50Invocation
+module
+
+public import IntegerMultBounds.Networks.Shared50Invocation
 
 /-! The optimized local invocation, explicitly inverted and oriented in the
 opposite direction for the middle stage. These are actual instruction lists
 with arbitrary dirty scratch; global placement and frame ranks are separate. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.Shared50Exchange
 

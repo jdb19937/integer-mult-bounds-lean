@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexActualBasisSlice
-import IntegerMultBounds.Machine.CompactComplexChildTensorCoordinateFactor
+module
+
+public import IntegerMultBounds.Machine.CompactComplexActualBasisSlice
+public import IntegerMultBounds.Machine.CompactComplexChildTensorCoordinateFactor
 
 /-! The literal native basis permutation gives the complete original tensor
 slice pullback. The local alignment needed by child tensor conjugation is
 derived from the actual row destination and its preserved spectators. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexActualBasisPullback
 noncomputable section
 open CompactGadgetReservationShape (Shape)

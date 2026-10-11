@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexScalarNativeEndpoint
-import IntegerMultBounds.Machine.CompactComplexSpectatorTargetBank
+module
+
+public import IntegerMultBounds.Machine.CompactComplexScalarNativeEndpoint
+public import IntegerMultBounds.Machine.CompactComplexSpectatorTargetBank
 
 /-! Scalar source replacement and count destruction reconstruct the literal
 original codec caller. Only true live storage7 and genuine role streams change;
 all native metadata, immutable scalar descriptors and stacks remain in place. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexScalarCallerEndpoint
 noncomputable section
 open CompactComplexNativeCodecFrame (bank permanentTapes)

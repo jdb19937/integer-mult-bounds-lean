@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.Shared50RecursiveNodeRows
+module
+
+public import IntegerMultBounds.Machine.Shared50RecursiveNodeRows
 
 /-! Full fixed Shared50 control, including its pre/post moves, on every binary
 cyclic row fiber. Its routed result is exactly the permuted merge input for the
 parent H/D transpose. The common I/O slot never participates in the network. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.Shared50RecursiveNodeSemantics
 noncomputable section
 open Networks

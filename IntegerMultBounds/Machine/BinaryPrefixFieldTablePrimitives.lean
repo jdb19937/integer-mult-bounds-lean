@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.BinaryPrefixFieldTableData
-import IntegerMultBounds.Machine.CompactGadgetReservationHeadersPowerRound
+module
+
+public import IntegerMultBounds.Machine.BinaryPrefixFieldTableData
+public import IntegerMultBounds.Machine.CompactGadgetReservationHeadersPowerRound
 
 /-! Physical table and dummy-zero constructors sharing fifteen private tapes.
 Only the selected destination changes; every workspace tape returns blank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryPrefixFieldTablePrimitives
 noncomputable section
 open SharedPlacementAlphabet (setTape)

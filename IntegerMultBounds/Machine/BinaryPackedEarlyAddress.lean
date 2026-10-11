@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.BinaryPackedEarlyLayout
+module
+
+public import IntegerMultBounds.Machine.BinaryPackedEarlyLayout
 
 /-! Every cell of the unchanged complete role word has exactly one full early
 address, including arbitrary unused, dirty back, active and payload coordinates. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryPackedEarlyAddress
 open CompactGadgetReservationShape
 open BinaryPackedEarlyLayout

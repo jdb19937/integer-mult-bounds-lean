@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.Shared50NonrecursiveCoordinates
+module
+
+public import IntegerMultBounds.Machine.Shared50NonrecursiveCoordinates
 
 /-! Fixed nonrecursive segments of actual Shared50 schedules execute on one
 uniform physical machine. Canonical dimension descriptors are supplied here;
 recursive interchange operations remain excluded explicitly. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.Shared50NonrecursiveSegments
 open Networks
 open Shared50ModularSchedule (Index)

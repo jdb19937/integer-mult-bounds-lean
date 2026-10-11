@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.ActualAffineScalingDimensions
-import IntegerMultBounds.Machine.SignedScalingDimensionsStream
+module
+
+public import IntegerMultBounds.Machine.ActualAffineScalingDimensions
+public import IntegerMultBounds.Machine.SignedScalingDimensionsStream
 
 /-! Actual Shared50 rational scales on a physically consecutive family of equal
 Q-by-B fibers. One fixed machine synthesizes metadata once, then runs the entire
 counted family. The symbol theorem uses the concrete address i*Q*B+y*B+k. It does
 not assert that an arbitrary multidimensional field layout already has this
 fiber order. Canonical Q/B/n and inherited fixed sentinels remain explicit. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActualAffineScalingStream
 
 open Networks

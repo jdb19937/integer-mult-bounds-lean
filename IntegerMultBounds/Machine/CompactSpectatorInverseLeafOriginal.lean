@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactSpectatorLeafOriginal
-import IntegerMultBounds.Machine.CompactSpectatorInverseLeafLoop
+module
+
+public import IntegerMultBounds.Machine.CompactSpectatorLeafOriginal
+public import IntegerMultBounds.Machine.CompactSpectatorInverseLeafLoop
 
 /-! The inverse leaf uses the identical paid original-header copies and geometry,
 followed by the actual swapped-merge spectator loop and complete cleanup. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactSpectatorInverseLeafOriginal
 noncomputable section
 open CompactGadgetReservationShape (Shape)

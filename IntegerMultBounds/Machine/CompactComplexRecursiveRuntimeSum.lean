@@ -1,13 +1,18 @@
-import IntegerMultBounds.Networks.ComplexRecursiveCallSchema
-import IntegerMultBounds.Machine.CompactComplexRecursiveGeometry
-import IntegerMultBounds.Swap.Recurrence
-import Mathlib.Data.Nat.Cast.Order.Field
+module
+
+public import IntegerMultBounds.Networks.ComplexRecursiveCallSchema
+public import IntegerMultBounds.Machine.CompactComplexRecursiveGeometry
+public import IntegerMultBounds.Swap.Recurrence
+public import Mathlib.Data.Nat.Cast.Order.Field
 
 /-! Structural runtime sums for the actual complex25 call schema. The recurrence
 charges each literal child occurrence once, at the role-volume quotient. Its
 analytic bound separates stopped-leaf cost from local interchange cost. This
 is a budget theorem: constructing an execution satisfying the local contracts
 and the recursive child contracts remains a distinct obligation. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexRecursiveRuntimeSum
 noncomputable section
 open Networks

@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActivePrefixStageSingletonInverseData
-import IntegerMultBounds.Machine.ActivePrefixStageDispatchInverseRun
-import IntegerMultBounds.Machine.ActivePrefixStageRuntimeRun
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStageSingletonInverseData
+public import IntegerMultBounds.Machine.ActivePrefixStageDispatchInverseRun
+public import IntegerMultBounds.Machine.ActivePrefixStageRuntimeRun
 
 /-! The complete fixed width-and-direction program executes its own inverse.
 Both runtime flags and every private tape are restored on each return. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixStageRuntimeInverseRun
 noncomputable section
 open CompactGadgetReservationShape (Shape)

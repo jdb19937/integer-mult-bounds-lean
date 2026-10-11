@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActivePrefixLayoutShapes
-import IntegerMultBounds.Machine.ActivePrefixCorrectionOffsetData
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixLayoutShapes
+public import IntegerMultBounds.Machine.ActivePrefixCorrectionOffsetData
 
 /-! First and third offset rows at the literal active-target fiber prefix.
 The current compact T and the complete earlier source slot come directly from
 that address; the generated inner table is repeated for arbitrary outer rows. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixLayoutTarget
 open ActivePrefixLayoutShapes ActivePrefixLayoutFields
 open BinaryAddressTableData (row)

@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlSequenceBudget
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlSequenceBudget
 
 /-! The complete prepared later-source schedule on arbitrary caller tapes.
 All supplied numeric words and caller spectators survive; only the original
 full array changes and every private tape returns blank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixDirtyControlSequencePlaced
 noncomputable section
 open ActivePrefixDirtyControlSequenceData

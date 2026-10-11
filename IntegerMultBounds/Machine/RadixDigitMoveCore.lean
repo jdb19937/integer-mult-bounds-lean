@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.RadixDigitMoveRows
-import IntegerMultBounds.Machine.CyclicRowRewind
-import IntegerMultBounds.Machine.Shared50RecursiveBank
+module
+
+public import IntegerMultBounds.Machine.RadixDigitMoveRows
+public import IntegerMultBounds.Machine.CyclicRowRewind
+public import IntegerMultBounds.Machine.Shared50RecursiveBank
 
 /-! Actual split/rewind/merge/rewind redistribution on one fixed role bank.
 This core exposes marked count clocks; initialization and physical role cleanup
 belong to its initialized execution wrapper. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RadixDigitMoveCore
 variable {Q a n m : ℕ}
 noncomputable section

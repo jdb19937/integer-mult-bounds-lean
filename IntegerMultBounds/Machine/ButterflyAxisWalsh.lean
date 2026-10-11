@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ButterflyAxisKernel
-import IntegerMultBounds.Machine.FlatCoordinateLayout
+module
+
+public import IntegerMultBounds.Machine.ButterflyAxisKernel
+public import IntegerMultBounds.Machine.FlatCoordinateLayout
 
 /-! Concrete identification with the binary Walsh translation kernel on the
 repository's common row-major coordinate layout. The physical least-significant
 axis t is the reversed coordinate of the most-significant-first address codec. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ButterflyAxisWalsh
 noncomputable section
 open ButterflyAxisArray ButterflyAxisDecoded ButterflyAxisKernel

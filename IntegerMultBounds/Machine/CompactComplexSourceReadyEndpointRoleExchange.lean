@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactComplexEndpointRoleExchange
-import IntegerMultBounds.Machine.CompactComplexSourceReadyNonleafContraction
-import IntegerMultBounds.Machine.CompactComplexSourceReadyOrientedControls
+module
+
+public import IntegerMultBounds.Machine.CompactComplexEndpointRoleExchange
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyNonleafContraction
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyOrientedControls
 
 /-! Original named X/Y exchanges execute on the existing node bank, retaining
 its frame9, leaf, work10 and scalar suffix. The complete endpoint is the literal
 caller with its routed array payload; no local execution contract is supplied. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyEndpointRoleExchange
 noncomputable section
 open CompactGadgetReservationShape (Shape)

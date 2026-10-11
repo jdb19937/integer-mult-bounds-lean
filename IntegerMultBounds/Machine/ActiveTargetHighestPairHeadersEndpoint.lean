@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActiveTargetHighestPairHeadersRun
+module
+
+public import IntegerMultBounds.Machine.ActiveTargetHighestPairHeadersRun
 
 /-! Arbitrary canonical original geometry words are retained literally;
 constructed highest-bit consumer words are canonical binary numerals. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveTargetHighestPairHeadersEndpoint
 noncomputable section
 open ActiveTargetHighestPairData ActiveTargetHighestPairHeadersData

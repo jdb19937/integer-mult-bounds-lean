@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactNativeRoleScalarProducer
+module
+
+public import IntegerMultBounds.Machine.CompactNativeRoleScalarProducer
 
 /-! Fixed native role execution at the real global source43 port. Numeric
 original13 storage is separate from the retained original scalar caller bank;
 all other caller tapes are stationary and all appended private storage clears. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactNativeRoleSourcePorts
 noncomputable section
 open CompactNativeRoleInstall (rawCount)

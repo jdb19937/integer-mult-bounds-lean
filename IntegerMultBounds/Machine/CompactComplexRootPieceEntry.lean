@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactComplexRootPieceController
-import IntegerMultBounds.Machine.CompactComplexRootDigitsFromHeader
+module
+
+public import IntegerMultBounds.Machine.CompactComplexRootPieceController
+public import IntegerMultBounds.Machine.CompactComplexRootDigitsFromHeader
 
 /-! Original native-header entry into the fixed canonical root-piece loop.
 The fresh queue cursor, digit queue, exponent/left/width seed and all later
 root descriptors are physically generated; only the native callback's proof
 is abstracted for the still-unassembled recursive machine. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexRootPieceEntry
 noncomputable section
 open ActiveRepairRankHeadersCommands (State bank)

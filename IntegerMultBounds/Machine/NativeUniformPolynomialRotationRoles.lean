@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.NativeUniformPolynomialRotationOriginalBudget
-import IntegerMultBounds.Machine.CompactComplexEndpointRoleExchange
+module
+
+public import IntegerMultBounds.Machine.NativeUniformPolynomialRotationOriginalBudget
+public import IntegerMultBounds.Machine.CompactComplexEndpointRoleExchange
 
 /-! Actual finite endpoint traversal for runtime-column correction or fixed
 negation. Each role uses the retained original headers, constructs its private
 count and flags, and returns all67 borrowed tapes blank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.NativeUniformPolynomialRotationRoles
 noncomputable section
 open CompactGadgetReservationShape (Shape)

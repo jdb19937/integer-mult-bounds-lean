@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.NativeEndpointCharacterLeafPlacement
-import IntegerMultBounds.Machine.CompactComplexSourceReadyNonleafContraction
+module
+
+public import IntegerMultBounds.Machine.NativeEndpointCharacterLeafPlacement
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyNonleafContraction
 
 /-! Character and uniform endpoint families borrow the first67 leaf tapes on
 the actual source-ready recursive bank. The frame9, work10 and arbitrary
 scalar suffix remain literal frames under the fixed executable permutation. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.NativeEndpointSourceReadyPlacement
 noncomputable section
 variable {s c q B w : ℕ}
@@ -17,7 +22,7 @@ abbrev fullTapes (s c w : ℕ) := CompactComplexSourceReadyWorkspace.tapes s c+w
 private theorem caller_count : callerTapes s c=publicTapes s c := by
   rfl
 
-private theorem full_count : callerTapes s c+tailTapes w=fullTapes s c w := by
+theorem full_count : callerTapes s c+tailTapes w=fullTapes s c w := by
   have h := caller_count (s:=s) (c:=c)
   unfold tailTapes fullTapes CompactComplexSourceReadyWorkspace.tapes
   omega

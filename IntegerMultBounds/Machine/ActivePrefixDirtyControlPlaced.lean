@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixDirtyControl
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControl
 
 /-! Clean selected/control/parity-XOR offset production on arbitrary caller tapes, retaining every
 original descriptor and spectator. All native private storage starts and ends
 blank; placement adds no transitions or dimension-dependent finite control. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixDirtyControlPlaced
 noncomputable section
 open ActivePrefixDirtyControlData

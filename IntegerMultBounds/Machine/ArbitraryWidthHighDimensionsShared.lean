@@ -1,15 +1,20 @@
-import IntegerMultBounds.Machine.ArbitraryWidthHighDimensionsCleanup
-import IntegerMultBounds.Machine.FixedHeaderSparseBankCopy
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthHighDimensionsCleanup
+public import IntegerMultBounds.Machine.FixedHeaderSparseBankCopy
 
 /-! Copy the five original dimension sources from a caller, construct the
 actual high-layout dimensions, then erase both generated and copied headers. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthHighDimensionsShared
 noncomputable section
 variable {a t : ℕ}
 open ArbitraryWidthHighDimensions (dataVolume originalValues)
 
 def destination : Fin 5 → Fin 17 := Fin.castAdd 12
-private theorem destination_injective : Function.Injective destination := Fin.castAdd_injective _ _
+theorem destination_injective : Function.Injective destination := Fin.castAdd_injective _ _
 
 def copyProgram (focus : Fin 5 → Fin t) := FixedHeaderSparseBankCopy.program
   (a := a) (by omega : 0 < t+5) focus destination destination_injective (by decide)

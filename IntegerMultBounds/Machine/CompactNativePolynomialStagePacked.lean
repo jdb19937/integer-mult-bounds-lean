@@ -1,12 +1,17 @@
-import IntegerMultBounds.Machine.NativePolynomialStageShape
-import IntegerMultBounds.Machine.CompactActualStageRuntime
-import IntegerMultBounds.Machine.ActivePrefixStagePairData
+module
+
+public import IntegerMultBounds.Machine.NativePolynomialStageShape
+public import IntegerMultBounds.Machine.CompactActualStageRuntime
+public import IntegerMultBounds.Machine.ActivePrefixStagePairData
 
 /-! The real polynomial codec, rather than the reservation's one-symbol
 payload, pays packed repair for every pair in a native phase basis word.
 Original multiplier geometry and descendant row padding discharge readiness
 and both repair densities at constant one. The stored signed-width allowance
 remains an explicit scalar contract until controller propagation is assembled. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactNativePolynomialStagePacked
 noncomputable section
 open Sizes

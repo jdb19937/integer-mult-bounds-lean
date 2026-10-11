@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ArbitraryWidthExecutionPrivateHeadersCore
-import IntegerMultBounds.Machine.ArbitraryWidthExecutionPrivateHeadersAppend
-import IntegerMultBounds.Machine.RadixHighBlockJoinSetup
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthExecutionPrivateHeadersCore
+public import IntegerMultBounds.Machine.ArbitraryWidthExecutionPrivateHeadersAppend
+public import IntegerMultBounds.Machine.RadixHighBlockJoinSetup
 
 /-! The physical pad/dispatch/crop private bank is exactly ten sparse headers. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthExecutionPrivateHeadersPadding
 noncomputable section
 open Networks

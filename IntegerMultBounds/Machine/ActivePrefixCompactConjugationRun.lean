@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixCompactConjugationMiddle
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixCompactConjugationMiddle
 
 /-! Paid physical swap/load/swap with literal serialized-array transport.
 The supplied load shape describes the actual prefix and source coordinates;
 stage-control preparation of its eight numeric words remains separate. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixCompactConjugationRun
 noncomputable section
 open ActivePrefixCompactConjugationData

@@ -1,12 +1,17 @@
-import IntegerMultBounds.Machine.BinaryPackedEarlyCorrect
-import IntegerMultBounds.Machine.BinarySelectedOffsetLoad
-import IntegerMultBounds.Machine.BinaryCorrectionOffsetLoad
-import IntegerMultBounds.Machine.BinaryPackedEarlyPrefixParityLoad
-import IntegerMultBounds.Machine.BinaryPackedEarlyPrefixNegativeLoad
+module
+
+public import IntegerMultBounds.Machine.BinaryPackedEarlyCorrect
+public import IntegerMultBounds.Machine.BinarySelectedOffsetLoad
+public import IntegerMultBounds.Machine.BinaryCorrectionOffsetLoad
+public import IntegerMultBounds.Machine.BinaryPackedEarlyPrefixParityLoad
+public import IntegerMultBounds.Machine.BinaryPackedEarlyPrefixNegativeLoad
 
 /-! One retained eighteen-tape bank for the four early actions. Temp/control
 shape headers, original q/b/n/controls and paid repetition descriptors survive.
 All four child machines share one blank private bank and one erased offset tape. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryPackedEarlyRunBank
 noncomputable section
 open Networks.Shared50ModularControl (prime)

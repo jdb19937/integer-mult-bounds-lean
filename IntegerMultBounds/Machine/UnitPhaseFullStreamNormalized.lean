@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.UnitPhaseSourceEndpoint
-import IntegerMultBounds.Machine.BlankWordReturnAt
+module
+
+public import IntegerMultBounds.Machine.UnitPhaseSourceEndpoint
+public import IntegerMultBounds.Machine.BlankWordReturnAt
 
 /-! Native-bridge endpoint for a literal phase coefficient array: input and
 output streams are both physically rewound to0, every generated phase/count/
 address workspace is erased, and output words have exact stored signed width. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.UnitPhaseFullStreamNormalized
 noncomputable section
 open CompactGadgetReservationShape (Shape)

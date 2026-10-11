@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactFallbackOriginal
+module
+
+public import IntegerMultBounds.Machine.CompactFallbackOriginal
 
 /-! Actual multiplier choices instantiate the physical sparse-axis fallback.
 Its coefficient count and original signed-width reservation determine the real
 native volume; the paid per-axis costs, not an abstract work oracle, now fill
 CompactFallbackBudget uniformly at the actual cutoff. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactFallbackActualBudget
 noncomputable section
 open Filter Sizes Parameters

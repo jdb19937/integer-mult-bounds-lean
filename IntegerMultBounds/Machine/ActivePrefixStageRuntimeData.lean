@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActivePrefixStageRuntimePlaced
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStageRuntimePlaced
 
 /-! Runtime width and source order select among three finite implementations.
 Only the non-singleton execution needs the packed-repair hypotheses. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixStageRuntimeData
 noncomputable section
 open CompactGadgetReservationShape (Shape)

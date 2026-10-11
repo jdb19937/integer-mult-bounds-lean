@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixLayoutHeadersData
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixLayoutHeadersData
 
 /-! Actual header preparation with a fixed 28+15 tape bank. A real constant
 writer, retained-word arithmetic, power constructor and product constructor
 prepare all ten consumer headers and erase their temporary words. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixLayoutHeadersRun
 noncomputable section
 open ActivePrefixLayoutHeadersData ActiveRepairRankHeadersCommands

@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactNativeRoleSourcePorts
-import IntegerMultBounds.Machine.CompactSpectatorLeafPlacement
+module
+
+public import IntegerMultBounds.Machine.CompactNativeRoleSourcePorts
+public import IntegerMultBounds.Machine.CompactSpectatorLeafPlacement
 
 /-! Actual native role words are leaf source words at identical heads. A paid
 quotient replaces only the copied row descriptor; immutable ell and corrected
 precision remain literal. Leaf placement frames the retained controller/stack. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactNativeRoleChildBank
 noncomputable section
 open CompactGadgetReservationShape (Shape)

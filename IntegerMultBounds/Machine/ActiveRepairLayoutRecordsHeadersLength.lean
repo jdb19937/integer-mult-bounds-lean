@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.BinaryLengthInit
-import IntegerMultBounds.Machine.BinaryDescriptorCopyPlaced
-import IntegerMultBounds.Machine.DescriptorStackControl
-import IntegerMultBounds.Machine.CompactGadgetReservationHeadersCore
+module
+
+public import IntegerMultBounds.Machine.BinaryLengthInit
+public import IntegerMultBounds.Machine.BinaryDescriptorCopyPlaced
+public import IntegerMultBounds.Machine.DescriptorStackControl
+public import IntegerMultBounds.Machine.CompactGadgetReservationHeadersCore
 
 /-! An actual fixed length scanner reads an original canonical row-count word,
 constructs its binary word-length descriptor on a blank tape and restores both
 heads. No supplied logarithm or row-bit-width descriptor is used. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLayoutRecordsHeadersLength
 noncomputable section
 open BinaryDescriptorCopy (source)

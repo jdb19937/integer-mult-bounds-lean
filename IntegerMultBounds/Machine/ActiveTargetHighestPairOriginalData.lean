@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActiveTargetHighestPairHeadersEndpoint
-import IntegerMultBounds.Machine.ActiveTargetHighestPairPlaced
+module
+
+public import IntegerMultBounds.Machine.ActiveTargetHighestPairHeadersEndpoint
+public import IntegerMultBounds.Machine.ActiveTargetHighestPairPlaced
 
 /-! The highest-pair machine starts with five original numeric words and the
 unchanged full array. Ten headers and every native work tape begin blank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveTargetHighestPairOriginalData
 noncomputable section
 open ActiveTargetHighestPairData

@@ -1,8 +1,12 @@
-import IntegerMultBounds.Networks.Shared50GlobalShear
+module
+
+public import IntegerMultBounds.Networks.Shared50GlobalShear
 
 /-! Rational source/target operators behind every physical signed frame edge.
 Keeping both endpoints makes reduction modulo a common good prime compositional;
 the difference list remains exactly the already-counted actual operator list. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.Shared50OperatorPairs
 

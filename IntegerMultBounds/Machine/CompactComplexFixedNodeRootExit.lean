@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactComplexFixedNodePaths
+module
+
+public import IntegerMultBounds.Machine.CompactComplexFixedNodePaths
 
 /-! A reached empty-stack return guard genuinely halts the original fixed node
 controller. The arbitrary shared finite alphabet is retained. The two physical guard steps preserve the complete computed bank;
 this lemma does not supply the preceding recursive execution path. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexFixedNodeRootExit
 noncomputable section
 open Networks

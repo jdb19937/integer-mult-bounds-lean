@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.NativeColumnPhaseFlagsPlaced
+module
+
+public import IntegerMultBounds.Machine.NativeColumnPhaseFlagsPlaced
 
 /-! Fixed Gaussian-unit flags are written by one actual transition. In
 particular phase2 writes false/true, without accepting external phase bits. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.NativeFixedPhaseFlags
 open UnitPhaseNumerator (flags low high)
 open MarkedWordCleanup (one)

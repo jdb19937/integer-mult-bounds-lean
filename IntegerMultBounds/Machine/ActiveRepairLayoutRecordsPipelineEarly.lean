@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsMove
-import IntegerMultBounds.Machine.ActiveRepairLayoutKeysPipelineEarly
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsMove
+public import IntegerMultBounds.Machine.ActiveRepairLayoutKeysPipelineEarly
 
 /-! Full-width physical records use payload-one repair addresses and original
 geometry unchanged. The checked repair endpoint yields exact ideal records and
 semantic serialization to the full physical ideal array. Formatting is separate. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLayoutRecordsPipelineEarly
 noncomputable section
 attribute [local instance] Classical.propDecidable

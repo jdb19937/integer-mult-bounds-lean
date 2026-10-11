@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsMove
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlLateGlobal
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlSequenceRun
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlSequenceOriginalRun
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsMove
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlLateGlobal
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlSequenceRun
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlSequenceOriginalRun
 
 /-! The actual prepared later array supplies exactly the global late repair
 records, with full physical-width payloads and a paid machine execution. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLayoutRecordsLate
 noncomputable section
 open CompactGadgetReservationShape (Shape)

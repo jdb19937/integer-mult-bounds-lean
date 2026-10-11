@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActiveRepairEarlyOriginalPipelineBudgetWords
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairEarlyOriginalPipelineBudgetWords
 
 /-! Shared arithmetic absorption of every actual scan/preparation/cleanup
 charge. Fixed program constants remain symbolic throughout these proofs. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairEarlyOriginalPipelineBudgetArithmetic
 
 def modelCost (C A N S E F P I J H : ℕ) :=

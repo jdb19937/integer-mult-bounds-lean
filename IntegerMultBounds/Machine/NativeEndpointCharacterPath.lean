@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.NativeEndpointCharacterNamedBank
-import IntegerMultBounds.Machine.CompactSpectatorInheritedGrid
-import IntegerMultBounds.Networks.ComplexEndpointGrid
+module
+
+public import IntegerMultBounds.Machine.NativeEndpointCharacterNamedBank
+public import IntegerMultBounds.Machine.CompactSpectatorInheritedGrid
+public import IntegerMultBounds.Networks.ComplexEndpointGrid
 
 /-! Original Path guards justify every actual endpoint character coefficient;
 the literal output preserves signed widths and the exact common dyadic grid. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.NativeEndpointCharacterPath
 noncomputable section
 open CompactGadgetReservationShape (Shape)

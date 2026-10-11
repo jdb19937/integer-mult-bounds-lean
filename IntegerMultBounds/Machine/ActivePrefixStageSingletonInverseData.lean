@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixStageSingletonSelected
-import IntegerMultBounds.Machine.ActivePrefixStageSingletonDispatch
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStageSingletonSelected
+public import IntegerMultBounds.Machine.ActivePrefixStageSingletonDispatch
 
 /-! Highest-only singleton actions and their physical direction selection
 square to the identity on the complete original array. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixStageSingletonInverseData
 noncomputable section
 open CompactGadgetReservationShape (Shape)

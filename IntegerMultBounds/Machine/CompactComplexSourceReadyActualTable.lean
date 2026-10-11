@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyFullChildPaths
-import IntegerMultBounds.Machine.CompactComplexScalarSegmentRows
-import IntegerMultBounds.Machine.CompactComplexSourceReadyOrientationInvariants
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyFullChildPaths
+public import IntegerMultBounds.Machine.CompactComplexScalarSegmentRows
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyOrientationInvariants
 
 /-! The original event schedule populated by actual full-bank scalar and child
 programs. Return blocks execute the complete physical parent continuation.
 Nonleaf target/contraction and orientation controls remain fixed parameters
 until their actual finalization programs are assembled. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyActualTable
 noncomputable section
 open Networks.ComplexRecursiveCallSchema (Call)
@@ -51,7 +56,7 @@ def event (headerStack pcStack liveStack : Fin s) : Event → Σ q,Program (tape
       ⟨_,extend (CompactComplexSourceReadyChildReturnPath.program
         (CompactComplexRolePhaseSite.role call.site) headerStack liveStack) scratch⟩ := rfl
 
-private def assemble {t : ℕ} (ht : 0<t) (stack : Fin t)
+def assemble {t : ℕ} (ht : 0<t) (stack : Fin t)
     (returns : Call → Σ q,Program t q 2) (ctrl : Fin 4 → Σ q,Program t q 2)
     (events : Event → Σ q,Program t q 2) (classify : Fin (ctrl 0).1 → Bool) :
     Σ q,Program t q 2 :=

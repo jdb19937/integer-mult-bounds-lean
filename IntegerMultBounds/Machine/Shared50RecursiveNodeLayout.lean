@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.RecursiveRowsNode
-import IntegerMultBounds.Machine.Shared50RecursiveSegments
-import IntegerMultBounds.Networks.Shared50FixedControl
+module
+
+public import IntegerMultBounds.Machine.RecursiveRowsNode
+public import IntegerMultBounds.Machine.Shared50RecursiveSegments
+public import IntegerMultBounds.Networks.Shared50FixedControl
 
 /-! Actual World enumeration for recursive nodes. World wires retain their
 existing numeric slots; the common input/output occupies a separate final slot. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.Shared50RecursiveNodeLayout
 noncomputable section
 open Networks

@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedEntryTablePath
-import IntegerMultBounds.Machine.NativeEndpointCharacterPath
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedEntryTablePath
+public import IntegerMultBounds.Machine.NativeEndpointCharacterPath
 
 /-! Literal reached-bank facts after corrected tag2. Original raw geometry,
 including payload descriptor5, is retained; scalar coefficient arrays are
 exposed directly without full-stage record-capacity assumptions. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexCorrectedEntryGeometryReadiness
 noncomputable section
 open CompactGadgetReservationShape (Shape)

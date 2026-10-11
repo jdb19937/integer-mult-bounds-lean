@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CountedRepairScanSeed
-import IntegerMultBounds.Compact.KeyInstance
+module
+
+public import IntegerMultBounds.Machine.CountedRepairScanSeed
+public import IntegerMultBounds.Compact.KeyInstance
 
 /-! Physical preparation of the complete fixed scan bank from a source stream,
 original q/b/n descriptors, control word and otherwise blank workspace. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedRepairScanPrepare
 noncomputable section
 open CountedRepairScanMetadataRun

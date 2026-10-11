@@ -1,6 +1,11 @@
-import IntegerMultBounds.Machine.CompactGadgetReservationHeadersCost
+module
+
+public import IntegerMultBounds.Machine.CompactGadgetReservationHeadersCost
 
 /-! The setup schedule is linear in the complete concrete reserved role volume. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactGadgetReservationHeadersVolume
 noncomputable section
 open CompactGadgetReservationShape

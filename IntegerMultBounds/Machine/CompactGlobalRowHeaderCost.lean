@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.CompactGlobalRowHeaders
+module
+
+public import IntegerMultBounds.Machine.CompactGlobalRowHeaders
 
 /-! Exact physical header cost, decomposed at fixed schedule boundaries to
 keep kernel checking within the project's default resource limits. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactGlobalRowHeaderCost
 open CompactGlobalRowHeaders
 open CompactGlobalRowPadding

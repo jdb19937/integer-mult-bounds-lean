@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.ExactFrame
-import IntegerMultBounds.Machine.RecursiveDimensionBank
-import IntegerMultBounds.Machine.RecursiveInterchangeScaling
+module
+
+public import IntegerMultBounds.Machine.ExactFrame
+public import IntegerMultBounds.Machine.RecursiveDimensionBank
+public import IntegerMultBounds.Machine.RecursiveInterchangeScaling
 
 /-! Additional physical products for heterogeneous H/D scaling dimensions.
 Original six headers and generated Q/ARB/N stay intact; three extra output
 slots hold Q*E, C*Q*E, and N*C as required by the selected static target. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveScalingDimensions
 open RecursiveInterchangeLayout (Descriptor volume)
 open RecursiveInterchangeScaling (Target)

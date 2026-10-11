@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.UnitPhaseCountPower
+module
+
+public import IntegerMultBounds.Machine.UnitPhaseCountPower
 
 /-! Polynomial multiplicity is physically constructed from an immutable
 canonical ell scalar on port65. It is stored on60, and all six construction
 scratch tapes are restored. No multiplicity descriptor is supplied for free. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.UnitPhaseMultiplicity
 noncomputable section
 open SharedPlacementAlphabet (setTape)

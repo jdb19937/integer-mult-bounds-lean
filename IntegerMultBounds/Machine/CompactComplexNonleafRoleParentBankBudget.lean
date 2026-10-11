@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.CompactComplexNonleafRoleParentBank
-import IntegerMultBounds.Machine.CompactComplexControllerChildBudget
-import IntegerMultBounds.Machine.CompactComplexControllerExactReturnBudget
+module
+
+public import IntegerMultBounds.Machine.CompactComplexNonleafRoleParentBank
+public import IntegerMultBounds.Machine.CompactComplexControllerChildBudget
+public import IntegerMultBounds.Machine.CompactComplexControllerExactReturnBudget
 
 /-! The actual raw child-to-parent geometric return has a uniform native-volume
 cost. Actual dependency Paths supply the parent visit and genuine child call;
 retained geometry pays descriptor lengths, exponent traffic and every join.
 No separate live-denominator or aggregate time allowance is needed here. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexNonleafRoleParentBankBudget
 noncomputable section
 open CompactGadgetReservationShape (Shape)

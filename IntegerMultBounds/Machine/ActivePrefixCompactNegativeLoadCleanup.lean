@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActivePrefixCompactNegativeLoadRun
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixCompactNegativeLoadRun
 
 /-! Physical erasure of both emitted offset words and every derived rotation
 header. The original ten descriptors and the newly rotated full array remain. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixCompactNegativeLoadCleanup
 noncomputable section
 open ActivePrefixCompactNegativeLoadData

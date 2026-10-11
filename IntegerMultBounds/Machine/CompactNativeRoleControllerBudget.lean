@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactNativeRoleTransferBudget
+module
+
+public import IntegerMultBounds.Machine.CompactNativeRoleTransferBudget
 
 /-! The six controller scalars are the actual Stage fields, with all their
 bounds derived from its geometric decomposition and real source/target slots.
 No controller cost allowance or unchecked bound is supplied. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactNativeRoleControllerBudget
 noncomputable section
 open CompactGadgetReservationShape (Shape)

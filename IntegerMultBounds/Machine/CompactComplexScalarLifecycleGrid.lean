@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexScalarCountLifecycle
-import IntegerMultBounds.Machine.CompactComplexScalarSequenceGrid
+module
+
+public import IntegerMultBounds.Machine.CompactComplexScalarCountLifecycle
+public import IntegerMultBounds.Machine.CompactComplexScalarSequenceGrid
 
 /-! Genuine original-header scalar lifecycles expose the numerical Gaussian
 postcondition needed by recursive induction. The original dependency Path and
 one retained field reserve derive every intermediate signed arithmetic guard. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexScalarLifecycleGrid
 noncomputable section
 open CompactComplexScalarCountLifecycle (Realizes program output cost)

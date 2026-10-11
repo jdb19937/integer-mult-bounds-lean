@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactNativeConjugatedPhase
-import IntegerMultBounds.Machine.FixedHeaderSparseBankCopy
+module
+
+public import IntegerMultBounds.Machine.CompactNativeConjugatedPhase
+public import IntegerMultBounds.Machine.FixedHeaderSparseBankCopy
 
 /-! The full native conjugated caller has only original13 and immutable ell
 metadata after its shared native source is removed. This is the actual sparse
 bank constructed and erased by the fixed descriptor copier. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactNativeConjugatedHeaderBank
 noncomputable section
 open CompactGadgetReservationShape (Shape)

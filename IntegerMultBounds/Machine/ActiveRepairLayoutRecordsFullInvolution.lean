@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsFullEarlySelected
-import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsFullLateSelected
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsFullEarlySelected
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsFullLateSelected
 
 /-! The complete selected-mask address actions are involutions. Earlier
 source retention uses its explicit disjointness from target-high bit zero. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLayoutRecordsFullInvolution
 noncomputable section
 open CompactGadgetReservationShape (Shape)

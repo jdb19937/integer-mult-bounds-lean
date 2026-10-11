@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactNativeRoleMergeCaller
-import IntegerMultBounds.Machine.CompactNativeRoleOriginalBudget
+module
+
+public import IntegerMultBounds.Machine.CompactNativeRoleMergeCaller
+public import IntegerMultBounds.Machine.CompactNativeRoleOriginalBudget
 
 /-! Final copied metadata erasure is paid from actual Stage geometry. Combined
 arbitrary-result merging includes every source reset, header lifecycle and the
 final return to the retained global scalar caller. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactNativeRoleMetadataBudget
 noncomputable section
 open CompactNativeRoleTransferBudget (volume)

@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactComplexCompletedLiveLower
-import IntegerMultBounds.Machine.CompactComplexActualCallOrder
-import IntegerMultBounds.Machine.CompactComplexActualCallLoweredNetwork
-import IntegerMultBounds.Machine.CompactComplexActualScalarNetworkPrefix
+module
+
+public import IntegerMultBounds.Machine.CompactComplexCompletedLiveLower
+public import IntegerMultBounds.Machine.CompactComplexActualCallOrder
+public import IntegerMultBounds.Machine.CompactComplexActualCallLoweredNetwork
+public import IntegerMultBounds.Machine.CompactComplexActualScalarNetworkPrefix
 
 /-! Literal group boundaries split the actual site-major call schedule.
 Ordered compiler edge annotations retain both frames and the physical wire. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexActualEventTrace
 noncomputable section
 open Networks

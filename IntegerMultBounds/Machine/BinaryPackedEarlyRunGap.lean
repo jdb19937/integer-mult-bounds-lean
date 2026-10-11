@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.BinaryPackedEarlyRunBank
+module
+
+public import IntegerMultBounds.Machine.BinaryPackedEarlyRunBank
 
 /-! Actual first and third child runs on the common unchanged role word.
 The offset producer, swap/rotation/swap, and offset erasure are all executed. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryPackedEarlyRunGap
 noncomputable section
 open Networks.Shared50ModularControl (prime)

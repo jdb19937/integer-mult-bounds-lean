@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyNonleafScalarInitialReadiness
-import IntegerMultBounds.Machine.CompactNativeRoleRecombine
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyNonleafScalarInitialReadiness
+public import IntegerMultBounds.Machine.CompactNativeRoleRecombine
 
 /-! Arbitrary corrected physical role families supply the canonical scalar
 prefix inputs directly. Recombination and original named-role identities derive
 all source words, widths and decoded grids while retaining raw/live/stack data. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedScalarReadiness
 noncomputable section
 open ButterflyStreamData (Coefficient)

@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ArbitraryWidthHighCommonFallback
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthHighCommonFallback
 
 /-! Actual fallback after common metadata preparation, preserving that metadata
 for the selector's shared cleanup. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthHighCommonFallbackBody
 noncomputable section
 open Networks

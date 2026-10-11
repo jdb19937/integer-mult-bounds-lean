@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactComplexCorrectedEntryGeometryReadiness
+module
+
+public import IntegerMultBounds.Machine.CompactComplexCorrectedEntryGeometryReadiness
 
 /-! The actual canonical corrected source role family inherits its original
 parent grid. Signed guards are derived from the genuine dependency Path;
 neither a prepared role grid nor record-capacity assumptions are supplied. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexCorrectedEntryGridReadiness
 noncomputable section
 open CompactGadgetReservationShape (Shape)

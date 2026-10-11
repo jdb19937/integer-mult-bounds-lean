@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.BinaryParityXorOffsetLoop
-import IntegerMultBounds.Machine.BinaryAddressOffsetRepeat
+module
+
+public import IntegerMultBounds.Machine.BinaryParityXorOffsetLoop
+public import IntegerMultBounds.Machine.BinaryAddressOffsetRepeat
 
 /-! Complete unary rowwise modular negation with blank initial workspace.
 The input table is consumed and erased, the output is rewound, both loop
 clocks are physically initialized/erased, and width/count headers survive. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryParityXorOffsetNegate
 open SharedPlacementAlphabet (setTape)
 open CountedCopyReuse (empty binary)

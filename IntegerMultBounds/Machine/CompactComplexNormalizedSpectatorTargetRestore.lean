@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactComplexNormalizedSpectatorHandoff
-import IntegerMultBounds.Machine.CompactComplexNonleafSpectatorTargetRestore
-import IntegerMultBounds.Machine.CompactComplexNonleafRoleTargetRestore
+module
+
+public import IntegerMultBounds.Machine.CompactComplexNormalizedSpectatorHandoff
+public import IntegerMultBounds.Machine.CompactComplexNonleafSpectatorTargetRestore
+public import IntegerMultBounds.Machine.CompactComplexNonleafRoleTargetRestore
 
 /-! The saved parent node target is popped only after actual spectator promotion
 and shared-live commit. The advanced live word, aligned payloads and all nineteen
 fixed frame/work tapes survive this final boundary. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexNormalizedSpectatorTargetRestore
 noncomputable section
 open CompactGadgetReservationShape (Shape)

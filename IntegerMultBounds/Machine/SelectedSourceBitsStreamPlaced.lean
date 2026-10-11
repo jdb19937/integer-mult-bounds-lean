@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.SelectedSourceBitsStreamRun
-import IntegerMultBounds.Machine.CompactGadgetReservationPlacement
+module
+
+public import IntegerMultBounds.Machine.SelectedSourceBitsStreamRun
+public import IntegerMultBounds.Machine.CompactGadgetReservationPlacement
 
 /-! Selected bits are extracted from every complete row of the caller source stream.
 Seven caller ports are source/output/q/n/rho/f/P; the output starts blank. Source,
 original headers and arbitrary spectators are retained with their heads. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.SelectedSourceBitsStreamPlaced
 noncomputable section
 open SelectedSourceBitsStreamData

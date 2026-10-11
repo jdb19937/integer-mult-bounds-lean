@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlUSwapGeometry
-import IntegerMultBounds.Machine.ActivePrefixCompactSwapGeometry
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlConjugationData
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlUSwapGeometry
+public import IntegerMultBounds.Machine.ActivePrefixCompactSwapGeometry
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlConjugationData
 
 /-! Both executed compact swaps act at the literal original full-array index.
 No reserialization or restricted-address assumption enters these equations. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixDirtyControlGlobalSwap
 noncomputable section
 open CompactGadgetReservationShape (Shape)

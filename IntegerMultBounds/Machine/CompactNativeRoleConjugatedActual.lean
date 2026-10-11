@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactNativePolynomialStagePacked
-import IntegerMultBounds.Machine.CompactNativeRoleConjugatedLifecycle
+module
+
+public import IntegerMultBounds.Machine.CompactNativePolynomialStagePacked
+public import IntegerMultBounds.Machine.CompactNativeRoleConjugatedLifecycle
 
 /-! One actual phase lifecycle handles all multiplier descendants eventually,
 with packed repair proved from original geometry and literal polynomial codec
 capacity. Its only scalar allowance concerns the actual retained signed width;
 physical controller propagation and recursive network composition remain open. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactNativeRoleConjugatedActual
 noncomputable section
 open Sizes

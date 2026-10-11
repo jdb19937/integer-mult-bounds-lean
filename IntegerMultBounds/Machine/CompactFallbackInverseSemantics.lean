@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactFallbackInverseOriginal
-import IntegerMultBounds.Machine.CompactFallbackSemantics
+module
+
+public import IntegerMultBounds.Machine.CompactFallbackInverseOriginal
+public import IntegerMultBounds.Machine.CompactFallbackSemantics
 
 /-! Sparse inverse semantics starting at an already accrued precision. The
 forward phase's grid is consumed directly, with no fresh normalization premise. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactFallbackInverseSemantics
 noncomputable section
 open CompactFallbackHeaders

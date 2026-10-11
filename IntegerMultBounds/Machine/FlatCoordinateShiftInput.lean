@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.FlatCoordinateShiftFromDimensions
+module
+
+public import IntegerMultBounds.Machine.FlatCoordinateShiftFromDimensions
 
 /-! Initial payload and private-bank contracts for the fully synthesized shift.
 Only b/W and the original array are supplied; all private metadata is independent
 of that array and no intermediate payload is encoded in the input. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.FlatCoordinateShiftInput
 open FlatCoordinateShiftFromDimensions
 open Networks.Shared50ModularControl (prime)

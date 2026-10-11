@@ -1,8 +1,12 @@
-import IntegerMultBounds.Networks.Certificates.Shared50.Checked
-import IntegerMultBounds.Networks.Certificates.Shared50.Semantics
+module
+
+public import IntegerMultBounds.Networks.Certificates.Shared50.Checked
+public import IntegerMultBounds.Networks.Certificates.Shared50.Semantics
 
 /-! Every compact duplicate certificate is a genuine witness in the actual
 fifty-copy family, giving the concrete optimized support-count bound. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.Certificates.Shared50
 

@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixSelectedLoad
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixSelectedLoad
 
 /-! The complete original-input selected load on arbitrary caller
 tapes. Ten original headers and the array are permanent; all private storage
 starts and returns blank, with arbitrary caller spectators unchanged. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixSelectedLoadPlaced
 noncomputable section
 open ActivePrefixSelectedLoadData

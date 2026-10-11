@@ -1,7 +1,12 @@
-import IntegerMultBounds.Compact.ActiveTargetSubsegmentValue
+module
+
+public import IntegerMultBounds.Compact.ActiveTargetSubsegmentValue
 
 /-! Literal selected-bit mask on a contiguous active target, with the omitted
 highest operation separated onto the first bit of the retained high field. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Compact.ActiveTargetSubsegmentWords
 noncomputable section
 open IntegerMultBounds.Counter (value)

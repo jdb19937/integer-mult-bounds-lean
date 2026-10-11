@@ -1,12 +1,17 @@
-import IntegerMultBounds.Machine.CompactComplexRootPieceDigit
-import IntegerMultBounds.Machine.CompactComplexRootPiecePrefixes
-import IntegerMultBounds.Machine.BinaryDescriptorQueueRewind
+module
+
+public import IntegerMultBounds.Machine.CompactComplexRootPieceDigit
+public import IntegerMultBounds.Machine.CompactComplexRootPiecePrefixes
+public import IntegerMultBounds.Machine.BinaryDescriptorQueueRewind
 
 /-! A fixed outer root controller consumes the generated low-to-high digit
 queue, generates all canonical exponent/left/width triples and invokes one
 fixed callback per root piece. Its finite table has no digit-list, root-path,
 loop-count or descriptor input. The callback's native execution is an explicit
 interface for the still-separate recursive machine. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexRootPieceController
 noncomputable section
 open ActiveRepairRankHeadersCommands (State bank put)

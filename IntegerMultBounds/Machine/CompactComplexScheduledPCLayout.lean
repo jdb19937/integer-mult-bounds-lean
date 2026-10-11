@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexCompletedLiveLower
-import IntegerMultBounds.Machine.CompactComplexCallerWorkingExtraFlow
-import Mathlib.Data.List.Nodup
+module
+
+public import IntegerMultBounds.Machine.CompactComplexCompletedLiveLower
+public import IntegerMultBounds.Machine.CompactComplexCallerWorkingExtraFlow
+public import Mathlib.Data.List.Nodup
 
 /-! Original saved call PCs and fixed local event entries. All table indices
 are chosen from the actual finite schedule, independently of runtime depth. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexScheduledPCLayout
 noncomputable section
 open Networks
@@ -130,10 +135,10 @@ abbrev PCs := Fin (originalCount+extraCount+2)
 def eventPC (i : Fin schedule.length) :=
   GuardedFiniteReturnExtraFlow.extraPC (N:=originalCount) (Fin.natAdd 4 i)
 
-private def finalPCFor (N length : ℕ) : Fin (N+(4+length)+2) :=
+def finalPCFor (N length : ℕ) : Fin (N+(4+length)+2) :=
   GuardedFiniteReturnExtraFlow.extraPC ⟨3,by omega⟩
 
-private def nextPCFor (N length : ℕ) (i : Fin length) : Fin (N+(4+length)+2) :=
+def nextPCFor (N length : ℕ) (i : Fin length) : Fin (N+(4+length)+2) :=
   if h : i.val+1<length then
     GuardedFiniteReturnExtraFlow.extraPC (Fin.natAdd 4 (⟨i.val+1,h⟩ : Fin length))
   else finalPCFor N length

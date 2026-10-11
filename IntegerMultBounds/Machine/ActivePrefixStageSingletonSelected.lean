@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.ActivePrefixStageSingletonRun
-import IntegerMultBounds.Machine.ActiveTargetHighestLayoutCompose
-import IntegerMultBounds.Machine.ActiveTargetHighestLayoutSourceFrames
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStageSingletonRun
+public import IntegerMultBounds.Machine.ActiveTargetHighestLayoutCompose
+public import IntegerMultBounds.Machine.ActiveTargetHighestLayoutSourceFrames
 
 /-! Exact singleton selected-XOR semantics on original array addresses. The
 single physically read source bit is the complete selection when f=1; no low
 packed operation, repair permutation, or assumed low-word specification occurs. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixStageSingletonSelected
 noncomputable section
 open CompactGadgetReservationShape (Shape)

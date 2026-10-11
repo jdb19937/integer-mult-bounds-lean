@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ArbitraryWidthHighPrepare
-import IntegerMultBounds.Machine.SharedPlacementAlphabet
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthHighPrepare
+public import IntegerMultBounds.Machine.SharedPlacementAlphabet
 
 /-! Runtime metadata preparation reads the caller's sole width header through
 an actual shared physical tape. Its private width slot stays wholly blank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthHighPrepareShared
 noncomputable section
 variable {a l : ℕ}

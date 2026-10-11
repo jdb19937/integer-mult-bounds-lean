@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactActualStageDispatch
-import IntegerMultBounds.Machine.ActivePrefixStageInverseBudget
+module
+
+public import IntegerMultBounds.Machine.CompactActualStageDispatch
+public import IntegerMultBounds.Machine.ActivePrefixStageInverseBudget
 
 /-! Actual density-one original-input stages implement recursive return and
 round trips without additional geometry or allowance assumptions. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactActualStageInverse
 noncomputable section
 open CompactGadgetReservationShape (Shape)

@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactSpectatorLeafSetup
+module
+
+public import IntegerMultBounds.Machine.CompactSpectatorLeafSetup
 
 /-! Physical complete-native-row lengths and role group counts are synthesized
 from the original thirteen words and ell/p. The full Shape.bits dimension is
 retained while only the outer row count is divided by the fixed role count. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactNativeRoleHeaders
 noncomputable section
 open CompactGadgetReservationShape (Shape)

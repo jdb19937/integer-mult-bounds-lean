@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CountedLateRepairMetadata
-import IntegerMultBounds.Machine.CountedLateRepairScanBank
-import IntegerMultBounds.Machine.CountedRepairScanPrepare
+module
+
+public import IntegerMultBounds.Machine.CountedLateRepairMetadata
+public import IntegerMultBounds.Machine.CountedLateRepairScanBank
+public import IntegerMultBounds.Machine.CountedRepairScanPrepare
 
 /-! Physical preparation of the complete fixed scan bank from a source stream,
 original q/b/n descriptors, control word and otherwise blank workspace. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedLateRepairPrepare
 noncomputable section
 open CountedRepairScanMetadataRun (filled)

@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactGadgetReservationShape
-import IntegerMultBounds.Machine.RoundedRowDescriptor
-import IntegerMultBounds.Machine.BinaryCanonicalData
+module
+
+public import IntegerMultBounds.Machine.CompactGadgetReservationShape
+public import IntegerMultBounds.Machine.RoundedRowDescriptor
+public import IntegerMultBounds.Machine.BinaryCanonicalData
 
 /-! A subtraction/product-only recipe for the exact compact load headers.
 Zero slack is allowed; canonical zero exponents represent complete unit ranges. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactGadgetReservationHeadersData
 open CompactGadgetReservationShape
 open CompactGadgetReservationCapacity

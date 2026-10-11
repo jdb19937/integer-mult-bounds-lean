@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActiveRepairEarlyKeyOriginalValid
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairEarlyKeyOriginalValid
 
 /-! Actual header synthesis, full-rank early-key computation, and generated
 header erasure share eighty-four blank tapes. Original inputs are retained. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairEarlyKeyOriginalRun
 noncomputable section
 open ActiveRepairEarlyKeyOriginalData ActiveRepairEarlyKeyOriginalValid

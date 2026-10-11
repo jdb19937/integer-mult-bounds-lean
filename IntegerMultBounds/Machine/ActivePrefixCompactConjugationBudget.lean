@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixCompactConjugationRun
-import IntegerMultBounds.Machine.ActivePrefixCompactSwapBudget
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixCompactConjugationRun
+public import IntegerMultBounds.Machine.ActivePrefixCompactSwapBudget
 
 /-! One uniform full-volume bound for both concrete compact conjugations,
 including two interchanges, the actual load, and both sequential joins. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixCompactConjugationBudget
 open ActivePrefixCompactConjugationData ActivePrefixCompactConjugationRun
 open CompactGadgetReservationShape

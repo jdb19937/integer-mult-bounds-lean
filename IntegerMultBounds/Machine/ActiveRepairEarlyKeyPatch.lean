@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActiveRepairEarlyKeyPlacement
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairEarlyKeyPlacement
 
 /-! Full original-rank reconstruction and runtime V/T/U patching on the
 shared early-key bank. All fifty-two private tapes are erased. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairEarlyKeyPatch
 noncomputable section
 open ActiveRepairEarlyKeyPlacement

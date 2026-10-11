@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.NativeEndpointCharacterRoles
+module
+
+public import IntegerMultBounds.Machine.NativeEndpointCharacterRoles
 
 /-! Endpoint character execution borrows only the first67 private leaf tapes.
 Every remaining leaf tape and arbitrary scalar-work suffix is literal frame;
 no fixed machine bank enlargement or clearing of scalar work is required. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.NativeEndpointCharacterLeafPlacement
 noncomputable section
 variable {t r q : ℕ}

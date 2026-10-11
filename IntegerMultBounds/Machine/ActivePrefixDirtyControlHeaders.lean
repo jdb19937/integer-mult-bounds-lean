@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlData
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlData
 
 /-! Dirty-U offset metadata comes from exactly six original descriptors.
 The count, compact width, wide output width and prefix cardinality are physical
 power/product outputs; neither synthetic source padding nor f=n+1 is used. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixDirtyControlHeaders
 noncomputable section
 open ActivePrefixDirtyControlData

@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactGadgetReservationPlacement
+module
+
+public import IntegerMultBounds.Machine.CompactGadgetReservationPlacement
 
 /-! Actual original-header packed action on six arbitrary caller tapes.
 The native private bank is appended blank and returned blank. Placement
 preserves all caller spectators, including other offset-producer descriptors. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryPackedOffsetOriginalPlaced
 noncomputable section
 open Networks.Shared50ModularControl (prime)

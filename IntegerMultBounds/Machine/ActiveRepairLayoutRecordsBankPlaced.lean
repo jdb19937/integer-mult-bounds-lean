@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsBankInput
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsBankInput
 
 /-! Genuine fixed-many descriptor copies into the literal original repair
 caller, retaining the whole producer and all unselected consumer tapes. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLayoutRecordsBankPlaced
 noncomputable section
 open CompactGadgetReservationShape (Shape)

@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsOriginalEarlyAlphabet
-import IntegerMultBounds.Machine.ActivePrefixEarlySequenceOriginalPlaced
-import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsEarly
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsOriginalEarlyAlphabet
+public import IntegerMultBounds.Machine.ActivePrefixEarlySequenceOriginalPlaced
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsEarly
 
 /-! Literal shared prime-alphabet caller for early payload then repair.
 Twenty-two original words and one original raw array are the only inputs. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLayoutRecordsPayloadEarlyData
 noncomputable section
 open CompactGadgetReservationShape (Shape)

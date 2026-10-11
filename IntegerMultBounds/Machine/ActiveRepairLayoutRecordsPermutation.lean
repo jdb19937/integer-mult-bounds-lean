@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsShape
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsShape
 
 /-! Concrete packed actual and ideal operations move whole records and retain
 all bit positions inside them. Repair uses the address-only permutation. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLayoutRecordsPermutation
 noncomputable section
 open CompactGadgetReservationShape CompactActiveTargetLayout

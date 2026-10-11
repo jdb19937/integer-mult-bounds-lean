@@ -1,12 +1,17 @@
-import IntegerMultBounds.Machine.CompactFramedScalarGrid
-import IntegerMultBounds.Machine.CompactRecursiveGridBudget
-import IntegerMultBounds.Networks.ComplexRecursiveCallSchema
-import IntegerMultBounds.Networks.GaussianFrameInverseGrid
+module
+
+public import IntegerMultBounds.Machine.CompactFramedScalarGrid
+public import IntegerMultBounds.Machine.CompactRecursiveGridBudget
+public import IntegerMultBounds.Networks.ComplexRecursiveCallSchema
+public import IntegerMultBounds.Networks.GaussianFrameInverseGrid
 
 /-! Dependency accounting for the actual finite complex25 call schema.
 Paths choose actual call occurrences, including all preceding sibling sites.
 This is a mathematical stack invariant; connecting it to the physical
 recursive controller's returned precision remains a separate obligation. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactRecursiveDependencyBudget
 noncomputable section
 open CompactComplexRecursiveGeometry Networks Networks.GaussianPrecision

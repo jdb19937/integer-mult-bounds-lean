@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ArbitraryWidthHighCommonPrepare
-import IntegerMultBounds.Machine.ArbitraryWidthElementaryInitializedRun
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthHighCommonPrepare
+public import IntegerMultBounds.Machine.ArbitraryWidthElementaryInitializedRun
 
 /-! Complete actual fallback from original headers and blank private banks,
 including common metadata generation and reverse cleanup. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthHighCommonFallback
 noncomputable section
 open Networks

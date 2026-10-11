@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadySinkCorrections
-import IntegerMultBounds.Machine.NativeUniformPolynomialRotationPath
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadySinkCorrections
+public import IntegerMultBounds.Machine.NativeUniformPolynomialRotationPath
 
 /-! The literal physical sink-correction family preserves the original common
 signed widths and numerical grid. Every signed guard comes from the genuine
 recursive dependency Path; the corrections consume no denominator growth. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSinkCorrectionGrid
 noncomputable section
 open CompactGadgetReservationShape (Shape)

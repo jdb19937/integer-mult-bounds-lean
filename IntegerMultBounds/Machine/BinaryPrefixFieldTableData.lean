@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.BinaryAddressOffsetData
+module
+
+public import IntegerMultBounds.Machine.BinaryAddressOffsetData
 
 /-! Project a contiguous runtime field from every full-width address, in
 integer order. Zero-width fields and zero-width addresses are included. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryPrefixFieldTableData
 open BinaryAddressTableData
 

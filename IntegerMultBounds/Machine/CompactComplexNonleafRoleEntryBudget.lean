@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexNonleafRoleEntry
+module
+
+public import IntegerMultBounds.Machine.CompactComplexNonleafRoleEntry
 
 /-! The two physical parking lifecycles have one uniform native-volume bound.
 The retained master and the selected role have different generated lengths;
 both header lifecycles, spectator parking and every assembly join are paid.
 This accounts for entry only, not child splitting or recursive execution. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexNonleafRoleEntryBudget
 noncomputable section
 open CompactGadgetReservationShape (Shape)

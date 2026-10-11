@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.CountedLateRepairPrefix
+module
+
+public import IntegerMultBounds.Machine.CountedLateRepairPrefix
 
 /-! The later repair physically applies the ideal low-bit toggle to the
 recovered target, retaining both recovered dirty words and the original flag. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedLateRepairToggle
 noncomputable section
 open SharedPlacementAlphabet (setTape)

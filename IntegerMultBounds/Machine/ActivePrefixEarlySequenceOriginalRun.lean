@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixEarlySequenceOriginalHeaders
-import IntegerMultBounds.Machine.ActivePrefixEarlySequenceOriginalPayload
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixEarlySequenceOriginalHeaders
+public import IntegerMultBounds.Machine.ActivePrefixEarlySequenceOriginalPayload
 
 /-! End-to-end physical preparation, all four early loads and header cleanup.
 Only original geometry/stage words and the original array are supplied. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixEarlySequenceOriginalRun
 noncomputable section
 open ActivePrefixEarlySequenceOriginalData ActivePrefixEarlySequenceOriginalInputs

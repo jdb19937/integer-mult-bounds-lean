@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.NativeEndpointCharacterReadout
+module
+
+public import IntegerMultBounds.Machine.NativeEndpointCharacterReadout
 
 /-! The actual fixed terminal-vector sign correction specializes the physical
 aggregate character to the exceptional complex network source and sink. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.NativeEndpointCharacterTerminal
 noncomputable section
 open CompactGadgetReservationShape (Shape)

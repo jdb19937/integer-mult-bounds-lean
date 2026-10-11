@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.ActivePrefixSelectedLoadPlaced
-import IntegerMultBounds.Machine.ActivePrefixCorrectionLoadPlaced
-import IntegerMultBounds.Machine.ActivePrefixCompactConjugationPlaced
-import IntegerMultBounds.Machine.SharedBankFamily
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixSelectedLoadPlaced
+public import IntegerMultBounds.Machine.ActivePrefixCorrectionLoadPlaced
+public import IntegerMultBounds.Machine.ActivePrefixCompactConjugationPlaced
+public import IntegerMultBounds.Machine.SharedBankFamily
 
 /-! One literal original-array bank for the four active early payload actions.
 Numeric stage headers are prepared inputs; no offset table is supplied. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixEarlySequenceData
 noncomputable section
 open CompactGadgetReservationShape (Shape)

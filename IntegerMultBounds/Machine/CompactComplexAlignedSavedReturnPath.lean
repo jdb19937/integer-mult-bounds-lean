@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactComplexAlignedChildEntryPath
-import IntegerMultBounds.Machine.CompactComplexFixedNodeSavedReturnPath
-import IntegerMultBounds.Machine.CompactComplexSourceReadySavedCallHistory
+module
+
+public import IntegerMultBounds.Machine.CompactComplexAlignedChildEntryPath
+public import IntegerMultBounds.Machine.CompactComplexFixedNodeSavedReturnPath
+public import IntegerMultBounds.Machine.CompactComplexSourceReadySavedCallHistory
 
 /-! The actual prime-alphabet aligned table pops the genuine top call.
 The older association and erased-cell blanks come from the physical history;
 all other tapes, including the basis workspace, are retained literally. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexAlignedSavedReturnPath
 noncomputable section
 open Networks.Shared50ModularControl (prime)

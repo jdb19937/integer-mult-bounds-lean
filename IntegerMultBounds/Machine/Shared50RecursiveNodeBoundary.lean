@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.Shared50RecursiveNodeBinary
+module
+
+public import IntegerMultBounds.Machine.Shared50RecursiveNodeBinary
 
 /-! Actual fixed Shared50 node entry/exit contracts on the binary World bank.
 All header and movement work is charged; the saved descriptor stack supports
 nested calls through its preserved blank suffix. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.Shared50RecursiveNodeBoundary
 noncomputable section
 open Networks

@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedClassifierTablePath
-import IntegerMultBounds.Machine.CompactComplexCorrectedStoppedChildGridSemantics
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedClassifierTablePath
+public import IntegerMultBounds.Machine.CompactComplexCorrectedStoppedChildGridSemantics
 
 /-! Actual classifier pre-orientation supplies the stopped leaf source;
 the ensuing tag1 and saved-frame pop compute the corrected tensor. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexCorrectedStoppedClassifierTensor
 noncomputable section
 open Networks

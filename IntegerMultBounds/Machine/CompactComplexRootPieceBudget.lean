@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactComplexRootPieceRun
+module
+
+public import IntegerMultBounds.Machine.CompactComplexRootPieceRun
 
 /-! Root enumeration charges every queue read, numeric update and loop test
 separately from the recursive callback costs. No callback runtime is treated
 as an elementary transition. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexRootPieceBudget
 noncomputable section
 open ActiveRepairRankHeadersCommands (State put)

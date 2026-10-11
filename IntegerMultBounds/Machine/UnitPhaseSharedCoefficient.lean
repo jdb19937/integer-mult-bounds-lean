@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.UnitPhaseRecordIO
-import IntegerMultBounds.Machine.UnitPhaseCoreReset
-import IntegerMultBounds.Machine.PlacementBank
+module
+
+public import IntegerMultBounds.Machine.UnitPhaseRecordIO
+public import IntegerMultBounds.Machine.UnitPhaseCoreReset
+public import IntegerMultBounds.Machine.PlacementBank
 
 /-! One coefficient consumes retained physical phase flags and leaves them
 unchanged. Arithmetic, IO, and source erasure are charged independently of
 address width; this is the inner body for a polynomial row. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.UnitPhaseSharedCoefficient
 noncomputable section
 open UnitPhaseNumerator (flags coreInput coreOutput words)

@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ArbitraryWidthHighDimensions
-import IntegerMultBounds.Machine.ArbitraryWidthHighLayout
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthHighDimensions
+public import IntegerMultBounds.Machine.ArbitraryWidthHighLayout
 
 /-! The joined-row suffix is physically multiplied from the two retained
 movement dimensions. Its output and all cleanup costs are linear in that row. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthHighPaddingSuffix
 noncomputable section
 variable {a : ℕ}

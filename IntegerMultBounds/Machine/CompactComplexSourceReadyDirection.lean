@@ -1,12 +1,17 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyWorkspace
-import IntegerMultBounds.Machine.CompactComplexSourceReadyStoppedLeafDispatch
-import IntegerMultBounds.Machine.CompactComplexScheduledPCDecode
-import IntegerMultBounds.Machine.FiniteDispatch
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyWorkspace
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyStoppedLeafDispatch
+public import IntegerMultBounds.Machine.CompactComplexScheduledPCDecode
+public import IntegerMultBounds.Machine.FiniteDispatch
 
 /-! Recover actual child direction from the top saved return address. One
 fixed pop-and-restore machine reads the code into finite control and restores
 every stack cell and its head before selecting a directional continuation.
 The temporary erasure needs no blank assumption on the older background. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyDirection
 noncomputable section
 namespace Peek
@@ -148,7 +153,7 @@ attribute [local irreducible] terminalFor FiniteReturnStack.encode
 attribute [local irreducible] ComplexRank25.program ComplexRecursiveCallSchema.sites
   CompactComplexCallReturn.addressWidth
 
-private def exactWidth (n : ℕ) : ℕ :=
+def exactWidth (n : ℕ) : ℕ :=
   Classical.choose (show ∃ m : ℕ,m=n from ⟨n,rfl⟩)
 
 private theorem exactWidth_eq (n : ℕ) : exactWidth n=n :=

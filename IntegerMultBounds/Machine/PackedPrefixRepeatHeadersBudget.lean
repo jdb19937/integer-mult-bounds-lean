@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.PackedPrefixRepeatHeadersPlaced
-import IntegerMultBounds.Machine.CompactGadgetReservationHeadersCost
+module
+
+public import IntegerMultBounds.Machine.PackedPrefixRepeatHeadersPlaced
+public import IntegerMultBounds.Machine.CompactGadgetReservationHeadersCost
 
 /-! Charge the complete physical prefix-factor construction and erasure
 against a containing array volume. Intermediate powers and products are
 bounded by the actual final repetition factor, rather than free descriptors. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.PackedPrefixRepeatHeadersBudget
 noncomputable section
 open PackedPrefixRepeatHeaders

@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.BinarySelectedOffsetData
-import IntegerMultBounds.Machine.CountedGatherOriginalRun
+module
+
+public import IntegerMultBounds.Machine.BinarySelectedOffsetData
+public import IntegerMultBounds.Machine.CountedGatherOriginalRun
 
 /-! Actual original-header gather over the physically generated address table.
 Its q/b/count shape is installed and erased; all fourteen private metadata
 tapes start and finish blank. Payload scans advance by the exact full lengths. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinarySelectedOffsetGather
 open SharedPlacementAlphabet (setTape)
 open BinarySelectedOffsetData

@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActivePrefixLayoutHeadersBudget
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixLayoutHeadersBudget
 
 /-! Arbitrary canonical original words are retained exactly. Ten constructed
 outputs are canonical, and the complete arithmetic workspace is restored. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixLayoutHeadersEndpoint
 noncomputable section
 open ActivePrefixLayoutHeadersData ActivePrefixLayoutHeadersRun ActiveRepairRankHeadersCommands

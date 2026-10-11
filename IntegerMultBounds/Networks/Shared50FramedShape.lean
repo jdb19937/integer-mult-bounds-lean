@@ -1,8 +1,13 @@
-import IntegerMultBounds.Networks.DAGFramedShape
-import IntegerMultBounds.Networks.Shared50SignedFramed
+module
+
+public import IntegerMultBounds.Networks.DAGFramedShape
+public import IntegerMultBounds.Networks.Shared50SignedFramed
 
 /-! Every actual Shared50 physical wire and scalar gate is independent of the
 chosen realization of frames. No large circuit list is evaluated. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Networks.Shared50FramedShape
 noncomputable section
 open FramedCircuit FramedControlShape

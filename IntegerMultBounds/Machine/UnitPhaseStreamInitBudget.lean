@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.UnitPhaseStreamInit
+module
+
+public import IntegerMultBounds.Machine.UnitPhaseStreamInit
 
 /-! Physical complete-address initialization costs linear reserved payload,
 including full width-header derivation, counter filling and header erasure. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.UnitPhaseStreamInitBudget
 open CompactGadgetReservationShape (Shape)
 open ActivePrefixStageParameters

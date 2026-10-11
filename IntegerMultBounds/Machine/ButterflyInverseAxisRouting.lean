@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ButterflyAxisKernel
+module
+
+public import IntegerMultBounds.Machine.ButterflyAxisKernel
 
 /-! The inverse butterfly uses the same paid arithmetic followed by a physical
 merge that exchanges its two role sources. The merge's finite-control role
 permutation performs the exchange during the existing charged pass. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ButterflyInverseAxisRouting
 noncomputable section
 open ButterflyStreamData ButterflyAxisSerialization

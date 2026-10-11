@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.ActivePrefixEarlySequenceData
-import IntegerMultBounds.Machine.ActivePrefixLayoutTarget
-import IntegerMultBounds.Machine.ActivePrefixCompactConjugationSemantics
-import IntegerMultBounds.Machine.BinaryPackedEarlyData
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixEarlySequenceData
+public import IntegerMultBounds.Machine.ActivePrefixLayoutTarget
+public import IntegerMultBounds.Machine.ActivePrefixCompactConjugationSemantics
+public import IntegerMultBounds.Machine.BinaryPackedEarlyData
 
 /-! Forward coordinate semantics of the four physical early loads on the
 original array. Every spectator remains in its original serialized position. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixEarlySequenceSemantics
 noncomputable section
 open CompactGadgetReservationShape (Shape)

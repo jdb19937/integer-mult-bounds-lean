@@ -1,12 +1,17 @@
-import IntegerMultBounds.Machine.CompactComplexNonleafRoleReturnFrame
-import IntegerMultBounds.Machine.BinaryDescriptorStackAt
-import IntegerMultBounds.Machine.BinaryDescriptorCleanupList
+module
+
+public import IntegerMultBounds.Machine.CompactComplexNonleafRoleReturnFrame
+public import IntegerMultBounds.Machine.BinaryDescriptorStackAt
+public import IntegerMultBounds.Machine.BinaryDescriptorCleanupList
 
 /-! Save the actual parent event denominator on a distinct fixed unbounded
 storage stack. Child entry inherits it unchanged. After child normalization,
 copy its actual current denominator into blank target8 before popping the old
 parent denominator back into live7. Spectator promotion can then read old cur7
 and advanced tar8; numerical alignment and final commit are separate. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexParentLiveStack
 noncomputable section
 open SharedPlacementAlphabet (setTape)

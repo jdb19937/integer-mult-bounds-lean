@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.CompactGadgetReservationHeadersCore
-import IntegerMultBounds.Machine.BinaryDescriptorDivision
+module
+
+public import IntegerMultBounds.Machine.CompactGadgetReservationHeadersCore
+public import IntegerMultBounds.Machine.BinaryDescriptorDivision
 
 /-! Physical quotient synthesis in the same clean fifteen-tape workspace. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactGadgetReservationHeadersDivision
 noncomputable section
 open CompactGadgetReservationHeadersCore

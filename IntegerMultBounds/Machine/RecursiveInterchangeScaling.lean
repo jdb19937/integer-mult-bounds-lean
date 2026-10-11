@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.RecursiveInterchangeLayout
-import IntegerMultBounds.Machine.FlatAffineScalingPayload
+module
+
+public import IntegerMultBounds.Machine.RecursiveInterchangeLayout
+public import IntegerMultBounds.Machine.FlatAffineScalingPayload
 
 /-! Actual normalized H/D scalings on the seven-factor recursive interface.
 Spectator cardinalities and row count are arbitrary positive integers. The
 fiber views are casts of the same serialized word, not tape transpositions.
 This interface assumes canonical prefix/modulus/suffix descriptors; physically
 constructing them from the recursive descriptor remains a separate obligation. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveInterchangeScaling
 open RecursiveInterchangeLayout (Descriptor volume)
 open Networks
@@ -25,7 +30,7 @@ structure Address (v : Descriptor) where
   d : Fin (modulus v.width)
   after : Fin v.afterD
 
-private def pack {m n : ℕ} (a : Fin m) (b : Fin n) : Fin (m*n) := finProdFinEquiv (a,b)
+def pack {m n : ℕ} (a : Fin m) (b : Fin n) : Fin (m*n) := finProdFinEquiv (a,b)
 private theorem pack_val {m n : ℕ} (a : Fin m) (b : Fin n) : (pack a b).val = a.val*n+b.val := by simp [pack,finProdFinEquiv]; ring
 
 def index {v : Descriptor} (x : Address v) : Fin (volume prime v) :=

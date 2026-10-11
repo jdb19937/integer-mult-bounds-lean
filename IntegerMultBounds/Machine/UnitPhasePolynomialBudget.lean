@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.UnitPhasePolynomialStream
-import IntegerMultBounds.Machine.UnitPhaseStreamBudget
-import IntegerMultBounds.Machine.UnitPhaseFullStreamInitBudget
+module
+
+public import IntegerMultBounds.Machine.UnitPhasePolynomialStream
+public import IntegerMultBounds.Machine.UnitPhaseStreamBudget
+public import IntegerMultBounds.Machine.UnitPhaseFullStreamInitBudget
 
 /-! Polynomial traversal counts phase setup once per address, while charging
 coefficient arithmetic once per actual polynomial coefficient. The paid
 inner loop descriptor preparation and erasure are included. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.UnitPhasePolynomialBudget
 open CompactGadgetReservationShape (Shape)
 open ActivePrefixStageParameters

@@ -1,9 +1,13 @@
-import IntegerMultBounds.Networks.Shared50Finite
-import IntegerMultBounds.Networks.DirtyLinearCircuit
+module
+
+public import IntegerMultBounds.Networks.Shared50Finite
+public import IntegerMultBounds.Networks.DirtyLinearCircuit
 
 /-! Dirty-scratch execution of the actual fifty-point shared circuit. Explicit
 input and readout matrices connect its physical roles to triple data banks.
 These dense matrix wrappers establish semantics, not a rank or runtime budget. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.Shared50Dirty
 

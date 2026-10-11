@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.BinarySelectedOffsetPrepare
-import IntegerMultBounds.Machine.PackedArith
+module
+
+public import IntegerMultBounds.Machine.BinarySelectedOffsetPrepare
+public import IntegerMultBounds.Machine.PackedArith
 
 /-! Literal selected mask-shift offsets for all regular temporary addresses.
 Each copy of the original control word aligns with one complete source row. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinarySelectedOffsetData
 open BinaryAddressOffsetRepeatData (copies)
 

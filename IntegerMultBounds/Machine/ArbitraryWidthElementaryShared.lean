@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ArbitraryWidthElementary
-import IntegerMultBounds.Machine.ArbitraryWidthHighExchangeShared
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthElementary
+public import IntegerMultBounds.Machine.ArbitraryWidthHighExchangeShared
 
 /-! The actual bounded-width fallback shares the caller's source tape. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthElementaryShared
 noncomputable section
 open Networks

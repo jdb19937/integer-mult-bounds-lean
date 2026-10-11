@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactSpectatorLeafHeaders
-import IntegerMultBounds.Machine.ButterflySpectatorPorts
-import IntegerMultBounds.Machine.ButterflyInverseSpectatorOriginal
+module
+
+public import IntegerMultBounds.Machine.CompactSpectatorLeafHeaders
+public import IntegerMultBounds.Machine.ButterflySpectatorPorts
+public import IntegerMultBounds.Machine.ButterflyInverseSpectatorOriginal
 
 /-! One actual stopped-call leaf body derives its selected global bit,
 executes the spectator-preserving native butterfly, reclaims all derived
 headers and advances its chunk ordinal. No body execution callback is used. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactSpectatorInverseLeafAxis
 noncomputable section
 open CompactGadgetReservationShape (Shape)

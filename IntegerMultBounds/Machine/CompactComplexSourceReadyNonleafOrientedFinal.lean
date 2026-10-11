@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyNonleafFinalPorts
-import IntegerMultBounds.Machine.CompactComplexSourceReadyOrientedControls
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyNonleafFinalPorts
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyOrientedControls
 
 /-! Actual widened tag3 executes all-role contraction, current-row merging,
 and the real saved-call post-orientation selector before returning to guard0. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyNonleafOrientedFinal
 noncomputable section
 open CompactGadgetReservationShape (Shape)

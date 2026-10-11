@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ButterflyAxisSemantics
+module
+
+public import IntegerMultBounds.Machine.ButterflyAxisSemantics
 
 /-! Exact complex semantics of the physical selected-axis schedule. The
 mathematical operator is the genuine two-point complex butterfly, with its
 coordinate pairing specified by the same finite product indexing used by the
 proved tape split and merge. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ButterflyAxisDecoded
 noncomputable section
 open ButterflyAxisArray ButterflyAxisSemantics ButterflyStreamSemantics

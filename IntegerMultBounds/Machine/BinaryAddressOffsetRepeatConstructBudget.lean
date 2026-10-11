@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.BinaryAddressOffsetRepeatConstruct
+module
+
+public import IntegerMultBounds.Machine.BinaryAddressOffsetRepeatConstruct
 
 /-! Pay for derived descriptors and all physical repetition work in the full
 rotation volume. The base enumeration allowance is an explicit record-width
 hypothesis, rather than an uncharged precomputed control table. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryAddressOffsetRepeatConstructBudget
 open BinaryAddressOffsetRepeatHeaders
 

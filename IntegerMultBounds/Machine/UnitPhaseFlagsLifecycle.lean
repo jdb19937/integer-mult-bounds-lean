@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.UnitPhaseNumerator
+module
+
+public import IntegerMultBounds.Machine.UnitPhaseNumerator
 
 /-! The accumulator flags are physically initialized to zero and erased
 after every coefficient. Both operations take one actual transition. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.UnitPhaseFlagsLifecycle
 open UnitPhaseNumerator (flags)
 

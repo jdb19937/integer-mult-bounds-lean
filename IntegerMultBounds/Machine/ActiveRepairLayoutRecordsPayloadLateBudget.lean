@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsPayloadLateRun
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsPayloadLateRun
 
 /-! The actual original-input later payload, full-width repair, cleanup and
 copy-back retain the certified payload width exponent with all joins paid. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLayoutRecordsPayloadLateBudget
 noncomputable section
 open CompactGadgetReservationShape (Shape)

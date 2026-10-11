@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexNonleafSpectatorTargetPrefix
-import IntegerMultBounds.Machine.CompactComplexSourceReadyNonleafOrientedSemantics
+module
+
+public import IntegerMultBounds.Machine.CompactComplexNonleafSpectatorTargetPrefix
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyNonleafOrientedSemantics
 
 /-! Corrected child tensor semantics propagates the selected-stream grid and
 actual parent spectator promotion. Recursive tensor correctness remains an
 explicit induction hypothesis; no uncorrected network execution is assumed. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexCorrectedChildGridSemantics
 noncomputable section
 open CompactGadgetReservationShape (Shape)

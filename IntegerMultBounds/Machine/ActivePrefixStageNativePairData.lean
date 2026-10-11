@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixStageNativeRows
-import IntegerMultBounds.Machine.ActivePrefixStagePairData
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStageNativeRows
+public import IntegerMultBounds.Machine.ActivePrefixStagePairData
 
 /-! Physical source/target header replacement for canonical native rows.
 The literal native source stays unchanged when coordinate pairs change. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixStageNativePairData
 noncomputable section
 open CompactGadgetReservationShape (Shape)

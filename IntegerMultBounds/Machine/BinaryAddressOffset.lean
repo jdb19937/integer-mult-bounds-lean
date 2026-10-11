@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.BinaryAddressOffsetCleanup
+module
+
+public import IntegerMultBounds.Machine.BinaryAddressOffsetCleanup
 
 /-! Complete physical parity-offset production from only original q/b/n.
 The address table, repeated dummy control, all derived dimensions and every
 private marker are constructed and erased. Only the actual packed offset
 word remains, with an explicit record-width condition for linear volume cost. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryAddressOffset
 open BinaryAddressOffsetHeaders (widthBits rangeBits countBits)
 noncomputable section

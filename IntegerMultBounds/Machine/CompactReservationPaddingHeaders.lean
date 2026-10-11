@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactReservedHeaders
-import IntegerMultBounds.Machine.CompactGlobalReservation
+module
+
+public import IntegerMultBounds.Machine.CompactReservedHeaders
+public import IntegerMultBounds.Machine.CompactGlobalReservation
 
 /-! Paid global reservation-to-native-padding caller metadata, derived from
 original D,K,rho,ell,q,d,G. Original scalars are retained and generated metadata
 is erased after the one global pad; no descendant invokes this adapter. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactReservationPaddingHeaders
 noncomputable section
 open CompactGlobalRowHeaderOps

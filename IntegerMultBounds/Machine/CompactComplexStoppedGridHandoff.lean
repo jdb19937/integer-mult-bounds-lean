@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactComplexSpectatorTargetBank
-import IntegerMultBounds.Machine.CompactComplexChildGridPromoted
-import IntegerMultBounds.Machine.NativeSignedReturnPrecision
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSpectatorTargetBank
+public import IntegerMultBounds.Machine.CompactComplexChildGridPromoted
+public import IntegerMultBounds.Machine.NativeSignedReturnPrecision
 
 /-! The literal native spectator program's output is the promoted child-grid
 array, with field capacity, stream nonemptiness and equal volumes derived from
 the actual retained record widths and original visit geometry. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexStoppedGridHandoff
 noncomputable section
 open CompactGadgetReservationShape (Shape)

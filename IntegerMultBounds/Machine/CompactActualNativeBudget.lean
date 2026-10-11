@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactActualNativeWidth
+module
+
+public import IntegerMultBounds.Machine.CompactActualNativeWidth
 
 /-! Actual native stage costs measured in the original polynomial coefficient
 volume. The single global padding contributes at most a factor two, and the
 role divisor is restored explicitly at descendant depth. Including signed
 guard bits and native/Boolean conversion therefore preserves the certified
 stage exponent without paying the padding again at every recursive node. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactActualNativeBudget
 noncomputable section
 open Sizes

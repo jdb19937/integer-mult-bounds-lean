@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActiveTargetHighestLayoutHeadersRun
-import IntegerMultBounds.Machine.ActivePrefixLayoutHeadersGeometry
+module
+
+public import IntegerMultBounds.Machine.ActiveTargetHighestLayoutHeadersRun
+public import IntegerMultBounds.Machine.ActivePrefixLayoutHeadersGeometry
 
 /-! The physically synthesized five words are the exact unchanged-layout
 highest-pair geometry for either source order. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveTargetHighestLayoutHeadersGeometry
 open CompactGadgetReservationShape (Shape)
 open ActivePrefixLayoutShapes (Parameters)

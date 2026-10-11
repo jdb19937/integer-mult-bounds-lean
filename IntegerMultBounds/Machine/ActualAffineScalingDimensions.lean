@@ -1,5 +1,7 @@
-import IntegerMultBounds.Machine.ActualAffineScaling
-import IntegerMultBounds.Machine.SignedScalingDimensions
+module
+
+public import IntegerMultBounds.Machine.ActualAffineScaling
+public import IntegerMultBounds.Machine.SignedScalingDimensions
 
 /-! Literal scaling for coefficients that actually occur in the fixed Shared50
 ordered-affine schedules. Schedule membership discharges positivity and unit
@@ -7,6 +9,9 @@ conditions at every prime-power width. Program size depends only on the fixed
 rational coefficient. Only canonical dimension words and declared scratch remain
 inputs; the concrete bank still specifies the inherited fixed sentinels. This
 module proves one complete fiber transform, not the full stream scheduler. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActualAffineScalingDimensions
 
 open Networks

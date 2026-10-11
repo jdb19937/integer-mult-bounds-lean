@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedActualTable
-import IntegerMultBounds.Machine.CompactComplexFixedNodePaths
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedActualTable
+public import IntegerMultBounds.Machine.CompactComplexFixedNodePaths
 
 /-! The genuine corrected final branch follows its actual table edge to guard0.
 All physical correction, contraction, rejoin and orientation runs are derived
 from tape premises, with the table join charged after their exact summed cost. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedFinalTablePath
 noncomputable section
 open CompactGadgetReservationShape (Shape)

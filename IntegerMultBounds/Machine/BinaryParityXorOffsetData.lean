@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.BinarySelectedOffsetData
-import IntegerMultBounds.Machine.BinaryParityXorOffsetNegate
-import IntegerMultBounds.Compact.PackedArithValue
+module
+
+public import IntegerMultBounds.Machine.BinarySelectedOffsetData
+public import IntegerMultBounds.Machine.BinaryParityXorOffsetNegate
+public import IntegerMultBounds.Compact.PackedArithValue
 
 /-! Fourth-line offsets: gather parity XOR original controls from each regular
 q-bit source address, then negate each n*b-bit row independently. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryParityXorOffsetData
 
 def source (q n : ℕ) := BinarySelectedOffsetData.source q n

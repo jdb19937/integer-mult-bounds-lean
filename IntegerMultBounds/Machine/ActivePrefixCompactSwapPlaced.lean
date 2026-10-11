@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActivePrefixCompactSwapRun
-import IntegerMultBounds.Machine.SharedBankFrames
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixCompactSwapRun
+public import IntegerMultBounds.Machine.SharedBankFrames
 
 /-! Complete original-geometry compact swap on arbitrary caller tapes. Nine
 ports retain the original eight numeric words and full array, with all native
 private storage blank and every complementary caller tape unchanged. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixCompactSwapPlaced
 noncomputable section
 open ActivePrefixCompactSwapData ActivePrefixCompactSwapRun

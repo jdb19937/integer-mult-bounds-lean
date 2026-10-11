@@ -1,5 +1,7 @@
-import IntegerMultBounds.Machine.CompactNativeDenominatorTarget
-import IntegerMultBounds.Machine.CompactComplexControllerChildPrefix
+module
+
+public import IntegerMultBounds.Machine.CompactNativeDenominatorTarget
+public import IntegerMultBounds.Machine.CompactComplexControllerChildPrefix
 
 /-! Physical return-target synthesis in the actual persistent controller bank.
 The original true denominator is read from storage7 and retained, the full
@@ -8,6 +10,9 @@ receives the generated target, and storage0 is borrowed and reclaimed.
 Every other tape, including the live denominator and target stack, is framed.
 These bodies do not choose a stopping decision externally. Their eventual
 runtime stop-branch wiring is a separate controller obligation. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexControllerDenominatorTarget
 noncomputable section
 open CompactComplexControllerNativeFrame (nativeSlot storageSlot)
@@ -20,7 +25,7 @@ def work : Fin (size s) := storageSlot ⟨0,by omega⟩
 def volume : Fin (size s) := nativeSlot 7
 def slots : Fin 4 → Fin (size s) := ![current,volume,target,work]
 
-private theorem slots_injective : Function.Injective (slots (s:=s)) := by
+theorem slots_injective : Function.Injective (slots (s:=s)) := by
   intro i j h
   fin_cases i <;> fin_cases j
   all_goals first | rfl |

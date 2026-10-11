@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.BinaryDescriptorQueueRead
-import IntegerMultBounds.Machine.CompactComplexRootDigits
+module
+
+public import IntegerMultBounds.Machine.BinaryDescriptorQueueRead
+public import IntegerMultBounds.Machine.CompactComplexRootDigits
 
 /-! Paid rewind of a forward binary-field queue from its actual end cursor.
 The blank cell immediately before its first field is the physical sentinel;
 all queue symbols and the trailing blank are retained exactly. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryDescriptorQueueRewind
 noncomputable section
 open MarkedWordCleanup (one)

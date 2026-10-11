@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ButterflyNumerator
-import IntegerMultBounds.Machine.ActivePrefixStageDispatchCommon
+module
+
+public import IntegerMultBounds.Machine.ButterflyNumerator
+public import IntegerMultBounds.Machine.ActivePrefixStageDispatchCommon
 
 /-! A fixed runtime four-way Gaussian unit multiplier. Both phase bits and
 real/imaginary sources are preserved, two width-exact outputs remain, and all
 private source copies are erased in time linear in radix-word width. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.UnitPhaseNumerator
 noncomputable section
 open RadixLinearCombinationRefresh (Expr controls)

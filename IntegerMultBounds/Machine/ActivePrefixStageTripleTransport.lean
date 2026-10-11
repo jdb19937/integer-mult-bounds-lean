@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.SymbolTripleArray
-import IntegerMultBounds.Machine.ActivePrefixStageRuntimeSelected
+module
+
+public import IntegerMultBounds.Machine.SymbolTripleArray
+public import IntegerMultBounds.Machine.ActivePrefixStageRuntimeSelected
 
 /-! The actual all-width stage endpoint transports literal native coefficient
 codes, with arbitrary payload spectators. Each observed output bit is the
 result of the proved physical runtime stage, not an assumed record permutation.
 Conversion placement, cleanup and whole-stage assembly remain separate. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixStageTripleTransport
 noncomputable section
 open CompactGadgetReservationShape (Shape)

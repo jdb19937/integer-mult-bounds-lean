@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActivePrefixStageWidthOriginal
-import IntegerMultBounds.Machine.ActivePrefixStageSingletonDispatch
-import IntegerMultBounds.Machine.ActivePrefixStageDispatchSelected
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStageWidthOriginal
+public import IntegerMultBounds.Machine.ActivePrefixStageSingletonDispatch
+public import IntegerMultBounds.Machine.ActivePrefixStageDispatchSelected
 
 /-! Extend a leading-bank clean routine with a separate width flag. The new
 flag is framed and all native private tapes remain physically blank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixStageRuntimePlaced
 noncomputable section
 variable {k n q a B : ℕ}

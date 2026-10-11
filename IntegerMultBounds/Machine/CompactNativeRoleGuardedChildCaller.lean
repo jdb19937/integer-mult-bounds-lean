@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactNativeRoleChildGuardRuns
-import IntegerMultBounds.Machine.NativePolynomialStageHeaders
+module
+
+public import IntegerMultBounds.Machine.CompactNativeRoleChildGuardRuns
+public import IntegerMultBounds.Machine.NativePolynomialStageHeaders
 
 /-! Paid original role child: row quotient, native codec payload synthesis,
 baseline precision conversion, genuine guarded leaf, and complete reverse
 metadata restoration. The leaf's derived output stays on its original role. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactNativeRoleGuardedChildCaller
 noncomputable section
 open CompactGadgetReservationShape (Shape)

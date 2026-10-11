@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.RadixDigitMoveBlockPlacement
+module
+
+public import IntegerMultBounds.Machine.RadixDigitMoveBlockPlacement
 
 /-! Complete fixed-radix movement [P][Q][S][E] ↔ [P][S][Q][E].
 Only canonical P,S,E and arbitrary payload are supplied. Every generated
 product, clock, role tape and tracking tape is physically initialized/cleaned. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RadixDigitMoveBlockExecution
 variable {P Q S E a : ℕ}
 noncomputable section

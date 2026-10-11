@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyNonleafOrientedFinal
-import IntegerMultBounds.Machine.CompactComplexFixedNodePaths
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyNonleafOrientedFinal
+public import IntegerMultBounds.Machine.CompactComplexFixedNodePaths
 
 /-! Actual tag3 body followed by the native final-return edge reaches guard0.
 The machine execution is constructed internally from its real tape premises. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyNonleafFinalTablePath
 noncomputable section
 open CompactComplexSourceReadyNonleafOrientedFinal (program constant runs_native_linear)

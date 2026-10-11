@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.NativeSignedGapPromoteHeadersReturn
-import IntegerMultBounds.Machine.CompactComplexSpectatorPromoteFamily
+module
+
+public import IntegerMultBounds.Machine.NativeSignedGapPromoteHeadersReturn
+public import IntegerMultBounds.Machine.CompactComplexSpectatorPromoteFamily
 
 /-! Spectator promotion uses physical current/target denominator tapes.
 Each actual subroutine synthesizes and erases the difference, preserving the
 true denominator words until the whole role bank has been aligned. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSpectatorTargetFamily
 noncomputable section
 open RadixSignedShiftRight (Word)

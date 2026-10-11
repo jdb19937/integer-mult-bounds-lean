@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.BlankWordReturnAt
-import IntegerMultBounds.Machine.WordMoves
-import IntegerMultBounds.Machine.TwoTapeAt
-import IntegerMultBounds.Machine.WordSegments
+module
+
+public import IntegerMultBounds.Machine.BlankWordReturnAt
+public import IntegerMultBounds.Machine.WordMoves
+public import IntegerMultBounds.Machine.TwoTapeAt
+public import IntegerMultBounds.Machine.WordSegments
 
 /-! Replace a retained stream by an equal-length result stream, physically
 clear the result tape, and return both heads to zero. Every copy, erasure,
 return and sequential join is charged; all other caller tapes are framed. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BlankWordOverwriteAt
 noncomputable section
 open SharedPlacementAlphabet (setTape)

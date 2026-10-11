@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlLoadProducer
-import IntegerMultBounds.Machine.ActivePrefixOffsetRepeatPlaced
-import IntegerMultBounds.Machine.ActiveTargetRotation
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlLoadProducer
+public import IntegerMultBounds.Machine.ActivePrefixOffsetRepeatPlaced
+public import IntegerMultBounds.Machine.ActiveTargetRotation
 
 /-! Original six dirty-U headers, original row/suffix descriptors and one array.
 Five blank work tapes hold the original/repeated offsets and three dimensions. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixDirtyControlLoadData
 noncomputable section
 open ActivePrefixDirtyControlLoadProducer (Mode Shape values width word)

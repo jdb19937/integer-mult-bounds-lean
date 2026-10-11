@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactNativeRolePaddingBudget
-import IntegerMultBounds.Machine.CompactReservationNativePaddingActualBudget
+module
+
+public import IntegerMultBounds.Machine.CompactNativeRolePaddingBudget
+public import IntegerMultBounds.Machine.CompactReservationNativePaddingActualBudget
 
 /-! Actual multiplier scalars pay the complete native reservation-role caller
 with the certified saving, using the fixed machine's genuine Hoare runtime. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactNativeRolePaddingActualBudget
 noncomputable section
 open Filter Sizes Parameters

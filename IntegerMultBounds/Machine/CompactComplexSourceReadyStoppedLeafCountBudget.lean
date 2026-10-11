@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyStoppedLeafCount
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyStoppedLeafCount
 
 /-! Actual per-slot count expansion and restoration are charged in full, on
 both sides of the complete physical stopped leaf. Scalar leaves retain count1. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyStoppedLeafCountBudget
 noncomputable section
 open CompactGadgetReservationShape (Shape)

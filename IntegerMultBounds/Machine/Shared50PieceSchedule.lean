@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.Shared50OrderedPieces
+module
+
+public import IntegerMultBounds.Machine.Shared50OrderedPieces
 
 /-! Expand the fixed actual interleaved control into certified nonrecursive
 runs, explicit role-specific recursive boundaries, and certified scalar gates.
 All source field operations survive in order. This is a finite controller input;
 physical recursive-call assembly remains a separate obligation. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.Shared50PieceSchedule
 noncomputable section
 open Networks Shared50OrderedControl Shared50OrderedPieces

@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.NativeSignedGapHeadersReturn
-import IntegerMultBounds.Machine.CompactNativeReturnGapBudget
+module
+
+public import IntegerMultBounds.Machine.NativeSignedGapHeadersReturn
+public import IntegerMultBounds.Machine.CompactNativeReturnGapBudget
 
 /-! Paid precision return at the native caller's actual source43. Nine appended
 slots hold the stream length, two true denominator descriptors and clean work.
 All other native66 tapes stay fixed. Recursive production/stack restoration of
 the true denominator descriptors is an explicit remaining obligation. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactNativeGapHeadersReturn
 noncomputable section
 open SharedPlacementAlphabet (setTape)

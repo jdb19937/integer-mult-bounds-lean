@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.BinaryPrefixFieldTableCleanup
+module
+
+public import IntegerMultBounds.Machine.BinaryPrefixFieldTableCleanup
 
 /-! End-to-end full-prefix field projection from three original descriptors.
 All source addresses and dummy controls are physically generated and erased;
 no extracted field stream or count descriptor is supplied. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryPrefixFieldTableRun
 noncomputable section
 open CompactGadgetReservationHeadersCore (bank)

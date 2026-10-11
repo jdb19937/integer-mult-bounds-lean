@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixCompactNegativeLoadCleanup
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixCompactNegativeLoadCleanup
 
 /-! Complete compact negative parity-XOR load from original prefix/gadget descriptors, original
 rows and suffix width, and the original full array. Offset production, repeat,
 rotation, all descriptor synthesis and all cleanup are real paid executions. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixCompactNegativeLoad
 noncomputable section
 open ActivePrefixCompactNegativeLoadData

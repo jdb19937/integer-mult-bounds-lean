@@ -1,6 +1,11 @@
-import IntegerMultBounds.Machine.CountedRepairKeyWrite
+module
+
+public import IntegerMultBounds.Machine.CountedRepairKeyWrite
 
 /-! Physical erasure of all nine generated words after conditional key writing. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedRepairKeyCleanup
 noncomputable section
 open SharedPlacementAlphabet

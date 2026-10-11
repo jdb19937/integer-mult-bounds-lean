@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexStoppedAlignedCall
-import IntegerMultBounds.Machine.CompactComplexSpectatorVolumeBudget
-import IntegerMultBounds.Machine.CompactComplexDenominatorCapacity
+module
+
+public import IntegerMultBounds.Machine.CompactComplexStoppedAlignedCall
+public import IntegerMultBounds.Machine.CompactComplexSpectatorVolumeBudget
+public import IntegerMultBounds.Machine.CompactComplexDenominatorCapacity
 
 /-! Actual stopped alignment costs, including all generated metadata, are
 paid from original native volume under the true live-progress invariant. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexStoppedAlignedBudget
 noncomputable section
 open CompactGadgetReservationShape (Shape)

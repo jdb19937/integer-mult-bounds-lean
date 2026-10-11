@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactGadgetReservationHeadersSchedule
-import IntegerMultBounds.Machine.BinaryPackedOffsetOriginalRun
+module
+
+public import IntegerMultBounds.Machine.CompactGadgetReservationHeadersSchedule
+public import IntegerMultBounds.Machine.BinaryPackedOffsetOriginalRun
 
 /-! Exact physical original-header sources for the reserved compact load.
 All seven original inputs survive; only four generated descriptors remain. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactGadgetReservationHeadersEndpoint
 noncomputable section
 open CompactGadgetReservationShape

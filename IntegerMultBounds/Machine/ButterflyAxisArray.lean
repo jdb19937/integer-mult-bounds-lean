@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ButterflyAxisOriginal
+module
+
+public import IntegerMultBounds.Machine.ButterflyAxisOriginal
 
 /-! A single global coefficient array has the same physical word for every
 selected-axis view. Reshaping is a proved indexing identity, not a free tape
 reorder; the actual machine performs the split and merge. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ButterflyAxisArray
 noncomputable section
 open ButterflyStreamData ButterflyAxisSerialization

@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CountedControlWordRepeat
-import IntegerMultBounds.Machine.BinaryAddressOffsetPrepare
+module
+
+public import IntegerMultBounds.Machine.CountedControlWordRepeat
+public import IntegerMultBounds.Machine.BinaryAddressOffsetPrepare
 
 /-! Produce a regular temporary-address table and the actual repeated control
 stream for the selected mask-shift load. Original headers are ordered b/q/n;
 the original control word is retained on tape16. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinarySelectedOffsetPrepare
 noncomputable section
 open SharedPlacementAlphabet (setTape)

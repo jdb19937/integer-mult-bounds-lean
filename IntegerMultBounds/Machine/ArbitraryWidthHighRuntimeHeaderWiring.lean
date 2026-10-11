@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.ArbitraryWidthHighInitializedRun
-import IntegerMultBounds.Machine.ArbitraryWidthHighDimensionsAndSuffixShared
-import IntegerMultBounds.Machine.ArbitraryWidthZeroHeaderShared
-import IntegerMultBounds.Machine.ArbitraryWidthJoinedHeaders
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthHighInitializedRun
+public import IntegerMultBounds.Machine.ArbitraryWidthHighDimensionsAndSuffixShared
+public import IntegerMultBounds.Machine.ArbitraryWidthZeroHeaderShared
+public import IntegerMultBounds.Machine.ArbitraryWidthJoinedHeaders
 
 /-! Concrete source-slot wiring from the physically constructed metadata
 caller into the three private high-execution header-copy families. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthHighRuntimeHeaderWiring
 noncomputable section
 open Networks

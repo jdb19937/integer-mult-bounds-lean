@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.NativeUniformPolynomialRotationOriginal
-import IntegerMultBounds.Machine.NativePolynomialStageHeaderBudget
+module
+
+public import IntegerMultBounds.Machine.NativeUniformPolynomialRotationOriginal
+public import IntegerMultBounds.Machine.NativePolynomialStageHeaderBudget
 
 /-! Every original-header copy, actual role-count construction, native stream
 rewind/overwrite, count/header cleanup and connecting transition is paid by
 the real original parent native polynomial volume. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.NativeUniformPolynomialRotationOriginalBudget
 noncomputable section
 open CompactGadgetReservationShape (Shape)

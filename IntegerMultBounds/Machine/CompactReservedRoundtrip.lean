@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactReservedCorrect
+module
+
+public import IntegerMultBounds.Machine.CompactReservedCorrect
 
 /-! Actual nonfallback forward/inverse reservation roundtrip. The inverse
 consumes the forward grid and retained native word; all runtime ordinal and
 count synthesis is included twice in the physical execution bound. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactReservedRoundtrip
 noncomputable section
 open CompactReservedHeaders

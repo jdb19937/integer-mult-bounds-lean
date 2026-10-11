@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.BinaryCorrectionOffsetPrepare
-import IntegerMultBounds.Machine.BinaryCorrectionOffsetValue
+module
+
+public import IntegerMultBounds.Machine.BinaryCorrectionOffsetPrepare
+public import IntegerMultBounds.Machine.BinaryCorrectionOffsetValue
 
 /-! Physically construct the row width, subtract each independently reset
 row, then erase the full address table, repeated controls and every generated
 descriptor. Only original b/q/n, original controls, and correction output remain. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryCorrectionOffsetFinish
 open SharedPlacementAlphabet (setTape)
 open BinaryCorrectionOffsetData

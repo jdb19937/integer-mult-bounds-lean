@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ArbitraryWidthHighFoldHeadersShared
-import IntegerMultBounds.Machine.ArbitraryWidthHighPrepareShared
-import IntegerMultBounds.Machine.ArbitraryWidthHighMetadataBudget
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthHighFoldHeadersShared
+public import IntegerMultBounds.Machine.ArbitraryWidthHighPrepareShared
+public import IntegerMultBounds.Machine.ArbitraryWidthHighMetadataBudget
 
 /-! The actual common fold and high-row metadata lifecycle precedes either
 branch, retaining the caller and charging all generated headers. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthHighCommonPrepare
 noncomputable section
 variable {a t : ℕ}

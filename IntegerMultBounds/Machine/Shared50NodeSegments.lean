@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.Shared50RecursiveSegments
+module
+
+public import IntegerMultBounds.Machine.Shared50RecursiveSegments
 
 /-! Actual nonrecursive segment adapters for the complete node payload layout:
 all original World roles first, then the separate node input/output role. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.Shared50NodeSegments
 noncomputable section
 open Networks

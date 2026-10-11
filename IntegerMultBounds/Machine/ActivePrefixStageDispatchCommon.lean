@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixStageOrderCompare
-import IntegerMultBounds.Machine.Branch
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStageOrderCompare
+public import IntegerMultBounds.Machine.Branch
 
 /-! Symbolic native conditional contracts with the actual flag read and paid
 branch transition. Impossible alternatives add no artificial runtime. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixStageDispatchCommon
 noncomputable section
 variable {t q r a B : ℕ}

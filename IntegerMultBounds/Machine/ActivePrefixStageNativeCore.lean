@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActivePrefixStageNative
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStageNative
 
 /-! Actual native-stage placement on the original sixty-six-tape caller.
 Its native word resides at original65; the Boolean conversion source and all
 runtime stage workspace are appended and blank at both boundaries. This is a
 static tape permutation of the real fixed machine, with unchanged runtime. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixStageNativeCore
 noncomputable section
 open CompactGadgetReservationShape (Shape)

@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ArbitraryWidthHighLayout
-import IntegerMultBounds.Machine.ArbitrarySliceRepeat
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthHighLayout
+public import IntegerMultBounds.Machine.ArbitrarySliceRepeat
 
 /-! Consecutive physical one-digit slice calls exchange exactly the leading
 rho digit pairs, at the numeric serialized addresses used by high-row joining. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthHighExchangeSemantics
 noncomputable section
 open Networks

@@ -1,12 +1,17 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyWorkspace
-import IntegerMultBounds.Machine.CompactComplexSourceReadyStoppedLeafDispatch
-import IntegerMultBounds.Machine.CompactComplexFixedNodePaths
-import IntegerMultBounds.Machine.CompactComplexNonleafRoleMergeCurrent
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyWorkspace
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyStoppedLeafDispatch
+public import IntegerMultBounds.Machine.CompactComplexFixedNodePaths
+public import IntegerMultBounds.Machine.CompactComplexNonleafRoleMergeCurrent
 
 /-! Actual source-ready node control blocks. The entry's real stopping test
 returns a finite-state marker after erasing all guard workspace. That marker
 selects the stopped/nonleaf PCs of the existing fixed node table. Event and
 return-address tables remain separate; this bank does not assert scalar room. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyNodeControls
 noncomputable section
 open CompactComplexSourceReadyWorkspace (publicTapes tapes bank ready publicProgram)

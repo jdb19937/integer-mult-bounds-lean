@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlSequenceOriginalData
-import IntegerMultBounds.Machine.ActivePrefixEarlySequenceOriginalInputs
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlSequencePlaced
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlSequenceOriginalData
+public import IntegerMultBounds.Machine.ActivePrefixEarlySequenceOriginalInputs
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlSequencePlaced
 
 /-! The later sequence accepts only original geometry and stage words.
 All consumer header values here are supplied by the physical producer. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixDirtyControlSequenceOriginalInputs
 noncomputable section
 open CompactGadgetReservationShape (Shape)

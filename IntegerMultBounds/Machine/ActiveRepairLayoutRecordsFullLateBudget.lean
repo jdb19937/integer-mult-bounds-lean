@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsFullLateRun
-import IntegerMultBounds.Machine.ActiveTargetHighestLayoutOriginalBudget
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsFullLateRun
+public import IntegerMultBounds.Machine.ActiveTargetHighestLayoutOriginalBudget
 
 /-! Complete physical later low/high action retains the certified compact
 width exponent, paying original highest geometry synthesis and all cleanup. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLayoutRecordsFullLateBudget
 open CompactGadgetReservationShape (Shape)
 open ActivePrefixLayoutShapes ActivePrefixEarlySequenceOriginalInputs

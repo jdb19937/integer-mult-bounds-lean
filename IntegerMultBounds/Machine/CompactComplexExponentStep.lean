@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.CompactGadgetReservationHeadersCore
-import IntegerMultBounds.Machine.BinaryDescriptorCopyPlaced
-import IntegerMultBounds.Machine.ActiveRepairRankHeadersCommands
-import IntegerMultBounds.Machine.BinaryDescriptorIncrement
+module
+
+public import IntegerMultBounds.Machine.CompactGadgetReservationHeadersCore
+public import IntegerMultBounds.Machine.BinaryDescriptorCopyPlaced
+public import IntegerMultBounds.Machine.ActiveRepairRankHeadersCommands
+public import IntegerMultBounds.Machine.BinaryDescriptorIncrement
 
 /-! Runtime descent decrements the retained canonical exponent word. A fixed
 three-tape machine writes its own one, subtracts, replaces the exponent, and
 physically clears both work tapes; no child exponent word is supplied. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexExponentStep
 noncomputable section
 open SharedPlacementAlphabet (setTape)

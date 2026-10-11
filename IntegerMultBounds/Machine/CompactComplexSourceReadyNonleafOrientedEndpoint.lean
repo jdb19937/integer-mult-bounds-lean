@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyNonleafOrientedFinal
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyNonleafOrientedFinal
 
 /-! Literal source bytes and original padded cost after the real tag3
 post-orientation selector. The decoded inverse endpoint is a separate semantic
 conjugation obligation; no unchanged forward endpoint is asserted. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyNonleafOrientedEndpoint
 noncomputable section
 open CompactGadgetReservationShape (Shape)

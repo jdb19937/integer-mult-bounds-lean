@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.VaryingControlRepairPacked
-import IntegerMultBounds.Machine.CountedTapeRepairDensity
-import IntegerMultBounds.Machine.CountedLateTapeRepairDensity
+module
+
+public import IntegerMultBounds.Machine.VaryingControlRepairPacked
+public import IntegerMultBounds.Machine.CountedTapeRepairDensity
+public import IntegerMultBounds.Machine.CountedLateTapeRepairDensity
 
 /-! Uniform exceptional counts over varying source words. Complete source and
 spectator fibers are counted by a finite sum; no fixed global control input or
 probabilistic independence is assumed. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.VaryingControlRepairDensity
 noncomputable section
 open Compact Compact.PowerTwo

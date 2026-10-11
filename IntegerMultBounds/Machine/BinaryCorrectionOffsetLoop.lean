@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.BinaryCorrectionOffsetRow
-import IntegerMultBounds.Machine.BinaryAddressOffsetRepeatPass
+module
+
+public import IntegerMultBounds.Machine.BinaryCorrectionOffsetRow
+public import IntegerMultBounds.Machine.BinaryAddressOffsetRepeatPass
 
 /-! Runtime-counted independent modular subtraction of packed row pairs.
 The body re-enters the subtraction transducer at state zero on every row. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryCorrectionOffsetLoop
 open CountedCopyReuse (empty binary)
 open BinaryCorrectionOffsetRow (diff)

@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixLayoutHeadersEndpoint
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixLayoutHeadersEndpoint
 
 /-! Physical repair-header generation and erasure on arbitrary caller ports.
 Fourteen originals and ten generated outputs are selected; all private native
 storage returns blank, and arbitrary caller spectators retain tape and head. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixLayoutHeadersPlaced
 noncomputable section
 open ActiveRepairRankHeadersCommands ActivePrefixLayoutHeadersData

@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActiveRepairLayoutDensityArithmetic
-import IntegerMultBounds.Machine.ActiveRepairLayoutDensityScan
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairLayoutDensityArithmetic
+public import IntegerMultBounds.Machine.ActiveRepairLayoutDensityScan
 
 /-! Positive record counts and payload bounds for complete layout streams. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLayoutKeysPipelineBudgetCommon
 noncomputable section
 open CompactGadgetReservationShape CompactActiveTargetLayout Compact

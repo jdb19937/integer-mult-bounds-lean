@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.NativeColumnPhaseFlagsPlaced
-import IntegerMultBounds.Machine.UnitPhasePolynomialArray
-import IntegerMultBounds.Machine.NativeFixedPhaseFlags
+module
+
+public import IntegerMultBounds.Machine.NativeColumnPhaseFlagsPlaced
+public import IntegerMultBounds.Machine.UnitPhasePolynomialArray
+public import IntegerMultBounds.Machine.NativeFixedPhaseFlags
 
 /-! Runtime column-header phase initialization followed by the actual native
 coefficient loop. The phase is uniform across the complete polynomial stream;
 its two private flags are erased afterwards. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.NativeUniformPolynomialRotation
 noncomputable section
 open MarkedWordCleanup (one)

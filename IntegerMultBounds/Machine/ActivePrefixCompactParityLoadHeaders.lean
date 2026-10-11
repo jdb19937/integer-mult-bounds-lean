@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixCompactParityLoadData
-import IntegerMultBounds.Machine.ActivePrefixOffsetHeadersCleanup
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixCompactParityLoadData
+public import IntegerMultBounds.Machine.ActivePrefixOffsetHeadersCleanup
 
 /-! Paid construction of P=rows times two-to-W and compact width n*b from
 original descriptors, in the same blank workspace used by offset production. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixCompactParityLoadHeaders
 noncomputable section
 open ActivePrefixCompactParityLoadData

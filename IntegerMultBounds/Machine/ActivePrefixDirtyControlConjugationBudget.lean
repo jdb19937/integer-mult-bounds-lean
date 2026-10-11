@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlConjugationRun
-import IntegerMultBounds.Machine.ActivePrefixCompactSwapBudget
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlUSwapBudget
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlConjugationRun
+public import IntegerMultBounds.Machine.ActivePrefixCompactSwapBudget
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlUSwapBudget
 
 /-! Uniform full-volume sublinear-width bound for every concrete compact
 conjugation, including both swaps and the complete original-input load. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixDirtyControlConjugationBudget
 open ActivePrefixDirtyControlConjugationData ActivePrefixDirtyControlConjugationRun
 open CompactGadgetReservationShape

@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.FlatAffineScalingPayload
+module
+
+public import IntegerMultBounds.Machine.FlatAffineScalingPayload
 
 /-! Scaling-stage private input storage depends only on its fixed coefficient
 and dimensional words. The common payload array never needs to be computed in
 advance to prepare a later scaling stage. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.FlatAffineScalingMetadata
 open Networks
 open SharedPlacementAlphabet (setTape)

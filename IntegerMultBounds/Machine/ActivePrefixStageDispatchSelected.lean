@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActivePrefixStageDispatchEndpoint
-import IntegerMultBounds.Machine.ActivePrefixStageFullSelected
-import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsFullInverseData
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStageDispatchEndpoint
+public import IntegerMultBounds.Machine.ActivePrefixStageFullSelected
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsFullInverseData
 
 /-! The runtime-selected full stage acts on every original address and is its
 own inverse. Branch geometry is derived from the original source/target slots. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixStageDispatchSelected
 noncomputable section
 open CompactGadgetReservationShape (Shape)

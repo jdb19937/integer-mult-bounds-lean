@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.FlatCoordinateShiftInput
-import IntegerMultBounds.Machine.SharedBank
+module
+
+public import IntegerMultBounds.Machine.FlatCoordinateShiftInput
+public import IntegerMultBounds.Machine.SharedBank
 
 /-! Four common tapes for fully initialized shifts: payload, output scratch,
 and the sole preserved exponent/record-width descriptors. All private input
 tapes are literally blank, enabling schedules without copied input headers. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.FlatCoordinateShiftSharedBank
 open Networks.Shared50ModularControl (prime)
 open FlatCoordinateShiftFromDimensions

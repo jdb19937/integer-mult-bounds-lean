@@ -1,6 +1,11 @@
-import IntegerMultBounds.Machine.ArbitraryWidthPaddedPieceArrays
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthPaddedPieceArrays
 
 /-! Actual row padding and reversed crop with descriptor-level binary endpoints. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthPaddedPiecePadding
 noncomputable section
 open Networks

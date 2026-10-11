@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.Shared50RecursiveCallSemantics
-import IntegerMultBounds.Machine.RecursiveRowsSerialization
+module
+
+public import IntegerMultBounds.Machine.Shared50RecursiveCallSemantics
+public import IntegerMultBounds.Machine.RecursiveRowsSerialization
 
 /-! Actual counted recovery after a child has transformed its I/O word. The
 child result is moved back to the active World role and all parked arrays,
 stack cells and controls are physically restored. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.Shared50RecursiveCallRecovery
 noncomputable section
 open Networks

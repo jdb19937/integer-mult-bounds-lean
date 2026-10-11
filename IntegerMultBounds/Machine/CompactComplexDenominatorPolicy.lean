@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.CompactComplexControllerDenominator
-import IntegerMultBounds.Machine.CompactSpectatorInheritedGrid
+module
+
+public import IntegerMultBounds.Machine.CompactComplexControllerDenominator
+public import IntegerMultBounds.Machine.CompactSpectatorInheritedGrid
 
 /-! Semantic return policies distinguish stopped leaves from completed array
 networks. A leaf keeps its actual n+axes denominator. A nonleaf has the proved
 endpoint grid n+2*volume; enough real child calls exist to cover this target
 once their actual live-denominator progression is connected to completion.
 This file does not supply or assume a whole-stream execution callback. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexDenominatorPolicy
 noncomputable section
 open Networks Networks.GaussianPrecision Networks.ComplexRank25 NeighborCounts

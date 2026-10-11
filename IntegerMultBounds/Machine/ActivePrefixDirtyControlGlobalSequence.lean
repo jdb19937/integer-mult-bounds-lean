@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlGlobalConjugation
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlSourceSemantics
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlGlobalConjugation
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlSourceSemantics
 
 /-! Full-array forward semantics of the actual prepared later schedule, with
 both early blocks reading the current compact U and both source conjugations
 using the unchanged actual source coordinate. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixDirtyControlGlobalSequence
 noncomputable section
 open CompactGadgetReservationShape (Shape)

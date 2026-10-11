@@ -1,6 +1,11 @@
-import IntegerMultBounds.Machine.CompactRowReservationPlacement
+module
+
+public import IntegerMultBounds.Machine.CompactRowReservationPlacement
 
 /-! Literal padded role arrays, retaining every within-record binary coordinate. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactRowReservationData
 noncomputable section
 variable {a c r l : ℕ}

@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.RecursiveScalingDimensions
-import IntegerMultBounds.Machine.RecursiveScalingInstall
+module
+
+public import IntegerMultBounds.Machine.RecursiveScalingDimensions
+public import IntegerMultBounds.Machine.RecursiveScalingInstall
 
 /-! Physical heterogeneous H/D scaling from six canonical original headers and
 one flat payload: construct all dimensions, install descriptors, then scale and
 normalize the same source/scratch pair. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveInterchangeScalingConstruct
 open Networks
 open RecursiveInterchangeLayout (Descriptor volume)
@@ -12,14 +17,14 @@ open RecursiveScalingInstall (LocalTapes)
 open Shared50ModularControl (prime)
 open ActualAffineScaling (modulus)
 noncomputable section
-private theorem hprime : 2 ≤ prime := Shared50ModularControl.prime_prime.two_le
+theorem hprime : 2 ≤ prime := Shared50ModularControl.prime_prime.two_le
 
 abbrev blockBits (v : Descriptor) (hs : Fin 6 → List Bool) (t : Target) :=
   RecursiveScalingDimensions.blockBits (q := prime) v hs t
 abbrev countBits (v : Descriptor) := RecursiveDimensionBank.qBits hprime v
 abbrev prefixBits (v : Descriptor) (t : Target) := RecursiveScalingDimensions.prefixBits (q := prime) v t
 
-private def source {v : Descriptor} (a : Fin (volume prime v) → Fin 4) (t : Target) : ℤ → Fin 4 :=
+def source {v : Descriptor} (a : Fin (volume prime v) → Fin 4) (t : Target) : ℤ → Fin 4 :=
   putWord (fun _ => blank) 0 (List.ofFn (view a t))
 
 def workspace {v : Descriptor} {r : ℚ} (a : Fin (volume prime v) → Fin 4) (t : Target) :=

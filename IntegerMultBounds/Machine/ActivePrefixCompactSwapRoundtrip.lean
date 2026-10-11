@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixCompactSwapBudget
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixCompactSwapBudget
 
 /-! Two complete physical compact swaps surrounding a counted middle machine.
 Each swap constructs and erases its own headers, and both joins are charged.
 The special empty-middle roundtrip restores even arbitrarily dirty back bits. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixCompactSwapRoundtrip
 noncomputable section
 open ActivePrefixCompactSwapData ActivePrefixCompactSwapRun

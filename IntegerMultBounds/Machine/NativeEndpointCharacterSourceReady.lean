@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.NativeEndpointCharacterNamedBank
-import IntegerMultBounds.Machine.NativeEndpointSourceReadyPlacement
+module
+
+public import IntegerMultBounds.Machine.NativeEndpointCharacterNamedBank
+public import IntegerMultBounds.Machine.NativeEndpointSourceReadyPlacement
 
 /-! The complete actual source/sink character boundary on the original recursive
 caller bank, with parent-volume cost and all shared private storage reclaimed. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.NativeEndpointCharacterSourceReady
 noncomputable section
 open CompactGadgetReservationShape (Shape)

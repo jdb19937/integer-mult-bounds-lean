@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.SparseSourceBitsRun
-import IntegerMultBounds.Machine.WeightedUnitPhase
+module
+
+public import IntegerMultBounds.Machine.SparseSourceBitsRun
+public import IntegerMultBounds.Machine.WeightedUnitPhase
 
 /-! Complete physical sparse-address phase application. The extracted tape
 is shared directly with the weighted accumulator; no control word or phase
 flag is supplied as input. Original address and descriptors are preserved. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.SparseWeightedUnitPhase
 noncomputable section
 open SelectedSourceBitsCore (payload)

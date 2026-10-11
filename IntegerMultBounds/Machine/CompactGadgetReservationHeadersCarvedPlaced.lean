@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactGadgetReservationHeadersCarvedVolume
+module
+
+public import IntegerMultBounds.Machine.CompactGadgetReservationHeadersCarvedVolume
 
 /-! The carved schedule acts directly on seven original caller descriptors and
 one width descriptor. Only its three output ports change, and all forty private
 workspace tapes return blank. No original descriptor is copied. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactGadgetReservationHeadersCarvedPlaced
 noncomputable section
 open CompactGadgetReservationShape

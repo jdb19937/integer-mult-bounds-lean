@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsPayloadEarlyClean
-import IntegerMultBounds.Machine.ActiveTargetHighestLayoutOriginalGlobal
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsPayloadEarlyClean
+public import IntegerMultBounds.Machine.ActiveTargetHighestLayoutOriginalGlobal
 
 /-! Original-input common caller for the complete early low/high action.
 The highest stage shares the genuine raw array and all fourteen original
 layout words; no highest geometry or derived descriptor is an input. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLayoutRecordsFullEarlyData
 noncomputable section
 open CompactGadgetReservationShape (Shape)

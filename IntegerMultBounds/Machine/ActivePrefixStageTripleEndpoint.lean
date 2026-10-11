@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActivePrefixStageTripleTransport
-import IntegerMultBounds.Machine.ActivePrefixStageRuntimeInverseRun
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStageTripleTransport
+public import IntegerMultBounds.Machine.ActivePrefixStageRuntimeInverseRun
 
 /-! The complete all-width stage returns an explicit literal native-symbol
 encoding, including arbitrary spectators. The output representation is derived
 from the actual destination action, rather than supplied as a codec premise. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixStageTripleEndpoint
 noncomputable section
 open CompactGadgetReservationShape (Shape)

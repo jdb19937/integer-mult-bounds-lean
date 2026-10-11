@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActiveRepairEarlyKeyData
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairEarlyKeyData
 
 /-! One fixed machine computes a conditional full early-repair key from the
 genuine short original rank, then erases all nine generated caller words. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairEarlyKeyRun
 noncomputable section
 open ActiveRepairEarlyKeyData

@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyNonleafFinalPath
-import IntegerMultBounds.Machine.CompactComplexSourceReadyOrientationInvariants
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyNonleafFinalPath
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyOrientationInvariants
 
 /-! Literal emitted source and retained saved-call storage at the actual
 current-node merger endpoint; the post selector can therefore decode the same
 saved call after contraction and merging. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyNonleafFinalPorts
 noncomputable section
 open CompactGadgetReservationShape (Shape)

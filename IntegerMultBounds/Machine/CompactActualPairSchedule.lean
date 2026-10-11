@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactActualStageRuntime
-import IntegerMultBounds.Machine.ActivePrefixStagePairSchedule
+module
+
+public import IntegerMultBounds.Machine.CompactActualStageRuntime
+public import IntegerMultBounds.Machine.ActivePrefixStagePairSchedule
 
 /-! The actual multiplier scalar and global-row choices supply density-one
 allowances for every literal pair in a fixed binary schedule. No individual
 stage allowance, runtime source order, or width branch is supplied. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactActualPairSchedule
 noncomputable section
 open CompactGadgetReservationShape (Shape)

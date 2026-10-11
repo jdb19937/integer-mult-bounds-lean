@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.NativeUniformPolynomialRotationNormalized
-import IntegerMultBounds.Machine.NativeUniformPolynomialRotationHeaders
+module
+
+public import IntegerMultBounds.Machine.NativeUniformPolynomialRotationNormalized
+public import IntegerMultBounds.Machine.NativeUniformPolynomialRotationHeaders
 
 /-! Fixed private67 placement uses actual count27 and original runtime
 columns7, retaining all copied raw headers. Uniform source56/output58 stay
 at the same native bridge ports, and private loop61/62 are disjoint. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.NativeUniformPolynomialRotationPlacement
 noncomputable section
 open CompactGadgetReservationShape (Shape)

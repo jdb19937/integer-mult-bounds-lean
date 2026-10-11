@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActualAffineScalingStream
-import IntegerMultBounds.Machine.FlatControlledShift
+module
+
+public import IntegerMultBounds.Machine.ActualAffineScalingStream
+public import IntegerMultBounds.Machine.FlatControlledShift
 
 /-! Actual network scaling on a concrete row-major physical array. Each fiber
 is extracted from the input itself; no address family is supplied. The exact
 full-bank contract includes descriptor synthesis, counted streaming and sign. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.FlatAffineScaling
 
 open Networks

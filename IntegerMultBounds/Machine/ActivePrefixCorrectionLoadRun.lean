@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixCorrectionLoadHeaders
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixCorrectionLoadHeaders
 
 /-! Actual original-input correction offset production, original-row repetition
 and containing-target rotation, without supplied derived descriptors or tables.
 All stages reuse the same fixed blank fifty-seven-tape workspace. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixCorrectionLoadRun
 noncomputable section
 open ActivePrefixCorrectionLoadData

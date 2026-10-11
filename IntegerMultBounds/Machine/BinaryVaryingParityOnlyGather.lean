@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CountedPackedShapeHeaders
-import IntegerMultBounds.Machine.CountedGatherOriginalRun
+module
+
+public import IntegerMultBounds.Machine.CountedPackedShapeHeaders
+public import IntegerMultBounds.Machine.CountedGatherOriginalRun
 
 /-! Physically gather pure-parity offsets from the current target digits
 and independently varying source controls. Sole q/b/count headers initialize
 the machine; every derived header and clock is physically constructed and
 erased. The physical Boolean transition ignores its control bit. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryVaryingParityOnlyGather
 noncomputable section
 variable {a : ℕ}

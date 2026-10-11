@@ -1,9 +1,13 @@
-import IntegerMultBounds.Networks.Shared50LabeledInvocation
-import IntegerMultBounds.Networks.Shared50FiniteTrace
+module
+
+public import IntegerMultBounds.Networks.Shared50LabeledInvocation
+public import IntegerMultBounds.Networks.Shared50FiniteTrace
 
 /-! Exact rank-loss accounting for the actual finite forward invocation. The
 history contains explicit scalar-block boundary alignments and all actual DAG
 incidences. Its only downward transitions are the fifty central returns. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.Shared50InvocationRank
 

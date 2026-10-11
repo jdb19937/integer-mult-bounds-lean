@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.BinaryParityXorOffsetData
-import IntegerMultBounds.Compact.PackedArithValue
+module
+
+public import IntegerMultBounds.Machine.BinaryParityXorOffsetData
+public import IntegerMultBounds.Compact.PackedArithValue
 
 /-! The positive fourth-line gather packs parity XOR original controls
 for each regular source address, before per-row modular negation. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryParityXorOffsetPositive
 open BinaryParityXorOffsetData BinaryAddressTableData
 open BinaryAddressOffsetRepeatData (copies)

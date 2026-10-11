@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.BinaryDescriptorCleanupList
-import IntegerMultBounds.Machine.CompactGadgetReservationHeadersCarvedVolume
+module
+
+public import IntegerMultBounds.Machine.BinaryDescriptorCleanupList
+public import IntegerMultBounds.Machine.CompactGadgetReservationHeadersCarvedVolume
 
 /-! Paid physical erasure of the twelve generated early headers, with exact framing. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.PackedEarlyHeaderCleanup
 noncomputable section
 open CompactGadgetReservationShape

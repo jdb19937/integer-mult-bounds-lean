@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActiveRepairRankFieldsRun
-import IntegerMultBounds.Machine.SharedBankFrames
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairRankFieldsRun
+public import IntegerMultBounds.Machine.SharedBankFrames
 
 /-! The complete genuine-rank field/source parser placed on arbitrary caller
 slots, with literal retained descriptors and clean private storage. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairRankParserPlaced
 noncomputable section
 open SharedPlacementAlphabet (setTape)

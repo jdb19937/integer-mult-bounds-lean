@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActiveRepairRankParserPlaced
-import IntegerMultBounds.Machine.ActiveRepairEarlyFieldsPlaced
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairRankParserPlaced
+public import IntegerMultBounds.Machine.ActiveRepairEarlyFieldsPlaced
 
 /-! Actual original-rank parsing feeds the inverse/guard/ideal computation.
 Current source controls are physically extracted, not supplied as a common
 word for the stream. Runtime field descriptors remain explicit originals. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairEarlySourceRun
 noncomputable section
 open ActiveRepairRankFieldsBank (offsetSlot widthSlot)

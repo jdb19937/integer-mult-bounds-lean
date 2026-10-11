@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactGadgetReservationHeadersEndpoint
-import IntegerMultBounds.Machine.CompactGadgetReservationHeadersRows
+module
+
+public import IntegerMultBounds.Machine.CompactGadgetReservationHeadersEndpoint
+public import IntegerMultBounds.Machine.CompactGadgetReservationHeadersRows
 
 /-! Exact header constructor routing with a retained spectator bank between
 its permanent header tapes and its shared fifteen private tapes. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactGadgetReservationHeadersRouting
 noncomputable section
 variable {t a : ℕ}

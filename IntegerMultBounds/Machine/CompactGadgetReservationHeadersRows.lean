@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.CompactGadgetReservationHeadersDivision
-import IntegerMultBounds.Machine.CompactGadgetReservationHeadersPowerRound
-import IntegerMultBounds.Machine.CompactRowPaddingRound
-import IntegerMultBounds.Machine.RecursiveRowsQuotient
+module
+
+public import IntegerMultBounds.Machine.CompactGadgetReservationHeadersDivision
+public import IntegerMultBounds.Machine.CompactGadgetReservationHeadersPowerRound
+public import IntegerMultBounds.Machine.CompactRowPaddingRound
+public import IntegerMultBounds.Machine.RecursiveRowsQuotient
 
 /-! Original row count to the padded per-role row count. The static role count
 is physically installed, the rounded row count is physically divided, and all
 work descriptors are erased. The original row tape and the frame survive. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactGadgetReservationHeadersRows
 noncomputable section
 open CompactGadgetReservationHeadersCore

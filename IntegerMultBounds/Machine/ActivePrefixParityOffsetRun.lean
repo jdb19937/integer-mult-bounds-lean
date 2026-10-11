@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixParityOffsetBank
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixParityOffsetBank
 
 /-! Actual original-header setup, both generated prefix projections, batch
 source-bit extraction and parity-XOR gather share one unchanged caller bank and
 twenty-four blank private tapes. No intermediate stream is a stage input. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixParityOffsetRun
 noncomputable section
 open ActivePrefixParityOffsetBank

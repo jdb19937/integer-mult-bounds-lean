@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactNativeRoleSourceRuns
+module
+
+public import IntegerMultBounds.Machine.CompactNativeRoleSourceRuns
 
 /-! Reassociate the physically copied fresh28 headers with fifteen blank
 arithmetic tapes. This pays the producer lifecycle and exposes the exact43
 numeric bank consumed by native role placement, without any payload move. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactNativeRoleScalarCaller
 noncomputable section
 open ActiveRepairRankHeadersCommands (bank)

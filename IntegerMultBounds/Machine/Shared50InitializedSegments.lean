@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.Shared50NonrecursiveSegments
-import IntegerMultBounds.Machine.FlatCoordinateInitializedSchedule
+module
+
+public import IntegerMultBounds.Machine.Shared50NonrecursiveSegments
+public import IntegerMultBounds.Machine.FlatCoordinateInitializedSchedule
 
 /-! Actual nonrecursive Shared50 segments from sole b/W and payload. This bridge
 uses fully initialized physical stages; recursive interchanges remain explicit
 separate obligations. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.Shared50InitializedSegments
 open Networks
 open Shared50ModularSchedule (Index)

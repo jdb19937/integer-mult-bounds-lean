@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActiveRepairEarlyFieldsRun
-import IntegerMultBounds.Machine.CountedRepairKeyCleanup
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairEarlyFieldsRun
+public import IntegerMultBounds.Machine.CountedRepairKeyCleanup
 
 /-! Retain only the extracted originals, actual guard flag and recovered
 repair destination fields; physically erase the four inverse intermediates. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairEarlyFieldsCleanup
 noncomputable section
 open SharedPlacementAlphabet (setTape)

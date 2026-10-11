@@ -1,6 +1,11 @@
-import IntegerMultBounds.Machine.CountedRepairKeyRun
+module
+
+public import IntegerMultBounds.Machine.CountedRepairKeyRun
 
 /-! Rank membership and destination key bridges for actual short counters. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedRepairKeyValue
 noncomputable section
 open CountedRepairKeyBank

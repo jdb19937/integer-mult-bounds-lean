@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.BinaryAddressOffsetRepeatData
-import IntegerMultBounds.Machine.BinaryPackedEarlyPrefixHeaders
-import IntegerMultBounds.Machine.BinaryAddressOffsetPlaced
-import IntegerMultBounds.Machine.BinaryAddressOffsetRepeatConstructBudget
+module
+
+public import IntegerMultBounds.Machine.BinaryAddressOffsetRepeatData
+public import IntegerMultBounds.Machine.BinaryPackedEarlyPrefixHeaders
+public import IntegerMultBounds.Machine.BinaryAddressOffsetPlaced
+public import IntegerMultBounds.Machine.BinaryAddressOffsetRepeatConstructBudget
 
 /-! Physical parity source-prefix table. Each current-source row
 is repeated L times, and the whole table K times; all private storage is erased. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryPackedEarlyPrefixParity
 open SharedPlacementAlphabet (setTape)
 open BinaryAddressOffsetRepeatHeaders

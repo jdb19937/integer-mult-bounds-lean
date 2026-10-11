@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ArbitraryWidthHighBudget
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthHighBudget
 
 /-! Runtime high-row metadata construction is paid even before the branch
 choosing fast interchange or the bounded elementary fallback. Its rounded
 row count is uniformly bounded by a fixed multiple of the original volume. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthHighMetadataBudget
 noncomputable section
 open ArbitraryWidthHighPrepare

@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.NativeUniformPolynomialRotationPlacement
+module
+
+public import IntegerMultBounds.Machine.NativeUniformPolynomialRotationPlacement
 
 /-! Original caller endpoint correction: physically copy retained raw numeric
 headers, derive the actual role polynomial count, uniformly rotate or negate
 the native role source, and reclaim all67 private tapes. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.NativeUniformPolynomialRotationOriginal
 noncomputable section
 open CompactGadgetReservationShape (Shape)

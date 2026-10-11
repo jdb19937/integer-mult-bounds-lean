@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.UnitPhaseFlagsLifecycle
-import IntegerMultBounds.Machine.RecursiveChildQuotientsConstant
+module
+
+public import IntegerMultBounds.Machine.UnitPhaseFlagsLifecycle
+public import IntegerMultBounds.Machine.RecursiveChildQuotientsConstant
 
 /-! Two genuine reads of the original little-endian column-count header
 construct the Gaussian-unit phase 27 times that count modulo four. The
 header is retained and its head restored; no direction or phase is supplied
 to the transition table. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.NativeColumnPhaseFlags
 open UnitPhaseNumerator (flags low high)
 open MarkedWordCleanup (one)

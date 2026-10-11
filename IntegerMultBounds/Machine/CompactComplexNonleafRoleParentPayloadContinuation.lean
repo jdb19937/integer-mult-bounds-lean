@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexNonleafRoleParentLiveContinuation
-import IntegerMultBounds.Machine.CompactComplexNonleafRoleSourceReturnBudget
+module
+
+public import IntegerMultBounds.Machine.CompactComplexNonleafRoleParentLiveContinuation
+public import IntegerMultBounds.Machine.CompactComplexNonleafRoleSourceReturnBudget
 
 /-! Actual parent geometry/row/live restoration preserves the genuine parked
 payload stack and clock. Its literal source-ready endpoint supplies all raw,
 result and vacant-role readiness for physical payload recovery. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexNonleafRoleParentPayloadContinuation
 noncomputable section
 open CompactGadgetReservationShape (Shape)

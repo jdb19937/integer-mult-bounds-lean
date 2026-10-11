@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.BinaryRadixRangePrepareAlphabet
-import IntegerMultBounds.Machine.ArbitraryWidthHighOriginalEncoding
+module
+
+public import IntegerMultBounds.Machine.BinaryRadixRangePrepareAlphabet
+public import IntegerMultBounds.Machine.ArbitraryWidthHighOriginalEncoding
 
 /-! The binary range wrapper and recursive radix interchange have the same
 literal payload and full-transpose endpoints despite their descriptor views. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryRadixRootEncoding
 noncomputable section
 open Networks

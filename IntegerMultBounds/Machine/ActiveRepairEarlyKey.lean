@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActiveRepairEarlyKeyValue
-import IntegerMultBounds.Machine.ActiveRepairEarlyKeyPlaced
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairEarlyKeyValue
+public import IntegerMultBounds.Machine.ActiveRepairEarlyKeyPlaced
 
 /-! Complete current-address early key production, from genuine short rank
 through exact full-rank reconstruction, conditional output and paid erasure. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairEarlyKey
 noncomputable section
 abbrev Data := ActiveRepairEarlyKeyData.Data

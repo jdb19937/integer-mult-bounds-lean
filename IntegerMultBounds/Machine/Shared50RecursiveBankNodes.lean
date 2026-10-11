@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.Shared50RecursiveBank
+module
+
+public import IntegerMultBounds.Machine.Shared50RecursiveBank
 
 /-! Concrete node blocks on the same permanent bank as recursive calls. The
 node frame and the blank scalar-view frame occupy different physical tapes. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.Shared50RecursiveBankNodes
 noncomputable section
 open Networks

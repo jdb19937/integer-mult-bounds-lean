@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActivePrefixStageFullErase
-import IntegerMultBounds.Machine.ActiveTargetHighestLayoutOriginalGlobal
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStageFullErase
+public import IntegerMultBounds.Machine.ActiveTargetHighestLayoutOriginalGlobal
 
 /-! The f=1 branch has no low packed target. Its single selected bit is the
 physical highest-bit action, starting from the same thirteen original words
 and raw array as the nontrivial full stage. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixStageSingletonData
 noncomputable section
 open CompactGadgetReservationShape (Shape)

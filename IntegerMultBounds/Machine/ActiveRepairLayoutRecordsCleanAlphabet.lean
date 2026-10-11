@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsAssemblyCleanEarly
-import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsAssemblyCleanLateAfter
-import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsOriginalEarlyAlphabet
-import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsOriginalLateAlphabet
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsAssemblyCleanEarly
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsAssemblyCleanLateAfter
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsOriginalEarlyAlphabet
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsOriginalLateAlphabet
 
 /-! Complete original-input repairs with all generated metadata erased run
 in the payload prime alphabet, preserving exact literal banks and costs. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLayoutRecordsCleanAlphabet
 noncomputable section
 open CompactGadgetReservationShape (Shape)

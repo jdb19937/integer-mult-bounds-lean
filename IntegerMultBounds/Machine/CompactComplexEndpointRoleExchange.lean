@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.NamedRoleWordExchange
-import IntegerMultBounds.Machine.CompactComplexSourceReadyNonleafScalarInitialReadiness
-import IntegerMultBounds.Networks.ComplexFramedExecution
+module
+
+public import IntegerMultBounds.Machine.NamedRoleWordExchange
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyNonleafScalarInitialReadiness
+public import IntegerMultBounds.Networks.ComplexFramedExecution
 
 /-! The actual complex25 named X/Y banks are physically exchanged once each.
 The fixed original address enumeration stays opaque; scratch and every tape
 head are preserved. Uniform cost is charged against parent native volume. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexEndpointRoleExchange
 noncomputable section
 open CompactGadgetReservationShape (Shape)
@@ -29,7 +34,7 @@ theorem port_injective : Function.Injective (port (s:=s) (u:=u)) := by
     Fin.ext hv
   exact roleEncoding.injective (CompactComplexSpectatorTargetBank.role_injective h0)
 
-private theorem enumeration_exists : ∃ as : List Address,as.Nodup ∧ ∀ a,a∈as := by
+theorem enumeration_exists : ∃ as : List Address,as.Nodup ∧ ∀ a,a∈as := by
   classical
   exact ⟨Finset.univ.toList,Finset.nodup_toList _,fun a => Finset.mem_toList.mpr (Finset.mem_univ a)⟩
 

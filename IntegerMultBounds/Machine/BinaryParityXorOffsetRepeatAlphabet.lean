@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.BinaryParityXorOffsetRepeatBudget
+module
+
+public import IntegerMultBounds.Machine.BinaryParityXorOffsetRepeatBudget
 
 /-! Lift the complete original-descriptor repeated-offset constructor to the
 payload alphabet without changing any physical step count. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryParityXorOffsetRepeatAlphabet
 open SharedPlacementAlphabet (setTape)
 open StreamedFiberTranslationAlphabet (encoding mapTape)

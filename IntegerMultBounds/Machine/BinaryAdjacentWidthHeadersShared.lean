@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.ArbitraryWidthHighDimensionsShared
-import IntegerMultBounds.Machine.ArbitraryWidthZeroHeaderShared
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthHighDimensionsShared
+public import IntegerMultBounds.Machine.ArbitraryWidthZeroHeaderShared
 
 /-! Paid construction of the three binary movement headers from only P/G/B/u.
 A canonical zero is physically written before the shared dimension engine is
 run with radix two and high width zero. All eighteen private tapes are erased
 by the reverse cleanup; the arbitrary caller is preserved throughout. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryAdjacentWidthHeadersShared
 noncomputable section
 variable {a t n : ℕ}

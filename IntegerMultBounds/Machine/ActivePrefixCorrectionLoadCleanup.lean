@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActivePrefixCorrectionLoadRun
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixCorrectionLoadRun
 
 /-! Physical erasure of both emitted offset words and every derived rotation
 header. The original ten descriptors and the newly rotated full array remain. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixCorrectionLoadCleanup
 noncomputable section
 open ActivePrefixCorrectionLoadData

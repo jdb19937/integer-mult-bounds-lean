@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.ArbitrarySliceStep
-import IntegerMultBounds.Machine.ArbitrarySliceStepBudget
-import IntegerMultBounds.Machine.BinaryCanonicalData
+module
+
+public import IntegerMultBounds.Machine.ArbitrarySliceStep
+public import IntegerMultBounds.Machine.ArbitrarySliceStepBudget
+public import IntegerMultBounds.Machine.BinaryCanonicalData
 
 /-! Runtime-counted consecutive selected-slice calls. The runtime digit is
 copied into a physically initialized countdown clock; the clock is erased at
 the end. Every call runs the proved slice machine and actual offset advance. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitrarySliceRepeat
 noncomputable section
 open Networks
@@ -42,12 +47,12 @@ theorem offsets_length_le (b t i V : ℕ) (ts : List Bool) (ht : Counter.value t
   have hl := Nat.log2_le_self (t+i*b)
   omega
 
-private theorem prefix_fit {v : Descriptor} (ws us : List ℕ) (t : ℕ)
+theorem prefix_fit {v : Descriptor} (ws us : List ℕ) (t : ℕ)
     (h : t+(ws++us).sum ≤ v.width) : t+ws.sum ≤ v.width := by
   rw [List.sum_append] at h
   omega
 
-private theorem suffix_fit {v : Descriptor} (ws us : List ℕ) (t : ℕ)
+theorem suffix_fit {v : Descriptor} (ws us : List ℕ) (t : ℕ)
     (h : t+(ws++us).sum ≤ v.width) : t+ws.sum+us.sum ≤ v.width := by
   simpa [List.sum_append,Nat.add_assoc] using h
 

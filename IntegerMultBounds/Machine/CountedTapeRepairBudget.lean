@@ -1,6 +1,11 @@
-import IntegerMultBounds.Machine.CountedTapeRepairCleanupRun
+module
+
+public import IntegerMultBounds.Machine.CountedTapeRepairCleanupRun
 
 /-! Uniform paid repair bounds in record width and exceptional count/density. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedTapeRepairBudget
 noncomputable section
 open IntegerMultBounds.Compact

@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.RadixDigitMoveCore
-import IntegerMultBounds.Machine.CleanExecution
+module
+
+public import IntegerMultBounds.Machine.RadixDigitMoveCore
+public import IntegerMultBounds.Machine.CleanExecution
 
 /-! The redistribution core with paid clock installation and physical cleanup
 of all private role, clock, and tracking tapes. Four input descriptors are
 preserved; their generation is separate from this initialized core. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RadixDigitMoveInitialized
 variable {Q a n m : ℕ}
 noncomputable section

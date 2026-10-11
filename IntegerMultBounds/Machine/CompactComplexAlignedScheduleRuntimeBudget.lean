@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexCorrectedNonleafBoundaryBudget
-import IntegerMultBounds.Machine.CompactComplexActualCallAlignment
+module
+
+public import IntegerMultBounds.Machine.CompactComplexCorrectedNonleafBoundaryBudget
+public import IntegerMultBounds.Machine.CompactComplexActualCallAlignment
 
 /-! The actual aligned event schedule pays a forward and reverse basis pass
 and both new sequencing joins at every original recursive occurrence. The
 basis stage scale remains explicit, separate from linear native volume. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexAlignedScheduleRuntimeBudget
 noncomputable section
 open Networks

@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActivePrefixCompactConjugationSemantics
-import IntegerMultBounds.Machine.ActivePrefixCompactConjugationBudget
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixCompactConjugationSemantics
+public import IntegerMultBounds.Machine.ActivePrefixCompactConjugationBudget
 
 /-! Both complete physical compact conjugations on arbitrary caller tapes.
 Nineteen ports retain all eighteen prepared input words and change only the
 full array; every private tape starts and returns blank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixCompactConjugationPlaced
 noncomputable section
 open ActivePrefixCompactConjugationData ActivePrefixCompactConjugationLayout

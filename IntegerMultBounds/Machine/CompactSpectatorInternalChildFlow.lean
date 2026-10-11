@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.CompactSpectatorStoppedReturnFlow
-import IntegerMultBounds.Machine.CompactComplexControllerChildReturn
+module
+
+public import IntegerMultBounds.Machine.CompactSpectatorStoppedReturnFlow
+public import IntegerMultBounds.Machine.CompactComplexControllerChildReturn
 
 /-! Actual internal-child entry and return blocks occupy literal continuations
 of the stopped-leaf cyclic table. Entry saves parent descriptors, pushes the
 actual table return PC, descends the exponent, and installs selected child
 headers. Return erases child headers, restores parent descriptors and exponent.
 No execution of the intervening recursive child is assumed here. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactSpectatorInternalChildFlow
 noncomputable section
 open CompactComplexRecursiveGeometry

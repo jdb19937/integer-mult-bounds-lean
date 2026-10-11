@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.CompactGadgetReservationHeadersPowerRound
+module
+
+public import IntegerMultBounds.Machine.CompactGadgetReservationHeadersPowerRound
 
 /-! Canonical optional-header banks for the finite synthesis schedule. An
 absent entry is physically blank at zero, never a supplied derived word. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactGadgetReservationHeadersWords
 noncomputable section
 open SharedPlacementAlphabet (setTape)

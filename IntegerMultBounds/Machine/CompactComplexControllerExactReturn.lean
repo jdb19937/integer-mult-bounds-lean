@@ -1,12 +1,17 @@
-import IntegerMultBounds.Machine.CompactComplexExactReturnFamily
-import IntegerMultBounds.Machine.CompactComplexSpectatorVolumeHeaders
-import IntegerMultBounds.Machine.CompactComplexControllerAlignedCommit
-import IntegerMultBounds.Machine.CompactComplexDenominatorPolicy
+module
+
+public import IntegerMultBounds.Machine.CompactComplexExactReturnFamily
+public import IntegerMultBounds.Machine.CompactComplexSpectatorVolumeHeaders
+public import IntegerMultBounds.Machine.CompactComplexControllerAlignedCommit
+public import IntegerMultBounds.Machine.CompactComplexDenominatorPolicy
 
 /-! Exact completed-network returns contract every genuine permanent role,
 install the true target denominator and erase generated length metadata.
 Coarser-grid correctness is a semantic obligation of the completed nonleaf;
 retained signed-field capacity alone does not imply exact contraction. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexControllerExactReturn
 noncomputable section
 open CompactComplexNativeCodecFrame (bank permanentTapes)
@@ -21,12 +26,12 @@ open RecursiveChildQuotientsConstant (bits)
 open SharedPlacementAlphabet (setTape)
 variable {s c : ℕ}
 
-private theorem different : (⟨7,by omega⟩ : Fin (10+s))≠⟨8,by omega⟩ := by
+theorem different : (⟨7,by omega⟩ : Fin (10+s))≠⟨8,by omega⟩ := by
   intro h
   have hv := congrArg Fin.val h
   norm_num at hv
 
-private def family := CompactComplexExactReturnFamily.compile
+def family := CompactComplexExactReturnFamily.compile
   (roleSlot (s:=10+s) (c:=c)) (oldSlot ⟨7,by omega⟩) (oldSlot ⟨8,by omega⟩) (numericSlot 27)
   (CompactComplexSpectatorTargetBank.ports_injective ⟨7,by omega⟩ ⟨8,by omega⟩ different 27)
   (List.finRange c)
@@ -53,7 +58,7 @@ private theorem output_bank (control : Tapes 43 2) (queue : Tapes 1 2) (scalar s
     SharedPlacementAlphabet.setTape_append_right,SharedPlacementAlphabet.setTape_append_right,
     SharedPlacementAlphabet.setTape_append_right,SharedPlacementAlphabet.setTape_append_left]
 
-private def compose {t : ℕ} (p q : Σ r,Program t r 2) : Σ r,Program t r 2 := ⟨_,seq p.2 q.2⟩
+def compose {t : ℕ} (p q : Σ r,Program t r 2) : Σ r,Program t r 2 := ⟨_,seq p.2 q.2⟩
 private theorem compose_runs {t : ℕ} (p q : Σ r,Program t r 2)
     {pre mid post : TapePred t 2} {A B : ℕ} (h0 : HoareTime p.2 pre mid A)
     (h1 : HoareTime q.2 mid post B) : HoareTime (compose p q).2 pre post (A+1+B) := h0.seq h1

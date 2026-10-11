@@ -1,12 +1,17 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyOrientedActualTable
-import IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedEntry
-import IntegerMultBounds.Machine.CompactComplexSourceReadySinkCorrections
-import IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedFinal
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyOrientedActualTable
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedEntry
+public import IntegerMultBounds.Machine.CompactComplexSourceReadySinkCorrections
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedFinal
 
 /-! A fixed controller table with actual source and sink correction routines.
 The entry classifier, stopped branch, child programs and saved-return port are
 the original oriented actual machinery. This identifies the transition table;
 it does not assert a recursive execution invariant or its total runtime. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedActualTable
 noncomputable section
 open CompactComplexSourceReadyScalarWorkspace (roles tapes)

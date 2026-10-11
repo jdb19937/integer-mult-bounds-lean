@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.NativeEndpointCharacterLifecycle
-import IntegerMultBounds.Machine.AllAxisPolynomialNativeBudget
+module
+
+public import IntegerMultBounds.Machine.NativeEndpointCharacterLifecycle
+public import IntegerMultBounds.Machine.AllAxisPolynomialNativeBudget
 
 /-! All original descriptor copies, metadata construction, aggregate
 traversal, overwrite and cleanup joins are paid by polynomial row volume. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.NativeEndpointCharacterBudget
 noncomputable section
 open CompactGadgetReservationShape (Shape)

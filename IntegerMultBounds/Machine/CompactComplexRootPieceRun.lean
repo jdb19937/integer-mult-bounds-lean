@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactComplexRootPieceCleanup
+module
+
+public import IntegerMultBounds.Machine.CompactComplexRootPieceCleanup
 
 /-! One original-header root-piece machine, including paid controller entry
 and exit cleanup. The native recursive callback remains an explicit exact
 contract; no root paths, base digits or numeric piece descriptors are input. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexRootPieceRun
 noncomputable section
 open CompactComplexRecursiveGeometry (arity)

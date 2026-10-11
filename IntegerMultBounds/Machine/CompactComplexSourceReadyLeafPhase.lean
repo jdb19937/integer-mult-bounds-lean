@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexNonleafRoleSourceReturn
-import IntegerMultBounds.Machine.CompactNativeRoleChildPrecisionSaved
+module
+
+public import IntegerMultBounds.Machine.CompactComplexNonleafRoleSourceReturn
+public import IntegerMultBounds.Machine.CompactNativeRoleChildPrecisionSaved
 
 /-! Direct directional leaf execution consumes the actual source-ready bank.
 The source and retained baseline numeric descriptors are the only public ports;
 all controller, role, ancestor and seven private tapes remain framed. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyLeafPhase
 noncomputable section
 open CompactGadgetReservationShape (Shape)

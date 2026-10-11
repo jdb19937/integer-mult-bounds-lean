@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActiveTargetHighestPairLayoutGeometry
+module
+
+public import IntegerMultBounds.Machine.ActiveTargetHighestPairLayoutGeometry
 
 /-! Literal finite-word split at one selected bit, retaining both surrounding
 intervals. These are coordinate equalities, with no machine assumptions. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveTargetHighestBits
 open RecursiveInterchangeRows (pack pack_val)
 open ActiveTargetHighestLaterValue (xorBit)

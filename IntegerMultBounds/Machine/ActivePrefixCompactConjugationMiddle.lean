@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixCompactConjugationData
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixCompactConjugationData
 
 /-! Concrete pure and negative load branches on the same caller geometry.
 The surrounding interchange workspace is framed, and each load's complete
 private workspace is clean at both endpoints. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixCompactConjugationMiddle
 noncomputable section
 open ActivePrefixCompactConjugationData

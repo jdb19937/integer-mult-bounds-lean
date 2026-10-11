@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.UnitPhasePolynomialSourceEndpoint
-import IntegerMultBounds.Machine.UnitPhaseFullStreamNormalized
-import IntegerMultBounds.Machine.BlankWordOverwriteAt
+module
+
+public import IntegerMultBounds.Machine.UnitPhasePolynomialSourceEndpoint
+public import IntegerMultBounds.Machine.UnitPhaseFullStreamNormalized
+public import IntegerMultBounds.Machine.BlankWordOverwriteAt
 
 /-! Literal polynomial phase machine with native stream reuse: traverse the
 whole array, physically rewind both streams, copy the equal-width result
 back into the original source, erase temporary output, and return heads0. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.UnitPhasePolynomialNative
 noncomputable section
 open CompactGadgetReservationShape (Shape)

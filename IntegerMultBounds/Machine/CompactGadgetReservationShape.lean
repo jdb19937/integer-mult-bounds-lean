@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactGadgetReservationCapacity
-import IntegerMultBounds.Machine.RadixRangePadding
+module
+
+public import IntegerMultBounds.Machine.CompactGadgetReservationCapacity
+public import IntegerMultBounds.Machine.RadixRangePadding
 
 /-! Literal suffix geometry of the existing compact reservations. Temp/control
 front fields and their shared dirty back field retain every unused address bit. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactGadgetReservationShape
 open CompactGadgetReservationCapacity
 

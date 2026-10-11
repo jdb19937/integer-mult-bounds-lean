@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexRootPieceEntry
-import IntegerMultBounds.Machine.BinaryDescriptorQueueCleanup
+module
+
+public import IntegerMultBounds.Machine.CompactComplexRootPieceEntry
+public import IntegerMultBounds.Machine.BinaryDescriptorQueueCleanup
 
 /-! Paid exit of the root-piece controller. The completed digit queue is
 physically erased and restored to head zero, then all four generated numeric
 headers are erased. The entire appended native/stack bank is retained. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexRootPieceCleanup
 noncomputable section
 open ActiveRepairRankHeadersCommands (State bank put)

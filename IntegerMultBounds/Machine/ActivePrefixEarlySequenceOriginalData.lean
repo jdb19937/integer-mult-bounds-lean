@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActivePrefixLayoutHeadersLayout
-import IntegerMultBounds.Machine.ActivePrefixEarlySequenceData
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixLayoutHeadersLayout
+public import IntegerMultBounds.Machine.ActivePrefixEarlySequenceData
 
 /-! Original caller bank for the four early loads. Twenty-two original numeric
 words and the array are supplied; both ten-word consumer header banks start
 blank. Each header producer physically copies its own row word. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixEarlySequenceOriginalData
 noncomputable section
 open Networks.Shared50ModularControl (prime)

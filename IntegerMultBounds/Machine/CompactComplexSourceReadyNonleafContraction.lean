@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexControllerExactReturnBudget
-import IntegerMultBounds.Machine.CompactComplexSourceReadyChildReturnPath
-import IntegerMultBounds.Machine.CompactComplexSourceReadyFullNodeControls
+module
+
+public import IntegerMultBounds.Machine.CompactComplexControllerExactReturnBudget
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyChildReturnPath
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyFullNodeControls
 
 /-! Physical all-role contraction borrows the existing node work10 while
 retaining the nine Entry/frame tapes, the leaf bank and scalar scratch. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyNonleafContraction
 noncomputable section
 open CompactComplexNativeCodecFrame (bank permanentTapes)

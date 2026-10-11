@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ArbitraryWidthConsumePlacement
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthConsumePlacement
 
 /-! The level controller shares the slice-width tape, while its remaining six
 slots live outside the slice's required blank scratch bank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthLevelPlacement
 noncomputable section
 open Networks
@@ -20,7 +25,7 @@ def widthGlobal : Fin T := Fin.natAdd 14 (Fin.castAdd 6 widthSlot)
 def slot : Fin 7 → Fin T := ![extraSlot 0,extraSlot 1,extraSlot 2,extraSlot 3,
   extraSlot 4,widthGlobal,extraSlot 5]
 
-private theorem slot_injective : Function.Injective slot := by
+theorem slot_injective : Function.Injective slot := by
   intro i j he
   have hh := congrArg Fin.val he
   have hS : S = ArbitrarySliceCall.rootCount+12 := rfl

@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyStoppedInstalledResult
-import IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedFinalTablePath
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyStoppedInstalledResult
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedFinalTablePath
 
 /-! The genuine stopped tag1 installs its oriented result and reaches guard0
 inside the corrected table. The same saved-PC bank remains available for pop. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedStoppedTablePath
 noncomputable section
 open Networks

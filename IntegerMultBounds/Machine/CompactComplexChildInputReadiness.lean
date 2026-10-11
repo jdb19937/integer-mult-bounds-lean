@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyChildEntryPath
-import IntegerMultBounds.Machine.CompactComplexSourceReadyGuard
-import IntegerMultBounds.Machine.CompactComplexNonleafRoleSourceReturn
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyChildEntryPath
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyGuard
+public import IntegerMultBounds.Machine.CompactComplexNonleafRoleSourceReturn
 
 /-! The actual installed child bank supplies its input headers, source and
 reusable stopping workspace. These facts are projections of physical entry,
 not independent readiness premises for the recursive call. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexChildInputReadiness
 noncomputable section
 variable {s c : ℕ}

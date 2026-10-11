@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedFinal
-import IntegerMultBounds.Machine.CompactComplexSourceReadyNonleafRootFinal
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedFinal
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyNonleafRootFinal
 
 /-! Actual root sink correction, contraction and rejoin on the unchanged
 corrected program. The empty saved stack selects identity post-orientation. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedRootFinal
 noncomputable section
 open CompactGadgetReservationShape (Shape)

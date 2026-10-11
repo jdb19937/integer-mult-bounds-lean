@@ -1,13 +1,18 @@
-import IntegerMultBounds.Machine.CompactComplexScalarGroupProgress
-import IntegerMultBounds.Machine.CompactComplexControllerExactReturnBudget
-import IntegerMultBounds.Machine.CompactComplexControllerChildBudget
-import IntegerMultBounds.Machine.CompactComplexRootPieceVolume
-import IntegerMultBounds.Machine.CompactComplexRecursiveRuntimeSum
+module
+
+public import IntegerMultBounds.Machine.CompactComplexScalarGroupProgress
+public import IntegerMultBounds.Machine.CompactComplexControllerExactReturnBudget
+public import IntegerMultBounds.Machine.CompactComplexControllerChildBudget
+public import IntegerMultBounds.Machine.CompactComplexRootPieceVolume
+public import IntegerMultBounds.Machine.CompactComplexRecursiveRuntimeSum
 
 /-! Actual scalar group, geometric descriptor/return-PC and exact-return metadata costs
 are linear in native volume with fixed compiler constants. Recursive callback
 runtimes remain their literal separate sum. These partial local expressions do not include per-child spectator alignment,
 codec lifecycles or every sequencing join. Full recursive assembly is separate. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexNodeLocalBudget
 noncomputable section
 open CompactGadgetReservationShape (Shape)

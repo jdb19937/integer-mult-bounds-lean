@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlHeadersRun
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlHeadersRun
 
 /-! Canonical dirty-control headers, with literal original inputs and complete
 physical retention. No derived address start is supplied as an input. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixDirtyControlHeadersEndpoint
 noncomputable section
 open ActiveRepairRankHeadersCommands ActivePrefixLayoutHeadersData

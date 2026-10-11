@@ -1,6 +1,8 @@
-import IntegerMultBounds.Machine.RoleArrayCallBoundary
-import IntegerMultBounds.Machine.CompactComplexSpectatorVolumeBudget
-import IntegerMultBounds.Machine.CompactComplexNativeCodecFrame
+module
+
+public import IntegerMultBounds.Machine.RoleArrayCallBoundary
+public import IntegerMultBounds.Machine.CompactComplexSpectatorVolumeBudget
+public import IntegerMultBounds.Machine.CompactComplexNativeCodecFrame
 
 /-! First physical payload boundary for an unstopped complex child. Original
 raw geometry generates the full-volume count to park the retained master source,
@@ -9,6 +11,9 @@ on one fixed payload-stack tape, the selected role moves to native source65,
 and every permanent role tape becomes blank at head zero. All generated numeric
 headers are then erased. This is payload entry, not child network execution:
 the next row quotient/split and inherited-denominator handoff remain separate. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexNonleafRoleEntry
 noncomputable section
 open CompactGadgetReservationShape (Shape)
@@ -30,7 +35,7 @@ def roleTape (j : Fin c) : Fin (tapes s c) := Fin.castAdd 2 (roleSlot (s:=s) j)
 def stack : Fin (tapes s c) := Fin.natAdd (permanentTapes s c) 0
 def clock : Fin (tapes s c) := Fin.natAdd (permanentTapes s c) 1
 
-private theorem numeric_injective : Function.Injective (numeric (s:=s) (c:=c)) := by
+theorem numeric_injective : Function.Injective (numeric (s:=s) (c:=c)) := by
   intro i j h
   apply Fin.ext
   have hv := congrArg Fin.val h
@@ -38,7 +43,7 @@ private theorem numeric_injective : Function.Injective (numeric (s:=s) (c:=c)) :
     CompactComplexControllerNativeFrame.nativeSlot,Fin.val_castAdd,Fin.val_natAdd] at hv
   omega
 
-private theorem role_numeric (j : Fin c) (i : Fin 43) : roleTape (s:=s) j≠numeric i := by
+theorem role_numeric (j : Fin c) (i : Fin 43) : roleTape (s:=s) j≠numeric i := by
   intro h
   have hv := congrArg Fin.val h
   have hi := i.isLt
@@ -47,7 +52,7 @@ private theorem role_numeric (j : Fin c) (i : Fin 43) : roleTape (s:=s) j≠nume
     CompactComplexControllerNativeFrame.tapes,Fin.val_castAdd,Fin.val_natAdd] at hv
   omega
 
-private theorem source_numeric (i : Fin 43) : source (s:=s) (c:=c)≠numeric i := by
+theorem source_numeric (i : Fin 43) : source (s:=s) (c:=c)≠numeric i := by
   intro h
   have hv := congrArg Fin.val h
   have hi := i.isLt
@@ -55,7 +60,7 @@ private theorem source_numeric (i : Fin 43) : source (s:=s) (c:=c)≠numeric i :
     CompactComplexControllerNativeFrame.nativeSlot,Fin.val_castAdd,Fin.val_natAdd] at hv
   omega
 
-private theorem extra_numeric (i : Fin 2) (j : Fin 43) :
+theorem extra_numeric (i : Fin 2) (j : Fin 43) :
     Fin.natAdd (permanentTapes s c) i≠numeric j := by
   intro h
   have hv := congrArg Fin.val h
@@ -63,7 +68,7 @@ private theorem extra_numeric (i : Fin 2) (j : Fin 43) :
   simp only [numeric,Fin.val_castAdd,Fin.val_natAdd] at hv
   omega
 
-private theorem numeric_size : 43+(tapes s c-43)=tapes s c := by
+theorem numeric_size : 43+(tapes s c-43)=tapes s c := by
   unfold tapes permanentTapes CompactComplexNativeRoleBridge.publicTapes
     CompactComplexControllerNativeFrame.tapes
   omega
@@ -99,7 +104,7 @@ def layout : Layout (tapes s c) where
   stack_count := extra_numeric 0 27
   clock_count := extra_numeric 1 27
 
-private theorem role_extra (j : Fin c) (i : Fin 2) :
+theorem role_extra (j : Fin c) (i : Fin 2) :
     roleTape (s:=s) j≠Fin.natAdd (permanentTapes s c) i := by
   intro h
   have hv := congrArg Fin.val h
@@ -107,7 +112,7 @@ private theorem role_extra (j : Fin c) (i : Fin 2) :
   simp only [roleTape,Fin.val_castAdd,Fin.val_natAdd] at hv
   omega
 
-private theorem source_extra (i : Fin 2) :
+theorem source_extra (i : Fin 2) :
     source (s:=s) (c:=c)≠Fin.natAdd (permanentTapes s c) i := by
   intro h
   have hv := congrArg Fin.val h
@@ -128,7 +133,7 @@ private theorem role_injective : Function.Injective (role (s:=s) (c:=c)) := by
     Fin.val_castAdd,Fin.val_natAdd] at hv
   omega
 
-private theorem role_source (j : Fin c) : role (s:=s) j≠sourceRole := by
+theorem role_source (j : Fin c) : role (s:=s) j≠sourceRole := by
   intro h
   have hv := congrArg (fun k => k.val.val) h
   simp only [role,roleTape,roleSlot,CompactComplexNativeRoleBridge.roleSlot,sourceRole,source,numericSlot,

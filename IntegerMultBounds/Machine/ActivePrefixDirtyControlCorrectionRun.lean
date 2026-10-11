@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlCorrectionBank
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlCorrectionBank
 
 /-! Correction executes the dirty-U selected and control producers, constructs
 row width/count, subtracts with a fresh borrow for every row, and erases headers.
 Both operand streams are consumed by the real subtraction machine. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixDirtyControlCorrectionRun
 noncomputable section
 open ActivePrefixDirtyControlData (Shape values)

@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactReservedLifecycle
-import IntegerMultBounds.Machine.CompactFallbackReservedBudget
+module
+
+public import IntegerMultBounds.Machine.CompactReservedLifecycle
+public import IntegerMultBounds.Machine.CompactFallbackReservedBudget
 
 /-! The complete nonfallback reservation machine visits the actual low back
 and high row/front positions, using runtime counts derived from original
 geometry and erasing every generated control before returning. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactReservedOriginal
 noncomputable section
 open CompactReservedHeaders

@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsAssemblyOriginalLateAfter
-import IntegerMultBounds.Machine.ActiveRepairLayoutDensityArithmetic
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsAssemblyOriginalLateAfter
+public import IntegerMultBounds.Machine.ActiveRepairLayoutDensityArithmetic
 
 /-! Original canonical row headers pay the full-address repair width.
 The dyadic bound uses the original layout size, rather than a separately
 supplied repair address width or density constant. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLayoutRecordsAllowance
 noncomputable section
 open CompactGadgetReservationShape (Shape)

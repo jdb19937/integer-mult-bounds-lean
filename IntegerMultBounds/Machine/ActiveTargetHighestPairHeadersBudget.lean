@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActiveTargetHighestPairHeadersRun
+module
+
+public import IntegerMultBounds.Machine.ActiveTargetHighestPairHeadersRun
 
 /-! All highest-bit header construction and erasure costs are absorbed into
 the original array volume, without a record-width allowance. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveTargetHighestPairHeadersBudget
 open ActiveTargetHighestPairData ActiveTargetHighestPairHeadersData
 open ActiveRepairRankHeadersCommands

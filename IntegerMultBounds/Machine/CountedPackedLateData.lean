@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CountedPackedParityValue
-import IntegerMultBounds.Machine.CountedPackedControlLoadValue
-import IntegerMultBounds.Machine.CountedPackedGuarded
+module
+
+public import IntegerMultBounds.Machine.CountedPackedParityValue
+public import IntegerMultBounds.Machine.CountedPackedControlLoadValue
+public import IntegerMultBounds.Machine.CountedPackedGuarded
 
 /-! Exact word specification for the two early gadgets and the physical dirty
 load/unload used by the later-source gadget. These are data semantics; the
 actual sequential tape assembly is proved separately. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedPackedLateData
 noncomputable section
 open Compact Compact.PowerTwo Compact.Radix

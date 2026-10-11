@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactComplexStoppedLedgerRoundtrip
-import IntegerMultBounds.Machine.CompactComplexSpectatorVolumeHandoff
-import IntegerMultBounds.Machine.CompactComplexControllerAlignedCommit
+module
+
+public import IntegerMultBounds.Machine.CompactComplexStoppedLedgerRoundtrip
+public import IntegerMultBounds.Machine.CompactComplexSpectatorVolumeHandoff
+public import IntegerMultBounds.Machine.CompactComplexControllerAlignedCommit
 
 /-! A stopped child becomes a physically installed common-grid endpoint only
 through original-descriptor codec setup, generated stream-volume promotion,
 paid denominator commit and exact parent-codec cleanup. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexStoppedAlignedCall
 noncomputable section
 open CompactGadgetReservationShape (Shape)
@@ -172,11 +177,11 @@ theorem raw_runs (sh : Shape) (headerCount rows ell metadataP : ℕ)
   refine ⟨time+1+(2*(bits n).length+4*(bits (n+arity^k)).length+15),hrun,?_,hgrid,hvalues⟩
   omega
 
-private def frame {t : ℕ} (v : Tapes t 2) (x y z : ℕ) :=
+def frame {t : ℕ} (v : Tapes t 2) (x y z : ℕ) :=
   ((v.append (SharedBank.empty x 2)).append (SharedBank.empty y 2)).append (SharedBank.empty z 2)
-private def frameSlots (t x y z : ℕ) (i : Fin t) : Fin (((t+x)+y)+z) :=
+def frameSlots (t x y z : ℕ) (i : Fin t) : Fin (((t+x)+y)+z) :=
   Fin.castAdd z (Fin.castAdd y (Fin.castAdd x i))
-private theorem frameSlots_injective (t x y z : ℕ) : Function.Injective (frameSlots t x y z) :=
+theorem frameSlots_injective (t x y z : ℕ) : Function.Injective (frameSlots t x y z) :=
   (Fin.castAdd_injective _ _).comp ((Fin.castAdd_injective _ _).comp (Fin.castAdd_injective _ _))
 private theorem frame_payload {t : ℕ} (v : Tapes t 2) (x y z : ℕ) :
     SharedBank.payload (frame v x y z) (frameSlots t x y z)=v := by
@@ -195,10 +200,10 @@ private theorem frame_strip {t : ℕ} (v w : Tapes t 2) (x y z : ℕ) :
     (((SharedBank.strip w id).append (SharedBank.empty x 2)).append (SharedBank.empty y 2)).append (SharedBank.empty z 2)
   rw [SharedBankFrames.strip_identity,SharedBankFrames.strip_identity]
 
-private def adapt {t r : ℕ} (M : Program (t+10) r 2) (x y z : ℕ) :=
+def adapt {t r : ℕ} (M : Program (t+10) r 2) (x y z : ℕ) :=
   Placement.placed M (CleanSubbank.placement (Fin.castAdd 10) (frameSlots t x y z)
     (frameSlots_injective t x y z))
-private theorem adapt_runs {t r b : ℕ} (M : Program (t+10) r 2) (v w : Tapes t 2) (x y z : ℕ)
+theorem adapt_runs {t r b : ℕ} (M : Program (t+10) r 2) (v w : Tapes t 2) (x y z : ℕ)
     (h : HoareTime M (fun a => a=CompactComplexSpectatorTargetFamily.ready v)
       (fun a => a=CompactComplexSpectatorTargetFamily.ready w) b) :
     HoareTime (adapt M x y z)
@@ -218,7 +223,7 @@ abbrev tapes (s c : ℕ) := (((publicTapes s c+86)+childTapes s)+targetTapes s)+
 
 def ready (v : Tapes (publicTapes s c) 2) : Tapes (tapes s c) 2 :=
   (frame v 86 (childTapes s) (targetTapes s)).append (SharedBank.empty (privateTapes s c) 2)
-private def codecExtend {r : ℕ} (M : Program (publicTapes s c+86) r 2) :=
+def codecExtend {r : ℕ} (M : Program (publicTapes s c+86) r 2) :=
   extend (extend (extend M (childTapes s)) (targetTapes s)) (privateTapes s c)
 def alignmentProgram (m s c : ℕ) (selected : Fin c) := seq (seq
   (codecExtend (CompactComplexNativeCodecFrame.program c m (10+s)))

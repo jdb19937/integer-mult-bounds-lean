@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActiveRepairLayoutKeysScan
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairLayoutKeysScan
 
 /-! Bounded physical scan-key identification suffices for the complete
 list repair. No behavior beyond the finite original layout is assumed. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLayoutKeysPipelineCommon
 noncomputable section
 open Compact

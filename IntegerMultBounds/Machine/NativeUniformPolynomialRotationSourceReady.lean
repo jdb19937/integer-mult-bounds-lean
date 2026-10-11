@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.NativeUniformPolynomialRotationNamedBank
-import IntegerMultBounds.Machine.NativeEndpointCharacterSourceReady
+module
+
+public import IntegerMultBounds.Machine.NativeUniformPolynomialRotationNamedBank
+public import IntegerMultBounds.Machine.NativeEndpointCharacterSourceReady
 
 /-! The complete actual uniform phase/negation boundary on the original recursive
 caller bank, with parent-volume cost and all shared private storage reclaimed. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.NativeUniformPolynomialRotationSourceReady
 noncomputable section
 open CompactGadgetReservationShape (Shape)

@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlBank
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlBank
 
 /-! Original descriptors physically produce three prefix projections, compact
 U parities and the selected/control/parity-XOR offsets. No intermediate stream
 or synthetic wide source is an input to this machine. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixDirtyControlRun
 noncomputable section
 open ActivePrefixDirtyControlData ActivePrefixDirtyControlBank

@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CountedTapeRepairBudget
-import IntegerMultBounds.Compact.Density
+module
+
+public import IntegerMultBounds.Machine.CountedTapeRepairBudget
+public import IntegerMultBounds.Compact.Density
 
 /-! The paid reusable repair machine's density coefficient is bounded by the
 actual exceptional set, rather than supplied as a repair oracle assumption. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedTapeRepairDensity
 noncomputable section
 open IntegerMultBounds.Compact

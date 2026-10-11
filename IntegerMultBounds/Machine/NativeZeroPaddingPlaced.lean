@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.NativeZeroPaddingHeaders
-import IntegerMultBounds.Machine.CleanSubbank
+module
+
+public import IntegerMultBounds.Machine.NativeZeroPaddingHeaders
+public import IntegerMultBounds.Machine.CleanSubbank
 
 /-! Complete counted native row padding from original numeric row/dimension/
 polynomial/width headers and one native word. Derived count is physically
 constructed, consumed and erased; payload EOF and origin movements are paid. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.NativeZeroPaddingPlaced
 noncomputable section
 open NativeZeroPaddingHeaders

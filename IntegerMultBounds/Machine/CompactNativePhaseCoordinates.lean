@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.ActivePrefixStageNativePairCoordinates
-import IntegerMultBounds.Machine.CompactLiteralUnitPhase
-import IntegerMultBounds.Machine.UnitPhasePolynomialLiteralEndpoint
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStageNativePairCoordinates
+public import IntegerMultBounds.Machine.CompactLiteralUnitPhase
+public import IntegerMultBounds.Machine.UnitPhasePolynomialLiteralEndpoint
 
 /-! Actual complex-network phase controls are read at the row ordinal reached
 by the real native basis word. The original signed phase theorem therefore
 applies to native coefficient streams without an assumed address interchange. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactNativePhaseCoordinates
 noncomputable section
 open CompactGadgetReservationShape (Shape)

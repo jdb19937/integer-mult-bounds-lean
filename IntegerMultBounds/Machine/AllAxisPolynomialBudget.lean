@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.AllAxisPolynomialStream
-import IntegerMultBounds.Machine.AllAxisFullStreamInitBudget
+module
+
+public import IntegerMultBounds.Machine.AllAxisPolynomialStream
+public import IntegerMultBounds.Machine.AllAxisFullStreamInitBudget
 
 /-! Aggregate phase extraction is paid once per address; coefficient work is
 paid once per polynomial entry. Every generated descriptor is erased. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.AllAxisPolynomialBudget
 open CompactGadgetReservationShape (Shape)
 open ActivePrefixStageParameters

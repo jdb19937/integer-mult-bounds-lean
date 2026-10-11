@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyFullNodeControls
-import IntegerMultBounds.Machine.CompactComplexSourceReadyChildEntryPath
-import IntegerMultBounds.Machine.CompactComplexSourceReadyChildReturnPath
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyFullNodeControls
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyChildEntryPath
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyChildReturnPath
 
 /-! Actual child entry and decoded return in the scalar-inclusive node table.
 Controls and event programs are fixed table parameters, permitting the final
 nonleaf target/contraction blocks. These derive widened execution from the original physical lifecycles, retain
 arbitrary scalar scratch, and charge every genuine cyclic join. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyFullChildPaths
 noncomputable section
 namespace Entry

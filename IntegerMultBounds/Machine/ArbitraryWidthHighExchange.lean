@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ArbitraryWidthHighExchangePlacement
-import IntegerMultBounds.Machine.ArbitraryWidthHighExchangeSemantics
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthHighExchangePlacement
+public import IntegerMultBounds.Machine.ArbitraryWidthHighExchangeSemantics
 
 /-! Actual high-prefix exchange from original canonical headers and rho.
 All one-digit views are constructed by SliceRepeat at depth zero; setup,
 copying, offset advance, root calls and final descriptor erasure are charged. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthHighExchange
 noncomputable section
 open Networks

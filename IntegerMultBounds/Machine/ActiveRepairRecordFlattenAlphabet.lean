@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActiveRepairRecordFlattenOriginal
-import IntegerMultBounds.Machine.Alphabet
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairRecordFlattenOriginal
+public import IntegerMultBounds.Machine.Alphabet
 
 /-! The real record flattening endpoint on larger caller alphabets. Existing
 blank, bits, separators and the temporary source marker keep literal codes. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairRecordFlattenAlphabet
 noncomputable section
 variable (a : ℕ)

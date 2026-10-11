@@ -1,7 +1,11 @@
-import IntegerMultBounds.Networks.Shared50BlockFrames
-import IntegerMultBounds.Networks.BoundedFramedCircuit
+module
+
+public import IntegerMultBounds.Networks.Shared50BlockFrames
+public import IntegerMultBounds.Networks.BoundedFramedCircuit
 
 /-! Whole-bank alignments and common-frame scalar-block execution helpers. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.Shared50FramedInvocation
 

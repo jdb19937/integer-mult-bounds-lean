@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlHeadersPlaced
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlSequenceGeometry
-import IntegerMultBounds.Machine.ActivePrefixLayoutHeadersGeometry
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlHeadersPlaced
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlSequenceGeometry
+public import IntegerMultBounds.Machine.ActivePrefixLayoutHeadersGeometry
 
 /-! The physical header producer's six-word groups are the exact target,
 compact-back and later-source geometries of the unchanged original array. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixDirtyControlHeadersGeometry
 open CompactGadgetReservationShape (Shape)
 open ActivePrefixLayoutShapes ActivePrefixLayoutHeadersGeometry

@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.OneSourceCircuit
-import IntegerMultBounds.Networks.Shared50GlobalCircuit
+module
+
+public import IntegerMultBounds.Machine.OneSourceCircuit
+public import IntegerMultBounds.Networks.Shared50GlobalCircuit
 
 /-! The actual Shared50 scalar lists satisfy the physical one-source compiler's
 hypothesis. Proofs follow the allocator's layout certificates and list structure;
 no enormous concrete instruction list is evaluated or replaced by a new list. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.Shared50XorLists
 open Networks OneSourceCircuit
 open Circuit NeighborCounts

@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyScalarChildReadiness
-import IntegerMultBounds.Machine.CompactComplexSourceReadyNonleafTargetSplit
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyScalarChildReadiness
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyNonleafTargetSplit
 
 /-! Canonical initial scalar rows are read from the actual cyclic role split.
 The reverse cardinality cast preserves the literal word and original numerical
 decoder. Source correction is a separate subsequent operation. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyNonleafScalarInitialReadiness
 noncomputable section
 open ButterflyStreamData (Coefficient)

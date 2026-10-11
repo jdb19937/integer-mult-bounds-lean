@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsBankHeaders
-import IntegerMultBounds.Machine.ActiveRepairEarlyOriginalPipelineEndpoint
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsBankHeaders
+public import IntegerMultBounds.Machine.ActiveRepairEarlyOriginalPipelineEndpoint
 
 /-! Exact consumer wiring: the generated fifteen-word bank fills every
 nonblank repair descriptor port, and the remaining initial bank contains only
 the actual unmarked source records. All work tapes and heads start blank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLayoutRecordsBankInput
 noncomputable section
 open CompactGadgetReservationShape (Shape)

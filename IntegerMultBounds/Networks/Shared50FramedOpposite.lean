@@ -1,11 +1,15 @@
-import IntegerMultBounds.Networks.Shared50OppositeBlockFrames
-import IntegerMultBounds.Networks.Shared50OppositeRank
-import IntegerMultBounds.Networks.FramedBlocks
-import IntegerMultBounds.Networks.Shared50PhysicalEdges
+module
+
+public import IntegerMultBounds.Networks.Shared50OppositeBlockFrames
+public import IntegerMultBounds.Networks.Shared50OppositeRank
+public import IntegerMultBounds.Networks.FramedBlocks
+public import IntegerMultBounds.Networks.Shared50PhysicalEdges
 
 /-! Physical opposite invocation: exchanged sparse scalar blocks with the
 literal finite complementary inverse DAG in the middle. Exact frame history,
 scalar erasure, and arbitrary-module execution are proved together. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.Shared50FramedOpposite
 

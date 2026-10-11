@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.SparsePhaseHeadersData
+module
+
+public import IntegerMultBounds.Machine.SparsePhaseHeadersData
 
 /-! Sparse descriptor arithmetic is charged linearly to the actual full
 address width. All runtime products are bounded geometric bit positions. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.SparsePhaseHeadersBudget
 open CompactGadgetReservationShape (Shape)
 open ActivePrefixStageParameters

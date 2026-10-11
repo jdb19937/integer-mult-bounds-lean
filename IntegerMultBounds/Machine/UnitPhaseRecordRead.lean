@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.UnitPhaseRecordKernel
+module
+
+public import IntegerMultBounds.Machine.UnitPhaseRecordKernel
 
 /-! Read one physical coefficient and prepare its two phase flags before the
 header-derived phase caller. Stream advancement is exactly the serialized
 word size; every spectator tape is retained. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.UnitPhaseRecordRead
 noncomputable section
 open CompactGadgetReservationShape (Shape)

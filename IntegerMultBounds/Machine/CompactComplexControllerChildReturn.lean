@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexControllerChildPrefix
-import IntegerMultBounds.Machine.CompactComplexChildHeaderFrames
+module
+
+public import IntegerMultBounds.Machine.CompactComplexControllerChildPrefix
+public import IntegerMultBounds.Machine.CompactComplexChildHeaderFrames
 
 /-! Concrete internal-child return continuation: physically erase child
 headers, pop the saved parent descriptors from appended storage and increment
 the retained controller exponent. The child's computed payload is retained. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexControllerChildReturn
 noncomputable section
 open CompactComplexControllerNativeFrame (tapes)

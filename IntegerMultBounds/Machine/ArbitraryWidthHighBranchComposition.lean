@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ArbitraryWidthHighBranchPlacement
-import IntegerMultBounds.Machine.ArbitraryWidthHighGuard
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthHighBranchPlacement
+public import IntegerMultBounds.Machine.ArbitraryWidthHighGuard
 
 /-! Genuine finite-state branching after the physical descriptor selector.
 The branch programs and their Hoare contracts are explicit parameters; this
 composition rule does not assert that a final wrapper has been instantiated. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthHighBranchComposition
 noncomputable section
 variable {t a h s : ℕ}

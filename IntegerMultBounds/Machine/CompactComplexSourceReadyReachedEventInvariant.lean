@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyScalarSavedCallHistory
-import IntegerMultBounds.Machine.CompactComplexCorrectedEntryGridReadiness
-import IntegerMultBounds.Machine.CompactComplexActualScalarNetworkPrefix
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyScalarSavedCallHistory
+public import IntegerMultBounds.Machine.CompactComplexCorrectedEntryGridReadiness
+public import IntegerMultBounds.Machine.CompactComplexActualScalarNetworkPrefix
 
 /-! Concrete reached scalar-event banks. The raw Stage is the retained original
 Stage, not its expanded polynomial codec. The middle bank is the actual child
 entry layout, and the call list is associated with the real saved-PC tape. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyReachedEventInvariant
 noncomputable section
 open CompactComplexSourceReadyScalarWorkspace (roles nodeTapes permanent ready output)

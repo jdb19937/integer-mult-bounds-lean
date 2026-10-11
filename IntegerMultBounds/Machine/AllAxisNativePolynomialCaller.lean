@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.AllAxisNativePolynomialData
+module
+
+public import IntegerMultBounds.Machine.AllAxisNativePolynomialData
 
 /-! One fixed original-input aggregate phase caller physically copies native
 headers and immutable ell, synthesizes stage metadata, executes the actual
 finite edge dispatcher on the original native source and erases every phase
 header/work tape. No prepared header, codec or execution callback is assumed. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.AllAxisNativePolynomialCaller
 noncomputable section
 open CompactGadgetReservationShape (Shape)

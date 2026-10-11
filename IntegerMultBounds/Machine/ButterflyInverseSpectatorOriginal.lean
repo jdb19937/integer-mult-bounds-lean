@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ButterflySpectatorOriginal
-import IntegerMultBounds.Machine.ButterflyInverseSpectatorGeometry
+module
+
+public import IntegerMultBounds.Machine.ButterflySpectatorOriginal
+public import IntegerMultBounds.Machine.ButterflyInverseSpectatorGeometry
 
 /-! A fixed native axis machine over all arbitrary outer row spectators.
 Header multiplication, copied ports, routing, arithmetic and erasure are paid. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ButterflyInverseSpectatorOriginal
 noncomputable section
 open ButterflySpectatorHeaders

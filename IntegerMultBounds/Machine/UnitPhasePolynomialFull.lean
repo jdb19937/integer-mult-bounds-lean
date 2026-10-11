@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.UnitPhasePolynomialRestore
-import IntegerMultBounds.Machine.UnitPhaseRecordAddress
+module
+
+public import IntegerMultBounds.Machine.UnitPhasePolynomialRestore
+public import IntegerMultBounds.Machine.UnitPhaseRecordAddress
 
 /-! A polynomial body physically reads and advances the live address once,
 then shares that address's phase over all coefficients. The polynomial
 multiplicity and outer address count are retained for the next iteration. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.UnitPhasePolynomialFull
 noncomputable section
 open CompactGadgetReservationShape (Shape)

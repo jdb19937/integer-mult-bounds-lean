@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactComplexRolePhaseSite
-import IntegerMultBounds.Machine.CompactComplexNativeCodecFrame
+module
+
+public import IntegerMultBounds.Machine.CompactComplexRolePhaseSite
+public import IntegerMultBounds.Machine.CompactComplexNativeCodecFrame
 
 /-! A single physical basis pass on an original selected role. Unlike the
 complete scalar phase lifecycle, this restores a canonical raw bank after
 only the forward or reversed original basis word, so a recursive child can
 execute between the two passes. The alphabet is the native prime alphabet. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexActualCallAlignment
 noncomputable section
 open CompactGadgetReservationShape (Shape)

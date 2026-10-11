@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActiveRepairLayoutKeysFields
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairLayoutKeysFields
 
 /-! The physically generated original-layout early key is the membership
 flag and complete destination rank of the concrete global permutations. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLayoutKeysEarly
 noncomputable section
 attribute [local instance] Classical.propDecidable

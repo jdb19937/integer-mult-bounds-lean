@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActivePrefixCompactConjugationLayout
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixCompactConjugationLayout
 
 /-! Literal compact-T destination semantics of the complete physical
 conjugation, for both source orders and both parity load branches. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixCompactConjugationSemantics
 noncomputable section
 open ActivePrefixCompactConjugationData ActivePrefixCompactConjugationLayout

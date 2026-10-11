@@ -1,8 +1,12 @@
-import IntegerMultBounds.Networks.Shared50GlobalTraceNondegenerate
+module
+
+public import IntegerMultBounds.Networks.Shared50GlobalTraceNondegenerate
 
 /-! Chronological composition of the actual local histories on the reused
 physical world. Each stage enumerates exactly the scalar schedule's coordinate
 lines; disjointness within a stage preserves every unprocessed local profile. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.Shared50GlobalTraceStages
 

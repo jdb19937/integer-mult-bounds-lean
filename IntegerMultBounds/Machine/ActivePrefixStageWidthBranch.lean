@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActivePrefixStageWidthPlaced
-import IntegerMultBounds.Machine.ActivePrefixStageDispatchCommon
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStageWidthPlaced
+public import IntegerMultBounds.Machine.ActivePrefixStageDispatchCommon
 
 /-! An actual width selector precedes a genuine finite-state branch. The
 computed flag is erased before entering either original-input stage; branch
 selection costs one transition and introduces no supplied Boolean premise. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixStageWidthBranch
 noncomputable section
 open ActivePrefixStageWidthPlaced

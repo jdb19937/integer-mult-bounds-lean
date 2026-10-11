@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActivePrefixStageHeadersRouting
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStageHeadersRouting
 
 /-! Complete synthesis plus paid descriptor duplication. Consumer ports43..64
 are distinct actual tapes; original13 survive and every synthesis tape clears. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixStageHeadersPlaced
 noncomputable section
 open CompactGadgetReservationShape (Shape)

@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactNativeRoleReservedBridge
-import IntegerMultBounds.Machine.CompactSpectatorInheritedGrid
+module
+
+public import IntegerMultBounds.Machine.CompactNativeRoleReservedBridge
+public import IntegerMultBounds.Machine.CompactSpectatorInheritedGrid
 
 /-! Every complete corrected role family has a unique original row-major
 array. This reverses the actual cyclic split, so final contraction and merge
 can consume arbitrary completed role arrays without assuming a common source. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactNativeRoleRecombine
 noncomputable section
 open ButterflyStreamData (Coefficient)

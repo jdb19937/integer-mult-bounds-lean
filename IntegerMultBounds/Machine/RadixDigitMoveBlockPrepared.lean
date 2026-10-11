@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.RadixDigitMoveInitialized
-import IntegerMultBounds.Machine.RadixDigitMoveBlockRows
+module
+
+public import IntegerMultBounds.Machine.RadixDigitMoveInitialized
+public import IntegerMultBounds.Machine.RadixDigitMoveBlockRows
 
 /-! Fixed-radix digit movement across a spectator block while preserving a trailing payload block. Four canonical descriptors are already present.
 The source and every private head return to zero; all scratch is erased. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RadixDigitMoveBlockPrepared
 open RadixDigitMoveBlockRows
 open RadixDigitMoveCore (count)

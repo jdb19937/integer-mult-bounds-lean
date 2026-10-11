@@ -1,15 +1,20 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyActualTable
-import IntegerMultBounds.Machine.CompactComplexSourceReadyOrientedControlsEntry
-import IntegerMultBounds.Machine.CompactComplexSourceReadyOrientedControlsStoppedSemantics
-import IntegerMultBounds.Machine.CompactComplexSourceReadyOrientedControlsStoppedRoot
-import IntegerMultBounds.Machine.CompactComplexSourceReadyNonleafTargetSplit
-import IntegerMultBounds.Machine.CompactComplexSourceReadyNonleafOrientedFinal
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyActualTable
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyOrientedControlsEntry
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyOrientedControlsStoppedSemantics
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyOrientedControlsStoppedRoot
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyNonleafTargetSplit
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyNonleafOrientedFinal
 
 /-! One canonical fixed machine instantiates all four controls with genuine
 physical routines: pre-orientation and original stopping test, forward stopped
 body and post-orientation, target/count and split, contraction/rejoin and
 post-orientation. Scalar, child and saved-return tables are the original actual
 programs. Its only arguments choose permanent controller stack slots. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyOrientedActualTable
 noncomputable section
 open CompactComplexSourceReadyScalarWorkspace (roles tapes)

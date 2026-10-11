@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.BinaryParityXorOffsetRepeatData
-import IntegerMultBounds.Machine.BinaryPackedEarlyPrefixHeaders
-import IntegerMultBounds.Machine.BinaryParityXorOffsetPlaced
-import IntegerMultBounds.Machine.BinaryAddressOffsetRepeatConstructBudget
+module
+
+public import IntegerMultBounds.Machine.BinaryParityXorOffsetRepeatData
+public import IntegerMultBounds.Machine.BinaryPackedEarlyPrefixHeaders
+public import IntegerMultBounds.Machine.BinaryParityXorOffsetPlaced
+public import IntegerMultBounds.Machine.BinaryAddressOffsetRepeatConstructBudget
 
 /-! Physical negative parity-XOR source-prefix table. Each current-source row
 is repeated L times, and the whole table K times; all private storage is erased. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryPackedEarlyPrefixNegative
 open SharedPlacementAlphabet (setTape)
 open BinaryAddressOffsetRepeatHeaders

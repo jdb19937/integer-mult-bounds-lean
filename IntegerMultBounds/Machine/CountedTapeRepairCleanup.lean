@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.CountedTapeRepairCleanupAt
+module
+
+public import IntegerMultBounds.Machine.CountedTapeRepairCleanupAt
 
 /-! Complete physical cleanup of fourteen scan/stage tapes, retaining source
 and repaired output at their origins and restoring all stage work to blank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedTapeRepairCleanup
 noncomputable section
 open SharedPlacementAlphabet

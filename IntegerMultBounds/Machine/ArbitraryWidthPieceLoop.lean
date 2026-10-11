@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.ArbitraryWidthPieceCounter
-import IntegerMultBounds.Machine.ArbitraryWidthPieces
-import IntegerMultBounds.Machine.LoopChain
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthPieceCounter
+public import IntegerMultBounds.Machine.ArbitraryWidthPieces
+public import IntegerMultBounds.Machine.LoopChain
 
 /-! A fixed runtime base-digit loop around actual quotient/remainder
 extraction. A fixed continuation consumes each physically emitted digit and
 advances the framed depth/power/offset/data bank. The continuation's concrete
 piece dispatch remains a separate proof obligation. No list is a machine input. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthPieceLoop
 noncomputable section
 variable {a t s : ℕ}

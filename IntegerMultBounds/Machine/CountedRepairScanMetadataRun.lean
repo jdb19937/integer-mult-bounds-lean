@@ -1,6 +1,11 @@
-import IntegerMultBounds.Machine.CountedRepairScanMetadata
+module
+
+public import IntegerMultBounds.Machine.CountedRepairScanMetadata
 
 /-! Exact execution and uniform bounds for repair width/counter construction. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedRepairScanMetadataRun
 noncomputable section
 open CountedRankSplitBank

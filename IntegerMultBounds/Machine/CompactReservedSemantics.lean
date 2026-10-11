@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.CompactReservedOriginal
+module
+
+public import IntegerMultBounds.Machine.CompactReservedOriginal
 
 /-! Each physical reserved interval has exact signed Walsh semantics, including
 continuations from already accrued precision under the shared signed guard. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactReservedSemantics
 noncomputable section
 open CompactFallbackHeaders

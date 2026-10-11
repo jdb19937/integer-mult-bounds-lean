@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.CountedLateTapeRepairEndpoint
+module
+
+public import IntegerMultBounds.Machine.CountedLateTapeRepairEndpoint
 
 /-! Density absorption for the complete paid later repair machine. The setup,
 key scans, sort, reinsertion and all final cleanup enter the same volume bound. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedLateTapeRepairLinear
 noncomputable section
 open CountedLateTapeRepairBank

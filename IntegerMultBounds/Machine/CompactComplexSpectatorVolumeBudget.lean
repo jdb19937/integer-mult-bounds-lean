@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactComplexSpectatorVolumeHeaders
-import IntegerMultBounds.Machine.CompactNativeRoleOriginalBudget
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSpectatorVolumeHeaders
+public import IntegerMultBounds.Machine.CompactNativeRoleOriginalBudget
 
 /-! Genuine stream-volume header synthesis and cleanup are bounded by native
 volume, and by one complete role stream with a fixed header-count factor. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSpectatorVolumeBudget
 noncomputable section
 open CompactGadgetReservationShape (Shape)

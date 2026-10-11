@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActiveRepairLayoutPermutation
-import IntegerMultBounds.Machine.VaryingControlRepairDensity
-import IntegerMultBounds.Compact.TapeRepairStage
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairLayoutPermutation
+public import IntegerMultBounds.Machine.VaryingControlRepairDensity
+public import IntegerMultBounds.Compact.TapeRepairStage
 
 /-! Exceptional cardinalities of the unchanged full layout, transported
 through its complete source and spectator fibers. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLayoutDensity
 noncomputable section
 attribute [local instance] Classical.propDecidable

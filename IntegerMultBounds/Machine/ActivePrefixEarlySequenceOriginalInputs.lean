@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixEarlySequenceOriginalData
-import IntegerMultBounds.Machine.ActivePrefixEarlySequenceRun
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixEarlySequenceOriginalData
+public import IntegerMultBounds.Machine.ActivePrefixEarlySequenceRun
 
 /-! Only original swap geometry and original layout/gadget controls are
 supplied. The consumer Inputs record is filled by the physical header outputs. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixEarlySequenceOriginalInputs
 noncomputable section
 open CompactGadgetReservationShape (Shape)

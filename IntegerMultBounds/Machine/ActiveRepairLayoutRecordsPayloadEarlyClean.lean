@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsPayloadEarlyRun
-import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsCleanAlphabet
-import IntegerMultBounds.Machine.ActiveRepairArrayRecycle
-import IntegerMultBounds.Machine.ActivePrefixEarlySequenceOriginalBudget
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsPayloadEarlyRun
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsCleanAlphabet
+public import IntegerMultBounds.Machine.ActiveRepairArrayRecycle
+public import IntegerMultBounds.Machine.ActivePrefixEarlySequenceOriginalBudget
 
 /-! Actual early payload followed by clean original-input repair on one raw
 tape. Every repair descriptor/work tape is erased; the sole extra output is
 the ideal raw array on tape 223, while source 228 retains the actual low result. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLayoutRecordsPayloadEarlyClean
 noncomputable section
 open CompactGadgetReservationShape (Shape)

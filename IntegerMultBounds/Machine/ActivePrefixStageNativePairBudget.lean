@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActivePrefixStageNativePairSchedule
-import IntegerMultBounds.Machine.ActivePrefixStagePairBudget
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStageNativePairSchedule
+public import IntegerMultBounds.Machine.ActivePrefixStagePairBudget
 
 /-! Complete native basis words retain the certified stage exponent. Every
 header frame, physical rewrite, conversion, restoration and join is charged;
 the sole schedule factor is its fixed literal instruction count. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixStageNativePairBudget
 noncomputable section
 open CompactGadgetReservationShape (Shape)

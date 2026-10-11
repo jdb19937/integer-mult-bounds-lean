@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlHeadersRun
-import IntegerMultBounds.Machine.ActivePrefixLayoutHeadersBudget
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlHeadersRun
+public import IntegerMultBounds.Machine.ActivePrefixLayoutHeadersBudget
 
 /-! Paid linear bounds for all three original-input dirty-control header
 producers and their actual post-use cleanup, including arithmetic patches. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixDirtyControlHeadersBudget
 open ActivePrefixLayoutHeadersData ActiveRepairRankHeadersCommands
 open ActivePrefixDirtyControlHeadersData

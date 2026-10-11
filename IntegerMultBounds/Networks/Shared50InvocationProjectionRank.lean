@@ -1,12 +1,16 @@
-import IntegerMultBounds.Networks.Shared50InvocationPhysicalEdges
-import IntegerMultBounds.Networks.Shared50FramedOpposite
-import IntegerMultBounds.Networks.ProjectionTrace
-import IntegerMultBounds.Networks.ShearFrame
+module
+
+public import IntegerMultBounds.Networks.Shared50InvocationPhysicalEdges
+public import IntegerMultBounds.Networks.Shared50FramedOpposite
+public import IntegerMultBounds.Networks.ProjectionTrace
+public import IntegerMultBounds.Networks.ShearFrame
 
 /-! Actual projector-difference matrices for the physical optimized invocations.
 Every extracted physical frame change is the shear of its certified matrix,
 in the same order. Matrix range ranks telescope with the exact local loss;
 there is no assumed edge-cost or readiness contract. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.Shared50InvocationProjectionRank
 

@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactGadgetReservationShape
-import IntegerMultBounds.Machine.RecursiveInterchangeRows
+module
+
+public import IntegerMultBounds.Machine.CompactGadgetReservationShape
+public import IntegerMultBounds.Machine.RecursiveInterchangeRows
 
 /-! Literal unchanged compact reservation with its target in the active block.
 Only the two compact front fields fit in H; the target need not fit there.
 Every unused front bit, slack bit, active spectator, dirty back bit and payload
 coordinate remains an independent complete range. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactActiveTargetLayout
 open CompactGadgetReservationShape
 open RecursiveInterchangeRows (pack pack_val)
@@ -49,10 +54,10 @@ theorem size_eq (s : Shape) (w m before after rows : ℕ) (hw : w≤s.H)
       simp only [pow_add]; ring
     _ = _ := by rw [he]; ring
 
-private def join {A B : Type*} {a b : ℕ} (e : A ≃ Fin a) (f : B ≃ Fin b) : A × B ≃ Fin (a*b) :=
+def join {A B : Type*} {a b : ℕ} (e : A ≃ Fin a) (f : B ≃ Fin b) : A × B ≃ Fin (a*b) :=
   (e.prodCongr f).trans finProdFinEquiv
 
-private def rawEquiv (s : Shape) (w m before after rows : ℕ) :
+def rawEquiv (s : Shape) (w m before after rows : ℕ) :
     Fields s w m before after rows ≃ Fin (size s w m before after rows) :=
   join (Equiv.refl _) (join (Equiv.refl _) (join (Equiv.refl _) (join (Equiv.refl _)
     (join (Equiv.refl _) (join (Equiv.refl _) (join (Equiv.refl _) (join (Equiv.refl _)

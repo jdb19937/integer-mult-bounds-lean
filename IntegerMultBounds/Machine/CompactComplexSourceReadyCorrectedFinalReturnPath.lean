@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedFinalTablePath
-import IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedSavedReturnPath
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedFinalTablePath
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedSavedReturnPath
 
 /-! Actual corrected nonleaf finalization reaches the original saved call
 continuation, paying the physical final body, table join, guard and saved pop.
 Only the original saved stack is restored after the computed result is installed. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedFinalReturnPath
 noncomputable section
 open CompactGadgetReservationShape (Shape)

@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactComplexSpectatorTargetFamily
-import IntegerMultBounds.Machine.CompactComplexSpectatorRoleSchedule
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSpectatorTargetFamily
+public import IntegerMultBounds.Machine.CompactComplexSpectatorRoleSchedule
 
 /-! The genuine spectator promoter acts on the stopped caller's permanent
 controller/native65/role bank. True denominator slots stay in existing
 storage; the retained original scalar43 suffix remains beyond that storage.
 No tape indices are inserted ahead of the existing recursive ledgers. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSpectatorTargetBank
 noncomputable section
 open CompactComplexNativeCodecFrame (bank permanentTapes)

@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActiveTargetHighestPairData
-import IntegerMultBounds.Machine.ActiveRepairRankHeadersCommands
-import IntegerMultBounds.Machine.CompactGadgetReservationHeadersPowerRound
+module
+
+public import IntegerMultBounds.Machine.ActiveTargetHighestPairData
+public import IntegerMultBounds.Machine.ActiveRepairRankHeadersCommands
+public import IntegerMultBounds.Machine.CompactGadgetReservationHeadersPowerRound
 
 /-! A finite arithmetic/power schedule derives all ten highest-bit consumer
 headers from five numeric geometry inputs, with no supplied dimensions. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveTargetHighestPairHeadersData
 noncomputable section
 open ActiveTargetHighestPairData

@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlUSwapData
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlUSwapData
 
 /-! Physical construction, binary interchange and erasure of compact-U swap
 geometry. The fixed forty-tape header workspace and the complete interchange
 workspace both start and return blank, with every sequential join charged. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixDirtyControlUSwapRun
 noncomputable section
 open ActivePrefixDirtyControlUSwapData

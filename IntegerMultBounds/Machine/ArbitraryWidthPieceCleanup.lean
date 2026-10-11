@@ -1,6 +1,11 @@
-import IntegerMultBounds.Machine.ArbitraryWidthPieceSetup
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthPieceSetup
 
 /-! Every final marked digit-dispatcher control is physically erased. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthPieceCleanup
 noncomputable section
 open Networks

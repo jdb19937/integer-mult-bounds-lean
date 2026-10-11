@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlNegativeBank
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlNegativeBank
 
 /-! Real dirty-U parity-XOR production and rowwise negation, including
 physical width/count synthesis, source erasure, and complete metadata cleanup. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixDirtyControlNegativeRun
 noncomputable section
 open ActivePrefixDirtyControlData (Shape values)

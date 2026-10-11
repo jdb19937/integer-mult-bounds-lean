@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsFullLateData
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsFullLateData
 
 /-! Actual full later low/high execution on the original array: clean repaired
 low payload followed by original-header highest-bit action. Every original
 numeric word survives, and all independent private banks start and end blank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLayoutRecordsFullLateRun
 noncomputable section
 open CompactGadgetReservationShape (Shape)

@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ArbitraryWidthHighDimensionsShared
-import IntegerMultBounds.Machine.ArbitraryWidthHighPaddingSuffix
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthHighDimensionsShared
+public import IntegerMultBounds.Machine.ArbitraryWidthHighPaddingSuffix
 
 /-! Copy original headers, construct high dimensions and suffix, and clean
 all seventeen private tapes using actual programs. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthHighDimensionsAndSuffixShared
 noncomputable section
 variable {a t : ℕ}

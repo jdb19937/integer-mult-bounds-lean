@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.ActiveRepairRankFieldsRun
-import IntegerMultBounds.Machine.VaryingControlRepairLayoutRank
-import IntegerMultBounds.Machine.CountedPackedGuarded
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairRankFieldsRun
+public import IntegerMultBounds.Machine.VaryingControlRepairLayoutRank
+public import IntegerMultBounds.Machine.CountedPackedGuarded
 
 /-! Physical extraction offsets for actual RECORD address ranks. Payload is
 one in this address geometry; the physical R-bit record is separate. No
 padding or source word is assumed, and original array bits are not reordered. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairRankFieldsGeometry
 noncomputable section
 open CompactGadgetReservationShape CompactActiveTargetLayout CompactActiveTargetGeometry

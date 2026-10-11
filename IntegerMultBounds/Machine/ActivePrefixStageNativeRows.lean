@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.ActivePrefixStageNativeCore
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStageNativeCore
 
 /-! Canonical full-address native rows for the actual stage machine. The row
 index is the literal serialized ordinal, independently of the source/target
 coordinate decomposition. Changing stage pairs therefore requires no free
 array reshape or serialization premise, and every native payload symbol is
 transported with its row. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixStageNativeRows
 noncomputable section
 open CompactGadgetReservationShape (Shape)

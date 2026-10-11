@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.ActivePrefixStageNativePolynomial
-import IntegerMultBounds.Machine.ActivePrefixStageNativeConjugation
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStageNativePolynomial
+public import IntegerMultBounds.Machine.ActivePrefixStageNativeConjugation
 
 /-! A literal native basis word acts on genuine serialized polynomial arrays.
 Its chronological row destination retains every coefficient and field width;
 the reversed word restores the original row after an arbitrary row-local action.
 The fixed native executable supplies the corresponding physical word contract. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixStageNativePolynomialWord
 noncomputable section
 open CompactGadgetReservationShape (Shape)

@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactComplexNonleafRoleParentContinuation
-import IntegerMultBounds.Machine.CompactComplexNonleafRoleParentBankBudget
-import IntegerMultBounds.Machine.CompactComplexParentLiveStackBudget
+module
+
+public import IntegerMultBounds.Machine.CompactComplexNonleafRoleParentContinuation
+public import IntegerMultBounds.Machine.CompactComplexNonleafRoleParentBankBudget
+public import IntegerMultBounds.Machine.CompactComplexParentLiveStackBudget
 
 /-! After restoring parent geometry and rows, physically retain the child's
 normalized live word as the pending target and pop the real parent event live
 word. The bank remains mixed until the separate spectator promotion runs. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexNonleafRoleParentLiveContinuation
 noncomputable section
 open CompactGadgetReservationShape (Shape)

@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.BinarySelectedOffsetCleanup
+module
+
+public import IntegerMultBounds.Machine.BinarySelectedOffsetCleanup
 
 /-! Complete physical selected mask-shift offset production from original b/q/n and its control word.
 The address table, repeated original control, all derived dimensions and every
 private marker are constructed and erased. The original control and actual packed offset
 word remain, with an explicit record-width condition for linear volume cost. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinarySelectedOffset
 open BinaryAddressOffsetHeaders (widthBits rangeBits countBits)
 noncomputable section

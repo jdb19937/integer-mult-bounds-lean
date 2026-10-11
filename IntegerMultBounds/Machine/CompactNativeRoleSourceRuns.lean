@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactNativeRoleSourcePorts
-import IntegerMultBounds.Machine.CompactNativeRoleAssembly
+module
+
+public import IntegerMultBounds.Machine.CompactNativeRoleSourcePorts
+public import IntegerMultBounds.Machine.CompactNativeRoleAssembly
 
 /-! Concrete reservation-result splitting and arbitrary descendant-result
 joining at the retained global source43. The complete immutable reservation
 shape and the corrected stored precision are used at both physical endpoints. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactNativeRoleSourceRuns
 noncomputable section
 open CompactNativeRoleSourcePorts

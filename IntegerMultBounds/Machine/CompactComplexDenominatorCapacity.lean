@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.CompactComplexControllerAlignedCommit
-import IntegerMultBounds.Machine.CompactComplexScalarPathGuard
-import IntegerMultBounds.Machine.CompactComplexStoppedGridHandoff
+module
+
+public import IntegerMultBounds.Machine.CompactComplexControllerAlignedCommit
+public import IntegerMultBounds.Machine.CompactComplexScalarPathGuard
+public import IntegerMultBounds.Machine.CompactComplexStoppedGridHandoff
 
 /-! The live true-denominator dependency envelope has actual retained-field
 capacity. This does not identify the live header with width metadata: recursive
 execution must propagate the stated live-progress invariant. Once propagated,
 no separate denominator-at-most-stream-volume cost allowance is needed. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexDenominatorCapacity
 noncomputable section
 open CompactGadgetReservationShape (Shape)

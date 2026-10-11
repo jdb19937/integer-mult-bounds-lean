@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactNativeConjugatedPhaseFamily
-import IntegerMultBounds.Machine.FiniteKernelDispatchAlphabet
+module
+
+public import IntegerMultBounds.Machine.CompactNativeConjugatedPhaseFamily
+public import IntegerMultBounds.Machine.FiniteKernelDispatchAlphabet
 
 /-! One physical finite table dispatches every actual complex25 conjugated
 phase, including zero-dimensional edges, on the original native polynomial
 bank. Call sites write their literal edge token; execution erases it and all
 phase workspace. The complete shared table has one uniform stage-scale bound. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactNativeConjugatedPhaseDispatch
 noncomputable section
 open CompactGadgetReservationShape (Shape)

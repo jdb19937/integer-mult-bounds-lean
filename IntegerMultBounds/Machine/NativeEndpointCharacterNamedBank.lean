@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.NativeEndpointCharacterNamedRoles
+module
+
+public import IntegerMultBounds.Machine.NativeEndpointCharacterNamedRoles
 
 /-! The physical role loop returns the literal named bank, with only its
 original source/sink character family changed. All permanent caller frames
 are recovered without assuming a local endpoint equation. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.NativeEndpointCharacterNamedBank
 noncomputable section
 open CompactGadgetReservationShape (Shape)

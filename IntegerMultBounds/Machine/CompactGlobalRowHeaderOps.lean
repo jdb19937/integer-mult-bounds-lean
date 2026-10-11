@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactGlobalRowHeaderPrimitives
-import IntegerMultBounds.Machine.ActivePrefixStageHeadersOps
+module
+
+public import IntegerMultBounds.Machine.CompactGlobalRowHeaderPrimitives
+public import IntegerMultBounds.Machine.ActivePrefixStageHeadersOps
 
 /-! Global reservation descriptors are runtime computations in a fixed finite
 program. Fixed network constants are written physically; runtime exponents
 never enter the finite program or its tape count. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactGlobalRowHeaderOps
 noncomputable section
 open ActiveRepairRankHeadersCommands (State bank caller put put_caller)

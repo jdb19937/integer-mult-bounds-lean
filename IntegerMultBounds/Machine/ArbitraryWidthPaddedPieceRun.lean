@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ArbitraryWidthPaddedPiecePlacement
-import IntegerMultBounds.Machine.ArbitraryWidthPaddedPiecePadding
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthPaddedPiecePlacement
+public import IntegerMultBounds.Machine.ArbitraryWidthPaddedPiecePadding
 
 /-! Physical zero padding, full arbitrary-width dispatch, and cropping back
 onto the original source. No execution trace is supplied by the caller. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthPaddedPieceRun
 noncomputable section
 open Networks

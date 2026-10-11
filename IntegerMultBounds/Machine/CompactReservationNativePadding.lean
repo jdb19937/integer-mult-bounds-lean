@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactReservationPaddingHeaders
-import IntegerMultBounds.Machine.CompactReservedOriginal
-import IntegerMultBounds.Machine.NativeZeroPaddingArray
+module
+
+public import IntegerMultBounds.Machine.CompactReservationPaddingHeaders
+public import IntegerMultBounds.Machine.CompactReservedOriginal
+public import IntegerMultBounds.Machine.NativeZeroPaddingArray
 
 /-! Actual global reservation executes on the original binary word before
 one native zero pad. Runtime metadata is computed from retained original
 scalars, every generated field is erased, and the native source returns to0. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactReservationNativePadding
 noncomputable section
 open CompactReservationPaddingHeaders (prepared width)

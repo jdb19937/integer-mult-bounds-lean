@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactComplexScalarCountBudget
-import IntegerMultBounds.Machine.CompactComplexScalarRolePorts
-import IntegerMultBounds.Machine.CompactComplexNativeCodecFrame
+module
+
+public import IntegerMultBounds.Machine.CompactComplexScalarCountBudget
+public import IntegerMultBounds.Machine.CompactComplexScalarRolePorts
+public import IntegerMultBounds.Machine.CompactComplexNativeCodecFrame
 
 /-! The genuine controller/native/role bank derives scalar coefficient count
 from its retained native original13 and ell/p descriptors. Existing storage
 indices remain fixed; immutable scalar43, roles, ledgers and stacks are framed. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexScalarCountRootBank
 noncomputable section
 open CompactComplexNativeCodecFrame (bank permanentTapes headerSlot originalSlot)

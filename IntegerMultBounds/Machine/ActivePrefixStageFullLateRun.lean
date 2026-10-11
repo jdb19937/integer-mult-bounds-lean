@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixStageFullErase
-import IntegerMultBounds.Machine.ActivePrefixStageFullCompose
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStageFullErase
+public import IntegerMultBounds.Machine.ActivePrefixStageFullCompose
 
 /-! Complete later selected action from original node/slot geometry, including
 physical descriptor preparation and erasure around the unchanged raw array. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixStageFullLateRun
 noncomputable section
 open CompactGadgetReservationShape (Shape)

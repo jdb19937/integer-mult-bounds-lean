@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.RepeatedWeightedPhaseAccumulator
-import IntegerMultBounds.Machine.CountedLoopHeaderClean
+module
+
+public import IntegerMultBounds.Machine.RepeatedWeightedPhaseAccumulator
+public import IntegerMultBounds.Machine.CountedLoopHeaderClean
 
 /-! Runtime-axis phase scanning directly from an immutable original header.
 Both loop scratch tapes begin and end blank, including every sentinel. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RepeatedWeightedPhaseHeader
 noncomputable section
 open WeightedPhaseAccumulator (bank)

@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyScalarEventPath
-import IntegerMultBounds.Machine.CompactComplexNonleafRoleMergeReturn
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyScalarEventPath
+public import IntegerMultBounds.Machine.CompactComplexNonleafRoleMergeReturn
 
 /-! Physical readiness inherited from the literal next scalar caller. The raw
 metadata and retained master are read from their actual ports; named role words
 are the genuine executed polynomial rows, rather than supplied input codecs. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyPrefixReadiness
 noncomputable section
 open CompactComplexNativeCodecFrame (bank permanentTapes)

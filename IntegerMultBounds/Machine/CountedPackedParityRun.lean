@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CountedPackedParityHeaders
-import IntegerMultBounds.Machine.CountedGatherOriginalRun
+module
+
+public import IntegerMultBounds.Machine.CountedPackedParityHeaders
+public import IntegerMultBounds.Machine.CountedGatherOriginalRun
 
 /-! Uniform extraction of the low bit of every dirty b-bit digit from its
 original b/count headers, with every generated header and clock erased. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedPackedParityRun
 noncomputable section
 variable {a : ℕ}

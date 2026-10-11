@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.BinaryVaryingSelectedOffsetGather
-import IntegerMultBounds.Machine.BinarySelectedOffsetValue
+module
+
+public import IntegerMultBounds.Machine.BinaryVaryingSelectedOffsetGather
+public import IntegerMultBounds.Machine.BinarySelectedOffsetValue
 
 /-! Per-prefix semantics of the varying-control physical gather. Neither
 source digits nor controls must repeat: both are read from their current row.
 This is the mask-shift load needed when source bits vary with the address. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryVaryingSelectedOffsetData
 
 def stream (N : ℕ) (rows : ℕ → List Bool) := ((List.range N).map rows).flatten

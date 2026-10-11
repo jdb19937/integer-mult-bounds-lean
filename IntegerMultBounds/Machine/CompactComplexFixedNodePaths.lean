@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexFixedNodeTable
-import IntegerMultBounds.Machine.FiniteFlowPath
+module
+
+public import IntegerMultBounds.Machine.CompactComplexFixedNodeTable
+public import IntegerMultBounds.Machine.FiniteFlowPath
 
 /-! Reachability-local block contracts produce genuine nonhalting paths in
 one fixed cyclic node table. No uniform contract over invalid event banks,
 whole-node trace, or recursive execution oracle is assumed. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexFixedNodePaths
 noncomputable section
 open Networks
@@ -35,17 +40,17 @@ def nodeEdges (ht : 0<t)
     (controlEdgesWith (N:=originalCount) (length:=schedule.length) controls isStopped)
     (fun i _ => eventDestination i)
 
-private def familyWith {N extra k : ℕ} (stack : Fin t)
+def familyWith {N extra k : ℕ} (stack : Fin t)
     (programs : Fin (N+extra) → Σ q,Program t q a) :=
   GuardedFiniteReturnExtraFlow.family (k:=k) stack
     (fun i => (programs i).1) (fun i => (programs i).2)
 
-private def nextWith {N extra k : ℕ} (hN : N≤2^k)
+def nextWith {N extra k : ℕ} (hN : N≤2^k)
     (programs : Fin (N+extra) → Σ q,Program t q a)
     (edges : ∀ pc,Fin (programs pc).1 → Option (Fin (N+extra+2))) :=
   GuardedFiniteReturnExtraFlow.next hN (fun i => (programs i).1) edges
 
-private def pathWith {N extra k : ℕ} (hN : N≤2^k) (stack : Fin t)
+def pathWith {N extra k : ℕ} (hN : N≤2^k) (stack : Fin t)
     (programs : Fin (N+extra) → Σ q,Program t q a)
     (edges : ∀ pc,Fin (programs pc).1 → Option (Fin (N+extra+2))) :=
   FiniteFlowPath.Path (familyWith (k:=k) stack programs) (nextWith hN programs edges)

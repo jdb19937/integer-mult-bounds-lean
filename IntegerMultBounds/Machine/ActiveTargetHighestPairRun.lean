@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActiveTargetHighestPairData
+module
+
+public import IntegerMultBounds.Machine.ActiveTargetHighestPairData
 
 /-! Actual highest-bit machines for either source order, preserving all ten
 numeric words and returning every private tape blank. Arbitrary outer row
 counts are repeated physically rather than padded to a power of two. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveTargetHighestPairRun
 noncomputable section
 open ActiveTargetHighestPairData

@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactNativeRoleChildHeadersPorts
-import IntegerMultBounds.Machine.CompactSpectatorLeafGuardOriginal
+module
+
+public import IntegerMultBounds.Machine.CompactNativeRoleChildHeadersPorts
+public import IntegerMultBounds.Machine.CompactSpectatorLeafGuardOriginal
 
 /-! Guarded descendants use baseline p-2*bits, retaining the corrected original
 p physically at private21. Actual reservation proves this subtraction exact;
 the existing signed word is never resized or reserved a second time. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactNativeRoleChildPrecision
 noncomputable section
 open CompactGadgetReservationShape (Shape)

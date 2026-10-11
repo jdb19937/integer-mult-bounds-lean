@@ -1,15 +1,20 @@
-import IntegerMultBounds.Machine.ArbitrarySliceCall
-import IntegerMultBounds.Machine.BinaryDescriptorAdvance
+module
+
+public import IntegerMultBounds.Machine.ArbitrarySliceCall
+public import IntegerMultBounds.Machine.BinaryDescriptorAdvance
 
 /-! Physical offset advancement placed in the existing twelve-tape slice tail.
 The root bank, saved frame and every other control tape remain exact. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.SliceOffsetAdvance
 noncomputable section
 variable {T q : ℕ}
 
 def slot (i : Fin 3) : Fin (T+12) := Fin.natAdd T (![0,2,1] i : Fin 12)
 
-private theorem slot_injective : Function.Injective (slot (T := T)) := by
+theorem slot_injective : Function.Injective (slot (T := T)) := by
   intro i j h
   have hh := congrArg Fin.val h
   fin_cases i <;> fin_cases j <;> simp_all [slot]

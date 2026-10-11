@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.CompactGadgetReservationHeadersCarvedRouting
+module
+
+public import IntegerMultBounds.Machine.CompactGadgetReservationHeadersCarvedRouting
 
 /-! Original packing-width input is physically multiplied by n before exact
 headers are synthesized inside the unchanged global compact reservation. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactGadgetReservationHeadersCarvedCaller
 noncomputable section
 open CompactGadgetReservationShape

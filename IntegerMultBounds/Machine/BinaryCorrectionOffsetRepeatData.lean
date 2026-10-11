@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.BinaryCorrectionOffsetValue
-import IntegerMultBounds.Machine.BinaryAddressOffsetRepeatValue
+module
+
+public import IntegerMultBounds.Machine.BinaryCorrectionOffsetValue
+public import IntegerMultBounds.Machine.BinaryAddressOffsetRepeatValue
 
 /-! The literal table repeated by the selected mask-shift offset constructor. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryCorrectionOffsetRepeatData
 open BinaryAddressOffsetRepeatData (copies expanded)
 

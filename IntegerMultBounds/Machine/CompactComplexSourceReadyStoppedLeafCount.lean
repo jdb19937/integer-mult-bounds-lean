@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyStoppedLeafBudget
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyStoppedLeafBudget
 
 /-! Positive-exponent source-ready nodes store per-child count in header7.
 This actual adapter expands by retained arity before the leaf and restores the
 count after live commit; exponent-zero leaves use the unchanged scalar body. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyStoppedLeafCount
 noncomputable section
 open CompactGadgetReservationShape (Shape)

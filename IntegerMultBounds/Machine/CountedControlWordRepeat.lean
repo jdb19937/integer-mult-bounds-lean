@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.BinaryAddressOffsetRepeatCopy
-import IntegerMultBounds.Machine.ArbitraryWidthZeroHeaderShared
+module
+
+public import IntegerMultBounds.Machine.BinaryAddressOffsetRepeatCopy
+public import IntegerMultBounds.Machine.ArbitraryWidthZeroHeaderShared
 
 /-! Physical repetition of one original control word for an address-table
 scan. The immutable runtime repetition descriptor is retained; the local
 clock is physically initialized and erased, both output/source heads return
 and no repeated control stream is supplied. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedControlWordRepeat
 noncomputable section
 open BinaryAddressOffsetRepeatData (copies)

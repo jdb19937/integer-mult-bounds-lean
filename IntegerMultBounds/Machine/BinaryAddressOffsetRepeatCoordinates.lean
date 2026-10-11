@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.BinaryAddressOffsetRepeatConstructBudget
+module
+
+public import IntegerMultBounds.Machine.BinaryAddressOffsetRepeatConstructBudget
 
 /-! Coordinate alignment with the actual swap--rotate--swap source order.
 After swapping, the dirty-back field is before G=H*2^(n*q)*L. Every physical
 rotation row receives the parity offset of its own selected source address. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryAddressOffsetRepeatCoordinates
 open BinaryAddressOffsetRepeatData
 

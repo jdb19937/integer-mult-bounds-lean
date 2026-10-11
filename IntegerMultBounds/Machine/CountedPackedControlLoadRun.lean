@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CountedPackedControlLoadLine
-import IntegerMultBounds.Machine.WordBankCleanup
+module
+
+public import IntegerMultBounds.Machine.CountedPackedControlLoadLine
+public import IntegerMultBounds.Machine.WordBankCleanup
 
 /-! Reusable dirty-control loading and unloading with fixed control. The
 original dirty word is updated, the control word is preserved, and all
 private words, generated headers, and runtime clocks are physically erased. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedPackedControlLoadRun
 noncomputable section
 variable {a : ℕ}

@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActiveRepairEarlyOriginalPipelineEndpoint
-import IntegerMultBounds.Machine.CountedTapeRepairBudget
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairEarlyOriginalPipelineEndpoint
+public import IntegerMultBounds.Machine.CountedTapeRepairBudget
 
 /-! Word-volume bounds for physical flag/extract/sort/reinsert cleanup.
 These list lemmas will be instantiated with the actual early/later key programs. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairEarlyOriginalPipelineBudgetWords
 noncomputable section
 

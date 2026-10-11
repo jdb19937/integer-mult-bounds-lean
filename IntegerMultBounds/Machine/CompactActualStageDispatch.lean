@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactActualStageRuns
-import IntegerMultBounds.Machine.ActivePrefixStageDispatchSelected
+module
+
+public import IntegerMultBounds.Machine.CompactActualStageRuns
+public import IntegerMultBounds.Machine.ActivePrefixStageDispatchSelected
 
 /-! The fixed original-input runtime direction dispatcher executes actual
 multiplier stages at density constant one. Scalar choices, cutoff and global
 rows supply every repair allowance; no node direction or width is an input. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactActualStageDispatch
 noncomputable section
 open CompactGadgetReservationShape (Shape)

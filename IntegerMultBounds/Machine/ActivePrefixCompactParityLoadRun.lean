@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixCompactParityLoadHeaders
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixCompactParityLoadHeaders
 
 /-! Actual original-input pure parity offset production, original-row repetition
 and compact-back rotation, without supplied derived descriptors or tables.
 All stages reuse the same fixed blank forty-one-tape workspace. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixCompactParityLoadRun
 noncomputable section
 open ActivePrefixCompactParityLoadData

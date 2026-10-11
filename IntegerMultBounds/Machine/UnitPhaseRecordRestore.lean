@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.UnitPhaseRecordFull
+module
+
+public import IntegerMultBounds.Machine.UnitPhaseRecordFull
 
 /-! Exact restored caller state after a complete phase record iteration.
 The next coefficient context is arbitrary because all numerator/control
 workspace is physically blank; only the actual streams and counter advance. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.UnitPhaseRecordRestore
 noncomputable section
 open CompactGadgetReservationShape (Shape)

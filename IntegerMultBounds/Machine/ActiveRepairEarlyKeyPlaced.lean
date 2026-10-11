@@ -1,6 +1,11 @@
-import IntegerMultBounds.Machine.ActiveRepairEarlyKeyRun
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairEarlyKeyRun
 
 /-! Full early key computation on arbitrary original caller ports. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairEarlyKeyPlaced
 noncomputable section
 open ActiveRepairEarlyKeyData ActiveRepairEarlyKeyData.Data ActiveRepairEarlyKeyRun

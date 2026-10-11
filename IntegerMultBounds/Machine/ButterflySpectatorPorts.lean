@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ButterflySpectatorOriginal
+module
+
+public import IntegerMultBounds.Machine.ButterflySpectatorOriginal
 
 /-! Six public ports of the actual spectator-preserving butterfly: immutable
 bit dimension, selected bit, polynomial count, precision, outer rows, native word.
 All other local tapes start and finish blank for repeated leaf execution. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ButterflySpectatorPorts
 noncomputable section
 abbrev count := 52+ButterflyAxisPorts.count

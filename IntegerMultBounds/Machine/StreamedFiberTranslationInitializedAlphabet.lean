@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.StreamedFiberTranslationInitialized
-import IntegerMultBounds.Machine.StreamedFiberTranslationAlphabet
+module
+
+public import IntegerMultBounds.Machine.StreamedFiberTranslationInitialized
+public import IntegerMultBounds.Machine.StreamedFiberTranslationAlphabet
 
 /-! Complete original-header streamed rotation on the interchange alphabet.
 The actual machine physically initializes and erases every private tape. Its
 larger-alphabet endpoints are literal banks and arrays, not supplied execution
 certificates or prepared marker configurations. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.StreamedFiberTranslationInitializedAlphabet
 noncomputable section
 variable {a : ℕ}

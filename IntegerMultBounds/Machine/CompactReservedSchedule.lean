@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.CompactReservedAxisRun
+module
+
+public import IntegerMultBounds.Machine.CompactReservedAxisRun
 
 /-! Both reserved intervals use a fixed counted program reading their generated
 count descriptors; no repetition count enters finite control. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactReservedSchedule
 noncomputable section
 open CompactReservedHeaders

@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActivePrefixLayoutGeometry
-import IntegerMultBounds.Machine.ActivePrefixSelectedOffsetBank
-import IntegerMultBounds.Machine.ActivePrefixParityOffsetBank
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixLayoutGeometry
+public import IntegerMultBounds.Machine.ActivePrefixSelectedOffsetBank
+public import IntegerMultBounds.Machine.ActivePrefixParityOffsetBank
 
 /-! Runtime producer shapes specialized to the unchanged active-target layout.
 These are geometry identities only; physical synthesis is a separate duty. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixLayoutShapes
 open CompactGadgetReservationShape CompactActiveTargetLayout CompactActiveTargetGeometry
 open ActivePrefixLayoutGeometry

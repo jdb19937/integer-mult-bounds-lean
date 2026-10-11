@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.FlatCoordinateDimensions
-import IntegerMultBounds.Machine.ControlledShiftDimensionInstall
-import IntegerMultBounds.Machine.PrefixWidthCopiesAt
+module
+
+public import IntegerMultBounds.Machine.FlatCoordinateDimensions
+public import IntegerMultBounds.Machine.ControlledShiftDimensionInstall
+public import IntegerMultBounds.Machine.PrefixWidthCopiesAt
 
 /-! An actual controlled shift from one exponent, one record-width descriptor,
 one payload array, and wholly blank generated storage. Dimensional arithmetic,
 all width/B/Q/P descriptor copies, prefix initialization and the shift itself
 execute as fixed finite-state programs with a charged linear-volume bound. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.FlatCoordinateShiftFromDimensions
 open Networks
 open Networks.Shared50ModularControl (prime)
@@ -21,7 +26,7 @@ abbrev fields (t : Fin d) := (t.val-1)+1
 abbrev prefixTapes (t : Fin d) := PrefixCounterInit.tapeCount (fields t)
 abbrev TapeCount (t : Fin d) := (9+prefixTapes t)+17
 
-private def suffixPlacement (n : ℕ) : Fin ((9+17)+n) ≃ Fin ((9+n)+17) where
+def suffixPlacement (n : ℕ) : Fin ((9+17)+n) ≃ Fin ((9+n)+17) where
   toFun := Fin.addCases
     (Fin.addCases (fun i => Fin.castAdd 17 (Fin.castAdd n i)) (Fin.natAdd (9+n)))
     (fun i => Fin.castAdd 17 (Fin.natAdd 9 i))

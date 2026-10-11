@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.WeightedPhaseAccumulator
-import IntegerMultBounds.Machine.UnitPhaseSigned
+module
+
+public import IntegerMultBounds.Machine.WeightedPhaseAccumulator
+public import IntegerMultBounds.Machine.UnitPhaseSigned
 
 /-! The actual weighted-control scanner feeds its physical two-bit readout
 straight into the four-way signed coefficient kernel. No phase-result flag is
 supplied to the composed program. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.WeightedUnitPhase
 noncomputable section
 open WeightedPhaseAccumulator (accumulate weightedSum)

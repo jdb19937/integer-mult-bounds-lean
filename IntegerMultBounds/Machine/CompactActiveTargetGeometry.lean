@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactActiveTargetLayout
-import IntegerMultBounds.Machine.FiberLayoutData
-import IntegerMultBounds.Machine.CompactGadgetReservationHeadersCarvedData
+module
+
+public import IntegerMultBounds.Machine.CompactActiveTargetLayout
+public import IntegerMultBounds.Machine.FiberLayoutData
+public import IntegerMultBounds.Machine.CompactGadgetReservationHeadersCarvedData
 
 /-! Target-fiber and compact front/back-swap views of one unchanged array.
 The target occupies its literal active subinterval; all translations of a
 compact field after exchange have the entire active block in their prefix. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactActiveTargetGeometry
 open CompactGadgetReservationShape
 open CompactActiveTargetLayout

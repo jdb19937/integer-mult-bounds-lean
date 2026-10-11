@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactComplexRootPieceQueue
+module
+
+public import IntegerMultBounds.Machine.CompactComplexRootPieceQueue
 
 /-! Zero-cost reassociation of the numeric43, queue1 and arbitrary appended
 native/controller bank. All persistent recursive storage may be placed in
 this appended bank, beyond the original native66 private workspace. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexControllerTapeAssoc
 variable {a t q : ℕ}
 

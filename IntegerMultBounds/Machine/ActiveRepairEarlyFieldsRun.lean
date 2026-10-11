@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActiveRepairEarlyFieldsBank
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairEarlyFieldsBank
 
 /-! Actual extracted-field inverse, guard and ideal toggle on one thirty-tape
 bank. Source controls may be extracted afresh for every original array rank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairEarlyFieldsRun
 noncomputable section
 open ActiveRepairEarlyFieldsBank

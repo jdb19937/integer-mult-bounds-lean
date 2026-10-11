@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactReservationRate
+module
+
+public import IntegerMultBounds.Machine.CompactReservationRate
 
 /-! Uniform aggregation of paid individual-axis costs at the actual reservation
 cutoff. This does not assume execution of an axis kernel: that physical proof
 must supply its per-axis volume estimate. Both the volume and selected dimension
 may vary arbitrarily with the input. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactFallbackBudget
 noncomputable section
 open Filter Parameters Sizes CompactReservationCutoff

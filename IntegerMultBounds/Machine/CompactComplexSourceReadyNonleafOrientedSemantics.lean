@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyNonleafFinalSemantics
-import IntegerMultBounds.Machine.CompactComplexSourceReadyNonleafOrientedEndpoint
-import IntegerMultBounds.Networks.ComplexInverseExecution
-import IntegerMultBounds.Networks.ComplexEndpointGrid
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyNonleafFinalSemantics
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyNonleafOrientedEndpoint
+public import IntegerMultBounds.Networks.ComplexInverseExecution
+public import IntegerMultBounds.Networks.ComplexEndpointGrid
 
 /-! Genuine nonleaf contraction and saved-call post-orientation have exact
 Gaussian semantics. Negation safety is derived from the completed network,
 original Path and retained signed reserve, including endpoint corrections. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyNonleafOrientedSemantics
 noncomputable section
 open Networks

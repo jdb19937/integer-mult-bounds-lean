@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ArbitraryWidthHighExchange
-import IntegerMultBounds.Machine.SharedPlacementAlphabet
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthHighExchange
+public import IntegerMultBounds.Machine.SharedPlacementAlphabet
 
 /-! Actual high exchange on a caller's physically shared source tape. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthHighExchangeShared
 noncomputable section
 open Networks
@@ -11,7 +16,7 @@ open SharedPlacementAlphabet (setTape)
 open ArbitrarySliceCall (rootCount commonCount rootBank data)
 variable {t : ℕ}
 
-private theorem common_le : commonCount ≤ rootCount :=
+theorem common_le : commonCount ≤ rootCount :=
   SharedBankFamily.common_le_tapeCount
     (Shared50RecursiveControl.block Shared50RecursiveImplementation.returnCapacity
       Shared50RecursiveImplementation.width Shared50RecursiveImplementation.pcStack

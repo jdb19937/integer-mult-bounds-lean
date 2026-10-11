@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.RadixDigitMoveInitialized
+module
+
+public import IntegerMultBounds.Machine.RadixDigitMoveInitialized
 
 /-! Fixed-radix digit movement with four canonical descriptors already present.
 The source and every private head return to zero; all scratch is erased. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RadixDigitMovePrepared
 open RadixDigitMoveRows
 open RadixDigitMoveCore (count)

@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.Shared50RecursiveInduction
-import IntegerMultBounds.Machine.Shared50RecursiveBudgetBound
+module
+
+public import IntegerMultBounds.Machine.Shared50RecursiveInduction
+public import IntegerMultBounds.Machine.Shared50RecursiveBudgetBound
 
 /-! Full execution of the actual fixed root interchange program on power-width
 binary arrays. Root descriptor/return-frame construction, recursive execution,
 physical restoration, and genuine halt are all included. The complete bank is
 restored except for the exact full H/D transpose of the sole I/O array. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.Shared50RecursiveRootExecution
 noncomputable section
 open Networks

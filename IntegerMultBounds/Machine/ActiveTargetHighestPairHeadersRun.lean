@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActiveTargetHighestPairHeadersAtomic
+module
+
+public import IntegerMultBounds.Machine.ActiveTargetHighestPairHeadersAtomic
 
 /-! Complete physical highest-pair header synthesis and cleanup. All five
 original words survive, and every temporary power/product word is erased. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveTargetHighestPairHeadersRun
 noncomputable section
 open ActiveTargetHighestPairData ActiveTargetHighestPairHeadersData

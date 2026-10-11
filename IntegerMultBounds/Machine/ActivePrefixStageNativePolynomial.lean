@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActivePrefixStageNativePairSchedule
-import IntegerMultBounds.Machine.UnitPhaseFullStreamNormalized
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStageNativePairSchedule
+public import IntegerMultBounds.Machine.UnitPhaseFullStreamNormalized
 
 /-! Canonical native rows are literal serialized polynomial coefficients.
 A basis stage changes the original address row while retaining every polynomial
 coefficient and stored digit. No polynomial count is inferred from word width. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixStageNativePolynomial
 noncomputable section
 open CompactGadgetReservationShape (Shape)

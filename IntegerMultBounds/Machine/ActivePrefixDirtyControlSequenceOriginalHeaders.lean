@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlSequenceOriginalInputs
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlSequenceOriginalInputs
 
 /-! Three actual dirty-control numeric header banks, followed by physical
 cleanup that restores all generated metadata tapes to blank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixDirtyControlSequenceOriginalHeaders
 noncomputable section
 open ActivePrefixDirtyControlSequenceOriginalData ActivePrefixDirtyControlSequenceOriginalInputs

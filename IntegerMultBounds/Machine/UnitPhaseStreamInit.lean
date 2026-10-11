@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.UnitPhaseAddressHeaders
-import IntegerMultBounds.Machine.UnitPhaseAddressInitAt
+module
+
+public import IntegerMultBounds.Machine.UnitPhaseAddressHeaders
+public import IntegerMultBounds.Machine.UnitPhaseAddressInitAt
 
 /-! Complete live counter initialization from the original node/global
 headers. The address width is derived physically, used to fill the counter
 and readout, then its generated header is erased. Streams are spectators. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.UnitPhaseStreamInit
 noncomputable section
 open CompactGadgetReservationShape (Shape)

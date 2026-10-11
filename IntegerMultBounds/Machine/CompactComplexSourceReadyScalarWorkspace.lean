@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyWorkspace
-import IntegerMultBounds.Machine.CompactComplexScalarCountLifecycle
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyWorkspace
+public import IntegerMultBounds.Machine.CompactComplexScalarCountLifecycle
 
 /-! The actual scalar lifecycle uses a dedicated fixed suffix after the shared
 leaf/spectator bank. All nine public frames and both other private banks remain
 available to recursive descendants; no runtime depth enters this placement. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyScalarWorkspace
 noncomputable section
 open CompactComplexScalarCountLifecycle (publicTapes)
@@ -15,7 +20,7 @@ attribute [local irreducible] CompactComplexRolePhaseSite.roleCount
 abbrev roles := CompactComplexRolePhaseSite.roleCount
 abbrev permanentTapes (s c : ℕ) := CompactComplexNativeCodecFrame.permanentTapes (10+s) c
 abbrev nodeTapes (s c : ℕ) := CompactComplexSourceReadyWorkspace.tapes s c
-private def fixedSuffix (a b : ℕ) : ℕ :=
+def fixedSuffix (a b : ℕ) : ℕ :=
   Classical.choose (show ∃ n : ℕ,n=a+b from ⟨a+b,rfl⟩)
 private theorem fixedSuffix_eq (a b : ℕ) : fixedSuffix a b=a+b :=
   Classical.choose_spec (show ∃ n : ℕ,n=a+b from ⟨a+b,rfl⟩)
@@ -37,10 +42,10 @@ theorem public_le : permanentTapes s c ≤ nodeTapes s c := by
   exact (((Nat.le_add_right _ 2).trans (Nat.le_add_right _ 7)).trans
     (Nat.le_add_right _ _)).trans (Nat.le_add_right _ 10)
 
-private theorem suffix_bound {P N W : ℕ} (i : Fin (P+W)) (hi : P ≤ i.val) :
+theorem suffix_bound {P N W : ℕ} (i : Fin (P+W)) (hi : P ≤ i.val) :
     N+(i.val-P)<N+W := by have := i.isLt; omega
 
-private def select {P N W : ℕ} (hPN : P≤N) (i : Fin (P+W)) : Fin (N+W) :=
+def select {P N W : ℕ} (hPN : P≤N) (i : Fin (P+W)) : Fin (N+W) :=
   if h : i.val<P then ⟨i.val,lt_of_lt_of_le h (hPN.trans (Nat.le_add_right _ _))⟩
   else ⟨N+(i.val-P),suffix_bound i (Nat.le_of_not_gt h)⟩
 
@@ -52,7 +57,7 @@ private theorem select_injective {P N W : ℕ} (hPN : P≤N) :
   unfold select at hv
   split_ifs at hv <;> simp only at hv <;> omega
 
-private theorem placement_size {P N W : ℕ} (hPN : P≤N) :
+theorem placement_size {P N W : ℕ} (hPN : P≤N) :
     (P+W)+(N-P)=N+W := by omega
 
 def slot (i : Fin (activeTapes s c)) : Fin (tapes s c) := select public_le i
@@ -119,7 +124,7 @@ theorem active_ready (v : Tapes (nodeTapes s c) 2) :
 
 /-- Replace only the original permanent caller prefix. All source-ready
 controller, leaf and spectator work remains literal and unchanged. -/
-private def prefixOutput {P N : ℕ} (v : Tapes N 2) (w : Tapes P 2) : Tapes N 2 :=
+def prefixOutput {P N : ℕ} (v : Tapes N 2) (w : Tapes P 2) : Tapes N 2 :=
   ⟨fun i => if h : i.val<P then w.head ⟨i.val,h⟩ else v.head i,
    fun i => if h : i.val<P then w.tape ⟨i.val,h⟩ else v.tape i⟩
 
@@ -245,7 +250,7 @@ private theorem suffix_assoc {P A B S : ℕ} (h : S=A+B) : (P+A)+B=P+S := by
 
 private theorem lifecycle_public : publicTapes (10+s)=permanentTapes s roles := rfl
 
-private theorem lifecycle_size :
+theorem lifecycle_size :
     (publicTapes (10+s)+43)+RawLinearCombinationComplexDenominatorPlaced.localCount
       CompactComplexScalarRowBlock.wireCount CompactComplexScalarPolynomialSequence.scratch
       =activeTapes s roles := by
@@ -254,7 +259,7 @@ private theorem lifecycle_size :
   exact (suffix_assoc (P:=publicTapes (10+s)) hS).trans
     (congrArg (fun P => P+scratch) (lifecycle_public (s:=s)))
 
-private def relocate {k : ℕ} (P : Σ q,Program k q 2)
+def relocate {k : ℕ} (P : Σ q,Program k q 2)
     (h : k=activeTapes s c) : Σ q,Program (tapes s c) q 2 :=
   liftProgram (s:=s) (c:=c) ⟨P.1,reindex P.2 (finCongr h)⟩
 
@@ -268,7 +273,7 @@ private theorem relocate_runs {k : ℕ} (P : Σ q,Program k q 2)
   simp only [raw_reindex] at hr
   exact lift_runs (s:=s) (c:=c) ⟨P.1,reindex P.2 (finCongr hsize)⟩ v w hr
 
-private def lifecycle (header : Fin (10+s)) (hh : header.val≠7)
+def lifecycle (header : Fin (10+s)) (hh : header.val≠7)
     (ops : List CompactComplexScalarIntegerRows.RowIndex) :
     Σ q,Program ((publicTapes (10+s)+43)+RawLinearCombinationComplexDenominatorPlaced.localCount
       CompactComplexScalarRowBlock.wireCount CompactComplexScalarPolynomialSequence.scratch) q 2 :=
@@ -298,7 +303,7 @@ theorem realizes (header : Fin (10+s)) (hh : header.val≠7)
       CompactComplexScalarRowBlock.wireCount CompactComplexScalarPolynomialSequence.scratch))
     (lifecycle (s:=s) header hh ops) (lifecycle_size (s:=s)) v w h
 
-private def roleLifecycle (header : Fin (10+s)) (hh : header.val≠7)
+def roleLifecycle (header : Fin (10+s)) (hh : header.val≠7)
     (ops : List CompactComplexScalarIntegerRows.RowIndex) :
     Σ q,Program ((publicTapes (10+s)+43)+RawLinearCombinationComplexDenominatorPlaced.localCount
       CompactComplexScalarRowBlock.wireCount CompactComplexScalarPolynomialSequence.scratch) q 2 :=

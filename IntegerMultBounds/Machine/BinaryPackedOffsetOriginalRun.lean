@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.BinaryPackedOffsetRun
-import IntegerMultBounds.Machine.BinaryPackedRowCountBudget
+module
+
+public import IntegerMultBounds.Machine.BinaryPackedOffsetRun
+public import IntegerMultBounds.Machine.BinaryPackedRowCountBudget
 
 /-! Compute the fiber count from the original four headers, execute the actual
 swap/rotation/swap, and physically erase the derived descriptor. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryPackedOffsetOriginalRun
 noncomputable section
 open Networks.Shared50ModularControl (prime)

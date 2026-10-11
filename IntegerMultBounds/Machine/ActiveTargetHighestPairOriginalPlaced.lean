@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActiveTargetHighestPairOriginalRun
+module
+
+public import IntegerMultBounds.Machine.ActiveTargetHighestPairOriginalRun
 
 /-! Six-port original-header highest-bit execution on arbitrary caller banks.
 The array alone changes; original words, caller spectators, and all private
 blank tapes are retained exactly. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveTargetHighestPairOriginalPlaced
 noncomputable section
 open ActiveTargetHighestPairData ActiveTargetHighestPairHeadersData

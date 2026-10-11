@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ButterflyIndependentGuardHeaders
+module
+
+public import IntegerMultBounds.Machine.ButterflyIndependentGuardHeaders
 
 /-! Paid guard-header preparation, restoration and selected-axis reset on the
 actual counted-axis bank. The coefficient stream is framed literally, so these
 operations perform no uncharged re-encoding or record-width changes. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ButterflyIndependentGuardBank
 noncomputable section
 open ButterflyIndependentGuardHeaders

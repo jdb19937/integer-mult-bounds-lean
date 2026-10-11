@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActiveRepairEarlyKeyOriginalGeometry
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairEarlyKeyOriginalGeometry
 
 /-! Original-input early key production on arbitrary caller tapes, retaining
 all original descriptors, the scan counter, and every complementary frame. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairEarlyKeyOriginalPlaced
 noncomputable section
 open ActiveRepairEarlyKeyOriginalData ActiveRepairEarlyKeyOriginalValid

@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactComplexChildGridAlignment
-import IntegerMultBounds.Machine.NativeSignedGapPromoteWord
-import IntegerMultBounds.Machine.CompactComplexChildGridReturnBudget
+module
+
+public import IntegerMultBounds.Machine.CompactComplexChildGridAlignment
+public import IntegerMultBounds.Machine.NativeSignedGapPromoteWord
+public import IntegerMultBounds.Machine.CompactComplexChildGridReturnBudget
 
 /-! Actual literal promoted spectator words give the shared grid required by
 scalar streams after a stopped child. Their signed equations and capacity
 follow from the original dependency Path, not a supplied promotion contract. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexChildGridPromoted
 noncomputable section
 open CompactGadgetReservationShape (Shape)

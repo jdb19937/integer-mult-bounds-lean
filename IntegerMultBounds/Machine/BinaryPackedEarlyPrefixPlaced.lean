@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.BinaryPackedEarlyPrefixAlphabet
-import IntegerMultBounds.Machine.BinaryPackedEarlyPrefixAction
+module
+
+public import IntegerMultBounds.Machine.BinaryPackedEarlyPrefixAlphabet
+public import IntegerMultBounds.Machine.BinaryPackedEarlyPrefixAction
 
 /-! Arbitrary caller placement of the complete repeated-offset constructor.
 Seven shared tapes hold q/b/n/L/K, the original controls and blank destination. The 43 appended
 private tapes are all restored blank; every caller spectator is preserved. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryPackedEarlyPrefixPlaced
 open SharedPlacementAlphabet (setTape)
 open BinaryAddressOffsetRepeatAlphabet (word)

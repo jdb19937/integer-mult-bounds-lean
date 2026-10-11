@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActivePrefixLayoutAbsorption
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixLayoutAbsorption
 
 /-! The actual layout pays the wider dirty-U producer bound without requiring
 the wide target in a compact slot or increasing the record payload allowance. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixDirtyControlLayoutAbsorption
 open CompactGadgetReservationShape CompactActiveTargetGeometry
 open ActivePrefixLayoutShapes ActivePrefixLayoutGeometry

@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.RecursiveVolumeClean
-import IntegerMultBounds.Machine.RecursiveAffinePrepare
-import IntegerMultBounds.Machine.CleanSubbank
-import IntegerMultBounds.Machine.BinaryDescriptorCleanupList
+module
+
+public import IntegerMultBounds.Machine.RecursiveVolumeClean
+public import IntegerMultBounds.Machine.RecursiveAffinePrepare
+public import IntegerMultBounds.Machine.CleanSubbank
+public import IntegerMultBounds.Machine.BinaryDescriptorCleanupList
 
 /-! Physically synthesize a call's volume count from its six headers, leaving
 the reusable counted-loop clock blank at origin. The count can be erased before
 recursive entry and regenerated from restored headers for recovery. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveCallCount
 noncomputable section
 open SharedPlacementAlphabet (setTape)

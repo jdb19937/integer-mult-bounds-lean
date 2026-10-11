@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.ActivePrefixStageHeadersBudget
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStageHeadersBudget
 
 /-! Original thirteen numeric headers physically produce the complete stage
 metadata for an all-axis phase caller. The remaining phase tapes, including
 source56, immutable ell65 and edge token66, are stationary frame. Computed
 stage headers are physically erased after the phase caller releases its own
 workspace; there is no axis25 ordinal setup or per-axis metadata pass. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.AllAxisPhaseStageMetadata
 noncomputable section
 open CompactGadgetReservationShape (Shape)

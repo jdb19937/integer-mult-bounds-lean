@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.UnitPhaseAddressHeaders
-import IntegerMultBounds.Machine.PackedOffsetPowerHeader
-import IntegerMultBounds.Machine.PlacedDescriptorConstruction
+module
+
+public import IntegerMultBounds.Machine.UnitPhaseAddressHeaders
+public import IntegerMultBounds.Machine.PackedOffsetPowerHeader
+public import IntegerMultBounds.Machine.PlacedDescriptorConstruction
 
 /-! Construct the actual full-address power2^bits from the physically derived
 width22. Output23 is the generated power; six temporary tapes28–33 are blank
 again, and every original/header tape is retained. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.UnitPhaseCountPower
 noncomputable section
 open CompactGadgetReservationShape (Shape)

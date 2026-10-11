@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.BinaryPrefixFieldTableAlphabet
+module
+
+public import IntegerMultBounds.Machine.BinaryPrefixFieldTableAlphabet
 
 /-! Actual field-table construction at arbitrary caller ports. Only three
 canonical original descriptors and a blank output are needed; all original
 and spectator tapes are retained and all private workspace returns blank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryPrefixFieldTablePlaced
 noncomputable section
 open SharedPlacementAlphabet (setTape)

@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactActualStageInputs
-import IntegerMultBounds.Machine.ActivePrefixStageFullBudget
+module
+
+public import IntegerMultBounds.Machine.CompactActualStageInputs
+public import IntegerMultBounds.Machine.ActivePrefixStageFullBudget
 
 /-! Actual original-slot stages execute with density constant one, with
 repair width and density paid by multiplier choices and the global pad.
 These are fixed original-input programs; runtime direction dispatch and
 recursive iteration are separate. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactActualStageRuns
 noncomputable section
 open CompactGadgetReservationShape (Shape)

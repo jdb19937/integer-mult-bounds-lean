@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.RecursiveChildSetupRoleBank
-import IntegerMultBounds.Machine.RecursiveCrossPrepare
-import IntegerMultBounds.Machine.RecursiveChildReturnRoleBank
+module
+
+public import IntegerMultBounds.Machine.RecursiveChildSetupRoleBank
+public import IntegerMultBounds.Machine.RecursiveCrossPrepare
+public import IntegerMultBounds.Machine.RecursiveChildReturnRoleBank
 
 /-! Recursive call entry after the parent row split. Supplied headers already
 describe one role array: save those headers and the return PC, then construct
 the cross-group child with divisor one. No second row division occurs. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveRoleChildCallSetup
 noncomputable section
 open RecursiveInterchangeLayout (Descriptor child volume)

@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyOrientedControls
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyOrientedControls
 
 /-! Source-only orientation retains all runtime stop descriptors and guard
 scratch readiness on the original caller bank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyOrientedControlsFrame
 noncomputable section
 open Networks

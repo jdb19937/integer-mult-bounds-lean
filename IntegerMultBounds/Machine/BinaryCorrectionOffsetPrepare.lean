@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.BinaryCorrectionOffsetRewind
+module
+
+public import IntegerMultBounds.Machine.BinaryCorrectionOffsetRewind
 
 /-! Build both actual subtraction operand tables from only original b/q/n
 and controls. Every gather and every source/control/output rewind is paid.
 The controlsAt source-prefix rewind preserves its unread b-stride suffix. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryCorrectionOffsetPrepare
 open SharedPlacementAlphabet (setTape)
 open BinarySelectedOffsetData (source controls)

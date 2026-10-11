@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.FlatAffineScalingInstall
-import IntegerMultBounds.Machine.FlatCoordinateDimensions
+module
+
+public import IntegerMultBounds.Machine.FlatAffineScalingInstall
+public import IntegerMultBounds.Machine.FlatCoordinateDimensions
 
 /-! A complete physical coordinate scaling from only b/W and the array payload:
 construct dimensions, install all raw descriptor copies, then run and normalize
 an actual occurring affine scaler. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.FlatCoordinateScalingConstruct
 open Networks
 open Shared50ModularControl (prime)
@@ -14,7 +19,7 @@ open FlatAffineScalingInstall (LocalTapes)
 noncomputable section
 variable {d b W : ℕ}
 
-private def source (a : FlatCoordinateStages.Array d b W) (t : Fin d) : ℤ → Fin 4 :=
+def source (a : FlatCoordinateStages.Array d b W) (t : Fin d) : ℤ → Fin 4 :=
   putWord (fun _ => blank) 0 (List.ofFn (fiberView a t))
 
 def workspace {r : ℚ} (a : FlatCoordinateStages.Array d b W) (t : Fin d) :=

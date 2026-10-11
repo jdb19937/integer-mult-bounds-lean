@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactPolynomialPhasePlacement
+module
+
+public import IntegerMultBounds.Machine.CompactPolynomialPhasePlacement
 
 /-! The phase source contract is derived from the literal original native
 basis-word caller, including its full appended converter and header workspace.
 No supplied serialization or alphabet compatibility premise is needed. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.NativePolynomialPhaseCaller
 noncomputable section
 open CompactGadgetReservationShape (Shape)

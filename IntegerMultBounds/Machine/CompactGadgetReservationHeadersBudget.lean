@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactGadgetReservationHeadersVolume
-import IntegerMultBounds.Machine.CompactGadgetReservationHeadersReserved
+module
+
+public import IntegerMultBounds.Machine.CompactGadgetReservationHeadersVolume
+public import IntegerMultBounds.Machine.CompactGadgetReservationHeadersReserved
 
 /-! All synthesized-header setup is absorbed in the actual role volume, with
 the certified compact width exponent and no extra chunk-spacing factor. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactGadgetReservationHeadersBudget
 noncomputable section
 open CompactGadgetReservationShape

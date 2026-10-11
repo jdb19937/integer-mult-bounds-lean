@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ArbitraryWidthHighFoldSemantics
-import IntegerMultBounds.Machine.ArbitraryWidthHighExchangeJoinEncoding
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthHighFoldSemantics
+public import IntegerMultBounds.Machine.ArbitraryWidthHighExchangeJoinEncoding
 
 /-! Exact source-tape endpoints for the arbitrary original descriptor. Folding
 prefix factors changes no serialized cell, before or after the full transpose. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthHighOriginalEncoding
 noncomputable section
 open Networks

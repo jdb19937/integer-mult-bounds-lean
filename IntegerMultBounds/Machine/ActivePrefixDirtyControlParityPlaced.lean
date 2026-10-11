@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CountedPackedParityValue
-import IntegerMultBounds.Machine.CompactGadgetReservationPlacement
+module
+
+public import IntegerMultBounds.Machine.CountedPackedParityValue
+public import IntegerMultBounds.Machine.CompactGadgetReservationPlacement
 
 /-! Actual dirty compact-control parity extraction on arbitrary caller tapes.
 The physical clock stream is retained, all metadata is generated and erased,
 and every head is restored. Five ports are U/clock/output/b/count. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixDirtyControlParityPlaced
 noncomputable section
 open SharedPlacementAlphabet (setTape)

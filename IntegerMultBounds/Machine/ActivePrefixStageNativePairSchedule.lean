@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixStageNativePairRun
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStageNativePairRun
 
 /-! A literal basis word compiles to a finite native machine. Every instruction
 physically restores its pair headers and private frame, so each next stage reads
 the same canonical row-major caller without coordinate-conversion premises. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixStageNativePairSchedule
 noncomputable section
 open CompactGadgetReservationShape (Shape)

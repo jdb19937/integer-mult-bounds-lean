@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.RecursiveInterchangeShiftConstruct
-import IntegerMultBounds.Machine.CleanExecution
+module
+
+public import IntegerMultBounds.Machine.RecursiveInterchangeShiftConstruct
+public import IntegerMultBounds.Machine.CleanExecution
 
 /-! A clean, reusable seven-factor H-controlled D shift. Only the original six
 headers and common payload pair survive; every generated dimension, control,
 arithmetic workspace and tracker is physically erased and reset. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveInterchangeShiftClean
 open RecursiveInterchangeLayout (Descriptor volume)
 open Networks

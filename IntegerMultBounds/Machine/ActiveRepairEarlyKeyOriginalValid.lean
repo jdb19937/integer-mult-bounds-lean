@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActiveRepairEarlyKeyOriginalData
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairEarlyKeyOriginalData
 
 /-! Generated header values satisfy the complete early-key execution contract.
 All start positions are functions of the original geometric widths. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairEarlyKeyOriginalValid
 noncomputable section
 open ActiveRepairEarlyKeyOriginalData ActiveRepairRankHeadersData

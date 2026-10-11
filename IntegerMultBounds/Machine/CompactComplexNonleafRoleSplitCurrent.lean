@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactComplexNonleafRoleMergeCurrentBudget
+module
+
+public import IntegerMultBounds.Machine.CompactComplexNonleafRoleMergeCurrentBudget
 
 /-! The genuine nonleaf branch splits the current source-ready Original array.
 The current raw row geometry remains unchanged; no entry quotient or ChildBank
 execution is required. The same boundary applies at a root node. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexNonleafRoleSplitCurrent
 noncomputable section
 open CompactGadgetReservationShape (Shape)

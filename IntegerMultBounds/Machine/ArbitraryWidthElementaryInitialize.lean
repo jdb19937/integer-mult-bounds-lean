@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ArbitraryWidthExecutionPrivateHeadersRoot
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthExecutionPrivateHeadersRoot
 
 /-! The elementary fallback's complete blank private bank is initialized by
 copying its six retained source headers, then cleared by the actual eraser. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthElementaryInitialize
 noncomputable section
 open Networks
@@ -10,7 +15,7 @@ open ArbitraryWidthExecutionPrivateHeadersCore (blankTape emptyOne emptyTwo)
 open ArbitraryWidthExecutionPrivateHeadersRoot (elementarySlots elementary_injective elementary_sparse)
 variable {t : ℕ}
 
-private theorem six_le : 6 ≤ ArbitraryWidthElementary.tapeCount := by
+theorem six_le : 6 ≤ ArbitraryWidthElementary.tapeCount := by
   change 6 ≤ ArbitrarySliceCall.rootCount+16
   omega
 

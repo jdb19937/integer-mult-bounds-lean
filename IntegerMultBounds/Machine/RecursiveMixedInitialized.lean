@@ -1,6 +1,8 @@
-import IntegerMultBounds.Machine.RecursiveVolumeRoleBank
-import IntegerMultBounds.Machine.RecursiveMixedSchedule
-import IntegerMultBounds.Machine.SharedBankRawCompose
+module
+
+public import IntegerMultBounds.Machine.RecursiveVolumeRoleBank
+public import IntegerMultBounds.Machine.RecursiveMixedSchedule
+public import IntegerMultBounds.Machine.SharedBankRawCompose
 
 /-! One fixed mixed-operation machine starting from roles, six canonical headers,
 and blank work. Its clock and full stream-volume descriptor are physically
@@ -8,6 +10,9 @@ constructed before any operation. Construction, all joins and complete private
 cleanup are included in the linear time bound. As in RecursiveMixedSchedule,
 all operations use the same supplied coordinate view; header regrouping and
 recursive calls remain separate obligations. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveMixedInitialized
 noncomputable section
 open Networks

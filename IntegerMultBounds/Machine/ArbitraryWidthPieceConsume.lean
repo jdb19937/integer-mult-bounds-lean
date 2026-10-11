@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ArbitraryWidthLevelPlacement
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthLevelPlacement
 
 /-! The concrete digit continuation: perform the runtime digit's selected
 slice calls, erase that digit, then physically advance depth and power-width.
 No callback execution trace is a hypothesis of this continuation theorem. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthPieceConsume
 noncomputable section
 open Networks

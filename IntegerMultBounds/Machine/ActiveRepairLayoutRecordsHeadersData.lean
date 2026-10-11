@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsEarly
-import IntegerMultBounds.Machine.ActivePrefixEarlySequenceOriginalInputs
-import IntegerMultBounds.Machine.ActiveRepairEarlyKeyOriginalGeometry
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsEarly
+public import IntegerMultBounds.Machine.ActivePrefixEarlySequenceOriginalInputs
+public import IntegerMultBounds.Machine.ActiveRepairEarlyKeyOriginalGeometry
 
 /-! Original early caller descriptors determine the full-width record repair
 metadata. New words are row length, n+1, source width and complete address width;
 their physical construction is the separate header producer. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLayoutRecordsHeadersData
 noncomputable section
 open CompactGadgetReservationShape (Shape)

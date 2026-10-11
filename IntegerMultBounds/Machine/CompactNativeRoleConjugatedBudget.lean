@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactNativeRoleConjugatedPorts
+module
+
+public import IntegerMultBounds.Machine.CompactNativeRoleConjugatedPorts
 
 /-! Every copied original descriptor and the immutable ell word is charged
 against actual stage record volume. Enlarging the native codec supplies the
 polynomial count and signed-width premises without a cost allowance. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactNativeRoleConjugatedBudget
 noncomputable section
 open CompactGadgetReservationShape (Shape)

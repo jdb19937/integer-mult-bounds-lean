@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.CompactComplexNonleafRolePreparation
-import IntegerMultBounds.Machine.CompactComplexNonleafRoleEntryBudget
-import IntegerMultBounds.Machine.CompactComplexNonleafRoleChildBankBudget
-import IntegerMultBounds.Machine.CompactComplexNonleafRoleMergeCurrentBudget
+module
+
+public import IntegerMultBounds.Machine.CompactComplexNonleafRolePreparation
+public import IntegerMultBounds.Machine.CompactComplexNonleafRoleEntryBudget
+public import IntegerMultBounds.Machine.CompactComplexNonleafRoleChildBankBudget
+public import IntegerMultBounds.Machine.CompactComplexNonleafRoleMergeCurrentBudget
 
 /-! Uniform actual budgets for source-ready child entry and its later nonleaf
 role split. Entry parks payloads, divides rows once and constructs child control;
 only the nonleaf branch splits those already-quotiented current rows. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexNonleafRolePreparationBudget
 noncomputable section
 open CompactGadgetReservationShape (Shape)

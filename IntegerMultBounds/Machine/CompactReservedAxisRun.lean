@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.CompactReservedHeaders
+module
+
+public import IntegerMultBounds.Machine.CompactReservedHeaders
 
 /-! Forward and inverse sparse bodies preserve original global geometry and
 all generated interval controls, changing only ordinal and coefficient word. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactReservedAxisRun
 noncomputable section
 open CompactReservedHeaders

@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.FlatControlledShiftPayload
-import IntegerMultBounds.Machine.CleanExecution
-import IntegerMultBounds.Compact.ActiveTargetSubsegmentWords
+module
+
+public import IntegerMultBounds.Machine.FlatControlledShiftPayload
+public import IntegerMultBounds.Machine.CleanExecution
+public import IntegerMultBounds.Compact.ActiveTargetSubsegmentWords
 
 /-! Actual radix-two controlled one-bit rotation, followed by physical cleanup.
 Stage inputs supply canonical widths and B/Q/P descriptors; no offset table or
 initialized private tape is supplied. Arbitrary preceding/intervening/suffix
 spectators are included in the exact array. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveTargetHighestRun
 noncomputable section
 local instance : Fact (Nat.Prime 2) := ⟨by decide⟩

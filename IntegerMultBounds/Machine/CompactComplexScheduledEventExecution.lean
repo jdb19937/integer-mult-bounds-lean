@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactComplexCompletedLiveLower
+module
+
+public import IntegerMultBounds.Machine.CompactComplexCompletedLiveLower
 
 /-! Finite local node execution composes actual named scalar lifecycles
 and local child-machine contracts on one permanent caller bank. This compiler
 does not implement the fixed cyclic recursive dispatcher. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexScheduledEventExecution
 noncomputable section
 open Networks
@@ -23,7 +28,7 @@ attribute [local irreducible] CompactComplexScalarCountLifecycle.program
 
 abbrev eventTapes (s childTapes : ℕ) := CompactComplexScalarCountLifecycle.totalTapes s+childTapes
 
-private def padSigma {t N : ℕ} (P : Σ q,Program t q 2) (h : t≤N) : Σ q,Program N q 2 :=
+def padSigma {t N : ℕ} (P : Σ q,Program t q 2) (h : t≤N) : Σ q,Program N q 2 :=
   ⟨P.1,SharedBankFamily.padProgram P.2 h⟩
 
 private theorem pad_sigma_runs {permanent t N : ℕ} (P : Σ q,Program t q 2) (ht : t≤N)

@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.Shared50RecursiveExecution
+module
+
+public import IntegerMultBounds.Machine.Shared50RecursiveExecution
 
 /-! Actual return-stack decoding in the uniformly padded recursive graph.
 The erased frame and decoded finite state are both retained in the contract. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.Shared50RecursiveReturnExecution
 open Shared50RecursiveControl SharedBankFamilyExact SharedBankStageInput
 open SharedPlacementAlphabet (setTape)

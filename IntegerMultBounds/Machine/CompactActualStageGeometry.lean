@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactActualStageAllowance
-import IntegerMultBounds.Machine.CompactReservationCutoff
+module
+
+public import IntegerMultBounds.Machine.CompactActualStageAllowance
+public import IntegerMultBounds.Machine.CompactReservationCutoff
 
 /-! Actual scalar choices, the nonfallback cutoff and one global pad provide
 all geometry/record prerequisites of the original-input stage producers.
 No positive-row, guard-room or repair-width premise is supplied per node. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactActualStageGeometry
 noncomputable section
 open CompactGadgetReservationShape (Shape)

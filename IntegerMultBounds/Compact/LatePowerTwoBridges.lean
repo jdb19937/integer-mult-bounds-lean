@@ -1,7 +1,12 @@
-import IntegerMultBounds.Compact.LatePowerTwoWords
-import IntegerMultBounds.Machine.CountedLateRepairKeyBank
+module
+
+public import IntegerMultBounds.Compact.LatePowerTwoWords
+public import IntegerMultBounds.Machine.CountedLateRepairKeyBank
 
 /-! Literal physical later inverse and toggle words encode the exact destination rank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Compact.PowerTwo
 noncomputable section
 open IntegerMultBounds.Counter (value)

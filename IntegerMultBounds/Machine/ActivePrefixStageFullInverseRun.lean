@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActivePrefixStageInverseMachine
-import IntegerMultBounds.Machine.ActivePrefixStageFullInverseData
-import IntegerMultBounds.Machine.ActivePrefixStageFullBudget
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStageInverseMachine
+public import IntegerMultBounds.Machine.ActivePrefixStageFullInverseData
+public import IntegerMultBounds.Machine.ActivePrefixStageFullBudget
 
 /-! The same physical original-input stages implement recursive return. Every
 reverse run pays synthesis/action/erasure; a round trip pays two runs and join. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixStageFullInverseRun
 noncomputable section
 open CompactGadgetReservationShape (Shape)

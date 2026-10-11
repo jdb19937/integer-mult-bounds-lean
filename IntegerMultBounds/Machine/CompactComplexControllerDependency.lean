@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactComplexControllerChildBudget
-import IntegerMultBounds.Machine.CompactRecursiveDependencyBudget
+module
+
+public import IntegerMultBounds.Machine.CompactComplexControllerChildBudget
+public import IntegerMultBounds.Machine.CompactRecursiveDependencyBudget
 
 /-! The paid child prefix advances the real occurrence-indexed dependency
 Path and installs exactly its child interval and exponent on physical tapes.
 This connects geometric dependency accounting to actual controller/header
 words; execution of the intervening recursive child remains separate. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexControllerDependency
 noncomputable section
 open CompactComplexRecursiveGeometry CompactRecursiveDependencyBudget

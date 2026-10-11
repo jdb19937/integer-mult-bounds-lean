@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.AllAxisPolynomialAdvance
+module
+
+public import IntegerMultBounds.Machine.AllAxisPolynomialAdvance
 
 /-! The outer physically counted address loop runs one phase preparation per
 address and a complete inner coefficient loop. Original row metadata and
 polynomial multiplicity persist; both outer loop-work tapes are erased. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.AllAxisPolynomialStreamLoop
 noncomputable section
 open CompactGadgetReservationShape (Shape)

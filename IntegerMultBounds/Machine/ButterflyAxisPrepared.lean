@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ButterflyAxisHeadersInstall
-import IntegerMultBounds.Machine.ButterflyAxisPorts
+module
+
+public import IntegerMultBounds.Machine.ButterflyAxisHeadersInstall
+public import IntegerMultBounds.Machine.ButterflyAxisPorts
 
 /-! Lift the complete native axis machine onto the physically installed header
 bank. Original shape inputs and generated arithmetic headers are framed; the
 axis machine retains only its common stream and the eight real header copies. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ButterflyAxisPrepared
 noncomputable section
 open ButterflyAxisHeadersData ButterflyAxisHeadersGeometry ButterflyAxisHeadersBudget

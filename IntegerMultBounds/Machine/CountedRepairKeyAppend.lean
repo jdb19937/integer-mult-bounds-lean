@@ -1,6 +1,11 @@
-import IntegerMultBounds.Machine.CountedRepairKeyAppendMoves
+module
+
+public import IntegerMultBounds.Machine.CountedRepairKeyAppendMoves
 
 /-! Conditional key writing by actual scans, followed by physical head returns. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedRepairKeyAppend
 noncomputable section
 open CountedRepairKeyAppendMoves

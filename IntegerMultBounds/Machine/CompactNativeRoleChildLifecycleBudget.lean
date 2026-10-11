@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactNativeRoleStoppedChildCaller
-import IntegerMultBounds.Machine.NativePolynomialStageHeaderBudget
-import IntegerMultBounds.Machine.CompactSpectatorLeafGuardBudget
+module
+
+public import IntegerMultBounds.Machine.CompactNativeRoleStoppedChildCaller
+public import IntegerMultBounds.Machine.NativePolynomialStageHeaderBudget
+public import IntegerMultBounds.Machine.CompactSpectatorLeafGuardBudget
 
 /-! Paid child metadata lifecycles are bounded using actual original native
 volume. Fixed role quotients are binary divisions, with no numeric oracle. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactNativeRoleChildLifecycleBudget
 noncomputable section
 open CompactGadgetReservationShape (Shape)

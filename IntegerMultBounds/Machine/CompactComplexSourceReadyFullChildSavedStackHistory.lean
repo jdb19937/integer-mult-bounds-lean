@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexSavedStackTailInvariant
-import IntegerMultBounds.Machine.CompactComplexSourceReadyChildEntryPath
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSavedStackTailInvariant
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyChildEntryPath
 
 /-! The complete real child-entry endpoint has the actual pushed call frame.
 Source preparation and raw replacement retain storage; target, live and header
 saves use distinct physical ports. No endpoint equality is assumed. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyFullChildSavedStackHistory
 noncomputable section
 open Networks

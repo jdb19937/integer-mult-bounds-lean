@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CountedPackedShapeHeaders
-import IntegerMultBounds.Machine.CountedGatherOriginalRun
+module
+
+public import IntegerMultBounds.Machine.CountedPackedShapeHeaders
+public import IntegerMultBounds.Machine.CountedGatherOriginalRun
 
 /-! Physically place independently varying controls in stride-q output
 words. Original q/b/count descriptors generate and erase every derived header
 and clock; source and control tapes are retained. The source is scanned only
 as a physical clocked field, without contributing to the output value. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryVaryingControlOffsetGather
 noncomputable section
 variable {a : ℕ}

@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.RecursiveDigitDimensions
-import IntegerMultBounds.Machine.DigitInterchangeClean
-import IntegerMultBounds.Machine.BinaryDescriptorInstallMarkedList
+module
+
+public import IntegerMultBounds.Machine.RecursiveDigitDimensions
+public import IntegerMultBounds.Machine.DigitInterchangeClean
+public import IntegerMultBounds.Machine.BinaryDescriptorInstallMarkedList
 
 /-! Four physical marked descriptor copies connect the generated recursive
 base dimensions to a completely blank digit-interchange workspace. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveDigitInstall
 open BinaryDescriptorInstallMarkedList
 open DigitInterchangeBank (Slot slot name TapeCount)

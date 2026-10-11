@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ArbitraryWidthHighDimensions
-import IntegerMultBounds.Machine.BinaryDescriptorCleanupList
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthHighDimensions
+public import IntegerMultBounds.Machine.BinaryDescriptorCleanupList
 
 /-! Actual erasure of all six generated high-layout descriptors retains the
 sole original headers and restores every private tape to blank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthHighDimensionsCleanup
 noncomputable section
 open ArbitraryWidthHighDimensions

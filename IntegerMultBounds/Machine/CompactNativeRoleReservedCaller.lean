@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactNativeRoleScalarCaller
+module
+
+public import IntegerMultBounds.Machine.CompactNativeRoleScalarCaller
 
 /-! Paid global scalar bank to native reservation-role split. The genuine
 padding result remains at source43 throughout metadata preparation, then moves
 destructively to complete role words. Every original scalar, retained controller
 word and unrelated tape is framed, with all temporary metadata reclaimed. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactNativeRoleReservedCaller
 noncomputable section
 open CompactNativeRoleSourcePorts

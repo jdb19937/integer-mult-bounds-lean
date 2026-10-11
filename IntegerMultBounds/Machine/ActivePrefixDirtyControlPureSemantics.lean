@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlPurePlaced
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlSemantics
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlPurePlaced
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlSemantics
 
 /-! Literal pure target parity at every prefix, independent of the compact-U
 control values scanned by the physical gather. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixDirtyControlPureSemantics
 open ActivePrefixDirtyControlData hiding offsetWord
 open ActivePrefixDirtyControlPureBank (offsetWord)

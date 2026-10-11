@@ -1,12 +1,17 @@
-import IntegerMultBounds.Machine.CompactSpectatorLeafGuardHeaders
-import IntegerMultBounds.Machine.CompactSpectatorLeafLoop
-import IntegerMultBounds.Machine.CompactSpectatorInverseLeafLoop
-import IntegerMultBounds.Machine.ButterflyInverseAxisCorrect
+module
+
+public import IntegerMultBounds.Machine.CompactSpectatorLeafGuardHeaders
+public import IntegerMultBounds.Machine.CompactSpectatorLeafLoop
+public import IntegerMultBounds.Machine.CompactSpectatorInverseLeafLoop
+public import IntegerMultBounds.Machine.ButterflyInverseAxisCorrect
 
 /-! The actual sparse leaf's ordered full-address axes realize its literal Walsh
 kernel list for every outer row and polynomial spectator. Every prefix advances
 precision, carries its own numerator grid and uses the original fixed two-pass
 signed width. The inverse consumes the forward grid without normalization. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactSpectatorLeafSemantics
 noncomputable section
 open CompactGadgetReservationShape (Shape)

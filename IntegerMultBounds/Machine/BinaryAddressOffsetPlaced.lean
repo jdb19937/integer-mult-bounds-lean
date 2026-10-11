@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.BinaryAddressOffset
-import IntegerMultBounds.Machine.PlacementBank
+module
+
+public import IntegerMultBounds.Machine.BinaryAddressOffset
+public import IntegerMultBounds.Machine.PlacementBank
 
 /-! Place the complete parity-address producer using only caller-owned q/b/n
 and one blank destination. All 26 appended private tapes are returned blank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryAddressOffsetPlaced
 open SharedPlacementAlphabet (setTape)
 variable {t : ℕ}

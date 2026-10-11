@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.GuardedFiniteReturnFlow
-import IntegerMultBounds.Machine.CompactComplexControllerReturnStack
+module
+
+public import IntegerMultBounds.Machine.GuardedFiniteReturnFlow
+public import IntegerMultBounds.Machine.CompactComplexControllerReturnStack
 
 /-! Guarded cyclic control on the actual controller43/queue1/native66 bank.
 The return PC lives in appended storage, outside every original native tape;
 fixed continuation blocks may back-edge into the same shared recursive entry.
 Concrete role-block execution remains an explicit integration obligation. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexControllerFlow
 noncomputable section
 open CompactComplexControllerNativeFrame

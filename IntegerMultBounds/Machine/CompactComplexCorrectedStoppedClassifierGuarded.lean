@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedClassifierTablePath
-import IntegerMultBounds.Machine.CompactComplexCorrectedStoppedClassifierTensor
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedClassifierTablePath
+public import IntegerMultBounds.Machine.CompactComplexCorrectedStoppedClassifierTensor
 
 /-! Width-only classifier execution combines with any genuinely guarded input
 grid, including the parent's actual scalar prefix. No recursive-bound
 replacement of the input grid is needed. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexCorrectedStoppedClassifierGuarded
 noncomputable section
 open Networks

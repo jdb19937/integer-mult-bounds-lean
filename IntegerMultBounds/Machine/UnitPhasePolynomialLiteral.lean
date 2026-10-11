@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.UnitPhasePolynomialStream
+module
+
+public import IntegerMultBounds.Machine.UnitPhasePolynomialStream
 
 /-! Discharge every source context and row/coefficient adjacency premise
 from one literal flattened row-major polynomial array. Each address owns R
 consecutive coefficients; the final nonexistent coefficient is never read. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.UnitPhasePolynomialLiteral
 noncomputable section
 open CompactGadgetReservationShape (Shape)

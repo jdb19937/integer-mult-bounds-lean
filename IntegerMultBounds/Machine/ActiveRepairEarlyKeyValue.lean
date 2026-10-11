@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActiveRepairEarlyKeyRun
-import IntegerMultBounds.Machine.ActiveRepairEarlyFieldsValue
-import IntegerMultBounds.Machine.ActiveRepairDestinationPatchEndpoint
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairEarlyKeyRun
+public import IntegerMultBounds.Machine.ActiveRepairEarlyFieldsValue
+public import IntegerMultBounds.Machine.ActiveRepairDestinationPatchEndpoint
 
 /-! Exact guard classification and complete original-layout destination of
 the physical early-key writer. Local concatenation appears only in the proof. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairEarlyKeyValue
 noncomputable section
 open ActiveRepairEarlyKeyData ActiveRepairEarlyKeyData.Data ActiveRepairEarlyKeyRun

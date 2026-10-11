@@ -1,9 +1,13 @@
-import IntegerMultBounds.Networks.Shared50StageFrames
-import IntegerMultBounds.Networks.Shared50Certificate
+module
+
+public import IntegerMultBounds.Networks.Shared50StageFrames
+public import IntegerMultBounds.Networks.Shared50Certificate
 
 /-! Restriction of actual bounded label traces to the certified finite role
 bank. Every original incidence and its ordered pair of endpoint labels is
 preserved, including identity pivots and repeated incidences. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.Shared50FiniteTrace
 

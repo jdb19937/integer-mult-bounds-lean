@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.UnitPhaseStreamData
+module
+
+public import IntegerMultBounds.Machine.UnitPhaseStreamData
 
 /-! The physical stream endpoint is exactly the flattened coefficient array
 obtained by applying the runtime full-address unit phase to each record.
 Output serialization follows actual result widths, independent of reserved
 payload padding or unrelated spectator cells. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.UnitPhaseStreamEndpoint
 noncomputable section
 open CompactGadgetReservationShape (Shape)

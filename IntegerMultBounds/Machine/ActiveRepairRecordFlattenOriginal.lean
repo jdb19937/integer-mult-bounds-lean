@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActiveRepairRecordFlattenPrepare
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairRecordFlattenPrepare
 
 /-! Complete decoder from the literal unmarked record word. Its marker is
 physically installed, consumed by cleanup, and absent from the final bank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairRecordFlattenOriginal
 noncomputable section
 open ActiveRepairRecordFlatten ActiveRepairRecordFlattenEndpoint

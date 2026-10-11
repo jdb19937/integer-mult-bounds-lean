@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.CompactActiveTargetGeometry
-import IntegerMultBounds.Machine.CountedRankSplitData
-import IntegerMultBounds.Machine.BinaryAddressTableData
+module
+
+public import IntegerMultBounds.Machine.CompactActiveTargetGeometry
+public import IntegerMultBounds.Machine.CountedRankSplitData
+public import IntegerMultBounds.Machine.BinaryAddressTableData
 
 /-! Extracting genuine original-array coordinates from the current full rank.
 These identities use the unchanged serialized active-target layout; they do
 not reorder the array or assume a semantic source word supplied to the key.
 Physical division and copying are separate machine obligations. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.VaryingControlRepairLayoutRank
 open CompactGadgetReservationShape CompactActiveTargetLayout CompactActiveTargetGeometry
 open RecursiveInterchangeRows (pack pack_val)

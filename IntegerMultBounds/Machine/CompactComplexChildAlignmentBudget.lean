@@ -1,5 +1,7 @@
-import IntegerMultBounds.Machine.CompactComplexNodeLocalBudget
-import IntegerMultBounds.Machine.CompactComplexStoppedAlignedBudget
+module
+
+public import IntegerMultBounds.Machine.CompactComplexNodeLocalBudget
+public import IntegerMultBounds.Machine.CompactComplexStoppedAlignedBudget
 
 /-! Nonleaf return-side cost arithmetic for literal exact contraction, generated
 spectator-volume headers, arbitrary-target promotion, live installation, a
@@ -7,6 +9,9 @@ second parent codec lifecycle and target/geometry/PC restoration. This pays the
 listed component schedules; it does not construct their nonleaf execution or
 prove the recursive child's semantic output. Entry/stop/target-save traffic and
 recursive child execution are excluded and charged separately. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexChildAlignmentBudget
 noncomputable section
 open CompactGadgetReservationShape (Shape)

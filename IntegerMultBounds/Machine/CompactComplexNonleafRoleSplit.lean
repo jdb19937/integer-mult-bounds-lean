@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexNonleafRoleEntry
-import IntegerMultBounds.Machine.CompactNativeRoleReservedBridge
+module
+
+public import IntegerMultBounds.Machine.CompactComplexNonleafRoleEntry
+public import IntegerMultBounds.Machine.CompactNativeRoleReservedBridge
 
 /-! Physical row quotient and cyclic role splitting at a genuine nonleaf child.
 The parent's selected stream supplies the child source; no prepared child bank
 or child split correctness oracle is required. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexNonleafRoleSplit
 noncomputable section
 open CompactGadgetReservationShape (Shape)
@@ -102,7 +107,7 @@ private theorem slot_val (i : Fin (43+CompactNativeRoleInstall.rawCount c)) :
       else if i.val<44+c then 153+s+(i.val-44)
       else CompactComplexNonleafRoleEntry.tapes s c+(i.val-(44+c)) := rfl
 
-private theorem slot_injective : Function.Injective (slot (s:=s) (c:=c)) := by
+theorem slot_injective : Function.Injective (slot (s:=s) (c:=c)) := by
   intro i j h
   have hv := congrArg Fin.val h
   rw [slot_val,slot_val] at hv
@@ -113,7 +118,7 @@ private theorem slot_injective : Function.Injective (slot (s:=s) (c:=c)) := by
     CompactComplexNativeRoleBridge.publicTapes CompactComplexControllerNativeFrame.tapes at hv
   split_ifs at hv <;> omega
 
-private theorem placement_size :
+theorem placement_size :
     (43+CompactNativeRoleInstall.rawCount c)+
       (tapes s c-(43+CompactNativeRoleInstall.rawCount c))=tapes s c := by
   unfold tapes CompactComplexNonleafRoleEntry.tapes CompactComplexNativeCodecFrame.permanentTapes

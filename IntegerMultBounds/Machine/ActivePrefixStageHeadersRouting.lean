@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixStageHeadersRun
-import IntegerMultBounds.Machine.SharedBankFamily
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStageHeadersRun
+public import IntegerMultBounds.Machine.SharedBankFamily
 
 /-! Each consumer descriptor has its own physically copied tape, including
 repeated numeric values. Copies retain original inputs; erase clears synthesis. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixStageHeadersRouting
 noncomputable section
 open SharedPlacementAlphabet (setTape)

@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactLiteralUnitPhase
-import IntegerMultBounds.Machine.ButterflyGuard
+module
+
+public import IntegerMultBounds.Machine.CompactLiteralUnitPhase
+public import IntegerMultBounds.Machine.ButterflyGuard
 
 /-! The phase negation guard follows from the existing actual bounded-grid
 invariant and fixed fallback signed width. It is not a new machine or codec
 correctness premise, and phase application keeps dyadic precision unchanged. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.UnitPhaseGuard
 noncomputable section
 open ButterflySigned

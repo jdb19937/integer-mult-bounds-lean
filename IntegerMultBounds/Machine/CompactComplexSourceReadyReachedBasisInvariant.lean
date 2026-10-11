@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyReachedChildInvariant
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyReachedChildInvariant
 
 /-! The real chronological basis word permutes original selected polynomial
 coefficients without changing widths, denominator or any prefix grid. The
 expanded codec shape is private; retained parent raw rows stay unchanged. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyReachedBasisInvariant
 noncomputable section
 open ActivePrefixStageParameters (Stage)

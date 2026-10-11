@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.BinarySelectedOffset
-import IntegerMultBounds.Machine.PlacementBank
-import IntegerMultBounds.Machine.PackedOffsetPayloadAlphabet
+module
+
+public import IntegerMultBounds.Machine.BinarySelectedOffset
+public import IntegerMultBounds.Machine.PlacementBank
+public import IntegerMultBounds.Machine.PackedOffsetPayloadAlphabet
 
 /-! Place the complete selected mask-shift producer using only caller-owned b/q/n, original controls
 and one blank destination. All 26 appended private tapes are returned blank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinarySelectedOffsetPlaced
 open SharedPlacementAlphabet (setTape)
 variable {a t : ℕ}

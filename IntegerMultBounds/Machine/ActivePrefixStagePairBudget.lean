@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.ActivePrefixStagePairSchedule
-import IntegerMultBounds.Machine.ActivePrefixStageRuntimeBudget
-import IntegerMultBounds.Machine.ActivePrefixStageInverseBudget
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStagePairSchedule
+public import IntegerMultBounds.Machine.ActivePrefixStageRuntimeBudget
+public import IntegerMultBounds.Machine.ActivePrefixStageInverseBudget
 
 /-! Saving the original pair, writing each literal instruction, restoring the
 pair and all joins are charged. A fixed finite word retains the stage exponent;
 its only extra factor is its fixed number of row additions. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixStagePairBudget
 noncomputable section
 open CompactGadgetReservationShape (Shape)

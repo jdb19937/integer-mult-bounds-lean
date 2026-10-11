@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.RecursiveScalarCoordinates
+module
+
+public import IntegerMultBounds.Machine.RecursiveScalarCoordinates
 
 /-! Every serialized cell has original scalar coordinates, including all
 spectator fields. No positivity hypothesis or restricted-address oracle. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveScalarIndex
 noncomputable section
 open Networks

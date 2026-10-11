@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.CompactComplexScalarPrefixAdvance
-import IntegerMultBounds.Machine.CompactComplexScalarCallerEndpoint
-import IntegerMultBounds.Machine.CompactComplexRecursiveLiveProgress
+module
+
+public import IntegerMultBounds.Machine.CompactComplexScalarPrefixAdvance
+public import IntegerMultBounds.Machine.CompactComplexScalarCallerEndpoint
+public import IntegerMultBounds.Machine.CompactComplexRecursiveLiveProgress
 
 /-! A genuine named scalar group returns the exact next native caller, the
 next original scalar-prefix grid and the physically advanced live ledger.
 Overflow uses the full node reserve; the induction postcondition retains the
 strict prefix budget instead of replacing it by the coarse node allowance. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexScalarGroupProgress
 noncomputable section
 open CompactComplexScalarIntegerRows (GroupIndex gates guardBits)

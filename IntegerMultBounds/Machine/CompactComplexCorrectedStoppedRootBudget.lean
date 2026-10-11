@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedStoppedRootRun
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedStoppedRootRun
 
 /-! The full stopped-root cost includes runtime classification, literal leaf
 execution and the final empty-root halt. Original Path geometry pays every
 term uniformly in native volume times the actual visit count. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexCorrectedStoppedRootBudget
 noncomputable section
 open CompactGadgetReservationShape (Shape)

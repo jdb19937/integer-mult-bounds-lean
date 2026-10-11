@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.BinaryAddressOffsetHeaders
-import IntegerMultBounds.Machine.CountedPackedShapeHeaders
-import IntegerMultBounds.Compact.PowerTwoDigits
-import IntegerMultBounds.Machine.BlockRotationData
+module
+
+public import IntegerMultBounds.Machine.BinaryAddressOffsetHeaders
+public import IntegerMultBounds.Machine.CountedPackedShapeHeaders
+public import IntegerMultBounds.Compact.PowerTwoDigits
+public import IntegerMultBounds.Machine.BlockRotationData
 
 /-! Literal parity-load offsets in increasing regular address order. Each
 q-bit source digit contributes its low bit to the corresponding b-bit output
 digit; this is the second modular line of the early-source gadget. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryAddressOffsetData
 open BinaryAddressTableData
 

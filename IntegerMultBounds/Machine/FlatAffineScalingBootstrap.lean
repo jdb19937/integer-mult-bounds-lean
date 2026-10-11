@@ -1,17 +1,22 @@
-import IntegerMultBounds.Machine.FlatAffineScaling
-import IntegerMultBounds.Machine.StaticMarkerInit
+module
+
+public import IntegerMultBounds.Machine.FlatAffineScaling
+public import IntegerMultBounds.Machine.StaticMarkerInit
 
 /-! A blank-workspace entry point for actual coefficient scaling. The fixed
 coefficient determines only finite tape wiring and a one-step marker template.
 All residue banks, piece buffers, intermediate payloads and sign scratch are
 chosen blank; existing execution physically synthesizes every residue/count. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.FlatAffineScalingBootstrap
 open Networks
 open CountedCopyReuse (empty binary)
 open SignedScalingPrepared (Setup)
 open ActualAffineScaling (modulus negative)
 
-private def blankBank (c : ℕ) : Tapes c 0 := ⟨fun _ => 0,fun _ _ => blank⟩
+def blankBank (c : ℕ) : Tapes c 0 := ⟨fun _ => 0,fun _ _ => blank⟩
 
 def setup (c : ℕ) (bs qs : List Bool) : Setup c where
   background := fun _ _ => blank

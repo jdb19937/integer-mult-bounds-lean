@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.FlatCoordinateStages
-import IntegerMultBounds.Machine.SharedPayloadStageSkeleton
+module
+
+public import IntegerMultBounds.Machine.FlatCoordinateStages
+public import IntegerMultBounds.Machine.SharedPayloadStageSkeleton
 
 /-! Fixed rational operation descriptions instantiate actual coordinate stages
 with canonical dimensional words. Their complete finite-state skeletons are
 independent of the prime-power exponent and trailing record width. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.FlatCoordinateSchedule
 open Networks
 open ActualAffineScaling (modulus)

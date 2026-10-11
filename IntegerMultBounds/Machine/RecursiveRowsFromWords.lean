@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.RecursiveRowsClean
+module
+
+public import IntegerMultBounds.Machine.RecursiveRowsClean
 
 /-! Reconstruct the actual flat input array from arbitrary literal row words.
 This removes any caller-supplied serialization codec when specializing clean
 cyclic splitting and merging to delimited coefficient records. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveRowsFromWords
 noncomputable section
 open RecursiveInterchangeLayout (Descriptor volume)

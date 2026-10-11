@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixLayoutShapes
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixLayoutShapes
 
 /-! Prefix construction is paid by the original record payload whenever that
 payload exceeds the complete address width. All spectator/back factors only
 increase the available volume; no wide active target fits a compact slot. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixLayoutAbsorption
 open CompactGadgetReservationShape CompactActiveTargetGeometry
 open ActivePrefixLayoutShapes ActivePrefixLayoutGeometry

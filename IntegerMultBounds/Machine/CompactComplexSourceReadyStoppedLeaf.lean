@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyLeafDenominator
-import IntegerMultBounds.Machine.CompactComplexSourceReadyLeafSemantics
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyLeafDenominator
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyLeafSemantics
 
 /-! Actual stopped source-ready execution through restored raw geometry and
 physical leaf-target/live installation. One fixed leaf-plus-ten suffix suffices;
 rows, vacant roles and saved parent/ancestor frames remain untouched. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyStoppedLeaf
 noncomputable section
 open CompactGadgetReservationShape (Shape)

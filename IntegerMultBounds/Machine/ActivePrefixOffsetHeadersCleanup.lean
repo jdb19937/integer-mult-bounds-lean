@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixOffsetHeadersBudget
-import IntegerMultBounds.Machine.BinaryDescriptorCleanupList
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixOffsetHeadersBudget
+public import IntegerMultBounds.Machine.BinaryDescriptorCleanupList
 
 /-! Paid post-use erasure of all five derived active-prefix descriptors.
 Every original/spectator tape is preserved and each output returns blank at zero. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixOffsetHeadersCleanup
 noncomputable section
 open SharedPlacementAlphabet (setTape)

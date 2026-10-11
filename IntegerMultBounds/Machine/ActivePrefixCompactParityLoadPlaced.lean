@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixCompactParityLoad
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixCompactParityLoad
 
 /-! The complete original-input compact parity action on arbitrary caller
 tapes. Ten original headers and the array are permanent; all private storage
 starts and returns blank, with arbitrary caller spectators unchanged. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixCompactParityLoadPlaced
 noncomputable section
 open ActivePrefixCompactParityLoadData

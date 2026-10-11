@@ -1,11 +1,15 @@
-import IntegerMultBounds.Networks.FramedBlocks
-import IntegerMultBounds.Networks.Shared50InvocationRank
-import IntegerMultBounds.Networks.Shared50FiniteFramed
-import IntegerMultBounds.Networks.FramedEmbedding
+module
+
+public import IntegerMultBounds.Networks.FramedBlocks
+public import IntegerMultBounds.Networks.Shared50InvocationRank
+public import IntegerMultBounds.Networks.Shared50FiniteFramed
+public import IntegerMultBounds.Networks.FramedEmbedding
 
 /-! Physical forward execution of the sparse twelve-block invocation, including
 all boundary alignments and the actual finite framed middle computation.
 The scalar erasure and arbitrary-module common-frame identity are exact. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.Shared50FramedInvocation
 

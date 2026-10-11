@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyOrientedControlsFrame
-import IntegerMultBounds.Machine.CompactComplexSourceReadyStoppedNodePath
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyOrientedControlsFrame
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyStoppedNodePath
 
 /-! Actual pre-orientation followed by the original stopping guard reaches
 its genuine finite marker, shifted through sequence and scalar widening. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyOrientedControlsEntry
 noncomputable section
 open Networks

@@ -1,6 +1,11 @@
-import IntegerMultBounds.Machine.CompactGadgetReservationHeadersCaller
+module
+
+public import IntegerMultBounds.Machine.CompactGadgetReservationHeadersCaller
 
 /-! A uniform linear-volume charge for every executed header instruction. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactGadgetReservationHeadersCost
 noncomputable section
 open CompactGadgetReservationHeadersOps

@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.ActiveRepairEarlyKey
-import IntegerMultBounds.Machine.RepairScan
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairEarlyKey
+public import IntegerMultBounds.Machine.RepairScan
 
 /-! The actual fourteen-tape repair scan calls the current-address early key
 machine. Every record uses its own genuine growing counter; controls are
 parsed internally. Header synthesis and full permutation identification are
 separate from this physical per-record scan contract. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairEarlyKeyScan
 noncomputable section
 open ActiveRepairEarlyKeyData ActiveRepairEarlyKeyData.Data

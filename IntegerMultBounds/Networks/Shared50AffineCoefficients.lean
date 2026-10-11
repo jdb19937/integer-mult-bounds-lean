@@ -1,11 +1,15 @@
-import IntegerMultBounds.Networks.Shared50AffineControl
-import IntegerMultBounds.Networks.Shared50CoefficientMachines
+module
+
+public import IntegerMultBounds.Networks.Shared50AffineControl
+public import IntegerMultBounds.Networks.Shared50CoefficientMachines
 
 /-! Coefficients of the actual refined scalar schedules. Their denominators
 come from the protected rational matrix entries, and actual diagonal scalings
 have numerators coprime to the chosen prime. Literal coefficient arithmetic
 and the fixed signed numerator/denominator unit recipe therefore require no
 new coefficient assumptions. This is not a payload permutation or time theorem. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.Shared50AffineCoefficients
 

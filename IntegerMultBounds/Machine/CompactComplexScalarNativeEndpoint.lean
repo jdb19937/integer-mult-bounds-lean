@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactComplexScalarLifecycleGrid
+module
+
+public import IntegerMultBounds.Machine.CompactComplexScalarLifecycleGrid
 
 /-! Actual scalar lifecycle outputs are genuine native polynomial row streams
 for the next physical event. Flattening and unflattening only rename positions;
 no serialization conversion, copying or prepared source equality is required. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexScalarNativeEndpoint
 noncomputable section
 open ButterflyStreamData (Coefficient)

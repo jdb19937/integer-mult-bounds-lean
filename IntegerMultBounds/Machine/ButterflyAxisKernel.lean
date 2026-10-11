@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ButterflyAxisDecoded
+module
+
+public import IntegerMultBounds.Machine.ButterflyAxisDecoded
 
 /-! The decoded selected-axis butterfly is exactly a translation kernel:
 its translation exchanges the selected bit and preserves all other coordinates.
 This identifies the arithmetic operator independently of its tape realization. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ButterflyAxisKernel
 noncomputable section
 open ButterflyAxisArray ButterflyAxisDecoded

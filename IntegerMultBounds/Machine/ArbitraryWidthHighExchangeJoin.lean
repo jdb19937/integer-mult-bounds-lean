@@ -1,6 +1,11 @@
-import IntegerMultBounds.Machine.ArbitraryWidthHighExchangeJoinEncoding
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthHighExchangeJoinEncoding
 
 /-! Paid actual exchange followed by ordered join on one physical caller tape. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthHighExchangeJoin
 noncomputable section
 open Networks

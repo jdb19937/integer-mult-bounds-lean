@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.CompactComplexSpectatorTargetBank
-import IntegerMultBounds.Machine.CompactComplexControllerDenominator
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSpectatorTargetBank
+public import IntegerMultBounds.Machine.CompactComplexControllerDenominator
 
 /-! Physically install the certified common grid only after spectator promotion.
 The existing denominator commit routine occupies the fixed original root prefix;
 all later controller stacks, immutable scalar descriptors and role streams are
 outside its placement. This is descriptor execution, not a claim that changing
 a header alone aligns the coefficients. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexControllerAlignedCommit
 noncomputable section
 open CompactComplexNativeCodecFrame (permanentTapes bank)
@@ -15,12 +20,12 @@ open SharedPlacementAlphabet (setTape)
 open RecursiveChildQuotientsConstant (bits)
 variable {s c : ℕ}
 
-private def slot (i : Fin (size 0)) : Fin (permanentTapes (10+s) c) :=
+def slot (i : Fin (size 0)) : Fin (permanentTapes (10+s) c) :=
   ⟨i.val,by have := i.isLt; unfold size permanentTapes CompactComplexNativeRoleBridge.publicTapes CompactComplexControllerNativeFrame.tapes at *; omega⟩
-private theorem slot_injective : Function.Injective (slot (s:=s) (c:=c)) := by
+theorem slot_injective : Function.Injective (slot (s:=s) (c:=c)) := by
   intro i j h
   exact Fin.ext (congrArg (fun x : Fin (permanentTapes (10+s) c) => x.val) h)
-private def placement := InjectivePlacement.placement (slot (s:=s) (c:=c)) slot_injective
+def placement := InjectivePlacement.placement (slot (s:=s) (c:=c)) slot_injective
   (by unfold size permanentTapes CompactComplexNativeRoleBridge.publicTapes CompactComplexControllerNativeFrame.tapes; omega :
     size 0+(permanentTapes (10+s) c-size 0)=permanentTapes (10+s) c)
 
@@ -128,12 +133,12 @@ open NativeSignedGapPromoteReturn (word)
 open CompactComplexSpectatorTargetBank (roleSlot numericSlot ports_injective)
 open CompactComplexSpectatorPromoteFamily (spectatorList)
 
-private theorem old_current_target : (⟨7,by omega⟩ : Fin (10+s))≠⟨8,by omega⟩ := by
+theorem old_current_target : (⟨7,by omega⟩ : Fin (10+s))≠⟨8,by omega⟩ := by
   intro h
   have hv := congrArg Fin.val h
   norm_num at hv
 
-private def compose {t : ℕ} (p q : Σ r,Program t r 2) : Σ r,Program t r 2 :=
+def compose {t : ℕ} (p q : Σ r,Program t r 2) : Σ r,Program t r 2 :=
   ⟨_,seq p.2 q.2⟩
 private theorem compose_runs {t : ℕ} (p q : Σ r,Program t r 2)
     {pre mid post : TapePred t 2} {b d : ℕ}
@@ -146,7 +151,7 @@ def promoteProgram (len : Fin 66) (selected : Fin c) :=
     (ports_injective (s:=10+s) (c:=c) ⟨7,by omega⟩ ⟨8,by omega⟩ old_current_target len) (spectatorList selected))
     ⟨_,extend (program (s:=s) (c:=c)) 10⟩
 
-private theorem runs_framed (v : Tapes (permanentTapes (10+s) c) 2) (n targetN : ℕ)
+theorem runs_framed (v : Tapes (permanentTapes (10+s) c) 2) (n targetN : ℕ)
     (hc : v.tape current=RadixZeroFill.encodedBinary (bits n)) (hch : v.head current=1)
     (ht : v.tape target=RadixZeroFill.encodedBinary (bits targetN)) (hth : v.head target=1) :
     HoareTime (extend (program (s:=s) (c:=c)) 10)

@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.NativeEndpointCharacterCanonicalOriginalBudget
-import IntegerMultBounds.Machine.NativeEndpointCharacterRoles
-import IntegerMultBounds.Machine.NativeEndpointCharacterTerminal
-import IntegerMultBounds.Machine.CompactComplexScalarCountLifecycle
+module
+
+public import IntegerMultBounds.Machine.NativeEndpointCharacterCanonicalOriginalBudget
+public import IntegerMultBounds.Machine.NativeEndpointCharacterRoles
+public import IntegerMultBounds.Machine.NativeEndpointCharacterTerminal
+public import IntegerMultBounds.Machine.CompactComplexScalarCountLifecycle
 
 /-! Fixed finite role traversal for actual source/sink endpoint characters.
 Each physical role is visited once, all original descriptors and complementary
 roles remain framed, and each iteration releases the entire private67 bank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.NativeEndpointCharacterCanonicalRoles
 noncomputable section
 open CompactGadgetReservationShape (Shape)

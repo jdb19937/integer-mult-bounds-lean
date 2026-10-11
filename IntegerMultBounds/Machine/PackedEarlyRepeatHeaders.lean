@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.PackedPrefixRepeatHeadersReserved
+module
+
+public import IntegerMultBounds.Machine.PackedPrefixRepeatHeadersReserved
 
 /-! Shared physical repetition metadata for all four early loads. The gap-source
 loads use the retained H factor and actual upstream control gap; the prefix-source
 loads use L. Both factors are produced by one schedule and physically erased. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.PackedEarlyRepeatHeaders
 noncomputable section
 open CompactGadgetReservationHeadersWords

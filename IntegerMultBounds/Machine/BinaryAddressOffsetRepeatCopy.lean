@@ -1,12 +1,17 @@
-import IntegerMultBounds.Machine.BinaryAddressOffsetRepeatData
-import IntegerMultBounds.Machine.WordBankCleanup
+module
+
+public import IntegerMultBounds.Machine.BinaryAddressOffsetRepeatData
+public import IntegerMultBounds.Machine.WordBankCleanup
 
 /-! Copy one complete temporary offset word and physically return its head.
 Only the destination advances; no per-bit scan of a runtime descriptor occurs. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryAddressOffsetRepeatCopy
 open BinaryAddressOffsetRepeatData
 
-private def empty : ℤ → Fin 4 := fun _ => blank
+def empty : ℤ → Fin 4 := fun _ => blank
 
 def program := seq (Copy.program (blank : Fin 4) false) (extend (ReturnOrigin.program (a := 0)) 1)
 def bank (xs : List Bool) (g : ℤ → Fin 4) (p : ℤ) := Copy.tapes (putWord empty 0 (xs.map bitSymbol)) g 0 p

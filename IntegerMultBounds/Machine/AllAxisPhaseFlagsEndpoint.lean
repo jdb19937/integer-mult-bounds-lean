@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.AllAxisPhaseFlagsCaller
-import IntegerMultBounds.Machine.UnitPhasePolynomialLoop
-import IntegerMultBounds.Machine.UnitPhaseControlReset
+module
+
+public import IntegerMultBounds.Machine.AllAxisPhaseFlagsCaller
+public import IntegerMultBounds.Machine.UnitPhasePolynomialLoop
+public import IntegerMultBounds.Machine.UnitPhaseControlReset
 
 /-! The aggregated phase bank shares the existing polynomial flags/core
 layout, so one retained all-axis phase feeds the actual coefficient loop. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.AllAxisPhaseFlagsEndpoint
 noncomputable section
 open CompactGadgetReservationShape (Shape)

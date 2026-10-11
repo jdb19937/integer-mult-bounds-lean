@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixCorrectionOffsetBank
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixCorrectionOffsetBank
 
 /-! Actual complete producers and rowwise modular subtraction share forty-one
 blank private tapes. Operand tables and derived descriptors are erased before
 return; no operand or derived dimension is supplied by the caller. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixCorrectionOffsetRun
 noncomputable section
 open ActivePrefixCorrectionOffsetBank

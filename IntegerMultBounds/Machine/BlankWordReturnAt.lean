@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.UnitPhaseStreamAddressReset
+module
+
+public import IntegerMultBounds.Machine.UnitPhaseStreamAddressReset
 
 /-! Physically rewind one arbitrary caller tape from its actual serialized
 EOF to origin0 while retaining its literal blank-backed nonblank word. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BlankWordReturnAt
 open SharedPlacementAlphabet (setTape)
 noncomputable section

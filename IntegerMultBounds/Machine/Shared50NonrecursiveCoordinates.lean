@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.FlatCoordinateScheduleCompile
-import IntegerMultBounds.Networks.AffineFieldCoordinates
+module
+
+public import IntegerMultBounds.Machine.FlatCoordinateScheduleCompile
+public import IntegerMultBounds.Networks.AffineFieldCoordinates
 
 /-! Actual Shared50 nonrecursive field operations become fixed concrete scalar
 stage lists in one H-before-D coordinate layout. Recursive interchanges remain
 explicitly excluded and require their separate physical realization. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.Shared50NonrecursiveCoordinates
 open Networks
 open Shared50ModularSchedule (Index)

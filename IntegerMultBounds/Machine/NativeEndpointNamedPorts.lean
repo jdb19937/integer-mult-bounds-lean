@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.NativeEndpointCharacterCopy
-import IntegerMultBounds.Machine.CompactComplexEndpointRoleExchange
+module
+
+public import IntegerMultBounds.Machine.NativeEndpointCharacterCopy
+public import IntegerMultBounds.Machine.CompactComplexEndpointRoleExchange
 
 /-! Actual original raw-header and named endpoint ports, with arbitrary caller
 suffix. These ports are shared by source character and sink phase families. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.NativeEndpointNamedPorts
 noncomputable section
 open CompactComplexRolePhaseSite (roleCount roleEncoding)

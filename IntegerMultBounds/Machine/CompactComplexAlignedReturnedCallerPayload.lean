@@ -1,4 +1,8 @@
-import IntegerMultBounds.Machine.CompactComplexAlignedReachedChildReturnPath
+module
+
+public import IntegerMultBounds.Machine.CompactComplexAlignedReachedChildReturnPath
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.CompactComplexAlignedReturnedCallerPayload
 noncomputable section

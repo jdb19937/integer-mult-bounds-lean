@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactComplexNonleafRoleReturnFrames
+module
+
+public import IntegerMultBounds.Machine.CompactComplexNonleafRoleReturnFrames
 
 /-! Actual source-ready payload recovery on the permanent bank with seven
 additional private tapes. The protected endpoints determine readiness; arbitrary
 simultaneous controller changes and the private suffix supply their own frame. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexNonleafRoleSourceReturn
 noncomputable section
 open CompactComplexNonleafRoleEntry

@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.BinaryCorrectionOffsetSubtract
-import IntegerMultBounds.Machine.BinarySelectedOffsetRepeatData
+module
+
+public import IntegerMultBounds.Machine.BinaryCorrectionOffsetSubtract
+public import IntegerMultBounds.Machine.BinarySelectedOffsetRepeatData
 
 /-! Exact row operands and modular correction offsets. ControlsAt gathers
 are real source-reading operations even though their output ignores the source. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryCorrectionOffsetData
 open BinaryAddressOffsetRepeatData (copies)
 open BinarySelectedOffsetData (source controls)

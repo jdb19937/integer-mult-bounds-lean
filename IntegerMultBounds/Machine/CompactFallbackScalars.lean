@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactScalarAllowances
-import IntegerMultBounds.Machine.ButterflyIndependentGuardHeaders
+module
+
+public import IntegerMultBounds.Machine.CompactScalarAllowances
+public import IntegerMultBounds.Machine.ButterflyIndependentGuardHeaders
 
 /-! Actual multiplier scalars bound the enlarged initial native signed record
 width. One selected chunk-axis means one bit rho+i*K, not K butterfly passes;
 all D*K address bits nevertheless remain in the literal coefficient stream. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactFallbackScalars
 noncomputable section
 open Sizes Parameters

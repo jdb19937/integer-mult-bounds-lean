@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyPrefixGeometry
-import IntegerMultBounds.Machine.CompactComplexSourceReadyFullChildPaths
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyPrefixGeometry
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyFullChildPaths
 
 /-! Concrete child-entry premises at the corrected scalar endpoint. Parent raw
 rows remain in the native metadata while the actual role words use privately
 computed quotient rows. All stream, stack and descriptor facts are derived from
 the literal caller, rather than a supplied prepared bank or local execution. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyScalarChildReadiness
 noncomputable section
 open CompactComplexNativeCodecFrame (bank permanentTapes)

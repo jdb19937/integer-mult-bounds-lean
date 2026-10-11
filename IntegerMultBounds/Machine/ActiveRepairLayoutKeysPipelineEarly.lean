@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActiveRepairLayoutKeysPipelineCommon
-import IntegerMultBounds.Machine.ActiveRepairEarlyOriginalPipelineEndpoint
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairLayoutKeysPipelineCommon
+public import IntegerMultBounds.Machine.ActiveRepairEarlyOriginalPipelineEndpoint
 
 /-! The actual original-input repair endpoint produces the concrete global
 ideal permutation, while retaining its complete exact bank and runtime. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLayoutKeysPipelineEarly
 noncomputable section
 attribute [local instance] Classical.propDecidable

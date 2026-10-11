@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.CompactComplexNonleafRoleMergeCurrentBudget
-import IntegerMultBounds.Machine.CompactComplexControllerExactReturnBudget
+module
+
+public import IntegerMultBounds.Machine.CompactComplexNonleafRoleMergeCurrentBudget
+public import IntegerMultBounds.Machine.CompactComplexControllerExactReturnBudget
 
 /-! Actual permanent-bank projections used between contraction and merging. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyNonleafFinalBank
 noncomputable section
 open CompactComplexNativeCodecFrame (bank permanentTapes)

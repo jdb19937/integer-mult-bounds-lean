@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.RecursiveRowsRoleBank
-import IntegerMultBounds.Machine.RecursiveRoleSerialization
-import IntegerMultBounds.Machine.RecursiveAffineViews
+module
+
+public import IntegerMultBounds.Machine.RecursiveRowsRoleBank
+public import IntegerMultBounds.Machine.RecursiveRoleSerialization
+public import IntegerMultBounds.Machine.RecursiveAffineViews
 
 /-! Four-symbol recursive data specialization of the physical cyclic moves.
 Parent and role-volume data use the exact serialization of the fixed mixed
 blocks. Splitting changes array volume without an uncharged conversion, and
 child spectator regrouping is a literal equality of serialized words. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveRowsSerialization
 open Networks
 open Shared50ModularControl (prime)

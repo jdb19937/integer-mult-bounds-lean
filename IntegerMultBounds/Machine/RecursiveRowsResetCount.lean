@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.RecursiveRowsConstruct
+module
+
+public import IntegerMultBounds.Machine.RecursiveRowsConstruct
 
 /-! An actual final product provides the erase/reset length for either the
 common source or all role sources. The count is never supplied by the caller. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveRowsResetCount
 open RecursiveInterchangeLayout (Descriptor volume role)
 variable {q : ℕ} (hq : 2 ≤ q)

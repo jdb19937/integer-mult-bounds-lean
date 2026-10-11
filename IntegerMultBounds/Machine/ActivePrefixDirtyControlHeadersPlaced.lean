@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlHeadersEndpoint
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlHeadersEndpoint
 
 /-! Physical repair-header generation and erasure on arbitrary caller ports.
 Fourteen originals and ten generated outputs are selected; all private native
 storage returns blank, and arbitrary caller spectators retain tape and head. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixDirtyControlHeadersPlaced
 noncomputable section
 open ActiveRepairRankHeadersCommands ActivePrefixLayoutHeadersData ActivePrefixDirtyControlHeadersData

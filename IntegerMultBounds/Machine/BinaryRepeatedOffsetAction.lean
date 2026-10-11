@@ -1,13 +1,18 @@
-import IntegerMultBounds.Machine.BinaryAddressOffsetRepeatCoordinates
-import IntegerMultBounds.Machine.BinarySelectedOffsetRepeatCoordinates
-import IntegerMultBounds.Machine.BinaryCorrectionOffsetRepeatCoordinates
-import IntegerMultBounds.Machine.BinaryParityXorOffsetRepeatCoordinates
-import IntegerMultBounds.Machine.BinaryPackedOffsetData
+module
+
+public import IntegerMultBounds.Machine.BinaryAddressOffsetRepeatCoordinates
+public import IntegerMultBounds.Machine.BinarySelectedOffsetRepeatCoordinates
+public import IntegerMultBounds.Machine.BinaryCorrectionOffsetRepeatCoordinates
+public import IntegerMultBounds.Machine.BinaryParityXorOffsetRepeatCoordinates
+public import IntegerMultBounds.Machine.BinaryPackedOffsetData
 
 /-! The physically constructed repeated words drive the actual packed-field
 permutation in the required source-address order. Every dirty back coordinate
 and every suffix bit is retained; spectators do not change the chosen offset.
 This identifies action semantics, not producer/action bank sequencing. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryRepeatedOffsetAction
 noncomputable section
 open RadixRangePadding (volume index)

@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.VaryingControlRepairPacked
-import IntegerMultBounds.Machine.CountedRepairKeyValue
-import IntegerMultBounds.Machine.CountedLateRepairKeyValue
+module
+
+public import IntegerMultBounds.Machine.VaryingControlRepairPacked
+public import IntegerMultBounds.Machine.CountedRepairKeyValue
+public import IntegerMultBounds.Machine.CountedLateRepairKeyValue
 
 /-! Scan rank flags and complete destination keys for varying controls.
 The decoded source selects each existing actual local key routine. These are
 semantic bridges; no physical full-rank source-extraction machine is assumed. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.VaryingControlRepairKeys
 noncomputable section
 open Compact Compact.PowerTwo

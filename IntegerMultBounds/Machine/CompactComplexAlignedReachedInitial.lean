@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexAlignedBoundaryPaths
-import IntegerMultBounds.Machine.CompactComplexAlignedChildEntryPath
+module
+
+public import IntegerMultBounds.Machine.CompactComplexAlignedBoundaryPaths
+public import IntegerMultBounds.Machine.CompactComplexAlignedChildEntryPath
 
 /-! The actual corrected source boundary both executes and establishes the
 concrete reached event invariant. All physical runs follow from original input
 words, numerical guards and dependency data; no execution callback is supplied. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexAlignedReachedInitial
 noncomputable section
 open CompactComplexSourceReadyScalarWorkspace (roles nodeTapes ready)

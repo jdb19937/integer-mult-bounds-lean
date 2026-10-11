@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.CompactActualNativeStage
-import IntegerMultBounds.Machine.ButterflyAxisSerialization
+module
+
+public import IntegerMultBounds.Machine.CompactActualNativeStage
+public import IntegerMultBounds.Machine.ButterflyAxisSerialization
 
 /-! Actual native stage capacity for the stored signed field width, including
 arithmetic guard bits. Literal complex records contain two fields and two
 separators. The fixed stage machine handles every such width above the actual
 precision allowance; a linear stored-width bound gives a fixed-factor payload
 bound. This does not assume that precision and stored width coincide. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactActualNativeWidth
 noncomputable section
 open Sizes

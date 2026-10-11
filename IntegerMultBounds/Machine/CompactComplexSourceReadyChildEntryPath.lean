@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyWorkspace
-import IntegerMultBounds.Machine.CompactComplexNonleafRolePreparationBudget
-import IntegerMultBounds.Machine.CompactComplexRolePhaseSite
-import IntegerMultBounds.Machine.CompactComplexFixedNodePaths
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyWorkspace
+public import IntegerMultBounds.Machine.CompactComplexNonleafRolePreparationBudget
+public import IntegerMultBounds.Machine.CompactComplexRolePhaseSite
+public import IntegerMultBounds.Machine.CompactComplexFixedNodePaths
 
 /-! Actual selected child entry on the depth-independent workspace and its
 reachable event-to-shared-entry path. No local execution or cost is assumed. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyChildEntryPath
 noncomputable section
 open CompactGadgetReservationShape (Shape)

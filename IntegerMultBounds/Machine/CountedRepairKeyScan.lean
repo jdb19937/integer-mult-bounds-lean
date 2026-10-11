@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.CountedRepairKeyValue
+module
+
+public import IntegerMultBounds.Machine.CountedRepairKeyValue
 
 /-! The actual scan contract for the fixed repair-key machine on a forty-two
  tape bank: fourteen scan tapes and twenty-eight retained scratch tapes. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedRepairKeyScan
 noncomputable section
 open CountedRepairKeyBank

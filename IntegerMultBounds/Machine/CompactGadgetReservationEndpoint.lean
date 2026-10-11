@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.CompactGadgetReservationPlacement
+module
+
+public import IntegerMultBounds.Machine.CompactGadgetReservationPlacement
 
 /-! Complete physical per-role compact load from the actual reservation
 endpoint, with original shape/offset tapes explicit and all other roles framed. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactGadgetReservationEndpoint
 noncomputable section
 open Networks.Shared50ModularControl (prime)

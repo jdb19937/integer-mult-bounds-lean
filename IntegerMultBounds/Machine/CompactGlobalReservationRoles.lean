@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactGlobalReservation
-import IntegerMultBounds.Machine.CompactGadgetReservationData
-import IntegerMultBounds.Machine.RecursiveInterchangeVolume
+module
+
+public import IntegerMultBounds.Machine.CompactGlobalReservation
+public import IntegerMultBounds.Machine.CompactGadgetReservationData
+public import IntegerMultBounds.Machine.RecursiveInterchangeVolume
 
 /-! The global once-padded row range supplies every recursive physical role
 reservation. Its real padding/splitting machine adds no rows at a node, and
 its cost and complete role volume use that node's current logical volume. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactGlobalReservationRoles
 noncomputable section
 open CompactGlobalRowPadding

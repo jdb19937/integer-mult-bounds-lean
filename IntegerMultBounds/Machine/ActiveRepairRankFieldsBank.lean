@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActiveRepairRankFieldsPlaced
-import IntegerMultBounds.Machine.SelectedSourceBitsPlaced
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairRankFieldsPlaced
+public import IntegerMultBounds.Machine.SelectedSourceBitsPlaced
 
 /-! One caller bank for actual counter parsing and source-bit extraction:
 counter, four fields, selected controls, eight start/width headers, and the
 original four selected-source headers. The nine private tapes are shared. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairRankFieldsBank
 noncomputable section
 open SharedPlacementAlphabet (setTape)

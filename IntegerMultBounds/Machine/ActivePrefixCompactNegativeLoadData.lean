@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.ActivePrefixParityNegativePlaced
-import IntegerMultBounds.Machine.ActivePrefixOffsetRepeatPlaced
-import IntegerMultBounds.Machine.ActiveTargetRotation
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixParityNegativePlaced
+public import IntegerMultBounds.Machine.ActivePrefixOffsetRepeatPlaced
+public import IntegerMultBounds.Machine.ActiveTargetRotation
 
 /-! One fixed caller bank for a complete original-input compact negative parity-XOR load. Only
 original descriptors and the array are supplied; all offset words and rotation
 metadata begin blank and are physically constructed. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixCompactNegativeLoadData
 noncomputable section
 open ActivePrefixParityOffsetBank (Shape values)

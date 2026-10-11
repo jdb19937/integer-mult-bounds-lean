@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexControllerHeaderStack
-import IntegerMultBounds.Machine.BinaryDescriptorCleanupList
+module
+
+public import IntegerMultBounds.Machine.CompactComplexControllerHeaderStack
+public import IntegerMultBounds.Machine.BinaryDescriptorCleanupList
 
 /-! Exact appended-stack parent-header return. Changed child descriptors are
 physically erased before the saved parent words are popped; every controller,
 payload and stack cell/head outside these three headers is retained literally. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexControllerHeaderReturn
 noncomputable section
 open CompactComplexControllerNativeFrame

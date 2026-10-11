@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlHeadersData
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlHeadersData
 
 /-! Actual full-header producer and cleanup for the dirty-control consumers.
 The complete 43-tape bank preserves originals and erases all scratch words. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixDirtyControlHeadersRun
 noncomputable section
 open ActiveRepairRankHeadersCommands ActivePrefixLayoutHeadersData

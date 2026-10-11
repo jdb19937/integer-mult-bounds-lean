@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactComplexSavedStackTailInvariant
-import IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedClassifierTablePath
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSavedStackTailInvariant
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedClassifierTablePath
 
 /-! Genuine fixed-width saved-stack histories lift to the reached corrected
 controller, survive its classifier orientation, and supply the older blank
 tail for its actual decoded return. The child pcSaved update writes the real
 call code; no abstract execution callback supplies the erased-cell premise. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyReachedSavedStackHistory
 noncomputable section
 open Networks

@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.NativeEndpointCharacterSplitCaller
-import IntegerMultBounds.Machine.NativeEndpointCharacterEntryStorage
-import IntegerMultBounds.Machine.NativeEndpointCharacterEntryRoles
-import IntegerMultBounds.Machine.ProgramPairSequence
+module
+
+public import IntegerMultBounds.Machine.NativeEndpointCharacterSplitCaller
+public import IntegerMultBounds.Machine.NativeEndpointCharacterEntryStorage
+public import IntegerMultBounds.Machine.NativeEndpointCharacterEntryRoles
+public import IntegerMultBounds.Machine.ProgramPairSequence
 
 /-! Actual corrected tag2: target generation, physical row splitting and
 canonical source signs, with a literal endpoint and exact summed runtime. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedEntry
 noncomputable section
 open CompactGadgetReservationShape (Shape)

@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.ActivePrefixStageHeadersEndpoint
-import IntegerMultBounds.Machine.ActivePrefixStageHeadersBudget
-import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsFullEarlyPlaced
-import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsFullLatePlaced
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStageHeadersEndpoint
+public import IntegerMultBounds.Machine.ActivePrefixStageHeadersBudget
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsFullEarlyPlaced
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsFullLatePlaced
 
 /-! Original shape/node/slot descriptors and one raw array are the complete
 caller input. Every full-stage consumer descriptor is physically synthesized. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixStageFullData
 noncomputable section
 open CompactGadgetReservationShape (Shape)

@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactSpectatorInheritedGrid
-import IntegerMultBounds.Machine.NativeSignedGapReturn
+module
+
+public import IntegerMultBounds.Machine.CompactSpectatorInheritedGrid
+public import IntegerMultBounds.Machine.NativeSignedGapReturn
 
 /-! Genuine return-gap width bounds from the actual complex25 scalar rows and
 real dependency paths. The scalar numerator certificate itself pays every row's
 denominator bit. These are arithmetic/controller metadata connection lemmas;
 physical propagation of the stated precision budget is not asserted here. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactNativeReturnGapBudget
 noncomputable section
 open Networks Networks.GaussianPrecision

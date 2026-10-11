@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.NativeEndpointCharacterCopy
-import IntegerMultBounds.Machine.NativeEndpointCharacterLifecycle
-import IntegerMultBounds.Machine.NativeEndpointCharacterAddress
+module
+
+public import IntegerMultBounds.Machine.NativeEndpointCharacterCopy
+public import IntegerMultBounds.Machine.NativeEndpointCharacterLifecycle
+public import IntegerMultBounds.Machine.NativeEndpointCharacterAddress
 
 /-! One original-input endpoint character machine: physically copy retained
 raw geometry, synthesize codec and role-row quotient privately, traverse the
 actual selected role polynomial, and reclaim every private tape. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.NativeEndpointCharacterOriginal
 noncomputable section
 open CompactGadgetReservationShape (Shape)

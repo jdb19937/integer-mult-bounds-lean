@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.ArbitraryWidthHighPreparedRun
-import IntegerMultBounds.Machine.ArbitraryWidthHighCommonHeaderWiring
-import IntegerMultBounds.Machine.ArbitraryWidthHighOriginalEncoding
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthHighPreparedRun
+public import IntegerMultBounds.Machine.ArbitraryWidthHighCommonHeaderWiring
+public import IntegerMultBounds.Machine.ArbitraryWidthHighOriginalEncoding
 
 /-! The actual high body starts with the common preparation output. All its
 source contracts follow from the original six shape headers; folding retains
 the exact original payload and full transpose endpoints. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthHighCommonHighBody
 noncomputable section
 open Networks

@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactSpectatorStoppedLeafDispatch
-import IntegerMultBounds.Machine.GuardedFiniteReturnFlow
+module
+
+public import IntegerMultBounds.Machine.CompactSpectatorStoppedLeafDispatch
+public import IntegerMultBounds.Machine.GuardedFiniteReturnFlow
 
 /-! One cyclic finite table contains the physical return guard/pop, both
 actual directional stopped leaves, and the remaining literal continuations.
 Leaf terminal states always enter the guard; original return addresses keep
 their original width and enter the continuation at offset4. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactSpectatorStoppedLeafFlow
 noncomputable section
 open CompactSpectatorStoppedLeafCaller

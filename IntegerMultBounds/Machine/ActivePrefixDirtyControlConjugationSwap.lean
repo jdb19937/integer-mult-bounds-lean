@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlConjugationData
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlConjugationData
 
 /-! Actual original-input T/back and U/back swaps on one full-array bank.
 The complementary load workspace is stationary and blank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixDirtyControlConjugationSwap
 noncomputable section
 open ActivePrefixDirtyControlConjugationData

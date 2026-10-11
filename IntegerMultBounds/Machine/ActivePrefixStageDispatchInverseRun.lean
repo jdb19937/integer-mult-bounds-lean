@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActivePrefixStageFullInverseRun
-import IntegerMultBounds.Machine.ActivePrefixStageDispatchSelected
-import IntegerMultBounds.Machine.ActivePrefixStageDispatchBudget
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStageFullInverseRun
+public import IntegerMultBounds.Machine.ActivePrefixStageDispatchSelected
+public import IntegerMultBounds.Machine.ActivePrefixStageDispatchBudget
 
 /-! Runtime source-order dispatch is physically self-inverse: running the
 same compare/branch/erase program restores original words, array and flags. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixStageDispatchInverseRun
 noncomputable section
 open CompactGadgetReservationShape (Shape)

@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixStageHeadersSchedule
-import IntegerMultBounds.Machine.CompactGadgetReservationHeadersCarvedSchedule
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStageHeadersSchedule
+public import IntegerMultBounds.Machine.CompactGadgetReservationHeadersCarvedSchedule
 
 /-! An actual fixed physical arithmetic schedule generates all numeric stage
 geometry from the original thirteen retained words and clears its scratch. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixStageHeadersRun
 noncomputable section
 open CompactGadgetReservationShape (Shape)

@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyStoppedLeaf
-import IntegerMultBounds.Machine.CompactNativeRoleStoppedChildBudget
-import IntegerMultBounds.Machine.CompactComplexControllerExactReturnBudget
-import IntegerMultBounds.Machine.CompactComplexControllerDenominatorTarget
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyStoppedLeaf
+public import IntegerMultBounds.Machine.CompactNativeRoleStoppedChildBudget
+public import IntegerMultBounds.Machine.CompactComplexControllerExactReturnBudget
+public import IntegerMultBounds.Machine.CompactComplexControllerDenominatorTarget
 
 /-! Full source-ready stopped costs are uniformly paid from actual native
 volume and visit count. The dependency Path/live ledger pays real denominator
 traffic, including target synthesis, commit and every lifecycle join. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyStoppedLeafBudget
 noncomputable section
 open CompactGadgetReservationShape (Shape)

@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlCorrection
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlCorrection
 
 /-! Arbitrary-caller correction wrapper. Six original descriptors are retained,
 only the output changes, and all fifty native working tapes are blank again. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixDirtyControlCorrectionPlaced
 noncomputable section
 open ActivePrefixDirtyControlData (Shape values)

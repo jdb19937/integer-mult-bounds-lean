@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlGlobalSequence
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlGlobalSequence
 
 /-! The two conjugations shift exactly T or U at their original coordinates;
 the dirty back word and all spectators return to their original values. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixDirtyControlGlobalCoordinates
 noncomputable section
 open CompactGadgetReservationShape (Shape)

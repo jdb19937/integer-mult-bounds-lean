@@ -1,4 +1,8 @@
-import IntegerMultBounds.Machine.ActivePrefixStageHeadersPlaced
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStageHeadersPlaced
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.ActivePrefixStageHeadersBudget
 open CompactGadgetReservationShape (Shape)

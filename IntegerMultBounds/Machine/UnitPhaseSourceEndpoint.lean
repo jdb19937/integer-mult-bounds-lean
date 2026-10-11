@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.UnitPhaseFullStreamClean
-import IntegerMultBounds.Machine.ButterflyStreamEndpoint
+module
+
+public import IntegerMultBounds.Machine.UnitPhaseFullStreamClean
+public import IntegerMultBounds.Machine.ButterflyStreamEndpoint
 
 /-! The source coefficient stream is retained literally and its head finishes
 at the exact serialized EOF, with no fabricated readable terminal record. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.UnitPhaseSourceEndpoint
 noncomputable section
 open CompactGadgetReservationShape (Shape)

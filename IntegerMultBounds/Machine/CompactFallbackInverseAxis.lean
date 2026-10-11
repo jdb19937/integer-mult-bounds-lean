@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.CompactFallbackAxisBudget
+module
+
+public import IntegerMultBounds.Machine.CompactFallbackAxisBudget
 
 /-! Negative-phase sparse-axis execution reuses the frozen physical header
 synthesis and cleanup, replacing only the paid coefficient axis program. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactFallbackInverseAxis
 noncomputable section
 open CompactFallbackHeaders

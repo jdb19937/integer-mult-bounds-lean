@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactGadgetReservationHeadersCarvedPlacedWidth
+module
+
+public import IntegerMultBounds.Machine.CompactGadgetReservationHeadersCarvedPlacedWidth
 
 /-! Physical shape synthesis from original caller descriptors. Caller ports
 0..6 are chunk, axes, global guard, n, active, rows, payload; 7..10 are initially
 blank width/P/G/B outputs; port 11 is the retained original packing factor.
 The product and complete carved schedule reuse one blank forty-tape bank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactGadgetReservationHeadersCarvedPlacedRun
 noncomputable section
 open CompactGadgetReservationShape

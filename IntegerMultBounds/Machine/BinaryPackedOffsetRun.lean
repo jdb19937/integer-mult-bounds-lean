@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.BinaryPackedOffsetData
-import IntegerMultBounds.Machine.PackedOffsetPayloadPlaced
+module
+
+public import IntegerMultBounds.Machine.BinaryPackedOffsetData
+public import IntegerMultBounds.Machine.PackedOffsetPayloadPlaced
 
 /-! A real swap/packed back rotation/swap on shared caller tapes. Both private
 banks are physically cleaned between uses and every sequencing step is paid. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryPackedOffsetRun
 noncomputable section
 open Networks.Shared50ModularControl (prime)

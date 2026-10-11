@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActiveRepairRecordFlattenAlphabet
-import IntegerMultBounds.Machine.CompactGadgetReservationPlacement
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairRecordFlattenAlphabet
+public import IntegerMultBounds.Machine.CompactGadgetReservationPlacement
 
 /-! Actual raw decoder on two caller ports, preserving the full complementary
 frame and restoring appended private storage. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairRecordFlattenPlaced
 noncomputable section
 open SharedPlacementAlphabet (setTape)

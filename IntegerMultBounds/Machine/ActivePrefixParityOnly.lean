@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixParityOnlyCleanup
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixParityOnlyCleanup
 
 /-! Complete pure-parity offset producer from original prefix/source/gadget
 descriptors, including all tables, varying controls, arithmetic and cleanup.
 Every derived word and temporary stream is physically generated and erased. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixParityOnly
 noncomputable section
 open ActivePrefixParityOnlyBank

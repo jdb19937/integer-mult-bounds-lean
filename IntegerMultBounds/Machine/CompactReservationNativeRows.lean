@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactReservedOriginal
-import IntegerMultBounds.Machine.NativeZeroPaddingArray
-import IntegerMultBounds.Machine.CompactGlobalReservation
+module
+
+public import IntegerMultBounds.Machine.CompactReservedOriginal
+public import IntegerMultBounds.Machine.NativeZeroPaddingArray
+public import IntegerMultBounds.Machine.CompactGlobalReservation
 
 /-! Original binary row axes are reserved before global row reinterpretation
 and genuine native zero padding. Afterwards rows are arbitrary outer ranges:
 role division changes row multiplicity, never immutable address dimension. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactReservationNativeRows
 noncomputable section
 open CompactGlobalRowPadding

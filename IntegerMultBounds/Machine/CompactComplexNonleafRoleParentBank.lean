@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactComplexNonleafRoleChildBank
-import IntegerMultBounds.Machine.CompactChildHeadersStack
-import IntegerMultBounds.Machine.BinaryDescriptorCleanupList
+module
+
+public import IntegerMultBounds.Machine.CompactComplexNonleafRoleChildBank
+public import IntegerMultBounds.Machine.CompactChildHeadersStack
+public import IntegerMultBounds.Machine.BinaryDescriptorCleanupList
 
 /-! Physical parent geometry restoration on the same raw-role child bank.
 The child row count, retained ell/p, live denominator, target and payloads stay
 unchanged. Only three geometric words, their real stack and exponent are touched. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexNonleafRoleParentBank
 noncomputable section
 open CompactComplexNonleafRoleChildBank (tapes numeric storage control headerFocus)
@@ -22,7 +27,7 @@ private theorem header_injective : Function.Injective (headerFocus (s:=s) (c:=c)
     Fin.val_castAdd,Fin.val_natAdd] at hv
   fin_cases i <;> fin_cases j <;> simp_all
 
-private theorem header_stack (stack : Fin s) :
+theorem header_stack (stack : Fin s) :
     ∀ i : Fin 3,headerFocus (s:=s) (c:=c) i≠stackSlot stack := by
   intro i h
   have hv := congrArg Fin.val h

@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixStageNativePairCoordinates
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStageNativePairCoordinates
 
 /-! Actual native basis words retain the complete front and back address
 spectators. These projections come from the literal runtime destination and
 its canonical row ordinal, not from a supplied array permutation contract. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixStageNativeFrameCoordinates
 noncomputable section
 open CompactGadgetReservationShape (Shape)

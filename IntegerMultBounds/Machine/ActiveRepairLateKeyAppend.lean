@@ -1,6 +1,11 @@
-import IntegerMultBounds.Machine.ActiveRepairEarlyKeyPlacement
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairEarlyKeyPlacement
 
 /-! Conditional output contains the complete physical destination rank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLateKeyAppend
 noncomputable section
 open ActiveRepairEarlyKeyPlacement

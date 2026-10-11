@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.BinaryPrefixFieldTableGather
+module
+
+public import IntegerMultBounds.Machine.BinaryPrefixFieldTableGather
 
 /-! Erase the generated full-address table, marked dummy stream and every
 copied or derived descriptor; only originals and the field table remain. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryPrefixFieldTableCleanup
 noncomputable section
 open SharedPlacementAlphabet (setTape)

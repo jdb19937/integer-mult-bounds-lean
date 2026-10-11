@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActivePrefixStageRuntimeWord
-import IntegerMultBounds.Networks.BinaryRowColumns
-import IntegerMultBounds.Machine.CompactBinaryBasisSchedule
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStageRuntimeWord
+public import IntegerMultBounds.Networks.BinaryRowColumns
+public import IntegerMultBounds.Machine.CompactBinaryBasisSchedule
 
 /-! Actual runtime address destinations perform the literal binary row
 addition on every selected column, retaining every other original slot. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixStageRuntimeCoordinates
 noncomputable section
 open CompactGadgetReservationShape (Shape)

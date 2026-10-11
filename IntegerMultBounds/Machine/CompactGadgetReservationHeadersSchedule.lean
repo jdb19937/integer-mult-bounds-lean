@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactGadgetReservationHeadersOps
-import IntegerMultBounds.Machine.CompactGadgetReservationHeadersData
+module
+
+public import IntegerMultBounds.Machine.CompactGadgetReservationHeadersOps
+public import IntegerMultBounds.Machine.CompactGadgetReservationHeadersData
 
 /-! Actual finite descriptor schedule from seven original canonical inputs.
 Neither a compact factor nor a shape-output word is supplied to the machine. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactGadgetReservationHeadersSchedule
 noncomputable section
 open CompactGadgetReservationShape

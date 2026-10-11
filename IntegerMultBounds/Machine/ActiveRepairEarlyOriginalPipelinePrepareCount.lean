@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.ActiveRepairEarlyOriginalPipelineRun
-import IntegerMultBounds.Machine.CountedGuardConstantsFill
-import IntegerMultBounds.Machine.CountedGuardGadgetPosition
-import IntegerMultBounds.Machine.CountedRepairScanPrepare
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairEarlyOriginalPipelineRun
+public import IntegerMultBounds.Machine.CountedGuardConstantsFill
+public import IntegerMultBounds.Machine.CountedGuardGadgetPosition
+public import IntegerMultBounds.Machine.CountedRepairScanPrepare
 
 /-! Runtime unary filling and return from the original address-width header.
 One reusable three-tape bank is physically blank between all operations. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairEarlyOriginalPipelinePrepareCount
 noncomputable section
 open SharedPlacementAlphabet (setTape)

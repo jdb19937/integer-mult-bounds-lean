@@ -1,9 +1,13 @@
-import IntegerMultBounds.Networks.Shared50OppositeLabels
-import IntegerMultBounds.Networks.Shared50InvocationRank
+module
+
+public import IntegerMultBounds.Networks.Shared50OppositeLabels
+public import IntegerMultBounds.Networks.Shared50InvocationRank
 
 /-! Exact finite frame history of the opposite invocation. It contains the
 literal complemented inverse DAG trace between proved sparse input/output
 attachments. Only the fifty central full-to-common returns lose dimension. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.Shared50OppositeRank
 

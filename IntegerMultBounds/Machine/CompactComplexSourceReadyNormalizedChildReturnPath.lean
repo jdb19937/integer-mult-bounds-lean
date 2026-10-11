@@ -1,9 +1,15 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyChildReturnPath
-import IntegerMultBounds.Machine.CompactComplexNormalizedSpectatorTargetRestore
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyChildReturnPath
+public import IntegerMultBounds.Machine.CompactComplexNormalizedSpectatorTargetRestore
+
 /-! The existing decoded return machine is independent of the normalization
 gap. This adapter proves its literal endpoint using a genuine Progress ledger
 and the actual header-driven spectator machine, leaving the selected child
 unchanged and preserving the original nonleaf API. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyNormalizedChildReturnPath
 noncomputable section
 open CompactGadgetReservationShape (Shape)

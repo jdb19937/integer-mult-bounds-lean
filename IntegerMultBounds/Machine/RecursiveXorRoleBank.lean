@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.RecursiveShiftRoleBank
-import IntegerMultBounds.Machine.SparseRoleCircuit
+module
+
+public import IntegerMultBounds.Machine.RecursiveShiftRoleBank
+public import IntegerMultBounds.Machine.SparseRoleCircuit
 
 /-! Actual XOR on the same permanent role/scratch/six-header bank as the
 heterogeneous shifts and scalings. A reusable XOR clock and the canonical stream
 length descriptor occupy the first two auxiliary tapes. Their construction is
 explicitly outside this adapter; both are preserved exactly by every gate. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveXorRoleBank
 noncomputable section
 open Networks

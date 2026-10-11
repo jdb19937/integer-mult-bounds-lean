@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActivePrefixStageWidthBranch
-import IntegerMultBounds.Machine.ActivePrefixStageDispatchData
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStageWidthBranch
+public import IntegerMultBounds.Machine.ActivePrefixStageDispatchData
 
 /-! The width selector reads original public slot seven. Its separate flag
 follows the existing original13/raw/direction-flag caller, so the source-order
 flag is framed and can be used by either selected branch. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixStageWidthOriginal
 noncomputable section
 open CompactGadgetReservationShape (Shape)

@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.CompactComplexPhaseSchedule
-import Mathlib.Data.Nat.Digits.Lemmas
-import IntegerMultBounds.Machine.CompactActualStageAllowance
+module
+
+public import IntegerMultBounds.Machine.CompactComplexPhaseSchedule
+public import Mathlib.Data.Nat.Digits.Lemmas
+public import IntegerMultBounds.Machine.CompactActualStageAllowance
 
 /-! Canonical consecutive power pieces of the actual active-axis count, and
 geometric descent through the fixed complex25 arity. Node fields are computed
 from a piece and a literal child-slot path, not supplied as a decomposition.
 This is axis geometry; a physical recursive controller remains separate. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexRecursiveGeometry
 noncomputable section
 open CompactGadgetReservationShape (Shape)

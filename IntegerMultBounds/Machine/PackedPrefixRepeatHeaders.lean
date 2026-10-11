@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactGadgetReservationHeadersSchedule
+module
+
+public import IntegerMultBounds.Machine.CompactGadgetReservationHeadersSchedule
 
 /-! Paid prefix-source repetition geometry. The actual gap and role-count
 words come from the earlier reservation-header stage; this fixed program reads
 d/globalGuard/n/q/b and them to construct L, retaining K=roleRows on its port.
 No repetition count or repeated-offset word is supplied to this constructor. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.PackedPrefixRepeatHeaders
 noncomputable section
 open CompactGadgetReservationHeadersWords

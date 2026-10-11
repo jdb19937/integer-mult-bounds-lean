@@ -1,6 +1,11 @@
-import IntegerMultBounds.Machine.ActiveRepairLayoutDensity
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairLayoutDensity
 
 /-! The manuscript's dyadic radix choice pays full-address repair width. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLayoutDensityArithmetic
 open VaryingControlRepairDensity
 

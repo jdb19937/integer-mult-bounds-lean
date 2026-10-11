@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.FlatAffineScalingBootstrap
-import IntegerMultBounds.Machine.FlatAffineScalingNormalize
+module
+
+public import IntegerMultBounds.Machine.FlatAffineScalingBootstrap
+public import IntegerMultBounds.Machine.FlatAffineScalingNormalize
 
 /-! Actual affine scaling from blank generated storage through complete payload
 normalization. Canonical B/Q/P words are marker-free inputs; marker creation,
 metadata synthesis, all data motion, erasure and head restoration are charged. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.FlatAffineScalingReady
 open Networks
 open ActualAffineScaling (modulus)

@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.BinaryAddressOffsetRepeatValue
-import IntegerMultBounds.Machine.BinaryPackedOffsetData
+module
+
+public import IntegerMultBounds.Machine.BinaryAddressOffsetRepeatValue
+public import IntegerMultBounds.Machine.BinaryPackedOffsetData
 
 /-! Exact source-field factorization inside one fixed physical gap. A selected
 contiguous source occupies u bits, with all preceding/following bits retained
 as spectators. The coordinate conversions preserve literal serialized order. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactPackedSourceGeometry
 open RadixRangePadding (index)
 open RecursiveInterchangeRows (pack pack_val)

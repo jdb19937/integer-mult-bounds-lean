@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.AllAxisPhaseHeadersBudget
-import IntegerMultBounds.Machine.SparsePhaseFlagsCaller
-import IntegerMultBounds.Machine.RepeatedWeightedPhaseHeader
+module
+
+public import IntegerMultBounds.Machine.AllAxisPhaseHeadersBudget
+public import IntegerMultBounds.Machine.SparsePhaseFlagsCaller
+public import IntegerMultBounds.Machine.RepeatedWeightedPhaseHeader
 
 /-! All-axis phase flags from original numeric geometry. Extraction clocks
 are reused for the runtime-axis scanner only after extraction restores them;
 both scanner clocks are physically initialized and completely erased. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.AllAxisPhaseFlagsCaller
 noncomputable section
 open CompactGadgetReservationShape (Shape)

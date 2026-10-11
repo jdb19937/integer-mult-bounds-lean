@@ -1,6 +1,11 @@
-import IntegerMultBounds.Machine.CompactComplexRootPieceVisits
+module
+
+public import IntegerMultBounds.Machine.CompactComplexRootPieceVisits
 
 /-! Prefix identities for the physical outer root-digit loop. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexRootPiecePrefixes
 open CompactComplexRecursiveGeometry CompactComplexRootPieceVisits
 

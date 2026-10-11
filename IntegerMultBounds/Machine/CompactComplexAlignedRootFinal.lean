@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactComplexAlignedBoundaryPaths
-import IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedRootTablePath
-import IntegerMultBounds.Machine.CompactComplexFixedNodeRootExit
+module
+
+public import IntegerMultBounds.Machine.CompactComplexAlignedBoundaryPaths
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedRootTablePath
+public import IntegerMultBounds.Machine.CompactComplexFixedNodeRootExit
 
 /-! Root finalization and the real empty-stack halt in the aligned table. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexAlignedRootFinal
 noncomputable section
 open Networks

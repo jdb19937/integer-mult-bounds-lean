@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.FiniteFlowPath
-import IntegerMultBounds.Machine.CompactComplexScheduledPCLayout
+module
+
+public import IntegerMultBounds.Machine.FiniteFlowPath
+public import IntegerMultBounds.Machine.CompactComplexScheduledPCLayout
 
 /-! Fixed-controller paths are composed only at reachable sequence boundaries.
 Local contracts are indexed by the actual prefix state, rather than asserted
 for every event on every possible caller. Child paths may traverse the same
 shared recursive entry and return without rebuilding the transition table. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexScheduledPaths
 noncomputable section
 open FiniteFlow FiniteFlowPath

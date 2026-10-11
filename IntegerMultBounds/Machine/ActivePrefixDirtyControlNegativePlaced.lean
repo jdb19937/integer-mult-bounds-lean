@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlNegative
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlNegative
 
 /-! Arbitrary-caller negative parity-XOR wrapper. Six original descriptors are retained,
 only the output changes, and all fifty-one native working tapes are blank again. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixDirtyControlNegativePlaced
 noncomputable section
 open ActivePrefixDirtyControlData (Shape values)

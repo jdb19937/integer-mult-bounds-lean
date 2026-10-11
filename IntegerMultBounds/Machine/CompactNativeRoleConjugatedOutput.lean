@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactNativeRoleConjugatedPorts
-import IntegerMultBounds.Machine.AlphabetTapeReplacement
+module
+
+public import IntegerMultBounds.Machine.CompactNativeRoleConjugatedPorts
+public import IntegerMultBounds.Machine.AlphabetTapeReplacement
 
 /-! Actual conjugated phase output is again the encoding of a literal native
 role bank. Thus lifted binary controller routines can consume the result
 without a payload conversion or an assumed alphabet correspondence. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactNativeRoleConjugatedOutput
 noncomputable section
 open CompactNativeRoleSourcePorts (external roles replaceSource callerTapes)

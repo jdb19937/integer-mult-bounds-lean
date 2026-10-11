@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactGadgetReservationBudget
-import IntegerMultBounds.Machine.CleanSubbank
+module
+
+public import IntegerMultBounds.Machine.CompactGadgetReservationBudget
+public import IntegerMultBounds.Machine.CleanSubbank
 
 /-! Concrete caller slots for a reserved role load: five retained original
 shape/offset tapes follow the complete reservation bank; the native payload
 port is the actual selected role. Every other role and original header is framed. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactGadgetReservationPlacement
 noncomputable section
 open Networks.Shared50ModularControl (prime)

@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActivePrefixStageNativeFrameCoordinates
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStageNativeFrameCoordinates
 
 /-! Exact support of the actual runtime XOR mask. Every unselected active bit
 is preserved by a physical stage, including bits inside the target chunk. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixStageUnselectedFrame
 noncomputable section
 open CompactGadgetReservationShape (Shape)

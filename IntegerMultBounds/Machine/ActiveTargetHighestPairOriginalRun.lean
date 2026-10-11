@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActiveTargetHighestPairOriginalData
+module
+
+public import IntegerMultBounds.Machine.ActiveTargetHighestPairOriginalData
 
 /-! Original-five-input highest-bit execution: construct every actual load
 and swap descriptor, execute the complete physical action, erase every
 constructed descriptor, and retain the literal original words and full array. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveTargetHighestPairOriginalRun
 noncomputable section
 open ActiveTargetHighestPairData ActiveTargetHighestPairHeadersData ActiveTargetHighestPairHeadersEndpoint

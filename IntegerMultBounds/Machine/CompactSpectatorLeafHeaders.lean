@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactSpectatorVisitGeometry
+module
+
+public import IntegerMultBounds.Machine.CompactSpectatorVisitGeometry
 
 /-! Runtime sparse leaf selectors retain the entire immutable address geometry.
 Each body derives its descending selected bit from the actual ordinal, and
 reclaims every generated descriptor after the native butterfly. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactSpectatorLeafHeaders
 noncomputable section
 open CompactGadgetReservationShape (Shape)

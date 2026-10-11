@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsPayloadEarlyData
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsPayloadEarlyData
 
 /-! Genuine early low payload execution followed by formatting/repair/decode.
 The actual low output supplies the repair input on the same physical tape. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLayoutRecordsPayloadEarlyRun
 noncomputable section
 open CompactGadgetReservationShape (Shape)

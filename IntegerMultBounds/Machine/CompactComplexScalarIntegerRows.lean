@@ -1,12 +1,17 @@
-import IntegerMultBounds.Machine.CompactFramedScalarGrid
-import IntegerMultBounds.Machine.CompactComplexScalarGrid
-import IntegerMultBounds.Machine.RawLinearCombination
-import Mathlib.Data.Rat.Floor
+module
+
+public import IntegerMultBounds.Machine.CompactFramedScalarGrid
+public import IntegerMultBounds.Machine.CompactComplexScalarGrid
+public import IntegerMultBounds.Machine.RawLinearCombination
+public import Mathlib.Data.Rat.Floor
 
 /-! Concrete integer numerator rows of the actual grouped complex25 scalar
 modules. Their original sparse term order and wire names are retained. One
 common factor2 clears every coefficient denominator; real and imaginary
 numerators therefore use the same fixed binary expression compiler. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexScalarIntegerRows
 noncomputable section
 attribute [local irreducible] Networks.ComplexRank25.program
@@ -306,7 +311,7 @@ theorem gate_mem (r : RowIndex) : gate r ∈ ComplexFramedExecution.rows := by
 
 /-- Literal finite data determine one allowance for all scalar modules. These
 constants are independent of integer length, recursion exponent, and row count. -/
-private opaque termTotalData :
+opaque termTotalData :
     {k : ℕ // k=(ComplexFramedExecution.rows.map (fun g => g.terms.length)).sum} :=
   ⟨(ComplexFramedExecution.rows.map (fun g => g.terms.length)).sum,rfl⟩
 

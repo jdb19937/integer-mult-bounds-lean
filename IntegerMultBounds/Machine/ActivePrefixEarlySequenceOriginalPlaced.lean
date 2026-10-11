@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixEarlySequenceOriginalRun
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixEarlySequenceOriginalRun
 
 /-! The complete original-input four-load block on arbitrary caller tapes.
 Only twenty-two original numeric words and the array are ports. Generated
 headers, duplicate row words and all private storage start and return blank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixEarlySequenceOriginalPlaced
 noncomputable section
 open ActivePrefixEarlySequenceOriginalData ActivePrefixEarlySequenceOriginalInputs

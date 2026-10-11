@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.WordBankCleanup
-import IntegerMultBounds.Machine.CountedRepairKeyCleanup
+module
+
+public import IntegerMultBounds.Machine.WordBankCleanup
+public import IntegerMultBounds.Machine.CountedRepairKeyCleanup
 
 /-! Paid copying of an extracted unmarked binary word to blank workspace,
 with both heads restored and every complementary tape retained. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLateFieldsCopy
 noncomputable section
 open SharedPlacementAlphabet

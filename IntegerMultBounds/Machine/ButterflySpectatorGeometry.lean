@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ButterflyAxisArray
+module
+
+public import IntegerMultBounds.Machine.ButterflyAxisArray
 
 /-! Arbitrary outer row spectators multiply higher groups, never polynomial
 multiplicity or the binary dimension. The literal stream remains row-major. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ButterflySpectatorGeometry
 noncomputable section
 open ButterflyAxisHeadersData

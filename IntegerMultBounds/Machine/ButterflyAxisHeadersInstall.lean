@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ButterflyAxisHeadersBudget
-import IntegerMultBounds.Machine.ButterflyAxisHeadersGeometry
+module
+
+public import IntegerMultBounds.Machine.ButterflyAxisHeadersBudget
+public import IntegerMultBounds.Machine.ButterflyAxisHeadersGeometry
 
 /-! Physically copy eight generated runtime descriptors into distinct axis
 ports. Repeated constant-one headers receive separate real copies; no tape is
 aliased across simultaneous routing controls. The source payload is framed. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ButterflyAxisHeadersInstall
 noncomputable section
 open ButterflyAxisHeadersData ButterflyAxisHeadersGeometry ButterflyAxisHeadersBudget

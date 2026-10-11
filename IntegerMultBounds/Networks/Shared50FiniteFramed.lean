@@ -1,11 +1,15 @@
-import IntegerMultBounds.Networks.BoundedFramedCircuit
-import IntegerMultBounds.Networks.Shared50FiniteTrace
-import IntegerMultBounds.Networks.Shared50Finite
-import IntegerMultBounds.Networks.DAGComplementExecution
+module
+
+public import IntegerMultBounds.Networks.BoundedFramedCircuit
+public import IntegerMultBounds.Networks.Shared50FiniteTrace
+public import IntegerMultBounds.Networks.Shared50Finite
+public import IntegerMultBounds.Networks.DAGComplementExecution
 
 /-! Actual finite-bank physical forward and complementary inverse execution.
 All declared frame incidences, including scalar-empty identity pivots, are
 restricted by proved bounds; no register or instruction is filtered out. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.Shared50FiniteFramed
 

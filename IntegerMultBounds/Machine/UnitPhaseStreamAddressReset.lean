@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactZeroUnitPhase
+module
+
+public import IntegerMultBounds.Machine.CompactZeroUnitPhase
 
 /-! Physically erase the final live counter and raw address after a whole
 phase stream. A preserved-address scan copies into clean clock45, so both
 raw words can be erased backwards with genuine head returns. Streams and
 all original/controller tapes are retained. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.UnitPhaseStreamAddressReset
 noncomputable section
 open SharedPlacementAlphabet (setTape)

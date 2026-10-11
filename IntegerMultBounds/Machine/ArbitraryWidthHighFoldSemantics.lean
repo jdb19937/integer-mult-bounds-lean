@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ArbitraryWidthHighPrefix
-import IntegerMultBounds.Machine.Shared50RecursiveNodeTranspose
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthHighPrefix
+public import IntegerMultBounds.Machine.Shared50RecursiveNodeTranspose
 
 /-! Folding the three adjacent spectator factors is a cast of the same literal
 serialized word. It commutes with the complete H/D transpose. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthHighFoldSemantics
 noncomputable section
 open Networks

@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CountedGatherMetadata
-import IntegerMultBounds.Machine.ArbitraryWidthZeroHeaderShared
-import IntegerMultBounds.Machine.BinaryRadixRootHeadersShared
+module
+
+public import IntegerMultBounds.Machine.CountedGatherMetadata
+public import IntegerMultBounds.Machine.ArbitraryWidthZeroHeaderShared
+public import IntegerMultBounds.Machine.BinaryRadixRootHeadersShared
 
 /-! Construct six original parity-gather dimensions from only the retained
 runtime b/count headers. Zero and one are
 physically written, copied, and erased. All eight private tapes are reusable. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedPackedParityHeaders
 noncomputable section
 variable {a t : ℕ}

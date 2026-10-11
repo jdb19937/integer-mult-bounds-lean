@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.Shared50RecursiveBudget
-import IntegerMultBounds.Machine.Shared50RecursiveBasePermutation
+module
+
+public import IntegerMultBounds.Machine.Shared50RecursiveBudget
+public import IntegerMultBounds.Machine.Shared50RecursiveBasePermutation
 
 /-! The actual graph's induction base, in the canonical binary source-bank
 interface and logical-volume budget used by the recursive case. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.Shared50RecursiveInductionBase
 noncomputable section
 open Networks

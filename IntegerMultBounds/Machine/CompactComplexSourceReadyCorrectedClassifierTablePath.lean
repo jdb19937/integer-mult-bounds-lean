@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedSavedReturnPath
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedSavedReturnPath
 
 /-! The real pre-orientation and stopping classifier enter tag1 or tag2 of
 the actual corrected cyclic table. Both child and empty-root paths retain all
 private suffixes and pay the physical join, without an execution callback. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedClassifierTablePath
 noncomputable section
 open Networks

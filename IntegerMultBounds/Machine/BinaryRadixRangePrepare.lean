@@ -1,15 +1,20 @@
-import IntegerMultBounds.Machine.RadixRangeDescriptors
-import IntegerMultBounds.Machine.RadixRangePaddingExecution
+module
+
+public import IntegerMultBounds.Machine.RadixRangeDescriptors
+public import IntegerMultBounds.Machine.RadixRangePaddingExecution
 
 /-! Actual numerical range preparation from only P/G/B/binary-width input
 headers. The fixed-radix range, exponent and binary range are generated,
 both payload coordinates are padded, and inverse cropping erases metadata. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryRadixRangePrepare
 noncomputable section
 open RadixRangePaddingExecution (word empty)
 
-private def hd : Option (List Bool) → ℤ | none => 0 | some _ => 1
-private def tp : Option (List Bool) → ℤ → Fin 4
+def hd : Option (List Bool) → ℤ | none => 0 | some _ => 1
+def tp : Option (List Bool) → ℤ → Fin 4
   | none => fun _ => blank
   | some bs => RadixZeroFill.encodedBinary bs
 

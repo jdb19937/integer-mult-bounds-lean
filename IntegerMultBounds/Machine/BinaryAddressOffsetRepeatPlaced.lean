@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.BinaryAddressOffsetRepeatAlphabet
-import IntegerMultBounds.Machine.PlacementBank
+module
+
+public import IntegerMultBounds.Machine.BinaryAddressOffsetRepeatAlphabet
+public import IntegerMultBounds.Machine.PlacementBank
 
 /-! Caller-owned source/destination and four original repetition descriptors
 are shared directly. Exactly five private tapes are appended, initialized and
 returned blank; the source table is physically erased and spectators survive. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryAddressOffsetRepeatPlaced
 open SharedPlacementAlphabet (setTape)
 open BinaryAddressOffsetRepeatAlphabet (word)

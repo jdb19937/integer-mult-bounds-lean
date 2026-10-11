@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.Shared50NodeGates
-import IntegerMultBounds.Machine.Shared50PieceSemantics
+module
+
+public import IntegerMultBounds.Machine.Shared50NodeGates
+public import IntegerMultBounds.Machine.Shared50PieceSemantics
 
 /-! Fiberwise correctness of the actual node payload transformations, in the
 literal Shared50 piece order. Recursive calls expose only their exact original
 field-interchange contract; segment and gate actions are the physical arrays. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.Shared50NodePieceTransport
 noncomputable section
 open Networks

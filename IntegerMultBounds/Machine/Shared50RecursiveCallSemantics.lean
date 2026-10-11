@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.RecursiveCallProtocol
-import IntegerMultBounds.Machine.Shared50RecursiveCallLayout
+module
+
+public import IntegerMultBounds.Machine.RecursiveCallProtocol
+public import IntegerMultBounds.Machine.Shared50RecursiveCallLayout
 
 /-! Exact payload semantics of the actual fixed recursive-call parking list.
 All original World roles except the active one are parked; the final I/O role
 is the sole child payload. Updating that child payload is literally entry of
 the transformed parent bank, the endpoint required by physical recovery. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.Shared50RecursiveCallSemantics
 noncomputable section
 open Networks

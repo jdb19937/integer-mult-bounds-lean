@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlLoadRun
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlLoadRun
 
 /-! Erase both offset streams and all three rotation dimensions after the
 full-array rotation, retaining precisely the original descriptors and array. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixDirtyControlLoadCleanup
 noncomputable section
 open ActivePrefixDirtyControlLoadProducer (Mode Shape values width word)

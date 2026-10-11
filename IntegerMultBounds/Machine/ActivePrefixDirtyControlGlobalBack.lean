@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlGlobalTarget
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlGlobalTarget
 
 /-! Generic full-array back rotation at the unchanged layout coordinates.
 Its explicit stream is later instantiated by the proved physical producers. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixDirtyControlGlobalBack
 noncomputable section
 open CompactGadgetReservationShape (Shape)

@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.BinaryAddressOffset
-import IntegerMultBounds.Compact.PackedArithValue
+module
+
+public import IntegerMultBounds.Machine.BinaryAddressOffset
+public import IntegerMultBounds.Compact.PackedArithValue
 
 /-! Each generated n*b-bit offset is exactly the packed parities of the
 radix-2^q digits of its regular source address. This identifies the actual
 physical output field with the second line of packedEarly, without an oracle. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryAddressOffsetValue
 open BinaryAddressOffsetData BinaryAddressTableData
 

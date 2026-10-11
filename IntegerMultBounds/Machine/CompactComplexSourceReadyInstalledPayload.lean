@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyNormalizedChildReturnPath
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyNormalizedChildReturnPath
 
 /-! The recovered parent payload is derived from its original caller words.
 Installing a returned child updates exactly its selected role, independently
 of all geometry, controller and ancestor-frame cells. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyInstalledPayload
 noncomputable section
 open CompactGadgetReservationShape (Shape)
@@ -113,8 +118,11 @@ theorem returned_payload (sh : Shape) (rows ell : ℕ)
   all_goals induction i using Fin.addCases (m:=1) (n:=c) with
   | left i =>
     fin_cases i
-    all_goals simp [
-      CompactComplexStoppedGridHandoff.payload,CyclicRowCopy.payload,Tapes.append]
+    all_goals
+      simp [CompactComplexStoppedGridHandoff.payload,CyclicRowCopy.payload,Tapes.append,
+        Function.update_apply,Fin.ext_iff]
+      intro h
+      omega
   | right j =>
     by_cases hj : j=selected
     · subst j

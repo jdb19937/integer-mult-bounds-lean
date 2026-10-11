@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.ActiveRepairLayoutPermutationDestination
-import IntegerMultBounds.Machine.ActiveRepairEarlyKeyOriginal
-import IntegerMultBounds.Machine.ActiveRepairLateKeyOriginal
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairLayoutPermutationDestination
+public import IntegerMultBounds.Machine.ActiveRepairEarlyKeyOriginal
+public import IntegerMultBounds.Machine.ActiveRepairLateKeyOriginal
 
 /-! Original geometric descriptors decode exactly the global permutation's
 current target/T/U and varying retained source. No computed field starts or
 control word is supplied to this identification. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLayoutKeysFields
 noncomputable section
 open CompactGadgetReservationShape CompactActiveTargetLayout

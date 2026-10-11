@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexPhaseSparseControls
-import IntegerMultBounds.Machine.SparseWeightedUnitPhase
+module
+
+public import IntegerMultBounds.Machine.CompactComplexPhaseSparseControls
+public import IntegerMultBounds.Machine.SparseWeightedUnitPhase
 
 /-! Actual literal phase application from a complete runtime destination
 address and two signed numerator records. Physical extraction, accumulation,
 flag readout and arithmetic are one composed machine, with payload charging. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactActualSparseUnitPhase
 noncomputable section
 open CompactGadgetReservationShape (Shape)

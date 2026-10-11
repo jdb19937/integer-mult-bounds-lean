@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.UnitPhaseFullStream
-import IntegerMultBounds.Machine.ButterflyStreamData
+module
+
+public import IntegerMultBounds.Machine.UnitPhaseFullStream
+public import IntegerMultBounds.Machine.ButterflyStreamData
 
 /-! Actual phase coefficient contexts come from the literal flattened input
 array. Only readable records require contexts; the terminal dummy is used
 solely in the restored blank workspace and is never read by the machine. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.UnitPhaseStreamData
 noncomputable section
 open DelimitedRadixRecord (Context)

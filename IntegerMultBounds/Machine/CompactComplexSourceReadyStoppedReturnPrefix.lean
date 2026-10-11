@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyFullNormalizedChildPaths
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyFullNormalizedChildPaths
 
 /-! Genuine stopped arithmetic closes the normalized physical return's exact
 scalar-prefix invariant. The selected installed result is retained literally;
 only spectators are shifted by the child's single-volume denominator gap. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyStoppedReturnPrefix
 noncomputable section
 open CompactGadgetReservationShape (Shape)

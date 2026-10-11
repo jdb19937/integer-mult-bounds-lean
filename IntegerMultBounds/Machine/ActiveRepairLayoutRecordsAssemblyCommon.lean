@@ -1,7 +1,11 @@
-import IntegerMultBounds.Machine.ActiveRepairRecordFormatPlaced
-import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsDecodeEarly
-import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsDecodeLate
-import IntegerMultBounds.Machine.CountedTapeRepairCleanupWord
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairRecordFormatPlaced
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsDecodeEarly
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsDecodeLate
+public import IntegerMultBounds.Machine.CountedTapeRepairCleanupWord
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.ActiveRepairLayoutRecordsAssemblyCommon
 noncomputable section

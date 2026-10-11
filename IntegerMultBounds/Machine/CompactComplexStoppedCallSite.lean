@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactComplexRolePhaseContinuation
-import IntegerMultBounds.Machine.CompactNativeRoleStoppedChildBudget
-import IntegerMultBounds.Machine.CompactRecursiveDependencyBudget
+module
+
+public import IntegerMultBounds.Machine.CompactComplexRolePhaseContinuation
+public import IntegerMultBounds.Machine.CompactNativeRoleStoppedChildBudget
+public import IntegerMultBounds.Machine.CompactRecursiveDependencyBudget
 
 /-! A literal recursive Call chooses its real named role, residual child
 interval and forward/inverse leaf direction. This executes the stopped child
 on the genuine split bank; it does not implement an unstopped recursive call. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexStoppedCallSite
 noncomputable section
 open CompactComplexRecursiveGeometry

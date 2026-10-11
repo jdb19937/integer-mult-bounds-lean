@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.BlankWordPairRecycle
+module
+
+public import IntegerMultBounds.Machine.BlankWordPairRecycle
 
 /-! A fixed all-port recycler restores every original stream head, installs its
 computed equal-width output, and erases every private output stream. An
 arbitrary appended caller frame is retained exactly. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BlankWordPairRecycleBank
 noncomputable section
 open RadixLinearCombinationBootstrap (empty)

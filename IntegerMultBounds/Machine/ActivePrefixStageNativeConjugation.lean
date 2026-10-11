@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixStageNativePairInverse
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStageNativePairInverse
 
 /-! Exact original-row semantics of a native basis word, one row-local action,
 and the reversed word. This is coordinate algebra for the physical native
 word; execution of the row-local action is a separate obligation. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixStageNativeConjugation
 noncomputable section
 open CompactGadgetReservationShape (Shape)

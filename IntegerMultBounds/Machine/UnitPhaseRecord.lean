@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.UnitPhaseRecordRead
-import IntegerMultBounds.Machine.UnitPhaseSigned
+module
+
+public import IntegerMultBounds.Machine.UnitPhaseRecordRead
+public import IntegerMultBounds.Machine.UnitPhaseSigned
 
 /-! One complete coefficient stream iteration after address readout: actual
 record read, phase flag initialization, header-derived phase arithmetic,
 result emission, and complete workspace reset, with a paid time bound. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.UnitPhaseRecord
 noncomputable section
 open CompactGadgetReservationShape (Shape)

@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactComplexNonleafRoleReturnFrame
+module
+
+public import IntegerMultBounds.Machine.CompactComplexNonleafRoleReturnFrame
 
 /-! Arbitrary simultaneous controller changes at a physical nonleaf return.
 Only the raw numeric bank, payloads, payload stack and reusable clock are
 protected. All complementary tapes and heads may come from an unrelated bank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexNonleafRoleReturnFrames
 noncomputable section
 open CompactComplexNonleafRoleEntry

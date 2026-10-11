@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactSpectatorLeafOriginal
+module
+
+public import IntegerMultBounds.Machine.CompactSpectatorLeafOriginal
 
 /-! The actual leaf's native word is placed at original caller tape65, after
 controller44. Its immutable ell/p ports follow all native-core workspace;
 original descriptors and every exterior caller tape are framed literally. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactSpectatorLeafPlacement
 noncomputable section
 open CompactSpectatorLeafOriginal

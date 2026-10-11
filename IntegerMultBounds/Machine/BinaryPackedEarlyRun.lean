@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.BinaryPackedEarlyRunPrefix
+module
+
+public import IntegerMultBounds.Machine.BinaryPackedEarlyRunPrefix
 
 /-! Actual four-load packed-early execution on one unchanged serialized role.
 Every offset is constructed from original controls and the current source field;
 all four machines share blank workspace and erase their own offset table. The
 retained shape/repetition words are explicit paid-upstream stage interfaces. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryPackedEarlyRun
 noncomputable section
 open Networks.Shared50ModularControl (prime)

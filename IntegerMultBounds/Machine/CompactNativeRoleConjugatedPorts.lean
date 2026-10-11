@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactNativeConjugatedSharedCaller
-import IntegerMultBounds.Machine.CompactNativeRoleChildHeadersPorts
-import IntegerMultBounds.Machine.NativePolynomialStageHeaders
+module
+
+public import IntegerMultBounds.Machine.CompactNativeConjugatedSharedCaller
+public import IntegerMultBounds.Machine.CompactNativeRoleChildHeadersPorts
+public import IntegerMultBounds.Machine.NativePolynomialStageHeaders
 
 /-! Actual numeric43 role headers supply the full native conjugated caller.
 The alphabet change is an explicit symbol encoding from six symbols into the
 prime alphabet. The selected role remains the physically shared source. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactNativeRoleConjugatedPorts
 noncomputable section
 open CompactGadgetReservationShape (Shape)

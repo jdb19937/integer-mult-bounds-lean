@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.BinaryPrefixFieldTableRun
-import IntegerMultBounds.Machine.PackedOffsetPayloadAlphabet
+module
+
+public import IntegerMultBounds.Machine.BinaryPrefixFieldTableRun
+public import IntegerMultBounds.Machine.PackedOffsetPayloadAlphabet
 
 /-! Lift the complete generated-address field projection to arbitrary caller
 alphabets, preserving the exact paid transition bound and blank workspace. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryPrefixFieldTableAlphabet
 noncomputable section
 open StreamedFiberTranslationAlphabet (encoding mapTape)

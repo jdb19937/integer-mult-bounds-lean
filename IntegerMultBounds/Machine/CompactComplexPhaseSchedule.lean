@@ -1,9 +1,14 @@
-import IntegerMultBounds.Networks.ComplexPhaseRowSchedule
-import IntegerMultBounds.Machine.CompactBinaryBasisSchedule
+module
+
+public import IntegerMultBounds.Networks.ComplexPhaseRowSchedule
+public import IntegerMultBounds.Machine.CompactBinaryBasisSchedule
 
 /-! Actual fixed complex25 phase words determine literal compact stages on
 an original node with the established 15625 consecutive slots. Geometry is
 still supplied by that node; no physical tape execution is asserted here. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexPhaseSchedule
 noncomputable section
 open Networks.BinaryRowProgram

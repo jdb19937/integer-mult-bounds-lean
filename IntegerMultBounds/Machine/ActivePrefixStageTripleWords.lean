@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.ActivePrefixStageTripleEndpoint
-import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsShape
-import IntegerMultBounds.Machine.SymbolTriplePlaced
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStageTripleEndpoint
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsShape
+public import IntegerMultBounds.Machine.SymbolTriplePlaced
 
 /-! Full physical word representation when payload capacity is a multiple of
 three. Native records are flattened in original row-major address order; their
 Boolean codes are exactly the raw input/output words of the actual stage. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixStageTripleWords
 noncomputable section
 open CompactGadgetReservationShape (Shape)

@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ArbitraryWidthHighBranchPrepare
-import IntegerMultBounds.Machine.ArbitraryWidthHighRuntimeHeaderWiring
-import IntegerMultBounds.Machine.ArbitraryWidthHighHeaderBounds
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthHighBranchPrepare
+public import IntegerMultBounds.Machine.ArbitraryWidthHighRuntimeHeaderWiring
+public import IntegerMultBounds.Machine.ArbitraryWidthHighHeaderBounds
 
 /-! Complete high execution with physical metadata preparation and erasure.
 All metadata and execution banks start and finish wholly blank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthHighPreparedRun
 noncomputable section
 open Networks

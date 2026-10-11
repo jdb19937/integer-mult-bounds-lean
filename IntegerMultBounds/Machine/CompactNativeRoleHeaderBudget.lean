@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactNativeRoleControllerBudget
-import IntegerMultBounds.Machine.CompactSpectatorLeafSetupBudget
+module
+
+public import IntegerMultBounds.Machine.CompactNativeRoleControllerBudget
+public import IntegerMultBounds.Machine.CompactSpectatorLeafSetupBudget
 
 /-! The binary quotient of the physical row count costs linearly in row count,
 with a fixed role-count constant. Complete role header synthesis is paid below. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactNativeRoleHeaderBudget
 noncomputable section
 open CompactGadgetReservationShape (Shape)

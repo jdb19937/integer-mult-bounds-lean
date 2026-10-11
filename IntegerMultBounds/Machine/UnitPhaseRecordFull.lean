@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.UnitPhaseRecord
-import IntegerMultBounds.Machine.UnitPhaseRecordAddress
+module
+
+public import IntegerMultBounds.Machine.UnitPhaseRecord
+public import IntegerMultBounds.Machine.UnitPhaseRecordAddress
 
 /-! Physical sixty-tape record body including the live address counter.
 Every iteration reads the current counter, increments it, reads one actual
 serialized coefficient, applies its header-derived unit phase, emits the
 result and resets the complete local phase workspace. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.UnitPhaseRecordFull
 noncomputable section
 open CompactGadgetReservationShape (Shape)

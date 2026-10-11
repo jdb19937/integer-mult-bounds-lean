@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.SignedScalingExecution
-import IntegerMultBounds.Machine.BlockNegationReuse
-import IntegerMultBounds.Machine.ScalingAffineBridge
+module
+
+public import IntegerMultBounds.Machine.SignedScalingExecution
+public import IntegerMultBounds.Machine.BlockNegationReuse
+public import IntegerMultBounds.Machine.ScalingAffineBridge
 
 /-! Compile-time sign choice for literal rational-coordinate scaling. Positive
 coefficients use the unsigned core directly. Negative coefficients additionally
 rewind and negate the unsigned stream, then erase and rewind that intermediate.
 Tail-length and tail-block-count descriptors remain explicit prepared inputs. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.SignedScalingSign
 
 open SignedScalingExecution (Controls setTape sharedPlacement shared_hoare)

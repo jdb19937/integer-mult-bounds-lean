@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ArbitraryWidthHighRows
-import IntegerMultBounds.Machine.RecursiveRowPadding
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthHighRows
+public import IntegerMultBounds.Machine.RecursiveRowPadding
 
 /-! Exact high-field exchange, joined-row view, low transpose and separation.
 Every view is a bijection of literal serialized cell indices. No physical
 exchange or join runtime is asserted by this semantic bridge. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthHighLayout
 noncomputable section
 open Networks

@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedActualTable
-import IntegerMultBounds.Machine.CompactComplexFixedNodePaths
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedActualTable
+public import IntegerMultBounds.Machine.CompactComplexFixedNodePaths
 
 /-! Actual corrected nonleaf setup reaches the first original schedule PC.
 Checked execution supplies the source signs, installed target and exact cost;
 the original fixed table supplies its paid control edge. This is a local path,
 not a recursive execution theorem. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedEntryTablePath
 noncomputable section
 open Networks

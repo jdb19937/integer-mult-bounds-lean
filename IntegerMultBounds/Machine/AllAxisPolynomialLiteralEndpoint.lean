@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.AllAxisPolynomialLiteral
-import IntegerMultBounds.Machine.UnitPhasePolynomialArray
+module
+
+public import IntegerMultBounds.Machine.AllAxisPolynomialLiteral
+public import IntegerMultBounds.Machine.UnitPhasePolynomialArray
 
 /-! The nested physical phase traversal emits the literal flattened result
 array, with phase selected by the address quotient rather than the flat
 coefficient index. This is the exact serialization endpoint. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.AllAxisPolynomialLiteralEndpoint
 noncomputable section
 open CompactGadgetReservationShape (Shape)

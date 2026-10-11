@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CountedPackedRuntimeLine
-import IntegerMultBounds.Compact.ToggleValue
+module
+
+public import IntegerMultBounds.Machine.CountedPackedRuntimeLine
+public import IntegerMultBounds.Compact.ToggleValue
 
 /-! The repair-key ideal toggle uses a fixed controls-at gather and XOR rule.
 All widths/counts come from original q/b/n descriptors; private shape and
 count metadata and mask scratch are physically erased. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedIdealToggle
 noncomputable section
 variable {a : ℕ}

@@ -1,12 +1,17 @@
-import IntegerMultBounds.Machine.CompactSpectatorVisitGeometry
-import IntegerMultBounds.Machine.NativeZeroPaddingArray
-import IntegerMultBounds.Machine.CompactGlobalRowPadding
-import IntegerMultBounds.Machine.CyclicRowSplit
-import IntegerMultBounds.Machine.CompactReservationNativePaddingBudget
+module
+
+public import IntegerMultBounds.Machine.CompactSpectatorVisitGeometry
+public import IntegerMultBounds.Machine.NativeZeroPaddingArray
+public import IntegerMultBounds.Machine.CompactGlobalRowPadding
+public import IntegerMultBounds.Machine.CyclicRowSplit
+public import IntegerMultBounds.Machine.CompactReservationNativePaddingBudget
 
 /-! Native coefficient row distribution keeps every immutable binary address,
 polynomial coordinate and signed field. Cyclic grouping only selects outer
 row c*g+j; the complete inner coordinate is unchanged. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactNativeRoleGeometry
 noncomputable section
 open RecursiveInterchangeRows (pack)

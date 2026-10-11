@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ArbitraryWidthHighPreparedRun
-import IntegerMultBounds.Machine.ArbitraryWidthHighCommonFallbackBody
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthHighPreparedRun
+public import IntegerMultBounds.Machine.ArbitraryWidthHighCommonFallbackBody
 
 /-! The actual fallback runs within the same blank high execution banks as
 its fast sibling, preserving every high bank for the common selector. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthHighFramedFallback
 noncomputable section
 open Networks

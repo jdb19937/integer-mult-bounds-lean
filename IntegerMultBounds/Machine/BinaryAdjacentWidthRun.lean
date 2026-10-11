@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.BinaryAdjacentWidthPrefixShared
-import IntegerMultBounds.Machine.BinaryAdjacentWidthMovementShared
-import IntegerMultBounds.Machine.BinaryAdjacentWidthInterchange
-import IntegerMultBounds.Machine.BinaryRadixEqualShared
+module
+
+public import IntegerMultBounds.Machine.BinaryAdjacentWidthPrefixShared
+public import IntegerMultBounds.Machine.BinaryAdjacentWidthMovementShared
+public import IntegerMultBounds.Machine.BinaryAdjacentWidthInterchange
+public import IntegerMultBounds.Machine.BinaryRadixEqualShared
 
 /-! Actual adjacent binary-width interchange, with physically constructed
 prefix and movement headers and blank private workspace at both endpoints. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryAdjacentWidthRun
 noncomputable section
 open Networks.Shared50ModularControl (prime)

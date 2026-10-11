@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.CompactComplexScalarLifecycleGrid
-import IntegerMultBounds.Machine.CompactComplexStoppedAlignedCall
-import IntegerMultBounds.Machine.CompactComplexDenominatorCapacity
+module
+
+public import IntegerMultBounds.Machine.CompactComplexScalarLifecycleGrid
+public import IntegerMultBounds.Machine.CompactComplexStoppedAlignedCall
+public import IntegerMultBounds.Machine.CompactComplexDenominatorCapacity
 
 /-! Physical scalar and stopped-call events propagate the true-denominator
 ledger on the permanent caller bank. These are execution steps, not a supplied
 recursive callback. The unstopped recursive dispatcher remains a separate
 assembly obligation. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexRecursiveLiveProgress
 noncomputable section
 open CompactComplexRecursiveGeometry

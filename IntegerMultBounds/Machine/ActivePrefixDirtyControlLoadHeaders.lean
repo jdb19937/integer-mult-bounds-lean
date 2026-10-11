@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlLoadData
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlLoadData
 
 /-! Rotation dimensions are physical products/powers of original descriptors,
 with all three outputs retained only until the final cleanup. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixDirtyControlLoadHeaders
 noncomputable section
 open ActivePrefixDirtyControlLoadProducer (Mode Shape values width word)

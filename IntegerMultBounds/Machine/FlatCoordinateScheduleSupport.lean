@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.FlatCoordinateInitializedSchedule
-import IntegerMultBounds.Machine.RunSupport
+module
+
+public import IntegerMultBounds.Machine.FlatCoordinateInitializedSchedule
+public import IntegerMultBounds.Machine.RunSupport
 
 /-! Explicit support bounds for the generated private workspace of actual
 initialized mixed schedules. These are derived from verified physical runtime;
 they are preparation for cleanup, not an assertion of a cleanup machine. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.FlatCoordinateScheduleSupport
 open FlatCoordinateInitializedSchedule
 open ActualAffineScaling (modulus)

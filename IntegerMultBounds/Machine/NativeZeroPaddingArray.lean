@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.NativeZeroPaddingPlaced
-import IntegerMultBounds.Machine.ButterflySpectatorGeometry
+module
+
+public import IntegerMultBounds.Machine.NativeZeroPaddingPlaced
+public import IntegerMultBounds.Machine.ButterflySpectatorGeometry
 
 /-! The emitted native word is exactly the original coefficient array extended
 by signed-zero coefficient records, at the complete padded row cardinality. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.NativeZeroPaddingArray
 noncomputable section
 open ButterflyStreamData (Coefficient encoded)

@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.Shared50RecursiveCallRecovery
-import IntegerMultBounds.Machine.Shared50RecursiveChildPermutation
-import IntegerMultBounds.Machine.Shared50RecursiveBank
-import IntegerMultBounds.Machine.RecursiveStackAllocation
+module
+
+public import IntegerMultBounds.Machine.Shared50RecursiveCallRecovery
+public import IntegerMultBounds.Machine.Shared50RecursiveChildPermutation
+public import IntegerMultBounds.Machine.Shared50RecursiveBank
+public import IntegerMultBounds.Machine.RecursiveStackAllocation
 
 /-! Actual recursive call entry automatically supplies the canonical binary
 child input and all available-stack invariants. The child headers are those
 constructed by the physical entry block, not an externally initialized bank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.Shared50RecursiveCallReady
 noncomputable section
 open Networks

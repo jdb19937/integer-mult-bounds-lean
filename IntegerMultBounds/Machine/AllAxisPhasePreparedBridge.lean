@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.AllAxisPhaseOriginalMetadata
+module
+
+public import IntegerMultBounds.Machine.AllAxisPhaseOriginalMetadata
 
 /-! The physically prepared original-header phase bank is literally the
 source-sharing bank required by the aggregate polynomial phase machine.
 Only the original native source is shared; immutable ell is physically copied. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.AllAxisPhasePreparedBridge
 noncomputable section
 open CompactGadgetReservationShape (Shape)

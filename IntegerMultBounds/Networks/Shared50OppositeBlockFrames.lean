@@ -1,8 +1,12 @@
-import IntegerMultBounds.Networks.Shared50BlockFrames
-import IntegerMultBounds.Networks.Shared50OppositeLabels
+module
+
+public import IntegerMultBounds.Networks.Shared50BlockFrames
+public import IntegerMultBounds.Networks.Shared50OppositeLabels
 
 /-! Common-frame proofs for the actual swapped sparse blocks in the opposite
 invocation. The backward middle computation is handled by its physical frames. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.Shared50OppositeBlockFrames
 

@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActiveTargetHighestPairHeadersData
+module
+
+public import IntegerMultBounds.Machine.ActiveTargetHighestPairHeadersData
 
 /-! Exact state-indexed wrappers around actual constant, power and product
 machines in the common 28+15 descriptor bank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveTargetHighestPairHeadersAtomic
 noncomputable section
 open ActiveRepairRankHeadersCommands

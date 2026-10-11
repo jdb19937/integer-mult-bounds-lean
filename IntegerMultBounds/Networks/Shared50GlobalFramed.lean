@@ -1,10 +1,14 @@
-import IntegerMultBounds.Networks.Shared50GlobalTraceStages
-import IntegerMultBounds.Networks.Shared50InvocationPhysicalEdges
-import IntegerMultBounds.Networks.Shared50FramedOpposite
+module
+
+public import IntegerMultBounds.Networks.Shared50GlobalTraceStages
+public import IntegerMultBounds.Networks.Shared50InvocationPhysicalEdges
+public import IntegerMultBounds.Networks.Shared50FramedOpposite
 
 /-! The actual finite physical instruction schedule on the reused two-bank
 world. Local forward and complementary inverse programs use their proved stage
 profiles, and every boundary alignment is an explicit instruction list. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.Shared50GlobalFramed
 

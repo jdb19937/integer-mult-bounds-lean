@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactComplexNonleafEventProgress
-import IntegerMultBounds.Machine.CompactComplexScalarIntegerRows
-import IntegerMultBounds.Networks.ComplexRecursiveCallSchema
+module
+
+public import IntegerMultBounds.Machine.CompactComplexNonleafEventProgress
+public import IntegerMultBounds.Machine.CompactComplexScalarIntegerRows
+public import IntegerMultBounds.Networks.ComplexRecursiveCallSchema
 
 /-! Genuine child addresses retain outer-row, polynomial and untouched global
 binary spectators. Actual network wires occupy the original cyclic row slots.
 The selected child interval is supplied by the original recursive call slot. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexNonleafChildAddress
 noncomputable section
 open CompactGadgetReservationShape (Shape)

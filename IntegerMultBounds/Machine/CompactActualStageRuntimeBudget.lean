@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.CompactActualStageRuntime
+module
+
+public import IntegerMultBounds.Machine.CompactActualStageRuntime
 
 /-! One uniform constant bounds the actual all-width stage on every global
 row level, with density fixed at one and the certified compact exponent. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactActualStageRuntimeBudget
 noncomputable section
 open CompactGadgetReservationShape (Shape)

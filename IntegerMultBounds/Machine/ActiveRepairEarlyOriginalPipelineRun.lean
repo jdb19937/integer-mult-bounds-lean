@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActiveRepairEarlyOriginalScan
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairEarlyOriginalScan
 
 /-! Physical original-input early repair: scan, stable key radix sort,
 prefix stripping, and exact payload reinsertion. Per-record synthesized
 metadata and all private key workspace are erased within the stated cost. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairEarlyOriginalPipelineRun
 noncomputable section
 open ActiveRepairEarlyKeyOriginalData ActiveRepairEarlyKeyOriginalValid

@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ArbitraryWidthOriginalRun
-import IntegerMultBounds.Machine.ArbitraryWidthOriginalZeroBranch
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthOriginalRun
+public import IntegerMultBounds.Machine.ArbitraryWidthOriginalZeroBranch
 
 /-! One fixed original-descriptor machine covers zero and positive widths.
 The actual canonical-width read selects the concrete proved branch; all
 private metadata and execution banks start and finish blank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthOriginalTotalRun
 noncomputable section
 open Networks

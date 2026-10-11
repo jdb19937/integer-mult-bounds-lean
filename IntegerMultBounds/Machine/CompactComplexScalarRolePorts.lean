@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.CompactComplexScalarDenominatorSequence
-import IntegerMultBounds.Machine.RawLinearCombinationComplexDenominatorPlaced
-import IntegerMultBounds.Machine.CompactComplexNativeRoleBridge
-import IntegerMultBounds.Machine.CompactComplexRolePhaseSite
+module
+
+public import IntegerMultBounds.Machine.CompactComplexScalarDenominatorSequence
+public import IntegerMultBounds.Machine.RawLinearCombinationComplexDenominatorPlaced
+public import IntegerMultBounds.Machine.CompactComplexNativeRoleBridge
+public import IntegerMultBounds.Machine.CompactComplexRolePhaseSite
 
 /-! Actual named scalar wires share the existing permanent role tapes.
 The count and true live denominator occupy separate persistent storage ports;
 no source copying or equality between independently prepared banks is used. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexScalarRolePorts
 noncomputable section
 open CompactComplexScalarRowBlock (wireCount wires_pos)
@@ -21,7 +26,7 @@ attribute [local irreducible] Networks.ComplexRank25.program CompactComplexScala
 /-- Both enumerations name the same genuine network wire. -/
 def roleIndex : Fin wireCount ≃ Fin roleCount := wireIndex.symm.trans roleEncoding
 
-private def bankPorts {c R s : ℕ} (roles : Fin c → Fin R) (storedPorts : Fin 2 → Fin s) :
+def bankPorts {c R s : ℕ} (roles : Fin c → Fin R) (storedPorts : Fin 2 → Fin s) :
     Fin (c+2) → Fin (tapes s+R) :=
   Fin.addCases (fun j => Fin.natAdd (tapes s) (roles j))
     (fun j => Fin.castAdd R (storageSlot (storedPorts j)))
@@ -124,14 +129,14 @@ theorem ready_native {sh : CompactGadgetReservationShape.Shape} {R w : ℕ}
   · simpa only [count_port] using hcount
   · simpa only [live_port] using hlive
 
-private def compiled {c S k : ℕ} {ι : Type*} (hc : 0<c)
+def compiled {c S k : ℕ} {ι : Type*} (hc : 0<c)
     (es : ι → Fin c → RadixLinearCombinationRefresh.Expr c)
     (hs : ∀ r j,RadixLinearCombinationRefresh.Size (es r j)≤S) (ops : List ι)
     (common : Fin (c+2) → Fin k) (hinj : Function.Injective common) :
     Σ q,Program (k+RawLinearCombinationComplexDenominatorPlaced.localCount c S) q 2 :=
   ⟨_,RawLinearCombinationComplexDenominatorPlaced.program hc es hs ops common hinj⟩
 
-private def callerBank {c S k : ℕ} (v : Tapes k 2) :
+def callerBank {c S k : ℕ} (v : Tapes k 2) :
     Tapes (k+RawLinearCombinationComplexDenominatorPlaced.localCount c S) 2 :=
   CleanSubbank.bank v
 

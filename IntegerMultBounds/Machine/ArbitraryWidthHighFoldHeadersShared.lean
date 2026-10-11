@@ -1,15 +1,20 @@
-import IntegerMultBounds.Machine.ArbitraryWidthHighFoldHeadersCleanup
-import IntegerMultBounds.Machine.FixedHeaderSparseBankCopy
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthHighFoldHeadersCleanup
+public import IntegerMultBounds.Machine.FixedHeaderSparseBankCopy
 
 /-! Physically copy the caller's sole original six headers, compute the folded
 root header bank, then erase all generated and copied private descriptors. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthHighFoldHeadersShared
 noncomputable section
 variable {a t : ℕ}
 open RecursiveInterchangeLayout (Descriptor)
 
 def destination : Fin 6 → Fin 16 := Fin.castAdd 10
-private theorem destination_injective : Function.Injective destination := Fin.castAdd_injective _ _
+theorem destination_injective : Function.Injective destination := Fin.castAdd_injective _ _
 def copyProgram (focus : Fin 6 → Fin t) := FixedHeaderSparseBankCopy.program
   (a := a) (by omega : 0 < t+6) focus destination destination_injective (by decide)
 def foldedProgram := Placement.placed (ArbitraryWidthHighFoldHeaders.program (a := a))

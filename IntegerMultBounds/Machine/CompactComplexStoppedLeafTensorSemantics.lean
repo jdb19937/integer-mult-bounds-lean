@@ -1,12 +1,17 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyLeafSemantics
-import IntegerMultBounds.Machine.CompactComplexNonleafChildAddress
-import IntegerMultBounds.Networks.ComplexEndpoints
-import IntegerMultBounds.Networks.BinaryColumnConjugation
-import IntegerMultBounds.Machine.CompactComplexSourceReadyOrientedStoppedReturnPrefix
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyLeafSemantics
+public import IntegerMultBounds.Machine.CompactComplexNonleafChildAddress
+public import IntegerMultBounds.Networks.ComplexEndpoints
+public import IntegerMultBounds.Networks.BinaryColumnConjugation
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyOrientedStoppedReturnPrefix
 
 /-! Literal selected-axis leaf kernels restrict to genuine child tensor
 coordinates. The surrounding binary address remains anchored to the actual
 input, and no numerical transform equality is assumed. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexStoppedLeafTensorSemantics
 noncomputable section
 open Networks

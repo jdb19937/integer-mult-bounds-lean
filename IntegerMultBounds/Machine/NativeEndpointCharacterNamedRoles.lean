@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.NativeEndpointCharacterLeafPlacement
-import IntegerMultBounds.Machine.NativeEndpointNamedPorts
+module
+
+public import IntegerMultBounds.Machine.NativeEndpointCharacterLeafPlacement
+public import IntegerMultBounds.Machine.NativeEndpointNamedPorts
 
 /-! Original named X/source and Y/sink sign families run on the actual retained
 raw caller bank. Header readiness and original role words are derived from that
 bank; execution releases all67 private tapes and retains every other caller tape. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.NativeEndpointCharacterNamedRoles
 noncomputable section
 open CompactGadgetReservationShape (Shape)

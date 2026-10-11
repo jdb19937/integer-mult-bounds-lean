@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.RecursiveScalingDimensions
+module
+
+public import IntegerMultBounds.Machine.RecursiveScalingDimensions
 
 /-! Physical width-one base dimensions. The H-scaling bank already constructs
 Q, O=A*rows*beforeH and C*Q*E. One additional actual product constructs O*C.
 Only the original six headers are supplied; every other tape starts blank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveDigitDimensions
 open RecursiveInterchangeLayout (Descriptor volume)
 variable {q : ℕ} (hq : 2 ≤ q)

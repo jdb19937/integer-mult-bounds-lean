@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.BinaryCorrectionOffsetRepeatData
-import IntegerMultBounds.Machine.BinaryCorrectionOffsetPlaced
-import IntegerMultBounds.Machine.BinaryAddressOffsetRepeatConstructBudget
+module
+
+public import IntegerMultBounds.Machine.BinaryCorrectionOffsetRepeatData
+public import IntegerMultBounds.Machine.BinaryCorrectionOffsetPlaced
+public import IntegerMultBounds.Machine.BinaryAddressOffsetRepeatConstructBudget
 
 /-! Complete correction-offset repetition from original b/q/n/P/H/L and the
 original control word. The exchanged width/range metadata uses the existing
 physical descriptor constructor; all private storage is erased on return. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryCorrectionOffsetRepeatConstruct
 open SharedPlacementAlphabet (setTape)
 open BinaryAddressOffsetRepeatHeaders

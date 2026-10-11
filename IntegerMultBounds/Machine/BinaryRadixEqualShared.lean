@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.BinaryRadixEqualRun
-import IntegerMultBounds.Machine.ArbitraryWidthOriginalTotalRun
-import IntegerMultBounds.Machine.BinaryRadixRootHeadersShared
-import IntegerMultBounds.Machine.ArbitraryWidthExecutionPrivateHeadersAppend
-import IntegerMultBounds.Machine.BinaryAdjacentWidthHeadersShared
+module
+
+public import IntegerMultBounds.Machine.BinaryRadixEqualRun
+public import IntegerMultBounds.Machine.ArbitraryWidthOriginalTotalRun
+public import IntegerMultBounds.Machine.BinaryRadixRootHeadersShared
+public import IntegerMultBounds.Machine.ArbitraryWidthExecutionPrivateHeadersAppend
+public import IntegerMultBounds.Machine.BinaryAdjacentWidthHeadersShared
 
 /-! Equal binary interchange on a shared caller tape. The sole four original
 headers are physically copied into the blank private bank and erased again. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryRadixEqualShared
 noncomputable section
 open Networks

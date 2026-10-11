@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.SliceOffsetAdvance
+module
+
+public import IntegerMultBounds.Machine.SliceOffsetAdvance
 
 /-! One actual piece step executes the selected recursive slice, restores
 the parent bank, and physically advances its offset to the next piece. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitrarySliceStep
 noncomputable section
 open Networks

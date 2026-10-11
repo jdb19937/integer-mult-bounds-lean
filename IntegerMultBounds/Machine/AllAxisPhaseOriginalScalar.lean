@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.AllAxisPhaseOriginalPorts
-import IntegerMultBounds.Machine.AllAxisPolynomialPlacement
+module
+
+public import IntegerMultBounds.Machine.AllAxisPhaseOriginalPorts
+public import IntegerMultBounds.Machine.AllAxisPolynomialPlacement
 
 /-! Actual native original13 and one retained immutable ell word physically
 populate the aggregate phase bank. The original native source and full stage
 workspace are retained; ell is copied, not supplied in prepared storage. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.AllAxisPhaseOriginalScalar
 noncomputable section
 open CompactGadgetReservationShape (Shape)

@@ -1,10 +1,14 @@
-import IntegerMultBounds.Networks.Shared50Dirty
-import IntegerMultBounds.Networks.DAGSourceRoles
-import IntegerMultBounds.Networks.SparseCircuit
+module
+
+public import IntegerMultBounds.Networks.Shared50Dirty
+public import IntegerMultBounds.Networks.DAGSourceRoles
+public import IntegerMultBounds.Networks.SparseCircuit
 
 /-! Actual sparse input/output instructions for the shared fifty-point program.
 Every update is a one-source XOR, and all destinations are actual physical
 source roles or requested data outputs. No dense zero terms are emitted. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.Shared50SparseIO
 
@@ -41,7 +45,7 @@ private theorem bank_read_run {n s : ℕ} (entries : List (Fin n × Fin s))
 
 abbrev Source := {entry : ℕ × ℕ // entry ∈ SharedPointExecution.code.sources}
 
-private theorem source_mem_compile (entry : Source) :
+theorem source_mem_compile (entry : Source) :
     entry.val ∈ (DAGAllocator.compile circuit.nodes outputRefs).sources := by
   simpa only [SharedPointExecution.code] using entry.property
 

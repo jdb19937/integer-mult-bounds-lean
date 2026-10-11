@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.PackedPrefixRepeatHeaders
+module
+
+public import IntegerMultBounds.Machine.PackedPrefixRepeatHeaders
 
 /-! The paid prefix repetition factors on eight arbitrary caller ports.
 Seven original descriptors are retained; the eighth receives the constructed
 factor L. The actual erasure restores the original caller and all workspace. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.PackedPrefixRepeatHeadersPlaced
 noncomputable section
 open CompactGadgetReservationHeadersWords

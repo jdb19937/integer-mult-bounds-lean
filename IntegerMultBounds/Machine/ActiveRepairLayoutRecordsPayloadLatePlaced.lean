@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsLate
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlSequenceOriginalBudget
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsLate
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlSequenceOriginalBudget
 
 /-! The original later payload machine placed on exactly twenty-three original
 numeric/array ports. All private storage is initially and finally blank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLayoutRecordsPayloadLatePlaced
 noncomputable section
 open CompactGadgetReservationShape (Shape)

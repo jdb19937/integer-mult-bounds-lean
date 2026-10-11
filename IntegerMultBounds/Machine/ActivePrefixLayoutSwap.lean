@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixLayoutBack
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixLayoutBack
 
 /-! The real compact-T/back exchange on unchanged array coordinates. The
 active target and both active source regions remain literal coordinates; the
 back rotation now acts on T, while its prefix contains the current target. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixLayoutSwap
 open CompactGadgetReservationShape (Shape)
 open CompactActiveTargetGeometry

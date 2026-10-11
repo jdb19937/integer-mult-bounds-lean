@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.CompactNativeRoleConjugatedLifecycle
-import IntegerMultBounds.Machine.CompactComplexRecursiveGeometry
-import IntegerMultBounds.Networks.ComplexRecursiveCallSchema
+module
+
+public import IntegerMultBounds.Machine.CompactNativeRoleConjugatedLifecycle
+public import IntegerMultBounds.Machine.CompactComplexRecursiveGeometry
+public import IntegerMultBounds.Networks.ComplexRecursiveCallSchema
 
 /-! Every actual complex25 edge occurrence selects its original named role
 and its actual native phase kernel. Stage geometry is derived from a genuine
 recursive Visit; repeated equal labels retain distinct occurrence indices.
 This supplies physical phase blocks, not a whole scalar/recursive network. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexRolePhaseSite
 noncomputable section
 open CompactGadgetReservationShape (Shape)

@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlPureSemantics
-import IntegerMultBounds.Machine.BinaryParityXorOffsetNegate
-import IntegerMultBounds.Machine.BinaryParityXorOffsetValue
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlPureSemantics
+public import IntegerMultBounds.Machine.BinaryParityXorOffsetNegate
+public import IntegerMultBounds.Machine.BinaryParityXorOffsetValue
 
 /-! Independent modular negation of each current original-prefix parity row,
 including zero-width rows when n is zero. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixDirtyControlNegativePureData
 open ActivePrefixDirtyControlData hiding offsetWord offset_length
 open ActivePrefixDirtyControlPureBank (offsetWord offset_length)

@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactComplexStoppedGridHandoff
+module
+
+public import IntegerMultBounds.Machine.CompactComplexStoppedGridHandoff
 
 /-! Spectator stream-volume descriptors are physically generated from the
 genuine retained raw geometry/ell/precision words. The selected scalar and
 every old recursion slot are framed; cleanup restores the exact raw state. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSpectatorVolumeHeaders
 noncomputable section
 open CompactGadgetReservationShape (Shape)

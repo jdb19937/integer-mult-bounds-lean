@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixStageFullErase
-import IntegerMultBounds.Machine.ActivePrefixStageFullCompose
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStageFullErase
+public import IntegerMultBounds.Machine.ActivePrefixStageFullCompose
 
 /-! The complete early selected stage from original shape/node/slot words.
 Synthesis, same-array action and consumer erasure are all physical and paid. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixStageFullEarlyRun
 noncomputable section
 open CompactGadgetReservationShape (Shape)

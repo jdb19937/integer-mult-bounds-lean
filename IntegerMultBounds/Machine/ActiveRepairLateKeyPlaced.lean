@@ -1,6 +1,11 @@
-import IntegerMultBounds.Machine.ActiveRepairLateKeyRun
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairLateKeyRun
 
 /-! Full later key computation on arbitrary original caller ports. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLateKeyPlaced
 noncomputable section
 open ActiveRepairLateKeyData ActiveRepairLateKeyData.Data ActiveRepairLateKeyRun

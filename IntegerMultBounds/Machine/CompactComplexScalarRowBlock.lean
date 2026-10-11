@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactComplexScalarWireEmit
-import IntegerMultBounds.Machine.RawLinearCombinationComplexFamily
+module
+
+public import IntegerMultBounds.Machine.CompactComplexScalarWireEmit
+public import IntegerMultBounds.Machine.RawLinearCombinationComplexFamily
 
 /-! A complete actual complex25 sparse row block executes all named wire
 expressions on real and imaginary components. Original controls are retained,
 one shared arithmetic bank is blank afterward, and every output record has
 the common advanced denominator, including physically doubled spectators. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexScalarRowBlock
 noncomputable section
 open CompactComplexScalarIntegerRows
@@ -49,7 +54,7 @@ theorem expression_cost (r : RowIndex) (i : Fin wireCount) (w : ℕ) :
     simp only [RadixLinearCombinationRefresh.leaves,one_mul] at h
     exact h.trans (scale_allowance termTotal w)
 
-private opaque budgetWireCount : {k : ℕ // k=wireCount} := ⟨wireCount,rfl⟩
+opaque budgetWireCount : {k : ℕ // k=wireCount} := ⟨wireCount,rfl⟩
 
 @[irreducible] def timeConstant := 2*budgetWireCount.val*(42*(termTotal+1)+8)+1
 

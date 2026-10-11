@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.UnitPhaseCountTransfer
+module
+
+public import IntegerMultBounds.Machine.UnitPhaseCountTransfer
 
 /-! Full-address coefficient stream initialization from original headers:
 physically derive bits, synthesize count rows*2^bits, transfer count to59,
 initialize live counter/readout, and erase generated numeric workspace.
 Original row header4 is preserved throughout. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.UnitPhaseFullStreamInit
 noncomputable section
 open CompactGadgetReservationShape (Shape)

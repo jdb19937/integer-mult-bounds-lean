@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixStageFullBudget
-import IntegerMultBounds.Machine.ActivePrefixStageFullEndpoint
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStageFullBudget
+public import IntegerMultBounds.Machine.ActivePrefixStageFullEndpoint
 
 /-! Actual original-input array endpoints have the complete selected low and
 highest address action, preserving every original source-slot bit. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixStageFullSelected
 noncomputable section
 open CompactGadgetReservationShape (Shape)

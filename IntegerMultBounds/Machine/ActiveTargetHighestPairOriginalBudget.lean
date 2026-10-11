@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActiveTargetHighestPairOriginalRun
-import IntegerMultBounds.Machine.ActiveTargetHighestPairHeadersBudget
-import IntegerMultBounds.Machine.ActiveTargetHighestPairBudget
+module
+
+public import IntegerMultBounds.Machine.ActiveTargetHighestPairOriginalRun
+public import IntegerMultBounds.Machine.ActiveTargetHighestPairHeadersBudget
+public import IntegerMultBounds.Machine.ActiveTargetHighestPairBudget
 
 /-! The full original-input highest-bit machines retain a linear volume
 bound including physical metadata preparation, execution and erasure. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveTargetHighestPairOriginalBudget
 open ActiveTargetHighestPairData ActiveTargetHighestPairOriginalRun
 open ActiveTargetHighestPairHeadersEndpoint

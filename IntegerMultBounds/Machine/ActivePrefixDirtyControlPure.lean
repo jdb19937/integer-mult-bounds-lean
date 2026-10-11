@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlPureCleanup
-import IntegerMultBounds.Machine.ActivePrefixDirtyControl
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlPureCleanup
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControl
 
 /-! The second dirty-U controlled early load emits pure target parity. It uses
 the same real source/clock setup and cleanup, with a target-only Boolean gather. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixDirtyControlPure
 noncomputable section
 open ActivePrefixDirtyControlData hiding offsetWord gathered offset_length

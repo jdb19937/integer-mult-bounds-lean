@@ -1,12 +1,16 @@
-import IntegerMultBounds.Networks.Shared50GlobalBudget
-import IntegerMultBounds.Networks.Shared50SparseInvocation
-import IntegerMultBounds.Networks.TripleNeighborPermutation
+module
+
+public import IntegerMultBounds.Networks.Shared50GlobalBudget
+public import IntegerMultBounds.Networks.Shared50SparseInvocation
+public import IntegerMultBounds.Networks.TripleNeighborPermutation
 
 /-! The actual three-coordinate scalar schedule on the padded two-bank world.
 Stages one and three reuse complete auxiliary banks through the neighbor
 permutation; the middle stage has separate banks and reversed local block order.
 All dirty scratch is restored. Grouped topology, projector ranks and tape costs
 are separate obligations. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.Shared50GlobalCircuit
 

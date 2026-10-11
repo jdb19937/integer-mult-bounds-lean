@@ -1,14 +1,19 @@
-import IntegerMultBounds.Machine.ActivePrefixCompactConjugationRun
-import IntegerMultBounds.Machine.ActivePrefixCompactSwapGeometry
-import IntegerMultBounds.Machine.ActivePrefixCompactParityLoadLayout
-import IntegerMultBounds.Machine.ActivePrefixCompactParityLoadLayoutAfter
-import IntegerMultBounds.Machine.ActivePrefixCompactNegativeLoadLayout
-import IntegerMultBounds.Machine.ActivePrefixCompactNegativeLoadLayoutAfter
-import IntegerMultBounds.Machine.ActivePrefixLayoutAbsorption
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixCompactConjugationRun
+public import IntegerMultBounds.Machine.ActivePrefixCompactSwapGeometry
+public import IntegerMultBounds.Machine.ActivePrefixCompactParityLoadLayout
+public import IntegerMultBounds.Machine.ActivePrefixCompactParityLoadLayoutAfter
+public import IntegerMultBounds.Machine.ActivePrefixCompactNegativeLoadLayout
+public import IntegerMultBounds.Machine.ActivePrefixCompactNegativeLoadLayoutAfter
+public import IntegerMultBounds.Machine.ActivePrefixLayoutAbsorption
 
 /-! Both source orders in the unchanged layout for both physical load branches.
 The original-record payload hypothesis pays prefix construction, with no
 additional assumption that the wide target fits the compact reservation. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixCompactConjugationLayout
 noncomputable section
 open ActivePrefixCompactConjugationData

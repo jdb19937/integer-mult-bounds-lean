@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.BinaryDescriptorQueueRewind
+module
+
+public import IntegerMultBounds.Machine.BinaryDescriptorQueueRewind
 
 /-! Physically erase a completed forward field queue and restore its entire
 blank tape/head zero. The EOF cursor is rewound with paid transitions before
 the already verified counted-free word eraser runs. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryDescriptorQueueCleanup
 noncomputable section
 open MarkedWordCleanup (one)

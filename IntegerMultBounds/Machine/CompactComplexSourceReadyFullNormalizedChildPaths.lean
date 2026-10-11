@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyFullChildPaths
-import IntegerMultBounds.Machine.CompactComplexSourceReadyNormalizedChildReturnPath
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyFullChildPaths
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyNormalizedChildReturnPath
 
 /-! The unchanged scalar-inclusive table executes decoded normalized returns.
 The stopped specialization uses the genuine single child-volume gap, retains
 all scalar scratch and reaches the original unique successor event PC. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyFullNormalizedChildPaths
 noncomputable section
 open CompactGadgetReservationShape (Shape)

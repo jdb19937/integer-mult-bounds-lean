@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactComplexNonleafSpectatorTargetRestore
-import IntegerMultBounds.Machine.CompactComplexNonleafChildAddress
-import IntegerMultBounds.Machine.CompactComplexFixedNodePaths
+module
+
+public import IntegerMultBounds.Machine.CompactComplexNonleafSpectatorTargetRestore
+public import IntegerMultBounds.Machine.CompactComplexNonleafChildAddress
+public import IntegerMultBounds.Machine.CompactComplexFixedNodePaths
 
 /-! The paid nonleaf continuation returns the literal next raw caller bank,
 its named scalar prefix and true live ledger. Concrete child address maps retain
 every spectator; actual child execution is the explicit induction premise. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexNonleafSpectatorTargetPrefix
 noncomputable section
 open CompactGadgetReservationShape (Shape)

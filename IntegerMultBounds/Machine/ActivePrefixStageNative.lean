@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixStageTripleWords
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStageTripleWords
 
 /-! One physical native-symbol stage: destructive encoding, the actual fixed
 all-width Boolean stage, then destructive decoding. Every head is restored and
 both obsolete code words are erased; conversion and sequencing costs are paid. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixStageNative
 noncomputable section
 open CompactGadgetReservationShape (Shape)
@@ -38,7 +43,7 @@ def bank (d : Inputs s) (h : s.payload=B*3+0) (xs : Address d → Fin B → Fin 
 
 def encodeProgram := SymbolTriplePlaced.encodeProgram ha src raw distinct
 def decodeProgram := SymbolTriplePlaced.decodeProgram ha raw src distinct.symm
-private def compose {t a q r u : ℕ} (E : Program t q a) (M : Program t r a) (D : Program t u a) :=
+def compose {t a q r u : ℕ} (E : Program t q a) (M : Program t r a) (D : Program t u a) :=
   seq (seq E M) D
 
 def programFor {q : ℕ} (M : Program count q prime) :=

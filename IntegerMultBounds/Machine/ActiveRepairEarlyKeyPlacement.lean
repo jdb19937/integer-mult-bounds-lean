@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActiveRepairEarlySourceRun
-import IntegerMultBounds.Machine.ActiveRepairDestinationPatchRun
-import IntegerMultBounds.Machine.CountedRepairKeyAppend
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairEarlySourceRun
+public import IntegerMultBounds.Machine.ActiveRepairDestinationPatchRun
+public import IntegerMultBounds.Machine.CountedRepairKeyAppend
 
 /-! Exact placement of clean early-key stages into a shared caller bank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairEarlyKeyPlacement
 noncomputable section
 variable {c k s q : ℕ}

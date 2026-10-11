@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActiveRepairEarlyFieldsPlaced
-import IntegerMultBounds.Machine.CountedRepairKeyValue
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairEarlyFieldsPlaced
+public import IntegerMultBounds.Machine.CountedRepairKeyValue
 
 /-! The actual extracted-field computation has the existing exact local guard
 and repair-destination rank semantics. A concatenated word is used only in
 this mathematical identification, never as a supplied physical machine input. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairEarlyFieldsValue
 noncomputable section
 open IntegerMultBounds.Compact

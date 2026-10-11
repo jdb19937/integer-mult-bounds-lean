@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactComplexScalarGrid
-import IntegerMultBounds.Machine.CompactComplexRecursiveGeometry
+module
+
+public import IntegerMultBounds.Machine.CompactComplexScalarGrid
+public import IntegerMultBounds.Machine.CompactComplexRecursiveGeometry
 
 /-! Numerator growth from scalar network levels and actual butterfly depths
 has an explicit signed-width budget. Geometric Visits derive the maximum
 remaining recursion exponent from the original active-axis header. These
 lemmas do not assert an assembled recursive execution theorem. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactRecursiveGridBudget
 noncomputable section
 open CompactComplexRecursiveGeometry

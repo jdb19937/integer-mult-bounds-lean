@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactGlobalRowInitialRun
-import IntegerMultBounds.Machine.CompactGlobalRowHeaderCost
+module
+
+public import IntegerMultBounds.Machine.CompactGlobalRowInitialRun
+public import IntegerMultBounds.Machine.CompactGlobalRowHeaderCost
 
 /-! All global header synthesis, whole-row movement and descriptor erasure
 are charged to original complete-record volume. The role and arity constants
 are fixed; no factor depending on recursion depth enters the coefficient. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactGlobalRowInitialBudget
 noncomputable section
 open CompactGlobalRowPadding

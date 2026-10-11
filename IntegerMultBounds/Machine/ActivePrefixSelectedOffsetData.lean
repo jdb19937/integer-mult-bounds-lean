@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.BinaryPrefixFieldTableData
-import IntegerMultBounds.Machine.SelectedSourceBitsStreamData
-import IntegerMultBounds.Machine.BinaryVaryingSelectedOffsetData
+module
+
+public import IntegerMultBounds.Machine.BinaryPrefixFieldTableData
+public import IntegerMultBounds.Machine.SelectedSourceBitsStreamData
+public import IntegerMultBounds.Machine.BinaryVaryingSelectedOffsetData
 
 /-! The actual generated prefix-field tables and batch-extracted controls
 drive the first active-target offset load. Controls are bits of the current
 full prefix address, not one external source word repeated over the array. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixSelectedOffsetData
 open BinaryVaryingSelectedOffsetData (stream)
 

@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActiveRepairLateKey
-import IntegerMultBounds.Machine.ActiveRepairRankHeadersPlaced
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairLateKey
+public import IntegerMultBounds.Machine.ActiveRepairRankHeadersPlaced
 
 /-! Original geometric descriptors and a genuine rank supply all inputs of
 the later key machine. Parser and patch headers start physically blank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLateKeyOriginalData
 noncomputable section
 open ActiveRepairRankHeadersData

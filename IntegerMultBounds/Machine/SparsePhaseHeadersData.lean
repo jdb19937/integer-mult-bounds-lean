@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactChildHeadersArithmetic
-import IntegerMultBounds.Machine.ActivePrefixStageHeadersRun
+module
+
+public import IntegerMultBounds.Machine.CompactChildHeadersArithmetic
+public import IntegerMultBounds.Machine.ActivePrefixStageHeadersRun
 
 /-! Sparse phase stride, count and full-address offset are physically derived
 from original node/global headers and the controller's current axis header.
 The two arithmetic temporaries are blank again at the endpoint. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.SparsePhaseHeadersData
 noncomputable section
 open CompactGadgetReservationShape (Shape)

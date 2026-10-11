@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.FlatCoordinateScalingConstruct
-import IntegerMultBounds.Machine.FlatCoordinateShiftSharedBank
+module
+
+public import IntegerMultBounds.Machine.FlatCoordinateScalingConstruct
+public import IntegerMultBounds.Machine.FlatCoordinateShiftSharedBank
 
 /-! A fully initialized scaling shares only payload/scratch and b/W. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.FlatCoordinateScalingSharedBank
 open FlatAffineScalingInputLayout (Kind kinds coefficientKinds)
 open Networks.Shared50ModularControl (prime)

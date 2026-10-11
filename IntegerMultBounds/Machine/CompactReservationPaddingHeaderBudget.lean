@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactReservationPaddingHeaders
-import IntegerMultBounds.Machine.CompactReservedVolumeBudget
+module
+
+public import IntegerMultBounds.Machine.CompactReservationPaddingHeaders
+public import IntegerMultBounds.Machine.CompactReservedVolumeBudget
 
 /-! Paid adapter-header generation and erasure are uniformly charged to the
 original native symbol volume, before the single global row pad. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactReservationPaddingHeaderBudget
 noncomputable section
 open CompactReservationPaddingHeaders

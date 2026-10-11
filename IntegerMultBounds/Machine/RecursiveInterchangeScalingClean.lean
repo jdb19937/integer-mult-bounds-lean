@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.RecursiveInterchangeScalingConstruct
-import IntegerMultBounds.Machine.FlatCoordinateScalingSharedBank
-import IntegerMultBounds.Machine.CleanExecution
+module
+
+public import IntegerMultBounds.Machine.RecursiveInterchangeScalingConstruct
+public import IntegerMultBounds.Machine.FlatCoordinateScalingSharedBank
+public import IntegerMultBounds.Machine.CleanExecution
 
 /-! Reusable initialized heterogeneous scalings: retain six original headers and
 the normalized payload pair, physically erase every private tape and tracker. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveInterchangeScalingClean
 open Networks
 open RecursiveInterchangeLayout (Descriptor volume)

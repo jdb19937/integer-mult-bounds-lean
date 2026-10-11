@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActiveRepairRankHeadersData
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairRankHeadersData
 
 /-! Physical original-width descriptor producer and matching post-use eraser.
 Parser8 and patch7 outputs retain canonical marked words, all scratch is blank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairRankHeadersRun
 noncomputable section
 open ActiveRepairRankHeadersCommands ActiveRepairRankHeadersData

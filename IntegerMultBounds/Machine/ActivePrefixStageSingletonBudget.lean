@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActivePrefixStageSingletonRun
-import IntegerMultBounds.Machine.ActiveTargetHighestLayoutOriginalBudget
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStageSingletonRun
+public import IntegerMultBounds.Machine.ActiveTargetHighestLayoutOriginalBudget
 
 /-! Both singleton source orders have uniform linear cost in the complete
 current array volume. Producer synthesis, highest-bit action and all consumer
 word erasure are included; no packed-repair density hypothesis is needed. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixStageSingletonBudget
 open CompactGadgetReservationShape (Shape)
 open ActivePrefixStageParameters ActivePrefixStageGeometry

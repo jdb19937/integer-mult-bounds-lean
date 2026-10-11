@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.CompactNativeRoleOriginal
-import IntegerMultBounds.Machine.CompactReservationNativeRows
-import IntegerMultBounds.Machine.CompactReservationNativePadding
+module
+
+public import IntegerMultBounds.Machine.CompactNativeRoleOriginal
+public import IntegerMultBounds.Machine.CompactReservationNativeRows
+public import IntegerMultBounds.Machine.CompactReservationNativePadding
 
 /-! The genuine globally padded reservation word has the exact native row
 representation used by every descendant role. Original high binary coordinates
 are retained by the outer row range; Shape.bits is immutable after reservation.
 Changing row multiplicity never narrows the stored signed coefficient fields. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactNativeRoleReservedBridge
 noncomputable section
 open CompactGadgetReservationShape (Shape)

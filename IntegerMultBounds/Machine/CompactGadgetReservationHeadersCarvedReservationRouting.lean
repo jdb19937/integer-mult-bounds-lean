@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.CompactGadgetReservationHeadersCarvedBudget
+module
+
+public import IntegerMultBounds.Machine.CompactGadgetReservationHeadersCarvedBudget
 
 /-! Physical placement of the original-array pad/split/erase machine inside
 the same header/spectator/private bank consumed by the carved load. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactGadgetReservationHeadersCarvedReservationRouting
 noncomputable section
 variable {s h t u w₁ w₂ a q : ℕ}

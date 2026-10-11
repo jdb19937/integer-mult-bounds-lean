@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.UnitPhaseFullStreamArray
-import IntegerMultBounds.Machine.CompactComplexPhaseRecordAddress
+module
+
+public import IntegerMultBounds.Machine.UnitPhaseFullStreamArray
+public import IntegerMultBounds.Machine.CompactComplexPhaseRecordAddress
 
 /-! The physical stream kernel's derived sparse offset and live full-address
 readout yield the actual ordered complex25 phase. No phase exponent, controls
 or supplied numeric sparse descriptors enter this semantic connection. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactLiteralUnitPhase
 noncomputable section
 open CompactGadgetReservationShape (Shape)

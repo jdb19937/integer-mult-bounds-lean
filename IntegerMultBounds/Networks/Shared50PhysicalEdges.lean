@@ -1,10 +1,14 @@
-import IntegerMultBounds.Networks.FramedEdgeTrace
-import IntegerMultBounds.Networks.Shared50FiniteFramed
-import IntegerMultBounds.Networks.Shared50FiniteReverseTrace
+module
+
+public import IntegerMultBounds.Networks.FramedEdgeTrace
+public import IntegerMultBounds.Networks.Shared50FiniteFramed
+public import IntegerMultBounds.Networks.Shared50FiniteReverseTrace
 
 /-! The physical frame pairs of the actual finite fifty-copy program agree
 exactly, in order and with repetitions, with the proved forward and complementary
 reverse rank traces. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.Shared50PhysicalEdges
 

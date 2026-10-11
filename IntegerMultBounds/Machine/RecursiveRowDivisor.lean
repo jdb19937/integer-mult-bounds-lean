@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.FixedBasePowerDescriptor
-import IntegerMultBounds.Machine.Shared50RecursiveDepth
+module
+
+public import IntegerMultBounds.Machine.FixedBasePowerDescriptor
+public import IntegerMultBounds.Machine.Shared50RecursiveDepth
 
 /-! The fixed Shared50 row divisor W^k is actually synthesized from a runtime
 binary depth on the unchanged finite alphabet. Its cost is linear in a row
 range known to dominate the divisor; no precomputed power descriptor is assumed. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveRowDivisor
 noncomputable section
 open Networks

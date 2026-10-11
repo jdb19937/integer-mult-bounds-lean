@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.CompactReservedSchedule
+module
+
+public import IntegerMultBounds.Machine.CompactReservedSchedule
 
 /-! Every interval boundary is paid: preparation computes the counts, switching
 loads the derived high start, and finalization erases all generated controls. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactReservedLifecycle
 noncomputable section
 open CompactReservedHeaders

@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CountedRepairKeyPrefix
-import IntegerMultBounds.Machine.Branch
-import IntegerMultBounds.Machine.MarkedReturn
+module
+
+public import IntegerMultBounds.Machine.CountedRepairKeyPrefix
+public import IntegerMultBounds.Machine.Branch
+public import IntegerMultBounds.Machine.MarkedReturn
 
 /-! Four-tape physical moves used by the conditional repair-key writer. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedRepairKeyAppendMoves
 noncomputable section
 open SharedPlacementAlphabet

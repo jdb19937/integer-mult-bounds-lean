@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.RecursiveMixedClean
-import IntegerMultBounds.Machine.RecursiveViewFrameRoleBank
+module
+
+public import IntegerMultBounds.Machine.RecursiveMixedClean
+public import IntegerMultBounds.Machine.RecursiveViewFrameRoleBank
 
 /-! Place an initialized, fully cleaned mixed block on the same permanent
 role/header/stack bank as recursive scalar segments. Its two transient controls
 are private; the dedicated stack and arbitrary auxiliaries are framed literally. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveMixedRoleBank
 noncomputable section
 open Networks

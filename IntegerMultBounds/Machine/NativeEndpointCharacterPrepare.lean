@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.NativeEndpointCharacterHeaders
-import IntegerMultBounds.Machine.NativePolynomialStageHeaderBudget
+module
+
+public import IntegerMultBounds.Machine.NativeEndpointCharacterHeaders
+public import IntegerMultBounds.Machine.NativePolynomialStageHeaderBudget
 
 /-! Private endpoint-character geometry is synthesized from copied original
 raw descriptors. Actual parent rows are physically divided by the fixed role
 count; codec payload is computed from ell and precision, and both immutable
 inputs are erased after ell is copied to its retained phase port. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.NativeEndpointCharacterPrepare
 noncomputable section
 open CompactGadgetReservationShape (Shape)

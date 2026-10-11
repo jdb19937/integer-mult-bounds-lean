@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.RecursiveVolumeConstruct
-import IntegerMultBounds.Machine.CleanExecution
+module
+
+public import IntegerMultBounds.Machine.RecursiveVolumeConstruct
+public import IntegerMultBounds.Machine.CleanExecution
 
 /-! Fully clean physical volume synthesis. The only retained tapes are the six
 original headers, the newly initialized empty clock, and the canonical volume
 descriptor; every intermediate dimension and tracker is physically erased. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveVolumeClean
 open RecursiveInterchangeLayout (Descriptor volume)
 variable {q : ℕ} (hq : 2 ≤ q)

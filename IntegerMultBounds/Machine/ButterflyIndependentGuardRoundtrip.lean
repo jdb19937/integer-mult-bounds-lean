@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.ButterflyIndependentGuardSchedule
-import IntegerMultBounds.Machine.ButterflyIndependentGuardBank
+module
+
+public import IntegerMultBounds.Machine.ButterflyIndependentGuardSchedule
+public import IntegerMultBounds.Machine.ButterflyIndependentGuardBank
 
 /-! One fixed machine reserves a two-pass signed guard, performs all forward
 axes, physically resets its selected-axis descriptor, performs all inverse axes
 and restores the original actual-precision header. The common stream starts
 at the explicitly enlarged initial width; no free resizing occurs between
 passes. The second pass consumes the first pass's actual grid and tape output. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ButterflyIndependentGuardRoundtrip
 noncomputable section
 open ButterflyAxisArray (Array)

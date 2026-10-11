@@ -1,7 +1,9 @@
-import IntegerMultBounds.Machine.SparsePhaseHeadersData
-import IntegerMultBounds.Machine.BinaryDescriptorCopyPlaced
-import IntegerMultBounds.Machine.ActivePrefixStageHeadersBudget
-import IntegerMultBounds.Machine.FlatCoordinateDimensions
+module
+
+public import IntegerMultBounds.Machine.SparsePhaseHeadersData
+public import IntegerMultBounds.Machine.BinaryDescriptorCopyPlaced
+public import IntegerMultBounds.Machine.ActivePrefixStageHeadersBudget
+public import IntegerMultBounds.Machine.FlatCoordinateDimensions
 
 /-! Paid stage metadata lifecycle for the polynomial phase caller. Original
 thirteen headers produce all computed geometry; an immutable caller ordinal
@@ -9,6 +11,9 @@ is physically copied only after stage synthesis has released its scratch.
 Final metadata/ordinal erasure restores exactly the original numeric bank.
 Native coefficient streams and outer controller storage can be framed by
 placing/extending these actual header machines. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.UnitPhaseStageHeaders
 noncomputable section
 open CompactGadgetReservationShape (Shape)

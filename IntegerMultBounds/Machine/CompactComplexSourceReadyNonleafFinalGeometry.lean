@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexControllerExactReturnBudget
-import IntegerMultBounds.Machine.CompactComplexNonleafSpectatorTargetRestore
-import IntegerMultBounds.Machine.CompactComplexNonleafRoleMergeCurrentBudget
+module
+
+public import IntegerMultBounds.Machine.CompactComplexControllerExactReturnBudget
+public import IntegerMultBounds.Machine.CompactComplexNonleafSpectatorTargetRestore
+public import IntegerMultBounds.Machine.CompactComplexNonleafRoleMergeCurrentBudget
 
 /-! Literal serialization and retained-frame bridges for actual current-node
 contraction followed by same-row cyclic merging. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyNonleafFinalGeometry
 noncomputable section
 open CompactComplexNativeCodecFrame (permanentTapes)

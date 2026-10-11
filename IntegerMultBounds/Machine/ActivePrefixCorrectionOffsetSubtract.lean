@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActivePrefixCorrectionOffsetData
-import IntegerMultBounds.Machine.PackedOffsetPayloadAlphabet
-import IntegerMultBounds.Machine.CompactGadgetReservationPlacement
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixCorrectionOffsetData
+public import IntegerMultBounds.Machine.PackedOffsetPayloadAlphabet
+public import IntegerMultBounds.Machine.CompactGadgetReservationPlacement
 
 /-! Caller-alphabet rowwise subtraction consumes both complete operand tables
 and returns blank scratch, preserving runtime width/count descriptors. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixCorrectionOffsetSubtract
 noncomputable section
 open StreamedFiberTranslationAlphabet (encoding)

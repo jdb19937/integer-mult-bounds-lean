@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.BinaryRadixRangePrepare
-import IntegerMultBounds.Machine.RowPaddingConstructedAlphabet
+module
+
+public import IntegerMultBounds.Machine.BinaryRadixRangePrepare
+public import IntegerMultBounds.Machine.RowPaddingConstructedAlphabet
 
 /-! Actual binary-range preparation and cropping embedded into the recursive
 alphabet, with literal encoded payload and header endpoints. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryRadixRangePrepareAlphabet
 noncomputable section
 variable {a : ℕ}
@@ -12,8 +17,8 @@ def mapTape (source : ℤ → Fin 4) : ℤ → Fin (a+4) := fun z => (encoding (
 def mapArray {n : ℕ} (x : Fin n → Fin 4) : Fin n → Fin (a+4) := fun z => (encoding (a := a)).encode (x z)
 def word {n : ℕ} (x : Fin n → Fin (a+4)) := putWord (fun _ => blank) 0 (List.ofFn x)
 
-private def hd : Option (List Bool) → ℤ | none => 0 | some _ => 1
-private def tp : Option (List Bool) → ℤ → Fin (a+4)
+def hd : Option (List Bool) → ℤ | none => 0 | some _ => 1
+def tp : Option (List Bool) → ℤ → Fin (a+4)
   | none => fun _ => blank
   | some bs => RadixZeroFill.encodedBinary bs
 

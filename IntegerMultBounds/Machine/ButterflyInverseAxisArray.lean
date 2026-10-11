@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ButterflyInverseAxisOriginal
-import IntegerMultBounds.Machine.ButterflyAxisWalsh
+module
+
+public import IntegerMultBounds.Machine.ButterflyInverseAxisOriginal
+public import IntegerMultBounds.Machine.ButterflyAxisWalsh
 
 /-! Exact common-array endpoints and dyadic guard for the native inverse axis.
 The inverse merge changes physical stream order; no free array permutation is
 assumed at the clean endpoint. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ButterflyInverseAxisArray
 noncomputable section
 open ButterflyAxisArray ButterflyAxisSemantics ButterflyAxisDecoded

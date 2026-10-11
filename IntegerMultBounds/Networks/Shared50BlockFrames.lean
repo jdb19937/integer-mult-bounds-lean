@@ -1,9 +1,13 @@
-import IntegerMultBounds.Networks.Shared50LabeledInvocation
-import IntegerMultBounds.Networks.Shared50SparseInvocation
+module
+
+public import IntegerMultBounds.Networks.Shared50LabeledInvocation
+public import IntegerMultBounds.Networks.Shared50SparseInvocation
 
 /-! Actual sparse scalar blocks use a common frame on each gate's precise
 incidences. No dense zero-coefficient terms or assumed attachment contract is
 used in these frame-commutation theorems. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.Shared50BlockFrames
 

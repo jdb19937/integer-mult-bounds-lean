@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ArbitraryWidthHighCommonDispatchCost
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthHighCommonDispatchCost
 
 /-! Sole-original-header positive-width execution: physically prepare common
 metadata, choose and run the actual branch, then erase every private bank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthOriginalRun
 noncomputable section
 open Networks

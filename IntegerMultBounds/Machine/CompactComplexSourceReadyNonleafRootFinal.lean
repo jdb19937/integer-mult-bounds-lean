@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyNonleafOrientedFinal
-import IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedRoleRejoin
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyNonleafOrientedFinal
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedRoleRejoin
 
 /-! Actual root tag3 contracts and rejoins the role payload, then physically
 selects identity from the retained empty return stack. Child saved-PC contracts
 are not substituted for the root case. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyNonleafRootFinal
 noncomputable section
 open CompactGadgetReservationShape (Shape)

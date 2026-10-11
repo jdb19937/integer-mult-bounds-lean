@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlGlobalCoordinates
-import IntegerMultBounds.Machine.BinaryPackedLateData
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlGlobalCoordinates
+public import IntegerMultBounds.Machine.BinaryPackedLateData
 
 /-! The actual dirty-U-controlled early block is precisely the early step of
 the packed late algorithm, with every original spectator retained. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixDirtyControlPackedEarly
 noncomputable section
 open CompactGadgetReservationShape (Shape)

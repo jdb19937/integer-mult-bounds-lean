@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlHeadersGeometry
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlSequenceData
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlHeadersGeometry
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlSequenceData
 
 /-! Original caller bank for the four early loads. Twenty-two original numeric
 words and the array are supplied; both ten-word consumer header banks start
 blank. Each header producer physically copies its own row word. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixDirtyControlSequenceOriginalData
 noncomputable section
 open Networks.Shared50ModularControl (prime)

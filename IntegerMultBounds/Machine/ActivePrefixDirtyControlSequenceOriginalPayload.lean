@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlSequenceOriginalInputs
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlSequenceOriginalInputs
 
 /-! The complete actual later sequence consumes the physically generated
 header groups in the original 53-tape caller and preserves every spectator. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixDirtyControlSequenceOriginalPayload
 noncomputable section
 open ActivePrefixDirtyControlSequenceOriginalData ActivePrefixDirtyControlSequenceOriginalInputs

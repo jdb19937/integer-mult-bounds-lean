@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActivePrefixEarlySequenceSemantics
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixEarlySequenceSemantics
 
 /-! The physical four-load coordinate map is the packed early arithmetic on
 every address, with its actual address-dependent source controls. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixEarlySequencePacked
 noncomputable section
 open CompactGadgetReservationShape (Shape)

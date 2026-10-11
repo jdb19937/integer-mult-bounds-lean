@@ -1,12 +1,17 @@
-import IntegerMultBounds.Machine.Shared50RecursiveBaseExecution
-import IntegerMultBounds.Machine.Shared50NodePieceTransport
-import IntegerMultBounds.Machine.Shared50RecursiveCallRecovery
-import IntegerMultBounds.Machine.Shared50RecursiveBinaryInvariant
+module
+
+public import IntegerMultBounds.Machine.Shared50RecursiveBaseExecution
+public import IntegerMultBounds.Machine.Shared50NodePieceTransport
+public import IntegerMultBounds.Machine.Shared50RecursiveCallRecovery
+public import IntegerMultBounds.Machine.Shared50RecursiveBinaryInvariant
 
 /-! Exact physical traces through suffixes of the literal recursive schedule.
 Segment and gate traces use their concrete global-bank contracts. Recursive
 calls retain an explicit actual child trace, between charged physical setup and
 recovery blocks, so this does not assert recursive termination for free. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.Shared50RecursivePieceExecution
 noncomputable section
 open Networks

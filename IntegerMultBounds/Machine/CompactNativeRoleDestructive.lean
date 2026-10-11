@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactNativeRoleTransfer
+module
+
+public import IntegerMultBounds.Machine.CompactNativeRoleTransfer
 
 /-! Complete native cyclic transfers with separately paid source erasure.
 Split clears the common word; merge clears every role word. All origins and
 the reset workspace return to zero, with the exact immutable count retained. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactNativeRoleDestructive
 noncomputable section
 open CompactNativeRoleGeometry

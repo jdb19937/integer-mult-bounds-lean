@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactComplexActualCallFullAlignment
-import IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedActualTable
+module
+
+public import IntegerMultBounds.Machine.CompactComplexActualCallFullAlignment
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedActualTable
 
 /-! One fixed corrected recursive table includes physical forward/reverse
 basis passes around each actual child call. The finite alphabet and appended
 basis workspace are shared by every block; original saved PCs are unchanged.
 This identifies the complete table, not a reached recursive execution proof. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyAlignedActualTable
 noncomputable section
 open Networks.Shared50ModularControl (prime)

@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActiveRepairLateKeyOriginalGeometry
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairLateKeyOriginalGeometry
 
 /-! Original-input later key production on arbitrary caller tapes, retaining
 all original descriptors, the scan counter, and every complementary frame. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLateKeyOriginalPlaced
 noncomputable section
 open ActiveRepairLateKeyOriginalData ActiveRepairLateKeyOriginalValid

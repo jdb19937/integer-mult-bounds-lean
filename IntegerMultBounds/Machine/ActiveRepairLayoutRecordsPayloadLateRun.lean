@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsPayloadLateData
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsPayloadLateData
 
 /-! Actual original later payload execution, clean full-width repair and
 physical copy-back share the original array tape. Every private tape is blank
 at entry and exit, and every original numeric word is retained. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLayoutRecordsPayloadLateRun
 noncomputable section
 open CompactGadgetReservationShape (Shape)

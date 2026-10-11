@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.RawLinearCombinationComplexArrayReusable
+module
+
+public import IntegerMultBounds.Machine.RawLinearCombinationComplexArrayReusable
 
 /-! A fixed literal sequence of Gaussian sparse rows executes end to end over
 retained polynomial wire streams. Every row reuses the same blank private
 bank, so there is no unresolved intermediate head or scratch restoration. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RawLinearCombinationComplexRowSequence
 noncomputable section
 open ButterflyStreamData (Coefficient)

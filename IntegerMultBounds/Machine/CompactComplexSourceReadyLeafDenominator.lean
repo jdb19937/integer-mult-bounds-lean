@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyLeaf
-import IntegerMultBounds.Machine.CompactComplexNonleafRoleChildBank
-import IntegerMultBounds.Machine.CompactNativeDenominatorTarget
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyLeaf
+public import IntegerMultBounds.Machine.CompactComplexNonleafRoleChildBank
+public import IntegerMultBounds.Machine.CompactNativeDenominatorTarget
 
 /-! Physical stopped-leaf target construction and live installation on the
 fixed source-ready bank plus leaf work and ten dedicated private tapes. The
 actual retained volume is read, not supplied as a target word. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyLeafDenominator
 noncomputable section
 open SharedPlacementAlphabet (setTape)
@@ -21,7 +26,7 @@ def volume : Fin (tapes s c) := Fin.castAdd 10 (Fin.castAdd leafTapes (CompactCo
 def work : Fin (tapes s c) := Fin.natAdd (publicTapes s c+leafTapes) 0
 
 def slots : Fin 4 → Fin (tapes s c) := ![current,volume,target,work]
-private theorem slots_injective : Function.Injective (slots (s:=s) (c:=c)) := by
+theorem slots_injective : Function.Injective (slots (s:=s) (c:=c)) := by
   intro i j h
   fin_cases i <;> fin_cases j
   all_goals first | rfl |
@@ -47,7 +52,7 @@ private theorem current_target : current (s:=s) (c:=c)≠target := by
   exact (by decide : (0:Fin 4)≠2) hh
 
 def copySlots : Fin 2 → Fin (tapes s c) := ![target,current]
-private theorem copy_injective : Function.Injective (copySlots (s:=s) (c:=c)) := by
+theorem copy_injective : Function.Injective (copySlots (s:=s) (c:=c)) := by
   intro i j h
   fin_cases i <;> fin_cases j <;> simp_all [copySlots,current_target,Ne.symm current_target]
 def commitProgram := seq (BinaryDescriptorCleanupList.oneProgram (a:=2) (current (s:=s) (c:=c)))

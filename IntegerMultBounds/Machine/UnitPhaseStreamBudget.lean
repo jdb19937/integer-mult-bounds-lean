@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.UnitPhaseStreamLoop
+module
+
+public import IntegerMultBounds.Machine.UnitPhaseStreamLoop
 
 /-! Every phase record costs linear time in reserved payload and signed
 coefficient width, including actual address generation and all cleanup.
 The original-header stream loop retains the resulting aggregate bound. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.UnitPhaseStreamBudget
 open CompactGadgetReservationShape (Shape)
 open ActivePrefixStageParameters

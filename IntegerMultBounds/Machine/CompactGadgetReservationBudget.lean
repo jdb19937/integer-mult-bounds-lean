@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactGadgetReservationRun
-import IntegerMultBounds.Machine.BinaryPackedOffsetOriginalBudget
+module
+
+public import IntegerMultBounds.Machine.CompactGadgetReservationRun
+public import IntegerMultBounds.Machine.BinaryPackedOffsetOriginalBudget
 
 /-! The actual reserved-front/back movement retains the certified compact
 width exponent. Its width is n*G, without the wider selected-slot spacing K. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactGadgetReservationBudget
 open CompactGadgetReservationShape
 open CompactGadgetReservationData (rowCount)

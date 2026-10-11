@@ -1,12 +1,17 @@
-import IntegerMultBounds.Machine.BinaryPackedOffsetOriginalPlaced
-import IntegerMultBounds.Machine.BinaryParityXorOffsetRepeatPlaced
-import IntegerMultBounds.Machine.BinaryRepeatedOffsetAction
-import IntegerMultBounds.Machine.WordBankCleanup
+module
+
+public import IntegerMultBounds.Machine.BinaryPackedOffsetOriginalPlaced
+public import IntegerMultBounds.Machine.BinaryParityXorOffsetRepeatPlaced
+public import IntegerMultBounds.Machine.BinaryRepeatedOffsetAction
+public import IntegerMultBounds.Machine.WordBankCleanup
 
 /-! Physical negative parity-XOR offset production, packed-field action and offset erasure
 on one caller bank. The four action shape headers and six original generator
 headers and retained control word are literal retained inputs; no offset word or action oracle is supplied.
 Upstream reservation geometry construction remains a separate stage. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryParityXorOffsetLoad
 noncomputable section
 open Networks.Shared50ModularControl (prime)

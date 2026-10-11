@@ -1,8 +1,12 @@
-import IntegerMultBounds.Networks.Shared50Dirty
-import IntegerMultBounds.Networks.Shared50Frames
+module
+
+public import IntegerMultBounds.Networks.Shared50Dirty
+public import IntegerMultBounds.Networks.Shared50Frames
 
 /-! Physical readout roles have globally distinct target/common-point owners
 and the exact source-span label used by the forward frame trace. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.Shared50OutputRoles
 

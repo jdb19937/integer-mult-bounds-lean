@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyOrientedControlsFrame
-import IntegerMultBounds.Machine.CompactComplexSourceReadyStoppedLeafDispatchBudget
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyOrientedControlsFrame
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyStoppedLeafDispatchBudget
 
 /-! The stopped control executes the actual complete forward leaf body and
 then reads the same retained saved frame for post-conjugation, before pop. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyOrientedControlsStopped
 noncomputable section
 open Networks

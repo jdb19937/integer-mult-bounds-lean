@@ -1,17 +1,22 @@
-import IntegerMultBounds.Machine.RadixDigitMoveBlockExecution
-import IntegerMultBounds.Machine.FixedBaseDescriptorQuotient
-import IntegerMultBounds.Machine.FixedBasePowerStep
+module
+
+public import IntegerMultBounds.Machine.RadixDigitMoveBlockExecution
+public import IntegerMultBounds.Machine.FixedBaseDescriptorQuotient
+public import IntegerMultBounds.Machine.FixedBasePowerStep
 
 /-! Shared exact bank for ordered high-block join/separate bodies and their
 independent physical setup/cleanup. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RadixHighBlockJoinBank
 noncomputable section
 variable {q a : ℕ}
 
 def count (q : ℕ) := ((RadixDigitMoveCore.count q+RadixDigitMoveCore.count q)+4)+16
 theorem count_eq (q : ℕ) : count q = 2*q+34 := by unfold count RadixDigitMoveCore.count; omega
-private def hd : Option (List Bool) → ℤ | none => 0 | some _ => 1
-private def tp : Option (List Bool) → ℤ → Fin (a+4)
+def hd : Option (List Bool) → ℤ | none => 0 | some _ => 1
+def tp : Option (List Bool) → ℤ → Fin (a+4)
   | none => fun _ => blank
   | some bs => CountedLoopReuseAlphabet.binary bs
 

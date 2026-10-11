@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactComplexNonleafSpectatorHandoff
+module
+
+public import IntegerMultBounds.Machine.CompactComplexNonleafSpectatorHandoff
 
 /-! A fixed spectator-handoff bank preserves all nine Entry payload/clock and
 role scratch tapes. Its private ten tapes follow that retained frame, with no
 depth-dependent workspace and no additional physical transition cost. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexNonleafSpectatorPlacement
 noncomputable section
 variable {P q b : ℕ}

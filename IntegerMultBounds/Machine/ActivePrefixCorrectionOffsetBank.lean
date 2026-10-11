@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.ActivePrefixCorrectionOffsetSubtract
-import IntegerMultBounds.Machine.ActivePrefixSelectedOffsetPlaced
-import IntegerMultBounds.Machine.ActivePrefixControlOffsetPlaced
-import IntegerMultBounds.Machine.ActivePrefixOffsetHeadersCleanup
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixCorrectionOffsetSubtract
+public import IntegerMultBounds.Machine.ActivePrefixSelectedOffsetPlaced
+public import IntegerMultBounds.Machine.ActivePrefixControlOffsetPlaced
+public import IntegerMultBounds.Machine.ActivePrefixOffsetHeadersCleanup
 
 /-! Eight immutable caller descriptors, two internally produced operands,
 one correction output and five internally synthesized numeric descriptors. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixCorrectionOffsetBank
 noncomputable section
 open ActivePrefixSelectedOffsetBank (Shape values headerWords)

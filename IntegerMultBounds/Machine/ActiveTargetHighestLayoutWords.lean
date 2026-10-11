@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActiveTargetHighestLayoutGlobal
-import IntegerMultBounds.Machine.ActiveTargetHighestBitsWords
-import IntegerMultBounds.Machine.ActiveRepairLayoutPermutationFiber
+module
+
+public import IntegerMultBounds.Machine.ActiveTargetHighestLayoutGlobal
+public import IntegerMultBounds.Machine.ActiveTargetHighestBitsWords
+public import IntegerMultBounds.Machine.ActiveRepairLayoutPermutationFiber
 
 /-! Highest-bit destinations implement the literal omitted selected-bit XOR
 on the retained high interval of the containing target word. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveTargetHighestLayoutWords
 noncomputable section
 open CompactGadgetReservationShape (Shape)

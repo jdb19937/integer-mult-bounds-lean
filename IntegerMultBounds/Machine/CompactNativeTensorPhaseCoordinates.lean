@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactNativePhaseCoordinates
-import IntegerMultBounds.Machine.CompactAllAxisPhaseReadout
+module
+
+public import IntegerMultBounds.Machine.CompactNativePhaseCoordinates
+public import IntegerMultBounds.Machine.CompactAllAxisPhaseReadout
 
 /-! The single all-axis scanner reads the row actually reached by the native
 basis word. Its one coefficient rotation is therefore the complete original
 complex-edge tensor phase, including every coordinate axis and spectator. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactNativeTensorPhaseCoordinates
 noncomputable section
 open CompactGadgetReservationShape (Shape)

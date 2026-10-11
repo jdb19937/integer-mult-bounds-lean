@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlConjugationPlaced
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlConjugationPlaced
 
 /-! The literal later-source schedule on one unchanged array. All three
 six-header groups describe real producer coordinates; no offset stream or
 load action is supplied by the caller. Header synthesis remains separate. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixDirtyControlSequenceData
 noncomputable section
 open Networks.Shared50ModularControl (prime)

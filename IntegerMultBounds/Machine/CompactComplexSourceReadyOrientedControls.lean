@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.CompactComplexSourceReadyOrientationInvariants
-import IntegerMultBounds.Machine.CompactComplexSourceReadyNodeControls
-import IntegerMultBounds.Machine.CompactComplexSourceReadyScalarWorkspace
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyOrientationInvariants
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyNodeControls
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyScalarWorkspace
 
 /-! Actual oriented control blocks: pre-conjugation precedes the stopping
 marker and post-conjugation follows the complete forward stopped body. The
 post block executes before return-PC guard/pop. All blocks are widened over
 the dedicated scalar suffix, with that bank retained literally. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyOrientedControls
 noncomputable section
 open CompactComplexSourceReadyWorkspace (tapes)
@@ -14,7 +19,7 @@ variable {s c q B : ℕ}
 attribute [local irreducible] CompactComplexSourceReadyDirection.width
   CompactComplexSourceReadyGuard.setupProgram CompactComplexSourceReadyGuard.setupProgramFor
 
-private def stateCount {t q a : ℕ} (_ : Program t q a) := q
+def stateCount {t q a : ℕ} (_ : Program t q a) := q
 
 def orientation (pcStack : Fin s) := CompactComplexSourceReadyOrientation.program (savedSlot (c:=c) pcStack)
 def nodeEntry (pcStack : Fin s) : Σ q,Program (tapes s c) q 2 :=

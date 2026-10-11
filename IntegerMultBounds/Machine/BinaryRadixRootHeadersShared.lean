@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.BinaryRadixRangePrepareAlphabet
-import IntegerMultBounds.Machine.FixedHeaderBankCopy
-import IntegerMultBounds.Machine.ArbitraryWidthHighLayout
+module
+
+public import IntegerMultBounds.Machine.BinaryRadixRangePrepareAlphabet
+public import IntegerMultBounds.Machine.FixedHeaderBankCopy
+public import IntegerMultBounds.Machine.ArbitraryWidthHighLayout
 
 /-! Physically synthesize [P,1,1,e,G,B] from retained P/e/G/B. The one
 constant is written and erased; all root descriptor copies are charged. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryRadixRootHeadersShared
 noncomputable section
 variable {a t : ℕ}

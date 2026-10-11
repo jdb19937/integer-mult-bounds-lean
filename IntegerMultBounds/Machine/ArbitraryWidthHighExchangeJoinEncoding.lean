@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ArbitraryWidthHighExchangeShared
-import IntegerMultBounds.Machine.ArbitraryWidthHighMovementPlacement
-import IntegerMultBounds.Machine.ArbitraryWidthHighMovementSemantics
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthHighExchangeShared
+public import IntegerMultBounds.Machine.ArbitraryWidthHighMovementPlacement
+public import IntegerMultBounds.Machine.ArbitraryWidthHighMovementSemantics
 
 /-! Concrete four-symbol encoding agrees with actual ordered high joining. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthHighExchangeJoinEncoding
 noncomputable section
 open Networks

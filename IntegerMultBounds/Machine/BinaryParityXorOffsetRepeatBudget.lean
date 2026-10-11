@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.BinaryParityXorOffsetRepeatConstruct
-import IntegerMultBounds.Machine.BinarySelectedOffsetRepeatBudget
+module
+
+public import IntegerMultBounds.Machine.BinaryParityXorOffsetRepeatConstruct
+public import IntegerMultBounds.Machine.BinarySelectedOffsetRepeatBudget
 
 /-! Negative parity-XOR repetition has the same paid metadata/copying layout as parity
 repetition, with the negative parity-XOR producer's
 larger constant. Its allowance is explicitly charged to record width. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryParityXorOffsetRepeatBudget
 
 def constant := BinarySelectedOffsetRepeatBudget.constant+1000

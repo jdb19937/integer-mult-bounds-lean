@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactComplexScalarPolynomialReusable
-import IntegerMultBounds.Machine.RawLinearCombinationComplexRowSequence
+module
+
+public import IntegerMultBounds.Machine.CompactComplexScalarPolynomialReusable
+public import IntegerMultBounds.Machine.RawLinearCombinationComplexRowSequence
 
 /-! Actual named scalar rows share one fixed scratch bank and compose on
 literal polynomial arrays without assumed numerical stream callbacks. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexScalarPolynomialSequence
 noncomputable section
 open CompactComplexScalarIntegerRows (RowIndex)
@@ -11,7 +16,7 @@ open ButterflyStreamData (Coefficient)
 open RecursiveChildQuotientsConstant (bits)
 attribute [local irreducible] Networks.ComplexRank25.program CompactComplexScalarIntegerRows.gates
 
-private opaque commonScratch : {S : ℕ // ∀ r j,
+opaque commonScratch : {S : ℕ // ∀ r j,
     RadixLinearCombinationRefresh.Size (expressions r j)≤S} :=
   ⟨Finset.univ.sup CompactComplexScalarRowBlock.scratch,fun r j =>
     (CompactComplexScalarRowBlock.scratch_fits r j).trans
@@ -32,7 +37,7 @@ def compile (ops : List RowIndex) :=
 def execute {n : ℕ} (ops : List RowIndex) (data : Fin wireCount → Fin n → Coefficient) :=
   RawLinearCombinationComplexRowSequence.execute wires_pos rows ops data
 
-private def normalizedBank {c S n : ℕ} (data : Fin c → Fin n → Coefficient)
+def normalizedBank {c S n : ℕ} (data : Fin c → Fin n → Coefficient)
     (bs : List Bool) : Tapes (RawLinearCombinationComplexRowSequence.count c S) 2 :=
   RawLinearCombinationComplexArrayReusable.bank (S:=S) data bs
 

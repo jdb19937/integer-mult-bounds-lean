@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ArbitraryWidthPieces
-import IntegerMultBounds.Machine.Shared50RecursiveRootExecution
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthPieces
+public import IntegerMultBounds.Machine.Shared50RecursiveRootExecution
 
 /-! The actual proved root budgets summed over the literal arbitrary-width
 partition. This bounds the power-piece calls; physical view construction and
 padding must still be charged by the general-width wrapper. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthPieceBudget
 noncomputable section
 open Networks

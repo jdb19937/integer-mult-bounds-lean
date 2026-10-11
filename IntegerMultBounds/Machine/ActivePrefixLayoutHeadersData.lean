@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActiveRepairRankHeadersCommands
-import IntegerMultBounds.Machine.CompactGadgetReservationHeadersPowerRound
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairRankHeadersCommands
+public import IntegerMultBounds.Machine.CompactGadgetReservationHeadersPowerRound
 
 /-! Physical layout-header preparation starts with fourteen original widths
 and stage controls. Reservation widths H/B/F themselves are supplied here;
 deriving those from reservation chunk/axis/guard controls remains separate. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixLayoutHeadersData
 noncomputable section
 open ActiveRepairRankHeadersCommands

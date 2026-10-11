@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactLiteralUnitPhase
-import IntegerMultBounds.Machine.ActivePrefixStageTripleTransport
+module
+
+public import IntegerMultBounds.Machine.CompactLiteralUnitPhase
+public import IntegerMultBounds.Machine.ActivePrefixStageTripleTransport
 
 /-! Explicit physical record-start embedding, its actual stage destination,
 and the corresponding coefficient ordinal. Payload offset zero is preserved
 by every actual stage instruction and therefore by the complete literal word. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactPhaseRecordEmbedding
 noncomputable section
 open CompactGadgetReservationShape (Shape)

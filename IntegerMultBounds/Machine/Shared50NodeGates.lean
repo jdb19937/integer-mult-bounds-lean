@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.Shared50RecursiveGates
-import IntegerMultBounds.Machine.Shared50NodeSegments
+module
+
+public import IntegerMultBounds.Machine.Shared50RecursiveGates
+public import IntegerMultBounds.Machine.Shared50NodeSegments
 
 /-! Actual Shared50 scalar gates on the complete node payload layout: original
 World roles followed by one untouched input/output role. Every generated clock
 and volume bit is physically constructed and erased on private tapes. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.Shared50NodeGates
 noncomputable section
 open Networks

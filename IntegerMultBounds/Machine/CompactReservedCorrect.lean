@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.CompactReservedSemantics
+module
+
+public import IntegerMultBounds.Machine.CompactReservedSemantics
 
 /-! The full physically controlled low/high reservation schedule implements
 exactly its two sparse signed-kernel lists, at the actual accrued precision. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactReservedCorrect
 noncomputable section
 open CompactReservedHeaders

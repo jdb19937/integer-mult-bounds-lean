@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActivePrefixStageDispatchData
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStageDispatchData
 
 /-! Physical comparison and clean original-input branches share a separate
 runtime flag; all other caller words and every private tape are framed. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixStageDispatchPlaced
 noncomputable section
 open CompactGadgetReservationShape (Shape)

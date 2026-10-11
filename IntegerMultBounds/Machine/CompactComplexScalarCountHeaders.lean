@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactNativeRoleHeaders
-import IntegerMultBounds.Machine.ActivePrefixStageTripleWords
+module
+
+public import IntegerMultBounds.Machine.CompactNativeRoleHeaders
+public import IntegerMultBounds.Machine.ActivePrefixStageTripleWords
 
 /-! Construct the genuine scalar coefficient count from original native shape,
 row and polynomial-exponent descriptors. All intermediate geometry and powers
 are physically erased; no count or denominator is supplied as an input. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexScalarCountHeaders
 noncomputable section
 open CompactGadgetReservationShape (Shape)

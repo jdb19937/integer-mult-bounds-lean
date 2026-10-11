@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.RadixHighBlockJoinRun
-import IntegerMultBounds.Machine.RadixHighBlockSeparateRun
-import IntegerMultBounds.Machine.SharedPlacementAlphabet
+module
+
+public import IntegerMultBounds.Machine.RadixHighBlockJoinRun
+public import IntegerMultBounds.Machine.RadixHighBlockSeparateRun
+public import IntegerMultBounds.Machine.SharedPlacementAlphabet
 
 /-! Concrete shared-source placement of the actual high-block join/separate
 machines. All other caller tapes and heads are literally framed; the private
 source remains blank and the original private header bank is restored. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthHighMovementPlacement
 noncomputable section
 open SharedPlacementAlphabet (setTape)

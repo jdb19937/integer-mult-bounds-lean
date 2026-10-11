@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.NativeUniformPolynomialRotationNamedRoles
-import IntegerMultBounds.Machine.NativeEndpointCharacterNamedBank
+module
+
+public import IntegerMultBounds.Machine.NativeUniformPolynomialRotationNamedRoles
+public import IntegerMultBounds.Machine.NativeEndpointCharacterNamedBank
 
 /-! Uniform corrections return the literal canonical native role bank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.NativeUniformPolynomialRotationNamedBank
 noncomputable section
 open CompactGadgetReservationShape (Shape)

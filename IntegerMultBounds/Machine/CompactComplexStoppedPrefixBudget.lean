@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactComplexStoppedPrefixAlignedCall
-import IntegerMultBounds.Machine.CompactComplexStoppedAlignedBudget
+module
+
+public import IntegerMultBounds.Machine.CompactComplexStoppedPrefixAlignedCall
+public import IntegerMultBounds.Machine.CompactComplexStoppedAlignedBudget
 
 /-! The exact-prefix stopped event has the original uniform volume-times-child
 runtime. True live-header capacity follows from its actual scalar-prefix ledger. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexStoppedPrefixBudget
 noncomputable section
 open CompactGadgetReservationShape (Shape)
@@ -23,7 +28,7 @@ open CompactComplexRolePhaseSite (roleCount role)
 open Networks.ComplexRecursiveCallSchema (Call)
 variable {s : ℕ}
 
-private opaque actualRowsData : {R : ℕ // R=CompactComplexDenominatorCapacity.scalarRows} :=
+opaque actualRowsData : {R : ℕ // R=CompactComplexDenominatorCapacity.scalarRows} :=
   ⟨CompactComplexDenominatorCapacity.scalarRows,rfl⟩
 
 def actualRows := actualRowsData.val

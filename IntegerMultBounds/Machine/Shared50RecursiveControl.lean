@@ -1,15 +1,20 @@
-import IntegerMultBounds.Machine.Shared50PieceSchedule
-import IntegerMultBounds.Machine.RecursiveWidthGuard
-import IntegerMultBounds.Machine.FiniteFlow
-import IntegerMultBounds.Machine.FiniteReturnStackAt
-import IntegerMultBounds.Machine.RecursiveFrameControl
-import Mathlib.Tactic.DeriveFintype
-import IntegerMultBounds.Machine.SharedBankFamily
+module
+
+public import IntegerMultBounds.Machine.Shared50PieceSchedule
+public import IntegerMultBounds.Machine.RecursiveWidthGuard
+public import IntegerMultBounds.Machine.FiniteFlow
+public import IntegerMultBounds.Machine.FiniteReturnStackAt
+public import IntegerMultBounds.Machine.RecursiveFrameControl
+public import Mathlib.Tactic.DeriveFintype
+public import IntegerMultBounds.Machine.SharedBankFamily
 
 /-! Fixed cyclic control graph for the literal Shared50 piece list. Calls jump
 back to the same width guard and return to their own recovery node. Runtime
 width and recursion depth never enter the graph. Physical block implementations
 are explicit parameters: this graph alone does not prove recursive execution. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.Shared50RecursiveControl
 noncomputable section
 open Classical

@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.Shared50RecursiveBank
-import IntegerMultBounds.Machine.RecursiveDigitRoleBank
+module
+
+public import IntegerMultBounds.Machine.Shared50RecursiveBank
+public import IntegerMultBounds.Machine.RecursiveDigitRoleBank
 
 /-! Actual width-one base and shared ancestor-header return on the permanent
 recursive bank. The PC is left encoded for the controller's separate pop block. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.Shared50RecursiveBankReturn
 noncomputable section
 open Networks

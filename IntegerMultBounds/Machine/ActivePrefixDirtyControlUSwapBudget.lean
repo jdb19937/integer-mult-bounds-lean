@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlUSwapRun
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlUSwapRun
 
 /-! Certified full-volume sublinear-width bound including physical descriptor
 construction and cleanup around the complete binary interchange machine. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixDirtyControlUSwapBudget
 open ActivePrefixDirtyControlUSwapData ActivePrefixDirtyControlUSwapRun
 open CompactGadgetReservationShape

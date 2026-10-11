@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.BinaryPackedEarlyArray
-import IntegerMultBounds.Machine.BinaryPackedEarlyAddress
+module
+
+public import IntegerMultBounds.Machine.BinaryPackedEarlyArray
+public import IntegerMultBounds.Machine.BinaryPackedEarlyAddress
 
 /-! Full serialized-array correctness of the four real offset actions. The
 common address equivalence covers every dirty back/unused/active/payload cell;
 guarded inputs have exactly the ideal selected toggle and restored temporary. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryPackedEarlyCorrect
 open CompactGadgetReservationShape
 open BinaryPackedEarlyLayout

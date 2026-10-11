@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.FlatCoordinateSchedule
+module
+
+public import IntegerMultBounds.Machine.FlatCoordinateSchedule
 
 /-! A fixed finite rational coordinate schedule compiles to one actual multitape
 machine, independent of all variable array dimensions. Its private inputs are
 canonical dimensional words; all writable storage starts blank. The two common
 payload tapes carry the canonical array from stage to stage, and every physical
 setup, motion, cleanup and sequential join is charged. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.FlatCoordinateScheduleCompile
 open Networks
 open ActualAffineScaling (modulus)

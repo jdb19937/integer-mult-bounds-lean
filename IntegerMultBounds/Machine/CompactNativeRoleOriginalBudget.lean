@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactNativeRoleHeaderBudget
+module
+
+public import IntegerMultBounds.Machine.CompactNativeRoleHeaderBudget
 
 /-! Complete native role caller budget: actual geometry synthesis, binary
 row quotient, installed counts/markers, destructive transfer, source resets
 and every generated-header cleanup fit fixed role-count times native volume. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactNativeRoleOriginalBudget
 noncomputable section
 open CompactGadgetReservationShape (Shape)

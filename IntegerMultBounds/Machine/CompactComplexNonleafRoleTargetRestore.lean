@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexNonleafRoleChildBankBudget
+module
+
+public import IntegerMultBounds.Machine.CompactComplexNonleafRoleChildBankBudget
 
 /-! Restore the parent's saved node target only after the returned child and
 spectators have installed their common live denominator and cleared target8.
 The actual saved frame comes from physical child entry, not a fabricated word.
 No live word or coefficient payload is changed by this final parent step. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexNonleafRoleTargetRestore
 noncomputable section
 open CompactGadgetReservationShape (Shape)
@@ -22,7 +27,7 @@ private theorem storage_injective : Function.Injective (storage (s:=s) (c:=c)) :
     CompactComplexControllerNativeFrame.storageSlot,Fin.val_castAdd,Fin.val_natAdd] at hv
   omega
 
-private theorem target_stack : target (s:=s) (c:=c)≠targetStack := by
+theorem target_stack : target (s:=s) (c:=c)≠targetStack := by
   intro h
   have hv := congrArg Fin.val (storage_injective h)
   change 8=9 at hv

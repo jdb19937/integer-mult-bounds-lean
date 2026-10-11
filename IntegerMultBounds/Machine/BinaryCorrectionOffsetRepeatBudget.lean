@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.BinaryCorrectionOffsetRepeatConstruct
-import IntegerMultBounds.Machine.BinarySelectedOffsetRepeatBudget
+module
+
+public import IntegerMultBounds.Machine.BinaryCorrectionOffsetRepeatConstruct
+public import IntegerMultBounds.Machine.BinarySelectedOffsetRepeatBudget
 
 /-! Correction repetition has the same paid metadata/copying layout as parity
 repetition, with the correction producer's
 larger constant. Its allowance is explicitly charged to record width. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryCorrectionOffsetRepeatBudget
 
 def constant := BinarySelectedOffsetRepeatBudget.constant+1000

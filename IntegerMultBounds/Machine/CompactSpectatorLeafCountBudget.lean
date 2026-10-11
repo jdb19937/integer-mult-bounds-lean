@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexChildHeadersData
-import IntegerMultBounds.Machine.CompactComplexLeafHeadersData
+module
+
+public import IntegerMultBounds.Machine.CompactComplexChildHeadersData
+public import IntegerMultBounds.Machine.CompactComplexLeafHeadersData
 
 /-! A positive-exponent node stores its child-slot width in original header7.
 The stopped whole-node leaf must physically expand that width by original
 header6, then restore it after execution. Both schedules reclaim scratch22. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactSpectatorLeafCountBudget
 noncomputable section
 open CompactChildHeadersArithmetic

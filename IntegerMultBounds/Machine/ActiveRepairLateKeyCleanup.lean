@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActiveRepairEarlyKeyPlacement
-import IntegerMultBounds.Machine.WordBankCleanup
-import IntegerMultBounds.Machine.ExactFrame
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairEarlyKeyPlacement
+public import IntegerMultBounds.Machine.WordBankCleanup
+public import IntegerMultBounds.Machine.ExactFrame
 
 /-! Actual word erasure for the generated later-key fields, including the
 full destination and guard. The original counter and descriptors are framed. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLateKeyCleanup
 noncomputable section
 

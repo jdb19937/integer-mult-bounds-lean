@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactFallbackActualBudget
+module
+
+public import IntegerMultBounds.Machine.CompactFallbackActualBudget
 
 /-! The original individual-work reservation contains low back-field axes and
 high row/front-field axes. Their exact occurrence map supplies real sparse-axis
 call costs to the uniform cutoff budget; they are not treated as one contiguous
 prefix of the original address. The occurrence controller is a separate layer. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactFallbackReservedBudget
 noncomputable section
 open Filter Sizes Parameters CompactReservationCutoff CompactReservationGrowth

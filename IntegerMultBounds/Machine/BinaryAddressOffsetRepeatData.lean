@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.BinaryAddressOffsetValue
+module
+
+public import IntegerMultBounds.Machine.BinaryAddressOffsetValue
 
 /-! Literal expansion order for an offset table: repeat each row over the
 trailing spectator coordinate, then repeat that complete table over preceding
 coordinates, including the original dirty back field. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryAddressOffsetRepeatData
 
 def copies {α : Type*} (xs : List α) : ℕ → List α

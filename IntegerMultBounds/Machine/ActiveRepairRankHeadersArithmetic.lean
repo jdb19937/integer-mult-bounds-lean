@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.BinaryDescriptorAdvance
-import IntegerMultBounds.Machine.BinaryDescriptorCopyPlaced
-import IntegerMultBounds.Machine.CompactGadgetReservationHeadersCore
+module
+
+public import IntegerMultBounds.Machine.BinaryDescriptorAdvance
+public import IntegerMultBounds.Machine.BinaryDescriptorCopyPlaced
+public import IntegerMultBounds.Machine.CompactGadgetReservationHeadersCore
 
 /-! Physical retained-header addition in the existing clean fifteen-tape
 workspace. Unary-counted increments have an amortized, paid linear bound. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairRankHeadersArithmetic
 noncomputable section
 open CompactGadgetReservationHeadersCore

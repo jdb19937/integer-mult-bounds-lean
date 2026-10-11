@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.NativeEndpointCharacterOriginal
-import IntegerMultBounds.Machine.NativeEndpointCharacterBudget
+module
+
+public import IntegerMultBounds.Machine.NativeEndpointCharacterOriginal
+public import IntegerMultBounds.Machine.NativeEndpointCharacterBudget
 
 /-! Original raw-header character preparation, including the actual role-row
 quotient, is paid by the original parent native polynomial volume. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.NativeEndpointCharacterOriginalBudget
 noncomputable section
 open CompactGadgetReservationShape (Shape)

@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.BinaryAdjacentWidthHeadersShared
-import IntegerMultBounds.Machine.RadixDigitMoveBlockExecution
-import IntegerMultBounds.Machine.SharedPlacementAlphabet
+module
+
+public import IntegerMultBounds.Machine.BinaryAdjacentWidthHeadersShared
+public import IntegerMultBounds.Machine.RadixDigitMoveBlockExecution
+public import IntegerMultBounds.Machine.SharedPlacementAlphabet
 
 /-! Binary block-digit movement sharing the caller's payload tape. All three
 execution headers are copied physically into a blank private bank and erased
 again. The constructed lifecycle supplies them from only P/G/B/u. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryAdjacentWidthMovementShared
 noncomputable section
 variable {a t P S E : ℕ}

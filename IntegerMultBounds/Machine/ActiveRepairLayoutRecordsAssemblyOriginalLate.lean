@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsAssemblyOriginalEarly
-import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsAssemblyLayoutLate
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsAssemblyOriginalEarly
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsAssemblyLayoutLate
 
 /-! Physical original-header preparation, raw formatting, repair, decoding,
 record cleanup and generated-header erasure. No formatted record buffer or
 generated descriptor is supplied in the initial bank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLayoutRecordsAssemblyOriginalLate
 noncomputable section
 open CompactGadgetReservationShape (Shape)

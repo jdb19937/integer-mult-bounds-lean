@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.UnitPhasePolynomialNative
-import IntegerMultBounds.Machine.CompactLiteralUnitPhase
-import IntegerMultBounds.Machine.FiniteTapeKernelDispatch
+module
+
+public import IntegerMultBounds.Machine.UnitPhasePolynomialNative
+public import IntegerMultBounds.Machine.CompactLiteralUnitPhase
+public import IntegerMultBounds.Machine.FiniteTapeKernelDispatch
 
 /-! The actual complex25 phase kernels form a fixed finite family. A real
 binary edge token is physically decoded and erased before the selected
 polynomial phase runs. The finite control depends only on the fixed network
 edge list, never on input length, coefficient count, or recursive depth. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactPolynomialPhaseDispatch
 noncomputable section
 open Networks Networks.ComplexPhaseRowSchedule

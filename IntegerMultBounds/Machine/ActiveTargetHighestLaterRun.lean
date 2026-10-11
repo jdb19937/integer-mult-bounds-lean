@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.ActiveTargetHighestLaterBank
+module
+
+public import IntegerMultBounds.Machine.ActiveTargetHighestLaterBank
 
 /-! The later-source highest target bit is toggled by three actual machines:
 physical interchange, controlled one-bit rotation, physical interchange. The
 entire original array is retained as spectators, with no target-capacity bound.
 All ten supplied canonical stage descriptors survive and all work tapes return
 blank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveTargetHighestLaterRun
 noncomputable section
 open Networks.Shared50ModularControl (prime)

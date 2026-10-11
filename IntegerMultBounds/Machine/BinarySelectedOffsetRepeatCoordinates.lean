@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.BinarySelectedOffsetRepeatBudget
-import IntegerMultBounds.Machine.BinaryAddressOffsetRepeatCoordinates
+module
+
+public import IntegerMultBounds.Machine.BinarySelectedOffsetRepeatBudget
+public import IntegerMultBounds.Machine.BinaryAddressOffsetRepeatCoordinates
 
 /-! The selected offset for a complete physical rotation row is precisely
 packed 2*z*w, where w is that row's regular temporary address and z is the
 retained original control word. Dirty-back and spectator fields only repeat it. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinarySelectedOffsetRepeatCoordinates
 open BinarySelectedOffsetRepeatData
 

@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactFallbackRoundtripBudget
+module
+
+public import IntegerMultBounds.Machine.CompactFallbackRoundtripBudget
 
 /-! Sparse-axis public ports expose just the original six numeric descriptors
 and the complete native word. This permits global reservation controls to be
 framed while all generated butterfly geometry remains private. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactReservedAxisPorts
 noncomputable section
 abbrev count := 44+CompactFallbackAxisPorts.count

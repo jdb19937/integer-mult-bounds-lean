@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.CompactNativeRolePrecisionHeaders
-import IntegerMultBounds.Machine.CompactNativeRoleScalarBudget
-import IntegerMultBounds.Machine.BinaryDescriptorInstall
-import IntegerMultBounds.Machine.CompactNativeRoleConjugatedLifecycle
+module
+
+public import IntegerMultBounds.Machine.CompactNativeRolePrecisionHeaders
+public import IntegerMultBounds.Machine.CompactNativeRoleScalarBudget
+public import IntegerMultBounds.Machine.BinaryDescriptorInstall
+public import IntegerMultBounds.Machine.CompactNativeRoleConjugatedLifecycle
 
 /-! Original retained scalar descriptors physically regenerate the corrected
 stored signed width reservation. Only then are ell and corrected precision
 copied into stage17/18; all scalar arithmetic workspace is erased. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexNativeCodec
 noncomputable section
 open ActiveRepairRankHeadersCommands (State bank put)

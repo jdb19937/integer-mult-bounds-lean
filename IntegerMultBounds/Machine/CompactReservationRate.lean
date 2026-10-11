@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactReservationCutoff
+module
+
+public import IntegerMultBounds.Machine.CompactReservationCutoff
 
 /-! Quantitative reservation savings for the actual small-dimension fallback.
 The actual cutoff is negligible relative to d^a for every a>1-spacing, in
 particular the certified lam' exponent. Merely being o(d) would not suffice. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactReservationRate
 noncomputable section
 open Filter Asymptotics Sizes TimeBound Parameters CompactScalarAllowances

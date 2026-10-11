@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActiveRepairRankHeadersRun
-import IntegerMultBounds.Machine.ActiveRepairRankFieldsEndpoint
-import IntegerMultBounds.Machine.ActiveRepairDestinationPatchEndpoint
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairRankHeadersRun
+public import IntegerMultBounds.Machine.ActiveRepairRankFieldsEndpoint
+public import IntegerMultBounds.Machine.ActiveRepairDestinationPatchEndpoint
 
 /-! Original active-layout widths physically generate the exact parser and
 patch descriptors. No target/T/U start or completed destination is an input. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairRankHeadersEndpoint
 noncomputable section
 open CompactGadgetReservationShape

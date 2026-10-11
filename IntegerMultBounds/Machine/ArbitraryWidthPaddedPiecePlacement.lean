@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ArbitraryWidthPieceRun
-import IntegerMultBounds.Machine.ArbitraryWidthHighExchangeShared
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthPieceRun
+public import IntegerMultBounds.Machine.ArbitraryWidthHighExchangeShared
 
 /-! The actual piece dispatcher on one physically shared payload tape. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthPaddedPiecePlacement
 noncomputable section
 open Networks

@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactChildHeadersArithmetic
+module
+
+public import IntegerMultBounds.Machine.CompactChildHeadersArithmetic
 
 /-! The root-piece generator obtains each low-to-high base digit from its
 actual remaining-prefix word. The fixed arithmetic schedule produces the
 quotient and digit, replaces the remaining prefix, and cleans every private
 operand. All other permanent controller fields and native tapes are framed. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexRootDigitRound
 noncomputable section
 open CompactChildHeadersArithmetic

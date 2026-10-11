@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ArbitraryWidthHighFoldSemantics
-import IntegerMultBounds.Machine.BinaryDescriptorInstall
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthHighFoldSemantics
+public import IntegerMultBounds.Machine.BinaryDescriptorInstall
 
 /-! Construct all six folded root headers from the sole original header bank.
 Every input remains literal, and the private arithmetic workspace is restored. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthHighFoldHeaders
 noncomputable section
 variable {a : ℕ}

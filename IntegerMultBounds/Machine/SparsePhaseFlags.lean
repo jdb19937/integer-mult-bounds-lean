@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.SparseWeightedUnitPhase
-import IntegerMultBounds.Machine.UnitPhaseFlagsLifecycle
+module
+
+public import IntegerMultBounds.Machine.SparseWeightedUnitPhase
+public import IntegerMultBounds.Machine.UnitPhaseFlagsLifecycle
 
 /-! Sparse address extraction and accumulation, without coefficient arithmetic.
 The physical flags are initialized once and retained for a whole polynomial. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.SparsePhaseFlags
 noncomputable section
 open UnitPhaseNumerator (flags)

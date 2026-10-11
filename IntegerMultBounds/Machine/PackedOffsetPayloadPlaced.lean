@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.PackedOffsetPayloadAlphabet
-import IntegerMultBounds.Machine.PlacedDescriptorConstruction
-import IntegerMultBounds.Machine.FixedHeaderBankCopy
+module
+
+public import IntegerMultBounds.Machine.PackedOffsetPayloadAlphabet
+public import IntegerMultBounds.Machine.PlacedDescriptorConstruction
+public import IntegerMultBounds.Machine.FixedHeaderBankCopy
 
 /-! Caller-owned payload, packed-offset source and three original headers are
 shared directly with a real packed back-field rotation. Twelve blank private
 tapes hold all generated data and return wholly blank at their original heads.
 The selected slots change only static transition wiring, never tape contents. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.PackedOffsetPayloadPlaced
 noncomputable section
 open SharedPlacementAlphabet (setTape)

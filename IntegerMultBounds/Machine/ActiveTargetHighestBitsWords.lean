@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActiveTargetHighestBits
-import IntegerMultBounds.Compact.ActiveTargetSubsegmentWords
+module
+
+public import IntegerMultBounds.Machine.ActiveTargetHighestBits
+public import IntegerMultBounds.Compact.ActiveTargetSubsegmentWords
 
 /-! Literal bit-word semantics of the one-bit coordinate split. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveTargetHighestBitsWords
 noncomputable section
 open ActiveTargetHighestBits

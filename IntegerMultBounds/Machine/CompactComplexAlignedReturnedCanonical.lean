@@ -1,4 +1,8 @@
-import IntegerMultBounds.Machine.CompactComplexAlignedReturnedCallerPayload
+module
+
+public import IntegerMultBounds.Machine.CompactComplexAlignedReturnedCallerPayload
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.CompactComplexAlignedReturnedCanonical
 noncomputable section

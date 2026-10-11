@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.Shared50RecursiveNodeLayout
+module
+
+public import IntegerMultBounds.Machine.Shared50RecursiveNodeLayout
 
 /-! Cyclic row splitting commutes with the full H/D interchange. Every spectator
 and cyclic row stays in its original place; only the two equal-width fields swap. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.Shared50RecursiveNodeRows
 noncomputable section
 open Networks

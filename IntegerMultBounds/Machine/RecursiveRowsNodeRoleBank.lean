@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.RecursiveRowsNodeHeaders
-import IntegerMultBounds.Machine.RecursiveRowsSerialization
+module
+
+public import IntegerMultBounds.Machine.RecursiveRowsNodeHeaders
+public import IntegerMultBounds.Machine.RecursiveRowsSerialization
 
 /-! Physical installation of the network's row descriptor on the permanent
 role bank. All payloads and auxiliary stacks are framed; private tapes clear. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveRowsNodeRoleBank
 noncomputable section
 open Networks

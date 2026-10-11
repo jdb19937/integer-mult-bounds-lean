@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActiveTargetHighestLayoutWords
+module
+
+public import IntegerMultBounds.Machine.ActiveTargetHighestLayoutWords
 
 /-! Highest-bit actions retain complete source intervals. For an earlier
 source, its original interval must lie strictly above target-high bit zero;
 this explicit disjointness condition cannot be inferred from sourceHigh>0. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveTargetHighestLayoutSourceFrames
 noncomputable section
 open CompactGadgetReservationShape (Shape)

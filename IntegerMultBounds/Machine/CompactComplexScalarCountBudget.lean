@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.CompactComplexScalarCountPlaced
-import IntegerMultBounds.Machine.CompactSpectatorLeafSetupBudget
-import IntegerMultBounds.Machine.NativePolynomialStageShape
-import IntegerMultBounds.Machine.CompactNativeRoleHeaderBudget
+module
+
+public import IntegerMultBounds.Machine.CompactComplexScalarCountPlaced
+public import IntegerMultBounds.Machine.CompactSpectatorLeafSetupBudget
+public import IntegerMultBounds.Machine.NativePolynomialStageShape
+public import IntegerMultBounds.Machine.CompactNativeRoleHeaderBudget
 
 /-! A uniform physical count-setup budget is paid by the genuine coefficient
 count and therefore by the original native stream volume. Untouched original
 metadata supplies no caller cost allowance. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexScalarCountBudget
 noncomputable section
 open CompactGadgetReservationShape (Shape)

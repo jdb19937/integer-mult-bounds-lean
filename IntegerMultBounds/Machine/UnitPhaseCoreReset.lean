@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.UnitPhaseNumerator
-import IntegerMultBounds.Machine.FiniteReturnStackAt
+module
+
+public import IntegerMultBounds.Machine.UnitPhaseNumerator
+public import IntegerMultBounds.Machine.FiniteReturnStackAt
 
 /-! After the two results have been physically emitted and erased, both
 retained numerator sources are cleared. The complete arithmetic bank returns
 blank at zero; every source digit and marker is charged. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.UnitPhaseCoreReset
 noncomputable section
 open SharedPlacementAlphabet (setTape)

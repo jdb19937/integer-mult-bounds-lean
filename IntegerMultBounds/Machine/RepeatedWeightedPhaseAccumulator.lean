@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.WeightedPhaseAccumulator
-import IntegerMultBounds.Machine.CountedLoopReuseAlphabet
+module
+
+public import IntegerMultBounds.Machine.WeightedPhaseAccumulator
+public import IntegerMultBounds.Machine.CountedLoopReuseAlphabet
 
 /-! A fixed-weight phase scanner repeats each statically selected edge weight
 across a runtime number of coordinate axes. It traverses the control stream
 once, retains the two phase flags and restores both binary loop controls.
 Neither the axis count nor the control word is compiled into finite control. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RepeatedWeightedPhaseAccumulator
 noncomputable section
 open WeightedPhaseAccumulator (bank next)

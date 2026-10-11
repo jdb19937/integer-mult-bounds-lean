@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsAssemblyEarly
-import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsDecodeBudgetEarly
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsAssemblyEarly
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsDecodeBudgetEarly
 
 /-! Literal source and ideal-result arrays for the entire physical format,
 repair, decode and cleanup program. Chunks are derived from real record cells. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLayoutRecordsAssemblyLayoutEarly
 noncomputable section
 open ActiveRepairEarlyKeyOriginalData ActiveRepairEarlyKeyOriginalValid

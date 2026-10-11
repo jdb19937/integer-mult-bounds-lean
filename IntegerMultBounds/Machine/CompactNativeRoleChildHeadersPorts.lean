@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.CompactNativeRoleChildBank
+module
+
+public import IntegerMultBounds.Machine.CompactNativeRoleChildBank
 
 /-! Child row quotient/restore acts on actual exterior copied numeric43 tapes.
 Every role word and retained controller/stack tape is framed without copying. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactNativeRoleChildHeadersPorts
 noncomputable section
 open CompactNativeRoleSourcePorts (external callerTapes)

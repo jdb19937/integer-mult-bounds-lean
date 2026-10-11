@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsFullLateBudget
-import IntegerMultBounds.Machine.ActiveTargetHighestLayoutFullSelected
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsFullLateBudget
+public import IntegerMultBounds.Machine.ActiveTargetHighestLayoutFullSelected
 
 /-! The actual complete later low/high machine has the full-selected address
 destination. Its literal forward array equation covers every original address;
 the complete later source is retained. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLayoutRecordsFullLateSelected
 noncomputable section
 open CompactGadgetReservationShape (Shape)

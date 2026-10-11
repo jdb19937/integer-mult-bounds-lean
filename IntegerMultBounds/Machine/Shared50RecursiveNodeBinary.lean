@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.Shared50RecursiveNodeTranspose
-import IntegerMultBounds.Machine.Shared50NodeGates
+module
+
+public import IntegerMultBounds.Machine.Shared50RecursiveNodeTranspose
+public import IntegerMultBounds.Machine.Shared50NodeGates
 
 /-! Binary node fiber state uses the same encoding and World enumeration as the
 actual segment/gate compiler; the additional input/output role is blank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.Shared50RecursiveNodeBinary
 noncomputable section
 open Networks

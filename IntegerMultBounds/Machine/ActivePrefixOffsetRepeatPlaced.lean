@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActivePrefixOffsetRepeatAlphabet
-import IntegerMultBounds.Machine.CompactGadgetReservationPlacement
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixOffsetRepeatAlphabet
+public import IntegerMultBounds.Machine.CompactGadgetReservationPlacement
 
 /-! Physically repeat a generated offset word for an arbitrary caller row
 count. The three caller ports are rows/base/output; four private tapes are
 returned blank, and the original descriptor, base and spectators are retained. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixOffsetRepeatPlaced
 noncomputable section
 open ActivePrefixOffsetRepeatAlphabet (word bank)

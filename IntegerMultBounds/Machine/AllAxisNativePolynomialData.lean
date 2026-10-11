@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.AllAxisPhasePreparedBridge
-import IntegerMultBounds.Machine.AllAxisPolynomialTensorResult
-import IntegerMultBounds.Machine.NativePolynomialPhaseCaller
+module
+
+public import IntegerMultBounds.Machine.AllAxisPhasePreparedBridge
+public import IntegerMultBounds.Machine.AllAxisPolynomialTensorResult
+public import IntegerMultBounds.Machine.NativePolynomialPhaseCaller
 
 /-! Physical aggregate phase output is again a valid literal native row bank,
 with unchanged polynomial multiplicity and signed field widths. Count casts
 only identify the already-proved common global address count. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.AllAxisNativePolynomialData
 noncomputable section
 open CompactGadgetReservationShape (Shape)

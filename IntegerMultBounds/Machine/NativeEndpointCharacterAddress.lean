@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.AllAxisPhaseGeometry
+module
+
+public import IntegerMultBounds.Machine.AllAxisPhaseGeometry
 
 /-! The endpoint character's single low-first address traversal reads every
 original coordinate and runtime column, reversing both high-first indices
 explicitly. This is derived from actual global serialized record ranks. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.NativeEndpointCharacterAddress
 noncomputable section
 open CompactGadgetReservationShape (Shape)

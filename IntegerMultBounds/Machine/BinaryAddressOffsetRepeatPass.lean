@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.BinaryAddressOffsetRepeatBlock
+module
+
+public import IntegerMultBounds.Machine.BinaryAddressOffsetRepeatBlock
 
 /-! One real pass through a packed table. Each runtime-width row is emitted
 L times, and the source head is physically restored after the whole pass. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryAddressOffsetRepeatPass
 open CountedCopyReuse (empty binary)
 open BinaryAddressOffsetRepeatData

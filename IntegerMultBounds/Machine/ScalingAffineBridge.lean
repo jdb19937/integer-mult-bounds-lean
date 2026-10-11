@@ -1,13 +1,17 @@
-import IntegerMultBounds.Machine.ScalingStream
-import IntegerMultBounds.Machine.ScalingPartitionData
-import IntegerMultBounds.Machine.BlockNegationData
-import IntegerMultBounds.Machine.ScalingInverseExecution
-import IntegerMultBounds.Networks.Shared50AffineCoefficients
+module
+
+public import IntegerMultBounds.Machine.ScalingStream
+public import IntegerMultBounds.Machine.ScalingPartitionData
+public import IntegerMultBounds.Machine.BlockNegationData
+public import IntegerMultBounds.Machine.ScalingInverseExecution
+public import IntegerMultBounds.Networks.Shared50AffineCoefficients
 
 /-! Pure semantic orientation of literal payload scaling and ordered-affine
 coordinate updates. Positive merging transports a source block y to c*y;
 inverse scatter reads input c*y at output y. Whole blocks remain opaque values.
 No additional machine execution or running-time theorem is asserted here. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.ScalingAffineBridge
 

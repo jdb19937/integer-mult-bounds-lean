@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActivePrefixDirtyControlCorrectionRun
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlCorrectionRun
 
 /-! Clean correction producer from the six original compact-source layout
 headers, including real operand production and all physical subtraction costs. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixDirtyControlCorrection
 noncomputable section
 open ActivePrefixDirtyControlData (Shape values)

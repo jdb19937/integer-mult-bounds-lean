@@ -1,12 +1,17 @@
-import IntegerMultBounds.Machine.RationalTranslationStream
-import IntegerMultBounds.Machine.WordSegments
-import IntegerMultBounds.Networks.OrderedAffine
-import IntegerMultBounds.Networks.Shared50AffineCoefficients
+module
+
+public import IntegerMultBounds.Machine.RationalTranslationStream
+public import IntegerMultBounds.Machine.WordSegments
+public import IntegerMultBounds.Networks.OrderedAffine
+public import IntegerMultBounds.Networks.Shared50AffineCoefficients
 
 /-! Physical symbol transport for the concrete rational-controlled fiber stream.
 The represented cyclic control value determines an OrderedAffine.shift target.
 This proves the address action on the represented fiber layout; construction and
 composition of a complete multidimensional layout remain separate obligations. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RationalTranslationAffineBridge
 
 open Networks
@@ -88,7 +93,7 @@ theorem output_symbol (r : ℚ) (hden : r.den < radix) (B n : ℕ)
   let : NeZero (radix^xs.length) := ⟨pow_ne_zero _ (Fact.out : radix.Prime).ne_zero⟩
   have hh := output_symbol_nat r B n source dest p q bs qs ns old xs
     (fun j z => payload j (z : ZMod (radix^xs.length))) (fun j z => hwidth j _) i y.val k hi (ZMod.val_lt y) hk
-  rw [destination_index,ZMod.natCast_zmod_val,RationalTranslationStream.offset_value r hden] at hh
+  simp only [destination_index,ZMod.natCast_zmod_val,RationalTranslationStream.offset_value r hden] at hh
   exact hh
 
 /-- Other address coordinates remain fixed throughout a represented target fiber. -/

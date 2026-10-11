@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexScheduledPCDecode
-import IntegerMultBounds.Machine.CompactComplexScheduledEventExecution
+module
+
+public import IntegerMultBounds.Machine.CompactComplexScheduledPCDecode
+public import IntegerMultBounds.Machine.CompactComplexScheduledEventExecution
 
 /-! A fixed node table retains original return addresses, four shared control
 blocks, and every event of the actual interleaved schedule. Local block programs
 are fixed arguments; recursive depth changes tape data, never this table. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexFixedNodeTable
 noncomputable section
 open Networks
@@ -76,7 +81,7 @@ def tableEdgesWith (returns : Fin N → Σ q,Program t q a)
 def controlPCFor (N length : ℕ) (tag : Fin 4) : Fin (N+(4+length)+2) :=
   GuardedFiniteReturnExtraFlow.extraPC (Fin.castAdd length tag)
 
-private def firstPCFor (N length : ℕ) : Fin (N+(4+length)+2) :=
+def firstPCFor (N length : ℕ) : Fin (N+(4+length)+2) :=
   if h : 0<length then GuardedFiniteReturnExtraFlow.extraPC (Fin.natAdd 4 (⟨0,h⟩ : Fin length))
   else controlPCFor N length 3
 
@@ -100,7 +105,7 @@ theorem returnDestination_actual (c : ComplexRecursiveCallSchema.Call) :
     returnDestination (callAddress c)=some (callNextPC c) := by
   simp only [returnDestination,CompactComplexScheduledPCDecode.decodeCall_actual]
 
-private def destinationWith {P : ℕ} (e : Event) (next entry : Fin P) : Option (Fin P) :=
+def destinationWith {P : ℕ} (e : Event) (next entry : Fin P) : Option (Fin P) :=
   match e with
   | .scalar _ => some next
   | .child _ => some entry

@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.RecursiveDigitRoleBank
-import IntegerMultBounds.Machine.RecursiveWidthBranch
+module
+
+public import IntegerMultBounds.Machine.RecursiveDigitRoleBank
+public import IntegerMultBounds.Machine.RecursiveWidthBranch
 
 /-! Actual width-one base block in the three-PC finite controller. Recursive
 entry remains a supplied same-bank program; no recursive correctness or global
 termination is assumed by this base-case theorem. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveBaseBranch
 noncomputable section
 open Networks

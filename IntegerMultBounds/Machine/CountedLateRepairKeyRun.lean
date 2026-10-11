@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CountedLateRepairKeyCleanup
-import IntegerMultBounds.Machine.CountedLateRankEndpoint
+module
+
+public import IntegerMultBounds.Machine.CountedLateRepairKeyCleanup
+public import IntegerMultBounds.Machine.CountedLateRankEndpoint
 
 /-! The complete original-header late key machine on fixed34 tapes.
 An actual short rank counter is split; the original address is classified,
 its inverse and ideal destination are computed, and all generated work is erased. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedLateRepairKeyRun
 noncomputable section
 open CountedLateRepairKeyBank

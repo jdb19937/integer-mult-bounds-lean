@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.RecursiveViewedAction
-import IntegerMultBounds.Machine.Shared50NonrecursiveCoordinates
+module
+
+public import IntegerMultBounds.Machine.RecursiveViewedAction
+public import IntegerMultBounds.Machine.Shared50NonrecursiveCoordinates
 
 /-! Static routing of the actual ordered scalar descriptions to paid recursive
 coordinate views. The selected fields retain the original H-before-D numbering;
 no runtime descriptor, dimension or replacement schedule enters the selection. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveScalarSelection
 noncomputable section
 open Networks

@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ActivePrefixStageNativePairCoordinates
-import IntegerMultBounds.Machine.ActivePrefixStageNativePairBudget
+module
+
+public import IntegerMultBounds.Machine.ActivePrefixStageNativePairCoordinates
+public import IntegerMultBounds.Machine.ActivePrefixStageNativePairBudget
 
 /-! Reversing a literal native basis word physically undoes every original
 row permutation. Clean pair-frame endpoints permit exact chronological
 composition; inverse conversion, descriptor and join costs are all paid. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixStageNativePairInverse
 noncomputable section
 open CompactGadgetReservationShape (Shape)

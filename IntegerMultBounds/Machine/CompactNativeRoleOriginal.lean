@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CompactNativeRoleHeaders
-import IntegerMultBounds.Machine.CompactNativeRoleInstall
+module
+
+public import IntegerMultBounds.Machine.CompactNativeRoleHeaders
+public import IntegerMultBounds.Machine.CompactNativeRoleInstall
 
 /-! Concrete original-header native role split/rejoin: all full-address row
 lengths and role group counts are generated, every source reset is charged,
 all installed descriptors are removed, and the original thirteen words plus
 ell/p remain intact. The program depends only on the fixed role count. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactNativeRoleOriginal
 noncomputable section
 open CompactGadgetReservationShape (Shape)

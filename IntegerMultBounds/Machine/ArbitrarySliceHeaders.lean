@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.ArbitrarySliceDimensions
-import IntegerMultBounds.Machine.RecursiveViewFrame
-import IntegerMultBounds.Machine.BinaryDescriptorReplaceList
+module
+
+public import IntegerMultBounds.Machine.ArbitrarySliceDimensions
+public import IntegerMultBounds.Machine.RecursiveViewFrame
+public import IntegerMultBounds.Machine.BinaryDescriptorReplaceList
 
 /-! Paid save, synthesis, header installation and restoration for an arbitrary
 slice view. All six original headers are saved on a dedicated physical stack;
 occupied changing headers are erased before copying their replacements. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitrarySliceHeaders
 open RecursiveInterchangeLayout (Descriptor volume)
 open BinaryDescriptorInstallMarkedList
@@ -85,7 +90,7 @@ def newWords (hs : Fin 6 → List Bool) (i : Fin 17) : List Bool :=
   if i = 10 then hs 2 else if i = 7 then hs 3 else if i = 12 then hs 4 else if i = 13 then hs 5 else []
 
 def replacements := BinaryDescriptorReplaceList.program (q := q) (by decide : 0 < 17) instructions
-private def generatedSlots : List (Fin 17) := [10,12,13]
+def generatedSlots : List (Fin 17) := [10,12,13]
 def handoffProgram := seq (replacements (q := q))
   (BinaryDescriptorCleanupList.program (a := q) (by decide : 0 < 17) generatedSlots)
 

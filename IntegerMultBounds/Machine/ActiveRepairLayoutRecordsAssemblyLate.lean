@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsAssemblyCommon
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsAssemblyCommon
 
 /-! Real raw-array formatting, original repair, raw decoding and record-buffer
 cleanup in one finite program. The producer headers and original raw array
 are retained; all appended formatter and decoder private tapes are restored. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLayoutRecordsAssemblyLate
 noncomputable section
 open ActiveRepairLayoutRecordsAssemblyCommon

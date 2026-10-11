@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactReservedAxisPorts
-import IntegerMultBounds.Machine.CompactGlobalRowHeaders
+module
+
+public import IntegerMultBounds.Machine.CompactReservedAxisPorts
+public import IntegerMultBounds.Machine.CompactGlobalRowHeaders
 
 /-! Original node/global geometry determines both reserved intervals. Fixed
 network constants c,m occur only in finite control; all counts and the high
 starting ordinal are physically computed from D,K,d,G. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactReservedHeaders
 noncomputable section
 open ActiveRepairRankHeadersCommands (State)
