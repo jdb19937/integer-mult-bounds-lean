@@ -66,7 +66,9 @@ the canonical returned caller from the reached parent. The aligned table also
 pops the genuine associated saved call with its exact runtime. Joined recursive
 return execution and whole event induction remain open. The actual ordered
 site trace now retains every original compiler wire and both frames, including
-terminal sink incidences; full interleaved event execution remains open.
+terminal sink incidences. The actual interleaved child-call and scalar schedule
+now has exact original compiler semantics on every wire array. Recursive tape
+execution and total runtime remain open.
 
 Complete boundary and event allowances pay classification, corrections,
 contraction, genuine return dispatch, both basis passes and their joins. The

@@ -4700,9 +4700,12 @@ Machine model, execution, composition, and tape routines.
 
 - `Machine/CompactComplexAlignedSavedReturnPath.lean`: The actual prime-alphabet aligned table performs the genuine saved guard and pop from Associated physical call history, restores the older associated stack, and preserves all other tapes and basis workspace. Exact runtime is saved-address width plus five; the joined recursive return remains open.
 
-- `Machine/CompactComplexActualEventTrace.lean`: The actual site-major calls have exact group intervals, and every original edge occurrence retains its literal wire and both ordered compiler frames, including terminal sink incidences. Generic compiler trace extraction and a mapped raw-site trace avoid expanding the enormous concrete occurrence type. Child-block execution, interleaved event semantics and recursive execution remain open.
+- `Machine/CompactComplexActualEventTrace.lean`: The actual site-major calls have exact group intervals, and every original edge occurrence retains its literal wire and both ordered compiler frames, including terminal sink incidences. Generic compiler trace extraction and a mapped raw-site trace avoid expanding the enormous concrete occurrence type. Child-block and interleaved algebraic execution are proved in the adjacent event-network modules; recursive tape execution remains open.
 
 - `Machine/CompactComplexSourceReadyCompletedChildWidth.lean`: The actual completed nonroot child preserves its Reached stored width through sink correction, contraction, cyclic role recombination and saved-call orientation. Inherited width and exact result lengths follow from stage arity, row divisibility and the metadata guard; no supplied output-width or recursive semantic equality is used. Returned numerical grid and recursive saved-frame preservation remain open.
+
+- `Machine/CompactComplexActualEventNetwork.lean`: Every actual site-major child-call block executes the original compiler edge on all physical wire arrays. Exact group intervals and the complete terminal sink suffix realize the original ordered alignments. Separate execution folds and abstract projection/empty-suffix identities avoid evaluating the enormous concrete traces during conversion. Recursive tape execution and total runtime remain open.
+- `Machine/CompactComplexActualInterleavedNetwork.lean`: The literal completed-event schedule executes the original framed compiler on every wire array, with each scalar block after its own child-call alignment and all terminal sink incidences retained. Backward suffix induction also identifies this schedule with the certified original lowering. This is exact algebraic schedule semantics; recursive fixed-table tape execution and total runtime remain open.
 
 ## Compact
 
