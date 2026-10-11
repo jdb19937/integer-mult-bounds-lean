@@ -13,14 +13,17 @@ attribute [local irreducible] ComplexRank25.program sites ComplexPhaseBudget.edg
 def directions : ComplexFramedExecution.Directions :=
   List.ofFn (fun site : Occurrence => (callsAt site).map kernel)
 
-private theorem original_edges :
+private theorem attached_order {α : Type*} (xs : List α) :
+    List.ofFn (fun site : Fin xs.attach.length => (xs.attach[site.val]).val)=xs := by
+  rw [List.ofFn_getElem_eq_map]
+  simpa only [Function.comp_def,id_eq,List.map_id_fun] using
+    (List.attach_map_val (l:=xs) (f:=id))
+
+theorem original_edges :
     List.ofFn (fun site : Occurrence => (edge site).val)=ComplexPhaseBudget.edges := by
   change List.ofFn (fun site : Fin sites.length => (sites[site.val]).val)=_
-  rw [List.ofFn_getElem_eq_map]
   unfold sites
-  change ComplexPhaseBudget.edges.attach.map Subtype.val=ComplexPhaseBudget.edges
-  simpa only [Function.comp_def,id_eq,List.map_id_fun] using
-    (List.attach_map_val (l:=ComplexPhaseBudget.edges) (f:=id))
+  exact attached_order ComplexPhaseBudget.edges
 
 /-- Every signed direction and factor comes from the same actual call list
 used by the recursive controller, in the original edge occurrence order. -/
