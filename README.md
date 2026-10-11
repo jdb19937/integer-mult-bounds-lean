@@ -123,9 +123,9 @@ lake env lean AxiomAudit.lean
 
 For local component checks, use `python3 scripts/check-lean-safe.py FILE`.
 This runner permits one check per workspace, uses one Lean thread and a
-1024 MiB Lean memory limit, and stops the process group if its observed RSS
-exceeds 1536 MiB. It also stops the child processes if monitoring fails or the
-check is interrupted. Dependencies must already have compiled artifacts;
+6144 MiB Lean memory limit, and stops the process group if its observed RSS
+exceeds 7168 MiB or the check runs past twenty minutes. It also stops child
+processes if monitoring fails or the check is interrupted. Dependencies must already have compiled artifacts;
 it does not launch a broad build. The full build commands above are for CI
 or a machine with sufficient memory.
 

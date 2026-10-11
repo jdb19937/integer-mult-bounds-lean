@@ -11,9 +11,9 @@ import sys
 import tempfile
 import time
 
-# Mathlib's imports alone need about 2.4 GB; keep a hard ceiling well below system RAM.
-LEAN_MIB = 4096
-GUARD_MIB = 5120
+# User-authorized modest increase; retain one check and a hard RSS ceiling.
+LEAN_MIB = 6144
+GUARD_MIB = 7168
 # Stop runaway elaboration (loops) rather than letting it grow.
 TIMEOUT_S = 1200
 
