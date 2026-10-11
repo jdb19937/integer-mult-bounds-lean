@@ -150,7 +150,8 @@ private theorem sub_hoare (rs ds : List Bool) :
       (4*BinarySubReuse.width rs oneBits+14) :=
     h.consequence (fun _ h => ⟨_,rfl,h⟩) (by rintro v ⟨w,rfl,h⟩; exact h) le_rfl
   apply placed_exact subPlacement _ _ _ _ _ _ _ hh
-  all_goals apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
+  all_goals apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;>
+    first | (simp [bank, subPlacement]; done) | rfl
 
 private theorem div_hoare (rs ds zs : List Bool)
     (hdiv : HoareTime (BinaryDescriptorDivision.program q)
@@ -163,7 +164,8 @@ private theorem div_hoare (rs ds zs : List Bool)
       (BinaryDescriptorDivision.cost (decBits rs) ds) := by
   apply placed_exact divPlacement _ _ _ _ _ _ _ hdiv
   all_goals apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;>
-    first | rfl | exact BinaryDescriptorStackRoundtrip.descriptor_encoded _ | exact (BinaryDescriptorStackRoundtrip.descriptor_encoded _).symm
+    first | (simp [bank, divPlacement]; done) | rfl | exact BinaryDescriptorStackRoundtrip.descriptor_encoded _ |
+      exact (BinaryDescriptorStackRoundtrip.descriptor_encoded _).symm
 
 private theorem inc_hoare (rs ds zs : List Bool) :
     HoareTime (incProgram (q := q))
