@@ -16,11 +16,14 @@ open Machine Strm Tp Schedule Spec.SignedRingProduct
 noncomputable def pwCoreProg : Program 𝕌 (compile (a := 0) (by decide) pwCore).1 0 :=
   (compile (a := 0) (by decide) pwCore).2
 
-/-- Seal, run, unseal. -/
-noncomputable def pwProg91 :=
+/-- Seal, run `core`, unseal. -/
+noncomputable def pwProg91With {q : ℕ} (core : Program 𝕌 q 0) :=
   Machine.seq (sealAt (a := 0) zH) <| Machine.seq (sealAt (a := 0) zF) <| Machine.seq (sealAt (a := 0) zG) <|
-  Machine.seq pwCoreProg <| Machine.seq (unsealAt (a := 0) zO) <| Machine.seq (unsealAt (a := 0) zH) <|
+  Machine.seq core <| Machine.seq (unsealAt (a := 0) zO) <| Machine.seq (unsealAt (a := 0) zH) <|
   Machine.seq (unsealAt (a := 0) zF) (unsealAt (a := 0) zG)
+
+/-- Seal, run, unseal. -/
+noncomputable def pwProg91 := pwProg91With pwCoreProg
 
 /-- The raw bank: header and operands on `zH`, `zF`, `zG`, the output on `zO`, all else blank. -/
 def raw91 (hdr F G out : List Bool) : Tapes 𝕌 0 :=
@@ -67,19 +70,10 @@ theorem pwCoreProg_hoare {p d l K w : ℕ} {ts : List ℕ} {fs gs : List (Rec (2
   exact (compile_correct (by decide) hx).consequence (fun _ h => h) (fun _ h => h) hk
 
 set_option maxHeartbeats 4000000 in
-theorem pwProg91_hoare {p d l K w : ℕ} {ts : List ℕ} {fs gs : List (Rec (2 ^ l))}
-    (hp : 2 ≤ p) (hd : 1 ≤ d) (hK : 1 ≤ K) (hw : p + 2 ≤ w) (hlen : fs.length = gs.length)
-    (hf : ∀ f ∈ fs, DiskGrid p f.1 f.2) (hg : ∀ g ∈ gs, DiskGrid p g.1 g.2) :
-    HoareTime pwProg91 (· = raw91 (transformHeader p d (2 ^ l) K w ts) (array w fs) (array w gs) [])
-      (· = raw91 (transformHeader p d (2 ^ l) K w ts) (array w fs) (array w gs)
-        (array w (List.zipWith (prodRec p) fs gs)))
-      (pwCost p d l K w (transformHeader p d (2 ^ l) K w ts).length fs.length (array w fs).length +
-        4 * ((transformHeader p d (2 ^ l) K w ts).length + (array w fs).length + (array w gs).length +
-          (array w (List.zipWith (prodRec p) fs gs)).length) + 60) := by
-  set hdr := transformHeader p d (2 ^ l) K w ts
-  set F := array w fs
-  set G := array w gs
-  set out := array w (List.zipWith (prodRec p) fs gs)
+theorem pwProg91With_hoare {q : ℕ} {core : Program 𝕌 q 0} {hdr F G out : List Bool} {c : ℕ}
+    (h4 : HoareTime core (· = enc (startBank hdr F G)) (· = enc (Function.update (startBank hdr F G) zO (reg out))) c) :
+    HoareTime (pwProg91With core) (· = raw91 hdr F G []) (· = raw91 hdr F G out)
+      (c + 4 * (hdr.length + F.length + G.length + out.length) + 60) := by
   set v0 := raw91 hdr F G []
   have h1 := sealAt_hoare (a := 0) zH hdr v0 rfl (by simp [v0, raw91])
   set v1 : Tapes 𝕌 0 := ⟨v0.head, Function.update v0.tape zH (⟨[], [hdr]⟩ : WTape).tape⟩
@@ -92,7 +86,6 @@ theorem pwProg91_hoare {p d l K w : ℕ} {ts : List ℕ} {fs gs : List (Rec (2 ^
     simp only [v2, v1, v0, raw91, Tapes.mk.injEq, true_and]
     funext i; simp only [Function.update_apply]
     split_ifs <;> (try subst_vars) <;> first | rfl | exact wordAt_nil | (tsimp at *)
-  have h4 := pwCoreProg_hoare (ts := ts) hp hd hK hw hlen hf hg
   set v4 := enc (a := 0) (Function.update (startBank hdr F G) zO (reg out))
   have hv4 : v4 = _ := enc_startBank_out hdr F G out
   have h5 := unsealAt_hoare (a := 0) zO out v4 (by rw [hv4]) (by rw [hv4]; tsimp)
@@ -113,9 +106,18 @@ theorem pwProg91_hoare {p d l K w : ℕ} {ts : List ℕ} {fs gs : List (Rec (2 ^
     split_ifs <;> (try subst_vars) <;> first | rfl | (tsimp at *)
   refine ((h1.seq (h2.seq (h3.seq ((h4.consequence (fun v h => h.trans e3) (fun v h => h) le_rfl).seq
     (h5.seq (h6.seq (h7.seq h8)))))))).consequence (fun v h => h) (fun v h => h.trans e8) ?_
-  have e : pwCost p d l K w (transformHeader p d (2 ^ l) K w ts).length fs.length (array w fs).length =
-      pwCost p d l K w hdr.length fs.length F.length := rfl
   omega
+
+theorem pwProg91_hoare {p d l K w : ℕ} {ts : List ℕ} {fs gs : List (Rec (2 ^ l))}
+    (hp : 2 ≤ p) (hd : 1 ≤ d) (hK : 1 ≤ K) (hw : p + 2 ≤ w) (hlen : fs.length = gs.length)
+    (hf : ∀ f ∈ fs, DiskGrid p f.1 f.2) (hg : ∀ g ∈ gs, DiskGrid p g.1 g.2) :
+    HoareTime pwProg91 (· = raw91 (transformHeader p d (2 ^ l) K w ts) (array w fs) (array w gs) [])
+      (· = raw91 (transformHeader p d (2 ^ l) K w ts) (array w fs) (array w gs)
+        (array w (List.zipWith (prodRec p) fs gs)))
+      (pwCost p d l K w (transformHeader p d (2 ^ l) K w ts).length fs.length (array w fs).length +
+        4 * ((transformHeader p d (2 ^ l) K w ts).length + (array w fs).length + (array w gs).length +
+          (array w (List.zipWith (prodRec p) fs gs)).length) + 60) :=
+  pwProg91With_hoare (pwCoreProg_hoare (ts := ts) hp hd hK hw hlen hf hg)
 
 /-! ### Tapes 0–3 -/
 

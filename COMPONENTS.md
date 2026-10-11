@@ -6567,6 +6567,12 @@ Schönhage–Strassen multiplication, the fast multiplier used for the packed pr
   (`pointwiseTime_le`), so the step meets `pointwisePolylogTarget 1`
   (`pointwise_polylog`).
 
+- `Schoenhage/RingLemmaHeader.lean`, `RingLemma.lean`: the signed ring product
+  lemma on its own interface: a decoder for `Γ(p)Γ(r)Γ(w)` within the same
+  header bound, the pointwise program's core generalized over its decoder
+  (`runs_pwCoreWith`, `pwProg91With_hoare`) and run on one record; it meets
+  `Meets` (`ring_meets`) and `polylogTarget 1` (`ring_polylog`).
+
 - `Spec/SyntheticTransform.lean`: the statement of the paper's synthetic
   transforms in its formats: exact counterparts `L B F⁻` and `F⁺ B⁻¹ L⁻¹`,
   per-coefficient error `√2 ℓ 2^(-p)`, disk grid outputs, the paper's cost

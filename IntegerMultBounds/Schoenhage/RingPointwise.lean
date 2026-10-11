@@ -230,9 +230,19 @@ theorem runs_pwFinish (τ : Fin 𝕌 → WTape) {out F G : List Bool} (hO : τ z
 
 /-! ### The whole step on word tapes -/
 
+/-- Header decoding by `dec`, then constants, preparation, the records, cleanup. -/
+noncomputable def pwCoreWith (dec : Cmd 0 𝕌) : Cmd 0 𝕌 :=
+  .seq dec <| .seq constAll <| .seq pwPrep <| .seq recLoop pwFinish
+
 /-- Header, constants, preparation, the records, cleanup. -/
-noncomputable def pwCore : Cmd 0 𝕌 :=
-  .seq decodeHeader <| .seq constAll <| .seq pwPrep <| .seq recLoop pwFinish
+noncomputable def pwCore : Cmd 0 𝕌 := pwCoreWith decodeHeader
+
+/-- `dec` decodes the header `hdr` into `iP = ones p`, `iL = ones l`, `iW = ones w` within the
+header bound. -/
+def HdrDecodes (dec : Cmd 0 𝕌) (hdr : List Bool) (p l w : ℕ) : Prop :=
+  ∀ τ : Fin 𝕌 → WTape, Clean τ → τ zH = reg hdr → τ iP = emp → τ iL = emp → τ iW = emp →
+    Runs dec τ (· = Function.update (Function.update (Function.update τ iP (reg (ones p)))
+      iL (reg (ones l))) iW (reg (ones w))) (headerCost p (2 ^ l) w hdr.length)
 
 /-- The word bank at the start: header and operand strings, all else empty. -/
 def startBank (hdr F G : List Bool) : Fin 𝕌 → WTape :=
@@ -277,15 +287,14 @@ def pwCost (p d l K w H M X : ℕ) : ℕ :=
     10 * wOf p l w + 1000
 
 set_option maxHeartbeats 32000000 in
-theorem runs_pwCore {p d l K w : ℕ} {ts : List ℕ} {fs gs : List (Rec (2 ^ l))}
-    (hp : 2 ≤ p) (hd : 1 ≤ d) (hK : 1 ≤ K) (hw : p + 2 ≤ w) (hlen : fs.length = gs.length)
+theorem runs_pwCoreWith {dec : Cmd 0 𝕌} {hdr : List Bool} {p l w : ℕ} {fs gs : List (Rec (2 ^ l))}
+    (hdec : HdrDecodes dec hdr p l w) (hw : p + 2 ≤ w) (hlen : fs.length = gs.length)
     (hf : ∀ f ∈ fs, DiskGrid p f.1 f.2) (hg : ∀ g ∈ gs, DiskGrid p g.1 g.2) :
-    Runs pwCore (startBank (transformHeader p d (2 ^ l) K w ts) (array w fs) (array w gs))
-      (· = Function.update (startBank (transformHeader p d (2 ^ l) K w ts) (array w fs) (array w gs))
+    Runs (pwCoreWith dec) (startBank hdr (array w fs) (array w gs))
+      (· = Function.update (startBank hdr (array w fs) (array w gs))
         zO (reg (array w (List.zipWith (prodRec p) fs gs))))
-      (pwCost p d l K w (transformHeader p d (2 ^ l) K w ts).length fs.length (array w fs).length) := by
+      (pwCost p 0 l 0 w hdr.length fs.length (array w fs).length) := by
   have hw1 : 1 ≤ w := by omega
-  set hdr := transformHeader p d (2 ^ l) K w ts
   set F := array w fs
   set G := array w gs
   set τ₀ := startBank hdr F G
@@ -295,8 +304,8 @@ theorem runs_pwCore {p d l K w : ℕ} {ts : List ℕ} {fs gs : List (Rec (2 ^ l)
     rw [Function.update_of_ne (by intro e; have := congrArg Fin.val e; simp at this; omega),
       Function.update_of_ne (by intro e; have := congrArg Fin.val e; simp at this; omega),
       Function.update_of_ne (by intro e; have := congrArg Fin.val e; simp at this; omega)]
-  have s1 := runs_decodeHeader (p := p) (d := d) (K := K) (w := w) (by omega) hd hK hw1 τ₀ hc₀ (by tsimp [τ₀, startBank, hdr]) (by tsimp [τ₀, startBank])
-    (by tsimp [τ₀, startBank]) (by tsimp [τ₀, startBank]) (ts := ts) (l := l)
+  have s1 := hdec τ₀ hc₀ (by tsimp [τ₀, startBank]) (by tsimp [τ₀, startBank])
+    (by tsimp [τ₀, startBank]) (by tsimp [τ₀, startBank])
   set τ₁ := Function.update (Function.update (Function.update τ₀ iP (reg (ones p))) iL (reg (ones l)))
     iW (reg (ones w))
   have hc₁ : Clean τ₁ := ((hc₀.update (by unfold Own; decide) _).update (by unfold Own; decide) _).update
@@ -377,11 +386,21 @@ theorem runs_pwCore {p d l K w : ℕ} {ts : List ℕ} {fs gs : List (Rec (2 ^ l)
     have lps : ps.length = fs.length := by simp [ps, hlen]
     rw [oF, oG, lps, rwd_length, rwd_length]
     unfold pwCost
-    generalize headerCost p (2 ^ l) w (transformHeader p d (2 ^ l) K w ts).length = A1 at *
+    generalize headerCost p (2 ^ l) w hdr.length = A1 at *
     generalize constCost p l w = A2 at *
     generalize ringCost (wOf p l w) (2 ^ l) w (p + l) (wOf p l w * 2 ^ l) = A3 at *
     clear_value F G out' ps
     rw [lFG] at cG ⊢
     nlinarith
+
+theorem runs_pwCore {p d l K w : ℕ} {ts : List ℕ} {fs gs : List (Rec (2 ^ l))}
+    (hp : 2 ≤ p) (hd : 1 ≤ d) (hK : 1 ≤ K) (hw : p + 2 ≤ w) (hlen : fs.length = gs.length)
+    (hf : ∀ f ∈ fs, DiskGrid p f.1 f.2) (hg : ∀ g ∈ gs, DiskGrid p g.1 g.2) :
+    Runs pwCore (startBank (transformHeader p d (2 ^ l) K w ts) (array w fs) (array w gs))
+      (· = Function.update (startBank (transformHeader p d (2 ^ l) K w ts) (array w fs) (array w gs))
+        zO (reg (array w (List.zipWith (prodRec p) fs gs))))
+      (pwCost p d l K w (transformHeader p d (2 ^ l) K w ts).length fs.length (array w fs).length) :=
+  runs_pwCoreWith (fun τ hc hH hP hL hW => runs_decodeHeader (by omega) hd hK (by omega) τ hc hH hP hL hW)
+    hw hlen hf hg
 
 end IntegerMultBounds.Schoenhage
