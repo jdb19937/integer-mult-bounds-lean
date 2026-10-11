@@ -7,6 +7,8 @@ Regenerate with scripts/generate_shared50_witnesses.py. -/
 namespace IntegerMultBounds.Networks.Certificates.Shared50
 open SharedPointWitnessCheck
 set_option maxRecDepth 8192
+-- Mathlib linters run in the interpreter and dominate elaboration time for this many declarations.
+set_option linter.all false
 
 /-- The actual local addition interval; its classification is checked separately. -/
 def isAddition (i : ℕ) : Bool := decide (1176 ≤ i ∧ i < 10989)

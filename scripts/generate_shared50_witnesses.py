@@ -78,7 +78,9 @@ def main() -> None:
               'Regenerate with scripts/generate_shared50_witnesses.py. -/\n')
     chunks = [(lo,min(lo+args.chunk_size,len(rows))) for lo in range(0,len(rows),args.chunk_size)]
     lines = [f'import {paired}.SignaturesData', 'import IntegerMultBounds.Networks.SharedPointWitnessCheck',
-             '',header,f'namespace {ns}', 'open SharedPointWitnessCheck', 'set_option maxRecDepth 8192', '',
+             '',header,f'namespace {ns}', 'open SharedPointWitnessCheck', 'set_option maxRecDepth 8192',
+             '-- Mathlib linters run in the interpreter and dominate elaboration time for this many declarations.',
+             'set_option linter.all false', '',
              '/-- The actual local addition interval; its classification is checked separately. -/',
              'def isAddition (i : ℕ) : Bool := decide (1176 ≤ i ∧ i < 10989)', '']
     lines += [f'def point{i:02d} : Fin 50 := ⟨{i}, by decide⟩' for i in range(50)] + ['']

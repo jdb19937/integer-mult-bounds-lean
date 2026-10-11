@@ -37,7 +37,9 @@ def main() -> None:
               'Regenerate with scripts/generate_paired49_certificate.py. -/\n')
     lines = ['import IntegerMultBounds.Networks.MaskDAG', '', header,
              f'namespace {namespace}', 'open MaskDAG', '',
-             'set_option maxRecDepth 4096', 'set_option exponentiation.threshold 2000', '']
+             'set_option maxRecDepth 4096',
+             '-- Mathlib linters run in the interpreter and dominate elaboration time for this many declarations.',
+             'set_option linter.all false', 'set_option exponentiation.threshold 2000', '']
     for i, (_, mask) in enumerate(rows):
         lines.append(f'def mask{i:05d} : BitVec {width} := BitVec.ofNat {width} {mask}')
     lines.append('')

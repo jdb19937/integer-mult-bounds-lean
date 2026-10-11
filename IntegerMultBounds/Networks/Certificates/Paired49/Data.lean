@@ -7,6 +7,8 @@ namespace IntegerMultBounds.Networks.Certificates.Paired49
 open MaskDAG
 
 set_option maxRecDepth 4096
+-- Mathlib linters run in the interpreter and dominate elaboration time for this many declarations.
+set_option linter.all false
 set_option exponentiation.threshold 2000
 
 def mask00000 : BitVec 1176 := BitVec.ofNat 1176 1

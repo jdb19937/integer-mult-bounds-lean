@@ -39,7 +39,9 @@ def main() -> None:
               'Regenerate with scripts/generate_paired49_signatures.py. -/\n')
     lines = [f'import {namespace}.Data', 'import IntegerMultBounds.Networks.MaskSignature',
              'import IntegerMultBounds.Networks.PairMask', '', header, f'namespace {namespace}',
-             'open MaskDAG MaskSignature', 'set_option maxRecDepth 4096', '',
+             'open MaskDAG MaskSignature', 'set_option maxRecDepth 4096',
+             '-- Mathlib linters run in the interpreter and dominate elaboration time for this many declarations.',
+             'set_option linter.all false', '',
              '/-- Actual source endpoints in the canonical pair-input order. -/',
              'def signatureSource (i : Fin 1176) : BitVec 49 :=',
              '  PairMask.bit 49 (PairMask.pairAt49 i).1 ||| PairMask.bit 49 (PairMask.pairAt49 i).2', '',

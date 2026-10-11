@@ -8,6 +8,8 @@ Regenerate with scripts/generate_paired49_signatures.py. -/
 namespace IntegerMultBounds.Networks.Certificates.Paired49
 open MaskDAG MaskSignature
 set_option maxRecDepth 4096
+-- Mathlib linters run in the interpreter and dominate elaboration time for this many declarations.
+set_option linter.all false
 
 /-- Actual source endpoints in the canonical pair-input order. -/
 def signatureSource (i : Fin 1176) : BitVec 49 :=
