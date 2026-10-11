@@ -1,7 +1,11 @@
 import Mathlib.LinearAlgebra.BilinearForm.Orthogonal
 import Mathlib.LinearAlgebra.Basis.Fin
 import Mathlib.Data.ZMod.Basic
-import Mathlib.Tactic
+import Mathlib.Algebra.Field.ZMod
+import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.NormNum
+import Mathlib.Tactic.Contrapose
+import Lean.Elab.Tactic.Omega
 
 /-! Orthonormalization of symmetric bilinear forms over the binary field.
 Characteristic two needs a separate argument: a unit line absorbs a hyperbolic

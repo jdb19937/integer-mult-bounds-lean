@@ -1,6 +1,8 @@
 import Mathlib.LinearAlgebra.Matrix.Transvection
 import Mathlib.Data.ZMod.Basic
-import Mathlib.Tactic
+import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.Ext
+import Mathlib.Algebra.Field.ZMod
 import Mathlib.LinearAlgebra.Matrix.ToLin
 import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
 

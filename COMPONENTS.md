@@ -6582,7 +6582,9 @@ Parameters and asymptotics.
   comparisons, the complex motif counts, and the strict complex branching-ratio
   bound. The logarithm enclosure is proved from a finite exponential-series
   lower bound inside Lean. These do not establish the motif's circuit interface
-  or the costs of an implementation.
+  or the costs of an implementation. Module-scoped imports and separate
+  rational goals allow the full parameter file to pass the guarded local check
+  without increasing memory or proof limits.
 - `Shared50Parameters.lean`: exact h=50 two-bank counts, positive deficit,
   finite exponential-series logarithm enclosure and strict branching inequality
   for the selected tau. Converting the numerical budget into an actual circuit

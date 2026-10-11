@@ -1,12 +1,19 @@
-import Mathlib.Analysis.SpecialFunctions.Pow.Real
-import Mathlib.Analysis.Complex.Exponential
-import Mathlib.Tactic
+module
+
+public import Mathlib.Analysis.SpecialFunctions.Pow.Real
+public import Mathlib.Analysis.Complex.Exponential
+import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.NormNum
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.Ring
 
 /-!
 Exact real inequalities for the October 7 compact-control witness. These prove
 the numerical and elementary analytic claims, not the algorithmic interfaces
 whose costs the parameters are intended to satisfy.
 -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Parameters
 noncomputable section
@@ -43,7 +50,9 @@ def Admissible : Prop :=
   0 < 1 - epsilon ∧ 0 < kappa
 
 theorem admissible : Admissible := by
-  norm_num [Admissible, tau, sigma, epsilon, spacing, beta, zeta, delta,
+  unfold Admissible
+  repeat' apply And.intro
+  all_goals norm_num [tau, sigma, epsilon, spacing, beta, zeta, delta,
     guardExponent, lam, lam', kappa, internalExponent, leafExponent, reservationExponent]
 
 def margin : Fin 7 → ℝ := ![
