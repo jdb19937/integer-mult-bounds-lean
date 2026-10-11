@@ -1,5 +1,7 @@
-import IntegerMultBounds.Schoenhage.IterCorrect
-import IntegerMultBounds.Schoenhage.Schedule
+module
+
+public import IntegerMultBounds.Schoenhage.IterCorrect
+public import IntegerMultBounds.Schoenhage.Schedule
 
 /-! The whole Schönhage–Strassen recursion as the tapes compute it, on
 natural-number residues. A level with ring size `N` (modulus `2^N + 1`) uses
@@ -11,6 +13,8 @@ to signed representatives (`liftN`) and evaluated at `2^M` modulo `2^N + 1`
 (`recomb`). Below `N0` the product is taken directly. Proved: `ssMul N x y`
 is `x y mod 2^N + 1` for residues whenever `2^(kOf N) ∣ N` (`ssMul_correct`),
 with the value bounds and lengths of every intermediate list. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Schoenhage
 

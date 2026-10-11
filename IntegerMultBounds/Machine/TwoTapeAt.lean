@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.PlacementBank
-import IntegerMultBounds.Machine.SharedPlacementAlphabet
-import IntegerMultBounds.Machine.Copy
+module
+
+public import IntegerMultBounds.Machine.PlacementBank
+public import IntegerMultBounds.Machine.SharedPlacementAlphabet
+public import IntegerMultBounds.Machine.Copy
 
 /-! Exact two-tape routines placed at two fixed distinct slots, framing every
 other cell and head. The injection depends only on the finite machine layout. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.TwoTapeAt
 noncomputable section
 open SharedPlacementAlphabet (setTape)

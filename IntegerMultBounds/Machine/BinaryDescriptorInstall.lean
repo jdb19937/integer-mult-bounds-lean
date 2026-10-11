@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.BinaryDescriptorCopy
-import IntegerMultBounds.Machine.InjectivePlacement
-import IntegerMultBounds.Machine.SharedPlacementAlphabet
+module
+
+public import IntegerMultBounds.Machine.BinaryDescriptorCopy
+public import IntegerMultBounds.Machine.InjectivePlacement
+public import IntegerMultBounds.Machine.SharedPlacementAlphabet
 
 /-! Install a descriptor in arbitrary distinct physical tape slots while
 preserving every other complete tape and head. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryDescriptorInstall
 open SharedPlacementAlphabet (setTape)
 variable {t q : ℕ}

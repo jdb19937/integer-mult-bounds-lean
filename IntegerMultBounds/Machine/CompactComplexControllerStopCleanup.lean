@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexControllerStopSetup
-import IntegerMultBounds.Machine.BinaryDescriptorCleanupList
-import IntegerMultBounds.Machine.DescriptorStackControl
+module
+
+public import IntegerMultBounds.Machine.CompactComplexControllerStopSetup
+public import IntegerMultBounds.Machine.BinaryDescriptorCleanupList
+public import IntegerMultBounds.Machine.DescriptorStackControl
 
 /-! Physically reclaim every stop-workspace cell after the runtime decision.
 The retained native bank and all appended persistent tapes are framed exactly. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexControllerStopCleanup
 noncomputable section
 open SharedPlacementAlphabet (setTape)

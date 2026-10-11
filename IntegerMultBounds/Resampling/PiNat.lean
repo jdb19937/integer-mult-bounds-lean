@@ -1,9 +1,13 @@
-import IntegerMultBounds.Resampling.WeightNat
+module
+
+public import IntegerMultBounds.Resampling.WeightNat
 
 /-! Machin's sums in natural numbers, as the tape machine computes them:
 `D_0 = ⌊2^q/m⌋`, `D_{k+1} = ⌊D_k/m²⌋`, the `k`-th term `⌊D_k/(2k+1)⌋`, and the
 even and odd partial sums. The alternating sum of these nonincreasing terms
 is nonnegative, so `piN` is a natural subtraction of the two. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Resampling.PiNat
 

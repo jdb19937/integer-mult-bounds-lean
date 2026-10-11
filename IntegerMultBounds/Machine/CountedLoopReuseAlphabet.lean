@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.CountedLoopAlphabet
-import IntegerMultBounds.Machine.CountedLoopReuse
-import IntegerMultBounds.Machine.Alphabet
+module
+
+public import IntegerMultBounds.Machine.CountedLoopAlphabet
+public import IntegerMultBounds.Machine.CountedLoopReuse
+public import IntegerMultBounds.Machine.Alphabet
 
 /-! Reusable binary-counted loops with arbitrary finite-alphabet bodies. Only the
 two dedicated binary control tapes are passed through the alphabet encoding;
 all payload/radix symbols remain literal spectators during setup and cleanup.
 The loop copies its count once, amortizes real decrements, and restores controls. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedLoopReuseAlphabet
 
 variable {t q a : ℕ}

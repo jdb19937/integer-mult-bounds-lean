@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.RoleArrayStackAt
+module
+
+public import IntegerMultBounds.Machine.RoleArrayStackAt
 
 /-! Destructive arbitrary-symbol array transfer between two origin slots.
 Both payload heads and the reusable clock are physically reset to zero. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RoleArrayMove
 open RoleArrayStackMoves
 open SharedPlacementAlphabet (setTape)

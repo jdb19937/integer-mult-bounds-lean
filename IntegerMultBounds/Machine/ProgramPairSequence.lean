@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.Hoare
+module
+
+public import IntegerMultBounds.Machine.Hoare
 
 /-! Sigma-packaged finite programs compose with their exact state indices,
 physical join cost and unchanged tape predicates. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ProgramPairSequence
 noncomputable section
 variable {t a : ℕ}

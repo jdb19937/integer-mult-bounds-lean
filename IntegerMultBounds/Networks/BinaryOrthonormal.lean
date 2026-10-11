@@ -1,15 +1,19 @@
-import Mathlib.LinearAlgebra.BilinearForm.Orthogonal
-import Mathlib.LinearAlgebra.Basis.Fin
-import Mathlib.Data.ZMod.Basic
-import Mathlib.Algebra.Field.ZMod
-import Mathlib.Tactic.FinCases
-import Mathlib.Tactic.NormNum
-import Mathlib.Tactic.Contrapose
-import Lean.Elab.Tactic.Omega
+module
+
+public import Mathlib.LinearAlgebra.BilinearForm.Orthogonal
+public import Mathlib.LinearAlgebra.Basis.Fin
+public import Mathlib.Data.ZMod.Basic
+public import Mathlib.Algebra.Field.ZMod
+public import Mathlib.Tactic.FinCases
+public import Mathlib.Tactic.NormNum
+public import Mathlib.Tactic.Contrapose
+public import Lean.Elab.Tactic.Omega
 
 /-! Orthonormalization of symmetric bilinear forms over the binary field.
 Characteristic two needs a separate argument: a unit line absorbs a hyperbolic
 plane through the three vectors `w+a`, `w+b`, and `w+a+b`. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.BinaryOrthonormal
 

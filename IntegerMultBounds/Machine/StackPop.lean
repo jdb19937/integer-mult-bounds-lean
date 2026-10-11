@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CountedLoopReuseAlphabet
+module
+
+public import IntegerMultBounds.Machine.CountedLoopReuseAlphabet
 
 /-! Destructive length-counted stack transfer. Source and destination heads start
 on the final cells of their respective regions, move left together, and stop
 just before those regions. Every alphabet symbol, including blank and separator,
 is data; only the independent binary clock decides when to stop. Positioning and
 constructing the immutable length descriptor are explicit caller obligations. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.StackPop
 variable {a : ℕ}
 

@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.RawLinearCombinationFieldFamily
+module
+
+public import IntegerMultBounds.Machine.RawLinearCombinationFieldFamily
 
 /-! A whole Gaussian row executes every fixed wire expression on both stored
 components. Output records retain the original wire ordering; original marked
 source controls are restored and one shared private bank is blank afterward. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RawLinearCombinationComplexFamily
 noncomputable section
 open RadixLinearCombinationRefresh (Expr Size controls)

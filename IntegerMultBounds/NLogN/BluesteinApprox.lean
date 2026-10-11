@@ -1,5 +1,7 @@
-import IntegerMultBounds.NLogN.Bluestein
-import IntegerMultBounds.NLogN.Approx
+module
+
+public import IntegerMultBounds.NLogN.Bluestein
+public import IntegerMultBounds.NLogN.Approx
 
 /-! Error bookkeeping for Bluestein's method, the proof of Theorem 3.1 of
 Harvey and van der Hoeven. With the normalized transform `(1/t) F` and the
@@ -10,6 +12,8 @@ the unit ball, and rounded pointwise products, the pipeline
 scaled error at most `εM + 3 εa + 4`, in one and `d` dimensions. The
 construction of the approximate chirp and convolution, and any cost, are not
 part of this file. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.NLogN
 

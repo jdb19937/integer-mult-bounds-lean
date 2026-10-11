@@ -1,8 +1,12 @@
-import IntegerMultBounds.Machine.Counter
+module
+
+public import IntegerMultBounds.Machine.Counter
 
 /-! Binary increment with a growing most-significant end. Carry into the end
 creates a new true bit, so no width is supplied in advance. The exact scan
 potential pays for both carry propagation and return to the left sentinel. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.GrowingCounterData
 

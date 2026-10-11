@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.FiniteReturnStackAt
+module
+
+public import IntegerMultBounds.Machine.FiniteReturnStackAt
 
 /-! A next-free stack head has a genuinely blank tail. Initialization derives
 this from a support bound; arbitrary physical binary pushes preserve it.
 The older tail required by pop comes from the pre-push invariant, rather than
 from an equality describing only the occupied word. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSavedStackTailInvariant
 noncomputable section
 open FiniteReturnStack (Code wordPart)

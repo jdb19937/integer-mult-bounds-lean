@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.BinaryDescriptorCleanupList
-import IntegerMultBounds.Machine.BinaryDescriptorFrames
+module
+
+public import IntegerMultBounds.Machine.BinaryDescriptorCleanupList
+public import IntegerMultBounds.Machine.BinaryDescriptorFrames
 
 /-! Restore a saved ancestor frame over the child's still-present headers.
 The child's descriptors are physically erased and rewound before any frame is
 popped; the final bank contains the saved words and the exact older stack. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryDescriptorFrameRestore
 open BinaryDescriptorFrames
 open SharedPlacementAlphabet (setTape)

@@ -1,13 +1,17 @@
-import IntegerMultBounds.Networks.Shared50ComplementFrames
-import IntegerMultBounds.Networks.Shared50InitialLabels
-import IntegerMultBounds.Networks.MotifLabels
-import IntegerMultBounds.Networks.StageLabels
+module
+
+public import IntegerMultBounds.Networks.Shared50ComplementFrames
+public import IntegerMultBounds.Networks.Shared50InitialLabels
+public import IntegerMultBounds.Networks.MotifLabels
+public import IntegerMultBounds.Networks.StageLabels
 
 /-! Actual fifty-copy middle-computation frames in a stage geometry.
 D_U is the orthogonal sum of B tensor F and P tensor U, followed by the actual
 future line Q. Forward and reversed-complement traces remain increasing and
 nondegenerate with zero loss. Whole-motif central returns and global rank
 assembly are not included here. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.Shared50StageFrames
 

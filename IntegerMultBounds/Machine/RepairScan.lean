@@ -1,10 +1,12 @@
-import IntegerMultBounds.Machine.FlagCopy
-import IntegerMultBounds.Machine.MarkedReturn
-import IntegerMultBounds.Machine.LoopChain
-import IntegerMultBounds.Machine.RepairStage
-import IntegerMultBounds.Machine.CounterTape
-import IntegerMultBounds.Machine.GrowingCounter
-import Mathlib.Data.List.GetD
+module
+
+public import IntegerMultBounds.Machine.FlagCopy
+public import IntegerMultBounds.Machine.MarkedReturn
+public import IntegerMultBounds.Machine.LoopChain
+public import IntegerMultBounds.Machine.RepairStage
+public import IntegerMultBounds.Machine.CounterTape
+public import IntegerMultBounds.Machine.GrowingCounter
+public import Mathlib.Data.List.GetD
 
 /-! The flagging and extraction scan of the exceptional-address repair (§5),
 on the same fourteen-slot bank as the sort, strip and reinsert stage. A
@@ -15,6 +17,8 @@ the flagged full stream, extracting a flagged record in the raw keyed format,
 and finally increments the counter. The key routine is a parameter with a
 per-record contract; the manuscript's arithmetic (membership in `ℬ`, reversal
 of the eight modular additions, destination rank) is its content. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.RepairScan
 

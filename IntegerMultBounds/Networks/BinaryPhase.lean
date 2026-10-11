@@ -1,11 +1,15 @@
-import IntegerMultBounds.Networks.BinaryOrthonormal
-import IntegerMultBounds.Networks.ProjectionRank
-import Mathlib.Algebra.Group.AddChar
-import Mathlib.Basic.Complex.Basic
+module
+
+public import IntegerMultBounds.Networks.BinaryOrthonormal
+public import IntegerMultBounds.Networks.ProjectionRank
+public import Mathlib.Algebra.Group.AddChar
+public import Mathlib.Basic.Complex.Basic
 
 /-! Exact finite-rank projection decompositions underlying binary phase frames.
 Actual network residuals must still supply their norm-one witnesses. No tape
 costs or unproved network labels are assumed here. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.BinaryPhase
 

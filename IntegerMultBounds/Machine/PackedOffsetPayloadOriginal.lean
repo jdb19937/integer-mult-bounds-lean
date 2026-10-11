@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.PackedOffsetPayload
-import IntegerMultBounds.Machine.PackedOffsetPowerHeader
+module
+
+public import IntegerMultBounds.Machine.PackedOffsetPayload
+public import IntegerMultBounds.Machine.PackedOffsetPowerHeader
 
 /-! Packed-word controlled payload rotations from original B/n/w headers.
 The power header is physically synthesized and erased; its cost is retained
 when there are no fibers. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.PackedOffsetPayloadOriginal
 noncomputable section
 open SharedPlacementAlphabet (setTape)

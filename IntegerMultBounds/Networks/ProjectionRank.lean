@@ -1,9 +1,13 @@
-import IntegerMultBounds.Networks.TensorLabels
-import Mathlib.LinearAlgebra.Projection
+module
+
+public import IntegerMultBounds.Networks.TensorLabels
+public import Mathlib.LinearAlgebra.Projection
 
 /-! Orthogonal projection differences on nested nondegenerate subspaces.
 This gives the exact edge-rank identity needed by the rational interface; a
 complete network must still supply its actual comparable labels. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.ProjectionRank
 

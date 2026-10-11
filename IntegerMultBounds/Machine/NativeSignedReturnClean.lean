@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.NativeSignedReturnStream
+module
+
+public import IntegerMultBounds.Machine.NativeSignedReturnStream
 
 /-! Paid complete native precision-return stream: actual field arithmetic,
 both head rewinds, obsolete source erasure and generated-control cleanup. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.NativeSignedReturnClean
 noncomputable section
 open NativeSignedReturnStream (encode volume work)

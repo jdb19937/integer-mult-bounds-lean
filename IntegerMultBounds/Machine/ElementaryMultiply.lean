@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.ElementaryMultiplyOutputData
-import IntegerMultBounds.Assembly
+module
+
+public import IntegerMultBounds.Machine.ElementaryMultiplyOutputData
+public import IntegerMultBounds.Assembly
 
 /-! A complete fixed elementary multiplication machine. Real scanning erases
 the original packed input, and a preserved operand clocks the padded reverse
 copy of the Horner accumulator onto tape zero. This gives correctness at every
 input length with quadratic cost, for use as a finite small-input fallback. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ElementaryMultiply
 noncomputable section
 variable {a : ℕ}

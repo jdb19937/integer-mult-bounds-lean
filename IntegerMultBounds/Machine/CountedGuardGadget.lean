@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CountedGuardGadgetOriginal
-import IntegerMultBounds.Machine.CountedGuardGadgetFinish
+module
+
+public import IntegerMultBounds.Machine.CountedGuardGadgetOriginal
+public import IntegerMultBounds.Machine.CountedGuardGadgetFinish
 
 /-! The complete fixed-control guard gadget from sole original q/b/n headers.
 The exact legacy flag word is physically generated and reduced by AnyFlag;
 all private tapes are restored, with both source heads at their origins. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedGuardGadget
 noncomputable section
 variable {a : ℕ}

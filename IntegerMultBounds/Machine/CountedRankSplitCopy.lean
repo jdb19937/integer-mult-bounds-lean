@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.SharedBank
-import IntegerMultBounds.Machine.WordMoves
-import IntegerMultBounds.Machine.CountedLoopReuseAlphabet
-import IntegerMultBounds.Machine.ArbitraryWidthZeroHeaderShared
-import IntegerMultBounds.Machine.BinaryDescriptorCleanupList
+module
+
+public import IntegerMultBounds.Machine.SharedBank
+public import IntegerMultBounds.Machine.WordMoves
+public import IntegerMultBounds.Machine.CountedLoopReuseAlphabet
+public import IntegerMultBounds.Machine.ArbitraryWidthZeroHeaderShared
+public import IntegerMultBounds.Machine.BinaryDescriptorCleanupList
 
 /-! Fixed zero-filling copy driven by a preserved binary count. Its private
 clock sentinel is physically initialized and erased, including count zero. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedRankSplitCopy
 noncomputable section
 variable {a : ℕ}

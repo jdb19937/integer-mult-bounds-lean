@@ -1,12 +1,16 @@
-import Mathlib.Data.Nat.ModEq
-import Mathlib.Data.Fintype.EquivFin
-import Mathlib.Tactic.Linarith
-import Mathlib.Tactic.Ext
+module
+
+public import Mathlib.Data.Nat.ModEq
+public import Mathlib.Data.Fintype.EquivFin
+public import Mathlib.Tactic.Linarith
+public import Mathlib.Tactic.Ext
 
 /-! Arithmetic and stream semantics of splitting a positive unit scaling into
 monotone pieces. For modulus Q and fixed positive multiplier c coprime to Q,
 the source y belongs to piece floor(c*y/Q). Every output has one admissible
 piece and an exact reconstructed source. No tape runtime is asserted here. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.ScalingPieces
 

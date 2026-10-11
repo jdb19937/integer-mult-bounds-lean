@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.RoleArrayCall
+module
+
+public import IntegerMultBounds.Machine.RoleArrayCall
 
 /-! Separate physical entry and return blocks for a cyclic recursive controller.
 Entry parks inactive arrays and moves the selected array to the common child
 source. Return moves its result back and recovers the parked frame. No child
 program is embedded in either block; fixed FiniteFlow edges may connect them. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RoleArrayCallBoundary
 open RoleArrayFrames
 open RoleArrayCall (entered)

@@ -1,8 +1,12 @@
-import IntegerMultBounds.Networks.PairMask
-import Mathlib.Tactic.IntervalCases
+module
+
+public import IntegerMultBounds.Networks.PairMask
+public import Mathlib.Tactic.IntervalCases
 
 /-! Literal incident masks, checked against the canonical pair enumeration.
 Regenerate with scripts/generate_paired49_outputs.py. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.Certificates.Paired49
 open PairMask

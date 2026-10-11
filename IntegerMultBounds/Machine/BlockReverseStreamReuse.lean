@@ -1,9 +1,13 @@
-import IntegerMultBounds.Machine.BlockReverseStream
-import IntegerMultBounds.Machine.CountedLoopReuse
+module
+
+public import IntegerMultBounds.Machine.BlockReverseStream
+public import IntegerMultBounds.Machine.CountedLoopReuse
 
 /-! Reusable blockwise payload reversal. The outer count descriptor remains
 immutable, its mutable clock is prepared and fully cleared by the actual
 machine, and the advancing block body preserves its own reusable controls. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.BlockReverseStreamReuse
 

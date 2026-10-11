@@ -1,10 +1,14 @@
-import IntegerMultBounds.Networks.PairedGraphSpec
-import IntegerMultBounds.Networks.PairedVectorCorrect
-import IntegerMultBounds.Networks.DisjointPaired
-import Mathlib.Data.List.InsertIdx
+module
+
+public import IntegerMultBounds.Networks.PairedGraphSpec
+public import IntegerMultBounds.Networks.PairedVectorCorrect
+public import IntegerMultBounds.Networks.DisjointPaired
+public import Mathlib.Data.List.InsertIdx
 
 /-! Correctness of literal strip construction: balanced group totals followed
 by the actual prefix/suffix vector, preserving every original reference. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.PairedCircuitCorrect
 

@@ -1,8 +1,12 @@
-import IntegerMultBounds.Machine.KeySelect
+module
+
+public import IntegerMultBounds.Machine.KeySelect
 
 /-! A literal unary-selector increment. The selector is scanned to its blank,
 extended by one symbol, and rewound to zero. A second tape's head advances by
 one at the write step while its entire contents are preserved. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.UnarySelector
 

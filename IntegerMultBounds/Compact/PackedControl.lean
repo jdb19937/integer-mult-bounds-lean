@@ -1,8 +1,10 @@
-import IntegerMultBounds.Compact.DirtyControl
-import IntegerMultBounds.Compact.Radix
-import Mathlib.Tactic.Use
-import Mathlib.Tactic.Set
-import Mathlib.Tactic.LinearCombination
+module
+
+public import IntegerMultBounds.Compact.DirtyControl
+public import IntegerMultBounds.Compact.Radix
+public import Mathlib.Tactic.Use
+public import Mathlib.Tactic.Set
+public import Mathlib.Tactic.LinearCombination
 
 /-!
 A packed implementation of the earlier-source four-update gadget. Every field
@@ -13,6 +15,8 @@ restoration and selected-parity toggling for every length on the guarded set.
 This is address arithmetic. Realizing the loads by front/back swaps and
 accounting for their tape costs are additional tasks.
 -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Compact
 open Radix

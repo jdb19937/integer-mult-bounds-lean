@@ -1,25 +1,30 @@
-import IntegerMultBounds.Machine.PrefixCounterData
-import IntegerMultBounds.Machine.RadixCounter
+module
+
+public import IntegerMultBounds.Machine.PrefixCounterData
+public import IntegerMultBounds.Machine.RadixCounter
 
 /-! A concrete carry scheduler over a fixed finite family of separate radix
 fields. Overflow restores the selected field's head and immediately enters the
 next field. Long spectators incur only actual ripple visits, never a width scan
 per fiber. Field order is compiled into the finite transition table. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.PrefixCounter
 
 open RadixDigits RadixCounterData PrefixCounterData
 variable {q c : ℕ} (hq : 2 ≤ q)
 
-private def state (i : Fin c) (mode : Fin 3) : Fin (c*3+1) :=
+def state (i : Fin c) (mode : Fin 3) : Fin (c*3+1) :=
   Fin.castAdd 1 (finProdFinEquiv (i,mode))
 
-private def haltState : Fin (c*3+1) := Fin.natAdd (c*3) 0
+def haltState : Fin (c*3+1) := Fin.natAdd (c*3) 0
 
-private def jump : Option (Fin c) → Fin (c*3+1)
+def jump : Option (Fin c) → Fin (c*3+1)
   | none => haltState
   | some i => state i 0
 
-private def fieldTransition (next : Fin c → Option (Fin c)) (i : Fin c) (mode : Fin 3)
+def fieldTransition (next : Fin c → Option (Fin c)) (i : Fin c) (mode : Fin 3)
     (symbol : Fin (q+4)) : Option (Fin (c*3+1) × Fin (q+4) × Move) :=
   if mode = 0 then
     match readDigit symbol with
@@ -30,7 +35,7 @@ private def fieldTransition (next : Fin c → Option (Fin c)) (i : Fin c) (mode 
     some ((if mode = 1 then haltState else jump (next i)),separator,.right)
   else some (state i mode,symbol,.left)
 
-private def action (symbols : Fin c → Fin (q+4)) (i : Fin c) (x : Fin (q+4)) (move : Move) :=
+def action (symbols : Fin c → Fin (q+4)) (i : Fin c) (x : Fin (q+4)) (move : Move) :=
   fun j => if j = i then (x,move) else (symbols j,Move.stay)
 
 /-- Three carry/return states per field and one genuine halt state. -/
@@ -189,7 +194,7 @@ private theorem field_exact (first : Fin c) (next : Fin c → Option (Fin c)) (v
 def tapes (f : Fin c → ℤ → Fin (q+4)) (ds : Fin c → List (Fin q)) : Tapes c q :=
   ⟨fun _ => 1,fun i => RadixCounter.digitsTape (f i) 1 (ds i)⟩
 
-private def boundary (f : Fin c → ℤ → Fin (q+4)) (ds : Fin c → List (Fin q))
+def boundary (f : Fin c → ℤ → Fin (q+4)) (ds : Fin c → List (Fin q))
     (st : Fin (c*3+1)) : Config c (c*3+1) q := ⟨st,(tapes f ds).head,(tapes f ds).tape⟩
 
 private theorem field_run (first : Fin c) (next : Fin c → Option (Fin c))
@@ -218,7 +223,7 @@ def successor : List (Fin c) → Fin c → Option (Fin c)
   | [],_ => none
   | i::is,j => if j = i then is.head? else successor is j
 
-private theorem chain_run (first : Fin c) (next : Fin c → Option (Fin c))
+theorem chain_run (first : Fin c) (next : Fin c → Option (Fin c))
     (is : List (Fin c)) (hn : is.Nodup) (hpath : ∀ i ∈ is, next i = successor is i)
     (f : Fin c → ℤ → Fin (q+4)) (ds : Fin c → List (Fin q))
     (hzero : ∀ i, f i 0 = separator) (hend : ∀ i, f i (1+(ds i).length) = blank) :
@@ -241,7 +246,7 @@ private theorem chain_run (first : Fin c) (next : Fin c → Option (Fin c))
       exact ih hnt htail _ (fun j => by by_cases hj : j = i <;> simpa [hj] using hend j)
     · simpa only [stepCost,advanceFields,ho,Bool.false_eq_true,ite_false,add_zero,List.head?_cons,jump] using hd
 
-private theorem halted (first : Fin c) (next : Fin c → Option (Fin c))
+theorem halted (first : Fin c) (next : Fin c → Option (Fin c))
     (f : Fin c → ℤ → Fin (q+4)) (ds : Fin c → List (Fin q)) :
     step (controller hq first next) (boundary f ds haltState) = none := by
   simp [step,controller,boundary,haltState]

@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.MarkedBinaryCleanup
+module
+
+public import IntegerMultBounds.Machine.MarkedBinaryCleanup
 
 /-! Repeated shared-control evaluation with physical previous-result erasure.
 The caller may advance the shared controls between calls; stale leaf copies and
 the old binary descriptor are charged and removed by the next finite program. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RadixLinearCombinationReuse
 
 open RadixLinearCombinationRefresh (Expr controls leaves)
@@ -17,7 +22,7 @@ word. This exact tape state is independent of the old word's semantic value. -/
 def state (e : Expr c) (xs old : ℕ → List (Fin q)) (bs : List Bool) : Tapes (TapeCount e) q :=
   (controls xs).append (RadixLinearCombinationBinary.bank e.erase old ((RadixToBinary.binaryState q bs).tape 0) 1 [])
 
-private def clearBinary (e : Expr c) : Program (RadixLinearCombinationBinary.TapeCount e.erase) 4 q :=
+def clearBinary (e : Expr c) : Program (RadixLinearCombinationBinary.TapeCount e.erase) 4 q :=
   extend (extend MarkedBinaryCleanup.program 2) (RadixLinearCombination.AuxTapes e.erase)
 
 private theorem bank_pair (e : Expr c) (old : ℕ → List (Fin q)) (f : ℤ → Fin (q+4)) (p : ℤ) :

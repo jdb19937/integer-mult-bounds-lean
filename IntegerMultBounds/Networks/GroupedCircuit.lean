@@ -1,5 +1,7 @@
-import IntegerMultBounds.Networks.FramedCircuit
-import IntegerMultBounds.Networks.CircuitBits
+module
+
+public import IntegerMultBounds.Networks.FramedCircuit
+public import IntegerMultBounds.Networks.CircuitBits
 
 /-! Finite grouped linear updates, with their actual scalar incidences. A group
 reads its source registers before simultaneously adding to its destinations.
@@ -7,6 +9,8 @@ Disjoint source/destination banks permit refinement to an elementary circuit.
 The compiler removes zero-coefficient source terms, and the support theorem
 characterizes exactly the remaining target and source incidences. No tape cost
 or identification of an elementary instruction with a grouped gate is made. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.GroupedCircuit
 
@@ -379,16 +383,16 @@ theorem matrixGroup_evaluate {n m : ℕ} (dst : Fin n → ι) (src : Fin m → �
   rw [← compile_run, compile, run_sparse_rows]
   rfl
 
-private theorem side_x_sep {n a c s : ℕ} (i : Fin a) (j : Fin n) :
+theorem side_x_sep {n a c s : ℕ} (i : Fin a) (j : Fin n) :
     (Circuit.side i : Circuit.Role n a c s) ≠ Circuit.x j := by simp [Circuit.side, Circuit.x]
 
-private theorem y_side_sep {n a c s : ℕ} (i : Fin n) (j : Fin a) :
+theorem y_side_sep {n a c s : ℕ} (i : Fin n) (j : Fin a) :
     (Circuit.y i : Circuit.Role n a c s) ≠ Circuit.side j := by simp [Circuit.y, Circuit.side]
 
-private theorem y_center_sep {n a c s : ℕ} (i : Fin n) (j : Fin c) :
+theorem y_center_sep {n a c s : ℕ} (i : Fin n) (j : Fin c) :
     (Circuit.y i : Circuit.Role n a c s) ≠ Circuit.center j := by simp [Circuit.y, Circuit.center]
 
-private theorem center_x_sep {n a c s : ℕ} (i : Fin c) (j : Fin n) :
+theorem center_x_sep {n a c s : ℕ} (i : Fin c) (j : Fin n) :
     (Circuit.center i : Circuit.Role n a c s) ≠ Circuit.x j := by simp [Circuit.center, Circuit.x]
 
 /-- The manuscript's eight rows with their true group boundaries: side injection

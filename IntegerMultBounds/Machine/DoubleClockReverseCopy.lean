@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.WordSegments
-import IntegerMultBounds.Machine.Hoare
+module
+
+public import IntegerMultBounds.Machine.WordSegments
+public import IntegerMultBounds.Machine.Hoare
 
 /-! Fixed two-phase machines use a preserved bit word as a unary length clock.
 Each clock bit pays exactly two transitions. Seeking retains every cell;
 reverse copying writes Booleanized source cells, treating blank as false. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.DoubleClockReverseCopy
 variable {a : ℕ}
 

@@ -1,4 +1,6 @@
-import IntegerMultBounds.Machine.ExactFrame
+module
+
+public import IntegerMultBounds.Machine.ExactFrame
 
 /-! A stride gadget assembling a packed word from digit fields of a source
 word under a one-bit-per-digit control. For each of `n` digits the source
@@ -9,6 +11,8 @@ heads move on by one source stride, one target stride and one control bit.
 Everything is unrolled into finite control; the cost is linear in the total
 stride width. The four packed offsets of the compact-control address
 arithmetic and the selected-bit toggle mask are instances. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.Gather
 

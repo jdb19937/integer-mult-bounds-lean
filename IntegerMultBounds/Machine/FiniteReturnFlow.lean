@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.FiniteFlow
-import IntegerMultBounds.Machine.FiniteReturnDispatch
+module
+
+public import IntegerMultBounds.Machine.FiniteFlow
+public import IntegerMultBounds.Machine.FiniteReturnDispatch
 
 /-! A cyclic fixed controller with a real binary-pop block at PC zero and fixed
 continuations at successor PCs. Continuations may jump to any block, including
 the same recursive entry or the shared pop block. No recursion depth is compiled
 into the machine. This is control plumbing, not a recursive algorithm proof. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.FiniteReturnFlow
 variable {k N t u a : ℕ}
 noncomputable section

@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ButterflyRecordEmit
+module
+
+public import IntegerMultBounds.Machine.ButterflyRecordEmit
 
 /-! Two-field physical record IO on the shared phase caller. Stream56 is read
 into marked radix controls50/51; result52/54 is consumed into stream58. All other
 sixty-bank tapes, including address/counter/flags, are retained literally. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.UnitPhaseRecordIO
 noncomputable section
 open RadixDigits

@@ -1,4 +1,6 @@
-import IntegerMultBounds.Machine.NeumannStepLemmas
+module
+
+public import IntegerMultBounds.Machine.NeumannStepLemmas
 
 /-! The Neumann evaluation on tapes. One iteration builds the cyclic
 extension of the current iterate on the input tape of the Gaussian line
@@ -8,6 +10,8 @@ runs the subtraction pass against the start words; `p` iterations are counted
 by a ruler. Twenty-seven tapes: the line machine's twenty-two, the iterate,
 the start words, two rulers for the extension and the iteration ruler. The
 iterate after `K` iterations is exactly `iter wt v0 s m p w W K`. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.NeumannStep
 

@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.BinaryDescriptorQueueEmit
-import IntegerMultBounds.Machine.MarkedWordCleanup
-import IntegerMultBounds.Machine.RawLinearCombinationCleanup
+module
+
+public import IntegerMultBounds.Machine.BinaryDescriptorQueueEmit
+public import IntegerMultBounds.Machine.MarkedWordCleanup
+public import IntegerMultBounds.Machine.RawLinearCombinationCleanup
 
 /-! Read one forward binary field into a fresh marked descriptor. The actual
 next separator stops the copy machine, source cells are retained literally,
 and both cursors are moved/rewound by paid transitions. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryDescriptorQueueRead
 noncomputable section
 open MarkedWordCleanup (one empty marked)

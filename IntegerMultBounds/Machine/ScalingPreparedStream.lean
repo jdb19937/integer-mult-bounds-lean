@@ -1,9 +1,13 @@
-import IntegerMultBounds.Machine.ScalingPreparedExecution
-import IntegerMultBounds.Machine.ScalingStream
+module
+
+public import IntegerMultBounds.Machine.ScalingPreparedExecution
+public import IntegerMultBounds.Machine.ScalingStream
 
 /-! One descriptor-synthesis setup followed by a counted family of complete
 scaling executions. The canonical Q/B counts and family count are supplied;
 piece descriptors and every mutable work sentinel are built physically once. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.ScalingPreparedStream
 
@@ -13,14 +17,14 @@ open ScalingPreparedExecution (ExecutionTapes executionPlacement spare)
 abbrev PreparedTapes (c : ℕ) := ScalingPreparedExecution.TapeCount c
 abbrev TapeCount (c : ℕ) := PreparedTapes c+2
 
-private def placementTo {c : ℕ} : Fin (ExecutionTapes c+2+1) → Fin (TapeCount c) :=
+def placementTo {c : ℕ} : Fin (ExecutionTapes c+2+1) → Fin (TapeCount c) :=
   Fin.addCases
     (Fin.addCases
       (fun i => Fin.castAdd 2 (executionPlacement c (Fin.castAdd 1 i)))
       (fun i => Fin.natAdd (PreparedTapes c) i))
     (fun i => Fin.castAdd 2 (executionPlacement c (Fin.natAdd (ExecutionTapes c) i)))
 
-private def placementInverse {c : ℕ} : Fin (TapeCount c) → Fin (ExecutionTapes c+2+1) :=
+def placementInverse {c : ℕ} : Fin (TapeCount c) → Fin (ExecutionTapes c+2+1) :=
   Fin.addCases
     (fun i => Fin.addCases
       (fun j => Fin.castAdd 1 (Fin.castAdd 2 j))

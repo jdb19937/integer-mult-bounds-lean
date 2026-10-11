@@ -1,9 +1,13 @@
-import IntegerMultBounds.Schoenhage.Layers
+module
+
+public import IntegerMultBounds.Schoenhage.Layers
 
 /-! Inverse transform layers on word tapes. The inverse pair loop runs the
 inverse butterfly over the half-block tapes; an inverse block loads the
 block's complementary shift `N - t`; a layer at depth `s` first recomputes the
 shift list `shiftsAt N s` from the root by `s` rounds of `kids`. -/
+
+@[expose] public section
 
 set_option maxRecDepth 10000
 

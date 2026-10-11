@@ -1,9 +1,13 @@
-import IntegerMultBounds.Machine.WordTape
-import IntegerMultBounds.Machine.Hoare
+module
+
+public import IntegerMultBounds.Machine.WordTape
+public import IntegerMultBounds.Machine.Hoare
 
 /-! A literal three-tape, two-state concatenation machine. Tape zero is copied
 first, then tape one, into tape two. The one-step phase switch preserves every
 head and cell. Sources are blank-terminated; no markers or rewinds are needed. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.Concatenate
 

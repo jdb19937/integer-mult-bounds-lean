@@ -1,5 +1,7 @@
-import Mathlib.Tactic
-import IntegerMultBounds.Machine
+module
+
+public import Mathlib.Tactic
+public import IntegerMultBounds.Machine
 
 /-! Kronecker substitution: integer multiplication as convolution of bounded
 digit vectors, least-significant digit first. Proved: the acyclic convolution
@@ -8,6 +10,8 @@ length-`L` cyclic convolution whenever `a.length + b.length ≤ L + 1`, chunking
 of a digit string into `k`-digit blocks with values below `B ^ k`, and the link
 to the machine's most-significant-first bit encoding. Nothing here computes a
 convolution quickly or on a tape. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.NLogN
 

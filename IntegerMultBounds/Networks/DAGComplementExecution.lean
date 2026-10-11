@@ -1,8 +1,12 @@
-import IntegerMultBounds.Networks.DAGComplementTrace
+module
+
+public import IntegerMultBounds.Networks.DAGComplementTrace
 
 /-! Physical complementary inverse execution, retaining each allocated event.
 Inverse scalar gates run in complemented forward node frames, then the exact
 reverse alignment restores the complemented previous profile. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.DAGComplementExecution
 

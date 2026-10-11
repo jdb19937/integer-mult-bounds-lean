@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.NativeSignedGapScan
-import IntegerMultBounds.Machine.NativeReturnOneTape
+module
+
+public import IntegerMultBounds.Machine.NativeSignedGapScan
+public import IntegerMultBounds.Machine.NativeReturnOneTape
 
 /-! Physical erasure of the reusable gap clock and its preparation sentinel. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.NativeSignedGapClock
 open RadixDigits
 

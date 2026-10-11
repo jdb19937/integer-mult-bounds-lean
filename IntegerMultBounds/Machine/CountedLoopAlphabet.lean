@@ -1,5 +1,7 @@
-import IntegerMultBounds.Machine.CountedCopy
-import IntegerMultBounds.Machine.Frame
+module
+
+public import IntegerMultBounds.Machine.CountedCopy
+public import IntegerMultBounds.Machine.Frame
 
 /-! A finite binary-counted loop for arbitrary finite-alphabet bodies. Clock
 transitions leave every body symbol unchanged, including extra radix markers.
@@ -10,6 +12,8 @@ mutable clock. CountedCopy's literal ripple/return transitions drive the loop;
 a successful decrement enters the body, and its actual halt returns to the
 clock. One terminal underflow halts the whole machine. Clock preparation and
 cleanup are explicit caller work, and no descriptor is rescanned per body call. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.CountedLoopAlphabet
 
@@ -65,11 +69,11 @@ theorem putBits_ne_separator (f : ℤ → Fin (a+4)) (p j : ℤ) (bs : List Bool
 
 
 /-- Only the clock tape moves during a ripple or return transition. -/
-private def clockAction (symbols : Fin 3 → Fin (a+4)) (x : Fin (a+4)) (move : Move) :
+def clockAction (symbols : Fin 3 → Fin (a+4)) (x : Fin (a+4)) (move : Move) :
     Fin 3 → Fin (a+4) × Move := fun i => if i = 2 then (x,move) else (symbols i,.stay)
 
 /-- States: decrement, successful return, underflow return, copy, halt. -/
-private def clockProgram : Program 3 5 a where
+def clockProgram : Program 3 5 a where
   tapes_pos := by decide
   start := 0
   transition := fun s symbols =>

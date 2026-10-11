@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.TwoTapeAt
-import IntegerMultBounds.Machine.DelimitedRadixRecord
-import IntegerMultBounds.Machine.ExactFrame
+module
+
+public import IntegerMultBounds.Machine.TwoTapeAt
+public import IntegerMultBounds.Machine.DelimitedRadixRecord
+public import IntegerMultBounds.Machine.ExactFrame
 
 /-! A fixed finite list reads literal fields from separate retained role
 streams. Original symbols are retained, each source head advances exactly past
 its separator, and private destinations receive actual marked radix controls. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RadixFieldReadList
 noncomputable section
 open SharedPlacementAlphabet (setTape)

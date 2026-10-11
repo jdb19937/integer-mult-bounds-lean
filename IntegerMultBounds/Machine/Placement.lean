@@ -1,8 +1,12 @@
-import IntegerMultBounds.Machine.Frame
+module
+
+public import IntegerMultBounds.Machine.Frame
 
 /-! Exact placement of a small program into any fixed slots of a larger tape
 bank. Projection and replacement retain the complete complementary tapes and
 their heads. The lift preserves actual transition counts and genuine halting. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.Placement
 

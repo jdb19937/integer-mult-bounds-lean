@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.RecursiveWidthGuard
-import IntegerMultBounds.Machine.FiniteFlow
-import IntegerMultBounds.Machine.RecursiveChildQuotients
+module
+
+public import IntegerMultBounds.Machine.RecursiveWidthGuard
+public import IntegerMultBounds.Machine.FiniteFlow
+public import IntegerMultBounds.Machine.RecursiveChildQuotients
 
 /-! Conditional three-block recursive entry controller. PC zero physically
 tests width; PCs one and two are supplied base and recursive-entry machines.
 Their exit tables are explicit and may include backedges. This does not supply
 the recursive-entry implementation or assert that its execution terminates. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveWidthBranch
 variable {t a b r : ℕ}
 noncomputable section

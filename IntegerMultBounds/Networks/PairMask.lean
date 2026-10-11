@@ -1,9 +1,13 @@
-import IntegerMultBounds.Networks.MaskDAG
-import IntegerMultBounds.Networks.PairedInitialGraph
-import Mathlib.Data.List.NodupEquivFin
+module
+
+public import IntegerMultBounds.Networks.MaskDAG
+public import IntegerMultBounds.Networks.PairedInitialGraph
+public import Mathlib.Data.List.NodupEquivFin
 
 /-! Canonical bit positions and exclusion masks for the literal pair-input
 order. The masks retain the exact sorted combinations used by the circuit. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.PairMask
 

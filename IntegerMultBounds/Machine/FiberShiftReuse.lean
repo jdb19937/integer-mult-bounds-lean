@@ -1,9 +1,13 @@
-import IntegerMultBounds.Machine.FiberShift
-import IntegerMultBounds.Machine.CountedLoopReuse
+module
+
+public import IntegerMultBounds.Machine.FiberShift
+public import IntegerMultBounds.Machine.CountedLoopReuse
 
 /-! Repeated common-offset fiber shifting with the entire outer count setup
 and cleanup physically executed. Every mutable clock is restored and every
 immutable descriptor survives. Derived descriptor arithmetic remains separate. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.FiberShiftReuse
 

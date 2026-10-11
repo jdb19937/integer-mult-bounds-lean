@@ -1,11 +1,15 @@
-import IntegerMultBounds.Machine.OneHot
-import IntegerMultBounds.Machine.CountedLoopReuse
-import IntegerMultBounds.Machine.GrowingCounterData
+module
+
+public import IntegerMultBounds.Machine.OneHot
+public import IntegerMultBounds.Machine.CountedLoopReuse
+public import IntegerMultBounds.Machine.GrowingCounterData
 
 /-! A literal unary-time initializer of fixed-modulus one-hot control from an
 immutable binary count. One transition writes residue zero; a reusable counted
 loop advances exactly the supplied count. All unrelated cells and all heads
 are preserved, and both descriptor controls are restored. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.OneHotCount
 

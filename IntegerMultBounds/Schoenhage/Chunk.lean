@@ -1,4 +1,6 @@
-import IntegerMultBounds.Schoenhage.Reverse
+module
+
+public import IntegerMultBounds.Schoenhage.Reverse
 
 /-! Cutting a word into pieces of a fixed width. A three-tape machine copies
 the source's current word to the destination while stepping a unary width
@@ -6,6 +8,8 @@ register; when the register runs out it ends the piece with a separator and
 rewinds the register. As a primitive (`Chunk.prim`, `chunkw`): the source
 advances one word and the destination gains the pieces `cut w x`
 (`runs_chunkw`). -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Schoenhage
 

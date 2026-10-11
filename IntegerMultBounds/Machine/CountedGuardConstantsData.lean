@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CountedGuardGadgetRecord
-import IntegerMultBounds.Compact.GuardValue
+module
+
+public import IntegerMultBounds.Machine.CountedGuardGadgetRecord
+public import IntegerMultBounds.Compact.GuardValue
 
 /-! Exact padded guard-constant bit patterns and the correctness of the one-cell
 overwrite construction. The widths are retained even when high bits are zero. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedGuardConstantsData
 noncomputable section
 variable {a : ℕ}

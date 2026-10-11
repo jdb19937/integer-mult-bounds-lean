@@ -1,10 +1,14 @@
-import IntegerMultBounds.Networks.BinaryRankFactors
-import Mathlib.Algebra.Algebra.Rat
+module
+
+public import IntegerMultBounds.Networks.BinaryRankFactors
+public import Mathlib.Algebra.Algebra.Rat
 
 /-! Genuine invertible frames on arrays with any number of binary columns.
 Their forward and inverse maps are the actual column operators. Restricting
 scalars exposes the same complex-array maps to rational module compilers;
 this changes neither the arrays nor the operators and asserts no runtime. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.BinaryColumnFrame
 

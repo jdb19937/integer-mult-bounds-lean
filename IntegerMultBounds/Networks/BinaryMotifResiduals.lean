@@ -1,8 +1,12 @@
-import IntegerMultBounds.Networks.MotifResiduals
-import IntegerMultBounds.Networks.LabelTransport
+module
+
+public import IntegerMultBounds.Networks.MotifResiduals
+public import IntegerMultBounds.Networks.LabelTransport
 
 /-! Concrete characteristic-two nonalternation witnesses for all motif edges.
 Zero residuals are distinguished from nonzero residuals with norm-one vectors. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.BinaryMotifResiduals
 
@@ -218,8 +222,8 @@ section Stages
 open Labels StageLabels
 variable {h : ℕ}
 
-private theorem binary_symm : (binary h).IsSymm := ⟨form_symm 0⟩
-private theorem triple_nonzero (S : Finset (Fin h)) (hs : S.card = 3) :
+theorem binary_symm : (binary h).IsSymm := ⟨form_symm 0⟩
+theorem triple_nonzero (S : Finset (Fin h)) (hs : S.card = 3) :
     binary h (indicator S) (indicator S) ≠ 0 := by
   rw [binary_self S hs]
   exact one_ne_zero

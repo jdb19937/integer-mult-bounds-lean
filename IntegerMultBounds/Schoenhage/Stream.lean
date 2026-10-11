@@ -1,5 +1,7 @@
-import IntegerMultBounds.Schoenhage.FMachine
-import IntegerMultBounds.Schoenhage.Words
+module
+
+public import IntegerMultBounds.Schoenhage.FMachine
+public import IntegerMultBounds.Schoenhage.Words
 
 /-! A generic streaming machine over word tapes. Tape `0` is the driver,
 tapes `1 … r` are further inputs and tape `r + 1` is the output. For each
@@ -11,6 +13,8 @@ all inputs step past their separators. In extend mode the first symbol
 overwrites the output's last separator, so the output continues the last
 word. This file proves the raw run: exact final heads and tapes and the
 exact number of transitions. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Schoenhage
 

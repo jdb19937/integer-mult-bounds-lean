@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.RawLinearCombinationCleanup
+module
+
+public import IntegerMultBounds.Machine.RawLinearCombinationCleanup
 
 /-! Exact shared-input radix linear arithmetic from blank private storage.
 Repeated expression sources are physically copied; every private copy is
 cleared afterward. Runtime is measured in word length, not represented value. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RawLinearCombination
 noncomputable section
 open RadixLinearCombinationRefresh (Expr Size controls)

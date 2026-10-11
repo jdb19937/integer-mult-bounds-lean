@@ -1,8 +1,12 @@
-import IntegerMultBounds.Networks.Certificates.Paired49.Data
-import IntegerMultBounds.Networks.SharedPointWitnessCheck
+module
+
+public import IntegerMultBounds.Networks.Certificates.Paired49.Data
+public import IntegerMultBounds.Networks.SharedPointWitnessCheck
 
 /-! Generated untrusted duplicate witnesses. Lean checks IDs, signature equality and uniqueness.
 Regenerate with scripts/generate_shared50_witnesses.py. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.Certificates.Shared50
 open SharedPointWitnessCheck

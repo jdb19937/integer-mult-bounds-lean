@@ -1,9 +1,13 @@
-import IntegerMultBounds.Networks.Circuit
-import Mathlib.Tactic.Ring
+module
+
+public import IntegerMultBounds.Networks.Circuit
+public import Mathlib.Tactic.Ring
 
 /-! Rational coefficient matrices of the complex motif, with explicit finite bank enumerations.
 The supplied equivalences only enumerate the physical wires; no algebraic or
 runtime property of the circuit is assumed. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.Circuit
 

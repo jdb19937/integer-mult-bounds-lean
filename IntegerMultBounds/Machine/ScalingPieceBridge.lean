@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ScalingSplit
-import IntegerMultBounds.Machine.ScalingMergeData
-import IntegerMultBounds.Machine.BlockRotationData
+module
+
+public import IntegerMultBounds.Machine.ScalingSplit
+public import IntegerMultBounds.Machine.ScalingMergeData
+public import IntegerMultBounds.Machine.BlockRotationData
 
 /-! Representation bridge between literal flat-tape splitting and the FIFO
 block-stream merge. This equality preserves each block's complete payload. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ScalingPieceBridge
 
 private theorem interval_volume {Q B start len : ℕ} (payload : ℕ → List (Fin 4))

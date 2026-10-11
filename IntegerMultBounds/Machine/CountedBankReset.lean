@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CountedLoopReuseAlphabet
-import IntegerMultBounds.Machine.GrowingCounterData
+module
+
+public import IntegerMultBounds.Machine.CountedLoopReuseAlphabet
+public import IntegerMultBounds.Machine.GrowingCounterData
 
 /-! Delimiter-free simultaneous erasure and head restoration for any fixed
 selection of payload tapes over the full native alphabet. Runtime lengths live
 on an immutable descriptor, and every erased cell and return move is charged. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedBankReset
 variable {t a : ℕ}
 

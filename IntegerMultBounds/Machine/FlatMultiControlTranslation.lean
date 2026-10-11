@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.MultiControlPrefixTranslationInit
-import IntegerMultBounds.Machine.FlatControlledShift
+module
+
+public import IntegerMultBounds.Machine.MultiControlPrefixTranslationInit
+public import IntegerMultBounds.Machine.FlatControlledShift
 
 /-! Concrete flat-array multi-control translation. Fibers are extracted from the
 array, all prefix fields are physically generated and enumerated, and each fixed
 rational expression is evaluated on the actual radix slices of the fiber index.
 No supplied family of addresses, offsets, or refreshed source copies is assumed. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.FlatMultiControlTranslation
 
 open RadixLinearCombinationRefresh (Expr leaves)
@@ -99,7 +104,7 @@ theorem source_array (b : ℕ) (a : Fin (radix^(c*b)*(radix^b*B)) → Fin 4) :
     (TranslationStream.fibers (radix^b) (radix^(c*b)) (FlatControlledShift.payload a)).flatten = List.ofFn a :=
   FlatControlledShift.source_eq a
 
-private def bodyDestination (e : Expr c) : Fin (MultiControlPrefixTranslationBootstrap.TapeCount e) :=
+def bodyDestination (e : Expr c) : Fin (MultiControlPrefixTranslationBootstrap.TapeCount e) :=
   Fin.castAdd 2 (Fin.natAdd (MultiControlTranslationExecution.ArithmeticTapes e) (11 : Fin 12))
 
 /-- Real destination tape after the initializer's static whole-bank placement. -/

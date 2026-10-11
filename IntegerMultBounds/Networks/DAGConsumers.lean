@@ -1,8 +1,12 @@
-import IntegerMultBounds.Networks.DAGAllocatorFrontier
+module
+
+public import IntegerMultBounds.Networks.DAGAllocatorFrontier
 
 /-! Structural certificates for the literal ordered consumer list. Gate ports
 are unique, occur strictly after their producers, and exist for every active
 addition input. Output ports remain unique even for repeated requested nodes. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.DAGAllocator
 

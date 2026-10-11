@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.TrackedCleanup
-import IntegerMultBounds.Machine.Frame
+module
+
+public import IntegerMultBounds.Machine.TrackedCleanup
+public import IntegerMultBounds.Machine.Frame
 
 /-! Synchronized visited tapes for literal machine execution. Every original
 transition is simulated by two transitions; the second records the arrival cell.
 No input length or runtime bound enters the finite transition table. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.TrackedExecution
 open TrackedCleanup (tracker)
 variable {t s a : ℕ}

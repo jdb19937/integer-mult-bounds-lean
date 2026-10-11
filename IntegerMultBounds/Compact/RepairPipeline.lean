@@ -1,7 +1,9 @@
-import IntegerMultBounds.Compact.ExactRepair
-import IntegerMultBounds.Compact.Density
-import IntegerMultBounds.Machine.Reinsert
-import IntegerMultBounds.Machine.RadixSort
+module
+
+public import IntegerMultBounds.Compact.ExactRepair
+public import IntegerMultBounds.Compact.Density
+public import IntegerMultBounds.Machine.Reinsert
+public import IntegerMultBounds.Machine.RadixSort
 
 /-! The assembled exceptional-address repair pipeline (§5, the correction in the
 proof of the packed selected-bit lemma). The actual program `S` moves the record
@@ -15,6 +17,8 @@ number is the exceptional fraction times the volume and the radix passes
 traverse `A · |ℬ| · (R + A)` cells; with the density bound this gives the
 written cost expression, at most three volumes. Both concrete packed programs
 are instantiated. Tape execution of the scan is not part of this file. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Compact
 

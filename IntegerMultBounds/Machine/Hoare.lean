@@ -1,8 +1,12 @@
-import IntegerMultBounds.Machine.Composition
+module
+
+public import IntegerMultBounds.Machine.Composition
 
 /-! Time-bounded contracts for literal programs. Tape predicates include head
 positions and all cells, so composition retains exact frame and cleanup facts.
 All contracts quantify over actual `run` witnesses and a genuine halt. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine
 

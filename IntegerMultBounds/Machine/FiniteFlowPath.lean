@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.FiniteFlow
+module
+
+public import IntegerMultBounds.Machine.FiniteFlow
 
 /-! Nonhalting paths between block entries in one fixed cyclic controller.
 A recursive child returns to its caller continuation, rather than halting the
 whole machine. Paths compose across nesting and can precede the root's genuine
 halting trace. Every physical block join is included in the runtime. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.FiniteFlowPath
 noncomputable section
 open FiniteFlow

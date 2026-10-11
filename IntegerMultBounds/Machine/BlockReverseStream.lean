@@ -1,10 +1,14 @@
-import IntegerMultBounds.Machine.BlockReverseAdvance
-import IntegerMultBounds.Machine.FiberShift
+module
+
+public import IntegerMultBounds.Machine.BlockReverseAdvance
+public import IntegerMultBounds.Machine.FiberShift
 
 /-! One fixed counted machine reverses the payload inside each equal-width
 block, preserving the order of the blocks themselves. The body restores its
 immutable width descriptor and local clock after every block; a separate outer
 clock controls termination without rescanning a count descriptor per block. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.BlockReverseStream
 

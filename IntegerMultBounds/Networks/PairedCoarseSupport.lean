@@ -1,11 +1,15 @@
-import IntegerMultBounds.Networks.PairedCircuit
-import IntegerMultBounds.Networks.PairedPartition
-import IntegerMultBounds.Networks.SupportInterpretation
+module
+
+public import IntegerMultBounds.Networks.PairedCircuit
+public import IntegerMultBounds.Networks.PairedPartition
+public import IntegerMultBounds.Networks.SupportInterpretation
 
 /-! Actual weighted graph contraction through consecutive pairs. Coarse
 vertex cells contain fine internal sources, and coarse edge cells contain
 fine crossing sources. Their partition and exclusion identities are proved
 on the original source atoms, before interpreting any DAG weights. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.PairedCoarseSupport
 

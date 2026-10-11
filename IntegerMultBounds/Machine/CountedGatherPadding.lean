@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.Gather
-import IntegerMultBounds.Machine.CountedLoopReuseAlphabet
-import IntegerMultBounds.Machine.GrowingCounterData
+module
+
+public import IntegerMultBounds.Machine.Gather
+public import IntegerMultBounds.Machine.CountedLoopReuseAlphabet
+public import IntegerMultBounds.Machine.GrowingCounterData
 
 /-! Fixed finite-control gather padding and source seeking. The runtime count
 is read from one retained binary descriptor; a separate marked-empty clock is
 copied, decremented and restored. Counts never parameterize a program. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedGatherPadding
 variable {a : ℕ}
 

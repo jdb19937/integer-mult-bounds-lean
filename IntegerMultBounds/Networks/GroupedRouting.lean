@@ -1,10 +1,14 @@
-import IntegerMultBounds.Networks.GroupedCircuit
+module
+
+public import IntegerMultBounds.Networks.GroupedCircuit
 
 /-! Inverse grouped motifs and their local three-stage exchange. Register
 renaming is performed on each finite group's rows before execution, and its
 support is transported exactly. The schedule refines the existing elementary
 signed exchange while preserving the true multi-output group boundaries.
 Counts here are grouped instruction counts, not tape costs or topology bounds. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.GroupedCircuit
 
@@ -74,13 +78,13 @@ theorem runGroups_rename (e : ι ≃ κ) (gs : List (Group ι R)) (r : κ → R)
     simp only [renameGroups, List.map_cons, runGroups] at *
     rw [ih, evaluate_rename]
 
-private theorem routing_side_x_sep {n a c s : ℕ} (i : Fin a) (j : Fin n) :
+theorem routing_side_x_sep {n a c s : ℕ} (i : Fin a) (j : Fin n) :
     (Circuit.side i : Circuit.Role n a c s) ≠ Circuit.x j := by simp [Circuit.side, Circuit.x]
-private theorem routing_y_side_sep {n a c s : ℕ} (i : Fin n) (j : Fin a) :
+theorem routing_y_side_sep {n a c s : ℕ} (i : Fin n) (j : Fin a) :
     (Circuit.y i : Circuit.Role n a c s) ≠ Circuit.side j := by simp [Circuit.y, Circuit.side]
-private theorem routing_y_center_sep {n a c s : ℕ} (i : Fin n) (j : Fin c) :
+theorem routing_y_center_sep {n a c s : ℕ} (i : Fin n) (j : Fin c) :
     (Circuit.y i : Circuit.Role n a c s) ≠ Circuit.center j := by simp [Circuit.y, Circuit.center]
-private theorem routing_center_x_sep {n a c s : ℕ} (i : Fin c) (j : Fin n) :
+theorem routing_center_x_sep {n a c s : ℕ} (i : Fin c) (j : Fin n) :
     (Circuit.center i : Circuit.Role n a c s) ≠ Circuit.x j := by simp [Circuit.center, Circuit.x]
 
 /-- Reverse cancellation rows with all coefficient signs negated, retaining

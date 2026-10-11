@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.RecursiveChildDimensions
-import IntegerMultBounds.Machine.CleanExecution
+module
+
+public import IntegerMultBounds.Machine.RecursiveChildDimensions
+public import IntegerMultBounds.Machine.CleanExecution
 
 /-! Child-dimension construction with all arithmetic scratch, powers, temporary
 products and trackers physically erased. Six parent headers and two explicit
 quotients remain, alongside the three new child spectator headers. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveChildDimensionsClean
 open RecursiveInterchangeLayout (Descriptor child volume)
 variable {q : ℕ} (hq : 2 ≤ q)

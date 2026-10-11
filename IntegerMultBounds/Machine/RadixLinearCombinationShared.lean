@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.RadixLinearCombinationRefresh
+module
+
+public import IntegerMultBounds.Machine.RadixLinearCombinationRefresh
 
 /-! Physical shared-source preparation through canonical binary output.
 The refresh stage synchronizes the compiler's actual leaf bank before arithmetic;
 every source copy and conversion step is executed by the finite tape machine. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RadixLinearCombinationShared
 
 open RadixDigits

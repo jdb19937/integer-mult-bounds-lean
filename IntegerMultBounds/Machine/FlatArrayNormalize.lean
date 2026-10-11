@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CountedVolumeLoop
-import IntegerMultBounds.Machine.WordSegments
+module
+
+public import IntegerMultBounds.Machine.CountedVolumeLoop
+public import IntegerMultBounds.Machine.WordSegments
 
 /-! Physical normalization between affine array operations. Starting with both
 payload heads at the end, rewind both, transfer every output cell to the common
 input while clearing the output, then rewind both again. Canonical dimensions
 B/Q/P are reused by actual nested loops; no product descriptor is supplied. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.FlatArrayNormalize
 variable {a : ℕ}
 

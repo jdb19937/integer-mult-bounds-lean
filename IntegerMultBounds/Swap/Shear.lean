@@ -1,6 +1,8 @@
-import Mathlib.Data.Matrix.Basis
-import Mathlib.Data.Matrix.Mul
-import Mathlib.Data.Fintype.Sort
+module
+
+public import Mathlib.Data.Matrix.Basis
+public import Mathlib.Data.Matrix.Mul
+public import Mathlib.Data.Fintype.Sort
 
 /-! The algebra of the rational matrix shear (§4, Lemma 4.2). Two ordered groups
 of fields `H` and `D` are updated. A pivot pair `(i, j)` adds `D_j` to `H_i`
@@ -12,6 +14,8 @@ triangular transformation is a sequence of coordinate updates in descending
 order, each reading only its own and earlier coordinates. These are identities
 over any commutative ring; the tape cost of each update and the choice of a
 modulus are separate obligations. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Swap.Shear
 

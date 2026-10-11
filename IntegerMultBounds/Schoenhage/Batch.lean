@@ -1,9 +1,13 @@
-import IntegerMultBounds.Schoenhage.LevelDown
+module
+
+public import IntegerMultBounds.Schoenhage.LevelDown
 
 /-! A whole level of the batched recursion on word tapes. The batch is a
 flat list of residues, read as consecutive pairs; the down-sweep maps it to
 the next level's batch, the up-sweep maps the next level's products, `K` at a
 time, to this level's products. -/
+
+@[expose] public section
 
 set_option maxRecDepth 10000
 

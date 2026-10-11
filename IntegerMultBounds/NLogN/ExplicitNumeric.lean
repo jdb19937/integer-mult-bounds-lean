@@ -1,7 +1,9 @@
-import IntegerMultBounds.NLogN.Clamp
-import IntegerMultBounds.NLogN.ResamplingNumeric
-import IntegerMultBounds.NLogN.ResamplingMultiNumeric
-import IntegerMultBounds.NLogN.SynthConvApproxD
+module
+
+public import IntegerMultBounds.NLogN.Clamp
+public import IntegerMultBounds.NLogN.ResamplingNumeric
+public import IntegerMultBounds.NLogN.ResamplingMultiNumeric
+public import IntegerMultBounds.NLogN.SynthConvApproxD
 
 /-! Explicit numerical maps with hypothesis-free error bounds. The per-term
 fixed-point evaluations assumed by `ResamplingNumeric` are defined here as
@@ -14,6 +16,8 @@ the multidimensional resampling tensors. Proved: `ε(Ã) ≤ (8m + 7)/2`,
 `d ε(Ã)`, `d ε(B̃)`, and the clamped synthetic pipeline with scaled error
 `3 log₂ T' + 2`, all with no hypotheses beyond the parameter ranges. Bit costs
 of evaluating a Gaussian weight to `p` bits are not modeled. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.NLogN
 

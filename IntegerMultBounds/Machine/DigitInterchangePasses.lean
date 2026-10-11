@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.DigitInterchangeRows
+module
+
+public import IntegerMultBounds.Machine.DigitInterchangeRows
 
 /-! Physical pass contracts for single-digit interchange. Both split levels and
 both inverse merge levels use fixed counted tape machines. The intermediate
 words match literally; only the fixed pair of radix-role indices is exchanged.
 Joining the passes on one complete bank remains separate. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.DigitInterchangePasses
 open DigitInterchangeRows CyclicRowSplit
 variable {O q C E a : ℕ}

@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.Copy
-import IntegerMultBounds.Machine.Reflection
+module
+
+public import IntegerMultBounds.Machine.Copy
+public import IntegerMultBounds.Machine.Reflection
 
 /-! Delimiter-driven backward reading with forward output, with no supplied
 length descriptor. The source delimiter is retained and all exterior cells are
 framed; optionally every copied source symbol is erased. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.DelimitedReverseCopy
 variable {a : ℕ}
 

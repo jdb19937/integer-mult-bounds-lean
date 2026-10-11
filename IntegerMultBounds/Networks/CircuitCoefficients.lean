@@ -1,7 +1,12 @@
-import IntegerMultBounds.Networks.GlobalCircuit
+module
+
+public import IntegerMultBounds.Networks.GlobalCircuit
 
 /-! Static coefficient certificates survive literal block, inverse, role
 renaming and global invocation compilation. No execution premise is used. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Networks.CircuitCoefficients
 open Circuit
 variable {ι κ R : Type*} [CommRing R] [DecidableEq ι] [DecidableEq κ]

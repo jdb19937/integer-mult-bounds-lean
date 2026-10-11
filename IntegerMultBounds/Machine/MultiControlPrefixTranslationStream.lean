@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.MultiControlPrefixTranslationExecution
-import IntegerMultBounds.Machine.CountedLoopReuseAlphabet
-import IntegerMultBounds.Machine.TranslationPreparedFamily
+module
+
+public import IntegerMultBounds.Machine.MultiControlPrefixTranslationExecution
+public import IntegerMultBounds.Machine.CountedLoopReuseAlphabet
+public import IntegerMultBounds.Machine.TranslationPreparedFamily
 
 /-! Multi-control translation streams with an actual carry scheduler. The exact
 bank invariant separates current shared fields from stale leaf copies and old
 binary output, refreshed only by the proved physical evaluator. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.MultiControlPrefixTranslationStream
 
 open TranslationStream (blocks fibers)
@@ -203,7 +208,7 @@ theorem translate_hoare_linear (e : Expr c) (seed : Fin c) (order : List (Fin c)
   have htail := Nat.mul_le_mul_left (4*order.length+14) hnvol
   nlinarith
 
-private theorem lex_nonempty (seed : Fin c) : List.finRange c ≠ [] := by
+theorem lex_nonempty (seed : Fin c) : List.finRange c ≠ [] := by
   intro h
   have hh := congrArg List.length h
   simp at hh

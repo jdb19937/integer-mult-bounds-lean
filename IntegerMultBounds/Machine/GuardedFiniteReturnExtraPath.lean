@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.GuardedFiniteReturnExtraFlow
-import IntegerMultBounds.Machine.FiniteFlowPath
+module
+
+public import IntegerMultBounds.Machine.GuardedFiniteReturnExtraFlow
+public import IntegerMultBounds.Machine.FiniteFlowPath
 
 /-! Actual occupied guard and saved PC pop form a nonhalting path in the same
 finite table. Both physical jumps are charged; no continuation run is assumed. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.GuardedFiniteReturnExtraPath
 noncomputable section
 open GuardedFiniteReturnExtraFlow

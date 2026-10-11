@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.DigitInterchangeCompile
-import IntegerMultBounds.Machine.CleanExecution
-import IntegerMultBounds.Machine.SharedPayload
+module
+
+public import IntegerMultBounds.Machine.DigitInterchangeCompile
+public import IntegerMultBounds.Machine.CleanExecution
+public import IntegerMultBounds.Machine.SharedPayload
 
 /-! Reusable width-one interchange from four supplied canonical descriptors and
 the sole array. Two loop sentinels are physically initialized; every generated
 stream, marker and tracker is erased after the result overwrites its source.
 Synthesis of the four dimension descriptors is explicitly outside this module. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.DigitInterchangeClean
 open DigitInterchangeRows DigitInterchangeBank
 noncomputable section

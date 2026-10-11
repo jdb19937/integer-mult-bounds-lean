@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.WordBankCleanup
-import IntegerMultBounds.Machine.FiniteReturnStackAt
-import IntegerMultBounds.Machine.SharedBank
+module
+
+public import IntegerMultBounds.Machine.WordBankCleanup
+public import IntegerMultBounds.Machine.FiniteReturnStackAt
+public import IntegerMultBounds.Machine.SharedBank
 
 /-! Four physical caller streams: erase completed T/Z backwards, erase X from
 its restored origin, and rewind the retained output. Empty words are included. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixOffsetStreamsCleanup
 noncomputable section
 open SharedPlacementAlphabet (setTape)

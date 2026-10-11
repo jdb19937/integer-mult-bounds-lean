@@ -1,11 +1,15 @@
-import IntegerMultBounds.Machine.CountedCopy
-import IntegerMultBounds.Machine.Frame
+module
+
+public import IntegerMultBounds.Machine.CountedCopy
+public import IntegerMultBounds.Machine.Frame
 
 /-! A fixed finite binary-counted body loop. The final tape is the dedicated
 mutable clock. CountedCopy's literal ripple/return transitions drive the loop;
 a successful decrement enters the body, and its actual halt returns to the
 clock. One terminal underflow halts the whole machine. Clock preparation and
 cleanup are explicit caller work, and no descriptor is rescanned per body call. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.CountedLoop
 

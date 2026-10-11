@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.BinaryDescriptorCopies
-import IntegerMultBounds.Machine.PrefixCounterInit
+module
+
+public import IntegerMultBounds.Machine.BinaryDescriptorCopies
+public import IntegerMultBounds.Machine.PrefixCounterInit
 
 /-! Replicate one width descriptor into the actual prefix-field initializer
 bank. Every output field, clock, and final spare remains wholly blank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.PrefixWidthCopies
 open PrefixCounterInit (tapeCount)
 noncomputable section

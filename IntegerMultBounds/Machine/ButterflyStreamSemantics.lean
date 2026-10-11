@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ButterflyAxisSerialization
+module
+
+public import IntegerMultBounds.Machine.ButterflyAxisSerialization
 
 /-! Exact decoded meaning of the literal coefficient streams produced by the
 paid machine. The fixed signed width is justified by the actual prefix grid;
 one butterfly increases the dyadic precision by one and preserves the grid
 invariant required by the next selected-axis operation. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ButterflyStreamSemantics
 noncomputable section
 open ButterflyStreamData ButterflyAxisSerialization

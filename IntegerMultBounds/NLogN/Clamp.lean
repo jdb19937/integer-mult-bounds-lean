@@ -1,4 +1,6 @@
-import IntegerMultBounds.NLogN.Approx
+module
+
+public import IntegerMultBounds.NLogN.Approx
 
 /-! Radial clamping to the closed unit disk, the paper's convention that every
 numerical map returns values of modulus at most one. Proved: the clamp lands in
@@ -8,6 +10,8 @@ approximation of a contraction may be clamped without increasing its scaled
 error, which supplies the unit-ball side conditions of the composition lemmas;
 the radius-`R` version; and rounding after clamping stays in the disk. No cost
 is attached to the clamp. -/
+
+@[expose] public section
 
 open Complex
 

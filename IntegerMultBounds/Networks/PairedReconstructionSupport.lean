@@ -1,9 +1,13 @@
-import IntegerMultBounds.Networks.PairedCircuitCorrect
-import IntegerMultBounds.Networks.PairedQuerySupport
-import IntegerMultBounds.Networks.PairedStripSupport
+module
+
+public import IntegerMultBounds.Networks.PairedCircuitCorrect
+public import IntegerMultBounds.Networks.PairedQuerySupport
+public import IntegerMultBounds.Networks.PairedStripSupport
 
 /-! Source-level contracts discharge the real reconstruction loops' local
 support-disjointness requirements. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.PairedReconstructionSupport
 

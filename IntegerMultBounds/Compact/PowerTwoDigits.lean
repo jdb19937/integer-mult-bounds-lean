@@ -1,6 +1,8 @@
-import IntegerMultBounds.Machine.Gather
-import IntegerMultBounds.Machine.ColumnTransducer
-import IntegerMultBounds.Compact.Radix
+module
+
+public import IntegerMultBounds.Machine.Gather
+public import IntegerMultBounds.Machine.ColumnTransducer
+public import IntegerMultBounds.Compact.Radix
 
 /-! Bit words as packed integers in a power-of-two radix. A word of `n·q`
 bits read least significant bit first is the packed integer whose base-`2^q`
@@ -8,6 +10,8 @@ digits are the values of its `q`-bit blocks; the gather gadget's output is the
 packing of its digit words; and the per-digit forms used by the compact
 control arithmetic, a block masked by a control bit and shifted, a block's
 parity, and a parity toggled by a control bit, have the stated values. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Compact.PowerTwo
 

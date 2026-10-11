@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.RationalTranslationStream
+module
+
+public import IntegerMultBounds.Machine.RationalTranslationStream
 
 /-! A physical arbitrary-length family of D-fiber translations with one fixed
 physical H control. This is the middle-spectator loop for heterogeneous
 recursive layouts: its repetition count need not be a radix power. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.FixedControlTranslationStream
 open TranslationStream (blocks fibers)
 variable {radix : ℕ} [Fact radix.Prime]

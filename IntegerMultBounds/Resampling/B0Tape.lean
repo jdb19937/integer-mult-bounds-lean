@@ -1,4 +1,6 @@
-import IntegerMultBounds.Resampling.B0Words
+module
+
+public import IntegerMultBounds.Resampling.B0Words
 
 /-! The numerical `B̃₀ = D̃' J̃' C` on tapes: join the complex input records,
 select the records at `rowIndexNat s t j` with the modular-counter machine,
@@ -7,6 +9,8 @@ machine (weights `-2^(p-1)`, zero start words), copy the halved words to the
 start tape, run `p` Neumann iterations, and apply `D̃'` with one more
 window-radius-zero step (weights `-ρ(2^p d')`). Forty-two tapes, generated
 by `b0gen.py`. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Resampling.B0Tape
 

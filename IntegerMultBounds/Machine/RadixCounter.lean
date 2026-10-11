@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.RadixCounterData
-import IntegerMultBounds.Machine.Loop
-import IntegerMultBounds.Machine.Frame
-import IntegerMultBounds.Machine.WordSegments
+module
+
+public import IntegerMultBounds.Machine.RadixCounterData
+public import IntegerMultBounds.Machine.Loop
+public import IntegerMultBounds.Machine.Frame
+public import IntegerMultBounds.Machine.WordSegments
 
 /-! Literal fixed-width radix increment with complete head returns. The program
 and alphabet are fixed with q; width and prefix length are tape data. Arbitrary
 framed payload tapes are untouched throughout each increment and every cycle. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RadixCounter
 
 open RadixDigits RadixCounterData

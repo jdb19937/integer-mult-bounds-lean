@@ -1,5 +1,7 @@
-import IntegerMultBounds.Resampling.OffDiagSum
-import IntegerMultBounds.NLogN.NeumannHalved
+module
+
+public import IntegerMultBounds.Resampling.OffDiagSum
+public import IntegerMultBounds.NLogN.NeumannHalved
 
 /-! The Neumann evaluation of `J̃'` on fixed-point words. An iterate is a list of
 `2s` signed words (real and imaginary numerators, in coordinate order); one step
@@ -8,6 +10,8 @@ sums of the Gaussian line machine with stride one, truncates each accumulator to
 the word width, negates it and adds the start vector. Every word stays exact:
 the iterates of the word recursion are the numerators of the rounded Horner
 iterates of `resampJNumH`, because those stay in the unit disk and on the grid. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Resampling.NeumannWords
 

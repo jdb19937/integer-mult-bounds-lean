@@ -1,11 +1,15 @@
-import IntegerMultBounds.Networks.GlobalGrouped
-import IntegerMultBounds.Networks.LabeledMotif
-import IntegerMultBounds.Networks.StageLabels
-import IntegerMultBounds.Networks.LabelTransport
+module
+
+public import IntegerMultBounds.Networks.GlobalGrouped
+public import IntegerMultBounds.Networks.LabeledMotif
+public import IntegerMultBounds.Networks.StageLabels
+public import IntegerMultBounds.Networks.LabelTransport
 
 /-! Actual tensor labels on the physical three-stage grouped schedule. Labels
 are lifted by the future line, transported to a common cube, and attached to
 exactly the existing global groups and invocation embeddings. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.GlobalLabels
 

@@ -1,10 +1,14 @@
-import IntegerMultBounds.Machine.ScalingDescriptorData
-import IntegerMultBounds.Machine.GrowingCounter
-import IntegerMultBounds.Machine.ScalingControlInit
+module
+
+public import IntegerMultBounds.Machine.ScalingDescriptorData
+public import IntegerMultBounds.Machine.GrowingCounter
+public import IntegerMultBounds.Machine.ScalingControlInit
 
 /-! Literal synthesis of binary scaling-piece lengths. A fixed residue selector
 chooses one growing descriptor, a reusable B-counted loop increments it, and a
 Q-counted outer loop visits every output block. Carries are amortized globally. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.ScalingDescriptors
 
@@ -203,17 +207,17 @@ theorem sweep_hoare {c : ℕ} (hc : 0 < c) (Q B : ℕ) (bs qs : List Bool)
   simp only [Finset.sum_add_distrib,Finset.sum_const,Finset.card_range,smul_eq_mul]
   nlinarith
 
-private def controls {c : ℕ} (b : Tapes (1+c+2) 0) (modulus current : Tapes c 0)
+def controls {c : ℕ} (b : Tapes (1+c+2) 0) (modulus current : Tapes c 0)
     (outer : Tapes 2 0) : Tapes (1+c+2+c+c+2) 0 :=
   ((b.append modulus).append current).append outer
 
-private def initTo {c : ℕ} : Fin (c+c+2) → Fin (1+c+2+c+c+2) :=
+def initTo {c : ℕ} : Fin (c+c+2) → Fin (1+c+2+c+c+2) :=
   Fin.addCases (Fin.addCases
     (fun i => Fin.castAdd 2 (Fin.castAdd c (Fin.natAdd (1+c+2) i)))
     (fun i => Fin.castAdd 2 (Fin.natAdd (1+c+2+c) i)))
     (fun i => Fin.natAdd (1+c+2+c+c) i)
 
-private def initInverse {c : ℕ} : Fin (1+c+2+c+c+2) → Fin (c+c+2+(1+c+2)) :=
+def initInverse {c : ℕ} : Fin (1+c+2+c+c+2) → Fin (c+c+2+(1+c+2)) :=
   Fin.addCases (Fin.addCases (Fin.addCases
     (fun i => Fin.natAdd (c+c+2) i)
     (fun i => Fin.castAdd (1+c+2) (Fin.castAdd 2 (Fin.castAdd c i))))

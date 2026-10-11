@@ -1,8 +1,10 @@
-import IntegerMultBounds.Schoenhage.FMachine
-import IntegerMultBounds.Schoenhage.Words
-import IntegerMultBounds.Machine.Branch
-import IntegerMultBounds.Machine.InjectivePlacement
-import IntegerMultBounds.Machine.PlacementBank
+module
+
+public import IntegerMultBounds.Schoenhage.FMachine
+public import IntegerMultBounds.Schoenhage.Words
+public import IntegerMultBounds.Machine.Branch
+public import IntegerMultBounds.Machine.InjectivePlacement
+public import IntegerMultBounds.Machine.PlacementBank
 
 /-! Word programs: a small language over banks of word tapes, compiled to
 literal programs. A primitive is a verified machine on a few tapes with an
@@ -11,6 +13,8 @@ tapes, sequence them, loop while a tape has a word under its head, and branch
 on whether the current word starts with a one bit. `compile_correct`: every
 big-step execution of a program is a run of the compiled machine from the
 encoded bank to the encoded result, within the execution's cost. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Schoenhage
 

@@ -1,7 +1,11 @@
-import IntegerMultBounds.Networks.ProjectionRank
+module
+
+public import IntegerMultBounds.Networks.ProjectionRank
 
 /-! Transport actual labels and their orthogonal projections across a linear
 isometry. This supports changing tensor coordinates without changing edge ranks. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.LabelTransport
 

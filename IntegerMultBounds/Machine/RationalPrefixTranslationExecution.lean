@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.RationalTranslationExecution
-import IntegerMultBounds.Machine.PrefixCounter
+module
+
+public import IntegerMultBounds.Machine.RationalTranslationExecution
+public import IntegerMultBounds.Machine.PrefixCounter
 
 /-! Concrete translation with a mixed-prefix scheduler. Physical field zero
 supplies the rational control value; the fixed carry order may place it anywhere.
 The remaining fields are genuine spectator tapes with arbitrary independent
 widths. Translation preserves them exactly; the scheduler visits only carries. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RationalPrefixTranslationExecution
 
 variable {radix c : ℕ}

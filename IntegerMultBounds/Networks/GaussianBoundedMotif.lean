@@ -1,7 +1,12 @@
-import IntegerMultBounds.Networks.GaussianBoundedArithmetic
+module
+
+public import IntegerMultBounds.Networks.GaussianBoundedArithmetic
 
 /-! Concrete numerator bounds for every scalar coefficient of the actual
 complex cancellation motifs; no coefficient closure contract is supplied. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Networks.GaussianPrecision
 
  theorem bounded_centralCoeff {h n : ℕ} (L : Fin n → Finset (Fin h)) (s t : Fin n) :

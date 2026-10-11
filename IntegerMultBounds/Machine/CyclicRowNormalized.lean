@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CyclicRowRewind
-import IntegerMultBounds.Machine.CyclicRowMerge
+module
+
+public import IntegerMultBounds.Machine.CyclicRowRewind
+public import IntegerMultBounds.Machine.CyclicRowMerge
 
 /-! Origin-normalized physical cyclic row split and merge. Each transfer is
 followed by a charged nested row/group rewind preserving arbitrary symbols.
 The same two descriptors are reused, with no synthesized product count. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CyclicRowNormalized
 open CyclicRowSplit (bank sourceWord roleWord)
 variable {a c n : ℕ}

@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CyclicRowMerge
-import IntegerMultBounds.Machine.RecursiveInterchangeRows
+module
+
+public import IntegerMultBounds.Machine.CyclicRowMerge
+public import IntegerMultBounds.Machine.RecursiveInterchangeRows
 
 /-! A radix digit can cross an arbitrary spectator block using one cyclic
 split with block-length rows and one cyclic merge with singleton rows.
 The same role words connect the two actual streaming primitives. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RadixDigitMoveRows
 open RecursiveInterchangeRows (pack pack_val)
 variable {P Q S a : ℕ}

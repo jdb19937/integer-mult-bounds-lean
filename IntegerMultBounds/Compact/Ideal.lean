@@ -1,7 +1,11 @@
-import IntegerMultBounds.Compact.Permutations
+module
+
+public import IntegerMultBounds.Compact.Permutations
 
 /-! The ideal selected-parity permutation on every packed address, with no
 guard restriction. This is the destination map used in exceptional repair. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Compact
 open Radix

@@ -1,7 +1,11 @@
-import IntegerMultBounds.Networks.BinaryMotifResiduals
+module
+
+public import IntegerMultBounds.Networks.BinaryMotifResiduals
 
 /-! Extra residual witnesses for sparse physical histories that skip intermediate
 motif labels. These are actual tensor vectors, not inferred dimension claims. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.GlobalLabelsResiduals
 

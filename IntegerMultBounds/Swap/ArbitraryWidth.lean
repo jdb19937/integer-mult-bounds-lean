@@ -1,4 +1,6 @@
-import IntegerMultBounds.Swap.Recurrence
+module
+
+public import IntegerMultBounds.Swap.Recurrence
 
 /-! The cost assembly of the arbitrary-width interchange (§4, Lemma 4.4). Binary
 chunks of width `u` are padded to the radix width `e ≤ u`; the top `ρ` digits
@@ -8,6 +10,8 @@ volume; the high-digit moves, padding, descriptors, and cleanup cost a fixed
 multiple of `ρ + log (2e) + 1` per unit volume. The total is `O(u^τ)` per unit
 volume with a constant independent of `u`. The field-order bookkeeping of the
 construction is a tape obligation. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Swap.ArbitraryWidth
 

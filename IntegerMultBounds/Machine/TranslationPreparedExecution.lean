@@ -1,10 +1,14 @@
-import IntegerMultBounds.Machine.TranslationDescriptors
-import IntegerMultBounds.Machine.CountedRotateAdvance
+module
+
+public import IntegerMultBounds.Machine.TranslationDescriptors
+public import IntegerMultBounds.Machine.CountedRotateAdvance
 
 /-! Fully prepared literal cyclic translation of a uniform block fiber. Only
 canonical Q, a and B descriptors are supplied. Subtraction, length products,
 work markers, all payload movement and head restoration are actual programs;
 the derived descriptor metadata is retained explicitly in the final bank. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.TranslationPreparedExecution
 

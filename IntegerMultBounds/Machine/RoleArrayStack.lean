@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.RoleArrayStackMoves
+module
+
+public import IntegerMultBounds.Machine.RoleArrayStackMoves
 
 /-! Destructive parking and recovery of one arbitrary-symbol role array.
 The vacated role and work clock are physically blank/head-zero between calls;
 only the payload stack's runtime position and the immutable count survive. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RoleArrayStack
 open RoleArrayStackMoves
 variable {a : ℕ}

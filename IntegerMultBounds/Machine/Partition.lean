@@ -1,9 +1,13 @@
-import IntegerMultBounds.Machine.Copy
+module
+
+public import IntegerMultBounds.Machine.Copy
 
 /-! A stable three-tape partition of delimiter-separated records by their first
 bit. The source is preserved; each record is appended to the selected output.
 The control has three states independently of record widths and stream length.
 This is a routing pass, not yet an implementation of full radix sorting. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.Partition
 

@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.RawLinearCombinationComplexCoefficient
-import IntegerMultBounds.Machine.ButterflyStreamEndpoint
-import IntegerMultBounds.Machine.CountedLoopHeaderClean
+module
+
+public import IntegerMultBounds.Machine.RawLinearCombinationComplexCoefficient
+public import IntegerMultBounds.Machine.ButterflyStreamEndpoint
+public import IntegerMultBounds.Machine.CountedLoopHeaderClean
 
 /-! A fixed runtime-counted scalar stream executes the actual expression family
 on every coefficient of every retained wire polynomial. The source contexts
 are derived from the literal arrays; all coefficient and loop work is blank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RawLinearCombinationComplexArray
 noncomputable section
 open ButterflyStreamData (Coefficient full prefixTape position)

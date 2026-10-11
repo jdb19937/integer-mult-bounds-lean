@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.FlatRepeatedControlShift
-import IntegerMultBounds.Machine.FlatHyperArrayNormalize
+module
+
+public import IntegerMultBounds.Machine.FlatRepeatedControlShift
+public import IntegerMultBounds.Machine.FlatHyperArrayNormalize
 
 /-! Physical normalization of the recurring heterogeneous shift on its existing
 20 tapes, with all four independent runtime dimensions retained. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.FlatRepeatedControlNormalize
 variable {radix : ℕ}
 open CountedLoopReuseAlphabet (empty binary)

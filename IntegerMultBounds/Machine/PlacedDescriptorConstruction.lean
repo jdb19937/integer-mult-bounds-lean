@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.FixedBasePowerDescriptor
-import IntegerMultBounds.Machine.BoundedProductDescriptor
-import IntegerMultBounds.Machine.InjectivePlacement
+module
+
+public import IntegerMultBounds.Machine.FixedBasePowerDescriptor
+public import IntegerMultBounds.Machine.BoundedProductDescriptor
+public import IntegerMultBounds.Machine.InjectivePlacement
 
 /-! Descriptor constructors may share input tapes with a larger bank. Exact
 single-output framing preserves every original tape outside the output slot. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.PlacedDescriptorConstruction
 noncomputable section
 open SharedPlacementAlphabet (setTape)

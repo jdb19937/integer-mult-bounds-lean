@@ -1,10 +1,14 @@
-import IntegerMultBounds.Schoenhage.Alu
-import IntegerMultBounds.Schoenhage.Lists
+module
+
+public import IntegerMultBounds.Schoenhage.Alu
+public import IntegerMultBounds.Schoenhage.Lists
 
 /-! Butterflies of the twisted transform on word tapes. The forward butterfly
 reads `u` and `v` from the half-block tapes and appends `u + 2^t v` and
 `u - 2^t v` modulo `2^N + 1` to the two output tapes; the shift `t` is a unary
 register. Modular negation is subtraction from zero. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Schoenhage
 

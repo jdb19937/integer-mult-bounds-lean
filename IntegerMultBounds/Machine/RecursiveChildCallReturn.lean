@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.RecursiveChildCallSetup
-import IntegerMultBounds.Machine.RecursiveStackAllocation
-import IntegerMultBounds.Machine.RecursiveCleanReturn
+module
+
+public import IntegerMultBounds.Machine.RecursiveChildCallSetup
+public import IntegerMultBounds.Machine.RecursiveStackAllocation
+public import IntegerMultBounds.Machine.RecursiveCleanReturn
 
 /-! Physical return on the exact forty-tape child-preparation bank. Retained
 child headers are erased before saved parent headers are popped; the PC frame
 is retained for the actual decoder. No header assignment is a free operation. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveChildCallReturn
 open RecursiveChildCallSetup BinaryDescriptorFrames
 open SharedPlacementAlphabet (setTape)

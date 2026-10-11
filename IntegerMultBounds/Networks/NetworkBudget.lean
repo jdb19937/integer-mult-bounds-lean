@@ -1,10 +1,14 @@
-import IntegerMultBounds.Networks.GlobalLabels
-import IntegerMultBounds.Networks.SignedProjection
-import IntegerMultBounds.Parameters
+module
+
+public import IntegerMultBounds.Networks.GlobalLabels
+public import IntegerMultBounds.Networks.SignedProjection
+public import IntegerMultBounds.Parameters
 
 /-! Terminal dimension accounting on the actual physical global wire layout.
 The rank inequalities here consume the genuine trace balance and loss bound;
 proving those for the complete schedule remains a separate obligation. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.NetworkBudget
 

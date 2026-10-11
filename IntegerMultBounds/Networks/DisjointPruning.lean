@@ -1,9 +1,13 @@
-import IntegerMultBounds.Networks.DisjointCircuit
+module
+
+public import IntegerMultBounds.Networks.DisjointCircuit
 
 /-! Execution with inactive DAG nodes omitted. A backwards pass computes the
 actual ancestors of the requested outputs. The execution keeps node indices
 stable using zero placeholders; only marked addition nodes perform additions.
 This is an array execution theorem, not a tape-space allocation theorem. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.DisjointPruning
 

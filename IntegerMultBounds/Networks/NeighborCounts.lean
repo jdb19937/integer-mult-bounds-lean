@@ -1,17 +1,21 @@
-import IntegerMultBounds.Networks.Scalar
-import Mathlib.Data.Fintype.Powerset
-import Mathlib.Tactic.NormNum
-import Mathlib.Tactic.Choose
-import Mathlib.Tactic.Tauto
-import Mathlib.Tactic.Set
-import Mathlib.Data.Fintype.Sum
-import Mathlib.Data.Fintype.Prod
-import Mathlib.Data.Fintype.Sigma
-import Mathlib.Data.Fintype.BigOperators
+module
+
+public import IntegerMultBounds.Networks.Scalar
+public import Mathlib.Data.Fintype.Powerset
+public import Mathlib.Tactic.NormNum
+public import Mathlib.Tactic.Choose
+public import Mathlib.Tactic.Tauto
+public import Mathlib.Tactic.Set
+public import Mathlib.Data.Fintype.Sum
+public import Mathlib.Data.Fintype.Prod
+public import Mathlib.Data.Fintype.Sigma
+public import Mathlib.Data.Fintype.BigOperators
 
 /-! Cardinalities of the actual finite triple banks and their neighbor sets.
 Counting uses a bijection that splits each triple into its intersection with a
 fixed set and its complementary part; no numerical wire counts are assumed. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks
 

@@ -1,8 +1,12 @@
-import IntegerMultBounds.Schoenhage.LevelUp
+module
+
+public import IntegerMultBounds.Schoenhage.LevelUp
 
 /-! The down-sweep of one pair on word tapes: each operand is cut into its
 padded pieces and transformed; the two transformed lists are interleaved
 into the next level's batch of pairs. -/
+
+@[expose] public section
 
 set_option maxRecDepth 10000
 

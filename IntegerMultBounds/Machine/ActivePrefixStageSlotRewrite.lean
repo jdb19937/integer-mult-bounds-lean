@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.RecursiveChildQuotientsConstant
-import IntegerMultBounds.Machine.BinaryDescriptorCleanupList
+module
+
+public import IntegerMultBounds.Machine.RecursiveChildQuotientsConstant
+public import IntegerMultBounds.Machine.BinaryDescriptorCleanupList
 
 /-! Physically replace the source/target slot words between fixed binary
 row-addition instructions. Old descriptors are scanned and erased; the next
 literal pair is written and rewound by finite control. Every join is paid. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActivePrefixStageSlotRewrite
 noncomputable section
 open SharedPlacementAlphabet (setTape)

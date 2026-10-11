@@ -1,8 +1,13 @@
-import IntegerMultBounds.Networks.ComplexEndpoints
-import IntegerMultBounds.Networks.BinaryWalshComplexConjugation
+module
+
+public import IntegerMultBounds.Networks.ComplexEndpoints
+public import IntegerMultBounds.Networks.BinaryWalshComplexConjugation
 
 /-! Conjugating the actual framed network retains every original rational
 gate and changes its frames. These are exact array semantics, not tape runs. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Networks.ComplexFramedConjugation
 noncomputable section
 open FramedCircuit BinaryWalshComplexConjugation

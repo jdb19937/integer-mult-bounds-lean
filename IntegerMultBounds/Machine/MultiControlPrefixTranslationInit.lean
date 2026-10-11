@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.MultiControlPrefixTranslationBootstrap
-import IntegerMultBounds.Machine.PrefixCounterInitPlacement
+module
+
+public import IntegerMultBounds.Machine.MultiControlPrefixTranslationBootstrap
+public import IntegerMultBounds.Machine.PrefixCounterInitPlacement
 
 /-! Physical generation of the common radix control bank from blank fields.
 Each width is read from a canonical binary descriptor by PrefixCounterInit;
 its generated fields are statically shared with the actual multi-control stream.
 All initializer clocks, descriptors and spare tapes remain exact frames. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.MultiControlPrefixTranslationInit
 
 open RadixLinearCombinationRefresh (Expr leaves)

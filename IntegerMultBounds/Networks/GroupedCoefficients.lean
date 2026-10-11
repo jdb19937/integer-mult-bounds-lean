@@ -1,8 +1,13 @@
-import IntegerMultBounds.Networks.CircuitCoefficients
-import IntegerMultBounds.Networks.GlobalGrouped
+module
+
+public import IntegerMultBounds.Networks.CircuitCoefficients
+public import IntegerMultBounds.Networks.GlobalGrouped
 
 /-! Static coefficient bounds of the exact sparse grouped compiler, including
 inverse stage orientation and every physical invocation embedding. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Networks.GroupedCoefficients
 open Circuit GroupedCircuit CircuitCoefficients
 variable {ι κ R : Type*} [CommRing R] [DecidableEq R] [DecidableEq ι] [DecidableEq κ]

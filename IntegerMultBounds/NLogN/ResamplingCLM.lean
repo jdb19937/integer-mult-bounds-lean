@@ -1,6 +1,8 @@
-import IntegerMultBounds.NLogN.ResamplingNorm
-import IntegerMultBounds.NLogN.Neumann
-import IntegerMultBounds.NLogN.Approx
+module
+
+public import IntegerMultBounds.NLogN.ResamplingNorm
+public import IntegerMultBounds.NLogN.Neumann
+public import IntegerMultBounds.NLogN.Approx
 
 /-! The resampling ingredients of Harvey–van der Hoeven, Section 4.1, packaged
 as continuous linear maps on `ZMod n → ℂ` with the sup norm. Proved: the
@@ -11,6 +13,8 @@ for coprime lengths with inverse of norm at most one; `S` has operator norm at
 most `1 + 1/α`; the resampling identity holds as an equation of continuous
 linear maps; and every vector has a fixed-point approximation with scaled
 error at most two. The square subsystem, its inverse, and costs are not here. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.NLogN
 

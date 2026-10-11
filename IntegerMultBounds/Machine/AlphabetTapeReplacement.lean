@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.Alphabet
-import IntegerMultBounds.Machine.SharedPlacementAlphabet
+module
+
+public import IntegerMultBounds.Machine.Alphabet
+public import IntegerMultBounds.Machine.SharedPlacementAlphabet
 
 /-! Literal tape replacement commutes with the finite symbol encoding used
 by lifted controllers. This preserves heads and every stationary tape. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.AlphabetTapeReplacement
 variable {t a b : ℕ}
 

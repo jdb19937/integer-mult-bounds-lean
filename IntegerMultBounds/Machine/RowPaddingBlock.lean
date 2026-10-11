@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CountedRawMove
-import IntegerMultBounds.Machine.ExactFrame
+module
+
+public import IntegerMultBounds.Machine.CountedRawMove
+public import IntegerMultBounds.Machine.ExactFrame
 
 /-! One actual per-prefix row-padding block: move the valid span, write a
 zero-bit span, and preserve the two supplied immutable count descriptors.
 The reusable inner clock is cleaned to its sentinel. Whole-stream framing,
 clock initialization and head reset belong to the outer padding procedure. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RowPaddingBlock
 open CountedRawFill (filled)
 

@@ -1,9 +1,13 @@
-import IntegerMultBounds.Machine.KeySelectData
+module
+
+public import IntegerMultBounds.Machine.KeySelectData
 
 /-! Remove the leading routing flag of each delimiter-terminated record. The
 literal two-state routine optionally erases the consumed source stream, enabling
 buffer reuse. It works for arbitrary flagged records, including empty payloads,
 and does not assume the records remain in their original order. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.DropFlag
 

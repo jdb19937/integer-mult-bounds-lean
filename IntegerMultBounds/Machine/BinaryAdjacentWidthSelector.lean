@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.ArbitraryWidthHighBranchPlacement
-import IntegerMultBounds.Machine.BinaryCanonicalData
-import IntegerMultBounds.Machine.FiniteFlow
-import IntegerMultBounds.Machine.Placement
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthHighBranchPlacement
+public import IntegerMultBounds.Machine.BinaryCanonicalData
+public import IntegerMultBounds.Machine.FiniteFlow
+public import IntegerMultBounds.Machine.Placement
 
 /-! Paid strict comparison of the two original binary widths, read from the retained canonical
 binary descriptors. The comparison flag is physically erased in the selecting
 transition, and all descriptor cells and heads are restored. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryAdjacentWidthSelector.Less
 noncomputable section
 variable {a : ℕ}

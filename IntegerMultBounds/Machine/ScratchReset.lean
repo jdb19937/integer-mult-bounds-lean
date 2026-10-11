@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CountedErase
-import IntegerMultBounds.Machine.CountedSeek
+module
+
+public import IntegerMultBounds.Machine.CountedErase
+public import IntegerMultBounds.Machine.CountedSeek
 
 /-! Restore a scratch segment and its head after a stream writes it. Both
 backward seeks, every erased cell, reusable clocks and sequential joins are
 charged. The immutable length descriptor is an explicit prepared input. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ScratchReset
 
 abbrev bank := CountedSeek.bank

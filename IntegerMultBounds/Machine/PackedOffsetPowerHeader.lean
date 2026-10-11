@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.FixedBasePowerDescriptor
+module
+
+public import IntegerMultBounds.Machine.FixedBasePowerDescriptor
 
 /-! Construct the Q=2^w header used by packed-offset rotations from the sole
 original width header. The fixed native power machine uses seven initially
 blank slots, returns six clean, and retains only the generated Q header. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.PackedOffsetPowerHeader
 noncomputable section
 variable {a : ℕ}

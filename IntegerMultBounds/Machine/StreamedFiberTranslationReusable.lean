@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.StreamedFiberTranslationInitialized
-import IntegerMultBounds.Machine.WordBankCleanup
+module
+
+public import IntegerMultBounds.Machine.StreamedFiberTranslationInitialized
+public import IntegerMultBounds.Machine.WordBankCleanup
 
 /-! Reusable varying-offset binary rotations. The real initialized stream
 machine writes a private destination, returns both payload heads, copies the
 rotated word over the original source and physically erases the destination. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.StreamedFiberTranslationReusable
 noncomputable section
 open StreamedFiberTranslationInitialized (bare)

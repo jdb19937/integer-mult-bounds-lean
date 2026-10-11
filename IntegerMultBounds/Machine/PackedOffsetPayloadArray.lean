@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.PackedOffsetPayloadValue
+module
+
+public import IntegerMultBounds.Machine.PackedOffsetPayloadValue
 
 /-! Canonical Boolean-array handoff after the complete physical packed-offset
 rotation. It can feed a subsequent binary field interchange without copying. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.PackedOffsetPayloadArray
 
 theorem translated_map {α β : Type*} {P Q B : ℕ} (f : α → β)

@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ButterflyStreamRun
-import IntegerMultBounds.Machine.CyclicRowSplit
+module
+
+public import IntegerMultBounds.Machine.ButterflyStreamRun
+public import IntegerMultBounds.Machine.CyclicRowSplit
 
 /-! Complete physical endpoints of the paired coefficient scan. Both produced
 streams are materialized in coefficient order, original streams are preserved,
 and all coefficient workspace is blank, with actual end positions specified. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ButterflyStreamEndpoint
 noncomputable section
 open ButterflyStreamData

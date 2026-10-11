@@ -1,9 +1,13 @@
-import IntegerMultBounds.Spec.SimultaneousLayer
+module
+
+public import IntegerMultBounds.Spec.SimultaneousLayer
 
 /-! The numerical guarantees of `prop:simultaneous-layer` follow from the
 statement's definitions: for disk grid input, every coefficient of the
 returned array `Q_p(ℋ z)` lies in the unit disk (`layerOut_norm_le`), and
 the array is within `√2 2^(-p)` of `ℋ z` coefficientwise (`layerOut_close`). -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Spec.SignedRingProduct
 

@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.Hoare
+module
+
+public import IntegerMultBounds.Machine.Hoare
 
 /-! Physical erasure guided by a synchronized visited-interval tape. An origin
 marker survives the outward sweep and restores both heads to zero. Internal
 blank data cells never serve as delimiters. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.TrackedCleanup
 variable {q : ℕ}
 

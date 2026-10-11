@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CyclicRowCycle
+module
+
+public import IntegerMultBounds.Machine.CyclicRowCycle
 
 /-! Actual cyclic distribution of runtime-many groups of fixed-many roles.
 The two supplied descriptors count row symbols and row groups. Every payload
 symbol is transferred literally, and both binary loop workspaces are restored.
 The machine depends on the role count and alphabet only. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CyclicRowSplit
 open CyclicRowCycle (rowPrefix prefix_succ prefix_all)
 variable {a c n : ℕ}

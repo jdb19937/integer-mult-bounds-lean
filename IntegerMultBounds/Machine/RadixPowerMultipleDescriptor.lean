@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.RadixPowerMultipleWord
-import IntegerMultBounds.Machine.RadixPowerDescriptor
+module
+
+public import IntegerMultBounds.Machine.RadixPowerMultipleWord
+public import IntegerMultBounds.Machine.RadixPowerDescriptor
 
 /-! A fixed four-tape machine computes q^(k*b) from one binary b descriptor.
 The fixed k belongs to finite control; even k=0 reads no supplied dimension. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RadixPowerMultipleDescriptor
 
 open RadixDigits MarkedWordCleanup

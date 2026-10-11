@@ -1,10 +1,14 @@
-import IntegerMultBounds.Machine.KeyPass
-import IntegerMultBounds.Machine.Erase
+module
+
+public import IntegerMultBounds.Machine.KeyPass
+public import IntegerMultBounds.Machine.Erase
 
 /-! A physically reusable raw-key pass. Obsolete source and bucket streams are
 cleared, the new raw stream is moved back into the original input tape, and all
 heads return to their initial positions. Tape permutations only place finite
 subroutines; no step is credited for a mathematical swap of tape contents. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.KeyPassReuse
 
@@ -50,7 +54,7 @@ private def clean (v : Tapes 7 1) (i : Fin 7) : Tapes 7 1 :=
 private def positioned (v : Tapes 7 1) (i : Fin 7) : Tapes 7 1 :=
   ⟨Function.update v.head i 0, v.tape⟩
 
-private def place (i : Fin 7) : Fin 7 ≃ Fin 7 := Equiv.swap 0 i
+def place (i : Fin 7) : Fin 7 ≃ Fin 7 := Equiv.swap 0 i
 
 def eraseProgram (i : Fin 7) : Program 7 2 1 := reindex (extend Erase.program 6) (place i)
 

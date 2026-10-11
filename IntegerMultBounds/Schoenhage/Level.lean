@@ -1,6 +1,8 @@
-import IntegerMultBounds.Schoenhage.Transform
-import Mathlib.Data.ZMod.Basic
-import Mathlib.Algebra.Polynomial.Eval.Defs
+module
+
+public import IntegerMultBounds.Schoenhage.Transform
+public import Mathlib.Data.ZMod.Basic
+public import Mathlib.Algebra.Polynomial.Eval.Defs
 
 /-! One level of Schönhage–Strassen multiplication modulo `2^n + 1`, with
 `n = 2^k M`: cut each operand into `2^k` pieces of `M` bits (the top piece
@@ -11,6 +13,8 @@ representative and evaluate at `2^M`. Proved (`level_correct`): whenever
 `2^k ∣ N` and `2M + k + 1 ≤ N`, the result is congruent to `x y` modulo
 `2^n + 1`. The pointwise products are left abstract in the ring, so the
 recursion may compute them by any correct means. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Schoenhage
 

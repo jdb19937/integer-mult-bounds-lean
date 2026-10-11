@@ -1,4 +1,6 @@
-import IntegerMultBounds.NLogN.SynthFFT
+module
+
+public import IntegerMultBounds.NLogN.SynthFFT
 
 /-! The convolution theorem and inversion for the synthetic transform in
 coefficient form, the analogue of (2.1) and Lemma 2.3 of Harvey and van der
@@ -10,6 +12,8 @@ negacyclic product of the transforms, and for a power of two `t ∣ 2r` the
 transform at the inverse root `y^((2r/t)(t-1))` recovers `u/t`. Orthogonality
 `∑_k y^((2r/t) m k) = 0` for `0 < m < t` is proved from `y^r = -1` alone. Fixed
 point errors of this pipeline are not treated here. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.NLogN
 

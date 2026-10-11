@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.PrefixCounterInitPlacement
-import IntegerMultBounds.Machine.FlatControlledShift
+module
+
+public import IntegerMultBounds.Machine.PrefixCounterInitPlacement
+public import IntegerMultBounds.Machine.FlatControlledShift
 
 /-! Physical blank-prefix initialization followed by a complete controlled
 shift. Width descriptors are supplied; their mutable clocks and generated radix
 fields start blank. Translation metadata retains the existing marked-workspace
 contract. A static whole-bank permutation shares generated fields with the
 stream, preserving every initializer descriptor/clock as an exact frame. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RationalPrefixTranslationInit
 open PrefixCounterInitPlacement
 variable {radix c B : ℕ} [Fact radix.Prime]

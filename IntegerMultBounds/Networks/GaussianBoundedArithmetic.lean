@@ -1,9 +1,14 @@
-import IntegerMultBounds.Networks.GaussianPrecision
-import IntegerMultBounds.Networks.GaussianCircuit
-import Mathlib.Tactic.LinearCombination
+module
+
+public import IntegerMultBounds.Networks.GaussianPrecision
+public import IntegerMultBounds.Networks.GaussianCircuit
+public import Mathlib.Tactic.LinearCombination
 
 /-! Exact numerator bounds for the Gaussian dyadic scalar updates used by
 finite role circuits. These are mathematical arithmetic bounds, not tape costs. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Networks.GaussianPrecision
 
 /-- Raising the common denominator multiplies both numerators by its exact

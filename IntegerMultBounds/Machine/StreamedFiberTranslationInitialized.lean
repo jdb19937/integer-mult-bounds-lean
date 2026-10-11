@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.StreamedFiberTranslationArray
-import IntegerMultBounds.Machine.BinaryDescriptorCleanupList
+module
+
+public import IntegerMultBounds.Machine.StreamedFiberTranslationArray
+public import IntegerMultBounds.Machine.BinaryDescriptorCleanupList
 
 /-! Complete varying-offset rotation lifecycle. Only original B/Q/n headers,
 source, destination and literal control stream are supplied; every private tape
 starts and finishes blank at zero. Payload heads advance by the exact volume. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.StreamedFiberTranslationInitialized
 open CountedCopyReuse (binary empty)
 open StreamedFiberTranslation (encoded old)

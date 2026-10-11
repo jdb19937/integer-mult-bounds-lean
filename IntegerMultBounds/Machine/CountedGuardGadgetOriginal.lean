@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CountedGuardGadgetArray
-import IntegerMultBounds.Machine.CountedGuardGadgetHeaders
+module
+
+public import IntegerMultBounds.Machine.CountedGuardGadgetArray
+public import IntegerMultBounds.Machine.CountedGuardGadgetHeaders
 
 /-! Whole original-header guard-word construction: q−1 is physically derived,
 all records execute under fixed counted control, and the derived header is
 physically erased. Only original q/b/n descriptors and literal words are input. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedGuardGadgetOriginal
 noncomputable section
 variable {a : ℕ}

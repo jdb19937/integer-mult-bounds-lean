@@ -1,8 +1,12 @@
-import IntegerMultBounds.Networks.SharedPointOutputMap
-import IntegerMultBounds.Networks.FanoutFrames
+module
+
+public import IntegerMultBounds.Networks.SharedPointOutputMap
+public import IntegerMultBounds.Networks.FanoutFrames
 
 /-! The actual lifted output supports carry exactly the rational source-span
 labels used for terminal attachment in the shared-point network. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.SharedPointOutputLabels
 

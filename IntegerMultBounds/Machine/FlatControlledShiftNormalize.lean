@@ -1,28 +1,33 @@
-import IntegerMultBounds.Machine.FlatControlledShift
-import IntegerMultBounds.Machine.FlatArrayNormalize
-import IntegerMultBounds.Machine.FamilyPlacementAlphabet
+module
+
+public import IntegerMultBounds.Machine.FlatControlledShift
+public import IntegerMultBounds.Machine.FlatArrayNormalize
+public import IntegerMultBounds.Machine.FamilyPlacementAlphabet
 
 /-! Static wiring of actual payload normalization directly into a controlled
 shift bank. Existing B/Q/P descriptors and clocks are shared physically. There
 are no extra payload copies, sentinels or free head resets in the handoff. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.FlatControlledShiftNormalize
 variable {radix c : ℕ}
 open CountedLoopReuseAlphabet (empty binary)
 
-private def basePlacement : Fin (6+10) ≃ Fin 16 where
+def basePlacement : Fin (6+10) ≃ Fin 16 where
   toFun := ![11,10,4,5,6,7,0,1,2,3,8,9,12,13,14,15]
   invFun := ![6,7,8,9,2,3,4,5,10,11,1,0,12,13,14,15]
   left_inv := by decide +kernel
   right_inv := by decide +kernel
 
-private def bodyPlacement (c : ℕ) : Fin (6+(10+c)) ≃ Fin (16+c) :=
+def bodyPlacement (c : ℕ) : Fin (6+(10+c)) ≃ Fin (16+c) :=
   FamilyPlacement.pair basePlacement (finCongr (by omega) : Fin (0+c) ≃ Fin c)
 
 /-- Source/destination, B clock/count, Q clock/count, and P clock/count. -/
 def placement (c : ℕ) : Fin (8+(10+c)) ≃ Fin ((16+c)+2) :=
   FamilyPlacement.withFrame (r := 2) (bodyPlacement c)
 
-private def encoded (f : ℤ → Fin 4) : ℤ → Fin (radix+4) :=
+def encoded (f : ℤ → Fin 4) : ℤ → Fin (radix+4) :=
   fun z => (RadixToBinary.binaryEncoding (q := radix)).encode (f z)
 
 def bank (source dest : ℤ → Fin 4) (p q : ℤ) (bs qs ps old : List Bool)

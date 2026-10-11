@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CountedLoopHeaderClean
+module
+
+public import IntegerMultBounds.Machine.CountedLoopHeaderClean
 
 /-! Paid native-tape rewind and erasure from a retained original length header.
 Both generated binary controls start and finish blank; payload heads need not
 start at zero. This permits composition immediately after a streaming scan. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedBankHeaderClean
 noncomputable section
 variable {t a : ℕ}

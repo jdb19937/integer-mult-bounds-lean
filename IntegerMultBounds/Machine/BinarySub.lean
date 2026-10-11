@@ -1,7 +1,11 @@
-import IntegerMultBounds.Machine.BinaryAdd
+module
+
+public import IntegerMultBounds.Machine.BinaryAdd
 
 /-! Literal least-significant-first modular binary subtraction. The borrow
 lives in finite control. Every input column costs exactly one transition. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.BinarySub
 

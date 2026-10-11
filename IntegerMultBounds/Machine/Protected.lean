@@ -1,9 +1,13 @@
-import IntegerMultBounds.Machine.Alphabet
+module
+
+public import IntegerMultBounds.Machine.Alphabet
 
 /-! Exact alphabet simulation on a region of each tape. Cells outside the region
 may contain arbitrary foreign symbols, including left sentinels, and are retained
 literally. Region membership is a proof condition on the source head trajectory;
 it is not an extra primitive or an oracle in the transition table. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.Alphabet
 

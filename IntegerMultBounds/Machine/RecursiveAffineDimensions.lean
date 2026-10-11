@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.RecursiveChildDimensions
-import IntegerMultBounds.Machine.RecursiveAffineViews
+module
+
+public import IntegerMultBounds.Machine.RecursiveChildDimensions
+public import IntegerMultBounds.Machine.RecursiveAffineViews
 
 /-! Paid construction of within-H and within-D coordinate-view dimensions.
 All four required powers and four spectator products are emitted by fixed tape
 programs. Only six original headers and canonical quotient-width/row descriptors
 are supplied. Neither payload regrouping nor free arithmetic is assumed. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveAffineDimensions
 open RecursiveInterchangeLayout (Descriptor volume)
 variable {q : ℕ} (hq : 2 ≤ q)

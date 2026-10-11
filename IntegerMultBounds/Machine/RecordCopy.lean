@@ -1,4 +1,6 @@
-import IntegerMultBounds.Machine.RecordRewind
+module
+
+public import IntegerMultBounds.Machine.RecordRewind
 
 /-! Walking over blank-separated records: a three-tape machine (source,
 destination, ruler) that moves the source head over whole records, copying
@@ -6,6 +8,8 @@ them to the destination when `cp`, and stops at a record origin either when
 the source reads blank (`ct = false`: to the end of the records) or when the
 ruler reads blank (`ct = true`: one ruler cell per record). Copy-all, copy-`n`,
 skip-all and skip-`n` are its four instances. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.RecordCopy
 

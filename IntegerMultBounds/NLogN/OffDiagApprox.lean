@@ -1,5 +1,7 @@
-import IntegerMultBounds.NLogN.ResamplingInverse
-import IntegerMultBounds.NLogN.Approx
+module
+
+public import IntegerMultBounds.NLogN.ResamplingInverse
+public import IntegerMultBounds.NLogN.Approx
 
 /-! Lemmas 4.8 and 4.11 of Harvey and van der Hoeven, at the level of error
 bounds. The off-diagonal map `E` of the normalised resampling system is
@@ -9,6 +11,8 @@ and `q = e^{-4 π α² θ}`, hence at most `3 / 2^p` once `p ≤ 9 m` under
 `α² θ ≥ 1`; evaluating the `2m` retained terms with per-term scaled error `c`
 costs `2 m c`; and a rounded diagonal entry times a unit-ball input has scaled
 error at most `4`. The bit cost of computing the terms is not formalised. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.NLogN
 

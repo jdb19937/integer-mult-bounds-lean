@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ArbitraryWidthHighBranch
-import IntegerMultBounds.Machine.InjectivePlacement
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthHighBranch
+public import IntegerMultBounds.Machine.InjectivePlacement
 
 /-! Place the physical manuscript guard at any three distinct shared tape
 slots. Its concrete contract accepts only the original marked rho/e words
 and one blank flag; every complete tape and every head is restored. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthHighBranchPlacement
 noncomputable section
 variable {t a : ℕ}

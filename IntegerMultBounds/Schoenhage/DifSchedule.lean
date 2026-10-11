@@ -1,10 +1,14 @@
-import IntegerMultBounds.Schoenhage.DifGroup
+module
+
+public import IntegerMultBounds.Schoenhage.DifGroup
 
 /-! The rounds grouped by slot (the paper's schedule). Rounds of different axes
 commute, so running, for each slot from the top down, the round of every
 axis long enough to have that slot equals running every axis in turn
 (`run_slotMajor`), and so computes `F⁻` with every axis address bit-reversed
 (`slotMajor_eq`). -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Schoenhage
 

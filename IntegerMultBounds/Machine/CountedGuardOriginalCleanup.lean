@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CountedGuardGadget
-import IntegerMultBounds.Machine.WordBankCleanup
+module
+
+public import IntegerMultBounds.Machine.CountedGuardGadget
+public import IntegerMultBounds.Machine.WordBankCleanup
 
 /-! Actual scan-and-erase cleanup of the three synthesized guard constants.
 The fixed fifteen-tape program retains the result and every source/header. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedGuardOriginalCleanup
 noncomputable section
 variable {a : ℕ}

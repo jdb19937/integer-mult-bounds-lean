@@ -1,11 +1,15 @@
-import IntegerMultBounds.Networks.ReversibleFanout
-import IntegerMultBounds.Networks.FramedCircuit
-import IntegerMultBounds.Networks.SharedPointLabels
-import IntegerMultBounds.Networks.RankTrace
+module
+
+public import IntegerMultBounds.Networks.ReversibleFanout
+public import IntegerMultBounds.Networks.FramedCircuit
+public import IntegerMultBounds.Networks.SharedPointLabels
+public import IntegerMultBounds.Networks.RankTrace
 
 /-! Common-frame execution and increasing source-span labels for one actual
 reversible fanout layout. Alignment includes the declared pivot even for an
 identity node. Global allocator support propagation is a separate obligation. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.FanoutFrames
 

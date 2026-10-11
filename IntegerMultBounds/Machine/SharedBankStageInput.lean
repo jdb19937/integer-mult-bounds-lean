@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.SharedBankSkeleton
+module
+
+public import IntegerMultBounds.Machine.SharedBankSkeleton
 
 /-! Literal initial banks for compiled initialized stages: only the permanent
 leading bank is supplied, and every remaining tape is blank at head zero. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.SharedBankStageInput
 open SharedBankStage
 universe u

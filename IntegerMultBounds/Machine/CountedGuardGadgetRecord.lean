@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CountedGuardTest
-import IntegerMultBounds.Machine.CountedGuardGadgetPosition
-import IntegerMultBounds.Machine.GuardGadget
+module
+
+public import IntegerMultBounds.Machine.CountedGuardTest
+public import IntegerMultBounds.Machine.CountedGuardGadgetPosition
+public import IntegerMultBounds.Machine.GuardGadget
 
 /-! Fixed-control guard-record bodies. Comparison widths are immutable runtime
 headers; both replay and constant rewinds are literal, charged tape programs. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedGuardGadgetRecord
 noncomputable section
 variable {a : ℕ}

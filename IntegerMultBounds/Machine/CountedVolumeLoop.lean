@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CountedLoopReuseAlphabet
-import IntegerMultBounds.Machine.GrowingCounterData
+module
+
+public import IntegerMultBounds.Machine.CountedLoopReuseAlphabet
+public import IntegerMultBounds.Machine.GrowingCounterData
 
 /-! Three nested physical counted loops for a flat P-by-Q-by-B payload.
 Only the separate dimension descriptors are inputs; no product descriptor or
 unpriced head motion is used. Every clock is restored after execution. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedVolumeLoop
 open CountedLoopReuseAlphabet (empty binary)
 variable {t s a : ℕ}

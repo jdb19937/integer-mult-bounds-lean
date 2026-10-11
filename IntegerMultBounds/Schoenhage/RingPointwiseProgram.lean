@@ -1,10 +1,14 @@
-import IntegerMultBounds.Schoenhage.RingPointwise
+module
+
+public import IntegerMultBounds.Schoenhage.RingPointwise
 
 /-! The pointwise-product step as a literal program in the paper's formats:
 seal the raw header and operand strings into word tapes, run the compiled
 word program, unseal the four data tapes, and relabel the bank so that the
 header, the two operands and the output are tapes 0–3
 (`pointwise_meets`: `MeetsPointwise`). -/
+
+@[expose] public section
 
 set_option maxRecDepth 10000
 

@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.RadixControlCleanupList
-import IntegerMultBounds.Machine.RadixComplexReadBank
+module
+
+public import IntegerMultBounds.Machine.RadixControlCleanupList
+public import IntegerMultBounds.Machine.RadixComplexReadBank
 
 /-! Erase a complete copied marked radix-control bank while preserving an
 arbitrary appended frame. No digit count enters the fixed finite program. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RadixControlCleanupBank
 noncomputable section
 open RadixLinearCombinationRefresh (controls)

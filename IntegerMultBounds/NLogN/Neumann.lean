@@ -1,8 +1,10 @@
-import Mathlib.Analysis.Normed.Operator.NormedSpace
-import Mathlib.Analysis.Normed.Operator.Completeness
-import Mathlib.Analysis.SpecificLimits.Normed
-import Mathlib.Analysis.Complex.Basic
-import Mathlib.Tactic
+module
+
+public import Mathlib.Analysis.Normed.Operator.NormedSpace
+public import Mathlib.Analysis.Normed.Operator.Completeness
+public import Mathlib.Analysis.SpecificLimits.Normed
+public import Mathlib.Analysis.Complex.Basic
+public import Mathlib.Tactic
 
 /-! The linear-algebra skeleton of Harvey–van der Hoeven, Proposition 4.7(i),
 separated from the Gaussian analysis. Proved: a Neumann-series inverse of
@@ -12,6 +14,8 @@ from the resampling identity `T P_s F_s = P_t F_t S`, the normalisation
 scaled normal form `F_s = 2^γ (B' F_t A')` with `‖A'‖, ‖B'‖ ≤ 1`; and the
 sup-norm operator bounds for diagonal and coordinate-selection maps. The
 resampling identity, the estimate `‖E‖ < 1`, and all costs are not here. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.NLogN
 

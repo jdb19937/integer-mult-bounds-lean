@@ -1,9 +1,13 @@
-import IntegerMultBounds.Networks.GlobalCircuit
-import IntegerMultBounds.Networks.CircuitBits
+module
+
+public import IntegerMultBounds.Networks.GlobalCircuit
+public import IntegerMultBounds.Networks.CircuitBits
 
 /-! The full three-coordinate bit network on the actual physical wire layout.
 This establishes scalar routing and dirty-scratch restoration. Like the generic
 global circuit, it does not establish grouped incidence topology or tape costs. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.GlobalCircuit
 

@@ -1,7 +1,11 @@
-import IntegerMultBounds.Machine.Registers
+module
+
+public import IntegerMultBounds.Machine.Registers
 
 /-! Writing a fixed word on a blank register: the state counts the bits
 written; then the head returns to the origin. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.RegConst
 

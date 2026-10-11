@@ -1,5 +1,7 @@
-import IntegerMultBounds.Spec.PointwiseProducts
-import IntegerMultBounds.NLogN.SynthFFT
+module
+
+public import IntegerMultBounds.Spec.PointwiseProducts
+public import IntegerMultBounds.NLogN.SynthFFT
 
 /-! The statement of the paper's synthetic transforms (`lem:synthetic-transform-cost`,
 §6) on the literal machine model and in the paper's formats. An array holds
@@ -16,6 +18,8 @@ returning disk grid arrays in the same component format, within
 existentially, shared by both procedures: the paper constructs one explicit
 `L`, and the convolution only uses that the two procedures agree on it.
 Definitions only. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Spec.SignedRingProduct
 

@@ -1,4 +1,6 @@
-import IntegerMultBounds.NLogN.Multidim
+module
+
+public import IntegerMultBounds.NLogN.Multidim
 
 /-! The `d`-dimensional discrete Fourier transform on `(i : Fin d) → ZMod (N i)`
 with one primitive root per axis. Proved: the convolution theorem, character
@@ -6,6 +8,8 @@ orthogonality, double-transform inversion up to the factor `∏ N i`, and the
 splitting of a `(d+1)`-dimensional transform into a one-dimensional transform
 along the first axis applied to `d`-dimensional transforms of the slices. No
 cost accounting or algorithm is part of this file. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.NLogN
 

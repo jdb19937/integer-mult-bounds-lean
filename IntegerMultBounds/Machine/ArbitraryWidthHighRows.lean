@@ -1,8 +1,13 @@
-import Mathlib.Analysis.SpecialFunctions.Log.Base
+module
+
+public import Mathlib.Analysis.SpecialFunctions.Log.Base
 
 /-! Computable least high-digit row count for arbitrary-width pieces. The
 selector is an exact natural ceiling logarithm; no guessed real parameter
 or uncharged physical controller is asserted by these semantic theorems. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthHighRows
 
 /-- Least number of paired high radix digits whose row count dominates D. -/

@@ -1,8 +1,12 @@
-import IntegerMultBounds.Networks.RankTrace
+module
+
+public import IntegerMultBounds.Networks.RankTrace
 
 /-! Genuine projection-rank accounting on traces whose labels are ordinary
 submodules. Nondegeneracy is proved for actual endpoints by a trace invariant;
 it is not encoded into a replacement trace or an assigned edge cost. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.ProjectionTrace
 

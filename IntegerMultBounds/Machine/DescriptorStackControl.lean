@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.DelimitedReverseCopy
-import IntegerMultBounds.Machine.ReturnOrigin
+module
+
+public import IntegerMultBounds.Machine.DelimitedReverseCopy
+public import IntegerMultBounds.Machine.ReturnOrigin
 
 /-! Fixed local controls for descriptor stacks: one physical adjustment and a
 real delimiter scan that preserves every complete tape. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.DescriptorStackControl
 variable {t a : ℕ}
 

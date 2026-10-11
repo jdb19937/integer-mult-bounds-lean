@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.NativeSignedGapPromoteReturn
-import IntegerMultBounds.Machine.CleanSubbank
+module
+
+public import IntegerMultBounds.Machine.NativeSignedGapPromoteReturn
+public import IntegerMultBounds.Machine.CleanSubbank
 
 /-! Physical clean spectator promotion at arbitrary permanent role slots.
 The two retained gap/volume descriptors are appended after the permanent
 bank; the original bank's other tapes and every private slot are framed. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSpectatorPromoteFamily
 noncomputable section
 open RadixSignedShiftRight (Word)

@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.RadixDigits
-import IntegerMultBounds.Machine.Hoare
+module
+
+public import IntegerMultBounds.Machine.RadixDigits
+public import IntegerMultBounds.Machine.Hoare
 
 /-! One fixed native radix-two word machine copies the arithmetic right shift
 with sign extension. Both words retain their length; source digits use the
 same six-symbol alphabet as actual native Gaussian records. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RadixSignedShiftRight
 open RadixDigits
 

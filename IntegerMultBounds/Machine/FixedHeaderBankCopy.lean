@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.BinaryDescriptorInstall
-import IntegerMultBounds.Machine.BinaryDescriptorCleanupList
-import IntegerMultBounds.Machine.RecursiveDimensionBank
+module
+
+public import IntegerMultBounds.Machine.BinaryDescriptorInstall
+public import IntegerMultBounds.Machine.BinaryDescriptorCleanupList
+public import IntegerMultBounds.Machine.RecursiveDimensionBank
 
 /-! A fixed finite family of actual descriptor copies from retained caller
 tapes into a private header bank, followed by paid physical bank cleanup. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.FixedHeaderBankCopy
 noncomputable section
 variable {t n a : ℕ}

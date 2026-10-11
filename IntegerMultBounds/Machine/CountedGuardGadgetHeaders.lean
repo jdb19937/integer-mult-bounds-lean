@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.BinaryDescriptorDifference
+module
+
+public import IntegerMultBounds.Machine.BinaryDescriptorDifference
 
 /-! Original-width preparation for the fixed runtime guard gadget. The original
 q header is retained; one is physically written on blank private storage,
 canonical q−1 is computed, and the temporary one is physically erased. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedGuardGadgetHeaders
 noncomputable section
 variable {a : ℕ}

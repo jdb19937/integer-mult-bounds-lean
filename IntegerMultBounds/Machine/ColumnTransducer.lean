@@ -1,11 +1,15 @@
-import IntegerMultBounds.Machine.BinaryAdd
-import IntegerMultBounds.Machine.BinarySub
+module
+
+public import IntegerMultBounds.Machine.BinaryAdd
+public import IntegerMultBounds.Machine.BinarySub
 
 /-! A generic three-tape column transducer on equally padded
 least-significant-first words: a finite control reads one bit from each
 operand, writes one output bit and moves on, halting on the common blank.
 Modular addition and bitwise exclusive or are instances; each costs exactly
 the common width and preserves both operands. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.ColumnTransducer
 

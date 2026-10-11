@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.SelectedSourceBitsCore
-import IntegerMultBounds.Machine.CountedBankResetHeader
+module
+
+public import IntegerMultBounds.Machine.SelectedSourceBitsCore
+public import IntegerMultBounds.Machine.CountedBankResetHeader
 
 /-! Three independently counted scans share a literal two-tape source/output
 payload. All three countdown clocks are physically initProgramd and erased. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.SelectedSourceBitsBank
 open CountedLoopReuseAlphabet (bank empty binary)
 variable {a : ℕ}

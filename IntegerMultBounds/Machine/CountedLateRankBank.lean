@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.CountedRankSplitEndpoint
+module
+
+public import IntegerMultBounds.Machine.CountedRankSplitEndpoint
 
 /-! Thirteen tapes: the original twelve-tape short-counter splitter bank plus
 one third address word. The existing nq/nb descriptors are shared and erased. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedLateRankBank
 noncomputable section
 variable {a : ℕ}

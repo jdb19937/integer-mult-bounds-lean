@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CountedGuardConstantsEdit
-import IntegerMultBounds.Machine.CountedGuardConstantsData
-import IntegerMultBounds.Machine.CountedGuardGadgetHeaders
+module
+
+public import IntegerMultBounds.Machine.CountedGuardConstantsEdit
+public import IntegerMultBounds.Machine.CountedGuardConstantsData
+public import IntegerMultBounds.Machine.CountedGuardGadgetHeaders
 
 /-! Fixed eight-tape placements for original-header guard-constant production.
 Only canonical q/b are original inputs. Shared fill/replay clock starts and
 finishes blank; the synthesized q−1 descriptor and temporary one are explicit. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedGuardConstantsPlacement
 noncomputable section
 variable {a : ℕ}

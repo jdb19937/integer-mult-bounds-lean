@@ -1,9 +1,13 @@
-import IntegerMultBounds.Machine.BinaryReplace
-import IntegerMultBounds.Machine.TranslationPreparedFamily
+module
+
+public import IntegerMultBounds.Machine.BinaryReplace
+public import IntegerMultBounds.Machine.TranslationPreparedFamily
 
 /-! Physical installation of a supplied offset on translation's immutable-input
 slot. A separate canonical binary source tape supplies the replacement; every
 other translation tape and head is framed literally. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.TranslationOffsetReplace
 

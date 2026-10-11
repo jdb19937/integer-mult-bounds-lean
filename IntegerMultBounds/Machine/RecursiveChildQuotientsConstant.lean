@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.BinaryDescriptorStackRoundtrip
-import IntegerMultBounds.Machine.FiniteReturnStackAt
-import IntegerMultBounds.Machine.ExactFrame
-import IntegerMultBounds.Machine.BinaryCanonicalData
-import Mathlib.Data.Nat.Bits
+module
+
+public import IntegerMultBounds.Machine.BinaryDescriptorStackRoundtrip
+public import IntegerMultBounds.Machine.FiniteReturnStackAt
+public import IntegerMultBounds.Machine.ExactFrame
+public import IntegerMultBounds.Machine.BinaryCanonicalData
+public import Mathlib.Data.Nat.Bits
 
 /-! A literal finite-control writer for the fixed divisor constants used by
 child quotient production. All writes, rewinds and joins are charged. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveChildQuotientsConstant
 variable {a : ℕ}
 

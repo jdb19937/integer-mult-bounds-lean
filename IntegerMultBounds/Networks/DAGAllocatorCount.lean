@@ -1,7 +1,11 @@
-import IntegerMultBounds.Networks.DAGAllocator
+module
+
+public import IntegerMultBounds.Networks.DAGAllocator
 
 /-! Exact role accounting for the executable DAG allocator. Consumer incidence
 is counted from the real pruned DAG and requested output list. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.DAGAllocator
 

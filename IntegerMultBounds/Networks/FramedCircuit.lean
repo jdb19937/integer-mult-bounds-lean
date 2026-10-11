@@ -1,4 +1,6 @@
-import IntegerMultBounds.Networks.Circuit
+module
+
+public import IntegerMultBounds.Networks.Circuit
 
 /-! Compile a finite scalar circuit with a common linear frame at each gate.
 The generated instructions explicitly change each touched wire from its current
@@ -6,6 +8,8 @@ frame to the next gate's frame, then execute the pointwise linear gate. Final
 edge instructions apply the prescribed output frames to every enumerated wire,
 including scratch and spectators. Frames are exact operators; no tape cost or
 approximate implementation of a frame is assumed. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.FramedCircuit
 

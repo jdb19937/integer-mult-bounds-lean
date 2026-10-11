@@ -1,6 +1,8 @@
-import IntegerMultBounds.Machine.Gather
-import IntegerMultBounds.Machine.ColumnTransducer
-import IntegerMultBounds.Machine.WordMoves
+module
+
+public import IntegerMultBounds.Machine.Gather
+public import IntegerMultBounds.Machine.ColumnTransducer
+public import IntegerMultBounds.Machine.WordMoves
 
 /-! One line of packed address arithmetic on five tapes: gather a packed
 offset from the digit fields of a source word under the control word, rewind,
@@ -8,6 +10,8 @@ combine the accumulator with the offset by a column transducer into a fresh
 target word, erase the offset and rewind. Source, control and accumulator are
 preserved; the target holds the exact transduced word; the offset scratch is
 blank again; every head is back at its origin. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.PackedLine
 

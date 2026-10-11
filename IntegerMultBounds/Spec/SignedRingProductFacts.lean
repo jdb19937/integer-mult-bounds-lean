@@ -1,10 +1,14 @@
-import IntegerMultBounds.Spec.SignedRingProduct
+module
+
+public import IntegerMultBounds.Spec.SignedRingProduct
 
 /-! Sanity facts for the signed ring product's formats: the code `Γ` is
 self-delimiting and the header reads back as `p, r, w`; component words have
 width `w` and decode to the integer they encode; disk grid numerators fit the
 width `w ≥ p + 2` and give coefficients of modulus at most one; a record has
 `2 r w` bits. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Spec.SignedRingProduct
 

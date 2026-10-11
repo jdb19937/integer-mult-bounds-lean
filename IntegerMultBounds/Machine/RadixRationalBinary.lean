@@ -1,12 +1,16 @@
-import IntegerMultBounds.Machine.RadixRational
-import IntegerMultBounds.Machine.RadixToBinary
-import IntegerMultBounds.Machine.MarkedWordCleanup
-import IntegerMultBounds.Machine.ReturnOrigin
+module
+
+public import IntegerMultBounds.Machine.RadixRational
+public import IntegerMultBounds.Machine.RadixToBinary
+public import IntegerMultBounds.Machine.MarkedWordCleanup
+public import IntegerMultBounds.Machine.ReturnOrigin
 
 /-! Compute a fixed rational multiple of a marked radix word, convert its
 canonical residue to binary, and erase the temporary radix result. The source
 word and its head are preserved; every arithmetic/conversion/cleanup step runs
 on the actual tapes over the fixed radix alphabet. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.RadixRationalBinary
 
@@ -40,7 +44,7 @@ private theorem source_ne_marker (xs : List (Fin q)) (z : ℤ) (hz : 0 < z) : so
   · rw [source,marked,putWord_outside _ _ _ _ (Or.inr (by simpa using not_lt.mp hi))]
     simp [MarkedWordCleanup.empty,ne_of_gt hz,blank,separator]
 
-private def initializeProgram : Program 2 2 q where
+def initializeProgram : Program 2 2 q where
   tapes_pos := by decide
   start := 0
   transition := fun s symbols => if s = 0 then
@@ -75,7 +79,7 @@ private theorem arithmetic_hoare (r : ℚ) (xs : List (Fin q)) :
   exact ⟨xs.length,_,le_rfl,hr,hh,rfl⟩
 
 /-- Synchronous return: keep the source sentinel/head, remove the result sentinel. -/
-private def resetProgram : Program 2 2 q where
+def resetProgram : Program 2 2 q where
   tapes_pos := by decide
   start := 0
   transition := fun s symbols => if s = 0 then
@@ -157,7 +161,7 @@ def input (xs : List (Fin q)) : Tapes 4 q := bank (fun _ => blank) 0 xs []
 def output (r : ℚ) (xs : List (Fin q)) : Tapes 4 q :=
   bank ((RadixToBinary.binaryState q (RadixToBinaryData.output (result r xs))).tape 0) 1 xs []
 
-private def arithmeticPlacement : Fin (2+2) ≃ Fin 4 := (Equiv.swap 0 3).trans (Equiv.swap 1 2)
+def arithmeticPlacement : Fin (2+2) ≃ Fin 4 := (Equiv.swap 0 3).trans (Equiv.swap 1 2)
 
 private theorem arithmetic_at (r : ℚ) (xs : List (Fin q)) :
     HoareTime (Placement.placed (arithmeticProgram r) arithmeticPlacement)
@@ -204,7 +208,7 @@ private theorem conversion_at (xs ys : List (Fin q)) :
   · intro v hv; exact ⟨_,rfl,by simpa only [conversion_input] using hv⟩
   · rintro v ⟨w,rfl,hv⟩; simpa only [conversion_output] using hv
 
-private def cleanupPlacement : Fin (1+3) ≃ Fin 4 := Equiv.swap 0 2
+def cleanupPlacement : Fin (1+3) ≃ Fin 4 := Equiv.swap 0 2
 
 omit [Fact q.Prime] in
 private theorem cleanup_at (f : ℤ → Fin (q+4)) (h : ℤ) (xs ys : List (Fin q)) :

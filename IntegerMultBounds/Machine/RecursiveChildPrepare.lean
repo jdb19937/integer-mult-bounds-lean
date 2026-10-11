@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.RecursiveChildQuotientsBound
-import IntegerMultBounds.Machine.RecursiveChildHeaderHandoff
+module
+
+public import IntegerMultBounds.Machine.RecursiveChildQuotientsBound
+public import IntegerMultBounds.Machine.RecursiveChildHeaderHandoff
 
 /-! Complete physical preparation of one recursive child header bank. Fixed
 constants, divisions, powers, products, old-header replacement, temporary-copy
 erasure and all joins are charged. Parent headers must first be saved by the
 caller; the machine leaves only the canonical six child headers. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveChildPrepare
 open RecursiveInterchangeLayout RecursiveInterchangeVolume
 variable {q : ℕ}

@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.PackedOffsetStreamBlock
-import IntegerMultBounds.Machine.StreamedFiberTranslation
-import IntegerMultBounds.Machine.CountedGatherClockPair
+module
+
+public import IntegerMultBounds.Machine.PackedOffsetStreamBlock
+public import IntegerMultBounds.Machine.StreamedFiberTranslation
+public import IntegerMultBounds.Machine.CountedGatherClockPair
 
 /-! Synthesize a literal stream of canonical offsets from fixed-width packed
 binary blocks. Only the original width/count headers are initialized inputs.
 All three private tapes start and finish blank, including both loop markers. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.PackedOffsetStream
 open PackedOffsetStreamBlock (canonical)
 open CountedCopyReuse (binary empty)

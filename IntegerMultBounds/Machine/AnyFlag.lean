@@ -1,9 +1,13 @@
-import IntegerMultBounds.Machine.ExactFrame
+module
+
+public import IntegerMultBounds.Machine.ExactFrame
 
 /-! Scan a word of flag bits and write whether any is set: two tapes, the
 flag word and the key; state one remembers a set flag; on the flag word's
 blank the result bit is written at the key head, which advances. The flag
 word is preserved and its head ends on its blank. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.AnyFlag
 

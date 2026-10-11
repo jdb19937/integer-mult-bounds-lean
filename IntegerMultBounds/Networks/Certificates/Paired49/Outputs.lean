@@ -1,9 +1,13 @@
-import IntegerMultBounds.Networks.Certificates.Paired49.Data
-import IntegerMultBounds.Networks.Certificates.Paired49.Incidents
+module
+
+public import IntegerMultBounds.Networks.Certificates.Paired49.Data
+public import IntegerMultBounds.Networks.Certificates.Paired49.Incidents
 
 /-! Exact output checks for the 9813-addition local witness.
 Acceptance of the node certificate is the sole remaining premise.
 Regenerate with scripts/generate_paired49_outputs.py. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.Certificates.Paired49
 open MaskDAG PairMask DisjointCircuit

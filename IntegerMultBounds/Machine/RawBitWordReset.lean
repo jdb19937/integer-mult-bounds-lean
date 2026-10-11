@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.SelectedSourceBitsScan
+module
+
+public import IntegerMultBounds.Machine.SelectedSourceBitsScan
 
 /-! A marker-free Boolean word is erased backwards from its actual endpoint.
 The adjacent blank restores head zero, including for the empty word. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RawBitWordReset
 open SelectedSourceBitsScan (word)
 open MarkedWordCleanup (one)

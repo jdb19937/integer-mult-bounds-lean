@@ -1,5 +1,7 @@
-import IntegerMultBounds.TimeBound
-import Mathlib.Analysis.SpecialFunctions.Log.Base
+module
+
+public import IntegerMultBounds.TimeBound
+public import Mathlib.Analysis.SpecialFunctions.Log.Base
 
 /-! Input and transform sizes (§8). From `b = lg n` the algorithm sets
 `p = 6b`, `d = ⌊b^ε⌋`, `K = ⌊d^c⌋`, a power of two `T` in `[4n/b, 8n/b)`,
@@ -8,6 +10,8 @@ layer and transform interfaces use: `24 n ≤ T p < 48 n`, `p^ε / 12 ≤ d ≤ 
 `p^(εc) / 24 ≤ K ≤ p^(εc)`, `b / 2 ≤ log₂ T ≤ b`, and `p / (12 d) ≤ ℓ ≤ p / (3 d)`,
 all for sufficiently large `n`, with the fixed constants of the manuscript.
 The exponent `c` is the witness parameter `spacing`. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Sizes
 

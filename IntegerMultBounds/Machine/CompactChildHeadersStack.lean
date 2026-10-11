@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.BinaryDescriptorStackAt
+module
+
+public import IntegerMultBounds.Machine.BinaryDescriptorStackAt
 
 /-! Three changed numeric node descriptors are saved on a separate generic
 binary frame stack. The full tape-bank frame is retained by both directions. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactChildHeadersStack
 noncomputable section
 open BinaryDescriptorStack SharedPlacementAlphabet

@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.DigitInterchangeRows
-import IntegerMultBounds.Machine.RecursiveInterchangeLayout
+module
+
+public import IntegerMultBounds.Machine.DigitInterchangeRows
+public import IntegerMultBounds.Machine.RecursiveInterchangeLayout
 
 /-! Literal serialized width-one view of a recursive seven-factor array. The
 outer spectator collects A,row,B without moving any symbol. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveDigitLayout
 open RecursiveInterchangeLayout (Descriptor volume)
 variable {q a : ℕ}

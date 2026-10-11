@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.RationalPrefixTranslationInit
+module
+
+public import IntegerMultBounds.Machine.RationalPrefixTranslationInit
 
 /-! A physical one-step bootstrap for every writable translation metadata tape.
 Only the canonical dimension descriptors and payload tapes are supplied. Prefix
 fields/clocks remain blank until the existing counted initializer constructs them. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RationalPrefixTranslationBootstrap
 open PrefixCounterInitPlacement
 variable {radix c B : ℕ}

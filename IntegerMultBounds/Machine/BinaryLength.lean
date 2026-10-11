@@ -1,10 +1,14 @@
-import IntegerMultBounds.Machine.GrowingCounter
-import IntegerMultBounds.Machine.Placement
+module
+
+public import IntegerMultBounds.Machine.GrowingCounter
+public import IntegerMultBounds.Machine.Placement
 
 /-! Literal delimiter-terminated source length measurement. A fixed two-tape
 controller grows a binary descriptor from its empty marked tape. Every source
 cell is preserved, every increment and head movement is charged, and the
 controller truly halts on the first blank source symbol. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.BinaryLength
 

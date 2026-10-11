@@ -1,9 +1,13 @@
-import IntegerMultBounds.Machine.TranslationExecutionReuse
-import IntegerMultBounds.Machine.FiberShift
+module
+
+public import IntegerMultBounds.Machine.TranslationExecutionReuse
+public import IntegerMultBounds.Machine.FiberShift
 
 /-! Repeated literal translation on consecutive fibers. The same canonical
 Q/a/B descriptors serve every fiber; all derived descriptors and work clocks
 are constructed and erased by real transitions inside the loop body. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.TranslationStream
 
@@ -131,7 +135,7 @@ def input (Q n : ℕ) (source dest : ℤ → Fin 4) (p q : ℤ) (bs qs as ns : L
       (TranslationPreparedExecution.payload (putWord source p (fibers Q n payload).flatten) dest p q))
     (fun _ => blank) (binary ns) 0 1
 
-private def markerMask (i : Fin 14) : Bool :=
+def markerMask (i : Fin 14) : Bool :=
   decide (i = 1 ∨ i = 2 ∨ i = 3 ∨ i = 4 ∨ i = 6 ∨ i = 12)
 
 private def marked (v : Tapes 14 0) : Tapes 14 0 :=

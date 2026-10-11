@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CountedLoopReuse
-import IntegerMultBounds.Machine.GrowingCounterData
+module
+
+public import IntegerMultBounds.Machine.CountedLoopReuse
+public import IntegerMultBounds.Machine.GrowingCounterData
 
 /-! Exact delimiter-free constant filling with a physical reusable countdown.
 The immutable count is supplied on its own tape; no generated count is assumed.
 The inner clock is reset and cleared to its retained sentinel by this subroutine. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedRawFill
 
 /-- Replace precisely one finite interval and retain every surrounding cell. -/

@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ButterflyRecordOutputData
+module
+
+public import IntegerMultBounds.Machine.ButterflyRecordOutputData
 
 /-! Emit all four physical butterfly outputs to their two coefficient streams.
 Each result word is consumed and its private tape restored literally blank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ButterflyRecordEmit
 noncomputable section
 open DelimitedRadixRecord (field complex)

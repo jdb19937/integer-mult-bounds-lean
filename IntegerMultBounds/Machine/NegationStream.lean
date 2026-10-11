@@ -1,9 +1,13 @@
-import IntegerMultBounds.Machine.BlockNegationReuse
-import IntegerMultBounds.Machine.FiberShift
+module
+
+public import IntegerMultBounds.Machine.BlockNegationReuse
+public import IntegerMultBounds.Machine.FiberShift
 
 /-! Repeated coordinate negation on uniform fibers. The single physical scratch
 interval is reused from the same origin on every iteration; every work clock,
 descriptor, scratch cell and scratch head is restored. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.NegationStream
 

@@ -1,7 +1,11 @@
-import IntegerMultBounds.Networks.DAGAllocatorCount
+module
+
+public import IntegerMultBounds.Networks.DAGAllocatorCount
 
 /-! Pruning can only improve the actual allocator's role budget. This lets a
 fully checked, possibly unpruned certificate bound the compiled role count. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.DAGAllocator
 

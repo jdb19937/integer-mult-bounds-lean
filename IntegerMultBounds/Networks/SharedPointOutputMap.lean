@@ -1,7 +1,11 @@
-import IntegerMultBounds.Networks.SharedPointLift
+module
+
+public import IntegerMultBounds.Networks.SharedPointLift
 
 /-! The checked pair-exclusion outputs are exactly the common-point partial
 outputs of the global intersection-one map, under the actual source embedding. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.SharedPointOutputMap
 

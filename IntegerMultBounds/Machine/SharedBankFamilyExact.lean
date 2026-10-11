@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.SharedBankFamily
+module
+
+public import IntegerMultBounds.Machine.SharedBankFamily
 
 /-! Exact finite-state execution survives uniform workspace padding. In
 particular, width-test and return-decoder terminal states remain available to
 the cyclic controller; a tape-only Hoare contract would lose this information. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.SharedBankFamilyExact
 open SharedBankFamily SharedBankStageInput
 variable {k t n r a : ℕ}

@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.DigitInterchangeBank
+module
+
+public import IntegerMultBounds.Machine.DigitInterchangeBank
 
 /-! Actual fixed whole-bank execution of all digit-interchange passes. Only the
 radix and alphabet determine the program; runtime dimensions occur solely in
 supplied descriptor tapes and the correctness/time specification. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.DigitInterchangeCompile
 open DigitInterchangeRows DigitInterchangeBank
 noncomputable section

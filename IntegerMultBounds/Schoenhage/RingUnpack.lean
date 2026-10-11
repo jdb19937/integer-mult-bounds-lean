@@ -1,11 +1,15 @@
-import IntegerMultBounds.Schoenhage.RingPack
-import IntegerMultBounds.Schoenhage.RingDigit
+module
+
+public import IntegerMultBounds.Schoenhage.RingPack
+public import IntegerMultBounds.Schoenhage.RingDigit
 
 /-! Unpacking a residue into output coefficients. Each digit `e` of the offset
 residue is compared with the half `H = 2^(W-1)`: the difference is the signed
 coefficient in two's complement; a negative one gets `2^s - 1` added, so that
 dropping `s` bits truncates toward zero; the first `w` bits are the output
 word (`runs_digitStep`). -/
+
+@[expose] public section
 
 set_option maxRecDepth 10000
 

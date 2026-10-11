@@ -1,16 +1,21 @@
-import IntegerMultBounds.Machine.RadixPowerWord
-import IntegerMultBounds.Machine.CountedLoopReuseAlphabet
+module
+
+public import IntegerMultBounds.Machine.RadixPowerWord
+public import IntegerMultBounds.Machine.CountedLoopReuseAlphabet
 
 /-! Fixed-many passes over one immutable binary exponent append all radix zeroes.
 No copies of the exponent and no multiplication subroutine are supplied. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RadixPowerMultipleWord
 
 open RadixDigits MarkedWordCleanup
 variable {q : ℕ} (hq : 2 ≤ q)
 
-private def field (n : ℕ) : Tapes 1 q := one (RadixZeroFill.radixZeros hq n) (1+n)
+def field (n : ℕ) : Tapes 1 q := one (RadixZeroFill.radixZeros hq n) (1+n)
 
-private def writeProgram : Program 1 2 q where
+def writeProgram : Program 1 2 q where
   tapes_pos := by decide
   start := 0
   transition := fun s _ => if s = 0 then
@@ -43,9 +48,9 @@ private theorem binary_eq (bs : List Bool) :
   rw [← CountedLoopReuseAlphabet.encoding_binary]
   rfl
 
-private def loopProgram : Program 3 18 q := CountedLoopReuseAlphabet.program (writeProgram hq)
+def loopProgram : Program 3 18 q := CountedLoopReuseAlphabet.program (writeProgram hq)
 
-private theorem loop_hoare (bs : List Bool) (b n : ℕ) (hb : Counter.value bs = b) :
+theorem loop_hoare (bs : List Bool) (b n : ℕ) (hb : Counter.value bs = b) :
     HoareTime (loopProgram hq) (fun v => v = bank hq bs n) (fun v => v = bank hq bs (n+b))
       (7*b+7*bs.length+16) := by
   have hh := CountedLoopReuseAlphabet.loop_hoare (writeProgram hq) bs b
@@ -55,7 +60,7 @@ private theorem loop_hoare (bs : List Bool) (b n : ℕ) (hb : Counter.value bs =
   simp only [Finset.sum_const,Finset.card_range,smul_eq_mul,mul_one]
   omega
 
-private def haltProgram : Program 3 1 q where
+def haltProgram : Program 3 1 q where
   tapes_pos := by decide
   start := 0
   transition := fun _ _ => none
@@ -74,7 +79,7 @@ def loops : (k : ℕ) → Program 3 (loopStates k) q
   | 0 => haltProgram
   | k+1 => seq (loops k) (loopProgram hq)
 
-private theorem loops_hoare (k : ℕ) (bs : List Bool) (b n : ℕ) (hb : Counter.value bs = b) :
+theorem loops_hoare (k : ℕ) (bs : List Bool) (b n : ℕ) (hb : Counter.value bs = b) :
     HoareTime (loops hq k) (fun v => v = bank hq bs n) (fun v => v = bank hq bs (n+k*b))
       (k*(7*b+7*bs.length+17)) := by
   induction k with
@@ -87,7 +92,7 @@ private theorem loops_hoare (k : ℕ) (bs : List Bool) (b n : ℕ) (hb : Counter
     simp only [Nat.add_mul,Nat.one_mul]
     omega
 
-private def initializeProgram : Program 3 2 q where
+def initializeProgram : Program 3 2 q where
   tapes_pos := by decide
   start := 0
   transition := fun s sy => if s = 0 then
@@ -147,7 +152,7 @@ private theorem rewind_hoare (bs : List Bool) (n : ℕ) :
 private def restored (bs : List Bool) (n : ℕ) : Tapes 3 q :=
   ⟨![1,0,1],![RadixZeroFill.radixZeros hq n,fun _ => blank,RadixZeroFill.encodedBinary bs]⟩
 
-private def restoreProgram : Program 3 3 q where
+def restoreProgram : Program 3 3 q where
   tapes_pos := by decide
   start := 0
   transition := fun s sy =>

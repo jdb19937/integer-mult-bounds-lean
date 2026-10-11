@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.RadixLinearCombinationShared
+module
+
+public import IntegerMultBounds.Machine.RadixLinearCombinationShared
 
 /-! First-use preparation from genuinely blank scratch. Every persistent leaf
 sentinel is physically installed before shared-source refresh and computation. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RadixLinearCombinationBootstrap
 
 open RadixLinearCombinationRefresh (Expr Size controls leaves)
@@ -91,7 +96,7 @@ abbrev TapeCount (e : Expr c) := RadixLinearCombinationShared.TapeCount e
 def input (e : Expr c) (xs : ℕ → List (Fin q)) : Tapes (TapeCount e) q :=
   (controls xs).append (empty (RadixLinearCombinationBinary.TapeCount e.erase))
 
-private def initializeProgram (e : Expr c) : Program (TapeCount e) (InitStates e) q :=
+def initializeProgram (e : Expr c) : Program (TapeCount e) (InitStates e) q :=
   Placement.placed (Placement.placed (initProgram e) (RadixLinearCombinationBinary.arithmeticPlacement e.erase))
     (finAddFlip : Fin (RadixLinearCombinationBinary.TapeCount e.erase+c) ≃ Fin (TapeCount e))
 

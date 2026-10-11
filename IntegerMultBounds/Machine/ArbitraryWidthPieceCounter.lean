@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.BinaryDescriptorDivMod
-import IntegerMultBounds.Machine.BinaryCanonicalData
-import IntegerMultBounds.Machine.BinaryDescriptorInstall
+module
+
+public import IntegerMultBounds.Machine.BinaryDescriptorDivMod
+public import IntegerMultBounds.Machine.BinaryCanonicalData
+public import IntegerMultBounds.Machine.BinaryDescriptorInstall
 
 /-! The physical fixed-base digit-extraction boundary for the arbitrary-width
 controller. No digit list or runtime quotient is supplied to the program.
 This module does not yet compile the outer piece-dispatch loop. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthPieceCounter
 noncomputable section
 variable {a : ℕ}

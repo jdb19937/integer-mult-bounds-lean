@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CountedLoopReuseAlphabet
-import IntegerMultBounds.Machine.FixedHeaderBankCopy
+module
+
+public import IntegerMultBounds.Machine.CountedLoopReuseAlphabet
+public import IntegerMultBounds.Machine.FixedHeaderBankCopy
 
 /-! Physical initialization and erasure of two independent gather clocks.
 The outer digit loop and inner field loop each need their own marked zero. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedGatherClockPair
 variable {a t : ℕ}
 

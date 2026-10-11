@@ -1,4 +1,6 @@
-import IntegerMultBounds.Schoenhage.DifSchedule
+module
+
+public import IntegerMultBounds.Schoenhage.DifSchedule
 
 /-! Layouts as permutations of address bits. With `σ` a permutation of the
 bit positions `[0, n)`, the logical address of the record stored at physical
@@ -8,6 +10,8 @@ stored array a butterfly on logical bit `P` is the butterfly on physical bit
 running the slot-major schedule on physical bits computes, at physical
 address `y`, the entry `(F⁻ z)_(B (logi y))` of the transform of the logical
 array (`physSchedule_eq`). -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Schoenhage
 

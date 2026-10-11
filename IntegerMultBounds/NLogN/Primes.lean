@@ -1,11 +1,15 @@
-import Mathlib.NumberTheory.Bertrand
-import Mathlib.Tactic
+module
+
+public import Mathlib.NumberTheory.Bertrand
+public import Mathlib.Tactic
 
 /-! Prime selection by Bertrand's postulate. From any `x ≥ 1`, a chain of
 primes `x < t₁ < t₂ < ⋯` with `tᵢ ≤ 2ⁱ x` exists; its members are pairwise
 coprime, odd when `x ≥ 2`, and the product of the first `d` lies at least
 `x^d` (strictly above for `d ≥ 1`) and at most `2^(d(d+1)/2) x^d`. Only existence is proved: no
 procedure for finding the primes within a cost bound is given. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.NLogN
 

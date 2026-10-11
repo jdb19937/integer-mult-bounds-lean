@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.RawLinearCombination
+module
+
+public import IntegerMultBounds.Machine.RawLinearCombination
 
 /-! Sequential composition of two machines with the same preserved control bank.
 Their private banks are physically disjoint; each invocation frames the other. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.SharedControlPair
 
 variable {c l r q m n B C : ℕ}

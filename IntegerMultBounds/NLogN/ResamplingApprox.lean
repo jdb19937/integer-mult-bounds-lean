@@ -1,7 +1,9 @@
-import IntegerMultBounds.NLogN.ResamplingNorm
-import IntegerMultBounds.NLogN.Approx
-import Mathlib.Analysis.Complex.ExponentialBounds
-import Mathlib.Analysis.Real.Pi.Bounds
+module
+
+public import IntegerMultBounds.NLogN.ResamplingNorm
+public import IntegerMultBounds.NLogN.Approx
+public import Mathlib.Analysis.Complex.ExponentialBounds
+public import Mathlib.Analysis.Real.Pi.Bounds
 
 /-! Truncation of the Gaussian resampling series (Lemma 4.9 of Harvey and
 van der Hoeven). Proved: keeping only the `2m + 1` terms whose index lies within
@@ -12,6 +14,8 @@ most `3 / (α 2^p)`; and a fixed-point evaluation of the truncated sum whose
 `2m + 1` terms each carry scaled error at most `c` approximates `S u` with
 scaled error at most `c (2m + 1) + 3` when `α ≥ 1`. The per-term fixed-point
 computation of a Gaussian weight and the bit costs are not part of this file. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.NLogN
 

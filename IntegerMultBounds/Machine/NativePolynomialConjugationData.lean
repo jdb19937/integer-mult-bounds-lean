@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ButterflyStreamSemantics
-import IntegerMultBounds.Machine.TwosComplement
+module
+
+public import IntegerMultBounds.Machine.ButterflyStreamSemantics
+public import IntegerMultBounds.Machine.TwosComplement
 
 /-! Exact native two's-complement conjugation. Real fields stay literal,
 imaginary fields are modularly negated at unchanged width. A strict signed
 guard rules out the unrepresentable negation of the most-negative word. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.NativePolynomialConjugationData
 noncomputable section
 open ButterflyStreamData (Coefficient)

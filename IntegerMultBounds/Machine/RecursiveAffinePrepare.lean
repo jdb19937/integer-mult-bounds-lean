@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.RecursiveAffineDimensionsClean
-import IntegerMultBounds.Machine.RecursiveChildQuotientsBound
-import IntegerMultBounds.Machine.RecursiveChildPrepare
+module
+
+public import IntegerMultBounds.Machine.RecursiveAffineDimensionsClean
+public import IntegerMultBounds.Machine.RecursiveChildQuotientsBound
+public import IntegerMultBounds.Machine.RecursiveChildPrepare
 
 /-! Fully paid within-group coordinate-view preparation. A fixed program starts
 with only the original six headers, initializes its divisors, computes width
 and row quotients, constructs all spectator powers/products, replaces occupied
 headers and erases every temporary copy. Parent-header restoration is separate. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveAffinePrepare
 open RecursiveInterchangeLayout (Descriptor volume)
 open RecursiveAffineDimensions (Group)

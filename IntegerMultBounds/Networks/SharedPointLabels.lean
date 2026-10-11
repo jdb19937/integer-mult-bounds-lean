@@ -1,9 +1,13 @@
-import IntegerMultBounds.Networks.Labels
+module
+
+public import IntegerMultBounds.Networks.Labels
 
 /-! Nondegenerate source labels for shared-point triple families. The labels
 are the actual spans of supported indicator vectors, not chosen abstract
 nondegenerate subspaces. The argument works even when the ambient rational
 form is degenerate (ambient dimension nine). -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.SharedPointLabels
 

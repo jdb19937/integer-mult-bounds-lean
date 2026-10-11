@@ -1,11 +1,15 @@
-import IntegerMultBounds.Networks.ProjectionTrace
-import IntegerMultBounds.Networks.GlobalRankStages
-import IntegerMultBounds.Networks.GlobalLabelsNondegenerate
-import IntegerMultBounds.Networks.NetworkBudget
+module
+
+public import IntegerMultBounds.Networks.ProjectionTrace
+public import IntegerMultBounds.Networks.GlobalRankStages
+public import IntegerMultBounds.Networks.GlobalLabelsNondegenerate
+public import IntegerMultBounds.Networks.NetworkBudget
 
 /-! Actual projection-difference ranks for the physically labeled three-stage
 network. Scalar gates, incidences, labels, and terminal dimensions are the
 existing constructions; no global rank or loss estimate is a hypothesis. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.GlobalProjectionRank
 

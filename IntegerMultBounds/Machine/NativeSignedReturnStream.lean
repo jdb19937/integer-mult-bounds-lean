@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.RadixSignedShiftRight
-import IntegerMultBounds.Machine.DelimitedRadixRecord
-import IntegerMultBounds.Machine.CountedBankHeaderClean
-import IntegerMultBounds.Machine.SignedRadixExactReturn
+module
+
+public import IntegerMultBounds.Machine.RadixSignedShiftRight
+public import IntegerMultBounds.Machine.DelimitedRadixRecord
+public import IntegerMultBounds.Machine.CountedBankHeaderClean
+public import IntegerMultBounds.Machine.SignedRadixExactReturn
 
 /-! One fixed native streaming transducer shifts each nonempty signed field,
 retains both field separators, and pays source/output rewind and old-source
 erasure. No per-record arithmetic controls are supplied by the caller. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.NativeSignedReturnStream
 open RadixDigits
 open RadixSignedShiftRight (Word shifted track cfg tapes)

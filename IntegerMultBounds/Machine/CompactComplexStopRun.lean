@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactComplexStopCompare
+module
+
+public import IntegerMultBounds.Machine.CompactComplexStopCompare
 
 /-! Original global dimension and remaining exponent feed a fixed stop machine:
 construct the threshold once, then read the actual runtime comparison flag.
 All scalar words are retained. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexStopRun
 noncomputable section
 variable {q : ℕ}

@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.BinaryDescriptorCleanupList
-import IntegerMultBounds.Machine.RawLinearCombination
+module
+
+public import IntegerMultBounds.Machine.BinaryDescriptorCleanupList
+public import IntegerMultBounds.Machine.RawLinearCombination
 
 /-! Physical erasure of marked arithmetic source fields at fixed tape slots.
 The control list is compiled once; field lengths and values are runtime data. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RadixControlCleanupList
 noncomputable section
 open SharedPlacementAlphabet (setTape)

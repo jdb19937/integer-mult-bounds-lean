@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.BinaryDescriptorCopy
-import IntegerMultBounds.Machine.PlacedDescriptorConstruction
+module
+
+public import IntegerMultBounds.Machine.BinaryDescriptorCopy
+public import IntegerMultBounds.Machine.PlacedDescriptorConstruction
 
 /-! Physical marked descriptor duplication on two actual caller tapes.
 The source word and head survive, the blank destination becomes the same
 canonical word at head one, and all other caller tapes and heads are framed. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryDescriptorCopyPlaced
 noncomputable section
 open SharedPlacementAlphabet (setTape)

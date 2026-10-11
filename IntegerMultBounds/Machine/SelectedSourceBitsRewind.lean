@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.SelectedSourceBitsScan
-import IntegerMultBounds.Machine.FiniteReturnStackAt
+module
+
+public import IntegerMultBounds.Machine.SelectedSourceBitsScan
+public import IntegerMultBounds.Machine.FiniteReturnStackAt
 
 /-! Return from an interior source position across its actual nonblank prefix;
 there is no blank assumption at rho or at any selected subsegment boundary. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.SelectedSourceBitsRewind
 noncomputable section
 open SelectedSourceBitsCore (payload)

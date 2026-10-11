@@ -1,9 +1,13 @@
-import IntegerMultBounds.Machine.RadixRationalData
-import IntegerMultBounds.Machine.RadixUnary
-import IntegerMultBounds.Swap.Modular
+module
+
+public import IntegerMultBounds.Machine.RadixRationalData
+public import IntegerMultBounds.Machine.RadixUnary
+public import IntegerMultBounds.Swap.Modular
 
 /-! Literal fixed-rational coefficient multiplication in prime-radix words.
 A fixed finite signed-carry table processes each digit in one transition. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.RadixRational
 

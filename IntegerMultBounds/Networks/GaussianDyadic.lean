@@ -1,9 +1,13 @@
-import IntegerMultBounds.Networks.BinaryColumns
+module
+
+public import IntegerMultBounds.Networks.BinaryColumns
 
 /-! Exact arithmetic closure for the binary phase interfaces. A grid at precision
 `n` consists of Gaussian integers divided by `2^n`. Each literal translation
 kernel increases precision by at most one, and a whole-column factor by at most
 the number of columns. These are arithmetic bounds, not tape runtimes. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.GaussianDyadic
 

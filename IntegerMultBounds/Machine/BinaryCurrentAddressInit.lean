@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.BinaryCurrentAddress
-import IntegerMultBounds.Machine.BinaryAddressTableFill
+module
+
+public import IntegerMultBounds.Machine.BinaryCurrentAddress
+public import IntegerMultBounds.Machine.BinaryAddressTableFill
 
 /-! Physically initialize a live address counter and its raw readout from the
 original binary width descriptor. No address word is prepared externally. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryCurrentAddressInit
 noncomputable section
 open CountedLoopReuseAlphabet (encoding binary)

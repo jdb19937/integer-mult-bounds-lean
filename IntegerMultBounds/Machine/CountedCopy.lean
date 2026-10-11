@@ -1,12 +1,16 @@
-import IntegerMultBounds.Machine.CountdownData
-import IntegerMultBounds.Machine.BitTape
-import IntegerMultBounds.Machine.WordTape
-import IntegerMultBounds.Machine.Hoare
+module
+
+public import IntegerMultBounds.Machine.CountdownData
+public import IntegerMultBounds.Machine.BitTape
+public import IntegerMultBounds.Machine.WordTape
+public import IntegerMultBounds.Machine.Hoare
 
 /-! Binary-counted transfer of an implicit-address stream. A five-state
 three-tape machine decrements its little-endian clock before each copy. Carry
 propagation and every head return are charged; no width scan occurs per symbol.
 The initial clock and its local boundaries are explicit preconditions. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.CountedCopy
 

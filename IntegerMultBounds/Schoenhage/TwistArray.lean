@@ -1,5 +1,7 @@
-import IntegerMultBounds.Schoenhage.TwistTape
-import IntegerMultBounds.Schoenhage.Relabel
+module
+
+public import IntegerMultBounds.Schoenhage.TwistTape
+public import IntegerMultBounds.Schoenhage.Relabel
 
 /-! The recordwise monomial over a whole array. A fifteen-tape word program
 runs the eleven-tape monomial on its first tapes once per record, loading the
@@ -7,6 +9,8 @@ record's head count, tail count and the two sign flags from four descriptor
 lists (`runs_twistArray`): from the component words of records `fᵢ` with
 exponents `Eᵢ`, the output gains the component words of `y^(Eᵢ) fᵢ`, in
 `O(M r w)` steps for `M` records. -/
+
+@[expose] public section
 
 set_option maxRecDepth 10000
 

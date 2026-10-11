@@ -1,11 +1,15 @@
-import IntegerMultBounds.Resampling.RowSelect
-import IntegerMultBounds.Machine.NeumannLoop
-import IntegerMultBounds.Machine.PairJoin
+module
+
+public import IntegerMultBounds.Resampling.RowSelect
+public import IntegerMultBounds.Machine.NeumannLoop
+public import IntegerMultBounds.Machine.PairJoin
 
 /-! Word lists for the numerical `B̃₀` on tapes: the selected words of the
 row-selecting map (the joined pairs at the selected indices split again),
 and the one-step maps with window radius zero used for the halving and for
 `D̃'`. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Resampling.B0Words
 

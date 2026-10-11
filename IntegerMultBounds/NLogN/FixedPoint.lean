@@ -1,5 +1,7 @@
-import IntegerMultBounds.NLogN.FFT
-import Mathlib.Analysis.Complex.Basic
+module
+
+public import IntegerMultBounds.NLogN.FFT
+public import Mathlib.Analysis.Complex.Basic
 
 /-! Rounding-error analysis of the radix-2 transform over `ℂ`. Each output at
 each level of the recursion is perturbed by an explicit error term of norm at
@@ -9,6 +11,8 @@ at most the factor `2 ^ n`. A complex value within `1 / 2` of an integer rounds
 to it, so integer vectors are recovered exactly from close approximations.
 This fixes no precision, and does not compile fixed-point arithmetic to tape
 steps or bound the error of the full forward–pointwise–inverse pipeline. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.NLogN
 

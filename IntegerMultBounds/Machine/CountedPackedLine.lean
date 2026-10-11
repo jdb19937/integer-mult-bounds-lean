@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.PackedLine
-import IntegerMultBounds.Machine.CountedGatherRun
+module
+
+public import IntegerMultBounds.Machine.PackedLine
+public import IntegerMultBounds.Machine.CountedGatherRun
 
 /-! Uniform thirteen-tape packed line. Shape and digit count are supplied on
 runtime binary descriptors, all of which are retained across the actual gather,
 column transduction, offset erasure and physical head rewinds. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedPackedLine
 noncomputable section
 variable {a : ℕ}

@@ -1,11 +1,15 @@
-import IntegerMultBounds.Machine.PackedArith
-import IntegerMultBounds.Compact.PowerTwoDigits
-import IntegerMultBounds.Compact.PackedControl
+module
+
+public import IntegerMultBounds.Machine.PackedArith
+public import IntegerMultBounds.Compact.PowerTwoDigits
+public import IntegerMultBounds.Compact.PackedControl
 
 /-! The forward packed program on tapes computes `packedEarly` in the
 radices `2^q` and `2^b`: each gathered offset word packs as the corresponding
 integer offset, each modular transduction is the corresponding modular
 update, so the final words are exactly the packed program's output integers. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Compact.PowerTwo
 

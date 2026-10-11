@@ -1,7 +1,11 @@
-import IntegerMultBounds.Machine.TranslationDescriptors
+module
+
+public import IntegerMultBounds.Machine.TranslationDescriptors
 
 /-! Physical erasure of translation metadata and synthesis from a reusable
 marked workspace. Every scan and join is charged, and Q, a, B stay immutable. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.TranslationDescriptorsReuse
 
@@ -11,9 +15,9 @@ open TranslationDescriptors (bank descriptors)
 private def packed (ds : Fin 4 → List Bool) (bs qs as : List Bool) : Tapes 10 0 :=
   bank (fun i => ds (Fin.castAdd 1 i)) bs qs as (binary (ds 3)) 1
 
-private def slot (j : Fin 4) : Fin 10 := ![1,2,3,9] j
+def slot (j : Fin 4) : Fin 10 := ![1,2,3,9] j
 
-private def placement (j : Fin 4) : Fin (2+8) ≃ Fin 10 :=
+def placement (j : Fin 4) : Fin (2+8) ≃ Fin 10 :=
   (Equiv.swap 1 5).trans (Equiv.swap 0 (slot j))
 
 /-- Erase one generated word, using the preserved B descriptor as a frame. -/

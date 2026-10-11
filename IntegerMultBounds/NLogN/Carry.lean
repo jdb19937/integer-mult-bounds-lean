@@ -1,5 +1,7 @@
-import Mathlib.Tactic
-import IntegerMultBounds.NLogN.Kronecker
+module
+
+public import Mathlib.Tactic
+public import IntegerMultBounds.NLogN.Kronecker
 
 /-! Carry propagation: an unnormalised digit vector, such as the output of a
 convolution, is rewritten as proper base-`B` digits, truncated to a fixed
@@ -9,6 +11,8 @@ form has exactly `L` digits and the same value whenever that value fits, and
 the resulting `k * L` bits have the machine's `binaryValue` equal to the
 digit vector's value. This is list-level arithmetic; no tape program or cost
 bound is part of this file. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.NLogN
 

@@ -1,5 +1,7 @@
-import IntegerMultBounds.Schoenhage.RingSpec
-import IntegerMultBounds.Spec.PointwiseProducts
+module
+
+public import IntegerMultBounds.Schoenhage.RingSpec
+public import IntegerMultBounds.Spec.PointwiseProducts
 
 /-! The ring product's word-level output in the paper's format. A record's
 component words, most significant bit first, reversed are the multiplier's
@@ -8,6 +10,8 @@ signed values are the numerators (`coeffs_lsbPairs`); and the output words,
 reversed, are the words of `Q_p(f g / r)` (`ringOut_records`): the integer
 negacyclic coefficients agree with `NLogN.negacyclicMul`, and truncation of
 `2^-(p+ℓ)` times them is `rho0`. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Schoenhage
 

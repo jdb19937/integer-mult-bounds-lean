@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.RationalPrefixTranslationStream
-import IntegerMultBounds.Machine.FiberLayoutData
+module
+
+public import IntegerMultBounds.Machine.RationalPrefixTranslationStream
+public import IntegerMultBounds.Machine.FiberLayoutData
 
 /-! A concrete flat-array controlled shift. The fibers are extracted from the
 actual input array; the selected control is extracted from the physical prefix
 index and computed by the executing mixed-prefix counter. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.FlatControlledShift
 
 variable {P Q B radix c : ℕ}

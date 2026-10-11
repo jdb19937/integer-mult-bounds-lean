@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.RecursiveInterchangeLayout
+module
+
+public import IntegerMultBounds.Machine.RecursiveInterchangeLayout
 
 /-! Logical volume along genuine seven-factor child selections. The row count
 shrinks by the number of roles, while all original target digits remain present
 in target or spectator fields. No parked storage is counted as child volume. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveInterchangeVolume
 open RecursiveInterchangeLayout
 

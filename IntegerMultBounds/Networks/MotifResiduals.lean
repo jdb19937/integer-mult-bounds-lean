@@ -1,7 +1,11 @@
-import IntegerMultBounds.Networks.StageLabels
-import IntegerMultBounds.Networks.NeighborResidual
+module
+
+public import IntegerMultBounds.Networks.StageLabels
+public import IntegerMultBounds.Networks.NeighborResidual
 
 /-! Exact orthogonal residuals of the motif's actual tensor subspaces. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.MotifResiduals
 

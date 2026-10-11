@@ -1,8 +1,13 @@
-import IntegerMultBounds.Networks.BinaryWalsh
+module
+
+public import IntegerMultBounds.Networks.BinaryWalsh
 
 /-! Complex conjugation converts the literal forward translation-kernel list
 to its inverse-phase list in the same order. This is a mathematical bridge;
 physical conjugation and inverse-oriented recursive execution remain separate. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Networks.BinaryWalshComplexConjugation
 noncomputable section
 open BinaryPhase BinaryWalsh

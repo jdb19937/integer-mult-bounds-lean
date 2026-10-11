@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactComplexActualCallFrameEdge
+module
+
+public import IntegerMultBounds.Machine.CompactComplexActualCallFrameEdge
 
 /-! The original finite call schema supplies the complete original lowered
 network's factor certificate, rather than an existentially selected replacement
 family. This is array semantics and exact instruction counting, not tape execution. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexActualCallLoweredNetwork
 noncomputable section
 open Networks

@@ -1,8 +1,12 @@
-import IntegerMultBounds.Networks.PairedCoarseCorrect
-import IntegerMultBounds.Networks.SupportInterpretation
+module
+
+public import IntegerMultBounds.Networks.PairedCoarseCorrect
+public import IntegerMultBounds.Networks.SupportInterpretation
 
 /-! The literal ordered table query agrees with source-set interpretation.
 This connects recursive output contracts to concrete partition identities. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.PairedQuerySupport
 

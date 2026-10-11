@@ -1,4 +1,6 @@
-import IntegerMultBounds.Schoenhage.Dif
+module
+
+public import IntegerMultBounds.Schoenhage.Dif
 
 /-! The in-place rounds on several axes. An axis of length `2^a` whose
 address bits sit above `o` lower bits has its rounds at bits `o + a - 1, …, o`
@@ -7,6 +9,8 @@ On a slice through the other axes these are the one-axis rounds
 (`difAllAt_slice`). Running every axis in turn, first axis first, computes the
 normalized transform over all axes with every axis address bit-reversed
 (`difAxes_eq`). -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Schoenhage
 

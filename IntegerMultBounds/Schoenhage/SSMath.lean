@@ -1,7 +1,11 @@
-import IntegerMultBounds.Schoenhage.DriverUp
+module
+
+public import IntegerMultBounds.Schoenhage.DriverUp
 
 /-! The driver's trajectory computes `ssMul`: the up-sweep over the saved
 levels of the base products returns the products of the top batch. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Schoenhage
 

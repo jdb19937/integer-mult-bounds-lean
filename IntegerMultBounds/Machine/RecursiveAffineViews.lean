@@ -1,15 +1,20 @@
-import IntegerMultBounds.Machine.RecursiveInterchangeLayout
-import Mathlib.Tactic.Ring
-import Mathlib.Tactic.Linarith
-import Mathlib.Tactic.NthRewrite
-import Mathlib.Tactic.Group
-import Mathlib.Data.List.OfFn
+module
+
+public import IntegerMultBounds.Machine.RecursiveInterchangeLayout
+public import Mathlib.Tactic.Ring
+public import Mathlib.Tactic.Linarith
+public import Mathlib.Tactic.NthRewrite
+public import Mathlib.Tactic.Group
+public import Mathlib.Data.List.OfFn
 
 /-! Literal row-major coordinate views for all ordered affine shifts. The first
 selected field is the earlier control and the second the later target. They
 may both lie inside H, both inside D, or on opposite sides of the original
 middle spectator factor. These equalities move no payload symbols; physical
 construction and replacement of the six headers require separate programs. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveAffineViews
 open RecursiveInterchangeLayout (Descriptor volume index child)
 variable (q b : ℕ) {m : ℕ}

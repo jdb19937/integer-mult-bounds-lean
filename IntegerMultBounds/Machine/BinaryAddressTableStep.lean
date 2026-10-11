@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.BinaryAddressTableData
-import IntegerMultBounds.Machine.MarkedControlStreamReset
-import IntegerMultBounds.Machine.CountedLoopReuse
+module
+
+public import IntegerMultBounds.Machine.BinaryAddressTableData
+public import IntegerMultBounds.Machine.MarkedControlStreamReset
+public import IntegerMultBounds.Machine.CountedLoopReuse
 
 /-! Copy one actual fixed-width address to the packed output, physically rewind
 its source, and increment it. The counter width is absent from finite control. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryAddressTableStep
 open BinaryAddressTableData
 open CountedCopyReuse (empty binary)

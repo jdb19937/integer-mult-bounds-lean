@@ -1,10 +1,14 @@
-import IntegerMultBounds.Networks.Paired49Certificate
-import IntegerMultBounds.Networks.DAGValueTransfer
-import IntegerMultBounds.Networks.DAGInstructionCount
+module
+
+public import IntegerMultBounds.Networks.Paired49Certificate
+public import IntegerMultBounds.Networks.DAGValueTransfer
+public import IntegerMultBounds.Networks.DAGInstructionCount
 
 /-! The checked local witness compiled to its actual scalar register program.
 Preloading the physical input roles and zeroing other roles gives the complete
 pair-exclusion map. This is scalar execution, not literal tape execution. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.Paired49Execution
 

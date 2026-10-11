@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.CountedLateRankBank
+module
+
+public import IntegerMultBounds.Machine.CountedLateRankBank
 
 /-! Complete original-header V/W/U rank split with paid reads over the blank
 tail, charged rewind of all four heads, and literal descriptor/work erasure. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedLateRankRun
 noncomputable section
 variable {a : ℕ}

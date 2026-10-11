@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.FiniteReturnStackAt
-import IntegerMultBounds.Machine.ExactFrame
-import IntegerMultBounds.Machine.SharedBank
+module
+
+public import IntegerMultBounds.Machine.FiniteReturnStackAt
+public import IntegerMultBounds.Machine.ExactFrame
+public import IntegerMultBounds.Machine.SharedBank
 
 /-! A finite kernel family on an arbitrary bank and alphabet is selected by
 an actual appended binary token. Call sites write the token, and dispatch
 reads and erases it before execution; both transitions and the write are paid. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.FiniteKernelDispatchAlphabet
 noncomputable section
 variable {N k t a : ℕ}

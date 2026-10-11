@@ -1,8 +1,12 @@
-import IntegerMultBounds.Machine.WordTape
+module
+
+public import IntegerMultBounds.Machine.WordTape
 
 /-! Exact local views into concatenated raw tape words. These representation
 lemmas support repeated stream routines without extra reads or writes; runtime
 claims belong to the literal programs that consume the views. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.WordSegments
 

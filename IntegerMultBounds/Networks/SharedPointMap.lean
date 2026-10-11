@@ -1,11 +1,15 @@
-import IntegerMultBounds.Networks.SharedPointLabels
-import IntegerMultBounds.Networks.NeighborCounts
-import IntegerMultBounds.Networks.CircuitBits
-import Mathlib.LinearAlgebra.BilinearForm.Orthogonal
+module
+
+public import IntegerMultBounds.Networks.SharedPointLabels
+public import IntegerMultBounds.Networks.NeighborCounts
+public import IntegerMultBounds.Networks.CircuitBits
+public import Mathlib.LinearAlgebra.BilinearForm.Orthogonal
 
 /-! The source/output semantic map of the shared-point pair-exclusion circuit.
 Inserting the common point gives an exact bijection of supports; summing its
 partial outputs counts every intersection-one source exactly once. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.SharedPointMap
 

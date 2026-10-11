@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.RecursiveDimensionBank
-import IntegerMultBounds.Machine.RepeatedControlBootstrap
-import IntegerMultBounds.Machine.BinaryDescriptorInstallMarkedList
+module
+
+public import IntegerMultBounds.Machine.RecursiveDimensionBank
+public import IntegerMultBounds.Machine.RepeatedControlBootstrap
+public import IntegerMultBounds.Machine.BinaryDescriptorInstallMarkedList
 
 /-! Five physical marked descriptor copies connect the recursive dimension
 bank to the blank shift workspace. Original headers and payload are framed. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveShiftInstall
 open BinaryDescriptorInstallMarkedList
 variable {q : ℕ}

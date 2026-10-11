@@ -1,4 +1,6 @@
-import IntegerMultBounds.Machine.ExactFrame
+module
+
+public import IntegerMultBounds.Machine.ExactFrame
 
 /-! Read a bit on one tape and prepend it, or its negation, to a word on a
 second tape: the second head steps left and writes the bit there, so the
@@ -6,6 +8,8 @@ word starting one cell to the right is doubled and the bit added in
 least-significant-first reading. The first head optionally steps left after
 reading, which consumes the bits of a word from its most significant end.
 Two tapes, four states, two transitions. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.PrependRead
 

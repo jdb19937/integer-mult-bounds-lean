@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.FlatCoordinateLayout
+module
+
+public import IntegerMultBounds.Machine.FlatCoordinateLayout
 
 /-! One- and two-digit decompositions of the actual most-significant-first
 coordinate encoding. These are arithmetic identities for the existing word;
 they do not postulate a rearrangement or perform an uncharged tape operation. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveCoordinateDigits
 noncomputable section
 open FlatCoordinateLayout

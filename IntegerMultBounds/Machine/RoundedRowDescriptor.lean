@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.RowPaddingSpanCounts
-import IntegerMultBounds.Machine.BinaryDescriptorDivision
-import IntegerMultBounds.Machine.RecursiveChildQuotientsConstant
-import IntegerMultBounds.Machine.RecursiveDescriptorDivision
+module
+
+public import IntegerMultBounds.Machine.RowPaddingSpanCounts
+public import IntegerMultBounds.Machine.BinaryDescriptorDivision
+public import IntegerMultBounds.Machine.RecursiveChildQuotientsConstant
+public import IntegerMultBounds.Machine.RecursiveDescriptorDivision
 
 /-! A physical constructor for the least positive multiple of D above or equal
 to a positive R. Only R and D are supplied; one, R-1, the quotient, all markers,
 and the rounded result are actually written. All private tapes finish blank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RoundedRowDescriptor
 variable {q : ℕ}
 noncomputable section
@@ -53,10 +58,10 @@ theorem rounded_le_multiple (R D n : ℕ) (hR : 0 < R) (hn : R ≤ n*D) : rounde
   · have hquot : (R-1)/D < n := (Nat.div_lt_iff_lt_mul (by omega)).mpr (by omega)
     exact Nat.mul_le_mul_right D (by omega)
 
-private def hd : Option (List Bool) → ℤ
+def hd : Option (List Bool) → ℤ
   | none => 0
   | some _ => 1
-private def tp : Option (List Bool) → ℤ → Fin (q+4)
+def tp : Option (List Bool) → ℤ → Fin (q+4)
   | none => fun _ => blank
   | some xs => RadixZeroFill.encodedBinary xs
 
@@ -74,9 +79,9 @@ def bits (R D : ℕ) : List Bool := BoundedProductDescriptor.bits ((R-1)/D+1) D
 
 def output (rs ds : List Bool) (R D : ℕ) : Tapes 15 q := bank rs ds none none none (some (bits R D))
 
-private def oneBits := RecursiveChildQuotientsConstant.bits 1
-private def decBits (rs : List Bool) := BinarySubReuse.difference rs oneBits
-private def incBits := GrowingCounterData.increment
+def oneBits := RecursiveChildQuotientsConstant.bits 1
+def decBits (rs : List Bool) := BinarySubReuse.difference rs oneBits
+def incBits := GrowingCounterData.increment
 
 def subPlacement : Fin (3+12) ≃ Fin 15 where
   toFun := ![0,2,3,1,4,5,6,7,8,9,10,11,12,13,14]
@@ -105,7 +110,7 @@ def incProgram := Placement.placed
   (Alphabet.program (RadixToBinary.binaryEncoding (q := q)) GrowingCounter.program)
   (FiniteReturnStackAt.placement (4 : Fin 15))
 def mulProgram := Placement.placed (BoundedProductDescriptor.program (q := q)) mulPlacement
-private def cleanSlots : List (Fin 15) := [2,3,4]
+def cleanSlots : List (Fin 15) := [2,3,4]
 def cleanProgram := BinaryDescriptorCleanupList.program (a := q) (by decide : 0 < 15) cleanSlots
 
 /-- Finite control is independent of R and D. -/

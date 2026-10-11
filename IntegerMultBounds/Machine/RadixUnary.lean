@@ -1,9 +1,13 @@
-import IntegerMultBounds.Machine.RadixDigits
-import IntegerMultBounds.Machine.Hoare
+module
+
+public import IntegerMultBounds.Machine.RadixDigits
+public import IntegerMultBounds.Machine.Hoare
 
 /-! Literal finite-state digit transduction on two tapes. The lookup table is
 fixed independently of the word width. Each input digit costs one transition,
 the complete source tape is preserved, and only the output segment changes. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.RadixUnary
 

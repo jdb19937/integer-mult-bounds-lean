@@ -1,12 +1,16 @@
-import IntegerMultBounds.Machine.BlockReverseStreamReuse
-import IntegerMultBounds.Machine.ScratchReset
-import IntegerMultBounds.Machine.BlockNegationData
+module
+
+public import IntegerMultBounds.Machine.BlockReverseStreamReuse
+public import IntegerMultBounds.Machine.ScratchReset
+public import IntegerMultBounds.Machine.BlockNegationData
 
 /-! Reusable single-fiber coordinate negation. Copy the first block, reverse
 its raw tail into scratch, restore the scratch head, and reverse each payload
 block into output. The final literal scratch reset restores the entire scratch
 background and its original head. All controls are retained and all work clocks
 are cleaned, with preparation and every sequential join charged. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.BlockNegationReuse
 

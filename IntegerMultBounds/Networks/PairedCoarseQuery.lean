@@ -1,8 +1,12 @@
-import IntegerMultBounds.Networks.PairedQuerySupport
+module
+
+public import IntegerMultBounds.Networks.PairedQuerySupport
 
 /-! Transport actual recursive coarse outputs back to the original fine graph.
 The contraction uses genuine weighted source cells and keeps interpretation at
 the current persistent DAG state, ready for the reconstruction constructors. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.PairedCoarseQuery
 

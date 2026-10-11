@@ -1,15 +1,20 @@
-import IntegerMultBounds.Machine.RoleArrayStack
-import IntegerMultBounds.Machine.InjectivePlacement
+module
+
+public import IntegerMultBounds.Machine.RoleArrayStack
+public import IntegerMultBounds.Machine.InjectivePlacement
 
 /-! Place a physical role-array stack transfer in any four distinct bank slots:
 role, shared payload stack, reusable work clock, immutable volume descriptor. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RoleArrayStackAt
 open SharedPlacementAlphabet (setTape)
 open RoleArrayStackMoves (idle)
 variable {t a : ℕ}
 noncomputable section
 
-private theorem size (slot : Fin 4 → Fin t) (hi : Function.Injective slot) : 4+(t-4) = t := by
+theorem size (slot : Fin 4 → Fin t) (hi : Function.Injective slot) : 4+(t-4) = t := by
   have h := Fintype.card_le_of_injective slot hi
   simp only [Fintype.card_fin] at h
   omega

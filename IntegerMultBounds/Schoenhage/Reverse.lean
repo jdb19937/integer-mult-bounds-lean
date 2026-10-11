@@ -1,10 +1,14 @@
-import IntegerMultBounds.Schoenhage.Ops
+module
+
+public import IntegerMultBounds.Schoenhage.Ops
 
 /-! Copying a word reversed. A two-tape machine scans the source's current
 word to its separator, walks back over it writing each bit to the
 destination, ends the new word with a separator, and steps the source past
 the word. As a primitive (`Reverse.prim`, `revw`): the source advances one
 word and the destination gains the reversed word (`runs_revw`). -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Schoenhage
 

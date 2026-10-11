@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.BinaryDescriptorFrames
-import IntegerMultBounds.Machine.RecursiveDescriptorSize
+module
+
+public import IntegerMultBounds.Machine.BinaryDescriptorFrames
+public import IntegerMultBounds.Machine.RecursiveDescriptorSize
 
 /-! Fixed-many runtime descriptor stack operations charged to the recursive
 child's logical volume. The constant depends only on the compiled field count
 and role count, not recursion depth, tape positions, or ancestor storage size. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveDescriptorFrames
 open RecursiveInterchangeLayout RecursiveInterchangeVolume BinaryDescriptorFrames
 variable {t a q roles m n k : ℕ} {root child : Descriptor}

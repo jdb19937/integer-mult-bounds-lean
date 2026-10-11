@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.BinaryDescriptorFrameRestore
-import IntegerMultBounds.Machine.RecursiveAffinePrepare
+module
+
+public import IntegerMultBounds.Machine.BinaryDescriptorFrameRestore
+public import IntegerMultBounds.Machine.RecursiveAffinePrepare
 
 /-! Six-header push and occupied-header restoration on one dedicated stack.
 The programs are fixed independently of words or lengths. The stack may contain
 older data; only the explicit free interval for the saved frame is required. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveViewFrame
 open BinaryDescriptorFrames
 variable {q : ℕ}

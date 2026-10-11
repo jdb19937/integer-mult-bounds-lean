@@ -1,4 +1,6 @@
-import IntegerMultBounds.NLogN.Approx
+module
+
+public import IntegerMultBounds.NLogN.Approx
 
 /-! The elementary fixed-point operations of Harvey and van der Hoeven,
 Sections 2.3 to 2.5, at the level of error bounds. Proved: `p`-bit fixed-point
@@ -13,6 +15,8 @@ product is commutative with `‖ab‖ ≤ r ‖a‖ ‖b‖` (Lemma 2.5) and mul
 by a power of `y` is a signed cyclic shift of norm one. The bit costs
 `O(p^{1+δ})` are not formalised, and the coefficient-vector product is not yet
 identified with multiplication in `SynthRing`. -/
+
+@[expose] public section
 
 open Complex
 

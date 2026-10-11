@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CountedPairPosition
-import IntegerMultBounds.Machine.CountedPosition
-import IntegerMultBounds.Machine.RowPaddingBlock
+module
+
+public import IntegerMultBounds.Machine.CountedPairPosition
+public import IntegerMultBounds.Machine.CountedPosition
+public import IntegerMultBounds.Machine.RowPaddingBlock
 
 /-! Physical origin restoration after streaming padding or cropping. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RowPaddingReset
 
 theorem binary_zero (bs : List Bool) : CountedLoopReuseAlphabet.binary (a := 0) bs =

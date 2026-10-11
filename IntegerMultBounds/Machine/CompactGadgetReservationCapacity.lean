@@ -1,7 +1,12 @@
-import IntegerMultBounds.Compact.Layout
+module
+
+public import IntegerMultBounds.Compact.Layout
 
 /-! Concrete existing-axis reservations from compact-control-layout.tex.
 The two front fields and back field fit without adding address coordinates. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactGadgetReservationCapacity
 
 def chunks (bits K : ℕ) := (bits+K-1)/K

@@ -1,7 +1,9 @@
-import Mathlib.Analysis.SpecialFunctions.Pow.Real
-import Mathlib.Analysis.SpecialFunctions.Log.Basic
-import Mathlib.Algebra.Field.GeomSum
-import Mathlib.Order.Filter.AtTopBot.Archimedean
+module
+
+public import Mathlib.Analysis.SpecialFunctions.Pow.Real
+public import Mathlib.Analysis.SpecialFunctions.Log.Basic
+public import Mathlib.Algebra.Field.GeomSum
+public import Mathlib.Order.Filter.AtTopBot.Archimedean
 
 /-! Arithmetic of the chunk-interchange recurrence (§4). A node of width `m^k`
 makes `s` recursive calls on streams of volume `V / W`; with `s / W ≤ m^τ` the
@@ -9,6 +11,8 @@ normalized cost is `O(m^{kτ})`. The remaining lemmas bound the digit pieces of
 a general width, the row padding, the row-range digits, and the radix padding
 used to remove the width restrictions. These are statements about numbers, not
 about a machine. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Swap.Recurrence
 

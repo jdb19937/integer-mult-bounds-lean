@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.BinaryDescriptorStackRoundtrip
-import IntegerMultBounds.Machine.GrowingCounter
+module
+
+public import IntegerMultBounds.Machine.BinaryDescriptorStackRoundtrip
+public import IntegerMultBounds.Machine.GrowingCounter
 
 /-! A reusable incrementer for marked binary descriptors on the unchanged
 finite alphabet. Carry propagation and return to the marker are charged. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryDescriptorIncrement
 variable {q : ℕ}
 

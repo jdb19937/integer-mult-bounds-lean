@@ -1,5 +1,7 @@
-import IntegerMultBounds.Networks.GroupedRouting
-import IntegerMultBounds.Networks.GlobalCircuitBits
+module
+
+public import IntegerMultBounds.Networks.GroupedRouting
+public import IntegerMultBounds.Networks.GlobalCircuitBits
 
 /-! Actual grouped three-coordinate networks on the existing physical wire
 layout. Each invocation uses its own stage-indexed side and central banks.
@@ -7,6 +9,8 @@ Injective placement transports the exact sparse group support; groups outside
 a local invocation are left untouched. The reversed middle schedule retains
 its physical side-wire names, and the full run refines `GlobalCircuit`.
 No rank, nested-label, numerical-precision, or tape-cost claim is made here. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.GlobalGrouped
 

@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CleanSubbank
-import IntegerMultBounds.Machine.SharedBankStageInput
+module
+
+public import IntegerMultBounds.Machine.CleanSubbank
+public import IntegerMultBounds.Machine.SharedBankStageInput
 
 /-! Finite physical joining of stages that clean their private outputs. Every
 join is charged; the compiled input and output contain only the same permanent
 bank and blank private tapes, ready for another caller or recursive continuation. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CleanSubbankCompile
 open SharedBankStage
 universe u

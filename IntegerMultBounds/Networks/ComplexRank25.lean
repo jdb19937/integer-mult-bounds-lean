@@ -1,10 +1,14 @@
-import IntegerMultBounds.Networks.GlobalProjectionRank
-import IntegerMultBounds.Networks.MotifSupport
+module
+
+public import IntegerMultBounds.Networks.GlobalProjectionRank
+public import IntegerMultBounds.Networks.MotifSupport
 
 /-! The actual h=25 complex network's projection-rank budget. All labels,
 coefficients, physical incidences and terminal dimensions are instantiated;
 no trace-balance or rank-loss estimate is an assumption. This is a finite
 network rank theorem, not yet a phase-interface or tape-runtime theorem. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.ComplexRank25
 

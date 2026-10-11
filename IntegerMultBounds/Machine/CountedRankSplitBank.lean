@@ -1,14 +1,19 @@
-import IntegerMultBounds.Machine.CountedRankSplitPosition
-import IntegerMultBounds.Machine.DimensionProductDescriptor
+module
+
+public import IntegerMultBounds.Machine.CountedRankSplitPosition
+public import IntegerMultBounds.Machine.DimensionProductDescriptor
 
 /-! A fixed twelve-tape splitter bank. Counter/V/W, original q/b/n, generated
 nq/nb and one clock plus three product-work tapes. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedRankSplitBank
 noncomputable section
 variable {a : ℕ}
 
-private def hd : Option (List Bool) → ℤ | none => 0 | some _ => 1
-private def tp : Option (List Bool) → ℤ → Fin (a+4)
+def hd : Option (List Bool) → ℤ | none => 0 | some _ => 1
+def tp : Option (List Bool) → ℤ → Fin (a+4)
   | none => fun _ => blank
   | some bs => RadixZeroFill.encodedBinary bs
 

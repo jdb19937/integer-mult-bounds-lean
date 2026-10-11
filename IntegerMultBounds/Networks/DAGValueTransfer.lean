@@ -1,8 +1,12 @@
-import IntegerMultBounds.Networks.DAGCompileCorrect
+module
+
+public import IntegerMultBounds.Networks.DAGCompileCorrect
 
 /-! Value transfer through the actual role allocator. Initial values are placed
 at its concrete source roles using source node identifiers, so repeated input
 labels do not identify distinct physical source slots. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.DAGValueTransfer
 

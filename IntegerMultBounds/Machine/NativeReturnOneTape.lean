@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.TwoTapeAt
+module
+
+public import IntegerMultBounds.Machine.TwoTapeAt
 
 /-! Exact one-tape subroutines at fixed caller slots, framing every other tape. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.NativeReturnOneTape
 noncomputable section
 variable {t a q cost : ℕ}
 def slot (i : Fin t) : Fin 1 → Fin t := fun _ => i
-private theorem injective (i : Fin t) : Function.Injective (slot i) := by intro x y _; exact Subsingleton.elim _ _
+theorem injective (i : Fin t) : Function.Injective (slot i) := by intro x y _; exact Subsingleton.elim _ _
 def placement (i : Fin t) : Fin (1+(t-1)) ≃ Fin t :=
   InjectivePlacement.placement (slot i) (injective i) (by have := i.isLt; omega)
 def program (M : Program 1 q a) (i : Fin t) := Placement.placed M (placement i)

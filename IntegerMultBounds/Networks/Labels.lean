@@ -1,16 +1,20 @@
-import IntegerMultBounds.Networks.Scalar
-import Mathlib.LinearAlgebra.BilinearForm.Properties
-import Mathlib.Data.ZMod.Basic
-import Mathlib.Tactic.Ring
-import Mathlib.Tactic.NormNum
-import Mathlib.Tactic.Use
-import Mathlib.Tactic.Linarith
-import Mathlib.Tactic.SimpRw
-import Mathlib.Algebra.Field.ZMod
+module
+
+public import IntegerMultBounds.Networks.Scalar
+public import Mathlib.LinearAlgebra.BilinearForm.Properties
+public import Mathlib.Data.ZMod.Basic
+public import Mathlib.Tactic.Ring
+public import Mathlib.Tactic.NormNum
+public import Mathlib.Tactic.Use
+public import Mathlib.Tactic.Linarith
+public import Mathlib.Tactic.SimpRw
+public import Mathlib.Algebra.Field.ZMod
 
 /-! The degree-one bilinear label spaces of the two finite motifs. These are
 label fields, distinct from the scalar rings on the circuit wires. Tensor-cube
 labels, nested gate labels, and the total residual-rank saving remain separate. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.Labels
 

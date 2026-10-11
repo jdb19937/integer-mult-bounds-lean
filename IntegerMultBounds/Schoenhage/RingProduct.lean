@@ -1,4 +1,6 @@
-import IntegerMultBounds.Schoenhage.RingUnpack
+module
+
+public import IntegerMultBounds.Schoenhage.RingUnpack
 
 /-! The packed ring product on tapes (the paper's signed ring product,
 `lem:signed-ring-product`). Both polynomials come as coefficient pairs of
@@ -6,6 +8,8 @@ signed `w`-bit words; the four component residues are packed, multiplied
 pairwise by the Schönhage–Strassen machine modulo `2^N + 1` (`N = W r`, so
 the wrap is the negacyclic one), combined into the real and imaginary
 residues, and unpacked into truncated output words, interleaved on `rO`. -/
+
+@[expose] public section
 
 set_option maxRecDepth 10000
 

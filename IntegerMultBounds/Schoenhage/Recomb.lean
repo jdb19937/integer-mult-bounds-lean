@@ -1,10 +1,14 @@
-import IntegerMultBounds.Schoenhage.Recursive
+module
+
+public import IntegerMultBounds.Schoenhage.Recursive
 
 /-! The up-sweep of a level as the tapes compute it. The signed coefficients
 are split into two nonnegative streams, the positive parts and the negated
 negative parts; each stream is evaluated at `2^M` as a plain sum of shifted
 words (`wsum`), and each sum is reduced modulo `2^N + 1` from its low and
 high `N`-bit halves (`red`). Proved: this equals `levelOut` (`levelTape_eq`). -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Schoenhage
 

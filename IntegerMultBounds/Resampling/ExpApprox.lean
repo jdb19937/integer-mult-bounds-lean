@@ -1,11 +1,15 @@
-import Mathlib.Analysis.SpecialFunctions.Exponential
-import Mathlib.Analysis.SpecialFunctions.Exp
+module
+
+public import Mathlib.Analysis.SpecialFunctions.Exponential
+public import Mathlib.Analysis.SpecialFunctions.Exp
 
 /-! A certified integer approximation of `2^q exp (X / 2^q)` by the truncated
 Taylor series, each term obtained from the previous one by one multiplication
 and one truncated division: `T₀ = 2^q`, `T_{n+1} = (T_n X).tdiv (2^q (n+1))`.
 Each term is within `∑_{i<n} |x|^i/i! ≤ e^{|x|}` of `2^q x^n/n!`, and the
 Taylor tail after `N` terms is at most `|x|^N/N! e^{|x|}`. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Resampling.ExpApprox
 

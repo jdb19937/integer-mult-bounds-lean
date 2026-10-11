@@ -1,9 +1,13 @@
-import IntegerMultBounds.Machine.SubPass
-import IntegerMultBounds.Machine.RecordCopy
+module
+
+public import IntegerMultBounds.Machine.SubPass
+public import IntegerMultBounds.Machine.RecordCopy
 
 /-! List and tape facts for the Neumann step on tapes: the cyclic extension
 as a concatenation of a suffix, the whole iterate and a prefix; record tapes
 read from any record origin; widths of the word iterates. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.NeumannStep
 

@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.FixedControlTranslationStream
-import IntegerMultBounds.Machine.FlatControlledShift
+module
+
+public import IntegerMultBounds.Machine.FixedControlTranslationStream
+public import IntegerMultBounds.Machine.FlatControlledShift
 
 /-! Concrete flat-array translation across an arbitrary middle spectator range.
 A physical H word is held fixed while all C D-fibers are translated. The count
 C is an arbitrary binary input; this routine performs no radix-power padding
 or spectator reorder. It is a recurring prepared boundary, not a bootstrap or
 the complete outer H/prefix scheduler. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.FlatFixedControlShift
 variable {radix : ℕ} [Fact radix.Prime]
 

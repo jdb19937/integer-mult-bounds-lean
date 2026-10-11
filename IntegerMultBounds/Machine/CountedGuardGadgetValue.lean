@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CountedGuardGadget
-import IntegerMultBounds.Compact.GuardValue
+module
+
+public import IntegerMultBounds.Machine.CountedGuardGadget
+public import IntegerMultBounds.Compact.GuardValue
 
 /-! The actual fixed-control runtime guard result decides exceptional address
 membership. Literal constant words have certified widths and values; their
 physical synthesis and the later rank-splitting repair program remain separate. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedGuardGadgetValue
 noncomputable section
 variable {a : ℕ}

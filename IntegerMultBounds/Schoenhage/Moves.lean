@@ -1,8 +1,12 @@
-import IntegerMultBounds.Schoenhage.Cmd
+module
+
+public import IntegerMultBounds.Schoenhage.Cmd
 
 /-! Head movements on one word tape: rewind to the first word, step back over
 the previous word, and erase the whole tape. Each is a small finite-type
 machine with an exact run. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Schoenhage
 

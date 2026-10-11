@@ -1,10 +1,14 @@
-import IntegerMultBounds.Machine.Hoare
-import IntegerMultBounds.Machine.WordTape
+module
+
+public import IntegerMultBounds.Machine.Hoare
+public import IntegerMultBounds.Machine.WordTape
 
 /-! Reverse the physical direction of any chosen tapes in a finite program.
 This changes its actual local transition table, with exactly the same runtime.
 It supports backwards payload transfers while leaving a binary clock forward;
 it does not implement a free reversal of an existing tape's contents. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.Reflection
 

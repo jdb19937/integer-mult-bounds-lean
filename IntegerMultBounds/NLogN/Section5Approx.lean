@@ -1,5 +1,7 @@
-import IntegerMultBounds.NLogN.FixedOps
-import IntegerMultBounds.NLogN.Neumann
+module
+
+public import IntegerMultBounds.NLogN.FixedOps
+public import IntegerMultBounds.NLogN.Neumann
 
 /-! The error bookkeeping of Propositions 5.2 and 5.3 of Harvey and van der
 Hoeven, stated abstractly over normed spaces with the paper's conventions:
@@ -13,6 +15,8 @@ the forward, rounded pointwise, inverse pipeline approximates the exact
 convolution map with error `ε_I + 2 ε_F + 2`, and `S` times that after scaling
 by `S`. The maps and their errors are hypotheses, not constructions, and no
 cost model is attached. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.NLogN
 

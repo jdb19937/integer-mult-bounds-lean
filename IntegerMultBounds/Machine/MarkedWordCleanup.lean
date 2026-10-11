@@ -1,8 +1,12 @@
-import IntegerMultBounds.Machine.Copy
-import IntegerMultBounds.Machine.Rewind
+module
+
+public import IntegerMultBounds.Machine.Copy
+public import IntegerMultBounds.Machine.Rewind
 
 /-! Erase a finite nonblank word at cell one and restore an entirely blank tape.
 A temporary marker is installed, scanned back to, and physically removed. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.MarkedWordCleanup
 

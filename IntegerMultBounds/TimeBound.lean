@@ -1,6 +1,8 @@
-import IntegerMultBounds.Asymptotics
-import IntegerMultBounds.Machine
-import Mathlib.Analysis.SpecialFunctions.Log.Basic
+module
+
+public import IntegerMultBounds.Asymptotics
+public import IntegerMultBounds.Machine
+public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 
 /-! The complete time bound (§8). With precision `p = 6 lg n` and padded volume
 `V = Θ(n)`, every operation of the multiplication algorithm costs a fixed
@@ -10,6 +12,8 @@ eventually bounded. Since every margin exceeds `κ`, the total is eventually
 `O(n (lg n)^(1 - κ))`, the target time of `Machine.ComputesWithin`. These are
 statements about cost functions; the costs themselves are supplied by the
 algorithm's components. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.TimeBound
 

@@ -1,6 +1,8 @@
-import IntegerMultBounds.NLogN.DFT
-import IntegerMultBounds.NLogN.FFT
-import Mathlib.RingTheory.AdjoinRoot
+module
+
+public import IntegerMultBounds.NLogN.DFT
+public import IntegerMultBounds.NLogN.FFT
+public import Mathlib.RingTheory.AdjoinRoot
 
 /-! Principal roots of unity and the synthetic coefficient ring `ℂ[y]/(y^r + 1)`.
 A principal root satisfies the vanishing character sums directly, so transform
@@ -12,6 +14,8 @@ in the synthetic ring, `y^(2r/t)` is a principal `t`-th root for every power
 of two `t ∣ 2r`, and hence the radix-2 recursion computes the synthetic
 transform exactly. The coefficient-norm bound `‖ab‖ ≤ r ‖a‖ ‖b‖`, precision,
 and costs are not here. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.NLogN
 

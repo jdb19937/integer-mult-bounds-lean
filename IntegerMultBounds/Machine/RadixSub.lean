@@ -1,8 +1,12 @@
-import IntegerMultBounds.Machine.RadixDigits
-import IntegerMultBounds.Machine.Hoare
+module
+
+public import IntegerMultBounds.Machine.RadixDigits
+public import IntegerMultBounds.Machine.Hoare
 
 /-! Literal least-significant-first modular fixed-radix subtraction. The borrow
 lives in finite control. Every input column costs exactly one transition. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.RadixSub
 

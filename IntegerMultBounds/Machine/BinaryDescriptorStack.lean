@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.DescriptorStackControl
+module
+
+public import IntegerMultBounds.Machine.DescriptorStackControl
 
 /-! Variable-length binary descriptor frames on a separate stack tape. A frame
 stores a sentinel followed by reversed bits. Its length is discovered by actual
 scans; finite control and tape count are independent of descriptor length/depth. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryDescriptorStack
 open DescriptorStackControl
 variable {a : ℕ}

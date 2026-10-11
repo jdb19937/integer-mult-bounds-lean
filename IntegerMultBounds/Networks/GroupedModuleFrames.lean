@@ -1,9 +1,13 @@
-import IntegerMultBounds.Networks.GroupedFrames
+module
+
+public import IntegerMultBounds.Networks.GroupedFrames
 
 /-! The actual grouped common-frame compiler over an arbitrary module. Scalar
 coefficients and the exact physical incidence/label trace are unchanged when
 the stored values live in another module, including complex-valued arrays
 viewed as a rational module. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.GroupedModuleFrames
 

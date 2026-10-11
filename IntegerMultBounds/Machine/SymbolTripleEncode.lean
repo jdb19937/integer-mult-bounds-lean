@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.DescriptorStackControl
-import IntegerMultBounds.Machine.Copy
-import IntegerMultBounds.Machine.WordSegments
-import IntegerMultBounds.Machine.LoopChain
+module
+
+public import IntegerMultBounds.Machine.DescriptorStackControl
+public import IntegerMultBounds.Machine.Copy
+public import IntegerMultBounds.Machine.WordSegments
+public import IntegerMultBounds.Machine.LoopChain
 
 /-! A fixed three-bit representation connects the six-symbol coefficient
 streams to Boolean payload records. Each source symbol is retained and every
 output bit is physically written; the converter has no width-dependent control. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.SymbolTripleEncode
 noncomputable section
 

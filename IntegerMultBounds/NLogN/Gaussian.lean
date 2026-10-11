@@ -1,5 +1,7 @@
-import Mathlib.Analysis.SpecialFunctions.Gaussian.PoissonSummation
-import Mathlib.Tactic
+module
+
+public import Mathlib.Analysis.SpecialFunctions.Gaussian.PoissonSummation
+public import Mathlib.Tactic
 
 /-! Analytic preliminaries for Gaussian resampling. Proved: the Gaussian
 `exp (-α x²)` is positive, at most one, and decreasing in `|x|`; its integer
@@ -9,6 +11,8 @@ integer shifts, bounded below by `exp (-α/4)` and above by an explicit constant
 depending only on `α`; and the Gaussian Poisson summation identity restated for
 `gauss`. The resampling matrix, its inverse, and any error analysis of the
 resampled transform are not part of this file. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.NLogN
 

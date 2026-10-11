@@ -1,5 +1,7 @@
-import IntegerMultBounds.NLogN.DFT
-import IntegerMultBounds.NLogN.Multiplier
+module
+
+public import IntegerMultBounds.NLogN.DFT
+public import IntegerMultBounds.NLogN.Multiplier
 
 /-! Steps (1) and (3) of the recursive step of Harvey–van der Hoeven
 (Proposition 5.4). Two `n`-bit integers cut into `k`-bit digits multiply as a
@@ -13,6 +15,8 @@ within `δ` in each entry, with `2 ^ (2 k) S δ < 1 / 2`, rounds to the exact
 digits, also in the paper's `2 ^ p`-scaled error form, and those rounded
 digits evaluate to the product of the inputs. Computing the approximation,
 the middle step (2) of the proposition, and tape costs are not covered. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.NLogN
 

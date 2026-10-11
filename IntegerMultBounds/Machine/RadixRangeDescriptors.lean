@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.FixedBasePowerUntilRange
+module
+
+public import IntegerMultBounds.Machine.FixedBasePowerUntilRange
 
 /-! Paid numerical range preparation from the sole runtime binary width.
 The machine constructs 2^u, then the least enclosing fixed-radix power and
 its exponent, retaining the original width and clearing every scratch tape. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RadixRangeDescriptors
 noncomputable section
 

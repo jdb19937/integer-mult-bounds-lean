@@ -1,10 +1,14 @@
-import IntegerMultBounds.Machine.Registers
-import IntegerMultBounds.Machine.TwosComplement
-import IntegerMultBounds.Machine.FixedMul
+module
+
+public import IntegerMultBounds.Machine.Registers
+public import IntegerMultBounds.Machine.TwosComplement
+public import IntegerMultBounds.Machine.FixedMul
 
 /-! Registers as fixed-width words: a ruler copy of `w` cells from a register
 gives its canonical word padded with zeros to width `w`, and for values below
 `2^(w-1)` that word has the register's value as its signed value. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.RegWord
 

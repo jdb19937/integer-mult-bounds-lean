@@ -1,8 +1,12 @@
-import IntegerMultBounds.Networks.ProjectionRank
+module
+
+public import IntegerMultBounds.Networks.ProjectionRank
 
 /-! Exact rank accounting for finite wire-label updates. Every edge uses the
 label actually left by preceding updates on that wire. Concrete networks must
 still prove comparability and enumerate their decreasing edges. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.RankTrace
 

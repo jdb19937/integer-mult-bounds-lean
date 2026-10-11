@@ -1,11 +1,15 @@
-import IntegerMultBounds.Machine.CountedLoop
-import IntegerMultBounds.Machine.CountedCopyReuse
-import IntegerMultBounds.Machine.Placement
+module
+
+public import IntegerMultBounds.Machine.CountedLoop
+public import IntegerMultBounds.Machine.CountedCopyReuse
+public import IntegerMultBounds.Machine.Placement
 
 /-! Reusable outer countdown loops. The immutable descriptor is physically
 copied to a clean mutable clock, both control heads are reset, and the actual
 counted body loop runs. Cleanup erases the exhausted clock and resets its head.
 All descriptor preparation, joins, head movements, and cleanup are charged. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.CountedLoopReuse
 
@@ -109,7 +113,7 @@ private theorem clear_exact (bs : List Bool) :
 def controls (clock descriptor : ℤ → Fin 4) (r s : ℤ) : Tapes 2 0 :=
   ⟨fun i => if i = 0 then r else s,fun i => if i = 0 then clock else descriptor⟩
 
-private def atControl {k : ℕ} (M : Program 1 k 0) (i : Fin 2) : Program 2 k 0 :=
+def atControl {k : ℕ} (M : Program 1 k 0) (i : Fin 2) : Program 2 k 0 :=
   Placement.placed (u := 1) M (Equiv.swap 0 i)
 
 private theorem active_clock (clock descriptor : ℤ → Fin 4) (r s : ℤ) :

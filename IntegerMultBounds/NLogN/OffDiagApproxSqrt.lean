@@ -1,6 +1,8 @@
-import IntegerMultBounds.NLogN.ExplicitNumeric
-import Mathlib.Analysis.Complex.ExponentialBounds
-import Mathlib.Analysis.Real.Pi.Bounds
+module
+
+public import IntegerMultBounds.NLogN.ExplicitNumeric
+public import Mathlib.Analysis.Complex.ExponentialBounds
+public import Mathlib.Analysis.Real.Pi.Bounds
 
 /-! Lemma 4.11 of Harvey and van der Hoeven with the paper's window size. Under
 `α² θ ≥ 1` every off-diagonal term of the normalised resampling system is at
@@ -11,6 +13,8 @@ as soon as `p ≤ 9 m²`: a window of order `√p` rather than the `p / 9` of
 square-root threshold, and the explicit numerical `Ẽ`, `J̃`, and `B̃` with that
 window, with `ε(B̃) < p²` at `m = ⌊√p⌋ + 1`. The bit cost of the terms is not
 formalised. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.NLogN
 

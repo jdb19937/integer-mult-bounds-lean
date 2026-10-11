@@ -1,5 +1,7 @@
-import IntegerMultBounds.Machine.GaussianLine
-import IntegerMultBounds.Machine.FixedMulValue
+module
+
+public import IntegerMultBounds.Machine.GaussianLine
+public import IntegerMultBounds.Machine.FixedMulValue
 
 /-! The accumulators of the Gaussian line hold the exact sums of the
 truncated products: when every weight and input word has magnitude at most
@@ -7,6 +9,8 @@ truncated products: when every weight and input word has magnitude at most
 enough for `2m + 1` such terms, the signed value of the real accumulator
 after `i` terms is the sum of the `i` truncated products `(w·a).tdiv 2^p`,
 and likewise for the imaginary one. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.GaussianLine
 

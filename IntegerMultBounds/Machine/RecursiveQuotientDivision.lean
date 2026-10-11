@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.BinaryDivideQuotient
-import IntegerMultBounds.Machine.RecursiveDescriptorDivision
+module
+
+public import IntegerMultBounds.Machine.BinaryDivideQuotient
+public import IntegerMultBounds.Machine.RecursiveDescriptorDivision
 
 /-! Physical quotient relocation and canonicalization retain the long-division
 child-volume bound. Raw input preparation and remainder cleanup remain explicit
 in BinaryDivideQuotient.input/output; this theorem does not hide either task. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveQuotientDivision
 open RecursiveInterchangeLayout RecursiveInterchangeVolume
 

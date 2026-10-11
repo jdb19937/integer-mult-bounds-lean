@@ -1,8 +1,12 @@
-import IntegerMultBounds.Schoenhage.SSCost
+module
+
+public import IntegerMultBounds.Schoenhage.SSCost
 
 /-! The Schönhage–Strassen multiplier as a literal multitape program: the
 compiled word program on 64 tapes, with a `HoareTime` contract on encoded
 tapes. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Schoenhage
 

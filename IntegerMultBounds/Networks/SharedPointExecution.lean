@@ -1,10 +1,14 @@
-import IntegerMultBounds.Networks.SharedPointReplay
-import IntegerMultBounds.Networks.SharedPointOutputMap
-import IntegerMultBounds.Networks.DAGValueTransfer
+module
+
+public import IntegerMultBounds.Networks.SharedPointReplay
+public import IntegerMultBounds.Networks.SharedPointOutputMap
+public import IntegerMultBounds.Networks.DAGValueTransfer
 
 /-! Scalar execution of the actual globally interned circuit. The concrete
 allocated program computes every common-point partial intersection sum and
 has an executable inverse on arbitrary register states. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.SharedPointExecution
 

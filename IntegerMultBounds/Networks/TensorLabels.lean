@@ -1,13 +1,17 @@
-import IntegerMultBounds.Networks.Labels
-import Mathlib.LinearAlgebra.BilinearForm.TensorProduct
-import Mathlib.LinearAlgebra.BilinearForm.Orthogonal
-import Mathlib.LinearAlgebra.Matrix.BilinearForm
-import Mathlib.LinearAlgebra.Matrix.Kronecker
-import Mathlib.LinearAlgebra.Dimension.Constructions
+module
+
+public import IntegerMultBounds.Networks.Labels
+public import Mathlib.LinearAlgebra.BilinearForm.TensorProduct
+public import Mathlib.LinearAlgebra.BilinearForm.Orthogonal
+public import Mathlib.LinearAlgebra.Matrix.BilinearForm
+public import Mathlib.LinearAlgebra.Matrix.Kronecker
+public import Mathlib.LinearAlgebra.Dimension.Constructions
 
 /-! Tensor label spaces for the three-coordinate motifs. Nondegeneracy is
 proved from the Kronecker matrix of the tensor form, over either label field.
 These are actual tensor spaces, not an assumed dimension or rank interface. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.Labels
 

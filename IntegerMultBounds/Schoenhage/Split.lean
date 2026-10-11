@@ -1,11 +1,15 @@
-import IntegerMultBounds.Schoenhage.Rules
-import IntegerMultBounds.Schoenhage.Level
+module
+
+public import IntegerMultBounds.Schoenhage.Rules
+public import IntegerMultBounds.Schoenhage.Level
 
 /-! Cutting a word into padded pieces in one streaming pass. The driver is a
 ruler that spells, two bits per action, what to emit next: copy the operand's
 next bit, emit a padding zero, or end the current piece. With the ruler of
 `K` pieces of `M` bits (the top piece takes one more bit) padded to `W` bits,
 the emitted words are exactly the `W`-bit words of `pieces M K x`. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Schoenhage
 

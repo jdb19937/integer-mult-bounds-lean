@@ -1,6 +1,10 @@
-import Mathlib.Logic.Equiv.Defs
+module
+
+public import Mathlib.Logic.Equiv.Defs
 
 /-! Abstract deterministic exceptional-address repair, for arbitrary types. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Compact
 

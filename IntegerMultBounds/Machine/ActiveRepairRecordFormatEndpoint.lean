@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActiveRepairRecordFormatEndpointAt
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairRecordFormatEndpointAt
 
 /-! Complete raw-to-record formatting from blank clock storage, retaining
 both canonical binary headers and the original source. Scratch clocks are
 physically synthesized and erased; both data heads return to origin. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairRecordFormatEndpoint
 noncomputable section
 open ActiveRepairRecordFormatWords ActiveRepairRecordFormatEndpointAt

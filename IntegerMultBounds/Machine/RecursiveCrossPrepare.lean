@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.RecursiveAffinePrepare
+module
+
+public import IntegerMultBounds.Machine.RecursiveAffinePrepare
 
 /-! Paid cross-group coordinate-view preparation on the same positive runtime
 layout. The role divisor is physically initialized to one, so every payload
 row survives. No root-path or power-width certificate is needed beyond the
 actual width factorization used by this fixed field operation. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveCrossPrepare
 open RecursiveInterchangeLayout (Descriptor child volume)
 variable {q : ℕ}

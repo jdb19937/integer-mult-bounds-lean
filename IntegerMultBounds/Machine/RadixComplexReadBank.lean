@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.RadixComplexReadList
-import IntegerMultBounds.Machine.RawLinearCombination
+module
+
+public import IntegerMultBounds.Machine.RadixComplexReadList
+public import IntegerMultBounds.Machine.RawLinearCombination
 
 /-! Both component readers operate on fixed retained role ports. The selected
 private component bank receives actual source digits; all role symbols, the
 other component bank, and the entire arithmetic/output tail are framed. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RadixComplexReadBank
 noncomputable section
 open DelimitedRadixRecord (Context)

@@ -1,9 +1,13 @@
-import IntegerMultBounds.Networks.PairedReconstructionSupport
-import IntegerMultBounds.Networks.PairedCoarseQuery
-import IntegerMultBounds.Networks.PairedReconstructionKeys
+module
+
+public import IntegerMultBounds.Networks.PairedReconstructionSupport
+public import IntegerMultBounds.Networks.PairedCoarseQuery
+public import IntegerMultBounds.Networks.PairedReconstructionKeys
 
 /-! Assembly of the literal paired recursion from the verified coarse call,
 actual strip loops, and source-level reconstruction. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.PairedBlockCorrect
 

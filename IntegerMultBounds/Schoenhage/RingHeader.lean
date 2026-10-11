@@ -1,10 +1,14 @@
-import IntegerMultBounds.Schoenhage.RingConst
-import IntegerMultBounds.Spec.PointwiseProducts
+module
+
+public import IntegerMultBounds.Schoenhage.RingConst
+public import IntegerMultBounds.Spec.PointwiseProducts
 
 /-! Decoding the `Γ` header on tapes. A streaming rule counts the leading
 zeros of a code in unary; the code's binary digits, most significant first,
 are then cut off with `take` and `drop`, and turned into unary by doubling an
 accumulator and adding each bit (`runs_binLoop`, value `binaryValue`). -/
+
+@[expose] public section
 
 set_option maxRecDepth 10000
 

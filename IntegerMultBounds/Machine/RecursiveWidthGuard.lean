@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.BinaryDescriptorStack
-import IntegerMultBounds.Machine.GrowingCounterData
+module
+
+public import IntegerMultBounds.Machine.BinaryDescriptorStack
+public import IntegerMultBounds.Machine.GrowingCounterData
 
 /-! A physical four-state width-one guard. It reads the first bit and, only
 when that bit is one, its successor. Every tape and head is restored exactly;
 the actual terminal state selects the base or recursive continuation. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveWidthGuard
 variable {t a : ℕ}
 

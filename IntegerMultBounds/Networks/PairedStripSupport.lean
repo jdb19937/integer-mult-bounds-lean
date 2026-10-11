@@ -1,9 +1,13 @@
-import IntegerMultBounds.Networks.PairedStripCorrect
-import IntegerMultBounds.Networks.PairedCoarseCorrect
-import IntegerMultBounds.Networks.PairedCoarseSupport
+module
+
+public import IntegerMultBounds.Networks.PairedStripCorrect
+public import IntegerMultBounds.Networks.PairedCoarseCorrect
+public import IntegerMultBounds.Networks.PairedCoarseSupport
 
 /-! Literal strip operands are disjoint valid references of the original
 weighted graph. Their supports are interpreted as the actual strip partitions. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.PairedStripSupport
 

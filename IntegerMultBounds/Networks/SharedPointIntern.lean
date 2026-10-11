@@ -1,9 +1,13 @@
-import IntegerMultBounds.Networks.SharedPointKey
-import IntegerMultBounds.Networks.DisjointCircuit
+module
+
+public import IntegerMultBounds.Networks.SharedPointKey
+public import IntegerMultBounds.Networks.DisjointCircuit
 
 /-! Executable compressed-key sharing across common-point DAG copies. Lookup
 is enabled precisely when at least two points belong to every source triple.
 The key test is proved to reuse only an exactly equal support. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.SharedPointIntern
 

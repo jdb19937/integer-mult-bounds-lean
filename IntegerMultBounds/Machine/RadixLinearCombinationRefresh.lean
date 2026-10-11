@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.MarkedRadixRefresh
-import IntegerMultBounds.Machine.RadixLinearCombinationBinary
-import IntegerMultBounds.Machine.SharedPlacementAlphabet
+module
+
+public import IntegerMultBounds.Machine.MarkedRadixRefresh
+public import IntegerMultBounds.Machine.RadixLinearCombinationBinary
+public import IntegerMultBounds.Machine.SharedPlacementAlphabet
 
 /-! Refresh every expression leaf from one shared fixed-size control bank.
 References are bounded at compilation; stale copies are physically erased.
 No fresh-copy oracle or runtime-dependent tape placement is assumed. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RadixLinearCombinationRefresh
 
 open RadixDigits

@@ -1,11 +1,15 @@
-import IntegerMultBounds.Networks.DAGSupportTrace
-import IntegerMultBounds.Networks.GroupedModuleFrames
+module
+
+public import IntegerMultBounds.Networks.DAGSupportTrace
+public import IntegerMultBounds.Networks.GroupedModuleFrames
 
 /-! Physical forward frame execution for the actual allocated DAG event list.
 Each event aligns all declared incidences and then executes its unchanged
 scalar program. The resulting identity holds on arbitrary stored module
 states; inverse-complement schedules, sinks, and motif rank assembly are
 separate obligations. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.DAGFramedExecution
 

@@ -1,9 +1,13 @@
-import IntegerMultBounds.Schoenhage.RingProgram
+module
+
+public import IntegerMultBounds.Schoenhage.RingProgram
 
 /-! The ring product's constants built on tapes from `p`, `ℓ` and `w` in
 unary: the digit width `W = 2^(size M)` with `M = 2p + ℓ + w + 3`, the size
 `N = W 2^ℓ`, the ruler, the offset words and the half and rounding words
 (`runs_ringConst`). -/
+
+@[expose] public section
 
 set_option maxRecDepth 10000
 

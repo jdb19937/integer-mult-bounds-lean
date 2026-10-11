@@ -1,9 +1,13 @@
-import IntegerMultBounds.Schoenhage.Wp
+module
+
+public import IntegerMultBounds.Schoenhage.Wp
 
 /-! Word-list fragments on arbitrary tapes: copy the current word, skip it,
 append every remaining word of one tape to another, and copy as many words as
 a tick tape holds. Each has an exact effect and a step bound linear in the
 words moved. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Schoenhage
 

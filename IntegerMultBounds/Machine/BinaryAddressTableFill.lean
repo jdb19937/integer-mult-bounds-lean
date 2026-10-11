@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.BinaryAddressTableStep
-import IntegerMultBounds.Machine.FixedBasePowerDescriptor
+module
+
+public import IntegerMultBounds.Machine.BinaryAddressTableStep
+public import IntegerMultBounds.Machine.FixedBasePowerDescriptor
 
 /-! Physical initialization of a fixed-width zero counter from its original
 binary width descriptor. The mutable loop clock starts and returns blank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryAddressTableFill
 open CountedCopyReuse (empty binary)
 open SharedPlacementAlphabet (setTape)

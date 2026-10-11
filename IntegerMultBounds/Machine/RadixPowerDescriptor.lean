@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.RadixPowerWord
+module
+
+public import IntegerMultBounds.Machine.RadixPowerWord
 
 /-! A fixed four-tape machine computes the canonical binary descriptor q^b
 from the canonical binary descriptor b, restoring every scratch tape to blank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RadixPowerDescriptor
 
 open RadixDigits MarkedWordCleanup

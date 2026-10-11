@@ -1,10 +1,14 @@
-import IntegerMultBounds.Machine.CountedCopy
-import IntegerMultBounds.Machine.CountedCopyReuse
-import IntegerMultBounds.Machine.Reflection
+module
+
+public import IntegerMultBounds.Machine.CountedCopy
+public import IntegerMultBounds.Machine.CountedCopyReuse
+public import IntegerMultBounds.Machine.Reflection
 
 /-! Counted backwards reading with forwards output. The binary clock keeps its
 normal orientation. All payload symbols, including blanks, are reversed by real
 head movements; the source and all other destination cells are preserved. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.CountedReverse
 

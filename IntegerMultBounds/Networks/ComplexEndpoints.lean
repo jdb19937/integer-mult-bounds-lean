@@ -1,10 +1,14 @@
-import IntegerMultBounds.Networks.ComplexFramedExecution
-import IntegerMultBounds.Networks.TensorTerminalWeight
-import Mathlib.Algebra.BigOperators.GroupWithZero.Action
+module
+
+public import IntegerMultBounds.Networks.ComplexFramedExecution
+public import IntegerMultBounds.Networks.TensorTerminalWeight
+public import Mathlib.Algebra.BigOperators.GroupWithZero.Action
 
 /-! Concrete binary phase endpoint corrections for the actual complex network.
 The source/sink projectors and diagonal corrections are proved as operators;
 no terminal transform identity is assumed. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.ComplexEndpoints
 

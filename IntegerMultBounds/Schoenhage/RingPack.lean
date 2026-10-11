@@ -1,5 +1,7 @@
-import IntegerMultBounds.Schoenhage.RingAlu
-import IntegerMultBounds.Schoenhage.RingWords
+module
+
+public import IntegerMultBounds.Schoenhage.RingAlu
+public import IntegerMultBounds.Schoenhage.RingWords
 
 /-! Packing one component of a polynomial into a residue. The input tape
 holds the coefficient pairs, real word then imaginary word. One pass flips
@@ -7,6 +9,8 @@ the top bit of every real (or every imaginary) word onto the multiplier's
 coefficient tape; the shifted sum of these digits is one word, cut to
 `N + 1` bits; subtracting the offset word gives the residue
 (`runs_pack`). -/
+
+@[expose] public section
 
 set_option maxRecDepth 10000
 

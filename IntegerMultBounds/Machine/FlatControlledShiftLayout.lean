@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.FlatControlledShiftPayload
+module
+
+public import IntegerMultBounds.Machine.FlatControlledShiftPayload
 
 /-! Literal blank-workspace layout of the controlled-shift input, exposing every
 supplied descriptor location for physical initialization from a dimension bank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.FlatControlledShiftLayout
 open PrefixCounterInitPlacement
 variable {radix c B P : ℕ} [Fact radix.Prime]

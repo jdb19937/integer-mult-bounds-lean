@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.MultiControlPrefixTranslationStream
-import IntegerMultBounds.Machine.RadixLinearCombinationBootstrap
+module
+
+public import IntegerMultBounds.Machine.MultiControlPrefixTranslationStream
+public import IntegerMultBounds.Machine.RadixLinearCombinationBootstrap
 
 /-! Blank-workspace bootstrap for the actual multi-control prefix stream.
 The shared radix fields and canonical B/Q/n descriptors are the only numeric
 inputs. One physical marker step and one actual expression evaluation construct
 the recurring state; the first loop body recomputes it, with all work charged. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.MultiControlPrefixTranslationBootstrap
 
 open RadixLinearCombinationRefresh (Expr leaves)
@@ -13,7 +18,7 @@ open MultiControlTranslationExecution (ArithmeticTapes)
 variable {c radix : ℕ}
 
 def workspace (i : Fin 14) : Bool := decide (i ≠ 5 ∧ i ≠ 7 ∧ i ≠ 10 ∧ i ≠ 11 ∧ i ≠ 13)
-private def marker (i : Fin 14) : Bool := decide (i = 1 ∨ i = 2 ∨ i = 3 ∨ i = 4 ∨ i = 6 ∨ i = 12)
+def marker (i : Fin 14) : Bool := decide (i = 1 ∨ i = 2 ∨ i = 3 ∨ i = 4 ∨ i = 6 ∨ i = 12)
 
 def raw (v : Tapes 14 radix) : Tapes 14 radix :=
   ⟨fun i => if workspace i then 0 else v.head i,
@@ -23,7 +28,7 @@ private def marked (v : Tapes 14 radix) : Tapes 14 radix :=
   ⟨fun i => v.head i+if marker i || decide (i = 0) then 1 else 0,
     fun i => if marker i then Function.update (v.tape i) (v.head i) separator else v.tape i⟩
 
-private def markerProgram : Program 14 2 radix where
+def markerProgram : Program 14 2 radix where
   tapes_pos := by decide
   start := 0
   transition := fun st symbols => if st = 0 then some (1,fun i =>
@@ -84,7 +89,7 @@ theorem raw_workspace (v : Tapes 14 radix) (i : Fin 14) (hi : workspace i = true
 theorem raw_retained (v : Tapes 14 radix) (i : Fin 14) (hi : workspace i = false) :
     (raw v).head i = v.head i ∧ (raw v).tape i = v.tape i := by simp [raw,hi]
 
-private def assoc (a : ℕ) : Fin (a+14) ≃ Fin ((a+12)+2) := finCongr (by omega)
+def assoc (a : ℕ) : Fin (a+14) ≃ Fin ((a+12)+2) := finCongr (by omega)
 
 private theorem append_assoc {a : ℕ} (v : Tapes a radix) (w : Tapes 12 radix) (z : Tapes 2 radix) :
     (v.append (w.append z)).reindex (assoc a) = (v.append w).append z := by
@@ -102,7 +107,7 @@ private theorem append_assoc {a : ℕ} (v : Tapes a radix) (w : Tapes 12 radix) 
       | right i => rw [hm]; simp [Tapes.append]
     | right i => rw [hr]; simp [Tapes.append]
 
-private def setup (a : ℕ) : Program (a+14) 2 radix :=
+def setup (a : ℕ) : Program (a+14) 2 radix :=
   Placement.placed markerProgram (finAddFlip : Fin (14+a) ≃ Fin (a+14))
 
 private theorem setup_hoare {a : ℕ} (arithmetic : Tapes a radix)
@@ -135,7 +140,7 @@ def input (e : Expr c) (seed : Fin c) (b n : ℕ) (source dest : ℤ → Fin 4) 
     (raw (frame (putWord source p (TranslationStream.fibers (radix^b) n payload).flatten) dest p q bs qs ns))).reindex
     (assoc (ArithmeticTapes e))
 
-private def prepareProgram (e : Expr c) : Program (TapeCount e) (2+RadixLinearCombinationBootstrap.States e) radix :=
+def prepareProgram (e : Expr c) : Program (TapeCount e) (2+RadixLinearCombinationBootstrap.States e) radix :=
   reindex (seq (setup (ArithmeticTapes e)) (extend (RadixLinearCombinationBootstrap.program e) 14)) (assoc (ArithmeticTapes e))
 
 private theorem prepare_hoare (e : Expr c) (seed : Fin c) (order : List (Fin c)) (b B n : ℕ)
@@ -165,7 +170,7 @@ private theorem prepare_hoare (e : Expr c) (seed : Fin c) (order : List (Fin c))
 def program (e : Expr c) (order : List (Fin c)) (hne : order ≠ []) :=
   seq (prepareProgram (radix := radix) e) (MultiControlPrefixTranslationStream.program e order hne)
 
-private theorem lex_nonempty (seed : Fin c) : List.finRange c ≠ [] := by
+theorem lex_nonempty (seed : Fin c) : List.finRange c ≠ [] := by
   intro h
   have hh := congrArg List.length h
   simp at hh

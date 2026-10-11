@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.NativeSignedGapPromoteWord
-import IntegerMultBounds.Machine.NativeSignedGapClock
-import IntegerMultBounds.Machine.WordMoves
+module
+
+public import IntegerMultBounds.Machine.NativeSignedGapPromoteWord
+public import IntegerMultBounds.Machine.NativeSignedGapClock
+public import IntegerMultBounds.Machine.WordMoves
 
 /-! One fixed native promotion scanner uses the runtime unary gap clock once
 in each direction per field. It emits low zeros, copies the source once, trims
 the excess high digits, and restores the clock. No repeated one-bit shift is
 used. Only the actual destination suffix is required to be blank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.NativeSignedGapPromoteScan
 open RadixDigits
 open RadixSignedShiftRight (Word)

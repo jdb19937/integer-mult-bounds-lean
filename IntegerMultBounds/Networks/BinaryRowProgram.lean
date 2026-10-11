@@ -1,14 +1,19 @@
-import Mathlib.LinearAlgebra.Matrix.Transvection
-import Mathlib.Data.ZMod.Basic
-import Mathlib.Tactic.FinCases
-import Mathlib.Tactic.Ext
-import Mathlib.Algebra.Field.ZMod
-import Mathlib.LinearAlgebra.Matrix.ToLin
-import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
+module
+
+public import Mathlib.LinearAlgebra.Matrix.Transvection
+public import Mathlib.Data.ZMod.Basic
+public import Mathlib.Tactic.FinCases
+public import Mathlib.Tactic.Ext
+public import Mathlib.Algebra.Field.ZMod
+public import Mathlib.LinearAlgebra.Matrix.ToLin
+public import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
 
 /-! Every invertible binary coordinate map has a literal finite schedule of
 row additions. All instructions carry distinct source and target registers;
 the chronological list implements the matrix exactly. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Networks.BinaryRowProgram
 
 open Module

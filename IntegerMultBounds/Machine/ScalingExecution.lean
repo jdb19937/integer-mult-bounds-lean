@@ -1,11 +1,15 @@
-import IntegerMultBounds.Machine.ScalingMerge
-import IntegerMultBounds.Machine.ScalingPieceBridge
-import IntegerMultBounds.Machine.ScalingSplitRewind
+module
+
+public import IntegerMultBounds.Machine.ScalingMerge
+public import IntegerMultBounds.Machine.ScalingPieceBridge
+public import IntegerMultBounds.Machine.ScalingSplitRewind
 
 /-! End-to-end literal positive-unit scaling from a single raw payload tape.
 The fixed machine splits the payload into contiguous buffers, physically
 rewinds them, and merges blocks in inverse-scaled source order. Binary length
 descriptors and one-hot control cells are explicit prepared inputs. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.ScalingExecution
 
@@ -22,7 +26,7 @@ def join {c : ℕ} (a : Tapes 4 0) (buffers descriptors : Tapes c 0)
     (b : Tapes 4 0) (modulus current : Tapes c 0) (outer : Tapes 2 0) : Tapes (TapeCount c) 0 :=
   (a.append (buffers.append descriptors)).append (((b.append modulus).append current).append outer)
 
-private def activeTo {c : ℕ} : Fin (MergeTapes c) → Fin (TapeCount c) :=
+def activeTo {c : ℕ} : Fin (MergeTapes c) → Fin (TapeCount c) :=
   Fin.addCases
     (Fin.addCases
       (Fin.addCases
@@ -33,12 +37,12 @@ private def activeTo {c : ℕ} : Fin (MergeTapes c) → Fin (TapeCount c) :=
       (fun i => Fin.natAdd (SplitTapes c) (Fin.castAdd 2 (Fin.natAdd (4+c) i))))
     (fun i => Fin.natAdd (SplitTapes c) (Fin.natAdd (4+c+c) i))
 
-private def frameTo {c : ℕ} : Fin (4+c) → Fin (TapeCount c) :=
+def frameTo {c : ℕ} : Fin (4+c) → Fin (TapeCount c) :=
   Fin.addCases
     (fun i => Fin.castAdd (AuxTapes c) (Fin.castAdd (c+c) i))
     (fun i => Fin.castAdd (AuxTapes c) (Fin.natAdd 4 (Fin.natAdd c i)))
 
-private def inverse {c : ℕ} : Fin (TapeCount c) → Fin (MergeTapes c+(4+c)) :=
+def inverse {c : ℕ} : Fin (TapeCount c) → Fin (MergeTapes c+(4+c)) :=
   Fin.addCases
     (Fin.addCases
       (fun i => Fin.natAdd (MergeTapes c) (Fin.castAdd c i))
@@ -129,13 +133,13 @@ theorem replace_join {c : ℕ} (a : Tapes 4 0) (buffers buffers' descriptors : T
     ← active_join a buffers' descriptors b' modulus' current' outer']
   exact Placement.view _ _
 
-private def splitControl (source : ℤ → Fin 4) (p : ℤ) : Tapes 4 0 :=
+def splitControl (source : ℤ → Fin 4) (p : ℤ) : Tapes 4 0 :=
   CountedCopyReuse.bank source (fun _ => blank) empty (fun _ => blank) p 0 1 0
 
-private def mergeControl (dest : ℤ → Fin 4) (q : ℤ) (bs : List Bool) : Tapes 4 0 :=
+def mergeControl (dest : ℤ → Fin 4) (q : ℤ) (bs : List Bool) : Tapes 4 0 :=
   CountedCopyReuse.bank empty dest empty (binary bs) 0 q 1 1
 
-private def descriptorBank {c : ℕ} (descriptors : Fin c → List Bool) : Tapes c 0 :=
+def descriptorBank {c : ℕ} (descriptors : Fin c → List Bool) : Tapes c 0 :=
   ⟨fun _ => 1,fun j => binary (descriptors j)⟩
 
 /-- Explicit prepared controls, all untouched by splitting and buffer rewinds. -/

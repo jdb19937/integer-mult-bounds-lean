@@ -1,9 +1,13 @@
-import IntegerMultBounds.Networks.BoundedCircuit
-import IntegerMultBounds.Networks.DAGValueTransfer
+module
+
+public import IntegerMultBounds.Networks.BoundedCircuit
+public import IntegerMultBounds.Networks.DAGValueTransfer
 
 /-! The actual role allocator emits a finite-register scalar program. Its bound
 covers every elementary target and source, and restriction preserves execution
 and instruction count exactly. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.DAGFiniteCompile
 

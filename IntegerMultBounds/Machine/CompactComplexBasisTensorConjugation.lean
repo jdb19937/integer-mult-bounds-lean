@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.CompactComplexActualCallFrameEdge
+module
+
+public import IntegerMultBounds.Machine.CompactComplexActualCallFrameEdge
 
 /-! Exact coordinate changes of the column translation tensors. The inverse
 coordinate map carries each canonical slot back to its literal basis vector. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexBasisTensorConjugation
 noncomputable section
 open Networks Module

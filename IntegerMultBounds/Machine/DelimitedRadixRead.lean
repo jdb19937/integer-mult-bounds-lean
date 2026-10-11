@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.RawLinearCombinationCleanup
+module
+
+public import IntegerMultBounds.Machine.RawLinearCombinationCleanup
 
 /-! A delimiter-driven coefficient-field reader. The stream is retained, its
 head advances over exactly one separator, and the extracted radix word is
 returned at the marked-control head expected by the arithmetic compiler. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.DelimitedRadixRead
 open MarkedWordCleanup (one empty marked word)
 open RadixDigits

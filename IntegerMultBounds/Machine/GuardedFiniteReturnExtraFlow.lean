@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.GuardedFiniteReturnFlow
+module
+
+public import IntegerMultBounds.Machine.GuardedFiniteReturnFlow
 
 /-! Extra fixed control blocks are not return addresses. The original binary
 PC codec and width are retained; decoded return PCs enter the leading table,
 while direct edges may enter any additional shared recursive/branch block. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.GuardedFiniteReturnExtraFlow
 noncomputable section
 variable {k N extra t a : ℕ}

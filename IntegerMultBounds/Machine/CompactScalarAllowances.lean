@@ -1,9 +1,14 @@
-import IntegerMultBounds.Sizes
-import IntegerMultBounds.Asymptotics
+module
+
+public import IntegerMultBounds.Sizes
+public import IntegerMultBounds.Asymptotics
 
 /-! The actual multiplier choices d=floor(b^epsilon), K=floor(d^spacing)
 and p=6b pay the complete original-axis repair size. No independent cubic
 address-width hypothesis is needed once D is an original subset of d axes. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactScalarAllowances
 noncomputable section
 open Sizes TimeBound Parameters

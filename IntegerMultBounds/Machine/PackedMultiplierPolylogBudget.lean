@@ -1,9 +1,14 @@
-import IntegerMultBounds.CostTable
+module
+
+public import IntegerMultBounds.CostTable
 
 /-! A polylogarithmic overhead on the packed-product subroutine is absorbed by
 the existing certified margin. This permits a proved Schonhage--Strassen tape
 multiplier, rather than requiring an exact n log n subroutine bound. Actual
 subroutine execution and its bit-cost estimate remain separate obligations. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.PackedMultiplierPolylogBudget
 noncomputable section
 open Filter Parameters Sizes TimeBound CostTable

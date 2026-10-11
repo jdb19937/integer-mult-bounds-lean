@@ -1,5 +1,7 @@
-import IntegerMultBounds.NLogN.ResamplingInverse
-import IntegerMultBounds.NLogN.ResamplingCLM
+module
+
+public import IntegerMultBounds.NLogN.ResamplingInverse
+public import IntegerMultBounds.NLogN.ResamplingCLM
 
 /-! Proposition 4.7(i) of Harvey–van der Hoeven in one dimension. The row
 selection `C`, the diagonal map `D` with its inverse, and the off-diagonal part
@@ -10,6 +12,8 @@ Proved: for `s < t` coprime and `α ≥ 1`, there are `A : ℂ^s → ℂ^t` and
 and the explicit shapes `A = S/2`, `B = P_s⁻¹ D J C P_t / 2^{γ-1}` for any left
 inverse `J` of `1 + E`. Numerical approximation of `A` and `B`, the
 multidimensional version, and costs are not here. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.NLogN
 

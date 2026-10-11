@@ -1,10 +1,14 @@
-import IntegerMultBounds.Schoenhage.DifLayout
+module
+
+public import IntegerMultBounds.Schoenhage.DifLayout
 
 /-! One slot's round over several axes in a bit layout, as the paper groups
 it: every axis's butterfly first, then one twist by the sum of the axes'
 exponents (`run_group`). The exponent of the record at physical address `y`
 is `slotExp`: for each participating axis, the twiddle `(2r/2^(h+1)) k` when
 the axis's bit at the slot is set, `k` its bits below the slot. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Schoenhage
 

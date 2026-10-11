@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.BoundedProductDescriptor
-import IntegerMultBounds.Machine.RecursiveChildQuotientsConstant
-import IntegerMultBounds.Machine.BinaryDescriptorCleanupList
+module
+
+public import IntegerMultBounds.Machine.BoundedProductDescriptor
+public import IntegerMultBounds.Machine.RecursiveChildQuotientsConstant
+public import IntegerMultBounds.Machine.BinaryDescriptorCleanupList
 
 /-! Four actual digit-redistribution control descriptors from only canonical
 S/P inputs. The fixed one and product P*S are physically written, and their
 later erasure is charged. All three product work tapes finish blank/head0. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RadixDigitMoveCounts
 variable {a : ℕ}
 noncomputable section
@@ -12,8 +17,8 @@ noncomputable section
 def oneBits := RecursiveChildQuotientsConstant.bits 1
 def productBits (P S : ℕ) := BoundedProductDescriptor.bits P S
 
-private def hd : Option (List Bool) → ℤ | none => 0 | some _ => 1
-private def tp : Option (List Bool) → ℤ → Fin (a+4)
+def hd : Option (List Bool) → ℤ | none => 0 | some _ => 1
+def tp : Option (List Bool) → ℤ → Fin (a+4)
   | none => fun _ => blank
   | some bs => RadixZeroFill.encodedBinary bs
 

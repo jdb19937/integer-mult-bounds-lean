@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.Frame
+module
+
+public import IntegerMultBounds.Machine.Frame
 
 /-! One actual transition installs a fixed collection of sentinel cells and
 zero/one head positions. Its template is compiled into finite control and may
 not depend on input dimensions or payload. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.StaticMarkerInit
 variable {t : ℕ}
 

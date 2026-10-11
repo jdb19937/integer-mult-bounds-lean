@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.RadixDigitMoveRows
+module
+
+public import IntegerMultBounds.Machine.RadixDigitMoveRows
 
 /-! Moving a radix digit across a spectator block preserves an arbitrary
 following suffix. Long split rows have length S*E; merge rows have length E.
 This is the serialization bridge needed for joining high digits in §4. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RadixDigitMoveBlockRows
 open RecursiveInterchangeRows (pack pack_val)
 variable {P Q S E a : ℕ}

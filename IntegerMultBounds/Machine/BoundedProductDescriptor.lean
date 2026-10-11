@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.RadixPowerDescriptor
-import IntegerMultBounds.Machine.TranslationProduct
+module
+
+public import IntegerMultBounds.Machine.RadixPowerDescriptor
+public import IntegerMultBounds.Machine.TranslationProduct
 
 /-! Canonical product synthesis from a possibly padded outer count.
 All markers are initialized physically, and all scratch tapes are restored. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BoundedProductDescriptor
 
 variable {q : ℕ}
@@ -28,7 +33,7 @@ def output (ws ns : List Bool) (N W : ℕ) : Tapes 6 q :=
   ⟨![0,1,0,1,0,1],![fun _ => blank,RadixZeroFill.encodedBinary (bits N W),fun _ => blank,
     RadixZeroFill.encodedBinary ws,fun _ => blank,RadixZeroFill.encodedBinary ns]⟩
 
-private def initProgram : Program 6 2 q where
+def initProgram : Program 6 2 q where
   tapes_pos := by decide
   start := 0
   transition := fun s sy => if s = 0 then
@@ -63,7 +68,7 @@ private theorem mapped_bank (ds ws ns : List Bool) :
       by_cases hz : z = 0 <;>
         simp [hz,RadixToBinary.binaryEncoding,CountedCopyReuse.empty,MarkedWordCleanup.empty,blank,separator]
 
-private def coreProgram : Program 6 35 q :=
+def coreProgram : Program 6 35 q :=
   Alphabet.program RadixToBinary.binaryEncoding (TranslationProduct.program (0 : Fin 1))
 
 private theorem core_hoare (ws ns : List Bool) (N W Q : ℕ) (hW : 0 < W)
@@ -83,7 +88,7 @@ private theorem core_hoare (ws ns : List Bool) (N W Q : ℕ) (hW : 0 < W)
   · rintro v ⟨w,rfl,hv⟩
     exact hv.trans (mapped_bank (bits N W) ws ns)
 
-private def cleanProgram : Program 6 3 q where
+def cleanProgram : Program 6 3 q where
   tapes_pos := by decide
   start := 0
   transition := fun s sy =>

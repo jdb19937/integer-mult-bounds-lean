@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.BlockRotationData
-import IntegerMultBounds.Machine.PrefixAddressData
-import Mathlib.Data.List.OfFn
+module
+
+public import IntegerMultBounds.Machine.BlockRotationData
+public import IntegerMultBounds.Machine.PrefixAddressData
+public import Mathlib.Data.List.OfFn
 
 /-! Canonical whole-array fibers, constructed from the physical array itself.
 A prefix is most significant, a target coordinate comes next, and every symbol
 of the arbitrary suffix record remains least significant. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.FiberLayoutData
 variable {α : Type*} {P Q B : ℕ}
 

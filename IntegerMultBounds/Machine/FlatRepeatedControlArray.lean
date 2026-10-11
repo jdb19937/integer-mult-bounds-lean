@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.FlatRepeatedControlNormalize
-import IntegerMultBounds.Machine.SharedPayload
+module
+
+public import IntegerMultBounds.Machine.FlatRepeatedControlNormalize
+public import IntegerMultBounds.Machine.SharedPayload
 
 /-! Canonical payload pair after heterogeneous repeated shift and normalization.
 The complete prepared arithmetic/control bank remains explicit at both ends. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.FlatRepeatedControlArray
 open FlatRepeatedControlShift
 variable {radix N C B : ℕ} [Fact radix.Prime]

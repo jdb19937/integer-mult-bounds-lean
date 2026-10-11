@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.PrefixCounterInit
+module
+
+public import IntegerMultBounds.Machine.PrefixCounterInit
 
 /-! Static full-bank wiring of the actual prefix initializer. The generated
 fields remain on the same physical tapes; clocks, immutable width descriptors,
 and the spare tape form an exact frame of subsequent computation. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.PrefixCounterInitPlacement
 open PrefixCounterInit
 variable {q c : ℕ}

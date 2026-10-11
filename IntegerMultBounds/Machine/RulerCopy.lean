@@ -1,9 +1,13 @@
-import IntegerMultBounds.Machine.RulerAdvance
+module
+
+public import IntegerMultBounds.Machine.RulerAdvance
 
 /-! Copy as many cells as a ruler word is long, zero-filled, from a source
 head to a destination head: three tapes and one state, all heads stepping
 right together while the ruler reads nonblank. Also a one-cell writer of a
 fixed symbol. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.RulerCopy
 

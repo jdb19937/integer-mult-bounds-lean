@@ -1,4 +1,6 @@
-import IntegerMultBounds.NLogN.TensorApproxD
+module
+
+public import IntegerMultBounds.NLogN.TensorApproxD
 
 /-! Lemma 2.11 of Harvey and van der Hoeven for arrays with values in an
 arbitrary normed complex space, indexed by `(i : Fin d) → Fin (N i)`; this is
@@ -9,6 +11,8 @@ tensor of approximations approximates the tensor of the exact maps with the
 sum of the errors; and, for rectangular maps between different lengths, the
 tensor of compositions is the composition of tensors. No cost model is
 attached. -/
+
+@[expose] public section
 
 open Complex
 

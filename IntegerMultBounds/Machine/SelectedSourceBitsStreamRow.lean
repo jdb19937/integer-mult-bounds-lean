@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.SelectedSourceBitsStreamCore
-import IntegerMultBounds.Machine.SelectedSourceBitsScan
+module
+
+public import IntegerMultBounds.Machine.SelectedSourceBitsStreamCore
+public import IntegerMultBounds.Machine.SelectedSourceBitsScan
 
 /-! Process one complete source row directly. After its selected bits are
 appended, paid q-right/rho-left movement reaches the next row boundary. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.SelectedSourceBitsStreamRow
 open CountedLoopReuseAlphabet (bank empty binary controls)
 open SelectedSourceBitsCore (payload)

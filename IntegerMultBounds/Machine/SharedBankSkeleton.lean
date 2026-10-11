@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.SharedBankStage
+module
+
+public import IntegerMultBounds.Machine.SharedBankStage
 
 /-! Fixed finite control for the arbitrary-common-bank compiler. Erasing array
 sizes, input words and contracts leaves a machine chosen solely by the schedule. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.SharedBankSkeleton
 universe u
 

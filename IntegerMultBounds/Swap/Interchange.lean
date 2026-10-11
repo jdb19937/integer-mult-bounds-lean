@@ -1,7 +1,9 @@
-import IntegerMultBounds.Swap.Modular
-import IntegerMultBounds.Swap.Recurrence
-import IntegerMultBounds.Networks.ShearFrame
-import Mathlib.LinearAlgebra.Matrix.ToLin
+module
+
+public import IntegerMultBounds.Swap.Modular
+public import IntegerMultBounds.Swap.Recurrence
+public import IntegerMultBounds.Networks.ShearFrame
+public import Mathlib.LinearAlgebra.Matrix.ToLin
 
 /-! The mathematics of the power-width interchange (§4, Proposition 4.3). Two
 address chunks `H`, `D` are interchanged by `D ← D - H`, `H ← H + D`,
@@ -13,6 +15,8 @@ contract makes the routed output of the framed circuit the full shear on every
 wire. The recursion `time (k+1) V ≤ s · time k (V / W) + C V` with
 `s / W ≤ m^τ` gives time `O(V (m^k)^τ)`. The role-stream split, the
 depth-first tape schedule, and descriptor processing are tape obligations. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Swap.Interchange
 

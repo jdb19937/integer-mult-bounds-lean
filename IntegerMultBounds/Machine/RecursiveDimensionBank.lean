@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.RecursiveInterchangeLayout
-import IntegerMultBounds.Machine.RadixPowerDescriptor
-import IntegerMultBounds.Machine.DimensionProductDescriptor
+module
+
+public import IntegerMultBounds.Machine.RecursiveInterchangeLayout
+public import IntegerMultBounds.Machine.RadixPowerDescriptor
+public import IntegerMultBounds.Machine.DimensionProductDescriptor
 
 /-! Runtime dimension arithmetic for seven-factor layouts. Six original binary
 headers are retained; Q and successive prefix products are physically computed
 from blank output/scratch tapes. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveDimensionBank
 open RecursiveInterchangeLayout (Descriptor volume)
 variable {q : ℕ} (hq : 2 ≤ q)

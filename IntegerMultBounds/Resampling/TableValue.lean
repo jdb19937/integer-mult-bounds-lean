@@ -1,6 +1,8 @@
-import IntegerMultBounds.Resampling.TabDTape
-import IntegerMultBounds.Resampling.B0Value
-import IntegerMultBounds.Resampling.TabledMaps
+module
+
+public import IntegerMultBounds.Resampling.TabDTape
+public import IntegerMultBounds.Resampling.B0Value
+public import IntegerMultBounds.Resampling.TabledMaps
 
 /-! The words written by the table machines, read back: every word has width
 `w`, the A and E words have signed value the table entry (zero at the
@@ -8,6 +10,8 @@ off-diagonal centre), the D and halving words have signed value the negated
 entry, and every signed value is at most `2^p` in magnitude. These are the
 hypotheses of `accumulators_eq_W` and `b0_value_W` for the tables
 `tableA`, `tableE`, `tableD` of `tables_ok`. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Resampling.TableValue
 

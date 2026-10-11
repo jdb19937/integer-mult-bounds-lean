@@ -1,10 +1,15 @@
-import IntegerMultBounds.Compact.Repair
-import IntegerMultBounds.Machine.RecursiveInterchangeRows
-import Mathlib.Data.Fintype.BigOperators
+module
+
+public import IntegerMultBounds.Compact.Repair
+public import IntegerMultBounds.Machine.RecursiveInterchangeRows
+public import Mathlib.Data.Fintype.BigOperators
 
 /-! Source-dependent repair on complete finite fibers. The unchanged source
 selects the actual and ideal permutations; arbitrary spectators are retained.
 Ranks and repair destinations include the source and every spectator. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.VaryingControlRepairFiber
 noncomputable section
 open RecursiveInterchangeRows (pack pack_val)

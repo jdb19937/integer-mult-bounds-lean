@@ -1,5 +1,7 @@
-import IntegerMultBounds.NLogN.ResamplingAssembly
-import IntegerMultBounds.NLogN.TensorApproxD
+module
+
+public import IntegerMultBounds.NLogN.ResamplingAssembly
+public import IntegerMultBounds.NLogN.TensorApproxD
 
 /-! Theorem 4.1 of Harvey and van der Hoeven: the multidimensional resampling
 factorization. Proved: the normalized transform `dftC` is the normalized `dft`
@@ -11,6 +13,8 @@ the normalized one-dimensional transforms; and for coprime `s_i < t_i`,
 `α ≥ 1`, and `α² θ_i ≥ 1`, the `d`-dimensional source transform equals
 `2^(dγ) · B ∘ F_t ∘ A` with `‖A‖, ‖B‖ ≤ 1`. The numerical approximation of
 `A` and `B` and every cost are not here. -/
+
+@[expose] public section
 
 open Real Complex
 

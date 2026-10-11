@@ -1,9 +1,13 @@
-import IntegerMultBounds.Networks.MotifLabels
+module
+
+public import IntegerMultBounds.Networks.MotifLabels
 
 /-! Actual associator and unit identifications for the three local tensor stages.
 Subspaces are transported by the concrete tensor linear equivalences, and form
 preservation is proved, not assumed. These lemmas reconcile the local motif
 label table with a single right-associated three-factor ambient space. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.StageLabels
 

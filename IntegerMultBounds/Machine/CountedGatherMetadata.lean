@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.Gather
-import IntegerMultBounds.Machine.BinaryDescriptorDifference
-import IntegerMultBounds.Machine.InjectivePlacement
+module
+
+public import IntegerMultBounds.Machine.Gather
+public import IntegerMultBounds.Machine.BinaryDescriptorDifference
+public import IntegerMultBounds.Machine.InjectivePlacement
 
 /-! Four actual descriptor subtractions construct the two gather suffixes.
 The fixed ten-tape machine retains the six original runtime dimensions and
 cleans every generated header, including zero-valued marked descriptors. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedGatherMetadata
 noncomputable section
 variable {a : ℕ}

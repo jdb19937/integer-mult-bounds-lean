@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.VaryingControlRepairFiber
-import IntegerMultBounds.Compact.LatePowerTwoRank
-import IntegerMultBounds.Compact.KeyValue
+module
+
+public import IntegerMultBounds.Machine.VaryingControlRepairFiber
+public import IntegerMultBounds.Compact.LatePowerTwoRank
+public import IntegerMultBounds.Compact.KeyValue
 
 /-! Actual early and later packed permutations with a source word selected
 from the retained address coordinate. The finite local rank range depends on
 its length only, while every inverse and ideal operation reads that source. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.VaryingControlRepairPacked
 noncomputable section
 open Compact Compact.PowerTwo

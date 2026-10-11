@@ -1,14 +1,18 @@
-import IntegerMultBounds.Machine.ScalingPieces
-import Mathlib.Data.ZMod.Basic
-import Mathlib.Tactic.Ring
-import Mathlib.Tactic.Set
-import Mathlib.Tactic.Linarith
+module
+
+public import IntegerMultBounds.Machine.ScalingPieces
+public import Mathlib.Data.ZMod.Basic
+public import Mathlib.Tactic.Ring
+public import Mathlib.Tactic.Set
+public import Mathlib.Tactic.Linarith
 
 /-! Fixed-multiplier finite control for piece selection in unit scaling. The
 lookup has c possible modulus residues and c control states, independently of
 the array length Q. Advancing an output address advances just one finite
 residue state. Source pieces are contiguous clipped ceiling intervals. These
 are arithmetic and control semantics, without a tape-transition cost claim. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.ScalingControl
 

@@ -1,12 +1,17 @@
-import IntegerMultBounds.Machine.BinarySubReuse
-import IntegerMultBounds.Machine.BinaryDescriptorNormalize
-import IntegerMultBounds.Machine.BinaryCanonicalData
-import IntegerMultBounds.Machine.BinaryDescriptorCleanupList
-import IntegerMultBounds.Machine.RecursiveChildQuotientsConstant
+module
+
+public import IntegerMultBounds.Machine.BinarySubReuse
+public import IntegerMultBounds.Machine.BinaryDescriptorNormalize
+public import IntegerMultBounds.Machine.BinaryCanonicalData
+public import IntegerMultBounds.Machine.BinaryDescriptorCleanupList
+public import IntegerMultBounds.Machine.RecursiveChildQuotientsConstant
 
 /-! Immutable marked-descriptor subtraction with a canonical output. The
 literal subtractor, forward scan, zero trimming and all rewinds are paid;
 no padded operands or derived result are supplied to the fixed program. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryDescriptorDifference
 noncomputable section
 variable {a : ℕ}

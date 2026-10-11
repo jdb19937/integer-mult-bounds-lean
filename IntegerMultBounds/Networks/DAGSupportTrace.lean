@@ -1,9 +1,13 @@
-import IntegerMultBounds.Networks.DAGValueTransfer
-import IntegerMultBounds.Networks.FanoutFrames
+module
+
+public import IntegerMultBounds.Networks.DAGValueTransfer
+public import IntegerMultBounds.Networks.FanoutFrames
 
 /-! Concrete source-support labels propagated by the literal role allocator.
 Each event retains its actual node support and actual allocated gate. Declared
 incidences are relabeled together, including identity-node pivots. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.DAGSupportTrace
 

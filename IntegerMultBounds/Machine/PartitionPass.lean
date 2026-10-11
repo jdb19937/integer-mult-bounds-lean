@@ -1,21 +1,25 @@
-import IntegerMultBounds.Machine.PartitionMarked
-import IntegerMultBounds.Machine.Concatenate
-import IntegerMultBounds.Machine.Frame
-import IntegerMultBounds.Machine.PartitionSort
+module
+
+public import IntegerMultBounds.Machine.PartitionMarked
+public import IntegerMultBounds.Machine.Concatenate
+public import IntegerMultBounds.Machine.Frame
+public import IntegerMultBounds.Machine.PartitionSort
 
 /-! A complete literal stable partition pass on four tapes. The input and two
 bucket tapes have distinct left markers; the fourth is the output. Bucket heads
 are rewound before concatenation. Every phase connection and head movement is
 included in the time bound. This is one leading-key-bit pass, not full sorting. -/
 
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.PartitionPass
 
 open PartitionMarked
 
-private def setHead (v : Tapes 4 1) (i : Fin 4) (p : ℤ) : Tapes 4 1 :=
+def setHead (v : Tapes 4 1) (i : Fin 4) (p : ℤ) : Tapes 4 1 :=
   ⟨Function.update v.head i p, v.tape⟩
 
-private def resetCfg (v : Tapes 4 1) (s : Fin 2) : Config 4 2 1 :=
+def resetCfg (v : Tapes 4 1) (s : Fin 2) : Config 4 2 1 :=
   ⟨s, v.head, v.tape⟩
 
 /-- Rewind one selected physical tape, then step right off its marker and halt.

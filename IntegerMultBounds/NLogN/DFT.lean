@@ -1,5 +1,7 @@
-import Mathlib.RingTheory.RootsOfUnity.PrimitiveRoots
-import Mathlib.Tactic
+module
+
+public import Mathlib.RingTheory.RootsOfUnity.PrimitiveRoots
+public import Mathlib.Tactic
 
 /-! The discrete Fourier transform over an integral domain with a primitive
 `N`-th root of unity, indexed by `ZMod N`. Proved: linearity, the cyclic
@@ -7,6 +9,8 @@ convolution theorem, the orthogonality sum, double-transform inversion up to
 the factor `N`, injectivity when `N` is a nonzero scalar, and uniqueness of the
 convolution with a given pointwise-product transform. No fast evaluation
 algorithm, cost model, or rounding analysis is part of this file. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.NLogN
 

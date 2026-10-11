@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.SharedBank
+module
+
+public import IntegerMultBounds.Machine.SharedBank
 
 /-! Projection and clearing laws for permanent shared banks. All complementary
 complete tapes and heads are retained in their original physical slots. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.SharedBankFrames
 open SharedBank
 variable {k t u a : ℕ}

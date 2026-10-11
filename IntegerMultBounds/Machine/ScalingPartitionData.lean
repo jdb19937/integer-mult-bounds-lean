@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ScalingPieceBridge
+module
+
+public import IntegerMultBounds.Machine.ScalingPieceBridge
 
 /-! Contiguous quotient pieces partition the complete payload in source order.
 This is the final semantic bridge for inverse scaling by scatter/concatenate. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ScalingPartitionData
 
 variable {α : Type*}

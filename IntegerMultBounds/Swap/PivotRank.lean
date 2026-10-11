@@ -1,11 +1,15 @@
-import IntegerMultBounds.Swap.LowerTriangular
-import Mathlib.LinearAlgebra.Matrix.Rank
-import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
+module
+
+public import IntegerMultBounds.Swap.LowerTriangular
+public import Mathlib.LinearAlgebra.Matrix.Rank
+public import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
 
 /-! The number of pivots of a lower triangular factorization is the rank. A
 pivot matrix `Π` with distinct rows and distinct columns satisfies
 `Πᵀ Π = D` and `Π D = Π` for the diagonal indicator `D` of its columns, so its
 rank is the number of pivots; invertible factors do not change the rank. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Swap.PivotRank
 

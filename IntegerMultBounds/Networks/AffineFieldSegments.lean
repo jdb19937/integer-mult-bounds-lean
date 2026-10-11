@@ -1,8 +1,13 @@
-import IntegerMultBounds.Networks.AffineFieldCoordinates
+module
+
+public import IntegerMultBounds.Networks.AffineFieldCoordinates
 
 /-! Separate maximal nonrecursive runs from explicit recursive interchange
 boundaries, retaining the complete original field program in order. Empty runs
 are allowed at the ends and between adjacent recursive operations. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Networks.AffineFieldSegments
 open AffineFieldProgram AffineFieldCoordinates
 variable {d : ℕ} {R : Type*}

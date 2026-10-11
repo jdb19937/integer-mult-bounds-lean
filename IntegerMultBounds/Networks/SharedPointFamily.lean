@@ -1,11 +1,15 @@
-import IntegerMultBounds.Networks.Paired49Certificate
-import IntegerMultBounds.Networks.SharedPointLift
-import IntegerMultBounds.Networks.SharedPointMatching
-import IntegerMultBounds.Networks.DisjointUnique
+module
+
+public import IntegerMultBounds.Networks.Paired49Certificate
+public import IntegerMultBounds.Networks.SharedPointLift
+public import IntegerMultBounds.Networks.SharedPointMatching
+public import IntegerMultBounds.Networks.DisjointUnique
 
 /-! The actual fifty-copy family of certified local addition supports.
 Its size is derived from the checked arithmetic count, without reducing a
 large semantic finite set or assuming any duplicate-witness facts. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.SharedPointFamily
 

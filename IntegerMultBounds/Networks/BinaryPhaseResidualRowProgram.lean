@@ -1,8 +1,13 @@
-import IntegerMultBounds.Networks.BinaryPhaseBasisExtension
+module
+
+public import IntegerMultBounds.Networks.BinaryPhaseBasisExtension
 
 /-! Actual nested phase labels choose their proved orthonormal residual basis,
 then produce the literal ambient row-addition word. No basis or decomposition
 is supplied as a separate compiler hypothesis. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Networks.BinaryPhaseResidualRowProgram
 noncomputable section
 open Module ProjectionRank

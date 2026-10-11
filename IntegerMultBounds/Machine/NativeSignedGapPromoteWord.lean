@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.SignedRadixExactReturn
+module
+
+public import IntegerMultBounds.Machine.SignedRadixExactReturn
 
 /-! Literal constant-width promotion of a native signed numerator to a finer
 common denominator. Low zero digits are prepended and high digits truncated;
 a real signed capacity guard proves exact multiplication rather than wrapping. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.NativeSignedGapPromoteWord
 noncomputable section
 open RadixSignedShiftRight (Word)

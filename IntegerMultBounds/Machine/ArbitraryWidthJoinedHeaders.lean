@@ -1,19 +1,24 @@
-import IntegerMultBounds.Machine.BinaryDescriptorDifference
-import IntegerMultBounds.Machine.BinaryDescriptorInstall
-import IntegerMultBounds.Machine.PlacedDescriptorConstruction
-import IntegerMultBounds.Machine.RecursiveDimensionBank
+module
+
+public import IntegerMultBounds.Machine.BinaryDescriptorDifference
+public import IntegerMultBounds.Machine.BinaryDescriptorInstall
+public import IntegerMultBounds.Machine.PlacedDescriptorConstruction
+public import IntegerMultBounds.Machine.RecursiveDimensionBank
 
 /-! Paid construction of the six joined/padded low-width headers from sole
 retained P,G,B,e,rho,R' originals. All copies, the fixed one, and subtraction
 are actual tape programs; the six original descriptors are immutable. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthJoinedHeaders
 noncomputable section
 open SharedPlacementAlphabet (setTape)
 open RecursiveChildQuotientsConstant (bits)
 variable {a : ℕ}
 
-private def hd : Option (List Bool) → ℤ | none => 0 | some _ => 1
-private def tp : Option (List Bool) → ℤ → Fin (a+4)
+def hd : Option (List Bool) → ℤ | none => 0 | some _ => 1
+def tp : Option (List Bool) → ℤ → Fin (a+4)
   | none => fun _ => blank
   | some bs => RadixZeroFill.encodedBinary bs
 

@@ -1,8 +1,12 @@
-import IntegerMultBounds.Networks.CircuitBits
+module
+
+public import IntegerMultBounds.Networks.CircuitBits
 
 /-! The literal reversible fanout gate used by the pair-exclusion compiler.
 A pivot accumulates its other inputs, then copies that sum into fresh output
 slots. Elementary steps and their reversed inverse are actual scalar programs. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.ReversibleFanout
 

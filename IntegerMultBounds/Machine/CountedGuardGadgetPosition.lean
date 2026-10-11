@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CountedPosition
-import IntegerMultBounds.Machine.BinaryDescriptorCleanupList
-import IntegerMultBounds.Machine.RecursiveChildQuotientsConstant
+module
+
+public import IntegerMultBounds.Machine.CountedPosition
+public import IntegerMultBounds.Machine.BinaryDescriptorCleanupList
+public import IntegerMultBounds.Machine.RecursiveChildQuotientsConstant
 
 /-! Real runtime-distance replay inside a guard record. One is not compiled
 per width: the canonical count is read by the reusable countdown, with physical
 clock initialization and erasure from wholly blank private storage. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedGuardGadgetPosition
 noncomputable section
 variable {a : ℕ}

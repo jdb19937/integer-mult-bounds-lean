@@ -1,4 +1,6 @@
-import IntegerMultBounds.Schoenhage.Ops
+module
+
+public import IntegerMultBounds.Schoenhage.Ops
 
 /-! Weakest preconditions for word programs. `WP c σ Q` unfolds a program
 symbolically: a primitive demands its precondition and passes its exact
@@ -6,6 +8,8 @@ effect and cost on, sequencing threads states and adds the connecting step,
 a branch splits on its test, and a loop asks for an execution. `wp_sound`
 turns a weakest precondition into an execution, so straight-line correctness
 proofs become simplification of the unfolded conditions. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Schoenhage
 

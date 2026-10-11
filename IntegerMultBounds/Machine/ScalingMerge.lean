@@ -1,12 +1,16 @@
-import IntegerMultBounds.Machine.ScalingMergeData
-import IntegerMultBounds.Machine.Dispatch
-import IntegerMultBounds.Machine.CountedLoopReuse
-import IntegerMultBounds.Machine.OneHot
-import IntegerMultBounds.Machine.FiberShift
+module
+
+public import IntegerMultBounds.Machine.ScalingMergeData
+public import IntegerMultBounds.Machine.Dispatch
+public import IntegerMultBounds.Machine.CountedLoopReuse
+public import IntegerMultBounds.Machine.OneHot
+public import IntegerMultBounds.Machine.FiberShift
 
 /-! Literal sequential scaling merge. Block sources occupy fixed tapes, and
 finite local-symbol dispatch selects a reusable counted block copy. Descriptor
 preparation and control heads are explicit in every contract. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.ScalingMerge
 

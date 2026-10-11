@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.RecursiveInterchangeRows
-import IntegerMultBounds.Machine.CyclicRowNormalized
+module
+
+public import IntegerMultBounds.Machine.RecursiveInterchangeRows
+public import IntegerMultBounds.Machine.CyclicRowNormalized
 
 /-! Seven-factor recursive row split/merge with physically normalized payload
 heads. Only canonical row/group descriptors remain explicit caller inputs. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveInterchangeRowsNormalized
 open RecursiveInterchangeLayout (Descriptor volume role)
 open RecursiveInterchangeRows (rowLength groups rows rows_length roleArray source_word role_word volume_split)

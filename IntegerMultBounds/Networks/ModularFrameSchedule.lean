@@ -1,4 +1,6 @@
-import IntegerMultBounds.Swap.Interchange
+module
+
+public import IntegerMultBounds.Swap.Interchange
 
 /-! Simultaneous modular specialization of an ordered rational frame schedule.
 One prime avoids old/new frame denominators, every difference factorization's
@@ -6,6 +8,8 @@ denominators, and any additional endpoint matrices. At every prime-power width
 the ordered programs realize the differences of the reduced frames, with the
 exact rational-rank interchange total. Reduction uses only the coprime-denominator
 subring; no homomorphism from all rationals to a finite ring is assumed. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.ModularFrameSchedule
 

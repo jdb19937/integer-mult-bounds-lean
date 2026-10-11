@@ -1,11 +1,15 @@
-import IntegerMultBounds.Networks.DisjointBalanced
-import Mathlib.Data.List.Sublists
+module
+
+public import IntegerMultBounds.Networks.DisjointBalanced
+public import Mathlib.Data.List.Sublists
 
 /-! Weighted paired-exclusion builder foundations. The upstream small-block
 branch computes all, leave-one-out, and leave-two-out weighted graph sums.
 This file executes that branch using the upstream floor-half balanced totals
 with left-before-right evaluation, zero elision, and support interning, and proves the complete returned list of references correct. The recursive
 coarse-graph and strip reconstruction are not asserted here. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.DisjointPaired
 

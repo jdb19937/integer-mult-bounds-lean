@@ -1,5 +1,7 @@
-import IntegerMultBounds.Compact.TapeRepairStage
-import IntegerMultBounds.Machine.RepairScan
+module
+
+public import IntegerMultBounds.Compact.TapeRepairStage
+public import IntegerMultBounds.Machine.RepairScan
 
 /-! The complete exceptional-address repair on literal tapes (§5): the
 flagging and extraction scan followed by the sort, strip and reinsert stage.
@@ -10,6 +12,8 @@ modular additions and the rank arithmetic. With that routine, the machine
 carries the unflagged actual output stream to the ideal stream on the output
 slot, within the key cost plus ten per record, three stream volumes, `74k + 5`
 extracted volumes, `2k + 3` per exceptional address, and `k + 14`. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Compact
 

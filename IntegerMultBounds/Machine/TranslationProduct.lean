@@ -1,8 +1,12 @@
-import IntegerMultBounds.Machine.ScalingDescriptors
+module
+
+public import IntegerMultBounds.Machine.ScalingDescriptors
 
 /-! Literal binary product-descriptor synthesis by nested counted loops. The
 outer N descriptor need not be canonical; starting the growing output at zero
 still gives the exact canonical N*B. All binary countdown setup/cleanup is charged. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.TranslationProduct
 

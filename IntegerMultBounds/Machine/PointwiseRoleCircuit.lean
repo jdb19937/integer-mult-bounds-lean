@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.PointwiseRoleGate
+module
+
+public import IntegerMultBounds.Machine.PointwiseRoleGate
 
 /-! Compile a fixed finite list of physical pointwise role gates. Every gate
 shares the original descriptor and work clock and returns all payload heads
 to their original positions, so sequential composition introduces no copying. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.PointwiseRoleCircuit
 open PointwiseRoleGate (Gate bank applyGate)
 variable {t a n : ℕ}
@@ -17,7 +22,7 @@ def states : ℕ → ℕ
   | 0 => 1
   | n+1 => 36+states n
 
-private def haltProgram (t a : ℕ) : Program (t+2) 1 a := ⟨by omega,0,fun _ _ => none⟩
+def haltProgram (t a : ℕ) : Program (t+2) 1 a := ⟨by omega,0,fun _ _ => none⟩
 
 def program (op : Fin (a+4) → Fin (a+4) → Fin (a+4)) :
     (gs : List (Gate t)) → Program (t+2) (states gs.length) a

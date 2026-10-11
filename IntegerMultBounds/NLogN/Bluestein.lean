@@ -1,5 +1,7 @@
-import IntegerMultBounds.NLogN.MultidimD
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
+module
+
+public import IntegerMultBounds.NLogN.MultidimD
+public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 
 /-! Bluestein's chirp identity. For an even length `t` the transform with root
 `e^{-2πi/t}` is a pointwise multiplication by the conjugate chirp, a cyclic
@@ -7,6 +9,8 @@ convolution with the chirp, and another conjugate-chirp multiplication. The
 `d`-dimensional version on a product of even-length cyclic groups is also
 proved. This reduces transforms to convolutions; no cost model, rounding, or
 synthetic-ring realization of the convolution is part of this file. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.NLogN
 

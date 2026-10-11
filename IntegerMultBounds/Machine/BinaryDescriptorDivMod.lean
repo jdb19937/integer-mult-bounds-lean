@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.BinaryDescriptorDivision
-import IntegerMultBounds.Machine.FixedBasePowerUntilBound
+module
+
+public import IntegerMultBounds.Machine.BinaryDescriptorDivision
+public import IntegerMultBounds.Machine.FixedBasePowerUntilBound
 
 /-! Physical quotient and remainder extraction from marked binary inputs.
 The shifted long-division remainder is copied, erased and normalized; tracking
 then restores every private tape and head, including its shifted source head. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryDescriptorDivMod
 noncomputable section
 variable {a : ℕ}

@@ -1,10 +1,14 @@
-import IntegerMultBounds.Machine.WordTape
-import IntegerMultBounds.Machine.Hoare
+module
+
+public import IntegerMultBounds.Machine.WordTape
+public import IntegerMultBounds.Machine.Hoare
 
 /-! Return a head from the end of a blank-backed word to the word's origin:
 one step left, then left over every nonblank cell, then one step right from
 the blank before the word. One tape, three states, every cell retained, and
 exactly the word length plus two transitions. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.ReturnOrigin
 

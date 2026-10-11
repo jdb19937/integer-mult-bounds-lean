@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.FixedHeaderSparseBankCopy
-import IntegerMultBounds.Machine.SharedBank
+module
+
+public import IntegerMultBounds.Machine.FixedHeaderSparseBankCopy
+public import IntegerMultBounds.Machine.SharedBank
 
 /-! Structural sparse-header bank identities, with no tape operations hidden
 in the equalities. Actual copying/erasure is supplied by SparseBankCopy. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthExecutionPrivateHeadersAppend
 noncomputable section
 open FixedHeaderSparseBankCopy

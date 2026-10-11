@@ -1,4 +1,6 @@
-import IntegerMultBounds.NLogN.NeumannHalved
+module
+
+public import IntegerMultBounds.NLogN.NeumannHalved
 
 /-! Lemma 7.1 with the manuscript's numerical maps: no clamps. For `α ≥ 2`,
 `‖A‖ ≤ 3/4`, so the unclamped window sums `Ã` land in the unit disk once their
@@ -6,6 +8,8 @@ scaled error is below `2^p/4`; with the clamp-free `B̃₀ = D̃' J̃' C` of
 `NeumannHalved` (window `⌊√p⌋ + 1`) both maps approximate `A`, `B₀` with errors
 below `p²` and are contractions on the unit disk. These are the maps the tape
 machines compute. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.NLogN
 

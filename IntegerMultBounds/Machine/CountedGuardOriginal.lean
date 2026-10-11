@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.CountedGuardOriginalSetup
-import IntegerMultBounds.Machine.CountedGuardOriginalCleanup
-import IntegerMultBounds.Machine.CountedGuardGadgetValue
+module
+
+public import IntegerMultBounds.Machine.CountedGuardOriginalSetup
+public import IntegerMultBounds.Machine.CountedGuardOriginalCleanup
+public import IntegerMultBounds.Machine.CountedGuardGadgetValue
 
 /-! The complete original-input fixed-control exceptional-address guard.
 Only V/W and canonical q/b/n are supplied. Comparison constants, derived
 counts and flags are physically constructed and erased; the sole retained
 private output is the actual exceptional-membership bit. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedGuardOriginal
 noncomputable section
 variable {a : ℕ}

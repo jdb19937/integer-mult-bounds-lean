@@ -1,9 +1,13 @@
-import IntegerMultBounds.Machine.Dispatch
+module
+
+public import IntegerMultBounds.Machine.Dispatch
 
 /-! Fixed one-hot residue control on a fixed finite bank of tapes. Only the
 symbol under each current head encodes the residue. One literal transition
 increments it modulo the fixed bank size while preserving every head and all
 background cells. The finite decoder is a lookup over scanned symbols only. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.OneHot
 

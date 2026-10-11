@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.SharedPayloadFrames
+module
+
+public import IntegerMultBounds.Machine.SharedPayloadFrames
 
 /-! A stage interface recording a concrete program, its exact input/output,
 canonical common payload pair, input-independent private metadata, and charged
 runtime. Actual affine stage constructors discharge all these fields. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.SharedPayloadStage
 universe u
 

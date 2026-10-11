@@ -1,10 +1,14 @@
-import IntegerMultBounds.Networks.NeighborCounts
-import Mathlib.Tactic.Ring
+module
+
+public import IntegerMultBounds.Networks.NeighborCounts
+public import Mathlib.Tactic.Ring
 
 /-! Explicit role sets for the full three-coordinate network layout. Each
 invocation has its own side and central wires, including across stages. This
 counts the named layout; compilation of the global gate schedule and attachment
 of its nested labels are separate obligations. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.Wires
 

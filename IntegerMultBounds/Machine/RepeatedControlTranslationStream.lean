@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.RepeatedControlTranslationExecution
+module
+
+public import IntegerMultBounds.Machine.RepeatedControlTranslationExecution
 
 /-! Arbitrary-prefix execution of heterogeneous controlled shifts. The inner
 count C repeats D translations at fixed H; the outer count n increments H once
 per entire C group. Choosing n=L*q^b handles arbitrary outer prefix cardinality
 L and returns the control to zero. Both counts are runtime binary descriptors;
 program/tape counts are independent of them. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RepeatedControlTranslationStream
 open TranslationStream (fibers)
 open RationalTranslationStream (control descriptor control_length control_succ)

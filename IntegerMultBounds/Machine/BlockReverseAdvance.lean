@@ -1,12 +1,16 @@
-import IntegerMultBounds.Machine.CountedSeek
-import IntegerMultBounds.Machine.CountedReverse
-import IntegerMultBounds.Machine.Placement
+module
+
+public import IntegerMultBounds.Machine.CountedSeek
+public import IntegerMultBounds.Machine.CountedReverse
+public import IntegerMultBounds.Machine.Placement
 
 /-! Reverse one raw block while advancing both payload heads to the next block.
 The program seeks to the block's end, moves back one cell, copies backwards to
 forward output, moves forward one cell, and seeks over the source block again.
 Every move and composition join is charged, including when the block is empty.
 The immutable length descriptor and reusable work clock are restored. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.BlockReverseAdvance
 

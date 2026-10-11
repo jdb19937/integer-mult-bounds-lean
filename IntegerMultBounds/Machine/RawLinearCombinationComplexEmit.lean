@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.RawLinearCombinationFieldEmit
+module
+
+public import IntegerMultBounds.Machine.RawLinearCombinationFieldEmit
 
 /-! Real and imaginary fixed expressions emit one literal Gaussian record.
 Both original control banks are retained; both private arithmetic banks end
 blank, and the output head advances by the actual two-field record length. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RawLinearCombinationComplexEmit
 noncomputable section
 open RadixLinearCombinationRefresh (Expr)

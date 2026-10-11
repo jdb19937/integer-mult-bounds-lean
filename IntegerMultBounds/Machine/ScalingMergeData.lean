@@ -1,9 +1,13 @@
-import IntegerMultBounds.Machine.ScalingControl
+module
+
+public import IntegerMultBounds.Machine.ScalingControl
 
 /-! Pure sequential merge semantics for positive unit scaling. Source streams
 are contiguous intervals, consumed only at their heads. The finite selector's
 prefix counts recover precisely the inverse-scaled source address. No tape
 implementation or running-time claim is made here. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.ScalingMergeData
 

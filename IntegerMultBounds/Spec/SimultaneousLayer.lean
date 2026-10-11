@@ -1,4 +1,6 @@
-import IntegerMultBounds.Spec.SyntheticTransform
+module
+
+public import IntegerMultBounds.Spec.SyntheticTransform
 
 /-! The statement of the paper's simultaneous normalized butterfly layer
 (`prop:simultaneous-layer`, §5) on the literal machine model and in the
@@ -16,6 +18,8 @@ array by `Q_p(ℋ z)` in the same format within `O(V d^λ')` steps,
 `V = 2 M r w`, uniformly over the bands for `d` and `r`. The two numerical
 consequences (unit disk, error `< √2 2^(-p)`) are proved from the
 definitions in `SimultaneousLayerFacts`. Definitions only. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Spec.SignedRingProduct
 

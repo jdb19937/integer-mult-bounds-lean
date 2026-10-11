@@ -1,8 +1,12 @@
-import IntegerMultBounds.Schoenhage.SSMain
+module
+
+public import IntegerMultBounds.Schoenhage.SSMain
 
 /-! The multiplier's cost within the schedule's recurrence: `ssCost N [x, y]`
 is at most `cost A B C0 N` for fixed constants plus a linear term, hence
 `O(N log N log log N)`. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Schoenhage
 

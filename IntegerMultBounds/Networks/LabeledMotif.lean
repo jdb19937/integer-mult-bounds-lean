@@ -1,12 +1,16 @@
-import IntegerMultBounds.Networks.GroupedFrames
-import IntegerMultBounds.Networks.MotifSupport
-import IntegerMultBounds.Networks.MotifLabels
+module
+
+public import IntegerMultBounds.Networks.GroupedFrames
+public import IntegerMultBounds.Networks.MotifSupport
+public import IntegerMultBounds.Networks.MotifLabels
 
 /-! Actual motif groups equipped with their common tensor-subspace labels.
 Forward and opposite-inverse schedules retain all scalar boundaries. Their
 actual RankTrace histories are comparable, including explicit output edges.
 The exact loss comes only from covered central columns and is at most the
 number of central registers times the current-factor dimension. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.LabeledMotif
 
@@ -222,13 +226,13 @@ variable {K E F R : Type*} [Field K] [AddCommGroup E] [Module K E]
   [AddCommGroup F] [Module K F] [CommRing R] [DecidableEq R]
   {n a c s : ℕ}
 
-private theorem sx (i : Fin a) (j : Fin n) :
+theorem sx (i : Fin a) (j : Fin n) :
     (side i : Role n a c s) ≠ x j := by simp [side, x]
-private theorem ys (i : Fin n) (j : Fin a) :
+theorem ys (i : Fin n) (j : Fin a) :
     (y i : Role n a c s) ≠ side j := by simp [y, side]
-private theorem yc (i : Fin n) (j : Fin c) :
+theorem yc (i : Fin n) (j : Fin c) :
     (y i : Role n a c s) ≠ center j := by simp [y, center]
-private theorem cx (i : Fin c) (j : Fin n) :
+theorem cx (i : Fin c) (j : Fin n) :
     (center i : Role n a c s) ≠ x j := by simp [center, x]
 
 variable (g : Geometry K E F) (t : Fin n → F)

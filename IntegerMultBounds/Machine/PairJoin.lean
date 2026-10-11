@@ -1,4 +1,6 @@
-import IntegerMultBounds.Machine.NeumannStepLemmas
+module
+
+public import IntegerMultBounds.Machine.NeumannStepLemmas
 
 /-! Joining and splitting complex records in place. A complex coordinate is
 two blank-separated words (real, imaginary); joined, it is one record
@@ -6,6 +8,8 @@ two blank-separated words (real, imaginary); joined, it is one record
 over every other blank; the split machine writes a blank over every
 separator. Both stop on the blank after the last record. They let the
 record-selecting machine move complex coordinates as single records. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.PairJoin
 

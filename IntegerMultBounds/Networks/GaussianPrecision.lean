@@ -1,8 +1,12 @@
-import IntegerMultBounds.Networks.GaussianDyadic
+module
+
+public import IntegerMultBounds.Networks.GaussianDyadic
 
 /-! Concrete integer numerator bounds for the actual binary translation
 kernels and their column products. These bounds concern exact arithmetic;
 they do not assert a tape implementation or charge arithmetic as one step. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.GaussianPrecision
 

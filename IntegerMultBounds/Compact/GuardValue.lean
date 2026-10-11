@@ -1,10 +1,14 @@
-import IntegerMultBounds.Machine.GuardGadget
-import IntegerMultBounds.Compact.PowerTwoDigits
-import IntegerMultBounds.Compact.ExactRepair
+module
+
+public import IntegerMultBounds.Machine.GuardGadget
+public import IntegerMultBounds.Compact.PowerTwoDigits
+public import IntegerMultBounds.Compact.ExactRepair
 
 /-! The guard test on tapes decides membership in the exceptional set: with
 the constants `2B`, `L - 2B - 1` and `B - 2` as words, some flag is set
 exactly when the address fails `earlyGood` in the radices `2^q`, `2^b`. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Compact.PowerTwo
 

@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.Frame
-import Mathlib.Logic.Equiv.Fintype
+module
+
+public import IntegerMultBounds.Machine.Frame
+public import Mathlib.Logic.Equiv.Fintype
 
 /-! A fixed finite dispatcher: a genuine halt of the front program selects a
 fixed continuation from its decoded finite state. One actual stay transition
 enters that continuation; no tape operation or dynamic machine construction is
 hidden in the branch. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.FiniteDispatch
 noncomputable section
 variable {t q a N : ℕ}

@@ -1,9 +1,13 @@
-import IntegerMultBounds.Machine.TranslationStream
+module
+
+public import IntegerMultBounds.Machine.TranslationStream
 
 /-! Literal varying-offset translation. A single fixed offset-preparation
 machine physically updates the canonical offset descriptor and any spectator
 workspace. Its exact whole-bank contract is composed with descriptor synthesis,
 rotation, metadata cleanup and an actual reusable outer counted loop. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.TranslationPreparedFamily
 

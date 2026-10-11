@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CountedGuardConstantsPlacement
+module
+
+public import IntegerMultBounds.Machine.CountedGuardConstantsPlacement
 
 /-! Physically produce all three certified padded guard constants from sole
 original canonical q/b headers. Every runtime fill, descriptor subtraction,
 overwrite, replay, rewind and private-workspace erasure is included. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedGuardConstants
 noncomputable section
 variable {a : ℕ}

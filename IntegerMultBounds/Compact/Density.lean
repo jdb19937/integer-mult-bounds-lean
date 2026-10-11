@@ -1,10 +1,14 @@
-import IntegerMultBounds.Compact.Counting
-import IntegerMultBounds.Compact.RepairBounds
-import Mathlib.Algebra.Order.Ring.Pow
+module
+
+public import IntegerMultBounds.Compact.Counting
+public import IntegerMultBounds.Compact.RepairBounds
+public import Mathlib.Algebra.Order.Ring.Pow
 
 /-! Fractions of actual exceptional packed addresses. Exact finite counts are
 converted to the source's union bounds, then to its uniform numerical estimate.
 This file counts records; extracting and sorting them on tapes remains separate. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Compact
 

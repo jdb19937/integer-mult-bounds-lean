@@ -1,5 +1,7 @@
-import IntegerMultBounds.NLogN.SynthConv
-import IntegerMultBounds.NLogN.Section5Approx
+module
+
+public import IntegerMultBounds.NLogN.SynthConv
+public import IntegerMultBounds.NLogN.Section5Approx
 
 /-! Proposition 3.4 of Harvey and van der Hoeven in one dimension over the
 synthetic ring in coefficient form. The normalised convolution
@@ -12,6 +14,8 @@ of at most `(3n + 2)/2^p + (n/2^p)^2` before the final scaling, hence scaled
 error at most `4n + 2` once `n ≤ 2^p`. The inverse transform is the forward
 transform at the negated index. Bit costs and the per-term evaluation of the
 negacyclic products are not modelled. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.NLogN
 

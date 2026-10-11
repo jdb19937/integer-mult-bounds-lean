@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.NativeSignedReturnClean
-import IntegerMultBounds.Machine.TwoTapeAt
-import IntegerMultBounds.Machine.WordMoves
+module
+
+public import IntegerMultBounds.Machine.NativeSignedReturnClean
+public import IntegerMultBounds.Machine.TwoTapeAt
+public import IntegerMultBounds.Machine.WordMoves
 
 /-! A reusable precision lowering pass returns its result on the original
 source tape, with the scratch stream blank and both heads at zero. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.NativeSignedReturnReuse
 noncomputable section
 open RadixSignedShiftRight (Word shifted tapes)

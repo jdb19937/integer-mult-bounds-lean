@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.RecursiveChildQuotientsBound
+module
+
+public import IntegerMultBounds.Machine.RecursiveChildQuotientsBound
 
 /-! One fixed-role row quotient from the original six headers. The constant
 is physically written and erased; the clean divider resets every private tape. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveRowsQuotient
 open RecursiveChildQuotients
 variable {a : ℕ}

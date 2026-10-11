@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.PointwiseBinary
-import IntegerMultBounds.Machine.WordSegments
-import IntegerMultBounds.Machine.GrowingCounterData
+module
+
+public import IntegerMultBounds.Machine.PointwiseBinary
+public import IntegerMultBounds.Machine.WordSegments
+public import IntegerMultBounds.Machine.GrowingCounterData
 
 /-! A pointwise finite-symbol operation followed by an actual counted rewind
 of both payload heads. The same length descriptor and work clock are reused;
 all original heads and every out-of-word cell are preserved exactly. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.PointwiseBinaryNormalized
 variable {a : ℕ}
 

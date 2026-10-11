@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActiveRepairDestinationPatchOverwrite
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairDestinationPatchOverwrite
 
 /-! Fixed-width address patches retain all bits outside their runtime interval.
 The word definition is identified with the actual physical tape overwrite. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairDestinationPatchData
 noncomputable section
 variable {a : ℕ}

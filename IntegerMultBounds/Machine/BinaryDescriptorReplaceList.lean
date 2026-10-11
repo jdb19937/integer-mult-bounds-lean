@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.BinaryDescriptorInstallMarkedList
-import IntegerMultBounds.Machine.BinaryDescriptorCleanupList
+module
+
+public import IntegerMultBounds.Machine.BinaryDescriptorInstallMarkedList
+public import IntegerMultBounds.Machine.BinaryDescriptorCleanupList
 
 /-! Physically replace a fixed list of occupied binary-header slots from a
 separate source bank. Old headers are erased before new marked words are copied;
 no blank-destination or free-reset assumption is exported. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryDescriptorReplaceList
 open BinaryDescriptorInstallMarkedList
 variable {t q : ℕ}

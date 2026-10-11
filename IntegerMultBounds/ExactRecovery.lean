@@ -1,6 +1,8 @@
-import IntegerMultBounds.NLogN.MainReduction
-import IntegerMultBounds.NLogN.ResamplingNumeric
-import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
+module
+
+public import IntegerMultBounds.NLogN.MainReduction
+public import IntegerMultBounds.NLogN.ResamplingNumeric
+public import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 
 /-! Precision and exact recovery (§8, "The final integer coefficients"). The
 computed source transforms `F'` approximate the exact contraction `F` with
@@ -16,6 +18,8 @@ and the rounding recovery of `MainReduction` gives the exact product once
 `L < k`, `γ ≤ k/4` and `p = 6k`, this is the manuscript's
 `448 k 2^(-3k/4) < 1/2`, which holds for all large `k`. Tape costs are not
 part of this file. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.ExactRecovery
 

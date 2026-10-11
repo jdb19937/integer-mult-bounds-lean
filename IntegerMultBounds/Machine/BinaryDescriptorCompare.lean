@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.BinaryCompare
-import IntegerMultBounds.Machine.BinaryDescriptorStackRoundtrip
-import IntegerMultBounds.Machine.DescriptorStackControl
-import IntegerMultBounds.Machine.WordSegments
+module
+
+public import IntegerMultBounds.Machine.BinaryCompare
+public import IntegerMultBounds.Machine.BinaryDescriptorStackRoundtrip
+public import IntegerMultBounds.Machine.DescriptorStackControl
+public import IntegerMultBounds.Machine.WordSegments
 
 /-! Real reusable comparison of two marked binary descriptors. Operand scans
 and marker rewinds are paid; only the comparison flag is changed. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryDescriptorCompare
 variable {q : ℕ}
 open DescriptorStackControl (positioned)

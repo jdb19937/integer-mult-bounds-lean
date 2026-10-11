@@ -1,12 +1,16 @@
-import IntegerMultBounds.Machine.GrowingCounterData
-import IntegerMultBounds.Machine.ExactFrame
-import IntegerMultBounds.Machine.WordMoves
-import Mathlib.Data.List.GetD
+module
+
+public import IntegerMultBounds.Machine.GrowingCounterData
+public import IntegerMultBounds.Machine.ExactFrame
+public import IntegerMultBounds.Machine.WordMoves
+public import Mathlib.Data.List.GetD
 
 /-! Natural-number registers on tapes. A register holding `n` is the canonical
 binary word of `n` (least significant bit first, no high zeros) at origin
 zero with the head there. Canonical words are unique for their value, and a
 trim machine removes high zeros from any word. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.Registers
 

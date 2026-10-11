@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.ActiveRepairRankFieldsPosition
-import IntegerMultBounds.Machine.CountedRankSplitBank
-import IntegerMultBounds.Machine.CountedRankSplitData
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairRankFieldsPosition
+public import IntegerMultBounds.Machine.CountedRankSplitBank
+public import IntegerMultBounds.Machine.CountedRankSplitData
 
 /-! One fixed five-tape machine extracts a runtime start/width field from a
 possibly short counter. Source/output heads and original headers are restored;
 zero extension is by actual blank cells and all clock work is physically erased. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairRankFieldsField
 noncomputable section
 variable {a : ℕ}

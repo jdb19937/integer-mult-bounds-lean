@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.RadixDigitMoveBlockRows
+module
+
+public import IntegerMultBounds.Machine.RadixDigitMoveBlockRows
 
 /-! Literal ordered high-block joining by successive single-radix movements.
 The recursive arrays use the exact existing block-digit unmove operation. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RadixHighBlockJoinSemantics
 noncomputable section
 open RecursiveInterchangeRows (pack pack_val)
@@ -10,11 +15,11 @@ variable {a : ℕ}
 def reindex {α : Type*} {n m : ℕ} (h : n=m) (x : Fin m → α) : Fin n → α :=
   fun z => x (Fin.cast h z)
 
-private theorem input_succ (P S q r E : ℕ) :
+theorem input_succ (P S q r E : ℕ) :
     P*S*q*(q^r*E) = P*S*q^(r+1)*E := by rw [pow_succ]; ring
-private theorem middle_succ (P S q r E : ℕ) :
+theorem middle_succ (P S q r E : ℕ) :
     (P*q)*S*q^r*E = P*q*(S*(q^r*E)) := by ring
-private theorem output_succ (P S q r E : ℕ) :
+theorem output_succ (P S q r E : ℕ) :
     P*q^(r+1)*(S*E) = (P*q)*q^r*(S*E) := by rw [pow_succ]; ring
 
 /-- Take the leading radix digit after S, then continue with the extended

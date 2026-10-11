@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.SharedBankFamily
+module
+
+public import IntegerMultBounds.Machine.SharedBankFamily
 
 /-! Raw extension preserves any selected public port view and physically blank
 private bank. Tape counts and port maps remain symbolic. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairLayoutRecordsFullPlacedCommon
 noncomputable section
 variable {k c n a : ℕ}

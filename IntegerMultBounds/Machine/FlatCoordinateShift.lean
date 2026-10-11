@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.FlatCoordinateLayout
-import IntegerMultBounds.Machine.FlatControlledShiftArray
+module
+
+public import IntegerMultBounds.Machine.FlatCoordinateLayout
+public import IntegerMultBounds.Machine.FlatControlledShiftArray
 
 /-! A concrete fastest-first prefix counter for a selected earlier coordinate,
 instantiated with the initialized physical shift and canonical common-array output. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.FlatCoordinateShift
 open Networks
 open FlatCoordinateLayout

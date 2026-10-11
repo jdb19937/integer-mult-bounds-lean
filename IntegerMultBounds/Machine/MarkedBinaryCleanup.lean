@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.RadixLinearCombinationShared
-import IntegerMultBounds.Machine.CountedLoopReuseAlphabet
+module
+
+public import IntegerMultBounds.Machine.RadixLinearCombinationShared
+public import IntegerMultBounds.Machine.CountedLoopReuseAlphabet
 
 /-! Erase an actual encoded binary descriptor and its sentinel, restoring a
 fully blank tape at origin. No length descriptor is supplied to the machine. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.MarkedBinaryCleanup
 
 open MarkedWordCleanup (one empty marked)

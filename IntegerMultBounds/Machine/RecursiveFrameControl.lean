@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.BinaryDescriptorFrames
-import IntegerMultBounds.Machine.FiniteReturnStackAt
+module
+
+public import IntegerMultBounds.Machine.BinaryDescriptorFrames
+public import IntegerMultBounds.Machine.FiniteReturnStackAt
 
 /-! Concrete descriptor-frame and finite return-PC stack wiring. Calls save
 runtime descriptors and a fixed call-site PC; returns restore descriptors then
 branch on the physically decoded PC. Any intervening child body remains an
 explicit contract here: this file does not assert a recursive multiplier. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveFrameControl
 open BinaryDescriptorFrames
 open FiniteReturnStack (Code Control address)

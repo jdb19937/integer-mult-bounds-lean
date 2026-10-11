@@ -1,7 +1,11 @@
-import IntegerMultBounds.Schoenhage.SSMath
+module
+
+public import IntegerMultBounds.Schoenhage.SSMath
 
 /-! The whole Schönhage–Strassen multiplier on the 64-tape bank: from the two
 operands modulo `2^N + 1` on `tIn` and `pN = ones N`, the product on `tIn`. -/
+
+@[expose] public section
 
 set_option maxRecDepth 10000
 

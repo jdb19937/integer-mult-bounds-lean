@@ -1,9 +1,13 @@
-import IntegerMultBounds.Networks.Certificates.Shared50.Data
-import IntegerMultBounds.Networks.Certificates.Shared50.Kinds
-import IntegerMultBounds.Networks.SharedPointFamily
+module
+
+public import IntegerMultBounds.Networks.Certificates.Shared50.Data
+public import IntegerMultBounds.Networks.Certificates.Shared50.Kinds
+public import IntegerMultBounds.Networks.SharedPointFamily
 
 /-! The compact certificate supplies actual duplicate witnesses in the
 fifty-copy family. All membership, signature and counting premises are closed. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.Certificates.Shared50
 

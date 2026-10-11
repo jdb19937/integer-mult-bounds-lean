@@ -1,9 +1,13 @@
-import Mathlib.Data.List.Rotate
-import Lean.Elab.Tactic.Omega
+module
+
+public import Mathlib.Data.List.Rotate
+public import Lean.Elab.Tactic.Omega
 
 /-! Pure block semantics of controlled cyclic shifts. A fiber is split before
 its final a blocks and rejoined suffix first. Payload indices move forward by
 a modulo the number of blocks; no tape-runtime assertion is made here. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.BlockRotationData
 

@@ -1,10 +1,14 @@
-import IntegerMultBounds.Schoenhage.Stream
+module
+
+public import IntegerMultBounds.Schoenhage.Stream
 
 /-! Streaming rules for word arithmetic, least significant bit first, and
 the exact words they emit: copy, constant fill, fit to a width, drop a
 prefix, addition with carry, subtraction with borrow, halving a unary word,
 and a delayed marker. Each output lemma states the emitted symbols as the
 symbols of an explicit word list. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Schoenhage
 

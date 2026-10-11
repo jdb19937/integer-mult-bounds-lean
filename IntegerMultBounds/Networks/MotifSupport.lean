@@ -1,9 +1,13 @@
-import IntegerMultBounds.Networks.GroupedRouting
-import Mathlib.Tactic.Linarith
+module
+
+public import IntegerMultBounds.Networks.GroupedRouting
+public import Mathlib.Tactic.Linarith
 
 /-! Exact sparse incidences of the local motif groups. In particular, no side
 wire disappears under its nonzero cancelling coefficient, and each side wire
 belongs to precisely its owning copy and injection groups. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.MotifSupport
 
@@ -36,13 +40,13 @@ section Incidences
 variable {R : Type*} [CommRing R] [DecidableEq R]
     {n a c s : ℕ}
 
-private theorem side_x (i : Fin a) (j : Fin n) :
+theorem side_x (i : Fin a) (j : Fin n) :
     (side i : Role n a c s) ≠ x j := by simp [side, x]
-private theorem y_side (i : Fin n) (j : Fin a) :
+theorem y_side (i : Fin n) (j : Fin a) :
     (y i : Role n a c s) ≠ side j := by simp [y, side]
-private theorem y_center (i : Fin n) (j : Fin c) :
+theorem y_center (i : Fin n) (j : Fin c) :
     (y i : Role n a c s) ≠ center j := by simp [y, center]
-private theorem center_x (i : Fin c) (j : Fin n) :
+theorem center_x (i : Fin c) (j : Fin n) :
     (center i : Role n a c s) ≠ x j := by simp [center, x]
 
 /-- Each side wire is touched only in the copy group of its unique owner. -/

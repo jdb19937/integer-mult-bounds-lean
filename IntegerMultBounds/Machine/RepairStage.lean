@@ -1,7 +1,9 @@
-import IntegerMultBounds.Machine.TapeRadixSort
-import IntegerMultBounds.Machine.StripPrefix
-import IntegerMultBounds.Machine.ReturnOrigin
-import IntegerMultBounds.Machine.Reinsert
+module
+
+public import IntegerMultBounds.Machine.TapeRadixSort
+public import IntegerMultBounds.Machine.StripPrefix
+public import IntegerMultBounds.Machine.ReturnOrigin
+public import IntegerMultBounds.Machine.Reinsert
 
 /-! The sorting and reinsertion stage of the exceptional-address repair on
 literal tapes. Extracted records arrive with their destination-rank keys as a
@@ -11,6 +13,8 @@ the flagged holes of the full stream. The contract is an exact-run Hoare
 triple with every tape content and head, and the cost is linear in the key
 width times the extracted volume plus the full-stream volume. Computing the
 keys and flags from the actual program's output remains a separate stage. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.RepairStage
 

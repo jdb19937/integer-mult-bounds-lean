@@ -1,11 +1,15 @@
-import IntegerMultBounds.Machine.CountedCopyReuse
-import IntegerMultBounds.Machine.Reflection
+module
+
+public import IntegerMultBounds.Machine.CountedCopyReuse
+public import IntegerMultBounds.Machine.Reflection
 
 /-! Delimiter-free seeking through an arbitrary raw payload. Project the
 verified reusable counted-copy machine onto its source, clock, and descriptor
 tapes. Its discarded destination cannot influence retained actions or control.
 The resulting fixed three-tape machine preserves every payload cell and retains
 all descriptor preparation, local clock cleanup, and exact runtime guarantees. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.CountedSeek
 

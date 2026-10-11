@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.FlatControlledShiftReady
+module
+
+public import IntegerMultBounds.Machine.FlatControlledShiftReady
 
 /-! Canonical finite-array output for the complete physical controlled shift.
 This representation can be refactored into another prefix/target/suffix split
 without copying the tape or attaching explicit address keys. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.FlatControlledShiftArray
 variable {radix c B : ℕ} [Fact radix.Prime]
 

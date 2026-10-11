@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ActiveRepairRankFieldsField
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairRankFieldsField
 
 /-! Runtime fixed-width overwrite at an address supplied on an unchanged header.
 The replacement, both headers and all heads are retained; clock work is erased. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairDestinationPatchOverwrite
 noncomputable section
 open ActiveRepairRankFieldsField

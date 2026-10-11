@@ -1,9 +1,13 @@
-import IntegerMultBounds.Resampling.WeightNat
+module
+
+public import IntegerMultBounds.Resampling.WeightNat
 
 /-! Natural-number formulas for the exponent numerators of the weight tables,
 as the table machines compute them without signs: the Gaussian numerator
 `(s k − t j)²` with `j = ⌊sk/t⌋ − m + i` splits at `i = m`, and the centered
 residue `s β(x) = rr x` has magnitude `min (u, s − u)` with `u = t x mod s`. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Resampling.TableIdx
 

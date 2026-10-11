@@ -1,7 +1,11 @@
-import IntegerMultBounds.Schoenhage.Driver
+module
+
+public import IntegerMultBounds.Schoenhage.Driver
 
 /-! The level driver's up-sweep on word tapes: the base case below `N0`, then
 one level per saved size, popped from the size stack. -/
+
+@[expose] public section
 
 set_option maxRecDepth 10000
 

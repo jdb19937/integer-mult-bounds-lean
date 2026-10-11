@@ -1,27 +1,31 @@
-import IntegerMultBounds.Machine.ScalingExecution
-import IntegerMultBounds.Machine.ScalingConcatenate
-import IntegerMultBounds.Machine.ScalingPartitionData
-import IntegerMultBounds.Machine.ScalingControlInit
-import IntegerMultBounds.Machine.ScalingBuffersReset
+module
+
+public import IntegerMultBounds.Machine.ScalingExecution
+public import IntegerMultBounds.Machine.ScalingConcatenate
+public import IntegerMultBounds.Machine.ScalingPartitionData
+public import IntegerMultBounds.Machine.ScalingControlInit
+public import IntegerMultBounds.Machine.ScalingBuffersReset
 
 /-! Reusable literal inverse positive-unit scaling. Both residue banks are initialized
 from arbitrary scanned cells; scatter and concatenation are physically executed,
 and every temporary piece buffer is erased and rewound. Binary descriptors
 remain explicit immutable inputs; no hidden preparation cost is claimed. -/
 
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ScalingInverseExecution
 
 open CountedCopyReuse (empty binary)
 open ScalingExecution (SplitTapes AuxTapes TapeCount)
 
-private def initTo {c : ℕ} : Fin (c+c+2) → Fin (AuxTapes c) :=
+def initTo {c : ℕ} : Fin (c+c+2) → Fin (AuxTapes c) :=
   Fin.addCases
     (Fin.addCases
       (fun i => Fin.castAdd 2 (Fin.castAdd c (Fin.natAdd 4 i)))
       (fun i => Fin.castAdd 2 (Fin.natAdd (4+c) i)))
     (fun i => Fin.natAdd (4+c+c) i)
 
-private def initInverse {c : ℕ} : Fin (AuxTapes c) → Fin (c+c+2+4) :=
+def initInverse {c : ℕ} : Fin (AuxTapes c) → Fin (c+c+2+4) :=
   Fin.addCases
     (Fin.addCases
       (Fin.addCases
@@ -55,7 +59,7 @@ def initPlacement (c : ℕ) : Fin (c+c+2+4) ≃ Fin (AuxTapes c) where
       | right i => simp only [initTo,initInverse,Fin.addCases_left,Fin.addCases_right]
     | right i => simp only [initTo,initInverse,Fin.addCases_left,Fin.addCases_right]
 
-private def controls {c : ℕ} (b : Tapes 4 0) (modulus current : Tapes c 0)
+def controls {c : ℕ} (b : Tapes 4 0) (modulus current : Tapes c 0)
     (outer : Tapes 2 0) : Tapes (AuxTapes c) 0 :=
   ((b.append modulus).append current).append outer
 
@@ -166,13 +170,13 @@ theorem word_eq_piece {Q c B : ℕ} (hc : 0 < c) (payload : ℕ → List (Fin 4)
   rw [ScalingPieceBridge.piece_eq_blocks hc j _ (fun y _ => hwidth _)]
   rfl
 
-private def splitControl (dest : ℤ → Fin 4) (q : ℤ) : Tapes 4 0 :=
+def splitControl (dest : ℤ → Fin 4) (q : ℤ) : Tapes 4 0 :=
   CountedCopyReuse.bank dest (fun _ => blank) empty (fun _ => blank) q 0 1 0
 
-private def scatterControl (source : ℤ → Fin 4) (p : ℤ) (bs : List Bool) : Tapes 4 0 :=
+def scatterControl (source : ℤ → Fin 4) (p : ℤ) (bs : List Bool) : Tapes 4 0 :=
   CountedCopyReuse.bank source empty empty (binary bs) p 0 1 1
 
-private def descriptorBank {c : ℕ} (descriptors : Fin c → List Bool) : Tapes c 0 :=
+def descriptorBank {c : ℕ} (descriptors : Fin c → List Bool) : Tapes c 0 :=
   ⟨fun _ => 1,fun j => binary (descriptors j)⟩
 
 /-- Unprepared residue cells and initially empty temporary buffers. -/

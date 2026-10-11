@@ -1,12 +1,16 @@
-import IntegerMultBounds.Machine.ScalingMerge
-import IntegerMultBounds.Machine.Dispatch
-import IntegerMultBounds.Machine.CountedLoopReuse
-import IntegerMultBounds.Machine.OneHot
-import IntegerMultBounds.Machine.FiberShift
+module
+
+public import IntegerMultBounds.Machine.ScalingMerge
+public import IntegerMultBounds.Machine.Dispatch
+public import IntegerMultBounds.Machine.CountedLoopReuse
+public import IntegerMultBounds.Machine.OneHot
+public import IntegerMultBounds.Machine.FiberShift
 
 /-! Literal inverse scaling scatter. Read a single source sequentially and append
 whole blocks to the selected fixed buffer. Every copy, dispatch and residue
 advance is physically executed and charged. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.ScalingScatter
 

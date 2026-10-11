@@ -1,9 +1,13 @@
-import IntegerMultBounds.Networks.BinaryWalsh
-import Mathlib.Algebra.BigOperators.Group.List.Lemmas
+module
+
+public import IntegerMultBounds.Networks.BinaryWalsh
+public import Mathlib.Algebra.BigOperators.Group.List.Lemmas
 
 /-! Actual array operators on several binary address columns. Each local
 translation kernel acts on one column slice; commuting those concrete operators
 regroups an edge into one all-column factor per residual direction. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.BinaryColumns
 

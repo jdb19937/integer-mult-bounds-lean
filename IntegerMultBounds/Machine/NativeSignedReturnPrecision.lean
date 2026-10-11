@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.NativeSignedReturnReuse
+module
+
+public import IntegerMultBounds.Machine.NativeSignedReturnReuse
 
 /-! An original-count driven fixed machine repeats the executable native
 precision-return pass. Every pass restores its source, scratch and private
 controls, so actual returned words can feed the next sibling at the certified
 coarser exponent. Repetition cost is explicit; no asymptotic absorption is
 asserted here. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.NativeSignedReturnPrecision
 noncomputable section
 open RadixSignedShiftRight (Word shifted)

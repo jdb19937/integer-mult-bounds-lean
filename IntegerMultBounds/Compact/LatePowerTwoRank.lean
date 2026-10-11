@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.CountedLateRankEndpoint
+module
+
+public import IntegerMultBounds.Machine.CountedLateRankEndpoint
 
 /-! Full late address ranks: V occupies the low nq bits, W the following nb
 bits, and U the high nb bits. Short counters are read with zero extension. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Compact.PowerTwo
 noncomputable section
 open IntegerMultBounds.Counter (value)

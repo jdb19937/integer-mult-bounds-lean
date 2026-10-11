@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.SelectedSourceBitsCore
-import IntegerMultBounds.Machine.SelectedSourceBitsStreamData
+module
+
+public import IntegerMultBounds.Machine.SelectedSourceBitsCore
+public import IntegerMultBounds.Machine.SelectedSourceBitsStreamData
 
 /-! Append selected bits to an existing output prefix without rewinding either
 head at a row boundary; counted source movement can cross arbitrary exteriors. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.SelectedSourceBitsStreamCore
 open CountedLoopReuseAlphabet (bank empty binary)
 open SelectedSourceBitsCore (payload)

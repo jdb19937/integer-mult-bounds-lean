@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CountedBankResetHeader
-import IntegerMultBounds.Machine.BinaryDescriptorCleanupList
-import IntegerMultBounds.Machine.RawLinearCombinationCleanup
+module
+
+public import IntegerMultBounds.Machine.CountedBankResetHeader
+public import IntegerMultBounds.Machine.BinaryDescriptorCleanupList
+public import IntegerMultBounds.Machine.RawLinearCombinationCleanup
 
 /-! Original-header counted loops with explicit binary-control erasure. No head
 normalization is assumed: every body head may start and finish at any position.
 Only two blank work tapes are needed, and both are physically blank afterwards. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedLoopHeaderClean
 noncomputable section
 variable {t q a : ℕ}

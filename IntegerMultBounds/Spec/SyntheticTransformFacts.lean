@@ -1,7 +1,9 @@
-import IntegerMultBounds.Spec.SyntheticTransform
-import IntegerMultBounds.NLogN.SynthMultiD
-import IntegerMultBounds.NLogN.SynthConv
-import Mathlib.Data.List.GetD
+module
+
+public import IntegerMultBounds.Spec.SyntheticTransform
+public import IntegerMultBounds.NLogN.SynthMultiD
+public import IntegerMultBounds.NLogN.SynthConv
+public import Mathlib.Data.List.GetD
 
 /-! Sanity facts for the synthetic transform statement: mixed-radix addresses
 and their digits are inverse; bit reversal of every axis address is an
@@ -9,6 +11,8 @@ involution of the record addresses; the multi-axis transforms invert each
 other up to `1/M` (`oppT_fwdT`, the paper's `lem:synthetic-characters`); and
 the stored order of the exact counterparts is consistent, for every layout
 (`oppExact_fwdExact`). -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Spec.SignedRingProduct
 

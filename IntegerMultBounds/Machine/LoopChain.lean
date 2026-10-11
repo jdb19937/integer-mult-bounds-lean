@@ -1,10 +1,14 @@
-import IntegerMultBounds.Machine.Loop
+module
+
+public import IntegerMultBounds.Machine.Loop
 
 /-! A while loop whose iterations are a chain of exact-tape contracts: the
 `j`-th iteration carries bank `j` to bank `j + 1` within its own bound, every
 bank before the last passes the local test, and the last fails it. The loop
 then carries bank zero to the last bank within the sum of the iteration
 bounds plus two control transitions per iteration. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine
 

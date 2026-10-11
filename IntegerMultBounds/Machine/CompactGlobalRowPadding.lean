@@ -1,10 +1,15 @@
-import IntegerMultBounds.Compact.Layout
-import Mathlib.Data.Nat.Log
+module
+
+public import IntegerMultBounds.Compact.Layout
+public import Mathlib.Data.Nat.Log
 
 /-! The single global row padding of compact-control-layout.tex. The reserved
 original row axes dominate the full recursive divisor. Every later fixed-role
 split consumes one factor of that divisor without further padding. These are
 layout/volume facts; construction of runtime descriptors is a separate machine. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactGlobalRowPadding
 open IntegerMultBounds.Compact.Layout (paddedRows)
 

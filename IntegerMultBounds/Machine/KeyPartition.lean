@@ -1,10 +1,14 @@
-import IntegerMultBounds.Machine.KeySelect
-import IntegerMultBounds.Machine.PartitionPass
+module
+
+public import IntegerMultBounds.Machine.KeySelect
+public import IntegerMultBounds.Machine.PartitionPass
 
 /-! A complete physically selected stable partition on six tapes. Key selection,
 rewinding, stable bucket routing, and concatenation are all literal programs;
 the finite control is independent of the key index and record count. The input
 must already carry a unary selector and marked blank work buffers. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.KeyPartition
 

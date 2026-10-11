@@ -1,9 +1,13 @@
-import IntegerMultBounds.Machine.FiberShiftReuse
+module
+
+public import IntegerMultBounds.Machine.FiberShiftReuse
 
 /-! Address-level interpretation of the actual repeated-fiber machine. Each
 fiber has Q target-address blocks with B payload symbols. One common offset
 moves the target coordinate forward modulo Q without changing payload order.
 The outer prefix count and suffix width can be arbitrarily large. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.FiberShiftAddress
 

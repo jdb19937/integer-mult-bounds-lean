@@ -1,9 +1,13 @@
-import IntegerMultBounds.Networks.GroupedModuleFrames
+module
+
+public import IntegerMultBounds.Networks.GroupedModuleFrames
 
 /-! Lower actual framed instructions to same-wire linear factors and unchanged
 scalar gates. Product lists execute in reverse order because linear-map
 multiplication composes right to left. Correctness concerns actual register
 states; factor counts here are instruction counts, not tape runtimes. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.FramedFactorExecution
 

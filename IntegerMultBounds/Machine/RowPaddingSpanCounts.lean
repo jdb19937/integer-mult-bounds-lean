@@ -1,19 +1,24 @@
-import IntegerMultBounds.Machine.BoundedProductDescriptor
-import IntegerMultBounds.Machine.BinarySubReuse
-import IntegerMultBounds.Machine.BinaryDescriptorCleanupList
+module
+
+public import IntegerMultBounds.Machine.BoundedProductDescriptor
+public import IntegerMultBounds.Machine.BinarySubReuse
+public import IntegerMultBounds.Machine.BinaryDescriptorCleanupList
 
 /-! Physical valid-span and padding-span descriptor construction. The original
 row count, rounded row count and row length are immutable inputs. Subtraction
 may retain high zeros; product synthesis canonicalizes its output directly.
 All temporary descriptors and all marker setup and cleanup are charged. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RowPaddingSpanCounts
 variable {q : ℕ}
 noncomputable section
 
-private def head : Option (List Bool) → ℤ
+def head : Option (List Bool) → ℤ
   | none => 0
   | some _ => 1
-private def tape : Option (List Bool) → ℤ → Fin (q+4)
+def tape : Option (List Bool) → ℤ → Fin (q+4)
   | none => fun _ => blank
   | some xs => RadixZeroFill.encodedBinary xs
 

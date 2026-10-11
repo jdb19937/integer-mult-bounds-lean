@@ -1,9 +1,13 @@
-import IntegerMultBounds.Machine.RadixDivisionData
-import IntegerMultBounds.Machine.RadixUnary
+module
+
+public import IntegerMultBounds.Machine.RadixDivisionData
+public import IntegerMultBounds.Machine.RadixUnary
 
 /-! Literal division by a fixed denominator in prime-radix words. Two tapes
 and d carry states suffice for every width. The finite transition table makes
 one lookup and one transition per digit; the source tape is preserved. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.RadixDivide
 

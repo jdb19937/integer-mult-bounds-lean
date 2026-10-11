@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.GrowingCounterData
+module
+
+public import IntegerMultBounds.Machine.GrowingCounterData
 
 /-! Canonical little-endian binary words are uniquely determined by value.
 These lemmas identify physically emitted normalized descriptors with semantic
 counter values without assuming a chosen binary representation as input. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryCanonicalData
 
 theorem tail (b : Bool) (xs : List Bool) (hc : GrowingCounterData.Canonical (b::xs)) :

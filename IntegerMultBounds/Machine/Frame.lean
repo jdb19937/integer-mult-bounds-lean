@@ -1,8 +1,12 @@
-import IntegerMultBounds.Machine.Hoare
+module
+
+public import IntegerMultBounds.Machine.Hoare
 
 /-! Embed a program in a larger fixed tape bank. Extra tapes are preserved
 literally, including their heads and arbitrary contents, at no runtime cost.
 Unlike a one-sided marked-tape model, idle tapes need no parking invariant. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine
 

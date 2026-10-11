@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CountedLoopReuseAlphabet
-import IntegerMultBounds.Machine.GrowingCounterData
+module
+
+public import IntegerMultBounds.Machine.CountedLoopReuseAlphabet
+public import IntegerMultBounds.Machine.GrowingCounterData
 
 /-! Reusable arbitrary-alphabet head positioning. The literal body preserves
 every scanned symbol and moves one cell in a fixed direction. A binary-counted
 loop charges every movement, countdown, descriptor copy, reset and join. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedPosition
 variable {a : ℕ}
 

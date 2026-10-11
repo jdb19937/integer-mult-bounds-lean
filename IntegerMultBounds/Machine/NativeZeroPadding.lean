@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.NativeZeroStream
-import IntegerMultBounds.Machine.ScanRight
-import IntegerMultBounds.Machine.ReturnOrigin
+module
+
+public import IntegerMultBounds.Machine.NativeZeroStream
+public import IntegerMultBounds.Machine.ScanRight
+public import IntegerMultBounds.Machine.ReturnOrigin
 
 /-! Native row padding physically seeks the original EOF, appends valid signed
 zero records and pays the return to origin. Existing coefficients are retained. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.NativeZeroPadding
 noncomputable section
 open CountedLoopReuseAlphabet (one)

@@ -1,8 +1,12 @@
-import IntegerMultBounds.Networks.Certificates.Paired49.SignaturesData
-import IntegerMultBounds.Networks.Certificates.Paired49.SignaturesChunk081
+module
+
+public import IntegerMultBounds.Networks.Certificates.Paired49.SignaturesData
+public import IntegerMultBounds.Networks.Certificates.Paired49.SignaturesChunk081
 
 /-! Generated untrusted endpoint signatures. Checked by accompanying Lean proofs.
 Regenerate with scripts/generate_paired49_signatures.py. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.Certificates.Paired49
 open MaskSignature

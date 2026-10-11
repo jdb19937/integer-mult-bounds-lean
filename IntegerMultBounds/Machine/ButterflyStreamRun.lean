@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ButterflyStreamData
-import IntegerMultBounds.Machine.CountedLoopReuseAlphabet
+module
+
+public import IntegerMultBounds.Machine.ButterflyStreamData
+public import IntegerMultBounds.Machine.CountedLoopReuseAlphabet
 
 /-! Runtime-many paired coefficient records executed by one fixed finite
 machine. The binary loop count is copied, consumed with amortized decrements,
 and restored; no source extraction or per-record arithmetic oracle is assumed. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ButterflyStreamRun
 noncomputable section
 open ButterflyStreamData

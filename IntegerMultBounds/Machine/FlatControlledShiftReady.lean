@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.RationalPrefixTranslationBootstrap
-import IntegerMultBounds.Machine.FlatControlledShiftNormalize
+module
+
+public import IntegerMultBounds.Machine.RationalPrefixTranslationBootstrap
+public import IntegerMultBounds.Machine.FlatControlledShiftNormalize
 
 /-! A complete controlled shift from blank workspace back to common payload
 origins. Width and dimension descriptors are supplied. All marker installation,
 prefix generation, arithmetic, shifting, copying, erasure and rewinds are paid.
 The initializer's descriptors/clocks and final operation metadata are retained. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.FlatControlledShiftReady
 open PrefixCounterInitPlacement
 open RationalPrefixTranslationInit (streamPlacement)

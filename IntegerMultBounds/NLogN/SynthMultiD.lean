@@ -1,4 +1,6 @@
-import IntegerMultBounds.NLogN.SynthEmbed
+module
+
+public import IntegerMultBounds.NLogN.SynthEmbed
 
 /-! The `d`-dimensional synthetic transform of Harvey and van der Hoeven,
 Sections 2.4 and 3.1, in coefficient form over `R = ℂ[y]/(y^r + 1)`: the
@@ -10,6 +12,8 @@ the convolution theorem (the transform of `synthConvG` is `∏ N i` times the
 pointwise negacyclic product), orthogonality and inversion when every `N i`
 is a power of two, and the sup-norm contraction of both transforms. Fixed
 point errors are not treated here. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.NLogN
 

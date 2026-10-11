@@ -1,10 +1,14 @@
-import IntegerMultBounds.Networks.SharedPointKey
-import Mathlib.Data.Finset.Card
+module
+
+public import IntegerMultBounds.Networks.SharedPointKey
+public import Mathlib.Data.Finset.Card
 
 /-! Cardinal savings from certified pairs of equal circuit supports. Deleting
 one endpoint of each disjoint match preserves all represented supports, so a
 list of genuine duplicate witnesses gives an upper bound without requiring
 an exhaustive global hash-table computation. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.DuplicateBudget
 

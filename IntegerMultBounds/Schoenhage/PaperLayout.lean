@@ -1,4 +1,6 @@
-import IntegerMultBounds.Schoenhage.DifRound
+module
+
+public import IntegerMultBounds.Schoenhage.DifRound
 
 /-! The paper's layout `L` (Lemma "Transform layout and cost") as a bit
 permutation. Axes have `ℓ - 1` or `ℓ` bits; put `b = (ℓ - 1) mod K` and
@@ -9,6 +11,8 @@ chunk of the group); then the bottom slots `h < b`, slot-major; then the top
 slots `ℓ - 1` of the long axes, axis order from the top. `paperTau` sends a
 physical bit to its logical bit, and `paperPerm` is the resulting
 `BitPerm`. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Schoenhage
 

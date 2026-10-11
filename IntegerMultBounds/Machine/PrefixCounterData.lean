@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.RadixCounterData
+module
+
+public import IntegerMultBounds.Machine.RadixCounterData
 
 /-! Mixed-prefix carry semantics. Field zero is least significant; widths may
 be arbitrary and unequal, including zero. Carries visit only overflowing fields.
 The total potential is the sum of maximal-digit potentials of those fields. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.PrefixCounterData
 
 open RadixDigits RadixCounterData

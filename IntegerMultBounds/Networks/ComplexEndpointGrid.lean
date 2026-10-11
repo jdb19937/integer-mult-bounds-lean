@@ -1,9 +1,14 @@
-import IntegerMultBounds.Networks.ComplexEndpoints
-import IntegerMultBounds.Networks.GaussianPrecision
+module
+
+public import IntegerMultBounds.Networks.ComplexEndpoints
+public import IntegerMultBounds.Networks.GaussianPrecision
 
 /-! Physical source and sink corrections preserve the exact denominator and
 both integer numerator bounds. They require no additional precision reserve
 before entering the raw grouped network or after completing it. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Networks.GaussianPrecision
 open BinaryWalsh ComplexEndpoints
 

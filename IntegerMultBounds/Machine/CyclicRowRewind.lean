@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CyclicRowSplit
+module
+
+public import IntegerMultBounds.Machine.CyclicRowSplit
 
 /-! Actual rewind of a common payload head and all fixed role heads. The
 existing row and group descriptors drive nested counted loops, so neither a
 product descriptor nor a payload sentinel is needed. Every symbol survives. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CyclicRowRewind
 open CyclicRowCopy (payload bank)
 open CyclicRowCycle (states states_succ castStates castStates_hoare)
@@ -61,7 +66,7 @@ theorem stage_hoare (j : Fin c) (source : ℤ → Fin (a+4))
     Finset.sum_const,Finset.card_range,smul_eq_mul,mul_one,
     show B+6*B = 7*B by omega] using hh
 
-private def haltProgram (c a : ℕ) : Program ((1+c)+2) 1 a :=
+def haltProgram (c a : ℕ) : Program ((1+c)+2) 1 a :=
   ⟨by omega,0,fun _ _ => none⟩
 
 def initialStages (c a : ℕ) : (n : ℕ) → n ≤ c → Program ((1+c)+2) (states n) a

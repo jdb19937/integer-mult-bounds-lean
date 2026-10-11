@@ -1,4 +1,6 @@
-import IntegerMultBounds.Machine.GuardTest
+module
+
+public import IntegerMultBounds.Machine.GuardTest
 
 /-! The guard test of the compact-control repair on seven tapes: for each
 `q`-bit block of the first word its upper `q - 1` bits are compared with two
@@ -6,6 +8,8 @@ constant words, and for each `b`-bit block of the second word the block is
 compared with a third constant, each comparison appending one flag bit; the
 flag word then records every failed guard. Everything is unrolled into
 finite control with linear cost; the words and constants are preserved. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.GuardGadget
 

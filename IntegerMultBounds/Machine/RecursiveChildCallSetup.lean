@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.RecursiveChildPrepare
-import IntegerMultBounds.Machine.RecursiveFrameControl
-import IntegerMultBounds.Machine.ExactFrame
+module
+
+public import IntegerMultBounds.Machine.RecursiveChildPrepare
+public import IntegerMultBounds.Machine.RecursiveFrameControl
+public import IntegerMultBounds.Machine.ExactFrame
 
 /-! Actual call entry: save six parent headers and a fixed return PC, then
 physically compute and install the child headers. The two stackBank are framed
 through all arithmetic. Array parking and the recursive body remain separate. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveChildCallSetup
 open RecursiveInterchangeLayout RecursiveInterchangeVolume
 open BinaryDescriptorFrames

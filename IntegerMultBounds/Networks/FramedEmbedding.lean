@@ -1,9 +1,13 @@
-import IntegerMultBounds.Networks.BoundedFramedCircuit
-import IntegerMultBounds.Networks.GlobalCircuit
+module
+
+public import IntegerMultBounds.Networks.BoundedFramedCircuit
+public import IntegerMultBounds.Networks.GlobalCircuit
 
 /-! Injective placement of physical frame instructions into a larger register
 file. Every edge and scalar instruction is retained, with exact local execution
 and spectator preservation. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.FramedEmbedding
 

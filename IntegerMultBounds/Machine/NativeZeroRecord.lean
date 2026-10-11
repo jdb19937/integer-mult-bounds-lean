@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CountedLoopHeaderClean
-import IntegerMultBounds.Machine.ButterflyStreamData
+module
+
+public import IntegerMultBounds.Machine.CountedLoopHeaderClean
+public import IntegerMultBounds.Machine.ButterflyStreamData
 
 /-! Physical signed zero coefficients use radix-zero digits and actual field
 separators. Uniform false Boolean padding is not this representation. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.NativeZeroRecord
 noncomputable section
 open CountedLoopReuseAlphabet (one)

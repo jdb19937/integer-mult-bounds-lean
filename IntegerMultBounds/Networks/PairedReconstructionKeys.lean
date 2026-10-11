@@ -1,6 +1,10 @@
-import IntegerMultBounds.Networks.PairedCircuitCorrect
+module
+
+public import IntegerMultBounds.Networks.PairedCircuitCorrect
 
 /-! Exact key coverage of the concrete paired reconstruction loops. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.PairedReconstructionKeys
 

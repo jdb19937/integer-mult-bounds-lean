@@ -1,9 +1,13 @@
-import IntegerMultBounds.Machine.CountedLoopReuse
-import IntegerMultBounds.Machine.GrowingCounterData
+module
+
+public import IntegerMultBounds.Machine.CountedLoopReuse
+public import IntegerMultBounds.Machine.GrowingCounterData
 
 /-! Physically replace a sentinel-marked binary descriptor from a second tape.
 Erase the old word, copy the supplied replacement, and rewind both equal words.
 The supplied replacement tape is preserved exactly, including its head. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.BinaryReplace
 

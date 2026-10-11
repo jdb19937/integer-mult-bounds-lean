@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.Gather
-import IntegerMultBounds.Machine.CountedLoopReuseAlphabet
-import IntegerMultBounds.Machine.GrowingCounterData
+module
+
+public import IntegerMultBounds.Machine.Gather
+public import IntegerMultBounds.Machine.CountedLoopReuseAlphabet
+public import IntegerMultBounds.Machine.GrowingCounterData
 
 /-! A fixed finite-state field gather. A runtime binary descriptor counts the
 mapped field cells; the control head stays fixed and both countdown controls
 are restored exactly. No field length or stride is compiled into the program. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedGatherField
 variable {a : ℕ}
 

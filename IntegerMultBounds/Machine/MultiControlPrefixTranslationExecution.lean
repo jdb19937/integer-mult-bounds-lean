@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.MultiControlTranslationExecution
-import IntegerMultBounds.Machine.PrefixCounter
+module
+
+public import IntegerMultBounds.Machine.MultiControlTranslationExecution
+public import IntegerMultBounds.Machine.PrefixCounter
 
 /-! Actual shared-control scheduling after multi-control translation. Only the
 common physical control bank advances; the old leaf copies and binary output
 remain stale until the next verified recurring evaluator refreshes them. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.MultiControlPrefixTranslationExecution
 
 open RadixLinearCombinationRefresh (Expr controls leaves)

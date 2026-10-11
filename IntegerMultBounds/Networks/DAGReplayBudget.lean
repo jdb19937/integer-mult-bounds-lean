@@ -1,8 +1,12 @@
-import IntegerMultBounds.Networks.DAGReplay
-import IntegerMultBounds.Networks.DAGAllocatorBudget
+module
+
+public import IntegerMultBounds.Networks.DAGReplay
+public import IntegerMultBounds.Networks.DAGAllocatorBudget
 
 /-! Count actual interned additions by their distinct supports. These bounds
 connect replayed node lists to finite support-sharing certificates. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.DAGReplayBudget
 

@@ -1,7 +1,9 @@
-import IntegerMultBounds.NLogN.Gaussian
-import IntegerMultBounds.NLogN.DFT
-import Mathlib.NumberTheory.ModularForms.JacobiTheta.TwoVariable
-import Mathlib.Tactic
+module
+
+public import IntegerMultBounds.NLogN.Gaussian
+public import IntegerMultBounds.NLogN.DFT
+public import Mathlib.NumberTheory.ModularForms.JacobiTheta.TwoVariable
+public import Mathlib.Tactic
 
 /-! Gaussian resampling, after Harvey and van der Hoeven, Section 4.1. The
 normalised complex transform `dftC`, the resampling maps `resampS` and
@@ -11,6 +13,8 @@ Jacobi theta functional equation; orthogonality of the additive characters;
 and the resampling identity `T ∘ Ps ∘ Fs = Pt ∘ Ft ∘ S` for all positive
 lengths. The left inverse of `T`, its norm bounds, and every fixed-point
 approximation are not part of this file. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.NLogN
 

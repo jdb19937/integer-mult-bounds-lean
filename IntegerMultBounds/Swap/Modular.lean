@@ -1,7 +1,9 @@
-import IntegerMultBounds.Swap.PivotRank
-import Mathlib.Data.ZMod.Basic
-import Mathlib.Data.Rat.Lemmas
-import Mathlib.Data.Nat.Prime.Infinite
+module
+
+public import IntegerMultBounds.Swap.PivotRank
+public import Mathlib.Data.ZMod.Basic
+public import Mathlib.Data.Rat.Lemmas
+public import Mathlib.Data.Nat.Prime.Infinite
 
 /-! Specialization of rational identities to `ℤ/mℤ` (§4, Lemma 4.2). Rationals
 whose denominators are prime to `m` form a subring of `ℚ`, and `num · den⁻¹` is
@@ -11,6 +13,8 @@ with the same pivots. For any finite collection of rational matrices there is
 a prime beyond every denominator, so the reduction is available modulo every
 power of that prime, and the shear programs of `Shear` then compute
 `H ← H + A D` modulo `q^b` with exactly `rank A` interchanges. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Swap.Modular
 

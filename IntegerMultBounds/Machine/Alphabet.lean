@@ -1,9 +1,13 @@
-import IntegerMultBounds.Machine.Hoare
+module
+
+public import IntegerMultBounds.Machine.Hoare
 
 /-! Change a literal machine's finite alphabet through an encoding with a
 left-inverse decoder. Encoded runs, their exact transition counts, and actual
 halting are preserved. The initial-segment instance adds finitely many marker
 symbols while preserving the existing blank, bits, and separator. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.Alphabet
 

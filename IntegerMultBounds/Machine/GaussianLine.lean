@@ -1,7 +1,9 @@
-import IntegerMultBounds.Machine.FixedMul
-import IntegerMultBounds.Machine.SignExtendAdd
-import IntegerMultBounds.Machine.RecordTape
-import IntegerMultBounds.Machine.LoopChain
+module
+
+public import IntegerMultBounds.Machine.FixedMul
+public import IntegerMultBounds.Machine.SignExtendAdd
+public import IntegerMultBounds.Machine.RecordTape
+public import IntegerMultBounds.Machine.LoopChain
 
 /-! The Gaussian window sums of the resampling map `S̃'` on tapes. The weights
 and the (cyclically extended) input words are blank-separated fixed-point
@@ -12,6 +14,8 @@ accumulators, writes the two accumulator words to the output, rewinds the
 input by the window and advances it by the centre increment, which a modular
 counter decides. Twenty-two tapes; the loops are driven by unary rulers and
 the input exhaustion, so the finite control is fixed. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.GaussianLine
 

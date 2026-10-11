@@ -1,14 +1,19 @@
-import IntegerMultBounds.Machine.CyclicRowMergeCopy
-import IntegerMultBounds.Machine.CyclicRowCycle
+module
+
+public import IntegerMultBounds.Machine.CyclicRowMergeCopy
+public import IntegerMultBounds.Machine.CyclicRowCycle
 
 /-! Physical inverse cyclic traversal: take one row from each fixed role tape
 and append the rows in role order to the common output. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CyclicRowMergeCycle
 open CyclicRowCopy (bank)
 open CyclicRowCycle (states states_succ castStates castStates_hoare rowPrefix prefix_succ prefix_all)
 variable {a c : ℕ}
 
-private def haltProgram (c a : ℕ) : Program ((1+c)+2) 1 a :=
+def haltProgram (c a : ℕ) : Program ((1+c)+2) 1 a :=
   ⟨by omega,0,fun _ _ => none⟩
 
 def initialStages (c a : ℕ) : (n : ℕ) → n ≤ c → Program ((1+c)+2) (states n) a

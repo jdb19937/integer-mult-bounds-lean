@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.PrefixWidthCopies
+module
+
+public import IntegerMultBounds.Machine.PrefixWidthCopies
 
 /-! Run prefix width replication using a descriptor already resident in an
 arbitrary preserved bank; no additional source tape is allocated. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.PrefixWidthCopiesAt
 open PrefixCounterInit (tapeCount)
 noncomputable section

@@ -1,10 +1,15 @@
-import IntegerMultBounds.ExactRecovery
-import IntegerMultBounds.NLogN.Carry
+module
+
+public import IntegerMultBounds.ExactRecovery
+public import IntegerMultBounds.NLogN.Carry
 
 /-! Exact-width output from recovered coefficients. Carry normalization may
 produce more than twice the input length; the proven product bound justifies
 removing that leading padding. These are output semantics, not a tape compiler
 or a runtime bound for carry propagation. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.ExactRecoveryOutput
 noncomputable section
 open Machine NLogN

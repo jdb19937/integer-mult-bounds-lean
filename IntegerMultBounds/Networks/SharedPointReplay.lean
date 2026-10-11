@@ -1,10 +1,14 @@
-import IntegerMultBounds.Networks.SharedPointFamily
-import IntegerMultBounds.Networks.DAGReplayBudget
-import IntegerMultBounds.Networks.DAGInstructionCount
+module
+
+public import IntegerMultBounds.Networks.SharedPointFamily
+public import IntegerMultBounds.Networks.DAGReplayBudget
+public import IntegerMultBounds.Networks.DAGInstructionCount
 
 /-! The actual globally shared fifty-copy circuit: replay each certified local
 DAG into one persistent interned DAG and retain every remapped output reference.
 The proof does not assume any global circuit list or allocation count. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.SharedPointReplay
 

@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.RadixZeroFill
-import IntegerMultBounds.Machine.MarkedWordCleanup
+module
+
+public import IntegerMultBounds.Machine.RadixZeroFill
+public import IntegerMultBounds.Machine.MarkedWordCleanup
 
 /-! A physical radix power word, constructed from the supplied binary exponent.
 The fixed radix lives in finite control; the exponent is read on tape. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RadixPowerWord
 
 open RadixDigits MarkedWordCleanup
@@ -138,7 +143,7 @@ def input (bs : List Bool) : Tapes 3 q := RadixZeroFill.input bs
 
 def output (bs : List Bool) (b : ℕ) : Tapes 3 q := bank hq bs b (fun _ => blank) 0
 
-private def cleanClock : Program 3 3 q where
+def cleanClock : Program 3 3 q where
   tapes_pos := by decide
   start := 0
   transition := fun s sy =>

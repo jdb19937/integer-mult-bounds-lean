@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.CountedRankSplitRun
+module
+
+public import IntegerMultBounds.Machine.CountedRankSplitRun
 
 /-! Direct endpoint for the actual short growing counter used by RepairScan.
 All copied high bits come from physical blank cells, with charged movement. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedRankSplitEndpoint
 noncomputable section
 open CountedRankSplitBank

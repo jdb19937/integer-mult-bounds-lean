@@ -1,8 +1,12 @@
-import IntegerMultBounds.Networks.Certificates.Paired49.Data
-import IntegerMultBounds.Networks.Certificates.Paired49.Chunk047
+module
+
+public import IntegerMultBounds.Networks.Certificates.Paired49.Data
+public import IntegerMultBounds.Networks.Certificates.Paired49.Chunk047
 
 /-! Generated untrusted mask data. Checked by the accompanying Lean proofs.
 Regenerate with scripts/generate_paired49_certificate.py. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.Certificates.Paired49
 open MaskDAG

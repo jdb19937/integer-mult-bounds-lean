@@ -1,11 +1,15 @@
-import IntegerMultBounds.Schoenhage.RingMath
-import IntegerMultBounds.Schoenhage.Lists
+module
+
+public import IntegerMultBounds.Schoenhage.RingMath
+public import IntegerMultBounds.Schoenhage.Lists
 
 /-! Signed coefficient words. A coefficient is a two's complement word, least
 significant bit first (`sv`). Flipping its top bit gives the offset digit
 `sv t + 2^(|t| - 1)` (`bval_flipLast`), and a streaming rule does the flip in
 one pass (`Rules.output_flip`). The output word of a coefficient is its value
 modulo `2^w` (`tw`), and truncation toward zero is `trunc0`. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Schoenhage
 

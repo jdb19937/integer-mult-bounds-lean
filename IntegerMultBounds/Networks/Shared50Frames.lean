@@ -1,11 +1,15 @@
-import IntegerMultBounds.Networks.DAGSupportTrace
-import IntegerMultBounds.Networks.SharedPointOutputIndex
-import IntegerMultBounds.Networks.SharedPointOutputLabels
+module
+
+public import IntegerMultBounds.Networks.DAGSupportTrace
+public import IntegerMultBounds.Networks.SharedPointOutputIndex
+public import IntegerMultBounds.Networks.SharedPointOutputLabels
 
 /-! Actual forward source-span labels for the globally interned fifty-copy
 circuit. Node common-point properties, increasing edges, zero loss, and terminal
 partial-output labels are proved from the constructed DAG. Sink attachment,
 inverse schedules, and global rank assembly remain separate. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.Shared50Frames
 

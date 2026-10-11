@@ -1,5 +1,7 @@
-import IntegerMultBounds.NLogN.NormFFT
-import IntegerMultBounds.NLogN.FixedOps
+module
+
+public import IntegerMultBounds.NLogN.NormFFT
+public import IntegerMultBounds.NLogN.FixedOps
 
 /-! The synthetic FFT of Harvey and van der Hoeven, Lemma 3.2, in coefficient
 form. Elements of `ℂ[y]/(y^r + 1)` are coefficient vectors `Fin r → ℂ` with the
@@ -12,6 +14,8 @@ after `n` levels: synthetic twiddles cost no rounding. The transform here uses
 the `+` exponent; the paper's `G_t` is the same map with `y^(-…)`, i.e. the
 transform at the inverse root. The identification of `shiftNegZ` with
 multiplication in the quotient ring of `Synthetic.lean` is not made. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.NLogN
 

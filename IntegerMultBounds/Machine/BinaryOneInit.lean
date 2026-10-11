@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.Placement
-import IntegerMultBounds.Machine.CountedCopyReuse
-import IntegerMultBounds.Machine.GrowingCounterData
+module
+
+public import IntegerMultBounds.Machine.Placement
+public import IntegerMultBounds.Machine.CountedCopyReuse
+public import IntegerMultBounds.Machine.GrowingCounterData
 
 /-! Literal constant-one binary descriptor construction from a blank tape.
 This fixed two-transition bootstrap supplies the one used to form Q minus one
 for coordinate negation; no prewritten sentinel or digit is assumed. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryOneInit
 
 def bank (f : ℤ → Fin 4) (p : ℤ) : Tapes 1 0 := ⟨fun _ => p,fun _ => f⟩

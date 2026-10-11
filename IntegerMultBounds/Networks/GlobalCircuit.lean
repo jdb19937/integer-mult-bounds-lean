@@ -1,12 +1,16 @@
-import IntegerMultBounds.Networks.CircuitRouting
-import IntegerMultBounds.Networks.Wires
-import Mathlib.Tactic.FinCases
+module
+
+public import IntegerMultBounds.Networks.CircuitRouting
+public import IntegerMultBounds.Networks.Wires
+public import Mathlib.Tactic.FinCases
 
 /-! A literal global scalar circuit with one dirty-scratch bank per invocation.
 The elementary lists preserve the eight-row order, including the reversed middle
 schedule. They do not establish the manuscript's grouped incidence topology:
 `rowGate` retains zero-coefficient terms and splits multi-output gates. No label,
 residual-rank, or tape-cost claim is made for these elementary lists. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.GlobalCircuit
 

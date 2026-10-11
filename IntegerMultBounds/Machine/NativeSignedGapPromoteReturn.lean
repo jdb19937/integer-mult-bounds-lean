@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.NativeSignedGapReturn
-import IntegerMultBounds.Machine.NativeSignedGapPromoteScan
+module
+
+public import IntegerMultBounds.Machine.NativeSignedGapReturn
+public import IntegerMultBounds.Machine.NativeSignedGapPromoteScan
 
 /-! One original-header numerator-promotion executable: prepare the gap clock once,
 scan each signed field once, replace the original source and erase every private
 stream/clock. The runtime has no exponent-gap times serialized-volume factor. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.NativeSignedGapPromoteReturn
 noncomputable section
 open RadixSignedShiftRight (Word)

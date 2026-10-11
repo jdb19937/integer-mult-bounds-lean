@@ -1,4 +1,6 @@
-import IntegerMultBounds.Spec.SignedRingProductFacts
+module
+
+public import IntegerMultBounds.Spec.SignedRingProductFacts
 
 /-! The pointwise-product step of the synthetic convolution
 (`prop:synthetic-convolution`, §6), stated in the paper's formats: the slice
@@ -15,6 +17,8 @@ is charged to the transform in the paper; its length is `O(p)` there);
 `pointwisePaperTarget` is the paper's `O(T p log (r p))` plus the header, and
 `pointwisePolylogTarget k` allows an extra `(log log (r p))^k`. The header
 reads back as its parameters (`transformHeader_read`). -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Spec.SignedRingProduct
 

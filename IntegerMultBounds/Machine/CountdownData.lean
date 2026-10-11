@@ -1,9 +1,13 @@
-import IntegerMultBounds.Machine.Counter
-import Mathlib.Tactic.Bound
+module
+
+public import IntegerMultBounds.Machine.Counter
+public import Mathlib.Tactic.Bound
 
 /-! Fixed-width LSB-first binary countdown and its exact digit trace. Successful
 calls include the borrow scan, head return, and one payload operation. A single
 terminal underflow includes its full scan and return, with no payload operation. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.CountdownData
 

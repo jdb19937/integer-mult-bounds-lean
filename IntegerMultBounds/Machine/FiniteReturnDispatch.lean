@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.FiniteReturnStack
-import IntegerMultBounds.Machine.FiniteDispatch
-import IntegerMultBounds.Machine.Placement
+module
+
+public import IntegerMultBounds.Machine.FiniteReturnStack
+public import IntegerMultBounds.Machine.FiniteDispatch
+public import IntegerMultBounds.Machine.Placement
 
 /-! Actual binary return-stack decoding followed by a fixed finite family of
 same-bank continuations. The stack's physical placement, PC width, and family
 are fixed; runtime recursion depth affects only the stack's head position. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.FiniteReturnDispatch
 open FiniteReturnStack (Code Control encode address)
 variable {k N t u a : ℕ}

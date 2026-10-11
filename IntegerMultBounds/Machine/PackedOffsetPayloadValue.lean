@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.PackedOffsetPayload
+module
+
+public import IntegerMultBounds.Machine.PackedOffsetPayload
 
 /-! Address semantics of the complete packed-offset payload machine. The
 offset of each prefix is the value of its actual w-bit packed input block. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.PackedOffsetPayloadValue
 open PackedOffsetPayload
 

@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.BinaryDescriptorReplaceList
-import IntegerMultBounds.Machine.RecursiveChildDimensionsClean
-import IntegerMultBounds.Machine.RecursiveHeaderBounds
+module
+
+public import IntegerMultBounds.Machine.BinaryDescriptorReplaceList
+public import IntegerMultBounds.Machine.RecursiveChildDimensionsClean
+public import IntegerMultBounds.Machine.RecursiveHeaderBounds
 
 /-! Physically replace the five changing parent header slots by generated child
 headers. The unchanged A header stays in place. Old parent headers must be saved
 by the caller before this destructive update; no implicit reset is used. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveChildHeaderInstall
 open BinaryDescriptorInstallMarkedList
 variable {q : ℕ}

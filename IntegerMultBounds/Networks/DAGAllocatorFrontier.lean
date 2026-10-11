@@ -1,8 +1,12 @@
-import IntegerMultBounds.Networks.DAGAllocatorCount
+module
+
+public import IntegerMultBounds.Networks.DAGAllocatorCount
 
 /-! The live frontier follows the actual consumer ports: issued by an earlier
 node and not yet consumed by a gate. This invariant proves slot allocation
 structurally, independently of scalar values or support frames. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.DAGAllocator
 

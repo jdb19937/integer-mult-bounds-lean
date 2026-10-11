@@ -1,8 +1,12 @@
-import IntegerMultBounds.Machine.BlockRotationData
+module
+
+public import IntegerMultBounds.Machine.BlockRotationData
 
 /-! Pure blockwise coordinate negation. Block zero stays first, the remaining
 blocks reverse order, and the payload order inside every block is preserved.
 The data recipe reverses the raw tail and then reverses each fixed-width pop. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.BlockNegationData
 

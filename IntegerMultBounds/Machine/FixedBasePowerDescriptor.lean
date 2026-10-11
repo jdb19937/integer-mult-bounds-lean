@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.FixedBasePowerStep
-import IntegerMultBounds.Machine.SharedBank
+module
+
+public import IntegerMultBounds.Machine.FixedBasePowerStep
+public import IntegerMultBounds.Machine.SharedBank
 
 /-! A fixed finite program constructs B^k from a retained binary exponent.
 The fixed base and initial one are physically written; reusable countdown
 controls and the base constant are fully erased at the final boundary. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.FixedBasePowerDescriptor
 noncomputable section
 open SharedPlacementAlphabet (setTape)

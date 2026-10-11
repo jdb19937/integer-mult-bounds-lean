@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.BinaryAddressTableStep
-import IntegerMultBounds.Machine.CountedLoopReuseAlphabet
-import IntegerMultBounds.Machine.SelectedSourceBitsRewind
+module
+
+public import IntegerMultBounds.Machine.BinaryAddressTableStep
+public import IntegerMultBounds.Machine.CountedLoopReuseAlphabet
+public import IntegerMultBounds.Machine.SelectedSourceBitsRewind
 
 /-! A live fixed-width binary address counter supplies a complete raw address
 word each iteration. Copying, both head returns and increment are physical;
 old raw address words are overwritten at equal width. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryCurrentAddress
 noncomputable section
 open MarkedWordCleanup (one marked)

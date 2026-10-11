@@ -1,8 +1,12 @@
-import IntegerMultBounds.Networks.Certificates.Paired49.Checked
-import IntegerMultBounds.Networks.MaskUnique
+module
+
+public import IntegerMultBounds.Networks.Certificates.Paired49.Checked
+public import IntegerMultBounds.Networks.MaskUnique
 
 /-! Untrusted sorted mask positions, checked in the ordinary kernel.
 Regenerate with scripts/generate_paired49_unique.py. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.Certificates.Paired49
 open MaskDAG MaskUnique

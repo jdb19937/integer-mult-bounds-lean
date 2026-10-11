@@ -1,10 +1,14 @@
-import IntegerMultBounds.Machine.BinaryAdd
+module
+
+public import IntegerMultBounds.Machine.BinaryAdd
 
 /-! Two's complement words, least significant bit first: the signed value is
 the unsigned value minus `2^n` when the top bit is set. Sign extension,
 modular addition of an extended word into a wider accumulator, and negation
 are defined on words with their value identities; the machines realizing
 them are in `SignExtendAdd` and `Negate`. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.TwosComplement
 

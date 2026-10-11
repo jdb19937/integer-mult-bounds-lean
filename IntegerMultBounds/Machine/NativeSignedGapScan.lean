@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.NativeSignedReturnPrecision
-import IntegerMultBounds.Machine.WordSegments
+module
+
+public import IntegerMultBounds.Machine.NativeSignedReturnPrecision
+public import IntegerMultBounds.Machine.WordSegments
 
 /-! A single scan per native signed field with a reusable runtime unary gap
 clock. The clock traverses only the skipped prefix and returns to its origin;
 remaining digits and sign extension are emitted directly. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.NativeSignedGapScan
 open RadixDigits
 open RadixSignedShiftRight (Word)

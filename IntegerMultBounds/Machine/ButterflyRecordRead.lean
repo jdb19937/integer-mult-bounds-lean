@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.DelimitedRadixRecord
-import IntegerMultBounds.Machine.TwoTapeAt
-import IntegerMultBounds.Machine.ButterflyNumerator
+module
+
+public import IntegerMultBounds.Machine.DelimitedRadixRecord
+public import IntegerMultBounds.Machine.TwoTapeAt
+public import IntegerMultBounds.Machine.ButterflyNumerator
 
 /-! Read four actual coefficient fields from two aligned record streams into
 the physical butterfly controls. Both source streams and output streams are
 framed, with source heads advanced by one complete complex coefficient. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ButterflyRecordRead
 noncomputable section
 open DelimitedRadixRecord (Context)

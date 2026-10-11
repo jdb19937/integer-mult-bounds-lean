@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.RationalOffsetPrepare
-import IntegerMultBounds.Machine.TranslationExecutionReuse
+module
+
+public import IntegerMultBounds.Machine.RationalOffsetPrepare
+public import IntegerMultBounds.Machine.TranslationExecutionReuse
 
 /-! A concrete rational-controlled translation of one physical fiber. Fixed
 rational arithmetic reads a marked radix prefix coordinate, converts its residue
 to canonical binary, installs the translation descriptor, then executes actual
 metadata synthesis, payload rotation and cleanup. Radix workspace is framed
 outside the alphabet-lifted translation machine. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RationalTranslationExecution
 
 variable {radix : ℕ}
@@ -17,7 +22,7 @@ def bank (source dest : ℤ → Fin 4) (p q : ℤ) (bs qs supplied offset : List
     (TranslationExecutionReuse.bank source dest p q bs qs offset)).append
     (RadixRationalBinaryReuse.input supplied xs)
 
-private def prepPlacement : Fin (5+11) ≃ Fin 16 where
+def prepPlacement : Fin (5+11) ≃ Fin 16 where
   toFun := ![12,13,14,15,8,5,6,7,4,9,10,11,0,1,2,3]
   invFun := ![12,13,14,15,8,5,6,7,4,9,10,11,0,1,2,3]
   left_inv := by decide +kernel

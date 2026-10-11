@@ -1,5 +1,7 @@
-import IntegerMultBounds.NLogN.ResamplingAssembly
-import IntegerMultBounds.NLogN.Bluestein
+module
+
+public import IntegerMultBounds.NLogN.ResamplingAssembly
+public import IntegerMultBounds.NLogN.Bluestein
 
 /-! Resampling with the permutations left in the transform (§7). The one
 dimensional factorization `F_s = 2^γ B F_t A` of `ResamplingAssembly` carries
@@ -11,6 +13,8 @@ identity with the weighted chirp `exp(π i Σ sᵢ jᵢ² / tᵢ)`, and the reta
 source permutation `R : j ↦ (cᵢ jᵢ)ᵢ` by units commutes with the transform up
 to inversion, `F R = R⁻¹ F`, so it cancels in a convolution. Costs are not
 part of this file. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.NLogN
 

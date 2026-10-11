@@ -1,12 +1,16 @@
-import IntegerMultBounds.Networks.NeighborCounts
-import Mathlib.Combinatorics.Hall.Finite
-import Mathlib.Algebra.Order.BigOperators.Group.Finset
-import Mathlib.Algebra.BigOperators.Ring.Finset
+module
+
+public import IntegerMultBounds.Networks.NeighborCounts
+public import Mathlib.Combinatorics.Hall.Finite
+public import Mathlib.Algebra.Order.BigOperators.Group.Finset
+public import Mathlib.Algebra.BigOperators.Ring.Finset
 
 /-! A neighbor permutation of finite triple banks. This is a finite Hall
 existence construction from the exact regular neighbor census. It supplies
 the bijection needed for stage reuse, but does not formalize or identify the
 explicit paired-point generator in `scripts/reuse_network.py`. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.TripleNeighborPermutation
 

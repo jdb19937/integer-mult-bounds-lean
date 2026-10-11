@@ -1,9 +1,13 @@
-import IntegerMultBounds.Machine.InjectivePlacement
+module
+
+public import IntegerMultBounds.Machine.InjectivePlacement
 
 /-! Reading a replaced bank cell by cell: at an active slot the replacement's
 tape and head appear, elsewhere the original bank is unchanged. With these,
 an exact contract placed by an injective slot map yields an exact contract
 on the whole bank once the two banks are compared index by index. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.Placement
 

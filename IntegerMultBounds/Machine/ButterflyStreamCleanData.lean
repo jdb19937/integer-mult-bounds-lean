@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ButterflyStreamOriginal
-import IntegerMultBounds.Machine.CountedBankHeaderClean
+module
+
+public import IntegerMultBounds.Machine.ButterflyStreamOriginal
+public import IntegerMultBounds.Machine.CountedBankHeaderClean
 
 /-! Exact normalized physical states for a paired butterfly scan. Old input
 streams are explicitly erased; only the two computed output streams survive. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ButterflyStreamCleanData
 noncomputable section
 open ButterflyStreamData

@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.NativeSignedGapClock
+module
+
+public import IntegerMultBounds.Machine.NativeSignedGapClock
 
 /-! One original-header precision-return executable: prepare the gap clock once,
 scan each signed field once, replace the original source and erase every private
 stream/clock. The runtime has no exponent-gap times serialized-volume factor. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.NativeSignedGapReturn
 noncomputable section
 open RadixSignedShiftRight (Word)

@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ScanRight
-import IntegerMultBounds.Machine.BinaryCanonicalTrim
+module
+
+public import IntegerMultBounds.Machine.ScanRight
+public import IntegerMultBounds.Machine.BinaryCanonicalTrim
 
 /-! Normalize an arbitrary marked binary descriptor starting at its usual
 head one. Scanning, high-zero erasure and return to head one are all paid. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryDescriptorNormalize
 variable {a : ℕ}
 open BinaryDescriptorStack (descriptor)

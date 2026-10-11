@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.FlatControlledShiftPayload
+module
+
+public import IntegerMultBounds.Machine.FlatControlledShiftPayload
 
 /-! The private input bank of a controlled-shift stage contains only dimensional
 metadata. Replacing the permanent payload pair leaves this bank identical. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.FlatControlledShiftMetadata
 open SharedPlacementAlphabet (setTape)
 open PrefixCounterInitPlacement

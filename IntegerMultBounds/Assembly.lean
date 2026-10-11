@@ -1,4 +1,6 @@
-import IntegerMultBounds.CostTable
+module
+
+public import IntegerMultBounds.CostTable
 
 /-! Reduction of the end-to-end theorem to a program with a cost function. A
 program that halts with the correct product on every pair of `n`-bit inputs
@@ -6,6 +8,8 @@ within `total n` steps, where `total` is eventually a fixed multiple of the
 target time, satisfies `Machine.ComputesWithin`; and `total` bounded by the
 cost table of §8 is such a function. What remains for `Machine.EndToEnd` is
 the program itself with its correctness and cost proofs. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Assembly
 

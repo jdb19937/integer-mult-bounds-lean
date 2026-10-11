@@ -1,12 +1,16 @@
-import IntegerMultBounds.Machine.ReturnOrigin
-import IntegerMultBounds.Machine.PartitionMarked
-import IntegerMultBounds.Machine.DropFlag
+module
+
+public import IntegerMultBounds.Machine.ReturnOrigin
+public import IntegerMultBounds.Machine.PartitionMarked
+public import IntegerMultBounds.Machine.DropFlag
 
 /-! Return a head from the end of a written word to the word's origin, over
 either a blank or a marked background: one step left, then left over every
 cell that is neither blank nor the marker, then one step right. One tape,
 three states, every cell retained, exactly the word length plus two
 transitions. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.MarkedReturn
 

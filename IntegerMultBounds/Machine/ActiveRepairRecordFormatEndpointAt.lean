@@ -1,6 +1,10 @@
-import IntegerMultBounds.Machine.ActiveRepairRecordFormatStream
-import IntegerMultBounds.Machine.BinaryDescriptorCleanupList
-import IntegerMultBounds.Machine.ReturnOrigin
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairRecordFormatStream
+public import IntegerMultBounds.Machine.BinaryDescriptorCleanupList
+public import IntegerMultBounds.Machine.ReturnOrigin
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.ActiveRepairRecordFormatEndpointAt
 noncomputable section

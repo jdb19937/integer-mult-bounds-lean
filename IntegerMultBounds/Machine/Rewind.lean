@@ -1,8 +1,12 @@
-import IntegerMultBounds.Machine.Hoare
+module
+
+public import IntegerMultBounds.Machine.Hoare
 
 /-! Literal backwards scanning to a sentinel over an arbitrary finite alphabet.
 The one-state table preserves every cell and works at arbitrary integer head
 positions. Tape placement supplies additional, untouched tapes. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.Rewind
 

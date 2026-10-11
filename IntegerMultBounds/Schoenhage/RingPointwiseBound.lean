@@ -1,10 +1,14 @@
-import IntegerMultBounds.Schoenhage.RingPointwiseProgram
+module
+
+public import IntegerMultBounds.Schoenhage.RingPointwiseProgram
 
 /-! The pointwise-product step's time bound is `O(T p log(r p) log log(r p) + H)`
 for each fixed width constant `Cw` (`pointwiseTime_le`): the four
 Schönhage–Strassen products per record cost `O(r p log(r p) log log(r p))`, and
 every other phase is linear in the record or the header up to one
 logarithm. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Schoenhage
 

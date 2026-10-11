@@ -1,11 +1,15 @@
-import IntegerMultBounds.Machine.ScalingMergeData
-import IntegerMultBounds.Machine.GrowingCounterData
-import IntegerMultBounds.Machine.ScalingSplit
+module
+
+public import IntegerMultBounds.Machine.ScalingMergeData
+public import IntegerMultBounds.Machine.GrowingCounterData
+public import IntegerMultBounds.Machine.ScalingSplit
 
 /-! Growing binary descriptor families for scaling pieces. The merge selector
 routes one block-width batch of increments to exactly one descriptor. Aggregate
 carry potential telescopes across the whole family, paying linear total work
 without charging the growing binary width separately on every increment. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.ScalingDescriptorData
 

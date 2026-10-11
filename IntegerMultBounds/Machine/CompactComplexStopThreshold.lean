@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.FixedBasePowerUntilRange
-import IntegerMultBounds.Networks.ComplexRecursiveCallSchema
+module
+
+public import IntegerMultBounds.Machine.FixedBasePowerUntilRange
+public import IntegerMultBounds.Networks.ComplexRecursiveCallSchema
 
 /-! The complex recursion stop threshold is generated once from the original
 global dimension. Growing a fixed-base power only up to that dimension avoids
 computing an unbounded thousandth power at every recursive node. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexStopThreshold
 noncomputable section
 open SharedPlacementAlphabet (setTape)

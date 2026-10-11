@@ -1,9 +1,13 @@
-import IntegerMultBounds.Machine.ExactFrame
+module
+
+public import IntegerMultBounds.Machine.ExactFrame
 
 /-! Small word-moving routines on blank-terminated words, for any alphabet:
 scan to a word's end, copy a word onto another tape, erase a word backwards
 to its origin, and copy a fixed number of cells with blanks read as zero
 bits. Each has an exact contract with its transition count. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine
 

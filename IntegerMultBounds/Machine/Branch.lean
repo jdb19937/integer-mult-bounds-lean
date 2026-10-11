@@ -1,4 +1,6 @@
-import IntegerMultBounds.Machine.Loop
+module
+
+public import IntegerMultBounds.Machine.Loop
 
 /-!
 A finite-state conditional whose test reads only the currently scanned
@@ -6,6 +8,8 @@ symbols. One transition enters the selected branch, preserving every tape and
 head; the branch then runs to its own halt, which halts the whole machine.
 The contract charges the larger branch bound plus the one control step.
 -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine
 

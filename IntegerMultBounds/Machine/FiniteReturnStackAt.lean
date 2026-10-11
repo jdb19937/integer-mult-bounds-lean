@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.FiniteReturnDispatch
-import IntegerMultBounds.Machine.InjectivePlacement
-import IntegerMultBounds.Machine.SharedPlacementAlphabet
+module
+
+public import IntegerMultBounds.Machine.FiniteReturnDispatch
+public import IntegerMultBounds.Machine.InjectivePlacement
+public import IntegerMultBounds.Machine.SharedPlacementAlphabet
 
 /-! Put a fixed-width binary return-PC stack in any physical tape slot.
 The PC encoded by push is a fixed call-site constant; pop decodes actual bits. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.FiniteReturnStackAt
 open SharedPlacementAlphabet (setTape)
 open FiniteReturnStack (Code Control address)

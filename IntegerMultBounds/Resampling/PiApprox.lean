@@ -1,10 +1,14 @@
-import Mathlib.Analysis.SpecialFunctions.Complex.Arctan
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
+module
+
+public import Mathlib.Analysis.SpecialFunctions.Complex.Arctan
+public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-! A certified integer approximation of `2^q π` by Machin's formula,
 computed with natural-number divisions only: the `k`-th term of
 `2^q arctan (1/m)` is `⌊2^q / ((2k+1) m^(2k+1))⌋`, the series is cut after `K`
 terms, and `π = 16 arctan (1/5) - 4 arctan (1/239)`. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Resampling.PiApprox
 

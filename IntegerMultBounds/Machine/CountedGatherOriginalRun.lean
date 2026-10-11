@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.CountedGatherRun
-import IntegerMultBounds.Machine.CountedGatherMetadata
-import IntegerMultBounds.Machine.PlacementBank
-import IntegerMultBounds.Machine.FixedHeaderBankCopy
-import IntegerMultBounds.Machine.CountedGatherClockPair
+module
+
+public import IntegerMultBounds.Machine.CountedGatherRun
+public import IntegerMultBounds.Machine.CountedGatherMetadata
+public import IntegerMultBounds.Machine.PlacementBank
+public import IntegerMultBounds.Machine.FixedHeaderBankCopy
+public import IntegerMultBounds.Machine.CountedGatherClockPair
 
 /-! Uniform gather from the six original runtime headers, sharing three
 caller payload tapes and starting every generated descriptor and clock blank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedGatherOriginalRun
 noncomputable section
 variable {t a : ℕ}

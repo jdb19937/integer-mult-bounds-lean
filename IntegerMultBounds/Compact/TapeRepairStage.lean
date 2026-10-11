@@ -1,5 +1,7 @@
-import IntegerMultBounds.Compact.RepairPipeline
-import IntegerMultBounds.Machine.RepairStage
+module
+
+public import IntegerMultBounds.Compact.RepairPipeline
+public import IntegerMultBounds.Machine.RepairStage
 
 /-! The sorting and reinsertion half of the exceptional-address repair on
 literal tapes. The list-level pipeline's extracted records, keyed by their
@@ -8,6 +10,8 @@ fixed eleven-tape stage machine; its output tape then holds the stream of the
 ideal map. The cost is linear in the key width times the extracted volume plus
 the full-stream volume. The flagging scan and the destination-rank arithmetic
 that produce the keyed records are the remaining tape obligation. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Compact
 

@@ -1,10 +1,14 @@
-import IntegerMultBounds.Machine.Frame
-import IntegerMultBounds.Machine.ReturnOrigin
+module
+
+public import IntegerMultBounds.Machine.Frame
+public import IntegerMultBounds.Machine.ReturnOrigin
 
 /-! Exact-tape forms of the frame rules, for any alphabet: a contract between
 two fully specified banks lifts to an extended or relabelled bank. Also the
 rewind to a word's origin from an arbitrary position with an arbitrary
 background, and two one-tape moves used when assembling arithmetic. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine
 

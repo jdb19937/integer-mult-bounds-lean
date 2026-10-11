@@ -1,9 +1,13 @@
-import IntegerMultBounds.Machine.Loop
+module
+
+public import IntegerMultBounds.Machine.Loop
 
 /-! Finite local-symbol dispatch. One literal stationary transition selects a
 member of a fixed finite program family. Its chosen tag is retained in finite
 control throughout execution, and the family's true halt is the dispatch halt.
 The selector reads only the currently scanned symbols, not remote tape cells. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.Dispatch
 

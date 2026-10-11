@@ -1,10 +1,14 @@
-import IntegerMultBounds.Networks.DAGFramedExecution
+module
+
+public import IntegerMultBounds.Networks.DAGFramedExecution
 
 /-! Exact complementary reversal of the allocated forward frame trace.
 Forward old labels are recorded, so reversing restores their complements even
 at identity pivots and repeated incidences. Inverse scalar gates keep their
 original event boundaries and execute in complemented node frames. This does
 not assemble the surrounding correction motif or its sink/global rank joins. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.DAGComplementTrace
 

@@ -1,4 +1,6 @@
-import IntegerMultBounds.Spec.SyntheticTransform
+module
+
+public import IntegerMultBounds.Spec.SyntheticTransform
 
 /-! The statement of the paper's synthetic convolution
 (`prop:synthetic-convolution`, §6) on the literal machine model and in the
@@ -14,6 +16,8 @@ operand arrays (component width `w`) and returns an approximation within
 with component width `w_M = w + log₂ M`, and writes `Γ(w_M)` on an output
 descriptor tape, within `O(T p [d K + p K^(τ-1) + ℓ d^λ' + log (r p)])` steps.
 Definitions only. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Spec.SignedRingProduct
 

@@ -1,11 +1,15 @@
-import IntegerMultBounds.Machine.BlockReverseStream
-import IntegerMultBounds.Machine.BlockNegationData
+module
+
+public import IntegerMultBounds.Machine.BlockReverseStream
+public import IntegerMultBounds.Machine.BlockNegationData
 
 /-! Literal single-fiber coordinate negation. The first B-symbol block is copied
 unchanged. The raw tail is reversed onto scratch, then its B-symbol blocks are
 individually reversed into output. All positioning and joins are charged. The
 scratch tail remains explicitly present; no scratch erasure or descriptor
 construction is asserted by this routine. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.BlockNegation
 

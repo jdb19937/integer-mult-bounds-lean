@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CountedGuardGadgetRecord
-import IntegerMultBounds.Machine.AnyFlag
-import IntegerMultBounds.Machine.WordMoves
+module
+
+public import IntegerMultBounds.Machine.CountedGuardGadgetRecord
+public import IntegerMultBounds.Machine.AnyFlag
+public import IntegerMultBounds.Machine.WordMoves
 
 /-! Physical guard-word finalization: source and flag rewinds, AnyFlag scan,
 and complete flag erasure. A fixed fifteen-tape machine retains every spectator. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedGuardGadgetFinish
 noncomputable section
 variable {a : ℕ}

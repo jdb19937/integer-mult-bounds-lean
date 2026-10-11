@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.Copy
-import IntegerMultBounds.Machine.Reflection
-import IntegerMultBounds.Machine.WordMoves
-import IntegerMultBounds.Machine.Frame
+module
+
+public import IntegerMultBounds.Machine.Copy
+public import IntegerMultBounds.Machine.Reflection
+public import IntegerMultBounds.Machine.WordMoves
+public import IntegerMultBounds.Machine.Frame
 
 /-! A fixed parser for the literal multiplication input. It preserves the
 packed input and physically copies both operands backwards onto blank tapes.
 The copies are least-significant-bit first and their heads finish at their ends. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.MultiplicationInputSplit
 noncomputable section
 variable {a : ℕ}

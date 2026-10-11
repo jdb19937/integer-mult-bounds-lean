@@ -1,9 +1,13 @@
-import IntegerMultBounds.Networks.MaskDAG
+module
+
+public import IntegerMultBounds.Networks.MaskDAG
 
 /-! Small vertex signatures for certified source-support DAGs. Each addition
 intersects common-vertex masks and unions covered-vertex masks, so checking a
 signature never scans the much wider source mask. Static banks are checked
 against sequential rows and are not trusted as independent oracles. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.MaskSignature
 

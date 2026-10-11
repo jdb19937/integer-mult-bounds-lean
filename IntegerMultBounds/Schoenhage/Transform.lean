@@ -1,5 +1,7 @@
-import Mathlib.Algebra.Polynomial.Div
-import Mathlib.Tactic
+module
+
+public import Mathlib.Algebra.Polynomial.Div
+public import Mathlib.Tactic
 
 /-! The twisted transform behind Schönhage–Strassen, over any commutative
 ring, in the form a tape executes it: lists of length `2^k` whose halves stay
@@ -11,6 +13,8 @@ without dividing by two. Proved: inverse of the pointwise product of two
 forward transforms is `2^k` times the product modulo `X^(2^k) - ψ^e`
 (`inv_fwd_mul`); no division by two and no primitive-root hypothesis beyond
 `ψ^H = -1` is used. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Schoenhage
 

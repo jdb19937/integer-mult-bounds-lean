@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.RadixLinearCombinationReuse
-import IntegerMultBounds.Machine.TranslationExecutionReuse
+module
+
+public import IntegerMultBounds.Machine.RadixLinearCombinationReuse
+public import IntegerMultBounds.Machine.TranslationExecutionReuse
 
 /-! Recurring translation controlled by an actual bounded expression over a
 shared physical radix bank. The computed binary tape is statically shared with
 the translation offset input. The original translation offset slot is a blank
 spectator; no fresh leaf copies or independently supplied offsets are assumed. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.MultiControlTranslationExecution
 
 open RadixLinearCombinationRefresh (Expr controls leaves)
@@ -18,7 +23,7 @@ abbrev TapeCount (e : Expr c) := ArithmeticTapes e+12
 def offsetSlot (e : Expr c) : Fin (ArithmeticTapes e) :=
   Fin.natAdd c (Fin.castAdd (RadixLinearCombination.AuxTapes e.erase) (0 : Fin 3))
 
-private def liftedBank (source dest : ℤ → Fin 4) (p q : ℤ) (bs qs offset : List Bool) : Tapes 12 radix :=
+def liftedBank (source dest : ℤ → Fin 4) (p q : ℤ) (bs qs offset : List Bool) : Tapes 12 radix :=
   Alphabet.mapTapes (RadixToBinary.binaryEncoding (q := radix))
     (TranslationExecutionReuse.bank source dest p q bs qs offset)
 

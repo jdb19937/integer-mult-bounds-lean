@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CyclicRowNormalized
+module
+
+public import IntegerMultBounds.Machine.CyclicRowNormalized
 
 /-! Undo the fixed network role permutation during physical merging. Only the
 finite wiring changes; no tape is freely permuted. The normalized merge retains
 its exact runtime, source frames and restored heads. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CyclicRowPermutedMerge
 variable {a c n : ℕ}
 open CyclicRowSplit (bank roleWord sourceWord)

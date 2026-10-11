@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.RecursiveChildCallSetup
-import IntegerMultBounds.Machine.RoleArrayCall
+module
+
+public import IntegerMultBounds.Machine.RecursiveChildCallSetup
+public import IntegerMultBounds.Machine.RoleArrayCall
 
 /-! Recursive stack allocation from blank suffixes. Each physical push moves
 its head past its writes, leaving a blank suffix for every subsequent nested
 frame. These invariants discharge finite free-interval premises without a
 runtime allocation oracle or a bound on recursion depth. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveStackAllocation
 open SharedPlacementAlphabet (setTape)
 variable {t a k : ℕ}

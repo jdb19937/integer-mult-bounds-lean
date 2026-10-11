@@ -1,12 +1,16 @@
-import IntegerMultBounds.Resampling.B0Tape
-import IntegerMultBounds.NLogN.NeumannHalved
-import IntegerMultBounds.Resampling.TabledMaps
+module
+
+public import IntegerMultBounds.Resampling.B0Tape
+public import IntegerMultBounds.NLogN.NeumannHalved
+public import IntegerMultBounds.Resampling.TabledMaps
 
 /-! The words written by the `B̃₀` tape machine are the numerators of the
 manuscript's clamp-free `B̃₀ = D̃' J̃' C`: the selected words represent
 `C w`, a window-radius-zero step with weights `-2^(p-1)` halves them with the
 rounding of `rdV`, the Neumann loop gives `J̃'` (`NeumannWords`), and a
 window-radius-zero step with weights `-ρ(2^p d')` is `D̃'`. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Resampling.B0Value
 

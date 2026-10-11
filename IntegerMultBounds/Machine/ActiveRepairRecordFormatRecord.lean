@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.CountedCopyReuse
-import IntegerMultBounds.Machine.CountedLoopReuseAlphabet
-import IntegerMultBounds.Machine.Partition
-import IntegerMultBounds.Machine.Gather
+module
+
+public import IntegerMultBounds.Machine.CountedCopyReuse
+public import IntegerMultBounds.Machine.CountedLoopReuseAlphabet
+public import IntegerMultBounds.Machine.Partition
+public import IntegerMultBounds.Machine.Gather
 
 /-! Runtime-width formatting of one raw binary payload. Two fixed output
 symbols enclose an amortized binary-counted copy, preserving the raw source
 and width descriptor and restoring the reusable clock. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairRecordFormatRecord
 noncomputable section
 open CountedCopyReuse (bank empty binary)

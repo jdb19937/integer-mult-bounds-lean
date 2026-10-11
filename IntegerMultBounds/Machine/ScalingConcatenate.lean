@@ -1,10 +1,14 @@
-import IntegerMultBounds.Machine.ScalingSplitRewind
-import IntegerMultBounds.Machine.ScalingScatter
+module
+
+public import IntegerMultBounds.Machine.ScalingSplitRewind
+public import IntegerMultBounds.Machine.ScalingScatter
 
 /-! Literal concatenation of fixed many end-positioned buffer streams. Each
 stage physically rewinds its source and then copies it to the advancing output.
 All buffer cells and endpoint heads survive, as do all immutable descriptors
 and the reusable clock. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.ScalingConcatenate
 
@@ -109,7 +113,7 @@ def states : ℕ → ℕ
   | 0 => 1
   | n+1 => states n+32
 
-private def haltProgram (c : ℕ) : Program (TapeCount c) 1 0 :=
+def haltProgram (c : ℕ) : Program (TapeCount c) 1 0 :=
   ⟨by dsimp [TapeCount]; omega,0,fun _ _ => none⟩
 
 def initialStages (c : ℕ) : (n : ℕ) → n ≤ c → Program (TapeCount c) (states n) 0

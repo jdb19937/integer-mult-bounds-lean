@@ -1,8 +1,12 @@
-import IntegerMultBounds.Schoenhage.LevelTape
+module
+
+public import IntegerMultBounds.Schoenhage.LevelTape
 
 /-! The up-sweep of one group on word tapes: the inverse transform of the
 group's `K` products, the coefficient split, the two shifted sums and their
 reductions modulo `2^N + 1`, and the final difference. -/
+
+@[expose] public section
 
 set_option maxRecDepth 10000
 

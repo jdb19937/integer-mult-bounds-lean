@@ -1,8 +1,12 @@
-import IntegerMultBounds.Machine.WordMoves
+module
+
+public import IntegerMultBounds.Machine.WordMoves
 
 /-! Advance a data head by the length of a ruler word: two tapes and one
 state step right together while the ruler reads nonblank. One transition per
 ruler cell; the ruler head parks on the ruler's blank end. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.RulerAdvance
 

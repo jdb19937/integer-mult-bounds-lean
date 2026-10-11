@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.RecursiveChildQuotients
-import IntegerMultBounds.Machine.RecursiveDescriptorDivision
-import IntegerMultBounds.Machine.RecursiveHeaderBounds
+module
+
+public import IntegerMultBounds.Machine.RecursiveChildQuotients
+public import IntegerMultBounds.Machine.RecursiveDescriptorDivision
+public import IntegerMultBounds.Machine.RecursiveHeaderBounds
 
 /-! Child quotient generation has a logical-child-volume bound. Fixed divisor
 bit lengths belong to the compile-time constant; no assumption that these
 constants fit below root volume is needed. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveChildQuotientsBound
 open RecursiveInterchangeLayout RecursiveInterchangeVolume RecursiveDimensionBank
 

@@ -1,10 +1,14 @@
-import IntegerMultBounds.Compact.PackedArithValue
-import IntegerMultBounds.Compact.Ideal
+module
+
+public import IntegerMultBounds.Compact.PackedArithValue
+public import IntegerMultBounds.Compact.Ideal
 
 /-! The ideal selected-parity toggle on bit words: exclusive or with the
 control mask, the control bits at stride `q`, flips the lowest bit of each
 `q`-bit block exactly when its control is set, and packs as `toggleList` of
 the block digits. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Compact.PowerTwo
 

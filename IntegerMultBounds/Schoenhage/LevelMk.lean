@@ -1,6 +1,10 @@
-import IntegerMultBounds.Schoenhage.LevelParams
+module
+
+public import IntegerMultBounds.Schoenhage.LevelParams
 
 /-! A whole level's registers on word tapes from `pN = ones N`. -/
+
+@[expose] public section
 
 set_option maxRecDepth 10000
 

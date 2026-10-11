@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.DelimitedRadixEmit
+module
+
+public import IntegerMultBounds.Machine.DelimitedRadixEmit
 
 /-! Literal coefficient serialization for arithmetic stream kernels. A field is
 one radix word followed by a separator; a complex coefficient consists of its
 real and imaginary fields. Read correctness derives all delimiter conditions. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.DelimitedRadixRecord
 open RadixDigits
 variable {q : ℕ}

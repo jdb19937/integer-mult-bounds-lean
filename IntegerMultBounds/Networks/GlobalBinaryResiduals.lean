@@ -1,9 +1,13 @@
-import IntegerMultBounds.Networks.GlobalLabelsResiduals
-import IntegerMultBounds.Networks.GlobalProjectionRank
+module
+
+public import IntegerMultBounds.Networks.GlobalLabelsResiduals
+public import IntegerMultBounds.Networks.GlobalProjectionRank
 
 /-! Residual witnesses for actual sparse physical binary histories. Equality
 is retained explicitly so that skipped labels compose without nondegeneracy
 assumptions on unrelated intermediate subspaces. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.GlobalBinaryResiduals
 

@@ -1,8 +1,12 @@
-import IntegerMultBounds.Networks.MaskDAG
+module
+
+public import IntegerMultBounds.Networks.MaskDAG
 
 /-! Uniqueness certificates use a sorted list of bank positions. Strict masks
 force distinct identifiers, and a full-length bounded list covers the bank.
 No sorting algorithm or permutation checker is trusted. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.MaskUnique
 

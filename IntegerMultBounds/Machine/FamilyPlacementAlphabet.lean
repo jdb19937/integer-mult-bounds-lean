@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.FamilyPlacement
+module
+
+public import IntegerMultBounds.Machine.FamilyPlacement
 
 /-! Alphabet-polymorphic tape-family wiring contracts. Each placement acts on
 complete tapes, preserving every finite-alphabet symbol on framed banks. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.FamilyPlacementAlphabet
 open FamilyPlacement (pair withFrame)
 variable {alphabet : ℕ}

@@ -1,12 +1,16 @@
-import IntegerMultBounds.Machine.FiniteReturnStackAt
-import IntegerMultBounds.Machine.ExactFrame
+module
 
-import IntegerMultBounds.Machine.SharedBank
+public import IntegerMultBounds.Machine.FiniteReturnStackAt
+public import IntegerMultBounds.Machine.ExactFrame
 
+public import IntegerMultBounds.Machine.SharedBank
 
 /-! A generic finite family of66-tape kernels selected by an actual binary
 edge token on appended tape66. The selector reads and erases the token; the
 chosen kernel executes on the restored66-tape bank. All costs are physical. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.FiniteTapeKernelDispatch
 noncomputable section
 variable {N k : ℕ}

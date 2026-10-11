@@ -1,12 +1,17 @@
-import IntegerMultBounds.Machine.FiberLayoutData
-import IntegerMultBounds.Networks.OrderedAffine
-import Mathlib.Algebra.BigOperators.Fin
-import Mathlib.Data.Fin.Rev
+module
+
+public import IntegerMultBounds.Machine.FiberLayoutData
+public import IntegerMultBounds.Networks.OrderedAffine
+public import Mathlib.Algebra.BigOperators.Fin
+public import Mathlib.Data.Fin.Rev
 
 /-! One common physical row-major layout for every target of an ordered-affine
 schedule. The first coordinate is most significant and an arbitrary trailing
 record is least significant. Target-specific fibers are views of the same
 finite array, not independently supplied address families. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.FlatCoordinateLayout
 noncomputable section
 variable {d Q W : ℕ} [NeZero Q]

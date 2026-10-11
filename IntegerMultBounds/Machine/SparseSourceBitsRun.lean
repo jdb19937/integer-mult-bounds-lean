@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.SelectedSourceBitsRun
+module
+
+public import IntegerMultBounds.Machine.SelectedSourceBitsRun
 
 /-! Runtime sparse extraction from an arbitrary complete source word. The
 last sample does not advance the source, so no artificial trailing stride or
 padding is required. Original headers and source cells are retained. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.SparseSourceBitsRun
 noncomputable section
 open SelectedSourceBitsCore (payload sample sample_hoare copy copy_hoare)

@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CountedGatherDigit
+module
+
+public import IntegerMultBounds.Machine.CountedGatherDigit
 
 /-! A uniform packed gather: both strides, field offsets and digit count are
 runtime descriptors. Neither the state count nor the transition table depends
 on the shape or the number of digits. All independent clocks are restored. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedGatherRun
 noncomputable section
 variable {a : ℕ}

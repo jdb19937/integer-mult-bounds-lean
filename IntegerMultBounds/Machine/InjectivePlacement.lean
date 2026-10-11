@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.Placement
-import Mathlib.Logic.Equiv.Fintype
+module
+
+public import IntegerMultBounds.Machine.Placement
+public import Mathlib.Logic.Equiv.Fintype
 
 /-! A fixed injection of active tape slots extends to a whole-bank placement.
 The complementary tape ordering is irrelevant: every complementary tape and
 head is preserved by the already verified placement construction. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.InjectivePlacement
 variable {s u t : ℕ}
 

@@ -1,11 +1,15 @@
-import IntegerMultBounds.Compact.KeyValue
-import IntegerMultBounds.Machine.PlacementBank
+module
+
+public import IntegerMultBounds.Compact.KeyValue
+public import IntegerMultBounds.Machine.PlacementBank
 
 /-! The key routine placed into the repair scan's bank meets the scan's key
 contract for the concrete early instance: at every rank it writes the
 membership flag and the destination rank's bits on the key tape and leaves
 every other tape, including its own scratch frame, as it was. With it the
 complete repair machine of `TapeRepair` runs with a concrete key routine. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Compact.PowerTwo
 

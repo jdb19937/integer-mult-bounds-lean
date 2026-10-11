@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CyclicRowCopy
+module
+
+public import IntegerMultBounds.Machine.CyclicRowCopy
 
 /-! One complete physical cyclic role distribution: each successive raw row
 is copied to its fixed role tape. A single row descriptor and reusable clock
 are shared across every role. Source and output heads advance physically. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CyclicRowCycle
 open CyclicRowCopy (bank)
 variable {a c : ℕ}
@@ -54,7 +59,7 @@ theorem castStates_hoare {t q r a : ℕ} (h : q=r) (M : Program t q a)
   cases h
   exact hh
 
-private def haltProgram (c a : ℕ) : Program ((1+c)+2) 1 a :=
+def haltProgram (c a : ℕ) : Program ((1+c)+2) 1 a :=
   ⟨by omega,0,fun _ _ => none⟩
 
 def initialStages (c a : ℕ) : (n : ℕ) → n ≤ c → Program ((1+c)+2) (states n) a

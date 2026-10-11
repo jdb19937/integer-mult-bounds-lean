@@ -1,4 +1,6 @@
-import IntegerMultBounds.Machine.KeySelect
+module
+
+public import IntegerMultBounds.Machine.KeySelect
 
 /-! Remove a unary-counted key pre from every delimiter-terminated raw
 record. The three-tape, four-state control first rewinds the unary width tape
@@ -7,11 +9,13 @@ source over the pre in lockstep with the width tape, rewinds the width tape
 to its origin, and copies the remainder through the delimiter. The source and
 width tapes are retained literally; every rewind is an actual left transition. -/
 
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.StripPrefix
 
 open KeySelect (selector recordWord encode)
 
-private def action (symbols : Fin 3 → Fin 5) (sm um om : Move) (out : Fin 5) :
+def action (symbols : Fin 3 → Fin 5) (sm um om : Move) (out : Fin 5) :
     Fin 3 → Fin 5 × Move :=
   fun i => (if i = 2 then out else symbols i,
     if i = 0 then sm else if i = 1 then um else om)

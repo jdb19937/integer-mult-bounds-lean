@@ -1,9 +1,13 @@
-import IntegerMultBounds.Machine.ScalingInverseExecution
+module
+
+public import IntegerMultBounds.Machine.ScalingInverseExecution
 
 /-! Repeated literal inverse positive-unit scaling on consecutive equal-size fibers.
 Every fiber physically initializes residue controls and restores its temporary
 buffers. The outer descriptor and clock are prepared, consumed, and cleaned by
 the actual reusable counted loop. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.ScalingInverseStream
 

@@ -1,4 +1,6 @@
-import IntegerMultBounds.NLogN.DFT
+module
+
+public import IntegerMultBounds.NLogN.DFT
 
 /-! The two-dimensional reduction of cyclic convolution. Proved: convolution on
 any finite additive group transports along additive isomorphisms, so by the
@@ -6,6 +8,8 @@ Chinese remainder theorem a length `m * n` cyclic convolution with coprime
 `m, n` is a convolution on `ZMod m × ZMod n`; the two-dimensional transform
 factors as row transforms followed by column transforms and satisfies the
 convolution theorem. No cost accounting or algorithm is part of this file. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.NLogN
 

@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.SymbolTripleDecode
-import IntegerMultBounds.Machine.SymbolTripleStream
-import IntegerMultBounds.Machine.CyclicRowCycle
+module
+
+public import IntegerMultBounds.Machine.SymbolTripleDecode
+public import IntegerMultBounds.Machine.SymbolTripleStream
+public import IntegerMultBounds.Machine.CyclicRowCycle
 
 /-! A fixed physical inverse of the Boolean triple representation. Every
 coefficient symbol is reconstructed from its three actual tape cells, with
 linear cost and exact whole-word output rather than a supplied decode oracle. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.SymbolTripleDecodeStream
 noncomputable section
 open SymbolTripleEncode (encoded)

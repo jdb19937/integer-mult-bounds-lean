@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CountedBankReset
-import IntegerMultBounds.Machine.BinaryDescriptorInstall
-import IntegerMultBounds.Machine.SharedBank
+module
+
+public import IntegerMultBounds.Machine.CountedBankReset
+public import IntegerMultBounds.Machine.BinaryDescriptorInstall
+public import IntegerMultBounds.Machine.SharedBank
 
 /-! Reset selected native payload tapes using a physically copied existing
 marked length header. Both appended work tapes start entirely blank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedBankResetHeader
 open CountedBankReset
 variable {t a : ℕ}

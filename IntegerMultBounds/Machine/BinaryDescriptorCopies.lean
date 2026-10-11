@@ -1,12 +1,17 @@
-import IntegerMultBounds.Machine.BinaryDescriptorCopy
-import IntegerMultBounds.Machine.InjectivePlacement
-import IntegerMultBounds.Machine.FamilyPlacementAlphabet
-import IntegerMultBounds.Machine.ExactFrame
+module
+
+public import IntegerMultBounds.Machine.BinaryDescriptorCopy
+public import IntegerMultBounds.Machine.InjectivePlacement
+public import IntegerMultBounds.Machine.FamilyPlacementAlphabet
+public import IntegerMultBounds.Machine.ExactFrame
 
 /-! Replicate one supplied binary descriptor onto a fixed number of genuinely
 blank tapes. The source is preserved, all resulting heads are restored to one,
 and every copy and sequential join is charged. No descriptor length occurs in
 the transition table, and no extra workspace tape is used. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryDescriptorCopies
 noncomputable section
 variable {q : ℕ}

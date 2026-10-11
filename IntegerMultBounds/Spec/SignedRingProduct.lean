@@ -1,7 +1,9 @@
-import IntegerMultBounds.Machine.Hoare
-import IntegerMultBounds.NLogN.Approx
-import IntegerMultBounds.NLogN.FixedOps
-import Mathlib.Data.Nat.Size
+module
+
+public import IntegerMultBounds.Machine.Hoare
+public import IntegerMultBounds.NLogN.Approx
+public import IntegerMultBounds.NLogN.FixedOps
+public import Mathlib.Data.Nat.Size
 
 /-! The statement of the paper's signed ring product
 (`lem:signed-ring-product`, §6), on the literal machine model and in the
@@ -19,6 +21,8 @@ Only definitions are made here: `SignedRingProduct M Cw T` says the program
 bound `O(r p log (r p))`, and `polylogTarget k` allows an extra factor
 `(log log (r p))^k`, which the packed-product margin of the cost table absorbs
 (`Machine.PackedMultiplierPolylogBudget`). -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Spec.SignedRingProduct
 

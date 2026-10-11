@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.BinaryOffsetStreamRead
-import IntegerMultBounds.Machine.TranslationPreparedFamily
+module
+
+public import IntegerMultBounds.Machine.BinaryOffsetStreamRead
+public import IntegerMultBounds.Machine.TranslationPreparedFamily
 
 /-! Varying-offset payload rotations driven by a literal binary control stream.
 One fixed reader installs each offset, then the actual translation constructs
 its split lengths, rotates the fiber and clears derived metadata. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.StreamedFiberTranslation
 open CountedCopyReuse (binary empty)
 open MarkedWordCleanup (one)

@@ -1,8 +1,13 @@
-import IntegerMultBounds.Networks.FramedEdgeTrace
+module
+
+public import IntegerMultBounds.Networks.FramedEdgeTrace
 
 /-! Attach edge implementations without dropping wire names or moving scalar
 instructions. The ordered relation checks every literal original instruction;
 its edge-only projection is the existing physical edge certificate. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Networks.FramedControlSchedule
 open FramedCircuit
 variable {ι R E P : Type*} [CommRing R] [AddCommGroup E] [Module R E]

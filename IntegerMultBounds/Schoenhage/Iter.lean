@@ -1,4 +1,6 @@
-import Mathlib.Tactic
+module
+
+public import Mathlib.Tactic
 
 /-! The twisted transform as the tape computes it: layer by layer over
 natural-number residues modulo `2^N + 1`, each block carrying the unary shift
@@ -6,6 +8,8 @@ of its butterfly multiplier. A forward layer maps a block `U ++ V` to
 `(u + 2^t v) ++ (u - 2^t v)`; an inverse layer maps `P ++ Q` to
 `(p + q) ++ (p - q) 2^(2N - t)`, computed as the negation of `(p - q) 2^(N - t)`.
 Children of a block with shift `t` get the shifts `t / 2` and `t / 2 + N / 2`. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Schoenhage
 

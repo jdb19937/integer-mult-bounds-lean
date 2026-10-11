@@ -1,9 +1,13 @@
-import IntegerMultBounds.Networks.ProjectionRank
-import IntegerMultBounds.Networks.BinaryOrthonormal
+module
+
+public import IntegerMultBounds.Networks.ProjectionRank
+public import IntegerMultBounds.Networks.BinaryOrthonormal
 
 /-! The degree-one residual between neighboring triple lines. Its dimension
 and nondegeneracy are derived from actual orthogonal subspaces. Binary unit
 witnesses are coordinate vectors outside the triple supports. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.NeighborResidual
 

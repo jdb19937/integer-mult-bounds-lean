@@ -1,11 +1,15 @@
-import IntegerMultBounds.Swap.Shear
-import Mathlib.LinearAlgebra.Matrix.Block
-import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
+module
+
+public import IntegerMultBounds.Swap.Shear
+public import Mathlib.LinearAlgebra.Matrix.Block
+public import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
 
 /-! Refine a lower-triangular matrix transform into a fixed finite schedule of
 coordinate scalings and controlled shifts. Rows execute in descending order;
 within one row, each control is earlier than its target and remains unchanged.
 This reuses the existing whole-row correctness theorem and asserts no tape cost. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.OrderedAffine
 

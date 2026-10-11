@@ -1,6 +1,8 @@
-import IntegerMultBounds.CostTable
-import IntegerMultBounds.NLogN.ResamplingNumeric
-import Mathlib.GroupTheory.Perm.Fin
+module
+
+public import IntegerMultBounds.CostTable
+public import IntegerMultBounds.NLogN.ResamplingNumeric
+public import Mathlib.GroupTheory.Perm.Fin
 
 /-! The transform layout and its cost (§6, Lemma "Transform layout and cost").
 The layout moves at most `D (b + 1) ≤ d K` named slots to a prefix, reorders
@@ -13,6 +15,8 @@ error at most `m √2 2^(-p)` and keep the disk. The cost bracket
 `dK + pK^(τ-1) + ℓ d^λ' + log(rp)` is exactly the sum of four rows of the
 cost table of §8, and the lemma's hypothesis `K ≤ ℓ - 1` holds under the size
 relations for all large `n`. Tape execution is not part of this file. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.LayoutCost
 

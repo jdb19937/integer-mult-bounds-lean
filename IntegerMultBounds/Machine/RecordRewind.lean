@@ -1,11 +1,15 @@
-import IntegerMultBounds.Machine.RecordTape
-import Mathlib.Data.List.GetD
+module
+
+public import IntegerMultBounds.Machine.RecordTape
+public import Mathlib.Data.List.GetD
 
 /-! Rewinding (and optionally erasing) a tape of blank-separated records: from
 any cell, step left once, then scan left until two consecutive blanks, the
 blank run to the left of the first record; return to the first record's
 origin. With `er` every visited cell is blanked, so a record tape is erased
 completely when the scan starts at its end. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.RecordRewind
 

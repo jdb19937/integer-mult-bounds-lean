@@ -1,6 +1,8 @@
-import IntegerMultBounds.Resampling.PiApprox
-import IntegerMultBounds.Resampling.ExpApprox
-import IntegerMultBounds.Resampling.TabledMaps
+module
+
+public import IntegerMultBounds.Resampling.PiApprox
+public import IntegerMultBounds.Resampling.ExpApprox
+public import IntegerMultBounds.Resampling.TabledMaps
 
 /-! Integer weight tables for the numerical maps, computed from the certified
 approximations of `π` and `exp`: with `q = 5p` guard bits, `P ≈ 2^q π`,
@@ -9,6 +11,8 @@ terms, shifted down by `4p` bits, is within `3/2` of `2^p exp (± π a/b)`
 (with a shortcut to zero when the negative exponent is below `-p`). The three
 tables of the Gaussian, off-diagonal and diagonal weights follow, each within
 two units. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Resampling.WeightTable
 

@@ -1,6 +1,8 @@
-import IntegerMultBounds.NLogN.FFT
-import IntegerMultBounds.NLogN.FixedPoint
-import IntegerMultBounds.NLogN.Kronecker
+module
+
+public import IntegerMultBounds.NLogN.FFT
+public import IntegerMultBounds.NLogN.FixedPoint
+public import IntegerMultBounds.NLogN.Kronecker
 
 /-! The exact-arithmetic complex-FFT integer multiplier on `Fin (2 ^ n)`.
 Proved: the cyclic convolution theorem and double-transform inversion for the
@@ -10,6 +12,8 @@ with integer inputs the result is the integer convolution; and for digit lists
 whose acyclic product fits in `2 ^ n` positions, rounding the real parts and
 evaluating in any base gives the product of the two digit values. Arithmetic
 here is exact over `ℂ`; no precision, cost, or tape compilation is involved. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.NLogN
 

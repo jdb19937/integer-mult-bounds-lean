@@ -1,7 +1,11 @@
-import IntegerMultBounds.Machine.WordTape
+module
+
+public import IntegerMultBounds.Machine.WordTape
 
 /-! Fixed-radix digits in the extra portion of the machine alphabet. The four
 reserved symbols remain available, and every data digit is distinct from blank. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.RadixDigits
 

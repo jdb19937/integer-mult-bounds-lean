@@ -1,5 +1,7 @@
-import IntegerMultBounds.NLogN.OffDiagApproxSqrt
-import IntegerMultBounds.NLogN.ResamplingPermutedNumeric
+module
+
+public import IntegerMultBounds.NLogN.OffDiagApproxSqrt
+public import IntegerMultBounds.NLogN.ResamplingPermutedNumeric
 
 /-! The Neumann evaluation of `J' = N⁻¹/2` as in the manuscript, with no clamp.
 The input is halved and rounded first, so it lies in the disk of radius one
@@ -9,6 +11,8 @@ as the scaled error of `Ẽ` on the unit disk is at most `2^p / 25`. The errors
 are those of the clamped version, plus the rounding of the halved input carried
 through `J`. Hence `B̃₀ = D̃' J̃' C` approximates `B₀` with scaled error
 `24 m + 27` and lands in the unit disk without a clamp. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.NLogN
 

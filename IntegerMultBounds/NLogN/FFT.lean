@@ -1,4 +1,6 @@
-import Mathlib.Tactic
+module
+
+public import Mathlib.Tactic
 
 /-! The radix-2 Cooley–Tukey transform as an executable recursion over any
 commutative ring, proved equal to the quadratic-time definition whenever the
@@ -6,6 +8,8 @@ twiddle element satisfies `ω ^ N = 1`, with its ring-operation count in closed
 form. The count is of ring multiplications and additions in the recursion,
 with the twiddle powers `ω ^ k` taken as given; it is not a tape-step bound,
 and nothing here addresses precision or the choice of `ω`. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.NLogN
 

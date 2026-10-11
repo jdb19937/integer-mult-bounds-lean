@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.SymbolTripleEncode
-import IntegerMultBounds.Machine.Branch
+module
+
+public import IntegerMultBounds.Machine.SymbolTripleEncode
+public import IntegerMultBounds.Machine.Branch
 
 /-! A finite runtime decoder reads all three Boolean cells and physically
 writes the recovered native coefficient symbol. Branches inspect actual cells;
 no decoded value or branch result is supplied to the transition table. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.SymbolTripleDecode
 noncomputable section
 

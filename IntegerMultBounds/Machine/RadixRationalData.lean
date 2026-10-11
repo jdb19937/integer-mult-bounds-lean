@@ -1,8 +1,12 @@
-import IntegerMultBounds.Machine.RadixDivisionData
+module
+
+public import IntegerMultBounds.Machine.RadixDivisionData
 
 /-! A finite signed-carry transducer for any fixed rational coefficient. Its
 state interval depends only on the integer numerator and natural denominator,
 not the radix-word width. Digit congruences make every carry division exact. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.RadixRationalData
 

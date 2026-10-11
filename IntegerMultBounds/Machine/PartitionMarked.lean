@@ -1,10 +1,14 @@
-import IntegerMultBounds.Machine.Partition
-import IntegerMultBounds.Machine.Protected
-import IntegerMultBounds.Machine.Rewind
+module
+
+public import IntegerMultBounds.Machine.Partition
+public import IntegerMultBounds.Machine.Protected
+public import IntegerMultBounds.Machine.Rewind
 
 /-! A stable partition with a distinct left sentinel on every tape. The concrete
 partition control only moves heads right or stays, so alphabet widening cannot
 touch these markers. Whole-tape outputs support subsequent literal rewinds. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.PartitionMarked
 

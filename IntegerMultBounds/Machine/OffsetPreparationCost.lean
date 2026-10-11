@@ -1,7 +1,12 @@
-import Mathlib.Analysis.SpecificLimits.Normed
+module
+
+public import Mathlib.Analysis.SpecificLimits.Normed
 
 /-! Polynomial control preparation is absorbed by prime-power fiber width.
 These analytic bounds do not supply a physical preparation program. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.OffsetPreparationCost
 
 open Filter Asymptotics

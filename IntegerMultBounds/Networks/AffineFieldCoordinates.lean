@@ -1,8 +1,13 @@
-import IntegerMultBounds.Networks.AffineFieldProgram
+module
+
+public import IntegerMultBounds.Networks.AffineFieldProgram
 
 /-! One ordered coordinate vector for the H/D field state. All H coordinates
 precede all D coordinates, so every nonrecursive cross-group control is earlier
 than its target. Recursive interchanges are explicitly outside this expansion. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Networks.AffineFieldCoordinates
 variable {d : ℕ} {R : Type*} [CommRing R]
 

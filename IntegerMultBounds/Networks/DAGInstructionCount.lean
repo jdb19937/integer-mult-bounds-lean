@@ -1,8 +1,12 @@
-import IntegerMultBounds.Networks.DAGCompileCorrect
-import IntegerMultBounds.Networks.DAGAllocatorBudget
+module
+
+public import IntegerMultBounds.Networks.DAGCompileCorrect
+public import IntegerMultBounds.Networks.DAGAllocatorBudget
 
 /-! Exact elementary XOR-instruction counts for the literal pruned DAG
 compiler. These are lengths of actual scalar programs, not tape runtimes. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.DAGAllocator
 

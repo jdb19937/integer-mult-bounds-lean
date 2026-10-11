@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CountedLoopReuse
-import IntegerMultBounds.Machine.GrowingCounterData
+module
+
+public import IntegerMultBounds.Machine.CountedLoopReuse
+public import IntegerMultBounds.Machine.GrowingCounterData
 
 /-! Delimiter-free erasure of an arbitrary raw segment, with an immutable length
 and fully reusable clock. Every overwritten symbol and head move is charged. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedErase
 
 /-- Erase precisely the half-open interval, preserving the surrounding tape. -/

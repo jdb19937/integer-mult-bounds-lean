@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.DoubleClockReverseCopy
-import IntegerMultBounds.Machine.ElementaryMultiplyCore
-import IntegerMultBounds.Machine.Registers
+module
+
+public import IntegerMultBounds.Machine.DoubleClockReverseCopy
+public import IntegerMultBounds.Machine.ElementaryMultiplyCore
+public import IntegerMultBounds.Machine.Registers
 
 /-! Exact output serialization for the elementary multiplier. Reverse copying
 the full two-input-width window appends high zeros to the little-endian
 accumulator before reversal, producing the required padded MSB product word. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ElementaryMultiplyOutputData
 variable {a : ℕ}
 open DoubleClockReverseCopy (copied readBit)

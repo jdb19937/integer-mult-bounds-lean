@@ -1,8 +1,12 @@
-import IntegerMultBounds.Networks.DisjointBalanced
+module
+
+public import IntegerMultBounds.Networks.DisjointBalanced
 
 /-! Support uniqueness and nonemptiness for actual persistent DAG nodes.
 Interning reuses every existing support, and valid nonzero additions have
 at least two input atoms, separating them from singleton input nodes. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.DisjointUnique
 

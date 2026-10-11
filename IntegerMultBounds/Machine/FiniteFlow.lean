@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.Frame
-import Mathlib.Logic.Equiv.Fintype
+module
+
+public import IntegerMultBounds.Machine.Frame
+public import Mathlib.Logic.Equiv.Fintype
 
 /-! Fixed cyclic finite block control. Every block is a concrete same-bank
 machine. Its actual terminal finite state selects the next block, including
 back-edges and self-calls; a join costs one physical tape-preserving transition.
 No control state or tape count depends on runtime recursion depth. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.FiniteFlow
 noncomputable section
 variable {N t a : ℕ} {states : Fin N → ℕ}

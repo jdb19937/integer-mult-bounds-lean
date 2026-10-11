@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.TrackedHoare
-import IntegerMultBounds.Machine.TrackedCleanupList
+module
+
+public import IntegerMultBounds.Machine.TrackedHoare
+public import IntegerMultBounds.Machine.TrackedCleanupList
 
 /-! Execute a fixed machine with physical tracking, then erase every private
 work tape and all tracking tapes. Selected common tapes and heads are retained. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CleanExecution
 variable {t s a : ℕ}
 noncomputable section

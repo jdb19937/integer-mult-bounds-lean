@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.RecursiveShiftInstall
+module
+
+public import IntegerMultBounds.Machine.RecursiveShiftInstall
 
 /-! Full heterogeneous-shift setup from six canonical layout headers and the
 sole payload. All dimension outputs and shift workspace are initially blank;
 original headers remain present at the exact prepared endpoint. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveShiftInitialize
 open RecursiveInterchangeLayout (Descriptor volume)
 variable {q : ℕ} [Fact q.Prime]

@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.BinaryDivide
-import IntegerMultBounds.Machine.BinaryQuotientNormalize
+module
+
+public import IntegerMultBounds.Machine.BinaryDivide
+public import IntegerMultBounds.Machine.BinaryQuotientNormalize
 
 /-! Raw words at cell one, long division, and physical quotient relocation.
 The raw quotient tape is erased/head-zero; the sixth tape holds a canonical
 marked quotient/head-one. The shifted raw remainder is deliberately explicit. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryDescriptorDivisionRaw
 variable {a : ℕ}
 noncomputable section

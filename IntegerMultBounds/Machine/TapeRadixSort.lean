@@ -1,11 +1,15 @@
-import IntegerMultBounds.Machine.KeyPassReuse
-import IntegerMultBounds.Machine.UnarySelector
-import IntegerMultBounds.Machine.Loop
+module
+
+public import IntegerMultBounds.Machine.KeyPassReuse
+public import IntegerMultBounds.Machine.UnarySelector
+public import IntegerMultBounds.Machine.Loop
 
 /-! A fixed eight-tape terminating radix-sort controller. A unary width tape
 supplies the number of passes; its advancing head denotes the remaining suffix.
 The reusable stable pass handles physical selection, routing, flag deletion,
 move-back, and cleanup. Empty record streams halt without scanning the width. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.TapeRadixSort
 

@@ -1,9 +1,14 @@
-import IntegerMultBounds.Networks.ComplexFramedConjugation
-import IntegerMultBounds.Networks.BinaryColumnConjugation
+module
+
+public import IntegerMultBounds.Networks.ComplexFramedConjugation
+public import IntegerMultBounds.Networks.BinaryColumnConjugation
 
 /-! The conjugated ORIGINAL corrected complex network computes the genuine
 inverse full tensor, including every scratch wire. The source/sink corrections
 are part of this identity; no claim about a physical tape wrapper is made. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Networks.ComplexInverseExecution
 noncomputable section
 

@@ -1,7 +1,12 @@
-import IntegerMultBounds.Networks.GaussianFrameGrid
+module
+
+public import IntegerMultBounds.Networks.GaussianFrameGrid
 
 /-! Exact inverse-frame grids for decoding actually stored network roles.
 The budget follows from the literal inverse Walsh/phase operator. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Networks.GaussianPrecision
 open BinaryWalsh
 

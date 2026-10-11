@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.SymbolTripleEncode
+module
+
+public import IntegerMultBounds.Machine.SymbolTripleEncode
 
 /-! Actual stream execution of the fixed three-bit symbol representation. The
 source is retained, arbitrary destination backgrounds are framed, and every
 head movement and output write is included in the linear runtime. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.SymbolTripleStream
 noncomputable section
 open SymbolTripleEncode (encoded body)

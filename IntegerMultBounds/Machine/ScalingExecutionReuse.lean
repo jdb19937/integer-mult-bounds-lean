@@ -1,25 +1,29 @@
-import IntegerMultBounds.Machine.ScalingExecution
-import IntegerMultBounds.Machine.ScalingControlInit
-import IntegerMultBounds.Machine.ScalingBuffersReset
+module
+
+public import IntegerMultBounds.Machine.ScalingExecution
+public import IntegerMultBounds.Machine.ScalingControlInit
+public import IntegerMultBounds.Machine.ScalingBuffersReset
 
 /-! Reusable literal positive-unit scaling. Both residue banks are initialized
 from arbitrary scanned cells, all split/rewind/merge work is physically run,
 and every temporary piece buffer is erased and rewound. Binary descriptors
 remain explicit immutable inputs; no hidden preparation cost is claimed. -/
 
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ScalingExecutionReuse
 
 open CountedCopyReuse (empty binary)
 open ScalingExecution (SplitTapes AuxTapes TapeCount)
 
-private def initTo {c : ℕ} : Fin (c+c+2) → Fin (AuxTapes c) :=
+def initTo {c : ℕ} : Fin (c+c+2) → Fin (AuxTapes c) :=
   Fin.addCases
     (Fin.addCases
       (fun i => Fin.castAdd 2 (Fin.castAdd c (Fin.natAdd 4 i)))
       (fun i => Fin.castAdd 2 (Fin.natAdd (4+c) i)))
     (fun i => Fin.natAdd (4+c+c) i)
 
-private def initInverse {c : ℕ} : Fin (AuxTapes c) → Fin (c+c+2+4) :=
+def initInverse {c : ℕ} : Fin (AuxTapes c) → Fin (c+c+2+4) :=
   Fin.addCases
     (Fin.addCases
       (Fin.addCases
@@ -53,7 +57,7 @@ def initPlacement (c : ℕ) : Fin (c+c+2+4) ≃ Fin (AuxTapes c) where
       | right i => simp only [initTo,initInverse,Fin.addCases_left,Fin.addCases_right]
     | right i => simp only [initTo,initInverse,Fin.addCases_left,Fin.addCases_right]
 
-private def controls {c : ℕ} (b : Tapes 4 0) (modulus current : Tapes c 0)
+def controls {c : ℕ} (b : Tapes 4 0) (modulus current : Tapes c 0)
     (outer : Tapes 2 0) : Tapes (AuxTapes c) 0 :=
   ((b.append modulus).append current).append outer
 

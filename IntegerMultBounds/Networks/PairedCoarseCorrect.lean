@@ -1,9 +1,13 @@
-import IntegerMultBounds.Networks.PairedGraphSpec
-import IntegerMultBounds.Networks.SupportInterpretation
-import IntegerMultBounds.Networks.PairedCoarseSupport
+module
+
+public import IntegerMultBounds.Networks.PairedGraphSpec
+public import IntegerMultBounds.Networks.SupportInterpretation
+public import IntegerMultBounds.Networks.PairedCoarseSupport
 
 /-! Validity and exact source supports of the literal coarse graph constructors.
 These proofs concern the actual persistent DAG and ordered association tables. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.PairedCoarseCorrect
 

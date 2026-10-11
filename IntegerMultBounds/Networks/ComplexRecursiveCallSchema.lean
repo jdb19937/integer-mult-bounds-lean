@@ -1,8 +1,13 @@
-import IntegerMultBounds.Networks.ComplexPhaseRowSchedule
+module
+
+public import IntegerMultBounds.Networks.ComplexPhaseRowSchedule
 
 /-! Literal recursive call occurrences retain the wire and edge position of
 the actual complex25 label-update trace. Repeated equal labels remain distinct
 call sites. This is the fixed finite call schema, not a tape controller. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Networks.ComplexRecursiveCallSchema
 noncomputable section
 open ComplexPhaseBudget ComplexPhaseRowSchedule

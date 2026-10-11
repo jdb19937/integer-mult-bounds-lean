@@ -1,13 +1,17 @@
-import IntegerMultBounds.Machine.ScalingControl
-import IntegerMultBounds.Machine.CountedCopyReuse
-import IntegerMultBounds.Machine.Placement
-import IntegerMultBounds.Machine.WordSegments
-import IntegerMultBounds.Machine.GrowingCounterData
+module
+
+public import IntegerMultBounds.Machine.ScalingControl
+public import IntegerMultBounds.Machine.CountedCopyReuse
+public import IntegerMultBounds.Machine.Placement
+public import IntegerMultBounds.Machine.WordSegments
+public import IntegerMultBounds.Machine.GrowingCounterData
 
 /-! Literal finite-piece splitting for fixed-coefficient scaling. The program
 is a fixed sequence of reusable counted copies, one per fixed coefficient
 piece. Supplied binary piece lengths are preserved; no descriptor synthesis or
 merge is hidden in the split. Source and output origins/backgrounds are arbitrary. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.ScalingSplit
 
@@ -218,7 +222,7 @@ def states : ℕ → ℕ
   | 0 => 1
   | n+1 => states n + 16
 
-private def haltProgram (c : ℕ) : Program (TapeCount c) 1 0 :=
+def haltProgram (c : ℕ) : Program (TapeCount c) 1 0 :=
   ⟨by dsimp [TapeCount]; omega,0,fun _ _ => none⟩
 
 /-- Compile exactly the first n fixed stages; input sizes do not enter the table. -/

@@ -1,15 +1,19 @@
-import IntegerMultBounds.Machine.Registers
-import IntegerMultBounds.Machine.BinaryAccumulate
-import IntegerMultBounds.Machine.BinaryDecrease
-import IntegerMultBounds.Machine.BinaryMultiply
-import IntegerMultBounds.Machine.BinaryDivide
-import IntegerMultBounds.Machine.BinaryCompare
-import IntegerMultBounds.Machine.RulerAdvance
+module
+
+public import IntegerMultBounds.Machine.Registers
+public import IntegerMultBounds.Machine.BinaryAccumulate
+public import IntegerMultBounds.Machine.BinaryDecrease
+public import IntegerMultBounds.Machine.BinaryMultiply
+public import IntegerMultBounds.Machine.BinaryDivide
+public import IntegerMultBounds.Machine.BinaryCompare
+public import IntegerMultBounds.Machine.RulerAdvance
 
 /-! Arithmetic on natural-number registers: each macro runs a binary
 arithmetic machine on canonical register words, returns the heads to the
 origins and trims the result, so registers stay canonical and contracts are
 stated by values only. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine
 

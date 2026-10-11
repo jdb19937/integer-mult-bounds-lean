@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ArbitraryWidthJoinedHeaders
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthJoinedHeaders
 
 /-! Paid cleanup of all six generated joined/padded headers. The original
 P,G,B,e,rho,R' descriptors are retained literally and all six targets return
 to wholly blank tapes with heads at zero. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthJoinedHeadersCleanup
 noncomputable section
 open ArbitraryWidthJoinedHeaders

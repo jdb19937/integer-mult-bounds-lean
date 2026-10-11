@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.BinaryDescriptorStackRoundtrip
-import IntegerMultBounds.Machine.GrowingCounterData
-import IntegerMultBounds.Machine.ExactFrame
+module
+
+public import IntegerMultBounds.Machine.BinaryDescriptorStackRoundtrip
+public import IntegerMultBounds.Machine.GrowingCounterData
+public import IntegerMultBounds.Machine.ExactFrame
 
 /-! Physically remove high zero bits from a marked binary word and return its
 head to one. The fixed control discovers all boundaries by reading symbols. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryCanonicalTrim
 open BinaryDescriptorStack (descriptor)
 variable {a : ℕ}

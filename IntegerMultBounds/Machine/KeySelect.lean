@@ -1,15 +1,19 @@
-import IntegerMultBounds.Machine.KeySelectData
+module
+
+public import IntegerMultBounds.Machine.KeySelectData
 
 /-! Select a key position from a unary tape, then prepend that bit to every
 record while retaining its complete payload. The three-tape finite control is
 independent of the index, record count, and record widths. Source and unary tape
 are retained literally; rewinds are actual left-moving transitions. -/
 
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.KeySelect
 
 def remember (b : Bool) : Fin 4 := if b then 2 else 1
 
-private def action (symbols : Fin 3 → Fin 5) (sm um om : Move) (out : Fin 5) :
+def action (symbols : Fin 3 → Fin 5) (sm um om : Move) (out : Fin 5) :
     Fin 3 → Fin 5 × Move :=
   fun i => (if i = 2 then out else symbols i,
     if i = 0 then sm else if i = 1 then um else om)

@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.Hoare
+module
+
+public import IntegerMultBounds.Machine.Hoare
 
 /-! A literal rightward sentinel scan preserves every tape cell and charges
 one transition per scanned symbol. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ScanRight
 variable {a : ℕ}
 

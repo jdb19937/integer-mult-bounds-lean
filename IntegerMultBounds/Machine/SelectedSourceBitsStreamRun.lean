@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.SelectedSourceBitsStreamRow
-import IntegerMultBounds.Machine.SelectedSourceBitsStreamBank
-import IntegerMultBounds.Machine.SelectedSourceBitsRewind
-import IntegerMultBounds.Machine.FixedHeaderBankCopy
+module
+
+public import IntegerMultBounds.Machine.SelectedSourceBitsStreamRow
+public import IntegerMultBounds.Machine.SelectedSourceBitsStreamBank
+public import IntegerMultBounds.Machine.SelectedSourceBitsRewind
+public import IntegerMultBounds.Machine.FixedHeaderBankCopy
 
 /-! Actual counted extraction of all P full-source rows. The literal source
 stream and all original descriptors are retained, all output heads return to
 zero, and all four private clocks return entirely blank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.SelectedSourceBitsStreamRun
 noncomputable section
 open SelectedSourceBitsCore (payload)

@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ExactFrame
+module
+
+public import IntegerMultBounds.Machine.ExactFrame
 
 /-! Combine the two physically written exceptional flags of the later repair.
 Both input heads are at one; the result head stays at one and the second
 flag tape is erased and returned to zero. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedLateRepairFlag
 variable {a : ℕ}
 

@@ -1,10 +1,14 @@
-import IntegerMultBounds.Machine.ScalingExecutionReuse
-import IntegerMultBounds.Machine.ScalingInverseExecution
-import IntegerMultBounds.Machine.CountedSpanReset
+module
+
+public import IntegerMultBounds.Machine.ScalingExecutionReuse
+public import IntegerMultBounds.Machine.ScalingInverseExecution
+public import IntegerMultBounds.Machine.CountedSpanReset
 
 /-! Literal rational-coordinate scaling through a shared intermediate tape.
 The numerator forward pass and denominator inverse pass retain their own fixed
 control banks; static placement aliases only the physically shared payload. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.SignedScalingExecution
 

@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.RadixLinearCombinationBootstrap
-import IntegerMultBounds.Machine.MarkedBinaryCleanup
+module
+
+public import IntegerMultBounds.Machine.RadixLinearCombinationBootstrap
+public import IntegerMultBounds.Machine.MarkedBinaryCleanup
 
 /-! Erase every physically copied radix-expression source while retaining the
 actual result. This cleanup is linear in word width, with no value conversion. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RawLinearCombinationCleanup
 noncomputable section
 open MarkedWordCleanup (one word marked empty)

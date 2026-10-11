@@ -1,10 +1,14 @@
-import IntegerMultBounds.Networks.PairedCircuit
-import IntegerMultBounds.Networks.PairedPartition
-import IntegerMultBounds.Networks.DisjointExclusion
+module
+
+public import IntegerMultBounds.Networks.PairedCircuit
+public import IntegerMultBounds.Networks.PairedPartition
+public import IntegerMultBounds.Networks.DisjointExclusion
 
 /-! Correctness infrastructure for the literal weighted paired-exclusion
 recursion. Stateful constructor loops retain the actual DAG, reference order,
 and source supports. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.PairedCircuitCorrect
 

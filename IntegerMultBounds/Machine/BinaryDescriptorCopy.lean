@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.MarkedRadixRefresh
-import IntegerMultBounds.Machine.RadixZeroFill
+module
+
+public import IntegerMultBounds.Machine.MarkedRadixRefresh
+public import IntegerMultBounds.Machine.RadixZeroFill
 
 /-! Copy a binary descriptor from a preserved source to a wholly blank tape,
 installing its sentinel and restoring both heads. Every scan is charged. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryDescriptorCopy
 open MarkedWordCleanup (marked empty one)
 
@@ -15,7 +20,7 @@ private theorem nonblank (xs : List Bool) : ∀ x ∈ xs.map bitSymbol, x ≠ (b
   obtain ⟨y,_,rfl⟩ := List.mem_map.mp hx
   cases y <;> decide
 
-private def initProgram : Program 2 2 0 where
+def initProgram : Program 2 2 0 where
   tapes_pos := by decide
   start := 0
   transition := fun s sy => if s = 0 then
@@ -58,7 +63,7 @@ private theorem no_marker (xs : List Bool) (z : ℤ) (hz : 0 < z) : source xs z 
   · rw [source,marked,putWord_outside _ _ _ _ (Or.inr (by simpa using le_of_not_gt hi))]
     simp [empty,show z ≠ 0 by omega,blank,separator,Fin.ext_iff]
 
-private def resetProgram : Program 2 2 0 where
+def resetProgram : Program 2 2 0 where
   tapes_pos := by decide
   start := 0
   transition := fun s symbols => if s = 0 then

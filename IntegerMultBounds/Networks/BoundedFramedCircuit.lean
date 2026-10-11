@@ -1,8 +1,12 @@
-import IntegerMultBounds.Networks.BoundedCircuit
-import IntegerMultBounds.Networks.FramedCircuit
+module
+
+public import IntegerMultBounds.Networks.BoundedCircuit
+public import IntegerMultBounds.Networks.FramedCircuit
 
 /-! Checked restriction of physical frame instructions and scalar module
 execution to a finite register bank. Every instruction and incidence survives. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.BoundedFramedCircuit
 

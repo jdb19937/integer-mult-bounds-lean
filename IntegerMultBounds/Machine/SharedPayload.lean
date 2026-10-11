@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.InjectivePlacement
-import IntegerMultBounds.Machine.SharedPlacementAlphabet
+module
+
+public import IntegerMultBounds.Machine.InjectivePlacement
+public import IntegerMultBounds.Machine.SharedPlacementAlphabet
 
 /-! One pair of permanent payload tapes shared with a stage's private metadata.
 The stage's own source/output slots are physically blank unused frames; only
 metadata is retained there. No payload copy or head reset is assumed. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.SharedPayload
 variable {t q a : ℕ}
 open SharedPlacementAlphabet (setTape)

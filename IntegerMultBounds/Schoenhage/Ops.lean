@@ -1,12 +1,16 @@
-import IntegerMultBounds.Schoenhage.StreamPrim
-import IntegerMultBounds.Schoenhage.Moves
-import IntegerMultBounds.Schoenhage.Rules
+module
+
+public import IntegerMultBounds.Schoenhage.StreamPrim
+public import IntegerMultBounds.Schoenhage.Moves
+public import IntegerMultBounds.Schoenhage.Rules
 
 /-! Word-program building blocks on named tapes, with execution lemmas in a
 pre/post style: `Runs c σ Q B` says `c` executes from `σ` to a bank
 satisfying `Q` within `B` steps. Streaming rules with zero, one or two extra
 inputs, and the rewind, back, clear and emit primitives, each have an exact
 effect stated with `Function.update`. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Schoenhage
 

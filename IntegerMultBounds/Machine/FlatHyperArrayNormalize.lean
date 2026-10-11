@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CountedHyperVolumeLoop
-import IntegerMultBounds.Machine.FlatArrayNormalize
+module
+
+public import IntegerMultBounds.Machine.CountedHyperVolumeLoop
+public import IntegerMultBounds.Machine.FlatArrayNormalize
 
 /-! Four-dimensional physical payload normalization, using the four existing
 count descriptors and restoring all four clocks. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.FlatHyperArrayNormalize
 open FlatArrayNormalize
 variable {a : ℕ}

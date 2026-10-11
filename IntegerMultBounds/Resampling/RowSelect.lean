@@ -1,6 +1,8 @@
-import IntegerMultBounds.Machine.OrderedSelect
-import IntegerMultBounds.Machine.GrowingCounterData
-import IntegerMultBounds.NLogN.ResamplingInverse
+module
+
+public import IntegerMultBounds.Machine.OrderedSelect
+public import IntegerMultBounds.Machine.GrowingCounterData
+public import IntegerMultBounds.NLogN.ResamplingInverse
 
 /-! The row-selecting map `C` of the resampling interface on tapes. With the
 addend `2s`, the modulus `2t` and the initial counter `2t - s - 1`, the
@@ -9,6 +11,8 @@ ordered selection machine copies exactly the records at the indices
 of `2t` before record `i` exactly when `i` is such an index. One pass over
 the `t` records costs the input volume plus a fixed multiple of `log t` per
 record, with no numerical error. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Resampling.RowSelect
 

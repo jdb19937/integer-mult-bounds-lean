@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.RecursiveRowsQuotient
-import IntegerMultBounds.Machine.BinaryDescriptorReplaceList
-import IntegerMultBounds.Machine.RecursiveRowsNodeLayout
+module
+
+public import IntegerMultBounds.Machine.RecursiveRowsQuotient
+public import IntegerMultBounds.Machine.BinaryDescriptorReplaceList
+public import IntegerMultBounds.Machine.RecursiveRowsNodeLayout
 
 /-! Paid installation of the reduced-row descriptor, including destruction of
 both the original row header and its temporary quotient copy. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveRowsNodeHeaders
 open BinaryDescriptorInstallMarkedList
 variable {q : ℕ}

@@ -1,7 +1,11 @@
-import IntegerMultBounds.Networks.MaskDAG
+module
+
+public import IntegerMultBounds.Networks.MaskDAG
 
 /-! Generated untrusted mask data. Checked by the accompanying Lean proofs.
 Regenerate with scripts/generate_paired49_certificate.py. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.Certificates.Paired49
 open MaskDAG

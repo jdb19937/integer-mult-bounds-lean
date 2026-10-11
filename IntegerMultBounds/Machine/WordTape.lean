@@ -1,7 +1,11 @@
-import IntegerMultBounds.Machine.Execution
+module
+
+public import IntegerMultBounds.Machine.Execution
 
 /-! Arbitrary finite-alphabet words placed in a segment of a two-sided tape.
 Cells outside the segment may contain other records or control data. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine
 

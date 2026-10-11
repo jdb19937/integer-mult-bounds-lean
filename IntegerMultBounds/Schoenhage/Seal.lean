@@ -1,5 +1,7 @@
-import IntegerMultBounds.Schoenhage.Ops
-import IntegerMultBounds.Spec.SignedRingProduct
+module
+
+public import IntegerMultBounds.Schoenhage.Ops
+public import IntegerMultBounds.Spec.SignedRingProduct
 
 /-! The boundary between raw bit strings and word tapes. A raw string on a
 tape (`wordAt`, bits from cell zero, blank after) becomes one word of the
@@ -7,6 +9,8 @@ word-tape layer by writing a separator after its last bit (`Seal`), and back
 by erasing that separator (`Unseal`). Both are one-tape machines that end
 with the head at cell zero; placed on any tape of a bank they change only
 that tape (`sealAt_hoare`, `unsealAt_hoare`). -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Schoenhage
 

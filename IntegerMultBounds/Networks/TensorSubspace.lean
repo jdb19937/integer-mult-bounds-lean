@@ -1,9 +1,13 @@
-import IntegerMultBounds.Networks.TensorLabels
-import Mathlib.RingTheory.Flat.Basic
+module
+
+public import IntegerMultBounds.Networks.TensorLabels
+public import Mathlib.RingTheory.Flat.Basic
 
 /-! Tensor products of labels as actual subspaces of the ambient tensor space.
 These constructions retain inclusion, dimensions, nondegeneracy, and
 orthogonality, rather than recording them as annotations. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.TensorSubspace
 

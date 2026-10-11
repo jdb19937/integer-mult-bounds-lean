@@ -1,11 +1,15 @@
-import IntegerMultBounds.Machine.BinaryAccumulate
-import IntegerMultBounds.Machine.TwosComplement
+module
+
+public import IntegerMultBounds.Machine.BinaryAccumulate
+public import IntegerMultBounds.Machine.TwosComplement
 
 /-! Add a two's complement word into a wider accumulator, sign-extending the
 addend and dropping the final carry. Two tapes and four states (carry and
 the last addend bit): one transition per accumulator cell; the addend head
 advances over its bits and parks on its blank, the accumulator head parks on
 its blank, and the accumulator holds the sum modulo `2^n`. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.SignExtendAdd
 

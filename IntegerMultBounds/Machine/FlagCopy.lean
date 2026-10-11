@@ -1,6 +1,8 @@
-import IntegerMultBounds.Machine.DropFlag
-import IntegerMultBounds.Machine.PartitionMarked
-import IntegerMultBounds.Machine.ReturnOrigin
+module
+
+public import IntegerMultBounds.Machine.DropFlag
+public import IntegerMultBounds.Machine.PartitionMarked
+public import IntegerMultBounds.Machine.ReturnOrigin
 
 /-! Flag one record and extract it when its key says so. The key tape holds a
 flag bit followed by the destination bits over a marked blank tape. The
@@ -10,11 +12,13 @@ stream and then copies the record behind them in the raw keyed format. The key
 tape is erased back to its marked blank state with its head at the origin; the
 source is retained literally. -/
 
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.FlagCopy
 
 open PartitionMarked (marker markedTape)
 
-private def act (symbols : Fin 4 → Fin 5) (kw ow ew : Fin 5) (sm km om em : Move) :
+def act (symbols : Fin 4 → Fin 5) (kw ow ew : Fin 5) (sm km om em : Move) :
     Fin 4 → Fin 5 × Move :=
   fun i => (if i = 0 then symbols 0 else if i = 1 then kw else if i = 2 then ow else ew,
     if i = 0 then sm else if i = 1 then km else if i = 2 then om else em)

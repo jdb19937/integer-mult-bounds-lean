@@ -1,4 +1,8 @@
-import IntegerMultBounds.Machine.ActiveRepairRecordFormatRecord
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairRecordFormatRecord
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.ActiveRepairRecordFormatWords
 

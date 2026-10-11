@@ -1,4 +1,6 @@
-import IntegerMultBounds.Machine.BinaryPad
+module
+
+public import IntegerMultBounds.Machine.BinaryPad
 
 /-! Literal least-significant-first binary comparison. Three tapes and four
 states: the two operands are scanned forward together, with a missing high
@@ -6,6 +8,8 @@ bit read as zero, and the order so far lives in finite control, a later
 column overriding every earlier one. On the common blank the result bit,
 whether the first operand is strictly smaller, is written on the third tape.
 Both operands are preserved; the cost is the larger width plus one. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.BinaryCompare
 

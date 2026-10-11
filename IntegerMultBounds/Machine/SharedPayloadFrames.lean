@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.SharedPayloadPair
+module
+
+public import IntegerMultBounds.Machine.SharedPayloadPair
 
 /-! The common-payload representation has no hidden private copies. The two
 old payload slots in each metadata bank are literal blank stationary tapes. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.SharedPayloadFrames
 open SharedPlacementAlphabet (setTape)
 variable {t u a : ℕ}

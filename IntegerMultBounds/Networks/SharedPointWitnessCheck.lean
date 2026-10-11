@@ -1,9 +1,13 @@
-import IntegerMultBounds.Networks.SharedPointLift
-import Mathlib.Data.Nat.Pairing
+module
+
+public import IntegerMultBounds.Networks.SharedPointLift
+public import Mathlib.Data.Nat.Pairing
 
 /-! Compact duplicate witnesses use small common-vertex and covered-vertex
 masks. Inserting the common point is computed with shifts and masks; soundness
 connects those operations to the semantic lifted triple supports. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.SharedPointWitnessCheck
 

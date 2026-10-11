@@ -1,9 +1,11 @@
-import IntegerMultBounds.Machine.BinaryMultiply
-import IntegerMultBounds.Machine.Negate
-import IntegerMultBounds.Machine.RulerCopy
-import IntegerMultBounds.Machine.WordMoves
-import IntegerMultBounds.Machine.Branch
-import IntegerMultBounds.Machine.Gather
+module
+
+public import IntegerMultBounds.Machine.BinaryMultiply
+public import IntegerMultBounds.Machine.Negate
+public import IntegerMultBounds.Machine.RulerCopy
+public import IntegerMultBounds.Machine.WordMoves
+public import IntegerMultBounds.Machine.Branch
+public import IntegerMultBounds.Machine.Gather
 
 /-! Signed fixed-point multiplication on twelve tapes: two's complement
 words `x`, `y` of width `w`, rulers of lengths `p`, `w` and `2w`. Copies of
@@ -14,6 +16,8 @@ the signs differ; every scratch tape is restored. The output word represents
 the product truncated toward zero by `p` bits, the fixed-point rounding `ρ`
 (proved in `FixedMulValue`). The unsigned product uses the quadratic
 `BinaryMultiply`; its cost is the only superlinear term. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.FixedMul
 

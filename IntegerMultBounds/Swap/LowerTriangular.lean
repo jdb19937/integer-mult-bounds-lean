@@ -1,5 +1,7 @@
-import IntegerMultBounds.Swap.Shear
-import Mathlib.Tactic.Abel
+module
+
+public import IntegerMultBounds.Swap.Shear
+public import Mathlib.Tactic.Abel
 
 /-! Lower triangular factorization (§4, Lemma 4.1): every matrix over a field
 factors as `E₁ Π E₂` with `E₁`, `E₂` invertible lower triangular and `Π` a
@@ -10,6 +12,8 @@ left, a lower triangular row operation clears the pivot column below, the pivot
 is scaled to one and removed, and the elimination continues on the remaining
 active indices. The identification of the number of pivots with the rank is a
 separate statement. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Swap.LowerTriangular
 

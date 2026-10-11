@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.SelectedSourceBitsBank
+module
+
+public import IntegerMultBounds.Machine.SelectedSourceBitsBank
 
 /-! Counted positioning by rho and counted extraction of n source bits. The
 uniform finite control reads original descriptors; the full source tape stays literal. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.SelectedSourceBitsScan
 open CountedLoopReuseAlphabet (bank empty binary controls)
 open SelectedSourceBitsCore

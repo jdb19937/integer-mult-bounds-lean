@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.RawLinearCombinationFieldEmit
+module
+
+public import IntegerMultBounds.Machine.RawLinearCombinationFieldEmit
 
 /-! A finite family of compiled expressions shares the same retained controls
 and blank private arithmetic bank. Each fixed output wire receives its actual
 field; no arithmetic program or field result is supplied as a callback. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RawLinearCombinationFieldFamily
 noncomputable section
 open RadixLinearCombinationRefresh (Expr Size controls)

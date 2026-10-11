@@ -1,4 +1,6 @@
-import IntegerMultBounds.Resampling.WindowSum
+module
+
+public import IntegerMultBounds.Resampling.WindowSum
 
 /-! The off-diagonal map `Ẽ` of the Neumann iteration on the Gaussian line
 machine: run with stride one (`s` outputs over `s` inputs, so the window of
@@ -6,6 +8,8 @@ output `ℓ` is centred at `ℓ`), with the weight words holding the rounded
 weights `ρ(2^p·exp(…))` of the off-diagonal terms and a zero word at the
 centre of every window, the two accumulator words of output `ℓ` are `2^p`
 times the real and imaginary parts of `offDiagNum m (offDiagTermNum p s t α) u ℓ`. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Resampling.OffDiagSum
 

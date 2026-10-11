@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ButterflyRecordEmit
-import IntegerMultBounds.Machine.ButterflyGuard
+module
+
+public import IntegerMultBounds.Machine.ButterflyRecordEmit
+public import IntegerMultBounds.Machine.ButterflyGuard
 
 /-! One complete paired coefficient record: extract all four serialized fields,
 compute the exact butterfly, erase the extracted inputs, and emit both complex
 outputs. All forty-eight private tapes return blank for the next record. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ButterflyRecord
 noncomputable section
 open DelimitedRadixRecord (Context)

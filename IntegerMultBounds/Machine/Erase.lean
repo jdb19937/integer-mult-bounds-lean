@@ -1,8 +1,12 @@
-import IntegerMultBounds.Machine.PartitionMarked
+module
+
+public import IntegerMultBounds.Machine.PartitionMarked
 
 /-! Literal backwards erasure of a marked stream. Starting at its blank endpoint,
 the machine clears each cell through the word origin, retains the sentinel,
 steps right, and halts. All cells outside that interval are retained. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.Erase
 

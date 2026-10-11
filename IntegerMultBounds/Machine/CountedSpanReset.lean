@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CountedSpanSeek
-import IntegerMultBounds.Machine.ScratchReset
+module
+
+public import IntegerMultBounds.Machine.CountedSpanSeek
+public import IntegerMultBounds.Machine.ScratchReset
 
 /-! Restore a complete intermediate fiber using only block-width and block-count
 descriptors. Every rewind, erase transition and clock operation is charged. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedSpanReset
 
 open CountedCopyReuse (empty binary)

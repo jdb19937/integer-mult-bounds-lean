@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.BinaryDescriptorDivisionBoundary
-import IntegerMultBounds.Machine.CleanExecution
+module
+
+public import IntegerMultBounds.Machine.BinaryDescriptorDivisionBoundary
+public import IntegerMultBounds.Machine.CleanExecution
 
 /-! Fully prepared and cleaned marked-binary descriptor division. Inputs start
 at head one; all scratch and trackers start blank/head-zero. The fixed machine
 retains both exact inputs, returns a canonical marked quotient/head-one, and
 physically erases/rewinds every private tape, including the shifted remainder. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryDescriptorDivision
 variable {a : ℕ}
 noncomputable section

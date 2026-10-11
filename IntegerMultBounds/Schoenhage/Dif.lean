@@ -1,4 +1,6 @@
-import IntegerMultBounds.Spec.SyntheticTransformFacts
+module
+
+public import IntegerMultBounds.Spec.SyntheticTransformFacts
 
 /-! The in-place decimation-in-frequency recursion of §6 on one axis. A round
 at slot `h` pairs the entries whose addresses differ only in bit `h`, writes
@@ -6,6 +8,8 @@ their half-sum at bit `0` and their half-difference times `y^(-(2r/2^(h+1)) k)`
 at bit `1`, `k` the address bits below `h`. Running the rounds from the top
 slot down computes the normalized transform `F⁻` with its output in
 bit-reversed order (`difAll_eq`): entry `x` holds `(F⁻ z)_(rev x)`. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Schoenhage
 

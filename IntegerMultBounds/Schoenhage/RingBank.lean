@@ -1,10 +1,14 @@
-import IntegerMultBounds.Schoenhage.SSClean
-import IntegerMultBounds.Schoenhage.Relabel
+module
+
+public import IntegerMultBounds.Schoenhage.SSClean
+public import IntegerMultBounds.Schoenhage.Relabel
 
 /-! The bank of the packed ring product: the multiplier's 64 tapes followed by
 twenty-seven tapes of its own. Programs on the multiplier's bank run on the first
 64 tapes (`up`); an exact effect there is the same effect on the larger
 bank, the other tapes untouched (`runs_up`). -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Schoenhage
 

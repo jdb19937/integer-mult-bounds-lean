@@ -1,6 +1,8 @@
-import IntegerMultBounds.NLogN.Pipeline
-import IntegerMultBounds.NLogN.ErrorBudget
-import IntegerMultBounds.NLogN.Carry
+module
+
+public import IntegerMultBounds.NLogN.Pipeline
+public import IntegerMultBounds.NLogN.ErrorBudget
+public import IntegerMultBounds.NLogN.Carry
 
 /-! The assembled fixed-point FFT multiplier on bit strings. Two `n`-bit inputs
 are cut into `k`-bit digits, transformed with length `2 ^ m` and `p` bits of
@@ -12,6 +14,8 @@ convolution, the output's `binaryValue` is the product and its length is
 length condition with `2 ^ m ≤ 4 L`; and the count of fixed-point complex ring
 operations is `(6 m + 1) 2 ^ m`. Chunking, rounding, carries, and twiddle
 generation are not counted, and nothing is compiled to tape steps. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.NLogN
 

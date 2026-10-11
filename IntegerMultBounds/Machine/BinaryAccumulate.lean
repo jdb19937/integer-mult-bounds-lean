@@ -1,5 +1,7 @@
-import IntegerMultBounds.Machine.BinaryCompare
-import IntegerMultBounds.Machine.BinaryAdd
+module
+
+public import IntegerMultBounds.Machine.BinaryCompare
+public import IntegerMultBounds.Machine.BinaryAdd
 
 /-! Literal in-place least-significant-first binary accumulation. Two tapes
 and three states: the addend is scanned forward together with the
@@ -7,6 +9,8 @@ accumulator, a missing high bit on either tape read as zero, each column's
 sum written back over the accumulator cell, the carry living in finite
 control. A final carry extends the accumulator by one cell. The addend is
 preserved; the cost is the larger width plus one. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.BinaryAccumulate
 

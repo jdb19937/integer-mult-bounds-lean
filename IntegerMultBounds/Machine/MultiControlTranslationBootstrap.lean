@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.MultiControlTranslationExecution
-import IntegerMultBounds.Machine.RadixLinearCombinationBootstrap
+module
+
+public import IntegerMultBounds.Machine.MultiControlTranslationExecution
+public import IntegerMultBounds.Machine.RadixLinearCombinationBootstrap
 
 /-! First actual multi-control translation from blank arithmetic scratch and
 unprepared writable translation metadata. The computed binary tape is physically
 shared with the initial translation program. Canonical B/Q inputs and marked
 shared radix controls are explicit premises; no old result or leaf copy exists. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.MultiControlTranslationBootstrap
 
 open RadixLinearCombinationRefresh (Expr leaves)
@@ -12,7 +17,7 @@ open SharedPlacementAlphabet (setTape sharedPlacement)
 open MultiControlTranslationExecution (ArithmeticTapes TapeCount offsetSlot bits offset)
 variable {c radix : ℕ}
 
-private def liftedInitial (source dest : ℤ → Fin 4) (p q : ℤ) (bs qs as : List Bool) : Tapes 12 radix :=
+def liftedInitial (source dest : ℤ → Fin 4) (p q : ℤ) (bs qs as : List Bool) : Tapes 12 radix :=
   Alphabet.mapTapes (RadixToBinary.binaryEncoding (q := radix))
     ((TranslationDescriptors.initial bs qs as).append (TranslationPreparedExecution.payload source dest p q))
 
@@ -223,7 +228,7 @@ private theorem initial_tapes (source dest : ℤ → Fin 4) (p q : ℤ) (bs qs :
   rfl
 
 omit [Fact radix.Prime] in
-private def spareProgram : Program 12 2 radix where
+def spareProgram : Program 12 2 radix where
   tapes_pos := by decide
   start := 0
   transition := fun s symbols => if s = 0 then
@@ -262,7 +267,7 @@ def input (e : Expr c) (source dest : ℤ → Fin 4) (p q : ℤ) (blocks : List 
   bank e (putWord source p blocks.flatten) dest p q bs qs xs
 
 omit [Fact radix.Prime] in
-private def setupProgram (e : Expr c) : Program (TapeCount e) 2 radix :=
+def setupProgram (e : Expr c) : Program (TapeCount e) 2 radix :=
   Placement.placed spareProgram (finAddFlip : Fin (12+ArithmeticTapes e) ≃ Fin (TapeCount e))
 
 omit [Fact radix.Prime] in

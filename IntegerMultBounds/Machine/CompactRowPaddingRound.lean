@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.RoundedRowDescriptor
-import IntegerMultBounds.Compact.Layout
+module
+
+public import IntegerMultBounds.Machine.RoundedRowDescriptor
+public import IntegerMultBounds.Compact.Layout
 
 /-! Construct the compact least enclosing role multiple from only the original
 runtime row count and record width. The role count is physically installed as
 a fixed machine constant and erased after division. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactRowPaddingRound
 noncomputable section
 variable {a : ℕ}
@@ -36,8 +41,8 @@ theorem rounded_eq (r c : ℕ) (hr : 0 < r) (hc : 0 < c) :
     have he := Nat.eq_zero_of_dvd_of_lt hdiv (by omega : paddedRows r c-RoundedRowDescriptor.rounded r c < c)
     omega
 
-private def head : Option (List Bool) → ℤ | none => 0 | some _ => 1
-private def tape : Option (List Bool) → ℤ → Fin (a+4)
+def head : Option (List Bool) → ℤ | none => 0 | some _ => 1
+def tape : Option (List Bool) → ℤ → Fin (a+4)
   | none => fun _ => blank
   | some bs => RadixZeroFill.encodedBinary bs
 

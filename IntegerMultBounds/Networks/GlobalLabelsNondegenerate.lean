@@ -1,6 +1,10 @@
-import IntegerMultBounds.Networks.GlobalLabels
+module
+
+public import IntegerMultBounds.Networks.GlobalLabels
 
 /-! Nondegeneracy of the concrete physical global labels. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.GlobalLabels
 

@@ -1,4 +1,6 @@
-import IntegerMultBounds.Schoenhage.Recomb
+module
+
+public import IntegerMultBounds.Schoenhage.Recomb
 
 /-! Exact arithmetic for packed negacyclic products. Evaluation at `X` turns
 the negacyclic product modulo `y^r + 1` into the product modulo `X^r + 1`
@@ -7,6 +9,8 @@ the negacyclic product modulo `y^r + 1` into the product modulo `X^r + 1`
 adding the offset word of `2^(W-1)` digits and cutting into `W`-bit pieces
 (`decode_pieces`); offset digits `d - c` are packed by a plain shifted sum
 and one subtraction of the offset word (`encode_res`). -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Schoenhage
 

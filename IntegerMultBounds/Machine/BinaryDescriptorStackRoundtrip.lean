@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.BinaryDescriptorStack
-import IntegerMultBounds.Machine.Placement
-import IntegerMultBounds.Machine.RadixZeroFill
+module
+
+public import IntegerMultBounds.Machine.BinaryDescriptorStack
+public import IntegerMultBounds.Machine.Placement
+public import IntegerMultBounds.Machine.RadixZeroFill
 
 /-! A concrete push/pop roundtrip on three tapes: preserved source descriptor,
 stack, and initially blank restoration destination. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryDescriptorStackRoundtrip
 open BinaryDescriptorStack
 variable {a : ℕ}

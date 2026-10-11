@@ -1,8 +1,12 @@
-import IntegerMultBounds.Networks.ProjectionRank
+module
+
+public import IntegerMultBounds.Networks.ProjectionRank
 
 /-! The rational negative-source edge remains correct when sparse support
 skips the initial repeated source label. Its actual rank is the first containing
 label's dimension, exactly one source dimension above ordinary edge rank. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.ProjectionRank
 

@@ -1,6 +1,8 @@
-import IntegerMultBounds.Machine.BinaryCompare
-import IntegerMultBounds.Machine.Gather
-import IntegerMultBounds.Machine.WordMoves
+module
+
+public import IntegerMultBounds.Machine.BinaryCompare
+public import IntegerMultBounds.Machine.Gather
+public import IntegerMultBounds.Machine.WordMoves
 
 /-! Comparing a fixed number of cells of a word with a constant word, the
 order kept in a single cell: for each cell the two heads advance and the
@@ -8,6 +10,8 @@ order cell is updated, a later column overriding the order so far; then a
 flag bit, whether the order is "smaller" or "larger" as requested, is
 appended to a flag word and the order cell is erased. Unrolled into finite
 control. The order semantics are those of `BinaryCompare.rel`. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.GuardTest
 

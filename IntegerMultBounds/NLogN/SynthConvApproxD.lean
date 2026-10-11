@@ -1,6 +1,8 @@
-import IntegerMultBounds.NLogN.SynthMultiD
-import IntegerMultBounds.NLogN.SynthConvApprox
-import IntegerMultBounds.NLogN.TensorApproxV
+module
+
+public import IntegerMultBounds.NLogN.SynthMultiD
+public import IntegerMultBounds.NLogN.SynthConvApprox
+public import IntegerMultBounds.NLogN.TensorApproxV
 
 /-! Propositions 3.3 and 3.4 of Harvey and van der Hoeven in `d` dimensions
 over the synthetic ring in coefficient form. The `d`-dimensional synthetic
@@ -15,6 +17,8 @@ the final scaling by `T' r`, and after scaling approximates the normalised
 convolution `(1/T') u ∗ v` with absolute error `T' r (3 log₂ T' + 2)/2^p`.
 The numerical transforms are assumed to map the unit ball into itself (the
 paper's `C̃◦` convention, obtained by clamping); bit costs are not modelled. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.NLogN
 

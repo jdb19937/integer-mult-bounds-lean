@@ -1,5 +1,7 @@
-import IntegerMultBounds.Machine.BinaryCompare
-import IntegerMultBounds.Machine.BinarySub
+module
+
+public import IntegerMultBounds.Machine.BinaryCompare
+public import IntegerMultBounds.Machine.BinarySub
 
 /-! Literal in-place least-significant-first binary subtraction. Two tapes
 and two states: the subtrahend is scanned forward together with the
@@ -8,6 +10,8 @@ difference written back over the minuend cell, the borrow living in finite
 control; the machine halts on the common blank, so the result is the
 difference modulo two to the common width. The subtrahend is preserved with
 its head parked on its blank end; the cost is the common width. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.BinaryDecrease
 

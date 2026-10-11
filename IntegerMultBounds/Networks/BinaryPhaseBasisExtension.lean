@@ -1,10 +1,15 @@
-import IntegerMultBounds.Networks.BinaryPhase
-import IntegerMultBounds.Networks.BinaryRowProgram
-import Mathlib.LinearAlgebra.Basis.Prod
+module
+
+public import IntegerMultBounds.Networks.BinaryPhase
+public import IntegerMultBounds.Networks.BinaryRowProgram
+public import Mathlib.LinearAlgebra.Basis.Prod
 
 /-! Extend an actual nondegenerate phase-subspace basis by its orthogonal
 complement, retaining its literal first coordinates. The resulting ambient
 binary basis has a proved finite row-addition schedule. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Networks.BinaryPhaseBasisExtension
 noncomputable section
 open Module

@@ -1,13 +1,18 @@
-import IntegerMultBounds.Machine.RadixDigitMoveCounts
+module
+
+public import IntegerMultBounds.Machine.RadixDigitMoveCounts
 
 /-! Physical dimension products for digit movement with an arbitrary trailing
 block. Only canonical P,S,E are supplied; S*E and P*S are generated and cleaned. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RadixDigitMoveBlockCounts
 variable {a : ℕ}
 noncomputable section
 
-private def hd : Option (List Bool) → ℤ | none => 0 | some _ => 1
-private def tp : Option (List Bool) → ℤ → Fin (a+4)
+def hd : Option (List Bool) → ℤ | none => 0 | some _ => 1
+def tp : Option (List Bool) → ℤ → Fin (a+4)
   | none => fun _ => blank
   | some bs => RadixZeroFill.encodedBinary bs
 

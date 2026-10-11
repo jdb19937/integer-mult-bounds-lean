@@ -1,8 +1,12 @@
-import IntegerMultBounds.Networks.DAGValueTransfer
+module
+
+public import IntegerMultBounds.Networks.DAGValueTransfer
 
 /-! Certified finite locations and input labels for actual allocator source
 entries. Extracting an input label uses its proved input-node shape, never a
 default label or identification of repeated semantic inputs. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.DAGSourceRoles
 

@@ -1,9 +1,13 @@
-import IntegerMultBounds.Machine.ScalingDescriptors
-import IntegerMultBounds.Machine.ScalingExecutionReuse
+module
+
+public import IntegerMultBounds.Machine.ScalingDescriptors
+public import IntegerMultBounds.Machine.ScalingExecutionReuse
 
 /-! Physical descriptor preparation followed by complete reusable scaling.
 Only binary Q/B are supplied: piece counts, control sentinels and residue cells
 are constructed by actual finite programs. Derived descriptors are retained. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.ScalingPreparedExecution
 
@@ -17,7 +21,7 @@ abbrev TapeCount (c : ℕ) := SynthesisTapes c+FrameTapes c
 
 def spare : Tapes 1 0 := ⟨fun _ => 1,fun _ _ => blank⟩
 
-private def activeTo {c : ℕ} : Fin (SynthesisTapes c) → Fin (ExecutionTapes c+1) :=
+def activeTo {c : ℕ} : Fin (SynthesisTapes c) → Fin (ExecutionTapes c+1) :=
   Fin.addCases (Fin.addCases (Fin.addCases
     (Fin.addCases (Fin.addCases
       (fun i => Fin.natAdd (ExecutionTapes c) i)
@@ -29,14 +33,14 @@ private def activeTo {c : ℕ} : Fin (SynthesisTapes c) → Fin (ExecutionTapes 
     (fun i => Fin.castAdd 1 (Fin.natAdd (SplitTapes c) (Fin.castAdd 2 (Fin.natAdd (4+c) i)))))
     (fun i => Fin.castAdd 1 (Fin.natAdd (SplitTapes c) (Fin.natAdd (4+c+c) i)))
 
-private def frameTo {c : ℕ} : Fin (FrameTapes c) → Fin (ExecutionTapes c+1) :=
+def frameTo {c : ℕ} : Fin (FrameTapes c) → Fin (ExecutionTapes c+1) :=
   Fin.addCases (Fin.addCases
     (fun i => Fin.castAdd 1 (Fin.castAdd (AuxTapes c) (Fin.castAdd (c+c) i)))
     (fun i => Fin.castAdd 1 (Fin.castAdd (AuxTapes c) (Fin.natAdd 4 (Fin.castAdd c i)))))
     (fun i => Fin.castAdd 1 (Fin.natAdd (SplitTapes c)
       (Fin.castAdd 2 (Fin.castAdd c (Fin.castAdd c (Fin.castAdd 2 i))))))
 
-private def inverse {c : ℕ} : Fin (ExecutionTapes c+1) → Fin (TapeCount c) := by
+def inverse {c : ℕ} : Fin (ExecutionTapes c+1) → Fin (TapeCount c) := by
   refine Fin.addCases ?_ ?_
   · refine Fin.addCases ?_ ?_
     · refine Fin.addCases ?_ ?_
@@ -168,7 +172,7 @@ theorem regroup {c : ℕ} (a : Tapes 4 0) (buffers ds : Tapes c 0)
   simpa only [Placement.combine,executionPlacement,Tapes.reindex,Equiv.symm_symm,
     Equiv.symm_apply_apply,join] using hr
 
-private def frame {c : ℕ} (source : ℤ → Fin 4) (p : ℤ) (background : Fin c → ℤ → Fin 4)
+def frame {c : ℕ} (source : ℤ → Fin 4) (p : ℤ) (background : Fin c → ℤ → Fin 4)
     (origins : Fin c → ℤ) (dest : ℤ → Fin 4) (q : ℤ) (clock marker : ℤ → Fin 4) (r : ℤ) :
     Tapes (FrameTapes c) 0 :=
   ((CountedCopyReuse.bank source (fun _ => blank) clock (fun _ => blank) p 0 r 0).append

@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.RecursiveDescriptorSize
-import IntegerMultBounds.Machine.BinaryDescriptorStackRoundtrip
+module
+
+public import IntegerMultBounds.Machine.RecursiveDescriptorSize
+public import IntegerMultBounds.Machine.BinaryDescriptorStackRoundtrip
 
 /-! Charge real variable-length binary stack scans to the current recursive
 child's logical volume. Older frames remain unchanged and never contribute to
 the volume denominator. Integration around an intervening recursive call is
 separate from this literal stack roundtrip. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveDescriptorStack
 open RecursiveInterchangeLayout RecursiveInterchangeVolume
 variable {a : ℕ}

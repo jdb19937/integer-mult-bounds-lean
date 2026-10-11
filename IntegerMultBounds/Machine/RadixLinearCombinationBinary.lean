@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.RadixLinearCombination
+module
+
+public import IntegerMultBounds.Machine.RadixLinearCombination
 
 /-! Complete fixed linear-combination preparation: compute a radix expression,
 convert its modular residue once to canonical binary, and erase the final radix
 scratch. Original marked controls are preserved, with every scratch head reset. Each
 expression leaf has its own supplied marked source copy, as in the arithmetic
 compiler; this module does not duplicate or refresh repeated logical controls. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RadixLinearCombinationBinary
 
 open RadixDigits
@@ -49,7 +54,7 @@ def arithmeticPlacement (e : Expr) : Fin (RadixLinearCombination.TapeCount e+2) 
     | left i => fin_cases i <;> simp
     | right i => simp
 
-private def cleanupThree : Program 3 6 q :=
+def cleanupThree : Program 3 6 q :=
   Placement.placed (u := 2) MarkedWordCleanup.program (Equiv.swap 0 (2 : Fin 3))
 
 omit [Fact q.Prime] in

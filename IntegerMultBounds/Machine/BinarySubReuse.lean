@@ -1,12 +1,16 @@
-import IntegerMultBounds.Machine.BinarySub
-import IntegerMultBounds.Machine.CountedCopyReuse
-import IntegerMultBounds.Machine.Placement
-import IntegerMultBounds.Machine.GrowingCounterData
+module
+
+public import IntegerMultBounds.Machine.BinarySub
+public import IntegerMultBounds.Machine.CountedCopyReuse
+public import IntegerMultBounds.Machine.Placement
+public import IntegerMultBounds.Machine.GrowingCounterData
 
 /-! Immutable arbitrary-width binary subtraction. The literal ripple machine
 reads missing high bits as zero until both source tapes end. It creates an
 output sentinel on blank work, preserves both operands, and physically restores
 all three heads. No padded operand copies or size-dependent control are needed. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.BinarySubReuse
 

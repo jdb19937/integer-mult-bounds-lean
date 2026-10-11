@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.BinaryPackedRowCount
-import IntegerMultBounds.Machine.FixedHeaderBankCopy
+module
+
+public import IntegerMultBounds.Machine.BinaryPackedRowCount
+public import IntegerMultBounds.Machine.FixedHeaderBankCopy
 
 /-! Shared original P/G/B/w headers, with a physically generated packed fiber
 count in one of nine private tapes. Every other private tape is clean. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryPackedRowCountPlaced
 noncomputable section
 variable {t a : ℕ}

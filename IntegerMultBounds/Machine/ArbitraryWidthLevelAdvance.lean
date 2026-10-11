@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.FixedBasePowerStep
-import IntegerMultBounds.Machine.FixedBasePowerDescriptor
-import IntegerMultBounds.Machine.BinaryDescriptorIncrement
-import IntegerMultBounds.Machine.BinaryCanonicalData
+module
+
+public import IntegerMultBounds.Machine.FixedBasePowerStep
+public import IntegerMultBounds.Machine.FixedBasePowerDescriptor
+public import IntegerMultBounds.Machine.BinaryDescriptorIncrement
+public import IntegerMultBounds.Machine.BinaryCanonicalData
 
 /-! Physical paired depth/power control for the arbitrary-width digit loop.
 The base is initialized once and retained across level changes. Arbitrary
 offset and data spectators are preserved by ordinary tape framing. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthLevelAdvance
 noncomputable section
 variable {a t : ℕ}

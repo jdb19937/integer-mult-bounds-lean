@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.RadixRationalBinary
-import IntegerMultBounds.Machine.BinaryDescriptorReset
+module
+
+public import IntegerMultBounds.Machine.RadixRationalBinary
+public import IntegerMultBounds.Machine.BinaryDescriptorReset
 
 /-! Recurring fixed-rational conversion. The previous binary output is erased
 by actual transitions before the next computation, and all radix workspace is
 again completely blank afterward. Alphabet lifting touches only binary output. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RadixRationalBinaryReuse
 
 open RadixDigits

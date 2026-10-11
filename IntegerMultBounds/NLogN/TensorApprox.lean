@@ -1,5 +1,7 @@
-import IntegerMultBounds.NLogN.Approx
-import IntegerMultBounds.NLogN.Multidim
+module
+
+public import IntegerMultBounds.NLogN.Approx
+public import IntegerMultBounds.NLogN.Multidim
 
 /-! The two-factor case of Lemma 2.11 of Harvey and van der Hoeven. Proved:
 slice-wise application along the second coordinate keeps the error and norm
@@ -9,6 +11,8 @@ second-coordinate slice approximates the tensor product with the sum of the
 two errors; and the two-dimensional transform, normalized or not, is exactly
 such a tensor product of one-dimensional transforms. The `d`-fold version
 follows by induction on the coordinates and is not written here. -/
+
+@[expose] public section
 
 open Complex
 

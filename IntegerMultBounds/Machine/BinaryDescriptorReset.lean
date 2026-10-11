@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.MarkedWordCleanup
-import IntegerMultBounds.Machine.CountedCopyReuse
+module
+
+public import IntegerMultBounds.Machine.MarkedWordCleanup
+public import IntegerMultBounds.Machine.CountedCopyReuse
 
 /-! Erase a marked binary descriptor and remove its sentinel. The entire tape
 returns to blank at head zero, ready for a converter that installs fresh markers. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryDescriptorReset
 
 open MarkedWordCleanup (one empty)

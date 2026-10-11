@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.Hoare
+module
+
+public import IntegerMultBounds.Machine.Hoare
 
 /-! Concrete visited-interval bounds from the literal transition semantics.
 A run cannot change a cell farther from its original head than its transition
 count; initially blank work tapes therefore have explicitly bounded support. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RunSupport
 variable {t q a : ℕ}
 

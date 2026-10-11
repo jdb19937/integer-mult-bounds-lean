@@ -1,8 +1,13 @@
-import IntegerMultBounds.Networks.AffineFieldProgram
+module
+
+public import IntegerMultBounds.Networks.AffineFieldProgram
 
 /-! Bijectivity of legal ordered field programs on finite coefficient rings.
 This supplies the inverse-function semantics already used by the fixed Shared50
 control; it introduces no abstract machine or uncharged inverse operation. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Networks.AffineFieldBijective
 noncomputable section
 variable {ι R : Type*} [Fintype ι] [LinearOrder ι] [CommRing R]

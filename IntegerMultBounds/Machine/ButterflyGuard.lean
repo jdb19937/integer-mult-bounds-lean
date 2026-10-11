@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ButterflySigned
-import IntegerMultBounds.Networks.GaussianPrecision
+module
+
+public import IntegerMultBounds.Machine.ButterflySigned
+public import IntegerMultBounds.Networks.GaussianPrecision
 
 /-! A single signed width covers every arithmetic stage of an individual-kernel
 fallback. The guard follows from the actual dyadic numerator growth, including
 all precision increments, rather than a supplied codec correctness assumption. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ButterflyGuard
 noncomputable section
 open ButterflySigned

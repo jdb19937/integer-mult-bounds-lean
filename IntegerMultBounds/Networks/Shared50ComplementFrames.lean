@@ -1,9 +1,13 @@
-import IntegerMultBounds.Networks.Shared50Frames
-import IntegerMultBounds.Networks.DAGComplementExecution
+module
+
+public import IntegerMultBounds.Networks.Shared50Frames
+public import IntegerMultBounds.Networks.DAGComplementExecution
 
 /-! Complementary reverse frames of the actual shared fifty-copy DAG.
 Ambient nondegeneracy and common-point support premises are discharged.
 These are middle-computation traces, without surrounding motif/sink joins. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.Shared50ComplementFrames
 

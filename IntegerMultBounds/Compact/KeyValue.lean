@@ -1,13 +1,17 @@
-import IntegerMultBounds.Machine.KeyRoutine
-import IntegerMultBounds.Compact.PackedInverseValue
-import IntegerMultBounds.Compact.ToggleValue
-import IntegerMultBounds.Compact.GuardValue
-import IntegerMultBounds.Compact.TapeRepair
+module
+
+public import IntegerMultBounds.Machine.KeyRoutine
+public import IntegerMultBounds.Compact.PackedInverseValue
+public import IntegerMultBounds.Compact.ToggleValue
+public import IntegerMultBounds.Compact.GuardValue
+public import IntegerMultBounds.Compact.TapeRepair
 
 /-! The key routine's words are the repair scan's key data for the concrete
 early instance: ranks are the addresses in lexicographic order, the counter
 word at rank `j` splits into the address words, the flag is membership in
 the exceptional set, and the appended words are the destination rank's bits. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Compact.PowerTwo
 

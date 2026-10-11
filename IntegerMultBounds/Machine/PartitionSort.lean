@@ -1,9 +1,13 @@
-import IntegerMultBounds.Machine.Partition
-import IntegerMultBounds.Machine.RadixSort
+module
+
+public import IntegerMultBounds.Machine.Partition
+public import IntegerMultBounds.Machine.RadixSort
 
 /-! The concrete partition's two output words represent the stable list pass.
 This connects the interfaces without assuming that concatenation or selection
 of subsequent key bits is free on tapes. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.Partition
 

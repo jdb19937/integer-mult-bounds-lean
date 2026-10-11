@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.RadixRationalBinary
+module
+
+public import IntegerMultBounds.Machine.RadixRationalBinary
 
 /-! Replace a stale marked radix word from one physical shared source. The old
 copy is actually erased, source digits copied, and both heads returned to one.
 The shared source is preserved cell-for-cell; no supplied fresh copy is assumed. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.MarkedRadixRefresh
 
 open RadixDigits
@@ -17,7 +22,7 @@ private theorem nonblank (xs : List (Fin q)) : ∀ x ∈ xs.map digitSymbol, x �
   obtain ⟨y,_,rfl⟩ := List.mem_map.mp hx
   simp [digitSymbol,blank,Fin.ext_iff]
 
-private def rightProgram : Program 1 2 q where
+def rightProgram : Program 1 2 q where
   tapes_pos := by decide
   start := 0
   transition := fun s symbols => if s = 0 then some (1,fun i => (symbols i,Move.right)) else none
@@ -50,7 +55,7 @@ theorem clear_hoare (xs : List (Fin q)) :
     simpa only [Rewind.cfg,Config.tapes,one,sub_self,Nat.cast_add,Nat.cast_one,add_comm] using hr
   exact ((hc.seq hr').seq (right_hoare empty 0)).consequence (fun _ h => h) (fun _ h => h) (by omega)
 
-private def clearDestination : Program 2 4 q := Placement.placed (u := 1) clearProgram (Equiv.swap 0 1)
+def clearDestination : Program 2 4 q := Placement.placed (u := 1) clearProgram (Equiv.swap 0 1)
 
 private theorem clear_destination (xs old : List (Fin q)) :
     HoareTime clearDestination (fun v => v = bank xs old) (fun v => v = bank xs []) (2*old.length+4) := by
@@ -94,7 +99,7 @@ private theorem no_marker (xs : List (Fin q)) (z : ℤ) (hz : 0 < z) : source xs
   · rw [source,marked,putWord_outside _ _ _ _ (Or.inr (by simpa using le_of_not_gt hi))]
     simp [empty,show z ≠ 0 by omega,blank,separator,Fin.ext_iff]
 
-private def resetProgram : Program 2 2 q where
+def resetProgram : Program 2 2 q where
   tapes_pos := by decide
   start := 0
   transition := fun s symbols => if s = 0 then

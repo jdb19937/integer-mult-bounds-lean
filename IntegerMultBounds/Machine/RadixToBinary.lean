@@ -1,22 +1,27 @@
-import IntegerMultBounds.Machine.RadixToBinaryData
-import IntegerMultBounds.Machine.GrowingCounter
-import IntegerMultBounds.Machine.Alphabet
-import IntegerMultBounds.Machine.Placement
-import IntegerMultBounds.Machine.WordSegments
-import IntegerMultBounds.Machine.CountedCopyReuse
-import IntegerMultBounds.Machine.Copy
-import IntegerMultBounds.Machine.Rewind
+module
+
+public import IntegerMultBounds.Machine.RadixToBinaryData
+public import IntegerMultBounds.Machine.GrowingCounter
+public import IntegerMultBounds.Machine.Alphabet
+public import IntegerMultBounds.Machine.Placement
+public import IntegerMultBounds.Machine.WordSegments
+public import IntegerMultBounds.Machine.CountedCopyReuse
+public import IntegerMultBounds.Machine.Copy
+public import IntegerMultBounds.Machine.Rewind
 
 /-! Literal radix countdown with a binary growing-counter body. The source
 radix digits are finite symbols; no unit-cost arithmetic is used by the machine. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RadixToBinary
 
 open RadixDigits RadixToBinaryData
 variable {q t s : ℕ} (hq : 2 ≤ q)
 
-private def predDigit (x : Fin q) : Fin q := ⟨x.val-1,lt_of_le_of_lt (Nat.sub_le _ _) x.isLt⟩
+def predDigit (x : Fin q) : Fin q := ⟨x.val-1,lt_of_le_of_lt (Nat.sub_le _ _) x.isLt⟩
 
-private def clockTransition (state : Fin 5) (symbol : Fin (q+4)) :
+def clockTransition (state : Fin 5) (symbol : Fin (q+4)) :
     Option (Fin 5 × Fin (q+4) × Move) :=
   if state = 0 then
     match readDigit symbol with
@@ -42,7 +47,7 @@ def loopProgram (M : Program t s q) : Program (t+1) (s+5) q where
         (fun (st',x,move) => (Fin.natAdd s st',Fin.addCases
           (fun i => (symbols (Fin.castAdd 1 i),.stay)) (fun _ => (x,move))))) state
 
-private def putRadix (f : ℤ → Fin (q+4)) (r : ℤ) (xs : List (Fin q)) : ℤ → Fin (q+4) :=
+def putRadix (f : ℤ → Fin (q+4)) (r : ℤ) (xs : List (Fin q)) : ℤ → Fin (q+4) :=
   putWord f r (xs.map digitSymbol)
 
 private theorem putRadix_head (f : ℤ → Fin (q+4)) (r : ℤ) (x : Fin q) (xs : List (Fin q)) :
@@ -404,7 +409,7 @@ theorem core_hoare (clock : ℤ → Fin (q+4)) (xs : List (Fin q))
 
 private def empty : ℤ → Fin (q+4) := fun z => if z = 0 then separator else blank
 
-private def triple (out clock source : ℤ → Fin (q+4)) (p r u : ℤ) : Tapes 3 q :=
+def triple (out clock source : ℤ → Fin (q+4)) (p r u : ℤ) : Tapes 3 q :=
   ⟨![p,r,u],![out,clock,source]⟩
 
 private def markedRadix (xs : List (Fin q)) := putRadix empty 1 xs
@@ -419,7 +424,7 @@ def input (xs : List (Fin q)) : Tapes 3 q :=
 private def prepared (bits : List Bool) (clock source : List (Fin q)) (r u : ℤ) : Tapes 3 q :=
   triple ((binaryState q bits).tape 0) (markedRadix clock) (markedRadix source) 1 r u
 
-private def initializeProgram : Program 3 2 q where
+def initializeProgram : Program 3 2 q where
   tapes_pos := by decide
   start := 0
   transition := fun state _ => if state = 0 then some (1,fun _ => (separator,.right)) else none
@@ -472,9 +477,9 @@ private theorem initialize_hoare (xs : List (Fin q)) :
         simpa [input,prepared,triple,sourceWord,putRadix,Function.update_apply] using congrFun he z
   · simp [step,initializeProgram]
 
-private def copyPlacement : Fin (2+1) ≃ Fin 3 := Equiv.swap 0 2
+def copyPlacement : Fin (2+1) ≃ Fin 3 := Equiv.swap 0 2
 
-private def copyProgram : Program 3 1 q := Placement.placed (Copy.program blank false) copyPlacement
+def copyProgram : Program 3 1 q := Placement.placed (Copy.program blank false) copyPlacement
 
 private theorem copy_hoare (xs : List (Fin q)) :
     HoareTime (copyProgram (q := q)) (fun v => v = prepared [] [] xs 1 1)
@@ -503,7 +508,7 @@ private theorem copy_hoare (xs : List (Fin q)) :
   simpa only [hf] using Placement.view copyPlacement (prepared [] xs xs (1+xs.length) (1+xs.length))
 
 /-- Rewind the source and its exact copy together, preserving the binary output. -/
-private def resetProgram : Program 3 2 q where
+def resetProgram : Program 3 2 q where
   tapes_pos := by decide
   start := 0
   transition := fun state symbols => if state = 0 then
@@ -559,7 +564,7 @@ private theorem reset_hoare (xs : List (Fin q)) :
 
 private def oneTape (f : ℤ → Fin (q+4)) (r : ℤ) : Tapes 1 q := ⟨fun _ => r,fun _ => f⟩
 
-private def clearProgram : Program 1 1 q where
+def clearProgram : Program 1 1 q where
   tapes_pos := by decide
   start := 0
   transition := fun _ symbols => if symbols 0 = blank then none
@@ -614,9 +619,9 @@ private theorem clear_hoare (xs : List (Fin q)) :
   refine ⟨xs.length,clearCfg empty (1+xs.length),le_rfl,hr,?_,rfl⟩
   simp [step,clearProgram,clearCfg,empty,show (1:ℤ)+xs.length ≠ 0 by omega]
 
-private def clockPlacement : Fin (1+2) ≃ Fin 3 := Equiv.swap 0 1
+def clockPlacement : Fin (1+2) ≃ Fin 3 := Equiv.swap 0 1
 
-private def atClock {k : ℕ} (M : Program 1 k q) : Program 3 k q := Placement.placed M clockPlacement
+def atClock {k : ℕ} (M : Program 1 k q) : Program 3 k q := Placement.placed M clockPlacement
 
 private def clockBank (bits : List Bool) (xs : List (Fin q)) (f : ℤ → Fin (q+4)) (r : ℤ) : Tapes 3 q :=
   triple ((binaryState q bits).tape 0) f (markedRadix xs) 1 r 1
@@ -651,7 +656,7 @@ source restored exactly, including its blank marker cell and original head. -/
 def output (xs : List (Fin q)) : Tapes 3 q :=
   triple ((binaryState q (RadixToBinaryData.output xs)).tape 0) (fun _ => blank) (sourceWord xs) 1 0 0
 
-private def unmarkProgram : Program 3 3 q where
+def unmarkProgram : Program 3 3 q where
   tapes_pos := by decide
   start := 0
   transition := fun state symbols =>
@@ -700,7 +705,7 @@ private theorem unmark_hoare (xs : List (Fin q)) :
       · simpa [middle,output,triple,Function.update_apply] using congrFun (source_unmark xs) z
   · simp [step,unmarkProgram]
 
-private def cleanupProgram : Program 3 5 q :=
+def cleanupProgram : Program 3 5 q :=
   seq (seq (atClock clearProgram) (atClock (Rewind.program separator))) unmarkProgram
 
 private theorem cleanup_hoare (xs : List (Fin q)) :

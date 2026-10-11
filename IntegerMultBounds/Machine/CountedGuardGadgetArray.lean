@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.CountedGuardGadgetRecord
+module
+
+public import IntegerMultBounds.Machine.CountedGuardGadgetRecord
 
 /-! One fixed pair of counted loops generates exactly the legacy three-flag
 word for every record. The original record-count descriptor is retained. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedGuardGadgetArray
 noncomputable section
 variable {a : ℕ}

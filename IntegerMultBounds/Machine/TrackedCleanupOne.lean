@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.TrackedCleanup
+module
+
+public import IntegerMultBounds.Machine.TrackedCleanup
 
 /-! Erase a visited tracker alone, so shared data tapes and their heads can be
 framed unchanged. The control flow is the tracker projection of paired cleanup. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.TrackedCleanupOne
 variable {a : ℕ}
 

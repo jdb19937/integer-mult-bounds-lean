@@ -1,8 +1,13 @@
-import IntegerMultBounds.Networks.ComplexPhaseBudget
-import IntegerMultBounds.Networks.BinaryPhaseResidualRowProgram
+module
+
+public import IntegerMultBounds.Networks.ComplexPhaseBudget
+public import IntegerMultBounds.Networks.BinaryPhaseResidualRowProgram
 
 /-! Every actual edge of the fixed complex25 network supplies its own binary
 residual prerequisites and its own literal ambient row-addition word. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Networks.ComplexPhaseRowSchedule
 noncomputable section
 open ComplexPhaseBudget

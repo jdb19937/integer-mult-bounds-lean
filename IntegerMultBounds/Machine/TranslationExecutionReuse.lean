@@ -1,9 +1,13 @@
-import IntegerMultBounds.Machine.TranslationPreparedExecution
-import IntegerMultBounds.Machine.TranslationDescriptorsReuse
+module
+
+public import IntegerMultBounds.Machine.TranslationPreparedExecution
+public import IntegerMultBounds.Machine.TranslationDescriptorsReuse
 
 /-! Reusable single-fiber translation. Each invocation synthesizes its physical
 split lengths, runs the actual rotation, and erases every derived descriptor.
 The recurring complete bank retains only canonical Q/a/B and empty workspaces. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.TranslationExecutionReuse
 

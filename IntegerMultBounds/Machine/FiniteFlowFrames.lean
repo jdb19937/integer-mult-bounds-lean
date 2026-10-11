@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.FiniteFlowPath
+module
+
+public import IntegerMultBounds.Machine.FiniteFlowPath
 
 /-! Literal frame preservation for complete cyclic controller paths. Enlarging
 or relabeling the fixed bank retains every original state-dependent edge and
 all transition counts, including recursive-call and return joins. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.FiniteFlowFrames
 noncomputable section
 open FiniteFlow FiniteFlowPath

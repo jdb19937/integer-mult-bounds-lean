@@ -1,9 +1,13 @@
-import IntegerMultBounds.Machine.Hoare
+module
+
+public import IntegerMultBounds.Machine.Hoare
 
 /-! Machines whose finite control is an arbitrary finite type. A machine over
 a `Fintype` of states compiles to a literal `Program` by numbering its states;
 runs correspond step for step, so contracts proved for the finite-type
 machine hold for the program with the same bound. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Schoenhage
 

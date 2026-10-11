@@ -1,8 +1,12 @@
-import IntegerMultBounds.Machine.BinaryLength
+module
+
+public import IntegerMultBounds.Machine.BinaryLength
 
 /-! Length-descriptor bootstrap directly from a genuinely blank work tape.
 One literal transition writes its sentinel and advances its head; one genuine
 sequence join enters the fixed length scanner. No marked-clock setup is assumed. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.BinaryLengthInit
 

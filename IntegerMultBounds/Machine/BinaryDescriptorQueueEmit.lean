@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.BinaryDescriptorStackRoundtrip
-import IntegerMultBounds.Machine.Rewind
-import IntegerMultBounds.Machine.BinaryDescriptorCopyPlaced
+module
+
+public import IntegerMultBounds.Machine.BinaryDescriptorStackRoundtrip
+public import IntegerMultBounds.Machine.Rewind
+public import IntegerMultBounds.Machine.BinaryDescriptorCopyPlaced
 
 /-! Move a canonical marked binary word into a forward delimiter-separated
 queue. The source bits and marker are physically erased, while the queue
 cursor advances through the appended field and delimiter. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryDescriptorQueueEmit
 noncomputable section
 variable {a : ℕ}

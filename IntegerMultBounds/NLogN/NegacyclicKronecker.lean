@@ -1,5 +1,7 @@
-import IntegerMultBounds.NLogN.Kronecker
-import IntegerMultBounds.NLogN.FixedOps
+module
+
+public import IntegerMultBounds.NLogN.Kronecker
+public import IntegerMultBounds.NLogN.FixedOps
 
 /-! The negacyclic product by Kronecker substitution (the paper's Lemma 2.5),
 exact arithmetic only. Proved: the integer negacyclic product is the fold
@@ -11,6 +13,8 @@ and negative parts; and the packed values are below `B^r`, with `B ≤ 2^(3p)`
 for `M = 2^(p+1)` and `r < 2^(p-2)`. The complex case is the cast of the
 integer case. Bit costs, the fixed-point scaling, and the real/imaginary
 split of complex coefficients are not modeled. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.NLogN
 

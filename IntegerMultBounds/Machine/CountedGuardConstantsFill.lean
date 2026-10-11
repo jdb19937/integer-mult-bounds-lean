@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CountedGuardGadgetPosition
-import IntegerMultBounds.Machine.Gather
+module
+
+public import IntegerMultBounds.Machine.CountedGuardGadgetPosition
+public import IntegerMultBounds.Machine.Gather
 
 /-! Runtime-counted literal constant filling and positioning from blank private
 clock storage. The original count is retained; all marker initialization,
 countdown borrowing, replay and clock erasure are physically charged. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedGuardConstantsFill
 noncomputable section
 variable {a : ℕ}

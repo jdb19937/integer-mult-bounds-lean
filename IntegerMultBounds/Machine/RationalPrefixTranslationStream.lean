@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.RationalPrefixTranslationExecution
-import IntegerMultBounds.Machine.CountedLoopReuseAlphabet
-import IntegerMultBounds.Machine.TranslationPreparedFamily
+module
+
+public import IntegerMultBounds.Machine.RationalPrefixTranslationExecution
+public import IntegerMultBounds.Machine.CountedLoopReuseAlphabet
+public import IntegerMultBounds.Machine.TranslationPreparedFamily
 
 /-! Consecutive rational-controlled translations with actual mixed-prefix carry
 scheduling. Field zero controls the shift; the fixed order may put it anywhere.
 All other prefix fields advance on their actual tapes and retain independent
 widths. Their carry cost is amortized, not rescanned per payload fiber. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RationalPrefixTranslationStream
 
 open TranslationStream (blocks fibers)
@@ -229,7 +234,7 @@ theorem fields_full_cycle (initial : Fin (c+1) → List (Fin radix)) :
     fields (List.finRange (c+1)) initial (radix^(∑ j, (initial j).length)) = initial :=
   PrefixCounterData.full_cycle _ _
 
-private theorem lex_nonempty (c : ℕ) : List.finRange (c+1) ≠ [] := by
+theorem lex_nonempty (c : ℕ) : List.finRange (c+1) ≠ [] := by
   intro h
   have hh := congrArg List.length h
   simp at hh

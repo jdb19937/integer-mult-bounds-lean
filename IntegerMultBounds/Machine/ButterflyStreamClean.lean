@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ButterflyStreamCleanData
+module
+
+public import IntegerMultBounds.Machine.ButterflyStreamCleanData
 
 /-! A complete reusable paired-stream butterfly: read original record and length
 headers, execute all coefficient arithmetic, rewind the four streams, erase both
 old inputs, and clean all generated controls. All final heads are normalized. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ButterflyStreamClean
 noncomputable section
 open ButterflyStreamData ButterflyStreamCleanData

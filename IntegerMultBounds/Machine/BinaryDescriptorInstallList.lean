@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.BinaryDescriptorInstallRaw
-import IntegerMultBounds.Machine.ExactFrame
+module
+
+public import IntegerMultBounds.Machine.BinaryDescriptorInstallRaw
+public import IntegerMultBounds.Machine.ExactFrame
 
 /-! A fixed list of physical raw descriptor installations, with every copy,
 marker removal, and sequential join charged. The source bank is preserved and
 no descriptor value enters the compiled transition table. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryDescriptorInstallList
 open SharedPlacementAlphabet (setTape)
 variable {t q : ℕ}

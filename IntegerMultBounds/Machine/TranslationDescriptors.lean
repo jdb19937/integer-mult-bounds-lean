@@ -1,15 +1,19 @@
-import IntegerMultBounds.Machine.TranslationProduct
-import IntegerMultBounds.Machine.BinarySubReuse
+module
+
+public import IntegerMultBounds.Machine.TranslationProduct
+public import IntegerMultBounds.Machine.BinarySubReuse
 
 /-! Literal synthesis of translation's three physical split lengths. All
 output counters and work-clock markers are installed on initially blank tapes.
 Three nested growing-counter products share immutable binary input counts. -/
 
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.TranslationDescriptors
 
 open CountedCopyReuse (empty binary)
 
-private def extras (as : List Bool) (diff : ℤ → Fin 4) (r : ℤ) : Tapes 2 0 :=
+def extras (as : List Bool) (diff : ℤ → Fin 4) (r : ℤ) : Tapes 2 0 :=
   ⟨fun i => if i = 0 then 1 else r,fun i => if i = 0 then binary as else diff⟩
 
 /-- Spare, three generated lengths, B clock/descriptor, N clock/Q descriptor,
@@ -26,7 +30,7 @@ def initial (bs qs as : List Bool) : Tapes 10 0 :=
       (fun _ => blank) (binary bs) 0 1)
     (fun _ => blank) (binary qs) 0 1).append (extras as (fun _ => blank) 0))
 
-private def markerMask (i : Fin 10) : Bool := decide (i = 1 ∨ i = 2 ∨ i = 3 ∨ i = 4 ∨ i = 6)
+def markerMask (i : Fin 10) : Bool := decide (i = 1 ∨ i = 2 ∨ i = 3 ∨ i = 4 ∨ i = 6)
 
 private def marked (v : Tapes 10 0) : Tapes 10 0 :=
   ⟨fun i => v.head i+if markerMask i then 1 else 0,
@@ -64,7 +68,7 @@ private theorem marker_initial (bs qs as : List Bool) :
   · funext i z
     fin_cases i <;> simp [Fin.addCases,binary,empty,putBits,Function.update_apply]
 
-private def count (qs as diff : List Bool) (k : Fin 3) : List Bool := ![qs,as,diff] k
+def count (qs as diff : List Bool) (k : Fin 3) : List Bool := ![qs,as,diff] k
 
 def descriptorSlot (k : Fin 3) : Fin 10 := ⟨7+k.val,by omega⟩
 

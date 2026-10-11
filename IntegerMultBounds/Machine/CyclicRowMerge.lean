@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CyclicRowMergeCycle
-import IntegerMultBounds.Machine.CyclicRowSplit
+module
+
+public import IntegerMultBounds.Machine.CyclicRowMergeCycle
+public import IntegerMultBounds.Machine.CyclicRowSplit
 
 /-! Actual runtime-many-group cyclic merge. It is the serialized inverse of
 CyclicRowSplit: take successive rows from role tapes in the fixed cyclic order.
 Input role heads must be positioned at their origins by charged caller code. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CyclicRowMerge
 open CyclicRowCycle (rowPrefix prefix_succ prefix_all)
 open CyclicRowSplit (cycleWords sourceWord roleWord bank prefix_length cycle_length)

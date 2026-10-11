@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.BinaryDescriptorDivisionRaw
-import IntegerMultBounds.Machine.DescriptorStackControl
+module
+
+public import IntegerMultBounds.Machine.BinaryDescriptorDivisionRaw
+public import IntegerMultBounds.Machine.DescriptorStackControl
 
 /-! Physical marked-input preparation and marker restoration for division.
 Every scan, head move, marker erasure/write, and program join is charged. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryDescriptorDivisionBoundary
 open BinaryDescriptorDivisionRaw (bank)
 open BinaryDescriptorStack (descriptor)

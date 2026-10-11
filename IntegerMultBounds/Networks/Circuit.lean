@@ -1,7 +1,9 @@
-import IntegerMultBounds.Networks.Scalar
-import Mathlib.Data.List.FinRange
-import Mathlib.Tactic.Abel
-import Mathlib.Algebra.BigOperators.Fin
+module
+
+public import IntegerMultBounds.Networks.Scalar
+public import Mathlib.Data.List.FinRange
+public import Mathlib.Tactic.Abel
+public import Mathlib.Algebra.BigOperators.Fin
 
 /-!
 Executable scalar circuits for the cancellation schedule in Section 3.
@@ -9,6 +11,8 @@ Each instruction adds a finite linear combination of registers to one register.
 This file counts these elementary instructions, not the manuscript's grouped
 multi-output gates. It does not compile circuits to tape machines.
 -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.Circuit
 

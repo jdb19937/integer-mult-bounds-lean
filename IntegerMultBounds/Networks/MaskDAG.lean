@@ -1,9 +1,13 @@
-import IntegerMultBounds.Networks.DisjointCircuit
-import Mathlib.Data.BitVec
+module
+
+public import IntegerMultBounds.Networks.DisjointCircuit
+public import Mathlib.Data.BitVec
 
 /-! A kernel-checkable bitmask certificate for disjoint addition DAGs.
 The verifier operates only on masks and parent indices. Its soundness theorem
 constructs the existing semantic DAG without evaluating its finite sets. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.MaskDAG
 

@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.SelectedSourceBitsRewind
-import IntegerMultBounds.Machine.FixedHeaderBankCopy
+module
+
+public import IntegerMultBounds.Machine.SelectedSourceBitsRewind
+public import IntegerMultBounds.Machine.FixedHeaderBankCopy
 
 /-! Uniform extraction from a complete f*q-bit source. All original q/n/rho/f
 headers and source cells are retained; output and source heads return to zero,
 and all countdown clocks return completely blank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.SelectedSourceBitsRun
 noncomputable section
 open SelectedSourceBitsCore (payload)

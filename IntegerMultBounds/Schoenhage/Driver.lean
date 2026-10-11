@@ -1,7 +1,11 @@
-import IntegerMultBounds.Schoenhage.LevelMk
-import IntegerMultBounds.Schoenhage.BatchMath
+module
+
+public import IntegerMultBounds.Schoenhage.LevelMk
+public import IntegerMultBounds.Schoenhage.BatchMath
 
 /-! The level driver on word tapes: bookkeeping fragments between levels. -/
+
+@[expose] public section
 
 set_option maxRecDepth 10000
 

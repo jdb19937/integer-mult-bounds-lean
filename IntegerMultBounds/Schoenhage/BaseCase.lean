@@ -1,8 +1,12 @@
-import IntegerMultBounds.Schoenhage.Batch
+module
+
+public import IntegerMultBounds.Schoenhage.Batch
 
 /-! The base case on word tapes: schoolbook multiplication modulo `2^N + 1`.
 For every bit `yᵢ` of the second operand the residue `2^i x` is added to the
 accumulator when `yᵢ = 1`; the products of all pairs of `tIn` go to `tOut`. -/
+
+@[expose] public section
 
 set_option maxRecDepth 10000
 

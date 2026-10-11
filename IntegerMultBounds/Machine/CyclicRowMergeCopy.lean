@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.CyclicRowCopy
+module
+
+public import IntegerMultBounds.Machine.CyclicRowCopy
 
 /-! Reverse-direction role transfer, copying a counted row from one fixed role
 tape to the common output. Payload values never control termination. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CyclicRowMergeCopy
 open CyclicRowCopy (payload bank)
 variable {a c : ℕ}

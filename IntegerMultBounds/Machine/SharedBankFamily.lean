@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.SharedBankRawCompose
+module
+
+public import IntegerMultBounds.Machine.SharedBankRawCompose
 
 /-! One fixed physical tape count for a finite cyclic family of clean blocks.
 Padding is program extension by unused stationary tapes plus an index-type cast;
 it performs no tape copying, head movement, initialization, or extra transition.
 The workspace bound depends only on the selected finite machine family. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.SharedBankFamily
 open SharedBankStageInput (raw)
 open SharedBankSkeleton (Skeleton)

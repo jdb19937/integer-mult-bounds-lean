@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.FiniteReturnStackAt
+module
+
+public import IntegerMultBounds.Machine.FiniteReturnStackAt
 
 /-! A physical empty-stack guard. It peeks one cell left of the stack head,
 then returns that head exactly; empty stacks halt at state2, occupied stacks
 halt at state3. No bottom marker or free empty-stack oracle is assumed. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.FiniteReturnGuard
 variable {t a : ℕ}
 

@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CyclicRowNormalized
-import Mathlib.Data.List.OfFn
+module
+
+public import IntegerMultBounds.Machine.CyclicRowNormalized
+public import Mathlib.Data.List.OfFn
 
 /-! Serialization for the width-one recursive base case. Two cyclic splits
 isolate the fixed radix digits; exchanging the fixed pair of stream indices
 and applying the two inverse merges transposes the digits, preserving arbitrary
 outer, middle and suffix fields. Physical composition is a separate step. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.DigitInterchangeRows
 open CyclicRowSplit
 variable {O q C E a : ℕ}

@@ -1,13 +1,17 @@
-import IntegerMultBounds.Schoenhage.RingRecord
-import IntegerMultBounds.Schoenhage.RingHeader
-import IntegerMultBounds.Schoenhage.Chunk
-import IntegerMultBounds.Schoenhage.Seal
-import IntegerMultBounds.Schoenhage.RingBridgeMath
+module
+
+public import IntegerMultBounds.Schoenhage.RingRecord
+public import IntegerMultBounds.Schoenhage.RingHeader
+public import IntegerMultBounds.Schoenhage.Chunk
+public import IntegerMultBounds.Schoenhage.Seal
+public import IntegerMultBounds.Schoenhage.RingBridgeMath
 
 /-! The pointwise-product step on word tapes: decode the header, build the
 ring product's constants, cut both operand arrays into their component
 words, multiply record by record, and clear everything but the output
 string (`runs_pwCore`). -/
+
+@[expose] public section
 
 set_option maxRecDepth 10000
 

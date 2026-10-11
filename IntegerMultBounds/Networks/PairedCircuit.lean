@@ -1,11 +1,15 @@
-import IntegerMultBounds.Networks.DisjointBalanced
-import IntegerMultBounds.Networks.PairGrouping
+module
+
+public import IntegerMultBounds.Networks.DisjointBalanced
+public import IntegerMultBounds.Networks.PairGrouping
 
 /-! Executable weighted paired-exclusion recursion. Constructor order follows
 `paired_exclusion_circuit.py`: balanced totals, coarse edges then weights,
 recursive coarse outputs, strips, singles, within-group pairs, and cross-group
 pairs with a shared left partial sum. Optional references represent zero.
 Correctness and size properties are proved separately from these definitions. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.PairedCircuit
 

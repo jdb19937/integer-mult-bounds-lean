@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ArbitraryWidthPieceCounter
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthPieceCounter
 
 /-! A reusable fixed-base quotient replaces its sole canonical input descriptor
 and physically clears the extracted remainder. This supplies the shrinking
 suffix control needed by repeated high-digit movement. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.FixedBaseDescriptorQuotient
 noncomputable section
 variable {a : ℕ}

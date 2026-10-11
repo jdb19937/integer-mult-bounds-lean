@@ -1,10 +1,14 @@
-import IntegerMultBounds.Machine.KeyPartition
-import IntegerMultBounds.Machine.DropFlag
+module
+
+public import IntegerMultBounds.Machine.KeyPartition
+public import IntegerMultBounds.Machine.DropFlag
 
 /-! A complete stable pass on raw records. Seven fixed tapes hold the original
 raw input, selector, partition workspace, and a distinct raw output. The sorted
 routing flags are destructively removed, and their emptied tape is rewound.
 All joins, rewinds, erasure, and copying are charged as real transitions. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.KeyPass
 
@@ -69,7 +73,7 @@ private theorem partition_exact (k : ℕ) (records : List (List Bool))
 private def updateHead (v : Tapes 7 1) (i : Fin 7) (p : ℤ) : Tapes 7 1 :=
   ⟨Function.update v.head i p, v.tape⟩
 
-private def resetPlacement : Fin 7 ≃ Fin 7 := Equiv.swap 0 5
+def resetPlacement : Fin 7 ≃ Fin 7 := Equiv.swap 0 5
 
 /-- The reset's active tape occupies slot five, the sorted-flag buffer. -/
 def resetProgram : Program 7 2 1 :=

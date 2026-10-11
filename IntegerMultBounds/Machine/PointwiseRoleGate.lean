@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.PointwiseBinaryNormalized
-import IntegerMultBounds.Machine.InjectivePlacement
+module
+
+public import IntegerMultBounds.Machine.PointwiseBinaryNormalized
+public import IntegerMultBounds.Machine.InjectivePlacement
 
 /-! A fixed source/destination pointwise gate placed into a role bank. Every
 role retains its head, all spectators remain exact, and a single descriptor
 and work clock are shared across all gates. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.PointwiseRoleGate
 variable {t a n : ℕ}
 noncomputable section

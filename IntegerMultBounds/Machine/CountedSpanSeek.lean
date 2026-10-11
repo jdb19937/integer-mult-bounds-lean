@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CountedSeek
-import IntegerMultBounds.Machine.CountedLoopReuse
-import IntegerMultBounds.Machine.GrowingCounterData
+module
+
+public import IntegerMultBounds.Machine.CountedSeek
+public import IntegerMultBounds.Machine.CountedLoopReuse
+public import IntegerMultBounds.Machine.GrowingCounterData
 
 /-! Reposition a complete uniform fiber using only its block-width and count
 descriptors. This physically moves the payload head and restores both clocks;
 no separately prepared product-length descriptor is needed. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedSpanSeek
 
 open CountedCopyReuse (empty binary)

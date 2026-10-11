@@ -1,10 +1,15 @@
-import IntegerMultBounds.Networks.ComplexRecursiveCallSchema
-import IntegerMultBounds.Machine.FiniteReturnStackAt
-import Mathlib.Data.Nat.Log
+module
+
+public import IntegerMultBounds.Networks.ComplexRecursiveCallSchema
+public import IntegerMultBounds.Machine.FiniteReturnStackAt
+public import Mathlib.Data.Nat.Log
 
 /-! Actual complex recursive call occurrences have distinct fixed-width return
 addresses. A placed physical return stack saves and decodes those addresses,
 retaining the full native bank when the stack slot is outside it. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexCallReturn
 noncomputable section
 open Networks.ComplexRecursiveCallSchema
@@ -19,13 +24,13 @@ abbrev addresses := addressCount sites.length (25^3)
 abbrev width := addressWidth sites.length (25^3)
 abbrev room := roomFor sites.length (25^3)
 
-private theorem pack_lt (base sites site coordinate : ℕ) (hs : site < sites)
+theorem pack_lt (base sites site coordinate : ℕ) (hs : site < sites)
     (hc : coordinate < base) : site*base+coordinate < sites*base := by
   have hm := Nat.mul_le_mul_right base (Nat.succ_le_of_lt hs)
   rw [Nat.succ_mul] at hm
   omega
 
-private def packFin {base sites : ℕ} (site : Fin sites) (coordinate : Fin base) : Fin (sites*base) :=
+def packFin {base sites : ℕ} (site : Fin sites) (coordinate : Fin base) : Fin (sites*base) :=
   ⟨site.val*base+coordinate.val,pack_lt _ _ _ _ site.isLt coordinate.isLt⟩
 
 def pc (call : Call) := packFin call.site call.slot

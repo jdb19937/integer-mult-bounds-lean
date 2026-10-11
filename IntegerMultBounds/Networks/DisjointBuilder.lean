@@ -1,9 +1,13 @@
-import IntegerMultBounds.Networks.DisjointCircuit
+module
+
+public import IntegerMultBounds.Networks.DisjointCircuit
 
 /-! Executable cancellation-free DAG construction with absent references
 representing zero. Smart addition elides zeros and interns actual union
 supports. List totals execute these constructors recursively; all node-count
 bounds concern constructed DAG nodes, not tape runtime. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.DisjointBuilder
 

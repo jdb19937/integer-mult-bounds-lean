@@ -1,5 +1,7 @@
-import IntegerMultBounds.Schoenhage.RingBridgeMath
-import IntegerMultBounds.NLogN.SynthFFT
+module
+
+public import IntegerMultBounds.Schoenhage.RingBridgeMath
+public import IntegerMultBounds.NLogN.SynthFFT
 
 /-! The recordwise monomial of the synthetic transforms (§6): multiplication
 of a polynomial record by `y^E` modulo `y^r + 1`. With `E = e r + s`,
@@ -9,6 +11,8 @@ On the record's component words (most significant bit first) this is
 `twWords`: the words are rotated and some are negated in two's complement
 (`negW`). It is exact on the grid (`gridPoly_twistRec`) and preserves disk
 grid records (`DiskGrid.twistRec`). -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Schoenhage
 
@@ -135,7 +139,7 @@ theorem recordWords_getElem {r : ℕ} (w : ℕ) (re im : Fin r → ℤ) (m : ℕ
     (recordWords w re im)[m]'(by simpa using hm) =
       compWord w (if m % 2 = 0 then re ⟨m / 2, by omega⟩ else im ⟨m / 2, by omega⟩) := by
   unfold recordWords
-  rw [flatMap_pair_getElem]
+  refine (flatMap_pair_getElem _ _ _ m (by simp; omega)).trans ?_
   simp only [List.getElem_finRange]
   split_ifs <;> rfl
 

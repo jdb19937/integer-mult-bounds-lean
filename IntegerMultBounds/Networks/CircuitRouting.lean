@@ -1,8 +1,12 @@
-import IntegerMultBounds.Networks.CircuitTriples
+module
+
+public import IntegerMultBounds.Networks.CircuitTriples
 
 /-! Compile the three-stage signed exchange by changing register names in the
 middle inverse schedule. Renaming is a finite circuit construction, not a free
 data movement operation on tapes. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.Circuit
 

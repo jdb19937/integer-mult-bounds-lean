@@ -1,8 +1,13 @@
-import IntegerMultBounds.Networks.BinaryColumnFrame
-import IntegerMultBounds.Networks.BinaryWalshComplexConjugation
+module
+
+public import IntegerMultBounds.Networks.BinaryColumnFrame
+public import IntegerMultBounds.Networks.BinaryWalshComplexConjugation
 
 /-! Complex conjugation of the actual columnwise phase frames, including
 zero columns. It changes a whole-array label frame into its genuine inverse. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Networks.BinaryColumnConjugation
 noncomputable section
 open BinaryColumns BinaryColumnFrame

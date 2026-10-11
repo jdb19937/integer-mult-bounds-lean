@@ -1,9 +1,13 @@
-import IntegerMultBounds.Schoenhage.RingSpec
+module
+
+public import IntegerMultBounds.Schoenhage.RingSpec
 
 /-! The packed ring product as a literal 91-tape program with a `HoareTime`
 contract stating the truncated negacyclic Gaussian product (`ringProgram_spec`),
 and its step bound `O(N log N log log N)` in the packed size
 `N = W r` (`ringCost_le`). -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Schoenhage
 

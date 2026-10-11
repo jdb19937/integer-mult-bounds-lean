@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.TrackedExecution
-import IntegerMultBounds.Machine.SharedBank
+module
+
+public import IntegerMultBounds.Machine.TrackedExecution
+public import IntegerMultBounds.Machine.SharedBank
 
 /-! Initialize synchronized visited tapes from wholly blank workspace for a
 fixed zero/one head template. Original data tapes and heads are untouched. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.TrackedInit
 variable {t a s : ℕ}
 

@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.ContiguousBankPlacement
-import IntegerMultBounds.Machine.CompactComplexStopRun
-import IntegerMultBounds.Machine.BinaryDescriptorCopyPlaced
+module
+
+public import IntegerMultBounds.Machine.ContiguousBankPlacement
+public import IntegerMultBounds.Machine.CompactComplexStopRun
+public import IntegerMultBounds.Machine.BinaryDescriptorCopyPlaced
 
 /-! Generate the actual recursive stop flag from native dimension header45
 and live controller exponent1. A contiguous fresh stop10 workspace follows
 original controller44/native66 and arbitrary native-core workspace; every
 persistent stack after it and every original caller tape/head is retained. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexControllerStopSetup
 noncomputable section
 open SharedPlacementAlphabet (setTape)

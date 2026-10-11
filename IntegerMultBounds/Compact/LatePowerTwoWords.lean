@@ -1,7 +1,12 @@
-import IntegerMultBounds.Compact.LatePowerTwoRank
+module
+
+public import IntegerMultBounds.Compact.LatePowerTwoRank
 
 /-! Unrestricted late word/address digit extraction and rank encoding.
 These identities require word lengths, never guard membership or long counters. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Compact.PowerTwo
 noncomputable section
 open IntegerMultBounds.Counter (value)

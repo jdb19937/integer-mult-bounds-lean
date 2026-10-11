@@ -1,7 +1,11 @@
-import IntegerMultBounds.Networks.Circuit
+module
+
+public import IntegerMultBounds.Networks.Circuit
 
 /-! Restrict a scalar program to the finite register interval proved to contain
 every target and source. No out-of-range register is defaulted or identified. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.BoundedCircuit
 

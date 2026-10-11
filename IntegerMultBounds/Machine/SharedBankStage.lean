@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.SharedBankPair
-import IntegerMultBounds.Machine.SharedBankFrames
-import IntegerMultBounds.Machine.ExactFrame
+module
+
+public import IntegerMultBounds.Machine.SharedBankPair
+public import IntegerMultBounds.Machine.SharedBankFrames
+public import IntegerMultBounds.Machine.ExactFrame
 
 /-! Finite compilation with a fixed permanent bank of arbitrary size. Actual
 stages supply their discharged contracts; initialized four-tape stages share
 the sole payload pair and b/W pair and require only blank private storage. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.SharedBankStage
 universe u
 

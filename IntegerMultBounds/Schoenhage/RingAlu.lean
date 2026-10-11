@@ -1,10 +1,14 @@
-import IntegerMultBounds.Schoenhage.RingMul
+module
+
+public import IntegerMultBounds.Schoenhage.RingMul
 
 /-! The residue unit inside the ring product's bank. Switching it on builds the
 constants for `2^N + 1` on the multiplier's tapes from `kN = ones N`
 (`runs_aluOn`); switching it off clears them (`runs_aluOff`). While it is on, a
 modular subtraction or addition reads two registers of the ring product's own
 and writes the result to a third (`runs_aluSub`, `runs_aluAdd`). -/
+
+@[expose] public section
 
 set_option maxRecDepth 10000
 

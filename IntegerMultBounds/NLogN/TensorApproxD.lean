@@ -1,5 +1,7 @@
-import IntegerMultBounds.NLogN.TensorApprox
-import IntegerMultBounds.NLogN.MultidimD
+module
+
+public import IntegerMultBounds.NLogN.TensorApprox
+public import IntegerMultBounds.NLogN.MultidimD
 
 /-! The `d`-fold form of Lemma 2.11 of Harvey and van der Hoeven. Proved:
 applying a map along the first coordinate of a `d + 1`-dimensional array, or a
@@ -8,6 +10,8 @@ approximation errors; the coordinate-by-coordinate tensor of approximations
 approximates the tensor of the exact maps with the sum of the errors; and the
 `d`-dimensional transform, normalized or not, is exactly the tensor of the
 one-dimensional transforms. No cost model is attached. -/
+
+@[expose] public section
 
 open Complex
 

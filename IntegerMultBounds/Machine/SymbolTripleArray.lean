@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.SymbolTripleDecodeStream
-import Mathlib.Data.List.OfFn
+module
+
+public import IntegerMultBounds.Machine.SymbolTripleDecodeStream
+public import Mathlib.Data.List.OfFn
 
 /-! Literal Boolean arrays for native symbol records. Three bits per symbol
 are followed by arbitrary spectator bits; permutations move the entire record,
 so decoding recovers each native symbol and every spectator without a supplied
 codec assumption. Physical encoder and decoder contracts use these same words. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.SymbolTripleArray
 noncomputable section
 variable {H B K : ℕ}

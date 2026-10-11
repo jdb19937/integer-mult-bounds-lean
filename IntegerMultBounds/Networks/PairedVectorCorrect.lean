@@ -1,9 +1,13 @@
-import IntegerMultBounds.Networks.PairedCircuit
-import IntegerMultBounds.Networks.DisjointExclusion
+module
+
+public import IntegerMultBounds.Networks.PairedCircuit
+public import IntegerMultBounds.Networks.DisjointExclusion
 
 /-! Correctness of the literal prefix-then-suffix vector branch used by the
 paired recursion. The results describe its actual persistent DAG and every
 returned reference, including the total and each ordered omission. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.PairedVectorCorrect
 

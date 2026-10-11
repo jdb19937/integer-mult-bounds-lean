@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.RadixComplexReadBank
-import IntegerMultBounds.Machine.RadixControlCleanupBank
-import IntegerMultBounds.Machine.RawLinearCombinationComplexFamily
+module
+
+public import IntegerMultBounds.Machine.RadixComplexReadBank
+public import IntegerMultBounds.Machine.RadixControlCleanupBank
+public import IntegerMultBounds.Machine.RawLinearCombinationComplexFamily
 
 /-! A fixed Gaussian coefficient kernel reads genuine retained source records,
 executes every literal wire expression, emits each output record, and erases
 both copied component banks. Source symbols and arithmetic workspace are
 restored; source and output heads advance by their actual record lengths. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RawLinearCombinationComplexCoefficient
 noncomputable section
 open DelimitedRadixRecord (Context)

@@ -1,12 +1,16 @@
-import Mathlib.Data.Nat.Basic
-import Mathlib.Data.Finset.Basic
-import Mathlib.Tactic.Linarith
-import Mathlib.Tactic.Ring
-import Lean.Elab.Tactic.Omega
+module
+
+public import Mathlib.Data.Nat.Basic
+public import Mathlib.Data.Finset.Basic
+public import Mathlib.Tactic.Linarith
+public import Mathlib.Tactic.Ring
+public import Lean.Elab.Tactic.Omega
 
 /-! Packed integer addresses, with signed offsets and explicit no-carry bounds.
 The least significant digit is first. These lemmas quantify over all list
 lengths and values; they are not bounded exhaustive checks. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Compact.Radix
 

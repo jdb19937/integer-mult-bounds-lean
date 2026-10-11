@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.ButterflyStreamEndpoint
-import IntegerMultBounds.Machine.CountedLoopHeaderClean
-import IntegerMultBounds.Machine.ExactFrame
+module
+
+public import IntegerMultBounds.Machine.ButterflyStreamEndpoint
+public import IntegerMultBounds.Machine.CountedLoopHeaderClean
+public import IntegerMultBounds.Machine.ExactFrame
 
 /-! Paired coefficient execution from the original count header and blank scratch.
 The physical count copy, clock setup and workspace cleanup are charged. Stream
 heads remain at their real endpoints; rewinding is a separate paid operation. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ButterflyStreamOriginal
 noncomputable section
 open ButterflyStreamData

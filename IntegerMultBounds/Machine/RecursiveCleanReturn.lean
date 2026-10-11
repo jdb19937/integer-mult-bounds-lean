@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.RecursiveFrameControl
-import IntegerMultBounds.Machine.BinaryDescriptorFrameRestore
+module
+
+public import IntegerMultBounds.Machine.RecursiveFrameControl
+public import IntegerMultBounds.Machine.BinaryDescriptorFrameRestore
 
 /-! A real return path over retained nonblank child headers: physically erase
 and rewind them, restore saved ancestor fields, pop the binary return PC, and
 run the selected continuation. Intervening child execution remains explicit. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveCleanReturn
 open BinaryDescriptorFrames
 open FiniteReturnStack (Code Control address)

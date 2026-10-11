@@ -1,10 +1,14 @@
-import IntegerMultBounds.Networks.TripleNeighborPermutation
-import IntegerMultBounds.Networks.GlobalLabelsNondegenerate
-import IntegerMultBounds.Networks.ProjectionTrace
+module
+
+public import IntegerMultBounds.Networks.TripleNeighborPermutation
+public import IntegerMultBounds.Networks.GlobalLabelsNondegenerate
+public import IntegerMultBounds.Networks.ProjectionTrace
 
 /-! The actual rational tensor-label join for reuse of stage-one scratch at
 stage three. The selected neighbor permutation proves nesting in the concrete
 right-associated cube. This is a label/rank lemma, not a reused schedule. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.Shared50ReuseLabels
 

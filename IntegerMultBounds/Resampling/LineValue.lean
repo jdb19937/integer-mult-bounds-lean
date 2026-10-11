@@ -1,10 +1,14 @@
-import IntegerMultBounds.Resampling.LineApply
-import IntegerMultBounds.Resampling.TableValue
-import Mathlib.Data.List.GetD
+module
+
+public import IntegerMultBounds.Resampling.LineApply
+public import IntegerMultBounds.Resampling.TableValue
+public import Mathlib.Data.List.GetD
 
 /-! The line-by-line machine's output read back: the words of line `ℓ` on the
 output tape are the `Ã` numerators of that line, with the weights written
 by the A-table machine. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.LineApply
 

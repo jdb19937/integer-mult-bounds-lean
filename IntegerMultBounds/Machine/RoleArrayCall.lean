@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.RoleArrayFrames
-import IntegerMultBounds.Machine.RoleArrayMove
+module
+
+public import IntegerMultBounds.Machine.RoleArrayFrames
+public import IntegerMultBounds.Machine.RoleArrayMove
 
 /-! Physical payload part of a recursive call: park inactive roles, move the
 active role to a common child source, execute a framed child, and reverse the
 moves. The child contract explicitly includes the parked stack and controls. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RoleArrayCall
 open RoleArrayFrames
 open SharedPlacementAlphabet (setTape)

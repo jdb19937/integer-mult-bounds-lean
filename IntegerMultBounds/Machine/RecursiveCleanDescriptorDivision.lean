@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.BinaryDescriptorDivision
-import IntegerMultBounds.Machine.RecursiveDescriptorDivision
+module
+
+public import IntegerMultBounds.Machine.BinaryDescriptorDivision
+public import IntegerMultBounds.Machine.RecursiveDescriptorDivision
 
 /-! Fully prepared, canonical-output, physically cleaned binary descriptor
 division charged to the active child's logical volume. Every boundary scan,
 marker operation, tracked transition and scratch cleanup is included. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveCleanDescriptorDivision
 open RecursiveInterchangeLayout RecursiveInterchangeVolume
 

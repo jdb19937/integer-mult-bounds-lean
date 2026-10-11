@@ -1,9 +1,13 @@
-import IntegerMultBounds.Machine.WordTape
-import IntegerMultBounds.Machine.Hoare
+module
+
+public import IntegerMultBounds.Machine.WordTape
+public import IntegerMultBounds.Machine.Hoare
 
 /-! Two-tape copying and moving of delimiter-terminated words. Every copied
 symbol costs one actual transition. The finite control is independent of the
 word length; arbitrary cells outside the two segments are preserved. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine
 

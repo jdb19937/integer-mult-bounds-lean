@@ -1,5 +1,7 @@
-import IntegerMultBounds.NLogN.FFT
-import IntegerMultBounds.NLogN.Approx
+module
+
+public import IntegerMultBounds.NLogN.FFT
+public import IntegerMultBounds.NLogN.Approx
 
 /-! The normalised radix-2 transform of Harvey and van der Hoeven, Lemma 3.2:
 every butterfly halves, so the transform is a contraction, and an additive
@@ -11,6 +13,8 @@ normalised transform is `2 ^ (-n)` times `fft` and hence `2 ^ (-n)` times the
 quadratic transform when `ω ^ (2 ^ n) = 1`; finally packaged as an
 `ApproxMap` with scaled error `n`. Twiddles are taken as exact, and no cost or
 tape model is attached. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.NLogN
 

@@ -1,10 +1,14 @@
-import IntegerMultBounds.Machine.ScalingSplitRewind
-import IntegerMultBounds.Machine.ScratchReset
+module
+
+public import IntegerMultBounds.Machine.ScalingSplitRewind
+public import IntegerMultBounds.Machine.ScratchReset
 
 /-! Literal cleanup of all fixed-coefficient scaling buffers after consumption.
 Every stage rewinds, erases its described segment, and rewinds again. Original
 blank intervals, arbitrary outside backgrounds, immutable descriptors, shared
 work clock and the source tape are retained in the complete-bank contract. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.ScalingBuffersReset
 

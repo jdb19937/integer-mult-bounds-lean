@@ -1,9 +1,13 @@
-import IntegerMultBounds.Networks.SharedPointMap
+module
+
+public import IntegerMultBounds.Networks.SharedPointMap
 
 /-! Exact compressed support keys for common-point circuit sharing. A family
 of triples containing a fixed pair is determined by its common vertices and
 its union of vertices. Thus the upstream key merges equal linear sums, not
 merely equal metadata. No circuit count is asserted here. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.SharedPointKey
 

@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.RecursiveAffineDimensionsBound
-import IntegerMultBounds.Machine.RecursiveChildHeaderHandoff
+module
+
+public import IntegerMultBounds.Machine.RecursiveAffineDimensionsBound
+public import IntegerMultBounds.Machine.RecursiveChildHeaderHandoff
 
 /-! Within-group spectator construction with a fixed physical output placement
 and full private cleanup. New headers occupy exactly the child handoff ports,
 so occupied old headers can be replaced by the existing paid handoff machine. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveAffineDimensionsClean
 open RecursiveInterchangeLayout (Descriptor volume)
 open RecursiveAffineDimensions (Group)

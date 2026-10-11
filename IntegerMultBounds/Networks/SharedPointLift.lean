@@ -1,10 +1,14 @@
-import IntegerMultBounds.Networks.SharedPointKey
-import IntegerMultBounds.Networks.MaskSignature
-import IntegerMultBounds.Networks.PairMask
+module
+
+public import IntegerMultBounds.Networks.SharedPointKey
+public import IntegerMultBounds.Networks.MaskSignature
+public import IntegerMultBounds.Networks.PairMask
 
 /-! Lift certified local pair supports through the actual omitted-point
 coordinate map. Exact core and union formulas transport the small checked
 signatures into the global equal-support sharing criterion. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.SharedPointLift
 

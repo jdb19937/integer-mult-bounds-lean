@@ -1,15 +1,20 @@
-import IntegerMultBounds.Machine.ArbitraryWidthJoinedHeadersCleanup
-import IntegerMultBounds.Machine.FixedHeaderSparseBankCopy
+module
+
+public import IntegerMultBounds.Machine.ArbitraryWidthJoinedHeadersCleanup
+public import IntegerMultBounds.Machine.FixedHeaderSparseBankCopy
 
 /-! Physically wire the six retained sources into a blank private joined
 header bank, generate all six target headers, then erase the entire bank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthJoinedHeadersShared
 noncomputable section
 variable {a t : ℕ}
 open ArbitraryWidthJoinedHeaders (originalValues)
 
 def destination : Fin 6 → Fin 12 := Fin.castAdd 6
-private theorem destination_injective : Function.Injective destination := Fin.castAdd_injective _ _
+theorem destination_injective : Function.Injective destination := Fin.castAdd_injective _ _
 def copyProgram (focus : Fin 6 → Fin t) := FixedHeaderSparseBankCopy.program
   (a := a) (by omega : 0 < t+6) focus destination destination_injective (by decide)
 def joinedProgram := Placement.placed (ArbitraryWidthJoinedHeaders.program (a := a))

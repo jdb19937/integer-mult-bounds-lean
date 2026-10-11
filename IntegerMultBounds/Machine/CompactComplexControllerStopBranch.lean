@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexControllerStopCleanup
-import IntegerMultBounds.Machine.Branch
+module
+
+public import IntegerMultBounds.Machine.CompactComplexControllerStopCleanup
+public import IntegerMultBounds.Machine.Branch
 
 /-! The finite controller reads the physically computed stop flag. Each branch
 first reclaims the stop workspace, then enters its own finite continuation.
 The selection transition itself depends solely on the scanned runtime symbol. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexControllerStopBranch
 noncomputable section
 variable {a w r q s : ℕ}

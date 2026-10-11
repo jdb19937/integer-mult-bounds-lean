@@ -1,10 +1,14 @@
-import IntegerMultBounds.Machine.BitTape
-import IntegerMultBounds.Machine.Counter
-import IntegerMultBounds.Machine.Loop
+module
+
+public import IntegerMultBounds.Machine.BitTape
+public import IntegerMultBounds.Machine.Counter
+public import IntegerMultBounds.Machine.Loop
 
 /-! A three-state, four-symbol tape implementation of fixed-width binary
 increment. It propagates carry, then returns to a left boundary marker. The
 runtime accounts for every movement in both directions, including overflow. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine
 

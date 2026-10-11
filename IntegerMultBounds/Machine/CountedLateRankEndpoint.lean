@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.CountedLateRankRun
+module
+
+public import IntegerMultBounds.Machine.CountedLateRankRun
 
 /-! Actual short RepairScan counter to the three literal late-address words.
 No full-width counter assumption, derived-width input, or free head reset. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedLateRankEndpoint
 noncomputable section
 open CountedLateRankBank

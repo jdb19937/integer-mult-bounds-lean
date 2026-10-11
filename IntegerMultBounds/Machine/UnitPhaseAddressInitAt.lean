@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.PlacementBank
-import IntegerMultBounds.Machine.BinaryCurrentAddressInit
-import IntegerMultBounds.Machine.BinaryDescriptorCleanupList
+module
+
+public import IntegerMultBounds.Machine.PlacementBank
+public import IntegerMultBounds.Machine.BinaryCurrentAddressInit
+public import IntegerMultBounds.Machine.BinaryDescriptorCleanupList
 
 /-! Initialize live counter57 and raw address43 from the physically derived
 complete-width header22 using clean clock45; erase header22 afterwards.
 No counter/address word or width header59 is prepared externally. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.UnitPhaseAddressInitAt
 noncomputable section
 open SharedPlacementAlphabet (setTape)

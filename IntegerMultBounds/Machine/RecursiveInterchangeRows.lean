@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.RecursiveInterchangeLayout
-import IntegerMultBounds.Machine.CyclicRowMerge
-import Mathlib.Data.List.OfFn
+module
+
+public import IntegerMultBounds.Machine.RecursiveInterchangeLayout
+public import IntegerMultBounds.Machine.CyclicRowMerge
+public import Mathlib.Data.List.OfFn
 
 /-! Literal serialization bridge from the seven-factor recursive descriptor to
 physical cyclic row split/merge. Descriptors for row length and group count are
 explicit inputs; their construction and payload head resets are caller work. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveInterchangeRows
 open RecursiveInterchangeLayout (Descriptor volume role)
 variable {a : ℕ}

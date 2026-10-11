@@ -1,7 +1,12 @@
-import IntegerMultBounds.Networks.FramedControlSchedule
+module
+
+public import IntegerMultBounds.Networks.FramedControlSchedule
 
 /-! Width-independent control shapes retain every wire and scalar gate, while
 forgetting only the old/new frame operators. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Networks.FramedControlShape
 open FramedCircuit FramedControlSchedule
 variable {ι κ R E F : Type*} [CommRing R] [AddCommGroup E] [Module R E]

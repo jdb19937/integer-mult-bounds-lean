@@ -1,6 +1,8 @@
-import IntegerMultBounds.NLogN.Neumann
-import IntegerMultBounds.NLogN.Approx
-import Mathlib.Algebra.Ring.GeomSum
+module
+
+public import IntegerMultBounds.NLogN.Neumann
+public import IntegerMultBounds.NLogN.Approx
+public import Mathlib.Algebra.Ring.GeomSum
 
 /-! Lemma 4.12 of Harvey–van der Hoeven: approximating the inverse `J = (1 + E)⁻¹`
 with `‖E‖ ≤ 1/2`. Proved: the truncated Neumann series `∑_{i<K} (-E)^i` is within
@@ -10,6 +12,8 @@ the ball of radius two and, because the exact `E` damps by one half, has scaled
 error at most `2 (εE + ρ)` uniformly in the number of steps; after `p` steps the
 total scaled error against `J v` is at most `2 (εE + ρ) + 1`. Bit costs and the
 particular `E` of the resampling system are not here. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.NLogN
 

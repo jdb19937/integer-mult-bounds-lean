@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.StackPush
-import IntegerMultBounds.Machine.RecursiveChildQuotientsConstant
-import IntegerMultBounds.Machine.BinaryDescriptorCleanupList
+module
+
+public import IntegerMultBounds.Machine.StackPush
+public import IntegerMultBounds.Machine.RecursiveChildQuotientsConstant
+public import IntegerMultBounds.Machine.BinaryDescriptorCleanupList
 
 /-! Physically initialize/reset the reusable stack-transfer clock and move
 payload heads by the runtime binary count. All payload symbols are spectators. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RoleArrayStackMoves
 variable {a : ℕ}
 noncomputable section

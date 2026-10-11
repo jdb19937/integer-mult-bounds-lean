@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.BinaryAddressTable
-import IntegerMultBounds.Machine.PlacedDescriptorConstruction
+module
+
+public import IntegerMultBounds.Machine.BinaryAddressTable
+public import IntegerMultBounds.Machine.PlacedDescriptorConstruction
 
 /-! Construct the actual total address width, complete binary range and total
 selected-digit count from original q/b/n. Every product and power is a real
 fixed-control tape computation; b is retained for the subsequent parity gather. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryAddressOffsetHeaders
 open SharedPlacementAlphabet (setTape)
 noncomputable section

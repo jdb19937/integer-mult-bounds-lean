@@ -1,9 +1,13 @@
-import IntegerMultBounds.Machine.RadixDigits
-import IntegerMultBounds.Machine.Hoare
+module
+
+public import IntegerMultBounds.Machine.RadixDigits
+public import IntegerMultBounds.Machine.Hoare
 
 /-! Literal fixed-radix modular addition. Three tapes and a two-state carry
 perform one transition per input digit. The radix is fixed in the finite
 alphabet and transition table; it does not grow with the input width. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.RadixAdd
 

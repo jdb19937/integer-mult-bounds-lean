@@ -1,9 +1,13 @@
-import IntegerMultBounds.Schoenhage.InvLayers
-import IntegerMultBounds.Schoenhage.Split
-import IntegerMultBounds.Schoenhage.Recomb
+module
+
+public import IntegerMultBounds.Schoenhage.InvLayers
+public import IntegerMultBounds.Schoenhage.Split
+public import IntegerMultBounds.Schoenhage.Recomb
 
 /-! One Schönhage–Strassen level on word tapes: cutting an operand into its
 padded pieces by one pass over a ruler. -/
+
+@[expose] public section
 
 set_option maxRecDepth 10000
 

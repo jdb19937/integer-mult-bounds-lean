@@ -1,8 +1,12 @@
-import IntegerMultBounds.Schoenhage.RingPointwise
+module
+
+public import IntegerMultBounds.Schoenhage.RingPointwise
 
 /-! Decoding the signed ring product's own header `Γ(p)Γ(r)Γ(w)` on tapes
 into `p`, `log₂ r` and `w` in unary, within the same bound as the transform
 header (`hdrDecodes_decodeHeader3`). -/
+
+@[expose] public section
 
 set_option maxRecDepth 10000
 

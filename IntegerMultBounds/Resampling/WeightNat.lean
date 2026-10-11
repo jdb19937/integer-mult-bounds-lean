@@ -1,9 +1,13 @@
-import IntegerMultBounds.Resampling.WeightTable
+module
+
+public import IntegerMultBounds.Resampling.WeightTable
 
 /-! The weight routine in natural numbers, as the tape machines compute it.
 The Taylor terms of `exp (∓Y/2^q)` are `±M_n` with natural magnitudes
 `M₀ = 2^q`, `M_{n+1} = ⌊M_n Y / (2^q (n+1))⌋`; the alternating sum is the
 difference of the even and odd partial sums. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Resampling.WeightNat
 

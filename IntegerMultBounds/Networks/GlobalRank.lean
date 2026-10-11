@@ -1,7 +1,11 @@
-import IntegerMultBounds.Networks.GlobalLabels
+module
+
+public import IntegerMultBounds.Networks.GlobalLabels
 
 /-! Rank accounting through the actual physical placements and tensor-stage
 label transports. No local loss or history is supplied as an oracle. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.GlobalRank
 

@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.StackPop
+module
+
+public import IntegerMultBounds.Machine.StackPop
 
 /-! A fixed finite symbol operation applied pointwise to two streams. The first
 stream is preserved; the second receives the operation's value at every counted
 cell. Binary clock setup, real scanning, and clock cleanup are charged. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.PointwiseBinary
 variable {a : ℕ}
 

@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.BinaryDescriptorFrameRestore
-import IntegerMultBounds.Machine.RecursiveHeaderBounds
+module
+
+public import IntegerMultBounds.Machine.BinaryDescriptorFrameRestore
+public import IntegerMultBounds.Machine.RecursiveHeaderBounds
 
 /-! Erase retained child layout headers and restore a saved ancestor frame,
 charging both sets of physical scans to the active child's logical volume. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveHeaderRestore
 open RecursiveInterchangeLayout RecursiveInterchangeVolume RecursiveDimensionBank
 open BinaryDescriptorFrames BinaryDescriptorFrameRestore

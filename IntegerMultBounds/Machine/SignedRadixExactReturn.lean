@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.RadixSignedShiftRight
-import IntegerMultBounds.Machine.ButterflyGuard
-import IntegerMultBounds.Networks.GaussianBoundedArithmetic
+module
+
+public import IntegerMultBounds.Machine.RadixSignedShiftRight
+public import IntegerMultBounds.Machine.ButterflyGuard
+public import IntegerMultBounds.Networks.GaussianBoundedArithmetic
 
 /-! Exact native signed-field denominator lowering. A coarser semantic grid
 supplies divisibility; word width alone never supplies normalization. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.SignedRadixExactReturn
 noncomputable section
 open RadixDigits ButterflySigned RadixSignedShiftRight

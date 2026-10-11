@@ -1,6 +1,11 @@
-import IntegerMultBounds.Machine.Placement
+module
+
+public import IntegerMultBounds.Machine.Placement
 
 /-! Alphabet-polymorphic placement sharing one physical tape. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.SharedPlacementAlphabet
 variable {a : ℕ}
 

@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.ButterflyRecordRead
+module
+
+public import IntegerMultBounds.Machine.ButterflyRecordRead
 
 /-! The physical output workspace and paid erasure of the four extracted input
 components, ready for serial emission and reuse by the next coefficient pair. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ButterflyRecordOutputData
 noncomputable section
 open RadixDigits

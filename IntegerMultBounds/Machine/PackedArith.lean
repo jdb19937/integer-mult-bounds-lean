@@ -1,4 +1,6 @@
-import IntegerMultBounds.Machine.PackedLine
+module
+
+public import IntegerMultBounds.Machine.PackedLine
 
 /-! The forward packed program of the compact-control address arithmetic on
 nine tapes, for digit widths `q` and `b` with `b + 1 ≤ q` and `n` digits:
@@ -7,6 +9,8 @@ each a line gathering its offset from the current words under the control
 word and combining by a modular column transducer into a fresh word. The
 input words and the control are preserved, the offset scratch is blank again,
 and the final words sit on their own tapes with every head at its origin. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.PackedArith
 

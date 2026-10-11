@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CleanSubbankCompile
+module
+
+public import IntegerMultBounds.Machine.CleanSubbankCompile
 
 /-! Physical composition of two clean fixed machines on leading permanent tapes.
 The shared contents may change arbitrarily between stages, including construction
 of formerly blank descriptors. Both independent private banks are left blank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.SharedBankRawCompose
 open SharedBankStageInput (raw)
 variable {k t u a : ℕ}

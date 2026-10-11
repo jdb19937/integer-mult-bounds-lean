@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.BinaryDescriptorInstall
+module
+
+public import IntegerMultBounds.Machine.BinaryDescriptorInstall
 
 /-! Physically remove a newly copied descriptor sentinel and return its head
 to zero, charging both transitions and the copying-to-cleanup join. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryDescriptorInstallRaw
 open SharedPlacementAlphabet (setTape)
 variable {t q : ℕ}

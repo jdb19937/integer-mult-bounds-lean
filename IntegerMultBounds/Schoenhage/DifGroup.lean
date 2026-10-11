@@ -1,4 +1,6 @@
-import IntegerMultBounds.Schoenhage.DifAxes
+module
+
+public import IntegerMultBounds.Schoenhage.DifAxes
 
 /-! Rounds as butterflies and twists. A round is the butterfly `H₀` on one
 address bit (`bfly`) followed by a pointwise twist `y^(-f(x))` (`twist`)
@@ -6,6 +8,8 @@ address bit (`bfly`) followed by a pointwise twist `y^(-f(x))` (`twist`)
 adding exponents, and a twist commutes with a butterfly whose bit it does not
 read (`bfly_twist_comm`); hence rounds of different axes commute
 (`difRoundAt_comm`). -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Schoenhage
 

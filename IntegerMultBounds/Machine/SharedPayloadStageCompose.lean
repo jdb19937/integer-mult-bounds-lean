@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.SharedPayloadStage
-import IntegerMultBounds.Machine.ExactFrame
+module
+
+public import IntegerMultBounds.Machine.SharedPayloadStage
+public import IntegerMultBounds.Machine.ExactFrame
 
 /-! Actual sequential assembly of heterogeneous finite-state stages, keeping
 exactly two shared payload tapes and retaining every private metadata bank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.SharedPayloadStage
 open SharedPlacementAlphabet (setTape setTape_append_left)
 universe u

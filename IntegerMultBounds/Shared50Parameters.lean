@@ -1,9 +1,13 @@
-import IntegerMultBounds.Parameters
+module
+
+public import IntegerMultBounds.Parameters
 
 /-! Exact arithmetic and the strict branching inequality for the optimized
 50-point bit-network budget. The constants are recomputed from their formulas;
 rank-balance and loss statements about an actual trace remain explicit premises
 in the conditional arithmetic corollaries below. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Shared50Parameters
 

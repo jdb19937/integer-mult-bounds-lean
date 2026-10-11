@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.WordMoves
+module
+
+public import IntegerMultBounds.Machine.WordMoves
 
 /-! Fixed control replacement of an equal-width word by a copied word.
 The source remains intact, the destination exterior remains intact, and both
 heads return to their origins, including for empty words. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.EqualWordReplace
 variable {a : ℕ}
 

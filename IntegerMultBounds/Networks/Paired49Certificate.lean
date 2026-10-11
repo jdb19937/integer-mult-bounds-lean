@@ -1,14 +1,18 @@
-import IntegerMultBounds.Networks.Certificates.Paired49.Checked
-import IntegerMultBounds.Networks.Certificates.Paired49.Outputs
-import IntegerMultBounds.Networks.Certificates.Paired49.Unique
-import IntegerMultBounds.Networks.Certificates.Paired49.Signatures
-import IntegerMultBounds.Networks.DAGAllocatorBudget
-import IntegerMultBounds.Networks.DAGCompileCorrect
+module
+
+public import IntegerMultBounds.Networks.Certificates.Paired49.Checked
+public import IntegerMultBounds.Networks.Certificates.Paired49.Outputs
+public import IntegerMultBounds.Networks.Certificates.Paired49.Unique
+public import IntegerMultBounds.Networks.Certificates.Paired49.Signatures
+public import IntegerMultBounds.Networks.DAGAllocatorBudget
+public import IntegerMultBounds.Networks.DAGCompileCorrect
 
 /-! An unconditional finite witness for the 49-vertex pair-exclusion map.
 The generator is untrusted: Lean checks all nodes, outputs and unique supports.
 This proves the witness itself, not equality with the literal recursive builder.
 The allocator budget counts physical scalar roles, not tape steps. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.Paired49Certificate
 

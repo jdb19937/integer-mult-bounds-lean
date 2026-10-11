@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.PointwiseRoleCircuit
-import IntegerMultBounds.Networks.SparseCircuit
+module
+
+public import IntegerMultBounds.Machine.PointwiseRoleCircuit
+public import IntegerMultBounds.Networks.SparseCircuit
 
 /-! Physical realization of Networks.SparseCircuit's fixed one-source XOR
 lists. Each scalar register is a literal bit stream. Gate placement, counted
 pointwise XOR, head restoration and every list join are all charged. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.SparseRoleCircuit
 open Networks
 variable {t a n : ℕ}

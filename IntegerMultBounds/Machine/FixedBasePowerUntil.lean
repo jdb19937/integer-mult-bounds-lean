@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.FixedBasePowerUntilBound
-import IntegerMultBounds.Machine.BinaryDescriptorCompare
-import IntegerMultBounds.Machine.BinaryDescriptorIncrement
-import IntegerMultBounds.Machine.LoopChain
+module
+
+public import IntegerMultBounds.Machine.FixedBasePowerUntilBound
+public import IntegerMultBounds.Machine.BinaryDescriptorCompare
+public import IntegerMultBounds.Machine.BinaryDescriptorIncrement
+public import IntegerMultBounds.Machine.LoopChain
 
 /-! The fixed-base threshold loop on nine permanent tapes. The threshold is
 runtime data; neither the loop nor any of its finite subprograms depends on
 the threshold or on the eventual stopping exponent. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.FixedBasePowerUntil
 noncomputable section
 variable {q : ℕ}

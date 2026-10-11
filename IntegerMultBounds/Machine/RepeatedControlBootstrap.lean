@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.FlatRepeatedControlArray
-import IntegerMultBounds.Machine.RadixZeroFill
+module
+
+public import IntegerMultBounds.Machine.FlatRepeatedControlArray
+public import IntegerMultBounds.Machine.RadixZeroFill
 
 /-! Exact physical setup for the repeated-control shift. Only B,Q,C,N,width
 and the payload pair are present initially. The H field, clocks, metadata
 markers, and zero offset are constructed on initially blank workspace. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RepeatedControlBootstrap
 variable {radix : ℕ} [Fact radix.Prime]
 

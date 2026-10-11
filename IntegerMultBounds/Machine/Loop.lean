@@ -1,4 +1,6 @@
-import IntegerMultBounds.Machine.Hoare
+module
+
+public import IntegerMultBounds.Machine.Hoare
 
 /-!
 A finite-state while loop whose test reads only the currently scanned symbols.
@@ -9,6 +11,8 @@ output tape or scan a binary limit between iterations.
 The potential rule charges the actual body runtime plus both control steps.
 It supports variable-cost iterations without replacing them by their maximum.
 -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine
 

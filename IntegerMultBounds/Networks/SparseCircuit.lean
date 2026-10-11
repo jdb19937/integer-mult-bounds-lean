@@ -1,7 +1,11 @@
-import IntegerMultBounds.Networks.ReversibleFanout
+module
+
+public import IntegerMultBounds.Networks.ReversibleFanout
 
 /-! Literal one-source XOR lists between disjoint register banks. Sources are
 stable, so repeated targets accumulate and repeated source labels are allowed. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.SparseCircuit
 

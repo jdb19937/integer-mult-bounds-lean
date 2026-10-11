@@ -1,6 +1,8 @@
-import Mathlib.Data.Int.Basic
-import Mathlib.Algebra.Ring.Int.Defs
-import Lean.Elab.Tactic.Omega
+module
+
+public import Mathlib.Data.Int.Basic
+public import Mathlib.Algebra.Ring.Int.Defs
+public import Lean.Elab.Tactic.Omega
 
 /-!
 The four *integer* updates in compact-control-movement.tex. These statements
@@ -8,6 +10,8 @@ hold for arbitrary dirty integer temporaries, not merely enumerated examples.
 The packed modular implementation and its no-carry refinement remain separate
 obligations; this file does not assert a tape-runtime bound.
 -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Compact
 

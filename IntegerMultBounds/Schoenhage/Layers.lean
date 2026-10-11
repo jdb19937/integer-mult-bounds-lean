@@ -1,5 +1,7 @@
-import IntegerMultBounds.Schoenhage.Butterfly
-import IntegerMultBounds.Schoenhage.IterCorrect
+module
+
+public import IntegerMultBounds.Schoenhage.Butterfly
+public import IntegerMultBounds.Schoenhage.IterCorrect
 
 /-! Transform layers on word tapes. The pair loop runs the butterfly over the
 two half-block tapes; the block loop splits the data into blocks, runs the
@@ -7,6 +9,8 @@ pair loop with the block's shift, collects sums then differences, and writes
 the children's shifts; the layer replaces the data and shift tapes by the new
 ones. The words are canonical residues `rwd N r`, and the results are the
 layer functions of `Iter.lean`. -/
+
+@[expose] public section
 
 set_option maxRecDepth 10000
 

@@ -1,15 +1,19 @@
-import Mathlib.Algebra.Module.Equiv.Basic
-import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-import Mathlib.Algebra.BigOperators.Group.Finset.Piecewise
-import Mathlib.Data.Finset.Card
-import Mathlib.Data.Fintype.Powerset
-import Mathlib.Tactic.Abel
-import Mathlib.Tactic.NormNum
-import Lean.Elab.Tactic.Omega
+module
+
+public import Mathlib.Algebra.Module.Equiv.Basic
+public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+public import Mathlib.Algebra.BigOperators.Group.Finset.Piecewise
+public import Mathlib.Data.Finset.Card
+public import Mathlib.Data.Fintype.Powerset
+public import Mathlib.Tactic.Abel
+public import Mathlib.Tactic.NormNum
+public import Lean.Elab.Tactic.Omega
 
 /-! Algebraic components of the scalar motif and common-frame argument.
 Residual spaces, sparse wire counts, and network-to-tape compilation are not
 established by this file. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks
 

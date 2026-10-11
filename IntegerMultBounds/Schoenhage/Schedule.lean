@@ -1,5 +1,7 @@
-import Mathlib.Data.Nat.Size
-import Mathlib.Tactic
+module
+
+public import Mathlib.Data.Nat.Size
+public import Mathlib.Tactic
 
 /-! The size schedule and cost recurrence of the Schönhage–Strassen recursion.
 A level with ring size `N` (modulus `2^N + 1`) uses `K = 2^k` pieces with
@@ -16,6 +18,8 @@ overhead `B (N+1)(s+1)` is at most `C (N+1)(s+1)(size (s^3) + 1)` with
 `C = C0 2^2048 + 16 A + 2 B` (`cost_le`), i.e. `O(N log N log log N)`; and
 for `m ≥ 1` input bits the power of two `topN m ∈ (2m, 4m]` is a valid
 top-level ring size (`topN_facts`, `cost_topN`). -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Schoenhage.Schedule
 

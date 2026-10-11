@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.Hoare
-import Mathlib.Logic.Equiv.Fintype
+module
+
+public import IntegerMultBounds.Machine.Hoare
+public import Mathlib.Logic.Equiv.Fintype
 
 /-! Fixed-width binary return addresses. Stack depth appears only in a tape
 head coordinate; every program, alphabet and finite-control state space is fixed
 by the return-address width. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.FiniteReturnStack
 noncomputable section
 variable {a k : ℕ}

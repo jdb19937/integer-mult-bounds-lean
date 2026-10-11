@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.RecursiveInterchangeLayout
+module
+
+public import IntegerMultBounds.Machine.RecursiveInterchangeLayout
 
 /-! A network runs on the already cyclically divided row descriptor. Recursive
 child regrouping therefore divides rows by one, never by the role count again. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveRowsNodeLayout
 open RecursiveInterchangeLayout
 

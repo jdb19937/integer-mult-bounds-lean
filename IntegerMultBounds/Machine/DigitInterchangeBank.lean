@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.DigitInterchangePasses
-import IntegerMultBounds.Machine.InjectivePlacement
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import IntegerMultBounds.Machine.DigitInterchangePasses
+public import IntegerMultBounds.Machine.InjectivePlacement
+public import Mathlib.Tactic.DeriveFintype
 
 /-! One fixed bank for all width-one digit interchange passes. Stream slots are
 named by fixed radix indices; runtime outer, middle and suffix lengths never
 enter the machine wiring. Four descriptors and two marked loop clocks are
 explicit inputs at this prepared boundary. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.DigitInterchangeBank
 open DigitInterchangeRows CyclicRowSplit
 noncomputable section

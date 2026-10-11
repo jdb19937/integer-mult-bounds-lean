@@ -1,11 +1,15 @@
-import IntegerMultBounds.Networks.PairedQuerySupport
-import IntegerMultBounds.Networks.PairedBlockCorrect
-import Mathlib.Tactic.NormNum
-import Mathlib.Tactic.Choose
+module
+
+public import IntegerMultBounds.Networks.PairedQuerySupport
+public import IntegerMultBounds.Networks.PairedBlockCorrect
+public import Mathlib.Tactic.NormNum
+public import Mathlib.Tactic.Choose
 
 /-! Literal initial unweighted pair graph: one singleton input node per pair
 in combination order, indexed references to those nodes, and absent vertex
 weights. The initial graph is verified directly, without a supplied checker. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.PairedInitialGraph
 

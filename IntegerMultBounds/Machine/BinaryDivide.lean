@@ -1,7 +1,9 @@
-import IntegerMultBounds.Machine.BinaryDecrease
-import IntegerMultBounds.Machine.PrependRead
-import IntegerMultBounds.Machine.Branch
-import IntegerMultBounds.Machine.LoopChain
+module
+
+public import IntegerMultBounds.Machine.BinaryDecrease
+public import IntegerMultBounds.Machine.PrependRead
+public import IntegerMultBounds.Machine.Branch
+public import IntegerMultBounds.Machine.LoopChain
 
 /-! Literal binary long division on five tapes. The dividend is read from its
 most significant bit downwards; each bit is prepended to the remainder,
@@ -12,6 +14,8 @@ comparison flag lives in one cell that is erased after use. Dividend and
 divisor are preserved; the remainder and quotient words are exact, and the
 cost is at most `m (4m + 6k + 27)` for an `m`-bit dividend and `k`-bit
 divisor. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.BinaryDivide
 

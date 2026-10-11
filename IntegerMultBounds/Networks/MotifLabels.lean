@@ -1,11 +1,15 @@
-import IntegerMultBounds.Networks.TensorSubspace
-import IntegerMultBounds.Networks.ProjectionRank
+module
+
+public import IntegerMultBounds.Networks.TensorSubspace
+public import IntegerMultBounds.Networks.ProjectionRank
 
 /-! The actual local tensor-label table for one motif invocation. The earlier
 space splits as the orthogonal complement of a nondegenerate line plus that
 line. Gate labels are embedded tensor subspaces, not dimension annotations.
 The side-wire comparison uses orthogonality of its two physical triple lines.
 Tensoring by the future line preserves every dimension and comparison. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.MotifLabels
 

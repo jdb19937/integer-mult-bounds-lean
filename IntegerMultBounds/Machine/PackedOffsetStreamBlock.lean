@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.PackedOffsetStreamEmit
-import IntegerMultBounds.Machine.BinaryCanonicalTrim
+module
+
+public import IntegerMultBounds.Machine.PackedOffsetStreamEmit
+public import IntegerMultBounds.Machine.BinaryCanonicalTrim
 
 /-! One runtime-width packed block becomes a canonical offset stream word.
 Its complete scratch tape starts and ends blank, including its marker. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.PackedOffsetStreamBlock
 open MarkedWordCleanup (one empty)
 open CountedCopyReuse (binary)

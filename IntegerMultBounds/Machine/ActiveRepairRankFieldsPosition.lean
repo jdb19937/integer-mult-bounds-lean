@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.CountedRankSplitPosition
+module
+
+public import IntegerMultBounds.Machine.CountedRankSplitPosition
 
 /-! Paid runtime positioning in either direction, with actual blank-clock
 initialization and cleanup. Blank counter-tail cells are traversed literally. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairRankFieldsPosition
 noncomputable section
 variable {a : ℕ}

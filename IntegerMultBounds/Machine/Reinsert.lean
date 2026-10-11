@@ -1,10 +1,14 @@
-import IntegerMultBounds.Machine.Partition
+module
+
+public import IntegerMultBounds.Machine.Partition
 
 /-! Stable replacement of flagged records by a second record stream. Tape zero
 holds the originals, tape one the replacements, and tape two the result. Each
 false flag copies its original record; each true flag consumes exactly one
 replacement. Both source tapes are preserved, and every visited source symbol
 costs exactly one transition. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.Reinsert
 

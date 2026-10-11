@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.Placement
+module
+
+public import IntegerMultBounds.Machine.Placement
 
 /-! Static composition of independent tape-bank placements. These equivalences
 wire finite transition tables; they do not perform or assume payload transfers. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.FamilyPlacement
 
 /-- Pair two active banks and their separate frames. -/

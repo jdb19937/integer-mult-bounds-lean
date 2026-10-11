@@ -1,10 +1,12 @@
-import IntegerMultBounds.Machine.PackedInverse
-import IntegerMultBounds.Machine.GuardGadget
-import IntegerMultBounds.Machine.AnyFlag
-import IntegerMultBounds.Machine.WordMoves
-import IntegerMultBounds.Machine.Branch
-import IntegerMultBounds.Machine.FlagCopy
-import IntegerMultBounds.Machine.MarkedReturn
+module
+
+public import IntegerMultBounds.Machine.PackedInverse
+public import IntegerMultBounds.Machine.GuardGadget
+public import IntegerMultBounds.Machine.AnyFlag
+public import IntegerMultBounds.Machine.WordMoves
+public import IntegerMultBounds.Machine.Branch
+public import IntegerMultBounds.Machine.FlagCopy
+public import IntegerMultBounds.Machine.MarkedReturn
 
 /-! The repair key routine for the compact-control instance in the radices
 `2^q`, `2^b`, on seventeen tapes: split the rank from the counter into the two
@@ -13,6 +15,8 @@ origin, run the inverse packed program and the ideal toggle, append the
 destination words to the key when flagged, and erase every scratch word.
 The counter, control and constants are preserved; the key holds the flag
 word of the repair scan; the cost is linear in the address width. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.KeyRoutine
 

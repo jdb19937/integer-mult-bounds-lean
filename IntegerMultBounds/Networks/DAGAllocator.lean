@@ -1,11 +1,15 @@
-import IntegerMultBounds.Networks.DisjointPruning
-import IntegerMultBounds.Networks.ReversibleFanout
-import Mathlib.Data.List.Range
+module
+
+public import IntegerMultBounds.Networks.DisjointPruning
+public import IntegerMultBounds.Networks.ReversibleFanout
+public import Mathlib.Data.List.Range
 
 /-! Literal role allocation for a pruned addition DAG. Consumer ports preserve
 upstream gate/argument order and requested-output order. Each node shares its
 first input slot with its first output, allocates all other outputs fresh,
 and retires its nonpivot inputs. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.DAGAllocator
 

@@ -1,5 +1,7 @@
-import IntegerMultBounds.Resampling.NeumannWords
-import IntegerMultBounds.NLogN.ResamplingManuscript
+module
+
+public import IntegerMultBounds.Resampling.NeumannWords
+public import IntegerMultBounds.NLogN.ResamplingManuscript
 
 /-! The manuscript's numerical maps with supplied weights. Exact rounding of
 an exponential cannot be computed within a provable time bound, so the tape
@@ -8,6 +10,8 @@ weights. The error analysis is unchanged: each fixed-point term keeps its
 scaled error (four for `Ã`, six for `Ẽ` and `D̃'`), so `Ã` and the clamp-free
 `B̃₀` built from any such tables approximate `A` and `B₀` with errors below
 `p²` and send the unit disk to itself. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Resampling.TabledMaps
 

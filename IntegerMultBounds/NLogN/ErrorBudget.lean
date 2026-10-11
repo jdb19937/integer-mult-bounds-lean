@@ -1,4 +1,6 @@
-import IntegerMultBounds.NLogN.FixedPoint
+module
+
+public import IntegerMultBounds.NLogN.FixedPoint
 
 /-! Total error budget of the fixed-point convolution pipeline: forward
 transforms of both inputs, pointwise product, inverse transform, division by
@@ -10,6 +12,8 @@ most `5 * (2 ^ n) ^ 2 * A * ε` for `ε ≤ 1 ≤ A`; and with `ε = 1 / 2 ^ p` 
 integer outputs. Whether the exact pipeline computes the convolution is the
 business of the transform files; nothing here chooses `ω` or models the cost
 of fixed-point arithmetic. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.NLogN
 

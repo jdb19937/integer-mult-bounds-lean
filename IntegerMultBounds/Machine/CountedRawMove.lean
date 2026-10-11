@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CountedRawFill
-import IntegerMultBounds.Machine.WordSegments
+module
+
+public import IntegerMultBounds.Machine.CountedRawFill
+public import IntegerMultBounds.Machine.WordSegments
 
 /-! Exact raw destructive transfer with a reusable actual binary countdown.
 Arbitrary symbols are moved; source cells are physically erased, surrounding
 cells and the immutable span descriptor are retained. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedRawMove
 open CountedRawFill (filled)
 

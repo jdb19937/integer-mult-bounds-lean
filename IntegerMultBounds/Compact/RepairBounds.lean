@@ -1,17 +1,21 @@
-import Mathlib.Basic.Real.Basic
-import Mathlib.Tactic.NormNum
-import Mathlib.Tactic.Linarith
-import Mathlib.Tactic.Ring
-import Mathlib.Tactic.Positivity
-import Mathlib.Tactic.FieldSimp
-import Mathlib.Tactic.GCongr
-import Lean.Elab.Tactic.Omega
+module
+
+public import Mathlib.Basic.Real.Basic
+public import Mathlib.Tactic.NormNum
+public import Mathlib.Tactic.Linarith
+public import Mathlib.Tactic.Ring
+public import Mathlib.Tactic.Positivity
+public import Mathlib.Tactic.FieldSimp
+public import Mathlib.Tactic.GCongr
+public import Lean.Elab.Tactic.Omega
 
 /-! Uniform numerical bounds used in the local exceptional-record repair cost.
 `Counting.lean` and `Density.lean` connect these estimates to the actual
 bad-address sets. Realizing sorting on tapes remains a separate obligation.
 The hypotheses here are explicit arithmetic inequalities.
 -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Compact
 

@@ -1,8 +1,12 @@
-import IntegerMultBounds.Networks.DisjointCircuit
+module
+
+public import IntegerMultBounds.Networks.DisjointCircuit
 
 /-! Interpret weighted graph atoms as disjoint supports of original inputs.
 This transports source partitions through coarse graph aggregation, where
 one vertex or edge weight already represents many original sources. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.SupportInterpretation
 

@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.RadixZeroFill
-import IntegerMultBounds.Machine.FamilyPlacementAlphabet
+module
+
+public import IntegerMultBounds.Machine.RadixZeroFill
+public import IntegerMultBounds.Machine.FamilyPlacementAlphabet
 
 /-! A finite family of physical prefix-field initializers. Each dimension has
 an output, reusable clock, and immutable binary width descriptor. A final spare
 tape makes the empty family a genuine machine as well. Only the number of fields
 is compiled into the transition table; every width is supplied on a tape. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.PrefixCounterInit
 variable {q : ℕ} (hq : 2 ≤ q)
 
@@ -23,12 +28,12 @@ theorem tapeCount_eq (c : ℕ) : tapeCount c = 3*c+1 := by
 theorem stateCount_eq (c : ℕ) : stateCount c = 23*c+1 := by
   induction c <;> simp_all [stateCount]; omega
 
-private def haltProgram : Program 1 1 q where
+def haltProgram : Program 1 1 q where
   tapes_pos := by decide
   start := 0
   transition := fun _ _ => none
 
-private def spare : Tapes 1 q := ⟨fun _ => 0, fun _ _ => blank⟩
+def spare : Tapes 1 q := ⟨fun _ => 0, fun _ _ => blank⟩
 
 def program : (c : ℕ) → Program (tapeCount c) (stateCount c) q
   | 0 => haltProgram

@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.TrackedCleanupAt
-import IntegerMultBounds.Machine.TrackedHoare
+module
+
+public import IntegerMultBounds.Machine.TrackedCleanupAt
+public import IntegerMultBounds.Machine.TrackedHoare
 
 /-! A fixed finite cleanup list for a tracked execution. Every private data
 pair is erased; retained common data and heads are framed unchanged while
 only their trackers are erased. All tape visits and list joins are charged. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.TrackedCleanupList
 open SharedPlacementAlphabet (setTape)
 variable {t a : ℕ}
@@ -102,7 +107,7 @@ def states : ℕ → ℕ
   | 0 => 1
   | n+1 => states n+4
 
-private def haltProgram (ht : 0 < t) : Program (t+t) 1 a :=
+def haltProgram (ht : 0 < t) : Program (t+t) 1 a :=
   ⟨by omega,0,fun _ _ => none⟩
 
 def initialStages (keep : Fin t → Bool) (ht : 0 < t) :

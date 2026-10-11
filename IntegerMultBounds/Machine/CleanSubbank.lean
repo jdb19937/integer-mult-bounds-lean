@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.SharedBankStage
+module
+
+public import IntegerMultBounds.Machine.SharedBankStage
 
 /-! Place a clean small-bank machine at arbitrary selected permanent tapes,
 using blank private workspace and preserving every unselected permanent tape.
 The placement is fixed and adds no copying, head reset, or transition cost. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CleanSubbank
 noncomputable section
 variable {c s k q a : ℕ}

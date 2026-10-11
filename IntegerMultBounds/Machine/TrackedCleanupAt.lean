@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.TrackedCleanupOne
-import IntegerMultBounds.Machine.BinaryDescriptorInstall
+module
+
+public import IntegerMultBounds.Machine.TrackedCleanupOne
+public import IntegerMultBounds.Machine.BinaryDescriptorInstall
 
 /-! Place literal visited-interval cleanup in fixed tape slots. Pair cleanup
 erases data and its tracker; tracker-only cleanup preserves every data tape. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.TrackedCleanupAt
 open SharedPlacementAlphabet (setTape)
 variable {t a : ℕ}

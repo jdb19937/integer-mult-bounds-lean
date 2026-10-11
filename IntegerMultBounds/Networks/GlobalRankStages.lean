@@ -1,7 +1,11 @@
-import IntegerMultBounds.Networks.GlobalRank
+module
+
+public import IntegerMultBounds.Networks.GlobalRank
 
 /-! Aggregation over actual disjoint physical invocations within a stage,
 followed by the real three tensor-stage boundaries. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.GlobalRank
 

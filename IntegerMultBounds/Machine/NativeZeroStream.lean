@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.NativeZeroRecord
+module
+
+public import IntegerMultBounds.Machine.NativeZeroRecord
 
 /-! Repeated valid native zero coefficients are emitted by a physical outer
 countdown. Both inner and outer generated controls start and finish blank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.NativeZeroStream
 noncomputable section
 open CountedLoopReuseAlphabet (one)

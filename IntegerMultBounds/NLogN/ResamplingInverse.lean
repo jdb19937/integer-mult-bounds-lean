@@ -1,7 +1,9 @@
-import IntegerMultBounds.NLogN.Resampling
-import Mathlib.Analysis.Complex.ExponentialBounds
-import Mathlib.Analysis.Real.Pi.Bounds
-import Mathlib.Tactic
+module
+
+public import IntegerMultBounds.NLogN.Resampling
+public import Mathlib.Analysis.Complex.ExponentialBounds
+public import Mathlib.Analysis.Real.Pi.Bounds
+public import Mathlib.Tactic
 
 /-! Section 4.2 of Harvey and van der Hoeven: solving the resampling system.
 The row-selecting map `C`, the square subsystem `T' = C T`, the diagonal map
@@ -11,6 +13,8 @@ termwise exponent inequality, and Lemma 4.6: `‖E u‖ ≤ 2.01 e^{-π α² θ 
 entrywise for `‖u‖ ≤ 1` when `α² θ ≥ 1`, hence `‖E u‖ ≤ 1/2`. The
 left inverse `D N⁻¹ C` of `T` is assembled elsewhere from these facts; no
 fixed-point approximation is part of this file. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.NLogN
 

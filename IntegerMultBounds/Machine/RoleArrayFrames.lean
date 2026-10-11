@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.RoleArrayStackAt
+module
+
+public import IntegerMultBounds.Machine.RoleArrayStackAt
 
 /-! A fixed list of inactive role arrays is destructively parked in order and
 recovered in reverse. No payload symbol is reserved, all vacated role slots and
 work clock return to blank/head-zero, and the exact older stack is restored. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RoleArrayFrames
 open SharedPlacementAlphabet (setTape)
 variable {t a : ℕ}

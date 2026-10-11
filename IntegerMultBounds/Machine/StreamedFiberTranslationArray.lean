@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.StreamedFiberTranslation
-import IntegerMultBounds.Machine.FlatControlledShift
+module
+
+public import IntegerMultBounds.Machine.StreamedFiberTranslation
+public import IntegerMultBounds.Machine.FlatControlledShift
 
 /-! Exact flat-array destinations for the actual literal-control-stream
 machine. Every suffix bit is carried intact to its offset back coordinate. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.StreamedFiberTranslationArray
 open StreamedFiberTranslation (offset)
 

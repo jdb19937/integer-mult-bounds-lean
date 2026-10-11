@@ -1,10 +1,14 @@
-import IntegerMultBounds.Machine.ScalingSplit
-import IntegerMultBounds.Machine.CountedSeek
+module
+
+public import IntegerMultBounds.Machine.ScalingSplit
+public import IntegerMultBounds.Machine.CountedSeek
 
 /-! Literal return of every scaling-piece buffer head to its origin. The fixed
 sequence of backward counted seeks preserves all payload cells, source head,
 descriptors and reusable clock. This connects the split's end-position buffers
 to a merge consuming each piece from its beginning. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.ScalingSplitRewind
 

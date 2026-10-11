@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.SparseRoleCircuit
-import IntegerMultBounds.Networks.GlobalCircuit
-import IntegerMultBounds.Networks.BoundedCircuit
+module
+
+public import IntegerMultBounds.Machine.SparseRoleCircuit
+public import IntegerMultBounds.Networks.GlobalCircuit
+public import IntegerMultBounds.Networks.BoundedCircuit
 
 /-! A proof-carrying fixed compiler for scalar lists consisting of one-source
 XORs. The list is preserved literally, including reversal and role renaming;
 only its finite register names are enumerated as physical role tape slots. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.OneSourceCircuit
 open Networks
 variable {ι κ : Type*}
@@ -64,7 +69,7 @@ theorem finiteProgram (capacity : ℕ) (p : Circuit.Program ℕ (ZMod 2))
 noncomputable section
 variable {t a n : ℕ}
 
-private def chosen (e : Fin t ≃ ι) (g : Circuit.Gate ι (ZMod 2))
+def chosen (e : Fin t ≃ ι) (g : Circuit.Gate ι (ZMod 2))
     (h : ∃ dst src, dst ≠ src ∧ g = ReversibleFanout.add dst src) : PointwiseRoleGate.Gate t where
   dst := e.symm (Classical.choose h)
   src := e.symm (Classical.choose (Classical.choose_spec h))

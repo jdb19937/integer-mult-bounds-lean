@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.BinaryAddressTableFill
+module
+
+public import IntegerMultBounds.Machine.BinaryAddressTableFill
 
 /-! A fixed nine-tape machine writes every width-w binary address in increasing
 order from only the original width header. Power/count/zero-counter generation,
 copying, head returns and full private erasure are all physical and charged. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryAddressTable
 open BinaryAddressTableData
 open CountedCopyReuse (empty binary)

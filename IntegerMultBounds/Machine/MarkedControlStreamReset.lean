@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.MarkedWordCleanup
-import IntegerMultBounds.Machine.ExactFrame
+module
+
+public import IntegerMultBounds.Machine.MarkedWordCleanup
+public import IntegerMultBounds.Machine.ExactFrame
 
 /-! Rewind and erase a marked control stream whose interior may contain blanks.
 Only the separator terminates the backwards scan; every generated cell and the
 marker are erased, while the cell beyond the stream is retained. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.MarkedControlStreamReset
 open MarkedWordCleanup (marked empty one)
 variable {a : ℕ}

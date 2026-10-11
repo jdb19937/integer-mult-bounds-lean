@@ -1,11 +1,15 @@
-import IntegerMultBounds.Schoenhage.RingConst
-import IntegerMultBounds.Schoenhage.Reverse
-import IntegerMultBounds.Schoenhage.RingProgram
+module
+
+public import IntegerMultBounds.Schoenhage.RingConst
+public import IntegerMultBounds.Schoenhage.Reverse
+public import IntegerMultBounds.Schoenhage.RingProgram
 
 /-! Moving words between tapes, reversed, once per tick: the operand words of
 one record go from the chunk lists to the multiplier's input tapes, and its
 output words come back, in each case with the bit order turned
 (`runs_moveRev`). -/
+
+@[expose] public section
 
 set_option maxRecDepth 10000
 

@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.FlatControlledShiftLayout
-import IntegerMultBounds.Machine.BinaryDescriptorInstall
+module
+
+public import IntegerMultBounds.Machine.FlatControlledShiftLayout
+public import IntegerMultBounds.Machine.BinaryDescriptorInstall
 
 /-! Physically install the B/Q/P words of a controlled shift from the retained
 nine-tape dimension bank. Every destination starts wholly blank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ControlledShiftDimensionInstall
 open SharedPlacementAlphabet (setTape)
 open FlatControlledShiftLayout (suffix)
@@ -36,9 +41,9 @@ private theorem set_p (source dest : ℤ → Fin 4) (p r : ℤ)
   unfold setTape suffix
   apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> simp [FlatControlledShiftLayout.descriptorHead,FlatControlledShiftLayout.descriptorTape]
 
-private def sourceSlot (i : Fin 9) : Fin (9+17) := Fin.castAdd 17 i
-private def destSlot (i : Fin 17) : Fin (9+17) := Fin.natAdd 9 i
-private theorem separate (i : Fin 9) (j : Fin 17) : sourceSlot i ≠ destSlot j := by
+def sourceSlot (i : Fin 9) : Fin (9+17) := Fin.castAdd 17 i
+def destSlot (i : Fin 17) : Fin (9+17) := Fin.natAdd 9 i
+theorem separate (i : Fin 9) (j : Fin 17) : sourceSlot i ≠ destSlot j := by
   intro h
   have hv := congrArg Fin.val h
   have hi := i.isLt

@@ -1,8 +1,12 @@
-import IntegerMultBounds.Networks.DisjointBuilder
+module
+
+public import IntegerMultBounds.Networks.DisjointBuilder
 
 /-! Literal balanced totals from the pair-exclusion implementation: split the
 input list at length divided by two, build left before right, and intern their
 final addition. The construction order matters for subsequent DAG sharing. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.DisjointBalanced
 

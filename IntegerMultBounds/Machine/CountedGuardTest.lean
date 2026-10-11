@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.GuardTest
-import IntegerMultBounds.Machine.CountedLoopReuseAlphabet
-import IntegerMultBounds.Machine.BinaryDescriptorCleanupList
+module
+
+public import IntegerMultBounds.Machine.GuardTest
+public import IntegerMultBounds.Machine.CountedLoopReuseAlphabet
+public import IntegerMultBounds.Machine.BinaryDescriptorCleanupList
 
 /-! Fixed-control comparison of a runtime-width field and constant, followed
 by actual guard-flag append. The original comparison-width header is retained;
 the order cell and countdown workspace finish wholly blank at their origins. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedGuardTest
 noncomputable section
 variable {a : ℕ}

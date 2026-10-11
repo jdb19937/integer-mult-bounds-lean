@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.BinaryAddressOffsetHeaders
-import IntegerMultBounds.Machine.BinaryDescriptorCleanupList
+module
+
+public import IntegerMultBounds.Machine.BinaryAddressOffsetHeaders
+public import IntegerMultBounds.Machine.BinaryDescriptorCleanupList
 
 /-! Construct the repetition dimensions from six original descriptors q, b, n,
 P, H, L. The four products, two powers, and temporary-header cleanup are actual
 fixed-control tape programs. No derived dimension is supplied as an input. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryAddressOffsetRepeatHeaders
 open SharedPlacementAlphabet (setTape)
 noncomputable section

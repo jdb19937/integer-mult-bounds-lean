@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.StackPop
-import IntegerMultBounds.Machine.Reflection
+module
+
+public import IntegerMultBounds.Machine.StackPop
+public import IntegerMultBounds.Machine.Reflection
 
 /-! Destructive forward parking with a reusable length clock. Reflection changes
 the physical transition table of StackPop, reversing both payload head motions
 but leaving the binary controls unchanged. It is not a free tape reversal. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.StackPush
 variable {a : ℕ}
 

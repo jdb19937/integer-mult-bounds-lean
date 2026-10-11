@@ -1,6 +1,8 @@
-import IntegerMultBounds.Machine.GaussianLine
-import IntegerMultBounds.Machine.Negate
-import IntegerMultBounds.Resampling.NeumannWords
+module
+
+public import IntegerMultBounds.Machine.GaussianLine
+public import IntegerMultBounds.Machine.Negate
+public import IntegerMultBounds.Resampling.NeumannWords
 
 /-! The subtraction pass of the Neumann evaluation on tapes: for each record,
 the first `w` bits of the accumulator word are copied by a ruler, negated in
@@ -8,6 +10,8 @@ place, and added with sign extension onto a copy of the start word, which is
 written to the output. Five tapes: accumulators, start words, output,
 scratch, the width ruler. The output records are exactly
 `nextWords vs es w`. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.SubPass
 

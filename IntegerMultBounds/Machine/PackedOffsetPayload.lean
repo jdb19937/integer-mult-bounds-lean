@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.PackedOffsetStreamRaw
-import IntegerMultBounds.Machine.StreamedFiberTranslationReusable
-import IntegerMultBounds.Machine.MarkedControlStreamReset
+module
+
+public import IntegerMultBounds.Machine.PackedOffsetStreamRaw
+public import IntegerMultBounds.Machine.StreamedFiberTranslationReusable
+public import IntegerMultBounds.Machine.MarkedControlStreamReset
 
 /-! Physical packed-offset payload rotation, including synthesis and erasure
 of its control stream. Original w/B/Q/n headers and both source heads survive;
 all private storage starts and finishes wholly blank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.PackedOffsetPayload
 noncomputable section
 open MarkedWordCleanup (one empty marked)

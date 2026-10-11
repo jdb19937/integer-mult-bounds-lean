@@ -1,9 +1,13 @@
-import IntegerMultBounds.Machine.WordTape
-import IntegerMultBounds.Machine.Hoare
-import IntegerMultBounds.Machine.Counter
+module
+
+public import IntegerMultBounds.Machine.WordTape
+public import IntegerMultBounds.Machine.Hoare
+public import IntegerMultBounds.Machine.Counter
 
 /-! Literal two-tape preparation of equally padded LSF operands. Missing
 high bits become zero, at one transition per column of the longer operand. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.BinaryPad
 

@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.PlacedDescriptorConstruction
-import IntegerMultBounds.Machine.PackedOffsetPowerHeader
-import IntegerMultBounds.Machine.RecursiveDimensionBank
+module
+
+public import IntegerMultBounds.Machine.PlacedDescriptorConstruction
+public import IntegerMultBounds.Machine.PackedOffsetPowerHeader
+public import IntegerMultBounds.Machine.RecursiveDimensionBank
 
 /-! Physically derive the packed front-action fiber count P*2^w*G from the
 four original interchange headers. Only the derived count survives; all
 power/product workspace is physically erased. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryPackedRowCount
 noncomputable section
 variable {a : ℕ}
@@ -129,7 +134,7 @@ theorem second_product (hs : Fin 4 → List Bool) (P w G : ℕ) (hG : 0 < G)
   -- every level of the tape vector.
   · apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> simp [multiplied, prepared, bank, secondPlacement]
 
-private def cleanCost (P w : ℕ) := 2*(powerBits w).length+2*(productBits P w).length+12
+def cleanCost (P w : ℕ) := 2*(powerBits w).length+2*(productBits P w).length+12
 
 theorem cleans (hs : Fin 4 → List Bool) (P w G : ℕ) :
     HoareTime (cleanup (a := a)) (fun z => z=prepared hs P w G) (fun z => z=output hs P w G) (cleanCost P w) := by

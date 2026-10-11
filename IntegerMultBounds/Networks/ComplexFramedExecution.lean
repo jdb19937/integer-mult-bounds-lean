@@ -1,12 +1,16 @@
-import IntegerMultBounds.Networks.ComplexPhaseBudget
-import IntegerMultBounds.Networks.BinaryColumnFrame
-import IntegerMultBounds.Networks.GroupedModuleFrames
-import IntegerMultBounds.Networks.FramedFactorExecution
+module
+
+public import IntegerMultBounds.Networks.ComplexPhaseBudget
+public import IntegerMultBounds.Networks.BinaryColumnFrame
+public import IntegerMultBounds.Networks.GroupedModuleFrames
+public import IntegerMultBounds.Networks.FramedFactorExecution
 
 /-! Actual framed execution of the size-25 complex network on complex arrays.
 Rational gates retain their original graph and coefficients. The theorem
 identifies the whole physical run with the signed bank exchange conjugated
 by its actual endpoint frames, including every scratch wire. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.ComplexFramedExecution
 

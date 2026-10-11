@@ -1,4 +1,6 @@
-import IntegerMultBounds.Machine.Execution
+module
+
+public import IntegerMultBounds.Machine.Execution
 
 /-!
 Finite-state sequential composition in the project's literal machine model.
@@ -9,6 +11,8 @@ The design follows the exact-cost composition approach of complexitylib
 (SamuelSchlesinger/complexitylib, commit 3f4b5fe, Apache 2.0); definitions and
 proofs here are for our two-sided, writable-tape model.
 -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine
 

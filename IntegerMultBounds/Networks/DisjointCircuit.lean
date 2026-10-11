@@ -1,11 +1,15 @@
-import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-import Mathlib.Data.List.Basic
+module
+
+public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+public import Mathlib.Data.List.Basic
 
 /-! Finite cancellation-free addition DAGs with explicit source supports.
 A structural checker validates backward references and disjoint unions.
 Evaluation executes the listed additions; support sums describe its proved
 semantics, and equal-support interning safely shares previously built nodes.
 No generated circuit certificate or tape-runtime claim is made here. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.DisjointCircuit
 

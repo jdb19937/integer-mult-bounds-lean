@@ -1,5 +1,7 @@
-import IntegerMultBounds.NLogN.ResamplingPermuted
-import IntegerMultBounds.NLogN.ExplicitNumeric
+module
+
+public import IntegerMultBounds.NLogN.ResamplingPermuted
+public import IntegerMultBounds.NLogN.ExplicitNumeric
 
 /-! The permutation-left resampling identity in `d` dimensions and its numerical
 maps (§7, Lemmas 7.1 and 7.2). Tensoring the one-dimensional identity
@@ -10,6 +12,8 @@ explicit clamped maps of `ExplicitNumeric` the clamped `Ã` and `B̃₀` approxi
 `A` and `B₀` with scaled errors `(8m+7)/2` and `(24m+23)/2`, below `p²` for
 `m ≤ p` and `p ≥ 13`, hence the linewise tensors with errors below `d p²`.
 Costs are not part of this file. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.NLogN
 

@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.SelectedSourceBitsData
+module
+
+public import IntegerMultBounds.Machine.SelectedSourceBitsData
 
 /-! The selected control stream is computed from every literal full-source
 row in order. Each row contributes n bits from positions rho+i*q. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.SelectedSourceBitsStreamData
 open SelectedSourceBitsData
 

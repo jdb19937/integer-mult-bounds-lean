@@ -1,9 +1,13 @@
-import IntegerMultBounds.Networks.BinaryPhase
+module
+
+public import IntegerMultBounds.Networks.BinaryPhase
 
 /-! Exact finite binary Walsh operators and their translation-kernel conjugates.
 We use the unnormalized Walsh sum with its explicit inverse; conjugation is the
 same as with the normalized Hadamard tensor, without introducing square roots.
 No tape implementation or cost claim is made. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.BinaryWalsh
 

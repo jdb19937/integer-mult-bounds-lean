@@ -1,9 +1,13 @@
-import IntegerMultBounds.Networks.DisjointUnique
-import IntegerMultBounds.Networks.PairedInitialGraph
+module
+
+public import IntegerMultBounds.Networks.DisjointUnique
+public import IntegerMultBounds.Networks.PairedInitialGraph
 
 /-! Support interning remains globally unique through every literal paired
 constructor and recursive level. The final nonempty-support invariant is then
 derived from the already-proved validity of the actual completed DAG. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.PairedUnique
 

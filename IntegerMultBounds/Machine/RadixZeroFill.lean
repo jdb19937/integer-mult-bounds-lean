@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.RadixToBinary
-import IntegerMultBounds.Machine.PrefixCounter
-import IntegerMultBounds.Machine.CountedLoopReuse
+module
+
+public import IntegerMultBounds.Machine.RadixToBinary
+public import IntegerMultBounds.Machine.PrefixCounter
+public import IntegerMultBounds.Machine.CountedLoopReuse
 
 /-! Physical construction of a zero radix field from a supplied binary width.
 A counted binary loop writes one placeholder per digit; a backward finite
 transducer recodes those placeholders and restores the field head. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RadixZeroFill
 
 open CountedCopyReuse (empty binary)
@@ -12,7 +17,7 @@ variable {q : ℕ} (hq : 2 ≤ q)
 
 private def one {a : ℕ} (f : ℤ → Fin (a+4)) (r : ℤ) : Tapes 1 a := ⟨fun _ => r,fun _ => f⟩
 
-private def writeProgram : Program 1 2 0 where
+def writeProgram : Program 1 2 0 where
   tapes_pos := by decide
   start := 0
   transition := fun st _ => if st = 0 then some (1,fun _ => (bitSymbol false,.right)) else none
@@ -36,7 +41,7 @@ private theorem write_hoare (n : ℕ) :
     simpa [Function.update_apply] using congrFun he z
   · simp [step,writeProgram]
 
-private def binaryFill : Program 3 18 0 := CountedLoopReuse.program writeProgram
+def binaryFill : Program 3 18 0 := CountedLoopReuse.program writeProgram
 
 private def binaryBank (bs : List Bool) (n : ℕ) : Tapes 3 0 :=
   CountedLoopReuse.bank (filled n) empty (binary bs) 1 1
@@ -60,7 +65,7 @@ private def placeholders (n : ℕ) : ℤ → Fin (q+4) :=
 def encodedBinary (bs : List Bool) : ℤ → Fin (q+4) :=
   fun z => (RadixToBinary.binaryEncoding (q := q)).encode (binary bs z)
 
-private def triple (out clock descriptor : ℤ → Fin (q+4)) (p r s : ℤ) : Tapes 3 q :=
+def triple (out clock descriptor : ℤ → Fin (q+4)) (p r s : ℤ) : Tapes 3 q :=
   ⟨![p,r,s],![out,clock,descriptor]⟩
 
 /-- No marker or placeholder is supplied on either writable tape. -/
@@ -102,7 +107,7 @@ private theorem map_bank (bs : List Bool) (n : ℕ) :
     · exact encode_empty
     · rfl
 
-private def initializeProgram : Program 3 2 q where
+def initializeProgram : Program 3 2 q where
   tapes_pos := by decide
   start := 0
   transition := fun st symbols => if st = 0 then
@@ -123,7 +128,7 @@ private theorem initialize_hoare (bs : List Bool) :
       · by_cases hz : z = 1 <;> simp [input,afterFill,triple,hz]
   · simp [step,initializeProgram]
 
-private def fillProgram : Program 3 18 q :=
+def fillProgram : Program 3 18 q :=
   Alphabet.program (RadixToBinary.binaryEncoding (q := q)) binaryFill
 
 private theorem fill_hoare (bs : List Bool) (n : ℕ) (hn : Counter.value bs = n) :
@@ -138,7 +143,7 @@ private theorem fill_hoare (bs : List Bool) (n : ℕ) (hn : Counter.value bs = n
 
 /-- Move left from the output endpoint, recode each placeholder, and restore
 the least-significant head. Every converted digit takes one actual transition. -/
-private def recodeProgram : Program 1 3 q where
+def recodeProgram : Program 1 3 q where
   tapes_pos := by decide
   start := 0
   transition := fun st symbols =>

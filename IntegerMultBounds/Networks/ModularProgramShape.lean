@@ -1,9 +1,13 @@
-import IntegerMultBounds.Networks.ModularFrameSchedule
+module
+
+public import IntegerMultBounds.Networks.ModularFrameSchedule
 
 /-! A fixed rational instruction list generates each modular edge program.
 Only coefficient reduction depends on the modulus: operation order, pivots,
 program length and interchange count are all fixed before choosing the width.
 These are field-operation counts, not tape-transition costs. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.ModularProgramShape
 

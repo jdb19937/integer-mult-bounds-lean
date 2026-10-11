@@ -1,4 +1,6 @@
-import IntegerMultBounds.Networks.ComplexEndpoints
+module
+
+public import IntegerMultBounds.Networks.ComplexEndpoints
 
 /-! Explicit endpoint correction programs and per-column scalar kernels for
 the actual complex network. The source and sink sign corrections become
@@ -6,6 +8,8 @@ literal single-wire instructions placed around the lowered factor program,
 with exact instruction counts (28 per data wire, independent of the rank
 budget), and every all-column vector factor expands into its per-column
 two-term Gaussian-dyadic translation kernels `aI + bX_v`. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.ComplexCorrections
 

@@ -1,9 +1,13 @@
-import IntegerMultBounds.Networks.OrderedAffine
+module
+
+public import IntegerMultBounds.Networks.OrderedAffine
 
 /-! Compile whole-group triangular transforms to ordered scalar affine steps.
 Cross-group additions, reflected additions, and recursive interchanges retain
 their exact existing semantics. Compilation preserves recursive interchange
 counts and commutes with coefficient-only specialization. No tape cost is asserted. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.AffineFieldProgram
 

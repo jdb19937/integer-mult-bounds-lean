@@ -1,11 +1,16 @@
-import IntegerMultBounds.Networks.GaussianBoundedMotif
-import IntegerMultBounds.Networks.CircuitCoefficients
-import IntegerMultBounds.Networks.ComplexRank25
-import IntegerMultBounds.Machine.ButterflyGuard
+module
+
+public import IntegerMultBounds.Networks.GaussianBoundedMotif
+public import IntegerMultBounds.Networks.CircuitCoefficients
+public import IntegerMultBounds.Networks.ComplexRank25
+public import IntegerMultBounds.Machine.ButterflyGuard
 
 /-! Every prefix of the actual complex25 scalar cancellation network has an
 explicit precision and numerator bound on all actual roles. Initial bounded
 numerators are derived from normalized stored values, not a grid callback. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexScalarGrid
 noncomputable section
 open Networks Networks.GaussianPrecision

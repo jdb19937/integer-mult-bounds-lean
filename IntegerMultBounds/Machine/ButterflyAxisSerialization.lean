@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ButterflyStreamClean
-import IntegerMultBounds.Machine.RecursiveInterchangeRows
+module
+
+public import IntegerMultBounds.Machine.ButterflyStreamClean
+public import IntegerMultBounds.Machine.RecursiveInterchangeRows
 
 /-! Literal selected-bit serialization. Splitting the bit between the higher
 and lower coordinates pairs exactly the two coefficients used by a butterfly;
 all radix digits and delimiters are preserved as native symbols. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ButterflyAxisSerialization
 noncomputable section
 open ButterflyStreamData

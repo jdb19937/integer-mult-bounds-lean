@@ -1,9 +1,13 @@
-import IntegerMultBounds.Networks.Shared50Frames
-import IntegerMultBounds.Networks.DAGSourceRoles
-import IntegerMultBounds.Networks.DAGComplementTrace
+module
+
+public import IntegerMultBounds.Networks.Shared50Frames
+public import IntegerMultBounds.Networks.DAGSourceRoles
+public import IntegerMultBounds.Networks.DAGComplementTrace
 
 /-! Exact initial source lines and empty scratch labels for the actual shared
 circuit. Repeated semantic labels retain distinct physical source slots. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.Shared50InitialLabels
 

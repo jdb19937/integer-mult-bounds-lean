@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.BinaryDescriptorReset
-import IntegerMultBounds.Machine.Placement
+module
+
+public import IntegerMultBounds.Machine.BinaryDescriptorReset
+public import IntegerMultBounds.Machine.Placement
 
 /-! Consume one blank-delimited binary word from a retained control stream.
 The previous marked offset is erased before copying; its marker is physically
 reinstalled, its head restored, and the stream delimiter is crossed. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryOffsetStreamRead
 open CountedCopyReuse (binary)
 open MarkedWordCleanup (one empty marked)

@@ -1,7 +1,11 @@
-import IntegerMultBounds.Networks.DAGAllocatorFrontier
+module
+
+public import IntegerMultBounds.Networks.DAGAllocatorFrontier
 
 /-! Induction over the actual allocator execution. The schedule hypotheses
 concern only the original consumer wiring, never a supplied allocator result. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.DAGAllocator
 

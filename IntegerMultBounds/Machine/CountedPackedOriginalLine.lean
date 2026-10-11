@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CountedPackedLine
-import IntegerMultBounds.Machine.CountedGatherOriginalRun
+module
+
+public import IntegerMultBounds.Machine.CountedPackedLine
+public import IntegerMultBounds.Machine.CountedGatherOriginalRun
 
 /-! Uniform packed line from the six original shape/count descriptors.
 All four derived descriptors and both clocks are physically constructed and
 erased. The payload heads and offset scratch are restored by real tape routines. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedPackedOriginalLine
 noncomputable section
 variable {a : ℕ}

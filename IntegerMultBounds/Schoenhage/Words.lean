@@ -1,10 +1,14 @@
-import IntegerMultBounds.Machine.WordTape
+module
+
+public import IntegerMultBounds.Machine.WordTape
 
 /-! Tapes holding lists of binary words. A word is written as its bits
 followed by one separator; the words of a tape are laid out from cell zero,
 blank everywhere else. The abstract tape is a zipper: the words left of the
 head (nearest first) and the words from the head on. The head sits on the
 first cell of the first right word, or on the blank after the last word. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Schoenhage
 

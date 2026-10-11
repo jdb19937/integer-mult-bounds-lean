@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.RadixRationalBinaryReuse
-import IntegerMultBounds.Machine.BinaryReplace
+module
+
+public import IntegerMultBounds.Machine.RadixRationalBinaryReuse
+public import IntegerMultBounds.Machine.BinaryReplace
 
 /-! Concrete recurring preparation of one fixed-rational translation offset.
 Compute from the physical marked radix input, convert to canonical binary,
 erase old output/scratch, and install the result on a separate offset tape.
 Only the two binary tapes are alphabet-lifted during installation; radix cells
 remain exact spectator frames. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RationalOffsetPrepare
 
 open RadixDigits
@@ -17,7 +22,7 @@ def descriptor (bits : List Bool) : Tapes 1 q := RadixToBinary.binaryState q bit
 def bank (supplied offset : List Bool) (xs : List (Fin q)) : Tapes 5 q :=
   (RadixRationalBinaryReuse.input supplied xs).append (descriptor offset)
 
-private def replacementPlacement : Fin (2+3) ≃ Fin 5 := (Equiv.swap 0 4).trans (Equiv.swap 1 0)
+def replacementPlacement : Fin (2+3) ≃ Fin 5 := (Equiv.swap 0 4).trans (Equiv.swap 1 0)
 
 /-- Lift the two active binary tapes only, before placing them in radix workspace. -/
 def replacementProgram : Program 5 7 q :=

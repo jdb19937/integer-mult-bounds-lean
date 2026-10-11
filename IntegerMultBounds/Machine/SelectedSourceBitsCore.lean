@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.SelectedSourceBitsData
-import IntegerMultBounds.Machine.CountedLoopReuseAlphabet
-import IntegerMultBounds.Machine.WordSegments
+module
+
+public import IntegerMultBounds.Machine.SelectedSourceBitsData
+public import IntegerMultBounds.Machine.CountedLoopReuseAlphabet
+public import IntegerMultBounds.Machine.WordSegments
 
 /-! Direct selected-source scanning: copy the current bit without changing the
 source head, then move that head by the original runtime q descriptor. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.SelectedSourceBitsCore
 open CountedLoopReuseAlphabet (bank empty binary)
 open SelectedSourceBitsData

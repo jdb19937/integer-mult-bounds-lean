@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.SharedBank
+module
+
+public import IntegerMultBounds.Machine.SharedBank
 
 /-! Two concrete stages share a fixed common bank and retain separate private
 metadata. The complete common bank is handed off on the same physical tapes. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.SharedBankPair
 variable {k t u q r a : ℕ}
 

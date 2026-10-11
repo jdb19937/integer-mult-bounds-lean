@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.RecursiveChildQuotientsConstant
-import IntegerMultBounds.Machine.BinaryDescriptorDivision
-import IntegerMultBounds.Machine.BinaryDescriptorCleanupList
-import IntegerMultBounds.Machine.RecursiveChildDimensionsClean
+module
+
+public import IntegerMultBounds.Machine.RecursiveChildQuotientsConstant
+public import IntegerMultBounds.Machine.BinaryDescriptorDivision
+public import IntegerMultBounds.Machine.BinaryDescriptorCleanupList
+public import IntegerMultBounds.Machine.RecursiveChildDimensionsClean
 
 /-! Produce child width/row quotients on the constructor's actual 38-tape bank.
 Both fixed divisors are physically written, used, and erased. No quotient or
 constant descriptor is supplied as input; parent headers are preserved. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveChildQuotients
 open SharedPlacementAlphabet (setTape)
 variable {a : ℕ}

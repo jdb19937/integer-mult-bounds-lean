@@ -1,14 +1,19 @@
-import IntegerMultBounds.Machine.RecursiveDescriptorSize
-import IntegerMultBounds.Machine.BinaryDivide
-import Mathlib.Tactic.Ring
-import Mathlib.Tactic.NormNum
-import Mathlib.Tactic.Linarith
-import Mathlib.Tactic.Bound
-import Mathlib.Tactic.IntervalCases
+module
+
+public import IntegerMultBounds.Machine.RecursiveDescriptorSize
+public import IntegerMultBounds.Machine.BinaryDivide
+public import Mathlib.Tactic.Ring
+public import Mathlib.Tactic.NormNum
+public import Mathlib.Tactic.Linarith
+public import Mathlib.Tactic.Bound
+public import Mathlib.Tactic.IntervalCases
 
 /-! The existing physical long-division scan has a linear logical-child-volume
 bound for canonical root-bounded descriptors. Its shifted output origins and
 noncanonical quotient remain explicit; normalization is a separate operation. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveDescriptorDivision
 open RecursiveInterchangeLayout RecursiveInterchangeVolume
 

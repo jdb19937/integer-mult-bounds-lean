@@ -1,5 +1,7 @@
-import IntegerMultBounds.Machine.GaussianLineValue
-import IntegerMultBounds.NLogN.ExplicitNumeric
+module
+
+public import IntegerMultBounds.Machine.GaussianLineValue
+public import IntegerMultBounds.NLogN.ExplicitNumeric
 
 /-! The window sums computed by the Gaussian line machine are the numerical
 map `Ã` of the resampling interface: with the weight words holding the
@@ -7,6 +9,8 @@ rounded weights `ρ(2^p·w)` of each window and the input words holding the
 numerators of a grid vector `u` (cyclically extended by `m` records at both
 ends), the two accumulator words of output `k` are `2^(p+1)` times the real
 and imaginary parts of `resampANum s t m (resampTermNum p s t α) u k`. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Resampling.WindowSum
 

@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.OneHotCount
+module
+
+public import IntegerMultBounds.Machine.OneHotCount
 
 /-! Initialize both finite residue banks used by scaling from the supplied
 binary modulus. Control cells need no prepared symbols. The modulus-sized loop
 has a charged linear cost, while descriptor and clock return unchanged. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ScalingControlInit
 
 variable {c : ℕ}

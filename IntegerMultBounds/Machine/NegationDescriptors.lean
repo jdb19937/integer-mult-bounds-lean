@@ -1,16 +1,21 @@
-import IntegerMultBounds.Machine.TranslationDescriptors
-import IntegerMultBounds.Machine.BinaryOneInit
+module
+
+public import IntegerMultBounds.Machine.TranslationDescriptors
+public import IntegerMultBounds.Machine.BinaryOneInit
 
 /-! Literal construction of canonical coordinate-negation metadata. The fixed
 program writes its own constant one and derives both tail volume and tail count;
 no precomputed difference or tail descriptor is supplied. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.NegationDescriptors
 
 open CountedCopyReuse (empty binary)
 
-private def one (f : ℤ → Fin 4) (r : ℤ) : Tapes 1 0 := ⟨fun _ => r,fun _ => f⟩
+def one (f : ℤ → Fin 4) (r : ℤ) : Tapes 1 0 := ⟨fun _ => r,fun _ => f⟩
 
-private def uninitialized (bs qs : List Bool) : Tapes 10 0 :=
+def uninitialized (bs qs : List Bool) : Tapes 10 0 :=
   ⟨Function.update (TranslationDescriptors.initial bs qs []).head 8 0,
    Function.update (TranslationDescriptors.initial bs qs []).tape 8 (fun _ => blank)⟩
 
@@ -21,7 +26,7 @@ def initial (bs qs : List Bool) : Tapes 11 0 :=
 private def initialized (bs qs : List Bool) : Tapes 11 0 :=
   (TranslationDescriptors.initial bs qs [true]).append (one (fun _ => blank) 0)
 
-private def bankAt (ds : Fin 3 → List Bool) (bs qs diff : List Bool)
+def bankAt (ds : Fin 3 → List Bool) (bs qs diff : List Bool)
     (tail : ℤ → Fin 4) (r : ℤ) : Tapes 11 0 :=
   (TranslationDescriptors.bank ds bs qs [true] (binary diff) 1).append (one tail r)
 
@@ -30,7 +35,7 @@ Slots 2, 3, 8, 9 retain the other generated lengths, one, and padded difference.
 def bank (ds : Fin 3 → List Bool) (bs qs diff tail : List Bool) : Tapes 11 0 :=
   bankAt ds bs qs diff (binary tail) 1
 
-private def onePlacement : Fin (1+10) ≃ Fin 11 := Equiv.swap 0 8
+def onePlacement : Fin (1+10) ≃ Fin 11 := Equiv.swap 0 8
 
 def oneProgram : Program 11 3 0 := Placement.placed BinaryOneInit.program onePlacement
 

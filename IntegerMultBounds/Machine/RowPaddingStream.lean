@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.RowPaddingBlock
-import Mathlib.Data.List.Flatten
+module
+
+public import IntegerMultBounds.Machine.RowPaddingBlock
+public import Mathlib.Data.List.Flatten
 
 /-! Literal counted streaming padding across all consumed groups. The two
 reusable clocks are supplied with retained sentinels; initialization, origin
 restoration and final sentinel deletion belong to the enclosing wrapper. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RowPaddingStream
 open CountedRawFill (filled)
 

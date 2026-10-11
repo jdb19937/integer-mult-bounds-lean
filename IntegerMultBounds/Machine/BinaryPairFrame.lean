@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.BinaryDescriptorFrameRestore
-import IntegerMultBounds.Machine.SharedBank
-import IntegerMultBounds.Machine.ActivePrefixStageSlotRewrite
+module
+
+public import IntegerMultBounds.Machine.BinaryDescriptorFrameRestore
+public import IntegerMultBounds.Machine.SharedBank
+public import IntegerMultBounds.Machine.ActivePrefixStageSlotRewrite
 
 /-! Save two runtime descriptors on one private stack, execute a clean native
 routine, then physically erase its replacements and restore the saved pair. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryPairFrame
 noncomputable section
 open BinaryDescriptorFrames

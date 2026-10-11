@@ -1,7 +1,11 @@
-import IntegerMultBounds.Schoenhage.BaseCase
+module
+
+public import IntegerMultBounds.Schoenhage.BaseCase
 
 /-! The schedule's parameters computed on word tapes in unary: the bit length
 of a unary word by repeated halving. -/
+
+@[expose] public section
 
 set_option maxRecDepth 10000
 

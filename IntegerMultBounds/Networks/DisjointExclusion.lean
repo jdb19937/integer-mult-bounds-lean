@@ -1,8 +1,12 @@
-import IntegerMultBounds.Networks.DisjointBuilder
+module
+
+public import IntegerMultBounds.Networks.DisjointBuilder
 
 /-! An executable prefix/suffix leave-one-out builder. A suffix pass shares
 all suffix totals; a forward pass shares prefixes and combines each prefix
 with the suffix after the omitted position. Counts bound actual new DAG nodes. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.DisjointExclusion
 

@@ -1,8 +1,12 @@
-import IntegerMultBounds.Networks.TensorLabels
-import Mathlib.Data.Fintype.EquivFin
+module
+
+public import IntegerMultBounds.Networks.TensorLabels
+public import Mathlib.Data.Fintype.EquivFin
 
 /-! The binary tensor cube is identified with its actual coordinate-bit space.
 This bridges tensor-subspace labels and the Hamming-weight phase interface. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.TensorCoordinates
 

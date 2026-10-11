@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.RawLinearCombination
-import IntegerMultBounds.Machine.ExactFrame
-import IntegerMultBounds.Machine.TwoTapeAt
-import IntegerMultBounds.Machine.DelimitedRadixRecord
+module
+
+public import IntegerMultBounds.Machine.RawLinearCombination
+public import IntegerMultBounds.Machine.ExactFrame
+public import IntegerMultBounds.Machine.TwoTapeAt
+public import IntegerMultBounds.Machine.DelimitedRadixRecord
 
 /-! A fixed expression computes a field, emits its literal radix digits and
 separator, and returns all arithmetic workspace to blank storage. The marked
 source fields remain available for other output wires of the same scalar row. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RawLinearCombinationFieldEmit
 noncomputable section
 open RadixLinearCombinationRefresh (Expr Size controls)

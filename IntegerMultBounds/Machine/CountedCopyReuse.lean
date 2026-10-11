@@ -1,13 +1,17 @@
-import IntegerMultBounds.Machine.CountedCopy
-import IntegerMultBounds.Machine.Copy
-import IntegerMultBounds.Machine.Frame
-import IntegerMultBounds.Machine.Rewind
+module
+
+public import IntegerMultBounds.Machine.CountedCopy
+public import IntegerMultBounds.Machine.Copy
+public import IntegerMultBounds.Machine.Frame
+public import IntegerMultBounds.Machine.Rewind
 
 /-! Reusable binary-counted copying. The immutable binary descriptor is already
 prepared on its own tape. The program physically copies it to a local work
 clock, resets both heads, transfers the raw payload, and clears and resets the
 clock. All joins and head movements are charged. Source and destination data
 need no markers; their heads finish just after the transferred segment. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.CountedCopyReuse
 
@@ -138,7 +142,7 @@ private theorem clear_exact (bs : List Bool) :
   refine ⟨clearCfg empty (1+bs.length),hr,?_,rfl⟩
   simp [step,clearProgram,clearCfg,empty,show (1:ℤ)+bs.length ≠ 0 by omega]
 
-private def place (i : Fin 4) : Fin 4 ≃ Fin 4 := Equiv.swap 0 i
+def place (i : Fin 4) : Fin 4 ≃ Fin 4 := Equiv.swap 0 i
 
 private def single (v : Tapes 4 0) (i : Fin 4) : Tapes 1 0 :=
   one (v.tape i) (v.head i)

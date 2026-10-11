@@ -1,8 +1,12 @@
-import IntegerMultBounds.Schoenhage.Batch
+module
+
+public import IntegerMultBounds.Schoenhage.Batch
 
 /-! The batched recursion computes `ssMul` pair by pair: one level's up-sweep
 of the next level's products of the down-sweep's batch gives this level's
 products (`upList_nextBatch`). -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Schoenhage
 

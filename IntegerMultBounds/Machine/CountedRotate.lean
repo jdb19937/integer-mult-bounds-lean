@@ -1,11 +1,15 @@
-import IntegerMultBounds.Machine.CountedSeek
-import IntegerMultBounds.Machine.Placement
-import IntegerMultBounds.Machine.BlockRotationData
+module
+
+public import IntegerMultBounds.Machine.CountedSeek
+public import IntegerMultBounds.Machine.Placement
+public import IntegerMultBounds.Machine.BlockRotationData
 
 /-! Literal cyclic rotation of a raw block using three immutable binary
 length descriptors. Skip the prefix, copy the suffix, rewind over the complete
 block, then copy the prefix. Every seek, clock reset, and join is charged.
 Descriptor synthesis is explicit caller work, not an assumed free operation. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.CountedRotate
 

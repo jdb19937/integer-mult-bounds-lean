@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.RecursiveDimensionBank
-import IntegerMultBounds.Machine.RecursiveDescriptorSize
+module
+
+public import IntegerMultBounds.Machine.RecursiveDimensionBank
+public import IntegerMultBounds.Machine.RecursiveDescriptorSize
 
 /-! Actual six-field layout headers satisfy the root-volume hypotheses used by
 recursive descriptor-stack bounds. No external size certificate is required. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveHeaderBounds
 open RecursiveInterchangeLayout RecursiveInterchangeVolume RecursiveDimensionBank
 

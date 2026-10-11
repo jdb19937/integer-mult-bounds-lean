@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.RecursiveChildQuotientsConstant
-import IntegerMultBounds.Machine.BinaryDescriptorCleanupList
+module
+
+public import IntegerMultBounds.Machine.RecursiveChildQuotientsConstant
+public import IntegerMultBounds.Machine.BinaryDescriptorCleanupList
 
 /-! A physically written canonical zero clock, with paid erasure. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthZeroHeaderShared
 noncomputable section
 variable {a t : ℕ}

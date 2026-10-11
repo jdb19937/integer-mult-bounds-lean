@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.EqualWordReplace
-import IntegerMultBounds.Machine.InjectivePlacement
+module
+
+public import IntegerMultBounds.Machine.EqualWordReplace
+public import IntegerMultBounds.Machine.InjectivePlacement
 
 /-! Fixed-slot word replacement and physical erasure on an arbitrary bank.
 All complementary tape contents and all heads are retained exactly. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.WordBankCleanup
 noncomputable section
 variable {a t : ℕ}

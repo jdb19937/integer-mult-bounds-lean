@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.DimensionProductDescriptor
-import IntegerMultBounds.Machine.BinaryDescriptorCleanupList
-import IntegerMultBounds.Machine.BinaryDescriptorInstall
-import IntegerMultBounds.Machine.RecursiveChildQuotientsConstant
+module
+
+public import IntegerMultBounds.Machine.DimensionProductDescriptor
+public import IntegerMultBounds.Machine.BinaryDescriptorCleanupList
+public import IntegerMultBounds.Machine.BinaryDescriptorInstall
+public import IntegerMultBounds.Machine.RecursiveChildQuotientsConstant
 
 /-! A fixed binary-descriptor multiplication step for computing a fixed-base
 power from a runtime exponent. The old value and temporary product are erased;
 all workspace is blank again, with the base retained. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.FixedBasePowerStep
 noncomputable section
 variable {q : ℕ}

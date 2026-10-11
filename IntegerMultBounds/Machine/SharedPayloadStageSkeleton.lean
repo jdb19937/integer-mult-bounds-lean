@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.SharedPayloadStageCompose
+module
+
+public import IntegerMultBounds.Machine.SharedPayloadStageCompose
 
 /-! Erasing array types and supplied descriptors from a concrete stage exposes
 its fixed finite-state machine. The finite compiler depends only on this data. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.SharedPayloadStageSkeleton
 universe u
 

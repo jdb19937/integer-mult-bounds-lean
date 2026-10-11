@@ -1,8 +1,12 @@
-import IntegerMultBounds.Machine.CountedRotate
+module
+
+public import IntegerMultBounds.Machine.CountedRotate
 
 /-! A cyclic raw-block rotation whose source and destination both finish at the
 next block. This adds a real counted seek over the final suffix to the proved
 rotation; descriptor resets and the extra sequential join are charged. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.CountedRotateAdvance
 

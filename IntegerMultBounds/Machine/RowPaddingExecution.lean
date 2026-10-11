@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.RowPaddingStream
-import IntegerMultBounds.Machine.RowPaddingReset
+module
+
+public import IntegerMultBounds.Machine.RowPaddingStream
+public import IntegerMultBounds.Machine.RowPaddingReset
 
 /-! Complete physical row-padding wrapper, including both clock markers,
 immutable countdown use, full head restoration and clock cleanup. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RowPaddingExecution
 
 def clockBank (source dest : ℤ → Fin 4) (p q : ℤ) (valid padding count : List Bool)

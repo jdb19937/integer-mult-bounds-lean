@@ -1,4 +1,6 @@
-import IntegerMultBounds.Schoenhage.RingProduct
+module
+
+public import IntegerMultBounds.Schoenhage.RingProduct
 
 /-! What the ring product's output words mean. Each packed residue is the
 evaluation of the signed coefficients at `2^W` modulo `2^N + 1`, so the
@@ -6,6 +8,8 @@ combined residues are the evaluations of the real and imaginary parts of the
 negacyclic product; when those parts are below `2^(W-1)` in absolute value,
 the unpacked words are exactly the parts truncated toward zero by `s` bits,
 as `w`-bit words (`outs_eq`). -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Schoenhage
 

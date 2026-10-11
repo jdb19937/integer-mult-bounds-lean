@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.ActiveRepairRecordFormatWords
+module
+
+public import IntegerMultBounds.Machine.ActiveRepairRecordFormatWords
 
 /-! Entire raw-array formatter: an outer runtime record count drives the
 fixed record producer, whose independent runtime width count copies payloads.
 Both clocks are copied, decremented and restored by real amortized machines. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ActiveRepairRecordFormatStream
 noncomputable section
 open ActiveRepairRecordFormatWords

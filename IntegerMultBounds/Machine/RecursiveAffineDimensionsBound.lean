@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.RecursiveAffineDimensions
-import IntegerMultBounds.Machine.RecursiveHeaderBounds
+module
+
+public import IntegerMultBounds.Machine.RecursiveAffineDimensions
+public import IntegerMultBounds.Machine.RecursiveHeaderBounds
 
 /-! Every emitted within-group power or product is bounded by the unchanged
 role-stream volume. This turns the exact arithmetic execution cost into a fixed
 linear bound for arbitrary positive heterogeneous layouts. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveAffineDimensionsBound
 open RecursiveInterchangeLayout (Descriptor volume)
 open RecursiveAffineDimensions

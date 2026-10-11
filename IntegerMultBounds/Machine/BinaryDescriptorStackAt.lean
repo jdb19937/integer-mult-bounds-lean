@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.BinaryDescriptorStackRoundtrip
-import IntegerMultBounds.Machine.BinaryDescriptorInstall
+module
+
+public import IntegerMultBounds.Machine.BinaryDescriptorStackRoundtrip
+public import IntegerMultBounds.Machine.BinaryDescriptorInstall
 
 /-! Place variable-length descriptor push and pop on arbitrary distinct slots;
 all other complete tapes and heads are preserved literally. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryDescriptorStackAt
 open SharedPlacementAlphabet (setTape)
 open BinaryDescriptorInstall (placement slot placement_active)

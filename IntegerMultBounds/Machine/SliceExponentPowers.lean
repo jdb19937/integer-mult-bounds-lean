@@ -1,13 +1,18 @@
-import IntegerMultBounds.Machine.RowPaddingSpanCounts
+module
+
+public import IntegerMultBounds.Machine.RowPaddingSpanCounts
 
 /-! Physically compute the powers used by a selected digit slice. Exponent
 subtractions may retain high zero bits; every such scanned bit is charged. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.SliceExponentPowers
 variable {q : ℕ} (hq : 2 ≤ q)
 noncomputable section
 
-private def hd : Option (List Bool) → ℤ | none => 0 | some _ => 1
-private def tp : Option (List Bool) → ℤ → Fin (q+4)
+def hd : Option (List Bool) → ℤ | none => 0 | some _ => 1
+def tp : Option (List Bool) → ℤ → Fin (q+4)
   | none => fun _ => blank
   | some xs => RadixZeroFill.encodedBinary xs
 
@@ -63,7 +68,7 @@ def power0Program := Placement.placed (RadixPowerDescriptor.program hq) power0Pl
 
 def power1Program := Placement.placed (RadixPowerDescriptor.program hq) power1Placement
 
-private def cleanSlots : List (Fin 9) := [3,4]
+def cleanSlots : List (Fin 9) := [3,4]
 def cleanProgram := BinaryDescriptorCleanupList.program (a := q) (by decide : 0 < 9) cleanSlots
 
 def program := seq (seq (seq (seq (sub0Program (q := q)) sub1Program) (power0Program hq)) (power1Program hq)) cleanProgram

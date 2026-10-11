@@ -1,9 +1,13 @@
-import IntegerMultBounds.Schoenhage.RingWords
+module
+
+public import IntegerMultBounds.Schoenhage.RingWords
 
 /-! The value a digit step computes. An offset digit `e = h + 2^(Wd-1)` is
 shifted to `h` when nonnegative, and to `2^(Wd+1) + h + 2^s - 1` otherwise;
 dropping `s` bits and keeping `w` gives the word of `h` truncated toward zero
 (`tw_digit`), whenever `w + s ≤ Wd + 1`. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Schoenhage
 

@@ -1,6 +1,8 @@
-import IntegerMultBounds.NLogN.ResamplingMulti
-import IntegerMultBounds.NLogN.ResamplingNumeric
-import IntegerMultBounds.NLogN.TensorApproxV
+module
+
+public import IntegerMultBounds.NLogN.ResamplingMulti
+public import IntegerMultBounds.NLogN.ResamplingNumeric
+public import IntegerMultBounds.NLogN.TensorApproxV
 
 /-! The numerical half of Theorem 4.1 of Harvey and van der Hoeven. Proved: the
 coordinate-by-coordinate rectangular tensor of numerical maps on
@@ -13,6 +15,8 @@ maps `Ã_i`, `B̃_i` approximating `A_i = S_i/2` and `B_i` with scaled errors
 scaled errors `d εA`, `d εB`, while `F_s = 2^(dγ) (⊗ B_i) F_t (⊗ A_i)`. The
 per-coordinate approximations are hypotheses here; they are discharged for the
 explicit numerical maps in `ResamplingNumeric.lean`. No cost is modeled. -/
+
+@[expose] public section
 
 open Real Complex
 

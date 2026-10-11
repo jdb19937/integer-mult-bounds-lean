@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.BinaryPackedRowCountPlaced
+module
+
+public import IntegerMultBounds.Machine.BinaryPackedRowCountPlaced
 
 /-! Paid original-header fiber-count preparation and erasure are linear in the
 number of fibers. Positive prefix/intervening dimensions are explicit. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryPackedRowCountBudget
 open BinaryPackedRowCount (powerBits productBits rowBits)
 

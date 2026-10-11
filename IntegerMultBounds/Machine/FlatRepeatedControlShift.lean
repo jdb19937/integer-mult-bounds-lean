@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.RepeatedControlTranslationStream
-import IntegerMultBounds.Machine.FlatFixedControlShift
+module
+
+public import IntegerMultBounds.Machine.RepeatedControlTranslationStream
+public import IntegerMultBounds.Machine.FlatFixedControlShift
 
 /-! Literal flat-array boundary for repeated controlled shifts with arbitrary
 outer prefix and middle spectator cardinalities. Canonical runtime dimensions
 and the initial control word are explicit prepared inputs. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.FlatRepeatedControlShift
 variable {radix N C Q B : ℕ} [Fact radix.Prime]
 

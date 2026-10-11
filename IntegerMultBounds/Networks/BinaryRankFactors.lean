@@ -1,12 +1,16 @@
-import IntegerMultBounds.Networks.BinaryColumns
-import IntegerMultBounds.Networks.ProjectionTrace
-import IntegerMultBounds.Networks.LabelTransport
-import IntegerMultBounds.Networks.TensorCoordinates
-import IntegerMultBounds.Networks.BinaryMotifResiduals
+module
+
+public import IntegerMultBounds.Networks.BinaryColumns
+public import IntegerMultBounds.Networks.ProjectionTrace
+public import IntegerMultBounds.Networks.LabelTransport
+public import IntegerMultBounds.Networks.TensorCoordinates
+public import IntegerMultBounds.Networks.BinaryMotifResiduals
 
 /-! Factor counts derived from genuine projection ranks. Both orientations of
 an actual binary frame edge are handled; no rank is assigned to an unrelated
 replacement operation. The residual-unit premise is explicit here. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.BinaryRankFactors
 

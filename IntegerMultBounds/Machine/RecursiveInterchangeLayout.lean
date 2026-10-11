@@ -1,7 +1,9 @@
-import Mathlib.Data.Nat.Basic
-import Mathlib.Tactic.Linarith
-import Mathlib.Tactic.Ring
-import Lean.Elab.Tactic.Omega
+module
+
+public import Mathlib.Data.Nat.Basic
+public import Mathlib.Tactic.Linarith
+public import Mathlib.Tactic.Ring
+public import Lean.Elab.Tactic.Omega
 
 /-! Fixed-size child descriptors for manuscript §4, “Power-width interchange
 with rows” and “A fixed-tape depth-first schedule” (04-swap.tex, lines129–267).
@@ -14,6 +16,9 @@ row-major address and size equalities, not tape operations, descriptor runtime
 bounds, or a recursive-machine construction. Arbitrary spectator cardinalities
 and the row range remain explicit; existing radix-power prefix routines do not
 automatically implement them. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveInterchangeLayout
 
 structure Descriptor where

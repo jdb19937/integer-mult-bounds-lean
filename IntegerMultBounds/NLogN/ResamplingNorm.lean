@@ -1,6 +1,8 @@
-import IntegerMultBounds.NLogN.Resampling
-import Mathlib.Analysis.SpecialFunctions.Gaussian.GaussianIntegral
-import Mathlib.Analysis.SumIntegralComparisons
+module
+
+public import IntegerMultBounds.NLogN.Resampling
+public import Mathlib.Analysis.SpecialFunctions.Gaussian.GaussianIntegral
+public import Mathlib.Analysis.SumIntegralComparisons
 
 /-! The sup-norm bound on the Gaussian resampling map `S`, Lemma 4.5 of
 Harvey and van der Hoeven. Proved: the periodised Gaussian `θ_a` is even and
@@ -8,6 +10,8 @@ bounded by `1 + √(π/a)` through comparison with the Gaussian integral, and
 consequently every entry of `S u` has modulus at most `1 + 1/α` whenever the
 entries of `u` have modulus at most one. The companion map `T`, the square
 subsystem, and its inverse are not treated here. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.NLogN
 

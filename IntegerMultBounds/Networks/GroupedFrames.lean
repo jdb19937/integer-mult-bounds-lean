@@ -1,8 +1,12 @@
-import IntegerMultBounds.Networks.GroupedCircuit
-import IntegerMultBounds.Networks.RankTrace
+module
+
+public import IntegerMultBounds.Networks.GroupedCircuit
+public import IntegerMultBounds.Networks.RankTrace
 
 /-! A full common-frame compiler preserving the actual grouped boundaries.
 Its per-wire label history is precisely the history used by rank accounting. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.GroupedFrames
 

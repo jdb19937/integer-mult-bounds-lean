@@ -1,7 +1,9 @@
-import Mathlib.Analysis.Normed.Operator.Mul
-import Mathlib.Analysis.Normed.Operator.Bilinear
-import Mathlib.Analysis.Complex.Basic
-import Mathlib.Tactic
+module
+
+public import Mathlib.Analysis.Normed.Operator.Mul
+public import Mathlib.Analysis.Normed.Operator.Bilinear
+public import Mathlib.Analysis.Complex.Basic
+public import Mathlib.Tactic
 
 /-! The fixed-point approximation framework of Harvey and van der Hoeven,
 Sections 2.2 and 2.6. Proved: round-towards-zero at precision `p` does not
@@ -12,6 +14,8 @@ and rounded complex multiplication (Corollary 2.10); and applying an
 approximation slice by slice keeps its error and norm bound (the one-coordinate
 case of Lemma 2.11). Errors are stated as bounds, not as suprema, and no cost
 model is attached. -/
+
+@[expose] public section
 
 open Complex
 

@@ -1,10 +1,14 @@
-import IntegerMultBounds.Schoenhage.RingBank
+module
+
+public import IntegerMultBounds.Schoenhage.RingBank
 
 /-! One product modulo `2^N + 1` inside the ring product's bank: the operand
 registers `s₁`, `s₂` (tapes of the ring product's own) are loaded onto the
 multiplier's input, the size `kN` onto its size tape, the cleaned multiplier
 runs on the first 64 tapes, and the product moves to the register `d`
 (`runs_mulStep`). Before and after, the multiplier's tapes are all empty. -/
+
+@[expose] public section
 
 set_option maxRecDepth 10000
 

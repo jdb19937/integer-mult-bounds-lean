@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.BinaryDescriptorIncrement
-import IntegerMultBounds.Machine.BinaryDescriptorCleanupList
-import IntegerMultBounds.Machine.RecursiveChildQuotientsConstant
-import IntegerMultBounds.Machine.CountedLoopReuseAlphabet
+module
+
+public import IntegerMultBounds.Machine.BinaryDescriptorIncrement
+public import IntegerMultBounds.Machine.BinaryDescriptorCleanupList
+public import IntegerMultBounds.Machine.RecursiveChildQuotientsConstant
+public import IntegerMultBounds.Machine.CountedLoopReuseAlphabet
 
 /-! Physically advance a marked offset by a retained runtime count.
 Amortized increments pay for all carries; the work clock is initialized
 and erased by the program, and the immutable count is restored. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryDescriptorAdvance
 noncomputable section
 variable {q : ℕ}

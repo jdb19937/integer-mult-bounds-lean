@@ -1,8 +1,12 @@
-import IntegerMultBounds.Machine.OrderedSelect
+module
+
+public import IntegerMultBounds.Machine.OrderedSelect
 
 /-! Blank-separated records: the cell before a record's origin is blank, bit
 words map to records, and a backward move from the origin of one record to
 the origin of the previous one (four states, one transition per cell). -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.OrderedSelect
 

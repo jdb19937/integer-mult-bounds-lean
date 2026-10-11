@@ -1,7 +1,11 @@
-import IntegerMultBounds.Networks.PairedStripCorrect
+module
+
+public import IntegerMultBounds.Networks.PairedStripCorrect
 
 /-! Local correctness of the actual recursive paired-exclusion constructors.
 The full recursive block theorem is assembled separately from these contracts. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.PairedCircuitCorrect
 

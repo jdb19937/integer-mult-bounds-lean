@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.BinaryDescriptorCompare
-import IntegerMultBounds.Machine.BinaryCanonicalData
-import IntegerMultBounds.Machine.FiniteFlow
-import IntegerMultBounds.Machine.Placement
+module
+
+public import IntegerMultBounds.Machine.BinaryDescriptorCompare
+public import IntegerMultBounds.Machine.BinaryCanonicalData
+public import IntegerMultBounds.Machine.FiniteFlow
+public import IntegerMultBounds.Machine.Placement
 
 /-! Paid manuscript guard 1 ≤ rho < e, read from the retained canonical
 binary descriptors. The comparison flag is physically erased in the selecting
 transition, and all descriptor cells and heads are restored. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ArbitraryWidthHighBranch
 noncomputable section
 variable {a : ℕ}

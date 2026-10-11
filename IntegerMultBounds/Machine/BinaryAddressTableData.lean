@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CounterTape
-import IntegerMultBounds.Machine.GrowingCounterData
+module
+
+public import IntegerMultBounds.Machine.CounterTape
+public import IntegerMultBounds.Machine.GrowingCounterData
 
 /-! The literal least-significant-bit-first words visited by a regular binary
 address counter. Table rows increase in ordinary integer order. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryAddressTableData
 
 def row (w i : ℕ) : List Bool := Counter.advance i (List.replicate w false)

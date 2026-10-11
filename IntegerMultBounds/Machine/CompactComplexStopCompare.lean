@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactComplexStopThreshold
+module
+
+public import IntegerMultBounds.Machine.CompactComplexStopThreshold
 
 /-! Runtime stop comparison from a retained canonical remaining-exponent word
 and the physically generated threshold word. The zero-leaf test reads the
 actual first exponent cell; no branch decision is supplied by the caller. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexStopCompare
 noncomputable section
 variable {q : ℕ}

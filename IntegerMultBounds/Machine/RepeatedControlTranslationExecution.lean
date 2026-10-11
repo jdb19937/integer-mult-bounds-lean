@@ -1,13 +1,18 @@
-import IntegerMultBounds.Machine.FixedControlTranslationStream
-import IntegerMultBounds.Machine.ExactFrame
+module
+
+public import IntegerMultBounds.Machine.FixedControlTranslationStream
+public import IntegerMultBounds.Machine.ExactFrame
 
 /-! One heterogeneous H group: execute every middle-spectator D fiber with
 fixed H, then physically increment H once. All loop controls are restored. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RepeatedControlTranslationExecution
 variable {radix : ℕ} [Fact radix.Prime]
 open TranslationStream (fibers)
 
-private def incrementPlacement : Fin (1+15) ≃ Fin 16 := Equiv.swap 0 15
+def incrementPlacement : Fin (1+15) ≃ Fin 16 := Equiv.swap 0 15
 
 def incrementProgram : Program 16 3 radix :=
   Placement.placed (RadixCounter.program (Fact.out : radix.Prime).two_le) incrementPlacement

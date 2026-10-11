@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.BinaryAdjacentWidthSelector
+module
+
+public import IntegerMultBounds.Machine.BinaryAdjacentWidthSelector
 
 /-! Generic finite-flow composition of the actual three-way width selector
 with three supplied branch programs. This composition rule does not assert
 that the final concrete binary interchange wrapper has been instantiated. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryAdjacentWidthSelectorDispatch
 noncomputable section
 variable {t a e h d : ℕ}

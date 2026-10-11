@@ -1,5 +1,7 @@
-import IntegerMultBounds.Machine.RadixAddReusable
-import IntegerMultBounds.Machine.RadixRationalBinary
+module
+
+public import IntegerMultBounds.Machine.RadixAddReusable
+public import IntegerMultBounds.Machine.RadixRationalBinary
 
 /-! A fixed finite arithmetic-expression compiler for rational linear
 combinations of marked radix controls. Every leaf executes the fixed rational
@@ -7,6 +9,9 @@ kernel; every addition executes modular radix addition and erases both temporary
 operands. The complete bank restores every original source and scratch head.
 Each leaf has its own supplied marked source tape, including the zero seed.
 Repeated logical indices do not imply a free physical copy or refresh operation. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RadixLinearCombination
 
 open RadixDigits

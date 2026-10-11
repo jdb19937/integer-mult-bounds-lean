@@ -1,15 +1,20 @@
-import IntegerMultBounds.Machine.BoundedProductDescriptor
-import IntegerMultBounds.Machine.BinaryDescriptorCleanupList
+module
+
+public import IntegerMultBounds.Machine.BoundedProductDescriptor
+public import IntegerMultBounds.Machine.BinaryDescriptorCleanupList
 
 /-! Physical four-product dimensions for rectangular range padding. Payload
 tapes are complete spectators; the five original descriptors are preserved.
 All product markers are initialized on blank tape, and workspace is cleaned. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RangePaddingDimensions
 variable {q : ℕ}
 noncomputable section
 
-private def hd : Option (List Bool) → ℤ | none => 0 | some _ => 1
-private def tp : Option (List Bool) → ℤ → Fin (q+4)
+def hd : Option (List Bool) → ℤ | none => 0 | some _ => 1
+def tp : Option (List Bool) → ℤ → Fin (q+4)
   | none => fun _ => blank
   | some xs => RadixZeroFill.encodedBinary xs
 
@@ -379,7 +384,7 @@ theorem construct_hoare (source destination : ℤ → Fin (q+4)) (hs : Fin 5 →
   rw [Nat.mul_comm N P,Nat.mul_comm M G]
   omega
 
-private def slots : List (Fin 17) := [7,8,9,10]
+def slots : List (Fin 17) := [7,8,9,10]
 def cleanupProgram := BinaryDescriptorCleanupList.program (a := q) (by decide : 0 < 17) slots
 
 private theorem cleanup_words (source destination : ℤ → Fin (q+4)) (hs : Fin 5 → List Bool)

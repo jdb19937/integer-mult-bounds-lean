@@ -1,9 +1,13 @@
-import IntegerMultBounds.Schoenhage.Params
+module
+
+public import IntegerMultBounds.Schoenhage.Params
 
 /-! A level's registers from the unary outer size `pN = ones N`: the
 transform exponent `k = kOf N`, the piece size, `K = 2^k`, the next size
 `nextN N`, the derived unary words, the half constant, the ruler and the
 unit's constants for the inner modulus. -/
+
+@[expose] public section
 
 set_option maxRecDepth 10000
 

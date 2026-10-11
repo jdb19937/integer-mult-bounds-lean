@@ -1,14 +1,18 @@
-import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-import Mathlib.Data.Finset.Card
-import Aesop
-import Mathlib.Tactic.Ext
-import Lean.Elab.Tactic.Omega
+module
+
+public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+public import Mathlib.Data.Finset.Card
+public import Aesop
+public import Mathlib.Tactic.Ext
+public import Lean.Elab.Tactic.Omega
 
 /-! Actual weighted-graph source partitions behind paired exclusion. Vertex
 weights and edge weights are distinct source atoms. Groups of at most two
 vertices permit reconstruction without subtraction: coarse outside values,
 remaining-vertex strips, and the surviving cross edge have disjoint supports.
 These are support and finite-sum identities, not circuit-size or tape bounds. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.PairedPartition
 

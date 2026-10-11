@@ -1,6 +1,11 @@
-import IntegerMultBounds.Machine.CountedRawMove
+module
+
+public import IntegerMultBounds.Machine.CountedRawMove
 
 /-! Paid simultaneous movement of two payload heads by one immutable count. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedPairPosition
 
 def cell (m : Move) : Program 2 2 0 where

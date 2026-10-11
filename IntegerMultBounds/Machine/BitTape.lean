@@ -1,7 +1,11 @@
-import IntegerMultBounds.Machine.Execution
+module
+
+public import IntegerMultBounds.Machine.Execution
 
 /-! Finite bit segments on otherwise arbitrary tapes. Writing a segment preserves
 every cell outside it; this representation does not assume blank spectators. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine
 

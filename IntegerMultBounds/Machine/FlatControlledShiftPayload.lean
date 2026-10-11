@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.FlatControlledShiftArray
-import IntegerMultBounds.Machine.SharedPayload
+module
+
+public import IntegerMultBounds.Machine.FlatControlledShiftArray
+public import IntegerMultBounds.Machine.SharedPayload
 
 /-! Permanent-payload interface of an initialized, normalized controlled shift.
 The selected slots are the existing source/output in its metadata suffix. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.FlatControlledShiftPayload
 open PrefixCounterInitPlacement
 variable {radix c B : ℕ} [Fact radix.Prime]

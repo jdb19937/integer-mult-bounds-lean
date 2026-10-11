@@ -1,4 +1,6 @@
-import IntegerMultBounds.Sizes
+module
+
+public import IntegerMultBounds.Sizes
 
 /-! The cost table of §8. Each operation's cost divided by the padded volume
 `V = T p` is a product of the size parameters `d`, `K`, `ℓ`, `α` and powers of
@@ -11,6 +13,8 @@ rounds `ℓ d^λ'`, axis layouts `d (1 + ℓ^τ)`, Gaussian line maps
 `d p^(1/2+δ) α` with `α = ⌈(12 d b)^(1/4)⌉`, chirps `d p^δ`, and packed
 products `log (r p)`. That the components achieve these rows is their own
 obligation. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.CostTable
 

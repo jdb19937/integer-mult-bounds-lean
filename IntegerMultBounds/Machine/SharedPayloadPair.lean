@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.SharedPayload
-import IntegerMultBounds.Machine.FamilyPlacementAlphabet
+module
+
+public import IntegerMultBounds.Machine.SharedPayload
+public import IntegerMultBounds.Machine.FamilyPlacementAlphabet
 
 /-! Two actual stages use the same permanent payload pair and separate private
 metadata. The second stage's private payload slots remain blank throughout;
 its input comes solely from the first stage's physical common output. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.SharedPayloadPair
 variable {t u q r a : ℕ}
 

@@ -1,4 +1,6 @@
-import IntegerMultBounds.Schoenhage.SSProgram
+module
+
+public import IntegerMultBounds.Schoenhage.SSProgram
 
 /-! The multiplier returned to a clean bank, so that it can be called again:
 after `ssMain`, every tape but the product is cleared. The final state of
@@ -6,6 +8,8 @@ after `ssMain`, every tape but the product is cleared. The final state of
 and the tapes it never names, which a decidable syntactic check
 (`Cmd.touches`) shows unchanged. `runs_ssClean`: from the start state, the
 product modulo `2^N + 1` alone on `tIn`, every other tape empty. -/
+
+@[expose] public section
 
 set_option maxRecDepth 10000
 

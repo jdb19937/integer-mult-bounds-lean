@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.InjectivePlacement
-import IntegerMultBounds.Machine.FamilyPlacementAlphabet
+module
+
+public import IntegerMultBounds.Machine.InjectivePlacement
+public import IntegerMultBounds.Machine.FamilyPlacementAlphabet
 
 /-! An arbitrary fixed number of permanent tapes shared by actual stages.
 Selected private slots are genuinely blank stationary frames. Fixed injective
 placements redirect accesses to the common bank without copying or resetting. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.SharedBank
 noncomputable section
 variable {k t q a : ℕ}

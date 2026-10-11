@@ -1,10 +1,14 @@
-import Mathlib.Data.List.Sort
-import Mathlib.Algebra.Order.BigOperators.Group.Finset
+module
+
+public import Mathlib.Data.List.Sort
+public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 
 /-! Executable stable least-significant-bit radix sorting of arbitrary records.
 Each pass is exactly the false filter followed by the true filter. The theorems
 here describe lists and the record volume traversed by the passes; they do not
 claim a tape implementation or charge list operations as machine steps. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.RadixSort
 

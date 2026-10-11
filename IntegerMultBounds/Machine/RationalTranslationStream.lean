@@ -1,13 +1,18 @@
-import IntegerMultBounds.Machine.RationalTranslationExecution
-import IntegerMultBounds.Machine.CountedLoopReuseAlphabet
-import IntegerMultBounds.Machine.RadixCounter
-import IntegerMultBounds.Machine.TranslationPreparedFamily
+module
+
+public import IntegerMultBounds.Machine.RationalTranslationExecution
+public import IntegerMultBounds.Machine.CountedLoopReuseAlphabet
+public import IntegerMultBounds.Machine.RadixCounter
+public import IntegerMultBounds.Machine.TranslationPreparedFamily
 
 /-! Complete varying-offset translation over a single cyclic radix coordinate.
 Each fiber computes its rational offset from the current physical control word,
 executes translation, and physically increments that control word. An actual
 arbitrary-alphabet binary-counted loop processes the consecutive fiber family.
 The initial marked controls/workspace are explicit recurring-state inputs. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RationalTranslationStream
 
 open TranslationStream (blocks fibers)
@@ -53,7 +58,7 @@ def state (r : ℚ) (B n : ℕ) (source dest : ℤ → Fin 4) (p q : ℤ)
     (p+((i*(radix^xs.length*B) : ℕ) : ℤ)) (q+((i*(radix^xs.length*B) : ℕ) : ℤ))
     bs qs (descriptor r old xs i) (descriptor r old xs i) (control xs i)
 
-private def incrementPlacement : Fin (1+15) ≃ Fin 16 := Equiv.swap 0 15
+def incrementPlacement : Fin (1+15) ≃ Fin 16 := Equiv.swap 0 15
 
 def incrementProgram : Program 16 3 radix :=
   Placement.placed (RadixCounter.program (Fact.out : radix.Prime).two_le) incrementPlacement

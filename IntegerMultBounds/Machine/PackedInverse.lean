@@ -1,4 +1,6 @@
-import IntegerMultBounds.Machine.PackedArith
+module
+
+public import IntegerMultBounds.Machine.PackedArith
 
 /-! The inverse packed program of the compact-control address arithmetic on
 nine tapes: the four packed updates of `packedEarly` undone in reverse order
@@ -6,6 +8,8 @@ with negated offsets, each a gather-and-transduce line. From the output words
 of the forward program it recovers the input words; the input words and the
 control are preserved, the offset scratch is blank again, and the recovered
 words sit on their own tapes with every head at its origin. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.PackedInverse
 

@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.FixedBasePowerUntil
-import IntegerMultBounds.Machine.ArbitraryWidthHighRows
+module
+
+public import IntegerMultBounds.Machine.FixedBasePowerUntil
+public import IntegerMultBounds.Machine.ArbitraryWidthHighRows
 
 /-! The actual least-power selector costs linearly in its input threshold.
 Its runtime exponent is exactly the manuscript
 parameter for selecting recursive depth or paired high-digit rows. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.FixedBasePowerUntilRange
 variable {q : ℕ}
 

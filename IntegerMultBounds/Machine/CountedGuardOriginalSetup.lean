@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CountedGuardConstants
-import IntegerMultBounds.Machine.CountedGuardGadget
+module
+
+public import IntegerMultBounds.Machine.CountedGuardConstants
+public import IntegerMultBounds.Machine.CountedGuardGadget
 
 /-! Fixed fifteen-tape guard initialization from original q/b/n headers and
 literal V/W alone. The three comparison constants are physically synthesized
 in the existing private workspace, with all workspace returned blank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedGuardOriginalSetup
 noncomputable section
 variable {a : ℕ}

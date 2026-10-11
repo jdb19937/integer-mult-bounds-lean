@@ -1,10 +1,14 @@
-import IntegerMultBounds.Compact.PackedControl
+module
+
+public import IntegerMultBounds.Compact.PackedControl
 
 /-!
 Reversibility of modular address operations on the entire rectangle, including
 bad addresses. Canonical integer residues let the equivalence agree literally
 with the executable integer program in PackedControl.lean.
 -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Compact
 open Radix

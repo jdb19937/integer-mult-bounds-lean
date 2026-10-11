@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.BinaryOffsetStreamRead
-import IntegerMultBounds.Machine.DescriptorStackControl
-import IntegerMultBounds.Machine.ExactFrame
+module
+
+public import IntegerMultBounds.Machine.BinaryOffsetStreamRead
+public import IntegerMultBounds.Machine.DescriptorStackControl
+public import IntegerMultBounds.Machine.ExactFrame
 
 /-! Move one marked binary word to a raw stream, write its blank delimiter,
 and erase the scratch marker. The fixed machine returns scratch wholly blank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.PackedOffsetStreamEmit
 open MarkedWordCleanup (empty one)
 open CountedCopyReuse (binary)

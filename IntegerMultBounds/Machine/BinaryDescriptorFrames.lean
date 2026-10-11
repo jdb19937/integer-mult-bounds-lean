@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.BinaryDescriptorStackAt
-import IntegerMultBounds.Machine.ExactFrame
+module
+
+public import IntegerMultBounds.Machine.BinaryDescriptorStackAt
+public import IntegerMultBounds.Machine.ExactFrame
 
 /-! A fixed list of runtime-length descriptor fields, pushed in list order and
 popped in reverse order. Only the tape slots, not any descriptor bits or lengths,
 enter the finite control. The stack's older contents may be arbitrary. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryDescriptorFrames
 open SharedPlacementAlphabet (setTape)
 open BinaryDescriptorStack

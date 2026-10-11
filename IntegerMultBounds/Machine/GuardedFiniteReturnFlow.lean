@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.FiniteReturnGuard
-import IntegerMultBounds.Machine.FiniteReturnFlow
+module
+
+public import IntegerMultBounds.Machine.FiniteReturnGuard
+public import IntegerMultBounds.Machine.FiniteReturnFlow
 
 /-! One fixed cyclic table contains an empty-stack guard, the binary pop
 machine, and every continuation. The guard supplies the root exit: occupied saved frames
 physically decode their PC and enter its continuation, while the empty root
 stack halts without attempting a pop. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.GuardedFiniteReturnFlow
 noncomputable section
 variable {k N t a : ℕ}

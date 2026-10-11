@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.SymbolTripleArray
-import IntegerMultBounds.Machine.SelectedSourceBitsRewind
-import IntegerMultBounds.Machine.WordBankCleanup
+module
+
+public import IntegerMultBounds.Machine.SymbolTripleArray
+public import IntegerMultBounds.Machine.SelectedSourceBitsRewind
+public import IntegerMultBounds.Machine.WordBankCleanup
 
 /-! Paid converter lifecycle on two physical tapes: encode or decode, rewind
 both heads, and erase the obsolete source. Both endpoints have head zero and
 the source tape wholly blank. Native coefficient words have nonblank interiors;
 arbitrary spectator transport is handled by the literal array layer. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.SymbolTripleClean
 noncomputable section
 open SharedPlacementAlphabet (setTape)

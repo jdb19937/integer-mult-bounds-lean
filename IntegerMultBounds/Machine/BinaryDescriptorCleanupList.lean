@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.MarkedBinaryCleanup
-import IntegerMultBounds.Machine.FiniteReturnStackAt
-import IntegerMultBounds.Machine.BinaryDescriptorStackRoundtrip
-import IntegerMultBounds.Machine.ExactFrame
+module
+
+public import IntegerMultBounds.Machine.MarkedBinaryCleanup
+public import IntegerMultBounds.Machine.FiniteReturnStackAt
+public import IntegerMultBounds.Machine.BinaryDescriptorStackRoundtrip
+public import IntegerMultBounds.Machine.ExactFrame
 
 /-! Physically erase a fixed list of retained binary headers. Every bit and
 sentinel is erased, every head returns to zero, and all other tapes are framed.
 Neither descriptor lengths nor a reset oracle enter the finite control. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryDescriptorCleanupList
 open SharedPlacementAlphabet (setTape)
 variable {t a : ℕ}

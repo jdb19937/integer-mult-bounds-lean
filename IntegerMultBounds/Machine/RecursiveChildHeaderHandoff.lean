@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.RecursiveChildHeaderInstall
+module
+
+public import IntegerMultBounds.Machine.RecursiveChildHeaderInstall
 
 /-! Actual child-header handoff erases all temporary quotient/product copies
 after replacing occupied parent headers. The whole-bank endpoint and runtime
 remain explicit; saving the parent frame belongs to the caller. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveChildHeaderHandoff
 open RecursiveChildHeaderInstall
 variable {q : ℕ}

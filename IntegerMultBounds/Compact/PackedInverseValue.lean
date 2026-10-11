@@ -1,11 +1,15 @@
-import IntegerMultBounds.Machine.PackedInverse
-import IntegerMultBounds.Compact.PackedArithValue
-import IntegerMultBounds.Compact.Permutations
+module
+
+public import IntegerMultBounds.Machine.PackedInverse
+public import IntegerMultBounds.Compact.PackedArithValue
+public import IntegerMultBounds.Compact.Permutations
 
 /-! The inverse packed program on tapes computes the inverse of the packed
 permutation: applying `packedEarly` to the integers of its recovered words
 returns the integers of its input words, so by injectivity the recovered
 address is the permutation's preimage. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Compact.PowerTwo
 

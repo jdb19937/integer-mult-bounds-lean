@@ -1,8 +1,12 @@
-import IntegerMultBounds.Networks.FramedEmbedding
-import IntegerMultBounds.Networks.DAGComplementExecution
+module
+
+public import IntegerMultBounds.Networks.FramedEmbedding
+public import IntegerMultBounds.Networks.DAGComplementExecution
 
 /-! Ordered physical edge extraction preserves every frame change, including
 identity changes and repeated incidences. Scalar instructions alone are omitted. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.FramedEdgeTrace
 

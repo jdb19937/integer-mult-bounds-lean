@@ -1,5 +1,7 @@
-import IntegerMultBounds.Networks.CircuitRouting
-import Mathlib.Data.ZMod.Basic
+module
+
+public import IntegerMultBounds.Networks.CircuitRouting
+public import Mathlib.Data.ZMod.Basic
 
 /-! The bit motif as a finite scalar circuit over `ZMod 2`. Side wires are
 ordered label pairs meeting in exactly one coordinate; the `h` central wires
@@ -7,6 +9,8 @@ are coordinate sums. There is no all-source-sum wire. The finite instruction
 lists restore arbitrary dirty scratch and perform a true data-bank exchange.
 Wire enumerations are explicit inputs; sparse wire counts and tape costs are
 not established here. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.Circuit
 

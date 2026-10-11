@@ -1,2 +1,3 @@
 .lake/
 integer-mult-bounds/
+__pycache__/

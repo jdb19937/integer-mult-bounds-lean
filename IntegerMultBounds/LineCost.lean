@@ -1,4 +1,6 @@
-import IntegerMultBounds.CostTable
+module
+
+public import IntegerMultBounds.CostTable
 
 /-! Line counting for the tensor interface (§7, Lemma 7.2). Applying a
 one-dimensional map along axis `i` of a box with `T = ∏ tⱼ` entries visits
@@ -8,6 +10,8 @@ this is the volume `T p` times the cost-table row `d p^(1/2+δ) α`. When every
 `tᵢ ≥ r/2`, at most `2 d T / r` lines are visited in all, and any fixed
 polynomial `p^c` of setup per line totals `o(T p)` under the size relations
 of §8, because `r = 2^ℓ ≥ 2^(p^(1-ε)/12)` outgrows every power of `p`. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.LineCost
 

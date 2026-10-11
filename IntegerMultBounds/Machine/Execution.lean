@@ -1,7 +1,11 @@
-import IntegerMultBounds.Machine
+module
+
+public import IntegerMultBounds.Machine
 
 /-! Basic execution laws and a concrete one-tape scan with an exact step count.
 The scan is a primitive for stream routines, not a multiplication algorithm. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine
 

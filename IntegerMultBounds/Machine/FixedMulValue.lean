@@ -1,10 +1,14 @@
-import IntegerMultBounds.Machine.FixedMul
-import IntegerMultBounds.Compact.PowerTwoDigits
+module
+
+public import IntegerMultBounds.Machine.FixedMul
+public import IntegerMultBounds.Compact.PowerTwoDigits
 
 /-! The signed fixed-point multiply computes the product truncated toward
 zero by `p` bits: for two's complement words of width `w ≥ p + 2` whose
 signed values have magnitude at most `2^p`, the result word's signed value is
 `(x * y).tdiv 2^p`, the fixed-point rounding `ρ` of the numerical maps. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.FixedMul
 

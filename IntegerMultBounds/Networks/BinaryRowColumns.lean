@@ -1,8 +1,13 @@
-import IntegerMultBounds.Networks.BinaryRowProgram
+module
+
+public import IntegerMultBounds.Networks.BinaryRowProgram
 
 /-! Literal Boolean row additions on any number of columns implement the
 same fixed binary basis word in each column. The XOR action is connected to
 the F2 coordinate semantics; no field-operation oracle is used here. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Networks.BinaryRowColumns
 open Module BinaryRowProgram
 variable {ι κ : Type*} [DecidableEq ι]

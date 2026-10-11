@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CompactComplexActualCallFrameEdge
+module
+
+public import IntegerMultBounds.Machine.CompactComplexActualCallFrameEdge
 
 /-! Chronological recursive calls agree with the original frame product.
 Commutativity comes from the actual column translation kernels, including
 calls acting on the same column, rather than an extra scheduling premise. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexActualCallOrder
 noncomputable section
 open Networks

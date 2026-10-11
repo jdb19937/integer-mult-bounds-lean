@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CountedRankSplitCopy
-import IntegerMultBounds.Compact.KeyValue
+module
+
+public import IntegerMultBounds.Machine.CountedRankSplitCopy
+public import IntegerMultBounds.Compact.KeyValue
 
 /-! The growing repair counter is read with literal zero extension. No minimum
 counter length is required for either tape or rank-value correctness. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedRankSplitData
 noncomputable section
 variable {a : ℕ}

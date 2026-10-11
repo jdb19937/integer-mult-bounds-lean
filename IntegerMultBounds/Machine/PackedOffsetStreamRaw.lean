@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.PackedOffsetStream
-import IntegerMultBounds.Compact.PowerTwoDigits
+module
+
+public import IntegerMultBounds.Machine.PackedOffsetStream
+public import IntegerMultBounds.Compact.PowerTwoDigits
 
 /-! The packed-offset stream builder applied directly to a raw n*w-bit word.
 The emitted canonical integers are exactly its radix-2^w digits, in order. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.PackedOffsetStreamRaw
 open Compact.PowerTwo
 

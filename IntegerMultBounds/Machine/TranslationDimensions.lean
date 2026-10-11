@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.RadixPowerMultipleDescriptor
-import IntegerMultBounds.Machine.DimensionProductDescriptor
+module
+
+public import IntegerMultBounds.Machine.RadixPowerMultipleDescriptor
+public import IntegerMultBounds.Machine.DimensionProductDescriptor
 
 /-! Shared dimensions for a flat coordinate translation, built from one exponent
 and one trailing record width. All descriptor calculations reuse blank work. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.TranslationDimensions
 
 variable {q : ℕ} (hq : 2 ≤ q)
@@ -16,11 +21,11 @@ def pSlot : Fin 9 := 5
 def suffixSlot : Fin 9 := 6
 def bSlot : Fin 9 := 7
 
-private def descriptorHead : Option (List Bool) → ℤ
+def descriptorHead : Option (List Bool) → ℤ
   | none => 0
   | some _ => 1
 
-private def descriptorTape : Option (List Bool) → ℤ → Fin (q+4)
+def descriptorTape : Option (List Bool) → ℤ → Fin (q+4)
   | none => fun _ => blank
   | some bs => RadixZeroFill.encodedBinary bs
 
@@ -56,7 +61,7 @@ private theorem placed_exact {t u n r a cost : ℕ} {M : Program t r a}
   exact Placement.view _ _
 
 omit hq in
-private def powerPlacement (j : Fin 3) : Fin (4+5) ≃ Fin 9 :=
+def powerPlacement (j : Fin 3) : Fin (4+5) ≃ Fin 9 :=
   Equiv.swap 3 ⟨4+j,Nat.lt_trans (Nat.add_lt_add_left j.isLt 4) (by decide)⟩
 
 private theorem power_active_empty (j : Fin 3) (bs ws : List Bool)
@@ -122,7 +127,7 @@ private def afterP (p b : ℕ) : Fin 4 → Option (List Bool) :=
 private def afterS (p s b : ℕ) : Fin 4 → Option (List Bool) :=
   ![some (qBits hq b),some (pBits hq p b),some (suffixBits hq s b),none]
 
-private def productPlacement : Fin (6+3) ≃ Fin 9 where
+def productPlacement : Fin (6+3) ≃ Fin 9 where
   toFun := fun i => ![0,7,1,3,8,6,2,4,5] i
   invFun := fun i => ![0,2,6,3,7,8,5,1,4] i
   left_inv := by decide +kernel

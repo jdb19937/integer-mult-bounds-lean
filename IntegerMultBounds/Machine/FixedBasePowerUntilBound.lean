@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.FixedBasePowerDescriptor
+module
+
+public import IntegerMultBounds.Machine.FixedBasePowerDescriptor
 
 /-! Bounds paying repeated scans while a fixed-base power grows to a runtime
 threshold. The exponent is the genuine least stopping exponent. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.FixedBasePowerUntilBound
 
 def rho (B D : ℕ) := Nat.clog B D

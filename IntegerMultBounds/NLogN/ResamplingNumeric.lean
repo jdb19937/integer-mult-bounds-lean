@@ -1,7 +1,9 @@
-import IntegerMultBounds.NLogN.ResamplingAssembly
-import IntegerMultBounds.NLogN.ResamplingApprox
-import IntegerMultBounds.NLogN.OffDiagApprox
-import IntegerMultBounds.NLogN.NeumannApprox
+module
+
+public import IntegerMultBounds.NLogN.ResamplingAssembly
+public import IntegerMultBounds.NLogN.ResamplingApprox
+public import IntegerMultBounds.NLogN.OffDiagApprox
+public import IntegerMultBounds.NLogN.NeumannApprox
 
 /-! Proposition 4.7(ii) of Harvey–van der Hoeven: numerical approximations of the
 resampling maps `A = S / 2` and `B = P_s⁻¹ D' J' C P_t`. The numerical `Ã` sums
@@ -13,6 +15,8 @@ scaled errors `c` for the Gaussian terms (the paper's `7`), `ε(Ã) ≤ (c(2m+1)
 and `ε(B̃) ≤ (2(2mc + 8) + 7)/2`, both below `p²` for the paper's parameters.
 The fixed-point evaluation of a single Gaussian term, the clamping of `Ẽ` into
 the unit ball (taken as a hypothesis), and bit costs are not modeled. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.NLogN
 

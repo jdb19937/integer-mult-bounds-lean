@@ -1,10 +1,14 @@
-import IntegerMultBounds.Compact.Ideal
-import IntegerMultBounds.Compact.Repair
+module
+
+public import IntegerMultBounds.Compact.Ideal
+public import IntegerMultBounds.Compact.Repair
 
 /-! Concrete deterministic exceptional-address repair for the packed program.
 The conclusion is unconditional in the input address. Guards decide *where*
 repair runs, rather than restricting the correctness theorem's inputs.
 Tape implementation and sorting cost are not supplied by this file. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Compact
 open Radix

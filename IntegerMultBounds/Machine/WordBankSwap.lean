@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.EqualWordSwap
-import IntegerMultBounds.Machine.WordBankCleanup
+module
+
+public import IntegerMultBounds.Machine.EqualWordSwap
+public import IntegerMultBounds.Machine.WordBankCleanup
 
 /-! Physical equal-word exchange on any two fixed caller ports. All heads,
 all complementary tapes and the full word exteriors are retained literally. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.WordBankSwap
 noncomputable section
 open WordBankCleanup (write pairPlace pairSlot)

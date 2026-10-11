@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ButterflyNumerator
-import IntegerMultBounds.Networks.GaussianDyadic
+module
+
+public import IntegerMultBounds.Machine.ButterflyNumerator
+public import IntegerMultBounds.Networks.GaussianDyadic
 
 /-! Signed interpretation and exact dyadic semantics for the physical butterfly
 numerator machine. Advancing the common denominator by one implements division
 by two exactly; a guard bound makes centered residue decoding unambiguous. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ButterflySigned
 noncomputable section
 open ButterflyNumerator

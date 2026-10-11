@@ -1,11 +1,15 @@
-import IntegerMultBounds.Compact.ExactRepair
-import Mathlib.Data.Int.Interval
-import Mathlib.Data.Fintype.BigOperators
-import Mathlib.SetTheory.Cardinal.Finite
+module
+
+public import IntegerMultBounds.Compact.ExactRepair
+public import Mathlib.Data.Int.Interval
+public import Mathlib.Data.Fintype.BigOperators
+public import Mathlib.SetTheory.Cardinal.Finite
 
 /-! Exact finite counts for the actual packed-address predicates used by
 exceptional repair. The radix bijection transfers independent digit counts
 to complete packed fields. No probabilistic independence is assumed. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Compact
 open Radix

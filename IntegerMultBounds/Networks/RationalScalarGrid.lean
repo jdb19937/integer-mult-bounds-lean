@@ -1,10 +1,15 @@
-import IntegerMultBounds.Networks.GaussianBoundedArithmetic
-import IntegerMultBounds.Networks.CircuitCoefficients
-import IntegerMultBounds.Networks.GroupedModuleFrames
-import Mathlib.Algebra.Algebra.Rat
+module
+
+public import IntegerMultBounds.Networks.GaussianBoundedArithmetic
+public import IntegerMultBounds.Networks.CircuitCoefficients
+public import IntegerMultBounds.Networks.GroupedModuleFrames
+public import Mathlib.Algebra.Algebra.Rat
 
 /-! Numerator certificates apply to the same rational module gate rows on
 complex arrays, preserving literal row order and source/target names. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Networks.RationalScalarGrid
 open Circuit GaussianPrecision
 variable {ι Ω : Type*} [DecidableEq ι]
@@ -31,6 +36,7 @@ theorem gate_pointwise (g : Gate ι ℚ) (x : ι → Ω → ℂ) (i : ι) (ω : 
     | cons p ps ih =>
       simp only [List.map_cons,List.sum_cons,Pi.add_apply,Pi.smul_apply,ih]
       congr 1
+      exact Rat.smul_def _ _
   by_cases hi : i=g.target
   · subst i
     simp only [FramedCircuit.moduleGate,Gate.run,castGate,Function.update_self,List.map_map,

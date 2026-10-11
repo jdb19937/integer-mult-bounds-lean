@@ -1,5 +1,7 @@
-import IntegerMultBounds.NLogN.SynthConv
-import IntegerMultBounds.NLogN.Bluestein
+module
+
+public import IntegerMultBounds.NLogN.SynthConv
+public import IntegerMultBounds.NLogN.Bluestein
 
 /-! The embedding of complex cyclic convolutions into the synthetic ring,
 Section 3.2 of Harvey and van der Hoeven. Twisting a length-`r` vector by
@@ -10,6 +12,8 @@ convolution on `G × Fin r` for any finite abelian group `G` becomes the
 `G`-indexed cyclic convolution with coefficients in the synthetic ring; the
 twist and its inverse are isometries of the sup norm. Fixed-point errors of
 the twist and the bit cost of computing `ζ^k` are not treated here. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.NLogN
 

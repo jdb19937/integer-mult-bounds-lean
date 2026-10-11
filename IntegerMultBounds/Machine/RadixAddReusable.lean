@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.RadixAdd
-import IntegerMultBounds.Machine.MarkedWordCleanup
-import IntegerMultBounds.Machine.ReturnOrigin
-import IntegerMultBounds.Machine.FamilyPlacementAlphabet
+module
+
+public import IntegerMultBounds.Machine.RadixAdd
+public import IntegerMultBounds.Machine.MarkedWordCleanup
+public import IntegerMultBounds.Machine.ReturnOrigin
+public import IntegerMultBounds.Machine.FamilyPlacementAlphabet
 
 /-! Literal modular radix addition with restored input and output heads. All
 three temporary markers are written and removed by the machine. The source
 words are preserved exactly, and the output can feed another arithmetic stage. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RadixAddReusable
 
 open RadixDigits
@@ -20,7 +25,7 @@ private def markedBank (xs ys zs : List (Fin q)) (p : ℤ) : Tapes 3 q :=
 
 def result (hq : 2 ≤ q) (xs ys : List (Fin q)) := RadixAdd.digits hq 0 (xs.zip ys)
 
-private def initializeProgram : Program 3 2 q where
+def initializeProgram : Program 3 2 q where
   tapes_pos := by decide
   start := 0
   transition := fun s _ => if s = 0 then some (1,fun _ => (separator,Move.right)) else none
@@ -54,7 +59,7 @@ private theorem marked_ne_marker (xs : List (Fin q)) (z : ℤ) (hz : 0 < z) :
   · rw [marked,putWord_outside _ _ _ _ (Or.inr (by simpa using le_of_not_gt hi))]
     simp [MarkedWordCleanup.empty,show z ≠ 0 by omega,blank,separator,Fin.ext_iff]
 
-private def resetProgram : Program 3 2 q where
+def resetProgram : Program 3 2 q where
   tapes_pos := by decide
   start := 0
   transition := fun s symbols => if s = 0 then

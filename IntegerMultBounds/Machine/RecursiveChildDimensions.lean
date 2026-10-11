@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.RecursiveDimensionBank
-import IntegerMultBounds.Machine.RadixPowerMultipleDescriptor
-import IntegerMultBounds.Machine.ExactFrame
+module
+
+public import IntegerMultBounds.Machine.RecursiveDimensionBank
+public import IntegerMultBounds.Machine.RadixPowerMultipleDescriptor
+public import IntegerMultBounds.Machine.ExactFrame
 
 /-! Physical child dimensions from six parent headers and two explicit canonical
 quotient headers. Quotient production is a separate operation. No derived power
 or spectator product is supplied; all eight outputs start blank. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveChildDimensions
 open RecursiveInterchangeLayout (Descriptor child volume)
 variable {q : ℕ} (hq : 2 ≤ q)

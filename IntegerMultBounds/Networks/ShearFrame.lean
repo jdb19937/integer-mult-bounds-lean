@@ -1,10 +1,14 @@
-import IntegerMultBounds.Networks.ProjectionRank
-import IntegerMultBounds.Networks.FramedCircuit
+module
+
+public import IntegerMultBounds.Networks.ProjectionRank
+public import IntegerMultBounds.Networks.FramedCircuit
 
 /-! Exact address-shear permutations and their action on wire arrays. The
 address coefficient ring and the ring of scalar values are independent. This
 supplies algebraic frame identities; finite-radix representation and tape
 implementation of the shears are still separate obligations. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.ShearFrame
 

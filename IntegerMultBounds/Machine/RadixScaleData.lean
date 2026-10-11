@@ -1,19 +1,23 @@
-import IntegerMultBounds.Machine.RadixDigits
+module
+
+public import IntegerMultBounds.Machine.RadixDigits
 
 /-! Fixed-natural-coefficient scaling by a bounded-carry radix transducer.
 The state bound depends on the fixed coefficient, never on word length. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.RadixScaleData
 
 open RadixDigits
 variable {q coefficient : ℕ} [NeZero q]
 
-private theorem radix_pos : 0 < q := Nat.pos_of_ne_zero (NeZero.ne q)
+theorem radix_pos : 0 < q := Nat.pos_of_ne_zero (NeZero.ne q)
 
 def digit (c : Fin (coefficient + 1)) (x : Fin q) : Fin q :=
   ⟨(coefficient * x.val + c.val) % q, Nat.mod_lt _ radix_pos⟩
 
-private theorem carry_lt (c : Fin (coefficient + 1)) (x : Fin q) :
+theorem carry_lt (c : Fin (coefficient + 1)) (x : Fin q) :
     (coefficient * x.val + c.val) / q < coefficient + 1 := by
   apply (Nat.div_lt_iff_lt_mul radix_pos).mpr
   have hm := Nat.mul_le_mul_left coefficient (Nat.succ_le_of_lt x.isLt)

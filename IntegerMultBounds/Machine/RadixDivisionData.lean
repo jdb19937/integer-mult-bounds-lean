@@ -1,10 +1,14 @@
-import IntegerMultBounds.Machine.RadixDigits
-import Mathlib.Data.ZMod.Basic
-import Mathlib.Algebra.Field.ZMod
+module
+
+public import IntegerMultBounds.Machine.RadixDigits
+public import Mathlib.Data.ZMod.Basic
+public import Mathlib.Algebra.Field.ZMod
 
 /-! Fixed-denominator modular division by a digit transducer. The carry is a
 member of Fin d, independent of input width. One output digit solves the local
 congruence modulo the fixed prime radix, and exact arithmetic telescopes. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.RadixDivisionData
 
@@ -15,7 +19,7 @@ variable {q d : ℕ} [Fact q.Prime]
 def digit (c : Fin d) (x : Fin q) : Fin q :=
   ⟨((d : ZMod q)⁻¹ * ((x.val : ZMod q) - (c.val : ZMod q))).val, ZMod.val_lt _⟩
 
-private theorem carry_lt (c : Fin d) (x : Fin q) :
+theorem carry_lt (c : Fin d) (x : Fin q) :
     (d * (digit c x).val + c.val) / q < d := by
   have hq := (Fact.out : q.Prime).pos
   apply (Nat.div_lt_iff_lt_mul hq).mpr

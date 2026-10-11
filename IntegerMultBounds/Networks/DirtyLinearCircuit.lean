@@ -1,9 +1,13 @@
-import IntegerMultBounds.Networks.GlobalCircuit
-import Mathlib.Data.ZMod.Basic
+module
+
+public import IntegerMultBounds.Networks.GlobalCircuit
+public import Mathlib.Data.ZMod.Basic
 
 /-! Dirty-scratch cancellation around an actual invertible scalar program. The
 wrapper executes literal embedded instruction lists; its semantic theorem makes
 no tape-time, grouped-gate, or sparse-incidence claim. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.DirtyLinearCircuit
 

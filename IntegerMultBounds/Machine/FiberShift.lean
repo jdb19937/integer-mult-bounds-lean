@@ -1,11 +1,15 @@
-import IntegerMultBounds.Machine.CountedRotateAdvance
-import IntegerMultBounds.Machine.WordSegments
-import IntegerMultBounds.Machine.CountedLoop
-import IntegerMultBounds.Machine.GrowingCounterData
+module
+
+public import IntegerMultBounds.Machine.CountedRotateAdvance
+public import IntegerMultBounds.Machine.WordSegments
+public import IntegerMultBounds.Machine.CountedLoop
+public import IntegerMultBounds.Machine.GrowingCounterData
 
 /-! A single fixed body for shifting successive equal-length raw fibers.
 The offset and binary length descriptors are reused unchanged. All payload
 contents remain implicit in their physical stream positions. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.FiberShift
 

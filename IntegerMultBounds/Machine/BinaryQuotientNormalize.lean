@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.BinaryCanonicalTrim
-import IntegerMultBounds.Machine.FiniteReturnStackAt
+module
+
+public import IntegerMultBounds.Machine.BinaryCanonicalTrim
+public import IntegerMultBounds.Machine.FiniteReturnStackAt
 
 /-! Copy a raw division quotient onto a fresh marked descriptor, erase its raw
 source, physically trim high zero bits, and return the descriptor head to one.
 For a quotient ending at cell zero, the erased source head is also exactly zero. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.BinaryQuotientNormalize
 open SharedPlacementAlphabet (setTape)
 variable {a : ℕ}

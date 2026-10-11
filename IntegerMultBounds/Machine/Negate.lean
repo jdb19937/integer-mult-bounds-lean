@@ -1,8 +1,12 @@
-import IntegerMultBounds.Machine.SignExtendAdd
+module
+
+public import IntegerMultBounds.Machine.SignExtendAdd
 
 /-! In-place two's complement negation on one tape: copy bits up to and
 including the first one, then complement; halt on the blank. One transition
 per bit; the head parks on the word's blank end. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.Negate
 

@@ -1,10 +1,14 @@
-import IntegerMultBounds.Machine.BitTape
-import IntegerMultBounds.Machine.GrowingCounterData
-import IntegerMultBounds.Machine.Loop
+module
+
+public import IntegerMultBounds.Machine.BitTape
+public import IntegerMultBounds.Machine.GrowingCounterData
+public import IntegerMultBounds.Machine.Loop
 
 /-! A literal growing binary counter. Carry into the end blank creates a new
 high bit, then the head returns to its left sentinel. No initial width is
 needed, and every carry, return, and repeated-call transition is charged. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine
 

@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.PrefixCounter
+module
+
+public import IntegerMultBounds.Machine.PrefixCounter
 
 /-! Physical lexicographic prefix addresses. The scheduler order is fastest
 field first, the reverse of the array's most-significant-first field order.
 Widths need not agree, and arbitrary spectator fields occur in the address. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.PrefixAddressData
 open RadixDigits PrefixCounterData
 variable {q c : ℕ}

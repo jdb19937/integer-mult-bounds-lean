@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.DelimitedRadixRead
+module
+
+public import IntegerMultBounds.Machine.DelimitedRadixRead
 
 /-! Emit an actual arithmetic result word as one delimited stream field.
 The result tape is erased completely and its head restored for the next call. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.DelimitedRadixEmit
 open MarkedWordCleanup (one empty marked word)
 open RadixDigits

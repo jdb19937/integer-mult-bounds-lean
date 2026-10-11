@@ -1,10 +1,14 @@
-import IntegerMultBounds.Schoenhage.Ops
+module
+
+public import IntegerMultBounds.Schoenhage.Ops
 
 /-! Word programs moved into a larger bank: an injective map of tape names
 relabels every primitive slot, loop tape and branch tape. An execution of the
 relabelled program from a bank whose relabelled tapes hold the original bank
 ends in a bank whose relabelled tapes hold the original result, with the same
 cost, and every tape outside the image untouched (`Exec.map`, `Runs.map`). -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Schoenhage
 

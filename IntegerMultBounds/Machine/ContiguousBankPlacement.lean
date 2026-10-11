@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.InjectivePlacement
+module
+
+public import IntegerMultBounds.Machine.InjectivePlacement
 
 /-! Exact execution on a contiguous middle tape bank, preserving both
 arbitrary banks around it literally, including all tape heads. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ContiguousBankPlacement
 noncomputable section
 variable {a l n r q : ℕ}

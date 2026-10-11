@@ -1,11 +1,15 @@
-import IntegerMultBounds.Schoenhage.Stream
-import IntegerMultBounds.Schoenhage.Cmd
+module
+
+public import IntegerMultBounds.Schoenhage.Stream
+public import IntegerMultBounds.Schoenhage.Cmd
 
 /-! The streaming machine as a word-program primitive. Every input tape must
 have a current word; the output tape must be at its end. The inputs step
 past their current words, and the emitted symbols, which must form whole
 words, are appended to the output tape (in extend mode the first of them
 continues the output's last word). -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Schoenhage
 

@@ -1,12 +1,16 @@
-import IntegerMultBounds.Schoenhage.Twist
-import IntegerMultBounds.Schoenhage.Reverse
-import IntegerMultBounds.Schoenhage.RingConst
+module
+
+public import IntegerMultBounds.Schoenhage.Twist
+public import IntegerMultBounds.Schoenhage.Reverse
+public import IntegerMultBounds.Schoenhage.RingConst
 
 /-! The recordwise monomial on word tapes. An eleven-tape word program moves
 a record's component words to a buffer with their bits reversed, skips the
 head words, then emits the tail words and the head words to the output,
 each turned back to most-significant-first order and negated in two's
 complement when its flag says so (`runs_twist`: the output is `twWords`). -/
+
+@[expose] public section
 
 set_option maxRecDepth 10000
 

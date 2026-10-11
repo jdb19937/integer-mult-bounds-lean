@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.BinaryCurrentAddress
-import IntegerMultBounds.Machine.UnitPhaseRecordIO
+module
+
+public import IntegerMultBounds.Machine.BinaryCurrentAddress
+public import IntegerMultBounds.Machine.UnitPhaseRecordIO
 
 /-! The sixty-tape coefficient body reads its address from the live marked
 counter, returns both heads, and increments the counter on actual tapes. The
 previous equal-width raw readout is overwritten; all other tapes are framed. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.UnitPhaseRecordAddress
 noncomputable section
 open SharedPlacementAlphabet (setTape)

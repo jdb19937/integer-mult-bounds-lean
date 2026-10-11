@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.SharedControlPair
+module
+
+public import IntegerMultBounds.Machine.SharedControlPair
 
 /-! Four literal integer numerators of the complex butterfly. This program uses
 four common radix-two inputs and disjoint private banks, performs all source
 copies and cleanup, and retains four output words. Signed interpretation and
 Gaussian dyadic scaling are proved separately. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ButterflyNumerator
 noncomputable section
 open RadixLinearCombinationRefresh (Expr controls)

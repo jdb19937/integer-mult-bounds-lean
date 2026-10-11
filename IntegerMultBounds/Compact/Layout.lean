@@ -1,13 +1,17 @@
-import Mathlib.Logic.Equiv.Fin.Basic
-import Mathlib.Data.Fintype.Prod
-import Mathlib.Tactic.Ring
-import Lean.Elab.Tactic.Omega
+module
+
+public import Mathlib.Logic.Equiv.Fin.Basic
+public import Mathlib.Data.Fintype.Prod
+public import Mathlib.Tactic.Ring
+public import Lean.Elab.Tactic.Omega
 
 /-!
 The complete-field part of the reservation invariant. A role split changes
 only the row coordinate; the entire suffix (including arbitrary temporary
 fields and payloads) is retained. No fixed-tape implementation is asserted here.
 -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Compact.Layout
 

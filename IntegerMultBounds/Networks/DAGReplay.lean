@@ -1,8 +1,12 @@
-import IntegerMultBounds.Networks.DisjointUnique
+module
+
+public import IntegerMultBounds.Networks.DisjointUnique
 
 /-! Replay a valid source DAG into an existing persistent DAG, renaming its
 input atoms and interning every node by its exact lifted support. The returned
 reference list remaps actual source node indices to actual target indices. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.DAGReplay
 

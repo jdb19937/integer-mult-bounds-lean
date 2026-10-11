@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.RadixDigits
+module
+
+public import IntegerMultBounds.Machine.RadixDigits
 
 /-! Fixed-width prime-radix counter semantics. The carry potential counts only
 maximal digits, so unrelated wide spectator counters are not rescanned per
 increment. The radix need not be prime for these counter facts. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RadixCounterData
 
 open RadixDigits

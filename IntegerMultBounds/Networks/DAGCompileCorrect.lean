@@ -1,8 +1,12 @@
-import IntegerMultBounds.Networks.DAGAllocatorRun
-import IntegerMultBounds.Networks.DAGConsumers
+module
+
+public import IntegerMultBounds.Networks.DAGAllocatorRun
+public import IntegerMultBounds.Networks.DAGConsumers
 
 /-! Unconditional structural correctness and exact role count of the actual
 allocator on valid DAGs with in-bounds requested outputs. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.DAGAllocator
 

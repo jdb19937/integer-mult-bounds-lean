@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CountedGuardConstantsFill
-import IntegerMultBounds.Machine.CountedGuardGadgetFinish
+module
+
+public import IntegerMultBounds.Machine.CountedGuardConstantsFill
+public import IntegerMultBounds.Machine.CountedGuardGadgetFinish
 
 /-! Fixed-control overwrite at the cell b+1 using the original b descriptor,
 with real outward movement and replay to the origin. Exact complete tapes,
 including padded high bits, are retained except for the chosen cell. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedGuardConstantsEdit
 noncomputable section
 variable {a : ℕ}

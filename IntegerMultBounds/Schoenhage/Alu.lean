@@ -1,4 +1,6 @@
-import IntegerMultBounds.Schoenhage.Wp
+module
+
+public import IntegerMultBounds.Schoenhage.Wp
 
 /-! Residue arithmetic modulo `2^N + 1` as word programs on a fixed bank of
 tapes. Residues are `(N + 1)`-bit words, least significant bit first. A
@@ -6,6 +8,8 @@ register tape holds exactly one word with the head before it. The unit keeps
 its constants (the width `N + 1` in unary and the word of `2^N + 1`) in
 registers, takes its operands from two registers, leaves the result in a
 third, and returns every scratch tape to empty. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Schoenhage
 

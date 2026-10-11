@@ -1,14 +1,19 @@
-import IntegerMultBounds.Machine.RadixHighBlockJoinSemantics
+module
+
+public import IntegerMultBounds.Machine.RadixHighBlockJoinSemantics
 
 /-! Literal inverse ordered high-block separation, moving the trailing
 prefix digit after S at each step. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RadixHighBlockSeparateSemantics
 noncomputable section
 open RecursiveInterchangeRows (pack pack_val)
 variable {a : ℕ}
-private theorem input_succ (P S q r E : ℕ) : (P*q^r)*q*(S*E) = P*q^(r+1)*(S*E) := by rw [pow_succ]; ring
-private theorem middle_succ (P S q r E : ℕ) : P*q^r*(S*(q*E)) = (P*q^r)*S*q*E := by ring
-private theorem output_succ (P S q r E : ℕ) : P*S*q^(r+1)*E = P*S*q^r*(q*E) := by rw [pow_succ]; ring
+theorem input_succ (P S q r E : ℕ) : (P*q^r)*q*(S*E) = P*q^(r+1)*(S*E) := by rw [pow_succ]; ring
+theorem middle_succ (P S q r E : ℕ) : P*q^r*(S*(q*E)) = (P*q^r)*S*q*E := by ring
+theorem output_succ (P S q r E : ℕ) : P*S*q^(r+1)*E = P*S*q^r*(q*E) := by rw [pow_succ]; ring
 
 def separate (q : ℕ) : (r P S E : ℕ) →
     (Fin (P*q^r*(S*E)) → Fin (a+4)) → (Fin (P*S*q^r*E) → Fin (a+4))

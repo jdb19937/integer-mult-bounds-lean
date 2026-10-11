@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.FixedHeaderBankCopy
-import IntegerMultBounds.Machine.InjectivePlacement
+module
+
+public import IntegerMultBounds.Machine.FixedHeaderBankCopy
+public import IntegerMultBounds.Machine.InjectivePlacement
 
 /-! Place a fixed descriptor copy family into named slots of a larger blank
 private bank. Unselected private tapes remain blank throughout the contract. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.FixedHeaderSparseBankCopy
 noncomputable section
 variable {t n u a : ℕ}

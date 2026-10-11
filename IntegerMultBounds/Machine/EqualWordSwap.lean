@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.EqualWordReplace
+module
+
+public import IntegerMultBounds.Machine.EqualWordReplace
 
 /-! Physical simultaneous exchange of equal-length nonblank words, followed
 by paid restoration of both heads. The full complementary tape exteriors are
 retained. This supplies the bank exchange needed by endpoint corrections. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.EqualWordSwap
 variable {a : ℕ}
 open CopyWord (cfg)

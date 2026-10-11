@@ -1,9 +1,13 @@
-import IntegerMultBounds.Machine.ScalingExecutionReuse
+module
+
+public import IntegerMultBounds.Machine.ScalingExecutionReuse
 
 /-! Repeated literal positive-unit scaling on consecutive equal-size fibers.
 Every fiber physically initializes residue controls and restores its temporary
 buffers. The outer descriptor and clock are prepared, consumed, and cleaned by
 the actual reusable counted loop. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.ScalingStream
 

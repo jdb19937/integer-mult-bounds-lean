@@ -1,10 +1,14 @@
-import IntegerMultBounds.Networks.DuplicateBudget
+module
+
+public import IntegerMultBounds.Networks.DuplicateBudget
 
 /-! Duplicate witnesses across actual common-point copies automatically form
 a matching. A nontrivial triple support has at most two common points; local
 support uniqueness therefore rules out repeated right endpoints, and the
 increasing common-point orientation rules out chains of overlapping matches.
 No disjointness assumption is imposed on the witness certificate itself. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.SharedPointMatching
 

@@ -1,9 +1,13 @@
-import IntegerMultBounds.Machine.BinaryPad
-import IntegerMultBounds.Machine.BinaryAdd
-import IntegerMultBounds.Machine.Frame
+module
+
+public import IntegerMultBounds.Machine.BinaryPad
+public import IntegerMultBounds.Machine.BinaryAdd
+public import IntegerMultBounds.Machine.Frame
 
 /-! Addition of arbitrary-width LSF words by actual padding, physical rewind,
 and ripple addition. Both sequential joins are charged as real transitions. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.BinaryArithmetic
 

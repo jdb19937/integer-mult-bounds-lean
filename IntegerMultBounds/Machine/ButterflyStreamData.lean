@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.ButterflyRecord
-import IntegerMultBounds.Machine.CyclicRowCycle
+module
+
+public import IntegerMultBounds.Machine.ButterflyRecord
+public import IntegerMultBounds.Machine.CyclicRowCycle
 
 /-! Literal paired coefficient streams and their clean per-record loop states.
 The contexts used by the record machine are derived from the actual flattened
 input arrays, rather than supplied per-record tape representations. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.ButterflyStreamData
 noncomputable section
 open DelimitedRadixRecord (Context complex)

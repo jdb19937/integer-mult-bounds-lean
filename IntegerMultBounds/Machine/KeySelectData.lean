@@ -1,7 +1,11 @@
-import IntegerMultBounds.Machine.PartitionMarked
+module
+
+public import IntegerMultBounds.Machine.PartitionMarked
 
 /-! Record encodings for a physically selected key bit. `keyAt` is a data-level
 specification; the machine selects that position by scanning a unary tape. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.KeySelect
 

@@ -1,7 +1,12 @@
-import IntegerMultBounds.Compact.KeyValue
+module
+
+public import IntegerMultBounds.Compact.KeyValue
 
 /-! Selected original-source bits at rho+i*q. The complete source word remains
 available; neither a supplied slice nor a fixed external control word is used. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.SelectedSourceBitsData
 
 def selected (xs : List Bool) (q rho n : ℕ) : List Bool :=

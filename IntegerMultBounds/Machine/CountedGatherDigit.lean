@@ -1,10 +1,15 @@
-import IntegerMultBounds.Machine.CountedGatherField
-import IntegerMultBounds.Machine.CountedGatherPadding
-import IntegerMultBounds.Machine.Placement
+module
+
+public import IntegerMultBounds.Machine.CountedGatherField
+public import IntegerMultBounds.Machine.CountedGatherPadding
+public import IntegerMultBounds.Machine.Placement
 
 /-! One packed gather digit using runtime binary descriptors, rather than
 unrolling the strides into finite control. The five immutable counts describe
 source prefix, target prefix, field, source suffix, and target suffix. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedGatherDigit
 noncomputable section
 variable {a : ℕ}

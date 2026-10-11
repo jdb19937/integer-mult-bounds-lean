@@ -1,11 +1,15 @@
-import IntegerMultBounds.Networks.PairedPartition
-import IntegerMultBounds.Networks.DisjointBuilder
+module
+
+public import IntegerMultBounds.Networks.PairedPartition
+public import IntegerMultBounds.Networks.DisjointBuilder
 
 /-! Literal local reconstruction steps of the paired-exclusion DAG builder.
 The source supports are the concrete weighted-graph partitions, and every
 addition uses the existing zero-eliding, support-interning smart constructor.
 This proves one recursive reconstruction step, not the full recursive graph
 builder or its optimized global node count. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.PairedReconstruct
 

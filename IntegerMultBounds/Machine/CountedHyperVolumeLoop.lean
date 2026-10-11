@@ -1,6 +1,11 @@
-import IntegerMultBounds.Machine.CountedVolumeLoop
+module
+
+public import IntegerMultBounds.Machine.CountedVolumeLoop
 
 /-! Four runtime counted dimensions, without a supplied product descriptor. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedHyperVolumeLoop
 open CountedLoopReuseAlphabet (empty binary)
 variable {t s a : ℕ}

@@ -1,8 +1,13 @@
-import IntegerMultBounds.Machine.CountedRankSplitBank
-import IntegerMultBounds.Machine.CountedRankSplitData
+module
+
+public import IntegerMultBounds.Machine.CountedRankSplitBank
+public import IntegerMultBounds.Machine.CountedRankSplitData
 
 /-! Fixed rank splitting from only original q/b/n headers, with exact original
 counter preservation through a possibly long blank tail and paid rewind. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedRankSplitRun
 noncomputable section
 variable {a : ℕ}

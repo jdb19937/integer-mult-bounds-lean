@@ -1,9 +1,14 @@
-import IntegerMultBounds.Machine.CompactComplexSavedStackTailInvariant
-import IntegerMultBounds.Machine.FiniteReturnGuard
+module
+
+public import IntegerMultBounds.Machine.CompactComplexSavedStackTailInvariant
+public import IntegerMultBounds.Machine.FiniteReturnGuard
 
 /-! The physical empty-stack probe classifies genuine push histories. Positive
 fixed frame width makes the last occupied cell a binary symbol, so the guard
 is empty exactly at the original stack head. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CompactComplexSavedStackGuard
 open CompactComplexSavedStackTailInvariant (History)
 variable {a t width : ℕ} {origin head : ℤ} {f : ℤ → Fin (a+4)}

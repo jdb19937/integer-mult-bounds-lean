@@ -1,11 +1,15 @@
-import IntegerMultBounds.Networks.ComplexRank25
-import IntegerMultBounds.Networks.BinaryRankFactors
-import IntegerMultBounds.Networks.GlobalBinaryResiduals
+module
+
+public import IntegerMultBounds.Networks.ComplexRank25
+public import IntegerMultBounds.Networks.BinaryRankFactors
+public import IntegerMultBounds.Networks.GlobalBinaryResiduals
 
 /-! Actual complex-network edge interfaces in binary tensor coordinates.
 The ordered per-edge factorizations count all-column vector factors, not
 literal tape instructions. Physical placement and full scheduled composition
 are separate from these exact edge operator identities. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.ComplexPhaseBudget
 

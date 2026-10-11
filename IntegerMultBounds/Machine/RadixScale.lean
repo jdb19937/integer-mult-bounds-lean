@@ -1,9 +1,13 @@
-import IntegerMultBounds.Machine.RadixScaleData
-import IntegerMultBounds.Machine.RadixUnary
+module
+
+public import IntegerMultBounds.Machine.RadixScaleData
+public import IntegerMultBounds.Machine.RadixUnary
 
 /-! Literal fixed-coefficient modular scaling. The two-tape machine has exactly
 coefficient+1 finite carry states and takes one transition per source digit.
 The radix and coefficient are fixed independently of the input width. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.RadixScale
 

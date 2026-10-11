@@ -1,11 +1,16 @@
-import IntegerMultBounds.Machine.RecursiveInterchangeVolume
-import Mathlib.Data.Nat.Log
-import IntegerMultBounds.Machine.GrowingCounterData
+module
+
+public import IntegerMultBounds.Machine.RecursiveInterchangeVolume
+public import Mathlib.Data.Nat.Log
+public import IntegerMultBounds.Machine.GrowingCounterData
 
 /-! Descriptor-size comparison along recursive child selections. Retained
 spectator digits ensure that the root's binary size is at most a fixed multiple
 of the current child's binary size, despite cyclic row subdivision. This is
 arithmetic, not an assertion that descriptor processing is free. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.RecursiveDescriptorSize
 open RecursiveInterchangeLayout RecursiveInterchangeVolume
 

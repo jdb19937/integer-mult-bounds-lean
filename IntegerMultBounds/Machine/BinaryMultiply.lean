@@ -1,7 +1,9 @@
-import IntegerMultBounds.Machine.BinaryAccumulate
-import IntegerMultBounds.Machine.ExactFrame
-import IntegerMultBounds.Machine.Branch
-import IntegerMultBounds.Machine.LoopChain
+module
+
+public import IntegerMultBounds.Machine.BinaryAccumulate
+public import IntegerMultBounds.Machine.ExactFrame
+public import IntegerMultBounds.Machine.Branch
+public import IntegerMultBounds.Machine.LoopChain
 
 /-! Literal binary multiplication by Horner's rule on three tapes. The
 multiplier is read from its most significant bit downwards; each bit doubles
@@ -11,6 +13,8 @@ The accumulator's origin moves left one cell per multiplier bit, so no word
 is ever copied. The multiplicand and multiplier are preserved; the cost is
 quadratic in the widths, at most `m (5w + 2m + 18)` for a `w`-bit
 multiplicand and `m`-bit multiplier. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Machine.BinaryMultiply
 

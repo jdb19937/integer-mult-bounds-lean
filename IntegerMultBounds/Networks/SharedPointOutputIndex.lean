@@ -1,7 +1,11 @@
-import IntegerMultBounds.Networks.SharedPointExecution
+module
+
+public import IntegerMultBounds.Networks.SharedPointExecution
 
 /-! Arithmetic output addressing for the actual shared-point program. The
 common-point/pair output index requires no search through the output list. -/
+
+@[expose] public section
 
 namespace IntegerMultBounds.Networks.SharedPointOutputIndex
 

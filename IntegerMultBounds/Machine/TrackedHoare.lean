@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.TrackedInit
+module
+
+public import IntegerMultBounds.Machine.TrackedInit
 
 /-! Initialized tracking for actual Hoare contracts. Only blank tracker tapes
 are supplied; their marked intervals and finite support are physically built. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.TrackedHoare
 variable {t s a : ℕ}
 

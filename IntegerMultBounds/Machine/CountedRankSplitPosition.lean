@@ -1,7 +1,12 @@
-import IntegerMultBounds.Machine.CountedRankSplitCopy
-import IntegerMultBounds.Machine.CountedPosition
+module
+
+public import IntegerMultBounds.Machine.CountedRankSplitCopy
+public import IntegerMultBounds.Machine.CountedPosition
 
 /-! Counted left positioning with paid clock initialization and deletion. -/
+
+@[expose] public section
+
 namespace IntegerMultBounds.Machine.CountedRankSplitPosition
 noncomputable section
 variable {a : ℕ}
