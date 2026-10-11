@@ -2638,3 +2638,5 @@ import IntegerMultBounds.Machine.CompactComplexActualBasisCoordinates
 import IntegerMultBounds.Spec.SyntheticTransform
 import IntegerMultBounds.Spec.SyntheticTransformFacts
 import IntegerMultBounds.Spec.SyntheticConvolution
+import IntegerMultBounds.Spec.SimultaneousLayer
+import IntegerMultBounds.Spec.SimultaneousLayerFacts
