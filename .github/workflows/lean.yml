@@ -20,6 +20,11 @@ jobs:
         timeout-minutes: 55
         with:
           use-github-cache: false
+      # A timed-out build can leave Lean processes writing into .lake; stop them so the archive is consistent.
+      - if: always()
+        run: |
+          pkill -f 'lake|lean' || true
+          sleep 5
       - if: always()
         uses: actions/cache/save@v4
         with:
