@@ -2640,6 +2640,8 @@ import IntegerMultBounds.Schoenhage.TwistTape
 import IntegerMultBounds.Schoenhage.TwistArray
 import IntegerMultBounds.Schoenhage.Dif
 import IntegerMultBounds.Schoenhage.DifAxes
+import IntegerMultBounds.Schoenhage.DifGroup
+import IntegerMultBounds.Schoenhage.DifSchedule
 import IntegerMultBounds.Machine.CompactComplexSourceReadyReachedDormantFrameInvariant
 import IntegerMultBounds.Machine.CompactComplexAlignedReachedInitial
 import IntegerMultBounds.Machine.CompactComplexSourceReadyCompletedChildBoundary
