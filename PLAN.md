@@ -16,18 +16,19 @@ See [COMPONENTS.md](COMPONENTS.md) for what each file proves.
 | Composition, loops, frames, elementary streams | §2 | 🟡 (163/164) | 🟡 (145/156) |
 | Finite networks with a rank saving | §3 | ✅ (66/66) | 🟡 (1/42) |
 | Faster interchange of address chunks | §4 | ✅ (129/129) | 🟡 (125/126) |
-| Simultaneous butterfly layers with compact control | §5, §11, CrocSwap | ✅ (1605/1605) | 🟡 (1255/1257) |
+| Simultaneous butterfly layers with compact control | §5, §11, CrocSwap | ✅ (1609/1609) | 🟡 (1256/1258) |
 | Synthetic transforms and their tape layout | §6 | ✅ (5/5) | ⬜ (0/3) |
 | Gaussian resampling | §7 | ✅ (17/17) | 🟡 (7/9) |
 | Fast multiplication subroutine | Schönhage–Strassen | ✅ (23/23) | 🟡 (11/15) |
 | Exact multiplication, parameters, time bound | §8 | 🟡 (5/7) | ⬜ (0/2) |
 | End-to-end theorem `EndToEnd` | — | 🟡 (5/8) | 🟡 (5/8) |
 
-Component accounting: mathematics **2021/2027**, tape **1551/1620**.
+Component accounting: mathematics **2025/2031**, tape **1552/1621**.
 Each numerator counts only ✅ rows; partial and unstarted rows remain in the
 denominator, and — entries are excluded. These counts measure checklist rows,
 not remaining effort or end-to-end completion. In particular, Section 5 remains
 open despite its many checked local components, and fast `EndToEnd` is unproved.
+
 
 ## 1. Machine model and target statement (§2)
 
@@ -2023,6 +2024,11 @@ The main binary interchange theorem is proved in `BinaryInterchangeRun.runs` and
 | CompactComplexActualBasisCoordinates | `CompactComplexActualBasisCoordinates` | ✅ | — | The computed native row destination has the exact original ambient basis coordinate map in every parent column, and its inverse recovers the input coordinates. The literal selected-role basisArray preserves stored coefficients and their decoded values at that actual destination, retaining the polynomial index and inherited denominator. No supplied local input-alignment premise is used. Full slice/pullback identification and the original child factor are derived in ActualBasisPullback; recursive child execution remains open. |
 | CompactComplexActualBasisSlice | `CompactComplexActualBasisSlice` | ✅ | — | Actual native row coordinates identify the original recursive node address. The chosen basis word transforms precisely the selected node columns by its original ambient basis map and preserves every surrounding global-address spectator. |
 | CompactComplexActualBasisPullback | `CompactComplexActualBasisPullback` | ✅ | — | The actual native basis word preserves the original outer row and polynomial index and transports coefficients in the literal original row layout. Decoding at every inherited denominator gives the full tensor-slice pullback. The original child factor at the actual call site follows without a supplied local alignment premise; recursive child execution and the complete return theorem remain open. |
+
+| CompactComplexAlignedReachedChildReturnPath | `CompactComplexAlignedReachedChildReturnPath` | ✅ | — | Actual row/live restoration and source recovery derive control and storage projections, genuine local Restored ports, and the exact seven-tape mid frame. These are local endpoint identities; completed recursive child execution and the joined aligned return remain open. |
+| CompactComplexAlignedReturnedCallerPayload | `CompactComplexAlignedReturnedCallerPayload` | ✅ | — | The concrete reached parent derives the selected-role overwrite payload and exact caller auxiliary tapes from its physical words. No whole payload or auxiliary equality is supplied; recursive child execution remains open. |
+| CompactComplexAlignedReturnedCanonical | `CompactComplexAlignedReturnedCanonical` | ✅ | — | The genuine mid-frame identity derives the canonical returned caller after normalized spectator handoff. Entry geometry and auxiliary restoration follow from the reached parent; executing and joining the whole recursive return remains open. |
+| CompactComplexAlignedSavedReturnPath | `CompactComplexAlignedSavedReturnPath` | ✅ | ✅ | The actual prime-alphabet aligned table performs the genuine saved guard and pop from Associated physical call history, restores the older associated stack, and preserves all other tapes and basis workspace. Exact runtime is saved-address width plus five; the joined recursive return remains open. |
 
 ## 6. Synthetic transforms and their tape layout (§6)
 

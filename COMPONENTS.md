@@ -4692,6 +4692,14 @@ Machine model, execution, composition, and tape routines.
 
 - `Machine/CompactComplexActualBasisPullback.lean`: The actual native basis word preserves the original outer row and polynomial index and transports coefficients in the literal original row layout. Decoding at every inherited denominator gives the full tensor-slice pullback. The original child factor at the actual call site follows without a supplied local alignment premise; recursive child execution and the complete return theorem remain open.
 
+- `Machine/CompactComplexAlignedReachedChildReturnPath.lean`: Actual row/live restoration and source recovery derive control and storage projections, genuine local Restored ports, and the exact seven-tape mid frame. These are local endpoint identities; completed recursive child execution and the joined aligned return remain open.
+
+- `Machine/CompactComplexAlignedReturnedCallerPayload.lean`: The concrete reached parent derives the selected-role overwrite payload and exact caller auxiliary tapes from its physical words. No whole payload or auxiliary equality is supplied; recursive child execution remains open.
+
+- `Machine/CompactComplexAlignedReturnedCanonical.lean`: The genuine mid-frame identity derives the canonical returned caller after normalized spectator handoff. Entry geometry and auxiliary restoration follow from the reached parent; executing and joining the whole recursive return remains open.
+
+- `Machine/CompactComplexAlignedSavedReturnPath.lean`: The actual prime-alphabet aligned table performs the genuine saved guard and pop from Associated physical call history, restores the older associated stack, and preserves all other tapes and basis workspace. Exact runtime is saved-address width plus five; the joined recursive return remains open.
+
 ## Compact
 
 Compact packed controls, repair, and density bounds.

@@ -59,7 +59,11 @@ endpoints now derive the actual physical return ports and pre-pop saved call
 association; dormant restoration still needs recursively proved settled frames.
 Computed native basis destinations now have the original ambient coordinate
 map and retain exact stored and decoded coefficients at every polynomial index.
-Full slice alignment and joined recursive execution remain open.
+Full slice alignment and the original child factor are now derived.
+Actual return geometry derives restored ports, the selected-role payload and
+the canonical returned caller from the reached parent. The aligned table also
+pops the genuine associated saved call with its exact runtime. Joined recursive
+return execution and whole event induction remain open.
 
 Complete boundary and event allowances pay classification, corrections,
 contraction, genuine return dispatch, both basis passes and their joins. The

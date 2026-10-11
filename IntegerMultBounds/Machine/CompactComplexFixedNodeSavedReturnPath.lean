@@ -11,16 +11,16 @@ open CompactComplexFixedNodePaths (nodePath)
 open CompactComplexFixedNodeTable
 open CompactComplexScheduledPCLayout
 open CompactComplexCompletedLiveLower (Event schedule)
-variable {t : ℕ}
+variable {t a : ℕ}
 attribute [local irreducible] ComplexRank25.program ComplexRecursiveCallSchema.sites schedule
   CompactComplexRolePhaseSite.roleCount CompactComplexCallReturn.addressCount CompactComplexCallReturn.addressWidth
   tableProgramsWith returnPrograms CompactComplexFixedNodePaths.nodeEdges
 
 theorem saved_return_path (ht : 0<t) (stack : Fin t)
-    (childReturn : ComplexRecursiveCallSchema.Call → Σ q,Program t q 2)
-    (controls : Fin 4 → Σ q,Program t q 2) (event : Event → Σ q,Program t q 2)
+    (childReturn : ComplexRecursiveCallSchema.Call → Σ q,Program t q a)
+    (controls : Fin 4 → Σ q,Program t q a) (event : Event → Σ q,Program t q a)
     (isStopped : Fin (controls 0).1 → Bool) (call : ComplexRecursiveCallSchema.Call)
-    (v : Tapes t 2) (older : ℤ → Fin 6) (origin : ℤ)
+    (v : Tapes t a) (older : ℤ → Fin (a+4)) (origin : ℤ)
     (hw : 0<CompactComplexCallReturn.addressWidth ComplexRecursiveCallSchema.sites.length (25^3))
     (hs : v.tape stack=FiniteReturnStack.wordPart older origin
       (CompactComplexCallReturn.code call)
@@ -42,7 +42,7 @@ theorem saved_return_path (ht : 0<t) (stack : Fin t)
   change FiniteFlowPath.Path (GuardedFiniteReturnExtraFlow.family stack (fun i => (tableProgramsWith (returnPrograms ht childReturn) controls (fun j => event (schedule.get j)) i).1) (fun i => (tableProgramsWith (returnPrograms ht childReturn) controls (fun j => event (schedule.get j)) i).2))
     (GuardedFiniteReturnExtraFlow.next room (fun i => (tableProgramsWith (returnPrograms ht childReturn) controls (fun j => event (schedule.get j)) i).1) E) 0 v (w+5)
     (Fin.castAdd (4+schedule.length) address).succ.succ (SharedPlacementAlphabet.setTape v stack older origin)
-  exact @GuardedFiniteReturnExtraPath.return_path originalCount (4+schedule.length) w t 2
+  exact @GuardedFiniteReturnExtraPath.return_path originalCount (4+schedule.length) w t a
     room hw stack
     (fun i => (tableProgramsWith (returnPrograms ht childReturn) controls (fun j => event (schedule.get j)) i).1)
     (fun i => (tableProgramsWith (returnPrograms ht childReturn) controls (fun j => event (schedule.get j)) i).2)
