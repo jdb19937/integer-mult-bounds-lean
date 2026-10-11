@@ -1,10 +1,10 @@
 # Local verification resources
 
-The user experienced a system out-of-memory crash during parallel Lean checks.
+An unguarded parallel Lean build once grew past 200 GB and crashed the machine (128 GB, 16 cores).
+Every local Lean process runs under a memory guard.
 
-- Only the root agent launches local Lean verification; workers edit source and report readiness.
-- Run one check at a time through `python3 scripts/check-lean-safe.py FILE`.
-- The runner holds a workspace-wide lock, uses one Lean thread, sets a 12288 MiB Lean memory limit, and stops its process group when observed RSS exceeds 14336 MiB or the check runs past 20 minutes.
-- Do not launch unguarded Lean processes or broad local Lake builds.
-- If a check reaches the memory guard, reduce its imports or elaboration work rather than raising the cap.
+- Check single files with `python3 scripts/check-lean-safe.py FILE`: one Lean thread, a 12288 MiB Lean memory limit, stopped when its RSS exceeds 14336 MiB or it runs past 20 minutes.
+- Build with `python3 scripts/build-lean-guarded.py [TARGETS]`: a normal parallel `lake build`, stopped when the combined RSS of all its processes exceeds 80 GiB or it runs past 3 hours.
+- Both share one workspace-wide lock, so only one check or build runs at a time.
+- Do not launch Lean or Lake outside these two scripts.
 - Preserve default proof limits and all existing proof-integrity requirements.
