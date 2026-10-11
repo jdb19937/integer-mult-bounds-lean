@@ -1,5 +1,6 @@
 import IntegerMultBounds.Networks.Scalar
 import Mathlib.Data.Fintype.Powerset
+import Mathlib.Tactic
 
 /-! Cardinalities of the actual finite triple banks and their neighbor sets.
 Counting uses a bijection that splits each triple into its intersection with a

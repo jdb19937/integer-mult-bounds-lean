@@ -1,4 +1,5 @@
 import IntegerMultBounds.Machine.Counter
+import Mathlib.Tactic
 
 /-! Fixed-width LSB-first binary countdown and its exact digit trace. Successful
 calls include the borrow scan, head return, and one payload operation. A single

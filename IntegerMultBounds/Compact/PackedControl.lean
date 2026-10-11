@@ -1,5 +1,6 @@
 import IntegerMultBounds.Compact.DirtyControl
 import IntegerMultBounds.Compact.Radix
+import Mathlib.Tactic
 
 /-!
 A packed implementation of the earlier-source four-update gadget. Every field

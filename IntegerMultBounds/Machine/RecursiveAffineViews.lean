@@ -1,4 +1,5 @@
 import IntegerMultBounds.Machine.RecursiveInterchangeLayout
+import Mathlib.Tactic
 
 /-! Literal row-major coordinate views for all ordered affine shifts. The first
 selected field is the earlier control and the second the later target. They

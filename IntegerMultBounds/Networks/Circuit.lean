@@ -1,5 +1,6 @@
 import IntegerMultBounds.Networks.Scalar
 import Mathlib.Data.List.FinRange
+import Mathlib.Tactic
 
 /-!
 Executable scalar circuits for the cancellation schedule in Section 3.

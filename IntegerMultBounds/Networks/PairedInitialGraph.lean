@@ -1,5 +1,6 @@
 import IntegerMultBounds.Networks.PairedQuerySupport
 import IntegerMultBounds.Networks.PairedBlockCorrect
+import Mathlib.Tactic
 
 /-! Literal initial unweighted pair graph: one singleton input node per pair
 in combination order, indexed references to those nodes, and absent vertex

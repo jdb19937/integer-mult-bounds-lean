@@ -1,5 +1,6 @@
 import IntegerMultBounds.Machine.RecursiveDescriptorSize
 import IntegerMultBounds.Machine.BinaryDivide
+import Mathlib.Tactic
 
 /-! The existing physical long-division scan has a linear logical-child-volume
 bound for canonical root-bounded descriptors. Its shifted output origins and
