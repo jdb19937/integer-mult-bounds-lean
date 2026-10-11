@@ -6573,6 +6573,11 @@ Schönhage–Strassen multiplication, the fast multiplier used for the packed pr
   (`runs_pwCoreWith`, `pwProg91With_hoare`) and run on one record; it meets
   `Meets` (`ring_meets`) and `polylogTarget 1` (`ring_polylog`).
 
+- `Schoenhage/Twist.lean`: the recordwise monomial `y^E` of the synthetic
+  transforms on records: exact on the grid (`gridPoly_twistRec`), preserves
+  disk grids, and on component words is a split, swap and two's-complement
+  negation (`twWords_recordWords`, `negW_compWord`).
+
 - `Spec/SyntheticTransform.lean`: the statement of the paper's synthetic
   transforms in its formats: exact counterparts `L B F⁻` and `F⁺ B⁻¹ L⁻¹`,
   per-coefficient error `√2 ℓ 2^(-p)`, disk grid outputs, the paper's cost
