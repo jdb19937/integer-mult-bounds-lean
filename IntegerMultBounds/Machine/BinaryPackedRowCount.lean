@@ -125,7 +125,9 @@ theorem second_product (hs : Fin 4 → List Bool) (P w G : ℕ) (hG : 0 < G)
       (DimensionProductDescriptor.bits_value P (2^w)) hc (DimensionProductDescriptor.bits_canonical P (2^w)))
   · apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   · apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
-  · apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
+  -- Normalize the frame by simp: a bare `rfl` makes the kernel retry the differing slots at
+  -- every level of the tape vector.
+  · apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> simp [multiplied, prepared, bank, secondPlacement]
 
 private def cleanCost (P w : ℕ) := 2*(powerBits w).length+2*(productBits P w).length+12
 
