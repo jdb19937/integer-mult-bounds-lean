@@ -58,6 +58,9 @@ the aligned table and establishes the concrete reached event invariant from
 original source words, grids, ledger and saved calls. Completed nonroot sink
 endpoints now derive the actual physical return ports and pre-pop saved call
 association; dormant restoration still needs recursively proved settled frames.
+Completed-child return readiness now derives its physical saved-stack equations
+and exact record widths, while the full coefficient phase stream has checked
+initialization, loop execution, cleanup and a linear transition bound.
 Computed native basis destinations now have the original ambient coordinate
 map and retain exact stored and decoded coefficients at every polynomial index.
 Full slice alignment and the original child factor are now derived.

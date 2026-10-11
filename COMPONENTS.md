@@ -4707,6 +4707,9 @@ Machine model, execution, composition, and tape routines.
 - `Machine/CompactComplexActualEventNetwork.lean`: Every actual site-major child-call block executes the original compiler edge on all physical wire arrays. Exact group intervals and the complete terminal sink suffix realize the original ordered alignments. Separate execution folds and abstract projection/empty-suffix identities avoid evaluating the enormous concrete traces during conversion. Recursive tape execution and total runtime remain open.
 - `Machine/CompactComplexActualInterleavedNetwork.lean`: The literal completed-event schedule executes the original framed compiler on every wire array, with each scalar block after its own child-call alignment and all terminal sink incidences retained. Backward suffix induction also identifies this schedule with the certified original lowering. This is exact algebraic schedule semantics; recursive fixed-table tape execution and total runtime remain open.
 
+- `Machine/CompactComplexAlignedCompletedReturnReadiness.lean`: The actual completed child derives blank clock, exact result record widths and saved header/live/target/payload equations from its Reached and Settled invariants. The genuine parent derives free and supported regions, and actual child output overwrites the original call-selected role. Recursive Settled preservation, return grids and joined recursive execution remain open.
+- `Machine/UnitPhaseStream.lean`: One physical coefficient phase stream initializes its address width and live counter from original headers, executes the original-count loop, and restores generated width and loop controls. Exact tape endpoints and a linear transition bound in reserved payload and coefficient width are proved; caller-supplied record contexts and header conditions remain explicit.
+
 ## Compact
 
 Compact packed controls, repair, and density bounds.

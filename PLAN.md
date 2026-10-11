@@ -16,14 +16,14 @@ See [COMPONENTS.md](COMPONENTS.md) for what each file proves.
 | Composition, loops, frames, elementary streams | §2 | 🟡 (163/164) | 🟡 (145/156) |
 | Finite networks with a rank saving | §3 | ✅ (66/66) | 🟡 (1/42) |
 | Faster interchange of address chunks | §4 | ✅ (129/129) | 🟡 (125/126) |
-| Simultaneous butterfly layers with compact control | §5, §11, CrocSwap | ✅ (1613/1613) | 🟡 (1256/1258) |
+| Simultaneous butterfly layers with compact control | §5, §11, CrocSwap | ✅ (1615/1615) | 🟡 (1257/1259) |
 | Synthetic transforms and their tape layout | §6 | ✅ (5/5) | ⬜ (0/3) |
 | Gaussian resampling | §7 | ✅ (17/17) | 🟡 (7/9) |
 | Fast multiplication subroutine | Schönhage–Strassen | ✅ (23/23) | 🟡 (11/15) |
 | Exact multiplication, parameters, time bound | §8 | 🟡 (5/7) | ⬜ (0/2) |
 | End-to-end theorem `EndToEnd` | — | 🟡 (5/8) | 🟡 (5/8) |
 
-Component accounting: mathematics **2029/2035**, tape **1552/1621**.
+Component accounting: mathematics **2031/2037**, tape **1553/1622**.
 Each numerator counts only ✅ rows; partial and unstarted rows remain in the
 denominator, and — entries are excluded. These counts measure checklist rows,
 not remaining effort or end-to-end completion. In particular, Section 5 remains
@@ -2036,6 +2036,9 @@ The main binary interchange theorem is proved in `BinaryInterchangeRun.runs` and
 
 | CompactComplexActualEventNetwork | `CompactComplexActualEventNetwork` | ✅ | — | Every actual site-major child-call block executes the original compiler edge on all physical wire arrays. Exact group intervals and the complete terminal sink suffix realize the original ordered alignments. Separate execution folds and abstract projection/empty-suffix identities avoid evaluating the enormous concrete traces during conversion. Recursive tape execution and total runtime remain open. |
 | CompactComplexActualInterleavedNetwork | `CompactComplexActualInterleavedNetwork` | ✅ | — | The literal completed-event schedule executes the original framed compiler on every wire array, with each scalar block after its own child-call alignment and all terminal sink incidences retained. Backward suffix induction also identifies this schedule with the certified original lowering. This is exact algebraic schedule semantics; recursive fixed-table tape execution and total runtime remain open. |
+
+| CompactComplexAlignedCompletedReturnReadiness | `CompactComplexAlignedCompletedReturnReadiness` | ✅ | — | The actual completed child derives blank clock, exact result record widths and saved header/live/target/payload equations from its Reached and Settled invariants. The genuine parent derives free and supported regions, and actual child output overwrites the original call-selected role. Recursive Settled preservation, return grids and joined recursive execution remain open. |
+| UnitPhaseStream | `UnitPhaseStream` | ✅ | ✅ | One physical coefficient phase stream initializes its address width and live counter from original headers, executes the original-count loop, and restores generated width and loop controls. Exact tape endpoints and a linear transition bound in reserved payload and coefficient width are proved; caller-supplied record contexts and header conditions remain explicit. |
 
 ## 6. Synthetic transforms and their tape layout (§6)
 
