@@ -66,7 +66,11 @@ map and retain exact stored and decoded coefficients at every polynomial index.
 Full slice alignment and the original child factor are now derived.
 Actual return geometry derives restored ports, the selected-role payload and
 the canonical returned caller from the reached parent. The aligned table also
-pops the genuine associated saved call with its exact runtime. Joined recursive
+pops the genuine associated saved call with its exact runtime. The actual
+completed child now supplies that path with its derived return stacks retained;
+forward child entry and inverse return share one fixed basis program. The
+inverse adapter derives width and promotion guards from the child and parent
+path. Joined recursive
 return execution and whole event induction remain open. The actual ordered
 site trace now retains every original compiler wire and both frames, including
 terminal sink incidences. The actual interleaved child-call and scalar schedule

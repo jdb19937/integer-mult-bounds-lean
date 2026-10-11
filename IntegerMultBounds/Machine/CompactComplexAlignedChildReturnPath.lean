@@ -241,7 +241,67 @@ open CompactComplexSourceReadyReachedReturnInvariant
 /-- The actual inverse basis machine executes on the restored parent
 fragments. Numerical return readiness is derived from the parent's reached
 state and the child's grid. Restored explicitly records the physical port
-facts still required from the completed-child return boundary. -/
+facts still required from the completed-child return boundary. The inverse
+pass retains the same genuine finite basis witness as forward entry. -/
+theorem restored_inverse_runs (D : ℕ)
+    (P : Program ActivePrefixStageNative.tapes q prime) (K : ℝ)
+    (hP : CompactComplexAlignedChildEntryPath.BasisRuns D q P K) :
+    ∀ (s : ℕ) (sh : CompactGadgetReservationShape.Shape) (stage : ActivePrefixStageParameters.Stage sh)
+      (rows ell metadataP e p C axes baseline levels frames returned pref n : ℕ)
+      (pcStack : Fin s) (origin : ℤ) (calls : List Call) (v : Tapes (nodeTapes s roles) 2)
+      (h : Reached stage rows ell metadataP e p C axes baseline levels frames returned pref n pcStack origin calls v)
+      (selected : Fin roles) (pc : Fin count) (gap volume : ℕ)
+      (child : CompactSpectatorVisitGeometry.Array sh (rows/roles) ell)
+      (_hmetadata : 2*sh.bits≤metadataP) (_hgap : gap≤2*volume)
+      (_hw : ∀ i,(child i).1.length=ButterflyGuard.halfWidth metadataP sh.bits+1 ∧
+        (child i).2.length=ButterflyGuard.halfWidth metadataP sh.bits+1)
+      (_hgrid : CompactSpectatorInheritedGrid.Grid sh (rows/roles) ell (metadataP-2*sh.bits) (n+gap)
+        (CompactFramedScalarGrid.bound pref
+          (CompactRecursiveGridBudget.bound p C levels (frames+2*(returned+volume)+axes))) child)
+      (_hcapacity : gap≤CompactSpectatorInheritedGrid.half sh (metadataP-2*sh.bits)+1)
+      (_hguard : CompactFramedScalarGrid.bound pref
+        (CompactRecursiveGridBudget.bound p C levels (frames+2*returned+axes))*2^gap<
+          2^(CompactSpectatorInheritedGrid.half sh (metadataP-2*sh.bits)))
+      (control : Tapes 43 2) (queue : Tapes 1 2) (scalar : ActiveRepairRankHeadersCommands.State)
+      (tail : Tapes 22 2) (storage : Tapes (10+s) 2) (aux : Tapes 2 2)
+      (_physical : Restored e (n+gap) h.targetValue pcStack origin calls control storage aux)
+      (hG : 1≤sh.guard) (hGK : sh.guard+1≤sh.chunk) (_hr : 0<rows) (hm : 0<rows/roles)
+      (_hd : roles∣rows) (_hpay : sh.payload=1) (hslots : stage.slots=25^3)
+      (hpack : ∀ op,1<stage.f → ActivePrefixStageRuntimeData.Packed
+        (ActivePrefixStagePairData.changePair
+          (CompactComplexSourceReadyReachedBasisInvariant.input stage (rows/roles) ell metadataP hG hGK hm) op) D),
+      let d := CompactComplexSourceReadyReachedBasisInvariant.input stage (rows/roles) ell metadataP hG hGK hm
+      let start := canonical (returnedCaller h selected gap child control queue scalar tail storage) aux
+      ∃ hn : Reached stage rows ell metadataP e p C axes baseline levels frames (returned+volume) pref
+        (n+gap) pcStack origin calls start,
+        hn.data=returnedData h selected gap child ∧
+        let after := basisArray stage (rows/roles) ell metadataP hG hGK hm hslots pc true
+          (hn.data (CompactComplexScalarRolePorts.roleIndex.symm selected))
+        let passTime := CompactNativeConjugatedSharedCaller.cost (CompactNativeRoleSourcePorts.callerTapes 44 roles) d ell
+          (CompactComplexActualCallAlignment.nativeCost D d hslots pc true
+            (ActivePrefixStageNativePolynomial.symbols (2^ell) (NativePolynomialStageShape.width sh metadataP)) hpack)
+        ∃ ha : Reached stage rows ell metadataP e p C axes baseline levels frames (returned+volume) pref
+          (n+gap) pcStack origin calls (canonical (replacementCaller hn selected after) hn.aux),
+          ha.data=replacementData hn selected after ∧
+          HoareTime (CompactComplexActualCallFullAlignment.roleProgram P s roles selected pc true)
+            (fun z => z=CleanSubbank.bank (Alphabet.mapTapes CompactNativeRoleConjugatedPorts.encoding (ready start)))
+            (fun z => z=CleanSubbank.bank (Alphabet.mapTapes CompactNativeRoleConjugatedPorts.encoding
+              (ready (canonical (replacementCaller hn selected after) hn.aux))))
+            (CompactComplexActualCallRoleAlignment.cost roles stage rows ell metadataP passTime) ∧
+          (CompactComplexActualCallRoleAlignment.cost roles stage rows ell metadataP passTime : ℝ)≤
+            K*ActivePrefixStageInverseBudget.scale d := by
+  intro s sh stage rows ell metadataP e p C axes baseline levels frames returned pref n pcStack origin calls v h
+    selected pc gap volume child hmetadata hgap hw hgrid hcapacity hguard control queue scalar tail storage aux physical
+    hG hGK hr hm hd hpay hslots hpack
+  dsimp only
+  obtain ⟨hn,hdata⟩ := returned_reached h selected gap volume child hmetadata hgap hw hgrid hcapacity hguard
+    control queue scalar tail storage aux physical
+  refine ⟨hn,hdata,?_⟩
+  obtain ⟨ha,hadata⟩ := basis_reached hn selected hG hGK hm hslots pc true
+  refine ⟨ha,hadata,?_⟩
+  exact hP s sh stage rows ell metadataP e p C axes baseline levels frames (returned+volume) pref
+    (n+gap) pcStack origin calls _ hn selected hG hGK hr hm hd hpay hslots pc true hpack
+
 theorem exists_restored_inverse_runs (D : ℕ) (hroles : 0<roles) :
     ∃ q, ∃ P : Program ActivePrefixStageNative.tapes q prime, ∃ K : ℝ,0<K ∧
     ∀ (s : ℕ) (sh : CompactGadgetReservationShape.Shape) (stage : ActivePrefixStageParameters.Stage sh)
@@ -289,18 +349,7 @@ theorem exists_restored_inverse_runs (D : ℕ) (hroles : 0<roles) :
           (CompactComplexActualCallRoleAlignment.cost roles stage rows ell metadataP passTime : ℝ)≤
             K*ActivePrefixStageInverseBudget.scale d := by
   obtain ⟨q,P,K,hK,hP⟩ := CompactComplexAlignedChildEntryPath.exists_basis_runs D hroles
-  refine ⟨q,P,K,hK,?_⟩
-  intro s sh stage rows ell metadataP e p C axes baseline levels frames returned pref n pcStack origin calls v h
-    selected pc gap volume child hmetadata hgap hw hgrid hcapacity hguard control queue scalar tail storage aux physical
-    hG hGK hr hm hd hpay hslots hpack
-  dsimp only
-  obtain ⟨hn,hdata⟩ := returned_reached h selected gap volume child hmetadata hgap hw hgrid hcapacity hguard
-    control queue scalar tail storage aux physical
-  refine ⟨hn,hdata,?_⟩
-  obtain ⟨ha,hadata⟩ := basis_reached hn selected hG hGK hm hslots pc true
-  refine ⟨ha,hadata,?_⟩
-  exact hP s sh stage rows ell metadataP e p C axes baseline levels frames (returned+volume) pref
-    (n+gap) pcStack origin calls _ hn selected hG hGK hr hm hd hpay hslots pc true hpack
+  exact ⟨q,P,K,hK,restored_inverse_runs D P K hP⟩
 
 end
 end IntegerMultBounds.Machine.CompactComplexAlignedChildReturnPath
