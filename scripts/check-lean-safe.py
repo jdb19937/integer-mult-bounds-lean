@@ -12,8 +12,8 @@ import tempfile
 import time
 
 # User-authorized modest increase; retain one check and a hard RSS ceiling.
-LEAN_MIB = 6144
-GUARD_MIB = 7168
+LEAN_MIB = 12288
+GUARD_MIB = 14336
 # Stop runaway elaboration (loops) rather than letting it grow.
 TIMEOUT_S = 1200
 
