@@ -3708,6 +3708,10 @@ Machine model, execution, composition, and tape routines.
 
 - `Machine/ActivePrefixStageNativePairCoordinates.lean`: Native row destinations are exactly the original serialized record-start destinations of each basis instruction, preserving spectators and every payload symbol. Complete chronological native words have the original Boolean basis-coordinate semantics and actual entrywise output; individual row destinations are involutions.
 
+- `Machine/ActivePrefixStageNativeFrameCoordinates.lean`: The actual row-addition destination preserves complete front/back address spectators. Chronological native basis words also preserve the original outer-row quotient, including expanded polynomial codec payloads; no frame-preservation callback is assumed.
+
+- `Machine/ActivePrefixStageUnselectedFrame.lean`: The literal runtime XOR mask has exactly its selected-coordinate support. Actual chronological native basis words preserve every global address bit outside the selected node coordinates, including bits between those coordinates and all front/back reserves.
+
 - `Machine/ActivePrefixStageNativePairInverse.lean`: Reversing the actual literal native word physically restores exact original row data, caller headers and private storage. Both directions and every conversion/frame/join cost are paid, and the complete roundtrip retains the certified stage exponent with a genuine executable witness.
 
 - `Machine/ActivePrefixStageNativePolynomial.lean`: Explicit polynomial coefficient rows yield canonical native row symbols with proved literal full-stream serialization, real separators and nonblank converter input. Original caller source65 is exactly the alphabet-encoded phase source word; basis address actions retain polynomial indices and every stored digit. No codec or multiplicity-from-width premise is supplied.
@@ -4682,7 +4686,11 @@ Machine model, execution, composition, and tape routines.
 
 - `Machine/CompactComplexSourceReadyCompletedChildBoundary.lean`: Derives the completed nonroot sink/orientation endpoint directly from the actual reached bank: raw source and headers, scalar frame, all controller and storage projections, exponent, blank count and controls, advanced live ledger, blank target and retained pre-pop saved-call association. Exact endpoint identity links the paid aligned final path to these ports. Dormant saved-frame equality follows from explicit Settled conditions; recursive preservation, PC pop and whole joined return execution remain open.
 
-- `Machine/CompactComplexActualBasisCoordinates.lean`: The computed native row destination has the exact original ambient basis coordinate map in every parent column, and its inverse recovers the input coordinates. The literal selected-role basisArray preserves stored coefficients and their decoded values at that actual destination, retaining the polynomial index and inherited denominator. No supplied local input-alignment premise is used. Full slice/pullback identification and recursive child-factor execution remain to connect.
+- `Machine/CompactComplexActualBasisCoordinates.lean`: The computed native row destination has the exact original ambient basis coordinate map in every parent column, and its inverse recovers the input coordinates. The literal selected-role basisArray preserves stored coefficients and their decoded values at that actual destination, retaining the polynomial index and inherited denominator. No supplied local input-alignment premise is used. Full slice/pullback identification and the original child factor are derived in ActualBasisPullback; recursive child execution remains open.
+
+- `Machine/CompactComplexActualBasisSlice.lean`: Actual native row coordinates identify the original recursive node address. The chosen basis word transforms precisely the selected node columns by its original ambient basis map and preserves every surrounding global-address spectator.
+
+- `Machine/CompactComplexActualBasisPullback.lean`: The actual native basis word preserves the original outer row and polynomial index and transports coefficients in the literal original row layout. Decoding at every inherited denominator gives the full tensor-slice pullback. The original child factor at the actual call site follows without a supplied local alignment premise; recursive child execution and the complete return theorem remain open.
 
 ## Compact
 
