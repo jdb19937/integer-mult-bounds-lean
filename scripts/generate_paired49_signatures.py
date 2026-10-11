@@ -82,9 +82,12 @@ def main() -> None:
     (args.output / 'SignaturesData.lean').write_text('\n'.join(lines))
     empty_pred = '(fun row => match row.1.kind with | .input _ => false | .add _ _ => row.2.core == 0)'
     nonempty_pred = '(fun row => match row.1.kind with | .input _ => false | .add _ _ => row.2.core != 0)'
+    counts = {'empty': [], 'nonempty': []}
     for n, (lo, hi) in enumerate(chunks):
         empty_count = sum(circuit.args[old] is not None and cores[old] == 0 for old in active[lo:hi])
         nonempty_count = sum(circuit.args[old] is not None and cores[old] != 0 for old in active[lo:hi])
+        counts['empty'].append(empty_count)
+        counts['nonempty'].append(nonempty_count)
         lines = [f'import {namespace}.SignaturesData']
         if n >= 4:
             lines.append(f'import {namespace}.SignaturesChunk{n-4:03d}')
@@ -100,17 +103,19 @@ def main() -> None:
                   f'end {namespace}', '']
         (args.output / f'SignaturesChunk{n:03d}.lean').write_text('\n'.join(lines))
     lines = [f'import {namespace}.SignaturesChunk{n:03d}' for n in range(len(chunks))]
-    lines += ['', header, f'namespace {namespace}', 'open MaskSignature', 'set_option maxRecDepth 32768', 'set_option maxHeartbeats 2000000', '',
+    pairs = ', '.join(f'(chunk{n:03d}, signatures{n:03d})' for n in range(len(chunks)))
+    flat = 'List.map_cons, List.map_nil, List.flatten_cons, List.flatten_nil, List.append_nil, List.append_assoc'
+    lines += ['', header, f'namespace {namespace}', 'open MaskDAG MaskSignature', 'set_option maxRecDepth 32768', '',
+              '/-- The certified row chunks paired with their signature chunks. -/',
+              'def signatureChunks : List (List (Entry 1176) × List (Signature 49)) :=', f'  [{pairs}]', '',
+              'theorem entries_eq : entries = (signatureChunks.map Prod.fst).flatten := by',
+              f'  simp only [entries, signatureChunks, {flat}]', '',
+              'theorem signatures_eq : signatures = (signatureChunks.map Prod.snd).flatten := by',
+              f'  simp only [signatures, signatureChunks, {flat}]', '',
               'theorem signatures_checked : checkChunk signatureSource signatureCoreBank.lookup signatureUnionBank.lookup 0',
-              '    entries signatures = true := by', '  unfold entries signatures', '  simp only [List.append_assoc]']
-    for n, (lo, _) in enumerate(chunks[:-1]):
-        rest = ' ++ '.join(f'chunk{k:03d}' for k in range(n+1, len(chunks)))
-        restS = ' ++ '.join(f'signatures{k:03d}' for k in range(n+1, len(chunks)))
-        lines += [f'  refine checkChunk_append_of signatureSource signatureCoreBank.lookup signatureUnionBank.lookup {lo}',
-                  f'    chunk{n:03d} ({rest}) signatures{n:03d} ({restS}) signatures{n:03d}_checked ?_',
-                  f'  change checkChunk signatureSource signatureCoreBank.lookup signatureUnionBank.lookup {chunks[n+1][0]}',
-                  f'    ({rest}) ({restS}) = true']
-    lines += [f'  exact signatures{len(chunks)-1:03d}_checked', '',
+              '    entries signatures = true := by', '  rw [entries_eq, signatures_eq]',
+              '  exact checkChunk_flatten signatureSource signatureCoreBank.lookup signatureUnionBank.lookup 0 signatureChunks',
+              '    ⟨' + ', '.join(f'signatures{n:03d}_checked' for n in range(len(chunks))) + ', trivial⟩', '',
               '/-- Every actual node has the exact common and covered endpoint sets. -/',
               'theorem signatures_correct (hv : MaskDAG.checkChunk bank.lookup 0 entries = true) :',
               '    List.Forall₂ (Correct signaturePayload) entries signatures ∧',
@@ -126,13 +131,12 @@ def main() -> None:
               '    signatureCoreBank.lookup signatureUnionBank.lookup entries signatures hv signatures_checked i hi', '',
               ]
     for name, pred, total in [('empty', empty_pred, 4389), ('nonempty', nonempty_pred, 5424)]:
+        assert sum(counts[name]) == total
         lines += [f'theorem {name}_core_addition_count : (entries.zip signatures).countP {pred} = {total} := by',
-                  '  unfold entries signatures', '  simp only [List.append_assoc]']
-        for n in range(len(chunks)-1):
-            lines.append(f'  rw [List.zip_append (show chunk{n:03d}.length = signatures{n:03d}.length from rfl)]')
-        lines.append('  simp only [List.countP_append]')
-        lines.append('  decide +kernel')
-        lines += ['']
+                  f'  rw [entries_eq, signatures_eq, countP_zip_flatten {pred} signatureChunks',
+                  f'    {counts[name]}',
+                  '    ⟨' + ', '.join(f'rfl, signatures{n:03d}_{name}_core_additions' for n in range(len(chunks))) + ', trivial⟩]',
+                  '  rfl', '']
     lines += [f'end {namespace}', '']
     (args.output / 'Signatures.lean').write_text('\n'.join(lines))
     additions = [old for old in active if circuit.args[old] is not None]

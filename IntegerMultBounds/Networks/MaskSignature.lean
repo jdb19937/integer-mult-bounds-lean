@@ -228,6 +228,40 @@ theorem checkChunk_append_of (source : Fin width → BitVec vertices)
     (checkChunk_length source coreBank unionBank offset first firstS hf), hf, hr]
   rfl
 
+/-- Consecutive chunks each check at the offset where the previous ones end. -/
+def ChunksChecked (source : Fin width → BitVec vertices) (coreBank unionBank : ℕ → Option (BitVec vertices)) :
+    ℕ → List (List (Entry width) × List (Signature vertices)) → Prop
+  | _, [] => True
+  | offset, (first, firstS) :: rest =>
+    checkChunk source coreBank unionBank offset first firstS = true ∧
+      ChunksChecked source coreBank unionBank (offset + first.length) rest
+
+/-- Chunks checked separately check together. Stated for an arbitrary chunk list so that the
+kernel never compares the concatenated certificate lists, which it would do by evaluating them. -/
+theorem checkChunk_flatten (source : Fin width → BitVec vertices)
+    (coreBank unionBank : ℕ → Option (BitVec vertices)) :
+    ∀ (offset : ℕ) (chunks : List (List (Entry width) × List (Signature vertices))),
+      ChunksChecked source coreBank unionBank offset chunks →
+      checkChunk source coreBank unionBank offset (chunks.map Prod.fst).flatten
+        (chunks.map Prod.snd).flatten = true
+  | _, [], _ => by simp [checkChunk]
+  | offset, (first, firstS) :: rest, ⟨hf, hr⟩ => by
+    simpa using checkChunk_append_of source coreBank unionBank offset first _ firstS _ hf
+      (checkChunk_flatten source coreBank unionBank _ rest hr)
+
+/-- Chunk pairs of equal lengths whose zipped rows have the listed counts. -/
+def ZipCounted {α β : Type*} (p : α × β → Bool) : List (List α × List β) → List ℕ → Prop
+  | [], [] => True
+  | (a, b) :: rest, k :: ks => a.length = b.length ∧ (a.zip b).countP p = k ∧ ZipCounted p rest ks
+  | _, _ => False
+
+theorem countP_zip_flatten {α β : Type*} (p : α × β → Bool) :
+    ∀ (chunks : List (List α × List β)) (counts : List ℕ), ZipCounted p chunks counts →
+      ((chunks.map Prod.fst).flatten.zip (chunks.map Prod.snd).flatten).countP p = counts.sum
+  | [], [], _ => by simp
+  | (a, b) :: rest, k :: ks, ⟨h, hk, hr⟩ => by
+    simp [List.zip_append h, hk, countP_zip_flatten p rest ks hr]
+
 /-- A requested static-bank signature has the exact core and union of its
 source support, even when no row list is evaluated by the caller. -/
 theorem bank_correct (payload : Fin width → Finset (Fin vertices))
