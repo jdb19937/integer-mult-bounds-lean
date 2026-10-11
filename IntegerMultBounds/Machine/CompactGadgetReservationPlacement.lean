@@ -52,7 +52,7 @@ theorem common_injective (c : ℕ) (j : Fin c) : Function.Injective (commonSlots
 
 theorem native_payload (caller : Tapes 6 prime) :
     SharedBank.payload (BinaryPackedOffsetOriginalRun.input caller) nativeSlots = caller := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem native_clean (caller : Tapes 6 prime) :
     SharedBank.strip (BinaryPackedOffsetOriginalRun.input caller) nativeSlots =

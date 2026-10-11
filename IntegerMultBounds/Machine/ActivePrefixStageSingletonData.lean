@@ -36,7 +36,7 @@ def ready (order : Order) (d : Inputs s) (x : Array s d.rows) := ActivePrefixSta
 theorem sources (order : Order) (d : Inputs s) (x : Array s d.rows) :
     SharedBank.payload (ready order d x) focus=ActiveTargetHighestLayoutOriginalPlaced.sources
       (ActivePrefixStageFullData.descriptors order d.toInputs).hs x := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem caller_set (order : Order) (d : Inputs s) (x y : Array s d.rows) :
     SharedPlacementAlphabet.setTape (ready order d x) (focus 14) (ActiveTargetRotation.word y) 0=ready order d y :=

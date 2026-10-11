@@ -10,17 +10,17 @@ open CountedRankSplitBank (placed_exact)
 theorem rank_input (Z cs : List Bool) (hs : Fin 3 → List Bool) :
     Placement.active rankPlace (CountedRepairKeyBank.input Z cs hs)=CountedRankSplitBank.bank (RepairScan.ctrTape cs)
       (fun _ => blank) (fun _ => blank) 1 0 0 hs none none := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem rank_output (q b : ℕ) (Z cs : List Bool) (hs : Fin 3 → List Bool) :
     Placement.active rankPlace (split q b Z cs hs)=CountedRankSplitBank.bank (RepairScan.ctrTape cs)
       (putWord (fun _ => blank) 0 ((V q Z cs).map bitSymbol))
       (putWord (fun _ => blank) 0 ((W q b Z cs).map bitSymbol)) 1 0 0 hs none none := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem rank_extra (q b : ℕ) (Z cs : List Bool) (hs : Fin 3 → List Bool) :
     Placement.extra rankPlace (CountedRepairKeyBank.input Z cs hs)=Placement.extra rankPlace (split q b Z cs hs) := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem rank_runs (q b : ℕ) (Z cs : List Bool) (hs : Fin 3 → List Bool)
     (hq : 0<q) (hb : 0<b) (hv : ∀ i, Counter.value (hs i)=CountedRankSplitBank.values q b Z.length i)
@@ -51,7 +51,7 @@ theorem guard_output (q b : ℕ) (hb : 1≤b) (hbq : b+1≤q) (V W Z cs : List B
 
 theorem guard_extra (q b : ℕ) (hb : 1≤b) (hbq : b+1≤q) (V W Z cs : List Bool) (hs : Fin 3 → List Bool) :
     Placement.extra guardPlace (inverted q b hb hbq V W Z cs hs)=Placement.extra guardPlace (guarded q b hb hbq V W Z cs hs) := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem guard_runs (q b : ℕ) (hb : 1≤b) (hbq : b+1≤q) (hbq3 : b+3≤q)
     (V W Z cs : List Bool) (hs : Fin 3 → List Bool)
@@ -74,7 +74,7 @@ theorem toggle_input (q b : ℕ) (hb : 1≤b) (hbq : b+1≤q) (V W Z cs : List B
       (PackedLine.bank (CountedGuardGadgetRecord.word (PackedInverse.w q b hb hbq V W Z))
         (CountedGuardGadgetRecord.word Z) (fun _ => blank)
         (CountedGuardGadgetRecord.word (PackedInverse.v q b hb hbq V W Z)) (fun _ => blank) 0 0 0 0 0) hs := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem toggle_output (q b : ℕ) (hb : 1≤b) (hbq : b+1≤q) (V W Z cs : List Bool) (hs : Fin 3 → List Bool) :
     Placement.active togglePlace (toggled q b hb hbq V W Z cs hs)=CountedIdealToggle.bank
@@ -82,11 +82,11 @@ theorem toggle_output (q b : ℕ) (hb : 1≤b) (hbq : b+1≤q) (V W Z cs : List 
         (CountedGuardGadgetRecord.word Z) (fun _ => blank)
         (CountedGuardGadgetRecord.word (PackedInverse.v q b hb hbq V W Z))
         (CountedGuardGadgetRecord.word (CountedIdealToggle.word q (PackedInverse.v q b hb hbq V W Z) Z)) 0 0 0 0 0) hs := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem toggle_extra (q b : ℕ) (hb : 1≤b) (hbq : b+1≤q) (V W Z cs : List Bool) (hs : Fin 3 → List Bool) :
     Placement.extra togglePlace (guarded q b hb hbq V W Z cs hs)=Placement.extra togglePlace (toggled q b hb hbq V W Z cs hs) := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem toggle_runs (q b : ℕ) (hb : 1≤b) (hbq : b+1≤q) (V W Z cs : List Bool) (hs : Fin 3 → List Bool)
     (hV : V.length=Z.length*q) (hW : W.length=Z.length*b)

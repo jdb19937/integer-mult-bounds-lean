@@ -41,14 +41,14 @@ theorem output_eq (hs : Fin 6 → List Bool) (bs rs : List Bool) :
 def widthPlacement : Fin (12+26) ≃ Fin 38 where
   toFun := ![6,0,1,2,11,9,12,13,14,15,16,17,3,4,5,7,8,10,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37]
   invFun := ![1,2,3,12,13,14,0,15,16,5,17,4,6,7,8,9,10,11,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37]
-  left_inv i := by fin_cases i <;> rfl
-  right_inv i := by fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def rowsPlacement : Fin (12+26) ≃ Fin 38 where
   toFun := ![4,0,1,2,11,10,12,13,14,15,16,17,3,5,6,7,8,9,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37]
   invFun := ![1,2,3,12,0,13,14,15,16,17,5,4,6,7,8,9,10,11,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37]
-  left_inv i := by fin_cases i <;> rfl
-  right_inv i := by fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 private theorem placed_exact {s u t r cost : ℕ} {M : Program s r a}
     (e : Fin (s+u) ≃ Fin t) (v w : Tapes t a) (small small' : Tapes s a)
@@ -70,9 +70,9 @@ private theorem width_hoare (hs : Fin 6 → List Bool) (ds bs : List Bool)
       (fun v => v = bank hs none none (some ds)) (fun v => v = bank hs (some bs) none (some ds))
       (BinaryDescriptorDivision.cost (hs 3) ds) := by
   apply placed_exact widthPlacement _ _ _ _ _ _ _ hh
-  · apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
-  · apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
-  · apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  · apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
+  · apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
+  · apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 private theorem rows_hoare (hs : Fin 6 → List Bool) (ds bs rs : List Bool)
     (hh : HoareTime (BinaryDescriptorDivision.program a)
@@ -83,9 +83,9 @@ private theorem rows_hoare (hs : Fin 6 → List Bool) (ds bs rs : List Bool)
       (fun v => v = bank hs (some bs) none (some ds)) (fun v => v = bank hs (some bs) (some rs) (some ds))
       (BinaryDescriptorDivision.cost (hs 1) ds) := by
   apply placed_exact rowsPlacement _ _ _ _ _ _ _ hh
-  · apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
-  · apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
-  · apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  · apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
+  · apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
+  · apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 def initializeProgram (n : ℕ) :=
   Placement.placed (RecursiveChildQuotientsConstant.program (a := a) n) (FiniteReturnStackAt.placement (0 : Fin 38))

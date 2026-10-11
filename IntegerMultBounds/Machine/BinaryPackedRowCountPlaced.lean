@@ -80,7 +80,7 @@ private theorem native_output (hs : Fin 4 → List Bool) (P w G : ℕ) :
     BinaryPackedRowCount.output (a := a) hs P w G =
       setTape (BinaryPackedRowCount.input hs) 4
         (RadixZeroFill.encodedBinary (BinaryPackedRowCount.rowBits P w G)) 1 := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 /-- The only new retained tape contains the derived count. Every original
 header and arbitrary complementary tape is framed. -/

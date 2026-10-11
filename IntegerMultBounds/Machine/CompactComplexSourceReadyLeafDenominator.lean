@@ -77,7 +77,7 @@ theorem install (v : Tapes (tapes s c) 2) (n fullVolume : ℕ)
   have he : CompactNativeDenominatorTarget.bank n fullVolume (some (n+fullVolume))=
       setTape (CompactNativeDenominatorTarget.input n fullVolume) (2:Fin 4)
         (RadixZeroFill.encodedBinary (bits (n+fullVolume))) 1 := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   rw [he,←ha,PlacedDescriptorConstruction.replace_setTape]
   simp only [placement,InjectivePlacement.active_slot,slots,Matrix.cons_val_two,installed]
   rfl

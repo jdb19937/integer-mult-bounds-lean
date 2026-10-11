@@ -111,8 +111,8 @@ private theorem pad_cfg (f g out : ℤ → Fin (a + 4)) (p q r : ℤ) :
     (BinaryPad.cfg f g p q).extend (⟨fun _ => r, fun _ => out⟩ : Tapes 1 a) = cfg f g out p q r 0 := by
   unfold Config.extend Tapes.append Config.tapes BinaryPad.cfg cfg
   congr 1
-  · funext i; fin_cases i <;> rfl
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
+  · apply List.ofFn_injective; rfl
 
 theorem sumWord_value (xs ys : List Bool) : Counter.value (sumWord xs ys) = Counter.value xs + Counter.value ys := by
   have hl : (BinaryPad.padded xs (width xs ys)).length = (BinaryPad.padded ys (width xs ys)).length := by

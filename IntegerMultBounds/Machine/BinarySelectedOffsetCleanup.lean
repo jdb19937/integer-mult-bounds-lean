@@ -99,7 +99,7 @@ def output (hs : Fin 3 → List Bool) (q b n : ℕ) (Z : List Bool) (hb : 1 ≤ 
 
 theorem final_eq (hs : Fin 3 → List Bool) (q b n : ℕ) (Z : List Bool) (hb : 1 ≤ b) (hbq : b+1 ≤ q) :
     states hs q b n Z hb hbq 6=output hs q b n Z hb hbq := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem cleans (hs : Fin 3 → List Bool) (q b n : ℕ) (Z : List Bool) (hb : 1 ≤ b) (hbq : b+1 ≤ q) (hZ : Z.length=n) :
     HoareTime program (fun z => z=BinarySelectedOffsetGather.after hs q b n Z hb hbq)

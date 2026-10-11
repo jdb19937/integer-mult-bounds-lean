@@ -34,13 +34,13 @@ theorem negate_sources (s : Shape) (rowCount B : ℕ) (hs : Fin 6 → List Bool)
     (x : Array s rowCount B) : SharedBank.payload (dimensions (base (a := a) s rowCount B hs rs bs x) s rowCount) negateFocus=
       ActivePrefixParityNegativeNegate.sources (rows s).flatten (bits (width s)) (bits (2^s.W)) := by
   rw [rows_flatten s,ActivePrefixParityNegativeNegate.sources,ActivePrefixParityNegativeNegate.local_payload]
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem repeat_sources (s : Shape) (rowCount B : ℕ) (hs : Fin 6 → List Bool) (rs bs : List Bool)
     (x : Array s rowCount B) : SharedBank.payload (negated (base (a := a) s rowCount B hs rs bs x) s rowCount) repeatFocus=
       ActivePrefixOffsetRepeatPlaced.sources (negative s) rs := by
   rw [ActivePrefixOffsetRepeatPlaced.sources_eq]
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem rotation_tapes (s : Shape) (rowCount B : ℕ) (hs : Fin 6 → List Bool) (rs bs : List Bool)
     (x : Array s rowCount B) : ∀ i,

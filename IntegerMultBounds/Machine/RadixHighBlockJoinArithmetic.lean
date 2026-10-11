@@ -117,7 +117,7 @@ theorem grow_hoare (g : Bool) (source : ℤ → Fin (a+4)) (ss op oe ps es ws : 
   have he : FixedBasePowerStep.input ws (DimensionProductDescriptor.bits N q) =
       setTape (FixedBasePowerStep.input (q := a) ws (if g then ps else es)) 5
         (RadixZeroFill.encodedBinary (DimensionProductDescriptor.bits N q)) 1 := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   apply h.consequence (fun _ hh => hh) _ le_rfl
   rintro v ⟨small,rfl,rfl⟩
   rw [he,← grow_active g source ss op oe ps es ws,PlacedDescriptorConstruction.replace_setTape]

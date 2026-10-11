@@ -73,30 +73,30 @@ theorem power (hs : Fin 4 → List Bool) (w : ℕ)
       (FixedBasePowerDescriptor.constant 2*2^w) := by
   have ha : Placement.active powerPlacement (input (a := a) hs)=FixedBasePowerDescriptor.input (hs 3) := by
     apply congrArg₂ Tapes.mk
-    · funext i; fin_cases i <;> rfl
+    · apply List.ofFn_injective; rfl
     · funext i; fin_cases i <;> first | rfl | exact CountedLoopReuseAlphabet.encoding_binary _
   have hp := PlacedDescriptorConstruction.power_hoare powerPlacement (input (a := a) hs)
     2 w (by decide) (hs 3) hw cw ha
   have he : setTape (input (a := a) hs) 5 (RadixZeroFill.encodedBinary (powerBits w)) 1=powered hs w := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   exact hp.consequence (fun _ h => h) (fun _ h => h.trans he) le_rfl
 
 private theorem first_input (hs : Fin 4 → List Bool) (w : ℕ) :
     Placement.active firstPlacement (powered (a := a) hs w) =
       DimensionProductDescriptor.input (powerBits w) (hs 0) := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 private theorem first_output (hs : Fin 4 → List Bool) (P w : ℕ) :
     Placement.active firstPlacement (multiplied (a := a) hs P w) =
       DimensionProductDescriptor.output (powerBits w) (hs 0) P (2^w) := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 private theorem first_extra (hs : Fin 4 → List Bool) (ds : Fin 3 → Option (List Bool)) :
     Placement.extra firstPlacement (bank (a := a) hs ds) =
       (⟨![1,1,1,head (ds 0),0,0,0],![RadixZeroFill.encodedBinary (hs 1),
         RadixZeroFill.encodedBinary (hs 2),RadixZeroFill.encodedBinary (hs 3),tape (ds 0),
         fun _ => blank,fun _ => blank,fun _ => blank]⟩ : Tapes 7 a) := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 private theorem first_frame (hs : Fin 4 → List Bool) (P w : ℕ) :
     Placement.extra firstPlacement (powered (a := a) hs w) =
@@ -123,9 +123,9 @@ theorem second_product (hs : Fin 4 → List Bool) (P w G : ℕ) (hG : 0 < G)
   apply placed_exact secondPlacement _ _ _ _ _ _ _
     (DimensionProductDescriptor.construct_hoare (hs 1) (productBits P w) (P*2^w) G hG hv
       (DimensionProductDescriptor.bits_value P (2^w)) hc (DimensionProductDescriptor.bits_canonical P (2^w)))
-  · apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
-  · apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
-  · apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  · apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
+  · apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
+  · apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 private def cleanCost (P w : ℕ) := 2*(powerBits w).length+2*(productBits P w).length+12
 
@@ -138,7 +138,7 @@ theorem cleans (hs : Fin 4 → List Bool) (P w G : ℕ) :
   have h := h₀.seq h₁
   have he : setTape (setTape (prepared (a := a) hs P w G) 5 (fun _ => blank) 0) 6 (fun _ => blank) 0 =
       output hs P w G := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   refine h.consequence (fun _ h => h) (fun _ h => h.trans he) ?_
   dsimp only [cleanCost]
   omega

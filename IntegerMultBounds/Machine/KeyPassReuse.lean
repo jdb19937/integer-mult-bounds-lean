@@ -147,8 +147,8 @@ private theorem clean_source (k : ℕ) (records output : List (List Bool))
       KeyPass.bank k [] flags zeros ones sf output 0 hF hZ hO hS hOut := by
   unfold clean KeyPass.bank KeyPartition.bank Tapes.append
   congr 1
-  · funext i; fin_cases i <;> rfl
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
+  · apply List.ofFn_injective; rfl
 
 private theorem clean_flags (k : ℕ) (records output : List (List Bool))
     (flags zeros ones sf : List (Fin 4)) (h₀ hF hZ hO hS hOut : ℤ) :
@@ -156,8 +156,8 @@ private theorem clean_flags (k : ℕ) (records output : List (List Bool))
       KeyPass.bank k records [] zeros ones sf output h₀ 0 hZ hO hS hOut := by
   unfold clean KeyPass.bank KeyPartition.bank Tapes.append
   congr 1
-  · funext i; fin_cases i <;> rfl
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
+  · apply List.ofFn_injective; rfl
 
 private theorem clean_zeros (k : ℕ) (records output : List (List Bool))
     (flags zeros ones sf : List (Fin 4)) (h₀ hF hZ hO hS hOut : ℤ) :
@@ -165,8 +165,8 @@ private theorem clean_zeros (k : ℕ) (records output : List (List Bool))
       KeyPass.bank k records flags [] ones sf output h₀ hF 0 hO hS hOut := by
   unfold clean KeyPass.bank KeyPartition.bank Tapes.append
   congr 1
-  · funext i; fin_cases i <;> rfl
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
+  · apply List.ofFn_injective; rfl
 
 private theorem clean_ones (k : ℕ) (records output : List (List Bool))
     (flags zeros ones sf : List (Fin 4)) (h₀ hF hZ hO hS hOut : ℤ) :
@@ -174,8 +174,8 @@ private theorem clean_ones (k : ℕ) (records output : List (List Bool))
       KeyPass.bank k records flags zeros [] sf output h₀ hF hZ 0 hS hOut := by
   unfold clean KeyPass.bank KeyPartition.bank Tapes.append
   congr 1
-  · funext i; fin_cases i <;> rfl
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
+  · apply List.ofFn_injective; rfl
 
 private theorem position_source (k : ℕ) (records output : List (List Bool))
     (flags zeros ones sf : List (Fin 4)) (h₀ hF hZ hO hS hOut : ℤ) :
@@ -214,8 +214,8 @@ private theorem move_bank (k : ℕ) (source dest : List (List Bool)) (hs hd : �
   unfold Copy.tapes Copy.cfg Config.tapes Tapes.append Tapes.reindex moveExtra
     KeyPass.bank KeyPartition.bank
   congr 1
-  · funext i; fin_cases i <;> rfl
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
+  · apply List.ofFn_injective; rfl
 
 private theorem raw_nonblank (records : List (List Bool)) :
     ∀ x ∈ KeySelect.encode records, x ≠ blank := by

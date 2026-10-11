@@ -47,7 +47,7 @@ private theorem step_at (st st' : Fin 4) (f g h : ℤ → Fin 6) (p q r : ℤ)
   dsimp only
   congr 1
   apply congrArg₂ (fun hs ts => Config.mk st' hs ts)
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
   · funext i z; fin_cases i <;> simp [Function.update_apply,eq_comm]
     all_goals intro he; subst z; rfl
 

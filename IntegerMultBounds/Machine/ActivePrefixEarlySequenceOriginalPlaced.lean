@@ -28,7 +28,7 @@ def result {m : ℕ} (caller : Tapes t prime) (focus : Fin 23 → Fin t) (x : Fi
 
 theorem base_raw {m : ℕ} (gs : Fin 7 → List Bool) (bw : List Bool) (hs : Fin 14 → List Bool) (x : Fin m → Bool) :
     base gs bw hs x=SharedBankStageInput.raw (sources gs bw hs x) 43 := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem raw_twice {k n r : ℕ} (v : Tapes k prime) (hk : k≤n) :
     SharedBankStageInput.raw (SharedBankStageInput.raw v n) r=SharedBankStageInput.raw v r := by
@@ -66,7 +66,7 @@ theorem native_output {m n : ℕ} (gs : Fin 7 → List Bool) (bw : List Bool) (h
       (SharedBankStageInput.raw (base gs bw hs x) count) (ports 22) (ActiveTargetRotation.word y) 0 := by
   rw [native_raw,native_raw]
   have h : sources gs bw hs y=setTape (sources gs bw hs x) 22 (ActiveTargetRotation.word y) 0 := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   rw [h,raw_set common_le]
   rfl
 

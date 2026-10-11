@@ -29,13 +29,13 @@ def program := seq (seq (headerProgram setup) axisProgram) (headerProgram cleanu
 theorem payload (s : Shape) (rows ell p rho ordinal count shift : ℕ) (f : ℤ → Fin 6) :
     SharedBank.payload (common (prepared s rows ell p rho ordinal count shift) f) focus=
       ButterflySpectatorPorts.payload rows s.bits (selected s rho ordinal+shift) (2^ell) p f := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem frame (s : Shape) (rows ell p rho ordinal count : ℕ) (f g : ℤ → Fin 6) :
     SharedBank.strip (common (prepared s rows ell p rho ordinal count 0) f) focus=
       SharedBank.strip (common (prepared s rows ell p rho ordinal count 1) g) focus := by
   apply congrArg₂ Tapes.mk
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
   · funext i
     by_cases hi : ∃ j,focus j=i
     · simp only [hi,ite_true]

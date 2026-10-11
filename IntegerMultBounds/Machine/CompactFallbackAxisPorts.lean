@@ -19,7 +19,7 @@ def payload (D t R p : ℕ) (f : ℤ → Fin 6) : Tapes 5 2 :=
 
 theorem selected (D t R p : ℕ) (f : ℤ → Fin 6) :
     SharedBank.payload (ButterflyAxisOriginal.bank D t R p f) ports=payload D t R p f := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 private theorem unselected (D t R p : ℕ) (f : ℤ → Fin 6) (i : Fin count) (hi : ¬∃ j,ports j=i) :
     (ButterflyAxisOriginal.bank D t R p f).head i=0 ∧

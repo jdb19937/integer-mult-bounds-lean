@@ -62,7 +62,7 @@ theorem final_eq (s : Shape .parity) (hs : Fin 6 → List Bool) :
     CompactGadgetReservationHeadersCarvedPlacedCleanup.cleared (clock (a := a) s hs) derivedFocus=result s hs := by
   unfold clock streams
   rw [gathered_eq]
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem headers_runs (s : Shape .parity) (hs : Fin 6 → List Bool) :
     HoareTime (CompactGadgetReservationHeadersCarvedPlacedCleanup.program (a := a) derivedFocus)

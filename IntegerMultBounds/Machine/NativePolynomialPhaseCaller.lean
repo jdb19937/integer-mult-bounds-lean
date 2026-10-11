@@ -59,7 +59,7 @@ theorem replace_rows {B : ℕ} (d : Inputs s) (xs ys : ActivePrefixStageNativeRo
   rw [show (65 : Fin 66)=Fin.natAdd 65 (0 : Fin 1) from rfl,
     SharedPlacementAlphabet.setTape_append_right]
   congr 1
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 end
 end IntegerMultBounds.Machine.NativePolynomialPhaseCaller

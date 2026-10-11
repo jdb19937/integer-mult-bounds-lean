@@ -27,9 +27,9 @@ private theorem rows_hoare (hs : Fin 6 → List Bool) (ds rs : List Bool)
       (fun v => v = bank hs none none (some ds)) (fun v => v = bank hs none (some rs) (some ds))
       (BinaryDescriptorDivision.cost (hs 1) ds) := by
   apply placed_exact rowsPlacement _ _ _ _ _ _ _ hh
-  · apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
-  · apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
-  · apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  · apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
+  · apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
+  · apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 def initializeProgram (n : ℕ) :=
   Placement.placed (RecursiveChildQuotientsConstant.program (a := a) n) (FiniteReturnStackAt.placement (0 : Fin 38))

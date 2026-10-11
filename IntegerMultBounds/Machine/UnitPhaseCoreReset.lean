@@ -36,13 +36,13 @@ theorem runs (xs : ℕ → List (Fin 2)) (w : ℕ) (hw : ∀ j,(xs j).length=w) 
     change Placement.replace (FiniteReturnStackAt.placement (1 : Fin 6)) mid
       (FiniteReturnStack.bank (fun _ => blank) 0)=SharedBank.empty 6 2
     rw [FiniteReturnStackAt.replace_bank]
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   exact (hr.seq hi).consequence (fun _ h => h) (fun _ h => h) (by rw [hw 0,hw 1]; omega)
 
 theorem emitted_core (p : Fin 4) (xs : ℕ → List (Fin 2)) :
     setTape (setTape (UnitPhaseNumerator.coreOutput p xs) 2 (fun _ => blank) 0)
       4 (fun _ => blank) 0=UnitPhaseNumerator.coreInput xs := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 end
 end IntegerMultBounds.Machine.UnitPhaseCoreReset

@@ -84,7 +84,7 @@ theorem finalizes (f : Array s rows ell) :
   have he : BinaryDescriptorCleanupList.cleared fields
       (ActiveRepairRankHeadersCommands.bank (initial s rows ell p rho.val (left+arity^k) (arity^k)))=
       ActiveRepairRankHeadersCommands.bank (a:=2) (fun _ => none) := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   have hc := hh.consequence (fun _ h => h) (fun v hv => hv.trans he) le_rfl
   exact hoare_extend_eq (hoare_extend_eq (hoare_extend_eq hc
     (CountedLoopReuseAlphabet.one (CompactSpectatorInverseLeafAxis.word (run s rows ell p rho visit (arity^k) f)) 0))

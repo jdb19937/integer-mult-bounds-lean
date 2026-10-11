@@ -51,7 +51,7 @@ private theorem placed {t u n q B : ℕ} (M : Program t q 2) (e : Fin (t+u) ≃ 
 theorem prepare_runs (addr : List Bool) (hs : Fin 3 → List Bool) :
     HoareTime prepare (fun z => z=initial addr hs) (fun z => z=input addr hs) 1 := by
   apply placed _ _ _ _ _ _ UnitPhaseFlagsLifecycle.prepares
-  all_goals apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  all_goals apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem extractor_runs (addr : List Bool) (hs : Fin 3 → List Bool) (q rho n : ℕ)
     (hspan : rho+n*q<addr.length) (hpos : 1≤q)
@@ -67,7 +67,7 @@ theorem accumulator_runs (ws : List (ZMod 4)) (addr : List Bool) (hs : Fin 3 →
       (fun z => z=output ws addr hs q rho n) (2*ws.length) := by
   apply placed _ _ _ _ _ _ (WeightedPhaseAccumulator.word_runs 0 ws (selected addr q rho n)
     (by simpa only [selected,SelectedSourceBitsData.selected_length] using hl))
-  all_goals apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  all_goals apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem runs (ws : List (ZMod 4)) (addr : List Bool) (hs : Fin 3 → List Bool) (q rho n : ℕ)
     (hl : n+1=ws.length) (hspan : rho+n*q<addr.length) (hpos : 1≤q)

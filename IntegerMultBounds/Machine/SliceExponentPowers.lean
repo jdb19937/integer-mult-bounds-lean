@@ -34,26 +34,26 @@ def output (es ts bs : List Bool) (e t b : ℕ) : Tapes 9 q :=
 def sub0Placement : Fin (3+6) ≃ Fin 9 where
   toFun := ![0,1,3,2,4,5,6,7,8]
   invFun := ![0,1,3,2,4,5,6,7,8]
-  left_inv i := by fin_cases i <;> rfl
-  right_inv i := by fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def sub1Placement : Fin (3+6) ≃ Fin 9 where
   toFun := ![3,2,4,0,1,5,6,7,8]
   invFun := ![3,4,1,0,2,5,6,7,8]
-  left_inv i := by fin_cases i <;> rfl
-  right_inv i := by fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def power0Placement : Fin (4+5) ≃ Fin 9 where
   toFun := ![7,8,1,5,0,2,3,4,6]
   invFun := ![4,2,5,6,7,3,8,0,1]
-  left_inv i := by fin_cases i <;> rfl
-  right_inv i := by fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def power1Placement : Fin (4+5) ≃ Fin 9 where
   toFun := ![7,8,4,6,0,1,2,3,5]
   invFun := ![4,5,6,7,2,8,3,0,1]
-  left_inv i := by fin_cases i <;> rfl
-  right_inv i := by fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def sub0Program := Placement.placed (Alphabet.program (RadixToBinary.binaryEncoding (q := q)) BinarySubReuse.program) sub0Placement
 
@@ -94,8 +94,8 @@ private theorem sub0_hoare (es ts bs : List Bool) (xs : Fin 4 → List Bool)
     rw [hx]
     exact h.consequence (fun _ h => ⟨_,rfl,h⟩) (by rintro v ⟨w,rfl,h⟩; exact h) le_rfl
   apply placed_exact sub0Placement _ _ _ _ _ _ _ hh
-  · apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
-  · apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  · apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
+  · apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   · apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;>
       simp [sub0Placement,stage,bank]
 
@@ -114,8 +114,8 @@ private theorem sub1_hoare (es ts bs : List Bool) (xs : Fin 4 → List Bool)
     rw [hx]
     exact h.consequence (fun _ h => ⟨_,rfl,h⟩) (by rintro v ⟨w,rfl,h⟩; exact h) le_rfl
   apply placed_exact sub1Placement _ _ _ _ _ _ _ hh
-  · apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
-  · apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  · apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
+  · apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   · apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;>
       simp [sub1Placement,stage,bank]
 
@@ -124,7 +124,7 @@ private theorem power0_hoare (es ts bs : List Bool) (xs : Fin 4 → List Bool) (
     HoareTime (power0Program hq) (fun v => v = stage es ts bs xs 2)
       (fun v => v = stage es ts bs xs 3) (10*q^n+18*n+7*ts.length+57) := by
   apply placed_exact power0Placement _ _ _ _ _ _ _ (RadixPowerDescriptor.construct_hoare hq ts n hv)
-  · apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  · apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   · apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;>
       simp [power0Placement,stage,bank,tp,hd,hx]
   · apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;>
@@ -135,7 +135,7 @@ private theorem power1_hoare (es ts bs : List Bool) (xs : Fin 4 → List Bool) (
     HoareTime (power1Program hq) (fun v => v = stage es ts bs xs 3)
       (fun v => v = stage es ts bs xs 4) (10*q^n+18*n+7*(xs 1).length+57) := by
   apply placed_exact power1Placement _ _ _ _ _ _ _ (RadixPowerDescriptor.construct_hoare hq (xs 1) n hv)
-  · apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  · apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   · apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;>
       simp [power1Placement,stage,bank,tp,hd,hx]
   · apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;>
@@ -154,7 +154,7 @@ private theorem clean_hoare (es ts bs : List Bool) (xs : Fin 4 → List Bool) :
         first | rfl | simpa [ws,stage,bank,tp] using (BinaryDescriptorStackRoundtrip.descriptor_encoded (a := q) _).symm)
   apply h.consequence (fun _ h => h) _ _
   · rintro v rfl
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   · simp [BinaryDescriptorCleanupList.cost,cleanSlots,ws]
     omega
 

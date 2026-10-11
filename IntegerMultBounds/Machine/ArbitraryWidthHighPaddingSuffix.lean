@@ -76,8 +76,8 @@ theorem local_linear (q e r G B : ℕ) (hq : 2 ≤ q) (hG : 0 < G) (hB : 0 < B)
 def placement : Fin (6+11) ≃ Fin 17 where
   toFun := ![11,12,13,9,14,10,0,1,2,3,4,5,6,7,8,15,16]
   invFun := ![6,7,8,9,10,11,12,13,14,3,5,0,1,2,4,15,16]
-  left_inv i := by fin_cases i <;> rfl
-  right_inv i := by fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def program := Placement.placed (localProgram (a := a)) placement
 
@@ -97,18 +97,18 @@ private theorem active_input (q P e r G B : ℕ) (hs : Fin 5 → List Bool) :
     Placement.active placement (ArbitraryWidthHighDimensions.output (a := a) q P G B e r hs) =
       BoundedProductDescriptor.input (ArbitraryWidthHighDimensions.words q P G B e r 4)
         (ArbitraryWidthHighDimensions.words q P G B e r 5) := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 private theorem active_output (q P e r G B : ℕ) (hs : Fin 5 → List Bool) :
     Placement.active placement (output (a := a) q P e r G B hs) =
       BoundedProductDescriptor.output (ArbitraryWidthHighDimensions.words q P G B e r 4)
         (ArbitraryWidthHighDimensions.words q P G B e r 5) (B*q^(e-r)) (G*q^(e-r)) := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 private theorem extra_frame (q P e r G B : ℕ) (hs : Fin 5 → List Bool) :
     Placement.extra placement (ArbitraryWidthHighDimensions.output (a := a) q P G B e r hs) =
       Placement.extra placement (output q P e r G B hs) := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem constructs (q P e r G B : ℕ) (hq : 2 ≤ q) (hG : 0 < G) (hB : 0 < B)
     (hs : Fin 5 → List Bool) :
@@ -147,7 +147,7 @@ def cleanupCost (q e r G B : ℕ) := 2*(bits q e r G B).length+4
 private theorem cleaned_output (q P e r G B : ℕ) (hs : Fin 5 → List Bool) :
     setTape (output (a := a) q P e r G B hs) 12 (fun _ => blank) 0 =
       ArbitraryWidthHighDimensions.output q P G B e r hs := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem cleans (q P e r G B : ℕ) (hs : Fin 5 → List Bool) :
     HoareTime (cleanup (a := a)) (fun z => z = output q P e r G B hs)

@@ -122,7 +122,7 @@ private theorem pair_encoded {v : Descriptor} (x : Fin (volume q v) → Fin 4) :
     simp only [RecursiveDigitInterchangeConstruct.word,List.map_ofFn]
     rfl
   apply congrArg₂ Tapes.mk
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
   · funext i; fin_cases i
     · exact hw
     · rfl

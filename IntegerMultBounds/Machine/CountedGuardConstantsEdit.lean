@@ -26,7 +26,7 @@ theorem stepRight_hoare (f : ℤ → Fin (a+4)) (p : ℤ) (ks : List Bool) :
   rintro v ⟨z,rfl,rfl⟩
   change Placement.replace _ _ (FiniteReturnStack.bank _ _) = _
   rw [FiniteReturnStackAt.replace_bank]
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem stepLeft_hoare (f : ℤ → Fin (a+4)) (p : ℤ) (ks : List Bool) :
     HoareTime (stepLeft (a := a)) (fun v => v=bank f p ks)
@@ -38,7 +38,7 @@ theorem stepLeft_hoare (f : ℤ → Fin (a+4)) (p : ℤ) (ks : List Bool) :
   rintro v ⟨z,rfl,rfl⟩
   change Placement.replace _ _ (FiniteReturnStack.bank _ _) = _
   rw [FiniteReturnStackAt.replace_bank]
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem write_hoare (b : Bool) (f : ℤ → Fin (a+4)) (p : ℤ) (ks : List Bool) :
     HoareTime (write (a := a) b) (fun v => v=bank f p ks)
@@ -50,7 +50,7 @@ theorem write_hoare (b : Bool) (f : ℤ → Fin (a+4)) (p : ℤ) (ks : List Bool
   rintro v ⟨z,rfl,rfl⟩
   change Placement.replace _ _ (FiniteReturnStack.bank _ _) = _
   rw [FiniteReturnStackAt.replace_bank]
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem rewind_hoare (xs : List Bool) (ks : List Bool) :
     HoareTime (rewind (a := a)) (fun v => v=bank (word xs) xs.length ks)
@@ -63,7 +63,7 @@ theorem rewind_hoare (xs : List Bool) (ks : List Bool) :
   rintro v ⟨z,rfl,rfl⟩
   change Placement.replace _ _ (FiniteReturnStack.bank _ _) = _
   rw [FiniteReturnStackAt.replace_bank]
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 def program (x : Bool) := seq (seq (seq (seq (seq
   (CountedGuardConstantsFill.position (a := a) Move.right) stepRight) (write x))

@@ -36,7 +36,7 @@ theorem constructs (caller : Tapes t a) (focus : Fin 3 → Fin t) (hf : Function
         (RadixZeroFill.encodedBinary (bits (N*W))) 1 := by
     rw [← CompactGadgetReservationHeadersCore.canonical_bits (DimensionProductDescriptor.bits N W) (N*W)
       (DimensionProductDescriptor.bits_canonical N W) (DimensionProductDescriptor.bits_value N W)]
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   rw [he,← SharedPlacementAlphabet.setTape_append_left] at h
   have hi : SharedBank.payload (native (a := a) ws ns) ports = SharedBank.payload caller focus := by
     apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i

@@ -123,7 +123,7 @@ theorem increment_hoare (ws ps ds rs : List Bool) :
   change Placement.replace _ _ (FiniteReturnStack.bank (BinaryDescriptorStack.descriptor
     (GrowingCounterData.increment rs)) 1) = _
   rw [FiniteReturnStackAt.replace_bank]
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 def body : Program 9 (((2+53)+3)+12) q := seq (seq (seq erase
   (extend FixedBasePowerStep.program 3)) increment) compare
@@ -221,7 +221,7 @@ theorem cleanup_hoare (B r : ℕ) (ds : List Bool) :
   have hc := BinaryDescriptorCleanupList.one_hoare (3 : Fin 9) (cleared (q := q) B r ds)
     (bits B) (by rw [BinaryDescriptorStackRoundtrip.descriptor_encoded]; rfl) rfl
   have hf : setTape (cleared (q := q) B r ds) (3 : Fin 9) (fun _ => blank) 0 = output B r ds := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   rw [hf] at hc
   exact (he.seq hc).consequence (fun _ h => h) (fun _ h => h) (by omega)
 

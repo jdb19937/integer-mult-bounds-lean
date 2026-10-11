@@ -58,7 +58,7 @@ private theorem replace_output (st : State) (h4 : st 4=none)
   have hs : Copy.tapes f (BinaryDescriptorStack.descriptor (bits n)) p' 1=
       setTape (setTape (Copy.tapes f (fun _ => blank) p 0) 0 f p')
         1 (BinaryDescriptorStack.descriptor (bits n)) 1 := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   rw [hs,← active_input st h4 f p,replace_write,PlacedDescriptorConstruction.replace_setTape]
   simp only [placement,InjectivePlacement.active_slot,focus]
   change setTape (setTape _ (Fin.natAdd 43 (0 : Fin 1)) f p')
@@ -70,7 +70,7 @@ private theorem replace_output (st : State) (h4 : st 4=none)
     ← ActiveRepairRankHeadersCommands.put_caller]
   apply congrArg (fun tail => ((ActiveRepairRankHeadersCommands.caller (a := a) (put st 4 n)).append
     (SharedBank.empty 15 a)).append tail)
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 /-- Read a physically present field, retaining every other numeric descriptor
 and all fifteen arithmetic-workspace tapes exactly. -/

@@ -48,14 +48,14 @@ theorem split_payload (ss : Fin 4 → ℤ → Fin 6) (source : ℤ → Fin 6)
     SharedBank.payload (common ss source bs ls hs) splitPorts=
       (CyclicRowCopy.payload source ![ss 0,ss 1] 0 (fun _ => 0)).append
         (RecursiveRowsRoleBank.headers hs) := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem merge_payload (ss : Fin 4 → ℤ → Fin 6) (source : ℤ → Fin 6)
     (bs ls : List Bool) (hs : Fin 6 → List Bool) :
     SharedBank.payload (common ss source bs ls hs) mergePorts=
       (CyclicRowCopy.payload source ![ss 2,ss 3] 0 (fun _ => 0)).append
         (RecursiveRowsRoleBank.headers hs) := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 private theorem strip_eq (ports : Fin 9 → Fin 63) (ss tt : Fin 4 → ℤ → Fin 6)
     (source target : ℤ → Fin 6) (bs ls : List Bool) (hs : Fin 6 → List Bool)

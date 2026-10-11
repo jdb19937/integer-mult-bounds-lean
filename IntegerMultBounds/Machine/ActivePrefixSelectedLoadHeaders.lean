@@ -15,7 +15,7 @@ def bank (v : Tapes 19 a) := CleanSubbank.bank (s := 41) v
 
 theorem pad15 (v : Tapes 19 a) :
     (CompactGadgetReservationHeadersCore.bank v).append (SharedBank.empty 26 a)=bank v := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 def setup := extend (ActivePrefixOffsetHeadersRun.program (a := a) headerFocus header_injective) 26
 def product := extend (CompactGadgetReservationHeadersCore.productProgram (a := a) productFocus product_injective) 26

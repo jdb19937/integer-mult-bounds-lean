@@ -27,7 +27,7 @@ def program (ha : 2 ≤ a) (c : ℕ) := seq (seq (seq (seq (preparesProgram (a :
 
 theorem base_none (source target : ℤ → Fin (a+4)) (q : ℤ) (rs ls : List Bool) (rp : Option (List Bool)) :
     base source target q rs ls none rp = CompactRowPaddingRun.bank source target 0 q rs ls none rp := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem empty_head : (emptyPayload (a := a) (c := c)).head 0 = 0 := rfl
 theorem empty_tape : (emptyPayload (a := a) (c := c)).tape 0 = fun _ => blank := rfl

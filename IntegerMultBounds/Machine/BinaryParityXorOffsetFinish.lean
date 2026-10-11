@@ -53,12 +53,12 @@ theorem width_hoare (hs : Fin 3 → List Bool) (Z : List Bool) (q b n : ℕ) (hb
       (fun z => z=widthBank hs Z q b n hb hbq) (53*(n*b)+28) := by
   have ha : Placement.active widthPlace (BinaryParityXorOffsetPrepare.output hs Z q b n hb hbq)=
       DimensionProductDescriptor.input (hs 1) (hs 2) := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   have h := Placement.hoare_at (DimensionProductDescriptor.construct_hoare (hs 1) (hs 2) n b (by omega)
     hvq hvn cq cn) widthPlace _ ha
   apply h.consequence (fun _ h => h) _ le_rfl
   rintro z ⟨small,rfl,rfl⟩
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem negate_hoare (hs : Fin 3 → List Bool) (Z : List Bool) (q b n : ℕ) (hb : 1≤b) (hbq : b+1≤q)
     (hZ : Z.length=n) :
@@ -73,10 +73,10 @@ theorem negate_hoare (hs : Fin 3 → List Bool) (Z : List Bool) (q b n : ℕ) (h
   have ha : Placement.active negatePlace (widthBank hs Z q b n hb hbq)=
       BinaryParityXorOffsetNegate.raw (BinaryParityXorOffsetRow.word (positiveWord q b n Z hb hbq))
         (fun _ => blank) 0 0 (widthWord b n) (rangeBits q n) := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   apply (Placement.hoare_at h negatePlace _ ha).consequence (fun _ h => h) _ le_rfl
   rintro z ⟨small,rfl,rfl⟩
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem cleanup_hoare (hs : Fin 3 → List Bool) (Z : List Bool) (q b n : ℕ) (hb : 1≤b) (hbq : b+1≤q) (hZ : Z.length=n) :
     HoareTime cleanup (fun z => z=negated hs Z q b n hb hbq)
@@ -86,12 +86,12 @@ theorem cleanup_hoare (hs : Fin 3 → List Bool) (Z : List Bool) (q b n : ℕ) (
   have h0 := WordBankCleanup.clear_hoare v (6 : Fin 31) (by decide)
     ((BinarySelectedOffsetData.source q n).map bitSymbol) (ReturnOrigin.bits_nonblank _) rfl
   have he0 : WordBankCleanup.write v 6 (fun _ => blank)=cleanSource v := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   rw [he0] at h0
   have h1 := WordBankCleanup.clear_hoare (cleanSource v) (7 : Fin 31) (by decide)
     ((BinarySelectedOffsetData.controls q n Z).map bitSymbol) (ReturnOrigin.bits_nonblank _) rfl
   have he1 : WordBankCleanup.write (cleanSource v) 7 (fun _ => blank)=cleanControls (cleanSource v) := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   rw [he1] at h1
   have h2 := BinaryDescriptorCleanupList.cleanup_hoare (by decide : 0<31) headerSlots (by decide)
     (headerWords q b n) (cleanControls (cleanSource v)) (by
@@ -117,7 +117,7 @@ theorem finishes (hs : Fin 3 → List Bool) (Z : List Bool) (q b n : ℕ) (hb : 
 theorem output_eq (hs : Fin 3 → List Bool) (Z : List Bool) (q b n : ℕ) (hb : 1≤b) (hbq : b+1≤q) :
     output hs Z q b n hb hbq=setTape (BinaryParityXorOffsetPrepare.input hs Z) (14 : Fin 31)
       (BinaryParityXorOffsetRow.word (word q b n Z hb hbq)) 0 := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 end
 end IntegerMultBounds.Machine.BinaryParityXorOffsetFinish

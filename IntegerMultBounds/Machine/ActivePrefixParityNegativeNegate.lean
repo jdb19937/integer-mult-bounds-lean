@@ -78,7 +78,7 @@ theorem local_payload (xs ys ws ns : List Bool) :
     (local_clean _ _ _ _) (local_clean _ _ _ _) ?_ hh
   · rw [local_payload]
     simp only [result,CompactGadgetReservationPlacement.payload_set _ _ hf,hsrc,sources,local_payload]
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   · simp only [result,CompactGadgetReservationPlacement.strip_set]
 
 end

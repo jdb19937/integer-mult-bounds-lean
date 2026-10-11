@@ -61,18 +61,18 @@ theorem offsets_length (s : Shape) (rows : ℕ) : (offsets s rows).length=prefix
 theorem producer_sources (s : Shape) (rows B : ℕ) (hs : Fin 8 → List Bool) (rs bs : List Bool)
     (x : Array s rows B) : SharedBank.payload (base (a := a) s rows B hs rs bs x) producerFocus=
       ActivePrefixSelectedOffsetPlaced.sources hs := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem header_sources (s : Shape) (rows B : ℕ) (hs : Fin 8 → List Bool) (rs bs : List Bool)
     (x : Array s rows B) : SharedBank.payload (selected (base (a := a) s rows B hs rs bs x) s) headerFocus=
       ActivePrefixOffsetHeadersData.sources (headerWords hs) := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem repeat_sources (s : Shape) (rows B : ℕ) (hs : Fin 8 → List Bool) (rs bs : List Bool)
     (x : Array s rows B) : SharedBank.payload (dimensions (base (a := a) s rows B hs rs bs x) s rows) repeatFocus=
       ActivePrefixOffsetRepeatPlaced.sources (offsetWord s) rs := by
   rw [ActivePrefixOffsetRepeatPlaced.sources_eq]
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem rotation_tapes (s : Shape) (rows B : ℕ) (hs : Fin 8 → List Bool) (rs bs : List Bool)
     (x : Array s rows B) : ∀ i,

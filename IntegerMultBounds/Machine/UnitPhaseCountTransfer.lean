@@ -31,7 +31,7 @@ private theorem endpoint (order : Order) (v : Stage s) (rows : ℕ) (axis : Fin 
     setTape (setTape (input order v rows axis tail) 59
       (RadixZeroFill.encodedBinary (RecursiveChildQuotientsConstant.bits (rows*2^s.bits))) 1)
         24 (fun _ => blank) 0=output order v rows axis tail := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem runs (order : Order) (v : Stage s) (rows : ℕ) (axis : Fin v.f) (tail : Tapes 4 2)
     (hn : tail.tape 3=(fun _ => blank) ∧ tail.head 3=0) :

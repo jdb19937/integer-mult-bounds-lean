@@ -52,7 +52,7 @@ theorem sequence_sources (hfit : offset+p.f*p.q≤p.after) (hn : 0<p.n) (hb : 2�
     (d : Inputs s p offset rows) (x : ActivePrefixDirtyControlConjugationData.FullArray s rows) :
     SharedBank.payload (ready d.gs d.bw d.hs x (layout d)) sequenceFocus=
       ActivePrefixDirtyControlSequenceData.caller (prepared hfit hn hb d) x := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 end
 end IntegerMultBounds.Machine.ActivePrefixDirtyControlSequenceOriginalInputs

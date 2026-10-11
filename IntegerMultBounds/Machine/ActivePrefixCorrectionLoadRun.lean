@@ -13,11 +13,11 @@ variable {a : ℕ}
 
 theorem pad4 (v : Tapes 19 a) :
     (CleanSubbank.bank (s := 4) v).append (SharedBank.empty 53 a)=bank v := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem pad12 (v : Tapes 19 a) :
     (PackedOffsetPayloadPlaced.input v).append (SharedBank.empty 45 a)=bank v := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 def produce := ActivePrefixCorrectionOffsetPlaced.program (a := a) producerFocus producer_injective
 def repeatProgram := extend (ActivePrefixOffsetRepeatPlaced.program (a := a) repeatFocus repeat_injective) 53

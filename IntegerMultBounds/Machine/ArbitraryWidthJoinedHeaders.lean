@@ -66,8 +66,8 @@ def oneProgram := Placement.placed (RecursiveChildQuotientsConstant.program (a :
 def differencePlacement : Fin (3+9) ≃ Fin 12 where
   toFun := ![3,4,9,0,1,2,5,6,7,8,10,11]
   invFun := ![3,4,5,0,1,6,7,8,9,2,10,11]
-  left_inv i := by fin_cases i <;> rfl
-  right_inv i := by fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def differenceProgram := Placement.placed (BinaryDescriptorDifference.program (a := a)) differencePlacement
 
@@ -113,7 +113,7 @@ private theorem difference_step (hs : Fin 6 → List Bool) (e r : ℕ) (hr : r �
   have ha : Placement.active differencePlacement (state (a := a) hs e r 3) =
       BinaryDescriptorDifference.input (hs 3) (hs 4) := by
     apply congrArg₂ Tapes.mk
-    · funext i; fin_cases i <;> rfl
+    · apply List.ofFn_injective; rfl
     · funext i; fin_cases i
       · exact encoded_binary _
       · exact encoded_binary _
@@ -122,7 +122,7 @@ private theorem difference_step (hs : Fin 6 → List Bool) (e r : ℕ) (hr : r �
       setTape (BinaryDescriptorDifference.input (hs 3) (hs 4)) 2
         (RadixZeroFill.encodedBinary (bits (e-r))) 1 := by
     apply congrArg₂ Tapes.mk
-    · funext i; fin_cases i <;> rfl
+    · apply List.ofFn_injective; rfl
     · funext i; fin_cases i
       · rfl
       · rfl

@@ -20,7 +20,7 @@ theorem clearV (V W U X T D cs : List Bool) (hs : Fin 3 → List Bool)
   unfold WordBankCleanup.write
   apply congrArg₂ Tapes.mk
   · rfl
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
 
 theorem clearW (V W U X T D cs : List Bool) (hs : Fin 3 → List Bool)
     (F K : ℤ → Fin 5) (pf pk : ℤ) :
@@ -33,7 +33,7 @@ theorem clearW (V W U X T D cs : List Bool) (hs : Fin 3 → List Bool)
   unfold WordBankCleanup.write
   apply congrArg₂ Tapes.mk
   · rfl
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
 
 theorem clearU (V W U X T D cs : List Bool) (hs : Fin 3 → List Bool)
     (F K : ℤ → Fin 5) (pf pk : ℤ) :
@@ -46,7 +46,7 @@ theorem clearU (V W U X T D cs : List Bool) (hs : Fin 3 → List Bool)
   unfold WordBankCleanup.write
   apply congrArg₂ Tapes.mk
   · rfl
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
 
 theorem clearT (V W U X T D cs : List Bool) (hs : Fin 3 → List Bool)
     (F K : ℤ → Fin 5) (pf pk : ℤ) :
@@ -59,7 +59,7 @@ theorem clearT (V W U X T D cs : List Bool) (hs : Fin 3 → List Bool)
   unfold WordBankCleanup.write
   apply congrArg₂ Tapes.mk
   · rfl
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
 
 theorem clearD (V W U X T D cs : List Bool) (hs : Fin 3 → List Bool)
     (F K : ℤ → Fin 5) (pf pk : ℤ) :
@@ -72,7 +72,7 @@ theorem clearD (V W U X T D cs : List Bool) (hs : Fin 3 → List Bool)
   unfold WordBankCleanup.write
   apply congrArg₂ Tapes.mk
   · rfl
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
 
 theorem clearF (V W U X T D cs : List Bool) (hs : Fin 3 → List Bool) (fl : Bool)
     (K : ℤ → Fin 5) (pk : ℤ) :
@@ -85,7 +85,7 @@ theorem clearF (V W U X T D cs : List Bool) (hs : Fin 3 → List Bool) (fl : Boo
   unfold WordBankCleanup.write
   apply congrArg₂ Tapes.mk
   · rfl
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
 
 def program := seq (seq (seq (seq (seq (clear 0) (clear 1)) (clear 2)) (clear 32)) (clear 33)) (clear 28)
 

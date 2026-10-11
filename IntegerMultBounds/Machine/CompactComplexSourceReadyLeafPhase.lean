@@ -152,7 +152,7 @@ theorem runs (dir : Direction) (sh : Shape) (rows ell q : ℕ) (rho : Fin sh.chu
     unfold CompactSpectatorLeafPlacement.payload
     rw [SharedPlacementAlphabet.setTape_append_left]
     congr 1
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   · have he : source (s:=s) (c:=c)=common (Fin.castAdd 15 (0 : Fin 1)) := rfl
     rw [he,strip_update]
 

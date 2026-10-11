@@ -197,8 +197,8 @@ private theorem reset_clock (source dest : ℤ → Fin 4) (bs desc : List Bool) 
   convert h using 1
   unfold replace bank one
   congr 1
-  · funext i; fin_cases i <;> rfl
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
+  · apply List.ofFn_injective; rfl
 
 private theorem reset_descriptor (source dest : ℤ → Fin 4) (bs desc : List Bool)
     (p q r : ℤ) (n : ℕ) :
@@ -210,8 +210,8 @@ private theorem reset_descriptor (source dest : ℤ → Fin 4) (bs desc : List B
   convert h using 1
   unfold replace bank one
   congr 1
-  · funext i; fin_cases i <;> rfl
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
+  · apply List.ofFn_injective; rfl
 
 private theorem clear_clock (source dest : ℤ → Fin 4) (bs desc : List Bool) (p q s : ℤ) :
     ExactRun (placed clearProgram 2) bs.length
@@ -222,8 +222,8 @@ private theorem clear_clock (source dest : ℤ → Fin 4) (bs desc : List Bool) 
   convert h using 1
   unfold replace bank one
   congr 1
-  · funext i; fin_cases i <;> rfl
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
+  · apply List.ofFn_injective; rfl
 
 /-- Place the descriptor-to-clock copy at physical slots three and two. -/
 def preparePlacement : Fin 4 ≃ Fin 4 where
@@ -243,8 +243,8 @@ private theorem prepare_bank (source dest clock descriptor : ℤ → Fin 4) (p q
       preparePlacement = bank source dest clock descriptor p q r s := by
   unfold Copy.tapes Copy.cfg Config.tapes Tapes.append Tapes.reindex prepareExtra bank
   congr 1
-  · funext i; fin_cases i <;> rfl
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
+  · apply List.ofFn_injective; rfl
 
 private theorem prepare_exact (source dest : ℤ → Fin 4) (p q : ℤ) (bs : List Bool) :
     ExactRun prepareProgram bs.length
@@ -279,8 +279,8 @@ private theorem counted_bank (source dest clock descriptor : ℤ → Fin 4)
       bank source dest clock descriptor p q r s := by
   unfold CountedCopy.cfg Config.tapes Tapes.append bank one
   congr 1
-  · funext i; fin_cases i <;> rfl
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
+  · apply List.ofFn_injective; rfl
 
 private theorem counted_exact (source dest : ℤ → Fin 4) (p q : ℤ)
     (xs : List (Fin 4)) (bs : List Bool) (hcount : Counter.value bs = xs.length) :

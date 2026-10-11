@@ -22,8 +22,8 @@ def prepared (hs : Fin 6 → List Bool) (ts bs : List Bool) (v : Descriptor) (t 
 def framePlacement : Fin (7+11) ≃ Fin 18 where
   toFun := ![0,1,2,3,4,5,17,6,7,8,9,10,11,12,13,14,15,16]
   invFun := ![0,1,2,3,4,5,7,8,9,10,11,12,13,14,15,16,17,6]
-  left_inv i := by fin_cases i <;> rfl
-  right_inv i := by fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def pushProgram := Placement.placed (RecursiveViewFrame.pushProgram (q := q)) framePlacement
 def restoreProgram := Placement.placed (RecursiveViewFrame.restoreProgram (q := q)) framePlacement
@@ -41,7 +41,7 @@ private theorem placed_exact {s u t r cost : ℕ} {M : Program s r q}
 
 private theorem frame_active (hs : Fin 6 → List Bool) (ts bs : List Bool) (st : Tapes 1 q) :
     Placement.active framePlacement (canonical hs ts bs st) = RecursiveViewFrame.bank hs st := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 private theorem frame_extra (hs hs' : Fin 6 → List Bool) (ts bs : List Bool) (st st' : Tapes 1 q) :
     Placement.extra framePlacement (canonical hs ts bs st) = Placement.extra framePlacement (canonical hs' ts bs st') := by
@@ -145,7 +145,7 @@ private theorem handedOff_exact (hs : Fin 6 → List Bool) (ts bs : List Bool) (
     handedOff (q := q) (ArbitrarySliceDimensions.headers (q := q) hs bs v t b)
       (ArbitrarySliceDimensions.output hs ts bs v t b) =
       ArbitrarySliceDimensions.input (ArbitrarySliceDimensions.headers (q := q) hs bs v t b) ts bs := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 private theorem generated_handoff (hs : Fin 6 → List Bool) (ts bs : List Bool) (v : Descriptor) (t b : ℕ) :
     HoareTime (handoffProgram (q := q))

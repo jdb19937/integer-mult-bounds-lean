@@ -14,13 +14,13 @@ def bank (f v w u : ℤ → Fin (a+4)) (p pv pw pu : ℤ) (hs : Fin 3 → List B
 def copyUPlace : Fin (4+9) ≃ Fin 13 where
   toFun := ![0,12,8,7,1,2,3,4,5,6,9,10,11]
   invFun := ![0,4,5,6,7,8,9,3,2,10,11,12,1]
-  left_inv i := by fin_cases i <;> rfl
-  right_inv i := by fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 def uPlace : Fin (3+10) ≃ Fin 13 where
   toFun := ![12,8,7,0,1,2,3,4,5,6,9,10,11]
   invFun := ![3,4,5,6,7,8,9,2,1,10,11,12,0]
-  left_inv i := by fin_cases i <;> rfl
-  right_inv i := by fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 def copyU := Placement.placed (CountedRankSplitCopy.program (a := a)) copyUPlace
 def backU := Placement.placed (CountedRankSplitPosition.program (a := a)) uPlace
 

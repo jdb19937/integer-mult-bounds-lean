@@ -53,7 +53,7 @@ private theorem mapped {states cost : ℕ} {M : Program 2 states 2} {v w : Tapes
 private theorem map_copy (ha : 2≤a) (f g : ℤ → Fin 6) :
     Alphabet.mapTapes (encoding ha) (Copy.tapes f g 0 0)=
       Copy.tapes (mapTape ha f) (mapTape ha g) 0 0 := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 def encodeProgram (ha : 2≤a) (src dst : Fin t) (hne : src≠dst) :=
   TwoTapeAt.program (Alphabet.program (encoding ha) SymbolTripleClean.encodeProgram) src dst hne

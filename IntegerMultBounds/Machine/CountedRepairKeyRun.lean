@@ -18,7 +18,7 @@ def program := seq (seq CountedRepairKeyPrefix.program CountedRepairKeyWrite.pro
 
 theorem cleanup_output (q b : ℕ) (hb : 1≤b) (hbq : b+1≤q) (V W Z cs : List Bool) (hs : Fin 3 → List Bool) :
     CountedRepairKeyCleanup.output (CountedRepairKeyWrite.output q b hb hbq V W Z cs hs)=output q b hb hbq V W Z cs hs := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem cleanup_runs (q b : ℕ) (hb : 1≤b) (hbq : b+1≤q) (V W Z cs : List Bool) (hs : Fin 3 → List Bool)
     (hV : V.length=Z.length*q) (hW : W.length=Z.length*b) :

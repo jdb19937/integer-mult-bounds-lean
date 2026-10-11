@@ -48,12 +48,12 @@ theorem width_hoare (hs : Fin 3 → List Bool) (q n : ℕ) (hq : 0 < q)
     (hcq : GrowingCounterData.Canonical (hs 0)) (hcn : GrowingCounterData.Canonical (hs 2)) :
     HoareTime widthProgram (fun z => z=bank hs) (fun z => z=widthBank hs q n) (53*(n*q)+28) := by
   have ha : Placement.active widthPlace (bank hs)=DimensionProductDescriptor.input (hs 0) (hs 2) := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   have hh := Placement.hoare_at (DimensionProductDescriptor.construct_hoare (hs 0) (hs 2) n q hq hvq hvn hcq hcn)
     widthPlace (bank hs) ha
   apply hh.consequence (fun _ h => h) _ le_rfl
   rintro z ⟨small,rfl,rfl⟩
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem range_hoare (hs : Fin 3 → List Bool) (q n : ℕ) :
     HoareTime rangeProgram (fun z => z=widthBank hs q n) (fun z => z=rangeBank hs q n)
@@ -70,13 +70,13 @@ theorem count_hoare (hs : Fin 3 → List Bool) (q n : ℕ)
     HoareTime countProgram (fun z => z=rangeBank hs q n) (fun z => z=output hs q n)
       (53*(n*2^(n*q))+28) := by
   have ha : Placement.active countPlace (rangeBank hs q n)=DimensionProductDescriptor.input (rangeBits q n) (hs 2) := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   have hh := Placement.hoare_at (DimensionProductDescriptor.construct_hoare (rangeBits q n) (hs 2) n (2^(n*q))
     (by positivity) (FixedBasePowerDescriptor.result_value 2 (n*q)) hvn
     (FixedBasePowerDescriptor.result_canonical 2 (n*q)) hcn) countPlace (rangeBank hs q n) ha
   apply hh.consequence (fun _ h => h) _ le_rfl
   rintro z ⟨small,rfl,rfl⟩
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 def cost (q n : ℕ) := 53*(n*q)+FixedBasePowerDescriptor.constant 2*2^(n*q)+53*(n*2^(n*q))+58
 

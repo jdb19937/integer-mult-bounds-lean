@@ -37,14 +37,14 @@ def output (ps ss es : List Bool) (P S E : ℕ) : Tapes 8 a :=
 def sePlacement : Fin (6+2) ≃ Fin 8 where
   toFun := ![5,3,6,2,7,1,0,4]
   invFun := ![6,5,3,1,7,0,2,4]
-  left_inv i := by fin_cases i <;> rfl
-  right_inv i := by fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def psPlacement : Fin (6+2) ≃ Fin 8 where
   toFun := ![5,4,6,1,7,0,2,3]
   invFun := ![5,3,6,7,1,0,2,4]
-  left_inv i := by fin_cases i <;> rfl
-  right_inv i := by fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def seProgram : Program 8 40 a := Placement.placed BoundedProductDescriptor.program sePlacement
 def psProgram : Program 8 40 a := Placement.placed BoundedProductDescriptor.program psPlacement
@@ -78,7 +78,7 @@ theorem se_hoare (ps ss es : List Bool) (S E : ℕ) (hE : 0 < E)
   have le := Nat.log2_le_self (Counter.value es)
   apply placed_exact sePlacement _ _ _ _ _ _ _
     (BoundedProductDescriptor.construct_hoare es ss S E S hE he hs le_rfl (by omega) (by omega))
-  all_goals apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  all_goals apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem ps_hoare (ps ss es : List Bool) (P S E : ℕ) (hS : 0 < S)
     (hp : Counter.value ps = P) (hs : Counter.value ss = S)
@@ -91,7 +91,7 @@ theorem ps_hoare (ps ss es : List Bool) (P S E : ℕ) (hS : 0 < S)
   have ls := Nat.log2_le_self (Counter.value ss)
   apply placed_exact psPlacement _ _ _ _ _ _ _
     (BoundedProductDescriptor.construct_hoare ss ps P S P hS hs hp le_rfl (by omega) (by omega))
-  all_goals apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  all_goals apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem construct_hoare (ps ss es : List Bool) (P S E : ℕ)
     (hP : 0 < P) (hS : 0 < S) (hE : 0 < E)
@@ -116,14 +116,14 @@ theorem cleanup_hoare (ps ss es : List Bool) (P S E : ℕ)
     (BinaryDescriptorStackRoundtrip.descriptor_encoded _).symm rfl
   have heq : SharedPlacementAlphabet.setTape (output (a := a) ps ss es P S E) 3 (fun _ => blank) 0 =
       bank ps ss es none (some (psBits P S)) := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   rw [heq] at h
   have hh := BinaryDescriptorCleanupList.one_hoare (4 : Fin 8)
     (bank (a := a) ps ss es none (some (psBits P S))) (psBits P S)
     (BinaryDescriptorStackRoundtrip.descriptor_encoded _).symm rfl
   have heq' : SharedPlacementAlphabet.setTape (bank (a := a) ps ss es none (some (psBits P S)))
       4 (fun _ => blank) 0 = input ps ss es := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   rw [heq'] at hh
   have ws := GrowingCounterData.canonical_width _ (se_canonical S E)
   have wp := GrowingCounterData.canonical_width _ (ps_canonical P S)

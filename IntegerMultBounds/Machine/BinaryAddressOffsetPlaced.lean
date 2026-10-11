@@ -93,7 +93,7 @@ theorem runs (caller : Tapes t 0) (focus : Fin 4 → Fin t) (hf : Function.Injec
     (placement focus hf) (input caller) ha
   have he : BinaryAddressOffset.output hs q b n hb hbq=
       setTape (BinaryAddressOffset.input hs) (8 : Fin 30) (BinaryAddressOffsetGather.outputTape q b n hb hbq) 0 := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   apply hp.consequence (fun _ h => h) _ le_rfl
   rintro z ⟨small,rfl,rfl⟩
   rw [he,←ha,PlacedDescriptorConstruction.replace_setTape]

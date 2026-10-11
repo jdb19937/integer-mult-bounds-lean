@@ -72,7 +72,7 @@ def program (s : Selection m) := Placement.placed (block s).program
 
 private theorem local_payload (hs : Fin 6 → List Bool) :
     SharedBank.payload (RecursiveChildHeaderHandoff.canonical (q := prime) hs) ports = headers hs := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 private theorem common_payload (roles : Tapes t prime) (hs : Fin 6 → List Bool) (aux : Tapes u prime) :
     SharedBank.payload (common roles hs aux) commonPorts = headers hs := by

@@ -11,8 +11,8 @@ open CountedRankSplitBank (placed_exact)
 def place : Fin (4+26) ≃ Fin 30 where
   toFun := ![28,27,29,6,0,1,2,3,4,5,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26]
   invFun := ![4,5,6,7,8,9,3,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,1,0,2]
-  left_inv i := by fin_cases i <;> rfl
-  right_inv i := by fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def program := Placement.placed CountedRepairKeyAppend.program place
 
@@ -24,16 +24,16 @@ def output (q b : ℕ) (hb : 1≤b) (hbq : b+1≤q) (V W Z cs : List Bool) (hs :
 theorem input_view (q b : ℕ) (hb : 1≤b) (hbq : b+1≤q) (V W Z cs : List Bool) (hs : Fin 3 → List Bool) :
     Placement.active place (toggled q b hb hbq V W Z cs hs)=CountedRepairKeyAppend.input
       (flag q b V W Z) (CountedIdealToggle.word q (PackedInverse.v q b hb hbq V W Z) Z) (PackedInverse.w q b hb hbq V W Z) := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem output_view (q b : ℕ) (hb : 1≤b) (hbq : b+1≤q) (V W Z cs : List Bool) (hs : Fin 3 → List Bool) :
     Placement.active place (output q b hb hbq V W Z cs hs)=CountedRepairKeyAppend.output
       (flag q b V W Z) (CountedIdealToggle.word q (PackedInverse.v q b hb hbq V W Z) Z) (PackedInverse.w q b hb hbq V W Z) := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem extra_view (q b : ℕ) (hb : 1≤b) (hbq : b+1≤q) (V W Z cs : List Bool) (hs : Fin 3 → List Bool) :
     Placement.extra place (toggled q b hb hbq V W Z cs hs)=Placement.extra place (output q b hb hbq V W Z cs hs) := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem runs (q b : ℕ) (hb : 1≤b) (hbq : b+1≤q) (V W Z cs : List Bool) (hs : Fin 3 → List Bool)
     (hV : V.length=Z.length*q) (hW : W.length=Z.length*b) :

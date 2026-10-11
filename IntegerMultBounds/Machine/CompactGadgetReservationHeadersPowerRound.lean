@@ -64,7 +64,7 @@ theorem round (v : Tapes t a) (focus : Fin 3 → Fin t) (hf : Function.Injective
       setTape X (roundPorts 2) (RadixZeroFill.encodedBinary (bits (RoundedRowDescriptor.rounded R D))) 1 := by
     unfold RoundedRowDescriptor.output
     rw [he]
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   rw [hout] at hr0
   apply single _ roundPorts round_injective focus hf v X 2 _ _ ?_ ?_ hr0
   · apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i

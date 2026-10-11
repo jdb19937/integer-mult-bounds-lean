@@ -16,22 +16,22 @@ def U (q b : ℕ) (X cs : List Bool) := Gather.field cs (X.length*q+X.length*b) 
 def rankPlace : Fin (13+21) ≃ Fin 34 where
   toFun := ![30,0,1,11,12,13,14,15,16,17,18,19,2,3,4,5,6,7,8,9,10,20,21,22,23,24,25,26,27,28,29,31,32,33]
   invFun := ![1,2,12,13,14,15,16,17,18,19,20,3,4,5,6,7,8,9,10,11,21,22,23,24,25,26,27,28,29,30,0,31,32,33]
-  left_inv i := by fin_cases i <;> rfl
-  right_inv i := by fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def rankProgram := Placement.placed (CountedLateRankRun.program (a := 1)) rankPlace
 
 theorem rank_input (X cs : List Bool) (hs : Fin 3 → List Bool) :
     Placement.active rankPlace (initial X cs hs)=CountedLateRankBank.bank (RepairScan.ctrTape cs)
       (fun _ => blank) (fun _ => blank) (fun _ => blank) 1 0 0 0 hs none none := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem rank_output (q b : ℕ) (X cs : List Bool) (hs : Fin 3 → List Bool) :
     Placement.active rankPlace (ranked (V q X cs) (W q b X cs) (U q b X cs) X cs hs)=
       CountedLateRankBank.bank (RepairScan.ctrTape cs)
         (CountedGuardGadgetRecord.word (V q X cs)) (CountedGuardGadgetRecord.word (W q b X cs))
         (CountedGuardGadgetRecord.word (U q b X cs)) 1 0 0 0 hs none none := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem extra_index (i : Fin 21) : rankPlace (Fin.natAdd 13 i)=![3,4,5,6,7,8,9,10,20,21,22,23,24,25,26,27,28,29,31,32,33] i := by
   fin_cases i <;> decide

@@ -47,7 +47,7 @@ private theorem writer_runs (a b c : Bool) (f g : ℤ → Fin 6) (p r : ℤ)
   apply h.consequence (fun _ h => h) _ le_rfl
   rintro v rfl
   apply congrArg₂ Tapes.mk
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
   · funext i z; fin_cases i
     · change (if z=p then f p else f z)=f z
       split_ifs with hz <;> simp_all

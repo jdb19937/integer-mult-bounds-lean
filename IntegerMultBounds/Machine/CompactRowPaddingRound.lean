@@ -54,8 +54,8 @@ def output (rs ls : List Bool) (r c : ℕ) := bank (a := a) rs ls none (some (bi
 def roundPlace : Fin (15+1) ≃ Fin 16 where
   toFun := ![0,2,4,5,6,3,7,8,9,10,11,12,13,14,15,1]
   invFun := ![0,15,1,5,2,3,4,6,7,8,9,10,11,12,13,14]
-  left_inv i := by fin_cases i <;> rfl
-  right_inv i := by fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def writeProgram (c : ℕ) := Placement.placed (RecursiveChildQuotientsConstant.program (a := a) c)
   (FiniteReturnStackAt.placement (2 : Fin 16))
@@ -90,16 +90,16 @@ theorem constructs (c : ℕ) (rs ls : List Bool) (r : ℕ)
       hr (RecursiveChildQuotientsConstant.bits_value c) cr
       (RecursiveChildQuotientsConstant.bits_canonical c) hR hc) roundPlace
       (bank rs ls (some cs) none) (by
-        apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl)
+        apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl)
     apply h.consequence (fun _ h => h) ?_ le_rfl
     rintro w ⟨z,rfl,rfl⟩
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   have h2 := BinaryDescriptorCleanupList.one_hoare (2 : Fin 16)
     (bank (a := a) rs ls (some cs) (some (bits r c))) cs
     (BinaryDescriptorStackRoundtrip.descriptor_encoded cs).symm rfl
   have hclear : SharedPlacementAlphabet.setTape
       (bank (a := a) rs ls (some cs) (some (bits r c))) 2 (fun _ => blank) 0 = output rs ls r c := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   rw [hclear] at h2
   apply ((h0.seq h1).seq h2).consequence (fun _ h => h) (fun _ h => h)
   rw [rounded_eq r c hR hc]

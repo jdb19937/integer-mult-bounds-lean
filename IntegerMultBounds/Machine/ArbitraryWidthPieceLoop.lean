@@ -174,7 +174,7 @@ theorem runs_clean (B N : ℕ) (hB : 2 ≤ B) (consume : Program (14+t) s a)
     (ArbitraryWidthPieceCounter.input (a := a) (bits 0)) [] rfl rfl
   have he : SharedPlacementAlphabet.setTape (ArbitraryWidthPieceCounter.input (a := a) (bits 0))
       (0 : Fin 14) (fun _ => blank) 0 = SharedBank.empty 14 a := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   rw [he] at hc
   have hc' := hoare_extend_eq hc (payload (count B N))
   have hx := loop_linear B N hB consume payload consumeCost hconsume

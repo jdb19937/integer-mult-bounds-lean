@@ -58,7 +58,7 @@ private theorem swapped (source : ℤ → Fin (a+4)) (ss ps os ts : List Bool) :
     rw [RadixDigitMoveInitialized.bank,RadixDigitMoveCore.swap,Shared50RecursiveBank.append_reindex]
     have hc : (RadixDigitMoveInitialized.controls (a := a) os ts ss ps).reindex RadixDigitMoveCore.swapControls =
         RadixDigitMoveInitialized.controls ss ps os ts := by
-      apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+      apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
     rw [hc]
     rfl
   rw [hb]

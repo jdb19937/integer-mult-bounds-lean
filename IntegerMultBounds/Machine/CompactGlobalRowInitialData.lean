@@ -19,8 +19,8 @@ def bank (st : State) (source dest : ℤ → Fin (a+4)) (p q : ℤ) : Tapes 45 a
 def placement : Fin (12+33) ≃ Fin 45 where
   toFun := ![43,44,17,11,16,15,28,29,30,31,32,33,0,1,2,3,4,5,6,7,8,9,10,12,13,14,18,19,20,21,22,23,24,25,26,27,34,35,36,37,38,39,40,41,42]
   invFun := ![12,13,14,15,16,17,18,19,20,21,22,3,23,24,25,5,4,2,26,27,28,29,30,31,32,33,34,35,6,7,8,9,10,11,36,37,38,39,40,41,42,43,44,0,1]
-  left_inv i := by fin_cases i <;> rfl
-  right_inv i := by fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def prepare (c m : ℕ) := extend (CompactGlobalRowHeaders.program (a := a) c m) 2
 def padProgram := Placement.placed (RowPaddingConstructedAlphabet.program (a := a)) placement

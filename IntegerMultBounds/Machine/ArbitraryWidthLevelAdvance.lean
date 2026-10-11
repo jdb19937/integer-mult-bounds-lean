@@ -32,7 +32,7 @@ private theorem increment_hoare (bs ps ks : List Bool) :
   change Placement.replace _ _ (FiniteReturnStack.bank
     (BinaryDescriptorStack.descriptor (GrowingCounterData.increment ks)) 1) = _
   rw [FiniteReturnStackAt.replace_bank]
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 def advance : Program 7 (53+3) a := seq (extend FixedBasePowerStep.program 1) increment
 def advanceCost (B j : ℕ) := 110*B^(j+1)+2*((bits j).length+1)+1
@@ -127,7 +127,7 @@ theorem finish_hoare (B j : ℕ) :
     (by rw [BinaryDescriptorStackRoundtrip.descriptor_encoded]; rfl) rfl
   have hd := BinaryDescriptorCleanupList.one_hoare (6 : Fin 7) v2 (bits j) rfl rfl
   have he : setTape v2 (6 : Fin 7) (fun _ => blank) 0 = SharedBank.empty 7 a := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   rw [he] at hd
   exact ((hb.seq hw).seq hd).consequence (fun _ h => h) (fun _ h => h) (by omega)
 

@@ -64,7 +64,7 @@ theorem anyRuns (v : Tapes 15 a) (fl : List Bool)
     · funext i; fin_cases i <;> first | exact ht | exact hk)
   refine h.consequence (fun _ h => h) ?_ le_rfl
   rintro w ⟨z,rfl,rfl⟩
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 def program := seq (seq (seq (seq (rewindAt (a := a) 0) (rewindAt 1)) (rewindAt 5)) anyProgram) (eraseAt 5)
 def output (v : Tapes 15 a) (V W fl : List Bool) : Tapes 15 a :=
@@ -88,7 +88,7 @@ theorem runs (v : Tapes 15 a) (V W fl : List Bool)
     (by simpa [C,B,A,setTape] using hKt) (by simpa [C,B,A,setTape] using hKp)
   have h5 := erases D 5 fl (by simp [D,setTape]) (by simp [D,setTape])
   have he : setTape D 5 (fun _ => blank) 0=output v V W fl := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   rw [he] at h5
   exact ((((h1.seq h2).seq h3).seq h4).seq h5).consequence
     (fun _ h => h) (fun _ h => h) (by omega)

@@ -80,7 +80,7 @@ theorem output_update (pc : Fin count) (order : Order) (v : Stage s)
             (CompactComplexPhaseControlCodec.weights (edge pc)).reverse xs))) 0 := by
   unfold output
   rw [UnitPhasePolynomialNative.restored]
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 /-- The appended source-sharing slot remains blank; all ready numeric metadata
 and every private phase tape are restored literally. -/

@@ -42,10 +42,10 @@ theorem copy_hoare (xs : List Bool) (f g : ℤ → Fin 4) (p q : ℤ) (ws ls : L
   simp only [List.length_map,zero_add] at hh
   have ha : Placement.active copyPlace v=CountedCopyReuse.bank (putWord f p (xs.map bitSymbol))
       (fun _ => blank) empty (binary ws) p 0 1 1 := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   apply (Placement.hoare_at hh copyPlace v ha).consequence (fun _ h => h) _ le_rfl
   rintro z ⟨small,rfl,rfl⟩
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem rewind_hoare (xs : List Bool) (f g : ℤ → Fin 4) (p q : ℤ) (ws ls : List Bool) :
     HoareTime rewindProgram (fun z => z=bank f g (scratch xs) p q xs.length ws ls)
@@ -61,7 +61,7 @@ theorem rewind_hoare (xs : List Bool) (f g : ℤ → Fin 4) (p q : ℤ) (ws ls :
   rintro z ⟨small,rfl,rfl⟩
   change Placement.replace _ _ (FiniteReturnStack.bank (scratch xs) 0)=_
   rw [FiniteReturnStackAt.replace_bank]
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem repeat_hoare (xs : List Bool) (f g : ℤ → Fin 4) (p q : ℤ) (ws ls : List Bool) (L : ℕ)
     (hL : Counter.value ls=L) :
@@ -77,7 +77,7 @@ theorem repeat_hoare (xs : List Bool) (f g : ℤ → Fin 4) (p q : ℤ) (ws ls :
   apply (Placement.hoare_at hh repeatPlace (bank f g (scratch xs) p q 0 ws ls) ha).consequence
     (fun _ h => h) _ (by simp only [Finset.sum_const,Finset.card_range,smul_eq_mul]; nlinarith)
   rintro z ⟨small,rfl,rfl⟩
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem clear_hoare (xs : List Bool) (f g : ℤ → Fin 4) (p q : ℤ) (ws ls : List Bool) :
     HoareTime cleanup (fun z => z=bank f g (scratch xs) p q 0 ws ls)
@@ -86,7 +86,7 @@ theorem clear_hoare (xs : List Bool) (f g : ℤ → Fin 4) (p q : ℤ) (ws ls : 
     (xs.map bitSymbol) (ReturnOrigin.bits_nonblank xs) rfl
   have he : WordBankCleanup.write (bank f g (scratch xs) p q 0 ws ls) 2 (fun _ => blank)=
       bank f g (fun _ => blank) p q 0 ws ls := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   simpa only [he,List.length_map,cleanup] using hh
 
 theorem runs (xs : List Bool) (f g : ℤ → Fin 4) (p q : ℤ) (ws ls : List Bool) (L : ℕ)

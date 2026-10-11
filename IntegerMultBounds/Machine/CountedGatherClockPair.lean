@@ -46,7 +46,7 @@ theorem clear_hoare : HoareTime (clear a) (fun z => z = (marked : Tapes 2 a))
     simp only [step,clear,marked,CountedLoopReuseAlphabet.controls,Tapes.start,
       ↓reduceIte,Move.offset,mid,cfg]
     congr 2
-    · funext i; fin_cases i <;> rfl
+    · apply List.ofFn_injective; rfl
     · funext i j
       fin_cases i <;> by_cases hj : j = 1 <;> simp [CountedLoopReuseAlphabet.empty,hj]
   have h2 : step (clear a) mid = some last := by

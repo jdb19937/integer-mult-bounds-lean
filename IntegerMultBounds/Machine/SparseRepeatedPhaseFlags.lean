@@ -57,7 +57,7 @@ private theorem active_extracted (ws : List (ZMod 4)) (addr : List Bool)
         (word (SelectedSourceBitsData.selected addr q rho (ws.length*f))) 0 ds := by
   have he : ws.length*f-1+1=ws.length*f := by omega
   simp only [extracted,SparsePhaseFlags.extracted,SparseSourceBitsRun.output,he]
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 private theorem active_output (ws : List (ZMod 4)) (addr : List Bool)
     (hs : Fin 3 → List Bool) (ds : List Bool) (q rho f : ℕ) :
@@ -66,7 +66,7 @@ private theorem active_output (ws : List (ZMod 4)) (addr : List Bool)
       RepeatedWeightedPhaseAccumulator.boundary (accumulate 0 ws (fun i => bs.getD i false) f)
         (word bs) (ws.length*f) ds := by
   simp only [output,SelectedSourceBitsData.selected_length]
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 private theorem extra_model_head (addr bs cs : List Bool) (hs : Fin 3 → List Bool)
     (ds : List Bool) (p r : Fin 4) (i j : ℤ) :

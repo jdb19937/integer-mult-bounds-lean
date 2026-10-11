@@ -61,7 +61,7 @@ def caller {m : ℕ} (hs : Fin 10 → List Bool) (x : Fin m → Bool) : Tapes 11
 
 theorem caller_set {m n : ℕ} (hs : Fin 10 → List Bool) (x : Fin m → Bool) (y : Fin n → Bool) :
     setTape (caller hs x) 10 (ActiveTargetRotation.word y) 0=caller hs y := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 def view {m n : ℕ} (h : m=n) (x : Fin m → Bool) : Fin n → Bool := fun i => x (Fin.cast h.symm i)
 theorem caller_view {m n : ℕ} (h : m=n) (hs : Fin 10 → List Bool) (x : Fin m → Bool) :
@@ -77,7 +77,7 @@ theorem load_sources (g : Geometry) (hs : Fin 10 → List Bool) (x : Array g) :
     SharedBank.payload (caller hs x) loadFocus=ActivePrefixDirtyControlLoadPlaced.sources (m := .pure)
       (loadShape g) g.rows (suffix g) (loadHeaders hs) (hs 6) (hs 7) (view (load_volume g) x) := by
   rw [←caller_view (load_volume g) hs x]
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem load_values (g : Geometry) (hs : Fin 10 → List Bool) (hv : ∀ i,Counter.value (hs i)=values g i) :
     ∀ i,Counter.value (loadHeaders hs i)=ActivePrefixDirtyControlData.values (loadShape g) i := by

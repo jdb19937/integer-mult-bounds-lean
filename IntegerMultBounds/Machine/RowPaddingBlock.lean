@@ -23,7 +23,7 @@ def spectators (source : ℤ → Fin 4) (p : ℤ) (valid : List Bool) : Tapes 2 
 theorem fill_endpoint (source dest : ℤ → Fin 4) (p q : ℤ) (valid padding : List Bool) :
     ((CountedRawFill.bank dest q padding).append (spectators source p valid)).reindex fillPlacement =
       bank source dest p q valid padding := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 /-- Fixed finite program; both span counts are data on tapes, never parameters
 of its finite control. The inserted zero is the actual binary zero symbol. -/
@@ -40,7 +40,7 @@ def erasePlacement : Fin (3+2) ≃ Fin 5 where
 theorem erase_endpoint (source dest : ℤ → Fin 4) (p q : ℤ) (valid padding : List Bool) :
     ((CountedRawFill.bank source p padding).append (spectators dest q valid)).reindex erasePlacement =
       bank source dest p q valid padding := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 /-- Cropping physically moves the valid cells and erases every padded cell. -/
 def cropProgram : Program 5 (18+18) 0 :=

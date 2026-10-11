@@ -23,7 +23,7 @@ theorem input_eq (g : Geometry) (hs : Fin 5 → List Bool)
     (hv : ∀ i,Counter.value (hs i)=originalValues g i)
     (hc : ∀ i,GrowingCounterData.Canonical (hs i)) : input (a := a) hs=bank (initial g) := by
   rw [canonical_originals g hs hv hc]
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem words_value (g : Geometry) : ∀ i,Counter.value (words g i)=values g i :=
   fun _ => RecursiveChildQuotientsConstant.bits_value _

@@ -67,7 +67,7 @@ def swap : Fin 12 ≃ Fin 12 := Equiv.swap 0 1
 
 theorem bank_swap (source dest : ℤ → Fin (prime+4)) (hs : Fin 4 → List Bool) :
     (bank source dest hs).reindex swap = bank dest source hs := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 def cropProgram := Machine.reindex (RowPaddingConstructedAlphabet.cropProgram (a := prime)) swap
 
@@ -110,7 +110,7 @@ theorem crop_hoare (v : Descriptor) (R' : ℕ) (hs : Fin 4 → List Bool)
 theorem middle_source {v w : Descriptor} (x : Fin (volume prime v) → ZMod 2)
     (y : Fin (volume prime w) → ZMod 2) (hs : Fin 4 → List Bool) :
     SharedPlacementAlphabet.setTape (middle x hs) 1 (sourceWord y) 0 = middle y hs := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 end
 end IntegerMultBounds.Machine.ArbitraryWidthPaddedPiecePadding

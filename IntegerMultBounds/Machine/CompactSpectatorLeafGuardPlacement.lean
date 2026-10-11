@@ -36,7 +36,7 @@ private theorem payload_replaced (f g : ℤ → Fin 6) (vs : Fin 15 → ℕ) :
   unfold payload
   rw [SharedPlacementAlphabet.setTape_append_left]
   congr 1
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 def phaseProgram (dir : Direction) := Placement.placed (CompactSpectatorLeafGuardOriginal.phaseProgram dir)
   (CleanSubbank.placement ports (common (w:=w)) common_injective)

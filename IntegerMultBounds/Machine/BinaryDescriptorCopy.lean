@@ -28,7 +28,7 @@ private theorem init_hoare (xs : List Bool) :
   · simp only [run_one,step,initProgram,Tapes.start,ite_true]
     congr 1
     congr 1
-    · funext i; fin_cases i <;> rfl
+    · apply List.ofFn_injective; rfl
     · funext i z
       fin_cases i
       · change (if z = 1 then source xs 1 else source xs z) = source xs z
@@ -73,7 +73,7 @@ private theorem reset_step (xs : List Bool) (p : ℤ) (hp : 0 < p) :
   simp only [step,resetProgram,resetCfg,Copy.tapes,Copy.cfg,Config.tapes,ite_true,no_marker xs p hp,ite_false,Move.offset]
   congr 1
   congr 1
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
   · funext i z; fin_cases i <;> by_cases hz : z = p <;> simp [hz]
 
 private theorem reset_run (xs : List Bool) (n : ℕ) :
@@ -92,7 +92,7 @@ private theorem reset_hoare (xs : List Bool) :
     simp only [step,resetProgram,resetCfg,Copy.tapes,Copy.cfg,Config.tapes,ite_true,marker,Move.offset]
     congr 1
     congr 1
-    · funext i; fin_cases i <;> rfl
+    · apply List.ofFn_injective; rfl
     · funext i z; fin_cases i <;> by_cases hz : z = 0 <;> simp [bank,Copy.tapes,Copy.cfg,Config.tapes,hz]
   have hr := reset_run xs (xs.length+1)
   rw [Nat.cast_add,Nat.cast_one] at hr

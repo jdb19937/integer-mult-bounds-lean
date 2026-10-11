@@ -36,27 +36,27 @@ def pushSlots : Fin (2+1) ≃ Fin 3 := Equiv.refl _
 def popSlots : Fin (2+1) ≃ Fin 3 where
   toFun := ![1,2,0]
   invFun := ![2,0,1]
-  left_inv i := by fin_cases i <;> rfl
-  right_inv i := by fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def program : Program 3 16 a :=
   seq (Placement.placed push pushSlots) (Placement.placed pop popSlots)
 
 private theorem active_push (f g h : ℤ → Fin (a+4)) (p q r : ℤ) :
     Placement.active pushSlots (bank f g h p q r) = Copy.tapes f g p q := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 private theorem active_pop (f g h : ℤ → Fin (a+4)) (p q r : ℤ) :
     Placement.active popSlots (bank f g h p q r) = Copy.tapes g h q r := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 private theorem replace_push (f g h f' g' : ℤ → Fin (a+4)) (p q r p' q' : ℤ) :
     Placement.replace pushSlots (bank f g h p q r) (Copy.tapes f' g' p' q') = bank f' g' h p' q' r := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 private theorem replace_pop (f g h g' h' : ℤ → Fin (a+4)) (p q r q' r' : ℤ) :
     Placement.replace popSlots (bank f g h p q r) (Copy.tapes g' h' q' r') = bank f g' h' p q' r' := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 /-- Both directions run on one fixed bank. All stack contents and its exact
 head are restored, and the copied descriptor is returned at head one. -/

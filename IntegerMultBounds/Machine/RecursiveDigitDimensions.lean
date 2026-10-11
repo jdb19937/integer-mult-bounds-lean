@@ -47,12 +47,12 @@ theorem product_hoare (v : Descriptor) (hs : Fin 6 → List Bool)
       ((RecursiveScalingDimensions.output hq hs v .h).append (tailBank (q := q) none)) =
       DimensionProductDescriptor.input (hs 4) (RecursiveDimensionBank.arbBits v) := by
     unfold Placement.active placement RecursiveScalingDimensions.output RecursiveScalingDimensions.bank
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   have hb : Placement.active placement (output hq hs v) =
       DimensionProductDescriptor.output (hs 4) (RecursiveDimensionBank.arbBits v)
         (v.beforeRows*v.rows*v.beforeH) v.between := by
     unfold Placement.active placement output RecursiveScalingDimensions.output RecursiveScalingDimensions.bank
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   have hf := Placement.hoare_at hh placement _ ha
   apply hf.consequence (fun _ h => h) _ le_rfl
   rintro w ⟨z,rfl,rfl⟩

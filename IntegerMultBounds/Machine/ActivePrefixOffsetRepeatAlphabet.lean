@@ -35,7 +35,7 @@ theorem mapped_output (xs rs : List Bool) (rows : ℕ) :
 
 theorem output_eq (xs rs : List Bool) (out : ℤ → Fin (a+4)) :
     bank xs rs out=setTape (bank xs rs (fun _ => blank)) 1 out 0 := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem repeats (xs rs : List Bool) (rows : ℕ) (hv : Counter.value rs=rows)
     (hc : GrowingCounterData.Canonical rs) :

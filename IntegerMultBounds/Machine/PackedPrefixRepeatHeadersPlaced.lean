@@ -24,7 +24,7 @@ theorem output_set (hs : Fin 7 → List Bool) (d G n q b gap : ℕ) :
     outputPayload (a := a) hs d G n q b gap =
       setTape (inputPayload hs) 7 (RadixZeroFill.encodedBinary
         (RecursiveChildQuotientsConstant.bits (repetitions d G n q b gap))) 1 := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem initial_clean (hs : Fin 7 → List Bool) :
     SharedBank.strip (bank (a := a) (initial hs)) ports = SharedBank.empty 40 a := by

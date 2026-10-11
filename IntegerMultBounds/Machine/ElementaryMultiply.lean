@@ -150,7 +150,7 @@ theorem multiplies {n : ℕ} {x y : List Bool} (hx : x.length = n) (hy : y.lengt
 theorem input_start (x y : List Bool) :
     (ElementaryMultiplyCore.input (a := a) x y).start (program a) = Machine.input (program a) x y := by
   apply congrArg₂ (Config.mk (program a).start)
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
   · funext i; fin_cases i <;> simp [ElementaryMultiplyCore.input,MultiplicationInputSplit.input,
       MultiplicationInputSplit.bank,MultiplicationInputSplit.single,Tapes.append,MultiplicationInputSplit.source_wordTape]
     all_goals rfl

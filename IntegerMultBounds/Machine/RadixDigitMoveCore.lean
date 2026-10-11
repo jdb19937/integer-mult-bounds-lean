@@ -40,8 +40,8 @@ private theorem cyclic_bank (source : ℤ → Fin (a+4)) (roles : Fin Q → ℤ 
 def swapControls : Equiv.Perm (Fin 6) where
   toFun := ![0,4,2,5,1,3]
   invFun := ![0,4,2,5,1,3]
-  left_inv i := by fin_cases i <;> rfl
-  right_inv i := by fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def swap : Equiv.Perm (Fin (count Q)) := Shared50RecursiveBank.join (Equiv.refl _) swapControls
 
@@ -50,7 +50,7 @@ private theorem swapped (source : ℤ → Fin (a+4)) (roles : Fin Q → ℤ → 
     (bank source roles p origins cs hs bs gs).reindex swap = bank source roles p origins bs gs cs hs := by
   rw [bank,swap,Shared50RecursiveBank.append_reindex]
   have hh : (controls (a := a) cs hs bs gs).reindex swapControls = controls bs gs cs hs := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   rw [hh]
   rfl
 

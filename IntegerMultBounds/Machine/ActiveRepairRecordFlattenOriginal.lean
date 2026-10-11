@@ -16,7 +16,7 @@ def cost (rs : List Partition.Record) := 3+ActiveRepairRecordFlattenEndpoint.cos
 theorem initialized (rs : List Partition.Record) :
     setTape (input rs) 0 (CountedTapeRepairCleanupWord.marked (encode rs)) 0=
       ActiveRepairRecordFlattenEndpoint.input rs := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem prepare (rs : List Partition.Record) :
     HoareTime markerProgram (fun v => v=input rs)

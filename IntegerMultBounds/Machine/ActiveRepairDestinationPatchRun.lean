@@ -60,12 +60,12 @@ theorem init_runs (cs v t u : List Bool) (g : ℤ → Fin 5) (hs : Fin 7 → Lis
       (ActiveRepairRankFieldsField.cost 0 total (initHeaders hs)) := by
   have hp : SharedBank.payload (bank cs v t u g hs) initFocus=
       ActiveRepairRankFieldsPlaced.sources cs g (initHeaders hs) := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   have h := ActiveRepairRankFieldsPlaced.runs (bank cs v t u g hs) initFocus init_injective
     g cs (initHeaders hs) 0 total hp hz hw
   have he : ActiveRepairRankFieldsPlaced.result (bank cs v t u g hs) initFocus g cs 0 total=
       bank cs v t u (putWord g 0 ((initial cs total).map bitSymbol)) hs := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   rw [he] at h
   exact h
 
@@ -85,7 +85,7 @@ theorem init_runs (cs v t u : List Bool) (g : ℤ → Fin 5) (hs : Fin 7 → Lis
       bank cs v t u (putWord g start (xs.map bitSymbol)) hs := by
     unfold ActiveRepairDestinationPatchPlaced.result
     rw [hout]
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   rw [he] at h
   exact h
 
@@ -107,13 +107,13 @@ theorem runs (cs v t u : List Bool) (hs : Fin 7 → List Bool) (total sv st su :
   have h0 := init_runs cs v t u (fun _ => blank) hs total hz hA
   have pv : SharedBank.payload (bank cs v t u g0 hs) vFocus=
       ActiveRepairDestinationPatchPlaced.sources v g0 (vHeaders hs) := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   have pt : SharedBank.payload (bank cs v t u g1 hs) tFocus=
       ActiveRepairDestinationPatchPlaced.sources t g1 (tHeaders hs) := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   have pu : SharedBank.payload (bank cs v t u g2 hs) uFocus=
       ActiveRepairDestinationPatchPlaced.sources u g2 (uHeaders hs) := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   have h1 := patch_runs cs v t u g0 hs vFocus v_injective v (vHeaders hs) sv pv rfl hsv hv
   have h2 := patch_runs cs v t u g1 hs tFocus t_injective t (tHeaders hs) st pt rfl hst ht
   have h3 := patch_runs cs v t u g2 hs uFocus u_injective u (uHeaders hs) su pu rfl hsu (by change Counter.value (hs 5)=u.length; rw [hu]; exact ht)

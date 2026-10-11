@@ -34,7 +34,7 @@ private theorem endpoint (order : Order) (v : Stage s) (rows : ℕ) (axis : Fin 
     UnitPhaseAddressInitAt.output (UnitPhaseCountTransfer.output order v rows axis tail)
       (RecursiveChildQuotientsConstant.bits s.bits) s.bits=output order v rows axis a tail := by
   rw [UnitPhaseAddressInitAt.output_eq]
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem runs (order : Order) (v : Stage s) (rows : ℕ) (axis : Fin v.f) (a : Context 2) (tail : Tapes 4 2)
     (hc : tail.tape 1=(fun _ => blank) ∧ tail.head 1=0)

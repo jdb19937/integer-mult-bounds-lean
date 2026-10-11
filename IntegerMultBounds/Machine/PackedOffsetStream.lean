@@ -118,20 +118,20 @@ def program : Program 7 51 0 := seq (seq initProgram loopProgram) clearProgram
 theorem initializes (f g : ℤ → Fin 4) (p q : ℤ) (bs ns : List Bool) :
     HoareTime initProgram (fun v => v = input f g p q bs ns) (fun v => v = ready f g p q bs ns) 1 := by
   have ha : Placement.active clocks (input f g p q bs ns) = CountedGatherClockPair.empty := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   have hh := Placement.hoare_at (CountedGatherClockPair.init_hoare (a := 0)) clocks _ ha
   apply hh.consequence (fun _ h => h) _ le_rfl
   rintro v ⟨z,rfl,rfl⟩
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem clears (f g : ℤ → Fin 4) (p q : ℤ) (bs ns : List Bool) :
     HoareTime clearProgram (fun v => v = ready f g p q bs ns) (fun v => v = input f g p q bs ns) 2 := by
   have ha : Placement.active clocks (ready f g p q bs ns) = CountedGatherClockPair.marked := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   have hh := Placement.hoare_at (CountedGatherClockPair.clear_hoare (a := 0)) clocks _ ha
   apply hh.consequence (fun _ h => h) _ le_rfl
   rintro v ⟨z,rfl,rfl⟩
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 /-- All physical copying, trimming, stream delimiters, clocks and cleanup are
 charged. Width zero emits one empty-word delimiter per block; count zero

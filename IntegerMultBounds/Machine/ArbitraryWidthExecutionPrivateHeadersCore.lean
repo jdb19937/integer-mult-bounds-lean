@@ -33,7 +33,7 @@ theorem rootPrivate_eq (hs : Fin 6 → List Bool) :
   rw [blank_roles]
   unfold Shared50RecursiveBank.bank RecursiveCallBank.bank RecursiveShiftRoleBank.common commonPrivate
   congr 3
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem header_injective : Function.Injective headerSlot := by
   intro i j he

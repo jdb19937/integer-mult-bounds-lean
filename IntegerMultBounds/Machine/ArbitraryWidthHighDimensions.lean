@@ -59,43 +59,43 @@ private theorem placed_exact {s u t z cost : ℕ} {M : Program s z a}
 def differencePlacement : Fin (3+14) ≃ Fin 17 where
   toFun := ![3,4,5,0,1,2,6,7,8,9,10,11,12,13,14,15,16]
   invFun := ![3,4,5,0,1,2,6,7,8,9,10,11,12,13,14,15,16]
-  left_inv i := by fin_cases i <;> rfl
-  right_inv i := by fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 def differenceProgram := Placement.placed (BinaryDescriptorDifference.program (a := a)) differencePlacement
 
 def highPlacement : Fin (8+9) ≃ Fin 17 where
   toFun := ![11,12,13,14,15,6,16,4,0,1,2,3,5,7,8,9,10]
   invFun := ![8,9,10,11,7,12,5,13,14,15,16,0,1,2,3,4,6]
-  left_inv i := by fin_cases i <;> rfl
-  right_inv i := by fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 def highProgram (q : ℕ) := Placement.placed (FixedBasePowerDescriptor.program (q := a) q) highPlacement
 
 def lowPlacement : Fin (8+9) ≃ Fin 17 where
   toFun := ![11,12,13,14,15,7,16,5,0,1,2,3,4,6,8,9,10]
   invFun := ![8,9,10,11,12,7,13,5,14,15,16,0,1,2,3,4,6]
-  left_inv i := by fin_cases i <;> rfl
-  right_inv i := by fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 def lowProgram (q : ℕ) := Placement.placed (FixedBasePowerDescriptor.program (q := a) q) lowPlacement
 
 def prefixPlacement : Fin (6+11) ≃ Fin 17 where
   toFun := ![11,8,12,6,13,0,1,2,3,4,5,7,9,10,14,15,16]
   invFun := ![5,6,7,8,9,10,3,11,1,12,13,0,2,4,14,15,16]
-  left_inv i := by fin_cases i <;> rfl
-  right_inv i := by fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 def prefixProgram := Placement.placed (BoundedProductDescriptor.program (q := a)) prefixPlacement
 
 def gapPlacement : Fin (6+11) ≃ Fin 17 where
   toFun := ![11,9,12,7,13,1,0,2,3,4,5,6,8,10,14,15,16]
   invFun := ![6,5,7,8,9,10,11,3,12,1,13,0,2,4,14,15,16]
-  left_inv i := by fin_cases i <;> rfl
-  right_inv i := by fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 def gapProgram := Placement.placed (BoundedProductDescriptor.program (q := a)) gapPlacement
 
 def suffixPlacement : Fin (6+11) ≃ Fin 17 where
   toFun := ![11,10,12,7,13,2,0,1,3,4,5,6,8,9,14,15,16]
   invFun := ![6,7,5,8,9,10,11,3,12,13,1,0,2,4,14,15,16]
-  left_inv i := by fin_cases i <;> rfl
-  right_inv i := by fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 def suffixProgram := Placement.placed (BoundedProductDescriptor.program (q := a)) suffixPlacement
 
 def program (q : ℕ) := seq (seq (seq (seq (seq (differenceProgram (a := a)) (highProgram q))
@@ -119,7 +119,7 @@ theorem words_canonical (q P G B e r : ℕ) (i : Fin 6) :
 private theorem difference_active_input (_q _P _G _B _e _r : ℕ) (hs : Fin 5 → List Bool) :
     Placement.active differencePlacement (input (a := a) hs) = BinaryDescriptorDifference.input (a := a) (hs 3) (hs 4) := by
   apply congrArg₂ Tapes.mk
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
   · funext i; fin_cases i
     · exact encoded_binary (hs 3)
     · exact encoded_binary (hs 4)
@@ -128,7 +128,7 @@ private theorem difference_active_input (_q _P _G _B _e _r : ℕ) (hs : Fin 5 �
 private theorem difference_active_output (q P G B e r : ℕ) (hs : Fin 5 → List Bool) :
     Placement.active differencePlacement (state (a := a) q P G B e r 1 hs) = BinaryDescriptorDifference.output (a := a) (hs 3) (hs 4) (RecursiveChildQuotientsConstant.bits (e-r)) := by
   apply congrArg₂ Tapes.mk
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
   · funext i; fin_cases i
     · exact encoded_binary (hs 3)
     · exact encoded_binary (hs 4)
@@ -136,12 +136,12 @@ private theorem difference_active_output (q P G B e r : ℕ) (hs : Fin 5 → Lis
 
 private theorem difference_extra (q P G B e r : ℕ) (hs : Fin 5 → List Bool) :
     Placement.extra differencePlacement (input (a := a) hs) = Placement.extra differencePlacement (state (a := a) q P G B e r 1 hs) := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 private theorem high_active_input (q P G B e r : ℕ) (hs : Fin 5 → List Bool) :
     Placement.active highPlacement (state (a := a) q P G B e r 1 hs) = FixedBasePowerDescriptor.input (q := a) (hs 4) := by
   apply congrArg₂ Tapes.mk
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
   · funext i; fin_cases i
     · rfl
     · rfl
@@ -155,7 +155,7 @@ private theorem high_active_input (q P G B e r : ℕ) (hs : Fin 5 → List Bool)
 private theorem high_active_output (q P G B e r : ℕ) (hs : Fin 5 → List Bool) :
     Placement.active highPlacement (state (a := a) q P G B e r 2 hs) = FixedBasePowerDescriptor.output (q := a) q r (hs 4) := by
   apply congrArg₂ Tapes.mk
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
   · funext i; fin_cases i
     · rfl
     · rfl
@@ -168,12 +168,12 @@ private theorem high_active_output (q P G B e r : ℕ) (hs : Fin 5 → List Bool
 
 private theorem high_extra (q P G B e r : ℕ) (hs : Fin 5 → List Bool) :
     Placement.extra highPlacement (state (a := a) q P G B e r 1 hs) = Placement.extra highPlacement (state (a := a) q P G B e r 2 hs) := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 private theorem low_active_input (q P G B e r : ℕ) (hs : Fin 5 → List Bool) :
     Placement.active lowPlacement (state (a := a) q P G B e r 2 hs) = FixedBasePowerDescriptor.input (q := a) (RecursiveChildQuotientsConstant.bits (e-r)) := by
   apply congrArg₂ Tapes.mk
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
   · funext i; fin_cases i
     · rfl
     · rfl
@@ -187,7 +187,7 @@ private theorem low_active_input (q P G B e r : ℕ) (hs : Fin 5 → List Bool) 
 private theorem low_active_output (q P G B e r : ℕ) (hs : Fin 5 → List Bool) :
     Placement.active lowPlacement (state (a := a) q P G B e r 3 hs) = FixedBasePowerDescriptor.output (q := a) q (e-r) (RecursiveChildQuotientsConstant.bits (e-r)) := by
   apply congrArg₂ Tapes.mk
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
   · funext i; fin_cases i
     · rfl
     · rfl
@@ -200,12 +200,12 @@ private theorem low_active_output (q P G B e r : ℕ) (hs : Fin 5 → List Bool)
 
 private theorem low_extra (q P G B e r : ℕ) (hs : Fin 5 → List Bool) :
     Placement.extra lowPlacement (state (a := a) q P G B e r 2 hs) = Placement.extra lowPlacement (state (a := a) q P G B e r 3 hs) := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 private theorem prefix_active_input (q P G B e r : ℕ) (hs : Fin 5 → List Bool) :
     Placement.active prefixPlacement (state (a := a) q P G B e r 3 hs) = BoundedProductDescriptor.input (q := a) (FixedBasePowerStep.bits q r) (hs 0) := by
   apply congrArg₂ Tapes.mk
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
   · funext i; fin_cases i
     · rfl
     · rfl
@@ -217,7 +217,7 @@ private theorem prefix_active_input (q P G B e r : ℕ) (hs : Fin 5 → List Boo
 private theorem prefix_active_output (q P G B e r : ℕ) (hs : Fin 5 → List Bool) :
     Placement.active prefixPlacement (state (a := a) q P G B e r 4 hs) = BoundedProductDescriptor.output (q := a) (FixedBasePowerStep.bits q r) (hs 0) P (q^r) := by
   apply congrArg₂ Tapes.mk
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
   · funext i; fin_cases i
     · rfl
     · rfl
@@ -228,12 +228,12 @@ private theorem prefix_active_output (q P G B e r : ℕ) (hs : Fin 5 → List Bo
 
 private theorem prefix_extra (q P G B e r : ℕ) (hs : Fin 5 → List Bool) :
     Placement.extra prefixPlacement (state (a := a) q P G B e r 3 hs) = Placement.extra prefixPlacement (state (a := a) q P G B e r 4 hs) := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 private theorem gap_active_input (q P G B e r : ℕ) (hs : Fin 5 → List Bool) :
     Placement.active gapPlacement (state (a := a) q P G B e r 4 hs) = BoundedProductDescriptor.input (q := a) (FixedBasePowerStep.bits q (e-r)) (hs 1) := by
   apply congrArg₂ Tapes.mk
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
   · funext i; fin_cases i
     · rfl
     · rfl
@@ -245,7 +245,7 @@ private theorem gap_active_input (q P G B e r : ℕ) (hs : Fin 5 → List Bool) 
 private theorem gap_active_output (q P G B e r : ℕ) (hs : Fin 5 → List Bool) :
     Placement.active gapPlacement (state (a := a) q P G B e r 5 hs) = BoundedProductDescriptor.output (q := a) (FixedBasePowerStep.bits q (e-r)) (hs 1) G (q^(e-r)) := by
   apply congrArg₂ Tapes.mk
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
   · funext i; fin_cases i
     · rfl
     · rfl
@@ -256,12 +256,12 @@ private theorem gap_active_output (q P G B e r : ℕ) (hs : Fin 5 → List Bool)
 
 private theorem gap_extra (q P G B e r : ℕ) (hs : Fin 5 → List Bool) :
     Placement.extra gapPlacement (state (a := a) q P G B e r 4 hs) = Placement.extra gapPlacement (state (a := a) q P G B e r 5 hs) := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 private theorem suffix_active_input (q P G B e r : ℕ) (hs : Fin 5 → List Bool) :
     Placement.active suffixPlacement (state (a := a) q P G B e r 5 hs) = BoundedProductDescriptor.input (q := a) (FixedBasePowerStep.bits q (e-r)) (hs 2) := by
   apply congrArg₂ Tapes.mk
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
   · funext i; fin_cases i
     · rfl
     · rfl
@@ -273,7 +273,7 @@ private theorem suffix_active_input (q P G B e r : ℕ) (hs : Fin 5 → List Boo
 private theorem suffix_active_output (q P G B e r : ℕ) (hs : Fin 5 → List Bool) :
     Placement.active suffixPlacement (state (a := a) q P G B e r 6 hs) = BoundedProductDescriptor.output (q := a) (FixedBasePowerStep.bits q (e-r)) (hs 2) B (q^(e-r)) := by
   apply congrArg₂ Tapes.mk
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
   · funext i; fin_cases i
     · rfl
     · rfl
@@ -284,7 +284,7 @@ private theorem suffix_active_output (q P G B e r : ℕ) (hs : Fin 5 → List Bo
 
 private theorem suffix_extra (q P G B e r : ℕ) (hs : Fin 5 → List Bool) :
     Placement.extra suffixPlacement (state (a := a) q P G B e r 5 hs) = Placement.extra suffixPlacement (state (a := a) q P G B e r 6 hs) := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 private theorem difference_hoare (q P G B e r : ℕ) (_hq : 2 ≤ q) (hr : r ≤ e)
     (hs : Fin 5 → List Bool) (hv : ∀ i, Counter.value (hs i) = originalValues P G B e r i)

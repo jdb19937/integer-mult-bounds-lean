@@ -22,7 +22,7 @@ theorem mapped_bank (payload offsets : ℤ → Fin 4) (p s : ℤ) (bs ns ws : Li
     Alphabet.mapTapes (encoding (a := a)) (PackedOffsetPayloadOriginal.bank payload offsets p s bs ns ws) =
       bank (mapTape payload) (mapTape offsets) p s bs ns ws := by
   apply congrArg₂ Tapes.mk
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
   · funext i
     fin_cases i <;> first | rfl | exact CountedLoopReuseAlphabet.encoding_binary _
 

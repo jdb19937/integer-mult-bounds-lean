@@ -96,20 +96,20 @@ def gatherHeaders (s : Shape k) (hs : Fin 6 → List Bool) : Fin 3 → List Bool
 
 theorem temp_sources (s : Shape k) (hs : Fin 6 → List Bool) :
     SharedBank.payload (headers (a := a) s hs) (tempFocus k)=BinaryPrefixFieldTablePlaced.sources (tempHeaders s hs) := by
-  cases k <;> apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  cases k <;> apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem source_sources (s : Shape k) (hs : Fin 6 → List Bool) :
     SharedBank.payload (tempReady (a := a) s hs) sourceFocus=BinaryPrefixFieldTablePlaced.sources (sourceHeaders s hs) := by
-  cases k <;> apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  cases k <;> apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem clock_sources (s : Shape k) (hs : Fin 6 → List Bool) :
     SharedBank.payload (sourceReady (a := a) s hs) clockFocus=BinaryPrefixFieldTablePlaced.sources (clockHeaders hs) := by
-  cases k <;> apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  cases k <;> apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem parity_sources (s : Shape k) (hs : Fin 6 → List Bool) :
     SharedBank.payload (clockReady (a := a) s hs) parityFocus=
       ActivePrefixDirtyControlParityPlaced.sources (sourceWord s) (clockWord s) (parityHeaders s hs) := by
-  cases k <;> apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  cases k <;> apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 end
 end IntegerMultBounds.Machine.ActivePrefixDirtyControlData

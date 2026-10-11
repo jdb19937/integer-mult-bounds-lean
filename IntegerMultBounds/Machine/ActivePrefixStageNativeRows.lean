@@ -65,7 +65,7 @@ private theorem core_form (d : Inputs s) (h : s.payload=B*3+0) (xs : Address d �
     SharedPlacementAlphabet.setTape_append_right]
   apply congrArg ((ActivePrefixStageHeadersRouting.caller (a := prime)
     (ActivePrefixStageHeadersPlaced.lift (ActivePrefixStageHeadersData.initial d.stage d.rows))).append)
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 /-- The actual caller contains literal flattened native rows. The original
 numeric headers and every private tape are independent of row decomposition. -/
@@ -84,7 +84,7 @@ theorem core_from_raw (d : Inputs s) (x : ActiveRepairLayoutRecordsData.Array s 
     SharedPlacementAlphabet.setTape_append_right]
   apply congrArg ((ActivePrefixStageHeadersRouting.caller (a := prime)
     (ActivePrefixStageHeadersPlaced.lift (ActivePrefixStageHeadersData.initial d.stage d.rows))).append)
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem action_nonblank (d : Inputs s) (xs : Rows d B) (hn : ∀ i j, xs i j≠blank) :
     ∀ i j, action d xs i j≠blank := fun i j => hn (rowDestination d i) j

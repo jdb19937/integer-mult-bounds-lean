@@ -35,7 +35,7 @@ theorem result_payload (caller : Tapes t 1) (focus : Fin 18 → Fin t)
     (hsrc : SharedBank.payload caller focus=sources cs hs ss) (ws : Fin 5 → List Bool) :
     SharedBank.payload (result caller focus ws) focus=bank cs ws hs ss := by
   simp only [result,CompactGadgetReservationPlacement.payload_set _ _ hf,hsrc,sources]
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem runs (caller : Tapes t 1) (focus : Fin 18 → Fin t) (hf : Function.Injective focus)
     (cs : List Bool) (starts widths : Fin 4 → ℕ) (hs : Fin 8 → List Bool) (ss : Fin 4 → List Bool)

@@ -62,7 +62,7 @@ theorem setup_hoare (ws : List Bool) : HoareTime setup
   have h0  := initializes 0 (input ws) rfl rfl
   have h1  := initializes 1 (setTape (input ws) 0 empty 1) rfl rfl
   have he : setTape (setTape (input ws) 0 empty 1) 1 empty 1=ready ws 0 := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   rw [he] at h1
   exact h0.seq h1
 
@@ -79,12 +79,12 @@ theorem runs (ws : List Bool) (w : ℕ) (hw : Counter.value ws=w) :
   let v : Tapes 3 0 := ⟨![1,1,1],![binary (List.replicate w false),empty,binary ws]⟩
   have he' : (MarkedWordCleanup.one (binary (List.replicate w false)) 1).append
       (CountedLoopReuse.controls empty (binary ws) 1 1) = v := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   rw [he'] at hr
   have hr' : HoareTime rewind (fun z => z=ready ws w) (fun z => z=v) (w+3) := hr
   have hc := BinaryDescriptorCleanupList.one_hoare (1 : Fin 3) v [] rfl rfl
   have he : setTape v 1 (fun _ => blank) 0=output ws w := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   rw [he] at hc
   exact ((((setup_hoare ws).seq hl).seq hr').seq hc).consequence
     (fun _ h => h) (fun _ h => h) (by simp only [List.length_nil]; omega)

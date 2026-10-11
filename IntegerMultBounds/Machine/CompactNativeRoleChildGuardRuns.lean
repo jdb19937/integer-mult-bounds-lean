@@ -107,7 +107,7 @@ theorem phase_runs (dir : Direction) (old : Tapes t 2) (ht : 43<t) (s : Shape) (
     unfold CompactSpectatorLeafPlacement.payload
     rw [SharedPlacementAlphabet.setTape_append_left]
     congr 1
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   · have he : roleSource t j=common t j (Fin.castAdd 15 (0 : Fin 1)) := rfl
     rw [he,strip_update]
 

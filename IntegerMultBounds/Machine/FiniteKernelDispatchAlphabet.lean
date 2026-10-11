@@ -31,7 +31,7 @@ theorem runs (hN : N≤2^k) (kernels : Fin N → Kernel t a) (pc : Fin N)
       (FiniteReturnStack.bank (fun _ => blank) 0)=b.append (SharedBank.empty 1 a) := by
     rw [placement,FiniteReturnStackAt.replace_bank,slot,SharedPlacementAlphabet.setTape_append_right]
     apply congrArg (b.append)
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   have hfam : HoareTime (family kernels pc)
       (fun z => z=Placement.replace placement (b.append (token hN pc))
         (FiniteReturnStack.bank (fun _ => blank) 0))

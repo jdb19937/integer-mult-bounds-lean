@@ -22,7 +22,7 @@ theorem input_eq (d : Inputs) (hs : Fin 14 → List Bool)
     (hv : ∀ i, Counter.value (hs i)=originalValues d i)
     (hc : ∀ i, GrowingCounterData.Canonical (hs i)) : input (a := a) hs=bank (initial d) := by
   rw [canonical_originals d hs hv hc]
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem words_value (mode : Mode) (d : Inputs) : ∀ i, Counter.value (words mode d i)=values mode d i :=
   fun _ => RecursiveChildQuotientsConstant.bits_value _

@@ -42,10 +42,10 @@ theorem setup_runs (order : Order) (v : Stage s) (rows : ℕ) (axis : Fin v.f)
   have h0 := hoare_extend_eq (ActivePrefixStageHeadersRun.runs (a := a) order v rows hG horder) (axisBank axis.val)
   have h1 := BinaryDescriptorCopyPlaced.copies (prepared (a := a) order v rows axis) focus injective
     (bits axis.val) (by
-      apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl)
+      apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl)
   have he : setTape (prepared (a := a) order v rows axis) (focus 1)
       (RadixZeroFill.encodedBinary (bits axis.val)) 1=ready order v rows axis := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   rw [he] at h1
   exact (h0.seq h1).consequence (fun _ h => h) (fun _ h => h) (by omega)
 

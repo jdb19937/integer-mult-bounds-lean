@@ -49,7 +49,7 @@ theorem positions (f : ℤ → Fin (a+4)) (p : ℤ) (ks : List Bool) (n : ℕ)
   have h3 := BinaryDescriptorCleanupList.one_hoare (1 : Fin 3)
     (CountedPosition.bank f (p-n) ks) [] rfl rfl
   have he : setTape (CountedPosition.bank f (p-n) ks) 1 (fun _ => blank) 0 = output f p ks n := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   rw [he] at h3
   exact ((h1.seq h2).seq h3).consequence (fun _ h => h) (fun _ h => h) (by simp; omega)
 

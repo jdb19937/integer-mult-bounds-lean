@@ -14,8 +14,8 @@ def bank (f0 f1 f2 f3 f4 f5 f6 : ℤ → Fin (a+4)) (p0 p1 p2 p3 p4 p5 p6 : ℤ)
 def placement : Fin (2+5) ≃ Fin 7 where
   toFun := ![2,6,0,1,3,4,5]
   invFun := ![2,3,0,4,5,6,1]
-  left_inv i := by fin_cases i <;> rfl
-  right_inv i := by fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def initial (ys ds : List Bool) : Tapes 7 a :=
   (BinaryDescriptorDivisionBoundary.input ys ds).append (FiniteReturnStack.bank (fun _ => blank) 0)
@@ -68,14 +68,14 @@ theorem divmod_hoare (ys ds : List Bool) (hd : 0 < Counter.value ds) :
   have ha : Placement.active placement (middle (a := a) ys ds zs) =
       Copy.tapes (BinaryQuotientNormalize.raw (BinaryDivide.remainder ds ys) (-(ys.length : ℤ)))
         (fun _ => blank) (-(ys.length : ℤ)) 0 := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   have hr := Placement.hoare_at hn placement (middle (a := a) ys ds zs) ha
   have hr' : HoareTime (Placement.placed (BinaryQuotientNormalize.program (a := a)) placement)
       (fun v => v = middle ys ds zs) (fun v => v = normalized ys ds zs rs)
       (2*(BinaryDivide.remainder ds ys).length+8) := by
     apply hr.consequence (fun _ h => h) _ le_rfl
     rintro v ⟨w,rfl,rfl⟩
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   have hlen := BinaryDivide.remainder_length ds ys
   have hcore : HoareTime (core a) (fun v => v = initial ys ds)
       (fun v => v = normalized ys ds zs rs) (coreCost ys ds) := by

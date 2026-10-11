@@ -27,8 +27,8 @@ def output (v : Descriptor) (hs : Fin 6 → List Bool) : Tapes 16 a := state v h
 def prefixPlacement : Fin (8+8) ≃ Fin 16 where
   toFun := ![0,1,2,12,6,13,14,15,3,4,5,7,8,9,10,11]
   invFun := ![0,1,2,8,9,10,4,11,12,13,14,15,3,5,6,7]
-  left_inv i := by fin_cases i <;> rfl
-  right_inv i := by fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 def prefixProgram := Placement.placed (ArbitraryWidthHighPrefix.program (a := a)) prefixPlacement
 
 def constantProgram (i : Fin 16) := Placement.placed
@@ -46,16 +46,16 @@ def cost (v : Descriptor) (hs : Fin 6 → List Bool) :=
 private theorem prefix_active_input (hs : Fin 6 → List Bool) :
     Placement.active prefixPlacement (input (a := a) hs) =
       ArbitraryWidthHighPrefix.input (fun i => hs (Fin.castAdd 3 i)) := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 private theorem prefix_active_output (v : Descriptor) (hs : Fin 6 → List Bool) :
     Placement.active prefixPlacement (state (a := a) v hs 1) =
       ArbitraryWidthHighPrefix.output v.beforeRows v.rows v.beforeH
         (fun i => hs (Fin.castAdd 3 i)) := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 private theorem prefix_frame (v : Descriptor) (hs : Fin 6 → List Bool) :
     Placement.extra prefixPlacement (input (a := a) hs) =
       Placement.extra prefixPlacement (state v hs 1) := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem prefix_constructs (v : Descriptor) (hs : Fin 6 → List Bool)
     (hp : v.Positive) (hh : RecursiveDimensionBank.Headers v hs) :
@@ -109,7 +109,7 @@ private theorem copy3_constructs (v : Descriptor) (hs : Fin 6 → List Bool) :
     (state (a := a) v hs 3) (hs 3) rfl rfl rfl rfl
   have he : setTape (state (a := a) v hs 3) 9
       (RadixZeroFill.encodedBinary (hs 3)) 1 = state v hs 4 := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   rw [he] at h
   exact h
 
@@ -120,7 +120,7 @@ private theorem copy4_constructs (v : Descriptor) (hs : Fin 6 → List Bool) :
     (state (a := a) v hs 4) (hs 4) rfl rfl rfl rfl
   have he : setTape (state (a := a) v hs 4) 10
       (RadixZeroFill.encodedBinary (hs 4)) 1 = state v hs 5 := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   rw [he] at h
   exact h
 
@@ -131,7 +131,7 @@ private theorem copy5_constructs (v : Descriptor) (hs : Fin 6 → List Bool) :
     (state (a := a) v hs 5) (hs 5) rfl rfl rfl rfl
   have he : setTape (state (a := a) v hs 5) 11
       (RadixZeroFill.encodedBinary (hs 5)) 1 = state v hs 6 := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   rw [he] at h
   exact h
 

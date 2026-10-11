@@ -29,7 +29,7 @@ def cost (d : Data) (rs : List Partition.Record) :=
     SharedBank.payload (ActiveRepairLateOriginalPipelineEndpoint.output d rs) focus=
       ActiveRepairRecordFlattenAlphabet.input 0 (ActiveRepairLateOriginalPipelineCleanup.repaired d rs) := by
   rw [ActiveRepairLayoutRecordsDecodeCommon.decoder_input]
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
  theorem runs (d : Data) (h : Valid d) (rs : List Partition.Record) :
     HoareTime (program d.side) (fun v => v=input d rs) (fun v => v=output d rs) (cost d rs) := by
@@ -54,7 +54,7 @@ def cost (d : Data) (rs : List Partition.Record) :=
     (output d rs).tape 11=RepairScan.srcTape rs := rfl
  theorem private_blank (d : Data) (rs : List Partition.Record) :
     SharedBank.payload (output d rs) (Fin.natAdd 192)=SharedBank.empty 2 1 := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
  theorem raw_output (d : Data) (rs : List Partition.Record) :
     (output d rs).tape 189=putWord (fun _ => blank) 0
       ((ActiveRepairLayoutRecordsData.serialize (ActiveRepairLateOriginalPipelineCleanup.repaired d rs)).map bitSymbol) := rfl

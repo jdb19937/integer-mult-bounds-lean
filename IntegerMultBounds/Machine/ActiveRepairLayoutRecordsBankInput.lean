@@ -20,7 +20,7 @@ def raw (rs : List Partition.Record) : Tapes 183 1 :=
 theorem metadata (d : Inputs s p offset rows) (rs : List Partition.Record) :
     SharedBank.payload (ActiveRepairEarlyOriginalPipelineEndpoint.input (repair d) rs) destinations=
       FixedHeaderBankCopy.headerBank (words d) := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem blank_work (d : Inputs s p offset rows) (rs : List Partition.Record) :
     SharedBank.strip (ActiveRepairEarlyOriginalPipelineEndpoint.input (repair d) rs) destinations=raw rs := by

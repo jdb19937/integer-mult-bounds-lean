@@ -22,7 +22,7 @@ def cost (d : Inputs s p offset rows) (cs : List (List Bool)) :=
 
 theorem metadata (d : Inputs s p offset rows) (cs : List (List Bool)) :
     SharedBank.payload (ActiveRepairLayoutRecordsAssemblyOriginalEarly.output d cs) focus=FixedHeaderBankCopy.headerBank (words d) := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem cleans (d : Inputs s p offset rows) (cs : List (List Bool)) :
     HoareTime cleanProgram (fun v => v=ActiveRepairLayoutRecordsAssemblyOriginalEarly.output d cs)

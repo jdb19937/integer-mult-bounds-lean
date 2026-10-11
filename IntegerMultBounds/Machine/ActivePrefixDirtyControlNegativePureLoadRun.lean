@@ -14,11 +14,11 @@ variable {a : ℕ}
 
 theorem pad4 (v : Tapes 14 a) :
     (CleanSubbank.bank (s := 4) v).append (SharedBank.empty 47 a)=bank v := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem pad12 (v : Tapes 14 a) :
     (PackedOffsetPayloadPlaced.input v).append (SharedBank.empty 39 a)=bank v := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 def negate := extend (ActivePrefixParityNegativeNegate.program (a := a) negateFocus (by decide)) 10
 def repeatProgram := extend (ActivePrefixOffsetRepeatPlaced.program (a := a) repeatFocus (by decide)) 47
@@ -32,7 +32,7 @@ def cost (s : Shape) (rows B : ℕ) := ActivePrefixDirtyControlLoadProducer.cons
 
 theorem pad41 (v : Tapes 14 a) :
     (CleanSubbank.bank (s := 41) v).append (SharedBank.empty 10 a)=bank v := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem negate_runs (s : Shape) (rows B : ℕ) (hs : Fin 6 → List Bool) (rs bs : List Bool)
     (x : Array s rows B) :

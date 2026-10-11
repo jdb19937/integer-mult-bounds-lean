@@ -35,10 +35,10 @@ theorem controls_runs (xs : ℕ → List (Fin 2)) (w : ℕ) (hw : ∀ i,(xs i).l
     (FamilyPlacementAlphabet.sequence_hoare (h 2) (h 3))
   have hi : ((one (marked ((xs 0).map digitSymbol)) 1).append (one (marked ((xs 1).map digitSymbol)) 1)).append
       ((one (marked ((xs 2).map digitSymbol)) 1).append (one (marked ((xs 3).map digitSymbol)) 1))=controls xs := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   have ho : ((one (fun _ => (blank:Fin 6)) 0).append (one (fun _ => blank) 0)).append
       ((one (fun _ => blank) 0).append (one (fun _ => blank) 0))=empty 4 := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   rw [hi,ho] at hh
   exact hh.consequence (fun _ h => h) (fun _ h => h) (by simp only [hw]; omega)
 

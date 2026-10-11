@@ -98,7 +98,7 @@ theorem early_update (V W Z T : List Bool) (f g z : ℤ → Fin (a+4))
       write (CountedPackedArith.bank (PackedArith.input V W Z f g z p0 p1 p2 p3 p4 p5 p6 p7 p8) hs)
         0 (putWord f p0 (T.map bitSymbol)) := by
   unfold CountedPackedArith.bank CountedPackedArith.tail PackedArith.input PackedArith.bank write Tapes.append
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem late_update (V W U X T : List Bool) (f g h k : ℤ → Fin (a+4))
     (pv pw pu px : ℤ) (hs : Fin 3 → List Bool) :
@@ -106,7 +106,7 @@ theorem late_update (V W U X T : List Bool) (f g h k : ℤ → Fin (a+4))
       write (CountedPackedLateRun.bank V W U X [] f g h k pv pw pu px hs)
         0 (putWord f pv (T.map bitSymbol)) := by
   unfold CountedPackedLateRun.bank CountedPackedLateRun.payload write Tapes.append
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 /-- Exact guarded early semantics in an arbitrary larger caller bank. The
 active output explicitly retains descriptors and returns every private tape blank. -/

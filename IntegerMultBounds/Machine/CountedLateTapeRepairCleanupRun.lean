@@ -59,7 +59,7 @@ theorem clean_output (q b : ℕ) (Z : List Bool) (hs : Fin 3 → List Bool) (dat
       (recordWord (ideal q b Z data)) (recordWord (records q b Z data))=cleaned q b Z hs data := by
   unfold cleaned
   rw [← record_tape]
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem runs (q b : ℕ) (Z : List Bool) (hs : Fin 3 → List Bool) (data : Address q b Z → List Bool) :
     HoareTime CountedLateTapeRepairCleanup.program (fun v => v=CountedLateTapeRepairBank.output q b Z hs data)

@@ -70,7 +70,7 @@ private theorem changed_root (u : ℕ) (hs : Fin 4 → List Bool) (s s' : ℤ �
       (preparedWords prime u hs)) source s' 0 =
     BinaryRadixRootHeadersShared.output (prepared prime u s' (fun _ => blank) hs)
       (preparedWords prime u hs) := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem runs (P G B u : ℕ) (hs : Fin 4 → List Bool)
     (hv : ∀ i, Counter.value (hs i) = BinaryRadixRangePrepare.values P G B u i)

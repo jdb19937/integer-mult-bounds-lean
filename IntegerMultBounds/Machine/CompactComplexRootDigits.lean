@@ -47,7 +47,7 @@ private theorem emit_output (f : ℤ → Fin (a+4)) (p : ℤ) (xs : List Bool) :
     Copy.tapes (fun _ => blank) (putWord f p (xs.map bitSymbol++[separator])) 0 (p+xs.length+1) =
       setTape (setTape (Copy.tapes (BinaryDescriptorStack.descriptor xs) f 1 p)
         0 (fun _ => blank) 0) 1 (putWord f p (xs.map bitSymbol++[separator])) (p+xs.length+1) := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 private theorem replace_write {s u t : ℕ} (e : Fin (s+u) ≃ Fin t) (v : Tapes t a)
     (small : Tapes s a) (i : Fin s) (f : ℤ → Fin (a+4)) (p : ℤ) :
@@ -95,7 +95,7 @@ private theorem emit_replace (remaining base : ℕ) (f : ℤ → Fin (a+4)) (p :
   unfold bank CleanSubbank.bank
   rw [SharedPlacementAlphabet.setTape_append_left,← ActiveRepairRankHeadersCommands.erase_caller,cleared_state]
   apply congrArg (fun tail => (bank (a := a) (state (remaining/base))).append tail)
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 def bodyCost (base remaining : ℕ) :=
   CompactChildHeadersArithmetic.scheduleCost (CompactComplexRootDigitRound.schedule base) (state remaining)+

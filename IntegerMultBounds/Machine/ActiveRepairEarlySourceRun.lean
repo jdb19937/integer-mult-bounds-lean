@@ -32,18 +32,18 @@ def program := seq parseProgram (ActiveRepairEarlyFieldsPlaced.program repairFoc
 
 theorem pad (v : Tapes 22 1) :
     (CleanSubbank.bank (s := 27) v).append (SharedBank.empty 3 1)=fullBank v := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem parse_sources (cs : List Bool) (hs : Fin 8 → List Bool) (ss : Fin 4 → List Bool) (bs : List Bool) :
     SharedBank.payload (bank cs ActiveRepairRankFieldsRun.empty hs ss bs) parseFocus=
       ActiveRepairRankParserPlaced.sources cs hs ss := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem parse_result (cs : List Bool) (hs : Fin 8 → List Bool) (ss : Fin 4 → List Bool)
     (bs : List Bool) (ws : Fin 5 → List Bool) :
     ActiveRepairRankParserPlaced.result (bank cs ActiveRepairRankFieldsRun.empty hs ss bs) parseFocus ws=
       bank cs ws hs ss bs := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem repair_sources (cs : List Bool) (starts widths : Fin 4 → ℕ) (q rho n : ℕ)
     (hs : Fin 8 → List Bool) (ss : Fin 4 → List Bool) (bs : List Bool) :
@@ -51,7 +51,7 @@ theorem repair_sources (cs : List Bool) (starts widths : Fin 4 → ℕ) (q rho n
       ActiveRepairEarlyFieldsPlaced.sources
         (Gather.field cs (starts 0) (widths 0)) (Gather.field cs (starts 1) (widths 1))
         (SelectedSourceBitsData.selected (Gather.field cs (starts 3) (widths 3)) q rho n) cs (repairHeaders ss bs) := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem runs (cs : List Bool) (starts widths : Fin 4 → ℕ) (hs : Fin 8 → List Bool)
     (ss : Fin 4 → List Bool) (bs : List Bool)

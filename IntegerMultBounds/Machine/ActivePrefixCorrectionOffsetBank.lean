@@ -39,15 +39,15 @@ def output (s : Shape) (hs : Fin 8 → List Bool) :=
 
 theorem selected_sources (hs : Fin 8 → List Bool) :
     SharedBank.payload (base (a := a) hs) selectedFocus=ActivePrefixSelectedOffsetPlaced.sources hs := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem control_sources (s : Shape) (hs : Fin 8 → List Bool) :
     SharedBank.payload (selectedReady (a := a) s hs) controlFocus=ActivePrefixControlOffsetPlaced.sources hs := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem header_sources (s : Shape) (hs : Fin 8 → List Bool) :
     SharedBank.payload (operands (a := a) s hs) headerFocus=ActivePrefixOffsetHeadersData.sources (headerWords hs) := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem subtract_sources (s : Shape) (hs : Fin 8 → List Bool) :
     SharedBank.payload (headers (a := a) s hs) subtractFocus=
@@ -56,7 +56,7 @@ theorem subtract_sources (s : Shape) (hs : Fin 8 → List Bool) :
         (BinaryCorrectionOffsetLoop.right (ActivePrefixCorrectionOffsetData.rows s))
         (bits (s.n*s.q)) (bits (2^s.W)) := by
   rw [ActivePrefixCorrectionOffsetData.left_rows,ActivePrefixCorrectionOffsetData.right_rows]
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem cleanup_tapes (s : Shape) (hs : Fin 8 → List Bool) :
     (∀ i, (subtracted (a := a) s hs).tape (cleanupFocus i)=
@@ -66,7 +66,7 @@ theorem cleanup_tapes (s : Shape) (hs : Fin 8 → List Bool) :
 
 theorem cleared (s : Shape) (hs : Fin 8 → List Bool) :
     ActivePrefixOffsetHeadersCleanup.cleared (subtracted (a := a) s hs) cleanupFocus=output s hs := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 end
 end IntegerMultBounds.Machine.ActivePrefixCorrectionOffsetBank

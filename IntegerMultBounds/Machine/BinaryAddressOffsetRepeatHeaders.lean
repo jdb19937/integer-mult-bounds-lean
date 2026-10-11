@@ -88,7 +88,7 @@ private theorem product_hoare {u : ℕ} (e : Fin (6+u) ≃ Fin 18) (v : Tapes 18
   have hh := Placement.hoare_at (DimensionProductDescriptor.construct_hoare ws ns N W hW hw hn cw cn) e v ha
   have he : DimensionProductDescriptor.output (q := 0) ws ns N W=
       setTape (DimensionProductDescriptor.input ws ns) (1 : Fin 6) (binary (DimensionProductDescriptor.bits N W)) 1 := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   apply hh.consequence (fun _ h => h) _ le_rfl
   rintro z ⟨small,rfl,rfl⟩
   rw [he,←ha,PlacedDescriptorConstruction.replace_setTape]
@@ -98,7 +98,7 @@ theorem width_hoare (hs : Fin 6 → List Bool) (b n : ℕ) (hb : 0<b)
     (hc : ∀ i, GrowingCounterData.Canonical (hs i)) :
     HoareTime widthProgram (fun z => z=input hs) (fun z => z=widthBank hs b n) (53*((n)*(b))+28) := by
   have ha : Placement.active widthPlace (input hs)=DimensionProductDescriptor.input (hs 1) (hs 2) := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   exact product_hoare widthPlace (input hs) (hs 1) (hs 2) (n) (b) (hb)
     (hvb) (hvn) (hc 1) (hc 2) ha
 
@@ -107,7 +107,7 @@ theorem source_hoare (hs : Fin 6 → List Bool) (q b n : ℕ) (hq : 0<q)
     (hc : ∀ i, GrowingCounterData.Canonical (hs i)) :
     HoareTime sourceProgram (fun z => z=widthBank hs b n) (fun z => z=sourceBank hs q b n) (53*((n)*(q))+28) := by
   have ha : Placement.active sourcePlace (widthBank hs b n)=DimensionProductDescriptor.input (hs 0) (hs 2) := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   exact product_hoare sourcePlace (widthBank hs b n) (hs 0) (hs 2) (n) (q) (hq)
     (hvq) (hvn) (hc 0) (hc 2) ha
 
@@ -116,14 +116,14 @@ theorem prefix_hoare (hs : Fin 6 → List Bool) (q b n P H : ℕ) (hH : 0<H)
     (hc : ∀ i, GrowingCounterData.Canonical (hs i)) :
     HoareTime prefixProgram (fun z => z=targetBank hs q b n) (fun z => z=prefixBank hs q b n P H) (53*((P)*(H))+28) := by
   have ha : Placement.active prefixPlace (targetBank hs q b n)=DimensionProductDescriptor.input (hs 4) (hs 3) := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   exact product_hoare prefixPlace (targetBank hs q b n) (hs 4) (hs 3) (P) (H) (hH)
     (hvH) (hvP) (hc 4) (hc 3) ha
 
 theorem repeat_hoare (hs : Fin 6 → List Bool) (q b n P H : ℕ) :
     HoareTime repeatProgram (fun z => z=prefixBank hs q b n P H) (fun z => z=repeatBank hs q b n P H) (53*((P*H)*(2^(n*b)))+28) := by
   have ha : Placement.active repeatPlace (prefixBank hs q b n P H)=DimensionProductDescriptor.input (targetBits b n) (prefixBits P H) := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   exact product_hoare repeatPlace (prefixBank hs q b n P H) (targetBits b n) (prefixBits P H) (P*H) (2^(n*b)) (by positivity)
     (FixedBasePowerDescriptor.result_value 2 (n*b)) (DimensionProductDescriptor.bits_value P H) (FixedBasePowerDescriptor.result_canonical 2 (n*b)) (DimensionProductDescriptor.bits_canonical P H) ha
 

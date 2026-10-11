@@ -68,7 +68,7 @@ private theorem input_cleared_eq (order : Order) (v : Stage s) (rows ell : ℕ)
       (0 : Fin 4) (fun _ => blank) 0 =
       setTape (AllAxisPolynomialLiteral.tail (fun _ => blank) (fun _ => blank) 0 0 ys)
       (0 : Fin 4) (fun _ => blank) 0 := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   have hi : (56 : Fin 67)=Fin.castAdd 1 (Fin.castAdd 6
       (Fin.natAdd 43 (Fin.natAdd 13 (0 : Fin 4)))) := rfl
   simp only [hi,input,AllAxisPolynomialStreamInit.input,AllAxisFullStreamInit.input,

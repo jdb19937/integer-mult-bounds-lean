@@ -15,10 +15,10 @@ def bank (v : Tapes 11 a) := CleanSubbank.bank (s := 39) v
 
 theorem pad15 (v : Tapes 11 a) :
     (CompactGadgetReservationHeadersCore.bank v).append (SharedBank.empty 24 a)=bank v := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 theorem pad9 (v : Tapes 11 a) :
     (CleanSubbank.bank (s := 9) v).append (SharedBank.empty 30 a)=bank v := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 def makeSelected := ActivePrefixDirtyControlPlaced.program (a := a) .selected selectedFocus (by decide)
 def makeControl := ActivePrefixDirtyControlPlaced.program (a := a) .control controlFocus (by decide)

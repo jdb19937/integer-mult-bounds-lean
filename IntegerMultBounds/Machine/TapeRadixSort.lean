@@ -53,8 +53,8 @@ private theorem increment_bank (width k : ℕ) (records : List (List Bool)) :
   unfold UnarySelector.cfg Config.tapes Tapes.append Tapes.reindex incrementExtra bank
     KeyPass.bank KeyPartition.bank
   congr 1
-  · funext i; fin_cases i <;> rfl
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
+  · apply List.ofFn_injective; rfl
 
 private theorem increment_exact (width k : ℕ) (records : List (List Bool)) :
     ExactRun incrementProgram (2 * k + 2) (bank width k records) (bank width (k + 1) records) := by

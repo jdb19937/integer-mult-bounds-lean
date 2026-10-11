@@ -39,7 +39,7 @@ def tail (hs : Fin 2 → List Bool) : Tapes 16 a :=
 theorem input_eq (v : Tapes 5 a) (hs : Fin 2 → List Bool) : input v hs = v.append (tail hs) := by
   unfold input CountedPackedControlLoadLine.input CountedPackedControlLoadLine.caller
     CountedPackedControlLoadHeaders.input tail Tapes.append
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem write_input (v : Tapes 5 a) (hs : Fin 2 → List Bool) (k : Fin 5)
     (f : ℤ → Fin (a+4)) : write (input v hs) (Fin.castAdd 16 k) f = input (write v k f) hs := by
@@ -77,7 +77,7 @@ theorem copies (U X : List Bool) (f g : ℤ → Fin (a+4)) (pu px : ℤ) (hs : F
   have he : write (payload U X f g pu px) 0 (putWord (fun _ => blank) 0 (X.map bitSymbol)) =
       copied U X f g pu px := by
     unfold write payload copied PackedLine.bank
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   rw [he] at h
   simpa only [List.length_map] using h
 
@@ -119,7 +119,7 @@ theorem finishes (U X Y : List Bool) (f g : ℤ → Fin (a+4)) (pu px : ℤ) (hs
     rw [write_input,write_input,write_input]
     apply congrArg (fun w : Tapes 5 a => input w hs)
     unfold write finishPayload payload PackedLine.bank
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   · simp only [List.length_map]
     omega
 

@@ -44,40 +44,40 @@ def output (hs : Fin 6 → List Bool) (ts bs : List Bool) (v : Descriptor) (t b 
 def powersPlacement : Fin (9+8) ≃ Fin 17 where
   toFun := ![3,6,7,10,11,8,9,14,15,0,1,2,4,5,12,13,16]
   invFun := ![9,10,11,0,12,13,1,2,5,6,3,4,14,15,7,8,16]
-  left_inv i := by fin_cases i <;> rfl
-  right_inv i := by fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def powersProgram := Placement.placed (SliceExponentPowers.program hq) powersPlacement
 
 def beforePlacement : Fin (6+11) ≃ Fin 17 where
   toFun := ![14,10,15,8,16,2,0,1,3,4,5,6,7,9,11,12,13]
   invFun := ![6,7,5,8,9,10,11,12,3,13,1,14,15,16,0,2,4]
-  left_inv i := by fin_cases i <;> rfl
-  right_inv i := by fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def beforeProgram := Placement.placed (DimensionProductDescriptor.program (q := q)) beforePlacement
 
 def middlePlacement : Fin (6+11) ≃ Fin 17 where
   toFun := ![14,11,15,4,16,9,0,1,2,3,5,6,7,8,10,12,13]
   invFun := ![6,7,8,9,3,10,11,12,13,5,14,1,15,16,0,2,4]
-  left_inv i := by fin_cases i <;> rfl
-  right_inv i := by fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def middleProgram := Placement.placed (DimensionProductDescriptor.program (q := q)) middlePlacement
 
 def betweenPlacement : Fin (6+11) ≃ Fin 17 where
   toFun := ![14,12,15,8,16,11,0,1,2,3,4,5,6,7,9,10,13]
   invFun := ![6,7,8,9,10,11,12,13,3,14,15,5,1,16,0,2,4]
-  left_inv i := by fin_cases i <;> rfl
-  right_inv i := by fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def betweenProgram := Placement.placed (DimensionProductDescriptor.program (q := q)) betweenPlacement
 
 def afterPlacement : Fin (6+11) ≃ Fin 17 where
   toFun := ![14,13,15,5,16,9,0,1,2,3,4,6,7,8,10,11,12]
   invFun := ![6,7,8,9,10,3,11,12,13,5,14,15,16,1,0,2,4]
-  left_inv i := by fin_cases i <;> rfl
-  right_inv i := by fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def afterProgram := Placement.placed (DimensionProductDescriptor.program (q := q)) afterPlacement
 
@@ -105,8 +105,8 @@ private theorem powers_hoare (hs : Fin 6 → List Bool) (ts bs : List Bool) (v :
       (fun z => z = stage hs ts bs (words hq v t b) 2) (300*V) := by
   apply placed_exact powersPlacement _ _ _ _ _ _ _
     (SliceExponentPowers.construct_hoare hq (hs 3) ts bs v.width t b V he ht hb hfit hV hQ we wt wb)
-  · apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
-  · apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  · apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
+  · apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   · apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;>
       simp [powersPlacement,input,stage,bank,words]
 
@@ -118,7 +118,7 @@ private theorem before_hoare (hs : Fin 6 → List Bool) (ts bs : List Bool) (xs 
       (fun z => z = stage hs ts bs xs 3) (53*(N*W)+28) := by
   apply placed_exact beforePlacement _ _ _ _ _ _ _
     (DimensionProductDescriptor.construct_hoare (xs 0) (hs 2) N W hW hw hn cw cn)
-  · apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  · apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   · apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;>
       simp [beforePlacement,stage,bank,RecursiveDimensionBank.head,RecursiveDimensionBank.tape,hx]
   · apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;>
@@ -132,7 +132,7 @@ private theorem middle_hoare (hs : Fin 6 → List Bool) (ts bs : List Bool) (xs 
       (fun z => z = stage hs ts bs xs 4) (53*(N*W)+28) := by
   apply placed_exact middlePlacement _ _ _ _ _ _ _
     (DimensionProductDescriptor.construct_hoare (hs 4) (xs 1) N W hW hw hn cw cn)
-  · apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  · apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   · apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;>
       simp [middlePlacement,stage,bank,RecursiveDimensionBank.head,RecursiveDimensionBank.tape,hx]
   · apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;>
@@ -146,7 +146,7 @@ private theorem between_hoare (hs : Fin 6 → List Bool) (ts bs : List Bool) (xs
       (fun z => z = stage hs ts bs xs 5) (53*(N*W)+28) := by
   apply placed_exact betweenPlacement _ _ _ _ _ _ _
     (DimensionProductDescriptor.construct_hoare (xs 0) (xs 3) N W hW hw hn cw cn)
-  · apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  · apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   · apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;>
       simp [betweenPlacement,stage,bank,RecursiveDimensionBank.head,RecursiveDimensionBank.tape,hx]
   · apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;>
@@ -160,7 +160,7 @@ private theorem after_hoare (hs : Fin 6 → List Bool) (ts bs : List Bool) (xs :
       (fun z => z = stage hs ts bs xs 6) (53*(N*W)+28) := by
   apply placed_exact afterPlacement _ _ _ _ _ _ _
     (DimensionProductDescriptor.construct_hoare (hs 5) (xs 1) N W hW hw hn cw cn)
-  · apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  · apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   · apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;>
       simp [afterPlacement,stage,bank,RecursiveDimensionBank.head,RecursiveDimensionBank.tape,hx]
   · apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;>
@@ -180,7 +180,7 @@ private theorem clean_hoare (hs : Fin 6 → List Bool) (ts bs : List Bool) (xs :
           (BinaryDescriptorStackRoundtrip.descriptor_encoded (a := q) _).symm)
   apply h.consequence (fun _ h => h) _ _
   · rintro z rfl
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   · simp [BinaryDescriptorCleanupList.cost,cleanSlots,ws]
     omega
 

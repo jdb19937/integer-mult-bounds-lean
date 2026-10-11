@@ -55,7 +55,7 @@ theorem clean (xs ys zs ws ns : List Bool) :
 
 theorem output_eq (xs ys zs ws ns : List Bool) :
     bank (a := a) [] [] zs ws ns=output (bank xs ys [] ws ns) ports zs := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem runs (caller : Tapes t a) (focus : Fin 5 → Fin t) (hf : Function.Injective focus)
     (rows : List (List Bool × List Bool)) (W : ℕ) (hu : Uniform W rows)

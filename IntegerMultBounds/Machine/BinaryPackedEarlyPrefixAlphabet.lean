@@ -33,7 +33,7 @@ theorem mapped_output (hs : Fin 5 → List Bool) (Z : List Bool) (q b n L K : �
 
 theorem output_eq (hs : Fin 5 → List Bool) (Z : List Bool) (f : ℤ → Fin (a+4)) :
     bank hs Z f=setTape (bank hs Z (fun _ => blank)) (8 : Fin 50) f 0 := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem negative_constructs (hs : Fin 5 → List Bool) (Z : List Bool) (q b n L K : ℕ) (hb : 1≤b) (hbq : b+1≤q)
     (hvq : Counter.value (hs 0)=q) (hvb : Counter.value (hs 1)=b) (hvn : Counter.value (hs 2)=n)

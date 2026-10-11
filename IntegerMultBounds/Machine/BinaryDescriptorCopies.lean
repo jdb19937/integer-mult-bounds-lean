@@ -29,7 +29,7 @@ theorem input_layout (q n : ℕ) (xs : List Bool) :
         fun i => if i.val = 0 then RadixZeroFill.encodedBinary xs else fun _ => blank⟩ : Tapes (n+1) q) := by
   induction n with
   | zero =>
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   | succ n ih =>
     rw [input,ih]
     unfold Tapes.append empty

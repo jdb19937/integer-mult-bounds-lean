@@ -30,14 +30,14 @@ def bank (source dest : ℤ → Fin (a+4)) (p q : ℤ) (rs ls : List Bool)
 def roundPlace : Fin (16+9) ≃ Fin 25 where
   toFun := ![2,3,5,6,7,8,9,10,11,12,13,14,15,16,17,18,0,1,4,19,20,21,22,23,24]
   invFun := ![16,17,0,1,18,2,3,4,5,6,7,8,9,10,11,12,13,14,15,19,20,21,22,23,24]
-  left_inv i := by fin_cases i <;> rfl
-  right_inv i := by fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def padPlace : Fin (12+13) ≃ Fin 25 where
   toFun := ![0,1,4,2,6,3,19,20,21,22,23,24,5,7,8,9,10,11,12,13,14,15,16,17,18]
   invFun := ![0,1,3,5,2,12,4,13,14,15,16,17,18,19,20,21,22,23,24,6,7,8,9,10,11]
-  left_inv i := by fin_cases i <;> rfl
-  right_inv i := by fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def roundProgram (c : ℕ) := Placement.placed (CompactRowPaddingRound.program (a := a) c) roundPlace
 def oneProgram := Placement.placed (RecursiveChildQuotientsConstant.program (a := a) 1)
@@ -65,7 +65,7 @@ theorem rounds (c : ℕ) (source dest : ℤ → Fin (a+4)) (p q : ℤ)
       (fun w => w = bank source dest p q rs ls none (some (CompactRowPaddingRound.bits r c)))
       (4096*paddedRows r c+5*(RecursiveChildQuotientsConstant.bits c).length+12) := by
   apply placed_exact roundPlace _ _ _ _ _ _ _ (CompactRowPaddingRound.constructs c rs ls r hr cr hR hc)
-  all_goals apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  all_goals apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem writes_one (source dest : ℤ → Fin (a+4)) (p q : ℤ)
     (rs ls rp : List Bool) :
@@ -118,7 +118,7 @@ theorem clears_one (source dest : ℤ → Fin (a+4)) (p q : ℤ)
     (BinaryDescriptorStackRoundtrip.descriptor_encoded oneBits).symm rfl
   apply h.consequence (fun _ h => h) ?_ (by decide)
   rintro w rfl
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem clears_rounded (source dest : ℤ → Fin (a+4)) (p q : ℤ)
     (rs ls rp : List Bool) :
@@ -130,7 +130,7 @@ theorem clears_rounded (source dest : ℤ → Fin (a+4)) (p q : ℤ)
     (BinaryDescriptorStackRoundtrip.descriptor_encoded rp).symm rfl
   apply h.consequence (fun _ h => h) ?_ le_rfl
   rintro w rfl
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 /-- Padding is physically executed, and all twenty-one private tapes return
 blank at origin. Original row/width headers and arbitrary exterior backgrounds

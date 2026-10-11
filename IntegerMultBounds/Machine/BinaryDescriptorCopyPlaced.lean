@@ -25,7 +25,7 @@ theorem active (caller : Tapes t a) (focus : Fin 2 → Fin t) (hf : Function.Inj
 
 theorem output_set (xs : List Bool) : BinaryDescriptorCopy.encodedOutput a xs=
     setTape (BinaryDescriptorCopy.encodedInput a xs) 1 (RadixZeroFill.encodedBinary xs) 1 := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem copies (caller : Tapes t a) (focus : Fin 2 → Fin t) (hf : Function.Injective focus)
     (xs : List Bool) (hi : SharedBank.payload caller focus=BinaryDescriptorCopy.encodedInput a xs) :

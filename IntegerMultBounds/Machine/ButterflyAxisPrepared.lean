@@ -27,7 +27,7 @@ theorem payload (D t R p : ℕ) (f : ℤ → Fin 6) :
     SharedBank.payload (prepared D t R p f) commonPorts=
       (CountedLoopReuseAlphabet.one f 0).append
         (ButterflyAxisPorts.headers (words D t R p 0) (words D t R p 1) (headers D t R p)) := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem frame (D t R p : ℕ) (f g : ℤ → Fin 6) :
     SharedBank.strip (prepared D t R p f) commonPorts=

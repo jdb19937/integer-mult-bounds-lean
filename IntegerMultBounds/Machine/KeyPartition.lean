@@ -55,8 +55,8 @@ private theorem select_bank (k : ℕ) (records : List (List Bool)) (flags : List
       emptyThree = bank k records flags [] [] [] h₀ hF 0 0 0 := by
   unfold Config.tapes KeySelect.cfg Tapes.append bank emptyThree
   congr 1
-  · funext i; fin_cases i <;> rfl
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
+  · apply List.ofFn_injective; rfl
 
 def selectionTime (k : ℕ) (records : List (List Bool)) : ℕ :=
   (KeySelect.encode records).length + records.length * (2 * k + 2)
@@ -105,8 +105,8 @@ private theorem reset_bank (k : ℕ) (records : List (List Bool)) (flags : List 
     (resetView k records flags h₀ hF).append emptyTwo = bank k records flags [] [] [] h₀ hF 0 0 0 := by
   unfold resetView Tapes.append emptyTwo bank
   congr 1
-  · funext i; fin_cases i <;> rfl
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
+  · apply List.ofFn_injective; rfl
 
 private theorem reset_exact (k : ℕ) (records : List (List Bool)) (flags : List (Fin 4)) (h₀ : ℤ) :
     ExactRun (extend (PartitionPass.reset 2) 2) (flags.length + 2)
@@ -162,8 +162,8 @@ private theorem partition_bank (k : ℕ) (records : List (List Bool))
   unfold PartitionPass.bank PartitionMarked.cfg Config.tapes Tapes.append Tapes.reindex
     protectedTapes bank
   congr 1
-  · funext i; fin_cases i <;> rfl
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
+  · apply List.ofFn_injective; rfl
 
 private theorem partition_exact (k : ℕ) (records : List (List Bool)) (h₀ : ℤ) :
     ExactRun partitionProgram (3 * (flagWord k records).length + 8)

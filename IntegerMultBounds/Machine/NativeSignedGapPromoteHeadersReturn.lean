@@ -52,7 +52,7 @@ private theorem active_input (ws : List Word) (current target : ℕ) (ls : List 
 private theorem installed (ws : List Word) (current target : ℕ) (ls : List Bool) :
     setTape (input ws current target ls) (4:Fin 10)
       (RadixZeroFill.encodedBinary (bits (target-current))) 1=prepared ws current target ls := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem synthesize_runs (ws : List Word) (current target : ℕ) (hle : current≤target) (ls : List Bool) :
     HoareTime synthesize (fun v => v=input ws current target ls)

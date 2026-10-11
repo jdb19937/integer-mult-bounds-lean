@@ -81,20 +81,20 @@ private def incBits := GrowingCounterData.increment
 def subPlacement : Fin (3+12) ≃ Fin 15 where
   toFun := ![0,2,3,1,4,5,6,7,8,9,10,11,12,13,14]
   invFun := ![0,3,1,2,4,5,6,7,8,9,10,11,12,13,14]
-  left_inv i := by fin_cases i <;> rfl
-  right_inv i := by fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def divPlacement : Fin (12+3) ≃ Fin 15 where
   toFun := ![3,1,6,7,8,4,9,10,11,12,13,14,0,2,5]
   invFun := ![12,1,13,0,5,14,2,3,4,6,7,8,9,10,11]
-  left_inv i := by fin_cases i <;> rfl
-  right_inv i := by fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def mulPlacement : Fin (6+9) ≃ Fin 15 where
   toFun := ![6,5,7,1,8,4,0,2,3,9,10,11,12,13,14]
   invFun := ![6,3,7,8,5,1,0,2,4,9,10,11,12,13,14]
-  left_inv i := by fin_cases i <;> rfl
-  right_inv i := by fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def initProgram := Placement.placed (RecursiveChildQuotientsConstant.program (a := q) 1)
   (FiniteReturnStackAt.placement (2 : Fin 15))
@@ -150,7 +150,7 @@ private theorem sub_hoare (rs ds : List Bool) :
       (4*BinarySubReuse.width rs oneBits+14) :=
     h.consequence (fun _ h => ⟨_,rfl,h⟩) (by rintro v ⟨w,rfl,h⟩; exact h) le_rfl
   apply placed_exact subPlacement _ _ _ _ _ _ _ hh
-  all_goals apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  all_goals apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 private theorem div_hoare (rs ds zs : List Bool)
     (hdiv : HoareTime (BinaryDescriptorDivision.program q)
@@ -184,18 +184,18 @@ private theorem inc_hoare (rs ds zs : List Bool) :
   apply hi.consequence (fun _ h => h) _ le_rfl
   rintro v ⟨z,rfl,rfl⟩
   rw [FiniteReturnStackAt.replace_bank]
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 private theorem mul_input (rs ds one dec zs : List Bool) :
     Placement.active mulPlacement (bank (q := q) rs ds (some one) (some dec) (some zs) none) =
       BoundedProductDescriptor.input ds zs := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 private theorem mul_output (rs ds one dec zs : List Bool) (N D : ℕ) :
     Placement.active mulPlacement
       (bank (q := q) rs ds (some one) (some dec) (some zs) (some (BoundedProductDescriptor.bits N D))) =
       BoundedProductDescriptor.output ds zs N D := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 private theorem mul_extra (rs ds one dec zs bs : List Bool) :
     Placement.extra mulPlacement (bank (q := q) rs ds (some one) (some dec) (some zs) none) =
@@ -236,7 +236,7 @@ private theorem clean_hoare (rs ds zs : List Bool) (R D : ℕ) :
         first | rfl | simpa [words,bank,tp] using (BinaryDescriptorStackRoundtrip.descriptor_encoded (a := q) _).symm)
   apply h.consequence (fun _ h => h) _ _
   · rintro v rfl
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   · simp [BinaryDescriptorCleanupList.cost,cleanSlots,words,oneBits,
       RecursiveChildQuotientsConstant.bits]
     omega

@@ -24,7 +24,7 @@ def storageOutput (hs : 7<s) (storage : Tapes s 2) (d : ℕ) :=
 
 private theorem emitted_source (payload : Tapes (1+c) 2) (words : Fin c → ℤ → Fin 6) :
     CompactComplexNativeRoleBridge.single (emitted payload words)=CompactComplexNativeRoleBridge.single payload := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 private theorem prefix_emitted (control : Tapes 43 2) (queue : Tapes 1 2)
     (scalar stage : State) (tail : Tapes 22 2) (storage : Tapes s 2) (payload : Tapes (1+c) 2)

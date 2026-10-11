@@ -76,7 +76,7 @@ theorem restored (order : Order) (v : Stage s) (rows : ℕ) (axis : Fin v.f) (m 
     output order v rows axis m ws ell xs=
       UnitPhasePolynomialStreamInit.input order v rows axis
         (UnitPhasePolynomialLiteral.tail (fun _ => blank) (fun _ => blank) 0 0 (result v axis m ws xs)) ell := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem endpoint (order : Order) (v : Stage s) (rows : ℕ) (axis : Fin v.f) (m : ℕ) (ws : List (ZMod 4)) (ell : ℕ)
     (xs : Fin ((rows*2^s.bits)*2^ell) → Coefficient) :

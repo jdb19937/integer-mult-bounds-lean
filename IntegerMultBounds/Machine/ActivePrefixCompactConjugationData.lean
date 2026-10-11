@@ -53,7 +53,7 @@ theorem base_view {m n : ℕ} (h : m=n) (gs : Fin 7 → List Bool) (b : List Boo
 theorem base_set {m n : ℕ} (gs : Fin 7 → List Bool) (b : List Bool)
     (hs : Fin 8 → List Bool) (rs bs : List Bool) (x : Fin m → Bool) (y : Fin n → Bool) :
     setTape (base gs b hs rs bs x) 18 (ActiveTargetRotation.word y) 0=base gs b hs rs bs y := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 def loadResult (kind : Kind) (s : Shape) (rows B : ℕ)
     (x : ActivePrefixCompactParityLoadData.Array s rows B) : ActivePrefixCompactParityLoadData.Array s rows B :=
@@ -68,18 +68,18 @@ def loadSources (s : Shape) (rows B : ℕ) (hs : Fin 8 → List Bool) (rs bs : L
 theorem negative_sources (s : Shape) (rows B : ℕ) (hs : Fin 8 → List Bool) (rs bs : List Bool)
     (x : ActivePrefixCompactParityLoadData.Array s rows B) :
     ActivePrefixCompactNegativeLoadPlaced.sources (a := prime) s rows B hs rs bs x=loadSources s rows B hs rs bs x := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem swap_sources (s : CompactGadgetReservationShape.Shape) (rows w : ℕ)
     (gs : Fin 7 → List Bool) (b : List Bool) (hs : Fin 8 → List Bool) (rs bs : List Bool)
     (x : ActivePrefixCompactSwapData.Array s rows w) :
     SharedBank.payload (base gs b hs rs bs x) swapFocus=ActivePrefixCompactSwapPlaced.sources gs b x := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem load_sources (s : Shape) (rows B : ℕ) (gs : Fin 7 → List Bool) (b : List Bool)
     (hs : Fin 8 → List Bool) (rs bs : List Bool) (x : ActivePrefixCompactParityLoadData.Array s rows B) :
     SharedBank.payload (base gs b hs rs bs x) loadFocus=loadSources s rows B hs rs bs x := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 end
 end IntegerMultBounds.Machine.ActivePrefixCompactConjugationData

@@ -93,9 +93,9 @@ theorem qe_hoare (v : Descriptor) (hs : Fin 6 → List Bool) (hv : RecursiveDime
     (hvpos.2.2.2.2) (hv.1 5) (RadixPowerDescriptor.bits_value _ _) (hv.2 5) (RadixPowerDescriptor.bits_canonical _ _)
   exact placed_exact qePlacement _ _ _ _
     (by simp only [Placement.active,qePlacement,bank,base,tailBank,RecursiveDimensionBank.bank,RecursiveDimensionBank.ds4,ds0]
-        apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl)
+        apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl)
     (by simp only [Placement.active,qePlacement,bank,base,tailBank,RecursiveDimensionBank.bank,RecursiveDimensionBank.ds4,ds1]
-        apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl)
+        apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl)
     (qe_frame (base hq hs v) ![qeBits (q := q) v,cqeBits (q := q) v,ncBits (q := q) v]) hh
 
 theorem cqe_hoare (v : Descriptor) (hs : Fin 6 → List Bool) (hv : RecursiveDimensionBank.Headers v hs) (hvpos : v.Positive) :
@@ -105,9 +105,9 @@ theorem cqe_hoare (v : Descriptor) (hs : Fin 6 → List Bool) (hv : RecursiveDim
     (Nat.mul_pos (pow_pos (by omega) _) hvpos.2.2.2.2) (DimensionProductDescriptor.bits_value _ _) (hv.1 4) (DimensionProductDescriptor.bits_canonical _ _) (hv.2 4)
   exact placed_exact cqePlacement _ _ _ _
     (by simp only [Placement.active,cqePlacement,bank,base,tailBank,RecursiveDimensionBank.bank,RecursiveDimensionBank.ds4,ds1]
-        apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl)
+        apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl)
     (by simp only [Placement.active,cqePlacement,bank,base,tailBank,RecursiveDimensionBank.bank,RecursiveDimensionBank.ds4,descriptors]
-        apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl)
+        apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl)
     (cqe_frame (base hq hs v) ![qeBits (q := q) v,cqeBits (q := q) v,ncBits (q := q) v]) hh
 
 theorem nc_hoare (v : Descriptor) (hs : Fin 6 → List Bool) (hv : RecursiveDimensionBank.Headers v hs) (hvpos : v.Positive) :
@@ -117,9 +117,9 @@ theorem nc_hoare (v : Descriptor) (hs : Fin 6 → List Bool) (hv : RecursiveDime
     (hvpos.2.2.2.1) (hv.1 4) (DimensionProductDescriptor.bits_value _ _) (hv.2 4) (DimensionProductDescriptor.bits_canonical _ _)
   exact placed_exact ncPlacement _ _ _ _
     (by simp only [Placement.active,ncPlacement,bank,base,tailBank,RecursiveDimensionBank.bank,RecursiveDimensionBank.ds4,ds0]
-        apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl)
+        apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl)
     (by simp only [Placement.active,ncPlacement,bank,base,tailBank,RecursiveDimensionBank.bank,RecursiveDimensionBank.ds4,descriptors]
-        apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl)
+        apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl)
     (nc_frame (base hq hs v) ![qeBits (q := q) v,cqeBits (q := q) v,ncBits (q := q) v]) hh
 
 

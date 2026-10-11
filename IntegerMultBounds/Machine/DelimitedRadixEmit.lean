@@ -23,7 +23,7 @@ theorem finish_runs (g : ℤ → Fin (q+4)) (p : ℤ) :
     simp only [step,finishProgram,Copy.tapes,Copy.cfg,Config.tapes,Tapes.start,ite_true,Move.offset]
     congr 1
     congr 1
-    · funext i; fin_cases i <;> rfl
+    · apply List.ofFn_injective; rfl
     · funext i z; fin_cases i <;> by_cases hz : z=0 <;> simp [empty,Function.update_apply,hz]
   · simp [step,finishProgram]
 

@@ -80,7 +80,7 @@ theorem fill_runs (f : ℤ → Fin 6) (p : ℤ) (bs : List Bool) (w : ℕ) (hw :
 
 theorem bank_assoc (f : ℤ → Fin 6) (p : ℤ) (bs : List Bool) :
     bank f p bs=(one f p).append ((one (RadixZeroFill.encodedBinary bs) 1).append (SharedBank.empty 2 2)) := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem field_runs (f : ℤ → Fin 6) (p : ℤ) (bs : List Bool) (w : ℕ) (hw : Counter.value bs=w) :
     HoareTime fieldProgram (fun v => v=bank f p bs)

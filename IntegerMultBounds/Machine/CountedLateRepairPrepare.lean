@@ -16,8 +16,8 @@ open CountedRepairScanPrepare (selector_filled ctr_filled)
 def place : Fin (12+34) ≃ Fin 46 where
   toFun := ![13,7,14,25,26,27,28,29,30,31,32,33,0,1,2,3,4,5,6,8,9,10,11,12,15,16,17,18,19,20,21,22,23,24,34,35,36,37,38,39,40,41,42,43,44,45]
   invFun := ![12,13,14,15,16,17,18,1,19,20,21,22,23,0,2,24,25,26,27,28,29,30,31,32,33,3,4,5,6,7,8,9,10,11,34,35,36,37,38,39,40,41,42,43,44,45]
-  left_inv i := by fin_cases i <;> rfl
-  right_inv i := by fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def bank (k : ℕ) (src : ℤ → Fin 5) (Z : List Bool) (hs : Fin 3 → List Bool) : Tapes 46 1 :=
   (RepairScan.bank k [] 0 (fun _ => blank) 0 src 0 (FlagCopy.keyTape [])
@@ -32,7 +32,7 @@ def program := seq (extend CountedRepairScanSeed.program 32) metadataProgram
 theorem active_bank (k : ℕ) (src : ℤ → Fin 5) (Z : List Bool) (hs : Fin 3 → List Bool) :
     Placement.active place (bank k src Z hs)=CountedRankSplitBank.bank
       (RepairScan.ctrTape (List.replicate k false)) (KeySelect.selector k) (fun _ => blank) 1 0 0 hs none none := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem place_extra (i : Fin 34) : place (Fin.natAdd 12 i)=(![0,1,2,3,4,5,6,8,9,10,11,12,15,16,17,18,19,20,21,22,23,24,34,35,36,37,38,39,40,41,42,43,44,45] : Fin 34 → Fin 46) i := by
   fin_cases i <;> decide

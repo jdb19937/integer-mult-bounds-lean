@@ -32,12 +32,12 @@ def program (a : ℕ) : Program 2 7 a :=
 theorem first_bank (f g : ℤ → Fin (a+4)) (p q : ℤ) :
     (ReturnOrigin.cfg f p 0).tapes.append (⟨fun _ => q,fun _ => g⟩ : Tapes 1 a) =
       (CopyWord.cfg f g p q).tapes := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem second_bank (f g : ℤ → Fin (a+4)) (p q : ℤ) :
     ((ReturnOrigin.cfg g q 0).tapes.append (⟨fun _ => p,fun _ => f⟩ : Tapes 1 a)).reindex swap =
       (CopyWord.cfg f g p q).tapes := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 /-- Copy and restore both heads with an exact linear bound, replacing all old cells. -/
 theorem replace_hoare (f g : ℤ → Fin (a+4)) (p q : ℤ)

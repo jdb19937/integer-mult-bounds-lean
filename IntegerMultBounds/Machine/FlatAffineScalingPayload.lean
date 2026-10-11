@@ -120,7 +120,7 @@ theorem input_payload {r : ℚ} (hr : Shared50AffineCoefficients.ScaleOccurs r)
   unfold SharedPayload.payload input Alphabet.mapTapes pair
   dsimp only
   congr 1
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
   · rw [show (FlatAffineScalingReady.input hr a bs qs ns (fun _ => blank) (fun _ => blank)).tape
       (FlatAffineScaling.sourceSlot r) = _ from FlatAffineScalingBootstrap.source_tape hr a bs qs ns _ _,
       input_destination]

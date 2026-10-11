@@ -65,15 +65,15 @@ def gatherHeaders (s : Shape) (hs : Fin 8 → List Bool) : Fin 3 → List Bool :
 
 theorem original_sources (hs : Fin 8 → List Bool) :
     SharedBank.payload (base (a := a) hs) headerFocus=ActivePrefixOffsetHeadersData.sources (headerWords hs) := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem temp_sources (s : Shape) (hs : Fin 8 → List Bool) :
     SharedBank.payload (headers (a := a) s hs) tempFocus=BinaryPrefixFieldTablePlaced.sources (tempHeaders s hs) := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem source_sources (s : Shape) (hs : Fin 8 → List Bool) :
     SharedBank.payload (tempReady (a := a) s hs) sourceFocus=BinaryPrefixFieldTablePlaced.sources (sourceHeaders s hs) := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem extract_sources (s : Shape) (hs : Fin 8 → List Bool) :
     SharedBank.payload (sourceReady (a := a) s hs) extractFocus=

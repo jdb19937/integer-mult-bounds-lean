@@ -31,13 +31,13 @@ def program (B : ℕ) := seq (extend (CompactComplexStopThreshold.program (q := 
 private theorem active (B D : ℕ) (ds es : List Bool) :
     Placement.active placement (intermediate (q := q) B D ds es) =
       BinaryDescriptorCompare.input es (FixedBasePowerUntil.counter (Nat.clog B D)) := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 private theorem replace (B D : ℕ) (ds es : List Bool) :
     Placement.replace placement (intermediate (q := q) B D ds es)
       (CompactComplexStopCompare.output es (FixedBasePowerUntil.counter (Nat.clog B D))) =
       output B D ds es := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem runs (B D : ℕ) (hB : 2≤B) (hD : 0<D) (ds es : List Bool)
     (hd : Counter.value ds=D) (cd : GrowingCounterData.Canonical ds)

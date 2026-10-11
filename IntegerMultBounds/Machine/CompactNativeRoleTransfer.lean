@@ -36,7 +36,7 @@ theorem controls_clean (bs : List Bool) :
         · rfl
         · exact binary_descriptor bs)
   have he : BinaryDescriptorCleanupList.cleared [0,1] v=SharedBank.empty 2 a := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   exact hh.consequence (fun _ h => h) (fun _ h => by simpa only [he] using h)
     (by simp [BinaryDescriptorCleanupList.cost]; omega)
 

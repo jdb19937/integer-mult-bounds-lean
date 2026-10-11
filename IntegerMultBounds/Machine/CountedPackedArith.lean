@@ -30,12 +30,12 @@ theorem input_eq (payload : Tapes 5 a) (hs : Fin 3 → List Bool) :
     CountedPackedRuntimeLine.input payload hs = payload.append (tail hs) := by
   unfold CountedPackedRuntimeLine.input CountedPackedRuntimeLine.caller
     CountedPackedShapeHeaders.input tail Tapes.append
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem shuffle_bank (v : Tapes 5 a) (w : Tapes 17 a) (extra : Tapes 4 a) :
     ((v.append w).append extra).reindex shuffle = (v.append extra).append w := by
   unfold Tapes.reindex Tapes.append shuffle
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem lift_bank (v : Tapes 9 a) (w : Tapes 17 a) (L : Fin 9 ≃ Fin 9) :
     (v.append w).reindex (liftL L) = (v.reindex L).append w := by

@@ -39,12 +39,12 @@ theorem rewinds (xs ys : List Bool) (hs : Fin 3 → List Bool) (p : ℕ) (hp : p
   have h0 := rewinds_at (marked (payload (word (a := a) xs) (word ys) p ys.length) hs) 0 xs p hp rfl rfl
   have he0 : setTape (marked (payload (word (a := a) xs) (word ys) p ys.length) hs) 0 (word xs) 0 =
       marked (payload (word xs) (word ys) 0 ys.length) hs := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   rw [he0] at h0
   have h1 := rewinds_at (marked (payload (word (a := a) xs) (word ys) 0 ys.length) hs) 1 ys ys.length le_rfl rfl rfl
   have he1 : setTape (marked (payload (word (a := a) xs) (word ys) 0 ys.length) hs) 1 (word ys) 0 =
       marked (payload (word xs) (word ys) 0 0) hs := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   rw [he1] at h1
   exact (h0.seq h1).consequence (fun _ h => h) (fun _ h => h) (by omega)
 

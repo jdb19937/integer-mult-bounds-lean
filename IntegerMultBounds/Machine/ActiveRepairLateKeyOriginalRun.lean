@@ -17,7 +17,7 @@ def program (side : ActiveRepairRankHeadersData.SourceSide) :=
 theorem pad (v : Tapes 43 1) :
     (CleanSubbank.bank (s := 43) v).append (SharedBank.empty 48 1)=
       CleanSubbank.bank (s := 91) v := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem header_runs (d : Data) (h : Valid d) :
     HoareTime (headerProgram d.side) (fun z => z=CleanSubbank.bank (s := 91) d.input)

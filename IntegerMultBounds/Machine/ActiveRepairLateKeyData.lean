@@ -96,7 +96,7 @@ private theorem patch_payload_raw (cs : List Bool) (ws : Fin 5 → List Bool)
         21 (CountedLateRepairFlag.key fl) 1) 22 (CountedGuardGadgetRecord.word v) 0).append
         (extra ph (fun _ => blank) (FlagCopy.keyTape []))) patchFocus=
       ActiveRepairDestinationPatchRun.bank cs v t u (fun _ => blank) ph := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem patch_payload (d : Data) : SharedBank.payload d.computed patchFocus=
     ActiveRepairDestinationPatchRun.bank d.cs d.target d.recoveredT d.recoveredU (fun _ => blank) d.ph :=
@@ -109,7 +109,7 @@ theorem patched_install (d : Data) : ActiveRepairEarlyKeyPlacement.install d.com
   · unfold patched
     change SharedBank.payload (setTape d.computed (patchFocus 1) _ _) patchFocus = _
     rw [CompactGadgetReservationPlacement.payload_set _ _ patch_injective,patch_payload]
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   · unfold patched
     change SharedBank.strip d.computed patchFocus=
       SharedBank.strip (setTape d.computed (patchFocus 1) _ _) patchFocus
@@ -117,13 +117,13 @@ theorem patched_install (d : Data) : ActiveRepairEarlyKeyPlacement.install d.com
 
 theorem append_payload (d : Data) : SharedBank.payload d.patched appendFocus=
     CountedRepairKeyAppend.input d.flag d.destination [] := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem written_install (d : Data) : ActiveRepairEarlyKeyPlacement.install d.patched appendFocus
     (CountedRepairKeyAppend.output d.flag d.destination [])=d.written := by
   apply ActiveRepairEarlyKeyPlacement.install_eq
   · simp only [CountedRepairKeyAppend.output,List.append_nil]
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   · unfold written
     change SharedBank.strip d.patched appendFocus=
       SharedBank.strip (setTape (setTape d.patched (appendFocus 0) _ _)
@@ -166,7 +166,7 @@ theorem cleanup_heads (d : Data) (i : Fin 33) (hi : i∈ActiveRepairLateKeyClean
 
 theorem cleanup_output (d : Data) :
     ActiveRepairLateKeyCleanup.execute ActiveRepairLateKeyCleanup.slots d.written=d.output := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 end
 end IntegerMultBounds.Machine.ActiveRepairLateKeyData

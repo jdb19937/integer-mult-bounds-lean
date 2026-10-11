@@ -51,15 +51,15 @@ private theorem product_hoare (v : Descriptor) (hs : Fin 6 → List Bool) (hp : 
   have hi : Placement.active productPlacement (bank hq hs v none) =
       DimensionProductDescriptor.input (RecursiveScalingDimensions.cqeBits (q := q) v)
         (RecursiveDimensionBank.nBits (q := q) v) := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   have ho : Placement.active productPlacement (bank hq hs v (some (bits (q := q) v))) =
       DimensionProductDescriptor.output (RecursiveScalingDimensions.cqeBits (q := q) v)
         (RecursiveDimensionBank.nBits (q := q) v)
         (v.beforeRows*v.rows*v.beforeH*q^v.width) (v.between*(q^v.width*v.afterD)) := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   have hf : Placement.extra productPlacement (bank hq hs v none) =
       Placement.extra productPlacement (bank hq hs v (some (bits (q := q) v))) := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   apply (Placement.hoare_at hh productPlacement _ hi).consequence (fun _ h => h) ?_ ?_
   · rintro x ⟨y,rfl,rfl⟩
     rw [Placement.replace,hf,← ho]

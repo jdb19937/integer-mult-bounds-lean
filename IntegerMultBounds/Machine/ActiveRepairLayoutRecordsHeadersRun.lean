@@ -31,7 +31,7 @@ def originalInput (d : Inputs s p offset rows) : Tapes 43 a :=
 
 theorem input_eq (d : Inputs s p offset rows) : bank (a := a) (initial d)=originalInput d := by
   apply congrArg₂ Tapes.mk
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
   · funext i
     fin_cases i
     · change _ = RadixZeroFill.encodedBinary (d.hs 0)

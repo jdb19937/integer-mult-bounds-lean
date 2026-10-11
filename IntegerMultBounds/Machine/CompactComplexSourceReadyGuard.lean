@@ -122,7 +122,7 @@ private theorem initialized_eq (v : Tapes (tapes s c) 2) (D e : ℕ) (h : Ready 
   congr 1
   unfold CompactComplexStopRun.input CompactComplexStopRun.exponent FixedBasePowerUntil.input
   simp only [BinaryDescriptorStackRoundtrip.descriptor_encoded]
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 def initializeProgram := seq
   (copyProgram (dimension (s:=s) (c:=c)) 6 (dimension_scratch 6))

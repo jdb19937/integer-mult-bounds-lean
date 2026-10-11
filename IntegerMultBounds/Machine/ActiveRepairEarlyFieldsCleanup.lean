@@ -42,7 +42,7 @@ def output (q b : ℕ) (hb : 1≤b) (hbq : b+1≤q) (V W Z cs : List Bool) (hs :
 theorem result_eq (q b : ℕ) (hb : 1≤b) (hbq : b+1≤q)
     (V W Z cs : List Bool) (hs : Fin 3 → List Bool) :
     result (toggled q b hb hbq V W Z cs hs)=output q b hb hbq V W Z cs hs := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem runs (q b : ℕ) (hb : 1≤b) (hbq : b+1≤q)
     (V W Z cs : List Bool) (hs : Fin 3 → List Bool)

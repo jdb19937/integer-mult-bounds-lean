@@ -32,7 +32,7 @@ theorem ready (body : Tapes 2 0) (bs : List Bool) :
     (body.append (ArbitraryWidthZeroHeaderShared.header (a := 0))).append (descriptor bs) =
       CountedLoopReuseAlphabet.bank body CountedLoopReuseAlphabet.empty
         (CountedLoopReuseAlphabet.binary bs) 1 1 := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem returns (xs : List Bool) (g : ℤ → Fin 4) (p : ℤ) (bs : List Bool) (n : ℕ)
     (hg : g (p-1)=blank) :
@@ -53,11 +53,11 @@ theorem returns (xs : List Bool) (g : ℤ → Fin 4) (p : ℤ) (bs : List Bool) 
       (p+(n*xs.length : ℕ)) 0).tapes.append extra).reindex rewindPlacement =
       CountedLoopReuseAlphabet.bank (state xs g p n) CountedLoopReuseAlphabet.empty
         (CountedLoopReuseAlphabet.binary bs) 1 1 := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   have h1 : ((ReturnOrigin.cfg (putWord g p ((copies xs n).map bitSymbol)) p 2).tapes.append extra).reindex rewindPlacement =
       CountedLoopReuseAlphabet.bank (bank xs (putWord g p ((copies xs n).map bitSymbol)) p)
         CountedLoopReuseAlphabet.empty (CountedLoopReuseAlphabet.binary bs) 1 1 := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   simpa only [rewind,h0,h1] using h
 
 /-- Actual word copying, source returns, counted iteration and output rewind;

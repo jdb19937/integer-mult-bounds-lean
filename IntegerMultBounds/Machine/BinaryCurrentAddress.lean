@@ -91,7 +91,7 @@ theorem copies_into (counter : List Bool) (g : ℤ → Fin (a+4))
       Copy.tapes (binary counter) (SelectedSourceBitsScan.word counter) p counter.length := by
     intro p
     rw [binary_word]
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   simp only [List.length_map,he] at hr
   have ht := SelectedSourceBitsRewind.rewinds_at
     (Copy.tapes (binary (a := a) counter) (SelectedSourceBitsScan.word counter) 1 counter.length)
@@ -99,7 +99,7 @@ theorem copies_into (counter : List Bool) (g : ℤ → Fin (a+4))
   have het : SharedPlacementAlphabet.setTape
       (Copy.tapes (binary (a := a) counter) (SelectedSourceBitsScan.word counter) 1 counter.length)
       1 (SelectedSourceBitsScan.word counter) 0=bank counter counter := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   rw [het] at ht
   exact ((hc.seq hr).seq ht).consequence (fun _ h => h) (fun _ h => h) (by omega)
 
@@ -120,7 +120,7 @@ theorem runs (counter old : List Bool) (hl : old.length=counter.length) :
   have hi := hoare_extend_eq (increments (a := a) counter) (one (SelectedSourceBitsScan.word counter) 0)
   have he : ∀ bs,(one (binary (a := a) bs) 1).append (one (SelectedSourceBitsScan.word counter) 0)=bank bs counter := by
     intro bs
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   simp only [he] at hi
   exact ((copies counter old hl).seq hi).consequence (fun _ h => h) (fun _ h => h) (by omega)
 

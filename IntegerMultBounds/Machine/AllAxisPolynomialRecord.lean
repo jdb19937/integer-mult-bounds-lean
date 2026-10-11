@@ -39,7 +39,7 @@ def output (order : Order) (v : Stage s) (rows : ℕ) (m : ℕ)
 
 theorem reassociate (b : Tapes 56 2) (z : Tapes 4 2) (R : ℕ) :
     b.append (tail z R)=CountedLoopHeaderClean.bank ((b.append z).append (multiplicity R)) := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem prepared_flags (order : Order) (v : Stage s) (rows : ℕ) (m : ℕ)
     (ws : List (ZMod 4)) (addr : List Bool) (z : Tapes 4 2) :
@@ -52,7 +52,7 @@ theorem prepared_core (order : Order) (v : Stage s) (rows : ℕ) (m : ℕ)
 theorem reassociate60 (x : Tapes 60 2) (R : ℕ) :
     x.append ((multiplicity R).append (SharedBank.empty 2 2))=
       CountedLoopHeaderClean.bank (x.append (multiplicity R)) := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem prepared_headers (order : Order) (v : Stage s) (rows : ℕ) (m : ℕ)
     (ws : List (ZMod 4)) (addr : List Bool) (z : Tapes 4 2) :

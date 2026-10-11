@@ -87,7 +87,7 @@ theorem core_runs (hs : Fin 3 → List Bool) (W start d : ℕ) (h : start+d≤W)
     (by simp [noCopy,noZero,noCount,noDummy,noTable,BinaryPrefixFieldTableGather.output,setTape])
   have he : setTape (noCopy hs W start d h) 7
       (putWord (fun _ => blank) 0 ((word W start d h).map bitSymbol)) 0 = output hs W start d h := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   rw [he] at h5
   have hall := ((((h0.seq h1).seq h2).seq h3).seq h4).seq h5
   simpa only [core,cost,List.length_map,BinaryAddressTableData.table_length,List.length_cons,

@@ -67,7 +67,7 @@ theorem payload (c m D K rho ell q d G : ℕ) (xs : List (Fin 6)) :
     SharedBank.payload (NativeZeroPaddingPlaced.bank (NativeZeroPaddingHeaders.initial (originalRows c m d K)
       (initialRows c m d K) ((D-rowAxes c m d)*K) ell (width D K q)) xs) ports=
       SharedBank.payload (originalBank (prepared c m D K rho ell q d G) xs) focus := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem frame (st : ActiveRepairRankHeadersCommands.State) (xs ys : List (Fin 6)) :
     SharedBank.strip (originalBank st xs) focus=SharedBank.strip (originalBank st ys) focus := by

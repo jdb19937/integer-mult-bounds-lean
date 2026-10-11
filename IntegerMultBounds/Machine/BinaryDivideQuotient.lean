@@ -14,22 +14,22 @@ def bank (f0 f1 f2 f3 f4 f5 : ℤ → Fin (a+4)) (p0 p1 p2 p3 p4 p5 : ℤ) : Tap
 def placement : Fin (2+4) ≃ Fin 6 where
   toFun := ![4,5,0,1,2,3]
   invFun := ![2,3,4,5,0,1]
-  left_inv i := by fin_cases i <;> rfl
-  right_inv i := by fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 private theorem appended (f0 f1 f2 f3 f4 f5 : ℤ → Fin (a+4)) (p0 p1 p2 p3 p4 p5 : ℤ) :
     (BinaryDivide.bank f0 f1 f2 f3 f4 p0 p1 p2 p3 p4).append (FiniteReturnStack.bank f5 p5) =
       bank f0 f1 f2 f3 f4 f5 p0 p1 p2 p3 p4 p5 := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 private theorem active (f0 f1 f2 f3 f4 f5 : ℤ → Fin (a+4)) (p0 p1 p2 p3 p4 p5 : ℤ) :
     Placement.active placement (bank f0 f1 f2 f3 f4 f5 p0 p1 p2 p3 p4 p5) = Copy.tapes f4 f5 p4 p5 := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 private theorem replace (f0 f1 f2 f3 f4 f5 g4 g5 : ℤ → Fin (a+4)) (p0 p1 p2 p3 p4 p5 q4 q5 : ℤ) :
     Placement.replace placement (bank f0 f1 f2 f3 f4 f5 p0 p1 p2 p3 p4 p5) (Copy.tapes g4 g5 q4 q5) =
       bank f0 f1 f2 f3 g4 g5 p0 p1 p2 p3 q4 q5 := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 def program (a : ℕ) :=
   seq (extend (BinaryDivide.program a) 1) (Placement.placed BinaryQuotientNormalize.program placement)

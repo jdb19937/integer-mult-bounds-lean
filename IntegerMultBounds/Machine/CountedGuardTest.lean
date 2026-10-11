@@ -101,7 +101,7 @@ theorem runs (target : Ordering) (f g F : ℤ → Fin (a+4)) (px pc pf : ℤ)
     (fun i hi => column_hoare f g F px pc pf xs ys start d i hx hy hi)
   have hi : Placement.active flagPlace A=GuardTest.bank2
       (Function.update (fun _ => blank) 0 (ordSymbol (orderAfter .eq xs ys start d))) F 0 pf := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   have hf := Placement.hoare_at (GuardTest.flagCell_hoare target (fun _ => blank) F 0 pf
     (orderAfter .eq xs ys start d)) flagPlace A hi
   let B0 := setTape (bank (putWord f px (xs.map bitSymbol)) (putWord g pc (ys.map bitSymbol))
@@ -111,7 +111,7 @@ theorem runs (target : Ordering) (f g F : ℤ → Fin (a+4)) (px pc pf : ℤ)
     refine hf.consequence (fun _ h => h) ?_ le_rfl
     rintro w ⟨z,rfl,rfl⟩
     apply congrArg₂ Tapes.mk
-    · funext i; fin_cases i <;> rfl
+    · apply List.ofFn_injective; rfl
     · funext i z; fin_cases i <;> first | rfl | simp [bank,GuardTest.bank2,flagPlace,Tapes.append,Fin.addCases]
   have he := BinaryDescriptorCleanupList.one_hoare (4 : Fin 6) B0 [] rfl rfl
   have heout : setTape B0 4 (fun _ => blank) 0 = bank
@@ -120,7 +120,7 @@ theorem runs (target : Ordering) (f g F : ℤ → Fin (a+4)) (px pc pf : ℤ)
       (px+start+d) (pc+d) (pf+1) ks := by
     dsimp only [B0]
     rw [SharedPlacementAlphabet.setTape_setTape]
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   rw [heout] at he
   exact (((hm.seq hc).seq hf').seq he).consequence (fun _ h => h) (fun _ h => h)
     (by simp only [Finset.sum_const,Finset.card_range,smul_eq_mul,List.length_nil]; omega)

@@ -37,8 +37,8 @@ def countPlacement : Fin (9+3) ≃ Fin 12 where
   invFun := fun i => match i.val with
     | 0 => 9 | 1 => 10 | 2 => 11 | 3 => 0 | 4 => 1 | 5 => 2
     | 6 => 4 | 7 => 5 | 8 => 3 | 9 => 6 | 10 => 7 | _ => 8
-  left_inv i := by fin_cases i <;> rfl
-  right_inv i := by fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def physicalPlacement : Fin (7+5) ≃ Fin 12 where
   toFun := fun i => match i.val with
@@ -47,8 +47,8 @@ def physicalPlacement : Fin (7+5) ≃ Fin 12 where
   invFun := fun i => match i.val with
     | 0 => 0 | 1 => 1 | 2 => 6 | 3 => 7 | 4 => 8 | 5 => 9
     | 6 => 3 | 7 => 4 | 8 => 10 | 9 => 2 | 10 => 5 | _ => 11
-  left_inv i := by fin_cases i <;> rfl
-  right_inv i := by fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 private theorem placed_exact {s u t r cost : ℕ} {M : Program s r 0}
     (e : Fin (s+u) ≃ Fin t) (v w : Tapes t 0) (small small' : Tapes s 0)
@@ -74,7 +74,7 @@ theorem count_active (source dest : ℤ → Fin 4) (p q : ℤ) (ps rs rps ls : L
     Placement.active countPlacement (bank source dest p q ps rs rps ls valid padding) =
       RowPaddingSpanCounts.bank (q := 0) rs rps ls none valid padding := by
   cases valid <;> cases padding <;>
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem count_extra_index (i : Fin 3) : countPlacement (Fin.natAdd 9 i) = Fin.castAdd 9 i := by
   fin_cases i <;> rfl
@@ -90,13 +90,13 @@ theorem count_extra (source dest : ℤ → Fin 4) (p q : ℤ) (ps rs rps ls : Li
 theorem physical_active (source dest : ℤ → Fin 4) (p q : ℤ) (ps rs rps ls valid padding : List Bool) :
     Placement.active physicalPlacement (bank source dest p q ps rs rps ls (some valid) (some padding)) =
       RowPaddingExecution.clockBank source dest p q valid padding ps (fun _ => blank) 0 := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem physical_extra (source dest source' dest' : ℤ → Fin 4) (p q p' q' : ℤ)
     (ps rs rps ls valid padding : List Bool) :
     Placement.extra physicalPlacement (bank source dest p q ps rs rps ls (some valid) (some padding)) =
       Placement.extra physicalPlacement (bank source' dest' p' q' ps rs rps ls (some valid) (some padding)) := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem construct_hoare (source dest : ℤ → Fin 4) (p q : ℤ) (ps rs rps ls : List Bool)
     (R R' L : ℕ) (hr : Counter.value rs = R) (hp : Counter.value rps = R')
@@ -169,14 +169,14 @@ theorem cleanup_hoare (source dest : ℤ → Fin 4) (p q : ℤ) (ps rs rps ls va
     (by exact (BinaryDescriptorStackRoundtrip.descriptor_encoded valid).trans (encoded_zero valid) |>.symm) rfl
   have he : SharedPlacementAlphabet.setTape (bank source dest p q ps rs rps ls (some valid) (some padding))
       6 (fun _ => blank) 0 = bank source dest p q ps rs rps ls none (some padding) := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   rw [he] at h
   have hh := BinaryDescriptorCleanupList.one_hoare (7 : Fin 12)
     (bank source dest p q ps rs rps ls none (some padding)) padding
     (by exact (BinaryDescriptorStackRoundtrip.descriptor_encoded padding).trans (encoded_zero padding) |>.symm) rfl
   have he' : SharedPlacementAlphabet.setTape (bank source dest p q ps rs rps ls none (some padding))
       7 (fun _ => blank) 0 = bank source dest p q ps rs rps ls none none := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   rw [he'] at hh
   exact h.seq hh
 

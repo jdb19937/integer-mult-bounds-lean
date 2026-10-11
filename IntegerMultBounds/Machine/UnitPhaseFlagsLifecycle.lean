@@ -19,7 +19,7 @@ theorem prepares : HoareTime prepare (fun v => v=SharedBank.empty 2 2)
   · simp only [run_one,step,prepare,write,Tapes.start,ite_true,Move.offset,add_zero]
     congr 1
     congr 1
-    · funext i; fin_cases i <;> rfl
+    · apply List.ofFn_injective; rfl
     · funext i z
       fin_cases i <;> simp [flags,MarkedWordCleanup.one,Tapes.append,putWord,
         UnitPhaseNumerator.low,UnitPhaseNumerator.high,SharedBank.empty,Fin.addCases,Function.update_apply]
@@ -33,7 +33,7 @@ theorem cleans (p : Fin 4) : HoareTime cleanup (fun v => v=flags p)
   · simp only [run_one,step,cleanup,write,Tapes.start,ite_true,Move.offset,add_zero]
     congr 1
     congr 1
-    · funext i; fin_cases i <;> rfl
+    · apply List.ofFn_injective; rfl
     · funext i z
       fin_cases i <;> simp [flags,MarkedWordCleanup.one,Tapes.append,putWord,SharedBank.empty,Fin.addCases]
       all_goals intro hz; simp [hz]

@@ -141,7 +141,7 @@ theorem runs (q b n : ℕ) (V W C1 C2 C3 : List Bool) (ds bs ns : List Bool)
     (marked (stateW (a := a) q b n V W C1 C2 C3 ds bs n) ns) [] rfl rfl
   have e : setTape (marked (stateW (a := a) q b n V W C1 C2 C3 ds bs n) ns) 11 (fun _ => blank) 0 =
       input (stateW q b n V W C1 C2 C3 ds bs n) ns := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   rw [e] at he
   exact ((hm.seq hl).seq he).consequence (fun _ h => h) (fun _ h => h) (by simp; omega)
 

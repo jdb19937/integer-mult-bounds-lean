@@ -34,8 +34,8 @@ def output (ss ps : List Bool) (P S : ℕ) : Tapes 7 a :=
 def productPlacement : Fin (6+1) ≃ Fin 7 where
   toFun := ![4,3,5,0,6,1,2]
   invFun := ![3,5,6,1,0,2,4]
-  left_inv i := by fin_cases i <;> rfl
-  right_inv i := by fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def oneProgram := Placement.placed (RecursiveChildQuotientsConstant.program (a := a) 1)
   (FiniteReturnStackAt.placement (2 : Fin 7))
@@ -95,7 +95,7 @@ theorem product_hoare (ss ps : List Bool) (P S : ℕ) (hS : 0 < S)
   have lp := Nat.log2_le_self (Counter.value ps)
   apply placed_exact productPlacement _ _ _ _ _ _ _
     (BoundedProductDescriptor.construct_hoare ss ps P S P hS hs hp le_rfl (by omega) (by omega))
-  all_goals apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  all_goals apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 /-- The whole fixed finite constructor uses only supplied S/P descriptors,
 including the physical constant writer and the paid product scratch setup. -/
@@ -116,14 +116,14 @@ theorem cleanup_hoare (ss ps : List Bool) (P S : ℕ) (hP : 0 < P) (hS : 0 < S) 
     (BinaryDescriptorStackRoundtrip.descriptor_encoded _).symm rfl
   have he : SharedPlacementAlphabet.setTape (output (a := a) ss ps P S) 2 (fun _ => blank) 0 =
       bank ss ps none (some (productBits P S)) := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   rw [he] at h
   have hh := BinaryDescriptorCleanupList.one_hoare (3 : Fin 7)
     (bank (a := a) ss ps none (some (productBits P S))) (productBits P S)
     (BinaryDescriptorStackRoundtrip.descriptor_encoded _).symm rfl
   have he' : SharedPlacementAlphabet.setTape (bank (a := a) ss ps none (some (productBits P S)))
       3 (fun _ => blank) 0 = input ss ps := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   rw [he'] at hh
   have hw := GrowingCounterData.canonical_width _ (product_canonical P S)
   have hl := Nat.log2_le_self (Counter.value (productBits P S))

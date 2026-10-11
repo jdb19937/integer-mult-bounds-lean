@@ -86,7 +86,7 @@ theorem caller_view {m n : ℕ} (h : m=n) (d : Inputs s g) (x : Fin m → Bool) 
     caller d (view h x)=caller d x := by unfold caller; rw [ActivePrefixDirtyControlConjugationData.word_view]
 theorem caller_set {m n : ℕ} (d : Inputs s g) (x : Fin m → Bool) (y : Fin n → Bool) :
     setTape (caller d x) 29 (ActiveTargetRotation.word y) 0=caller d y := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 def selected (g : Geometry s) (x : FullArray s g.rows) : FullArray s g.rows :=
   view g.targetVolume.symm (ActivePrefixDirtyControlLoad.result (m := .selected) g.target g.rows g.targetSuffix (view g.targetVolume x))
@@ -109,17 +109,17 @@ theorem target_sources (d : Inputs s g) (x : FullArray s g.rows) :
       ActivePrefixDirtyControlLoadPlaced.sources (a := prime) (m := .selected) g.target g.rows g.targetSuffix
         d.ht d.rs d.bt (view g.targetVolume x) := by
   rw [←caller_view g.targetVolume d x]
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem compact_sources (d : Inputs s g) (x : FullArray s g.rows) :
     SharedBank.payload (caller d x) compactFocus=
       ActivePrefixDirtyControlConjugationData.base d.gs d.bw d.hc d.rs d.bc x := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem source_sources (d : Inputs s g) (x : FullArray s g.rows) :
     SharedBank.payload (caller d x) sourceFocus=
       ActivePrefixDirtyControlConjugationData.base d.gs d.bw d.hx d.rs d.bc x := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 end
 end IntegerMultBounds.Machine.ActivePrefixDirtyControlSequenceData

@@ -61,7 +61,7 @@ private theorem frame_eq (source dest : ℤ → Fin 4) (p q : ℤ) (bs qs ns : L
       (MultiControlTranslationExecution.translationBank source dest p q bs qs).append
         (CountedLoopReuseAlphabet.controls CountedLoopReuseAlphabet.empty (CountedLoopReuseAlphabet.binary ns) 1 1) := by
   apply congrArg₂ Tapes.mk
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
   · funext i z
     fin_cases i <;> try rfl
     all_goals

@@ -98,7 +98,7 @@ def output (hs : Fin 3 → List Bool) (q b n : ℕ) (hb : 1 ≤ b) (hbq : b+1 �
 
 theorem final_eq (hs : Fin 3 → List Bool) (q b n : ℕ) (hb : 1 ≤ b) (hbq : b+1 ≤ q) :
     states hs q b n hb hbq 6=output hs q b n hb hbq := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem cleans (hs : Fin 3 → List Bool) (q b n : ℕ) (hb : 1 ≤ b) (hbq : b+1 ≤ q) :
     HoareTime program (fun z => z=BinaryAddressOffsetGather.after hs q b n hb hbq)

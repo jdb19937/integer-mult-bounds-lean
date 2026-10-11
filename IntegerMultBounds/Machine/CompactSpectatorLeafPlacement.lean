@@ -189,7 +189,7 @@ private theorem payload_replaced (f g : ℤ → Fin 6) (vs : Fin 15 → ℕ) :
   unfold payload
   rw [SharedPlacementAlphabet.setTape_append_left]
   congr 1
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem runs (s : Shape) (rows ell p : ℕ) (rho : Fin s.chunk) {left k : ℕ}
     (visit : Visit s.active left k) (slots right sourceSlot targetSlot : ℕ)

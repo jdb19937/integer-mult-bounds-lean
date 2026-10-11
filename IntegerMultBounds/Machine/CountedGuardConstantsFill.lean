@@ -74,7 +74,7 @@ theorem fills (b : Bool) (f : ℤ → Fin (a+4)) (p : ℤ) (ks : List Bool) (n :
   have eo : setTape (CountedLoopReuseAlphabet.bank (S n) CountedLoopReuseAlphabet.empty
       (CountedLoopReuseAlphabet.binary ks) 1 1) 1 (fun _ => blank) 0=
       input (putWord f p (List.replicate n (bitSymbol b))) (p+n) ks := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   rw [eo] at he
   exact ((hm.seq hl).seq he).consequence (fun _ h => h) (fun _ h => h) (by
     simp only [Finset.sum_const,Finset.card_range,smul_eq_mul,List.length_nil]; omega)
@@ -90,7 +90,7 @@ theorem positions (m : Move) (f : ℤ → Fin (a+4)) (p : ℤ) (ks : List Bool) 
     (CountedPosition.bank f (p+n*m.offset) ks) [] rfl rfl
   have eo : setTape (CountedPosition.bank f (p+n*m.offset) ks) 1 (fun _ => blank) 0=
       input f (p+n*m.offset) ks := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   rw [eo] at he
   exact ((hm.seq hl).seq he).consequence (fun _ h => h) (fun _ h => h) (by simp; omega)
 

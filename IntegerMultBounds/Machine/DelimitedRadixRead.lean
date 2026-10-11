@@ -24,7 +24,7 @@ theorem right_runs (f g : ℤ → Fin (q+4)) (p r : ℤ) :
     simp only [step,rightProgram,Copy.tapes,Copy.cfg,Config.tapes,Tapes.start,ite_true,Move.offset]
     congr 1
     congr 1
-    · funext i; fin_cases i <;> rfl
+    · apply List.ofFn_injective; rfl
     · funext i z
       fin_cases i
       · by_cases hz : z=p <;> simp [hz]

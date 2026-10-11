@@ -30,7 +30,7 @@ theorem mapped_output (hs : Fin 3 → List Bool) (W start d : ℕ) (h : start+d�
 
 theorem output_eq (hs : Fin 3 → List Bool) (out : ℤ → Fin (a+4)) :
     bank hs out=setTape (bank hs (fun _ => blank)) 7 out 0 := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem constructs (hs : Fin 3 → List Bool) (W start d : ℕ) (h : start+d≤W)
     (hv : ∀ i, Counter.value (hs i)=BinaryPrefixFieldTableGather.values W start d i)

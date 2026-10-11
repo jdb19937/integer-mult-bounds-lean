@@ -43,15 +43,15 @@ def ready (d : Inputs) := state gs bw hs (some (targetWords d)) (some (compactWo
 theorem state_set (ht hc : Option HeaderWords) {n : ℕ} (y : Fin n → Bool) :
     SharedPlacementAlphabet.setTape (state gs bw hs ht hc x) 22 (ActiveTargetRotation.word y) 0=
       state gs bw hs ht hc y := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem target_sources : SharedBank.payload (base gs bw hs x) targetFocus=
     ActivePrefixLayoutHeadersPlaced.sources hs := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem compact_sources (d : Inputs) : SharedBank.payload (targetReady gs bw hs x d) compactFocus=
     ActivePrefixLayoutHeadersPlaced.sources hs := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem target_outputs (d : Inputs)
     (hv : ∀ i, Counter.value (hs i)=ActivePrefixLayoutHeadersData.originalValues d i)
@@ -59,14 +59,14 @@ theorem target_outputs (d : Inputs)
     SharedBank.payload (state gs bw hs (some (targetWords d)) other x) targetFocus=
       ActivePrefixLayoutHeadersPlaced.outputs .target d := by
   rw [ActivePrefixLayoutHeadersEndpoint.canonical_originals d hs hv hc]
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem compact_outputs (d : Inputs)
     (hv : ∀ i, Counter.value (hs i)=ActivePrefixLayoutHeadersData.originalValues d i)
     (hc : ∀ i, GrowingCounterData.Canonical (hs i)) :
     SharedBank.payload (ready gs bw hs x d) compactFocus=ActivePrefixLayoutHeadersPlaced.outputs .compactBefore d := by
   rw [ActivePrefixLayoutHeadersEndpoint.canonical_originals d hs hv hc]
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem target_frame (ht ht' hc : Option HeaderWords) :
     SharedBank.strip (state gs bw hs ht hc x) targetFocus=SharedBank.strip (state gs bw hs ht' hc x) targetFocus := by
@@ -84,7 +84,7 @@ theorem sequence_sources (d : Inputs) : SharedBank.payload (ready gs bw hs x d) 
     ActivePrefixEarlySequenceData.base gs bw
       (fun i => targetWords d (Fin.castAdd 2 i)) (fun i => compactWords d (Fin.castAdd 2 i))
       (targetWords d 8) (targetWords d 9) (compactWords d 9) x := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem sequence_frame (d : Inputs) {n : ℕ} (y : Fin n → Bool) :
     SharedBank.strip (ready gs bw hs x d) sequenceFocus=SharedBank.strip (ready gs bw hs y d) sequenceFocus := by

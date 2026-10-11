@@ -34,9 +34,9 @@ theorem split_runs (hs : Fin 6 → List Bool) (hv : RecursiveDimensionBank.Heade
     (RecursiveRowsClean.bank hs (ButterflyAxisRouting.sourcePayload xs))
     (RecursiveRowsClean.bank hs (ButterflyAxisRouting.rolePayload xs)) _
   · rw [RecursiveRowsRoleBank.local_payload,split_payload]
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   · rw [RecursiveRowsRoleBank.local_payload,split_payload]
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   · exact RecursiveRowsRoleBank.local_clean _ _
   · exact RecursiveRowsRoleBank.local_clean _ _
   · exact split_frame _ _ _ _ bs ls hs rfl rfl
@@ -57,9 +57,9 @@ theorem merge_runs (hs : Fin 6 → List Bool) (hv : RecursiveDimensionBank.Heade
     (RecursiveRowsClean.bank hs (ButterflyAxisRouting.rolePayload xs))
     (RecursiveRowsClean.bank hs (ButterflyAxisRouting.sourcePayload xs)) _
   · rw [RecursiveRowsRoleBank.local_payload,merge_payload]
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   · rw [RecursiveRowsRoleBank.local_payload,merge_payload]
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   · exact RecursiveRowsRoleBank.local_clean _ _
   · exact RecursiveRowsRoleBank.local_clean _ _
   · exact merge_frame _ _ _ _ bs ls hs rfl rfl

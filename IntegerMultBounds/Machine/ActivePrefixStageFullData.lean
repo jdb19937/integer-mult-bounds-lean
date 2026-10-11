@@ -42,16 +42,16 @@ theorem ready_sources (order : Order) (d : Inputs s) (x : Array s d.rows) :
     SharedBank.payload (ready order d x) focus=
       ActivePrefixEarlySequenceOriginalPlaced.sources (descriptors order d).gs
         (descriptors order d).bw (descriptors order d).hs x := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem late_sources (d : Inputs s) (x : Array s d.rows) :
     SharedBank.payload (ready .late d x) focus=
       ActiveRepairLayoutRecordsFullLatePlaced.common (descriptors .late d) x := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem caller_set (d : Inputs s) (st : ActivePrefixStageHeadersRouting.State) (x y : Array s d.rows) :
     SharedPlacementAlphabet.setTape (caller d st x) 65 (ActiveTargetRotation.word y) 0=caller d st y := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 def earlyResult (d : Inputs s) (horder : d.stage.source.val<d.stage.target.val) (x : Array s d.rows) :=
   ActiveRepairLayoutRecordsFullEarlyData.result (descriptors .early d)

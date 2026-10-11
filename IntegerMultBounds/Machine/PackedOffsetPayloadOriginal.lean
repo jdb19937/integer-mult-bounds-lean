@@ -19,7 +19,7 @@ theorem generated (payload offsets : ℤ → Fin 4) (p s : ℤ)
     (bs ns ws : List Bool) (w : ℕ) :
     PackedOffsetPowerHeader.output (bank payload offsets p s bs ns ws) w =
       PackedOffsetPayload.bank payload (fun _ => blank) offsets p 0 s bs (powerBits w) ns ws := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem scratch (payload offsets : ℤ → Fin 4) (p s : ℤ) (bs ns ws : List Bool) :
     PackedOffsetPowerHeader.ScratchBlank (bank payload offsets p s bs ns ws) := by

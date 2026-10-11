@@ -23,7 +23,7 @@ theorem runs_linear (s : Shape) (hs : Fin 8 → List Bool)
     output (a := a) s hs=SharedPlacementAlphabet.setTape (input hs) (9 : Fin 56)
       (ActivePrefixParityNegativeNegate.word (ActivePrefixParityNegativeData.negative s)) 0 := by
   rw [output,ActivePrefixParityNegativeBank.output_eq]
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 end
 end IntegerMultBounds.Machine.ActivePrefixParityNegative

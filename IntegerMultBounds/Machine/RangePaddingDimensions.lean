@@ -109,8 +109,8 @@ def pnPlacement : Fin (6+11) ≃ Fin 17 where
     | 14 => 14
     | 15 => 15
     | _ => 16
-  left_inv i := by fin_cases i <;> rfl
-  right_inv i := by fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def pnProgram := Placement.placed (BoundedProductDescriptor.program (q := q)) pnPlacement
 
@@ -151,8 +151,8 @@ def pngPlacement : Fin (6+11) ≃ Fin 17 where
     | 14 => 14
     | 15 => 15
     | _ => 16
-  left_inv i := by fin_cases i <;> rfl
-  right_inv i := by fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def pngProgram := Placement.placed (BoundedProductDescriptor.program (q := q)) pngPlacement
 
@@ -193,8 +193,8 @@ def gmPlacement : Fin (6+11) ≃ Fin 17 where
     | 14 => 14
     | 15 => 15
     | _ => 16
-  left_inv i := by fin_cases i <;> rfl
-  right_inv i := by fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def gmProgram := Placement.placed (BoundedProductDescriptor.program (q := q)) gmPlacement
 
@@ -235,8 +235,8 @@ def gmbPlacement : Fin (6+11) ≃ Fin 17 where
     | 14 => 14
     | 15 => 15
     | _ => 16
-  left_inv i := by fin_cases i <;> rfl
-  right_inv i := by fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def gmbProgram := Placement.placed (BoundedProductDescriptor.program (q := q)) gmbPlacement
 
@@ -274,9 +274,9 @@ private theorem pn_hoare (source destination : ℤ → Fin (q+4)) (hs : Fin 5 �
     HoareTime (pnProgram (q := q)) (fun z => z = stage source destination hs xs 0)
       (fun z => z = stage source destination hs xs 1) (53*(N*W)+28) := by
   apply placed_exact pnPlacement _ _ _ _ _ _ _ (bounded_product (hs 1) (hs 0) N W hn hw cn cw hW)
-  · apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  · apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   · apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> simp [pnPlacement,stage,bank,tp,hd,hx]
-  · apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  · apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 private theorem png_hoare (source destination : ℤ → Fin (q+4)) (hs : Fin 5 → List Bool)
     (xs : Fin 4 → List Bool) (N W : ℕ)
@@ -286,9 +286,9 @@ private theorem png_hoare (source destination : ℤ → Fin (q+4)) (hs : Fin 5 �
     HoareTime (pngProgram (q := q)) (fun z => z = stage source destination hs xs 1)
       (fun z => z = stage source destination hs xs 2) (53*(N*W)+28) := by
   apply placed_exact pngPlacement _ _ _ _ _ _ _ (bounded_product (xs 0) (hs 2) N W hn hw cn cw hW)
-  · apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  · apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   · apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> simp [pngPlacement,stage,bank,tp,hd,hx]
-  · apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  · apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 private theorem gm_hoare (source destination : ℤ → Fin (q+4)) (hs : Fin 5 → List Bool)
     (xs : Fin 4 → List Bool) (N W : ℕ)
@@ -298,9 +298,9 @@ private theorem gm_hoare (source destination : ℤ → Fin (q+4)) (hs : Fin 5 �
     HoareTime (gmProgram (q := q)) (fun z => z = stage source destination hs xs 2)
       (fun z => z = stage source destination hs xs 3) (53*(N*W)+28) := by
   apply placed_exact gmPlacement _ _ _ _ _ _ _ (bounded_product (hs 4) (hs 2) N W hn hw cn cw hW)
-  · apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  · apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   · apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> simp [gmPlacement,stage,bank,tp,hd,hx]
-  · apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  · apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 private theorem gmb_hoare (source destination : ℤ → Fin (q+4)) (hs : Fin 5 → List Bool)
     (xs : Fin 4 → List Bool) (N W : ℕ)
@@ -310,9 +310,9 @@ private theorem gmb_hoare (source destination : ℤ → Fin (q+4)) (hs : Fin 5 �
     HoareTime (gmbProgram (q := q)) (fun z => z = stage source destination hs xs 3)
       (fun z => z = stage source destination hs xs 4) (53*(N*W)+28) := by
   apply placed_exact gmbPlacement _ _ _ _ _ _ _ (bounded_product (xs 2) (hs 3) N W hn hw cn cw hW)
-  · apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  · apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   · apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> simp [gmbPlacement,stage,bank,tp,hd,hx]
-  · apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  · apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem words_value (P N G B M : ℕ) :
     Counter.value (words P N G B M 0) = P*N ∧
@@ -396,7 +396,7 @@ private theorem cleanup_words (source destination : ℤ → Fin (q+4)) (hs : Fin
         first | rfl | simpa [ws,bank,tp] using (BinaryDescriptorStackRoundtrip.descriptor_encoded (a := q) _).symm)
   apply h.consequence (fun _ h => h) _ _
   · rintro z rfl
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   · simp [BinaryDescriptorCleanupList.cost,slots,ws]
     omega
 

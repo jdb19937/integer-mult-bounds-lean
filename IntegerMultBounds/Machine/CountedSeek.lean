@@ -153,8 +153,8 @@ private theorem project_bank (source dest : ℤ → Fin 4) (p q : ℤ) (bs : Lis
       (CountedCopyReuse.binary bs) p q 1 1).start CountedCopyReuse.program)).tapes = bank source p bs := by
   unfold projectConfig CountedCopyReuse.bank Config.tapes Tapes.start bank
   congr 1
-  · funext i; fin_cases i <;> rfl
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
+  · apply List.ofFn_injective; rfl
 
 private def segment (payload : ℤ → Fin 4) (p : ℤ) : ℕ → List (Fin 4)
   | 0 => []
@@ -201,8 +201,8 @@ theorem seek_exact (payload : ℤ → Fin 4) (p : ℤ) (bs : List Bool) :
   rw [hp]
   unfold CountedCopyReuse.bank bank
   congr 1
-  · funext i; fin_cases i <;> rfl
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
+  · apply List.ofFn_injective; rfl
 
 /-- Linear-time forward seek with a physically restored reusable clock. -/
 theorem seek_hoare (payload : ℤ → Fin 4) (p : ℤ) (bs : List Bool) :

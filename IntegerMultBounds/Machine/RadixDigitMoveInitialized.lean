@@ -34,7 +34,7 @@ theorem init_controls_hoare (bs gs cs hs : List Bool) :
     simp only [step,initControls,Tapes.start,ite_true]
     congr 1
     congr 1
-    · funext i; fin_cases i <;> rfl
+    · apply List.ofFn_injective; rfl
     · funext i z; fin_cases i <;>
         simp [controls,RadixDigitMoveCore.controls,isClock,empty] <;> rintro rfl <;> rfl
   rintro v rfl

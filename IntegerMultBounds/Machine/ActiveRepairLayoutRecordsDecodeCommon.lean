@@ -7,7 +7,7 @@ noncomputable section
     ActiveRepairRecordFlattenAlphabet.input 0 rs=
       (ActiveRepairRecordFlatten.cfg (RepairStage.encTape (Partition.encode rs)) (fun _ => blank) 0 0 0).tapes := by
   apply congrArg₂ Tapes.mk
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
   · funext i
     fin_cases i
     · change (fun j => (Alphabet.widen 1 0).encode

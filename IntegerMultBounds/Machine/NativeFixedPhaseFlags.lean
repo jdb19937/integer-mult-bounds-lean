@@ -21,7 +21,7 @@ theorem writes (p : Fin 4) : HoareTime (write p)
   · simp only [run_one,step,write,Tapes.start,ite_true,Move.offset,add_zero]
     congr 1
     congr 1
-    · funext i; fin_cases i <;> rfl
+    · apply List.ofFn_injective; rfl
     · funext i z
       fin_cases i <;> simp [flags,one,Tapes.append,putWord,SharedBank.empty,Fin.addCases,
         Function.update_apply]

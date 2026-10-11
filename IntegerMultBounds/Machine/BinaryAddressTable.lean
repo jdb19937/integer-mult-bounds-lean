@@ -70,11 +70,11 @@ theorem fill_hoare (ws : List Bool) (w : ℕ) (hw : Counter.value ws=w) :
     HoareTime fill (fun z => z=states ws w 1) (fun z => z=states ws w 2)
       (8*w+7*ws.length+39) := by
   have ha : Placement.active fillPlace (states ws w 1)=BinaryAddressTableFill.input ws := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   have h := Placement.hoare_at (BinaryAddressTableFill.runs ws w hw) fillPlace (states ws w 1) ha
   apply h.consequence (fun _ h => h) _ le_rfl
   rintro z ⟨small,rfl,rfl⟩
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem clock_hoare (ws : List Bool) (w : ℕ) :
     HoareTime clockInit (fun z => z=states ws w 2) (fun z => z=states ws w 3) 6 := by
@@ -84,7 +84,7 @@ theorem clock_hoare (ws : List Bool) (w : ℕ) :
   apply h.consequence (fun _ h => h) _ (by decide)
   rintro z ⟨small,rfl,rfl⟩
   rw [FiniteReturnStackAt.replace_bank]
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 def tail (ws : List Bool) : Tapes 5 0 :=
   ⟨![0,1,0,0,0],![(fun _ => blank),binary ws,(fun _ => blank),(fun _ => blank),(fun _ => blank)]⟩
@@ -114,14 +114,14 @@ theorem counter_clean (ws : List Bool) (w : ℕ) :
   have h := BinaryDescriptorCleanupList.one_hoare (0 : Fin 9) (states ws w 4)
     (List.replicate w false) (by exact BinaryAddressTableStep.bits_word _ _ _) rfl
   have he : setTape (states ws w 4) 0 (fun _ => blank) 0=states ws w 5 := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   simpa only [he,List.length_replicate,clearCounter] using h
 
 theorem clock_clean (ws : List Bool) (w : ℕ) :
     HoareTime clearClock (fun z => z=states ws w 5) (fun z => z=states ws w 6) 4 := by
   have h := BinaryDescriptorCleanupList.one_hoare (2 : Fin 9) (states ws w 5) [] rfl rfl
   have he : setTape (states ws w 5) 2 (fun _ => blank) 0=states ws w 6 := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   simpa only [he,List.length_nil,clearClock] using h
 
 theorem count_clean (ws : List Bool) (w : ℕ) :
@@ -130,7 +130,7 @@ theorem count_clean (ws : List Bool) (w : ℕ) :
   have h := BinaryDescriptorCleanupList.one_hoare (3 : Fin 9) (states ws w 6)
     (countBits w) (by exact BinaryAddressTableStep.bits_word _ _ _) rfl
   have he : setTape (states ws w 6) 3 (fun _ => blank) 0=states ws w 7 := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   simpa only [he,clearCount] using h
 
 theorem rewinds (ws : List Bool) (w : ℕ) :
@@ -147,7 +147,7 @@ theorem rewinds (ws : List Bool) (w : ℕ) :
   change Placement.replace (FiniteReturnStackAt.placement (1 : Fin 9)) (states ws w 7)
     (FiniteReturnStack.bank (outputTape w) 0) = _
   rw [FiniteReturnStackAt.replace_bank]
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 def exactCost (ws : List Bool) (w : ℕ) :=
   FixedBasePowerDescriptor.constant 2*2^w+(8*w+7*ws.length+39)+6+

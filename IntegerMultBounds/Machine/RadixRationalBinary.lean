@@ -58,7 +58,7 @@ private theorem initialize_hoare (xs : List (Fin q)) :
     simp only [step,initializeProgram,Tapes.start,ite_true]
     congr 1
     congr 1
-    · funext i; fin_cases i <;> rfl
+    · apply List.ofFn_injective; rfl
     · funext i z
       fin_cases i <;> simp [pair,Copy.tapes,Copy.cfg,Config.tapes,MarkedWordCleanup.empty]
       intro hz; subst z; rfl
@@ -93,7 +93,7 @@ private theorem reset_step (xs ys : List (Fin q)) (p : ℤ) (hp : 0 < p) :
     source_ne_marker xs p hp,ite_false,Move.offset]
   congr 1
   congr 1
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
   · funext i z
     fin_cases i <;> by_cases hz : z = p <;> simp [hz]
 
@@ -116,7 +116,7 @@ private theorem reset_hoare (xs ys : List (Fin q)) :
     simp only [step,resetProgram,resetCfg,pair,Copy.tapes,Copy.cfg,Config.tapes,ite_true,source_marker]
     congr 1
     congr 1
-    · funext i; fin_cases i <;> rfl
+    · apply List.ofFn_injective; rfl
     · funext i z
       fin_cases i
       · simp [pair,Copy.tapes,Copy.cfg,Config.tapes]

@@ -155,7 +155,7 @@ private theorem cleanClock_hoare (bs : List Bool) (b : ℕ) :
     simp only [step,cleanClock,Tapes.start,ite_true]
     congr 1
     congr 1
-    · funext i; fin_cases i <;> rfl
+    · apply List.ofFn_injective; rfl
     · funext i z
       by_cases hz : z = (bank hq bs b empty 1).head i <;> simp_all [middle,bank]
   rintro v rfl
@@ -165,7 +165,7 @@ private theorem cleanClock_hoare (bs : List Bool) (b : ℕ) :
       show (1 : Fin 3) ≠ 0 by decide,ite_false,ite_true]
     congr 1
     congr 1
-    · funext i; fin_cases i <;> rfl
+    · apply List.ofFn_injective; rfl
     · funext i z
       fin_cases i <;> simp [middle,output,bank,empty] <;> aesop
   · simp [step,cleanClock]
@@ -185,9 +185,9 @@ theorem construct_hoare (bs : List Bool) (b : ℕ) (hb : Counter.value bs = b) :
     · intro v hv
       refine ⟨_,rfl,?_⟩
       rw [hv]
-      apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+      apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
     · rintro v ⟨w,rfl,rfl⟩
-      apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+      apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   exact (((RadixZeroFill.fill_zeros hq bs b hb).seq ha).seq
     (cleanClock_hoare hq bs b)).consequence (fun _ h => h) (fun _ h => h) (by omega)
 

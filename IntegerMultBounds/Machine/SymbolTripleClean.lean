@@ -36,12 +36,12 @@ private theorem both_runs (xs ys : List (Fin 6))
   have h0 := rewind_runs (Copy.tapes (word xs) (word ys) xs.length ys.length) 0 xs hx rfl rfl
   have he0 : setTape (Copy.tapes (word xs) (word ys) xs.length ys.length) 0 (word xs) 0=
       Copy.tapes (word xs) (word ys) 0 ys.length := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   rw [he0] at h0
   have h1 := rewind_runs (Copy.tapes (word xs) (word ys) 0 ys.length) 1 ys hy rfl rfl
   have he1 : setTape (Copy.tapes (word xs) (word ys) 0 ys.length) 1 (word ys) 0=
       Copy.tapes (word xs) (word ys) 0 0 := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   rw [he1] at h1
   exact (h0.seq h1).consequence (fun _ h => h) (fun _ h => h) (by omega)
 
@@ -52,7 +52,7 @@ private theorem clear_runs (xs ys : List (Fin 6)) (hx : ∀ s∈xs,s≠blank) :
     (0 : Fin 2) (by decide) xs hx rfl
   have he : WordBankCleanup.write (Copy.tapes (word xs) (word ys) 0 0) 0 (fun _ => blank)=
       Copy.tapes (fun _ => blank) (word ys) 0 0 := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   rw [he] at h
   exact h
 

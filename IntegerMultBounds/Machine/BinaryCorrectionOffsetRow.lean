@@ -48,10 +48,10 @@ theorem copy_left (xs : List Bool) (f g out right : ℤ → Fin 4) (p q r y : �
   simp only [List.length_map,zero_add] at h
   have ha : Placement.active leftPlace (bank (putWord f p (xs.map bitSymbol)) g out (fun _ => blank) right p q r 0 y ws)=
       CountedCopyReuse.bank (putWord f p (xs.map bitSymbol)) (fun _ => blank) empty (binary ws) p 0 1 1 := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   apply (Placement.hoare_at h leftPlace _ ha).consequence (fun _ h => h) _ le_rfl
   rintro z ⟨small,rfl,rfl⟩
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem copy_right (ys : List Bool) (f g out left : ℤ → Fin 4) (p q r x : ℤ) (ws : List Bool)
     (hw : Counter.value ws=ys.length) :
@@ -62,10 +62,10 @@ theorem copy_right (ys : List Bool) (f g out left : ℤ → Fin 4) (p q r x : �
   simp only [List.length_map,zero_add] at h
   have ha : Placement.active rightPlace (bank f (putWord g q (ys.map bitSymbol)) out left (fun _ => blank) p q r x 0 ws)=
       CountedCopyReuse.bank (putWord g q (ys.map bitSymbol)) (fun _ => blank) empty (binary ws) q 0 1 1 := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   apply (Placement.hoare_at h rightPlace _ ha).consequence (fun _ h => h) _ le_rfl
   rintro z ⟨small,rfl,rfl⟩
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem rewind_left (xs : List Bool) (f g out right : ℤ → Fin 4) (p q r y : ℤ) (ws : List Bool) :
     HoareTime rewindLeft (fun z => z=bank f g out (word xs) right p q r xs.length y ws)
@@ -78,7 +78,7 @@ theorem rewind_left (xs : List Bool) (f g out right : ℤ → Fin 4) (p q r y : 
   rintro z ⟨small,rfl,rfl⟩
   change Placement.replace _ _ (FiniteReturnStack.bank (word xs) 0)=_
   rw [FiniteReturnStackAt.replace_bank]
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem rewind_right (ys : List Bool) (f g out left : ℤ → Fin 4) (p q r x : ℤ) (ws : List Bool) :
     HoareTime rewindRight (fun z => z=bank f g out left (word ys) p q r x ys.length ws)
@@ -91,7 +91,7 @@ theorem rewind_right (ys : List Bool) (f g out left : ℤ → Fin 4) (p q r x : 
   rintro z ⟨small,rfl,rfl⟩
   change Placement.replace _ _ (FiniteReturnStack.bank (word ys) 0)=_
   rw [FiniteReturnStackAt.replace_bank]
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem subtract_hoare (xs ys : List Bool) (hlen : xs.length=ys.length)
     (f g out : ℤ → Fin 4) (p q r : ℤ) (ws : List Bool) :
@@ -103,10 +103,10 @@ theorem subtract_hoare (xs ys : List Bool) (hlen : xs.length=ys.length)
   simp only [zero_add] at h
   have ha : Placement.active subPlace (bank f g out (word xs) (word ys) p q r 0 0 ws)=
       (ColumnTransducer.cfg (s := 1) (word xs) (word ys) out 0 0 r 0).tapes := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   apply (Placement.hoare_at h subPlace _ ha).consequence (fun _ h => h) _ le_rfl
   rintro z ⟨small,rfl,rfl⟩
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem erase_left (xs : List Bool) (f g out right : ℤ → Fin 4) (p q r y : ℤ) (ws : List Bool) :
     HoareTime eraseLeft (fun z => z=bank f g out (word xs) right p q r xs.length y ws)
@@ -120,7 +120,7 @@ theorem erase_left (xs : List Bool) (f g out right : ℤ → Fin 4) (p q r y : �
   rintro z ⟨small,rfl,rfl⟩
   change Placement.replace _ _ (FiniteReturnStack.bank (fun _ => blank) 0)=_
   rw [FiniteReturnStackAt.replace_bank]
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem erase_right (ys : List Bool) (f g out left : ℤ → Fin 4) (p q r x : ℤ) (ws : List Bool) :
     HoareTime eraseRight (fun z => z=bank f g out left (word ys) p q r x ys.length ws)
@@ -134,7 +134,7 @@ theorem erase_right (ys : List Bool) (f g out left : ℤ → Fin 4) (p q r x : �
   rintro z ⟨small,rfl,rfl⟩
   change Placement.replace _ _ (FiniteReturnStack.bank (fun _ => blank) 0)=_
   rw [FiniteReturnStackAt.replace_bank]
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem runs (xs ys : List Bool) (hlen : xs.length=ys.length)
     (f g out : ℤ → Fin 4) (p q r : ℤ) (ws : List Bool) (hw : Counter.value ws=xs.length) :

@@ -81,7 +81,7 @@ theorem runs (e : ℕ) (he : 0 < e) : HoareTime (program (a := a))
 
 private theorem output_eq (e : ℕ) : bank (a := a) (e-1) =
     setTape (bank e) 0 (BinaryDescriptorStack.descriptor (bits (e-1))) 1 := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 /-- Place the exponent plus two clean work tapes outside a native bank.
 All complementary tapes and heads are retained by the actual execution. -/

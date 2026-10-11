@@ -31,10 +31,10 @@ theorem runs (q b : ℕ) (V W : List Bool) (bs ns qs : List Bool)
       (fun v => v=prepared q b V W bs ns qs) (40*q+80*b+300) := by
   have h := Placement.hoare_at (CountedGuardConstants.runs (a := a) q b qs bs hq cq hvb cb hb hbq)
     constantsPlace (input (a := a) V W bs ns qs) (by
-      apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl)
+      apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl)
   refine h.consequence (fun _ h => h) ?_ le_rfl
   rintro v ⟨z,rfl,rfl⟩
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem input_private (V W : List Bool) (bs ns qs : List Bool) (i : Fin 15)
     (hi : i=2 ∨ i=3 ∨ i=4 ∨ i=5 ∨ i=6 ∨ i=7 ∨ i=8 ∨ i=10 ∨ i=11 ∨ i=14) :

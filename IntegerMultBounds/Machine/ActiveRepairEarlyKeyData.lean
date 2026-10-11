@@ -81,13 +81,13 @@ theorem source_payload (d : Data) : SharedBank.payload d.input sourceFocus=d.sou
 
 theorem patch_payload (d : Data) : SharedBank.payload d.computed patchFocus=
     ActiveRepairDestinationPatchRun.bank d.cs d.target d.recoveredT d.U (fun _ => blank) d.ph := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem patched_install (d : Data) : ActiveRepairEarlyKeyPlacement.install d.computed patchFocus
     (ActiveRepairDestinationPatchRun.bank d.cs d.target d.recoveredT d.U
       (ActiveRepairDestinationPatchRun.word d.destination) d.ph)=d.patched := by
   apply ActiveRepairEarlyKeyPlacement.install_eq
-  · apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  · apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   · unfold patched
     change SharedBank.strip d.computed patchFocus=
       SharedBank.strip (setTape d.computed (patchFocus 1) _ _) patchFocus
@@ -95,13 +95,13 @@ theorem patched_install (d : Data) : ActiveRepairEarlyKeyPlacement.install d.com
 
 theorem append_payload (d : Data) : SharedBank.payload d.patched appendFocus=
     CountedRepairKeyAppend.input d.flag d.destination [] := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem written_install (d : Data) : ActiveRepairEarlyKeyPlacement.install d.patched appendFocus
     (CountedRepairKeyAppend.output d.flag d.destination [])=d.written := by
   apply ActiveRepairEarlyKeyPlacement.install_eq
   · simp only [CountedRepairKeyAppend.output,List.append_nil]
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   · unfold written
     change SharedBank.strip d.patched appendFocus=
       SharedBank.strip (setTape (setTape d.patched (appendFocus 0) _ _)
@@ -125,7 +125,7 @@ theorem cleanup_heads (d : Data) (i : Fin 32) (hi : i∈ActiveRepairEarlyKeyClea
 
 theorem cleanup_output (d : Data) :
     ActiveRepairEarlyKeyCleanup.execute ActiveRepairEarlyKeyCleanup.slots d.written=d.output := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 end
 end IntegerMultBounds.Machine.ActiveRepairEarlyKeyData

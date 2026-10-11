@@ -203,8 +203,8 @@ theorem flag_bank (k : ℕ) (raw : List (List Bool)) (h0 : ℤ) (t9 : ℤ → Fi
       bank k raw h0 t9 h9 src hs key ctr := by
   unfold FlagCopy.cfg Config.tapes Tapes.append Tapes.reindex bank stage flagPlacement
   congr 1
-  · funext i; fin_cases i <;> rfl
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
+  · apply List.ofFn_injective; rfl
 
 theorem ctr_bank (k : ℕ) (raw : List (List Bool)) (h0 : ℤ) (t9 : ℤ → Fin 5) (h9 : ℤ)
     (src : ℤ → Fin 5) (hs : ℤ) (key : ℤ → Fin 5) (bs : List Bool) :
@@ -218,8 +218,8 @@ theorem ctr_bank (k : ℕ) (raw : List (List Bool)) (h0 : ℤ) (t9 : ℤ → Fin
   unfold CounterTape.tapes Alphabet.mapTapes Tapes.append Tapes.reindex bank stage ctrPlacement
     ctrTape
   congr 1
-  · funext i; fin_cases i <;> rfl
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
+  · apply List.ofFn_injective; rfl
 
 theorem out_bank (k : ℕ) (raw : List (List Bool)) (h0 : ℤ) (t9 : ℤ → Fin 5) (h9 : ℤ)
     (src : ℤ → Fin 5) (hs : ℤ) (key ctr : ℤ → Fin 5) (s : Fin 3) :
@@ -233,8 +233,8 @@ theorem out_bank (k : ℕ) (raw : List (List Bool)) (h0 : ℤ) (t9 : ℤ → Fin
       bank k raw h0 t9 h9 src hs key ctr := by
   unfold MarkedReturn.cfg Config.tapes Tapes.append Tapes.reindex bank stage outPlacement
   congr 1
-  · funext i; fin_cases i <;> rfl
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
+  · apply List.ofFn_injective; rfl
 
 theorem ext_bank (k : ℕ) (raw : List (List Bool)) (h0 : ℤ) (t9 : ℤ → Fin 5) (h9 : ℤ)
     (src : ℤ → Fin 5) (hs : ℤ) (key ctr : ℤ → Fin 5) (s : Fin 3) :
@@ -248,8 +248,8 @@ theorem ext_bank (k : ℕ) (raw : List (List Bool)) (h0 : ℤ) (t9 : ℤ → Fin
       bank k raw h0 t9 h9 src hs key ctr := by
   unfold MarkedReturn.cfg Config.tapes Tapes.append Tapes.reindex bank stage extPlacement
   congr 1
-  · funext i; fin_cases i <;> rfl
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
+  · apply List.ofFn_injective; rfl
 
 /-! ### The scan states -/
 

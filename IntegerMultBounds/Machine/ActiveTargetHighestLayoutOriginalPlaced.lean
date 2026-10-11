@@ -25,13 +25,13 @@ def sources {m : ℕ} (hs : Fin 14 → List Bool) (x : Fin m → Bool) : Tapes 1
 
 theorem sources_set {m n : ℕ} (hs : Fin 14 → List Bool) (x : Fin m → Bool) (y : Fin n → Bool) :
     setTape (sources hs x) 14 (ActiveTargetRotation.word y) 0=sources hs y := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem native_payload {m : ℕ} (hs : Fin 14 → List Bool) (x : Fin m → Bool) :
     SharedBank.payload (bank (base hs x)) ports=sources hs x := by
   change SharedBank.payload ((base hs x).append _) (fun i => Fin.castAdd _ (basePorts i))=_
   rw [SharedBankFrames.payload_append_left]
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem base_clean {m : ℕ} (hs : Fin 14 → List Bool) (x : Fin m → Bool) :
     SharedBank.strip (base hs x) basePorts=SharedBank.empty 44 prime := by

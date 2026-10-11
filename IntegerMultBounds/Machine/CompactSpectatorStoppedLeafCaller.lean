@@ -192,7 +192,7 @@ private theorem source_data (caller : Tapes (callerCount w) 2) (f g : ℤ → Fi
   unfold payload
   rw [SharedPlacementAlphabet.setTape_append_left]
   congr 1
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 private theorem updates_commute (caller : Tapes (callerCount w) 2) (n : ℕ) (f : ℤ → Fin 6) :
     updateSource (setCount caller n) f=setCount (updateSource caller f) n := by

@@ -28,8 +28,8 @@ def after (q b : ℕ) (hb : 1≤b) (hbq : b+1≤q)
 def place : Fin (22+9) ≃ Fin 31 where
   toFun := ![1,3,5,0,30,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,2,4,6,7,8,9,10,28,29]
   invFun := ![3,0,22,1,23,2,24,25,26,27,28,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,29,30,4]
-  left_inv i := by fin_cases i <;> rfl
-  right_inv i := by fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 theorem extra_ne (i : Fin 9) : place (Fin.natAdd 22 i) ≠ (30 : Fin 31) := by
   fin_cases i <;> decide
@@ -42,12 +42,12 @@ def view (V W X T : List Bool) (hs : Fin 3 → List Bool) : Tapes 22 1 :=
 
 theorem active_working (V W U X T : List Bool) (hs : Fin 3 → List Bool) (fl : Bool) :
     Placement.active place (working V W U X T hs fl)=view V W X T hs := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem extra_working (V W U X T1 T2 : List Bool) (hs : Fin 3 → List Bool) (fl : Bool) :
     Placement.extra place (working V W U X T1 hs fl)=
       Placement.extra place (working V W U X T2 hs fl) := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem runs (q b : ℕ) (hb : 1≤b) (hbq : b+1≤q)
     (V W U X : List Bool) (hs : Fin 3 → List Bool)

@@ -38,10 +38,10 @@ theorem copy_hoare (xs : List Bool) (f g : ℤ → Fin 4) (p q : ℤ) (ws : List
   simp only [List.length_map,zero_add] at h
   have ha : Placement.active copyPlace (bank (putWord f p (xs.map bitSymbol)) g (fun _ => blank) p q 0 ws)=
       CountedCopyReuse.bank (putWord f p (xs.map bitSymbol)) (fun _ => blank) empty (binary ws) p 0 1 1 := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   apply (Placement.hoare_at h copyPlace _ ha).consequence (fun _ h => h) _ le_rfl
   rintro z ⟨small,rfl,rfl⟩
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem rewind_hoare (xs : List Bool) (f g : ℤ → Fin 4) (p q : ℤ) (ws : List Bool) :
     HoareTime rewindProgram (fun z => z=bank f g (word xs) p q xs.length ws)
@@ -54,7 +54,7 @@ theorem rewind_hoare (xs : List Bool) (f g : ℤ → Fin 4) (p q : ℤ) (ws : Li
   rintro z ⟨small,rfl,rfl⟩
   change Placement.replace _ _ (FiniteReturnStack.bank (word xs) 0)=_
   rw [FiniteReturnStackAt.replace_bank]
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem negate_hoare (xs : List Bool) (f g : ℤ → Fin 4) (p q : ℤ) (ws : List Bool) :
     HoareTime negateProgram (fun z => z=bank f g (word xs) p q 0 ws)
@@ -67,7 +67,7 @@ theorem negate_hoare (xs : List Bool) (f g : ℤ → Fin 4) (p q : ℤ) (ws : Li
   rintro z ⟨small,rfl,rfl⟩
   change Placement.replace _ _ (FiniteReturnStack.bank (word (negWord xs)) xs.length)=_
   rw [FiniteReturnStackAt.replace_bank]
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem emit_hoare (xs : List Bool) (f g : ℤ → Fin 4) (p q : ℤ) (ws : List Bool) :
     HoareTime emitProgram (fun z => z=bank f g (word xs) p q 0 ws)
@@ -75,10 +75,10 @@ theorem emit_hoare (xs : List Bool) (f g : ℤ → Fin 4) (p q : ℤ) (ws : List
       (2*xs.length+3) := by
   have h := BinaryAddressOffsetRepeatCopy.copies xs g q
   have ha : Placement.active emitPlace (bank f g (word xs) p q 0 ws)=BinaryAddressOffsetRepeatCopy.bank xs g q := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   apply (Placement.hoare_at h emitPlace _ ha).consequence (fun _ h => h) _ le_rfl
   rintro z ⟨small,rfl,rfl⟩
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem clear_hoare (xs : List Bool) (f g : ℤ → Fin 4) (p q : ℤ) (ws : List Bool) :
     HoareTime clearProgram (fun z => z=bank f g (word xs) p q 0 ws)
@@ -86,7 +86,7 @@ theorem clear_hoare (xs : List Bool) (f g : ℤ → Fin 4) (p q : ℤ) (ws : Lis
   have h := WordBankCleanup.clear_hoare (bank f g (word xs) p q 0 ws) (2 : Fin 5) (by decide)
     (xs.map bitSymbol) (ReturnOrigin.bits_nonblank xs) rfl
   have he : WordBankCleanup.write (bank f g (word xs) p q 0 ws) 2 (fun _ => blank)=bank f g (fun _ => blank) p q 0 ws := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   simpa only [he,List.length_map,clearProgram] using h
 
 theorem runs (xs : List Bool) (f g : ℤ → Fin 4) (p q : ℤ) (ws : List Bool) (hw : Counter.value ws=xs.length) :

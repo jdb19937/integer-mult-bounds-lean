@@ -27,7 +27,7 @@ private theorem rewind (x y : Bool) :
   simp only [key,ite_true,Move.offset]
   congr 1
   congr 1
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
   · funext i j; fin_cases i <;> simp [Function.update_apply] <;> omega
 
 private theorem combine (x y : Bool) :

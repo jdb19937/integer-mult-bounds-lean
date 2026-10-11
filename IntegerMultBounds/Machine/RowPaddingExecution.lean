@@ -13,7 +13,7 @@ def clockBank (source dest : ℤ → Fin 4) (p q : ℤ) (valid padding count : L
 theorem marked_bank (source dest : ℤ → Fin 4) (p q : ℤ) (valid padding count : List Bool) :
     clockBank source dest p q valid padding count CountedCopyReuse.empty 1 =
       RowPaddingStream.bank source dest p q valid padding count := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 def clockCell (symbol : Fin 4) (m : Move) : Program 7 2 0 where
   tapes_pos := by decide

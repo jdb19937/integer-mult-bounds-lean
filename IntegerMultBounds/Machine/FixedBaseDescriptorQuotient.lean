@@ -30,7 +30,7 @@ theorem quotient_hoare (B : ℕ) (hB : 2 ≤ B) (ys : List Bool)
       (ArbitraryWidthPieceCounter.ready (a := a) (bits (Counter.value ys/B)) (bits (Counter.value ys%B)))
       (6 : Fin 14) (fun _ => blank) 0 =
       ArbitraryWidthPieceCounter.input (bits (Counter.value ys/B)) := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   rw [he] at h2
   apply (h1.seq h2).consequence (fun _ h => h) (fun _ h => h)
   have hw := GrowingCounterData.canonical_width (bits (Counter.value ys%B))

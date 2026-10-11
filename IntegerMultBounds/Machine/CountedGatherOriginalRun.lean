@@ -63,7 +63,7 @@ def input (caller : Tapes t a) := caller.append (FixedHeaderBankCopy.empty 6)
 theorem bank_zero (caller : Tapes t a) (S : Gather.Shape) : bank caller S 0 = input caller := by
   change caller.append (work S 0) = caller.append (FixedHeaderBankCopy.empty 6)
   apply congrArg (fun w : Tapes 6 a => caller.append w)
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 def clockSlot (t : ℕ) (i : Fin 2) : Fin (t+6) := Fin.natAdd t (Fin.natAdd 4 i)
 theorem clockSlot_injective (t : ℕ) : Function.Injective (clockSlot t) := by

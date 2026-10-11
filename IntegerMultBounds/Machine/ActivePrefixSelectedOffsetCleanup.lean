@@ -86,7 +86,7 @@ theorem result_eq (s : Shape) (hs : Fin 8 → List Bool) :
     result (a := a) s hs=setTape (base hs) 16 (ActivePrefixOffsetStreamsCleanup.word (offsetWord s)) 0 := by
   unfold result streamResult
   rw [gathered_eq]
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 end
 end IntegerMultBounds.Machine.ActivePrefixSelectedOffsetCleanup

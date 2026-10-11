@@ -67,7 +67,7 @@ theorem swap_runs (s : Shape) (rows w : ℕ) (hs : Fin 7 → List Bool) (bs : Li
 theorem cleared (s : Shape) (rows w : ℕ) (hs : Fin 7 → List Bool) (bs : List Bool) (x : Array s rows w) :
     CompactGadgetReservationHeadersCarvedPlacedCleanup.cleared (rotated (base hs bs x) s rows w x) swapFocus=
       base hs bs (RadixRangePadding.transpose x) := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem cleanup_runs (s : Shape) (rows w : ℕ) (hs : Fin 7 → List Bool) (bs : List Bool) (x : Array s rows w) :
     HoareTime cleanup (fun v => v=bank (rotated (base hs bs x) s rows w x))

@@ -77,7 +77,7 @@ theorem product_hoare (e : Fin (6+u) ≃ Fin t) (v : Tapes t a)
   have he : BoundedProductDescriptor.output (q := a) ws ns N W =
       setTape (BoundedProductDescriptor.input ws ns) (1 : Fin 6)
         (RadixZeroFill.encodedBinary (BoundedProductDescriptor.bits N W)) 1 := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   apply h.consequence (fun _ h => h) _ le_rfl
   rintro w ⟨z,rfl,rfl⟩
   rw [he,← ha,replace_setTape]

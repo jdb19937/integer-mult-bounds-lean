@@ -24,15 +24,15 @@ theorem focus_injective : Function.Injective focus := by decide
 
 theorem prepared_sources {m : ℕ} (g : Geometry) (x : Fin m → Bool) :
     SharedBank.payload (prepared g x) focus=caller (words g) x := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem base_set {m n : ℕ} (hs : Fin 5 → List Bool) (x : Fin m → Bool) (y : Fin n → Bool) :
     setTape (base hs x) 43 (ActiveTargetRotation.word y) 0=base hs y := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem prepared_set {m n : ℕ} (g : Geometry) (x : Fin m → Bool) (y : Fin n → Bool) :
     setTape (prepared g x) (focus 10) (ActiveTargetRotation.word y) 0=prepared g y := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem bank_raw (v : Tapes 44 prime) : bank v=SharedBankStageInput.raw v count :=
   SharedBankRawCompose.bank_eq_raw v

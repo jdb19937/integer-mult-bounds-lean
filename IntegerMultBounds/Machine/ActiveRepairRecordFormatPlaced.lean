@@ -31,7 +31,7 @@ theorem output_result (chunks : List (List Bool)) (bs ns : List Bool) :
     ActiveRepairRecordFormatAlphabet.output a chunks bs ns=
       result (ActiveRepairRecordFormatAlphabet.input a chunks bs ns) ports chunks := by
   apply congrArg₂ Tapes.mk
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
   · funext i; fin_cases i
     all_goals first
       | rfl

@@ -47,7 +47,7 @@ private theorem recover_result (role f : ℤ → Fin (a+4)) (p : ℤ) (n : ℕ) 
   change swapped (StackPop.transfer (StackPop.bank (parked f role p n) (fun _ => blank) (p+n-1) (n-1)) n) = _
   rw [ht]
   apply congrArg₂ Tapes.mk
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
   · funext i z; fin_cases i
     · change (if (0 : ℤ) ≤ z ∧ z < n then parked f role p n (p+z) else blank) = role z
       by_cases hz : (0 : ℤ) ≤ z ∧ z < n

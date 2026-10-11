@@ -19,7 +19,7 @@ theorem focus_injective : Function.Injective focus := by decide
 theorem sources (d : Inputs s p offset rows) (x : Array s rows) :
     SharedBank.payload (ActiveRepairLayoutRecordsPayloadEarlyData.input d x) focus=
       ActiveTargetHighestLayoutOriginalPlaced.sources d.hs x := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem input_set (d : Inputs s p offset rows) (x y : Array s rows) :
     SharedPlacementAlphabet.setTape (ActiveRepairLayoutRecordsPayloadEarlyData.input d x)

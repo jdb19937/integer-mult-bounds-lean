@@ -69,7 +69,7 @@ theorem compareV1_hoare (V W C1 C2 C3 : List Bool) (F : ℤ → Fin (a+4))
   rintro v ⟨z,rfl,rfl⟩
   apply congrArg₂ Tapes.mk
   · funext i; fin_cases i <;> first | rfl | (change 0+(start : ℤ)+d=((start+d : ℕ) : ℤ); push_cast; omega) | (change 0+(d : ℤ)=d; omega)
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
 
 theorem compareV2_hoare (V W C1 C2 C3 : List Bool) (F : ℤ → Fin (a+4))
     (_pv pw pc1 _pc2 pc3 pf : ℤ) (ds bs : List Bool) (start d : ℕ)
@@ -89,7 +89,7 @@ theorem compareV2_hoare (V W C1 C2 C3 : List Bool) (F : ℤ → Fin (a+4))
   rintro v ⟨z,rfl,rfl⟩
   apply congrArg₂ Tapes.mk
   · funext i; fin_cases i <;> first | rfl | (change 0+(start : ℤ)+d=((start+d : ℕ) : ℤ); push_cast; omega) | (change 0+(d : ℤ)=d; omega)
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
 
 theorem compareW_hoare (V W C1 C2 C3 : List Bool) (F : ℤ → Fin (a+4))
     (pv _pw pc1 pc2 _pc3 pf : ℤ) (ds bs : List Bool) (start d : ℕ)
@@ -109,7 +109,7 @@ theorem compareW_hoare (V W C1 C2 C3 : List Bool) (F : ℤ → Fin (a+4))
   rintro v ⟨z,rfl,rfl⟩
   apply congrArg₂ Tapes.mk
   · funext i; fin_cases i <;> first | rfl | (change 0+(start : ℤ)+d=((start+d : ℕ) : ℤ); push_cast; omega) | (change 0+(d : ℤ)=d; omega)
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
 
 theorem replay_hoare (V W C1 C2 C3 : List Bool) (F : ℤ → Fin (a+4))
     (pv pw pc1 pc2 pc3 pf : ℤ) (ds bs : List Bool) (d : ℕ) (hk : Counter.value ds=d) :
@@ -120,10 +120,10 @@ theorem replay_hoare (V W C1 C2 C3 : List Bool) (F : ℤ → Fin (a+4))
   have h := CountedGuardGadgetPosition.positions (word (a := a) V) pv ds d hk
   have hh := Placement.hoare_at h replayPlace
     (bank V W C1 C2 C3 F pv pw pc1 pc2 pc3 pf ds bs) (by
-      apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl)
+      apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl)
   refine hh.consequence (fun _ h => h) ?_ le_rfl
   rintro v ⟨z,rfl,rfl⟩
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem stepV_hoare (V W C1 C2 C3 : List Bool) (F : ℤ → Fin (a+4))
     (pv pw pc1 pc2 pc3 pf : ℤ) (ds bs : List Bool) :
@@ -138,7 +138,7 @@ theorem stepV_hoare (V W C1 C2 C3 : List Bool) (F : ℤ → Fin (a+4))
   rintro v ⟨z,rfl,rfl⟩
   change Placement.replace _ _ (FiniteReturnStack.bank _ _) = _
   rw [FiniteReturnStackAt.replace_bank]
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem returnC1_hoare (V W C1 C2 C3 : List Bool) (F : ℤ → Fin (a+4))
     (pv pw _pc1 pc2 pc3 pf : ℤ) (ds bs : List Bool) :
@@ -155,7 +155,7 @@ theorem returnC1_hoare (V W C1 C2 C3 : List Bool) (F : ℤ → Fin (a+4))
   rintro v ⟨z,rfl,rfl⟩
   change Placement.replace _ _ (FiniteReturnStack.bank _ _) = _
   rw [FiniteReturnStackAt.replace_bank]
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem returnC2_hoare (V W C1 C2 C3 : List Bool) (F : ℤ → Fin (a+4))
     (pv pw pc1 _pc2 pc3 pf : ℤ) (ds bs : List Bool) :
@@ -172,7 +172,7 @@ theorem returnC2_hoare (V W C1 C2 C3 : List Bool) (F : ℤ → Fin (a+4))
   rintro v ⟨z,rfl,rfl⟩
   change Placement.replace _ _ (FiniteReturnStack.bank _ _) = _
   rw [FiniteReturnStackAt.replace_bank]
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem returnC3_hoare (V W C1 C2 C3 : List Bool) (F : ℤ → Fin (a+4))
     (pv pw pc1 pc2 _pc3 pf : ℤ) (ds bs : List Bool) :
@@ -189,7 +189,7 @@ theorem returnC3_hoare (V W C1 C2 C3 : List Bool) (F : ℤ → Fin (a+4))
   rintro v ⟨z,rfl,rfl⟩
   change Placement.replace _ _ (FiniteReturnStack.bank _ _) = _
   rw [FiniteReturnStackAt.replace_bank]
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 /-- Both first-word guards, including paid within-record replay and both
 constant rewinds. The control is independent of the supplied q descriptor. -/

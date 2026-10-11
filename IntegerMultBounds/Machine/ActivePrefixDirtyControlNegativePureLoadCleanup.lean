@@ -66,7 +66,7 @@ theorem result_eq (s : Shape) (rows B : ℕ) (hs : Fin 6 → List Bool) (rs bs :
     (x : Array s rows B) :
     result (rotated (base (a := a) s rows B hs rs bs x) s rows B x)=
       base s rows B hs rs bs (PackedOffsetPayloadArray.array (offsets s rows) (width s) (prefixCount s rows) B x) := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem runs (s : Shape) (rows B : ℕ) (hs : Fin 6 → List Bool) (rs bs : List Bool)
     (x : Array s rows B) :

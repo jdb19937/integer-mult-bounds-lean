@@ -33,7 +33,7 @@ private theorem initialize_hoare (xs ys : List (Fin q)) :
     simp only [step,initializeProgram,Tapes.start,ite_true,Move.offset]
     congr 1
     congr 1
-    · funext i; fin_cases i <;> rfl
+    · apply List.ofFn_injective; rfl
     · funext i z
       fin_cases i <;> simp [bank,markedBank,← MarkedWordCleanup.mark_word,Function.update_apply]
   · simp [step,initializeProgram]
@@ -69,7 +69,7 @@ private theorem reset_step (xs ys zs : List (Fin q)) (p : ℤ) (hp : 0 < p) :
   simp only [step,resetProgram,resetCfg,markedBank,Matrix.cons_val_zero,ite_true,marked_ne_marker xs p hp,ite_false,Move.offset]
   congr 1
   congr 1
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
   · funext i z
     fin_cases i <;> by_cases hz : z = p <;> simp [hz]
 
@@ -89,7 +89,7 @@ private theorem reset_hoare (xs ys zs : List (Fin q)) :
     simp only [step,resetProgram,resetCfg,markedBank,Matrix.cons_val_zero,ite_true,marked_marker]
     congr 1
     congr 1
-    · funext i; fin_cases i <;> rfl
+    · apply List.ofFn_injective; rfl
     · funext i z
       fin_cases i <;> change (if z = 0 then blank else marked _ z) = word _ z
       all_goals

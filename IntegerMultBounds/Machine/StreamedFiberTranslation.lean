@@ -78,11 +78,11 @@ private theorem reader (source dest control : ℤ → Fin 4) (p q r : ℤ)
   have ha : Placement.active placement ((TranslationExecutionReuse.bank source dest p q bs qs old).append
       (one (putWord control r (xs.map bitSymbol)) r)) =
       Copy.tapes (putWord control r (xs.map bitSymbol)) (binary old) r 1 := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   have hh := Placement.hoare_at (BinaryOffsetStreamRead.reads control r old xs hend) placement _ ha
   apply hh.consequence (fun _ h => h) _ le_rfl
   rintro v ⟨w,rfl,rfl⟩
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem read_hoare (ws : List (List Bool)) (Q B : ℕ) (source dest control : ℤ → Fin 4)
     (p q r : ℤ) (bs qs : List Bool) (payload : ℕ → ℕ → List (Fin 4))

@@ -38,7 +38,7 @@ theorem second_step (src : ℤ → Fin 5) :
   simp only [step,program,show (1 : Fin 3)≠0 by decide,ite_false,ite_true]
   congr 1
   apply congrArg₂ (Config.mk (2 : Fin 3))
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
   · funext i z; fin_cases i <;>
       simp [output,RepairScan.bank,RepairStage.stage,Tapes.append,Fin.addCases,KeyPartition.rawTape,
         KeySelect.selector,PartitionMarked.markedTape,FlagCopy.keyTape,RepairScan.ctrTape,putWord,putBits,

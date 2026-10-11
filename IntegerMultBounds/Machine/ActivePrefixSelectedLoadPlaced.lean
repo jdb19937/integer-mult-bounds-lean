@@ -25,7 +25,7 @@ theorem sources_eq (s : Shape) (rows B : ℕ) (hs : Fin 8 → List Bool) (rs bs 
           else if i.val=8 then RadixZeroFill.encodedBinary rs
           else if i.val=9 then RadixZeroFill.encodedBinary bs
           else ActiveTargetRotation.word x⟩ : Tapes 11 a) := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 def result (caller : Tapes t a) (focus : Fin 11 → Fin t) (s : Shape) (rows B : ℕ) (x : Array s rows B) :=
   setTape caller (focus 10) (ActiveTargetRotation.word (ActivePrefixSelectedLoad.result s rows B x)) 0
@@ -58,7 +58,7 @@ theorem native_output (s : Shape) (rows B : ℕ) (hs : Fin 8 → List Bool) (rs 
     bank (base (a := a) s rows B hs rs bs (ActivePrefixSelectedLoad.result s rows B x))=
       setTape (bank (base s rows B hs rs bs x)) (ports 10)
         (ActiveTargetRotation.word (ActivePrefixSelectedLoad.result s rows B x)) 0 := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem runs_exact (caller : Tapes t a) (focus : Fin 11 → Fin t) (hf : Function.Injective focus)
     (s : Shape) (rows B : ℕ) (hrows : 0<rows) (hB : 0<B)

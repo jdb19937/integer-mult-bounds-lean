@@ -12,7 +12,7 @@ variable {a : ℕ} {m : Mode}
 def bank (v : Tapes 14 a) := CleanSubbank.bank (s := 51) v
 theorem pad15 (v : Tapes 14 a) :
     (CompactGadgetReservationHeadersCore.bank v).append (SharedBank.empty 36 a)=bank v := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 def power := extend (CompactGadgetReservationHeadersPowerRound.powerProgram (a := a) powerFocus (by decide)) 36
 def makeWidth (m : Mode) := extend (CompactGadgetReservationHeadersCore.productProgram (a := a) (widthFocus m) width_injective) 36

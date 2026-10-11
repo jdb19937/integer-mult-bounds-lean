@@ -108,7 +108,7 @@ omit [Fact radix.Prime] in
 private theorem bank_frame (source dest : ℤ → Fin 4) (p q : ℤ) (bs qs cs ns : List Bool) (xs : List (Fin radix)) :
     FlatRepeatedControlNormalize.bank source dest p q bs qs cs ns [] xs = frame source dest p q bs qs cs ns xs := by
   apply congrArg₂ Tapes.mk
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
   · have he : (fun z => (RadixToBinary.binaryEncoding (q := radix)).encode (CountedCopyReuse.empty z)) =
         RadixZeroFill.radixEmpty := by
       funext z

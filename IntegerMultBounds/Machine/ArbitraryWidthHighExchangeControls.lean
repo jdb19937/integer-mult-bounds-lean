@@ -62,15 +62,15 @@ theorem initializes (rs : List Bool) :
   let v3 : Tapes 16 a := bank rs (some (bits 0)) (some (bits 1)) none (some (bits 0))
   have h1 := constant_hoare 0 0 (input (a := a) rs) rfl rfl
   have e1 : setTape (input (a := a) rs) 0 (BinaryDescriptorStack.descriptor (bits 0)) 1 = v1 := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   rw [e1] at h1
   have h2 := constant_hoare 1 1 v1 rfl rfl
   have e2 : setTape v1 1 (BinaryDescriptorStack.descriptor (bits 1)) 1 = v2 := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   rw [e2] at h2
   have h3 := constant_hoare 15 0 v2 rfl rfl
   have e3 : setTape v2 15 (BinaryDescriptorStack.descriptor (bits 0)) 1 = v3 := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   rw [e3] at h3
   have h4 := BinaryDescriptorInstall.install_hoare (14 : Fin 16) 13 (by decide) v3 rs
     (BinaryDescriptorStackRoundtrip.descriptor_encoded rs) rfl rfl rfl
@@ -89,15 +89,15 @@ theorem cleans (rs ts : List Bool) :
   let v2 : Tapes 16 a := bank rs none none none (some (bits 0))
   have h1 := BinaryDescriptorCleanupList.one_hoare (0 : Fin 16) (returned (a := a) rs ts) ts rfl rfl
   have e1 : setTape (returned (a := a) rs ts) 0 (fun _ => blank) 0 = v1 := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   rw [e1] at h1
   have h2 := BinaryDescriptorCleanupList.one_hoare (1 : Fin 16) v1 (bits 1) rfl rfl
   have e2 : setTape v1 1 (fun _ => blank) 0 = v2 := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   rw [e2] at h2
   have h3 := BinaryDescriptorCleanupList.one_hoare (15 : Fin 16) v2 (bits 0) rfl rfl
   have e3 : setTape v2 15 (fun _ => blank) 0 = input rs := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   rw [e3] at h3
   exact ((h1.seq h2).seq h3).consequence (fun _ h => h) (fun _ h => h) (by
     change 2*ts.length+4+1+(2*1+4)+1+(2*0+4) ≤ 2*ts.length+16

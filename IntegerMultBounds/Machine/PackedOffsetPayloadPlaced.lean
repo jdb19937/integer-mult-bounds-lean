@@ -94,7 +94,7 @@ theorem active_input (caller : Tapes t a) (focus : Fin 5 → Fin t) (hf : Functi
 theorem bank_set_payload (payload payload' offsets : ℤ → Fin (a+4)) (p s : ℤ) (bs ns ws : List Bool) :
     PackedOffsetPayloadAlphabet.bank payload' offsets p s bs ns ws =
       setTape (PackedOffsetPayloadAlphabet.bank payload offsets p s bs ns ws) 10 payload' p := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 def program (a : ℕ) (focus : Fin 5 → Fin t) (hf : Function.Injective focus) :=
   Placement.placed (PackedOffsetPayloadAlphabet.program a) (placement focus hf)

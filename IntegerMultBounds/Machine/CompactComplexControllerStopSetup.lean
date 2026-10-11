@@ -79,7 +79,7 @@ private theorem initialized_eq (D e : ℕ) :
     initialized (a := a) D e=CompactComplexStopRun.input (bits D) (bits e) := by
   unfold initialized CompactComplexStopRun.input CompactComplexStopRun.exponent FixedBasePowerUntil.input
   simp only [BinaryDescriptorStackRoundtrip.descriptor_encoded]
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 def initializeProgram : Σ q, Program (tapes w r) q a :=
   ⟨_,seq (copyProgram dimensionSource (6 : Fin 10)) (copyProgram exponentSource (9 : Fin 10))⟩

@@ -16,13 +16,13 @@ def flagPlace : Fin (2+2) ≃ Fin 4 := Equiv.refl _
 def vPlace : Fin (2+2) ≃ Fin 4 where
   toFun := ![2,1,0,3]
   invFun := ![2,1,0,3]
-  left_inv i := by fin_cases i <;> rfl
-  right_inv i := by fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 def wPlace : Fin (2+2) ≃ Fin 4 where
   toFun := ![3,1,0,2]
   invFun := ![2,1,3,0]
-  left_inv i := by fin_cases i <;> rfl
-  right_inv i := by fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def copyFlag := Placement.placed (CopyWord.program (a := 1)) flagPlace
 def copyV := Placement.placed (CopyWord.program (a := 1)) vPlace
@@ -77,7 +77,7 @@ theorem copyFlag_runs (K V W : ℤ → Fin 5) (pk pv pw : ℤ) (fl : Bool) :
   apply placed_exact flagPlace _ _ _ _ _ _ _
     (CopyWord.copy_hoare (fun _ => blank) K 0 pk [bitSymbol fl]
       (ReturnOrigin.bits_nonblank [fl]) rfl)
-  all_goals apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  all_goals apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem copyV_runs (F K W : ℤ → Fin 5) (pf pk pw : ℤ) (xs : List Bool) :
     HoareTime copyV (fun v => v=bank F K (word xs) W pf pk 0 pw)
@@ -87,7 +87,7 @@ theorem copyV_runs (F K W : ℤ → Fin 5) (pf pk pw : ℤ) (xs : List Bool) :
     (ReturnOrigin.bits_nonblank xs) rfl
   simp only [List.length_map,zero_add] at h0
   apply placed_exact vPlace _ _ _ _ _ _ _ h0
-  all_goals apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  all_goals apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem copyW_runs (F K V : ℤ → Fin 5) (pf pk pv : ℤ) (xs : List Bool) :
     HoareTime copyW (fun v => v=bank F K V (word xs) pf pk pv 0)
@@ -97,7 +97,7 @@ theorem copyW_runs (F K V : ℤ → Fin 5) (pf pk pv : ℤ) (xs : List Bool) :
     (ReturnOrigin.bits_nonblank xs) rfl
   simp only [List.length_map,zero_add] at h0
   apply placed_exact wPlace _ _ _ _ _ _ _ h0
-  all_goals apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  all_goals apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 end
 end IntegerMultBounds.Machine.CountedRepairKeyAppendMoves

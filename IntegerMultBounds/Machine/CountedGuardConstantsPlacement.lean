@@ -60,7 +60,7 @@ theorem setsUp (qs bs : List Bool) (q : ℕ) (hq : Counter.value qs=q)
     HoareTime (setup (a := a)) (fun v => v=input qs bs)
       (fun v => v=bank qs bs (RecursiveChildQuotientsConstant.bits (q-1)) (fun _ => blank) (fun _ => blank) (fun _ => blank) 0 0 0) (6*q+44) := by
   have h := Placement.hoare_at (CountedGuardGadgetHeaders.constructs (a := a) qs q hq cq hp) headerPlace (input (a := a) qs bs) (by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl)
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl)
   refine h.consequence (fun _ h => h) ?_ le_rfl
   rintro v ⟨z,rfl,rfl⟩
   apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> first | rfl | (change BinaryDescriptorStack.descriptor _=CountedLoopReuseAlphabet.binary _; rw [CountedGuardGadgetHeaders.binary_eq,BinaryDescriptorStackRoundtrip.descriptor_encoded])
@@ -73,10 +73,10 @@ theorem fills1 (x : Bool) (qs bs ds : List Bool) (F1 F2 F3 : ℤ → Fin (a+4))
       (fun v => v=bank qs bs ds (putWord F1 p1 (List.replicate n (bitSymbol x))) F2 F3 (p1+n) p2 p3) (7*n+7*ds.length+23) := by
   have h := Placement.hoare_at (CountedGuardConstantsFill.fills (a := a) x F1 p1 ds n hk)
     fill1Place (bank (a := a) qs bs ds F1 F2 F3 p1 p2 p3) (by
-      apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl)
+      apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl)
   refine h.consequence (fun _ h => h) ?_ le_rfl
   rintro v ⟨z,rfl,rfl⟩
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 def fill2 (x : Bool) := Placement.placed (CountedGuardConstantsFill.fill (a := a) x) fill2Place
 
@@ -86,10 +86,10 @@ theorem fills2 (x : Bool) (qs bs ds : List Bool) (F1 F2 F3 : ℤ → Fin (a+4))
       (fun v => v=bank qs bs ds F1 (putWord F2 p2 (List.replicate n (bitSymbol x))) F3 p1 (p2+n) p3) (7*n+7*ds.length+23) := by
   have h := Placement.hoare_at (CountedGuardConstantsFill.fills (a := a) x F2 p2 ds n hk)
     fill2Place (bank (a := a) qs bs ds F1 F2 F3 p1 p2 p3) (by
-      apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl)
+      apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl)
   refine h.consequence (fun _ h => h) ?_ le_rfl
   rintro v ⟨z,rfl,rfl⟩
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 def fill3 (x : Bool) := Placement.placed (CountedGuardConstantsFill.fill (a := a) x) fill3Place
 
@@ -99,10 +99,10 @@ theorem fills3 (x : Bool) (qs bs ds : List Bool) (F1 F2 F3 : ℤ → Fin (a+4))
       (fun v => v=bank qs bs ds F1 F2 (putWord F3 p3 (List.replicate n (bitSymbol x))) p1 p2 (p3+n)) (7*n+7*bs.length+23) := by
   have h := Placement.hoare_at (CountedGuardConstantsFill.fills (a := a) x F3 p3 bs n hk)
     fill3Place (bank (a := a) qs bs ds F1 F2 F3 p1 p2 p3) (by
-      apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl)
+      apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl)
   refine h.consequence (fun _ h => h) ?_ le_rfl
   rintro v ⟨z,rfl,rfl⟩
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 def rewind1 := Placement.placed (CountedGuardConstantsEdit.rewind (a := a)) edit1Place
 
@@ -112,10 +112,10 @@ theorem rewinds1 (qs bs ds : List Bool) (_F1 F2 F3 : ℤ → Fin (a+4))
       (fun v => v=bank qs bs ds (word xs) F2 F3 0 p2 p3) (xs.length+2) := by
   have h := Placement.hoare_at (CountedGuardConstantsEdit.rewind_hoare (a := a) xs bs)
     edit1Place (bank (a := a) qs bs ds (word xs) F2 F3 (xs.length) p2 p3) (by
-      apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl)
+      apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl)
   refine h.consequence (fun _ h => h) ?_ le_rfl
   rintro v ⟨z,rfl,rfl⟩
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 def rewind2 := Placement.placed (CountedGuardConstantsEdit.rewind (a := a)) edit2Place
 
@@ -125,10 +125,10 @@ theorem rewinds2 (qs bs ds : List Bool) (F1 _F2 F3 : ℤ → Fin (a+4))
       (fun v => v=bank qs bs ds F1 (word xs) F3 p1 0 p3) (xs.length+2) := by
   have h := Placement.hoare_at (CountedGuardConstantsEdit.rewind_hoare (a := a) xs bs)
     edit2Place (bank (a := a) qs bs ds F1 (word xs) F3 p1 (xs.length) p3) (by
-      apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl)
+      apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl)
   refine h.consequence (fun _ h => h) ?_ le_rfl
   rintro v ⟨z,rfl,rfl⟩
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 def rewind3 := Placement.placed (CountedGuardConstantsEdit.rewind (a := a)) fill3Place
 
@@ -138,10 +138,10 @@ theorem rewinds3 (qs bs ds : List Bool) (F1 F2 _F3 : ℤ → Fin (a+4))
       (fun v => v=bank qs bs ds F1 F2 (word xs) p1 p2 0) (xs.length+2) := by
   have h := Placement.hoare_at (CountedGuardConstantsEdit.rewind_hoare (a := a) xs bs)
     fill3Place (bank (a := a) qs bs ds F1 F2 (word xs) p1 p2 (xs.length)) (by
-      apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl)
+      apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl)
   refine h.consequence (fun _ h => h) ?_ le_rfl
   rintro v ⟨z,rfl,rfl⟩
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 def edit1 (x : Bool) := Placement.placed (CountedGuardConstantsEdit.program (a := a) x) edit1Place
 
@@ -151,10 +151,10 @@ theorem edits1 (x : Bool) (qs bs ds : List Bool) (F1 F2 F3 : ℤ → Fin (a+4))
       (fun v => v=bank qs bs ds (Function.update F1 (b+1 : ℕ) (bitSymbol x)) F2 F3 0 p2 p3) (14*b+14*bs.length+55) := by
   have h := Placement.hoare_at (CountedGuardConstantsEdit.runs (a := a) x F1 bs b hk)
     edit1Place (bank (a := a) qs bs ds F1 F2 F3 0 p2 p3) (by
-      apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl)
+      apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl)
   refine h.consequence (fun _ h => h) ?_ le_rfl
   rintro v ⟨z,rfl,rfl⟩
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 def edit2 (x : Bool) := Placement.placed (CountedGuardConstantsEdit.program (a := a) x) edit2Place
 
@@ -164,10 +164,10 @@ theorem edits2 (x : Bool) (qs bs ds : List Bool) (F1 F2 F3 : ℤ → Fin (a+4))
       (fun v => v=bank qs bs ds F1 (Function.update F2 (b+1 : ℕ) (bitSymbol x)) F3 p1 0 p3) (14*b+14*bs.length+55) := by
   have h := Placement.hoare_at (CountedGuardConstantsEdit.runs (a := a) x F2 bs b hk)
     edit2Place (bank (a := a) qs bs ds F1 F2 F3 p1 0 p3) (by
-      apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl)
+      apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl)
   refine h.consequence (fun _ h => h) ?_ le_rfl
   rintro v ⟨z,rfl,rfl⟩
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 def write3 := Placement.placed (CountedGuardConstantsFill.cell (a := a) false) (FiniteReturnStackAt.placement (4 : Fin 8))
 def left3 := Placement.placed (StepLeft.program (a := a)) (FiniteReturnStackAt.placement (4 : Fin 8))
@@ -182,7 +182,7 @@ theorem writes3 (qs bs ds : List Bool) (F1 F2 F3 : ℤ → Fin (a+4)) (p1 p2 p3 
   rintro v ⟨z,rfl,rfl⟩
   change Placement.replace _ _ (FiniteReturnStack.bank _ _) = _
   rw [FiniteReturnStackAt.replace_bank]
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem lefts3 (qs bs ds : List Bool) (F1 F2 F3 : ℤ → Fin (a+4)) (p1 p2 p3 : ℤ) :
     HoareTime (left3 (a := a)) (fun v => v=bank qs bs ds F1 F2 F3 p1 p2 p3)
@@ -194,7 +194,7 @@ theorem lefts3 (qs bs ds : List Bool) (F1 F2 F3 : ℤ → Fin (a+4)) (p1 p2 p3 :
   rintro v ⟨z,rfl,rfl⟩
   change Placement.replace _ _ (FiniteReturnStack.bank _ _) = _
   rw [FiniteReturnStackAt.replace_bank]
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 end
 end IntegerMultBounds.Machine.CountedGuardConstantsPlacement

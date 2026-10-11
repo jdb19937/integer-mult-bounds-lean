@@ -41,7 +41,7 @@ theorem base_view {m n : ℕ} (h : m=n) (gs : Fin 7 → List Bool) (bw : List Bo
 theorem base_set {m n : ℕ} (gs : Fin 7 → List Bool) (bw : List Bool) (hs : Fin 6 → List Bool)
     (rs bs : List Bool) (x : Fin m → Bool) (y : Fin n → Bool) :
     setTape (base gs bw hs rs bs x) 16 (ActiveTargetRotation.word y) 0=base gs bw hs rs bs y := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 def tSwap (s : Shape) (rows w : ℕ) (hw : w≤s.H) (x : FullArray s rows) : FullArray s rows :=
   view (ActivePrefixCompactSwapData.volume_eq s rows w hw)
@@ -64,7 +64,7 @@ def loadSources (l : LoadShape) (rows B : ℕ) (hs : Fin 6 → List Bool) (rs bs
 theorem load_sources (l : LoadShape) (rows B : ℕ) (gs : Fin 7 → List Bool) (bw : List Bool)
     (hs : Fin 6 → List Bool) (rs bs : List Bool) (x : LoadArray l rows B) :
     SharedBank.payload (base gs bw hs rs bs x) loadFocus=loadSources l rows B hs rs bs x := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 def swapCost (kind : Kind) (s : Shape) (rows w : ℕ) := match kind with
   | .tPure | .tNegative => ActivePrefixCompactSwapRun.cost s rows w

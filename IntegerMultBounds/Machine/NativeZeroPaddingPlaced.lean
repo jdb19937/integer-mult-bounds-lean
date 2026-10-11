@@ -29,7 +29,7 @@ def program := seq (seq (headerProgram schedule) padProgram) (headerProgram clea
 theorem payload (rows padded D ell width : ℕ) (xs : List (Fin 6)) :
     SharedBank.payload (NativeZeroStream.bank (NativeZeroPadding.word xs) 0 (bits width) (bits (count rows padded D ell))) ports=
       SharedBank.payload (common (output rows padded D ell width) xs) focus := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem clean (f : ℤ → Fin 6) (width count : List Bool) :
     SharedBank.strip (NativeZeroStream.bank f 0 width count) ports=SharedBank.empty 7 2 := by

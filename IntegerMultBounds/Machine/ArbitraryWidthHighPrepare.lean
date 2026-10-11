@@ -58,32 +58,32 @@ def depthPlacement : Fin (9+10) ≃ Fin 19 where
     | 0 => 7 | 1 => 8 | 2 => 9 | 3 => 10 | 4 => 11 | 5 => 2 | 6 => 0 | 7 => 1 | 8 => 12 | 9 => 3 | 10 => 4 | 11 => 5 | 12 => 6 | 13 => 13 | 14 => 14 | 15 => 15 | 16 => 16 | 17 => 17 | _ => 18
   invFun := fun i => match i.val with
     | 0 => 6 | 1 => 7 | 2 => 5 | 3 => 9 | 4 => 10 | 5 => 11 | 6 => 12 | 7 => 0 | 8 => 1 | 9 => 2 | 10 => 3 | 11 => 4 | 12 => 8 | 13 => 13 | 14 => 14 | 15 => 15 | 16 => 16 | 17 => 17 | _ => 18
-  left_inv i := by fin_cases i <;> rfl
-  right_inv i := by fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def divisorPlacement : Fin (8+11) ≃ Fin 19 where
   toFun := fun i => match i.val with
     | 0 => 7 | 1 => 8 | 2 => 9 | 3 => 10 | 4 => 11 | 5 => 3 | 6 => 12 | 7 => 1 | 8 => 0 | 9 => 2 | 10 => 4 | 11 => 5 | 12 => 6 | 13 => 13 | 14 => 14 | 15 => 15 | 16 => 16 | 17 => 17 | _ => 18
   invFun := fun i => match i.val with
     | 0 => 8 | 1 => 7 | 2 => 9 | 3 => 5 | 4 => 10 | 5 => 11 | 6 => 12 | 7 => 0 | 8 => 1 | 9 => 2 | 10 => 3 | 11 => 4 | 12 => 6 | 13 => 13 | 14 => 14 | 15 => 15 | 16 => 16 | 17 => 17 | _ => 18
-  left_inv i := by fin_cases i <;> rfl
-  right_inv i := by fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def rowsPlacement : Fin (9+10) ≃ Fin 19 where
   toFun := fun i => match i.val with
     | 0 => 7 | 1 => 8 | 2 => 9 | 3 => 10 | 4 => 11 | 5 => 5 | 6 => 3 | 7 => 4 | 8 => 12 | 9 => 0 | 10 => 1 | 11 => 2 | 12 => 6 | 13 => 13 | 14 => 14 | 15 => 15 | 16 => 16 | 17 => 17 | _ => 18
   invFun := fun i => match i.val with
     | 0 => 9 | 1 => 10 | 2 => 11 | 3 => 6 | 4 => 7 | 5 => 5 | 6 => 12 | 7 => 0 | 8 => 1 | 9 => 2 | 10 => 3 | 11 => 4 | 12 => 8 | 13 => 13 | 14 => 14 | 15 => 15 | 16 => 16 | 17 => 17 | _ => 18
-  left_inv i := by fin_cases i <;> rfl
-  right_inv i := by fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def roundPlacement : Fin (15+4) ≃ Fin 19 where
   toFun := fun i => match i.val with
     | 0 => 5 | 1 => 3 | 2 => 7 | 3 => 8 | 4 => 9 | 5 => 6 | 6 => 10 | 7 => 11 | 8 => 12 | 9 => 13 | 10 => 14 | 11 => 15 | 12 => 16 | 13 => 17 | 14 => 18 | 15 => 0 | 16 => 1 | 17 => 2 | _ => 4
   invFun := fun i => match i.val with
     | 0 => 15 | 1 => 16 | 2 => 17 | 3 => 1 | 4 => 18 | 5 => 0 | 6 => 5 | 7 => 2 | 8 => 3 | 9 => 4 | 10 => 6 | 11 => 7 | 12 => 8 | 13 => 9 | 14 => 10 | 15 => 11 | 16 => 12 | 17 => 13 | _ => 14
-  left_inv i := by fin_cases i <;> rfl
-  right_inv i := by fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 private theorem encoded_descriptor (bs : List Bool) : RadixZeroFill.encodedBinary (q := a) bs =
     BinaryDescriptorStack.descriptor bs := (BinaryDescriptorStackRoundtrip.descriptor_encoded _).symm
@@ -168,7 +168,7 @@ private theorem round_hoare (q e : ℕ) (es : List Bool) (hq : 2 ≤ q) :
     (RoundedRowDescriptor.construct_hoare (rBits q e) (dBits e) (rows q e) (divisor e)
       (rows_value q e) (divisor_value e) (FixedBasePowerStep.bits_canonical _ _) (FixedBasePowerStep.bits_canonical _ _)
       (rows_positive q e hq) (divisor_positive e))
-  all_goals apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  all_goals apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 private theorem erase_envelope_hoare (q e : ℕ) (es : List Bool) :
     HoareTime (eraseEnvelope (a := a)) (fun v => v = fourth q e es)
@@ -176,7 +176,7 @@ private theorem erase_envelope_hoare (q e : ℕ) (es : List Bool) :
   have h := BinaryDescriptorCleanupList.one_hoare (2 : Fin 19) (fourth (a := a) q e es) (mBits e)
     (encoded_descriptor _) rfl
   have he : SharedPlacementAlphabet.setTape (fourth (a := a) q e es) 2 (fun _ => blank) 0 = output q e es := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   rw [he] at h
   exact h
 
@@ -252,7 +252,7 @@ theorem cleanup_hoare (q e : ℕ) (hq : 2 ≤ q) (es : List Bool) :
       rcases hi with rfl | rfl | rfl | rfl | rfl
       all_goals exact ⟨rfl,encoded_descriptor _⟩)
   have heq : BinaryDescriptorCleanupList.cleared cleanupSlots (output (a := a) q e es) = input es := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   rw [heq] at h
   have hp := RoundedRowDescriptor.rounded_pos (rows q e) (divisor e) (divisor_positive e)
   have hk : depth e ≤ rounded q e := by

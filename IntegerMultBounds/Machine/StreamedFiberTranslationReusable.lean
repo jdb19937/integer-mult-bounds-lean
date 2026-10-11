@@ -90,22 +90,22 @@ theorem runs (ws : List (List Bool)) (Q B : ℕ) (hQ : 0 < Q) (hB : 0 < B)
     simpa only [X,Y,V,C,r',A,zero_add] using hr
   have hs := rewind_hoare 10 A f p X hx hf rfl (by simp [A,bare,hX])
   have hsout : setTape A 10 (putWord f p X) p = B0 := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   rw [hsout,hX] at hs
   have hd := rewind_hoare 11 B0 (fun _ => blank) 0 Y hy rfl rfl (by simp [B0,bare,hY])
   have hdout : setTape B0 11 (putWord (fun _ => blank) 0 Y) 0 = B1 := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   rw [hdout,hY] at hd
   have hp := WordBankCleanup.replace_hoare B1 (11 : Fin 15) 10 (by decide) (by decide)
     (fun _ => blank) f Y X (hY.trans hX.symm) rfl rfl hy rfl rfl hf
   have hpout : write B1 10 (putWord f p Y) = B2 := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   change HoareTime _ (fun w => w=B1) (fun w => w=write B1 10 (putWord f p Y)) _ at hp
   rw [hpout,hY] at hp
   have he := WordBankCleanup.clear_hoare B2 (11 : Fin 15) (by decide) Y hy rfl
   have heout : write B2 11 (fun _ => blank) = bare (putWord f p Y)
       (fun _ => blank) C p 0 r' bs qs ns := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   rw [heout,hY] at he
   exact ((((hA.seq hs).seq hd).seq hp).seq he).consequence
     (fun _ h => h) (fun _ h => h) (by omega)

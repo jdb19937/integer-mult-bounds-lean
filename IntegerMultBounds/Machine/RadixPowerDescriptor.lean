@@ -43,12 +43,12 @@ private theorem conversion_hoare (bs : List Bool) (b : ℕ) :
       (10*q^b+6*b+20) := by
   let xs := RadixPowerWord.digits hq b
   have ha : Placement.active conversionPlacement (ready hq bs b) = RadixToBinary.input xs := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   have hf : Placement.active conversionPlacement (converted hq bs b) = RadixToBinary.output xs := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   have he : Placement.extra conversionPlacement (ready hq bs b) =
       Placement.extra conversionPlacement (converted hq bs b) := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   apply (Placement.hoare_at (RadixToBinary.convert_hoare hq xs) conversionPlacement
     (ready hq bs b) ha).consequence (fun _ h => h) _ (by simp [xs]; omega)
   rintro v ⟨w,rfl,rfl⟩
@@ -69,9 +69,9 @@ private theorem cleanup_hoare (bs : List Bool) (b : ℕ) :
   · intro v hv
     refine ⟨_,rfl,?_⟩
     rw [hv]
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   · rintro v ⟨w,rfl,rfl⟩
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 /-- No program state depends on the runtime exponent. -/
 def program : Program 4 53 q :=

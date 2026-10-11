@@ -74,7 +74,7 @@ private theorem cleanup_hoare (B k : ℕ) (ks : List Bool) :
     (by rw [BinaryDescriptorStackRoundtrip.descriptor_encoded]; rfl) rfl
   have h2 := BinaryDescriptorCleanupList.one_hoare (6 : Fin 8) vv [] rfl rfl
   have he : setTape vv (6 : Fin 8) (fun _ => blank) 0 = output B k ks := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   rw [he] at h2
   exact (h1.seq h2).consequence (fun _ h => h) (fun _ h => h) (by simp only [List.length_nil]; omega)
 

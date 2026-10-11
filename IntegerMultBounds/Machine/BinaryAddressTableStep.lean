@@ -19,7 +19,7 @@ theorem binary_word (xs : List Bool) : binary xs = MarkedWordCleanup.marked (xs.
 
 theorem pair_append (f g : ℤ → Fin 4) (p q : ℤ) :
     (⟨fun _ => p,fun _ => f⟩ : Tapes 1 0).append (⟨fun _ => q,fun _ => g⟩ : Tapes 1 0) = Copy.tapes f g p q := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 def program : Program 2 ((1+3)+3) 0 :=
   seq (seq (Copy.program blank false) (extend MarkedControlStreamReset.rewind 1))

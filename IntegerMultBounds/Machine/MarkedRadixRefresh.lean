@@ -109,7 +109,7 @@ private theorem reset_step (xs : List (Fin q)) (p : ℤ) (hp : 0 < p) :
   simp only [step,resetProgram,resetCfg,Copy.tapes,Copy.cfg,Config.tapes,ite_true,no_marker xs p hp,ite_false,Move.offset]
   congr 1
   congr 1
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
   · funext i z; fin_cases i <;> by_cases hz : z = p <;> simp [hz]
 
 private theorem reset_run (xs : List (Fin q)) (n : ℕ) :
@@ -128,7 +128,7 @@ private theorem reset_hoare (xs : List (Fin q)) :
     simp only [step,resetProgram,resetCfg,Copy.tapes,Copy.cfg,Config.tapes,ite_true,marker,Move.offset]
     congr 1
     congr 1
-    · funext i; fin_cases i <;> rfl
+    · apply List.ofFn_injective; rfl
     · funext i z; fin_cases i <;> by_cases hz : z = 0 <;> simp [bank,Copy.tapes,Copy.cfg,Config.tapes,hz]
   have hr := reset_run xs (xs.length+1)
   rw [Nat.cast_add,Nat.cast_one] at hr

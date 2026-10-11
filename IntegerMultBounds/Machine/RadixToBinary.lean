@@ -484,7 +484,7 @@ private theorem copy_hoare (xs : List (Fin q)) :
     (by simp only [List.length_map]; simp [empty,show (1:ℤ)+xs.length ≠ 0 by omega])
   have ha : Placement.active copyPlacement (prepared [] [] xs 1 1) =
       Copy.tapes (putWord empty 1 (xs.map digitSymbol)) empty 1 1 := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   have hh := Placement.hoare_at h copyPlacement (prepared [] [] xs 1 1) ha
   apply hh.consequence (fun _ h => h) _ (by simp)
   rintro v ⟨w,rfl,rfl⟩
@@ -493,12 +493,12 @@ private theorem copy_hoare (xs : List (Fin q)) :
   rw [hid]
   have he : Placement.extra copyPlacement (prepared [] [] xs 1 1) =
       Placement.extra copyPlacement (prepared [] xs xs (1+xs.length) (1+xs.length)) := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   have hf : Placement.active copyPlacement (prepared [] xs xs (1+xs.length) (1+xs.length)) =
       Copy.tapes (putWord empty 1 (xs.map digitSymbol)) (putWord empty 1 (xs.map digitSymbol))
         (1+(xs.map digitSymbol).length) (1+(xs.map digitSymbol).length) := by
     simp only [List.length_map]
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   rw [Placement.replace,he]
   simpa only [hf] using Placement.view copyPlacement (prepared [] xs xs (1+xs.length) (1+xs.length))
 
@@ -627,12 +627,12 @@ private theorem clock_hoare {k n : ℕ} (M : Program 1 k q) (bits : List Bool) (
     HoareTime (atClock M) (fun v => v = clockBank bits xs f r)
       (fun v => v = clockBank bits xs g u) n := by
   have ha : Placement.active clockPlacement (clockBank bits xs f r) = oneTape f r := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   have he : Placement.extra clockPlacement (clockBank bits xs f r) =
       Placement.extra clockPlacement (clockBank bits xs g u) := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   have hf : Placement.active clockPlacement (clockBank bits xs g u) = oneTape g u := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   apply (Placement.hoare_at h clockPlacement (clockBank bits xs f r) ha).consequence (fun _ h => h) _ le_rfl
   rintro v ⟨w,rfl,rfl⟩
   rw [Placement.replace,he]
@@ -738,9 +738,9 @@ theorem convert_hoare (xs : List (Fin q)) :
     · intro v hv
       refine ⟨_,rfl,?_⟩
       rw [hv]
-      apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+      apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
     · rintro v ⟨w,rfl,rfl⟩
-      apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+      apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   apply (((((initialize_hoare xs).seq (copy_hoare xs)).seq (reset_hoare xs)).seq hc).seq
     (cleanup_hoare hq xs)).consequence (fun _ h => h) (fun _ h => h) _
   omega

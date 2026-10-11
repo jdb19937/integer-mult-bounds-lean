@@ -27,7 +27,7 @@ theorem prepared_bank (source : ℤ → Fin (a+4)) (ss ps os ts : List Bool) :
     bank (Q := Q) source ss ps (some os) (some ts) =
       (RadixDigitMovePrepared.bank (Q := Q) source ss ps os ts).append (SharedBank.empty 3 a) := by
   have hc : controls (a := a) ss ps (some os) (some ts) = RadixDigitMoveInitialized.controls ss ps os ts := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   simp only [bank,RadixDigitMovePrepared.bank,RadixDigitMoveInitialized.bank,hc]
 
 def slot : Fin 7 → Fin ((count Q+count Q)+3) :=

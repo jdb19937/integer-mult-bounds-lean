@@ -39,7 +39,7 @@ theorem step_hoare (ws ps : List Bool) (N B : ℕ) (hB : 0 < B)
     (by rw [BinaryDescriptorStackRoundtrip.descriptor_encoded]; rfl) rfl
   have hfinal : setTape copied (1 : Fin 6) (fun _ => blank) 0 =
       input ws (DimensionProductDescriptor.bits N B) := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   rw [hfinal] at ht
   exact (((hh.seq he).seq hc).seq ht).consequence (fun _ h => h) (fun _ h => h) (by omega)
 

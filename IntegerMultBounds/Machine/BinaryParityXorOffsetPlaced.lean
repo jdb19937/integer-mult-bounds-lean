@@ -113,7 +113,7 @@ theorem runs (caller : Tapes t a) (focus : Fin 5 → Fin t) (hf : Function.Injec
     (placement focus hf) (input caller) ha
   have he : Alphabet.mapTapes (encoding (a := a)) (BinaryParityXorOffset.output hs Z q b n hb hbq)=
       setTape (Alphabet.mapTapes (encoding (a := a)) (BinarySelectedOffset.input hs Z)) (14 : Fin 31) (mapTape (BinaryParityXorOffsetRow.word (BinaryParityXorOffsetData.word q b n Z hb hbq))) 0 := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   apply hp.consequence (fun _ h => h) _ le_rfl
   rintro z ⟨small,rfl,rfl⟩
   rw [he,←ha,PlacedDescriptorConstruction.replace_setTape]

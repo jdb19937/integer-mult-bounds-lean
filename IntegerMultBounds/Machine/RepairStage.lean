@@ -196,8 +196,8 @@ theorem sort_stage (k idx : ℕ) (raw : List (List Bool)) (t8 t9 t10 : ℤ → F
       stage k idx raw 0 idx t8 h8 t9 h9 t10 h10 := by
   unfold TapeRadixSort.bank KeyPass.bank KeyPartition.bank Tapes.append stage
   congr 1
-  · funext i; fin_cases i <;> rfl
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
+  · apply List.ofFn_injective; rfl
 
 theorem strip_stage (k idx : ℕ) (raw : List (List Bool)) (h0 h7 : ℤ) (t8 : ℤ → Fin 5) (h8 : ℤ)
     (t9 : ℤ → Fin 5) (h9 : ℤ) (t10 : ℤ → Fin 5) (h10 : ℤ) (s : Fin 4) :
@@ -208,8 +208,8 @@ theorem strip_stage (k idx : ℕ) (raw : List (List Bool)) (h0 h7 : ℤ) (t8 : �
       stage k idx raw h0 h7 t8 h8 t9 h9 t10 h10 := by
   unfold StripPrefix.cfg Config.tapes Tapes.append Tapes.reindex stage stripPlacement
   congr 1
-  · funext i; fin_cases i <;> rfl
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
+  · apply List.ofFn_injective; rfl
 
 theorem return_stage (k idx : ℕ) (raw : List (List Bool)) (h0 h7 : ℤ) (t8 : ℤ → Fin 5) (h8 : ℤ)
     (t9 : ℤ → Fin 5) (h9 : ℤ) (t10 : ℤ → Fin 5) (h10 : ℤ) (s : Fin 3) :
@@ -222,8 +222,8 @@ theorem return_stage (k idx : ℕ) (raw : List (List Bool)) (h0 h7 : ℤ) (t8 : 
       stage k idx raw h0 h7 t8 h8 t9 h9 t10 h10 := by
   unfold ReturnOrigin.cfg Config.tapes Tapes.append Tapes.reindex stage returnPlacement
   congr 1
-  · funext i; fin_cases i <;> rfl
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
+  · apply List.ofFn_injective; rfl
 
 theorem reinsert_stage (k idx : ℕ) (raw : List (List Bool)) (h0 h7 : ℤ) (f h g : ℤ → Fin 4)
     (p q r : ℤ) (s : Fin 4) :
@@ -237,8 +237,8 @@ theorem reinsert_stage (k idx : ℕ) (raw : List (List Bool)) (h0 h7 : ℤ) (f h
   unfold Reinsert.cfg Reinsert.source Config.tapes Alphabet.mapTapes Tapes.append Tapes.reindex
     stage reinsertPlacement
   congr 1
-  · funext i; fin_cases i <;> rfl
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
+  · apply List.ofFn_injective; rfl
 
 /-! ### The stage contract -/
 

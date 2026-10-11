@@ -131,12 +131,12 @@ private def productPlacement : Fin (6+3) ≃ Fin 9 where
 private theorem product_active_input (p s : ℕ) (bs ws : List Bool) (b : ℕ) :
     Placement.active productPlacement (bank (q := q) bs ws (afterS hq p s b)) =
       DimensionProductDescriptor.input ws (suffixBits hq s b) := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 private theorem product_active_output (p s : ℕ) (bs ws : List Bool) (b W : ℕ) :
     Placement.active productPlacement (output hq p s bs ws b W) =
       DimensionProductDescriptor.output ws (suffixBits hq s b) (q^(s*b)) W := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 private theorem product_frame (p s : ℕ) (bs ws : List Bool) (b W : ℕ) :
     Placement.extra productPlacement (bank bs ws (afterS hq p s b)) =

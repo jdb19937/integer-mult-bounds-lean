@@ -86,8 +86,8 @@ theorem input_bank (x y : List Bool) :
     input program x y = (blankBank (wordTape (inputWord x y)) 0).start program := by
   unfold input Tapes.start blankBank inputWord
   congr 1
-  · funext i; fin_cases i <;> rfl
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
+  · apply List.ofFn_injective; rfl
 
 /-- The standard multiplication input now bootstraps its total input-length
 descriptor from the actual blank second tape, including its separator symbol. -/

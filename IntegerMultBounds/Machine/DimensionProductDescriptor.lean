@@ -43,7 +43,7 @@ private theorem init_hoare (ws ns : List Bool) :
   · simp only [run_one,step,initProgram,Tapes.start,ite_true]
     congr 1
     congr 1
-    · funext i; fin_cases i <;> rfl
+    · apply List.ofFn_injective; rfl
     · funext i z
       fin_cases i <;> by_cases hz : z = 0 <;> by_cases hz1 : z = 1 <;>
         simp [input,prepared,hz,hz1,RadixZeroFill.encodedBinary,
@@ -55,7 +55,7 @@ private theorem mapped_bank (ds ws ns : List Bool) :
     Alphabet.mapTapes (RadixToBinary.binaryEncoding (q := q))
       (TranslationProduct.bank (fun _ : Fin 1 => ds) ws ns) = prepared ds ws ns := by
   apply congrArg₂ Tapes.mk
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
   · funext i z
     fin_cases i <;> try rfl
     all_goals
@@ -100,7 +100,7 @@ private theorem clean_hoare (ws ns : List Bool) (N W : ℕ) :
     simp only [step,cleanProgram,Tapes.start,ite_true]
     congr 1
     congr 1
-    · funext i; fin_cases i <;> rfl
+    · apply List.ofFn_injective; rfl
     · funext i z
       by_cases hz : z = 1 <;> simp [hz,middle,prepared]
   rintro v rfl
@@ -110,7 +110,7 @@ private theorem clean_hoare (ws ns : List Bool) (N W : ℕ) :
       show (1 : Fin 3) ≠ 0 by decide,ite_false,ite_true]
     congr 1
     congr 1
-    · funext i; fin_cases i <;> rfl
+    · apply List.ofFn_injective; rfl
     · funext i z
       fin_cases i <;> by_cases hz : z = 0 <;> by_cases hz1 : z = 1 <;>
         simp [middle,output,prepared,MarkedWordCleanup.empty,hz,hz1]

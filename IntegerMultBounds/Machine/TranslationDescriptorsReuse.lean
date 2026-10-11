@@ -117,7 +117,7 @@ private theorem unmark_hoare (v : Tapes 10 0) (hh : v.head 9 = 1) (ht : v.tape 9
 
 private theorem unmarked_packed (bs qs as : List Bool) :
     unmarked (packed (fun _ => []) bs qs as) = bank (fun _ => []) bs qs as (fun _ => blank) 0 := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 /-- Complete cleanup restores the exact marked workspace expected by synthesis. -/
 def cleanupProgram : Program 10 19 0 := seq clearAllProgram unmarkProgram

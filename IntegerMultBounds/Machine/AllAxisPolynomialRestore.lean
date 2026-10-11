@@ -29,7 +29,7 @@ theorem stream_frame (v : Tapes 60 2) (ctx : ℕ → Context 2) (p : Fin 4)
 
 theorem reset_streams (v w : Tapes 60 2) :
     UnitPhaseControlReset.output (streams v w)=streams (UnitPhaseControlReset.output v) w := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem reset_prepared (order : Order) (v : Stage s) (rows : ℕ) (m : ℕ)
     (ws : List (ZMod 4)) (addr : List Bool) (z : Tapes 4 2) :
@@ -37,7 +37,7 @@ theorem reset_prepared (order : Order) (v : Stage s) (rows : ℕ) (m : ℕ)
       (AllAxisPhaseFlagsCaller.input order v rows addr (SharedBank.empty 6 2)).append z := by
   unfold prepared
   rw [AllAxisPhaseFlagsNormalize.output_eq]
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 def nextTail (order : Order) (v : Stage s) (rows : ℕ) (m : ℕ)
     (ws : List (ZMod 4)) (addr : List Bool) (z : Tapes 4 2) (ctx : ℕ → Context 2) (R : ℕ) :=
@@ -55,7 +55,7 @@ theorem restored (order : Order) (v : Stage s) (rows : ℕ) (m : ℕ)
     (finished order v rows m ws addr z ctx R) at h
   unfold AllAxisPolynomialRecord.output
   rw [h,reset_streams,reset_prepared]
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 end
 end IntegerMultBounds.Machine.AllAxisPolynomialRestore

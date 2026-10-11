@@ -34,7 +34,7 @@ theorem local_clean (f g : ℤ → Fin 5) (hs : Fin 2 → List Bool) :
 theorem local_output (f g : ℤ → Fin 5) (hs : Fin 2 → List Bool) (cs : List Bool) (start : ℕ) :
     localBank f (putWord g start (cs.map bitSymbol)) hs=
       setTape (localBank f g hs) (ports 1) (putWord g start (cs.map bitSymbol)) 0 := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem runs (caller : Tapes t 1) (focus : Fin 4 → Fin t) (hf : Function.Injective focus)
     (g : ℤ → Fin 5) (cs : List Bool) (hs : Fin 2 → List Bool) (start : ℕ)

@@ -87,7 +87,7 @@ theorem rewind_hoare (xs : List Bool) (f g : ℤ → Fin 4) (p q : ℤ) (ws ls n
   rintro z ⟨small,rfl,rfl⟩
   change Placement.replace _ _ (FiniteReturnStack.bank (putWord f p (xs.map bitSymbol)) p)=_
   rw [FiniteReturnStackAt.replace_bank]
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 def cost (W L N : ℕ) (ws ls ns : List Bool) := loopCost W L N ws ls ns+N*W+3
 

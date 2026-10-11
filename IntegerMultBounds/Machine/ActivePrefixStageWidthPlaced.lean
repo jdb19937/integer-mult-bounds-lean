@@ -18,11 +18,11 @@ def marked (v : Tapes t a) (focus : Fin 2 → Fin t) (fs : List Bool) :=
   setTape v (focus 1) (BinaryDescriptorCompare.result (RecursiveChildQuotientsConstant.bits 1) fs) 0
 
 theorem native_payload (fs : List Bool) : SharedBank.payload (ActivePrefixStageWidthSelector.input (a := a) fs) ports=sources fs := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem native_output (fs : List Bool) : SharedBank.payload (ActivePrefixStageWidthSelector.output (a := a) fs) ports=
     marked (sources fs) id fs := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem input_clean (fs : List Bool) : SharedBank.strip (ActivePrefixStageWidthSelector.input (a := a) fs) ports=SharedBank.empty 3 a := by
   apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;>

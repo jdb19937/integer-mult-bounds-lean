@@ -42,7 +42,7 @@ theorem setup_hoare (f g : ℤ → Fin 4) (p q : ℤ) (hs : Fin 4 → List Bool)
   have h2 := init_hoare 7 v2 rfl rfl
   have h3 := init_hoare 9 v3 rfl rfl
   have he : setTape v3 9 empty 1=bank f g p q hs := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   rw [he] at h3
   exact ((h0.seq h1).seq h2).seq h3
 
@@ -54,7 +54,7 @@ theorem clear_clocks (f g : ℤ → Fin 4) (p q : ℤ) (hs : Fin 4 → List Bool
       simp only [clocks,List.mem_cons,List.not_mem_nil,or_false] at hi
       rcases hi with rfl|rfl|rfl|rfl <;> exact ⟨rfl,rfl⟩)
   have he : BinaryDescriptorCleanupList.cleared clocks (bank f g p q hs)=raw f g p q hs := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   simpa only [he,clearClocks,show BinaryDescriptorCleanupList.cost clocks (fun _ => [])=20 by decide] using hh
 
 theorem rewinds (xs : List Bool) (f : ℤ → Fin 4) (hs : Fin 4 → List Bool) :
@@ -72,7 +72,7 @@ theorem rewinds (xs : List Bool) (f : ℤ → Fin 4) (hs : Fin 4 → List Bool) 
   rintro z ⟨small,rfl,rfl⟩
   change Placement.replace _ _ (FiniteReturnStack.bank (putWord (fun _ => blank) 0 (xs.map bitSymbol)) 0)=_
   rw [FiniteReturnStackAt.replace_bank]
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem erases (xs : List Bool) (g : ℤ → Fin 4) (hs : Fin 4 → List Bool) :
     HoareTime eraseSource (fun z => z=raw (putWord (fun _ => blank) 0 (xs.map bitSymbol)) g 0 0 hs)
@@ -81,7 +81,7 @@ theorem erases (xs : List Bool) (g : ℤ → Fin 4) (hs : Fin 4 → List Bool) :
     (0 : Fin 11) (by decide) (xs.map bitSymbol) (ReturnOrigin.bits_nonblank xs) rfl
   have he : WordBankCleanup.write (raw (putWord (fun _ => blank) 0 (xs.map bitSymbol)) g 0 0 hs)
       0 (fun _ => blank)=raw (fun _ => blank) g 0 0 hs := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   simpa only [he,eraseSource,List.length_map] using hh
 
 def cost (W L N K : ℕ) (hs : Fin 4 → List Bool) :=

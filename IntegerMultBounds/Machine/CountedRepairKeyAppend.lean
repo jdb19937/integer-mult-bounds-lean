@@ -9,19 +9,19 @@ open SharedPlacementAlphabet
 
 theorem set_bank0 (F K V W G : ℤ → Fin 5) (pf pk pv pw pg : ℤ) :
     setTape (bank F K V W pf pk pv pw) 0 G pg = bank G K V W pg pk pv pw := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem set_bank1 (F K V W G : ℤ → Fin 5) (pf pk pv pw pg : ℤ) :
     setTape (bank F K V W pf pk pv pw) 1 G pg = bank F G V W pf pg pv pw := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem set_bank2 (F K V W G : ℤ → Fin 5) (pf pk pv pw pg : ℤ) :
     setTape (bank F K V W pf pk pv pw) 2 G pg = bank F K G W pf pk pg pw := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem set_bank3 (F K V W G : ℤ → Fin 5) (pf pk pv pw pg : ℤ) :
     setTape (bank F K V W pf pk pv pw) 3 G pg = bank F K V G pf pk pv pg := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 def input (fl : Bool) (V W : List Bool) := bank (word [fl]) (FlagCopy.keyTape []) (word V) (word W) 1 0 0 0
 def ready (fl : Bool) (V W : List Bool) := bank (word [fl]) (FlagCopy.keyTape [bitSymbol fl]) (word V) (word W) 0 1 0 0

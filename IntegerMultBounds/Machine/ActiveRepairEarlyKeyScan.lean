@@ -32,19 +32,19 @@ theorem bits_length (d : Data) (c j : ℕ) : (bits d c j).length=d.A :=
   ActiveRepairDestinationPatchRun.destination_length _ _ _ _ _ _ _ _
 
 theorem metadata_counter (d : Data) (cs : List Bool) : metadata (withCounter d cs)=metadata d := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem scan_payload (d : Data) (c j : ℕ) (records : List Partition.Record) :
     SharedBank.payload
       ((RepairScan.scanBank d.A records (flag d c) (bits d c) c j [] j).append (metadata d)) focus=
       (withCounter d (RepairScan.counter c j)).input := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem padded_scan (d : Data) (c j : ℕ) (records : List Partition.Record) (key : List (Fin 5)) :
     CleanSubbank.bank (s := 84)
       ((RepairScan.scanBank d.A records (flag d c) (bits d c) c j key j).append (metadata d))=
       (RepairScan.scanBank d.A records (flag d c) (bits d c) c j key j).append (scratch d) := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem written_scan (d : Data) (c j : ℕ) (records : List Partition.Record) :
     ActiveRepairEarlyKeyPlaced.result
@@ -52,7 +52,7 @@ theorem written_scan (d : Data) (c j : ℕ) (records : List Partition.Record) :
       focus (withCounter d (RepairScan.counter c j))=
       (RepairScan.scanBank d.A records (flag d c) (bits d c) c j
         (FlagCopy.keyWord (flag d c j) (bits d c j)) j).append (metadata d) := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 /-- A real reusable key routine for every record of the scan, with fixed
 canonical field/patch descriptors but genuinely address-dependent controls. -/

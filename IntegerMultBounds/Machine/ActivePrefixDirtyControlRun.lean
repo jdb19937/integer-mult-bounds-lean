@@ -12,10 +12,10 @@ variable {a : ℕ} {k : Kind}
 
 theorem pad19 (v : Tapes 15 a) :
     (CleanSubbank.bank (s := 19) v).append (SharedBank.empty 5 a)=bank v := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 theorem pad20 (v : Tapes 15 a) :
     (CleanSubbank.bank (s := 20) v).append (SharedBank.empty 4 a)=bank v := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 def projectT (k : Kind) := BinaryPrefixFieldTablePlaced.program (a := a) (tempFocus k) temp_injective
 def projectU := BinaryPrefixFieldTablePlaced.program (a := a) sourceFocus (by decide)

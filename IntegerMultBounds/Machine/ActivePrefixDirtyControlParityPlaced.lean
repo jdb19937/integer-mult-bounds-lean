@@ -31,7 +31,7 @@ theorem output_eq (U X : List Bool) (hs : Fin 2 → List Bool) (b : ℕ) :
     CountedPackedParityRun.input (Gather.bank (word (a := a) U) (word X)
       (word (CountedPackedParityRun.parities b U X.length)) 0 0 0) hs=
       result (input U X hs) ports b U X := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem runs (caller : Tapes t a) (focus : Fin 5 → Fin t) (hf : Function.Injective focus)
     (b : ℕ) (hb : 1≤b) (U X : List Bool) (hs : Fin 2 → List Bool)

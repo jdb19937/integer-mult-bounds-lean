@@ -44,7 +44,7 @@ def tail (ts bs : List Bool) (st : Tapes 1 a) : Tapes 12 a :=
 private theorem canonical_eq (hs : Fin 6 → List Bool) (ts bs : List Bool) (st : Tapes 1 a) :
     ArbitrarySliceHeaders.canonical hs ts bs st =
       (⟨fun _ => 1,fun i => RadixZeroFill.encodedBinary (hs i)⟩ : Tapes 6 a).append (tail ts bs st) := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem active_bank (headers : Fin 6 → Fin T) (hi : Function.Injective headers) (hT : 6 ≤ T)
     (v : Tapes T a) (hs : Fin 6 → List Bool) (ts bs : List Bool) (st : Tapes 1 a)

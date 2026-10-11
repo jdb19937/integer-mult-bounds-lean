@@ -38,7 +38,7 @@ private theorem move_hoare (f g : ℤ → Fin (a+4)) (p q : ℤ) (m n : Move) :
   apply (once_hoare (by decide) (moveAction m n) (Copy.tapes f g p q)).consequence (fun _ h => h) _ le_rfl
   rintro v rfl
   apply congrArg₂ Tapes.mk
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
   · funext i z; fin_cases i <;> by_cases hz : z = p <;> by_cases hq : z = q <;>
       simp_all [moveAction,Copy.tapes,Copy.cfg,Config.tapes]
 

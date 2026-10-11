@@ -72,7 +72,7 @@ private theorem initialized_eq (D e : ℕ) :
     initialized D e=CompactComplexStopRun.input (bits D) (bits e) := by
   unfold initialized CompactComplexStopRun.input CompactComplexStopRun.exponent FixedBasePowerUntil.input
   simp only [BinaryDescriptorStackRoundtrip.descriptor_encoded]
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 def initializeProgram := seq (copyProgram (dimensionSource (s:=s)) 6)
   (copyProgram exponentSource 9)
@@ -112,7 +112,7 @@ theorem decrement_runs (D e : ℕ) (he : 0<e) :
   apply h.consequence (fun _ h => h) _ le_rfl
   rintro v rfl
   simp only [decrementPlacement,InjectivePlacement.active_slot,decrementSlots,Matrix.cons_val_zero]
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 def stopConstantFor (B : ℕ) := FixedBasePowerUntil.constant B*B+2*B+27
 def prepareCostFor (B D e : ℕ) := 2*D+2*e+16+20*(e+1)+100+stopConstantFor B*(D+(e-1)+1)+2

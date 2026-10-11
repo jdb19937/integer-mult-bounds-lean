@@ -46,7 +46,7 @@ theorem cleanup (B D e : ℕ) :
   have hclean : cleaned (a := a) B D e=setTape (SharedBank.empty 10 a) 8
       (CompactComplexStopCompare.result (RecursiveChildQuotientsConstant.bits e)
         (FixedBasePowerUntil.counter (Nat.clog B D))) 0 := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   have he : DescriptorStackControl.after (cleaned (a := a) B D e) flagEraseAction=SharedBank.empty 10 a := by
     rw [hclean]
     apply congrArg₂ Tapes.mk

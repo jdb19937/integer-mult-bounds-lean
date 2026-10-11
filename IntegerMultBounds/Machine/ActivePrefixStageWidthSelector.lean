@@ -29,7 +29,7 @@ theorem initializes (fs : List Bool) : HoareTime (initializer (a := a))
   apply h.consequence (fun _ h => h) ?_ (by decide)
   rintro v ⟨w,rfl,rfl⟩
   rw [FiniteReturnStackAt.replace_bank]
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem erases_one (fs : List Bool) : HoareTime (eraseOne (a := a))
     (fun v => v=BinaryDescriptorCompare.output (bits 1) fs) (fun v => v=output fs) 6 := by
@@ -37,7 +37,7 @@ theorem erases_one (fs : List Bool) : HoareTime (eraseOne (a := a))
     (BinaryDescriptorCompare.output (q := a) (bits 1) fs) (bits 1) rfl rfl
   apply h.consequence (fun _ h => h) ?_ (by decide)
   rintro v rfl
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem runs (fs : List Bool) : HoareTime (program (a := a))
     (fun v => v=input fs) (fun v => v=output fs) (cost fs) := by
@@ -52,7 +52,7 @@ theorem cleans (fs : List Bool) : HoareTime (cleanup (a := a))
     (fun _ h => h) ?_ le_rfl
   rintro v rfl
   apply congrArg₂ Tapes.mk
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
   · funext i z
     fin_cases i <;> by_cases hz : z=0
     all_goals simp [output,BinaryDescriptorCompare.result,hz]

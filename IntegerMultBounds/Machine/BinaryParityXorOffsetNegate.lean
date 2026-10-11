@@ -37,7 +37,7 @@ theorem setup_hoare (f g : ℤ → Fin 4) (p q : ℤ) (ws ns : List Bool) :
   have h0 := init_hoare 3 (raw f g p q ws ns) rfl rfl
   have h1 := init_hoare 5 (setTape (raw f g p q ws ns) 3 empty 1) rfl rfl
   have he : setTape (setTape (raw f g p q ws ns) 3 empty 1) 5 empty 1=bank f g p q ws ns := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   rw [he] at h1
   exact h0.seq h1
 
@@ -49,7 +49,7 @@ theorem clear_clocks (f g : ℤ → Fin 4) (p q : ℤ) (ws ns : List Bool) :
       simp only [clocks,List.mem_cons,List.not_mem_nil,or_false] at hi
       rcases hi with rfl|rfl <;> exact ⟨rfl,rfl⟩)
   have he : BinaryDescriptorCleanupList.cleared clocks (bank f g p q ws ns)=raw f g p q ws ns := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   simpa only [he,clearClocks,show BinaryDescriptorCleanupList.cost clocks (fun _ => [])=10 by decide] using h
 theorem erases (xs : List Bool) (g : ℤ → Fin 4) (q : ℤ) (ws ns : List Bool) :
     HoareTime eraseSource (fun z => z=raw (word xs) g xs.length q ws ns)
@@ -63,7 +63,7 @@ theorem erases (xs : List Bool) (g : ℤ → Fin 4) (q : ℤ) (ws ns : List Bool
   rintro z ⟨small,rfl,rfl⟩
   change Placement.replace _ _ (FiniteReturnStack.bank (fun _ => blank) 0)=_
   rw [FiniteReturnStackAt.replace_bank]
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 theorem rewinds (xs : List Bool) (f : ℤ → Fin 4) (p : ℤ) (ws ns : List Bool) :
     HoareTime rewind (fun z => z=raw f (word xs) p xs.length ws ns)
       (fun z => z=raw f (word xs) p 0 ws ns) (xs.length+2) := by
@@ -76,7 +76,7 @@ theorem rewinds (xs : List Bool) (f : ℤ → Fin 4) (p : ℤ) (ws ns : List Boo
   rintro z ⟨small,rfl,rfl⟩
   change Placement.replace _ _ (FiniteReturnStack.bank (word xs) 0)=_
   rw [FiniteReturnStackAt.replace_bank]
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 def cost (W N : ℕ) (ws ns : List Bool) := BinaryParityXorOffsetLoop.cost W N ws ns+2*(N*W)+31
 

@@ -34,12 +34,12 @@ theorem width_hoare (hs : Fin 5 → List Bool) (Z : List Bool) (q b n : ℕ) (hb
     (cb : GrowingCounterData.Canonical (hs 1)) (cn : GrowingCounterData.Canonical (hs 2)) :
     HoareTime widthProgram (fun z => z=ready hs Z q n) (fun z => z=output hs Z q b n) (53*(n*b)+28) := by
   have ha : Placement.active widthPlace (ready hs Z q n)=DimensionProductDescriptor.input (hs 1) (hs 2) := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   have h := Placement.hoare_at (DimensionProductDescriptor.construct_hoare (hs 1) (hs 2) n b hb hvb hvn cb cn)
     widthPlace _ ha
   apply h.consequence (fun _ h => h) _ le_rfl
   rintro z ⟨small,rfl,rfl⟩
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 def cost (q b n : ℕ) := BinaryAddressOffsetHeaders.cost q n+53*(n*b)+29
 

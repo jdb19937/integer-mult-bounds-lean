@@ -32,7 +32,7 @@ theorem compare_set (d : Inputs s) :
       (BinaryDescriptorCompare.result (RecursiveChildQuotientsConstant.bits d.stage.source.val)
         (RecursiveChildQuotientsConstant.bits d.stage.target.val)) 0=
           ActivePrefixStageOrderCompare.output d.stage := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem flagged_compare (d : Inputs s) (x : Array s d.rows) :
     SharedBank.payload (flagged d x) compareSlots=ActivePrefixStageOrderCompare.output d.stage := by
@@ -57,7 +57,7 @@ theorem flagged_payload (d : Inputs s) (x : Array s d.rows) :
 
 theorem flagged_set (d : Inputs s) (x y : Array s d.rows) :
     setTape (flagged d x) (Fin.castAdd 1 (65:Fin 66)) (ActiveTargetRotation.word y) 0=flagged d y := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem caller_flag_blank (d : Inputs s) (x : Array s d.rows) :
     (caller d x).head flag=0 ∧ (caller d x).tape flag=(fun _ => blank) := ⟨rfl,rfl⟩

@@ -16,8 +16,8 @@ def keyed (X cs : List Bool) (hs : Fin 3 → List Bool) (key : List (Fin 5)) :=
 def place : Fin (34+12) ≃ Fin 46 where
   toFun := ![14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,13,12,44,45,0,1,2,3,4,5,6,7,8,9,10,11]
   invFun := ![34,35,36,37,38,39,40,41,42,43,44,45,31,30,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,32,33]
-  left_inv i := by fin_cases i <;> rfl
-  right_inv i := by fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def program := Placement.placed CountedLateRepairKeyRun.program place
 
@@ -25,7 +25,7 @@ theorem active_scan (k c j : ℕ) (records : List Partition.Record) (flag : ℕ 
     (bits : ℕ → List Bool) (X : List Bool) (hs : Fin 3 → List Bool) (key : List (Fin 5)) :
     Placement.active place ((RepairScan.scanBank k records flag bits c j key j).append (scratch X hs))=
       keyed X (RepairScan.counter c j) hs key := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem place_extra (i : Fin 12) : place (Fin.natAdd 34 i)=Fin.castAdd 34 i := by
   fin_cases i <;> decide

@@ -32,14 +32,14 @@ def output (c : ℕ) (hs : Fin 6 → List Bool) (v : Descriptor) (rs : List Bool
 def commonPlacement : Fin (6+32) ≃ Fin 38 where
   toFun := ![0,20,1,18,2,11,3,4,5,6,7,8,9,10,12,13,14,15,16,17,19,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37]
   invFun := ![0,2,4,6,7,8,9,10,11,12,13,5,14,15,16,17,18,19,3,20,1,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37]
-  left_inv i := by fin_cases i <;> rfl
-  right_inv i := by fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def rolesPlacement : Fin (6+32) ≃ Fin 38 where
   toFun := ![0,20,1,18,2,19,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37]
   invFun := ![0,2,4,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,3,5,1,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37]
-  left_inv i := by fin_cases i <;> rfl
-  right_inv i := by fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def placement : Target → Fin (6+32) ≃ Fin 38 | .common => commonPlacement | .roles => rolesPlacement
 
@@ -72,14 +72,14 @@ theorem constructs_hoare (c : ℕ) (hs : Fin 6 → List Bool) (v : Descriptor) (
   rw [he] at hh
   have hi : Placement.active (placement target) (RecursiveRowsDimensions.output hq c hs v rs) =
       DimensionProductDescriptor.input (RecursiveRowsDimensions.rowBits (q := q) v) (factorBits c v target) := by
-    cases target <;> apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    cases target <;> apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   have ho : Placement.active (placement target) (output hq c hs v rs target) =
       DimensionProductDescriptor.output (RecursiveRowsDimensions.rowBits (q := q) v) (factorBits c v target)
         (factor c v target) (RecursiveInterchangeRows.rowLength q v) := by
-    cases target <;> apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    cases target <;> apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   have hframe : Placement.extra (placement target) (RecursiveRowsDimensions.output hq c hs v rs) =
       Placement.extra (placement target) (output hq c hs v rs target) := by
-    cases target <;> apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    cases target <;> apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   apply (Placement.hoare_at hh (placement target) _ hi).consequence (fun _ h => h) _ le_rfl
   rintro w ⟨z,rfl,rfl⟩
   rw [Placement.replace,hframe,← ho]

@@ -73,7 +73,7 @@ private theorem small_output (n fullVolume targetN : ℕ) :
     CompactNativeDenominatorTarget.bank n fullVolume (some targetN)=
       setTape (CompactNativeDenominatorTarget.input n fullVolume) (2:Fin 4)
         (RadixZeroFill.encodedBinary (bits targetN)) 1 := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 private theorem replace_output (v : Tapes (size s) 2) (n fullVolume targetN : ℕ)
     (ha : Placement.active placement v=CompactNativeDenominatorTarget.input n fullVolume) :

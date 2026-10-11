@@ -31,7 +31,7 @@ theorem toggle_active (V W U X T D cs : List Bool) (hs : Fin 3 → List Bool) (f
     (K : ℤ → Fin 5) (pk : ℤ) :
     Placement.active togglePlace (bank V W U X T D hs cs (CountedLateRepairFlag.key fl) K 1 pk)=
       CountedLateRepairToggle.working V W U X T hs fl := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem toggle_extra_index (i : Fin 3) : togglePlace (Fin.natAdd 31 i)=![30,31,33] i := by
   fin_cases i <;> decide
@@ -59,13 +59,13 @@ theorem concat_input (V W U X T cs : List Bool) (hs : Fin 3 → List Bool)
     (F K : ℤ → Fin 5) (pf pk : ℤ) :
     Placement.active concatPlace (bank V W U X T [] hs cs F K pf pk)=
       CountedLateRepairConcat.input W U := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem concat_output (V W U X T cs : List Bool) (hs : Fin 3 → List Bool)
     (F K : ℤ → Fin 5) (pf pk : ℤ) :
     Placement.active concatPlace (bank V W U X T (W++U) hs cs F K pf pk)=
       CountedLateRepairConcat.output W U := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem concat_extra_index (i : Fin 30) : concatPlace (Fin.natAdd 4 i)=![0,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,30,31,32] i := by
   fin_cases i <;> decide

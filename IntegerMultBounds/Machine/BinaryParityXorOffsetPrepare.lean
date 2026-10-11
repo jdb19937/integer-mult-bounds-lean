@@ -38,7 +38,7 @@ theorem rewind_selected (hs : Fin 3 → List Bool) (Z : List Bool) (q b n : ℕ)
   have h2 := BinaryCorrectionOffsetRewind.runs (8 : Fin 31) v2 (BinaryParityXorOffsetData.positiveWord q b n Z hb hbq) ((n*2^(n*q))*b)
     (by rw [BinaryParityXorOffsetData.positiveWord_length]) rfl rfl
   have he : setTape v2 8 (v2.tape 8) 0=output hs Z q b n hb hbq := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   rw [he] at h2
   exact ((h0.seq h1).seq h2).consequence (fun _ h => h) (fun _ h => h) (by omega)
 

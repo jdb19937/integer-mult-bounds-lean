@@ -47,7 +47,7 @@ theorem original_sources (hs : Fin 7 → List Bool) (bs : List Bool)
     {s : Shape} {rows w : ℕ} (x : Array s rows w) :
     SharedBank.payload (base hs bs x) (CompactGadgetReservationHeadersCarvedPlacedRun.headerFocus headerFocus)=
       CompactGadgetReservationHeadersCarvedPlacedRun.sources hs := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem generated_headers (v : Tapes 13 prime) (s : Shape) (rows w : ℕ) :
     BinaryAdjacentWidthHeadersShared.Sources (headers v s rows w) swapFocus (headerWords s rows w) := by
@@ -58,11 +58,11 @@ theorem generated_headers (v : Tapes 13 prime) (s : Shape) (rows w : ℕ) :
 
 theorem headers_store (v : Tapes 13 prime) (s : Shape) (rows w : ℕ) (x : Array s rows w) :
     headers (store v x) s rows w=store (headers v s rows w) x := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem base_store (hs : Fin 7 → List Bool) (bs : List Bool) {s : Shape} {rows w : ℕ}
     (x y : Array s rows w) : store (base hs bs x) y=base hs bs y := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem store_headers (hs : Fin 7 → List Bool) (bs : List Bool) (s : Shape) (rows w : ℕ)
     (x : Array s rows w) : store (headers (base hs bs x) s rows w) x=headers (base hs bs x) s rows w := by

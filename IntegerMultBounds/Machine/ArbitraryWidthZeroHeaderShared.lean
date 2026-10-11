@@ -57,7 +57,7 @@ theorem cleans (caller : Tapes t a) :
       (fun w => w = caller.append header) (fun w => w = caller.append empty) 4 := by
   have h := BinaryDescriptorCleanupList.one_hoare (0 : Fin 1) (header (a := a)) [] rfl rfl
   have he : SharedPlacementAlphabet.setTape (header (a := a)) 0 (fun _ => blank) 0 = empty := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   rw [he] at h
   exact right_hoare h caller
 

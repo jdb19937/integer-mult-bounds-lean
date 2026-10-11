@@ -25,7 +25,7 @@ def cost (s : Shape k) := FixedBasePowerDescriptor.constant 2*2^s.W+
 
 theorem pad15 (v : Tapes 15 a) :
     (CompactGadgetReservationHeadersCore.bank v).append (SharedBank.empty 9 a)=bank v := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem core_runs (s : Shape k) (hs : Fin 6 → List Bool)
     (hv : ∀ i, Counter.value (hs i)=values s i) (hc : ∀ i, GrowingCounterData.Canonical (hs i)) :

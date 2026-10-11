@@ -56,7 +56,7 @@ theorem consumer_inputs (order : Order) (v : Stage s) (rows : ℕ) (hG : 1≤s.g
         (FixedHeaderBankCopy.headerBank (fun _ : Fin 1 => (inputs order v rows hG hGK hrows hrecord).bw))).append
           (FixedHeaderBankCopy.headerBank (inputs order v rows hG hGK hrows hrecord).hs) := by
   rw [consumer]
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem originals (order : Order) (v : Stage s) (rows : ℕ) (i : Fin 13) :
     finished order v rows (Fin.castAdd 52 i)=some (originalValues v rows i) := by

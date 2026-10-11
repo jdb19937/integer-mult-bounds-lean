@@ -38,11 +38,11 @@ private theorem prepares (z : Tapes 60 2)
         (putWord (fun _ => blank) 0 [bitSymbol false])
         (putWord (fun _ => blank) 0 [bitSymbol false]) 0 0) 1 := by
   have hs : SharedBank.empty 2 2=Copy.tapes (fun _ => blank) (fun _ => blank) 0 0 := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   have hp : UnitPhaseNumerator.flags 0=Copy.tapes
       (putWord (fun _ => blank) 0 [bitSymbol false])
       (putWord (fun _ => blank) 0 [bitSymbol false]) 0 0 := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   have h := UnitPhaseFlagsLifecycle.prepares
   rw [hs,hp] at h
   exact TwoTapeAt.runs UnitPhaseFlagsLifecycle.prepare (48 : Fin 60) 49 (by decide)
@@ -53,7 +53,7 @@ private theorem ready_eq (order : Order) (v : Stage s) (rows : ℕ) (axis : Fin 
     TwoTapeAt.result (UnitPhaseRecordIO.readOutput (initial order v rows axis addr a tail) a)
       48 49 (putWord (fun _ => blank) 0 [bitSymbol false])
         (putWord (fun _ => blank) 0 [bitSymbol false]) 0 0=ready order v rows axis addr a tail := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem runs (order : Order) (v : Stage s) (rows : ℕ) (axis : Fin v.f)
     (addr : List Bool) (a : Context 2) (tail : Tapes 4 2)

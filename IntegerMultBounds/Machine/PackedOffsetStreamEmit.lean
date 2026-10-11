@@ -18,7 +18,7 @@ theorem first_hoare {s cost : ℕ} (M : Program 1 s 0) (f h : ℤ → Fin 4) (p 
     HoareTime (first M) (fun v => v = Copy.tapes f g p q)
       (fun v => v = Copy.tapes h g r q) cost := by
   have he (f g : ℤ → Fin 4) (p q : ℤ) : (one f p).append (one g q) = Copy.tapes f g p q := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   simpa only [he,first] using hoare_extend_eq hh (one g q)
 
 def delimiter : Program 2 2 0 := DescriptorStackControl.once (by decide)

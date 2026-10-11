@@ -33,7 +33,7 @@ def back (focus : Fin 2 → Fin k) (hf : Function.Injective focus) :=
 
 theorem local_result (f g : ℤ → Fin 5) (p r : ℤ) (hs : List Bool) :
     sources g r hs=setTape (sources f p hs) 0 g r := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem realizes {q B : ℕ} (M : Program 3 q 1) (caller : Tapes k 1)
     (focus : Fin 2 → Fin k) (hf : Function.Injective focus) (f g : ℤ → Fin 5)

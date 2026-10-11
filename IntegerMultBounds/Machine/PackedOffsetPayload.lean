@@ -37,12 +37,12 @@ theorem at_hoare {k cost : ℕ} (M : Program 1 k 0) (slot : Fin 17) (v : Tapes 1
 theorem set_control (payload control offsets control' : ℤ → Fin 4) (p r s r' : ℤ) (bs qs ns ws : List Bool) :
     setTape (bank payload control offsets p r s bs qs ns ws) 12 control' r' =
       bank payload control' offsets p r' s bs qs ns ws := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem set_offsets (payload control offsets offsets' : ℤ → Fin 4) (p r s s' : ℤ) (bs qs ns ws : List Bool) :
     setTape (bank payload control offsets p r s bs qs ns ws) 16 offsets' s' =
       bank payload control offsets' p r s' bs qs ns ws := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 def generatorPlacement : Fin (7+10) ≃ Fin 17 where
   toFun := ![16,0,1,15,12,2,14,3,4,5,6,7,8,9,10,11,13]
@@ -64,12 +64,12 @@ theorem generates (V : List Bool) (w n : ℕ) (hV : V.length=n*w)
   have ha : Placement.active generatorPlacement
       (bank payload control (putWord f s (V.map bitSymbol)) p r s bs qs ns ws) =
       PackedOffsetStream.input (putWord f s (V.map bitSymbol)) control s r ws ns := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   have hh := Placement.hoare_at (PackedOffsetStreamRaw.runs V w n hV f control s r ws ns hw hn cw cn)
     generatorPlacement _ ha
   apply hh.consequence (fun _ h => h) _ le_rfl
   rintro z ⟨v,rfl,rfl⟩
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 def view (V : List Bool) (w n B : ℕ) (a : Fin (n*(2^w*B)) → Bool) :
     Fin ((PackedOffsetStreamRaw.words V w n).length*(2^w*B)) → Bool :=

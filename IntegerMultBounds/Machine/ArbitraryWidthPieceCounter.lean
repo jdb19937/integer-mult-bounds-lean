@@ -40,7 +40,7 @@ theorem extract_hoare (B : ℕ) (hB : 2 ≤ B) (ys : List Bool) :
     apply hi.consequence (fun _ h => h) _ le_rfl
     rintro v ⟨w,rfl,rfl⟩
     rw [FiniteReturnStackAt.replace_bank]
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   obtain ⟨zs,rs,hzc,hrc,hzv,hrv,_,_,hd⟩ := BinaryDescriptorDivMod.divmod_hoare (a := a) ys (bits B)
     (by rw [RecursiveChildQuotientsConstant.bits_value]; omega)
   rw [RecursiveChildQuotientsConstant.bits_value] at hzv hrv
@@ -48,7 +48,7 @@ theorem extract_hoare (B : ℕ) (hB : 2 ≤ B) (ys : List Bool) :
     (BinaryDescriptorDivMod.output (a := a) ys (bits B) zs rs) (bits B) rfl rfl
   have he : setTape (BinaryDescriptorDivMod.output (a := a) ys (bits B) zs rs) (1 : Fin 14)
       (fun _ => blank) 0 = emitted ys zs rs := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   rw [he] at hc
   exact ⟨zs,rs,hzc,hrc,hzv,hrv,((hi'.seq hd).seq hc).consequence
     (fun _ h => h) (fun _ h => h) (by unfold extractCost; omega)⟩

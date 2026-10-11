@@ -60,7 +60,7 @@ theorem native_clean (d : Inputs s p offset rows) (x : FullArray s rows) :
 
 theorem common_set (d : Inputs s p offset rows) (x y : FullArray s rows) :
     setTape (common d x) 22 (ActiveTargetRotation.word y) 0=common d y := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem realizes {q budget : ℕ} (M : Program count q prime)
     (v : Tapes t prime) (focus : Fin 23 → Fin t) (hf : Function.Injective focus)

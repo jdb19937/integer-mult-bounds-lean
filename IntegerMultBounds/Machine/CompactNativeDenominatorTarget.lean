@@ -36,13 +36,13 @@ def networkCost (n volume : ℕ) := leafCost n volume+1+addCost (n+volume) volum
 
 private theorem copied (n volume : ℕ) :
     setTape (input n volume) (2:Fin 4) (RadixZeroFill.encodedBinary (bits n)) 1=bank n volume (some n) := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 private theorem copy_runs (n volume : ℕ) :
     HoareTime copyProgram (fun v => v=input n volume) (fun v => v=bank n volume (some n))
       (2*(bits n).length+5) := by
   have h := BinaryDescriptorCopyPlaced.copies (input n volume) copySlots copy_injective (bits n) (by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl)
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl)
   simp only [copySlots,Matrix.cons_val_one,Matrix.cons_val_zero] at h
   rw [copied] at h
   exact h
@@ -82,7 +82,7 @@ theorem add_runs (n volume t : ℕ) :
   rintro v ⟨small,rfl,rfl⟩
   rw [←active n volume t,PlacedDescriptorConstruction.replace_setTape]
   simp only [addPlacement,InjectivePlacement.active_slot,addSlots,Matrix.cons_val_zero]
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 attribute [local irreducible] copyProgram addProgram
 

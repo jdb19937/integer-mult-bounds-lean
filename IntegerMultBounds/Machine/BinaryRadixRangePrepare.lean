@@ -46,16 +46,16 @@ def metadataPlacement : Fin (12+7) ≃ Fin 19 where
     | 0 => 9 | 1 => 10 | 2 => 11 | 3 => 12 | 4 => 13 | 5 => 6 | 6 => 14 | 7 => 5 | 8 => 15 | 9 => 16 | 10 => 7 | 11 => 8 | 12 => 0 | 13 => 1 | 14 => 2 | 15 => 3 | 16 => 4 | 17 => 17 | _ => 18
   invFun := fun i => match i.val with
     | 0 => 12 | 1 => 13 | 2 => 14 | 3 => 15 | 4 => 16 | 5 => 7 | 6 => 5 | 7 => 10 | 8 => 11 | 9 => 0 | 10 => 1 | 11 => 2 | 12 => 3 | 13 => 4 | 14 => 6 | 15 => 8 | 16 => 9 | 17 => 17 | _ => 18
-  left_inv i := by fin_cases i <;> rfl
-  right_inv i := by fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def paddingPlacement : Fin (17+2) ≃ Fin 19 where
   toFun := fun i => match i.val with
     | 0 => 0 | 1 => 1 | 2 => 2 | 3 => 6 | 4 => 3 | 5 => 4 | 6 => 7 | 7 => 9 | 8 => 10 | 9 => 11 | 10 => 12 | 11 => 13 | 12 => 14 | 13 => 15 | 14 => 16 | 15 => 17 | 16 => 18 | 17 => 5 | _ => 8
   invFun := fun i => match i.val with
     | 0 => 0 | 1 => 1 | 2 => 2 | 3 => 4 | 4 => 5 | 5 => 17 | 6 => 3 | 7 => 6 | 8 => 18 | 9 => 7 | 10 => 8 | 11 => 9 | 12 => 10 | 13 => 11 | 14 => 12 | 15 => 13 | 16 => 14 | 17 => 15 | _ => 16
-  left_inv i := by fin_cases i <;> rfl
-  right_inv i := by fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 private theorem binary_eq (bs : List Bool) : RadixZeroFill.encodedBinary (q := 0) bs =
     CountedLoopReuseAlphabet.binary bs := by
@@ -76,17 +76,17 @@ private theorem metadata_prepared (radix u : ℕ) (source dest : ℤ → Fin 4) 
 private theorem metadata_extra (radix u : ℕ) (source dest : ℤ → Fin 4) (hs : Fin 4 → List Bool) :
     Placement.extra metadataPlacement (input source dest hs) =
       Placement.extra metadataPlacement (prepared radix u source dest hs) := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 private theorem padding_active (radix u : ℕ) (source dest : ℤ → Fin 4) (hs : Fin 4 → List Bool) :
     Placement.active paddingPlacement (prepared radix u source dest hs) =
       RangePaddingDimensions.input source dest (headers radix u hs) := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 private theorem padding_extra (radix u : ℕ) (source dest source' dest' : ℤ → Fin 4) (hs : Fin 4 → List Bool) :
     Placement.extra paddingPlacement (prepared radix u source dest hs) =
       Placement.extra paddingPlacement (prepared radix u source' dest' hs) := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 private theorem placed_exact {s u t r cost : ℕ} {M : Program s r 0}
     (e : Fin (s+u) ≃ Fin t) (v w : Tapes t 0) (small small' : Tapes s 0)

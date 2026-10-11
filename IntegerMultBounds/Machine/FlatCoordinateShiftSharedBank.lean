@@ -33,7 +33,7 @@ private theorem four (t : Fin d) (v : Tapes (TapeCount t) prime) :
       (SharedPayload.payload v (sourceSlot t) (destSlot t)).append
         ⟨![v.head (exponentSlot t),v.head (widthSlot t)],
           ![v.tape (exponentSlot t),v.tape (widthSlot t)]⟩ := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem input_common (t : Fin d) (a : FlatCoordinateStages.Array d b W) :
     SharedBank.payload (FlatCoordinateShiftFromDimensions.input t b W a) (slots t) = common a := by
@@ -69,7 +69,7 @@ theorem output_common (r : ℚ) (hr : Networks.Shared50AffineCoefficients.Occurs
     (⟨![v.head 2,v.head 3],![v.tape 2,v.tape 3]⟩ : Tapes 2 prime)) hd
   have he : (⟨![(FlatCoordinateDimensions.output t b W).head 2,(FlatCoordinateDimensions.output t b W).head 3],
       ![(FlatCoordinateDimensions.output t b W).tape 2,(FlatCoordinateDimensions.output t b W).tape 3]⟩ : Tapes 2 prime) = headers b W := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   rw [he] at hh
   simpa only [Placement.extra,stagePlacement,Equiv.coe_fn_mk,Fin.addCases_right,exponentSlot,widthSlot] using hh
 

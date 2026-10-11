@@ -36,7 +36,7 @@ theorem bank_source (source target : ℤ → Fin (prime+4))
   rw [SharedPlacementAlphabet.setTape_append_left]
   apply congrArg (fun w : Tapes 12 prime => w.append
     (ArbitraryWidthPaddedPiecePlacement.privateBank rootHeaders f p node scalar st frame))
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem bank_head_source (source : ℤ → Fin (prime+4))
     (paddingHeaders : Fin 4 → List Bool) (rootHeaders : Fin 6 → List Bool)

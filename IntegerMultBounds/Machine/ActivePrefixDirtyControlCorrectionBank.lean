@@ -36,11 +36,11 @@ def output (s : Shape .selected) (hs : Fin 6 → List Bool) :=
 
 theorem selected_sources (hs : Fin 6 → List Bool) :
     SharedBank.payload (base (a := a) hs) selectedFocus=ActivePrefixDirtyControlPlaced.sources hs := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem control_sources (s : Shape .selected) (hs : Fin 6 → List Bool) :
     SharedBank.payload (selectedReady (a := a) s hs) controlFocus=ActivePrefixDirtyControlPlaced.sources hs := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem subtract_sources (s : Shape .selected) (hs : Fin 6 → List Bool) :
     SharedBank.payload (headers (a := a) s hs) subtractFocus=
@@ -48,11 +48,11 @@ theorem subtract_sources (s : Shape .selected) (hs : Fin 6 → List Bool) :
         (BinaryCorrectionOffsetLoop.left (rows s)) (BinaryCorrectionOffsetLoop.right (rows s))
         (bits (s.n*s.q)) (bits (2^s.W)) := by
   rw [left_rows,right_rows]
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem cleared (s : Shape .selected) (hs : Fin 6 → List Bool) :
     setTape (widthCleared (a := a) s hs) 10 (fun _ => blank) 0=output s hs := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 end
 end IntegerMultBounds.Machine.ActivePrefixDirtyControlCorrectionBank

@@ -29,11 +29,11 @@ theorem scratch_hoare {s cost : ℕ} (M : Program 1 s 0) (h h' : ℤ → Fin 4) 
     HoareTime (atScratch M) (fun v => v = work f h g p r q bs)
       (fun v => v = work f h' g p r' q bs) cost := by
   have ha : Placement.active scratchPlacement (work f h g p r q bs) = one h r := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   have ht := Placement.hoare_at hh scratchPlacement _ ha
   apply ht.consequence (fun _ h => h) _ le_rfl
   rintro v ⟨w,rfl,rfl⟩
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 def normalize : Program 1 6 0 := seq StepLeft.program BinaryCanonicalTrim.program
 
@@ -63,11 +63,11 @@ theorem emits (xs : List Bool) (f g : ℤ → Fin 4) (p q : ℤ) (bs : List Bool
       (fun v => v = bank f (putWord g q (PackedOffsetStreamEmit.encoded xs))
         p (q+(PackedOffsetStreamEmit.encoded xs).length) bs) (2*xs.length+6) := by
   have ha : Placement.active emitPlacement (work f (binary xs) g p 1 q bs) = Copy.tapes (binary xs) g 1 q := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   have hh := Placement.hoare_at (PackedOffsetStreamEmit.emits xs g q) emitPlacement _ ha
   apply hh.consequence (fun _ h => h) _ le_rfl
   rintro v ⟨w,rfl,rfl⟩
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 def program : Program 5 30 0 := seq (seq (seq (atScratch MarkedWordCleanup.markProgram)
   (extend CountedCopyReuse.program 1)) (atScratch normalize)) emitProgram

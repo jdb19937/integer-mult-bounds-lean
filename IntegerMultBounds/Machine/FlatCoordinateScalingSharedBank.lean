@@ -114,7 +114,7 @@ private theorem four (r : ℚ) (v : Tapes (TapeCount r) prime) :
       (SharedPayload.payload v (sourceSlot r) (destSlot r)).append
         ⟨![v.head (exponentSlot r),v.head (widthSlot r)],
           ![v.tape (exponentSlot r),v.tape (widthSlot r)]⟩ := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem input_common {r : ℚ} (hr : Networks.Shared50AffineCoefficients.ScaleOccurs r)
     (t : Fin d) (a : FlatCoordinateStages.Array d b W) :

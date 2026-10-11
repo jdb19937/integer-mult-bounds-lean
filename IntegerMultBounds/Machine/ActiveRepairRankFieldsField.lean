@@ -15,26 +15,26 @@ def bank (f g : ℤ → Fin (a+4)) (p q : ℤ) (hs : Fin 2 → List Bool) : Tape
 def startPlace : Fin (3+2) ≃ Fin 5 where
   toFun := ![0,4,2,1,3]
   invFun := ![0,3,2,4,1]
-  left_inv i := by fin_cases i <;> rfl
-  right_inv i := by fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def sourceWidthPlace : Fin (3+2) ≃ Fin 5 where
   toFun := ![0,4,3,1,2]
   invFun := ![0,3,4,2,1]
-  left_inv i := by fin_cases i <;> rfl
-  right_inv i := by fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def outputWidthPlace : Fin (3+2) ≃ Fin 5 where
   toFun := ![1,4,3,0,2]
   invFun := ![3,0,4,2,1]
-  left_inv i := by fin_cases i <;> rfl
-  right_inv i := by fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def copyPlace : Fin (4+1) ≃ Fin 5 where
   toFun := ![0,1,4,3,2]
   invFun := ![0,1,4,3,2]
-  left_inv i := by fin_cases i <;> rfl
-  right_inv i := by fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def seek := Placement.placed (ActiveRepairRankFieldsPosition.program (a := a) .right) startPlace
 def copy := Placement.placed (CountedRankSplitCopy.program (a := a)) copyPlace
@@ -51,7 +51,7 @@ theorem seeks (f g : ℤ → Fin (a+4)) (p q : ℤ) (hs : Fin 2 → List Bool)
   have h := ActiveRepairRankFieldsPosition.runs .right f p (hs 0) start hv
   simp only [Move.offset,mul_one] at h
   apply CountedRankSplitBank.placed_exact startPlace _ _ _ _ _ _ _ h
-  all_goals apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  all_goals apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem copies (f g : ℤ → Fin (a+4)) (p q : ℤ) (hs : Fin 2 → List Bool)
     (width : ℕ) (hv : Counter.value (hs 1)=width) :
@@ -60,7 +60,7 @@ theorem copies (f g : ℤ → Fin (a+4)) (p q : ℤ) (hs : Fin 2 → List Bool)
       (7*width+7*(hs 1).length+28) := by
   apply CountedRankSplitBank.placed_exact copyPlace _ _ _ _ _ _ _
     (CountedRankSplitCopy.copies f g p q (hs 1) width hv)
-  all_goals apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  all_goals apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem source_back_width (f g : ℤ → Fin (a+4)) (p q : ℤ) (hs : Fin 2 → List Bool)
     (width : ℕ) (hv : Counter.value (hs 1)=width) :
@@ -69,7 +69,7 @@ theorem source_back_width (f g : ℤ → Fin (a+4)) (p q : ℤ) (hs : Fin 2 → 
   have h := ActiveRepairRankFieldsPosition.runs .left f p (hs 1) width hv
   simp only [Move.offset,mul_neg_one] at h
   apply CountedRankSplitBank.placed_exact sourceWidthPlace _ _ _ _ _ _ _ h
-  all_goals apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  all_goals apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem source_back_start (f g : ℤ → Fin (a+4)) (p q : ℤ) (hs : Fin 2 → List Bool)
     (start : ℕ) (hv : Counter.value (hs 0)=start) :
@@ -78,7 +78,7 @@ theorem source_back_start (f g : ℤ → Fin (a+4)) (p q : ℤ) (hs : Fin 2 → 
   have h := ActiveRepairRankFieldsPosition.runs .left f p (hs 0) start hv
   simp only [Move.offset,mul_neg_one] at h
   apply CountedRankSplitBank.placed_exact startPlace _ _ _ _ _ _ _ h
-  all_goals apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  all_goals apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem output_back (f g : ℤ → Fin (a+4)) (p q : ℤ) (hs : Fin 2 → List Bool)
     (width : ℕ) (hv : Counter.value (hs 1)=width) :
@@ -87,7 +87,7 @@ theorem output_back (f g : ℤ → Fin (a+4)) (p q : ℤ) (hs : Fin 2 → List B
   have h := ActiveRepairRankFieldsPosition.runs .left g q (hs 1) width hv
   simp only [Move.offset,mul_neg_one] at h
   apply CountedRankSplitBank.placed_exact outputWidthPlace _ _ _ _ _ _ _ h
-  all_goals apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  all_goals apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 def cost (start width : ℕ) (hs : Fin 2 → List Bool) :=
   14*start+21*width+14*(hs 0).length+21*(hs 1).length+144

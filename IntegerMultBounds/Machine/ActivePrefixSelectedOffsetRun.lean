@@ -12,13 +12,13 @@ def bank (v : Tapes 17 a) := CleanSubbank.bank (s := 24) v
 
 theorem pad15 (v : Tapes 17 a) :
     (CompactGadgetReservationHeadersCore.bank v).append (SharedBank.empty 9 a)=bank v := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 theorem pad11 (v : Tapes 17 a) :
     (CleanSubbank.bank (s := 11) v).append (SharedBank.empty 13 a)=bank v := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 theorem pad20 (v : Tapes 17 a) :
     (CleanSubbank.bank (s := 20) v).append (SharedBank.empty 4 a)=bank v := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 def setup := extend (ActivePrefixOffsetHeadersRun.program (a := a) headerFocus header_injective) 9
 def projectT := BinaryPrefixFieldTablePlaced.program (a := a) tempFocus temp_injective

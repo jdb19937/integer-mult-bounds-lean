@@ -10,12 +10,12 @@ open CountedRankSplitBank (placed_exact)
 theorem input_view (V W U X T D cs : List Bool) (hs : Fin 3 → List Bool) (fl : Bool) :
     Placement.active writePlace (bank V W U X T D hs cs (CountedLateRepairFlag.key fl) (FlagCopy.keyTape []) 1 0)=
       CountedRepairKeyAppend.input fl T D := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem output_view (V W U X T D cs : List Bool) (hs : Fin 3 → List Bool) (fl : Bool) :
     Placement.active writePlace (bank V W U X T D hs cs (CountedLateRepairFlag.key fl)
       (FlagCopy.keyTape (FlagCopy.keyWord fl (T++D))) 0 0)=CountedRepairKeyAppend.output fl T D := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem extra_index (i : Fin 30) : writePlace (Fin.natAdd 4 i)=![0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,29,30] i := by
   fin_cases i <;> decide

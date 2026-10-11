@@ -48,7 +48,7 @@ private theorem cleanup (B r : ℕ) (ds : List Bool) :
     (by rw [BinaryDescriptorStackRoundtrip.descriptor_encoded]; rfl) rfl
   apply h.consequence (fun _ h => h) _ le_rfl
   rintro v rfl
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 /-- A fixed nine-tape machine retains only the original threshold word and the
 new least exponent; every other tape is blank and reset. The fixed constant is

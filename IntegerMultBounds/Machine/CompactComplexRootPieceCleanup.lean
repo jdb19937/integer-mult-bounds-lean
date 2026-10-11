@@ -50,7 +50,7 @@ private theorem queue_runs (st : State) (ds : List ℕ) :
   change setTape _ (Fin.natAdd 43 (0 : Fin 1)) (fun _ => blank) 0=_
   rw [setTape_append_right]
   apply congrArg ((bank (a := a) st).append)
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 private theorem numeric_runs (st : State) (e left width : ℕ)
     (h0 : st 0=some 0) (h1 : st 1=some e) (h2 : st 2=some left) (h3 : st 3=some width) :

@@ -13,8 +13,8 @@ noncomputable section
 def scalingPlacement : Fin (16+22) ≃ Fin 38 where
   toFun := ![0,1,2,3,4,5,6,7,8,9,11,12,13,14,15,16,10,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37]
   invFun := ![0,1,2,3,4,5,6,7,8,9,16,10,11,12,13,14,15,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37]
-  left_inv i := by fin_cases i <;> rfl
-  right_inv i := by fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def extra (rs : List Bool) : Tapes 22 q where
   head i := if i = 0 then 1 else 0
@@ -69,47 +69,47 @@ theorem scaling_hoare (hs : Fin 6 → List Bool) (v : Descriptor) (rs : List Boo
         RecursiveChildQuotients.headerTape,RecursiveChildQuotients.headerHead,
         BinaryDescriptorStackRoundtrip.descriptor_encoded] <;> rfl
   have ho : scaled hq hs v rs = products (scaled hq hs v rs) ds0 := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   exact h.consequence (fun _ hw => hw.trans hi.symm) (fun _ hw => hw.trans ho) le_rfl
 
 def bqPlacement : Fin (6+32) ≃ Fin 38 where
   toFun := ![0,17,1,9,2,5,3,4,6,7,8,10,11,12,13,14,15,16,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37]
   invFun := ![0,2,4,6,7,5,8,9,10,3,11,12,13,14,15,16,17,1,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37]
-  left_inv i := by fin_cases i <;> rfl
-  right_inv i := by fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def bqProgram : Program 38 40 q := Placement.placed DimensionProductDescriptor.program bqPlacement
 
 def rowPlacement : Fin (6+32) ≃ Fin 38 where
   toFun := ![0,18,1,15,2,17,3,4,5,6,7,8,9,10,11,12,13,14,16,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37]
   invFun := ![0,2,4,6,7,8,9,10,11,12,13,14,15,16,17,3,18,5,1,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37]
-  left_inv i := by fin_cases i <;> rfl
-  right_inv i := by fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def rowProgram : Program 38 40 q := Placement.placed DimensionProductDescriptor.program rowPlacement
 
 def groupPlacement : Fin (6+32) ≃ Fin 38 where
   toFun := ![0,19,1,10,2,3,4,5,6,7,8,9,11,12,13,14,15,16,17,18,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37]
   invFun := ![0,2,4,5,6,7,8,9,10,11,3,12,13,14,15,16,17,18,19,1,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37]
-  left_inv i := by fin_cases i <;> rfl
-  right_inv i := by fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def groupProgram : Program 38 40 q := Placement.placed DimensionProductDescriptor.program groupPlacement
 
 private theorem bq_frame (base : Tapes 38 q) (v : Descriptor) (_roles : ℕ) :
     Placement.extra bqPlacement (products base (ds0)) =
       Placement.extra bqPlacement (products base (ds1 (q := q) v)) := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 private theorem row_frame (base : Tapes 38 q) (v : Descriptor) (_roles : ℕ) :
     Placement.extra rowPlacement (products base (ds1 (q := q) v)) =
       Placement.extra rowPlacement (products base (ds2 (q := q) v)) := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 private theorem group_frame (base : Tapes 38 q) (v : Descriptor) (roles : ℕ) :
     Placement.extra groupPlacement (products base (ds2 (q := q) v)) =
       Placement.extra groupPlacement (products base (ds3 (q := q) roles v)) := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem bq_hoare (hs : Fin 6 → List Bool) (v : Descriptor) (rs : List Bool)
     (hv : RecursiveDimensionBank.Headers v hs) :
@@ -119,8 +119,8 @@ theorem bq_hoare (hs : Fin 6 → List Bool) (v : Descriptor) (rs : List Bool)
     v.beforeH (q^v.width) (pow_pos (by omega) _) (RadixPowerDescriptor.bits_value _ _)
     (hv.1 2) (RadixPowerDescriptor.bits_canonical _ _) (hv.2 2)
   apply placed_exact bqPlacement _ _ _ _ _ _ (bq_frame _ v 0) h
-  · apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
-  · apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  · apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
+  · apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem row_hoare (hs : Fin 6 → List Bool) (v : Descriptor) (rs : List Bool) (hp : v.Positive) :
     HoareTime (rowProgram (q := q)) (fun w => w = products (scaled hq hs v rs) (ds1 (q := q) v))
@@ -132,8 +132,8 @@ theorem row_hoare (hs : Fin 6 → List Bool) (v : Descriptor) (rs : List Bool) (
     (DimensionProductDescriptor.bits_value _ _) (DimensionProductDescriptor.bits_value _ _)
     (DimensionProductDescriptor.bits_canonical _ _) (DimensionProductDescriptor.bits_canonical _ _)
   apply placed_exact rowPlacement _ _ _ _ _ _ (row_frame _ v 0) h
-  · apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
-  · apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  · apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
+  · apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem group_hoare (roles : ℕ) (hs : Fin 6 → List Bool) (v : Descriptor) (rs : List Bool)
     (hv : RecursiveDimensionBank.Headers v hs) (hrc : GrowingCounterData.Canonical rs)
@@ -143,8 +143,8 @@ theorem group_hoare (roles : ℕ) (hs : Fin 6 → List Bool) (v : Descriptor) (r
   have h := DimensionProductDescriptor.construct_hoare (q := q) rs (hs 0) v.beforeRows (v.rows/roles)
     hrpos hrv (hv.1 0) hrc (hv.2 0)
   apply placed_exact groupPlacement _ _ _ _ _ _ (group_frame _ v roles) h
-  · apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
-  · apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  · apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
+  · apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 def program (roles : ℕ) := seq (seq (seq (seq (RecursiveRowsQuotient.program (a := q) roles)
   (Placement.placed (RecursiveScalingDimensions.program hq .h) scalingPlacement)) bqProgram) rowProgram) groupProgram

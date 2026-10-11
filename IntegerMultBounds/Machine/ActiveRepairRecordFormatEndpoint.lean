@@ -33,7 +33,7 @@ def cost (chunks : List (List Bool)) (bs ns : List Bool) (R : ℕ) :=
  theorem prepared_eq (chunks : List (List Bool)) (bs ns : List Bool) :
     setTape (setTape (input chunks bs ns) 2 CountedCopyReuse.empty 1) 4 CountedCopyReuse.empty 1=
       prepared chunks bs ns := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
  theorem encoded_nonblank (chunks : List (List Bool)) : ∀ x ∈ encoded chunks,x≠blank := by
   induction chunks with

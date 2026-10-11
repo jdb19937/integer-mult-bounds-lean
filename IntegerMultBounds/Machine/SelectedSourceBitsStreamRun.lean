@@ -19,7 +19,7 @@ def rowHeaders (hs : Fin 4 → List Bool) : Fin 3 → List Bool := fun i => hs (
 
 theorem marked_eq (v : Tapes 2 a) (hs : Fin 4 → List Bool) :
     marked v hs = bank (SelectedSourceBitsBank.marked v (rowHeaders hs)) empty (binary (hs 3)) 1 1 := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 def loopProgram := CountedLoopReuseAlphabet.program (SelectedSourceBitsStreamRow.program (a := a))
 def rewindProgram := extend (SelectedSourceBitsRewind.program (a := a)) 2

@@ -21,7 +21,7 @@ theorem sources (d : Inputs s p offset rows) (x : Array s rows) :
       ActiveTargetHighestLayoutOriginalPlaced.sources d.hs x := by
   unfold ActiveRepairLayoutRecordsPayloadLateData.caller
   rw [ActiveRepairLayoutRecordsOriginalLateAlphabet.input_literal]
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem input_set (d : Inputs s p offset rows) (x y : Array s rows) :
     SharedPlacementAlphabet.setTape (ActiveRepairLayoutRecordsPayloadLateData.caller d x)

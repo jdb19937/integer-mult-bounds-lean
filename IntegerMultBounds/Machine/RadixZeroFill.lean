@@ -95,7 +95,7 @@ private theorem map_bank (bs : List Bool) (n : ℕ) :
     rw [encode_word,encode_empty,List.map_replicate]
     rfl
   apply congrArg₂ Tapes.mk
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
   · funext i
     fin_cases i
     · exact hf
@@ -115,7 +115,7 @@ private theorem initialize_hoare (bs : List Bool) :
   · simp only [run_one,step,initializeProgram,Tapes.start,ite_true]
     congr 1
     congr 1
-    · funext i; fin_cases i <;> rfl
+    · apply List.ofFn_injective; rfl
     · funext i z
       fin_cases i
       · simp [input,afterFill,triple,placeholders,putWord,radixEmpty]

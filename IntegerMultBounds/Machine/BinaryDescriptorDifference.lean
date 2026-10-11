@@ -29,7 +29,7 @@ theorem mapped_bank (xs ys : List Bool) (out : ℤ → Fin 4) (r : ℤ) :
     Alphabet.mapTapes (CountedLoopReuseAlphabet.encoding a) (BinarySubReuse.bank xs ys out 1 1 r) =
       bank xs ys (fun j => (CountedLoopReuseAlphabet.encoding a).encode (out j)) r := by
   apply congrArg₂ Tapes.mk
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
   · funext i; fin_cases i
     · exact CountedLoopReuseAlphabet.encoding_binary xs
     · exact CountedLoopReuseAlphabet.encoding_binary ys
@@ -67,7 +67,7 @@ private theorem normalizes (xs ys zs : List Bool) :
   change Placement.replace outputPlacement (output xs ys zs)
     (FiniteReturnStack.bank (BinaryDescriptorStack.descriptor ws) 1) = _
   rw [outputPlacement,FiniteReturnStackAt.replace_bank]
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 /-- The two original canonical operands and their heads are retained;
 zero difference has the canonical empty binary word and head one. -/

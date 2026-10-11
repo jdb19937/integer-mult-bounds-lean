@@ -77,7 +77,7 @@ theorem product (v : Tapes t a) (focus : Fin 3 → Fin t) (hf : Function.Injecti
         (RadixZeroFill.encodedBinary (bits (N*W))) 1 := by
     rw [← canonical_bits (DimensionProductDescriptor.bits N W) (N*W)
       (DimensionProductDescriptor.bits_canonical N W) (DimensionProductDescriptor.bits_value N W)]
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   rw [he] at hr
   rw [← SharedPlacementAlphabet.setTape_append_left] at hr
   apply single (productCore (a := a)) productPorts product_injective focus hf v X 2 _ _ ?_ ?_ hr
@@ -112,7 +112,7 @@ theorem difference (v : Tapes t a) (focus : Fin 3 → Fin t) (hf : Function.Inje
       setTape (BinaryDescriptorDifference.input xs ys) 2
         (RadixZeroFill.encodedBinary (bits (Counter.value xs-Counter.value ys))) 1 := by
     rw [BinaryDescriptorDifference.output,BinaryDescriptorStackRoundtrip.descriptor_encoded]
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   rw [he,← SharedPlacementAlphabet.setTape_append_left] at hr
   apply single (differenceCore (a := a)) differencePorts difference_injective focus hf v X 2 _ _ ?_ ?_ hr
   · apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i

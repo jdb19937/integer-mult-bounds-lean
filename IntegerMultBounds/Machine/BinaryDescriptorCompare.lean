@@ -92,7 +92,7 @@ theorem compare_hoare (xs ys : List Bool) :
   have h1 := reset_hoare (1 : Fin 3) v1 ys rfl rfl
   have h2 := move_hoare (2 : Fin 3) .left v2
   have he : positioned v2 (2 : Fin 3) (v2.head 2+Move.left.offset) = output xs ys := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   rw [he] at h2
   exact (((hc'.seq h0).seq h1).seq h2).consequence (fun _ h => h) (fun _ h => h) (by unfold cost; omega)
 

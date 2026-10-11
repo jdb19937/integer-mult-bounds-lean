@@ -14,7 +14,7 @@ def tail (width count : List Bool) : Tapes 6 2 :=
 
 theorem bank_eq (f : ℤ → Fin 6) (p : ℤ) (width count : List Bool) :
     NativeZeroStream.bank f p width count=(one f p).append (tail width count) := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 def program := seq (seq (extend (ScanRight.program (blank : Fin 6)) 6) NativeZeroStream.program)
   (extend (ReturnOrigin.program (a:=2)) 6)

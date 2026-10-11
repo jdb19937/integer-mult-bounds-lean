@@ -58,7 +58,7 @@ theorem parity_bank (V W U X Z : List Bool) (f g h k : ℤ → Fin (a+4))
       (parityExtra V W f g pv pw hs)).reindex parityPlace = bank V W U X Z f g h k pv pw pu px hs := by
   unfold CountedPackedParityRun.input CountedPackedParityRun.caller CountedPackedParityHeaders.input
     parityExtra bank payload bn Gather.bank Tapes.reindex Tapes.append parityPlace
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem early_bank (V W U X Z : List Bool) (f g h k : ℤ → Fin (a+4))
     (pv pw pu px : ℤ) (hs : Fin 3 → List Bool) :
@@ -66,7 +66,7 @@ theorem early_bank (V W U X Z : List Bool) (f g h k : ℤ → Fin (a+4))
       (earlyExtra U X h k pu px)).reindex earlyPlace = bank V W U X Z f g h k pv pw pu px hs := by
   unfold CountedPackedArith.bank CountedPackedArith.tail PackedArith.input PackedArith.bank
     earlyExtra bank payload Tapes.reindex Tapes.append earlyPlace
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem load_bank (V W U X Z : List Bool) (f g h k : ℤ → Fin (a+4))
     (pv pw pu px : ℤ) (hs : Fin 3 → List Bool) :
@@ -75,7 +75,7 @@ theorem load_bank (V W U X Z : List Bool) (f g h k : ℤ → Fin (a+4))
   unfold CountedPackedControlLoadRun.input CountedPackedControlLoadLine.input CountedPackedControlLoadLine.caller
     CountedPackedControlLoadHeaders.input CountedPackedControlLoadRun.payload PackedLine.bank
     loadExtra bank payload bn Tapes.reindex Tapes.append loadPlace
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 def parity (a : ℕ) := reindex (extend (CountedPackedParityRun.program a) 9) parityPlace
 def early (a : ℕ) := reindex (extend (CountedPackedReusable.forwardProgram a) 2) earlyPlace
@@ -143,7 +143,7 @@ theorem clear_hoare :
   intro v hv
   rw [hv]
   unfold WordBankCleanup.write bank payload Tapes.append
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 private theorem control_hoare {s : ℕ} (R : ColumnTransducer.Rule s)
     (hv : ∀ i, Counter.value (hs i) = CountedPackedShapeHeaders.originalValues q b X.length i)

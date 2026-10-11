@@ -29,7 +29,7 @@ theorem t_runs (x : FullArray s rows) :
   let e := ActivePrefixCompactSwapData.volume_eq s rows (n*b) hw
   let y := view e.symm x
   have hsrc : SharedBank.payload (base gs bw hs rs bs y) swapFocus=ActivePrefixCompactSwapPlaced.sources gs bw y := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   have h := ActivePrefixCompactSwapPlaced.runs (base gs bw hs rs bs y) swapFocus swap_injective
     s n rows b gs bw y hsrc gv gc gb cb hbp hr hK hd hg hp hw
   have he : ActivePrefixCompactSwapPlaced.result (base gs bw hs rs bs y) swapFocus y=
@@ -48,7 +48,7 @@ theorem u_runs (x : FullArray s rows) :
   let e := ActivePrefixDirtyControlUSwapData.volume_eq s rows (n*b) hw
   let y := view e.symm x
   have hsrc : SharedBank.payload (base gs bw hs rs bs y) swapFocus=ActivePrefixDirtyControlUSwapPlaced.sources gs bw y := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   have h := ActivePrefixDirtyControlUSwapPlaced.runs (base gs bw hs rs bs y) swapFocus swap_injective
     s n rows b gs bw y hsrc gv gc gb cb hbp hr hK hd hg hp hw
   have he : ActivePrefixDirtyControlUSwapPlaced.result (base gs bw hs rs bs y) swapFocus y=

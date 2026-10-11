@@ -32,7 +32,7 @@ theorem fill_runs (ws : List Bool) (W : ℕ) (hw : Counter.value ws=W) :
   have ha : Placement.active placement (input (a := a) ws)=
       Alphabet.mapTapes (encoding a) (BinaryAddressTableFill.input ws) := by
     apply congrArg₂ Tapes.mk
-    · funext i; fin_cases i <;> rfl
+    · apply List.ofFn_injective; rfl
     · funext i z
       fin_cases i
       · rfl
@@ -41,7 +41,7 @@ theorem fill_runs (ws : List Bool) (W : ℕ) (hw : Counter.value ws=W) :
   have hb : Placement.active placement (ready (a := a) ws W)=
       Alphabet.mapTapes (encoding a) (BinaryAddressTableFill.output ws W) := by
     apply congrArg₂ Tapes.mk
-    · funext i; fin_cases i <;> rfl
+    · apply List.ofFn_injective; rfl
     · funext i z
       fin_cases i
       · exact congrFun (CountedLoopReuseAlphabet.encoding_binary (List.replicate W false)).symm z
@@ -56,7 +56,7 @@ theorem fill_runs (ws : List Bool) (W : ℕ) (hw : Counter.value ws=W) :
   apply (Placement.hoare_at hs placement (input ws) rfl).consequence (fun _ h => h) _ le_rfl
   rintro v ⟨small,rfl,rfl⟩
   have hf : Placement.extra placement (input (a := a) ws)=Placement.extra placement (ready ws W) := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   rw [Placement.replace,hf]
   exact Placement.view placement (ready ws W)
 
@@ -66,10 +66,10 @@ theorem readout_runs (ws : List Bool) (W : ℕ) :
     (⟨![0,1],![(fun _ => blank),binary ws]⟩ : Tapes 2 a)
   have he0 : (Copy.tapes (binary (a := a) (List.replicate W false)) (fun _ => blank) 1 0).append
       (⟨![0,1],![(fun _ => blank),binary ws]⟩ : Tapes 2 a)=ready ws W := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   have he1 : (BinaryCurrentAddress.bank (a := a) (List.replicate W false) (List.replicate W false)).append
       (⟨![0,1],![(fun _ => blank),binary ws]⟩ : Tapes 2 a)=output ws W := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   simpa only [readout,he0,he1,List.length_replicate] using h
 
 theorem runs (ws : List Bool) (W : ℕ) (hw : Counter.value ws=W)

@@ -37,12 +37,12 @@ def countWord (s : Shape) := RecursiveChildQuotientsConstant.bits (2^s.W)
 
 theorem positive_sources (hs : Fin 8 → List Bool) :
     SharedBank.payload (base (a := a) hs) positiveFocus=ActivePrefixParityOffsetPlaced.sources hs := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem header_sources (s : Shape) (hs : Fin 8 → List Bool) :
     SharedBank.payload (positive (a := a) s hs) headerFocus=
       ActivePrefixOffsetHeadersData.sources (originalWords hs) := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem negate_sources (s : Shape) (hs : Fin 8 → List Bool) :
     SharedBank.payload (headers (a := a) s hs) negateFocus=
@@ -50,7 +50,7 @@ theorem negate_sources (s : Shape) (hs : Fin 8 → List Bool) :
         (widthWord s) (countWord s) := by
   rw [ActivePrefixParityNegativeNegate.sources,ActivePrefixParityNegativeNegate.local_payload,
     ActivePrefixParityNegativeData.rows_flatten]
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem retained_headers (s : Shape) (hs : Fin 8 → List Bool) :
     (∀ i, (negated (a := a) s hs).tape (ActivePrefixOffsetHeadersData.outputFocus headerFocus i)=
@@ -61,7 +61,7 @@ theorem retained_headers (s : Shape) (hs : Fin 8 → List Bool) :
 theorem output_eq (s : Shape) (hs : Fin 8 → List Bool) :
     output (a := a) s hs=setTape (base hs) 9
       (ActivePrefixParityNegativeNegate.word (ActivePrefixParityNegativeData.negative s)) 0 := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 end
 end IntegerMultBounds.Machine.ActivePrefixParityNegativeBank

@@ -26,7 +26,7 @@ private theorem finish (g : ℤ → Fin (a+4)) (p : ℤ) :
     simp only [step,finishProgram,Copy.tapes,Copy.cfg,Config.tapes,Tapes.start,ite_true,Move.offset]
     congr 1
     congr 1
-    · funext i; fin_cases i <;> rfl
+    · apply List.ofFn_injective; rfl
     · funext i z; fin_cases i <;> by_cases hz : z=0 <;> simp [empty,Function.update_apply,hz]
   · simp [step,finishProgram]
 
@@ -65,7 +65,7 @@ theorem runs (g : ℤ → Fin (a+4)) (p : ℤ) (xs : List Bool) :
   have ha : ∀ (u v : ℤ → Fin (a+4)) (j k : ℤ),
       (FiniteReturnStack.bank u j).append (FiniteReturnStack.bank v k)=Copy.tapes u v j k := by
     intro u v j k
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   simp only [ha] at hr
   have hf := finish (putWord g p (xs.map bitSymbol)) (p+xs.length)
   have he : Function.update (putWord g p (xs.map bitSymbol)) (p+xs.length) separator =

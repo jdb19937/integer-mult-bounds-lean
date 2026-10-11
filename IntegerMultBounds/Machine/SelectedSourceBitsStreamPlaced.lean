@@ -34,7 +34,7 @@ theorem clean (xs : List Bool) (hs : Fin 5 → List Bool) :
 theorem output_eq (xs : List Bool) (hs : Fin 5 → List Bool) (q rho n f P : ℕ) :
     SelectedSourceBitsStreamRun.output (a := a) xs hs q rho n f P =
       setTape (SelectedSourceBitsStreamRun.input xs hs) (ports 1) (word (selected xs q rho n f P)) 0 := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem runs (caller : Tapes t a) (focus : Fin 7 → Fin t) (hf : Function.Injective focus)
     (xs : List Bool) (hs : Fin 5 → List Bool) (q rho n f P : ℕ)

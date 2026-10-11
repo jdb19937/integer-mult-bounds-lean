@@ -22,7 +22,7 @@ def program (focus : Fin 4 → Fin t) (hf : Function.Injective focus) :=
 
 theorem native_payload (hs : Fin 3 → List Bool) :
     SharedBank.payload (BinaryPrefixFieldTableAlphabet.bank (a := a) hs (fun _ => blank)) ports=sources hs := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem native_clean (hs : Fin 3 → List Bool) :
     SharedBank.strip (BinaryPrefixFieldTableAlphabet.bank (a := a) hs (fun _ => blank)) ports=SharedBank.empty 24 a := by

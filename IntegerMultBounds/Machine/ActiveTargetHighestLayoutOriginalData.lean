@@ -31,15 +31,15 @@ theorem words_canonical (mode : Mode) (d : Inputs) : ∀ i,GrowingCounterData.Ca
 
 theorem prepared_sources {m : ℕ} (mode : Mode) (d : Inputs) (x : Fin m → Bool) :
     SharedBank.payload (prepared mode d x) focus=ActiveTargetHighestPairOriginalPlaced.sources (words mode d) x := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem base_set {m n : ℕ} (hs : Fin 14 → List Bool) (x : Fin m → Bool) (y : Fin n → Bool) :
     SharedPlacementAlphabet.setTape (base hs x) 43 (ActiveTargetRotation.word y) 0=base hs y := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem prepared_set {m n : ℕ} (mode : Mode) (d : Inputs) (x : Fin m → Bool) (y : Fin n → Bool) :
     SharedPlacementAlphabet.setTape (prepared mode d x) (focus 5) (ActiveTargetRotation.word y) 0=prepared mode d y := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 end
 end IntegerMultBounds.Machine.ActiveTargetHighestLayoutOriginalData

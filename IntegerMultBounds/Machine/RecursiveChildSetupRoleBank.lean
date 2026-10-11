@@ -38,7 +38,7 @@ theorem commonPorts_injective : Function.Injective (commonPorts (t := t) (u := u
 
 private theorem local_payload (hs : Fin 6 → List Bool) (st : Tapes 2 prime) :
     SharedBank.payload (RecursiveChildCallSetup.bank hs st) ports = (headers hs).append st := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 private theorem local_clean (hs : Fin 6 → List Bool) (st : Tapes 2 prime) :
     SharedBank.strip (RecursiveChildCallSetup.bank hs st) ports = SharedBank.empty 40 prime := by

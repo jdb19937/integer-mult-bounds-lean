@@ -35,7 +35,7 @@ theorem base_set {m n : ℕ} (gs : Fin 7 → List Bool) (bw : List Bool)
     (ht hc : Fin 8 → List Bool) (rs bt bc : List Bool) (x : Fin m → Bool) (y : Fin n → Bool) :
     SharedPlacementAlphabet.setTape (base gs bw ht hc rs bt bc x) 27
       (ActiveTargetRotation.word y) 0=base gs bw ht hc rs bt bc y := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem base_view {m n : ℕ} (h : m=n) (gs : Fin 7 → List Bool) (bw : List Bool)
     (ht hc : Fin 8 → List Bool) (rs bt bc : List Bool) (x : Fin m → Bool) :
@@ -58,20 +58,20 @@ theorem selected_sources (l : ActivePrefixSelectedOffsetBank.Shape) (rows B : �
     (rs bt bc : List Bool) (x : ActivePrefixSelectedLoadData.Array l rows B) :
     SharedBank.payload (base gs bw ht hc rs bt bc x) targetFocus=
       ActivePrefixSelectedLoadPlaced.sources (a := prime) l rows B ht rs bt x := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem correction_sources (l : ActivePrefixSelectedOffsetBank.Shape) (rows B : ℕ)
     (gs : Fin 7 → List Bool) (bw : List Bool) (ht hc : Fin 8 → List Bool)
     (rs bt bc : List Bool) (x : ActivePrefixCorrectionLoadData.Array l rows B) :
     SharedBank.payload (base gs bw ht hc rs bt bc x) targetFocus=
       ActivePrefixCorrectionLoadPlaced.sources (a := prime) l rows B ht rs bt x := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem compact_sources {m : ℕ} (gs : Fin 7 → List Bool) (bw : List Bool)
     (ht hc : Fin 8 → List Bool) (rs bt bc : List Bool) (x : Fin m → Bool) :
     SharedBank.payload (base gs bw ht hc rs bt bc x) compactFocus=
       ActivePrefixCompactConjugationData.base gs bw hc rs bc x := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 def selected (s : Shape) (p : Parameters s) (offset : ℕ)
     (hfit : offset+p.f*p.q≤p.before) (rows : ℕ) (x : Array s rows) : Array s rows :=

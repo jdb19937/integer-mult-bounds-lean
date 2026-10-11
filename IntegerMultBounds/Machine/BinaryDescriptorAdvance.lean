@@ -33,7 +33,7 @@ private theorem initialize_hoare (ts bs : List Bool) :
   apply h.consequence (fun _ h => h) _ le_rfl
   rintro w ⟨z,rfl,rfl⟩
   rw [FiniteReturnStackAt.replace_bank]
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 private theorem increment_advance (n : ℕ) (ts : List Bool) :
     GrowingCounterData.increment (GrowingCounterData.advance n ts) =
@@ -69,7 +69,7 @@ private theorem cleanup_hoare (ts bs : List Bool) :
       (fun v => v = input ts bs) 4 := by
   have h := BinaryDescriptorCleanupList.one_hoare (1 : Fin 3) (working (q := q) ts bs) [] rfl rfl
   have he : setTape (working (q := q) ts bs) (1 : Fin 3) (fun _ => blank) 0 = input ts bs := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   rw [he] at h
   exact h
 

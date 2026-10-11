@@ -42,13 +42,13 @@ def output (A R C : ℕ) (hs : Fin 3 → List Bool) : Tapes 8 a :=
 def firstPlacement : Fin (6+2) ≃ Fin 8 where
   toFun := ![5,3,6,1,7,0,2,4]
   invFun := ![5,3,6,1,7,0,2,4]
-  left_inv i := by fin_cases i <;> rfl
-  right_inv i := by fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 def secondPlacement : Fin (6+2) ≃ Fin 8 where
   toFun := ![5,4,6,2,7,3,0,1]
   invFun := ![6,7,3,5,1,0,2,4]
-  left_inv i := by fin_cases i <;> rfl
-  right_inv i := by fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def firstProgram := Placement.placed (BoundedProductDescriptor.program (q := a)) firstPlacement
 def secondProgram := Placement.placed (BoundedProductDescriptor.program (q := a)) secondPlacement
@@ -75,28 +75,28 @@ private theorem product_hoare (ws ns : List Bool) (N W : ℕ) (hW : 0 < W)
 private theorem first_active_input (_A _R _C : ℕ) (hs : Fin 3 → List Bool) :
     Placement.active firstPlacement (input hs : Tapes 8 a) =
       BoundedProductDescriptor.input (hs 1) (hs 0) := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 private theorem first_active_output (A R _C : ℕ) (hs : Fin 3 → List Bool) :
     Placement.active firstPlacement (first A R hs : Tapes 8 a) =
       BoundedProductDescriptor.output (hs 1) (hs 0) (A) (R) := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 private theorem first_frame (A R _C : ℕ) (hs : Fin 3 → List Bool) :
     Placement.extra firstPlacement (input hs : Tapes 8 a) =
       Placement.extra firstPlacement (first A R hs) := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 private theorem second_active_input (A R _C : ℕ) (hs : Fin 3 → List Bool) :
     Placement.active secondPlacement (first A R hs : Tapes 8 a) =
       BoundedProductDescriptor.input (hs 2) (intermediate A R) := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 private theorem second_active_output (A R C : ℕ) (hs : Fin 3 → List Bool) :
     Placement.active secondPlacement (second A R C hs : Tapes 8 a) =
       BoundedProductDescriptor.output (hs 2) (intermediate A R) (A*R) (C) := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 private theorem second_frame (A R C : ℕ) (hs : Fin 3 → List Bool) :
     Placement.extra secondPlacement (first A R hs : Tapes 8 a) =
       Placement.extra secondPlacement (second A R C hs) := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem first_constructs (A R : ℕ) (hR : 0 < R) (hs : Fin 3 → List Bool)
     (hA : Counter.value (hs 0) = A) (hRv : Counter.value (hs 1) = R)
@@ -124,7 +124,7 @@ theorem second_constructs (A R C : ℕ) (hC : 0 < C) (hs : Fin 3 → List Bool)
 
 private theorem erase_intermediate_bank (A R C : ℕ) (hs : Fin 3 → List Bool) :
     setTape (second (a := a) A R C hs) 3 (fun _ => blank) 0 = output A R C hs := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem intermediate_cleans (A R C : ℕ) (hs : Fin 3 → List Bool) :
     HoareTime (eraseIntermediate (a := a)) (fun z => z = second A R C hs)
@@ -164,7 +164,7 @@ def cleanup : Program 8 4 a := BinaryDescriptorCleanupList.oneProgram 4
 def cleanupCost (A R C : ℕ) := 2*(bits A R C).length+4
 private theorem erase_output_bank (A R C : ℕ) (hs : Fin 3 → List Bool) :
     setTape (output (a := a) A R C hs) 4 (fun _ => blank) 0 = input hs := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem cleans (A R C : ℕ) (hs : Fin 3 → List Bool) :
     HoareTime (cleanup (a := a)) (fun z => z = output A R C hs)

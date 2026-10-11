@@ -33,17 +33,17 @@ def output (s : Shape .parity) (hs : Fin 6 → List Bool) :=
 
 theorem positive_sources (hs : Fin 6 → List Bool) :
     SharedBank.payload (base (a := a) hs) positiveFocus=ActivePrefixDirtyControlPlaced.sources hs := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem negate_sources (s : Shape .parity) (hs : Fin 6 → List Bool) :
     SharedBank.payload (headers (a := a) s hs) negateFocus=
       ActivePrefixParityNegativeNegate.sources (rows s).flatten (bits (s.n*s.b)) (bits (2^s.W)) := by
   rw [rows_flatten,ActivePrefixParityNegativeNegate.sources,ActivePrefixParityNegativeNegate.local_payload]
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem cleared (s : Shape .parity) (hs : Fin 6 → List Bool) :
     setTape (widthCleared (a := a) s hs) 9 (fun _ => blank) 0=output s hs := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 end
 end IntegerMultBounds.Machine.ActivePrefixDirtyControlNegativeBank

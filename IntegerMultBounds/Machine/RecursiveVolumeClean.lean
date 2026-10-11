@@ -33,12 +33,12 @@ def bound (V : ℕ) : ℕ := 36279*V+15503
 
 private theorem input_eq (hs : Fin 6 → List Bool) :
     RecursiveVolumeConstruct.input (q := q) hs = retained hs none := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 private theorem retained_eq (hs : Fin 6 → List Bool) (v : Descriptor) :
     TrackedCleanupList.retained keep (RecursiveVolumeConstruct.output hq hs v) =
       retained hs (some (RecursiveVolumeConstruct.bits (q := q) v)) := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem realizes (v : Descriptor) (hs : Fin 6 → List Bool)
     (hv : RecursiveDimensionBank.Headers v hs) (hp : v.Positive) :

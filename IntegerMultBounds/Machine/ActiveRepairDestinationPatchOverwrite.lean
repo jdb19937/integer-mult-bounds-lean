@@ -10,8 +10,8 @@ variable {a : ℕ}
 def outputStartPlace : Fin (3+2) ≃ Fin 5 where
   toFun := ![1,4,2,0,3]
   invFun := ![3,0,2,4,1]
-  left_inv i := by fin_cases i <;> rfl
-  right_inv i := by fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def seek := Placement.placed (ActiveRepairRankFieldsPosition.program (a := a) .right) outputStartPlace
 def back := Placement.placed (ActiveRepairRankFieldsPosition.program (a := a) .left) outputStartPlace
@@ -25,7 +25,7 @@ theorem seeks (f g : ℤ → Fin (a+4)) (p q : ℤ) (hs : Fin 2 → List Bool)
   have h := ActiveRepairRankFieldsPosition.runs .right g q (hs 0) start hv
   simp only [Move.offset,mul_one] at h
   apply CountedRankSplitBank.placed_exact outputStartPlace _ _ _ _ _ _ _ h
-  all_goals apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  all_goals apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem backs (f g : ℤ → Fin (a+4)) (p q : ℤ) (hs : Fin 2 → List Bool)
     (start : ℕ) (hv : Counter.value (hs 0)=start) :
@@ -34,7 +34,7 @@ theorem backs (f g : ℤ → Fin (a+4)) (p q : ℤ) (hs : Fin 2 → List Bool)
   have h := ActiveRepairRankFieldsPosition.runs .left g q (hs 0) start hv
   simp only [Move.offset,mul_neg_one] at h
   apply CountedRankSplitBank.placed_exact outputStartPlace _ _ _ _ _ _ _ h
-  all_goals apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  all_goals apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem runs_raw (f g : ℤ → Fin (a+4)) (p q : ℤ) (hs : Fin 2 → List Bool)
     (start width : ℕ) (hv0 : Counter.value (hs 0)=start) (hv1 : Counter.value (hs 1)=width) :

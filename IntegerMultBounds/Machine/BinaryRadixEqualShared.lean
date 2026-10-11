@@ -108,7 +108,7 @@ theorem bank_set_source (source spare : ℤ → Fin (prime+4)) (hs : Fin 4 → L
     setTape (bank source hs) sourceSlot spare 0 = bank spare hs := by
   have hl : setTape (BinaryRadixRangePrepareAlphabet.input source (fun _ => blank) hs) 0 spare 0 =
       BinaryRadixRangePrepareAlphabet.input spare (fun _ => blank) hs := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   have h : setTape (liftBank (BinaryRadixRangePrepareAlphabet.input source (fun _ => blank) hs))
       (liftSlot 0) spare 0 =
       liftBank (setTape (BinaryRadixRangePrepareAlphabet.input source (fun _ => blank) hs) 0 spare 0) := by

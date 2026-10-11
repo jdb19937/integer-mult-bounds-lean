@@ -22,7 +22,7 @@ def program (focus : Fin 9 → Fin t) (hf : Function.Injective focus) :=
 
 theorem native_payload (hs : Fin 8 → List Bool) :
     SharedBank.payload (ActivePrefixSelectedOffset.input (a := a) hs) ports=sources hs := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem native_clean (hs : Fin 8 → List Bool) :
     SharedBank.strip (ActivePrefixSelectedOffset.input (a := a) hs) ports=SharedBank.empty 41 a := by
@@ -45,14 +45,14 @@ theorem produces (caller : Tapes t a) (focus : Fin 9 → Fin t) (hf : Function.I
   · have hout : ActivePrefixSelectedOffset.output (a := a) s hs =
         setTape (ActivePrefixSelectedOffset.input hs) (ports 8)
           (ActivePrefixOffsetStreamsCleanup.word (offsetWord s)) 0 := by
-      apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+      apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
     rw [hout]
     simp only [result,CompactGadgetReservationPlacement.payload_set _ _ ports_injective,
       CompactGadgetReservationPlacement.payload_set _ _ hf,native_payload,hsrc]
   · have hout : ActivePrefixSelectedOffset.output (a := a) s hs =
         setTape (ActivePrefixSelectedOffset.input hs) (ports 8)
           (ActivePrefixOffsetStreamsCleanup.word (offsetWord s)) 0 := by
-      apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+      apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
     rw [hout,CompactGadgetReservationPlacement.strip_set]
     exact native_clean hs
   · simp only [result,CompactGadgetReservationPlacement.strip_set]

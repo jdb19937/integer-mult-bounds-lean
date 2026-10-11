@@ -48,7 +48,7 @@ theorem native_output (s : Shape) (rows B : ℕ) (hs : Fin 8 → List Bool) (rs 
     bank (base (a := a) s rows B hs rs bs (ActivePrefixCompactNegativeLoad.result s rows B x))=
       setTape (bank (base s rows B hs rs bs x)) (ports 10)
         (ActiveTargetRotation.word (ActivePrefixCompactNegativeLoad.result s rows B x)) 0 := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem runs (caller : Tapes t a) (focus : Fin 11 → Fin t) (hf : Function.Injective focus)
     (s : Shape) (rows B : ℕ) (hrows : 0<rows) (hB : 0<B) (habs : s.W+1≤2^width s*B)

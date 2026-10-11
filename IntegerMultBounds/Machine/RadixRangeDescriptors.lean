@@ -31,13 +31,13 @@ def output (radix u : ℕ) (us : List Bool) : Tapes 12 0 :=
 def placement : Fin (9+3) ≃ Fin 12 where
   toFun := ![0,1,2,3,4,10,5,11,6,7,8,9]
   invFun := ![0,1,2,3,4,6,8,9,10,11,5,7]
-  left_inv i := by fin_cases i <;> rfl
-  right_inv i := by fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 private theorem active_middle (u : ℕ) (us : List Bool) :
     Placement.active placement (middle u us) = FixedBasePowerUntil.input (binaryBits u) := by
   apply congrArg₂ Tapes.mk
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
   · funext i; fin_cases i
     all_goals first | rfl | exact (BinaryDescriptorStackRoundtrip.descriptor_encoded _).symm
 
@@ -45,14 +45,14 @@ private theorem active_output (radix u : ℕ) (us : List Bool) :
     Placement.active placement (output radix u us) =
       FixedBasePowerUntil.output radix (exponent radix u) (binaryBits u) := by
   apply congrArg₂ Tapes.mk
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
   · funext i; fin_cases i
     all_goals first | rfl | exact (BinaryDescriptorStackRoundtrip.descriptor_encoded _).symm
 
 private theorem extra_output (radix u : ℕ) (us : List Bool) :
     Placement.extra placement (middle u us) = Placement.extra placement (output radix u us) := by
   apply congrArg₂ Tapes.mk
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
   · funext i; fin_cases i
     · have hb : RadixZeroFill.encodedBinary (q := 0) us = CountedLoopReuseAlphabet.binary us := by
         change (fun z => (RadixToBinary.binaryEncoding (q := 0)).encode (CountedCopyReuse.binary us z)) = _
@@ -132,7 +132,7 @@ theorem cleanup_hoare (radix u : ℕ) (us : List Bool) :
       change (fun z => (RadixToBinary.binaryEncoding (q := 0)).encode (CountedCopyReuse.binary us z)) = _
       exact CountedLoopReuseAlphabet.encoding_binary (a := 0) us
     apply congrArg₂ Tapes.mk
-    · funext i; fin_cases i <;> rfl
+    · apply List.ofFn_injective; rfl
     · funext i; fin_cases i <;> first | rfl | exact hb
   rw [he] at h
   exact h

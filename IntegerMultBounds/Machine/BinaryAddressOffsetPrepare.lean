@@ -37,24 +37,24 @@ theorem table_hoare (hs : Fin 3 → List Bool) (q n : ℕ) :
       (fun z => z=sourceBank hs q n) (BinaryAddressTable.constant*((n*q+1)*2^(n*q))) := by
   have ha : Placement.active tablePlace (BinaryAddressOffsetHeaders.output hs q n)=
       BinaryAddressTable.input (widthBits q n) := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   have hh := Placement.hoare_at (BinaryAddressTable.constructs (widthBits q n) (n*q)
     (DimensionProductDescriptor.bits_value n q) (DimensionProductDescriptor.bits_canonical n q))
     tablePlace (BinaryAddressOffsetHeaders.output hs q n) ha
   apply hh.consequence (fun _ h => h) _ le_rfl
   rintro z ⟨small,rfl,rfl⟩
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem fill_hoare (hs : Fin 3 → List Bool) (q n : ℕ) :
     HoareTime fillProgram (fun z => z=sourceBank hs q n)
       (fun z => z=output hs q n) (8*(n*2^(n*q))+7*(countBits q n).length+39) := by
   have ha : Placement.active fillPlace (sourceBank hs q n)=BinaryAddressTableFill.input (countBits q n) := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   have hh := Placement.hoare_at (BinaryAddressTableFill.runs (countBits q n) (n*2^(n*q))
     (DimensionProductDescriptor.bits_value n (2^(n*q)))) fillPlace (sourceBank hs q n) ha
   apply hh.consequence (fun _ h => h) _ le_rfl
   rintro z ⟨small,rfl,rfl⟩
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 def cost (q n : ℕ) := BinaryAddressOffsetHeaders.cost q n+
   BinaryAddressTable.constant*((n*q+1)*2^(n*q))+(8*(n*2^(n*q))+7*(countBits q n).length+39)+2

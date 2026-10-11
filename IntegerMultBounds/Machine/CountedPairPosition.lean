@@ -16,7 +16,7 @@ theorem cell_hoare (m : Move) (source dest : ℤ → Fin 4) (p q : ℤ) :
   · simp only [run_one,step,cell,Tapes.start,↓reduceIte,CountedRawMove.payload]
     congr 1
     congr 1
-    · funext i; fin_cases i <;> rfl
+    · apply List.ofFn_injective; rfl
     · funext i z; fin_cases i <;> split_ifs with hz <;> simp_all
   · simp [step,cell]
 

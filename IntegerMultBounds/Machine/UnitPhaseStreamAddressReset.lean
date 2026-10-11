@@ -23,7 +23,7 @@ def output (v : Tapes 60 2) (addr : List Bool) := setTape (afterClock v addr) 57
 theorem output_eq (v : Tapes 60 2) (addr : List Bool) :
     output v addr=setTape (setTape (setTape v 43 (fun _ => blank) 0) 45 (fun _ => blank) 0)
       57 (fun _ => blank) 0 := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 private theorem raw_clears (v : Tapes 60 2) (i : Fin 60) (addr : List Bool)
     (ht : v.tape i=SelectedSourceBitsScan.word addr) (hh : v.head i=addr.length) :

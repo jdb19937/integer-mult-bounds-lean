@@ -170,8 +170,8 @@ private theorem concat_bank (xs ys zs ws : List (Fin 4)) (h₀ h₁ h₂ h₃ : 
   unfold Tapes.reindex Concatenate.tapes Concatenate.cfg Tapes.append
     Config.tapes bank PartitionMarked.cfg
   congr 1
-  · funext i; fin_cases i <;> rfl
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
+  · apply List.ofFn_injective; rfl
 
 private theorem encoded_nonblank (xs : List (Fin 4)) (h : ∀ x ∈ xs, x ≠ blank) :
     ∀ x ∈ xs.map encoding.encode, x ≠ blank := by

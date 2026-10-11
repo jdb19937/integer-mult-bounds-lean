@@ -59,7 +59,7 @@ theorem log_native (B D : ℕ) (hB : 2 ≤ B) (hD : 0 < D)
         (RadixZeroFill.encodedBinary (bits (Nat.clog B D))) 1 := by
     unfold FixedBasePowerUntil.output
     rw [hc,BinaryDescriptorStackRoundtrip.descriptor_encoded]
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   rw [he] at h1
   have hl := GrowingCounterData.canonical_width _ (FixedBasePowerStep.bits_canonical B (Nat.clog B D))
   rw [FixedBasePowerStep.bits_value] at hl

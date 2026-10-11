@@ -21,12 +21,12 @@ def cleanup (focus : Fin l) := Placement.placed
 
 theorem strip_input (es : List Bool) :
     setTape (ArbitraryWidthHighPrepare.input (a := a) es) 0 (fun _ => blank) 0 = privateInput := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem strip_output (q e : ℕ) (es : List Bool) :
     setTape (ArbitraryWidthHighPrepare.output (a := a) q e es) 0 (fun _ => blank) 0 =
       privateOutput q e := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 private theorem retained_caller (caller : Tapes l a) (focus : Fin l) (q e : ℕ)
     (es : List Bool) (ht : caller.tape focus = RadixZeroFill.encodedBinary es)

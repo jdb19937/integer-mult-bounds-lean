@@ -80,12 +80,12 @@ def program := seq (seq (guardW (a := a)) guardU) combine
 theorem w_input (V W U X : List Bool) (hs : Fin 3 → List Bool) :
     Placement.active wPlace (before (a := a) V W U X hs)=
       CountedGuardOriginal.input V W (hs 1) (hs 2) (hs 0) := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem w_output (q b : ℕ) (V W U X : List Bool) (hs : Fin 3 → List Bool) :
     Placement.active wPlace (first (a := a) q b V W U X hs)=
       CountedGuardOriginal.output q b X.length V W (hs 1) (hs 2) (hs 0) := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem w_extra (q b : ℕ) (V W U X : List Bool) (hs : Fin 3 → List Bool) :
     Placement.extra wPlace (before (a := a) V W U X hs)=
@@ -113,12 +113,12 @@ theorem w_runs (q b : ℕ) (hb : 1≤b) (hbq : b+3≤q)
 theorem u_input (q b : ℕ) (V W U X : List Bool) (hs : Fin 3 → List Bool) :
     Placement.active uPlace (first (a := a) q b V W U X hs)=
       CountedGuardOriginal.input V U (hs 1) (hs 2) (hs 0) := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem u_output (q b : ℕ) (V W U X : List Bool) (hs : Fin 3 → List Bool) :
     Placement.active uPlace (second (a := a) q b V W U X hs)=
       CountedGuardOriginal.output q b X.length V U (hs 1) (hs 2) (hs 0) := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem u_extra (q b : ℕ) (V W U X : List Bool) (hs : Fin 3 → List Bool) :
     Placement.extra uPlace (first (a := a) q b V W U X hs)=
@@ -146,12 +146,12 @@ theorem u_runs (q b : ℕ) (hb : 1≤b) (hbq : b+3≤q)
 theorem combine_input (q b : ℕ) (V W U X : List Bool) (hs : Fin 3 → List Bool) :
     Placement.active flagPlace (second (a := a) q b V W U X hs)=
       CountedLateRepairFlag.input (flag q b V W X) (flag q b V U X) := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem combine_output (q b : ℕ) (V W U X : List Bool) (hs : Fin 3 → List Bool) :
     Placement.active flagPlace (after (a := a) q b V W U X hs)=
       CountedLateRepairFlag.output (flag q b V W X) (flag q b V U X) := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem combine_extra (q b : ℕ) (V W U X : List Bool) (hs : Fin 3 → List Bool) :
     Placement.extra flagPlace (second (a := a) q b V W U X hs)=

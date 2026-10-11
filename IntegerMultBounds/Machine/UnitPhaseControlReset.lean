@@ -44,9 +44,9 @@ theorem runs (v : Tapes count 2) (bs : List Bool) (p : Fin 4)
   have hfp : UnitPhaseNumerator.flags p=Copy.tapes
       (putWord (fun _ => blank) 0 [bitSymbol (UnitPhaseNumerator.low p)])
       (putWord (fun _ => blank) 0 [bitSymbol (UnitPhaseNumerator.high p)]) 0 0 := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   have he : SharedBank.empty 2 2=Copy.tapes (fun _ => blank) (fun _ => blank) 0 0 := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   rw [hfp,he] at hflags
   have h3 := TwoTapeAt.runs UnitPhaseFlagsLifecycle.cleanup (48 : Fin count) 49 (by decide)
     (afterControl v) _ _ _ _ _ _ _ _

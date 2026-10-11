@@ -22,7 +22,7 @@ def program (focus : Fin 9 → Fin t) (hf : Function.Injective focus) :=
 
 theorem native_payload (hs : Fin 8 → List Bool) :
     SharedBank.payload (ActivePrefixParityNegative.input (a := a) hs) ports=sources hs := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem native_clean (hs : Fin 8 → List Bool) :
     SharedBank.strip (ActivePrefixParityNegative.input (a := a) hs) ports=SharedBank.empty 56 a := by

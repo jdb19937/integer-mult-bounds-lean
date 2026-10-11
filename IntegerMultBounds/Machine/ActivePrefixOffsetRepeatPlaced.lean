@@ -19,7 +19,7 @@ def sources (xs rs : List Bool) : Tapes 3 a :=
 
 theorem sources_eq (xs rs : List Bool) : sources (a := a) xs rs=
     ⟨![1,0,0],![RadixZeroFill.encodedBinary rs,word xs,fun _ => blank]⟩ := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 def result (caller : Tapes t a) (focus : Fin 3 → Fin t) (xs : List Bool) (rows : ℕ) :=
   setTape caller (focus 2) (word (copies xs rows)) 0

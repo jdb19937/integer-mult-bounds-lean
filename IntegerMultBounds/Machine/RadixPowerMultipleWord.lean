@@ -102,7 +102,7 @@ private theorem initialize_hoare (bs : List Bool) :
   · simp only [run_one,step,initializeProgram,Tapes.start,ite_true]
     congr 1
     congr 1
-    · funext i; fin_cases i <;> rfl
+    · apply List.ofFn_injective; rfl
     · funext i z
       fin_cases i
       · change (if z = 0 then separator else blank) = RadixZeroFill.radixEmpty z
@@ -164,7 +164,7 @@ private theorem restore_hoare (bs : List Bool) (n : ℕ) :
     simp only [step,restoreProgram,Tapes.start,ite_true]
     congr 1
     congr 1
-    · funext i; fin_cases i <;> rfl
+    · apply List.ofFn_injective; rfl
     · funext i z
       by_cases hz : z = (rewound hq bs n).head i <;> simp [hz,middle]
   rintro v rfl
@@ -174,7 +174,7 @@ private theorem restore_hoare (bs : List Bool) (n : ℕ) :
       show (1 : Fin 3) ≠ 0 by decide,ite_false,ite_true]
     congr 1
     congr 1
-    · funext i; fin_cases i <;> rfl
+    · apply List.ofFn_injective; rfl
     · funext i z
       fin_cases i
       · change (if z = 1 then RadixZeroFill.radixZeros hq n 1 else RadixZeroFill.radixZeros hq n z) = _
@@ -206,9 +206,9 @@ theorem construct_hoare (k : ℕ) (bs : List Bool) (b : ℕ) (hb : Counter.value
     · intro v hv
       refine ⟨_,rfl,?_⟩
       rw [hv]
-      apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+      apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
     · rintro v ⟨w,rfl,rfl⟩
-      apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+      apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   have hh := ((((initialize_hoare hq bs).seq hl).seq (rewind_hoare hq bs (k*b))).seq
     (restore_hoare hq bs (k*b))).seq ha
   apply hh.consequence (fun _ h => h) (fun _ h => h)

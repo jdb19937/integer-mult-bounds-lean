@@ -34,7 +34,7 @@ private theorem one_hoare (qs : List Bool) :
   refine h.consequence (fun _ h => h) ?_ le_rfl
   rintro v ⟨z,rfl,rfl⟩
   rw [FiniteReturnStackAt.replace_bank]
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem constructs (qs : List Bool) (q : ℕ) (hq : Counter.value qs=q)
     (cq : GrowingCounterData.Canonical qs) (hp : 1 ≤ q) :
@@ -51,7 +51,7 @@ theorem constructs (qs : List Bool) (q : ℕ) (hq : Counter.value qs=q)
         rw [BinaryDescriptorStackRoundtrip.descriptor_encoded,binary_eq]) rfl
   have he : setTape (BinaryDescriptorDifference.output (a := a) qs (RecursiveChildQuotientsConstant.bits 1)
       (RecursiveChildQuotientsConstant.bits (q-1))) 1 (fun _ => blank) 0 = output qs q := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   rw [he] at h3
   exact ((h1.seq h2).seq h3).consequence (fun _ h => h) (fun _ h => h) (by
     norm_num [RecursiveChildQuotientsConstant.cost,RecursiveChildQuotientsConstant.bits]

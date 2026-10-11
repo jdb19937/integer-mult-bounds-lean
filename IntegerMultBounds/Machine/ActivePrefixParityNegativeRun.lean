@@ -11,7 +11,7 @@ variable {a : ℕ}
 def bank (caller : Tapes 15 a) := CleanSubbank.bank (s := 41) caller
  theorem pad15 (caller : Tapes 15 a) :
     (CleanSubbank.bank (s := 15) caller).append (SharedBank.empty 26 a)=bank caller := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 def positiveProgram := ActivePrefixParityOffsetPlaced.program (a := a) positiveFocus positive_injective
 def headerProgram := extend (ActivePrefixOffsetHeadersRun.program (a := a) headerFocus header_injective) 26

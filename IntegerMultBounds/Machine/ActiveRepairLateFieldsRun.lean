@@ -21,7 +21,7 @@ theorem copy_runs (V W U X cs : List Bool) (hs : Fin 3 → List Bool) :
 theorem bank_assoc (v : Tapes 30 1) (V W U cs : List Bool) :
     bank v [] V W U cs = v.append
       ((FiniteReturnStack.bank (CountedGuardGadgetRecord.word []) 0).append (originals V W U cs)) := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem inverse_runs (q b : ℕ) (hb : 1≤b) (hbq : b+1≤q) (hbq3 : b+3≤q)
     (V W U X cs : List Bool) (hs : Fin 3 → List Bool)

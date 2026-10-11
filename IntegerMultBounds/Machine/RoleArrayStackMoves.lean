@@ -86,16 +86,16 @@ theorem step_hoare (v : Tapes 2 a) (moves : Fin 2 → Move) (bs : List Bool) :
 def swap : Fin 4 ≃ Fin 4 where
   toFun := ![1,0,2,3]
   invFun := ![1,0,2,3]
-  left_inv i := by fin_cases i <;> rfl
-  right_inv i := by fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def swapped (v : Tapes 2 a) : Tapes 2 a := StackPop.bank (v.tape 1) (v.tape 0) (v.head 1) (v.head 0)
 
 theorem ready_swap (v : Tapes 2 a) (bs : List Bool) : (ready v bs).reindex swap = ready (swapped v) bs := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem swapped_swapped (v : Tapes 2 a) : swapped (swapped v) = v := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 def popProgram (a : ℕ) := reindex (StackPop.program (a := a)) swap
 

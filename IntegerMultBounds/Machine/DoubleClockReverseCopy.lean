@@ -63,7 +63,7 @@ private theorem seek_one (f g : ℤ → Fin (a+4)) (p pc : ℤ) :
   simp only [step,doubleSeekProgram,seekCfg,seekBank,show (1 : Fin 2) ≠ 0 by decide,ite_false,Move.offset]
   congr 1
   apply congrArg₂ (Config.mk (0 : Fin 2))
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
   · funext i z; fin_cases i <;> simp
     all_goals intro he; rw [he]
 

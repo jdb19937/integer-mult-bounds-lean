@@ -28,7 +28,7 @@ def input (hs : Fin 6 → List Bool) : Tapes 10 a :=
 def output (S : Gather.Shape) (hs : Fin 6 → List Bool) := state (a := a) S hs 4
 
 theorem state_zero (S : Gather.Shape) (hs : Fin 6 → List Bool) : state (a := a) S hs 0 = input hs := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 def slots (k : Fin 4) : Fin 3 → Fin 10 :=
   ![![0,1,6],![6,2,7],![3,4,8],![8,2,9]] k

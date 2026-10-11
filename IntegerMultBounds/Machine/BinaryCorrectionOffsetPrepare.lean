@@ -44,7 +44,7 @@ theorem rewind_selected (hs : Fin 3 → List Bool) (Z : List Bool) (q b n : ℕ)
   have h2 := BinaryCorrectionOffsetRewind.runs (8 : Fin 31) v2 (BinarySelectedOffsetData.word q b n hb hbq Z) ((n*2^(n*b))*q)
     (by rw [BinarySelectedOffsetData.word_length]) rfl rfl
   have he : setTape v2 8 (v2.tape 8) 0=selectedReady hs Z q b n hb hbq := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   rw [he] at h2
   exact ((h0.seq h1).seq h2).consequence (fun _ h => h) (fun _ h => h) (by omega)
 
@@ -67,7 +67,7 @@ theorem rewind_controls (hs : Fin 3 → List Bool) (Z : List Bool) (q b n : ℕ)
   have h2 := BinaryCorrectionOffsetRewind.runs (9 : Fin 31) v2 (BinaryCorrectionOffsetData.controlWord q b n Z hb hbq) ((n*2^(n*b))*q)
     (by rw [controlWord_length]) rfl rfl
   have he : setTape v2 9 (v2.tape 9) 0=output hs Z q b n hb hbq := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   rw [he] at h2
   exact ((h0.seq h1).seq h2).consequence (fun _ h => h) (fun _ h => h) (by omega)
 

@@ -14,32 +14,32 @@ def dForward : Fin (12+5) ≃ Fin 17 where
     | 0 => 0 | 1 => 1 | 2 => 8 | 3 => 3 | 4 => 6 | 5 => 5 | 6 => 11 | 7 => 12 | 8 => 13 | 9 => 14 | 10 => 15 | 11 => 16 | 12 => 2 | 13 => 4 | 14 => 7 | 15 => 9 | _ => 10
   invFun := fun i => match i.val with
     | 0 => 0 | 1 => 1 | 2 => 12 | 3 => 3 | 4 => 13 | 5 => 5 | 6 => 4 | 7 => 14 | 8 => 2 | 9 => 15 | 10 => 16 | 11 => 6 | 12 => 7 | 13 => 8 | 14 => 9 | 15 => 10 | _ => 11
-  left_inv i := by fin_cases i <;> rfl
-  right_inv i := by fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def hReverse : Fin (12+5) ≃ Fin 17 where
   toFun := fun i => match i.val with
     | 0 => 1 | 1 => 0 | 2 => 2 | 3 => 3 | 4 => 6 | 5 => 10 | 6 => 11 | 7 => 12 | 8 => 13 | 9 => 14 | 10 => 15 | 11 => 16 | 12 => 4 | 13 => 5 | 14 => 7 | 15 => 8 | _ => 9
   invFun := fun i => match i.val with
     | 0 => 1 | 1 => 0 | 2 => 2 | 3 => 3 | 4 => 12 | 5 => 13 | 6 => 4 | 7 => 14 | 8 => 15 | 9 => 16 | 10 => 5 | 11 => 6 | 12 => 7 | 13 => 8 | 14 => 9 | 15 => 10 | _ => 11
-  left_inv i := by fin_cases i <;> rfl
-  right_inv i := by fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def hForward : Fin (12+5) ≃ Fin 17 where
   toFun := fun i => match i.val with
     | 0 => 0 | 1 => 1 | 2 => 2 | 3 => 3 | 4 => 6 | 5 => 10 | 6 => 11 | 7 => 12 | 8 => 13 | 9 => 14 | 10 => 15 | 11 => 16 | 12 => 4 | 13 => 5 | 14 => 7 | 15 => 8 | _ => 9
   invFun := fun i => match i.val with
     | 0 => 0 | 1 => 1 | 2 => 2 | 3 => 3 | 4 => 12 | 5 => 13 | 6 => 4 | 7 => 14 | 8 => 15 | 9 => 16 | 10 => 5 | 11 => 6 | 12 => 7 | 13 => 8 | 14 => 9 | 15 => 10 | _ => 11
-  left_inv i := by fin_cases i <;> rfl
-  right_inv i := by fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def dReverse : Fin (12+5) ≃ Fin 17 where
   toFun := fun i => match i.val with
     | 0 => 1 | 1 => 0 | 2 => 8 | 3 => 3 | 4 => 6 | 5 => 5 | 6 => 11 | 7 => 12 | 8 => 13 | 9 => 14 | 10 => 15 | 11 => 16 | 12 => 2 | 13 => 4 | 14 => 7 | 15 => 9 | _ => 10
   invFun := fun i => match i.val with
     | 0 => 1 | 1 => 0 | 2 => 12 | 3 => 3 | 4 => 13 | 5 => 5 | 6 => 4 | 7 => 14 | 8 => 2 | 9 => 15 | 10 => 16 | 11 => 6 | 12 => 7 | 13 => 8 | 14 => 9 | 15 => 10 | _ => 11
-  left_inv i := by fin_cases i <;> rfl
-  right_inv i := by fin_cases i <;> rfl
+  left_inv := by decide +kernel
+  right_inv := by decide +kernel
 
 def prepared (source dest : ℤ → Fin 4) (hs : Fin 5 → List Bool) (xs : Fin 4 → List Bool) :=
   bank source dest hs (fun i => some (xs i))
@@ -47,42 +47,42 @@ def prepared (source dest : ℤ → Fin 4) (hs : Fin 5 → List Bool) (xs : Fin 
 theorem dForward_active (source dest : ℤ → Fin 4) (hs : Fin 5 → List Bool) (xs : Fin 4 → List Bool) :
     Placement.active dForward (prepared source dest hs xs) =
       RowPaddingConstructed.bank source dest 0 0 (xs 1) (hs 1) (hs 4) (hs 3) none none := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem dForward_extra (source dest source' dest' : ℤ → Fin 4) (hs : Fin 5 → List Bool) (xs : Fin 4 → List Bool) :
     Placement.extra dForward (prepared source dest hs xs) =
       Placement.extra dForward (prepared source' dest' hs xs) := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem hReverse_active (source dest : ℤ → Fin 4) (hs : Fin 5 → List Bool) (xs : Fin 4 → List Bool) :
     Placement.active hReverse (prepared source dest hs xs) =
       RowPaddingConstructed.bank dest source 0 0 (hs 0) (hs 1) (hs 4) (xs 3) none none := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem hReverse_extra (source dest source' dest' : ℤ → Fin 4) (hs : Fin 5 → List Bool) (xs : Fin 4 → List Bool) :
     Placement.extra hReverse (prepared source dest hs xs) =
       Placement.extra hReverse (prepared source' dest' hs xs) := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem hForward_active (source dest : ℤ → Fin 4) (hs : Fin 5 → List Bool) (xs : Fin 4 → List Bool) :
     Placement.active hForward (prepared source dest hs xs) =
       RowPaddingConstructed.bank source dest 0 0 (hs 0) (hs 1) (hs 4) (xs 3) none none := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem hForward_extra (source dest source' dest' : ℤ → Fin 4) (hs : Fin 5 → List Bool) (xs : Fin 4 → List Bool) :
     Placement.extra hForward (prepared source dest hs xs) =
       Placement.extra hForward (prepared source' dest' hs xs) := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem dReverse_active (source dest : ℤ → Fin 4) (hs : Fin 5 → List Bool) (xs : Fin 4 → List Bool) :
     Placement.active dReverse (prepared source dest hs xs) =
       RowPaddingConstructed.bank dest source 0 0 (xs 1) (hs 1) (hs 4) (hs 3) none none := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem dReverse_extra (source dest source' dest' : ℤ → Fin 4) (hs : Fin 5 → List Bool) (xs : Fin 4 → List Bool) :
     Placement.extra dReverse (prepared source dest hs xs) =
       Placement.extra dReverse (prepared source' dest' hs xs) := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 private theorem placed_exact {s u t r cost : ℕ} {M : Program s r 0}
     (e : Fin (s+u) ≃ Fin t) (v w : Tapes t 0) (small small' : Tapes s 0)

@@ -21,7 +21,7 @@ private theorem right_runs (f g : ℤ → Fin (a+4)) (p r : ℤ) :
     (fun _ h => h) _ le_rfl
   rintro v rfl
   apply congrArg₂ Tapes.mk
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
   · funext i z
     fin_cases i
     · by_cases hz : z=p <;> simp [Copy.tapes,Copy.cfg,Config.tapes,hz]
@@ -76,7 +76,7 @@ theorem runs (f : ℤ → Fin (a+4)) (p : ℤ) (xs : List Bool)
   have hf := right_runs (putWord f p (xs.map bitSymbol)) (marked (xs.map bitSymbol)) (p+xs.length) 0
   have ha : ∀ (u v : ℤ → Fin (a+4)) (j k : ℤ), (one u j).append (one v k)=Copy.tapes u v j k := by
     intro u v j k
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   rw [ha,ha] at hm hr
   exact (((hm.seq hc).seq hr).seq hf).consequence (fun _ h => h) (fun _ h => h) (by omega)
 

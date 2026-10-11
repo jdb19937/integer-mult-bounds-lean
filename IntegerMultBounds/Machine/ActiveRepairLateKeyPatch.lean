@@ -15,7 +15,7 @@ def program (focus : Fin 12 → Fin k) (hf : Function.Injective focus) :=
 theorem pad (v : Tapes 12 1) :
     (CleanSubbank.bank (s := 9) v).append (SharedBank.empty 37 1)=
       CleanSubbank.bank (s := 46) v := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem runs (caller : Tapes k 1) (focus : Fin 12 → Fin k)
     (hf : Function.Injective focus) (cs v t u : List Bool) (hs : Fin 7 → List Bool)

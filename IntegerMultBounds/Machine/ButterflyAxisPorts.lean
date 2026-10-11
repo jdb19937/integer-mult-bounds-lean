@@ -19,7 +19,7 @@ def headers (bs ls : List Bool) (hs : Fin 6 → List Bool) : Tapes 8 2 :=
 theorem payload (f : ℤ → Fin 6) (bs ls : List Bool) (hs : Fin 6 → List Bool) :
     SharedBank.payload (bank blankStreams f bs ls hs) ports=
       (CountedLoopReuseAlphabet.one f 0).append (headers bs ls hs) := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 def selection : Fin 9 → Fin 63 := ![56,52,53,57,58,59,60,61,62]
 

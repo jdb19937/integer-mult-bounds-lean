@@ -44,7 +44,7 @@ theorem setsUp (V W C1 C2 C3 : List Bool) (bs ns qs : List Bool) (q : ℕ)
       (fun v => v=prepared V W C1 C2 C3 (RecursiveChildQuotientsConstant.bits (q-1)) bs ns qs) (6*q+44) := by
   have h := Placement.hoare_at (CountedGuardGadgetHeaders.constructs (a := a) qs q hq cq hp)
     headerPlace (input (a := a) V W C1 C2 C3 bs ns qs) (by
-      apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl)
+      apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl)
   refine h.consequence (fun _ h => h) ?_ le_rfl
   rintro v ⟨z,rfl,rfl⟩
   apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> first | rfl | (change BinaryDescriptorStack.descriptor _=CountedLoopReuseAlphabet.binary _; rw [CountedGuardGadgetHeaders.binary_eq,BinaryDescriptorStackRoundtrip.descriptor_encoded])

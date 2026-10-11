@@ -39,7 +39,7 @@ def program {r : ℚ} (hr : Shared50AffineCoefficients.ScaleOccurs r) (target : 
 
 private theorem pair_eq {N : ℕ} (a : Fin N → Fin 4) :
     FlatAffineScalingPayload.pair (radix := prime) a = FlatRepeatedControlArray.pair a := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 private theorem local_headers {v : Descriptor} (r : ℚ) (hs : Fin 6 → List Bool)
     (a : Fin (volume prime v) → Fin 4) (target : Target) (j : Fin 6) :

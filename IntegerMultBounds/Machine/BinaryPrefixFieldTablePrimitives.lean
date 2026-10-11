@@ -44,7 +44,7 @@ theorem table (v : Tapes t 0) (focus : Fin 2 → Fin t) (hf : Function.Injective
   have he : BinaryAddressTable.bank (fun _ => blank) (BinaryAddressTable.outputTape W)
       (fun _ => blank) (fun _ => blank) 0 0 0 0 ws =
       setTape (BinaryAddressTable.input ws) 1 (BinaryAddressTable.outputTape W) 0 := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   have h := hoare_extend_eq (BinaryAddressTable.constructs ws W hv hc) (SharedBank.empty 6 0)
   rw [he,← SharedPlacementAlphabet.setTape_append_left] at h
   refine single tableCore tablePorts table_injective focus hf v X 1 _ 0 _ ?_ ?_ h
@@ -70,7 +70,7 @@ theorem fill (v : Tapes t 0) (focus : Fin 2 → Fin t) (hf : Function.Injective 
   let X := (BinaryAddressTableFill.input ns).append (SharedBank.empty 12 0)
   have he : BinaryAddressTableFill.output ns N = setTape (BinaryAddressTableFill.input ns)
       0 (CountedCopyReuse.binary (List.replicate N false)) 1 := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   have h := hoare_extend_eq (BinaryAddressTableFill.runs ns N hv) (SharedBank.empty 12 0)
   rw [he,← SharedPlacementAlphabet.setTape_append_left] at h
   refine single fillCore fillPorts fill_injective focus hf v X 1 _ 1 _ ?_ ?_ h

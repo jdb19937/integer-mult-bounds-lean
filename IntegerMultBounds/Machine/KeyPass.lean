@@ -88,8 +88,8 @@ private theorem reset_view (v : Tapes 7 1) :
   cases v with | mk heads tapes =>
     unfold resetSmall resetExtra Tapes.append Tapes.reindex
     congr 1
-    · funext i; fin_cases i <;> rfl
-    · funext i; fin_cases i <;> rfl
+    · apply List.ofFn_injective; rfl
+    · apply List.ofFn_injective; rfl
 
 /-- Reset the sorted-flag tape at exact cost, preserving every other head/cell. -/
 private theorem reset_exact (v : Tapes 7 1) (word : List (Fin 4)) (distance : ℕ)
@@ -114,8 +114,8 @@ private theorem reset_exact (v : Tapes 7 1) (word : List (Fin 4)) (distance : �
     (resetExtra v)).reindex resetPlacement = updateHead v 5 0
   unfold resetSmall resetExtra Tapes.append Tapes.reindex updateHead
   congr 1
-  · funext i; fin_cases i <;> rfl
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
+  · apply List.ofFn_injective; rfl
 
 private theorem update_bank (k : ℕ) (records output : List (List Bool))
     (flags zeros ones sortedFlags : List (Fin 4)) (h₀ hF hZ hO hSorted hOut : ℤ) :
@@ -160,8 +160,8 @@ private theorem drop_bank (k : ℕ) (records output : List (List Bool))
       bank k records flags zeros ones sortedFlags output h₀ hF hZ hO hSorted hOut := by
   unfold DropFlag.cfg Config.tapes Tapes.append Tapes.reindex dropExtra bank KeyPartition.bank
   congr 1
-  · funext i; fin_cases i <;> rfl
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
+  · apply List.ofFn_injective; rfl
 
 private theorem drop_exact (k : ℕ) (records : List (List Bool))
     (flags zeros ones : List (Fin 4)) (h₀ hF hZ hO : ℤ) :

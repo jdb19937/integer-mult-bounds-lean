@@ -60,7 +60,7 @@ noncomputable section
       ⟨![0,0,1,1],![putWord (fun _ => blank) 0 (chunks.flatten.map bitSymbol),fun _ => blank,
         CountedLoopReuseAlphabet.binary bs,CountedLoopReuseAlphabet.binary ns]⟩ := by
   apply congrArg₂ Tapes.mk
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
   · funext i; fin_cases i
     · change RowPaddingConstructedAlphabet.mapTape
         (putWord (fun _ => blank) 0 (ActiveRepairRecordFormatWords.raw chunks))=_

@@ -38,7 +38,7 @@ theorem setup_hoare (f g out : ℤ → Fin 4) (p q r : ℤ) (ws ns : List Bool) 
   have h0 := init_hoare 5 (raw f g out p q r ws ns) rfl rfl
   have h1 := init_hoare 7 (setTape (raw f g out p q r ws ns) 5 empty 1) rfl rfl
   have he : setTape (setTape (raw f g out p q r ws ns) 5 empty 1) 7 empty 1=bank f g out p q r ws ns := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   rw [he] at h1
   exact h0.seq h1
 
@@ -50,7 +50,7 @@ theorem clear_clocks (f g out : ℤ → Fin 4) (p q r : ℤ) (ws ns : List Bool)
       simp only [clocks,List.mem_cons,List.not_mem_nil,or_false] at hi
       rcases hi with rfl|rfl <;> exact ⟨rfl,rfl⟩)
   have he : BinaryDescriptorCleanupList.cleared clocks (bank f g out p q r ws ns)=raw f g out p q r ws ns := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   simpa only [he,clearClocks,show BinaryDescriptorCleanupList.cost clocks (fun _ => [])=10 by decide] using h
 
 theorem erase_left (xs : List Bool) (g out : ℤ → Fin 4) (q r : ℤ) (ws ns : List Bool) :
@@ -65,7 +65,7 @@ theorem erase_left (xs : List Bool) (g out : ℤ → Fin 4) (q r : ℤ) (ws ns :
   rintro z ⟨small,rfl,rfl⟩
   change Placement.replace _ _ (FiniteReturnStack.bank (fun _ => blank) 0)=_
   rw [FiniteReturnStackAt.replace_bank]
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem erase_right (ys : List Bool) (f out : ℤ → Fin 4) (p r : ℤ) (ws ns : List Bool) :
     HoareTime eraseRight (fun z => z=raw f (word ys) out p ys.length r ws ns)
@@ -79,7 +79,7 @@ theorem erase_right (ys : List Bool) (f out : ℤ → Fin 4) (p r : ℤ) (ws ns 
   rintro z ⟨small,rfl,rfl⟩
   change Placement.replace _ _ (FiniteReturnStack.bank (fun _ => blank) 0)=_
   rw [FiniteReturnStackAt.replace_bank]
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 theorem rewinds (xs : List Bool) (f g : ℤ → Fin 4) (p q : ℤ) (ws ns : List Bool) :
     HoareTime rewind (fun z => z=raw f g (word xs) p q xs.length ws ns)
@@ -93,7 +93,7 @@ theorem rewinds (xs : List Bool) (f g : ℤ → Fin 4) (p q : ℤ) (ws ns : List
   rintro z ⟨small,rfl,rfl⟩
   change Placement.replace _ _ (FiniteReturnStack.bank (word xs) 0)=_
   rw [FiniteReturnStackAt.replace_bank]
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 def cost (W N : ℕ) (ws ns : List Bool) := BinaryCorrectionOffsetLoop.cost W N ws ns+3*(N*W)+34
 

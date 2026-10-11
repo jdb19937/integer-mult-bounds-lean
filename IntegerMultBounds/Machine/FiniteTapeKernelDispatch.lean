@@ -39,7 +39,7 @@ theorem runs (hN : N≤2^k) (kernels : Fin N → Kernel) (pc : Fin N)
   have hreplace : Placement.replace placement (b.append (token hN pc)) (FiniteReturnStack.bank (fun _ => blank) 0)=
       b.append (SharedBank.empty 1 2) := by
     rw [placement,FiniteReturnStackAt.replace_bank]
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   have hfam : HoareTime (family kernels pc)
       (fun t => t=Placement.replace placement (b.append (token hN pc)) (FiniteReturnStack.bank (fun _ => blank) 0))
       (fun t => t=c.append (SharedBank.empty 1 2)) B := by

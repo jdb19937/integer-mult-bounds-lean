@@ -19,11 +19,11 @@ theorem target_hoare {s cost : ℕ} (M : Program 1 s 0)
       (fun v => v = Copy.tapes f h p r) cost := by
   have ha : Placement.active (Equiv.swap 0 1 : Fin (1+1) ≃ Fin 2)
       (Copy.tapes f g p q) = one g q := by
-    apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
   have ht := Placement.hoare_at hh (Equiv.swap 0 1 : Fin (1+1) ≃ Fin 2) _ ha
   apply ht.consequence (fun _ h => h) _ le_rfl
   rintro v ⟨w,rfl,rfl⟩
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 def advance : Program 2 2 0 where
   tapes_pos := by decide
@@ -39,7 +39,7 @@ theorem advance_hoare (f g : ℤ → Fin 4) (p q : ℤ) :
   · simp only [run_one,step,advance,Tapes.start,ite_true,Move.offset]
     congr 1
     congr 1
-    · funext i; fin_cases i <;> rfl
+    · apply List.ofFn_injective; rfl
     · funext i z; fin_cases i <;> simp [Copy.tapes,Copy.cfg,Config.tapes] <;>
         intro h <;> subst z <;> rfl
   · simp [step,advance]

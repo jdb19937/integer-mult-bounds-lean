@@ -22,7 +22,7 @@ theorem pair_active (v : Tapes t a) (src dst : Fin t) (hne : src ≠ dst) (ht : 
     Placement.active (pairPlace src dst hne ht) v =
       (CopyWord.cfg (v.tape src) (v.tape dst) (v.head src) (v.head dst)).tapes := by
   rw [pairPlace, InjectivePlacement.active_bank]
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
+  apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
 
 private theorem pair_replace (v : Tapes t a) (src dst : Fin t) (hne : src ≠ dst) (ht : 2 ≤ t)
     (f : ℤ → Fin (a+4)) :

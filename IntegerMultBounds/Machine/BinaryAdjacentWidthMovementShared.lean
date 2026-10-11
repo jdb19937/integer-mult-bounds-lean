@@ -36,8 +36,8 @@ theorem bank_source (source : ℤ → Fin (a+4)) (hs : Fin 3 → List Bool) :
 theorem bank_set_source (source spare : ℤ → Fin (a+4)) (hs : Fin 3 → List Bool) :
     setTape (bank source hs) 0 spare 0 = bank spare hs := by
   apply congrArg₂ Tapes.mk
-  · funext i; fin_cases i <;> rfl
-  · funext i; fin_cases i <;> rfl
+  · apply List.ofFn_injective; rfl
+  · apply List.ofFn_injective; rfl
 
 def copyProgram (focus : Fin 3 → Fin t) := FixedHeaderSparseBankCopy.program
   (a := a) (by omega : 0 < t+3) focus destination destination_injective (by decide)
