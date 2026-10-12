@@ -6440,6 +6440,16 @@ Schönhage–Strassen multiplication, the fast multiplier used for the packed pr
   twelve-tape contract plus a blank 91-tape block (`fastMul_hoare`), copying
   operands in and the result out; placing a machine with such a block into a
   larger bank (`placeMul_hoare`).
+- `Schoenhage/RecordWords.lean`: a one-tape machine turning a word tape's
+  separators into blanks, which gives the resampling machines' record tape
+  (`desepProg_hoare`).
+- `Schoenhage/WordBridge.lean`: word programs cutting a bit array into
+  fixed-width words with the bit order reversed (`runs_toWords`), and reversing
+  and joining words back into one array (`runs_fromWords`).
+- `Schoenhage/RecordBridge.lean`: the bridges between the paper's arrays
+  (components most significant bit first) and the resampling machines'
+  records (least significant bit first, blank-separated), as literal
+  four-tape programs (`paperToRecords_hoare`, `recordsToPaper_hoare`).
 - `Schoenhage/RingMath.lean`, `RingWords.lean`, `RingDigit.lean`: evaluation
   at `X = 2^W` turns negacyclic products into products modulo `2^(W r) + 1`
   (`ev_ncMul`); offset digits pack signed coefficients and recover them

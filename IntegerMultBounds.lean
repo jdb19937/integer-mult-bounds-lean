@@ -2335,6 +2335,9 @@ import IntegerMultBounds.Schoenhage.ExactMul
 import IntegerMultBounds.Schoenhage.FixedMulWords
 import IntegerMultBounds.Schoenhage.FixedMulProgram
 import IntegerMultBounds.Schoenhage.FixedMulPlaced
+import IntegerMultBounds.Schoenhage.RecordWords
+import IntegerMultBounds.Schoenhage.WordBridge
+import IntegerMultBounds.Schoenhage.RecordBridge
 import IntegerMultBounds.Machine.GaussianLineFast
 import IntegerMultBounds.Machine.NeumannLoopFast
 import IntegerMultBounds.Resampling.B0TapeFast
