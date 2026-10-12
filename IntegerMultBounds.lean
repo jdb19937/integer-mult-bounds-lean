@@ -2774,3 +2774,4 @@ import IntegerMultBounds.Machine.CompactComplexSourceReadyReachedEventScalarValu
 import IntegerMultBounds.Machine.CompactComplexSourceReadyReachedStoppedScheduleValues
 import IntegerMultBounds.Schoenhage.SigmaConstsTape
 import IntegerMultBounds.Schoenhage.TransformParams
+import IntegerMultBounds.Schoenhage.LayerHeaderTape
