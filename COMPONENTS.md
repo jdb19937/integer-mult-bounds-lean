@@ -6165,7 +6165,9 @@ Transform, fixed-point, Kronecker and Gaussian resampling mathematics used by th
 - `Resampling/TensorNumeric.lean`: decoding commutes with the flat pass
   (`flatPass_map`); the decoded expansion output is the flat array of the
   rectangular tensor of floored tabled `Ã` maps (`floorAt`) on the
-  restricted input (`expand_tensor`).
+  restricted input (`expand_tensor`); the decoded compression output is the
+  square tensor of the padded tabled `B̃₀` maps (`compress_tensor`), which
+  keep the unit disk (`padB_ball`).
 - `Resampling/Milestones.lean`: the §7 milestone theorems of
   `plan/07-gaussian-resampling.md` that package proved results:
   `FixedMul.signed_word_ops`, `Schoenhage.wordRecordLayer_hoare`,

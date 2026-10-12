@@ -123,5 +123,62 @@ theorem expand_tensor (d : ℕ) (lg : Fin d → ℕ) (S : Fin d → ℕ) [∀ i,
       exact (hlp _ (List.getElem_mem _)).2
     · rw [List.getD_eq_default _ _ (by simpa using hj)]; simp
 
+/-! ### Compression -/
+
+theorem padB_ball (s t α p : ℕ) [NeZero s] [NeZero t] (hst : s < t) (hcop : Nat.Coprime s t) (hα : 2 ≤ α)
+    (hαp : α ^ 2 ≤ p) (hθ : 1 ≤ (α : ℝ) ^ 2 * ((t : ℝ) / s - 1)) (hp : 13 ≤ p) (v : ZMod t → ℂ) (hv : ‖v‖ ≤ 1) :
+    ‖padB s t α p v‖ ≤ 1 := by
+  obtain ⟨hA, hE, hD, hD1⟩ := WeightTable.tables_ok s t α p hst hp hα hαp
+  have hαr : (2 : ℝ) ≤ α := by exact_mod_cast hα
+  have hαpr : (α : ℝ) ^ 2 ≤ p := by exact_mod_cast hαp
+  obtain ⟨-, -, -, -, -, -, -, -, -, hBb⟩ := TabledMaps.permuted_numeric_tabled hst hcop hαr hθ (m := p) hαpr
+    (by have : (p : ℝ) * (α : ℝ) ^ 2 ≤ (p : ℝ) * p := by gcongr
+        nlinarith) (by omega) le_rfl hp (WeightTable.tableA s t α p) (WeightTable.tableE s t α p)
+    (WeightTable.tableD s t α p) hA hE hD hD1
+  have hb := hBb v hv
+  refine (pi_norm_le_iff_of_nonneg zero_le_one).mpr fun k => ?_
+  simp only [padB, extd]
+  split_ifs
+  · exact (norm_le_pi_norm _ _).trans hb
+  · simp
+
+theorem compress_tensor (d : ℕ) (lg : Fin d → ℕ) (S : Fin d → ℕ) [∀ i, NeZero (S i)] (α p w W : ℕ)
+    (hst : ∀ i, S i < 2 ^ lg i) (hcop : ∀ i, Nat.Coprime (S i) (2 ^ lg i)) (hα : 2 ≤ α) (hαp : α ^ 2 ≤ p)
+    (hθ : ∀ i, 1 ≤ (α : ℝ) ^ 2 * (((2 ^ lg i : ℕ) : ℝ) / S i - 1)) (hp : 13 ≤ p) (hw : p + 3 ≤ w) (hwW : w ≤ W)
+    (hWW : ((2 * NLogN.sqrtWindow p + 1 : ℕ) : ℤ) * 2 ^ p < 2 ^ (W - 1)) (es : List (List Bool))
+    (hes : ∀ e ∈ es, e.length = 2 * w ∧ ‖decE w p e‖ ≤ 1) (hl : es.length = ∏ i, 2 ^ lg i)
+    (u : ((i : Fin d) → ZMod (2 ^ lg i)) → ℂ) (hu : es.map (decE w p) = lexFlat d (fun i => 2 ^ lg i) u) :
+    (flatPass d (fun i => 2 ^ lg i)
+      (fun i => lineB (cTabs (S i) (2 ^ lg i) α p w).1 (cTabs (S i) (2 ^ lg i) α p w).2.1
+        (cTabs (S i) (2 ^ lg i) α p w).2.2.1 (cTabs (S i) (2 ^ lg i) α p w).2.2.2 (S i) (2 ^ lg i)
+        (NLogN.sqrtWindow p) p w W) [] es).map (decE w p) =
+      lexFlat d (fun i => 2 ^ lg i) (tensorZR d (fun i => 2 ^ lg i) (fun i => 2 ^ lg i)
+        (fun i => padB (S i) (2 ^ lg i) α p) u) := by
+  rw [flatPass_map (fun e => e.length = 2 * w ∧ ‖decE w p e‖ ≤ 1) (decE w p) d lg _
+    (fun i => lineOf (padB (S i) (2 ^ lg i) α p)) [] es ?_ hl hes, decE_nil, hu,
+    flatPass_lexFlat d (fun i => 2 ^ lg i) (fun i => padB (S i) (2 ^ lg i) α p) u]
+  intro i l hll hlp
+  have hv := lineB_value l (S i) (2 ^ lg i) α p w W (hst i) hα hαp (hθ i) hp hw hwW hWW hll
+    (fun e he => (hlp e he).1) (fun e he => (hlp e he).2)
+  have hlen : (lineB (cTabs (S i) (2 ^ lg i) α p w).1 (cTabs (S i) (2 ^ lg i) α p w).2.1
+      (cTabs (S i) (2 ^ lg i) α p w).2.2.1 (cTabs (S i) (2 ^ lg i) α p w).2.2.2 (S i) (2 ^ lg i)
+      (NLogN.sqrtWindow p) p w W l).length = 2 ^ lg i := by
+    have := congrArg List.length hv
+    rw [List.length_map, length_lineOf] at this; exact this
+  refine ⟨hlen, fun e he => ⟨?_, ?_⟩, hv⟩
+  · exact TensorTape.lineB_width ⟨_, _, _, _, S i, [], []⟩ _ _ p w W
+      (fun x hx => by simp [cTabs] at hx; rw [hx.2]; simp) l e he
+  · have hme : decE w p e ∈ lineOf (padB (S i) (2 ^ lg i) α p) (l.map (decE w p)) := by
+      rw [← hv]; exact List.mem_map_of_mem he
+    simp only [lineOf, List.mem_map, List.mem_range] at hme
+    obtain ⟨k, -, hk⟩ := hme
+    rw [← hk]
+    refine (norm_le_pi_norm _ _).trans (padB_ball _ _ α p (hst i) (hcop i) hα hαp (hθ i) hp _ ?_)
+    refine (pi_norm_le_iff_of_nonneg zero_le_one).mpr fun j => ?_
+    by_cases hj : j.val < l.length
+    · rw [getD_map_lt _ _ _ hj _ [], List.getD_eq_getElem _ _ hj]
+      exact (hlp _ (List.getElem_mem _)).2
+    · rw [List.getD_eq_default _ _ (by simpa using hj)]; simp
+
 end
 end IntegerMultBounds.Resampling.TensorNumeric
