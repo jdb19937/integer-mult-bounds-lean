@@ -89,6 +89,23 @@ noncomputable def roundAxis : Cmd 0 14 :=
 /-- The table of a round below the top. -/
 noncomputable def tableGen : Cmd 0 14 := .loop tAx roundAxis
 
+/-- Copy a whole row to `tS`. -/
+noncomputable def copyFull : Cmd 0 14 := .loop tFull (.seq (cpy tR tS (by decide)) (skp tFull tJ (by decide)))
+
+/-- Skip a whole row. -/
+noncomputable def skipFull : Cmd 0 14 := .loop tFull (.seq (skp tR tJ (by decide)) (skp tFull tJ (by decide)))
+
+/-- The top round on a long axis: its whole row, the next top bit as the slot bit. -/
+noncomputable def longBranch : Cmd 0 14 :=
+  .seq copyFull <| .seq (rewind tFull) <| .seq (cpy tTop tX (by decide)) <| .seq (rewind tS) <|
+  .seq loadW <| .seq (.loop tS emitEntry) <| .seq (clear tS) <| .seq (clear tX) (clear tW)
+
+/-- The top round on a short axis: skip its row. -/
+noncomputable def shortBranch : Cmd 0 14 := .seq skipFull (rewind tFull)
+
+/-- The table of the top round: the long axes only. -/
+noncomputable def topGen : Cmd 0 14 := .loop tF (.seq (.cond tF longBranch shortBranch) (skp tF tJ (by decide)))
+
 /-! ### Steps -/
 
 /-- Words of an axis's entries. -/
@@ -452,6 +469,311 @@ theorem runs_tableGen_paper {r : ℕ} {ts : List ℕ} {ℓ K : ℕ} (hL : Layout
   have hIs : ∀ i ∈ slotAxes ts h, i < ts.length ∧ h < axLen ts i := slotAxes_valid ts h
   rw [slotTable_paper hL r' hIs, slotAxes_below_top hL hh, slotTableP_rows ts ℓ K r' hh.le]
   tsimp [hrows, tableWords, List.flatMap_map, List.flatMap_assoc, List.getD_eq_getElem, hh]
+
+/-! ### The top round -/
+
+/-- The entries of the top round: each long axis's whole row with its top bit. -/
+def topEntries (w0 : ℕ) : List (List ℕ) → List Bool → List ℕ → List Entry
+  | row :: rows, true :: fl, x :: tops => axisEntries x w0 row ++ topEntries w0 rows fl tops
+  | _ :: rows, false :: fl, tops => topEntries w0 rows fl tops
+  | _, _, _ => []
+
+set_option maxHeartbeats 8000000 in
+/-- Copy `k` words of the rows to `tS`, counted on `tFull`. -/
+theorem runs_copyFull {Wm : ℕ} : ∀ (ws : List (List Bool)) (σ : Fin 14 → WTape) (LR RR LS LH : List (List Bool)),
+    (∀ u ∈ ws, u.length ≤ Wm) → σ tFull = ⟨LH, List.replicate ws.length []⟩ → σ tR = ⟨LR, ws ++ RR⟩ →
+    σ tS = ⟨LS, []⟩ → σ tJ = emp →
+    Runs copyFull σ (· = Function.update (Function.update (Function.update σ tR ⟨ws.reverse ++ LR, RR⟩)
+        tS ⟨ws.reverse ++ LS, []⟩) tFull ⟨List.replicate ws.length [] ++ LH, []⟩) (ws.length * (Wm + 17))
+  | [], σ, LR, RR, LS, LH, _, hH, hR, hS, hJ => by
+    refine (Runs.loop_done (by simp [hH]) rfl).mono (fun τ e => ?_) (by simp)
+    subst e
+    funext i; fin_cases i <;> first | rfl | tsimp [hH, hR, hS]
+  | u :: ws, σ, LR, RR, LS, LH, hW, hH, hR, hS, hJ => by
+    have s1 : Runs (.seq (cpy (a := 0) tR tS (by decide)) (skp tFull tJ (by decide))) σ
+        (· = Function.update (Function.update (Function.update σ tR ⟨u :: LR, ws ++ RR⟩) tS ⟨u :: LS, []⟩)
+          tFull ⟨[] :: LH, List.replicate ws.length []⟩) (u.length + 15) := by
+      apply Runs.of_wp
+      simp only [cpy, skp, WP, wp_op0]
+      tsimp [hH, hR, hS, hJ, emp, Rules.output_copy, Rules.output_skip]
+      refine ⟨?_, ?_⟩
+      · funext i; fin_cases i <;> first | rfl | tsimp [hH, hR, hS, hJ, emp]
+      · simp [time_copy, time_skip, List.replicate_succ]
+    set σ₁ := Function.update (Function.update (Function.update σ tR ⟨u :: LR, ws ++ RR⟩) tS ⟨u :: LS, []⟩)
+      tFull ⟨[] :: LH, List.replicate ws.length []⟩ with hσ₁
+    have ih := runs_copyFull (Wm := Wm) ws σ₁ (u :: LR) RR (u :: LS) ([] :: LH)
+      (fun x hx => hW x (by simp [hx])) (by tsimp [hσ₁]) (by tsimp [hσ₁]) (by tsimp [hσ₁]) (by tsimp [hσ₁, hJ])
+    refine (Runs.loop_step (by simp [hH]) (s1.mono (fun τ h => by rw [h]; exact ih) le_rfl)).mono
+      (fun τ h => ?_) ?_
+    · rw [h]; funext i; fin_cases i <;> first | rfl | tsimp [hσ₁, replicate_cons]
+    · have := hW u (by simp)
+      simp only [List.length_cons]; nlinarith
+
+set_option maxHeartbeats 8000000 in
+/-- Skip `k` words of the rows, counted on `tFull`. -/
+theorem runs_skipFull {Wm : ℕ} : ∀ (ws : List (List Bool)) (σ : Fin 14 → WTape) (LR RR LT : List (List Bool)),
+    (∀ u ∈ ws, u.length ≤ Wm) → σ tFull = ⟨LT, List.replicate ws.length []⟩ → σ tR = ⟨LR, ws ++ RR⟩ →
+    σ tJ = emp →
+    Runs skipFull σ (· = Function.update (Function.update σ tR ⟨ws.reverse ++ LR, RR⟩)
+        tFull ⟨List.replicate ws.length [] ++ LT, []⟩) (ws.length * (Wm + 17))
+  | [], σ, LR, RR, LT, _, hT, hR, hJ => by
+    refine (Runs.loop_done (by simp [hT]) rfl).mono (fun τ e => ?_) (by simp)
+    subst e
+    funext i; fin_cases i <;> first | rfl | tsimp [hT, hR]
+  | u :: ws, σ, LR, RR, LT, hW, hT, hR, hJ => by
+    have s1 : Runs (.seq (skp (a := 0) tR tJ (by decide)) (skp tFull tJ (by decide))) σ
+        (· = Function.update (Function.update σ tR ⟨u :: LR, ws ++ RR⟩)
+          tFull ⟨[] :: LT, List.replicate ws.length []⟩) (u.length + 15) := by
+      apply Runs.of_wp
+      simp only [skp, WP, wp_op0]
+      tsimp [hT, hR, hJ, emp, Rules.output_skip]
+      refine ⟨?_, ?_⟩
+      · funext i; fin_cases i <;> first | rfl | tsimp [hT, hR, hJ, emp]
+      · simp [time_skip, List.replicate_succ]
+    set σ₁ := Function.update (Function.update σ tR ⟨u :: LR, ws ++ RR⟩)
+      tFull ⟨[] :: LT, List.replicate ws.length []⟩ with hσ₁
+    have ih := runs_skipFull (Wm := Wm) ws σ₁ (u :: LR) RR ([] :: LT)
+      (fun x hx => hW x (by simp [hx])) (by tsimp [hσ₁]) (by tsimp [hσ₁]) (by tsimp [hσ₁, hJ])
+    refine (Runs.loop_step (by simp [hT]) (s1.mono (fun τ h => by rw [h]; exact ih) le_rfl)).mono
+      (fun τ h => ?_) ?_
+    · rw [h]; funext i; fin_cases i <;> first | rfl | tsimp [hσ₁, replicate_cons]
+    · have := hW u (by simp)
+      simp only [List.length_cons]; nlinarith
+
+/-- The cost bound of one axis in the top round. -/
+def topAxisCost (m Vm w0 : ℕ) : ℕ :=
+  (m + 4) * (Vm + 20) + m * (6 * Vm + 12 * (w0 * 2 ^ m) + 82) + 4 * m * (Vm + 1) + 2 * (w0 * 2 ^ m) +
+    4 * w0 + 140
+
+set_option maxHeartbeats 16000000 in
+/-- The top round on a long axis writes the axis's entries with its top bit. -/
+theorem runs_longBranch {Vm w0 x : ℕ} (row : List ℕ) (hVm : ∀ v ∈ row, v ≤ Vm) (hx : x ≤ Vm)
+    (σ : Fin 14 → WTape) (hFull : σ tFull = ticks row.length)
+    {LR RR : List (List Bool)} (hR : σ tR = ⟨LR, row.map ones ++ RR⟩) {LP RP : List (List Bool)}
+    (hTop : σ tTop = ⟨LP, ones x :: RP⟩) (hS : σ tS = emp) (hX : σ tX = emp)
+    (hW : σ tW = emp) (hW0 : σ tW0 = endv w0) (hT : σ tT = emp) {O : List (List Bool)}
+    (hTab : σ tTab = ⟨O, []⟩) (hJ : σ tJ = emp) :
+    Runs longBranch σ (· = Function.update (Function.update (Function.update σ tR
+        ⟨(row.map ones).reverse ++ LR, RR⟩) tTab
+        ⟨(tableWords (axisEntries x w0 row)).reverse ++ O, []⟩) tTop ⟨ones x :: LP, RP⟩)
+      (topAxisCost row.length Vm w0) := by
+  set ws := row.map ones with hws
+  have hwsl : ws.length = row.length := by simp [hws]
+  have hwsW : ∀ u ∈ ws, u.length ≤ Vm := by
+    intro u hu; simp only [hws, List.mem_map] at hu
+    obtain ⟨v, hv, rfl⟩ := hu; simpa using hVm v hv
+  have s1 := runs_copyFull (Wm := Vm) ws σ LR RR [] [] hwsW (by rw [hFull, hwsl]; rfl) hR (by rw [hS]; rfl) hJ
+  set σ₁ := Function.update (Function.update (Function.update σ tR ⟨ws.reverse ++ LR, RR⟩)
+    tS ⟨ws.reverse ++ [], []⟩) tFull ⟨List.replicate ws.length [] ++ [], []⟩ with hσ₁
+  have s2 := runs_rewind (a := 0) tFull σ₁
+  set σ₂ := Function.update σ₁ tFull ⟨[], (σ₁ tFull).left.reverse ++ (σ₁ tFull).right⟩ with hσ₂
+  have s3 : Runs (cpy (a := 0) tTop tX (by decide)) σ₂
+      (· = Function.update (Function.update σ₂ tTop ⟨ones x :: LP, RP⟩) tX (endv x)) (x + 6) := by
+    refine (runs_cpy (a := 0) (show tTop ≠ tX by decide) σ₂ (by tsimp [hσ₂, hσ₁, hTop])
+      (by tsimp [hσ₂, hσ₁, hX, emp])).mono (fun τ e => ?_) (by tsimp [hσ₂, hσ₁, hTop])
+    rw [e]; funext i; fin_cases i <;> first | rfl | tsimp [hσ₂, hσ₁, hX, hTop, emp, endv]
+  set σ₃ := Function.update (Function.update σ₂ tTop ⟨ones x :: LP, RP⟩) tX (endv x) with hσ₃
+  have s4 := runs_rewind (a := 0) tS σ₃
+  set σ₄ := Function.update σ₃ tS ⟨[], (σ₃ tS).left.reverse ++ (σ₃ tS).right⟩ with hσ₄
+  have s5 := runs_loadW (w0 := w0) σ₄ (by tsimp [hσ₄, hσ₃, hσ₂, hσ₁, hW0]) (by tsimp [hσ₄, hσ₃, hσ₂, hσ₁, hW])
+  set σ₅ := Function.update σ₄ tW (endv w0) with hσ₅
+  have s6 := runs_entriesLoop (X := x) (Vm := Vm) row w0 σ₅ [] O hVm (by tsimp [hσ₅, hσ₄, hσ₃, hσ₂, hσ₁, hws])
+    (by tsimp [hσ₅, hσ₄, hσ₃]) (by tsimp [hσ₅]) (by tsimp [hσ₅, hσ₄, hσ₃, hσ₂, hσ₁, hT])
+    (by tsimp [hσ₅, hσ₄, hσ₃, hσ₂, hσ₁, hTab])
+  set σ₆ := Function.update (Function.update (Function.update σ₅ tTab
+    ⟨(tableWords (axisEntries x w0 row)).reverse ++ O, []⟩) tS ⟨(row.map ones).reverse ++ [], []⟩)
+    tW (endv (w0 * 2 ^ row.length)) with hσ₆
+  have s7 := runs_clear (a := 0) tS σ₆
+  set σ₇ := Function.update σ₆ tS ⟨[], []⟩ with hσ₇
+  have s8 := runs_clear (a := 0) tX σ₇
+  set σ₈ := Function.update σ₇ tX ⟨[], []⟩ with hσ₈
+  have s9 := runs_clear (a := 0) tW σ₈
+  refine (Runs.then s1 (Runs.then s2 (Runs.then s3 (Runs.then s4 (Runs.then s5 (Runs.then s6
+    (Runs.then s7 (Runs.then s8 s9)))))))).mono (fun τ e => ?_) ?_
+  · rw [e]; funext i; fin_cases i <;> first | rfl |
+      tsimp [hσ₈, hσ₇, hσ₆, hσ₅, hσ₄, hσ₃, hσ₂, hσ₁, hS, hX, hW, hFull, emp, ticks, hwsl]
+  · have hc := clen_map_ones_le (Vm := Vm) row hVm
+    rw [← hws] at hc
+    tsimp [hσ₈, hσ₇, hσ₆, hσ₅, hσ₄, hσ₃, hσ₂, hσ₁, WTape.words, clen_reverse, endv, hwsl, hws]
+    unfold topAxisCost
+    have hB : row.length * (4 * x + 2 * Vm + 12 * (w0 * 2 ^ row.length) + 82) ≤
+        row.length * (6 * Vm + 12 * (w0 * 2 ^ row.length) + 82) := Nat.mul_le_mul_left _ (by omega)
+    rw [hws] at hc
+    ring_nf at hB hc ⊢
+    nlinarith [hx]
+
+set_option maxHeartbeats 8000000 in
+theorem runs_shortBranch {Vm : ℕ} (row : List ℕ) (hVm : ∀ v ∈ row, v ≤ Vm) (σ : Fin 14 → WTape)
+    (hFull : σ tFull = ticks row.length) {LR RR : List (List Bool)} (hR : σ tR = ⟨LR, row.map ones ++ RR⟩)
+    (hJ : σ tJ = emp) :
+    Runs shortBranch σ (· = Function.update σ tR ⟨(row.map ones).reverse ++ LR, RR⟩)
+      (row.length * (Vm + 18) + 3) := by
+  have hwsW : ∀ u ∈ row.map ones, u.length ≤ Vm := by
+    intro u hu; simp only [List.mem_map] at hu
+    obtain ⟨v, hv, rfl⟩ := hu; simpa using hVm v hv
+  have s1 := runs_skipFull (Wm := Vm) (row.map ones) σ LR RR [] hwsW (by rw [hFull]; simp [ticks]) hR hJ
+  set σ₁ := Function.update (Function.update σ tR ⟨(row.map ones).reverse ++ LR, RR⟩)
+    tFull ⟨List.replicate (row.map ones).length [] ++ [], []⟩ with hσ₁
+  have s2 := runs_rewind (a := 0) tFull σ₁
+  refine (Runs.then s1 s2).mono (fun τ e => ?_) ?_
+  · rw [e]; funext i; fin_cases i <;> first | rfl | tsimp [hσ₁, hFull, ticks]
+  · tsimp [hσ₁]; nlinarith
+
+set_option maxHeartbeats 16000000 in
+/-- `runs_topGen`: over rows of length `m` with long-axis flags and the long axes' top bits, the top
+round writes the long axes' entries. -/
+theorem runs_topGen {m Vm w0 : ℕ} :
+    ∀ (rows : List (List ℕ)) (flags : List Bool) (tops : List ℕ) (σ : Fin 14 → WTape)
+      (LR RR LF LP RP O : List (List Bool)),
+      rows.length = flags.length → (flags.filter id).length = tops.length →
+      (∀ row ∈ rows, row.length = m ∧ ∀ v ∈ row, v ≤ Vm) → (∀ x ∈ tops, x ≤ Vm) →
+      σ tF = ⟨LF, flags.map fun b => [b]⟩ → σ tFull = ticks m →
+      σ tR = ⟨LR, rows.flatMap (fun row => row.map ones) ++ RR⟩ → σ tTop = ⟨LP, tops.map ones ++ RP⟩ →
+      σ tS = emp → σ tX = emp → σ tW = emp → σ tW0 = endv w0 → σ tT = emp → σ tTab = ⟨O, []⟩ →
+      σ tJ = emp →
+      Runs topGen σ (· = Function.update (Function.update (Function.update (Function.update σ tR
+          ⟨(rows.flatMap fun row => row.map ones).reverse ++ LR, RR⟩) tTab
+          ⟨(tableWords (topEntries w0 rows flags tops)).reverse ++ O, []⟩)
+          tTop ⟨(tops.map ones).reverse ++ LP, RP⟩) tF ⟨(flags.map fun b => [b]).reverse ++ LF, []⟩)
+        (rows.length * (topAxisCost m Vm w0 + m * (Vm + 18) + 10))
+  | [], [], tops, σ, LR, RR, LF, LP, RP, O, _, htops, _, _, hF, hFull, hR, hTop, hS, hX, hW, hW0, hT, hTab, hJ => by
+    have : tops = [] := by simpa using htops.symm
+    subst this
+    refine (Runs.loop_done (by simp [hF]) rfl).mono (fun τ e => ?_) (by simp)
+    subst e
+    funext i; fin_cases i <;> first | rfl | tsimp [hF, hR, hTop, hTab, topEntries, tableWords]
+  | [], _ :: _, _, _, _, _, _, _, _, _, hl, _, _, _, _, _, _, _, _, _, _, _, _, _, _ => by simp at hl
+  | _ :: _, [], _, _, _, _, _, _, _, _, hl, _, _, _, _, _, _, _, _, _, _, _, _, _, _ => by simp at hl
+  | row :: rows, true :: flags, [], _, _, _, _, _, _, _, _, htops, _, _, _, _, _, _, _, _, _, _, _, _, _ => by
+    simp at htops
+  | row :: rows, true :: flags, x :: tops, σ, LR, RR, LF, LP, RP, O, hl, htops, hrows, htopsV, hF, hFull,
+      hR, hTop, hS, hX, hW, hW0, hT, hTab, hJ => by
+    obtain ⟨hlen, hVm⟩ := hrows row (by simp)
+    have s1 := runs_longBranch (Vm := Vm) (w0 := w0) (x := x) row hVm (htopsV x (by simp)) σ (by rw [hFull, hlen])
+      (show σ tR = ⟨LR, row.map ones ++ (rows.flatMap (fun row => row.map ones) ++ RR)⟩ by rw [hR]; simp)
+      (show σ tTop = ⟨LP, ones x :: (tops.map ones ++ RP)⟩ by rw [hTop]; simp) hS hX hW hW0 hT hTab hJ
+    have sc := Runs.cond_true (c := longBranch) (d := shortBranch) (i := tF)
+      (by rw [hF]; exact (startsOne_mk _ _ _ _).mpr rfl) s1
+    set σ₁ := Function.update (Function.update (Function.update σ tR
+      ⟨(row.map ones).reverse ++ LR, rows.flatMap (fun row => row.map ones) ++ RR⟩) tTab
+      ⟨(tableWords (axisEntries x w0 row)).reverse ++ O, []⟩) tTop ⟨ones x :: LP, tops.map ones ++ RP⟩ with hσ₁
+    have sk := runs_skp (a := 0) (show tF ≠ tJ by decide) σ₁ (by tsimp [hσ₁, hF]) (by tsimp [hσ₁, hJ, emp])
+    set σ₂ := Function.update σ₁ tF (σ₁ tF).next with hσ₂
+    have ih := runs_topGen (m := m) (Vm := Vm) (w0 := w0) rows flags tops σ₂ ((row.map ones).reverse ++ LR) RR
+      ([true] :: LF) (ones x :: LP) RP ((tableWords (axisEntries x w0 row)).reverse ++ O)
+      (by simpa using hl) (by simpa using htops) (fun r hr => hrows r (by simp [hr]))
+      (fun y hy => htopsV y (by simp [hy])) (by tsimp [hσ₂, hσ₁, hF]) (by tsimp [hσ₂, hσ₁, hFull])
+      (by tsimp [hσ₂, hσ₁]) (by tsimp [hσ₂, hσ₁]) (by tsimp [hσ₂, hσ₁, hS]) (by tsimp [hσ₂, hσ₁, hX])
+      (by tsimp [hσ₂, hσ₁, hW]) (by tsimp [hσ₂, hσ₁, hW0]) (by tsimp [hσ₂, hσ₁, hT]) (by tsimp [hσ₂, hσ₁])
+      (by tsimp [hσ₂, hσ₁, hJ])
+    refine (Runs.loop_step (by simp [hF]) ((Runs.then sc sk).mono (fun τ h => by rw [h]; exact ih)
+      le_rfl)).mono (fun τ h => ?_) ?_
+    · rw [h]
+      have e1 : (tableWords (topEntries w0 rows flags tops)).reverse ++
+          ((tableWords (axisEntries x w0 row)).reverse ++ O) =
+          (tableWords (topEntries w0 (row :: rows) (true :: flags) (x :: tops))).reverse ++ O := by
+        simp [topEntries, tableWords]
+      funext i; fin_cases i <;> first | rfl | tsimp [hσ₂, hσ₁, hF, e1]
+    · have hc : (σ₁ tF).cur.length = 1 := by tsimp [hσ₁, hF]
+      rw [hc]
+      simp only [List.length_cons, hlen]
+      ring_nf; nlinarith
+  | row :: rows, false :: flags, tops, σ, LR, RR, LF, LP, RP, O, hl, htops, hrows, htopsV, hF, hFull,
+      hR, hTop, hS, hX, hW, hW0, hT, hTab, hJ => by
+    obtain ⟨hlen, hVm⟩ := hrows row (by simp)
+    have s1 := runs_shortBranch (Vm := Vm) row hVm σ (by rw [hFull, hlen])
+      (show σ tR = ⟨LR, row.map ones ++ (rows.flatMap (fun row => row.map ones) ++ RR)⟩ by rw [hR]; simp) hJ
+    have sc := Runs.cond_false (c := longBranch) (d := shortBranch) (i := tF)
+      (by rw [hF]; intro h; have := (startsOne_mk _ _ _ _).mp h; simp at this) s1
+    set σ₁ := Function.update σ tR ⟨(row.map ones).reverse ++ LR, rows.flatMap (fun row => row.map ones) ++ RR⟩
+      with hσ₁
+    have sk := runs_skp (a := 0) (show tF ≠ tJ by decide) σ₁ (by tsimp [hσ₁, hF]) (by tsimp [hσ₁, hJ, emp])
+    set σ₂ := Function.update σ₁ tF (σ₁ tF).next with hσ₂
+    have ih := runs_topGen (m := m) (Vm := Vm) (w0 := w0) rows flags tops σ₂ ((row.map ones).reverse ++ LR) RR
+      ([false] :: LF) LP RP O
+      (by simpa using hl) (by simpa using htops) (fun r hr => hrows r (by simp [hr])) htopsV
+      (by tsimp [hσ₂, hσ₁, hF]) (by tsimp [hσ₂, hσ₁, hFull]) (by tsimp [hσ₂, hσ₁]) (by tsimp [hσ₂, hσ₁, hTop])
+      (by tsimp [hσ₂, hσ₁, hS]) (by tsimp [hσ₂, hσ₁, hX]) (by tsimp [hσ₂, hσ₁, hW]) (by tsimp [hσ₂, hσ₁, hW0])
+      (by tsimp [hσ₂, hσ₁, hT]) (by tsimp [hσ₂, hσ₁, hTab]) (by tsimp [hσ₂, hσ₁, hJ])
+    refine (Runs.loop_step (by simp [hF]) ((Runs.then sc sk).mono (fun τ h => by rw [h]; exact ih)
+      le_rfl)).mono (fun τ h => ?_) ?_
+    · rw [h]
+      funext i; fin_cases i <;> first | rfl | tsimp [hσ₂, hσ₁, hF, topEntries]
+    · have hc : (σ₁ tF).cur.length = 1 := by tsimp [hσ₁, hF]
+      rw [hc]
+      simp only [List.length_cons, hlen]
+      have : 3 ≤ topAxisCost m Vm w0 := by unfold topAxisCost; omega
+      ring_nf; nlinarith
+
+theorem topEntries_filter (w0 : ℕ) (rowf : ℕ → List ℕ) (flagf : ℕ → Bool) (topf : ℕ → ℕ) :
+    ∀ L : List ℕ, topEntries w0 (L.map rowf) (L.map flagf) ((L.filter flagf).map topf) =
+      (L.filter flagf).flatMap fun i => axisEntries (topf i) w0 (rowf i)
+  | [] => by simp [topEntries]
+  | i :: L => by
+    by_cases hf : flagf i = true
+    · simp [hf, topEntries, topEntries_filter w0 rowf flagf topf L]
+    · have hf' : flagf i = false := by simpa using hf
+      simp [hf', topEntries, topEntries_filter w0 rowf flagf topf L]
+
+/-- `runs_topGen_paper`: started on the paper's axis rows, the long-axis flags and the top bits, the
+top round writes its exponent table `tableWords (slotTable (paperPerm hL) r ts (slotAxes ts (ℓ-1)) (ℓ-1))`. -/
+theorem runs_topGen_paper {r : ℕ} {ts : List ℕ} {ℓ K : ℕ} (hL : LayoutOK r ts ℓ K) (r' : ℕ)
+    (σ : Fin 14 → WTape)
+    (hF : σ tF = ⟨[], (List.range ts.length).map fun i => [decide (axLen ts i = ℓ)]⟩)
+    (hFull : σ tFull = ticks (ℓ - 1))
+    (hR : σ tR = ⟨[], (List.range ts.length).flatMap fun i =>
+      (List.range (ℓ - 1)).map fun h' => ones (paperSigma ts ℓ K i h')⟩)
+    (hTop : σ tTop = ⟨[], (longs ts ℓ).map fun i => ones (paperSigma ts ℓ K i (ℓ - 1))⟩)
+    (hS : σ tS = emp) (hX : σ tX = emp) (hW : σ tW = emp)
+    (hW0 : σ tW0 = endv (2 * (2 * r' / 2 ^ (ℓ - 1 + 1)))) (hT : σ tT = emp) (hTab : σ tTab = emp)
+    (hJ : σ tJ = emp) :
+    Runs topGen σ (fun σ' => σ' tTab =
+        ⟨(tableWords (slotTable (paperPerm hL) r' ts (slotAxes ts (ℓ - 1)) (ℓ - 1))).reverse, []⟩)
+      (ts.length * (topAxisCost (ℓ - 1) (Nat.log 2 ts.prod) (2 * (2 * r' / 2 ^ (ℓ - 1 + 1))) +
+        (ℓ - 1) * (Nat.log 2 ts.prod + 18) + 10)) := by
+  have hℓ := hL.2.2.2
+  set rowf : ℕ → List ℕ := fun i => (List.range (ℓ - 1)).map (paperSigma ts ℓ K i) with hrowf
+  set flagf : ℕ → Bool := fun i => decide (axLen ts i = ℓ) with hflagf
+  set topf : ℕ → ℕ := fun i => paperSigma ts ℓ K i (ℓ - 1) with htopf
+  set L := List.range ts.length with hLdef
+  have hlongs : L.filter flagf = longs ts ℓ := rfl
+  have hrowsOK : ∀ row ∈ L.map rowf, row.length = ℓ - 1 ∧ ∀ v ∈ row, v ≤ Nat.log 2 ts.prod := by
+    intro row hrow
+    simp only [hLdef, List.mem_map, List.mem_range] at hrow
+    obtain ⟨i, hi, rfl⟩ := hrow
+    refine ⟨by simp [hrowf], fun v hv => ?_⟩
+    simp only [hrowf, List.mem_map, List.mem_range] at hv
+    obtain ⟨h', hh', rfl⟩ := hv
+    have := hL.2.1 i hi
+    exact (paperSigma_lt hL hi (by omega)).le
+  have htopsOK : ∀ x ∈ (L.filter flagf).map topf, x ≤ Nat.log 2 ts.prod := by
+    intro x hx
+    rw [hlongs] at hx
+    simp only [List.mem_map] at hx
+    obtain ⟨i, hi, rfl⟩ := hx
+    simp only [longs, List.mem_filter, List.mem_range, decide_eq_true_eq] at hi
+    exact (paperSigma_lt hL hi.1 (by omega)).le
+  have s := runs_topGen (m := ℓ - 1) (Vm := Nat.log 2 ts.prod) (w0 := 2 * (2 * r' / 2 ^ (ℓ - 1 + 1)))
+    (L.map rowf) (L.map flagf) ((L.filter flagf).map topf) σ [] [] [] [] [] []
+    (by simp) (by simp [List.filter_map]) hrowsOK htopsOK
+    (by rw [hF]; simp [hLdef, hflagf]) hFull (by rw [hR]; simp [hLdef, hrowf, List.flatMap_map, Function.comp_def])
+    (by rw [hTop, ← hlongs]; simp [htopf]) hS hX hW hW0 hT (by rw [hTab]; rfl) hJ
+  have hlen : (L.map rowf).length = ts.length := by simp [hLdef]
+  rw [hlen] at s
+  refine s.mono (fun τ e => ?_) le_rfl
+  rw [e]
+  have hIs : ∀ i ∈ slotAxes ts (ℓ - 1), i < ts.length ∧ ℓ - 1 < axLen ts i := slotAxes_valid ts (ℓ - 1)
+  have hslot : slotAxes ts (ℓ - 1) = longs ts ℓ := by
+    unfold slotAxes longs
+    apply List.filter_congr
+    intro i hi
+    have := hL.2.1 i (List.mem_range.mp hi)
+    simp only [decide_eq_decide]
+    omega
+  rw [slotTable_paper hL r' hIs, hslot, slotTableP_rows ts ℓ K r' le_rfl, topEntries_filter, hlongs]
+  have htake : ∀ i, List.take (ℓ - 1) ((List.range (ℓ - 1)).map (paperSigma ts ℓ K i)) =
+      (List.range (ℓ - 1)).map (paperSigma ts ℓ K i) := fun i => List.take_of_length_le (by simp)
+  tsimp [htake, htopf, hrowf]
 
 end SigmaTableTape
 
