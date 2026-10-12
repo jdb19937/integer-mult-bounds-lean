@@ -31,6 +31,10 @@ the actual event now derives its prefix-to-call ordinal identity. Full physical
 event induction remains open. Actual sibling scalar lifecycles now derive
 their live capacity and next grid from the entry Path and execute in the fixed
 aligned table with exact emitted arrays, saved history and paid runtime.
+Sibling return guards now also derive from the original entry Path and
+processed-call count, and an explicit-guard physical-return/inverse adapter
+preserves the same fixed table and paid cost. Complete aligned stopped-child return
+composition, recursive Progress construction and event induction remain open.
 Complete stopped-root execution, full stopped-leaf
 tensor semantics, genuine halting and paid runtime are checked. Corrected
 source entry, sink corrections, contraction/rejoin and saved-PC dispatch also

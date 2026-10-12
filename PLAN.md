@@ -16,14 +16,14 @@ See [COMPONENTS.md](COMPONENTS.md) for what each file proves.
 | Composition, loops, frames, elementary streams | §2 | 🟡 (153/154) | 🟡 (136/147) |
 | Finite networks with a rank saving | §3 | ✅ (66/66) | 🟡 (1/42) |
 | Faster interchange of address chunks | §4 | ✅ (129/129) | ✅ (126/126) |
-| Simultaneous butterfly layers with compact control | §5, §11, CrocSwap | ✅ (1639/1639) | 🟡 (1265/1269) |
+| Simultaneous butterfly layers with compact control | §5, §11, CrocSwap | ✅ (1641/1641) | 🟡 (1266/1270) |
 | Synthetic transforms and their tape layout | §6 | ✅ (5/5) | ⬜ (0/3) |
 | Gaussian resampling | §7 | ✅ (17/17) | 🟡 (8/9) |
 | Fast multiplication subroutine | Schönhage–Strassen | ✅ (22/22) | 🟡 (11/15) |
 | Exact multiplication, parameters, time bound | §8 | 🟡 (5/7) | ⬜ (0/2) |
 | End-to-end theorem `EndToEnd` | — | 🟡 (5/8) | 🟡 (5/8) |
 
-Component accounting: mathematics **2044/2050**, tape **1554/1623**.
+Component accounting: mathematics **2046/2052**, tape **1555/1624**.
 Each numerator counts only ✅ rows; partial and unstarted rows remain in the
 denominator, and — entries are excluded. These counts measure checklist rows,
 not remaining effort or end-to-end completion. In particular, Section 5 remains
@@ -2056,6 +2056,8 @@ The main binary interchange theorem is proved in `BinaryInterchangeRun.runs` and
 | CompactComplexActualScalarOrdinal | `CompactComplexActualScalarOrdinal` | ✅ | — | The actual schedule retains every original scalar group once and in order. A real scalar event derives its processed-prefix group ordinal; scalar and child transitions respectively advance and preserve that cursor. Generic symbolic list proofs keep the concrete compiler enumeration opaque. |
 | CompactComplexSourceReadySiblingScalarPath | `CompactComplexSourceReadySiblingScalarPath` | ✅ | ✅ | The actual scalar lifecycle after counted sibling returns derives live capacity, numerator reserve, next prefix grid and full Reached output from the original entry Path. Original count/header execution, emitted arrays, saved history and exact runtime remain physical; no advanced dependency Path or supplied execution is assumed. |
 | CompactComplexAlignedSiblingScalarPath | `CompactComplexAlignedSiblingScalarPath` | ✅ | ✅ | The sibling-aware scalar lifecycle runs on the unchanged aligned prime-alphabet table and reaches the next actual event PC with its join paid. Actual emitted arrays and the blank basis suffix are retained. The event itself derives its original scalar cursor; full recursive event induction remains open. |
+| CompactComplexSourceReadySiblingReturnInvariant | `CompactComplexSourceReadySiblingReturnInvariant` | ✅ | — | Original node-entry Paths and actual processed sibling counts derive promotion capacity and signed guards with the unchanged precision reserve. Literal child Width/Grid and restored ports produce the next genuine parent Reached witness; no advanced sibling Path or supplied execution callback is required. |
+| CompactComplexAlignedSiblingJoinedPhysicalReturn | `CompactComplexAlignedSiblingJoinedPhysicalReturn` | ✅ | ✅ | The actual physical parent restoration and inverse basis run in the unchanged aligned table after counted siblings. Numerical guards derive from the original entry Path and current returned cursor; all physical readiness, child grid, Progress and saved-target Ledger remain explicit genuine boundary obligations. The preceding full recursive execution remains open. |
 | Full reachable recursive fixed-table execution | `CompactComplexFixedNodePaths`, `CompactComplexSourceReadyReachedChildInvariant` | — | 🟡 | Local scalar and child entry/return paths are checked. Full leaf/nonleaf recursive induction, child tensor semantics, target coverage and complete event witness assembly remain open. |
 | Actual uniform recursive runtime | `CompactComplexRecursiveRuntimeSum`, `CompactComplexCorrectedNonleafBoundaryBudget` | — | 🟡 | Local boundary costs and abstract recursive sum estimates are checked. Instantiation with the complete actual recursive trace and all paid basis and physical transitions remains open. |
 
