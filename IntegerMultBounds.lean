@@ -2759,3 +2759,5 @@ import IntegerMultBounds.Machine.CompactComplexDirectionalStoppedLeafTensor
 import IntegerMultBounds.Machine.CompactComplexStoppedAlignedExact
 import IntegerMultBounds.Schoenhage.PaperSigma
 import IntegerMultBounds.Schoenhage.TwistCost
+import IntegerMultBounds.Schoenhage.SigmaRows
+import IntegerMultBounds.Schoenhage.SigmaRowsTape
