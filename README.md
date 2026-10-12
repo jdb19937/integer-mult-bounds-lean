@@ -37,8 +37,13 @@ their live capacity and next grid from the entry Path and execute in the fixed
 aligned table with exact emitted arrays, saved history and paid runtime.
 Sibling return guards now also derive from the original entry Path and
 processed-call count, and an explicit-guard physical-return/inverse adapter
-preserves the same fixed table and paid cost. Complete aligned stopped-child return
-composition, recursive Progress construction and event induction remain open.
+preserves the same fixed table and paid cost. Complete aligned stopped-child
+classification, leaf, saved-PC pop, physical parent restoration and inverse
+basis now compose after counted siblings using the original entry Path.
+The installed stopped grid, genuine stopped/nonleaf return Progress and
+next-event returned cursor are proved; the saved-target Ledger can be captured
+at node entry. Full event induction and nonleaf completed-target coverage
+remain open.
 Complete stopped-root execution, full stopped-leaf
 tensor semantics, genuine halting and paid runtime are checked. Corrected
 source entry, sink corrections, contraction/rejoin and saved-PC dispatch also

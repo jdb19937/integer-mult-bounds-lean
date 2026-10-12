@@ -27,7 +27,7 @@ here.
 | [Composition, loops, frames, elementary streams](plan/02-composition-loops-frames.md) | §2 | ✅ 8/8 | ✅ 8/8 | 255 |
 | [Finite networks with a rank saving](plan/03-finite-networks-rank.md) | §3 | ✅ 8/8 | 🟡 2/6 | 358 |
 | [Faster interchange of address chunks](plan/04-faster-interchange-address.md) | §4 | ✅ 10/10 | ✅ 9/9 | 375 |
-| [Simultaneous butterfly layers with compact control](plan/05-simultaneous-butterfly-layers.md) | §5, §11, CrocSwap | 🟡 1/12 | 🟡 0/12 | 1655 |
+| [Simultaneous butterfly layers with compact control](plan/05-simultaneous-butterfly-layers.md) | §5, §11, CrocSwap | 🟡 1/12 | 🟡 0/12 | 1661 |
 | [Synthetic transforms and their tape layout](plan/06-synthetic-transforms-tape.md) | §6 | ✅ 3/3 | ⬜ 0/3 | 7 |
 | [Gaussian resampling](plan/07-gaussian-resampling.md) | §7 | ✅ 6/6 | 🟡 3/4 | 59 |
 | [Fast multiplication subroutine](plan/08-fast-multiplication-subroutine.md) | Schönhage–Strassen | ✅ 6/6 | 🟡 2/4 | 85 |
@@ -107,7 +107,7 @@ Details: [plan/05-simultaneous-butterfly-layers.md](plan/05-simultaneous-butterf
 | Exact scalar grids and stopped calls | 🟡 | 🟡 | 92 |
 | Nonleaf calls and the fixed node table | 🟡 | 🟡 | 48 |
 | Source-ready table, orientation and endpoints | 🟡 | 🟡 | 155 |
-| Full recursive execution and runtime | 🟡 | 🟡 35/37 rows | 77 |
+| Full recursive execution and runtime | 🟡 | 🟡 38/40 rows | 83 |
 
 ## 6. Synthetic transforms and their tape layout (§6)
 
