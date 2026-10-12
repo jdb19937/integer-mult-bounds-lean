@@ -6744,7 +6744,8 @@ Schönhage–Strassen multiplication, the fast multiplier used for the packed pr
 - `Schoenhage/ConvCost.lean`: the convolution program's steps beyond its three
   transforms are within a constant times the paper's convolution cost for all
   large `p` (`convExtra_le_cost`): the header is `O(p)`, `p ≤ T`, and the pointwise
-  products' `log log (r p)` factor is absorbed by `ℓ d^λ'`.
+  products' `log log (r p)` factor is absorbed by `ℓ d^λ'`; hence
+  `transformTarget P → convolutionTarget P` (`convolution_of_transform`).
 
 - `Schoenhage/PointwiseRow.lean`: at the main sizes `p = 6 lg n`, `r = 2^ℓ`
   the pointwise program's time is at most a constant times `T p` times the

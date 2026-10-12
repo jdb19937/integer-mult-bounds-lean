@@ -364,4 +364,43 @@ theorem convExtra_le_cost (P : TransformParams) (hε0 : 0 < P.ε) (hε1 : P.ε <
         nlinarith [mul_le_mul_of_nonneg_left hHT hCp0, mul_le_mul_of_nonneg_left htc_le hCp0,
           mul_le_mul_of_nonneg_left hTp hRc0, mul_le_mul_of_nonneg_left hTp (mul_nonneg hCp0 hCH0)]
 
+/-! ### The convolution target -/
+
+theorem transformCost_nonneg (P : TransformParams) (p d ℓ K : ℕ) (ts : List ℕ) :
+    0 ≤ transformCost P p d ℓ K ts := by
+  unfold transformCost
+  have := Real.rpow_nonneg (Nat.cast_nonneg K) (P.τ - 1)
+  have := Real.rpow_nonneg (Nat.cast_nonneg d) P.lam'
+  positivity
+
+/-- `prop:synthetic-convolution` from `lem:synthetic-transform-cost`: one fixed program
+(forward transforms of both operands, pointwise products by Schönhage–Strassen, the opposite
+transform, scaling by `M`) meets the convolution statement whenever fixed programs meet the
+transform statement, for parameters with `0 < ε < 1`, `λ' > 0` and positive `a_d`, `a_r`, `b_d`. -/
+theorem convolution_of_transform (P : TransformParams) (hε0 : 0 < P.ε) (hε1 : P.ε < 1)
+    (hlam : 0 < P.lam') (had : 0 < P.ad) (har : 0 < P.ar) (hbd : 0 < P.bd)
+    (hT : transformTarget P) : convolutionTarget P := by
+  obtain ⟨p₁, L, t, q₁, q₂, a, Mf, Mo, C, ht, hmeet⟩ := hT
+  obtain ⟨p₂, C2, hC2, hcost⟩ := convExtra_le_cost P hε0 hε1 hlam had har hbd
+  refine ⟨max p₁ p₂, NB t, _, a, convProg Mf Mo ht, 3 * max C 0 + C2, by unfold NB; omega, ?_⟩
+  intro p d ℓ K w ts hp hadm fs gs hfl hgl hfd hgd
+  obtain ⟨hMF, hMO⟩ := hmeet p d ℓ K w ts (le_trans (le_max_left _ _) hp) hadm
+  obtain ⟨hs, k, hl, hc, hk, hH⟩ := conv_instance Mf Mo ht P L C hadm hMF hMO fs gs hfl hgl hfd hgd
+  refine ⟨hs, k, hl, hc, ?_, hH⟩
+  have hx := hcost p d ℓ K w ts (le_trans (le_max_right _ _) hp) hadm
+  have htc0 := transformCost_nonneg P p d ℓ K ts
+  have hconv : convolutionCost P p d ℓ K ts = transformCost P p d ℓ K ts +
+      ((2 ^ ℓ * ts.prod : ℕ) : ℝ) * p * (Nat.log 2 (2 ^ ℓ * p) + 1) := rfl
+  have hextra : (0 : ℝ) ≤ ((2 ^ ℓ * ts.prod : ℕ) : ℝ) * p * (Nat.log 2 (2 ^ ℓ * p) + 1) := by positivity
+  have htc : transformCost P p d ℓ K ts ≤ convolutionCost P p d ℓ K ts := by rw [hconv]; linarith
+  have h3 : 3 * C * transformCost P p d ℓ K ts ≤ 3 * max C 0 * convolutionCost P p d ℓ K ts := by
+    have a1 : C * transformCost P p d ℓ K ts ≤ max C 0 * transformCost P p d ℓ K ts :=
+      mul_le_mul_of_nonneg_right (le_max_left _ _) htc0
+    have a2 : max C 0 * transformCost P p d ℓ K ts ≤ max C 0 * convolutionCost P p d ℓ K ts :=
+      mul_le_mul_of_nonneg_left htc (le_max_right _ _)
+    linarith
+  calc (k : ℝ) ≤ 3 * C * transformCost P p d ℓ K ts +
+        (convExtra p d ℓ K w (transformHeader p d (2 ^ ℓ) K w ts).length ts.prod : ℕ) := hk
+    _ ≤ (3 * max C 0 + C2) * convolutionCost P p d ℓ K ts := by rw [add_mul]; linarith
+
 end IntegerMultBounds.Schoenhage

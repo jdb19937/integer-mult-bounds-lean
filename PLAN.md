@@ -15,11 +15,11 @@ See [COMPONENTS.md](COMPONENTS.md) for what each file proves.
 | [The machine model and elementary streams](plan/02-machine-model-streams.md) | §2 | ✅ 9/9 | ✅ 9/9 | 257 |
 | [Two finite networks with a rank saving](plan/03-finite-networks-rank.md) | §3 | ✅ 8/8 | 🟡 2/6 | 358 |
 | [Faster interchange of address chunks](plan/04-faster-interchange-address.md) | §4 | ✅ 10/10 | ✅ 9/9 | 375 |
-| [Fast simultaneous synthetic butterfly layers](plan/05-simultaneous-butterfly-layers.md) | §5, §11, CrocSwap | 🟡 4/12 | 🟡 0/12 | 1678 |
+| [Fast simultaneous synthetic butterfly layers](plan/05-simultaneous-butterfly-layers.md) | §5, §11, CrocSwap | 🟡 4/12 | 🟡 0/12 | 1681 |
 | [Synthetic transforms and their tape layout](plan/06-synthetic-transforms-tape.md) | §6 | ✅ 2/2 | 🟡 0/2 | 26 |
 | [Resampling with the permutations left in the transform](plan/07-gaussian-resampling.md) | §7 | ✅ 6/6 | 🟡 3/4 | 79 |
 | [Exact integer multiplication and its cost](plan/08-exact-multiplication.md) | §8 | 🟡 3/4 | ⬜ 0/3 | 15 |
-| [Fast multiplication subroutine](plan/A-schoenhage-strassen.md) | Schönhage–Strassen | ✅ 6/6 | 🟡 3/4 | 87 |
+| [Fast multiplication subroutine](plan/A-schoenhage-strassen.md) | Schönhage–Strassen | ✅ 6/6 | 🟡 3/4 | 94 |
 | [End-to-end theorem `EndToEnd`](plan/B-end-to-end.md) | — | 🟡 1/3 | 🟡 2/3 | 6 |
 
 Every sub-problem has a math milestone and a tape milestone: one named Lean
@@ -100,7 +100,7 @@ Details: [plan/05-simultaneous-butterfly-layers.md](plan/05-simultaneous-butterf
 | Exact scalar grids and stopped calls | 🟡 | 🟡 | 92 |
 | Nonleaf calls and the fixed node table | 🟡 | 🟡 | 48 |
 | Source-ready table, orientation and endpoints | 🟡 | 🟡 | 155 |
-| Full recursive execution and runtime | 🟡 | 🟡 45/47 rows | 97 |
+| Full recursive execution and runtime | 🟡 | 🟡 47/49 rows | 100 |
 
 ## 6. Synthetic transforms and their tape layout (§6)
 
@@ -146,7 +146,7 @@ Details: [plan/A-schoenhage-strassen.md](plan/A-schoenhage-strassen.md)
 | Word-tape programming layer | ✅ | ✅ | 10 |
 | Schönhage–Strassen multiplier on tapes | ✅ | ✅ | 15 |
 | Packed signed ring products | ✅ | ✅ | 28 |
-| Paper-format transform layer statements | ✅ | 🟡 1/4 rows | 7 |
+| Paper-format transform layer statements | ✅ | 🟡 2/5 rows | 14 |
 
 ## B. End-to-end theorem `EndToEnd`
 
