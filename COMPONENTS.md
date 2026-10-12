@@ -4,6 +4,9 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 ## Machine
 
+- `Machine/CompactComplexAlignedSiblingStoppedEventPath.lean`: Executes one complete actual stopped child event after counted siblings, from the event PC through forward basis, physical entry, classifier, oriented leaf, saved-PC pop, parent restoration and inverse basis to callNextPC in the unchanged aligned table. Retains actual forward/returned/final Reached data, associated history, clean suffix and the summed paid runtime; whole-node event induction remains open.
+- `Machine/CompactComplexSourceReadyStoppedChildTensor.lean`: Proves the genuine child tensor for the literal stopped leaf and both call orientations at each global address. Specializes it to the actual forward basis array, supplying ChildTensor from inherited width/grid and the signed guard without a result oracle.
+- `Machine/CompactComplexSourceReadySiblingStoppedChildSemantics.lean`: Derives stopped ChildTensor for the original parent's data from the actual forward-basis Reached witness after counted siblings. The computed installed result and actual returned/inverse witnesses imply the original child-instruction semantics; all guards derive from the original entry Path and current readiness, with no supplied tensor equality.
 - `Machine/ActivePrefixControlScheduleGlobal.lean`: Closes the compact-control math milestone on one original layout and payload. The early and late packed schedules have their exact global actual destinations and literal original payload endpoints, with a proved shared physical index and chronological early-then-late composed permutation. Original-header synthesis and full fixed-machine execution remain separate.
 - `Machine/CompactNativeStagePhaseMilestone.lean`: Closes the basis-stage and phase math milestone on one actual complex-edge word and serialized polynomial bank. Proves binary row-coordinate action, payload at the reached row, exact reverse restoration, and decoded coefficient equality to the full original tensor phase after forward basis, reached-row rotation and reverse basis. Genuine widths and signed guards are retained; tape execution is separate.
 - `Machine/CompactComplexSourceReadySiblingChildEntryPath.lean`: Runs actual child entry after counted siblings at the original linear bound. Its true child-entry dependency Path pays the current live word, and the immutable entry target Ledger pays the saved target word. Literal caller geometry, payload and workspace endpoint derive from current Reached; no fictitious advanced Path is supplied.
@@ -6157,6 +6160,10 @@ Transform, fixed-point, Kronecker and Gaussian resampling mathematics used by th
   to complex numbers (`decE`); on lines in the unit disk the expansion line
   map with the machine-built table is the floored tabled `Ã` on the first
   `s` entries (`lineA_value`, `floorA`).
+- `Resampling/TensorNumeric.lean`: decoding commutes with the flat pass
+  (`flatPass_map`); the decoded expansion output is the flat array of the
+  rectangular tensor of floored tabled `Ã` maps (`floorAt`) on the
+  restricted input (`expand_tensor`).
 - `Resampling/Milestones.lean`: the §7 milestone theorems of
   `plan/07-gaussian-resampling.md` that package proved results:
   `FixedMul.signed_word_ops`, `Schoenhage.wordRecordLayer_hoare`,
