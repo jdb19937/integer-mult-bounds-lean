@@ -16,14 +16,14 @@ See [COMPONENTS.md](COMPONENTS.md) for what each file proves.
 | Composition, loops, frames, elementary streams | §2 | 🟡 (163/164) | 🟡 (145/156) |
 | Finite networks with a rank saving | §3 | ✅ (66/66) | 🟡 (1/42) |
 | Faster interchange of address chunks | §4 | ✅ (129/129) | ✅ (126/126) |
-| Simultaneous butterfly layers with compact control | §5, §11, CrocSwap | ✅ (1620/1620) | 🟡 (1260/1262) |
+| Simultaneous butterfly layers with compact control | §5, §11, CrocSwap | ✅ (1621/1621) | 🟡 (1261/1263) |
 | Synthetic transforms and their tape layout | §6 | ✅ (5/5) | ⬜ (0/3) |
 | Gaussian resampling | §7 | ✅ (17/17) | 🟡 (7/9) |
 | Fast multiplication subroutine | Schönhage–Strassen | ✅ (23/23) | 🟡 (11/15) |
 | Exact multiplication, parameters, time bound | §8 | 🟡 (5/7) | ⬜ (0/2) |
 | End-to-end theorem `EndToEnd` | — | 🟡 (5/8) | 🟡 (5/8) |
 
-Component accounting: mathematics **2036/2042**, tape **1557/1625**.
+Component accounting: mathematics **2037/2043**, tape **1558/1626**.
 Each numerator counts only ✅ rows; partial and unstarted rows remain in the
 denominator, and — entries are excluded. These counts measure checklist rows,
 not remaining effort or end-to-end completion. In particular, Section 5 remains
@@ -2041,11 +2041,12 @@ The main binary interchange theorem is proved in `BinaryInterchangeRun.runs` and
 | UnitPhaseStream | `UnitPhaseStream` | ✅ | ✅ | One physical coefficient phase stream initializes its address width and live counter from original headers, executes the original-count loop, and restores generated width and loop controls. Exact tape endpoints and a linear transition bound in reserved payload and coefficient width are proved; caller-supplied record contexts and header conditions remain explicit. |
 
 | CompactComplexAlignedPoppedReturnReadiness | `CompactComplexAlignedPoppedReturnReadiness` | ✅ | — | The literal public saved-PC update preserves the completed child’s header/live stacks, saved target and payload stack and blank clock. All equations derive from Reached and Settled, with only the necessary distinct PC-stack slots required. This supplies post-pop return ports; recursive Settled preservation remains open. |
-| CompactComplexAlignedCompletedSavedPop | `CompactComplexAlignedCompletedSavedPop` | ✅ | ✅ | The actual reached completed child supplies its genuine saved-call association. The original aligned table performs the paid guard/pop path to this call’s saved PC, restoring the older associated history and retaining the derived dormant return stacks and blank clock. Settled is an explicit recursive completion obligation; joining the following physical return remains open. |
+| CompactComplexAlignedCompletedSavedPop | `CompactComplexAlignedCompletedSavedPop` | ✅ | ✅ | The actual reached completed child supplies its genuine saved-call association. The original aligned table performs the paid guard/pop path to this call’s saved PC, restoring the older associated history and retaining the derived dormant return stacks and blank clock. Settled remains an explicit recursive completion obligation; CompactComplexAlignedCompletedReturnPath joins this pop to physical return and inverse basis. |
 | CompactComplexAlignedCompletedInverse | `CompactComplexAlignedCompletedInverse` | ✅ | ✅ | The inverse basis machine is the same fixed witness used for forward child entry and is selected by the actual call’s role and PC. Stored widths derive from the computed completed-child result; capacity and promotion guard derive from the parent dependency Path. The real inverse Hoare execution, returned Reached/data and uniform basis cost follow. Recursive child output grid and physical restored ports remain explicit obligations. |
 
-| CompactComplexAlignedPoppedReturnPorts | `CompactComplexAlignedPoppedReturnPorts` | ✅ | — | The literal completed-child saved-PC pop preserves projected controller blanks, exponent, count, advanced live/target fields and the computed source word, and exposes the restored older call history. These facts derive the computed restored-parent ports without assuming a returned-bank equality. Actual saved-frame completion and physical return readiness remain recursive obligations. |
+| CompactComplexAlignedPoppedReturnPorts | `CompactComplexAlignedPoppedReturnPorts` | ✅ | — | The literal completed-child saved-PC pop preserves the complete raw/source bank and scalar state as well as projected controller blanks, exponent, count, advanced live/target fields and computed source word, and exposes the restored older call history. These derive the computed restored-parent ports without assuming a returned-bank equality. Saved-frame completion still requires recursive Settled preservation. |
 | CompactComplexAlignedJoinedPhysicalReturn | `CompactComplexAlignedJoinedPhysicalReturn` | ✅ | ✅ | Literal physical restoration and the original inverse basis pass compose in the unchanged aligned table from the actual saved-call PC to its original next-call PC, with both joins and the table transition charged. The reached parent derives caller readiness, role widths, payload reconstruction, canonical midpoint and restored numerical ports; the same fixed basis witness supplies inverse execution. Child result grid, stored result widths and literal saved-stack/input readiness remain explicit recursive boundary obligations. |
+| CompactComplexAlignedCompletedReturnPath | `CompactComplexAlignedCompletedReturnPath` | ✅ | ✅ | The actual computed completed child executes the stopping guard, genuine saved-PC pop, physical parent restoration and original inverse basis in one unchanged aligned table, reaching the original next-call PC with every join paid. Raw/source and scalar ports, controller fields, stored widths and older call association derive from the child. Captured stack equations, recursive Settled preservation, output grid and live-ledger progress remain explicit recursion obligations; full recursive execution is not proved. |
 
 ## 6. Synthetic transforms and their tape layout (§6)
 

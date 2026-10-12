@@ -71,9 +71,11 @@ completed child now supplies that path with its derived return stacks retained;
 forward child entry and inverse return share one fixed basis program. The
 inverse adapter derives width and promotion guards from the child and parent
 path. Literal physical return now joins the inverse basis pass and reaches
-the original next-call PC. Its input readiness, completed-result grid and
-saved-frame invariant must still follow from recursion; full recursive event
-induction and total runtime remain open. The actual ordered
+the original next-call PC. The computed completed child now supplies a joined
+guard/pop/physical-return/inverse path with all transitions paid, deriving its
+raw, scalar, controller and width readiness. Captured saved-stack equations,
+recursive settled frames, output grids and ledger progress remain explicit;
+full recursive event induction and total runtime remain open. The actual ordered
 site trace now retains every original compiler wire and both frames, including
 terminal sink incidences. The actual interleaved child-call and scalar schedule
 now has exact original compiler semantics on every wire array. Recursive tape
@@ -82,7 +84,7 @@ execution and total runtime remain open.
 Complete boundary and event allowances pay classification, corrections,
 contraction, genuine return dispatch, both basis passes and their joins. The
 basis stage-scale term remains explicit alongside original recursive budgets.
-Joined aligned child paths, complete nonleaf recursive correctness and
+Complete nonleaf recursive correctness and
 termination, and the actual total runtime recurrence remain open.
 
 The machine model, the target statement, and a growing set of algorithmic and

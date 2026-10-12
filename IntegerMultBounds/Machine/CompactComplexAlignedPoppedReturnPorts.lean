@@ -50,6 +50,60 @@ private theorem source_ne_saved (pc : Fin s) :
     Fin.val_castAdd,Fin.val_natAdd] at hv
   omega
 
+private theorem raw_slot_ne_saved
+    (i : Fin (43+CompactNativeRoleInstall.rawCount roles)) (pc : Fin s) :
+    CompactComplexNonleafRoleSplit.slot (s:=10+s) (c:=roles) i≠publicSaved pc := by
+  intro he
+  have hv := congrArg Fin.val he
+  have hp := pc.isLt
+  simp only [CompactComplexNonleafRoleSplit.slot,publicSaved,storage,
+    CompactComplexSpectatorTargetBank.oldSlot,CompactComplexControllerNativeFrame.storageSlot,
+    Fin.val_castAdd,Fin.val_natAdd] at hv
+  unfold CompactComplexNonleafRoleEntry.tapes CompactComplexNativeCodecFrame.permanentTapes
+    CompactComplexNativeRoleBridge.publicTapes CompactComplexControllerNativeFrame.tapes at hv
+  split_ifs at hv <;> omega
+
+/-- Popping the saved-PC stack retains the literal child raw/source bank. -/
+theorem popped_raw_active (u : Tapes (CompactComplexNonleafRoleChildBank.tapes s roles) 2)
+    (pc : Fin s) (older : ℤ → Fin 6) (top : ℤ) :
+    Placement.active CompactComplexNonleafRoleParentContinuation.placement (popped u pc older top)=
+      Placement.active CompactComplexNonleafRoleParentContinuation.placement u := by
+  change Placement.active (CompactComplexNonleafRoleSplit.placement (s:=10+s) (c:=roles)) _=
+    Placement.active (CompactComplexNonleafRoleSplit.placement (s:=10+s) (c:=roles)) _
+  simp only [CompactComplexNonleafRoleSplit.placement,InjectivePlacement.active_bank]
+  apply congrArg₂ Tapes.mk <;> funext i
+  all_goals simp only [popped,setTape,Function.update_of_ne (raw_slot_ne_saved i pc)]
+
+private def scalarSlot {c : ℕ} (i : Fin 43) : Fin (CompactComplexNonleafRoleChildBank.tapes s c) :=
+  Fin.castAdd 7 (Fin.castAdd 2 (CompactComplexNativeCodecFrame.originalSlot (s:=10+s) (c:=c) i))
+
+private theorem scalar_slot_generic {c : ℕ} (i : Fin 43) :
+    (CompactComplexNonleafSpectatorTargetRestore.entryEquiv s c).symm
+      (Fin.castAdd 9 (CompactComplexNativeCodecFrame.originalSlot (s:=10+s) (c:=c) i))=
+      scalarSlot (c:=c) i := Fin.ext rfl
+
+private theorem scalar_slot (i : Fin 43) :
+    (CompactComplexNonleafSpectatorTargetRestore.entryEquiv s roles).symm
+      (Fin.castAdd 9 (CompactComplexNativeCodecFrame.originalSlot (s:=10+s) (c:=roles) i))=
+      scalarSlot (c:=roles) i := scalar_slot_generic i
+
+private theorem scalar_ne_saved (i : Fin 43) (pc : Fin s) : scalarSlot (c:=roles) i≠publicSaved pc := by
+  intro he
+  have hv := congrArg Fin.val he
+  have hp := pc.isLt
+  simp only [scalarSlot,CompactComplexNativeCodecFrame.originalSlot,publicSaved,storage,
+    CompactComplexSpectatorTargetBank.oldSlot,CompactComplexControllerNativeFrame.storageSlot,
+    Fin.val_castAdd,Fin.val_natAdd] at hv
+  omega
+
+theorem popped_scalarPart (u : Tapes (CompactComplexNonleafRoleChildBank.tapes s roles) 2)
+    (pc : Fin s) (older : ℤ → Fin 6) (top : ℤ) :
+    CompactComplexSourceReadyChildReturnPath.scalarPart (popped u pc older top)=
+      CompactComplexSourceReadyChildReturnPath.scalarPart u := by
+  apply congrArg₂ Tapes.mk <;> funext i
+  all_goals simp only [CompactComplexSourceReadyChildReturnPath.permanent,SharedBank.payload,Tapes.reindex,
+    scalar_slot,popped,setTape,Function.update_of_ne (scalar_ne_saved i pc)]
+
 /-- A saved-PC pop retains every actual controller projection. -/
 theorem popped_control_read (u : Tapes (CompactComplexNonleafRoleChildBank.tapes s roles) 2)
     (pc : Fin s) (older : ℤ → Fin 6) (top : ℤ) (i : Fin 43) :
@@ -93,6 +147,22 @@ variable {sh : CompactGadgetReservationShape.Shape} {stage : ActivePrefixStagePa
       pcStack origin (call::calls) v)
     (hslots : stage.slots=NativeEndpointCharacterRoles.arity) (hd : roles∣rows)
     (older : ℤ → Fin 6) (top : ℤ)
+
+theorem popped_raw_source :
+    Placement.active CompactComplexNonleafRoleParentContinuation.placement
+      (popped (completed h hslots hd call) pcStack older top)=
+      CompactNativeRoleOriginal.bank (CompactComplexNativeCodec.raw stage rows ell metadataP)
+        (CompactNativeRoleReservedBridge.sourcePayload sh rows ell
+          (CompactComplexSourceReadyCompletedChildBoundary.result h hslots hd call) roles) :=
+  (popped_raw_active (completed h hslots hd call) pcStack older top).trans
+    (CompactComplexSourceReadyCompletedChildBoundary.completed_raw_source h hslots hd call)
+
+theorem popped_scalar :
+    CompactComplexSourceReadyChildReturnPath.scalarPart
+      (popped (completed h hslots hd call) pcStack older top)=
+      ActiveRepairRankHeadersCommands.bank h.scalar :=
+  (popped_scalarPart (completed h hslots hd call) pcStack older top).trans
+    (CompactComplexSourceReadyCompletedChildBoundary.completed_scalar h hslots hd call)
 
 theorem popped_control28 :
     (controlPart (popped (completed h hslots hd call) pcStack older top)).head 28=0 ∧
