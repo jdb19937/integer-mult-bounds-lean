@@ -81,8 +81,9 @@ captures now derive the saved header, live, target and payload references.
 Corrected source setup, scalar/basis events and completed-child finalization
 preserve settled frames on their actual reached witnesses. The recursive
 return adapter derives its parent grid and physical budget from child
-tensor semantics and actual ledgers; those semantics, balanced recursive
-restoration and target coverage still need the full event induction. The actual ordered
+tensor semantics and actual ledgers. Balanced physical return now preserves
+settled ancestor frames on the returned and inverse-basis reached witnesses;
+child semantics and target coverage still need the full event induction. The actual ordered
 site trace now retains every original compiler wire and both frames, including
 terminal sink incidences. The actual interleaved child-call and scalar schedule
 now has exact original compiler semantics on every wire array. Recursive tape
