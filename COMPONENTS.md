@@ -6811,6 +6811,12 @@ Schönhage–Strassen multiplication, the fast multiplier used for the packed pr
   slots (`step_prefix`, `step_top`, `step_chunk`, `step_opp_prefix`, `step_opp_top`,
   `step_opp_chunk`).
 
+- `Schoenhage/DriverWords.lean`, `Schoenhage/DriverBank.lean`,
+  `Schoenhage/DriverCalls.lean`: §6 task 6 plumbing: joining word lists
+  (`runs_joinAll`); the drivers' bank of named tapes and the twist block
+  (`dstate`, `update_nm`, `update_tw`); slot maps for the twist, prefix-round, layer
+  and layout primitives with what each call sees and changes.
+
 - `Schoenhage/PointwiseRow.lean`: at the main sizes `p = 6 lg n`, `r = 2^ℓ`
   the pointwise program's time is at most a constant times `T p` times the
   `packedProducts` row times the `log log` overhead of
