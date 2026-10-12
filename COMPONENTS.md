@@ -6747,6 +6747,14 @@ Schönhage–Strassen multiplication, the fast multiplier used for the packed pr
   products' `log log (r p)` factor is absorbed by `ℓ d^λ'`; hence
   `transformTarget P → convolutionTarget P` (`convolution_of_transform`).
 
+- `Schoenhage/PrefixRoundMath.lean`: §6 task 5, the prefix-slot round on
+  numerators: a butterfly on bit `P` is the exact sum and difference of paired
+  records one grid finer (`arrayVec_bflyRecs`, `arrayVec_bflysRecs`), one
+  truncation toward zero by `2^s` is grid rounding (`arrayVec_truncRecs`); in the
+  paper's layout prefix slot `h` occupies the `D` bits from `DqK + hD`
+  (`paperPerm_σ_prefix`), so its computed round is the twist of the truncated exact
+  butterflies on those bits (`prefix_round_eq`).
+
 - `Schoenhage/PointwiseRow.lean`: at the main sizes `p = 6 lg n`, `r = 2^ℓ`
   the pointwise program's time is at most a constant times `T p` times the
   `packedProducts` row times the `log log` overhead of
