@@ -2649,6 +2649,7 @@ import IntegerMultBounds.Machine.CompactComplexActualBasisPullback
 import IntegerMultBounds.Spec.SyntheticTransform
 import IntegerMultBounds.Spec.SyntheticTransformFacts
 import IntegerMultBounds.Spec.SyntheticConvolution
+import IntegerMultBounds.Spec.SyntheticConvolutionFacts
 import IntegerMultBounds.Spec.SimultaneousLayer
 import IntegerMultBounds.Spec.SimultaneousLayerFacts
 import IntegerMultBounds.Machine.CompactComplexAlignedReachedChildReturnPath

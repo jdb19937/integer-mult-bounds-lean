@@ -6756,6 +6756,11 @@ Schönhage–Strassen multiplication, the fast multiplier used for the packed pr
   address subtraction, error `√2 M (3ℓ + 1) 2^(-p)`, output width `w + log₂ M`
   with `Γ(w_M)` on a descriptor tape, the paper's cost (`MeetsConvolution`,
   `convolutionTarget`). Definitions only.
+- `Spec/SyntheticConvolutionFacts.lean`: the convolution theorem
+  `F⁺(F⁻f · F⁻g) = M⁻²(f ⋆ g)` over the record addresses (`oppT_mul_fwdT`), in
+  every stored layout (`oppExact_pointwise`); with forward and opposite transforms
+  within `√2 ℓ 2^(-p)` and rounded products `Q_p(fg/r)` between them, `M` times
+  the result is within `√2 M (3ℓ + 1) 2^(-p)` of `ℳ_r(f, g)` (`conv_error`).
 - `Spec/SimultaneousLayer.lean`: the statement of the paper's simultaneous
   normalized butterfly layer: header `Γ(p)Γ(d)Γ(r)Γ(D)Γ(P)Γ(S)Γ(K)Γ(ρ+1)Γ(w)`, an
   array on `[P] × [2^K]^D × [S]`, `ℋ` the tensor of `H₀` on bit `ρ` of every chunk
