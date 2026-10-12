@@ -29,7 +29,7 @@ Fixes parameter margins, proves the asymptotic estimates, and supplies the prime
 
 Shows rounding and carries recover the exact product with exactly twice-length output.
 
-- Math milestone: `IntegerMultBounds.ExactRecoveryOutput.outputCorrect_of_computed` — Once the recovered word computed from the approximate transform pipeline is installed at tape zero, the configuration satisfies the EndToEnd output contract (exactly 2n bits, value x*y).
+- Math milestone: `IntegerMultBounds.ExactRecoveryOutput.eventually_outputCorrect_of_sizes` — For all large k, under the size relations, the rounded, carried output computed from the approximate pipeline has exactly 2n bits and value x*y, so installing it at tape zero satisfies outputCorrect. Combines `ExactRecoveryOutput.outputCorrect_of_computed`, `ExactRecoveryOutput.computed_output_spec`, `ExactRecovery.margins_of_sizes`, `ExactRecovery.eventually_threshold`.
 - Tape milestone: `IntegerMultBounds.Machine.RecoverOutput.runs_recover` — A fixed literal program rounds the computed convolution coefficients, propagates carries, and installs the exactly 2n-bit product word at tape zero within a cost linear in the volume.
 
 | Subcomponent | Files | Mathematics | Tape | Notes |

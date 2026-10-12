@@ -27,7 +27,7 @@ replaces the Harvey–van der Hoeven recursion. The Harvey–van der Hoeven recu
 
 Proves the DFT, FFT, fixed-point error budget, tensor approximation and synthetic convolution approximations the other sections use.
 
-- Math milestone: `IntegerMultBounds.NLogN.synthConvNormD_approx` — Proposition 3.4: the numerical d-dimensional synthetic convolution pipeline approximates the normalized convolution (1/T') u*v with absolute error T' r (3 sum log2 t_i + 2)/2^p.
+- Math milestone: `IntegerMultBounds.NLogN.fourier_foundations` — The DFT convolution theorem and inversion, radix-2 FFT cost counts, the fixed-point pipeline error budget, the d-dimensional tensor approximation law, exactness of the plain FFT multiplier, the clamp approximation, and Proposition 3.4 for the d-dimensional synthetic convolution all hold. Combines `NLogN.dft_cconv`, `NLogN.dft_dft`, `NLogN.fftCost_le`, `NLogN.pipeline_exact_recovery`, `NLogN.approxMap_tensorD`, `NLogN.mulFixed_correct`, `NLogN.approxMap_clamp`, `NLogN.synthConvNormD_approx`.
 - Tape milestone: —
 
 | Subcomponent | Files | Mathematics | Tape | Notes |
@@ -44,7 +44,7 @@ Proves the DFT, FFT, fixed-point error budget, tensor approximation and syntheti
 
 Proves one level modulo 2^N + 1 correct and bounds the recursion's cost by O(N log N log log N).
 
-- Math milestone: `IntegerMultBounds.Schoenhage.ssMul_correct` — The functional Schoenhage-Strassen recursion exactly as the tapes run it computes x y mod 2^N + 1 for every scheduled size N and residues x, y.
+- Math milestone: `IntegerMultBounds.Schoenhage.ssMul_correct_cost` — For every scheduled N and residues x, y < 2^N+1, ssMul N x y = x*y mod 2^N+1, and the recursion's cost is at most C (N+1)(log N+1)(log log N+1). Combines `Schoenhage.level_correct`, `Schoenhage.ssMul_correct`, `Schedule.cost_le`.
 - Tape milestone: —
 
 | Subcomponent | Files | Mathematics | Tape | Notes |
@@ -57,8 +57,8 @@ Proves one level modulo 2^N + 1 correct and bounds the recursion's cost by O(N l
 
 Builds word tapes, a streaming primitive, a correct program compiler and modular residue arithmetic.
 
-- Math milestone: `IntegerMultBounds.Schoenhage.FMachine.hoare` — A HoareTime contract proved for a machine over any finite state type is a contract for its compiled literal program.
-- Tape milestone: `IntegerMultBounds.Schoenhage.compile_correct` — Every big-step execution of a word program is a run of the compiled literal program within its cost.
+- Math milestone: `IntegerMultBounds.Schoenhage.wordLayer_sound` — Compiled finite-type machines have the same runs as the source machine and inherit its HoareTime contracts, and the weakest-precondition evaluator for word programs is sound. Combines `FMachine.run_toProgram`, `FMachine.hoare`, `Schoenhage.wp_sound`.
+- Tape milestone: `IntegerMultBounds.Schoenhage.wordLayer_runs` — Every big-step word-program execution is a run of the compiled literal program within its cost, the streaming transducer has its exact run and step count, and modular sub, add and multiply-by-2^t mod 2^N+1 run exactly in O(N) steps. Combines `Schoenhage.compile_correct`, `Schoenhage.stream_run`, `Schoenhage.runs_subMod`, `Schoenhage.runs_addMod`, `Schoenhage.runs_mulPow2`.
 
 | Subcomponent | Files | Mathematics | Tape | Notes |
 | --- | --- | --- | --- | --- |
@@ -71,7 +71,7 @@ Builds word tapes, a streaming primitive, a correct program compiler and modular
 
 Runs transform layers, splitting, recombination and batched recursion on tapes, exact and within the cost bound.
 
-- Math milestone: `IntegerMultBounds.Schoenhage.upList_nextBatch` — A level's up-sweep applied to the next level's products of its down-sweep batch gives ssMul pair by pair, so level-batched recursion computes ssMul.
+- Math milestone: `IntegerMultBounds.Schoenhage.tapeRecursion_eq_ssMul` — The layer-by-layer forward/inverse transforms, the up-sweep and level-batched recursion exactly as the tapes run them compute ssMul, with step count at most the schedule recurrence plus a linear term. Combines `Schoenhage.fwdIter_eq_fwd`, `Schoenhage.invIter_eq_inv`, `Schoenhage.levelTape_eq`, `Schoenhage.upList_nextBatch`, `Schoenhage.ssCost_le`.
 - Tape milestone: `IntegerMultBounds.Schoenhage.pointwise_le_packedProducts` — The pointwise-product program installed in the main transform pipeline costs, over all its calls on n-bit inputs, eventually at most a constant times V n times the packedProducts cost-table row.
 
 | Subcomponent | Files | Mathematics | Tape | Notes |
@@ -85,8 +85,8 @@ Runs transform layers, splitting, recombination and batched recursion on tapes, 
 
 Proves lem:signed-ring-product on the literal machine in the paper's formats and bridges it to MeetsPointwise.
 
-- Math milestone: `IntegerMultBounds.Schoenhage.ringOut_records` — The reversed output words of the ring product are exactly the paper's record Q_p(fg/r) of the negacyclic product in Z[i][y]/(y^r+1).
-- Tape milestone: `IntegerMultBounds.Schoenhage.pointwise_polylog` — pointwisePolylogTarget 1: a fixed literal program meets the paper-format pointwise-product statement (MeetsPointwise) within O(T p log(rp) loglog(rp)) plus the header length.
+- Math milestone: `IntegerMultBounds.Schoenhage.ringProduct_records` — Packing operands into digits, four products mod 2^N+1 and decoding give the negacyclic product coefficients, and the reversed output words are exactly the paper's record Q_p(fg/r). Combines `Schoenhage.ev_ncMul`, `Schoenhage.encode_res`, `Schoenhage.decode_pieces`, `Schoenhage.ringOut_records`.
+- Tape milestone: `IntegerMultBounds.Schoenhage.ring_pointwise_polylog` — polylogTarget 1 ∧ pointwisePolylogTarget 1: fixed literal programs meet lem:signed-ring-product and the transform-header pointwise statement within O(T p log(rp) loglog(rp)) plus the header. Combines `Schoenhage.ring_polylog`, `Schoenhage.pointwise_polylog`.
 
 | Subcomponent | Files | Mathematics | Tape | Notes |
 | --- | --- | --- | --- | --- |
@@ -98,7 +98,7 @@ Proves lem:signed-ring-product on the literal machine in the paper's formats and
 
 States the pointwise step, synthetic transforms, synthetic convolution and simultaneous layer in the paper's formats.
 
-- Math milestone: `IntegerMultBounds.Spec.SignedRingProduct.oppExact_fwdExact` — In the stored order the opposite exact transform undoes the forward one up to the factor 1/M, so the paper-format forward/opposite statements compose.
+- Math milestone: `IntegerMultBounds.Spec.SignedRingProduct.statements_consistent` — The paper-format statements are consistent: transform and ring headers read back, address bit reversal is an involution, the opposite exact transform undoes the forward one up to 1/M, and layer outputs lie in the unit disk within sqrt2 2^(-p) of H z. Combines `SignedRingProduct.transformHeader_read`, `SignedRingProduct.header_read`, `SignedRingProduct.bitrevAddr_bitrevAddr`, `SignedRingProduct.oppT_fwdT`, `SignedRingProduct.oppExact_fwdExact`, `SignedRingProduct.layerOut_norm_le`, `SignedRingProduct.layerOut_close`.
 - Tape milestone: `IntegerMultBounds.Spec.SignedRingProduct.convolution_target` — For valid transform parameters P, convolutionTarget P holds: one fixed literal program (forward transforms via simultaneous layers, pointwise products, opposite transform) meets prop:synthetic-convolution in the paper's formats within its cost.
 
 | Subcomponent | Files | Mathematics | Tape | Notes |

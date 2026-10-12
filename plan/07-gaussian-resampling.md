@@ -34,7 +34,7 @@ Proves F_s = 2^γ B F_t A with contractions A, B in one and d dimensions via Poi
 
 Gives explicit truncated maps Ã and B̃₀ with scaled error below p², including the permutation-left variant.
 
-- Math milestone: `IntegerMultBounds.NLogN.permuted_numeric_manuscript` — Lemma 7.1 with the manuscript's unclamped maps: P_s F_s = 2^gamma B0 P_t F_t A with contractions, and the explicit A~ and clamp-free B~0 = resampB0NumH (the tape targets) approximate them with errors below p^2 and map the unit disk to itself.
+- Math milestone: `IntegerMultBounds.NLogN.permuted_multi_numeric_manuscript` — For every d and axes with s_i < t_i coprime, alpha >= 2: P_s F_s = 2^gamma B0 P_t F_t A with contractions in d dimensions, and the tensor products of the explicit A~ and clamp-free B~0 = resampB0NumH approximate A and B0 with error below d p^2 and map the unit disk to itself. Combines `NLogN.permuted_numeric_manuscript`, `NLogN.permuted_multi_numeric`, `NLogN.permuted_factorization_multi`, `NLogN.approxMap_tensorZR`, `NLogN.tensorZR_ball`.
 - Tape milestone: —
 
 | Subcomponent | Files | Mathematics | Tape | Notes |
@@ -47,8 +47,8 @@ Gives explicit truncated maps Ã and B̃₀ with scaled error below p², includi
 
 Provides signed fixed-point arithmetic and record manipulation on tapes for the resampling machines.
 
-- Math milestone: `IntegerMultBounds.Machine.FixedMul.signed_result` — The truncating fixed-point multiply's result word has signed value (x*y).tdiv 2^p for w >= p+2 and |x|,|y| <= 2^p.
-- Tape milestone: `IntegerMultBounds.Schoenhage.fastMul_hoare` — FixedMul's 12-tape contract holds for the fast program (Schoenhage-Strassen inner product plus a blank 91-tape block) within fmTime w = O(w log w log log w) steps; consumed by the *Fast line machines via placeMul_hoare.
+- Math milestone: `IntegerMultBounds.Machine.FixedMul.signed_word_ops` — For w-bit two's-complement words: sign-extending add gives the signed sum mod the accumulator width, negate gives the negated signed value, and the truncating multiply gives (x*y).tdiv 2^p for w >= p+2, |x|,|y| <= 2^p. Combines `TwosComplement.signed_addMod`, `TwosComplement.signed_negWord`, `FixedMul.signed_result`.
+- Tape milestone: `IntegerMultBounds.Schoenhage.wordRecordLayer_hoare` — HoareTime contracts with explicit bounds hold for the literal add, negate, fast multiply (O(w log w log log w)), record rewind, copy, back, join and split machines used by the resampling line machines. Combines `SignExtendAdd.add_hoare`, `Negate.neg_hoare`, `Schoenhage.fastMul_hoare`, `RecordRewind.rewind_hoare`, `RecordCopy.walk_hoare`, `BackWord.back_hoare`, `PairJoin.join_hoare`, `PairJoin.split_hoare`.
 
 | Subcomponent | Files | Mathematics | Tape | Notes |
 | --- | --- | --- | --- | --- |
@@ -60,7 +60,7 @@ Provides signed fixed-point arithmetic and record manipulation on tapes for the 
 Computes integer weight tables within two units of the scaled weights from π and exp on tapes.
 
 - Math milestone: `IntegerMultBounds.Resampling.WeightTable.tables_ok` — The integer tables tableA, tableE, tableD lie within 2 units of 2^p times the Gaussian resampling weights, exponentials and d' entries (Lemma 7.1 with computed tables).
-- Tape milestone: `IntegerMultBounds.Resampling.TableValue.b0_tables` — The B~0 machine fed with the words written by the table machines (E, D and halving tables) outputs exactly the tabled numerical map resampB0NumW with the tables of tables_ok; a_tables is the companion for the A table.
+- Tape milestone: `IntegerMultBounds.Resampling.TableValue.tables_on_tapes` — The literal pi, exp and table machines write the A, E, D and halving tables as w-bit word tapes within their step bounds, and these words fed to the A~ window sums and the B~0 machine give exactly resampANumW and resampB0NumW with the tables of tables_ok. Combines `PiTape.pi_hoare`, `TabATape.tableA_hoare`, `TabETape.tableE_hoare`, `TabDTape.tableD_hoare`, `TableValue.a_tables`, `TableValue.b0_tables`.
 
 | Subcomponent | Files | Mathematics | Tape | Notes |
 | --- | --- | --- | --- | --- |
@@ -70,8 +70,8 @@ Computes integer weight tables within two units of the scaled weights from π an
 
 Runs C, Ã, Ẽ, the Neumann loop and B̃₀ as fixed machines whose outputs equal the numerical maps.
 
-- Math milestone: `IntegerMultBounds.Resampling.B0Value.b0_value_W` — The words written by the assembled B~0 = D~' J~' C machine from integer weight tables are exactly the numerators of B~0 with those tables.
-- Tape milestone: `IntegerMultBounds.Resampling.B0Tape.b0_hoareF` — The 42-tape B~0 machine with the quasi-linear multiply (join, select, split, halve, p Neumann steps, D~') produces the B~0 output words within b0BoundF steps.
+- Math milestone: `IntegerMultBounds.Resampling.B0Value.maps_value_W` — From integer weight tables, the words written by the A~ window-sum machine are exactly the numerators of A~ and the words written by the assembled B~0 = D~' J~' C machine are exactly the numerators of B~0 with those tables. Combines `WindowSum.accumulators_eq`, `TabledMaps.accumulators_eq_W`, `OffDiagSum.accumulators_eq`, `NeumannWords.resampJNumH_eq_iter`, `B0Value.b0_value_W`.
+- Tape milestone: `IntegerMultBounds.Resampling.B0Tape.maps_hoareF` — The literal fast A~ line machine and the 42-tape B~0 machine halt within their bounds (lineBound-type and b0BoundF) with output words equal to the numerators of A~ and B~0 for the supplied weight tables. Combines `GaussianLine.line_hoareF`, `B0Tape.b0_hoareF`, `WindowSum.accumulators_eq`, `B0Value.b0_value_W`.
 
 | Subcomponent | Files | Mathematics | Tape | Notes |
 | --- | --- | --- | --- | --- |
@@ -85,7 +85,7 @@ Runs C, Ã, Ẽ, the Neumann loop and B̃₀ as fixed machines whose outputs equ
 
 Applies the one-dimensional maps along each axis within the cost-table budget.
 
-- Math milestone: `IntegerMultBounds.LineCost.gaussian_lines_eq` — Lemma 7.2 cost: applying the Gaussian line cost C t_i p^(3/2+delta) alpha along every line of every axis totals the volume T p times the cost-table row gaussianLines.
+- Math milestone: `IntegerMultBounds.LineCost.tensor_line_costs` — Gaussian line cost along every line of every axis totals T p times gaussianLines, there are at most 2 d T / r lines, and polynomial per-line setup is eventually at most any fixed fraction of T p. Combines `LineCost.linewise_sum`, `LineCost.gaussian_lines_eq`, `LineCost.lines_le`, `LineCost.setup_isLittleO`, `LineCost.eventually_setup_le`.
 - Tape milestone: `IntegerMultBounds.Spec.SignedRingProduct.tensorResampling_meets` — A fixed literal program (axis driver over a supplied script of axis and swap records) applies A~ (resp. B~0) along every axis of the padded d-dimensional record array, outputs exactly the tensor of the one-dimensional numerical maps, and halts within the gaussianLines and axisLayouts rows times T p plus o(T p) setup.
 
 | Subcomponent | Files | Mathematics | Tape | Notes |

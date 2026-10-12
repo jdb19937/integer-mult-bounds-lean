@@ -25,8 +25,8 @@ Section 5 realizes one level of simultaneous butterfly layers on a multitape mac
 
 Runtime-counted gather/transduce lines execute the signed packed radix updates, and on top of them the guard gadget, ideal toggle and repeated offset loads compute packed control words exactly from original q/b/n headers in linear time.
 
-- Math milestone: `IntegerMultBounds.Machine.BinaryPackedEarlyCorrect.packed_entry` — On the serialized array, the four early offset actions send every address to the cell whose target and temporary words are exactly packedEarly of the radix-2^q/2^b inputs, so the packed control words are computed exactly.
-- Tape milestone: `IntegerMultBounds.Machine.BinaryPackedEarlyRunPlaced.runs` — The complete early four-load machine on arbitrary caller ports transforms the reserved array in place, retains all other caller tapes, returns its native workspace blank, and runs within the BinaryPackedEarlyRun cost.
+- Math milestone: `IntegerMultBounds.Machine.BinaryPackedControls.packed_controls` — From the original q/b/n headers, both the early and later packed control actions send every address to the cell holding exactly packedEarly and packedLate of its radix-2^q/2^b inputs. Combines `BinaryPackedEarlyCorrect.packed_entry`, `BinaryPackedLatePermutation.run_fields`, `BinaryPackedLateData.good_value`, `CountedPackedLateRun.runs_value`.
+- Tape milestone: `IntegerMultBounds.Machine.BinaryPackedControlsPlaced.runs_linear` — One placed fixed machine computes both early and later packed control words in place on arbitrary caller ports from the original headers, retains caller tapes, returns its workspace blank, and runs within C times the array volume (times the certified width factor). Combines `BinaryPackedEarlyRunPlaced.runs`, `BinaryPackedEarlyRunBudget.uniform_bound`, `CountedPackedLatePlacement.late_hoare`, `CountedPackedLateRun.runs_guarded`.
 
 | Subcomponent | Files | Mathematics | Tape | Notes |
 | --- | --- | --- | --- | --- |
@@ -220,7 +220,7 @@ Runtime-counted gather/transduce lines execute the signed packed radix updates, 
 
 The early and late packed control programs run on the actual original row layout: active-target rotations, prefix offset loads, dirty-control parity/correction/negation and compact T/back conjugations, all with exact semantics and clean workspace.
 
-- Math milestone: `IntegerMultBounds.Machine.ActivePrefixDirtyControlLateGlobal.destination_actual` — The actual twelve-swap, ten-rotation later control schedule realizes exactly the global lateActual permutation consumed by repair, on every original array address.
+- Math milestone: `IntegerMultBounds.Machine.ActivePrefixControlScheduleGlobal.destinations_actual` — On the original row layout, the early and the later packed control schedules realize exactly the global earlyActual and lateActual permutations on every array address. Combines `ActivePrefixEarlySequenceGlobal.destination_actual`, `ActivePrefixDirtyControlLateGlobal.destination_actual`, `ActivePrefixEarlySequenceGlobal.entry`, `ActivePrefixDirtyControlLateGlobal.entry`.
 - Tape milestone: `IntegerMultBounds.Machine.ActivePrefixControlScheduleOriginal.runs` — From the original unchanged layout with reservation and stage widths synthesized on tape, one fixed machine runs the full early and later packed control schedules, equals the exact global early/late permutations on every address, cleans all generated headers and scratch, and stays within the certified width-exponent runtime.
 
 | Subcomponent | Files | Mathematics | Tape | Notes |
@@ -503,8 +503,8 @@ The early and late packed control programs run on the actual original row layout
 
 Addresses where the packed guard fails are counted (density at most 5/(128 p^3)), and their records are keyed, extracted, sorted and reinserted so every destination is exactly the ideal permutation, at cost bounded by three logical volumes.
 
-- Math milestone: `IntegerMultBounds.Compact.early_pipeline_exact` — Keying, extracting, sorting and reinserting the exceptional (failed-guard) records turns the early packed program into exactly the ideal selected-bit toggle on the whole stream.
-- Tape milestone: `IntegerMultBounds.Machine.ActiveRepairLayoutRecordsFullEarlyPlaced.runs` — The complete early low/high action with exceptional-address repair, placed on arbitrary caller ports, writes the fully repaired array, retains every other tape, restores its private bank blank, and runs within the density-bounded FullEarlyRun cost.
+- Math milestone: `IntegerMultBounds.Compact.repair_pipeline_exact_density` — For both the early and late packed programs, the key/extract/sort/reinsert pipeline yields exactly the ideal toggle, the extracted records are at most 5/(128 p^3) of the volume, and the pipeline cost is within three logical volumes. Combines `Compact.early_pipeline_exact`, `Compact.late_pipeline_exact`, `Compact.pipeline_cost_le`, `Compact.late_extracted_le`, `Compact.dyadic_actual_repair_density`.
+- Tape milestone: `IntegerMultBounds.Machine.ActiveRepairLayoutRecordsFullPlaced.runs_linear` — The placed early and late low/high actions with exceptional-address repair each write the fully repaired array, retain other tapes, restore the private bank blank, and run within a constant times the logical volume under the density bound. Combines `ActiveRepairLayoutRecordsFullEarlyPlaced.runs`, `ActiveRepairLayoutRecordsFullLatePlaced.runs`, `ActiveRepairLayoutRecordsFullEarlyBudget.uniform_bound`, `ActiveRepairLayoutRecordsFullLateBudget.uniform_bound`.
 
 | Subcomponent | Files | Mathematics | Tape | Notes |
 | --- | --- | --- | --- | --- |
@@ -760,7 +760,7 @@ Addresses where the packed guard fails are counted (density at most 5/(128 p^3))
 
 One global row padding and the gadget reservation supply the row headers, reserved capacity and guard room that every stage needs, with all sizes derived from the actual multiplier parameters d, K, p and costing at most a constant times original volume.
 
-- Math milestone: `IntegerMultBounds.Machine.CompactActualStageInputs.eventually_allowances` — For all large n, every actual stage at every padded row depth satisfies the repair-record payload allowance and both early and late repair densities at constant one, derived from the actual d, K, p choices.
+- Math milestone: `IntegerMultBounds.Machine.CompactActualStagePadding.eventually_ready_allowances` — For all large n, global row padding and reservation make every actual stage at every row depth Ready with its repair allowances and densities at constant one, and the padded reserved volume is at most a constant times the original volume. Combines `CompactActualStageGeometry.eventually_ready`, `CompactActualStageInputs.eventually_allowances`, `CompactGlobalRowPadding.rowsAt_le_twice_original`, `CompactReservationCutoff.padding_cost`, `CompactActualNativeBudget.charged_volume`.
 - Tape milestone: `IntegerMultBounds.Machine.CompactRowReservationStageRun.runs` — From the original unpadded array one fixed machine performs global row padding, role splitting and gadget reservation, synthesizes the stage widths, coordinate ranges and packing parameters, and hands them to the early/later control and repair schedules with exact output, clean workspace and constant-factor linear cost.
 
 | Subcomponent | Files | Mathematics | Tape | Notes |
@@ -842,8 +842,8 @@ One global row padding and the gadget reservation supply the row headers, reserv
 
 Each butterfly stage is compiled into literal binary row programs and stage pairs whose physical execution realizes the required coordinate change and its inverse, and the complex25 phase words map onto these stages with exact address controls.
 
-- Math milestone: `IntegerMultBounds.Machine.CompactNativeTensorPhaseCoordinates.coefficient_phase` — At the row physically reached by the native basis word, one signed rotation multiplies each coefficient by the product of all original coordinate phases of the complex25 edge.
-- Tape milestone: `IntegerMultBounds.Machine.CompactActualNativeBudget.eventually_correct` — One uniform fixed native stage machine executes every actual descendant stage, mapping each array to its exact stage destination, with cost times c^j bounded by a constant times the original volume and the certified stage exponent factor.
+- Math milestone: `IntegerMultBounds.Machine.CompactNativeStagePhaseCoordinates.stage_and_phase` — The literal native basis word of each stage sends every row to the coordinate change given by its binary row program, its reverse restores the original rows, and the one coefficient rotation at the reached row is the full complex25 edge tensor phase. Combines `ActivePrefixStageNativePairCoordinates.run_coordinates`, `BinaryRowProgram.reverse_restores`, `ActivePrefixStageNativePairInverse.reverse_restores`, `CompactNativeTensorPhaseCoordinates.coefficient_phase`.
+- Tape milestone: `IntegerMultBounds.Machine.CompactActualNativePhaseStage.eventually_correct` — One uniform fixed machine executes every actual descendant stage forward and in reverse, including its complex25 phase controls, mapping each array to its exact stage destination (and back) with cost times c^j at most a constant times original volume and the certified stage factor. Combines `CompactActualNativeBudget.eventually_correct`, `ActivePrefixStageNativePairInverse.exists_roundtrip_stage_program`, `CompactActualComplexPhase.eventually_bounded`.
 
 | Subcomponent | Files | Mathematics | Tape | Notes |
 | --- | --- | --- | --- | --- |
@@ -955,8 +955,8 @@ Each butterfly stage is compiled into literal binary row programs and stage pair
 
 Fixed tape machines read and write signed radix complex records, perform the butterfly and raw linear combinations, and multiply by the sparse and all-axis unit phases over whole polynomial streams with exact numerical semantics.
 
-- Math milestone: `IntegerMultBounds.Machine.ButterflyStreamSemantics.result_grid` — A butterfly on two signed radix complex records on the dyadic grid yields records whose decoded values are the exact butterfly outputs and lie on the next bounded grid with precision raised by one.
-- Tape milestone: `IntegerMultBounds.Machine.CompactNativeRoleConjugatedActual.eventually_exists_program` — One fixed program eventually executes every actual conjugated unit-phase lifecycle on the native role bank for every descendant, role and edge, producing the exact phased polynomial payload within a constant times the stage scale.
+- Math milestone: `IntegerMultBounds.Machine.ButterflyPhaseRecordSemantics.stream_exact` — On whole signed radix complex record streams, the butterfly and raw linear combinations decode to their exact outputs on the next bounded grid, and sparse and all-axis unit-phase multiplications decode to the exact phased values. Combines `ButterflyStreamSemantics.result_exact`, `ButterflyStreamSemantics.result_grid`, `UnitPhaseSigned.words_phase`, `CompactNativeTensorPhaseCoordinates.coefficient_phase`.
+- Tape milestone: `IntegerMultBounds.Machine.CompactNativeRoleButterflyPhaseActual.eventually_exists_program` — One fixed program eventually executes, for every actual descendant, role and edge, both the butterfly record arithmetic and the conjugated unit-phase lifecycle on the native role bank with exact output payload and time within a constant times the stage scale. Combines `CompactNativeRoleConjugatedActual.eventually_exists_program`, `ButterflyStreamOriginal.runs_linear`, `ButterflyStreamRun.runs_linear`.
 
 | Subcomponent | Files | Mathematics | Tape | Notes |
 | --- | --- | --- | --- | --- |
@@ -1172,8 +1172,8 @@ Fixed tape machines read and write signed radix complex records, perform the but
 
 Single-axis butterfly passes (forward, inverse, fallback and reserved) run over serialized arrays with spectator rows and leaves preserved, and the cyclic native role layout serializes, transfers and merges role arrays for child calls.
 
-- Math milestone: `IntegerMultBounds.Machine.CompactSpectatorInheritedGrid.directional_semantics` — A forward or inverse directional leaf pass over arity^k axes keeps the array on the inherited bounded grid and its decoded values equal the Walsh kernel run on the input, at every row and polynomial spectator.
-- Tape milestone: `IntegerMultBounds.Machine.CompactNativeRoleStoppedChildCaller.runs` — The stopped child caller expands the node header, runs the complete guarded role child on the selected native role, restores the header and leaves the exact result word in that role, within its paid cost.
+- Math milestone: `IntegerMultBounds.Machine.CompactSpectatorInheritedGrid.all_direction_semantics` — Every single-axis pass (forward, inverse, fallback, reserved) keeps the array on the inherited bounded grid and decodes to the Walsh kernel run on the input at every row and polynomial spectator. Combines `CompactSpectatorInheritedGrid.directional_semantics`, `CompactFallbackSemantics.correct`, `CompactFallbackInverseSemantics.decoded_run_from`.
+- Tape milestone: `IntegerMultBounds.Machine.CompactNativeRoleAxisPasses.runs_linear` — Fixed machines run each forward, inverse, fallback and reserved axis pass on the native role layout, including role serialization, transfer and merge for child calls, with exact result words, clean workspace and cost linear in the role volume. Combines `CompactNativeRoleStoppedChildCaller.runs`, `CompactFallbackAxisRun.runs`, `CompactFallbackActualBudget.eventually_cost`, `CompactNativeRoleConjugatedActual.eventually_exists_program`.
 
 | Subcomponent | Files | Mathematics | Tape | Notes |
 | --- | --- | --- | --- | --- |
@@ -1322,8 +1322,8 @@ Single-axis butterfly passes (forward, inverse, fallback and reserved) run over 
 
 The base-15625 partition fixes the recursion tree and call schema; a controller descends and ascends the exponent, enumerates root pieces, builds child headers, maintains return stacks and applies the stopping test.
 
-- Math milestone: `IntegerMultBounds.Networks.ComplexRecursiveCallSchema.calls_rankSum` — The fixed recursive call schema has exactly as many child-call sites as the proved complex25 network rank sum.
-- Tape milestone: `IntegerMultBounds.Machine.CompactComplexControllerChildReturn.runs` — The internal-child return continuation physically erases child headers, pops the saved parent descriptors and increments the controller exponent while retaining the child's computed payload, within its stated time.
+- Math milestone: `IntegerMultBounds.Networks.ComplexRecursiveCallSchema.schema_complete` — The base-15625 partition covers the active axes with fitting pieces, the call schema lists every child call exactly once with rank-sum many sites, and the stop test is exactly the manuscript beta=1/1000 criterion. Combines `ComplexRecursiveCallSchema.calls_rankSum`, `ComplexRecursiveCallSchema.calls_complete`, `ComplexRecursiveCallSchema.stopped_iff`, `CompactComplexRecursiveGeometry.widths_sum`, `CompactComplexRecursiveGeometry.piece_fits`.
+- Tape milestone: `IntegerMultBounds.Machine.CompactComplexControllerCycle.runs` — The fixed controller descends the exponent, builds and pushes child headers, applies the stop branch, and on return pops the parent descriptors and ascends, retaining the child payload, within its stated linear time. Combines `CompactComplexControllerChildPrefix.runs`, `CompactComplexControllerStopBranch.decision`, `CompactComplexControllerChildReturn.runs`.
 
 | Subcomponent | Files | Mathematics | Tape | Notes |
 | --- | --- | --- | --- | --- |
@@ -1376,8 +1376,8 @@ The base-15625 partition fixes the recursion tree and call schema; a controller 
 
 Gaussian bounded arithmetic keeps every scalar on an exact dyadic grid; named scalar lifecycles, spectator promotion, live denominators and complete stopped-call roundtrips execute on tapes with Path-derived precision and paid volume bounds.
 
-- Math milestone: `IntegerMultBounds.Machine.CompactComplexScalarSequenceSemantics.sequence_values` — Executing a complete named scalar-array sequence gives exactly the original complex circuit's output, with every intermediate guard paid by one initial reserve and one denominator step per row.
-- Tape milestone: `IntegerMultBounds.Machine.CompactComplexStoppedAlignedBudget.actual_runs_linear` — A complete stopped-call roundtrip on the permanent bank (target selection, entry, codec lifecycle, stack restoration) produces the aligned child result and runs in time linear in the original native volume.
+- Math milestone: `IntegerMultBounds.Machine.CompactComplexScalarStoppedSemantics.stopped_call_values` — A complete stopped call (scalar sequences, leaf tensor and spectator promotion) yields the exact corrected tensor values on its target role with Path-derived grid bounds and advanced live denominators, leaving other roles' decoded values unchanged. Combines `CompactComplexScalarSequenceSemantics.sequence_values`, `CompactComplexStoppedLeafTensorSemantics.stopped_leaf_tensor_from_path`, `CompactComplexStoppedEventProgress.stopped_prefix_from_path`.
+- Tape milestone: `IntegerMultBounds.Machine.CompactComplexStoppedAlignedBudget.actual_runs_exact` — The complete stopped-call roundtrip on the permanent bank installs on the target role exactly the corrected leaf tensor of its input, keeps spectators, grids and ledger, and runs in time linear in original native volume. Combines `CompactComplexStoppedAlignedBudget.actual_runs_linear`, `CompactComplexStoppedLeafTensorSemantics.stopped_leaf_tensor_from_path`.
 
 | Subcomponent | Files | Mathematics | Tape | Notes |
 | --- | --- | --- | --- | --- |
@@ -1478,8 +1478,8 @@ Gaussian bounded arithmetic keeps every scalar on an exact dyadic grid; named sc
 
 Nonleaf entry parks the parent payload, splits rows for the child and saves parent live/target state; return merges the child result and restores parent geometry, all wired into one fixed cyclic table with decoded PCs and paid paths.
 
-- Math milestone: `IntegerMultBounds.Machine.CompactComplexNonleafEventProgress.prefix_grid` — After a normalized nonleaf child call, spectator promotion preserves the parent's original scalar-prefix grid while the ledgers advance by the child's volume.
-- Tape milestone: `IntegerMultBounds.Machine.CompactComplexNonleafSpectatorTargetRestore.runs_linear` — The final nonleaf return boundary pops the saved parent target after spectator promotion and live commit, retaining the advanced live word, aligned payloads and all frame tapes, in linear time.
+- Math milestone: `IntegerMultBounds.Machine.CompactComplexNonleafEventProgress.entry_return_grid` — Across a whole nonleaf call (entry split, child, merge and spectator promotion) the parent keeps its original scalar-prefix grid, receives the child's exact result, and its ledgers advance by the child's volume. Combines `CompactComplexNonleafEventProgress.prefix_grid`, `CompactComplexStoppedEventProgress.stopped_prefix_from_path`.
+- Tape milestone: `IntegerMultBounds.Machine.CompactComplexNonleafRoundtrip.runs_linear` — In the fixed cyclic table, a nonleaf call parks the parent payload, splits rows, saves parent state, and on return merges the child result and restores parent geometry, live word and target, in time linear in native volume. Combines `CompactComplexNonleafRoleEntryBudget.runs_linear`, `CompactComplexNonleafSpectatorTargetRestore.runs_linear`.
 
 | Subcomponent | Files | Mathematics | Tape | Notes |
 | --- | --- | --- | --- | --- |
@@ -1536,8 +1536,8 @@ Nonleaf entry parks the parent payload, splits rows for the child and saves pare
 
 The source-ready stopping guard, leaf dispatch, complex-conjugation orientation for inverse calls and endpoint sign/phase/role corrections are assembled into the actual fixed table, with every local entry, stopped and return path proved.
 
-- Math milestone: `IntegerMultBounds.Networks.ComplexInverseExecution.corrected_inverse_network` — The complex-conjugated original corrected network, including its source and sink corrections, computes the genuine inverse full tensor transform on every wire.
-- Tape milestone: `IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedStoppedRootRun.positive_runs` — The actual corrected stopped-root table machine classifies its literal input, computes and installs the genuine leaf result and halts at the empty root guard, within its paid cost.
+- Math milestone: `IntegerMultBounds.Networks.ComplexInverseExecution.oriented_corrected_network` — For both orientations, the original corrected network (conjugated for inverse) with its source and sink corrections computes the genuine forward or inverse full tensor transform on every wire. Combines `ComplexInverseExecution.corrected_inverse_network`, `ComplexFramedConjugation.corrected_network_run`, `ComplexFramedExecution.network_run`.
+- Tape milestone: `IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedLocalPaths.runs` — Every local path of the actual source-ready corrected table (stopped leaf in either orientation, nonleaf entry and child return) runs from its literal input to its stated endpoint within its paid cost. Combines `CompactComplexSourceReadyCorrectedStoppedRootRun.positive_runs`, `CompactComplexSourceReadyCorrectedRootStoppedTablePath.root_positive_path`, `CompactComplexSourceReadyCorrectedRootStoppedTablePath.root_scalar_path`.
 
 | Subcomponent | Files | Mathematics | Tape | Notes |
 | --- | --- | --- | --- | --- |

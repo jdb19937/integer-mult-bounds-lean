@@ -16,8 +16,8 @@ Section 1 fixes what is being proved. It defines a literal multi-tape machine mo
 
 Defines the literal multi-tape machine semantics and states the EndToEnd proposition the whole development must prove.
 
-- Math milestone: `IntegerMultBounds.Machine.product_fits` — For n-bit operands the product is below 2^(2n), so the exactly twice-length output word demanded by outputCorrect and EndToEnd can hold it (used by ExactRecoveryOutput and NLogN/Multiplier).
-- Tape milestone: `IntegerMultBounds.Machine.Move.unit` — Every head move of the literal multi-tape machine shifts the head by at most one cell (used by Machine/TrackedExecution).
+- Math milestone: `IntegerMultBounds.Machine.outputCorrect_wellPosed` — For all n-bit x, y there is exactly one output word of length 2n with binaryValue x*y, so outputCorrect pins tape zero to a unique, always-achievable content and EndToEnd is a meaningful (non-vacuous) target. Combines `Machine.product_fits`, `Machine.binaryValue_lt`.
+- Tape milestone: `IntegerMultBounds.Machine.step_semantics` — One step of any literal Program writes only the scanned cell of each tape, moves each head by at most one cell, and its result is determined by the state and the scanned symbols. Combines `Move.unit`, `Machine.step_local`, `Machine.step_head_bound`.
 
 | Subcomponent | Files | Mathematics | Tape | Notes |
 | --- | --- | --- | --- | --- |

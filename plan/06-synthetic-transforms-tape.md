@@ -17,7 +17,7 @@ Section 6 supplies the transforms the main recursion applies along each axis: di
 
 Builds the ring with shift twiddles, its multidimensional FFT with error bounds, and the isometric embedding of complex vectors.
 
-- Math milestone: `IntegerMultBounds.NLogN.synth_fft_err` — The radix-2 synthetic FFT over C[y]/(y^r+1) with exact shift twiddles and per-level error at most eps is within n*eps of the exact length-2^n synthetic DFT (Lemma 3.2; used by SynthConvApprox and SynthConvApproxD).
+- Math milestone: `IntegerMultBounds.NLogN.synth_transform_bounds` — Over C[y]/(y^r+1) with shift twiddles the 1- and d-dimensional synthetic DFTs satisfy the convolution theorem and inversion, the radix-2 FFT with per-level error eps is within n*eps of them in one and d dimensions, and the twisted embedding is an isometry carrying complex convolution to synthetic convolution. Combines `NLogN.synthDFT_conv`, `NLogN.synthDFTInv_synthDFT`, `NLogN.synth_fft_err`, `NLogN.synthDFTD_conv`, `NLogN.synthDFTDInv_synthDFTD`, `NLogN.approxMap_synthDFTDNumC`, `NLogN.norm_twist`, `NLogN.synthConvG_toSynth`.
 - Tape milestone: `IntegerMultBounds.Spec.SignedRingProduct.transform_target` — For valid transform parameters P, transformTarget P holds: fixed literal programs run the forward and opposite synthetic transforms on tapes in the paper's formats with per-coefficient error below sqrt2*l*2^(-p) within the transformTarget cost.
 
 | Subcomponent | Files | Mathematics | Tape | Notes |
@@ -30,7 +30,7 @@ Builds the ring with shift twiddles, its multidimensional FFT with error bounds,
 
 Reduces arbitrary-length transforms to convolutions, exactly and approximately.
 
-- Math milestone: `IntegerMultBounds.NLogN.bluesteinApproxD_err` — The d-dimensional Bluestein pipeline with approximate chirps (error eps_a) and an approximate normalized convolution (error eps_M) computes the normalized DFT with scaled error at most eps_M + 3 eps_a + 4.
+- Math milestone: `IntegerMultBounds.NLogN.bluesteinD_exact_approx` — The d-dimensional DFT of even lengths equals the chirp-convolution-chirp pipeline exactly, and with approximate chirps (eps_a) and approximate normalized convolution (eps_M) the pipeline has scaled error at most eps_M + 3 eps_a + 4. Combines `NLogN.bluesteinD`, `NLogN.bluesteinApproxD_err`.
 - Tape milestone: `IntegerMultBounds.Spec.SignedRingProduct.bluestein_meets` — A fixed literal program multiplies each record by the chirp, calls the synthetic convolution, and multiplies by the conjugate chirp, outputting the arbitrary-length transform within the bluesteinApproxD_err error and the chirps row plus the convolution cost.
 
 | Subcomponent | Files | Mathematics | Tape | Notes |
@@ -41,7 +41,7 @@ Reduces arbitrary-length transforms to convolutions, exactly and approximately.
 
 Bounds slots, reordering exchanges, rounds, error and descriptors so a transform costs four cost-table rows.
 
-- Math milestone: `IntegerMultBounds.LayoutCost.bracket_eq_rows` — The transform cost bracket (with the convolution's log(rp) term) equals the sum of the prefix-move, chunk-exchange, simultaneous-round and packed-product cost-table rows.
+- Math milestone: `IntegerMultBounds.LayoutCost.transform_layout_bracket` — Eventually: prefix slots are at most dK, chunk reordering needs at most Dq-1 exchanges costing at most d l K^(tau-1), there are exactly l rounds with error l*sqrt2*2^(-p) staying in the disk, descriptors have length at most C_desc p, K < l, and the resulting bracket equals the sum of the four cost-table rows. Combines `LayoutCost.prefix_slots_le`, `LayoutCost.chunk_exchanges_le`, `LayoutCost.exchange_cost_le`, `LayoutCost.rounds_eq`, `LayoutCost.compIter_error`, `LayoutCost.compIter_disk`, `LayoutCost.descriptor_length_le`, `LayoutCost.eventually_K_lt_ℓ`, `LayoutCost.bracket_eq_rows`.
 - Tape milestone: `IntegerMultBounds.LayoutCost.transform_runs_le_bracket` — The literal forward and opposite transform programs, with the prefix-slot layout and chunk reordering by address exchanges, halt within T p times the bracket, hence within the four cost-table rows.
 
 | Subcomponent | Files | Mathematics | Tape | Notes |

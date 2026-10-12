@@ -26,7 +26,7 @@ The main binary interchange theorem is proved in `BinaryInterchangeRun.runs` and
 
 Proves the cost recurrence F(k) <= K (m^k)^tau from s/W <= m^tau and the arithmetic bounds for digit pieces and row, range and radix padding.
 
-- Math milestone: `IntegerMultBounds.Swap.Recurrence.power_width_bound` — If F 0 <= L and F(k+1) <= a F(k) + C with a <= m^tau, then F(k) <= (L+C) m^tau/(m^tau-1) * (m^k)^tau for every k.
+- Math milestone: `IntegerMultBounds.Swap.Recurrence.interchange_arithmetic` — The recurrence gives F(k) <= K (m^k)^tau, the power-digit piece sum is O(e^tau), and the row, row-range and radix padding bounds hold. Combines `Recurrence.power_width_bound`, `Recurrence.swap_recurrence`, `Recurrence.digit_sum_le`, `Recurrence.pieces_le`, `Recurrence.row_padding`, `Recurrence.row_range`, `Recurrence.radixWidth_spec`.
 - Tape milestone: —
 
 | Subcomponent | Files | Mathematics | Tape | Notes |
@@ -37,8 +37,8 @@ Proves the cost recurrence F(k) <= K (m^k)^tau from s/W <= m^tau and the arithme
 
 Factors a matrix as lower-triangular times partial permutation times lower-triangular and turns the rational shear into a fixed certified affine interchange network.
 
-- Math milestone: `IntegerMultBounds.Swap.Modular.exists_prime_shear` — Lemma 4.2: for a finite set of rational matrices there is an odd prime q such that modulo every q^b each matrix A has a lower-triangular shear program computing H <- H + A D with exactly rank A interchanges (built on the Lemma 4.1 factorization).
-- Tape milestone: `IntegerMultBounds.Machine.Shared50RecursiveSegments.realizes` — Each fixed Shared50 affine field segment runs as one clean machine on the recursive role bank, executing exactly its modular field program on the selected role, leaving every other role unchanged, within coefficient times volume steps.
+- Math milestone: `IntegerMultBounds.Swap.Modular.certified_factor_shear` — Every rational matrix factors as E1 Pi E2 with lower-triangular factors and rank A pivots, and for the fixed Shared50 edge set the chosen odd prime gives, at every q^b, shear programs H <- H + A D with exactly rank A interchanges and certified coefficients. Combines `PivotRank.exists_factorization_rank`, `LowerTriangular.factorization`, `Modular.exists_prime_shear`, `Shared50ModularControl.chosen_edge_specs`, `Shared50ModularControl.interchanges_exact`.
+- Tape milestone: `IntegerMultBounds.Machine.Shared50RecursiveSegments.realizes_shear` — For each certified edge, the fixed machine runs every nonrecursive segment of its shear program on the role bank and, with the rank A interchanges given by their call contracts, computes H <- H + A D mod q^b within coefficient times volume plus the interchange costs. Combines `Shared50RecursiveSegments.realizes`, `AffineFieldSegments.split_run_spec`, `Shared50ModularControl.interchanges_exact`, `Shared50RecursiveInduction.contract`.
 
 | Subcomponent | Files | Mathematics | Tape | Notes |
 | --- | --- | --- | --- | --- |
@@ -49,8 +49,8 @@ Factors a matrix as lower-triangular times partial permutation times lower-trian
 
 Builds the reusable tape machinery: cyclic role split/merge, counted push/pop stacks, binary descriptor stacks and arithmetic, and finite return dispatch.
 
-- Math milestone: `IntegerMultBounds.Machine.BinaryDescriptorDivision.divide_hoare` — The fixed 12-tape machine divides two marked binary descriptors, returning the canonical quotient value floor(ys/ds) of length at most |ys| with inputs retained and all private tapes erased, within the explicit cost.
-- Tape milestone: `IntegerMultBounds.Machine.BinaryDescriptorDivision.divide_hoare` — The fixed 12-tape machine divides two marked binary descriptors, returning the canonical quotient value floor(ys/ds) of length at most |ys| with inputs retained and all private tapes erased, within the explicit cost.
+- Math milestone: `IntegerMultBounds.Machine.RecursivePrimitives.word_semantics` — Cyclic role split/merge, counted stack push/pop, descriptor-stack roundtrip, descriptor division and finite return dispatch have exact word-level results: role words, restored older stacks, canonical quotient and decoded return state. Combines `BinaryDescriptorDivision.divide_hoare`, `BinaryDescriptorStackRoundtrip.roundtrip_hoare`, `FiniteReturnDispatch.dispatch_exact`, `BinaryDivide.div_correct`.
+- Tape milestone: `IntegerMultBounds.Machine.RecursivePrimitives.machines_hoare` — The fixed machines for normalized cyclic role split and merge, counted stack push and pop, descriptor-stack roundtrip, role-array call parking, clean descriptor division and finite return dispatch each meet their exact bank contract within linear cost. Combines `CyclicRowNormalized.split_hoare`, `CyclicRowNormalized.merge_hoare`, `StackPush.push_hoare`, `StackPop.pop_hoare`, `BinaryDescriptorStackRoundtrip.roundtrip_hoare`, `RoleArrayCall.call_hoare`, `BinaryDescriptorDivision.divide_hoare`, `FiniteReturnDispatch.dispatch_hoare`.
 
 | Subcomponent | Files | Mathematics | Tape | Notes |
 | --- | --- | --- | --- | --- |
@@ -72,7 +72,7 @@ Builds the reusable tape machinery: cyclic role split/merge, counted push/pop st
 Executes the width-one digit interchange on a clean permanent bank with exact transpose, private cleanup and linear-volume cost.
 
 - Math milestone: `IntegerMultBounds.Machine.Shared50RecursiveBasePermutation.array_transpose` — At width one the base-case output array equals the node transpose of the input array.
-- Tape milestone: `IntegerMultBounds.Machine.RecursiveDigitRoleBank.realizes` — At width one the clean digit-interchange machine on the permanent role bank replaces the selected role by the transposed array, retains headers and auxiliaries, and finishes within coefficient times volume steps.
+- Tape milestone: `IntegerMultBounds.Machine.RecursiveDigitRoleBank.realizes_transpose` — At width one the clean machine on the permanent role bank replaces the selected role by the exact node transpose, retains headers and auxiliaries, leaves private storage blank, within coefficient times volume steps. Combines `RecursiveDigitRoleBank.realizes`, `Shared50RecursiveBasePermutation.array_transpose`.
 
 | Subcomponent | Files | Mathematics | Tape | Notes |
 | --- | --- | --- | --- | --- |
@@ -85,8 +85,8 @@ Executes the width-one digit interchange on a clean permanent bank with exact tr
 
 Realizes one node's work on tapes: row split/merge, controlled shifts, H/D scaling and coordinate views, all with exact payload semantics and linear cost.
 
-- Math milestone: `IntegerMultBounds.Machine.RecursiveViewedAction.realizes_array` — A selected scalar shift or scaling, wrapped in parent-header save, coordinate-view construction and parent restoration, maps the role bank to the bank holding the transformed array with the stack and private tapes blank, in linear-volume time.
-- Tape milestone: `IntegerMultBounds.Machine.RecursiveViewedAction.realizes_array` — A selected scalar shift or scaling, wrapped in parent-header save, coordinate-view construction and parent restoration, maps the role bank to the bank holding the transformed array with the stack and private tapes blank, in linear-volume time.
+- Math milestone: `IntegerMultBounds.Machine.RecursiveNodeOperations.array_semantics` — Node row split into roles, selected shifts and H/D scalings through coordinate views, and the permuted merge act on the logical node array exactly as the corresponding field operations. Combines `RecursiveViewedAction.realizes_array`, `RecursiveRowsNode.entry_hoare`, `RecursiveRowsNode.exit_hoare`, `Shared50RecursiveSegments.realizes`.
+- Tape milestone: `IntegerMultBounds.Machine.RecursiveNodeOperations.realizes` — One fixed machine performs node entry (save headers, split rows), any selected shift or H/D scaling through coordinate views, and node exit (restore headers, permuted merge) on the permanent role bank, with exact payload semantics and linear parent-volume cost. Combines `RecursiveRowsNode.entry_hoare`, `RecursiveRowsNode.exit_hoare`, `RecursiveViewedAction.realizes_array`, `RecursiveRowsNode.entry_cost_linear`, `RecursiveRowsNode.exit_cost_linear`.
 
 | Subcomponent | Files | Mathematics | Tape | Notes |
 | --- | --- | --- | --- | --- |
@@ -110,8 +110,8 @@ Realizes one node's work on tapes: row split/merge, controlled shifts, H/D scali
 
 Saves parent headers, computes and installs child headers by descriptor division, enters and returns from child calls and restores the parent, charging all of it to child volume.
 
-- Math milestone: `IntegerMultBounds.Machine.RecursiveInterchangeVolume.Path.original_chunks` — Along any recursive child path, every child's logical volume is at least q^(2 * root width), the lower bound that absorbs descriptor-processing costs.
-- Tape milestone: `IntegerMultBounds.Machine.RecursiveCallProtocol.enters` — The fixed call-entry block parks arrays, moves the payload, saves parent headers and PC, and constructs the child's canonical headers, in linear parent-volume time (paired with RecursiveCallProtocol.recovers for the return).
+- Math milestone: `IntegerMultBounds.Machine.RecursiveInterchangeVolume.call_cost_absorbed` — Along any child path the prepared child headers are the canonical child layout, logical volume divides exactly by the role count, and all descriptor stack, division and header costs are at most a constant times the child's logical volume. Combines `Path.original_chunks`, `Path.volume_div`, `RecursiveDescriptorDivision.cost_le_child_volume`, `RecursiveDescriptorDivision.divide_hoare_linear`, `RecursiveChildPrepare.prepares`.
+- Tape milestone: `IntegerMultBounds.Machine.RecursiveCallProtocol.roundtrip` — The fixed call-entry block parks arrays, saves parent headers and PC and installs the child headers, and the recovery block restores the parent headers and payload, with every count control and private tape blank, in linear parent-volume time. Combines `RecursiveCallProtocol.enters`, `RecursiveCallProtocol.recovers`, `RecursiveHeaderRestore.restore_hoare_linear`.
 
 | Subcomponent | Files | Mathematics | Tape | Notes |
 | --- | --- | --- | --- | --- |
@@ -134,7 +134,7 @@ Saves parent headers, computes and installs child headers by descriptor division
 
 Assembles the fixed Shared50 cyclic machine and proves by induction that it performs the power-width interchange within the certified budget.
 
-- Math milestone: `IntegerMultBounds.Machine.Shared50RecursiveBudgetBound.power_width_bound` — The certified recursive budget at depth k is at most constant * V * (125000^depth)^tau.
+- Math milestone: `IntegerMultBounds.Machine.Shared50RecursiveNodeTranspose.recursive_transpose_budget` — At every power width the node pre/child/post decomposition composes to the full binary transpose, and the certified recursive budget at depth k is at most constant * V * (125000^depth)^tau. Combines `Shared50RecursiveBudgetBound.power_width_bound`, `Shared50RecursiveNodeTranspose.transpose_all`, `Shared50RecursiveChildPermutation.child_spec`, `Shared50RecursiveDepth.selected_volume`.
 - Tape milestone: `IntegerMultBounds.Machine.Shared50RecursiveRootExecution.halts_power_bound` — The fixed root machine halts on every power-width input within constant * volume * width^tau steps with the payload replaced by its exact transpose and all other cells restored.
 
 | Subcomponent | Files | Mathematics | Tape | Notes |
@@ -163,8 +163,8 @@ Assembles the fixed Shared50 cyclic machine and proves by induction that it perf
 
 Pads and crops rows and two-chunk numeric ranges and moves radix digits on tapes, reducing general shapes to padded ones.
 
-- Math milestone: `IntegerMultBounds.Machine.RadixRangePadding.crop_transpose_pad` — Zero-padding both chunk ranges to M, transposing, and cropping back gives exactly the transpose of the original array.
-- Tape milestone: `IntegerMultBounds.Machine.BinaryRadixRangePrepare.finish_transpose_pad_hoare` — After a padded radix-range transpose, the finish machine crops back and erases all generated range descriptors, leaving exactly the original binary-range transpose, in linear-volume time.
+- Math milestone: `IntegerMultBounds.Machine.RadixRangePadding.padding_semantics` — Zero-padding rows or both chunk ranges, transposing and cropping back gives exactly the original transpose, and the ordered radix digit movement (join/separate) agrees with the joined transpose layout. Combines `RadixRangePadding.crop_transpose_pad`, `RecursiveRowPadding.cropArray_transpose_padArray`, `RecursiveRowPadding.crop_permute_pad`, `ArbitraryWidthHighMovementSemantics.exchange_join_transpose_separate`.
+- Tape milestone: `IntegerMultBounds.Machine.BinaryRadixRangePrepare.pad_transpose_crop_hoare` — Given a padded radix-range transpose contract, the prepare, transpose and finish machines together return exactly the original binary-range transpose with all generated metadata erased in linear padded-volume time, and the row padding/cropping and radix digit-movement machines meet their exact contracts. Combines `BinaryRadixRangePrepare.prepare_hoare`, `BinaryRadixRangePrepare.finish_transpose_pad_hoare`, `RadixRangePaddingExecution.crop_transpose_pad_hoare`, `RowPaddingConstructedAlphabet.pad_bits_hoare`, `RowPaddingConstructedAlphabet.crop_bits_hoare`, `RadixDigitMoveBlockExecution.forward_hoare`, `RadixDigitMoveBlockExecution.backward_hoare`.
 
 | Subcomponent | Files | Mathematics | Tape | Notes |
 | --- | --- | --- | --- | --- |
@@ -184,8 +184,8 @@ Pads and crops rows and two-chunk numeric ranges and moves radix digits on tapes
 
 Splits an arbitrary radix width into power pieces, runs recursive slice calls, the high-width exchange/join and the elementary fallback, giving the radix interchange for every width.
 
-- Math milestone: `IntegerMultBounds.Machine.ArbitrarySliceStepBudget.sum_bound` — Summed over the base-125000 power pieces of width e, the slice-step budgets total at most constant * V * e^tau.
-- Tape milestone: `IntegerMultBounds.Machine.ArbitraryWidthOriginalTotalRun.runs` — From the six original headers, the fixed machine transposes the radix payload for every width including zero within cost d hs, which ArbitraryWidthOriginalTotalRun.uniform_bound bounds by C * volume * max(1,width)^tau.
+- Math milestone: `IntegerMultBounds.Machine.ArbitraryWidthPieces.pieces_transpose_budget` — The base-125000 power pieces of width e (slice windows, high exchange/join, elementary fallback) compose to the full radix transpose, and their slice-step budgets total at most constant * V * e^tau. Combines `ArbitrarySliceStepBudget.sum_bound`, `ArbitraryWidthPieces.pieces_swap`, `ArbitraryWidthPieces.runWindows_full`, `ArbitraryWidthSliceTranspose.array_entry`, `ArbitraryWidthHighMovementSemantics.exchange_join_transpose_separate`.
+- Tape milestone: `IntegerMultBounds.Machine.ArbitraryWidthOriginalTotalRun.runs_uniform` — There is C such that, from the six original headers, the fixed machine transposes the radix payload for every width including zero, restoring all other tapes, within C * volume * max(1,width)^tau steps. Combines `ArbitraryWidthOriginalTotalRun.runs`, `ArbitraryWidthOriginalTotalRun.uniform_bound`.
 
 | Subcomponent | Files | Mathematics | Tape | Notes |
 | --- | --- | --- | --- | --- |
@@ -235,8 +235,8 @@ Splits an arbitrary radix width into power pieces, runs recursive slice calls, t
 
 Converts binary inputs to radix ranges and composes equal- and adjacent-width cases behind a physical width selector, yielding the main binary interchange theorem with the certified exponent.
 
-- Math milestone: `IntegerMultBounds.Machine.BinaryInterchangeRun.uniform_bound` — One constant C bounds the binary interchange cost by C * rectangular volume * max(1, h, d)^tau with tau = 1 - 296/10^11, for all adjacent widths including zero.
-- Tape milestone: `IntegerMultBounds.Machine.BinaryInterchangeRun.runs` — From five original binary headers, the fixed machine selects the equal or adjacent-width branch and returns the exact rectangular transpose of the payload, restoring every other tape and head, within cost P G B h d hs.
+- Math milestone: `IntegerMultBounds.Machine.BinaryAdjacentWidthInterchange.decomposition_bound` — Equal- and adjacent-width binary transposes decompose exactly into padded radix-range transposes and high-block movements, and one constant C bounds the wrapper cost by C * rectangular volume * max(1,h,d)^tau. Combines `BinaryInterchangeRun.uniform_bound`, `BinaryAdjacentWidthInterchange.longH_eq_transpose`, `BinaryAdjacentWidthInterchange.longD_eq_transpose`, `RadixRangePadding.crop_transpose_pad`.
+- Tape milestone: `IntegerMultBounds.Machine.BinaryInterchangeRun.runs_uniform` — There is C such that, from five original binary headers, the fixed machine returns the exact rectangular transpose, restoring every other tape and head, within C * rectangular volume * max(1,h,d)^tau steps for all adjacent widths including zero. Combines `BinaryInterchangeRun.runs`, `BinaryInterchangeRun.uniform_bound`.
 
 | Subcomponent | Files | Mathematics | Tape | Notes |
 | --- | --- | --- | --- | --- |

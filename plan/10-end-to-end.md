@@ -27,7 +27,7 @@ Parses the literal input into reversed operands in linear time.
 
 Proves a fixed four-tape machine outputs the exact twice-length product in quadratic time.
 
-- Math milestone: `IntegerMultBounds.Machine.ElementaryMultiplyOutputData.horner_output_value` — The twice-length MSB word read back from the Horner accumulator has binary value x*y for equal-length operands, including empty ones.
+- Math milestone: `IntegerMultBounds.Machine.ElementaryMultiplyOutputData.horner_output_spec` — For equal-length operands (including empty) the MSB word read back from the Horner accumulator has length exactly 2n and binary value x*y. Combines `ElementaryMultiplyOutputData.horner_output_length`, `ElementaryMultiplyOutputData.horner_output_value`.
 - Tape milestone: `IntegerMultBounds.Machine.ElementaryMultiply.runsWithin` — The fixed four-tape program halts with the exact twice-length product on tape zero for every equal input length within 40(n^2+n+1) steps (Assembly.RunsWithin).
 
 | Subcomponent | Files | Mathematics | Tape | Notes |
