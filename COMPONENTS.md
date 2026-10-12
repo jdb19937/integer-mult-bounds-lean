@@ -6142,8 +6142,9 @@ Transform, fixed-point, Kronecker and Gaussian resampling mathematics used by th
   mapping lines and swapping back is the head-axis step of the flat pass in
   every outer block (`sandwich_eq`). The script `sScript` processes the tail
   axes, then the head axis with one interchange each way (`headRecs`), so
-  `2 (d - 1)` interchanges in all, and computes the flat pass
-  (`sScript_spec`).
+  `2 (d - 1)` interchanges in all, and computes the flat pass; its cost is at
+  most the axis records' bounds plus `3 + 2 (Ks + 3)` per axis for a bound
+  `Ks` on one interchange record (`sScript_spec`).
 - `Resampling/LineMaps.lean`: the axis records as line maps on entries
   (two `w`-bit words, most significant bit first). The expansion record maps
   every line of `t` entries by `lineA`: the first `s` entries as words, the

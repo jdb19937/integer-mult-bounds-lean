@@ -202,14 +202,23 @@ theorem headRecs_spec (S : AxisSpec E) (B NT : ℕ) (hB : 0 < B) (d : ℕ) (lg :
     Valid S (headRecs B d lg Q ws) es.flatten ∧
       result S (headRecs B d lg Q ws) es.flatten =
         (mapBlocks (2 ^ lg 0 * ∏ i : Fin d, 2 ^ lg i.succ) (fun blk => trL (∏ i : Fin d, 2 ^ lg i.succ) (2 ^ lg 0) []
-          (mapBlocks (2 ^ lg 0) G0 (trL (2 ^ lg 0) (∏ i : Fin d, 2 ^ lg i.succ) [] blk))) es).flatten := by
+          (mapBlocks (2 ^ lg 0) G0 (trL (2 ^ lg 0) (∏ i : Fin d, 2 ^ lg i.succ) [] blk))) es).flatten ∧
+      ∀ Ka Ks : ℕ,
+        (∀ xs : List (List Bool), xs.length = NT → (∀ e ∈ xs, e.length = B) → axisCost S ws xs.flatten ≤ Ka) →
+        (∀ (P G h d' : ℕ) (A : List Bool), A.length = NT * B → (∃ i, h = lg i) → (∃ j, d' = lg j) →
+          swapCost (swapHdrsG P G h d' B) A ≤ Ks) →
+        driveCost S (headRecs B d lg Q ws) es.flatten ≤ Ka + 3 + 2 * (Ks + 3) := by
   have hT0 : 0 < 2 ^ lg 0 := by positivity
   cases d with
   | zero =>
     simp only [Finset.univ_eq_empty, Finset.prod_empty, mul_one] at hNT ⊢
     have hl' : es.length = Q * 2 ^ lg 0 := by rw [hl, ← hNT]
     obtain ⟨h1, h2, h3⟩ := hax es hl hw
-    refine ⟨⟨h1, h2, trivial⟩, ?_⟩
+    refine ⟨⟨h1, h2, trivial⟩, ?_, ?_⟩
+    swap
+    · intro Ka Ks hKa _
+      have := hKa es hl hw
+      simp only [headRecs, driveCost]; omega
     simp only [headRecs, result]
     rw [h3]
     congr 1
@@ -258,9 +267,20 @@ theorem headRecs_spec (S : AxisSpec E) (B NT : ℕ) (hB : 0 < B) (d : ℕ) (lg :
     obtain ⟨p2, f2⟩ := swapRecG_spec Q Gm hlast (lg 0) B es3.flatten hQ hGm hB (hlg _ _) (hlg _ _) hflat3
     rw [swapList_flatten Q D Gm T0 B es3 hes3w (by rw [hes3])] at f2
     have hsw := sandwich_eq Q T0 Gm D G0 es (by rw [hl']; ring) (by positivity) hGm hD hGl
-    refine ⟨⟨rfl, p1, by rw [f1]; exact ⟨a1, a2, by rw [a3]; exact ⟨rfl, p2, trivial⟩⟩⟩, ?_⟩
-    simp only [headRecs, result]
-    rw [f1, a3, f2, hsw, ← hRGD]
+    refine ⟨⟨rfl, p1, by rw [f1]; exact ⟨a1, a2, by rw [a3]; exact ⟨rfl, p2, trivial⟩⟩⟩, ?_, ?_⟩
+    · simp only [headRecs, result]
+      rw [f1, a3, f2, hsw, ← hRGD]
+    · intro Ka Ks hKa hKs
+      have c1 := hKs Q Gm (lg 0) hlast es.flatten (by rw [lenFlat B es hw, hl]) ⟨0, rfl⟩ ⟨_, rfl⟩
+      have c2 := hKa es2 hes2 hes2w
+      have c3 := hKs Q Gm hlast (lg 0) es3.flatten (by rw [lenFlat B es3 hes3w, hes3, ← hes2, length_swapE])
+        ⟨_, rfl⟩ ⟨0, rfl⟩
+      have hh : headRecs B (d + 1) lg Q ws = [.swap (swapHdrsG Q Gm (lg 0) hlast B), .axis ws,
+          .swap (swapHdrsG Q Gm hlast (lg 0) B)] := rfl
+      rw [hh]
+      simp only [driveCost]
+      rw [f1, a3]
+      omega
 
 theorem sScript_spec (S : AxisSpec E) (B NT : ℕ) (hB : 0 < B) : ∀ (d : ℕ) (lg : Fin d → ℕ) (Q : ℕ)
     (aw : Fin d → List (List Bool)) (G : Fin d → List (List Bool) → List (List Bool)) (es : List (List Bool)),
@@ -273,9 +293,15 @@ theorem sScript_spec (S : AxisSpec E) (B NT : ℕ) (hB : 0 < B) : ∀ (d : ℕ) 
     0 < Q → Q * ∏ i, 2 ^ lg i = NT → es.length = NT → (∀ e ∈ es, e.length = B) →
     Valid S (sScript B d lg Q aw) es.flatten ∧
       result S (sScript B d lg Q aw) es.flatten =
-        (mapBlocks (∏ i, 2 ^ lg i) (flatPass d (fun i => 2 ^ lg i) G []) es).flatten
+        (mapBlocks (∏ i, 2 ^ lg i) (flatPass d (fun i => 2 ^ lg i) G []) es).flatten ∧
+      ∀ (Ka : Fin d → ℕ) (Ks : ℕ),
+        (∀ i (xs : List (List Bool)), xs.length = NT → (∀ e ∈ xs, e.length = B) →
+          axisCost S (aw i) xs.flatten ≤ Ka i) →
+        (∀ (P G h d' : ℕ) (A : List Bool), A.length = NT * B → (∃ i, h = lg i) → (∃ j, d' = lg j) →
+          swapCost (swapHdrsG P G h d' B) A ≤ Ks) →
+        driveCost S (sScript B d lg Q aw) es.flatten ≤ (∑ i, Ka i) + d * (3 + 2 * (Ks + 3))
   | 0, lg, Q, aw, G, es, _, _, _, _, hQ, hNT, hl, hw => by
-    refine ⟨trivial, ?_⟩
+    refine ⟨trivial, ?_, fun _ _ _ _ => by simp [sScript, driveCost]⟩
     simp only [sScript, result, Finset.univ_eq_empty, Finset.prod_empty]
     congr 1
     have hb1 : ∀ b, b < es.length → (flatPass 0 (fun i => 2 ^ lg i) G [] (block 1 b es)).length = 1 :=
@@ -296,7 +322,7 @@ theorem sScript_spec (S : AxisSpec E) (B NT : ℕ) (hB : 0 < B) : ∀ (d : ℕ) 
     have hprod : ∏ i : Fin (d + 1), 2 ^ lg i = T0 * R := Fin.prod_univ_succ _
     have hl' : es.length = Q * (T0 * R) := by rw [hl, ← hNT, hprod]
     -- 1. the tail axes
-    obtain ⟨v1, r1⟩ := sScript_spec S B NT hB d (fun i => lg i.succ) (Q * T0) (fun i => aw i.succ)
+    obtain ⟨v1, r1, k1⟩ := sScript_spec S B NT hB d (fun i => lg i.succ) (Q * T0) (fun i => aw i.succ)
       (fun i => G i.succ) es (fun i j => hlg _ _) (fun i l => hGl i.succ l) (fun i l => hGw i.succ l)
       (fun i xs => hax i.succ xs) (by positivity) (by rw [← hNT, hprod]; ring) hl hw
     set φ := flatPass d (fun i => 2 ^ lg i.succ) (fun i => G i.succ) ([] : List Bool)
@@ -326,13 +352,19 @@ theorem sScript_spec (S : AxisSpec E) (B NT : ℕ) (hB : 0 < B) : ∀ (d : ℕ) 
             Nat.mul_div_cancel _ hR])
         (fun l _ => by simp only [head, length_trL]; try ring)]
       rfl
-    obtain ⟨vh, rh⟩ := headRecs_spec S B NT hB d lg Q (aw 0) (G 0) es1 hlg (hGl 0) (hGw 0) (hax 0) hQ
+    obtain ⟨vh, rh, kh⟩ := headRecs_spec S B NT hB d lg Q (aw 0) (G 0) es1 hlg (hGl 0) (hGw 0) (hax 0) hQ
       (by rw [← hNT, hprod]) (by rw [hes1, ← hNT, hprod]) hes1w
     have hscr : sScript B (d + 1) lg Q aw = sScript B d (fun i => lg i.succ) (Q * T0) (fun i => aw i.succ) ++
         headRecs B d lg Q (aw 0) := rfl
     rw [hscr]
-    refine ⟨valid_append S _ _ _ v1 (by rw [r1]; exact vh), ?_⟩
-    rw [result_append, r1, rh, hfinal, hprod]
+    refine ⟨valid_append S _ _ _ v1 (by rw [r1]; exact vh), ?_, ?_⟩
+    · rw [result_append, r1, rh, hfinal, hprod]
+    · intro Ka Ks hKa hKs
+      have h1 := k1 (fun i => Ka i.succ) Ks (fun i xs h1 h2 => hKa i.succ xs h1 h2)
+        (fun P G' h d' A hA ⟨i, hi⟩ ⟨j, hj⟩ => hKs P G' h d' A hA ⟨i.succ, hi⟩ ⟨j.succ, hj⟩)
+      have h2 := kh (Ka 0) Ks (hKa 0) hKs
+      rw [driveCost_append, r1, Fin.sum_univ_succ]
+      nlinarith
 
 end
 end IntegerMultBounds.Resampling.Sandwich

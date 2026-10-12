@@ -69,7 +69,7 @@ theorem expand_result (d : ℕ) (lg : Fin d → ℕ) (m p w W : ℕ) (P : Fin d 
         (flatPass d (fun i => 2 ^ lg i) (fun i => lineA (P i).wt (P i).s (2 ^ lg i) m p w W) [] es).flatten := by
   set NT := ∏ i, 2 ^ lg i
   have hNT : 0 < NT := prod_pos_pow lg
-  obtain ⟨hv, hr⟩ := sScript_spec (expandSpec m p w W) (2 * w) NT (by omega) d lg 1 (eAxis lg NT m w P)
+  obtain ⟨hv, hr, -⟩ := sScript_spec (expandSpec m p w W) (2 * w) NT (by omega) d lg 1 (eAxis lg NT m w P)
     (fun i => lineA (P i).wt (P i).s (2 ^ lg i) m p w W) es hlg
     (fun i l _ => lineA_length _ _ _ _ _ _ _ l) (fun i l _ _ => lineA_width _ _ _ _ _ _ _ l)
     (fun i xs hxl hxw => by
@@ -142,7 +142,7 @@ theorem compress_result (d : ℕ) (lg : Fin d → ℕ) (m p w W : ℕ) (P : Fin 
   have hlen : ∀ i (l : List (List Bool)), l.length = 2 ^ lg i →
       (lineB (P i).wtE (P i).wtH (P i).wtD (P i).zeros (P i).s (2 ^ lg i) m p w W l).length = 2 ^ lg i :=
     fun i l _ => lineB_length (P i) _ m p w W (hok i).2.2.2.2.2.2.1 (hok i).2.2.2.2.2.2.2.2.2.2.1.le l
-  obtain ⟨hv, hr⟩ := sScript_spec (compressSpec m p w W) (2 * w) NT (by omega) d lg 1 (cAxis lg NT m w P)
+  obtain ⟨hv, hr, -⟩ := sScript_spec (compressSpec m p w W) (2 * w) NT (by omega) d lg 1 (cAxis lg NT m w P)
     (fun i => lineB (P i).wtE (P i).wtH (P i).wtD (P i).zeros (P i).s (2 ^ lg i) m p w W) es hlg hlen
     (fun i l _ _ => lineB_width (P i) _ m p w W (hok i).2.2.2.2.2.2.2.1 l)
     (fun i xs hxl hxw => by
