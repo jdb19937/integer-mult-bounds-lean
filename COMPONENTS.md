@@ -6153,6 +6153,10 @@ Transform, fixed-point, Kronecker and Gaussian resampling mathematics used by th
   the flat array of entries into the flat pass of the `lineA` maps
   (`expand_result`); likewise compression records (`cAxis`) and the `lineB`
   maps (`compress_result`).
+- `Resampling/LineNumeric.lean`: what the line maps compute. Entries decode
+  to complex numbers (`decE`); on lines in the unit disk the expansion line
+  map with the machine-built table is the floored tabled `Ã` on the first
+  `s` entries (`lineA_value`, `floorA`).
 - `Resampling/Milestones.lean`: the §7 milestone theorems of
   `plan/07-gaussian-resampling.md` that package proved results:
   `FixedMul.signed_word_ops`, `Schoenhage.wordRecordLayer_hoare`,
