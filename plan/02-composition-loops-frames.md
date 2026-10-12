@@ -38,8 +38,8 @@ Exact composition, branching, loops, frames, alphabet widening and basic scans g
 
 Binary and radix counters drive counted loops, copies, reversals and seeks with linear overhead and full clock cleanup.
 
-- Math milestone: `IntegerMultBounds.Machine.StreamScheduler.descriptors_exact` — Descriptor arithmetic derives, from the canonical dimension words alone, the exact loop counts and offsets every stream and recursive network call needs.
-- Tape milestone: `IntegerMultBounds.Machine.StreamScheduler.realizes_hoare` — One fixed machine derives its clock descriptors on tape, runs the counted stream bodies, halts and erases every clock, charging the body costs plus linear overhead.
+- Math milestone: `IntegerMultBounds.Machine.StreamScheduler.descriptors_exact` — Counter increments cost amortized two flips each, the canonical dimension words alone determine every common-coordinate descriptor with value and length bounds, and recursive child headers and descriptor costs are absorbed by the child volume.
+- Tape milestone: `IntegerMultBounds.Machine.StreamScheduler.realizes_hoare` — Counter increment, counted copy, reverse, seek and reset, the counted body loops with full clock cleanup, physical construction of the coordinate descriptors from the canonical b/W words, and the recursive network scheduler halting with the exact transpose within its power-width bound.
 
 | Subcomponent | Files | Mathematics | Tape | Notes |
 | --- | --- | --- | --- | --- |
@@ -57,7 +57,7 @@ Binary and radix counters drive counted loops, copies, reversals and seeks with 
 | Canonical length descriptor bootstrap | `GrowingCounterData`, `GrowingCounter`, `BinaryLength`, `BinaryLengthInit` | ✅ | ✅ | Growing counter needs no preset width; blank-work-tape setup and source scanning cost at most eight times source length plus two. Includes standard multiplication input; nonblank source segment required |
 | Literal binary-counted body loop | `CountedLoop` | ✅ | ✅ | Fixed finite control executes arbitrary proved body chains; all body costs plus linear iteration/clock overhead, including true terminal halt. Outer clock preparation/cleanup remains explicit |
 | Reusable binary-counted raw transfer | `CountedCopyReuse` | ✅ | ✅ | Immutable descriptor preserved; clock preparation, full erasure, control-head resets and all joins charged. Runtime at most five times count plus seven times width plus sixteen; descriptor construction remains separate |
-| Terminating stream scheduler | `CountedLoop`, `CountedLoopReuse` | 🟡 | 🟡 | Actual counted bodies and repeated common-offset fibers halt with full clock cleanup; derived descriptor arithmetic and the recursive network scheduler remain open |
+| Terminating stream scheduler | `CountedLoop`, `CountedLoopReuse` | ✅ | ✅ | Actual counted bodies and repeated common-offset fibers halt with full clock cleanup; descriptors are derived on tape by `FlatCoordinateDimensions` and the recursive network scheduler is the §4 root machine (`Shared50RecursiveRootExecution.halts_power_bound`) |
 
 ### Binary and radix arithmetic machines
 

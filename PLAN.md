@@ -24,7 +24,7 @@ here.
 | Part of the proof | Source | Mathematics | Tape | Files |
 | --- | --- | --- | --- | --- |
 | [Machine model and target statement](plan/01-machine-model-target.md) | §2 | ✅ 1/1 | ✅ 1/1 | 2 |
-| [Composition, loops, frames, elementary streams](plan/02-composition-loops-frames.md) | §2 | 🟡 7/8 | 🟡 7/8 | 255 |
+| [Composition, loops, frames, elementary streams](plan/02-composition-loops-frames.md) | §2 | ✅ 8/8 | ✅ 8/8 | 255 |
 | [Finite networks with a rank saving](plan/03-finite-networks-rank.md) | §3 | ✅ 8/8 | 🟡 2/6 | 358 |
 | [Faster interchange of address chunks](plan/04-faster-interchange-address.md) | §4 | ✅ 10/10 | ✅ 9/9 | 375 |
 | [Simultaneous butterfly layers with compact control](plan/05-simultaneous-butterfly-layers.md) | §5, §11, CrocSwap | 🟡 1/12 | 🟡 0/12 | 1655 |
@@ -50,7 +50,7 @@ Details: [plan/02-composition-loops-frames.md](plan/02-composition-loops-frames.
 | Sub-problem | Mathematics | Tape | Files |
 | --- | --- | --- | --- |
 | Machine combinators and frames | ✅ | ✅ | 14 |
-| Counters and counted loops | 🟡 14/15 rows | 🟡 14/15 rows | 28 |
+| Counters and counted loops | ✅ | ✅ | 28 |
 | Binary and radix arithmetic machines | ✅ | ✅ | 51 |
 | Rational scaling of one coordinate | ✅ | ✅ | 46 |
 | Controlled shift of one coordinate | ✅ | ✅ | 36 |
