@@ -8,3 +8,10 @@ Every local Lean process runs under a memory guard.
 - Both share one workspace-wide lock, so only one check or build runs at a time.
 - Do not launch Lean or Lake outside these two scripts.
 - Preserve default proof limits and all existing proof-integrity requirements.
+
+# Proof naming
+
+Prefer descriptive variable and hypothesis names, as in code, over single-letter
+mathematical shorthand. Name values by their role, such as `parentLive`,
+`childVolume`, `rowCount`, or `savedStack`, and name hypotheses by the fact they
+establish. Use this principle for new proofs and when revising existing proofs.
