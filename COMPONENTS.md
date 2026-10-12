@@ -6078,6 +6078,9 @@ Transform, fixed-point, Kronecker and Gaussian resampling mathematics used by th
   driver. `tr2` transposes a matrix of blocks; the interchange reads as an
   index map (`getD_swapList`), and moving the innermost field outward by
   adjacent interchanges (`rot`) is one `tr2` (`rot_eq_tr2`).
+- `Resampling/AxisPrims.lean`: the `Ã` and `B̃₀` line loops (`LineAPrim`,
+  `B0Prim`) as word-program primitives `aPrim`, `bPrim`, with their
+  parameters read back from the tapes (`aSem_sigIn`, `bSem_sigIn`).
 
 - `Resampling/PiApprox.lean`, `Resampling/ExpApprox.lean`: certified integer
   approximations for the weight tables. `piApprox q K` sums Machin's series
