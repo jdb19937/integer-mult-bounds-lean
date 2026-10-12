@@ -8,17 +8,6 @@ See [COMPONENTS.md](COMPONENTS.md) for what each file proves.
 
 ✅ done · 🟡 partial · ⬜ not started · 🚧 drafted, not yet in the build.
 
-Every sub-problem has a math milestone and a tape milestone: one named Lean
-theorem stating that part is done, listed in its section's detail file under
-`plan/`. A milestone is ✅ once that theorem is declared in the library, which
-the axiom audit keeps sorry-free. An open milestone shows 🟡, with its
-finished-row count when some rows are still open. The overview counts proved
-milestones per section; Files counts the Lean files, existing or planned,
-behind each part. Each detail file also outlines the section's proof and keeps
-the full per-row status. Add new rows to the detail file under the matching
-sub-problem, then run `python3 scripts/plan-status.py` to refresh the tables
-here.
-
 ## Overview
 
 | Part of the proof | Source | Mathematics | Tape | Files |
@@ -32,6 +21,18 @@ here.
 | [Exact integer multiplication and its cost](plan/08-exact-multiplication.md) | §8 | 🟡 2/3 | ⬜ 0/2 | 13 |
 | [Fast multiplication subroutine](plan/A-schoenhage-strassen.md) | Schönhage–Strassen | ✅ 6/6 | 🟡 2/4 | 85 |
 | [End-to-end theorem `EndToEnd`](plan/B-end-to-end.md) | — | 🟡 1/3 | 🟡 2/3 | 6 |
+
+Every sub-problem has a math milestone and a tape milestone: one named Lean
+theorem stating that part is done, listed in its section's detail file under
+`plan/`. A milestone is ✅ once that theorem is declared in the library, which
+the axiom audit keeps sorry-free. An open milestone shows 🟡, with its
+finished-row count when some rows are still open. The overview counts proved
+milestones per section; Files counts the Lean files, existing or planned,
+behind each part. Each detail file also outlines the section's proof and keeps
+the full per-row status. Add new rows to the detail file under the matching
+sub-problem, then run `python3 scripts/plan-status.py` to refresh the tables
+here.
+
 
 ## 2. The machine model and elementary streams (§2)
 
