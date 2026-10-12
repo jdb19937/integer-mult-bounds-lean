@@ -2345,6 +2345,7 @@ import IntegerMultBounds.Machine.NeumannLoopFast
 import IntegerMultBounds.Resampling.B0TapeFast
 import IntegerMultBounds.Resampling.LineApplyFast
 import IntegerMultBounds.Resampling.B0LineFast
+import IntegerMultBounds.Resampling.LineAPrim
 import IntegerMultBounds.Schoenhage.RingAlu
 import IntegerMultBounds.Schoenhage.RingMath
 import IntegerMultBounds.Schoenhage.RingWords
