@@ -6081,6 +6081,10 @@ Transform, fixed-point, Kronecker and Gaussian resampling mathematics used by th
 - `Resampling/AxisPrims.lean`: the `Ã` and `B̃₀` line loops (`LineAPrim`,
   `B0Prim`) as word-program primitives `aPrim`, `bPrim`, with their
   parameters read back from the tapes (`aSem_sigIn`, `bSem_sigIn`).
+- `Resampling/AxisStep.lean`: one expansion axis on word tapes
+  (`expandStep`): keep the first `s` entries of every line, cut into words,
+  run `Ã` line by line, floor the outputs by one bit and join them back
+  (`runs_expandStep`, result `expandOut`).
 
 - `Resampling/PiApprox.lean`, `Resampling/ExpApprox.lean`: certified integer
   approximations for the weight tables. `piApprox q K` sums Machin's series

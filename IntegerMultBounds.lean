@@ -693,6 +693,7 @@ import IntegerMultBounds.Resampling.TabledMaps
 import IntegerMultBounds.Resampling.FloorStep
 import IntegerMultBounds.Resampling.AxisRounds
 import IntegerMultBounds.Resampling.AxisPrims
+import IntegerMultBounds.Resampling.AxisStep
 import IntegerMultBounds.Resampling.PiApprox
 import IntegerMultBounds.Resampling.ExpApprox
 import IntegerMultBounds.Resampling.WeightTable
