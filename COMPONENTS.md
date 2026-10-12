@@ -6524,6 +6524,11 @@ Schönhage–Strassen multiplication, the fast multiplier used for the packed pr
   bank of the ring product; one product modulo `2^N + 1` between registers of
   its own (`runs_mulStep`); the residue unit switched on and off around
   modular subtraction and addition (`runs_aluOp`).
+- `Schoenhage/ExactMul.lean`: exact products of two binary words on the
+  91-tape bank: the size `topN n` built in unary from a ruler `ones n`, one
+  product modulo `2^N + 1`, and the low `n` bits, which equal
+  `bits n (bval x * bval y)` when the operand lengths sum to at most `n`
+  (`runs_exactMul`); scratch tapes end empty.
 - `Schoenhage/RingMath.lean`, `RingWords.lean`, `RingDigit.lean`: evaluation
   at `X = 2^W` turns negacyclic products into products modulo `2^(W r) + 1`
   (`ev_ncMul`); offset digits pack signed coefficients and recover them

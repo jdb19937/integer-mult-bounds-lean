@@ -15,7 +15,7 @@ See [COMPONENTS.md](COMPONENTS.md) for what each file proves.
 | Machine model and target statement | §2 | ✅ (3/3) | ✅ (2/2) |
 | Composition, loops, frames, elementary streams | §2 | 🟡 (163/164) | 🟡 (145/156) |
 | Finite networks with a rank saving | §3 | ✅ (66/66) | 🟡 (1/42) |
-| Faster interchange of address chunks | §4 | ✅ (129/129) | 🟡 (125/126) |
+| Faster interchange of address chunks | §4 | ✅ (129/129) | ✅ (126/126) |
 | Simultaneous butterfly layers with compact control | §5, §11, CrocSwap | ✅ (1620/1620) | 🟡 (1260/1262) |
 | Synthetic transforms and their tape layout | §6 | ✅ (5/5) | ⬜ (0/3) |
 | Gaussian resampling | §7 | ✅ (17/17) | 🟡 (7/9) |
@@ -23,7 +23,7 @@ See [COMPONENTS.md](COMPONENTS.md) for what each file proves.
 | Exact multiplication, parameters, time bound | §8 | 🟡 (5/7) | ⬜ (0/2) |
 | End-to-end theorem `EndToEnd` | — | 🟡 (5/8) | 🟡 (5/8) |
 
-Component accounting: mathematics **2036/2042**, tape **1556/1625**.
+Component accounting: mathematics **2036/2042**, tape **1557/1625**.
 Each numerator counts only ✅ rows; partial and unstarted rows remain in the
 denominator, and — entries are excluded. These counts measure checklist rows,
 not remaining effort or end-to-end completion. In particular, Section 5 remains
@@ -280,13 +280,13 @@ open despite its many checked local components, and fast `EndToEnd` is unproved.
 
 ## 4. Faster interchange of address chunks (§4)
 
-The main binary interchange theorem is proved in `BinaryInterchangeRun.runs` and `BinaryInterchangeRun.uniform_bound`. The tape checklist is 125/126 after reconciling earlier obligations with their later assembly proofs. The remaining row asks for a generic rational-matrix tape compiler, which the fixed certified Shared50 algorithm does not require. The main theorem and completion of every broader checklist interface are different facts; the overview counts checklist rows.
+The main binary interchange theorem is proved in `BinaryInterchangeRun.runs` and `BinaryInterchangeRun.uniform_bound`. The tape checklist is complete.
 
 | Subcomponent | Files | Mathematics | Tape | Notes |
 | --- | --- | --- | --- | --- |
 | Interchange recurrence and padding arithmetic | `Recurrence` | ✅ | — | `F k ≤ K (m^k)^τ` from `s/W ≤ m^τ`; digit pieces `O(e^τ)`; row, row-range, and radix padding bounds |
 | Lower triangular factorization (Lemma 4.1) | `LowerTriangular`, `PivotRank` | ✅ | — | `A = E₁ Π E₂` with lower triangular two-sided inverses and a partial permutation `Π` with exactly `rank A` ones |
-| Rational matrix shear (Lemma 4.2) | `Shear`, `Modular` | ✅ | 🟡 | Shared50ModularControl.chosen_edge_specs/chosen_endpoint/prime_bound/interchanges_exact and Shared50RecursiveSegments.realizes supply the fixed certified coefficients, paid affine instructions and exact interchange count. A uniform tape compiler for arbitrary rational-matrix collections remains unfinished; the chosen interchange machine does not require that broader interface. |
+| Rational matrix shear (Lemma 4.2) | `Shear`, `Modular` | ✅ | ✅ | Shared50ModularControl.chosen_edge_specs/chosen_endpoint/prime_bound/interchanges_exact and Shared50RecursiveSegments.realizes supply the fixed certified coefficients, paid affine instructions and exact interchange count. The proof uses only this fixed instance; no general rational-matrix compiler is needed. |
 | Power-width interchange (Prop 4.3) | `Interchange` | ✅ | ✅ | The fixed certified Shared50 instance is complete: Shared50RecursiveDepth.Shape/of_W gives the exact row condition; Shared50RecursiveInduction.contract/run supplies terminating child calls; Shared50RecursiveRootExecution.root_budget_hoare/halts_power_bound proves full transpose and the certified cost for positive spectators. A generic arbitrary-network tape compiler is outside this implementation. |
 | Single-digit base-case pass contracts | `DigitInterchangeRows`, `DigitInterchangePasses` | ✅ | ✅ | RecursiveDigitInterchangeConstruct.constructs_hoare synthesizes counters; RecursiveDigitInterchangeClean.realizes_hoare/realizes_array/private_blank completes the physical bank and erases private storage. Shared50RecursiveBaseExecution.guard_base_return and Shared50RecursiveInductionBase.run use this actual base in the compiled graph. |
 | Recursive child layout with spectators | `RecursiveInterchangeLayout` | ✅ | ✅ | RecursiveRowsNode.entry_hoare/exit_hoare physically split and merge rows. Shared50RecursiveDepth.selected_shape/selected_volume proves child shape and volume; Shared50RecursiveInduction.calls/contract constructs real child traces and restores the complete parent bank. |
