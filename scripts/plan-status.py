@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Recompute the summary tables in PLAN.md from the detail files in plan/.
 
-Each plan/NN-*.md file starts with '# N. Title (Source)' and lists its
+Each plan/NN-*.md file (or plan/X-*.md for parts outside the manuscript) starts
+with '# N. Title (Source)' and lists its
 sub-problems as '### Name' headings, each followed by a table of rows
 '| Subcomponent | Files | Mathematics | Tape | Notes |'. This script rewrites
 the PLAN.md overview row and the section's sub-problem table.
@@ -173,7 +174,7 @@ def file_count(rows):
 
 def read_section(path):
     lines = open(path).read().split('\n')
-    heading = re.match(r'^# (\d+)\. (.*)$', lines[0])
+    heading = re.match(r'^# (\d+|[A-Z])\. (.*)$', lines[0])
     groups = []
     for line in lines[1:]:
         if line.startswith('### '):
@@ -198,7 +199,8 @@ def main():
     tables = {}
     declared = declared_names()
     problems = []
-    for path in sorted(glob.glob(os.path.join(ROOT, 'plan', '[0-9][0-9]-*.md'))):
+    for path in sorted(glob.glob(os.path.join(ROOT, 'plan', '[0-9][0-9]-*.md')) +
+                      glob.glob(os.path.join(ROOT, 'plan', '[A-Z]-*.md'))):
         number, heading, groups = read_section(path)
         relative = os.path.relpath(path, ROOT)
         title = re.sub(r' \((.*)\)$', '', heading)
@@ -222,7 +224,7 @@ def main():
     index = 0
     while index < len(lines):
         line = lines[index]
-        heading = re.match(r'^## (\d+)\. ', line)
+        heading = re.match(r'^## (\d+|[A-Z])\. ', line)
         if heading:
             section = heading.group(1)
         elif line.startswith('## '):

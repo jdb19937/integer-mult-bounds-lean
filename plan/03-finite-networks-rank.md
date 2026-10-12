@@ -1,4 +1,4 @@
-# 3. Finite networks with a rank saving (§3)
+# 3. Two finite networks with a rank saving (§3)
 
 Part of the [plan](../PLAN.md). See [COMPONENTS.md](../COMPONENTS.md) for what each file proves.
 

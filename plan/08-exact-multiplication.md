@@ -1,10 +1,10 @@
-# 9. Exact multiplication, parameters, time bound (§8)
+# 8. Exact integer multiplication and its cost (§8)
 
 Part of the [plan](../PLAN.md). See [COMPONENTS.md](../COMPONENTS.md) for what each file proves.
 
 ## How the proof goes
 
-Section 9 (the manuscript's §8) turns the approximate transforms into an exact multiplier and accounts for the total time. Parameters are chosen with enough slack that the accumulated transform error is below one half, so rounding recovers the integer coefficients exactly; the cost table then sums every component's rows to the target bound.
+Section 8 (the manuscript's §8) turns the approximate transforms into an exact multiplier and accounts for the total time. Parameters are chosen with enough slack that the accumulated transform error is below one half, so rounding recovers the integer coefficients exactly; the cost table then sums every component's rows to the target bound.
 
 1. Parameters (`Parameters`, `Asymptotics`, `Primes`): parameter slacks and assembly margins, asymptotic estimates and the finite-depth recurrence, and odd pairwise coprime source lengths in the required intervals, which replace the manuscript's short-interval primes.
 2. Exact recovery (`Carry`, `MainReduction`, `ExactRecovery`, `ExactRecoveryOutput`): the precision chain from transform errors to the exact product, rounding and carry propagation, and an output of exactly twice the input length even for nondivisible chunk widths.

@@ -13,8 +13,8 @@ public import IntegerMultBounds.Machine.FlatCoordinateDimensions
 public import IntegerMultBounds.Machine.Shared50RecursiveRootExecution
 public import IntegerMultBounds.InterchangeMilestones
 
-/-! Section 2 milestones for counters and counted loops
-(plan/02-composition-loops-frames.md), bundling the exact statements of the
+/-! §2 milestones for counters and counted loops
+(plan/02-machine-model-streams.md), bundling the exact statements of the
 proved pieces. -/
 
 @[expose] public section

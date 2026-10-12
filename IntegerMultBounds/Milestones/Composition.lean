@@ -41,7 +41,7 @@ public import IntegerMultBounds.Networks.AffineFieldSegments
 public import IntegerMultBounds.Networks.OrderedAffine
 public import IntegerMultBounds.Networks.Shared50CoefficientMachines
 
-/-! Section 2 milestones (plan/02-composition-loops-frames.md): one theorem per sub-problem, each bundling the exact statements of its proved pieces. -/
+/-! §2 milestones (plan/02-machine-model-streams.md): one theorem per sub-problem, each bundling the exact statements of its proved pieces. -/
 
 @[expose] public section
 

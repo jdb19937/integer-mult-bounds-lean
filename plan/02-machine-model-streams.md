@@ -1,21 +1,47 @@
-# 2. Composition, loops, frames, elementary streams (§2)
+# 2. The machine model and elementary streams (§2)
 
 Part of the [plan](../PLAN.md). See [COMPONENTS.md](../COMPONENTS.md) for what each file proves.
 
 ## How the proof goes
 
-Section 2 builds the toolkit that every later tape construction uses. Machines are composed from small verified pieces with exact cost contracts: sequential composition, branching, loops, frames and alphabet widening. On top of these come counters and counted loops, a library of binary and fixed-radix arithmetic machines, and the two elementary affine streams the transform schedules need: scaling one coordinate by a rational coefficient, and shifting one coordinate by a multiple of an earlier one. Every invertible lower-triangular coordinate map factors into these two moves (`OrderedAffine`), so a fixed machine running them in order over one shared payload realizes each nonrecursive schedule segment of the network in time linear in the array volume.
+This section first fixes what is being proved. It defines a literal multi-tape machine model and states the end-to-end target as a Lean proposition, so that every later section ultimately produces facts about runs of such machines; an axiom audit confirms that nothing beyond Lean's standard axioms is used. It then builds the toolkit that every later tape construction uses. Machines are composed from small verified pieces with exact cost contracts: sequential composition, branching, loops, frames and alphabet widening. On top of these come counters and counted loops, a library of binary and fixed-radix arithmetic machines, and the two elementary affine streams the transform schedules need: scaling one coordinate by a rational coefficient, and shifting one coordinate by a multiple of an earlier one. Every invertible lower-triangular coordinate map factors into these two moves (`OrderedAffine`), so a fixed machine running them in order over one shared payload realizes each nonrecursive schedule segment of the network in time linear in the array volume.
 
-1. **Combinators.** `Composition`, `Hoare`, `Branch`, `Loop`, `Frame`, `Alphabet` and `Protected` give exact cost and correctness contracts for joining machines, branching on scanned symbols, looping with a potential, adding tapes and widening alphabets. Scans, rewinds, copies and generic tape placement (`Placement`) follow directly.
-2. **Counters and counted loops.** Binary and radix counters, growing counters and length descriptors drive `CountedLoop` and `CountedLoopReuse`. These run a proved body a counted number of times, charging the body costs plus linear overhead and erasing every clock afterwards. Counted copy, reverse, seek and erase come from the same pattern.
-3. **Arithmetic machines.** Literal machines for binary add, subtract, compare, multiply and divide, two's complement and fixed-point multiply, together with fixed-radix modular add and rational-coefficient kernels (`RadixRational`, `Shared50CoefficientMachines`). Radix-to-binary conversion and linear-combination compilers turn coefficients and widths into the canonical descriptors the streams consume.
-4. **Scaling streams.** One fiber is multiplied by a unit or inverse unit through split, rewind, merge and scatter of block pieces (`ScalingExecution`, `ScalingInverseExecution`). Sign negation combines with these into signed rational scaling (`SignedScalingExecution`, `ActualAffineScaling`), with descriptors synthesized from the dimensions and repeated over every fiber of a flat array (`FlatAffineScaling`).
-5. **Controlled shift streams.** `CountedRotate` translates one fiber by a fixed offset. `RationalTranslationExecution` and its prefix-counter streams compute that offset from earlier coordinates by radix arithmetic. Over the whole flat array this gives `FlatControlledShift`, normalized back to a canonical array.
-6. **Common coordinates and schedule assembly.** `FlatCoordinateLayout` puts scale and shift stages on one row-major coordinate system. Shared-payload and shared-bank compilers chain them on one fixed machine (`FlatCoordinateSchedule`, `Shared50NonrecursiveSegments`, `Shared50InitializedSegments`), with dimension synthesis from b and W and full private-workspace cleanup. `OrderedAffine` justifies that these moves cover every needed transform. The recursive call controller remains open.
-7. **Packed-line and window gadgets.** Gather, packed arithmetic lines, guard and flag tests, ordered record selection and the Gaussian window line are reusable gadgets for the §5 key routine and the §7 resampling.
-8. **Tape radix sort.** Stable partition passes on arbitrary key bits, with flag removal and cleanup, compose into `TapeRadixSort`. It sorts in at most 74 times width times volume steps.
+1. Machine semantics (`Machine.lean`): a deterministic machine with a finite alphabet and a fixed number of one-dimensional tapes, whose transition sees only the finite state and the scanned symbols, writes at most one cell per tape and moves each head at most one cell per step.
+2. Target statement (`Machine.EndToEnd`): there exist a fixed machine and constants, chosen before the input, that multiply every pair of n-bit integers correctly within `O(n (lg n)^(1 - 83/10^12))` steps. It is stated as a proposition to be proved, not assumed.
+3. Axiom audit (`AxiomAudit.lean`): the main theorems depend only on `propext`, `Quot.sound` and `Classical.choice`.
+4. **Combinators.** `Composition`, `Hoare`, `Branch`, `Loop`, `Frame`, `Alphabet` and `Protected` give exact cost and correctness contracts for joining machines, branching on scanned symbols, looping with a potential, adding tapes and widening alphabets. Scans, rewinds, copies and generic tape placement (`Placement`) follow directly.
+5. **Counters and counted loops.** Binary and radix counters, growing counters and length descriptors drive `CountedLoop` and `CountedLoopReuse`. These run a proved body a counted number of times, charging the body costs plus linear overhead and erasing every clock afterwards. Counted copy, reverse, seek and erase come from the same pattern.
+6. **Arithmetic machines.** Literal machines for binary add, subtract, compare, multiply and divide, two's complement and fixed-point multiply, together with fixed-radix modular add and rational-coefficient kernels (`RadixRational`, `Shared50CoefficientMachines`). Radix-to-binary conversion and linear-combination compilers turn coefficients and widths into the canonical descriptors the streams consume.
+7. **Scaling streams.** One fiber is multiplied by a unit or inverse unit through split, rewind, merge and scatter of block pieces (`ScalingExecution`, `ScalingInverseExecution`). Sign negation combines with these into signed rational scaling (`SignedScalingExecution`, `ActualAffineScaling`), with descriptors synthesized from the dimensions and repeated over every fiber of a flat array (`FlatAffineScaling`).
+8. **Controlled shift streams.** `CountedRotate` translates one fiber by a fixed offset. `RationalTranslationExecution` and its prefix-counter streams compute that offset from earlier coordinates by radix arithmetic. Over the whole flat array this gives `FlatControlledShift`, normalized back to a canonical array.
+9. **Common coordinates and schedule assembly.** `FlatCoordinateLayout` puts scale and shift stages on one row-major coordinate system. Shared-payload and shared-bank compilers chain them on one fixed machine (`FlatCoordinateSchedule`, `Shared50NonrecursiveSegments`, `Shared50InitializedSegments`), with dimension synthesis from b and W and full private-workspace cleanup. `OrderedAffine` justifies that these moves cover every needed transform. The recursive call controller remains open.
+10. **Packed-line and window gadgets.** Gather, packed arithmetic lines, guard and flag tests, ordered record selection and the Gaussian window line are reusable gadgets for the §5 key routine and the §7 resampling.
+11. **Tape radix sort.** Stable partition passes on arbitrary key bits, with flag removal and cleanup, compose into `TapeRadixSort`. It sorts in at most 74 times width times volume steps.
 
 ## Sub-problems
+
+### Machine model and target statement
+
+Defines the literal multi-tape machine semantics and states the EndToEnd proposition the whole development must prove.
+
+- Math milestone: `IntegerMultBounds.Machine.outputCorrect_wellPosed` — For all n-bit x, y there is exactly one output word of length 2n with binaryValue x*y, so outputCorrect pins tape zero to a unique, always-achievable content and EndToEnd is a meaningful (non-vacuous) target. Combines `Machine.product_fits`, `Machine.binaryValue_lt`.
+- Tape milestone: `IntegerMultBounds.Machine.step_semantics` — One step of any literal Program writes only the scanned cell of each tape, moves each head by at most one cell, and its result is determined by the state and the scanned symbols. Combines `Move.unit`, `Machine.step_local`, `Machine.step_head_bound`.
+
+| Subcomponent | Files | Mathematics | Tape | Notes |
+| --- | --- | --- | --- | --- |
+| Multi-tape machine semantics | `Machine.lean` | ✅ | ✅ | Finite alphabet, fixed tapes, local transitions |
+| Target proposition `EndToEnd` | `Machine.lean` | ✅ | ✅ | Stated, not proved |
+
+### Axiom audit
+
+Checks that the results rely only on Lean's three standard axioms.
+
+- Math milestone: —
+- Tape milestone: —
+
+| Subcomponent | Files | Mathematics | Tape | Notes |
+| --- | --- | --- | --- | --- |
+| Axiom audit | `AxiomAudit.lean` | ✅ | — | Only `propext`, `Quot.sound`, `Classical.choice` |
 
 ### Machine combinators and frames
 

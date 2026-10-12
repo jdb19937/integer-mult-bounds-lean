@@ -43,7 +43,7 @@ public import IntegerMultBounds.Swap.Modular
 public import IntegerMultBounds.Swap.PivotRank
 public import IntegerMultBounds.Swap.Recurrence
 
-/-! Section 4 milestones: each states one sub-problem of the faster
+/-! §4 milestones: each states one sub-problem of the faster
 interchange (plan/04-faster-interchange-address.md) in a single theorem. -/
 
 @[expose] public section

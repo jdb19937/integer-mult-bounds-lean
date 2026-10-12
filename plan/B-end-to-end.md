@@ -1,10 +1,10 @@
-# 10. End-to-end theorem `EndToEnd`
+# B. End-to-end theorem `EndToEnd`
 
 Part of the [plan](../PLAN.md). See [COMPONENTS.md](../COMPONENTS.md) for what each file proves.
 
 ## How the proof goes
 
-Section 10 proves `EndToEnd` itself by assembling one fixed machine. The machine parses the literal input, decides between a fast path for large inputs and an ordinary quadratic multiplier for the finitely many small ones, and installs the exact twice-length product. The quadratic fallback is complete; the fast path needs the components of sections 2–9 and the time bound of section 9.
+Part B proves `EndToEnd` itself by assembling one fixed machine. The machine parses the literal input, decides between a fast path for large inputs and an ordinary quadratic multiplier for the finitely many small ones, and installs the exact twice-length product. The quadratic fallback is complete; the fast path needs the components of sections 2–9 and the time bound of section 9.
 
 1. Input front end (`MultiplicationInputSplit`): a fixed parser reads the literal input, keeps it, and produces reversed operands in linear time, including empty operands.
 2. Quadratic multiplier (`ElementaryMultiplyCore`, `DoubleClockReverseCopy`, `ElementaryMultiplyOutputData`, `ElementaryMultiply`): a fixed four-tape machine computes the Horner accumulator, erases the input, and copies exactly twice-length most-significant-first product bits with an operand clock, halting in quadratic time.
@@ -47,5 +47,5 @@ Reduces EndToEnd to a program within the cost-table bound and assembles correctn
 | Subcomponent | Files | Mathematics | Tape | Notes |
 | --- | --- | --- | --- | --- |
 | Explicit multiplication program | `ElementaryMultiply` | 🟡 | 🟡 | Complete ordinary quadratic fallback is proved; fast program assembly and target bound remain open. |
-| Correctness on every input length | — | ⬜ | ⬜ | Requires sections 2–9 |
+| Correctness on every input length | — | ⬜ | ⬜ | Requires §2–§8 and part A |
 | Uniform runtime `O(n log^(1−83/10¹²) n)` | `Assembly` | 🟡 | ⬜ | `EndToEnd` reduced to a program running within a cost of the cost-table shape |

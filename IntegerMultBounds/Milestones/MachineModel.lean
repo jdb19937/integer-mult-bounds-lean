@@ -3,7 +3,7 @@ module
 public import IntegerMultBounds.Machine
 public import IntegerMultBounds.Machine.Execution
 
-/-! Section 1 milestones (plan/01-machine-model-target.md): one theorem per sub-problem, each bundling the exact statements of its proved pieces. -/
+/-! §2 machine-model milestones (plan/02-machine-model-streams.md): one theorem per sub-problem, each bundling the exact statements of its proved pieces. -/
 
 @[expose] public section
 

@@ -23,32 +23,24 @@ here.
 
 | Part of the proof | Source | Mathematics | Tape | Files |
 | --- | --- | --- | --- | --- |
-| [Machine model and target statement](plan/01-machine-model-target.md) | §2 | ✅ 1/1 | ✅ 1/1 | 2 |
-| [Composition, loops, frames, elementary streams](plan/02-composition-loops-frames.md) | §2 | ✅ 8/8 | ✅ 8/8 | 255 |
-| [Finite networks with a rank saving](plan/03-finite-networks-rank.md) | §3 | ✅ 8/8 | 🟡 2/6 | 358 |
+| [The machine model and elementary streams](plan/02-machine-model-streams.md) | §2 | ✅ 9/9 | ✅ 9/9 | 257 |
+| [Two finite networks with a rank saving](plan/03-finite-networks-rank.md) | §3 | ✅ 8/8 | 🟡 2/6 | 358 |
 | [Faster interchange of address chunks](plan/04-faster-interchange-address.md) | §4 | ✅ 10/10 | ✅ 9/9 | 375 |
-| [Simultaneous butterfly layers with compact control](plan/05-simultaneous-butterfly-layers.md) | §5, §11, CrocSwap | 🟡 3/12 | 🟡 0/12 | 1666 |
+| [Fast simultaneous synthetic butterfly layers](plan/05-simultaneous-butterfly-layers.md) | §5, §11, CrocSwap | 🟡 3/12 | 🟡 0/12 | 1666 |
 | [Synthetic transforms and their tape layout](plan/06-synthetic-transforms-tape.md) | §6 | ✅ 3/3 | ⬜ 0/3 | 7 |
-| [Gaussian resampling](plan/07-gaussian-resampling.md) | §7 | ✅ 6/6 | 🟡 3/4 | 59 |
-| [Fast multiplication subroutine](plan/08-fast-multiplication-subroutine.md) | Schönhage–Strassen | ✅ 6/6 | 🟡 2/4 | 85 |
-| [Exact multiplication, parameters, time bound](plan/09-exact-multiplication-parameters.md) | §8 | 🟡 1/3 | ⬜ 0/2 | 12 |
-| [End-to-end theorem `EndToEnd`](plan/10-end-to-end.md) | — | 🟡 1/3 | 🟡 2/3 | 6 |
+| [Resampling with the permutations left in the transform](plan/07-gaussian-resampling.md) | §7 | ✅ 6/6 | 🟡 3/4 | 59 |
+| [Exact integer multiplication and its cost](plan/08-exact-multiplication.md) | §8 | 🟡 1/3 | ⬜ 0/2 | 12 |
+| [Fast multiplication subroutine](plan/A-schoenhage-strassen.md) | Schönhage–Strassen | ✅ 6/6 | 🟡 2/4 | 85 |
+| [End-to-end theorem `EndToEnd`](plan/B-end-to-end.md) | — | 🟡 1/3 | 🟡 2/3 | 6 |
 
-## 1. Machine model and target statement (§2)
+## 2. The machine model and elementary streams (§2)
 
-Details: [plan/01-machine-model-target.md](plan/01-machine-model-target.md)
+Details: [plan/02-machine-model-streams.md](plan/02-machine-model-streams.md)
 
 | Sub-problem | Mathematics | Tape | Files |
 | --- | --- | --- | --- |
 | Machine model and target statement | ✅ | ✅ | 1 |
 | Axiom audit | — | — | 1 |
-
-## 2. Composition, loops, frames, elementary streams (§2)
-
-Details: [plan/02-composition-loops-frames.md](plan/02-composition-loops-frames.md)
-
-| Sub-problem | Mathematics | Tape | Files |
-| --- | --- | --- | --- |
 | Machine combinators and frames | ✅ | ✅ | 14 |
 | Counters and counted loops | ✅ | ✅ | 28 |
 | Binary and radix arithmetic machines | ✅ | ✅ | 51 |
@@ -58,7 +50,7 @@ Details: [plan/02-composition-loops-frames.md](plan/02-composition-loops-frames.
 | Packed-line and window gadgets | ✅ | ✅ | 9 |
 | Tape radix sort | ✅ | ✅ | 16 |
 
-## 3. Finite networks with a rank saving (§3)
+## 3. Two finite networks with a rank saving (§3)
 
 Details: [plan/03-finite-networks-rank.md](plan/03-finite-networks-rank.md)
 
@@ -90,7 +82,7 @@ Details: [plan/04-faster-interchange-address.md](plan/04-faster-interchange-addr
 | Arbitrary-width piece dispatcher (Lemma 4.4) | ✅ | ✅ | 120 |
 | Binary interchange wrapper | ✅ | ✅ | 16 |
 
-## 5. Simultaneous butterfly layers with compact control (§5, §11, CrocSwap)
+## 5. Fast simultaneous synthetic butterfly layers (§5, §11, CrocSwap)
 
 Details: [plan/05-simultaneous-butterfly-layers.md](plan/05-simultaneous-butterfly-layers.md)
 
@@ -119,7 +111,7 @@ Details: [plan/06-synthetic-transforms-tape.md](plan/06-synthetic-transforms-tap
 | Bluestein reduction | ✅ | ⬜ | 2 |
 | Tape layout and cost bracket | ✅ | ⬜ | 1 |
 
-## 7. Gaussian resampling (§7)
+## 7. Resampling with the permutations left in the transform (§7)
 
 Details: [plan/07-gaussian-resampling.md](plan/07-gaussian-resampling.md)
 
@@ -132,9 +124,19 @@ Details: [plan/07-gaussian-resampling.md](plan/07-gaussian-resampling.md)
 | Resampling maps on tapes | ✅ | ✅ | 13 |
 | Tensor interface line costs | ✅ | 🟡 0/1 rows | 3 |
 
-## 8. Fast multiplication subroutine (Schönhage–Strassen)
+## 8. Exact integer multiplication and its cost (§8)
 
-Details: [plan/08-fast-multiplication-subroutine.md](plan/08-fast-multiplication-subroutine.md)
+Details: [plan/08-exact-multiplication.md](plan/08-exact-multiplication.md)
+
+| Sub-problem | Mathematics | Tape | Files |
+| --- | --- | --- | --- |
+| Parameters, asymptotics and coprime source lengths | ✅ | — | 4 |
+| Exact recovery of the product | 🟡 | ⬜ | 4 |
+| Cost table and time bound | 🟡 1/2 rows | ⬜ | 4 |
+
+## A. Fast multiplication subroutine (Schönhage–Strassen)
+
+Details: [plan/A-schoenhage-strassen.md](plan/A-schoenhage-strassen.md)
 
 | Sub-problem | Mathematics | Tape | Files |
 | --- | --- | --- | --- |
@@ -145,26 +147,15 @@ Details: [plan/08-fast-multiplication-subroutine.md](plan/08-fast-multiplication
 | Packed signed ring products | ✅ | ✅ | 28 |
 | Paper-format transform layer statements | ✅ | 🟡 1/4 rows | 6 |
 
-## 9. Exact multiplication, parameters, time bound (§8)
+## B. End-to-end theorem `EndToEnd`
 
-Details: [plan/09-exact-multiplication-parameters.md](plan/09-exact-multiplication-parameters.md)
-
-| Sub-problem | Mathematics | Tape | Files |
-| --- | --- | --- | --- |
-| Parameters, asymptotics and coprime source lengths | ✅ | — | 4 |
-| Exact recovery of the product | 🟡 | ⬜ | 4 |
-| Cost table and time bound | 🟡 1/2 rows | ⬜ | 4 |
-
-## 10. End-to-end theorem `EndToEnd`
-
-Details: [plan/10-end-to-end.md](plan/10-end-to-end.md)
+Details: [plan/B-end-to-end.md](plan/B-end-to-end.md)
 
 | Sub-problem | Mathematics | Tape | Files |
 | --- | --- | --- | --- |
 | Literal input front end | ✅ | ✅ | 1 |
 | Quadratic fallback multiplier | 🟡 | ✅ | 4 |
 | Fast program assembly and final bound | 🟡 0/3 rows | 🟡 0/3 rows | 2 |
-
 ## Next steps
 
 - Assemble synthesized piece descriptors with repeated scaling, repeat inverse scaling, then compose signed rational scales and computed varying-offset translations.

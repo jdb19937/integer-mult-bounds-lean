@@ -1,4 +1,4 @@
-# 7. Gaussian resampling (§7)
+# 7. Resampling with the permutations left in the transform (§7)
 
 Part of the [plan](../PLAN.md). See [COMPONENTS.md](../COMPONENTS.md) for what each file proves.
 

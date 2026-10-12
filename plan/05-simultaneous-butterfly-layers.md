@@ -1,4 +1,4 @@
-# 5. Simultaneous butterfly layers with compact control (§5, §11, CrocSwap)
+# 5. Fast simultaneous synthetic butterfly layers (§5, §11, CrocSwap)
 
 Part of the [plan](../PLAN.md). See [COMPONENTS.md](../COMPONENTS.md) for what each file proves.
 

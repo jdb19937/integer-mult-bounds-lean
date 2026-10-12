@@ -28,7 +28,7 @@ public import IntegerMultBounds.Spec.SignedRingProductFacts
 public import IntegerMultBounds.Spec.SimultaneousLayerFacts
 public import IntegerMultBounds.Spec.SyntheticTransformFacts
 
-/-! Section 8 milestones (plan/08-fast-multiplication-subroutine.md): one theorem per sub-problem, each bundling the exact statements of its proved pieces. -/
+/-! Part A milestones (plan/A-schoenhage-strassen.md): one theorem per sub-problem, each bundling the exact statements of its proved pieces. -/
 
 @[expose] public section
 

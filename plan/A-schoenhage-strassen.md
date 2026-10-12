@@ -1,10 +1,10 @@
-# 8. Fast multiplication subroutine (Schönhage–Strassen)
+# A. Fast multiplication subroutine (Schönhage–Strassen)
 
 Part of the [plan](../PLAN.md). See [COMPONENTS.md](../COMPONENTS.md) for what each file proves.
 
 ## How the proof goes
 
-Section 8 supplies the multiplier for the packed products inside the synthetic convolution. The main proof only needs `m log m (log log m)^c` here, which the cost table absorbs, so Schönhage–Strassen replaces the Harvey–van der Hoeven recursion. Shared Fourier and fixed-point foundations come first; then the Schönhage–Strassen mathematics, a word-tape programming layer, the multiplier on tapes with its runtime, and finally the packed ring product and the paper-format statements of the transform layer that call it.
+Part A supplies the multiplier for the packed products inside the synthetic convolution. The main proof only needs `m log m (log log m)^c` here, which the cost table absorbs, so Schönhage–Strassen replaces the Harvey–van der Hoeven recursion. Shared Fourier and fixed-point foundations come first; then the Schönhage–Strassen mathematics, a word-tape programming layer, the multiplier on tapes with its runtime, and finally the packed ring product and the paper-format statements of the transform layer that call it.
 
 1. Foundations (`DFT`, `FFT`, `FixedPoint`, `TensorApprox`, `Pipeline`, `SynthConvApprox`, `Clamp`): DFT and convolution theorem, radix-2 FFT counts, a fixed-point error budget, the tensor approximation lemma, a plain exact FFT multiplier, and synthetic convolution approximations used by §6 and §7.
 2. Schönhage–Strassen mathematics (`Schoenhage/Transform`, `Level`, `Schedule`, `Recursive`): a twisted-transform convolution theorem over any ring with `ψ^H = -1`, one level computing `x y mod 2^(2^k M) + 1` (`level_correct`), and a tape-computable size schedule whose cost recurrence is `O(N log N log log N)` (`cost_le`).

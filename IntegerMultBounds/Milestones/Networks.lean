@@ -27,7 +27,7 @@ public import IntegerMultBounds.Networks.ShearFrame
 public import IntegerMultBounds.Networks.TensorLabels
 public import IntegerMultBounds.Networks.Wires
 
-/-! Section 3 milestones (plan/03-finite-networks-rank.md): one theorem per sub-problem, each bundling the exact statements of its proved pieces. -/
+/-! §3 milestones (plan/03-finite-networks-rank.md): one theorem per sub-problem, each bundling the exact statements of its proved pieces. -/
 
 @[expose] public section
 
