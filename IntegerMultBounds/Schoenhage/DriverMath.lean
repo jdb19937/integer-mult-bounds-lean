@@ -143,4 +143,82 @@ theorem opposite_close [NeZero r] {ts : List ℕ} (hts : PowAxes r ts) {n : ℕ}
   have := hcl (π.phys x) (π.phys_lt x) k
   rwa [π.logi_phys hx] at this
 
+/-! ### One round on records -/
+
+section Steps
+
+variable [NeZero r] {ts : List ℕ} {ℓ K : ℕ} (hL : LayoutOK r ts ℓ K) (p : ℕ)
+
+theorem agree_of_eq {n : ℕ} {u v : ℕ → Fin r → ℂ} (h : u = v) : Agree n u v := fun _ _ => by rw [h]
+
+/-- A forward prefix round on records. -/
+theorem step_prefix {h : ℕ} (hh : h < (ℓ - 1) % K) (R : List (Rec r)) (hR : R.length = ts.prod) :
+    RoundStep (Nat.log 2 ts.prod) p (slotRound (paperPerm hL) ts h) R
+      (TwistRound.twistRecs (slotExp (paperPerm hL) r ts (slotAxes ts h) h)
+        ((bflysRecs ((List.range ts.length).map (prefixBase ts.length ℓ K h + ·)) R).map (truncRec ts.length))) :=
+  agree_of_eq (by rw [TwistRound.arrayVec_twist, prefix_round_eq hL hh p R hR])
+
+/-- A forward top-slot round on records. -/
+theorem step_top (R : List (Rec r)) (hR : R.length = ts.prod) :
+    RoundStep (Nat.log 2 ts.prod) p (slotRound (paperPerm hL) ts (ℓ - 1)) R
+      (TwistRound.twistRecs (slotExp (paperPerm hL) r ts (slotAxes ts (ℓ - 1)) (ℓ - 1))
+        ((bflysRecs ((List.range (longs ts ℓ).length).map (topBase ts.length ℓ K + ·)) R).map
+          (truncRec (longs ts ℓ).length))) :=
+  agree_of_eq (by rw [TwistRound.arrayVec_twist, top_round_eq hL p R hR])
+
+/-- A forward chunk-group round on records. -/
+theorem step_chunk {c ρ : ℕ} (hc : c < (ℓ - 1) / K) (hρ : ρ < K) (R : List (Rec r)) :
+    RoundStep (Nat.log 2 ts.prod) p (slotRound (paperPerm hL) ts ((ℓ - 1) % K + c * K + ρ)) R
+      (TwistRound.twistRecs (slotExp (paperPerm hL) r ts (slotAxes ts ((ℓ - 1) % K + c * K + ρ))
+          ((ℓ - 1) % K + c * K + ρ))
+        (layerOut p ts.length K ρ (2 ^ (c * ts.length * K)) (2 ^ Nat.log 2 ts.prod) R)) := by
+  intro y hy
+  rw [TwistRound.arrayVec_twist]
+  exact (chunk_round_eq hL hc hρ p _ R hy).symm
+
+/-- An opposite prefix round on records. -/
+theorem step_opp_prefix {h : ℕ} (hh : h < (ℓ - 1) % K) (R : List (Rec r)) (hR : R.length = ts.prod) :
+    RoundStep (Nat.log 2 ts.prod) p (oppSlotRound (paperPerm hL) ts h) R
+      ((bflysRecs ((List.range ts.length).map (prefixBase ts.length ℓ K h + ·))
+        (TwistRound.untwistRecs (slotExp (paperPerm hL) r ts (slotAxes ts h) h) R)).map (truncRec ts.length)) :=
+  agree_of_eq (prefix_opp_round_eq hL hh p R hR).symm
+
+/-- The top slot's butterflies on any array of the right length, rounded once. -/
+theorem top_bflys_eq (gs : List (Rec r)) (hlen : gs.length = ts.prod) :
+    roundArr p (bflys (slotBits (paperPerm hL) ts (slotAxes ts (ℓ - 1)) (ℓ - 1)) (arrayVec p gs)) =
+      arrayVec p ((bflysRecs ((List.range (longs ts ℓ).length).map (topBase ts.length ℓ K + ·)) gs).map
+        (truncRec (longs ts ℓ).length)) := by
+  have := top_round_eq hL p gs hlen
+  unfold slotRound at this
+  rw [roundArr_twist] at this
+  have hinj : Function.Injective (twist (r := r) (slotExp (paperPerm hL) r ts (slotAxes ts (ℓ - 1)) (ℓ - 1))) := by
+    intro a b e
+    rw [← untwist_twist (slotExp (paperPerm hL) r ts (slotAxes ts (ℓ - 1)) (ℓ - 1)) a, e, untwist_twist]
+  exact hinj this
+
+/-- An opposite top-slot round on records. -/
+theorem step_opp_top (R : List (Rec r)) (hR : R.length = ts.prod) :
+    RoundStep (Nat.log 2 ts.prod) p (oppSlotRound (paperPerm hL) ts (ℓ - 1)) R
+      ((bflysRecs ((List.range (longs ts ℓ).length).map (topBase ts.length ℓ K + ·))
+        (TwistRound.untwistRecs (slotExp (paperPerm hL) r ts (slotAxes ts (ℓ - 1)) (ℓ - 1)) R)).map
+          (truncRec (longs ts ℓ).length)) := by
+  apply agree_of_eq
+  unfold oppSlotRound
+  rw [← TwistRound.arrayVec_untwist]
+  exact (top_bflys_eq hL p _ (by simp [TwistRound.untwistRecs, hR])).symm
+
+/-- An opposite chunk-group round on records. -/
+theorem step_opp_chunk {c ρ : ℕ} (hc : c < (ℓ - 1) / K) (hρ : ρ < K) (R : List (Rec r)) :
+    RoundStep (Nat.log 2 ts.prod) p (oppSlotRound (paperPerm hL) ts ((ℓ - 1) % K + c * K + ρ)) R
+      (layerOut p ts.length K ρ (2 ^ (c * ts.length * K)) (2 ^ Nat.log 2 ts.prod)
+        (TwistRound.untwistRecs (slotExp (paperPerm hL) r ts (slotAxes ts ((ℓ - 1) % K + c * K + ρ))
+          ((ℓ - 1) % K + c * K + ρ)) R)) := by
+  intro y hy
+  rw [arrayVec_layerOut _ hy]
+  unfold oppSlotRound
+  rw [paper_slotBits_chunk hL hc hρ, ← hadamard_eq_bflys hρ, ← TwistRound.arrayVec_untwist]
+  rfl
+
+end Steps
+
 end IntegerMultBounds.Schoenhage

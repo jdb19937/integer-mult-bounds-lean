@@ -6804,7 +6804,10 @@ Schönhage–Strassen multiplication, the fast multiplier used for the packed pr
   (`agree_of_contracts`); a chain of record rounds agrees with the computed schedule
   (`roundRun_agree`); disk records from disk values (`diskGrid_of_norm`); the
   forward and opposite drivers' outputs meet the `Close` and disk clauses of
-  `MeetsForward`/`MeetsOpposite` (`forward_close`, `opposite_close`).
+  `MeetsForward`/`MeetsOpposite` (`forward_close`, `opposite_close`); each machine round
+  on records is a chain step, forward and opposite, for prefix, top and chunk-group
+  slots (`step_prefix`, `step_top`, `step_chunk`, `step_opp_prefix`, `step_opp_top`,
+  `step_opp_chunk`).
 
 - `Schoenhage/PointwiseRow.lean`: at the main sizes `p = 6 lg n`, `r = 2^ℓ`
   the pointwise program's time is at most a constant times `T p` times the
