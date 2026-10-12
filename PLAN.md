@@ -29,7 +29,7 @@ here.
 | [Fast simultaneous synthetic butterfly layers](plan/05-simultaneous-butterfly-layers.md) | §5, §11, CrocSwap | 🟡 4/12 | 🟡 0/12 | 1667 |
 | [Synthetic transforms and their tape layout](plan/06-synthetic-transforms-tape.md) | §6 | ✅ 3/3 | ⬜ 0/3 | 7 |
 | [Resampling with the permutations left in the transform](plan/07-gaussian-resampling.md) | §7 | ✅ 6/6 | 🟡 3/4 | 59 |
-| [Exact integer multiplication and its cost](plan/08-exact-multiplication.md) | §8 | 🟡 1/3 | ⬜ 0/2 | 12 |
+| [Exact integer multiplication and its cost](plan/08-exact-multiplication.md) | §8 | 🟡 2/3 | ⬜ 0/2 | 13 |
 | [Fast multiplication subroutine](plan/A-schoenhage-strassen.md) | Schönhage–Strassen | ✅ 6/6 | 🟡 2/4 | 85 |
 | [End-to-end theorem `EndToEnd`](plan/B-end-to-end.md) | — | 🟡 1/3 | 🟡 2/3 | 6 |
 
@@ -131,7 +131,7 @@ Details: [plan/08-exact-multiplication.md](plan/08-exact-multiplication.md)
 | Sub-problem | Mathematics | Tape | Files |
 | --- | --- | --- | --- |
 | Parameters, asymptotics and coprime source lengths | ✅ | — | 4 |
-| Exact recovery of the product | 🟡 | ⬜ | 4 |
+| Exact recovery of the product | ✅ | ⬜ | 5 |
 | Cost table and time bound | 🟡 1/2 rows | ⬜ | 4 |
 
 ## A. Fast multiplication subroutine (Schönhage–Strassen)
