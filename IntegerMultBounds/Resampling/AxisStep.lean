@@ -24,6 +24,11 @@ open Machine Schoenhage
 variable {a : ℕ}
 
 /-- A relabelled program whose run is an exact bank, as an exact bank. -/
+theorem clen_uniform (k : ℕ) : ∀ l : List (List Bool), (∀ x ∈ l, x.length = k) → clen l = l.length * (k + 1)
+  | [], _ => by simp [clen]
+  | x :: l, h => by
+    rw [clen_cons, clen_uniform k l (fun y hy => h y (by simp [hy])), h x (by simp)]; simp; ring
+
 theorem runs_map_upd {t t' : ℕ} (f : Fin t → Fin t') (hf : Function.Injective f) {c : Cmd a t}
     (τ : Fin t' → WTape) {σ' : Fin t → WTape} {B : ℕ} (h : Runs c (τ ∘ f) (· = σ') B)
     (G : Fin t' → WTape) (hG1 : ∀ y, G (f y) = σ' y) (hG2 : ∀ x, (∀ y, f y ≠ x) → G x = τ x) :
@@ -80,6 +85,14 @@ noncomputable def expandStep : Cmd a EB :=
   .seq (clear 29) <| .seq (floorLoop.map fFloor fFloor_inj) <| .seq (clear tY) <| .seq (rewind tZ) <|
   (fromWords.map fJoin fJoin_inj)
 
+/-- The array handed to the `Ã` loop: the trimmed lines cut into words, least significant bit first. -/
+def expandArr (A : List Bool) (s t w : ℕ) : List (List Bool) :=
+  (cut w ((cut (2 * t * w) A).map (Rules.fit (2 * s * w))).flatten).map List.reverse
+
+/-- The cost of one expansion axis: the `Ã` loop plus linear plumbing. -/
+noncomputable def expandBound (A : List Bool) (wt : List (List Bool)) (s t m p w W L : ℕ) (sW tW : List Bool) : ℕ :=
+  LineAPrim.progBound wt (expandArr A s t w) s t m p w W L sW tW + 400 * (t * L * (W + 1)) + 400
+
 /-- The array after the step. -/
 noncomputable def expandOut (A : List Bool) (wt : List (List Bool)) (s t m p w W L : ℕ) : List Bool :=
   msbArray ((LineApply.outs wt ((cut w ((cut (2 * t * w) A).map (Rules.fit (2 * s * w))).flatten).map List.reverse)
@@ -122,8 +135,8 @@ theorem runs_expandStep (σ : Fin EB → WTape) (A : List Bool) (wt : List (List
     (hA : ∀ i, σ (aSlot i) = LineAPrim.sigIn wt [] s t m p w W L sW tW i)
     (hX : σ tX = reg A) (hU : σ tU = reg (ones (2 * t * w))) (hV : σ tV = reg (ones (2 * s * w)))
     (hS1 : σ tS1 = emp) (hS2 : σ tS2 = emp) (hY : σ tY = emp) (hOne : σ tOne = reg [true]) (hZ : σ tZ = emp) :
-    ∃ B, Runs (a := a) expandStep σ (· = Function.update (Function.update σ 0 emp) tX
-      (reg (expandOut A wt s t m p w W L))) B := by
+    Runs (a := a) expandStep σ (· = Function.update (Function.update σ 0 emp) tX
+      (reg (expandOut A wt s t m p w W L))) (expandBound A wt s t m p w W L sW tW) := by
   -- sizes
   set u := 2 * t * w with hu_def
   set v := 2 * s * w with hv_def
@@ -160,19 +173,19 @@ theorem runs_expandStep (σ : Fin EB → WTape) (A : List Bool) (wt : List (List
     have := hA (Fin.castAdd 91 29); simp only [LineAPrim.sigIn, Fin.addCases_left] at this; exact this
   -- 1. refit
   set σ1 := Function.update σ tX (reg R)
-  have s1 : ∃ B, Runs (a := a) (refit.map fRefit fRefit_inj) σ (· = σ1) B := ⟨_, runs_map_upd fRefit fRefit_inj σ
+  have s1 : Runs (a := a) (refit.map fRefit fRefit_inj) σ (· = σ1) _ := (runs_map_upd fRefit fRefit_inj σ
     (runs_refitW (a := a) (v := v) (W := u) hu A (fun x hx => (hcutA x hx).le) (σ ∘ fRefit) (by simp [fRefit, hX])
       (by simp [fRefit, hU]) (by simp [fRefit, hV]) (by simp [fRefit, hS1]) (by simp [fRefit, hS2]))
-    σ1 (fun y => by fin_cases y <;> simp (config := {decide := true}) [σ1, fRefit] <;> rfl)
-    (fun x hx => Function.update_of_ne (fun e => hx 0 (by rw [e]; rfl)) _ _)⟩
+    σ1 (fun y => by fin_cases y <;> (simp (config := {decide := true}) [σ1, fRefit]; try rfl))
+    (fun x hx => Function.update_of_ne (fun e => hx 0 (by rw [e]; rfl)) _ _))
   -- 2. cut into words onto the primitive's array tape
   set σ2 := Function.update σ1 22 ⟨[], arr⟩
-  have s2 : ∃ B, Runs (a := a) (toWords.map fIn fIn_inj) σ1 (· = σ2) B := ⟨_, runs_map_upd fIn fIn_inj σ1
+  have s2 : Runs (a := a) (toWords.map fIn fIn_inj) σ1 (· = σ2) _ := (runs_map_upd fIn fIn_inj σ1
     (runs_toWordsW (a := a) (W := w) hw R (fun x hx => (hcR x hx).le) (σ1 ∘ fIn)
       (by simp (config := {decide := true}) [fIn, σ1]) (by simp (config := {decide := true}) [fIn, σ1, h9])
       (by simp (config := {decide := true}) [fIn, σ1, h22]) (by simp (config := {decide := true}) [fIn, σ1, hS1]))
-    σ2 (fun y => by fin_cases y <;> simp (config := {decide := true}) [σ2, σ1, fIn] <;> rfl)
-    (fun x hx => Function.update_of_ne (fun e => hx 2 (by rw [e]; rfl)) _ _)⟩
+    σ2 (fun y => by fin_cases y <;> (simp (config := {decide := true}) [σ2, σ1, fIn]; try rfl))
+    (fun x hx => Function.update_of_ne (fun e => hx 2 (by rw [e]; rfl)) _ _))
   -- 3. clear the array tape
   set σ3 := Function.update σ2 tX ⟨[], []⟩
   have s3 := runs_clear (a := a) tX σ2
@@ -188,10 +201,11 @@ theorem runs_expandStep (σ : Fin EB → WTape) (A : List Bool) (wt : List (List
       exact (sigIn_arr _ _ _ _ _ _ _ _ _ _ _ _ h).symm
   set O := LineApply.outs wt arr s t m p w W L with hO_def
   set σ4 := upd σ3 aSlot (LineAPrim.sigOut wt arr s t m p w W L sW tW)
-  have s4 : ∃ B, Runs (a := a) (.prim (Prim.lift AxisPrims.aPrim) aSlot aSlot_inj) σ3 (· = σ4) B := by
+  have s4 : Runs (a := a) (.prim (Prim.lift AxisPrims.aPrim) aSlot aSlot_inj) σ3 (· = σ4)
+      (AxisPrims.aCost (σ3 ∘ aSlot)) := by
     have hp : AxisPrims.APre (σ3 ∘ aSlot) :=
       ⟨wt, arr, s, t, m, p, w, W, L, sW, tW, hpre, hw, hpw, hwW, hwt, hwtl, harr, harrw, hms, hst, hs, hsv, htv, hsl⟩
-    refine ⟨_, _, _, Exec.prim (P := Prim.lift AxisPrims.aPrim) hp, ?_, le_rfl⟩
+    refine ⟨_, _, Exec.prim (P := Prim.lift AxisPrims.aPrim) hp, ?_, le_rfl⟩
     show upd σ3 aSlot (AxisPrims.aSem (σ3 ∘ aSlot)) = σ4
     rw [hpre, (AxisPrims.aSem_sigIn wt arr s t m p w W L sW tW htv).1]
   have hσ4a : ∀ j : Fin 31, σ4 (aSlot (Fin.castAdd 91 j)) = LineAPrim.sigOut wt arr s t m p w W L sW tW
@@ -213,21 +227,21 @@ theorem runs_expandStep (σ : Fin EB → WTape) (A : List Bool) (wt : List (List
   have hdM : W ∣ (msbArray O).length := ⟨O.length, by rw [hMl]; ring⟩
   -- 5. cut the output into words
   set σ5 := Function.update σ4 tY ⟨[], O⟩
-  have s5 : ∃ B, Runs (a := a) (toWords.map fOut fOut_inj) σ4 (· = σ5) B := ⟨_, runs_map_upd fOut fOut_inj σ4
+  have s5 : Runs (a := a) (toWords.map fOut fOut_inj) σ4 (· = σ5) _ := (runs_map_upd fOut fOut_inj σ4
     (runs_toWordsW (a := a) (W := W) hW1 (msbArray O) (fun x hx => (cut_lengths hW1 _ hdM x hx).le) (σ4 ∘ fOut)
       (by simp [fOut, g29]) (by simp [fOut, g17])
       (by simp only [Function.comp_apply, fOut]; rw [hσ4b _ (by decide)]; simp (config := {decide := true}) [σ3, σ2, σ1, hY])
       (by simp only [Function.comp_apply, fOut]; rw [hσ4b _ (by decide)]; simp (config := {decide := true}) [σ3, σ2, σ1, hS1]))
     σ5 (fun y => by
       fin_cases y <;> simp (config := {decide := true}) [σ5, fOut, cut_msbArray hW1 O hOw])
-    (fun x hx => Function.update_of_ne (fun e => hx 2 (by rw [e]; rfl)) _ _)⟩
+    (fun x hx => Function.update_of_ne (fun e => hx 2 (by rw [e]; rfl)) _ _))
   -- 6. clear the output tape
   set σ6 := Function.update σ5 29 ⟨[], []⟩
   have s6 := runs_clear (a := a) 29 σ5
   -- 7. floor every word
   set F := O.map (floorWord w) with hF_def
   set σ7 := Function.update (Function.update σ6 tY ⟨O.reverse ++ [], []⟩) tZ ⟨F.reverse ++ [], []⟩
-  have s7 : ∃ B, Runs (a := a) (floorLoop.map fFloor fFloor_inj) σ6 (· = σ7) B := ⟨_, runs_map_upd fFloor fFloor_inj σ6
+  have s7 : Runs (a := a) (floorLoop.map fFloor fFloor_inj) σ6 (· = σ7) _ := (runs_map_upd fFloor fFloor_inj σ6
     (runs_floorLoop (a := a) (w := w) (W := W) O (σ6 ∘ fFloor) [] [] (fun x hx => (hOw x hx).le)
       (by simp only [Function.comp_apply, fFloor]; simp (config := {decide := true}) [σ6, σ5];
           rw [hσ4b _ (by decide)]; simp (config := {decide := true}) [σ3, σ2, σ1, hOne])
@@ -240,7 +254,7 @@ theorem runs_expandStep (σ : Fin EB → WTape) (A : List Bool) (wt : List (List
     σ7 (fun y => by fin_cases y <;> simp (config := {decide := true}) [σ7, fFloor, hF_def])
     (fun x hx => by
       simp only [σ7]
-      rw [Function.update_of_ne (fun e => hx 4 (by rw [e]; rfl)), Function.update_of_ne (fun e => hx 0 (by rw [e]; rfl))])⟩
+      rw [Function.update_of_ne (fun e => hx 4 (by rw [e]; rfl)), Function.update_of_ne (fun e => hx 0 (by rw [e]; rfl))]))
   -- 8, 9. clear the word list, rewind the floored list
   set σ8 := Function.update σ7 tY ⟨[], []⟩
   have s8 := runs_clear (a := a) tY σ7
@@ -251,7 +265,7 @@ theorem runs_expandStep (σ : Fin EB → WTape) (A : List Bool) (wt : List (List
   have hFw : ∀ x ∈ F, x.length ≤ w := by
     intro x hx; simp only [F, List.mem_map] at hx; obtain ⟨y, -, rfl⟩ := hx; simp [floorWord]
   set σ10 := Function.update (Function.update σ9 tX (reg (F.map List.reverse).flatten)) tZ emp
-  have s10 : ∃ B, Runs (a := a) (fromWords.map fJoin fJoin_inj) σ9 (· = σ10) B := ⟨_, runs_map_upd fJoin fJoin_inj σ9
+  have s10 : Runs (a := a) (fromWords.map fJoin fJoin_inj) σ9 (· = σ10) _ := (runs_map_upd fJoin fJoin_inj σ9
     (runs_fromWords (a := a) (W := w) F hFw (σ9 ∘ fJoin)
       (by simp only [Function.comp_apply, fJoin]; simp (config := {decide := true}) [σ9, σ8, σ7, σ6, σ5];
           rw [hσ4b _ (by decide)]; simp (config := {decide := true}) [σ3]; rfl)
@@ -261,15 +275,33 @@ theorem runs_expandStep (σ : Fin EB → WTape) (A : List Bool) (wt : List (List
     σ10 (fun y => by fin_cases y <;> simp (config := {decide := true}) [σ10, fJoin])
     (fun x hx => by
       simp only [σ10]
-      rw [Function.update_of_ne (fun e => hx 2 (by rw [e]; rfl)), Function.update_of_ne (fun e => hx 0 (by rw [e]; rfl))])⟩
-  obtain ⟨B1, r1⟩ := s1
-  obtain ⟨B2, r2⟩ := s2
-  obtain ⟨B4, r4⟩ := s4
-  obtain ⟨B5, r5⟩ := s5
-  obtain ⟨B7, r7⟩ := s7
-  obtain ⟨B10, r10⟩ := s10
-  refine ⟨_, (Runs.then r1 (Runs.then r2 (Runs.then s3 (Runs.then r4 (Runs.then r5 (Runs.then s6
-    (Runs.then r7 (Runs.then s8 (Runs.then s9 r10))))))))).mono (fun σ' e => ?_) le_rfl⟩
+      rw [Function.update_of_ne (fun e => hx 2 (by rw [e]; rfl)), Function.update_of_ne (fun e => hx 0 (by rw [e]; rfl))]))
+  refine (Runs.then s1 (Runs.then s2 (Runs.then s3 (Runs.then s4 (Runs.then s5 (Runs.then s6
+    (Runs.then s7 (Runs.then s8 (Runs.then s9 s10))))))))).mono (fun σ' e => ?_) ?_
+  swap
+  · have c4 : AxisPrims.aCost (σ3 ∘ aSlot) = LineAPrim.progBound wt arr s t m p w W L sW tW := by
+      rw [hpre]; exact (AxisPrims.aSem_sigIn wt arr s t m p w W L sW tW htv).2
+    rw [c4]
+    simp (config := {decide := true}) only [σ8, σ7, σ6, σ5, σ2, σ1, Function.update_self,
+      Function.update_of_ne, ne_eq, WTape.words, List.append_nil]
+    have hFl : F.length = O.length := by simp [F]
+    have hFw' : ∀ x ∈ F, x.length = w := by
+      intro x hx; simp only [F, List.mem_map] at hx; obtain ⟨y, -, rfl⟩ := hx; simp [floorWord]
+    have hcM : (cut W (msbArray O)).length = O.length := by
+      rw [length_cut hW1 _ hdM, hMl, Nat.mul_div_cancel _ (by omega)]
+    simp only [clen_reverse]
+    rw [g29, hLA, hlcR, hR, hcM, hMl, clen_uniform W O hOw,
+      clen_uniform w F hFw', hFl, hOl, hAl]
+    simp only [reg, List.reverse_nil, List.nil_append, clen_cons, clen_nil, expandBound, expandArr]
+    have hsw : s * w ≤ t * W := Nat.mul_le_mul hst hwW
+    have htw : t * w ≤ t * W := Nat.mul_le_mul_left _ hwW
+    have ht1 : 1 ≤ t := by omega
+    have e1 : L * (s * w) ≤ L * (t * W) := Nat.mul_le_mul_left _ hsw
+    have e2 : L * (t * w) ≤ L * (t * W) := Nat.mul_le_mul_left _ htw
+    have e3 : L * s ≤ L * t := Nat.mul_le_mul_left _ hst
+    have e4 : L ≤ L * t := Nat.le_mul_of_pos_right _ ht1
+    simp only [hu_def, hv_def]
+    nlinarith
   rw [e]
   funext x
   by_cases e1 : x = tX

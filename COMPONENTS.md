@@ -6084,7 +6084,8 @@ Transform, fixed-point, Kronecker and Gaussian resampling mathematics used by th
 - `Resampling/AxisStep.lean`: one expansion axis on word tapes
   (`expandStep`): keep the first `s` entries of every line, cut into words,
   run `Ã` line by line, floor the outputs by one bit and join them back
-  (`runs_expandStep`, result `expandOut`).
+  (`runs_expandStep`, result `expandOut`), at the `Ã` loop's cost plus
+  `400 t L (W + 1) + 400` (`expandBound`).
 
 - `Resampling/PiApprox.lean`, `Resampling/ExpApprox.lean`: certified integer
   approximations for the weight tables. `piApprox q K` sums Machin's series
