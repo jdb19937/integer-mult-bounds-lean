@@ -26,8 +26,9 @@ remains open. Witnessed complete child schedules now supply both
 their upper ledger and required denominator target. Actual scalar and stopped-child
 lifecycles construct reached event steps and preserve settled frames and the
 immutable saved target. Complete schedules now execute when every child stops,
-with a summed concrete event budget; actual stopped events also carry exact
-original instruction values. Nonstopped recursive execution, whole-node tensor
+with a summed concrete event budget and the original full compiler-network
+values on that same terminal reached bank; each local stopped event also
+carries its exact original instruction values. Nonstopped recursive execution, whole-node tensor
 correctness and uniform execution/runtime remain open.
 Its recursive geometry math milestone is proved:
 canonical axis coverage, fitting descendant intervals, unique exhaustive child
