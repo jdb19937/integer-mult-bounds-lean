@@ -14,7 +14,7 @@ tensor of the padded tabled `B̃₀` maps (`compress_hoare`). -/
 namespace IntegerMultBounds.Resampling.TensorDriver
 noncomputable section
 
-open Machine Schoenhage AxisDriver AxisInst Script FlatTensor TensorTape LineNumeric TensorNumeric PaddedTensor
+open Machine Schoenhage AxisDriver AxisInst Script Sandwich FlatTensor TensorTape LineNumeric TensorNumeric PaddedTensor
 open Networks.Shared50ModularControl (prime)
 open IntegerMultBounds.NLogN (tensorZR)
 
@@ -46,12 +46,12 @@ theorem expand_hoare (d : ℕ) (lg : Fin d → ℕ) (m α p w W : ℕ) (P : Fin 
     (hu : es.map (decE w p) = lexFlat d (fun i => 2 ^ lg i) u) :
     HoareTime (driveProg (expandSpec m p w W))
       (· = enc (bank (eRest m p w W) AxisStep.tX es.flatten
-        ⟨[], (tScript (2 * w) d lg 1 (eAxis lg (∏ i, 2 ^ lg i) m w P)).flatMap Rec.words⟩))
+        ⟨[], (sScript (2 * w) d lg 1 (eAxis lg (∏ i, 2 ^ lg i) m w P)).flatMap Rec.words⟩))
       (fun v => ∃ out : List (List Bool), v = enc (bank (eRest m p w W) AxisStep.tX out.flatten
-        ⟨((tScript (2 * w) d lg 1 (eAxis lg (∏ i, 2 ^ lg i) m w P)).flatMap Rec.words).reverse, []⟩) ∧
+        ⟨((sScript (2 * w) d lg 1 (eAxis lg (∏ i, 2 ^ lg i) m w P)).flatMap Rec.words).reverse, []⟩) ∧
         out.map (decE w p) = lexFlat d (fun i => 2 ^ lg i) (tensorZR d (fun i => (P i).s) (fun i => 2 ^ lg i)
           (fun i => floorAt (P i).s (2 ^ lg i) m α p) (restrD (fun i => (P i).s) (fun i => 2 ^ lg i) u)))
-      (driveCost (expandSpec m p w W) (tScript (2 * w) d lg 1 (eAxis lg (∏ i, 2 ^ lg i) m w P)) es.flatten) := by
+      (driveCost (expandSpec m p w W) (sScript (2 * w) d lg 1 (eAxis lg (∏ i, 2 ^ lg i) m w P)) es.flatten) := by
   obtain ⟨hv, hr⟩ := expand_result d lg m p w W P es hlg (by omega) (by omega) (by omega) hok hl
     (fun e he => (hes e he).1)
   refine (drive_hoare (expandSpec m p w W) _ es.flatten hv).consequence (fun _ h => by rw [h]; unfold expandSpec; rfl)
@@ -77,12 +77,12 @@ theorem compress_hoare (d : ℕ) (lg : Fin d → ℕ) (m α p w W : ℕ) (P : Fi
     (hu : es.map (decE w p) = lexFlat d (fun i => 2 ^ lg i) u) :
     HoareTime (driveProg (compressSpec m p w W))
       (· = enc (bank (cRest m p w W) AxisStep.cX es.flatten
-        ⟨[], (tScript (2 * w) d lg 1 (cAxis lg (∏ i, 2 ^ lg i) m w P)).flatMap Rec.words⟩))
+        ⟨[], (sScript (2 * w) d lg 1 (cAxis lg (∏ i, 2 ^ lg i) m w P)).flatMap Rec.words⟩))
       (fun v => ∃ out : List (List Bool), v = enc (bank (cRest m p w W) AxisStep.cX out.flatten
-        ⟨((tScript (2 * w) d lg 1 (cAxis lg (∏ i, 2 ^ lg i) m w P)).flatMap Rec.words).reverse, []⟩) ∧
+        ⟨((sScript (2 * w) d lg 1 (cAxis lg (∏ i, 2 ^ lg i) m w P)).flatMap Rec.words).reverse, []⟩) ∧
         out.map (decE w p) = lexFlat d (fun i => 2 ^ lg i) (tensorZR d (fun i => 2 ^ lg i) (fun i => 2 ^ lg i)
           (fun i => padB (P i).s (2 ^ lg i) α p) u))
-      (driveCost (compressSpec m p w W) (tScript (2 * w) d lg 1 (cAxis lg (∏ i, 2 ^ lg i) m w P)) es.flatten) := by
+      (driveCost (compressSpec m p w W) (sScript (2 * w) d lg 1 (cAxis lg (∏ i, 2 ^ lg i) m w P)) es.flatten) := by
   obtain ⟨hv, hr⟩ := compress_result d lg m p w W P es hlg (by omega) (by omega) hwW (by omega) hok hl
     (fun e he => (hes e he).1)
   refine (drive_hoare (compressSpec m p w W) _ es.flatten hv).consequence (fun _ h => by rw [h]; rfl)

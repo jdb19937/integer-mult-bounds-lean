@@ -6094,10 +6094,8 @@ Transform, fixed-point, Kronecker and Gaussian resampling mathematics used by th
   floored tabled `Ã` still has error below `p²` and preserves the unit disk
   (`floorA_tabled`). The tape `Ã` outputs carry one extra bit, which the
   tensor driver drops before the next axis.
-- `Resampling/AxisRounds.lean`: flat arrays of bit blocks for the tensor
-  driver. `tr2` transposes a matrix of blocks; the interchange reads as an
-  index map (`getD_swapList`), and moving the innermost field outward by
-  adjacent interchanges (`rot`) is one `tr2` (`rot_eq_tr2`).
+- `Resampling/AxisRounds.lean`: the interchange of two address fields of a
+  flat bit array as an index map (`getD_swapList`).
 - `Resampling/AxisPrims.lean`: the `Ã` and `B̃₀` line loops (`LineAPrim`,
   `B0Prim`) as word-program primitives `aPrim`, `bPrim`, with their
   parameters read back from the tapes (`aSem_sigIn`, `bSem_sigIn`).
@@ -6130,21 +6128,14 @@ Transform, fixed-point, Kronecker and Gaussian resampling mathematics used by th
   (`lexFlat`, positions `lexIdx`). The flat pass (`flatPass`: tail axes block
   by block, then the head axis by transpose, line map, transpose back)
   computes the square tensor `tensorZR d T T F` (`flatPass_lexFlat`).
-- `Resampling/ScriptSem.lean`: the driver's field moves on bit arrays. An
-  interchange with an outer prefix acts blockwise (`swapList_mul`); moving a
-  field inward (`rotIn`) or outward (`rotOut`) by adjacent interchanges is a
-  block transpose inside every outer block (`rotIn_getD`, `rotOut_getD`), and
-  on entry lists a blockwise `trL` (`rotIn_flatten`, `rotOut_flatten`); lines
-  nest in blocks (`mapBlocks_nest`) and blockwise maps compose
-  (`mapBlocks_comp`).
+- `Resampling/ScriptSem.lean`: flat arrays of entries: uniform-width
+  positions, lines nested in blocks (`mapBlocks_nest`), composed blockwise
+  maps (`mapBlocks_comp`), lengths and entry properties kept by the flat pass
+  (`flatPass_props`).
 - `Resampling/Script.lean`: driver scripts. Canonical headers (`bin`,
-  `swapHdrs`) make a swap record interchange two fields (`swapRec_spec`);
-  the records that move a field inward or outward compute `rotIn` and
-  `rotOut` (`insRecs_spec`, `outRecs_spec`); records concatenate
-  (`result_append`, `valid_append`, `driveCost_append`). The tensor script
-  (`tScript`: tail axes, move axis `0` in, its record, move it out) is valid
-  and computes the flat pass on entries when every axis record maps lines
-  (`tScript_spec`).
+  `swapHdrsG`) make a swap record interchange two fields across a gap
+  (`swapRecG_spec`); records concatenate (`result_append`, `valid_append`,
+  `driveCost_append`).
 - `Resampling/Sandwich.lean`: axis exposure by one nonadjacent interchange
   (`notes/nonadjacent-axis-note.tex`): the interchange of whole entries
   (`swapE`, `swapList_flatten`); swapping an axis with the innermost field,
@@ -6758,6 +6749,8 @@ Schönhage–Strassen multiplication, the fast multiplier used for the packed pr
 ## Removed modules
 
 Modules the proof does not use, removed after commit `4f27086`; restore with `git checkout 4f27086 -- <file>`.
+
+- Adjacent-interchange axis rotation in `Resampling/AxisRounds.lean`, `ScriptSem.lean` and `Script.lean` (restore from `cb57fa81`): `rot_eq_tr2` (moving the innermost field outward by adjacent interchanges is one block transpose), `rotIn`/`rotOut` with `rotIn_flatten`/`rotOut_flatten`, `swapList_mul`, and the `O(d²)`-interchange script `tScript` with `tScript_spec`; replaced by the linear schedule `Sandwich.sScript`.
 
 - `Machine/BinaryArithmetic.lean`: a fixed three-tape, seven-state adder accepts unequal-width raw words, physically pads and rewinds both operands, then runs binary addition.
 - `Machine/BinaryDivideQuotient.lean`: Six-tape physical division followed by quotient normalization.

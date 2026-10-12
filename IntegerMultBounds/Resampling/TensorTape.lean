@@ -1,10 +1,10 @@
 module
 
 public import IntegerMultBounds.Resampling.LineMaps
-public import IntegerMultBounds.Resampling.Script
+public import IntegerMultBounds.Resampling.Sandwich
 
 /-! The tensor driver's result on entries. With one expansion record per axis
-(`eAxis`), the script of `Script.tScript` turns the flat array of entries into
+(`eAxis`), the script of `Sandwich.sScript` turns the flat array of entries into
 the flat pass of the line maps `lineA` (`expand_result`). -/
 
 @[expose] public section
@@ -12,7 +12,7 @@ the flat pass of the line maps `lineA` (`expand_result`). -/
 namespace IntegerMultBounds.Resampling.TensorTape
 noncomputable section
 
-open Machine Schoenhage AxisDriver AxisInst Script ScriptSem FlatTensor LineMaps
+open Machine Schoenhage AxisDriver AxisInst Script ScriptSem FlatTensor LineMaps Sandwich
 
 variable {α : Type*}
 
@@ -64,12 +64,12 @@ theorem expand_result (d : ℕ) (lg : Fin d → ℕ) (m p w W : ℕ) (P : Fin d 
     (hlg : ∀ i j, lg i ≤ lg j + 1) (hw : 1 ≤ w) (hpw : p ≤ w) (hwW : w ≤ W)
     (hok : ∀ i, EAxisOk m w (2 ^ lg i) (P i)) (hl : es.length = ∏ i, 2 ^ lg i)
     (hes : ∀ e ∈ es, e.length = 2 * w) :
-    Valid (expandSpec m p w W) (tScript (2 * w) d lg 1 (eAxis lg (∏ i, 2 ^ lg i) m w P)) es.flatten ∧
-      result (expandSpec m p w W) (tScript (2 * w) d lg 1 (eAxis lg (∏ i, 2 ^ lg i) m w P)) es.flatten =
+    Valid (expandSpec m p w W) (sScript (2 * w) d lg 1 (eAxis lg (∏ i, 2 ^ lg i) m w P)) es.flatten ∧
+      result (expandSpec m p w W) (sScript (2 * w) d lg 1 (eAxis lg (∏ i, 2 ^ lg i) m w P)) es.flatten =
         (flatPass d (fun i => 2 ^ lg i) (fun i => lineA (P i).wt (P i).s (2 ^ lg i) m p w W) [] es).flatten := by
   set NT := ∏ i, 2 ^ lg i
   have hNT : 0 < NT := prod_pos_pow lg
-  obtain ⟨hv, hr⟩ := tScript_spec (expandSpec m p w W) (2 * w) NT (by omega) d lg 1 (eAxis lg NT m w P)
+  obtain ⟨hv, hr⟩ := sScript_spec (expandSpec m p w W) (2 * w) NT (by omega) d lg 1 (eAxis lg NT m w P)
     (fun i => lineA (P i).wt (P i).s (2 ^ lg i) m p w W) es hlg
     (fun i l _ => lineA_length _ _ _ _ _ _ _ l) (fun i l _ _ => lineA_width _ _ _ _ _ _ _ l)
     (fun i xs hxl hxw => by
@@ -133,8 +133,8 @@ theorem compress_result (d : ℕ) (lg : Fin d → ℕ) (m p w W : ℕ) (P : Fin 
     (hlg : ∀ i j, lg i ≤ lg j + 1) (hw : 1 ≤ w) (hpw : p ≤ w) (hwW : w ≤ W) (hp2 : 2 ≤ p)
     (hok : ∀ i, CAxisOk m w (2 ^ lg i) (P i)) (hl : es.length = ∏ i, 2 ^ lg i)
     (hes : ∀ e ∈ es, e.length = 2 * w) :
-    Valid (compressSpec m p w W) (tScript (2 * w) d lg 1 (cAxis lg (∏ i, 2 ^ lg i) m w P)) es.flatten ∧
-      result (compressSpec m p w W) (tScript (2 * w) d lg 1 (cAxis lg (∏ i, 2 ^ lg i) m w P)) es.flatten =
+    Valid (compressSpec m p w W) (sScript (2 * w) d lg 1 (cAxis lg (∏ i, 2 ^ lg i) m w P)) es.flatten ∧
+      result (compressSpec m p w W) (sScript (2 * w) d lg 1 (cAxis lg (∏ i, 2 ^ lg i) m w P)) es.flatten =
         (flatPass d (fun i => 2 ^ lg i)
           (fun i => lineB (P i).wtE (P i).wtH (P i).wtD (P i).zeros (P i).s (2 ^ lg i) m p w W) [] es).flatten := by
   set NT := ∏ i, 2 ^ lg i
@@ -142,7 +142,7 @@ theorem compress_result (d : ℕ) (lg : Fin d → ℕ) (m p w W : ℕ) (P : Fin 
   have hlen : ∀ i (l : List (List Bool)), l.length = 2 ^ lg i →
       (lineB (P i).wtE (P i).wtH (P i).wtD (P i).zeros (P i).s (2 ^ lg i) m p w W l).length = 2 ^ lg i :=
     fun i l _ => lineB_length (P i) _ m p w W (hok i).2.2.2.2.2.2.1 (hok i).2.2.2.2.2.2.2.2.2.2.1.le l
-  obtain ⟨hv, hr⟩ := tScript_spec (compressSpec m p w W) (2 * w) NT (by omega) d lg 1 (cAxis lg NT m w P)
+  obtain ⟨hv, hr⟩ := sScript_spec (compressSpec m p w W) (2 * w) NT (by omega) d lg 1 (cAxis lg NT m w P)
     (fun i => lineB (P i).wtE (P i).wtH (P i).wtD (P i).zeros (P i).s (2 ^ lg i) m p w W) es hlg hlen
     (fun i l _ _ => lineB_width (P i) _ m p w W (hok i).2.2.2.2.2.2.2.1 l)
     (fun i xs hxl hxw => by
