@@ -6755,6 +6755,14 @@ Schönhage–Strassen multiplication, the fast multiplier used for the packed pr
   (`paperPerm_σ_prefix`), so its computed round is the twist of the truncated exact
   butterflies on those bits (`prefix_round_eq`).
 
+- `Schoenhage/PrefixRoundWords.lean`: §6 task 5, words: numerators as offset
+  words (`offWord`, the low bits of `a + 2^(W-1)`), so a butterfly's sum is plain
+  addition and its difference addition of the complement with carry, one bit wider
+  (`addW_offWord`, `addNotW_offWord`, rule `addNot`); one pass on an array's offset
+  words in blocks of `2r 2^P` is the exact butterfly on bit `P`
+  (`arrOff_bflyRecs`), and `D` passes with doubling blocks are the butterflies on
+  `D` consecutive bits (`arrOff_bflysRecs`).
+
 - `Schoenhage/PointwiseRow.lean`: at the main sizes `p = 6 lg n`, `r = 2^ℓ`
   the pointwise program's time is at most a constant times `T p` times the
   `packedProducts` row times the `log log` overhead of
