@@ -6483,6 +6483,9 @@ Schönhage–Strassen multiplication, the fast multiplier used for the packed pr
   (bits from cell zero, then a separator) and the counter header format of the
   address-chunk interchange (separator at cell zero, bits from cell one,
   head at one): `toCtrProg_hoare`, `fromCtrProg_hoare`, each linear time.
+- `Schoenhage/PrimLift.lean`: a four-symbol word-program primitive over any
+  larger alphabet (`Prim.lift`); word tapes read the same in both
+  (`widen_enc`).
 - `Schoenhage/RingMath.lean`, `RingWords.lean`, `RingDigit.lean`: evaluation
   at `X = 2^W` turns negacyclic products into products modulo `2^(W r) + 1`
   (`ev_ncMul`); offset digits pack signed coefficients and recover them
