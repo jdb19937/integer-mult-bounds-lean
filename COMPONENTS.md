@@ -6115,6 +6115,10 @@ Transform, fixed-point, Kronecker and Gaussian resampling mathematics used by th
   (`lexFlat`, positions `lexIdx`). The flat pass (`flatPass`: tail axes block
   by block, then the head axis by transpose, line map, transpose back)
   computes the square tensor `tensorZR d T T F` (`flatPass_lexFlat`).
+- `Resampling/ScriptSem.lean`: the driver's field moves on bit arrays. An
+  interchange with an outer prefix acts blockwise (`swapList_mul`); moving a
+  field inward (`rotIn`) or outward (`rotOut`) by adjacent interchanges is a
+  block transpose inside every outer block (`rotIn_getD`, `rotOut_getD`).
 - `Resampling/Milestones.lean`: the §7 milestone theorems of
   `plan/07-gaussian-resampling.md` that package proved results:
   `FixedMul.signed_word_ops`, `Schoenhage.wordRecordLayer_hoare`,
