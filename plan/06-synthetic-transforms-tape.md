@@ -25,6 +25,7 @@ Builds the ring with shift twiddles, its multidimensional FFT with error bounds,
 | Synthetic FFT with shift twiddles | `SynthFFT`, `SynthMultiD` | ✅ | ⬜ | One and `d` dimensions, error `n ε` |
 | Complex-to-synthetic embedding | `SynthEmbed` | ✅ | — | Twist is an isometry |
 | Stored-order forward and opposite schedules (`eq:stored-opposite`) | `Schoenhage/Dif`, `Schoenhage/DifAxes`, `Schoenhage/DifGroup`, `Schoenhage/DifRound`, `Schoenhage/DifSchedule`, `Schoenhage/DifLayout`, `Schoenhage/PaperLayout`, `Schoenhage/DifOpposite` | ✅ | ⬜ | On any bit layout the slot-major forward rounds compute `L B F⁻` (`fwdSchedule_fwdExact`) and the reversed opposite rounds (inverse monomial, then butterfly) compute `F⁺ B⁻¹ L⁻¹` in the same layout (`oppSchedule_eq`), via `H₀² = I/2`; tape execution open |
+| Grouped rounds as layer calls, and their rounding error | `Schoenhage/DifHadamard` | ✅ | ⬜ | The layer operator `hadamard D K ρ (2^s)` is the butterfly on physical bits `s + jK + ρ` (`hadamard_eq_bflys`); grid rounding commutes with the exact twist (`roundArr_twist`, `roundArr_slotRound`); rounding every grouped slot round keeps the computed forward schedule within `√2 H 2^(-p)` of `L B F⁻ z` per coefficient and in the unit disk (`compSchedule_close`); the opposite computed schedule and the tape execution are open |
 ### Tape layout and cost bracket
 
 Bounds slots, reordering exchanges, rounds, error and descriptors so a transform costs four cost-table rows.
