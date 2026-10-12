@@ -6097,6 +6097,11 @@ Transform, fixed-point, Kronecker and Gaussian resampling mathematics used by th
   swap block with the axis array as payload (`swSlot`), the bank between
   script records (`bank`), and loading registers from the script
   (`runs_loadAll`). The record loop is still open.
+- `Resampling/Milestones.lean`: the §7 milestone theorems of
+  `plan/07-gaussian-resampling.md` that package proved results:
+  `FixedMul.signed_word_ops`, `Schoenhage.wordRecordLayer_hoare`,
+  `TableValue.tables_on_tapes`, `B0Value.maps_value_W`, `B0Tape.maps_hoareF`,
+  `LineCost.tensor_line_costs`.
 
 - `Resampling/PiApprox.lean`, `Resampling/ExpApprox.lean`: certified integer
   approximations for the weight tables. `piApprox q K` sums Machin's series
@@ -6713,6 +6718,7 @@ Modules the proof does not use, removed after commit `4f27086`; restore with `gi
 
 ## Top-level
 
+- `InterchangeMilestones.lean`: the section 4 milestones, one theorem per sub-problem of the faster interchange: the uniform-runtime runs of the binary wrapper (`BinaryInterchangeRun.runs_uniform`) and the arbitrary-width dispatcher (`ArbitraryWidthOriginalTotalRun.runs_uniform`), the exact base-case transpose on tapes, and exact bundles of the proved recurrence, shear, primitive, node, call, padding and piece results.
 - `ExactRecoveryOutput.lean`: Turns the actual recovered coefficients into exactly twice the input length in bits by proving that excess leading padding is zero. Covers nondivisible chunk widths, directly instantiates `ExactRecovery.exact_product`, and identifies the literal machine output contract once the word is installed. Carry compilation, physical installation and runtime are separate obligations.
 
 Parameters and asymptotics.

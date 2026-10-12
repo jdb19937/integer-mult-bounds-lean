@@ -26,10 +26,10 @@ here.
 | [Machine model and target statement](plan/01-machine-model-target.md) | §2 | 🟡 0/1 | 🟡 0/1 | 2 |
 | [Composition, loops, frames, elementary streams](plan/02-composition-loops-frames.md) | §2 | 🟡 0/8 | 🟡 3/8 | 254 |
 | [Finite networks with a rank saving](plan/03-finite-networks-rank.md) | §3 | 🟡 2/8 | 🟡 0/6 | 358 |
-| [Faster interchange of address chunks](plan/04-faster-interchange-address.md) | §4 | 🟡 1/10 | 🟡 1/9 | 375 |
+| [Faster interchange of address chunks](plan/04-faster-interchange-address.md) | §4 | ✅ 10/10 | ✅ 9/9 | 375 |
 | [Simultaneous butterfly layers with compact control](plan/05-simultaneous-butterfly-layers.md) | §5, §11, CrocSwap | 🟡 0/12 | 🟡 0/12 | 1654 |
 | [Synthetic transforms and their tape layout](plan/06-synthetic-transforms-tape.md) | §6 | 🟡 0/3 | ⬜ 0/3 | 7 |
-| [Gaussian resampling](plan/07-gaussian-resampling.md) | §7 | 🟡 2/6 | 🟡 0/4 | 59 |
+| [Gaussian resampling](plan/07-gaussian-resampling.md) | §7 | 🟡 5/6 | 🟡 3/4 | 59 |
 | [Fast multiplication subroutine](plan/08-fast-multiplication-subroutine.md) | Schönhage–Strassen | 🟡 0/6 | 🟡 0/4 | 85 |
 | [Exact multiplication, parameters, time bound](plan/09-exact-multiplication-parameters.md) | §8 | 🟡 0/3 | ⬜ 0/2 | 11 |
 | [End-to-end theorem `EndToEnd`](plan/10-end-to-end.md) | — | 🟡 1/3 | 🟡 2/3 | 6 |
@@ -79,16 +79,16 @@ Details: [plan/04-faster-interchange-address.md](plan/04-faster-interchange-addr
 
 | Sub-problem | Mathematics | Tape | Files |
 | --- | --- | --- | --- |
-| Interchange recurrence and padding arithmetic | 🟡 | — | 1 |
-| Triangular factorization and shear (Lemmas 4.1-4.2) | 🟡 | 🟡 | 4 |
-| Tape primitives: role transport, stacks, descriptors | 🟡 | 🟡 | 37 |
-| Single-digit base case | ✅ | 🟡 | 11 |
-| Recursive node operations | 🟡 | 🟡 | 59 |
-| Recursive call protocol and child headers | 🟡 | 🟡 | 34 |
-| Power-width recursive machine (Prop 4.3) | 🟡 | ✅ | 60 |
-| Row/range padding and radix digit movement | 🟡 | 🟡 | 34 |
-| Arbitrary-width piece dispatcher (Lemma 4.4) | 🟡 | 🟡 | 120 |
-| Binary interchange wrapper | 🟡 | 🟡 | 16 |
+| Interchange recurrence and padding arithmetic | ✅ | — | 1 |
+| Triangular factorization and shear (Lemmas 4.1-4.2) | ✅ | ✅ | 4 |
+| Tape primitives: role transport, stacks, descriptors | ✅ | ✅ | 37 |
+| Single-digit base case | ✅ | ✅ | 11 |
+| Recursive node operations | ✅ | ✅ | 59 |
+| Recursive call protocol and child headers | ✅ | ✅ | 34 |
+| Power-width recursive machine (Prop 4.3) | ✅ | ✅ | 60 |
+| Row/range padding and radix digit movement | ✅ | ✅ | 34 |
+| Arbitrary-width piece dispatcher (Lemma 4.4) | ✅ | ✅ | 120 |
+| Binary interchange wrapper | ✅ | ✅ | 16 |
 
 ## 5. Simultaneous butterfly layers with compact control (§5, §11, CrocSwap)
 
@@ -127,10 +127,10 @@ Details: [plan/07-gaussian-resampling.md](plan/07-gaussian-resampling.md)
 | --- | --- | --- | --- |
 | Exact Gaussian resampling factorization | ✅ | — | 8 |
 | Numerical resampling maps and error bounds | 🟡 | — | 11 |
-| Fixed-point word and record layer | 🟡 | 🟡 | 12 |
-| Gaussian weight tables on tapes | ✅ | 🟡 | 12 |
-| Resampling maps on tapes | 🟡 | 🟡 | 13 |
-| Tensor interface line costs | 🟡 | 🟡 0/1 rows | 3 |
+| Fixed-point word and record layer | ✅ | ✅ | 12 |
+| Gaussian weight tables on tapes | ✅ | ✅ | 12 |
+| Resampling maps on tapes | ✅ | ✅ | 13 |
+| Tensor interface line costs | ✅ | 🟡 0/1 rows | 3 |
 
 ## 8. Fast multiplication subroutine (Schönhage–Strassen)
 

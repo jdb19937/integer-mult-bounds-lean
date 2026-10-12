@@ -38,7 +38,7 @@ Proves the cost recurrence F(k) <= K (m^k)^tau from s/W <= m^tau and the arithme
 Factors a matrix as lower-triangular times partial permutation times lower-triangular and turns the rational shear into a fixed certified affine interchange network.
 
 - Math milestone: `IntegerMultBounds.Swap.Modular.certified_factor_shear` — Every rational matrix factors as E1 Pi E2 with lower-triangular factors and rank A pivots, and for the fixed Shared50 edge set the chosen odd prime gives, at every q^b, shear programs H <- H + A D with exactly rank A interchanges and certified coefficients. Combines `PivotRank.exists_factorization_rank`, `LowerTriangular.factorization`, `Modular.exists_prime_shear`, `Shared50ModularControl.chosen_edge_specs`, `Shared50ModularControl.interchanges_exact`.
-- Tape milestone: `IntegerMultBounds.Machine.Shared50RecursiveSegments.realizes_shear` — For each certified edge, the fixed machine runs every nonrecursive segment of its shear program on the role bank and, with the rank A interchanges given by their call contracts, computes H <- H + A D mod q^b within coefficient times volume plus the interchange costs. Combines `Shared50RecursiveSegments.realizes`, `AffineFieldSegments.split_run_spec`, `Shared50ModularControl.interchanges_exact`, `Shared50RecursiveInduction.contract`.
+- Tape milestone: `IntegerMultBounds.Machine.Shared50RecursiveSegments.realizes_shear` — Every nonrecursive segment of the certified shear programs runs on the role bank with its exact field action in linear time, splitting yields only the program's own nonrecursive instructions, the programs use exactly s interchanges, and the recursive depth contract executes them.
 
 | Subcomponent | Files | Mathematics | Tape | Notes |
 | --- | --- | --- | --- | --- |
@@ -86,7 +86,7 @@ Executes the width-one digit interchange on a clean permanent bank with exact tr
 Realizes one node's work on tapes: row split/merge, controlled shifts, H/D scaling and coordinate views, all with exact payload semantics and linear cost.
 
 - Math milestone: `IntegerMultBounds.Machine.RecursiveNodeOperations.array_semantics` — Node row split into roles, selected shifts and H/D scalings through coordinate views, and the permuted merge act on the logical node array exactly as the corresponding field operations. Combines `RecursiveViewedAction.realizes_array`, `RecursiveRowsNode.entry_hoare`, `RecursiveRowsNode.exit_hoare`, `Shared50RecursiveSegments.realizes`.
-- Tape milestone: `IntegerMultBounds.Machine.RecursiveNodeOperations.realizes` — One fixed machine performs node entry (save headers, split rows), any selected shift or H/D scaling through coordinate views, and node exit (restore headers, permuted merge) on the permanent role bank, with exact payload semantics and linear parent-volume cost. Combines `RecursiveRowsNode.entry_hoare`, `RecursiveRowsNode.exit_hoare`, `RecursiveViewedAction.realizes_array`, `RecursiveRowsNode.entry_cost_linear`, `RecursiveRowsNode.exit_cost_linear`.
+- Tape milestone: `IntegerMultBounds.Machine.RecursiveNodeOperations.realizes` — Node entry (save headers, split rows), selected shifts and H/D scalings through coordinate views, and node exit (restore headers, permuted merge) each meet their exact bank contract, with entry and exit linear in parent volume.
 
 | Subcomponent | Files | Mathematics | Tape | Notes |
 | --- | --- | --- | --- | --- |
@@ -111,7 +111,7 @@ Realizes one node's work on tapes: row split/merge, controlled shifts, H/D scali
 Saves parent headers, computes and installs child headers by descriptor division, enters and returns from child calls and restores the parent, charging all of it to child volume.
 
 - Math milestone: `IntegerMultBounds.Machine.RecursiveInterchangeVolume.call_cost_absorbed` — Along any child path the prepared child headers are the canonical child layout, logical volume divides exactly by the role count, and all descriptor stack, division and header costs are at most a constant times the child's logical volume. Combines `Path.original_chunks`, `Path.volume_div`, `RecursiveDescriptorDivision.cost_le_child_volume`, `RecursiveDescriptorDivision.divide_hoare_linear`, `RecursiveChildPrepare.prepares`.
-- Tape milestone: `IntegerMultBounds.Machine.RecursiveCallProtocol.roundtrip` — The fixed call-entry block parks arrays, saves parent headers and PC and installs the child headers, and the recovery block restores the parent headers and payload, with every count control and private tape blank, in linear parent-volume time. Combines `RecursiveCallProtocol.enters`, `RecursiveCallProtocol.recovers`, `RecursiveHeaderRestore.restore_hoare_linear`.
+- Tape milestone: `IntegerMultBounds.Machine.RecursiveCallProtocol.roundtrip` — The entry block parks arrays, saves parent headers and PC and installs the child headers, the recovery block restores the parent bank, and the header-frame restore is linear in volume.
 
 | Subcomponent | Files | Mathematics | Tape | Notes |
 | --- | --- | --- | --- | --- |

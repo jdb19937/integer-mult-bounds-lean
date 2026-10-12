@@ -695,6 +695,7 @@ import IntegerMultBounds.Resampling.AxisRounds
 import IntegerMultBounds.Resampling.AxisPrims
 import IntegerMultBounds.Resampling.AxisStep
 import IntegerMultBounds.Resampling.AxisDriver
+import IntegerMultBounds.Resampling.Milestones
 import IntegerMultBounds.Resampling.PiApprox
 import IntegerMultBounds.Resampling.ExpApprox
 import IntegerMultBounds.Resampling.WeightTable
@@ -2674,3 +2675,4 @@ import IntegerMultBounds.Machine.CompactComplexSourceReadySiblingScalarPath
 import IntegerMultBounds.Machine.CompactComplexAlignedSiblingScalarPath
 import IntegerMultBounds.Machine.CompactComplexSourceReadySiblingReturnInvariant
 import IntegerMultBounds.Machine.CompactComplexAlignedSiblingJoinedPhysicalReturn
+import IntegerMultBounds.InterchangeMilestones
