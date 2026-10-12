@@ -48,3 +48,16 @@ Assembles the cost-table rows, including the packed multiplier overhead, into O(
 | --- | --- | --- | --- | --- |
 | PackedMultiplierPolylogBudget | `PackedMultiplierPolylogBudget` | ✅ | — | At the actual packed product size, every fixed nonnegative power of the clamped log-log overhead is bounded by a fixed multiple of a power of log precision. The existing packed-product margin absorbs it into the exact certified final time exponent; the physical fast subroutine still must provide its execution and bit-cost bound. |
 | Complete time bound | `TimeBound`, `Sizes`, `CostTable` | 🟡 | ⬜ | Size relations, every table row as a multiple of `p^(1-margin)`, and the assembly into `O(n (lg n)^(1-κ))` at `κ = 83/10^12` proved; the components must still supply the row costs |
+
+### Chirp (Bluestein) reduction
+
+Reduces arbitrary-length transforms to convolutions, exactly and approximately.
+
+The chirp identity is the manuscript's `lem:chirp-permutation` (§7); the chirp procedures that use it are §8 "Chirp and source-transform procedures".
+
+- Math milestone: `IntegerMultBounds.NLogN.bluesteinD_exact_approx` — The d-dimensional DFT of even lengths equals the chirp-convolution-chirp pipeline exactly, and with approximate chirps (eps_a) and approximate normalized convolution (eps_M) the pipeline has scaled error at most eps_M + 3 eps_a + 4. Combines `NLogN.bluesteinD`, `NLogN.bluesteinApproxD_err`.
+- Tape milestone: `IntegerMultBounds.Spec.SignedRingProduct.bluestein_meets` — A fixed literal program multiplies each record by the chirp, calls the synthetic convolution, and multiplies by the conjugate chirp, outputting the arbitrary-length transform within the bluesteinApproxD_err error and the chirps row plus the convolution cost.
+
+| Subcomponent | Files | Mathematics | Tape | Notes |
+| --- | --- | --- | --- | --- |
+| Bluestein reduction | `Bluestein`, `BluesteinApprox` | ✅ | ⬜ | |

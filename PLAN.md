@@ -16,9 +16,9 @@ See [COMPONENTS.md](COMPONENTS.md) for what each file proves.
 | [Two finite networks with a rank saving](plan/03-finite-networks-rank.md) | §3 | ✅ 8/8 | 🟡 2/6 | 358 |
 | [Faster interchange of address chunks](plan/04-faster-interchange-address.md) | §4 | ✅ 10/10 | ✅ 9/9 | 375 |
 | [Fast simultaneous synthetic butterfly layers](plan/05-simultaneous-butterfly-layers.md) | §5, §11, CrocSwap | 🟡 4/12 | 🟡 0/12 | 1670 |
-| [Synthetic transforms and their tape layout](plan/06-synthetic-transforms-tape.md) | §6 | ✅ 3/3 | ⬜ 0/3 | 7 |
+| [Synthetic transforms and their tape layout](plan/06-synthetic-transforms-tape.md) | §6 | ✅ 2/2 | ⬜ 0/2 | 5 |
 | [Resampling with the permutations left in the transform](plan/07-gaussian-resampling.md) | §7 | ✅ 6/6 | 🟡 3/4 | 59 |
-| [Exact integer multiplication and its cost](plan/08-exact-multiplication.md) | §8 | 🟡 2/3 | ⬜ 0/2 | 13 |
+| [Exact integer multiplication and its cost](plan/08-exact-multiplication.md) | §8 | 🟡 3/4 | ⬜ 0/3 | 15 |
 | [Fast multiplication subroutine](plan/A-schoenhage-strassen.md) | Schönhage–Strassen | ✅ 6/6 | 🟡 2/4 | 85 |
 | [End-to-end theorem `EndToEnd`](plan/B-end-to-end.md) | — | 🟡 1/3 | 🟡 2/3 | 6 |
 
@@ -109,7 +109,6 @@ Details: [plan/06-synthetic-transforms-tape.md](plan/06-synthetic-transforms-tap
 | Sub-problem | Mathematics | Tape | Files |
 | --- | --- | --- | --- |
 | Synthetic ring and synthetic FFT | ✅ | ⬜ | 4 |
-| Bluestein reduction | ✅ | ⬜ | 2 |
 | Tape layout and cost bracket | ✅ | ⬜ | 1 |
 
 ## 7. Resampling with the permutations left in the transform (§7)
@@ -134,6 +133,7 @@ Details: [plan/08-exact-multiplication.md](plan/08-exact-multiplication.md)
 | Parameters, asymptotics and coprime source lengths | ✅ | — | 4 |
 | Exact recovery of the product | ✅ | ⬜ | 5 |
 | Cost table and time bound | 🟡 1/2 rows | ⬜ | 4 |
+| Chirp (Bluestein) reduction | ✅ | ⬜ | 2 |
 
 ## A. Fast multiplication subroutine (Schönhage–Strassen)
 

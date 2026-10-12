@@ -9,7 +9,7 @@ public import IntegerMultBounds.NLogN.SynthEmbed
 public import IntegerMultBounds.NLogN.SynthFFT
 public import IntegerMultBounds.NLogN.SynthMultiD
 
-/-! §6 milestones (plan/06-synthetic-transforms-tape.md): one theorem per sub-problem, each bundling the exact statements of its proved pieces. -/
+/-! §6 milestones (plan/06-synthetic-transforms-tape.md) and the §8 chirp reduction milestone (plan/08-exact-multiplication.md): one theorem per sub-problem, each bundling the exact statements of its proved pieces. -/
 
 @[expose] public section
 

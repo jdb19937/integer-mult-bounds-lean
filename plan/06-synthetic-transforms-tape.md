@@ -8,8 +8,7 @@ Section 6 supplies the transforms the main recursion applies along each axis: di
 
 1. Synthetic ring and FFT (`SynthConv`, `SynthFFT`, `SynthMultiD`): principal roots of unity in `ℂ[y]/(y^r + 1)` make a fast transform whose twiddles are shifts, in one and `d` dimensions, with accumulated error `n ε`.
 2. Embedding (`SynthEmbed`): a twisted embedding of complex vectors into synthetic ones is an isometry, so complex transforms reduce to synthetic ones without loss of precision.
-3. Bluestein reduction (`Bluestein`, `BluesteinApprox`): transforms of arbitrary length become convolutions, exactly and with controlled numerical error.
-4. Layout and costs (`LayoutCost`): prefix slots, chunk reordering by address exchanges, the number of rounds and their error growth, and descriptor length are bounded so that one transform bracket matches four cost-table rows.
+3. Layout and costs (`LayoutCost`): prefix slots, chunk reordering by address exchanges, the number of rounds and their error growth, and descriptor length are bounded so that one transform bracket matches four cost-table rows.
 
 ## Sub-problems
 
@@ -25,17 +24,6 @@ Builds the ring with shift twiddles, its multidimensional FFT with error bounds,
 | Principal roots and synthetic ring | `SynthConv` | ✅ | — | `ℂ[y]/(yʳ + 1)` |
 | Synthetic FFT with shift twiddles | `SynthFFT`, `SynthMultiD` | ✅ | ⬜ | One and `d` dimensions, error `n ε` |
 | Complex-to-synthetic embedding | `SynthEmbed` | ✅ | — | Twist is an isometry |
-
-### Bluestein reduction
-
-Reduces arbitrary-length transforms to convolutions, exactly and approximately.
-
-- Math milestone: `IntegerMultBounds.NLogN.bluesteinD_exact_approx` — The d-dimensional DFT of even lengths equals the chirp-convolution-chirp pipeline exactly, and with approximate chirps (eps_a) and approximate normalized convolution (eps_M) the pipeline has scaled error at most eps_M + 3 eps_a + 4. Combines `NLogN.bluesteinD`, `NLogN.bluesteinApproxD_err`.
-- Tape milestone: `IntegerMultBounds.Spec.SignedRingProduct.bluestein_meets` — A fixed literal program multiplies each record by the chirp, calls the synthetic convolution, and multiplies by the conjugate chirp, outputting the arbitrary-length transform within the bluesteinApproxD_err error and the chirps row plus the convolution cost.
-
-| Subcomponent | Files | Mathematics | Tape | Notes |
-| --- | --- | --- | --- | --- |
-| Bluestein reduction | `Bluestein`, `BluesteinApprox` | ✅ | ⬜ | |
 
 ### Tape layout and cost bracket
 
