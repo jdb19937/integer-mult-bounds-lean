@@ -6796,6 +6796,16 @@ Schönhage–Strassen multiplication, the fast multiplier used for the packed pr
   tapes with the layer header on tape 0 and the array replaced in place on tape 1
   (`prog1_hoare`), within the layer cost plus `O(Mrw)` (`layer_call`).
 
+- `Schoenhage/AlphaLift.lean`: word-program primitives over any alphabet run over
+  any larger one with the same contract (`embed_enc`, `Prim.liftE`,
+  `runs_ofHoare_liftE`).
+- `Schoenhage/DriverMath.lean`: §6 task 6 bookkeeping: rounds that contract and
+  commute with differences see only the first `2^n` records
+  (`agree_of_contracts`); a chain of record rounds agrees with the computed schedule
+  (`roundRun_agree`); disk records from disk values (`diskGrid_of_norm`); the
+  forward and opposite drivers' outputs meet the `Close` and disk clauses of
+  `MeetsForward`/`MeetsOpposite` (`forward_close`, `opposite_close`).
+
 - `Schoenhage/PointwiseRow.lean`: at the main sizes `p = 6 lg n`, `r = 2^ℓ`
   the pointwise program's time is at most a constant times `T p` times the
   `packedProducts` row times the `log log` overhead of
