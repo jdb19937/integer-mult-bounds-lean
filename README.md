@@ -18,7 +18,13 @@ chosen before quantifying over inputs.
 
 ## Status
 
-Section 5 remains open. Complete stopped-root execution, full stopped-leaf
+Section 5 remains open. Actual scalar successors and forward-child-inverse
+returns now derive the original event semantics from their reached arrays;
+the child result still requires recursive tensor correctness. Literal child-entry
+captures now derive settled frames from the parent, and stopped-leaf execution
+preserves those frames through its pre-pop endpoint. Full reachable recursive
+execution and actual uniform runtime have explicit partial rows in PLAN.
+Complete stopped-root execution, full stopped-leaf
 tensor semantics, genuine halting and paid runtime are checked. Corrected
 source entry, sink corrections, contraction/rejoin and saved-PC dispatch also
 have checked local paths.

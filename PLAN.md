@@ -16,14 +16,14 @@ See [COMPONENTS.md](COMPONENTS.md) for what each file proves.
 | Composition, loops, frames, elementary streams | §2 | 🟡 (153/154) | 🟡 (136/147) |
 | Finite networks with a rank saving | §3 | ✅ (66/66) | 🟡 (1/42) |
 | Faster interchange of address chunks | §4 | ✅ (129/129) | ✅ (126/126) |
-| Simultaneous butterfly layers with compact control | §5, §11, CrocSwap | ✅ (1626/1626) | 🟡 (1261/1263) |
+| Simultaneous butterfly layers with compact control | §5, §11, CrocSwap | ✅ (1630/1630) | 🟡 (1262/1266) |
 | Synthetic transforms and their tape layout | §6 | ✅ (5/5) | ⬜ (0/3) |
 | Gaussian resampling | §7 | ✅ (17/17) | 🟡 (8/9) |
 | Fast multiplication subroutine | Schönhage–Strassen | ✅ (22/22) | 🟡 (11/15) |
 | Exact multiplication, parameters, time bound | §8 | 🟡 (5/7) | ⬜ (0/2) |
 | End-to-end theorem `EndToEnd` | — | 🟡 (5/8) | 🟡 (5/8) |
 
-Component accounting: mathematics **2031/2037**, tape **1550/1617**.
+Component accounting: mathematics **2035/2041**, tape **1551/1620**.
 Each numerator counts only ✅ rows; partial and unstarted rows remain in the
 denominator, and — entries are excluded. These counts measure checklist rows,
 not remaining effort or end-to-end completion. In particular, Section 5 remains
@@ -2042,6 +2042,13 @@ The main binary interchange theorem is proved in `BinaryInterchangeRun.runs` and
 | CompactComplexAlignedCapturedReturnPath | `CompactComplexAlignedCapturedReturnPath` | ✅ | ✅ | The actual captured child-entry references discharge all individual saved-stack equations in the paid guard/pop/physical-return/inverse path on the unchanged table. The recursive specialization derives its result grid and Progress from decoded tensor correctness and genuine child/parent ledgers. Parent clean tails, balanced child Settled, semantic correctness and target coverage remain recursive obligations. |
 | CompactComplexAlignedReturnedDormantFrames | `CompactComplexAlignedReturnedDormantFrames` | ✅ | — | Balanced physical return restores the actual older header, live and target words; the original call list uniquely restores the saved-PC word. Canonical bank projections transfer Settled to the computed returned Reached witness and its actual inverse-basis endpoint without a return-invariant or whole-bank assumption. Complete recursive event induction and child semantic correctness remain open. |
 | CompactComplexActualInverseBasisPullback | `CompactComplexActualInverseBasisPullback` | ✅ | — | The actual reverse basis word pulls each native row and polynomial coefficient through the forward ambient coordinate map. Forward basis, recursive child tensor and inverse basis therefore produce the original residual factor at the unchanged parent address. The computed coordinate cancellation is proved; actual child tensor correctness remains a recursive obligation. |
+
+| CompactComplexSourceReadyCapturedSettledFrames | `CompactComplexSourceReadyCapturedSettledFrames` | ✅ | — | Actual child-entry snapshots derive clean protected tails from parent Settled and literal save/parking endpoints. Snapshot completion requires no supplied captured-bank equality; balanced recursive preservation remains open. |
+| CompactComplexSourceReadyChildEventSemantics | `CompactComplexSourceReadyChildEventSemantics` | ✅ | — | The actual forward-basis, returned and inverse Reached witnesses implement the original child instruction on every decoded row and polynomial slice. Width, grid and promotion guards derive from real Paths and ledgers; recursive child tensor semantics remain explicit. |
+| CompactComplexSourceReadyScalarEventSemantics | `CompactComplexSourceReadyScalarEventSemantics` | ✅ | ✅ | Actual scalar successors retain their paid Hoare execution and implement the original scalar instruction on every decoded row and polynomial slice. The equality derives from the actual group output rather than an assumed aligned prefix. |
+| CompactComplexSourceReadyStoppedSettledFrames | `CompactComplexSourceReadyStoppedSettledFrames` | ✅ | — | Actual stopped-leaf orientation and result installation preserve the captured settled frames through the pre-pop bank. Parent Settled initializes the literal snapshot. No post-pop claim is made for the consumed captured PC code. |
+| Full reachable recursive fixed-table execution | `CompactComplexFixedNodePaths`, `CompactComplexSourceReadyReachedChildInvariant` | — | 🟡 | Local scalar and child entry/return paths are checked. Full leaf/nonleaf recursive induction, child tensor semantics, target coverage and complete event witness assembly remain open. |
+| Actual uniform recursive runtime | `CompactComplexRecursiveRuntimeSum`, `CompactComplexCorrectedNonleafBoundaryBudget` | — | 🟡 | Local boundary costs and abstract recursive sum estimates are checked. Instantiation with the complete actual recursive trace and all paid basis and physical transitions remains open. |
 
 ## 6. Synthetic transforms and their tape layout (§6)
 
