@@ -517,5 +517,69 @@ theorem runs_axisBranch (S : AxisSpec E) (A : List Bool) (L R ws : List (List Bo
   refine (Runs.then s1 (Runs.then s2 s34)).mono (fun σ' e => e) ?_
   simp [axisCost, σ, bank_scr]
 
+/-! ### The script -/
+
+/-- A script record: one axis of the per-axis program, or one field interchange. -/
+inductive Rec where
+  | axis (ws : List (List Bool))
+  | swap (hs : List (List Bool))
+
+/-- A record's words on the script tape. -/
+def Rec.words : Rec → List (List Bool)
+  | .axis ws => [true] :: ws
+  | .swap hs => [false] :: hs
+
+/-- The driver: run every record of the script. -/
+def drive (S : AxisSpec E) : Cmd prime (NB E) := .loop scr (.cond scr (axisBranch S) (swapBranch S.X))
+
+/-- Every record meets its program's precondition on the array it receives. -/
+def Valid (S : AxisSpec E) : List Rec → List Bool → Prop
+  | [], _ => True
+  | .axis ws :: rs, A => ws.length = S.regs.length ∧ S.Good ws A ∧ Valid S rs (S.f ws A)
+  | .swap hs :: rs, A => hs.length = 5 ∧ SwapPrim.Pre (swIn hs A) ∧ Valid S rs (swapF hs A)
+
+/-- The array after the records. -/
+def result (S : AxisSpec E) : List Rec → List Bool → List Bool
+  | [], A => A
+  | .axis ws :: rs, A => result S rs (S.f ws A)
+  | .swap hs :: rs, A => result S rs (swapF hs A)
+
+/-- The driver's cost. -/
+noncomputable def driveCost (S : AxisSpec E) : List Rec → List Bool → ℕ
+  | [], _ => 0
+  | .axis ws :: rs, A => axisCost S ws A + 1 + 2 + driveCost S rs (S.f ws A)
+  | .swap hs :: rs, A => swapCost hs A + 1 + 2 + driveCost S rs (swapF hs A)
+
+theorem runs_drive (S : AxisSpec E) : ∀ (rs : List Rec) (A : List Bool) (L : List (List Bool)), Valid S rs A →
+    Runs (drive S) (bank S.ρ S.X A ⟨L, rs.flatMap Rec.words⟩)
+      (· = bank S.ρ S.X (result S rs A) ⟨(rs.flatMap Rec.words).reverse ++ L, []⟩) (driveCost S rs A)
+  | [], A, L, _ => Runs.loop_done (by simp [bank_scr]) (by simp [result])
+  | .axis ws :: rs, A, L, ⟨hl, hg, hv⟩ => by
+    have h1 := runs_axisBranch S A L (rs.flatMap Rec.words) ws hl hg
+    have ih := runs_drive S rs (S.f ws A) (ws.reverse ++ [true] :: L) hv
+    have e : ((Rec.axis ws :: rs).flatMap Rec.words) = ([true] :: ws) ++ rs.flatMap Rec.words := by
+      simp [Rec.words]
+    rw [e]
+    have ih' : Runs (drive S) (bank S.ρ S.X (S.f ws A) ⟨ws.reverse ++ [true] :: L, rs.flatMap Rec.words⟩)
+        (· = bank S.ρ S.X (result S (.axis ws :: rs) A) ⟨(([true] :: ws) ++ rs.flatMap Rec.words).reverse ++ L, []⟩)
+        (driveCost S rs (S.f ws A)) := ih.mono (fun σ'' e'' => by rw [e'']; simp [result]) le_rfl
+    have hb := Runs.cond_true (i := scr) (c := axisBranch S) (d := swapBranch S.X)
+      (σ := bank S.ρ S.X A ⟨L, ([true] :: ws) ++ rs.flatMap Rec.words⟩)
+      ⟨[], ws ++ rs.flatMap Rec.words, by simp [bank_scr]⟩ (h1.mono (fun σ' e' => e' ▸ ih') le_rfl)
+    exact (Runs.loop_step (by simp [bank_scr]) hb).mono (fun _ h => h) (by simp only [driveCost]; omega)
+  | .swap hs :: rs, A, L, ⟨hl, hp, hv⟩ => by
+    have h1 := runs_swapBranch S.ρ S.X A L (rs.flatMap Rec.words) hs hl hp
+    have ih := runs_drive S rs (swapF hs A) (hs.reverse ++ [false] :: L) hv
+    have e : ((Rec.swap hs :: rs).flatMap Rec.words) = ([false] :: hs) ++ rs.flatMap Rec.words := by
+      simp [Rec.words]
+    rw [e]
+    have ih' : Runs (drive S) (bank S.ρ S.X (swapF hs A) ⟨hs.reverse ++ [false] :: L, rs.flatMap Rec.words⟩)
+        (· = bank S.ρ S.X (result S (.swap hs :: rs) A) ⟨(([false] :: hs) ++ rs.flatMap Rec.words).reverse ++ L, []⟩)
+        (driveCost S rs (swapF hs A)) := ih.mono (fun σ'' e'' => by rw [e'']; simp [result]) le_rfl
+    have hb := Runs.cond_false (i := scr) (c := axisBranch S) (d := swapBranch S.X)
+      (σ := bank S.ρ S.X A ⟨L, ([false] :: hs) ++ rs.flatMap Rec.words⟩)
+      (fun ⟨w, R', h⟩ => by simp [bank_scr] at h) (h1.mono (fun σ' e' => e' ▸ ih') le_rfl)
+    exact (Runs.loop_step (by simp [bank_scr]) hb).mono (fun _ h => h) (by simp only [driveCost]; omega)
+
 end
 end IntegerMultBounds.Resampling.AxisDriver
