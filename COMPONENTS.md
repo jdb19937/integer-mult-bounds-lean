@@ -6091,6 +6091,10 @@ Transform, fixed-point, Kronecker and Gaussian resampling mathematics used by th
   `400 t L (W + 1) + 400` (`expandBound`). One compression axis
   (`compressStep`): cut into words, run `B̃₀` line by line, pad every line
   back to `t` entries (`runs_compressStep`, `compressOut`, `compressBound`).
+- `Resampling/AxisDriver.lean` (in progress): the tensor driver's bank, the
+  swap block with the axis array as payload (`swSlot`), the bank between
+  script records (`bank`), and loading registers from the script
+  (`runs_loadAll`). The record loop is still open.
 
 - `Resampling/PiApprox.lean`, `Resampling/ExpApprox.lean`: certified integer
   approximations for the weight tables. `piApprox q K` sums Machin's series
