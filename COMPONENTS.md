@@ -6815,7 +6815,9 @@ Schönhage–Strassen multiplication, the fast multiplier used for the packed pr
   `Schoenhage/DriverCalls.lean`: §6 task 6 plumbing: joining word lists
   (`runs_joinAll`); the drivers' bank of named tapes and the twist block
   (`dstate`, `update_nm`, `update_tw`); slot maps for the twist, prefix-round, layer
-  and layout primitives with what each call sees and changes.
+  and layout primitives with what each call sees and changes; `DriverTwist`: one
+  twist step (table from the round script, cut, twist block, join) on the bank
+  (`runs_twistStep`).
 
 - `Schoenhage/PointwiseRow.lean`: at the main sizes `p = 6 lg n`, `r = 2^ℓ`
   the pointwise program's time is at most a constant times `T p` times the
