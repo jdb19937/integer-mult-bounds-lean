@@ -393,5 +393,129 @@ theorem runs_swapBranch (ρ : Fin E → WTape) (X : Fin E) (A : List Bool) (L R 
     simp [reg, WTape.words, clen]
     omega
 
+/-! ### Axis records -/
+
+/-- A per-axis program on the axis block with its contract: from the rest bank `ρ` with the
+array `A` on `X` and the record's words in `regs`, it leaves `f ws A` on `X`, touches only `X`
+and the `junk` tapes (each left with at most `J ws A` cells), within `cost ws A` steps. -/
+structure AxisSpec (E : ℕ) where
+  cmd : Cmd prime E
+  X : Fin E
+  regs : List (Fin E)
+  junk : List (Fin E)
+  ρ : Fin E → WTape
+  Good : List (List Bool) → List Bool → Prop
+  f : List (List Bool) → List Bool → List Bool
+  cost : List (List Bool) → List Bool → ℕ
+  J : List (List Bool) → List Bool → ℕ
+  regs_nodup : regs.Nodup
+  junk_nodup : junk.Nodup
+  regs_junk : ∀ r ∈ regs, r ∈ junk
+  X_junk : X ∉ junk
+  ρ_junk : ∀ j ∈ junk, ρ j = emp
+  run : ∀ ws A, Good ws A → ws.length = regs.length →
+    Runs cmd (setRegs (Function.update ρ X (reg A)) regs ws)
+      (fun τ => τ X = reg (f ws A) ∧ (∀ x, x ∉ junk → x ≠ X → τ x = ρ x) ∧
+        ∀ j ∈ junk, clen (τ j).words ≤ J ws A) (cost ws A)
+
+theorem setRegs_map {n m : ℕ} (σ : Fin n → WTape) {f : Fin m → Fin n} (hf : Function.Injective f) (y : Fin m) :
+    ∀ (rs : List (Fin m)) (ws : List (List Bool)), setRegs σ (rs.map f) ws (f y) = setRegs (σ ∘ f) rs ws y
+  | [], _ => by simp [setRegs]
+  | _ :: _, [] => by simp [setRegs]
+  | r :: rs, w :: ws => by
+    simp only [List.map_cons, setRegs]
+    by_cases h : y = r
+    · subst h; simp
+    · rw [Function.update_of_ne (fun e => h (hf e)), Function.update_of_ne h, setRegs_map σ hf y rs ws]
+
+theorem clearCost_le {n : ℕ} (σ : Fin n → WTape) (J : ℕ) :
+    ∀ js : List (Fin n), (∀ j ∈ js, clen (σ j).words ≤ J) → clearCost σ js ≤ js.length * (2 * J + 3) + 2
+  | [], _ => by simp [clearCost]
+  | j :: js, h => by
+    have h1 := h j (by simp)
+    have h2 := clearCost_le σ J js (fun k hk => h k (by simp [hk]))
+    simp only [clearCost, List.length_cons]; nlinarith
+
+/-- Skip the tag, load the registers, run the axis program, clear its junk. -/
+def axisBranch (S : AxisSpec E) : Cmd prime (NB E) :=
+  .seq (skp scr jnk scr_ne_jnk) <| .seq (loadAll (S.regs.map ax)) <|
+  .seq (S.cmd.map ax ax_inj) (clearAll (S.junk.map ax))
+
+/-- The cost of an axis record. -/
+def axisCost (S : AxisSpec E) (ws : List (List Bool)) (A : List Bool) : ℕ :=
+  6 + 1 + (loadCost ws + 1 + (S.cost ws A + 1 + (S.junk.length * (2 * S.J ws A + 3) + 2)))
+
+theorem runs_axisBranch (S : AxisSpec E) (A : List Bool) (L R ws : List (List Bool))
+    (hl : ws.length = S.regs.length) (hg : S.Good ws A) :
+    Runs (axisBranch S) (bank S.ρ S.X A ⟨L, ([true] :: ws) ++ R⟩)
+      (· = bank S.ρ S.X (S.f ws A) ⟨ws.reverse ++ [true] :: L, R⟩) (axisCost S ws A) := by
+  set σ := bank S.ρ S.X A ⟨L, ([true] :: ws) ++ R⟩
+  have s1 := runs_skp (a := prime) scr_ne_jnk σ (by simp [σ, bank_scr]) (by simp [σ, bank_jnk])
+  set σ1 := Function.update σ scr (σ scr).next
+  have hσ1s : σ1 scr = ⟨[true] :: L, ws ++ R⟩ := by simp [σ1, σ, bank_scr]
+  have hσ1a : ∀ i, σ1 (ax i) = Function.update S.ρ S.X (reg A) i := fun i => by
+    simp only [σ1, σ]; rw [Function.update_of_ne (ax_ne_scr i), bank_ax]
+  have hregs : ∀ r ∈ S.regs.map ax, r ≠ scr ∧ r ≠ jnk := fun r hr => by
+    simp only [List.mem_map] at hr; obtain ⟨i, -, rfl⟩ := hr; exact ⟨ax_ne_scr i, ax_ne_jnk i⟩
+  have s2 := runs_loadAll (S.regs.map ax) ws σ1 ([true] :: L) R (by simpa using hl)
+    (S.regs_nodup.map ax_inj) (fun h => (hregs _ h).1 rfl) (fun h => (hregs _ h).2 rfl)
+    (fun r hr => by
+      simp only [List.mem_map] at hr; obtain ⟨i, hi, rfl⟩ := hr
+      rw [hσ1a, Function.update_of_ne (fun e => S.X_junk (by rw [← e]; exact S.regs_junk i hi))]
+      exact S.ρ_junk i (S.regs_junk i hi))
+    hσ1s (by simp only [σ1, σ]; rw [Function.update_of_ne scr_ne_jnk.symm, bank_jnk])
+  set σ2 := Function.update (setRegs σ1 (S.regs.map ax) ws) scr ⟨ws.reverse ++ [true] :: L, R⟩
+  have hσ2a : σ2 ∘ ax = setRegs (Function.update S.ρ S.X (reg A)) S.regs ws := by
+    funext y
+    simp only [Function.comp_apply, σ2]
+    rw [Function.update_of_ne (ax_ne_scr y), setRegs_map σ1 ax_inj]
+    congr 1; funext z; exact hσ1a z
+  have s3 := (S.run ws A hg hl).map ax ax_inj σ2 hσ2a
+  have hjm : ∀ j ∈ S.junk.map ax, ∃ i ∈ S.junk, j = ax i := fun j hj => by
+    simp only [List.mem_map] at hj; obtain ⟨i, hi, rfl⟩ := hj; exact ⟨i, hi, rfl⟩
+  have s34 : Runs (.seq (S.cmd.map ax ax_inj) (clearAll (S.junk.map ax))) σ2
+      (· = bank S.ρ S.X (S.f ws A) ⟨ws.reverse ++ [true] :: L, R⟩)
+      (S.cost ws A + 1 + (S.junk.length * (2 * S.J ws A + 3) + 2)) := by
+    refine Runs.seq (s3.mono (fun τ ⟨⟨hX, hρ, hJ⟩, ho⟩ => ?_) le_rfl)
+    have hτj : τ jnk = emp := by
+      rw [ho jnk (fun y e => ax_ne_jnk y e)]
+      simp only [σ2]; rw [Function.update_of_ne scr_ne_jnk.symm, setRegs_other _ _ _ _ (fun h => (hregs _ h).2 rfl)]
+      simp only [σ1, σ]; rw [Function.update_of_ne scr_ne_jnk.symm, bank_jnk]
+    refine (runs_clearAll (S.junk.map ax) τ (S.junk_nodup.map ax_inj) hτj).mono (fun σ' e => ?_)
+      (by
+        have := clearCost_le τ (S.J ws A) (S.junk.map ax) (fun j hj => by
+          obtain ⟨i, hi, rfl⟩ := hjm j hj; exact hJ i hi)
+        simpa using this)
+    rw [e]
+    have hσ2o : ∀ x, (∀ y, ax y ≠ x) → x ≠ scr → τ x = σ x := fun x hx hs => by
+      rw [ho x hx]; simp only [σ2]
+      rw [Function.update_of_ne hs, setRegs_other _ _ _ _ (fun h => by
+        obtain ⟨i, -, rfl⟩ := List.mem_map.mp h; exact hx i rfl)]
+      simp only [σ1]; rw [Function.update_of_ne hs]
+    apply bank_cases
+    · intro i
+      have hn : sw i ∉ S.junk.map ax := fun h => by obtain ⟨k, -, e⟩ := hjm _ h; exact sw_ne_ax i k e
+      simp only [setEmp, hn, ite_false]
+      rw [hσ2o _ (fun y e => sw_ne_ax i y e.symm) (sw_ne_scr i)]; exact bank_sw _ _ _ _ _
+    · intro i
+      by_cases hi : i ∈ S.junk
+      · have hm : ax i ∈ S.junk.map ax := List.mem_map_of_mem hi
+        simp only [setEmp, hm, ite_true]
+        rw [Function.update_of_ne (fun e => S.X_junk (by rw [← e]; exact hi)), S.ρ_junk i hi]
+      · have hn : ax i ∉ S.junk.map ax := fun h => by
+          obtain ⟨k, hk, e⟩ := hjm _ h; exact hi (by rw [ax_inj e]; exact hk)
+        simp only [setEmp, hn, ite_false]
+        by_cases hiX : i = S.X
+        · subst hiX; simp only [Function.update_self]; exact hX
+        · rw [Function.update_of_ne hiX]; exact hρ i hi hiX
+    · have hn : scr ∉ S.junk.map ax := fun h => by obtain ⟨k, -, e⟩ := hjm _ h; exact ax_ne_scr k e.symm
+      simp only [setEmp, hn, ite_false]
+      rw [ho scr (fun y e => ax_ne_scr y e)]
+      simp only [σ2, Function.update_self]
+    · have hn : jnk ∉ S.junk.map ax := fun h => by obtain ⟨k, -, e⟩ := hjm _ h; exact ax_ne_jnk k e.symm
+      simp only [setEmp, hn, ite_false]; exact hτj
+  refine (Runs.then s1 (Runs.then s2 s34)).mono (fun σ' e => e) ?_
+  simp [axisCost, σ, bank_scr]
+
 end
 end IntegerMultBounds.Resampling.AxisDriver

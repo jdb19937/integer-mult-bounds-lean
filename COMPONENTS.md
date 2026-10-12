@@ -6098,8 +6098,9 @@ Transform, fixed-point, Kronecker and Gaussian resampling mathematics used by th
   script records (`bank`), and loading registers from the script
   (`runs_loadAll`), clearing tapes (`runs_clearAll`), and one swap record:
   load five headers, interchange the array's fields, clear the headers
-  (`runs_swapBranch`, result `swapF`, cost `swapCost`). The axis record and
-  the record loop are still open.
+  (`runs_swapBranch`, result `swapF`, cost `swapCost`); one axis record for
+  any per-axis program with a contract (`AxisSpec`, `runs_axisBranch`). The
+  record loop is still open.
 - `Resampling/Milestones.lean`: the §7 milestone theorems of
   `plan/07-gaussian-resampling.md` that package proved results:
   `FixedMul.signed_word_ops`, `Schoenhage.wordRecordLayer_hoare`,
