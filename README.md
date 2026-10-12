@@ -73,7 +73,8 @@ inverse adapter derives width and promotion guards from the child and parent
 path. Literal physical return now joins the inverse basis pass and reaches
 the original next-call PC. The computed completed child now supplies a joined
 guard/pop/physical-return/inverse path with all transitions paid, deriving its
-raw, scalar, controller and width readiness. Captured saved-stack equations,
+raw, scalar, controller and width readiness. Physical live-exponent budgets
+are now independent of returned child-volume accounting. Captured saved-stack equations,
 recursive settled frames, output grids and ledger progress remain explicit;
 full recursive event induction and total runtime remain open. The actual ordered
 site trace now retains every original compiler wire and both frames, including
