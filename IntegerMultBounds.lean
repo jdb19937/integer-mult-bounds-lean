@@ -680,6 +680,7 @@ import IntegerMultBounds.Resampling.OffDiagSum
 import IntegerMultBounds.Resampling.NeumannWords
 import IntegerMultBounds.Machine.RecordRewind
 import IntegerMultBounds.Machine.RecordCopy
+import IntegerMultBounds.Machine.RecordPack
 import IntegerMultBounds.Machine.SubPass
 import IntegerMultBounds.Machine.NeumannStepLemmas
 import IntegerMultBounds.Machine.NeumannLoop

@@ -5984,6 +5984,9 @@ Transform, fixed-point, Kronecker and Gaussian resampling mathematics used by th
   record origin when the source reads blank (`ct = false`) or after one record
   per ruler cell (`ct = true`); `walk_hoare` is the exact contract, cost the
   volume walked, covering copy-all, copy-`n`, skip-all and skip-`n`.
+- `Machine/RecordPack.lean`: packing blank-separated records into one
+  contiguous word, skipping the separators (`pack_hoare`); the record side of
+  the bit arrays moved by the address-chunk interchange.
 
 - `Machine/SubPass.lean`: the subtraction pass of the Neumann evaluation.
   Five tapes (accumulator records, start records, output, scratch, width
