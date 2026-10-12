@@ -6106,6 +6106,11 @@ Transform, fixed-point, Kronecker and Gaussian resampling mathematics used by th
   rulers (`eWords`); the program unpacks the table and runs `expandStep`.
   Likewise the compression axis (`compressSpec`): four packed tables
   (`cWords`) unpacked (`runs_unpack`) before `compressStep`.
+- `Resampling/PaddedTensor.lean`: the padded box. The tensor of square maps
+  that read the first `sᵢ` entries of each line equals the rectangular tensor
+  on the restricted array (`tensorZR_restr`); the tensor of maps padded with
+  zeros equals the rectangular tensor extended by zeros, for maps sending
+  `0` to `0` (`tensorZR_extd`).
 - `Resampling/Milestones.lean`: the §7 milestone theorems of
   `plan/07-gaussian-resampling.md` that package proved results:
   `FixedMul.signed_word_ops`, `Schoenhage.wordRecordLayer_hoare`,
