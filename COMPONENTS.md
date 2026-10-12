@@ -6784,7 +6784,9 @@ Schönhage–Strassen multiplication, the fast multiplier used for the packed pr
   arithmetic on the ring product's word tapes: from the record array, offset
   words, `D` passes, zero extension, the digit loop's truncation toward zero, and
   the output words joined back into records (`runs_prefixHad`: output
-  `array w (truncRec D <$> bflysRecs [s, …, s+D-1] fs)`, cost `prefixCost`).
+  `array w (truncRec D <$> bflysRecs [s, …, s+D-1] fs)`, cost `prefixCost`); in the
+  paper's layout its preconditions hold and its output twisted by the round's
+  exponents is the computed round (`prefix_had_spec`).
 
 - `Schoenhage/PointwiseRow.lean`: at the main sizes `p = 6 lg n`, `r = 2^ℓ`
   the pointwise program's time is at most a constant times `T p` times the

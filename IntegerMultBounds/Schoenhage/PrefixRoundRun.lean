@@ -238,4 +238,55 @@ theorem runs_prefixHad {r w D s c : ℕ} (hr : 1 ≤ r) (hw : 2 ≤ w) (hc : 1 �
   simp only [Wd]
   nlinarith
 
+/-! ### The paper's prefix round -/
+
+theorem bounded_of_disk {r p w : ℕ} (hpw : p + 2 ≤ w) {fs : List (Rec r)} (hd : ∀ f ∈ fs, DiskGrid p f.1 f.2) :
+    Bounded (2 ^ (w - 1) - 1) fs := by
+  intro y c
+  have hle : (2 : ℤ) ^ p ≤ 2 ^ (w - 1) - 1 := by
+    have : (2 : ℤ) ^ (w - 1) = 2 ^ (w - 1 - p) * 2 ^ p := by rw [← pow_add]; congr 1; omega
+    rw [this]
+    have h1 : (2 : ℤ) ≤ 2 ^ (w - 1 - p) := by
+      calc (2 : ℤ) = 2 ^ 1 := by norm_num
+        _ ≤ 2 ^ (w - 1 - p) := pow_le_pow_right₀ (by norm_num) (by omega)
+    have h2 : (1 : ℤ) ≤ 2 ^ p := one_le_pow₀ (by norm_num)
+    nlinarith
+  by_cases hy : y < fs.length
+  · rw [List.getD_eq_getElem _ _ hy]
+    have hf := hd _ (List.getElem_mem hy)
+    unfold comp
+    split_ifs with h1 h2
+    · exact (hf.abs_le _).1.trans hle
+    · exact (hf.abs_le _).2.trans hle
+    · simp; linarith [one_le_pow₀ (M₀ := ℤ) (a := 2) (n := p) (by norm_num)]
+  · rw [List.getD_eq_default _ _ (by omega), comp_zero, abs_zero]
+    linarith [one_le_pow₀ (M₀ := ℤ) (a := 2) (n := p) (by norm_num)]
+
+/-- In the paper's layout, the prefix round's machine meets its preconditions, and twisting its output by
+the round's exponents is the computed round. -/
+theorem prefix_had_spec {r : ℕ} [NeZero r] {ts : List ℕ} {ℓ K : ℕ} (hL : LayoutOK r ts ℓ K) {h : ℕ}
+    (hh : h < (ℓ - 1) % K) {p w : ℕ} (hpw : p + 2 ≤ w) (fs : List (Rec r)) (hlen : fs.length = ts.prod)
+    (hd : ∀ f ∈ fs, DiskGrid p f.1 f.2) :
+    Bounded (2 ^ (w - 1) - 1) fs ∧
+      (∃ c, 1 ≤ c ∧ fs.length = 2 ^ (prefixBase ts.length ℓ K h + ts.length) * c) ∧
+      twist (slotExp (paperPerm hL) r ts (slotAxes ts h) h)
+        (arrayVec p ((bflysRecs ((List.range ts.length).map (prefixBase ts.length ℓ K h + ·)) fs).map
+          (truncRec ts.length))) = roundArr p (slotRound (paperPerm hL) ts h (arrayVec p fs)) := by
+  refine ⟨bounded_of_disk hpw hd, ?_, (prefix_round_eq hL hh p fs hlen).symm⟩
+  obtain ⟨-, hM⟩ := axes_zeros (ts := ts) (fun t ht => by obtain ⟨a, ha, -⟩ := hL.1 t ht; exact ⟨a, ha⟩)
+  set D := ts.length
+  have hlog : Nat.log 2 ts.prod = D * ((ℓ - 1) / K) * K + D * ((ℓ - 1) % K) + (longs ts ℓ).length :=
+    log_prod_layout hL
+  have hle : prefixBase D ℓ K h + D ≤ Nat.log 2 ts.prod := by
+    have hb1 : (h + 1) * D ≤ ((ℓ - 1) % K) * D := Nat.mul_le_mul_right _ (by omega)
+    have e1 : (h + 1) * D = h * D + D := by ring
+    have e2 : D * ((ℓ - 1) % K) = ((ℓ - 1) % K) * D := Nat.mul_comm _ _
+    simp only [prefixBase]
+    omega
+  refine ⟨2 ^ (Nat.log 2 ts.prod - (prefixBase D ℓ K h + D)), Nat.one_le_two_pow, ?_⟩
+  rw [hlen, ← pow_add]
+  conv_lhs => rw [hM]
+  congr 1
+  omega
+
 end IntegerMultBounds.Schoenhage
