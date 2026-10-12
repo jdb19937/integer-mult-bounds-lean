@@ -340,4 +340,54 @@ theorem rotOut_flatten (n Q : ℕ) (gs : List ℕ) (B : ℕ) (es : List (List Bo
     rw [getD_mapBlocks (R * n) (n * R) Q _ es (by positivity) hl (fun _ _ => length_trL _ _ _ _) hq hij,
       getD_trL R n [] _ hj hi, getD_block _ _ _ hjn]
 
+/-! ### The flat pass on general entries -/
+
+theorem prod_pos_pow {d : ℕ} (lg : Fin d → ℕ) : 0 < ∏ i, 2 ^ lg i := Finset.prod_pos fun _ _ => by positivity
+
+/-- The flat pass keeps the length and any property of the entries kept by the line maps. -/
+theorem flatPass_props (P : α → Prop) : ∀ (d : ℕ) (lg : Fin d → ℕ) (G : Fin d → List α → List α) (x : α)
+    (xs : List α),
+    (∀ i (l : List α), l.length = 2 ^ lg i → (∀ e ∈ l, P e) → (G i l).length = 2 ^ lg i ∧ ∀ e ∈ G i l, P e) →
+    xs.length = ∏ i, 2 ^ lg i → (∀ e ∈ xs, P e) →
+    (flatPass d (fun i => 2 ^ lg i) G x xs).length = ∏ i, 2 ^ lg i ∧ ∀ e ∈ flatPass d (fun i => 2 ^ lg i) G x xs, P e
+  | 0, _, _, _, xs, _, hl, hp => ⟨hl, hp⟩
+  | d + 1, lg, G, x, xs, hG, hl, hp => by
+    set R := ∏ i : Fin d, 2 ^ lg i.succ
+    set T0 := 2 ^ lg 0
+    have hR : 0 < R := prod_pos_pow _
+    have hT0 : 0 < T0 := by positivity
+    rw [Fin.prod_univ_succ] at hl
+    have hblk : ∀ b, b < T0 → (block R b xs).length = R := fun b hb => length_block _ _ _ T0 hl hb
+    have hbp : ∀ b, ∀ e ∈ block R b xs, P e := fun b e he => hp e (List.mem_of_mem_drop (List.mem_of_mem_take he))
+    have ih := fun b (hb : b < T0) => flatPass_props P d (fun i => lg i.succ) (fun i => G i.succ) x (block R b xs)
+      (fun i l => hG i.succ l) (hblk b hb) (hbp b)
+    set W := mapBlocks R (flatPass d (fun i => 2 ^ lg i.succ) (fun i => G i.succ) x) xs
+    have hW : W.length = T0 * R := by
+      rw [length_mapBlocks R R _ xs (fun b hb => (ih b (by rw [hl, Nat.mul_div_cancel _ hR] at hb; exact hb)).1), hl,
+        Nat.mul_div_cancel _ hR]
+    have hWp : ∀ e ∈ W, P e := by
+      intro e he
+      simp only [W, mapBlocks, List.mem_flatMap, List.mem_range] at he
+      obtain ⟨b, hb, he⟩ := he
+      rw [hl, Nat.mul_div_cancel _ hR] at hb
+      exact (ih b hb).2 e he
+    set Z := trL T0 R x W
+    have hZ : Z.length = R * T0 := length_trL _ _ _ _
+    have hZp : ∀ e ∈ Z, P e := fun e he => hWp e (mem_trL _ _ _ _ hW he)
+    have hgZ : ∀ b, b < R → (G 0 (block T0 b Z)).length = T0 ∧ ∀ e ∈ G 0 (block T0 b Z), P e := fun b hb =>
+      hG 0 _ (length_block _ _ _ R hZ hb) (fun e he => hZp e (List.mem_of_mem_drop (List.mem_of_mem_take he)))
+    set Y := mapBlocks T0 (G 0) Z
+    have hY : Y.length = R * T0 := by
+      rw [length_mapBlocks T0 T0 _ Z (fun b hb => (hgZ b (by rw [hZ, Nat.mul_div_cancel _ hT0] at hb; exact hb)).1), hZ,
+        Nat.mul_div_cancel _ hT0]
+    have hYp : ∀ e ∈ Y, P e := by
+      intro e he
+      simp only [Y, mapBlocks, List.mem_flatMap, List.mem_range] at he
+      obtain ⟨b, hb, he⟩ := he
+      rw [hZ, Nat.mul_div_cancel _ hT0] at hb
+      exact (hgZ b hb).2 e he
+    refine ⟨?_, fun e he => hYp e (mem_trL _ _ _ _ hY he)⟩
+    show (trL R T0 x Y).length = _
+    rw [length_trL, Fin.prod_univ_succ]
+
 end IntegerMultBounds.Resampling.ScriptSem

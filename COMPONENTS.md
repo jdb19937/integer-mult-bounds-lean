@@ -6132,7 +6132,10 @@ Transform, fixed-point, Kronecker and Gaussian resampling mathematics used by th
   `swapHdrs`) make a swap record interchange two fields (`swapRec_spec`);
   the records that move a field inward or outward compute `rotIn` and
   `rotOut` (`insRecs_spec`, `outRecs_spec`); records concatenate
-  (`result_append`, `valid_append`, `driveCost_append`).
+  (`result_append`, `valid_append`, `driveCost_append`). The tensor script
+  (`tScript`: tail axes, move axis `0` in, its record, move it out) is valid
+  and computes the flat pass on entries when every axis record maps lines
+  (`tScript_spec`).
 - `Resampling/Milestones.lean`: the §7 milestone theorems of
   `plan/07-gaussian-resampling.md` that package proved results:
   `FixedMul.signed_word_ops`, `Schoenhage.wordRecordLayer_hoare`,
