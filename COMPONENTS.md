@@ -4,6 +4,10 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 ## Machine
 
+- `Machine/CompactComplexSourceReadyReachedEventFrameState.lean`: Bundles an actual reached event boundary with a captured settled-stack snapshot and the immutable entry target value. Initializes from genuine clean current tails and the actual auxiliary blank-after invariant, derives current clean tails and reuses the original saved-target Ledger at advanced sibling cursors. Complete recursive execution remains separate.
+- `Machine/CompactComplexSourceReadyReachedEventScalarFrameStep.lean`: Strengthens actual scalar Step construction to preserve the exact incoming target and arbitrary settled ancestor frames on the same selected physical output bank. Storage and auxiliary fields derive from canonical output; the actual preserved target port validates its target record. Emitted scalar data, updated cursors and paid table path remain literal.
+- `Machine/CompactComplexSourceReadyReachedEventStoppedFrameStep.lean`: Strengthens actual stopped-child Step construction to preserve the incoming saved target and settled frames with matching fixed stack ports. Retains actual returned/final witnesses, derives restored target-eight and protected storage from balanced physical return, and validates the target on the same final bank. Current clean tails derive from incoming Settled; the original saved-target Ledger remains reusable.
+
 - `Machine/CompactComplexLargeAxesStop.lean`: Under the explicit hypothesis arity^1000 < globalAxes, proves exponent-one nodes satisfy the published stopping classifier and every nonstopped node has exponent at least two, with a positive immediate-child exponent. The large power remains symbolic. Connecting this hypothesis to eventual input parameters and covering smaller dimensions remain separate.
 - `Machine/CompactComplexSourceReadyReachedEventStoppedChildStep.lean`: Constructs an actual stopped-child Step from the complete forward-basis, child-entry, classifier, oriented leaf, saved-PC pop, parent restoration and inverse-basis execution. The final reached bank, both successor cursors, stopped denominator target, exact continuation PC and paid time are derived from the real event outcome. Protected-tail and retained-target premises remain explicit; preserving them through complete recursive execution is still open.
 
@@ -6736,6 +6740,11 @@ Schönhage–Strassen multiplication, the fast multiplier used for the packed pr
   and opposite programs meet `lem:synthetic-transform-cost`, the convolution
   program meets `prop:synthetic-convolution` (error, output format, `Γ(w_M)`)
   within three transform costs plus an explicit remainder (`conv_instance`).
+
+- `Schoenhage/ConvCost.lean`: the convolution program's steps beyond its three
+  transforms are within a constant times the paper's convolution cost for all
+  large `p` (`convExtra_le_cost`): the header is `O(p)`, `p ≤ T`, and the pointwise
+  products' `log log (r p)` factor is absorbed by `ℓ d^λ'`.
 
 - `Schoenhage/PointwiseRow.lean`: at the main sizes `p = 6 lg n`, `r = 2^ℓ`
   the pointwise program's time is at most a constant times `T p` times the

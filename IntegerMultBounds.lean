@@ -2635,6 +2635,7 @@ import IntegerMultBounds.Schoenhage.OfHoare
 import IntegerMultBounds.Schoenhage.ConvPrims
 import IntegerMultBounds.Schoenhage.ConvProgram
 import IntegerMultBounds.Schoenhage.ConvTarget
+import IntegerMultBounds.Schoenhage.ConvCost
 import IntegerMultBounds.Schoenhage.RingLemmaHeader
 import IntegerMultBounds.Schoenhage.RingLemma
 import IntegerMultBounds.Schoenhage.Twist
@@ -2740,3 +2741,6 @@ import IntegerMultBounds.Schoenhage.TwistRound
 import IntegerMultBounds.Machine.CompactComplexLargeAxesStop
 import IntegerMultBounds.Machine.CompactComplexSourceReadyReachedEventStoppedChildStep
 import IntegerMultBounds.Schoenhage.LayoutMachines
+import IntegerMultBounds.Machine.CompactComplexSourceReadyReachedEventFrameState
+import IntegerMultBounds.Machine.CompactComplexSourceReadyReachedEventScalarFrameStep
+import IntegerMultBounds.Machine.CompactComplexSourceReadyReachedEventStoppedFrameStep
