@@ -6074,6 +6074,10 @@ Transform, fixed-point, Kronecker and Gaussian resampling mathematics used by th
   floored tabled `Ã` still has error below `p²` and preserves the unit disk
   (`floorA_tabled`). The tape `Ã` outputs carry one extra bit, which the
   tensor driver drops before the next axis.
+- `Resampling/AxisRounds.lean`: flat arrays of bit blocks for the tensor
+  driver. `tr2` transposes a matrix of blocks; the interchange reads as an
+  index map (`getD_swapList`), and moving the innermost field outward by
+  adjacent interchanges (`rot`) is one `tr2` (`rot_eq_tr2`).
 
 - `Resampling/PiApprox.lean`, `Resampling/ExpApprox.lean`: certified integer
   approximations for the weight tables. `piApprox q K` sums Machin's series
