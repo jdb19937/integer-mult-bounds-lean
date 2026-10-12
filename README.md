@@ -25,6 +25,8 @@ certified together. Recursive controller execution remains open.
 The exceptional-address repair math milestone is also proved: both actual
 packed programs have exact repaired output, sparse extracted records and
 the three-logical-volume cost bound at common dyadic parameters.
+The basis-stage and phase math milestone is proved on one literal word and
+coefficient bank, including exact reverse restoration and the full edge phase.
 Actual scalar successors and forward-child-inverse
 returns now derive the original event semantics from their reached arrays;
 the child result still requires recursive tensor correctness. Literal child-entry
@@ -47,6 +49,10 @@ The installed stopped grid, genuine stopped/nonleaf return Progress and
 next-event returned cursor are proved; the saved-target Ledger can be captured
 at node entry. Full event induction and nonleaf completed-target coverage
 remain open.
+Actual forward
+basis and physical child entry now also compose after counted siblings on the
+unchanged aligned table, retaining the immutable target certificate; their
+decoded child-event semantics still require recursive child tensor correctness.
 Complete stopped-root execution, full stopped-leaf
 tensor semantics, genuine halting and paid runtime are checked. Corrected
 source entry, sink corrections, contraction/rejoin and saved-PC dispatch also
