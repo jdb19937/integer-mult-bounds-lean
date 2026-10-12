@@ -4,6 +4,12 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 ## Machine
 
+- `Machine/CompactComplexSourceReadySiblingChildProgress.lean`: Constructs genuine stopped and completed-nonleaf return Progress from the original node-entry Path and actual scheduled call. Symbolic arithmetic pays current scalar rows, the stopped one-volume advance and the last completed sibling. Captures the pending target Ledger from entry Reached and derives the exact next-event returned cursor; nonleaf completed-target coverage remains explicit.
+- `Machine/CompactComplexSourceReadySiblingStoppedGrid.lean`: Derives the actual stopped-result grid and signed conjugation/leaf guards after counted siblings from the original entry Path. Preserves the parent's scalar prefix and unchanged numerator reserve while advancing the actual live denominator by one child volume.
+- `Machine/CompactComplexAlignedSiblingStoppedChildRun.lean`: Executes the genuine scheduled stopped child's classifier, pre/post orientation, leaf and saved-PC pop in the unchanged aligned prime-alphabet table. Derives readiness and history from the actual parent and schedule event, counting preceding siblings once; all physical joins are paid.
+- `Machine/CompactComplexAlignedStoppedReturnPath.lean`: Composes actual stopped classification, leaf, saved return, parent restoration and original inverse basis into one paid fixed-table path with literal installed result and returned/final Reached witnesses. Requires a parent Path matching its returned counter; later siblings use the separate sibling-aware wrapper. Includes the full SourceReady return coefficient.
+- `Machine/CompactComplexAlignedStoppedReturnedDormantFrames.lean`: Specializes balanced captured-frame restoration to the literal stopped bank and result. Captured ancestor storage remains Settled on the genuine returned and inverse-basis witnesses, with the consumed PC frame replaced by its associated older stack.
+- `Machine/CompactComplexAlignedSiblingStoppedReturnPath.lean`: Composes genuine stopped-child classification, oriented leaf, saved-PC pop, physical parent restore and original inverse basis after counted siblings on the same aligned table. Derives installed width/grid and stopped Progress from the original entry Path and actual schedule, with one-volume live advance, exact reached arrays and all paid costs. The immutable saved-target Ledger remains explicit and constructible from entry Reached; parent forward entry and whole-node induction remain separate.
 Machine model, execution, composition, and tape routines.
 
 - `Machine/Composition.lean` and `Machine/Hoare.lean`: a concrete sequential
@@ -6118,7 +6124,10 @@ Transform, fixed-point, Kronecker and Gaussian resampling mathematics used by th
 - `Resampling/ScriptSem.lean`: the driver's field moves on bit arrays. An
   interchange with an outer prefix acts blockwise (`swapList_mul`); moving a
   field inward (`rotIn`) or outward (`rotOut`) by adjacent interchanges is a
-  block transpose inside every outer block (`rotIn_getD`, `rotOut_getD`).
+  block transpose inside every outer block (`rotIn_getD`, `rotOut_getD`), and
+  on entry lists a blockwise `trL` (`rotIn_flatten`, `rotOut_flatten`); lines
+  nest in blocks (`mapBlocks_nest`) and blockwise maps compose
+  (`mapBlocks_comp`).
 - `Resampling/Script.lean`: driver scripts. Canonical headers (`bin`,
   `swapHdrs`) make a swap record interchange two fields (`swapRec_spec`);
   the records that move a field inward or outward compute `rotIn` and
