@@ -697,6 +697,7 @@ import IntegerMultBounds.Resampling.AxisStep
 import IntegerMultBounds.Resampling.AxisDriver
 import IntegerMultBounds.Resampling.AxisInst
 import IntegerMultBounds.Resampling.PaddedTensor
+import IntegerMultBounds.Resampling.FlatTensor
 import IntegerMultBounds.Resampling.Milestones
 import IntegerMultBounds.Resampling.PiApprox
 import IntegerMultBounds.Resampling.ExpApprox
