@@ -6701,7 +6701,8 @@ Schönhage–Strassen multiplication, the fast multiplier used for the packed pr
 - `Schoenhage/ConvScaleRun.lean`: the convolution's last step on the ring
   product's word tapes: `log₂ M` in unary from the header's axis codes
   (`runs_kOf`), every `w`-bit component word widened by `k` zeros
-  (`runs_scaleArr`), and the descriptor `Γ(w + k)` (`runs_gammaOut`).
+  (`runs_scaleArr`), and the descriptor `Γ(w + k)` (`runs_gammaOut`), composed
+  after the header decoder (`runs_convScale`).
 
 - `Schoenhage/PointwiseRow.lean`: at the main sizes `p = 6 lg n`, `r = 2^ℓ`
   the pointwise program's time is at most a constant times `T p` times the

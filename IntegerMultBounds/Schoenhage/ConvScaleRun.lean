@@ -262,4 +262,73 @@ theorem runs_gammaOut {w k : ℕ} (τ : Fin 𝕌 → WTape) (hc : Clean τ) (hW 
   simp only [length_lsb]
   omega
 
+/-! ### The whole step -/
+
+theorem ι_ne_high {x : Fin 𝕌} (hx : 64 ≤ x.val) (i : Fin 𝕋) : ι i ≠ x := fun h => by
+  have h1 := congrArg Fin.val h
+  rw [ι_val] at h1
+  have := i.isLt
+  change i.val < 64 at this
+  omega
+
+theorem clean_update {τ : Fin 𝕌 → WTape} (hc : Clean τ) {x : Fin 𝕌} (hx : 64 ≤ x.val) (v : WTape) :
+    Clean (Function.update τ x v) := by
+  funext i
+  simp only [Function.comp_apply, Function.update_of_ne (ι_ne_high hx i)]
+  exact congrFun hc i
+
+/-- Decode the header, then write the array of `zF` times `M` to `zO` and `Γ(w + log₂ M)` to `zG`. -/
+noncomputable def convScale : Cmd 0 𝕌 :=
+  .seq decodeHeader <| .seq kOf <| .seq scaleArr <| .seq gammaOut <| .seq (clear iP) <|
+  .seq (clear iL) <| .seq (clear iW) (clear kI)
+
+/-- A bound on the step. -/
+def convScaleCost (p r w H X N k : ℕ) : ℕ :=
+  headerCost p r w H + 300 * H + 10 * X + N * (4 * k + 60) + 200 * (w + k) + 2 * (p + r + w + k) + 3000
+
+set_option maxHeartbeats 8000000 in
+theorem runs_convScale {p d l K w : ℕ} {ts : List ℕ} (hp : 1 ≤ p) (hd : 1 ≤ d) (hK : 1 ≤ K) (hw : 1 ≤ w)
+    (hts : ∀ t ∈ ts, ∃ e, t = 2 ^ e) {x : List Bool} (τ : Fin 𝕌 → WTape) (hc : Clean τ)
+    (hH : τ zH = reg (transformHeader p d (2 ^ l) K w ts)) (hF : τ zF = reg x) (hG : τ zG = emp)
+    (hO : τ zO = emp) (hP : τ iP = emp) (hL : τ iL = emp) (hW : τ iW = emp) (hk : τ kI = emp)
+    (hA : τ xA = emp) :
+    Runs convScale τ (· = Function.update (Function.update τ zO
+        (reg ((cut w x).flatMap (· ++ List.replicate (Nat.log 2 ts.prod) false))))
+        zG (reg (gamma (w + Nat.log 2 ts.prod))))
+      (convScaleCost p (2 ^ l) w (transformHeader p d (2 ^ l) K w ts).length x.length (cut w x).length
+        (Nat.log 2 ts.prod)) := by
+  have hz : ∀ i : Fin 𝕋, τ (ι i) = emp := fun i => congrFun hc i
+  set k := Nat.log 2 ts.prod
+  have hkz := (axes_zeros hts).1
+  have s1 := runs_decodeHeader hp hd hK hw τ hc hH hP hL hW
+  set τ₁ := Function.update (Function.update (Function.update τ iP (reg (ones p))) iL (reg (ones l))) iW
+    (reg (ones w))
+  have hc₁ : Clean τ₁ :=
+    clean_update (clean_update (clean_update hc (by decide) _) (by decide) _) (by decide) _
+  have s2 := runs_kOf (l := l) (ts := ts) hp hd hK hw τ₁ hc₁ (by tsimp [τ₁, hH]) (by tsimp [τ₁, hk])
+  rw [hkz] at s2
+  set τ₂ := Function.update τ₁ kI (reg (ones k))
+  have s3 := runs_scaleArr (x := x) (k := k) hw τ₂ (by tsimp [τ₂, τ₁, hF]) (by tsimp [τ₂, τ₁]) (by tsimp [τ₂])
+    (by tsimp [τ₂, τ₁, hA]) (by tsimp [τ₂, τ₁, hO])
+  set τ₃ := Function.update τ₂ zO (reg ((cut w x).flatMap (· ++ List.replicate k false)))
+  have hc₃ : Clean τ₃ := clean_update (clean_update hc₁ (by decide) _) (by decide) _
+  have s4 := runs_gammaOut (w := w) (k := k) τ₃ hc₃ (by tsimp [τ₃, τ₂, τ₁]) (by tsimp [τ₃, τ₂])
+    (by tsimp [τ₃, τ₂, τ₁, hG])
+  set τ₄ := Function.update τ₃ zG (reg (gamma (w + k)))
+  have s5 : Runs (a := 0) (.seq (clear iP) <| .seq (clear iL) <| .seq (clear iW) (clear kI)) τ₄
+      (· = Function.update (Function.update τ zO (reg ((cut w x).flatMap (· ++ List.replicate k false))))
+        zG (reg (gamma (w + k)))) (2 * (p + 2 ^ l + w + k) + 20) := by
+    apply Runs.of_wp
+    simp only [WP, wp_clear]
+    tsimp [τ₄, τ₃, τ₂, τ₁]
+    refine ⟨?_, ?_⟩
+    · funext y
+      simp only [Function.update_apply]
+      split_ifs <;> (try subst_vars) <;> (try tsimp [hP, hL, hW, hk, emp]) <;> (try tsimp at *)
+    · have hl : l ≤ 2 ^ l := Nat.lt_two_pow_self.le
+      simp [clen, WTape.words, reg]; omega
+  refine (Runs.then s1 (Runs.then s2 (Runs.then s3 (Runs.then s4 s5)))).mono (fun τ' h => h) ?_
+  unfold convScaleCost
+  omega
+
 end IntegerMultBounds.Schoenhage
