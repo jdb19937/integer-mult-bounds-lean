@@ -6690,6 +6690,13 @@ Schönhage–Strassen multiplication, the fast multiplier used for the packed pr
   (`pointwiseTime_le`), so the step meets `pointwisePolylogTarget 1`
   (`pointwise_polylog`).
 
+- `Schoenhage/ConvScale.lean`: the words of the synthetic convolution's last
+  step: scaling a record by `2^k` appends `k` zeros to every component word
+  (`compWord_scale`, `array_scale`); `log₂ M` is half the zeros of the axis codes
+  (`axes_zeros`); rules counting those zeros, reading a parity and emitting the
+  zero prefix of a `Γ` code; the binary digits of a unary word by repeated
+  halving on tapes (`runs_lsbLoop`, `lsb_reverse`).
+
 - `Schoenhage/PointwiseRow.lean`: at the main sizes `p = 6 lg n`, `r = 2^ℓ`
   the pointwise program's time is at most a constant times `T p` times the
   `packedProducts` row times the `log log` overhead of
