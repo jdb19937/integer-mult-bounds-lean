@@ -4683,6 +4683,7 @@ Machine model, execution, composition, and tape routines.
 
 ## Compact
 
+- `Compact/RepairMilestone.lean`: Closes the exceptional-address repair math milestone on common actual dyadic radices and control digits. Both early and late key/extract/sort/reinsert pipelines have exact ideal stream output, density and extracted-record count at most five over 128 times the parameter cubed, and complete written cost within three logical volumes under the certified setup and density allowances. Also supplies the early extracted-count bound; tape placement remains separate.
 Compact packed controls, repair, and density bounds.
 
 - `Compact/Ideal.lean` and `Compact/ExactRepair.lean`: a packed ideal toggle
@@ -6136,6 +6137,10 @@ Transform, fixed-point, Kronecker and Gaussian resampling mathematics used by th
   (`tScript`: tail axes, move axis `0` in, its record, move it out) is valid
   and computes the flat pass on entries when every axis record maps lines
   (`tScript_spec`).
+- `Resampling/LineMaps.lean`: the axis records as line maps on entries
+  (two `w`-bit words, most significant bit first). The expansion record maps
+  every line of `t` entries by `lineA`: the first `s` entries as words, the
+  `Ã` window sums, floored, paired back (`expandOut_eq`).
 - `Resampling/Milestones.lean`: the §7 milestone theorems of
   `plan/07-gaussian-resampling.md` that package proved results:
   `FixedMul.signed_word_ops`, `Schoenhage.wordRecordLayer_hoare`,

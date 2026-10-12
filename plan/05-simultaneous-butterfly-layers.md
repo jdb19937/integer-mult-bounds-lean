@@ -508,6 +508,7 @@ Addresses where the packed guard fails are counted (density at most 5/(128 p^3))
 
 | Subcomponent | Files | Mathematics | Tape | Notes |
 | --- | --- | --- | --- | --- |
+| Paired actual repair milestone | `Compact/RepairMilestone` | ✅ | — | `Compact.repair_pipeline_exact_density` proves both packed repairs at the same actual dyadic radices and control list: exact ideal stream output, early/late exceptional density and extracted record counts, and each full written repair cost within three logical volumes under the certified setup/density allowances. Tape placement is a separate milestone. |
 | CountedRankSplitCopy | `CountedRankSplitCopy` | ✅ | ✅ | Fixed runtime-counted bit copier reads actual blank-tail cells as zero, writes literal field words and retains source/control storage. No padded source word is assumed. |
 | CountedRankSplitPosition | `CountedRankSplitPosition` | ✅ | ✅ | Placed physical counted left walks restore source and destination heads while retaining caller tapes and erasing countdown workspace. |
 | CountedRankSplitData | `CountedRankSplitData` | ✅ | ✅ | Exact zero-extended low/middle field words for arbitrarily short rank counters, value splitting and in-range rank reconstruction without a stored-width premise. |

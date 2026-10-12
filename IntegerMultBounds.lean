@@ -700,6 +700,7 @@ import IntegerMultBounds.Resampling.PaddedTensor
 import IntegerMultBounds.Resampling.FlatTensor
 import IntegerMultBounds.Resampling.ScriptSem
 import IntegerMultBounds.Resampling.Script
+import IntegerMultBounds.Resampling.LineMaps
 import IntegerMultBounds.Resampling.Milestones
 import IntegerMultBounds.Resampling.PiApprox
 import IntegerMultBounds.Resampling.ExpApprox
@@ -2682,6 +2683,7 @@ import IntegerMultBounds.Machine.CompactComplexSourceReadySiblingReturnInvariant
 import IntegerMultBounds.Machine.CompactComplexAlignedSiblingJoinedPhysicalReturn
 import IntegerMultBounds.InterchangeMilestones
 import IntegerMultBounds.ComplexRecursiveGeometryMilestone
+import IntegerMultBounds.Compact.RepairMilestone
 import IntegerMultBounds.Machine.CompactComplexSourceReadySiblingChildProgress
 import IntegerMultBounds.Machine.CompactComplexSourceReadySiblingStoppedGrid
 import IntegerMultBounds.Machine.CompactComplexAlignedSiblingStoppedChildRun

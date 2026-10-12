@@ -22,6 +22,9 @@ Section 5 remains open. Its recursive geometry math milestone is proved:
 canonical axis coverage, fitting descendant intervals, unique exhaustive child
 calls, the original rank-sum count and the exact manuscript stop rule are
 certified together. Recursive controller execution remains open.
+The exceptional-address repair math milestone is also proved: both actual
+packed programs have exact repaired output, sparse extracted records and
+the three-logical-volume cost bound at common dyadic parameters.
 Actual scalar successors and forward-child-inverse
 returns now derive the original event semantics from their reached arrays;
 the child result still requires recursive tensor correctness. Literal child-entry
