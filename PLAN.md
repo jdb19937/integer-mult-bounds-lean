@@ -16,14 +16,14 @@ See [COMPONENTS.md](COMPONENTS.md) for what each file proves.
 | Composition, loops, frames, elementary streams | §2 | 🟡 (153/154) | 🟡 (136/147) |
 | Finite networks with a rank saving | §3 | ✅ (66/66) | 🟡 (1/42) |
 | Faster interchange of address chunks | §4 | ✅ (129/129) | ✅ (126/126) |
-| Simultaneous butterfly layers with compact control | §5, §11, CrocSwap | ✅ (1635/1635) | 🟡 (1263/1267) |
+| Simultaneous butterfly layers with compact control | §5, §11, CrocSwap | ✅ (1636/1636) | 🟡 (1263/1267) |
 | Synthetic transforms and their tape layout | §6 | ✅ (5/5) | ⬜ (0/3) |
 | Gaussian resampling | §7 | ✅ (17/17) | 🟡 (8/9) |
 | Fast multiplication subroutine | Schönhage–Strassen | ✅ (22/22) | 🟡 (11/15) |
 | Exact multiplication, parameters, time bound | §8 | 🟡 (5/7) | ⬜ (0/2) |
 | End-to-end theorem `EndToEnd` | — | 🟡 (5/8) | 🟡 (5/8) |
 
-Component accounting: mathematics **2040/2046**, tape **1552/1621**.
+Component accounting: mathematics **2041/2047**, tape **1552/1621**.
 Each numerator counts only ✅ rows; partial and unstarted rows remain in the
 denominator, and — entries are excluded. These counts measure checklist rows,
 not remaining effort or end-to-end completion. In particular, Section 5 remains
@@ -2052,6 +2052,7 @@ The main binary interchange theorem is proved in `BinaryInterchangeRun.runs` and
 | CompactComplexSourceReadySiblingGuards | `CompactComplexSourceReadySiblingGuards` | ✅ | — | Actual Reached scalar data and successor witnesses derive original gate semantics after counted siblings from the genuine entry Path. Signed numerator and row guards use the unchanged reservation. Complete physical scalar successor assembly still needs its bound-based readiness adapter. |
 | CompactComplexSourceReadySiblingChildInvariant | `CompactComplexSourceReadySiblingChildInvariant` | ✅ | — | The actual current Reached parent enters Path.child of the original entry Path and derives selected width/grid, denominator ledger, associated history and literal child ports. Preceding sibling volume is counted once. The scheduled adapter derives the prefix call-count/ordinal identity from the actual event using CompactComplexActualCallOrdinal; recursive execution remains open. |
 | CompactComplexActualCallOrdinal | `CompactComplexActualCallOrdinal` | ✅ | — | The actual site-major call index equals precedingCalls, and every real child event has exactly that processed-prefix count. Generic symbolic list proofs avoid expanding the concrete enumeration. The scheduled child-entry adapter now derives its original child Path and counts sibling volume once without a supplied ordinal identity. |
+| CompactComplexSourceReadyStoppedChildEntryPorts | `CompactComplexSourceReadyStoppedChildEntryPorts` | ✅ | — | Actual physical child entry and the installed stopped result retain scalar metadata, control scratch, blank count and clock. Literal source/live/target outputs are proved on the returned bank. Generic port chronology avoids expansion of the computed parent bank; joined fixed-table parent restoration remains separate. |
 | Full reachable recursive fixed-table execution | `CompactComplexFixedNodePaths`, `CompactComplexSourceReadyReachedChildInvariant` | — | 🟡 | Local scalar and child entry/return paths are checked. Full leaf/nonleaf recursive induction, child tensor semantics, target coverage and complete event witness assembly remain open. |
 | Actual uniform recursive runtime | `CompactComplexRecursiveRuntimeSum`, `CompactComplexCorrectedNonleafBoundaryBudget` | — | 🟡 | Local boundary costs and abstract recursive sum estimates are checked. Instantiation with the complete actual recursive trace and all paid basis and physical transitions remains open. |
 
