@@ -65,10 +65,6 @@ Machine model, execution, composition, and tape routines.
   preserves both numeric values and halts in exactly that maximum width,
   with complete padded word tapes and both heads at the common end. Rewinding
   to the start for arithmetic is a separate charged operation.
-- `Machine/BinaryArithmetic.lean`: a fixed three-tape, seven-state adder
-  accepts unequal-width raw words, physically pads and rewinds both operands,
-  then runs binary addition. Both composition joins and all head movement are
-  charged: at most three times the maximum input width plus five transitions.
 - `Machine/BinaryCompare.lean`: a fixed three-tape, four-state comparator for
   LSF binary words of unequal widths, reading a missing high bit as zero and
   keeping the order so far in control. It writes one bit, whether the first
@@ -386,13 +382,9 @@ Machine model, execution, composition, and tape routines.
 
 - `Machine/RadixDigits.lean`: Fixed-radix digit alphabet, decoder and least-significant-first word value, with exact encoding/decoding and word-width bounds.
 - `Machine/RadixAdd.lean`: Literal three-tape, two-state fixed-radix modular addition. Exactly one transition per padded digit, actual halting, exact output remainder and final carry, with arbitrary tape backgrounds and complete source preservation.
-- `Machine/RadixSub.lean`: Literal three-tape, two-state fixed-radix subtraction. Exactly one transition per padded digit; canonical modular difference, final borrow and underflow, actual halting and complete source preservation.
 
 - `Machine/RadixUnary.lean`: Generic literal two-tape finite-table digit transducer. Exact-width execution and halting, arbitrary finite control, full source preservation and output-local writes; the finite table is fixed independently of word length.
 - `Machine/RadixDivisionData.lean`: Bounded-carry prime-radix division by a fixed positive denominator below the radix. The d-state local congruence telescopes to exact integer and word-modulus division identities.
-- `Machine/RadixDivide.lean`: Literal two-tape fixed-denominator modular division using RadixUnary, with exactly d carry states and one transition per digit. Arithmetic, exact runtime, halting and complete source preservation are proved.
-- `Machine/RadixScaleData.lean`: Fixed-natural-coefficient scaling with coefficient+1 bounded carry states. Exact carry identity and word-width modular multiplication hold for every input word.
-- `Machine/RadixScale.lean`: Literal two-tape fixed-coefficient modular scaling using RadixUnary. Exactly one transition per digit, output remainder and final carry, actual halting and source preservation on arbitrary tape backgrounds.
 
 - `Machine/RadixRationalData.lean`: Arbitrary signed rational-numerator scaling in prime radix with a fixed finite signed-carry interval. The exact local congruence, interval invariant and full-word integer identity are proved; no state bound depends on width.
 - `Machine/RadixRational.lean`: Literal two-tape rational-coefficient multiplication, including negative coefficients, with one transition per digit. The exact finite carry table implements the actual Swap.Modular.ratMod coefficient at every word modulus; exact runtime, halting and complete source preservation are proved.
@@ -427,12 +419,9 @@ Machine model, execution, composition, and tape routines.
 - `Machine/FiberShift.lean`: A fixed seven-tape, eighty-five-state counted controller rotates successive uniform raw fibers by a common prepared cut. Source and prior output are preserved, both data heads advance the entire volume, and inner controls reset. Canonical prepared descriptors and nonempty fibers give actual runtime at most 177 times payload volume plus four; outer count preparation/cleanup and varying offsets remain separate.
 
 - `Machine/CountedLoopReuse.lean`: Generic fixed counted body loop with an immutable count descriptor. Physically prepares the mutable clock, runs the counted body chain, erases the clock and resets both control heads, preserving the descriptor. All body costs plus six times the count, seven times descriptor width and sixteen bound the actual execution. Public metadata cleanup also erases any padded binary word and resets its head while preserving an immutable companion descriptor, charging both scans.
-- `Machine/FiberShiftReuse.lean`: Fixed eight-tape, ninety-six-state common-offset fiber shifts with full inner and outer clock cleanup. Source and four immutable descriptors survive; both data heads advance the full volume. Canonical prepared descriptors and nonempty fibers give actual runtime at most 182 times payload volume plus twenty-three.
-- `Machine/FiberShiftAddress.lean`: Instantiates the reusable fiber machine as actual forward target-coordinate translation modulo Q on arbitrarily many Q-by-B fibers, preserving every intra-block payload position. The same linear-volume execution restores all clocks; the common offset and derived binary descriptors remain explicit prepared inputs.
 
 - `Machine/BlockReverseAdvance.lean`: Literal four-tape, fifty-two-state reversal of a raw block with both payload heads finishing at the next block. Two counted seeks, a backwards read-copy, two single-cell moves and all four joins cost at most fifteen times length plus twenty-one times descriptor width plus fifty-four, including empty blocks.
 - `Machine/BlockReverseStream.lean`: Fixed five-tape, fifty-seven-state counted repetition reverses each uniform block while preserving block order, source and prior output. Both heads advance the full volume and inner controls reset; canonical descriptors and positive width give actual runtime at most 119 times volume plus four. The outer count remains consumed.
-- `Machine/BlockNegation.lean`: Complete literal seven-tape, 141-state single-fiber coordinate negation. Copies block zero, reverses the raw tail onto scratch, physically rewinds scratch and reverses each popped block to restore internal payload order. All moves and three joins cost at most 200 times volume plus 128 for positive width and canonical descriptors. Full source and descriptor preservation are proved; dirty scratch and consumed outer count are explicitly tracked.
 
 - `Machine/Dispatch.lean`: Literal dispatch among a fixed finite family of programs using only scanned symbols. One stationary tape-preserving transition selects the branch, and exact execution, true halt and Hoare contracts add exactly one step to the selected body cost.
 - `Machine/ScalingMergeData.lean`: Sequential FIFO semantics for positive unit scaling. Prefix selection counts equal the inverse source offset within each contiguous piece; selected streams never underflow, all pieces are completely consumed and recursive head-pop merging gives the exact inverse-scaled payload. Pure semantics only; no tape runtime is asserted.
@@ -454,8 +443,6 @@ Machine model, execution, composition, and tape routines.
 - `Machine/OneHotCount.lean`: Actual fixed-modulus residue construction from an immutable binary count. Writes zero into arbitrary control cells and performs counted literal residue advances; heads and background cells survive and the mutable clock resets. Twenty fixed states, cost seven times count plus seven times descriptor width plus eighteen, or fourteen times count plus twenty-five for canonical descriptors.
 - `Machine/ScalingControlInit.lean`: Initializes both scaling residue banks from arbitrary control-cell contents: modulus becomes Q modulo fixed c, current becomes zero. One real initialization transition and reusable counted advances preserve descriptor, clock, all heads and background cells. The complete cost is linear in Q and fits the positive-width payload-volume budget.
 
-- `Machine/NegationStream.lean`: Fixed ten-tape, 218-state repeated coordinate negation on uniform fibers. Exact payload is the flattened map of fiber negation; both payload heads advance full volume, and shared scratch with its head plus every descriptor and work clock are restored. Canonical prepared descriptors and positive fiber dimensions give actual runtime at most 442 times payload volume plus twenty-three.
-
 - `Machine/ScalingExecution.lean`: Complete literal positive-unit scaling through fixed-coefficient split, physical buffer rewinds and FIFO merge. A static placement shares actual buffers; source and descriptors survive and destination block c*y modulo Q is original block y. Tape count ten plus four times fixed coefficient and state count forty-eight times coefficient plus twenty-one are independent of Q and B. Prepared canonical descriptors and residue banks give cost at most seventy-five times volume plus forty-eight times coefficient plus twenty-five.
 - `Machine/ScalingBuffersReset.lean`: Literal fixed-family scratch cleanup after scaling. Each buffer is physically rewound, erased and rewound again; initially blank intervals and original heads are restored with source and control tapes preserved. Canonical piece descriptors give cost at most thirty-eight times total volume plus seventy-two times fixed piece count.
 
@@ -476,13 +463,9 @@ Machine model, execution, composition, and tape routines.
 - `Machine/CountedSpanSeek.lean`: Whole-fiber forward/backward positioning from separate block-width and block-count descriptors. A fixed five-tape, thirty-two-state reusable loop performs every physical move and restores both clocks/descriptors without a product-length descriptor. Canonical descriptors and positive width give rewind cost at most forty-eight times fiber volume plus twenty-three.
 - `Machine/CountedSpanReset.lean`: Complete intermediate-fiber cleanup from separate width/count descriptors. Physically rewinds, erases all blocks using reusable counted loops, and rewinds again; initially blank scratch contents and original head are restored, with all other cells and both descriptors preserved. Fixed five tapes and ninety-eight states, canonical cost at most 146 times fiber volume plus seventy-one.
 
-- `Machine/ScalingInverseStream.lean`: Actual repeated inverse-unit scaling over uniform fibers with fixed control and shared restored scratch. Every fiber initializes residue cells, scatters, physically concatenates and cleans buffers; the outer loop also restores its clock. Exact inverse payload, unchanged source and advanced data heads; canonical supplied descriptors give runtime at most (191 plus 120 times fixed coefficient) times total volume plus twenty-three.
-
 - `Machine/ScalingAffineBridge.lean`: Exact semantic link from literal positive/inverse scaling and block negation to ordered-affine target-coordinate updates. Proves signed numerator/denominator list composition and instantiates every actual Shared50 rational scale at all prime-power widths using proved unit recipes. Preserves intra-block payload orientation; contains no uncharged tape operation or new runtime claim.
 
 - `Machine/ScalingPreparedExecution.lean`: Complete literal one-fiber positive-unit scaling with piece descriptors generated from blank work tapes. Static placement shares the generated descriptors and Q/B controls with the reusable scaling machine, initializes remaining sentinels physically, and preserves source plus restored scratch buffers. Only canonical Q/B descriptors are supplied; generated descriptors and explicit work-marker states remain in the final bank. Fixed eleven plus four-c tapes and 117-c plus eighty-five states; actual runtime at most 197 times volume plus 120 times fixed coefficient plus 106.
-
-- `Machine/ScalingPreparedStream.lean`: Once-only piece-descriptor synthesis from blank work followed by actual repeated positive-unit scaling. Complete initial/final banks retain generated descriptors and explicit spare/sentinel state while source and restored temporary buffers survive. Only canonical Q/B/family-count descriptors are supplied. Fixed thirteen plus four-c tapes and 117-c plus 103 states; cost is (192+120*c)*volume+70*Q*B+79, or (262+120*c)*volume+79 for a nonempty family.
 
 - `Machine/SignedScalingExecution.lean`: Unsigned rational scaling core, despite the broader module name: literal positive numerator scaling, physical shared-intermediate rewind, denominator inverse scaling, and complete intermediate erase/reset. Exact numerator/denominator payload semantics with source, coefficient scratch and shared intermediate restored. Fixed twenty-five plus four times the sum of coefficients tapes; cost448*volume+120*(numerator+denominator)+200. Canonical per-coefficient descriptors remain prepared, and optional sign negation is not part of unsignedProgram.
 
@@ -519,13 +502,9 @@ Machine model, execution, composition, and tape routines.
 
 - `Machine/BinaryReplace.lean`: Seven-state two-tape binary descriptor replacement: erases the old word, copies a physically supplied replacement and restores both heads, preserving the source exactly. Full-bank bound 2*oldWidth+2*newWidth+8 includes removal of stale longer suffixes.
 
-- `Machine/TranslationOffsetReplace.lean`: Places literal descriptor replacement on the translation offset tape and a physical scheduler-output tape, preserving arbitrary additional workspace. Composes an actual scheduler contract with replacement and varying-offset counted translation; charges the sum of scheduler runtimes and replacement scans plus 462*volume+23. The concrete scheduler and its complete tape/time contract remain required.
-
 - `Machine/RadixToBinary.lean`: Literal radix-to-canonical-binary converter for fixed q at least two, using three tapes, eighteen states and a q+4-symbol alphabet. Physically initializes markers, copies and rewinds source, runs amortized radix countdown with binary growth, erases work and removes the temporary source marker. Exact full-bank output, original source/head preserved, scratch blank/head restored. Bound 10*value+6*width+14, hence 16*q^width+14 and 30 times nonempty fiber volume. Handles empty words, zero and leading radix zeroes; alphabet-lifted connection to translation is separate.
 
 - `Machine/SignedScalingStream.lean`: Actual counted iteration of the signed rational scaling machine across consecutive equal-volume fibers. Exact boundary invariant tracks advanced source/destination heads, updated physical residue cells, preserved descriptor banks and restored shared scratch. Bound (1381+120*(a+d))*totalVolume+23; fixed 40+4*(a+d) tapes. Coefficient and negative-tail descriptors are prepared inputs, with explicit marked controls; once-only dimension-based setup composition is separate.
-
-- `Machine/OffsetPreparationCost.lean`: Every fixed polynomial in radix width is little-o of q^width for q at least two. A proved polynomial preparation bound therefore gives O(q^width), and O(q^width*B) for any varying positive suffix length B. Analytic absorption only; physical preparation correctness and its polynomial bound remain premises.
 
 - `Machine/SignedScalingDimensionsStream.lean`: One-time literal tail/coefficient descriptor synthesis followed by counted signed scaling across all fibers. Canonical Q/B/n numeric inputs only, exact full-bank endpoints with metadata and synthesis spares retained. Cost (1381+120*(a+d))*volume+356*Q*B+249, or (1737+120*(a+d))*volume+249 for nonempty families. Explicit inherited/outer sentinels and scratch requirements remain; fixed 51+4*(a+d) tapes.
 
@@ -599,10 +578,6 @@ Machine model, execution, composition, and tape routines.
 
 - `Machine/MarkedBinaryCleanup.lean`: Four-state physical erasure of an encoded binary descriptor and its sentinel, returning a wholly blank tape/head zero without a supplied length descriptor; exact runtime bound 2*bits.length+4.
 
-- `Machine/RadixLinearCombinationReuse.lean`: Recurring shared-bank expression evaluation physically erases the old binary output and refreshes all stale leaf copies. Exact finite-control-bank contract and bound (13*leaves+expressionConstant+47)*q^b. Physical advancement of the shared controls remains the caller scheduler responsibility.
-
-- `Machine/MultiControlTranslationExecution.lean`: Actual shared-source expression evaluation composes with fiber translation using the same physical binary offset tape through static placement. Exact recurring full-bank state, preserved controls, payload/head contracts and modular expression semantics; bound (13*leaves+expressionConstant+496)*Q*B. No fresh copies or supplied computed offset; canonical dimensions, initial metadata and control advancement remain explicit, and prefix-stream scheduling is separate.
-
 - `Machine/RationalPrefixTranslationBootstrap.lean`: Full flat-array controlled shift from blank writable prefix and translation metadata tapes. One actual transition installs eight markers and moves the spare head, then physical prefix initialization and stream execution run. Exact complete output bank inherits the transported-symbol theorem; bound (551+4*c)*volume+29*(c+1)+26. Only canonical width/B/Q/P descriptors and payload remain supplied; dimension construction and successive-operation composition are separate.
 
 - `Machine/CountedVolumeLoop.lean`: Three actual nested counted loops over separate canonical B/Q/P descriptors; restores all clocks and preserves arbitrary body symbols. Exact per-cell iteration contract and explicit runtime; one-step body costs at most 109*volume. No total-volume descriptor is assumed.
@@ -613,33 +588,21 @@ Machine model, execution, composition, and tape routines.
 
 - `Machine/FlatControlledShiftReady.lean`: Composes physical blank-workspace marker setup, prefix initialization, concrete controlled shift and payload normalization. Exact full bank retains initializer and operation metadata; transformed symbols return to common input with output scratch/head origins restored. Bound (878+4*c)*volume+29*(c+1)+29 includes every stage. Canonical width/B/Q/P descriptors remain supplied; full fixed affine schedule and dimension construction remain separate.
 
-- `Machine/MultiControlTranslationBootstrap.lean`: First-use physical shared-source expression evaluation and translation starts all writable arithmetic/translation scratch blank at head zero. Explicit spare-head setup, leaf marking, canonical offset computation, translation metadata initialization and rotation are charged; the exact output matches the recurring MultiControlTranslationExecution bank. Bound (15*leaves+expressionConstant+493)*Q*B. Only physical marked radix controls, canonical B/Q descriptors and payload remain supplied; full prefix scheduling is separate.
-
 - `Machine/FlatControlledShiftArray.lean`: Canonical finite-array representation of the physically normalized controlled-shift output. Proves the common input tape is exactly the new List.ofFn array on the original background, eliminating the nested old-word overlay. Supports subsequent operations with a different prefix/target/suffix split without an uncharged tape conversion.
 
 - `Machine/StaticMarkerInit.lean`: Two-state machine installs a fixed coefficient-dependent marker/head template in one actual transition. Exact raw-to-target full-bank proof, origin-zero input heads, off-origin data preservation and append lemmas. The template is part of fixed finite control, not input dimensions.
 
 - `Machine/FlatAffineScalingBootstrap.lean`: Actual rational scaling from blank generated storage, residue banks, intermediate payloads and sign scratch, with all heads initially zero. Physically installs coefficient-dependent sentinels and runs descriptor/residue synthesis and whole-array scaling; exact source and scaled destination symbols, bound nonemptyConstant*volume+251. Only canonical B/Q/P words in fixed input slots and payload remain supplied; dimension-word construction and common-input normalization are separate.
 
-- `Machine/MultiControlPrefixTranslationExecution.lean`: Physically evaluates shared-control expression, translates a fiber and advances the actual common prefix fields; old leaf copies and binary result remain explicitly stale until next evaluation. Exact full-bank postcondition and per-fiber linear work plus actual carry cost. No per-fiber refreshed-bank premise.
-
-- `Machine/MultiControlPrefixTranslationStream.lean`: Real counted stream of multi-control translations with physical carry scheduling and exact current/stale-field invariant. Complete equal-width c-field cycle costs (13*leaves+expressionConstant+512+4*c)*volume+23 and restores shared controls; exact output tape and modular-expression offsets. Initial recurring metadata/old arithmetic state and canonical B/Q/count descriptors are explicit; blank bootstrap is separate.
-
 - `Machine/InjectivePlacement.lean`: Extends fixed injective physical tape slots to a complete static placement, with exact active-slot/bank lemmas. Existing placement Hoare rules preserve every complementary tape and head literally; no runtime relabeling or tape movement is introduced.
 
 - `Machine/FlatAffineScalingNormalize.lean`: Attaches physical three-pass payload normalization to the actual scaling output using existing B/Q/P descriptors and clocks. Exact original source/destination slots, retained complementary metadata, restored scratch and heads, and scaled symbols on common input. Full bound (2064+120*(abs numerator+denominator))*volume+252. Prepared scaling input remains explicit; blank-workspace wrapper and schedule composition separate.
-
-- `Machine/MultiControlPrefixTranslationBootstrap.lean`: Complete equal-width multi-control prefix stream from wholly blank writable arithmetic, translation and outer-clock workspace. Physically creates metadata markers/spare position and evaluates the shared expression before running the counter-driven stream; exact full-bank output and bound (28*leaves+2*expressionConstant+552+4*c)*volume+26. Actual marked initial radix controls and canonical B/Q/count descriptors remain supplied; field initialization is separate.
 
 - `Machine/FlatAffineScalingReady.lean`: Complete actual rational scaling from blank generated workspace through physical normalization. Exact retained bank and transported symbols on original source; destination scratch and both heads restored. Bound (2064+120*(abs numerator+denominator))*volume+254 includes marker creation, descriptor synthesis, scaling and every normalization pass. Canonical dimension words and initially blank destination interval remain explicit inputs.
 
 - `Machine/FlatAffineScalingArray.lean`: Canonical finite array produced by initialized normalized scaling. Exact coordinate multiplication, List.ofFn representation and original-source tape equality over the original background; eliminates the old input overlay so later target-coordinate splits use the same physical word.
 
 - `Machine/FlatCoordinateLayout.lean`: One common row-major coordinate/index bijection for all targets, including modulus one and arbitrary trailing record width. Exact target-specific volume split, identical serialized source word, physical earlier-control extraction and scale/shift destination equations for OrderedAffine.execute. Concrete fiber transport bridges eliminate abstract address-family assumptions; actual machine specialization and shared-tape schedule composition remain separate.
-
-- `Machine/MultiControlPrefixTranslationInit.lean`: Physically generates every shared radix control field from blank storage using canonical width descriptors, then runs blank-workspace initialization and the complete multi-control prefix stream. Exact active output and preserved initializer frame; no supplied marked controls, stale copies, results or work sentinels. All initialization is absorbed into (28*leaves+2*expressionConstant+594+33*c)*volume. Canonical width/B/Q/count descriptors remain supplied; concrete flat-array adapter is separate.
-
-- `Machine/FlatMultiControlTranslation.lean`: Complete physical flat-array translation by a fixed rational expression over actual prefix coordinates. Proves generated counter field j is the jth radix slice of the physical prefix, computed offset equals modular expression evaluation, source fibers serialize exactly to the input array, and every suffix symbol reaches its correct output address. Full initialized machine costs (28*leaves+2*expressionConstant+594+33*c)*volume. Only canonical dimension descriptors and flat payload remain supplied; normalized output/schedule assembly separate.
 
 - `Machine/FlatCoordinateScaling.lean`: Instantiates the common-coordinate layout with actual initialized normalized network scaling. Exact returned canonical array transports every coordinate/record according to OrderedAffine.execute scale; original source tape equals that array. Actual ready-machine Hoare contract includes all setup/movement and bound (2064+120*(abs numerator+denominator))*commonVolume+254; canonical dimension descriptors remain supplied.
 
@@ -660,8 +623,6 @@ Machine model, execution, composition, and tape routines.
 - `Machine/FlatControlledShiftMetadata.lean`: Proves the entire stripped initialized-shift metadata bank is independent of the payload array. Stage metadata can be supplied using a literal blank dummy array; no initial bank needs to contain or name an uncomputed prior stage result.
 
 - `Machine/SharedPayloadFrames.lean`: Exact blank/head-zero contracts for unused private payload slots in stripped stage banks and two-stage input/output. Confirms that only the two permanent payload tapes carry data, with no hidden per-stage copies.
-
-- `Machine/FlatScaleShiftPair.lean`: Concrete actual-network rational scale followed by controlled shift on the same two physical payload tapes. Initial second-stage metadata uses a blank dummy array; real first output supplies second input through proved canonical-word handoff. Exact full-bank endpoint, restored common heads/scratch and bound (2942+120*(abs numerator+denominator)+4*c)*volume+29*(c+1)+284. Canonical dimension descriptors remain supplied; arbitrary fixed-schedule assembly separate.
 
 - `Machine/FlatAffineScalingMetadata.lean`: Proves the entire lifted scaling private input bank, after removing the two permanent payload slots, is independent of the finite input array. Only fixed coefficients and dimension descriptors determine this metadata; later scaling stages can be prepared before their actual input is computed.
 
@@ -719,8 +680,6 @@ Machine model, execution, composition, and tape routines.
 
 - `Machine/SharedBankFrames.lean`: Projection, clearing and frame lemmas for fixed shared banks, including exact empty private metadata through append/composition. Supports compiling initialized stages while keeping only permanent common inputs nonblank.
 
-- `Machine/FlatCoordinateShiftInitializedStage.lean`: Fully synthesized controlled shift instantiates the original two-payload Stage interface with exact transform, private input independence and charged setup-inclusive linear cost. Entire program skeleton is independent of runtime width/record size; each private bank still supplies b/W.
-
 - `Machine/FlatCoordinateShiftSharedBank.lean`: Four-tape common interface for initialized shifts: payload, output scratch and original b/W headers. Proves injective physical slots, exact common input/output with preserved headers, and literally blank entire private input after stripping common tapes; enables schedules with one physical b/W pair.
 
 - `Machine/FlatAffineScalingInstall.lean`: Physical fixed descriptor-copy list installs every marker-free B/Q/P copy in the actual scaling input. Proves source-bank preservation, exact full layout handoff from blank workspace and coefficient-dependent linear-volume copying cost.
@@ -744,10 +703,6 @@ Machine model, execution, composition, and tape routines.
 - `Machine/FlatCoordinateInitializedSchedule.lean`: One fixed physical machine executes any supported finite mixed scaling/shift schedule from the array and sole canonical b/W inputs with blank private storage. Exact ordered-affine output, preserved headers and explicit linear-volume runtime include all dimension synthesis, descriptor installation and joins.
 
 - `Machine/Shared50InitializedSegments.lean`: Actual nonrecursive Shared50 field-program segments execute from sole b/W and payload with all private tapes blank. The fixed machine has exact field-program symbol transport and a setup-inclusive linear-volume bound; recursive interchanges and heterogeneous spectator layouts remain separate.
-
-- `Machine/RunSupport.lean`: Actual transition induction bounds head displacement and changed cells by elapsed transitions, with exact preservation of all exterior cells. Hoare contracts from blank inputs yield concrete blank-workspace support bounds.
-
-- `Machine/FlatCoordinateScheduleSupport.lean`: The verified initialized mixed schedule has private heads and nonblank private cells within its explicit linear-volume runtime interval. Exact common-bank output and affine semantics are retained; physical cleanup is not inferred from support alone.
 
 - `Machine/StackPop.lean`: Fixed arbitrary-alphabet destructive stack transfer, controlled by a reusable binary clock. Heads move left together, preserving original data order and erasing exactly the popped region; all exterior cells, the immutable length descriptor and restored clock are retained. Exact whole-bank semantics and 7n+7 descriptor-length+16 time; initial head positioning and descriptor construction remain caller obligations.
 
@@ -865,8 +820,6 @@ Machine model, execution, composition, and tape routines.
 
 - `Machine/RecursiveDescriptorSize.lean`: Actual child-selection paths bound recursion depth by log2 of logical child volume. Root-bounded canonical descriptor lengths are at most a fixed role-count-dependent multiple of child log-size, hence of child volume. This charges linear descriptor scans without counting parked ancestors; arbitrary polynomial descriptor algorithms and physical recursive execution are separate.
 
-- `Machine/RecursiveDescriptorStack.lean`: Connects the actual delimiter-based binary push/pop roundtrip to the recursive descriptor-size theorem. Exact restored descriptor and complete older-stack preservation cost at most (8*(log2 roles+2)+15) times logical child volume; an intervening recursive call remains separate.
-
 - `Machine/BinaryDescriptorInstallMarkedList.lean`: Fixed lists of physical marked binary-header copies preserve the source bank and charge all copies, markers and joins; runtime descriptor values never enter the transition table.
 
 - `Machine/RecursiveShiftInstall.lean`: Five physical descriptor copies connect the generated recursive dimensions to a blank shift workspace, preserving original headers and payload.
@@ -884,8 +837,6 @@ Machine model, execution, composition, and tape routines.
 - `Machine/Shared50OrderedPieces.lean`: Actual fixed clean machines for certified nonrecursive segments and globally wired scalar XOR gates from the ordered control. Segment semantics use equal-width coordinates; heterogeneous header construction, whole-bank joining and recursive continuations remain separate.
 
 - `Machine/Shared50PieceSchedule.lean`: Fixed actual list of certified segments, explicit role-and-coordinate recursive calls, and scalar gates. Expansion equals the original control atom by atom, with exact improved recursive-call count. Whole-machine compilation remains separate.
-
-- `Machine/RecursiveDescriptorFrames.lean`: Actual fixed-list descriptor push/pop and same-bank roundtrip charged to logical child volume using canonical root-bounded header lengths. Six-field roundtrip costs at most (48*(log2 roles+2)+97) times child volume.
 
 - `Machine/RecursiveHeaderBounds.lean`: Every actual six-field recursive header is bounded by its layout volume and the original root volume. Canonical active or saved-ancestor headers therefore satisfy the child-volume scan bound without a separate descriptor-size assumption; parked ancestor storage is excluded.
 
@@ -925,10 +876,6 @@ Machine model, execution, composition, and tape routines.
 
 - `Machine/BinaryQuotientNormalize.lean`: Nine-state two-tape erase-copy, zero trim and rewind normalizes a raw division quotient in two times its length plus eight transitions. Raw source is wholly blank at head zero; destination is canonical at head one.
 
-- `Machine/BinaryDivideQuotient.lean`: Six-tape physical division followed by quotient normalization. Exact quotient arithmetic and canonical output on sixth tape, erased raw quotient tape, with original division cost plus two times dividend length plus nine. Input head preparation and shifted remainder cleanup remain explicit.
-
-- `Machine/RecursiveQuotientDivision.lean`: Physical division-plus-normalization runtime bounded by (40*A^2+58*A+9) times logical child volume, where A=log2 roles+2, for canonical root-bounded descriptors. No free quotient normalization; full canonical input preparation and remainder cleanup remain separate.
-
 - `Machine/RecursiveChildDimensions.lean`: Nineteen-tape physical construction of child layout powers and products from six parent headers plus explicit canonical divided-width and divided-row headers. Eight real arithmetic stages emit exact six child headers with bound (48*(m-1)+512) times child volume plus 119; no derived product oracle.
 
 - `Machine/RecursiveChildDimensionsClean.lean`: Thirty-eight-tape clean child-header constructor retains parent and quotient headers plus required child products, erasing all intermediate powers, scratch and trackers. Exact canonical child descriptor, volume division and bound 97*(48*(m-1)+512) times child volume plus 11756. Quotient production and child-bank installation remain separate.
@@ -938,8 +885,6 @@ Machine model, execution, composition, and tape routines.
 - `Machine/BinaryDescriptorDivisionBoundary.lean`: Actual marked-input preparation, dividend scan, division invocation and marker restoration. Every seek and boundary operation is charged; supplies fixed zero/one input heads for physical workspace tracking.
 
 - `Machine/BinaryDescriptorDivision.lean`: Complete fixed 12-tape marked binary division from two input headers and blank workspace. Inputs preserved, canonical quotient returned at head one, and all nine other private tapes physically erased at head zero, including shifted remainder. No free input setup, quotient normalization or cleanup.
-
-- `Machine/RecursiveCleanDescriptorDivision.lean`: The complete clean descriptor divider has runtime at most (1280*A^2+1920*A+710) times logical child volume for canonical root-bounded inputs, A=log2 roles+2. Exact division arithmetic, input preservation and clean quotient endpoint share the same fixed machine.
 
 - `Machine/BinaryDescriptorReplaceList.lean`: Fixed physical replacement of occupied binary-header slots: erase old marked words, install new words from disjoint sources, preserve all other tapes. Exact bank theorem and fieldCount*(4*maxWidth+11)+1 runtime include every erased bit, copy and join.
 
@@ -1021,15 +966,11 @@ Machine model, execution, composition, and tape routines.
 
 - `Machine/RecursiveRowsDimensions.lean`: Actual quotient, scaling products and row/group products construct normalized cyclic-transfer descriptors from sole six parent headers. Exact generated values, canonicality, header preservation and linear volume bound; installation, source erasure and transfer assembly remain separate.
 
-- `Machine/RecursiveWidthBranch.lean`: Actual fixed three-block finite flow selects supplied base or recursive block from the physical guard, with at most three charged transitions. Canonical38-tape headers and power-width depth select the correct actual branch; branch bodies remain explicit.
-
 - `Machine/RecursiveWidthGuard.lean`: Physical four-state width-one test preserves the exact bank in at most two transitions; canonical descriptor value selects actual base/recurse terminal state for finite-flow dispatch.
 
 - `Machine/RecursiveStackAllocation.lean`: Blank suffix invariants discharge descriptor, PC and role-array free-interval premises. Actual pushes and child payload entry preserve availability at the advanced stack head; concrete saved header/PC stacks retain both free suffixes, without a recursion-depth capacity assumption.
 
 - `Machine/RecursiveDigitRoleBank.lean`: Places the fully initialized clean digit interchange at one permanent role, with canonical six headers, exact Fin4 serialization, all spectator roles/auxiliaries preserved and complete private cleanup. Symbolic port proofs and explicit linear-volume cost.
-
-- `Machine/RecursiveBaseBranch.lean`: Actual digit-role base machine bound into the physical width controller. Width-one input runs guard/edge and complete base interchange within the base linear bound plus three transitions, preserving the exact shared bank and terminal control; the recursive block remains supplied.
 
 - `Machine/RecursiveViewFrame.lean`: Fixed six-header push and occupied-header cleanup/pop on a dedicated stack, exact older-stack preservation, explicit free interval and runtime bounds independent of word lengths in control.
 
@@ -1284,12 +1225,6 @@ Machine model, execution, composition, and tape routines.
 - `Machine/RadixDigitMoveInitialized.lean`: Physical initialization of two runtime clocks and full erasure of roles, clocks and trackers around actual redistribution; four original descriptors retained.
 
 - `Machine/RadixDigitMoveCounts.lean`: Construct and erase digit-movement dimensions from sole prefix and spectator lengths, including the constant one and prefix-times-spectator count; linear-volume cost.
-
-- `Machine/RadixDigitMovePrepared.lean`: Exact forward and inverse fixed-radix digit permutation for prepared canonical controls, with physically rewound payload and erased private storage.
-
-- `Machine/RadixDigitMovePlacement.lean`: Fixed injective placements compose count synthesis and redistribution while preserving original descriptors and spectator tapes.
-
-- `Machine/RadixDigitMoveExecution.lean`: Complete suffix-one digit movement from sole canonical prefix/spectator descriptors and arbitrary payload. All generated controls and private tapes are erased, with fixed-radix linear-volume forward/inverse bounds.
 
 - `Machine/RadixDigitMoveBlockRows.lean`: Literal digit exchange across a spectator block with an arbitrary trailing block. Exact split/merge word identity, role compatibility and mutually inverse forward/backward array permutations.
 
@@ -1592,8 +1527,6 @@ Machine model, execution, composition, and tape routines.
 - `Machine/CountedPackedParityRun.lean`: One fixed nineteen-tape program extracts the lowest bit of every dirty b-bit source block into an n-bit control word, clocked by a literal dummy control word and original b/n headers. Source/control and original descriptors are retained, every head restored and fourteen private tapes returned wholly blank, with bound330 times full stride. Includes b=1 and n=0; later-source load/unload remains separate.
 
 - `Machine/StreamedFiberTranslationInitialized.lean`: Complete fixed fifteen-tape streamed rotation lifecycle reads only original B/Q/n headers and a literal offset stream, physically initializes recurring markers, executes every payload fiber rotation and erases the last offset and all private markers. All nine private slots return wholly blank at head zero; source/control and original headers are retained. Actual payload/control heads advance explicitly; total cost is at most483 times payload volume plus35, including empty streams.
-
-- `Machine/StreamedFiberTranslationInitializedAlphabet.lean`: Executes the complete blank-private-storage streamed rotation on any larger finite alphabet with literal input/output banks and unchanged483-volume-plus35 cost. Exact encoded array and control words, retained original B/Q/n headers and all nine private tapes blank/head zero enable interchange-alphabet integration. Final payload/control normalization and complete packed-gadget assembly remain separate.
 
 - `Machine/CountedPackedParityValue.lean`: Proves physically extracted low block bits equal the parities of the power-of-two radix digits, then connects the actual clean parity-extraction run to the later-source packed integer specification with its exact uniform stride bound. No control word is supplied by an arithmetic oracle; full late-gadget composition remains separate.
 
@@ -4040,8 +3973,6 @@ Machine model, execution, composition, and tape routines.
 
 - `Machine/RadixControlCleanupList.lean`: Physically erases each actually read marked arithmetic control in a finite field list, preserving output and complementary tapes with exact paid runtime.
 
-- `Machine/RadixFieldReadList.lean`: Physically reads literal delimited role fields into their private marked arithmetic controls, retains source symbols, advances every real separator and proves the exact control bank and runtime.
-
 - `Machine/RawLinearCombinationFieldEmit.lean`: Computes a concrete fixed integer expression, emits its actual radix digits and separator to a native output stream, then erases the local result and restores arithmetic workspace while retaining input controls.
 
 - `Machine/RawLinearCombinationComplexEmit.lean`: Two actual expression executions emit one literal Gaussian record in real-then-imaginary order, retain both original control banks and clean both arithmetic workspaces with exact combined runtime.
@@ -5183,17 +5114,6 @@ Bit and complex networks.
   the correction instructions and kernel expansion; literal tape execution is
   a separate obligation.
 
-- `Networks/ComplexCorrections.lean`: the endpoint corrections as literal
-  single-wire instructions around the lowered h=25 factor program. Each
-  terminal sign character is the product of one sign flip per support
-  coordinate (27 of them), so the corrected program costs the rank total plus
-  28 instructions per data wire and sends every input, including dirty
-  scratch, to its full forward tensor on the exchanged bank. Every vector
-  factor expands into its per-column two-term kernels `aI + bX_v` with
-  `a = (1+i)/2`, `b = (1-i)/2` (inverse factors swap the coefficients), giving
-  the column-expanded program with `k` kernels per rank factor and `54k+2`
-  corrections per address. Literal tape costs remain open.
-
 - `Networks/NetworkBudget.lean`: sums dimensions of actual physical source
   and sink subspaces, including the empty-data case. At complex ground size
   twenty-five, their totals and the actual role count match the numerical
@@ -5217,11 +5137,6 @@ Bit and complex networks.
   key determines the exact triple support whenever at least two common
   vertices remain. Any sharing between distinct common-point copies lies
   in this branch, so the compressed key cannot merge unequal sums.
-
-- `Networks/SharedPointIntern.lean`: executable compressed-key lookup among
-  addition nodes and conditional interning preserve DAG validity and exact
-  values over any commutative additive monoid. One-common-point nodes are
-  freshly allocated; global sharing counts remain separate.
 
 - `Networks/DisjointPruning.lean`: an executable backwards ancestor pass
   computes the least parent-closed set containing requested outputs. The
@@ -5266,13 +5181,6 @@ Bit and complex networks.
   ceiling-half length, covers the original list, and gives nonempty disjoint
   groups of size at most two for distinct inputs. The coarse recursive call
   strictly decreases after the size-four base case.
-
-- `Networks/PairedReconstruct.lean`: the script's actual three smart additions
-  reconstruct a cross-pair exclusion from concrete far, strip and cross
-  supports; one smart addition reconstructs a single exclusion. Valid DAG
-  extension, exact output supports/values, preservation and three/one new-node
-  bounds are proved. `PairedBlockCorrect` supplies complete recursive semantics;
-  optimized sharing counts remain open.
 
 - `Networks/SupportInterpretation.lean`: expanding weighted source atoms
   into original input supports preserves disjoint partitions and finite sums,
@@ -5357,10 +5265,6 @@ Bit and complex networks.
   Valid DAG supports are nonempty; nonzero disjoint additions contain at least
   two sources, and equal supports identify valid references in a unique DAG.
 
-- `Networks/PairedUnique.lean`: every literal paired constructor and the full
-  recursive block preserve support uniqueness. Together with validity, this
-  proves unique nonempty supports for the concrete 49-vertex local circuit.
-
 - `Networks/DuplicateBudget.lean`: deleting one endpoint of each disjoint
   equal-support match preserves represented supports and saves a node. A
   nontrivial triple sum has at most two common vertices. Concrete domain and
@@ -5430,11 +5334,6 @@ Bit and complex networks.
   for the actual compiler: instructions plus source slots equal twice active
   additions plus requested outputs. This gives bounds from total additions
   or actual allocated roles, including repeated output requests.
-- `Networks/Paired49Execution.lean`: the checked local witness's actual
-  emitted program computes all 1,176 pair-exclusion sums over the binary field
-  with at most 10,989 scalar roles and 20,802 XOR updates. It has an executable reverse on
-  arbitrary states; tape execution and support-frame nesting are still open.
-
 - `Networks/Paired49Certificate.lean`: unconditional finite witness for all
   1,176 canonical pair-exclusion sums on 49 vertices, over every commutative
   additive monoid; exactly 9,813 additions, unique supports, and exact endpoint
@@ -5842,11 +5741,6 @@ Transform, fixed-point, Kronecker and Gaussian resampling mathematics used by th
   map approximations as predicates, error propagation through a map of norm
   at most one, through compositions, through bilinear maps, through rounded
   products, and through slice-wise application in a tensor factor.
-- `NLogN/Synthetic.lean`: principal roots of unity, transform inversion over
-  an arbitrary commutative ring from the principal-root property alone, the
-  synthetic ring `ℂ[y]/(y^r + 1)` with `y^(2r/t)` a principal `t`-th root for
-  every power of two `t ∣ 2r`, and the exact synthetic FFT and its inverse.
-  The coefficient norm bound on products in the synthetic ring is not here.
 - `NLogN/Resampling.lean`: the Gaussian resampling identity, Theorem 4.2 of
   the paper, for all positive lengths `s`, `t` and every `α > 0`: the
   Gaussian-weighted resampling maps `S` and `T` intertwine the length-`s` and
@@ -5984,13 +5878,6 @@ Transform, fixed-point, Kronecker and Gaussian resampling mathematics used by th
   `A` and `B` with explicit scaled errors, both below `p²` for the paper's
   per-term error seven. The per-term Gaussian evaluations and the clamping of
   the off-diagonal approximation into the unit ball are hypotheses.
-- `NLogN/NegacyclicKronecker.lean`: the paper's Lemma 2.5 in exact
-  arithmetic. The integer negacyclic product is the fold of the polynomial
-  product; a signed product splits into four nonnegative ones; and for
-  nonnegative inputs below `M` every coefficient of the polynomial product is
-  a base-`r M² + 1` digit of one integer product of two packed numbers below
-  `B^r`, so the negacyclic product is read off from a single multiplication
-  of integers of about `3rp` bits. This is where the recursion enters.
 - `NLogN/ResamplingMultiNumeric.lean`: the numerical half of Theorem 4.1.
   The rectangular coordinatewise tensor on Chinese-remainder grids preserves
   balls, accumulates the sum of the errors, and agrees with the matrix-defined
@@ -6337,16 +6224,6 @@ Faster interchange of address chunks (§4).
   `time k V ≤ K (m^k)^τ V` with an explicit constant. The role-stream split,
   the depth-first fixed-tape schedule, and descriptor processing are tape
   obligations.
-- `Swap/ArbitraryWidth.lean`: the cost assembly of Lemma 4.4. For binary
-  chunks of width `u`, the radix width `e` is at least one and at most `u`,
-  the row-range digit count `ρ` gives a row field of range at least `W^k`, and
-  the remaining width is split into base-`m` pieces. With per-volume overhead
-  `A (ρ + log (2e) + 1)` for the high-digit moves, padding, descriptors, and
-  cleanup, and the power-width calls on less than twice the volume, the total
-  per unit volume is at most `K u^τ` for every `u ≥ 1`, with `K` explicit and
-  independent of `u`; the logarithms are absorbed uniformly, not only
-  eventually. The field-order bookkeeping of the construction is a tape
-  obligation.
 - `NLogN/ResamplingPermuted.lean`: §7, resampling with the permutations left
   in the transform. From the explicit factorization `F_s = 2^γ B F_t A` with
   `B = P_s⁻¹ D J C P_t`, moving `P_s` to the left gives the exact identity
@@ -6665,6 +6542,57 @@ Schönhage–Strassen multiplication, the fast multiplier used for the packed pr
   (`MeetsLayer`, `layerTarget`). Definitions only.
 - `Spec/SimultaneousLayerFacts.lean`: the returned coefficients lie in the unit
   disk (`layerOut_norm_le`) and within `√2 2^(-p)` of `ℋ z` (`layerOut_close`).
+
+
+## Removed modules
+
+Modules the proof does not use, removed after commit `4f27086`; restore with `git checkout 4f27086 -- <file>`.
+
+- `Machine/BinaryArithmetic.lean`: a fixed three-tape, seven-state adder accepts unequal-width raw words, physically pads and rewinds both operands, then runs binary addition.
+- `Machine/BinaryDivideQuotient.lean`: Six-tape physical division followed by quotient normalization.
+- `Machine/BlockNegation.lean`: Complete literal seven-tape, 141-state single-fiber coordinate negation.
+- `Machine/FiberShiftAddress.lean`: Instantiates the reusable fiber machine as actual forward target-coordinate translation modulo Q on arbitrarily many Q-by-B fibers, preserving every intra-block payload position.
+- `Machine/FiberShiftReuse.lean`: Fixed eight-tape, ninety-six-state common-offset fiber shifts with full inner and outer clock cleanup.
+- `Machine/FlatCoordinateScheduleSupport.lean`: The verified initialized mixed schedule has private heads and nonblank private cells within its explicit linear-volume runtime interval.
+- `Machine/FlatCoordinateShiftInitializedStage.lean`: Fully synthesized controlled shift instantiates the original two-payload Stage interface with exact transform, private input independence and charged setup-inclusive linear cost.
+- `Machine/FlatMultiControlTranslation.lean`: Complete physical flat-array translation by a fixed rational expression over actual prefix coordinates.
+- `Machine/FlatScaleShiftPair.lean`: Concrete actual-network rational scale followed by controlled shift on the same two physical payload tapes.
+- `Machine/MultiControlPrefixTranslationBootstrap.lean`: Complete equal-width multi-control prefix stream from wholly blank writable arithmetic, translation and outer-clock workspace.
+- `Machine/MultiControlPrefixTranslationExecution.lean`: Physically evaluates shared-control expression, translates a fiber and advances the actual common prefix fields; old leaf copies and binary result remain explicitly stale until next evaluation.
+- `Machine/MultiControlPrefixTranslationInit.lean`: Physically generates every shared radix control field from blank storage using canonical width descriptors, then runs blank-workspace initialization and the complete multi-control prefix stream.
+- `Machine/MultiControlPrefixTranslationStream.lean`: Real counted stream of multi-control translations with physical carry scheduling and exact current/stale-field invariant.
+- `Machine/MultiControlTranslationBootstrap.lean`: First-use physical shared-source expression evaluation and translation starts all writable arithmetic/translation scratch blank at head zero.
+- `Machine/MultiControlTranslationExecution.lean`: Actual shared-source expression evaluation composes with fiber translation using the same physical binary offset tape through static placement.
+- `Machine/NegationStream.lean`: Fixed ten-tape, 218-state repeated coordinate negation on uniform fibers.
+- `Machine/OffsetPreparationCost.lean`: Every fixed polynomial in radix width is little-o of q^width for q at least two.
+- `Machine/RadixDigitMoveExecution.lean`: Complete suffix-one digit movement from sole canonical prefix/spectator descriptors and arbitrary payload.
+- `Machine/RadixDigitMovePlacement.lean`: Fixed injective placements compose count synthesis and redistribution while preserving original descriptors and spectator tapes.
+- `Machine/RadixDigitMovePrepared.lean`: Exact forward and inverse fixed-radix digit permutation for prepared canonical controls, with physically rewound payload and erased private storage.
+- `Machine/RadixDivide.lean`: Literal two-tape fixed-denominator modular division using RadixUnary, with exactly d carry states and one transition per digit.
+- `Machine/RadixFieldReadList.lean`: Physically reads literal delimited role fields into their private marked arithmetic controls, retains source symbols, advances every real separator and proves the exact control bank and runtime.
+- `Machine/RadixLinearCombinationReuse.lean`: Recurring shared-bank expression evaluation physically erases the old binary output and refreshes all stale leaf copies.
+- `Machine/RadixScale.lean`: Literal two-tape fixed-coefficient modular scaling using RadixUnary.
+- `Machine/RadixScaleData.lean`: Fixed-natural-coefficient scaling with coefficient+1 bounded carry states.
+- `Machine/RadixSub.lean`: Literal three-tape, two-state fixed-radix subtraction.
+- `Machine/RecursiveBaseBranch.lean`: Actual digit-role base machine bound into the physical width controller.
+- `Machine/RecursiveCleanDescriptorDivision.lean`: The complete clean descriptor divider has runtime at most (1280*A^2+1920*A+710) times logical child volume for canonical root-bounded inputs, A=log2 roles+2.
+- `Machine/RecursiveDescriptorFrames.lean`: Actual fixed-list descriptor push/pop and same-bank roundtrip charged to logical child volume using canonical root-bounded header lengths.
+- `Machine/RecursiveDescriptorStack.lean`: Connects the actual delimiter-based binary push/pop roundtrip to the recursive descriptor-size theorem.
+- `Machine/RecursiveQuotientDivision.lean`: Physical division-plus-normalization runtime bounded by (40*A^2+58*A+9) times logical child volume, where A=log2 roles+2, for canonical root-bounded descriptors.
+- `Machine/RecursiveWidthBranch.lean`: Actual fixed three-block finite flow selects supplied base or recursive block from the physical guard, with at most three charged transitions.
+- `Machine/RunSupport.lean`: Actual transition induction bounds head displacement and changed cells by elapsed transitions, with exact preservation of all exterior cells.
+- `Machine/ScalingInverseStream.lean`: Actual repeated inverse-unit scaling over uniform fibers with fixed control and shared restored scratch.
+- `Machine/ScalingPreparedStream.lean`: Once-only piece-descriptor synthesis from blank work followed by actual repeated positive-unit scaling.
+- `Machine/StreamedFiberTranslationInitializedAlphabet.lean`: Executes the complete blank-private-storage streamed rotation on any larger finite alphabet with literal input/output banks and unchanged483-volume-plus35 cost.
+- `Machine/TranslationOffsetReplace.lean`: Places literal descriptor replacement on the translation offset tape and a physical scheduler-output tape, preserving arbitrary additional workspace.
+- `NLogN/NegacyclicKronecker.lean`: the paper's Lemma 2.5 in exact arithmetic.
+- `NLogN/Synthetic.lean`: principal roots of unity, transform inversion over an arbitrary commutative ring from the principal-root property alone, the synthetic ring `ℂ[y]/(y^r + 1)` with `y^(2r/t)` a principal `t`-th root for every power of two 
+- `Networks/ComplexCorrections.lean`: the endpoint corrections as literal single-wire instructions around the lowered h=25 factor program.
+- `Networks/Paired49Execution.lean`: the checked local witness's emitted program computes all 1,176 pair-exclusion sums with at most 10,989 scalar roles; superseded by `SharedPointExecution`.
+- `Networks/PairedReconstruct.lean`: the script's actual three smart additions reconstruct a cross-pair exclusion from concrete far, strip and cross supports; one smart addition reconstructs a single exclusion.
+- `Networks/PairedUnique.lean`: every literal paired constructor and the full recursive block preserve support uniqueness.
+- `Networks/SharedPointIntern.lean`: executable compressed-key lookup among addition nodes and conditional interning preserve DAG validity and exact values over any commutative additive monoid.
+- `Swap/ArbitraryWidth.lean`: the cost assembly of Lemma 4.4.
 
 ## Top-level
 
