@@ -281,4 +281,115 @@ theorem runs_passLoop {B W : ℕ} (hB : 1 ≤ B) : ∀ (m : ℕ) (σ : Fin 𝕌 
     rw [hsplit, blockPass_cons xs ys R hxl hyl]
     split_ifs <;> simp
 
+theorem length_blockPass_words {B W : ℕ} (L : List (List Bool)) (hw : ∀ x ∈ L, x.length = W) :
+    ∀ x ∈ blockPass B L, x.length = W + 1 := by
+  intro x hx
+  obtain ⟨k, hk, rfl⟩ := List.getElem_of_mem hx
+  simp only [blockPass, List.length_ofFn] at hk
+  simp only [blockPass, List.getElem_ofFn]
+  split_ifs
+  · rw [length_addW, List.getD_eq_getElem _ _ hk, hw _ (List.getElem_mem _)]
+  · rw [length_addW, List.getD_eq_getElem _ _ (by omega), hw _ (List.getElem_mem _)]
+
+noncomputable def ptA : Cmd 0 𝕌 := .seq (clear xB) (rewind xC)
+
+noncomputable def ptB : Cmd 0 𝕌 :=
+  .seq (clear xC) <| .seq (rewind xB) <| .seq (op0 Rules.copy false xP xQ (by decide)) <| .seq (rewind xP) <|
+  .seq (op0 Rules.copy true xP xQ (by decide)) <| .seq (clear xP) <| .seq (rewind xQ) <|
+  .seq (regMove xQ xP (by decide)) (skp (ι qT) (ι tJ) (by decide))
+
+/-- Move a pass's output back to `xB`, double the ruler, and use one tick. -/
+noncomputable def passTail : Cmd 0 𝕌 := .seq ptA <| .seq (appendAll xC xB (by decide)) ptB
+
+/-- `D` passes, one per tick of `qT`. -/
+noncomputable def passesLoop : Cmd 0 𝕌 := .loop (ι qT) (.seq passLoop passTail)
+
+set_option maxHeartbeats 8000000 in
+theorem runs_passTail {B W : ℕ} (σ : Fin 𝕌 → WTape) {Lb P Tl Tr : List (List Bool)}
+    (hX : σ xB = ⟨Lb, []⟩) (hC : σ xC = ⟨P.reverse, []⟩) (hP : σ xP = reg (ones B)) (hQ : σ xQ = emp)
+    (hT : σ (ι qT) = ⟨Tl, [] :: Tr⟩) (hJ : σ (ι tJ) = emp) (hPw : ∀ x ∈ P, x.length = W) :
+    Runs passTail σ (· = Function.update (Function.update (Function.update (Function.update σ xB ⟨[], P⟩) xC emp)
+      xP (reg (ones (2 * B)))) (ι qT) ⟨[] :: Tl, Tr⟩)
+      (2 * clen Lb + P.length * (W + 8) + 4 * clen P + 40 * B + 100) := by
+  have s1 : Runs ptA σ (· = Function.update (Function.update σ xB emp) xC ⟨[], P⟩) (2 * clen Lb + clen P + 6) := by
+    apply Runs.of_wp
+    simp only [ptA, WP, wp_rewind, wp_clear]
+    tsimp [hX, hC]
+    refine ⟨?_, ?_⟩
+    · funext y; simp only [Function.update_apply]; split_ifs <;> (try subst_vars) <;> tsimp [emp] at *
+    · simp [WTape.words, clen_reverse]; omega
+  set σ₁ := Function.update (Function.update σ xB emp) xC ⟨[], P⟩
+  have s2 := runs_appendAll (a := 0) (s := xC) (d := xB) (by decide) W P σ₁ [] []
+    (by tsimp [σ₁]) (by tsimp [σ₁, emp]) (fun x hx => (hPw x hx).le)
+  set σ₂ := Function.update (Function.update σ₁ xC ⟨P.reverse ++ [], []⟩) xB ⟨P.reverse ++ [], []⟩
+  have s3 : Runs ptB σ₂ (· = Function.update (Function.update (Function.update (Function.update σ xB ⟨[], P⟩)
+      xC emp) xP (reg (ones (2 * B)))) (ι qT) ⟨[] :: Tl, Tr⟩) (3 * clen P + 40 * B + 80) := by
+    apply Runs.of_wp
+    simp only [ptB, regMove, regIn, cpy, skp, WP, wp_op0, wp_rewind, wp_clear]
+    tsimp [σ₂, σ₁, hP, hQ, hT, hJ, emp, reg, Rules.output_copy, Rules.output_skip, WTape.put, WTape.next,
+      WTape.cur]
+    have t3 := time_le Rules.skip [] (fun j => j.elim0) 0 (fun j => j.elim0)
+    have hones : ones B ++ ones B = ones (2 * B) := by simp [ones, two_mul]
+    refine ⟨?_, ?_⟩
+    · funext y; simp only [Function.update_apply]
+      split_ifs <;> (try subst_vars) <;> tsimp [hX, hC, hP, hQ, hT, hJ, emp, reg, hones] at *
+    · simp [WTape.words, clen_reverse, clen, time_copy] at t3 ⊢; omega
+  refine (Runs.then s1 (Runs.then s2 s3)).mono (fun τ h => h) ?_
+  omega
+
+theorem clen_le_uniform (L : List (List Bool)) (W : ℕ) (h : ∀ x ∈ L, x.length = W) :
+    clen L = L.length * (W + 1) := clen_uniform L W h
+
+set_option maxHeartbeats 8000000 in
+theorem runs_passesLoop : ∀ (D B W c : ℕ) (σ : Fin 𝕌 → WTape) (L Tl : List (List Bool)), 1 ≤ B → 1 ≤ c →
+    σ xB = ⟨[], L⟩ → σ xP = reg (ones B) → σ xC = emp → σ xQ = emp →
+    σ (ι qT) = ⟨Tl, List.replicate D []⟩ → σ (ι qS) = emp → σ (ι tJ) = emp → σ rF = emp → σ rG = emp →
+    σ rO = emp → σ kW = emp → L.length = B * 2 ^ D * c → (∀ x ∈ L, x.length = W) →
+    Runs passesLoop σ (· = Function.update (Function.update (Function.update σ xB ⟨[], passes B D L⟩)
+      xP (reg (ones (2 ^ D * B)))) (ι qT) ⟨List.replicate D [] ++ Tl, []⟩)
+      (D * (L.length * (40 * (W + D) + 400) + 200))
+  | 0, B, W, c, σ, L, Tl, _, _, hX, hP, _, _, hT, _, _, _, _, _, _, _, _ => by
+    refine (Runs.loop_done (by simp [hT]) rfl).mono (fun τ h => ?_) (by simp)
+    subst h
+    funext y
+    simp only [Function.update_apply]
+    split_ifs <;> (try subst_vars) <;> simp_all [passes]
+  | D + 1, B, W, c, σ, L, Tl, hB, hc, hX, hP, hC, hQ, hT, hS, hJ, hF, hG, hO, hK, hl, hw => by
+    have hm : L.length = 2 * B * (2 ^ D * c) := by rw [hl, pow_succ]; ring
+    have s1 := runs_passLoop (W := W) hB (2 ^ D * c) σ [] [] L hX hP (by rw [hC]; rfl) hS hJ hF hG hO hK hm hw
+    set P := blockPass B L
+    have hPw := length_blockPass_words (B := B) L hw
+    have hPl : P.length = L.length := by simp [P, blockPass]
+    set σ₁ := Function.update (Function.update σ xB ⟨L.reverse ++ [], []⟩) xC ⟨P.reverse ++ [], []⟩
+    have s2 := runs_passTail (B := B) (W := W + 1) σ₁ (Lb := L.reverse) (P := P) (Tl := Tl)
+      (Tr := List.replicate D []) (by tsimp [σ₁]) (by tsimp [σ₁]) (by tsimp [σ₁, hP]) (by tsimp [σ₁, hQ])
+      (by tsimp [σ₁, hT, List.replicate_succ]) (by tsimp [σ₁, hJ]) hPw
+    set σ₂ := Function.update (Function.update (Function.update (Function.update σ₁ xB ⟨[], P⟩) xC emp)
+      xP (reg (ones (2 * B)))) (ι qT) ⟨[] :: Tl, List.replicate D []⟩
+    have ih := runs_passesLoop D (2 * B) (W + 1) c σ₂ P ([] :: Tl) (by omega) hc (by tsimp [σ₂]) (by tsimp [σ₂])
+      (by tsimp [σ₂]) (by tsimp [σ₂, σ₁, hQ]) (by tsimp [σ₂]) (by tsimp [σ₂, σ₁, hS]) (by tsimp [σ₂, σ₁, hJ])
+      (by tsimp [σ₂, σ₁, hF]) (by tsimp [σ₂, σ₁, hG]) (by tsimp [σ₂, σ₁, hO]) (by tsimp [σ₂, σ₁, hK])
+      (by rw [hPl, hl, pow_succ]; ring) hPw
+    refine (Runs.loop_step (by simp [hT, List.replicate_succ])
+      (Runs.then s1 (s2.mono (fun τ h => by rw [h]; exact ih) le_rfl))).mono (fun τ h => ?_) ?_
+    · rw [h]
+      funext y
+      simp only [Function.update_apply, σ₂, σ₁]
+      split_ifs <;> (try subst_vars) <;>
+        simp_all [passes, P, pow_succ, List.replicate_succ, replicate_append_cons, mul_comm, mul_left_comm,
+          mul_assoc]
+    · have h1 := clen_uniform L.reverse W (by simpa using hw)
+      have h2 := clen_uniform P W.succ hPw
+      simp only [List.length_reverse] at h1
+      rw [hPl] at h2
+      rw [h1, h2, hPl]
+      have hc1 : 1 ≤ 2 ^ D * c := Nat.one_le_iff_ne_zero.mpr (by positivity)
+      generalize 2 ^ D * c = M' at hm hc1 ⊢
+      have e1 : M' * (60 * B * (W + 3) + 202) = 30 * L.length * (W + 3) + 202 * M' := by rw [hm]; ring
+      rw [e1]
+      have hBn : 2 * B ≤ L.length := by rw [hm]; nlinarith
+      have hMn : 2 * M' ≤ L.length := by rw [hm]; nlinarith
+      generalize L.length = n at *
+      nlinarith
+
 end IntegerMultBounds.Schoenhage

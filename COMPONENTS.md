@@ -6775,7 +6775,8 @@ Schönhage–Strassen multiplication, the fast multiplier used for the packed pr
 - `Schoenhage/BlockPass.lean`, `Schoenhage/PrefixRoundTape.lean`: §6 task 5 on
   tapes: zipped sums and complement sums of two word lists (`runs_zipAddSub`); a
   pass splits into block pairs (`blockPass_cons`); one block pair of the pass on
-  the ring product's bank (`runs_blockStep`) and a whole pass (`runs_passLoop`).
+  the ring product's bank (`runs_blockStep`), a whole pass (`runs_passLoop`), and `D`
+  passes with the ruler doubling each time (`runs_passesLoop`).
 
 - `Schoenhage/PointwiseRow.lean`: at the main sizes `p = 6 lg n`, `r = 2^ℓ`
   the pointwise program's time is at most a constant times `T p` times the
