@@ -27,7 +27,8 @@ execution and actual uniform runtime have explicit partial rows in PLAN.
 Actual schedule prefixes now pay their sibling budgets from the original
 node-entry Path. Scalar semantics and child-entry grid, ledger and tape ports
 use that entry Path while counting preceding child returns exactly once;
-physical event induction and the prefix-to-call ordinal identity remain open.
+the actual event now derives its prefix-to-call ordinal identity. Full physical
+event induction remains open.
 Complete stopped-root execution, full stopped-leaf
 tensor semantics, genuine halting and paid runtime are checked. Corrected
 source entry, sink corrections, contraction/rejoin and saved-PC dispatch also

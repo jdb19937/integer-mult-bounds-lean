@@ -2,6 +2,7 @@ module
 
 public import IntegerMultBounds.Machine.CompactComplexSourceReadySiblingGuards
 public import IntegerMultBounds.Machine.CompactComplexSourceReadyReachedChildInvariant
+public import IntegerMultBounds.Machine.CompactComplexActualCallOrdinal
 
 /-! The actual sibling cursor enters the original child dependency Path once.
 The selected grid and physical source ports come from current Reached; sibling
@@ -148,6 +149,25 @@ theorem child_entered (headerStack liveStack : Fin extraTapes)
       parentRows polynomialExponent metadataPrecision (selectedArray parentReached call) (caller parentReached) parentReached.targetValue parentLive headerStack pcStack liveStack
     exact parentReached.width _
   · exact ⟨enteredLivePort.1.trans (callerLivePort.1.trans parentReached.live.1),enteredLivePort.2.trans (callerLivePort.2.trans parentReached.live.2)⟩
+
+/-- An actual child event discharges the sibling ordinal automatically, so
+the real child entry has no supplied prefix-accounting equality. -/
+theorem scheduled_child_entered (headerStack liveStack : Fin extraTapes)
+    (pcHeaderDistinct : pcStack≠headerStack) (pcLiveDistinct : pcStack≠liveStack)
+    (metadataFits : 2*shape.bits≤metadataPrecision)
+    (growthReserve : CompactFramedScalarGrid.growthConstant≤growthConstant)
+    (eventBound : eventIndex<schedule.length)
+    (eventEquation : schedule[eventIndex]=CompactComplexCompletedLiveLower.Event.child call) :
+    Entered (child phaseCoordinate entryPath.visit activeFits pair call.slot)
+      (parentRows/roles) polynomialExponent metadataPrecision (childExponent+1)
+      (nodeLeft+call.slot.val*arity^(childExponent+1)) baselinePrecision growthConstant parentLive baselineLive
+      (dependencyLevels+1) (frameVolume+arity^(childExponent+2))
+      (entryReturned+CompactRecursiveDependencyBudget.precedingCalls call*arity^(childExponent+1))
+      pcStack origin (call::calls) (selectedArray parentReached call)
+      (childPublic phaseCoordinate entryPath activeFits pair parentReached call headerStack liveStack) :=
+  child_entered phaseCoordinate entryPath activeFits pair parentReached call headerStack liveStack
+    pcHeaderDistinct pcLiveDistinct metadataFits growthReserve
+    (CompactComplexActualCallOrdinal.schedule_prefix_ordinal eventIndex eventBound call eventEquation)
 
 end Child
 end
