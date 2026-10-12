@@ -6101,6 +6101,9 @@ Transform, fixed-point, Kronecker and Gaussian resampling mathematics used by th
   (`runs_swapBranch`, result `swapF`, cost `swapCost`); one axis record for
   any per-axis program with a contract (`AxisSpec`, `runs_axisBranch`); and
   the whole script (`drive`, `runs_drive`, result `result`, cost `driveCost`).
+- `Resampling/AxisInst.lean`: the expansion axis as a driver axis program
+  (`expandSpec`): a record carries the packed `Ã` table and the per-axis
+  rulers (`eWords`); the program unpacks the table and runs `expandStep`.
 - `Resampling/Milestones.lean`: the §7 milestone theorems of
   `plan/07-gaussian-resampling.md` that package proved results:
   `FixedMul.signed_word_ops`, `Schoenhage.wordRecordLayer_hoare`,
