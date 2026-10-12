@@ -1,6 +1,8 @@
 module
 
 public import IntegerMultBounds.Schoenhage.PrefixRoundTape
+public import IntegerMultBounds.Schoenhage.TwistRound
+public import IntegerMultBounds.Schoenhage.DifOppositeRounds
 
 /-! §6 task 5: the exact butterflies of a prefix slot and one truncation, on the
 ring product's word tapes (`runs_prefixHad`): from the record array on `zF`
@@ -288,5 +290,29 @@ theorem prefix_had_spec {r : ℕ} [NeZero r] {ts : List ℕ} {ℓ K : ℕ} (hL :
   conv_lhs => rw [hM]
   congr 1
   omega
+
+/-- The exact butterflies of prefix slot `h` on any array of the right length, rounded once. -/
+theorem prefix_bflys_eq {r : ℕ} [NeZero r] {ts : List ℕ} {ℓ K : ℕ} (hL : LayoutOK r ts ℓ K) {h : ℕ}
+    (hh : h < (ℓ - 1) % K) (p : ℕ) (gs : List (Rec r)) (hlen : gs.length = ts.prod) :
+    roundArr p (bflys (slotBits (paperPerm hL) ts (slotAxes ts h) h) (arrayVec p gs)) =
+      arrayVec p ((bflysRecs ((List.range ts.length).map (prefixBase ts.length ℓ K h + ·)) gs).map
+        (truncRec ts.length)) := by
+  have := prefix_round_eq hL hh p gs hlen
+  unfold slotRound at this
+  rw [roundArr_twist] at this
+  have hinj : Function.Injective (twist (r := r) (slotExp (paperPerm hL) r ts (slotAxes ts h) h)) := by
+    intro a b e
+    rw [← untwist_twist (slotExp (paperPerm hL) r ts (slotAxes ts h) h) a, e, untwist_twist]
+  exact hinj this
+
+/-- The opposite round of prefix slot `h`: untwist the records, then the same butterflies and truncation. -/
+theorem prefix_opp_round_eq {r : ℕ} [NeZero r] {ts : List ℕ} {ℓ K : ℕ} (hL : LayoutOK r ts ℓ K) {h : ℕ}
+    (hh : h < (ℓ - 1) % K) (p : ℕ) (fs : List (Rec r)) (hlen : fs.length = ts.prod) :
+    roundArr p (oppSlotRound (paperPerm hL) ts h (arrayVec p fs)) =
+      arrayVec p ((bflysRecs ((List.range ts.length).map (prefixBase ts.length ℓ K h + ·))
+        (TwistRound.untwistRecs (slotExp (paperPerm hL) r ts (slotAxes ts h) h) fs)).map (truncRec ts.length)) := by
+  unfold oppSlotRound
+  rw [← TwistRound.arrayVec_untwist]
+  exact prefix_bflys_eq hL hh p _ (by simp [TwistRound.untwistRecs, hlen])
 
 end IntegerMultBounds.Schoenhage
