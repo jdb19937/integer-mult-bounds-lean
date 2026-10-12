@@ -392,4 +392,150 @@ theorem runs_passesLoop : ∀ (D B W c : ℕ) (σ : Fin 𝕌 → WTape) (L Tl : 
       generalize L.length = n at *
       nlinarith
 
+/-! ### From records to offset words -/
+
+open Spec.SignedRingProduct in
+theorem flipLast_tw {w : ℕ} {a : ℤ} (hw : 1 ≤ w) (h1 : -2 ^ (w - 1) ≤ a) (h2 : a < 2 ^ (w - 1)) :
+    flipLast (tw w a) = offWord w a := by
+  have hne : tw w a ≠ [] := by intro e; have := congrArg List.length e; simp [tw] at this; omega
+  apply offWord_of_bval (by rw [length_flipLast hne]; simp [tw])
+  rw [bval_flipLast hne, sv_tw hw h1 h2]
+  simp [tw]
+
+open Spec.SignedRingProduct in
+theorem cut_array_off {r w : ℕ} (hw : 1 ≤ w) (fs : List (Rec r))
+    (hb : ∀ f ∈ fs, ∀ j, -2 ^ (w - 1) ≤ f.1 j ∧ f.1 j < 2 ^ (w - 1) ∧ -2 ^ (w - 1) ≤ f.2 j ∧ f.2 j < 2 ^ (w - 1)) :
+    (cut w (array w fs)).map (fun x => flipLast x.reverse) = arrOff w fs := by
+  rw [array_words, cut_flatten_words hw]
+  · simp only [arrOff, List.flatMap, List.map_flatten, List.map_map]
+    congr 1
+    apply List.map_congr_left
+    intro f hf
+    simp only [Function.comp_apply, recordWords, recOff, List.flatMap, List.map_flatten, List.map_map]
+    congr 1
+    apply List.map_congr_left
+    intro j _
+    obtain ⟨a1, a2, a3, a4⟩ := hb f hf j
+    simp [compWord_reverse, flipLast_tw hw a1 a2, flipLast_tw hw a3 a4]
+  · intro c hc
+    simp only [List.mem_flatten, List.mem_map] at hc
+    obtain ⟨l, ⟨f, -, rfl⟩, hl⟩ := hc
+    exact recordWords_lengths w f.1 f.2 c hl
+
+/-- Reverse a word of `xA` and flip its last bit onto `xB`. -/
+noncomputable def offBody : Cmd 0 𝕌 :=
+  .seq (revw xA (ι tX) (by decide)) <| .seq (rewind (ι tX)) <|
+  .seq (op0 Rules.flip false (ι tX) xB (by decide)) (clear (ι tX))
+
+noncomputable def offLoop : Cmd 0 𝕌 := .loop xA offBody
+
+theorem runs_offLoop : ∀ (ps : List (List Bool)) (σ : Fin 𝕌 → WTape) (La Lb : List (List Bool)),
+    σ xA = ⟨La, ps⟩ → σ xB = ⟨Lb, []⟩ → σ (ι tX) = emp → (∀ x ∈ ps, x ≠ []) →
+    Runs offLoop σ (· = Function.update (Function.update σ xA ⟨ps.reverse ++ La, []⟩) xB
+      ⟨(ps.map fun x => flipLast x.reverse).reverse ++ Lb, []⟩) (ps.length * 40 + 10 * clen ps)
+  | [], σ, La, Lb, hA, hB, _, _ => by
+    refine (Runs.loop_done (by simp [hA]) rfl).mono (fun τ h => ?_) (by simp)
+    subst h
+    funext y; simp only [Function.update_apply]; split_ifs <;> (try subst_vars) <;> simp_all
+  | x :: ps, σ, La, Lb, hA, hB, hX, hne => by
+    have hx : x ≠ [] := hne x (by simp)
+    have s1 : Runs offBody σ (· = Function.update (Function.update σ xA ⟨x :: La, ps⟩) xB
+        ⟨flipLast x.reverse :: Lb, []⟩) (10 * x.length + 30) := by
+      have r1 := runs_revw (a := 0) (show xA ≠ ι tX by decide) σ (L := La) (R := ps) (w := x) hA
+        (by rw [hX]; rfl)
+      set σ₁ := Function.update (Function.update σ xA ⟨x :: La, ps⟩) (ι tX) ⟨x.reverse :: (σ (ι tX)).left, []⟩
+      have r2 := runs_rewind (a := 0) (ι tX) σ₁
+      set σ₂ := Function.update σ₁ (ι tX) ⟨[], (σ₁ (ι tX)).left.reverse ++ (σ₁ (ι tX)).right⟩
+      have hxr : x.reverse ≠ [] := by simpa using hx
+      have r3 := runs_op0 (a := 0) Rules.flip false (show ι tX ≠ xB by decide) σ₂
+        (by tsimp [σ₂, σ₁, hX, emp]) (by tsimp [σ₂, σ₁, hB]) [flipLast x.reverse]
+        (by tsimp [σ₂, σ₁, hX, emp, WTape.cur]; exact Rules.output_flip _ _ hxr) (by simp)
+      set σ₃ := Function.update (Function.update σ₂ (ι tX) (σ₂ (ι tX)).next) xB ((σ₂ xB).put false [flipLast x.reverse])
+      have r4 := runs_clear (a := 0) (ι tX) σ₃
+      have t1 := time_le Rules.flip x.reverse (fun j => j.elim0) 0 (fun j => j.elim0)
+      refine (Runs.then r1 (Runs.then r2 (Runs.then r3 r4))).mono (fun τ h => ?_) ?_
+      · rw [h]; funext y; simp only [Function.update_apply]
+        split_ifs <;> (try subst_vars) <;> tsimp [σ₃, σ₂, σ₁, hX, hA, hB, emp, WTape.put, WTape.next,
+          WTape.cur] <;> simp_all (config := {decide := true})
+      · have hb : Rules.flip.B = 2 := rfl
+        rw [hb] at t1
+        tsimp [σ₃, σ₂, σ₁, hX, emp, WTape.put, WTape.next, WTape.cur, WTape.words, clen] at t1 ⊢
+        omega
+    set σ₁ := Function.update (Function.update σ xA ⟨x :: La, ps⟩) xB ⟨flipLast x.reverse :: Lb, []⟩
+    have ih := runs_offLoop ps σ₁ (x :: La) (flipLast x.reverse :: Lb) (by tsimp [σ₁]) (by tsimp [σ₁])
+      (by tsimp [σ₁, hX]) (fun y hy => hne y (by simp [hy]))
+    refine (Runs.loop_step (by simp [hA]) (s1.mono (fun τ h => by rw [h]; exact ih) le_rfl)).mono
+      (fun τ h => ?_) ?_
+    · rw [h]; funext y; simp only [Function.update_apply, σ₁]; split_ifs <;> simp
+    · simp [clen_cons]; omega
+
+/-! ### Words to digits and back -/
+
+/-- Append a zero bit to every word of `xB`, onto `tD`. -/
+noncomputable def zextLoop : Cmd 0 𝕌 := .loop xB (op0 Rules.zext false xB (ι tD) (by decide))
+
+theorem runs_zextLoop : ∀ (ps : List (List Bool)) (σ : Fin 𝕌 → WTape) (Lb Ld : List (List Bool)),
+    σ xB = ⟨Lb, ps⟩ → σ (ι tD) = ⟨Ld, []⟩ →
+    Runs zextLoop σ (· = Function.update (Function.update σ xB ⟨ps.reverse ++ Lb, []⟩) (ι tD)
+      ⟨(ps.map (· ++ [false])).reverse ++ Ld, []⟩) (ps.length * 12 + clen ps)
+  | [], σ, Lb, Ld, hB, hD => by
+    refine (Runs.loop_done (by simp [hB]) rfl).mono (fun τ h => ?_) (by simp)
+    subst h
+    funext y; simp only [Function.update_apply]; split_ifs <;> (try subst_vars) <;> simp_all
+  | x :: ps, σ, Lb, Ld, hB, hD => by
+    have s1 := runs_op0 (a := 0) Rules.zext false (show xB ≠ ι tD by decide) σ (by simp [hB]) (by simp [hD])
+      [x ++ [false]] (by simp [hB, WTape.cur, Rules.output_zext]) (by simp)
+    set σ₁ := Function.update (Function.update σ xB (σ xB).next) (ι tD) ((σ (ι tD)).put false [x ++ [false]])
+    have ih := runs_zextLoop ps σ₁ (x :: Lb) ((x ++ [false]) :: Ld) (by tsimp [σ₁, hB, WTape.next, WTape.cur])
+      (by tsimp [σ₁, hD, WTape.put])
+    have t1 := time_le Rules.zext x (fun j => j.elim0) 0 (fun j => j.elim0)
+    refine (Runs.loop_step (by simp [hB]) (s1.mono (fun τ h => by rw [h]; exact ih) le_rfl)).mono
+      (fun τ h => ?_) ?_
+    · rw [h]; funext y; simp only [Function.update_apply, σ₁]; split_ifs <;> simp
+    · have hb : Rules.zext.B = 2 := rfl
+      rw [hb] at t1
+      simp [hB, WTape.cur, clen_cons] at t1 ⊢; omega
+
+/-- Reverse every word of `xE` and append it to `zO`'s word. -/
+noncomputable def joinBody : Cmd 0 𝕌 :=
+  .seq (revw xE (ι tX) (by decide)) <| .seq (rewind (ι tX)) <|
+  .seq (op0 Rules.copy true (ι tX) zO (by decide)) (clear (ι tX))
+
+noncomputable def joinLoop : Cmd 0 𝕌 := .loop xE joinBody
+
+theorem runs_joinLoop : ∀ (ps : List (List Bool)) (σ : Fin 𝕌 → WTape) (Le : List (List Bool)) (acc : List Bool),
+    σ xE = ⟨Le, ps⟩ → σ zO = ⟨[acc], []⟩ → σ (ι tX) = emp →
+    Runs joinLoop σ (· = Function.update (Function.update σ xE ⟨ps.reverse ++ Le, []⟩) zO
+      ⟨[acc ++ (ps.map List.reverse).flatten], []⟩) (ps.length * 40 + 10 * clen ps)
+  | [], σ, Le, acc, hE, hO, _ => by
+    refine (Runs.loop_done (by simp [hE]) rfl).mono (fun τ h => ?_) (by simp)
+    subst h
+    funext y; simp only [Function.update_apply]; split_ifs <;> (try subst_vars) <;> simp_all
+  | x :: ps, σ, Le, acc, hE, hO, hX => by
+    have s1 : Runs joinBody σ (· = Function.update (Function.update σ xE ⟨x :: Le, ps⟩) zO
+        ⟨[acc ++ x.reverse], []⟩) (10 * x.length + 30) := by
+      have r1 := runs_revw (a := 0) (show xE ≠ ι tX by decide) σ (L := Le) (R := ps) (w := x) hE
+        (by rw [hX]; rfl)
+      set σ₁ := Function.update (Function.update σ xE ⟨x :: Le, ps⟩) (ι tX) ⟨x.reverse :: (σ (ι tX)).left, []⟩
+      have r2 := runs_rewind (a := 0) (ι tX) σ₁
+      set σ₂ := Function.update σ₁ (ι tX) ⟨[], (σ₁ (ι tX)).left.reverse ++ (σ₁ (ι tX)).right⟩
+      have r3 := runs_op0 (a := 0) Rules.copy true (show ι tX ≠ zO by decide) σ₂
+        (by tsimp [σ₂, σ₁, hX, emp]) (by tsimp [σ₂, σ₁, hO]) [x.reverse]
+        (by tsimp [σ₂, σ₁, hX, emp, WTape.cur, Rules.output_copy]) (by tsimp [σ₂, σ₁, hO])
+      set σ₃ := Function.update (Function.update σ₂ (ι tX) (σ₂ (ι tX)).next) zO ((σ₂ zO).put true [x.reverse])
+      have r4 := runs_clear (a := 0) (ι tX) σ₃
+      refine (Runs.then r1 (Runs.then r2 (Runs.then r3 r4))).mono (fun τ h => ?_) ?_
+      · rw [h]; funext y; simp only [Function.update_apply]
+        split_ifs <;> (try subst_vars) <;> tsimp [σ₃, σ₂, σ₁, hX, hE, hO, emp, WTape.put, WTape.next,
+          WTape.cur] <;> simp_all (config := {decide := true})
+      · tsimp [σ₃, σ₂, σ₁, hX, emp, WTape.put, WTape.next, WTape.cur, WTape.words, clen, time_copy]
+        omega
+    set σ₁ := Function.update (Function.update σ xE ⟨x :: Le, ps⟩) zO ⟨[acc ++ x.reverse], []⟩
+    have ih := runs_joinLoop ps σ₁ (x :: Le) (acc ++ x.reverse) (by tsimp [σ₁]) (by tsimp [σ₁])
+      (by tsimp [σ₁, hX])
+    refine (Runs.loop_step (by simp [hE]) (s1.mono (fun τ h => by rw [h]; exact ih) le_rfl)).mono
+      (fun τ h => ?_) ?_
+    · rw [h]; funext y; simp only [Function.update_apply, σ₁]; split_ifs <;> simp
+    · simp [clen_cons]; omega
+
 end IntegerMultBounds.Schoenhage
