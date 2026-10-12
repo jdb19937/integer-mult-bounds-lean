@@ -2344,6 +2344,7 @@ import IntegerMultBounds.Schoenhage.ProgPrim
 import IntegerMultBounds.Schoenhage.CounterWords
 import IntegerMultBounds.Schoenhage.PrimLift
 import IntegerMultBounds.Schoenhage.SwapPrim
+import IntegerMultBounds.Schoenhage.FloorWords
 import IntegerMultBounds.Machine.GaussianLineFast
 import IntegerMultBounds.Machine.NeumannLoopFast
 import IntegerMultBounds.Resampling.B0TapeFast

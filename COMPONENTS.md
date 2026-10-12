@@ -6497,6 +6497,10 @@ Schönhage–Strassen multiplication, the fast multiplier used for the packed pr
   (`BinaryInterchangeRun.runs`) as a word-program primitive over `prime`:
   five header words and a payload word, converted to counter form and raw
   bits and back around the interchange (`prim_spec`, `prim`).
+- `Schoenhage/FloorWords.lean`: floor every two's complement word of a tape
+  by one bit and keep `w` bits (`floorLoop`, `runs_floorLoop`); the value is
+  the floor of half the original (`signed_floorWord`). Brings the `Ã`
+  outputs back to the `p`-bit grid between axes.
 - `Schoenhage/RingMath.lean`, `RingWords.lean`, `RingDigit.lean`: evaluation
   at `X = 2^W` turns negacyclic products into products modulo `2^(W r) + 1`
   (`ev_ncMul`); offset digits pack signed coefficients and recover them
