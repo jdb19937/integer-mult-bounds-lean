@@ -2714,3 +2714,4 @@ import IntegerMultBounds.SourceLengths
 import IntegerMultBounds.Milestones.ExactRecovery
 import IntegerMultBounds.Schoenhage.DifOpposite
 import IntegerMultBounds.Schoenhage.DifHadamard
+import IntegerMultBounds.Schoenhage.DifOppositeRounds
