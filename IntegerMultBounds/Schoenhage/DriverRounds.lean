@@ -115,4 +115,48 @@ theorem runs_bflyStep {r w D s c : ℕ} (hr : 1 ≤ r) (hw : 2 ≤ w) (hc : 1 �
       clen_nil, length_ones, List.length_replicate, List.head?, List.headD] at *
     omega
 
+/-- The layer program as a primitive of the drivers. -/
+noncomputable def layerPrim {q a : ℕ} (M : Program tL q a) (ht : 2 ≤ tL) (haA : a ≤ A) : Prim A :=
+  Prim.liftE haA (Prim.ofHoare (prog1 M ht) (by omega))
+
+/-- A chunk-group round's Hadamard part: drop the kind word, load the layer header, run the layer
+program on header and array, clear the header. -/
+noncomputable def chunkStep {q a : ℕ} (M : Program tL q a) (ht : 2 ≤ tL) (haA : a ≤ A) : Cmd A (DB tL nL) :=
+  .seq (skp (nm tL nL 6) (nm tL nL 12) (nm_ne (by decide))) <|
+  .seq (regIn (nm tL nL 6) (nm tL nL 5) (nm_ne (by decide))) <|
+  .seq (.prim (layerPrim M ht haA) (lslot tL nL) lslot_injective) (clear (nm tL nL 5))
+
+theorem runs_chunkStep {q a : ℕ} (M : Program tL q a) (ht : 2 ≤ tL) (haA : a ≤ A)
+    (v : Fin 13 → WTape) (tw : Fin 29 → WTape) {Lr R : List (List Bool)} {kind hdr X X' : List Bool} {k : ℕ}
+    (hR : v 6 = ⟨Lr, kind :: hdr :: R⟩) (h0 : v 0 = reg X) (h5 : v 5 = emp) (h12 : v 12 = emp)
+    (hM : HoareTo (prog1 M ht) (start1 tL hdr X) (start1 tL hdr X') k) :
+    Runs (chunkStep (nL := nL) M ht haA) (dstate tL nL v tw)
+      (· = dstate tL nL (Function.update (Function.update v 0 (reg X')) 6 ⟨hdr :: kind :: Lr, R⟩) tw)
+      (k + kind.length + 4 * hdr.length + 40) := by
+  have s1 := runs_skp (a := A) (nm_ne (tL := tL) (nL := nL) (show (6 : Fin 13) ≠ 12 by decide)) (dstate tL nL v tw)
+    (by rw [dstate_nm, hR]; simp) (by rw [dstate_nm, h12]; rfl)
+  rw [update_nm, dstate_nm, hR] at s1
+  set v1 := Function.update v 6 (WTape.next ⟨Lr, kind :: hdr :: R⟩)
+  have s2 := runs_regIn (a := A) (nm_ne (tL := tL) (nL := nL) (show (6 : Fin 13) ≠ 5 by decide)) (dstate tL nL v1 tw)
+    (L := kind :: Lr) (R := R) (w := hdr) (by rw [dstate_nm]; simp [v1, WTape.next, WTape.cur])
+    (by rw [dstate_nm]; simp [v1, h5])
+  rw [update_nm, update_nm] at s2
+  set v2 := Function.update (Function.update v1 6 ⟨hdr :: kind :: Lr, R⟩) 5 (reg hdr)
+  have hL : HoareTo (prog1 M ht) (dstate tL nL v2 tw ∘ lslot tL nL) (start1 tL hdr X') k := by
+    rw [dstate_comp_lslot ht v2 tw (hdr := hdr) (A := X) (by simp [v2]) (by simp [v2, v1, h0])]
+    exact hM
+  have s3 := runs_ofHoare_liftE haA _ (by omega) lslot_injective hL
+  rw [upd_dstate_lslot ht] at s3
+  set v3 := Function.update (Function.update v2 5 (reg hdr)) 0 (reg X')
+  have s4 := runs_clear (a := A) (nm tL nL 5) (dstate tL nL v3 tw)
+  rw [update_nm] at s4
+  refine (Runs.then s1 (Runs.then s2 (Runs.then s3 s4))).mono (fun τ h => ?_) ?_
+  · rw [h]
+    congr 1
+    funext i
+    fin_cases i <;> simp (config := {decide := true}) [v3, v2, v1, Function.update_apply, h5, emp]
+  · simp (config := {decide := true}) only [dstate_nm, v3, v2, v1, Function.update_apply, WTape.words,
+      WTape.cur, reg, if_true, if_false, List.reverse_nil, List.nil_append, clen_cons, clen_nil, List.headD] at *
+    omega
+
 end IntegerMultBounds.Schoenhage
