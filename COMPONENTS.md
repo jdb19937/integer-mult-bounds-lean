@@ -6450,6 +6450,11 @@ Schönhage–Strassen multiplication, the fast multiplier used for the packed pr
   (components most significant bit first) and the resampling machines'
   records (least significant bit first, blank-separated), as literal
   four-tape programs (`paperToRecords_hoare`, `recordsToPaper_hoare`).
+- `Schoenhage/LineFit.lean`: refitting the lines of an array: cut into
+  `u`-bit lines and bring each to `v` bits, truncating or padding with zeros
+  (`fit_take`, `fit_pad`), as a five-tape program on raw arrays
+  (`refitRaw_hoare`); this drops and restores the padding of the tensor
+  interface's padded box.
 - `Schoenhage/RingMath.lean`, `RingWords.lean`, `RingDigit.lean`: evaluation
   at `X = 2^W` turns negacyclic products into products modulo `2^(W r) + 1`
   (`ev_ncMul`); offset digits pack signed coefficients and recover them
