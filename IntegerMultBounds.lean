@@ -2331,6 +2331,8 @@ import IntegerMultBounds.Schoenhage.SSClean
 import IntegerMultBounds.Schoenhage.RingBank
 import IntegerMultBounds.Schoenhage.RingMul
 import IntegerMultBounds.Schoenhage.ExactMul
+import IntegerMultBounds.Schoenhage.FixedMulWords
+import IntegerMultBounds.Schoenhage.FixedMulProgram
 import IntegerMultBounds.Schoenhage.RingAlu
 import IntegerMultBounds.Schoenhage.RingMath
 import IntegerMultBounds.Schoenhage.RingWords

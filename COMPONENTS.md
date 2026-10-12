@@ -6412,6 +6412,15 @@ Schönhage–Strassen multiplication, the fast multiplier used for the packed pr
   product modulo `2^N + 1`, and the low `n` bits, which equal
   `bits n (bval x * bval y)` when the operand lengths sum to at most `n`
   (`runs_exactMul`); scratch tapes end empty.
+- `Schoenhage/FixedMulWords.lean`: the signed fixed-point multiply
+  `FixedMul.result` as a word program with the quasi-linear product: signs from
+  reversed copies, magnitudes by streaming two's-complement negation
+  (`Rules.neg`), the exact product equals `FixedMul.padProd`
+  (`padProd_eq_bits`), the field cut by `drop` and `take`, negated when the
+  signs differ (`runs_fixedMulW`).
+- `Schoenhage/FixedMulProgram.lean`: that multiply as a literal 91-tape
+  program on raw bit strings from cell zero (`fmProg_hoare`), within
+  `fmTime w = O(w log w log log w)` steps (`fmProg_time`).
 - `Schoenhage/RingMath.lean`, `RingWords.lean`, `RingDigit.lean`: evaluation
   at `X = 2^W` turns negacyclic products into products modulo `2^(W r) + 1`
   (`ev_ncMul`); offset digits pack signed coefficients and recover them
