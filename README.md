@@ -18,7 +18,11 @@ chosen before quantifying over inputs.
 
 ## Status
 
-Section 5 remains open. Witnessed complete child schedules now supply both
+Section 5 remains open; its complete scalar-prefix/stopped-call math milestone
+is now proved, including corrected tensor values, spectators, grids and ledger.
+The permanent-bank stopped roundtrip has exact tensor semantics with its original
+native-volume times stopped-axis-count bound; the volume-only tape milestone
+remains open. Witnessed complete child schedules now supply both
 their upper ledger and required denominator target. Actual scalar and stopped-child
 lifecycles construct reached event steps and preserve settled frames and the
 immutable saved target. Complete schedules now execute when every child stops,
