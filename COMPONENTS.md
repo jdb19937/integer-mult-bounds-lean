@@ -6415,7 +6415,7 @@ Schönhage–Strassen multiplication, the fast multiplier used for the packed pr
 - `Schoenhage/FixedMulWords.lean`: the signed fixed-point multiply
   `FixedMul.result` as a word program with the quasi-linear product: signs from
   reversed copies, magnitudes by streaming two's-complement negation
-  (`Rules.neg`), the exact product equals `FixedMul.padProd`
+  (`FixedMulRules.neg`), the exact product equals `FixedMul.padProd`
   (`padProd_eq_bits`), the field cut by `drop` and `take`, negated when the
   signs differ (`runs_fixedMulW`).
 - `Schoenhage/FixedMulProgram.lean`: that multiply as a literal 91-tape

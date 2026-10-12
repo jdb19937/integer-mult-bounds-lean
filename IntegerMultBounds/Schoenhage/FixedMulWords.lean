@@ -8,7 +8,7 @@ public import IntegerMultBounds.Schoenhage.Reverse
 ring product's bank, with the quasi-linear product of `ExactMul`. From the
 operands on `zF`, `zG` and rulers `ones p`, `ones w` on `iP`, `iW`: the signs
 are read from reversed copies, the magnitudes are formed by the streaming
-two's-complement negation `Rules.neg`, the exact product of the magnitudes is
+two's-complement negation `FixedMulRules.neg`, the exact product of the magnitudes is
 the padded product `FixedMul.padProd` (`padProd_eq_bits`), its bits `p` to
 `p + w` are cut out by `drop` and `take`, and negated when the signs differ
 (`runs_fixedMulW`). Every scratch tape is empty again. -/
@@ -22,7 +22,7 @@ namespace IntegerMultBounds.Schoenhage
 open Machine Strm Tp Schedule
 open TwosComplement (negWord)
 
-namespace Rules
+namespace FixedMulRules
 
 /-- Two's-complement negation: copy up to and including the lowest one, then
 complement. -/
@@ -45,7 +45,7 @@ theorem go_neg (w : List Bool) (ws : Fin 0 → List Bool) :
 theorem output_neg (w : List Bool) (ws : Fin 0 → List Bool) : output neg w ws = syms [negWord w] := by
   simp [output, syms_cons, go_neg]
 
-end Rules
+end FixedMulRules
 
 /-! ### Values and words -/
 
@@ -115,15 +115,15 @@ theorem runs_streamTo (R : Rule 0) {s d : Fin 𝕌} (h : s ≠ d) {x v : List Bo
 
 /-- `d = mag x` from `s = x` and `rv = x` reversed. -/
 noncomputable def magTo (s rv d : Fin 𝕌) (h : s ≠ d) : Cmd 0 𝕌 :=
-  .cond rv (streamTo Rules.neg s d h) (streamTo Rules.copy s d h)
+  .cond rv (streamTo FixedMulRules.neg s d h) (streamTo Rules.copy s d h)
 
 theorem runs_magTo {s rv d : Fin 𝕌} (h : s ≠ d) {x : List Bool} (hx : x ≠ []) (τ : Fin 𝕌 → WTape)
     (hs : τ s = reg x) (hr : τ rv = reg x.reverse) (hd : τ d = emp) :
     Runs (magTo s rv d h) τ (· = Function.update τ d (reg (FixedMul.mag x))) (3 * x.length + 20) := by
   by_cases hl : x.getLastD false = true
-  · have r := runs_streamTo Rules.neg h τ hs hd (Rules.output_neg x _)
-    have t1 := time_le Rules.neg x (fun j => j.elim0) 0 (fun j => j.elim0)
-    have hB : Rules.neg.B = 1 := rfl
+  · have r := runs_streamTo FixedMulRules.neg h τ hs hd (FixedMulRules.output_neg x _)
+    have t1 := time_le FixedMulRules.neg x (fun j => j.elim0) 0 (fun j => j.elim0)
+    have hB : FixedMulRules.neg.B = 1 := rfl
     rw [show FixedMul.mag x = negWord x by unfold FixedMul.mag; rw [hl]; rfl]
     refine (Runs.cond_true (by rw [hr]; exact (startsOne_reverse hx).2 hl) r).le ?_
     rw [TwosComplement.negWord_length]; omega
@@ -196,17 +196,17 @@ theorem runs_fieldOut {p w : ℕ} {z : List Bool} (τ : Fin 𝕌 → WTape) (hQ 
 
 /-- Copy `kR` to `zO`, negated when the reversed operands on `lR`, `lI` start differently. -/
 noncomputable def signOut : Cmd 0 𝕌 :=
-  .cond lR (.cond lI (streamTo Rules.copy kR zO (by decide)) (streamTo Rules.neg kR zO (by decide)))
-    (.cond lI (streamTo Rules.neg kR zO (by decide)) (streamTo Rules.copy kR zO (by decide)))
+  .cond lR (.cond lI (streamTo Rules.copy kR zO (by decide)) (streamTo FixedMulRules.neg kR zO (by decide)))
+    (.cond lI (streamTo FixedMulRules.neg kR zO (by decide)) (streamTo Rules.copy kR zO (by decide)))
 
 theorem runs_signOut {x y F : List Bool} (hx : x ≠ []) (hy : y ≠ []) (τ : Fin 𝕌 → WTape)
     (hX : τ lR = reg x.reverse) (hY : τ lI = reg y.reverse) (hF : τ kR = reg F) (hO : τ zO = emp) :
     Runs signOut τ (· = Function.update τ zO
       (reg (if x.getLastD false = y.getLastD false then F else negWord F))) (3 * F.length + 30) := by
   have rc := runs_streamTo Rules.copy (show kR ≠ zO by decide) τ hF hO (Rules.output_copy F _)
-  have rn := runs_streamTo Rules.neg (show kR ≠ zO by decide) τ hF hO (Rules.output_neg F _)
-  have t1 := time_le Rules.neg F (fun j => j.elim0) 0 (fun j => j.elim0)
-  have hB : Rules.neg.B = 1 := rfl
+  have rn := runs_streamTo FixedMulRules.neg (show kR ≠ zO by decide) τ hF hO (FixedMulRules.output_neg F _)
+  have t1 := time_le FixedMulRules.neg F (fun j => j.elim0) 0 (fun j => j.elim0)
+  have hB : FixedMulRules.neg.B = 1 := rfl
   rw [time_copy] at rc
   rw [TwosComplement.negWord_length] at rn
   have sx := startsOne_reverse hx; have sy := startsOne_reverse hy
