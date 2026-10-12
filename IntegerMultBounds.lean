@@ -2769,3 +2769,4 @@ import IntegerMultBounds.Schoenhage.SigmaRows
 import IntegerMultBounds.Schoenhage.SigmaRowsTape
 import IntegerMultBounds.Schoenhage.TwistBank
 import IntegerMultBounds.Schoenhage.SigmaTableTape
+import IntegerMultBounds.Schoenhage.SigmaConstsTape
