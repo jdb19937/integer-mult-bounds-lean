@@ -102,8 +102,8 @@ theorem eDec_eWords (wt : List (List Bool)) (s t m w L : ℕ) (sW tW : List Bool
     eDec w (eWords wt s t m w L sW tW) = (wt, s, t, L, sW, tW) := by
   simp [eDec, eWords, cut_flatten_words hw wt hwt, htv]
 
-/-- The expansion axis as a driver axis program, for the global `m, p, w, W`. -/
 set_option linter.unusedSimpArgs false in
+/-- The expansion axis as a driver axis program, for the global `m, p, w, W`. -/
 def expandSpec (m p w W : ℕ) : AxisSpec EB where
   cmd := expandCmd
   X := tX
@@ -171,7 +171,7 @@ def expandSpec (m p w W : ℕ) : AxisSpec EB where
         rcases hj with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;>
           simp (config := {decide := true}) [σ3, σ2, σ1, σ0, Function.update_apply, setRegs, eRegs, eWords, emp,
             WTape.words, reg] <;>
-          first | omega | (apply clen_le_of_mem; simp [eWords])
+          omega
     · simp only [σ2, σ1, Function.update_self, WTape.words]
       simp (config := {decide := true}) only [emp, List.append_nil, clen_reverse, List.reverse_nil,
         List.nil_append, Function.update_apply, ite_false, ite_true]
