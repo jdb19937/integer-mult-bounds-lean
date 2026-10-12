@@ -20,8 +20,11 @@ chosen before quantifying over inputs.
 
 Section 5 remains open. Witnessed complete child schedules now supply both
 their upper ledger and required denominator target. Actual scalar and stopped-child
-lifecycles construct reached event steps; constructing complete schedules
-recursively and proving uniform execution/runtime remain open.
+lifecycles construct reached event steps and preserve settled frames and the
+immutable saved target. Complete schedules now execute when every child stops,
+with a summed concrete event budget; actual stopped events also carry exact
+original instruction values. Nonstopped recursive execution, whole-node tensor
+correctness and uniform execution/runtime remain open.
 Its recursive geometry math milestone is proved:
 canonical axis coverage, fitting descendant intervals, unique exhaustive child
 calls, the original rank-sum count and the exact manuscript stop rule are
