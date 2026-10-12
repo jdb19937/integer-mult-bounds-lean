@@ -6145,6 +6145,9 @@ Transform, fixed-point, Kronecker and Gaussian resampling mathematics used by th
   `2 (d - 1)` interchanges in all, and computes the flat pass; its cost is at
   most the axis records' bounds plus `3 + 2 (Ks + 3)` per axis for a bound
   `Ks` on one interchange record (`sScript_spec`).
+- `Resampling/SwapCost.lean`: one swap record of the tensor driver costs at
+  most a constant times the array length times the larger field width to the
+  power `τ` (`swapCost_le`), from the interchange's uniform budget.
 - `Resampling/LineMaps.lean`: the axis records as line maps on entries
   (two `w`-bit words, most significant bit first). The expansion record maps
   every line of `t` entries by `lineA`: the first `s` entries as words, the
