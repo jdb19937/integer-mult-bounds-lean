@@ -2,12 +2,13 @@ module
 
 public import IntegerMultBounds.Schoenhage.LayoutMoves
 public import IntegerMultBounds.Machine.RadixDigitMoveBlockRows
+public import IntegerMultBounds.Schoenhage.ChunkSwapRecords
 
 /-! The layout moves of §6 on a record array. An array is stored in a name
 order when its physical address bits, most significant first, hold the
 logical bits `ps` (`stored`): the record at physical address `y` is the
 logical record at `addrOf ps y`. A single-bit move (`moveOp`, the record-level
-form of `RadixDigitMoveBlockRows.unmove`) and a chunk exchange (`swapOp`, the
+form of `Machine.RadixDigitMoveBlockRows.unmove`) and a chunk exchange (`swapOp`, the
 record-level form of `ChunkSwapRecords.swapRecs`) turn an array stored in one
 order into the same array stored in the reordered order (`moveOp_stored`,
 `swapOp_stored`). Running the prefix moves and the chunk exchanges of the
@@ -521,5 +522,167 @@ theorem layoutOps_paper {ts : List ℕ} {ℓ K : ℕ} (hL : LayoutOK r ts ℓ K)
   rfl
 
 end Paper
+
+/-! ### The machines' payload maps and the inverse moves -/
+
+section Payload
+
+variable {γ : Type*}
+
+/-- An address map acting above a suffix of size `E`. -/
+def onTop (E : ℕ) (f : ℕ → ℕ) (w : ℕ → γ) : ℕ → γ := fun y => w (f (y / E) * E + y % E)
+
+/-- The single-bit move above the suffix: `(p, j, x) ↦ (p, x, j)`, `x` of width `m`. -/
+def moveTop (m t : ℕ) : ℕ := (t / 2 ^ m / 2 * 2 ^ m + t % 2 ^ m) * 2 + t / 2 ^ m % 2
+
+/-- Its inverse: `(p, x, j) ↦ (p, j, x)`. -/
+def backTop (m t : ℕ) : ℕ := (t / 2 / 2 ^ m * 2 + t % 2) * 2 ^ m + t / 2 % 2 ^ m
+
+/-- The chunk exchange above the suffix: `(p, c₁, g, c₂) ↦ (p, c₂, g, c₁)`. -/
+def swapTop (K g t : ℕ) : ℕ :=
+  ((t / 2 ^ K / 2 ^ g / 2 ^ K * 2 ^ K + t % 2 ^ K) * 2 ^ g + t / 2 ^ K % 2 ^ g) * 2 ^ K +
+    t / 2 ^ K / 2 ^ g % 2 ^ K
+
+theorem moveOp_eq_onTop (m ρ : ℕ) (w : ℕ → γ) : moveOp m ρ w = onTop (2 ^ ρ) (moveTop m) w := rfl
+
+theorem swapOp_eq_onTop (K g ρ : ℕ) (w : ℕ → γ) : swapOp K g ρ w = onTop (2 ^ ρ) (swapTop K g) w := rfl
+
+theorem div_shift' {a e E : ℕ} (he : e < E) : (a * E + e) / E = a := by
+  rw [Nat.add_comm, Nat.add_mul_div_right _ _ (by omega), Nat.div_eq_of_lt he, zero_add]
+
+theorem mod_shift' {a e E : ℕ} (he : e < E) : (a * E + e) % E = e := by
+  rw [Nat.add_comm, Nat.add_mul_mod_self_right, Nat.mod_eq_of_lt he]
+
+theorem onTop_comp {E : ℕ} (hE : 0 < E) (f g : ℕ → ℕ) (w : ℕ → γ) :
+    onTop E f (onTop E g w) = onTop E (fun t => g (f t)) w := by
+  funext y
+  have he : y % E < E := Nat.mod_lt _ hE
+  simp only [onTop]
+  rw [div_shift' he, mod_shift' he]
+
+theorem onTop_id {E : ℕ} (w : ℕ → γ) : onTop E id w = w := by
+  funext y; simp only [onTop, id, Nat.div_add_mod']
+
+theorem backTop_moveTop (m t : ℕ) : backTop m (moveTop m t) = t := by
+  have hx : t % 2 ^ m < 2 ^ m := Nat.mod_lt _ (by positivity)
+  have hj : t / 2 ^ m % 2 < 2 := Nat.mod_lt _ (by norm_num)
+  unfold backTop moveTop
+  simp only [div_shift' hj, mod_shift' hj, div_shift' hx, mod_shift' hx, Nat.div_add_mod']
+
+theorem moveTop_backTop (m t : ℕ) : moveTop m (backTop m t) = t := by
+  have hx : t / 2 % 2 ^ m < 2 ^ m := Nat.mod_lt _ (by positivity)
+  have hj : t % 2 < 2 := Nat.mod_lt _ (by norm_num)
+  unfold backTop moveTop
+  simp only [div_shift' hj, mod_shift' hj, div_shift' hx, mod_shift' hx, Nat.div_add_mod']
+
+theorem swapTop_swapTop (K g t : ℕ) : swapTop K g (swapTop K g t) = t := by
+  have h1 : t % 2 ^ K < 2 ^ K := Nat.mod_lt _ (by positivity)
+  have h2 : t / 2 ^ K % 2 ^ g < 2 ^ g := Nat.mod_lt _ (by positivity)
+  have h3 : t / 2 ^ K / 2 ^ g % 2 ^ K < 2 ^ K := Nat.mod_lt _ (by positivity)
+  have h4 : t / 2 ^ K / 2 ^ g / 2 ^ K * 2 ^ K + t % 2 ^ K < 2 ^ K * (t / 2 ^ K / 2 ^ g / 2 ^ K + 1) := by
+    nlinarith
+  unfold swapTop
+  simp only [div_shift' h1, mod_shift' h1, div_shift' h2, mod_shift' h2, div_shift' h3, mod_shift' h3]
+  simp only [Nat.div_add_mod']
+
+/-- The inverse single-bit move: physical fields `(p, x, j, e)` read the old `(p, j, x, e)`. -/
+def moveBackOp (m ρ : ℕ) (w : ℕ → γ) : ℕ → γ := onTop (2 ^ ρ) (backTop m) w
+
+theorem moveBackOp_moveOp (m ρ : ℕ) (w : ℕ → γ) : moveBackOp m ρ (moveOp m ρ w) = w := by
+  rw [moveBackOp, moveOp_eq_onTop, onTop_comp (by positivity)]
+  simp only [moveTop_backTop]
+  exact onTop_id w
+
+theorem swapOp_swapOp (K g ρ : ℕ) (w : ℕ → γ) : swapOp K g ρ (swapOp K g ρ w) = w := by
+  rw [swapOp_eq_onTop, swapOp_eq_onTop, onTop_comp (by positivity)]
+  simp only [swapTop_swapTop]
+  exact onTop_id w
+
+/-- The inverse moves, in reverse order. -/
+def runMovesBack : List (ℕ × ℕ) → (ℕ → γ) → ℕ → γ
+  | [], w => w
+  | q :: qs, w => moveBackOp q.1 q.2 (runMovesBack qs w)
+
+theorem runMovesBack_runMoves : ∀ (qs : List (ℕ × ℕ)) (w : ℕ → γ), runMovesBack qs (runMoves qs w) = w
+  | [], _ => rfl
+  | q :: qs, w => by
+    simp only [runMoves, runMovesBack, runMovesBack_runMoves qs, moveBackOp_moveOp]
+
+/-- The exchanges in reverse order. -/
+def runSwapsBack : List (ℕ × ℕ × ℕ) → (ℕ → γ) → ℕ → γ
+  | [], w => w
+  | q :: qs, w => swapOp q.1 q.2.1 q.2.2 (runSwapsBack qs w)
+
+theorem runSwapsBack_runSwaps : ∀ (qs : List (ℕ × ℕ × ℕ)) (w : ℕ → γ), runSwapsBack qs (runSwaps qs w) = w
+  | [], _ => rfl
+  | q :: qs, w => by
+    simp only [runSwaps, runSwapsBack, runSwapsBack_runSwaps qs, swapOp_swapOp]
+
+/-- An address map above a suffix of `E` records acts on their flattened symbols as on the records,
+with the suffix `E · R` (`R` symbols per record). -/
+theorem onTop_flatten {E R : ℕ} (hR : 0 < R) (f : ℕ → ℕ) (F : ℕ → ℕ → γ) :
+    onTop (E * R) f (fun i => F (i / R) (i % R)) = fun i => onTop E f (fun k => F k (i % R)) (i / R) := by
+  funext i
+  simp only [onTop]
+  have hq : (f (i / (E * R)) * (E * R) + i % (E * R)) / R = f (i / R / E) * E + i / R % E := by
+    rw [show f (i / (E * R)) * (E * R) = f (i / (E * R)) * E * R by ring, Nat.add_comm,
+      Nat.add_mul_div_right _ _ hR, Nat.mod_mul_left_div_self, Nat.div_div_eq_div_mul, Nat.mul_comm R E]
+    ring
+  have hr : (f (i / (E * R)) * (E * R) + i % (E * R)) % R = i % R := by
+    rw [show f (i / (E * R)) * (E * R) = f (i / (E * R)) * E * R by ring, Nat.add_comm,
+      Nat.add_mul_mod_self_right, Nat.mod_mul_left_mod]
+  rw [hq, hr]
+
+end Payload
+
+/-! ### The machines -/
+
+section Machines
+
+open Machine.RecursiveInterchangeRows (pack pack_val)
+
+/-- The radix-2 digit move's inverse direction (`Machine.RadixDigitMoveBlockRows.unmove` with `Q = 2`,
+`S = 2^m`) is the single-bit move above a suffix of size `E`. -/
+theorem unmove_eq_onTop {a P m E : ℕ} (g : ℕ → Fin (a + 4)) (z : Fin (P * 2 * (2 ^ m * E))) :
+    Machine.RadixDigitMoveBlockRows.unmove (P := P) (Q := 2) (S := 2 ^ m) (E := E) (fun i => g i.val) z =
+      onTop E (moveTop m) g z.val := by
+  simp only [Machine.RadixDigitMoveBlockRows.unmove, pack_val, onTop, moveTop, finProdFinEquiv, Equiv.coe_fn_symm_mk,
+    Fin.coe_divNat, Fin.coe_modNat]
+  congr 1
+  rw [Nat.mod_mul_left_div_self, Nat.mod_mul_left_mod, Nat.div_div_eq_div_mul z.val E (2 ^ m),
+    Nat.mul_comm E (2 ^ m)]
+
+/-- The §4 interchange payload (`SwapPrim.swapList`) with two `K`-bit fields separated by `g` bits
+is the chunk exchange above a suffix of size `B`. -/
+theorem swapList_eq_onTop (P K g B : ℕ) (xs : List Bool) :
+    SwapPrim.swapList P (2 ^ K) (2 ^ g) (2 ^ K) B xs =
+      List.ofFn fun z : Fin (Machine.BinaryAdjacentWidthInterchange.volume P (2 ^ K) (2 ^ g) (2 ^ K) B) =>
+        xs.getD (onTop B (swapTop K g) id z.val) false := by
+  unfold SwapPrim.swapList
+  congr 1
+  funext z
+  congr 1
+  have hzv := congrArg Fin.val (Machine.BinaryAdjacentWidthInterchange.index_coordinates z)
+  simp only [Machine.BinaryAdjacentWidthInterchange.index, pack_val] at hzv
+  have h1 := (Machine.BinaryAdjacentWidthInterchange.coordinates z).2.1.isLt
+  have h2 := (Machine.BinaryAdjacentWidthInterchange.coordinates z).2.2.1.isLt
+  have h3 := (Machine.BinaryAdjacentWidthInterchange.coordinates z).2.2.2.1.isLt
+  have h4 := (Machine.BinaryAdjacentWidthInterchange.coordinates z).2.2.2.2.isLt
+  simp only [Machine.BinaryAdjacentWidthInterchange.transpose, Machine.BinaryAdjacentWidthInterchange.index, pack_val, id,
+    onTop, swapTop]
+  rw [← hzv]
+  simp only [div_shift' h4, mod_shift' h4, div_shift' h3, mod_shift' h3, div_shift' h2, mod_shift' h2,
+    div_shift' h1, mod_shift' h1]
+
+end Machines
+
+/-- `layoutOps_undo`: the exchanges in reverse order and then the inverse moves in reverse order
+take the array stored in the paper's layout back to natural order. -/
+theorem layoutOps_undo {r : ℕ} {β : Type*} {ts : List ℕ} {ℓ K : ℕ} (hL : LayoutOK r ts ℓ K) (z : ℕ → β) :
+    runMovesBack (prefixParams 0 (prefixSlots ts ℓ K) (initOrder ts))
+        (runSwapsBack ((selectSwaps (axisToChunk ((ℓ - 1) / K) ts.length) 0).map (exParams K))
+          (fun y => z ((paperPerm hL).logi y))) =
+      fun y => z (y % 2 ^ Nat.log 2 ts.prod) := by
+  rw [← layoutOps_paper hL z, runSwapsBack_runSwaps, runMovesBack_runMoves]
 
 end IntegerMultBounds.Schoenhage.LayoutArray
