@@ -701,6 +701,7 @@ import IntegerMultBounds.Resampling.FlatTensor
 import IntegerMultBounds.Resampling.ScriptSem
 import IntegerMultBounds.Resampling.Script
 import IntegerMultBounds.Resampling.LineMaps
+import IntegerMultBounds.Resampling.TensorTape
 import IntegerMultBounds.Resampling.Milestones
 import IntegerMultBounds.Resampling.PiApprox
 import IntegerMultBounds.Resampling.ExpApprox

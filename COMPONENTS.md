@@ -6147,6 +6147,10 @@ Transform, fixed-point, Kronecker and Gaussian resampling mathematics used by th
   `Ã` window sums, floored, paired back (`expandOut_eq`); the compression
   record maps every line by `lineB`: `B̃₀` on its words, paired into `s`
   entries, then `t - s` zero entries (`compressOut_eq`).
+- `Resampling/TensorTape.lean`: the driver's result on entries. With one
+  expansion record per axis (`eAxis`) the tensor script is valid and turns
+  the flat array of entries into the flat pass of the `lineA` maps
+  (`expand_result`).
 - `Resampling/Milestones.lean`: the §7 milestone theorems of
   `plan/07-gaussian-resampling.md` that package proved results:
   `FixedMul.signed_word_ops`, `Schoenhage.wordRecordLayer_hoare`,
