@@ -497,22 +497,22 @@ theorem runs_zextLoop : ∀ (ps : List (List Bool)) (σ : Fin 𝕌 → WTape) (L
       simp [hB, WTape.cur, clen_cons] at t1 ⊢; omega
 
 /-- Reverse every word of `xE` and append it to `zO`'s word. -/
-noncomputable def joinBody : Cmd 0 𝕌 :=
+noncomputable def prJoinBody : Cmd 0 𝕌 :=
   .seq (revw xE (ι tX) (by decide)) <| .seq (rewind (ι tX)) <|
   .seq (op0 Rules.copy true (ι tX) zO (by decide)) (clear (ι tX))
 
-noncomputable def joinLoop : Cmd 0 𝕌 := .loop xE joinBody
+noncomputable def prJoinLoop : Cmd 0 𝕌 := .loop xE prJoinBody
 
-theorem runs_joinLoop : ∀ (ps : List (List Bool)) (σ : Fin 𝕌 → WTape) (Le : List (List Bool)) (acc : List Bool),
+theorem runs_prJoinLoop : ∀ (ps : List (List Bool)) (σ : Fin 𝕌 → WTape) (Le : List (List Bool)) (acc : List Bool),
     σ xE = ⟨Le, ps⟩ → σ zO = ⟨[acc], []⟩ → σ (ι tX) = emp →
-    Runs joinLoop σ (· = Function.update (Function.update σ xE ⟨ps.reverse ++ Le, []⟩) zO
+    Runs prJoinLoop σ (· = Function.update (Function.update σ xE ⟨ps.reverse ++ Le, []⟩) zO
       ⟨[acc ++ (ps.map List.reverse).flatten], []⟩) (ps.length * 40 + 10 * clen ps)
   | [], σ, Le, acc, hE, hO, _ => by
     refine (Runs.loop_done (by simp [hE]) rfl).mono (fun τ h => ?_) (by simp)
     subst h
     funext y; simp only [Function.update_apply]; split_ifs <;> (try subst_vars) <;> simp_all
   | x :: ps, σ, Le, acc, hE, hO, hX => by
-    have s1 : Runs joinBody σ (· = Function.update (Function.update σ xE ⟨x :: Le, ps⟩) zO
+    have s1 : Runs prJoinBody σ (· = Function.update (Function.update σ xE ⟨x :: Le, ps⟩) zO
         ⟨[acc ++ x.reverse], []⟩) (10 * x.length + 30) := by
       have r1 := runs_revw (a := 0) (show xE ≠ ι tX by decide) σ (L := Le) (R := ps) (w := x) hE
         (by rw [hX]; rfl)
@@ -531,7 +531,7 @@ theorem runs_joinLoop : ∀ (ps : List (List Bool)) (σ : Fin 𝕌 → WTape) (L
       · tsimp [σ₃, σ₂, σ₁, hX, emp, WTape.put, WTape.next, WTape.cur, WTape.words, clen, time_copy]
         omega
     set σ₁ := Function.update (Function.update σ xE ⟨x :: Le, ps⟩) zO ⟨[acc ++ x.reverse], []⟩
-    have ih := runs_joinLoop ps σ₁ (x :: Le) (acc ++ x.reverse) (by tsimp [σ₁]) (by tsimp [σ₁])
+    have ih := runs_prJoinLoop ps σ₁ (x :: Le) (acc ++ x.reverse) (by tsimp [σ₁]) (by tsimp [σ₁])
       (by tsimp [σ₁, hX])
     refine (Runs.loop_step (by simp [hE]) (s1.mono (fun τ h => by rw [h]; exact ih) le_rfl)).mono
       (fun τ h => ?_) ?_

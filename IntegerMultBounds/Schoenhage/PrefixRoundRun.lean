@@ -34,7 +34,7 @@ noncomputable def phF : Cmd 0 𝕌 := .seq (clear xE) <| .seq (rewind zO) <| .se
 /-- The exact butterflies of a prefix slot, then one truncation. -/
 noncomputable def prefixHad : Cmd 0 𝕌 :=
   .seq phA <| .seq offLoop <| .seq phB <| .seq passesLoop <| .seq phC <| .seq zextLoop <| .seq phD <|
-  .seq constK <| .seq (digitLoop xE own_xE (by decide)) <| .seq phE <| .seq joinLoop phF
+  .seq constK <| .seq (digitLoop xE own_xE (by decide)) <| .seq phE <| .seq prJoinLoop phF
 
 /-- A bound on the prefix round for `N` words of width `w` and `D` passes. -/
 def prefixCost (w D N : ℕ) : ℕ :=
@@ -201,7 +201,7 @@ theorem runs_prefixHad {r w D s c : ℕ} (hr : 1 ≤ r) (hw : 2 ≤ w) (hc : 1 �
       tsimp [WTape.words, clen_reverse, h1, h2, clen_cons, clen_nil]; nlinarith
   set σ₁₀ := Function.update (Function.update (Function.update σ₈ (ι tD) emp) xE ⟨[], outs⟩) zO ⟨[[]], []⟩
   -- 11. join
-  have s11 := runs_joinLoop outs σ₁₀ [] [] (by tsimp [σ₁₀]) (by tsimp [σ₁₀]) (by tsimp [σ₁₀, σ₈, σ₇, hz])
+  have s11 := runs_prJoinLoop outs σ₁₀ [] [] (by tsimp [σ₁₀]) (by tsimp [σ₁₀]) (by tsimp [σ₁₀, σ₈, σ₇, hz])
   set out := (outs.map List.reverse).flatten
   have hboundG : Bounded (2 ^ (Wd - 1) - 1) G := by
     have := bounded_bflysRecs ((List.range D).map (s + ·)) fs hb
