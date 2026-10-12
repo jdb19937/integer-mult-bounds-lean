@@ -2339,6 +2339,7 @@ import IntegerMultBounds.Schoenhage.RecordWords
 import IntegerMultBounds.Schoenhage.WordBridge
 import IntegerMultBounds.Schoenhage.RecordBridge
 import IntegerMultBounds.Schoenhage.LineFit
+import IntegerMultBounds.Schoenhage.ProgPrim
 import IntegerMultBounds.Machine.GaussianLineFast
 import IntegerMultBounds.Machine.NeumannLoopFast
 import IntegerMultBounds.Resampling.B0TapeFast

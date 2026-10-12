@@ -6464,6 +6464,10 @@ Schönhage–Strassen multiplication, the fast multiplier used for the packed pr
   (`fit_take`, `fit_pad`), as a five-tape program on raw arrays
   (`refitRaw_hoare`); this drops and restores the padding of the tensor
   interface's padded box.
+- `Schoenhage/ProgPrim.lean`: any literal program as a word-program
+  primitive: its finite-state machine has the same runs (`frun_ofProgram`),
+  so its contract on encoded banks carries over (`hoare_ofProgram`,
+  `Prim.ofProgram`).
 - `Schoenhage/RingMath.lean`, `RingWords.lean`, `RingDigit.lean`: evaluation
   at `X = 2^W` turns negacyclic products into products modulo `2^(W r) + 1`
   (`ev_ncMul`); offset digits pack signed coefficients and recover them
