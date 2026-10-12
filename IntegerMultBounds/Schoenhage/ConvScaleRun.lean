@@ -271,7 +271,7 @@ theorem ι_ne_high {x : Fin 𝕌} (hx : 64 ≤ x.val) (i : Fin 𝕋) : ι i ≠ 
   change i.val < 64 at this
   omega
 
-theorem clean_update {τ : Fin 𝕌 → WTape} (hc : Clean τ) {x : Fin 𝕌} (hx : 64 ≤ x.val) (v : WTape) :
+theorem clean_update_outside_workspace {τ : Fin 𝕌 → WTape} (hc : Clean τ) {x : Fin 𝕌} (hx : 64 ≤ x.val) (v : WTape) :
     Clean (Function.update τ x v) := by
   funext i
   simp only [Function.comp_apply, Function.update_of_ne (ι_ne_high hx i)]
@@ -304,14 +304,14 @@ theorem runs_convScale {p d l K w : ℕ} {ts : List ℕ} (hp : 1 ≤ p) (hd : 1 
   set τ₁ := Function.update (Function.update (Function.update τ iP (reg (ones p))) iL (reg (ones l))) iW
     (reg (ones w))
   have hc₁ : Clean τ₁ :=
-    clean_update (clean_update (clean_update hc (by decide) _) (by decide) _) (by decide) _
+    clean_update_outside_workspace (clean_update_outside_workspace (clean_update_outside_workspace hc (by decide) _) (by decide) _) (by decide) _
   have s2 := runs_kOf (l := l) (ts := ts) hp hd hK hw τ₁ hc₁ (by tsimp [τ₁, hH]) (by tsimp [τ₁, hk])
   rw [hkz] at s2
   set τ₂ := Function.update τ₁ kI (reg (ones k))
   have s3 := runs_scaleArr (x := x) (k := k) hw τ₂ (by tsimp [τ₂, τ₁, hF]) (by tsimp [τ₂, τ₁]) (by tsimp [τ₂])
     (by tsimp [τ₂, τ₁, hA]) (by tsimp [τ₂, τ₁, hO])
   set τ₃ := Function.update τ₂ zO (reg ((cut w x).flatMap (· ++ List.replicate k false)))
-  have hc₃ : Clean τ₃ := clean_update (clean_update hc₁ (by decide) _) (by decide) _
+  have hc₃ : Clean τ₃ := clean_update_outside_workspace (clean_update_outside_workspace hc₁ (by decide) _) (by decide) _
   have s4 := runs_gammaOut (w := w) (k := k) τ₃ hc₃ (by tsimp [τ₃, τ₂, τ₁]) (by tsimp [τ₃, τ₂])
     (by tsimp [τ₃, τ₂, τ₁, hG])
   set τ₄ := Function.update τ₃ zG (reg (gamma (w + k)))
