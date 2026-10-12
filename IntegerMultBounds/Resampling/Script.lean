@@ -69,6 +69,50 @@ theorem swapRec_spec (P h d B : ℕ) (A : List Bool) (hP : 0 < P) (hB : 0 < B) (
   · simp only [swapF, SwapPrim.swapped, hv, hw]
     simp
 
+/-- The headers of one interchange: prefix `P`, gap `G`, block `B`, field widths `h` and `d`. -/
+def swapHdrsG (P G h d B : ℕ) : List (List Bool) := [bin P, bin G, bin B, bin h, bin d]
+
+theorem swapRecG_spec (P G h d B : ℕ) (A : List Bool) (hP : 0 < P) (hG : 0 < G) (hB : 0 < B) (hhd : h ≤ d + 1) (hdh : d ≤ h + 1)
+    (hl : A.length = P * 2 ^ h * G * 2 ^ d * B) :
+    SwapPrim.Pre (swIn (swapHdrsG P G h d B) A) ∧
+      swapF (swapHdrsG P G h d B) A = SwapPrim.swapList P (2 ^ h) G (2 ^ d) B A := by
+  have hw : ∀ i : Fin 6, SwapPrim.words (swIn (swapHdrsG P G h d B) A) i =
+      if i.val < 5 then (swapHdrsG P G h d B).getD i.val [] else A := by
+    intro i
+    simp only [SwapPrim.words, swIn, SwapPrim.slot_val]
+    have := i.isLt
+    by_cases h5 : i.val < 5
+    · simp [h5, reg]
+    · have : i.val = 5 := by omega
+      simp [this, reg]
+  have hv : ∀ i : Fin 5, SwapPrim.vals (swIn (swapHdrsG P G h d B) A) i = ![P, G, B, h, d] i := by
+    intro i
+    simp only [SwapPrim.vals, SwapPrim.hdr, SwapPrim.focus, hw, Fin.val_castSucc, i.isLt, ite_true]
+    fin_cases i <;> simp [swapHdrsG, value_bin]
+  refine ⟨⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩, ?_⟩
+  · intro x hx
+    simp only [swIn]; rw [ite_eq_right_of_eq_false _ _ (eq_false (by omega)),
+      ite_eq_right_of_eq_false _ _ (eq_false (by omega))]
+  · intro i
+    rw [hw i]; simp only [swIn, SwapPrim.slot_val]
+    have := i.isLt
+    by_cases h5 : i.val < 5
+    · simp [h5, reg]
+    · have : i.val = 5 := by omega
+      simp [this, reg]
+  · intro i
+    simp only [SwapPrim.hdr, SwapPrim.focus, hw, Fin.val_castSucc, i.isLt, ite_true]
+    fin_cases i <;> simp [swapHdrsG, canonical_bin]
+  · rw [hv 0]; simpa using hP
+  · rw [hv 1]; simpa using hG
+  · rw [hv 2]; simpa using hB
+  · rw [hv 3, hv 4]; simpa using hhd
+  · rw [hv 3, hv 4]; simpa using hdh
+  · rw [hw 5, hv 0, hv 1, hv 2, hv 3, hv 4]
+    simp [BinaryAdjacentWidthInterchange.volume, hl]
+  · simp only [swapF, SwapPrim.swapped, hv, hw]
+    simp
+
 theorem result_append (S : AxisSpec E) : ∀ (r₁ r₂ : List Rec) (A : List Bool),
     result S (r₁ ++ r₂) A = result S r₂ (result S r₁ A)
   | [], _, _ => rfl
