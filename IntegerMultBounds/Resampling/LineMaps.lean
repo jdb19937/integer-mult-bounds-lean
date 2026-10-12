@@ -185,4 +185,84 @@ theorem expandOut_eq (es wt : List (List Bool)) (s t m p w W L : ℕ) (hw : 1 �
   simp only [lineA]
   rw [flatten_pairUp t _ (by rw [List.length_map]; exact hOW ℓ)]
 
+/-! ### The compression line map -/
+
+open B0Words (vsel oneStep)
+open Resampling.NeumannWords (iter nextWords)
+
+/-- `B̃₀` on the words of one line of `t` entries: `s` complex outputs as `2 s` words. -/
+noncomputable def b0Word (wtE wtH wtD zeros : List (List Bool)) (s t m p w W : ℕ) (ws : List (List Bool)) : List (List Bool) :=
+  oneStep wtD zeros s p w (iter wtE (oneStep wtH zeros s p w (vsel ws s t)) s m p w W p)
+
+/-- One line of `t` entries through the compression record: `B̃₀`, paired into `s` entries, then
+`t - s` zero entries. -/
+noncomputable def lineB (wtE wtH wtD zeros : List (List Bool)) (s t m p w W : ℕ) (line : List (List Bool)) : List (List Bool) :=
+  pairUp (b0Word wtE wtH wtD zeros s t m p w W (line.flatMap (entryWords w))) ++
+    List.replicate (t - s) (List.replicate (2 * w) false)
+
+theorem flatten_replicate' (k n : ℕ) (b : Bool) :
+    (List.replicate k (List.replicate n b)).flatten = List.replicate (k * n) b := by
+  induction k with
+  | zero => simp
+  | succ k ih => rw [List.replicate_succ, List.flatten_cons, ih, List.replicate_append_replicate, Nat.succ_mul, add_comm]
+
+theorem b0Outs_flatMap (arr wtE wtH wtD zeros : List (List Bool)) (s t m p w W : ℕ) : ∀ L : ℕ,
+    B0Line.b0Outs arr wtE wtH wtD zeros s t m p w W L =
+      (List.range L).flatMap fun ℓ => B0Line.b0Out arr wtE wtH wtD zeros s t m p w W ℓ
+  | 0 => rfl
+  | L + 1 => by
+    rw [B0Line.b0Outs, b0Outs_flatMap arr wtE wtH wtD zeros s t m p w W L, List.range_succ, List.flatMap_append]
+    simp
+
+theorem compressOut_eq (es wtE wtH wtD zeros : List (List Bool)) (s t m p w W L : ℕ) (hw : 1 ≤ w) (ht : 0 < t)
+    (hs : 0 < s) (hst : s ≤ t) (hz : zeros.length = 2 * s) (hzw : ∀ x ∈ zeros, x.length = w)
+    (hes : ∀ e ∈ es, e.length = 2 * w) (hl : es.length = L * t) :
+    AxisStep.compressOut es.flatten wtE wtH wtD zeros s t m p w W L =
+      (mapBlocks t (lineB wtE wtH wtD zeros s t m p w W) es).flatten := by
+  have hblk : ∀ b, b < L → (block t b es).length = t := fun b hb => length_block t b es L hl hb
+  have hblkw : ∀ b e, e ∈ block t b es → e.length = 2 * w := fun b e he =>
+    hes e (List.mem_of_mem_drop (List.mem_of_mem_take he))
+  set fW : ℕ → List (List Bool) := fun b => (block t b es).flatMap (entryWords w)
+  have hfW : ∀ b, b < L → (fW b).length = 2 * t := fun b hb => by
+    simp only [fW, List.length_flatMap, entryWords, List.length_cons, List.length_nil]
+    simp [hblk b hb]; ring
+  have harr : AxisStep.compressArr es.flatten w = (List.range L).flatMap fW := by
+    rw [AxisStep.compressArr, cut_entries w hw es hes]
+    conv_lhs => rw [← blocks_flatten t L es [] hl]
+    simp [fW, List.flatMap_assoc]
+  have hline : ∀ ℓ, ℓ < L → line ((List.range L).flatMap fW) t ℓ = fW ℓ := fun ℓ hℓ => by
+    rw [show line ((List.range L).flatMap fW) t ℓ = block (2 * t) ℓ ((List.range L).flatMap fW) by
+      simp only [line, block]; rw [mul_comm ℓ]]
+    exact block_flatMap (2 * t) L fW hfW ℓ hℓ []
+  set gB : ℕ → List (List Bool) := fun ℓ => b0Word wtE wtH wtD zeros s t m p w W (fW ℓ)
+  have hgl : ∀ ℓ, (gB ℓ).length = 2 * s := fun ℓ => by
+    simp only [gB, b0Word, B0Words.oneStep, Resampling.NeumannWords.nextWords_length, hz]
+  have hgw : ∀ ℓ, ∀ x ∈ gB ℓ, x.length = w := fun ℓ => by
+    simp only [gB, b0Word, B0Words.oneStep]; exact NeumannStep.nextWords_shape zeros _ w hzw
+  have hb0 : B0Line.b0Outs ((List.range L).flatMap fW) wtE wtH wtD zeros s t m p w W L =
+      (List.range L).flatMap gB := by
+    rw [b0Outs_flatMap]
+    exact flatMap_congr' _ fun ℓ hℓ => by
+      simp only [B0Line.b0Out, gB, b0Word]; rw [hline ℓ (List.mem_range.mp hℓ)]
+  have hpw : ∀ ℓ, ((pairUp (gB ℓ)).flatten).length = 2 * s * w := fun ℓ => by
+    rw [length_flatten_uniform (2 * w) _ (length_pairUp_mem w _ (hgw ℓ)), length_pairUp s _ (hgl ℓ)]; ring
+  have hmsb : msbArray ((List.range L).flatMap gB) = ((List.range L).map fun ℓ => (pairUp (gB ℓ)).flatten).flatten := by
+    rw [msbArray, List.map_flatMap, flatten_flatMap']
+    congr 1
+    exact List.map_congr_left fun ℓ _ => (flatten_pairUp s _ (hgl ℓ)).symm
+  have hsw : 1 ≤ 2 * s * w := by nlinarith
+  unfold AxisStep.compressOut
+  rw [harr, hb0, hmsb, cut_flatten_words hsw _ (fun c hc => by
+    simp only [List.mem_map, List.mem_range] at hc; obtain ⟨ℓ, -, rfl⟩ := hc; exact hpw ℓ)]
+  rw [mapBlocks, hl, Nat.mul_div_cancel _ ht, flatten_flatMap', List.map_map]
+  congr 1
+  apply List.map_congr_left
+  intro ℓ _
+  simp only [Function.comp_apply, lineB, List.flatten_append, flatten_replicate']
+  rw [fit_pad _ _ (by rw [hpw ℓ]; nlinarith), hpw ℓ]
+  congr 2
+  rw [show 2 * t * w = 2 * s * w + (t - s) * (2 * w) by
+    rw [show t = s + (t - s) by omega]; simp only [Nat.add_sub_cancel_left]; ring]
+  omega
+
 end IntegerMultBounds.Resampling.LineMaps

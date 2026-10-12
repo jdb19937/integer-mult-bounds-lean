@@ -6144,7 +6144,9 @@ Transform, fixed-point, Kronecker and Gaussian resampling mathematics used by th
 - `Resampling/LineMaps.lean`: the axis records as line maps on entries
   (two `w`-bit words, most significant bit first). The expansion record maps
   every line of `t` entries by `lineA`: the first `s` entries as words, the
-  `Ã` window sums, floored, paired back (`expandOut_eq`).
+  `Ã` window sums, floored, paired back (`expandOut_eq`); the compression
+  record maps every line by `lineB`: `B̃₀` on its words, paired into `s`
+  entries, then `t - s` zero entries (`compressOut_eq`).
 - `Resampling/Milestones.lean`: the §7 milestone theorems of
   `plan/07-gaussian-resampling.md` that package proved results:
   `FixedMul.signed_word_ops`, `Schoenhage.wordRecordLayer_hoare`,
