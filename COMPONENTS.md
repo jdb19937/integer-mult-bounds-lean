@@ -4,6 +4,8 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 ## Machine
 
+- `Machine/CompactComplexSourceReadySiblingCompletedChildProgress.lean`: Derives the terminal child returned counter and scalar cursor from the actual complete schedule, and its completed upper ledger from the genuine terminal Reached bank. Constructs nonleaf return Progress after counted siblings using the original parent entry Path and actual parent/child witnesses. Completed target coverage and existence of recursive child execution remain explicit obligations.
+
 - `Machine/CompactComplexAlignedSiblingStoppedEventPath.lean`: Executes one complete actual stopped child event after counted siblings, from the event PC through forward basis, physical entry, classifier, oriented leaf, saved-PC pop, parent restoration and inverse basis to callNextPC in the unchanged aligned table. Retains actual forward/returned/final Reached data, associated history, clean suffix and the summed paid runtime; whole-node event induction remains open.
 - `Machine/CompactComplexSourceReadyStoppedChildTensor.lean`: Proves the genuine child tensor for the literal stopped leaf and both call orientations at each global address. Specializes it to the actual forward basis array, supplying ChildTensor from inherited width/grid and the signed guard without a result oracle.
 - `Machine/CompactComplexSourceReadySiblingStoppedChildSemantics.lean`: Derives stopped ChildTensor for the original parent's data from the actual forward-basis Reached witness after counted siblings. The computed installed result and actual returned/inverse witnesses imply the original child-instruction semantics; all guards derive from the original entry Path and current readiness, with no supplied tensor equality.

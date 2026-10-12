@@ -18,7 +18,9 @@ chosen before quantifying over inputs.
 
 ## Status
 
-Section 5 remains open. Its recursive geometry math milestone is proved:
+Section 5 remains open. Completed-child return now derives its upper ledger
+from a genuine terminal reached bank; completed target coverage and recursive
+execution remain open. Its recursive geometry math milestone is proved:
 canonical axis coverage, fitting descendant intervals, unique exhaustive child
 calls, the original rank-sum count and the exact manuscript stop rule are
 certified together. Recursive controller execution remains open.
