@@ -6726,7 +6726,9 @@ Schönhage–Strassen multiplication, the fast multiplier used for the packed pr
 - `Schoenhage/ConvProgram.lean`: the synthetic convolution as one word program
   over given transform programs, on a bank of nine data tapes and private tapes:
   slot maps for the transform and ring-product banks, what each call sees and
-  what it changes (`runs_fwdCall`, `runs_uCall`, `runs_clearData`).
+  what it changes (`runs_fwdCall`, `runs_uCall`, `runs_clearData`); the core run
+  (`runs_convCore`) and the program in the paper's format from `bank5` to `bank5`
+  (`convProg_hoare`).
 
 - `Schoenhage/PointwiseRow.lean`: at the main sizes `p = 6 lg n`, `r = 2^ℓ`
   the pointwise program's time is at most a constant times `T p` times the

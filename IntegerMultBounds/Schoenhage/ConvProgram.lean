@@ -262,4 +262,258 @@ theorem runs_clearData (j : Fin 9) (v : Fin 9 → WTape) :
     · rw [eq_dt h9, cb_dt, cb_dt, Function.update_of_ne (fun e => hx (by rw [eq_dt h9, e]))]
     · rw [cb_high _ (by omega), cb_high _ (by omega)]
 
+/-! ### The core -/
+
+/-- The compiled scaling step. -/
+noncomputable def scProg : Program 𝕌 (compile (a := 0) (by decide) convScale).1 0 :=
+  (compile (a := 0) (by decide) convScale).2
+
+/-- The scaling step's start: the header on `zH`, the opposite transform's output on `zF`. -/
+def scaleStart (hdr V : List Bool) : Fin 𝕌 → WTape :=
+  Function.update (Function.update (fun _ => emp) zH (reg hdr)) zF (reg V)
+
+/-- Forward transforms of both operands, pointwise products, the opposite transform, scaling, cleanup. -/
+noncomputable def convCore (Mf : Program t q₁ a) (Mo : Program t q₂ a) (ht : 4 ≤ t) : Cmd a (NB t) :=
+  .seq (.prim (Prim.ofHoare (prog2 Mf ht) (by omega)) (fwdSlot t 1 5) (fwdSlot_inj (by decide) (by decide) (by decide))) <|
+  .seq (.prim (Prim.ofHoare (prog2 Mf ht) (by omega)) (fwdSlot t 2 6) (fwdSlot_inj (by decide) (by decide) (by decide))) <|
+  .seq (.prim (Prim.lift (Prim.ofHoare pwCoreProg (by decide))) (uSlot t 0 5 6 7) (uSlot_inj (by decide))) <|
+  .seq (.prim (Prim.ofHoare (prog2 Mo ht) (by omega)) (fwdSlot t 7 8) (fwdSlot_inj (by decide) (by decide) (by decide))) <|
+  .seq (.prim (Prim.lift (Prim.ofHoare scProg (by decide))) (uSlot t 0 8 4 3) (uSlot_inj (by decide))) <|
+  .seq (clear (dt t 5)) <| .seq (clear (dt t 6)) <| .seq (clear (dt t 7)) (clear (dt t 8))
+
+theorem uView_startBank {v : Fin 9 → WTape} {h f g o : Fin 9} {hdr F G : List Bool} (h0 : v h = reg hdr)
+    (hf : v f = reg F) (hg : v g = reg G) (ho : v o = emp) : uView v h f g o = startBank hdr F G := by
+  funext x
+  simp only [uView, startBank]
+  by_cases a0 : x = zH
+  · subst a0; simp [h0, zF_ne_zH.symm, zG_ne_zH.symm]
+  · by_cases a1 : x = zF
+    · subst a1; simp [hf, zF_ne_zH, zG_ne_zF.symm]
+    · by_cases a2 : x = zG
+      · subst a2; simp [hg, zG_ne_zH, zG_ne_zF]
+      · by_cases a3 : x = zO
+        · subst a3; simp [ho, zO_ne_zH, zO_ne_zF, zO_ne_zG]
+        · simp [a0, a1, a2, a3]
+
+theorem uView_scaleStart {v : Fin 9 → WTape} {h f g o : Fin 9} {hdr V : List Bool} (h0 : v h = reg hdr)
+    (hf : v f = reg V) (hg : v g = emp) (ho : v o = emp) : uView v h f g o = scaleStart hdr V := by
+  funext x
+  simp only [uView, scaleStart]
+  by_cases a0 : x = zH
+  · subst a0; simp [h0, zF_ne_zH.symm]
+  · by_cases a1 : x = zF
+    · subst a1; simp [hf, zF_ne_zH]
+    · by_cases a2 : x = zG
+      · subst a2; simp [hg, zG_ne_zH, zG_ne_zF]
+      · by_cases a3 : x = zO
+        · subst a3; simp [ho, zO_ne_zH, zO_ne_zF, zO_ne_zG]
+        · simp [a0, a1, a2, a3]
+
+/-- The core's cost beyond its five calls. -/
+def coreExtra (hdr F G Fh Gh U V : ℕ) : ℕ := 4 * (3 * hdr + F + G + 2 * Fh + 2 * Gh + 2 * U + 2 * V) + 400
+
+set_option maxHeartbeats 8000000 in
+theorem runs_convCore (Mf : Program t q₁ a) (Mo : Program t q₂ a) (ht : 4 ≤ t)
+    {hdr F G Fh Gh U V Out Desc : List Bool} {kF kG kP kO kS : ℕ}
+    (hF : HoareTime Mf (· = bank hdr F [] []) (· = bank hdr F [] Fh) kF)
+    (hG : HoareTime Mf (· = bank hdr G [] []) (· = bank hdr G [] Gh) kG)
+    (hP : HoareTo pwCoreProg (startBank hdr Fh Gh) (Function.update (startBank hdr Fh Gh) zO (reg U)) kP)
+    (hO : HoareTime Mo (· = bank hdr U [] []) (· = bank hdr U [] V) kO)
+    (hS : HoareTo scProg (scaleStart hdr V)
+      (Function.update (Function.update (scaleStart hdr V) zO (reg Out)) zG (reg Desc)) kS) :
+    Runs (convCore Mf Mo ht) (cb t ![reg hdr, reg F, reg G, emp, emp, emp, emp, emp, emp])
+      (· = cb t ![reg hdr, reg F, reg G, reg Out, reg Desc, emp, emp, emp, emp])
+      (kF + kG + kP + kO + kS + coreExtra hdr.length F.length G.length Fh.length Gh.length U.length V.length) := by
+  set v0 : Fin 9 → WTape := ![reg hdr, reg F, reg G, emp, emp, emp, emp, emp, emp]
+  have s1 := runs_fwdCall Mf ht (i := 1) (o := 5) (by decide) (by decide) (by decide)
+    (fwdSlot_inj (by decide) (by decide) (by decide)) v0 rfl rfl rfl hF
+  set v1 := Function.update v0 5 (reg Fh)
+  have s2 := runs_fwdCall Mf ht (i := 2) (o := 6) (by decide) (by decide) (by decide)
+    (fwdSlot_inj (by decide) (by decide) (by decide)) v1 rfl rfl rfl hG
+  set v2 := Function.update v1 6 (reg Gh)
+  have hv2 : uView v2 0 5 6 7 = startBank hdr Fh Gh := uView_startBank rfl rfl rfl rfl
+  have s3 := runs_uCall (t := t) (a := a) pwCoreProg (h := 0) (f := 5) (g := 6) (o := 7) (by decide)
+    (uSlot_inj (by decide)) v2 _ (by rw [hv2]; exact hP)
+    (fun x a0 a1 a2 a3 => by simp [Function.update_of_ne a3, startBank, a0, a1, a2])
+  set v3 := Function.update v2 7 (reg U)
+  have hv3 : (fun j : Fin 9 => if j = 0 then Function.update (startBank hdr Fh Gh) zO (reg U) zH
+      else if j = 5 then Function.update (startBank hdr Fh Gh) zO (reg U) zF
+      else if j = 6 then Function.update (startBank hdr Fh Gh) zO (reg U) zG
+      else if j = 7 then Function.update (startBank hdr Fh Gh) zO (reg U) zO else v2 j) = v3 := by
+    funext j
+    fin_cases j <;> simp [v3, v2, v1, v0, startBank, zO_ne_zH.symm, zO_ne_zF.symm, zO_ne_zG.symm,
+      zF_ne_zH.symm, zG_ne_zH.symm, zG_ne_zF.symm]
+  have s3' := s3.mono (fun σ h => h.trans (congrArg (cb t) hv3)) le_rfl
+  have s4 := runs_fwdCall Mo ht (i := 7) (o := 8) (by decide) (by decide) (by decide)
+    (fwdSlot_inj (by decide) (by decide) (by decide)) v3 rfl rfl rfl hO
+  set v4 := Function.update v3 8 (reg V)
+  have hv4 : uView v4 0 8 4 3 = scaleStart hdr V := uView_scaleStart rfl rfl rfl rfl
+  have s5 := runs_uCall (t := t) (a := a) scProg (h := 0) (f := 8) (g := 4) (o := 3) (by decide)
+    (uSlot_inj (by decide)) v4 _ (by rw [hv4]; exact hS)
+    (fun x a0 a1 a2 a3 => by
+      simp [Function.update_of_ne a3, Function.update_of_ne a2, scaleStart, a0, a1])
+  set v5 := Function.update (Function.update v4 3 (reg Out)) 4 (reg Desc)
+  have hv5 : (fun j : Fin 9 => if j = 0 then
+        Function.update (Function.update (scaleStart hdr V) zO (reg Out)) zG (reg Desc) zH
+      else if j = 8 then Function.update (Function.update (scaleStart hdr V) zO (reg Out)) zG (reg Desc) zF
+      else if j = 4 then Function.update (Function.update (scaleStart hdr V) zO (reg Out)) zG (reg Desc) zG
+      else if j = 3 then Function.update (Function.update (scaleStart hdr V) zO (reg Out)) zG (reg Desc) zO
+      else v4 j) = v5 := by
+    funext j
+    fin_cases j <;> simp [v5, v4, v3, v2, v1, v0, scaleStart, zO_ne_zH.symm, zO_ne_zF.symm, zO_ne_zG.symm,
+      zF_ne_zH.symm, zG_ne_zH.symm, zG_ne_zF.symm, zO_ne_zG]
+  have s5' := s5.mono (fun σ h => h.trans (congrArg (cb t) hv5)) le_rfl
+  have c5 := runs_clearData (t := t) (a := a) 5 v5
+  have c6 := runs_clearData (t := t) (a := a) 6 (Function.update v5 5 emp)
+  have c7 := runs_clearData (t := t) (a := a) 7 (Function.update (Function.update v5 5 emp) 6 emp)
+  have c8 := runs_clearData (t := t) (a := a) 8
+    (Function.update (Function.update (Function.update v5 5 emp) 6 emp) 7 emp)
+  have hfin : Function.update (Function.update (Function.update (Function.update v5 5 emp) 6 emp) 7 emp) 8 emp =
+      ![reg hdr, reg F, reg G, reg Out, reg Desc, emp, emp, emp, emp] := by
+    funext j
+    fin_cases j <;> rfl
+  refine (Runs.then s1 (Runs.then s2 (Runs.then s3' (Runs.then s4 (Runs.then s5' (Runs.then c5
+    (Runs.then c6 (Runs.then c7 c8)))))))).mono (fun σ h => by rw [h, hfin]) ?_
+  simp only [coreExtra, v5, v4, v3, v2, v1, v0, Function.update_apply]
+  simp [reg, WTape.words, clen]
+  omega
+
+/-! ### The program in the paper's format -/
+
+/-- Seal the header and operands, run the core, unseal the five data tapes. -/
+noncomputable def convProg (Mf : Program t q₁ a) (Mo : Program t q₂ a) (ht : 4 ≤ t) :=
+  Machine.seq (sealAt (dt t 0)) <| Machine.seq (sealAt (dt t 1)) <| Machine.seq (sealAt (dt t 2)) <|
+  Machine.seq (compile (by unfold NB; omega) (convCore Mf Mo ht)).2 <|
+  Machine.seq (unsealAt (dt t 0)) <| Machine.seq (unsealAt (dt t 1)) <| Machine.seq (unsealAt (dt t 2)) <|
+  Machine.seq (unsealAt (dt t 3)) (unsealAt (dt t 4))
+
+theorem cb_pos (v : Fin 9 → WTape) (hv : ∀ j, (v j).left = []) (x : Fin (NB t)) : (cb t v x).pos = 0 := by
+  simp only [cb]
+  split_ifs
+  · simp [WTape.pos, hv]
+  · rfl
+
+theorem dt_ne {i j : Fin 9} (h : i ≠ j) : dt t i ≠ dt t j := fun e => h (Fin.ext (by
+  have := congrArg Fin.val e; simpa [dt] using this))
+
+theorem tape_cases {f g : Fin (NB t) → ℤ → Fin (a + 4)} (hlow : ∀ j : Fin 9, f (dt t j) = g (dt t j))
+    (hhigh : ∀ x : Fin (NB t), 9 ≤ x.val → f x = g x) : f = g := by
+  funext x
+  by_cases h9 : x.val < 9
+  · rw [eq_dt h9]; exact hlow _
+  · exact hhigh x (by omega)
+
+theorem bank5_low (hdr F G O D : List Bool) (j : Fin 9) :
+    (bank5 (t := NB t) (a := a) hdr F G O D).tape (dt t j) =
+      (![wordAt hdr, wordAt F, wordAt G, wordAt O, wordAt D, fun _ => blank, fun _ => blank, fun _ => blank,
+        fun _ => blank] : Fin 9 → ℤ → Fin (a + 4)) j := by
+  fin_cases j <;> rfl
+
+theorem bank5_high (hdr F G O D : List Bool) {x : Fin (NB t)} (hx : 9 ≤ x.val) :
+    (bank5 (t := NB t) (a := a) hdr F G O D).tape x = fun _ => blank := by
+  have h0 : x.val ≠ 0 := by omega
+  have h1 : x.val ≠ 1 := by omega
+  have h2 : x.val ≠ 2 := by omega
+  have h3 : x.val ≠ 3 := by omega
+  have h4 : x.val ≠ 4 := by omega
+  simp only [bank5, h0, h1, h2, h3, h4, ↓reduceIte]
+
+theorem enc_cb_low (v : Fin 9 → WTape) (j : Fin 9) : (enc (a := a) (cb t v)).tape (dt t j) = (v j).tape := by
+  simp [enc, cb_dt]
+
+theorem enc_cb_high (v : Fin 9 → WTape) {x : Fin (NB t)} (hx : 9 ≤ x.val) :
+    (enc (a := a) (cb t v)).tape x = fun _ => blank := by
+  simp [enc, cb_high v hx, emp_tape']
+
+set_option maxHeartbeats 8000000 in
+theorem convProg_hoare (Mf : Program t q₁ a) (Mo : Program t q₂ a) (ht : 4 ≤ t)
+    {hdr F G Fh Gh U V Out Desc : List Bool} {kF kG kP kO kS : ℕ}
+    (hF : HoareTime Mf (· = bank hdr F [] []) (· = bank hdr F [] Fh) kF)
+    (hG : HoareTime Mf (· = bank hdr G [] []) (· = bank hdr G [] Gh) kG)
+    (hP : HoareTo pwCoreProg (startBank hdr Fh Gh) (Function.update (startBank hdr Fh Gh) zO (reg U)) kP)
+    (hO : HoareTime Mo (· = bank hdr U [] []) (· = bank hdr U [] V) kO)
+    (hS : HoareTo scProg (scaleStart hdr V)
+      (Function.update (Function.update (scaleStart hdr V) zO (reg Out)) zG (reg Desc)) kS) :
+    HoareTime (convProg Mf Mo ht) (· = bank5 hdr F G [] []) (· = bank5 hdr F G Out Desc)
+      (kF + kG + kP + kO + kS + coreExtra hdr.length F.length G.length Fh.length Gh.length U.length V.length +
+        4 * (hdr.length + F.length + G.length + Out.length + Desc.length) + 60) := by
+  obtain ⟨σ', k, hx, hq, hk⟩ := runs_convCore Mf Mo ht hF hG hP hO hS
+  subst hq
+  have hcore := compile_correct (by unfold NB; omega : 0 < NB t) hx
+  have n10 : dt t 1 ≠ dt t 0 := dt_ne (by decide)
+  have n20 : dt t 2 ≠ dt t 0 := dt_ne (by decide)
+  have n21 : dt t 2 ≠ dt t 1 := dt_ne (by decide)
+  have n30 : dt t 3 ≠ dt t 0 := dt_ne (by decide)
+  have n31 : dt t 3 ≠ dt t 1 := dt_ne (by decide)
+  have n32 : dt t 3 ≠ dt t 2 := dt_ne (by decide)
+  have n40 : dt t 4 ≠ dt t 0 := dt_ne (by decide)
+  have n41 : dt t 4 ≠ dt t 1 := dt_ne (by decide)
+  have n42 : dt t 4 ≠ dt t 2 := dt_ne (by decide)
+  have n43 : dt t 4 ≠ dt t 3 := dt_ne (by decide)
+  set u0 := bank5 (t := NB t) (a := a) hdr F G [] []
+  have h1 := sealAt_hoare (a := a) (dt t 0) hdr u0 rfl (bank5_low hdr F G [] [] 0)
+  set u1 : Tapes (NB t) a := ⟨u0.head, Function.update u0.tape (dt t 0) (⟨[], [hdr]⟩ : WTape).tape⟩
+  have h2 := sealAt_hoare (a := a) (dt t 1) F u1 rfl
+    (by simp only [u1]; rw [Function.update_of_ne n10]; exact bank5_low hdr F G [] [] 1)
+  set u2 : Tapes (NB t) a := ⟨u1.head, Function.update u1.tape (dt t 1) (⟨[], [F]⟩ : WTape).tape⟩
+  have h3 := sealAt_hoare (a := a) (dt t 2) G u2 rfl
+    (by simp only [u2, u1]; rw [Function.update_of_ne n21, Function.update_of_ne n20];
+        exact bank5_low hdr F G [] [] 2)
+  have e3 : (⟨u2.head, Function.update u2.tape (dt t 2) (⟨[], [G]⟩ : WTape).tape⟩ : Tapes (NB t) a) =
+      enc (cb t ![reg hdr, reg F, reg G, emp, emp, emp, emp, emp, emp]) := by
+    have hh : u2.head = (enc (a := a) (cb t ![reg hdr, reg F, reg G, emp, emp, emp, emp, emp, emp])).head := by
+      funext x; exact (cb_pos _ (fun j => by fin_cases j <;> rfl) x).symm
+    rw [Tapes.mk.injEq]
+    refine ⟨hh, tape_cases (fun j => ?_) (fun x hx => ?_)⟩
+    · rw [enc_cb_low]
+      simp only [u2, u1, u0]
+      fin_cases j <;> simp [Function.update_apply, dt_ne, bank5_low, n10, n20, n21, n30, n31, n32, n40, n41,
+        n42, n43, Ne.symm n10, Ne.symm n20, Ne.symm n21, Ne.symm n30, Ne.symm n31, Ne.symm n32, Ne.symm n40,
+        Ne.symm n41, Ne.symm n42, Ne.symm n43, emp_tape', wordAt_nil', reg] <;>
+        first | rfl | simp [dt, Fin.ext_iff, bank5]
+    · rw [enc_cb_high _ hx]
+      simp only [u2, u1, u0]
+      have hne : ∀ j : Fin 9, x ≠ dt t j := fun j e => by
+        have := congrArg Fin.val e; simp [dt] at this; omega
+      rw [Function.update_of_ne (hne 2), Function.update_of_ne (hne 1), Function.update_of_ne (hne 0),
+        bank5_high _ _ _ _ _ hx]
+  set w0 := enc (a := a) (cb t ![reg hdr, reg F, reg G, reg Out, reg Desc, emp, emp, emp, emp])
+  have hw0 : w0.head = fun _ => 0 := by
+    funext x; exact cb_pos _ (fun j => by fin_cases j <;> rfl) x
+  have g1 := unsealAt_hoare (a := a) (dt t 0) hdr w0 (by rw [hw0]) (enc_cb_low _ 0)
+  set w1 : Tapes (NB t) a := ⟨w0.head, Function.update w0.tape (dt t 0) (wordAt hdr)⟩
+  have g2 := unsealAt_hoare (a := a) (dt t 1) F w1 (by simp [w1, hw0])
+    (by simp only [w1]; rw [Function.update_of_ne n10]; exact enc_cb_low _ 1)
+  set w2 : Tapes (NB t) a := ⟨w1.head, Function.update w1.tape (dt t 1) (wordAt F)⟩
+  have g3 := unsealAt_hoare (a := a) (dt t 2) G w2 (by simp [w2, w1, hw0])
+    (by simp only [w2, w1]; rw [Function.update_of_ne n21, Function.update_of_ne n20]; exact enc_cb_low _ 2)
+  set w3 : Tapes (NB t) a := ⟨w2.head, Function.update w2.tape (dt t 2) (wordAt G)⟩
+  have g4 := unsealAt_hoare (a := a) (dt t 3) Out w3 (by simp [w3, w2, w1, hw0])
+    (by simp only [w3, w2, w1]; rw [Function.update_of_ne n32, Function.update_of_ne n31,
+        Function.update_of_ne n30]; exact enc_cb_low _ 3)
+  set w4 : Tapes (NB t) a := ⟨w3.head, Function.update w3.tape (dt t 3) (wordAt Out)⟩
+  have g5 := unsealAt_hoare (a := a) (dt t 4) Desc w4 (by simp [w4, w3, w2, w1, hw0])
+    (by simp only [w4, w3, w2, w1]; rw [Function.update_of_ne n43, Function.update_of_ne n42,
+        Function.update_of_ne n41, Function.update_of_ne n40]; exact enc_cb_low _ 4)
+  have e5 : (⟨w4.head, Function.update w4.tape (dt t 4) (wordAt Desc)⟩ : Tapes (NB t) a) =
+      bank5 hdr F G Out Desc := by
+    rw [Tapes.mk.injEq]
+    refine ⟨hw0, tape_cases (fun j => ?_) (fun x hx => ?_)⟩
+    · rw [bank5_low]
+      simp only [w4, w3, w2, w1, w0]
+      fin_cases j <;> simp [Function.update_apply, n10, n20, n21, n30, n31, n32, n40, n41,
+        n42, n43, Ne.symm n10, Ne.symm n20, Ne.symm n21, Ne.symm n30, Ne.symm n31, Ne.symm n32, Ne.symm n40,
+        Ne.symm n41, Ne.symm n42, Ne.symm n43, enc_cb_low, emp_tape'] <;>
+        first | rfl | simp [dt, Fin.ext_iff, enc, cb, emp_tape']
+    · rw [bank5_high _ _ _ _ _ hx]
+      simp only [w4, w3, w2, w1, w0]
+      have hne : ∀ j : Fin 9, x ≠ dt t j := fun j e => by
+        have := congrArg Fin.val e; simp [dt] at this; omega
+      rw [Function.update_of_ne (hne 4), Function.update_of_ne (hne 3), Function.update_of_ne (hne 2),
+        Function.update_of_ne (hne 1), Function.update_of_ne (hne 0), enc_cb_high _ hx]
+  refine (h1.seq (h2.seq ((h3.consequence (fun v h => h) (fun v h => h.trans e3) le_rfl).seq
+    ((hcore.consequence (fun v h => h) (fun v h => h) hk).seq (g1.seq (g2.seq (g3.seq (g4.seq g5)))))))).consequence
+    (fun v h => h) (fun v h => h.trans e5) ?_
+  omega
+
 end IntegerMultBounds.Schoenhage
