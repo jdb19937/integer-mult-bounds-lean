@@ -6088,7 +6088,9 @@ Transform, fixed-point, Kronecker and Gaussian resampling mathematics used by th
   (`expandStep`): keep the first `s` entries of every line, cut into words,
   run `Ã` line by line, floor the outputs by one bit and join them back
   (`runs_expandStep`, result `expandOut`), at the `Ã` loop's cost plus
-  `400 t L (W + 1) + 400` (`expandBound`).
+  `400 t L (W + 1) + 400` (`expandBound`). One compression axis
+  (`compressStep`): cut into words, run `B̃₀` line by line, pad every line
+  back to `t` entries (`runs_compressStep`, `compressOut`, `compressBound`).
 
 - `Resampling/PiApprox.lean`, `Resampling/ExpApprox.lean`: certified integer
   approximations for the weight tables. `piApprox q K` sums Machin's series

@@ -336,4 +336,229 @@ theorem runs_expandStep (σ : Fin EB → WTape) (A : List Bool) (wt : List (List
     simp only [σ3, σ2, σ1]
     rw [Function.update_of_ne e1, Function.update_of_ne hx22, Function.update_of_ne e1]
 
+/-! ### The compression bank -/
+
+/-- Tapes `0 … 139`: the `B̃₀` primitive; then the array, the two line widths and two scratch tapes. -/
+abbrev CB := 145
+
+abbrev cX : Fin CB := 140
+abbrev cU : Fin CB := 141
+abbrev cV : Fin CB := 142
+abbrev cS1 : Fin CB := 143
+abbrev cS2 : Fin CB := 144
+
+def bSlot : Fin (49 + 91) → Fin CB := Fin.castLE (by norm_num)
+theorem bSlot_inj : Function.Injective bSlot := Fin.castLE_injective _
+theorem bSlot_val (i : Fin (49 + 91)) : (bSlot i).val = i.val := rfl
+theorem bSlot_ne {x : Fin CB} (hx : 140 ≤ x.val) (i : Fin (49 + 91)) : bSlot i ≠ x := by
+  intro e; have := congrArg Fin.val e; rw [bSlot_val] at this; have := i.isLt; omega
+
+def gIn : Fin 4 → Fin CB := ![cX, 9, 42, cS1]
+def gPad : Fin 5 → Fin CB := ![47, cU, cV, cS1, cS2]
+theorem gIn_inj : Function.Injective gIn := by decide
+theorem gPad_inj : Function.Injective gPad := by decide
+
+/-- Cut into words, apply `B̃₀` line by line, pad every line back to `t` entries. -/
+noncomputable def compressStep : Cmd a CB :=
+  .seq (toWords.map gIn gIn_inj) <| .seq (clear cX) <|
+  .seq (.prim (Prim.lift AxisPrims.bPrim) bSlot bSlot_inj) <| .seq (refit.map gPad gPad_inj) (regMove 47 cX (by decide))
+
+/-- The array handed to the `B̃₀` loop. -/
+def compressArr (A : List Bool) (w : ℕ) : List (List Bool) := (cut w A).map List.reverse
+
+/-- The array after the step. -/
+noncomputable def compressOut (A : List Bool) (wtE wtH wtD zeros : List (List Bool)) (s t m p w W L : ℕ) : List Bool :=
+  ((cut (2 * s * w) (msbArray (B0Line.b0Outs (compressArr A w) wtE wtH wtD zeros s t m p w W L))).map
+    (Rules.fit (2 * t * w))).flatten
+
+/-- The cost of one compression axis. -/
+noncomputable def compressBound (A : List Bool) (wtE wtH wtD zeros : List (List Bool)) (s t m p w W L : ℕ)
+    (sW tW : List Bool) : ℕ :=
+  B0Prim.progBound (compressArr A w) wtE wtH wtD zeros s t m p w W L sW tW + 400 * (t * L * (W + 1)) + 400
+
+theorem bSigIn_arr (arr wtE wtH wtD zeros : List (List Bool)) (s t m p w W L : ℕ) (sW tW : List Bool)
+    (i : Fin (49 + 91)) (hi : i ≠ Fin.castAdd 91 42) :
+    B0Prim.sigIn arr wtE wtH wtD zeros s t m p w W L sW tW i =
+      B0Prim.sigIn [] wtE wtH wtD zeros s t m p w W L sW tW i := by
+  induction i using Fin.addCases with
+  | left j =>
+    have hj : j ≠ 42 := fun e => hi (by rw [e])
+    simp only [B0Prim.sigIn, Fin.addCases_left]
+    fin_cases j <;> simp at hj ⊢
+  | right j => simp [B0Prim.sigIn]
+
+/-- Outside the consumed inputs and the output, `sigOut` agrees with `sigIn`. -/
+theorem bSigOut_eq (arr wtE wtH wtD zeros : List (List Bool)) (s t m p w W L : ℕ) (sW tW : List Bool)
+    (i : Fin (49 + 91)) (h0 : i ≠ Fin.castAdd 91 0) (h27 : i ≠ Fin.castAdd 91 27) (h28 : i ≠ Fin.castAdd 91 28)
+    (h33 : i ≠ Fin.castAdd 91 33) (h42 : i ≠ Fin.castAdd 91 42) (h47 : i ≠ Fin.castAdd 91 47) :
+    B0Prim.sigOut arr wtE wtH wtD zeros s t m p w W L sW tW i =
+      B0Prim.sigIn [] wtE wtH wtD zeros s t m p w W L sW tW i := by
+  induction i using Fin.addCases with
+  | left j =>
+    have hj0 : j ≠ 0 := fun e => h0 (by rw [e])
+    have hj27 : j ≠ 27 := fun e => h27 (by rw [e])
+    have hj28 : j ≠ 28 := fun e => h28 (by rw [e])
+    have hj33 : j ≠ 33 := fun e => h33 (by rw [e])
+    have hj42 : j ≠ 42 := fun e => h42 (by rw [e])
+    have hj47 : j ≠ 47 := fun e => h47 (by rw [e])
+    simp only [B0Prim.sigOut, B0Prim.sigIn, Fin.addCases_left]
+    fin_cases j <;> simp at hj0 hj27 hj28 hj33 hj42 hj47 ⊢
+  | right j => simp [B0Prim.sigOut, B0Prim.sigIn]
+
+theorem b0Outs_length (arr wtE wtH wtD zeros : List (List Bool)) (s t m p w W : ℕ) (hz : zeros.length = 2 * s) :
+    ∀ L, (B0Line.b0Outs arr wtE wtH wtD zeros s t m p w W L).length = 2 * s * L
+  | 0 => rfl
+  | L + 1 => by
+    rw [B0Line.b0Outs, List.length_append, b0Outs_length arr wtE wtH wtD zeros s t m p w W hz L]
+    simp [B0Line.b0Out, B0Words.oneStep, NeumannWords.nextWords_length, hz]; ring
+
+set_option maxHeartbeats 1000000 in
+theorem runs_compressStep (σ : Fin CB → WTape) (A : List Bool) (wtE wtH wtD zeros : List (List Bool))
+    (s t m p w W L : ℕ) (sW tW : List Bool)
+    (hw : 1 ≤ w) (hpw : p ≤ w) (hwW : w ≤ W) (hp2 : 2 ≤ p)
+    (hwtE : ∀ x ∈ wtE, x.length = w) (hwtEl : wtE.length = s * (2 * m + 1)) (hwtH : ∀ x ∈ wtH, x.length = w)
+    (hwtHl : wtH.length = s * (2 * 0 + 1)) (hwtD : ∀ x ∈ wtD, x.length = w) (hwtDl : wtD.length = s * (2 * 0 + 1))
+    (hz : zeros.length = 2 * s) (hzw : ∀ x ∈ zeros, x.length = w) (hms : m + 1 ≤ s) (hs : 0 < s) (hst : s < t)
+    (hsv : Counter.value sW = s) (htv : Counter.value tW = s) (hsl : sW.length ≤ tW.length + 1)
+    (hAl : A.length = L * (2 * t * w))
+    (hB : ∀ i, σ (bSlot i) = B0Prim.sigIn [] wtE wtH wtD zeros s t m p w W L sW tW i)
+    (hX : σ cX = reg A) (hU : σ cU = reg (ones (2 * s * w))) (hV : σ cV = reg (ones (2 * t * w)))
+    (hS1 : σ cS1 = emp) (hS2 : σ cS2 = emp) :
+    Runs (a := a) compressStep σ (· = Function.update (Function.update (Function.update (Function.update
+      (Function.update σ 0 emp) 27 emp) 28 emp) 33 emp) cX (reg (compressOut A wtE wtH wtD zeros s t m p w W L)))
+      (compressBound A wtE wtH wtD zeros s t m p w W L sW tW) := by
+  have hdA : w ∣ A.length := ⟨L * 2 * t, by rw [hAl]; ring⟩
+  have hcA : ∀ x ∈ cut w A, x.length = w := cut_lengths hw A hdA
+  have hlcA : (cut w A).length = 2 * t * L := by
+    rw [length_cut hw A hdA, hAl, show L * (2 * t * w) = (2 * t * L) * w by ring, Nat.mul_div_cancel _ (by omega)]
+  set arr := compressArr A w with harr_def
+  have harr : arr.length = 2 * t * L := by simp [arr, compressArr, hlcA]
+  have harrw : ∀ x ∈ arr, x.length = w := by
+    intro x hx; simp only [arr, compressArr, List.mem_map] at hx; obtain ⟨y, hy, rfl⟩ := hx; simp [hcA y hy]
+  have h9 : σ 9 = reg (ones w) := by
+    have := hB (Fin.castAdd 91 9); simp only [B0Prim.sigIn, Fin.addCases_left] at this; exact this
+  have h42 : σ 42 = emp := by
+    have := hB (Fin.castAdd 91 42); simp only [B0Prim.sigIn, Fin.addCases_left] at this; exact this
+  have h47 : σ 47 = emp := by
+    have := hB (Fin.castAdd 91 47); simp only [B0Prim.sigIn, Fin.addCases_left] at this; exact this
+  -- 1. cut into words
+  set σ1 := Function.update σ 42 ⟨[], arr⟩
+  have s1 : Runs (a := a) (toWords.map gIn gIn_inj) σ (· = σ1) _ := (runs_map_upd gIn gIn_inj σ
+    (runs_toWordsW (a := a) (W := w) hw A (fun x hx => (hcA x hx).le) (σ ∘ gIn)
+      (by simp [gIn, hX]) (by simp [gIn, h9]) (by simp [gIn, h42]) (by simp [gIn, hS1]))
+    σ1 (fun y => by fin_cases y <;> (simp (config := {decide := true}) [σ1, gIn]; try rfl))
+    (fun x hx => Function.update_of_ne (fun e => hx 2 (by rw [e]; rfl)) _ _))
+  -- 2. clear the array tape
+  set σ2 := Function.update σ1 cX ⟨[], []⟩
+  have s2 := runs_clear (a := a) cX σ1
+  -- 3. the line loop
+  have hpre : σ2 ∘ bSlot = B0Prim.sigIn arr wtE wtH wtD zeros s t m p w W L sW tW := by
+    funext i
+    have hne : bSlot i ≠ cX := bSlot_ne (by decide) i
+    simp only [Function.comp_apply, σ2, σ1, Function.update_of_ne hne]
+    by_cases h : i = Fin.castAdd 91 42
+    · subst h; simp [B0Prim.sigIn]; rfl
+    · have hne' : bSlot i ≠ 42 := fun e => h (Fin.ext (by have := congrArg Fin.val e; rw [bSlot_val] at this; simp [this]))
+      rw [Function.update_of_ne hne', hB]
+      exact (bSigIn_arr _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ h).symm
+  set Ob := B0Line.b0Outs arr wtE wtH wtD zeros s t m p w W L with hOb_def
+  set σ3 := upd σ2 bSlot (B0Prim.sigOut arr wtE wtH wtD zeros s t m p w W L sW tW)
+  have s3 : Runs (a := a) (.prim (Prim.lift AxisPrims.bPrim) bSlot bSlot_inj) σ2 (· = σ3)
+      (AxisPrims.bCost (σ2 ∘ bSlot)) := by
+    have hp : AxisPrims.BPre (σ2 ∘ bSlot) :=
+      ⟨arr, wtE, wtH, wtD, zeros, s, t, m, p, w, W, L, sW, tW, hpre, hw, hpw, hwW, harr, harrw, hp2, hwtE, hwtEl,
+        hwtH, hwtHl, hwtD, hwtDl, hz, hzw, hms, hs, hst, hsv, htv, hsl⟩
+    refine ⟨_, _, Exec.prim (P := Prim.lift AxisPrims.bPrim) hp, ?_, le_rfl⟩
+    show upd σ2 bSlot (AxisPrims.bSem (σ2 ∘ bSlot)) = σ3
+    rw [hpre, (AxisPrims.bSem_sigIn arr wtE wtH wtD zeros s t m p w W L sW tW).1]
+  have hσ3a : ∀ j : Fin 49, σ3 (bSlot (Fin.castAdd 91 j)) = B0Prim.sigOut arr wtE wtH wtD zeros s t m p w W L sW tW
+      (Fin.castAdd 91 j) := fun j => upd_slot σ2 bSlot_inj _ _
+  have hσ3b : ∀ x : Fin CB, 140 ≤ x.val → σ3 x = σ2 x := fun x hx => upd_other _ _ _ _ (bSlot_ne hx)
+  have g47 : σ3 47 = reg (msbArray Ob) := by
+    have := hσ3a 47; simp only [B0Prim.sigOut, Fin.addCases_left] at this; exact this
+  have hOl : Ob.length = 2 * s * L := b0Outs_length _ _ _ _ _ _ _ _ _ _ _ hz L
+  have hOw : ∀ x ∈ Ob, x.length = w := B0Prim.b0Outs_width _ _ _ _ _ _ _ _ _ _ _ hzw L
+  have hMl : (msbArray Ob).length = L * (2 * s * w) := by
+    rw [msbArray, List.length_flatten, List.map_map]
+    rw [List.map_congr_left (g := fun _ => w) (fun x hx => by simp [hOw x hx])]
+    simp [hOl]; ring
+  have hsw : 1 ≤ 2 * s * w := by nlinarith
+  have hdM : 2 * s * w ∣ (msbArray Ob).length := ⟨L, by rw [hMl]; ring⟩
+  have hcM : ∀ x ∈ cut (2 * s * w) (msbArray Ob), x.length = 2 * s * w := cut_lengths hsw _ hdM
+  have hlcM : (cut (2 * s * w) (msbArray Ob)).length = L := by
+    rw [length_cut hsw _ hdM, hMl, Nat.mul_div_cancel _ (by omega)]
+  -- 4. pad every line
+  set P := ((cut (2 * s * w) (msbArray Ob)).map (Rules.fit (2 * t * w))).flatten with hP_def
+  set σ4 := Function.update σ3 47 (reg P)
+  have s4 : Runs (a := a) (refit.map gPad gPad_inj) σ3 (· = σ4) _ := (runs_map_upd gPad gPad_inj σ3
+    (runs_refitW (a := a) (v := 2 * t * w) (W := 2 * s * w) hsw (msbArray Ob) (fun x hx => (hcM x hx).le) (σ3 ∘ gPad)
+      (by simp [gPad, g47])
+      (by simp only [Function.comp_apply, gPad]; rw [hσ3b _ (by decide)]; simp (config := {decide := true}) [σ2, σ1, hU])
+      (by simp only [Function.comp_apply, gPad]; rw [hσ3b _ (by decide)]; simp (config := {decide := true}) [σ2, σ1, hV])
+      (by simp only [Function.comp_apply, gPad]; rw [hσ3b _ (by decide)]; simp (config := {decide := true}) [σ2, σ1, hS1])
+      (by simp only [Function.comp_apply, gPad]; rw [hσ3b _ (by decide)]; simp (config := {decide := true}) [σ2, σ1, hS2]))
+    σ4 (fun y => by fin_cases y <;> (simp (config := {decide := true}) [σ4, gPad]; try rfl))
+    (fun x hx => Function.update_of_ne (fun e => hx 0 (by rw [e]; rfl)) _ _))
+  -- 5. move the result to the array tape
+  have s5 := runs_regMove (a := a) (show (47 : Fin CB) ≠ cX by decide) σ4 (w := P) (by simp [σ4])
+    (by simp only [σ4]; rw [Function.update_of_ne (by decide), hσ3b _ (by decide)]; simp [σ2]; rfl)
+  refine (Runs.then s1 (Runs.then s2 (Runs.then s3 (Runs.then s4 s5)))).mono (fun σ' e => ?_) ?_
+  swap
+  · have c3 : AxisPrims.bCost (σ2 ∘ bSlot) = B0Prim.progBound arr wtE wtH wtD zeros s t m p w W L sW tW := by
+      rw [hpre]; exact (AxisPrims.bSem_sigIn arr wtE wtH wtD zeros s t m p w W L sW tW).2
+    rw [c3]
+    have hPl : P.length = L * (2 * t * w) := by
+      have h1 := clen_eq ((cut (2 * s * w) (msbArray Ob)).map (Rules.fit (2 * t * w)))
+      rw [clen_map_fit, hlcM] at h1
+      simp only [List.length_map, hlcM] at h1
+      rw [hP_def]; nlinarith
+    simp (config := {decide := true}) only [σ1, Function.update_of_ne, ne_eq, WTape.words]
+    rw [hlcA, hlcM, hMl, hPl, hAl, hX]
+    simp only [reg, List.reverse_nil, List.nil_append, clen_cons, clen_nil, compressBound, hAl]
+    have hsw' : s * w ≤ t * W := Nat.mul_le_mul hst.le hwW
+    have htw : t * w ≤ t * W := Nat.mul_le_mul_left _ hwW
+    have e1 : L * (s * w) ≤ L * (t * W) := Nat.mul_le_mul_left _ hsw'
+    have e2 : L * (t * w) ≤ L * (t * W) := Nat.mul_le_mul_left _ htw
+    have e4 : L ≤ L * t := Nat.le_mul_of_pos_right _ (by omega)
+    nlinarith
+  rw [e]
+  funext x
+  by_cases e1 : x = cX
+  · subst e1; simp (config := {decide := true}) [compressOut, hP_def, hOb_def, harr_def]
+  by_cases e47 : x = 47
+  · subst e47; simp (config := {decide := true}) [h47]
+  rw [Function.update_of_ne e1, Function.update_of_ne e47, Function.update_of_ne e1]
+  simp only [σ4]; rw [Function.update_of_ne e47]
+  by_cases hx : x.val < 140
+  · have hxi : x = bSlot ⟨x.val, hx⟩ := Fin.ext rfl
+    rw [hxi]; simp only [σ3]; rw [upd_slot σ2 bSlot_inj]
+    by_cases e0 : (⟨x.val, hx⟩ : Fin (49 + 91)) = Fin.castAdd 91 0
+    · rw [e0]; simp only [B0Prim.sigOut, Fin.addCases_left]
+      rw [show bSlot (Fin.castAdd 91 0) = 0 from rfl]; simp (config := {decide := true})
+    by_cases e27 : (⟨x.val, hx⟩ : Fin (49 + 91)) = Fin.castAdd 91 27
+    · rw [e27]; simp only [B0Prim.sigOut, Fin.addCases_left]
+      rw [show bSlot (Fin.castAdd 91 27) = 27 from rfl]; simp (config := {decide := true})
+    by_cases e28 : (⟨x.val, hx⟩ : Fin (49 + 91)) = Fin.castAdd 91 28
+    · rw [e28]; simp only [B0Prim.sigOut, Fin.addCases_left]
+      rw [show bSlot (Fin.castAdd 91 28) = 28 from rfl]; simp (config := {decide := true})
+    by_cases e33 : (⟨x.val, hx⟩ : Fin (49 + 91)) = Fin.castAdd 91 33
+    · rw [e33]; simp only [B0Prim.sigOut, Fin.addCases_left]
+      rw [show bSlot (Fin.castAdd 91 33) = 33 from rfl]; simp (config := {decide := true})
+    have n0 : bSlot ⟨x.val, hx⟩ ≠ 0 := fun e => e0 (Fin.ext (by have := congrArg Fin.val e; rw [bSlot_val] at this; simpa using this))
+    have n27 : bSlot ⟨x.val, hx⟩ ≠ 27 := fun e => e27 (Fin.ext (by have := congrArg Fin.val e; rw [bSlot_val] at this; simp at this ⊢; omega))
+    have n28 : bSlot ⟨x.val, hx⟩ ≠ 28 := fun e => e28 (Fin.ext (by have := congrArg Fin.val e; rw [bSlot_val] at this; simp at this ⊢; omega))
+    have n33 : bSlot ⟨x.val, hx⟩ ≠ 33 := fun e => e33 (Fin.ext (by have := congrArg Fin.val e; rw [bSlot_val] at this; simp at this ⊢; omega))
+    rw [Function.update_of_ne n33, Function.update_of_ne n28, Function.update_of_ne n27, Function.update_of_ne n0, hB]
+    by_cases e42 : (⟨x.val, hx⟩ : Fin (49 + 91)) = Fin.castAdd 91 42
+    · rw [e42]; simp only [B0Prim.sigOut, B0Prim.sigIn, Fin.addCases_left]; simp; rfl
+    · exact bSigOut_eq _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ e0 e27 e28 e33 e42
+        (fun e => e47 (Fin.ext (by have := congrArg Fin.val e; simp at this; rw [this]; rfl)))
+  · push Not at hx
+    have nk : ∀ k : Fin CB, k.val < 140 → x ≠ k := fun k hk e => by rw [e] at hx; omega
+    rw [hσ3b x hx]
+    simp only [σ2, σ1]
+    rw [Function.update_of_ne e1, Function.update_of_ne (nk 42 (by decide)), Function.update_of_ne (nk 33 (by decide)),
+      Function.update_of_ne (nk 28 (by decide)), Function.update_of_ne (nk 27 (by decide)),
+      Function.update_of_ne (nk 0 (by decide))]
+
 end IntegerMultBounds.Resampling.AxisStep
