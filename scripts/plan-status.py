@@ -73,8 +73,9 @@ def declared_names():
         scopes = []
         in_comment = 0
         for line in open(path):
+            was_comment = in_comment > 0
             in_comment += line.count('/-') - line.count('-/')
-            if in_comment > 0 or line.lstrip().startswith('--'):
+            if was_comment or in_comment > 0 or line.lstrip().startswith('--'):
                 continue
             opening = re.match(r'^\s*(namespace|section)\b\s*(\S*)', line)
             if opening:

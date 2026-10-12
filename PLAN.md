@@ -23,9 +23,9 @@ here.
 
 | Part of the proof | Source | Mathematics | Tape | Files |
 | --- | --- | --- | --- | --- |
-| [Machine model and target statement](plan/01-machine-model-target.md) | §2 | 🟡 0/1 | 🟡 0/1 | 2 |
-| [Composition, loops, frames, elementary streams](plan/02-composition-loops-frames.md) | §2 | 🟡 0/8 | 🟡 3/8 | 254 |
-| [Finite networks with a rank saving](plan/03-finite-networks-rank.md) | §3 | 🟡 2/8 | 🟡 0/6 | 358 |
+| [Machine model and target statement](plan/01-machine-model-target.md) | §2 | ✅ 1/1 | ✅ 1/1 | 2 |
+| [Composition, loops, frames, elementary streams](plan/02-composition-loops-frames.md) | §2 | 🟡 7/8 | 🟡 7/8 | 255 |
+| [Finite networks with a rank saving](plan/03-finite-networks-rank.md) | §3 | ✅ 8/8 | 🟡 2/6 | 358 |
 | [Faster interchange of address chunks](plan/04-faster-interchange-address.md) | §4 | ✅ 10/10 | ✅ 9/9 | 375 |
 | [Simultaneous butterfly layers with compact control](plan/05-simultaneous-butterfly-layers.md) | §5, §11, CrocSwap | 🟡 1/12 | 🟡 0/12 | 1655 |
 | [Synthetic transforms and their tape layout](plan/06-synthetic-transforms-tape.md) | §6 | 🟡 0/3 | ⬜ 0/3 | 7 |
@@ -40,7 +40,7 @@ Details: [plan/01-machine-model-target.md](plan/01-machine-model-target.md)
 
 | Sub-problem | Mathematics | Tape | Files |
 | --- | --- | --- | --- |
-| Machine model and target statement | 🟡 | 🟡 | 1 |
+| Machine model and target statement | ✅ | ✅ | 1 |
 | Axiom audit | — | — | 1 |
 
 ## 2. Composition, loops, frames, elementary streams (§2)
@@ -49,14 +49,14 @@ Details: [plan/02-composition-loops-frames.md](plan/02-composition-loops-frames.
 
 | Sub-problem | Mathematics | Tape | Files |
 | --- | --- | --- | --- |
-| Machine combinators and frames | 🟡 | 🟡 | 13 |
+| Machine combinators and frames | ✅ | ✅ | 14 |
 | Counters and counted loops | 🟡 14/15 rows | 🟡 14/15 rows | 28 |
-| Binary and radix arithmetic machines | 🟡 | 🟡 34/35 rows | 51 |
-| Rational scaling of one coordinate | 🟡 | ✅ | 46 |
-| Controlled shift of one coordinate | 🟡 | 🟡 | 36 |
-| Common coordinates and schedule assembly | 🟡 | ✅ | 56 |
-| Packed-line and window gadgets | 🟡 | 🟡 | 9 |
-| Tape radix sort | 🟡 | ✅ | 16 |
+| Binary and radix arithmetic machines | ✅ | ✅ | 51 |
+| Rational scaling of one coordinate | ✅ | ✅ | 46 |
+| Controlled shift of one coordinate | ✅ | ✅ | 36 |
+| Common coordinates and schedule assembly | ✅ | ✅ | 56 |
+| Packed-line and window gadgets | ✅ | ✅ | 9 |
+| Tape radix sort | ✅ | ✅ | 16 |
 
 ## 3. Finite networks with a rank saving (§3)
 
@@ -64,14 +64,14 @@ Details: [plan/03-finite-networks-rank.md](plan/03-finite-networks-rank.md)
 
 | Sub-problem | Mathematics | Tape | Files |
 | --- | --- | --- | --- |
-| Scalar shear and bank exchange circuits | 🟡 | ⬜ | 8 |
-| Wire counts and bilinear label spaces | 🟡 | — | 9 |
-| Grouped gates and binary residual units | 🟡 | ⬜ | 15 |
+| Scalar shear and bank exchange circuits | ✅ | ⬜ | 8 |
+| Wire counts and bilinear label spaces | ✅ | — | 9 |
+| Grouped gates and binary residual units | ✅ | ⬜ | 15 |
 | Projection-rank trace and h=25 saving | ✅ | ⬜ | 15 |
-| Shared-point h=50 network and compilation | 🟡 | ⬜ | 251 |
+| Shared-point h=50 network and compilation | ✅ | ✅ | 251 |
 | Optimized global rank trace | ✅ | — | 22 |
-| Optimized physical program and interchange | 🟡 | ⬜ | 22 |
-| Tape realization of the network | 🟡 | 🟡 1/3 rows | 18 |
+| Optimized physical program and interchange | ✅ | ✅ | 22 |
+| Tape realization of the network | ✅ | 🟡 1/3 rows | 18 |
 
 ## 4. Faster interchange of address chunks (§4)
 
