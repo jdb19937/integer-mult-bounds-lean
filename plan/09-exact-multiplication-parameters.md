@@ -6,24 +6,24 @@ Part of the [plan](../PLAN.md). See [COMPONENTS.md](../COMPONENTS.md) for what e
 
 Section 9 (the manuscript's §8) turns the approximate transforms into an exact multiplier and accounts for the total time. Parameters are chosen with enough slack that the accumulated transform error is below one half, so rounding recovers the integer coefficients exactly; the cost table then sums every component's rows to the target bound.
 
-1. Parameters (`Parameters`, `Asymptotics`, `Primes`): parameter slacks and assembly margins, asymptotic estimates and the finite-depth recurrence, and the existence of suitable primes (short-interval primes still open).
+1. Parameters (`Parameters`, `Asymptotics`, `Primes`): parameter slacks and assembly margins, asymptotic estimates and the finite-depth recurrence, and odd pairwise coprime source lengths in the required intervals, which replace the manuscript's short-interval primes.
 2. Exact recovery (`Carry`, `MainReduction`, `ExactRecovery`, `ExactRecoveryOutput`): the precision chain from transform errors to the exact product, rounding and carry propagation, and an output of exactly twice the input length even for nondivisible chunk widths.
 3. Time bound (`PackedMultiplierPolylogBudget`, `TimeBound`, `Sizes`, `CostTable`): the polylog overhead of the packed multiplier is absorbed by the packed-product margin, and the size relations and every cost-table row assemble into `O(n (lg n)^(1-κ))` with `κ = 83/10^12`, given the components' row costs.
 
 ## Sub-problems
 
-### Parameters, asymptotics and prime existence
+### Parameters, asymptotics and coprime source lengths
 
 Fixes parameter margins, proves the asymptotic estimates, and supplies the primes the construction needs.
 
-- Math milestone: `IntegerMultBounds.NLogN.eventually_prime_lengths` — For all large n there are distinct odd primes s_i with (1-2eta) t_i < s_i <= (1-eta) t_i (eta = 1/(4d)), so T/2 < S < T and alpha^4 theta_i > p, via the short-interval prime count of Harvey-van der Hoeven Lemma 5.1.
+- Math milestone: `IntegerMultBounds.Sizes.eventually_coprime_lengths` — For all large n and every t_i ∈ {r/2, r} there are odd, pairwise coprime s_i with (1-2η) t_i < s_i ≤ (1-η) t_i, η = 1/(4d). This replaces the short-interval primes of Harvey–van der Hoeven Lemma 5.1, since the assembly only uses that the s_i are odd and pairwise coprime.
 - Tape milestone: —
 
 | Subcomponent | Files | Mathematics | Tape | Notes |
 | --- | --- | --- | --- | --- |
 | Parameter slacks and assembly margins | `Parameters` | ✅ | — | Log enclosure proved in Lean |
 | Asymptotics and finite-depth recurrence | `Asymptotics` | ✅ | — | |
-| Prime existence | `Primes` | 🟡 | — | Short-interval primes open |
+| Coprime source lengths | `CoprimeLengths`, `SourceLengths` | ✅ | — | Lengths `1 + k·M` with `M = 2·d!` and an offset divisible by `∏_{m<4d}(1 + mM)` are odd and pairwise coprime in every interval once `X ≥ 2^(84 d³)`, which holds eventually because `ℓ ≥ p/(12d)` and `d ≤ p^ε`. No short-interval prime theorem is needed. Bertrand chains remain in `Primes` |
 
 ### Exact recovery of the product
 

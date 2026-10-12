@@ -31,7 +31,7 @@ here.
 | [Synthetic transforms and their tape layout](plan/06-synthetic-transforms-tape.md) | §6 | ✅ 3/3 | ⬜ 0/3 | 7 |
 | [Gaussian resampling](plan/07-gaussian-resampling.md) | §7 | ✅ 6/6 | 🟡 3/4 | 59 |
 | [Fast multiplication subroutine](plan/08-fast-multiplication-subroutine.md) | Schönhage–Strassen | ✅ 6/6 | 🟡 2/4 | 85 |
-| [Exact multiplication, parameters, time bound](plan/09-exact-multiplication-parameters.md) | §8 | 🟡 0/3 | ⬜ 0/2 | 11 |
+| [Exact multiplication, parameters, time bound](plan/09-exact-multiplication-parameters.md) | §8 | 🟡 1/3 | ⬜ 0/2 | 12 |
 | [End-to-end theorem `EndToEnd`](plan/10-end-to-end.md) | — | 🟡 1/3 | 🟡 2/3 | 6 |
 
 ## 1. Machine model and target statement (§2)
@@ -151,7 +151,7 @@ Details: [plan/09-exact-multiplication-parameters.md](plan/09-exact-multiplicati
 
 | Sub-problem | Mathematics | Tape | Files |
 | --- | --- | --- | --- |
-| Parameters, asymptotics and prime existence | 🟡 2/3 rows | — | 3 |
+| Parameters, asymptotics and coprime source lengths | ✅ | — | 4 |
 | Exact recovery of the product | 🟡 | ⬜ | 4 |
 | Cost table and time bound | 🟡 1/2 rows | ⬜ | 4 |
 
