@@ -6159,7 +6159,9 @@ Transform, fixed-point, Kronecker and Gaussian resampling mathematics used by th
 - `Resampling/LineNumeric.lean`: what the line maps compute. Entries decode
   to complex numbers (`decE`); on lines in the unit disk the expansion line
   map with the machine-built table is the floored tabled `Ã` on the first
-  `s` entries (`lineA_value`, `floorA`).
+  `s` entries (`lineA_value`, `floorA`); the compression line map with the
+  machine-built tables (`cTabs`) is the tabled `B̃₀` padded with zeros
+  (`lineB_value`, `padB`).
 - `Resampling/TensorNumeric.lean`: decoding commutes with the flat pass
   (`flatPass_map`); the decoded expansion output is the flat array of the
   rectangular tensor of floored tabled `Ã` maps (`floorAt`) on the

@@ -196,5 +196,93 @@ theorem lineA_value (line : List (List Bool)) (s t m α p w W : ℕ) [NeZero s] 
     refine Eq.trans ?_ (congrArg (floorC p) (hval k hk1)).symm
     rw [floorC_half]
 
+/-! ### Compression -/
+
+open TabETape (wE tabF)
+open TabDTape (dW hW)
+open NLogN (sqrtWindow)
+
+/-- The clamp-free tabled `B̃₀` from length `t` to `s`, padded with zeros back to length `t`. -/
+def padB (s t α p : ℕ) [NeZero s] [NeZero t] (v : ZMod t → ℂ) : ZMod t → ℂ :=
+  extd s t (TabledMaps.resampB₀NumW p (sqrtWindow p) (fun ℓ h => (WeightTable.tableE s t α p ℓ h : ℝ) / 2 ^ p)
+    (fun ℓ => (WeightTable.tableD s t α p ℓ : ℝ) / 2 ^ p) v)
+
+theorem signed_replicate_false (n : ℕ) : signed (List.replicate n false) = 0 :=
+  GaussianLine.signed_zero_word n
+
+theorem decE_zero (w p : ℕ) : decE w p (List.replicate (2 * w) false) = 0 := by
+  simp only [decE, List.take_replicate, List.drop_replicate, List.reverse_replicate, signed_replicate_false]
+  simp; rfl
+
+/-- The compression tables: the off-diagonal, halving and diagonal tables and the zero words. -/
+def cTabs (s t α p w : ℕ) : List (List Bool) × List (List Bool) × List (List Bool) × List (List Bool) :=
+  (tabF (wE s t α p (sqrtWindow p)) w (s * (2 * sqrtWindow p + 1)), tabF (hW w p) w s, tabF (dW s t α p w) w s,
+    List.replicate (2 * s) (List.replicate w false))
+
+set_option maxHeartbeats 1000000 in
+/-- The compression line map with the machine-built tables is the padded tabled `B̃₀` on decoded lines. -/
+theorem lineB_value (line : List (List Bool)) (s t α p w W : ℕ) [NeZero s] [NeZero t] (hst : s < t)
+    (hα : 2 ≤ α) (hαp : α ^ 2 ≤ p) (hθ : 1 ≤ (α : ℝ) ^ 2 * ((t : ℝ) / s - 1)) (hp : 13 ≤ p) (hw : p + 3 ≤ w)
+    (hwW : w ≤ W) (hWW : ((2 * sqrtWindow p + 1 : ℕ) : ℤ) * 2 ^ p < 2 ^ (W - 1))
+    (hl : line.length = t) (hlw : ∀ e ∈ line, e.length = 2 * w) (hb : ∀ e ∈ line, ‖decE w p e‖ ≤ 1) :
+    (lineB (cTabs s t α p w).1 (cTabs s t α p w).2.1 (cTabs s t α p w).2.2.1 (cTabs s t α p w).2.2.2 s t
+      (sqrtWindow p) p w W line).map (decE w p) = lineOf (padB s t α p) (line.map (decE w p)) := by
+  have hs : 0 < s := Nat.pos_of_ne_zero (NeZero.ne s)
+  set win := line.flatMap (entryWords w)
+  have hwl : win.length = 2 * t := by
+    simp only [win, List.length_flatMap, entryWords, List.length_cons, List.length_nil]; simp [hl]; ring
+  have hww : ∀ x ∈ win, x.length = w := by
+    intro x hx; simp only [win, List.mem_flatMap, entryWords, List.mem_cons, List.mem_nil_iff, or_false] at hx
+    obtain ⟨e, he, rfl | rfl⟩ := hx <;> simp [hlw e he] <;> omega
+  have hwb : ∀ x ∈ win, |signed x| ≤ 2 ^ p := by
+    intro x hx; simp only [win, List.mem_flatMap, entryWords, List.mem_cons, List.mem_nil_iff, or_false] at hx
+    obtain ⟨e, he, rfl | rfl⟩ := hx
+    · exact (abs_signed_le_of_decE w p e (hb e he)).1
+    · exact (abs_signed_le_of_decE w p e (hb e he)).2
+  have hvin : vec t p win = fun j => (line.map (decE w p)).getD j.val 0 := by
+    funext j
+    have hj := ZMod.val_lt j
+    obtain ⟨e1, e2⟩ := getD_flatMap_entryWords w line j.val (by omega)
+    rw [getD_map_lt _ _ _ (by omega) _ []]
+    simp only [vec]
+    rw [show win.getD (2 * j.val) [] = _ from e1, show win.getD (2 * j.val + 1) [] = _ from e2]; rfl
+  have hvn : ‖vec t p win‖ ≤ 1 := by
+    rw [hvin]
+    refine (pi_norm_le_iff_of_nonneg zero_le_one).mpr fun j => ?_
+    have hj := ZMod.val_lt j
+    rw [getD_map_lt _ _ _ (by omega) _ [], List.getD_eq_getElem _ _ (by omega)]
+    exact hb _ (List.getElem_mem _)
+  have hval := TableValue.b0_tables s t α p w W hst hα hαp hθ hp hw hwW hWW win
+    (List.replicate (2 * s) (List.replicate w false)) hwl hww hwb hvn (fun x hx => (List.mem_replicate.mp hx).2)
+    (by simp)
+  set bw := b0Word (cTabs s t α p w).1 (cTabs s t α p w).2.1 (cTabs s t α p w).2.2.1 (cTabs s t α p w).2.2.2 s t
+    (sqrtWindow p) p w W win
+  have hbwl : bw.length = 2 * s := by
+    simp only [bw, b0Word, cTabs, B0Words.oneStep, Resampling.NeumannWords.nextWords_length, List.length_replicate]
+  have hbww : ∀ x ∈ bw, x.length = w := by
+    simp only [bw, b0Word, cTabs, B0Words.oneStep]
+    exact NeumannStep.nextWords_shape _ _ w (fun x hx => by rw [(List.mem_replicate.mp hx).2]; simp)
+  have hpl : (pairUp bw).length = s := length_pairUp s bw hbwl
+  have hlineB : lineB (cTabs s t α p w).1 (cTabs s t α p w).2.1 (cTabs s t α p w).2.2.1 (cTabs s t α p w).2.2.2 s t
+      (sqrtWindow p) p w W line = pairUp bw ++ List.replicate (t - s) (List.replicate (2 * w) false) := rfl
+  rw [hlineB]
+  apply List.ext_getElem
+  · rw [List.length_map, length_lineOf, List.length_append, hpl, List.length_replicate]; omega
+  · intro k hk1 hk2
+    have hkt : k < t := by rw [List.length_map, List.length_append, hpl, List.length_replicate] at hk1; omega
+    simp only [List.getElem_map, lineOf, List.getElem_range, padB, extd]
+    rw [ZMod.val_natCast, Nat.mod_eq_of_lt hkt]
+    by_cases hks : k < s
+    · rw [ite_eq_left_of_eq_true _ _ (eq_true hks), List.getElem_append_left (by rw [hpl]; exact hks),
+        ← List.getD_eq_getElem _ [], getD_pairUp s bw hbwl k hks,
+        decE_pair _ _ _ _ (hbww _ (by
+          rw [List.getD_eq_getElem _ _ (by omega)]; exact List.getElem_mem _))]
+      rw [← hvin, ← hval]
+      simp only [vec, ZMod.val_natCast, Nat.mod_eq_of_lt hks]
+      rfl
+    · rw [ite_eq_right_of_eq_false _ _ (eq_false hks), List.getElem_append_right (by rw [hpl]; omega)]
+      simp only [List.getElem_replicate]
+      exact decE_zero w p
+
 end
 end IntegerMultBounds.Resampling.LineNumeric
