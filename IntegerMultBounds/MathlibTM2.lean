@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Main
+public import IntegerMultBounds.MathlibTM2.FastPath
 
 /-!
 # Integer multiplication on Mathlib's `Turing.FinTM2`

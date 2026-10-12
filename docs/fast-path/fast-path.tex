@@ -1,0 +1,175 @@
+\documentclass[11pt]{amsart}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage[margin=1.1in]{geometry}
+\usepackage{newtxtext,newtxmath}
+\usepackage{microtype}
+\usepackage[colorlinks=true, linkcolor=blue, citecolor=blue, urlcolor=blue]{hyperref}
+\usepackage{listings}
+\usepackage{upquote}
+\lstdefinelanguage{Lean}{
+  morekeywords={def,theorem,abbrev,open,namespace,end},
+  sensitive=true,
+  morecomment=[l]{--},
+}
+\lstset{language=Lean, basicstyle=\small\fontfamily{lmtt}\selectfont\upshape, keywordstyle=\bfseries,
+  columns=fullflexible, keepspaces=true, breaklines=false,
+  xleftmargin=1em, aboveskip=6pt, belowskip=6pt,
+  literate={ℕ}{{$\mathbb{N}$}}1 {ℝ}{{$\mathbb{R}$}}1 {ℤ}{{$\mathbb{Z}$}}1
+    {→}{{$\rightarrow$}}1 {×}{{$\times$}}1 {∃}{{$\exists$}}1 {∀}{{$\forall$}}1
+    {κ}{{$\kappa$}}1 {≤}{{$\le$}}1 {≥}{{$\ge$}}1 {∧}{{$\wedge$}}1
+    {¬}{{$\neg$}}1 {∈}{{$\in$}}1 {₁}{{$_1$}}1 {₂}{{$_2$}}1 {⊕}{{$\oplus$}}1
+}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\begin{document}
+
+\title[Foundations for a fast Mathlib multiplier]{Foundations for a fast integer multiplier\\ on Mathlib's Turing machines}
+
+\author{Dan Brown$^*$}
+\email{jdb1729@gmail.com}
+\thanks{$^*$Author of \emph{The Da Vinci Code}.}
+
+\date{October 11, 2026}
+
+\begin{abstract}
+We reduce the Mathlib statement \texttt{MathlibTM2.Statement} (integer multiplication in time
+$O(n(\log n)^{1-\kappa})$ on \texttt{Turing.FinTM2}) to the existence of a single structured
+host program that multiplies long inputs within that time. Toward that program we prove in
+Lean: the complete numeric algorithm of the paper as one concrete function whose rounded
+output is the product for every large input, with pairwise coprime moduli in place of primes;
+the simultaneous butterfly layer as an exact computation on Gaussian integers; the round
+decomposition and error bound of the synthetic transforms; the solution of the layer's cost
+recurrence; and a library of host machines with exact step counts, including the network gate,
+sign, leaf, packed-addition and node-body passes of the layer and the input and output stages of
+the multiplier. All theorems depend only on \texttt{propext}, \texttt{Classical.choice} and
+\texttt{Quot.sound}.
+\end{abstract}
+
+\maketitle
+
+\section{The reduction}
+
+Everything lives under \texttt{IntegerMultBounds.MathlibTM2} and builds on the Mathlib statement
+and the structured stack language \texttt{Stack.lean} of the preceding contribution. A
+\emph{host program} is a procedure table in that language over the Mathlib input and output
+stacks and a bank of register stacks. The predicate \texttt{HostMulWithin} says that on input
+$x\#y$ the program halts in the exact final configuration required by
+\texttt{TM2ComputableInTime} within the given time.
+
+\begin{theorem}[\texttt{Fast.statement\_of\_dispatch}]
+If a host program satisfies \texttt{HostMulWithin} on every input of encoded length at least
+$n_0$, with time $O(n(\log n)^{1-\kappa})$ for some $\kappa>0$, then
+\texttt{MathlibTM2.Statement} holds.
+\end{theorem}
+
+The proof wraps the program in a dispatcher that reads up to $n_0$ input symbols into its finite
+control. A shorter input is answered from a finite table; otherwise the symbols are pushed back
+and the fast program runs.
+
+\section{The numeric algorithm}
+
+\texttt{Mult.Pipeline.pipelineCoeffs n x y} is the paper's computation with every ingredient
+fixed: the parameters $b,p,d,K,T,r,\ell,t_i,s_i,\alpha,\gamma$ of \texttt{Mult.Sizes}; the CRT
+reindexing $\Phi$ of \texttt{Mult.CRT}; the line maps $\widetilde A$, $\widetilde B_0$ with the
+vendored weight tables; the chirp table; the computed complex convolution through twisted
+synthetic transforms; pointwise products; and the final scaling and rounding.
+
+\begin{theorem}[\texttt{Mult.Pipeline.pipeline\_correct}]
+For all large $n$ and all $x,y<2^n$,
+\[
+ \mathrm{evalBase}\,(2^{b})\,(\texttt{pipelineCoeffs}\ n\ x\ y)=xy.
+\]
+\end{theorem}
+
+The chain behind it is the vendored \texttt{ExactRecovery.exact\_product} together with new
+ingredients.
+
+\subsection*{Coprime moduli}
+No prime number theorem is needed. Let $N$ be the product of the odd numbers below $4d$, take
+group A moduli $Nx+1$ near $r/2$ for consecutive even $x$, and group B moduli $Ny+2$ near $r$
+for consecutive odd $y$ with $y\approx 2x$. A common divisor of two moduli has no prime factor
+below $4d$ and divides one of $y-2x$, $x-x'$, $y-y'$, all nonzero and at most $4d$; so the
+moduli are pairwise coprime, and for $r\ge 16d^2N+8d$ they lie in the required intervals
+(\texttt{Mult.Moduli.src\_good}).
+
+\subsection*{Errors}
+The source transform $\widetilde F=2^\gamma\,\widetilde B_0\,\widetilde C\,\widetilde A$ is
+within $9\cdot 2^\gamma T\log_2 T$ grid units of $RF_s\Phi^{-1}$ on the half ball
+(\texttt{Mult.SourceErr}), including the weighted chirp, restricted-domain compositions and the
+opposite transform by conjugation. The computed complex convolution is within
+$E_{\rm ring}+9$ units (\texttt{Mult.ComplexConv}), and the synthetic convolution of the twisted
+records has $E_{\rm ring}=\sqrt2\,M(3\ell+1)<5T\log_2 T$ (\texttt{Mult.SynthErr}). The forward
+and opposite synthetic transforms are exactly $\ell$ rounds of normalized butterflies on one
+selected bit per axis followed by per-record twiddles $y^{\mp E}$ (\texttt{Mult.Rounds}).
+
+\subsection*{A cheaper $\widetilde B_0$}
+The vendored tabled $\widetilde B_0$ runs $p$ Neumann steps. With
+$\|N-I\|\le 2^{-\alpha^2\theta}$ (\texttt{opNorm\_offDiagCLM\_le\_rpow}) the pipeline uses
+$\alpha^2$ steps and an off-diagonal window of $\lfloor\sqrt p\rfloor/(2\alpha)+1$ terms, with the
+same error conclusion (\texttt{Mult.FastB0.resampB}$_0$\texttt{NumK\_spec}): $O(s\,\alpha\sqrt p)$ term
+products per line.
+
+\section{The simultaneous layer on Gaussian integers}
+
+The machine stores Gaussian integers modulo $2^w$. Each network gate is doubled (its
+coefficients are halves of integers, \texttt{program\_gate\_coeff}) and doubles the wires it does
+not write; a child returns $2^{T_c}$ times its result and the other wires are scaled by
+$2^{T_c}$. With this uniform exponent every step is a ring operation, so intermediate overflow is
+harmless.
+
+\begin{theorem}[\texttt{Layer.nodeM\_correct}, \texttt{Layer.layerZ\_correct}]
+The scaled node, and by induction the recursive layer \texttt{layerZ} on $W^jR_0$ rows, computes
+$2^{E}$ times the kernel $C$ on every active bit.
+\end{theorem}
+
+\begin{theorem}[\texttt{Layer.topZ\_correct}]
+The full layer pipeline (phase $S$, kernels on the top chunks, rows and padding, base-$m$ pieces
+through \texttt{layerZ}, phase $S$, the unit $(1-i)^D2^{-\lfloor D/2\rfloor}$, truncating shift)
+returns the componentwise truncation toward zero of the normalized butterflies $H_0$ on the
+selected bits.
+\end{theorem}
+
+The cost recurrence of the paper is solved in \texttt{Layer.Recurrence.layer\_cost\_bound}:
+with branching $s/W<m^\sigma$ (\texttt{ComplexRank25.branching\_bound}) and the interchange
+exponent $\tau$ (\texttt{BinaryInterchangeRun.uniform\_bound}), the normalized cost of a layer is
+$O(d^{\lambda'})$.
+
+\section{Host machines}
+
+Every machine below comes with an \texttt{\_exec} theorem giving its exact final register
+contents and an explicit step bound.
+
+\begin{itemize}
+\item \emph{Toolkit} (\texttt{Host}): foreign calls running any vendored \texttt{Machine.Program}
+with a \texttt{HoareTime} contract on host registers; streams, block routing, word automata;
+index-driven routing and merging by address codes; stable radix sort; exact binary arithmetic
+(addition, comparison, multiplication, division); the vendored fast
+interchange of address chunks; the vendored Schönhage--Strassen multiplier
+(\texttt{ssMul\_exec\_log}).
+\item \emph{Layer passes} (\texttt{Layer}, \texttt{Node}): Gaussian linear automata, scaling by
+$2^s$, the doubled gate on a bank of wire registers, address-dependent phases and signs, the
+leaf kernels, the packed slot-XOR passes (controlled rotations, field swaps through the fast
+interchange, key attachment, exact repair by extraction, radix sort and reinsertion, top-bit
+fixup), unary parameter and mask utilities, and the node body
+(\texttt{LayerMachine.nodeBody\_exec\_layerZ}) with abstract factor programs.
+\item \emph{Multiplier stages} (\texttt{Fast}): reading the input and writing the scaled digit
+records; carry propagation and the Mathlib-encoded output.
+\end{itemize}
+
+\section{Status}
+
+The fast host program is not yet assembled. Its remaining components are the factor programs
+and the recursion of the layer machine, the synthetic transform machine, the linewise
+resampling machines, the table machines, the CRT reindexing machine, the pointwise and scaling
+stages, and the total cost bound.
+
+\section{Verification}
+
+\texttt{lake build} of the library passes, \texttt{AxiomAudit.lean} passes, and
+\texttt{FastPathCheck.lean} asserts the axioms of the main theorems above.
+
+\end{document}
