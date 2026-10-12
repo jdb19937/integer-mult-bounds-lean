@@ -17,7 +17,7 @@ See [COMPONENTS.md](COMPONENTS.md) for what each file proves.
 | [Faster interchange of address chunks](plan/04-faster-interchange-address.md) | §4 | ✅ 10/10 | ✅ 9/9 | 375 |
 | [Fast simultaneous synthetic butterfly layers](plan/05-simultaneous-butterfly-layers.md) | §5, §11, CrocSwap | 🟡 4/12 | 🟡 0/12 | 1670 |
 | [Synthetic transforms and their tape layout](plan/06-synthetic-transforms-tape.md) | §6 | ✅ 2/2 | ⬜ 0/2 | 5 |
-| [Resampling with the permutations left in the transform](plan/07-gaussian-resampling.md) | §7 | ✅ 6/6 | 🟡 3/4 | 59 |
+| [Resampling with the permutations left in the transform](plan/07-gaussian-resampling.md) | §7 | ✅ 6/6 | 🟡 3/4 | 78 |
 | [Exact integer multiplication and its cost](plan/08-exact-multiplication.md) | §8 | 🟡 3/4 | ⬜ 0/3 | 15 |
 | [Fast multiplication subroutine](plan/A-schoenhage-strassen.md) | Schönhage–Strassen | ✅ 6/6 | 🟡 2/4 | 85 |
 | [End-to-end theorem `EndToEnd`](plan/B-end-to-end.md) | — | 🟡 1/3 | 🟡 2/3 | 6 |
@@ -122,7 +122,7 @@ Details: [plan/07-gaussian-resampling.md](plan/07-gaussian-resampling.md)
 | Fixed-point word and record layer | ✅ | ✅ | 12 |
 | Gaussian weight tables on tapes | ✅ | ✅ | 12 |
 | Resampling maps on tapes | ✅ | ✅ | 13 |
-| Tensor interface line costs | ✅ | 🟡 0/1 rows | 3 |
+| Tensor interface line costs | ✅ | 🟡 0/2 rows | 22 |
 
 ## 8. Exact integer multiplication and its cost (§8)
 
