@@ -2633,6 +2633,7 @@ import IntegerMultBounds.Schoenhage.ConvScale
 import IntegerMultBounds.Schoenhage.ConvScaleRun
 import IntegerMultBounds.Schoenhage.OfHoare
 import IntegerMultBounds.Schoenhage.ConvPrims
+import IntegerMultBounds.Schoenhage.ConvProgram
 import IntegerMultBounds.Schoenhage.RingLemmaHeader
 import IntegerMultBounds.Schoenhage.RingLemma
 import IntegerMultBounds.Schoenhage.Twist
