@@ -4663,6 +4663,7 @@ Machine model, execution, composition, and tape routines.
 - `Machine/CompactComplexSourceReadyChildEventSemantics.lean`: The actual forward-basis, returned and inverse Reached witnesses implement the original child instruction on every decoded row and polynomial slice. Width, grid and promotion guards derive from real Paths and ledgers; recursive child tensor semantics remain explicit.
 - `Machine/CompactComplexSourceReadyScalarEventSemantics.lean`: Actual scalar successors retain their paid Hoare execution and implement the original scalar instruction on every decoded row and polynomial slice. The equality derives from the actual group output rather than an assumed aligned prefix.
 - `Machine/CompactComplexSourceReadyStoppedSettledFrames.lean`: Actual stopped-leaf orientation and result installation preserve the captured settled frames through the pre-pop bank. Parent Settled initializes the literal snapshot. No post-pop claim is made for the consumed captured PC code.
+- `Machine/CompactComplexAlignedStoppedChildRun.lean`: The unchanged aligned prime-alphabet table classifies the actual child, executes its stopped leaf and pops the genuinely associated saved PC. Exact installed oriented output and all joins are paid. A width-only classifier variant avoids an artificial child-grid premise; physical parent restoration and inverse basis remain separate.
 
 ## Compact
 

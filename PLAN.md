@@ -16,14 +16,14 @@ See [COMPONENTS.md](COMPONENTS.md) for what each file proves.
 | Composition, loops, frames, elementary streams | §2 | 🟡 (153/154) | 🟡 (136/147) |
 | Finite networks with a rank saving | §3 | ✅ (66/66) | 🟡 (1/42) |
 | Faster interchange of address chunks | §4 | ✅ (129/129) | ✅ (126/126) |
-| Simultaneous butterfly layers with compact control | §5, §11, CrocSwap | ✅ (1630/1630) | 🟡 (1262/1266) |
+| Simultaneous butterfly layers with compact control | §5, §11, CrocSwap | ✅ (1631/1631) | 🟡 (1263/1267) |
 | Synthetic transforms and their tape layout | §6 | ✅ (5/5) | ⬜ (0/3) |
 | Gaussian resampling | §7 | ✅ (17/17) | 🟡 (8/9) |
 | Fast multiplication subroutine | Schönhage–Strassen | ✅ (22/22) | 🟡 (11/15) |
 | Exact multiplication, parameters, time bound | §8 | 🟡 (5/7) | ⬜ (0/2) |
 | End-to-end theorem `EndToEnd` | — | 🟡 (5/8) | 🟡 (5/8) |
 
-Component accounting: mathematics **2035/2041**, tape **1551/1620**.
+Component accounting: mathematics **2036/2042**, tape **1552/1621**.
 Each numerator counts only ✅ rows; partial and unstarted rows remain in the
 denominator, and — entries are excluded. These counts measure checklist rows,
 not remaining effort or end-to-end completion. In particular, Section 5 remains
@@ -2047,6 +2047,7 @@ The main binary interchange theorem is proved in `BinaryInterchangeRun.runs` and
 | CompactComplexSourceReadyChildEventSemantics | `CompactComplexSourceReadyChildEventSemantics` | ✅ | — | The actual forward-basis, returned and inverse Reached witnesses implement the original child instruction on every decoded row and polynomial slice. Width, grid and promotion guards derive from real Paths and ledgers; recursive child tensor semantics remain explicit. |
 | CompactComplexSourceReadyScalarEventSemantics | `CompactComplexSourceReadyScalarEventSemantics` | ✅ | ✅ | Actual scalar successors retain their paid Hoare execution and implement the original scalar instruction on every decoded row and polynomial slice. The equality derives from the actual group output rather than an assumed aligned prefix. |
 | CompactComplexSourceReadyStoppedSettledFrames | `CompactComplexSourceReadyStoppedSettledFrames` | ✅ | — | Actual stopped-leaf orientation and result installation preserve the captured settled frames through the pre-pop bank. Parent Settled initializes the literal snapshot. No post-pop claim is made for the consumed captured PC code. |
+| CompactComplexAlignedStoppedChildRun | `CompactComplexAlignedStoppedChildRun` | ✅ | ✅ | The unchanged aligned prime-alphabet table classifies the actual child, executes its stopped leaf and pops the genuinely associated saved PC. Exact installed oriented output and all joins are paid. A width-only classifier variant avoids an artificial child-grid premise; physical parent restoration and inverse basis remain separate. |
 | Full reachable recursive fixed-table execution | `CompactComplexFixedNodePaths`, `CompactComplexSourceReadyReachedChildInvariant` | — | 🟡 | Local scalar and child entry/return paths are checked. Full leaf/nonleaf recursive induction, child tensor semantics, target coverage and complete event witness assembly remain open. |
 | Actual uniform recursive runtime | `CompactComplexRecursiveRuntimeSum`, `CompactComplexCorrectedNonleafBoundaryBudget` | — | 🟡 | Local boundary costs and abstract recursive sum estimates are checked. Instantiation with the complete actual recursive trace and all paid basis and physical transitions remains open. |
 

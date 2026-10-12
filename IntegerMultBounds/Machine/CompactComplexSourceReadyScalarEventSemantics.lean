@@ -82,7 +82,7 @@ theorem computed_scalar_semantics {dependencyLeft nodeLeft childExponent : ℕ}
   rw [←run_gates] at gateSemantics
   exact gateSemantics
 
-/-- The actual readiness witness'extraTapes data equation specializes the computed
+/-- The actual readiness witness data equation specializes the computed
 scalar semantics to its exact physical successor bank. -/
 theorem reached_scalar_semantics {dependencyLeft nodeLeft childExponent : ℕ}
     (path : CompactRecursiveDependencyBudget.Path shape.active dependencyLeft nodeExponent dependencyLevels frameVolume returnedVolume)
