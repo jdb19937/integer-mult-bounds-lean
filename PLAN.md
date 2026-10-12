@@ -28,9 +28,9 @@ here.
 | [Finite networks with a rank saving](plan/03-finite-networks-rank.md) | §3 | ✅ 8/8 | 🟡 2/6 | 358 |
 | [Faster interchange of address chunks](plan/04-faster-interchange-address.md) | §4 | ✅ 10/10 | ✅ 9/9 | 375 |
 | [Simultaneous butterfly layers with compact control](plan/05-simultaneous-butterfly-layers.md) | §5, §11, CrocSwap | 🟡 1/12 | 🟡 0/12 | 1655 |
-| [Synthetic transforms and their tape layout](plan/06-synthetic-transforms-tape.md) | §6 | 🟡 0/3 | ⬜ 0/3 | 7 |
+| [Synthetic transforms and their tape layout](plan/06-synthetic-transforms-tape.md) | §6 | ✅ 3/3 | ⬜ 0/3 | 7 |
 | [Gaussian resampling](plan/07-gaussian-resampling.md) | §7 | ✅ 6/6 | 🟡 3/4 | 59 |
-| [Fast multiplication subroutine](plan/08-fast-multiplication-subroutine.md) | Schönhage–Strassen | 🟡 0/6 | 🟡 0/4 | 85 |
+| [Fast multiplication subroutine](plan/08-fast-multiplication-subroutine.md) | Schönhage–Strassen | ✅ 6/6 | 🟡 2/4 | 85 |
 | [Exact multiplication, parameters, time bound](plan/09-exact-multiplication-parameters.md) | §8 | 🟡 0/3 | ⬜ 0/2 | 11 |
 | [End-to-end theorem `EndToEnd`](plan/10-end-to-end.md) | — | 🟡 1/3 | 🟡 2/3 | 6 |
 
@@ -115,9 +115,9 @@ Details: [plan/06-synthetic-transforms-tape.md](plan/06-synthetic-transforms-tap
 
 | Sub-problem | Mathematics | Tape | Files |
 | --- | --- | --- | --- |
-| Synthetic ring and synthetic FFT | 🟡 | ⬜ | 4 |
-| Bluestein reduction | 🟡 | ⬜ | 2 |
-| Tape layout and cost bracket | 🟡 | ⬜ | 1 |
+| Synthetic ring and synthetic FFT | ✅ | ⬜ | 4 |
+| Bluestein reduction | ✅ | ⬜ | 2 |
+| Tape layout and cost bracket | ✅ | ⬜ | 1 |
 
 ## 7. Gaussian resampling (§7)
 
@@ -138,12 +138,12 @@ Details: [plan/08-fast-multiplication-subroutine.md](plan/08-fast-multiplication
 
 | Sub-problem | Mathematics | Tape | Files |
 | --- | --- | --- | --- |
-| Fourier and fixed-point foundations | 🟡 | — | 23 |
-| Schönhage–Strassen level, schedule and cost | 🟡 | — | 4 |
-| Word-tape programming layer | 🟡 | 🟡 | 10 |
-| Schönhage–Strassen multiplier on tapes | 🟡 | 🟡 3/4 rows | 14 |
-| Packed signed ring products | 🟡 | 🟡 | 28 |
-| Paper-format transform layer statements | 🟡 | 🟡 1/4 rows | 6 |
+| Fourier and fixed-point foundations | ✅ | — | 23 |
+| Schönhage–Strassen level, schedule and cost | ✅ | — | 4 |
+| Word-tape programming layer | ✅ | ✅ | 10 |
+| Schönhage–Strassen multiplier on tapes | ✅ | 🟡 3/4 rows | 14 |
+| Packed signed ring products | ✅ | ✅ | 28 |
+| Paper-format transform layer statements | ✅ | 🟡 1/4 rows | 6 |
 
 ## 9. Exact multiplication, parameters, time bound (§8)
 
