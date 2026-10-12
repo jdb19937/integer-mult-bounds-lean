@@ -538,4 +538,164 @@ theorem runs_joinLoop : ∀ (ps : List (List Bool)) (σ : Fin 𝕌 → WTape) (L
     · rw [h]; funext y; simp only [Function.update_apply, σ₁]; split_ifs <;> simp
     · simp [clen_cons]; omega
 
+/-! ### The digit constants -/
+
+namespace Rules
+
+/-- Zeros for all driver bits after the first, then `1, 0`. -/
+abbrev hmark : Rule 0 where
+  Q := Bool
+  q0 := false
+  step q _ _ := (true, if q then some (some false) else none, fun _ => false)
+  flush _ := [some true, some false, none]
+  B := 3
+  hB _ := le_rfl
+
+theorem go_hmark_true (w : List Bool) (ws : Fin 0 → List Bool) :
+    (go hmark true w ws).2.1 = (List.replicate w.length false).map some := by
+  induction w generalizing ws with
+  | nil => simp [go]
+  | cons b w ih => simp [go, ih, List.replicate_succ]
+
+theorem output_hmark (w : List Bool) (ws : Fin 0 → List Bool) (h : w ≠ []) :
+    output hmark w ws = syms [List.replicate (w.length - 1) false ++ [true, false]] := by
+  cases w with
+  | nil => exact absurd rfl h
+  | cons b w => simp [output, go, go_hmark_true, syms_cons]
+
+/-- One zero per driver bit and one more. -/
+abbrev fill1 : Rule 0 where
+  Q := Unit
+  q0 := ()
+  step _ _ _ := ((), some (some false), fun _ => false)
+  flush _ := [some false, none]
+  B := 2
+  hB _ := le_rfl
+
+theorem go_fill1 (w : List Bool) (ws : Fin 0 → List Bool) :
+    (go fill1 () w ws).2.1 = (List.replicate w.length false).map some := by
+  induction w generalizing ws with
+  | nil => simp [go]
+  | cons b w ih => simp [go, ih, List.replicate_succ]
+
+theorem output_fill1 (w : List Bool) (ws : Fin 0 → List Bool) :
+    output fill1 w ws = syms [List.replicate (w.length + 1) false] := by
+  simp [output, go_fill1, syms_cons, List.replicate_succ']
+
+end Rules
+
+theorem bits_half {Wd : ℕ} (hW : 1 ≤ Wd) :
+    bits (Wd + 1) (2 ^ (Wd - 1)) = List.replicate (Wd - 1) false ++ [true, false] := by
+  have h := bits_bval (List.replicate (Wd - 1) false ++ [true, false])
+  have hl : (List.replicate (Wd - 1) false ++ [true, false]).length = Wd + 1 := by simp; omega
+  rw [hl, bval_append, bval_replicate_false] at h
+  simpa using h
+
+theorem bits_lowOnes {Wd D : ℕ} (hD : D ≤ Wd + 1) :
+    bits (Wd + 1) (2 ^ D - 1) = List.replicate D true ++ List.replicate (Wd + 1 - D) false := by
+  have hones : ∀ n, bval (List.replicate n true) = 2 ^ n - 1 := by
+    intro n; induction n with
+    | zero => rfl
+    | succ n ih => simp [List.replicate_succ, ih, pow_succ]; have := Nat.one_le_two_pow (n := n); omega
+  have h := bits_bval (List.replicate D true ++ List.replicate (Wd + 1 - D) false)
+  have hl : (List.replicate D true ++ List.replicate (Wd + 1 - D) false).length = Wd + 1 := by simp; omega
+  rw [hl, bval_append, bval_replicate_false, hones] at h
+  simpa using h
+
+/-- `kH`, `kC` for width `w + D` and shift `D`, from `kw = ones w` and `kS = ones D`. -/
+noncomputable def constK : Cmd 0 𝕌 :=
+  .seq (op0 Rules.copy false kw (ι qR) (by decide)) <| .seq (rewind kw) <|
+  .seq (op0 Rules.copy true kS (ι qR) (by decide)) <| .seq (rewind kS) <| .seq (rewind (ι qR)) <|
+  .seq (op0 Rules.hmark false (ι qR) kH (by decide)) <| .seq (rewind (ι qR)) <| .seq (rewind kH) <|
+  .seq (op0 Rules.copy false kS kC (by decide)) <| .seq (rewind kS) <|
+  .seq (op0 Rules.fill1 true kw kC (by decide)) <| .seq (rewind kw) <| .seq (rewind kC) (clear (ι qR))
+
+set_option maxHeartbeats 8000000 in
+theorem runs_constK {w D : ℕ} (hw : 1 ≤ w) (σ : Fin 𝕌 → WTape) (hW : σ kw = reg (ones w)) (hS : σ kS = reg (ones D))
+    (hR : σ (ι qR) = emp) (hH : σ kH = emp) (hC : σ kC = emp) :
+    Runs constK σ (· = Function.update (Function.update σ kH (reg (bits (w + D + 1) (2 ^ (w + D - 1)))))
+      kC (reg (bits (w + D + 1) (2 ^ D - 1)))) (20 * (w + D) + 100) := by
+  apply Runs.of_wp
+  simp only [constK, WP, wp_op0, wp_rewind, wp_clear]
+  have hne : ones w ++ ones D ≠ [] := by simp [ones]; omega
+  tsimp [hW, hS, hR, hH, hC, emp, reg, Rules.output_copy, Rules.output_hmark _ _ hne, Rules.output_fill1,
+    WTape.put, WTape.next, WTape.cur]
+  have t1 := time_le Rules.hmark (ones w ++ ones D) (fun j => j.elim0) 0 (fun j => j.elim0)
+  have t2 := time_le Rules.fill1 (ones w) (fun j => j.elim0) 0 (fun j => j.elim0)
+  refine ⟨?_, ?_⟩
+  · funext y
+    simp only [Function.update_apply]
+    split_ifs <;> (try subst_vars) <;>
+      tsimp [hW, hS, hR, hH, hC, emp, reg, bits_half (show 1 ≤ w + D by omega), bits_lowOnes (show D ≤ w + D + 1 by omega),
+        ones] at *
+    all_goals omega
+  · have hb1 : Rules.hmark.B = 3 := rfl
+    have hb2 : Rules.fill1.B = 2 := rfl
+    rw [hb1] at t1; rw [hb2] at t2
+    simp [time_copy, clen, WTape.words] at t1 t2 ⊢; omega
+
+/-! ### The output words -/
+
+open Spec.SignedRingProduct NLogN in
+theorem outWord_offWord {Wd D w : ℕ} {a : ℤ} (hw : 1 ≤ w) (hws : w + D ≤ Wd + 1) (hW : 1 ≤ Wd)
+    (h1 : -2 ^ (Wd - 1) ≤ a) (h2 : a < 2 ^ (Wd - 1)) :
+    (outWord Wd D w (bval (offWord Wd a))).reverse = compWord w (rho0 ((a : ℝ) / 2 ^ D)) := by
+  have hv := bval_offWord hW h1 h2
+  have he : bval (offWord Wd a) < 2 ^ Wd := by have := bval_lt (offWord Wd a); simpa using this
+  rw [outWord_eq hW he hw hws, rho0_div, tw_reverse]
+  congr 2
+  rw [hv]; ring
+
+open Spec.SignedRingProduct in
+/-- Bounds of components hold for every record of the array. -/
+theorem comp_bound_of {r : ℕ} {A : ℤ} {G : List (Rec r)} (hb : Bounded A G) {f : Rec r} (hf : f ∈ G) (j : Fin r) :
+    |f.1 j| ≤ A ∧ |f.2 j| ≤ A := by
+  obtain ⟨y, hy, rfl⟩ := List.getElem_of_mem hf
+  have h1 := hb y (2 * j.val)
+  have h2 := hb y (2 * j.val + 1)
+  rw [List.getD_eq_getElem _ _ hy] at h1 h2
+  unfold comp at h1 h2
+  have e1 : 2 * j.val / 2 = j.val := by omega
+  have e2 : (2 * j.val + 1) / 2 = j.val := by omega
+  simp only [e1, e2, j.isLt, ↓reduceDIte, show 2 * j.val % 2 = 0 by omega, show (2 * j.val + 1) % 2 = 1 by omega,
+    ↓reduceIte, one_ne_zero] at h1 h2
+  exact ⟨h1, h2⟩
+
+open Spec.SignedRingProduct NLogN in
+theorem join_outWords {r Wd D w : ℕ} (hw : 1 ≤ w) (hws : w + D ≤ Wd + 1) (hW : 1 ≤ Wd) (G : List (Rec r))
+    (hb : Bounded (2 ^ (Wd - 1) - 1) G) :
+    (((arrOff Wd G).map fun x => outWord Wd D w (bval x)).map List.reverse).flatten =
+      array w (G.map (truncRec D)) := by
+  rw [array_words]
+  simp only [arrOff, List.flatMap, List.map_flatten, List.map_map, List.flatten_flatten]
+  congr 1
+  apply List.map_congr_left
+  intro f hf
+  simp only [Function.comp_apply, recOff, recordWords, truncRec, List.flatMap, List.map_flatten, List.map_map]
+  congr 2
+  apply List.map_congr_left
+  intro j _
+  obtain ⟨b1, b2⟩ := comp_bound_of hb hf j
+  rw [abs_le] at b1 b2
+  simp only [Function.comp_apply, List.map_cons, List.map_nil]
+  rw [outWord_offWord hw hws hW (by linarith) (by linarith), outWord_offWord hw hws hW (by linarith) (by linarith)]
+
+theorem zext_digits {Wd : ℕ} (L : List (List Bool)) (h : ∀ x ∈ L, x.length = Wd) :
+    L.map (· ++ [false]) = (L.map bval).map (bits (Wd + 1)) := by
+  rw [List.map_map]
+  apply List.map_congr_left
+  intro x hx
+  simp only [Function.comp_apply]
+  rw [← bits_succ_zext _ _ (by have := bval_lt x; rwa [h x hx] at this), ← h x hx, bits_bval]
+
+open Spec.SignedRingProduct in
+theorem bounded_bflysRecs {r : ℕ} {A : ℤ} : ∀ (Ps : List ℕ) (fs : List (Rec r)), Bounded A fs →
+    Bounded (2 ^ Ps.length * A) (bflysRecs Ps fs)
+  | [], fs, h => by simpa [bflysRecs] using h
+  | P :: Ps, fs, h => by
+    have := bounded_bflysRecs Ps _ (bounded_bflyRecs P h)
+    simp only [List.length_cons, pow_succ]
+    rw [bflysRecs]
+    convert this using 1; ring
+
 end IntegerMultBounds.Schoenhage
