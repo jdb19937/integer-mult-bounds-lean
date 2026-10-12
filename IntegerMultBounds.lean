@@ -2645,6 +2645,7 @@ import IntegerMultBounds.Schoenhage.ChunkRound
 import IntegerMultBounds.Schoenhage.AlphaLift
 import IntegerMultBounds.Schoenhage.DriverMath
 import IntegerMultBounds.Schoenhage.DriverWords
+import IntegerMultBounds.Schoenhage.DriverBank
 import IntegerMultBounds.Schoenhage.RingLemmaHeader
 import IntegerMultBounds.Schoenhage.RingLemma
 import IntegerMultBounds.Schoenhage.Twist
