@@ -18,14 +18,22 @@ namespace IntegerMultBounds.Schoenhage
 
 open Spec.SignedRingProduct TwistDescriptors
 
-/-- A slot's Hadamard words, for a transform of length `2^n` over axes `ts` with `ℓ` slots in
-groups of `K`, precision `p`, layer parameter `d`, ring degree `r` and record word width `w`. -/
+/-- The chunk group `c` and the bit `ρ` within it of a chunk-group slot `h`. -/
+def chunkOf (ℓ K h : ℕ) : ℕ := (h - (ℓ - 1) % K) / K
+
+def rhoOf (ℓ K h : ℕ) : ℕ := (h - (ℓ - 1) % K) % K
+
+/-- The layer header of chunk-group slot `h`, for a transform of length `2^n` over axes `ts` with `ℓ`
+slots in groups of `K`, precision `p`, layer parameter `d`, ring degree `r` and record word width
+`w`: `S = 2^(cDK)` and `P = 2^n / (S·2^(KD))` for the slot's chunk group `c`. -/
+def chunkHdr (p d r w n : ℕ) (ts : List ℕ) (ℓ K h : ℕ) : List Bool :=
+  layerHeader p d r ts.length (2 ^ (n - (chunkOf ℓ K h * ts.length * K + K * ts.length)))
+    (2 ^ (chunkOf ℓ K h * ts.length * K)) K (rhoOf ℓ K h) w
+
+/-- A slot's Hadamard words. -/
 def hadWords (p d r w n : ℕ) (ts : List ℕ) (ℓ K h : ℕ) : List (List Bool) :=
   if h < (ℓ - 1) % K then [[false], ones (2 * r * 2 ^ prefixBase ts.length ℓ K h), ones ts.length]
-  else if h < ℓ - 1 then
-    [[true], layerHeader p d r ts.length
-      (2 ^ (n - ((h - (ℓ - 1) % K) / K * ts.length * K + K * ts.length)))
-      (2 ^ ((h - (ℓ - 1) % K) / K * ts.length * K)) K ((h - (ℓ - 1) % K) % K) w]
+  else if h < ℓ - 1 then [[true], chunkHdr p d r w n ts ℓ K h]
   else [[false], ones (2 * r * 2 ^ topBase ts.length ℓ K), ones (longs ts ℓ).length]
 
 /-- A slot's twist words: the table's word count in unary, then its words. -/
