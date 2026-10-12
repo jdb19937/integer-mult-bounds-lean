@@ -11,6 +11,8 @@ public import IntegerMultBounds.Resampling.B0TapeFast
 public import IntegerMultBounds.Resampling.TableValue
 public import IntegerMultBounds.Resampling.PiTape
 public import IntegerMultBounds.LineCost
+public import IntegerMultBounds.NLogN.ResamplingManuscript
+public import IntegerMultBounds.NLogN.ResamplingPermutedNumeric
 
 /-! The milestone theorems of §7 in `plan/07-gaussian-resampling.md`: each
 packages the results that close one sub-problem. -/
@@ -94,3 +96,48 @@ theorem tensor_line_costs :
   ⟨@linewise_sum, @gaussian_lines_eq, @lines_le, @setup_isLittleO, @eventually_setup_le⟩
 
 end IntegerMultBounds.LineCost
+
+namespace IntegerMultBounds.NLogN
+
+variable {d : ℕ} {s t : Fin d → ℕ} [∀ i, NeZero (s i)] [∀ i, NeZero (t i)] {α : ℝ}
+
+/-- Lemma 7.2 with the manuscript's maps: the `d`-dimensional permutation-left identity with
+contractions, and the tensor products of the explicit `Ã` and the clamp-free `B̃₀` approximating
+`𝒜` and `ℬ₀` with errors `d·errA` and `d·errB₀H`, each per-axis error below `p²`, both mapping the
+unit disk to itself. -/
+theorem permuted_multi_numeric_manuscript (hst : ∀ i, s i < t i)
+    (hcop : ∀ i, Nat.Coprime (s i) (t i)) (hα : 2 ≤ α)
+    (hθ : ∀ i, 1 ≤ α ^ 2 * ((t i : ℝ) / (s i) - 1)) {p m : ℕ} (hαp : α ^ 2 ≤ p)
+    (hm : (p : ℝ) * α ^ 2 ≤ (m : ℝ) ^ 2) (hm1 : 1 ≤ m) (hmp : m ≤ p) (hp : 13 ≤ p) :
+    ∃ J : (i : Fin d) → (ZMod (s i) → ℂ) →L[ℂ] (ZMod (s i) → ℂ),
+      permRCLM s t ∘L dftDCLM s = ((2 : ℂ) ^ (d * (2 * ⌈α ^ 2⌉₊ + 2))) •
+        (tensorRCLM (fun i => resampB₀ (s i) (t i) α (J i)) ∘L permQCLM s t ∘L dftDCLM t ∘L
+          tensorRCLM (fun i => resampA (s i) (t i) α)) ∧
+      ‖tensorRCLM (fun i => resampA (s i) (t i) α)‖ ≤ 1 ∧
+      ‖tensorRCLM (fun i => resampB₀ (s i) (t i) α (J i))‖ ≤ 1 ∧
+      ApproxMap p (tensorZR d s t fun i => resampANum (s i) (t i) m (resampTermNum p (s i) (t i) α))
+        (tensorRCLM fun i => resampA (s i) (t i) α) (d * errA m) ∧
+      ApproxMap p (tensorZR d t s fun i => resampB₀NumH p (sqrtWindow p) (s i) (t i) α)
+        (tensorRCLM fun i => resampB₀ (s i) (t i) α (J i)) (d * errB₀H (sqrtWindow p)) ∧
+      errA m < (p : ℝ) ^ 2 ∧ errB₀H (sqrtWindow p) < (p : ℝ) ^ 2 ∧
+      (∀ u, ‖u‖ ≤ 1 → ‖tensorZR d s t (fun i => resampANum (s i) (t i) m (resampTermNum p (s i) (t i) α)) u‖ ≤ 1) ∧
+      (∀ w, ‖w‖ ≤ 1 → ‖tensorZR d t s (fun i => resampB₀NumH p (sqrtWindow p) (s i) (t i) α) w‖ ≤ 1) := by
+  have h := fun i => permuted_numeric_manuscript (hst i) (hcop i) hα (hθ i) hαp hm hm1 hmp hp
+  choose J hJ using h
+  refine ⟨J, permuted_factorization_multi α J fun i => (hJ i).1,
+    opNorm_tensorRCLM_le _ fun i => (hJ i).2.1, opNorm_tensorRCLM_le _ fun i => (hJ i).2.2.1,
+    ?_, ?_, errA_lt_sq' hmp (by omega), errB₀H_sqrt_lt_sq hp,
+    tensorZR_ball d s t _ fun i v hv => (hJ i).2.2.2.2.2.2.2.1 v hv,
+    tensorZR_ball d t s _ fun i v hv => (hJ i).2.2.2.2.2.2.2.2 v hv⟩
+  · rw [← tensorZRCLM_eq_tensorRCLM]
+    have := approxMap_tensorZR d s t (fun i => resampANum (s i) (t i) m (resampTermNum p (s i) (t i) α))
+      (fun i => resampA (s i) (t i) α) (fun _ => errA m) (fun i => (hJ i).2.1)
+      (fun i => (hJ i).2.2.2.1) (fun i v hv => (hJ i).2.2.2.2.2.2.2.1 v hv)
+    simpa [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul] using this
+  · rw [← tensorZRCLM_eq_tensorRCLM]
+    have := approxMap_tensorZR d t s (fun i => resampB₀NumH p (sqrtWindow p) (s i) (t i) α)
+      (fun i => resampB₀ (s i) (t i) α (J i)) (fun _ => errB₀H (sqrtWindow p)) (fun i => (hJ i).2.2.1)
+      (fun i => (hJ i).2.2.2.2.1) (fun i v hv => (hJ i).2.2.2.2.2.2.2.2 v hv)
+    simpa [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul] using this
+
+end IntegerMultBounds.NLogN

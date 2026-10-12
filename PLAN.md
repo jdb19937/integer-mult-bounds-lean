@@ -29,7 +29,7 @@ here.
 | [Faster interchange of address chunks](plan/04-faster-interchange-address.md) | §4 | ✅ 10/10 | ✅ 9/9 | 375 |
 | [Simultaneous butterfly layers with compact control](plan/05-simultaneous-butterfly-layers.md) | §5, §11, CrocSwap | 🟡 0/12 | 🟡 0/12 | 1654 |
 | [Synthetic transforms and their tape layout](plan/06-synthetic-transforms-tape.md) | §6 | 🟡 0/3 | ⬜ 0/3 | 7 |
-| [Gaussian resampling](plan/07-gaussian-resampling.md) | §7 | 🟡 5/6 | 🟡 3/4 | 59 |
+| [Gaussian resampling](plan/07-gaussian-resampling.md) | §7 | ✅ 6/6 | 🟡 3/4 | 59 |
 | [Fast multiplication subroutine](plan/08-fast-multiplication-subroutine.md) | Schönhage–Strassen | 🟡 0/6 | 🟡 0/4 | 85 |
 | [Exact multiplication, parameters, time bound](plan/09-exact-multiplication-parameters.md) | §8 | 🟡 0/3 | ⬜ 0/2 | 11 |
 | [End-to-end theorem `EndToEnd`](plan/10-end-to-end.md) | — | 🟡 1/3 | 🟡 2/3 | 6 |
@@ -126,7 +126,7 @@ Details: [plan/07-gaussian-resampling.md](plan/07-gaussian-resampling.md)
 | Sub-problem | Mathematics | Tape | Files |
 | --- | --- | --- | --- |
 | Exact Gaussian resampling factorization | ✅ | — | 8 |
-| Numerical resampling maps and error bounds | 🟡 | — | 11 |
+| Numerical resampling maps and error bounds | ✅ | — | 11 |
 | Fixed-point word and record layer | ✅ | ✅ | 12 |
 | Gaussian weight tables on tapes | ✅ | ✅ | 12 |
 | Resampling maps on tapes | ✅ | ✅ | 13 |

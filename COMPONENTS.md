@@ -6101,7 +6101,9 @@ Transform, fixed-point, Kronecker and Gaussian resampling mathematics used by th
   `plan/07-gaussian-resampling.md` that package proved results:
   `FixedMul.signed_word_ops`, `Schoenhage.wordRecordLayer_hoare`,
   `TableValue.tables_on_tapes`, `B0Value.maps_value_W`, `B0Tape.maps_hoareF`,
-  `LineCost.tensor_line_costs`.
+  `LineCost.tensor_line_costs`; and `NLogN.permuted_multi_numeric_manuscript`,
+  Lemma 7.2 with the manuscript's explicit `Ã` and clamp-free `B̃₀` tensored
+  over `d` axes.
 
 - `Resampling/PiApprox.lean`, `Resampling/ExpApprox.lean`: certified integer
   approximations for the weight tables. `piApprox q K` sums Machin's series
