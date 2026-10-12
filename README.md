@@ -18,7 +18,11 @@ chosen before quantifying over inputs.
 
 ## Status
 
-Section 5 remains open. Actual scalar successors and forward-child-inverse
+Section 5 remains open. Its recursive geometry math milestone is proved:
+canonical axis coverage, fitting descendant intervals, unique exhaustive child
+calls, the original rank-sum count and the exact manuscript stop rule are
+certified together. Recursive controller execution remains open.
+Actual scalar successors and forward-child-inverse
 returns now derive the original event semantics from their reached arrays;
 the child result still requires recursive tensor correctness. Literal child-entry
 captures now derive settled frames from the parent, and stopped-leaf execution

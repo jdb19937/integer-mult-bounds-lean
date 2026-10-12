@@ -27,7 +27,7 @@ here.
 | [Composition, loops, frames, elementary streams](plan/02-composition-loops-frames.md) | §2 | 🟡 0/8 | 🟡 3/8 | 254 |
 | [Finite networks with a rank saving](plan/03-finite-networks-rank.md) | §3 | 🟡 2/8 | 🟡 0/6 | 358 |
 | [Faster interchange of address chunks](plan/04-faster-interchange-address.md) | §4 | ✅ 10/10 | ✅ 9/9 | 375 |
-| [Simultaneous butterfly layers with compact control](plan/05-simultaneous-butterfly-layers.md) | §5, §11, CrocSwap | 🟡 0/12 | 🟡 0/12 | 1654 |
+| [Simultaneous butterfly layers with compact control](plan/05-simultaneous-butterfly-layers.md) | §5, §11, CrocSwap | 🟡 1/12 | 🟡 0/12 | 1655 |
 | [Synthetic transforms and their tape layout](plan/06-synthetic-transforms-tape.md) | §6 | 🟡 0/3 | ⬜ 0/3 | 7 |
 | [Gaussian resampling](plan/07-gaussian-resampling.md) | §7 | ✅ 6/6 | 🟡 3/4 | 59 |
 | [Fast multiplication subroutine](plan/08-fast-multiplication-subroutine.md) | Schönhage–Strassen | 🟡 0/6 | 🟡 0/4 | 85 |
@@ -103,7 +103,7 @@ Details: [plan/05-simultaneous-butterfly-layers.md](plan/05-simultaneous-butterf
 | Binary basis stages and phase schedules | 🟡 | 🟡 | 103 |
 | Butterfly and unit-phase record arithmetic | 🟡 | 🟡 | 207 |
 | Butterfly axes, spectators and native roles | 🟡 | 🟡 | 140 |
-| Recursive geometry, controller and child headers | 🟡 | 🟡 | 44 |
+| Recursive geometry, controller and child headers | ✅ | 🟡 | 45 |
 | Exact scalar grids and stopped calls | 🟡 | 🟡 | 92 |
 | Nonleaf calls and the fixed node table | 🟡 | 🟡 | 48 |
 | Source-ready table, orientation and endpoints | 🟡 | 🟡 | 155 |

@@ -6720,6 +6720,7 @@ Modules the proof does not use, removed after commit `4f27086`; restore with `gi
 
 ## Top-level
 
+- `ComplexRecursiveGeometryMilestone.lean`: Proves the Section 5 recursive geometry math milestone: canonical base-15625 power pieces cover the active axes, root and descendant intervals fit, actual occurrence-indexed child calls are exhaustive and duplicate-free, their count is the original rank sum, and the stop rule is the manuscript beta=1/1000 criterion. Recursive tape execution remains separate.
 - `InterchangeMilestones.lean`: the section 4 milestones, one theorem per sub-problem of the faster interchange: the uniform-runtime runs of the binary wrapper (`BinaryInterchangeRun.runs_uniform`) and the arbitrary-width dispatcher (`ArbitraryWidthOriginalTotalRun.runs_uniform`), the exact base-case transpose on tapes, and exact bundles of the proved recurrence, shear, primitive, node, call, padding and piece results.
 - `ExactRecoveryOutput.lean`: Turns the actual recovered coefficients into exactly twice the input length in bits by proving that excess leading padding is zero. Covers nondivisible chunk widths, directly instantiates `ExactRecovery.exact_product`, and identifies the literal machine output contract once the word is installed. Carry compilation, physical installation and runtime are separate obligations.
 
