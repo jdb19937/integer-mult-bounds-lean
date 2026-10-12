@@ -690,6 +690,7 @@ import IntegerMultBounds.Machine.RegOps
 import IntegerMultBounds.Machine.RegConst
 import IntegerMultBounds.Resampling.B0Words
 import IntegerMultBounds.Resampling.TabledMaps
+import IntegerMultBounds.Resampling.FloorStep
 import IntegerMultBounds.Resampling.PiApprox
 import IntegerMultBounds.Resampling.ExpApprox
 import IntegerMultBounds.Resampling.WeightTable

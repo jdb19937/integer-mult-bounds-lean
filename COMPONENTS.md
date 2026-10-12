@@ -6069,6 +6069,11 @@ Transform, fixed-point, Kronecker and Gaussian resampling mathematics used by th
   below `p²` and the unit disk preserved. `accumulators_eq_W` and
   `B0Value.b0_value_W` connect the tape machines fed integer tables to these
   maps.
+- `Resampling/FloorStep.lean`: flooring to the `p`-bit grid between axes
+  (`floorV`) adds at most `2` to a scaled error (`approxMap_floorV`); the
+  floored tabled `Ã` still has error below `p²` and preserves the unit disk
+  (`floorA_tabled`). The tape `Ã` outputs carry one extra bit, which the
+  tensor driver drops before the next axis.
 
 - `Resampling/PiApprox.lean`, `Resampling/ExpApprox.lean`: certified integer
   approximations for the weight tables. `piApprox q K` sums Machin's series
