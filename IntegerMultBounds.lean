@@ -2333,6 +2333,11 @@ import IntegerMultBounds.Schoenhage.RingMul
 import IntegerMultBounds.Schoenhage.ExactMul
 import IntegerMultBounds.Schoenhage.FixedMulWords
 import IntegerMultBounds.Schoenhage.FixedMulProgram
+import IntegerMultBounds.Schoenhage.FixedMulPlaced
+import IntegerMultBounds.Machine.GaussianLineFast
+import IntegerMultBounds.Machine.NeumannLoopFast
+import IntegerMultBounds.Resampling.B0TapeFast
+import IntegerMultBounds.Resampling.LineApplyFast
 import IntegerMultBounds.Schoenhage.RingAlu
 import IntegerMultBounds.Schoenhage.RingMath
 import IntegerMultBounds.Schoenhage.RingWords
