@@ -24,7 +24,7 @@ Builds the ring with shift twiddles, its multidimensional FFT with error bounds,
 | Principal roots and synthetic ring | `SynthConv` | ✅ | — | `ℂ[y]/(yʳ + 1)` |
 | Synthetic FFT with shift twiddles | `SynthFFT`, `SynthMultiD` | ✅ | ⬜ | One and `d` dimensions, error `n ε` |
 | Complex-to-synthetic embedding | `SynthEmbed` | ✅ | — | Twist is an isometry |
-
+| Stored-order forward and opposite schedules (`eq:stored-opposite`) | `Schoenhage/Dif`, `Schoenhage/DifAxes`, `Schoenhage/DifGroup`, `Schoenhage/DifRound`, `Schoenhage/DifSchedule`, `Schoenhage/DifLayout`, `Schoenhage/PaperLayout`, `Schoenhage/DifOpposite` | ✅ | ⬜ | On any bit layout the slot-major forward rounds compute `L B F⁻` (`fwdSchedule_fwdExact`) and the reversed opposite rounds (inverse monomial, then butterfly) compute `F⁺ B⁻¹ L⁻¹` in the same layout (`oppSchedule_eq`), via `H₀² = I/2`; tape execution open |
 ### Tape layout and cost bracket
 
 Bounds slots, reordering exchanges, rounds, error and descriptors so a transform costs four cost-table rows.

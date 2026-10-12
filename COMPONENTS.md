@@ -6401,6 +6401,7 @@ Faster interchange of address chunks (§4).
 
 Schönhage–Strassen multiplication, the fast multiplier used for the packed products.
 
+- `Schoenhage/DifOpposite.lean`: the opposite schedule of §6 (`eq:stored-opposite`). An opposite round applies the inverse monomial, then the butterfly; with `H₀² = I/2` the reversed opposite rounds and the forward schedule compose to `1/M` in both orders, so on any bit layout the forward schedule computes `fwdExact` (`fwdSchedule_fwdExact`) and the opposite schedule computes `oppExact`, stored in the same layout (`oppSchedule_eq`).
 - `Schoenhage/Transform.lean`: the twisted transform over any commutative
   ring, on lists whose halves stay contiguous as on a tape. A forward layer
   maps a list modulo `X^(2K) - ζ²` to its residues `a₀ + ζ a₁` modulo

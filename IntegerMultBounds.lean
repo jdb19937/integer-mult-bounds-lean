@@ -2711,3 +2711,4 @@ import IntegerMultBounds.Milestones.FastMultiplication
 import IntegerMultBounds.NLogN.CoprimeLengths
 import IntegerMultBounds.SourceLengths
 import IntegerMultBounds.Milestones.ExactRecovery
+import IntegerMultBounds.Schoenhage.DifOpposite
