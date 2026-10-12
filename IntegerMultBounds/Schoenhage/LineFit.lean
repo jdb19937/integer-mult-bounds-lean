@@ -74,15 +74,14 @@ noncomputable def refit : Cmd a 5 :=
   .seq (clear 3) <| .seq (rewind 4) <| .seq (clear 0) <| .seq (emit [[]] 0) <|
   .seq (joinLoop 4 0 (by decide)) <| .seq (rewind 0) (clear 4)
 
-theorem runs_refit {u v : ℕ} (hu : 1 ≤ u) (A : List Bool) (σ : Fin 5 → WTape)
+/-- `refit` with pieces of length at most `W`. -/
+theorem runs_refitW {u v W : ℕ} (hu : 1 ≤ u) (A : List Bool) (hle : ∀ x ∈ cut u A, x.length ≤ W)
+    (σ : Fin 5 → WTape)
     (h0 : σ 0 = reg A) (h1 : σ 1 = reg (ones u)) (h2 : σ 2 = reg (ones v)) (h3 : σ 3 = emp) (h4 : σ 4 = emp) :
     Runs (a := a) refit σ (· = Function.update σ 0 (reg ((cut u A).map (Rules.fit v)).flatten))
-      ((cut u A).length * (4 * v + 2 * A.length + 40) + 20 * A.length + 10 * v * (cut u A).length + 60) := by
+      ((cut u A).length * (4 * v + 2 * W + 40) + 20 * A.length + 10 * v * (cut u A).length + 60) := by
   set C := cut u A
   set F := C.map (Rules.fit v)
-  have hle : ∀ x ∈ C, x.length ≤ A.length := fun x hx => by
-    have := List.Sublist.length_le (List.sublist_flatten_of_mem hx)
-    rwa [cut_flatten] at this
   have hFl : ∀ x ∈ F, x.length ≤ v := fun x hx => by
     simp only [F, List.mem_map] at hx; obtain ⟨y, -, rfl⟩ := hx; simp
   have hcl : clen C = A.length + C.length := by rw [clen_eq, cut_flatten]
@@ -94,7 +93,7 @@ theorem runs_refit {u v : ℕ} (hu : 1 ≤ u) (A : List Bool) (σ : Fin 5 → WT
   set σ₁ := Function.update (Function.update σ 0 ⟨[A], []⟩) 3 ⟨C.reverse ++ (σ 3).left, []⟩
   have s2 := runs_rewind (a := a) 3 σ₁
   set σ₂ := Function.update σ₁ 3 ⟨[], (σ₁ 3).left.reverse ++ (σ₁ 3).right⟩
-  have s3 := runs_fitLoop (a := a) (v := v) (W := A.length) C σ₂ [] [] hle
+  have s3 := runs_fitLoop (a := a) (v := v) (W := W) C σ₂ [] [] hle
     (by simp [σ₂, σ₁, h2]) (by simp [σ₂, σ₁, h3, emp]) (by simp [σ₂, σ₁, h4, emp])
   set σ₃ := Function.update (Function.update σ₂ 3 ⟨C.reverse ++ [], []⟩) 4 ⟨F.reverse ++ [], []⟩
   have s4 := runs_clear (a := a) 3 σ₃
@@ -122,6 +121,15 @@ theorem runs_refit {u v : ℕ} (hu : 1 ≤ u) (A : List Bool) (σ : Fin 5 → WT
     have hFn : F.length = C.length := by simp [F]
     rw [hFn]
     nlinarith
+
+
+theorem runs_refit {u v : ℕ} (hu : 1 ≤ u) (A : List Bool) (σ : Fin 5 → WTape)
+    (h0 : σ 0 = reg A) (h1 : σ 1 = reg (ones u)) (h2 : σ 2 = reg (ones v)) (h3 : σ 3 = emp) (h4 : σ 4 = emp) :
+    Runs (a := a) refit σ (· = Function.update σ 0 (reg ((cut u A).map (Rules.fit v)).flatten))
+      ((cut u A).length * (4 * v + 2 * A.length + 40) + 20 * A.length + 10 * v * (cut u A).length + 60) :=
+  runs_refitW hu A (fun x hx => by
+    have := List.Sublist.length_le (List.sublist_flatten_of_mem hx)
+    rwa [cut_flatten] at this) σ h0 h1 h2 h3 h4
 
 /-! ### Lines -/
 

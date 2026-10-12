@@ -95,20 +95,19 @@ noncomputable def toWords : Cmd a 4 :=
   .seq (chunkw 0 1 3 (by decide) (by decide) (by decide)) <| .seq (rewind 3) <|
   .seq (revLoop 3 2 (by decide)) <| .seq (rewind 2) <| .seq (clear 3) (rewind 0)
 
-theorem runs_toWords {w : ℕ} (hw : 1 ≤ w) (A : List Bool) (σ : Fin 4 → WTape)
+/-- `toWords` with pieces of length at most `W`. -/
+theorem runs_toWordsW {w W : ℕ} (hw : 1 ≤ w) (A : List Bool) (hle : ∀ x ∈ cut w A, x.length ≤ W)
+    (σ : Fin 4 → WTape)
     (h0 : σ 0 = reg A) (h1 : σ 1 = reg (ones w)) (h2 : σ 2 = emp) (h3 : σ 3 = emp) :
     Runs (a := a) toWords σ (· = Function.update σ 2 ⟨[], (cut w A).map List.reverse⟩)
-      (30 * A.length + 20 * (cut w A).length * (A.length + 1) + 60) := by
-  have hle : ∀ x ∈ cut w A, x.length ≤ A.length := fun x hx => by
-    have := List.Sublist.length_le (List.sublist_flatten_of_mem hx)
-    rwa [cut_flatten] at this
+      (30 * A.length + 20 * (cut w A).length * (W + 1) + 60) := by
   have hcl : clen (cut w A) = A.length + (cut w A).length := by rw [clen_eq, cut_flatten]
   have s1 := runs_chunkw (a := a) (s := 0) (r := 1) (d := 3) (by decide) (by decide) (by decide) σ
     (L := []) (R := []) (x := A) (by rw [h0]; rfl) h1 hw (by simp [h3, emp])
   set σ₁ := Function.update (Function.update σ 0 ⟨[A], []⟩) 3 ⟨(cut w A).reverse ++ (σ 3).left, []⟩
   have s2 := runs_rewind (a := a) 3 σ₁
   set σ₂ := Function.update σ₁ 3 ⟨[], (σ₁ 3).left.reverse ++ (σ₁ 3).right⟩
-  have s3 := runs_revLoop (a := a) (show (3 : Fin 4) ≠ 2 by decide) (W := A.length) (cut w A) σ₂ [] []
+  have s3 := runs_revLoop (a := a) (show (3 : Fin 4) ≠ 2 by decide) (W := W) (cut w A) σ₂ [] []
     hle (by simp [σ₂, σ₁, h3, emp]) (by simp [σ₂, σ₁, h2, emp])
   set σ₃ := Function.update (Function.update σ₂ 3 ⟨(cut w A).reverse ++ [], []⟩) 2
     ⟨((cut w A).map List.reverse).reverse ++ [], []⟩
@@ -125,6 +124,15 @@ theorem runs_toWords {w : ℕ} (hw : 1 ≤ w) (A : List Bool) (σ : Fin 4 → WT
       Function.update_of_ne (show (0 : Fin 4) ≠ 3 by decide), Function.update_of_ne (show (0 : Fin 4) ≠ 2 by decide),
       h3, emp, WTape.words, List.append_nil, clen_reverse, clen_map_reverse, hcl, clen_cons, clen_nil]
     nlinarith
+
+
+theorem runs_toWords {w : ℕ} (hw : 1 ≤ w) (A : List Bool) (σ : Fin 4 → WTape)
+    (h0 : σ 0 = reg A) (h1 : σ 1 = reg (ones w)) (h2 : σ 2 = emp) (h3 : σ 3 = emp) :
+    Runs (a := a) toWords σ (· = Function.update σ 2 ⟨[], (cut w A).map List.reverse⟩)
+      (30 * A.length + 20 * (cut w A).length * (A.length + 1) + 60) :=
+  runs_toWordsW hw A (fun x hx => by
+    have := List.Sublist.length_le (List.sublist_flatten_of_mem hx)
+    rwa [cut_flatten] at this) σ h0 h1 h2 h3
 
 /-- Reverse the words on tape `2` and join them into one array on tape `0`. -/
 noncomputable def fromWords : Cmd a 4 :=
