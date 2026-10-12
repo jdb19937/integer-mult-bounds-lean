@@ -2725,3 +2725,4 @@ import IntegerMultBounds.Schoenhage.PrefixRounds
 import IntegerMultBounds.Schoenhage.ChunkSwapRecords
 import IntegerMultBounds.Machine.CompactComplexSourceReadySiblingCompletedChildProgress
 import IntegerMultBounds.Schoenhage.LayoutMoves
+import IntegerMultBounds.Schoenhage.LayoutArray
