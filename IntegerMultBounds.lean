@@ -2628,6 +2628,7 @@ import IntegerMultBounds.Machine.CompactComplexAlignedChildReturnPath
 import IntegerMultBounds.Machine.CompactComplexAlignedRootFinal
 import IntegerMultBounds.Schoenhage.RingPointwiseBound
 import IntegerMultBounds.Schoenhage.RingPointwiseTarget
+import IntegerMultBounds.Schoenhage.PointwiseRow
 import IntegerMultBounds.Schoenhage.RingLemmaHeader
 import IntegerMultBounds.Schoenhage.RingLemma
 import IntegerMultBounds.Schoenhage.Twist

@@ -6689,6 +6689,12 @@ Schönhage–Strassen multiplication, the fast multiplier used for the packed pr
   (`pointwiseTime_le`), so the step meets `pointwisePolylogTarget 1`
   (`pointwise_polylog`).
 
+- `Schoenhage/PointwiseRow.lean`: at the main sizes `p = 6 lg n`, `r = 2^ℓ`
+  the pointwise program's time is at most a constant times `T p` times the
+  `packedProducts` row times the `log log` overhead of
+  `PackedMultiplierPolylogBudget`, plus the header
+  (`pointwise_le_packedProducts`).
+
 - `Schoenhage/RingLemmaHeader.lean`, `RingLemma.lean`: the signed ring product
   lemma on its own interface: a decoder for `Γ(p)Γ(r)Γ(w)` within the same
   header bound, the pointwise program's core generalized over its decoder

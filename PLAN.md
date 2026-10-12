@@ -19,7 +19,7 @@ See [COMPONENTS.md](COMPONENTS.md) for what each file proves.
 | [Synthetic transforms and their tape layout](plan/06-synthetic-transforms-tape.md) | §6 | ✅ 2/2 | 🟡 0/2 | 22 |
 | [Resampling with the permutations left in the transform](plan/07-gaussian-resampling.md) | §7 | ✅ 6/6 | 🟡 3/4 | 79 |
 | [Exact integer multiplication and its cost](plan/08-exact-multiplication.md) | §8 | 🟡 3/4 | ⬜ 0/3 | 15 |
-| [Fast multiplication subroutine](plan/A-schoenhage-strassen.md) | Schönhage–Strassen | ✅ 6/6 | 🟡 2/4 | 85 |
+| [Fast multiplication subroutine](plan/A-schoenhage-strassen.md) | Schönhage–Strassen | ✅ 6/6 | 🟡 3/4 | 86 |
 | [End-to-end theorem `EndToEnd`](plan/B-end-to-end.md) | — | 🟡 1/3 | 🟡 2/3 | 6 |
 
 Every sub-problem has a math milestone and a tape milestone: one named Lean
@@ -144,7 +144,7 @@ Details: [plan/A-schoenhage-strassen.md](plan/A-schoenhage-strassen.md)
 | Fourier and fixed-point foundations | ✅ | — | 23 |
 | Schönhage–Strassen level, schedule and cost | ✅ | — | 4 |
 | Word-tape programming layer | ✅ | ✅ | 10 |
-| Schönhage–Strassen multiplier on tapes | ✅ | 🟡 3/4 rows | 14 |
+| Schönhage–Strassen multiplier on tapes | ✅ | ✅ | 15 |
 | Packed signed ring products | ✅ | ✅ | 28 |
 | Paper-format transform layer statements | ✅ | 🟡 1/4 rows | 6 |
 
