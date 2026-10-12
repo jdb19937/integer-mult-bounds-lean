@@ -4,6 +4,15 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 ## Machine
 
+- `Machine/CompactComplexLargeAxesStop.lean`: Under the explicit hypothesis arity^1000 < globalAxes, proves exponent-one nodes satisfy the published stopping classifier and every nonstopped node has exponent at least two, with a positive immediate-child exponent. The large power remains symbolic. Connecting this hypothesis to eventual input parameters and covering smaller dimensions remain separate.
+- `Machine/CompactComplexSourceReadyReachedEventStoppedChildStep.lean`: Constructs an actual stopped-child Step from the complete forward-basis, child-entry, classifier, oriented leaf, saved-PC pop, parent restoration and inverse-basis execution. The final reached bank, both successor cursors, stopped denominator target, exact continuation PC and paid time are derived from the real event outcome. Protected-tail and retained-target premises remain explicit; preserving them through complete recursive execution is still open.
+
+- `Machine/CompactComplexFixedNodePathAlgebra.lean`: Proves empty paths and paid path concatenation for symbolic fixed-node block families, then specializes to the original finite node table without expanding compiled programs. These helpers preserve the exact fixed physical table and summed transition count.
+- `Machine/CompactComplexActualReturnedOrdinal.lean`: A genuine scalar event preserves the counted child prefix and actual returned-child cursor. Symbolic list identities are specialized to the sealed original schedule without evaluating its compiler calls.
+- `Machine/CompactComplexSourceReadyReachedEventTrace.lean`: Defines actual reached states at both schedule cursors and scalar/child steps carrying real paths on one unchanged aligned table. A witnessed complete execution composes its physical paths with exact summed time and derives its completed denominator, minimum completed exponent and network target. Existence of full recursive executions and a uniform total runtime remain open.
+- `Machine/CompactComplexSourceReadyReachedNonleafProgress.lean`: Constructs nonleaf return Progress from the original parent entry Path, genuine reached parent and a witnessed complete child event execution. The terminal reached bank supplies the upper ledger and trace accounting supplies target coverage; neither completed-ledger nor completed-target inequalities are callbacks. Recursive child execution existence remains open.
+- `Machine/CompactComplexSourceReadyReachedEventScalarStep.lean`: Constructs a real scalar execution step from the existing physical scalar lifecycle and original entry Path. The successor reached bank, emitted scalar arrays, preserved returned-child cursor, advanced scalar cursor, live denominator and paid event-to-next-event path are all derived. Child steps and whole-node recursive assembly remain separate.
+
 - `Machine/CompactComplexSourceReadySiblingCompletedChildProgress.lean`: Derives the terminal child returned counter and scalar cursor from the actual complete schedule, and its completed upper ledger from the genuine terminal Reached bank. Constructs nonleaf return Progress after counted siblings using the original parent entry Path and actual parent/child witnesses. Completed target coverage and existence of recursive child execution remain explicit obligations.
 
 - `Machine/CompactComplexAlignedSiblingStoppedEventPath.lean`: Executes one complete actual stopped child event after counted siblings, from the event PC through forward basis, physical entry, classifier, oriented leaf, saved-PC pop, parent restoration and inverse basis to callNextPC in the unchanged aligned table. Retains actual forward/returned/final Reached data, associated history, clean suffix and the summed paid runtime; whole-node event induction remains open.
@@ -6704,6 +6713,15 @@ Schönhage–Strassen multiplication, the fast multiplier used for the packed pr
   (`runs_kOf`), every `w`-bit component word widened by `k` zeros
   (`runs_scaleArr`), and the descriptor `Γ(w + k)` (`runs_gammaOut`), composed
   after the header decoder (`runs_convScale`).
+
+- `Schoenhage/OfHoare.lean`: programs halt in a unique configuration
+  (`run_halt_unique`, `HoareTime.det`) and a word bank is determined by its
+  physical tapes and heads (`enc_injective`), so any program with an exact
+  contract between word banks is a primitive with that contract as semantics and
+  its least bound as cost (`Prim.ofHoare`, `runs_ofHoare`, `runs_ofHoare_lift`).
+- `Schoenhage/ConvPrims.lean`: a program in the paper's raw format (header on
+  tape 0, operand on tape 1, output on tape 3) run between word tapes by
+  unsealing and resealing them (`prog2_hoare`).
 
 - `Schoenhage/PointwiseRow.lean`: at the main sizes `p = 6 lg n`, `r = 2^ℓ`
   the pointwise program's time is at most a constant times `T p` times the
