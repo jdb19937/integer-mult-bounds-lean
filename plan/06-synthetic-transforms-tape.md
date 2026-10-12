@@ -37,3 +37,4 @@ Bounds slots, reordering exchanges, rounds, error and descriptors so a transform
 | Subcomponent | Files | Mathematics | Tape | Notes |
 | --- | --- | --- | --- | --- |
 | Tape layout and costs | `LayoutCost` | ✅ | ⬜ | Prefix slots `≤ dK`, chunk reorder by `≤ Dq−1` exchanges costing `≤ dℓK^(τ−1)`, exactly `ℓ` rounds with error `ℓ√2·2^(-p)` in the disk, descriptor length `≤ C_desc p`, bracket equals four cost-table rows; `K < ℓ` eventually |
+| Chunk-group rounds as layer calls in the paper layout | `Schoenhage/PaperRounds` | ✅ | ⬜ | Slot `b + cK + ρ` of axis `i` sits at physical bit `cDK + (D-1-i)K + ρ` (`paperPerm_σ_chunk`); its round is the layer operator `ℋ` on `[P] × [2^K]^D × [2^(cDK)]` with offset `ρ`, then one twist (`paper_slotRound_chunk`); the other slots are the prefix slots `h < b` and `ℓ - 1` (`slot_cases`) |
