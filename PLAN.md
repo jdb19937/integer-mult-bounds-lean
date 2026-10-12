@@ -108,7 +108,7 @@ Details: [plan/06-synthetic-transforms-tape.md](plan/06-synthetic-transforms-tap
 
 | Sub-problem | Mathematics | Tape | Files |
 | --- | --- | --- | --- |
-| Synthetic ring and synthetic FFT | ✅ | 🟡 1/9 rows | 22 |
+| Synthetic ring and synthetic FFT | ✅ | 🟡 2/9 rows | 22 |
 | Tape layout and cost bracket | ✅ | 🟡 4/9 rows | 12 |
 
 ## 7. Resampling with the permutations left in the transform (§7)

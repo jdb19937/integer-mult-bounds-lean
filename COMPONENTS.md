@@ -6788,6 +6788,12 @@ Schönhage–Strassen multiplication, the fast multiplier used for the packed pr
   paper's layout its preconditions hold and its output twisted by the round's
   exponents is the computed round (`prefix_had_spec`).
 
+- `Schoenhage/ChunkRound.lean`: §6 task 4: in the paper's layout the computed
+  chunk-group round is the round's twist of the layer output `Q_p(ℋ z)`
+  (`chunk_round_eq`); a program meeting `prop:simultaneous-layer` runs between word
+  tapes with the layer header on tape 0 and the array replaced in place on tape 1
+  (`prog1_hoare`), within the layer cost plus `O(Mrw)` (`layer_call`).
+
 - `Schoenhage/PointwiseRow.lean`: at the main sizes `p = 6 lg n`, `r = 2^ℓ`
   the pointwise program's time is at most a constant times `T p` times the
   `packedProducts` row times the `log log` overhead of
