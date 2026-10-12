@@ -229,4 +229,56 @@ theorem runs_blockStep {B W : ℕ} (σ : Fin 𝕌 → WTape) {Ls M xs ys R : Lis
   tsimp [σ₂, σ₁, WTape.words, clen_replicate_nil]
   nlinarith
 
+/-! ### A whole pass -/
+
+/-- One pass: every block pair of `xB`, onto `xC`. -/
+noncomputable def passLoop : Cmd 0 𝕌 := .loop xB blockStep
+
+set_option maxHeartbeats 4000000 in
+theorem runs_passLoop {B W : ℕ} (hB : 1 ≤ B) : ∀ (m : ℕ) (σ : Fin 𝕌 → WTape) (Ls M L : List (List Bool)),
+    σ xB = ⟨Ls, L⟩ → σ xP = reg (ones B) → σ xC = ⟨M, []⟩ →
+    σ (ι qS) = emp → σ (ι tJ) = emp → σ rF = emp → σ rG = emp → σ rO = emp → σ kW = emp →
+    L.length = 2 * B * m → (∀ x ∈ L, x.length = W) →
+    Runs passLoop σ (· = Function.update (Function.update σ xB ⟨L.reverse ++ Ls, []⟩) xC
+      ⟨(blockPass B L).reverse ++ M, []⟩) (m * (60 * B * (W + 3) + 202))
+  | 0, σ, Ls, M, L, hX, _, hC, _, _, _, _, _, _, hl, _ => by
+    have hL : L = [] := List.length_eq_zero_iff.mp (by simpa using hl)
+    subst hL
+    refine (Runs.loop_done (by simp [hX]) rfl).mono (fun τ h => ?_) (by simp)
+    subst h
+    funext y
+    simp only [Function.update_apply]
+    split_ifs <;> (try subst_vars) <;> simp_all [blockPass]
+  | m + 1, σ, Ls, M, L, hX, hP, hC, hT, hJ, hF, hG, hO, hK, hl, hw => by
+    set xs := L.take B
+    set ys := (L.drop B).take B
+    set R := L.drop (2 * B)
+    have h2B : 2 * B ≤ L.length := by rw [hl]; nlinarith
+    have hsplit : L = xs ++ ys ++ R := by
+      simp only [xs, ys, R]
+      conv_lhs => rw [← List.take_append_drop B L, ← List.take_append_drop B (L.drop B)]
+      rw [List.drop_drop, two_mul, List.append_assoc]
+    have hxl : xs.length = B := by simp [xs]; omega
+    have hyl : ys.length = B := by simp [ys]; omega
+    have hRl : R.length = 2 * B * m := by simp [R, hl]; ring_nf; omega
+    have hw' : ∀ x ∈ xs ++ ys ++ R, x.length = W := by rw [← hsplit]; exact hw
+    have s1 := runs_blockStep (W := W) σ (Ls := Ls) (M := M) (xs := xs) (ys := ys) (R := R)
+      (by rw [hX, ← hsplit]) hP hC hT hJ hF hG hO hK hxl hyl
+      (fun x hx => hw' x (by simp [hx])) (fun x hx => hw' x (by simp [hx]))
+    set σ₁ := Function.update (Function.update σ xB ⟨ys.reverse ++ xs.reverse ++ Ls, R⟩) xC
+      ⟨(List.zipWith (fun x y => addW true x (cmpl y)) xs ys).reverse ++
+        (List.zipWith (addW false) xs ys).reverse ++ M, []⟩
+    have ih := runs_passLoop hB m σ₁ (ys.reverse ++ xs.reverse ++ Ls)
+      ((List.zipWith (fun x y => addW true x (cmpl y)) xs ys).reverse ++
+        (List.zipWith (addW false) xs ys).reverse ++ M) R (by tsimp [σ₁]) (by tsimp [σ₁, hP])
+      (by tsimp [σ₁]) (by tsimp [σ₁, hT]) (by tsimp [σ₁, hJ]) (by tsimp [σ₁, hF]) (by tsimp [σ₁, hG])
+      (by tsimp [σ₁, hO]) (by tsimp [σ₁, hK]) hRl (fun x hx => hw' x (by simp [hx]))
+    refine (Runs.loop_step (by simp only [hX, ne_eq]; intro hL; rw [hL] at h2B; simp at h2B; omega) (s1.mono (fun τ h => by rw [h]; exact ih) le_rfl)).mono
+      (fun τ h => ?_) (by nlinarith)
+    rw [h]
+    funext y
+    simp only [Function.update_apply, σ₁]
+    rw [hsplit, blockPass_cons xs ys R hxl hyl]
+    split_ifs <;> simp
+
 end IntegerMultBounds.Schoenhage
