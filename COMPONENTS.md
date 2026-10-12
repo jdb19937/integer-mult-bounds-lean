@@ -6119,6 +6119,11 @@ Transform, fixed-point, Kronecker and Gaussian resampling mathematics used by th
   interchange with an outer prefix acts blockwise (`swapList_mul`); moving a
   field inward (`rotIn`) or outward (`rotOut`) by adjacent interchanges is a
   block transpose inside every outer block (`rotIn_getD`, `rotOut_getD`).
+- `Resampling/Script.lean`: driver scripts. Canonical headers (`bin`,
+  `swapHdrs`) make a swap record interchange two fields (`swapRec_spec`);
+  the records that move a field inward or outward compute `rotIn` and
+  `rotOut` (`insRecs_spec`, `outRecs_spec`); records concatenate
+  (`result_append`, `valid_append`, `driveCost_append`).
 - `Resampling/Milestones.lean`: the §7 milestone theorems of
   `plan/07-gaussian-resampling.md` that package proved results:
   `FixedMul.signed_word_ops`, `Schoenhage.wordRecordLayer_hoare`,
