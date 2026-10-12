@@ -24,6 +24,10 @@ the child result still requires recursive tensor correctness. Literal child-entr
 captures now derive settled frames from the parent, and stopped-leaf execution
 preserves those frames through its pre-pop endpoint. Full reachable recursive
 execution and actual uniform runtime have explicit partial rows in PLAN.
+Actual schedule prefixes now pay their sibling budgets from the original
+node-entry Path. Scalar semantics and child-entry grid, ledger and tape ports
+use that entry Path while counting preceding child returns exactly once;
+physical event induction and the prefix-to-call ordinal identity remain open.
 Complete stopped-root execution, full stopped-leaf
 tensor semantics, genuine halting and paid runtime are checked. Corrected
 source entry, sink corrections, contraction/rejoin and saved-PC dispatch also
