@@ -6731,6 +6731,12 @@ Schönhage–Strassen multiplication, the fast multiplier used for the packed pr
   (`runs_convCore`) and the program in the paper's format from `bank5` to `bank5`
   (`convProg_hoare`).
 
+- `Schoenhage/ConvTarget.lean`: rounded products of disk records are disk
+  records (`prodRec_disk`); on every admissible instance where the given forward
+  and opposite programs meet `lem:synthetic-transform-cost`, the convolution
+  program meets `prop:synthetic-convolution` (error, output format, `Γ(w_M)`)
+  within three transform costs plus an explicit remainder (`conv_instance`).
+
 - `Schoenhage/PointwiseRow.lean`: at the main sizes `p = 6 lg n`, `r = 2^ℓ`
   the pointwise program's time is at most a constant times `T p` times the
   `packedProducts` row times the `log log` overhead of
