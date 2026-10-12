@@ -191,5 +191,207 @@ theorem runs_loadAll : ∀ (rs : List (Fin (NB E))) (ws : List (List Bool)) (σ 
         · subst h3; simp
         · rw [Function.update_of_ne h3, Function.update_of_ne h3, Function.update_of_ne h1, setRegs_other _ _ _ _ h2]
 
+/-- Empty the tapes `js`. -/
+def clearAll : List (Fin (NB E)) → Cmd prime (NB E)
+  | [] => rewind jnk
+  | j :: js => .seq (clear j) (clearAll js)
+
+/-- The tapes `js` emptied. -/
+def setEmp {n : ℕ} (σ : Fin n → WTape) (js : List (Fin n)) : Fin n → WTape :=
+  fun x => if x ∈ js then emp else σ x
+
+/-- The cost of emptying `js`. -/
+def clearCost {n : ℕ} (σ : Fin n → WTape) : List (Fin n) → ℕ
+  | [] => 2
+  | j :: js => 2 * clen (σ j).words + 2 + 1 + clearCost σ js
+
+theorem runs_clearAll : ∀ (js : List (Fin (NB E))) (σ : Fin (NB E) → WTape), js.Nodup → σ jnk = emp →
+    Runs (clearAll js) σ (· = setEmp σ js) (clearCost σ js)
+  | [], σ, _, hj => by
+    refine (runs_rewind jnk σ).mono (fun σ' e => ?_) (by simp [hj, emp, clearCost])
+    rw [e, hj]; funext x
+    by_cases h : x = jnk
+    · subst h; simp [setEmp, hj, emp]
+    · simp [setEmp, h]
+  | j :: js, σ, hnd, hj => by
+    simp only [List.nodup_cons] at hnd
+    have s1 := runs_clear (a := prime) j σ
+    set σ1 := Function.update σ j ⟨[], []⟩
+    have hj1 : σ1 jnk = emp := by
+      simp only [σ1]; by_cases h : jnk = j
+      · rw [h, Function.update_self]; rfl
+      · rw [Function.update_of_ne h, hj]
+    have ih := runs_clearAll js σ1 hnd.2 hj1
+    have hc : clearCost σ1 js = clearCost σ js := by
+      clear ih s1
+      induction js with
+      | nil => rfl
+      | cons k ks ihk =>
+        simp only [List.mem_cons, not_or, List.nodup_cons] at hnd
+        have hk : k ≠ j := fun e => hnd.1.1 e.symm
+        simp only [clearCost, σ1, Function.update_of_ne hk]
+        rw [ihk ⟨hnd.1.2, hnd.2.2⟩]
+    refine (Runs.then s1 ih).mono (fun σ' e => ?_) (by rw [hc]; simp [clearCost])
+    rw [e]; funext x
+    simp only [setEmp, σ1, List.mem_cons]
+    by_cases h1 : x = j
+    · subst h1; simp [emp]
+    · rw [Function.update_of_ne h1]; simp [h1]
+
+/-! ### Swap records -/
+
+theorem upd_update {n m : ℕ} (σ : Fin n → WTape) {f : Fin m → Fin n} (hf : Function.Injective f) (i : Fin m)
+    (v : WTape) : upd σ f (Function.update (σ ∘ f) i v) = Function.update σ (f i) v := by
+  funext x
+  by_cases hx : ∃ j, f j = x
+  · obtain ⟨j, rfl⟩ := hx
+    rw [upd_slot σ hf]
+    by_cases hj : j = i
+    · subst hj; simp
+    · rw [Function.update_of_ne hj, Function.update_of_ne (fun e => hj (hf e))]; rfl
+  · push Not at hx
+    rw [upd_other σ f _ x hx, Function.update_of_ne (fun e => hx i e.symm)]
+
+/-- The swap block as the interchange reads it: five headers, the array, empty private tapes. -/
+def swIn (hs : List (List Bool)) (A : List Bool) : Fin SN → WTape :=
+  fun i => if i.val < 5 then reg (hs.getD i.val []) else if i.val = 5 then reg A else emp
+
+/-- The array after one swap record. -/
+def swapF (hs : List (List Bool)) (A : List Bool) : List Bool := SwapPrim.swapped (swIn hs A)
+
+theorem hd_inj {i j : Fin 5} : hd (E := E) i = hd j ↔ i = j :=
+  ⟨fun h => Fin.ext (by have := congrArg Fin.val h; rwa [hd_val, hd_val] at this), fun h => h ▸ rfl⟩
+
+/-- The header registers. -/
+def hds : List (Fin (NB E)) := [hd 0, hd 1, hd 2, hd 3, hd 4]
+
+theorem hds_nodup : (hds (E := E)).Nodup := by
+  simp [hds, hd_inj]
+
+theorem hd_ne_ax (j : Fin 5) (i : Fin E) : hd j ≠ ax i := sw_ne_ax _ _
+theorem hd_ne_scr (j : Fin 5) : hd j ≠ (scr : Fin (NB E)) := sw_ne_scr _
+theorem hd_ne_jnk (j : Fin 5) : hd j ≠ (jnk : Fin (NB E)) := sw_ne_jnk _
+
+theorem mem_hds {x : Fin (NB E)} (hx : x ∈ hds) : ∃ j : Fin 5, x = hd j := by
+  simp only [hds, List.mem_cons, List.not_mem_nil, or_false] at hx
+  rcases hx with h | h | h | h | h <;> exact ⟨_, h⟩
+
+/-- Skip the tag, load the headers, interchange, clear the headers. -/
+def swapBranch (X : Fin E) : Cmd prime (NB E) :=
+  .seq (skp scr jnk scr_ne_jnk) <| .seq (loadAll hds) <|
+  .seq (.prim SwapPrim.prim (swSlot X) (swSlot_inj X)) (clearAll hds)
+
+/-- The cost of a swap record. -/
+noncomputable def swapCost (hs : List (List Bool)) (A : List Bool) : ℕ :=
+  6 + 1 + (loadCost hs + 1 + (SwapPrim.cost (swIn hs A) + 1 + (10 * clen hs + 30)))
+
+theorem bank_cases {ρ : Fin E → WTape} {X : Fin E} {A : List Bool} {S : WTape} (G : Fin (NB E) → WTape)
+    (h1 : ∀ i, G (sw i) = emp) (h2 : ∀ i, G (ax i) = Function.update ρ X (reg A) i) (h3 : G scr = S)
+    (h4 : G jnk = emp) : G = bank ρ X A S := by
+  funext x
+  rcases cases x with ⟨i, rfl⟩ | ⟨i, rfl⟩ | rfl | rfl
+  · rw [h1, bank_sw]
+  · rw [h2, bank_ax]
+  · rw [h3, bank_scr]
+  · rw [h4, bank_jnk]
+
+theorem runs_swapBranch (ρ : Fin E → WTape) (X : Fin E) (A : List Bool) (L R hs : List (List Bool))
+    (hl : hs.length = 5) (hpre : SwapPrim.Pre (swIn hs A)) :
+    Runs (swapBranch X) (bank ρ X A ⟨L, ([false] :: hs) ++ R⟩)
+      (· = bank ρ X (swapF hs A) ⟨hs.reverse ++ [false] :: L, R⟩) (swapCost hs A) := by
+  obtain ⟨h0, h1, h2, h3, h4, rfl⟩ : ∃ h0 h1 h2 h3 h4, hs = [h0, h1, h2, h3, h4] := by
+    match hs, hl with
+    | [h0, h1, h2, h3, h4], _ => exact ⟨h0, h1, h2, h3, h4, rfl⟩
+  set σ := bank ρ X A ⟨L, ([false] :: [h0, h1, h2, h3, h4]) ++ R⟩
+  -- 1. skip the tag
+  have s1 := runs_skp (a := prime) scr_ne_jnk σ (by simp [σ, bank_scr]) (by simp [σ, bank_jnk])
+  set σ1 := Function.update σ scr (σ scr).next
+  have hσ1s : σ1 scr = ⟨[false] :: L, [h0, h1, h2, h3, h4] ++ R⟩ := by simp [σ1, σ, bank_scr]
+  -- 2. load the headers
+  have s2 := runs_loadAll hds [h0, h1, h2, h3, h4] σ1 ([false] :: L) R rfl hds_nodup
+    (fun h => by obtain ⟨j, e⟩ := mem_hds h; exact hd_ne_scr j e.symm)
+    (fun h => by obtain ⟨j, e⟩ := mem_hds h; exact hd_ne_jnk j e.symm)
+    (fun r hr => by
+      obtain ⟨j, rfl⟩ := mem_hds hr
+      simp only [σ1, σ]; rw [Function.update_of_ne (hd_ne_scr j)]; exact bank_sw _ _ _ _ _)
+    hσ1s (by simp only [σ1, σ]; rw [Function.update_of_ne scr_ne_jnk.symm]; exact bank_jnk _ _ _ _)
+  set σ2 := Function.update (setRegs σ1 hds [h0, h1, h2, h3, h4]) scr
+    ⟨[h0, h1, h2, h3, h4].reverse ++ [false] :: L, R⟩
+  -- 3. the interchange
+  have hσ2 : σ2 ∘ swSlot X = swIn [h0, h1, h2, h3, h4] A := by
+    funext i
+    simp only [Function.comp_apply, swIn]
+    by_cases hi5 : i.val < 5
+    · have hsw : swSlot X i = hd ⟨i.val, hi5⟩ := by
+        simp only [swSlot, show i.val ≠ 5 by omega, ite_false]; exact Fin.ext rfl
+      rw [hsw, ite_eq_left_of_eq_true _ _ (eq_true hi5)]
+      simp only [σ2]; rw [Function.update_of_ne (hd_ne_scr _)]
+      obtain ⟨v, hv⟩ := i
+      simp only at hi5 ⊢
+      interval_cases v <;> simp [setRegs, hds, hd_inj]
+    · rw [ite_eq_right_of_eq_false _ _ (eq_false hi5)]
+      by_cases h5 : i.val = 5
+      · have hsw : swSlot X i = ax X := by simp [swSlot, h5]
+        rw [hsw, ite_eq_left_of_eq_true _ _ (eq_true h5)]
+        simp only [σ2]; rw [Function.update_of_ne (ax_ne_scr X), setRegs_other _ _ _ _ (fun h => by
+          obtain ⟨j, e⟩ := mem_hds h; exact hd_ne_ax j X e.symm)]
+        simp only [σ1, σ]; rw [Function.update_of_ne (ax_ne_scr X), bank_ax]; simp
+      · have hsw : swSlot X i = sw i := by simp [swSlot, h5]
+        rw [hsw, ite_eq_right_of_eq_false _ _ (eq_false h5)]
+        simp only [σ2]; rw [Function.update_of_ne (sw_ne_scr i), setRegs_other _ _ _ _ (fun h => by
+          obtain ⟨j, e⟩ := mem_hds h; have := congrArg Fin.val e; rw [sw_val, hd_val] at this; omega)]
+        simp only [σ1, σ]; rw [Function.update_of_ne (sw_ne_scr i), bank_sw]
+  have hs5 : swSlot X (BinaryInterchangeRun.slot 5) = ax X := by
+    simp [swSlot, SwapPrim.slot_val]
+  set σ3 := Function.update σ2 (ax X) (reg (swapF [h0, h1, h2, h3, h4] A))
+  have s3 : Runs (.prim SwapPrim.prim (swSlot X) (swSlot_inj X)) σ2 (· = σ3)
+      (SwapPrim.cost (swIn [h0, h1, h2, h3, h4] A)) := by
+    refine ⟨_, _, Exec.prim (P := SwapPrim.prim) (by show SwapPrim.Pre (σ2 ∘ swSlot X); rw [hσ2]; exact hpre), ?_,
+      by show SwapPrim.cost (σ2 ∘ swSlot X) ≤ _; rw [hσ2]⟩
+    show upd σ2 (swSlot X) (SwapPrim.sem (σ2 ∘ swSlot X)) = σ3
+    rw [SwapPrim.sem, upd_update σ2 (swSlot_inj X), hs5, hσ2]; rfl
+  -- 4. clear the headers
+  have hσ3j : σ3 jnk = emp := by
+    simp only [σ3, σ2]
+    rw [Function.update_of_ne (ax_ne_jnk X).symm, Function.update_of_ne scr_ne_jnk.symm,
+      setRegs_other _ _ _ _ (fun h => by obtain ⟨j, e⟩ := mem_hds h; exact hd_ne_jnk j e.symm)]
+    simp only [σ1, σ]; rw [Function.update_of_ne scr_ne_jnk.symm, bank_jnk]
+  have s4 := runs_clearAll hds σ3 hds_nodup hσ3j
+  refine (Runs.then s1 (Runs.then s2 (Runs.then s3 s4))).mono (fun σ' e => ?_) ?_
+  · rw [e]
+    apply bank_cases
+    · intro i
+      simp only [setEmp]
+      split_ifs with h
+      · rfl
+      · simp only [σ3, σ2]
+        rw [Function.update_of_ne (sw_ne_ax i X), Function.update_of_ne (sw_ne_scr i), setRegs_other _ _ _ _ h]
+        simp only [σ1, σ]; rw [Function.update_of_ne (sw_ne_scr i), bank_sw]
+    · intro i
+      have hni : ax i ∉ (hds : List (Fin (NB E))) := fun h => by
+        obtain ⟨j, e⟩ := mem_hds h; exact hd_ne_ax j i e.symm
+      simp only [setEmp, hni, ite_false, σ3, σ2]
+      by_cases hiX : i = X
+      · subst hiX; simp
+      · rw [Function.update_of_ne (fun e => hiX (ax_inj e)), Function.update_of_ne (ax_ne_scr i),
+          setRegs_other _ _ _ _ hni]
+        simp only [σ1, σ]; rw [Function.update_of_ne (ax_ne_scr i), bank_ax, Function.update_of_ne hiX,
+          Function.update_of_ne hiX]
+    · have hn : scr ∉ (hds : List (Fin (NB E))) := fun h => by
+        obtain ⟨j, e⟩ := mem_hds h; exact hd_ne_scr j e.symm
+      simp only [setEmp, hn, ite_false, σ3, σ2]
+      rw [Function.update_of_ne (ax_ne_scr X).symm, Function.update_self]
+    · have hn : jnk ∉ (hds : List (Fin (NB E))) := fun h => by
+        obtain ⟨j, e⟩ := mem_hds h; exact hd_ne_jnk j e.symm
+      simp only [setEmp, hn, ite_false]; exact hσ3j
+  · have hc : ∀ j : Fin 5, σ3 (hd j) = reg ([h0, h1, h2, h3, h4].getD j.val []) := by
+      intro j
+      simp only [σ3, σ2]
+      rw [Function.update_of_ne (hd_ne_ax j X), Function.update_of_ne (hd_ne_scr j)]
+      fin_cases j <;> simp [setRegs, hds, hd_inj]
+    simp only [clearCost, hds, hc, swapCost, σ, bank_scr]
+    simp [reg, WTape.words, clen]
+    omega
+
 end
 end IntegerMultBounds.Resampling.AxisDriver
