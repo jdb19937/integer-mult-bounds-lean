@@ -42,5 +42,22 @@ theorem corrected_inverse_network (k : ℕ)
     (BinaryColumnFrame.frameEquiv k BinaryPhase.weightPhase).symm (stored i)
   rw [BinaryColumnConjugation.frame_conjugate,BinaryColumnConjugation.conjugate_twice]
 
+/-- Both orientations of the original corrected compiler network compute the
+full tensor on every wire, including its dirty scratch wires. -/
+theorem oriented_corrected_network (columns : ℕ) (inverseOrientation : Bool)
+    (inputBank : ComplexFramedExecution.Wire → BinaryColumns.Arrays (25^3) columns) :
+    (if inverseOrientation then
+      ComplexFramedConjugation.correctOutput columns
+        (FramedCircuit.run (ComplexFramedConjugation.network columns)
+          (ComplexFramedConjugation.correctInput columns inputBank))
+    else ComplexEndpoints.correctOutput columns
+      (FramedCircuit.run (ComplexFramedExecution.network columns)
+        (ComplexEndpoints.correctInput columns inputBank)))=
+    fun wire => if inverseOrientation then (ComplexEndpoints.fullFrame columns).symm (inputBank wire)
+      else ComplexEndpoints.fullFrame columns (inputBank wire) := by
+  cases inverseOrientation with
+  | false => exact ComplexEndpoints.corrected_network_run columns inputBank
+  | true => exact corrected_inverse_network columns inputBank
+
 end
 end IntegerMultBounds.Networks.ComplexInverseExecution

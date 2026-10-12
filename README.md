@@ -18,18 +18,16 @@ chosen before quantifying over inputs.
 
 ## Status
 
-Section 5 remains open; its complete scalar-prefix/stopped-call math milestone
-is now proved, including corrected tensor values, spectators, grids and ledger.
-The permanent-bank stopped roundtrip has exact tensor semantics with its original
-native-volume times stopped-axis-count bound; the volume-only tape milestone
-remains open. Witnessed complete child schedules now supply both
-their upper ledger and required denominator target. Actual scalar and stopped-child
-lifecycles construct reached event steps and preserve settled frames and the
-immutable saved target. Complete schedules now execute when every child stops,
-with a summed concrete event budget and the original full compiler-network
-values on that same terminal reached bank; each local stopped event also
-carries its exact original instruction values. Nonstopped recursive execution, whole-node tensor
-correctness and uniform execution/runtime remain open.
+Section 5 remains open. Its complete scalar-prefix/stopped-call and original
+corrected-network orientation math milestones are proved. For a node whose
+children all stop, original coefficients and literal input ports now construct
+the actual event execution; its computed sink-corrected arrays have full tensor
+values on every original row, polynomial and spectator slice. Captured frames,
+immutable target, denominator coverage and the summed event budget are retained.
+Final contraction, rejoin, post-orientation and decoded return still need to be
+joined to this endpoint. Nonstopped recursive execution and uniform total
+runtime remain open. The stopped roundtrip's existing cost still includes its
+stopped-axis-count factor; the volume-only tape milestone remains open.
 Its recursive geometry math milestone is proved:
 canonical axis coverage, fitting descendant intervals, unique exhaustive child
 calls, the original rank-sum count and the exact manuscript stop rule are
