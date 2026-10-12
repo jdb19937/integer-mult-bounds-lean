@@ -27,6 +27,8 @@ packed programs have exact repaired output, sparse extracted records and
 the three-logical-volume cost bound at common dyadic parameters.
 The basis-stage and phase math milestone is proved on one literal word and
 coefficient bank, including exact reverse restoration and the full edge phase.
+The compact-control math milestone now proves both early and late actual
+destinations on the same original layout, including their composed payload endpoint.
 Actual scalar successors and forward-child-inverse
 returns now derive the original event semantics from their reached arrays;
 the child result still requires recursive tensor correctness. Literal child-entry

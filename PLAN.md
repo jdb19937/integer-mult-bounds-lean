@@ -26,7 +26,7 @@ here.
 | [The machine model and elementary streams](plan/02-machine-model-streams.md) | §2 | ✅ 9/9 | ✅ 9/9 | 257 |
 | [Two finite networks with a rank saving](plan/03-finite-networks-rank.md) | §3 | ✅ 8/8 | 🟡 2/6 | 358 |
 | [Faster interchange of address chunks](plan/04-faster-interchange-address.md) | §4 | ✅ 10/10 | ✅ 9/9 | 375 |
-| [Fast simultaneous synthetic butterfly layers](plan/05-simultaneous-butterfly-layers.md) | §5, §11, CrocSwap | 🟡 3/12 | 🟡 0/12 | 1666 |
+| [Fast simultaneous synthetic butterfly layers](plan/05-simultaneous-butterfly-layers.md) | §5, §11, CrocSwap | 🟡 4/12 | 🟡 0/12 | 1667 |
 | [Synthetic transforms and their tape layout](plan/06-synthetic-transforms-tape.md) | §6 | ✅ 3/3 | ⬜ 0/3 | 7 |
 | [Resampling with the permutations left in the transform](plan/07-gaussian-resampling.md) | §7 | ✅ 6/6 | 🟡 3/4 | 59 |
 | [Exact integer multiplication and its cost](plan/08-exact-multiplication.md) | §8 | 🟡 1/3 | ⬜ 0/2 | 12 |
@@ -89,7 +89,7 @@ Details: [plan/05-simultaneous-butterfly-layers.md](plan/05-simultaneous-butterf
 | Sub-problem | Mathematics | Tape | Files |
 | --- | --- | --- | --- |
 | Packed arithmetic and fixed control gadgets | 🟡 | 🟡 | 191 |
-| Active-target compact controls | 🟡 | 🟡 193/194 rows | 273 |
+| Active-target compact controls | ✅ | 🟡 193/194 rows | 274 |
 | Exceptional-address destination repair | ✅ | 🟡 | 256 |
 | Row padding, reservation and allowances | 🟡 | 🟡 56/57 rows | 72 |
 | Binary basis stages and phase schedules | ✅ | 🟡 | 104 |
