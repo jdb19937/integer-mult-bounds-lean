@@ -6486,6 +6486,10 @@ Schönhage–Strassen multiplication, the fast multiplier used for the packed pr
 - `Schoenhage/PrimLift.lean`: a four-symbol word-program primitive over any
   larger alphabet (`Prim.lift`); word tapes read the same in both
   (`widen_enc`).
+- `Schoenhage/SwapPrim.lean`: the §4 address-field interchange
+  (`BinaryInterchangeRun.runs`) as a word-program primitive over `prime`:
+  five header words and a payload word, converted to counter form and raw
+  bits and back around the interchange (`prim_spec`, `prim`).
 - `Schoenhage/RingMath.lean`, `RingWords.lean`, `RingDigit.lean`: evaluation
   at `X = 2^W` turns negacyclic products into products modulo `2^(W r) + 1`
   (`ev_ncMul`); offset digits pack signed coefficients and recover them
