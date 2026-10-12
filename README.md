@@ -54,7 +54,11 @@ remain open.
 Actual forward
 basis and physical child entry now also compose after counted siblings on the
 unchanged aligned table, retaining the immutable target certificate; their
-decoded child-event semantics still require recursive child tensor correctness.
+complete stopped event now runs from event PC to next-call PC with every
+join paid. Its literal stopped output derives child tensor correctness, so
+the actual forward/returned/inverse witnesses have the original instruction
+semantics without a child-transform premise. Nonleaf child correctness and
+whole-schedule recursive execution remain open.
 Complete stopped-root execution, full stopped-leaf
 tensor semantics, genuine halting and paid runtime are checked. Corrected
 source entry, sink corrections, contraction/rejoin and saved-PC dispatch also
