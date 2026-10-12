@@ -704,6 +704,7 @@ import IntegerMultBounds.Resampling.LineMaps
 import IntegerMultBounds.Resampling.TensorTape
 import IntegerMultBounds.Resampling.LineNumeric
 import IntegerMultBounds.Resampling.TensorNumeric
+import IntegerMultBounds.Resampling.TensorDriver
 import IntegerMultBounds.Resampling.Milestones
 import IntegerMultBounds.Resampling.PiApprox
 import IntegerMultBounds.Resampling.ExpApprox

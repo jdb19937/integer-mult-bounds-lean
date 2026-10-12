@@ -6168,6 +6168,11 @@ Transform, fixed-point, Kronecker and Gaussian resampling mathematics used by th
   restricted input (`expand_tensor`); the decoded compression output is the
   square tensor of the padded tabled `B̃₀` maps (`compress_tensor`), which
   keep the unit disk (`padB_ball`).
+- `Resampling/TensorDriver.lean`: the tensor driver as a literal program
+  (`driveProg`, `drive_hoare`); with expansion records its decoded output is
+  the tensor of the floored tabled `Ã` maps (`expand_hoare`), with
+  compression records the tensor of the padded tabled `B̃₀` maps
+  (`compress_hoare`), each within `driveCost` steps.
 - `Resampling/Milestones.lean`: the §7 milestone theorems of
   `plan/07-gaussian-resampling.md` that package proved results:
   `FixedMul.signed_word_ops`, `Schoenhage.wordRecordLayer_hoare`,
