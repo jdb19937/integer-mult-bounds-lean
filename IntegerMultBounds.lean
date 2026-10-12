@@ -700,6 +700,7 @@ import IntegerMultBounds.Resampling.PaddedTensor
 import IntegerMultBounds.Resampling.FlatTensor
 import IntegerMultBounds.Resampling.ScriptSem
 import IntegerMultBounds.Resampling.Script
+import IntegerMultBounds.Resampling.Sandwich
 import IntegerMultBounds.Resampling.LineMaps
 import IntegerMultBounds.Resampling.TensorTape
 import IntegerMultBounds.Resampling.LineNumeric

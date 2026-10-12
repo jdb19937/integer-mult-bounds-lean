@@ -6145,6 +6145,11 @@ Transform, fixed-point, Kronecker and Gaussian resampling mathematics used by th
   (`tScript`: tail axes, move axis `0` in, its record, move it out) is valid
   and computes the flat pass on entries when every axis record maps lines
   (`tScript_spec`).
+- `Resampling/Sandwich.lean`: axis exposure by one nonadjacent interchange
+  (`notes/nonadjacent-axis-note.tex`): the interchange of whole entries
+  (`swapE`, `swapList_flatten`); swapping an axis with the innermost field,
+  mapping lines and swapping back is the head-axis step of the flat pass in
+  every outer block (`sandwich_eq`).
 - `Resampling/LineMaps.lean`: the axis records as line maps on entries
   (two `w`-bit words, most significant bit first). The expansion record maps
   every line of `t` entries by `lineA`: the first `s` entries as words, the
