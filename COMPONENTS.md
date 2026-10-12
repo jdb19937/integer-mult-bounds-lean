@@ -6698,6 +6698,11 @@ Schönhage–Strassen multiplication, the fast multiplier used for the packed pr
   zero prefix of a `Γ` code; the binary digits of a unary word by repeated
   halving on tapes (`runs_lsbLoop`, `lsb_reverse`).
 
+- `Schoenhage/ConvScaleRun.lean`: the convolution's last step on the ring
+  product's word tapes: `log₂ M` in unary from the header's axis codes
+  (`runs_kOf`), every `w`-bit component word widened by `k` zeros
+  (`runs_scaleArr`), and the descriptor `Γ(w + k)` (`runs_gammaOut`).
+
 - `Schoenhage/PointwiseRow.lean`: at the main sizes `p = 6 lg n`, `r = 2^ℓ`
   the pointwise program's time is at most a constant times `T p` times the
   `packedProducts` row times the `log log` overhead of

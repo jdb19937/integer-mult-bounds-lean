@@ -2630,6 +2630,7 @@ import IntegerMultBounds.Schoenhage.RingPointwiseBound
 import IntegerMultBounds.Schoenhage.RingPointwiseTarget
 import IntegerMultBounds.Schoenhage.PointwiseRow
 import IntegerMultBounds.Schoenhage.ConvScale
+import IntegerMultBounds.Schoenhage.ConvScaleRun
 import IntegerMultBounds.Schoenhage.RingLemmaHeader
 import IntegerMultBounds.Schoenhage.RingLemma
 import IntegerMultBounds.Schoenhage.Twist
