@@ -6148,6 +6148,9 @@ Transform, fixed-point, Kronecker and Gaussian resampling mathematics used by th
 - `Resampling/SwapCost.lean`: one swap record of the tensor driver costs at
   most a constant times the array length times the larger field width to the
   power `τ` (`swapCost_le`), from the interchange's uniform budget.
+- `Resampling/ExpandCost.lean`: explicit cost bounds for the expansion
+  record: one line of the `Ã` loop (`lineBoundF_le`) and the whole loop
+  (`progBound_le`), in terms of the fast multiply's cost `fmTime w`.
 - `Resampling/LineMaps.lean`: the axis records as line maps on entries
   (two `w`-bit words, most significant bit first). The expansion record maps
   every line of `t` entries by `lineA`: the first `s` entries as words, the

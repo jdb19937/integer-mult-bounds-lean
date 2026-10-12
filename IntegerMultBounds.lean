@@ -707,6 +707,7 @@ import IntegerMultBounds.Resampling.TensorTape
 import IntegerMultBounds.Resampling.LineNumeric
 import IntegerMultBounds.Resampling.TensorNumeric
 import IntegerMultBounds.Resampling.TensorDriver
+import IntegerMultBounds.Resampling.ExpandCost
 import IntegerMultBounds.Resampling.Milestones
 import IntegerMultBounds.Resampling.PiApprox
 import IntegerMultBounds.Resampling.ExpApprox
