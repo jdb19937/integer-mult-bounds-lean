@@ -16,14 +16,14 @@ See [COMPONENTS.md](COMPONENTS.md) for what each file proves.
 | Composition, loops, frames, elementary streams | §2 | 🟡 (153/154) | 🟡 (136/147) |
 | Finite networks with a rank saving | §3 | ✅ (66/66) | 🟡 (1/42) |
 | Faster interchange of address chunks | §4 | ✅ (129/129) | ✅ (126/126) |
-| Simultaneous butterfly layers with compact control | §5, §11, CrocSwap | ✅ (1625/1625) | 🟡 (1261/1263) |
+| Simultaneous butterfly layers with compact control | §5, §11, CrocSwap | ✅ (1626/1626) | 🟡 (1261/1263) |
 | Synthetic transforms and their tape layout | §6 | ✅ (5/5) | ⬜ (0/3) |
 | Gaussian resampling | §7 | ✅ (17/17) | 🟡 (7/9) |
 | Fast multiplication subroutine | Schönhage–Strassen | ✅ (22/22) | 🟡 (11/15) |
 | Exact multiplication, parameters, time bound | §8 | 🟡 (5/7) | ⬜ (0/2) |
 | End-to-end theorem `EndToEnd` | — | 🟡 (5/8) | 🟡 (5/8) |
 
-Component accounting: mathematics **2030/2036**, tape **1549/1617**.
+Component accounting: mathematics **2031/2037**, tape **1549/1617**.
 Each numerator counts only ✅ rows; partial and unstarted rows remain in the
 denominator, and — entries are excluded. These counts measure checklist rows,
 not remaining effort or end-to-end completion. In particular, Section 5 remains
@@ -2041,6 +2041,7 @@ The main binary interchange theorem is proved in `BinaryInterchangeRun.runs` and
 | CompactComplexSourceReadyCompletedReturnGrid | `CompactComplexSourceReadyCompletedReturnGrid` | ✅ | — | Recursive tensor semantics derive the computed child result grid at the exact parent scalar-prefix and returned-volume budget; stopped leaf semantics derive the corresponding leaf grid. Actual parent/child upper ledgers and Paths construct physical Progress with independent child current and volume. Recursive result semantics and completed-target coverage remain explicit induction obligations. |
 | CompactComplexAlignedCapturedReturnPath | `CompactComplexAlignedCapturedReturnPath` | ✅ | ✅ | The actual captured child-entry references discharge all individual saved-stack equations in the paid guard/pop/physical-return/inverse path on the unchanged table. The recursive specialization derives its result grid and Progress from decoded tensor correctness and genuine child/parent ledgers. Parent clean tails, balanced child Settled, semantic correctness and target coverage remain recursive obligations. |
 | CompactComplexAlignedReturnedDormantFrames | `CompactComplexAlignedReturnedDormantFrames` | ✅ | — | Balanced physical return restores the actual older header, live and target words; the original call list uniquely restores the saved-PC word. Canonical bank projections transfer Settled to the computed returned Reached witness and its actual inverse-basis endpoint without a return-invariant or whole-bank assumption. Complete recursive event induction and child semantic correctness remain open. |
+| CompactComplexActualInverseBasisPullback | `CompactComplexActualInverseBasisPullback` | ✅ | — | The actual reverse basis word pulls each native row and polynomial coefficient through the forward ambient coordinate map. Forward basis, recursive child tensor and inverse basis therefore produce the original residual factor at the unchanged parent address. The computed coordinate cancellation is proved; actual child tensor correctness remains a recursive obligation. |
 
 ## 6. Synthetic transforms and their tape layout (§6)
 
