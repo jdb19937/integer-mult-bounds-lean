@@ -248,4 +248,87 @@ theorem prefix_round_eq [NeZero r] {ts : List ℕ} {ℓ K : ℕ} (hL : LayoutOK 
     omega
   omega
 
+/-! ### The top slot -/
+
+/-- The first physical bit of the top slot `ℓ - 1`. -/
+def topBase (D ℓ K : ℕ) : ℕ := D * ((ℓ - 1) / K) * K + D * ((ℓ - 1) % K)
+
+/-- In the paper's layout, the top slot of the `k`-th long axis sits at `topBase + (L - 1 - k)`. -/
+theorem paperPerm_σ_top {ts : List ℕ} {ℓ K : ℕ} (hL : LayoutOK r ts ℓ K) {k : ℕ}
+    (hk : k < (longs ts ℓ).length) :
+    (paperPerm hL).σ (axOff ts (longs ts ℓ)[k] + (ℓ - 1)) =
+      topBase ts.length ℓ K + ((longs ts ℓ).length - 1 - k) := by
+  set D := ts.length
+  set B := D * ((ℓ - 1) / K) * K
+  set Q := topBase D ℓ K + ((longs ts ℓ).length - 1 - k) with hQdef
+  have hQ : Q = B + D * ((ℓ - 1) % K) + ((longs ts ℓ).length - 1 - k) := rfl
+  have h1 : ¬ Q < B := by omega
+  have h2 : ¬ Q < B + D * ((ℓ - 1) % K) := by omega
+  have hslot : paperSlot ts ℓ K Q = ((longs ts ℓ)[k], ℓ - 1) := by
+    unfold paperSlot
+    rw [show ts.length = D from rfl, if_neg h1, if_neg h2]
+    simp only [Prod.mk.injEq, and_true]
+    rw [List.getD_eq_getElem _ _ (by omega)]
+    congr 1
+    omega
+  have htau : paperTau ts ℓ K Q = axOff ts (longs ts ℓ)[k] + (ℓ - 1) := by unfold paperTau; rw [hslot]
+  have hn : Q < Nat.log 2 ts.prod := by
+    have hlog : Nat.log 2 ts.prod = B + D * ((ℓ - 1) % K) + (longs ts ℓ).length := log_prod_layout hL
+    omega
+  rw [← htau]
+  exact BitPerm.ofTau_σ hn
+
+theorem slotAxes_top {ts : List ℕ} {ℓ K : ℕ} (hL : LayoutOK r ts ℓ K) : slotAxes ts (ℓ - 1) = longs ts ℓ := by
+  unfold slotAxes longs
+  apply List.filter_congr
+  intro i hi
+  have := hL.2.1 i (List.mem_range.mp hi)
+  have := hL.2.2.2
+  simp only [decide_eq_decide]
+  omega
+
+theorem paper_slotBits_top {ts : List ℕ} {ℓ K : ℕ} (hL : LayoutOK r ts ℓ K) :
+    slotBits (paperPerm hL) ts (slotAxes ts (ℓ - 1)) (ℓ - 1) =
+      (List.range (longs ts ℓ).length).map fun k => topBase ts.length ℓ K + ((longs ts ℓ).length - 1 - k) := by
+  rw [slotAxes_top hL]
+  unfold slotBits
+  apply List.ext_getElem (by simp)
+  intro k h1 h2
+  simp only [List.getElem_map, List.getElem_range]
+  exact paperPerm_σ_top hL (by simpa using h1)
+
+/-- `top_round_eq`: the computed round of the top slot is, like a prefix round, the twist of one
+truncation of the exact butterflies on its `L` consecutive bits, `L` the number of long axes. -/
+theorem top_round_eq [NeZero r] {ts : List ℕ} {ℓ K : ℕ} (hL : LayoutOK r ts ℓ K) (p : ℕ)
+    (fs : List (Rec r)) (hlen : fs.length = ts.prod) :
+    roundArr p (slotRound (paperPerm hL) ts (ℓ - 1) (arrayVec p fs)) =
+      twist (slotExp (paperPerm hL) r ts (slotAxes ts (ℓ - 1)) (ℓ - 1))
+        (arrayVec p ((bflysRecs ((List.range (longs ts ℓ).length).map (topBase ts.length ℓ K + ·)) fs).map
+          (truncRec (longs ts ℓ).length))) := by
+  set L := (longs ts ℓ).length
+  set s := topBase ts.length ℓ K
+  unfold slotRound
+  rw [roundArr_twist]
+  congr 1
+  rw [arrayVec_truncRecs]
+  congr 1
+  rw [paper_slotBits_top hL]
+  have hnd : ((List.range L).map fun k => s + (L - 1 - k)).Nodup := by
+    apply List.Nodup.map_on _ List.nodup_range
+    intro x hx y hy e
+    simp only [List.mem_range] at hx hy
+    omega
+  rw [bflys_perm (range_map_rev s L) hnd]
+  rw [show p + L = p + ((List.range L).map (s + ·)).length by simp]
+  refine (arrayVec_bflysRecs _ p fs ?_).symm
+  intro P hP
+  simp only [List.mem_map, List.mem_range] at hP
+  obtain ⟨j, hj, rfl⟩ := hP
+  obtain ⟨-, hM⟩ := axes_zeros (ts := ts) (fun t ht => by obtain ⟨a, ha, -⟩ := hL.1 t ht; exact ⟨a, ha⟩)
+  rw [hlen, hM]
+  apply Nat.pow_dvd_pow
+  have hlog := log_prod_layout hL
+  simp only [s, topBase, L] at *
+  omega
+
 end IntegerMultBounds.Schoenhage

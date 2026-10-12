@@ -6765,7 +6765,8 @@ Schönhage–Strassen multiplication, the fast multiplier used for the packed pr
   truncation toward zero by `2^s` is grid rounding (`arrayVec_truncRecs`); in the
   paper's layout prefix slot `h` occupies the `D` bits from `DqK + hD`
   (`paperPerm_σ_prefix`), so its computed round is the twist of the truncated exact
-  butterflies on those bits (`prefix_round_eq`).
+  butterflies on those bits (`prefix_round_eq`); the top slot `ℓ - 1` likewise on the
+  last `L` bits, `L` the number of long axes (`paperPerm_σ_top`, `top_round_eq`).
 
 - `Schoenhage/PrefixRoundWords.lean`: §6 task 5, words: numerators as offset
   words (`offWord`, the low bits of `a + 2^(W-1)`), so a butterfly's sum is plain
