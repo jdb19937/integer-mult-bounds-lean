@@ -16,6 +16,9 @@ Section 10 proves `EndToEnd` itself by assembling one fixed machine. The machine
 
 Parses the literal input into reversed operands in linear time.
 
+- Math milestone: `IntegerMultBounds.Machine.MultiplicationInputSplit.splits` — The fixed three-tape parser preserves the packed input and produces both reversed operands, halting within 3|x| + 2|y| + 12 steps (consumed by ElementaryMultiplyCore).
+- Tape milestone: `IntegerMultBounds.Machine.MultiplicationInputSplit.splits_original_input` — From the literal Machine.input configuration the parser halts within 3|x| + 2|y| + 12 steps with the split output tapes.
+
 | Subcomponent | Files | Mathematics | Tape | Notes |
 | --- | --- | --- | --- | --- |
 | Literal multiplication input front end | `MultiplicationInputSplit` | ✅ | ✅ | The actual fixed parser reads the literal input, retains it and produces reversed operands with linear cost, including empty lists. Multiplication execution and exact-width output installation remain separate. |
@@ -23,6 +26,9 @@ Parses the literal input into reversed operands in linear time.
 ### Quadratic fallback multiplier
 
 Proves a fixed four-tape machine outputs the exact twice-length product in quadratic time.
+
+- Math milestone: `IntegerMultBounds.Machine.ElementaryMultiplyOutputData.horner_output_value` — The twice-length MSB word read back from the Horner accumulator has binary value x*y for equal-length operands, including empty ones.
+- Tape milestone: `IntegerMultBounds.Machine.ElementaryMultiply.runsWithin` — The fixed four-tape program halts with the exact twice-length product on tape zero for every equal input length within 40(n^2+n+1) steps (Assembly.RunsWithin).
 
 | Subcomponent | Files | Mathematics | Tape | Notes |
 | --- | --- | --- | --- | --- |
@@ -34,6 +40,9 @@ Proves a fixed four-tape machine outputs the exact twice-length product in quadr
 ### Fast program assembly and final bound
 
 Reduces EndToEnd to a program within the cost-table bound and assembles correctness and runtime.
+
+- Math milestone: `IntegerMultBounds.Assembly.mainProgram_runsWithin` — The assembled fixed program (input front end, fast path for large n, quadratic fallback below the cutoff) satisfies RunsWithin with a total cost of the cost-table shape.
+- Tape milestone: `IntegerMultBounds.Assembly.endToEnd` — Machine.EndToEnd: one fixed literal machine multiplies every pair of n-bit integers correctly within O(n (lg n)^(1 - 83/10^12)) steps (via endToEnd_of_table).
 
 | Subcomponent | Files | Mathematics | Tape | Notes |
 | --- | --- | --- | --- | --- |

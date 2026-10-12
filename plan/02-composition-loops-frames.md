@@ -21,6 +21,9 @@ Section 2 builds the toolkit that every later tape construction uses. Machines a
 
 Exact composition, branching, loops, frames, alphabet widening and basic scans give contracts that the rest of the library builds on.
 
+- Math milestone: `IntegerMultBounds.Machine.HoareTime.seq` — Sequential composition of two machines with Hoare contracts satisfies the composed contract with cost b1 + 1 + b2.
+- Tape milestone: `IntegerMultBounds.Machine.Placement.hoare_at` — A proved machine placed on any selected slots of a larger tape bank keeps its exact contract and runtime and leaves every other tape untouched.
+
 | Subcomponent | Files | Mathematics | Tape | Notes |
 | --- | --- | --- | --- | --- |
 | Sequential composition and Hoare contracts | `Composition`, `Hoare` | ✅ | ✅ | Exact one-transition join |
@@ -34,6 +37,9 @@ Exact composition, branching, loops, frames, alphabet widening and basic scans g
 ### Counters and counted loops
 
 Binary and radix counters drive counted loops, copies, reversals and seeks with linear overhead and full clock cleanup.
+
+- Math milestone: `IntegerMultBounds.Machine.StreamScheduler.descriptors_exact` — Descriptor arithmetic derives, from the canonical dimension words alone, the exact loop counts and offsets every stream and recursive network call needs.
+- Tape milestone: `IntegerMultBounds.Machine.StreamScheduler.realizes_hoare` — One fixed machine derives its clock descriptors on tape, runs the counted stream bodies, halts and erases every clock, charging the body costs plus linear overhead.
 
 | Subcomponent | Files | Mathematics | Tape | Notes |
 | --- | --- | --- | --- | --- |
@@ -56,6 +62,9 @@ Binary and radix counters drive counted loops, copies, reversals and seeks with 
 ### Binary and radix arithmetic machines
 
 Literal machines for binary and fixed-radix arithmetic, coefficient kernels, conversions and descriptor copies compute every number the streams need.
+
+- Math milestone: `IntegerMultBounds.Machine.RadixRational.output_ratMod` — The rational-coefficient digit transducer outputs exactly ratMod(q^width, r) times the input word, for any rational r with denominator below the radix.
+- Tape milestone: `IntegerMultBounds.Networks.Shared50CoefficientMachines.coefficient_to_blank` — For every coefficient of every actual Shared50 transform, a fixed two-tape machine computes the reduced matrix entry times the input word in exactly one transition per digit and halts, preserving the source.
 
 | Subcomponent | Files | Mathematics | Tape | Notes |
 | --- | --- | --- | --- | --- |
@@ -99,6 +108,9 @@ Literal machines for binary and fixed-radix arithmetic, coefficient kernels, con
 
 Unit, inverse-unit and signed rational scaling of a coordinate run on fibers and whole flat arrays in linear volume time.
 
+- Math milestone: `IntegerMultBounds.Machine.ScalingAffineBridge.actual_signed_get` — For every actual network scale r, the signed numerator/denominator/negation block recipe sends each block to its ratMod(r)-scaled address, at every prime-power width.
+- Tape milestone: `IntegerMultBounds.Machine.FlatAffineScalingReady.realizes_hoare` — One fixed machine per actual rational scale installs its markers, scales the target coordinate of the whole flat array and restores the canonical common input, in linear volume time.
+
 | Subcomponent | Files | Mathematics | Tape | Notes |
 | --- | --- | --- | --- | --- |
 | Ordered-affine payload semantics | `BlockRotationData`, `BlockNegationData`, `ScalingPieces`, `ScalingControl` | ✅ | ⬜ | Exact block-shift and negation payload indices, flat split and reversal recipe; unique scaling-piece merge, inverse reconstruction, monotone streams, fixed residue selection and exact contiguous piece lengths. Literal split/merge scheduling remains open |
@@ -135,6 +147,9 @@ Unit, inverse-unit and signed rational scaling of a coordinate run on fibers and
 
 Translating a coordinate by a rational combination of earlier coordinates runs over the whole flat array in linear volume time.
 
+- Math milestone: `IntegerMultBounds.Machine.FiberLayoutData.translated_entry` — Rotating every fiber of a flat array by its offset puts each entry (p, y, j) at position (p, y + offset p mod Q, j) of the whole array.
+- Tape milestone: `IntegerMultBounds.Machine.FlatControlledShiftReady.realizes_hoare` — From blank workspace, one fixed machine shifts the target coordinate of the whole flat array by a rational multiple of an earlier coordinate and restores the canonical common input, in linear volume time.
+
 | Subcomponent | Files | Mathematics | Tape | Notes |
 | --- | --- | --- | --- | --- |
 | Literal shift descriptor construction | `BinarySubReuse`, `TranslationProduct`, `TranslationDescriptors` | ✅ | ✅ | Actual subtraction and nested counted products construct exact canonical split lengths from Q,a,B with linear-volume cost. Inputs preserved; metadata reuse cleanup and payload composition remain separate |
@@ -166,6 +181,9 @@ Translating a coordinate by a rational combination of earlier coordinates runs o
 ### Common coordinates and schedule assembly
 
 Scale and shift stages share one coordinate layout and payload, so one fixed machine runs each nonrecursive Shared50 schedule segment.
+
+- Math milestone: `IntegerMultBounds.Networks.OrderedAffine.program_run` — The descending row schedule of diagonal scalings and earlier-control shifts realizes every lower-triangular matrix: running it on x gives E·x.
+- Tape milestone: `IntegerMultBounds.Machine.Shared50CleanSegments.realizes` — One fixed clean machine executes any nonrecursive segment of an actual Shared50 schedule at every width, with exact field-program semantics, all private workspace returned blank, in linear volume time.
 
 | Subcomponent | Files | Mathematics | Tape | Notes |
 | --- | --- | --- | --- | --- |
@@ -201,6 +219,9 @@ Scale and shift stages share one coordinate layout and payload, so one fixed mac
 
 Gather, packed arithmetic lines, guard tests, record selection and Gaussian window sums are reusable gadgets for §5 and §7.
 
+- Math milestone: `IntegerMultBounds.Machine.KeyRoutine.routine_hoare` — The 17-tape key routine writes exactly the repair-scan flag word of the toggled inverted address and blanks all scratch, in linear time.
+- Tape milestone: `IntegerMultBounds.Machine.GaussianLine.line_hoare` — The 22-tape Gaussian line machine writes, for each of t outputs, the exact window sum of truncated weight-times-record products, within t times a per-output bound.
+
 | Subcomponent | Files | Mathematics | Tape | Notes |
 | --- | --- | --- | --- | --- |
 | Packed-offset stride gadget | `Gather` | ✅ | ✅ | Unrolled finite control assembles a packed word from digit fields of a source under a per-digit control bit and a Boolean combination, with chosen source and target strides and offsets; exact gathered word and cost `n(2(sx + st) + 7)`; the compact-control packed offsets and toggle masks are instances |
@@ -213,6 +234,9 @@ Gather, packed arithmetic lines, guard tests, record selection and Gaussian wind
 ### Tape radix sort
 
 Stable key-bit partition passes compose into a fixed-machine radix sort with a linear-in-width-times-volume bound.
+
+- Math milestone: `IntegerMultBounds.Machine.RadixSort.sort_pairwise` — The list-level LSB radix sort orders records by key value (permutation: RadixSort.sort_perm).
+- Tape milestone: `IntegerMultBounds.Machine.TapeRadixSort.sort_hoare_volume` — The fixed eight-tape machine sorts the record bank exactly into RadixSort.sort within 74 x width x volume steps.
 
 | Subcomponent | Files | Mathematics | Tape | Notes |
 | --- | --- | --- | --- | --- |

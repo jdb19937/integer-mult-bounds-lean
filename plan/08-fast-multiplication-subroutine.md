@@ -27,6 +27,9 @@ replaces the Harvey–van der Hoeven recursion. The Harvey–van der Hoeven recu
 
 Proves the DFT, FFT, fixed-point error budget, tensor approximation and synthetic convolution approximations the other sections use.
 
+- Math milestone: `IntegerMultBounds.NLogN.synthConvNormD_approx` — Proposition 3.4: the numerical d-dimensional synthetic convolution pipeline approximates the normalized convolution (1/T') u*v with absolute error T' r (3 sum log2 t_i + 2)/2^p.
+- Tape milestone: —
+
 | Subcomponent | Files | Mathematics | Tape | Notes |
 | --- | --- | --- | --- | --- |
 | DFT, convolution theorem, inversion | `DFT`, `Multidim`, `MultidimD` | ✅ | — | |
@@ -41,6 +44,9 @@ Proves the DFT, FFT, fixed-point error budget, tensor approximation and syntheti
 
 Proves one level modulo 2^N + 1 correct and bounds the recursion's cost by O(N log N log log N).
 
+- Math milestone: `IntegerMultBounds.Schoenhage.ssMul_correct` — The functional Schoenhage-Strassen recursion exactly as the tapes run it computes x y mod 2^N + 1 for every scheduled size N and residues x, y.
+- Tape milestone: —
+
 | Subcomponent | Files | Mathematics | Tape | Notes |
 | --- | --- | --- | --- | --- |
 | Twisted transform convolution theorem | `Schoenhage/Transform` | ✅ | — | Contiguous-halves forward and unscaled inverse transforms modulo `X^(2^k) - ψ^e` over any commutative ring with `ψ^H = -1`; inverse of the pointwise product is `2^k` times the product (`inv_fwd_mul`), no division by two |
@@ -50,6 +56,9 @@ Proves one level modulo 2^N + 1 correct and bounds the recursion's cost by O(N l
 ### Word-tape programming layer
 
 Builds word tapes, a streaming primitive, a correct program compiler and modular residue arithmetic.
+
+- Math milestone: `IntegerMultBounds.Schoenhage.FMachine.hoare` — A HoareTime contract proved for a machine over any finite state type is a contract for its compiled literal program.
+- Tape milestone: `IntegerMultBounds.Schoenhage.compile_correct` — Every big-step execution of a word program is a run of the compiled literal program within its cost.
 
 | Subcomponent | Files | Mathematics | Tape | Notes |
 | --- | --- | --- | --- | --- |
@@ -62,6 +71,9 @@ Builds word tapes, a streaming primitive, a correct program compiler and modular
 
 Runs transform layers, splitting, recombination and batched recursion on tapes, exact and within the cost bound.
 
+- Math milestone: `IntegerMultBounds.Schoenhage.upList_nextBatch` — A level's up-sweep applied to the next level's products of its down-sweep batch gives ssMul pair by pair, so level-batched recursion computes ssMul.
+- Tape milestone: `IntegerMultBounds.Schoenhage.pointwise_le_packedProducts` — The pointwise-product program installed in the main transform pipeline costs, over all its calls on n-bit inputs, eventually at most a constant times V n times the packedProducts cost-table row.
+
 | Subcomponent | Files | Mathematics | Tape | Notes |
 | --- | --- | --- | --- | --- |
 | Transform layers on tapes | `Schoenhage/Iter`, `Schoenhage/IterCorrect`, `Schoenhage/Butterfly`, `Schoenhage/Layers`, `Schoenhage/InvLayers` | ✅ | ✅ | The layer-by-layer transform with unary block shifts equals the recursive transform forward and inverse (`fwdIter_eq_fwd`, `invIter_eq_inv`); on tapes the forward and inverse butterflies and a whole forward layer (block split, pair loop, collection, children's shifts) compute the layer functions exactly (`runs_bflyF`, `runs_bflyI`, `runs_blocksF`); the forward transform over all layers is proved on tapes (`runs_fwdLoop`); the inverse transform too, with each layer's shifts recomputed from the root in linear total time (`runs_invLoop`) |
@@ -73,6 +85,9 @@ Runs transform layers, splitting, recombination and batched recursion on tapes, 
 
 Proves lem:signed-ring-product on the literal machine in the paper's formats and bridges it to MeetsPointwise.
 
+- Math milestone: `IntegerMultBounds.Schoenhage.ringOut_records` — The reversed output words of the ring product are exactly the paper's record Q_p(fg/r) of the negacyclic product in Z[i][y]/(y^r+1).
+- Tape milestone: `IntegerMultBounds.Schoenhage.pointwise_polylog` — pointwisePolylogTarget 1: a fixed literal program meets the paper-format pointwise-product statement (MeetsPointwise) within O(T p log(rp) loglog(rp)) plus the header length.
+
 | Subcomponent | Files | Mathematics | Tape | Notes |
 | --- | --- | --- | --- | --- |
 | Packed ring products on tapes (`lem:signed-ring-product`) | `Schoenhage/Relabel`, `Schoenhage/SSClean`, `Schoenhage/RingBank`, `Schoenhage/RingMul`, `Schoenhage/RingAlu`, `Schoenhage/RingMath`, `Schoenhage/RingWords`, `Schoenhage/RingDigit`, `Schoenhage/RingPack`, `Schoenhage/RingUnpack`, `Schoenhage/RingProduct`, `Schoenhage/RingSpec`, `Schoenhage/RingProgram` | ✅ | ✅ | A 91-tape program multiplies two polynomials of `Z[i][y]/(y^r + 1)` given as signed `w`-bit coefficient words (least significant bit first, real word then imaginary word) and writes each coefficient of the product truncated toward zero by `s` bits as a `w`-bit word (`ringProgram_spec`), in `O(N log N log log N)` steps for `N = W r` (`ringCost_le`). Four Schönhage–Strassen products modulo `2^N + 1` give the negacyclic wrap directly; the multiplier runs on the first 64 tapes (`Runs.map`) and returns them empty (`runs_ssClean`). The pointwise bridge now synthesizes the constants from the decoded header and handles the transform-record format and tape placement; the standalone three-field-header `Meets` contract remains the separate row below |
@@ -82,6 +97,9 @@ Proves lem:signed-ring-product on the literal machine in the paper's formats and
 ### Paper-format transform layer statements
 
 States the pointwise step, synthetic transforms, synthetic convolution and simultaneous layer in the paper's formats.
+
+- Math milestone: `IntegerMultBounds.Spec.SignedRingProduct.oppExact_fwdExact` — In the stored order the opposite exact transform undoes the forward one up to the factor 1/M, so the paper-format forward/opposite statements compose.
+- Tape milestone: `IntegerMultBounds.Spec.SignedRingProduct.convolution_target` — For valid transform parameters P, convolutionTarget P holds: one fixed literal program (forward transforms via simultaneous layers, pointwise products, opposite transform) meets prop:synthetic-convolution in the paper's formats within its cost.
 
 | Subcomponent | Files | Mathematics | Tape | Notes |
 | --- | --- | --- | --- | --- |

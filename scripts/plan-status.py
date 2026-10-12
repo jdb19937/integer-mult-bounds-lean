@@ -4,11 +4,18 @@
 Each plan/NN-*.md file starts with '# N. Title (Source)' and lists its
 sub-problems as '### Name' headings, each followed by a table of rows
 '| Subcomponent | Files | Mathematics | Tape | Notes |'. This script rewrites
-the PLAN.md overview row and the section's sub-problem table: Mathematics and
-Tape count ✅ rows out of rows not marked —, and Files counts the distinct Lean
-files named in the Files column (names that match no file count as planned).
+the PLAN.md overview row and the section's sub-problem table.
 
-Usage: python3 scripts/plan-status.py [--check]
+Each sub-problem names a math and a tape milestone, as lines
+'- Math milestone: `Full.Lean.name` — statement' (or '- Math milestone: —' when
+the column does not apply). A milestone is done when that theorem is declared in
+a file the IntegerMultBounds root imports; the axiom audit already rejects any
+sorry there. A sub-problem shows ✅ when its milestone is done, 🟡 with its
+finished-row count when only some rows are done, and ⬜ otherwise. The overview
+counts done milestones per section. Files counts the distinct Lean files named
+in the Files column (names that match no file count as planned).
+
+Usage: python3 scripts/plan-status.py [--check] [--list]
 """
 import collections
 import glob
@@ -34,6 +41,60 @@ def lean_files():
 
 
 NAMES = lean_files()
+
+DECLARATION = re.compile(r'^\s*(?:@\[[^\]]*\]\s*)*(?:(?:private|protected|noncomputable|nonrec|partial|unsafe)\s+)*'
+                         r'(?:theorem|lemma|def|abbrev|instance|structure|inductive|class)\s+([^\s(:{\[]+)')
+
+
+def imported_modules():
+    seen = set()
+    pending = ['IntegerMultBounds']
+    while pending:
+        module = pending.pop()
+        if module in seen:
+            continue
+        seen.add(module)
+        path = os.path.join(ROOT, module.replace('.', '/') + '.lean')
+        if not os.path.exists(path):
+            continue
+        for line in open(path):
+            found = re.match(r'^import\s+(IntegerMultBounds\S*)', line)
+            if found:
+                pending.append(found.group(1))
+    return seen
+
+
+def declared_names():
+    names = set()
+    for module in imported_modules():
+        path = os.path.join(ROOT, module.replace('.', '/') + '.lean')
+        if not os.path.exists(path):
+            continue
+        scopes = []
+        in_comment = 0
+        for line in open(path):
+            in_comment += line.count('/-') - line.count('-/')
+            if in_comment > 0 or line.lstrip().startswith('--'):
+                continue
+            opening = re.match(r'^\s*(namespace|section)\b\s*(\S*)', line)
+            if opening:
+                scopes.append(opening.group(2) if opening.group(1) == 'namespace' else '')
+                continue
+            if re.match(r'^\s*(noncomputable\s+section|mutual)\b', line):
+                scopes.append('')
+                continue
+            if re.match(r'^\s*end\b', line):
+                if scopes:
+                    scopes.pop()
+                continue
+            declaration = DECLARATION.match(line)
+            if declaration:
+                name = declaration.group(1)
+                if name.startswith('_root_.'):
+                    names.add(name[len('_root_.'):])
+                else:
+                    names.add('.'.join([scope for scope in scopes if scope] + [name]))
+    return names
 ALL_PATHS = set().union(*NAMES.values())
 
 
@@ -58,7 +119,7 @@ def cells(row):
     return [cell.strip() for cell in row.strip().strip('|').split(' | ')]
 
 
-def status(rows, column):
+def row_status(rows, column):
     values = [cells(row)[column] for row in rows]
     counted = [value for value in values if value != '—']
     if not counted:
@@ -71,6 +132,35 @@ def status(rows, column):
     else:
         symbol = '⬜'
     return f'{symbol} {done}/{len(counted)}'
+
+
+MILESTONE = re.compile(r'^- (Math|Tape) milestone: (?:`([^`]+)`|—)')
+
+
+def milestone_status(group, column, declared):
+    name = group['milestones'].get(column)
+    if name is None:
+        return '?' if group['rows'] else '—'
+    if name == '':
+        return '—'
+    if name in declared:
+        return '✅'
+    rows = row_status(group['rows'], 2 if column == 'Math' else 3)
+    if rows.startswith('✅') or rows.startswith('🟡'):
+        done, total = rows.split()[1].split('/')
+        return '🟡' if done == total else f'🟡 {done}/{total} rows'
+    return '⬜'
+
+
+def section_status(groups, column, declared):
+    named = [group for group in groups if group['milestones'].get(column)]
+    if not named:
+        return '—'
+    done = sum(group['milestones'][column] in declared for group in named)
+    if done == len(named):
+        return f'✅ {done}/{len(named)}'
+    started = any(milestone_status(group, column, declared) != '⬜' for group in named)
+    return f'{"🟡" if done or started else "⬜"} {done}/{len(named)}'
 
 
 def file_count(rows):
@@ -86,13 +176,16 @@ def read_section(path):
     groups = []
     for line in lines[1:]:
         if line.startswith('### '):
-            groups.append((line[4:].strip(), []))
+            groups.append({'name': line[4:].strip(), 'rows': [], 'milestones': {}})
         elif line.startswith('## '):
-            groups.append((None, []))
-        elif groups and groups[-1][0] and line.startswith('| ') \
-                and not line.startswith('| ---') and not line.startswith('| Subcomponent'):
-            groups[-1][1].append(line)
-    groups = [(name, rows) for name, rows in groups if name and rows]
+            groups.append({'name': None, 'rows': [], 'milestones': {}})
+        elif groups and groups[-1]['name']:
+            milestone = MILESTONE.match(line)
+            if milestone:
+                groups[-1]['milestones'][milestone.group(1)] = milestone.group(2) or ''
+            elif line.startswith('| ') and not line.startswith('| ---') and not line.startswith('| Subcomponent'):
+                groups[-1]['rows'].append(line)
+    groups = [group for group in groups if group['name'] and (group['rows'] or group['milestones'])]
     return heading.group(1), heading.group(2), groups
 
 
@@ -102,16 +195,27 @@ def main():
     lines = text.split('\n')
     overview = {}
     tables = {}
+    declared = declared_names()
+    problems = []
     for path in sorted(glob.glob(os.path.join(ROOT, 'plan', '[0-9][0-9]-*.md'))):
         number, heading, groups = read_section(path)
         relative = os.path.relpath(path, ROOT)
         title = re.sub(r' \((.*)\)$', '', heading)
         source = re.search(r'\((.*)\)$', heading)
-        rows = [row for _, group_rows in groups for row in group_rows]
+        rows = [row for group in groups for row in group['rows']]
         overview[relative] = (f'| [{title}]({relative}) | {source.group(1) if source else "—"} | '
-                              f'{status(rows, 2)} | {status(rows, 3)} | {file_count(rows)} |')
-        tables[number] = [f'| {name} | {status(group_rows, 2)} | {status(group_rows, 3)} | {file_count(group_rows)} |'
-                          for name, group_rows in groups]
+                              f'{section_status(groups, "Math", declared)} | '
+                              f'{section_status(groups, "Tape", declared)} | {file_count(rows)} |')
+        tables[number] = [f'| {group["name"]} | {milestone_status(group, "Math", declared)} | '
+                          f'{milestone_status(group, "Tape", declared)} | {file_count(group["rows"])} |'
+                          for group in groups]
+        for group in groups:
+            for column in ('Math', 'Tape'):
+                name = group['milestones'].get(column)
+                if name is None:
+                    problems.append(f'{relative}: {group["name"]}: no {column} milestone line')
+                if '--list' in sys.argv and name:
+                    print(f'{"done" if name in declared else "open"}\t{column}\t{name}')
     output = []
     section = None
     index = 0
@@ -136,9 +240,12 @@ def main():
         output.append(line)
         index += 1
     new_text = '\n'.join(output)
+    for problem in problems:
+        print(problem)
     if '--check' in sys.argv:
-        if new_text != text:
-            print('PLAN.md summary tables are out of date; run python3 scripts/plan-status.py')
+        if new_text != text or problems:
+            if new_text != text:
+                print('PLAN.md summary tables are out of date; run python3 scripts/plan-status.py')
             sys.exit(1)
         return
     if new_text != text:

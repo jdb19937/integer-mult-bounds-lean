@@ -16,6 +16,9 @@ Section 9 (the manuscript's §8) turns the approximate transforms into an exact 
 
 Fixes parameter margins, proves the asymptotic estimates, and supplies the primes the construction needs.
 
+- Math milestone: `IntegerMultBounds.NLogN.eventually_prime_lengths` — For all large n there are distinct odd primes s_i with (1-2eta) t_i < s_i <= (1-eta) t_i (eta = 1/(4d)), so T/2 < S < T and alpha^4 theta_i > p, via the short-interval prime count of Harvey-van der Hoeven Lemma 5.1.
+- Tape milestone: —
+
 | Subcomponent | Files | Mathematics | Tape | Notes |
 | --- | --- | --- | --- | --- |
 | Parameter slacks and assembly margins | `Parameters` | ✅ | — | Log enclosure proved in Lean |
@@ -26,6 +29,9 @@ Fixes parameter margins, proves the asymptotic estimates, and supplies the prime
 
 Shows rounding and carries recover the exact product with exactly twice-length output.
 
+- Math milestone: `IntegerMultBounds.ExactRecoveryOutput.outputCorrect_of_computed` — Once the recovered word computed from the approximate transform pipeline is installed at tape zero, the configuration satisfies the EndToEnd output contract (exactly 2n bits, value x*y).
+- Tape milestone: `IntegerMultBounds.Machine.RecoverOutput.runs_recover` — A fixed literal program rounds the computed convolution coefficients, propagates carries, and installs the exactly 2n-bit product word at tape zero within a cost linear in the volume.
+
 | Subcomponent | Files | Mathematics | Tape | Notes |
 | --- | --- | --- | --- | --- |
 | Exact coefficient arithmetic, rounding, carries | `Carry`, `MainReduction`, `ExactRecovery` | ✅ | ⬜ | Carries and packing at the list level; the §8 precision chain from transform errors `E_s` to the exact product, with the margins from the size relations for all large `k` |
@@ -34,6 +40,9 @@ Shows rounding and carries recover the exact product with exactly twice-length o
 ### Cost table and time bound
 
 Assembles the cost-table rows, including the packed multiplier overhead, into O(n (lg n)^(1-κ)).
+
+- Math milestone: `IntegerMultBounds.CostTable.fastCost_le_table` — The fast path's total cost, summed from the row costs the components prove, is eventually at most V n * tableRows n plus polynomial setup and bounded overheads (the htotal hypothesis of endToEnd_of_table).
+- Tape milestone: `IntegerMultBounds.Assembly.fastProgram_steps_le` — On every n-bit input pair the literal fast program's step count is at most the fast-path cost function bounded by fastCost_le_table.
 
 | Subcomponent | Files | Mathematics | Tape | Notes |
 | --- | --- | --- | --- | --- |

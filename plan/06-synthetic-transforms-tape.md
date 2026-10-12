@@ -17,6 +17,9 @@ Section 6 supplies the transforms the main recursion applies along each axis: di
 
 Builds the ring with shift twiddles, its multidimensional FFT with error bounds, and the isometric embedding of complex vectors.
 
+- Math milestone: `IntegerMultBounds.NLogN.synth_fft_err` — The radix-2 synthetic FFT over C[y]/(y^r+1) with exact shift twiddles and per-level error at most eps is within n*eps of the exact length-2^n synthetic DFT (Lemma 3.2; used by SynthConvApprox and SynthConvApproxD).
+- Tape milestone: `IntegerMultBounds.Spec.SignedRingProduct.transform_target` — For valid transform parameters P, transformTarget P holds: fixed literal programs run the forward and opposite synthetic transforms on tapes in the paper's formats with per-coefficient error below sqrt2*l*2^(-p) within the transformTarget cost.
+
 | Subcomponent | Files | Mathematics | Tape | Notes |
 | --- | --- | --- | --- | --- |
 | Principal roots and synthetic ring | `SynthConv` | ✅ | — | `ℂ[y]/(yʳ + 1)` |
@@ -27,6 +30,9 @@ Builds the ring with shift twiddles, its multidimensional FFT with error bounds,
 
 Reduces arbitrary-length transforms to convolutions, exactly and approximately.
 
+- Math milestone: `IntegerMultBounds.NLogN.bluesteinApproxD_err` — The d-dimensional Bluestein pipeline with approximate chirps (error eps_a) and an approximate normalized convolution (error eps_M) computes the normalized DFT with scaled error at most eps_M + 3 eps_a + 4.
+- Tape milestone: `IntegerMultBounds.Spec.SignedRingProduct.bluestein_meets` — A fixed literal program multiplies each record by the chirp, calls the synthetic convolution, and multiplies by the conjugate chirp, outputting the arbitrary-length transform within the bluesteinApproxD_err error and the chirps row plus the convolution cost.
+
 | Subcomponent | Files | Mathematics | Tape | Notes |
 | --- | --- | --- | --- | --- |
 | Bluestein reduction | `Bluestein`, `BluesteinApprox` | ✅ | ⬜ | |
@@ -34,6 +40,9 @@ Reduces arbitrary-length transforms to convolutions, exactly and approximately.
 ### Tape layout and cost bracket
 
 Bounds slots, reordering exchanges, rounds, error and descriptors so a transform costs four cost-table rows.
+
+- Math milestone: `IntegerMultBounds.LayoutCost.bracket_eq_rows` — The transform cost bracket (with the convolution's log(rp) term) equals the sum of the prefix-move, chunk-exchange, simultaneous-round and packed-product cost-table rows.
+- Tape milestone: `IntegerMultBounds.LayoutCost.transform_runs_le_bracket` — The literal forward and opposite transform programs, with the prefix-slot layout and chunk reordering by address exchanges, halt within T p times the bracket, hence within the four cost-table rows.
 
 | Subcomponent | Files | Mathematics | Tape | Notes |
 | --- | --- | --- | --- | --- |

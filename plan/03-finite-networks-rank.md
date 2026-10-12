@@ -21,6 +21,9 @@ Section 3 builds a finite reversible linear network over the triple bank of a gr
 
 An exact dirty-scratch shear schedule exchanges the two data banks over rational and binary motif matrices, lifted to framed global circuits.
 
+- Math milestone: `IntegerMultBounds.Networks.GlobalCircuit.program_run` — The global three-stage scalar circuit sends (X, Y, scratch) to (-Y, X, scratch) on every triple address for any reconstructing motif matrices, restoring every invocation scratch bank (complex and binary instances: complexProgram_run, bitProgram_run).
+- Tape milestone: `IntegerMultBounds.Machine.CompactComplexRecursiveExecution.root_runs` — From the root bank, the fixed cyclic node table runs to halt with the full complex tensor transform installed and clean workspace, in total time bounded by the uniform recursive runtime (a constant times native volume times the certified stage factor).
+
 | Subcomponent | Files | Mathematics | Tape | Notes |
 | --- | --- | --- | --- | --- |
 | Scalar cancellation schedule and bank identity | `Scalar` | ✅ | ⬜ | Eight-step dirty scratch, signed exchange |
@@ -33,6 +36,9 @@ An exact dirty-scratch shear schedule exchanges the two data banks over rational
 ### Wire counts and bilinear label spaces
 
 Exact role and neighbor counts at ground size 100 and nondegenerate degree-one, tensor and stage label spaces.
+
+- Math milestone: `IntegerMultBounds.Networks.Wires.complex_role_card` — The complex network has exactly 2·C(h,3)^3 + 3·C(h,3)^2·(C(h,3)·(C(h-3,3)+3(h-3)) + h+1) wire roles (NetworkBudget specializes it to h=25).
+- Tape milestone: —
 
 | Subcomponent | Files | Mathematics | Tape | Notes |
 | --- | --- | --- | --- | --- |
@@ -47,6 +53,9 @@ Exact role and neighbor counts at ground size 100 and nondegenerate degree-one, 
 ### Grouped gates and binary residual units
 
 Sparse grouped motif gates with binary orthonormal, phase and residual factorizations and exact dyadic arithmetic bounds.
+
+- Math milestone: `IntegerMultBounds.Networks.GroupedFrames.network_identity` — The compiled grouped network acts on every wire, data and scratch alike, as the grouped scalar run read through the input and output label frames.
+- Tape milestone: `IntegerMultBounds.Machine.CompactComplexRecursiveExecution.root_runs` — From the root bank, the fixed cyclic node table runs to halt with the full complex tensor transform installed and clean workspace, in total time bounded by the uniform recursive runtime (a constant times native volume times the certified stage factor).
 
 | Subcomponent | Files | Mathematics | Tape | Notes |
 | --- | --- | --- | --- | --- |
@@ -68,6 +77,9 @@ Sparse grouped motif gates with binary orthonormal, phase and residual factoriza
 
 Nested labels along the global schedule telescope projection ranks to the baseline h=25 rank saving.
 
+- Math milestone: `IntegerMultBounds.Networks.ComplexRank25.branching_bound` — The actual h=25 projection-rank sum divided by the role count is below 15625^sigma.
+- Tape milestone: `IntegerMultBounds.Machine.CompactComplexRecursiveExecution.root_runs` — From the root bank, the fixed cyclic node table runs to halt with the full complex tensor transform installed and clean workspace, in total time bounded by the uniform recursive runtime (a constant times native volume times the certified stage factor).
+
 | Subcomponent | Files | Mathematics | Tape | Notes |
 | --- | --- | --- | --- | --- |
 | Projection-rank trace accounting | `RankTrace` | ✅ | — | Actual edge ranks telescope; global physical instantiation in `GlobalProjectionRank` |
@@ -84,6 +96,9 @@ Nested labels along the global schedule telescope projection ranks to the baseli
 ### Shared-point h=50 network and compilation
 
 The paired-exclusion shared-point DAG is correct, certified in size, and compiled into reversible framed scalar programs.
+
+- Math milestone: `IntegerMultBounds.Networks.Shared50Finite.run_output` — The certified finite Shared50 scalar program writes, at every output slot, the exact paired-exclusion support sum of its inputs.
+- Tape milestone: `IntegerMultBounds.Machine.Shared50TapeInvocation.invocation_hoare` — The sparse invocation built on the certified shared program runs on fixed role tapes, sending Y to Y+X, restoring all dirty scratch and heads, in program length x (14L + 14·width + 34) steps.
 
 | Subcomponent | Files | Mathematics | Tape | Notes |
 | --- | --- | --- | --- | --- |
@@ -106,6 +121,9 @@ The paired-exclusion shared-point DAG is correct, certified in size, and compile
 
 Local histories and stage-reuse matching assemble into a global trace meeting the improved h=50 rank budget.
 
+- Math milestone: `IntegerMultBounds.Networks.Shared50GlobalProjectionRank.branching_bound` — The actual optimized global projection-rank sum plus the source correction, divided by W, is below m^tau.
+- Tape milestone: —
+
 | Subcomponent | Files | Mathematics | Tape | Notes |
 | --- | --- | --- | --- | --- |
 | Complete optimized local label histories | `Shared50LabeledInvocation`, `Shared50InvocationRank`, `Shared50OppositeLabels`, `Shared50OppositeRank` | ✅ | ⬜ | Actual forward/opposite finite middle traces plus all sparse-block boundary alignments; exact endpoints, nested nondegenerate edges and loss exactly 2,500 each, including common-input scratch. Exact physical-wrapper linkage is proved; global rank assembly remains separate |
@@ -118,6 +136,9 @@ Local histories and stage-reuse matching assemble into a global trace meeting th
 ### Optimized physical program and interchange
 
 The optimized two-bank program realizes the full address shear and coordinate interchange modulo a good prime on dirty scratch.
+
+- Math milestone: `IntegerMultBounds.Networks.Shared50FiniteInterchange.program_identity` — At every radix exponent, the pre/network/post field program transposes the two finite address chunks of every routed array, including arbitrary scratch.
+- Tape milestone: `IntegerMultBounds.Machine.Shared50RecursiveRootExecution.halts_power_bound` — The fixed root interchange machine halts with the exact transpose, restoring every other cell, within constant x volume x width^tau steps.
 
 | Subcomponent | Files | Mathematics | Tape | Notes |
 | --- | --- | --- | --- | --- |
@@ -132,6 +153,9 @@ The optimized two-bank program realizes the full address shear and coordinate in
 ### Tape realization of the network
 
 The Shared50 scalar programs and address-shear interfaces run on tapes with exact semantics and stream-time bounds.
+
+- Math milestone: `IntegerMultBounds.Networks.ComplexEndpoints.corrected_network_run` — The physical h=25 network with explicit source/sink sign and phase corrections applies the full forward tensor transform to every data and dirty-scratch array.
+- Tape milestone: `IntegerMultBounds.Machine.CompactComplexRecursiveExecution.root_runs` — From the root bank, the fixed cyclic node table runs to halt with the full complex tensor transform installed and clean workspace, in total time bounded by the uniform recursive runtime (a constant times native volume times the certified stage factor).
 
 | Subcomponent | Files | Mathematics | Tape | Notes |
 | --- | --- | --- | --- | --- |

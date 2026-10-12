@@ -16,6 +16,9 @@ Section 1 fixes what is being proved. It defines a literal multi-tape machine mo
 
 Defines the literal multi-tape machine semantics and states the EndToEnd proposition the whole development must prove.
 
+- Math milestone: `IntegerMultBounds.Machine.product_fits` — For n-bit operands the product is below 2^(2n), so the exactly twice-length output word demanded by outputCorrect and EndToEnd can hold it (used by ExactRecoveryOutput and NLogN/Multiplier).
+- Tape milestone: `IntegerMultBounds.Machine.Move.unit` — Every head move of the literal multi-tape machine shifts the head by at most one cell (used by Machine/TrackedExecution).
+
 | Subcomponent | Files | Mathematics | Tape | Notes |
 | --- | --- | --- | --- | --- |
 | Multi-tape machine semantics | `Machine.lean` | ✅ | ✅ | Finite alphabet, fixed tapes, local transitions |
@@ -24,6 +27,9 @@ Defines the literal multi-tape machine semantics and states the EndToEnd proposi
 ### Axiom audit
 
 Checks that the results rely only on Lean's three standard axioms.
+
+- Math milestone: —
+- Tape milestone: —
 
 | Subcomponent | Files | Mathematics | Tape | Notes |
 | --- | --- | --- | --- | --- |

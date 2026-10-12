@@ -19,6 +19,9 @@ Section 7 changes transform lengths by Gaussian resampling: a length-`s` DFT is 
 
 Proves F_s = 2^γ B F_t A with contractions A, B in one and d dimensions via Poisson summation and a Neumann inverse.
 
+- Math milestone: `IntegerMultBounds.NLogN.resampling_factorization_multi` — Theorem 4.1: the d-dimensional length-s DFT equals 2^(d(2ceil(alpha^2)+2)) B F_t A with contractions ||A||, ||B|| <= 1.
+- Tape milestone: —
+
 | Subcomponent | Files | Mathematics | Tape | Notes |
 | --- | --- | --- | --- | --- |
 | Gaussian sums and Poisson summation | `Gaussian` | ✅ | — | |
@@ -31,6 +34,9 @@ Proves F_s = 2^γ B F_t A with contractions A, B in one and d dimensions via Poi
 
 Gives explicit truncated maps Ã and B̃₀ with scaled error below p², including the permutation-left variant.
 
+- Math milestone: `IntegerMultBounds.NLogN.permuted_numeric_manuscript` — Lemma 7.1 with the manuscript's unclamped maps: P_s F_s = 2^gamma B0 P_t F_t A with contractions, and the explicit A~ and clamp-free B~0 = resampB0NumH (the tape targets) approximate them with errors below p^2 and map the unit disk to itself.
+- Tape milestone: —
+
 | Subcomponent | Files | Mathematics | Tape | Notes |
 | --- | --- | --- | --- | --- |
 | Truncation and Neumann errors (Lemmas 4.8–4.12) | `ResamplingApprox`, `OffDiagApprox`, `OffDiagApproxSqrt`, `NeumannApprox`, `NeumannHalved` | ✅ | — | Square-root windows as in the paper; the manuscript's clamp-free form (halve the input, `‖E‖ ≤ 0.46`, iterates stay in the unit disk) gives `B̃₀ = D̃' J̃' C` with error `24m + 27 < p²` and no clamp (`NeumannHalved`) |
@@ -41,6 +47,9 @@ Gives explicit truncated maps Ã and B̃₀ with scaled error below p², includi
 
 Provides signed fixed-point arithmetic and record manipulation on tapes for the resampling machines.
 
+- Math milestone: `IntegerMultBounds.Machine.FixedMul.signed_result` — The truncating fixed-point multiply's result word has signed value (x*y).tdiv 2^p for w >= p+2 and |x|,|y| <= 2^p.
+- Tape milestone: `IntegerMultBounds.Schoenhage.fastMul_hoare` — FixedMul's 12-tape contract holds for the fast program (Schoenhage-Strassen inner product plus a blank 91-tape block) within fmTime w = O(w log w log log w) steps; consumed by the *Fast line machines via placeMul_hoare.
+
 | Subcomponent | Files | Mathematics | Tape | Notes |
 | --- | --- | --- | --- | --- |
 | Signed fixed-point word layer | `TwosComplement`, `SignExtendAdd`, `Negate`, `RulerAdvance`, `RulerCopy`, `FixedMul`, `FixedMulValue`, `Schoenhage/FixedMulPlaced` | ✅ | ✅ | Two's complement add into a wider accumulator, negate, and truncating multiply with `signed_result`; on tapes the multiply is `Schoenhage.fastMul`, `O(w log w log log w)` steps, used by `GaussianLineFast`, `NeumannLoopFast`, `B0TapeFast` and `LineApplyFast` |
@@ -50,6 +59,9 @@ Provides signed fixed-point arithmetic and record manipulation on tapes for the 
 
 Computes integer weight tables within two units of the scaled weights from π and exp on tapes.
 
+- Math milestone: `IntegerMultBounds.Resampling.WeightTable.tables_ok` — The integer tables tableA, tableE, tableD lie within 2 units of 2^p times the Gaussian resampling weights, exponentials and d' entries (Lemma 7.1 with computed tables).
+- Tape milestone: `IntegerMultBounds.Resampling.TableValue.b0_tables` — The B~0 machine fed with the words written by the table machines (E, D and halving tables) outputs exactly the tabled numerical map resampB0NumW with the tables of tables_ok; a_tables is the companion for the A table.
+
 | Subcomponent | Files | Mathematics | Tape | Notes |
 | --- | --- | --- | --- | --- |
 | Weight evaluation | `PiApprox`, `ExpApprox`, `WeightTable`, `WeightNat`, `PiNat`, `PiTape`, `ExpTape`, `TableIdx`, `TabATape`, `TabETape`, `TabDTape`, `TableValue` | ✅ | ✅ | Integer tables within 2 units of `2^p` times the weights (`tables_ok`), from Machin's `π` and a Taylor `exp` in fixed point; register machines compute `π`, `exp` and the A, E, D and halving tables as `w`-bit word tapes (D and halving negated); `TableValue.a_tables` and `b0_tables` feed these words to the `Ã` window sums and the `B̃₀` machine with the tables of `tables_ok` |
@@ -57,6 +69,9 @@ Computes integer weight tables within two units of the scaled weights from π an
 ### Resampling maps on tapes
 
 Runs C, Ã, Ẽ, the Neumann loop and B̃₀ as fixed machines whose outputs equal the numerical maps.
+
+- Math milestone: `IntegerMultBounds.Resampling.B0Value.b0_value_W` — The words written by the assembled B~0 = D~' J~' C machine from integer weight tables are exactly the numerators of B~0 with those tables.
+- Tape milestone: `IntegerMultBounds.Resampling.B0Tape.b0_hoareF` — The 42-tape B~0 machine with the quasi-linear multiply (join, select, split, halve, p Neumann steps, D~') produces the B~0 output words within b0BoundF steps.
 
 | Subcomponent | Files | Mathematics | Tape | Notes |
 | --- | --- | --- | --- | --- |
@@ -69,6 +84,9 @@ Runs C, Ã, Ẽ, the Neumann loop and B̃₀ as fixed machines whose outputs equ
 ### Tensor interface line costs
 
 Applies the one-dimensional maps along each axis within the cost-table budget.
+
+- Math milestone: `IntegerMultBounds.LineCost.gaussian_lines_eq` — Lemma 7.2 cost: applying the Gaussian line cost C t_i p^(3/2+delta) alpha along every line of every axis totals the volume T p times the cost-table row gaussianLines.
+- Tape milestone: `IntegerMultBounds.Spec.SignedRingProduct.tensorResampling_meets` — A fixed literal program (axis driver over a supplied script of axis and swap records) applies A~ (resp. B~0) along every axis of the padded d-dimensional record array, outputs exactly the tensor of the one-dimensional numerical maps, and halts within the gaussianLines and axisLayouts rows times T p plus o(T p) setup.
 
 | Subcomponent | Files | Mathematics | Tape | Notes |
 | --- | --- | --- | --- | --- |
