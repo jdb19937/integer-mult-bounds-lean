@@ -2764,3 +2764,4 @@ import IntegerMultBounds.Schoenhage.TwistCost
 import IntegerMultBounds.Schoenhage.SigmaRows
 import IntegerMultBounds.Schoenhage.SigmaRowsTape
 import IntegerMultBounds.Schoenhage.TwistBank
+import IntegerMultBounds.Schoenhage.SigmaTableTape
