@@ -2657,6 +2657,7 @@ import IntegerMultBounds.Schoenhage.DriverLoop
 import IntegerMultBounds.Schoenhage.DriverLayout
 import IntegerMultBounds.Schoenhage.TransformDriver
 import IntegerMultBounds.Schoenhage.BankWrap
+import IntegerMultBounds.Schoenhage.TransformWrap
 import IntegerMultBounds.Schoenhage.RingLemmaHeader
 import IntegerMultBounds.Schoenhage.RingLemma
 import IntegerMultBounds.Schoenhage.Twist
