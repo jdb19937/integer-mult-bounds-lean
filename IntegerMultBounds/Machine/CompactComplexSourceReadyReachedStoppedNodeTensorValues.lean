@@ -8,7 +8,8 @@ public import IntegerMultBounds.Machine.CompactComplexSourceReadyReachedCursorGu
 /-! The actual stopped-child node schedule and its literal source/sink
 corrections have the full original tensor values on the same terminal Reached
 bank. This combines actual loop execution with computed correction arrays;
-it does not assert final contraction, post-orientation or a complete node path. -/
+it does not assert final contraction, post-orientation or a complete node path.
+The semantic postprocessing theorem also applies to arbitrary recursive schedules. -/
 
 @[expose] public section
 namespace IntegerMultBounds.Machine.CompactComplexSourceReadyReachedStoppedNodeTensorValues
@@ -36,6 +37,119 @@ variable {stackCount basisStateCount : ℕ} {shape : Shape}
   (entryPath : CompactRecursiveDependencyBudget.Path shape.active nodeLeft (childExponent+2)
     dependencyLevels frameVolume entryReturned)
   (activeFits : shape.active ≤ shape.axes) (pair : Networks.BinaryRowProgram.Op (Fin arity))
+
+/-- Source and sink correction of an actual schedule endpoint has full
+original tensor values. Only the literal entry-array equation and the raw
+compiler equality are supplied; no stopping or recursive execution callback
+is required by this shared semantic postprocessing proof. -/
+theorem tensor_of_schedule
+    (originalCoefficients : CompactSpectatorVisitGeometry.Array shape rowCount polynomialExponent)
+    (inputWidth : CompactSpectatorInheritedGrid.Width shape rowCount polynomialExponent inputPrecision originalCoefficients)
+    (inputGrid : CompactSpectatorInheritedGrid.Grid shape rowCount polynomialExponent inputPrecision initialLive
+      (CompactRecursiveGridBudget.bound baselinePrecision growthConstant dependencyLevels (frameVolume+2*entryReturned)) originalCoefficients)
+    (baselineFitsPrecision : baselinePrecision≤ inputPrecision)
+    (parentSlots : (parent phaseCoordinate entryPath.visit activeFits pair).slots=25^3)
+    (rolesDivideRows : roles∣rowCount)
+    (initialState : State (stage:=parent phaseCoordinate entryPath.visit activeFits pair) (rowCount:=rowCount)
+      (polynomialExponent:=polynomialExponent)
+      (metadataPrecision:=ButterflyIndependentGuardHeaders.reservation shape.bits inputPrecision)
+      (baselinePrecision:=baselinePrecision) (growthConstant:=growthConstant) (completedAxes:=0)
+      (baselineLive:=baselineLive) (dependencyLevels:=dependencyLevels) (frameVolume:=frameVolume)
+      (entryReturned:=entryReturned) (childExponent:=childExponent+1) (pcStack:=pcStack)
+      (origin:=origin) (savedCalls:=savedCalls) 0 initialLive)
+    (entryData : initialState.reached.data=(fun arrayIndex => CompactComplexCorrectedEntryGeometryReadiness.array
+      (parent phaseCoordinate entryPath.visit activeFits pair) parentSlots rowCount polynomialExponent
+      (ButterflyIndependentGuardHeaders.reservation shape.bits inputPrecision) rolesDivideRows originalCoefficients
+      (CompactComplexScalarRolePorts.roleIndex arrayIndex)))
+    (finalLive : ℕ) (terminalState : State (stage:=parent phaseCoordinate entryPath.visit activeFits pair) (rowCount:=rowCount)
+      (polynomialExponent:=polynomialExponent)
+      (metadataPrecision:=ButterflyIndependentGuardHeaders.reservation shape.bits inputPrecision)
+      (baselinePrecision:=baselinePrecision) (growthConstant:=growthConstant) (completedAxes:=0)
+      (baselineLive:=baselineLive) (dependencyLevels:=dependencyLevels) (frameVolume:=frameVolume)
+      (entryReturned:=entryReturned) (childExponent:=childExponent+1) (pcStack:=pcStack)
+      (origin:=origin) (savedCalls:=savedCalls) schedule.length finalLive)
+    (networkValues : ∀ (row : Fin (rowCount/roles)) (polynomialIndex : Fin (2^polynomialExponent))
+        (globalAnchor : Networks.BinaryWalsh.Address shape.bits),
+      stored phaseCoordinate entryPath.visit (rowCount/roles) polynomialExponent
+        ((ButterflyIndependentGuardHeaders.reservation shape.bits inputPrecision)-2*shape.bits)
+        finalLive terminalState.reached.data row polynomialIndex globalAnchor=
+      Networks.FramedCircuit.run (Networks.ComplexFramedExecution.network (arity^(childExponent+1)))
+        (stored phaseCoordinate entryPath.visit (rowCount/roles) polynomialExponent
+          ((ButterflyIndependentGuardHeaders.reservation shape.bits inputPrecision)-2*shape.bits)
+          initialLive initialState.reached.data row polynomialIndex globalAnchor))
+    (activePositive : 0<shape.active)
+    (precisionReserve : baselinePrecision+2*shape.bits≤ButterflyIndependentGuardHeaders.reservation shape.bits inputPrecision)
+    (growthReserve : CompactFramedScalarGrid.growthConstant≤growthConstant)
+    (childChunkRoom : CompactSpectatorInheritedGrid.dependencyCoefficient growthConstant+Nat.clog 2 (growthConstant+1)+
+      CompactComplexScalarIntegerRows.guardBits≤shape.chunk) :
+    ∀ (row : Fin (rowCount/roles)) (polynomialIndex : Fin (2^polynomialExponent))
+        (globalAnchor : Networks.BinaryWalsh.Address shape.bits),
+      stored phaseCoordinate entryPath.visit (rowCount/roles) polynomialExponent inputPrecision finalLive
+        (CompactComplexSinkSliceValues.scalarOutputRoles (parent phaseCoordinate entryPath.visit activeFits pair)
+          parentSlots (ButterflyIndependentGuardHeaders.reservation shape.bits inputPrecision) terminalState.reached.data)
+        row polynomialIndex globalAnchor=
+      fun wire => Networks.ComplexEndpoints.fullFrame (arity^(childExponent+1))
+        (stored phaseCoordinate entryPath.visit (rowCount/roles) polynomialExponent inputPrecision initialLive
+          (CompactComplexCorrectedEntrySliceValues.inputRoles rowCount polynomialExponent rolesDivideRows originalCoefficients)
+          row polynomialIndex globalAnchor wire) := by
+  let metadataPrecision := ButterflyIndependentGuardHeaders.reservation shape.bits inputPrecision
+  have metadataFits : 2*shape.bits  ≤  metadataPrecision := by
+    dsimp only [metadataPrecision,ButterflyIndependentGuardHeaders.reservation]
+    omega
+  have storagePrecision : metadataPrecision-2*shape.bits=inputPrecision := by
+    dsimp only [metadataPrecision,ButterflyIndependentGuardHeaders.reservation]
+    omega
+  dsimp only [metadataPrecision] at storagePrecision
+  let numeratorBound := CompactFramedScalarGrid.bound
+    (CompactComplexActualScalarOrdinal.scalarGroups (schedule.take schedule.length)).length
+    (CompactRecursiveGridBudget.bound baselinePrecision growthConstant dependencyLevels
+      (frameVolume+2*CompactComplexSourceReadySiblingGuards.returnedCursor entryReturned schedule.length
+        (arity^(childExponent+1))+0))
+  have terminalWidths : ∀ role,CompactSpectatorInheritedGrid.Width shape (rowCount/roles) polynomialExponent inputPrecision
+      (terminalState.reached.data role) := by
+    intro role
+    have physicalWidth := CompactComplexSourceReadyReachedReturnInvariant.role_width terminalState.reached metadataFits
+      (CompactComplexScalarRolePorts.roleIndex role)
+    simpa only [CompactComplexSourceReadyReachedReturnInvariant.roleData,Equiv.symm_apply_apply,storagePrecision]
+      using physicalWidth
+  have terminalGrid : ∀ role,CompactSpectatorInheritedGrid.Grid shape (rowCount/roles) polynomialExponent inputPrecision
+      finalLive numeratorBound (terminalState.reached.data role) := by
+    intro role
+    have physicalGrid := CompactComplexSourceReadyReachedReturnInvariant.role_grid terminalState.reached metadataFits
+      (CompactComplexScalarRolePorts.roleIndex role)
+    simpa only [CompactComplexSourceReadyReachedReturnInvariant.roleData,Equiv.symm_apply_apply,numeratorBound,storagePrecision]
+      using physicalGrid
+  have signedReserve := CompactComplexSourceReadyReachedCursorGuards.signed_grid_reserve entryPath terminalState
+    activePositive precisionReserve (by omega) growthReserve childChunkRoom
+  have signedReserveInput : numeratorBound  <  2^(CompactSpectatorInheritedGrid.half shape inputPrecision) := by
+    simpa only [numeratorBound,storagePrecision] using signedReserve
+  intro row polynomialIndex globalAnchor
+  have sinkValues := CompactComplexSinkSliceValues.stored_values_guarded phaseCoordinate entryPath.visit activeFits pair
+    parentSlots metadataPrecision inputPrecision finalLive numeratorBound terminalState.reached.data terminalWidths terminalGrid
+    signedReserveInput row polynomialIndex globalAnchor
+  have sourceValues : stored phaseCoordinate entryPath.visit (rowCount/roles) polynomialExponent inputPrecision initialLive
+      initialState.reached.data row polynomialIndex globalAnchor=
+      Networks.ComplexEndpoints.correctInput (arity^(childExponent+1))
+        (stored phaseCoordinate entryPath.visit (rowCount/roles) polynomialExponent inputPrecision initialLive
+          (CompactComplexCorrectedEntrySliceValues.inputRoles rowCount polynomialExponent rolesDivideRows originalCoefficients)
+          row polynomialIndex globalAnchor) := by
+    rw [entryData]
+    exact CompactComplexCorrectedEntrySliceValues.stored_values phaseCoordinate entryPath.visit activeFits pair
+      rowCount polynomialExponent metadataPrecision inputPrecision initialLive parentSlots rolesDivideRows originalCoefficients entryPath
+      baselinePrecision growthConstant baselineFitsPrecision (by have room := childChunkRoom;omega) inputWidth inputGrid
+      row polynomialIndex globalAnchor
+  have terminalValues := networkValues row polynomialIndex globalAnchor
+  have terminalValuesInput : stored phaseCoordinate entryPath.visit (rowCount/roles) polynomialExponent inputPrecision finalLive
+      terminalState.reached.data row polynomialIndex globalAnchor=
+      Networks.FramedCircuit.run (Networks.ComplexFramedExecution.network (arity^(childExponent+1)))
+        (stored phaseCoordinate entryPath.visit (rowCount/roles) polynomialExponent inputPrecision initialLive
+          initialState.reached.data row polynomialIndex globalAnchor) := by
+    simpa only [metadataPrecision,ButterflyIndependentGuardHeaders.reservation,Nat.add_sub_cancel] using terminalValues
+  have networkInputValues := terminalValuesInput.trans
+    (congrArg (Networks.FramedCircuit.run (Networks.ComplexFramedExecution.network (arity^(childExponent+1)))) sourceValues)
+  exact sinkValues.trans ((congrArg (Networks.ComplexEndpoints.correctOutput (arity^(childExponent+1))) networkInputValues).trans
+    (Networks.ComplexEndpoints.corrected_network_run (arity^(childExponent+1)) _))
+
 
 /-- A complete actual event schedule from original node input readiness,
 with exact compiler-network output on the chosen physical terminal bank. -/
@@ -142,63 +256,9 @@ theorem exists_node_tensor_values
       baselineFits growthReserve denominatorRoom axesPositive chunkPositive
   refine ⟨initialState,entryBank,entryData,finalLive,finalBoundary,elapsedSteps,actualTrace,timeBound,
     minimumCoverage,targetCoverage,networkValues,?_⟩
-  let metadataPrecision := ButterflyIndependentGuardHeaders.reservation shape.bits inputPrecision
-  have metadataFits : 2*shape.bits  ≤  metadataPrecision := by
-    dsimp only [metadataPrecision,ButterflyIndependentGuardHeaders.reservation]
-    omega
-  have storagePrecision : metadataPrecision-2*shape.bits=inputPrecision := by
-    dsimp only [metadataPrecision,ButterflyIndependentGuardHeaders.reservation]
-    omega
-  dsimp only [metadataPrecision] at storagePrecision
-  let numeratorBound := CompactFramedScalarGrid.bound
-    (CompactComplexActualScalarOrdinal.scalarGroups (schedule.take schedule.length)).length
-    (CompactRecursiveGridBudget.bound baselinePrecision growthConstant dependencyLevels
-      (frameVolume+2*CompactComplexSourceReadySiblingGuards.returnedCursor entryReturned schedule.length
-        (arity^(childExponent+1))+0))
-  have terminalWidths : ∀ role,CompactSpectatorInheritedGrid.Width shape (rowCount/roles) polynomialExponent inputPrecision
-      (finalBoundary.state.reached.data role) := by
-    intro role
-    have physicalWidth := CompactComplexSourceReadyReachedReturnInvariant.role_width finalBoundary.state.reached metadataFits
-      (CompactComplexScalarRolePorts.roleIndex role)
-    simpa only [CompactComplexSourceReadyReachedReturnInvariant.roleData,Equiv.symm_apply_apply,storagePrecision]
-      using physicalWidth
-  have terminalGrid : ∀ role,CompactSpectatorInheritedGrid.Grid shape (rowCount/roles) polynomialExponent inputPrecision
-      finalLive numeratorBound (finalBoundary.state.reached.data role) := by
-    intro role
-    have physicalGrid := CompactComplexSourceReadyReachedReturnInvariant.role_grid finalBoundary.state.reached metadataFits
-      (CompactComplexScalarRolePorts.roleIndex role)
-    simpa only [CompactComplexSourceReadyReachedReturnInvariant.roleData,Equiv.symm_apply_apply,numeratorBound,storagePrecision]
-      using physicalGrid
-  have signedReserve := CompactComplexSourceReadyReachedCursorGuards.signed_grid_reserve entryPath finalBoundary.state
-    activePositive precisionReserve (by omega) growthReserve childChunkRoom
-  have signedReserveInput : numeratorBound  <  2^(CompactSpectatorInheritedGrid.half shape inputPrecision) := by
-    simpa only [numeratorBound,storagePrecision] using signedReserve
-  intro row polynomialIndex globalAnchor
-  have sinkValues := CompactComplexSinkSliceValues.stored_values_guarded phaseCoordinate entryPath.visit activeFits pair
-    parentSlots metadataPrecision inputPrecision finalLive numeratorBound finalBoundary.state.reached.data terminalWidths terminalGrid
-    signedReserveInput row polynomialIndex globalAnchor
-  have sourceValues : stored phaseCoordinate entryPath.visit (rowCount/roles) polynomialExponent inputPrecision initialLive
-      initialState.reached.data row polynomialIndex globalAnchor=
-      Networks.ComplexEndpoints.correctInput (arity^(childExponent+1))
-        (stored phaseCoordinate entryPath.visit (rowCount/roles) polynomialExponent inputPrecision initialLive
-          (CompactComplexCorrectedEntrySliceValues.inputRoles rowCount polynomialExponent rolesDivideRows originalCoefficients)
-          row polynomialIndex globalAnchor) := by
-    rw [entryData]
-    exact CompactComplexCorrectedEntrySliceValues.stored_values phaseCoordinate entryPath.visit activeFits pair
-      rowCount polynomialExponent metadataPrecision inputPrecision initialLive parentSlots rolesDivideRows originalCoefficients entryPath
-      baselinePrecision growthConstant baselineFitsPrecision (by have room := childChunkRoom;omega) inputWidth inputGrid
-      row polynomialIndex globalAnchor
-  have terminalValues := networkValues row polynomialIndex globalAnchor
-  have terminalValuesInput : stored phaseCoordinate entryPath.visit (rowCount/roles) polynomialExponent inputPrecision finalLive
-      finalBoundary.state.reached.data row polynomialIndex globalAnchor=
-      Networks.FramedCircuit.run (Networks.ComplexFramedExecution.network (arity^(childExponent+1)))
-        (stored phaseCoordinate entryPath.visit (rowCount/roles) polynomialExponent inputPrecision initialLive
-          initialState.reached.data row polynomialIndex globalAnchor) := by
-    simpa only [metadataPrecision,ButterflyIndependentGuardHeaders.reservation,Nat.add_sub_cancel] using terminalValues
-  have networkInputValues := terminalValuesInput.trans
-    (congrArg (Networks.FramedCircuit.run (Networks.ComplexFramedExecution.network (arity^(childExponent+1)))) sourceValues)
-  exact sinkValues.trans ((congrArg (Networks.ComplexEndpoints.correctOutput (arity^(childExponent+1))) networkInputValues).trans
-    (Networks.ComplexEndpoints.corrected_network_run (arity^(childExponent+1)) _))
+  exact tensor_of_schedule phaseCoordinate entryPath activeFits pair originalCoefficients inputWidth inputGrid
+    baselineFitsPrecision parentSlots rolesDivideRows initialState entryData finalLive finalBoundary.state networkValues
+    activePositive precisionReserve growthReserve childChunkRoom
 
 end Node
 end

@@ -42,6 +42,98 @@ variable {stackCount basisStateCount : ℕ} {shape : Shape}
     dependencyLevels frameVolume entryReturned)
   (activeFits : shape.active ≤ shape.axes) (pair : Networks.BinaryRowProgram.Op (Fin arity))
 
+/-- Finalize an arbitrary actual recursive schedule and pop its saved call.
+The trace provides target coverage, and its reached frame provides the physical
+capacity. This endpoint does not depend on any child stopping hypothesis. -/
+theorem finalize_of_schedule
+    (basisProgram : Program ActivePrefixStageNative.tapes basisStateCount prime)
+    (headerStack liveStack : Fin stackCount)
+    (parentSlots : (parent phaseCoordinate entryPath.visit activeFits pair).slots=25^3)
+    (rolesDivideRows : roles∣rowCount)
+    (initialState : State (stage:=parent phaseCoordinate entryPath.visit activeFits pair) (rowCount:=rowCount)
+      (polynomialExponent:=polynomialExponent)
+      (metadataPrecision:=ButterflyIndependentGuardHeaders.reservation shape.bits inputPrecision)
+      (baselinePrecision:=baselinePrecision) (growthConstant:=growthConstant) (completedAxes:=0)
+      (baselineLive:=baselineLive) (dependencyLevels:=dependencyLevels) (frameVolume:=frameVolume)
+      (entryReturned:=entryReturned) (childExponent:=childExponent+1) (pcStack:=pcStack)
+      (origin:=origin) (savedCalls:=(call::olderCalls)) 0 initialLive)
+    (initialTarget : initialState.reached.targetValue=
+      CompactComplexDenominatorPolicy.networkTarget initialLive (childExponent+1))
+    (finalLive : ℕ) (finalBoundary : FrameState (stage:=parent phaseCoordinate entryPath.visit activeFits pair) (rowCount:=rowCount)
+      (polynomialExponent:=polynomialExponent) (metadataPrecision:=(ButterflyIndependentGuardHeaders.reservation shape.bits inputPrecision))
+      (baselinePrecision:=baselinePrecision) (growthConstant:=growthConstant) (completedAxes:=0)
+      (baselineLive:=baselineLive) (dependencyLevels:=dependencyLevels) (frameVolume:=frameVolume)
+      (entryReturned:=entryReturned) (childExponent:=childExponent+1) (pcStack:=pcStack)
+      (origin:=origin) (savedCalls:=(call::olderCalls)) (capture initialState headerStack liveStack)
+      initialState.reached.targetValue schedule.length finalLive)
+    (elapsedSteps : ℕ)
+    (actualTrace : Execution basisProgram headerStack liveStack initialLive initialState finalBoundary.state elapsedSteps)
+    (rowsPositive : 0 < rowCount) (childRowsPositive : 0 < rowCount/roles)
+    (axesPositive : 0 < shape.axes) (guardPositive : 1 ≤ shape.guard)
+    (guardFitsChunk : shape.guard+1 ≤ shape.chunk)
+    (unitPayload : shape.payload=1)
+    (baselineFits : baselineLive ≤ baselinePrecision)
+    (precisionReserve : baselinePrecision+2*shape.bits ≤ ButterflyIndependentGuardHeaders.reservation shape.bits inputPrecision)
+    (denominatorRoom : CompactComplexDenominatorCapacity.room CompactComplexDenominatorCapacity.scalarRows ≤ shape.chunk) :
+        ∃ older top finalElapsed,
+          CompactComplexSourceReadySavedCallHistory.Associated origin olderCalls older top ∧
+          finalElapsed≤elapsedSteps+CompactComplexAlignedReachedFinalReturn.finalCost (shape:=shape)
+            rowCount polynomialExponent (ButterflyIndependentGuardHeaders.reservation shape.bits inputPrecision)+
+            (CompactComplexCallReturn.addressWidth Networks.ComplexRecursiveCallSchema.sites.length (25^3)+5) ∧
+          CompactComplexAlignedChildEntryPath.path basisProgram headerStack pcStack liveStack
+            (CompactComplexSourceReadyReachedEventTrace.cursorPC 0)
+            (CompactComplexSourceReadyReachedEventTrace.physicalBank initialState) finalElapsed
+            (CompactComplexScheduledPCDecode.savedPC call)
+            (CompactComplexAlignedBoundaryPaths.alignedBank
+              ((CompactComplexSourceReadyWorkspace.ready
+                (CompactComplexAlignedPoppedReturnReadiness.popped
+                  (CompactComplexSourceReadyCompletedChildBoundary.completed finalBoundary.state.reached parentSlots rolesDivideRows call)
+                  pcStack older top)).append (SharedBank.empty CompactComplexSourceReadyScalarWorkspace.scratch 2))) ∧
+          let resultBank := CompactComplexAlignedPoppedReturnReadiness.popped
+            (CompactComplexSourceReadyCompletedChildBoundary.completed finalBoundary.state.reached parentSlots rolesDivideRows call)
+            pcStack older top
+          let sourcePort := Fin.castAdd 7 (CompactComplexNonleafRoleEntry.source (s:=10+stackCount) (c:=roles))
+          resultBank.head sourcePort=0 ∧
+          resultBank.tape sourcePort=CompactSpectatorLeafAxis.word
+            (CompactComplexSourceReadyOrientationInvariants.oriented call
+              (normalized rowCount polynomialExponent finalLive
+                (CompactComplexDenominatorPolicy.networkTarget initialLive (childExponent+1)) rolesDivideRows
+                (CompactComplexSinkSliceValues.scalarOutputRoles (parent phaseCoordinate entryPath.visit activeFits pair)
+                  parentSlots (ButterflyIndependentGuardHeaders.reservation shape.bits inputPrecision)
+                  finalBoundary.state.reached.data))) := by
+  have metadataFits : 2*shape.bits≤ButterflyIndependentGuardHeaders.reservation shape.bits inputPrecision := by
+    unfold ButterflyIndependentGuardHeaders.reservation
+    omega
+  have terminalTarget : finalBoundary.state.reached.targetValue=
+      CompactComplexDenominatorPolicy.networkTarget initialLive (childExponent+1) := by
+    exact finalBoundary.targetRetained.trans initialTarget
+  have currentCapacity : finalLive≤CompactSpectatorInheritedGrid.half shape
+      ((ButterflyIndependentGuardHeaders.reservation shape.bits inputPrecision)-2*shape.bits)+1 := by
+    rw [CompactComplexSourceReadyReachedReturnInvariant.inherited_half_eq metadataFits]
+    exact CompactComplexSourceReadyReachedCursorGuards.current_capacity entryPath finalBoundary.state
+      baselineFits precisionReserve denominatorRoom
+  have targetCoverage := (CompactComplexSourceReadyReachedEventTrace.execution_terminal_coverage actualTrace).2
+  have targetBelowCurrent : finalBoundary.state.reached.targetValue≤finalLive := by
+    rw [terminalTarget]
+    exact targetCoverage
+  obtain ⟨older,top,returnElapsed,olderAssociated,returnBound,returnPath⟩ :=
+    CompactComplexAlignedReachedFinalReturn.runs basisProgram headerStack pcStack liveStack origin olderCalls call
+      finalBoundary.state.reached parentSlots rowsPositive rolesDivideRows childRowsPositive guardPositive axesPositive
+      guardFitsChunk unitPayload metadataFits targetBelowCurrent currentCapacity
+  have eventPath := CompactComplexSourceReadyReachedEventTrace.execution_physical actualTrace
+  have finalPCEqual : CompactComplexSourceReadyReachedEventTrace.cursorPC schedule.length=
+      CompactComplexFixedNodeTable.controlPCFor CompactComplexScheduledPCLayout.originalCount schedule.length 3 := by
+    exact CompactComplexSourceReadyReachedEventTrace.cursorPCFor_final _ _
+  rw [finalPCEqual] at eventPath
+  have wholePath := FiniteFlowPath.append eventPath returnPath
+  refine ⟨older,top,elapsedSteps+returnElapsed,olderAssociated,?_,wholePath,?_⟩
+  · simpa only [Nat.add_assoc] using Nat.add_le_add_left returnBound elapsedSteps
+  · have sourceNormalized := CompactComplexSourceReadyNormalizedBoundary.popped_normalized_source
+      finalBoundary.state.reached parentSlots rolesDivideRows call older top
+    rw [terminalTarget] at sourceNormalized
+    exact sourceNormalized
+
+
 theorem exists_node_finalized_values
     (packingLimit : ℕ) (basisProgram : Program ActivePrefixStageNative.tapes basisStateCount prime) (basisConstant : ℝ)
     (basisRuns : CompactComplexAlignedChildEntryPath.BasisRuns packingLimit basisStateCount basisProgram basisConstant)
@@ -194,39 +286,12 @@ theorem exists_node_finalized_values
       baselineFits growthReserve denominatorRoom axesPositive chunkPositive
   refine ⟨initialState,entryBank,entryData,finalLive,finalBoundary,elapsedSteps,actualTrace,timeBound,
     minimumCoverage,targetCoverage,networkValues,tensorValues,normalizedWidth,normalizedGrid,contractionExact,normalizedTensor,?_⟩
-  have metadataFits : 2*shape.bits≤ButterflyIndependentGuardHeaders.reservation shape.bits inputPrecision := by
-    unfold ButterflyIndependentGuardHeaders.reservation
-    omega
   have initialTarget := CompactComplexSourceReadyReachedEntryTarget.target_of_corrected_entry
     initialState.reached parentSlots initialLive (childExponent+1) rolesDivideRows originalCoefficients
     controlBank queueBank scalarHeaders tailBank originalStorage auxiliaryBank entryBank
-  have terminalTarget : finalBoundary.state.reached.targetValue=
-      CompactComplexDenominatorPolicy.networkTarget initialLive (childExponent+1) := by
-    exact finalBoundary.targetRetained.trans initialTarget
-  have currentCapacity : finalLive≤CompactSpectatorInheritedGrid.half shape
-      ((ButterflyIndependentGuardHeaders.reservation shape.bits inputPrecision)-2*shape.bits)+1 := by
-    rw [CompactComplexSourceReadyReachedReturnInvariant.inherited_half_eq metadataFits]
-    exact CompactComplexSourceReadyReachedCursorGuards.current_capacity entryPath finalBoundary.state
-      baselineFits precisionReserve denominatorRoom
-  have targetBelowCurrent : finalBoundary.state.reached.targetValue≤finalLive := by
-    rw [terminalTarget]
-    exact targetCoverage
-  obtain ⟨older,top,returnElapsed,olderAssociated,returnBound,returnPath⟩ :=
-    CompactComplexAlignedReachedFinalReturn.runs basisProgram headerStack pcStack liveStack origin olderCalls call
-      finalBoundary.state.reached parentSlots rowsPositive rolesDivideRows childRowsPositive (by omega) axesPositive
-      guardFitsChunk unitPayload metadataFits targetBelowCurrent currentCapacity
-  have eventPath := CompactComplexSourceReadyReachedEventTrace.execution_physical actualTrace
-  have finalPCEqual : CompactComplexSourceReadyReachedEventTrace.cursorPC schedule.length=
-      CompactComplexFixedNodeTable.controlPCFor CompactComplexScheduledPCLayout.originalCount schedule.length 3 := by
-    exact CompactComplexSourceReadyReachedEventTrace.cursorPCFor_final _ _
-  rw [finalPCEqual] at eventPath
-  have wholePath := FiniteFlowPath.append eventPath returnPath
-  refine ⟨older,top,elapsedSteps+returnElapsed,olderAssociated,?_,wholePath,?_⟩
-  · simpa only [Nat.add_assoc] using Nat.add_le_add_left returnBound elapsedSteps
-  · have sourceNormalized := CompactComplexSourceReadyNormalizedBoundary.popped_normalized_source
-      finalBoundary.state.reached parentSlots rolesDivideRows call older top
-    rw [terminalTarget] at sourceNormalized
-    exact sourceNormalized
+  exact finalize_of_schedule call phaseCoordinate entryPath activeFits pair basisProgram headerStack liveStack
+    parentSlots rolesDivideRows initialState initialTarget finalLive finalBoundary elapsedSteps actualTrace
+    rowsPositive childRowsPositive axesPositive guardPositive guardFitsChunk unitPayload baselineFits precisionReserve denominatorRoom
 
 end Node
 end

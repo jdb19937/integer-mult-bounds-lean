@@ -5,7 +5,8 @@ public import IntegerMultBounds.Machine.CompactComplexSourceReadyNonleafOriented
 public import IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedRoleRejoin
 
 /-! Literal signed contraction and cyclic recombination of the actual stopped
-node's computed sink arrays. These are mathematical output arrays; physical
+node's computed sink arrays, with a shared proof for arbitrary recursive
+schedules. These are mathematical output arrays; physical
 execution of the final contraction and merge is a separate theorem. -/
 
 @[expose] public section
@@ -229,6 +230,154 @@ variable {stackCount basisStateCount : ℕ} {shape : Shape}
     dependencyLevels frameVolume entryReturned)
   (activeFits : shape.active ≤ shape.axes) (pair : Networks.BinaryRowProgram.Op (Fin arity))
 
+/-- Literal normalization of an arbitrary actually executed recursive node
+schedule. Raw compiler values are corrected internally, terminal capacity and
+target coverage follow from the actual reached frame and execution, and the
+original cyclic layout is preserved. No stopping assumption is required. -/
+theorem normalize_of_schedule
+    (basisProgram : Program ActivePrefixStageNative.tapes basisStateCount prime)
+    (headerStack liveStack : Fin stackCount)
+    (originalCoefficients : CompactSpectatorVisitGeometry.Array shape rowCount polynomialExponent)
+    (inputWidth : CompactSpectatorInheritedGrid.Width shape rowCount polynomialExponent inputPrecision originalCoefficients)
+    (inputGrid : CompactSpectatorInheritedGrid.Grid shape rowCount polynomialExponent inputPrecision initialLive
+      (CompactRecursiveGridBudget.bound baselinePrecision growthConstant dependencyLevels (frameVolume+2*entryReturned)) originalCoefficients)
+    (baselineFitsPrecision : baselinePrecision≤ inputPrecision)
+    (parentSlots : (parent phaseCoordinate entryPath.visit activeFits pair).slots=25^3)
+    (rolesDivideRows : roles∣rowCount)
+    (initialState : State (stage:=parent phaseCoordinate entryPath.visit activeFits pair) (rowCount:=rowCount)
+      (polynomialExponent:=polynomialExponent)
+      (metadataPrecision:=ButterflyIndependentGuardHeaders.reservation shape.bits inputPrecision)
+      (baselinePrecision:=baselinePrecision) (growthConstant:=growthConstant) (completedAxes:=0)
+      (baselineLive:=baselineLive) (dependencyLevels:=dependencyLevels) (frameVolume:=frameVolume)
+      (entryReturned:=entryReturned) (childExponent:=childExponent+1) (pcStack:=pcStack)
+      (origin:=origin) (savedCalls:=savedCalls) 0 initialLive)
+    (entryData : initialState.reached.data=(fun arrayIndex => CompactComplexCorrectedEntryGeometryReadiness.array
+      (parent phaseCoordinate entryPath.visit activeFits pair) parentSlots rowCount polynomialExponent
+      (ButterflyIndependentGuardHeaders.reservation shape.bits inputPrecision) rolesDivideRows originalCoefficients
+      (CompactComplexScalarRolePorts.roleIndex arrayIndex)))
+    (finalLive : ℕ) (finalBoundary : FrameState (stage:=parent phaseCoordinate entryPath.visit activeFits pair) (rowCount:=rowCount)
+      (polynomialExponent:=polynomialExponent) (metadataPrecision:=(ButterflyIndependentGuardHeaders.reservation shape.bits inputPrecision))
+      (baselinePrecision:=baselinePrecision) (growthConstant:=growthConstant) (completedAxes:=0)
+      (baselineLive:=baselineLive) (dependencyLevels:=dependencyLevels) (frameVolume:=frameVolume)
+      (entryReturned:=entryReturned) (childExponent:=childExponent+1) (pcStack:=pcStack)
+      (origin:=origin) (savedCalls:=savedCalls) (capture initialState headerStack liveStack)
+      initialState.reached.targetValue schedule.length finalLive)
+    (elapsedSteps : ℕ)
+    (actualTrace : Execution basisProgram headerStack liveStack initialLive initialState finalBoundary.state elapsedSteps)
+    (networkValues : ∀ (row : Fin (rowCount/roles)) (polynomialIndex : Fin (2^polynomialExponent))
+        (globalAnchor : Networks.BinaryWalsh.Address shape.bits),
+      stored phaseCoordinate entryPath.visit (rowCount/roles) polynomialExponent
+        ((ButterflyIndependentGuardHeaders.reservation shape.bits inputPrecision)-2*shape.bits)
+        finalLive finalBoundary.state.reached.data row polynomialIndex globalAnchor=
+      Networks.FramedCircuit.run (Networks.ComplexFramedExecution.network (arity^(childExponent+1)))
+        (stored phaseCoordinate entryPath.visit (rowCount/roles) polynomialExponent
+          ((ButterflyIndependentGuardHeaders.reservation shape.bits inputPrecision)-2*shape.bits)
+          initialLive initialState.reached.data row polynomialIndex globalAnchor))
+    (activePositive : 0<shape.active)
+    (precisionReserve : baselinePrecision+2*shape.bits≤ButterflyIndependentGuardHeaders.reservation shape.bits inputPrecision)
+    (growthReserve : CompactFramedScalarGrid.growthConstant≤growthConstant)
+    (childChunkRoom : CompactSpectatorInheritedGrid.dependencyCoefficient growthConstant+Nat.clog 2 (growthConstant+1)+
+      CompactComplexScalarIntegerRows.guardBits≤shape.chunk)
+    (baselineFits : baselineLive≤baselinePrecision)
+    (denominatorRoom : CompactComplexDenominatorCapacity.room CompactComplexDenominatorCapacity.scalarRows≤shape.chunk) :
+    (∀ (row : Fin (rowCount/roles)) (polynomialIndex : Fin (2^polynomialExponent))
+          (globalAnchor : Networks.BinaryWalsh.Address shape.bits),
+          stored phaseCoordinate entryPath.visit (rowCount/roles) polynomialExponent inputPrecision finalLive
+            (CompactComplexSinkSliceValues.scalarOutputRoles (parent phaseCoordinate entryPath.visit activeFits pair)
+              parentSlots (ButterflyIndependentGuardHeaders.reservation shape.bits inputPrecision)
+              finalBoundary.state.reached.data) row polynomialIndex globalAnchor=
+            fun wire => Networks.ComplexEndpoints.fullFrame (arity^(childExponent+1))
+              (stored phaseCoordinate entryPath.visit (rowCount/roles) polynomialExponent inputPrecision initialLive
+                (CompactComplexCorrectedEntrySliceValues.inputRoles rowCount polynomialExponent rolesDivideRows originalCoefficients)
+                row polynomialIndex globalAnchor wire)) ∧
+        (∀ index,((normalized rowCount polynomialExponent finalLive (CompactComplexDenominatorPolicy.networkTarget initialLive (childExponent+1)) rolesDivideRows (CompactComplexSinkSliceValues.scalarOutputRoles (parent phaseCoordinate entryPath.visit activeFits pair) parentSlots (ButterflyIndependentGuardHeaders.reservation shape.bits inputPrecision) finalBoundary.state.reached.data)) index).1.length=half shape inputPrecision+1 ∧
+          ((normalized rowCount polynomialExponent finalLive (CompactComplexDenominatorPolicy.networkTarget initialLive (childExponent+1)) rolesDivideRows (CompactComplexSinkSliceValues.scalarOutputRoles (parent phaseCoordinate entryPath.visit activeFits pair) parentSlots (ButterflyIndependentGuardHeaders.reservation shape.bits inputPrecision) finalBoundary.state.reached.data)) index).2.length=half shape inputPrecision+1) ∧
+        Grid shape rowCount polynomialExponent inputPrecision (CompactComplexDenominatorPolicy.networkTarget initialLive (childExponent+1)) ((CompactRecursiveGridBudget.bound baselinePrecision growthConstant dependencyLevels (frameVolume+2*entryReturned))*4^(2*arity^(childExponent+2))) (normalized rowCount polynomialExponent finalLive (CompactComplexDenominatorPolicy.networkTarget initialLive (childExponent+1)) rolesDivideRows (CompactComplexSinkSliceValues.scalarOutputRoles (parent phaseCoordinate entryPath.visit activeFits pair) parentSlots (ButterflyIndependentGuardHeaders.reservation shape.bits inputPrecision) finalBoundary.state.reached.data)) ∧
+        (∀ scalarRole index,decoded shape (rowCount/roles) polynomialExponent inputPrecision (CompactComplexDenominatorPolicy.networkTarget initialLive (childExponent+1))
+          (CompactNativeRoleReservedBridge.role shape rowCount roles polynomialExponent rolesDivideRows (normalized rowCount polynomialExponent finalLive (CompactComplexDenominatorPolicy.networkTarget initialLive (childExponent+1)) rolesDivideRows (CompactComplexSinkSliceValues.scalarOutputRoles (parent phaseCoordinate entryPath.visit activeFits pair) parentSlots (ButterflyIndependentGuardHeaders.reservation shape.bits inputPrecision) finalBoundary.state.reached.data))
+            (roleIndex scalarRole)) index=
+          decoded shape (rowCount/roles) polynomialExponent inputPrecision finalLive
+            ((CompactComplexSinkSliceValues.scalarOutputRoles (parent phaseCoordinate entryPath.visit activeFits pair) parentSlots (ButterflyIndependentGuardHeaders.reservation shape.bits inputPrecision) finalBoundary.state.reached.data) scalarRole) index) ∧
+        (∀ (rawRow : Fin rowCount) (polynomialIndex : Fin (2^polynomialExponent))
+          (globalAnchor : BinaryWalsh.Address shape.bits),
+          decoded shape rowCount polynomialExponent inputPrecision
+            (CompactComplexDenominatorPolicy.networkTarget initialLive (childExponent+1))
+            (normalized rowCount polynomialExponent finalLive
+              (CompactComplexDenominatorPolicy.networkTarget initialLive (childExponent+1)) rolesDivideRows
+              (CompactComplexSinkSliceValues.scalarOutputRoles (parent phaseCoordinate entryPath.visit activeFits pair)
+                parentSlots (ButterflyIndependentGuardHeaders.reservation shape.bits inputPrecision)
+                finalBoundary.state.reached.data))
+            (pack rawRow (FlatCoordinateLayout.index globalAnchor polynomialIndex))=
+          ComplexEndpoints.fullFrame (arity^(childExponent+1))
+            (fun tensorAddress => decoded shape rowCount polynomialExponent inputPrecision initialLive originalCoefficients
+              (pack rawRow (FlatCoordinateLayout.index
+                (CompactComplexNonleafChildAddress.insert phaseCoordinate entryPath.visit globalAnchor tensorAddress) polynomialIndex)))
+            (CompactComplexNonleafChildAddress.address phaseCoordinate entryPath.visit globalAnchor)) := by
+  have tensorValues := CompactComplexSourceReadyReachedStoppedNodeTensorValues.tensor_of_schedule
+    phaseCoordinate entryPath activeFits pair originalCoefficients inputWidth inputGrid baselineFitsPrecision parentSlots
+    rolesDivideRows initialState entryData finalLive finalBoundary.state networkValues activePositive precisionReserve growthReserve childChunkRoom
+  have targetCoverage := (CompactComplexSourceReadyReachedEventTrace.execution_terminal_coverage actualTrace).2
+  let stage := parent phaseCoordinate entryPath.visit activeFits pair
+  let metadataPrecision := ButterflyIndependentGuardHeaders.reservation shape.bits inputPrecision
+  let sink := CompactComplexSinkSliceValues.scalarOutputRoles stage parentSlots metadataPrecision finalBoundary.state.reached.data
+  have metadataFits : 2*shape.bits≤metadataPrecision := by
+    dsimp only [metadataPrecision,ButterflyIndependentGuardHeaders.reservation]
+    omega
+  have storagePrecision : metadataPrecision-2*shape.bits=inputPrecision := by
+    dsimp only [metadataPrecision,ButterflyIndependentGuardHeaders.reservation]
+    omega
+  have halfEqual : half shape inputPrecision=ButterflyGuard.halfWidth metadataPrecision shape.bits := by
+    rw [←storagePrecision]
+    exact CompactComplexSourceReadyReachedReturnInvariant.inherited_half_eq metadataFits
+  have currentCapacity : finalLive≤half shape inputPrecision+1 := by
+    rw [halfEqual]
+    exact CompactComplexSourceReadyReachedCursorGuards.current_capacity entryPath finalBoundary.state
+      baselineFits precisionReserve denominatorRoom
+  have terminalWidth : ∀ scalarRole index,(finalBoundary.state.reached.data scalarRole index).1.length=half shape inputPrecision+1 ∧
+      (finalBoundary.state.reached.data scalarRole index).2.length=half shape inputPrecision+1 := by
+    intro scalarRole index
+    rw [halfEqual]
+    exact finalBoundary.state.reached.width scalarRole index
+  have sinkWidth : ∀ scalarRole index,(sink scalarRole index).1.length=half shape inputPrecision+1 ∧
+      (sink scalarRole index).2.length=half shape inputPrecision+1 := by
+    intro scalarRole index
+    exact CompactComplexSourceReadyCorrectedFinal.family_width stage parentSlots polynomialExponent metadataPrecision
+      (half shape inputPrecision+1) (fun wire => finalBoundary.state.reached.data (wireIndex wire))
+      (fun wire => terminalWidth (wireIndex wire)) (roleIndex scalarRole) index
+  have inputRolesGrid : ∀ scalarRole,Grid shape (rowCount/roles) polynomialExponent inputPrecision initialLive
+      (CompactRecursiveGridBudget.bound baselinePrecision growthConstant dependencyLevels (frameVolume+2*entryReturned))
+      (CompactComplexCorrectedEntrySliceValues.inputRoles rowCount polynomialExponent rolesDivideRows originalCoefficients scalarRole) := by
+    intro scalarRole index
+    exact inputGrid _
+  have sinkGrid := full_tensor_grid phaseCoordinate entryPath.visit inputPrecision initialLive finalLive
+    (CompactRecursiveGridBudget.bound baselinePrecision growthConstant dependencyLevels (frameVolume+2*entryReturned))
+    (CompactComplexCorrectedEntrySliceValues.inputRoles rowCount polynomialExponent rolesDivideRows originalCoefficients)
+    sink inputRolesGrid tensorValues
+  have normalization := contract_and_rejoin rowCount polynomialExponent inputPrecision finalLive
+    (CompactComplexDenominatorPolicy.networkTarget initialLive (childExponent+1))
+    ((CompactRecursiveGridBudget.bound baselinePrecision growthConstant dependencyLevels (frameVolume+2*entryReturned))*
+      4^(2*arity^(childExponent+2))) rolesDivideRows sink targetCoverage currentCapacity sinkWidth sinkGrid
+  refine ⟨tensorValues,normalization.2.1,normalization.2.2,?_,?_⟩
+  · intro scalarRole index
+    rw [normalized_role]
+    exact normalization.1 scalarRole index
+  · intro rawRow polynomialIndex globalAnchor
+    let rowWire := (physicalRowLayout rowCount rolesDivideRows).symm rawRow
+    have rowAt : physicalRowLayout rowCount rolesDivideRows rowWire=rawRow :=
+      (physicalRowLayout rowCount rolesDivideRows).apply_symm_apply rawRow
+    have layoutAt : ∀ anchor,physicalLayout shape rowCount polynomialExponent rolesDivideRows
+        ((rowWire.1,rowWire.2),(anchor,polynomialIndex))=
+      pack rawRow (FlatCoordinateLayout.index anchor polynomialIndex) := by
+      intro anchor
+      change pack (physicalRowLayout rowCount rolesDivideRows rowWire)
+        (FlatCoordinateLayout.index anchor polynomialIndex)=_
+      rw [rowAt]
+    have values := normalized_tensor_layout phaseCoordinate entryPath.visit rowCount polynomialExponent inputPrecision
+      initialLive finalLive rolesDivideRows originalCoefficients sink normalization.1 tensorValues
+      rowWire.1 rowWire.2 globalAnchor polynomialIndex
+    simpa only [layoutAt] using values
+
+
 theorem exists_node_normalized_values
     (packingLimit : ℕ) (basisProgram : Program ActivePrefixStageNative.tapes basisStateCount prime) (basisConstant : ℝ)
     (basisRuns : CompactComplexAlignedChildEntryPath.BasisRuns packingLimit basisStateCount basisProgram basisConstant)
@@ -345,74 +494,21 @@ theorem exists_node_normalized_values
                 (CompactComplexNonleafChildAddress.insert phaseCoordinate entryPath.visit globalAnchor tensorAddress) polynomialIndex)))
             (CompactComplexNonleafChildAddress.address phaseCoordinate entryPath.visit globalAnchor)) := by
   obtain ⟨initialState,entryBank,entryData,finalLive,finalBoundary,elapsedSteps,actualTrace,timeBound,
-      minimumCoverage,targetCoverage,networkValues,tensorValues⟩ :=
-    CompactComplexSourceReadyReachedStoppedNodeTensorValues.exists_node_tensor_values phaseCoordinate entryPath activeFits pair
+      minimumCoverage,targetCoverage,networkValues⟩ :=
+    CompactComplexSourceReadyReachedStoppedNodeSchedule.exists_node_schedule phaseCoordinate entryPath activeFits pair
       packingLimit basisProgram basisConstant basisRuns headerStack liveStack originalCoefficients inputWidth inputGrid
       baselineFitsPrecision controlBank queueBank scalarHeaders tailBank originalStorage auxiliaryBank countBlank currentReady
       clockBlank auxiliaryFree exponentReady control28Blank control29Blank initialLedger savedAssociated pcHeaderDistinct
       pcLiveDistinct headerLiveDistinct originalProtectedTails activePositive childStopped axesFit childChunkRoom scalarChunkRoom
       guardPositive guardFitsChunk rowsPositive childRowsPositive rolesDivideRows unitPayload parentSlots parentPacked precisionReserve
       baselineFits growthReserve denominatorRoom axesPositive chunkPositive
-  let stage := parent phaseCoordinate entryPath.visit activeFits pair
-  let metadataPrecision := ButterflyIndependentGuardHeaders.reservation shape.bits inputPrecision
-  let sink := CompactComplexSinkSliceValues.scalarOutputRoles stage parentSlots metadataPrecision finalBoundary.state.reached.data
-  have metadataFits : 2*shape.bits≤metadataPrecision := by
-    dsimp only [metadataPrecision,ButterflyIndependentGuardHeaders.reservation]
-    omega
-  have storagePrecision : metadataPrecision-2*shape.bits=inputPrecision := by
-    dsimp only [metadataPrecision,ButterflyIndependentGuardHeaders.reservation]
-    omega
-  have halfEqual : half shape inputPrecision=ButterflyGuard.halfWidth metadataPrecision shape.bits := by
-    rw [←storagePrecision]
-    exact CompactComplexSourceReadyReachedReturnInvariant.inherited_half_eq metadataFits
-  have currentCapacity : finalLive≤half shape inputPrecision+1 := by
-    rw [halfEqual]
-    exact CompactComplexSourceReadyReachedCursorGuards.current_capacity entryPath finalBoundary.state
-      baselineFits precisionReserve denominatorRoom
-  have terminalWidth : ∀ scalarRole index,(finalBoundary.state.reached.data scalarRole index).1.length=half shape inputPrecision+1 ∧
-      (finalBoundary.state.reached.data scalarRole index).2.length=half shape inputPrecision+1 := by
-    intro scalarRole index
-    rw [halfEqual]
-    exact finalBoundary.state.reached.width scalarRole index
-  have sinkWidth : ∀ scalarRole index,(sink scalarRole index).1.length=half shape inputPrecision+1 ∧
-      (sink scalarRole index).2.length=half shape inputPrecision+1 := by
-    intro scalarRole index
-    exact CompactComplexSourceReadyCorrectedFinal.family_width stage parentSlots polynomialExponent metadataPrecision
-      (half shape inputPrecision+1) (fun wire => finalBoundary.state.reached.data (wireIndex wire))
-      (fun wire => terminalWidth (wireIndex wire)) (roleIndex scalarRole) index
-  have inputRolesGrid : ∀ scalarRole,Grid shape (rowCount/roles) polynomialExponent inputPrecision initialLive
-      (CompactRecursiveGridBudget.bound baselinePrecision growthConstant dependencyLevels (frameVolume+2*entryReturned))
-      (CompactComplexCorrectedEntrySliceValues.inputRoles rowCount polynomialExponent rolesDivideRows originalCoefficients scalarRole) := by
-    intro scalarRole index
-    exact inputGrid _
-  have sinkGrid := full_tensor_grid phaseCoordinate entryPath.visit inputPrecision initialLive finalLive
-    (CompactRecursiveGridBudget.bound baselinePrecision growthConstant dependencyLevels (frameVolume+2*entryReturned))
-    (CompactComplexCorrectedEntrySliceValues.inputRoles rowCount polynomialExponent rolesDivideRows originalCoefficients)
-    sink inputRolesGrid tensorValues
-  have normalization := contract_and_rejoin rowCount polynomialExponent inputPrecision finalLive
-    (CompactComplexDenominatorPolicy.networkTarget initialLive (childExponent+1))
-    ((CompactRecursiveGridBudget.bound baselinePrecision growthConstant dependencyLevels (frameVolume+2*entryReturned))*
-      4^(2*arity^(childExponent+2))) rolesDivideRows sink targetCoverage currentCapacity sinkWidth sinkGrid
-  refine ⟨initialState,entryBank,entryData,finalLive,finalBoundary,elapsedSteps,actualTrace,timeBound,
-    minimumCoverage,targetCoverage,networkValues,tensorValues,normalization.2.1,normalization.2.2,?_,?_⟩
-  · intro scalarRole index
-    rw [normalized_role]
-    exact normalization.1 scalarRole index
-  · intro rawRow polynomialIndex globalAnchor
-    let rowWire := (physicalRowLayout rowCount rolesDivideRows).symm rawRow
-    have rowAt : physicalRowLayout rowCount rolesDivideRows rowWire=rawRow :=
-      (physicalRowLayout rowCount rolesDivideRows).apply_symm_apply rawRow
-    have layoutAt : ∀ anchor,physicalLayout shape rowCount polynomialExponent rolesDivideRows
-        ((rowWire.1,rowWire.2),(anchor,polynomialIndex))=
-      pack rawRow (FlatCoordinateLayout.index anchor polynomialIndex) := by
-      intro anchor
-      change pack (physicalRowLayout rowCount rolesDivideRows rowWire)
-        (FlatCoordinateLayout.index anchor polynomialIndex)=_
-      rw [rowAt]
-    have values := normalized_tensor_layout phaseCoordinate entryPath.visit rowCount polynomialExponent inputPrecision
-      initialLive finalLive rolesDivideRows originalCoefficients sink normalization.1 tensorValues
-      rowWire.1 rowWire.2 globalAnchor polynomialIndex
-    simpa only [layoutAt] using values
+  obtain ⟨tensorValues,normalizedWidth,normalizedGrid,contractionExact,normalizedTensor⟩ :=
+    normalize_of_schedule phaseCoordinate entryPath activeFits pair basisProgram headerStack liveStack
+      originalCoefficients inputWidth inputGrid baselineFitsPrecision parentSlots rolesDivideRows initialState entryData
+      finalLive finalBoundary elapsedSteps actualTrace networkValues activePositive precisionReserve growthReserve childChunkRoom
+      baselineFits denominatorRoom
+  exact ⟨initialState,entryBank,entryData,finalLive,finalBoundary,elapsedSteps,actualTrace,timeBound,
+    minimumCoverage,targetCoverage,networkValues,tensorValues,normalizedWidth,normalizedGrid,contractionExact,normalizedTensor⟩
 
 end Node
 end
