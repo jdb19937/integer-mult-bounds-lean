@@ -117,10 +117,14 @@ Native normalization now has a checked fixed in-place numerator stream pass:
 one sum/difference per coefficient, exact signed readout at the increased
 denominator, genuine EOF returns, source overwrite and complete scratch cleanup.
 The actual recursive Path derives its guards in the unchanged reservation,
-with one fixed volume-plus-header coefficient. Original native count synthesis,
-root placement and physical live-denominator advancement remain open, along
-with stopped/scalar wrapper extension, public-format setup/rounding and
-arbitrary active-piece composition. Actual axis growth now
+with one fixed volume-plus-header coefficient. A complete fixed native
+normalization lifecycle now also derives the count and denominator target from
+original geometry, physically advances the true live descriptor once, and
+erases every generated descriptor. Exact normalized readout and the true new
+grid have one fixed serialized-volume bound. Copying/placement on the actual
+returned root and its live-word/ledger derivation remain open, along with
+stopped/scalar wrapper extension, public-format setup/rounding and arbitrary
+active-piece composition. Actual axis growth now
 justifies eventual exclusion of nonstopped exponent-one nodes; finite small-input
 coverage remains separate. The stopped
 roundtrip's existing cost still includes its stopped-axis-count factor; the
