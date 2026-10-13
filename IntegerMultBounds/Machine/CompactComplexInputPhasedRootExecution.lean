@@ -127,6 +127,8 @@ theorem root_runs
     ∃ outputArray : Array shape rowCount polynomialExponent,
       CompactComplexRootWorkspaceClean.Clean outputBank ∧
       NativeHadamardPhaseRootHeaders.Ready stage rowCount polynomialExponent metadataPrecision outputBank ∧
+      NativeHadamardNormalizationRootLive.Ready
+        (CompactComplexDenominatorPolicy.networkTarget initialLive (childExponent+1)) outputBank ∧
       (elapsedSteps : ℝ)≤constant packingLimit*
         (CompactNativeRoleTransferBudget.volume rowCount shape polynomialExponent metadataPrecision : ℝ)*
         CompactComplexUniformRuntimeCoefficient.stageFactor shape (childExponent+1) ∧
@@ -177,7 +179,7 @@ theorem root_runs
   have phaseRun := NativeHadamardPhaseRootBank.runs stage metadataPrecision rfl rowsPositive (by omega)
     axesPositive guardFitsChunk unitPayload originalCoefficients originalWidth controlBank queueBank scalarHeaders tailBank
     originalStorage auxiliaryBank
-  obtain ⟨childPathBudget,rootElapsed,outputBank,outputArray,clean,outputHeaders,rootNaturalBound,rootRuntime,rootRun,
+  obtain ⟨childPathBudget,rootElapsed,outputBank,outputArray,clean,outputHeaders,outputLive,rootNaturalBound,rootRuntime,rootRun,
       outputWord,outputHead,outputWidth,outputGrid,rootTensor⟩ :=
     CompactComplexPublicRootExecution.root_runs phaseCoordinate activeFits pair polynomialExponent
       inputPrecision baselinePrecision growthConstant baselineLive packingLimit guardPositive guardFitsChunk
@@ -189,7 +191,7 @@ theorem root_runs
       pcHeaderDistinct pcLiveDistinct headerLiveDistinct originalProtectedTails
   let phaseBudget := NativeHadamardPhaseOriginal.constant*
     CompactNativeRoleTransferBudget.volume rowCount shape polynomialExponent metadataPrecision
-  refine ⟨phaseBudget+rootElapsed+1,outputBank,outputArray,clean,outputHeaders,?_,?_,outputWord,outputHead,outputWidth,outputGrid,?_⟩
+  refine ⟨phaseBudget+rootElapsed+1,outputBank,outputArray,clean,outputHeaders,outputLive,?_,?_,outputWord,outputHead,outputWidth,outputGrid,?_⟩
   · have factorBound := stage_factor_one_le (shape:=shape) axesPositive (childExponent+1)
     have volumePositive : 0<CompactNativeRoleTransferBudget.volume rowCount shape polynomialExponent metadataPrecision := by
       unfold CompactNativeRoleTransferBudget.volume

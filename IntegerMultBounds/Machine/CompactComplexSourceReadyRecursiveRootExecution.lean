@@ -6,6 +6,8 @@ public import IntegerMultBounds.Machine.CompactComplexSourceReadyRecursiveNodeEx
 public import IntegerMultBounds.Machine.CompactComplexAlignedNonleafClassifierPrefix
 public import IntegerMultBounds.Machine.CompactComplexSourceReadyNormalizedBoundary
 
+public import IntegerMultBounds.Machine.NativeHadamardNormalizationRootLive
+
 /-! The literal empty-root input executes classification, corrected entry,
 the internally constructed arbitrary-depth schedule and physical root halt.
 Its emitted source is the same normalized array used in tensor semantics. -/
@@ -170,6 +172,8 @@ theorem exists_root_execution_with_runtime
     ∃ outputArray : Array shape rowCount polynomialExponent,
       CompactComplexRootWorkspaceClean.Clean outputBank ∧
       NativeHadamardPhaseRootHeaders.Ready stage rowCount polynomialExponent metadataPrecision outputBank ∧
+      NativeHadamardNormalizationRootLive.Ready
+        (CompactComplexDenominatorPolicy.networkTarget initialLive (childExponent+1)) outputBank ∧
       elapsedSteps≤(4*CompactComplexSourceReadyGuard.guardConstant+5)*
           CompactNativeRoleTransferBudget.volume rowCount shape polynomialExponent metadataPrecision+
         entryCost shape rowCount polynomialExponent metadataPrecision+
@@ -250,6 +254,11 @@ theorem exists_root_execution_with_runtime
     NativeHadamardPhaseRootHeaders.endpoint_ready stage rowCount polynomialExponent metadataPrecision outputArray
       (CompactComplexSourceReadyCompletedChildBoundary.returnEntry finalBoundary.state.reached stageSlots)
       (SharedBank.empty CompactComplexSourceReadyWorkspace.leafTapes 2)
+  have outputLive : NativeHadamardNormalizationRootLive.Ready
+      (CompactComplexDenominatorPolicy.networkTarget initialLive (childExponent+1)) outputBank := by
+    have actualLive := NativeHadamardNormalizationRootLive.root_ready finalBoundary.state.reached stageSlots rolesDivideRows
+    rw [terminalTarget] at actualLive
+    exact actualLive
   have outputSource := CompactComplexAlignedReachedFinalReturn.root_endpoint_source finalBoundary.state.reached stageSlots rolesDivideRows
   have stackEmpty : originalStorage.tape (Fin.natAdd 10 pcStack)
       (originalStorage.head (Fin.natAdd 10 pcStack)-1)=blank := by
@@ -282,7 +291,7 @@ theorem exists_root_execution_with_runtime
   have actualTimeReal := Nat.cast_le (α:=ℝ).mpr actualTimeBound
   push_cast at actualTimeReal
   refine ⟨runtimeConstant,constantPositive,fixedConstantEq,childPathBudget,elapsedSteps,outputBank,outputArray,
-    outputClean,outputHeaders,actualTimeBound,?_,rootRun,outputSource.1,outputSource.2,?_,?_,?_⟩
+    outputClean,outputHeaders,outputLive,actualTimeBound,?_,rootRun,outputSource.1,outputSource.2,?_,?_,?_⟩
   · dsimp only [prefixBudget] at actualTimeReal
     push_cast at actualTimeReal
     nlinarith only [actualTimeReal,boundaryReal,scheduleBound]
@@ -380,7 +389,7 @@ theorem exists_root_execution
               (CompactComplexNonleafChildAddress.insert phaseCoordinate entryPath.visit globalAnchor tensorAddress) polynomialIndex)))
           (CompactComplexNonleafChildAddress.address phaseCoordinate entryPath.visit globalAnchor) := by
   obtain ⟨runtimeConstant,constantPositive,fixedConstantEq,childPathBudget,elapsedSteps,outputBank,outputArray,
-    outputClean,outputHeaders,naturalBound,runtimeBound,rootRun,outputSource,outputHead,outputWidth,outputGrid,outputTensor⟩ :=
+    outputClean,outputHeaders,outputLive,naturalBound,runtimeBound,rootRun,outputSource,outputHead,outputWidth,outputGrid,outputTensor⟩ :=
     exists_root_execution_with_runtime phaseCoordinate activeFits pair polynomialExponent inputPrecision baselinePrecision
       growthConstant baselineLive packingLimit guardPositive guardFitsChunk basisProgram headerStack pcStack liveStack basisConstant
       basisRuns largeAxes activePositive axesPositive chunkPositive unitPayload packingFamily childChunkRoom scalarChunkRoom

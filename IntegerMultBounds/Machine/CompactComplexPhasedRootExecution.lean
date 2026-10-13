@@ -116,6 +116,8 @@ theorem root_runs
     ∃ outputArray : Array shape rowCount polynomialExponent,
       CompactComplexRootWorkspaceClean.Clean outputBank ∧
       NativeHadamardPhaseRootHeaders.Ready stage rowCount polynomialExponent metadataPrecision outputBank ∧
+      NativeHadamardNormalizationRootLive.Ready
+        (CompactComplexDenominatorPolicy.networkTarget initialLive (childExponent+1)) outputBank ∧
       (elapsedSteps : ℝ)≤constant packingLimit*
         (CompactNativeRoleTransferBudget.volume rowCount shape polynomialExponent metadataPrecision : ℝ)*
         CompactComplexUniformRuntimeCoefficient.stageFactor shape (childExponent+1) ∧
@@ -145,7 +147,7 @@ theorem root_runs
   let metadataPrecision := ButterflyIndependentGuardHeaders.reservation shape.bits inputPrecision
   let stage := parent phaseCoordinate entryPath.visit activeFits pair
   let completedDenominator := CompactComplexDenominatorPolicy.networkTarget initialLive (childExponent+1)
-  obtain ⟨rootElapsed,beforeBank,beforeArray,beforeClean,beforeHeaders,rootRuntime,rootRun,beforeWord,beforeHead,
+  obtain ⟨rootElapsed,beforeBank,beforeArray,beforeClean,beforeHeaders,beforeLive,rootRuntime,rootRun,beforeWord,beforeHead,
       beforeWidth,beforeGrid,beforeTensor⟩ :=
     CompactComplexInputPhasedRootExecution.root_runs phaseCoordinate activeFits pair polynomialExponent
       inputPrecision baselinePrecision growthConstant baselineLive packingLimit guardPositive guardFitsChunk
@@ -172,6 +174,8 @@ theorem root_runs
   let finalBank := NativeHadamardPhaseOutputBank.output stage metadataPrecision beforeArray beforeBank
   have finalClean := NativeHadamardPhaseOutputBank.output_clean stage metadataPrecision beforeArray beforeBank beforeClean
   have finalHeaders := NativeHadamardPhaseOutputBank.output_headers stage metadataPrecision beforeArray beforeBank beforeHeaders
+  have finalLive : NativeHadamardNormalizationRootLive.Ready completedDenominator finalBank :=
+    NativeHadamardNormalizationRootLive.source_update completedDenominator beforeBank beforeLive _ 0
   have dependencyRoom : CompactSpectatorInheritedGrid.dependencyCoefficient growthConstant≤shape.chunk := by omega
   have pendingFits : 2*arity^(childExponent+2)≤shape.bits :=
     NativeHadamardPhaseCompletedGrid.double_visit_le_bits entryPath.visit (by omega)
@@ -182,7 +186,7 @@ theorem root_runs
     beforeArray beforeWidth
   let phaseBudget := NativeHadamardPhaseOriginal.constant*
     CompactNativeRoleTransferBudget.volume rowCount shape polynomialExponent metadataPrecision
-  refine ⟨rootElapsed+phaseBudget+1,finalBank,finalArray,finalClean,finalHeaders,?_,?_,?_,?_,finalWidth,finalGrid,?_⟩
+  refine ⟨rootElapsed+phaseBudget+1,finalBank,finalArray,finalClean,finalHeaders,finalLive,?_,?_,?_,?_,finalWidth,finalGrid,?_⟩
   · have factorBound := CompactComplexInputPhasedRootExecution.stage_factor_one_le (shape:=shape) axesPositive (childExponent+1)
     have volumePositive : 0<CompactNativeRoleTransferBudget.volume rowCount shape polynomialExponent metadataPrecision := by
       unfold CompactNativeRoleTransferBudget.volume

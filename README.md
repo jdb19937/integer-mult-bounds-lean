@@ -121,10 +121,17 @@ with one fixed volume-plus-header coefficient. A complete fixed native
 normalization lifecycle now also derives the count and denominator target from
 original geometry, physically advances the true live descriptor once, and
 erases every generated descriptor. Exact normalized readout and the true new
-grid have one fixed serialized-volume bound. Copying/placement on the actual
-returned root and its live-word/ledger derivation remain open, along with
-stopped/scalar wrapper extension, public-format setup/rounding and arbitrary
-active-piece composition. Actual axis growth now
+grid have one fixed serialized-volume bound. Original-header copying and
+normalization now execute on the actual returned root source/live ports in the
+existing leaf workspace, preserving every scalar/basis suffix and all cleanup.
+The literal committed live word and its volume allowance derive from the same
+reached root and original Path/ledger. The complete nonstopped phase/root/phase/
+normalization trace now gives exact normalized Hadamard readout with no external
+factor, actual advanced denominator, retained widths/grid/raw headers and one
+positive packing-limit-only runtime coefficient. Stopped/scalar extension,
+public-format parsing/reservation/padding and final rounding/restoration, public
+parameter compatibility and cost, and arbitrary active-piece composition remain
+open. Actual axis growth now
 justifies eventual exclusion of nonstopped exponent-one nodes; finite small-input
 coverage remains separate. The stopped
 roundtrip's existing cost still includes its stopped-axis-count factor; the

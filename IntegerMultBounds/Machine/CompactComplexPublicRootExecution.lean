@@ -131,6 +131,8 @@ theorem root_runs
     ∃ outputArray : Array shape rowCount polynomialExponent,
       CompactComplexRootWorkspaceClean.Clean outputBank ∧
       NativeHadamardPhaseRootHeaders.Ready stage rowCount polynomialExponent metadataPrecision outputBank ∧
+      NativeHadamardNormalizationRootLive.Ready
+        (CompactComplexDenominatorPolicy.networkTarget initialLive (childExponent+1)) outputBank ∧
       elapsedSteps≤(4*CompactComplexSourceReadyGuard.guardConstant+5)*
           CompactNativeRoleTransferBudget.volume rowCount shape polynomialExponent metadataPrecision+
         entryCost shape rowCount polynomialExponent metadataPrecision+

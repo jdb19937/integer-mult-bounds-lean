@@ -53,9 +53,9 @@ private theorem public_source_bound : 109<publicTapes stackCount roles := by
     CompactComplexSpectatorTargetBank.numericSlot,CompactComplexControllerNativeFrame.nativeSlot,
     Fin.val_castAdd,Fin.val_natAdd,show (65 : Fin 66).val=65 from rfl] using bound
 
-theorem output_clean (stage : Stage shape) (metadataPrecision : ℕ) (input : Array shape rows ell)
-    (bank : Tapes (tapes stackCount roles) 2) (clean : CompactComplexRootWorkspaceClean.Clean bank) :
-    CompactComplexRootWorkspaceClean.Clean (output stage metadataPrecision input bank) := by
+theorem source_update_clean (bank : Tapes (tapes stackCount roles) 2)
+    (clean : CompactComplexRootWorkspaceClean.Clean bank) (word : ℤ → Fin 6) (head : ℤ) :
+    CompactComplexRootWorkspaceClean.Clean (setTape bank CompactComplexSourceReadyOrientation.source word head) := by
   have publicBound := public_source_bound (stackCount:=stackCount)
   rcases clean with ⟨leafClean,workClean,frameClean,roleClean⟩
   refine ⟨?_,?_,?_,?_⟩
@@ -66,7 +66,7 @@ theorem output_clean (stage : Stage shape) (metadataPrecision : ℕ) (input : Ar
       have sameValue := congrArg Fin.val same
       simp only [Fin.val_castAdd,Fin.val_natAdd,source_value] at sameValue
       omega
-    simpa only [output,setTape,Function.update_of_ne distinct] using leafClean leafPort
+    simpa only [setTape,Function.update_of_ne distinct] using leafClean leafPort
   · intro workPort
     have distinct : Fin.natAdd (publicTapes stackCount roles+leafTapes) workPort ≠
         CompactComplexSourceReadyOrientation.source (s:=stackCount) (c:=roles) := by
@@ -74,7 +74,7 @@ theorem output_clean (stage : Stage shape) (metadataPrecision : ℕ) (input : Ar
       have sameValue := congrArg Fin.val same
       simp only [Fin.val_natAdd,source_value] at sameValue
       omega
-    simpa only [output,setTape,Function.update_of_ne distinct] using workClean workPort
+    simpa only [setTape,Function.update_of_ne distinct] using workClean workPort
   · intro framePort
     have distinct : Fin.castAdd 10 (Fin.castAdd leafTapes
         (Fin.natAdd (CompactComplexNonleafRoleEntry.tapes (10+stackCount) roles) framePort)) ≠
@@ -86,7 +86,7 @@ theorem output_clean (stage : Stage shape) (metadataPrecision : ℕ) (input : Ar
         CompactComplexControllerNativeFrame.nativeSlot,Fin.val_castAdd,Fin.val_natAdd,show (65 : Fin 66).val=65 from rfl] at sourceBound
       simp only [Fin.val_castAdd,Fin.val_natAdd,source_value] at sameValue
       omega
-    simpa only [output,setTape,Function.update_of_ne distinct] using frameClean framePort
+    simpa only [setTape,Function.update_of_ne distinct] using frameClean framePort
   · intro rolePort
     have distinct : Fin.castAdd 10 (Fin.castAdd leafTapes
         (Fin.castAdd 7 (CompactComplexNonleafRoleEntry.roleTape (s:=10+stackCount) (c:=roles) rolePort))) ≠
@@ -97,7 +97,12 @@ theorem output_clean (stage : Stage shape) (metadataPrecision : ℕ) (input : Ar
         CompactComplexNativeRoleBridge.roleSlot,CompactComplexControllerNativeFrame.tapes,
         Fin.val_castAdd,Fin.val_natAdd,source_value] at sameValue
       omega
-    simpa only [output,setTape,Function.update_of_ne distinct] using roleClean rolePort
+    simpa only [setTape,Function.update_of_ne distinct] using roleClean rolePort
+
+theorem output_clean (stage : Stage shape) (metadataPrecision : ℕ) (input : Array shape rows ell)
+    (bank : Tapes (tapes stackCount roles) 2) (clean : CompactComplexRootWorkspaceClean.Clean bank) :
+    CompactComplexRootWorkspaceClean.Clean (output stage metadataPrecision input bank) :=
+  source_update_clean bank clean _ 0
 
 theorem output_headers (stage : Stage shape) (metadataPrecision : ℕ) (input : Array shape rows ell)
     (bank : Tapes (tapes stackCount roles) 2)
@@ -117,7 +122,7 @@ theorem output_headers (stage : Stage shape) (metadataPrecision : ℕ) (input : 
 
 private theorem caller_count : CallerCount (stackCount:=stackCount)=publicTapes stackCount roles := rfl
 
-private theorem focus_slot (header : Fin 15) :
+theorem focus_slot (header : Fin 15) :
     placement (stackCount:=stackCount) (Fin.castAdd TailCount (NativeHadamardPhaseRootBank.focus header))=
       Fin.castAdd scratch (NativeHadamardPhaseRootHeaders.slot header) := by
   apply Fin.ext
@@ -126,7 +131,7 @@ private theorem focus_slot (header : Fin 15) :
     CompactComplexNativeCodecFrame.headerSlot,CompactComplexControllerNativeFrame.nativeSlot,Fin.val_natAdd,
     NativeHadamardPhaseRootHeaders.slot,CompactComplexNonleafRoleEntry.numeric]
 
-private theorem source_slot :
+theorem source_slot :
     placement (stackCount:=stackCount) (Fin.castAdd TailCount NativeHadamardPhaseRootBank.source)=
       Fin.castAdd scratch CompactComplexSourceReadyOrientation.source := by
   apply Fin.ext
@@ -135,7 +140,7 @@ private theorem source_slot :
     NativePolynomialConjugationWorkspace.source,CompactComplexNonleafRoleEntry.source,
     CompactComplexSpectatorTargetBank.numericSlot,CompactComplexControllerNativeFrame.nativeSlot,Fin.val_natAdd]
 
-private theorem leaf_slot (index : Fin 67) :
+theorem leaf_slot (index : Fin 67) :
     placement (stackCount:=stackCount) (Fin.natAdd (CallerCount stackCount)
       (⟨index.val,by
         have := index.isLt
@@ -148,7 +153,7 @@ private theorem leaf_slot (index : Fin 67) :
   simp only [placement,NativeEndpointSourceReadyPlacement.placement,finCongr_apply,Fin.val_cast,
     Fin.val_natAdd,Fin.val_castAdd,caller_count]
 
-private theorem reindex_setTape {leftCount rightCount alphabet : ℕ} (equivalence : Fin leftCount ≃ Fin rightCount)
+theorem reindex_setTape {leftCount rightCount alphabet : ℕ} (equivalence : Fin leftCount ≃ Fin rightCount)
     (bank : Tapes leftCount alphabet) (source : Fin leftCount) (word : ℤ → Fin (alphabet+4)) (head : ℤ) :
     (setTape bank source word head).reindex equivalence = setTape (bank.reindex equivalence) (equivalence source) word head := by
   apply congrArg₂ Tapes.mk <;> funext port
