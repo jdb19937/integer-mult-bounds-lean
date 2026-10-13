@@ -61,8 +61,11 @@ all physical transitions paid. The reachable-execution row is complete;
 the uniform total runtime and named full-recursion milestones remain open.
 The actual schedule cost now splits exactly into its concrete local work and
 original nonstopped child-path sum. Actual scalar/stopped-prefix volume
-coefficients and the serialized child-volume quotient are proved; certified
-basis scaling and budget-invariant closure are the next runtime obligations. Actual axis growth now
+coefficients and the serialized child-volume quotient are proved. Both actual
+basis directions now have one fixed certified stage-scale coefficient, and
+the complete local-work bound retains every physical join. Converting that
+scale to the per-depth allowance and closing the static provider budget
+invariant are the next runtime obligations. Actual axis growth now
 justifies eventual exclusion of nonstopped exponent-one nodes; finite small-input
 coverage remains separate. The stopped
 roundtrip's existing cost still includes its stopped-axis-count factor; the

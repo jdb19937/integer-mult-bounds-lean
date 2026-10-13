@@ -186,6 +186,66 @@ theorem total_le_recursive_sum (childPathBudget : ComplexRecursiveCallSchema.Cal
       (CompactComplexRecursiveRuntimeSum.child_sum_le childPathBudget leaf localCost depth
         (volume rows shape ell precision) childBounds) _
 
+/-- Fixed physical entry/restoration coefficients and every join, plus the
+stopped prefix precisely when the original classifier selects it. -/
+def childLocalCoefficient (shape : Shape) (childExponent : ℕ) :=
+  CompactComplexNonleafRolePreparationBudget.constant roles ComplexRecursiveCallSchema.sites.length+
+  CompactComplexSourceReadyChildReturnPath.timeConstant roles+4+
+  if ComplexRecursiveCallSchema.stopped shape.axes (childExponent+1) then stoppedPrefixCoefficient childExponent else 0
+
+theorem local_child_le (rowsPositive : 0<rows) (call : ComplexRecursiveCallSchema.Call) :
+    localChildBudget phaseCoordinate entryPath activeFits pair packingLimit guardPositive guardFitsChunk
+      childRowsPositive stageSlots stagePacked call≤
+    CompactComplexSourceReadyRecursiveChildProvider.basisCost phaseCoordinate entryPath activeFits pair packingLimit
+      guardPositive guardFitsChunk childRowsPositive stageSlots stagePacked call false+
+    CompactComplexSourceReadyRecursiveChildProvider.basisCost phaseCoordinate entryPath activeFits pair packingLimit
+      guardPositive guardFitsChunk childRowsPositive stageSlots stagePacked call true+
+    childLocalCoefficient shape childExponent*volume rows shape ell precision := by
+  have volumePositive := Nat.mul_pos rowsPositive (CompactNativeRoleTransferBudget.symbols_pos shape ell precision)
+  change 0<volume rows shape ell precision at volumePositive
+  have joinBound := Nat.le_mul_of_pos_right 4 volumePositive
+  have prefixBound := stopped_prefix_linear shape (rows/roles) ell precision childExponent childRowsPositive
+  have childVolumeBound : volume (rows/roles) shape ell precision≤volume rows shape ell precision :=
+    Nat.mul_le_mul_right _ (Nat.div_le_self rows roles)
+  have prefixParentBound := prefixBound.trans (Nat.mul_le_mul_left (stoppedPrefixCoefficient childExponent) childVolumeBound)
+  unfold localChildBudget childLocalCoefficient
+    CompactComplexSourceReadyRecursiveChildProvider.forwardBudget
+    CompactComplexSourceReadyRecursiveChildProvider.returnBudget CompactComplexSourceReadyChildEntryPath.bound
+  split_ifs with childrenStopped <;> nlinarith only [joinBound,prefixParentBound]
+
+private theorem map_sum_bound {α : Type*} (entries : List α) (actual basis : α → ℕ) (constant : ℕ)
+    (entryBounds : ∀ entry ∈ entries,actual entry≤basis entry+constant) :
+    (entries.map actual).sum≤(entries.map basis).sum+entries.length*constant := by
+  induction entries with
+  | nil => simp only [List.map_nil,List.sum_nil,List.length_nil,Nat.zero_mul,Nat.zero_add,Nat.le_refl]
+  | cons entry entries inductionHypothesis =>
+    have headBound := entryBounds entry (List.mem_cons_self ..)
+    have tailBound := inductionHypothesis (fun tailEntry member => entryBounds tailEntry (List.mem_cons_of_mem _ member))
+    simp only [List.map_cons,List.sum_cons,List.length_cons,Nat.add_mul,Nat.one_mul]
+    omega
+
+/-- Complete concrete local work has a fixed native-volume part and both
+actual basis passes per original occurrence; no aggregate cost is assumed. -/
+theorem local_le (rowsPositive : 0<rows) :
+    localBudget phaseCoordinate entryPath activeFits pair packingLimit guardPositive guardFitsChunk
+      childRowsPositive stageSlots stagePacked≤
+    (CompactComplexScheduleRuntimeBudget.scalarCoefficient+CompactComplexScheduleRuntimeBudget.groupCount+
+      ComplexRank25.rankSum*childLocalCoefficient shape childExponent)*volume rows shape ell precision+
+    (ComplexRecursiveCallSchema.calls.map (fun call =>
+      CompactComplexSourceReadyRecursiveChildProvider.basisCost phaseCoordinate entryPath activeFits pair packingLimit
+        guardPositive guardFitsChunk childRowsPositive stageSlots stagePacked call false+
+      CompactComplexSourceReadyRecursiveChildProvider.basisCost phaseCoordinate entryPath activeFits pair packingLimit
+        guardPositive guardFitsChunk childRowsPositive stageSlots stagePacked call true)).sum := by
+  have scalarBound := scalar_sum_linear shape rows ell precision rowsPositive
+  have childBound := map_sum_bound ComplexRecursiveCallSchema.calls
+    (localChildBudget phaseCoordinate entryPath activeFits pair packingLimit guardPositive guardFitsChunk
+      childRowsPositive stageSlots stagePacked) _ (childLocalCoefficient shape childExponent*volume rows shape ell precision)
+    (fun call _ => local_child_le phaseCoordinate entryPath activeFits pair packingLimit guardPositive guardFitsChunk
+      childRowsPositive stageSlots stagePacked rowsPositive call)
+  rw [ComplexRecursiveCallSchema.calls_rankSum] at childBound
+  unfold localBudget
+  nlinarith only [scalarBound,childBound]
+
 end Node
 end
 end IntegerMultBounds.Machine.CompactComplexSourceReadyActualScheduleBudget
