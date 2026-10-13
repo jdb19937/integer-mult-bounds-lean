@@ -2881,3 +2881,7 @@ import IntegerMultBounds.Networks.GaussianHadamardBridge
 
 import IntegerMultBounds.Machine.PublicHadamardAddressBridge
 import IntegerMultBounds.Machine.CompactComplexPublicLayerTensor
+
+import IntegerMultBounds.Networks.GaussianHadamardPhase
+import IntegerMultBounds.Machine.NativeHadamardPhaseReadout
+import IntegerMultBounds.Machine.NativeHadamardPhaseOriginal

@@ -102,8 +102,11 @@ original native rank codec for arbitrary positive suffix sizes and every
 coefficient and suffix offset. CompactComplexPublicLayerTensor identifies this
 layer with the same anchored fullFrame certified by positive native roots,
 retaining the genuine visit positions, source/sink phases and exact normalization.
-Physical corrected-input execution and arbitrary active-piece composition remain
-separate obligations. Actual axis growth now
+The fixed unit-weight phase family now physically updates the native source,
+restores all 67 private tapes and retains exact tensor-phase readout and the
+original grid, with one positive native-volume coefficient. Original-header
+and placement assembly around the same root, exact normalization and arbitrary
+active-piece composition remain separate obligations. Actual axis growth now
 justifies eventual exclusion of nonstopped exponent-one nodes; finite small-input
 coverage remains separate. The stopped
 roundtrip's existing cost still includes its stopped-axis-count factor; the
