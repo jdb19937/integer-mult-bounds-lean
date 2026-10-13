@@ -140,6 +140,14 @@ theorem child_path_coefficient_bound (basisConstant : ℝ)
 
 end Node
 
+/-- The certified machine coefficient is selected once from the physical
+basis theorem, before all shapes, node exponents, banks and stack histories. -/
+def uniformBasisConstant (packingLimit : ℕ) : ℝ :=
+  Classical.choose (CompactComplexRecursiveStageScaleBudget.exists_local_depth_bound packingLimit)
+
+theorem uniform_basis_constant_positive (packingLimit : ℕ) : 0<uniformBasisConstant packingLimit :=
+  (Classical.choose_spec (CompactComplexRecursiveStageScaleBudget.exists_local_depth_bound packingLimit)).1
+
 section Static
 variable {shape : Shape}
   (phaseCoordinate : Fin shape.chunk) (activeFits : shape.active≤shape.axes)
@@ -219,7 +227,7 @@ theorem exists_runtime_provider
     (baselineFits : baselineLive ≤ baselinePrecision)
     (growthReserve : CompactFramedScalarGrid.growthConstant ≤ growthConstant)
     (denominatorRoom : CompactComplexDenominatorCapacity.room CompactComplexDenominatorCapacity.scalarRows ≤ shape.chunk) :
-    ∃ runtimeConstant : ℝ,0<runtimeConstant ∧
+    ∃ runtimeConstant : ℝ,0<runtimeConstant ∧ runtimeConstant=uniformBasisConstant packingLimit ∧
     LocalBounds phaseCoordinate activeFits pair ell inputPrecision packingLimit guardPositive guardFitsChunk
       chunkPositive packingFamily runtimeConstant ∧
     ∀ (childExponent : ℕ)
@@ -236,8 +244,8 @@ theorem exists_runtime_provider
         baselineLive basisProgram headerStack pcStack liveStack path childRowsDivisible eventBudget pathBudget ∧
       RuntimeInvariant shape ell (ButterflyIndependentGuardHeaders.reservation shape.bits inputPrecision)
         runtimeConstant path rowsPadded eventBudget pathBudget := by
-  obtain ⟨runtimeConstant,constantPositive,allLocalBounds⟩ :=
-    CompactComplexRecursiveStageScaleBudget.exists_local_depth_bound packingLimit
+  let runtimeConstant := uniformBasisConstant packingLimit
+  have constantPositive := uniform_basis_constant_positive packingLimit
   have localBounds : LocalBounds phaseCoordinate activeFits pair ell inputPrecision packingLimit
       guardPositive guardFitsChunk chunkPositive packingFamily runtimeConstant := by
     intro nodeLeft descendantExponent levels frames returned rows entryPath descendantRowsPadded
@@ -247,7 +255,8 @@ theorem exists_runtime_provider
     have rowsPositive : 0<rows := by rw [descendantRowsPadded]; exact rowGuards.2.1
     have childRowsPositive : 0<rows/roles := by rw [descendantRowsPadded]; exact rowGuards.2.2.2.1
     have rolesDivideRows : roles∣rows := by rw [descendantRowsPadded]; exact rowGuards.1
-    exact allLocalBounds phaseCoordinate entryPath activeFits pair guardPositive guardFitsChunk rowsPositive childRowsPositive
+    exact (Classical.choose_spec (CompactComplexRecursiveStageScaleBudget.exists_local_depth_bound packingLimit)).2
+      phaseCoordinate entryPath activeFits pair guardPositive guardFitsChunk rowsPositive childRowsPositive
       rolesDivideRows unitPayload rfl (packingFamily entryPath rows descendantRowsPadded childRowsPositive)
   let invariant : BudgetInvariant shape :=
     RuntimeInvariant shape ell (ButterflyIndependentGuardHeaders.reservation shape.bits inputPrecision) runtimeConstant
@@ -261,7 +270,7 @@ theorem exists_runtime_provider
       guardPositive guardFitsChunk chunkPositive packingFamily invariant :=
     successor_runtime_invariant phaseCoordinate activeFits pair ell inputPrecision packingLimit
       guardPositive guardFitsChunk chunkPositive packingFamily runtimeConstant localBounds
-  refine ⟨runtimeConstant,constantPositive,localBounds,?_⟩
+  refine ⟨runtimeConstant,constantPositive,rfl,localBounds,?_⟩
   intro childExponent nodeLeft dependencyLevels frameVolume returnedVolume rowCount path rowsPadded
   dsimp only
   obtain ⟨eventBudget,pathBudget,provider,runtimeCertificate⟩ :=

@@ -162,6 +162,7 @@ theorem exists_root_execution_with_runtime
     let stageSlots : stage.slots=25^3 := rfl
     let stagePacked := packingFamily entryPath rowCount rowsPadded childRowsPositive
     ∃ runtimeConstant : ℝ,0<runtimeConstant ∧
+    runtimeConstant=CompactComplexActualProviderRuntime.uniformBasisConstant packingLimit ∧
     ∃ childPathBudget : ComplexRecursiveCallSchema.Call → ℕ,
     ∃ elapsedSteps,∃ outputBank : Tapes (CompactComplexSourceReadyWorkspace.tapes stackCount roles) 2,
     ∃ outputArray : Array shape rowCount polynomialExponent,
@@ -213,7 +214,7 @@ theorem exists_root_execution_with_runtime
     rolesDivideRows originalCoefficients entryPath baselineFitsPrecision (by omega) inputWidth inputGrid
     controlBank queueBank scalarHeaders tailBank originalStorage auxiliaryBank countBlank currentReady clockBlank auxiliaryFree
     exponentReady control28Blank control29Blank initialLedger pcStack stackOrigin [] savedAssociated headerStack liveStack originalProtectedTails
-  obtain ⟨runtimeConstant,constantPositive,childPathBudget,scheduleBound,scheduleExists⟩ :=
+  obtain ⟨runtimeConstant,constantPositive,fixedConstantEq,childPathBudget,scheduleBound,scheduleExists⟩ :=
     CompactComplexSourceReadyRecursiveNodeExecution.exists_execution_values_with_runtime
     phaseCoordinate activeFits pair polynomialExponent inputPrecision baselinePrecision growthConstant baselineLive packingLimit
     guardPositive guardFitsChunk basisProgram headerStack pcStack liveStack basisConstant basisRuns largeAxes activePositive
@@ -270,7 +271,7 @@ theorem exists_root_execution_with_runtime
   push_cast at boundaryReal
   have actualTimeReal := Nat.cast_le (α:=ℝ).mpr actualTimeBound
   push_cast at actualTimeReal
-  refine ⟨runtimeConstant,constantPositive,childPathBudget,elapsedSteps,outputBank,outputArray,
+  refine ⟨runtimeConstant,constantPositive,fixedConstantEq,childPathBudget,elapsedSteps,outputBank,outputArray,
     actualTimeBound,?_,rootRun,outputSource.1,outputSource.2,?_,?_,?_⟩
   · dsimp only [prefixBudget] at actualTimeReal
     push_cast at actualTimeReal
@@ -368,7 +369,7 @@ theorem exists_root_execution
             (pack rawRow (FlatCoordinateLayout.index
               (CompactComplexNonleafChildAddress.insert phaseCoordinate entryPath.visit globalAnchor tensorAddress) polynomialIndex)))
           (CompactComplexNonleafChildAddress.address phaseCoordinate entryPath.visit globalAnchor) := by
-  obtain ⟨runtimeConstant,constantPositive,childPathBudget,elapsedSteps,outputBank,outputArray,
+  obtain ⟨runtimeConstant,constantPositive,fixedConstantEq,childPathBudget,elapsedSteps,outputBank,outputArray,
     naturalBound,runtimeBound,rootRun,outputSource,outputHead,outputWidth,outputGrid,outputTensor⟩ :=
     exists_root_execution_with_runtime phaseCoordinate activeFits pair polynomialExponent inputPrecision baselinePrecision
       growthConstant baselineLive packingLimit guardPositive guardFitsChunk basisProgram headerStack pcStack liveStack basisConstant

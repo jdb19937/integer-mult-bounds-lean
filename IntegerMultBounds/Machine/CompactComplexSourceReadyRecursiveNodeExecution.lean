@@ -67,6 +67,7 @@ theorem exists_execution_values_with_runtime
     let parentSlots : (parent phaseCoordinate entryPath.visit activeFits pair).slots=25^3 := rfl
     let parentPacked := packingFamily entryPath rowCount rowsPadded childRowsPositive
     ∃ runtimeConstant : ℝ,0<runtimeConstant ∧
+    runtimeConstant=CompactComplexActualProviderRuntime.uniformBasisConstant packingLimit ∧
     ∃ childPathBudget : ComplexRecursiveCallSchema.Call → ℕ,
     (CompactComplexSourceReadyReachedRecursiveSchedule.totalBudget phaseCoordinate entryPath activeFits pair
       packingLimit childPathBudget guardPositive guardFitsChunk childRowsPositive parentSlots parentPacked : ℝ)≤
@@ -117,7 +118,7 @@ theorem exists_execution_values_with_runtime
   have rolesDivideRows : roles∣rowCount := by rw [rowsPadded]; exact rowGuards.1
   let parentSlots : (parent phaseCoordinate entryPath.visit activeFits pair).slots=25^3 := rfl
   let parentPacked := packingFamily entryPath rowCount rowsPadded childRowsPositive
-  obtain ⟨runtimeConstant,constantPositive,localBounds,runtimeProviders⟩ :=
+  obtain ⟨runtimeConstant,constantPositive,fixedConstantEq,localBounds,runtimeProviders⟩ :=
     CompactComplexActualProviderRuntime.exists_runtime_provider phaseCoordinate activeFits pair polynomialExponent inputPrecision
       packingLimit guardPositive guardFitsChunk baselinePrecision growthConstant baselineLive basisProgram headerStack pcStack liveStack
       basisConstant basisRuns largeAxes activePositive axesPositive chunkPositive unitPayload packingFamily childChunkRoom scalarChunkRoom
@@ -126,7 +127,7 @@ theorem exists_execution_values_with_runtime
   have scheduleBound := CompactComplexActualProviderRuntime.schedule_coefficient_bound phaseCoordinate entryPath activeFits pair
     packingLimit guardPositive guardFitsChunk childRowsPositive parentSlots parentPacked runtimeConstant childPathBudget rolesDivideRows
     (localBounds entryPath rowsPadded) runtimeCertificate
-  refine ⟨runtimeConstant,constantPositive,childPathBudget,scheduleBound,?_⟩
+  refine ⟨runtimeConstant,constantPositive,fixedConstantEq,childPathBudget,scheduleBound,?_⟩
   intro origin savedCalls initialLive initialState pcHeaderDistinct pcLiveDistinct headerLiveDistinct initialProtectedTails
   have doubleChildFit := CompactComplexRecursivePathRows.two_child_volumes_fit entryPath chunkPositive
   have singleChildFit : 0+arity^(childExponent+1)≤shape.bits := by omega
@@ -204,7 +205,7 @@ theorem exists_execution_values
         FramedCircuit.run (ComplexFramedExecution.network (arity^(childExponent+1)))
           (stored phaseCoordinate entryPath.visit (rowCount/roles) polynomialExponent inputPrecision
             initialLive initialState.reached.data row polynomialIndex globalAnchor) := by
-  obtain ⟨runtimeConstant,constantPositive,childPathBudget,scheduleBound,execution⟩ := exists_execution_values_with_runtime
+  obtain ⟨runtimeConstant,constantPositive,fixedConstantEq,childPathBudget,scheduleBound,execution⟩ := exists_execution_values_with_runtime
     phaseCoordinate activeFits pair polynomialExponent inputPrecision baselinePrecision growthConstant baselineLive packingLimit
     guardPositive guardFitsChunk basisProgram headerStack pcStack liveStack basisConstant basisRuns largeAxes activePositive
     axesPositive chunkPositive unitPayload packingFamily childChunkRoom scalarChunkRoom precisionReserve baselineFits
