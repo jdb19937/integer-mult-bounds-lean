@@ -66,8 +66,11 @@ basis directions now have one fixed certified stage-scale coefficient, and
 the complete local-work bound retains every physical join. The expanded
 polynomial scale now retains the original per-depth tau exponent, and the
 actual completed-child path budget equals the checked fixed linear-volume
-boundary plus its event budget. Closing the static provider budget invariant
-is the next runtime obligation. Actual axis growth now
+boundary plus its event budget. The static runtime invariant now closes,
+and arbitrary-depth providers retain runtime certificates on their own
+selected budgets with one machine coefficient before every exponent and
+Path. Using those certified choices in the root schedule and deriving the
+final closed-form uniform estimate are the next runtime obligations. Actual axis growth now
 justifies eventual exclusion of nonstopped exponent-one nodes; finite small-input
 coverage remains separate. The stopped
 roundtrip's existing cost still includes its stopped-axis-count factor; the
