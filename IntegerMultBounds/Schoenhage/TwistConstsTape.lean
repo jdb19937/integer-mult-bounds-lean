@@ -212,6 +212,179 @@ theorem runs_dropOne {t : ℕ} {s j o : Fin t} (h1 : s ≠ j) (h2 : s ≠ o) (h3
   · simp at d1; omega
 
 
+/-- From the sum `n` on `sN`: the zero counter, then `sR` at one and ticks for `n`. -/
+noncomputable def blockC : Cmd 0 16 :=
+  .seq (clear sR) <| .seq (rewind sN) <| .seq (op0 (Rules.fill false) false sN o15 (by decide)) <|
+  .seq (rewind o15) <| .seq (rewind sN) <| .seq (emit [[true]] sR) <| .seq (rewind sR) <|
+  .seq (op0 Rules.ticks false sN sK (by decide)) <| .seq (rewind sN) <| .seq (rewind sK) (clear sJ)
+
+theorem runs_blockC (σ : Fin 16 → WTape) (a n : ℕ) (hR : σ sR = reg (ones a)) (hN : σ sN = ⟨[ones n], []⟩)
+    (h15 : σ o15 = emp) (hK : σ sK = emp) (hJ : σ sJ = reg [true]) :
+    Runs blockC σ (· = Function.update (Function.update (Function.update (Function.update
+      (Function.update σ o15 (reg (List.replicate n false))) sN (reg (ones n))) sR (reg [true]))
+      sK ⟨[], List.replicate n []⟩) sJ emp) (2 * a + 12 * n + 80) := by
+  have t1 := time_le (Rules.fill false) (ones n) (fun j => j.elim0) 0 (fun j => j.elim0)
+  have t2 := time_le Rules.ticks (ones n) (fun j => j.elim0) 0 (fun j => j.elim0)
+  apply Runs.of_wp
+  simp only [blockC, WP, wp_op0, wp_rewind, wp_emit, wp_clear]
+  tsimp [hR, hN, h15, hK, hJ, emp, reg, Rules.output_fill, Rules.output_ticks, WTape.put, WTape.next, WTape.cur]
+  refine ⟨?_, ?_⟩
+  · funext i; fin_cases i <;> tsimp [hR, hN, h15, hK, hJ, emp, reg]
+  · simp only [WTape.words, List.reverse_nil, List.nil_append, List.append_nil, clen_cons, clen_nil,
+      length_ones, List.reverse_replicate, clen_ticks, List.length_singleton, List.reverse_singleton] at t1 t2 ⊢
+    generalize time (Rules.fill false) (ones n) (fun j => j.elim0) = a1 at t1 ⊢
+    generalize time Rules.ticks (ones n) (fun j => j.elim0) = a2 at t2 ⊢
+    omega
+
+/-- The ticks of `2^n` on `o17`, scratch cleared. -/
+noncomputable def blockD : Cmd 0 16 :=
+  .seq (clear sK) <| .seq (op0 Rules.ticks false sR o17 (by decide)) <| .seq (rewind o17) <|
+  .seq (clear sR) (clear sN)
+
+theorem runs_blockD (σ : Fin 16 → WTape) (n M : ℕ) (hR : σ sR = reg (ones M)) (hN : σ sN = reg (ones n))
+    (hK : σ sK = ⟨List.replicate n [], []⟩) (h17 : σ o17 = emp) :
+    Runs blockD σ (· = Function.update (Function.update (Function.update (Function.update σ sK emp)
+      o17 ⟨[], List.replicate M []⟩) sR emp) sN emp) (6 * M + 4 * n + 40) := by
+  have t2 := time_le Rules.ticks (ones M) (fun j => j.elim0) 0 (fun j => j.elim0)
+  apply Runs.of_wp
+  simp only [blockD, WP, wp_op0, wp_rewind, wp_clear]
+  tsimp [hR, hN, hK, h17, emp, reg, Rules.output_ticks, WTape.put, WTape.next, WTape.cur]
+  refine ⟨?_, ?_⟩
+  · funext i; fin_cases i <;> tsimp [hR, hN, hK, h17, emp, reg]
+  · simp only [WTape.words, List.reverse_nil, List.nil_append, List.append_nil, clen_cons, clen_nil,
+      length_ones, List.reverse_replicate, clen_ticks, List.length_singleton, List.reverse_singleton] at t2 ⊢
+    generalize time Rules.ticks (ones M) (fun j => j.elim0) = a2 at t2 ⊢
+    omega
+
+/-! ### The whole program -/
+
+theorem clen_flags (fl : List Bool) : clen ((fl.map fun b => [b]).reverse) = 2 * fl.length := by
+  rw [clen_reverse]
+  induction fl with
+  | nil => rfl
+  | cons b fl ih => simp only [List.map_cons, clen_cons, List.length_cons, ih]; simp; ring
+
+/-- Write the twist block's constants and `ones w`. -/
+noncomputable def constGen : Cmd 0 16 :=
+  .seq blockA <| .seq powLoop <| .seq (clear sK) <| .seq dbl <| .seq (regDup sR o25 (by decide)) <|
+  .seq (regDup sR o3 (by decide)) <| .seq (emit [[true]] sJ) <| .seq (rewind sJ) <|
+  .seq (dropOne sR sJ o24 (by decide) (by decide) (by decide)) <| .seq dbl <|
+  .seq (regDup sR o23 (by decide)) <| .seq (dropOne sR sJ o22 (by decide) (by decide) (by decide)) <|
+  .seq (clear sR) <| .seq (dropOne cL sJ sR (by decide) (by decide) (by decide)) <|
+  .seq (emit [[]] sN) <| .seq (rewind cF) <| .seq flagLoop <| .seq blockC <| .seq powLoop blockD
+
+/-- The inputs: `ℓ` and `w` in unary and the flags `fl` as one-bit words, reversed on the left. -/
+def cIn (l w : ℕ) (fl : List Bool) : Fin 16 → WTape := fun i =>
+  if i = cL then reg (ones l) else if i = cW then reg (ones w)
+  else if i = cF then ⟨(fl.map fun b => [b]).reverse, []⟩ else emp
+
+/-- The inputs and the constants, for `r = 2^ℓ` and `n = Σ (ℓ - 1 + [long])`. -/
+def cOut (l w : ℕ) (fl : List Bool) : Fin 16 → WTape := fun i =>
+  if i = oW then reg (ones w) else if i = o3 then reg (ones (2 * 2 ^ l))
+  else if i = o15 then reg (List.replicate (flagSum (l - 1) fl) false)
+  else if i = o17 then ⟨[], List.replicate (2 ^ flagSum (l - 1) fl) []⟩
+  else if i = o22 then reg (ones (4 * 2 ^ l - 1)) else if i = o23 then reg (ones (4 * 2 ^ l))
+  else if i = o24 then reg (ones (2 * 2 ^ l - 1)) else if i = o25 then reg (ones (2 * 2 ^ l)) else cIn l w fl i
+
+/-- The constants program's step bound. -/
+def constCost (l w : ℕ) (fl : List Bool) : ℕ :=
+  6 * w + l * (20 * 2 ^ l * 1 + 70) + 200 * 2 ^ l + 40 * l + fl.length * (3 * (l - 1) + 50) +
+    flagSum (l - 1) fl * (20 * 2 ^ flagSum (l - 1) fl * 1 + 70) + 10 * 2 ^ flagSum (l - 1) fl +
+    20 * flagSum (l - 1) fl + 800
+
+set_option maxHeartbeats 8000000 in
+theorem runs_constGen (l w : ℕ) (fl : List Bool) :
+    Runs constGen (cIn l w fl) (· = cOut l w fl) (constCost l w fl) := by
+  set X := 2 ^ l
+  set n := flagSum (l - 1) fl
+  set σ0 := cIn l w fl
+  have s1 := runs_blockA σ0 l w (by tsimp [σ0, cIn]) (by tsimp [σ0, cIn]) (by tsimp [σ0, cIn])
+    (by tsimp [σ0, cIn]) (by tsimp [σ0, cIn])
+  set σ1 := Function.update (Function.update (Function.update σ0 oW (reg (ones w))) sR (reg [true]))
+    sK ⟨[], List.replicate l []⟩
+  have s2 := runs_powLoop l 1 [] σ1 (by tsimp [σ1]) (by tsimp [σ1]; rfl) (by tsimp [σ1, σ0, cIn])
+    (by tsimp [σ1, σ0, cIn, emp])
+  set σ2 := Function.update (Function.update σ1 sR (reg (ones (2 ^ l * 1)))) sK ⟨List.replicate l [] ++ [], []⟩
+  have s3 := runs_clear (a := 0) sK σ2
+  set σ3 := Function.update σ2 sK ⟨[], []⟩
+  have s4 := runs_dbl σ3 X (by tsimp [σ3, σ2, X]) (by tsimp [σ3, σ2, σ1, σ0, cIn])
+  set σ4 := Function.update σ3 sR (reg (ones (2 * X)))
+  have s5 := runs_regDup (a := 0) (show sR ≠ o25 by decide) σ4 (w := ones (2 * X)) (by tsimp [σ4])
+    (by tsimp [σ4, σ3, σ2, σ1, σ0, cIn])
+  set σ5 := Function.update σ4 o25 (reg (ones (2 * X)))
+  have s6 := runs_regDup (a := 0) (show sR ≠ o3 by decide) σ5 (w := ones (2 * X)) (by tsimp [σ5, σ4])
+    (by tsimp [σ5, σ4, σ3, σ2, σ1, σ0, cIn])
+  set σ6 := Function.update σ5 o3 (reg (ones (2 * X)))
+  have s7 := runs_emit (a := 0) [[true]] sJ σ6 (by tsimp [σ6, σ5, σ4, σ3, σ2, σ1, σ0, cIn, emp])
+  set σ7 := Function.update σ6 sJ ⟨[[true]].reverse ++ (σ6 sJ).left, []⟩
+  have s8 := runs_rewind (a := 0) sJ σ7
+  set σ8 := Function.update σ7 sJ ⟨[], (σ7 sJ).left.reverse ++ (σ7 sJ).right⟩
+  have hJ8 : σ8 sJ = reg [true] := by tsimp [σ8, σ7, σ6, σ5, σ4, σ3, σ2, σ1, σ0, cIn, emp, reg]
+  have s9 := runs_dropOne (show sR ≠ sJ by decide) (show sR ≠ o24 by decide) (show sJ ≠ o24 by decide) σ8 (2 * X)
+    (by tsimp [σ8, σ7, σ6, σ5, σ4]) hJ8 (by tsimp [σ8, σ7, σ6, σ5, σ4, σ3, σ2, σ1, σ0, cIn])
+  set σ9 := Function.update σ8 o24 (reg (ones (2 * X - 1)))
+  have s10 := runs_dbl σ9 (2 * X) (by tsimp [σ9, σ8, σ7, σ6, σ5, σ4])
+    (by tsimp [σ9, σ8, σ7, σ6, σ5, σ4, σ3, σ2, σ1, σ0, cIn])
+  set σ10 := Function.update σ9 sR (reg (ones (2 * (2 * X))))
+  have s11 := runs_regDup (a := 0) (show sR ≠ o23 by decide) σ10 (w := ones (2 * (2 * X))) (by tsimp [σ10])
+    (by tsimp [σ10, σ9, σ8, σ7, σ6, σ5, σ4, σ3, σ2, σ1, σ0, cIn])
+  set σ11 := Function.update σ10 o23 (reg (ones (2 * (2 * X))))
+  have s12 := runs_dropOne (show sR ≠ sJ by decide) (show sR ≠ o22 by decide) (show sJ ≠ o22 by decide) σ11
+    (2 * (2 * X)) (by tsimp [σ11, σ10]) (by tsimp [σ11, σ10, σ9, hJ8])
+    (by tsimp [σ11, σ10, σ9, σ8, σ7, σ6, σ5, σ4, σ3, σ2, σ1, σ0, cIn])
+  set σ12 := Function.update σ11 o22 (reg (ones (2 * (2 * X) - 1)))
+  have s13 := runs_clear (a := 0) sR σ12
+  set σ13 := Function.update σ12 sR ⟨[], []⟩
+  have s14 := runs_dropOne (show cL ≠ sJ by decide) (show cL ≠ sR by decide) (show sJ ≠ sR by decide) σ13 l
+    (by tsimp [σ13, σ12, σ11, σ10, σ9, σ8, σ7, σ6, σ5, σ4, σ3, σ2, σ1, σ0, cIn])
+    (by tsimp [σ13, σ12, σ11, σ10, σ9, hJ8]) (by tsimp [σ13, emp])
+  set σ14 := Function.update σ13 sR (reg (ones (l - 1)))
+  have s15 := runs_emit (a := 0) [[]] sN σ14 (by tsimp [σ14, σ13, σ12, σ11, σ10, σ9, σ8, σ7, σ6, σ5, σ4, σ3, σ2,
+    σ1, σ0, cIn, emp])
+  set σ15 := Function.update σ14 sN ⟨[[]].reverse ++ (σ14 sN).left, []⟩
+  have s16 := runs_rewind (a := 0) cF σ15
+  set σ16 := Function.update σ15 cF ⟨[], (σ15 cF).left.reverse ++ (σ15 cF).right⟩
+  have s17 := runs_flagLoop (l - 1) fl 0 [] σ16 (by tsimp [σ16, σ15, σ14])
+    (by tsimp [σ16, σ15, σ14, σ13, σ12, σ11, σ10, σ9, hJ8])
+    (by tsimp [σ16, σ15, σ14, σ13, σ12, σ11, σ10, σ9, σ8, σ7, σ6, σ5, σ4, σ3, σ2, σ1, σ0, cIn])
+    (by tsimp [σ16, σ15, σ14, σ13, σ12, σ11, σ10, σ9, σ8, σ7, σ6, σ5, σ4, σ3, σ2, σ1, σ0, cIn, emp])
+    (by tsimp [σ16, σ15, σ14, σ13, σ12, σ11, σ10, σ9, σ8, σ7, σ6, σ5, σ4, σ3, σ2, σ1, σ0, cIn])
+  set σ17 := Function.update (Function.update σ16 sN ⟨[ones (0 + n)], []⟩) cF
+    ⟨(fl.map fun b => [b]).reverse ++ [], []⟩
+  have s18 := runs_blockC σ17 (l - 1) n (by tsimp [σ17, σ16, σ15, σ14]) (by tsimp [σ17])
+    (by tsimp [σ17, σ16, σ15, σ14, σ13, σ12, σ11, σ10, σ9, σ8, σ7, σ6, σ5, σ4, σ3, σ2, σ1, σ0, cIn])
+    (by tsimp [σ17, σ16, σ15, σ14, σ13, σ12, σ11, σ10, σ9, σ8, σ7, σ6, σ5, σ4, σ3, emp])
+    (by tsimp [σ17, σ16, σ15, σ14, σ13, σ12, σ11, σ10, σ9, hJ8])
+  set σ18 := Function.update (Function.update (Function.update (Function.update
+      (Function.update σ17 o15 (reg (List.replicate n false))) sN (reg (ones n))) sR (reg [true]))
+      sK ⟨[], List.replicate n []⟩) sJ emp
+  have s19 := runs_powLoop n 1 [] σ18 (by tsimp [σ18]) (by tsimp [σ18]; rfl)
+    (by tsimp [σ18, σ17, σ16, σ15, σ14, σ13, σ12, σ11, σ10, σ9, σ8, σ7, σ6, σ5, σ4, σ3, σ2, σ1, σ0, cIn])
+    (by tsimp [σ18, emp])
+  set σ19 := Function.update (Function.update σ18 sR (reg (ones (2 ^ n * 1)))) sK ⟨List.replicate n [] ++ [], []⟩
+  have s20 := runs_blockD σ19 n (2 ^ n * 1) (by tsimp [σ19]) (by tsimp [σ19, σ18]) (by tsimp [σ19])
+    (by tsimp [σ19, σ18, σ17, σ16, σ15, σ14, σ13, σ12, σ11, σ10, σ9, σ8, σ7, σ6, σ5, σ4, σ3, σ2, σ1, σ0, cIn])
+  have h4 : 2 * (2 * 2 ^ l) = 4 * 2 ^ l := by ring
+  refine (Runs.then s1 (Runs.then s2 (Runs.then s3 (Runs.then s4 (Runs.then s5 (Runs.then s6 (Runs.then s7
+    (Runs.then s8 (Runs.then s9 (Runs.then s10 (Runs.then s11 (Runs.then s12 (Runs.then s13 (Runs.then s14
+    (Runs.then s15 (Runs.then s16 (Runs.then s17 (Runs.then s18 (Runs.then s19 s20))))))))))))))))))).mono
+    (fun τ e => ?_) ?_
+  · rw [e]
+    funext i
+    fin_cases i <;> tsimp [σ19, σ18, σ17, σ16, σ15, σ14, σ13, σ12, σ11, σ10, σ9, σ8, σ7, σ6, σ5, σ4, σ3, σ2, σ1, σ0,
+      cIn, cOut, emp, reg, X, n, h4]
+  · tsimp [σ19, σ18, σ17, σ16, σ15, σ14, σ13, σ12, σ11, σ10, σ9, σ8, σ7, σ6, σ5, σ4, σ3, σ2, σ1, σ0, cIn,
+      WTape.words, clen_ticks, length_ones, constCost, emp, reg]
+    have hc := clen_flags fl
+    have hq : fl.length * (3 * (l - 1) + 50) = fl.length * (3 * (l - 1) + 42) + 8 * fl.length := by ring
+    rw [hc, hq]
+    generalize l * (20 * 2 ^ l + 70) = P1
+    generalize fl.length * (3 * (l - 1) + 42) = P3
+    generalize flagSum (l - 1) fl * (20 * 2 ^ flagSum (l - 1) fl + 70) = P2 at *
+    simp only [X, n] at *
+    omega
+
+
 end TwistConsts
 
 end IntegerMultBounds.Schoenhage
