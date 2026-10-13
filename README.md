@@ -50,8 +50,12 @@ Node-exponent induction now constructs the smaller providers internally with
 fixed static budgets. The complete arbitrary-depth mixed schedule retains exact
 compiler values, settled frames and target coverage without a child-execution
 or child-tensor premise. Actual serialization supplies eventual descendant
-packing. Empty-root classification and finalization/halting paths are checked;
-assembly from the literal root input and the uniform total runtime remain open. Actual axis growth now
+packing. The literal nonstopped root now executes classification, physical
+corrected entry, internally constructed events and finalization to halt on the
+same aligned table. Its emitted array computes the corrected tensor at every
+original row, polynomial and spectator address with exact widths and bounded
+grid. All transitions are paid by the actual schedule budget. The stopped-root
+aligned-table halt wrapper and the uniform total runtime remain open. Actual axis growth now
 justifies eventual exclusion of nonstopped exponent-one nodes; finite small-input
 coverage remains separate. The stopped
 roundtrip's existing cost still includes its stopped-axis-count factor; the
