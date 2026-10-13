@@ -104,6 +104,35 @@ theorem raw_runs_native_linear (sh : Shape) (headerCount rows ell metadataP : �
     f hw current target hle hc ht hs path R base usedRows hb hu hroom hlive
   exact placed_runs (M:=(CompactComplexControllerExactReturn.program (s:=s) (c:=c) headerCount merge).2) h frame leaf
 
+/-- The placed contraction preserves all frames using actual retained-field capacity. -/
+theorem raw_runs_native_linear_capacity (sh : Shape) (headerCount rows ell metadataP : ℕ) (merge : Bool)
+    (hcount : 0<headerCount) (hr : 0<rows) (hgroup : 0<rows/headerCount)
+    (hG : 0<sh.guard) (hA : 0<sh.axes) (hK : 0<sh.chunk) (hmetadata : 2*sh.bits≤metadataP)
+    (rho left count slots right src dst : ℕ)
+    (control : Tapes 43 2) (queue : Tapes 1 2) (scalar : State) (tail : Tapes 22 2)
+    (storage : Tapes (10+s) 2) (payload : Tapes (1+c) 2)
+    (f : Fin c → CompactSpectatorVisitGeometry.Array sh (roleRows headerCount rows merge) ell)
+    (hw : ∀ j,CompactSpectatorInheritedGrid.Width sh (roleRows headerCount rows merge) ell
+      (metadataP-2*sh.bits) (f j))
+    (current target : ℕ) (hle : target≤current)
+    (hc : storage.head ⟨7,by omega⟩=1 ∧ storage.tape ⟨7,by omega⟩=RadixZeroFill.encodedBinary (bits current))
+    (ht : storage.head ⟨8,by omega⟩=1 ∧ storage.tape ⟨8,by omega⟩=RadixZeroFill.encodedBinary (bits target))
+    (hs : ∀ j,payload.head (Fin.natAdd 1 j)=0 ∧
+      payload.tape (Fin.natAdd 1 j)=word (CompactComplexStoppedGridHandoff.words (f j)))
+    (frame : Tapes 9 2) (leaf : Tapes CompactComplexSourceReadyWorkspace.leafTapes 2)
+    (currentCapacity : current≤CompactSpectatorInheritedGrid.half sh (metadataP-2*sh.bits)+1) :
+    let old := CompactSpectatorLeafSetup.raw sh rows ell metadataP rho left count slots right src dst
+    let ws := fun j => CompactComplexStoppedGridHandoff.words (f j)
+    HoareTime (program (s:=s) (c:=c) headerCount merge).2
+      (fun z => z=ready (bank control queue scalar old tail storage payload) frame leaf)
+      (fun z => z=ready (bank control queue scalar old tail (committed storage target)
+        (CompactComplexControllerExactReturn.returned ws current target payload)) frame leaf)
+      (CompactComplexControllerExactReturnBudget.nativeConstant headerCount c*volume rows sh ell metadataP) := by
+  have h := CompactComplexControllerExactReturnBudget.raw_runs_native_linear_capacity sh headerCount rows ell metadataP merge
+    hcount hr hgroup hG hA hK hmetadata rho left count slots right src dst control queue scalar tail storage payload
+    f hw current target hle hc ht hs currentCapacity
+  exact placed_runs (M:=(CompactComplexControllerExactReturn.program (s:=s) (c:=c) headerCount merge).2) h frame leaf
+
 open ButterflySigned (signedValue complexValue)
 open Networks.GaussianPrecision (BoundedGrid)
 theorem nonleaf_runs_native_linear (sh : Shape) (headerCount rows ell metadataP : ℕ) (merge : Bool)

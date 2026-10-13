@@ -24,9 +24,10 @@ children all stop, original coefficients and literal input ports now construct
 the actual event execution; its computed sink-corrected arrays have full tensor
 values on every original row, polynomial and spectator slice. Captured frames,
 immutable target, denominator coverage and the summed event budget are retained.
-Final contraction, rejoin, post-orientation and decoded return still need to be
-joined to this endpoint. Nonstopped recursive execution and uniform total
-runtime remain open. The stopped roundtrip's existing cost still includes its
+Exact contracted and row-rejoined tensor values are now derived. The physical
+finalization programs retain their linear costs from actual cursor capacity;
+their execution and decoded return still need joining to the reached endpoint.
+Nonstopped recursive execution and uniform total runtime remain open. The stopped roundtrip's existing cost still includes its
 stopped-axis-count factor; the volume-only tape milestone remains open.
 Its recursive geometry math milestone is proved:
 canonical axis coverage, fitting descendant intervals, unique exhaustive child

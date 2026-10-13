@@ -106,6 +106,56 @@ theorem raw_cost_native {sh : Shape} {pathLeft k levels frames returned : ℕ}
   unfold nativeConstant
   nlinarith only [hh,hf,hm]
 
+/-- Actual retained-field capacity pays every contraction and descriptor scan,
+without requiring a dependency Path at the advanced sibling cursor. -/
+theorem family_cost_capacity {sh : Shape}
+    (headerCount rows ell metadataP : ℕ) (merge : Bool)
+    (groupPositive : 0<rows/headerCount) (rowsPositive : 0<rows)
+    (metadataFits : 2*sh.bits≤metadataP) (current target roleCount : ℕ)
+    (currentCapacity : current≤CompactSpectatorInheritedGrid.half sh (metadataP-2*sh.bits)+1)
+    (targetFits : target≤current) :
+    roleCount*(129*streamVolume sh headerCount rows ell metadataP merge+8*current+360)+
+      (2*(bits current).length+4*(bits target).length+15)+3≤
+        (497*roleCount+30)*streamVolume sh headerCount rows ell metadataP merge := by
+  have roleRowsPositive : 0<roleRows headerCount rows merge := by
+    cases merge <;> assumption
+  have coefficientCountPositive :
+      0<ButterflySpectatorGeometry.Size (roleRows headerCount rows merge) sh.bits (2^ell) := by
+    rw [CompactSpectatorVisitGeometry.coefficient_count]
+    positivity
+  have fieldFitsStream := Nat.le_mul_of_pos_left
+    (2*(CompactSpectatorInheritedGrid.half sh (metadataP-2*sh.bits)+2)) coefficientCountPositive
+  have currentFitsStream : current≤streamVolume sh headerCount rows ell metadataP merge := by
+    rw [volume_semantic sh headerCount rows ell metadataP merge metadataFits]
+    omega
+  have streamPositive : 0<streamVolume sh headerCount rows ell metadataP merge := by
+    rw [volume_semantic sh headerCount rows ell metadataP merge metadataFits]
+    positivity
+  exact family_commit_linear roleCount _ current target streamPositive currentFitsStream targetFits
+
+theorem raw_cost_native_capacity {sh : Shape}
+    (headerCount rows ell metadataP rho left count slots right src dst : ℕ) (merge : Bool)
+    (hgroup : 0<rows/headerCount) (hr : 0<rows)
+    (hG : 0<sh.guard) (hA : 0<sh.axes) (hK : 0<sh.chunk) (hmetadata : 2*sh.bits≤metadataP)
+    (current target c : ℕ)
+    (currentCapacity : current≤CompactSpectatorInheritedGrid.half sh (metadataP-2*sh.bits)+1)
+    (ht : target≤current) :
+    let old := CompactSpectatorLeafSetup.raw sh rows ell metadataP rho left count slots right src dst
+    let prepared := CompactNativeRoleHeaders.prepared headerCount merge sh rows ell metadataP rho left count slots right src dst
+    ButterflyAxisHeadersArithmetic.scheduleCost (CompactNativeRoleHeaders.schedule headerCount merge) old+
+      c*(129*streamVolume sh headerCount rows ell metadataP merge+8*current+360)+
+      ButterflyAxisHeadersArithmetic.scheduleCost CompactNativeRoleHeaders.cleanup prepared+
+      (2*(bits current).length+4*(bits target).length+15)+3≤
+        nativeConstant headerCount c*volume rows sh ell metadataP := by
+  dsimp only
+  have hh := CompactComplexSpectatorVolumeBudget.setup_cleanup_native sh headerCount rows ell metadataP
+    rho left count slots right src dst merge hr hA hG hK
+  have hf := family_cost_capacity headerCount rows ell metadataP merge hgroup hr hmetadata
+    current target c currentCapacity ht
+  have hm := Nat.mul_le_mul_left (497*c+30) (stream_le_native sh headerCount rows ell metadataP merge)
+  unfold nativeConstant
+  nlinarith only [hh,hf,hm]
+
 theorem raw_cost_role {sh : Shape} {pathLeft k levels frames returned : ℕ}
     (path : Path sh.active pathLeft k levels frames returned)
     (headerCount rows ell metadataP rho left count slots right src dst : ℕ) (merge : Bool)
@@ -188,6 +238,39 @@ theorem raw_runs_native_linear (sh : Shape) (headerCount rows ell metadataP : �
     f hw current target hle hcapacity hc ht hs
   have hcost := raw_cost_native path headerCount rows ell metadataP rho left count slots right src dst merge
     hgroup hr hG hA hK hmetadata R base usedRows current target c hb hu hroom hlive hle
+  have hnew := realizes_weaken hrun hcost
+  exact hnew
+
+/-- Exact raw return on the actual bank, paid solely from true live capacity. -/
+theorem raw_runs_native_linear_capacity (sh : Shape) (headerCount rows ell metadataP : ℕ) (merge : Bool)
+    (hcount : 0<headerCount) (hr : 0<rows) (hgroup : 0<rows/headerCount)
+    (hG : 0<sh.guard) (hA : 0<sh.axes) (hK : 0<sh.chunk) (hmetadata : 2*sh.bits≤metadataP)
+    (rho left count slots right src dst : ℕ)
+    (control : Tapes 43 2) (queue : Tapes 1 2) (scalar : State) (tail : Tapes 22 2)
+    (storage : Tapes (10+s) 2) (payload : Tapes (1+c) 2)
+    (f : Fin c → CompactSpectatorVisitGeometry.Array sh (roleRows headerCount rows merge) ell)
+    (hw : ∀ j,CompactSpectatorInheritedGrid.Width sh (roleRows headerCount rows merge) ell
+      (metadataP-2*sh.bits) (f j))
+    (current target : ℕ) (hle : target≤current)
+    (hc : storage.head ⟨7,by omega⟩=1 ∧ storage.tape ⟨7,by omega⟩=RadixZeroFill.encodedBinary (bits current))
+    (ht : storage.head ⟨8,by omega⟩=1 ∧ storage.tape ⟨8,by omega⟩=RadixZeroFill.encodedBinary (bits target))
+    (hs : ∀ j,payload.head (Fin.natAdd 1 j)=0 ∧
+      payload.tape (Fin.natAdd 1 j)=word (CompactComplexStoppedGridHandoff.words (f j)))
+    (currentCapacity : current≤CompactSpectatorInheritedGrid.half sh (metadataP-2*sh.bits)+1) :
+    let old := CompactSpectatorLeafSetup.raw sh rows ell metadataP rho left count slots right src dst
+    let ws := fun j => CompactComplexStoppedGridHandoff.words (f j)
+    Realizes (program (s:=s) (c:=c) headerCount merge)
+      (bank control queue scalar old tail storage payload)
+      (bank control queue scalar old tail (committed storage target) (CompactComplexControllerExactReturn.returned ws current target payload))
+      (nativeConstant headerCount c*volume rows sh ell metadataP) := by
+  dsimp only
+  have hcapacity : current-target≤CompactSpectatorInheritedGrid.half sh (metadataP-2*sh.bits)+1 :=
+    (Nat.sub_le _ _).trans currentCapacity
+  have hrun := CompactComplexControllerExactReturn.raw_runs sh headerCount rows ell metadataP merge
+    hcount hr hgroup hG hA hK hmetadata rho left count slots right src dst control queue scalar tail storage payload
+    f hw current target hle hcapacity hc ht hs
+  have hcost := raw_cost_native_capacity headerCount rows ell metadataP rho left count slots right src dst merge
+    hgroup hr hG hA hK hmetadata current target c currentCapacity hle
   have hnew := realizes_weaken hrun hcost
   exact hnew
 
