@@ -122,6 +122,12 @@ theorem exists_classified_node_return
       (entryReturned:=entryReturned) (childExponent:=childExponent+1) (pcStack:=pcStack)
       (origin:=origin) (savedCalls:=(call::olderCalls)) (capture initialState headerStack liveStack)
       initialState.reached.targetValue schedule.length finalLive,
+      ∃ eventElapsed,
+        Execution basisProgram headerStack liveStack initialLive initialState finalBoundary.state eventElapsed ∧
+        eventElapsed ≤ totalBudget phaseCoordinate entryPath activeFits pair packingLimit guardPositive guardFitsChunk
+          childRowsPositive parentSlots parentPacked ∧
+        CompactComplexDenominatorPolicy.minimumCompletedExponent initialLive (childExponent+1) ≤ finalLive ∧
+        CompactComplexDenominatorPolicy.networkTarget initialLive (childExponent+1) ≤ finalLive ∧
       ∃ older top elapsed,
         CompactComplexSourceReadySavedCallHistory.Associated origin olderCalls older top ∧
         elapsed ≤ ((CompactComplexSourceReadyOrientationInvariants.constant+
@@ -217,7 +223,8 @@ theorem exists_classified_node_return
         (CompactComplexSinkSliceValues.scalarOutputRoles (parent phaseCoordinate entryPath.visit activeFits pair)
           parentSlots (ButterflyIndependentGuardHeaders.reservation shape.bits inputPrecision)
           finalBoundary.state.reached.data)) normalizedStoredWidth normalizedGrid
-  refine ⟨initialState,entryBank,entryData,finalLive,finalBoundary,older,top,classifierElapsed+nodeElapsed,
+  refine ⟨initialState,entryBank,entryData,finalLive,finalBoundary,elapsedSteps,actualTrace,timeBound,
+    minimumCoverage,targetCoverage,older,top,classifierElapsed+nodeElapsed,
     olderAssociated,?_,FiniteFlowPath.append classifierPath nodePath,sourceValues.1,sourceValues.2,
     resultWidth,resultGrid,?_⟩
   · omega

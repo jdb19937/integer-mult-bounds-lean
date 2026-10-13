@@ -27,8 +27,10 @@ cyclic rejoin, post-orientation and genuine saved-PC return on one aligned
 table. The exact returned source implements the original forward or inverse
 full tensor on every original row, polynomial and spectator slice. Output
 widths, bounded grids, older saved-call association and all transition costs
-are retained. Actual nonstopped child input readiness, recursive execution and
-uniform total runtime remain open; smaller nonstopped node exponents require
+are retained. Actual sibling child entry now derives its classifier input bank,
+descriptors and clean tails; genuine dependency paths pay nested row divisibility
+from the original padding. General recursive child execution and its uniform
+total runtime remain open; smaller nonstopped node exponents require
 separate coverage or a justified exclusion for actual parameters. The stopped
 roundtrip's existing cost still includes its stopped-axis-count factor; the
 volume-only tape milestone remains open.
