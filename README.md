@@ -107,11 +107,14 @@ restores all 67 private tapes and retains exact tensor-phase readout and the
 original grid, with one positive native-volume coefficient. Original-header
 assembly and input phase placement are now derived on the exact aligned
 root input bank, with tensor readout at every original address. The complete
-input-phase/nonstopped-root composition now has the same genuine halted output,
-exact phased-tensor semantics, complete cleanup and a fixed uniform runtime
-coefficient paying both traces and their joining edge. Output-phase readiness,
-exact normalization and arbitrary
-active-piece composition remain separate obligations. Actual axis growth now
+input-phase/nonstopped-root/output-phase composition now has the same genuine
+halted word, complete cleanup, retained phase headers and true grids. Output-phase
+readiness derives from that actual returned bank, and the completed two-pass grid
+supplies signed guards within the unchanged reservation. Decoded final readout
+times the explicit Gaussian-dyadic factor is the normalized Hadamard tensor;
+one positive fixed coefficient pays all traces and both joining edges. Physical
+normalization, stopped/scalar wrapper extension, public-format setup/rounding and
+arbitrary active-piece composition remain separate obligations. Actual axis growth now
 justifies eventual exclusion of nonstopped exponent-one nodes; finite small-input
 coverage remains separate. The stopped
 roundtrip's existing cost still includes its stopped-axis-count factor; the

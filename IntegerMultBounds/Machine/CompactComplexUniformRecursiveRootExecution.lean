@@ -110,6 +110,7 @@ theorem root_runs
     ∃ elapsedSteps,∃ outputBank : Tapes (CompactComplexSourceReadyWorkspace.tapes stackCount roles) 2,
     ∃ outputArray : Array shape rowCount polynomialExponent,
       CompactComplexRootWorkspaceClean.Clean outputBank ∧
+      NativeHadamardPhaseRootHeaders.Ready stage rowCount polynomialExponent metadataPrecision outputBank ∧
       elapsedSteps≤(4*CompactComplexSourceReadyGuard.guardConstant+5)*
           CompactNativeRoleTransferBudget.volume rowCount shape polynomialExponent metadataPrecision+
         entryCost shape rowCount polynomialExponent metadataPrecision+
@@ -142,7 +143,7 @@ theorem root_runs
               (CompactComplexNonleafChildAddress.insert phaseCoordinate entryPath.visit globalAnchor tensorAddress) polynomialIndex)))
           (CompactComplexNonleafChildAddress.address phaseCoordinate entryPath.visit globalAnchor) := by
   obtain ⟨runtimeConstant,constantPositive,fixedConstantEq,childPathBudget,elapsedSteps,outputBank,outputArray,
-    outputClean,naturalBound,runtimeBound,rootRun,outputSource,outputHead,outputWidth,outputGrid,outputTensor⟩ :=
+    outputClean,outputHeaders,naturalBound,runtimeBound,rootRun,outputSource,outputHead,outputWidth,outputGrid,outputTensor⟩ :=
     CompactComplexSourceReadyRecursiveRootExecution.exists_root_execution_with_runtime
       phaseCoordinate activeFits pair polynomialExponent inputPrecision baselinePrecision
       growthConstant baselineLive packingLimit guardPositive guardFitsChunk basisProgram headerStack pcStack liveStack basisConstant
@@ -160,7 +161,7 @@ theorem root_runs
   have commonBound := CompactComplexUniformRootConstant.nonstopped_bound packingLimit shape (childExponent+1)
     (CompactNativeRoleTransferBudget.volume rowCount shape polynomialExponent
       (ButterflyIndependentGuardHeaders.reservation shape.bits inputPrecision))
-  exact ⟨childPathBudget,elapsedSteps,outputBank,outputArray,outputClean,naturalBound,actualUniformBound.trans commonBound,rootRun,
+  exact ⟨childPathBudget,elapsedSteps,outputBank,outputArray,outputClean,outputHeaders,naturalBound,actualUniformBound.trans commonBound,rootRun,
     outputSource,outputHead,outputWidth,outputGrid,outputTensor⟩
 
 end

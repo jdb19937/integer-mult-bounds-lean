@@ -130,6 +130,7 @@ theorem root_runs
     ∃ elapsedSteps,∃ outputBank : Tapes (CompactComplexSourceReadyWorkspace.tapes stackCount roles) 2,
     ∃ outputArray : Array shape rowCount polynomialExponent,
       CompactComplexRootWorkspaceClean.Clean outputBank ∧
+      NativeHadamardPhaseRootHeaders.Ready stage rowCount polynomialExponent metadataPrecision outputBank ∧
       elapsedSteps≤(4*CompactComplexSourceReadyGuard.guardConstant+5)*
           CompactNativeRoleTransferBudget.volume rowCount shape polynomialExponent metadataPrecision+
         entryCost shape rowCount polynomialExponent metadataPrecision+

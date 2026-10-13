@@ -2890,3 +2890,8 @@ import IntegerMultBounds.Machine.NativeHadamardPhaseFixed
 import IntegerMultBounds.Machine.NativeHadamardPhaseRootBank
 
 import IntegerMultBounds.Machine.CompactComplexInputPhasedRootExecution
+
+import IntegerMultBounds.Machine.NativeHadamardPhaseRootHeaders
+import IntegerMultBounds.Machine.NativeHadamardPhaseOutputBank
+import IntegerMultBounds.Machine.NativeHadamardPhaseCompletedGrid
+import IntegerMultBounds.Machine.CompactComplexPhasedRootExecution

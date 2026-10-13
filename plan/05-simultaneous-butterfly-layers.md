@@ -1818,17 +1818,20 @@ selected internally before geometry and data, and the same fixed positive
 runtime coefficient. They assume explicit original data readiness, packing,
 width/grid and capacity conditions; they do not assume basis execution,
 recursive child correctness, provider existence, desired output or total time.
-They are not yet `Spec.SignedRingProduct.MeetsLayer` or `layerTarget`. The stronger
-input-phased nonstopped wrapper is now
-`CompactComplexInputPhasedRootExecution.root_runs`: its fixed program physically
-executes the proved input correction and the entire root trace from the original
-input bank to the same actual halted output. It retains output cleanup, literal
-source words, widths and true grids; its fullFrame input is exactly the proved
-tensor phase applied to the original row/polynomial/spectator slice. Original
-Paths derive transformed readiness and signed guards internally. One positive
-coefficient depending only on the fixed packing limit pays both executions and
-the joining transition in the original uniform stage-factor bound. It supplies
-no output-phase or normalized public-layer machine yet.
+They are not yet `Spec.SignedRingProduct.MeetsLayer` or `layerTarget`. The strongest
+phase-corrected nonstopped native contract is now
+`CompactComplexPhasedRootExecution.root_runs`: one fixed program physically
+executes the input phase, complete root trace and output phase on the same
+original bank. Original input readiness and the actual returned bank internally
+supply both phase prerequisites, including retained raw headers and signed
+guards for the true completed grid. The final source word retains cleanup,
+header readiness, widths and its genuine denominator/grid. Multiplying its
+exact decoded readout by `((1-I)/2)^(arity^(childExponent+2))` gives the
+normalized Hadamard tensor of each original row/polynomial/spectator slice.
+One positive coefficient depending only on packingLimit pays all three traces
+and both joining transitions in the original uniform stage-factor bound.
+The displayed normalization is not yet physically executed; public-format
+setup, final rounding and the full public-layer cost remain open.
 
 The unconditional `PublicHadamardAddressBridge.layer_gaussian_block` now
 identifies the public normalized selected-bit Hadamard on the original native
@@ -1856,9 +1859,14 @@ its state count stays abstract during placement, without increased proof limits.
 phase to the entire nonstopped root execution, with the same genuine halt,
 literal output array, complete cleanup and uniform paid runtime. The exact
 original-slice input tensor phase is derived from original Paths and insertion
-coordinates, without a corrected-input semantic premise. Output-phase readiness
-and execution on the actual final bank remain open; there is no public-format
-machine yet.
+coordinates, without a corrected-input semantic premise. `NativeHadamardPhaseRootHeaders` now derives all fifteen output-phase words
+from the literal root merger and carries them through the same runtime/public
+certificates. `NativeHadamardPhaseOutputBank` executes on the actual returned
+bank, retaining every complementary tape/head and all clean workspace.
+`NativeHadamardPhaseCompletedGrid` derives signed guards from the completed
+two-pass growth within the unchanged reservation. `CompactComplexPhasedRootExecution`
+joins the output phase to that exact trace and proves normalized Hadamard readout
+with its normalization factor explicit. There is no public-format machine yet.
 
 Section 6 consumes exactly `Spec.SignedRingProduct.layerTarget LP` through
 `Schoenhage.TransformOfLayer.transformTarget_of_compatible`; its chunk calls
@@ -1866,7 +1874,7 @@ require `MeetsLayer` on the paper's header/array bank. The exact remaining
 boundary obligations are:
 
 - Construct one fixed public program from `bank (layerHeader ...) (array w zs) [] []` to the native root bank and back, physically deriving all raw headers, Paths, packing families, denominator ledgers and clean initial workspace from `LayerAdmissible`. Preserve the original descriptor and every non-array tape. Include arbitrary admissible coefficient count `r`, multiplicities `Pa/S`, positive `D`, and actual reservation/fallback and non-power-of-arity cases; the native root hypotheses cannot be supplied as execution callbacks.
-- The abstract Gaussian-to-Hadamard identity and public natural-address/selected-bit identity are proved: `PublicHadamardAddressBridge.layer_gaussian_block` handles arbitrary positive suffixes; `CompactComplexPublicLayerTensor.layer_tensor_block` uses exactly the native positive-visit fullFrame at the unchanged original rank and tensor address. The fixed unit-weight physical phase family is now proved by `NativeHadamardPhaseOriginal`, with exact source replacement, cleanup, inherited-grid readout and positive uniform linear cost. Input phase placement and prerequisites on the exact aligned originalBank are now derived by `NativeHadamardPhaseRootBank.runs`, with original-address readout. The complete nonstopped input-phase/root composition is now proved by `CompactComplexInputPhasedRootExecution.root_runs`, retaining exact tensor input-phase readout, genuine halt, cleanup, true grids and one positive uniform coefficient with the joining edge paid. Still derive output-phase readiness from the same actual halted bank, execute the exact normalization, derive the reservation/padding and unpadding layouts from the public input, and compose the original active-piece sequence for arbitrary non-power-of-arity `D`. Exponent-zero visits must use the existing actual one-coordinate kernel with the corresponding proved coordinate bridge. No phase, layout or corrected-input execution may be assumed as a callback.
+- The abstract Gaussian-to-Hadamard identity and public natural-address/selected-bit identity are proved: `PublicHadamardAddressBridge.layer_gaussian_block` handles arbitrary positive suffixes; `CompactComplexPublicLayerTensor.layer_tensor_block` uses exactly the native positive-visit fullFrame at the unchanged original rank and tensor address. The fixed unit-weight physical phase family is now proved by `NativeHadamardPhaseOriginal`, with exact source replacement, cleanup, inherited-grid readout and positive uniform linear cost. Input phase placement and prerequisites on the exact aligned originalBank are now derived by `NativeHadamardPhaseRootBank.runs`, with original-address readout. The complete nonstopped input-phase/root composition is now proved by `CompactComplexInputPhasedRootExecution.root_runs`, retaining exact tensor input-phase readout, genuine halt, cleanup, true grids and one positive uniform coefficient with the joining edge paid. Output-phase readiness and execution on that same actual halted bank, complete phase/root/phase composition, and normalized Hadamard readout with an explicit factor are now proved by `CompactComplexPhasedRootExecution.root_runs`. Still physically execute the exact normalization, extend the joined wrapper to positive stopped and exponent-zero roots, derive the reservation/padding and unpadding layouts from the public input, and compose the original active-piece sequence for arbitrary non-power-of-arity `D`. Exponent-zero visits must use the existing actual one-coordinate kernel with the corresponding proved coordinate bridge. No phase, layout or corrected-input execution may be assumed as a callback.
 - Execute the final denominator conversion and truncation to exactly `layerOut p D K ρ S M zs`, in the original signed `w`-bit two's-complement format, replacing tape 1 in place and reclaiming internal tapes. Prove the literal output words; `SimultaneousLayerFacts` then supplies the disk/error consequences. Exact native dyadic output alone is not the requested `Q_p` output.
 - Bound the complete wrapper, reservation/fallback, native calls and final rounding by one `C * layerCost LP d r M w`, with one cutoff/program/coefficient before every admissible call. Derive actual guard/chunk/precision inequalities and absorb all native stage factors using `LayerParams.Valid` and `LayerAdmissible`, including their parameter bands. `LayerParams.Valid` has its own `layerTau`/beta constraints, so `Parameters.admissible` is not a parameter-compatibility proof. This quantitative and format bridge is required before invoking section 6's existing `Compatible` theorem.
 
@@ -1875,6 +1883,10 @@ boundary obligations are:
 
 | Subcomponent | Files | Mathematics | Tape | Notes |
 | --- | --- | --- | --- | --- |
+| NativeHadamardPhaseRootHeaders | `NativeHadamardPhaseRootHeaders` | ✅ | — | All fifteen original numeric words and head positions needed by the output phase derive from the literal root merger. Ready is retained on the same runtime-certified, uniform, public and input-phased halted root bank, without a post-root readiness premise. |
+| NativeHadamardPhaseOutputBank | `NativeHadamardPhaseOutputBank` | ✅ | ✅ | The existing fixed phase program runs on the actual clean returned root bank, using its retained header/source certificate. Projection and reindexing preserve every complementary tape/head and all appended scalar/basis workspace. Exact source replacement retains complete root cleanup and all header readiness with one positive native-volume coefficient. No canonical-bank equality or supplied execution is assumed. |
+| NativeHadamardPhaseCompletedGrid | `NativeHadamardPhaseCompletedGrid` | ✅ | — | Genuine Paths and the completed two-pass numerator growth derive strict signed guards inside the unchanged precision reservation. Exact emitted tensor-phase readout and the true output denominator/grid are retained, with no post-root safety or phase-compatibility premise. |
+| CompactComplexPhasedRootExecution | `CompactComplexPhasedRootExecution` | ✅ | ✅ | One fixed program executes input phase, complete nonstopped root and output phase from the original aligned bank. Same final halted source word, complete cleanup, retained raw headers, widths and true denominator/grid are certified. Its decoded readout times the explicit Gaussian-dyadic normalization is the normalized Hadamard tensor of every original row/polynomial/spectator slice. One positive coefficient selected solely from packingLimit pays all three traces and both joining edges in the original stage-factor bound. Physical normalization, stopped/scalar wrapper extension and MeetsLayer remain open. |
 | CompactComplexInputPhasedRootExecution | `CompactComplexInputPhasedRootExecution` | ✅ | ✅ | One fixed program executes the physical input phase followed by the entire nonstopped root from the original aligned bank, to the same actual halted output with source words, complete cleanup, widths and true denominator/grid. The output is exactly fullFrame applied to the tensor phase of each original row/polynomial/spectator slice; transformed-input guards/readiness derive from original Paths. One positive coefficient chosen solely from packingLimit pays both traces and the joining transition in the original stage-factor bound. Output-phase readiness/execution and normalization remain open. |
 | NativeHadamardPhaseFixed | `NativeHadamardPhaseFixed` | ✅ | ✅ | Internally selects one physical phase program before every shape, visit, word and polynomial width from the existing concrete compiler and universal checked run contract. Keeps its finite state count abstract during placement, without a supplied execution certificate or raised proof limits. |
 | NativeHadamardPhaseRootBank | `NativeHadamardPhaseRootBank` | ✅ | ✅ | The physical fixed phase runs on precisely the aligned originalBank used by public native root contracts, deriving all raw-header and source prerequisites from that same constructor. Exact replacement retains control, storage, auxiliary and every private suffix. The emitted phase on every original row/polynomial/spectator address is the root tensor correction, with original Path guards and uniform native-volume cost. Composing this input call with whole root execution, output-phase readiness at the actual final bank and normalization remain open. |
