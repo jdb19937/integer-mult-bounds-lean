@@ -19,15 +19,17 @@ chosen before quantifying over inputs.
 ## Status
 
 Section 5 remains open. Its complete scalar-prefix/stopped-call and original
-corrected-network orientation math milestones are proved. For a node whose
-children all stop, original coefficients and literal input ports now construct
-the actual event execution; its computed sink-corrected arrays have full tensor
-values on every original row, polynomial and spectator slice. Captured frames,
-immutable target, denominator coverage and the summed event budget are retained.
-Exact contracted and row-rejoined tensor values are now derived. The physical
-finalization programs retain their linear costs from actual cursor capacity;
-their execution and decoded return still need joining to the reached endpoint.
-Nonstopped recursive execution and uniform total runtime remain open. The stopped roundtrip's existing cost still includes its
+corrected-network orientation math milestones are proved. For a nonroot node
+whose children all stop, original coefficients and literal input ports now
+construct the event execution, physical sink correction, exact contraction,
+cyclic rejoin, post-orientation and genuine saved-PC return on one aligned
+table. The returned source contains the oriented normalized array with exact
+full tensor values on every original row, polynomial and spectator slice.
+The event schedule retains captured frames, immutable target and denominator
+coverage; return retains the older saved-call association. All event and
+finalization transitions are paid. Joining the initial
+corrected source-entry path, nonstopped recursive execution and uniform total
+runtime remain open. The stopped roundtrip's existing cost still includes its
 stopped-axis-count factor; the volume-only tape milestone remains open.
 Its recursive geometry math milestone is proved:
 canonical axis coverage, fitting descendant intervals, unique exhaustive child
