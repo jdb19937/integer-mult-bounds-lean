@@ -112,9 +112,15 @@ halted word, complete cleanup, retained phase headers and true grids. Output-pha
 readiness derives from that actual returned bank, and the completed two-pass grid
 supplies signed guards within the unchanged reservation. Decoded final readout
 times the explicit Gaussian-dyadic factor is the normalized Hadamard tensor;
-one positive fixed coefficient pays all traces and both joining edges. Physical
-normalization, stopped/scalar wrapper extension, public-format setup/rounding and
-arbitrary active-piece composition remain separate obligations. Actual axis growth now
+one positive fixed coefficient pays all traces and both joining edges.
+Native normalization now has a checked fixed in-place numerator stream pass:
+one sum/difference per coefficient, exact signed readout at the increased
+denominator, genuine EOF returns, source overwrite and complete scratch cleanup.
+The actual recursive Path derives its guards in the unchanged reservation,
+with one fixed volume-plus-header coefficient. Original native count synthesis,
+root placement and physical live-denominator advancement remain open, along
+with stopped/scalar wrapper extension, public-format setup/rounding and
+arbitrary active-piece composition. Actual axis growth now
 justifies eventual exclusion of nonstopped exponent-one nodes; finite small-input
 coverage remains separate. The stopped
 roundtrip's existing cost still includes its stopped-axis-count factor; the
