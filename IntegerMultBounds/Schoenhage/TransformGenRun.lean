@@ -152,4 +152,76 @@ theorem update_wbank_gslot (S0 : Fin 4 → WTape) (dec : Fin 𝕌 → WTape) (v 
         rw [Function.update_of_ne (fun e => hz (by
           apply Fin.ext; have := congrArg Fin.val e; simp at this ⊢; omega))]
 
+/-! ### Decoding the header -/
+
+theorem wb_cases {n : ℕ} (y : Fin (4 + n)) : (∃ k, y = Fin.castAdd n k) ∨ ∃ z, y = Fin.natAdd 4 z :=
+  Fin.addCases (motive := fun y => (∃ k, y = Fin.castAdd n k) ∨ ∃ z, y = Fin.natAdd 4 z)
+    (fun k => Or.inl ⟨k, rfl⟩) (fun z => Or.inr ⟨z, rfl⟩) y
+
+theorem decoded_zH (p d l K w : ℕ) (ts : List ℕ) :
+    decoded p d l K w ts zH = reg (transformHeader p d (2 ^ l) K w ts) := by
+  simp (config := {decide := true}) [decoded, decStart, Function.update_apply]
+
+/-- After decoding, the word bank by parts. -/
+theorem decState_eq (p d l K w : ℕ) (ts : List ℕ) (F : List Bool) :
+    decState (tL := tL) (nL := nL) p d l K w ts F =
+      wbank ![reg (transformHeader p d (2 ^ l) K w ts), reg F, emp, emp] (decoded p d l K w ts)
+        (fun _ => emp) (fun _ => emp) := by
+  unfold decState
+  apply upd_eq_of _ gslot_injective
+  · intro x
+    by_cases hx : x = zH
+    · subst hx
+      rw [show gslot tL nL zH = pt tL nL 0 by simp [gslot], wbank_pt, decoded_zH]; rfl
+    · exact wbank_gslot _ _ _ _ hx
+  · intro y hy
+    rcases wb_cases y with ⟨k, rfl⟩ | ⟨z, rfl⟩
+    · simp [wbank, wst]
+    · have hz := hy
+      simp only [wbank, wst, Fin.addCases_right]
+      split_ifs with h1 h2 h3 <;> try rfl
+      exfalso
+      have hz' : z.val - 50 < 91 := by omega
+      have hne : (⟨z.val - 50, hz'⟩ : Fin 𝕌) ≠ zH := fun e => by
+        have := congrArg Fin.val e; simp at this; omega
+      apply hz ⟨z.val - 50, hz'⟩
+      simp only [gslot, hne, if_false, drv]
+      apply Fin.ext; simp; omega
+
+/-- The header decoder on the ring product's bank inside the word bank. -/
+noncomputable def decStep (A tL nL : ℕ) : Cmd A (4 + DB tL nL) :=
+  .prim (Prim.liftE (Nat.zero_le A) (Prim.ofHoare (compile (a := 0) (by decide) TransformParams.decodeParams).2
+    (by decide))) (gslot tL nL) gslot_injective
+
+theorem runs_decStep {A : ℕ} {p d l K w : ℕ} {ts : List ℕ} (hp : 1 ≤ p) (hd : 1 ≤ d) (hK : 1 ≤ K) (hw : 1 ≤ w)
+    (hts : ∀ t ∈ ts, 1 ≤ t) (hD : ts.length = d - 1) (F : List Bool) :
+    Runs (decStep A tL nL) (wst ![reg (transformHeader p d (2 ^ l) K w ts), reg F, emp, emp] (fun _ => emp))
+      (· = decState p d l K w ts F)
+      (TransformParams.paramsCost p d (2 ^ l) K w (transformHeader p d (2 ^ l) K w ts).length ts.length l) := by
+  set hdr := transformHeader p d (2 ^ l) K w ts
+  have hcomp : wst ![reg hdr, reg F, emp, emp] (fun _ => emp) ∘ gslot tL nL = decStart hdr := by
+    funext x
+    simp only [Function.comp_apply, decStart]
+    by_cases hx : x = zH
+    · subst hx; simp [gslot, wst_pt]
+    · simp [gslot, hx, wst_drv]
+  have hz : ∀ x : Fin 𝕌, 64 ≤ x.val → x ≠ zH → decStart hdr x = emp := fun x _ hx => by simp [decStart, hx]
+  have hcl : Clean (decStart hdr) := by
+    funext i
+    have hi := i.isLt; change i.val < 64 at hi
+    have : ι i ≠ zH := fun e => by have := congrArg Fin.val e; simp at this; omega
+    simp [decStart, this]
+  obtain ⟨τ', k, hx, hq, hk⟩ := TransformParams.runs_decodeParams (l := l) hp hd hK hw hts hD (decStart hdr) hcl
+    (by simp [decStart, hdr]) (by simp (config := {decide := true}) [decStart])
+    (by simp (config := {decide := true}) [decStart]) (by simp (config := {decide := true}) [decStart])
+    (by simp (config := {decide := true}) [decStart]) (by simp (config := {decide := true}) [decStart])
+    (by simp (config := {decide := true}) [decStart]) (by simp (config := {decide := true}) [decStart])
+    (by simp (config := {decide := true}) [decStart])
+  subst hq
+  have hT : HoareTo (compile (a := 0) (by decide) TransformParams.decodeParams).2
+      (wst ![reg hdr, reg F, emp, emp] (fun _ => emp) ∘ gslot tL nL) (decoded p d l K w ts) k := by
+    rw [hcomp]
+    exact (compile_correct (by decide) hx).consequence (fun _ h => h) (fun _ h => h) le_rfl
+  exact (runs_ofHoare_liftE (Nat.zero_le A) _ (by decide) gslot_injective hT).mono (fun _ h => h) hk
+
 end IntegerMultBounds.Schoenhage
