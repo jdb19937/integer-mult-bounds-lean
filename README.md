@@ -58,7 +58,11 @@ grid. All transitions are paid by the actual schedule budget. Positive and
 exponent-zero stopped roots now execute their original leaf and retained
 empty-stack halt on the same aligned table, with exact emitted banks and
 all physical transitions paid. The reachable-execution row is complete;
-the uniform total runtime and named full-recursion milestones remain open. Actual axis growth now
+the uniform total runtime and named full-recursion milestones remain open.
+The actual schedule cost now splits exactly into its concrete local work and
+original nonstopped child-path sum. Actual scalar/stopped-prefix volume
+coefficients and the serialized child-volume quotient are proved; certified
+basis scaling and budget-invariant closure are the next runtime obligations. Actual axis growth now
 justifies eventual exclusion of nonstopped exponent-one nodes; finite small-input
 coverage remains separate. The stopped
 roundtrip's existing cost still includes its stopped-axis-count factor; the
