@@ -220,6 +220,8 @@ theorem exists_runtime_provider
     (growthReserve : CompactFramedScalarGrid.growthConstant ≤ growthConstant)
     (denominatorRoom : CompactComplexDenominatorCapacity.room CompactComplexDenominatorCapacity.scalarRows ≤ shape.chunk) :
     ∃ runtimeConstant : ℝ,0<runtimeConstant ∧
+    LocalBounds phaseCoordinate activeFits pair ell inputPrecision packingLimit guardPositive guardFitsChunk
+      chunkPositive packingFamily runtimeConstant ∧
     ∀ (childExponent : ℕ)
     {nodeLeft dependencyLevels frameVolume returnedVolume rowCount : ℕ}
     (path : Path shape.active nodeLeft (childExponent+2) dependencyLevels frameVolume returnedVolume)
@@ -259,7 +261,7 @@ theorem exists_runtime_provider
       guardPositive guardFitsChunk chunkPositive packingFamily invariant :=
     successor_runtime_invariant phaseCoordinate activeFits pair ell inputPrecision packingLimit
       guardPositive guardFitsChunk chunkPositive packingFamily runtimeConstant localBounds
-  refine ⟨runtimeConstant,constantPositive,?_⟩
+  refine ⟨runtimeConstant,constantPositive,localBounds,?_⟩
   intro childExponent nodeLeft dependencyLevels frameVolume returnedVolume rowCount path rowsPadded
   dsimp only
   obtain ⟨eventBudget,pathBudget,provider,runtimeCertificate⟩ :=

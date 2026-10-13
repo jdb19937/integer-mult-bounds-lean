@@ -69,8 +69,10 @@ actual completed-child path budget equals the checked fixed linear-volume
 boundary plus its event budget. The static runtime invariant now closes,
 and arbitrary-depth providers retain runtime certificates on their own
 selected budgets with one machine coefficient before every exponent and
-Path. Using those certified choices in the root schedule and deriving the
-final closed-form uniform estimate are the next runtime obligations. Actual axis growth now
+Path. Those certified choices now feed the actual node schedule and the
+same halted root bank and tensor output, with a real recurrence bound
+including the complete root boundary. Deriving the final closed-form
+uniform estimate remains the next runtime obligation. Actual axis growth now
 justifies eventual exclusion of nonstopped exponent-one nodes; finite small-input
 coverage remains separate. The stopped
 roundtrip's existing cost still includes its stopped-axis-count factor; the
