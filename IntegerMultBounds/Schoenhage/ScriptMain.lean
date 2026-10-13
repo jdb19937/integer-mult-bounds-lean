@@ -782,11 +782,11 @@ theorem hadWords_ch (p d w : ℕ) {ℓ K : ℕ} (ts : List ℕ) {h : ℕ} (hb : 
       [[true], chunkHdr p d (2 ^ ℓ) w (Nat.log 2 ts.prod) ts ℓ K h] := by
   simp only [hadWords, Nat.not_lt.mpr hb, ht, ↓reduceIte]
 
-/-- A bound on one slot body, for every kind. -/
+/-- A bound on one slot body, for every kind; the prefix words are counted only for prefix slots. -/
 def bodyCost (ℓ K : ℕ) (ts : List ℕ) (h : ℕ) (hdLen : ℕ) : ℕ :=
   2 * (ℓ - 1) + 2 * h + 30 + 1 + (2 * (longs ts ℓ).length + 2 * (ℓ - 1) + 2 * h + 200 +
     (clen [[false]] + 1 + (powOutCost (topExp ℓ K ts) + 1 + (2 * (longs ts ℓ).length + 10))) + twTopCost ℓ K ts +
-    hadPreCost ℓ K ts h + (clen [[true]] + 1 + (3 * hdLen + 15)) + twCost ℓ K ts h)
+    hadPreCost ℓ K ts (min h ((ℓ - 1) % K)) + (clen [[true]] + 1 + (3 * hdLen + 15)) + twCost ℓ K ts h)
 
 set_option maxHeartbeats 32000000 in
 /-- `runs_bodyF`: a forward slot appends its Hadamard and twist words; a chunk-group slot reads its
@@ -838,6 +838,7 @@ theorem runs_bodyF (p d w : ℕ) {ℓ K : ℕ} {ts : List ℕ} (hL : LayoutOK (2
         congr 2
         simp [twistWords]
       · unfold bodyCost
+        rw [Nat.min_eq_left hpre.le]
         simp only [clen, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, List.length_cons,
           List.length_nil]
         omega
@@ -935,6 +936,7 @@ theorem runs_bodyO (p d w : ℕ) {ℓ K : ℕ} {ts : List ℕ} (hL : LayoutOK (2
         congr 2
         simp
       · unfold bodyCost
+        rw [Nat.min_eq_left hpre.le]
         simp only [clen, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, List.length_cons,
           List.length_nil]
         omega
