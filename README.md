@@ -128,10 +128,15 @@ The literal committed live word and its volume allowance derive from the same
 reached root and original Path/ledger. The complete nonstopped phase/root/phase/
 normalization trace now gives exact normalized Hadamard readout with no external
 factor, actual advanced denominator, retained widths/grid/raw headers and one
-positive packing-limit-only runtime coefficient. Stopped/scalar extension,
-public-format parsing/reservation/padding and final rounding/restoration, public
-parameter compatibility and cost, and arbitrary active-piece composition remain
-open. Actual axis growth now
+positive packing-limit-only runtime coefficient. Positive stopped roots now
+execute both phases, their actual stopped leaf and physical normalization on
+that same fixed program and common coefficient, including depth-one visits.
+Original certificates derive all phase-modified readiness and the actual returned
+source/live words; exact normalized Hadamard readout, true leaf-target grid,
+widths, raw headers and complete cleanup are retained. Exponent-zero scalar
+wrapping, public-format parsing/reservation/padding and final rounding/restoration,
+public parameter compatibility and cost, and arbitrary active-piece composition
+remain open. Actual axis growth now
 justifies eventual exclusion of nonstopped exponent-one nodes; finite small-input
 coverage remains separate. The stopped
 roundtrip's existing cost still includes its stopped-axis-count factor; the
