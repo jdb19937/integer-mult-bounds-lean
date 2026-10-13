@@ -2813,3 +2813,5 @@ import IntegerMultBounds.Machine.CompactComplexSourceReadyStoppedNodeEntryReturn
 import IntegerMultBounds.Schoenhage.TransformCost
 import IntegerMultBounds.Schoenhage.TransformTarget
 import IntegerMultBounds.Schoenhage.ConvOfLayer
+import IntegerMultBounds.Schoenhage.LayoutSwapScan
+import IntegerMultBounds.Schoenhage.LayoutSwapTape
