@@ -182,6 +182,50 @@ private theorem lift_marker {controlStateCount elapsedSteps : ℕ}
   exact ⟨extend_run (Alphabet.program encoding controlProgram) suffix (Alphabet.map_success encoding controlProgram runSucceeded),
     extend_halt (Alphabet.program encoding controlProgram) suffix ((Alphabet.map_halt_iff encoding controlProgram haltedConfiguration).mpr halted)⟩
 
+/-- Lift the genuine empty-root classifier marker to the aligned fixed table.
+Preorientation is identity and the entire physical input bank is retained. -/
+theorem root_classifier_path
+    (basisProgram : Program ActivePrefixStageNative.tapes basisStateCount prime)
+    (headerStack pcStack liveStack : Fin stackCount)
+    (inputBank : Tapes (publicTapes stackCount roleCount) 2)
+    (leaf : Tapes leafTapes 2) (work : Tapes 10 2)
+    (scalar : Tapes CompactComplexSourceReadyScalarWorkspace.scratch 2)
+    (suffix : Tapes (localTapes roleCount) prime)
+    (stackEmpty : (bank inputBank leaf work).tape (savedSlot pcStack)
+      ((bank inputBank leaf work).head (savedSlot pcStack)-1)=blank)
+    (axes nodeExponent : ℕ) (axesPositive : 0<axes)
+    (guardReady : CompactComplexSourceReadyGuard.Ready inputBank)
+    (dimensionReady : inputBank.head CompactComplexSourceReadyGuard.dimension=1 ∧
+      inputBank.tape CompactComplexSourceReadyGuard.dimension=RadixZeroFill.encodedBinary (bits axes))
+    (exponentReady : inputBank.head CompactComplexSourceReadyGuard.exponent=1 ∧
+      inputBank.tape CompactComplexSourceReadyGuard.exponent=RadixZeroFill.encodedBinary (bits nodeExponent)) :
+    ∃ elapsedSteps≤CompactComplexSourceReadyGuard.setupCost axes nodeExponent+
+        CompactComplexSourceReadyGuard.cleanupCost axes nodeExponent+7+1,
+      CompactComplexAlignedChildEntryPath.path basisProgram headerStack pcStack liveStack
+        (controlPCFor originalCount schedule.length 0)
+        ((Alphabet.mapTapes encoding ((bank inputBank leaf work).append scalar)).append suffix) elapsedSteps
+        (controlPCFor originalCount schedule.length (if ComplexRecursiveCallSchema.stopped axes nodeExponent then 1 else 2))
+        ((Alphabet.mapTapes encoding ((bank inputBank leaf work).append scalar)).append suffix) := by
+  obtain ⟨elapsedSteps,classifierTimeBound,haltedConfiguration,classifierRunSucceeded,classifierHalted,
+      classifierEndpoint,classifierOutcome⟩ := CompactComplexSourceReadyOrientedControlsEntry.root_runs
+    pcStack inputBank leaf work scalar stackEmpty axes nodeExponent axesPositive guardReady dimensionReady exponentReady
+  obtain ⟨mappedRunSucceeded,mappedHalted⟩ := lift_marker
+    (CompactComplexSourceReadyOrientedControls.entry pcStack).2 ((bank inputBank leaf work).append scalar)
+    suffix haltedConfiguration classifierRunSucceeded classifierHalted
+  have classifierPath := Marker.canonical_path
+    (Nat.zero_lt_of_lt (CompactComplexSourceReadyAlignedActualTable.savedStackSlot pcStack).isLt)
+    (CompactComplexSourceReadyAlignedActualTable.savedStackSlot pcStack)
+    (CompactComplexActualCallFullAlignment.childReturn basisProgram headerStack liveStack)
+    (CompactComplexSourceReadyAlignedActualTable.controls pcStack)
+    (CompactComplexSourceReadyAlignedActualTable.event basisProgram headerStack pcStack liveStack)
+    (CompactComplexSourceReadyAlignedActualTable.classify pcStack)
+    ((Alphabet.mapTapes encoding ((bank inputBank leaf work).append scalar)).append suffix) elapsedSteps
+    ((Alphabet.mapConfig encoding haltedConfiguration).extend suffix) mappedRunSucceeded mappedHalted
+    (ComplexRecursiveCallSchema.stopped axes nodeExponent) classifierOutcome
+  refine ⟨elapsedSteps+1,Nat.add_le_add_right classifierTimeBound 1,?_⟩
+  exact Marker.endpoint _ classifierPath
+    (congrArg (fun candidateBank => (Alphabet.mapTapes encoding candidateBank).append suffix) classifierEndpoint)
+
 theorem classifier_path {shape : Shape} {rows polynomialExponent payloadPrecision childLeft nodeExponent levels frames returned : ℕ}
     (basisProgram : Program ActivePrefixStageNative.tapes basisStateCount prime)
     (headerStack pcStack liveStack : Fin stackCount) (call : ComplexRecursiveCallSchema.Call)

@@ -251,5 +251,83 @@ theorem runs {nodeLeft nodeExponent levels frames returned rows ell inputPrecisi
   rw [original_bank_public,original_bank_public]
   exact classifierPath
 
+/-- The genuine empty-root classifier enters tag two on the same original
+raw bank. Its identity preorientation and every control join are paid. -/
+theorem root_runs {nodeLeft nodeExponent levels frames returned rows ell inputPrecision : ℕ}
+    (basisProgram : Program ActivePrefixStageNative.tapes q prime)
+    (headerStack pcStack liveStack : Fin stackCount)
+    (stage : ActivePrefixStageParameters.Stage shape)
+    (entryPath : CompactRecursiveDependencyBudget.Path shape.active nodeLeft nodeExponent levels frames returned)
+    (coefficients : CompactSpectatorVisitGeometry.Array shape rows ell)
+    (rowsPositive : 0<rows) (guardPositive : 0<shape.guard) (axesPositive : 0<shape.axes)
+    (activeFitsAxes : shape.active≤shape.axes)
+    (control : Tapes 43 2) (queue : Tapes 1 2) (scalar : ActiveRepairRankHeadersCommands.State)
+    (tail : Tapes 22 2) (storage : Tapes (10+stackCount) 2) (auxiliary : Tapes 2 2)
+    (exponentReady : control.head 1=1 ∧ control.tape 1=BinaryDescriptorStack.descriptor (RecursiveChildQuotientsConstant.bits nodeExponent))
+    (stackEmpty : storage.tape (Fin.natAdd 10 pcStack)
+      (storage.head (Fin.natAdd 10 pcStack)-1)=blank)
+    (nodeNonstopped : Networks.ComplexRecursiveCallSchema.stopped shape.axes nodeExponent=false) :
+    ∃ elapsed≤(4*CompactComplexSourceReadyGuard.guardConstant+5)*
+        CompactNativeRoleTransferBudget.volume rows shape ell (ButterflyIndependentGuardHeaders.reservation shape.bits inputPrecision),
+      CompactComplexAlignedChildEntryPath.path basisProgram headerStack pcStack liveStack
+        (CompactComplexFixedNodeTable.controlPCFor CompactComplexScheduledPCLayout.originalCount
+          CompactComplexCompletedLiveLower.schedule.length 0)
+        (originalBank stage rows ell (ButterflyIndependentGuardHeaders.reservation shape.bits inputPrecision)
+          coefficients control queue scalar tail storage auxiliary) elapsed
+        (CompactComplexFixedNodeTable.controlPCFor CompactComplexScheduledPCLayout.originalCount
+          CompactComplexCompletedLiveLower.schedule.length 2)
+        (originalBank stage rows ell (ButterflyIndependentGuardHeaders.reservation shape.bits inputPrecision)
+          coefficients control queue scalar tail storage auxiliary) := by
+  let metadataPrecision := ButterflyIndependentGuardHeaders.reservation shape.bits inputPrecision
+  let publicBank := publicInput stage rows ell metadataPrecision coefficients control queue scalar tail storage auxiliary
+  have publicSavedPorts : publicBank.head (CompactComplexSourceReadyCorrectedSavedReturnPath.publicSaved pcStack)=
+      storage.head (Fin.natAdd 10 pcStack) ∧
+      publicBank.tape (CompactComplexSourceReadyCorrectedSavedReturnPath.publicSaved pcStack)=storage.tape (Fin.natAdd 10 pcStack) := by
+    simp only [publicBank,publicInput,CompactComplexSourceReadyCorrectedSavedReturnPath.publicSaved,
+      CompactComplexNonleafRoleChildBank.storage,CompactComplexSpectatorTargetBank.oldSlot,
+      CompactComplexControllerNativeFrame.storageSlot,bank,CompactComplexNativeRoleBridge.bank,
+      CompactComplexControllerNativeFrame.bank,Tapes.append,Fin.addCases_left,Fin.addCases_right]
+    exact ⟨True.intro,True.intro⟩
+  have actualStackEmpty : (CompactComplexSourceReadyWorkspace.ready publicBank).tape
+      (CompactComplexSourceReadyOrientationInvariants.savedSlot pcStack)
+      ((CompactComplexSourceReadyWorkspace.ready publicBank).head
+        (CompactComplexSourceReadyOrientationInvariants.savedSlot pcStack)-1)=blank := by
+    simp only [CompactComplexSourceReadyWorkspace.ready,CompactComplexSourceReadyWorkspace.bank,
+      CompactComplexSourceReadyOrientationInvariants.savedSlot,Tapes.append,Fin.addCases_left]
+    change publicBank.tape (CompactComplexSourceReadyCorrectedSavedReturnPath.publicSaved pcStack)
+      (publicBank.head (CompactComplexSourceReadyCorrectedSavedReturnPath.publicSaved pcStack)-1)=blank
+    rw [publicSavedPorts.1,publicSavedPorts.2]
+    exact stackEmpty
+  have dimensionReady : publicBank.head CompactComplexSourceReadyGuard.dimension=1 ∧
+      publicBank.tape CompactComplexSourceReadyGuard.dimension=
+      RadixZeroFill.encodedBinary (RecursiveChildQuotientsConstant.bits shape.axes) := by
+    exact numeric_ports control queue scalar (CompactComplexNativeCodec.raw stage rows ell metadataPrecision)
+      tail storage (CompactNativeRoleReservedBridge.sourcePayload shape rows ell coefficients roles) auxiliary 1
+  have controlPorts := CompactComplexSourceReadyScalarChildReadiness.entry_control control queue scalar
+    (CompactComplexNativeCodec.raw stage rows ell metadataPrecision) tail storage
+    (CompactNativeRoleReservedBridge.sourcePayload shape rows ell coefficients roles) auxiliary (SharedBank.empty 7 2) 1
+  have actualExponent : publicBank.head CompactComplexSourceReadyGuard.exponent=1 ∧
+      publicBank.tape CompactComplexSourceReadyGuard.exponent=
+      RadixZeroFill.encodedBinary (RecursiveChildQuotientsConstant.bits nodeExponent) := by
+    refine ⟨controlPorts.1.trans exponentReady.1,?_⟩
+    exact (controlPorts.2.trans exponentReady.2).trans (BinaryDescriptorStackRoundtrip.descriptor_encoded _)
+  obtain ⟨elapsed,elapsedBound,classifierPath⟩ := CompactComplexAlignedStoppedChildRun.root_classifier_path
+    basisProgram headerStack pcStack liveStack publicBank
+    (SharedBank.empty leafTapes 2) (SharedBank.empty 10 2)
+    (SharedBank.empty CompactComplexSourceReadyScalarWorkspace.scratch 2)
+    (SharedBank.empty (CompactComplexActualCallFullAlignment.localTapes roles) prime)
+    actualStackEmpty shape.axes nodeExponent axesPositive
+    (public_ready stage rows ell metadataPrecision coefficients control queue scalar tail storage auxiliary)
+    dimensionReady actualExponent
+  rw [nodeNonstopped] at classifierPath
+  refine ⟨elapsed,?_,?_⟩
+  · have guardBound := CompactComplexSourceReadyStoppedNodePath.guard_cost_from_visit entryPath.visit activeFitsAxes
+      rows ell metadataPrecision rowsPositive guardPositive
+    have volumePositive : 0<CompactNativeRoleTransferBudget.volume rows shape ell metadataPrecision :=
+      Nat.mul_pos rowsPositive (CompactNativeRoleTransferBudget.symbols_pos shape ell metadataPrecision)
+    exact elapsedBound.trans (by nlinarith)
+  · simp only [original_bank_public]
+    exact classifierPath
+
 end
 end IntegerMultBounds.Machine.CompactComplexAlignedNonleafClassifierPrefix

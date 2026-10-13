@@ -46,8 +46,12 @@ stopped loop now specializes the shared mixed loop with its original assumptions
 and cost, removing the duplicate loop proof. Pure recombination lives below
 recursive execution, avoiding an import cycle. Genuine Paths derive the
 additional child-volume fit and descendant row guards from original padding.
-Node-exponent induction must still construct the smaller providers internally,
-and the uniform total runtime remains open. Actual axis growth now
+Node-exponent induction now constructs the smaller providers internally with
+fixed static budgets. The complete arbitrary-depth mixed schedule retains exact
+compiler values, settled frames and target coverage without a child-execution
+or child-tensor premise. Actual serialization supplies eventual descendant
+packing. Empty-root classification and finalization/halting paths are checked;
+assembly from the literal root input and the uniform total runtime remain open. Actual axis growth now
 justifies eventual exclusion of nonstopped exponent-one nodes; finite small-input
 coverage remains separate. The stopped
 roundtrip's existing cost still includes its stopped-axis-count factor; the
