@@ -82,8 +82,10 @@ uniform stage-factor bound with one positive machine constant independent
 of geometry and depth. The same selected coefficient is now retained through
 provider, node and root execution; the actual nonstopped halted trace and
 exact tensor output have one fixed positive uniform runtime coefficient
-before every geometry and input bank. Stopped-root uniform integration,
-workspace cleanup exposure and the final named interfaces remain open. Actual axis growth now
+before every geometry and input bank. The positive and exponent-zero
+stopped roots now use that same common coefficient on their actual halted
+traces with the original stage factor. The actual uniform-runtime row is
+complete; workspace cleanup exposure and the final named interfaces remain open. Actual axis growth now
 justifies eventual exclusion of nonstopped exponent-one nodes; finite small-input
 coverage remains separate. The stopped
 roundtrip's existing cost still includes its stopped-axis-count factor; the

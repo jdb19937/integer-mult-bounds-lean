@@ -1,6 +1,6 @@
 module
 
-public import IntegerMultBounds.Machine.CompactComplexUniformRuntimeCoefficient
+public import IntegerMultBounds.Machine.CompactComplexUniformRootConstant
 public import IntegerMultBounds.Machine.CompactComplexAlignedNonleafClassifierPrefix
 public import IntegerMultBounds.Machine.CompactComplexSourceReadyNormalizedBoundary
 
@@ -42,13 +42,10 @@ variable {stackCount basisStateCount : ℕ} {shape : Shape}
 
 /-- The complete runtime coefficient depends only on the fixed packing limit,
 not on node geometry, inputs, exponents, banks or saved-call histories. -/
-def constant (packingLimit : ℕ) : ℝ :=
-  CompactComplexUniformRuntimeCoefficient.machineConstant
-    (CompactComplexActualProviderRuntime.uniformBasisConstant packingLimit)
+def constant (packingLimit : ℕ) : ℝ := CompactComplexUniformRootConstant.constant packingLimit
 
 theorem constant_positive (packingLimit : ℕ) : 0<constant packingLimit :=
-  CompactComplexUniformRuntimeCoefficient.machine_constant_positive _
-    (CompactComplexActualProviderRuntime.uniform_basis_constant_positive packingLimit).le
+  CompactComplexUniformRootConstant.constant_positive packingLimit
 
 /-- The same literal nonstopped root halts with exact original tensor output
 and the uniform stage-factor bound using the fixed coefficient above. -/
@@ -159,7 +156,10 @@ theorem root_runs
       (ButterflyIndependentGuardHeaders.reservation shape.bits inputPrecision)) nodeNonstopped
   have actualUniformBound := runtimeBound.trans uniformBound
   rw [fixedConstantEq] at actualUniformBound
-  exact ⟨childPathBudget,elapsedSteps,outputBank,outputArray,naturalBound,actualUniformBound,rootRun,
+  have commonBound := CompactComplexUniformRootConstant.nonstopped_bound packingLimit shape (childExponent+1)
+    (CompactNativeRoleTransferBudget.volume rowCount shape polynomialExponent
+      (ButterflyIndependentGuardHeaders.reservation shape.bits inputPrecision))
+  exact ⟨childPathBudget,elapsedSteps,outputBank,outputArray,naturalBound,actualUniformBound.trans commonBound,rootRun,
     outputSource,outputHead,outputWidth,outputGrid,outputTensor⟩
 
 end

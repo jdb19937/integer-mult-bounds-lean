@@ -32,6 +32,11 @@ def stageFactor (shape : Shape) (exponent : ℕ) : ℝ :=
     ((shape.axes : ℝ)^(Parameters.beta*(1-Parameters.sigma))+
       (shape.guard : ℝ)^Parameters.tau*(shape.axes : ℝ)^(Parameters.beta*(Parameters.tau-Parameters.sigma)))
 
+theorem stage_factor_nonnegative (shape : Shape) (exponent : ℕ) : 0≤stageFactor shape exponent :=
+  mul_nonneg (Real.rpow_nonneg (Nat.cast_nonneg _) _)
+    (add_nonneg (Real.rpow_nonneg (Nat.cast_nonneg _) _)
+      (mul_nonneg (Real.rpow_nonneg (Nat.cast_nonneg _) _) (Real.rpow_nonneg (Nat.cast_nonneg _) _)))
+
 private theorem normalize_algebra (fixedRoot leaf fixedLocal basis guard localSum width sigma tau : ℝ)
     (widthPositive : 0<width) :
     (fixedRoot+leaf*width+(basis*guard+(fixedLocal+basis*guard)*localSum)*width^tau)/width^sigma=
