@@ -166,6 +166,7 @@ theorem exists_root_execution_with_runtime
     ∃ childPathBudget : ComplexRecursiveCallSchema.Call → ℕ,
     ∃ elapsedSteps,∃ outputBank : Tapes (CompactComplexSourceReadyWorkspace.tapes stackCount roles) 2,
     ∃ outputArray : Array shape rowCount polynomialExponent,
+      CompactComplexRootWorkspaceClean.Clean outputBank ∧
       elapsedSteps≤(4*CompactComplexSourceReadyGuard.guardConstant+5)*
           CompactNativeRoleTransferBudget.volume rowCount shape polynomialExponent metadataPrecision+
         entryCost shape rowCount polynomialExponent metadataPrecision+
@@ -240,6 +241,8 @@ theorem exists_root_execution_with_runtime
   rw [terminalTarget] at joinedNormalized
   let outputArray := joined finalBoundary.state.reached stageSlots rolesDivideRows
   let outputBank := rootEndpoint finalBoundary.state.reached stageSlots rolesDivideRows
+  have outputClean := CompactComplexAlignedReachedFinalReturn.root_endpoint_clean
+    finalBoundary.state.reached stageSlots rolesDivideRows
   have outputSource := CompactComplexAlignedReachedFinalReturn.root_endpoint_source finalBoundary.state.reached stageSlots rolesDivideRows
   have stackEmpty : originalStorage.tape (Fin.natAdd 10 pcStack)
       (originalStorage.head (Fin.natAdd 10 pcStack)-1)=blank := by
@@ -272,7 +275,7 @@ theorem exists_root_execution_with_runtime
   have actualTimeReal := Nat.cast_le (α:=ℝ).mpr actualTimeBound
   push_cast at actualTimeReal
   refine ⟨runtimeConstant,constantPositive,fixedConstantEq,childPathBudget,elapsedSteps,outputBank,outputArray,
-    actualTimeBound,?_,rootRun,outputSource.1,outputSource.2,?_,?_,?_⟩
+    outputClean,actualTimeBound,?_,rootRun,outputSource.1,outputSource.2,?_,?_,?_⟩
   · dsimp only [prefixBudget] at actualTimeReal
     push_cast at actualTimeReal
     nlinarith only [actualTimeReal,boundaryReal,scheduleBound]
@@ -370,7 +373,7 @@ theorem exists_root_execution
               (CompactComplexNonleafChildAddress.insert phaseCoordinate entryPath.visit globalAnchor tensorAddress) polynomialIndex)))
           (CompactComplexNonleafChildAddress.address phaseCoordinate entryPath.visit globalAnchor) := by
   obtain ⟨runtimeConstant,constantPositive,fixedConstantEq,childPathBudget,elapsedSteps,outputBank,outputArray,
-    naturalBound,runtimeBound,rootRun,outputSource,outputHead,outputWidth,outputGrid,outputTensor⟩ :=
+    outputClean,naturalBound,runtimeBound,rootRun,outputSource,outputHead,outputWidth,outputGrid,outputTensor⟩ :=
     exists_root_execution_with_runtime phaseCoordinate activeFits pair polynomialExponent inputPrecision baselinePrecision
       growthConstant baselineLive packingLimit guardPositive guardFitsChunk basisProgram headerStack pcStack liveStack basisConstant
       basisRuns largeAxes activePositive axesPositive chunkPositive unitPayload packingFamily childChunkRoom scalarChunkRoom

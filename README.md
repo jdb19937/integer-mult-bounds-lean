@@ -85,7 +85,10 @@ exact tensor output have one fixed positive uniform runtime coefficient
 before every geometry and input bank. The positive and exponent-zero
 stopped roots now use that same common coefficient on their actual halted
 traces with the original stage factor. The actual uniform-runtime row is
-complete; workspace cleanup exposure and the final named interfaces remain open. Actual axis growth now
+complete. The same nonstopped output now carries explicit cleanup of every
+role, entry-frame, leaf, work, scalar and basis tape, with zero heads.
+Stopped-root input-cleanliness integration and the final named interfaces
+remain open. Actual axis growth now
 justifies eventual exclusion of nonstopped exponent-one nodes; finite small-input
 coverage remains separate. The stopped
 roundtrip's existing cost still includes its stopped-axis-count factor; the

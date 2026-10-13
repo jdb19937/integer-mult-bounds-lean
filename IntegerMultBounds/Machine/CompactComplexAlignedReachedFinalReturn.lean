@@ -6,6 +6,7 @@ public import IntegerMultBounds.Machine.CompactComplexAlignedReturnedDormantFram
 public import IntegerMultBounds.Machine.CompactComplexAlignedPoppedReturnReadiness
 public import IntegerMultBounds.Machine.CompactComplexAlignedSavedReturnPath
 public import IntegerMultBounds.Machine.CompactComplexAlignedRootFinal
+public import IntegerMultBounds.Machine.CompactComplexRootWorkspaceClean
 public import IntegerMultBounds.Machine.CompactComplexSourceReadyReachedCursorGuards
 public import IntegerMultBounds.Machine.CompactComplexSourceReadyReachedEventFrameState
 
@@ -189,6 +190,15 @@ theorem root_endpoint_source :
     (CompactComplexSourceReadyCompletedChildBoundary.joined reached slotsCorrect rowsDivisible)
     (CompactComplexSourceReadyCompletedChildBoundary.returnEntry reached slotsCorrect)
     (SharedBank.empty CompactComplexSourceReadyWorkspace.leafTapes 2)
+
+/-- The same literal root endpoint reclaims every role payload, private
+entry frame, complete leaf workspace and work suffix with origin heads. -/
+theorem root_endpoint_clean :
+    CompactComplexRootWorkspaceClean.Clean (rootEndpoint reached slotsCorrect rowsDivisible) :=
+  CompactComplexRootWorkspaceClean.endpoint_clean shape rows ell metadataPrecision
+    stage.rho stage.left stage.f stage.slots stage.right stage.source.val stage.target.val
+    (CompactComplexSourceReadyCompletedChildBoundary.joined reached slotsCorrect rowsDivisible)
+    (CompactComplexSourceReadyCompletedChildBoundary.returnEntry reached slotsCorrect)
 
 /-- The actual root saved association supplies its literal empty guard cell. -/
 theorem root_stack_empty : reached.storage.tape (Fin.natAdd 10 pcStack)
