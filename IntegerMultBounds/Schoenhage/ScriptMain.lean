@@ -497,6 +497,491 @@ noncomputable def hadChF : Cmd 0 37 := .seq (emit [[true]] mO) (readBack mHD mO 
 /-- A chunk-group slot's Hadamard words, opposite: `[true]`, then the header under the head. -/
 noncomputable def hadChO : Cmd 0 37 := .seq (emit [[true]] mO) (cpy mHD mO (by decide))
 
+/-! ### Slot states -/
+
+theorem mst_update_O (ℓ K : ℕ) (ts : List ℕ) (hd o tt : WTape) (h : ℕ) (o' : WTape) :
+    Function.update (mst ℓ K ts hd o tt h) mO o' = mst ℓ K ts hd o' tt h := by
+  funext i; fin_cases i <;> tsimp [mst]
+
+theorem mst_update_HD (ℓ K : ℕ) (ts : List ℕ) (hd o tt : WTape) (h : ℕ) (hd' : WTape) :
+    Function.update (mst ℓ K ts hd o tt h) mHD hd' = mst ℓ K ts hd' o tt h := by
+  funext i; fin_cases i <;> tsimp [mst]
+
+theorem mst_update_T (ℓ K : ℕ) (ts : List ℕ) (hd o tt : WTape) (h : ℕ) (tt' : WTape) :
+    Function.update (mst ℓ K ts hd o tt h) mT tt' = mst ℓ K ts hd o tt' h := by
+  funext i; fin_cases i <;> tsimp [mst]
+
+@[simp] theorem mst_O (ℓ K : ℕ) (ts : List ℕ) (hd o tt : WTape) (h : ℕ) : mst ℓ K ts hd o tt h mO = o := by
+  tsimp [mst]
+
+@[simp] theorem mst_HD (ℓ K : ℕ) (ts : List ℕ) (hd o tt : WTape) (h : ℕ) : mst ℓ K ts hd o tt h mHD = hd := by
+  tsimp [mst]
+
+@[simp] theorem mst_T (ℓ K : ℕ) (ts : List ℕ) (hd o tt : WTape) (h : ℕ) : mst ℓ K ts hd o tt h mT = tt := by
+  tsimp [mst]
+
+theorem runs_emitO (ℓ K : ℕ) (ts : List ℕ) (hd tt : WTape) (h : ℕ) (acc ws : List (List Bool)) :
+    Runs (a := 0) (emit ws mO) (mst ℓ K ts hd ⟨acc, []⟩ tt h)
+      (· = mst ℓ K ts hd ⟨ws.reverse ++ acc, []⟩ tt h) (clen ws) := by
+  have := runs_emit (a := 0) ws mO (mst ℓ K ts hd ⟨acc, []⟩ tt h) (by simp)
+  rw [mst_O, mst_update_O] at this
+  exact this
+
+theorem runs_cpyRegO {r : Fin 37} (hr : r ≠ mO) (ℓ K : ℕ) (ts : List ℕ) (hd tt : WTape) (h : ℕ)
+    (acc : List (List Bool)) {u : List Bool} (hu : mst ℓ K ts hd ⟨acc, []⟩ tt h r = reg u) :
+    Runs (a := 0) (ScriptOps.cpyReg r mO hr) (mst ℓ K ts hd ⟨acc, []⟩ tt h)
+      (· = mst ℓ K ts hd ⟨u :: acc, []⟩ tt h) (2 * u.length + 10) := by
+  have := ScriptOps.runs_cpyReg (a := 0) hr (mst ℓ K ts hd ⟨acc, []⟩ tt h) (M := acc) hu (by simp)
+  rw [mst_update_O] at this
+  exact this
+
+/-! ### The Hadamard words of each kind -/
+
+/-- The cost of `powOut`. -/
+def powOutCost (e : ℕ) : ℕ :=
+  e * (8 * 2 ^ e + 50) + 6 * e + 30 + 1 + (2 ^ e + 3 + 1 + (2 ^ e + 6 + 1 + (2 * (2 ^ e + 1) + 2)))
+
+/-- The top slot's exponent `ℓ + 1 + topBase`. -/
+def topExp (ℓ K : ℕ) (ts : List ℕ) : ℕ := ℓ + 1 + (ℓ - 1) / K * (ts.length * K) + (ℓ - 1) % K * ts.length
+
+theorem runs_hadTop (ℓ K : ℕ) (ts : List ℕ) (hd tt : WTape) (h : ℕ) (acc : List (List Bool)) :
+    Runs hadTop (mst ℓ K ts hd ⟨acc, []⟩ tt h)
+      (· = mst ℓ K ts hd ⟨ones (longs ts ℓ).length :: ones (2 ^ topExp ℓ K ts) :: [false] :: acc, []⟩ tt h)
+      (clen [[false]] + 1 + (powOutCost (topExp ℓ K ts) + 1 + (2 * (longs ts ℓ).length + 10))) := by
+  have s1 := runs_emitO ℓ K ts hd tt h acc [[false]]
+  have s2 := runs_powOut (show mET ≠ mPK by decide) (show mET ≠ mPW by decide) (by decide) (by decide)
+    (by decide) (mst ℓ K ts hd ⟨[[false]].reverse ++ acc, []⟩ tt h) (e := topExp ℓ K ts)
+    (acc := [[false]].reverse ++ acc) (by tsimp [mst, mconst, topExp])
+    (by tsimp [mst, mconst]) (by tsimp [mst, mconst]) (by tsimp [mst, mconst])
+    (by tsimp [mst, mconst]) (by simp)
+  rw [mst_update_O] at s2
+  have s3 := runs_cpyRegO (show mLL ≠ mO by decide) ℓ K ts hd tt h (ones (2 ^ topExp ℓ K ts) ::
+    [[false]].reverse ++ acc) (u := ones (longs ts ℓ).length) (by tsimp [mst, mconst])
+  exact (Runs.then s1 (Runs.then s2 s3)).mono (fun σ' e => by rw [e]; rfl) (by simp [powOutCost])
+
+/-- The prefix exponent of slot `h`: `ℓ + 1 + prefixBase`. -/
+def preExp (ℓ K : ℕ) (ts : List ℕ) (h : ℕ) : ℕ := ℓ + 1 + (ℓ - 1) / K * (ts.length * K) + h * ts.length
+
+/-- A bound on the prefix slot's Hadamard words. -/
+def hadPreCost (ℓ K : ℕ) (ts : List ℕ) (h : ℕ) : ℕ :=
+  8 * preExp ℓ K ts h + powOutCost (preExp ℓ K ts h) + 2 * ts.length + 100
+
+set_option maxHeartbeats 16000000 in
+theorem runs_hadPre (ℓ K : ℕ) (ts : List ℕ) (hd tt : WTape) (h : ℕ) (acc : List (List Bool)) :
+    Runs hadPre (mst ℓ K ts hd ⟨acc, []⟩ tt h)
+      (· = mst ℓ K ts hd ⟨ones ts.length :: ones (2 ^ preExp ℓ K ts h) :: [false] :: acc, []⟩ tt h)
+      (hadPreCost ℓ K ts h) := by
+  obtain ⟨E0, hE0⟩ : ∃ E0, E0 = ℓ + 1 + (ℓ - 1) / K * (ts.length * K) := ⟨_, rfl⟩
+  have s1 := runs_emitO ℓ K ts hd tt h acc [[false]]
+  set σ₁ := mst ℓ K ts hd ⟨[[false]].reverse ++ acc, []⟩ tt h with hσ₁
+  have s2 := runs_regDup (a := 0) (show mE0 ≠ mEX by decide) σ₁ (w := ones E0) (by tsimp [hσ₁, mst, mconst, hE0])
+    (by tsimp [hσ₁, mst, mconst])
+  set σ₂ := Function.update σ₁ mEX (reg (ones E0)) with hσ₂
+  have s3 := runs_skp (a := 0) (show mEX ≠ mJ by decide) σ₂ (by tsimp [hσ₂, reg]) (by tsimp [hσ₂, hσ₁, mst, mconst])
+  set σ₃ := Function.update σ₂ mEX ⟨[ones E0], []⟩ with hσ₃
+  have e3 : Function.update σ₂ mEX (σ₂ mEX).next = σ₃ := by tsimp [hσ₃, hσ₂, reg]
+  rw [e3] at s3
+  have s4 := runs_appendReg (a := 0) (show mHDD ≠ mEX by decide) σ₃ (u := ones (h * ts.length)) (v := ones E0)
+    (M := []) (by tsimp [hσ₃, hσ₂, hσ₁, mst]) (by tsimp [hσ₃])
+  set σ₄ := Function.update σ₃ mEX ⟨[ones (preExp ℓ K ts h)], []⟩ with hσ₄
+  have e4 : Function.update σ₃ mEX ⟨(ones E0 ++ ones (h * ts.length)) :: [], []⟩ = σ₄ := by
+    rw [hσ₄, ones_append_ones, hE0]; rfl
+  rw [e4] at s4
+  have s5 := runs_rewind' (a := 0) mEX σ₄ (L := [ones (preExp ℓ K ts h)]) (R := []) (by tsimp [hσ₄])
+  set σ₅ := Function.update σ₄ mEX (reg (ones (preExp ℓ K ts h))) with hσ₅
+  have e5 : Function.update σ₄ mEX ⟨[], [ones (preExp ℓ K ts h)].reverse ++ []⟩ = σ₅ := by tsimp [hσ₅, reg]
+  rw [e5] at s5
+  have s6 := runs_powOut (show mEX ≠ mPK by decide) (show mEX ≠ mPW by decide) (by decide) (by decide)
+    (by decide) σ₅ (e := preExp ℓ K ts h) (acc := [[false]].reverse ++ acc) (by tsimp [hσ₅])
+    (by tsimp [hσ₅, hσ₄, hσ₃, hσ₂, hσ₁, mst, mconst]) (by tsimp [hσ₅, hσ₄, hσ₃, hσ₂, hσ₁, mst, mconst])
+    (by tsimp [hσ₅, hσ₄, hσ₃, hσ₂, hσ₁, mst, mconst]) (by tsimp [hσ₅, hσ₄, hσ₃, hσ₂, hσ₁, mst, mconst])
+    (by tsimp [hσ₅, hσ₄, hσ₃, hσ₂, hσ₁, mst])
+  set σ₆ := Function.update σ₅ mO ⟨ones (2 ^ preExp ℓ K ts h) :: [[false]].reverse ++ acc, []⟩ with hσ₆
+  have s7 := runs_clear' (a := 0) mEX σ₆ (T := reg (ones (preExp ℓ K ts h))) (by tsimp [hσ₆, hσ₅])
+  set σ₇ := mst ℓ K ts hd ⟨ones (2 ^ preExp ℓ K ts h) :: [[false]].reverse ++ acc, []⟩ tt h with hσ₇
+  have e7 : Function.update σ₆ mEX emp = σ₇ := by
+    funext i; fin_cases i <;> tsimp [hσ₇, hσ₆, hσ₅, hσ₄, hσ₃, hσ₂, hσ₁, mst, mconst, emp]
+  rw [e7] at s7
+  have s8 := runs_cpyRegO (show mN ≠ mO by decide) ℓ K ts hd tt h (ones (2 ^ preExp ℓ K ts h) ::
+    [[false]].reverse ++ acc) (u := ones ts.length) (by tsimp [mst, mconst])
+  refine (Runs.then s1 (Runs.then s2 (Runs.then s3 (Runs.then s4 (Runs.then s5 (Runs.then s6 (Runs.then s7
+    s8))))))).mono (fun σ' e => by rw [e]; rfl) ?_
+  have hpe : preExp ℓ K ts h = E0 + h * ts.length := by rw [hE0]; rfl
+  have hc : (σ₂ mEX).cur.length = E0 := by tsimp [hσ₂, reg]
+  simp only [hadPreCost, clen, WTape.words, reg, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil,
+    length_ones, List.length_cons, List.length_nil, List.reverse_nil, List.nil_append, List.reverse_cons,
+    List.append_nil]
+  unfold powOutCost
+  omega
+
+theorem runs_hadChF (ℓ K : ℕ) (ts : List ℕ) (tt : WTape) (h : ℕ) (acc L R : List (List Bool)) (w : List Bool) :
+    Runs hadChF (mst ℓ K ts ⟨w :: L, R⟩ ⟨acc, []⟩ tt h)
+      (· = mst ℓ K ts ⟨L, w :: R⟩ ⟨w :: [true] :: acc, []⟩ tt h) (clen [[true]] + 1 + (3 * w.length + 15)) := by
+  have s1 := runs_emitO ℓ K ts ⟨w :: L, R⟩ tt h acc [[true]]
+  have s2 := runs_readBack (a := 0) (show mHD ≠ mO by decide)
+    (mst ℓ K ts ⟨w :: L, R⟩ ⟨[[true]].reverse ++ acc, []⟩ tt h) (w := w) (L := L) (R := R)
+    (M := [[true]].reverse ++ acc) (by simp) (by simp)
+  rw [mst_update_HD, mst_update_O] at s2
+  exact (Runs.then s1 s2).mono (fun σ' e => by rw [e]; rfl) le_rfl
+
+theorem runs_hadChO (ℓ K : ℕ) (ts : List ℕ) (tt : WTape) (h : ℕ) (acc L R : List (List Bool)) (w : List Bool) :
+    Runs hadChO (mst ℓ K ts ⟨L, w :: R⟩ ⟨acc, []⟩ tt h)
+      (· = mst ℓ K ts ⟨w :: L, R⟩ ⟨w :: [true] :: acc, []⟩ tt h) (clen [[true]] + 1 + (w.length + 6)) := by
+  have s1 := runs_emitO ℓ K ts ⟨L, w :: R⟩ tt h acc [[true]]
+  have s2 := runs_cpy (a := 0) (show mHD ≠ mO by decide) (mst ℓ K ts ⟨L, w :: R⟩ ⟨[[true]].reverse ++ acc, []⟩ tt h)
+    (by simp) (by simp)
+  simp only [mst_HD, mst_O, WTape.next_mk, WTape.cur_mk, List.headD_cons, List.tail_cons, WTape.put_false]
+    at s2
+  rw [mst_update_HD, mst_update_O] at s2
+  exact (Runs.then s1 s2).mono (fun σ' e => by rw [e]; rfl) le_rfl
+
+/-! ### The slot counter -/
+
+/-- Forward: lower `h` and `h·D` by one slot. -/
+noncomputable def decF : Cmd 0 37 :=
+  .seq (dropReg mH mKC mTmp (by decide) (by decide) (by decide)) <| .seq (clear mH) <|
+  .seq (regMove mTmp mH (by decide)) <| .seq (dropReg mHDD mN mTmp (by decide) (by decide) (by decide)) <|
+  .seq (clear mHDD) (regMove mTmp mHDD (by decide))
+
+/-- Opposite: raise `h` and `h·D` by one slot. -/
+noncomputable def incO : Cmd 0 37 :=
+  .seq (skp mH mJ (by decide)) <| .seq (appendReg mKC mH (by decide)) <| .seq (rewind mH) <|
+  .seq (skp mHDD mJ (by decide)) <| .seq (appendReg mN mHDD (by decide)) (rewind mHDD)
+
+/-- A bound on a counter step. -/
+def decCost (D h : ℕ) : ℕ := 20 * h + 20 * D + 20 * (h * D) + 400
+
+set_option maxHeartbeats 16000000 in
+theorem runs_decF (ℓ K : ℕ) (ts : List ℕ) (hd o tt : WTape) (h : ℕ) :
+    Runs decF (mst ℓ K ts hd o tt h) (· = mst ℓ K ts hd o tt (h - 1)) (decCost ts.length h) := by
+  set σ := mst ℓ K ts hd o tt h with hσ
+  have s1 := runs_dropReg (a := 0) (show mH ≠ mKC by decide) (show mH ≠ mTmp by decide)
+    (show mKC ≠ mTmp by decide) σ (u := ones h) (v := [true]) (by tsimp [hσ, mst, mconst])
+    (by tsimp [hσ, mst, mconst]) (by tsimp [hσ, mst, mconst])
+  set σ₁ := Function.update σ mTmp (reg (ones (h - 1))) with hσ₁
+  have e1 : Function.update σ mTmp (reg ((ones h).drop [true].length)) = σ₁ := by
+    rw [hσ₁, List.length_singleton, drop_ones]
+  rw [e1] at s1
+  have s2 := runs_clear' (a := 0) mH σ₁ (T := reg (ones h)) (by tsimp [hσ₁, hσ, mst])
+  set σ₂ := Function.update σ₁ mH emp with hσ₂
+  have s3 := runs_regMove (a := 0) (show mTmp ≠ mH by decide) σ₂ (w := ones (h - 1)) (by tsimp [hσ₂, hσ₁])
+    (by tsimp [hσ₂])
+  set σ₃ := Function.update (Function.update σ₂ mTmp emp) mH (reg (ones (h - 1))) with hσ₃
+  have s4 := runs_dropReg (a := 0) (show mHDD ≠ mN by decide) (show mHDD ≠ mTmp by decide)
+    (show mN ≠ mTmp by decide) σ₃ (u := ones (h * ts.length)) (v := ones ts.length)
+    (by tsimp [hσ₃, hσ₂, hσ₁, hσ, mst]) (by tsimp [hσ₃, hσ₂, hσ₁, hσ, mst, mconst]) (by tsimp [hσ₃])
+  set σ₄ := Function.update σ₃ mTmp (reg (ones ((h - 1) * ts.length))) with hσ₄
+  have e4 : Function.update σ₃ mTmp (reg ((ones (h * ts.length)).drop (ones ts.length).length)) = σ₄ := by
+    rw [hσ₄, length_ones, drop_ones, Nat.sub_one_mul]
+  rw [e4] at s4
+  have s5 := runs_clear' (a := 0) mHDD σ₄ (T := reg (ones (h * ts.length))) (by tsimp [hσ₄, hσ₃, hσ₂, hσ₁, hσ, mst])
+  set σ₅ := Function.update σ₄ mHDD emp with hσ₅
+  have s6 := runs_regMove (a := 0) (show mTmp ≠ mHDD by decide) σ₅ (w := ones ((h - 1) * ts.length))
+    (by tsimp [hσ₅, hσ₄]) (by tsimp [hσ₅])
+  refine (Runs.then s1 (Runs.then s2 (Runs.then s3 (Runs.then s4 (Runs.then s5 s6))))).mono
+    (fun σ' e => ?_) ?_
+  · rw [e]
+    funext i; fin_cases i <;> tsimp [hσ₅, hσ₄, hσ₃, hσ₂, hσ₁, hσ, mst, mconst, emp]
+  · have h1 : (h - 1) * ts.length ≤ h * ts.length := Nat.mul_le_mul_right _ (by omega)
+    have h2 : h - 1 ≤ h := by omega
+    simp only [decCost, clen, WTape.words, reg, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil,
+      length_ones, List.length_cons, List.length_nil, List.reverse_nil, List.nil_append]
+    omega
+
+set_option maxHeartbeats 16000000 in
+theorem runs_incO (ℓ K : ℕ) (ts : List ℕ) (hd o tt : WTape) (h : ℕ) :
+    Runs incO (mst ℓ K ts hd o tt h) (· = mst ℓ K ts hd o tt (h + 1)) (decCost ts.length (h + 1)) := by
+  set σ := mst ℓ K ts hd o tt h with hσ
+  have s1 := runs_skp (a := 0) (show mH ≠ mJ by decide) σ (by tsimp [hσ, mst, reg]) (by tsimp [hσ, mst, mconst])
+  set σ₁ := Function.update σ mH ⟨[ones h], []⟩ with hσ₁
+  have e1 : Function.update σ mH (σ mH).next = σ₁ := by tsimp [hσ₁, hσ, mst, reg]
+  rw [e1] at s1
+  have s2 := runs_appendReg (a := 0) (show mKC ≠ mH by decide) σ₁ (u := [true]) (v := ones h) (M := [])
+    (by tsimp [hσ₁, hσ, mst, mconst]) (by tsimp [hσ₁])
+  set σ₂ := Function.update σ₁ mH ⟨[ones (h + 1)], []⟩ with hσ₂
+  have e2 : Function.update σ₁ mH ⟨(ones h ++ [true]) :: [], []⟩ = σ₂ := by
+    rw [hσ₂]; congr 3; simp [ones, List.replicate_succ']
+  rw [e2] at s2
+  have s3 := runs_rewind' (a := 0) mH σ₂ (L := [ones (h + 1)]) (R := []) (by tsimp [hσ₂])
+  set σ₃ := Function.update σ₂ mH (reg (ones (h + 1))) with hσ₃
+  have e3 : Function.update σ₂ mH ⟨[], [ones (h + 1)].reverse ++ []⟩ = σ₃ := by tsimp [hσ₃, reg]
+  rw [e3] at s3
+  have s4 := runs_skp (a := 0) (show mHDD ≠ mJ by decide) σ₃ (by tsimp [hσ₃, hσ₂, hσ₁, hσ, mst, reg])
+    (by tsimp [hσ₃, hσ₂, hσ₁, hσ, mst, mconst])
+  set σ₄ := Function.update σ₃ mHDD ⟨[ones (h * ts.length)], []⟩ with hσ₄
+  have e4 : Function.update σ₃ mHDD (σ₃ mHDD).next = σ₄ := by tsimp [hσ₄, hσ₃, hσ₂, hσ₁, hσ, mst, reg]
+  rw [e4] at s4
+  have s5 := runs_appendReg (a := 0) (show mN ≠ mHDD by decide) σ₄ (u := ones ts.length) (v := ones (h * ts.length))
+    (M := []) (by tsimp [hσ₄, hσ₃, hσ₂, hσ₁, hσ, mst, mconst]) (by tsimp [hσ₄])
+  set σ₅ := Function.update σ₄ mHDD ⟨[ones ((h + 1) * ts.length)], []⟩ with hσ₅
+  have e5 : Function.update σ₄ mHDD ⟨(ones (h * ts.length) ++ ones ts.length) :: [], []⟩ = σ₅ := by
+    rw [hσ₅, ones_append_ones, Nat.succ_mul]
+  rw [e5] at s5
+  have s6 := runs_rewind' (a := 0) mHDD σ₅ (L := [ones ((h + 1) * ts.length)]) (R := []) (by tsimp [hσ₅])
+  refine (Runs.then s1 (Runs.then s2 (Runs.then s3 (Runs.then s4 (Runs.then s5 s6))))).mono
+    (fun σ' e => ?_) ?_
+  · rw [e]
+    funext i; fin_cases i <;> tsimp [hσ₅, hσ₄, hσ₃, hσ₂, hσ₁, hσ, mst, mconst, reg]
+  · have hc1 : (σ mH).cur.length = h := by tsimp [hσ, mst, reg]
+    have hc2 : (σ₃ mHDD).cur.length = h * ts.length := by tsimp [hσ₃, hσ₂, hσ₁, hσ, mst, reg]
+    rw [hc1, hc2]
+    simp only [decCost, clen, WTape.words, reg, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil,
+      length_ones, List.length_cons, List.length_nil, List.reverse_nil, List.nil_append, Nat.succ_mul]
+    omega
+
+/-! ### Slot bodies -/
+
+/-- One forward slot: test top, then prefix or chunk; Hadamard words, then twist words. -/
+noncomputable def bodyF : Cmd 0 37 :=
+  .seq (geqReg mM1 mH mF1 (by decide) (by decide) (by decide)) <|
+  .cond mF1
+    (.seq (clear mF1) <| .seq (geqReg mB mH mF2 (by decide) (by decide) (by decide)) <|
+      .cond mF2 (.seq (clear mF2) (.seq hadPre twSlot)) (.seq (clear mF2) (.seq hadChF twSlot)))
+    (.seq (clear mF1) (.seq hadTop twTop))
+
+/-- One opposite slot: twist words, then Hadamard words. -/
+noncomputable def bodyO : Cmd 0 37 :=
+  .seq (geqReg mM1 mH mF1 (by decide) (by decide) (by decide)) <|
+  .cond mF1
+    (.seq (clear mF1) <| .seq (geqReg mB mH mF2 (by decide) (by decide) (by decide)) <|
+      .cond mF2 (.seq (clear mF2) (.seq twSlot hadPre)) (.seq (clear mF2) (.seq twSlot hadChO)))
+    (.seq (clear mF1) (.seq twTop hadTop))
+
+theorem update_back {t : ℕ} (σ : Fin t → WTape) (i : Fin t) (v : WTape) (hi : σ i = emp) :
+    Function.update (Function.update σ i v) i emp = σ := by
+  rw [Function.update_idem, ← hi, Function.update_eq_self]
+
+/-- The paper's Hadamard words of the top slot. -/
+theorem hadWords_top (p d w : ℕ) {ℓ K : ℕ} (ts : List ℕ) (hℓ : 1 ≤ ℓ) :
+    hadWords p d (2 ^ ℓ) w (Nat.log 2 ts.prod) ts ℓ K (ℓ - 1) =
+      [[false], ones (2 ^ topExp ℓ K ts), ones (longs ts ℓ).length] := by
+  have h1 : ¬ ℓ - 1 < (ℓ - 1) % K := Nat.not_lt.mpr (Nat.mod_le _ _)
+  simp only [hadWords, h1, lt_irrefl, ↓reduceIte, if_false]
+  congr 2
+  unfold topExp topBase
+  rw [show 2 * 2 ^ ℓ * 2 ^ (ts.length * ((ℓ - 1) / K) * K + ts.length * ((ℓ - 1) % K)) =
+    2 ^ (ℓ + 1 + (ts.length * ((ℓ - 1) / K) * K + ts.length * ((ℓ - 1) % K))) by
+      simp only [pow_add, pow_one]; ring]
+  congr 1; ring
+
+/-- The paper's Hadamard words of a prefix slot. -/
+theorem hadWords_pre (p d w : ℕ) {ℓ K : ℕ} (ts : List ℕ) {h : ℕ} (hh : h < (ℓ - 1) % K) :
+    hadWords p d (2 ^ ℓ) w (Nat.log 2 ts.prod) ts ℓ K h =
+      [[false], ones (2 ^ preExp ℓ K ts h), ones ts.length] := by
+  simp only [hadWords, hh, ↓reduceIte]
+  congr 2
+  unfold preExp prefixBase
+  rw [show 2 * 2 ^ ℓ * 2 ^ (ts.length * ((ℓ - 1) / K) * K + h * ts.length) =
+    2 ^ (ℓ + 1 + (ts.length * ((ℓ - 1) / K) * K + h * ts.length)) by
+      simp only [pow_add, pow_one]; ring]
+  congr 1; ring
+
+/-- The paper's Hadamard words of a chunk-group slot. -/
+theorem hadWords_ch (p d w : ℕ) {ℓ K : ℕ} (ts : List ℕ) {h : ℕ} (hb : (ℓ - 1) % K ≤ h) (ht : h < ℓ - 1) :
+    hadWords p d (2 ^ ℓ) w (Nat.log 2 ts.prod) ts ℓ K h =
+      [[true], chunkHdr p d (2 ^ ℓ) w (Nat.log 2 ts.prod) ts ℓ K h] := by
+  simp only [hadWords, Nat.not_lt.mpr hb, ht, ↓reduceIte]
+
+/-- A bound on one slot body, for every kind. -/
+def bodyCost (ℓ K : ℕ) (ts : List ℕ) (h : ℕ) (hdLen : ℕ) : ℕ :=
+  2 * (ℓ - 1) + 2 * h + 30 + 1 + (2 * (longs ts ℓ).length + 2 * (ℓ - 1) + 2 * h + 200 +
+    (clen [[false]] + 1 + (powOutCost (topExp ℓ K ts) + 1 + (2 * (longs ts ℓ).length + 10))) + twTopCost ℓ K ts +
+    hadPreCost ℓ K ts h + (clen [[true]] + 1 + (3 * hdLen + 15)) + twCost ℓ K ts h)
+
+set_option maxHeartbeats 32000000 in
+/-- `runs_bodyF`: a forward slot appends its Hadamard and twist words; a chunk-group slot reads its
+header from before the head of the header tape. -/
+theorem runs_bodyF (p d w : ℕ) {ℓ K : ℕ} {ts : List ℕ} (hL : LayoutOK (2 ^ ℓ) ts ℓ K) {h : ℕ} (hh : h < ℓ)
+    (tt : WTape) (acc : List (List Bool)) (hd hd' : WTape) (hdLen : ℕ)
+    (hHD : if (ℓ - 1) % K ≤ h ∧ h < ℓ - 1 then ∃ L R, hd = ⟨chunkHdr p d (2 ^ ℓ) w (Nat.log 2 ts.prod) ts ℓ K h :: L, R⟩ ∧
+      hd' = ⟨L, chunkHdr p d (2 ^ ℓ) w (Nat.log 2 ts.prod) ts ℓ K h :: R⟩ ∧
+      (chunkHdr p d (2 ^ ℓ) w (Nat.log 2 ts.prod) ts ℓ K h).length ≤ hdLen else hd' = hd) :
+    Runs bodyF (mst ℓ K ts hd ⟨acc, []⟩ tt h)
+      (· = mst ℓ K ts hd' ⟨(hadWords p d (2 ^ ℓ) w (Nat.log 2 ts.prod) ts ℓ K h ++
+        twistWords (paperPerm hL) (2 ^ ℓ) ts h).reverse ++ acc, []⟩ tt h) (bodyCost ℓ K ts h hdLen) := by
+  have hℓ : 1 ≤ ℓ := hL.2.2.2
+  have hmod := Nat.mod_le (ℓ - 1) K
+  set σ := mst ℓ K ts hd ⟨acc, []⟩ tt h with hσ
+  have s1 := runs_geqReg (show mM1 ≠ mH by decide) (show mM1 ≠ mF1 by decide) (show mH ≠ mF1 by decide) σ
+    (x := ℓ - 1) (y := h) (by tsimp [hσ, mst, mconst]) (by tsimp [hσ, mst, mconst]) (by tsimp [hσ, mst, mconst])
+  set σ₁ := Function.update σ mF1 (reg [decide (h < ℓ - 1)]) with hσ₁
+  have hF1 : σ mF1 = emp := by tsimp [hσ, mst, mconst]
+  have hF2 : σ mF2 = emp := by tsimp [hσ, mst, mconst]
+  have cl1 : Runs (a := 0) (clear mF1) σ₁ (· = σ) (2 * clen [[decide (h < ℓ - 1)]] + 2) :=
+    (runs_clear' (a := 0) mF1 σ₁ (T := reg [decide (h < ℓ - 1)]) (by tsimp [hσ₁])).mono
+      (fun σ' e => by rw [e, hσ₁, update_back σ mF1 _ hF1]) le_rfl
+  by_cases htop : h < ℓ - 1
+  · -- below the top
+    have s2 := runs_geqReg (show mB ≠ mH by decide) (show mB ≠ mF2 by decide) (show mH ≠ mF2 by decide) σ
+      (x := (ℓ - 1) % K) (y := h) (by tsimp [hσ, mst, mconst]) (by tsimp [hσ, mst, mconst]) hF2
+    set σ₂ := Function.update σ mF2 (reg [decide (h < (ℓ - 1) % K)]) with hσ₂
+    have cl2 : Runs (a := 0) (clear mF2) σ₂ (· = σ) (2 * clen [[decide (h < (ℓ - 1) % K)]] + 2) :=
+      (runs_clear' (a := 0) mF2 σ₂ (T := reg [decide (h < (ℓ - 1) % K)]) (by tsimp [hσ₂])).mono
+        (fun σ' e => by rw [e, hσ₂, update_back σ mF2 _ hF2]) le_rfl
+    by_cases hpre : h < (ℓ - 1) % K
+    · have hn : ¬ ((ℓ - 1) % K ≤ h ∧ h < ℓ - 1) := fun ⟨a, _⟩ => by omega
+      simp only [hn, if_false] at hHD
+      rw [hHD]
+      have s3 := runs_hadPre ℓ K ts hd tt h acc
+      have s4 := runs_twSlot hL htop hd tt (ones ts.length :: ones (2 ^ preExp ℓ K ts h) :: [false] :: acc)
+      have sb := Runs.then cl2 (Runs.then s3 s4)
+      have sc := Runs.cond_true (c := .seq (clear mF2) (.seq hadPre twSlot))
+        (d := .seq (clear mF2) (.seq hadChF twSlot)) (i := mF2)
+        (by rw [hσ₂, Function.update_self]; exact (startsOne_mk _ _ _ _).mpr (by simpa using hpre)) sb
+      have sa := Runs.then cl1 (Runs.then s2 sc)
+      have st := Runs.cond_true (c := .seq (clear mF1) (.seq (geqReg mB mH mF2 (by decide) (by decide) (by decide))
+          (.cond mF2 (.seq (clear mF2) (.seq hadPre twSlot)) (.seq (clear mF2) (.seq hadChF twSlot)))))
+        (d := .seq (clear mF1) (.seq hadTop twTop)) (i := mF1)
+        (by rw [hσ₁, Function.update_self]; exact (startsOne_mk _ _ _ _).mpr (by simpa using htop)) sa
+      refine (Runs.then s1 st).mono (fun σ' e => ?_) ?_
+      · rw [e, hadWords_pre p d w ts hpre]
+        congr 2
+        simp [twistWords]
+      · unfold bodyCost
+        simp only [clen, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, List.length_cons,
+          List.length_nil]
+        omega
+    · have hc : (ℓ - 1) % K ≤ h ∧ h < ℓ - 1 := ⟨by omega, htop⟩
+      simp only [hc, and_self, if_true] at hHD
+      obtain ⟨L, R, rfl, rfl, hlen⟩ := hHD
+      have s3 := runs_hadChF ℓ K ts tt h acc L R (chunkHdr p d (2 ^ ℓ) w (Nat.log 2 ts.prod) ts ℓ K h)
+      have s4 := runs_twSlot hL htop ⟨L, chunkHdr p d (2 ^ ℓ) w (Nat.log 2 ts.prod) ts ℓ K h :: R⟩ tt
+        (chunkHdr p d (2 ^ ℓ) w (Nat.log 2 ts.prod) ts ℓ K h :: [true] :: acc)
+      have sb := Runs.then cl2 (Runs.then s3 s4)
+      have sc := Runs.cond_false (c := .seq (clear mF2) (.seq hadPre twSlot))
+        (d := .seq (clear mF2) (.seq hadChF twSlot)) (i := mF2)
+        (by rw [hσ₂, Function.update_self]; intro hs; have := (startsOne_mk _ _ _ _).mp hs; simp at this; omega) sb
+      have sa := Runs.then cl1 (Runs.then s2 sc)
+      have st := Runs.cond_true (c := .seq (clear mF1) (.seq (geqReg mB mH mF2 (by decide) (by decide) (by decide))
+          (.cond mF2 (.seq (clear mF2) (.seq hadPre twSlot)) (.seq (clear mF2) (.seq hadChF twSlot)))))
+        (d := .seq (clear mF1) (.seq hadTop twTop)) (i := mF1)
+        (by rw [hσ₁, Function.update_self]; exact (startsOne_mk _ _ _ _).mpr (by simpa using htop)) sa
+      refine (Runs.then s1 st).mono (fun σ' e => ?_) ?_
+      · rw [e, hadWords_ch p d w ts hc.1 hc.2]
+        congr 2
+        simp [twistWords]
+      · unfold bodyCost
+        simp only [clen, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, List.length_cons,
+          List.length_nil]
+        omega
+  · -- the top slot
+    have hht : h = ℓ - 1 := by omega
+    have hn : ¬ ((ℓ - 1) % K ≤ h ∧ h < ℓ - 1) := fun ⟨_, b⟩ => htop b
+    simp only [hn, if_false] at hHD
+    rw [hHD]
+    have s3 := runs_hadTop ℓ K ts hd tt h acc
+    have s4 := runs_twTop hL hd tt h (ones (longs ts ℓ).length :: ones (2 ^ topExp ℓ K ts) :: [false] :: acc)
+    have sa := Runs.then cl1 (Runs.then s3 s4)
+    have st := Runs.cond_false (c := .seq (clear mF1) (.seq (geqReg mB mH mF2 (by decide) (by decide) (by decide))
+        (.cond mF2 (.seq (clear mF2) (.seq hadPre twSlot)) (.seq (clear mF2) (.seq hadChF twSlot)))))
+      (d := .seq (clear mF1) (.seq hadTop twTop)) (i := mF1)
+      (by rw [hσ₁, Function.update_self]; intro hs; have := (startsOne_mk _ _ _ _).mp hs; simp at this; omega) sa
+    refine (Runs.then s1 st).mono (fun σ' e => ?_) ?_
+    · rw [e, hht, hadWords_top p d w ts hℓ]
+      congr 2
+      simp [twistWords]
+    · unfold bodyCost
+      simp only [clen, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, List.length_cons,
+        List.length_nil]
+      omega
+
+set_option maxHeartbeats 32000000 in
+/-- `runs_bodyO`: an opposite slot appends its twist and Hadamard words; a chunk-group slot reads its
+header under the head of the header tape. -/
+theorem runs_bodyO (p d w : ℕ) {ℓ K : ℕ} {ts : List ℕ} (hL : LayoutOK (2 ^ ℓ) ts ℓ K) {h : ℕ} (hh : h < ℓ)
+    (tt : WTape) (acc : List (List Bool)) (hd hd' : WTape) (hdLen : ℕ)
+    (hHD : if (ℓ - 1) % K ≤ h ∧ h < ℓ - 1 then ∃ L R, hd = ⟨L, chunkHdr p d (2 ^ ℓ) w (Nat.log 2 ts.prod) ts ℓ K h :: R⟩ ∧
+      hd' = ⟨chunkHdr p d (2 ^ ℓ) w (Nat.log 2 ts.prod) ts ℓ K h :: L, R⟩ ∧
+      (chunkHdr p d (2 ^ ℓ) w (Nat.log 2 ts.prod) ts ℓ K h).length ≤ hdLen else hd' = hd) :
+    Runs bodyO (mst ℓ K ts hd ⟨acc, []⟩ tt h)
+      (· = mst ℓ K ts hd' ⟨(twistWords (paperPerm hL) (2 ^ ℓ) ts h ++
+        hadWords p d (2 ^ ℓ) w (Nat.log 2 ts.prod) ts ℓ K h).reverse ++ acc, []⟩ tt h) (bodyCost ℓ K ts h hdLen) := by
+  have hℓ : 1 ≤ ℓ := hL.2.2.2
+  have hmod := Nat.mod_le (ℓ - 1) K
+  set σ := mst ℓ K ts hd ⟨acc, []⟩ tt h with hσ
+  have s1 := runs_geqReg (show mM1 ≠ mH by decide) (show mM1 ≠ mF1 by decide) (show mH ≠ mF1 by decide) σ
+    (x := ℓ - 1) (y := h) (by tsimp [hσ, mst, mconst]) (by tsimp [hσ, mst, mconst]) (by tsimp [hσ, mst, mconst])
+  set σ₁ := Function.update σ mF1 (reg [decide (h < ℓ - 1)]) with hσ₁
+  have hF1 : σ mF1 = emp := by tsimp [hσ, mst, mconst]
+  have hF2 : σ mF2 = emp := by tsimp [hσ, mst, mconst]
+  have cl1 : Runs (a := 0) (clear mF1) σ₁ (· = σ) (2 * clen [[decide (h < ℓ - 1)]] + 2) :=
+    (runs_clear' (a := 0) mF1 σ₁ (T := reg [decide (h < ℓ - 1)]) (by tsimp [hσ₁])).mono
+      (fun σ' e => by rw [e, hσ₁, update_back σ mF1 _ hF1]) le_rfl
+  by_cases htop : h < ℓ - 1
+  · -- below the top
+    have s2 := runs_geqReg (show mB ≠ mH by decide) (show mB ≠ mF2 by decide) (show mH ≠ mF2 by decide) σ
+      (x := (ℓ - 1) % K) (y := h) (by tsimp [hσ, mst, mconst]) (by tsimp [hσ, mst, mconst]) hF2
+    set σ₂ := Function.update σ mF2 (reg [decide (h < (ℓ - 1) % K)]) with hσ₂
+    have cl2 : Runs (a := 0) (clear mF2) σ₂ (· = σ) (2 * clen [[decide (h < (ℓ - 1) % K)]] + 2) :=
+      (runs_clear' (a := 0) mF2 σ₂ (T := reg [decide (h < (ℓ - 1) % K)]) (by tsimp [hσ₂])).mono
+        (fun σ' e => by rw [e, hσ₂, update_back σ mF2 _ hF2]) le_rfl
+    by_cases hpre : h < (ℓ - 1) % K
+    · have hn : ¬ ((ℓ - 1) % K ≤ h ∧ h < ℓ - 1) := fun ⟨a, _⟩ => by omega
+      simp only [hn, if_false] at hHD
+      rw [hHD]
+      have s3 := runs_twSlot hL htop hd tt acc
+      have s4 := runs_hadPre ℓ K ts hd tt h ((twistWords (paperPerm hL) (2 ^ ℓ) ts h).reverse ++ acc)
+      have sb := Runs.then cl2 (Runs.then s3 s4)
+      have sc := Runs.cond_true (c := .seq (clear mF2) (.seq twSlot hadPre))
+        (d := .seq (clear mF2) (.seq twSlot hadChO)) (i := mF2)
+        (by rw [hσ₂, Function.update_self]; exact (startsOne_mk _ _ _ _).mpr (by simpa using hpre)) sb
+      have sa := Runs.then cl1 (Runs.then s2 sc)
+      have st := Runs.cond_true (c := .seq (clear mF1) (.seq (geqReg mB mH mF2 (by decide) (by decide) (by decide))
+          (.cond mF2 (.seq (clear mF2) (.seq twSlot hadPre)) (.seq (clear mF2) (.seq twSlot hadChO)))))
+        (d := .seq (clear mF1) (.seq twTop hadTop)) (i := mF1)
+        (by rw [hσ₁, Function.update_self]; exact (startsOne_mk _ _ _ _).mpr (by simpa using htop)) sa
+      refine (Runs.then s1 st).mono (fun σ' e => ?_) ?_
+      · rw [e, hadWords_pre p d w ts hpre]
+        congr 2
+        simp
+      · unfold bodyCost
+        simp only [clen, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, List.length_cons,
+          List.length_nil]
+        omega
+    · have hc : (ℓ - 1) % K ≤ h ∧ h < ℓ - 1 := ⟨by omega, htop⟩
+      simp only [hc, and_self, if_true] at hHD
+      obtain ⟨L, R, rfl, rfl, hlen⟩ := hHD
+      have s3 := runs_twSlot hL htop ⟨L, chunkHdr p d (2 ^ ℓ) w (Nat.log 2 ts.prod) ts ℓ K h :: R⟩ tt acc
+      have s4 := runs_hadChO ℓ K ts tt h ((twistWords (paperPerm hL) (2 ^ ℓ) ts h).reverse ++ acc) L R
+        (chunkHdr p d (2 ^ ℓ) w (Nat.log 2 ts.prod) ts ℓ K h)
+      have sb := Runs.then cl2 (Runs.then s3 s4)
+      have sc := Runs.cond_false (c := .seq (clear mF2) (.seq twSlot hadPre))
+        (d := .seq (clear mF2) (.seq twSlot hadChO)) (i := mF2)
+        (by rw [hσ₂, Function.update_self]; intro hs; have := (startsOne_mk _ _ _ _).mp hs; simp at this; omega) sb
+      have sa := Runs.then cl1 (Runs.then s2 sc)
+      have st := Runs.cond_true (c := .seq (clear mF1) (.seq (geqReg mB mH mF2 (by decide) (by decide) (by decide))
+          (.cond mF2 (.seq (clear mF2) (.seq twSlot hadPre)) (.seq (clear mF2) (.seq twSlot hadChO)))))
+        (d := .seq (clear mF1) (.seq twTop hadTop)) (i := mF1)
+        (by rw [hσ₁, Function.update_self]; exact (startsOne_mk _ _ _ _).mpr (by simpa using htop)) sa
+      refine (Runs.then s1 st).mono (fun σ' e => ?_) ?_
+      · rw [e, hadWords_ch p d w ts hc.1 hc.2]
+        congr 2
+        simp
+      · unfold bodyCost
+        simp only [clen, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, List.length_cons,
+          List.length_nil]
+        omega
+  · -- the top slot
+    have hht : h = ℓ - 1 := by omega
+    have hn : ¬ ((ℓ - 1) % K ≤ h ∧ h < ℓ - 1) := fun ⟨_, b⟩ => htop b
+    simp only [hn, if_false] at hHD
+    rw [hHD]
+    have s3 := runs_twTop hL hd tt h acc
+    have s4 := runs_hadTop ℓ K ts hd tt h ((twistWords (paperPerm hL) (2 ^ ℓ) ts (ℓ - 1)).reverse ++ acc)
+    have sa := Runs.then cl1 (Runs.then s3 s4)
+    have st := Runs.cond_false (c := .seq (clear mF1) (.seq (geqReg mB mH mF2 (by decide) (by decide) (by decide))
+        (.cond mF2 (.seq (clear mF2) (.seq twSlot hadPre)) (.seq (clear mF2) (.seq twSlot hadChO)))))
+      (d := .seq (clear mF1) (.seq twTop hadTop)) (i := mF1)
+      (by rw [hσ₁, Function.update_self]; intro hs; have := (startsOne_mk _ _ _ _).mp hs; simp at this; omega) sa
+    refine (Runs.then s1 st).mono (fun σ' e => ?_) ?_
+    · rw [e, hht, hadWords_top p d w ts hℓ]
+      congr 2
+      simp
+    · unfold bodyCost
+      simp only [clen, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, List.length_cons,
+        List.length_nil]
+      omega
+
 end ScriptMain
 
 end IntegerMultBounds.Schoenhage
