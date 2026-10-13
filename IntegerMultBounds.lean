@@ -2821,6 +2821,7 @@ import IntegerMultBounds.Schoenhage.LayoutSwapTape
 import IntegerMultBounds.Schoenhage.ScriptParts
 import IntegerMultBounds.Schoenhage.ScriptOps
 import IntegerMultBounds.Schoenhage.ScriptMain
+import IntegerMultBounds.Schoenhage.ScriptHdr
 import IntegerMultBounds.Schoenhage.LayoutGenSetup
 import IntegerMultBounds.Machine.CompactComplexRecursivePathRows
 import IntegerMultBounds.Machine.CompactComplexSourceReadyRecursiveChildCleanTails
