@@ -6842,7 +6842,11 @@ Schönhage–Strassen multiplication, the fast multiplier used for the packed pr
   and the round loops as `Chain`s of the computed schedules (`runs_fwdRounds`,
   `runs_oppRounds`); `DriverLayout`: the layout and undo scripts on the bank;
   `TransformDriver`: the forward and opposite drivers, close to `fwdExact` and
-  `oppExact` given the layer calls (`runs_fwdDriver`, `runs_oppDriver`).
+  `oppExact` given the layer calls (`runs_fwdDriver`, `runs_oppDriver`);
+  `BankWrap`: any word program in the paper's four-tape bank format
+  (`wrapProg_hoare`); `TransformWrap`: the drivers behind a header generator
+  (`FwdGen`, `OppGen`), meeting the transform contracts in the bank format
+  (`fwd_bank`, `opp_bank`).
 
 - `Schoenhage/PointwiseRow.lean`: at the main sizes `p = 6 lg n`, `r = 2^ℓ`
   the pointwise program's time is at most a constant times `T p` times the
