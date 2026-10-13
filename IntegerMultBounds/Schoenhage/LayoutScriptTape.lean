@@ -791,6 +791,35 @@ theorem botTup_botF (ℓ b D c : ℕ) : ∀ L : ℕ,
     simp only [zero_mul, zero_add] at this
     rw [show ℓ - 1 - b + (c + 1 - 1) = ℓ - 1 - b + c by omega, this]
 
+theorem botRun_k (R c0 D n : ℕ) : ∀ (c : ℕ) (O U : List (List Bool)) (k L m s : ℕ),
+    (botRun R c0 D n c O U k L m s).2.2.1 = k + c * D
+  | 0, _, _, _, _, _, _ => by simp [botRun]
+  | c + 1, O, U, k, L, m, s => by rw [botRun, botRun_k, levRun_k]; ring
+
+theorem botRun_L (R c0 D n : ℕ) : ∀ (c : ℕ) (O U : List (List Bool)) (k L m s : ℕ),
+    (botRun R c0 D n c O U k L m s).2.2.2.1 = L - c * D
+  | 0, _, _, _, _, _, _ => by simp [botRun]
+  | c + 1, O, U, k, L, m, s => by rw [botRun, botRun_L, levRun_L, Nat.sub_sub]; congr 1; ring
+
+theorem botRun_s (R c0 D n : ℕ) : ∀ (c : ℕ) (O U : List (List Bool)) (k L m s : ℕ),
+    (botRun R c0 D n c O U k L m s).2.2.2.2.2 = s - c
+  | 0, _, _, _, _, _, _ => by simp [botRun]
+  | c + 1, O, U, k, L, m, s => by rw [botRun, botRun_s]; omega
+
+theorem botRun_m_le (R c0 D n : ℕ) : ∀ (c : ℕ) (O U : List (List Bool)) (k L m s : ℕ),
+    (botRun R c0 D n c O U k L m s).2.2.2.2.1 ≤ max m (c0 + D * s)
+  | 0, _, _, _, _, _, _ => by simp [botRun]
+  | c + 1, O, U, k, L, m, s => by
+    rw [botRun]
+    have ih := botRun_m_le R c0 D n c (levRun R s n D O U k L c0).1 (levRun R s n D O U k L c0).2.1
+      (levRun R s n D O U k L c0).2.2.1 (levRun R s n D O U k L c0).2.2.2.1 (levRun R s n D O U k L c0).2.2.2.2
+      (s - 1)
+    rw [levRun_m] at ih ⊢
+    have h1 : D * (s - 1) ≤ D * s := Nat.mul_le_mul_left _ (Nat.sub_le _ _)
+    have h2 : max (c0 + D * s) (c0 + D * (s - 1)) = c0 + D * s := max_eq_left (by omega)
+    rw [h2] at ih
+    exact ih.trans (le_max_right _ _)
+
 /-! ### The prefix moves of the paper's layout -/
 
 /-- Every prefix move: the top loop, then the level loop. -/
@@ -848,7 +877,8 @@ theorem runs_movesGen {r : ℕ} {ts : List ℕ} {ℓ K : ℕ} (hL : LayoutOK r t
         (ℓ - 1 - (ℓ - 1) % K + ((ℓ - 1) % K - 1))
         ⟨[], ((List.range ts.length).map fun i => decide (axLen ts i = ℓ)).map fun x => [x]⟩
         ⟨[], List.replicate ts.length []⟩ ⟨[], List.replicate ((ℓ - 1) % K) []⟩)
-      (fun σ' => ∃ k L m s, σ' = bank R (ℓ - 1) (ℓ - 1 - (ℓ - 1) % K) (LayoutMachines.addrBits ts)
+      (fun σ' => ∃ k L m s, k ≤ N ∧ L ≤ N ∧ m ≤ N ∧ s ≤ N ∧
+        σ' = bank R (ℓ - 1) (ℓ - 1 - (ℓ - 1) % K) (LayoutMachines.addrBits ts)
         (wordsOf (LayoutMachines.addrBits ts) R (LayoutMachines.moveOps (LayoutMachines.layoutMoves ts ℓ K))).reverse
         (wordsOf (LayoutMachines.addrBits ts) R (LayoutMachines.backOps (LayoutMachines.layoutMoves ts ℓ K).reverse))
         k L m s ⟨(((List.range ts.length).map fun i => decide (axLen ts i = ℓ)).map fun x => [x]).reverse, []⟩
@@ -888,7 +918,14 @@ theorem runs_movesGen {r : ℕ} {ts : List ℕ} {ℓ K : ℕ} (hL : LayoutOK r t
       LayoutScript.botF ℓ b D b (D * (ℓ - 1)) := by
     rw [LayoutScript.layoutMoves_eq hL]
   set br := botRun R c0 D n b tr.1 tr.2.1 tr.2.2.1 tr.2.2.2.1 tr.2.2.2.2 s0 with hbr
-  refine ⟨br.2.2.1, br.2.2.2.1, br.2.2.2.2.1, br.2.2.2.2.2, ?_⟩
+  refine ⟨br.2.2.1, br.2.2.2.1, br.2.2.2.2.1, br.2.2.2.2.2, ?_, ?_, ?_, ?_, ?_⟩
+  · rw [hbr, botRun_k, hk]; exact hkN
+  · rw [hbr, botRun_L, hLt]; omega
+  · have := botRun_m_le R c0 D n b tr.1 tr.2.1 tr.2.2.1 tr.2.2.2.1 tr.2.2.2.2 s0
+    rw [← hbr, hm] at this
+    have : max (D * (ℓ - 1)) (c0 + D * s0) ≤ N := max_le hmN hcN
+    omega
+  · rw [hbr, botRun_s]; omega
   rw [b1, b2, t1, t2, hbot, htop, hmoves]
   simp only [List.append_nil, LayoutMachines.moveOps, LayoutMachines.backOps, List.map_append, List.reverse_append,
     wordsOf_append, List.map_reverse]
