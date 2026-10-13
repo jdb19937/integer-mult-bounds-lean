@@ -71,8 +71,11 @@ and arbitrary-depth providers retain runtime certificates on their own
 selected budgets with one machine coefficient before every exponent and
 Path. Those certified choices now feed the actual node schedule and the
 same halted root bank and tensor output, with a real recurrence bound
-including the complete root boundary. Deriving the final closed-form
-uniform estimate remains the next runtime obligation. Actual axis growth now
+including the complete root boundary. The actual recurrence and that same
+root coefficient now have a closed geometric estimate above the original
+stopping cutoff, with forcing derived from complete paid local work.
+The exact cutoff charge and guard-to-tau factor remain explicit; uniform
+cutoff-charge and original-stage-factor closure remain open. Actual axis growth now
 justifies eventual exclusion of nonstopped exponent-one nodes; finite small-input
 coverage remains separate. The stopped
 roundtrip's existing cost still includes its stopped-axis-count factor; the
