@@ -982,6 +982,440 @@ theorem runs_bodyO (p d w : ℕ) {ℓ K : ℕ} {ts : List ℕ} (hL : LayoutOK (2
         List.length_nil]
       omega
 
+/-! ### The slot loops -/
+
+/-- The chunk-group layer headers in slot order. -/
+def chunkHdrs (p d w ℓ K : ℕ) (ts : List ℕ) : List (List Bool) :=
+  ((List.range (ℓ - 1)).drop ((ℓ - 1) % K)).map fun h => chunkHdr p d (2 ^ ℓ) w (Nat.log 2 ts.prod) ts ℓ K h
+
+/-- The header tape when the slots below `m` (forward: still to come; opposite: done) split the
+headers. -/
+def hdAt (p d w ℓ K : ℕ) (ts : List ℕ) (m : ℕ) : WTape :=
+  ⟨((chunkHdrs p d w ℓ K ts).take (m - (ℓ - 1) % K)).reverse, (chunkHdrs p d w ℓ K ts).drop (m - (ℓ - 1) % K)⟩
+
+theorem length_chunkHdrs (p d w ℓ K : ℕ) (ts : List ℕ) :
+    (chunkHdrs p d w ℓ K ts).length = ℓ - 1 - (ℓ - 1) % K := by
+  simp [chunkHdrs]
+
+theorem chunkHdrs_get (p d w ℓ K : ℕ) (ts : List ℕ) {m : ℕ} (hb : (ℓ - 1) % K ≤ m) (ht : m < ℓ - 1) :
+    (chunkHdrs p d w ℓ K ts)[m - (ℓ - 1) % K]'(by rw [length_chunkHdrs]; omega) =
+      chunkHdr p d (2 ^ ℓ) w (Nat.log 2 ts.prod) ts ℓ K m := by
+  simp only [chunkHdrs, List.getElem_map, List.getElem_drop, List.getElem_range]
+  congr 1; omega
+
+/-- The header step of a slot: a chunk-group slot moves its header across the head. -/
+theorem hdAt_step (p d w ℓ K : ℕ) (ts : List ℕ) {m : ℕ} (hm : m < ℓ) :
+    if (ℓ - 1) % K ≤ m ∧ m < ℓ - 1 then ∃ L R,
+      hdAt p d w ℓ K ts (m + 1) = ⟨chunkHdr p d (2 ^ ℓ) w (Nat.log 2 ts.prod) ts ℓ K m :: L, R⟩ ∧
+      hdAt p d w ℓ K ts m = ⟨L, chunkHdr p d (2 ^ ℓ) w (Nat.log 2 ts.prod) ts ℓ K m :: R⟩
+    else hdAt p d w ℓ K ts m = hdAt p d w ℓ K ts (m + 1) := by
+  split_ifs with hc
+  · obtain ⟨hb, ht⟩ := hc
+    set l := chunkHdrs p d w ℓ K ts
+    have hlt : m - (ℓ - 1) % K < l.length := by rw [length_chunkHdrs]; omega
+    refine ⟨(l.take (m - (ℓ - 1) % K)).reverse, l.drop (m + 1 - (ℓ - 1) % K), ?_, ?_⟩
+    · simp only [hdAt]
+      rw [show m + 1 - (ℓ - 1) % K = m - (ℓ - 1) % K + 1 by omega, List.take_succ,
+        List.getElem?_eq_getElem hlt, chunkHdrs_get p d w ℓ K ts hb ht]
+      simp [l]
+    · simp only [hdAt]
+      rw [List.drop_eq_getElem_cons hlt, chunkHdrs_get p d w ℓ K ts hb ht,
+        show m - (ℓ - 1) % K + 1 = m + 1 - (ℓ - 1) % K by omega]
+  · simp only [hdAt]
+    by_cases hb : m < (ℓ - 1) % K
+    · rw [show m - (ℓ - 1) % K = 0 by omega, show m + 1 - (ℓ - 1) % K = 0 by omega]
+    · have ht : m = ℓ - 1 := by omega
+      have h1 : (chunkHdrs p d w ℓ K ts).length ≤ m - (ℓ - 1) % K := by rw [length_chunkHdrs]; omega
+      have h2 : (chunkHdrs p d w ℓ K ts).length ≤ m + 1 - (ℓ - 1) % K := by rw [length_chunkHdrs]; omega
+      rw [List.take_of_length_le h1, List.take_of_length_le h2, List.drop_of_length_le h1,
+        List.drop_of_length_le h2]
+
+/-- The forward words of slot `h`. -/
+noncomputable def slotF (p d w ℓ K : ℕ) (ts : List ℕ) (hL : LayoutOK (2 ^ ℓ) ts ℓ K) (h : ℕ) : List (List Bool) :=
+  hadWords p d (2 ^ ℓ) w (Nat.log 2 ts.prod) ts ℓ K h ++ twistWords (paperPerm hL) (2 ^ ℓ) ts h
+
+/-- The opposite words of slot `h`. -/
+noncomputable def slotO (p d w ℓ K : ℕ) (ts : List ℕ) (hL : LayoutOK (2 ^ ℓ) ts ℓ K) (h : ℕ) : List (List Bool) :=
+  twistWords (paperPerm hL) (2 ^ ℓ) ts h ++ hadWords p d (2 ^ ℓ) w (Nat.log 2 ts.prod) ts ℓ K h
+
+@[simp] theorem rep_headD (n : ℕ) : (List.replicate n ([] : List Bool)).headD [] = [] := by
+  cases n <;> rfl
+
+@[simp] theorem rep_head_getD (n : ℕ) : (List.replicate n ([] : List Bool)).head?.getD [] = [] := by
+  cases n <;> rfl
+
+theorem decCost_mono (D h : ℕ) : decCost D h ≤ decCost D (h + 1) := by
+  unfold decCost
+  have : h * D ≤ (h + 1) * D := Nat.mul_le_mul_right D (by omega)
+  omega
+
+/-- One forward loop step. -/
+noncomputable def stepF : Cmd 0 37 := .seq bodyF (.seq decF (skp mT mJ (by decide)))
+
+/-- One opposite loop step. -/
+noncomputable def stepO : Cmd 0 37 := .seq bodyO (.seq incO (skp mT mJ (by decide)))
+
+/-- The forward slot loop. -/
+noncomputable def loopF : Cmd 0 37 := .loop mT stepF
+
+/-- The opposite slot loop. -/
+noncomputable def loopO : Cmd 0 37 := .loop mT stepO
+
+/-- The forward state with `m` slots left. -/
+noncomputable def stF (p d w ℓ K : ℕ) (ts : List ℕ) (hL : LayoutOK (2 ^ ℓ) ts ℓ K) (m : ℕ) : Fin 37 → WTape :=
+  mst ℓ K ts (hdAt p d w ℓ K ts m)
+    ⟨(((List.range ℓ).reverse.take (ℓ - m)).flatMap (slotF p d w ℓ K ts hL)).reverse, []⟩
+    ⟨List.replicate (ℓ - m) [], List.replicate m []⟩ (m - 1)
+
+/-- The opposite state with `k` slots done. -/
+noncomputable def stO (p d w ℓ K : ℕ) (ts : List ℕ) (hL : LayoutOK (2 ^ ℓ) ts ℓ K) (k : ℕ) : Fin 37 → WTape :=
+  mst ℓ K ts (hdAt p d w ℓ K ts k) ⟨((List.range k).flatMap (slotO p d w ℓ K ts hL)).reverse, []⟩
+    ⟨List.replicate k [], List.replicate (ℓ - k) []⟩ k
+
+/-- The cost of one loop step at slot `h`. -/
+def stepCost (p d w ℓ K : ℕ) (ts : List ℕ) (h : ℕ) : ℕ :=
+  bodyCost ℓ K ts h (chunkHdr p d (2 ^ ℓ) w (Nat.log 2 ts.prod) ts ℓ K h).length + 1 +
+    (decCost ts.length (h + 1) + 1 + 5)
+
+theorem take_range_reverse {ℓ m : ℕ} (hm : m < ℓ) :
+    (List.range ℓ).reverse.take (ℓ - m) = (List.range ℓ).reverse.take (ℓ - (m + 1)) ++ [m] := by
+  have hlt : ℓ - (m + 1) < (List.range ℓ).reverse.length := by simp; omega
+  rw [show ℓ - m = ℓ - (m + 1) + 1 by omega, List.take_succ, List.getElem?_eq_getElem hlt]
+  simp only [List.getElem_reverse, List.getElem_range, List.length_range, Option.toList_some]
+  congr 2; omega
+
+set_option maxHeartbeats 16000000 in
+theorem runs_stepF (p d w : ℕ) {ℓ K : ℕ} {ts : List ℕ} (hL : LayoutOK (2 ^ ℓ) ts ℓ K) {m : ℕ} (hm : m < ℓ) :
+    Runs stepF (stF p d w ℓ K ts hL (m + 1)) (· = stF p d w ℓ K ts hL m) (stepCost p d w ℓ K ts m) := by
+  have hstep := hdAt_step p d w ℓ K ts hm
+  have s1 := runs_bodyF p d w hL hm ⟨List.replicate (ℓ - (m + 1)) [], List.replicate (m + 1) []⟩
+    (((List.range ℓ).reverse.take (ℓ - (m + 1))).flatMap (slotF p d w ℓ K ts hL)).reverse
+    (hdAt p d w ℓ K ts (m + 1)) (hdAt p d w ℓ K ts m)
+    (chunkHdr p d (2 ^ ℓ) w (Nat.log 2 ts.prod) ts ℓ K m).length (by
+      split_ifs at hstep ⊢ with hc
+      · obtain ⟨L, R, e1, e2⟩ := hstep
+        exact ⟨L, R, e1, e2, le_rfl⟩
+      · exact hstep)
+  have s2 := runs_decF ℓ K ts (hdAt p d w ℓ K ts m)
+    ⟨(slotF p d w ℓ K ts hL m).reverse ++
+      (((List.range ℓ).reverse.take (ℓ - (m + 1))).flatMap (slotF p d w ℓ K ts hL)).reverse, []⟩
+    ⟨List.replicate (ℓ - (m + 1)) [], List.replicate (m + 1) []⟩ m
+  set σ₂ := mst ℓ K ts (hdAt p d w ℓ K ts m)
+    ⟨(slotF p d w ℓ K ts hL m).reverse ++
+      (((List.range ℓ).reverse.take (ℓ - (m + 1))).flatMap (slotF p d w ℓ K ts hL)).reverse, []⟩
+    ⟨List.replicate (ℓ - (m + 1)) [], List.replicate (m + 1) []⟩ (m - 1) with hσ₂
+  have s3 := runs_skp (a := 0) (show mT ≠ mJ by decide) σ₂ (by simp [hσ₂, List.replicate_succ])
+    (by tsimp [hσ₂, mst, mconst])
+  have hm1 : (m + 1) - 1 = m := by omega
+  have hc : (σ₂ mT).cur.length = 0 := by simp [hσ₂]
+  refine (Runs.then (by rw [stF, hm1]; exact s1) (Runs.then s2 s3)).mono (fun σ' e => ?_) ?_
+  · rw [e, hσ₂, mst_T, mst_update_T, stF, take_range_reverse hm, List.flatMap_append]
+    simp only [List.flatMap_cons, List.flatMap_nil, List.append_nil, List.reverse_append]
+    congr 2
+    · rw [show ℓ - m = ℓ - (m + 1) + 1 by omega]
+      simp [List.replicate_succ]
+  · rw [hc]
+    have := decCost_mono ts.length m
+    unfold stepCost
+    omega
+
+/-- The forward loop's cost with `m` slots left. -/
+def loopCostF (p d w ℓ K : ℕ) (ts : List ℕ) : ℕ → ℕ
+  | 0 => 0
+  | m + 1 => stepCost p d w ℓ K ts m + 2 + loopCostF p d w ℓ K ts m
+
+theorem runs_loopF (p d w : ℕ) {ℓ K : ℕ} {ts : List ℕ} (hL : LayoutOK (2 ^ ℓ) ts ℓ K) :
+    ∀ m, m ≤ ℓ → Runs loopF (stF p d w ℓ K ts hL m) (· = stF p d w ℓ K ts hL 0) (loopCostF p d w ℓ K ts m)
+  | 0, _ => Runs.loop_done (by simp [stF]) rfl
+  | m + 1, hm => by
+    have ih := runs_loopF p d w hL m (by omega)
+    have := Runs.loop_step (i := mT) (b := stepF) (by simp [stF, List.replicate_succ])
+      ((runs_stepF p d w hL (show m < ℓ by omega)).mono (fun σ e => by rw [e]; exact ih) le_rfl)
+    exact this
+
+set_option maxHeartbeats 16000000 in
+theorem runs_stepO (p d w : ℕ) {ℓ K : ℕ} {ts : List ℕ} (hL : LayoutOK (2 ^ ℓ) ts ℓ K) {k : ℕ} (hk : k < ℓ) :
+    Runs stepO (stO p d w ℓ K ts hL k) (· = stO p d w ℓ K ts hL (k + 1)) (stepCost p d w ℓ K ts k) := by
+  have hstep := hdAt_step p d w ℓ K ts hk
+  have s1 := runs_bodyO p d w hL hk ⟨List.replicate k [], List.replicate (ℓ - k) []⟩
+    ((List.range k).flatMap (slotO p d w ℓ K ts hL)).reverse
+    (hdAt p d w ℓ K ts k) (hdAt p d w ℓ K ts (k + 1))
+    (chunkHdr p d (2 ^ ℓ) w (Nat.log 2 ts.prod) ts ℓ K k).length (by
+      split_ifs at hstep ⊢ with hc
+      · obtain ⟨L, R, e1, e2⟩ := hstep
+        exact ⟨L, R, e2, e1, le_rfl⟩
+      · exact hstep.symm)
+  have s2 := runs_incO ℓ K ts (hdAt p d w ℓ K ts (k + 1))
+    ⟨(slotO p d w ℓ K ts hL k).reverse ++ ((List.range k).flatMap (slotO p d w ℓ K ts hL)).reverse, []⟩
+    ⟨List.replicate k [], List.replicate (ℓ - k) []⟩ k
+  set σ₂ := mst ℓ K ts (hdAt p d w ℓ K ts (k + 1))
+    ⟨(slotO p d w ℓ K ts hL k).reverse ++ ((List.range k).flatMap (slotO p d w ℓ K ts hL)).reverse, []⟩
+    ⟨List.replicate k [], List.replicate (ℓ - k) []⟩ (k + 1) with hσ₂
+  have hlk : ℓ - k = ℓ - (k + 1) + 1 := by omega
+  have s3 := runs_skp (a := 0) (show mT ≠ mJ by decide) σ₂
+    (by simp [hσ₂, hlk, List.replicate_succ])
+    (by tsimp [hσ₂, mst, mconst])
+  have hc : (σ₂ mT).cur.length = 0 := by simp [hσ₂]
+  refine (Runs.then s1 (Runs.then s2 s3)).mono (fun σ' e => ?_) ?_
+  · rw [e, hσ₂, mst_T, mst_update_T, stO, List.range_succ, List.flatMap_append]
+    simp only [List.flatMap_cons, List.flatMap_nil, List.append_nil, List.reverse_append]
+    congr 2
+    · rw [hlk]
+      simp [List.replicate_succ]
+  · rw [hc]
+    unfold stepCost
+    omega
+
+/-- The opposite loop's cost with `r` slots left, from slot `ℓ - r`. -/
+def loopCostO (p d w ℓ K : ℕ) (ts : List ℕ) : ℕ → ℕ
+  | 0 => 0
+  | r + 1 => stepCost p d w ℓ K ts (ℓ - (r + 1)) + 2 + loopCostO p d w ℓ K ts r
+
+theorem runs_loopO (p d w : ℕ) {ℓ K : ℕ} {ts : List ℕ} (hL : LayoutOK (2 ^ ℓ) ts ℓ K) :
+    ∀ r, r ≤ ℓ → Runs loopO (stO p d w ℓ K ts hL (ℓ - r)) (· = stO p d w ℓ K ts hL ℓ) (loopCostO p d w ℓ K ts r)
+  | 0, _ => Runs.loop_done (by simp [stO]) (by rw [Nat.sub_zero])
+  | r + 1, hr => by
+    have ih := runs_loopO p d w hL r (by omega)
+    have hk : ℓ - (r + 1) + 1 = ℓ - r := by omega
+    have := Runs.loop_step (i := mT) (b := stepO)
+      (by simp [stO, show ℓ - (ℓ - (r + 1)) = r + 1 by omega, List.replicate_succ])
+      ((runs_stepO p d w hL (show ℓ - (r + 1) < ℓ by omega)).mono (fun σ e => by rw [e, hk]; exact ih) le_rfl)
+    exact this
+
+/-! ### The whole slot program -/
+
+/-- `c := c + k·|u|` over the `k` ticks of `k`: append the register `u` once per tick. -/
+noncomputable def mulLoop {t : ℕ} (k c u j : Fin t) (h1 : k ≠ j) (h2 : u ≠ c) : Cmd 0 t :=
+  .loop k (.seq (appendReg u c h2) (skp k j h1))
+
+theorem runs_mulLoop {t : ℕ} {k c u j : Fin t} (h1 : k ≠ j) (h2 : u ≠ c) (hkc : k ≠ c) (hku : k ≠ u)
+    (hcj : c ≠ j) (huj : u ≠ j) (D : ℕ) :
+    ∀ (e n : ℕ) (σ : Fin t → WTape) (L : List (List Bool)), σ k = ⟨L, List.replicate e []⟩ →
+      σ c = ⟨[ones n], []⟩ → σ u = reg (ones D) → (σ j).right = [] →
+      Runs (mulLoop k c u j h1 h2) σ
+        (· = Function.update (Function.update σ k ⟨List.replicate e [] ++ L, []⟩) c ⟨[ones (n + e * D)], []⟩)
+        (e * (2 * D + 20))
+  | 0, n, σ, L, hk, hc, hu, hj => by
+    show Runs (Cmd.loop k _) _ _ _
+    refine (Runs.loop_done (by simp [hk]) rfl).mono (fun σ' e => ?_) (by simp)
+    subst e
+    funext x
+    by_cases hxc : x = c
+    · subst hxc; simp [hc]
+    · by_cases hxk : x = k
+      · subst hxk; simp [hxc, hk]
+      · simp [hxc, hxk]
+  | e + 1, n, σ, L, hk, hc, hu, hj => by
+    show Runs (Cmd.loop k _) _ _ _
+    have s1 := runs_appendReg (a := 0) h2 σ (u := ones D) (v := ones n) (M := []) hu hc
+    set σ₁ := Function.update σ c ⟨[ones (n + D)], []⟩ with hσ₁
+    have e1 : Function.update σ c ⟨(ones n ++ ones D) :: [], []⟩ = σ₁ := by rw [hσ₁, ones_append_ones]
+    rw [e1] at s1
+    have hk₁ : σ₁ k = ⟨L, [] :: List.replicate e []⟩ := by simp [hσ₁, hkc, hk, List.replicate_succ]
+    have s2 := runs_skp (a := 0) h1 σ₁ (by simp [hk₁]) (by simp [hσ₁, hcj.symm, hj])
+    set σ₂ := Function.update σ₁ k ⟨[] :: L, List.replicate e []⟩ with hσ₂
+    have e2 : Function.update σ₁ k (σ₁ k).next = σ₂ := by simp [hσ₂, hk₁]
+    rw [e2] at s2
+    have ih := runs_mulLoop h1 h2 hkc hku hcj huj D e (n + D) σ₂ ([] :: L) (by simp [hσ₂])
+      (by simp [hσ₂, hσ₁, hkc.symm]) (by simp [hσ₂, hσ₁, hku.symm, h2, hu]) (by simp [hσ₂, hσ₁, h1.symm, hcj.symm, hj])
+    refine (Runs.loop_step (by simp [hk]) ((Runs.then s1 s2).mono (fun σ' e' => by rw [e']; exact ih)
+      le_rfl)).mono (fun σ' e' => ?_) ?_
+    · rw [e']
+      have e3 : n + D + e * D = n + (e + 1) * D := by ring
+      have e4 : List.replicate e [] ++ [] :: L = List.replicate (e + 1) ([] : List Bool) ++ L := by
+        simp [List.replicate_succ']
+      funext x
+      by_cases hxc : x = c
+      · subst hxc; simp [e3]
+      · by_cases hxk : x = k
+        · subst hxk; simp [hxc, e4]
+        · simp [hσ₂, hσ₁, hxc, hxk]
+    · have hc0 : (σ₁ k).cur.length = 0 := by simp [hk₁]
+      rw [hc0]
+      simp only [length_ones]
+      nlinarith
+
+/-- The headers' tape after the header pass: every header, the head after them. -/
+noncomputable def hdFull (p d w ℓ K : ℕ) (ts : List ℕ) : WTape := ⟨(chunkHdrs p d w ℓ K ts).reverse, []⟩
+
+/-- The slot bank before the slot loop. -/
+noncomputable def mIn (p d w ℓ K : ℕ) (ts : List ℕ) : Fin 37 → WTape :=
+  Function.update (mconst ℓ K ts) mHD (hdFull p d w ℓ K ts)
+
+/-- The forward slot program: ticks, `h = ℓ - 1`, `h·D`, the loop, then clearing. -/
+noncomputable def mainF : Cmd 0 37 :=
+  .seq (dropReg mP1 mKC mTmp (by decide) (by decide) (by decide)) <| .seq (ticksReg mTmp mT (by decide)) <|
+  .seq (clear mTmp) <| .seq (regDup mM1 mH (by decide)) <| .seq (ticksReg mM1 mPK (by decide)) <|
+  .seq (emit [[]] mHDD) <| .seq (mulLoop mPK mHDD mN mJ (by decide) (by decide)) <| .seq (clear mPK) <|
+  .seq (rewind mHDD) <| .seq loopF <| .seq (clear mHD) <| .seq (clear mH) <| .seq (clear mHDD) (clear mT)
+
+/-- The opposite slot program: ticks, `h = 0`, the headers rewound, the loop, then clearing. -/
+noncomputable def mainO : Cmd 0 37 :=
+  .seq (dropReg mP1 mKC mTmp (by decide) (by decide) (by decide)) <| .seq (ticksReg mTmp mT (by decide)) <|
+  .seq (clear mTmp) <| .seq (emit [[]] mH) <| .seq (rewind mH) <| .seq (emit [[]] mHDD) <| .seq (rewind mHDD) <|
+  .seq (rewind mHD) <| .seq loopO <| .seq (clear mHD) <| .seq (clear mH) <| .seq (clear mHDD) (clear mT)
+
+theorem hdAt_full (p d w ℓ K : ℕ) (ts : List ℕ) : hdAt p d w ℓ K ts ℓ = hdFull p d w ℓ K ts := by
+  have h1 : (chunkHdrs p d w ℓ K ts).length ≤ ℓ - (ℓ - 1) % K := by rw [length_chunkHdrs]; omega
+  simp [hdAt, hdFull, List.take_of_length_le h1, List.drop_of_length_le h1]
+
+theorem hdAt_zero (p d w ℓ K : ℕ) (ts : List ℕ) : hdAt p d w ℓ K ts 0 = ⟨[], chunkHdrs p d w ℓ K ts⟩ := by
+  simp [hdAt]
+
+/-- A bound on the clearing and setup around the loops. -/
+def mainExtra (p d w ℓ K : ℕ) (ts : List ℕ) : ℕ :=
+  20 * (ℓ + 1) + 20 * (ℓ * ts.length + ts.length) + 20 * ℓ * (2 * ts.length + 20) +
+    4 * clen (chunkHdrs p d w ℓ K ts) + 1000
+
+set_option maxHeartbeats 32000000 in
+/-- `runs_mainF`: the forward slot program writes `fwdScript` and restores every other tape. -/
+theorem runs_mainF (p d w : ℕ) {ℓ K : ℕ} {ts : List ℕ} (hL : LayoutOK (2 ^ ℓ) ts ℓ K) :
+    Runs mainF (mIn p d w ℓ K ts)
+      (· = Function.update (mconst ℓ K ts) mO
+        ⟨(fwdScript p d (2 ^ ℓ) w (paperPerm hL) ts ℓ K).reverse, []⟩)
+      (mainExtra p d w ℓ K ts + loopCostF p d w ℓ K ts ℓ) := by
+  have hℓ : 1 ≤ ℓ := hL.2.2.2
+  set σ := mIn p d w ℓ K ts with hσ
+  have s1 := runs_dropReg (a := 0) (show mP1 ≠ mKC by decide) (show mP1 ≠ mTmp by decide)
+    (show mKC ≠ mTmp by decide) σ (u := ones (ℓ + 1)) (v := [true]) (by tsimp [hσ, mIn, mconst])
+    (by tsimp [hσ, mIn, mconst]) (by tsimp [hσ, mIn, mconst])
+  set σ₁ := Function.update σ mTmp (reg (ones ℓ)) with hσ₁
+  have e1 : Function.update σ mTmp (reg ((ones (ℓ + 1)).drop [true].length)) = σ₁ := by
+    rw [hσ₁, List.length_singleton, drop_ones]; rfl
+  rw [e1] at s1
+  have s2 := runs_ticksReg (a := 0) (show mTmp ≠ mT by decide) σ₁ (u := ones ℓ) (by tsimp [hσ₁])
+    (by tsimp [hσ₁, hσ, mIn, mconst])
+  set σ₂ := Function.update σ₁ mT ⟨[], List.replicate ℓ []⟩ with hσ₂
+  have e2 : Function.update σ₁ mT ⟨[], List.replicate (ones ℓ).length []⟩ = σ₂ := by rw [hσ₂, length_ones]
+  rw [e2] at s2
+  have s3 := runs_clear' (a := 0) mTmp σ₂ (T := reg (ones ℓ)) (by tsimp [hσ₂, hσ₁])
+  set σ₃ := Function.update σ₂ mTmp emp with hσ₃
+  have s4 := runs_regDup (a := 0) (show mM1 ≠ mH by decide) σ₃ (w := ones (ℓ - 1))
+    (by tsimp [hσ₃, hσ₂, hσ₁, hσ, mIn, mconst]) (by tsimp [hσ₃, hσ₂, hσ₁, hσ, mIn, mconst])
+  set σ₄ := Function.update σ₃ mH (reg (ones (ℓ - 1))) with hσ₄
+  have s5 := runs_ticksReg (a := 0) (show mM1 ≠ mPK by decide) σ₄ (u := ones (ℓ - 1))
+    (by tsimp [hσ₄, hσ₃, hσ₂, hσ₁, hσ, mIn, mconst]) (by tsimp [hσ₄, hσ₃, hσ₂, hσ₁, hσ, mIn, mconst])
+  set σ₅ := Function.update σ₄ mPK ⟨[], List.replicate (ℓ - 1) []⟩ with hσ₅
+  have e5 : Function.update σ₄ mPK ⟨[], List.replicate (ones (ℓ - 1)).length []⟩ = σ₅ := by rw [hσ₅, length_ones]
+  rw [e5] at s5
+  have s6 := runs_emit (a := 0) [[]] mHDD σ₅ (by tsimp [hσ₅, hσ₄, hσ₃, hσ₂, hσ₁, hσ, mIn, mconst])
+  set σ₆ := Function.update σ₅ mHDD ⟨[ones 0], []⟩ with hσ₆
+  have e6 : Function.update σ₅ mHDD ⟨[[]].reverse ++ (σ₅ mHDD).left, []⟩ = σ₆ := by
+    tsimp [hσ₆, hσ₅, hσ₄, hσ₃, hσ₂, hσ₁, hσ, mIn, mconst, ones]
+  rw [e6] at s6
+  have s7 := runs_mulLoop (show mPK ≠ mJ by decide) (show mN ≠ mHDD by decide) (by decide) (by decide)
+    (by decide) (by decide) ts.length (ℓ - 1) 0 σ₆ [] (by tsimp [hσ₆, hσ₅]) (by tsimp [hσ₆])
+    (by tsimp [hσ₆, hσ₅, hσ₄, hσ₃, hσ₂, hσ₁, hσ, mIn, mconst])
+    (by tsimp [hσ₆, hσ₅, hσ₄, hσ₃, hσ₂, hσ₁, hσ, mIn, mconst])
+  set σ₇ := Function.update (Function.update σ₆ mPK ⟨List.replicate (ℓ - 1) [] ++ [], []⟩) mHDD
+    ⟨[ones (0 + (ℓ - 1) * ts.length)], []⟩ with hσ₇
+  have s8 := runs_clear' (a := 0) mPK σ₇ (T := ⟨List.replicate (ℓ - 1) [] ++ [], []⟩) (by tsimp [hσ₇])
+  set σ₈ := Function.update σ₇ mPK emp with hσ₈
+  have s9 := runs_rewind' (a := 0) mHDD σ₈ (L := [ones (0 + (ℓ - 1) * ts.length)]) (R := []) (by tsimp [hσ₈, hσ₇])
+  have e9 : Function.update σ₈ mHDD ⟨[], [ones (0 + (ℓ - 1) * ts.length)].reverse ++ []⟩ =
+      stF p d w ℓ K ts hL ℓ := by
+    funext i; fin_cases i <;> tsimp [hσ₈, hσ₇, hσ₆, hσ₅, hσ₄, hσ₃, hσ₂, hσ₁, hσ, mIn, mconst, stF, mst, hdAt_full,
+      emp, reg]
+  rw [e9] at s9
+  have s10 := runs_loopF p d w hL ℓ le_rfl
+  set σ₁₀ := stF p d w ℓ K ts hL 0 with hσ₁₀
+  have s11 := runs_clear' (a := 0) mHD σ₁₀ (T := ⟨[], chunkHdrs p d w ℓ K ts⟩) (by rw [hσ₁₀, stF, mst_HD, hdAt_zero])
+  set σ₁₁ := Function.update σ₁₀ mHD emp with hσ₁₁
+  have s12 := runs_clear' (a := 0) mH σ₁₁ (T := reg (ones (0 - 1))) (by tsimp [hσ₁₁, hσ₁₀, stF, mst])
+  set σ₁₂ := Function.update σ₁₁ mH emp with hσ₁₂
+  have s13 := runs_clear' (a := 0) mHDD σ₁₂ (T := reg (ones ((0 - 1) * ts.length)))
+    (by tsimp [hσ₁₂, hσ₁₁, hσ₁₀, stF, mst])
+  set σ₁₃ := Function.update σ₁₂ mHDD emp with hσ₁₃
+  have s14 := runs_clear' (a := 0) mT σ₁₃ (T := ⟨List.replicate ℓ [], []⟩)
+    (by tsimp [hσ₁₃, hσ₁₂, hσ₁₁, hσ₁₀, stF, mst])
+  refine (Runs.then s1 (Runs.then s2 (Runs.then s3 (Runs.then s4 (Runs.then s5 (Runs.then s6 (Runs.then s7
+    (Runs.then s8 (Runs.then s9 (Runs.then s10 (Runs.then s11 (Runs.then s12 (Runs.then s13
+    s14))))))))))))).mono (fun σ' e => ?_) ?_
+  · rw [e]
+    have hs : fwdScript p d (2 ^ ℓ) w (paperPerm hL) ts ℓ K =
+        ((List.range ℓ).reverse.take (ℓ - 0)).flatMap (slotF p d w ℓ K ts hL) := by
+      rw [Nat.sub_zero, List.take_of_length_le (by simp)]; rfl
+    rw [hs]
+    funext i; fin_cases i <;> tsimp [hσ₁₃, hσ₁₂, hσ₁₁, hσ₁₀, stF, mst, mconst, emp]
+  · have hm : (ℓ - 1) * ts.length ≤ ℓ * ts.length := Nat.mul_le_mul_right _ (by omega)
+    simp only [mainExtra, clen, WTape.words, reg, emp, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil,
+      length_ones, List.length_cons, List.length_nil, List.reverse_nil, List.nil_append, List.append_nil,
+      List.map_replicate, List.sum_replicate, List.length_replicate, smul_eq_mul, List.reverse_reverse,
+      List.length_singleton, Nat.zero_add, Nat.zero_sub, Nat.zero_mul]
+    simp only [List.reverse_replicate, List.map_replicate, List.sum_replicate, List.length_nil, smul_eq_mul]
+    have h2 : (ℓ - 1) * (2 * ts.length + 20) ≤ ℓ * (2 * ts.length + 20) := Nat.mul_le_mul_right _ (by omega)
+    have h3 : 20 * ℓ * (2 * ts.length + 20) = 20 * (ℓ * (2 * ts.length + 20)) := by ring
+    omega
+
+set_option maxHeartbeats 32000000 in
+/-- `runs_mainO`: the opposite slot program writes `oppScript` and restores every other tape. -/
+theorem runs_mainO (p d w : ℕ) {ℓ K : ℕ} {ts : List ℕ} (hL : LayoutOK (2 ^ ℓ) ts ℓ K) :
+    Runs mainO (mIn p d w ℓ K ts)
+      (· = Function.update (mconst ℓ K ts) mO
+        ⟨(oppScript p d (2 ^ ℓ) w (paperPerm hL) ts ℓ K).reverse, []⟩)
+      (mainExtra p d w ℓ K ts + loopCostO p d w ℓ K ts ℓ) := by
+  have hℓ : 1 ≤ ℓ := hL.2.2.2
+  set σ := mIn p d w ℓ K ts with hσ
+  have s1 := runs_dropReg (a := 0) (show mP1 ≠ mKC by decide) (show mP1 ≠ mTmp by decide)
+    (show mKC ≠ mTmp by decide) σ (u := ones (ℓ + 1)) (v := [true]) (by tsimp [hσ, mIn, mconst])
+    (by tsimp [hσ, mIn, mconst]) (by tsimp [hσ, mIn, mconst])
+  set σ₁ := Function.update σ mTmp (reg (ones ℓ)) with hσ₁
+  have e1 : Function.update σ mTmp (reg ((ones (ℓ + 1)).drop [true].length)) = σ₁ := by
+    rw [hσ₁, List.length_singleton, drop_ones]; rfl
+  rw [e1] at s1
+  have s2 := runs_ticksReg (a := 0) (show mTmp ≠ mT by decide) σ₁ (u := ones ℓ) (by tsimp [hσ₁])
+    (by tsimp [hσ₁, hσ, mIn, mconst])
+  set σ₂ := Function.update σ₁ mT ⟨[], List.replicate ℓ []⟩ with hσ₂
+  have e2 : Function.update σ₁ mT ⟨[], List.replicate (ones ℓ).length []⟩ = σ₂ := by rw [hσ₂, length_ones]
+  rw [e2] at s2
+  have s3 := runs_clear' (a := 0) mTmp σ₂ (T := reg (ones ℓ)) (by tsimp [hσ₂, hσ₁])
+  set σ₃ := Function.update σ₂ mTmp emp with hσ₃
+  have s4 := runs_emit (a := 0) [[]] mH σ₃ (by tsimp [hσ₃, hσ₂, hσ₁, hσ, mIn, mconst])
+  set σ₄ := Function.update σ₃ mH ⟨[[]], []⟩ with hσ₄
+  have e4 : Function.update σ₃ mH ⟨[[]].reverse ++ (σ₃ mH).left, []⟩ = σ₄ := by
+    tsimp [hσ₄, hσ₃, hσ₂, hσ₁, hσ, mIn, mconst]
+  rw [e4] at s4
+  have s5 := runs_rewind' (a := 0) mH σ₄ (L := [[]]) (R := []) (by tsimp [hσ₄])
+  set σ₅ := Function.update σ₄ mH ⟨[], [[]].reverse ++ []⟩ with hσ₅
+  have s6 := runs_emit (a := 0) [[]] mHDD σ₅ (by tsimp [hσ₅, hσ₄, hσ₃, hσ₂, hσ₁, hσ, mIn, mconst])
+  set σ₆ := Function.update σ₅ mHDD ⟨[[]], []⟩ with hσ₆
+  have e6 : Function.update σ₅ mHDD ⟨[[]].reverse ++ (σ₅ mHDD).left, []⟩ = σ₆ := by
+    tsimp [hσ₆, hσ₅, hσ₄, hσ₃, hσ₂, hσ₁, hσ, mIn, mconst]
+  rw [e6] at s6
+  have s7 := runs_rewind' (a := 0) mHDD σ₆ (L := [[]]) (R := []) (by tsimp [hσ₆])
+  set σ₇ := Function.update σ₆ mHDD ⟨[], [[]].reverse ++ []⟩ with hσ₇
+  have s8 := runs_rewind' (a := 0) mHD σ₇ (L := (chunkHdrs p d w ℓ K ts).reverse) (R := [])
+    (by tsimp [hσ₇, hσ₆, hσ₅, hσ₄, hσ₃, hσ₂, hσ₁, hσ, mIn, mconst, hdFull])
+  have e8 : Function.update σ₇ mHD ⟨[], (chunkHdrs p d w ℓ K ts).reverse.reverse ++ []⟩ = stO p d w ℓ K ts hL 0 := by
+    funext i; fin_cases i <;> tsimp [hσ₇, hσ₆, hσ₅, hσ₄, hσ₃, hσ₂, hσ₁, hσ, mIn, mconst, stO, mst, hdAt_zero,
+      emp, reg, ones]
+  rw [e8] at s8
+  have s9 := runs_loopO p d w hL ℓ le_rfl
+  rw [Nat.sub_self] at s9
+  set σ₉ := stO p d w ℓ K ts hL ℓ with hσ₉
+  have s10 := runs_clear' (a := 0) mHD σ₉ (T := hdFull p d w ℓ K ts) (by rw [hσ₉, stO, mst_HD, hdAt_full])
+  set σ₁₀ := Function.update σ₉ mHD emp with hσ₁₀
+  have s11 := runs_clear' (a := 0) mH σ₁₀ (T := reg (ones ℓ)) (by tsimp [hσ₁₀, hσ₉, stO, mst])
+  set σ₁₁ := Function.update σ₁₀ mH emp with hσ₁₁
+  have s12 := runs_clear' (a := 0) mHDD σ₁₁ (T := reg (ones (ℓ * ts.length)))
+    (by tsimp [hσ₁₁, hσ₁₀, hσ₉, stO, mst])
+  set σ₁₂ := Function.update σ₁₁ mHDD emp with hσ₁₂
+  have s13 := runs_clear' (a := 0) mT σ₁₂ (T := ⟨List.replicate ℓ [], List.replicate (ℓ - ℓ) []⟩)
+    (by tsimp [hσ₁₂, hσ₁₁, hσ₁₀, hσ₉, stO, mst])
+  refine (Runs.then s1 (Runs.then s2 (Runs.then s3 (Runs.then s4 (Runs.then s5 (Runs.then s6 (Runs.then s7
+    (Runs.then s8 (Runs.then s9 (Runs.then s10 (Runs.then s11 (Runs.then s12 s13)))))))))))).mono
+    (fun σ' e => ?_) ?_
+  · rw [e]
+    have hs : oppScript p d (2 ^ ℓ) w (paperPerm hL) ts ℓ K = (List.range ℓ).flatMap (slotO p d w ℓ K ts hL) := rfl
+    rw [hs]
+    funext i; fin_cases i <;> tsimp [hσ₁₂, hσ₁₁, hσ₁₀, hσ₉, stO, mst, mconst, emp]
+  · simp only [mainExtra, clen, WTape.words, reg, emp, hdFull, List.map_cons, List.map_nil, List.sum_cons,
+      List.sum_nil, length_ones, List.length_cons, List.length_nil, List.reverse_nil, List.nil_append,
+      List.append_nil, List.map_replicate, List.sum_replicate, List.length_replicate, smul_eq_mul,
+      List.reverse_reverse, List.length_singleton, Nat.sub_self, List.replicate_zero, List.map_reverse,
+      List.sum_reverse]
+    omega
+
 end ScriptMain
 
 end IntegerMultBounds.Schoenhage
