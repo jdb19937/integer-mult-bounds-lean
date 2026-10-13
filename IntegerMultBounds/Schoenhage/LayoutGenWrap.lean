@@ -1,5 +1,6 @@
 module
 
+public import IntegerMultBounds.Schoenhage.TapeBank
 public import IntegerMultBounds.Schoenhage.LayoutGenMain
 public import IntegerMultBounds.Schoenhage.TransformGenRun
 public import IntegerMultBounds.Schoenhage.AlphaLift
@@ -76,11 +77,7 @@ theorem decState_lslot {p d ℓ K w : ℕ} {ts : List ℕ} (hL : LayoutOK (2 ^ �
 
 theorem upd_lslot (σ : Fin (4 + DB tL nL) → WTape) (v : WTape) :
     upd σ (lslot tL nL) (Function.update (σ ∘ lslot tL nL) 38 v) = Function.update σ (lslot tL nL 38) v := by
-  refine upd_eq_of σ lslot_injective _ _ (fun i => ?_) (fun x hx => ?_)
-  · by_cases hi : i = 38
-    · subst hi; simp
-    · rw [Function.update_of_ne hi, Function.update_of_ne (fun e => hi (lslot_injective e))]; rfl
-  · rw [Function.update_of_ne (fun e => hx 38 e.symm)]
+  rw [TapeBank.place_update lslot_injective, TapeBank.place_self lslot_injective]
 
 theorem lslot_out : lslot tL nL 38 = drv tL nL (nm tL nL 7) := rfl
 

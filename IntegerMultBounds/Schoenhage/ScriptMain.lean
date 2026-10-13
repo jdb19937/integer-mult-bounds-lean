@@ -1,5 +1,6 @@
 module
 
+public import IntegerMultBounds.Schoenhage.TapeBank
 public import IntegerMultBounds.Schoenhage.ScriptParts
 public import IntegerMultBounds.Schoenhage.ScriptOps
 public import IntegerMultBounds.Schoenhage.DriverScript
@@ -70,34 +71,16 @@ theorem tg_injective : Function.Injective tg := by decide
 
 theorem upd_update {s n : ℕ} {f : Fin s → Fin n} (hf : Function.Injective f) (τ : Fin n → WTape)
     (σ : Fin s → WTape) (i : Fin s) (v : WTape) :
-    upd τ f (Function.update σ i v) = Function.update (upd τ f σ) (f i) v := by
-  funext x
-  by_cases hx : ∃ j, f j = x
-  · obtain ⟨j, rfl⟩ := hx
-    rw [upd_slot τ hf]
-    by_cases hj : j = i
-    · subst hj; simp
-    · rw [Function.update_of_ne hj, Function.update_of_ne (fun e => hj (hf e)), upd_slot τ hf]
-  · push Not at hx
-    rw [upd_other τ f _ x hx, Function.update_of_ne (fun e => hx i e.symm), upd_other τ f _ x hx]
+    upd τ f (Function.update σ i v) = Function.update (upd τ f σ) (f i) v :=
+  TapeBank.place_update hf τ σ i v
 
 theorem upd_comp_self {s n : ℕ} {f : Fin s → Fin n} (hf : Function.Injective f) (τ : Fin n → WTape) :
-    upd τ f (τ ∘ f) = τ := by
-  funext x
-  by_cases hx : ∃ j, f j = x
-  · obtain ⟨j, rfl⟩ := hx; rw [upd_slot τ hf]; rfl
-  · push Not at hx; rw [upd_other τ f _ x hx]
+    upd τ f (τ ∘ f) = τ :=
+  TapeBank.place_self hf τ
 
 theorem runs_lift {s n : ℕ} (f : Fin s → Fin n) (hf : Function.Injective f) {c : Cmd 0 s} {τ : Fin n → WTape}
-    {σ₁ : Fin s → WTape} {B : ℕ} (h : Runs c (τ ∘ f) (· = σ₁) B) : Runs (c.map f hf) τ (· = upd τ f σ₁) B := by
-  refine (h.map f hf τ rfl).mono (fun τ' ⟨e, o⟩ => ?_) le_rfl
-  funext x
-  by_cases hx : ∃ y, f y = x
-  · obtain ⟨y, rfl⟩ := hx
-    rw [upd_slot τ hf]
-    exact congrFun e y
-  · simp only [not_exists] at hx
-    rw [o x hx, upd_other τ f _ x hx]
+    {σ₁ : Fin s → WTape} {B : ℕ} (h : Runs c (τ ∘ f) (· = σ₁) B) : Runs (c.map f hf) τ (· = upd τ f σ₁) B :=
+  TapeBank.runs_place f hf h
 
 /-! ### The values -/
 

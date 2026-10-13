@@ -1,0 +1,66 @@
+{
+  "version": 1,
+  "namespace": "IntegerMultBounds.Schoenhage.LayoutSequenceGenerated",
+  "imports": [
+    "IntegerMultBounds.Schoenhage.LayoutGenRun"
+  ],
+  "open": [
+    "IntegerMultBounds.Schoenhage.LayoutGenRun"
+  ],
+  "cases": [
+    {
+      "alphabet": 0,
+      "tapes": 48,
+      "binders": "(ell chunk width axisCount : \u2115) (flags : List Bool) (_chunkPositive : 0 < chunk) (_widthPositive : 0 < width)",
+      "arguments": "ell chunk width axisCount flags _chunkPositive _widthPositive",
+      "input": "lstart ell chunk width axisCount flags",
+      "name": "constantsCopies",
+      "output": "stB ell chunk width axisCount flags",
+      "stages": [
+        {
+          "command": "constsA",
+          "proof": "runs_constsA ell chunk width axisCount flags"
+        },
+        {
+          "command": "Cmd.seq copyFlags (Cmd.seq copyTicks lm1Calc)",
+          "proof": "runs_copies ell chunk width axisCount flags"
+        }
+      ]
+    },
+    {
+      "alphabet": 0,
+      "tapes": 48,
+      "binders": "(ell chunk width axisCount : \u2115) (flags : List Bool) (_chunkPositive : 0 < chunk) (_widthPositive : 0 < width)",
+      "arguments": "ell chunk width axisCount flags _chunkPositive _widthPositive",
+      "input": "lstart ell chunk width axisCount flags",
+      "name": "descriptorSetup",
+      "output": "stF ell chunk width axisCount flags",
+      "stages": [
+        {
+          "command": "constsA",
+          "proof": "runs_constsA ell chunk width axisCount flags"
+        },
+        {
+          "command": "Cmd.seq copyFlags (Cmd.seq copyTicks lm1Calc)",
+          "proof": "runs_copies ell chunk width axisCount flags"
+        },
+        {
+          "command": "nPhase",
+          "proof": "runs_nPhase ell chunk width axisCount flags"
+        },
+        {
+          "command": "divPhase",
+          "proof": "runs_divPhase (\u2113 := ell) _chunkPositive width axisCount flags"
+        },
+        {
+          "command": "binPhase",
+          "proof": "runs_binPhase (\u2113 := ell) (K := chunk) _widthPositive axisCount flags"
+        },
+        {
+          "command": "arrPhase",
+          "proof": "runs_arrPhase ell chunk width axisCount flags"
+        }
+      ]
+    }
+  ]
+}
