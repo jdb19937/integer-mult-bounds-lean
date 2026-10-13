@@ -33,7 +33,10 @@ from the original padding. A scheduled nonstopped child of exponent at least
 two whose own children stop now executes from that actual entry bank, retaining
 its event trace, exact tensor and paid returned endpoint. Its completed frame transports back to the
 original child snapshot, and tensor semantics supplies the tight parent return
-grid. Physical parent restoration, arbitrary-depth recursive execution and
+grid. From the actual completed child trace and tensor, physical parent
+restoration and inverse basis now execute with the original target and ancestor
+frames retained. Compositional adapters construct the next scheduled Step;
+assembling complete nonstopped events, arbitrary-depth recursive execution and
 the uniform total runtime remain open; smaller nonstopped node exponents require
 separate coverage or a justified exclusion for actual parameters. The stopped
 roundtrip's existing cost still includes its stopped-axis-count factor; the
