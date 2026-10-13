@@ -714,6 +714,185 @@ theorem topRun_words (R lm1 n : ℕ) : ∀ (f : List Bool) (O U : List (List Boo
   | false :: f, O, U, k, L, m => by
     simp only [topRun, topTup]; exact topRun_words R lm1 n f O U k L (m + lm1)
 
+theorem topTup_range (ℓ : ℕ) (g : ℕ → Bool) : ∀ (e i0 L : ℕ),
+    topTup (ℓ - 1) L (i0 * (ℓ - 1)) ((List.range e).map fun j => g (i0 + j)) =
+      LayoutScript.topMovesF ℓ L (((List.range e).map (i0 + ·)).filter g)
+  | 0, _, _ => rfl
+  | e + 1, i0, L => by
+    rw [List.range_succ_eq_map, List.map_cons, List.map_cons, List.map_map, List.map_map]
+    have ih := topTup_range ℓ g e (i0 + 1) L
+    have ih' := topTup_range ℓ g e (i0 + 1) (L - 1)
+    have hf : (fun j => g (i0 + (j + 1))) = fun j => g (i0 + 1 + j) := by funext j; congr 1; omega
+    have hm : (fun j => i0 + (j + 1)) = fun j => i0 + 1 + j := by funext j; omega
+    simp only [Function.comp_def, hf, hm, add_zero]
+    have hm1 : i0 * (ℓ - 1) + (ℓ - 1) = (i0 + 1) * (ℓ - 1) := by ring
+    cases hg : g i0
+    · rw [topTup, hm1, ih, List.filter_cons, hg]; rfl
+    · rw [topTup, hm1, ih', List.filter_cons, hg]; rfl
+
+/-- The move tuples of one level loop. -/
+def levTup (s : ℕ) : ℕ → ℕ → ℕ → List (ℕ × ℕ)
+  | _, _, 0 => []
+  | L, m, e + 1 => (m, L - m - 1) :: levTup s (L - 1) (m + s) e
+
+theorem levRun_words (R s n : ℕ) : ∀ (e : ℕ) (O U : List (List Bool)) (k L m : ℕ),
+    (levRun R s n e O U k L m).1 = (wordsOf n R (LayoutMachines.moveOps (levTup s L m e))).reverse ++ O ∧
+    (levRun R s n e O U k L m).2.1 = wordsOf n R (LayoutMachines.backOps (levTup s L m e).reverse) ++ U
+  | 0, O, U, k, L, m => by simp [levRun, levTup, wordsOf, LayoutMachines.moveOps, LayoutMachines.backOps]
+  | e + 1, O, U, k, L, m => by
+    obtain ⟨h1, h2⟩ := levRun_words R s n e ((swapWords R (n - m - 1 - (L - m - 1)) m (L - m - 1) 0 1).reverse ++ O)
+      (swapWords R (n - m - 1 - (L - m - 1)) m (L - m - 1) 1 0 ++ U) (k + 1) (L - 1) (m + s)
+    refine ⟨?_, ?_⟩
+    · simp only [levRun, levTup]; rw [h1, wordsOf_moveOps_cons]; simp
+    · simp only [levRun, levTup, List.reverse_cons]; rw [h2, wordsOf_backOps_append]; simp
+
+theorem levTup_levelF (ℓ b h : ℕ) : ∀ (e i L : ℕ),
+    levTup (ℓ - 1 - b + h) L (i * (ℓ - 1 - b + h) + (ℓ - 1 - b)) e = LayoutScript.levelF ℓ b h i L e
+  | 0, _, _ => rfl
+  | e + 1, i, L => by
+    rw [levTup, LayoutScript.levelF, ← levTup_levelF ℓ b h e (i + 1) (L - 1)]
+    congr 2; ring
+
+/-- The move tuples of the level loop: levels with steps `s, s - 1, …`. -/
+def botTup (c0 D : ℕ) : ℕ → ℕ → ℕ → List (ℕ × ℕ)
+  | 0, _, _ => []
+  | c + 1, L, s => levTup s L c0 D ++ botTup c0 D c (L - D) (s - 1)
+
+theorem botRun_words (R c0 D n : ℕ) : ∀ (c : ℕ) (O U : List (List Bool)) (k L m s : ℕ),
+    (botRun R c0 D n c O U k L m s).1 = (wordsOf n R (LayoutMachines.moveOps (botTup c0 D c L s))).reverse ++ O ∧
+    (botRun R c0 D n c O U k L m s).2.1 = wordsOf n R (LayoutMachines.backOps (botTup c0 D c L s).reverse) ++ U
+  | 0, O, U, k, L, m, s => by simp [botRun, botTup, wordsOf, LayoutMachines.moveOps, LayoutMachines.backOps]
+  | c + 1, O, U, k, L, m, s => by
+    obtain ⟨l1, l2⟩ := levRun_words R s n D O U k L c0
+    obtain ⟨h1, h2⟩ := botRun_words R c0 D n c (levRun R s n D O U k L c0).1 (levRun R s n D O U k L c0).2.1
+      (levRun R s n D O U k L c0).2.2.1 (levRun R s n D O U k L c0).2.2.2.1 (levRun R s n D O U k L c0).2.2.2.2
+      (s - 1)
+    refine ⟨?_, ?_⟩
+    · simp only [botRun, botTup]; rw [h1, l1, levRun_L]
+      simp [wordsOf, LayoutMachines.moveOps, List.map_append, List.flatMap_append]
+    · simp only [botRun, botTup]; rw [h2, l2, levRun_L]
+      simp [wordsOf, LayoutMachines.backOps, List.map_append, List.flatMap_append, List.reverse_append]
+
+theorem botTup_botF (ℓ b D c : ℕ) : ∀ L : ℕ,
+    botTup (ℓ - 1 - b) D c L (ℓ - 1 - b + (c - 1)) = LayoutScript.botF ℓ b D c L := by
+  induction c with
+  | zero => intro L; rfl
+  | succ c ih =>
+    intro L
+    have hrest : botTup (ℓ - 1 - b) D c (L - D) (ℓ - 1 - b + (c + 1 - 1) - 1) =
+        LayoutScript.botF ℓ b D c (L - D) := by
+      rcases c with _ | c
+      · rfl
+      · rw [show ℓ - 1 - b + (c + 1 + 1 - 1) - 1 = ℓ - 1 - b + (c + 1 - 1) by omega]
+        exact ih (L - D)
+    rw [botTup, LayoutScript.botF, hrest]
+    congr 1
+    have := levTup_levelF ℓ b c D 0 L
+    simp only [zero_mul, zero_add] at this
+    rw [show ℓ - 1 - b + (c + 1 - 1) = ℓ - 1 - b + c by omega, this]
+
+/-! ### The prefix moves of the paper's layout -/
+
+/-- Every prefix move: the top loop, then the level loop. -/
+noncomputable def movesGen : Cmd 0 20 := .seq (.loop gFl topBody) (.loop gLev levelStep)
+
+theorem topTup_paper {r : ℕ} {ts : List ℕ} {ℓ K : ℕ} :
+    topTup (ℓ - 1) (LayoutMachines.addrBits ts) 0 ((List.range ts.length).map fun i => decide (axLen ts i = ℓ)) =
+      LayoutScript.topMovesF ℓ (LayoutMachines.addrBits ts) (longs ts ℓ) := by
+  have := topTup_range ℓ (fun i => decide (axLen ts i = ℓ)) ts.length 0 (LayoutMachines.addrBits ts)
+  simp only [zero_mul, zero_add, List.map_id'] at this
+  rw [this]; rfl
+
+theorem addrBits_eq {r : ℕ} {ts : List ℕ} {ℓ K : ℕ} (hL : LayoutOK r ts ℓ K) :
+    LayoutMachines.addrBits ts = ts.length * (ℓ - 1) + (longs ts ℓ).length := by
+  rw [LayoutMachines.addrBits, log_prod_eq_sum hL.1]
+  exact sum_axLen hL.2.1 hL.2.2.2
+
+theorem topRun_L (R lm1 n : ℕ) : ∀ (f : List Bool) (O U : List (List Bool)) (k L m : ℕ),
+    (topRun R lm1 n f O U k L m).2.2.2.1 = L - (f.filter id).length
+  | [], _, _, _, _, _ => by simp [topRun]
+  | true :: f, _, _, _, _, _ => by rw [topRun, topRun_L]; simp; omega
+  | false :: f, _, _, _, _, _ => by rw [topRun, topRun_L]; simp
+
+theorem topRun_k (R lm1 n : ℕ) : ∀ (f : List Bool) (O U : List (List Bool)) (k L m : ℕ),
+    (topRun R lm1 n f O U k L m).2.2.1 = k + (f.filter id).length
+  | [], _, _, _, _, _ => by simp [topRun]
+  | true :: f, _, _, _, _, _ => by rw [topRun, topRun_k]; simp; omega
+  | false :: f, _, _, _, _, _ => by rw [topRun, topRun_k]; simp
+
+theorem topRun_m (R lm1 n : ℕ) : ∀ (f : List Bool) (O U : List (List Bool)) (k L m : ℕ),
+    (topRun R lm1 n f O U k L m).2.2.2.2 = m + f.length * lm1
+  | [], _, _, _, _, _ => by simp [topRun]
+  | true :: f, _, _, _, _, _ => by rw [topRun, topRun_m]; simp; ring
+  | false :: f, _, _, _, _, _ => by rw [topRun, topRun_m]; simp; ring
+
+theorem flags_count {ts : List ℕ} {ℓ : ℕ} :
+    (((List.range ts.length).map fun i => decide (axLen ts i = ℓ)).filter id).length = (longs ts ℓ).length := by
+  simp [longs, List.filter_map, Function.comp_def]
+
+theorem wordsOf_append (n R : ℕ) (a b : List LayoutMachines.Op) :
+    wordsOf n R (a ++ b) = wordsOf n R a ++ wordsOf n R b := by
+  simp [wordsOf, List.map_append, List.flatMap_append]
+
+set_option maxHeartbeats 8000000 in
+/-- `runs_movesGen`: from the axis flags, one tick per axis and one per bottom level, the move generator
+writes the forward words of the paper's prefix moves (reversed, on `gO`) and the undo words of their
+reversal (on `gU`). -/
+theorem runs_movesGen {r : ℕ} {ts : List ℕ} {ℓ K : ℕ} (hL : LayoutOK r ts ℓ K) {R N : ℕ} (hR0 : 0 < R)
+    (hDN : ts.length ≤ N) (hnN : LayoutMachines.addrBits ts ≤ N)
+    (hmN : ts.length * (ℓ - 1) ≤ N) (hkN : (longs ts ℓ).length + (ℓ - 1) % K * ts.length ≤ N)
+    (hcN : ℓ - 1 - (ℓ - 1) % K + ts.length * (ℓ - 1 - (ℓ - 1) % K + ((ℓ - 1) % K - 1)) ≤ N)
+    (hsN : ℓ - 1 - (ℓ - 1) % K + ((ℓ - 1) % K - 1) ≤ N) :
+    Runs movesGen
+      (bank R (ℓ - 1) (ℓ - 1 - (ℓ - 1) % K) (LayoutMachines.addrBits ts) [] [] 0 (LayoutMachines.addrBits ts) 0
+        (ℓ - 1 - (ℓ - 1) % K + ((ℓ - 1) % K - 1))
+        ⟨[], ((List.range ts.length).map fun i => decide (axLen ts i = ℓ)).map fun x => [x]⟩
+        ⟨[], List.replicate ts.length []⟩ ⟨[], List.replicate ((ℓ - 1) % K) []⟩)
+      (fun σ' => ∃ k L m s, σ' = bank R (ℓ - 1) (ℓ - 1 - (ℓ - 1) % K) (LayoutMachines.addrBits ts)
+        (wordsOf (LayoutMachines.addrBits ts) R (LayoutMachines.moveOps (LayoutMachines.layoutMoves ts ℓ K))).reverse
+        (wordsOf (LayoutMachines.addrBits ts) R (LayoutMachines.backOps (LayoutMachines.layoutMoves ts ℓ K).reverse))
+        k L m s ⟨(((List.range ts.length).map fun i => decide (axLen ts i = ℓ)).map fun x => [x]).reverse, []⟩
+        ⟨[], List.replicate ts.length []⟩ ⟨List.replicate ((ℓ - 1) % K) [], []⟩)
+      (ts.length * (topCost N R (ℓ - 1) + 2) + 1 + (ℓ - 1) % K * (levelCost N R ts.length + 2)) := by
+  set D := ts.length
+  set n := LayoutMachines.addrBits ts
+  set b := (ℓ - 1) % K
+  set c0 := ℓ - 1 - b
+  set s0 := c0 + (b - 1)
+  set f := (List.range D).map fun i => decide (axLen ts i = ℓ) with hf
+  have hn : n = D * (ℓ - 1) + (longs ts ℓ).length := addrBits_eq hL
+  have hT : (f.filter id).length = (longs ts ℓ).length := by rw [hf]; exact flags_count
+  have hfl : f.length = D := by simp [hf, D]
+  have s1 := runs_topLoop (R := R) (lm1 := ℓ - 1) (c0 := c0) (n := n) (s := s0) (N := N)
+    (ax := ⟨[], List.replicate D []⟩) (lev := ⟨[], List.replicate b []⟩) hR0 hnN f [] [] [] 0 n 0
+    (by rw [hfl]; omega) hnN (by rw [hfl]; omega)
+  set tr := topRun R (ℓ - 1) n f [] [] 0 n 0 with htr
+  have hk : tr.2.2.1 = (longs ts ℓ).length := by rw [htr, topRun_k, hT]; simp
+  have hLt : tr.2.2.2.1 = D * (ℓ - 1) := by rw [htr, topRun_L, hT]; omega
+  have hm : tr.2.2.2.2 = D * (ℓ - 1) := by rw [htr, topRun_m, hfl]; ring
+  have c1 : tr.2.2.1 + b * D ≤ N := by rw [hk]; exact hkN
+  have c2 : tr.2.2.2.1 ≤ N := by rw [hLt]; exact hmN
+  have c3 : tr.2.2.2.2 ≤ N := by rw [hm]; exact hmN
+  have s2 := runs_botLoop (R := R) (lm1 := ℓ - 1) (c0 := c0) (n := n) (N := N) (D := D)
+    (fl := ⟨(f.map fun x => [x]).reverse ++ [], []⟩) hR0 hnN hDN b [] tr.1 tr.2.1 tr.2.2.1 tr.2.2.2.1
+    tr.2.2.2.2 s0 c1 c2 hcN c3 hsN
+  refine (Runs.then s1 s2).mono (fun τ he => ?_) (by rw [hfl])
+  rw [he]
+  obtain ⟨b1, b2⟩ := botRun_words R c0 D n b tr.1 tr.2.1 tr.2.2.1 tr.2.2.2.1 tr.2.2.2.2 s0
+  obtain ⟨t1, t2⟩ := topRun_words R (ℓ - 1) n f [] [] 0 n 0
+  rw [← htr] at t1 t2
+  have hbot : botTup c0 D b tr.2.2.2.1 s0 = LayoutScript.botF ℓ b D b (D * (ℓ - 1)) := by
+    rw [hLt]; exact botTup_botF ℓ b D b (D * (ℓ - 1))
+  have htop : topTup (ℓ - 1) n 0 f = LayoutScript.topMovesF ℓ n (longs ts ℓ) := topTup_paper (r := r) (K := K)
+  have hmoves : LayoutMachines.layoutMoves ts ℓ K = LayoutScript.topMovesF ℓ n (longs ts ℓ) ++
+      LayoutScript.botF ℓ b D b (D * (ℓ - 1)) := by
+    rw [LayoutScript.layoutMoves_eq hL]
+  set br := botRun R c0 D n b tr.1 tr.2.1 tr.2.2.1 tr.2.2.2.1 tr.2.2.2.2 s0 with hbr
+  refine ⟨br.2.2.1, br.2.2.2.1, br.2.2.2.2.1, br.2.2.2.2.2, ?_⟩
+  rw [b1, b2, t1, t2, hbot, htop, hmoves]
+  simp only [List.append_nil, LayoutMachines.moveOps, LayoutMachines.backOps, List.map_append, List.reverse_append,
+    wordsOf_append, List.map_reverse]
+
 end LayoutScriptTape
 
 end IntegerMultBounds.Schoenhage
