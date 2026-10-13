@@ -224,4 +224,110 @@ theorem runs_decStep {A : ℕ} {p d l K w : ℕ} {ts : List ℕ} (hp : 1 ≤ p) 
     exact (compile_correct (by decide) hx).consequence (fun _ h => h) (fun _ h => h) le_rfl
   exact (runs_ofHoare_liftE (Nat.zero_le A) _ (by decide) gslot_injective hT).mono (fun _ h => h) hk
 
+/-! ### The constants -/
+
+/-- Where the constants program's tapes sit in the word bank. -/
+def cvals : Fin 16 → ℕ := ![139, 140, 130, 6, 27, 39, 41, 46, 47, 48, 49, 17, 18, 19, 20, 21]
+
+theorem cvals_lt (i : Fin 16) : cvals i < 141 := by fin_cases i <;> decide
+
+/-- The constants program's tapes in the word bank. -/
+def cslot (tL nL : ℕ) (i : Fin 16) : Fin (4 + DB tL nL) := ⟨cvals i, by have := cvals_lt i; unfold DB; omega⟩
+
+theorem cvals_injective : Function.Injective cvals := by decide
+
+theorem cslot_injective : Function.Injective (cslot tL nL) := fun i j h =>
+  cvals_injective (congrArg Fin.val h)
+
+theorem cslot_cL : cslot tL nL TwistConsts.cL = gslot tL nL iL := Fin.ext (by rw [gslot_val]; rfl)
+theorem cslot_cW : cslot tL nL TwistConsts.cW = gslot tL nL iW := Fin.ext (by rw [gslot_val]; rfl)
+theorem cslot_cF : cslot tL nL TwistConsts.cF = gslot tL nL xA := Fin.ext (by rw [gslot_val]; rfl)
+theorem cslot_oW : cslot tL nL TwistConsts.oW = drv tL nL (nm tL nL 2) := Fin.ext rfl
+theorem cslot_o3 : cslot tL nL TwistConsts.o3 = drv tL nL (twT tL nL 3) := Fin.ext rfl
+theorem cslot_o15 : cslot tL nL TwistConsts.o15 = drv tL nL (twT tL nL 15) := Fin.ext rfl
+theorem cslot_o17 : cslot tL nL TwistConsts.o17 = drv tL nL (twT tL nL 17) := Fin.ext rfl
+theorem cslot_o22 : cslot tL nL TwistConsts.o22 = drv tL nL (twT tL nL 22) := Fin.ext rfl
+theorem cslot_o23 : cslot tL nL TwistConsts.o23 = drv tL nL (twT tL nL 23) := Fin.ext rfl
+theorem cslot_o24 : cslot tL nL TwistConsts.o24 = drv tL nL (twT tL nL 24) := Fin.ext rfl
+theorem cslot_o25 : cslot tL nL TwistConsts.o25 = drv tL nL (twT tL nL 25) := Fin.ext rfl
+
+theorem cslot_scratch (i : Fin 16) (h : 11 ≤ i.val) :
+    cslot tL nL i = drv tL nL ⟨cvals i - 4, by have := cvals_lt i; unfold DB; omega⟩ := by
+  apply Fin.ext
+  have : 4 ≤ cvals i := by fin_cases i <;> simp at h <;> decide
+  simp [cslot, drv]; omega
+
+theorem wbank_scratch (S0 : Fin 4 → WTape) (dec : Fin 𝕌 → WTape) (v : Fin 13 → WTape) (tw : Fin 29 → WTape)
+    (i : Fin 16) (h : 11 ≤ i.val) : wbank (tL := tL) (nL := nL) S0 dec v tw (cslot tL nL i) = emp := by
+  rw [cslot_scratch i h]
+  have h1 : 17 ≤ cvals i ∧ cvals i ≤ 21 := by fin_cases i <;> simp at h <;> decide
+  simp only [wbank, wst_drv]
+  rw [dif_neg (by simp; omega), dif_neg (by simp; omega), dif_neg (by simp; omega)]
+
+/-- The constants program on the word bank. -/
+noncomputable def constStep (A tL nL : ℕ) : Cmd A (4 + DB tL nL) :=
+  .prim (Prim.liftE (Nat.zero_le A) (Prim.ofHoare (compile (a := 0) (by decide) TwistConsts.constGen).2
+    (by decide))) (cslot tL nL) cslot_injective
+
+theorem runs_constStep {A : ℕ} (S0 : Fin 4 → WTape) (dec : Fin 𝕌 → WTape) (v : Fin 13 → WTape)
+    (tw : Fin 29 → WTape) (l w : ℕ) (fl : List Bool) (hL : dec iL = reg (ones l)) (hW : dec iW = reg (ones w))
+    (hF : dec xA = ⟨(fl.map fun b => [b]).reverse, []⟩) (h2 : v 2 = emp) (t3 : tw 3 = emp) (t15 : tw 15 = emp)
+    (t17 : tw 17 = emp) (t22 : tw 22 = emp) (t23 : tw 23 = emp) (t24 : tw 24 = emp) (t25 : tw 25 = emp) :
+    Runs (constStep A tL nL) (wbank S0 dec v tw)
+      (· = wbank S0 dec (Function.update v 2 (reg (ones w)))
+        (Function.update (Function.update (Function.update (Function.update (Function.update (Function.update
+          (Function.update tw 3 (reg (ones (2 * 2 ^ l)))) 15 (reg (List.replicate (TwistConsts.flagSum (l - 1) fl) false)))
+          17 ⟨[], List.replicate (2 ^ TwistConsts.flagSum (l - 1) fl) []⟩) 22 (reg (ones (4 * 2 ^ l - 1))))
+          23 (reg (ones (4 * 2 ^ l)))) 24 (reg (ones (2 * 2 ^ l - 1)))) 25 (reg (ones (2 * 2 ^ l)))))
+      (TwistConsts.constCost l w fl) := by
+  have hcomp : wbank (tL := tL) (nL := nL) S0 dec v tw ∘ cslot tL nL = TwistConsts.cIn l w fl := by
+    funext i
+    simp only [Function.comp_apply]
+    by_cases hs : 11 ≤ i.val
+    · rw [wbank_scratch _ _ _ _ i hs]
+      fin_cases i <;> simp at hs <;> simp (config := {decide := true}) [TwistConsts.cIn]
+    · fin_cases i <;> simp at hs
+      · show wbank S0 dec v tw (cslot tL nL TwistConsts.cL) = TwistConsts.cIn l w fl TwistConsts.cL
+        rw [cslot_cL, wbank_gslot _ _ _ _ (by decide), hL]; rfl
+      · show wbank S0 dec v tw (cslot tL nL TwistConsts.cW) = TwistConsts.cIn l w fl TwistConsts.cW
+        rw [cslot_cW, wbank_gslot _ _ _ _ (by decide), hW]; rfl
+      · show wbank S0 dec v tw (cslot tL nL TwistConsts.cF) = TwistConsts.cIn l w fl TwistConsts.cF
+        rw [cslot_cF, wbank_gslot _ _ _ _ (by decide), hF]; rfl
+      · show wbank S0 dec v tw (cslot tL nL TwistConsts.oW) = TwistConsts.cIn l w fl TwistConsts.oW
+        rw [cslot_oW, wbank_nm, h2]; rfl
+      · show wbank S0 dec v tw (cslot tL nL TwistConsts.o3) = TwistConsts.cIn l w fl TwistConsts.o3
+        rw [cslot_o3, wbank_twT, t3]; rfl
+      · show wbank S0 dec v tw (cslot tL nL TwistConsts.o15) = TwistConsts.cIn l w fl TwistConsts.o15
+        rw [cslot_o15, wbank_twT, t15]; rfl
+      · show wbank S0 dec v tw (cslot tL nL TwistConsts.o17) = TwistConsts.cIn l w fl TwistConsts.o17
+        rw [cslot_o17, wbank_twT, t17]; rfl
+      · show wbank S0 dec v tw (cslot tL nL TwistConsts.o22) = TwistConsts.cIn l w fl TwistConsts.o22
+        rw [cslot_o22, wbank_twT, t22]; rfl
+      · show wbank S0 dec v tw (cslot tL nL TwistConsts.o23) = TwistConsts.cIn l w fl TwistConsts.o23
+        rw [cslot_o23, wbank_twT, t23]; rfl
+      · show wbank S0 dec v tw (cslot tL nL TwistConsts.o24) = TwistConsts.cIn l w fl TwistConsts.o24
+        rw [cslot_o24, wbank_twT, t24]; rfl
+      · show wbank S0 dec v tw (cslot tL nL TwistConsts.o25) = TwistConsts.cIn l w fl TwistConsts.o25
+        rw [cslot_o25, wbank_twT, t25]; rfl
+  obtain ⟨τ', k, hx, hq, hk⟩ := TwistConsts.runs_constGen l w fl
+  subst hq
+  have hT : HoareTo (compile (a := 0) (by decide) TwistConsts.constGen).2
+      (wbank (tL := tL) (nL := nL) S0 dec v tw ∘ cslot tL nL)
+      (TwistConsts.cOut l w fl) k := by
+    rw [hcomp]
+    exact (compile_correct (by decide) hx).consequence (fun _ h => h) (fun _ h => h) le_rfl
+  refine (runs_ofHoare_liftE (Nat.zero_le A) _ (by decide) cslot_injective hT).mono (fun τ e => ?_) hk
+  rw [e, ← update_wbank_nm, ← update_wbank_twT, ← update_wbank_twT, ← update_wbank_twT, ← update_wbank_twT,
+    ← update_wbank_twT, ← update_wbank_twT, ← update_wbank_twT, ← cslot_oW, ← cslot_o3, ← cslot_o15, ← cslot_o17,
+    ← cslot_o22, ← cslot_o23, ← cslot_o24, ← cslot_o25]
+  apply upd_eq_of _ cslot_injective
+  · intro i
+    have hi := congrFun hcomp i
+    simp only [Function.comp_apply] at hi
+    simp only [Function.update_apply, cslot_injective.eq_iff]
+    fin_cases i <;> simp (config := {decide := true}) [TwistConsts.cOut, TwistConsts.cIn] at hi ⊢ <;> exact hi
+  · intro y hy
+    have hy' : ∀ i, (y = cslot tL nL i) ↔ False := fun i => ⟨fun e => hy i e.symm, False.elim⟩
+    simp only [Function.update_apply, hy', if_false]
+
 end IntegerMultBounds.Schoenhage
