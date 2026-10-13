@@ -6834,7 +6834,14 @@ Schönhage–Strassen multiplication, the fast multiplier used for the packed pr
   (`dstate`, `update_nm`, `update_tw`); slot maps for the twist, prefix-round, layer
   and layout primitives with what each call sees and changes; `DriverTwist`: one
   twist step (table from the round script, cut, twist block, join) on the bank
-  (`runs_twistStep`).
+  (`runs_twistStep`); `DriverRounds`, `DriverHad`: a slot's Hadamard part, the
+  prefix machine or the layer call by kind word (`runs_hadStep`); `DriverScript`:
+  the round scripts (`fwdScript`, `oppScript`); `DriverRest`: the twist block at
+  rest (`twRest`, `runs_twistRest`); `DriverRound`, `DriverLoop`: one slot round
+  and the round loops as `Chain`s of the computed schedules (`runs_fwdRounds`,
+  `runs_oppRounds`); `DriverLayout`: the layout and undo scripts on the bank;
+  `TransformDriver`: the forward and opposite drivers, close to `fwdExact` and
+  `oppExact` given the layer calls (`runs_fwdDriver`, `runs_oppDriver`).
 
 - `Schoenhage/PointwiseRow.lean`: at the main sizes `p = 6 lg n`, `r = 2^ℓ`
   the pointwise program's time is at most a constant times `T p` times the
