@@ -442,6 +442,179 @@ theorem runs_arrPhase (ℓ K w D : ℕ) (f : List Bool) :
     rw [h2]
     omega
 
+/-! ### The prefix moves -/
+
+/-- The move generator's tapes are the bank's first twenty. -/
+def fm : Fin 20 → Fin 48 := Fin.castLE (by decide)
+
+theorem fm_injective : Function.Injective fm := Fin.castLE_injective _
+
+/-- The paper's flags. -/
+abbrev pf (ts : List ℕ) (ℓ : ℕ) : List Bool := SigmaConstsTape.paperFlags ts ℓ
+
+theorem nOf_paper {r : ℕ} {ts : List ℕ} {ℓ K : ℕ} (hL : LayoutOK r ts ℓ K) :
+    nOf ℓ ts.length (pf ts ℓ) = LayoutMachines.addrBits ts := by
+  rw [nOf, SigmaConstsTape.paperFlags_count, addrBits_eq hL]
+
+/-- The bank after the prefix moves, given the move generator's final counters. -/
+def stG (ℓ K w : ℕ) (ts : List ℕ) (k L m s : ℕ) : Fin 48 → WTape :=
+  fun i => if h : i.val < 20 then
+    bank (recLen ℓ w) (ℓ - 1) (ℓ - 1 - (ℓ - 1) % K) (LayoutMachines.addrBits ts)
+      (wordsOf (LayoutMachines.addrBits ts) (recLen ℓ w) (LayoutMachines.moveOps (LayoutMachines.layoutMoves ts ℓ K))).reverse
+      (wordsOf (LayoutMachines.addrBits ts) (recLen ℓ w)
+        (LayoutMachines.backOps (LayoutMachines.layoutMoves ts ℓ K).reverse))
+      k L m s ⟨((pf ts ℓ).map fun x => [x]).reverse, []⟩ ⟨[], List.replicate ts.length []⟩
+      ⟨List.replicate ((ℓ - 1) % K) [], []⟩ ⟨i.val, h⟩
+    else stF ℓ K w ts.length (pf ts ℓ) i
+
+/-- The bound on the move generator's counters. -/
+def movesN (ℓ : ℕ) (ts : List ℕ) : ℕ := LayoutMachines.addrBits ts + ts.length * ℓ + ℓ + ts.length
+
+set_option maxHeartbeats 16000000 in
+theorem runs_movesPhase {ℓ K w : ℕ} {ts : List ℕ} (hL : LayoutOK (2 ^ ℓ) ts ℓ K) (hw : 0 < w) :
+    Runs (movesGen.map fm fm_injective) (stF ℓ K w ts.length (pf ts ℓ))
+      (fun σ' => ∃ k L m s, k ≤ movesN ℓ ts ∧ L ≤ movesN ℓ ts ∧ m ≤ movesN ℓ ts ∧ s ≤ movesN ℓ ts ∧
+        σ' = stG ℓ K w ts k L m s)
+      (ts.length * (topCost (movesN ℓ ts) (recLen ℓ w) (ℓ - 1) + 2) + 1 +
+        (ℓ - 1) % K * (levelCost (movesN ℓ ts) (recLen ℓ w) ts.length + 2)) := by
+  set N := movesN ℓ ts with hN
+  have hNv : N = LayoutMachines.addrBits ts + ts.length * ℓ + ℓ + ts.length := by rw [hN, movesN]
+  have hR0 : 0 < recLen ℓ w := by unfold recLen; positivity
+  have hn := nOf_paper hL
+  have hn' : nOf ℓ ts.length ((List.range ts.length).map fun i => decide (axLen ts i = ℓ)) =
+      LayoutMachines.addrBits ts := hn
+  have hb : (ℓ - 1) % K ≤ ℓ - 1 := Nat.mod_le _ _
+  have hlong : (longs ts ℓ).length ≤ LayoutMachines.addrBits ts := by rw [addrBits_eq hL]; omega
+  have h1 : ts.length * (ℓ - 1) ≤ ts.length * ℓ := Nat.mul_le_mul_left _ (Nat.sub_le _ _)
+  have h2 : (ℓ - 1) % K * ts.length ≤ ts.length * ℓ := by
+    rw [mul_comm]; exact Nat.mul_le_mul_left _ (by omega)
+  have h3 : ts.length * (ℓ - 1 - (ℓ - 1) % K + ((ℓ - 1) % K - 1)) ≤ ts.length * ℓ :=
+    Nat.mul_le_mul_left _ (by omega)
+  have s := runs_movesGen hL (R := recLen ℓ w) (N := N) hR0 (by omega) (by omega) (by omega)
+    (by omega) (by omega) (by omega)
+  have hc : stF ℓ K w ts.length (pf ts ℓ) ∘ fm =
+      bank (recLen ℓ w) (ℓ - 1) (ℓ - 1 - (ℓ - 1) % K) (LayoutMachines.addrBits ts) [] [] 0
+        (LayoutMachines.addrBits ts) 0 (ℓ - 1 - (ℓ - 1) % K + ((ℓ - 1) % K - 1))
+        ⟨[], ((List.range ts.length).map fun i => decide (axLen ts i = ℓ)).map fun x => [x]⟩
+        ⟨[], List.replicate ts.length []⟩ ⟨[], List.replicate ((ℓ - 1) % K) []⟩ := by
+    funext i; fin_cases i <;> tsimp [fm, stF, stE, stD, stC, stB, stA, lstart, bank, emp, endv, hn, hn', pf,
+      SigmaConstsTape.paperFlags]
+  rw [← hc] at s
+  refine (s.map fm fm_injective (stF ℓ K w ts.length (pf ts ℓ)) rfl).mono (fun τ ⟨⟨k, L, m, s', hk, hL', hm, hs, he⟩, ho⟩ =>
+    ⟨k, L, m, s', hk, hL', hm, hs, ?_⟩) le_rfl
+  funext i
+  by_cases hi : i.val < 20
+  · have := congrFun he ⟨i.val, hi⟩
+    simp only [Function.comp_apply] at this
+    rw [show fm ⟨i.val, hi⟩ = i from Fin.ext rfl] at this
+    rw [this, stG, dif_pos hi]
+    rfl
+  · rw [ho i (fun y hy => hi (by rw [← hy]; exact y.isLt)), stG, dif_neg hi]
+
+/-! ### The chunk exchanges -/
+
+/-- Where the exchange scan's tapes sit. -/
+def fev : Fin 18 → ℕ := ![0, 1, 20, 21, 22, 33, 23, 6, 24, 25, 26, 27, 28, 29, 30, 10, 13, 31]
+
+theorem fev_lt (i : Fin 18) : fev i < 48 := by fin_cases i <;> decide
+
+def fe (i : Fin 18) : Fin 48 := ⟨fev i, fev_lt i⟩
+
+theorem fe_injective : Function.Injective fe := by
+  intro i j h; have := congrArg Fin.val h; simp only [fe] at this; revert i j; decide
+
+/-- The forward words of the moves and exchanges, reversed. -/
+def fwdOut (ℓ K w : ℕ) (ts : List ℕ) : List (List Bool) :=
+  (wordsOf (LayoutMachines.addrBits ts) (recLen ℓ w) (LayoutMachines.exOps (LayoutMachines.layoutSwaps ts ℓ K))).reverse ++
+    (wordsOf (LayoutMachines.addrBits ts) (recLen ℓ w)
+      (LayoutMachines.moveOps (LayoutMachines.layoutMoves ts ℓ K))).reverse
+
+/-- The undo words. -/
+def undoOut (ℓ K w : ℕ) (ts : List ℕ) : List (List Bool) :=
+  wordsOf (LayoutMachines.addrBits ts) (recLen ℓ w) (LayoutMachines.exOps (LayoutMachines.layoutSwaps ts ℓ K).reverse) ++
+    wordsOf (LayoutMachines.addrBits ts) (recLen ℓ w) (LayoutMachines.backOps (LayoutMachines.layoutMoves ts ℓ K).reverse)
+
+theorem fwdOut_eq (ℓ K w : ℕ) (ts : List ℕ) : fwdOut ℓ K w ts = (layoutWords (2 ^ ℓ) w ts ℓ K).reverse := by
+  rw [fwdOut, layoutWords, LayoutMachines.layoutOpList, ← List.reverse_append, ← wordsOf_append]; rfl
+
+theorem undoOut_eq (ℓ K w : ℕ) (ts : List ℕ) : undoOut ℓ K w ts = undoWords (2 ^ ℓ) w ts ℓ K := by
+  rw [undoOut, undoWords, LayoutMachines.undoOpList, ← wordsOf_append]; rfl
+
+/-- The bank after the exchanges. -/
+def stH (ℓ K w : ℕ) (ts : List ℕ) (k L m s : ℕ) : Fin 48 → WTape :=
+  Function.update (Function.update (Function.update (Function.update (stG ℓ K w ts k L m s) 0
+    ⟨fwdOut ℓ K w ts, []⟩) 1 ⟨undoOut ℓ K w ts, []⟩) 20 emp) 22 (endv ((ℓ - 1) / K * ts.length))
+
+set_option maxHeartbeats 16000000 in
+theorem runs_exPhase {ℓ K w : ℕ} {ts : List ℕ} (hL : LayoutOK (2 ^ ℓ) ts ℓ K) (hw : 0 < w) (k L m s : ℕ) :
+    Runs (Cmd.map fe fe_injective (.loop LayoutSwapTape.xA LayoutSwapTape.step)) (stG ℓ K w ts k L m s)
+      (· = stH ℓ K w ts k L m s)
+      ((ℓ - 1) / K * ts.length * (LayoutSwapTape.stepCost ((ℓ - 1) / K * ts.length) K
+        (LayoutMachines.addrBits ts - 2 * K) (recLen ℓ w) + 2)) := by
+  have hR0 : 0 < recLen ℓ w := by unfold recLen; positivity
+  have hn := nOf_paper hL
+  have hk2 : nOf ℓ ts.length (pf ts ℓ) - K - K = LayoutMachines.addrBits ts - 2 * K := by rw [hn]; omega
+  have hk2' : nOf ℓ ts.length ((List.range ts.length).map fun i => decide (axLen ts i = ℓ)) - K - K =
+      LayoutMachines.addrBits ts - 2 * K := hk2
+  have hscan := LayoutSwapTape.runs_exScan_paper (R := recLen ℓ w) (nA := LayoutMachines.addrBits ts) (K := K)
+    (W := (ℓ - 1) / K * ts.length) (ts := ts) (ℓ := ℓ) hR0 le_rfl
+    (wordsOf (LayoutMachines.addrBits ts) (recLen ℓ w) (LayoutMachines.moveOps (LayoutMachines.layoutMoves ts ℓ K))).reverse
+    (wordsOf (LayoutMachines.addrBits ts) (recLen ℓ w)
+      (LayoutMachines.backOps (LayoutMachines.layoutMoves ts ℓ K).reverse))
+  have hc : stG ℓ K w ts k L m s ∘ fe = LayoutSwapTape.stBank (recLen ℓ w) (LayoutMachines.addrBits ts - 2 * K) K
+      (wordsOf (LayoutMachines.addrBits ts) (recLen ℓ w)
+        (LayoutMachines.moveOps (LayoutMachines.layoutMoves ts ℓ K))).reverse
+      (wordsOf (LayoutMachines.addrBits ts) (recLen ℓ w)
+        (LayoutMachines.backOps (LayoutMachines.layoutMoves ts ℓ K).reverse))
+      (LayoutScript.axisArr ((ℓ - 1) / K) ts.length) 0 := by
+    funext i; fin_cases i <;> tsimp [fe, fev, stG, stF, stE, stD, stC, stB, stA, lstart, bank, emp, endv,
+      LayoutSwapTape.stBank, LayoutSwapTape.xbank, hk2, hk2', pf, SigmaConstsTape.paperFlags]
+  rw [← hc] at hscan
+  refine Runs.map_eq fe fe_injective hscan (stH ℓ K w ts k L m s) ?_ ?_
+  · funext i; fin_cases i <;> tsimp [fe, fev, stH, stG, stF, stE, stD, stC, stB, stA, lstart, bank, emp, endv,
+      LayoutSwapTape.stBank, LayoutSwapTape.xbank, hk2, hk2', pf, SigmaConstsTape.paperFlags, fwdOut, undoOut]
+  · intro y hy
+    have h0 : y ≠ 0 := fun e => hy 0 (by rw [e]; rfl)
+    have h1 : y ≠ 1 := fun e => hy 1 (by rw [e]; rfl)
+    have h20 : y ≠ 20 := fun e => hy 2 (by rw [e]; rfl)
+    have h22 : y ≠ 22 := fun e => hy 4 (by rw [e]; rfl)
+    simp [stH, h0, h1, h20, h22]
+
+/-! ### The output -/
+
+/-- The forward script onto the output tape. -/
+noncomputable def outFwd : Cmd 0 48 := .seq (rewind 0) <| .seq (appendAll 0 38 (by decide)) (rewind 38)
+
+/-- One word of the reversal: read the undo tape backwards. -/
+noncomputable def revBody : Cmd 0 48 :=
+  .seq (skp 47 10 (by decide)) <| .seq (back 1) <| .seq (cpy 1 38 (by decide)) (back 1)
+
+/-- The undo script, reversed onto the output tape. -/
+noncomputable def outUndo : Cmd 0 48 :=
+  .seq (rewind 1) <| .seq (appendAll 1 47 (by decide)) <| .seq (rewind 47) <| .seq (.loop 47 revBody) (rewind 38)
+
+set_option maxHeartbeats 8000000 in
+theorem runs_outFwd (σ : Fin 48 → WTape) {O : List (List Bool)} {W : ℕ} (hW : ∀ x ∈ O, x.length ≤ W)
+    (h0 : σ 0 = ⟨O.reverse, []⟩) (h38 : σ 38 = emp) :
+    Runs outFwd σ (· = Function.update (Function.update σ 0 ⟨O.reverse, []⟩) 38 ⟨[], O⟩)
+      (2 * clen O + O.length * (W + 8) + 10) := by
+  have s1 := runs_rewind (a := 0) 0 σ
+  set σ₁ := Function.update σ 0 ⟨[], (σ 0).left.reverse ++ (σ 0).right⟩ with hσ₁
+  have s2 := runs_appendAll (a := 0) (show (0 : Fin 48) ≠ 38 by decide) W O σ₁ [] []
+    (by rw [hσ₁, h0]; simp) (by rw [hσ₁, Function.update_of_ne (by decide), h38]; rfl) hW
+  set σ₂ := Function.update (Function.update σ₁ 0 ⟨O.reverse ++ [], []⟩) 38 ⟨O.reverse ++ [], []⟩ with hσ₂
+  have s3 := runs_rewind (a := 0) 38 σ₂
+  refine (Runs.then s1 (Runs.then s2 s3)).mono (fun τ h => ?_) ?_
+  · rw [h]; funext i
+    by_cases h38' : i = 38
+    · subst h38'; simp [hσ₂]
+    · by_cases h0' : i = 0
+      · subst h0'; simp [hσ₂, hσ₁]
+      · simp [hσ₂, hσ₁, h38', h0']
+  · have e1 : clen (σ 0).left = clen O := by rw [h0]; simp [clen_reverse]
+    have e2 : clen (σ₂ 38).left = clen O := by simp [hσ₂, clen_reverse]
+    rw [e1, e2]; omega
+
 end LayoutGenRun
 
 end IntegerMultBounds.Schoenhage
