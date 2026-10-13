@@ -90,7 +90,12 @@ role, entry-frame, leaf, work, scalar and basis tape, with zero heads.
 The original-source bank constructor now supplies stopped-root
 cleanliness, retained on the same positive and exponent-zero halted
 outputs; original blank scalar/basis suffixes give the same clean aligned
-endpoint. Final stopped tensor readout and the named interfaces remain open. Actual axis growth now
+endpoint. Stopped tensor readout is now joined to the same halted outputs.
+The public native root contracts select the fixed basis compiler internally
+and assume data admissibility without execution or total-time callbacks.
+The paper-format layer adapter remains open: section six requires literal
+MeetsLayer output, the Hadamard/address bridge, final Q_p rounding and a
+complete admissible-call cost bound; exact gates are listed in the section-five plan. Actual axis growth now
 justifies eventual exclusion of nonstopped exponent-one nodes; finite small-input
 coverage remains separate. The stopped
 roundtrip's existing cost still includes its stopped-axis-count factor; the
