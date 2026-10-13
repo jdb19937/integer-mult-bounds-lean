@@ -63,9 +63,11 @@ The actual schedule cost now splits exactly into its concrete local work and
 original nonstopped child-path sum. Actual scalar/stopped-prefix volume
 coefficients and the serialized child-volume quotient are proved. Both actual
 basis directions now have one fixed certified stage-scale coefficient, and
-the complete local-work bound retains every physical join. Converting that
-scale to the per-depth allowance and closing the static provider budget
-invariant are the next runtime obligations. Actual axis growth now
+the complete local-work bound retains every physical join. The expanded
+polynomial scale now retains the original per-depth tau exponent, and the
+actual completed-child path budget equals the checked fixed linear-volume
+boundary plus its event budget. Closing the static provider budget invariant
+is the next runtime obligation. Actual axis growth now
 justifies eventual exclusion of nonstopped exponent-one nodes; finite small-input
 coverage remains separate. The stopped
 roundtrip's existing cost still includes its stopped-axis-count factor; the
