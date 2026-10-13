@@ -77,8 +77,10 @@ stopping cutoff, with forcing derived from complete paid local work.
 The cutoff charge now has an explicit fixed-plus-leaf-width allowance,
 including exponent zero. The real root classifier selects the cutoff
 internally, and the same root coefficient has an explicit estimate in the
-original uncontracted width. Absorbing the normalized cutoff powers into
-the original uniform stage factor remains open. Actual axis growth now
+original uncontracted width. The classifier powers now yield the original
+uniform stage-factor bound with one positive machine constant independent
+of geometry and depth. Exposing the same uniformly selected basis constant
+in the actual root execution theorem remains open. Actual axis growth now
 justifies eventual exclusion of nonstopped exponent-one nodes; finite small-input
 coverage remains separate. The stopped
 roundtrip's existing cost still includes its stopped-axis-count factor; the
