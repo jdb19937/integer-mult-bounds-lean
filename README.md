@@ -29,8 +29,12 @@ full tensor on every original row, polynomial and spectator slice. Output
 widths, bounded grids, older saved-call association and all transition costs
 are retained. Actual sibling child entry now derives its classifier input bank,
 descriptors and clean tails; genuine dependency paths pay nested row divisibility
-from the original padding. General recursive child execution and its uniform
-total runtime remain open; smaller nonstopped node exponents require
+from the original padding. A scheduled nonstopped child of exponent at least
+two whose own children stop now executes from that actual entry bank, retaining
+its event trace, exact tensor and paid returned endpoint. Its completed frame transports back to the
+original child snapshot, and tensor semantics supplies the tight parent return
+grid. Physical parent restoration, arbitrary-depth recursive execution and
+the uniform total runtime remain open; smaller nonstopped node exponents require
 separate coverage or a justified exclusion for actual parameters. The stopped
 roundtrip's existing cost still includes its stopped-axis-count factor; the
 volume-only tape milestone remains open.
