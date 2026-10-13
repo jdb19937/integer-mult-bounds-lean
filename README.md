@@ -94,12 +94,16 @@ endpoint. Stopped tensor readout is now joined to the same halted outputs.
 The public native root contracts select the fixed basis compiler internally
 and assume data admissibility without execution or total-time callbacks.
 The paper-format layer adapter remains open: section six requires literal
-MeetsLayer output, public address identification, physical phase corrections,
-final Q_p rounding and a complete admissible-call cost bound; exact gates are
-listed in the section-five plan. The unconditional GaussianHadamardBridge now
-proves exact normalized Hadamard coordinate/product semantics and the
-front/back phase identity around the same fullFrame certified by native
-execution, with one normalization factor per bit per column. Actual axis growth now
+MeetsLayer output, physical phase/normalization corrections, original-input
+reservation and padding, final Q_p rounding and a complete admissible-call cost
+bound; exact gates are listed in the section-five plan. The unconditional
+PublicHadamardAddressBridge now proves exact public normalized Hadamard on the
+original native rank codec for arbitrary positive suffix sizes and every
+coefficient and suffix offset. CompactComplexPublicLayerTensor identifies this
+layer with the same anchored fullFrame certified by positive native roots,
+retaining the genuine visit positions, source/sink phases and exact normalization.
+Physical corrected-input execution and arbitrary active-piece composition remain
+separate obligations. Actual axis growth now
 justifies eventual exclusion of nonstopped exponent-one nodes; finite small-input
 coverage remains separate. The stopped
 roundtrip's existing cost still includes its stopped-axis-count factor; the

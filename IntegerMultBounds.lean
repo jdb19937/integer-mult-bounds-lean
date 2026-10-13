@@ -2878,3 +2878,6 @@ import IntegerMultBounds.Machine.CompactComplexSourceReadyRecursiveChildProvider
 import IntegerMultBounds.Machine.CompactComplexSourceReadyReachedRecursiveSchedule
 
 import IntegerMultBounds.Networks.GaussianHadamardBridge
+
+import IntegerMultBounds.Machine.PublicHadamardAddressBridge
+import IntegerMultBounds.Machine.CompactComplexPublicLayerTensor
