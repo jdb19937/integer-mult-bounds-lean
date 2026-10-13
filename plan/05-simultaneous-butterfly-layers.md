@@ -1722,22 +1722,29 @@ The source-ready stopping guard, leaf dispatch, complex-conjugation orientation 
 
 Reachable-state invariants (saved stacks, settled frames, aligned calls, basis pullbacks) are being assembled into full recursive fixed-table execution and the uniform recursive runtime bound; this is the open remainder.
 
-The next integration checkpoint is a producer-built completed-child certificate
-with one computed result array and popped bank, actual execution and tensor
-semantics. Keep existing checked implementations behind its constructor; derive
-return ports, target, Progress and parent grids as methods. Use that single
-interface in the event loop, then prove node execution by induction on the
-exponent, discharging the child constructor internally. Cover the nonstopped
-exponent-one case or justify its exclusion for actual parameters, then instantiate
-the uniform runtime on the full trace. Avoid further depth-specific endpoint
-wrappers. This changes the proof interface, not the manuscript algorithm or
-milestone requirements.
+Integration now uses a checked completed-child certificate with one computed
+result array and popped bank, actual execution and tensor semantics. The producer
+covers nonstopped children of exponent at least two whose own children stop;
+the consumer and compositional parent-event step share this interface. Target,
+Progress, captured-frame settlement and parent return grids derive from the
+same execution. Actual global parameters now justify eventual exclusion of
+nonstopped exponent-one nodes; finite small-input coverage remains separate.
+Next, use the certificate in the whole event loop and prove node execution by
+induction on the exponent, discharging the child constructor internally. Then
+instantiate the uniform runtime on the full trace. Avoid further depth-specific
+endpoint wrappers. This changes the proof interface, not the manuscript
+algorithm or milestone requirements.
 
 - Math milestone: `IntegerMultBounds.Machine.CompactComplexRecursiveTensorSemantics.node_tensor` — By induction over the recursion tree, every leaf and nonleaf node's interleaved scalar and child-call event schedule computes the genuine corrected complex tensor transform on its target with grids and ledgers preserved, with no child-semantics hypothesis.
 - Tape milestone: `IntegerMultBounds.Machine.CompactComplexRecursiveExecution.root_runs` — From the root bank, the fixed cyclic node table runs to halt with the full complex tensor transform installed and clean workspace, in total time bounded by the uniform recursive runtime (a constant times native volume times the certified stage factor).
 
 | Subcomponent | Files | Mathematics | Tape | Notes |
 | --- | --- | --- | --- | --- |
+| CompactComplexLargeAxesActual | `CompactComplexLargeAxesActual` | ✅ | — | Proves the actual axis count Sizes.d tends to infinity and eventually exceeds the manuscript stopping threshold. Exponent-one nodes therefore eventually stop, and every actual nonstopped node has exponent at least two with positive child exponent. The threshold stays symbolic; the finite small-input regime remains separate. |
+| CompactComplexSourceReadyCompletedNonleafChild | `CompactComplexSourceReadyCompletedNonleafChild` | ✅ | — | Packages one actual nonleaf child execution, terminal frame, paid classifier-to-saved-PC path, older association and exact tensor into a named certificate. Defines the returned bank and result array from the same terminal state; target, Progress and original-child snapshot settlement are derived methods. Existing dependent-pair machinery avoids generating a large custom recursor under unchanged proof limits. The certificate is an induction interface, not arbitrary-depth existence. |
+| CompactComplexSourceReadyCompletedNonleafChildOfStoppedChildren | `CompactComplexSourceReadyCompletedNonleafChildOfStoppedChildren` | ✅ | ✅ | Constructs the completed-child certificate from the actual scheduled child execution when the nonstopped child has exponent at least two and its children stop. Derives exact completed-result identity and native tensor semantics from the same returned bank with concrete event and physical-path budgets. No child execution or semantic callback is supplied; arbitrary-depth production remains open. |
+| CompactComplexSourceReadyCompletedNonleafChildReturn | `CompactComplexSourceReadyCompletedNonleafChildReturn` | ✅ | ✅ | Consumes one completed-child certificate and genuine parent geometry, packing and settled-frame contracts to execute parent restoration and inverse basis. Joins the certificate classifier-to-saved-PC path with that continuation on the same computed bank and adds their budgets. Derives physical ports, target, Progress and parent grid through checked methods rather than separate output oracles. |
+| CompactComplexSourceReadyCompletedNonleafChildEvent | `CompactComplexSourceReadyCompletedNonleafChildEvent` | ✅ | ✅ | Combines an actual forward-entry prefix with one completed-child certificate into a paid nonstopped parent Step, retaining the original target and settled ancestors. The same actual successor data implements the original child instruction on every row, polynomial and global spectator slice. This is the compositional recursion step; the supplied prefix and certificate must be constructed by the event loop and node induction. |
 | CompactComplexSourceReadyNonleafChildReturnPorts | `CompactComplexSourceReadyNonleafChildReturnPorts` | ✅ | — | Derives one coherent return-port bundle on the actual popped completed child bank: source, saved header/live/target frames, payload, descriptors, clock, controls and older history. Parent and actual-child Settled invariants supply clean restoration regions; no output-port or cleanliness oracle is needed. |
 | CompactComplexSourceReadyNonleafChildReturnProgress | `CompactComplexSourceReadyNonleafChildReturnProgress` | ✅ | — | Derives the completed child target from its actual corrected-entry descriptor and retained frame. The actual child trace supplies terminal coverage and both return ledgers, giving Progress at the exact two-volume return target without independent numerical bounds. |
 | CompactComplexSourceReadyNonleafReturnFrame | `CompactComplexSourceReadyNonleafReturnFrame` | ✅ | — | Defines the exact computed nonstopped parent return outcome using original captured frames and the child terminal scalar state. Extracts retained parent target and settled ancestors on the same final canonical bank, and prepends paid physical paths without changing endpoints. Outcome existence must come from actual execution. |

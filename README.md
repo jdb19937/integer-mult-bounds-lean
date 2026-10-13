@@ -35,10 +35,13 @@ its event trace, exact tensor and paid returned endpoint. Its completed frame tr
 original child snapshot, and tensor semantics supplies the tight parent return
 grid. From the actual completed child trace and tensor, physical parent
 restoration and inverse basis now execute with the original target and ancestor
-frames retained. Compositional adapters construct the next scheduled Step;
-assembling complete nonstopped events, arbitrary-depth recursive execution and
-the uniform total runtime remain open; smaller nonstopped node exponents require
-separate coverage or a justified exclusion for actual parameters. The stopped
+frames retained. A checked completed-child certificate now joins those paths
+and exact values in one compositional nonstopped parent-event Step, with its
+result bank defined from the actual terminal frame. Its producer covers children
+whose own children stop; arbitrary-depth certificate production, whole-event-loop
+assembly and the uniform total runtime remain open. Actual axis growth now
+justifies eventual exclusion of nonstopped exponent-one nodes; finite small-input
+coverage remains separate. The stopped
 roundtrip's existing cost still includes its stopped-axis-count factor; the
 volume-only tape milestone remains open.
 Its recursive geometry math milestone is proved:
