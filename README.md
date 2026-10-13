@@ -21,14 +21,15 @@ chosen before quantifying over inputs.
 Section 5 remains open. Its complete scalar-prefix/stopped-call and original
 corrected-network orientation math milestones are proved. For a nonroot node
 whose children all stop, original coefficients and literal input ports now
-construct the event execution, physical sink correction, exact contraction,
+execute corrected source entry, the event schedule, physical sink correction,
+exact contraction,
 cyclic rejoin, post-orientation and genuine saved-PC return on one aligned
 table. The returned source contains the oriented normalized array with exact
 full tensor values on every original row, polynomial and spectator slice.
 The event schedule retains captured frames, immutable target and denominator
 coverage; return retains the older saved-call association. All event and
-finalization transitions are paid. Joining the initial
-corrected source-entry path, nonstopped recursive execution and uniform total
+finalization transitions are paid. This path begins at the nonstopped-entry
+branch. Its classifier prefix, nonstopped child recursion and uniform total
 runtime remain open. The stopped roundtrip's existing cost still includes its
 stopped-axis-count factor; the volume-only tape milestone remains open.
 Its recursive geometry math milestone is proved:
