@@ -432,6 +432,154 @@ theorem runs_arrGen {D q V : ℕ} (hV : D + q * D ≤ V) :
     simp [arrCost, clen]
     omega
 
+/-! ### The address length -/
+
+/-- The result. -/
+abbrev nN : Fin 6 := 0
+/-- One tick per axis. -/
+abbrev nAx : Fin 6 := 1
+/-- One flag word per axis. -/
+abbrev nFl : Fin 6 := 2
+/-- `ones (ℓ - 1)`. -/
+abbrev nLm1 : Fin 6 := 3
+/-- `ones 1`. -/
+abbrev nOne : Fin 6 := 4
+/-- The junk tape. -/
+abbrev nJ : Fin 6 := 5
+
+/-- Add the constant on `s` to the value on `d`. -/
+noncomputable def addN (s d : Fin 6) (h : s ≠ d) : Cmd 0 6 := .seq (op0 Rules.copy true s d h) (rewind s)
+
+set_option maxHeartbeats 4000000 in
+theorem runs_addN {s d : Fin 6} (h : s ≠ d) {c v : ℕ} (σ : Fin 6 → WTape) (hs : σ s = reg (ones c))
+    (hd : σ d = endv v) :
+    Runs (addN s d h) σ (· = Function.update σ d (endv (v + c))) (2 * c + 10) := by
+  apply Runs.of_wp
+  simp only [addN, WP, wp_op0, wp_rewind]
+  simp only [Function.update_apply, hs, hd, h, ↓reduceIte, endv, reg, WTape.next_mk,
+    WTape.cur_mk, List.headD_cons, List.tail_cons, Rules.output_copy, ↓parse_syms]
+  refine ⟨⟨by simp, by simp, by simp, fun _ => ⟨by simp, by simp⟩⟩, ?_, ?_⟩
+  · funext i
+    simp only [Function.update_apply]
+    split_ifs <;> subst_vars <;> simp_all [ones_append', WTape.put, reg, endv]
+  · simp [time_copy]; omega
+
+/-- The bank of the address-length program. -/
+def nbank (lm1 : ℕ) (N Ax Fl : WTape) : Fin 6 → WTape :=
+  fun i => match i.val with
+  | 0 => N | 1 => Ax | 2 => Fl | 3 => reg (ones lm1) | 4 => reg (ones 1) | _ => emp
+
+/-- Every axis adds `ℓ - 1`. -/
+noncomputable def axBody : Cmd 0 6 := .seq (addN nLm1 nN (by decide)) (skp nAx nJ (by decide))
+
+/-- Every long axis adds one. -/
+noncomputable def flBody : Cmd 0 6 :=
+  .seq (.cond nFl (addN nOne nN (by decide)) (rewind nJ)) (skp nFl nJ (by decide))
+
+/-- `n = D (ℓ - 1) + #long` into `nN`. -/
+noncomputable def nCalc : Cmd 0 6 :=
+  .seq (emit [[]] nN) <| .seq (.loop nAx axBody) <| .seq (rewind nAx) <| .seq (.loop nFl flBody) <|
+  .seq (rewind nFl) (rewind nN)
+
+set_option maxHeartbeats 8000000 in
+theorem runs_axLoop {lm1 : ℕ} {Fl : WTape} : ∀ (e v : ℕ) (L : List (List Bool)),
+    Runs (.loop nAx axBody) (nbank lm1 (endv v) ⟨L, List.replicate e []⟩ Fl)
+      (· = nbank lm1 (endv (v + e * lm1)) ⟨List.replicate e [] ++ L, []⟩ Fl) (e * (2 * lm1 + 18))
+  | 0, v, L => by
+    refine (Runs.loop_done (by simp [nbank]) rfl).mono (fun τ h => ?_) (by simp)
+    rw [← h]; simp
+  | e + 1, v, L => by
+    set σ := nbank lm1 (endv v) ⟨L, List.replicate (e + 1) []⟩ Fl with hσ
+    have s1 := runs_addN (c := lm1) (v := v) (show nLm1 ≠ nN by decide) σ (by tsimp [hσ, nbank]) (by tsimp [hσ, nbank])
+    set σ₁ := Function.update σ nN (endv (v + lm1)) with hσ₁
+    have s2 := runs_skp (a := 0) (show nAx ≠ nJ by decide) σ₁ (by tsimp [hσ₁, hσ, nbank, List.replicate_succ])
+      (by tsimp [hσ₁, hσ, nbank, emp])
+    have ih := runs_axLoop (lm1 := lm1) (Fl := Fl) e (v + lm1) ([] :: L)
+    have e1 : Function.update σ₁ nAx (σ₁ nAx).next = nbank lm1 (endv (v + lm1)) ⟨[] :: L, List.replicate e []⟩ Fl := by
+      funext i; fin_cases i <;> first | rfl | tsimp [hσ₁, hσ, nbank, WTape.next, List.replicate_succ]
+    rw [e1] at s2
+    refine (Runs.loop_step (by tsimp [hσ, nbank, List.replicate_succ])
+      ((Runs.then s1 s2).mono (fun τ h => by rw [h]; exact ih) le_rfl)).mono (fun τ h => ?_) ?_
+    · rw [h, List.replicate_succ', List.append_assoc]; congr 2; ring
+    · have hc : (σ₁ nAx).cur.length = 0 := by tsimp [hσ₁, hσ, nbank, WTape.cur, List.replicate_succ]
+      rw [hc, add_mul, one_mul]; omega
+
+set_option maxHeartbeats 8000000 in
+theorem runs_flLoop {lm1 : ℕ} {Ax : WTape} : ∀ (f : List Bool) (v : ℕ) (L : List (List Bool)),
+    Runs (.loop nFl flBody) (nbank lm1 (endv v) Ax ⟨L, f.map fun b => [b]⟩)
+      (· = nbank lm1 (endv (v + (f.filter id).length)) Ax ⟨(f.map fun b => [b]).reverse ++ L, []⟩)
+      (f.length * 30)
+  | [], v, L => by
+    refine (Runs.loop_done (by simp [nbank]) rfl).mono (fun τ h => ?_) (by simp)
+    rw [← h]; simp
+  | b :: f, v, L => by
+    set σ := nbank lm1 (endv v) Ax ⟨L, (b :: f).map fun b => [b]⟩ with hσ
+    have s1 : Runs (.cond nFl (addN nOne nN (by decide)) (rewind nJ)) σ
+        (· = nbank lm1 (endv (v + if b then 1 else 0)) Ax ⟨L, (b :: f).map fun b => [b]⟩) 13 := by
+      cases b
+      · refine (Runs.cond_false (by simp [hσ, nbank, startsOne_mk]) (runs_rewind (a := 0) nJ σ)).mono
+          (fun τ h => ?_) (by simp [hσ, nbank, clen, emp])
+        rw [h]; funext i; fin_cases i <;> first | rfl | tsimp [hσ, nbank, emp]
+      · refine (Runs.cond_true (by simp [hσ, nbank, startsOne_mk])
+          (runs_addN (c := 1) (v := v) (show nOne ≠ nN by decide) σ (by tsimp [hσ, nbank])
+            (by tsimp [hσ, nbank]))).mono (fun τ h => ?_) (by omega)
+        rw [h]; funext i; fin_cases i <;> first | rfl | tsimp [hσ, nbank]
+    set σ₁ := nbank lm1 (endv (v + if b then 1 else 0)) Ax ⟨L, (b :: f).map fun b => [b]⟩ with hσ₁
+    have s2 := runs_skp (a := 0) (show nFl ≠ nJ by decide) σ₁ (by tsimp [hσ₁, nbank])
+      (by tsimp [hσ₁, nbank, emp])
+    have ih := runs_flLoop (lm1 := lm1) (Ax := Ax) f (v + if b then 1 else 0) ([b] :: L)
+    have e1 : Function.update σ₁ nFl (σ₁ nFl).next = nbank lm1 (endv (v + if b then 1 else 0)) Ax
+        ⟨[b] :: L, f.map fun b => [b]⟩ := by
+      funext i; fin_cases i <;> first | rfl | tsimp [hσ₁, nbank, WTape.next]
+    rw [e1] at s2
+    refine (Runs.loop_step (by tsimp [hσ, nbank])
+      ((Runs.then s1 s2).mono (fun τ h => by rw [h]; exact ih) le_rfl)).mono (fun τ h => ?_) ?_
+    · rw [h]; cases b <;> simp [List.filter_cons] <;> ring_nf
+    · have hc : (σ₁ nFl).cur.length = 1 := by tsimp [hσ₁, nbank, WTape.cur]
+      rw [hc]; simp only [List.length_cons]; rw [add_mul, one_mul]; omega
+
+set_option maxHeartbeats 8000000 in
+/-- `runs_nCalc`: the address length `D (ℓ - 1) + #long`, the ticks and flags restored. -/
+theorem runs_nCalc (lm1 D : ℕ) (f : List Bool) :
+    Runs nCalc (nbank lm1 emp ⟨[], List.replicate D []⟩ ⟨[], f.map fun b => [b]⟩)
+      (· = nbank lm1 (reg (ones (D * lm1 + (f.filter id).length))) ⟨[], List.replicate D []⟩
+        ⟨[], f.map fun b => [b]⟩)
+      (D * (2 * lm1 + 18) + f.length * 30 + 3 * D + 4 * f.length + 3 * (D * lm1 + f.length) + 30) := by
+  set σ0 := nbank lm1 emp ⟨[], List.replicate D []⟩ ⟨[], f.map fun b => [b]⟩ with hσ0
+  have c1 := runs_emit (a := 0) [[]] nN σ0 (by tsimp [hσ0, nbank, emp])
+  have e0 : Function.update σ0 nN ⟨[[]].reverse ++ (σ0 nN).left, []⟩ =
+      nbank lm1 (endv 0) ⟨[], List.replicate D []⟩ ⟨[], f.map fun b => [b]⟩ := by
+    funext i; fin_cases i <;> first | rfl | tsimp [hσ0, nbank, emp, endv]
+  rw [e0] at c1
+  have c2 := runs_axLoop (lm1 := lm1) (Fl := ⟨[], f.map fun b => [b]⟩) D 0 []
+  set σ₂ := nbank lm1 (endv (0 + D * lm1)) ⟨List.replicate D [] ++ [], []⟩ ⟨[], f.map fun b => [b]⟩ with hσ₂
+  have c3 := runs_rewind (a := 0) nAx σ₂
+  have e3 : Function.update σ₂ nAx ⟨[], (σ₂ nAx).left.reverse ++ (σ₂ nAx).right⟩ =
+      nbank lm1 (endv (0 + D * lm1)) ⟨[], List.replicate D []⟩ ⟨[], f.map fun b => [b]⟩ := by
+    funext i; fin_cases i <;> first | rfl | tsimp [hσ₂, nbank, List.reverse_replicate]
+  rw [e3] at c3
+  have c4 := runs_flLoop (lm1 := lm1) (Ax := ⟨[], List.replicate D []⟩) f (0 + D * lm1) []
+  set σ₄ := nbank lm1 (endv (0 + D * lm1 + (f.filter id).length)) ⟨[], List.replicate D []⟩
+    ⟨(f.map fun b => [b]).reverse ++ [], []⟩ with hσ₄
+  have c5 := runs_rewind (a := 0) nFl σ₄
+  set σ₅ := Function.update σ₄ nFl ⟨[], (σ₄ nFl).left.reverse ++ (σ₄ nFl).right⟩ with hσ₅
+  have c6 := runs_rewind (a := 0) nN σ₅
+  refine (Runs.then c1 (Runs.then c2 (Runs.then c3 (Runs.then c4 (Runs.then c5 c6))))).mono (fun τ h => ?_) ?_
+  · rw [h]; funext i; fin_cases i <;> first | rfl | tsimp [hσ₅, hσ₄, nbank, endv, reg, List.reverse_replicate]
+  · have h1 : clen (σ₂ nAx).left = D := by tsimp [hσ₂, nbank, clen]
+    have h2 : clen (σ₄ nFl).left = 2 * f.length := by
+      have hf : ∀ g : List Bool, clen (g.map fun b => [b]) = 2 * g.length := by
+        intro g; induction g with
+        | nil => rfl
+        | cons b g ih => simp only [List.map_cons, clen, List.sum_cons, List.length_cons] at ih ⊢; simp at ih ⊢; omega
+      have : (σ₄ nFl).left = (f.map fun b => [b]).reverse ++ [] := by tsimp [hσ₄, nbank]
+      rw [this, List.append_nil, clen_reverse, hf]
+    have h3 : clen (σ₅ nN).left = 0 + D * lm1 + (f.filter id).length + 1 := by
+      tsimp [hσ₅, hσ₄, nbank, endv, clen, length_ones]
+    rw [h1, h2, h3]
+    have : (f.filter id).length ≤ f.length := List.length_filter_le _ _
+    simp [clen]; omega
+
 end LayoutGenSetup
 
 end IntegerMultBounds.Schoenhage
