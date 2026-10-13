@@ -4920,6 +4920,8 @@ Compact packed controls, repair, and density bounds.
 
 ## Networks
 
+- `Networks/GaussianHadamardBridge.lean`: Unconditional exact normalized half-sum/half-difference semantics, coordinate phase conversion and distinct-selected-coordinate product identity. The all-coordinate tensor theorem wraps the same fullFrame certified by actual roots in explicit input/output phases, with normalization once per bit per column, including zero dimensions. Public natural-address identification, physical phase/normalization execution, final rounding and wrapper cost remain open.
+
 - `Networks/AffineFieldBijective.lean`: Legal finite field programs are bijections, including reflected subtraction and literal coordinate interchange, validating original inverse-function address semantics.
 
 

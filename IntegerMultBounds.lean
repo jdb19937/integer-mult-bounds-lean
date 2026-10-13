@@ -2876,3 +2876,5 @@ import IntegerMultBounds.Machine.CompactComplexSourceReadyReachedScheduleValues
 import IntegerMultBounds.Machine.CompactComplexSourceReadyRecursiveChildProvider
 
 import IntegerMultBounds.Machine.CompactComplexSourceReadyReachedRecursiveSchedule
+
+import IntegerMultBounds.Networks.GaussianHadamardBridge
