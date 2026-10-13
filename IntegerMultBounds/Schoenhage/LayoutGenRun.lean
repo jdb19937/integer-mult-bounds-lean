@@ -615,6 +615,97 @@ theorem runs_outFwd (σ : Fin 48 → WTape) {O : List (List Bool)} {W : ℕ} (hW
     have e2 : clen (σ₂ 38).left = clen O := by simp [hσ₂, clen_reverse]
     rw [e1, e2]; omega
 
+set_option maxHeartbeats 8000000 in
+theorem runs_revLoop {W : ℕ} : ∀ (Q P : List (List Bool)) (A B : List (List Bool)) (σ : Fin 48 → WTape),
+    (∀ x ∈ Q, x.length ≤ W) → (∀ x ∈ B, x.length ≤ W) → B.length = Q.length →
+    σ 47 = ⟨A, B⟩ → σ 1 = ⟨Q, P.reverse⟩ → σ 38 = ⟨P.reverse, []⟩ → σ 10 = emp →
+    Runs (.loop 47 revBody) σ (· = Function.update (Function.update (Function.update σ 47 ⟨B.reverse ++ A, []⟩) 1
+        ⟨[], (P ++ Q).reverse⟩) 38 ⟨(P ++ Q).reverse, []⟩)
+      (Q.length * (4 * W + 30))
+  | [], P, A, B, σ, _, _, hl, h47, h1, h38, _ => by
+    rw [List.length_nil, List.length_eq_zero_iff] at hl
+    subst hl
+    refine (Runs.loop_done (by simp [h47]) rfl).mono (fun τ h => ?_) (by simp)
+    rw [← h]; funext i
+    by_cases a : i = 38
+    · subst a; simp [h38]
+    · by_cases b : i = 1
+      · subst b; simp [h1]
+      · by_cases c : i = 47
+        · subst c; simp [h47]
+        · simp [a, b, c]
+  | q :: Q, P, A, [], σ, _, _, hl, _, _, _, _ => by simp at hl
+  | q :: Q, P, A, b :: B, σ, hQ, hB, hl, h47, h1, h38, h10 => by
+    simp only [List.length_cons, Nat.add_right_cancel_iff] at hl
+    have hq : q.length ≤ W := hQ q (by simp)
+    have hb : b.length ≤ W := hB b (by simp)
+    have s1 := runs_skp (a := 0) (show (47 : Fin 48) ≠ 10 by decide) σ (by simp [h47]) (by simp [h10, emp])
+    set σ₁ := Function.update σ 47 (σ 47).next with hσ₁
+    have s2 := runs_back (a := 0) 1 σ₁ (by simp [hσ₁, h1])
+    set σ₂ := Function.update σ₁ 1 ⟨(σ₁ 1).left.tail, (σ₁ 1).left.headD [] :: (σ₁ 1).right⟩ with hσ₂
+    have s3 := runs_cpy (a := 0) (show (1 : Fin 48) ≠ 38 by decide) σ₂ (by simp [hσ₂, hσ₁, h1])
+      (by simp [hσ₂, hσ₁, h38])
+    set σ₃ := Function.update (Function.update σ₂ 1 (σ₂ 1).next) 38 ((σ₂ 38).put false [(σ₂ 1).cur]) with hσ₃
+    have s4 := runs_back (a := 0) 1 σ₃ (by simp [hσ₃, hσ₂, hσ₁, h1, WTape.next])
+    set σ₄ := Function.update σ₃ 1 ⟨(σ₃ 1).left.tail, (σ₃ 1).left.headD [] :: (σ₃ 1).right⟩ with hσ₄
+    have ih := runs_revLoop Q (P ++ [q]) (b :: A) B σ₄ (fun x hx => hQ x (by simp [hx]))
+      (fun x hx => hB x (by simp [hx])) hl
+      (by simp [hσ₄, hσ₃, hσ₂, hσ₁, h47, WTape.next])
+      (by simp [hσ₄, hσ₃, hσ₂, hσ₁, h1, WTape.next])
+      (by simp [hσ₄, hσ₃, hσ₂, hσ₁, h38, h1, WTape.put, WTape.cur])
+      (by simp [hσ₄, hσ₃, hσ₂, hσ₁, h10])
+    refine (Runs.loop_step (by simp [h47]) ((Runs.then s1 (Runs.then s2 (Runs.then s3 s4))).mono
+      (fun τ h => by rw [h]; exact ih) le_rfl)).mono (fun τ h => ?_) ?_
+    · rw [h]; funext i
+      by_cases a : i = 38
+      · subst a; simp
+      · by_cases b' : i = 1
+        · subst b'; simp
+        · by_cases c : i = 47
+          · subst c; simp [hσ₄, hσ₃, hσ₂, hσ₁, h47, WTape.next]
+          · simp [hσ₄, hσ₃, hσ₂, hσ₁, a, b', c]
+    · have e1 : (σ 47).cur.length = b.length := by simp [h47, WTape.cur]
+      have e2 : ((σ₁ 1).left.headD []).length = q.length := by simp [hσ₁, h1]
+      have e3 : (σ₂ 1).cur.length = q.length := by simp [hσ₂, hσ₁, h1, WTape.cur]
+      have e4 : ((σ₃ 1).left.headD []).length = q.length := by simp [hσ₃, hσ₂, hσ₁, h1, WTape.next]
+      rw [e1, e2, e3, e4, List.length_cons]
+      nlinarith [hq, hb]
+
+set_option maxHeartbeats 8000000 in
+theorem runs_outUndo (σ : Fin 48 → WTape) {U : List (List Bool)} {W : ℕ} (hW : ∀ x ∈ U, x.length ≤ W)
+    (h1 : σ 1 = ⟨U, []⟩) (h38 : σ 38 = emp) (h47 : σ 47 = emp) (h10 : σ 10 = emp) :
+    Runs outUndo σ (· = Function.update (Function.update (Function.update σ 1 ⟨[], U.reverse⟩) 47 ⟨U, []⟩) 38
+      ⟨[], U⟩) (3 * clen U + U.length * (5 * W + 38) + 10) := by
+  have hWr : ∀ x ∈ U.reverse, x.length ≤ W := fun x hx => hW x (List.mem_reverse.mp hx)
+  have s1 := runs_rewind (a := 0) 1 σ
+  set σ₁ := Function.update σ 1 ⟨[], (σ 1).left.reverse ++ (σ 1).right⟩ with hσ₁
+  have s2 := runs_appendAll (a := 0) (show (1 : Fin 48) ≠ 47 by decide) W U.reverse σ₁ [] []
+    (by rw [hσ₁, h1]; simp) (by rw [hσ₁, Function.update_of_ne (by decide), h47]; rfl) hWr
+  set σ₂ := Function.update (Function.update σ₁ 1 ⟨U.reverse.reverse ++ [], []⟩) 47
+    ⟨U.reverse.reverse ++ [], []⟩ with hσ₂
+  have s3 := runs_rewind (a := 0) 47 σ₂
+  set σ₃ := Function.update σ₂ 47 ⟨[], (σ₂ 47).left.reverse ++ (σ₂ 47).right⟩ with hσ₃
+  have s4 := runs_revLoop (W := W) U [] [] U.reverse σ₃ hW hWr (by simp) (by simp [hσ₃, hσ₂])
+    (by simp [hσ₃, hσ₂]) (by simp [hσ₃, hσ₂, hσ₁, h38, emp]) (by simp [hσ₃, hσ₂, hσ₁, h10])
+  set σ₄ := Function.update (Function.update (Function.update σ₃ 47 ⟨U.reverse.reverse ++ [], []⟩) 1
+    ⟨[], ([] ++ U).reverse⟩) 38 ⟨([] ++ U).reverse, []⟩ with hσ₄
+  have s5 := runs_rewind (a := 0) 38 σ₄
+  refine (Runs.then s1 (Runs.then s2 (Runs.then s3 (Runs.then s4 s5)))).mono (fun τ h => ?_) ?_
+  · rw [h]; funext i
+    by_cases a : i = 38
+    · subst a; simp [hσ₄]
+    · by_cases b : i = 1
+      · subst b; simp [hσ₄]
+      · by_cases c : i = 47
+        · subst c; simp [hσ₄]
+        · simp [hσ₄, hσ₃, hσ₂, hσ₁, a, b, c]
+  · have e1 : clen (σ 1).left = clen U := by rw [h1]
+    have e2 : clen (σ₂ 47).left = clen U := by simp [hσ₂]
+    have e3 : clen (σ₄ 38).left = clen U := by simp [hσ₄, clen_reverse]
+    have e4 : (U.reverse).length = U.length := List.length_reverse
+    rw [e1, e2, e3, e4]
+    nlinarith
+
 end LayoutGenRun
 
 end IntegerMultBounds.Schoenhage
