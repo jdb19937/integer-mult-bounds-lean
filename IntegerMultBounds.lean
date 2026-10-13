@@ -2885,3 +2885,6 @@ import IntegerMultBounds.Machine.CompactComplexPublicLayerTensor
 import IntegerMultBounds.Networks.GaussianHadamardPhase
 import IntegerMultBounds.Machine.NativeHadamardPhaseReadout
 import IntegerMultBounds.Machine.NativeHadamardPhaseOriginal
+
+import IntegerMultBounds.Machine.NativeHadamardPhaseFixed
+import IntegerMultBounds.Machine.NativeHadamardPhaseRootBank
