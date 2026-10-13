@@ -2,6 +2,7 @@ module
 
 public import IntegerMultBounds.Machine.CompactRecursiveDependencyBudget
 public import IntegerMultBounds.Machine.CompactGlobalRowPadding
+public import IntegerMultBounds.Machine.CompactGadgetReservationShape
 
 /-! Genuine dependency paths retain the original root exponent. This pays
 nested role divisibility and positive child rows from the single original
@@ -62,5 +63,43 @@ theorem recursive_row_guards {activeAxes globalDimension nodeLeft nodeExponent d
     CompactGlobalRowPadding.split_divides _ _ _ _ _ rolesPositive chunksPositive childDepth,
     CompactGlobalRowPadding.rowsAt_positive _ _ _ _ _ rolesPositive chunksPositive childDepth.le,
     CompactGlobalRowPadding.rowsAt_positive _ _ _ _ _ rolesPositive chunksPositive grandchildDepth,rfl,rfl⟩
+
+/-- The genuine node interval reserves both immediate-child volumes inside
+the actual record. No additional fit premise is needed at a recursive call. -/
+theorem two_child_volumes_fit {shape : CompactGadgetReservationShape.Shape}
+    {nodeLeft childExponent dependencyLevels frameVolume returnedVolume : ℕ}
+    (path : Path shape.active nodeLeft (childExponent+2) dependencyLevels frameVolume returnedVolume)
+    (chunksPositive : 0<shape.chunk) : 0+2*arity^(childExponent+1)≤shape.bits := by
+  have arityAtLeastTwo : 2≤arity := by norm_num [CompactComplexRecursiveGeometry.arity]
+  have doubleVolume : 2*arity^(childExponent+1)≤arity^(childExponent+2) := by
+    calc
+      2*arity^(childExponent+1)≤arity*arity^(childExponent+1) :=
+        Nat.mul_le_mul_right _ arityAtLeastTwo
+      _=arity^(childExponent+2) := by
+        rw [show childExponent+2=(childExponent+1)+1 by omega,Nat.pow_succ]
+        exact Nat.mul_comm _ _
+  have nodeFits := path.visit.fits
+  have activeChunk : shape.active≤shape.active*shape.chunk :=
+    Nat.le_mul_of_pos_right shape.active chunksPositive
+  unfold CompactGadgetReservationShape.Shape.bits
+  omega
+
+/-- Original padding supplies the next recursive provider's role divisibility
+and positive child rows on the actual descendant Path. -/
+theorem grandchild_row_guards
+    {activeAxes globalDimension nodeLeft grandchildExponent dependencyLevels frameVolume returnedVolume parentRows : ℕ}
+    (path : Path activeAxes nodeLeft (grandchildExponent+3) dependencyLevels frameVolume returnedVolume)
+    (activeFitsDimension : activeAxes≤globalDimension)
+    (roleCount polynomialChunkCount : ℕ) (rolesPositive : 0<roleCount)
+    (chunksPositive : 0<polynomialChunkCount)
+    (parentRowsPadded : parentRows=rowsAt roleCount arity globalDimension polynomialChunkCount dependencyLevels)
+    (call : Networks.ComplexRecursiveCallSchema.Call) :
+    roleCount∣(parentRows/roleCount)/roleCount ∧ 0<((parentRows/roleCount)/roleCount)/roleCount := by
+  obtain ⟨_,_,_,_,_,childRowsAt,_⟩ := recursive_row_guards path activeFitsDimension
+    roleCount polynomialChunkCount rolesPositive chunksPositive (by omega)
+  have childGuards := recursive_row_guards (CompactRecursiveDependencyBudget.Path.child path call)
+    activeFitsDimension roleCount polynomialChunkCount rolesPositive chunksPositive (by omega)
+  rw [←childRowsAt,←parentRowsPadded] at childGuards
+  exact ⟨childGuards.2.2.1,childGuards.2.2.2.2.1⟩
 
 end IntegerMultBounds.Machine.CompactComplexRecursivePathRows

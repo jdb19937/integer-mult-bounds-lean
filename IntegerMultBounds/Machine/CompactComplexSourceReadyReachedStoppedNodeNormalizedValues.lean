@@ -27,24 +27,6 @@ open RecursiveInterchangeRows (pack)
 attribute [local irreducible] ComplexRank25.program ComplexRecursiveCallSchema.sites
   CompactComplexRolePhaseSite.roleCount CompactComplexRolePhaseSite.roleEncoding wireIndex
 
-/-- Recombine the literal contracted scalar sink arrays in their actual
-physical role-port order. -/
-def normalized {shape : Shape} (rowCount polynomialExponent current target : ℕ)
-    (rolesDivide : roles∣rowCount)
-    (sink : Fin wireCount → Array shape (rowCount/roles) polynomialExponent) :
-    Array shape rowCount polynomialExponent :=
-  CompactNativeRoleRecombine.recombine shape rowCount roles polynomialExponent rolesDivide
-    (fun port => contracted (current-target) (sink (roleIndex.symm port)))
-
-theorem normalized_role {shape : Shape} (rowCount polynomialExponent current target : ℕ)
-    (rolesDivide : roles∣rowCount)
-    (sink : Fin wireCount → Array shape (rowCount/roles) polynomialExponent) (scalarRole : Fin wireCount) :
-    CompactNativeRoleReservedBridge.role shape rowCount roles polynomialExponent rolesDivide
-      (normalized rowCount polynomialExponent current target rolesDivide sink) (roleIndex scalarRole)=
-    contracted (current-target) (sink scalarRole) := by
-  unfold normalized
-  rw [CompactNativeRoleRecombine.role_recombine,Equiv.symm_apply_apply]
-
 /-- The real physical cyclic wire order, including untouched spectators. -/
 def physicalRowLayout (rowCount : ℕ) (rolesDivide : roles∣rowCount) :
     (Fin (rowCount/roles) × ComplexFramedExecution.Wire) ≃ Fin rowCount :=

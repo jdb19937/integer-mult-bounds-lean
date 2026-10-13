@@ -1,6 +1,7 @@
 module
 
-public import IntegerMultBounds.Machine.CompactComplexSourceReadyReachedStoppedNodeNormalizedValues
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedRoleRejoin
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyNonleafOrientedSemantics
 public import IntegerMultBounds.Machine.CompactComplexSourceReadyChildEventSemantics
 
 /-! The normalized recursive node theorem computes the forward tensor on the

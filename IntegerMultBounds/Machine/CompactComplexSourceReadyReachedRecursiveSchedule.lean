@@ -218,7 +218,9 @@ variable
       headerStack liveStack pcStack storagePort → ∀ cell,initialState.reached.storage.head storagePort≤cell →
       initialState.reached.storage.tape storagePort cell=blank)
     (activePositive : 0<shape.active)
-    (axesFit : 0+2*arity^(childExponent+1)≤shape.bits)
+    (axesFit : 0+arity^(childExponent+1)≤shape.bits)
+    (nonstoppedAxesFit : Networks.ComplexRecursiveCallSchema.stopped shape.axes (childExponent+1)=false →
+      0+2*arity^(childExponent+1)≤shape.bits)
     (childChunkRoom : CompactSpectatorInheritedGrid.dependencyCoefficient growthConstant+Nat.clog 2 (growthConstant+1)+
       CompactComplexScalarIntegerRows.guardBits≤shape.chunk)
     (scalarChunkRoom : ∀ group : GroupIndex,CompactSpectatorInheritedGrid.dependencyCoefficient growthConstant+
@@ -233,19 +235,21 @@ variable
           (rowCount/roles) polynomialExponent metadataPrecision guardPositive guardFitsChunk childRowsPositive) operation) packingLimit)
     (childSlots : ∀ call : Networks.ComplexRecursiveCallSchema.Call,
       (CompactComplexChildHeadersData.child phaseCoordinate entryPath.visit activeFits pair call.slot).slots=arity)
-    (childRowsDivisible : roles∣rowCount/roles)
+    (childRowsDivisible : Networks.ComplexRecursiveCallSchema.stopped shape.axes (childExponent+1)=false →
+      roles∣rowCount/roles)
     (childEventBudget childPathBudget : Networks.ComplexRecursiveCallSchema.Call → ℕ)
-    (provider : CompactComplexSourceReadyRecursiveChildProvider.Provider
+    (provider : ∀ childNonstopped : Networks.ComplexRecursiveCallSchema.stopped shape.axes (childExponent+1)=false,
+      CompactComplexSourceReadyRecursiveChildProvider.Provider
       (parentRows:=rowCount) (polynomialExponent:=polynomialExponent) (metadataPrecision:=metadataPrecision)
       (baselinePrecision:=baselinePrecision) (growthConstant:=growthConstant) (baselineLive:=baselineLive)
       (pcStack:=pcStack) (origin:=origin) (savedCalls:=savedCalls) (headerStack:=headerStack) (liveStack:=liveStack)
-      phaseCoordinate entryPath activeFits pair basisProgram childSlots childRowsDivisible childEventBudget childPathBudget)
+      phaseCoordinate entryPath activeFits pair basisProgram childSlots (childRowsDivisible childNonstopped) childEventBudget childPathBudget)
     (precisionReserve : baselinePrecision+2*shape.bits≤metadataPrecision) (baselineFits : baselineLive≤baselinePrecision)
     (growthReserve : CompactFramedScalarGrid.growthConstant≤growthConstant)
     (denominatorRoom : CompactComplexDenominatorCapacity.room CompactComplexDenominatorCapacity.scalarRows≤shape.chunk)
     (axesPositive : 0<shape.axes) (chunkPositive : 0<shape.chunk)
 
-include basisRuns pcHeaderDistinct pcLiveDistinct headerLiveDistinct initialProtectedTails activePositive axesFit
+include basisRuns pcHeaderDistinct pcLiveDistinct headerLiveDistinct initialProtectedTails activePositive axesFit nonstoppedAxesFit
   childChunkRoom scalarChunkRoom guardPositive guardFitsChunk rowsPositive childRowsPositive rolesDivideRows
   unitPayload parentSlots parentPacked childSlots childRowsDivisible childEventBudget childPathBudget provider
   precisionReserve baselineFits growthReserve denominatorRoom axesPositive chunkPositive packingLimit basisConstant
@@ -301,7 +305,7 @@ theorem stopped_successor
     CompactComplexSourceReadyReachedEventStoppedFrameStep.stopped_child_frame_step_values phaseCoordinate entryPath activeFits pair
       packingLimit basisProgram basisConstant basisRuns headerStack liveStack call eventBound eventEquation before.state
       pcHeaderDistinct pcLiveDistinct headerLiveDistinct (capture initialState headerStack liveStack) before.settled
-      rfl rfl rfl activePositive childStopped (by omega) childChunkRoom guardPositive guardFitsChunk rowsPositive
+      rfl rfl rfl activePositive childStopped axesFit childChunkRoom guardPositive guardFitsChunk rowsPositive
       childRowsPositive rolesDivideRows unitPayload parentSlots parentPacked precisionReserve baselineFits growthReserve
       denominatorRoom axesPositive chunkPositive initialLive nodeLeft (childExponent+2) savedLedger
   let after : Boundary phaseCoordinate entryPath activeFits pair headerStack liveStack initialState
@@ -337,9 +341,10 @@ theorem nonstopped_successor
     CompactComplexSourceReadyRecursiveChildProvider.step (headerStack:=headerStack) (liveStack:=liveStack)
       phaseCoordinate entryPath activeFits pair packingLimit basisProgram basisConstant basisRuns call eventBound eventEquation
       childNonstopped (capture initialState headerStack liveStack) initialState.reached.targetValue before
-      guardPositive guardFitsChunk childRowsPositive parentSlots childSlots childRowsDivisible childEventBudget childPathBudget provider
+      guardPositive guardFitsChunk childRowsPositive parentSlots childSlots (childRowsDivisible childNonstopped)
+      childEventBudget childPathBudget (provider childNonstopped)
       rfl rfl rfl headerLiveDistinct pcHeaderDistinct pcLiveDistinct rowsPositive rolesDivideRows axesPositive chunkPositive
-      activePositive unitPayload precisionReserve baselineFits growthReserve denominatorRoom axesFit childChunkRoom
+      activePositive unitPayload precisionReserve baselineFits growthReserve denominatorRoom (nonstoppedAxesFit childNonstopped) childChunkRoom
       initialLive nodeLeft (childExponent+2) savedLedger parentPacked
   have paid : eventSteps≤budget schedule[eventIndex] := by
     rw [eventEquation,budgetEquation]
@@ -365,7 +370,7 @@ theorem event_successor {eventIndex sourceLive priorSteps : ℕ}
   cases eventEquation : schedule[eventIndex] with
   | scalar group =>
     exact scalar_successor phaseCoordinate entryPath activeFits pair packingLimit basisProgram basisConstant basisRuns headerStack liveStack
-        initialState pcHeaderDistinct pcLiveDistinct headerLiveDistinct initialProtectedTails activePositive axesFit childChunkRoom
+        initialState pcHeaderDistinct pcLiveDistinct headerLiveDistinct initialProtectedTails activePositive axesFit nonstoppedAxesFit childChunkRoom
         scalarChunkRoom guardPositive guardFitsChunk rowsPositive childRowsPositive rolesDivideRows unitPayload parentSlots parentPacked
         childSlots childRowsDivisible childEventBudget childPathBudget provider precisionReserve baselineFits growthReserve denominatorRoom
         axesPositive chunkPositive
@@ -373,7 +378,7 @@ theorem event_successor {eventIndex sourceLive priorSteps : ℕ}
   | child call =>
     by_cases childStopped : Networks.ComplexRecursiveCallSchema.stopped shape.axes (childExponent+1)=true
     · exact stopped_successor phaseCoordinate entryPath activeFits pair packingLimit basisProgram basisConstant basisRuns headerStack liveStack
-        initialState pcHeaderDistinct pcLiveDistinct headerLiveDistinct initialProtectedTails activePositive axesFit childChunkRoom
+        initialState pcHeaderDistinct pcLiveDistinct headerLiveDistinct initialProtectedTails activePositive axesFit nonstoppedAxesFit childChunkRoom
         scalarChunkRoom guardPositive guardFitsChunk rowsPositive childRowsPositive rolesDivideRows unitPayload parentSlots parentPacked
         childSlots childRowsDivisible childEventBudget childPathBudget provider precisionReserve baselineFits growthReserve denominatorRoom
         axesPositive chunkPositive
@@ -381,7 +386,7 @@ theorem event_successor {eventIndex sourceLive priorSteps : ℕ}
         (by simp only [eventBudget,childStopped,ite_true])
     · have childNonstopped := Bool.eq_false_of_not_eq_true childStopped
       exact nonstopped_successor phaseCoordinate entryPath activeFits pair packingLimit basisProgram basisConstant basisRuns headerStack liveStack
-        initialState pcHeaderDistinct pcLiveDistinct headerLiveDistinct initialProtectedTails activePositive axesFit childChunkRoom
+        initialState pcHeaderDistinct pcLiveDistinct headerLiveDistinct initialProtectedTails activePositive axesFit nonstoppedAxesFit childChunkRoom
         scalarChunkRoom guardPositive guardFitsChunk rowsPositive childRowsPositive rolesDivideRows unitPayload parentSlots parentPacked
         childSlots childRowsDivisible childEventBudget childPathBudget provider precisionReserve baselineFits growthReserve denominatorRoom
         axesPositive chunkPositive
@@ -438,7 +443,7 @@ theorem exists_execution_values :
     schedule.length initialLive initialBoundary initialTrace
     (fun eventIndex sourceLive before priorSteps priorTrace eventBound =>
       event_successor phaseCoordinate entryPath activeFits pair packingLimit basisProgram basisConstant basisRuns headerStack liveStack
-      initialState pcHeaderDistinct pcLiveDistinct headerLiveDistinct initialProtectedTails activePositive axesFit childChunkRoom
+      initialState pcHeaderDistinct pcLiveDistinct headerLiveDistinct initialProtectedTails activePositive axesFit nonstoppedAxesFit childChunkRoom
       scalarChunkRoom guardPositive guardFitsChunk rowsPositive childRowsPositive rolesDivideRows unitPayload parentSlots parentPacked
       childSlots childRowsDivisible childEventBudget childPathBudget provider precisionReserve baselineFits growthReserve denominatorRoom
       axesPositive chunkPositive

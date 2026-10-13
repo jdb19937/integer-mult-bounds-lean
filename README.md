@@ -37,15 +37,17 @@ grid. From the actual completed child trace and tensor, physical parent
 restoration and inverse basis now execute with the original target and ancestor
 frames retained. A checked completed-child certificate now joins those paths
 and exact values in one compositional nonstopped parent-event Step, with its
-result bank defined from the actual terminal frame. Its producer covers children
-whose own children stop. A checked provider now constructs the real forward
-entry and paid parent return from this explicit induction hypothesis. Shared
-compiler-prefix, tensor correction, normalization and physical finalization
-rules cover arbitrary actual schedules, and the stopped-node constructors
-reuse the postprocessing rules. The complete mixed event loop now retains
-original network values and paid event costs from an explicit completed-child
-induction hypothesis. Arbitrary-depth certificate production and the uniform
-total runtime remain open. Actual axis growth now
+result bank defined from the actual terminal frame. A general producer now constructs a completed child from a smaller-node
+provider with fixed budgets. Provider-based nonroot execution joins actual
+classification, preorientation, corrected entry, the complete mixed schedule,
+normalization, finalization and genuine saved-PC return on the same bank,
+retaining original forward/inverse tensor values and paid transitions. The
+stopped loop now specializes the shared mixed loop with its original assumptions
+and cost, removing the duplicate loop proof. Pure recombination lives below
+recursive execution, avoiding an import cycle. Genuine Paths derive the
+additional child-volume fit and descendant row guards from original padding.
+Node-exponent induction must still construct the smaller providers internally,
+and the uniform total runtime remains open. Actual axis growth now
 justifies eventual exclusion of nonstopped exponent-one nodes; finite small-input
 coverage remains separate. The stopped
 roundtrip's existing cost still includes its stopped-axis-count factor; the

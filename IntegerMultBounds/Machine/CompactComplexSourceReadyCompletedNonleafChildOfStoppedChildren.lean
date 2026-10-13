@@ -164,6 +164,126 @@ theorem exists_completed_child
     CompactComplexDenominatorPolicy.networkTarget,CompactComplexChildHeadersData.parent,
     CompactComplexChildHeadersData.child] using computedTensor
 
+/-- Build the same computed completed-child certificate from an actual
+provider-driven recursive execution and its literal physical return. -/
+theorem exists_completed_child_of_provider
+    (packingLimit : ℕ) (basisProgram : Program ActivePrefixStageNative.tapes basisStateCount prime) (basisConstant : ℝ)
+    (basisRuns : CompactComplexAlignedChildEntryPath.BasisRuns packingLimit basisStateCount basisProgram basisConstant)
+    (eventBound : eventIndex<schedule.length) (eventEquation : schedule[eventIndex]=CompactComplexCompletedLiveLower.Event.child call)
+    (ancestorSnapshot : Snapshot stackCount) (parentSettled : Settled ancestorSnapshot parentReached.storage parentReached.aux)
+    (snapshotHeaderStack : ancestorSnapshot.headerStack=headerStack) (snapshotLiveStack : ancestorSnapshot.liveStack=liveStack)
+    (snapshotPcStack : ancestorSnapshot.pcStack=pcStack)
+    (pcHeaderDistinct : pcStack≠headerStack) (pcLiveDistinct : pcStack≠liveStack) (headerLiveDistinct : headerStack≠liveStack)
+    (parentRowsPadded : parentRows=CompactGlobalRowPadding.rowsAt roles arity shape.axes shape.chunk parentLevels)
+    (activePositive : 0<shape.active)
+    (nodeNonstopped : ComplexRecursiveCallSchema.stopped shape.axes (grandchildExponent+2)=false)
+    (axesFit : 0+arity^(grandchildExponent+1)≤ shape.bits)
+    (nonstoppedAxesFit : ComplexRecursiveCallSchema.stopped shape.axes (grandchildExponent+1)=false →
+      0+2*arity^(grandchildExponent+1) ≤ shape.bits)
+    (childChunkRoom : CompactSpectatorInheritedGrid.dependencyCoefficient growthConstant+Nat.clog 2 (growthConstant+1)+guardBits≤ shape.chunk)
+    (scalarChunkRoom : ∀ group : GroupIndex,CompactSpectatorInheritedGrid.dependencyCoefficient growthConstant+
+      Nat.clog 2 (growthConstant+1)+(gates group).length*guardBits≤ shape.chunk)
+    (guardPositive : 1≤ shape.guard) (guardFitsChunk : shape.guard+1≤ shape.chunk) (unitPayload : shape.payload=1)
+    (axesPositive : 0<shape.axes) (chunkPositive : 0<shape.chunk)
+    (childSlots : (parent phaseCoordinate (CompactRecursiveDependencyBudget.Path.child parentPath call).visit activeFits pair).slots=25^3)
+    (childPacked : ∀ operation : BinaryRowProgram.Op (Fin (parent phaseCoordinate (CompactRecursiveDependencyBudget.Path.child parentPath call).visit activeFits pair).slots),1 < (parent phaseCoordinate (CompactRecursiveDependencyBudget.Path.child parentPath call).visit activeFits pair).f →
+      ActivePrefixStageRuntimeData.Packed
+        (ActivePrefixStagePairData.changePair
+          (CompactComplexSourceReadyReachedBasisInvariant.input
+            (parent phaseCoordinate (CompactRecursiveDependencyBudget.Path.child parentPath call).visit activeFits pair)
+            ((parentRows/roles)/roles) polynomialExponent
+            (ButterflyIndependentGuardHeaders.reservation shape.bits inputPrecision) guardPositive guardFitsChunk
+            (by
+              have rowGuards := CompactComplexRecursivePathRows.recursive_row_guards parentPath activeFits roles shape.chunk
+                (by unfold roles CompactComplexRolePhaseSite.roleCount; positivity) (by omega) (by omega)
+              rw [←parentRowsPadded] at rowGuards
+              exact rowGuards.2.2.2.2.1)) operation) packingLimit)
+    (grandchildSlots : ∀ grandchildCall : ComplexRecursiveCallSchema.Call,
+      (CompactComplexChildHeadersData.child phaseCoordinate
+        (CompactRecursiveDependencyBudget.Path.child parentPath call).visit activeFits pair grandchildCall.slot).slots=arity)
+    (grandchildRowsDivisible : ComplexRecursiveCallSchema.stopped shape.axes (grandchildExponent+1)=false →
+      roles∣(parentRows/roles)/roles)
+    (grandchildEventBudget grandchildPathBudget : ComplexRecursiveCallSchema.Call → ℕ)
+    (grandchildProvider : ∀ grandchildrenNonstopped : ComplexRecursiveCallSchema.stopped shape.axes (grandchildExponent+1)=false,
+      CompactComplexSourceReadyRecursiveChildProvider.Provider
+      (parentRows:=parentRows/roles) (polynomialExponent:=polynomialExponent)
+      (metadataPrecision:=ButterflyIndependentGuardHeaders.reservation shape.bits inputPrecision)
+      (baselinePrecision:=baselinePrecision) (growthConstant:=growthConstant) (baselineLive:=baselineLive)
+      (pcStack:=pcStack) (origin:=origin) (savedCalls:=(call::savedCalls))
+      (headerStack:=headerStack) (liveStack:=liveStack)
+      phaseCoordinate (CompactRecursiveDependencyBudget.Path.child parentPath call) activeFits pair basisProgram
+      grandchildSlots (grandchildRowsDivisible grandchildrenNonstopped) grandchildEventBudget grandchildPathBudget)
+    (precisionReserve : baselinePrecision+2*shape.bits≤ ButterflyIndependentGuardHeaders.reservation shape.bits inputPrecision)
+    (baselineFits : baselineLive≤ baselinePrecision) (growthReserve : CompactFramedScalarGrid.growthConstant≤ growthConstant)
+    (denominatorRoom : CompactComplexDenominatorCapacity.room CompactComplexDenominatorCapacity.scalarRows≤ shape.chunk)
+    :
+    let rowGuards := CompactComplexRecursivePathRows.recursive_row_guards parentPath activeFits roles shape.chunk
+      (by unfold roles CompactComplexRolePhaseSite.roleCount; positivity) chunkPositive (by omega)
+    let childRowsDivisible : roles∣parentRows/roles := by simpa only [←parentRowsPadded] using rowGuards.2.2.1
+    let grandchildRowsPositive : 0<(parentRows/roles)/roles := by simpa only [←parentRowsPadded] using rowGuards.2.2.2.2.1
+    let eventBudget := CompactComplexSourceReadyReachedRecursiveSchedule.totalBudget phaseCoordinate (CompactRecursiveDependencyBudget.Path.child parentPath call)
+      activeFits pair packingLimit grandchildPathBudget guardPositive guardFitsChunk grandchildRowsPositive childSlots childPacked
+    Nonempty (CompactComplexSourceReadyCompletedNonleafChild.CompletedChild
+      (headerStack:=headerStack) (liveStack:=liveStack) phaseCoordinate parentPath activeFits pair parentReached call basisProgram childSlots childRowsDivisible eventBudget
+      (pathBudget shape (parentRows/roles) polynomialExponent
+        (ButterflyIndependentGuardHeaders.reservation shape.bits inputPrecision) eventBudget)) := by
+  dsimp only
+  obtain ⟨initialState,entryBank,entryData,finalLive,finalBoundary,eventElapsed,childTrace,eventTimeBound,
+      minimumCoverage,targetCoverage,older,top,childElapsed,olderAssociated,childTimeBound,childPath,
+      sourceHead,sourceWord,childWidth,childGrid,childTensor⟩ :=
+    CompactComplexSourceReadyReachedNonleafChildRun.exists_child_run_of_provider phaseCoordinate parentPath activeFits pair
+      parentReached call headerStack liveStack packingLimit basisProgram basisConstant basisRuns eventBound eventEquation
+      ancestorSnapshot parentSettled snapshotHeaderStack snapshotLiveStack snapshotPcStack pcHeaderDistinct pcLiveDistinct
+      headerLiveDistinct parentRowsPadded activePositive nodeNonstopped axesFit nonstoppedAxesFit childChunkRoom
+      scalarChunkRoom guardPositive guardFitsChunk unitPayload axesPositive chunkPositive childSlots childPacked
+      grandchildSlots grandchildRowsDivisible grandchildEventBudget grandchildPathBudget grandchildProvider precisionReserve
+      baselineFits growthReserve denominatorRoom
+  have rowGuards := CompactComplexRecursivePathRows.recursive_row_guards parentPath activeFits roles shape.chunk
+    (by unfold roles CompactComplexRolePhaseSite.roleCount; positivity) chunkPositive (by omega)
+  rw [←parentRowsPadded] at rowGuards
+  have childRowsDivisible : roles∣parentRows/roles := rowGuards.2.2.1
+  have initialTarget := CompactComplexSourceReadyReachedEntryTarget.target_of_corrected_entry
+    initialState.reached childSlots parentLive (grandchildExponent+1) childRowsDivisible
+    (oriented call (selectedArray parentReached call))
+    (CompactComplexSourceReadyRecursiveChildReadiness.childControl phaseCoordinate parentPath activeFits pair parentReached call headerStack liveStack)
+    (CompactComplexSourceReadyRecursiveChildReadiness.childQueue phaseCoordinate parentPath activeFits pair parentReached call headerStack liveStack)
+    parentReached.scalar
+    (CompactComplexSourceReadyRecursiveChildReadiness.childTail phaseCoordinate parentPath activeFits pair parentReached call headerStack liveStack)
+    (CompactComplexSourceReadyRecursiveChildCleanTails.childStorage phaseCoordinate parentPath activeFits pair parentReached call headerStack liveStack)
+    (CompactComplexSourceReadyRecursiveChildCleanTails.childAuxiliary phaseCoordinate parentPath activeFits pair parentReached call headerStack liveStack)
+    entryBank
+  have terminalTarget : finalBoundary.state.reached.targetValue=parentLive+2*arity^(grandchildExponent+2) :=
+    finalBoundary.targetRetained.trans initialTarget
+  have resultEquation : CompactComplexSourceReadyCompletedChildBoundary.result
+      finalBoundary.state.reached childSlots childRowsDivisible call=
+    oriented call (normalized (parentRows/roles) polynomialExponent finalLive
+      (CompactComplexDenominatorPolicy.networkTarget parentLive (grandchildExponent+1)) childRowsDivisible
+      (CompactComplexSinkSliceValues.scalarOutputRoles
+        (parent phaseCoordinate (CompactRecursiveDependencyBudget.Path.child parentPath call).visit activeFits pair)
+        childSlots (ButterflyIndependentGuardHeaders.reservation shape.bits inputPrecision) finalBoundary.state.reached.data)) := by
+    unfold CompactComplexSourceReadyCompletedChildBoundary.result
+    rw [CompactComplexSourceReadyNormalizedBoundary.joined_eq_normalized,terminalTarget]
+    rfl
+  let traceWitness := CompactComplexSourceReadyCompletedNonleafChild.TraceWitness.make
+    (childSlots:=childSlots) (childRowsDivisible:=childRowsDivisible)
+    phaseCoordinate parentPath activeFits pair parentReached call basisProgram
+    initialState finalLive finalBoundary eventElapsed childTrace eventTimeBound entryBank
+  refine ⟨CompactComplexSourceReadyCompletedNonleafChild.CompletedChild.make
+    (childSlots:=childSlots) (childRowsDivisible:=childRowsDivisible)
+    phaseCoordinate parentPath activeFits pair parentReached call basisProgram
+    traceWitness older top olderAssociated childElapsed childTimeBound childPath ?_⟩
+  intro rawRow polynomialIndex globalAnchor
+  dsimp only [traceWitness, CompactComplexSourceReadyCompletedNonleafChild.TraceWitness.make,
+    CompactComplexSourceReadyCompletedNonleafChild.TraceWitness.finalBoundary]
+  have outputConversion := congrArg
+    (fun coefficients : CompactSpectatorVisitGeometry.Array shape (parentRows/roles) polynomialExponent =>
+      nativeField inputPrecision (CompactComplexDenominatorPolicy.networkTarget parentLive (grandchildExponent+1))
+        coefficients rawRow polynomialIndex globalAnchor) resultEquation
+  have computedTensor := outputConversion.trans (childTensor rawRow polynomialIndex globalAnchor)
+  simpa only [ButterflyIndependentGuardHeaders.reservation,Nat.add_sub_cancel,
+    CompactComplexDenominatorPolicy.networkTarget,CompactComplexChildHeadersData.parent,
+    CompactComplexChildHeadersData.child] using computedTensor
+
 end Child
 end
 end IntegerMultBounds.Machine.CompactComplexSourceReadyCompletedNonleafChildOfStoppedChildren

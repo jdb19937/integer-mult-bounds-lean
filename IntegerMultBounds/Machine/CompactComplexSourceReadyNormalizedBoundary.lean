@@ -1,6 +1,7 @@
 module
 
-public import IntegerMultBounds.Machine.CompactComplexSourceReadyReachedStoppedNodeNormalizedValues
+public import IntegerMultBounds.Machine.CompactComplexSinkSliceValues
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedRoleRejoin
 public import IntegerMultBounds.Machine.CompactComplexSourceReadyCompletedChildBoundary
 public import IntegerMultBounds.Machine.CompactComplexAlignedPoppedReturnReadiness
 
