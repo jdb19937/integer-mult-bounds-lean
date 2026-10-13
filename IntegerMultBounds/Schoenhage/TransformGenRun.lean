@@ -330,4 +330,117 @@ theorem runs_constStep {A : ℕ} (S0 : Fin 4 → WTape) (dec : Fin 𝕌 → WTap
     have hy' : ∀ i, (y = cslot tL nL i) ↔ False := fun i => ⟨fun e => hy i e.symm, False.elim⟩
     simp only [Function.update_apply, hy', if_false]
 
+/-! ### The generators -/
+
+/-- Clear the decoded parameters. -/
+noncomputable def cleanDec (A tL nL : ℕ) : Cmd A (4 + DB tL nL) :=
+  .seq (clear (gslot tL nL iP)) <| .seq (clear (gslot tL nL kN)) <| .seq (clear (gslot tL nL iL)) <|
+  .seq (clear (gslot tL nL kI)) <| .seq (clear (gslot tL nL iW)) <| .seq (clear (gslot tL nL xB))
+    (clear (gslot tL nL xA))
+
+/-- A header generator from a round-script writer `sg` and a layout-script writer `lg`. -/
+noncomputable def genCmd {A : ℕ} (sg lg : Cmd A (4 + DB tL nL)) : Cmd A (4 + DB tL nL) :=
+  .seq (decStep A tL nL) <| .seq sg <| .seq lg <| .seq (constStep A tL nL) (cleanDec A tL nL)
+
+/-- The generator's steps beyond the two script writers. -/
+noncomputable def genCost (p d l K w : ℕ) (ts : List ℕ) : ℕ :=
+  TransformParams.paramsCost p d (2 ^ l) K w (transformHeader p d (2 ^ l) K w ts).length ts.length l +
+    TwistConsts.constCost l w (TransformParams.lengthFlags l ts) + 2 * (p + d + l + K + w + 3 * ts.length) + 60
+
+set_option maxHeartbeats 8000000 in
+theorem runs_genCmd {A : ℕ} (sg lg : Cmd A (4 + DB tL nL)) {ℓ K : ℕ} {ts : List ℕ} (hL : LayoutOK (2 ^ ℓ) ts ℓ K)
+    {p d w Bs Bl : ℕ} (hp : 1 ≤ p) (hd : 1 ≤ d) (hK : 1 ≤ K) (hw : 1 ≤ w) (hD : ts.length = d - 1) (fwd : Bool)
+    (hsg : ScriptGen fwd sg hL p d w Bs) (hlg : LayoutGen fwd lg ℓ K ts p d w Bl) (F : List Bool) :
+    Runs (genCmd sg lg) (wst ![reg (transformHeader p d (2 ^ ℓ) K w ts), reg F, emp, emp] (fun _ => emp))
+      (· = wst ![reg (transformHeader p d (2 ^ ℓ) K w ts), reg F, emp, emp]
+        (dstate tL nL (Function.update (rnamed w []
+          ⟨[], if fwd then fwdScript p d (2 ^ ℓ) w (paperPerm hL) ts ℓ K else oppScript p d (2 ^ ℓ) w (paperPerm hL) ts ℓ K⟩
+          ⟨[], if fwd then layoutWords (2 ^ ℓ) w ts ℓ K else undoWords (2 ^ ℓ) w ts ℓ K⟩) 0 emp) (rest (2 ^ ℓ) ts)))
+      (genCost p d ℓ K w ts + Bs + Bl) := by
+  have hts : ∀ t ∈ ts, 1 ≤ t := fun t ht => by
+    obtain ⟨a, rfl, -⟩ := hL.1 t ht; exact Nat.one_le_two_pow
+  set S0 : Fin 4 → WTape := ![reg (transformHeader p d (2 ^ ℓ) K w ts), reg F, emp, emp]
+  set S6 : WTape := ⟨[], if fwd then fwdScript p d (2 ^ ℓ) w (paperPerm hL) ts ℓ K
+    else oppScript p d (2 ^ ℓ) w (paperPerm hL) ts ℓ K⟩
+  set S7 : WTape := ⟨[], if fwd then layoutWords (2 ^ ℓ) w ts ℓ K else undoWords (2 ^ ℓ) w ts ℓ K⟩
+  set fl := TransformParams.lengthFlags ℓ ts
+  have s1 := runs_decStep (A := A) (tL := tL) (nL := nL) (l := ℓ) hp hd hK hw hts hD F
+  have s2 := hsg F
+  have s3 := hlg F S6
+  rw [decState_eq, update_wbank_nm, update_wbank_nm] at s3
+  rw [decState_eq] at s1 s2
+  rw [update_wbank_nm] at s2
+  set dec := decoded p d ℓ K w ts
+  set v3 := Function.update (Function.update (fun _ : Fin 13 => emp) 6 S6) 7 S7
+  have s4 := runs_constStep (A := A) (tL := tL) (nL := nL) S0 dec v3 (fun _ => emp) ℓ w fl
+    (by simp (config := {decide := true}) [dec, decoded, Function.update_apply])
+    (by simp (config := {decide := true}) [dec, decoded, Function.update_apply])
+    (by simp (config := {decide := true}) [dec, decoded, Function.update_apply, fl])
+    (by simp (config := {decide := true}) [v3]) rfl rfl rfl rfl rfl rfl rfl
+  set v4 := Function.update v3 2 (reg (ones w))
+  set tw4 := Function.update (Function.update (Function.update (Function.update (Function.update (Function.update
+    (Function.update (fun _ : Fin 29 => emp) 3 (reg (ones (2 * 2 ^ ℓ))))
+    15 (reg (List.replicate (TwistConsts.flagSum (ℓ - 1) fl) false)))
+    17 ⟨[], List.replicate (2 ^ TwistConsts.flagSum (ℓ - 1) fl) []⟩) 22 (reg (ones (4 * 2 ^ ℓ - 1))))
+    23 (reg (ones (4 * 2 ^ ℓ)))) 24 (reg (ones (2 * 2 ^ ℓ - 1)))) 25 (reg (ones (2 * 2 ^ ℓ)))
+  have c1 := runs_clear (a := A) (gslot tL nL iP) (wbank S0 dec v4 tw4)
+  rw [update_wbank_gslot _ _ _ _ (by decide)] at c1
+  have c2 := runs_clear (a := A) (gslot tL nL kN) (wbank S0 (Function.update dec iP ⟨[], []⟩) v4 tw4)
+  rw [update_wbank_gslot _ _ _ _ (by decide)] at c2
+  set d2 := Function.update (Function.update dec iP ⟨[], []⟩) kN ⟨[], []⟩
+  have c3 := runs_clear (a := A) (gslot tL nL iL) (wbank S0 d2 v4 tw4)
+  rw [update_wbank_gslot _ _ _ _ (by decide)] at c3
+  have c4 := runs_clear (a := A) (gslot tL nL kI) (wbank S0 (Function.update d2 iL ⟨[], []⟩) v4 tw4)
+  rw [update_wbank_gslot _ _ _ _ (by decide)] at c4
+  set d4 := Function.update (Function.update d2 iL ⟨[], []⟩) kI ⟨[], []⟩
+  have c5 := runs_clear (a := A) (gslot tL nL iW) (wbank S0 d4 v4 tw4)
+  rw [update_wbank_gslot _ _ _ _ (by decide)] at c5
+  have c6 := runs_clear (a := A) (gslot tL nL xB) (wbank S0 (Function.update d4 iW ⟨[], []⟩) v4 tw4)
+  rw [update_wbank_gslot _ _ _ _ (by decide)] at c6
+  set d6 := Function.update (Function.update d4 iW ⟨[], []⟩) xB ⟨[], []⟩
+  have c7 := runs_clear (a := A) (gslot tL nL xA) (wbank S0 d6 v4 tw4)
+  rw [update_wbank_gslot _ _ _ _ (by decide)] at c7
+  have hd7 : ∀ x, x ≠ zH → Function.update d6 xA ⟨[], []⟩ x = emp := by
+    intro x hx
+    simp only [d6, d4, d2, dec, decoded, decStart, Function.update_apply]
+    split_ifs <;> first | rfl | (exfalso; tauto)
+  rw [wbank_dstate _ _ _ _ hd7] at c7
+  refine (Runs.then s1 (Runs.then s2 (Runs.then s3 (Runs.then s4 (Runs.then c1 (Runs.then c2 (Runs.then c3
+    (Runs.then c4 (Runs.then c5 (Runs.then c6 c7)))))))))).mono (fun τ e => ?_) ?_
+  · rw [e]
+    congr 1
+    congr 1
+    · funext i; fin_cases i <;> simp (config := {decide := true}) [v4, v3, rnamed, Function.update_apply, S6, S7]
+    · have hn := flagSum_lengthFlags hL
+      funext j; fin_cases j <;> simp (config := {decide := true}) [tw4, twRest, Function.update_apply, fl, hn,
+        bits_zero_eq]
+  · simp only [wbank_gslot _ _ _ _ (show iP ≠ zH by decide), wbank_gslot _ _ _ _ (show kN ≠ zH by decide),
+      wbank_gslot _ _ _ _ (show iL ≠ zH by decide), wbank_gslot _ _ _ _ (show kI ≠ zH by decide),
+      wbank_gslot _ _ _ _ (show iW ≠ zH by decide), wbank_gslot _ _ _ _ (show xB ≠ zH by decide),
+      wbank_gslot _ _ _ _ (show xA ≠ zH by decide)]
+    simp (config := {decide := true}) only [d6, d4, d2, dec, decoded, Function.update_apply, if_true, if_false,
+      WTape.words, reg, List.reverse_nil, List.nil_append, List.append_nil, clen_cons, clen_nil, length_ones,
+      List.reverse_replicate, TwistConsts.clen_ticks, genCost]
+    have hf : clen ((fl.map fun b => [b]).reverse.reverse) = 2 * ts.length := by
+      rw [clen_reverse, TwistConsts.clen_flags]; simp [fl, TransformParams.lengthFlags]
+    simp only [fl] at hf ⊢
+    rw [hf]
+    omega
+
+/-- `fwdGen_of`: the generator meets the forward driver's interface, given the two script writers. -/
+theorem fwdGen_of {A : ℕ} {sg lg : Cmd A (4 + DB tL NL)} {ℓ K : ℕ} {ts : List ℕ} (hL : LayoutOK (2 ^ ℓ) ts ℓ K)
+    {p d w Bs Bl : ℕ} (hp : 1 ≤ p) (hd : 1 ≤ d) (hK : 1 ≤ K) (hw : 1 ≤ w) (hD : ts.length = d - 1)
+    (hsg : ScriptGen true sg hL p d w Bs) (hlg : LayoutGen true lg ℓ K ts p d w Bl) :
+    FwdGen (genCmd sg lg) hL p d w (genCost p d ℓ K w ts + Bs + Bl) := fun F => by
+  have := runs_genCmd sg lg hL hp hd hK hw hD true hsg hlg F
+  simpa only [if_true, fwdGenOut] using this
+
+/-- `oppGen_of`: the generator meets the opposite driver's interface, given the two script writers. -/
+theorem oppGen_of {A : ℕ} {sg lg : Cmd A (4 + DB tL NL)} {ℓ K : ℕ} {ts : List ℕ} (hL : LayoutOK (2 ^ ℓ) ts ℓ K)
+    {p d w Bs Bl : ℕ} (hp : 1 ≤ p) (hd : 1 ≤ d) (hK : 1 ≤ K) (hw : 1 ≤ w) (hD : ts.length = d - 1)
+    (hsg : ScriptGen false sg hL p d w Bs) (hlg : LayoutGen false lg ℓ K ts p d w Bl) :
+    OppGen (genCmd sg lg) hL p d w (genCost p d ℓ K w ts + Bs + Bl) := fun F => by
+  have := runs_genCmd sg lg hL hp hd hK hw hD false hsg hlg F
+  simpa only [Bool.false_eq_true, if_false, oppGenOut] using this
+
 end IntegerMultBounds.Schoenhage
