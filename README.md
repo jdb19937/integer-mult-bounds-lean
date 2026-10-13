@@ -54,8 +54,11 @@ packing. The literal nonstopped root now executes classification, physical
 corrected entry, internally constructed events and finalization to halt on the
 same aligned table. Its emitted array computes the corrected tensor at every
 original row, polynomial and spectator address with exact widths and bounded
-grid. All transitions are paid by the actual schedule budget. The stopped-root
-aligned-table halt wrapper and the uniform total runtime remain open. Actual axis growth now
+grid. All transitions are paid by the actual schedule budget. Positive and
+exponent-zero stopped roots now execute their original leaf and retained
+empty-stack halt on the same aligned table, with exact emitted banks and
+all physical transitions paid. The reachable-execution row is complete;
+the uniform total runtime and named full-recursion milestones remain open. Actual axis growth now
 justifies eventual exclusion of nonstopped exponent-one nodes; finite small-input
 coverage remains separate. The stopped
 roundtrip's existing cost still includes its stopped-axis-count factor; the
