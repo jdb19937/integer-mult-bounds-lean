@@ -19,12 +19,12 @@ open Machine Spec.SignedRingProduct
 
 /-- Fixed transform parameters compatible with fixed layer parameters: the same bands for `d`,
 `r` and `K`, the layer's size, header and width constants above the transform's, the layer's
-exponent `λ'` at most the transform's, the interchange exponent `τ`, and the positivity the
-size comparison `w ≤ r` needs. -/
+exponent `λ'` nonnegative and at most the transform's, the interchange exponent `τ`, and the
+positivity the size comparison `w ≤ r` needs. -/
 def Compatible (LP : LayerParams) (P : TransformParams) : Prop :=
   P.c = (LP.c : ℝ) ∧ P.ε = (LP.ε : ℝ) ∧ P.ad = LP.ad ∧ P.bd = LP.bd ∧ P.ar = LP.ar ∧ P.br = LP.br ∧
     P.Cl + 1 ≤ LP.CM ∧ (32 * (⌈P.Cl⌉₊ + P.Cw + 1 : ℕ) : ℝ) ≤ LP.Cdesc ∧ (P.Cw : ℝ) ≤ LP.Cw ∧
-    (LP.lam' : ℝ) ≤ P.lam' ∧ P.τ = Parameters.tau ∧ P.ε < 1 ∧ 0 < P.ar ∧ 0 < P.bd
+    (LP.lam' : ℝ) ≤ P.lam' ∧ P.τ = Parameters.tau ∧ P.ε < 1 ∧ 0 < P.ar ∧ 0 < P.bd ∧ 0 ≤ (LP.lam' : ℝ)
 
 /-! ### The layout conditions -/
 
@@ -169,7 +169,7 @@ theorem layerAdmissible_chunk {LP : LayerParams} {P : TransformParams} (hc : Com
   have hrec := chunk_records hL hb hh
   have hhdr := chunkHdr_length hadm hp hb hh
   have hn := addr_le hL
-  obtain ⟨hc1, hε, had, hbd, har, hbr, hCM, hCd, hCw, -, -, -, -, -⟩ := hc
+  obtain ⟨hc1, hε, had, hbd, har, hbr, hCM, hCd, hCw, -, -, -, -, -, -⟩ := hc
   obtain ⟨h1, h2, h3, h4, hd, hℓ, hℓp, hdl, hKf, hK, hKℓ, hax, hpw, hw⟩ := hadm
   have hlen := hax.1
   have hp' : (1 : ℝ) ≤ p := by exact_mod_cast hp

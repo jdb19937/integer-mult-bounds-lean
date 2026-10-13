@@ -692,4 +692,381 @@ theorem transformHeader_length_le {P : TransformParams} {p d ℓ K w : ℕ} {ts 
   rw [e]
   omega
 
+/-- The forward wrapper beyond the layout moves: scripts, header and data movement. -/
+theorem wrapCost_fwd_le {P : TransformParams} {p d ℓ K w : ℕ} {ts : List ℕ}
+    (hadm : Admissible P p d ℓ K w ts) (hwr : w ≤ 2 ^ ℓ) :
+    wrapCost (2 ^ ℓ) w ts ℓ K (transformHeader p d (2 ^ ℓ) K w ts)
+        (fwdScript p d (2 ^ ℓ) w (paperPerm (layoutOK_of_admissible hadm)) ts ℓ K) (layoutWords (2 ^ ℓ) w ts ℓ K) ≤
+      layoutCost (2 ^ ℓ) w ts ℓ K + 2 * (ℓ * (scC ⌈P.Cl⌉₊ P.Cw * (2 * 2 ^ ℓ * w * ts.prod))) +
+        30 * (((layoutMoves ts ℓ K).length + (layoutSwaps ts ℓ K).length) * (2 * 2 ^ ℓ * w * ts.prod)) +
+        (4 * hdrC ⌈P.Cl⌉₊ + 261) * (2 * 2 ^ ℓ * w * ts.prod) := by
+  have hL := layoutOK_of_admissible hadm
+  obtain ⟨hpow, hnC, hdD, hD, hdl, hℓp, hpw, hKℓ, hK, hℓ, hw2, hlow, hnD⟩ := adm_sizes hadm hwr
+  have hw : 1 ≤ w := by omega
+  have h6 := clen_fwdScript_le hadm hwr
+  have h7 := clen_layoutWords_le hL Nat.one_le_two_pow hw
+  have hh := transformHeader_length_le hadm hwr
+  simp only [addrBits] at h7
+  rw [← hpow] at h7
+  have hM : 1 ≤ ts.prod := by rw [hpow]; exact Nat.one_le_two_pow
+  obtain ⟨V, hV⟩ : ∃ V, V = 2 * 2 ^ ℓ * w * ts.prod := ⟨_, rfl⟩
+  rw [← hV] at h6 h7 hh ⊢
+  have hwV : w ≤ V := by
+    rw [hV]; calc w = 1 * 1 * w * 1 := by ring
+      _ ≤ 2 * 2 ^ ℓ * w * ts.prod := by gcongr <;> omega
+  have hrV : 2 ^ ℓ ≤ V := by
+    rw [hV]; calc 2 ^ ℓ = 1 * 2 ^ ℓ * 1 * 1 := by ring
+      _ ≤ 2 * 2 ^ ℓ * w * ts.prod := by gcongr <;> omega
+  have hMV : ts.prod ≤ V := by
+    rw [hV]; calc ts.prod = 1 * 1 * 1 * ts.prod := by ring
+      _ ≤ 2 * 2 ^ ℓ * w * ts.prod := by gcongr <;> omega
+  have hnV : Nat.log 2 ts.prod ≤ V := by
+    have : Nat.log 2 ts.prod < 2 ^ Nat.log 2 ts.prod := Nat.lt_two_pow_self
+    rw [← hpow] at this; omega
+  have hV1 : 1 ≤ V := le_trans hw hwV
+  have e15 : 15 * (2 * 2 ^ ℓ * w * ts.prod) = 15 * V := by rw [hV]
+  unfold wrapCost
+  rw [← hpow, e15]
+  have e1 : (4 * hdrC ⌈P.Cl⌉₊ + 261) * V = 4 * (hdrC ⌈P.Cl⌉₊ * V) + 261 * V := by ring
+  have e2 : 30 * (((layoutMoves ts ℓ K).length + (layoutSwaps ts ℓ K).length) * V) =
+      2 * (((layoutMoves ts ℓ K).length + (layoutSwaps ts ℓ K).length) * (15 * V)) := by ring
+  rw [e1, e2]
+  omega
+
+/-- The opposite wrapper, with the same bound. -/
+theorem wrapCost_opp_le {P : TransformParams} {p d ℓ K w : ℕ} {ts : List ℕ}
+    (hadm : Admissible P p d ℓ K w ts) (hwr : w ≤ 2 ^ ℓ) :
+    wrapCost (2 ^ ℓ) w ts ℓ K (transformHeader p d (2 ^ ℓ) K w ts)
+        (oppScript p d (2 ^ ℓ) w (paperPerm (layoutOK_of_admissible hadm)) ts ℓ K) (undoWords (2 ^ ℓ) w ts ℓ K) ≤
+      layoutCost (2 ^ ℓ) w ts ℓ K + 2 * (ℓ * (scC ⌈P.Cl⌉₊ P.Cw * (2 * 2 ^ ℓ * w * ts.prod))) +
+        30 * (((layoutMoves ts ℓ K).length + (layoutSwaps ts ℓ K).length) * (2 * 2 ^ ℓ * w * ts.prod)) +
+        (4 * hdrC ⌈P.Cl⌉₊ + 261) * (2 * 2 ^ ℓ * w * ts.prod) := by
+  have hL := layoutOK_of_admissible hadm
+  obtain ⟨hpow, hnC, hdD, hD, hdl, hℓp, hpw, hKℓ, hK, hℓ, hw2, hlow, hnD⟩ := adm_sizes hadm hwr
+  have hw : 1 ≤ w := by omega
+  have h6 := clen_oppScript_le hadm hwr
+  have h7 := clen_undoWords_le hL Nat.one_le_two_pow hw
+  have hh := transformHeader_length_le hadm hwr
+  simp only [addrBits] at h7
+  rw [← hpow] at h7
+  have hM : 1 ≤ ts.prod := by rw [hpow]; exact Nat.one_le_two_pow
+  obtain ⟨V, hV⟩ : ∃ V, V = 2 * 2 ^ ℓ * w * ts.prod := ⟨_, rfl⟩
+  rw [← hV] at h6 h7 hh ⊢
+  have hwV : w ≤ V := by
+    rw [hV]; calc w = 1 * 1 * w * 1 := by ring
+      _ ≤ 2 * 2 ^ ℓ * w * ts.prod := by gcongr <;> omega
+  have hrV : 2 ^ ℓ ≤ V := by
+    rw [hV]; calc 2 ^ ℓ = 1 * 2 ^ ℓ * 1 * 1 := by ring
+      _ ≤ 2 * 2 ^ ℓ * w * ts.prod := by gcongr <;> omega
+  have hMV : ts.prod ≤ V := by
+    rw [hV]; calc ts.prod = 1 * 1 * 1 * ts.prod := by ring
+      _ ≤ 2 * 2 ^ ℓ * w * ts.prod := by gcongr <;> omega
+  have hnV : Nat.log 2 ts.prod ≤ V := by
+    have : Nat.log 2 ts.prod < 2 ^ Nat.log 2 ts.prod := Nat.lt_two_pow_self
+    rw [← hpow] at this; omega
+  have hV1 : 1 ≤ V := le_trans hw hwV
+  have e15 : 15 * (2 * 2 ^ ℓ * w * ts.prod) = 15 * V := by rw [hV]
+  unfold wrapCost
+  rw [← hpow, e15]
+  have e1 : (4 * hdrC ⌈P.Cl⌉₊ + 261) * V = 4 * (hdrC ⌈P.Cl⌉₊ * V) + 261 * V := by ring
+  have e2 : 30 * (((layoutMoves ts ℓ K).length + (layoutSwaps ts ℓ K).length) * V) =
+      2 * (((layoutMoves ts ℓ K).length + (layoutSwaps ts ℓ K).length) * (15 * V)) := by ring
+  rw [e1, e2]
+  omega
+
+/-! ### In the paper's bound -/
+
+theorem layoutC_pos : 0 < layoutC := (Classical.choose_spec (driveCost_layout_le layoutSpec)).1
+
+theorem tau_nonneg' : 0 ≤ Parameters.tau := by unfold Parameters.tau; norm_num
+
+/-- The layout moves' cost, as a real bound. -/
+theorem layoutCost_real_le {r w : ℕ} {ts : List ℕ} {ℓ K : ℕ} (hK : 1 ≤ K) :
+    (layoutCost r w ts ℓ K : ℝ) ≤
+      (layoutMoves ts ℓ K).length * (layoutC * (2 * r * w * 2 ^ addrBits ts : ℕ) + 3) +
+        (layoutSwaps ts ℓ K).length *
+          (layoutC * (2 * r * w * 2 ^ addrBits ts : ℕ) * (K : ℝ) ^ Parameters.tau + 3) + 1 := by
+  unfold layoutCost
+  have hmax : max 1 K = K := max_eq_right hK
+  rw [hmax]
+  have hnn : 0 ≤ (layoutMoves ts ℓ K).length * (layoutC * (2 * r * w * 2 ^ addrBits ts : ℕ) + 3) +
+      (layoutSwaps ts ℓ K).length *
+        (layoutC * (2 * r * w * 2 ^ addrBits ts : ℕ) * (K : ℝ) ^ Parameters.tau + 3) := by
+    have := layoutC_pos
+    positivity
+  exact (Nat.ceil_lt_add_one hnn).le
+
+/-- A layer call's bound, as a real bound. -/
+theorem layerCL_real_le (LP : LayerParams) (C : ℝ) (p d ℓ w : ℕ) (ts : List ℕ) :
+    (layerCL LP C p d ℓ w ts : ℝ) ≤
+      |C| * (((2 * 2 ^ Nat.log 2 ts.prod * 2 ^ ℓ * w : ℕ) : ℝ) * (d : ℝ) ^ (LP.lam' : ℝ)) +
+        4 * |LP.Cdesc| * p + 8 * ((2 * 2 ^ ℓ * w * 2 ^ Nat.log 2 ts.prod : ℕ) : ℝ) + 41 := by
+  unfold layerCL layerCost
+  set X := C * (((2 * 2 ^ Nat.log 2 ts.prod * 2 ^ ℓ * w : ℕ) : ℝ) * (d : ℝ) ^ (LP.lam' : ℝ)) +
+    4 * (LP.Cdesc * p + 2 * ((2 * 2 ^ ℓ * w * 2 ^ Nat.log 2 ts.prod : ℕ) : ℝ)) + 40
+  have hL : 0 ≤ ((2 * 2 ^ Nat.log 2 ts.prod * 2 ^ ℓ * w : ℕ) : ℝ) * (d : ℝ) ^ (LP.lam' : ℝ) := by positivity
+  have hX : X ≤ |X| := le_abs_self X
+  have habs : |X| ≤ |C| * (((2 * 2 ^ Nat.log 2 ts.prod * 2 ^ ℓ * w : ℕ) : ℝ) * (d : ℝ) ^ (LP.lam' : ℝ)) +
+      4 * |LP.Cdesc| * p + 8 * ((2 * 2 ^ ℓ * w * 2 ^ Nat.log 2 ts.prod : ℕ) : ℝ) + 40 := by
+    simp only [X]
+    have hp : (0 : ℝ) ≤ p := by positivity
+    have hv : (0 : ℝ) ≤ ((2 * 2 ^ ℓ * w * 2 ^ Nat.log 2 ts.prod : ℕ) : ℝ) := by positivity
+    calc |C * (((2 * 2 ^ Nat.log 2 ts.prod * 2 ^ ℓ * w : ℕ) : ℝ) * (d : ℝ) ^ (LP.lam' : ℝ)) +
+          4 * (LP.Cdesc * p + 2 * ((2 * 2 ^ ℓ * w * 2 ^ Nat.log 2 ts.prod : ℕ) : ℝ)) + 40|
+        ≤ |C * (((2 * 2 ^ Nat.log 2 ts.prod * 2 ^ ℓ * w : ℕ) : ℝ) * (d : ℝ) ^ (LP.lam' : ℝ))| +
+          |4 * (LP.Cdesc * p + 2 * ((2 * 2 ^ ℓ * w * 2 ^ Nat.log 2 ts.prod : ℕ) : ℝ))| + |(40 : ℝ)| :=
+          abs_add_three _ _ _
+      _ ≤ _ := by
+        rw [abs_mul, abs_of_nonneg hL, abs_mul, abs_of_nonneg (by norm_num : (0 : ℝ) ≤ 4)]
+        have h1 : |LP.Cdesc * p + 2 * ((2 * 2 ^ ℓ * w * 2 ^ Nat.log 2 ts.prod : ℕ) : ℝ)| ≤
+            |LP.Cdesc| * p + 2 * ((2 * 2 ^ ℓ * w * 2 ^ Nat.log 2 ts.prod : ℕ) : ℝ) := by
+          refine (abs_add_le _ _).trans ?_
+          rw [abs_mul, abs_of_nonneg hp,
+            abs_of_nonneg (by positivity : (0 : ℝ) ≤ 2 * ((2 * 2 ^ ℓ * w * 2 ^ Nat.log 2 ts.prod : ℕ) : ℝ))]
+        have h40 : |(40 : ℝ)| = 40 := by norm_num
+        rw [h40]
+        linarith
+  have hc := Nat.ceil_lt_add_one (abs_nonneg X)
+  have hmono : (⌈X⌉₊ : ℝ) ≤ ⌈|X|⌉₊ := by exact_mod_cast Nat.ceil_mono hX
+  linarith
+
+/-- The step-count constant of the transform programs beyond their generators. -/
+noncomputable def totC (P : TransformParams) (LP : LayerParams) (C : ℝ) : ℝ :=
+  2 * P.Cw * (((prC ⌈P.Cl⌉₊ : ℕ) : ℝ) + layoutC + 33 +
+    (((hdC ⌈P.Cl⌉₊ P.Cw + twC ⌈P.Cl⌉₊ + 3 : ℕ) : ℝ) + 2 * ((scC ⌈P.Cl⌉₊ P.Cw : ℕ) : ℝ) +
+      ((4 * hdrC ⌈P.Cl⌉₊ + 261 : ℕ) : ℝ) + 50 + |C| + 4 * |LP.Cdesc|) + (layoutC + 33) * |P.Cl|)
+
+/-- The real arithmetic of the totals. -/
+theorem total_arith {V Y d K ℓ p dl dL KT Km mv sw lc Cabs Dabs prc hdtw scc hdrc Cw Cl R W L CLr : ℝ}
+    (hR : R ≤ K * (prc * d * V) + ℓ * CLr + ℓ * (hdtw * V))
+    (hW : W ≤ L + 2 * (ℓ * (scc * V)) + 30 * ((mv + sw) * V) + hdrc * V)
+    (hL : L ≤ mv * (lc * V + 3) + sw * (lc * V * KT + 3) + 1)
+    (hCL : CLr ≤ Cabs * (V * dL) + 4 * Dabs * p + 8 * V + 41)
+    (hV1 : 1 ≤ V) (hpV : p ≤ V) (hdL : dL ≤ dl) (hdl1 : 1 ≤ dl) (hdL0 : 0 ≤ dL) (hKT1 : 1 ≤ KT)
+    (hKm0 : 0 ≤ Km) (hVY : V ≤ 2 * Cw * Y) (hY0 : 0 ≤ Y) (hmv : mv ≤ d * K) (hmv0 : 0 ≤ mv)
+    (hsw0 : 0 ≤ sw) (hsw : sw * KT ≤ Cl * p * Km) (hd1 : 1 ≤ d) (hK1 : 1 ≤ K) (hℓ1 : 1 ≤ ℓ)
+    (hp0 : 0 ≤ p) (hlc : 0 < lc) (hC0 : 0 ≤ Cabs) (hD0 : 0 ≤ Dabs) (hprc : 0 ≤ prc) (hhd : 0 ≤ hdtw)
+    (hsc : 0 ≤ scc) (hhr : 0 ≤ hdrc) (hCw : 0 ≤ Cw) :
+    R + W ≤ 2 * Cw * (prc + lc + 33 + (hdtw + 2 * scc + hdrc + 50 + Cabs + 4 * Dabs) + (lc + 33) * |Cl|) *
+      (Y * (d * K + p * Km + ℓ * dl)) := by
+  have hV0 : 0 ≤ V := by linarith
+  have hVdl : V ≤ V * dl := le_mul_of_one_le_right hV0 hdl1
+  have hVdl0 : 0 ≤ V * dl := by linarith
+  have hℓV : V ≤ ℓ * V * dl := by
+    have : V * dl ≤ ℓ * (V * dl) := le_mul_of_one_le_left hVdl0 hℓ1
+    linarith
+  have hdK : 1 ≤ d * K := one_le_mul_of_one_le_of_one_le hd1 hK1
+  have hdK0 : 0 ≤ d * K := by linarith
+  have hVdK : V ≤ V * d * K := by
+    have := mul_le_mul_of_nonneg_left hdK hV0
+    linarith
+  -- the layer calls
+  have e1 : ℓ * CLr ≤ (Cabs + 4 * Dabs + 49) * (ℓ * V * dl) := by
+    have a1 : V * dL ≤ V * dl := mul_le_mul_of_nonneg_left hdL hV0
+    have b1 : Cabs * (V * dL) ≤ Cabs * (V * dl) := mul_le_mul_of_nonneg_left a1 hC0
+    have b2 : 4 * Dabs * p ≤ 4 * Dabs * (V * dl) :=
+      mul_le_mul_of_nonneg_left (hpV.trans hVdl) (by linarith)
+    have b3 : 8 * V + 41 ≤ 49 * (V * dl) := by linarith
+    have hin : CLr ≤ (Cabs + 4 * Dabs + 49) * (V * dl) := by linarith
+    have := mul_le_mul_of_nonneg_left hin (by linarith : (0 : ℝ) ≤ ℓ)
+    linarith
+  have e2 : mv * (lc * V + 3) ≤ (lc + 3) * (V * d * K) := by
+    have a : mv * V ≤ d * K * V := mul_le_mul_of_nonneg_right hmv hV0
+    have a' := mul_le_mul_of_nonneg_left a hlc.le
+    have b0 : d * K ≤ V * (d * K) := by
+      have := mul_le_mul_of_nonneg_right hV1 hdK0
+      linarith
+    have b : mv ≤ V * d * K := by linarith
+    linarith
+  have e3 : sw * (lc * V * KT + 3) ≤ (lc + 3) * (sw * V * KT) := by
+    have h1 : 1 ≤ V * KT := one_le_mul_of_one_le_of_one_le hV1 hKT1
+    have h2 := mul_le_mul_of_nonneg_left h1 hsw0
+    linarith
+  have e5 : 30 * ((mv + sw) * V) ≤ 30 * (V * d * K) + 30 * (sw * V * KT) := by
+    have a : mv * V ≤ d * K * V := mul_le_mul_of_nonneg_right hmv hV0
+    have hswV : 0 ≤ sw * V := mul_nonneg hsw0 hV0
+    have b := mul_le_mul_of_nonneg_left hKT1 hswV
+    linarith
+  have e6 : hdrc * V ≤ hdrc * (ℓ * V * dl) := mul_le_mul_of_nonneg_left hℓV hhr
+  have hℓVd : ℓ * V ≤ ℓ * V * dl := le_mul_of_one_le_right (mul_nonneg (by linarith) hV0) hdl1
+  have e7 : ℓ * (hdtw * V) ≤ hdtw * (ℓ * V * dl) := by
+    have := mul_le_mul_of_nonneg_left hℓVd hhd
+    linarith
+  have e8 : 2 * (ℓ * (scc * V)) ≤ 2 * scc * (ℓ * V * dl) := by
+    have := mul_le_mul_of_nonneg_left hℓVd hsc
+    linarith
+  have e4 : (1 : ℝ) ≤ ℓ * V * dl := hV1.trans hℓV
+  have hT : R + W ≤ (prc + lc + 33) * (V * d * K) + (hdtw + 2 * scc + hdrc + 50 + Cabs + 4 * Dabs) * (ℓ * V * dl) +
+      (lc + 33) * (sw * V * KT) := by
+    have := mul_le_mul_of_nonneg_left hVdK (by linarith : (0 : ℝ) ≤ 30)
+    linarith
+  have f1 : V * d * K ≤ 2 * Cw * (Y * (d * K)) := by
+    have := mul_le_mul_of_nonneg_right hVY hdK0
+    linarith
+  have f2 : ℓ * V * dl ≤ 2 * Cw * (Y * (ℓ * dl)) := by
+    have hℓdl : 0 ≤ ℓ * dl := mul_nonneg (by linarith) (by linarith)
+    have := mul_le_mul_of_nonneg_right hVY hℓdl
+    linarith
+  have f3 : sw * V * KT ≤ 2 * Cw * |Cl| * (Y * (p * Km)) := by
+    have hpKm : 0 ≤ p * Km := mul_nonneg hp0 hKm0
+    have hcl : Cl * p * Km ≤ |Cl| * p * Km := by
+      have := mul_le_mul_of_nonneg_right (le_abs_self Cl) hpKm
+      linarith
+    have h1 : sw * KT ≤ |Cl| * p * Km := hsw.trans hcl
+    have h10 : 0 ≤ |Cl| * p * Km := by
+      have := mul_nonneg (abs_nonneg Cl) hpKm
+      linarith
+    have := mul_le_mul hVY h1 (mul_nonneg hsw0 (by linarith)) (by
+      have := mul_nonneg (mul_nonneg (by norm_num : (0:ℝ) ≤ 2) hCw) hY0
+      linarith)
+    linarith
+  have g1 : 0 ≤ Y * (d * K) := mul_nonneg hY0 hdK0
+  have g2 : 0 ≤ Y * (p * Km) := mul_nonneg hY0 (mul_nonneg hp0 hKm0)
+  have g3 : 0 ≤ Y * (ℓ * dl) := mul_nonneg hY0 (mul_nonneg (by linarith) (by linarith))
+  have hA1 : 0 ≤ prc + lc + 33 := by linarith
+  have hA2 : 0 ≤ hdtw + 2 * scc + hdrc + 50 + Cabs + 4 * Dabs := by linarith
+  have hA3 : 0 ≤ lc + 33 := by linarith
+  have habs := abs_nonneg Cl
+  have k1 := mul_le_mul_of_nonneg_left f1 hA1
+  have k2 := mul_le_mul_of_nonneg_left f2 hA2
+  have k3 := mul_le_mul_of_nonneg_left f3 hA3
+  have h2Cw : 0 ≤ 2 * Cw := by linarith
+  have m1 : 0 ≤ 2 * Cw * (prc + lc + 33) * (Y * (p * Km)) := mul_nonneg (mul_nonneg h2Cw hA1) g2
+  have m2 : 0 ≤ 2 * Cw * (prc + lc + 33) * (Y * (ℓ * dl)) := mul_nonneg (mul_nonneg h2Cw hA1) g3
+  have m3 : 0 ≤ 2 * Cw * (hdtw + 2 * scc + hdrc + 50 + Cabs + 4 * Dabs) * (Y * (d * K)) :=
+    mul_nonneg (mul_nonneg h2Cw hA2) g1
+  have m4 : 0 ≤ 2 * Cw * (hdtw + 2 * scc + hdrc + 50 + Cabs + 4 * Dabs) * (Y * (p * Km)) :=
+    mul_nonneg (mul_nonneg h2Cw hA2) g2
+  have m5 : 0 ≤ 2 * Cw * (lc + 33) * |Cl| * (Y * (d * K)) := mul_nonneg (mul_nonneg (mul_nonneg h2Cw hA3) habs) g1
+  have m6 : 0 ≤ 2 * Cw * (lc + 33) * |Cl| * (Y * (ℓ * dl)) := mul_nonneg (mul_nonneg (mul_nonneg h2Cw hA3) habs) g3
+  have expand : 2 * Cw * (prc + lc + 33 + (hdtw + 2 * scc + hdrc + 50 + Cabs + 4 * Dabs) + (lc + 33) * |Cl|) *
+      (Y * (d * K + p * Km + ℓ * dl)) =
+      (prc + lc + 33) * (2 * Cw * (Y * (d * K))) + (hdtw + 2 * scc + hdrc + 50 + Cabs + 4 * Dabs) * (2 * Cw * (Y * (ℓ * dl))) +
+        (lc + 33) * (2 * Cw * |Cl| * (Y * (p * Km))) +
+        (2 * Cw * (prc + lc + 33) * (Y * (p * Km)) + 2 * Cw * (prc + lc + 33) * (Y * (ℓ * dl)) +
+          2 * Cw * (hdtw + 2 * scc + hdrc + 50 + Cabs + 4 * Dabs) * (Y * (d * K)) +
+          2 * Cw * (hdtw + 2 * scc + hdrc + 50 + Cabs + 4 * Dabs) * (Y * (p * Km)) +
+          2 * Cw * (lc + 33) * |Cl| * (Y * (d * K)) + 2 * Cw * (lc + 33) * |Cl| * (Y * (ℓ * dl))) := by ring
+  rw [expand]
+  linarith
+
+/-- The common form of the forward and opposite totals. -/
+theorem total_of_bounds {P : TransformParams} {LP : LayerParams} (hc : Compatible LP P) (C : ℝ)
+    {p d ℓ K w : ℕ} {ts : List ℕ} (hadm : Admissible P p d ℓ K w ts) (hwr : w ≤ 2 ^ ℓ) {R W : ℕ}
+    (hR : R ≤ K * (prC ⌈P.Cl⌉₊ * d * (2 * 2 ^ ℓ * w * ts.prod)) + ℓ * layerCL LP C p d ℓ w ts +
+        ℓ * ((hdC ⌈P.Cl⌉₊ P.Cw + twC ⌈P.Cl⌉₊ + 3) * (2 * 2 ^ ℓ * w * ts.prod)))
+    (hW : W ≤ layoutCost (2 ^ ℓ) w ts ℓ K + 2 * (ℓ * (scC ⌈P.Cl⌉₊ P.Cw * (2 * 2 ^ ℓ * w * ts.prod))) +
+        30 * (((layoutMoves ts ℓ K).length + (layoutSwaps ts ℓ K).length) * (2 * 2 ^ ℓ * w * ts.prod)) +
+        (4 * hdrC ⌈P.Cl⌉₊ + 261) * (2 * 2 ^ ℓ * w * ts.prod)) :
+    ((R + W : ℕ) : ℝ) ≤ totC P LP C * transformCost P p d ℓ K ts := by
+  have hL := layoutOK_of_admissible hadm
+  obtain ⟨hpow, hnC, hdD, hD, hdl, hℓp, hpw, hKℓ, hK, hℓ, hw2, hlow, hnD⟩ := adm_sizes hadm hwr
+  obtain ⟨-, -, -, -, -, -, -, -, -, hlam, hτ, -, -, -, hlam0⟩ := hc
+  have hdlR := hadm.2.2.2.2.2.2.2.1
+  have hwC := hadm.2.2.2.2.2.2.2.2.2.2.2.2.2
+  -- the counts
+  have hmv : (layoutMoves ts ℓ K).length ≤ d * K := by
+    rw [(layout_counts hL).1]
+    have hb : (ℓ - 1) % K ≤ K - 1 := by have := Nat.mod_lt (ℓ - 1) (by omega : 0 < K); omega
+    have h1 := longs_length_le ts ℓ
+    have h2 : (ℓ - 1) % K * ts.length ≤ (K - 1) * ts.length := Nat.mul_le_mul_right _ hb
+    have e : d * K = ts.length * K + K := by rw [← hdD]; ring
+    have e2 : (K - 1) * ts.length + ts.length = K * ts.length := by
+      rw [← Nat.succ_mul, Nat.succ_eq_add_one, Nat.sub_add_cancel hK]
+    have e3 : K * ts.length = ts.length * K := Nat.mul_comm _ _
+    omega
+  have hsw : (layoutSwaps ts ℓ K).length * K ≤ ℓ * d := by
+    have h1 := (layout_counts hL).2
+    have h2 : ((ℓ - 1) / K * ts.length - 1) * K ≤ (ℓ - 1) / K * ts.length * K :=
+      Nat.mul_le_mul_right _ (Nat.sub_le _ _)
+    have h3 : (ℓ - 1) / K * ts.length * K ≤ (ℓ - 1) * ts.length := by
+      calc (ℓ - 1) / K * ts.length * K = (ℓ - 1) / K * K * ts.length := by ring
+        _ ≤ (ℓ - 1) * ts.length := Nat.mul_le_mul_right _ (Nat.div_mul_le_self _ _)
+    have h4 : (ℓ - 1) * ts.length ≤ ℓ * d := Nat.mul_le_mul (by omega) (by omega)
+    have := Nat.mul_le_mul_right K h1
+    omega
+  -- the volume as one natural number
+  obtain ⟨Vn, hVn⟩ : ∃ Vn : ℕ, Vn = 2 * 2 ^ ℓ * w * ts.prod := ⟨_, rfl⟩
+  rw [← hVn] at hR hW
+  have hV1 : 1 ≤ Vn := by
+    have hw : 0 < w := by omega
+    have hM : 0 < ts.prod := by rw [hpow]; exact Nat.two_pow_pos _
+    rw [hVn]; exact Nat.mul_pos (Nat.mul_pos (Nat.mul_pos two_pos (Nat.two_pow_pos _)) hw) hM
+  have hpV : p ≤ Vn := by
+    have : w ≤ Vn := by
+      rw [hVn]; calc w = 1 * 1 * w * 1 := by ring
+        _ ≤ 2 * 2 ^ ℓ * w * ts.prod := by
+          gcongr
+          · omega
+          · exact Nat.one_le_two_pow
+          · rw [hpow]; exact Nat.one_le_two_pow
+    omega
+  have hVY : Vn ≤ 2 * P.Cw * (2 ^ ℓ * ts.prod * p) := by
+    rw [hVn]
+    calc 2 * 2 ^ ℓ * w * ts.prod ≤ 2 * 2 ^ ℓ * (P.Cw * p) * ts.prod := by gcongr
+      _ = 2 * P.Cw * (2 ^ ℓ * ts.prod * p) := by ring
+  have hV2 : 2 * 2 ^ Nat.log 2 ts.prod * 2 ^ ℓ * w = Vn := by rw [hVn, ← hpow]; ring
+  have hV3 : 2 * 2 ^ ℓ * w * 2 ^ Nat.log 2 ts.prod = Vn := by rw [hVn, ← hpow]
+  have hCL := layerCL_real_le LP C p d ℓ w ts
+  rw [hV2, hV3] at hCL
+  have hLc := layoutCost_real_le (r := 2 ^ ℓ) (w := w) (ts := ts) (ℓ := ℓ) hK
+  rw [show 2 * 2 ^ ℓ * w * 2 ^ addrBits ts = Vn from hV3] at hLc
+  have hR' := (Nat.cast_le (α := ℝ)).mpr hR
+  have hW' := (Nat.cast_le (α := ℝ)).mpr hW
+  push_cast at hR' hW'
+  have hTC : transformCost P p d ℓ K ts =
+      (((2 ^ ℓ * ts.prod : ℕ) : ℝ) * p) * (d * K + p * (K : ℝ) ^ (P.τ - 1) + ℓ * (d : ℝ) ^ P.lam') := by
+    unfold transformCost; ring
+  rw [hTC]
+  push_cast
+  have hd1 : (1 : ℝ) ≤ d := by exact_mod_cast (show 1 ≤ d by omega)
+  have hK1 : (1 : ℝ) ≤ K := by exact_mod_cast hK
+  have hKm0 : (0 : ℝ) ≤ (K : ℝ) ^ (P.τ - 1) := by positivity
+  have hKT : (K : ℝ) ^ Parameters.tau = K * (K : ℝ) ^ (P.τ - 1) := by
+    rw [hτ, Real.rpow_sub_one (by positivity : (K : ℝ) ≠ 0)]
+    field_simp
+  have hswR : ((layoutSwaps ts ℓ K).length : ℝ) * (K : ℝ) ^ Parameters.tau ≤ P.Cl * p * (K : ℝ) ^ (P.τ - 1) := by
+    have h1 : ((layoutSwaps ts ℓ K).length : ℝ) * K ≤ ℓ * d := by exact_mod_cast hsw
+    have h2 : (ℓ : ℝ) * d ≤ P.Cl * p := by
+      have := hdlR; push_cast at this; linarith
+    rw [hKT]
+    have := mul_le_mul_of_nonneg_right (h1.trans h2) hKm0
+    linarith
+  have := total_arith (V := (Vn : ℝ)) (Y := (2 : ℝ) ^ ℓ * ts.prod * p) (d := d) (K := K) (ℓ := ℓ) (p := p)
+    (dl := (d : ℝ) ^ P.lam') (dL := (d : ℝ) ^ (LP.lam' : ℝ)) (KT := (K : ℝ) ^ Parameters.tau)
+    (Km := (K : ℝ) ^ (P.τ - 1)) (mv := (layoutMoves ts ℓ K).length) (sw := (layoutSwaps ts ℓ K).length)
+    (lc := layoutC) (Cabs := |C|) (Dabs := |LP.Cdesc|) (prc := (prC ⌈P.Cl⌉₊ : ℕ))
+    (hdtw := ((hdC ⌈P.Cl⌉₊ P.Cw + twC ⌈P.Cl⌉₊ + 3 : ℕ) : ℝ)) (scc := (scC ⌈P.Cl⌉₊ P.Cw : ℕ))
+    (hdrc := ((4 * hdrC ⌈P.Cl⌉₊ + 261 : ℕ) : ℝ)) (Cw := P.Cw) (Cl := P.Cl)
+    (R := R) (W := W) (L := layoutCost (2 ^ ℓ) w ts ℓ K) (CLr := layerCL LP C p d ℓ w ts)
+    (by push_cast; linarith) (by push_cast; linarith) (by linarith) hCL
+    (by exact_mod_cast hV1) (by exact_mod_cast hpV)
+    (Real.rpow_le_rpow_of_exponent_le hd1 hlam) (Real.one_le_rpow hd1 (hlam0.trans hlam)) (by positivity)
+    (Real.one_le_rpow hK1 tau_nonneg') hKm0
+    (by have := (Nat.cast_le (α := ℝ)).mpr hVY; simp only [Nat.cast_mul, Nat.cast_pow, Nat.cast_ofNat] at this; linarith) (by positivity)
+    (by exact_mod_cast hmv) (by positivity) (by positivity) hswR hd1 hK1
+    (by exact_mod_cast (show 1 ≤ ℓ by omega)) (by positivity) layoutC_pos (abs_nonneg _) (abs_nonneg _)
+    (by positivity) (by positivity) (by positivity) (by positivity) (by positivity)
+  unfold totC
+  push_cast at this ⊢
+  linarith
+
+/-- The forward program's step count beyond its generator is within `totC` of the paper's bound. -/
+theorem fwdTotal_le {P : TransformParams} {LP : LayerParams} (hc : Compatible LP P) (C : ℝ)
+    {p d ℓ K w : ℕ} {ts : List ℕ} (hadm : Admissible P p d ℓ K w ts) (hwr : w ≤ 2 ^ ℓ) :
+    ((fwdRoundsCost (layoutOK_of_admissible hadm) p d w (layerCL LP C p d ℓ w ts) +
+        wrapCost (2 ^ ℓ) w ts ℓ K (transformHeader p d (2 ^ ℓ) K w ts)
+          (fwdScript p d (2 ^ ℓ) w (paperPerm (layoutOK_of_admissible hadm)) ts ℓ K)
+          (layoutWords (2 ^ ℓ) w ts ℓ K) : ℕ) : ℝ) ≤ totC P LP C * transformCost P p d ℓ K ts :=
+  total_of_bounds hc C hadm hwr (fwdRoundsCost_le hadm hwr _) (wrapCost_fwd_le hadm hwr)
+
+/-- The same for the opposite program. -/
+theorem oppTotal_le {P : TransformParams} {LP : LayerParams} (hc : Compatible LP P) (C : ℝ)
+    {p d ℓ K w : ℕ} {ts : List ℕ} (hadm : Admissible P p d ℓ K w ts) (hwr : w ≤ 2 ^ ℓ) :
+    ((oppRoundsCost (layoutOK_of_admissible hadm) p d w (layerCL LP C p d ℓ w ts) +
+        wrapCost (2 ^ ℓ) w ts ℓ K (transformHeader p d (2 ^ ℓ) K w ts)
+          (oppScript p d (2 ^ ℓ) w (paperPerm (layoutOK_of_admissible hadm)) ts ℓ K)
+          (undoWords (2 ^ ℓ) w ts ℓ K) : ℕ) : ℝ) ≤ totC P LP C * transformCost P p d ℓ K ts :=
+  total_of_bounds hc C hadm hwr (oppRoundsCost_le hadm hwr _) (wrapCost_opp_le hadm hwr)
+
 end IntegerMultBounds.Schoenhage
