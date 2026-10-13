@@ -160,6 +160,58 @@ theorem runs_flagLoop (a : ℕ) : ∀ (fl : List Bool) (m : ℕ) (Lf : List (Lis
     · simp only [List.length_cons]
       nlinarith
 
+/-! ### The straight-line blocks -/
+
+theorem ones_tail (k : ℕ) : (ones k).tail = ones (k - 1) := by simp [ones, List.tail_replicate]
+
+theorem clen_ticks (n : ℕ) : clen (List.replicate n ([] : List Bool)) = n := by
+  induction n with
+  | zero => rfl
+  | succ n ih => rw [List.replicate_succ, clen_cons, ih]; simp; omega
+
+/-- Copy `w`, start `sR` at one, and ticks for `ℓ`. -/
+noncomputable def blockA : Cmd 0 16 :=
+  .seq (regDup cW oW (by decide)) <| .seq (emit [[true]] sR) <| .seq (rewind sR) <|
+  .seq (op0 Rules.ticks false cL sK (by decide)) <| .seq (rewind cL) (rewind sK)
+
+theorem runs_blockA (σ : Fin 16 → WTape) (l w : ℕ) (hL : σ cL = reg (ones l)) (hW : σ cW = reg (ones w))
+    (hO : σ oW = emp) (hR : σ sR = emp) (hK : σ sK = emp) :
+    Runs blockA σ (· = Function.update (Function.update (Function.update σ oW (reg (ones w))) sR (reg [true]))
+      sK ⟨[], List.replicate l []⟩) (6 * w + 4 * l + 60) := by
+  apply Runs.of_wp
+  simp only [blockA, regDup, regIn, cpy, WP, wp_op0, wp_rewind, wp_emit]
+  tsimp [hL, hW, hO, hR, hK, emp, reg, Rules.output_copy, Rules.output_ticks, WTape.put, WTape.next,
+    WTape.cur]
+  have t1 := time_le Rules.copy (ones w) (fun j => j.elim0) 0 (fun j => j.elim0)
+  have t2 := time_le Rules.ticks (ones l) (fun j => j.elim0) 0 (fun j => j.elim0)
+  refine ⟨?_, by simp [clen_ticks] at t1 t2 ⊢; omega⟩
+  funext i; fin_cases i <;> tsimp [hL, hW, reg]
+
+/-- Write `ones (k - 1)` on `o` from `ones k` on `s`, with `[true]` on `j`. -/
+noncomputable def dropOne {t : ℕ} (s j o : Fin t) (h1 : s ≠ j) (h2 : s ≠ o) (h3 : j ≠ o) : Cmd 0 t :=
+  .seq (op1 Rules.drop false s j o h1 h2 h3) <| .seq (rewind o) <| .seq (rewind s) (rewind j)
+
+theorem runs_dropOne {t : ℕ} {s j o : Fin t} (h1 : s ≠ j) (h2 : s ≠ o) (h3 : j ≠ o) (σ : Fin t → WTape) (k : ℕ)
+    (hs : σ s = reg (ones k)) (hj : σ j = reg [true]) (ho : σ o = emp) :
+    Runs (dropOne s j o h1 h2 h3) σ (· = Function.update σ o (reg (ones (k - 1)))) (3 * k + 30) := by
+  have d1 := time_le Rules.drop (ones k) (fun _ => [true]) 1 (fun _ => le_rfl)
+  apply Runs.of_wp
+  simp only [dropOne, WP, wp_op1, wp_rewind]
+  simp [Function.update_apply, h1, h2, h3, h1.symm, h2.symm, h3.symm, hs, hj, ho, reg, emp, Rules.output_drop,
+    WTape.put, WTape.next, WTape.cur, ↓parse_syms]
+  refine ⟨?_, ?_⟩
+  · funext x
+    by_cases hxo : x = o
+    · subst hxo
+      rw [Function.update_of_ne (Ne.symm h3), Function.update_of_ne (Ne.symm h2), Function.update_self, ones_tail, Function.update_self]
+    · by_cases hxs : x = s
+      · subst hxs; simp [hxo, h1, hs, reg]
+      · by_cases hxj : x = j
+        · subst hxj; simp [hxo, hxs, hj, reg]
+        · simp [hxo, hxs, hxj]
+  · simp at d1; omega
+
+
 end TwistConsts
 
 end IntegerMultBounds.Schoenhage
