@@ -74,8 +74,11 @@ same halted root bank and tensor output, with a real recurrence bound
 including the complete root boundary. The actual recurrence and that same
 root coefficient now have a closed geometric estimate above the original
 stopping cutoff, with forcing derived from complete paid local work.
-The exact cutoff charge and guard-to-tau factor remain explicit; uniform
-cutoff-charge and original-stage-factor closure remain open. Actual axis growth now
+The cutoff charge now has an explicit fixed-plus-leaf-width allowance,
+including exponent zero. The real root classifier selects the cutoff
+internally, and the same root coefficient has an explicit estimate in the
+original uncontracted width. Absorbing the normalized cutoff powers into
+the original uniform stage factor remains open. Actual axis growth now
 justifies eventual exclusion of nonstopped exponent-one nodes; finite small-input
 coverage remains separate. The stopped
 roundtrip's existing cost still includes its stopped-axis-count factor; the
