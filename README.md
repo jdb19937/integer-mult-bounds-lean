@@ -106,8 +106,11 @@ The fixed unit-weight phase family now physically updates the native source,
 restores all 67 private tapes and retains exact tensor-phase readout and the
 original grid, with one positive native-volume coefficient. Original-header
 assembly and input phase placement are now derived on the exact aligned
-root input bank, with tensor readout at every original address. Whole-root
-composition, output-phase readiness, exact normalization and arbitrary
+root input bank, with tensor readout at every original address. The complete
+input-phase/nonstopped-root composition now has the same genuine halted output,
+exact phased-tensor semantics, complete cleanup and a fixed uniform runtime
+coefficient paying both traces and their joining edge. Output-phase readiness,
+exact normalization and arbitrary
 active-piece composition remain separate obligations. Actual axis growth now
 justifies eventual exclusion of nonstopped exponent-one nodes; finite small-input
 coverage remains separate. The stopped
