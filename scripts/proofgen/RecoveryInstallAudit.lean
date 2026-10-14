@@ -16,6 +16,7 @@ import IntegerMultBounds.Machine.RecoverOutputSerialize
 import IntegerMultBounds.Machine.RecoverArrayCleanup
 import IntegerMultBounds.Machine.RecoverCarryFlush
 import IntegerMultBounds.Machine.RecoverOutput
+import IntegerMultBounds.Machine.RecoverNumericalBridge
 import Lean.Util.CollectAxioms
 
 /-! Targeted transitive audit for section 8 rounding, carry and installation. -/
@@ -40,6 +41,10 @@ run_cmd do
         `IntegerMultBounds.Machine.RecoverArrayCleanup,
         `IntegerMultBounds.Machine.RecoverCarryFlush,
         `IntegerMultBounds.Machine.RecoverOutput,
+        `IntegerMultBounds.Machine.RecoverNumericalBridge,
+        `IntegerMultBounds.ExactRecovery,
+        `IntegerMultBounds.NLogN.recover_coefficient_error,
+        `IntegerMultBounds.NLogN.recover_coefficient_real_error,
         `IntegerMultBounds.Schoenhage.RecoveryCleanupGenerated,
         `IntegerMultBounds.Schoenhage.CertifiedSequence].any (·.isPrefixOf name) then
       for axiomName in ← collectAxioms name do

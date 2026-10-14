@@ -964,6 +964,7 @@ import IntegerMultBounds.Machine.RecoverOutputSerialize
 import IntegerMultBounds.Machine.RecoverArrayCleanup
 import IntegerMultBounds.Machine.RecoverCarryFlush
 import IntegerMultBounds.Machine.RecoverOutput
+import IntegerMultBounds.Machine.RecoverNumericalBridge
 import IntegerMultBounds.Machine.CountedGatherField
 import IntegerMultBounds.Machine.CountedGatherPadding
 import IntegerMultBounds.Machine.CountedGatherDigit
