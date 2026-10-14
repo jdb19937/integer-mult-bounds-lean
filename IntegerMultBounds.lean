@@ -2932,3 +2932,5 @@ import IntegerMultBounds.Machine.RulerReverseCopy
 import IntegerMultBounds.Machine.RecoverRecordFormat
 import IntegerMultBounds.Machine.RecoverRecordField
 import IntegerMultBounds.Machine.RecoverRecordArray
+import IntegerMultBounds.Machine.RecoverRecordReady
+import IntegerMultBounds.Machine.RecoverPublicOutput

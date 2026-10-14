@@ -21,6 +21,8 @@ import IntegerMultBounds.Machine.RulerReverseCopy
 import IntegerMultBounds.Machine.RecoverRecordFormat
 import IntegerMultBounds.Machine.RecoverRecordField
 import IntegerMultBounds.Machine.RecoverRecordArray
+import IntegerMultBounds.Machine.RecoverRecordReady
+import IntegerMultBounds.Machine.RecoverPublicOutput
 import Lean.Util.CollectAxioms
 
 /-! Targeted transitive audit for section 8 rounding, carry and installation. -/
@@ -50,6 +52,8 @@ run_cmd do
         `IntegerMultBounds.Machine.RecoverRecordFormat,
         `IntegerMultBounds.Machine.RecoverRecordField,
         `IntegerMultBounds.Machine.RecoverRecordArray,
+        `IntegerMultBounds.Machine.RecoverRecordReady,
+        `IntegerMultBounds.Machine.RecoverPublicOutput,
         `IntegerMultBounds.ExactRecovery,
         `IntegerMultBounds.NLogN.recover_coefficient_error,
         `IntegerMultBounds.NLogN.recover_coefficient_real_error,
