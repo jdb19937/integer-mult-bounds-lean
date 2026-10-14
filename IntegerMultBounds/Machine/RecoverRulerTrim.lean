@@ -16,7 +16,7 @@ open SharedPlacementAlphabet (setTape)
 
 def eraseCell : Program 1 2 alphabet := DescriptorStackControl.once (by decide) (fun _ _ => (blank,Move.left))
 
-private theorem erase_cell (source : ℤ → Fin (alphabet+4)) (position : ℤ) :
+theorem erase_cell (source : ℤ → Fin (alphabet+4)) (position : ℤ) :
     HoareTime eraseCell (· = FiniteReturnStack.bank source position)
       (· = FiniteReturnStack.bank (Function.update source position blank) (position-1)) 1 := by
   apply (DescriptorStackControl.once_hoare (by decide) _ (FiniteReturnStack.bank source position)).consequence
