@@ -76,6 +76,26 @@ theorem input_right_update (left right : List Bool) (dropPrecision width : ℕ) 
     · simp only [setTape,Function.update_of_ne isRight,ChirpFastProduct.input,Alphabet.mapTapes,Schoenhage.rawFM,
         isRight,↓reduceIte]
 
+/-- Installing one left operand changes exactly that original raw port;
+all other input tapes, heads and the blank native destination are retained. -/
+theorem input_left_update (left right : List Bool) (dropPrecision width : ℕ) :
+    setTape (input [] right dropPrecision width) (Fin.castAdd 1 zF)
+      (RulerWordMap.word (left.map bitSymbol)) 0=input left right dropPrecision width := by
+  simp only [input,SharedPlacementAlphabet.setTape_append_left]
+  apply congrArg (fun bank : Tapes 91 2 => bank.append empty)
+  apply Placement.Tapes.ext'
+  · intro slot
+    simp only [setTape,Function.update_apply,ChirpFastProduct.input,Alphabet.mapTapes,Schoenhage.rawFM]
+    split <;> rfl
+  · intro slot
+    by_cases isLeft : slot=zF
+    · subst slot
+      simp only [setTape,Function.update_self]
+      simpa [ChirpFastProduct.input,Alphabet.mapTapes,Schoenhage.rawFM,zG,zF,iP,iW,zO]
+        using (mapped_word left).symm
+    · simp only [setTape,Function.update_of_ne isLeft,ChirpFastProduct.input,Alphabet.mapTapes,Schoenhage.rawFM,
+        isLeft,↓reduceIte]
+
 /-- Canonical zero-drop input ports, including the genuinely blank native
 destination and every private tape. -/
 theorem input_tape_zero (left right : List Bool) (width : ℕ) (slot : Fin tapeCount) :
