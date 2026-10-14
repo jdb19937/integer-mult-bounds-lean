@@ -2974,3 +2974,6 @@ import IntegerMultBounds.Machine.ChirpPublicEmitArray
 import IntegerMultBounds.Machine.ChirpPublicEmitStream
 import IntegerMultBounds.Machine.ChirpPublicPublished
 import IntegerMultBounds.Machine.ChirpPublicConjugation
+import IntegerMultBounds.Machine.FixedMulTruncation
+import IntegerMultBounds.Machine.ChirpFastProduct
+import IntegerMultBounds.Machine.ChirpSignExtend
