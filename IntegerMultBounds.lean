@@ -2934,3 +2934,4 @@ import IntegerMultBounds.Machine.RecoverRecordField
 import IntegerMultBounds.Machine.RecoverRecordArray
 import IntegerMultBounds.Machine.RecoverRecordReady
 import IntegerMultBounds.Machine.RecoverPublicOutput
+import IntegerMultBounds.Machine.RecoverBinaryRuler
