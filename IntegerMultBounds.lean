@@ -2980,3 +2980,4 @@ import IntegerMultBounds.Machine.ChirpSignExtend
 import IntegerMultBounds.Machine.ChirpProductNumerator
 import IntegerMultBounds.Machine.RulerWordMap
 import IntegerMultBounds.Machine.ChirpArithmeticCodec
+import IntegerMultBounds.Machine.ChirpFastNativeProduct
