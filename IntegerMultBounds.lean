@@ -2959,3 +2959,8 @@ import IntegerMultBounds.Machine.ChirpConjugateNumerator
 import IntegerMultBounds.Machine.ChirpConjugateRecord
 import IntegerMultBounds.Machine.ChirpConjugateArray
 import IntegerMultBounds.Machine.ChirpConjugateStream
+import IntegerMultBounds.Machine.RulerMapCopy
+import IntegerMultBounds.Machine.ChirpPublicCodec
+import IntegerMultBounds.Machine.ChirpPublicField
+import IntegerMultBounds.Machine.ChirpPublicPair
+import IntegerMultBounds.Machine.ChirpPublicArray
