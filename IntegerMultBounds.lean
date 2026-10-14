@@ -2955,3 +2955,7 @@ import IntegerMultBounds.Machine.RecoverHeaderControlSetup
 import IntegerMultBounds.Machine.RecoverHeaderControlBudget
 import IntegerMultBounds.Machine.RecoverRecordBudget
 import IntegerMultBounds.Machine.RecoverHeaderOutput
+import IntegerMultBounds.Machine.ChirpConjugateNumerator
+import IntegerMultBounds.Machine.ChirpConjugateRecord
+import IntegerMultBounds.Machine.ChirpConjugateArray
+import IntegerMultBounds.Machine.ChirpConjugateStream

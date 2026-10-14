@@ -61,4 +61,4 @@ The chirp identity is the manuscript's `lem:chirp-permutation` (§7); the chirp 
 
 | Subcomponent | Files | Mathematics | Tape | Notes |
 | --- | --- | --- | --- | --- |
-| Bluestein reduction | `Bluestein`, `BluesteinApprox` | ✅ | ⬜ | |
+| Bluestein reduction | `Bluestein`, `BluesteinApprox`, `Machine/ChirpConjugateNumerator`, `Machine/ChirpConjugateRecord`, `Machine/ChirpConjugateArray`, `Machine/ChirpConjugateStream` | ✅ | 🟡 | `Machine.ChirpConjugateStream.runs_conjugate` now executes exact coordinatewise conjugation of an original delimited native complex array, using actual blank-end loop termination, no count descriptor and no prepared unary controls. It preserves the source, emits exact conjugate dyadic values, rewinds both stream heads and clears all non-stream work within `44 * nativeSourceLength + 6`; width slack and the precision-scale numerator bound discharge imaginary negation representability. This is a chirp preparation primitive, not the complete Bluestein tape milestone. Public-format conversion, actual chirp coefficient generation, both rounded chirp multiplications and the synthetic convolution procedure remain open. |
