@@ -58,7 +58,6 @@ lemma drain_of_loop {k : BK t} {b : Act t q a} {v : BS t q a} {S : Stacks t a} {
     Exec body (drain k b) (mk v S) (1 + n) u :=
   Exec.seq (peekFlag_run k v S ▸ Exec.act (body := body) (peekFlag k) (mk v S)) h
 
-set_option maxHeartbeats 1600000 in
 theorem prepare_exec (M : Program t q a) (A B : ℕ) (v : BS t q a) :
     ∃ v' m, Keeps v v' ∧
       m ≤ 30 * ((encodeNat A).length + (encodeNat B).length) + 40 ∧
@@ -148,7 +147,7 @@ theorem prepare_exec (M : Program t q a) (A B : ℕ) (v : BS t q a) :
     b1 := []
     b3 := S₅.b1.reverse ++ S₅.b3 }
   -- 7. bit 3 → tape 0
-  obtain ⟨v₇, k₇, e₇⟩ := toTape3_loop body i₀ S₆.b3 { v₆ with flag := S₆.b3.head?.isSome } S₆ rfl rfl
+  obtain ⟨v₇, k₇, e₇⟩ := toTape3_loop body i₀ S₆.b3 { v₆ with flag := S₆.b3.head?.isSome } S₆ rfl (by dsimp only)
   set S₇ : Stacks t a := { S₆ with
     b3 := []
     R := Function.update S₆.R i₀ ((S₆.b3.map bitSymbol).reverse ++ S₆.R i₀) }
@@ -163,7 +162,7 @@ theorem prepare_exec (M : Program t q a) (A B : ℕ) (v : BS t q a) :
     b0 := []
     b2 := S₈.b0.reverse ++ S₈.b2 }
   -- 10. bit 2 → tape 0
-  obtain ⟨v₁₀, k₁₀, e₁₀⟩ := toTape2_loop body i₀ S₉.b2 { v₉ with flag := S₉.b2.head?.isSome } S₉ rfl rfl
+  obtain ⟨v₁₀, k₁₀, e₁₀⟩ := toTape2_loop body i₀ S₉.b2 { v₉ with flag := S₉.b2.head?.isSome } S₉ rfl (by dsimp only)
   set S₁₀ : Stacks t a := { S₉ with
     b2 := []
     R := Function.update S₉.R i₀ ((S₉.b2.map bitSymbol).reverse ++ S₉.R i₀) }
@@ -223,10 +222,11 @@ theorem prepare_exec (M : Program t q a) (A B : ℕ) (v : BS t q a) :
     (Exec.seq (drain_of_loop body e₁₀)
       (Exec.act (body := body) .done _)))))))))))
     rfl (by rw [← hfin]; rfl)⟩
-  · exact (Keeps.trans ⟨rfl, rfl⟩ k₁).trans <| (Keeps.trans ⟨rfl, rfl⟩ k₂).trans <|
-      (Keeps.trans ⟨rfl, rfl⟩ k₃).trans <| (Keeps.trans ⟨rfl, rfl⟩ k₄).trans <| k₅.trans <|
-      (Keeps.trans ⟨rfl, rfl⟩ k₆).trans <| (Keeps.trans ⟨rfl, rfl⟩ k₇).trans <|
-      (Keeps.trans ⟨rfl, rfl⟩ k₉).trans (Keeps.trans ⟨rfl, rfl⟩ k₁₀)
+  -- Compose the two preserved fields directly, avoiding inference of whole intermediate states.
+  · exact ⟨k₁₀.1.trans (k₉.1.trans (k₇.1.trans (k₆.1.trans (k₅.1.trans
+        (k₄.1.trans (k₃.1.trans (k₂.1.trans k₁.1))))))),
+      k₁₀.2.trans (k₉.2.trans (k₇.2.trans (k₆.2.trans (k₅.2.trans
+        (k₄.2.trans (k₃.2.trans (k₂.2.trans k₁.2)))))))⟩
   · rw [hlP, hl1, hl2, hl5, hl6, hl8, hl9]
     omega
 
@@ -280,7 +280,6 @@ theorem cleanup_exec : ∀ (l : List (Fin t)) (v : BS t q a) (S : Stacks t a),
           · subst hj; simp [S₂, S₁]
           · simp [S₂, S₁, hj, Function.update_of_ne hj]
 
-set_option maxHeartbeats 800000 in
 theorem finish_exec (M : Program t q a) (v : BS t q a) (S : Stacks t a) (cf : Config t q a)
     (out : List Bool) (hv : v.lead = true) (hrep : Rep cf S.L S.R)
     (hS : S.inp = [] ∧ S.out = [] ∧ S.b0 = [] ∧ S.b1 = [] ∧ S.b2 = [] ∧ S.b3 = [])
