@@ -138,6 +138,7 @@ theorem runs_signed_exists (signedLowBits : List Bool) (sign : Bool) (carryBits 
       2 ^ precision - coefficient| < 1 / 2) :
     ∃ lowerBits integerBits : List Bool, ∃ guard : Bool,
       lowerBits.length + 1 = precision ∧ integerBits.length = (signedLowBits ++ [sign]).length - precision ∧
+      RecoverMagnitude.magnitude signedLowBits sign = sourceBits lowerBits guard integerBits ∧
       HoareTime (program (alphabet := alphabet))
         (· = input signedLowBits sign carryBits chunkWidth precision)
         (fun finalBank => finalBank = output signedLowBits sign lowerBits integerBits carryBits guard chunkWidth ∧
@@ -170,7 +171,7 @@ theorem runs_signed_exists (signedLowBits : List Bool) (sign : Bool) (carryBits 
     change magnitudeBits = (lowerBits ++ [guard]) ++ magnitudeBits.drop precision
     rw [fractionalLayout]
     exact (List.take_append_drop precision magnitudeBits).symm
-  refine ⟨lowerBits,integerBits,guard,lowerLength,integerLength,?_⟩
+  refine ⟨lowerBits,integerBits,guard,lowerLength,integerLength,layout,?_⟩
   have execution := runs_signed (alphabet := alphabet) signedLowBits sign lowerBits integerBits carryBits guard
     coefficient chunkWidth layout (by rw [integerLength]; exact chunkFits)
     (by simpa only [lowerLength] using approximationClose)
