@@ -2967,3 +2967,8 @@ import IntegerMultBounds.Machine.ChirpPublicArray
 import IntegerMultBounds.Machine.PlacementBankEndpoint
 import IntegerMultBounds.Machine.ChirpHeaderWidth
 import IntegerMultBounds.Machine.ChirpPublicConjugate
+import IntegerMultBounds.Machine.GuardedMapCopy
+import IntegerMultBounds.Machine.ChirpPublicDecode
+import IntegerMultBounds.Machine.ChirpPublicEmitField
+import IntegerMultBounds.Machine.ChirpPublicEmitArray
+import IntegerMultBounds.Machine.ChirpPublicEmitStream
