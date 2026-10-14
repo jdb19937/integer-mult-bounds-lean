@@ -2937,3 +2937,5 @@ import IntegerMultBounds.Machine.RecoverPublicOutput
 import IntegerMultBounds.Machine.RecoverBinaryRuler
 import IntegerMultBounds.Machine.RecoverControlSetup
 import IntegerMultBounds.Machine.RecoverBinaryOutput
+import IntegerMultBounds.Machine.GammaPrefix
+import IntegerMultBounds.Machine.GammaRead
