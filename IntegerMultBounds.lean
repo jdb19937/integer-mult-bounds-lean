@@ -2985,3 +2985,5 @@ import IntegerMultBounds.Machine.ChirpScalarProducts
 import IntegerMultBounds.Machine.ChirpMarkProduct
 import IntegerMultBounds.Machine.ChirpMarkedProducts
 import IntegerMultBounds.Machine.ChirpExactProduct
+import IntegerMultBounds.Machine.ChirpUnitOperand
+import IntegerMultBounds.Machine.ChirpTruncate

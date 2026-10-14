@@ -6,6 +6,7 @@ import IntegerMultBounds.Machine.ChirpArithmeticCodec
 import IntegerMultBounds.Machine.ChirpFastNativeProduct
 import IntegerMultBounds.Machine.ChirpScalarProducts
 import IntegerMultBounds.Machine.ChirpExactProduct
+import IntegerMultBounds.Machine.ChirpTruncate
 import Lean.Util.CollectAxioms
 
 /-! Transitive proof-integrity audit for actual chirp tape primitives. -/
@@ -14,7 +15,9 @@ run_cmd do
   let environment ← getEnv
   let mut count : Nat := 0
   for (name, _) in environment.constants.toList do
-    if [`IntegerMultBounds.Machine.ChirpMarkProduct,
+    if [`IntegerMultBounds.Machine.ChirpUnitOperand,
+        `IntegerMultBounds.Machine.ChirpTruncate,
+        `IntegerMultBounds.Machine.ChirpMarkProduct,
         `IntegerMultBounds.Machine.ChirpMarkedProducts,
         `IntegerMultBounds.Machine.ChirpExactProduct,
         `IntegerMultBounds.Machine.ChirpScalarProducts,
