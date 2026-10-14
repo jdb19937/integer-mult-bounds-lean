@@ -949,6 +949,10 @@ import IntegerMultBounds.Machine.BinaryInterchangeRun
 import IntegerMultBounds.Machine.BinaryInterchangeBudget
 import IntegerMultBounds.ExactRecoveryOutput
 import IntegerMultBounds.Machine.RecoverOutputInstall
+import IntegerMultBounds.Machine.RecoverCoefficientRound
+import IntegerMultBounds.Machine.RecoverCarryStep
+import IntegerMultBounds.Machine.RecoverMagnitude
+import IntegerMultBounds.Machine.RecoverCoefficientStep
 import IntegerMultBounds.Machine.CountedGatherField
 import IntegerMultBounds.Machine.CountedGatherPadding
 import IntegerMultBounds.Machine.CountedGatherDigit
