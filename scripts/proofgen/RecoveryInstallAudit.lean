@@ -83,6 +83,8 @@ run_cmd do
         `IntegerMultBounds.Machine.RecoverHeaderParameters,
         `IntegerMultBounds.Machine.RecoverHeaderRulers,
         `IntegerMultBounds.Machine.RecoverHeaderControlSetup,
+        `IntegerMultBounds.Machine.RecoverHeaderControlBudget,
+        `IntegerMultBounds.Machine.RecoverRecordBudget,
         `IntegerMultBounds.Machine.RecoverHeaderOutput,
         `IntegerMultBounds.ExactRecovery,
         `IntegerMultBounds.NLogN.recover_coefficient_error,

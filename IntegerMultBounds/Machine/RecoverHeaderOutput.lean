@@ -1,6 +1,6 @@
 module
 
-public import IntegerMultBounds.Machine.RecoverHeaderControlSetup
+public import IntegerMultBounds.Machine.RecoverRecordBudget
 
 /-! The public gamma header and contiguous transform record suffice for actual
 exact multiplication recovery. One fixed program derives its own parameters
@@ -34,6 +34,19 @@ def output (recovered : List Bool) (inputLength : ℕ) : Tapes 22 alphabet :=
 def cost (pairs : List Pair) (chunkWidth lengthExponent wordWidth inputLength : ℕ) :=
   RecoverHeaderControlSetup.cost (6*chunkWidth) lengthExponent wordWidth + 1 +
     RecoverPublicOutput.cost (alphabet := alphabet) pairs wordWidth inputLength
+
+/-- Setup, adaptation, exact recovery and cleanup are all linear in public
+record/clock volume; binary division needs no separate polynomial allowance. -/
+theorem cost_le (pairs : List Pair) (chunkWidth lengthExponent wordWidth inputLength : ℕ)
+    (chunkLarge : 3 ≤ chunkWidth) (lengthFits : lengthExponent ≤ chunkWidth) (wordFits : 6*chunkWidth ≤ wordWidth)
+    (fieldWidths : ∀ pair ∈ pairs, pair.1.length = wordWidth ∧ pair.2.length = wordWidth) :
+    cost (alphabet := alphabet) pairs chunkWidth lengthExponent wordWidth inputLength ≤
+      6501 * ((raw pairs).length + wordWidth + inputLength + 1) := by
+  have setupBound := RecoverHeaderControlBudget.cost_six_le_width chunkWidth lengthExponent wordWidth
+    chunkLarge lengthFits wordFits
+  have recoveryBound := RecoverPublicOutput.cost_le (alphabet := alphabet) pairs wordWidth inputLength (by omega) fieldWidths
+  unfold cost
+  omega
 
 private theorem ready_bank (pairs : List Pair) (chunkWidth lengthExponent wordWidth : ℕ) (clock : List Bool) :
     ((RecoverPublicOutput.input pairs wordWidth chunkWidth (6*chunkWidth-(2*chunkWidth+4+2*lengthExponent)) clock).append
@@ -95,8 +108,7 @@ theorem runs_correct (pairs : List Pair) (records : List RecoverArray.Coefficien
     (coefficientsCorrect : NLogN.evalBase (2 ^ chunkWidth) (records.map RecoverArray.Coefficient.exact) =
       binaryValue leftInput * binaryValue rightInput) :
     ∃ elapsed finalConfig,
-      elapsed ≤ RecoverHeaderControlSetup.cost (6*chunkWidth) lengthExponent wordWidth + 1 +
-        200 * ((raw pairs).length + wordWidth + inputLength + 1) ∧
+      elapsed ≤ 6501 * ((raw pairs).length + wordWidth + inputLength + 1) ∧
       run (program (alphabet := alphabet)) elapsed
         ((input pairs (6*chunkWidth) lengthExponent wordWidth leftInput).start program) = some finalConfig ∧
       step program finalConfig = none ∧ outputCorrect program inputLength leftInput rightInput finalConfig ∧
@@ -105,10 +117,8 @@ theorem runs_correct (pairs : List Pair) (records : List RecoverArray.Coefficien
     chunkWidth lengthExponent wordWidth inputLength leftInput rightInput leftLength rightLength
     chunkLarge lengthFits wordFits fieldWidths encodedWords recordsGood coefficientsCorrect
   obtain ⟨elapsed,finalConfig,bounded,executed,halted,endpoint⟩ := execution _ rfl
-  have recoveryBound := RecoverPublicOutput.cost_le (alphabet := alphabet) pairs wordWidth inputLength (by omega) fieldWidths
-  refine ⟨elapsed,finalConfig,?_,executed,halted,?_,?_⟩
-  · unfold cost at bounded
-    omega
+  refine ⟨elapsed,finalConfig,bounded.trans
+    (cost_le pairs chunkWidth lengthExponent wordWidth inputLength chunkLarge lengthFits wordFits fieldWidths),executed,halted,?_,?_⟩
   · refine ⟨RecoverOutputSerialize.outputWord (alphabet := alphabet) recovered inputLength,wordLength,wordValue,?_⟩
     change finalConfig.tapes.tape (0 : Fin 22) = _
     rw [endpoint]
@@ -119,7 +129,8 @@ theorem runs_correct (pairs : List Pair) (records : List RecoverArray.Coefficien
 
 /-- Computed-transform guarantees give exact multiplication using only the
 original public gamma header, signed record and input-width clock. No decoded
-parameters, prebuilt rulers or residual-precision descriptor are supplied. -/
+parameters, prebuilt rulers or residual-precision descriptor are supplied.
+Every setup and recovery transition is paid by the original record volume. -/
 theorem runs_computed {coordinates : Type*} [Fintype coordinates] {scaledError : ℝ}
     (chunkWidth lengthExponent wordWidth inputLength : ℕ)
     (leftInput rightInput : List Bool) (real imaginary : Fin (2 ^ lengthExponent) → ℤ)
@@ -152,8 +163,7 @@ theorem runs_computed {coordinates : Type*} [Fintype coordinates] {scaledError :
     (finalMargin : (2 : ℝ) ^ (2 * chunkWidth + 4) * (2 ^ lengthExponent : ℕ) ^ 2 *
       (3 * scaledError + 2) < 2 ^ (6 * chunkWidth) / 2) :
     ∃ elapsed finalConfig,
-      elapsed ≤ RecoverHeaderControlSetup.cost (6*chunkWidth) lengthExponent wordWidth + 1 +
-        200 * ((Spec.SignedRingProduct.record wordWidth real imaginary).length + wordWidth + inputLength + 1) ∧
+      elapsed ≤ 26004 * (Spec.SignedRingProduct.record wordWidth real imaginary).length ∧
       run (program (alphabet := alphabet)) elapsed
         ((input (RecoverRecordArray.publicPairs wordWidth real imaginary) (6*chunkWidth) lengthExponent wordWidth leftInput).start program) = some finalConfig ∧
       step program finalConfig = none ∧ outputCorrect program inputLength leftInput rightInput finalConfig ∧
@@ -180,7 +190,15 @@ theorem runs_computed {coordinates : Type*} [Fintype coordinates] {scaledError :
       intro pair member
       obtain ⟨index, _, rfl⟩ := List.mem_map.mp member
       simp) encodedWords goodRecords productIdentity
-  simpa only [RecoverRecordArray.raw_public] using execution
+  have clockBound := RecoverRecordBudget.clock_le_public_length chunkWidth lengthExponent wordWidth
+    leftInput rightInput real imaginary chunkPositive (by omega) convolutionFits
+  rw [leftLength] at clockBound
+  obtain ⟨widthBound,sourcePositive⟩ := RecoverRecordBudget.width_and_one_le_public_length
+    lengthExponent wordWidth real imaginary (by omega)
+  obtain ⟨elapsed,finalConfig,bounded,executed,halted,correct,workspace⟩ := execution
+  refine ⟨elapsed,finalConfig,?_,executed,halted,correct,workspace⟩
+  rw [RecoverRecordArray.raw_public] at bounded
+  omega
 
 
 end

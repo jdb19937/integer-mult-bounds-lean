@@ -2952,4 +2952,6 @@ import IntegerMultBounds.Machine.RecoverResidualPrecision
 import IntegerMultBounds.Machine.RecoverHeaderParameters
 import IntegerMultBounds.Machine.RecoverHeaderRulers
 import IntegerMultBounds.Machine.RecoverHeaderControlSetup
+import IntegerMultBounds.Machine.RecoverHeaderControlBudget
+import IntegerMultBounds.Machine.RecoverRecordBudget
 import IntegerMultBounds.Machine.RecoverHeaderOutput
