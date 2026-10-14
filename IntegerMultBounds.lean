@@ -2942,6 +2942,8 @@ import IntegerMultBounds.Machine.GammaRead
 import IntegerMultBounds.Machine.RawMsbDescriptor
 import IntegerMultBounds.Machine.GammaDescriptorRead
 import IntegerMultBounds.Machine.GammaHeaderRead
+import IntegerMultBounds.Machine.LayerHeaderRead
+import IntegerMultBounds.Machine.LayerSelectedBitSetup
 import IntegerMultBounds.Machine.RecoverChunkParameter
 import IntegerMultBounds.Machine.RecoverRulerTrim
 import IntegerMultBounds.Machine.RecoverExponentRuler

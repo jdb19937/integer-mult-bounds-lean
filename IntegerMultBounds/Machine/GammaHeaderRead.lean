@@ -72,38 +72,61 @@ private theorem third_bank (source first second descriptor : ℤ → Fin (alphab
 
 /-- All three codes are physically read from the public header. No decoded
 values, boundaries, widths or initialized private rulers occur in the input. -/
-theorem runs_header (first second third : ℕ) (firstPositive : 1 ≤ first)
+theorem runs_at (beforeCode suffix : List Bool) (first second third : ℕ) (firstPositive : 1 ≤ first)
     (secondPositive : 1 ≤ second) (thirdPositive : 1 ≤ third) :
-    HoareTime (program (alphabet := alphabet)) (· = input first second third) (· = output first second third)
+    HoareTime (program (alphabet := alphabet))
+      (· = bank (word (beforeCode ++ header first second third ++ suffix)) beforeCode.length none none none)
+      (· = bank (word (beforeCode ++ header first second third ++ suffix))
+        (beforeCode.length + (header first second third).length) (some first) (some second) (some third))
       (4 * (header first second third).length + 86) := by
   have firstRead := hoare_place
-    (GammaDescriptorRead.runs_gamma (alphabet := alphabet) [] (gamma second++gamma third) first firstPositive)
+    (GammaDescriptorRead.runs_gamma (alphabet := alphabet) beforeCode (gamma second++gamma third++suffix) first firstPositive)
     (slots 0) (⟨![0,0],![fun _ => blank,fun _ => blank]⟩ : Tapes 2 alphabet)
-  simp only [GammaDescriptorRead.input,GammaDescriptorRead.output,List.nil_append,List.length_nil,Nat.cast_zero,zero_add] at firstRead
+  simp only [GammaDescriptorRead.input,GammaDescriptorRead.output] at firstRead
   rw [first_bank,first_bank] at firstRead
   have secondRead := hoare_place
-    (GammaDescriptorRead.runs_gamma (alphabet := alphabet) (gamma first) (gamma third) second secondPositive)
+    (GammaDescriptorRead.runs_gamma (alphabet := alphabet) (beforeCode++gamma first) (gamma third++suffix) second secondPositive)
     (slots 1) (⟨![1,0],![BinaryDescriptorStack.descriptor (bits first),fun _ => blank]⟩ : Tapes 2 alphabet)
   simp only [GammaDescriptorRead.input,GammaDescriptorRead.output] at secondRead
   rw [second_bank,second_bank] at secondRead
   have thirdRead := hoare_place
-    (GammaDescriptorRead.runs_gamma (alphabet := alphabet) (gamma first++gamma second) [] third thirdPositive)
+    (GammaDescriptorRead.runs_gamma (alphabet := alphabet) (beforeCode++gamma first++gamma second) suffix third thirdPositive)
     (slots 2) (⟨![1,1],![BinaryDescriptorStack.descriptor (bits first),BinaryDescriptorStack.descriptor (bits second)]⟩ : Tapes 2 alphabet)
-  simp only [GammaDescriptorRead.input,GammaDescriptorRead.output,List.append_nil] at thirdRead
+  simp only [GammaDescriptorRead.input,GammaDescriptorRead.output] at thirdRead
   rw [third_bank,third_bank] at thirdRead
   simp only [List.length_append,Nat.cast_add,List.append_assoc,add_assoc] at firstRead secondRead thirdRead
-  unfold program read input output bank header bits
+  unfold program read bank header bits
   simp only [Option.isSome,Option.elim,Bool.false_eq_true,ite_true,ite_false,List.length_append,Nat.cast_add,List.append_assoc]
   apply ((firstRead.seq secondRead).seq thirdRead).consequence (fun _ ready => ready) (fun _ finished => finished)
-  simp only [List.length_append,Spec.SignedRingProduct.length_gamma firstPositive,
+  simp only [Spec.SignedRingProduct.length_gamma firstPositive,
     Spec.SignedRingProduct.length_gamma secondPositive,Spec.SignedRingProduct.length_gamma thirdPositive]
   have firstWidth := Nat.size_pos.mpr firstPositive
   have secondWidth := Nat.size_pos.mpr secondPositive
   have thirdWidth := Nat.size_pos.mpr thirdPositive
   omega
 
+theorem runs_header (first second third : ℕ) (firstPositive : 1 ≤ first)
+    (secondPositive : 1 ≤ second) (thirdPositive : 1 ≤ third) :
+    HoareTime (program (alphabet := alphabet)) (· = input first second third) (· = output first second third)
+      (4 * (header first second third).length + 86) := by
+  simpa only [List.nil_append,List.append_nil,List.length_nil,Nat.cast_zero,zero_add,input,output] using
+    runs_at (alphabet := alphabet) [] [] first second third firstPositive secondPositive thirdPositive
+
 /-- Each controller receives the actual scalar encoded in its header field. -/
 theorem decoded_value (value : ℕ) : Counter.value (bits value) = value := GammaDescriptorRead.decoded_value value
+
+theorem bits_canonical (value : ℕ) : GrowingCounterData.Canonical (bits value) := by
+  by_cases valueZero : value=0
+  · subst value
+    exact Or.inl rfl
+  · apply Or.inr
+    rw [bits,Spec.SignedRingProduct.msbBits_size (by omega : 1≤value)]
+    simp
+
+theorem bits_eq_native (value : ℕ) : bits value=RecursiveChildQuotientsConstant.bits value :=
+  BinaryCanonicalData.value_injective _ _ (bits_canonical value)
+    (RecursiveChildQuotientsConstant.bits_canonical value)
+    ((decoded_value value).trans (RecursiveChildQuotientsConstant.bits_value value).symm)
 
 end
 end IntegerMultBounds.Machine.GammaHeaderRead
