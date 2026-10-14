@@ -12,7 +12,9 @@ Every local Lean process runs under a memory guard.
 
 # Proof naming
 
-Prefer descriptive variable and hypothesis names, as in code, over single-letter
-mathematical shorthand. Name values by their role, such as `parentLive`,
-`childVolume`, `rowCount`, or `savedStack`, and name hypotheses by the fact they
-establish. Use this principle for new proofs and when revising existing proofs.
+Use conventional mathematical names such as `x`, `y`, `z`, `i`, and `n` for
+generic values and indices. Prefer descriptive names when they convey a
+meaningful role, such as `parentLive`, `childVolume`, `rowCount`, or `savedStack`,
+and name hypotheses by the facts they establish. Avoid replacing single-letter
+names with generic ordinal names such as `first`, `second`, and `third` unless
+order matters. Use this principle for new proofs and when revising existing proofs.
