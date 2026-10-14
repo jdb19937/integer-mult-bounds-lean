@@ -126,5 +126,61 @@ theorem output_head (digits : List (Fin 2)) (dropPrecision width : ℕ) (slot : 
     exact ChirpTruncate.output_head _ _ _ _
   · simp [output,Tapes.append,empty]
 
+/-- Literal input ports: the native source and two actual unary rulers. -/
+def inputBank (digits : List (Fin 2)) (dropPrecision width : ℕ) : Tapes tapeCount 2 :=
+  ⟨fun _ => 0,fun slot =>
+    if slot.val=84 then RulerWordMap.word (List.replicate dropPrecision (bitSymbol true))
+    else if slot.val=86 then RulerWordMap.word (List.replicate width (bitSymbol true))
+    else if slot.val=92 then ChirpConsumeNumerator.source digits
+    else fun _ => blank⟩
+
+theorem input_eq_bank (digits : List (Fin 2)) (dropPrecision width : ℕ) :
+    input digits dropPrecision width=inputBank digits dropPrecision width := by
+  have mappedRuler (count : ℕ) :
+      (fun position => ChirpFastProduct.encoding.encode (Spec.SignedRingProduct.wordAt (List.replicate count true) position))=
+        RulerWordMap.word (List.replicate count (bitSymbol (a := 2) true)) := by
+    simpa only [List.map_replicate] using ChirpFastNativeProduct.mapped_word (List.replicate count true)
+  have mappedEmpty :
+      (fun position => ChirpFastProduct.encoding.encode (Spec.SignedRingProduct.wordAt (a := 0) [] position))=
+        (fun _ => blank) := by
+    simpa only [List.map_nil,RulerWordMap.word,putWord] using ChirpFastNativeProduct.mapped_word []
+  apply Placement.Tapes.ext'
+  · intro slot; fin_cases slot <;> rfl
+  · intro slot
+    fin_cases slot <;> first | rfl | exact mappedRuler _ | exact mappedEmpty
+
+/-- Literal scalar endpoint, including the retained raw numerator and unit. -/
+def bank (digits : List (Fin 2)) (dropPrecision width : ℕ) : Tapes tapeCount 2 :=
+  ⟨fun _ => 0,fun slot =>
+    if slot.val=88 then RulerWordMap.word ((ChirpArithmeticCodec.rawBits digits).map bitSymbol)
+    else if slot.val=89 then RulerWordMap.word ((ChirpUnitOperand.bits width).map bitSymbol)
+    else if slot.val=84 then RulerWordMap.word (List.replicate dropPrecision (bitSymbol true))
+    else if slot.val=86 then RulerWordMap.word (List.replicate width (bitSymbol true))
+    else if slot.val=91 then RulerWordMap.word ((words digits dropPrecision width).map RadixDigits.digitSymbol)
+    else fun _ => blank⟩
+
+theorem output_eq_bank (digits : List (Fin 2)) (dropPrecision width : ℕ) :
+    output digits dropPrecision width=bank digits dropPrecision width := by
+  have mappedRuler (count : ℕ) :
+      (fun position => ChirpFastProduct.encoding.encode (Spec.SignedRingProduct.wordAt (List.replicate count true) position))=
+        RulerWordMap.word (List.replicate count (bitSymbol (a := 2) true)) := by
+    simpa only [List.map_replicate] using ChirpFastNativeProduct.mapped_word (List.replicate count true)
+  have mappedEmpty :
+      (fun position => ChirpFastProduct.encoding.encode (Spec.SignedRingProduct.wordAt (a := 0) [] position))=
+        (fun _ => blank) := by
+    simpa only [List.map_nil,RulerWordMap.word,putWord] using ChirpFastNativeProduct.mapped_word []
+  unfold output ChirpTruncate.output
+  rw [ChirpFastNativeProduct.output_eq_input_update]
+  apply Placement.Tapes.ext'
+  · intro slot
+    fin_cases slot <;> rfl
+  · intro slot
+    fin_cases slot <;> first
+      | rfl
+      | exact mappedRuler _
+      | exact mappedEmpty
+      | exact ChirpFastNativeProduct.mapped_word (ChirpArithmeticCodec.rawBits digits)
+      | exact ChirpFastNativeProduct.mapped_word (ChirpUnitOperand.bits width)
+
 end
 end IntegerMultBounds.Machine.ChirpNativeTruncate

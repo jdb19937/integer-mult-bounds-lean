@@ -18,7 +18,12 @@ open Schoenhage Strm Tp
 abbrev tapeCount := 91
 
 def encoding : Alphabet.Encoding 0 2 := Schoenhage.embed (by decide : 0≤2)
-def program := Alphabet.program encoding Schoenhage.fmProg
+def controlSize {tapes states alphabet : ℕ} (_ : Program tapes states alphabet) : ℕ := states
+
+/-- Keep the compiled backend control size named throughout arithmetic composition. -/
+def stateCount : ℕ := controlSize Schoenhage.fmProg
+
+def program : Program tapeCount stateCount 2 := Alphabet.program encoding Schoenhage.fmProg
 
 def input (left right : List Bool) (dropPrecision width : ℕ) : Tapes tapeCount 2 :=
   Alphabet.mapTapes encoding (Schoenhage.rawFM left right dropPrecision width [])

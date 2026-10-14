@@ -15,10 +15,10 @@ See [COMPONENTS.md](COMPONENTS.md) for what each file proves.
 | [The machine model and elementary streams](plan/02-machine-model-streams.md) | §2 | ✅ 9/9 | ✅ 9/9 | 257 |
 | [Two finite networks with a rank saving](plan/03-finite-networks-rank.md) | §3 | ✅ 8/8 | 🟡 2/6 | 358 |
 | [Faster interchange of address chunks](plan/04-faster-interchange-address.md) | §4 | ✅ 10/10 | ✅ 9/9 | 375 |
-| [Fast simultaneous synthetic butterfly layers](plan/05-simultaneous-butterfly-layers.md) | §5, §11, CrocSwap | 🟡 6/12 | 🟡 0/12 | 1785 |
+| [Fast simultaneous synthetic butterfly layers](plan/05-simultaneous-butterfly-layers.md) | §5, §11, CrocSwap | 🟡 7/12 | 🟡 0/12 | 1804 |
 | [Synthetic transforms and their tape layout](plan/06-synthetic-transforms-tape.md) | §6 | ✅ 2/2 | 🟡 0/2 | 71 |
 | [Resampling with the permutations left in the transform](plan/07-gaussian-resampling.md) | §7 | ✅ 6/6 | 🟡 3/4 | 79 |
-| [Exact integer multiplication and its cost](plan/08-exact-multiplication.md) | §8 | 🟡 3/4 | 🟡 1/3 | 93 |
+| [Exact integer multiplication and its cost](plan/08-exact-multiplication.md) | §8 | 🟡 3/4 | 🟡 1/3 | 97 |
 | [Fast multiplication subroutine](plan/A-schoenhage-strassen.md) | Schönhage–Strassen | ✅ 6/6 | 🟡 3/4 | 94 |
 | [End-to-end theorem `EndToEnd`](plan/B-end-to-end.md) | — | 🟡 1/3 | 🟡 2/3 | 6 |
 
@@ -92,7 +92,7 @@ Details: [plan/05-simultaneous-butterfly-layers.md](plan/05-simultaneous-butterf
 | Packed arithmetic and fixed control gadgets | 🟡 | 🟡 | 191 |
 | Active-target compact controls | ✅ | 🟡 193/194 rows | 274 |
 | Exceptional-address destination repair | ✅ | 🟡 | 256 |
-| Row padding, reservation and allowances | 🟡 | 🟡 56/57 rows | 72 |
+| Row padding, reservation and allowances | ✅ | 🟡 56/57 rows | 73 |
 | Binary basis stages and phase schedules | ✅ | 🟡 | 104 |
 | Butterfly and unit-phase record arithmetic | 🟡 | 🟡 | 207 |
 | Butterfly axes, spectators and native roles | 🟡 | 🟡 | 140 |
@@ -100,7 +100,7 @@ Details: [plan/05-simultaneous-butterfly-layers.md](plan/05-simultaneous-butterf
 | Exact scalar grids and stopped calls | ✅ | 🟡 | 96 |
 | Nonleaf calls and the fixed node table | 🟡 | 🟡 | 48 |
 | Source-ready table, orientation and endpoints | ✅ | 🟡 | 168 |
-| Full recursive execution and runtime | 🟡 | 🟡 | 185 |
+| Full recursive execution and runtime | 🟡 | 🟡 | 203 |
 
 ## 6. Synthetic transforms and their tape layout (§6)
 
@@ -133,7 +133,7 @@ Details: [plan/08-exact-multiplication.md](plan/08-exact-multiplication.md)
 | Parameters, asymptotics and coprime source lengths | ✅ | — | 4 |
 | Exact recovery of the product | ✅ | ✅ | 49 |
 | Cost table and time bound | 🟡 1/2 rows | ⬜ | 4 |
-| Chirp (Bluestein) reduction | ✅ | 🟡 0/1 rows | 36 |
+| Chirp (Bluestein) reduction | ✅ | 🟡 0/1 rows | 40 |
 
 ## A. Fast multiplication subroutine (Schönhage–Strassen)
 
