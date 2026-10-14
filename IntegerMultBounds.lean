@@ -2978,3 +2978,5 @@ import IntegerMultBounds.Machine.FixedMulTruncation
 import IntegerMultBounds.Machine.ChirpFastProduct
 import IntegerMultBounds.Machine.ChirpSignExtend
 import IntegerMultBounds.Machine.ChirpProductNumerator
+import IntegerMultBounds.Machine.RulerWordMap
+import IntegerMultBounds.Machine.ChirpArithmeticCodec
