@@ -55,6 +55,32 @@ theorem mapped_word (bits : List Bool) :
     | some bit => cases bit <;> simp [bitSymbol]
   · rfl
 
+
+/-- Canonical zero-drop input ports, including the genuinely blank native
+destination and every private tape. -/
+theorem input_tape_zero (left right : List Bool) (width : ℕ) (slot : Fin tapeCount) :
+    (input left right 0 width).tape slot=
+      if slot.val=88 then RulerWordMap.word (left.map bitSymbol)
+      else if slot.val=89 then RulerWordMap.word (right.map bitSymbol)
+      else if slot.val=86 then RulerWordMap.word (List.replicate width (bitSymbol true))
+      else fun _ => blank := by
+  refine Fin.addCases (m := 91) (n := 1) (fun index => ?_) (fun index => ?_) slot
+  · simp only [input,Tapes.append,Fin.addCases_left,ChirpFastProduct.input,Alphabet.mapTapes,Schoenhage.rawFM,Fin.val_castAdd]
+    simp only [Fin.ext_iff,zF,zG,iP,iW,zO]
+    by_cases isLeft : index.val=88
+    · simpa [isLeft] using mapped_word left
+    · by_cases isRight : index.val=89
+      · simpa [isLeft,isRight] using mapped_word right
+      · by_cases isWidth : index.val=86
+        · simpa [isLeft,isRight,isWidth,Schoenhage.ones,List.map_replicate] using mapped_word (List.replicate width true)
+        · by_cases isPrecision : index.val=84
+          · simpa [isLeft,isRight,isWidth,isPrecision,Schoenhage.ones,RulerWordMap.word,putWord] using mapped_word []
+          · by_cases isRaw : index.val=90
+            · simpa [isLeft,isRight,isWidth,isPrecision,isRaw,RulerWordMap.word,putWord] using mapped_word []
+            · simp [isLeft,isRight,isWidth,isPrecision,isRaw,ChirpFastProduct.encoding,Schoenhage.embed,blank]
+  · fin_cases index
+    rfl
+
 private theorem multiplied_head (left right : List Bool) (dropPrecision width : ℕ) (slot : Fin tapeCount) :
     (multiplied left right dropPrecision width).head slot=0 := by
   refine Fin.addCases (m := 91) (n := 1) (fun index => ?_) (fun index => ?_) slot
