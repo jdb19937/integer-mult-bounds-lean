@@ -12,6 +12,10 @@ import IntegerMultBounds.Machine.RecoverIterationFinish
 import IntegerMultBounds.Machine.RecoverIteration
 import IntegerMultBounds.Machine.RecoverLoad
 import IntegerMultBounds.Machine.RecoverArray
+import IntegerMultBounds.Machine.RecoverOutputSerialize
+import IntegerMultBounds.Machine.RecoverArrayCleanup
+import IntegerMultBounds.Machine.RecoverCarryFlush
+import IntegerMultBounds.Machine.RecoverOutput
 import Lean.Util.CollectAxioms
 
 /-! Targeted transitive audit for section 8 rounding, carry and installation. -/
@@ -32,6 +36,10 @@ run_cmd do
         `IntegerMultBounds.Machine.RecoverIteration,
         `IntegerMultBounds.Machine.RecoverLoad,
         `IntegerMultBounds.Machine.RecoverArray,
+        `IntegerMultBounds.Machine.RecoverOutputSerialize,
+        `IntegerMultBounds.Machine.RecoverArrayCleanup,
+        `IntegerMultBounds.Machine.RecoverCarryFlush,
+        `IntegerMultBounds.Machine.RecoverOutput,
         `IntegerMultBounds.Schoenhage.RecoveryCleanupGenerated,
         `IntegerMultBounds.Schoenhage.CertifiedSequence].any (·.isPrefixOf name) then
       for axiomName in ← collectAxioms name do

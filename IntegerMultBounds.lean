@@ -960,6 +960,10 @@ import IntegerMultBounds.Machine.RecoverIterationFinish
 import IntegerMultBounds.Machine.RecoverIteration
 import IntegerMultBounds.Machine.RecoverLoad
 import IntegerMultBounds.Machine.RecoverArray
+import IntegerMultBounds.Machine.RecoverOutputSerialize
+import IntegerMultBounds.Machine.RecoverArrayCleanup
+import IntegerMultBounds.Machine.RecoverCarryFlush
+import IntegerMultBounds.Machine.RecoverOutput
 import IntegerMultBounds.Machine.CountedGatherField
 import IntegerMultBounds.Machine.CountedGatherPadding
 import IntegerMultBounds.Machine.CountedGatherDigit
