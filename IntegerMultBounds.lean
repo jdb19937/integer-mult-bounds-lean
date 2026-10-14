@@ -2977,3 +2977,4 @@ import IntegerMultBounds.Machine.ChirpPublicConjugation
 import IntegerMultBounds.Machine.FixedMulTruncation
 import IntegerMultBounds.Machine.ChirpFastProduct
 import IntegerMultBounds.Machine.ChirpSignExtend
+import IntegerMultBounds.Machine.ChirpProductNumerator
