@@ -31,7 +31,7 @@ theorem binary_state (bs : List Bool) :
 /-- Four fixed states suffice to erase, rewind and erase the sentinel. -/
 def program : Program 1 4 q := seq (seq MarkedWordCleanup.clearProgram (Rewind.program separator)) MarkedWordCleanup.unmarkProgram
 
-private theorem word_hoare (xs : List (Fin (q+4))) (hn : ∀ x ∈ xs, x ≠ blank) :
+theorem word_hoare (xs : List (Fin (q+4))) (hn : ∀ x ∈ xs, x ≠ blank) :
     HoareTime program (fun v => v = one (marked xs) 1) (fun v => v = one (fun _ => blank) 0) (2*xs.length+4) := by
   have hr := Rewind.rewind_hoare (separator : Fin (q+4)) empty (xs.length+1) (xs.length+1)
     (by intro j hj; simp [empty,show (xs.length:ℤ)+1-j ≠ 0 by omega,blank,separator,Fin.ext_iff])

@@ -3010,3 +3010,7 @@ import IntegerMultBounds.Machine.ChirpUnitOperand
 import IntegerMultBounds.Machine.ChirpTruncate
 import IntegerMultBounds.Machine.ChirpConsumeNumerator
 import IntegerMultBounds.Machine.ChirpNativeTruncate
+import IntegerMultBounds.Machine.ChirpExactProductClean
+import IntegerMultBounds.Machine.ChirpRoundCalls
+import IntegerMultBounds.Machine.ChirpRoundedValue
+import IntegerMultBounds.Machine.ChirpRoundedProduct

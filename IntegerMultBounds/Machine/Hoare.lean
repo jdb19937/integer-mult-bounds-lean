@@ -51,6 +51,16 @@ theorem HoareTime.seq {M : Program t q a} {N : Program t r a}
     seq_halt_right M N hd, hpost⟩
   exact seq_run M N hr hh hs
 
+/-- Compose contracts directly at a supplied budget, keeping the finite
+control size abstract while adjusting the bound. -/
+theorem HoareTime.seq_bound {M : Program t q a} {N : Program t r a}
+    {pre middle post : TapePred t a} {firstBound secondBound totalBound : ℕ}
+    (first : HoareTime M pre middle firstBound)
+    (second : HoareTime N middle post secondBound)
+    (budget : firstBound + 1 + secondBound ≤ totalBound) :
+    HoareTime (IntegerMultBounds.Machine.seq M N) pre post totalBound :=
+  (first.seq second).consequence (fun _ ready => ready) (fun _ finished => finished) budget
+
 /-- The existing scan has a contract about every cell of an arbitrary tape,
 not merely its encoded prefix. -/
 theorem scanRight_hoare (f : ℤ → Fin 4) (n : ℕ)

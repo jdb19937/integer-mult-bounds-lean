@@ -132,5 +132,51 @@ theorem output_result_head (operands : Fin 4 → List Bool) (width : ℕ) (field
     rw [Placement.replace_head_active]
     rfl
 
+/-- Literal complete-bank endpoint, exposing all retained controls and
+scalar products as well as the two exact sums and blank private arithmetic. -/
+def bank (operands : Fin 4 → List Bool) (width : ℕ) : Tapes 97 2 :=
+  ⟨fun slot => if slot.val<4 then 1 else 0,
+    fun slot => if slot.val=0 then MarkedRadixRefresh.source (ChirpScalarProducts.words operands width 0)
+      else if slot.val=1 then MarkedRadixRefresh.source (ChirpScalarProducts.words operands width 1)
+      else if slot.val=2 then MarkedRadixRefresh.source (ChirpScalarProducts.words operands width 2)
+      else if slot.val=3 then MarkedRadixRefresh.source (ChirpScalarProducts.words operands width 3)
+      else if slot.val=4 then MarkedWordCleanup.word ((words operands width 0).map RadixDigits.digitSymbol)
+      else if slot.val=9 then MarkedWordCleanup.word ((words operands width 1).map RadixDigits.digitSymbol)
+      else (ChirpScalarProducts.output operands width).tape slot⟩
+
+theorem output_eq_bank (operands : Fin 4 → List Bool) (width : ℕ) : output operands width=bank operands width := by
+  apply Placement.Tapes.ext'
+  · intro slot
+    refine Fin.addCases (m := 14) (n := 83) (fun index => ?_) (fun index => ?_) slot
+    · change (Placement.replace placement (ChirpMarkedProducts.output operands width)
+        (ChirpProductNumerator.output (sources operands width))).head (placement (Fin.castAdd 83 index))=_
+      rw [Placement.replace_head_active]
+      fin_cases index <;> rfl
+    · have outside : ∀ selected : Fin 14,placement (Fin.castAdd 83 selected)≠Fin.natAdd 14 index := by
+        intro selected equal
+        have values := congrArg Fin.val equal
+        change selected.val=14+index.val at values
+        omega
+      rw [output,Placement.replace_head_other placement _ _ _ outside]
+      simp [bank,ChirpMarkedProducts.output,ChirpMarkedProducts.stage,show ¬(14+index.val<4) by omega]
+  · intro slot
+    refine Fin.addCases (m := 14) (n := 83) (fun index => ?_) (fun index => ?_) slot
+    · change (Placement.replace placement (ChirpMarkedProducts.output operands width)
+        (ChirpProductNumerator.output (sources operands width))).tape (placement (Fin.castAdd 83 index))=_
+      rw [Placement.replace_tape_active]
+      fin_cases index <;> rfl
+    · have outside : ∀ selected : Fin 14,placement (Fin.castAdd 83 selected)≠Fin.natAdd 14 index := by
+        intro selected equal
+        have values := congrArg Fin.val equal
+        change selected.val=14+index.val at values
+        omega
+      rw [output,Placement.replace_tape_other placement _ _ _ outside]
+      have notOne : 14+index.val≠1 := by omega
+      have notTwo : 14+index.val≠2 := by omega
+      have notThree : 14+index.val≠3 := by omega
+      have notReal : 14+index.val≠4 := by omega
+      have notImaginary : 14+index.val≠9 := by omega
+      simp [bank,ChirpMarkedProducts.output,ChirpMarkedProducts.stage,notOne,notTwo,notThree,notReal,notImaginary]
+
 end
 end IntegerMultBounds.Machine.ChirpExactProduct
