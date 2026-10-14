@@ -41,7 +41,7 @@ def published (left right : List Bool) (dropPrecision width : ℕ) :=
 def output (left right : List Bool) (dropPrecision width : ℕ) :=
   RecoverWorkspace.erased (published left right dropPrecision width) rawSlot
 
-private theorem mapped_word (bits : List Bool) :
+theorem mapped_word (bits : List Bool) :
     (fun position => ChirpFastProduct.encoding.encode (Spec.SignedRingProduct.wordAt (a := 0) bits position))=
       RulerWordMap.word (bits.map (bitSymbol (a := 2))) := by
   rw [RulerWordMap.word,putWord_blank_origin]
@@ -184,6 +184,50 @@ theorem workspace_blank (left right : List Bool) (dropPrecision width : ℕ) (sl
       Function.update_of_ne notRaw,multiplied,Tapes.append,Fin.addCases_left]
     exact (ChirpFastProduct.workspace_blank left right dropPrecision width slot
       notLeft notRight notPrecision notWidth isRaw).1
+
+
+/-- The complete scalar endpoint is the original input bank with exactly
+one native destination written. This contract enables shared-workspace calls. -/
+theorem output_eq_input_update (left right : List Bool) (dropPrecision width : ℕ) :
+    output left right dropPrecision width=
+      setTape (input left right dropPrecision width) nativeSlot
+        (RulerWordMap.word ((ChirpArithmeticCodec.nativeBits (FixedMul.result left right dropPrecision width)).map RadixDigits.digitSymbol)) 0 := by
+  apply Placement.Tapes.ext'
+  · intro slot
+    rw [output_head]
+    simp only [setTape,Function.update_apply]
+    split
+    · rfl
+    · refine Fin.addCases (m := 91) (n := 1) (fun index => ?_) (fun index => ?_) slot
+      all_goals simp [input,ChirpFastProduct.input,Alphabet.mapTapes,Schoenhage.rawFM,Tapes.append,empty]
+  · intro slot
+    refine Fin.addCases (m := 91) (n := 1) (fun index => ?_) (fun index => ?_) slot
+    · have notNative : Fin.castAdd 1 index≠nativeSlot := by
+        intro equal
+        have values := congrArg Fin.val equal
+        change index.val=91 at values
+        omega
+      by_cases isRaw : index=zO
+      · subst index
+        rw [show Fin.castAdd 1 zO=rawSlot from rfl,raw_blank]
+        change (fun _ => blank)=Function.update (input left right dropPrecision width).tape nativeSlot
+          (RulerWordMap.word ((ChirpArithmeticCodec.nativeBits (FixedMul.result left right dropPrecision width)).map RadixDigits.digitSymbol)) rawSlot
+        rw [Function.update_of_ne (by decide : rawSlot≠nativeSlot)]
+        change (fun _ => blank)=(ChirpFastProduct.input left right dropPrecision width).tape zO
+        simpa [ChirpFastProduct.input,Alphabet.mapTapes,Schoenhage.rawFM,zO,zF,zG,iP,iW,RulerWordMap.word,putWord]
+          using (mapped_word []).symm
+      · have notRaw : Fin.castAdd 1 index≠rawSlot := by
+          intro equal
+          apply isRaw
+          apply Fin.ext
+          exact congrArg (fun slot : Fin tapeCount => slot.val) equal
+        simp only [output,RecoverWorkspace.erased,published,setTape,Function.update_of_ne notRaw,
+          Function.update_of_ne notNative,multiplied,input,Tapes.append,Fin.addCases_left,
+          ChirpFastProduct.output,ChirpFastProduct.input,Alphabet.mapTapes,Schoenhage.rawFM]
+        simp only [isRaw,↓reduceIte]
+    · have isNative : Fin.natAdd 91 index=nativeSlot := by fin_cases index; rfl
+      rw [isNative,native_tape]
+      simp only [setTape,Function.update_self]
 
 /-- Exact full scalar products reach the actual native destination. Scale
 slack derives all signed guards, and every head returns to origin. -/
