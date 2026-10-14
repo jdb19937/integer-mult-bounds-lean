@@ -2982,3 +2982,6 @@ import IntegerMultBounds.Machine.RulerWordMap
 import IntegerMultBounds.Machine.ChirpArithmeticCodec
 import IntegerMultBounds.Machine.ChirpFastNativeProduct
 import IntegerMultBounds.Machine.ChirpScalarProducts
+import IntegerMultBounds.Machine.ChirpMarkProduct
+import IntegerMultBounds.Machine.ChirpMarkedProducts
+import IntegerMultBounds.Machine.ChirpExactProduct
