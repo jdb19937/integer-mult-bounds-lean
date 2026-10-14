@@ -2972,3 +2972,5 @@ import IntegerMultBounds.Machine.ChirpPublicDecode
 import IntegerMultBounds.Machine.ChirpPublicEmitField
 import IntegerMultBounds.Machine.ChirpPublicEmitArray
 import IntegerMultBounds.Machine.ChirpPublicEmitStream
+import IntegerMultBounds.Machine.ChirpPublicPublished
+import IntegerMultBounds.Machine.ChirpPublicConjugation
