@@ -5,6 +5,8 @@ import IntegerMultBounds.Machine.RecoverCoefficientRound
 import IntegerMultBounds.Machine.RecoverCarryStep
 import IntegerMultBounds.Machine.RecoverMagnitude
 import IntegerMultBounds.Machine.RecoverCoefficientStep
+import IntegerMultBounds.Machine.RecoverPrecisionSplit
+import IntegerMultBounds.Machine.RecoverSignedCoefficient
 import Lean.Util.CollectAxioms
 
 /-! Targeted transitive audit for section 8 rounding, carry and installation. -/
@@ -18,6 +20,8 @@ run_cmd do
         `IntegerMultBounds.Machine.RecoverCarryStep,
         `IntegerMultBounds.Machine.RecoverMagnitude,
         `IntegerMultBounds.Machine.RecoverCoefficientStep,
+        `IntegerMultBounds.Machine.RecoverPrecisionSplit,
+        `IntegerMultBounds.Machine.RecoverSignedCoefficient,
         `IntegerMultBounds.Schoenhage.RecoveryCleanupGenerated,
         `IntegerMultBounds.Schoenhage.CertifiedSequence].any (·.isPrefixOf name) then
       for axiomName in ← collectAxioms name do
