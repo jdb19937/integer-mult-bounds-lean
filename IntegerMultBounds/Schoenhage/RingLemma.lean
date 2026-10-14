@@ -69,7 +69,7 @@ theorem ring_meets (Cw : ℕ) : Meets ringLemmaProgram Cw (ringLemmaTime Cw) := 
   generalize pwCost p 0 l 0 w H [f].length (2 * (2 ^ l * 1) * w) = P
   omega
 
-theorem length_header_le (p r w : ℕ) : (header p r w).length ≤ 2 * (p + r + w) := by
+theorem ring_header_length_le (p r w : ℕ) : (header p r w).length ≤ 2 * (p + r + w) := by
   simp only [header, List.length_append, gamma, List.length_replicate, length_msbBits]
   have := Nat.size_le.mpr (Nat.lt_two_pow_self (n := p))
   have := Nat.size_le.mpr (Nat.lt_two_pow_self (n := r))
@@ -89,7 +89,7 @@ theorem ring_polylog : polylogTarget 1 := by
   have hw'' : w' ≤ Cw * p := by simp at hw'; omega
   rw [Nat.log_pow (by norm_num)]
   have t := term_le (M := 1) (H := (header p (2 ^ l) w').length) hp hl hlp le_rfl hw''
-  have hH := length_header_le p (2 ^ l) w'
+  have hH := ring_header_length_le p (2 ^ l) w'
   have hlt : l < 2 ^ l := Nat.lt_two_pow_self
   set X := 2 ^ l * p * (Nat.log 2 (2 ^ l * p) + 1) * (Nat.log 2 (Nat.log 2 (2 ^ l * p) + 1) + 1)
   have hX : 2 ^ l * p ≤ X := by

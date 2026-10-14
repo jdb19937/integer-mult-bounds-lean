@@ -86,6 +86,36 @@ theorem scaledConv_eq {S k : ℕ} [NeZero S] (dx dy : List ℕ) (i : ZMod S) :
   simp only [scaledConv, cconv, hterm, ← Finset.sum_div]
   field_simp
 
+/-- Rescaling an approximate normalized convolution gives a strict half-unit
+complex error around the exact natural coefficient, before any rounding. -/
+theorem recover_coefficient_error {S k : ℕ} [NeZero S] (dx dy : List ℕ)
+    {approximation : ZMod S → ℂ} {error : ℝ}
+    (approximationBound : ∀ index, ‖approximation index - scaledConv S k dx dy index‖ ≤ error)
+    (recoveryMargin : (2 : ℝ) ^ (2 * k) * S * error < 1 / 2) (index : ZMod S) :
+    ‖((2 : ℂ) ^ (2 * k) * S) * approximation index -
+      ((cconvList S dx dy).getD index.val 0 : ℂ)‖ < 1 / 2 := by
+  rw [← scaledConv_eq dx dy index, ← mul_sub, norm_mul]
+  have hc : ‖(2 : ℂ) ^ (2 * k) * S‖ = (2 : ℝ) ^ (2 * k) * S := by
+    rw [norm_mul, norm_pow, norm_natCast, Complex.norm_ofNat]
+  rw [hc]
+  calc (2 : ℝ) ^ (2 * k) * S * ‖approximation index - scaledConv S k dx dy index‖
+      ≤ (2 : ℝ) ^ (2 * k) * S * error := by gcongr; exact approximationBound index
+    _ < 1 / 2 := recoveryMargin
+
+
+/-- The real part inherits the same strict half-unit error. This is the
+interface needed by physical signed-dyadic rounding and carry recovery. -/
+theorem recover_coefficient_real_error {S k : ℕ} [NeZero S] (dx dy : List ℕ)
+    {approximation : ZMod S → ℂ} {error : ℝ}
+    (approximationBound : ∀ index, ‖approximation index - scaledConv S k dx dy index‖ ≤ error)
+    (recoveryMargin : (2 : ℝ) ^ (2 * k) * S * error < 1 / 2) (index : ZMod S) :
+    |(((2 : ℂ) ^ (2 * k) * S) * approximation index).re -
+      ((cconvList S dx dy).getD index.val 0 : ℝ)| < 1 / 2 := by
+  have complexError := recover_coefficient_error dx dy approximationBound recoveryMargin index
+  exact lt_of_le_of_lt (by simpa using (Complex.abs_re_le_norm
+    (((2 : ℂ) ^ (2 * k) * S) * approximation index -
+      ((cconvList S dx dy).getD index.val 0 : ℂ)))) complexError
+
 /-- An approximation of the normalised convolution within `δ`, with
 `2 ^ (2 k) S δ < 1 / 2`, rounds to the exact convolution digits. -/
 theorem recover_cconv {S k : ℕ} [NeZero S] (dx dy : List ℕ) {w' : ZMod S → ℂ} {δ : ℝ}
@@ -95,13 +125,7 @@ theorem recover_cconv {S k : ℕ} [NeZero S] (dx dy : List ℕ) {w' : ZMod S →
       fun i => (((cconvList S dx dy).getD i.val 0 : ℕ) : ℤ) := by
   funext i
   apply round_exact
-  rw [Int.cast_natCast, ← scaledConv_eq dx dy i, ← mul_sub, norm_mul]
-  have hc : ‖(2 : ℂ) ^ (2 * k) * S‖ = (2 : ℝ) ^ (2 * k) * S := by
-    rw [norm_mul, norm_pow, norm_natCast, Complex.norm_ofNat]
-  rw [hc]
-  calc (2 : ℝ) ^ (2 * k) * S * ‖w' i - scaledConv S k dx dy i‖
-      ≤ (2 : ℝ) ^ (2 * k) * S * δ := by gcongr; exact hw i
-    _ < 1 / 2 := hδ
+  simpa only [Int.cast_natCast] using recover_coefficient_error dx dy hw hδ i
 
 /-- The same recovery in the paper's `2 ^ p`-scaled error form. -/
 theorem recover_cconv_scaled {S k p : ℕ} [NeZero S] (dx dy : List ℕ)

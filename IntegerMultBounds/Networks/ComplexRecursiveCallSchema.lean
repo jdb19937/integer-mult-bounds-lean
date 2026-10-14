@@ -104,6 +104,29 @@ theorem calls_complete (call : Call) : call ∈ calls := by
   apply List.mem_flatten.mpr
   refine ⟨callsAt call.site, List.mem_ofFn.mpr ⟨call.site,rfl⟩, callsAt_complete call⟩
 
+/-- Occurrence indices, rather than edge labels, keep distinct sites distinct.
+Each site's residual coordinates are enumerated exactly once. -/
+theorem callsFor_nodup (edgeSites : List Edge) : (callsFor edgeSites).Nodup := by
+  apply List.nodup_flatten.mpr
+  constructor
+  · intro siteCalls member
+    obtain ⟨site, rfl⟩ := List.mem_ofFn.mp member
+    apply List.nodup_ofFn_ofInjective
+    intro firstCoordinate secondCoordinate equalCalls
+    cases equalCalls
+    rfl
+  · apply List.pairwise_ofFn.mpr
+    intro firstSite secondSite siteOrder
+    apply List.disjoint_left.mpr
+    intro call firstMember secondMember
+    obtain ⟨firstCoordinate, firstEqual⟩ := List.mem_ofFn.mp firstMember
+    obtain ⟨secondCoordinate, secondEqual⟩ := List.mem_ofFn.mp secondMember
+    have equalSites : firstSite = secondSite :=
+      congrArg CallFor.site (firstEqual.trans secondEqual.symm)
+    exact (Nat.ne_of_lt siteOrder) (congrArg Fin.val equalSites)
+
+theorem calls_nodup : calls.Nodup := callsFor_nodup sites
+
 /-- Every site's child count equals its original projector-difference rank. -/
 theorem dimension_eq_rank (e : Edge) : dimension e =
     ProjectionTrace.edgeRank form formSymm e.val.1 e.val.2 := by

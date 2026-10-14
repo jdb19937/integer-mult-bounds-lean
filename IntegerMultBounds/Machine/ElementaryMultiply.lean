@@ -1,5 +1,6 @@
 module
 
+public import IntegerMultBounds.Machine.WordTapeBridge
 public import IntegerMultBounds.Machine.ElementaryMultiplyOutputData
 public import IntegerMultBounds.Assembly
 
@@ -172,8 +173,7 @@ theorem runs_correct {n : ℕ} {x y : List Bool} (hx : x.length = n) (hy : y.len
   change c.tapes.tape ⟨0,(program a).tapes_pos⟩ = _
   rw [hout]
   change putWord (fun _ => blank) 0 ((out (a := a) n x y).map bitSymbol) = _
-  funext j
-  simpa only [sub_zero] using putWord_blank (a := a) 0 j ((out (a := a) n x y).map bitSymbol)
+  exact putWord_blank_origin _
 
 /-- Polynomial fallback contract in the same format as the final assembly. -/
 theorem runsWithin : Assembly.RunsWithin (program a) (fun n => ((40*(n^2+n+1) : ℕ) : ℝ)) := by

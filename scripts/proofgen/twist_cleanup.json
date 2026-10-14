@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "kind": "cleanup",
+  "namespace": "IntegerMultBounds.Schoenhage.TwistCleanupGenerated",
+  "name": "twistCleanup",
+  "tapes": 29,
+  "rewind": 17,
+  "clear": [
+    11,
+    12,
+    13,
+    14
+  ]
+}

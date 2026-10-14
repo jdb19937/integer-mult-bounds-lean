@@ -20,6 +20,8 @@ TIMEOUT_S = 1200
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--wait-for-lock', action='store_true',
+                        help='queue this check behind the current workspace verifier')
     parser.add_argument('lean_args', nargs=argparse.REMAINDER,
                         help='Lean arguments, normally a source file and optional -o path')
     args = parser.parse_args()
@@ -37,7 +39,8 @@ def main():
     lock_path = Path(tempfile.gettempdir()) / ('integer-mult-lean-' + key + '.lock')
     with lock_path.open('a') as lock:
         try:
-            fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            lock_mode = fcntl.LOCK_EX if args.wait_for_lock else fcntl.LOCK_EX | fcntl.LOCK_NB
+            fcntl.flock(lock, lock_mode)
         except BlockingIOError:
             print('Another guarded Lean check is running; no check started.', file=sys.stderr)
             return 75

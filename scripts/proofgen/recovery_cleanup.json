@@ -1,0 +1,32 @@
+{
+  "version": 1,
+  "namespace": "IntegerMultBounds.Schoenhage.RecoveryCleanupGenerated",
+  "imports": [
+    "IntegerMultBounds.Schoenhage.Ops"
+  ],
+  "cases": [
+    {
+      "name": "recoveryCleanup",
+      "alphabet": 0,
+      "tapes": 3,
+      "binders": "(bank : Fin 3 \u2192 WTape)",
+      "arguments": "bank",
+      "input": "bank",
+      "output": "Function.update (Function.update (Function.update (bank) 0 emp) 1 emp) 2 emp",
+      "stages": [
+        {
+          "command": "clear 0",
+          "proof": "runs_clear (a := 0) 0 (bank)"
+        },
+        {
+          "command": "clear 1",
+          "proof": "runs_clear (a := 0) 1 (Function.update (bank) 0 emp)"
+        },
+        {
+          "command": "clear 2",
+          "proof": "runs_clear (a := 0) 2 (Function.update (Function.update (bank) 0 emp) 1 emp)"
+        }
+      ]
+    }
+  ]
+}

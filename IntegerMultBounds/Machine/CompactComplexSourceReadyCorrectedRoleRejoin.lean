@@ -1,5 +1,7 @@
 module
 
+public import IntegerMultBounds.Machine.CompactComplexSourceReadyScalarWorkspace
+public import IntegerMultBounds.Machine.CompactComplexScalarRolePorts
 public import IntegerMultBounds.Machine.CompactNativeRoleRecombine
 public import IntegerMultBounds.Machine.CompactComplexSourceReadyNonleafOrientedFinal
 public import IntegerMultBounds.Machine.CompactComplexSourceReadyPrefixGeometry
@@ -249,3 +251,37 @@ theorem oriented_runs_native_linear (sh : Shape) (rows ell p : ℕ)
 
 end
 end IntegerMultBounds.Machine.CompactComplexSourceReadyCorrectedRoleRejoin
+
+/-! Pure normalized role recombination is shared below recursive execution.
+The existing public names remain available without importing a stopped-node
+constructor. -/
+namespace IntegerMultBounds.Machine.CompactComplexSourceReadyReachedStoppedNodeNormalizedValues
+noncomputable section
+open CompactGadgetReservationShape (Shape)
+open CompactSpectatorVisitGeometry (Array)
+open CompactComplexSourceReadyScalarWorkspace (roles)
+open CompactComplexScalarRowBlock (wireCount)
+open CompactComplexScalarRolePorts (roleIndex)
+open CompactComplexControllerExactReturn (contracted)
+attribute [local irreducible] CompactComplexRolePhaseSite.roleCount
+
+/-- Recombine the literal contracted scalar sink arrays in their actual
+physical role-port order. -/
+def normalized {shape : Shape} (rowCount polynomialExponent current target : ℕ)
+    (rolesDivide : roles∣rowCount)
+    (sink : Fin wireCount → Array shape (rowCount/roles) polynomialExponent) :
+    Array shape rowCount polynomialExponent :=
+  CompactNativeRoleRecombine.recombine shape rowCount roles polynomialExponent rolesDivide
+    (fun port => contracted (current-target) (sink (roleIndex.symm port)))
+
+theorem normalized_role {shape : Shape} (rowCount polynomialExponent current target : ℕ)
+    (rolesDivide : roles∣rowCount)
+    (sink : Fin wireCount → Array shape (rowCount/roles) polynomialExponent) (scalarRole : Fin wireCount) :
+    CompactNativeRoleReservedBridge.role shape rowCount roles polynomialExponent rolesDivide
+      (normalized rowCount polynomialExponent current target rolesDivide sink) (roleIndex scalarRole)=
+    contracted (current-target) (sink scalarRole) := by
+  unfold normalized
+  rw [CompactNativeRoleRecombine.role_recombine,Equiv.symm_apply_apply]
+
+end
+end IntegerMultBounds.Machine.CompactComplexSourceReadyReachedStoppedNodeNormalizedValues

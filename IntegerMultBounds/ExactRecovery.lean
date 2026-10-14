@@ -202,6 +202,63 @@ noncomputable def computedConv (x y : List Bool) : ZMod S → ℂ :=
   (16 * (S : ℂ)) • computed (p := p) F' G' (scaledDigits S k (digitsOf k x))
     (scaledDigits S k (digitsOf k y))
 
+/-- The computed transform pipeline approximates the normalized convolution
+pointwise, independently of the final rounding or tape representation. -/
+theorem computedConv_approx (hk : 0 < k) {x y : List Bool}
+    (hF : ‖F‖ ≤ 1) (hF' : ∀ u : ZMod S → ℂ, ‖u‖ ≤ 1 / 2 → 2 ^ p * ‖F' u - F u‖ ≤ Es)
+    (hG : ‖G‖ ≤ 1) (hG' : ∀ y : κ → ℂ, ‖y‖ ≤ 1 / 2 → 2 ^ p * ‖G' y - G y‖ ≤ Es)
+    (hEs : Es ≤ 2 ^ p / 100)
+    (hconv : ∀ u v : ZMod S → ℂ,
+      G (fun κ => F u κ * F v κ) = fun i => cconv u v i / (S : ℂ) ^ 2) :
+    ∀ index, ‖computedConv (p := p) (k := k) F' G' x y index -
+      scaledConv S k (digitsOf k x) (digitsOf k y) index‖ ≤
+        16 * S * (3 * Es + 2) / 2 ^ p := by
+  have hp : (0 : ℝ) < 2 ^ p := by positivity
+  set u := scaledDigits S k (digitsOf k x) with hu
+  set v := scaledDigits S k (digitsOf k y) with hv
+  have hu1 : ‖u‖ ≤ 1 / 4 := norm_scaledDigits_le (digitsOf_lt hk x)
+  have hv1 : ‖v‖ ≤ 1 / 4 := norm_scaledDigits_le (digitsOf_lt hk y)
+  have herr := recovery_error F F' G G' hF hF' hG hG' hEs hu1 hv1
+  have hS0 : (0 : ℝ) ≤ S := Nat.cast_nonneg _
+  intro i
+  have hpt : ‖computed (p := p) F' G' u v i - G (fun κ => F u κ * F v κ) i‖ ≤
+      ‖computed (p := p) F' G' u v - G (fun κ => F u κ * F v κ)‖ :=
+    norm_le_pi_norm (computed (p := p) F' G' u v - G (fun κ => F u κ * F v κ)) i
+  have hid : scaledConv S k (digitsOf k x) (digitsOf k y) i =
+      (16 * (S : ℂ)) * G (fun κ => F u κ * F v κ) i := by
+    rw [← cconv_scaledDigits, hconv]
+  have hcc : computedConv (p := p) (k := k) F' G' x y i =
+      (16 * (S : ℂ)) * computed F' G' u v i := rfl
+  rw [hcc, hid, ← mul_sub, norm_mul, le_div_iff₀ hp]
+  have h16 : ‖(16 * (S : ℂ))‖ = 16 * S := by
+    rw [norm_mul, Complex.norm_natCast, Complex.norm_ofNat]
+  rw [h16]
+  calc 16 * (S : ℝ) * ‖computed F' G' u v i - G (fun κ => F u κ * F v κ) i‖ * 2 ^ p
+      = 16 * S * (2 ^ p * ‖computed F' G' u v i - G (fun κ => F u κ * F v κ) i‖) := by ring
+    _ ≤ 16 * S * (2 ^ p * ‖computed F' G' u v - G (fun κ => F u κ * F v κ)‖) := by gcongr
+    _ ≤ 16 * S * (3 * Es + 2) := by gcongr
+
+
+/-- The transform error chain gives the actual half-unit real margin used
+by the native recovery machine, without assuming a rounded coefficient. -/
+theorem computedConv_coefficient_real_error (hk : 0 < k) {x y : List Bool}
+    (hF : ‖F‖ ≤ 1) (hF' : ∀ u : ZMod S → ℂ, ‖u‖ ≤ 1 / 2 → 2 ^ p * ‖F' u - F u‖ ≤ Es)
+    (hG : ‖G‖ ≤ 1) (hG' : ∀ y : κ → ℂ, ‖y‖ ≤ 1 / 2 → 2 ^ p * ‖G' y - G y‖ ≤ Es)
+    (hEs : Es ≤ 2 ^ p / 100)
+    (hconv : ∀ u v : ZMod S → ℂ,
+      G (fun κ => F u κ * F v κ) = fun i => cconv u v i / (S : ℂ) ^ 2)
+    (hfinal : (2 : ℝ) ^ (2 * k + 4) * S ^ 2 * (3 * Es + 2) < 2 ^ p / 2) (index : ZMod S) :
+    |(((2 : ℂ) ^ (2 * k) * S) * computedConv (p := p) (k := k) F' G' x y index).re -
+      ((cconvList S (digitsOf k x) (digitsOf k y)).getD index.val 0 : ℝ)| < 1 / 2 := by
+  refine recover_coefficient_real_error (digitsOf k x) (digitsOf k y)
+    (computedConv_approx F F' G G' hk hF hF' hG hG' hEs hconv) ?_ index
+  have precisionPositive : (0 : ℝ) < 2 ^ p := by positivity
+  rw [← mul_div_assoc, div_lt_iff₀ precisionPositive]
+  calc (2 : ℝ) ^ (2 * k) * S * (16 * S * (3 * Es + 2))
+      = 2 ^ (2 * k + 4) * S ^ 2 * (3 * Es + 2) := by ring
+    _ < 2 ^ p / 2 := hfinal
+    _ = 1 / 2 * 2 ^ p := by ring
+
 /-- The exact product from the computed pipeline: rounding `2^(2k) S` times the
 computed normalised convolution gives the digits of the product, provided
 `2^(2k+4) S² (3 E_s + 2) < 2^(p-1)`. -/
@@ -218,36 +275,13 @@ theorem exact_product (hk : 0 < k) {x y : List Bool}
         computedConv (p := p) (k := k) F' G' x y (i.val : ZMod S)).re).toNat) =
       Machine.binaryValue x * Machine.binaryValue y := by
   have hp : (0 : ℝ) < 2 ^ p := by positivity
-  set u := scaledDigits S k (digitsOf k x) with hu
-  set v := scaledDigits S k (digitsOf k y) with hv
-  have hu1 : ‖u‖ ≤ 1 / 4 := norm_scaledDigits_le (digitsOf_lt hk x)
-  have hv1 : ‖v‖ ≤ 1 / 4 := norm_scaledDigits_le (digitsOf_lt hk y)
-  have herr := recovery_error F F' G G' hF hF' hG hG' hEs hu1 hv1
-  have hS0 : (0 : ℝ) ≤ S := Nat.cast_nonneg _
-  have hEs0 : 0 ≤ Es := le_trans (by positivity) (hF' 0 (by simp))
-  refine product_from_approx hk hS (δ := 16 * S * (3 * Es + 2) / 2 ^ p) ?_ ?_
-  · intro i
-    have hpt : ‖computed (p := p) F' G' u v i - G (fun κ => F u κ * F v κ) i‖ ≤
-        ‖computed (p := p) F' G' u v - G (fun κ => F u κ * F v κ)‖ :=
-      norm_le_pi_norm (computed (p := p) F' G' u v - G (fun κ => F u κ * F v κ)) i
-    have hid : scaledConv S k (digitsOf k x) (digitsOf k y) i =
-        (16 * (S : ℂ)) * G (fun κ => F u κ * F v κ) i := by
-      rw [← cconv_scaledDigits, hconv]
-    have hcc : computedConv (p := p) (k := k) F' G' x y i =
-        (16 * (S : ℂ)) * computed F' G' u v i := rfl
-    rw [hcc, hid, ← mul_sub, norm_mul, le_div_iff₀ hp]
-    have h16 : ‖(16 * (S : ℂ))‖ = 16 * S := by
-      rw [norm_mul, Complex.norm_natCast, Complex.norm_ofNat]
-    rw [h16]
-    calc 16 * (S : ℝ) * ‖computed F' G' u v i - G (fun κ => F u κ * F v κ) i‖ * 2 ^ p
-        = 16 * S * (2 ^ p * ‖computed F' G' u v i - G (fun κ => F u κ * F v κ) i‖) := by ring
-      _ ≤ 16 * S * (2 ^ p * ‖computed F' G' u v - G (fun κ => F u κ * F v κ)‖) := by gcongr
-      _ ≤ 16 * S * (3 * Es + 2) := by gcongr
-  · rw [← mul_div_assoc, div_lt_iff₀ hp]
-    calc (2 : ℝ) ^ (2 * k) * S * (16 * S * (3 * Es + 2))
-        = 2 ^ (2 * k + 4) * S ^ 2 * (3 * Es + 2) := by ring
-      _ < 2 ^ p / 2 := hfinal
-      _ = 1 / 2 * 2 ^ p := by ring
+  refine product_from_approx hk hS
+    (computedConv_approx F F' G G' hk hF hF' hG hG' hEs hconv) ?_
+  rw [← mul_div_assoc, div_lt_iff₀ hp]
+  calc (2 : ℝ) ^ (2 * k) * S * (16 * S * (3 * Es + 2))
+      = 2 ^ (2 * k + 4) * S ^ 2 * (3 * Es + 2) := by ring
+    _ < 2 ^ p / 2 := hfinal
+    _ = 1 / 2 * 2 ^ p := by ring
 
 end Product
 

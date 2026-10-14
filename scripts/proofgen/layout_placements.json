@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "kind": "placement",
+  "namespace": "IntegerMultBounds.Schoenhage.LayoutPlacementGenerated",
+  "cases": [
+    {
+      "name": "widthConverter",
+      "tapes": 48,
+      "slots": [
+        34,
+        44,
+        45,
+        46,
+        10
+      ]
+    },
+    {
+      "name": "chunkConverter",
+      "tapes": 48,
+      "slots": [
+        33,
+        24,
+        45,
+        46,
+        10
+      ]
+    }
+  ]
+}

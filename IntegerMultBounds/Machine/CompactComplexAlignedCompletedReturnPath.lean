@@ -57,7 +57,7 @@ private theorem prepend_runs (rho : Fin sh.chunk) (visit : Visit sh.active left 
     (u : Tapes (CompactComplexNonleafRoleChildBank.tapes s roles) 2)
     (headerStack pcStack liveStack : Fin s)
     (f : ℤ → Fin 6) (p : ℤ) (e : ℕ)
-    (liveFrame : ℤ → Fin 6) (liveHead : ℤ) (parentLive completed gap : ℕ)
+    (liveFrame : ℤ → Fin 6) (liveHead : ℤ) (parentLive childVolume gap : ℕ)
     (pNum growthC axes baseline levels frames returned pref : ℕ) (origin : ℤ)
     (calls : List Networks.ComplexRecursiveCallSchema.Call)
     (pv : Tapes (nodeTapes s roles) 2)
@@ -93,12 +93,12 @@ private theorem prepend_runs (rho : Fin sh.chunk) (visit : Visit sh.active left 
     let passTime := CompactNativeConjugatedSharedCaller.cost (CompactNativeRoleSourcePorts.callerTapes 44 roles) d ell
       (CompactComplexActualCallAlignment.nativeCost D d hslots pc true
         (ActivePrefixStageNativePolynomial.symbols (2^ell) (NativePolynomialStageShape.width sh precision)) hpack)
-    ∃ hn : Reached stage rows ell precision e pNum growthC axes baseline levels frames (returned+completed) pref
+    ∃ hn : Reached stage rows ell precision e pNum growthC axes baseline levels frames (returned+childVolume) pref
       (parentLive+gap) pcStack origin calls start,
       hn.data=returnedData h j gap result ∧
       let after := basisArray stage (rows/roles) ell precision hG hGK hr hslots pc true
         (hn.data (CompactComplexScalarRolePorts.roleIndex.symm j))
-      ∃ final : Reached stage rows ell precision e pNum growthC axes baseline levels frames (returned+completed) pref
+      ∃ final : Reached stage rows ell precision e pNum growthC axes baseline levels frames (returned+childVolume) pref
         (parentLive+gap) pcStack origin calls (canonical (replacementCaller hn j after) hn.aux),
         final.data=replacementData hn j after ∧
         (CompactComplexActualCallRoleAlignment.cost roles stage rows ell precision passTime : ℝ)≤
@@ -126,12 +126,12 @@ private theorem prepend_runs (rho : Fin sh.chunk) (visit : Visit sh.active left 
     let passTime := CompactNativeConjugatedSharedCaller.cost (CompactNativeRoleSourcePorts.callerTapes 44 roles) d ell
       (CompactComplexActualCallAlignment.nativeCost D d hslots pc true
         (ActivePrefixStageNativePolynomial.symbols (2^ell) (NativePolynomialStageShape.width sh precision)) hpack)
-    ∃ hn : Reached stage rows ell precision e pNum growthC axes baseline levels frames (returned+completed) pref
+    ∃ hn : Reached stage rows ell precision e pNum growthC axes baseline levels frames (returned+childVolume) pref
       (parentLive+gap) pcStack origin calls start,
       hn.data=returnedData h j gap result ∧
       let after := basisArray stage (rows/roles) ell precision hG hGK hr hslots pc true
         (hn.data (CompactComplexScalarRolePorts.roleIndex.symm j))
-      ∃ final : Reached stage rows ell precision e pNum growthC axes baseline levels frames (returned+completed) pref
+      ∃ final : Reached stage rows ell precision e pNum growthC axes baseline levels frames (returned+childVolume) pref
         (parentLive+gap) pcStack origin calls (canonical (replacementCaller hn j after) hn.aux),
         final.data=replacementData hn j after ∧
         (CompactComplexActualCallRoleAlignment.cost roles stage rows ell precision passTime : ℝ)≤
@@ -169,8 +169,8 @@ theorem runs (rho : Fin sh.chunk) (visit : Visit sh.active left (k+2))
     (hp : snapshot.storage.head (Fin.natAdd 10 headerStack)=CompactChildHeadersStack.top p
       (CompactComplexControllerChildPrefix.data (parent rho visit hactive pair)))
     (hb : ∀ z,p≤z → f z=blank)
-    (liveFrame : ℤ → Fin 6) (liveHead : ℤ) (completed : ℕ)
-    (progress : CompactComplexChildAlignmentBudget.Progress sh precision parentLive completed (parentLive+gap))
+    (liveFrame : ℤ → Fin 6) (liveHead : ℤ) (childVolume : ℕ)
+    (progress : CompactComplexChildAlignmentBudget.Progress sh precision parentLive cn (parentLive+gap))
     (hstack : snapshot.storage.tape (Fin.natAdd 10 liveStack)=BinaryDescriptorStack.frame liveFrame liveHead (bits parentLive))
     (hstackHead : snapshot.storage.head (Fin.natAdd 10 liveStack)=liveHead+1+(bits parentLive).length)
     (hfree : ∀ z,liveHead≤z → z<liveHead+1+(bits parentLive).length → liveFrame z=blank)
@@ -202,10 +202,10 @@ theorem runs (rho : Fin sh.chunk) (visit : Visit sh.active left (k+2))
     (ha : 0<sh.active) (hmeta : pNum+2*sh.bits≤precision) (haxes : axes+gap≤sh.bits)
     (hC : CompactFramedScalarGrid.growthConstant≤growthC)
     (hroom : CompactSpectatorInheritedGrid.dependencyCoefficient growthC+Nat.clog 2 (growthC+1)+
-      CompactComplexScalarIntegerRows.guardBits≤sh.chunk) (hgap : gap≤2*completed)
+      CompactComplexScalarIntegerRows.guardBits≤sh.chunk) (hgap : gap≤2*childVolume)
     (hgrid : CompactSpectatorInheritedGrid.Grid sh (rows/roles) ell (precision-2*sh.bits) (parentLive+gap)
       (CompactFramedScalarGrid.bound pref
-        (CompactRecursiveGridBudget.bound pNum growthC levels (frames+2*(returned+completed)+axes))) (CompactComplexSourceReadyCompletedChildBoundary.result hcChild hchildSlots hchildDiv call))
+        (CompactRecursiveGridBudget.bound pNum growthC levels (frames+2*(returned+childVolume)+axes))) (CompactComplexSourceReadyCompletedChildBoundary.result hcChild hchildSlots hchildDiv call))
     (hGK : sh.guard+1≤sh.chunk) (hrows : 0<rows) (hpay : sh.payload=1)
     (hslots : (parent rho visit hactive pair).slots=25^3)
     (hpack : ∀ op,1<(parent rho visit hactive pair).f → ActivePrefixStageRuntimeData.Packed
@@ -230,12 +230,12 @@ theorem runs (rho : Fin sh.chunk) (visit : Visit sh.active left (k+2))
     let passTime := CompactNativeConjugatedSharedCaller.cost (CompactNativeRoleSourcePorts.callerTapes 44 roles) d ell
       (CompactComplexActualCallAlignment.nativeCost D d hslots pc true
         (ActivePrefixStageNativePolynomial.symbols (2^ell) (NativePolynomialStageShape.width sh precision)) hpack)
-    ∃ hn : Reached stage rows ell precision e pNum growthC axes baseline levels frames (returned+completed) pref
+    ∃ hn : Reached stage rows ell precision e pNum growthC axes baseline levels frames (returned+childVolume) pref
       (parentLive+gap) pcStack origin calls start,
       hn.data=returnedData h j gap (CompactComplexSourceReadyCompletedChildBoundary.result hcChild hchildSlots hchildDiv call) ∧
       let after := basisArray stage (rows/roles) ell precision hG hGK hr hslots pc true
         (hn.data (CompactComplexScalarRolePorts.roleIndex.symm j))
-      ∃ final : Reached stage rows ell precision e pNum growthC axes baseline levels frames (returned+completed) pref
+      ∃ final : Reached stage rows ell precision e pNum growthC axes baseline levels frames (returned+childVolume) pref
         (parentLive+gap) pcStack origin calls (canonical (replacementCaller hn j after) hn.aux),
         final.data=replacementData hn j after ∧
         (CompactComplexActualCallRoleAlignment.cost roles stage rows ell precision passTime : ℝ)≤
@@ -311,7 +311,7 @@ theorem runs (rho : Fin sh.chunk) (visit : Visit sh.active left (k+2))
     CompactComplexAlignedJoinedPhysicalReturn.runs rho visit hactive pair call rows ell precision
       (CompactComplexSourceReadyCompletedChildBoundary.result hcChild hchildSlots hchildDiv call)
       u headerStack pcStack liveStack hstacks f p e he hr hd heq hG hraw ht' hp' hb hx' hhx'
-      liveFrame liveHead parentLive completed gap progress hstack' hstackHead' hcurrent' hcurrentHead'
+      liveFrame liveHead parentLive cn childVolume gap progress hstack' hstackHead' hcurrent' hcurrentHead'
       htarget' htargetHead' hfree pNum growthC axes baseline levels frames returned pref origin calls pv h
       hwidth hc hA hK hstackActual' hclock hcChild.scalar hscalar targetFrame targetHead ledgerN ledgerLeft ledgerExponent
       ledger htargetStack' htargetStackHead' htargetFree D P K hP path ha hmeta haxes hC hroom hgap hgrid
@@ -319,7 +319,7 @@ theorem runs (rho : Fin sh.chunk) (visit : Visit sh.active left (k+2))
   refine ⟨older,top,ho,?_⟩
   exact prepend_runs rho visit hactive pair call rows ell precision
     (CompactComplexSourceReadyCompletedChildBoundary.result hcChild hchildSlots hchildDiv call)
-    u headerStack pcStack liveStack f p e liveFrame liveHead parentLive completed gap
+    u headerStack pcStack liveStack f p e liveFrame liveHead parentLive childVolume gap
     pNum growthC axes baseline levels frames returned pref origin calls pv h hcChild.scalar
     targetFrame targetHead D P K hG hGK hr hslots hpack _ 0 _ hpop hjoined
 
