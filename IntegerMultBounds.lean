@@ -2964,3 +2964,6 @@ import IntegerMultBounds.Machine.ChirpPublicCodec
 import IntegerMultBounds.Machine.ChirpPublicField
 import IntegerMultBounds.Machine.ChirpPublicPair
 import IntegerMultBounds.Machine.ChirpPublicArray
+import IntegerMultBounds.Machine.PlacementBankEndpoint
+import IntegerMultBounds.Machine.ChirpHeaderWidth
+import IntegerMultBounds.Machine.ChirpPublicConjugate

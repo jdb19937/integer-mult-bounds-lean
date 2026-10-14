@@ -18,7 +18,7 @@ See [COMPONENTS.md](COMPONENTS.md) for what each file proves.
 | [Fast simultaneous synthetic butterfly layers](plan/05-simultaneous-butterfly-layers.md) | §5, §11, CrocSwap | 🟡 6/12 | 🟡 0/12 | 1785 |
 | [Synthetic transforms and their tape layout](plan/06-synthetic-transforms-tape.md) | §6 | ✅ 2/2 | 🟡 0/2 | 71 |
 | [Resampling with the permutations left in the transform](plan/07-gaussian-resampling.md) | §7 | ✅ 6/6 | 🟡 3/4 | 79 |
-| [Exact integer multiplication and its cost](plan/08-exact-multiplication.md) | §8 | 🟡 3/4 | 🟡 1/3 | 68 |
+| [Exact integer multiplication and its cost](plan/08-exact-multiplication.md) | §8 | 🟡 3/4 | 🟡 1/3 | 71 |
 | [Fast multiplication subroutine](plan/A-schoenhage-strassen.md) | Schönhage–Strassen | ✅ 6/6 | 🟡 3/4 | 94 |
 | [End-to-end theorem `EndToEnd`](plan/B-end-to-end.md) | — | 🟡 1/3 | 🟡 2/3 | 6 |
 
@@ -133,7 +133,7 @@ Details: [plan/08-exact-multiplication.md](plan/08-exact-multiplication.md)
 | Parameters, asymptotics and coprime source lengths | ✅ | — | 4 |
 | Exact recovery of the product | ✅ | ✅ | 49 |
 | Cost table and time bound | 🟡 1/2 rows | ⬜ | 4 |
-| Chirp (Bluestein) reduction | ✅ | 🟡 0/1 rows | 11 |
+| Chirp (Bluestein) reduction | ✅ | 🟡 0/1 rows | 14 |
 
 ## A. Fast multiplication subroutine (Schönhage–Strassen)
 
