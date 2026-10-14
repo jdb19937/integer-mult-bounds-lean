@@ -2939,3 +2939,6 @@ import IntegerMultBounds.Machine.RecoverControlSetup
 import IntegerMultBounds.Machine.RecoverBinaryOutput
 import IntegerMultBounds.Machine.GammaPrefix
 import IntegerMultBounds.Machine.GammaRead
+import IntegerMultBounds.Machine.RawMsbDescriptor
+import IntegerMultBounds.Machine.GammaDescriptorRead
+import IntegerMultBounds.Machine.GammaHeaderRead
