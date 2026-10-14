@@ -2944,3 +2944,4 @@ import IntegerMultBounds.Machine.GammaDescriptorRead
 import IntegerMultBounds.Machine.GammaHeaderRead
 import IntegerMultBounds.Machine.RecoverChunkParameter
 import IntegerMultBounds.Machine.RecoverRulerTrim
+import IntegerMultBounds.Machine.RecoverExponentRuler

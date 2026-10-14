@@ -33,6 +33,7 @@ import IntegerMultBounds.Machine.GammaDescriptorRead
 import IntegerMultBounds.Machine.GammaHeaderRead
 import IntegerMultBounds.Machine.RecoverChunkParameter
 import IntegerMultBounds.Machine.RecoverRulerTrim
+import IntegerMultBounds.Machine.RecoverExponentRuler
 import Lean.Util.CollectAxioms
 
 /-! Targeted transitive audit for section 8 rounding, carry and installation. -/
@@ -74,6 +75,7 @@ run_cmd do
         `IntegerMultBounds.Machine.GammaHeaderRead,
         `IntegerMultBounds.Machine.RecoverChunkParameter,
         `IntegerMultBounds.Machine.RecoverRulerTrim,
+        `IntegerMultBounds.Machine.RecoverExponentRuler,
         `IntegerMultBounds.ExactRecovery,
         `IntegerMultBounds.NLogN.recover_coefficient_error,
         `IntegerMultBounds.NLogN.recover_coefficient_real_error,
