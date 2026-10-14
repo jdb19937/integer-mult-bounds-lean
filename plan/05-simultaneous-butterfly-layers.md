@@ -765,6 +765,17 @@ One global row padding and the gadget reservation supply the row headers, reserv
 - Math milestone: `IntegerMultBounds.Machine.CompactActualStagePadding.eventually_ready_allowances` — For all large n, global row padding and reservation make every actual stage at every row depth Ready with its repair allowances and densities at constant one, and the padded reserved volume is at most a constant times the original volume. Combines `CompactActualStageGeometry.eventually_ready`, `CompactActualStageInputs.eventually_allowances`, `CompactGlobalRowPadding.rowsAt_le_twice_original`, `CompactReservationCutoff.padding_cost`, `CompactActualNativeBudget.charged_volume`.
 - Tape milestone: `IntegerMultBounds.Machine.CompactRowReservationStageRun.runs` — From the original unpadded array one fixed machine performs global row padding, role splitting and gadget reservation, synthesizes the stage widths, coordinate ranges and packing parameters, and hands them to the early/later control and repair schedules with exact output, clean workspace and constant-factor linear cost.
 
+The mathematics milestone is now closed by
+`CompactActualStagePadding.eventually_ready_allowances`. One uniform eventual
+certificate combines actual reservation fit, a half-sized active region,
+descendant positivity/divisibility, no repeated padding, at-most-twofold
+reserved volume, the original-volume physical padding cost and every stage's
+readiness and density-one allowances in both orders. It also supplies native
+volume charging with the role divisor restored. The cutoff eventually fits
+the actual dimension, avoiding a vacuous admissible-axis range. This theorem
+does not close the tape milestone: physical original-bank layout, role and
+reservation preparation still have to hand off to the actual stage caller.
+
 | Subcomponent | Files | Mathematics | Tape | Notes |
 | --- | --- | --- | --- | --- |
 | CompactRowHeaders | `CompactRowHeaders` | ✅ | ✅ | Physically constructs the six row-split headers from original canonical total-row/role-count/record-width descriptors, retains originals, erases temporary zero/one writers and cleans every generated descriptor with charged bounds. |
@@ -837,6 +848,7 @@ One global row padding and the gadget reservation supply the row headers, reserv
 | CompactReservationCutoff | `CompactReservationCutoff` | ✅ | — | Exact fallback/nonfallback axis split, a twice-reservation cutoff retaining half the selected axes, eventual fit for any positive dimension fraction and actual physical initial-padding cost/record-width bridges. Individual fallback kernels and complete recursive layers remain separate. |
 | CompactActualStageGeometry | `CompactActualStageGeometry` | ✅ | — | Actual multiplier choices, the nonfallback cutoff and once-padded descendant depth derive positive rows, guard room, record and full repair address allowances, and highest-bit geometry for every original stage node. |
 | CompactActualStageInputs | `CompactActualStageInputs` | ✅ | — | Actual scalar/row readiness fills original-input stage records, and both generated source-order descriptor banks have full repair width and density allowances at constant one from original multiplier choices. |
+| CompactActualStagePadding | `CompactActualStagePadding` | ✅ | — | Complete uniform mathematics certificate for once-only global row padding and reservation, all descendant stages, both repair densities, exact role divisibility, nonvacuous cutoff and constant-factor original/native volume budgets. Physical reservation-to-stage handoff remains open. |
 | CompactReservationRate | `CompactReservationRate` | ✅ | — | Actual reservation and cutoff are negligible relative to every dimension power above one minus spacing, including the certified layer exponent. Individually processed axes satisfy the same bound uniformly in the selected dimension; actual linear-volume per-axis kernel execution remains a separate requirement. |
 | Row layout and reservation capacities | `CompactRowReservationEndpoint`, `ActivePrefixEarlySequenceOriginalRun` | ✅ | 🟡 | Original-array padding/role splitting, compact reservation capacities and the exact unchanged active-target address layout are proved. The full early schedule derives every consumer header and varying offset from original reservation/stage widths and cleans up all generated storage; only nb compact fields fit H and the wide nq target stays active. Wiring the generated original-array reservation widths and stage coordinate ranges into this caller, original packing parameter synthesis and complete early/later permutation/repair assembly remain open. |
 
@@ -1948,6 +1960,53 @@ The entire fixed seventeen-tape setup costs at most eleven header lengths
 plus 308, paid by the original layer cost with three times the header-decoder
 coefficient. Native geometry and actual signed-array preparation remain open.
 
+Original-input preparation now has a joined physical checkpoint:
+`LayerPreparedInput.runs_public` starts from the exact nine-field public header
+and contiguous signed polynomial array. `LayerControlBank` builds the actual
+arithmetic bank; `LayerReservationHeaders` and `LayerReservationSetup` derive
+guard, address/word widths, capacity, rounded reservations, row axes, chunk
+counts and cutoff. `LayerPolynomialHeaders` constructs the ceiling binary
+polynomial exponent and power-of-two capacity, with less than twofold padding
+and a fixed linear construction bound, including exponent zero.
+`LayerNativeRecords` reuses the checked chirp complex-field converter to read
+both real and imaginary source fields using a ruler it builds from the actual
+word-width descriptor. `LayerNativeInput` produces the exact native signed
+record array with original order and Gaussian-dyadic values; the original
+header/source and all metadata are retained at their original heads, and the
+conversion ruler/countdown tapes are cleared. `LayerReservationClassifier`
+then writes the actual reservation-versus-axis comparison on that same bank;
+small inputs do not supply or assume a reservation-fit certificate.
+`LayerGuardedInput.runs_public` now extends that same original-input pipeline
+with physical native guard-width sign extension. `LayerNativeWidening` copies
+the generated descriptor at slot thirty, builds its own reusable unary ruler,
+reads every delimited real/imaginary field, widens it to `w+4*D*K+4`, and emits
+the resulting array at slot sixty-nine. Both stream heads return to origin;
+the original native source, parsed controls and actual reservation flag are
+retained, and all borrowed ruler/countdown/word tapes are erased.
+`signed_values` and `output_widths` prove unchanged signed values and exact
+generated widths, including the original signed minimum. The same fixed
+program handles empty arrays. The per-tape alphabet simulation preserves
+literal machine execution rather than assuming a Boolean/native codec.
+`LayerPaddedInput.runs_public` now also performs actual per-polynomial zero
+padding on that same original-input pipeline. A fixed arithmetic schedule
+derives the original symbol span and padded-count deficit from retained
+descriptors. The actual source EOF controls the outer polynomial loop; each
+block copies its original native symbols exactly and emits valid signed-zero
+real/imaginary records, including both separators. The padded coefficient
+count is exactly `2^clog₂(r)`, with unchanged original order and values, the
+same generated guard width and less than twofold native volume. Both stream
+heads return to origin, four borrowed loop tapes are blank, the original
+widened source remains intact and the actual fallback flag is retained.
+The arithmetic placement excludes the flag port rather than treating it as a
+blank descriptor. Padding execution, including loop controls and final head
+returns, costs at most 131 times original widened native volume plus six.
+This closes physical descriptor generation, record conversion, guard-width
+widening and coefficient padding, not complete root readiness. Global row
+padding/reservation, branch
+execution, original root-bank installation, active-piece sequencing and final
+rounding remain open. The joined preparation has an explicit paid runtime;
+the full public-layer cost absorption remains a separate obligation.
+
 - Construct one fixed public program from `bank (layerHeader ...) (array w zs) [] []` to the native root bank and back, physically deriving all raw headers, Paths, packing families, denominator ledgers and clean initial workspace from `LayerAdmissible`. Preserve the original descriptor and every non-array tape. Include arbitrary admissible coefficient count `r`, multiplicities `Pa/S`, positive `D`, and actual reservation/fallback and non-power-of-arity cases; the native root hypotheses cannot be supplied as execution callbacks.
 - The abstract Gaussian-to-Hadamard identity and public natural-address/selected-bit identity are proved: `PublicHadamardAddressBridge.layer_gaussian_block` handles arbitrary positive suffixes; `CompactComplexPublicLayerTensor.layer_tensor_block` uses exactly the native positive-visit fullFrame at the unchanged original rank and tensor address. The fixed unit-weight physical phase family is now proved by `NativeHadamardPhaseOriginal`, with exact source replacement, cleanup, inherited-grid readout and positive uniform linear cost. Input phase placement and prerequisites on the exact aligned originalBank are now derived by `NativeHadamardPhaseRootBank.runs`, with original-address readout. The complete nonstopped input-phase/root composition is now proved by `CompactComplexInputPhasedRootExecution.root_runs`, retaining exact tensor input-phase readout, genuine halt, cleanup, true grids and one positive uniform coefficient with the joining edge paid. Output-phase readiness and execution on that same actual halted bank, complete phase/root/phase composition, and normalized Hadamard readout with an explicit factor are now proved by `CompactComplexPhasedRootExecution.root_runs`. The exact normalization numerator pass and in-place stream installation are now executed by `NativeHadamardNormalizationGrid.runs_from_path`, with guard/readout/grid derived from the actual Path. The complete original-native-geometry count/increase/target construction, source pass, physical live-denominator commit and private cleanup now execute together in `NativeHadamardNormalizationBudget.runs_from_path` with one fixed native-volume coefficient. Actual returned-root header copying, source/live placement, literal completed-live readiness, Path/ledger-derived volume fit, copied-header and borrowed-workspace erasure, and paid joining edges are now closed for nonstopped roots by `CompactComplexNormalizedRootExecution.root_runs`. The same final witness has exact normalized Hadamard output, a physically advanced true live descriptor, retained widths/grid/raw headers and complete root/scalar/basis cleanup, with one fixed positive uniform coefficient. This native theorem still has original geometry/Path/packing premises, which must derive from `LayerAdmissible` at the public boundary. Positive stopped roots, including depth-one visits, now execute the same full normalized program and common coefficient in `CompactComplexNormalizedStoppedRootExecution.positive_root_halts`, with literal leaf-target live readiness and all phase/normalization prerequisites derived from original certificates. Extend the wrapper to exponent-zero roots, derive the reservation/padding and unpadding layouts from the public input, and compose the original active-piece sequence for arbitrary non-power-of-arity `D`. Exponent-zero visits must use the existing actual one-coordinate kernel with the corresponding proved coordinate bridge. No phase, layout or corrected-input execution may be assumed as a callback.
 - Execute the final denominator conversion and truncation to exactly `layerOut p D K ρ S M zs`, in the original signed `w`-bit two's-complement format, replacing tape 1 in place and reclaiming internal tapes. Prove the literal output words; `SimultaneousLayerFacts` then supplies the disk/error consequences. Exact native dyadic output alone is not the requested `Q_p` output.
@@ -1960,6 +2019,13 @@ coefficient. Native geometry and actual signed-array preparation remain open.
 | --- | --- | --- | --- | --- |
 | Public simultaneous-layer header decoding | `LayerHeaderRead` | ✅ | ✅ | Fixed public-bank decoder extracts all nine actual gamma fields, restores the original header cursor, preserves all arrays and clears parsing work. Admissibility derives field positivity; exact controller values and an original layer-cost setup bound are proved. Native-bank geometry and record conversion remain open. |
 | Public selected-bit control setup | `LayerSelectedBitSetup` | ✅ | ✅ | Original public input executes decoding and actual subtraction of an internally written one from `rho+1`, producing canonical `rho` even at zero. The constant and parsing tapes are blank again, all original words/heads are retained, and every parsed field matches the native descriptor codec. Complete setup has the original layer-cost bound; native geometry and array preparation remain open. |
+| Public arithmetic control-bank construction | `LayerControlBank` | ✅ | ✅ | Real decoded fields and selected-bit output construct the existing arithmetic descriptor bank with clean private storage and paid copies, preserving the original public bank. |
+| Public reservation descriptor synthesis | `LayerReservationHeaders`, `LayerReservationSetup` | ✅ | ✅ | Actual fixed arithmetic derives guard, widths, reservation capacity, rounded fields, row axes, front/back chunks and cutoff from the original public input. No prepared geometry or reservation-fit premise is supplied. Physical padding/reservation and root installation remain open. |
+| Actual public reservation classification | `LayerReservationClassifier` | ✅ | ✅ | A literal comparison of the generated reservation and original selected-axis descriptor writes the correct nonfallback flag, restores operand heads and retains every other tape. Branch execution remains open. |
+| Public polynomial exponent and capacity | `LayerPolynomialHeaders` | ✅ | ✅ | Actual logarithm and power routines derive the coefficient exponent and power-of-two capacity, including exponent zero, with less than twofold growth and linear construction cost. Per-polynomial zero padding remains open. |
+| Actual signed native-array preparation | `LayerNativeRecords`, `LayerNativeInput`, `LayerPreparedInput` | ✅ | ✅ | One original-input program generates all controls, builds its own width ruler, converts every real/imaginary field to exact native signed records, returns source/output heads, erases conversion work and writes the real reservation decision. Original order and Gaussian-dyadic values are proved. Widening and coefficient padding are joined by `LayerGuardedInput` and `LayerPaddedInput`; global row padding, complete root-bank installation and layer-cost absorption remain open. |
+| Original-input native guard-width widening | `NativeSignExtend`, `NativeSignExtendField`, `NativeSignExtendArray`, `LayerNativeWidening`, `LayerGuardedInput` | ✅ | ✅ | Actual generated-width descriptor consumption, EOF-controlled delimited-field widening, exact signed values and widths, retained source/controls/flag, stream returns and complete private cleanup compose from the original public bank. Every transition and join has an explicit bound. Coefficient padding is joined by `LayerPaddedInput`; global row padding, native root installation and public-layer cost absorption remain open. |
+| Original-input per-polynomial coefficient padding | `CountedSymbolCopy`, `NativePolynomialPadding`, `LayerPolynomialPaddingHeaders`, `LayerPolynomialPaddingData`, `LayerPaddedInput` | ✅ | ✅ | One fixed public-input program derives real symbol-span/deficit controls and physically pads each original widened polynomial to its generated power-of-two coefficient count. Original coefficients and order are literal, added complex values are zero, field widths and counts are exact, source/output heads return, private controls are erased and the fallback flag survives. Padding has a uniform native-volume bound. Global row padding/reservation, root installation and public-layer cost absorption remain open. |
 | NativeHadamardStoppedRootPorts | `NativeHadamardStoppedRootPorts` | ✅ | ✅ | Actual positive stopped-root raw/source/live projections supply all shared phase and normalization readiness. Raw header readiness derives from the original leaf-codec certificate; the literal stopped return retains those headers and installs the true leaf target. Source-only input phase preserves stopping scratch, global dimension, exponent, current/target, saved root stack and public cleanliness, without a post-root readiness premise. |
 | NativeHadamardStoppedInputPhase | `NativeHadamardStoppedInputPhase` | ✅ | ✅ | One checked physical input-phase preparation produces the actual phase-modified stopped-leaf input and its complete readiness certificate. Same literal source, retained raw descriptors, widths, inherited grid, real stopping guard and saved stack, source/current/target/exponent fields and clean public workspace are derived from original data. Exact execution pays one fixed native-volume allowance with full private cleanup; no phase execution or corrected-input readiness is supplied. |
 | CompactComplexNormalizedStoppedRootExecution | `CompactComplexNormalizedStoppedRootExecution` | ✅ | ✅ | Positive stopped roots now run input phase, their actual internally selected stopped leaf, output phase and physical normalization on exactly CompactComplexNormalizedRootExecution.program, using the same positive packing-limit-only coefficient. Exact normalized Hadamard output, actual source/live words, retained raw headers and widths, true doubled-numerator leaf grid, complete node/scalar/basis cleanup and every physical join are proved from original input certificates and genuine Paths/ledgers. All depth-one positive visits are included; exponent zero and the public signed-format MeetsLayer adapter remain open. |
