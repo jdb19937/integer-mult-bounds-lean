@@ -958,6 +958,8 @@ import IntegerMultBounds.Machine.RecoverSignedCoefficient
 import IntegerMultBounds.Machine.RecoverWorkspace
 import IntegerMultBounds.Machine.RecoverIterationFinish
 import IntegerMultBounds.Machine.RecoverIteration
+import IntegerMultBounds.Machine.RecoverLoad
+import IntegerMultBounds.Machine.RecoverArray
 import IntegerMultBounds.Machine.CountedGatherField
 import IntegerMultBounds.Machine.CountedGatherPadding
 import IntegerMultBounds.Machine.CountedGatherDigit
