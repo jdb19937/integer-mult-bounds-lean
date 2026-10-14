@@ -2947,3 +2947,7 @@ import IntegerMultBounds.Machine.RecoverRulerTrim
 import IntegerMultBounds.Machine.RecoverExponentRuler
 import IntegerMultBounds.Machine.DoubleRulerErase
 import IntegerMultBounds.Machine.RecoverResidualPrecision
+import IntegerMultBounds.Machine.RecoverHeaderParameters
+import IntegerMultBounds.Machine.RecoverHeaderRulers
+import IntegerMultBounds.Machine.RecoverHeaderControlSetup
+import IntegerMultBounds.Machine.RecoverHeaderOutput
