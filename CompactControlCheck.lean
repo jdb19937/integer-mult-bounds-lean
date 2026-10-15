@@ -1,3 +1,6 @@
+import IntegerMultBounds.MathlibTM2.Cost.CompactTopControlBound
+import IntegerMultBounds.MathlibTM2.Node.CompactBasisSetup
+import IntegerMultBounds.MathlibTM2.Cost.CompactTopBound
 import IntegerMultBounds.MathlibTM2.Cost.CompactCallerShape
 import IntegerMultBounds.MathlibTM2.Cost.CompactLayerBound
 import IntegerMultBounds.MathlibTM2.Fast.CompactPieceGeometry
@@ -209,7 +212,18 @@ run_cmd do
     ``IntegerMultBounds.MathlibTM2.Cost.compactPiece_eventually_packed,
     ``IntegerMultBounds.MathlibTM2.Cost.compactPiece_eventually_ready,
     ``IntegerMultBounds.MathlibTM2.Fast.sg_compactBasisCounts,
-    ``IntegerMultBounds.MathlibTM2.Cost.compactCaller_runtime_eventually_shape]
+    ``IntegerMultBounds.MathlibTM2.Cost.compactCaller_runtime_eventually_shape,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactDigit_envelope,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactGeometric_sum,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactDigit_sum,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactSynPcs_sum,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactSynDigits_support,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactSynPcs_envelope_sum,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactTopPcsCost_split,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactTopCost_split,
+    ``IntegerMultBounds.MathlibTM2.LayerMachine.compactBasisSetup_exec,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactTopPhaseSCost_linear,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactTopUnitSCost_linear]
   for name in names do
     for ax in ← collectAxioms name do
       unless #[``propext, ``Quot.sound, ``Classical.choice].contains ax do

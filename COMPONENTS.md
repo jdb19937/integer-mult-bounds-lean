@@ -3529,7 +3529,6 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 - `Machine/SparsePhaseFlagsCaller.lean`: Original stage geometry and live address produce sparse headers and phase flags once per address, preserving an arbitrary coefficient workspace and charging preparation independently of polynomial multiplicity.
 
-- `Machine/UnitPhaseMultiplicity.lean`: Physically computes two to ell from an immutable canonical ell scalar on an appended caller port, installs the polynomial count and restores all power-construction scratch. No multiplicity is inferred from payload width or supplied for free.
 
 - `Machine/UnitPhaseSharedCoefficient.lean`: A real read/phase/emit/reset body applies retained computed phase flags to one coefficient, preserves those flags and every other caller tape, and erases numerator work with exact native output and linear stored-width cost.
 
@@ -6234,3 +6233,9 @@ Parameters and asymptotics.
 - `MathlibTM2/Node/CompactBasisSetupCounts.lean`, `Node/CompactBasisSetupPlacement.lean`: Actual persistent reservation arithmetic and injective placement into the seven shared-host work registers, preserving source roles.
 
 - `MathlibTM2/Cost/CompactCallerShape.lean`: Actual runtime sizes imply shared-shape guard positivity, guard room and record capacity uniformly in selected dimensions and low offsets; only reservation capacity and original runtime row/width lower bounds are required.
+
+- `MathlibTM2/Cost/CompactTopBound.lean`: Geometric summation over actual digit records without a logarithmic piece-count factor, and exact decomposition of executable top costs into retained control work, top kernel and recursive calls.
+
+- `MathlibTM2/Node/CompactBasisSetupFrame.lean`, `CompactBasisSetupOutput.lean`, `CompactBasisSetup.lean`: Actual shared-host persistent-bank initialization from original source words with exact seven-register output, preserved sources, restored scratch and unchanged execution costs.
+
+- `MathlibTM2/Cost/CompactTopControlBound.lean`: Actual full-array phase scans and final unit multiplication have linear volume bounds under explicit address/payload conditions; configuration reads and unary headers remain charged separately.

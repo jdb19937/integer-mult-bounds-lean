@@ -1,3 +1,6 @@
+import IntegerMultBounds.MathlibTM2.Cost.CompactTopControlBound
+import IntegerMultBounds.MathlibTM2.Node.CompactBasisSetup
+import IntegerMultBounds.MathlibTM2.Cost.CompactTopBound
 import IntegerMultBounds.MathlibTM2.Cost.CompactCallerShape
 import IntegerMultBounds.MathlibTM2.Cost.CompactLayerBound
 import IntegerMultBounds.MathlibTM2.Fast.CompactPieceGeometry
@@ -1948,7 +1951,6 @@ import IntegerMultBounds.Machine.CompactFallbackRoundtripBudget
 import IntegerMultBounds.Machine.ActivePrefixStageNativeCore
 import IntegerMultBounds.Machine.SparsePhaseFlags
 import IntegerMultBounds.Machine.SparsePhaseFlagsCaller
-import IntegerMultBounds.Machine.UnitPhaseMultiplicity
 import IntegerMultBounds.Machine.UnitPhaseSharedCoefficient
 import IntegerMultBounds.Machine.UnitPhasePolynomialLoop
 import IntegerMultBounds.Machine.UnitPhaseControlReset

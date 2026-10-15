@@ -638,12 +638,22 @@ primitive guard positivity, guard room and record capacity from the actual
 runtime sizes, uniformly over selected dimensions and folded offsets.
 `Cost/CompactLayerBound.lean` solves the normalized recurrence with a fixed
 power-of-two coefficient, retaining the leaf term and explicit address/payload
-condition. The resulting local charge has no full chunk-width power. Actual
-top-piece summation, original-caller initialization and complete multiplier
-cost propagation remain necessary before claiming another public saving.
+condition. The resulting local charge has no full chunk-width power. `Cost/CompactTopBound.lean` now sums the actual base-m digit envelopes
+geometrically without a logarithmic piece-count loss, and exactly separates
+all executable top control work from kernel and recursive-call costs.
+`Cost/CompactTopControlBound.lean` bounds both phase scans and the final
+unit multiplication linearly in actual stream volume, retaining configuration
+reads and unary headers explicitly. Widening, shift, padding, piece-loop
+controls and full constructor/setup absorption still require assembly.
+Specializing that envelope to the actual canonical layer costs,
+original-caller initialization and complete multiplier cost propagation
+remain necessary before claiming another public saving.
 `Node/CompactBasisSetupCounts.lean` and `CompactBasisSetupPlacement.lean`
-compute and place the seven persistent reservation values; complete setup and
-cleanup execution are still being integrated.
+compute and place the seven persistent reservation values.
+`CompactBasisSetupFrame/Output` and `CompactBasisSetup.lean` now execute
+the complete setup on the shared host with exact seven-register output,
+source preservation and restored scratch. Rest-predicate initialization and
+cleanup are still being integrated.
 Propagate the complete execution costs and discharge remaining caller sizing; record coverage alone
 does not establish the complete reserved transform. M3 remains open and public
 saving remains `2^-66`.
