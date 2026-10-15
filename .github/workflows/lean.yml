@@ -34,3 +34,4 @@ jobs:
       - run: lake env lean AxiomAudit.lean
       - run: lake env lean MathlibTM2Check.lean
       - run: lake env lean FastPathCheck.lean
+      - run: lake env lean CompletedProofCheck.lean

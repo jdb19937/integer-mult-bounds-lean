@@ -14,13 +14,17 @@ completed route. Parts 2–B retain the original native-machine interfaces and
 the stronger `83/10^12` compact-control target; their open entries do not
 invalidate the completed Mathlib theorem.
 
+[Retention audit](docs/proof-retention.md): the completed route is primary;
+1,515 legacy modules are candidates for removal while preserving its public
+interfaces and all focused audits. No proof files have been deleted.
+
 ✅ done · 🟡 partial · ⬜ not started · 🚧 drafted, not yet in the build.
 
 ## Overview
 
 | Part of the proof | Source | Mathematics | Tape | Files |
 | --- | --- | --- | --- | --- |
-| [Proved Mathlib end-to-end multiplier](plan/C-mathlib-end-to-end.md) | — | ✅ 1/1 | ✅ 1/1 | 226 |
+| [Proved Mathlib end-to-end multiplier](plan/C-mathlib-end-to-end.md) | — | ✅ 1/1 | ✅ 1/1 | 227 |
 | [The machine model and elementary streams](plan/02-machine-model-streams.md) | §2 | ✅ 9/9 | ✅ 9/9 | 258 |
 | [Two finite networks with a rank saving](plan/03-finite-networks-rank.md) | §3 | ✅ 8/8 | 🟡 2/6 | 358 |
 | [Faster interchange of address chunks](plan/04-faster-interchange-address.md) | §4 | ✅ 10/10 | ✅ 9/9 | 376 |
@@ -172,7 +176,7 @@ Details: [plan/C-mathlib-end-to-end.md](plan/C-mathlib-end-to-end.md)
 
 | Sub-problem | Mathematics | Tape | Files |
 | --- | --- | --- | --- |
-| Complete fixed machine and sub-n-log-n bound | ✅ | ✅ | 226 |
+| Complete fixed machine and sub-n-log-n bound | ✅ | ✅ | 227 |
 
 ## Remaining work for the stronger compact-control target
 

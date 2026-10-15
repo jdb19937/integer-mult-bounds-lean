@@ -11,6 +11,10 @@ The construction proves the positive saving
 `kappa = 296 / (10^11 * 2^131)`, approximately `1.09e-48`, where `n` is the
 total encoded input length. See [the completed plan](plan/C-mathlib-end-to-end.md).
 
+This completed proof is the primary route. The [retention audit](docs/proof-retention.md)
+lists its dependencies and legacy removal candidates; the stronger native route
+remains available while its retirement is assessed.
+
 ## Stronger compact-control target
 
 The original target is an actual deterministic machine with a fixed finite alphabet and
@@ -346,6 +350,7 @@ python3 scripts/build-lean-guarded.py IntegerMultBounds
 python3 scripts/check-lean-safe.py AxiomAudit.lean
 python3 scripts/check-lean-safe.py MathlibTM2Check.lean
 python3 scripts/check-lean-safe.py FastPathCheck.lean
+python3 scripts/check-lean-safe.py CompletedProofCheck.lean
 ```
 
 For local component checks, use `python3 scripts/check-lean-safe.py FILE`.
