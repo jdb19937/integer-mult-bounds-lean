@@ -64,17 +64,23 @@ against its PDF contents. §7 is polynomial products, §8 is resampling,
 §9 is multiplication, and grouped packed additions are Appendix A. Earlier
 archived plans used inconsistent source-filename numbering.
 
-| Manuscript section | What limits our bound | Improvement needed |
-| --- | --- | --- |
-| §2 Machine model and streams | Every new algorithm needs actual finite-machine costs and clean returned state. | Reuse Mathlib FinTM2 and existing host primitives; price new schedules. |
-| §3 Finite networks | Current bit/complex primitive savings are `2.96e-9` and `4.18e-10`. | Selected PR589 bit supplier and T16 complex supplier, with checked words, restoration, owner schedules and variable-rank moments. |
-| §4 Address interchange | All field moves inherit the bit exponent; the running CRT now uses linear direct routing. | Prove selected arbitrary-source routing contracts. |
-| §5 Butterfly layers; Appendix A | Full-slot overhead pays `K^tau`; actual piece matching requires `c < lambda'-lambda`. | Compact dirty controls, stopped recursion, linear semantic precision and proved recursive stock. |
-| **§6 Synthetic transforms/layout** | **`p K^(tau-1)` gives saving `epsilon c (1-tau) > 2^-66`.** | M2 retuned epsilon/c; next replace this charge by selected coordinate routing and a balanced prefix. |
-| §7 Exact polynomial products | Packing widths and extra logarithms must remain within budget. | Reuse the proved fast subroutine and exact algebra; revalidate under new widths. Not currently binding. |
-| §8 Resampling | Current Gaussian exponent is `7/8 + 3 epsilon/2`, preventing epsilon near one. | Faster rounded inverse, bulk core/halo execution and proved error/normalization bounds. |
-| §9 Exact multiplication/cost | Direct CRT charge is `d(1+ell^tau)`; the final bound is the smallest stage margin. | Seven-stage bootstrap, all 47 linked target inequalities and unchanged exact output semantics. |
-| §§10–11 Arithmetic/transposition corollaries | Downstream consequences, not multiplication bottlenecks. | Defer until the multiplication bound advances. |
+The progress column tracks the stronger-bound work in each section, using the
+same ✅ / 🟡 / ⬜ markers as the milestone tables. §7 is complete for the
+current widths; any future width change requires revalidation. Yellow rows
+include checked improvements with further work remaining; they are not gaps
+in the completed multiplier.
+
+| Manuscript section | Progress | What limits our bound | Improvement needed |
+| --- | --- | --- | --- |
+| §2 Machine model and streams | 🟡 | Every new algorithm needs actual finite-machine costs and clean returned state. | Reuse Mathlib FinTM2 and existing host primitives; price new schedules. |
+| §3 Finite networks | ⬜ | Current bit/complex primitive savings are `2.96e-9` and `4.18e-10`. | Selected PR589 bit supplier and T16 complex supplier, with checked words, restoration, owner schedules and variable-rank moments. |
+| §4 Address interchange | 🟡 | All field moves inherit the bit exponent; the running CRT now uses linear direct routing. | Prove selected arbitrary-source routing contracts. |
+| §5 Butterfly layers; Appendix A | 🟡 | Full-slot overhead pays `K^tau`; actual piece matching requires `c < lambda'-lambda`. | Compact dirty controls, stopped recursion, linear semantic precision and proved recursive stock. |
+| **§6 Synthetic transforms/layout** | 🟡 | **`p K^(tau-1)` gives saving `epsilon c (1-tau) > 2^-66`.** | M2 retuned epsilon/c; next replace this charge by selected coordinate routing and a balanced prefix. |
+| §7 Exact polynomial products | ✅ | Packing widths and extra logarithms must remain within budget. | Reuse the proved fast subroutine and exact algebra; revalidate under new widths. Not currently binding. |
+| §8 Resampling | 🟡 | Current Gaussian exponent is `7/8 + 3 epsilon/2`, preventing epsilon near one. | Faster rounded inverse, bulk core/halo execution and proved error/normalization bounds. |
+| §9 Exact multiplication/cost | 🟡 | Direct CRT charge is `d(1+ell^tau)`; the final bound is the smallest stage margin. | Seven-stage bootstrap, all 47 linked target inequalities and unchanged exact output semantics. |
+| §§10–11 Arithmetic/transposition corollaries | ⬜ | Downstream consequences, not multiplication bottlenecks. | Defer until the multiplication bound advances. |
 
 ## Ordered implementation milestones
 
