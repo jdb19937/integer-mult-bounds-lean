@@ -1,3 +1,4 @@
+import IntegerMultBounds.MathlibTM2.Cost.CompactCallerShape
 import IntegerMultBounds.MathlibTM2.Cost.CompactLayerBound
 import IntegerMultBounds.MathlibTM2.Fast.CompactPieceGeometry
 import IntegerMultBounds.MathlibTM2.Fast.CompactTopExecution

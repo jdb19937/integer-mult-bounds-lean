@@ -633,7 +633,9 @@ placed compact layer, eliminating the generic execution/call-contract premise.
 `Fast/CompactPieceGeometry.lean` supplies the actual piece offsets, recursive
 layouts and kernel extent. `Cost/CompactPiecePacking.lean` derives recursive
 readiness from original row/address precision and runtime sizes, including
-canonical numeric budgets; primitive guard and record inequalities remain.
+canonical numeric budgets. `Cost/CompactCallerShape.lean` now derives the
+primitive guard positivity, guard room and record capacity from the actual
+runtime sizes, uniformly over selected dimensions and folded offsets.
 `Cost/CompactLayerBound.lean` solves the normalized recurrence with a fixed
 power-of-two coefficient, retaining the leaf term and explicit address/payload
 condition. The resulting local charge has no full chunk-width power. Actual

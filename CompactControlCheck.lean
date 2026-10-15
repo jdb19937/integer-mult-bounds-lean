@@ -1,3 +1,4 @@
+import IntegerMultBounds.MathlibTM2.Cost.CompactCallerShape
 import IntegerMultBounds.MathlibTM2.Cost.CompactLayerBound
 import IntegerMultBounds.MathlibTM2.Fast.CompactPieceGeometry
 import IntegerMultBounds.MathlibTM2.Fast.CompactTopExecution
@@ -207,7 +208,8 @@ run_cmd do
     ``IntegerMultBounds.MathlibTM2.Cost.compactPiece_descendant_rows,
     ``IntegerMultBounds.MathlibTM2.Cost.compactPiece_eventually_packed,
     ``IntegerMultBounds.MathlibTM2.Cost.compactPiece_eventually_ready,
-    ``IntegerMultBounds.MathlibTM2.Fast.sg_compactBasisCounts]
+    ``IntegerMultBounds.MathlibTM2.Fast.sg_compactBasisCounts,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactCaller_runtime_eventually_shape]
   for name in names do
     for ax in ← collectAxioms name do
       unless #[``propext, ``Quot.sound, ``Classical.choice].contains ax do

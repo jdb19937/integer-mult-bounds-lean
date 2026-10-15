@@ -6232,3 +6232,5 @@ Parameters and asymptotics.
 - `MathlibTM2/Cost/CompactPiecePacking.lean`: Uniform descendant packing and canonical recursive readiness from original address/row precision, runtime size bounds and primitive guard/record inequalities.
 - `MathlibTM2/Cost/CompactLayerBound.lean`: Closed normalized layer recurrence with a fixed power-of-two coefficient, compact-width charge and retained leaf term; full top summation and caller cost propagation remain separate.
 - `MathlibTM2/Node/CompactBasisSetupCounts.lean`, `Node/CompactBasisSetupPlacement.lean`: Actual persistent reservation arithmetic and injective placement into the seven shared-host work registers, preserving source roles.
+
+- `MathlibTM2/Cost/CompactCallerShape.lean`: Actual runtime sizes imply shared-shape guard positivity, guard room and record capacity uniformly in selected dimensions and low offsets; only reservation capacity and original runtime row/width lower bounds are required.
