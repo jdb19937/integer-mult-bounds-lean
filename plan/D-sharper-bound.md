@@ -1631,3 +1631,10 @@ equal to `a_i G(|l-i|)/a_l` for every column, with the shared Toeplitz
 kernel `G` and zeros beyond the band. This connects the actual matrix to the
 Gohberg–Semencul blocks. The guarded check and3-declaration standard-axiom
 audit pass. Per-cell interior solves and similarity-scaled rounding remain.
+
+Exact interior solvers now exist under any dominance margin, and on a
+consecutive interval of interior vertices containing every active vertex of
+its phase cell, every interior solution of the actual matrix equals the
+similarity-scaled Gohberg–Semencul inverse of the shared Toeplitz kernel.
+Both guarded checks and standard-axiom audits pass. Rounded similarity
+scaling, the boundary elimination error and tape costs remain open.
