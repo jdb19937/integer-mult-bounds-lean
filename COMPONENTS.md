@@ -6220,3 +6220,10 @@ Parameters and asymptotics.
 - `MathlibTM2/Cost/CompactFactor.lean`, `Cost/CompactFactorActual.lean`: Full non-child factor overhead at compact-width local volume, fixed power-of-two coefficient and child coefficient one.
 - `MathlibTM2/Node/CompactTopProcRegs.lean`, `Node/CompactTopProcCall.lean`, `Node/CompactTopProcKernel.lean`, `Node/CompactTopProcLeaf.lean`: Generic persistent-bank top registers, actual field reads/call cleanup/kernel; the top leaf kernel's call contract is discharged by actual execution.
 - `MathlibTM2/Node/CompactRegisterEmbedding.lean`, `Fast/CompactTopPlaced.lean`: One fixed union bank shares ordinary registers and separates private banks; actual original-input setup executes on it with unchanged cost and no procedure-table assumption.
+
+- `MathlibTM2/Node/CompactLayerPlaced.lean`: Actual recursive layer on the shared union host, preserving exact costs and every caller register except the output stream.
+- `MathlibTM2/Node/CompactTopProcRows.lean`, `Node/CompactTopProcPieces.lean`, `Node/CompactTopProcStages.lean`, `Node/CompactTopProc.lean`: All seven actual top stages, including padded recursive piece processing, with exact transform and normalized butterfly semantics. Generic per-layer call contracts remain the assembly boundary.
+- `MathlibTM2/Cost/CompactLayer.lean`, `Cost/CompactLayerReady.lean`: Canonical proved compact basis budget, actual layer-cost majorant recurrence and recursive readiness without arbitrary cost premises.
+- `MathlibTM2/Fast/CompactTopPrecision.lean`: Original numerator bounds imply input fit and intermediate fit at the exact computed working width.
+
+- `MathlibTM2/Cost/CompactLayerNormalized.lean`: Exact per-volume recurrence, original level-zero leaf term and compact-width basis ratio; address-to-payload overhead remains explicit.

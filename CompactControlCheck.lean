@@ -1,3 +1,8 @@
+import IntegerMultBounds.MathlibTM2.Cost.CompactLayerNormalized
+import IntegerMultBounds.MathlibTM2.Node.CompactLayerPlaced
+import IntegerMultBounds.MathlibTM2.Node.CompactTopProc
+import IntegerMultBounds.MathlibTM2.Cost.CompactLayerReady
+import IntegerMultBounds.MathlibTM2.Fast.CompactTopPrecision
 import IntegerMultBounds.MathlibTM2.Node.CompactLayerGeometry
 import IntegerMultBounds.MathlibTM2.Node.CompactTopProcLeaf
 import IntegerMultBounds.MathlibTM2.Fast.CompactTopPlaced
@@ -166,7 +171,25 @@ run_cmd do
     ``IntegerMultBounds.MathlibTM2.LayerMachine.compactLayerReg_ne_legacy_bc,
     ``IntegerMultBounds.MathlibTM2.Fast.compactTopPlaced_runs,
     ``IntegerMultBounds.MathlibTM2.Cost.compactFactorCost_linear,
-    ``IntegerMultBounds.MathlibTM2.Cost.compactFactorCost_le]
+    ``IntegerMultBounds.MathlibTM2.Cost.compactFactorCost_le,
+    ``IntegerMultBounds.MathlibTM2.LayerMachine.compactPlacedLayer_callSpec,
+    ``IntegerMultBounds.MathlibTM2.LayerMachine.compactTopDownS_exec,
+    ``IntegerMultBounds.MathlibTM2.LayerMachine.compactTopUpS_exec,
+    ``IntegerMultBounds.MathlibTM2.LayerMachine.compactTopPadS_exec,
+    ``IntegerMultBounds.MathlibTM2.LayerMachine.compactTopUnpadS_exec,
+    ``IntegerMultBounds.MathlibTM2.LayerMachine.compactTopPcBody_exec,
+    ``IntegerMultBounds.MathlibTM2.LayerMachine.compactTopPcLoop_exec,
+    ``IntegerMultBounds.MathlibTM2.LayerMachine.compactTopBlockS_exec,
+    ``IntegerMultBounds.MathlibTM2.LayerMachine.compactTopProg_exec,
+    ``IntegerMultBounds.MathlibTM2.LayerMachine.compactTopProg_exec_Hl,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactLayerBasisBudget_covers,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactLayerCost_compact_majorant,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactLayerReady_canonical,
+    ``IntegerMultBounds.MathlibTM2.Fast.compactTopPre_fits,
+    ``IntegerMultBounds.MathlibTM2.Fast.compactTopInput_fits,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactLayerNormalized_succ,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactLayerNormalized_zero,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactLayerBasisBound_ratio]
   for name in names do
     for ax in ← collectAxioms name do
       unless #[``propext, ``Quot.sound, ``Classical.choice].contains ax do

@@ -2431,3 +2431,13 @@ import IntegerMultBounds.MathlibTM2.Node.CompactTopProcLeaf
 import IntegerMultBounds.MathlibTM2.Fast.CompactTopPlaced
 
 import IntegerMultBounds.MathlibTM2.Cost.CompactFactorActual
+
+import IntegerMultBounds.MathlibTM2.Node.CompactLayerPlaced
+
+import IntegerMultBounds.MathlibTM2.Node.CompactTopProc
+
+import IntegerMultBounds.MathlibTM2.Cost.CompactLayerReady
+
+import IntegerMultBounds.MathlibTM2.Fast.CompactTopPrecision
+
+import IntegerMultBounds.MathlibTM2.Cost.CompactLayerNormalized

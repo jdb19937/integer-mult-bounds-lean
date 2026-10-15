@@ -608,9 +608,26 @@ The kernel's leaf call is discharged by actual `leafP_exec`.
 `Node/CompactRegisterEmbedding.lean` gives one fixed union host bank with
 shared ordinary registers and disjoint private banks. `Fast/CompactTopPlaced.lean`
 executes the full original-input constructor there, preserving exact costs,
-without assuming procedure-table compatibility. Recursive piece processing,
-remaining top stages, actual recurrence normalization and final caller assembly
-remain open.
+without assuming procedure-table compatibility. `Node/CompactLayerPlaced.lean` lifts the actual recursive layer to that host,
+restoring the entire caller frame and preserving exact step counts.
+`CompactTopProcRows/Pieces/Stages` and `CompactTopProc.lean` now execute all
+seven top stages and prove both `topZ` and normalized `Hl` semantics for an
+arbitrary persistent basis bank. Only per-layer `CallSpec` contracts remain
+at this generic boundary, ready for the concrete compact-layer specialization.
+
+`Cost/CompactLayer.lean` supplies a canonical rounded-up compact basis budget
+and bounds the actual layer cost by an explicit scalar recurrence with the
+original leaf term. `Cost/CompactLayerReady.lean` derives recursive readiness
+using this proved budget and local packing, without an arbitrary cost premise.
+`Fast/CompactTopPrecision.lean` proves the pre-shift array fits the exact
+computed working width from the original numerator norm bound. Complete
+caller specialization, actual initialization of persistent basis inputs,
+recurrence solving and stopped recursion remain open.
+`Cost/CompactLayerNormalized.lean` now proves the exact per-volume recurrence:
+child coefficient `factorCount/NW`, compact basis ratio bounded by
+`3*compactBasisConst*max(1,(bits-1)*guard)^tau` plus inverse volume, and explicit
+linear address/payload overhead `1+(o+n)/(r*w)`. The actual level-zero leaf
+term remains `200*u*(1+(o+n)/(r*w))`; no new stopping rule is claimed.
 Propagate the complete execution costs and discharge remaining caller sizing; record coverage alone
 does not establish the complete reserved transform. M3 remains open and public
 saving remains `2^-66`.
