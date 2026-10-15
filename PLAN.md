@@ -1,5 +1,10 @@
 # Plan and progress
 
+✅ Complete · 🟡 In progress / partially complete · ⬜ Not started.
+
+**Bound improvement progress:** M1 ✅ · M2 ✅ · M3 🟡 · M4 ⬜ · M5 ⬜ · M6 ⬜ · M7 ⬜ · M8 ⬜.
+The completed multiplier proves saving `2^-66`; the stronger bound is still in progress.
+
 ## Bound scoreboard
 
 We measure progress by the **proved exponent saving `kappa`** in worst-case
@@ -7,10 +12,10 @@ time `O(n (log n)^(1-kappa))`. Larger saving means a smaller time exponent.
 
 | Bound | Exponent saving `kappa` | Status |
 | --- | --- | --- |
-| **Current unconditional result** | **`2^-66`** | Proved on one fixed finite Mathlib machine, for all input pairs. |
+| **Current unconditional result** | **`2^-66`** | ✅ Proved on one fixed finite Mathlib machine, for all input pairs. |
 | **Pre-M1 unconditional result** | `296 / (10^11 * 2^131)` (between `2^-160` and `2^-159`) | Superseded by M1; the existential theorem remains compatible. |
 | **Historical M1 result** | `2^-93` | M2 improves the public exponent saving by `2^27`; this is not a timing speedup. |
-| **Goal: match the selected community construction** | **`836330098538459 / 500000000000000000 = 0.001672660197076918`** | Upstream construction is conditional; our goal is an unconditional machine theorem at this exact saving. |
+| **Goal: match the selected community construction** | **`836330098538459 / 500000000000000000 = 0.001672660197076918`** | ⬜ Not yet proved here. Upstream construction is conditional; our goal is an unconditional machine theorem at this exact saving. |
 
 The goal corresponds to a log exponent of `0.998327339802923082`.
 These are asymptotic exponent bounds, not measured execution speedups.
@@ -72,7 +77,8 @@ archived plans used inconsistent source-filename numbering.
 
 ## Ordered implementation milestones
 
-✅ Complete · 🟡 In progress · ⬜ Not started.
+Use ✅ only when the entire deliverable is checked, 🟡 when some work is checked
+but integration or proof obligations remain, and ⬜ before implementation starts.
 
 All rows below concern **improvements to an already completed theorem**.
 Detailed source references, code integration points, contracts and acceptance
@@ -97,8 +103,8 @@ criteria are in the [implementation plan](plan/D-sharper-bound.md).
 | Full runtime top transform and original size/precision bridges | ✅ | No per-piece readiness or execution premise remains. |
 | Persistent original guard/dimension, per-round refresh and cleanup | ✅ | Checked from explicit original parameter sources. |
 | Individual round stages and expanded main-host placement | ✅ | Checked staging/frame contracts and register embeddings. |
-| Complete chunk round and actual main-input bootstrap | 🟡 | Compose stages and connect named original sources. |
-| Complete transform cost and multiplier bound | 🟡 | Sum actual calls, controls and setup; retain direct early/terminal rounds. |
+| Complete chunk round and main-stage integration | 🟡 | Preparation and parking are checked; compose top execution/restoration and connect the main contracts. |
+| Complete transform cost and multiplier bound | 🟡 | Control overhead is absorbed; close recursive-call, setup and complete caller estimates. |
 | Stopped recursion | ⬜ | Required for the later selected construction; not yet implemented. |
 
 **Execution order:** M1–M2 complete → M3–M5 → M6/M7 → M8. Use current
