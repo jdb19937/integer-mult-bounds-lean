@@ -1,3 +1,12 @@
+import IntegerMultBounds.MathlibTM2.Fast.CRTControlProducer
+import IntegerMultBounds.MathlibTM2.Fast.CRTControlStreams
+import IntegerMultBounds.MathlibTM2.Cost.CRTControlProducer
+import IntegerMultBounds.MathlibTM2.Cost.CRTReverse
+import IntegerMultBounds.MathlibTM2.Fast.CRTControlGenerateTraversal
+import IntegerMultBounds.MathlibTM2.Fast.CRTControlGenerateTraversalLayout
+import IntegerMultBounds.MathlibTM2.Fast.CRTControlRouting
+import IntegerMultBounds.MathlibTM2.Fast.CRTReverse
+import IntegerMultBounds.MathlibTM2.Fast.CRTReverseFull
 import IntegerMultBounds.MathlibTM2.Fast.CRTControlGenerateSetup
 import IntegerMultBounds.MathlibTM2.Cost.CRTControlGenerate
 import IntegerMultBounds.MathlibTM2.Fast.CRTControlDriverSpec
@@ -30,6 +39,26 @@ complete driver/multiplier integration remain separate work. -/
 open Lean in
 run_cmd do
   let names := #[
+    ``IntegerMultBounds.MathlibTM2.Fast.crtControlProducer_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtControlAscendingEntries_runs,
+    ``IntegerMultBounds.MathlibTM2.Cost.crtControlProducer_actualCost_le,
+    ``IntegerMultBounds.MathlibTM2.Cost.crtControlProducer_pipeline_le,
+    ``IntegerMultBounds.MathlibTM2.Cost.crtReverseFull_cost_le,
+    ``IntegerMultBounds.MathlibTM2.Cost.mt_crt_reverse_arith,
+    ``IntegerMultBounds.MathlibTM2.Cost.mt_crt_reverse_le,
+
+    ``IntegerMultBounds.MathlibTM2.Fast.crtControlTraversal_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtControlTraversal_arithmetic,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtControlTraversal_exactTape,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtControlRouting_split,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtControlRoutingGap_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtReverseHalf_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtReversePair_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtReverseLoop_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtReverseCleanup_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtReverseCleanup_frame,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtReverseFull_runs,
+
     ``IntegerMultBounds.MathlibTM2.Fast.crtControlUnaryWord_runs,
     ``IntegerMultBounds.MathlibTM2.Fast.crtControlPadding_runs,
     ``IntegerMultBounds.MathlibTM2.Fast.crtControlPrefixWidth_runs,

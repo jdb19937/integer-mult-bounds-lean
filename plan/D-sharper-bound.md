@@ -273,8 +273,15 @@ its packet, advance the original mixed-radix weight, and save the entries.
 unary inputs, preserving those sources. `Cost/CRTControlGenerate.lean` proves
 that all target setup costs and all per-axis generation costs are each
 absorbed by one padded volume eventually. Loop overhead and terminal stream
-cleanup still need separate matching; the concrete complete traversal and
-its exposed descriptor-tape invariant remain unfinished. The generator
+cleanup still need separate matching. `CRTControlGenerateTraversal.lean`
+discharges the complete traversal's per-axis execution and derives all
+arithmetic fits at width `3B+1`. `CRTControlGenerateTraversalLayout.lean`
+proves its exact exposed descriptor tape, including parked-zero handling.
+`CRTControlProducer.lean` now composes setup, immutable target-counter copy,
+traversal and bank release into an exact descriptor producer. Only its tape
+destination changes. `Cost/CRTControlProducer.lean` matches its actual budget,
+including source restoration and descriptor disposal: all target producers
+cost at most one padded volume eventually. The generator
 kernels and one-fiber pass are audited; neither constitutes a new complete CRT
 driver or a stronger public bound.
 
@@ -284,8 +291,16 @@ reversed layout and restoring every register except the data source. Its
 routing parameters and descriptor/constants tapes are still prepared inputs.
 `CRTControlDriverSpec.lean` identifies descending and ascending target folds
 with the existing `crtFwdC` and `crtInvC`, independently of physical layout;
-target zero is an identity and can be omitted. The executable paired reversal
-and full runtime parameter preparation remain driver obligations.
+target zero is an identity and can be omitted. `CRTReverse.lean` and
+`CRTReverseFull.lean` execute the complete paired reversal, constructing the
+opposite width stream and unary half-count at runtime and restoring every
+register except data. `Cost/CRTReverse.lean` bounds the complete reversal by
+a linear number of interchange budgets, including runtime setup and cleanup.
+`CRTControlRouting.lean` ties the distant header widths
+to the existing driver's upper/lower unary counters. `CRTControlStreams.lean`
+constructs preserved ascending copies of the original descending entry streams.
+The complete driver and
+its cost matching remain integration obligations.
 
 `CRTControlParameters.lean` now executes the complete conversion from unary
 modulus, multiplier, axis width and total width into the two binary constants,
@@ -296,13 +311,13 @@ is absorbed by one padded volume in `Cost/CRTControlGenerate.lean`.
 
 Remaining integration steps, in order:
 
-1. **M2b — rotation scanner:** the complete one-fiber scan/rotation and indexed
-   loop, all-fiber semantic result, bank initialization/cleanup and width
-   setup are proved, with matching actual costs. Finish the runtime
-   descriptor-stream producer and include its cost.
-   Preserve the existing order of triangular arithmetic passes.
-2. **M2c — driver and matching:** generate runtime unary widths and assemble
-   the proved exposure/unexposure steps into the forward/inverse schedule; replace the
+1. **M2b — rotation scanner and producer: complete.** The actual all-fiber
+   rotation, workspace provisioning/restoration, runtime descriptor producer,
+   exact exposed tape, and matching production/rotation costs are proved.
+   These components preserve the existing triangular arithmetic semantics.
+2. **M2c — driver and matching:** runtime parameter preparation and complete
+   paired reversal are proved. Assemble producer/parameters/exposure/rotation
+   into the target step and forward/inverse unary-stream traversal; replace the
    actual driver, establish round-trip correctness, and match its actual costs.
    Separate the already-linear resampling exposure from `totCRT`, retaining
    the residual quadratic arithmetic charge.

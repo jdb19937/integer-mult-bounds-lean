@@ -1,4 +1,13 @@
 module
+public import IntegerMultBounds.MathlibTM2.Fast.CRTControlProducer
+public import IntegerMultBounds.MathlibTM2.Fast.CRTControlStreams
+public import IntegerMultBounds.MathlibTM2.Cost.CRTControlProducer
+public import IntegerMultBounds.MathlibTM2.Cost.CRTReverse
+public import IntegerMultBounds.MathlibTM2.Fast.CRTControlGenerateTraversal
+public import IntegerMultBounds.MathlibTM2.Fast.CRTControlGenerateTraversalLayout
+public import IntegerMultBounds.MathlibTM2.Fast.CRTControlRouting
+public import IntegerMultBounds.MathlibTM2.Fast.CRTReverse
+public import IntegerMultBounds.MathlibTM2.Fast.CRTReverseFull
 
 public import IntegerMultBounds.MathlibTM2.Cost.Branching
 public import IntegerMultBounds.MathlibTM2.Cost.CRTControl
