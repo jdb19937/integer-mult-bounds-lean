@@ -168,12 +168,49 @@ exactly `crtRevAx i` before the target: its address-validity count supplies
 prefix changes the interpretation of the counter. The pure CRT content
 lemmas in `CRTSpec.lean` remain reusable once that machine interface is proved.
 
+**M2b progress:** `Fast/CRTControl.lean` now proves an alternative to the
+order-dependent validity counter. Each physical field carries its place,
+modulus bound, original mixed-radix weight and active-control flag. The
+address evaluator recovers exactly `crtKI` and the original validity predicate,
+even with higher spectator axes mixed into the prefix. `crtControlRotOut_top`
+proves that all fibers together produce the same forward/inverse `crtRotC`,
+including invalid controls and padded target slots. A direct multiplication
+and remainder replaces iteration of `crtLo`; `crtControlShift_mod` proves the
+same cyclic shift.
+
+`Fast/CRTControlProg.lean` implements one descriptor in a fixed ten-variable
+binary program: at most nine interpreter atoms, with scratch cleared and
+spectators preserved. `crtControlStep_host` gives the actual host bound
+`9 * tblC W w`; this is not nine Turing-machine steps. A separate three-atom
+kernel computes the modular offset and complement. `CRTControlCheck.lean`
+audits the semantic and executable contracts. No descriptor generation,
+loading, fiber-loop or conversion cost has been silently included in these
+kernel bounds.
+
+**Chosen driver design:** retain the fully reversed axis layout during the
+triangular arithmetic passes. Expose each nonzero target by swapping it with
+axis zero at the inner end, run the descriptor-controlled rotation, then swap
+back. Finish the forward machine with paired distant swaps reversing the
+whole axis list; perform that reversal first in the inverse machine. This
+preserves the original target order and content maps while using at most
+`2(d-1) + floor(d/2)` swaps in either direction. The machine implementation
+and the proof of this schedule/count remain to be completed.
+
+For each target, the new scan visits `2^(L-a_i)` fibers. There are at most `d`
+descriptors per fiber, so the proved arithmetic kernel would contribute at
+most `9 d 2^(L-a_i) tblC W w` before loading, offset conversion and loop costs.
+Choose and prove a word-width bound of order `L`; the existing
+`mr_b_pow_le_r` lemma is a candidate for absorbing polynomial per-fiber
+arithmetic through the exponentially long axis (`t_i` is `r` or `r/2`). This
+absorption is still an obligation, not a matched end-to-end cost theorem.
+
 Remaining integration steps, in order:
 
-1. **M2b — rotation scanner:** implement and prove a scanner for the chosen
-   direct-swap layouts, recovering the same `crtKI` and invalid-address behavior.
-   Preserve the existing order of triangular arithmetic passes. Price the
-   changed control computation, including descriptors and workspace cleanup.
+1. **M2b — rotation scanner:** the semantics and arithmetic kernels are proved.
+   Implement descriptor generation/loading/restoration, the outer fiber loop,
+   and binary-to-unary offset conversion feeding `crtRotFib`. Prove word-width
+   bounds, unchanged state outside the workspace, and the complete actual cost.
+   Preserve the existing order of triangular arithmetic passes.
 2. **M2c — driver and matching:** prove the forward/inverse linear routing
    schedule and connect the header upgrade and swap pass to it; replace the
    actual driver, establish round-trip correctness, and match its actual costs.
@@ -373,8 +410,8 @@ reduction interfaces and encoding overhead if those corollaries are desired.
 
 1. **M1 complete:** public saving `2^-93`; exact internal margin between
    `2^-93` and `2^-92`, with the existing existential theorem preserved.
-2. **M2 in progress:** distant-swap bridge checked; next prove the compatible
-   rotation scanner and linear CRT/axis schedules, then retune and publish
+2. **M2 in progress:** distant-swap bridge checked; control semantics and kernels checked; next assemble the
+   rotation scanner and prove the linear CRT/axis schedules, then retune and publish
    the resulting stronger theorem. This yields a structural improvement
    without importing the large selected supplier inventory.
 3. **M3–M5:** compact controls, width/stock contracts and balanced coordinate

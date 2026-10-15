@@ -24,6 +24,7 @@ public import IntegerMultBounds.MathlibTM2.Cost.Total
 public import IntegerMultBounds.MathlibTM2.Fast.BundleDist
 public import IntegerMultBounds.MathlibTM2.Fast.BundleLay
 public import IntegerMultBounds.MathlibTM2.Fast.CRTGap
+public import IntegerMultBounds.MathlibTM2.Fast.CRTControlProg
 public import IntegerMultBounds.MathlibTM2.Fast.BundleMnLay
 public import IntegerMultBounds.MathlibTM2.Fast.BundleRnd
 public import IntegerMultBounds.MathlibTM2.Fast.BundleWires

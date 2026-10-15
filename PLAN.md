@@ -28,7 +28,7 @@ machine that multiplies every input pair correctly in worst-case time
 
 | Part of the proof | Source | Mathematics | Tape | Files |
 | --- | --- | --- | --- | --- |
-| [Proved Mathlib end-to-end multiplier](plan/C-mathlib-end-to-end.md) | — | ✅ 1/1 | ✅ 1/1 | 228 |
+| [Proved Mathlib end-to-end multiplier](plan/C-mathlib-end-to-end.md) | — | ✅ 1/1 | ✅ 1/1 | 230 |
 
 The [proof details](plan/C-mathlib-end-to-end.md) cover the numerical
 algorithm, recursive layers, transforms, resampling, CRT routing, exact
@@ -79,7 +79,7 @@ criteria are in the [implementation plan](plan/D-sharper-bound.md).
 | ID | Original sections | Concrete deliverable | Status / bound effect |
 | --- | --- | --- | --- |
 | **M1** | **§§5, 6, 9** | **Set `epsilon=2^-30`, `c=2^-34`; reprove dependent sizing, executable parameter generation, cost and machine lemmas.** | **Complete.** Public saving `kappa=2^-93`; exact internal margin `296/(10^11 * 2^64)` lies between `2^-93` and `2^-92`. Internal margin improved by `2^67`; public saving improves the former exact bound by more than `2^66`. |
-| M2 | §§4.3, 8.2, 9.3 | Replace adjacent CRT walks by direct nonadjacent swaps; reuse already linear resampling exposure and price residual CRT arithmetic separately. | **In progress.** Distant-swap box/bit semantics, executable header upgrade and prepared-header pass cost proved. Next: change the order-dependent rotation scanner and driver, then match costs and retune. Current saving remains `2^-93`. |
+| M2 | §§4.3, 8.2, 9.3 | Replace adjacent CRT walks by direct nonadjacent swaps; reuse already linear resampling exposure and price residual CRT arithmetic separately. | **In progress.** Distant-swap bridge, order-independent rotation semantics and executable descriptor/offset kernels proved. Next: assemble the descriptor-tape/fiber loop and linear driver, then match costs and retune. Current saving remains `2^-93`. |
 | M3 | §5.2–5.3, Appendix A | Compact dirty-control host adapter, stopped recursion and locally charged exceptional repair. | Planned. Remove `K^tau` from node overhead, with complete temporary-field restoration. |
 | M4 | §5.4, §9.7 | Linear completed-child precision bound and explicit recursive workspace/stock contracts. | Planned. Remove conservative guard-growth restrictions and prove the reserve coefficients required at selected cutoffs. |
 | M5 | §6.2, §4 | Balanced prefix and arbitrary-source coordinate routing in both transform directions. | Planned. Replace layout saving `epsilon c a_b` by direct movement saving `a_b`; restore spectators and frequency order. |
