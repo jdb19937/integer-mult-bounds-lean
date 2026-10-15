@@ -6332,3 +6332,7 @@ Parameters and asymptotics.
 - `MathlibTM2/Fast/CompactMainCleanup.lean`, `CompactMainHost.lean`, `CompactMainPrefixCost.lean`, `CompactFinal.lean`: Complete private-register cleanup, finite push bound, exact prefix accounting and unconditional `MulInTime (2^37)⁻¹`, now exported by the public theorem.
 
 - `MathlibTM2/Cost/CompactLogGrowth.lean`: Dimension-independent dyadic bounds for binary logarithms and the Schönhage–Strassen polylogarithmic overhead, with logarithmic loss `2^-5`; integration into resampling costs remains separate.
+
+- `MathlibTM2/Cost/CompactSharpBase.lean`: Actual real/complex multiplication costs matched to a sharper `p^(33/32)` budget with dyadic coefficients; resampling integration is a separate next step.
+- `MathlibTM2/Mult/CompactEighthRoom.lean`: Generic eighth-power dimension room, modulus and guard inequalities for future executable dimension retuning.
+- `MathlibTM2/Fast/CompactStoppedPiece.lean`: Cutoff-rebased piece records preserve covered bits, final rows, offset and padding; validity requires the explicitly recomputed exponent width. Runtime record generation and scanner integration remain open.
