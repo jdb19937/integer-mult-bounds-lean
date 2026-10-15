@@ -6361,3 +6361,5 @@ Parameters and asymptotics.
 
 - `Networks/Certificates/PR589/{Scalar,D,A,B,C,scatter,Word,FirstCheckpoint,Semantics}.lean`: Deterministic import of the pinned selected 5583-gate scalar word, preserving frame metadata, with generic binary-replay soundness and a kernel-checked first-four-gate prefix. All 6119 declarations pass the standard-axiom audit. Full-word restoration, framed semantics, nesting and charged machine execution remain open.
 - `scripts/generate_pr589_scalar.py`: Hash-pinned literal-data importer with deterministic regeneration; external exact dirty-column replay validates source ingestion, while only explicit checked Lean prefix certificates establish formal endpoints.
+
+- `Networks/FramedEventTrace.lean`: A checked literal sequence of frame-label changes and scalar gates executes exactly as its erased scalar word between the initial/final frame encodings, for arbitrary dirty stored values. Decidable event validity supports finite certificates; all three semantic theorems pass guarded checking and the standard-axiom audit. Concrete T16 trace validity and frame interpretation remain separate.
