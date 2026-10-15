@@ -59,7 +59,7 @@ theorem compactCompleted_mulInTime
       ∃ m v S, m ≤ compactRetunedPreTime extra n ∧
         Exec (compactCompletedTable p) p (Store.only compactMainV₀ .inp (pairEnc (x,y))) m (mk v S) ∧
         S.inp=[] ∧ S.out=encodingNatBool.encode (x*y) ∧ ∀ k,S.L k=[]) :
-    MulInTime ((2^37:ℝ)⁻¹) := by
+    MulInTime ((2^36:ℝ)⁻¹) := by
   apply compactRetuned_mulInTime_of_exec (compactCompletedTable p) (compactMainOldProc .main)
     compactMainV₀ (compactCompletedPush p) extra
   filter_upwards [hexec] with n hn x y hxy

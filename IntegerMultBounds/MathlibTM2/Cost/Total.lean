@@ -26,7 +26,7 @@ count `m (log m + 1)(log log m + 1)` of `Host/SSMul` by `625 m^{1+δ}`.
 
 Exponents: `τ = 1 - 296/10¹¹`, `σ = 1 - 418/10¹²` (`IntegerMultBounds.Parameters`), `β = 1/2`,
 `λ = 1 - 3/10¹⁰` (`totLam`), `λ' = 1 - 1/10¹¹` (`totLam'`), and
-`κ = ε c (1 - τ) = 296 / (10¹¹ · 2³⁷)` (`totKappa`, `tot_kappa_eq`). The ring-product factor is
+`κ = ε c (1 - τ) = 296 / (10¹¹ · 2³⁶)` (`totKappa`, `tot_kappa_eq`). The ring-product factor is
 `grLogLog X = (log₂ X + 1)(log₂ (log₂ X + 1) + 1)` (`Cost/Growth`); `gr_ringBound_le` bounds the
 packed ring product `rpRingBound N` of `Fast/RingProd` on `N ≤ A r p` bits by a constant times
 `r p · grLogLog (r p)`.
@@ -79,7 +79,7 @@ noncomputable def totLam' : ℝ := 1 - 1 / 10 ^ 11
 /-- `κ = ε c (1 - τ)`. -/
 noncomputable def totKappa : ℝ := epsilon * cParam * (1 - Parameters.tau)
 
-theorem tot_kappa_eq : totKappa = 296 / (10 ^ 11 * 2 ^ 37) := by
+theorem tot_kappa_eq : totKappa = 296 / (10 ^ 11 * 2 ^ 36) := by
   rw [totKappa, epsilon_eq, cParam_eq, Parameters.tau]; norm_num
 
 theorem tot_kappa_pos : 0 < totKappa := by rw [tot_kappa_eq]; norm_num

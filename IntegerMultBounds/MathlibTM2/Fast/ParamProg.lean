@@ -15,7 +15,7 @@ exactly, in words of `W ≥ 4 b + 16` bits (`b = ⌈log₂ n⌉`). Variable `i <
 | 0 | `n` | input |
 | 1 | `b = ⌈log₂ n⌉` | `Sizes.b` |
 | 2 | `p = 6 b` | `Sizes.p` |
-| 3 | `d = iroot (2^5) b` | `Sizes.d` |
+| 3 | `d = iroot (2^4) b` | `Sizes.d` |
 | 4 | `K = iroot (2^32) d` | `Sizes.K` |
 | 5 | `log₂ T` | `Sizes.logT` |
 | 6 | `T` | `Sizes.T` |
@@ -230,12 +230,12 @@ theorem pm_const_lt (hW : 4 * b n + 16 ≤ W) {k : ℕ} (hk : k < 2 ^ 16) : k < 
 
 /-- The new root computation fits the existing parameter-stage budget. -/
 theorem pm_s3 (hW : 4 * b n + 16 ≤ W) :
-    ∀ s, PmF n 3 acc s → TblDo A W w ((pmIrootC 5).rename ![1, 3, 31, 32, 33, 34]) s
+    ∀ s, PmF n 3 acc s → TblDo A W w ((pmIrootC 4).rename ![1, 3, 31, 32, 33, 34]) s
       (PmF n 4 acc) (7 * 30 + 11 + d n * (6 * 30 + 8)) :=
   pm_stage (by decide) 1 rfl fun s hs => by
     have h0 : (s.restrict ![1, 3, 31, 32, 33, 34]).val 0 = b n := by simpa [pmVal, pmNV] using hs.val 1
-    refine (pmIrootC_do 5 _ h0 (pm_sq_lt hW le_rfl) (pm_const_lt hW (by norm_num))).mono ?_
-      (by change 7 * 5 + 11 + d n * (6 * 5 + 8) ≤ 7 * 30 + 11 + d n * (6 * 30 + 8); omega)
+    refine (pmIrootC_do 4 _ h0 (pm_sq_lt hW le_rfl) (pm_const_lt hW (by norm_num))).mono ?_
+      (by change 7 * 4 + 11 + d n * (6 * 4 + 8) ≤ 7 * 30 + 11 + d n * (6 * 30 + 8); omega)
     rintro s' ⟨e0, e1, ea⟩
     refine ⟨by rw [ea]; exact hs.1, by rw [e1]; rfl, fun y hy => ?_⟩
     fin_cases y <;> simp [pmVal, pmNV] at hy ⊢ <;> assumption
@@ -759,7 +759,7 @@ end Stages
 def pmStages : TblCode pmNV :=
   pmClogC.rename ![0, 1, 31] ;;
   (pmLinC 6 0).rename ![1, 2, 31, 32] ;;
-  (pmIrootC 5).rename ![1, 3, 31, 32, 33, 34] ;;
+  (pmIrootC 4).rename ![1, 3, 31, 32, 33, 34] ;;
   (pmIrootC 32).rename ![3, 4, 31, 32, 33, 34] ;;
   pmLogTC.rename ![0, 1, 5, 31, 32] ;;
   (tblPow2 1 0 2).rename ![5, 6, 31] ;;

@@ -8,14 +8,14 @@
 `Turing.FinTM2` machine multiplies every pair of natural numbers, with standard
 binary input/output encodings, in worst-case time `O(n (log n)^(1-kappa))`.
 The construction proves the positive saving
-`kappa = 2^-37`, exposed by `MathlibTM2.mulInTime`, where `n` is the
+`kappa = 2^-36`, exposed by `MathlibTM2.mulInTime`, where `n` is the
 total encoded input length. See [the completed plan](plan/C-mathlib-end-to-end.md).
 
 The running multiplier combines linear direct CRT routing with compact controls
-and eighth-root chunks. Its parameters are `epsilon = 2^-5`, `c = 2^-3`, and
+and eighth-root chunks. Its parameters are `epsilon = 2^-4`, `c = 2^-3`, and
 `lambda' = 1-2^-32`. Complete input preparation, distribution, transforms,
 output and cleanup are included in the fixed-machine proof. The public saving
-is `2^29` times the historical M2 saving `2^-66`; this is an exponent improvement,
+is `2^30` times the historical M2 saving `2^-66`; this is an exponent improvement,
 not a measured runtime speedup.
 
 This completed proof is the primary route. The [retention audit](docs/proof-retention.md)

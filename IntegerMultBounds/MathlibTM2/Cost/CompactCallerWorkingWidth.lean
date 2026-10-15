@@ -40,7 +40,7 @@ theorem compactCaller_runtime_eventually_workingWidth (G F : ℕ) (hF : F+1≤m^
     calc
       (G+m+4)*Mult.Sizes.d M^6≤Mult.Sizes.d M*Mult.Sizes.d M^6 := Nat.mul_le_mul_right _ hlarge
       _ = Mult.Sizes.d M^7 := by rw [pow_succ]; ring
-      _ ≤ Mult.Sizes.b M := hbig.pow_le_b (by decide : 7≤20)
+      _ ≤ Mult.Sizes.b M := hbig.pow_le_b (by decide : 7≤16)
   have hb : Mult.Sizes.b M≤Mult.Sizes.p M := Nat.le_mul_of_pos_left _ (by decide : 0<6)
   have hhalf := Nat.div_le_self (D+1) 2
   unfold CompactReservationFits at hfit

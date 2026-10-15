@@ -246,6 +246,7 @@ import IntegerMultBounds.MathlibTM2.Fast.CompactMainDistributionCalls
 import IntegerMultBounds.MathlibTM2.Fast.CompactMainInputDistribution
 import IntegerMultBounds.MathlibTM2.Fast.CompactMainOutput
 import IntegerMultBounds.MathlibTM2.Fast.CompactFinal
+import IntegerMultBounds.MathlibTM2.Cost.CompactDimensionParameters
 
 /-! Focused integrity audit for the compact-control host primitives.
 These are prepared execution contracts, not an improved layer or multiplier theorem. -/
@@ -807,7 +808,15 @@ run_cmd do
     ``IntegerMultBounds.MathlibTM2.Fast.Main.compactMainInputDist_exec_eventually,
     ``IntegerMultBounds.MathlibTM2.Fast.Main.compactMainOutput_exec_eventually,
     ``IntegerMultBounds.MathlibTM2.Fast.Main.compactRetunedPrefix_exec,
-    ``IntegerMultBounds.MathlibTM2.Fast.Main.compact_mulInTime]
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.compact_mulInTime,
+    ``IntegerMultBounds.MathlibTM2.Cost.CompactDimension.prior_dimension_obstruction,
+    ``IntegerMultBounds.MathlibTM2.Cost.CompactDimension.margin_covers,
+    ``IntegerMultBounds.MathlibTM2.Cost.CompactDimension.layer_margin,
+    ``IntegerMultBounds.MathlibTM2.Cost.CompactDimension.twentieth_power_exceeds_sixteenth,
+    ``IntegerMultBounds.MathlibTM2.Cost.CompactDimension.next_supplier_obstruction,
+    ``IntegerMultBounds.MathlibTM2.Cost.CompactDimension.next_gaussian_obstruction,
+    ``IntegerMultBounds.MathlibTM2.Cost.CompactDimension.Eighth.margin_covers,
+    ``IntegerMultBounds.MathlibTM2.Cost.CompactDimension.Eighth.gaussian_margin]
   for name in names do
     for ax in ← collectAxioms name do
       unless #[``propext, ``Quot.sound, ``Classical.choice].contains ax do

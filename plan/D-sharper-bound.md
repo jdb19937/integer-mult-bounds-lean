@@ -44,17 +44,24 @@ not an assumption that every row already matches the sharper manuscript.
 | §7, packed ring products | Local logarithmic product factor has exponent bounded by `1-epsilon+epsilon c` | Saving `epsilon(1-c)`. | Must preserve a fast conventional subroutine and account for its extra logarithms under new parameters. Not currently binding. |
 | §9.7–9.8, precision and assembly | Maximum of all stage exponents, with exact recovery and fixed-machine assembly | The smallest surviving saving wins; isolated network improvement is insufficient. | Every changed stage must match actual costs and the exact recovery interface. |
 
-Further scalar tuning has a ceiling. The preserved integer sizing contracts
-require `epsExp >= 20`, so `epsilon=2^-5` is the largest admissible dyadic
-choice; Gaussian arithmetic separately requires `epsilon<1/12`. The actual
-`MatchSynPcs.mrP_eps_pos` condition is `lambda+c<lambda'`, while
-`sigma<lambda` and the convolution margin require `1-lambda'>=c(1-tau)`.
-Together these force `c < (1-sigma)/(2-tau)`, approximately `4.18e-10`;
-`c=2^-32` is the largest dyadic choice even if the layer exponents are retuned.
-The retained leaf condition is `sigma+(1-sigma)/2<lambda'`, and the internal
-recurrence still requires `tau(1+2c)<=lambda`. All hold at the M2 parameters.
-The next structural task is M3 compact dirty controls, followed by width/stock
-contracts and balanced coordinate routing in M4–M5.
+The preceding restrictions describe the historical M2 implementation. Compact
+integration removed its full-slot chunk restriction and proves `2^-37` with
+`c=2^-3`. The completed dimension retune doubles epsilon to `2^-4`, retaining the
+same chunk and layer exponent, for saving `2^-36`. Its executable sixteenth-root
+parameter generation, sharpened size bounds and all 289 affected dependencies
+passed guarded checks. The complete axiom audit passed for 124960 declarations
+and the focused audit passed for 563 contracts. The former `epsExp>=20` condition was excess
+proof slack, not an intrinsic runtime requirement: the modulus-room and precision
+arguments can use sixteenth powers, while compact working width needs only
+`d^7<=b`.
+
+At the old epsilon `2^-5`, even approaching the existing complex-supplier
+exponent cannot reach `2^-36`. The completed retune has positive Gaussian margin
+`1/32`; the following dyadic dimension `epsilon=2^-3` fails the current Gaussian
+condition `epsilon<1/12`. Further doubling beyond this candidate therefore needs
+new stage mathematics or stronger suppliers, rather than another parameter-only
+claim. Stopped recursion and precision/workspace remain structural milestones
+for the selected state-of-the-art construction.
 
 ## Historical M1: retune the existing construction
 
@@ -1115,7 +1122,8 @@ Lean machine theorems and focused axiom audits; M3–M8 remain unfinished.
 
 ## Completed compact integration checkpoint
 
-The public `MathlibTM2.mulInTime` now proves saving `2^-37` unconditionally.
+The public `MathlibTM2.mulInTime` now proves saving `2^-36` unconditionally,
+after the sixteenth-root dimension retune of the original `2^-37` compact result.
 `CompactFinal.compactRetunedPrefix_exec` composes actual input/parameter/distribution
 execution, the fifteen-stage chain and canonical output. `CompactMainHost` bounds
 all cleanup using a finite push constant and installs the completed main in the
@@ -1125,3 +1133,18 @@ within the sixteen-step allowance. No execution or cost premise remains in
 `compact_mulInTime`; earlier progress paragraphs above describe historical gates.
 M3 remains yellow only for stopped recursion and local repair work needed for
 later improvements; M4–M8 and the selected state-of-the-art goal remain open.
+
+### Follow-on logarithmic estimate under investigation
+
+The `epsilon<1/12` condition above belongs to the current coarse resampling
+cost estimate, not necessarily its executable algorithm. The existing
+Schönhage–Strassen polylogarithmic overhead is bounded using loss `delta=1/8`.
+A proposed sharper bound uses `delta=2^-5`, log exponent `2^-6`, and dyadic
+coefficients `2^7` and `2^14`. If checked and propagated into actual stage costs,
+its resampling margin becomes `1/4-delta-3epsilon/2`; at `epsilon=2^-3` this is
+`2^-5`, leaving room for public saving `2^-35`. This is not yet a machine theorem.
+Existing precision and workspace arguments appear to support the eighth-root
+dimension with a power-eight sizing cap. New supplier or Gaussian mathematics
+is still necessary after this route: at epsilon one eighth the existing complex
+supplier cannot certify `2^-34`, and epsilon one quarter fails the resampling
+margin even with arbitrarily small positive logarithmic loss.

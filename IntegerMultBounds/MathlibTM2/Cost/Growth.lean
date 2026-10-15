@@ -8,7 +8,7 @@ public import Mathlib.Data.Nat.Size
 # Growth of the size parameters
 
 Bounds on the parameters of `Mult/Sizes.lean` in powers of `B = b n = ⌈log₂ n⌉`, the comparison
-of `B` with `L = log n`, and closure lemmas for `IsBigO` against `n L^e`. Here `ε = 2^{-5}`
+of `B` with `L = log n`, and closure lemmas for `IsBigO` against `n L^e`. Here `ε = 2^{-4}`
 (`epsilon`) and `c = 2^{-32}` (`cParam`).
 
 * `gr_log_le_b`, `gr_b_le_two_log`: `L ≤ B` for every `n`, and `B ≤ 2L` for `n ≥ 8`.

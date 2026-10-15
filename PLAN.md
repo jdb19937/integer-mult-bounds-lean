@@ -3,7 +3,7 @@
 ✅ Complete · 🟡 In progress / partially complete · ⬜ Not started.
 
 **Bound improvement progress:** M1 ✅ · M2 ✅ · M3 🟡 · M4 ⬜ · M5 ⬜ · M6 ⬜ · M7 ⬜ · M8 ⬜.
-The completed compact multiplier proves saving `2^-37`; further structural improvements remain in progress.
+The completed compact multiplier proves saving `2^-36`; further structural improvements remain in progress.
 
 ## Bound scoreboard
 
@@ -12,8 +12,10 @@ time `O(n (log n)^(1-kappa))`. Larger saving means a smaller time exponent.
 
 | Bound | Exponent saving `kappa` | Status |
 | --- | --- | --- |
-| **Current unconditional result** | **`2^-37`** | ✅ Complete compact runtime, all-input correctness and cost bound on one fixed finite Mathlib machine. |
-| **Historical M2 result** | `2^-66` | ✅ Superseded; compact integration improves the saving by `2^29`, not a measured runtime speedup. |
+| **Current unconditional result** | **`2^-36`** | ✅ Complete compact runtime, all-input correctness and cost bound on one fixed finite Mathlib machine. |
+| **Next dimension-retune target** | **`2^-35`** | 🟡 Sharper logarithmic costs and eighth-root size lemmas checked; executable sizing and stage-cost integration remain. |
+| **Previous compact result** | `2^-37` | ✅ Superseded by the checked sixteenth-root dimension retune. |
+| **Historical M2 result** | `2^-66` | ✅ Superseded; compact integration improves the saving by `2^30`, not a measured runtime speedup. |
 | **Pre-M1 unconditional result** | `296 / (10^11 * 2^131)` (between `2^-160` and `2^-159`) | Superseded by M1; the existential theorem remains compatible. |
 | **Historical M1 result** | `2^-93` | M2 improves the public exponent saving by `2^27`; this is not a timing speedup. |
 | **Goal: match the selected community construction** | **`836330098538459 / 500000000000000000 = 0.001672660197076918`** | ⬜ Not yet proved here. Upstream construction is conditional; our goal is an unconditional machine theorem at this exact saving. |
@@ -28,13 +30,13 @@ certificate alone does not improve the proved multiplication bound.
 `IntegerMultBounds.MathlibTM2.statement` constructs a fixed finite Mathlib
 machine that multiplies every input pair correctly in worst-case time
 `O(n (log n)^(1-kappa))`, with positive saving
-`kappa = 2^-37`. No algorithmic or runtime assumption remains.
+`kappa = 2^-36`. No algorithmic or runtime assumption remains.
 
 ## Completed proof
 
 | Part of the proof | Source | Mathematics | Tape | Files |
 | --- | --- | --- | --- | --- |
-| [Proved Mathlib end-to-end multiplier](plan/C-mathlib-end-to-end.md) | — | ✅ 1/1 | ✅ 1/1 | 592 |
+| [Proved Mathlib end-to-end multiplier](plan/C-mathlib-end-to-end.md) | — | ✅ 1/1 | ✅ 1/1 | 601 |
 
 The [proof details](plan/C-mathlib-end-to-end.md) cover the numerical
 algorithm, recursive layers, transforms, resampling, CRT routing, exact
@@ -44,7 +46,7 @@ The Files column counts the components listed in that detail file; the full
 transitive proof dependency set is larger, as recorded by the
 [retention audit](docs/proof-retention.md).
 
-The complete compact theorem and its import-closure axiom audit passed at saving `2^-37`. The
+The complete compact theorem and its import-closure axiom audit passed at saving `2^-36`. The audit covers 124960 declarations; the focused compact audit covers 563 contracts. The
 earlier library-wide build and audit passed after native-wrapper retirement.
 `CompletedProofCheck.lean` independently audits
 the completed theorem's import closure; the library and focused checks allow
@@ -54,7 +56,7 @@ only `propext`, `Classical.choice` and `Quot.sound`.
 
 The [section-by-section implementation plan](plan/D-sharper-bound.md) is based
 on the original OpenAI manuscript and the pinned selected community
-construction. **Today's binding margin is §5 compact-layer cost: `epsilon (1-lambda') = 2^-37`.**
+construction. **Today's binding margin is §5 compact-layer cost: `epsilon (1-lambda') = 2^-36`.**
 The actual compact runtime removes the old full-slot control restriction. Further
 improvement must tighten the recursive layer estimate while preserving the §6
 layout margin; stopped recursion and better precision/workspace accounting are
@@ -77,8 +79,8 @@ in the completed multiplier.
 | §2 Machine model and streams | 🟡 | Every new algorithm needs actual finite-machine costs and clean returned state. | Reuse Mathlib FinTM2 and existing host primitives; price new schedules. |
 | §3 Finite networks | ⬜ | Current bit/complex primitive savings are `2.96e-9` and `4.18e-10`. | Selected PR589 bit supplier and T16 complex supplier, with checked words, restoration, owner schedules and variable-rank moments. |
 | §4 Address interchange | 🟡 | All field moves inherit the bit exponent; the running CRT now uses linear direct routing. | Prove selected arbitrary-source routing contracts. |
-| §5 Butterfly layers; Appendix A | 🟡 | **Current binding saving `epsilon (1-lambda') = 2^-37`.** Complete compact runtime is proved. | Tighten recursive layer costs using stopped recursion, precision and proved recursive stock. |
-| **§6 Synthetic transforms/layout** | 🟡 | **Layout saving `epsilon c (1-tau)` exceeds `2^-37` but remains a nearby restriction.** | M2 retuned epsilon/c; next replace this charge by selected coordinate routing and a balanced prefix. |
+| §5 Butterfly layers; Appendix A | 🟡 | **Current binding saving `epsilon (1-lambda') = 2^-36`.** Complete compact runtime is proved. | Tighten recursive layer costs using stopped recursion, precision and proved recursive stock. |
+| **§6 Synthetic transforms/layout** | 🟡 | **Layout saving `epsilon c (1-tau)` exceeds `2^-36` but remains a nearby restriction.** | M2 retuned epsilon/c; next replace this charge by selected coordinate routing and a balanced prefix. |
 | §7 Exact polynomial products | ✅ | Packing widths and extra logarithms must remain within budget. | Reuse the proved fast subroutine and exact algebra; revalidate under new widths. Not currently binding. |
 | §8 Resampling | 🟡 | Current Gaussian exponent is `7/8 + 3 epsilon/2`, preventing epsilon near one. | Faster rounded inverse, bulk core/halo execution and proved error/normalization bounds. |
 | §9 Exact multiplication/cost | 🟡 | Direct CRT charge is `d(1+ell^tau)`; the final bound is the smallest stage margin. | Seven-stage bootstrap, all 47 linked target inequalities and unchanged exact output semantics. |
@@ -97,7 +99,7 @@ criteria are in the [implementation plan](plan/D-sharper-bound.md).
 | --- | --- | --- | --- | --- |
 | **M1** | ✅ | **§§5, 6, 9** | **Set `epsilon=2^-30`, `c=2^-34`; reprove dependent sizing, executable parameter generation, cost and machine lemmas.** | **Complete, historical.** Public saving `kappa=2^-93`; exact internal margin `296/(10^11 * 2^64)` lies between `2^-93` and `2^-92`. Internal margin improved by `2^67`; public saving improves the former exact bound by more than `2^66`. |
 | M2 | ✅ | §§4.3, 8.2, 9.3 | Replace adjacent CRT walks by direct nonadjacent swaps; preserve exact semantics and price setup, controls, movement and cleanup. | **Complete.** The running multiplier uses linear CRT routing and sharp linear resampling costs. Final parameters `epsilon=2^-5`, `c=2^-32`, `lambda'=1-1/10^11` give exact margin `296/(10^11 * 2^37)` and public saving `2^-66`; theorem and focused audit pass. |
-| M3 | 🟡 | §5.2–5.3, Appendix A | Compact dirty controls, actual caller integration, stopped recursion and local repair costs. | **Compact integration complete:** actual eighth-root transforms, main input/distribution, full arithmetic chain, output, cleanup and finite-machine dispatch prove public saving `2^-37`. **Remaining:** actual stopped recursion and its local repair costs for later improvements. |
+| M3 | 🟡 | §5.2–5.3, Appendix A | Compact dirty controls, actual caller integration, stopped recursion and local repair costs. | **Compact integration complete:** actual eighth-root transforms, main input/distribution, full arithmetic chain, output, cleanup and finite-machine dispatch prove public saving `2^-36`. **Remaining:** actual stopped recursion and its local repair costs for later improvements. |
 | M4 | ⬜ | §5.4, §9.7 | Linear completed-child precision bound and explicit recursive workspace/stock contracts. | Planned. Remove conservative guard-growth restrictions and prove the reserve coefficients required at selected cutoffs. |
 | M5 | ⬜ | §6.2, §4 | Balanced prefix and arbitrary-source coordinate routing in both transform directions. | Planned. Replace layout saving `epsilon c a_b` by direct movement saving `a_b`; restore spectators and frequency order. |
 | M6 | ⬜ | §3.1–3.6, §§4–5 interfaces | Prove both selected finite suppliers, their variable-rank moments and the 144-call owner schedule. | Planned. Target primitive endpoints about `0.00173343` (bit) and `0.00167546` (complex); component bounds alone do not update the final bound. |
@@ -128,16 +130,16 @@ criteria are in the [implementation plan](plan/D-sharper-bound.md).
 | Complete eighth-root transforms | ✅ | Actual forward/opposite specifications use the new initial wires and existing executable layouts, with no execution/layout/readiness oracles. |
 | Retuned reservation and complete top-cost exponent | ✅ | All reserved axes and the actual recursive top program, kernels and controls fit the proposed layer exponent with dyadic coefficients. |
 | Retuned distribution-to-transform entry | ✅ | Actual charged distribution preserves the main invariant and supplies the new transform entry state. |
-| Retuned aggregate analytic bound | ✅ | Stage envelope and actual machine costs are matched at saving `2^-37`. |
+| Retuned aggregate analytic bound | ✅ | Stage envelope and actual machine costs are matched at saving `2^-36`. |
 | Replaceable main procedure entry | ✅ | Checked restricted-call transport preserves layer execution when installing the expanded main body. |
 | Actual retuned layer costs | ✅ | Complete chunk layer and direct branch costs match the retuned envelope; loop summation remains. |
 | Retuned source transforms under replaceable main entry | ✅ | Full source stages execute with exact costs under the expanded recursive procedure table. |
 | Main overhead, normalization and cleanup cost bridge | ✅ | Original primitive costs, fixed wrapper steps and expanded-host cleanup fit the sharper bound given the actual source-run match. |
 | Actual compact round and loop cost sums | ✅ | Both loop directions fit the retuned convolution envelope given the explicit stash budget. |
 | Expanded source and total-time aggregation | ✅ | All three actual source-run costs plus main overhead fit the stronger asymptotic bound, conditional on the two complete transform costs. |
-| Complete transform and concrete main-time estimate | ✅ | Actual stash, layout, bootstrap, loops, source runs and main overhead satisfy the `2^-37` envelope with no remaining stage-cost hypotheses. |
-| Stronger fixed-machine theorem | ✅ | Public `MathlibTM2.mulInTime` proves `2^-37` for every input pair; complete actual execution and cost hypotheses are discharged. |
-| Stopped recursion | ⬜ | Required for the later selected construction; not yet implemented. |
+| Complete transform and concrete main-time estimate | ✅ | Actual stash, layout, bootstrap, loops, source runs and main overhead satisfy the `2^-36` envelope with no remaining stage-cost hypotheses. |
+| Stronger fixed-machine theorem | ✅ | Public `MathlibTM2.mulInTime` proves `2^-36` for every input pair; complete actual execution and cost hypotheses are discharged. |
+| Stopped recursion | 🟡 | Cutoff-rebased geometry and charged record construction are checked; cutoff computation, scanner integration, precision and final runtime cost matching remain. |
 
 **Execution order:** M1–M2 complete → M3–M5 → M6/M7 → M8. Use current
 smaller networks while establishing the structural interfaces; then plug in
