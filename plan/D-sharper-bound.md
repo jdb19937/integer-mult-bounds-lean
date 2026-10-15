@@ -899,6 +899,15 @@ resampling and direct CRT costs. This remains conditional on matching actual
 machine runtime to that envelope: full transform-cost matching and expanded
 main-chain assembly remain open. Public saving is still `2^-66`.
 
+Actual chunk-layer costs now discharge caller geometry and volume obligations;
+the direct branch is also matched to the retuned convolution envelope. Complete
+retuned source transforms execute under an arbitrary expanded main entry, and
+legacy primitive transport preserves the private bank with one charged step.
+The main-cost bridge accounts for unchanged primitive costs, fixed wrapper
+normalizations and expanded-host cleanup. Its stronger asymptotic conclusion
+still requires the actual source-run cost bound. Loop summation and whole-chain
+execution assembly remain open; these contracts do not advance the public bound.
+
 Prove complete temporary address ranges survive every role split, arbitrary
 initial temporary values are restored, and exceptional extraction, sorting,
 reinsertion and cleanup are charged at each node's own volume. Add an actual

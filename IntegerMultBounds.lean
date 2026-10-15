@@ -2599,3 +2599,12 @@ import IntegerMultBounds.MathlibTM2.Fast.CompactSynRetunedMainEntry
 import IntegerMultBounds.MathlibTM2.Fast.CompactSynRetunedDistributionEntry
 import IntegerMultBounds.MathlibTM2.Fast.CompactMainCalls
 import IntegerMultBounds.MathlibTM2.Fast.CompactMainEntryTable
+import IntegerMultBounds.MathlibTM2.Cost.CompactRetunedLayerMatch
+import IntegerMultBounds.MathlibTM2.Cost.CompactRetunedDirectCost
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainTransformCalls
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynRetunedEntrySpecs
+import IntegerMultBounds.MathlibTM2.Fast.CompactSrcRetunedFrame
+import IntegerMultBounds.MathlibTM2.Fast.CompactSrcRetunedStages
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainTimeGlue
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainTimeBound
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainPrimitiveRuns

@@ -6310,3 +6310,8 @@ Parameters and asymptotics.
 - `MathlibTM2/Fast/CompactBdRetune.lean`, `CompactBdWiresCost.lean`, `CompactBundleWires.lean`: Executable retuned distribution bundle and dyadic costs from the original distribution precondition.
 - `MathlibTM2/Fast/CompactSynRetunedMainFrame.lean`, `CompactSynRetunedMainEntry.lean`, `CompactSynRetunedDistributionEntry.lean`: Actual distribution establishes placed retuned transform entry; forward/opposite specifications preserve the main frame.
 - `MathlibTM2/Fast/CompactMainCalls.lean`, `CompactMainEntryTable.lean`: Restricted-call execution transport allows replacement of the main entry while preserving both recursive layer tables.
+
+- `MathlibTM2/Cost/CompactRetunedLayerMatch.lean`, `CompactRetunedDirectCost.lean`: Actual full-dimension chunk-layer cost with caller obligations discharged, and actual retuned direct-branch costs matched to the compact convolution envelope.
+- `MathlibTM2/Fast/CompactMainTransformCalls.lean`, `CompactSynRetunedEntrySpecs.lean`, `CompactSrcRetunedFrame.lean`, `CompactSrcRetunedStages.lean`: Full retuned source transforms under an arbitrary expanded main entry, with restricted-call transport, preserved source frame and exact stage costs.
+- `MathlibTM2/Fast/CompactMainPrimitiveRuns.lean`: Legacy source primitives transported into the expanded host with preserved private bank and one charged normalization step.
+- `MathlibTM2/Fast/CompactMainTimeGlue.lean`, `CompactMainTimeBound.lean`: Aggregate unchanged primitive costs with supplied expanded source costs and symbolic host cleanup; fixed normalization overhead is absorbed, yielding the stronger asymptotic bound conditional on the source-run cost match.
