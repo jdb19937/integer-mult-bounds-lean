@@ -1597,3 +1597,17 @@ times the right-hand side. Both guarded checks and the10-declaration
 standard-axiom audit pass. Together with the Gohberg–Semencul blocks, this
 completes the exact algebra of the fast inverse; rounded factors, error
 propagation through the four steps and convolution/tape costs remain open.
+
+### Rounded four-step error composition
+
+The exact full solution satisfies the Schur boundary equation, and the Schur
+operator is linear with inverse bound `1/μ`. Stage deviations `e₁…e₅` for the
+interior pass, residual, boundary solve, recovery right-hand side and second
+interior pass compose to boundary error `e₃+(Ke₁+e₂)/μ` and interior error
+`e₅+(e₄+K·boundary)/μ`, with coupling row mass `K`. On the actual rounded
+Gaussian matrix the off-diagonal row mass is at most one, giving
+`e₃+8p(e₁+e₂)` and `e₅+8p(e₄+e₃+8p(e₁+e₂))`, with no factor in the number of
+cells or the line length. Both guarded checks and the8-declaration
+standard-axiom audit pass. This is the source's independent composition with
+simpler constants; local stage bounds for rounded Gohberg–Semencul and
+boundary elimination, and tape costs, remain open.
