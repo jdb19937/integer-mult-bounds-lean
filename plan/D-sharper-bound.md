@@ -1450,3 +1450,14 @@ the eight-declaration standard-axiom audit pass. These are actual operator
 inverses; their fast Toeplitz/Schur/core/halo realization, boundary composition,
 prime supply, normalization and charged machine costs remain open. The public
 fixed-machine saving is still `2^-34`.
+
+The stopped constructor is now hosted in the actual layer record path from
+SynV. Fresh records, exponent sum, config and width follow the executed
+constructor. Stopped and original lists have identical selected-address lists
+after global rebase, preserving coverage and the shared padded-row divisor.
+Configured precision discharges actual piece readiness and separate reservation
+costs. The selected-axis cutoff satisfies the required ambient-dimension depth
+bound, including small selected dimensions. Five modules and seven principal
+standard-axiom audits pass. The selected list is explicitly nonempty here;
+downstream refresh/prepare, the empty fallback and active recurrence absorption
+remain to connect.
