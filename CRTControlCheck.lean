@@ -1,3 +1,6 @@
+import IntegerMultBounds.MathlibTM2.Fast.CRTControlTarget
+import IntegerMultBounds.MathlibTM2.Cost.CRTControlTarget
+import IntegerMultBounds.MathlibTM2.Fast.CRTDirectDrive
 import IntegerMultBounds.MathlibTM2.Cost.DirectGrowth
 import IntegerMultBounds.MathlibTM2.Cost.MatchResampA
 import IntegerMultBounds.MathlibTM2.Cost.MatchResampB
@@ -36,12 +39,24 @@ import Lean.Util.CollectAxioms
 
 /-! Audit the replacement CRT control semantics and arithmetic kernels.
 Includes the complete all-fiber rotation and its semantic specialization,
-workspace restoration and distant exposure. Runtime descriptor production and
-complete driver/multiplier integration remain separate work. -/
+workspace restoration and distant exposure. Runtime descriptor production, complete unary-input target execution, and
+weighted traversal are covered. Concrete driver/multiplier integration remains
+separate work. -/
 
 open Lean in
 run_cmd do
   let names := #[
+    ``IntegerMultBounds.MathlibTM2.Fast.crtControlTarget_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtControlTarget_clear_runs,
+    ``IntegerMultBounds.MathlibTM2.Cost.crtControlTarget_pipeline_le,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtDirectTarget_zero,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtDirectForwardStep_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtDirectInverseStep_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtDirectForwardLoop_weighted,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtDirectInverseLoop_weighted,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtDirectRestore_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtDirectInverseCleanup_runs,
+
     ``IntegerMultBounds.MathlibTM2.Cost.tot_directCRT_le,
     ``IntegerMultBounds.MathlibTM2.Cost.mt_rsa_stage_le_linear,
     ``IntegerMultBounds.MathlibTM2.Cost.mt_rsb_stage_le_linear,

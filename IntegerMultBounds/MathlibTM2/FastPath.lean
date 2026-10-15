@@ -1,4 +1,8 @@
 module
+
+public import IntegerMultBounds.MathlibTM2.Fast.CRTControlTarget
+public import IntegerMultBounds.MathlibTM2.Cost.CRTControlTarget
+public import IntegerMultBounds.MathlibTM2.Fast.CRTDirectDrive
 public import IntegerMultBounds.MathlibTM2.Cost.DirectGrowth
 public import IntegerMultBounds.MathlibTM2.Fast.CRTControlProducer
 public import IntegerMultBounds.MathlibTM2.Fast.CRTControlStreams

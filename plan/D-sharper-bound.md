@@ -317,6 +317,16 @@ The existing resampling programs now have sharp matching theorems
 replacing the running CRT driver and final aggregate budget is still required
 before this improves the public multiplication theorem.
 
+`CRTControlTarget.lean` now composes unary parameter preparation, descriptor
+production, routing-gap setup, distant exposure, rotation and full cleanup.
+Only the data register changes. `Cost/CRTControlTarget.lean` bounds the sum of
+actual nonzero target costs by a constant times `totDirectCRT` plus `T`.
+`CRTDirectDrive.lean` implements both unary-stream traversal directions with
+exact stream restoration and a sum of individual target costs, avoiding an
+extra dimension factor. Its target-body contract still needs the concrete
+machine instantiation; runtime setup and final padding/reversal assembly are
+in progress. These contracts pass the focused standard-axiom audit.
+
 Remaining integration steps, in order:
 
 1. **M2b — rotation scanner and producer: complete.** The actual all-fiber
@@ -324,8 +334,8 @@ Remaining integration steps, in order:
    exact exposed tape, and matching production/rotation costs are proved.
    These components preserve the existing triangular arithmetic semantics.
 2. **M2c — driver and matching:** runtime parameter preparation and complete
-   paired reversal are proved. Assemble producer/parameters/exposure/rotation
-   into the target step and forward/inverse unary-stream traversal; replace the
+   paired reversal, the complete target step, and weighted forward/inverse
+   traversal are proved. Instantiate the traversal and runtime setup; replace the
    actual driver, establish round-trip correctness, and match its actual costs.
    Resampling's linear exposure cost is now separated from the old quadratic
    envelope; connect these sharper stage theorems to the aggregate budget.
@@ -525,7 +535,8 @@ reduction interfaces and encoding overhead if those corollaries are desired.
    `2^-93` and `2^-92`, with the existing existential theorem preserved.
 2. **M2 in progress:** complete all-fiber rotation, workspace restoration,
    width setup, generator kernels, linear schedule and distant exposure/cleanup
-   checked; next finish descriptor traversal and complete driver, then retune and publish
+   checked; descriptor production and full target execution are complete. Finish
+   concrete driver integration, then retune and publish
    the resulting stronger theorem. This yields a structural improvement
    without importing the large selected supplier inventory.
 3. **M3–M5:** compact controls, width/stock contracts and balanced coordinate
