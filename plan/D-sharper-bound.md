@@ -1517,3 +1517,15 @@ Packed-child geometry and runtime readiness remain unfinished after a
 definitional-equality memory hotspot; those drafts are preserved separately
 and excluded from committed sources. Full active recurrence/cost absorption
 remains open.
+
+### Complete selected PR589 label dimensions
+
+All636 selected rational root-span label dimensions now have exact spanning
+and dual certificates. Generic root-list subset witnesses give genuine
+nesting, actual projector-difference MOVE rank and ordered-list conversion.
+All44 Lean modules and the1981-declaration standard-axiom audit pass; the
+46-file checkpoint reproduces its42 generated modules and preserves all517
+earlier supplier files. Concrete nesting/rank certificates for29250 phase
+incidences plus661 final-alignment incidences, weighted moments, hosting and
+tape realization remain open. This checkpoint supplies complete label
+dimensions, not the complete ordered MOVE profile.
