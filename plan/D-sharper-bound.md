@@ -1624,3 +1624,10 @@ within `64Lη V` of the exact inverse for inputs bounded by `V≥1` when
 similarity scaling, the concrete rounding of the actual factors and the
 convolution costs remain open. Both guarded checks and the39-declaration
 standard-axiom audit pass.
+
+Every interior row of the actual rounded Gaussian matrix, whose band stays in
+the array and in one phase cell, is now proved free of aliasing and exactly
+equal to `a_i G(|l-i|)/a_l` for every column, with the shared Toeplitz
+kernel `G` and zeros beyond the band. This connects the actual matrix to the
+Gohberg–Semencul blocks. The guarded check and3-declaration standard-axiom
+audit pass. Per-cell interior solves and similarity-scaled rounding remain.
