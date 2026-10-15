@@ -1485,3 +1485,14 @@ from the original pivot equation. No symmetry or positive-definiteness is
 assumed. Both guarded source checks and the17-declaration standard-axiom audit
 pass. Connecting the actual rounded Gaussian matrix, boundary index geometry,
 LU/Woodbury realization and tape costs remains open.
+
+### T16 exact complex gate realization
+
+Source-faithful C/P/D gates now have genuine complex operators and exact
+phase-bearing Pauli conjugation, including inverses, literal diagonal
+polynomial/alpha compatibility and finite-word composition. The global phase
+is represented explicitly. Seven guarded module checks and a164-declaration
+standard-axiom audit pass without warnings; the eight-file checkpoint leaves
+all previous trace/geometry/tableau imports unchanged. Canonical-word/native
+tableau identification, monomial residual equality, tableau-plus-zero-state
+completeness, adapters, routing and tape costs remain open.
