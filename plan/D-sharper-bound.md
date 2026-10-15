@@ -1415,3 +1415,12 @@ a two-sided rounded inverse bounded by `2^(16p+1)`, within `2^(-12p)` of the
 exact inverse. The guarded check and14-declaration standard-axiom audit pass.
 This closes the approximation-to-operator bridge; constructing the exact sharp
 inverse and executing its structured solve remain separate obligations.
+
+The PR589 source's nine physical COPY/ERASE buffer lifecycles now have an
+explicit imported program through temporary661, retaining527 intervening
+frame-zero ADD incidences and545 total records. Decoded scatter equivalence,
+immutable copied sources and cleared temporary are proved for supplied
+invertible frames and arbitrary dirty binary streams. All four modules and
+101-declaration standard-axiom audit pass; source exporter order and six-file
+manifest verified. Concrete rational E8 projection interpretation and actual
+COPY/MOVE ranks remain open, so this does not yet certify primitive costs.
