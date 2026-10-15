@@ -30,6 +30,12 @@ would be progress, but would not reproduce the exact selected target.
 
 ## First milestone: prove that the gain can survive the host
 
+The [main milestone scoreboard](../PLAN.md#improvement-milestones) splits this
+work into P1 (constraint inventory and feasible candidate), P2 (first stronger
+machine theorem), P3 (generalized tuning) and S1 (target/host comparison).
+Prioritize P1–P2 before the broader supplier port. A feasible numerical
+candidate is provisional until all affected machine bounds are proved.
+
 Before porting the large finite construction, make the exponent transfer
 explicit. The existing `MathlibTM2/Cost/Total.lean` proves
 `totKappa = epsilon * cParam * (1 - Parameters.tau)`, with
