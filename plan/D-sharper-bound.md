@@ -658,6 +658,28 @@ Propagate the complete execution costs and discharge remaining caller sizing; re
 does not establish the complete reserved transform. M3 remains open and public
 saving remains `2^-66`.
 
+`Fast/CompactTopRuntimeExecution.lean` now discharges actual piece readiness,
+packing, layout, primitive guard and record-capacity obligations internally.
+Its inputs are original row/address precision, runtime size lower bounds,
+reservation capacity and the actual prepared machine state; no per-layer
+execution or arbitrary cost premise remains. `Fast/CompactSynRoundSources.lean`
+executes the existing chunk-round arithmetic on the shared host to obtain
+the stride, phase and current low offset from empty scratch, preserving the
+compact bank. Full round staging and the original global bootstrap remain.
+
+**Conditional first numerical gate after compact integration:** retain
+`epsilon=2^-5` and test `c=2^-3` only after the actual compact caller and
+fallback costs are proved. The local reservation term becomes
+`d^(7/8)*guard`, while the checked active recurrence uses
+`d^lambda*guard^tau`. Layout then permits exact saving
+`37/3200000000000`. Choosing `lambda'=1-2^-33` would give layer margin
+`2^-38` and preserve the old half-leaf inequality; `lambda'=1-2^-32`
+would give `2^-37` but fails that old inequality and requires replacing its
+use with the proved full-depth compact recurrence. These are arithmetic
+candidates, not proved machine bounds: complete control/setup absorption,
+terminal rounds, noncompact fallback and actual executable size generation
+must all pass before retuning or updating the scoreboard.
+
 **Actual caller integration gate:** `Fast/SynRound.lean`'s `SynV` starts
 all scratch registers empty. The new constructor's `s0=d`, `s1=guard` and
 `s7=offset` must therefore be computed or loaded from retained original
@@ -667,7 +689,12 @@ retain original precision to compute `guard=4*clog2(p)+6` (working width is
 not that precision). The existing rest-state initializer also consumes
 `p.kh` and `p.rh`, whereas compact configuration production returns only
 piece/configuration records and working width: initialize the actual stride
-and phase explicitly. Then compose shared-host setup, record construction,
+and phase explicitly. Concrete global sources exist: `MainProg.mnUs` copies
+original precision into unary `Main.mnIo .dpn` (also `mnRnd .pn`), retained by
+`MainCorrect.MnMid`; the initial `SynV.p.D` is the original axis count and can
+be retained before selection changes. The bootstrap must connect those
+sources through the expanded main-host embedding and price their copies.
+Then compose shared-host setup, record construction,
 rest initialization, stash, top execution, pop, unstash and cleanup, charging
 every stage and restoring the original round frame. Keep a proved fallback
 for selections below the reservation cutoff.
