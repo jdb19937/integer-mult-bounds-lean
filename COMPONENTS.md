@@ -6207,3 +6207,5 @@ Parameters and asymptotics.
 - `MathlibTM2/Node/CompactBasisSlot.lean`, `Node/CompactBasis.lean`: Actual parent-length preparation after division, slot-index setup, computed compact execution and cleanup; list composition realizes the exact basis map with restored frame and summed costs. Concrete register wiring remains separate.
 
 - `MathlibTM2/Fast/CompactTopCoordinates.lean`, `Fast/CompactTopSetup.lean`: Actual original-input root record and top-coordinate computation, regenerating cleared reservation counts and restoring all intermediates. The configuration serializer role adapter remains separate.
+
+- `MathlibTM2/Node/CompactBasisRegisters.lean`: Concrete finite compact register bank, persistent global reservation predicate and layer-counter aliases; actual basis execution changes only its selected wire. Factor/layer and top-wrapper integration remain separate.

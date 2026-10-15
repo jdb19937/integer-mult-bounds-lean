@@ -1,3 +1,4 @@
+import IntegerMultBounds.MathlibTM2.Node.CompactBasisRegisters
 import IntegerMultBounds.MathlibTM2.Fast.CompactTopSetup
 import IntegerMultBounds.MathlibTM2.Cost.CompactCallerCapacity
 import IntegerMultBounds.MathlibTM2.Node.CompactBasis
@@ -130,7 +131,8 @@ run_cmd do
     ``IntegerMultBounds.MathlibTM2.Node.compactBasis_exec,
     ``IntegerMultBounds.MathlibTM2.Fast.sg_compactTopCoordinates,
     ``IntegerMultBounds.MathlibTM2.Fast.sg_compactTopSetup,
-    ``IntegerMultBounds.MathlibTM2.Fast.sg_compactTopRecordSetup]
+    ``IntegerMultBounds.MathlibTM2.Fast.sg_compactTopRecordSetup,
+    ``IntegerMultBounds.MathlibTM2.LayerMachine.compactBasisW_exec]
   for name in names do
     for ax in ← collectAxioms name do
       unless #[``propext, ``Quot.sound, ``Classical.choice].contains ax do

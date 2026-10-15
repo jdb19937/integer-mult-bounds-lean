@@ -577,9 +577,12 @@ computed shift, piece-width validity and complete reserved `topZ` semantics.
 `Node/CompactBasisSlot.lean` computes the parent length from the divided live
 length, seeds slot indices, executes the computed slot and clears its controls.
 `Node/CompactBasis.lean` composes these actual steps to realize `basisMap`,
-with summed execution costs and full frame restoration. Concrete register
-wiring and compact factor/layer wrappers remain, including persistent globals
-across child calls and top wrappers currently specialized to `SXReg`.
+with summed execution costs and full frame restoration.
+`Node/CompactBasisRegisters.lean` supplies a concrete finite register bank and
+persistent reservation predicate, aliases the live layer counters, and proves
+`compactBasisW_exec` changes only its selected wire. Compact factor/layer
+wrappers remain, including preservation of globals across child calls and top
+wrappers currently specialized to `SXReg`.
 Propagate the complete execution costs and discharge remaining caller sizing; record coverage alone
 does not establish the complete reserved transform. M3 remains open and public
 saving remains `2^-66`.
