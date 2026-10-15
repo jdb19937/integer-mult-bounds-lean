@@ -22,6 +22,9 @@ import IntegerMultBounds.MathlibTM2.Node.CompactHeaderBank
 import IntegerMultBounds.MathlibTM2.Node.CompactHeaderClear
 import IntegerMultBounds.MathlibTM2.Fast.CompactSynRows
 import IntegerMultBounds.MathlibTM2.Node.CompactSlotPrepared
+import IntegerMultBounds.MathlibTM2.Cost.CompactPrepared
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynRecRoot
+import IntegerMultBounds.MathlibTM2.Fast.CompactTopRows
 import Lean.Util.CollectAxioms
 
 /-! Focused integrity audit for the compact-control host primitives.
@@ -74,7 +77,12 @@ run_cmd do
     ``IntegerMultBounds.MathlibTM2.Fast.compactRebasePc_record,
     ``IntegerMultBounds.MathlibTM2.Fast.compactRebasedPcs_initial_ok,
     ``IntegerMultBounds.MathlibTM2.Fast.compactSyn_depth_le,
-    ``IntegerMultBounds.MathlibTM2.Node.compactSlotPrepared_exec]
+    ``IntegerMultBounds.MathlibTM2.Node.compactSlotPrepared_exec,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactSlotPreparedCost_le,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactSlotPrepared_exec_le,
+    ``IntegerMultBounds.MathlibTM2.Fast.sg_compactSynRoot,
+    ``IntegerMultBounds.MathlibTM2.Fast.compactTopRows_bounds,
+    ``IntegerMultBounds.MathlibTM2.Fast.compactTopRows_pcs_ok]
   for name in names do
     for ax in ← collectAxioms name do
       unless #[``propext, ``Quot.sound, ``Classical.choice].contains ax do

@@ -487,9 +487,11 @@ coefficient index without moving the encoded stream. The shifted slot action
 commutes with this reshape, and expanded payload and volume agree exactly.
 This resolves the low-offset mismatch in the prepared compact executor.
 
-The row-axis and piece-building executions are checked separately. Their final
-root wrapper remains unverified after excessive proof-memory growth and is
-excluded from this checkpoint; proof limits were preserved.
+`Fast/CompactSynRecRoot.lean` now composes the actual row-axis calculation,
+reservation arithmetic, record production and cleanup. Its original-parameter
+execution theorem checks without a supplied execution premise. A generic
+intermediate composition avoids expensive reduction of the concrete constants;
+the final guarded check uses about two GiB with unchanged proof limits.
 
 `Fast/CompactSynRows.lean` now connects the actual padded row count: each
 piece's base-row metadata is the exact quotient by its level's wire-count power.
@@ -519,7 +521,14 @@ native bank; the existing dispatcher still synthesizes its own derived headers.
 and cleanup, with all three costs included. Only the live stream changes;
 unary sources, scratch and the initially empty native bank are restored.
 Runtime computation of the original unary descriptor values remains explicit
-caller work. The focused audit now passes for 45 contracts.
+caller work. `Cost/CompactPrepared.lean` bounds header setup by `274 V` and cleanup by
+`105 V`, where `V` is actual native bit volume. Complete prepared execution
+retains the compact-width bound with coefficient `2^(slotExponent(T,D)+9)`,
+independent of runtime dimensions. `Fast/CompactTopRows.lean` includes every
+outside row and high spectator when padding: the resulting row count is at
+most twice the original stock, is divisible by the global recursive divisor,
+and validates the unchanged piece records. The focused audit now covers 50
+contracts.
 
 **Next integration boundary:** supply the thirteen runtime unary values: chunk,
 global axes, guard, active axes, native rows, payload, slot count, slot width,

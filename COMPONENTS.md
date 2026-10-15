@@ -6187,3 +6187,7 @@ Parameters and asymptotics.
 
 - `MathlibTM2/Fast/CompactSynRows.lean`: Rebase piece row metadata to exact quotients of the actual padded row count without changing serialized records. Native divisibility and original-axis depth discharge shared-row validity.
 - `MathlibTM2/Node/CompactSlotPrepared.lean`: Actual header build, encoded compact operation and header cleanup from runtime unary descriptor values. Complete setup/execution/cleanup cost and exact restoration of the empty bank, source registers and scratch; only the live stream changes.
+
+- `MathlibTM2/Fast/CompactSynRecRoot.lean`: Concrete original-input composition of exact row-axis calculation, reserved piece production and scratch cleanup; its generic internal composition is discharged by actual executions.
+- `MathlibTM2/Cost/CompactPrepared.lean`: Setup and cleanup are bounded by 274 and 105 times native volume; the complete prepared slot operation retains compact-width cost with fixed power-of-two coefficient.
+- `MathlibTM2/Fast/CompactTopRows.lean`: Actual top-level row padding includes outside rows and high spectators, is at most twice original row stock, and validates the rebased piece records using the single global divisor.
