@@ -1,3 +1,9 @@
+import IntegerMultBounds.MathlibTM2.Fast.CRTDirectSource
+import IntegerMultBounds.MathlibTM2.Fast.SrcDirectStage
+import IntegerMultBounds.MathlibTM2.Cost.CRTDirectEntry
+import IntegerMultBounds.MathlibTM2.Fast.CRTDirectMachineFull
+import IntegerMultBounds.MathlibTM2.Fast.CRTDirectEntry
+import IntegerMultBounds.MathlibTM2.Cost.CRTDirectFull
 import IntegerMultBounds.MathlibTM2.Fast.CRTDirectMachine
 import IntegerMultBounds.MathlibTM2.Fast.CRTDirectMachineCore
 import IntegerMultBounds.MathlibTM2.Fast.CRTDirectMachineSetup
@@ -55,6 +61,22 @@ separate work. -/
 open Lean in
 run_cmd do
   let names := #[
+    ``IntegerMultBounds.MathlibTM2.Fast.crtDirectSourceForward_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtDirectSourceInverse_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.Src.srcDirectCrtF_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.Src.srcDirectCrtI_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.Src.srcDirectP_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.Src.srcDirectOpp_runs,
+    ``IntegerMultBounds.MathlibTM2.Cost.crtDirectEntry_pipeline_le,
+    ``IntegerMultBounds.MathlibTM2.Cost.crtDirectSource_pipeline_le,
+
+    ``IntegerMultBounds.MathlibTM2.Fast.crtDirectMachineFullForward_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtDirectMachineFullInverse_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtDirectEntryForward_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtDirectEntryInverse_runs,
+    ``IntegerMultBounds.MathlibTM2.Cost.crtDirectMachineFull_pipeline_le,
+    ``IntegerMultBounds.MathlibTM2.Cost.crtDirectMachineEntry_pipeline_le,
+
     ``IntegerMultBounds.MathlibTM2.Fast.crtDirectMachineTarget_runs,
     ``IntegerMultBounds.MathlibTM2.Fast.crtDirectMachineForwardLoop_runs,
     ``IntegerMultBounds.MathlibTM2.Fast.crtDirectMachineInverseLoop_runs,

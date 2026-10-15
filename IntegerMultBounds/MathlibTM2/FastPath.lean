@@ -1,5 +1,13 @@
 module
 
+public import IntegerMultBounds.MathlibTM2.Fast.CRTDirectSource
+public import IntegerMultBounds.MathlibTM2.Fast.SrcDirectStage
+public import IntegerMultBounds.MathlibTM2.Cost.CRTDirectEntry
+
+public import IntegerMultBounds.MathlibTM2.Fast.CRTDirectMachineFull
+public import IntegerMultBounds.MathlibTM2.Fast.CRTDirectEntry
+public import IntegerMultBounds.MathlibTM2.Cost.CRTDirectFull
+
 public import IntegerMultBounds.MathlibTM2.Fast.CRTDirectMachine
 public import IntegerMultBounds.MathlibTM2.Fast.CRTDirectMachineCore
 public import IntegerMultBounds.MathlibTM2.Fast.CRTDirectMachineSetup

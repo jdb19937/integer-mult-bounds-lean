@@ -360,6 +360,16 @@ contract. `Cost/CRTDirectMachine` bounds the actual loop by
 `(mtCrtControlTargetC + 2) * totDirectCRT`, including all metadata.
 Padding/reversal and complete legacy entry composition remain to be connected.
 
+`CRTDirectMachineFull.lean` composes padding, concrete traversal and paired
+reversal forward, and reversal, inverse traversal and deletion backward.
+`CRTDirectEntry.lean` adds actual runtime setup and complete cleanup: both
+entry theorems start from legacy inputs and update only data, with no execution
+oracle. `Cost/CRTDirectFull.lean` bounds both full entries by a fixed constant
+times `totDirectCRT`. `CRTDirectSource.lean` and `SrcDirectStage.lean` now bridge the complete
+entries to both source transforms, preserving their exact original semantics.
+`Cost/CRTDirectEntry.lean` matches the named entry and generic-dimension source
+costs. Switching the running main multiplier and final cost theorem remains.
+
 Remaining integration steps, in order:
 
 1. **M2b — rotation scanner and producer: complete.** The actual all-fiber
@@ -367,9 +377,9 @@ Remaining integration steps, in order:
    exact exposed tape, and matching production/rotation costs are proved.
    These components preserve the existing triangular arithmetic semantics.
 2. **M2c — driver and matching:** runtime parameter preparation and complete
-   paired reversal, the complete target step, and weighted forward/inverse
-   traversal are proved. Instantiate the traversal and runtime setup; replace the
-   actual driver, establish round-trip correctness, and match its actual costs.
+   paired reversal, both complete runtime entries, and source transforms
+   are proved with actual linear costs. Switch the running main multiplier
+   to these source transforms and connect its final cost theorem.
    Resampling's linear exposure cost is now separated from the old quadratic
    envelope; connect these sharper stage theorems to the aggregate budget.
 3. **M2d — bound:** retune power-of-two parameters only after all machine
