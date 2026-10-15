@@ -1543,3 +1543,16 @@ side, with no positive-definiteness assumption. Both guarded checks and the
 source's two interior passes and one boundary solve. Boundary sparsity and
 ordering, Gohberg–Semencul interior inverses, rounded structured solves and
 tape costs remain open.
+
+### Boundary sparsity after interior elimination
+
+Schur fill-in through a pivot needs both of its links, so eliminating vertices
+that couple only within their own cell creates only same-cell entries. The
+actual rounded matrix is supported in the cyclic band of the selected width.
+Interior vertices, whose band stays in the array and in one phase cell, couple
+only within that cell; after eliminating any of them, every reduced coupling
+is a band entry or joins one phase cell. This is the source's sparsity claim
+for the Schur boundary, with wrap entries kept as band entries. Both guarded
+checks and the10-declaration standard-axiom audit pass. Boundary count and
+bandwidth in boundary order, Gohberg–Semencul interior inverses, rounded
+structured solves and tape costs remain open.
