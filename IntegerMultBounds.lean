@@ -2369,3 +2369,10 @@ import IntegerMultBounds.MathlibTM2.Cost.CompactSwap
 import IntegerMultBounds.MathlibTM2.Node.CompactRotParity
 import IntegerMultBounds.MathlibTM2.Cost.CompactStageExec
 import IntegerMultBounds.MathlibTM2.Node.CompactGeometry
+import IntegerMultBounds.MathlibTM2.Cost.CompactRuntime
+import IntegerMultBounds.MathlibTM2.Cost.CompactParameters
+import IntegerMultBounds.MathlibTM2.Node.CompactRotRuntime
+import IntegerMultBounds.MathlibTM2.Node.CompactGeometryRecursive
+import IntegerMultBounds.MathlibTM2.Node.CompactEncoding
+import IntegerMultBounds.MathlibTM2.Node.CompactSlotXor
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynRecArithmetic

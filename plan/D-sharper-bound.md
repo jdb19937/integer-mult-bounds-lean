@@ -452,13 +452,30 @@ not runtime dimensions. All thirteen focused axiom contracts pass.
 `Node/CompactGeometry.lean` proves the actual native destination matches live
 slot XOR, including untouched bits, with exact serialized rank and entry
 transport. Native slot order is reversed relative to the live layer. This
-checkpoint still folds outer native rows into the address width; it is not
-yet the separate-row `encZ` contract. Next preserve the original row and payload
-offset explicitly, and connect the three-bit coefficient-symbol serialization.
-Maintain one global reserved shape through recursion using native left/right
-spectators, rather than allocating extra address bits at each child. Root
-reservation, original input production, uniform density and width bounds,
-and the stopped recurrence remain open; the public saving is still `2^-66`.
+baseline folds outer native rows into the address width. The new
+`Node/CompactGeometryRecursive.lean` preserves unrestricted original rows and
+payload offsets and proves the child invariant for one shared reserved shape.
+`Node/CompactEncoding.lean` connects the actual native result to the live
+three-bit coefficient serialization. `Node/CompactRotRuntime.lean` executes
+the unified native dispatcher, including singleton slots, and
+`Node/CompactSlotXor.lean` composes both codecs and transfers with that runtime.
+The resulting actual host execution maps `encZ Z` to the required slot-XOR
+encoding and restores the full frame; its cost includes all conversions.
+
+`Cost/CompactRuntime.lean` supplies the uniform compact-width execution bound.
+`Cost/CompactParameters.lean` derives repair allowance `D=1` from dyadic guard
+and full row-address size inequalities. These are explicit caller obligations:
+one shared guard must work throughout recursion, and the full address width
+must fit both the payload and the cube of the chosen global size parameter.
+`Fast/CompactSynRecArithmetic.lean` executes ceiling division and computes
+front/back reservation counts, remaining active width and offset from runtime
+registers, with exact costs and restored scratch. The row-axis count is still
+an input. All 23 focused axiom contracts pass.
+
+Root reservation and row-axis production, actual recursive records, header
+materialization, caller size inequalities, the stopped branch and recurrence,
+and integration into the running layer remain open. These checked bridges do
+not yet improve the public saving `2^-66`.
 
 Prove complete temporary address ranges survive every role split, arbitrary
 initial temporary values are restored, and exceptional extraction, sorting,

@@ -6170,3 +6170,8 @@ Parameters and asymptotics.
   `dK + pK^(τ-1) + ℓ d^λ' + log(rp)` is the sum of four cost-table rows,
   below the whole table; and `K + 1 ≤ ℓ` holds for all large `n`. Tape
   execution is not here.
+
+- `MathlibTM2/Node/CompactRotRuntime.lean`, `Node/CompactSlotXor.lean`: Actual unified compact execution including singleton slots, both symbol/bit codecs and transfers, charged normalization and full frame restoration. Supplied canonical headers and layout/size premises remain explicit.
+- `MathlibTM2/Node/CompactGeometryRecursive.lean`, `Node/CompactEncoding.lean`: Shared-shape child reservation invariant and exact native-to-live serialization preserving unrestricted outer rows and payload offsets.
+- `MathlibTM2/Cost/CompactRuntime.lean`, `Cost/CompactParameters.lean`: Uniform actual runtime cost and repair allowance one derived from dyadic guards and full row-address inequalities; callers must discharge the size premises.
+- `MathlibTM2/Fast/CompactSynRecArithmetic.lean`: Runtime ceiling division and front/back/active/offset reservation arithmetic with exact costs and scratch restoration. Row-axis count is an explicit input; recursive record production remains separate.

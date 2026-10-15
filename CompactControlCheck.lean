@@ -2,6 +2,13 @@ import IntegerMultBounds.MathlibTM2.Cost.CompactSwap
 import IntegerMultBounds.MathlibTM2.Node.CompactRotParity
 import IntegerMultBounds.MathlibTM2.Cost.CompactStageExec
 import IntegerMultBounds.MathlibTM2.Node.CompactGeometry
+import IntegerMultBounds.MathlibTM2.Cost.CompactRuntime
+import IntegerMultBounds.MathlibTM2.Cost.CompactParameters
+import IntegerMultBounds.MathlibTM2.Node.CompactRotRuntime
+import IntegerMultBounds.MathlibTM2.Node.CompactGeometryRecursive
+import IntegerMultBounds.MathlibTM2.Node.CompactEncoding
+import IntegerMultBounds.MathlibTM2.Node.CompactSlotXor
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynRecArithmetic
 import Lean.Util.CollectAxioms
 
 /-! Focused integrity audit for the compact-control host primitives.
@@ -22,7 +29,17 @@ run_cmd do
     ``IntegerMultBounds.MathlibTM2.Cost.compactEarlyProg_exec_le,
     ``IntegerMultBounds.MathlibTM2.Cost.compactLateProg_exec_le,
     ``IntegerMultBounds.MathlibTM2.Node.compactNative_destination_rank,
-    ``IntegerMultBounds.MathlibTM2.Node.compactNative_result_entry]
+    ``IntegerMultBounds.MathlibTM2.Node.compactNative_result_entry,
+    ``IntegerMultBounds.MathlibTM2.Node.compactRuntimeProg_exec,
+    ``IntegerMultBounds.MathlibTM2.Node.CompactRecursiveLayout.child,
+    ``IntegerMultBounds.MathlibTM2.Node.compactRecursiveNative_serialized_rank,
+    ``IntegerMultBounds.MathlibTM2.Node.compactEncoding_exists,
+    ``IntegerMultBounds.MathlibTM2.Node.compactEncoding_runtime_result,
+    ``IntegerMultBounds.MathlibTM2.Node.compactSlotXor_exec,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactRuntimeProg_exec_le,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactRuntimePacked_of_dyadic,
+    ``IntegerMultBounds.MathlibTM2.Fast.sg_compactCeil,
+    ``IntegerMultBounds.MathlibTM2.Fast.sg_compactReserveCounts]
   for name in names do
     for ax in ← collectAxioms name do
       unless #[``propext, ``Quot.sound, ``Classical.choice].contains ax do
