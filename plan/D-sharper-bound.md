@@ -1584,3 +1584,16 @@ Gohberg–Semencul factorization, and actual cell entries are exactly its
 diagonal similarity. The guarded check and10-declaration standard-axiom audit
 pass. Block composition of interior inverses with the boundary solve, rounded
 factors and convolution costs remain open.
+
+### Exact four-step interior/boundary solve
+
+The source's two interior passes and one boundary solve are now exact for
+any exact interior solver: interior solves are linear under dominance, any
+boundary solution of the Schur operator glues to a full solution, and with
+a margin on the whole index set it is the unique solution, bounded by
+`max|b|/μ`. On the actual rounded Gaussian matrix, for any interior set, the
+four steps reproduce the full solution with boundary values at most `8p`
+times the right-hand side. Both guarded checks and the10-declaration
+standard-axiom audit pass. Together with the Gohberg–Semencul blocks, this
+completes the exact algebra of the fast inverse; rounded factors, error
+propagation through the four steps and convolution/tape costs remain open.
