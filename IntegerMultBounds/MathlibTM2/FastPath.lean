@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Cost.Branching
+public import IntegerMultBounds.MathlibTM2.Cost.CRTControl
 public import IntegerMultBounds.MathlibTM2.Cost.Growth
 public import IntegerMultBounds.MathlibTM2.Cost.LayerCost
 public import IntegerMultBounds.MathlibTM2.Cost.LayerCostNat
@@ -25,6 +26,9 @@ public import IntegerMultBounds.MathlibTM2.Fast.BundleDist
 public import IntegerMultBounds.MathlibTM2.Fast.BundleLay
 public import IntegerMultBounds.MathlibTM2.Fast.CRTGap
 public import IntegerMultBounds.MathlibTM2.Fast.CRTControlProg
+public import IntegerMultBounds.MathlibTM2.Fast.CRTControlBounds
+public import IntegerMultBounds.MathlibTM2.Fast.CRTControlTape
+public import IntegerMultBounds.MathlibTM2.Fast.CRTSchedule
 public import IntegerMultBounds.MathlibTM2.Fast.BundleMnLay
 public import IntegerMultBounds.MathlibTM2.Fast.BundleRnd
 public import IntegerMultBounds.MathlibTM2.Fast.BundleWires

@@ -193,26 +193,38 @@ axis zero at the inner end, run the descriptor-controlled rotation, then swap
 back. Finish the forward machine with paired distant swaps reversing the
 whole axis list; perform that reversal first in the inverse machine. This
 preserves the original target order and content maps while using at most
-`2(d-1) + floor(d/2)` swaps in either direction. The machine implementation
-and the proof of this schedule/count remain to be completed.
+`2(d-1) + floor(d/2)` swaps in either direction. `Fast/CRTSchedule.lean` proves the exact forward/inverse route and count,
+including exposure-prefix completeness and restoration. The finite-host
+implementation remains to be completed.
 
 For each target, the new scan visits `2^(L-a_i)` fibers. There are at most `d`
 descriptors per fiber, so the proved arithmetic kernel would contribute at
 most `9 d 2^(L-a_i) tblC W w` before loading, offset conversion and loop costs.
-Choose and prove a word-width bound of order `L`; the existing
-`mr_b_pow_le_r` lemma is a candidate for absorbing polynomial per-fiber
-arithmetic through the exponentially long axis (`t_i` is `r` or `r/2`). This
-absorption is still an obligation, not a matched end-to-end cost theorem.
+`Fast/CRTControlBounds.lean` proves descriptor widths `L+1`, accumulated
+values below `2^(2L)` even for invalid controls, and final products below
+`2^(3L+1)`. Its budget invariant discharges intermediate overflow.
+`Cost/CRTControl.lean` uses `mr_b_pow_le_r` to absorb any fixed polynomial
+per-fiber budget over all axes into a constant times padded volume. The
+scanner must still supply that actual-step polynomial budget.
+
+`Fast/CRTControlTape.lean` proves the fixed four-word loader costs at most
+`48 W + 56` host steps, with descriptor reversal saved for restoration.
+The complete saved tape restores in `8 d W + 2` steps. A positive width
+makes tape emptiness exactly descriptor-list emptiness; the arithmetic step
+plus descriptor cleanup uses at most 13 interpreter atoms. These contracts
+are included in the focused axiom audit. Descriptor generation, the bank
+embedding, the runtime scanner and the fiber loop are still separate work.
 
 Remaining integration steps, in order:
 
 1. **M2b — rotation scanner:** the semantics and arithmetic kernels are proved.
-   Implement descriptor generation/loading/restoration, the outer fiber loop,
-   and binary-to-unary offset conversion feeding `crtRotFib`. Prove word-width
-   bounds, unchanged state outside the workspace, and the complete actual cost.
+   Connect the proved loader/restorer, width bounds and arithmetic kernel to
+   a runtime descriptor scan. Implement descriptor generation, the outer fiber
+   loop and binary-to-unary offset conversion feeding `crtRotFib`; prove
+   unchanged state outside the workspace and the complete actual cost.
    Preserve the existing order of triangular arithmetic passes.
-2. **M2c — driver and matching:** prove the forward/inverse linear routing
-   schedule and connect the header upgrade and swap pass to it; replace the
+2. **M2c — driver and matching:** connect the proved forward/inverse routing
+   schedule to the header upgrade and swap pass; replace the
    actual driver, establish round-trip correctness, and match its actual costs.
    Separate the already-linear resampling exposure from `totCRT`, retaining
    the residual quadratic arithmetic charge.
