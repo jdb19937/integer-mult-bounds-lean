@@ -26,6 +26,14 @@ elementary multiplier, the same bridge gives the unconditional `MathlibTM2.mul_q
 quadratic-time Mathlib machine. [The note](docs/mathlib-tm2/mathlib-tm2.pdf) explains the
 statement and the simulation; `lake env lean MathlibTM2Check.lean` checks the axioms.
 
+`IntegerMultBounds/MathlibTM2/Theorem.lean` proves `MathlibTM2.statement : MathlibTM2.Statement`:
+a fixed `Turing.FinTM2` machine multiplies in worst-case time `O(n (log n)^(1-κ))` for an
+explicit `κ > 0`. To verify it: read `Statement.lean` (its imports are Mathlib only), run
+`lake build`, then `lake env lean FastPathCheck.lean`, which prints nothing when `statement` and
+the main intermediate theorems depend on `propext`, `Classical.choice` and `Quot.sound` only
+(`#guard_msgs` fails loudly otherwise). [The note](docs/fast-mult/fast-mult.pdf) describes the
+machine and the proof.
+
 ## Status
 
 Section 5 remains open. Its complete scalar-prefix/stopped-call and original
