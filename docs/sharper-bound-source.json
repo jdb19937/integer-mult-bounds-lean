@@ -1,0 +1,18 @@
+{
+  "repository": "https://github.com/CrocSwap/integer-mult-bounds",
+  "revision": "0fdd7d82de03e43c9e5a1000dfbcd380d1b687d2",
+  "checked_on": "2026-10-15",
+  "target_kappa": "836330098538459/500000000000000000",
+  "target_decimal": "0.001672660197076918",
+  "status": "Maintainer-reviewed conditional finite construction; see the integration receipt for publication and PR resolution status",
+  "scope": "Finite composition under inherited all-size/compiler, common-label/mutable-source, whole-call hosting, precision/tape, analytic and bit H1-H5 assumptions. Not a full Lean multiplication theorem.",
+  "files_sha256": {
+    "certificates/selected-result.json": "10b9e340fd8e354a37a0c4813c90e5de1dd42044b5f6aca4a3fc5a42b685fa32",
+    "research/community-frontier1094-audit/ASSEMBLY.json": "1122cb3a575f8c788345fc1bf4c108ac7c3250fb81a5988671f5eb04b3ab3045",
+    "research/community-frontier1094-audit/SELECTED-SOURCE.json": "79b3de5db3dbcb9829789ba58e9e45758926031e2a7d80667a08429d369be53b",
+    "docs/research/community-batch1099-review.md": "7e76d2c38e5fce30587835b7251df1430488ae4dd372611ef69a3f03f476b6cb",
+    "docs/research/bottleneck-brief.md": "bbc9396c5cc390457d348bad076fc33bd3f98b7183f81b57af5b5666f6d887ab",
+    "research/selected-bootstrap-stock-audit/README.md": "0f3cda98c8382d41dc4f5d905460a4b4ed2854d6f94f20035b150e14825827c6"
+  },
+  "verification_scope": "Retrieved pinned records and verified assembly digest against selected-result.json; no supplier replay or Lean certificate validation performed."
+}

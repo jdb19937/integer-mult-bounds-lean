@@ -32,9 +32,15 @@ The next research goal is to reproduce the stronger bounds developed in
 using the completed Mathlib machine proof as the foundation. These are new
 milestones, not prerequisites for the result above.
 
+The [implementation plan](plan/D-sharper-bound.md) pins the selected source,
+maps the reuse candidates and orders the work. The first proof milestone is
+to expose the end-to-end exponent transfer: importing better finite circuits
+alone retains the current host's very small parameter factors.
+
 | Milestone | Status | Completion criterion |
 | --- | --- | --- |
-| Pin the external construction and its obligations | Next | Record an exact upstream revision, selected certificate, target saving and every inherited assumption. |
+| Pin the external construction and its obligations | In progress | Revision, selected target and record digests are pinned; trace the inherited obligation categories to their precise source definitions. |
+| Expose exponent transfer and check host feasibility | Next | Parameterize the current total-cost estimate, recover its existing instance and map every target outer charge to a proved local bound or an explicit missing contract. |
 | Connect the finite construction to the existing library | Planned | Prove the selected circuit, frame, restoration and rank/cost contracts, identifying reusable local lemmas. |
 | Realize and price the construction on the Mathlib machine | Planned | Prove the required uniform execution, routing, precision and recovery contracts with bounds on actual steps. |
 | Close the sharper end-to-end bound | Planned | Instantiate the recurrence and total-cost analysis and prove an unconditional multiplication theorem with the new explicit saving. |
