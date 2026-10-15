@@ -1,0 +1,1021 @@
+module
+
+public import IntegerMultBounds.MathlibTM2.Mult.Moduli
+public import IntegerMultBounds.ExactRecovery
+public import Mathlib.Analysis.SpecialFunctions.Log.Base
+public import Mathlib.Analysis.SpecificLimits.Normed
+
+/-!
+# Size parameters of the multiplication algorithm
+
+Integer definitions of the parameters of the paper's `§8` "Input and transform sizes" as
+functions of the operand length `n`, with the paper's constants `ε = 2^{-75}`, `c = 2^{-56}`:
+
+* `b = ⌈log₂ n⌉`, `p = 6b`;
+* `d = ⌊b^ε⌋`, the largest `d` with `d^(2^75) ≤ b`; `K = ⌊d^c⌋`, the largest `K` with
+  `K^(2^56) ≤ d`;
+* `T = 2^logT`, the power of two in `[4n/b, 8n/b)`; `ℓ = ⌈logT / d⌉`, `r = 2^ℓ`;
+* axis lengths `t_i ∈ {r/2, r}`: the first `numHalf = dℓ - logT` are `r/2`, the rest (in
+  particular the last) are `r`;
+* `α`, the least integer with `α^4 ≥ 12 d² b`; `γ = d (2α² + 2)`; `η = 1/(4d)`;
+  `q = ⌈n/b⌉`;
+* source lengths `s_i` from `Moduli.src` with `N = oddProd d`, and `S = ∏ s_i`.
+
+Every relation used downstream is proved for all large `n`, as a `Filter.Eventually` along
+`atTop`. Most of them follow deterministically from the regime `Big n : 2 ≤ n ∧ 16 ≤ d n`
+(`eventually_big`), whose consequences are the `Big.*` lemmas:
+
+* `prod_t`, `t_last`, `t_eq`: `∏ t_i = T`, `t_d = r`, `t_i ∈ {r/2, r}`;
+* `volume_bounds`: `24 n ≤ T p < 48 n`; `Big.logT_bounds`: `b ≤ 2 log₂ T`, `log₂ T < b`;
+* `d_pow_le_p`, `p_lt_pow`, `d_rpow_bounds`: `p^ε/12 ≤ d ≤ p^ε`;
+* `Big.ℓ_bounds`, `Big.ℓ_bounds_real`: `p/(12d) ≤ ℓ ≤ p/(3d)`; `Big.K_succ_le_ℓ`;
+* `two_le_alpha`, `Big.alpha_sq_le_p`, `Big.one_le_alpha_sq_theta`, `Big.eta_lt_theta`,
+  `Big.p_mul_s_lt`;
+* `Big.four_gamma_le_b`, `Big.gamma_le_real`: `γ ≤ b/4`;
+* `Big.good`: the moduli (`Moduli.Good`), with `Big.S_lt_T`, `Big.T_lt_two_S`;
+* `Big.two_q_le`, `Big.digits_length_le`: no wraparound, `2q - 2 < S`;
+* `Big.margin_hyps`, `eventually_threshold`, `eventually_margins`: the hypotheses and the
+  conclusion of `ExactRecovery.margins_of_sizes` at `k = b`, `L = log₂ T`;
+* `eventually_pow_p_le_r`, `eventually_clog_p_le_K`, `eventually_logb_p_le_K`,
+  `eventually_mul_K_le_ℓ`, `eventually_small`: the growth statements `p^C ≤ r`,
+  `C log₂ p ≤ K`, `C K ≤ ℓ`, `2 d p² ≤ T log₂ T`.
+-/
+
+@[expose] public section
+
+
+namespace IntegerMultBounds.MathlibTM2.Mult.Sizes
+
+open Filter Finset IntegerMultBounds.MathlibTM2.Mult.Moduli
+open scoped Function
+
+/-! ### Integer roots -/
+
+/-- The integer `k`-th root: the largest `y` with `y^k ≤ x`. -/
+def iroot (k x : ℕ) : ℕ := Nat.findGreatest (fun y => y ^ k ≤ x) x
+
+section Iroot
+
+variable {k x y : ℕ}
+
+theorem iroot_pow_le (hk : k ≠ 0) (x : ℕ) : iroot k x ^ k ≤ x :=
+  Nat.findGreatest_spec (P := fun y => y ^ k ≤ x) (Nat.zero_le x) (by simp [zero_pow hk])
+
+theorem le_iroot_iff (hk : k ≠ 0) : y ≤ iroot k x ↔ y ^ k ≤ x := by
+  constructor
+  · intro h
+    exact (Nat.pow_le_pow_left h k).trans (iroot_pow_le hk x)
+  · intro h
+    have hyx : y ≤ x := by
+      rcases Nat.eq_zero_or_pos y with rfl | _
+      · exact Nat.zero_le _
+      · exact (Nat.le_self_pow hk y).trans h
+    exact Nat.le_findGreatest (P := fun y => y ^ k ≤ x) hyx h
+
+theorem lt_succ_iroot_pow (hk : k ≠ 0) (x : ℕ) : x < (iroot k x + 1) ^ k := by
+  by_contra h
+  have := (le_iroot_iff hk).2 (not_lt.1 h)
+  omega
+
+theorem one_le_iroot (hk : k ≠ 0) (hx : 1 ≤ x) : 1 ≤ iroot k x :=
+  (le_iroot_iff hk).2 (by rw [one_pow]; exact hx)
+
+theorem iroot_le_self (hk : k ≠ 0) (x : ℕ) : iroot k x ≤ x := by
+  rcases Nat.eq_zero_or_pos (iroot k x) with h | h
+  · rw [h]; exact Nat.zero_le _
+  · exact (Nat.le_self_pow hk _).trans (iroot_pow_le hk x)
+
+end Iroot
+
+/-! ### Elementary inequalities -/
+
+theorem two_mul_le_two_pow (m : ℕ) : 2 * m ≤ 2 ^ m := by
+  rcases Nat.eq_zero_or_pos m with rfl | hm
+  · simp
+  · have h := Nat.lt_two_pow_self (n := m - 1)
+    have e : 2 ^ m = 2 * 2 ^ (m - 1) := by
+      rw [← pow_succ']; congr 1; omega
+    omega
+
+theorem le_two_pow_two_mul {m : ℕ} (hm : 2 ≤ m) : 4 * m ≤ 2 ^ (2 * m) := by
+  have h := Nat.lt_two_pow_self (n := m)
+  have e : 2 ^ (2 * m) = 2 ^ m * 2 ^ m := by rw [two_mul, pow_add]
+  have h4 : 4 ≤ 2 ^ m := by
+    calc 4 = 2 ^ 2 := by norm_num
+      _ ≤ 2 ^ m := Nat.pow_le_pow_right (by norm_num) hm
+  rw [e]
+  nlinarith
+
+/-- `A m^k ≤ 2^m` for all large `m`. -/
+theorem eventually_mul_pow_le_two_pow (A k : ℕ) : ∀ᶠ m : ℕ in atTop, A * m ^ k ≤ 2 ^ m := by
+  have h := tendsto_pow_const_div_const_pow_of_one_lt k (one_lt_two : (1 : ℝ) < 2)
+  have h2 := h.eventually (gt_mem_nhds (show (0 : ℝ) < 1 / (A + 1) by positivity))
+  filter_upwards [h2] with m hm
+  have hpos : (0 : ℝ) < 2 ^ m := by positivity
+  have hA : (0 : ℝ) < A + 1 := by positivity
+  rw [div_lt_div_iff₀ hpos hA, one_mul] at hm
+  have hm0 : (0 : ℝ) ≤ (m : ℝ) ^ k := by positivity
+  have : ((A * m ^ k : ℕ) : ℝ) ≤ ((2 ^ m : ℕ) : ℝ) := by
+    push_cast
+    nlinarith
+  exact_mod_cast this
+
+/-- `c x^k ≤ (c x)^k`. Stated for a variable exponent `k`, so that instances at
+`k = 2^75` never ask the kernel to evaluate a power of a numeral. -/
+theorem mul_pow_le_mul_pow {k : ℕ} (hk : k ≠ 0) (c x : ℕ) : c * x ^ k ≤ (c * x) ^ k := by
+  rw [mul_pow]
+  exact Nat.mul_le_mul_right _ (Nat.le_self_pow hk c)
+
+/-! ### Fixed exponents -/
+
+/-- `2^75`, the root index of `d = ⌊b^ε⌋`, `ε = 2^{-75}`. -/
+def epsExp : ℕ := 2 ^ 75
+
+/-- `2^56`, the root index of `K = ⌊d^c⌋`, `c = 2^{-56}`. -/
+def cExp : ℕ := 2 ^ 56
+
+theorem epsExp_ne : epsExp ≠ 0 := by unfold epsExp; positivity
+
+theorem cExp_ne : cExp ≠ 0 := by unfold cExp; positivity
+
+theorem twenty_le_epsExp : 20 ≤ epsExp := by unfold epsExp; norm_num
+
+theorem one_le_cExp : 1 ≤ cExp := by unfold cExp; norm_num
+
+/-- `ε = 2^{-75}` as a real number. -/
+noncomputable def epsilon : ℝ := ((epsExp : ℕ) : ℝ)⁻¹
+
+theorem epsilon_eq : epsilon = (2 ^ 75 : ℝ)⁻¹ := by
+  norm_num [epsilon, epsExp]
+
+/-- `c = 2^{-56}` as a real number. -/
+noncomputable def cParam : ℝ := ((cExp : ℕ) : ℝ)⁻¹
+
+theorem cParam_eq : cParam = (2 ^ 56 : ℝ)⁻¹ := by
+  norm_num [cParam, cExp]
+
+/-- `iroot k x = ⌊x^(1/k)⌋`. -/
+theorem iroot_eq_floor {k : ℕ} (hk : k ≠ 0) (x : ℕ) :
+    iroot k x = ⌊(x : ℝ) ^ ((k : ℝ)⁻¹)⌋₊ := by
+  have hk' : (0 : ℝ) < (k : ℝ)⁻¹ := inv_pos.2 (by exact_mod_cast Nat.pos_of_ne_zero hk)
+  symm
+  rw [Nat.floor_eq_iff (by positivity)]
+  constructor
+  · have h : ((iroot k x : ℝ)) ^ k ≤ x := by exact_mod_cast iroot_pow_le hk x
+    have h' := Real.rpow_le_rpow (by positivity) h hk'.le
+    rwa [Real.pow_rpow_inv_natCast (Nat.cast_nonneg _) hk] at h'
+  · have h : (x : ℝ) < ((iroot k x : ℝ) + 1) ^ k := by exact_mod_cast lt_succ_iroot_pow hk x
+    have h' := Real.rpow_lt_rpow (Nat.cast_nonneg _) h hk'
+    rwa [Real.pow_rpow_inv_natCast (by positivity) hk] at h'
+
+/-- `⌈X^(1/k)⌉ = m` when `(m - 1)^k < X ≤ m^k`. -/
+theorem ceil_root_eq {k m X : ℕ} (hk : k ≠ 0) (hm : 1 ≤ m) (h1 : (m - 1) ^ k < X)
+    (h2 : X ≤ m ^ k) : ⌈(X : ℝ) ^ ((k : ℝ)⁻¹)⌉₊ = m := by
+  have hk' : (0 : ℝ) < (k : ℝ)⁻¹ := inv_pos.2 (by exact_mod_cast Nat.pos_of_ne_zero hk)
+  rw [Nat.ceil_eq_iff (by omega)]
+  constructor
+  · have h : (((m - 1 : ℕ) : ℝ)) ^ k < X := by exact_mod_cast h1
+    have h' := Real.rpow_lt_rpow (by positivity) h hk'
+    rwa [Real.pow_rpow_inv_natCast (Nat.cast_nonneg _) hk] at h'
+  · have h : (X : ℝ) ≤ (m : ℝ) ^ k := by exact_mod_cast h2
+    have h' := Real.rpow_le_rpow (Nat.cast_nonneg _) h hk'.le
+    rwa [Real.pow_rpow_inv_natCast (Nat.cast_nonneg _) hk] at h'
+
+/-! ### The parameters -/
+
+/-- `b = ⌈log₂ n⌉`. -/
+def b (n : ℕ) : ℕ := Nat.clog 2 n
+
+/-- The working precision `p = 6b`. -/
+def p (n : ℕ) : ℕ := 6 * b n
+
+/-- The dimension `d = ⌊b^ε⌋`: the largest `d` with `d^(2^75) ≤ b`. -/
+def d (n : ℕ) : ℕ := iroot epsExp (b n)
+
+/-- `K = ⌊d^c⌋`: the largest `K` with `K^(2^56) ≤ d`. -/
+def K (n : ℕ) : ℕ := iroot cExp (d n)
+
+/-- `log₂ T`: the least `L` with `4n ≤ b 2^L`, i.e. `⌈log₂ ⌈4n/b⌉⌉`. -/
+def logT (n : ℕ) : ℕ := Nat.clog 2 ((4 * n + b n - 1) / b n)
+
+/-- `T`, the power of two in `[4n/b, 8n/b)`. -/
+def T (n : ℕ) : ℕ := 2 ^ logT n
+
+/-- `ℓ = ⌈logT / d⌉`. -/
+def ℓ (n : ℕ) : ℕ := (logT n + d n - 1) / d n
+
+/-- `r = 2^ℓ`. -/
+def r (n : ℕ) : ℕ := 2 ^ ℓ n
+
+/-- The number `dℓ - log₂ T` of axes of length `r/2`. -/
+def numHalf (n : ℕ) : ℕ := d n * ℓ n - logT n
+
+/-- The axis lengths: `r/2` on the first `numHalf` axes, `r` on the others. -/
+def t (n : ℕ) (i : Fin (d n)) : ℕ := if (i : ℕ) < numHalf n then 2 ^ (ℓ n - 1) else 2 ^ ℓ n
+
+theorem exists_alpha (n : ℕ) : ∃ α : ℕ, 12 * d n ^ 2 * b n ≤ α ^ 4 :=
+  ⟨12 * d n ^ 2 * b n, Nat.le_self_pow (by norm_num) _⟩
+
+/-- `α = ⌈(12 d² b)^{1/4}⌉`: the least `α` with `12 d² b ≤ α^4`. -/
+def alpha (n : ℕ) : ℕ := Nat.find (exists_alpha n)
+
+/-- `γ = d (2α² + 2)`, the library's `d (2⌈α²⌉ + 2)` at integer `α`. -/
+def gamma (n : ℕ) : ℕ := d n * (2 * alpha n ^ 2 + 2)
+
+/-- `η = 1/(4d)`. -/
+noncomputable def eta (n : ℕ) : ℝ := 1 / (4 * d n)
+
+/-- The number `q = ⌈n/b⌉` of radix-`2^b` digits. -/
+def q (n : ℕ) : ℕ := (n + b n - 1) / b n
+
+/-- `N = 1 · 3 ⋯ (4d - 1)`. -/
+def N (n : ℕ) : ℕ := oddProd (d n)
+
+/-- The source lengths `s_i` (`Moduli.src` with `N = oddProd d`, `R = r/2`). -/
+def s (n : ℕ) : Fin (d n) → ℕ := src (d n) (N n) (numHalf n) (ℓ n - 1)
+
+/-- `S = ∏ s_i`. -/
+def S (n : ℕ) : ℕ := ∏ i, s n i
+
+/-! ### `b` -/
+
+section Basic
+
+variable {n : ℕ}
+
+theorem one_le_b (hn : 2 ≤ n) : 1 ≤ b n := Nat.clog_pos one_lt_two hn
+
+theorem le_two_pow_b (n : ℕ) : n ≤ 2 ^ b n := Nat.le_pow_clog one_lt_two n
+
+theorem two_pow_b_lt (hn : 2 ≤ n) : 2 ^ b n < 2 * n := by
+  have h : 2 ^ (b n - 1) < n := by
+    have := Nat.pow_pred_clog_lt_self (b := 2) one_lt_two (x := n) hn
+    rwa [Nat.pred_eq_sub_one] at this
+  have h1 := one_le_b hn
+  have e : 2 ^ b n = 2 * 2 ^ (b n - 1) := by
+    rw [← pow_succ']; congr 1; omega
+  omega
+
+theorem b_lt_two_mul (hn : 2 ≤ n) : b n < 2 * n :=
+  Nat.lt_two_pow_self.trans (two_pow_b_lt hn)
+
+theorem le_b_of_two_pow_le {m : ℕ} (h : 2 ^ m ≤ n) : m ≤ b n := by
+  have := Nat.clog_mono_right 2 h
+  rwa [Nat.clog_pow 2 m one_lt_two] at this
+
+theorem tendsto_b : Tendsto b atTop atTop :=
+  tendsto_atTop.2 fun m => eventually_atTop.2 ⟨2 ^ m, fun _ h => le_b_of_two_pow_le h⟩
+
+/-! ### `d` and `K` -/
+
+theorem d_pow_le (n : ℕ) : d n ^ epsExp ≤ b n := iroot_pow_le epsExp_ne _
+
+theorem b_lt_d_succ_pow (n : ℕ) : b n < (d n + 1) ^ epsExp := lt_succ_iroot_pow epsExp_ne _
+
+theorem le_d_iff {D : ℕ} : D ≤ d n ↔ D ^ epsExp ≤ b n := le_iroot_iff epsExp_ne
+
+theorem one_le_d (hn : 2 ≤ n) : 1 ≤ d n := one_le_iroot epsExp_ne (one_le_b hn)
+
+theorem d_le_b (n : ℕ) : d n ≤ b n := iroot_le_self epsExp_ne _
+
+theorem pow_le_b_of {k : ℕ} (hk : k ≤ epsExp) (hd : 1 ≤ d n) : d n ^ k ≤ b n :=
+  (Nat.pow_le_pow_right hd hk).trans (d_pow_le n)
+
+theorem tendsto_d : Tendsto d atTop atTop :=
+  tendsto_atTop.2 fun D => (tendsto_atTop.1 tendsto_b (D ^ epsExp)).mono fun _ h => le_d_iff.2 h
+
+theorem K_pow_le (n : ℕ) : K n ^ cExp ≤ d n := iroot_pow_le cExp_ne _
+
+theorem d_lt_K_succ_pow (n : ℕ) : d n < (K n + 1) ^ cExp := lt_succ_iroot_pow cExp_ne _
+
+theorem K_le_d (n : ℕ) : K n ≤ d n := iroot_le_self cExp_ne _
+
+theorem tendsto_K : Tendsto K atTop atTop :=
+  tendsto_atTop.2 fun M => (tendsto_atTop.1 tendsto_d (M ^ cExp)).mono fun _ h =>
+    (le_iroot_iff cExp_ne).2 h
+
+/-! ### `T` -/
+
+theorem logT_le_iff (hn : 2 ≤ n) {L : ℕ} : logT n ≤ L ↔ 4 * n ≤ b n * 2 ^ L := by
+  have hb := one_le_b hn
+  unfold logT
+  rw [Nat.clog_le_iff_le_pow one_lt_two, Nat.div_le_iff_le_mul_add_pred hb]
+  omega
+
+theorem four_mul_le_bT (hn : 2 ≤ n) : 4 * n ≤ b n * T n := (logT_le_iff hn).1 le_rfl
+
+theorem bT_lt (hn : 2 ≤ n) : b n * T n < 8 * n := by
+  rcases Nat.eq_zero_or_pos (logT n) with h | h
+  · simp only [T, h, pow_zero, mul_one]
+    have := b_lt_two_mul hn
+    omega
+  · have h1 : ¬ logT n ≤ logT n - 1 := by omega
+    rw [logT_le_iff hn] at h1
+    have e : T n = 2 * 2 ^ (logT n - 1) := by
+      unfold T; rw [← pow_succ']; congr 1; omega
+    rw [e]
+    have : b n * (2 * 2 ^ (logT n - 1)) = 2 * (b n * 2 ^ (logT n - 1)) := by ring
+    omega
+
+theorem logT_le_b (hn : 2 ≤ n) (hb : 4 ≤ b n) : logT n ≤ b n := by
+  rw [logT_le_iff hn]
+  have := le_two_pow_b n
+  nlinarith
+
+/-- `T < 2^b` once `b ≥ 8`. -/
+theorem logT_lt_b (hn : 2 ≤ n) (hb : 8 ≤ b n) : logT n < b n := by
+  have h : logT n ≤ b n - 1 := by
+    rw [logT_le_iff hn]
+    have h1 := le_two_pow_b n
+    have e : 2 ^ b n = 2 * 2 ^ (b n - 1) := by
+      rw [← pow_succ']; congr 1; omega
+    rw [e] at h1
+    nlinarith
+  omega
+
+/-- `b/2 ≤ log₂ T`, for every `n ≥ 2`. -/
+theorem b_le_two_mul_logT (hn : 2 ≤ n) : b n ≤ 2 * logT n := by
+  by_contra hc
+  push Not at hc
+  set L := logT n
+  set m := b n + 1 - L
+  have h1 : 2 ^ (b n + 1) < 4 * n := by
+    have := two_pow_b_lt hn
+    rw [pow_succ]
+    omega
+  have h2 := four_mul_le_bT hn
+  have e : 2 ^ (b n + 1) = 2 ^ m * T n := by
+    unfold T; rw [← pow_add]; congr 1; omega
+  have h3 : 2 ^ m * T n < b n * T n := by omega
+  have h4 : 2 ^ m < b n := lt_of_mul_lt_mul_right h3 (Nat.zero_le _)
+  have h5 := two_mul_le_two_pow m
+  omega
+
+theorem one_le_logT_of (hn : 2 ≤ n) (hb : 2 ≤ b n) : 1 ≤ logT n := by
+  have := b_le_two_mul_logT hn
+  omega
+
+/-! ### `ℓ`, `r`, the axis lengths -/
+
+theorem logT_le_dℓ (hd : 1 ≤ d n) : logT n ≤ d n * ℓ n := by
+  have h := Nat.lt_mul_div_succ (logT n + d n - 1) (b := d n) hd
+  unfold ℓ
+  have : d n * ((logT n + d n - 1) / d n + 1) = d n * ((logT n + d n - 1) / d n) + d n := by
+    ring
+  omega
+
+theorem dℓ_lt (hd : 1 ≤ d n) : d n * ℓ n < logT n + d n := by
+  have h := Nat.mul_div_le (logT n + d n - 1) (d n)
+  unfold ℓ
+  omega
+
+theorem numHalf_lt (hd : 1 ≤ d n) : numHalf n < d n := by
+  have := dℓ_lt hd
+  unfold numHalf
+  omega
+
+theorem one_le_ℓ_of_numHalf (h : 0 < numHalf n) : 1 ≤ ℓ n := by
+  unfold numHalf at h
+  rcases Nat.eq_zero_or_pos (ℓ n) with h' | h'
+  · rw [h', mul_zero] at h; omega
+  · exact h'
+
+/-- `t_i ∈ {r/2, r}`. -/
+theorem t_eq (i : Fin (d n)) : t n i = if (i : ℕ) < numHalf n then r n / 2 else r n := by
+  unfold t r
+  split_ifs with h
+  · have := one_le_ℓ_of_numHalf (lt_of_le_of_lt (Nat.zero_le _) h)
+    have e : 2 ^ ℓ n = 2 ^ (ℓ n - 1) * 2 := by rw [← pow_succ]; congr 1; omega
+    rw [e, Nat.mul_div_cancel _ two_pos]
+  · rfl
+
+/-- The last axis has length `r`. -/
+theorem t_last (hd : 1 ≤ d n) : t n ⟨d n - 1, by omega⟩ = r n := by
+  have := numHalf_lt hd
+  unfold t r
+  split_ifs with h
+  · simp only at h; omega
+  · rfl
+
+/-- `∏ t_i = T`. -/
+theorem prod_t (hd : 1 ≤ d n) : ∏ i, t n i = T n := by
+  have ha := numHalf_lt hd
+  have h1 := logT_le_dℓ hd
+  have h2 := dℓ_lt hd
+  have hF := Fin.prod_univ_eq_prod_range
+    (fun i => if i < numHalf n then 2 ^ (ℓ n - 1) else 2 ^ ℓ n) (d n)
+  have hA : ∏ i ∈ range (numHalf n), (if i < numHalf n then 2 ^ (ℓ n - 1) else 2 ^ ℓ n) =
+      (2 ^ (ℓ n - 1)) ^ numHalf n := by
+    rw [prod_congr rfl (g := fun _ => 2 ^ (ℓ n - 1)) (fun i hi => by simp [mem_range.1 hi]),
+      prod_const, card_range]
+  have hB : ∏ i ∈ Ico (numHalf n) (d n), (if i < numHalf n then 2 ^ (ℓ n - 1) else 2 ^ ℓ n) =
+      (2 ^ ℓ n) ^ (d n - numHalf n) := by
+    rw [prod_congr rfl (g := fun _ => 2 ^ ℓ n)
+      (fun i hi => by simp [not_lt.2 (mem_Ico.1 hi).1]), prod_const, Nat.card_Ico]
+  unfold t
+  rw [hF, ← prod_range_mul_prod_Ico _ ha.le, hA, hB, ← pow_mul, ← pow_mul, ← pow_add]
+  unfold T
+  congr 1
+  rcases Nat.eq_zero_or_pos (numHalf n) with h0 | h0
+  · rw [h0]
+    unfold numHalf at h0
+    simp only [mul_zero, zero_add, Nat.sub_zero]
+    rw [mul_comm]; omega
+  · have hl := one_le_ℓ_of_numHalf h0
+    obtain ⟨m, hm⟩ : ∃ m, ℓ n = m + 1 := ⟨ℓ n - 1, by omega⟩
+    rw [hm, Nat.add_sub_cancel]
+    rw [hm] at h1 h2
+    unfold numHalf at h0 ⊢
+    rw [hm]
+    have e1 : d n * (m + 1) = m * d n + d n := by ring
+    have e2 : m * (d n * (m + 1) - logT n) + (m + 1) * (d n - (d n * (m + 1) - logT n)) =
+        m * d n + (d n - (d n * (m + 1) - logT n)) := by
+      have hle : d n * (m + 1) - logT n ≤ d n := by omega
+      obtain ⟨u, hu⟩ : ∃ u, d n = (d n * (m + 1) - logT n) + u := ⟨_, (Nat.add_sub_of_le hle).symm⟩
+      rw [show d n - (d n * (m + 1) - logT n) = u by omega]
+      generalize d n * (m + 1) - logT n = v at hu ⊢
+      rw [hu]
+      ring
+    rw [e2]
+    omega
+
+end Basic
+
+/-! ### Bounds valid for every `n ≥ 2` -/
+
+section Small
+
+variable {n : ℕ}
+
+/-- `T p = Θ(n)`: `24 n ≤ T p < 48 n`. -/
+theorem volume_bounds (hn : 2 ≤ n) : 24 * n ≤ T n * p n ∧ T n * p n < 48 * n := by
+  have h1 := four_mul_le_bT hn
+  have h2 := bT_lt hn
+  have e : T n * p n = 6 * (b n * T n) := by unfold p; ring
+  omega
+
+/-- `p^ε / 12 ≤ d ≤ p^ε`, integer form: `d^(2^75) ≤ p < (12 d)^(2^75)`. -/
+theorem d_pow_le_p (n : ℕ) : d n ^ epsExp ≤ p n := by
+  have := d_pow_le n
+  unfold p
+  omega
+
+theorem p_lt_pow (hn : 2 ≤ n) : p n < (12 * d n) ^ epsExp := by
+  have hd := one_le_d hn
+  have h2 : (d n + 1) ^ epsExp ≤ (2 * d n) ^ epsExp := Nat.pow_le_pow_left (by omega) _
+  calc p n = 6 * b n := rfl
+    _ < 6 * (d n + 1) ^ epsExp := by have := b_lt_d_succ_pow n; omega
+    _ ≤ 6 * (2 * d n) ^ epsExp := Nat.mul_le_mul_left _ h2
+    _ ≤ (6 * (2 * d n)) ^ epsExp := mul_pow_le_mul_pow epsExp_ne 6 _
+    _ = (12 * d n) ^ epsExp := by rw [show 6 * (2 * d n) = 12 * d n by ring]
+
+/-- `p^ε / 12 ≤ d ≤ p^ε`, `ε = 2^{-75}`. -/
+theorem d_rpow_bounds (hn : 2 ≤ n) :
+    (p n : ℝ) ^ epsilon / 12 ≤ d n ∧ (d n : ℝ) ≤ (p n : ℝ) ^ epsilon := by
+  have hE : (epsExp : ℝ) ≠ 0 := by exact_mod_cast epsExp_ne
+  have hd0 : (0 : ℝ) ≤ d n := Nat.cast_nonneg _
+  have he : (0 : ℝ) ≤ epsilon := by unfold epsilon; positivity
+  constructor
+  · have h : (p n : ℝ) ≤ ((12 * d n : ℕ) : ℝ) ^ epsExp := by
+      exact_mod_cast (p_lt_pow hn).le
+    have h' := Real.rpow_le_rpow (Nat.cast_nonneg _) h he
+    rw [epsilon, Real.pow_rpow_inv_natCast (Nat.cast_nonneg _) epsExp_ne] at h'
+    push_cast at h'
+    rw [epsilon]
+    linarith
+  · have h : ((d n : ℝ)) ^ epsExp ≤ p n := by exact_mod_cast d_pow_le_p n
+    have h' := Real.rpow_le_rpow (by positivity) h he
+    rwa [epsilon, Real.pow_rpow_inv_natCast hd0 epsExp_ne] at h'
+
+theorem alpha_spec (n : ℕ) : 12 * d n ^ 2 * b n ≤ alpha n ^ 4 := Nat.find_spec (exists_alpha n)
+
+theorem alpha_min (n : ℕ) {m : ℕ} (hm : m < alpha n) : m ^ 4 < 12 * d n ^ 2 * b n :=
+  not_le.1 (Nat.find_min (exists_alpha n) hm)
+
+theorem two_le_alpha (hn : 2 ≤ n) : 2 ≤ alpha n := by
+  have hd := one_le_d hn
+  have hb := one_le_b hn
+  have h := alpha_spec n
+  by_contra hc
+  have h1 : alpha n ^ 4 ≤ 1 := by
+    calc alpha n ^ 4 ≤ 1 ^ 4 := Nat.pow_le_pow_left (by omega) 4
+      _ = 1 := by norm_num
+  have h2 : 1 ≤ d n ^ 2 := Nat.one_le_pow _ _ hd
+  have h3 : 12 ≤ 12 * d n ^ 2 * b n := by nlinarith
+  omega
+
+theorem alpha_pow_four_le (hn : 2 ≤ n) : alpha n ^ 4 ≤ 192 * d n ^ 2 * b n := by
+  have h2 := two_le_alpha hn
+  have h1 := alpha_min n (m := alpha n - 1) (by omega)
+  have h3 : alpha n ^ 4 ≤ (2 * (alpha n - 1)) ^ 4 := Nat.pow_le_pow_left (by omega) 4
+  rw [mul_pow] at h3
+  have e : 192 * d n ^ 2 * b n = 16 * (12 * d n ^ 2 * b n) := by ring
+  omega
+
+/-- `4d ≤ α²`. -/
+theorem four_d_le_alpha_sq_of (hb : 2 ≤ b n) : 4 * d n ≤ alpha n ^ 2 := by
+  have h := alpha_spec n
+  have h1 : (4 * d n) ^ 2 ≤ (alpha n ^ 2) ^ 2 := by
+    rw [← pow_mul]
+    calc (4 * d n) ^ 2 = 16 * d n ^ 2 := by ring
+      _ ≤ 12 * d n ^ 2 * b n := by nlinarith
+      _ ≤ alpha n ^ (2 * 2) := h
+  exact (Nat.pow_le_pow_iff_left (by norm_num)).1 h1
+
+/-- `γ = d (2 ⌈α²⌉ + 2)` with real `α`, the library's normalization. -/
+theorem gamma_eq_ceil (n : ℕ) : gamma n = d n * (2 * ⌈((alpha n : ℝ)) ^ 2⌉₊ + 2) := by
+  rw [← Nat.cast_pow, Nat.ceil_natCast]
+  rfl
+
+/-- `d = ⌊b^ε⌋`. -/
+theorem d_eq_floor (n : ℕ) : d n = ⌊(b n : ℝ) ^ epsilon⌋₊ := iroot_eq_floor epsExp_ne _
+
+/-- `K = ⌊d^c⌋`. -/
+theorem K_eq_floor (n : ℕ) : K n = ⌊(d n : ℝ) ^ cParam⌋₊ := iroot_eq_floor cExp_ne _
+
+/-- `α = ⌈(12 d² b)^{1/4}⌉`. -/
+theorem alpha_eq_ceil (hn : 2 ≤ n) :
+    alpha n = ⌈((12 * d n ^ 2 * b n : ℕ) : ℝ) ^ ((4 : ℝ)⁻¹)⌉₊ := by
+  have h2 := two_le_alpha hn
+  have e : ((4 : ℝ))⁻¹ = ((4 : ℕ) : ℝ)⁻¹ := by norm_num
+  rw [e, ceil_root_eq (by norm_num) (by omega) (alpha_min n (by omega)) (alpha_spec n)]
+
+/-- `T` is the power of two in `[4n/b, 8n/b)`. -/
+theorem T_bounds_real (hn : 2 ≤ n) :
+    4 * (n : ℝ) / b n ≤ T n ∧ (T n : ℝ) < 8 * n / b n := by
+  have hb : (0 : ℝ) < b n := by exact_mod_cast one_le_b hn
+  have h1 : (4 * n : ℝ) ≤ b n * T n := by exact_mod_cast four_mul_le_bT hn
+  have h2 : (b n * T n : ℝ) < 8 * n := by exact_mod_cast bT_lt hn
+  constructor
+  · rw [div_le_iff₀ hb]; linarith
+  · rw [lt_div_iff₀ hb]; linarith
+
+/-- `log₂ p ≤ 3 + 2^131 ⌈log₂ (K + 1)⌉`. -/
+theorem clog_p_le (n : ℕ) : Nat.clog 2 (p n) ≤ 3 + cExp * epsExp * Nat.clog 2 (K n + 1) := by
+  apply Nat.clog_le_of_le_pow
+  have h1 := b_lt_d_succ_pow n
+  have h2 : d n + 1 ≤ (K n + 1) ^ cExp := d_lt_K_succ_pow n
+  have h3 : (d n + 1) ^ epsExp ≤ ((K n + 1) ^ cExp) ^ epsExp := Nat.pow_le_pow_left h2 _
+  have h4 : K n + 1 ≤ 2 ^ Nat.clog 2 (K n + 1) := Nat.le_pow_clog one_lt_two _
+  have h5 : ((K n + 1) ^ cExp) ^ epsExp ≤ ((2 ^ Nat.clog 2 (K n + 1)) ^ cExp) ^ epsExp :=
+    Nat.pow_le_pow_left (Nat.pow_le_pow_left h4 _) _
+  have e : 2 ^ (3 + cExp * epsExp * Nat.clog 2 (K n + 1)) =
+      8 * ((2 ^ Nat.clog 2 (K n + 1)) ^ cExp) ^ epsExp := by
+    rw [← pow_mul, ← pow_mul, pow_add]; ring_nf
+  rw [e]
+  unfold p
+  omega
+
+end Small
+
+/-! ### The large regime -/
+
+/-- The regime of the deterministic size relations: `n ≥ 2` and `d ≥ 16`, so that
+`b ≥ d^(2^75) ≥ d^20`. -/
+def Big (n : ℕ) : Prop := 2 ≤ n ∧ 16 ≤ d n
+
+theorem eventually_big : ∀ᶠ n in atTop, Big n :=
+  (eventually_ge_atTop 2).and (tendsto_atTop.1 tendsto_d 16)
+
+section Big
+
+variable {n : ℕ}
+
+theorem Big.one_le_d (h : Big n) : 1 ≤ d n := by have := h.2; omega
+
+theorem Big.two_le_d (h : Big n) : 2 ≤ d n := by have := h.2; omega
+
+theorem Big.pow_le_b (h : Big n) {k : ℕ} (hk : k ≤ 20) : d n ^ k ≤ b n :=
+  pow_le_b_of (hk.trans twenty_le_epsExp) h.one_le_d
+
+theorem Big.sixteen_le_b (h : Big n) : 16 ≤ b n := by
+  have := h.pow_le_b (k := 1) (by norm_num)
+  have := h.2
+  rw [pow_one] at *
+  omega
+
+theorem Big.logT_bounds (h : Big n) : b n ≤ 2 * logT n ∧ logT n < b n :=
+  ⟨b_le_two_mul_logT h.1, logT_lt_b h.1 (by have := h.sixteen_le_b; omega)⟩
+
+theorem Big.one_le_logT (h : Big n) : 1 ≤ logT n :=
+  one_le_logT_of h.1 (by have := h.sixteen_le_b; omega)
+
+/-- `b ≤ 2 d ℓ`. -/
+theorem Big.b_le_two_dℓ (h : Big n) : b n ≤ 2 * (d n * ℓ n) := by
+  have := h.logT_bounds.1
+  have := logT_le_dℓ h.one_le_d
+  omega
+
+/-- `d^19 ≤ 2ℓ`. -/
+theorem Big.pow_le_two_ℓ (h : Big n) : d n ^ 19 ≤ 2 * ℓ n := by
+  have h1 := h.b_le_two_dℓ
+  have h2 := h.pow_le_b (k := 20) le_rfl
+  have hd := h.one_le_d
+  have : d n * d n ^ 19 ≤ d n * (2 * ℓ n) := by
+    rw [← pow_succ']
+    calc d n ^ 20 ≤ b n := h2
+      _ ≤ 2 * (d n * ℓ n) := h1
+      _ = d n * (2 * ℓ n) := by ring
+  exact Nat.le_of_mul_le_mul_left this hd
+
+theorem Big.d_le_ℓ (h : Big n) : d n + 1 ≤ ℓ n := by
+  have h1 := h.pow_le_two_ℓ
+  have h2 : d n ^ 2 ≤ d n ^ 19 := Nat.pow_le_pow_right h.one_le_d (by norm_num)
+  have h3 := h.2
+  nlinarith
+
+theorem Big.two_le_ℓ (h : Big n) : 2 ≤ ℓ n := by have := h.d_le_ℓ; have := h.2; omega
+
+/-- `p/(12d) ≤ ℓ ≤ p/(3d)`, integer form. -/
+theorem Big.ℓ_bounds (h : Big n) : p n ≤ 12 * d n * ℓ n ∧ 3 * d n * ℓ n ≤ p n := by
+  have h1 := h.logT_bounds
+  have h2 := logT_le_dℓ h.one_le_d
+  have h3 := dℓ_lt h.one_le_d
+  have h4 := d_le_b n
+  have e1 : 12 * d n * ℓ n = 12 * (d n * ℓ n) := by ring
+  have e2 : 3 * d n * ℓ n = 3 * (d n * ℓ n) := by ring
+  unfold p
+  omega
+
+/-- `p/(12d) ≤ ℓ ≤ p/(3d)`. -/
+theorem Big.ℓ_bounds_real (h : Big n) :
+    (p n : ℝ) / (12 * d n) ≤ ℓ n ∧ (ℓ n : ℝ) ≤ p n / (3 * d n) := by
+  obtain ⟨h1, h2⟩ := h.ℓ_bounds
+  have hd : (0 : ℝ) < d n := by exact_mod_cast h.one_le_d
+  have h1' : (p n : ℝ) ≤ 12 * d n * ℓ n := by exact_mod_cast h1
+  have h2' : (3 * d n * ℓ n : ℝ) ≤ p n := by exact_mod_cast h2
+  constructor
+  · rw [div_le_iff₀ (by positivity)]; linarith
+  · rw [le_div_iff₀ (by positivity)]; linarith
+
+/-- `K + 1 ≤ ℓ`. -/
+theorem Big.K_succ_le_ℓ (h : Big n) : K n + 1 ≤ ℓ n := by
+  have := K_le_d n
+  have := h.d_le_ℓ
+  omega
+
+/-- The modulus condition `8 d² N + 4d ≤ r/2` of `Moduli.src_good`. -/
+theorem Big.moduli_room (h : Big n) : 8 * d n ^ 2 * N n + 4 * d n ≤ 2 ^ (ℓ n - 1) := by
+  set D := d n
+  have hD := h.2
+  have hN1 : 1 ≤ N n := oddProd_pos D
+  -- `N ≤ (4D)^(2D) ≤ 2^(2D · 2D)`
+  have hN : N n ≤ 2 ^ (2 * D * (2 * D)) := by
+    calc N n ≤ (4 * D) ^ (2 * D) := oddProd_le D
+      _ ≤ (2 ^ (2 * D)) ^ (2 * D) := Nat.pow_le_pow_left (le_two_pow_two_mul (by omega)) _
+      _ = 2 ^ (2 * D * (2 * D)) := by rw [← pow_mul]
+  have hD2 : D ^ 2 ≤ 2 ^ (2 * D) := by
+    calc D ^ 2 ≤ (2 ^ D) ^ 2 := Nat.pow_le_pow_left Nat.lt_two_pow_self.le 2
+      _ = 2 ^ (2 * D) := by rw [← pow_mul, mul_comm]
+  have hDN : D ≤ D ^ 2 * N n := by
+    calc D ≤ D ^ 2 := Nat.le_self_pow (by norm_num) D
+      _ ≤ D ^ 2 * N n := Nat.le_mul_of_pos_right _ hN1
+  have h1 : 8 * D ^ 2 * N n + 4 * D ≤ 16 * (D ^ 2 * N n) := by
+    have e : 8 * D ^ 2 * N n = 8 * (D ^ 2 * N n) := by ring
+    omega
+  have h1' : D ^ 2 * N n ≤ 2 ^ (2 * D) * 2 ^ (2 * D * (2 * D)) := Nat.mul_le_mul hD2 hN
+  have h2 : 4 + 2 * D + 2 * D * (2 * D) ≤ ℓ n - 1 := by
+    have h3 : D ^ 19 ≤ 2 * ℓ n := h.pow_le_two_ℓ
+    have h4 : D ^ 3 ≤ D ^ 19 := Nat.pow_le_pow_right (by omega) (by norm_num)
+    have h5 : 16 * D ^ 2 ≤ D ^ 3 := by
+      calc 16 * D ^ 2 ≤ D * D ^ 2 := Nat.mul_le_mul_right _ hD
+        _ = D ^ 3 := by ring
+    have h6 : 10 + 4 * D ≤ 8 * D ^ 2 := by nlinarith
+    have e : 2 * D * (2 * D) = 4 * D ^ 2 := by ring
+    omega
+  calc 8 * D ^ 2 * N n + 4 * D ≤ 16 * (D ^ 2 * N n) := h1
+    _ ≤ 16 * (2 ^ (2 * D) * 2 ^ (2 * D * (2 * D))) := Nat.mul_le_mul_left _ h1'
+    _ = 2 ^ (4 + 2 * D + 2 * D * (2 * D)) := by rw [pow_add, pow_add]; norm_num; ring
+    _ ≤ 2 ^ (ℓ n - 1) := Nat.pow_le_pow_right (by norm_num) h2
+
+theorem t_eq_box (hl : 1 ≤ ℓ n) : t n = Moduli.box (d n) (numHalf n) (ℓ n - 1) := by
+  funext i
+  unfold t Moduli.box axisLen
+  split_ifs
+  · rfl
+  · congr 1; omega
+
+/-- **The moduli at the chosen sizes**: odd, `s_i < t_i`, coprime to `t_i`, pairwise
+coprime, `(1 - 2η) t_i < s_i ≤ (1 - η) t_i`, `T/2 < S < T`. -/
+theorem Big.good (h : Big n) : Good (s n) (t n) := by
+  rw [t_eq_box (by have := h.two_le_ℓ; omega)]
+  exact src_good_oddProd h.two_le_d h.moduli_room
+
+theorem Big.bounds_real (h : Big n) (i : Fin (d n)) :
+    (1 - 2 * eta n) * t n i < s n i ∧ (s n i : ℝ) ≤ (1 - eta n) * t n i :=
+  (h.good.bounds i).real h.one_le_d
+
+theorem Big.S_lt_T (h : Big n) : S n < T n := by
+  have := h.good.prod_lt
+  rwa [prod_t h.one_le_d] at this
+
+theorem Big.T_lt_two_S (h : Big n) : T n < 2 * S n := by
+  have := h.good.prod_gt
+  rwa [prod_t h.one_le_d] at this
+
+theorem Big.half_T_lt_S (h : Big n) : (T n : ℝ) / 2 < S n := by
+  have : (T n : ℝ) < 2 * S n := by exact_mod_cast h.T_lt_two_S
+  linarith
+
+theorem Big.two_dvd_t (h : Big n) (i : Fin (d n)) : 2 ∣ t n i := by
+  have := h.two_le_ℓ
+  unfold t
+  split_ifs
+  · exact dvd_pow_self 2 (by omega)
+  · exact dvd_pow_self 2 (by omega)
+
+theorem Big.thirteen_le_p (h : Big n) : 13 ≤ p n := by
+  have := h.sixteen_le_b; unfold p; omega
+
+/-- `α² ≤ p`. -/
+theorem Big.alpha_sq_le_p (h : Big n) : alpha n ^ 2 ≤ p n := by
+  have h1 := alpha_pow_four_le h.1
+  have h2 := h.pow_le_b (k := 4) (by norm_num)
+  have hD := h.2
+  have h3 : 16 * d n ^ 2 ≤ 3 * b n := by
+    have : 16 * d n ^ 2 ≤ d n ^ 4 := by
+      rw [show d n ^ 4 = d n ^ 2 * d n ^ 2 by ring]
+      have : 16 ≤ d n ^ 2 := by nlinarith
+      nlinarith
+    omega
+  have h4 : (alpha n ^ 2) ^ 2 ≤ (p n) ^ 2 := by
+    rw [← pow_mul]
+    unfold p
+    calc alpha n ^ (2 * 2) = alpha n ^ 4 := by norm_num
+      _ ≤ 192 * d n ^ 2 * b n := h1
+      _ ≤ (6 * b n) ^ 2 := by nlinarith
+  exact (Nat.pow_le_pow_iff_left (by norm_num)).1 h4
+
+theorem Big.four_d_le_alpha_sq (h : Big n) : 4 * d n ≤ alpha n ^ 2 :=
+  four_d_le_alpha_sq_of (by have := h.sixteen_le_b; omega)
+
+/-- `1 ≤ α² θ_i`, `θ_i = t_i / s_i - 1`. -/
+theorem Big.one_le_alpha_sq_theta (h : Big n) (i : Fin (d n)) :
+    1 ≤ (alpha n : ℝ) ^ 2 * ((t n i : ℝ) / s n i - 1) := by
+  have hg := h.good
+  have hs : (0 : ℝ) < s n i := by exact_mod_cast (hg.odd i).pos
+  have hu : (4 * d n * s n i + t n i : ℝ) ≤ 4 * d n * t n i := by
+    exact_mod_cast (hg.bounds i).upper
+  have hlt : (s n i : ℝ) < t n i := by exact_mod_cast hg.lt i
+  have hα : (4 * d n : ℝ) ≤ (alpha n : ℝ) ^ 2 := by exact_mod_cast h.four_d_le_alpha_sq
+  have e : (t n i : ℝ) / s n i - 1 = (t n i - s n i) / s n i := by field_simp
+  rw [e, ← mul_div_assoc, le_div_iff₀ hs]
+  nlinarith
+
+/-- `η < θ_i`. -/
+theorem Big.eta_lt_theta (h : Big n) (i : Fin (d n)) : eta n < (t n i : ℝ) / s n i - 1 := by
+  have hg := h.good
+  have hs : (0 : ℝ) < s n i := by exact_mod_cast (hg.odd i).pos
+  have hd : (0 : ℝ) < d n := by exact_mod_cast h.one_le_d
+  have hu : (4 * d n * s n i + t n i : ℝ) ≤ 4 * d n * t n i := by
+    exact_mod_cast (hg.bounds i).upper
+  have hlt : (s n i : ℝ) < t n i := by exact_mod_cast hg.lt i
+  have e : (t n i : ℝ) / s n i - 1 = (t n i - s n i) / s n i := by field_simp
+  rw [e, eta, div_lt_div_iff₀ (by positivity) hs]
+  nlinarith
+
+/-- The manuscript's `α⁴ θ_i > p`, as `p s_i < α⁴ (t_i - s_i)`. -/
+theorem Big.p_mul_s_lt (h : Big n) (i : Fin (d n)) :
+    p n * s n i < alpha n ^ 4 * (t n i - s n i) := by
+  have hg := h.good
+  have hu := (hg.bounds i).upper
+  have hlt := hg.lt i
+  have hα := alpha_spec n
+  have hD := h.2
+  obtain ⟨w, hw⟩ : ∃ w, t n i = s n i + w := ⟨t n i - s n i, by omega⟩
+  rw [hw, Nat.add_sub_cancel_left]
+  rw [hw] at hu hlt
+  -- `4 d w ≥ t > s`
+  have h1 : s n i + w ≤ 4 * d n * w := by nlinarith
+  have h2 : alpha n ^ 4 * w ≥ 12 * d n ^ 2 * b n * w := Nat.mul_le_mul_right _ hα
+  have h3 : 12 * d n ^ 2 * b n * w = 3 * d n * b n * (4 * d n * w) := by ring
+  have h4 : 3 * d n * b n * (4 * d n * w) ≥ 3 * d n * b n * (s n i + w) :=
+    Nat.mul_le_mul_left _ h1
+  have h5 : 0 < w := by omega
+  have hb := h.sixteen_le_b
+  unfold p
+  have h6 : 6 * b n * s n i < 3 * d n * b n * (s n i + w) := by
+    have : 6 * b n * s n i ≤ 3 * d n * b n * s n i := by
+      have : 6 ≤ 3 * d n := by omega
+      calc 6 * b n * s n i = 6 * (b n * s n i) := by ring
+        _ ≤ 3 * d n * (b n * s n i) := Nat.mul_le_mul_right _ this
+        _ = 3 * d n * b n * s n i := by ring
+    have : 0 < 3 * d n * b n * w := by positivity
+    nlinarith
+  omega
+
+/-- `γ ≤ b/4`, integer form `4γ ≤ b`. -/
+theorem Big.four_gamma_le_b (h : Big n) : 4 * gamma n ≤ b n := by
+  have h1 := alpha_pow_four_le h.1
+  have h20 := h.pow_le_b (k := 20) le_rfl
+  have hD := h.2
+  set D := d n
+  set B := b n
+  set A := alpha n
+  -- `49152 D^4 ≤ B`
+  have h2 : 49152 * D ^ 4 ≤ B := by
+    have : 49152 ≤ D ^ 16 := by
+      calc 49152 ≤ 16 ^ 16 := by norm_num
+        _ ≤ D ^ 16 := Nat.pow_le_pow_left hD 16
+    calc 49152 * D ^ 4 ≤ D ^ 16 * D ^ 4 := Nat.mul_le_mul_right _ this
+      _ = D ^ 20 := by ring
+      _ ≤ B := h20
+  -- `16 D A² ≤ B`
+  have h3 : (16 * D * A ^ 2) ^ 2 ≤ B ^ 2 := by
+    calc (16 * D * A ^ 2) ^ 2 = 256 * D ^ 2 * A ^ 4 := by ring
+      _ ≤ 256 * D ^ 2 * (192 * D ^ 2 * B) := Nat.mul_le_mul_left _ h1
+      _ = 49152 * D ^ 4 * B := by ring
+      _ ≤ B * B := Nat.mul_le_mul_right _ h2
+      _ = B ^ 2 := by ring
+  have h4 : 16 * D * A ^ 2 ≤ B := (Nat.pow_le_pow_iff_left (by norm_num)).1 h3
+  have h5 : 16 * D ≤ B := by
+    have : 16 * D ≤ D ^ 4 := by
+      calc 16 * D ≤ D * D := Nat.mul_le_mul_right D hD
+        _ = D ^ 2 := by ring
+        _ ≤ D ^ 4 := Nat.pow_le_pow_right (by omega) (by norm_num)
+    have := h.pow_le_b (k := 4) (by norm_num)
+    omega
+  show 4 * (D * (2 * A ^ 2 + 2)) ≤ B
+  have e : 4 * (D * (2 * A ^ 2 + 2)) = 8 * (D * A ^ 2) + 8 * D := by ring
+  have e2 : 16 * D * A ^ 2 = 16 * (D * A ^ 2) := by ring
+  omega
+
+theorem Big.gamma_le_real (h : Big n) : (gamma n : ℝ) ≤ b n / 4 := by
+  have : (4 * gamma n : ℝ) ≤ b n := by exact_mod_cast h.four_gamma_le_b
+  linarith
+
+/-- No wraparound: `2q - 2 < S`, as `2q ≤ S + 1`. -/
+theorem Big.two_q_le (h : Big n) : 2 * q n ≤ S n + 1 := by
+  have hb := one_le_b h.1
+  have h1 : b n * q n ≤ n + b n - 1 := Nat.mul_div_le _ _
+  have h2 := four_mul_le_bT h.1
+  have h3 := h.T_lt_two_S
+  by_contra hc
+  push Not at hc
+  have h4 : T n + 5 ≤ 4 * q n := by omega
+  have h5 : b n * (T n + 5) ≤ b n * (4 * q n) := Nat.mul_le_mul_left _ h4
+  have e1 : b n * (T n + 5) = b n * T n + 5 * b n := by ring
+  have e2 : b n * (4 * q n) = 4 * (b n * q n) := by ring
+  omega
+
+theorem Big.two_q_sub_two_lt (h : Big n) : 2 * q n - 2 < S n := by
+  have := h.two_q_le
+  have : 0 < S n := by
+    have := h.T_lt_two_S
+    omega
+  omega
+
+/-- The digit-count hypothesis `hS` of `ExactRecovery.exact_product` at `k = b`. -/
+theorem Big.digits_length_le (h : Big n) {x y : List Bool} (hx : x.length = n)
+    (hy : y.length = n) :
+    (IntegerMultBounds.NLogN.digitsOf (b n) x).length +
+      (IntegerMultBounds.NLogN.digitsOf (b n) y).length ≤ S n + 1 := by
+  have hb := one_le_b h.1
+  have h1 := IntegerMultBounds.NLogN.digitsOf_length_le_div hb x
+  have h2 := IntegerMultBounds.NLogN.digitsOf_length_le_div hb y
+  rw [hx] at h1
+  rw [hy] at h2
+  have := h.two_q_le
+  unfold q at this
+  omega
+
+/-- The size hypotheses of `ExactRecovery.margins_of_sizes` with `k = b`, `L = log₂ T`. -/
+theorem Big.margin_hyps (h : Big n) :
+    S n ≤ T n ∧ 2 ≤ T n ∧ T n < 2 ^ b n ∧ 1 ≤ logT n ∧ logT n < b n ∧
+      (gamma n : ℝ) ≤ b n / 4 ∧ p n = 6 * b n := by
+  have hL := h.one_le_logT
+  have hLb := h.logT_bounds.2
+  refine ⟨h.S_lt_T.le, ?_, ?_, hL, hLb, h.gamma_le_real, rfl⟩
+  · unfold T
+    calc 2 = 2 ^ 1 := by norm_num
+      _ ≤ 2 ^ logT n := Nat.pow_le_pow_right (by norm_num) hL
+  · exact Nat.pow_lt_pow_right (by norm_num) hLb
+
+end Big
+
+/-! ### Eventual statements -/
+
+theorem tendsto_ℓ : Tendsto ℓ atTop atTop :=
+  tendsto_atTop.2 fun M => (eventually_big.and (tendsto_atTop.1 tendsto_d M)).mono
+    fun _ h => by have := h.1.d_le_ℓ; have := h.2; omega
+
+/-- `b ≤ 4ℓ²`, hence `p ≤ 24 ℓ²`. -/
+theorem Big.p_le_ℓ_sq {n : ℕ} (h : Big n) : p n ≤ 24 * ℓ n ^ 2 := by
+  have h1 := h.b_le_two_dℓ
+  have h2 := h.pow_le_b (k := 2) (by norm_num)
+  have hd : 0 < d n ^ 2 := by have := h.one_le_d; positivity
+  have h3 : d n ^ 2 * b n ≤ d n ^ 2 * (4 * ℓ n ^ 2) := by
+    calc d n ^ 2 * b n ≤ b n * b n := Nat.mul_le_mul_right _ h2
+      _ ≤ (2 * (d n * ℓ n)) * (2 * (d n * ℓ n)) := Nat.mul_le_mul h1 h1
+      _ = d n ^ 2 * (4 * ℓ n ^ 2) := by ring
+  have h4 := Nat.le_of_mul_le_mul_left h3 hd
+  unfold p
+  omega
+
+/-- `r` exceeds every fixed power of `p`. -/
+theorem eventually_pow_p_le_r (C : ℕ) : ∀ᶠ n in atTop, p n ^ C ≤ r n := by
+  filter_upwards [eventually_big,
+    tendsto_ℓ.eventually (eventually_mul_pow_le_two_pow (24 ^ C) (2 * C))] with n h hl
+  calc p n ^ C ≤ (24 * ℓ n ^ 2) ^ C := Nat.pow_le_pow_left h.p_le_ℓ_sq C
+    _ = 24 ^ C * ℓ n ^ (2 * C) := by rw [mul_pow, ← pow_mul]
+    _ ≤ r n := hl
+
+theorem tendsto_clog_succ : Tendsto (fun k : ℕ => Nat.clog 2 (k + 1)) atTop atTop :=
+  tendsto_atTop.2 fun m => eventually_atTop.2 ⟨2 ^ m, fun k hk => by
+    have := Nat.clog_mono_right 2 (show 2 ^ m ≤ k + 1 by omega)
+    rwa [Nat.clog_pow 2 m one_lt_two] at this⟩
+
+/-- `C (3 + M ⌈log₂ (k+1)⌉) ≤ k` for all large `k`. -/
+theorem eventually_log_le (C M : ℕ) :
+    ∀ᶠ k : ℕ in atTop, C * (3 + M * Nat.clog 2 (k + 1)) ≤ k := by
+  filter_upwards [eventually_ge_atTop 1, tendsto_clog_succ.eventually
+    ((eventually_mul_pow_le_two_pow (2 * (C * (3 + M))) 1).and (eventually_ge_atTop 1))]
+    with k hk ⟨hc, hc1⟩
+  set c := Nat.clog 2 (k + 1)
+  rw [pow_one] at hc
+  have h1 : 2 ^ (c - 1) < k + 1 := by
+    have := Nat.pow_pred_clog_lt_self (b := 2) one_lt_two (x := k + 1) (by omega)
+    rwa [Nat.pred_eq_sub_one] at this
+  have e : 2 ^ c = 2 * 2 ^ (c - 1) := by rw [← pow_succ']; congr 1; omega
+  have h2 : C * (3 + M * c) ≤ C * (3 + M) * c := by
+    rw [mul_assoc]
+    apply Nat.mul_le_mul_left
+    nlinarith
+  have h3 : 2 * (C * (3 + M)) * c = 2 * (C * (3 + M) * c) := by ring
+  omega
+
+/-- `K / log p → ∞`: for every `C`, eventually `C ⌈log₂ p⌉ ≤ K`. -/
+theorem eventually_clog_p_le_K (C : ℕ) : ∀ᶠ n in atTop, C * Nat.clog 2 (p n) ≤ K n := by
+  filter_upwards [tendsto_K.eventually (eventually_log_le C (cExp * epsExp))] with n hn
+  exact (Nat.mul_le_mul_left _ (clog_p_le n)).trans hn
+
+/-- `K / log p → ∞` with the real logarithm: for every real `C`, eventually
+`C log₂ p ≤ K`. -/
+theorem eventually_logb_p_le_K (C : ℝ) : ∀ᶠ n in atTop, C * Real.logb 2 (p n) ≤ K n := by
+  filter_upwards [eventually_clog_p_le_K ⌈C⌉₊, eventually_big] with n hn h
+  have hp : (1 : ℝ) ≤ p n := by exact_mod_cast (h.thirteen_le_p.trans' (by norm_num))
+  have hlog0 : 0 ≤ Real.logb 2 (p n) := Real.logb_nonneg one_lt_two hp
+  have hlog : Real.logb 2 (p n) ≤ Nat.clog 2 (p n) := by
+    have h1 : ((p n : ℕ) : ℝ) ≤ ((2 ^ Nat.clog 2 (p n) : ℕ) : ℝ) := by
+      exact_mod_cast Nat.le_pow_clog one_lt_two (p n)
+    have h2 := Real.logb_le_logb_of_le one_lt_two (by linarith) h1
+    rwa [Nat.cast_pow, Nat.cast_ofNat, Real.logb_pow, Real.logb_self_eq_one one_lt_two,
+      mul_one] at h2
+  have hC : C ≤ ⌈C⌉₊ := Nat.le_ceil C
+  have hK : ((⌈C⌉₊ * Nat.clog 2 (p n) : ℕ) : ℝ) ≤ K n := by exact_mod_cast hn
+  push_cast at hK
+  calc C * Real.logb 2 (p n) ≤ ⌈C⌉₊ * Real.logb 2 (p n) := by
+        exact mul_le_mul_of_nonneg_right hC hlog0
+    _ ≤ ⌈C⌉₊ * Nat.clog 2 (p n) := by
+        exact mul_le_mul_of_nonneg_left hlog (Nat.cast_nonneg _)
+    _ ≤ K n := hK
+
+/-- `ℓ / K → ∞`: for every `C`, eventually `C K ≤ ℓ`. -/
+theorem eventually_mul_K_le_ℓ (C : ℕ) : ∀ᶠ n in atTop, C * K n ≤ ℓ n := by
+  filter_upwards [eventually_big, tendsto_atTop.1 tendsto_d (2 * C)] with n h hC
+  have h1 := h.pow_le_two_ℓ
+  have h2 : d n ^ 2 ≤ d n ^ 19 := Nat.pow_le_pow_right h.one_le_d (by norm_num)
+  have h3 : C * K n ≤ C * d n := Nat.mul_le_mul_left _ (K_le_d n)
+  have h4 : 2 * C * d n ≤ d n * d n := Nat.mul_le_mul_right _ hC
+  have h5 : d n ^ 2 = d n * d n := by ring
+  have h6 : 2 * C * d n = 2 * (C * d n) := by ring
+  omega
+
+/-- `2 d p² ≤ T log₂ T` (the hypothesis `hsmall` of the source-transform assembly). -/
+theorem eventually_small : ∀ᶠ n in atTop, 2 * d n * p n ^ 2 ≤ T n * logT n := by
+  filter_upwards [eventually_big, tendsto_b.eventually (eventually_mul_pow_le_two_pow 72 4)]
+    with n h hb
+  have h1 := four_mul_le_bT h.1
+  have h2 := two_pow_b_lt h.1
+  have hL := h.one_le_logT
+  have hdb := d_le_b n
+  have hB := h.sixteen_le_b
+  -- `b · 72 b³ ≤ 2^b < 2n ≤ b T`, so `72 b³ < T`
+  have h3 : b n * (72 * b n ^ 3) < b n * T n := by
+    have : b n * (72 * b n ^ 3) = 72 * b n ^ 4 := by ring
+    omega
+  have h4 : 72 * b n ^ 3 < T n := Nat.lt_of_mul_lt_mul_left h3
+  have h5 : 2 * d n * p n ^ 2 ≤ 72 * b n ^ 3 := by
+    unfold p
+    have : d n * b n ^ 2 ≤ b n * b n ^ 2 := Nat.mul_le_mul_right _ hdb
+    nlinarith
+  have h6 : T n ≤ T n * logT n := Nat.le_mul_of_pos_right _ hL
+  omega
+
+/-- The threshold of `ExactRecovery.eventually_threshold` at `k = b`. -/
+theorem eventually_threshold :
+    ∀ᶠ n in atTop, 896 * (b n : ℝ) * (2 : ℝ) ^ ((b n : ℝ) / 4) < 2 ^ b n :=
+  tendsto_b.eventually IntegerMultBounds.ExactRecovery.eventually_threshold
+
+/-- The precision margins of exact recovery, `E_s = 9 · 2^γ T log₂ T`:
+`E_s ≤ 2^p / 100` and `2^(2b+4) S² (3 E_s + 2) < 2^p / 2`. -/
+theorem eventually_margins :
+    ∀ᶠ n in atTop,
+      9 * (2 : ℝ) ^ gamma n * T n * logT n ≤ 2 ^ p n / 100 ∧
+        (2 : ℝ) ^ (2 * b n + 4) * S n ^ 2 * (3 * (9 * (2 : ℝ) ^ gamma n * T n * logT n) + 2) <
+          2 ^ p n / 2 := by
+  filter_upwards [eventually_big, eventually_threshold] with n h hthr
+  obtain ⟨h1, h2, h3, h4, h5, h6, -⟩ := h.margin_hyps
+  exact IntegerMultBounds.ExactRecovery.margins_of_sizes h1 h2 h3 h4 h5 h6 hthr
+
+end IntegerMultBounds.MathlibTM2.Mult.Sizes
