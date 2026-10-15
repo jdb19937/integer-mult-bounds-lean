@@ -595,8 +595,22 @@ recursive induction boundary. `Cost/CompactBasis.lean` bounds every descriptor,
 seed, header, native execution and cleanup cost at actual local volume times
 compact width to `tau`; the fixed coefficient is `2^(slotExponent(T,D)+49)`.
 The quadratic descriptor arithmetic is absorbed into the actual address volume,
-not hidden in a full-width transport factor. Closing the recursive layer and
-generalizing the top wrappers currently specialized to `SXReg` remain.
+not hidden in a full-width transport factor. `Node/CompactLayerProc.lean` now closes all recursive calls with the actual
+compact factor; `CompactLayerGeometry.lean` derives child readiness from the
+root layout and local packing/budget bounds. No recursive execution oracle
+remains. `Cost/CompactFactor.lean` and `CompactFactorActual.lean` charge every
+non-child factor stage to compact-width local volume with a fixed power-of-two
+coefficient and retain child-cost coefficient one.
+
+The generic `CompactTopProcRegs/Call/Kernel/Leaf` modules execute top field
+reads, call cleanup and the top kernel while preserving persistent basis data.
+The kernel's leaf call is discharged by actual `leafP_exec`.
+`Node/CompactRegisterEmbedding.lean` gives one fixed union host bank with
+shared ordinary registers and disjoint private banks. `Fast/CompactTopPlaced.lean`
+executes the full original-input constructor there, preserving exact costs,
+without assuming procedure-table compatibility. Recursive piece processing,
+remaining top stages, actual recurrence normalization and final caller assembly
+remain open.
 Propagate the complete execution costs and discharge remaining caller sizing; record coverage alone
 does not establish the complete reserved transform. M3 remains open and public
 saving remains `2^-66`.

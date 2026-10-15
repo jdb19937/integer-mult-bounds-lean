@@ -6215,3 +6215,8 @@ Parameters and asymptotics.
 
 - `MathlibTM2/Cost/CompactBasis.lean`: Complete computed-slot and basis costs bounded by actual local volume times compact width to `tau`, including quadratic descriptor arithmetic, seed/header/native execution and cleanup, with fixed power-of-two coefficients.
 - `MathlibTM2/Node/CompactFactorBasis.lean`, `Node/CompactFactor.lean`: Complete compact factor program and exact factor contract, replacing both basis calls while restoring persistent globals; recursive child execution remains the existing `CallSpec` induction boundary.
+
+- `MathlibTM2/Node/CompactLayerProc.lean`, `Node/CompactLayerGeometry.lean`: Complete actual compact recursive layer and closed call contract; child geometry follows from the root layout, with local packing and numeric basis-budget obligations explicit.
+- `MathlibTM2/Cost/CompactFactor.lean`, `Cost/CompactFactorActual.lean`: Full non-child factor overhead at compact-width local volume, fixed power-of-two coefficient and child coefficient one.
+- `MathlibTM2/Node/CompactTopProcRegs.lean`, `Node/CompactTopProcCall.lean`, `Node/CompactTopProcKernel.lean`, `Node/CompactTopProcLeaf.lean`: Generic persistent-bank top registers, actual field reads/call cleanup/kernel; the top leaf kernel's call contract is discharged by actual execution.
+- `MathlibTM2/Node/CompactRegisterEmbedding.lean`, `Fast/CompactTopPlaced.lean`: One fixed union bank shares ordinary registers and separates private banks; actual original-input setup executes on it with unchanged cost and no procedure-table assumption.

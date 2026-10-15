@@ -2423,3 +2423,11 @@ import IntegerMultBounds.MathlibTM2.Cost.CompactCallerSelectedRows
 import IntegerMultBounds.MathlibTM2.Cost.CompactBasis
 
 import IntegerMultBounds.MathlibTM2.Node.CompactFactor
+
+import IntegerMultBounds.MathlibTM2.Node.CompactLayerGeometry
+
+import IntegerMultBounds.MathlibTM2.Node.CompactTopProcLeaf
+
+import IntegerMultBounds.MathlibTM2.Fast.CompactTopPlaced
+
+import IntegerMultBounds.MathlibTM2.Cost.CompactFactorActual

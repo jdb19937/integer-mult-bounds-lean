@@ -1,3 +1,7 @@
+import IntegerMultBounds.MathlibTM2.Node.CompactLayerGeometry
+import IntegerMultBounds.MathlibTM2.Node.CompactTopProcLeaf
+import IntegerMultBounds.MathlibTM2.Fast.CompactTopPlaced
+import IntegerMultBounds.MathlibTM2.Cost.CompactFactorActual
 import IntegerMultBounds.MathlibTM2.Cost.CompactBasis
 import IntegerMultBounds.MathlibTM2.Node.CompactFactor
 import IntegerMultBounds.MathlibTM2.Fast.CompactTopOriginal
@@ -147,7 +151,22 @@ run_cmd do
     ``IntegerMultBounds.MathlibTM2.Cost.compactBasisSlotCost_le,
     ``IntegerMultBounds.MathlibTM2.Cost.compactBasisCost_le,
     ``IntegerMultBounds.MathlibTM2.LayerMachine.compactBasisW_factor_exec,
-    ``IntegerMultBounds.MathlibTM2.LayerMachine.compactFactorProg_spec]
+    ``IntegerMultBounds.MathlibTM2.LayerMachine.compactFactorProg_spec,
+    ``IntegerMultBounds.MathlibTM2.LayerMachine.compactLayer_exec,
+    ``IntegerMultBounds.MathlibTM2.LayerMachine.compactLayer_callSpec,
+    ``IntegerMultBounds.MathlibTM2.LayerMachine.compactLayerReady_of_layout,
+    ``IntegerMultBounds.MathlibTM2.LayerMachine.compactTopRd_exec,
+    ``IntegerMultBounds.MathlibTM2.LayerMachine.compactTopCallClr_exec,
+    ``IntegerMultBounds.MathlibTM2.LayerMachine.compactTopKerS_exec,
+    ``IntegerMultBounds.MathlibTM2.LayerMachine.compactTopLeafKerS_exec,
+    ``IntegerMultBounds.MathlibTM2.LayerMachine.compactBasisTopLeaf_exec,
+    ``IntegerMultBounds.MathlibTM2.LayerMachine.compactLegacyReg_injective,
+    ``IntegerMultBounds.MathlibTM2.LayerMachine.compactLayerReg_injective,
+    ``IntegerMultBounds.MathlibTM2.LayerMachine.compactLegacyReg_ne_compact_bc,
+    ``IntegerMultBounds.MathlibTM2.LayerMachine.compactLayerReg_ne_legacy_bc,
+    ``IntegerMultBounds.MathlibTM2.Fast.compactTopPlaced_runs,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactFactorCost_linear,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactFactorCost_le]
   for name in names do
     for ax in ← collectAxioms name do
       unless #[``propext, ``Quot.sound, ``Classical.choice].contains ax do
