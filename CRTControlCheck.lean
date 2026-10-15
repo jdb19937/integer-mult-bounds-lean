@@ -1,3 +1,4 @@
+import IntegerMultBounds.MathlibTM2.Fast.CRTDirectSetup
 import IntegerMultBounds.MathlibTM2.Fast.CRTDirectBacking
 import IntegerMultBounds.MathlibTM2.Fast.MainDirectCore
 import IntegerMultBounds.MathlibTM2.Cost.DirectTotal
@@ -49,6 +50,15 @@ separate work. -/
 open Lean in
 run_cmd do
   let names := #[
+    ``IntegerMultBounds.MathlibTM2.Fast.crtDirectReverseCopy_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtDirectCacheHead_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtDirectCountAxes_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtDirectTriple_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtDirectBankWidth_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtDirectSetup_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtDirectSetup_legacy_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtDirectSetupClear_runs,
+
     ``IntegerMultBounds.MathlibTM2.Fast.crtDirectBacking_injective,
     ``IntegerMultBounds.MathlibTM2.Fast.crtDirectExternal_injective,
     ``IntegerMultBounds.MathlibTM2.Fast.crtDirectBank_injective,

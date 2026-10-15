@@ -343,6 +343,12 @@ persistent input aliases are preserved; all 58 scratch slots belong to the
 existing rest-empty contract. Focused checks of `CRTMachine`, `SrcStage`,
 `MainRegs` and `DistSpec` confirm the old entry contracts supply that backing.
 
+`CRTDirectSetup.lean` now constructs the ascending streams, cached axis-zero
+width, dimension count, encoded record width and bank width directly from
+legacy inputs. Its six-output frame and exact cleanup back to the original
+register state are proved. Final driver start/restore, reversal and padding
+composition remain before the replacement machine can enter the pipeline.
+
 Remaining integration steps, in order:
 
 1. **M2b — rotation scanner and producer: complete.** The actual all-fiber
