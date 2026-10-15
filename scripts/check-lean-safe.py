@@ -3,6 +3,7 @@
 import argparse
 import fcntl
 import hashlib
+import json
 import os
 from pathlib import Path
 import signal
@@ -22,6 +23,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--wait-for-lock', action='store_true',
                         help='queue this check behind the current workspace verifier')
+    parser.add_argument('--report-json', type=Path,
+                        help='write elapsed checking time and peak RSS (excludes lock waiting)')
     parser.add_argument('lean_args', nargs=argparse.REMAINDER,
                         help='Lean arguments, normally a source file and optional -o path')
     args = parser.parse_args()
@@ -91,6 +94,14 @@ def main():
                         pass
                     proc.wait()
             print(f'Guarded check peak RSS: {peak / 1024:.1f} MiB.', file=sys.stderr)
+            if args.report_json:
+                args.report_json.write_text(json.dumps({
+                    'lean_args': args.lean_args,
+                    'elapsed_seconds': time.monotonic() - start,
+                    'peak_rss_mib': peak / 1024,
+                    'child_returncode': proc.returncode,
+                    'stopped_by_guard': stopped,
+                }, indent=2) + '\n')
         return 137 if stopped else (proc.returncode if proc.returncode >= 0 else 128 - proc.returncode)
 
 

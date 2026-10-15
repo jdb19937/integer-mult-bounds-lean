@@ -82,6 +82,21 @@ processes if monitoring fails or the check is interrupted. Dependencies must alr
 it does not launch a broad build. The guarded build stops at 80 GiB combined
 RSS or three hours. Both runners share one workspace-wide lock.
 
+To locate memory growth within a file, use
+`python3 scripts/profile-lean-prefixes.py FILE --through LINE1 LINE2 ...`,
+choosing increasing line numbers immediately after complete declarations or
+sections. Each check uses a fresh source copy ending in `#exit` and the same
+guard and cached imports; the original file and production build artifacts are
+untouched. Start with the imports, then section boundaries, then add boundaries
+around declarations in the interval where the peak rises. Results and logs go
+to a fresh directory under `.lake/profiling`. Use `--serialize` to measure
+partial-module serialization too. Failed checks stop the sweep and are not
+valid measurements. These are cumulative prefix peaks, not exclusive
+allocations: earlier peaks can hide later costs, and allocator retention makes
+subtracting peaks unsuitable for attributing exact memory to one theorem.
+For a machine-readable single-file measurement, the guard also accepts
+`--report-json PATH` before the file argument; elapsed time excludes lock waiting.
+
 Lean and mathlib are pinned to v4.34.1; `lake-manifest.json` pins transitive
 dependencies. No theorem in this project uses a custom axiom or an admitted
 proof.
