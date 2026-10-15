@@ -1424,3 +1424,14 @@ invertible frames and arbitrary dirty binary streams. All four modules and
 101-declaration standard-axiom audit pass; source exporter order and six-file
 manifest verified. Concrete rational E8 projection interpretation and actual
 COPY/MOVE ranks remain open, so this does not yet certify primitive costs.
+
+The complete stopped top constructor now reuses the unchanged original adapter
+with its actual fresh exponent sum, config and working width; all full-frame
+execution contracts and exact costs are checked. The source processes back
+reservation separately (compact-control-layout.tex13–16,64–75), applying tiny
+beta only to the active middle recurrence (79–107). Accordingly the unchanged
+back leaf costs at most `512*B*V`, with actual floor-chunk bound
+`B ≤ 2*g*d^(1-c)+1`, without a tiny-beta assumption. Five modules and their
+principal standard-axiom audits pass. Hosting/layer replacement, the relation
+between selected-axis cutoff and ambient dimension, and asymptotic active
+cost absorption remain to connect.
