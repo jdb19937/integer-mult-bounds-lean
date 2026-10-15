@@ -2382,3 +2382,8 @@ import IntegerMultBounds.MathlibTM2.Fast.CompactSynRec
 import IntegerMultBounds.MathlibTM2.Fast.CompactSynRecRows
 import IntegerMultBounds.MathlibTM2.Fast.CompactSynSel
 import IntegerMultBounds.MathlibTM2.Node.CompactEncodingOffset
+import IntegerMultBounds.MathlibTM2.Fast.CompactReservationGeometry
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynCoverage
+import IntegerMultBounds.MathlibTM2.Node.CompactHeaderBuild
+import IntegerMultBounds.MathlibTM2.Node.CompactHeaderBank
+import IntegerMultBounds.MathlibTM2.Node.CompactHeaderClear

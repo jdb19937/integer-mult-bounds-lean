@@ -6181,3 +6181,6 @@ Parameters and asymptotics.
 - `MathlibTM2/Fast/CompactSynSel.lean`: Validity at a sufficient common row depth and exact exponent sum for the reserved piece records; no assumed execution and no claim of completed transform coverage.
 
 - `MathlibTM2/Node/CompactEncodingOffset.lean`: Literal encoding reshape absorbs arbitrary low address spectators into coefficient payloads, with shifted slot-action compatibility and exact volume preservation.
+
+- `MathlibTM2/Fast/CompactReservationGeometry.lean`, `Fast/CompactSynCoverage.lean`: Literal runtime reservations determine a common shape for digit pieces and child slots. Exact offsets, pre-padding volume and complete selected-coordinate coverage are proved under explicit capacity premises; execution of the new top configuration remains separate.
+- `MathlibTM2/Node/CompactHeaderBuild.lean`, `Node/CompactHeaderBank.lean`, `Node/CompactHeaderClear.lean`: Actual finite header conversion and cleanup with preserved sources/frame and explicit costs. Original thirteen headers match the native bank; their runtime arithmetic inputs and composition with the slot executor remain caller work.

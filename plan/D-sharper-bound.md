@@ -491,23 +491,38 @@ The row-axis and piece-building executions are checked separately. Their final
 root wrapper remains unverified after excessive proof-memory growth and is
 excluded from this checkpoint; proof limits were preserved. The actual padded row count and shared
 depth must still be connected to these records: serialized records omit the
-base-row count. Reservation capacity and complete selected-bit coverage,
-top-level configuration and fallback, header materialization,
+base-row count. Discharging reservation capacity at actual caller sizes,
+top-level configuration and fallback, header arithmetic and executor composition,
 caller size inequalities, the stopped branch and recurrence, and integration
 into the running layer remain open. These checked bridges do
 not yet improve the public saving `2^-66`.
 
-**Next integration boundary:** generate only the thirteen original canonical
-headers: chunk, global axes, guard, active axes, native rows, payload, slot
-count, slot width, left/right spectators, selected residue and reversed
-source/target slots. The complete native dispatcher already synthesizes its
-derived headers. Reuse `sxBinConv_exec` for unary-to-binary header conversion
-and charge the separator, setup and cleanup. The root builder clears derived
-active count, so preserve it in the caller or rederive it explicitly. After
-folding low offset `oS`, use payload `2^oS * (3*r*w)` and native rows
-`R * 2^(n-oS-s.bits)`, with the corresponding address-fit proof. Establish
-actual padding/depth, capacity and coverage before connecting these records
-to `TopProc`; piece validity alone does not establish transform coverage.
+**Reservation geometry and header generation checked:**
+`Fast/CompactReservationGeometry.lean` derives one shared shape from the literal
+runtime reservation counts. It proves the exact address width, back offset,
+nonleaf digit and child layouts, and original pre-padding volume, under the
+explicit capacity premise. `Fast/CompactSynCoverage.lean` proves that back and
+active piece records together with the high row/front kernel cover the original
+selected interval exactly. This is record coverage; executing the corresponding
+new top configuration remains separate.
+
+`Node/CompactHeaderBuild.lean` converts a finite family of runtime unary inputs
+to canonical separator-prefixed headers while preserving sources and scratch.
+`CompactHeaderBank.lean` identifies the thirteen original headers with the
+native bank; the existing dispatcher still synthesizes its own derived headers.
+`CompactHeaderClear.lean` restores the bank to empty. Conversion, separator and
+cleanup have explicit costs; their composition with the slot executor remains
+separate until checked.
+
+**Next integration boundary:** supply the thirteen runtime unary values: chunk,
+global axes, guard, active axes, native rows, payload, slot count, slot width,
+left/right spectators, selected residue and reversed source/target slots.
+The root builder clears derived active count, so preserve it in the caller or
+rederive it explicitly. After folding low offset `oS`, use payload
+`2^oS * (3*r*w)` and native rows `R * 2^(n-oS-s.bits)`, with the corresponding
+address-fit proof. Connect actual padded row metadata, header setup/execution/
+cleanup, and the new top configuration to `TopProc`. Record coverage alone does
+not establish execution of the complete reserved transform.
 
 Prove complete temporary address ranges survive every role split, arbitrary
 initial temporary values are restored, and exceptional extraction, sorting,

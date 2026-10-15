@@ -15,6 +15,11 @@ import IntegerMultBounds.MathlibTM2.Fast.CompactSynRec
 import IntegerMultBounds.MathlibTM2.Fast.CompactSynRecRows
 import IntegerMultBounds.MathlibTM2.Fast.CompactSynSel
 import IntegerMultBounds.MathlibTM2.Node.CompactEncodingOffset
+import IntegerMultBounds.MathlibTM2.Fast.CompactReservationGeometry
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynCoverage
+import IntegerMultBounds.MathlibTM2.Node.CompactHeaderBuild
+import IntegerMultBounds.MathlibTM2.Node.CompactHeaderBank
+import IntegerMultBounds.MathlibTM2.Node.CompactHeaderClear
 import Lean.Util.CollectAxioms
 
 /-! Focused integrity audit for the compact-control host primitives.
@@ -55,7 +60,15 @@ run_cmd do
     ``IntegerMultBounds.MathlibTM2.Fast.compactReservedPcs_exp_sum,
     ``IntegerMultBounds.MathlibTM2.Node.compactOffsetArray_encZ,
     ``IntegerMultBounds.MathlibTM2.Node.compactOffsetArray_encZ_pullM,
-    ``IntegerMultBounds.MathlibTM2.Node.compactOffset_volume]
+    ``IntegerMultBounds.MathlibTM2.Node.compactOffset_volume,
+    ``IntegerMultBounds.MathlibTM2.Fast.compactReservation_bits,
+    ``IntegerMultBounds.MathlibTM2.Fast.compactReservationChildLayout,
+    ``IntegerMultBounds.MathlibTM2.Fast.compactReservationDigitLayout,
+    ``IntegerMultBounds.MathlibTM2.Fast.compactReservation_volume,
+    ``IntegerMultBounds.MathlibTM2.Fast.compactReservation_full_coverage,
+    ``IntegerMultBounds.MathlibTM2.Node.compactHeadersBuild_exec,
+    ``IntegerMultBounds.MathlibTM2.Node.compactHeaderFill_native,
+    ``IntegerMultBounds.MathlibTM2.Node.compactHeadersClear_exec]
   for name in names do
     for ax in ← collectAxioms name do
       unless #[``propext, ``Quot.sound, ``Classical.choice].contains ax do
