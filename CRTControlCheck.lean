@@ -1,3 +1,7 @@
+import IntegerMultBounds.MathlibTM2.Fast.CRTDirectMachine
+import IntegerMultBounds.MathlibTM2.Fast.CRTDirectMachineCore
+import IntegerMultBounds.MathlibTM2.Fast.CRTDirectMachineSetup
+import IntegerMultBounds.MathlibTM2.Cost.CRTDirectMachine
 import IntegerMultBounds.MathlibTM2.Cost.CRTDirectSetup
 import IntegerMultBounds.MathlibTM2.Fast.CRTDirectSetup
 import IntegerMultBounds.MathlibTM2.Fast.CRTDirectBacking
@@ -51,6 +55,22 @@ separate work. -/
 open Lean in
 run_cmd do
   let names := #[
+    ``IntegerMultBounds.MathlibTM2.Fast.crtDirectMachineTarget_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtDirectMachineForwardLoop_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtDirectMachineInverseLoop_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtDirectMachineReverse_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtDirectMachinePad_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtDirectMachineDel_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtDirectMachineForwardInit_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtDirectMachineInverseInit_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtDirectMachineForwardCore_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtDirectMachineInverseCore_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtDirectSetupResult_ready,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtDirectSetupResult_update_data,
+    ``IntegerMultBounds.MathlibTM2.Cost.crtDirectMachineLoopCost_eq,
+    ``IntegerMultBounds.MathlibTM2.Cost.crtDirectMachineMetadata_pipeline_le,
+    ``IntegerMultBounds.MathlibTM2.Cost.crtDirectMachineLoop_pipeline_le,
+
     ``IntegerMultBounds.MathlibTM2.Cost.crtDirectSetup_pipeline_le,
     ``IntegerMultBounds.MathlibTM2.Fast.crtDirectReverseCopy_runs,
     ``IntegerMultBounds.MathlibTM2.Fast.crtDirectCacheHead_runs,

@@ -352,6 +352,14 @@ verification also refreshed all 19 affected dependency modules through
 `MainRegs` and `DistSpec`, with no full build. Final driver start/restore, reversal and padding
 composition remain before the replacement machine can enter the pipeline.
 
+`CRTDirectMachine.lean` instantiates both weighted loops with the actual target
+program, without an assumed target execution contract. `CRTDirectMachineCore`
+adds runtime initialization and stream restoration; only data changes.
+`CRTDirectMachineSetup` proves the setup result supplies its ready-state
+contract. `Cost/CRTDirectMachine` bounds the actual loop by
+`(mtCrtControlTargetC + 2) * totDirectCRT`, including all metadata.
+Padding/reversal and complete legacy entry composition remain to be connected.
+
 Remaining integration steps, in order:
 
 1. **M2b — rotation scanner and producer: complete.** The actual all-fiber
