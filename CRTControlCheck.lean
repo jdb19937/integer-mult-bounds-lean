@@ -1,3 +1,6 @@
+import IntegerMultBounds.MathlibTM2.Cost.DirectGrowth
+import IntegerMultBounds.MathlibTM2.Cost.MatchResampA
+import IntegerMultBounds.MathlibTM2.Cost.MatchResampB
 import IntegerMultBounds.MathlibTM2.Fast.CRTControlProducer
 import IntegerMultBounds.MathlibTM2.Fast.CRTControlStreams
 import IntegerMultBounds.MathlibTM2.Cost.CRTControlProducer
@@ -39,6 +42,9 @@ complete driver/multiplier integration remain separate work. -/
 open Lean in
 run_cmd do
   let names := #[
+    ``IntegerMultBounds.MathlibTM2.Cost.tot_directCRT_le,
+    ``IntegerMultBounds.MathlibTM2.Cost.mt_rsa_stage_le_linear,
+    ``IntegerMultBounds.MathlibTM2.Cost.mt_rsb_stage_le_linear,
     ``IntegerMultBounds.MathlibTM2.Fast.crtControlProducer_runs,
     ``IntegerMultBounds.MathlibTM2.Fast.crtControlAscendingEntries_runs,
     ``IntegerMultBounds.MathlibTM2.Cost.crtControlProducer_actualCost_le,

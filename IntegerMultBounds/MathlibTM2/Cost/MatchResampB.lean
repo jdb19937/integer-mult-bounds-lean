@@ -1,14 +1,14 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Cost.MatchBase
+public import IntegerMultBounds.MathlibTM2.Cost.DirectScale
 public import IntegerMultBounds.MathlibTM2.Fast.PrepB
 
 /-!
 # Cost matching: the `B̃₀` stage with its loader
 
-`mt_rsb_stage_le`: the step bound of `rsbStage_exec` (`Fast/PrepB.lean`),
+`mt_rsb_stage_le_linear`: the step bound of `rsbStage_exec` (`Fast/PrepB.lean`),
 `rsbAllCost Tm t₀ w (fastWindow p α) α² d t … (preCpB σ₀ …) T`, is eventually at most
-`C (totResamp + totCRT + T p)`, for fixed host stack count `Tm`, bank `t₀`, alphabet
+`C (totResamp + totDirectCRT + T p)`, for fixed host stack count `Tm`, bank `t₀`, alphabet
 `prime + Ka` and width ratios `w ≤ cw p`, `W ≤ cW p`, with the cleared registers of the base
 file `σ₀` of at most `T w` symbols.
 
@@ -19,7 +19,8 @@ Per axis (`mt_rsb_all_le`):
 * **Interchanges** of a non-last axis with the last one (`mt_rsb_swap_le`): `swapConst · 3 T w ·
   ℓ^τ + 1` each, times the simulation factor `Tm + 12 swapT t₀ + 5`; with the banks, headers and
   stream copies, `mtRsbCL · T p (ℓ^τ + 1)` per axis (`mt_rsb_stepAx_le`). Over the `d` axes this
-  is `d T p (1 + ℓ^τ) ≤ totCRT` (`mt_rsb_dV_le`); it does not fit `totResamp`.
+  is exactly `totDirectCRT = d T p (1 + ℓ^τ)`; it does not fit `totResamp`.
+  `mt_rsb_stage_le` retains the old quadratic envelope as a compatibility wrapper.
 * **Loader** (`mt_rsb_cp_succ_le`, `mt_rsb_cp_zero_le`): `100 (P + G) ≤ 200 T` per record and
   per cleared file (record fields `P`, `G` in unary, headers), and `O((t + 1) Q^4)` for the four
   table runs at `tblC W w` steps per atom, the counters and the cleared tables
@@ -939,7 +940,8 @@ of `fastWindow p α ≈ √p / (2α)` records, Schönhage–Strassen products at
 `totResamp`; the interchanges of each axis with the last one (`O(T w ℓ^τ)` per axis), the
 banks, headers and record fields (`O(T)` per axis) give `d T p (1 + ℓ^τ) ≤ totCRT`; the tables
 and counters of the loader (`O(r p^4)` per axis) are below `T p`. -/
-theorem mt_rsb_stage_le (Tm t₀ Ka cw cW : ℕ) :
+theorem mt_rsb_stage_le_route (route : ℕ → ℝ)
+    (hroute : ∀ n, Big n → totDirectCRT n ≤ route n) (Tm t₀ Ka cw cW : ℕ) :
     ∃ C : ℝ, ∀ᶠ n in atTop, ∀ (hd0 : 0 < d n) (w W : ℕ)
       (σ₀ : RsbR ⊕ RsbX t₀ → List (Fin (prime + Ka + 4))) (hd : Fin 5 → Fin t₀)
       (rest : List (Fin (prime + Ka + 4))),
@@ -948,7 +950,7 @@ theorem mt_rsb_stage_le (Tm t₀ Ka cw cW : ℕ) :
       (rsbAllCost Tm t₀ w (Mult.FastB0.fastWindow (p n) (alpha n)) (alpha n ^ 2) (d n) (t n) hd0
           (rsbLineBData n (fun i => Nat.log 2 (t n i)) (preHsB n w hd0)) (prime + Ka) hd
           (preCpB σ₀ hd n w W hd0 rest) (∏ i, t n i) : ℝ) ≤
-        C * (totResamp n + totCRT n + T n * p n) := by
+        C * (totResamp n + route n + T n * p n) := by
   refine ⟨2 * mtRsbCX Tm cw + mtRsbCL Tm t₀ cw + 409 + 34 * cw + 246, ?_⟩
   filter_upwards [eventually_big,
     mt_small_le ((10 ^ 8 + 1000) * 4 * 6 ^ 4 * (cW + cw + 6) ^ 4) 5] with n h hsm
@@ -964,8 +966,10 @@ theorem mt_rsb_stage_le (Tm t₀ Ka cw cW : ℕ) :
   set X := mtRsbX Tm w (Mult.FastB0.fastWindow (p n) (alpha n)) (alpha n ^ 2)
   set Y : ℝ := (alpha n : ℝ) * Real.sqrt (p n) * totMp n
   clear_value X Y
-  have hdV := mt_rsb_dV_le h
-  have hdT := mt_rsb_dT_le h
+  have hdV : (d n : ℝ) * mtRsbV n ≤ route n := by
+    have heq : (d n : ℝ) * mtRsbV n = totDirectCRT n := by unfold mtRsbV totDirectCRT; ring
+    rw [heq]; exact hroute n h
+  have hdT := (mt_directCRT_dT_le h).trans (hroute n h)
   have hU := hsm _ (mt_rsb_small_le h cw cW)
   push_cast at hU
   have hd1 : (1 : ℝ) ≤ d n := by exact_mod_cast h.one_le_d
@@ -979,7 +983,7 @@ theorem mt_rsb_stage_le (Tm t₀ Ka cw cW : ℕ) :
     unfold mtRsbCX; have := mt_CM_nonneg Tm cw; positivity
   have hCL := mt_rsb_CL_nonneg Tm t₀ cw
   have hRes0 := mt_resamp_nonneg n
-  have hCrt0 := mt_crt_nonneg n
+  have hCrt0 := (mt_directCRT_nonneg n).trans (hroute n h)
   -- the lines
   have l1 : (T n : ℝ) * X ≤ mtRsbCX Tm cw * ((T n : ℝ) * Y) := by
     have := mul_le_mul_of_nonneg_left hX hT0
@@ -994,10 +998,10 @@ theorem mt_rsb_stage_le (Tm t₀ Ka cw cW : ℕ) :
     rw [← hres]
     nlinarith
   -- the linear terms
-  have l4 : (d n : ℝ) * (mtRsbCL Tm t₀ cw * mtRsbV n) ≤ mtRsbCL Tm t₀ cw * totCRT n := by
+  have l4 : (d n : ℝ) * (mtRsbCL Tm t₀ cw * mtRsbV n) ≤ mtRsbCL Tm t₀ cw * route n := by
     have := mul_le_mul_of_nonneg_left hdV hCL
     linarith
-  have l5 : (d n : ℝ) * (400 * T n + 9) ≤ 409 * totCRT n := by
+  have l5 : (d n : ℝ) * (400 * T n + 9) ≤ 409 * route n := by
     have : (d n : ℝ) * 9 ≤ 9 * ((d n : ℝ) * T n) := by nlinarith
     nlinarith
   have l6 : 17 * (2 * ((T n : ℝ) * w) + 2) + 200 * T n + 2 * d n + 9 ≤
@@ -1026,10 +1030,10 @@ theorem mt_rsb_stage_le (Tm t₀ Ka cw cW : ℕ) :
     ring
   rw [e] at hall
   have hfin : mtRsbCX Tm cw * totResamp n + mtRsbCX Tm cw * totResamp n +
-      mtRsbCL Tm t₀ cw * totCRT n + 409 * totCRT n + (34 * cw + 245) * ((T n : ℝ) * p n) +
+      mtRsbCL Tm t₀ cw * route n + 409 * route n + (34 * cw + 245) * ((T n : ℝ) * p n) +
       (T n : ℝ) * p n ≤
       (2 * mtRsbCX Tm cw + mtRsbCL Tm t₀ cw + 409 + 34 * cw + 246) *
-        (totResamp n + totCRT n + T n * p n) := by
+        (totResamp n + route n + T n * p n) := by
     have hc0 : (0 : ℝ) ≤ 34 * cw + 246 := by linarith
     have p1 := mul_nonneg hCX hCrt0
     have p2 := mul_nonneg hCX hTp
@@ -1042,5 +1046,31 @@ theorem mt_rsb_stage_le (Tm t₀ Ka cw cW : ℕ) :
     linarith
   clear e hX hres hdV hdT hU
   linarith
+
+/-- Compatibility with the previous quadratic routing envelope. -/
+theorem mt_rsb_stage_le (Tm t₀ Ka cw cW : ℕ) :
+    ∃ C : ℝ, ∀ᶠ n in atTop, ∀ (hd0 : 0 < d n) (w W : ℕ)
+      (σ₀ : RsbR ⊕ RsbX t₀ → List (Fin (prime + Ka + 4))) (hd : Fin 5 → Fin t₀)
+      (rest : List (Fin (prime + Ka + 4))),
+      1 ≤ w → w ≤ cw * p n → W ≤ cW * p n →
+      (∀ r ∈ preClrB hd, (σ₀ r).length ≤ T n * w) →
+      (rsbAllCost Tm t₀ w (Mult.FastB0.fastWindow (p n) (alpha n)) (alpha n ^ 2) (d n) (t n) hd0
+          (rsbLineBData n (fun i => Nat.log 2 (t n i)) (preHsB n w hd0)) (prime + Ka) hd
+          (preCpB σ₀ hd n w W hd0 rest) (∏ i, t n i) : ℝ) ≤
+        C * (totResamp n + totCRT n + T n * p n) :=
+  mt_rsb_stage_le_route totCRT (fun _ h => mt_directCRT_le_old h) Tm t₀ Ka cw cW
+
+/-- The existing resampling program uses only linearly many axis interchanges. -/
+theorem mt_rsb_stage_le_linear (Tm t₀ Ka cw cW : ℕ) :
+    ∃ C : ℝ, ∀ᶠ n in atTop, ∀ (hd0 : 0 < d n) (w W : ℕ)
+      (σ₀ : RsbR ⊕ RsbX t₀ → List (Fin (prime + Ka + 4))) (hd : Fin 5 → Fin t₀)
+      (rest : List (Fin (prime + Ka + 4))),
+      1 ≤ w → w ≤ cw * p n → W ≤ cW * p n →
+      (∀ r ∈ preClrB hd, (σ₀ r).length ≤ T n * w) →
+      (rsbAllCost Tm t₀ w (Mult.FastB0.fastWindow (p n) (alpha n)) (alpha n ^ 2) (d n) (t n) hd0
+          (rsbLineBData n (fun i => Nat.log 2 (t n i)) (preHsB n w hd0)) (prime + Ka) hd
+          (preCpB σ₀ hd n w W hd0 rest) (∏ i, t n i) : ℝ) ≤
+        C * (totResamp n + totDirectCRT n + T n * p n) :=
+  mt_rsb_stage_le_route totDirectCRT (fun _ _ => le_rfl) Tm t₀ Ka cw cW
 
 end IntegerMultBounds.MathlibTM2.Cost

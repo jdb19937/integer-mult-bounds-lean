@@ -309,6 +309,14 @@ its arithmetic bank and temporary registers empty. Its checked disposal
 returns the four outputs empty; preparation plus disposal over all targets
 is absorbed by one padded volume in `Cost/CRTControlGenerate.lean`.
 
+The existing resampling programs now have sharp matching theorems
+`mt_rsa_stage_le_linear` and `mt_rsb_stage_le_linear`: their layout charge is
+`totDirectCRT = T*p*d*(1+ell^tau)`, without the old extra factor of `d`.
+`DirectGrowth.lean` proves the corresponding routing exponent margin
+`(1-epsilon)*(1-tau)`. The old cost APIs remain compatibility wrappers;
+replacing the running CRT driver and final aggregate budget is still required
+before this improves the public multiplication theorem.
+
 Remaining integration steps, in order:
 
 1. **M2b — rotation scanner and producer: complete.** The actual all-fiber
@@ -319,8 +327,8 @@ Remaining integration steps, in order:
    paired reversal are proved. Assemble producer/parameters/exposure/rotation
    into the target step and forward/inverse unary-stream traversal; replace the
    actual driver, establish round-trip correctness, and match its actual costs.
-   Separate the already-linear resampling exposure from `totCRT`, retaining
-   the residual quadratic arithmetic charge.
+   Resampling's linear exposure cost is now separated from the old quadratic
+   envelope; connect these sharper stage theorems to the aggregate budget.
 3. **M2d — bound:** retune power-of-two parameters only after all machine
    costs match; check the theorem target and its focused axiom audit, then
    update the scoreboard.

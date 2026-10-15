@@ -1,6 +1,6 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Cost.MatchBase
+public import IntegerMultBounds.MathlibTM2.Cost.DirectScale
 public import IntegerMultBounds.MathlibTM2.Fast.PrepA
 
 /-!
@@ -9,15 +9,15 @@ public import IntegerMultBounds.MathlibTM2.Fast.PrepA
 `rsaStage_exec` (`Fast/PrepA.lean`) runs `Ã` along every axis of the padded box with the loader
 `preA` in
 `rsaAllCost Tm t₀ w m d t hd0 (rsaPipeData n (preHsA n w hd0)) hd (preCpA V₀ hd n w W hd0 rest) T`
-steps, `m = windowA p α`, on a host of `Tm` stacks. `mt_rsa_stage_le` bounds it eventually by
-`C (totResamp + totCRT + T p)`, with `C` depending on `Tm`, `t₀`, `cw`, `cW` only, for
+steps, `m = windowA p α`, on a host of `Tm` stacks. `mt_rsa_stage_le_linear` bounds it eventually by
+`C (totResamp + totDirectCRT + T p)`, with `C` depending on `Tm`, `t₀`, `cw`, `cW` only, for
 `1 ≤ w ≤ cw p`, `W ≤ cW p` and the registers cleared by the first loader step of length at most
 `T w`.
 
 | piece | `ℕ` bound | term |
 |---|---|---|
 | lines of one axis (`rsaAxisCost`) | `T ((2m+1)(rmulCost + 13w + 17) + 60w + 8L + 80) + 4` (`mt_rsa_axis_le`) | `totResamp`, from `2m + 1 ≤ 4 α √p` (`mt_rsa_window_real`) |
-| interchange with the last axis | `swapConst · 3 T w · ℓ^τ + 1` each (`mt_rsa_swap_le`), `2 (d - 1)` of them | `totCRT`: `d T w ℓ^τ ≤ cw T p d² ℓ^τ` |
+| interchange with the last axis | `swapConst · 3 T w · ℓ^τ + 1` each (`mt_rsa_swap_le`), `2 (d - 1)` of them | `totDirectCRT`: `d T w ℓ^τ ≤ cw T p d (1 + ℓ^τ)` |
 | loader after the first axis (`preCostA`) | `62 T + 1600200 r Y^4` (`mt_rsa_cp_succ_le`), `Y = (cw + cW + 2)(p + 1)` | `O(d T)` in `totResamp`; `O(d r Y^4) = o(T)` |
 | first loader step | `28 T w + 29 + 42 T + 1600000 r Y^4` (`mt_rsa_cp_zero_le`) | `totResamp`, `T p` |
 | banks, headers, swap overheads | `O(T Y)` per step (`mt_rsa_term_nat`) | `totResamp` |
@@ -30,8 +30,8 @@ up to `T`) that it reads and turns into interchange headers. The tables cost
 **Misfit.** The `2 (d - 1)` interchanges of axis `i` with the last axis cost
 `Θ(d T w ℓ^τ)` in total. This is not `O(totResamp)`: `totResamp = d T p^{1/2} α M(p)` and
 `ℓ^τ / (p^{1/2+δ} α) ≈ (B/d)^τ / (6^{5/8} 12^{1/4} B^{7/8} d^{1/2}) → ∞` (`ℓ ≈ B/d`,
-`α ≈ (12 d² B)^{1/4}`, `d = B^{2^{-30}}`). It is `O(totCRT)`, since
-`d T w ℓ^τ ≤ cw T p d² ℓ^τ`.
+`α ≈ (12 d² B)^{1/4}`, `d = B^{2^{-30}}`). The sharp routing charge is `O(totDirectCRT) = O(T p d (1 + ℓ^τ))`.
+`mt_rsa_stage_le` retains the old quadratic envelope as a compatibility wrapper.
 -/
 
 @[expose] public section
@@ -644,14 +644,15 @@ step bound of `rsaStage_exec` is eventually at most `C (totResamp + totCRT + T p
 `d T (2m + 1) rmulCost` is `O(totResamp)`, the `2 (d - 1)` interchanges with the last axis are
 `O(d T w ℓ^τ) = O(totCRT)`, the loader is `O(d T)` (unary `P`, `G`) plus `O(d r B^4) = o(T)`
 for the tables, and the first loader step clears at most `14 (2 T w + 2)` symbols. -/
-theorem mt_rsa_stage_le (Tm t₀ K cw cW : ℕ) : ∃ C : ℝ, ∀ᶠ n in atTop, ∀ (hd0 : 0 < d n)
+theorem mt_rsa_stage_le_route (route : ℕ → ℝ)
+    (hroute : ∀ n, Big n → totDirectCRT n ≤ route n) (Tm t₀ K cw cW : ℕ) : ∃ C : ℝ, ∀ᶠ n in atTop, ∀ (hd0 : 0 < d n)
     (w W : ℕ) (V₀ : RsaV (RsaX t₀) (prime + K)) (hd : Fin 5 → Fin t₀)
     (rest : List (Fin (prime + K + 4))),
     1 ≤ w → w ≤ cw * p n → W ≤ cW * p n →
     (∀ x ∈ preClrA hd, (V₀.get x).length ≤ T n * w) →
     (rsaAllCost (K := K) Tm t₀ w (windowA (p n) (alpha n)) (d n) (t n) hd0
         (rsaPipeData n (preHsA n w hd0)) hd (preCpA V₀ hd n w W hd0 rest) (∏ i, t n i) : ℝ) ≤
-      C * (totResamp n + totCRT n + T n * p n) := by
+      C * (totResamp n + route n + T n * p n) := by
   set S := swapT t₀ with hS
   set CY := cw + cW + 2 with hCY
   set Q : ℝ := (Tm : ℝ) + 12 * S + 5 with hQ
@@ -728,7 +729,7 @@ theorem mt_rsa_stage_le (Tm t₀ K cw cW : ℕ) : ∃ C : ℝ, ∀ᶠ n in atTop
   have hres : totResamp n = d n * (T n * u * totMp n) := by rw [totResamp, hu]; ring
   have hMp0 : 0 ≤ totMp n := tot_mp_nonneg n
   have hres0 : 0 ≤ totResamp n := mt_resamp_nonneg n
-  have hcrt0 : 0 ≤ totCRT n := mt_crt_nonneg n
+  have hcrt0 : 0 ≤ route n := (mt_directCRT_nonneg n).trans (hroute n h)
   have hTp0 : 0 ≤ (T n : ℝ) * p n := mt_Tp_nonneg n
   have P1 : (d n : ℝ) * (T n * ((2 * m + 1) * (R + 13 * w + 17))) ≤ 4 * K1 * totResamp n := by
     rw [hres]; exact mt_rsa_P1 hD0 hT0 hm0 hwin hRw0 hA
@@ -742,14 +743,14 @@ theorem mt_rsa_stage_le (Tm t₀ K cw cW : ℕ) : ∃ C : ℝ, ∀ᶠ n in atTop
   have P2 : (d n : ℝ) * (T n * Y) ≤ 2 * CY * totResamp n := mt_rsa_P2 hD0 hT0 hYr hdTp hCY0
   have hXb : X ≤ 3 * swapConst * cw * (T n * p n * (ℓ n : ℝ) ^ Parameters.tau) :=
     mt_rsa_Xb (by rw [hX]; push_cast; ring) hsw0 hτ hT0 hw'
-  have hdCRT : (d n : ℝ) * (T n * p n * (ℓ n : ℝ) ^ Parameters.tau) ≤ totCRT n :=
-    mt_rsa_dCRT hd1 (mt_crt_eq n) hTp0 hτ
+  have hdCRT : (d n : ℝ) * (T n * p n * (ℓ n : ℝ) ^ Parameters.tau) ≤ route n :=
+    (mt_directCRT_swap_le n).trans (hroute n h)
   have hdres : (d n : ℝ) ≤ totResamp n := mt_rsa_dres hdTMp hT1 hMp1 hD0
   have hc : 0 ≤ 6 * Q * swapConst * cw := by
     have := mul_nonneg (mul_nonneg hQ0 hsw0) hcw0
     linarith
   have P4 : (d n : ℝ) * (2 * (Q * (Xc + 1))) ≤
-      6 * Q * swapConst * cw * totCRT n + 4 * Q * totResamp n :=
+      6 * Q * swapConst * cw * route n + 4 * Q * totResamp n :=
     mt_rsa_P4 hD0 hQ0 hXc hXb hc hdCRT hdres
   have hTTp : (T n : ℝ) ≤ T n * p n := by
     have := mul_le_mul_of_nonneg_left hp1 hT0
@@ -760,5 +761,27 @@ theorem mt_rsa_stage_le (Tm t₀ K cw cW : ℕ) : ∃ C : ℝ, ∀ᶠ n in atTop
     hcrt0 hTp0 hQ0 hK10 hCY0 hc hd1
   calc cost ≤ _ := hR
     _ = _ := by rw [hQ]; ring
+
+/-- Compatibility with the previous quadratic routing envelope. -/
+theorem mt_rsa_stage_le (Tm t₀ K cw cW : ℕ) : ∃ C : ℝ, ∀ᶠ n in atTop, ∀ (hd0 : 0 < d n)
+    (w W : ℕ) (V₀ : RsaV (RsaX t₀) (prime + K)) (hd : Fin 5 → Fin t₀)
+    (rest : List (Fin (prime + K + 4))),
+    1 ≤ w → w ≤ cw * p n → W ≤ cW * p n →
+    (∀ x ∈ preClrA hd, (V₀.get x).length ≤ T n * w) →
+    (rsaAllCost (K := K) Tm t₀ w (windowA (p n) (alpha n)) (d n) (t n) hd0
+        (rsaPipeData n (preHsA n w hd0)) hd (preCpA V₀ hd n w W hd0 rest) (∏ i, t n i) : ℝ) ≤
+      C * (totResamp n + totCRT n + T n * p n) :=
+  mt_rsa_stage_le_route totCRT (fun _ h => mt_directCRT_le_old h) Tm t₀ K cw cW
+
+/-- The existing resampling program uses only linearly many axis interchanges. -/
+theorem mt_rsa_stage_le_linear (Tm t₀ K cw cW : ℕ) : ∃ C : ℝ, ∀ᶠ n in atTop, ∀ (hd0 : 0 < d n)
+    (w W : ℕ) (V₀ : RsaV (RsaX t₀) (prime + K)) (hd : Fin 5 → Fin t₀)
+    (rest : List (Fin (prime + K + 4))),
+    1 ≤ w → w ≤ cw * p n → W ≤ cW * p n →
+    (∀ x ∈ preClrA hd, (V₀.get x).length ≤ T n * w) →
+    (rsaAllCost (K := K) Tm t₀ w (windowA (p n) (alpha n)) (d n) (t n) hd0
+        (rsaPipeData n (preHsA n w hd0)) hd (preCpA V₀ hd n w W hd0 rest) (∏ i, t n i) : ℝ) ≤
+      C * (totResamp n + totDirectCRT n + T n * p n) :=
+  mt_rsa_stage_le_route totDirectCRT (fun _ _ => le_rfl) Tm t₀ K cw cW
 
 end IntegerMultBounds.MathlibTM2.Cost
