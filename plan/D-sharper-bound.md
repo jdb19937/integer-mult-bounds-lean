@@ -1355,3 +1355,12 @@ An explicit initial-column extension API connects these formulas to native
 trace ranks; the1004 literal invertible extension witnesses remain to import.
 Four guarded checks and104-declaration standard-axiom audit pass. Complex
 Pauli realization, global phases, dirty routing and tape costs remain open.
+
+The selected stopped-recursion cutoff now reads actual preserved global `D`:
+`log_m(D) / 10^24 - 1`, matching the source assembler's selected beta rather
+than its default beta. Subtracting one level pays the emitted digit factor.
+The complete charged cutoff/scanner/cleanup pipeline proves every output leaf
+has `leaf^(10^24) ≤ D` when `10^24 ≤ log_m(D)`. Below that threshold the
+cutoff is explicitly zero, with no unsupported leaf bound. Both modules and
+standard-axiom audits pass. Actual compact caller replacement, precision,
+small-input handling and layer-cost absorption remain open.
