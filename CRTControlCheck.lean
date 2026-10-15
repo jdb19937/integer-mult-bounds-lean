@@ -1,3 +1,4 @@
+import IntegerMultBounds.MathlibTM2.Cost.DirectTotal
 import IntegerMultBounds.MathlibTM2.Fast.CRTControlTarget
 import IntegerMultBounds.MathlibTM2.Cost.CRTControlTarget
 import IntegerMultBounds.MathlibTM2.Fast.CRTDirectDrive
@@ -46,6 +47,9 @@ separate work. -/
 open Lean in
 run_cmd do
   let names := #[
+    ``IntegerMultBounds.MathlibTM2.Cost.tot_direct_le,
+    ``IntegerMultBounds.MathlibTM2.Cost.totDirectBound_isBigO_kappa,
+    ``IntegerMultBounds.MathlibTM2.Cost.tot_direct_htime,
     ``IntegerMultBounds.MathlibTM2.Fast.crtControlTarget_runs,
     ``IntegerMultBounds.MathlibTM2.Fast.crtControlTarget_clear_runs,
     ``IntegerMultBounds.MathlibTM2.Cost.crtControlTarget_pipeline_le,

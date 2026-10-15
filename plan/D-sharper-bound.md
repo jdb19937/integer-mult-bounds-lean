@@ -327,6 +327,11 @@ extra dimension factor. Its target-body contract still needs the concrete
 machine instantiation; runtime setup and final padding/reversal assembly are
 in progress. These contracts pass the focused standard-axiom audit.
 
+`DirectTotal.lean` supplies the aggregate envelope with linear routing and
+its logarithmic time-bound bridge, using the direct routing margin. It is
+checked at the existing parameters; the executable pipeline has not yet
+been matched to this envelope. No stronger public saving is claimed.
+
 Remaining integration steps, in order:
 
 1. **M2b — rotation scanner and producer: complete.** The actual all-fiber

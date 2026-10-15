@@ -1,5 +1,7 @@
 module
 
+public import IntegerMultBounds.MathlibTM2.Cost.DirectTotal
+
 public import IntegerMultBounds.MathlibTM2.Fast.CRTControlTarget
 public import IntegerMultBounds.MathlibTM2.Cost.CRTControlTarget
 public import IntegerMultBounds.MathlibTM2.Fast.CRTDirectDrive
