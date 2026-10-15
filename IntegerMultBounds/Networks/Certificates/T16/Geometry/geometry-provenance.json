@@ -1,0 +1,21 @@
+{
+  "ambient_binary_dimension": 9,
+  "distinct_oriented_edges": 2888,
+  "encoding": "Low-bit-first nine-bit masks; raw ordered bases retained. Dual and XOR witnesses checked in Lean.",
+  "event_hashes": {
+    "backward": "f36c5831106f5637102c6bedeec76ed2b223c6671ce42fd0eceed9ef24725b23",
+    "forward": "071ecdacc0bb3ac16046aad4119ed551a945cb0ed6c57002a548a3e2232503d8"
+  },
+  "events_per_orientation": {
+    "backward": 24767,
+    "forward": 24767
+  },
+  "frame_count": 1004,
+  "licenses_and_notices": "../Trace/ (byte-identical pinned original notices retained in trace-provenance.json)",
+  "pins": {
+    "CANONICAL-WORD.json.gz": "16bc0ebb04b4be6c0ade74badc6a0c0cdba4215eda86e4ff9f13abf8ecebd219",
+    "LOCAL-PROGRAMS.json.gz": "241fde27d4e43f5a9cb6b128f9f76c5131a53d09f0371676163f914d0b0fef3a"
+  },
+  "scope": "Actual binary span independence, inclusion and finite-dimensional rank differences for exact retained native climb/center events. No ambient frame operators, adapter semantics, dirty scalar endpoint, hosting or tape cost.",
+  "source_directory": "research/r480-owner-optimum/inputs/local"
+}

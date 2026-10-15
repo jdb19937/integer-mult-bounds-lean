@@ -139,6 +139,18 @@ in Lean, including bit H1–H5 and the native-complex pricing justification.
 The conservative complex surcharge gives final saving `0.001672660194225008`;
 that is a distinct fallback waypoint, not the exact selected target.
 
+**Selected T16 finite geometry checked:** the hash-pinned 1004 binary bases
+and their dual witnesses, all 2888 oriented span inclusions/dimension differences,
+and their occurrence bindings to both complete native traces now pass Lean.
+The doubled-space subspaces `L_U={(u,u+v):u in U,v in U-perp}` are isotropic
+of dimension nine; nested intersections have the exact deficit declared by each
+climb/center event. All 182 modules and the 16310-declaration standard-axiom audit
+pass at default limits. The supplier's true recursive width is a symplectic
+B-block rank, not complex operator or projector rank. Canonical Clifford/tableau
+action, correspondence to that B-block rank, serialized global phases and
+physical hosting remain explicit obligations; degenerate binary subspaces
+are allowed and cannot be fed blindly to nondegenerate-projector interfaces.
+
 #### §4 — Faster interchange of address chunks
 
 **M2 — complete: direct nonadjacent axis routing, also §§8.2 and 9.3.**
