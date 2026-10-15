@@ -859,6 +859,35 @@ The focused axiom audit passed for 378 contracts, with peak RSS below
 ran and no proof limits were raised. Public saving remains `2^-66`, with
 `2^-37` the next integration target.
 
+**Executable retuning and stronger top-cost checkpoint (2026-10-15).**
+`CompactParamProg/Pipeline` compute the eighth-root chunk in the actual clean
+parameter table, charge every operation and clear the arithmetic scratch.
+`CompactDistRetune/Dist` run actual distribution and replace only the chunk
+slot and its unary output. `CompactDistWires/Exec` rebuild the synthetic
+initialization contract with the new chunk, block count, twiddle positions
+and permutation; `CompactBundleMnLay` supplies the corresponding executable
+forward/opposite layouts. These changes preserve the legacy route.
+
+The uniform round/scan/full-transform contracts compose the same checked
+programs at the larger chunk size. `CompactSynRetunedTransforms` derives
+complete concrete forward/opposite specifications for the actual eighth-root
+initial wires and layouts, without supplied geometry or execution contracts.
+`CompactSynMainFrame/Entry` and `CompactSrcMachine/Frame/Base/Stages/MainStages`
+derive source-stage entry from the existing main invariant and run actual
+expanded source stages with exact costs. Expanded main-chain composition
+and recursive entry-table assembly remain to be closed.
+
+`CompactRetunedReservationGrowth` proves that the complete actual reservation
+is bounded by a dyadic coefficient times any dimension power above seven
+eighths. `CompactRetunedTopGrowth/Cost` combine this with guard absorption
+and the closed recursive bound: the actual complete top program, including
+kernels and controls, fits the proposed compact layer exponent. Full round,
+loop and total cost matching remain; these top bounds retain explicit
+concrete address-geometry premises. The focused axiom audit passed for 433
+contracts with peak RSS below 4.2 GiB. All new modules passed guarded
+single-file checks; no full build ran or proof limits increased. Public
+saving remains `2^-66`.
+
 Prove complete temporary address ranges survive every role split, arbitrary
 initial temporary values are restored, and exceptional extraction, sorting,
 reinsertion and cleanup are charged at each node's own volume. Add an actual
