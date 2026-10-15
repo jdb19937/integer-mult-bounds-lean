@@ -1338,3 +1338,9 @@ preservation and both contracts pass the standard-axiom audit. The next caller
 bridge must derive the cutoff from actual global dimension and establish
 rebased-leaf size, precision and layer-cost bounds; a supplied threshold is
 not yet the global stopped-recursion implementation.
+
+The omitted-tail width is now selected by ordinary executable natural division
+and integer square root: `sqrt(16*p/u)+1`. Checked strict upper-square and
+preceding-square bounds preserve the intended square-root scale, and the
+selected full-tail estimate no longer takes a band-condition oracle. The
+six-declaration standard-axiom audit passes; machine costs remain open.
