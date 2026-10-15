@@ -6363,3 +6363,5 @@ Parameters and asymptotics.
 - `scripts/generate_pr589_scalar.py`: Hash-pinned literal-data importer with deterministic regeneration; external exact dirty-column replay validates source ingestion, while only explicit checked Lean prefix certificates establish formal endpoints.
 
 - `Networks/FramedEventTrace.lean`: A checked literal sequence of frame-label changes and scalar gates executes exactly as its erased scalar word between the initial/final frame encodings, for arbitrary dirty stored values. Decidable event validity supports finite certificates; all three semantic theorems pass guarded checking and the standard-axiom audit. Concrete T16 trace validity and frame interpretation remain separate.
+
+- `Networks/Certificates/T16/`: Hash-pinned selected native charge lists, literal144-call weighted rank-price theorem, and bounds/copy identities for all69120 owner records. Nine modules and a4003-declaration standard-axiom audit pass. The explicit nominated idle profile is arithmetic only; frame semantics, owner hosting, restoration, precision and actual machine costs remain open. Deterministic importer: `scripts/generate_t16_certificate.py`.
