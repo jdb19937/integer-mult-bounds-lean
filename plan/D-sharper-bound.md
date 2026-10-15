@@ -1027,6 +1027,16 @@ inverse difference at most `M^2*eta/(1-M*eta)`. The half-gap specialization,
 guarded checks and both theorem axiom audits pass. The selected rounded
 operator and its approximation bound still have to be constructed and proved.
 
+`NLogN/PhaseCellRounded{,Error}.lean` constructs rational within-cell blocks
+from shared P-grid Gaussian samples and rounded similarity weights, with literal
+unit diagonals, band zeros and exact diagonal similarity. The actual floor
+rounding guarantees imply in-band coefficient error at most `3 eta/r^2` under
+a certified denominator bound `r+eta<=weight(k)`. Both guarded checks and all
+14 theorem axiom audits pass. This floor is a noncomputable rounding
+specification, not the selected corrected exponential evaluator; its four-unit
+error, the selected lower weights, cross-cell and periodic terms, truncation,
+row/operator norms and execution costs remain to be proved.
+
 **M7b — bulk exposure and microbox tape execution.** Build ordered core/halo
 windows of that same rounded matrix, bound truncation/locality errors, retain
 period cuts and show tensor errors accumulate without a volume factor. Price
