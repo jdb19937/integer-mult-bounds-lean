@@ -1611,3 +1611,16 @@ cells or the line length. Both guarded checks and the8-declaration
 standard-axiom audit pass. This is the source's independent composition with
 simpler constants; local stage bounds for rounded Gohberg–Semencul and
 boundary elimination, and tape costs, remain open.
+
+### Rounded Gohberg–Semencul application
+
+Gohberg–Semencul is now an operator identity: `x₀ M v` equals
+`L(x)L(x)ᵀv-L(z)L(z)ᵀv`, with truncated lower convolutions and upper
+correlations whose row norms are bounded by the coefficient mass. With masses
+at most two, `x₀≥1/2`, rounded factors and reciprocal within `η`, and each of
+the five computed stages rounded within `η`, the computed application is
+within `64Lη V` of the exact inverse for inputs bounded by `V≥1` when
+`Lη≤1`. This is the unscaled local stage error `e₁`/`e₅`; the diagonal
+similarity scaling, the concrete rounding of the actual factors and the
+convolution costs remain open. Both guarded checks and the39-declaration
+standard-axiom audit pass.
