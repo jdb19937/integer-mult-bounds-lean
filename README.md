@@ -48,22 +48,13 @@ machine and the proof.
 
 ## Status
 
-The primary Mathlib host route is complete: the fixed machine, recursive
-layers, transforms, resampling, CRT routing, products, output and total-time
-bound are proved by `MathlibTM2.statement`.
+The end-to-end Mathlib proof is complete, with no remaining algorithmic or
+runtime assumptions. The stronger `83/10^12` exponent saving remains open.
+See [PLAN.md](PLAN.md) for milestones and supporting results.
 
-The superseded native CompactComplex controller and its unused dependent
-wrappers have been retired: 635 modules and 109,973 lines. The two
-CompactComplex modules imported by the completed proof remain, along with all
-other proof dependencies, compatibility bridges and focused audit dependencies.
-See the [retirement record](docs/retired-compact-complex.md) for the exact
-manifest and the Git revision from which the old development can be restored.
-
-[PLAN.md](PLAN.md) records the completed result and the surviving supporting
-components. The larger `83/10^12` saving remains a separate unproved target;
-its retired native controller can be recovered from history if that route is
-resumed. No algorithmic or runtime assumption remains in the completed
-Mathlib theorem.
+The superseded native controller and its unused wrappers have been removed.
+The [retirement record](docs/retired-compact-complex.md) lists the deleted
+modules and how to recover them from Git history.
 
 ## Building and verification
 
