@@ -6358,3 +6358,6 @@ Parameters and asymptotics.
 - `MathlibTM2/Fast/CompactDyadicParamStage.lean`: The candidate32-bit-slack allocation supplies all concrete word-fit premises for that stage. Both stage modules pass guarded checks and a 12-declaration standard-axiom audit; actual pmStages integration remains separate.
 
 - `Networks/BinaryScalarReplay.lean`: Binary masks denote linear forms on arbitrary stored inputs; checked XOR, singleton, source-fold and row-update theorems connect symbolic replay to actual scalar circuit gates. All five semantic lemmas pass the standard-axiom audit; concrete supplier endpoint certificates remain separate.
+
+- `Networks/Certificates/PR589/{Scalar,D,A,B,C,scatter,Word,FirstCheckpoint,Semantics}.lean`: Deterministic import of the pinned selected 5583-gate scalar word, preserving frame metadata, with generic binary-replay soundness and a kernel-checked first-four-gate prefix. All 6119 declarations pass the standard-axiom audit. Full-word restoration, framed semantics, nesting and charged machine execution remain open.
+- `scripts/generate_pr589_scalar.py`: Hash-pinned literal-data importer with deterministic regeneration; external exact dirty-column replay validates source ingestion, while only explicit checked Lean prefix certificates establish formal endpoints.
