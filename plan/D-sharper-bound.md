@@ -520,8 +520,7 @@ native bank; the existing dispatcher still synthesizes its own derived headers.
 `Node/CompactSlotPrepared.lean` composes build, actual encoded slot execution
 and cleanup, with all three costs included. Only the live stream changes;
 unary sources, scratch and the initially empty native bank are restored.
-Runtime computation of the original unary descriptor values remains explicit
-caller work. `Cost/CompactPrepared.lean` bounds header setup by `274 V` and cleanup by
+The computed-descriptor composition below now supplies these values. `Cost/CompactPrepared.lean` bounds header setup by `274 V` and cleanup by
 `105 V`, where `V` is actual native bit volume. Complete prepared execution
 retains the compact-width bound with coefficient `2^(slotExponent(T,D)+9)`,
 independent of runtime dimensions. `Fast/CompactTopRows.lean` includes every
@@ -537,18 +536,36 @@ with exact costs. `compactDescriptorStage_exact` proves these are the desired
 counts when `L=K*(m*k)`, `a0=oS+backBits+K*right`, and
 `active=left+m*k+right`. The start offset excludes the selected residue;
 `backBits=K*backChunks`, not merely the chunk count. Dispatch level-zero leaves
-separately. The focused audit now covers 53 contracts.
+separately.
 
-**Next integration boundary:** connect the computed width/left/right outputs
-to their header positions, and supply the remaining runtime unary values: chunk,
-global axes, guard, active axes, native rows, payload, fixed slot count, selected residue and reversed source/target slots.
-The root builder clears derived active count, so preserve it in the caller or
-rederive it explicitly. After folding low offset `oS`, use payload
-`2^oS * (3*r*w)` and native rows `R * 2^(n-oS-s.bits)`, with the corresponding
-address-fit proof. Connect the checked padded-row metadata and prepared slot
-executor, together
-with the new top configuration, to `TopProc`. Record coverage alone does
-not establish execution of the complete reserved transform.
+**Computed slot and top configuration checked:**
+`Node/CompactDescriptorBankOps.lean` and `CompactDescriptorBank.lean` compute
+all thirteen original header values from sixteen current/global unary inputs.
+`Node/CompactSlotComputed.lean` composes descriptor computation, prepared slot
+execution and cleanup, with exact costs and full source/scratch restoration.
+The low offset is folded into payload without moving the encoded stream;
+only the live slot-XOR stream changes. No supplied header-value oracle remains.
+
+`Fast/CompactTopSelection.lean` proves the exact selected-bit permutation,
+nonduplication, padded-piece validity and exponent sum. The six
+`CompactTopConfig*` modules compute global depth and padded rows, serialize all
+ten top fields and working width, then restore sources and scratch. Their
+current interface still takes derived coordinates and the root exponent sum.
+`Cost/CompactCallerParameters.lean` discharges repair packing for manuscript
+`Sizes`, conditional on reservation, row-stock and width bounds; identification
+with the running `MathlibTM2.Mult.Sizes` generator remains open.
+`Cost/CompactCallerRows.lean` bounds actual padded top rows and every descendant
+quotient by the initial stock times `2^(rowBits+outsideBits+1)`. One bit pays
+for padding; fitting this exponent into `6*b` remains a caller obligation.
+
+**Next integration boundary:** derive the remaining top coordinates from original
+inputs and connect configuration production to `TopProc`. Implement compact
+basis/factor/layer wrappers through the existing generic `BReg`/`bcRest`
+contracts, retaining global reservation parameters across child calls. Account
+for the parent length before the factor's live-length division. Propagate the
+actual execution costs and discharge runtime sizing; record coverage alone
+does not establish the complete reserved transform. M3 remains open and public
+saving remains `2^-66`.
 
 Prove complete temporary address ranges survive every role split, arbitrary
 initial temporary values are restored, and exceptional extraction, sorting,

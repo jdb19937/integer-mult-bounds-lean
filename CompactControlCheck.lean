@@ -1,3 +1,6 @@
+import IntegerMultBounds.MathlibTM2.Cost.CompactCallerRows
+import IntegerMultBounds.MathlibTM2.Node.CompactSlotComputed
+import IntegerMultBounds.MathlibTM2.Fast.CompactTopConfig
 import IntegerMultBounds.MathlibTM2.Cost.CompactSwap
 import IntegerMultBounds.MathlibTM2.Node.CompactRotParity
 import IntegerMultBounds.MathlibTM2.Cost.CompactStageExec
@@ -27,6 +30,10 @@ import IntegerMultBounds.MathlibTM2.Fast.CompactSynRecRoot
 import IntegerMultBounds.MathlibTM2.Fast.CompactTopRows
 import IntegerMultBounds.MathlibTM2.Node.CompactDescriptorArithmetic
 import IntegerMultBounds.MathlibTM2.Node.CompactDescriptorPadding
+import IntegerMultBounds.MathlibTM2.Cost.CompactCallerParameters
+import IntegerMultBounds.MathlibTM2.Fast.CompactTopSelection
+import IntegerMultBounds.MathlibTM2.Node.CompactDescriptorBankOps
+import IntegerMultBounds.MathlibTM2.Node.CompactDescriptorBank
 import Lean.Util.CollectAxioms
 
 /-! Focused integrity audit for the compact-control host primitives.
@@ -87,7 +94,19 @@ run_cmd do
     ``IntegerMultBounds.MathlibTM2.Fast.compactTopRows_pcs_ok,
     ``IntegerMultBounds.MathlibTM2.Node.compactDescriptorQuotient_runs,
     ``IntegerMultBounds.MathlibTM2.Node.compactDescriptorStage_runs,
-    ``IntegerMultBounds.MathlibTM2.Node.compactDescriptorStage_exact]
+    ``IntegerMultBounds.MathlibTM2.Node.compactDescriptorStage_exact,
+    ``IntegerMultBounds.MathlibTM2.Fast.compactTopKernel_fits,
+    ``IntegerMultBounds.MathlibTM2.Fast.compactTopSelection_vals,
+    ``IntegerMultBounds.MathlibTM2.Fast.compactSelection_nodup,
+    ``IntegerMultBounds.MathlibTM2.Fast.compactTopPcs_ok,
+    ``IntegerMultBounds.MathlibTM2.Fast.compactTopPcs_exp,
+    ``IntegerMultBounds.MathlibTM2.Node.compactDescriptorBank_runs,
+    ``IntegerMultBounds.MathlibTM2.Node.compactDescriptorBank_original_lengths,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactCaller_eventually_packed,
+    ``IntegerMultBounds.MathlibTM2.Node.compactSlotComputed_exec,
+    ``IntegerMultBounds.MathlibTM2.Fast.sg_compactTopConfig,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactCaller_topRows_le,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactCaller_topRows_quotient_le]
   for name in names do
     for ax in ← collectAxioms name do
       unless #[``propext, ``Quot.sound, ``Classical.choice].contains ax do

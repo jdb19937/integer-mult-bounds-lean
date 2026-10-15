@@ -6193,3 +6193,10 @@ Parameters and asymptotics.
 - `MathlibTM2/Fast/CompactTopRows.lean`: Actual top-level row padding includes outside rows and high spectators, is at most twice original row stock, and validates the rebased piece records using the single global divisor.
 
 - `MathlibTM2/Node/CompactDescriptorArithmetic.lean`, `Node/CompactDescriptorPadding.lean`: Actual runtime quotient and width/right/left descriptor calculation with preserved inputs, restored scratch and exact costs. Exact physical-layout equations identify the outputs with the intended slot and spectator counts; remaining descriptor values and header placement stay explicit.
+
+- `MathlibTM2/Node/CompactDescriptorBankOps.lean`, `Node/CompactDescriptorBank.lean`, `Node/CompactSlotComputed.lean`: Compute all thirteen headers, execute the low-offset compact slot operation, and clear outputs with explicit costs; preserve original sources and scratch, changing only the live stream.
+- `MathlibTM2/Fast/CompactTopSelection.lean`: Exact selected-coordinate permutation, nonduplication, padded-piece validity and exponent sum.
+- `MathlibTM2/Fast/CompactTopConfigFields.lean`, `Fast/CompactTopConfigWrite.lean`, `Fast/CompactTopConfigPadding.lean`, `Fast/CompactTopConfigDivisor.lean`, `Fast/CompactTopConfigRows.lean`, `Fast/CompactTopConfig.lean`: Runtime global divisor and exact padding, ten-field configuration serialization and working width, with source restoration. Derived original-input coordinates remain caller work.
+- `MathlibTM2/Cost/CompactCallerParameters.lean`: Eventual repair packing from manuscript sizes, explicit reservation/row/width premises; runtime size-generator identification remains separate.
+
+- `MathlibTM2/Cost/CompactCallerRows.lean`: Actual padded top-row and descendant-quotient bounds, paying one exponent bit for padding; the combined outside-row/spectator allowance remains explicit.

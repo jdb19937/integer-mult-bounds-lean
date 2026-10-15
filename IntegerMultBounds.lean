@@ -2394,3 +2394,13 @@ import IntegerMultBounds.MathlibTM2.Fast.CompactSynRecRoot
 import IntegerMultBounds.MathlibTM2.Fast.CompactTopRows
 import IntegerMultBounds.MathlibTM2.Node.CompactDescriptorArithmetic
 import IntegerMultBounds.MathlibTM2.Node.CompactDescriptorPadding
+import IntegerMultBounds.MathlibTM2.Cost.CompactCallerParameters
+import IntegerMultBounds.MathlibTM2.Fast.CompactTopSelection
+import IntegerMultBounds.MathlibTM2.Node.CompactDescriptorBankOps
+import IntegerMultBounds.MathlibTM2.Node.CompactDescriptorBank
+
+import IntegerMultBounds.MathlibTM2.Node.CompactSlotComputed
+
+import IntegerMultBounds.MathlibTM2.Fast.CompactTopConfig
+
+import IntegerMultBounds.MathlibTM2.Cost.CompactCallerRows
