@@ -1507,3 +1507,13 @@ preserved by arbitrary successive interior elimination. Both guarded source
 checks and the12-declaration standard-axiom audit pass. Boundary sparsity and
 ordering, identification with the block Schur complement, fast structured
 solve, normalization and tape costs remain open.
+
+Stopped layer preparation/refresh and exact address selection now pass their
+actual execution contracts. Positive ambient parameters and the existing
+capacity implication justify the nonempty case; empty selection follows the
+existing direct synChunk fallback, with no additional runtime selection test.
+Three guarded source checks and the principal standard-axiom audit pass.
+Packed-child geometry and runtime readiness remain unfinished after a
+definitional-equality memory hotspot; those drafts are preserved separately
+and excluded from committed sources. Full active recurrence/cost absorption
+remains open.
