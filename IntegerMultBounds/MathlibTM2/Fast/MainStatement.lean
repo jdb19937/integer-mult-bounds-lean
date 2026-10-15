@@ -22,8 +22,8 @@ transform cost bound) and a distribution `MnDist mnKa mnLb w (mnσL L)`.
 
 The proof runs the fast multiplier `mnFast` (`Fast/MainProg`) through the dispatch of
 `Fast/Glue` (`statement_of_dispatch`): correctness beyond the threshold `mnN₀`
-(`mn_hostMul_ge`), and the time bound `mnTime ≤ totBound C` (`mnTime_le`) through
-`Cost/Total.tot_htime`, at `κ = totKappa`.
+(`mn_hostMul_ge`), and the time bound `mnTime ≤ totDirectBound C` (`mnTime_le`) through
+`Cost/DirectTotal.tot_direct_htime`, at `κ = totKappa`.
 -/
 
 @[expose] public section
@@ -44,7 +44,7 @@ theorem mulInTime_of_bundles
   obtain ⟨K, Lb, w, σ, ⟨Y⟩, ⟨D⟩⟩ := h
   obtain ⟨C, hC⟩ := mnTime_le D Y (mnC D Y)
   exact mulInTime_of_dispatch (mnTable D Y) .main mnV₀ (mnTime D Y (mnC D Y)) (mnN₀ D Y)
-    (mn_hostMul_ge D Y) (IntegerMultBounds.MathlibTM2.Cost.tot_htime C hC)
+    (mn_hostMul_ge D Y) (IntegerMultBounds.MathlibTM2.Cost.tot_direct_htime C hC)
 
 /-- The existential statement, retaining the quantitative bundle theorem. -/
 theorem statement_of_bundles

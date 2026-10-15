@@ -344,14 +344,14 @@ size `W`, transform bounds `cF`, `cO`, base files `V₀`, `σ₀`, remaining rec
 def mnRunsAt (n w W cF cO : ℕ) (hd0 : 0 < d n) (V₀ : RsaV (RsaX 6) (prime + K))
     (σ₀ : RsbR ⊕ RsbX 6 → List (Fin (prime + K + 4))) (restA restB : List (Fin (prime + K + 4))) :
     ℕ :=
-  srcPCost mnM n w W cF cO hd0 V₀ σ₀
+  srcDirectPCost mnM n w W cF cO hd0 V₀ σ₀
       (preRecsA n W hd0 0 ++ (preRecsA n W hd0 0 ++ restA))
       (preRecsB n W hd0 0 ++ (preRecsB n W hd0 0 ++ restB)) +
-    srcPCost mnM n w W cF cO hd0
+    srcDirectPCost mnM n w W cF cO hd0
       (preCfgA V₀ crtHd n w W hd0 (preRecsA n W hd0 0 ++ (preRecsA n W hd0 0 ++ restA)) (d n - 1))
       (preCfgB σ₀ crtHd n w W hd0 (preRecsB n W hd0 0 ++ (preRecsB n W hd0 0 ++ restB)) (d n - 1))
       (preRecsA n W hd0 0 ++ restA) (preRecsB n W hd0 0 ++ restB) +
-    oppPCost mnM n w W cF cO hd0
+    oppDirectPCost mnM n w W cF cO hd0
       (preCfgA (preCfgA V₀ crtHd n w W hd0
         (preRecsA n W hd0 0 ++ (preRecsA n W hd0 0 ++ restA)) (d n - 1))
         crtHd n w W hd0 (preRecsA n W hd0 0 ++ restA) (d n - 1))

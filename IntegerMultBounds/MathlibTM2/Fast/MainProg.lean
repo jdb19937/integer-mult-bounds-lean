@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.MainRegs
+public import IntegerMultBounds.MathlibTM2.Fast.SrcDirectStage
 public import IntegerMultBounds.MathlibTM2.Cost.Total
 
 /-!
@@ -18,10 +19,10 @@ transforms); their contracts are `MnDistSpec` and `SynFwdSpec`/`SynOppSpec` (`Fa
 3. `mnParams`: F2, `pmParams` on the layout `pm`, the streams onto `io .oT`, `io .oS`, and the
    unary copies `mnUs` of `b`, `p`, `S` for the digit, rounding and output stages.
 4. `distP`: the parameter distribution (`MnDistSpec`).
-5. `mnChain fwdP oppP`: F3 on `x`, `srcP` (F4, F5), the result parked on `io .hx`; F3 on `y`,
-   `srcP` (F6); both boxes onto the convolution's product registers `src (.v (.cm .xs))`,
+5. `mnChain fwdP oppP`: F3 on `x`, `srcDirectP` (F4, F5), the result parked on `io .hx`; F3 on `y`,
+   `srcDirectP` (F6); both boxes onto the convolution's product registers `src (.v (.cm .xs))`,
    `src (.v (.cm .ys))`; F7, the pointwise product (`cmulStream`); the operands cleared and the
-   product moved onto `src (.x .sb)`; `oppP'` (F8, F9); the coefficient stream onto `rnd .src`;
+   product moved onto `src (.x .sb)`; `oppDirectP` (F8, F9); the coefficient stream onto `rnd .src`;
    F10 (`roundStage`); the words onto `out .dat`.
 6. `mnOut`: F11, `carryOut`.
 7. `mnClear`: every register emptied (`emptyR`, `2 |R i| + 2` steps each).
@@ -151,13 +152,13 @@ def mnOut : MnPr A := carryOut mnOutR
 
 /-- F3 to F10 on the register file between the distribution and the output. -/
 def mnChain {K : ℕ} (fwdP oppP : MnPr (prime + K)) : MnPr (prime + K) :=
-  .seq (mnDigits .rx) <| .seq (srcP mnM fwdP oppP) <|
+  .seq (mnDigits .rx) <| .seq (srcDirectP mnM fwdP oppP) <|
   .seq (mnMv (.src (.x .sb)) (.io .hx)) <|
-  .seq (mnDigits .ry) <| .seq (srcP mnM fwdP oppP) <|
+  .seq (mnDigits .ry) <| .seq (srcDirectP mnM fwdP oppP) <|
   .seq (mnMv (.io .hx) (.src (.v (.cm .xs)))) <| .seq (mnMv (.src (.x .sb)) (.src (.v (.cm .ys)))) <|
   .seq mnPoint <| .seq (uclear (mnCm .xs)) <| .seq (uclear (mnCm .ys)) <|
   .seq (mnMv (.src (.v (.cm .out))) (.src (.x .sb))) <|
-  .seq (oppP' mnM fwdP oppP) <|
+  .seq (oppDirectP mnM fwdP oppP) <|
   .seq (mnMv (.src (.c .str)) (.rnd .src)) <|
   .seq mnRound (mnMv (.rnd .dst) (.out .dat))
 
@@ -358,12 +359,12 @@ def mnσ₂ (D : MnDist K Lb w σ) (n : ℕ) (hd0 : 0 < d n) : RsbR ⊕ RsbX 6 �
 /-- The step bounds of the three source-transform runs. -/
 def mnRuns (D : MnDist K Lb w σ) (Y : MnSyn K Lb w σ) (n : ℕ) : ℕ :=
   if hd0 : 0 < d n then
-    srcPCost mnM n (w n) (D.Wt n) (Y.cF n) (Y.cO n) hd0 (D.V₀ n) (D.σ₀ n)
+    srcDirectPCost mnM n (w n) (D.Wt n) (Y.cF n) (Y.cO n) hd0 (D.V₀ n) (D.σ₀ n)
         (preRecsA n (D.Wt n) hd0 0 ++ (preRecsA n (D.Wt n) hd0 0 ++ D.restA n))
         (preRecsB n (D.Wt n) hd0 0 ++ (preRecsB n (D.Wt n) hd0 0 ++ D.restB n)) +
-      srcPCost mnM n (w n) (D.Wt n) (Y.cF n) (Y.cO n) hd0 (mnV₁ D n hd0) (mnσ₁ D n hd0)
+      srcDirectPCost mnM n (w n) (D.Wt n) (Y.cF n) (Y.cO n) hd0 (mnV₁ D n hd0) (mnσ₁ D n hd0)
         (preRecsA n (D.Wt n) hd0 0 ++ D.restA n) (preRecsB n (D.Wt n) hd0 0 ++ D.restB n) +
-      oppPCost mnM n (w n) (D.Wt n) (Y.cF n) (Y.cO n) hd0 (mnV₂ D n hd0) (mnσ₂ D n hd0)
+      oppDirectPCost mnM n (w n) (D.Wt n) (Y.cF n) (Y.cO n) hd0 (mnV₂ D n hd0) (mnσ₂ D n hd0)
         (D.restA n) (D.restB n)
   else 0
 

@@ -273,7 +273,7 @@ its packet, advance the original mixed-radix weight, and save the entries.
 unary inputs, preserving those sources. `Cost/CRTControlGenerate.lean` proves
 that all target setup costs and all per-axis generation costs are each
 absorbed by one padded volume eventually. Loop overhead and terminal stream
-cleanup still need separate matching. `CRTControlGenerateTraversal.lean`
+cleanup are included in the complete producer match below. `CRTControlGenerateTraversal.lean`
 discharges the complete traversal's per-axis execution and derives all
 arithmetic fits at width `3B+1`. `CRTControlGenerateTraversalLayout.lean`
 proves its exact exposed descriptor tape, including parked-zero handling.
@@ -299,8 +299,8 @@ a linear number of interchange budgets, including runtime setup and cleanup.
 `CRTControlRouting.lean` ties the distant header widths
 to the existing driver's upper/lower unary counters. `CRTControlStreams.lean`
 constructs preserved ascending copies of the original descending entry streams.
-The complete driver and
-its cost matching remain integration obligations.
+The complete driver and its cost match are supplied by the direct-machine
+modules below.
 
 `CRTControlParameters.lean` now executes the complete conversion from unary
 modulus, multiplier, axis width and total width into the two binary constants,
@@ -314,8 +314,8 @@ The existing resampling programs now have sharp matching theorems
 `totDirectCRT = T*p*d*(1+ell^tau)`, without the old extra factor of `d`.
 `DirectGrowth.lean` proves the corresponding routing exponent margin
 `(1-epsilon)*(1-tau)`. The old cost APIs remain compatibility wrappers;
-replacing the running CRT driver and final aggregate budget is still required
-before this improves the public multiplication theorem.
+the running main multiplier now uses direct routing and this aggregate scale.
+Retuning is still required to publish a stronger saving.
 
 `CRTControlTarget.lean` now composes unary parameter preparation, descriptor
 production, routing-gap setup, distant exposure, rotation and full cleanup.
@@ -323,19 +323,18 @@ Only the data register changes. `Cost/CRTControlTarget.lean` bounds the sum of
 actual nonzero target costs by a constant times `totDirectCRT` plus `T`.
 `CRTDirectDrive.lean` implements both unary-stream traversal directions with
 exact stream restoration and a sum of individual target costs, avoiding an
-extra dimension factor. Its target-body contract still needs the concrete
-machine instantiation; runtime setup and final padding/reversal assembly are
-in progress. These contracts pass the focused standard-axiom audit.
+extra dimension factor. Its target-body contract is discharged by the concrete machine
+instantiation below, including runtime setup and padding/reversal assembly. These contracts pass the focused standard-axiom audit.
 
 `DirectTotal.lean` supplies the aggregate envelope with linear routing and
 its logarithmic time-bound bridge, using the direct routing margin. It is
-checked at the existing parameters; the executable pipeline has not yet
-been matched to this envelope. No stronger public saving is claimed.
+checked at the existing parameters. The actual executable pipeline is now
+matched to this envelope; no stronger public saving is claimed before retuning.
 
 `MainDirectCore.lean` connects both linear resampling bounds to the existing
 source-transform core. `mn_core_le_linear` bounds its actual `srcCoreCost` by
 the linear stage sum plus the explicit forward/inverse transform charges.
-Those charges still await the concrete direct-machine cost match.
+Those charges are discharged by the concrete direct-machine cost match.
 
 `CRTDirectBacking.lean` embeds the 40 direct-driver registers and 25 arithmetic
 bank registers into the expanded finite CRT register family. The seven
@@ -349,8 +348,7 @@ legacy inputs. Its six-output frame and exact cleanup back to the original
 register state are proved. `Cost/CRTDirectSetup.lean` bounds actual setup plus
 all six-output cleanup by one padded volume eventually. The allocation
 verification also refreshed all 19 affected dependency modules through
-`MainRegs` and `DistSpec`, with no full build. Final driver start/restore, reversal and padding
-composition remain before the replacement machine can enter the pipeline.
+`MainRegs` and `DistSpec`, with no full build.
 
 `CRTDirectMachine.lean` instantiates both weighted loops with the actual target
 program, without an assumed target execution contract. `CRTDirectMachineCore`
@@ -358,7 +356,7 @@ adds runtime initialization and stream restoration; only data changes.
 `CRTDirectMachineSetup` proves the setup result supplies its ready-state
 contract. `Cost/CRTDirectMachine` bounds the actual loop by
 `(mtCrtControlTargetC + 2) * totDirectCRT`, including all metadata.
-Padding/reversal and complete legacy entry composition remain to be connected.
+Padding/reversal and complete legacy entry composition are supplied below.
 
 `CRTDirectMachineFull.lean` composes padding, concrete traversal and paired
 reversal forward, and reversal, inverse traversal and deletion backward.
@@ -368,7 +366,12 @@ oracle. `Cost/CRTDirectFull.lean` bounds both full entries by a fixed constant
 times `totDirectCRT`. `CRTDirectSource.lean` and `SrcDirectStage.lean` now bridge the complete
 entries to both source transforms, preserving their exact original semantics.
 `Cost/CRTDirectEntry.lean` matches the named entry and generic-dimension source
-costs. Switching the running main multiplier and final cost theorem remains.
+costs. `MainProg`, `MainChain` and `MainCorrect` now use these actual source
+programs and preserve exact multiplication semantics. `MainTimeRuns`,
+`MainTimeGlue`, `MainTime` and `MainStatement` match the running program to
+`totDirectBound` and its logarithmic bound. The remaining 22 affected theorem-path modules were refreshed, and
+`CompletedProofCheck.lean` passed for 111885 declarations (peak 4.3 GiB),
+including the actual public fixed-machine theorem. No full build was used.
 
 Remaining integration steps, in order:
 
@@ -376,10 +379,10 @@ Remaining integration steps, in order:
    rotation, workspace provisioning/restoration, runtime descriptor producer,
    exact exposed tape, and matching production/rotation costs are proved.
    These components preserve the existing triangular arithmetic semantics.
-2. **M2c — driver and matching:** runtime parameter preparation and complete
-   paired reversal, both complete runtime entries, and source transforms
-   are proved with actual linear costs. Switch the running main multiplier
-   to these source transforms and connect its final cost theorem.
+2. **M2c — driver and matching: complete.** runtime parameter preparation, paired
+   reversal, complete entries and source transforms are proved with linear
+   costs. The running main multiplier and its final cost theorem now use
+   them; theorem dependencies and the completed-proof audit pass.
    Resampling's linear exposure cost is now separated from the old quadratic
    envelope; connect these sharper stage theorems to the aggregate budget.
 3. **M2d — bound:** retune power-of-two parameters only after all machine

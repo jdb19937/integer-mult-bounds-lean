@@ -2,13 +2,14 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Fast.MainProg
 public import IntegerMultBounds.MathlibTM2.Cost.MatchStages
+public import IntegerMultBounds.MathlibTM2.Cost.DirectTotal
 
 /-!
 # The time bound of the fast multiplier, given the bound of the source-transform runs
 
 `mn_time_le_of_runs`: if the three source-transform runs `mnRuns D Y n` cost at most
-`C_r (totCRT + totResamp + totConv + T M(p) + T p)` for all large `n`, then
-`mnTime D Y c n ≤ totBound C n` for all large `n`, with a natural constant `C`.
+`C_r (totDirectCRT + totResamp + totConv + T M(p) + T p)` for all large `n`, then
+`mnTime D Y c n ≤ totDirectBound C n` for all large `n`, with a natural constant `C`.
 
 The other stages are matched with `Cost/MatchStages`: the input and the unary length (`22 n`),
 the parameter machine (`mt_pm_stage_le`, `n + B^k`), the distribution (its cost bound
@@ -17,8 +18,8 @@ the parameter machine (`mt_pm_stage_le`, `n + B^k`), the distribution (its cost 
 streams (`S w`, `S W_o ≤ c_w T p`), the rounding stage (`mt_rnd_stage_le`, operand width
 `w + 2 size S ≤ (c_w + 3) p`, word size `2 B + 2 size S + 6 ≤ p`) and the output stage
 (`mt_carry_le`). All of them are bounded by a constant times
-`Z n = n + totCRT + totResamp + totConv + T M(p) + S M(p) + T p + B^k`, and the cleanup
-`2 (n + c · mnPreCost) + 2 mnT + 4` is linear in `mnPreCost` and `n`. `totBound C n` is at least
+`Z n = n + totDirectCRT + totResamp + totConv + T M(p) + S M(p) + T p + B^k`, and the cleanup
+`2 (n + c · mnPreCost) + 2 mnT + 4` is linear in `mnPreCost` and `n`. `totDirectBound C n` is at least
 `C · Z n` for `C ≥ k`.
 -/
 
@@ -89,9 +90,9 @@ theorem mn_time_le_of_runs {K : ℕ} {Lb : LProc → MnPr (prime + K)} {w : ℕ 
     {σ : ℕ → LReg SXReg → List (Fin (prime + K + 4))} (D : MnDist K Lb w σ)
     (Y : MnSyn K Lb w σ) (c : ℕ) {Cr : ℝ}
     (hR : ∀ᶠ n in atTop, (mnRuns D Y n : ℝ) ≤
-      Cr * (IntegerMultBounds.MathlibTM2.Cost.totCRT n + IntegerMultBounds.MathlibTM2.Cost.totResamp n + IntegerMultBounds.MathlibTM2.Cost.totConv n +
+      Cr * (IntegerMultBounds.MathlibTM2.Cost.totDirectCRT n + IntegerMultBounds.MathlibTM2.Cost.totResamp n + IntegerMultBounds.MathlibTM2.Cost.totConv n +
         (T n : ℝ) * IntegerMultBounds.MathlibTM2.Cost.totMp n + (T n : ℝ) * p n)) :
-    ∃ C : ℕ, ∀ᶠ n in atTop, (mnTime D Y c n : ℝ) ≤ IntegerMultBounds.MathlibTM2.Cost.totBound C n := by
+    ∃ C : ℕ, ∀ᶠ n in atTop, (mnTime D Y c n : ℝ) ≤ IntegerMultBounds.MathlibTM2.Cost.totDirectBound C n := by
   obtain ⟨cw, cW, hrat⟩ := D.ratio
   obtain ⟨Cd, kd, hcost⟩ := D.costBound
   set k := kd + 4 with hk
@@ -99,7 +100,7 @@ theorem mn_time_le_of_runs {K : ℕ} {Lb : LProc → MnPr (prime + K)} {w : ℕ 
   set CP : ℝ := mtCM mnT cw + 6 * cw + 10 with hCP
   set CR : ℝ := mtRndC mnT (cw + 3) cw 1 with hCR
   set Cr' : ℝ := max Cr 0 with hCr'
-  -- the coefficients of `n`, `B^k`, `totCRT`, `totResamp`, `totConv`, `T M(p)`, `S M(p)`, `T p`
+  -- the coefficients of `n`, `B^k`, `totDirectCRT`, `totResamp`, `totConv`, `T M(p)`, `S M(p)`, `T p`
   set A1 : ℝ := 22 + Pm + Cd + 2 * 3072 * cw + 20 + 8 + 2304 * (1 + 1) with hA1
   set A2 : ℝ := Pm + Cd * 2 ^ kd with hA2
   set A3 : ℝ := Cr' with hA3
@@ -122,7 +123,7 @@ theorem mn_time_le_of_runs {K : ℕ} {Lb : LProc → MnPr (prime + K)} {w : ℕ 
   have hWo := mn_Wo_le_p h
   have hMw := mn_Mw_le h hwc
   -- nonnegative atoms
-  have hcrt0 := mt_crt_nonneg n
+  have hcrt0 := mt_directCRT_nonneg n
   have hres0 := mt_resamp_nonneg n
   have hconv0 := tot_conv_nonneg h
   have hTmp0 := mt_Tmp_nonneg n
@@ -153,7 +154,7 @@ theorem mn_time_le_of_runs {K : ℕ} {Lb : LProc → MnPr (prime + K)} {w : ℕ 
     have := hdig (w n) hpw hwc
     push_cast
     linarith
-  have t5 : (mnRuns D Y n : ℝ) ≤ Cr' * (totCRT n + totResamp n + totConv n +
+  have t5 : (mnRuns D Y n : ℝ) ≤ Cr' * (totDirectCRT n + totResamp n + totConv n +
       (T n : ℝ) * totMp n + (T n : ℝ) * p n) :=
     hRn.trans (mul_le_mul_of_nonneg_right (le_max_left _ _) (by positivity))
   -- `T w ≤ c_w T p`
@@ -208,7 +209,7 @@ theorem mn_time_le_of_runs {K : ℕ} {Lb : LProc → MnPr (prime + K)} {w : ℕ 
     rw [e4] at hcr
     linarith
   -- the sum before the cleanup
-  set Z : ℝ := n + totCRT n + totResamp n + totConv n + (T n : ℝ) * totMp n +
+  set Z : ℝ := n + totDirectCRT n + totResamp n + totConv n + (T n : ℝ) * totMp n +
     (S n : ℝ) * totMp n + (T n : ℝ) * p n + (b n : ℝ) ^ k with hZ
   have hpre : (mnPreCost D Y n : ℝ) ≤ M * Z := by
     have e : (mnPreCost D Y n : ℝ) = (((4 * n + 6) + (4 * n + 8) : ℕ) : ℝ) + pmCost n mnUs +
@@ -220,7 +221,7 @@ theorem mn_time_le_of_runs {K : ℕ} {Lb : LProc → MnPr (prime + K)} {w : ℕ 
       (by rw [hA1]; positivity)
     have l2 : A2 * (b n : ℝ) ^ k ≤ A2 * Z := mul_le_mul_of_nonneg_left (by rw [hZ]; linarith)
       (by rw [hA2]; positivity)
-    have l3 : A3 * totCRT n ≤ A3 * Z := mul_le_mul_of_nonneg_left (by rw [hZ]; linarith) hCr'0
+    have l3 : A3 * totDirectCRT n ≤ A3 * Z := mul_le_mul_of_nonneg_left (by rw [hZ]; linarith) hCr'0
     have l4 : A3 * totResamp n ≤ A3 * Z :=
       mul_le_mul_of_nonneg_left (by rw [hZ]; linarith) hCr'0
     have l5 : A3 * totConv n ≤ A3 * Z := mul_le_mul_of_nonneg_left (by rw [hZ]; linarith) hCr'0
@@ -233,10 +234,10 @@ theorem mn_time_le_of_runs {K : ℕ} {Lb : LProc → MnPr (prime + K)} {w : ℕ 
     have hsum : (((4 * n + 6) + (4 * n + 8) : ℕ) : ℝ) + pmCost n mnUs + D.cost n +
         ((2 * digitCost (b n) (p n) (w n) (S n) : ℕ) : ℝ) + mnRuns D Y n + mnGlue n (w n) +
         mnTail n (w n) ≤
-        A1 * n + A2 * (b n : ℝ) ^ k + A3 * totCRT n + A3 * totResamp n + A3 * totConv n +
+        A1 * n + A2 * (b n : ℝ) ^ k + A3 * totDirectCRT n + A3 * totResamp n + A3 * totConv n +
           A6 * ((T n : ℝ) * totMp n) + CR * ((S n : ℝ) * totMp n) + A8 * ((T n : ℝ) * p n) := by
-      have e5 : Cr' * (totCRT n + totResamp n + totConv n + (T n : ℝ) * totMp n +
-          (T n : ℝ) * p n) = Cr' * totCRT n + Cr' * totResamp n + Cr' * totConv n +
+      have e5 : Cr' * (totDirectCRT n + totResamp n + totConv n + (T n : ℝ) * totMp n +
+          (T n : ℝ) * p n) = Cr' * totDirectCRT n + Cr' * totResamp n + Cr' * totConv n +
           Cr' * ((T n : ℝ) * totMp n) + Cr' * ((T n : ℝ) * p n) := by ring
       rw [e5] at t5
       rw [hA1, hA2, hA3, hA6, hA8]
@@ -266,7 +267,7 @@ theorem mn_time_le_of_runs {K : ℕ} {Lb : LProc → MnPr (prime + K)} {w : ℕ 
         (1 + 2 * c) * (M * Z) + 2 * Z + (2 * mnT + 4) * Z := by ring
     rw [e2]
     linarith
-  -- against `totBound`
+  -- against `totDirectBound`
   have hCk : k ≤ C := le_max_left _ _
   have hCM : (1 + 2 * c) * M + 2 * mnT + 6 ≤ (C : ℝ) := by
     have h1 : ⌈(1 + 2 * (c : ℝ)) * M + 2 * (mnT : ℝ) + 6⌉₊ ≤ C := le_max_right _ _
@@ -274,13 +275,13 @@ theorem mn_time_le_of_runs {K : ℕ} {Lb : LProc → MnPr (prime + K)} {w : ℕ 
     exact (Nat.le_ceil _).trans h2
   have hbC : (b n : ℝ) ^ k ≤ (b n : ℝ) ^ C :=
     pow_le_pow_right₀ (by exact_mod_cast hb1) hCk
-  have hZC : Z ≤ (n : ℝ) + 2 * totCRT n + 3 * (totResamp n + totConv n + (T n : ℝ) * totMp n) +
+  have hZC : Z ≤ (n : ℝ) + 2 * totDirectCRT n + 3 * (totResamp n + totConv n + (T n : ℝ) * totMp n) +
       (T n : ℝ) * totMp n + (S n : ℝ) * totMp n + (T n : ℝ) * p n + ((n : ℝ) + (b n : ℝ) ^ C) := by
     rw [hZ]; linarith
   have hfin : ((1 + 2 * c) * M + 2 * mnT + 6) * Z ≤ (C : ℝ) * Z :=
     mul_le_mul_of_nonneg_right hCM hZ0
-  have hfin2 : (C : ℝ) * Z ≤ totBound C n := by
-    unfold totBound
+  have hfin2 : (C : ℝ) * Z ≤ totDirectBound C n := by
+    unfold totDirectBound
     exact mul_le_mul_of_nonneg_left hZC (Nat.cast_nonneg _)
   linarith
 

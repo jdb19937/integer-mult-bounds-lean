@@ -218,16 +218,16 @@ lemma mn_srcP_runs (hA : 96 ≤ prime + K) {n : ℕ} (hbig : Big n)
     (u : ZMod (∏ i, s n i) → ℂ) (hu : ‖u‖ ≤ 1 / 2) (huf : ∀ k, IsFixed (p n) (u k))
     (hstr : E.c .str = cstream (prime + K) w (srcCoef (p n) (∏ i, s n i) u))
     (g : MnR → List (Fin (prime + K + 4))) :
-    SrcRuns body mnRg mnι Pre (srcP mnM fwdP oppP) (mnGlob E g)
+    SrcRuns body mnRg mnι Pre (srcDirectP mnM fwdP oppP) (mnGlob E g)
       (mnGlob { E with
         a := (rsaWith (preCfgA V₀ crtHd n w W (srcHd0 hbig) restA (d n - 1)) [] axsA []).get,
         b := rsbWith (preCfgB σ₀ crtHd n w W (srcHd0 hbig) restB (d n - 1)) [] axsB [],
         c := Function.update E.c .str [],
         x := (Function.update E.x .sb
           (cstream (prime + K) w (srcPad (p n) (s n) (t n) (srcMap n u)) ++ E.x .sb)) } g)
-      (srcPCost mnM n w W cF cO (srcHd0 hbig) V₀ σ₀ restA restB) := by
-  have h : SrcRuns body (fun x => mnRg (MnR.src x)) mnι Pre (srcP mnM fwdP oppP) E.get _ _ :=
-    srcP_runs (body := body) mnM hA hbig hsmall hEs hF hO (fun _ h => h) (fun _ h => h) hπ
+      (srcDirectPCost mnM n w W cF cO (srcHd0 hbig) V₀ σ₀ restA restB) := by
+  have h : SrcRuns body (fun x => mnRg (MnR.src x)) mnι Pre (srcDirectP mnM fwdP oppP) E.get _ _ :=
+    srcDirectP_runs (body := body) mnM hA hbig hsmall hEs hF hO (fun _ h => h) (fun _ h => h) hπ
       hP.comp hw hwW hWA hWB hWs hWk E hE hC hln u hu huf hstr
   have h' := SrcRuns.lift mnRg_inj mn_src_inj h (mnGlob E g) (fun _ => rfl)
   rwa [mn_extend_src] at h'
@@ -255,16 +255,16 @@ lemma mn_oppP_runs (hA : 96 ≤ prime + K) {n : ℕ} (hbig : Big n)
     (hyf : ∀ k, IsFixed (p n) (y k))
     (hsb : E.x .sb = cstream (prime + K) w (srcPad (p n) (s n) (t n) y))
     (g : MnR → List (Fin (prime + K + 4))) :
-    SrcRuns body mnRg mnι Pre (oppP' mnM fwdP oppP) (mnGlob E g)
+    SrcRuns body mnRg mnι Pre (oppDirectP mnM fwdP oppP) (mnGlob E g)
       (mnGlob { E with
         a := (rsaWith (preCfgA V₀ crtHd n w W (srcHd0 hbig) restA (d n - 1)) [] axsA []).get,
         b := rsbWith (preCfgB σ₀ crtHd n w W (srcHd0 hbig) restB (d n - 1)) [] axsB [],
         c := Function.update E.c .str
           (cstream (prime + K) w (srcCoef (p n) (∏ i, s n i) (oppMap n y))),
         x := Function.update E.x .sb [] } g)
-      (oppPCost mnM n w W cF cO (srcHd0 hbig) V₀ σ₀ restA restB) := by
-  have h : SrcRuns body (fun x => mnRg (MnR.src x)) mnι Pre (oppP' mnM fwdP oppP) E.get _ _ :=
-    srcOpp_runs (body := body) mnM hA hbig hsmall hEs hF hO (fun _ h => h) (fun _ h => h) hπ
+      (oppDirectPCost mnM n w W cF cO (srcHd0 hbig) V₀ σ₀ restA restB) := by
+  have h : SrcRuns body (fun x => mnRg (MnR.src x)) mnι Pre (oppDirectP mnM fwdP oppP) E.get _ _ :=
+    srcDirectOpp_runs (body := body) mnM hA hbig hsmall hEs hF hO (fun _ h => h) (fun _ h => h) hπ
       hP.comp hw hwW hWA hWB hWs hWk E hE hC hln hstr y hy hyf hsb
   have h' := SrcRuns.lift mnRg_inj mn_src_inj h (mnGlob E g) (fun _ => rfl)
   rwa [mn_extend_src] at h'
@@ -488,16 +488,16 @@ theorem mn_chain_runs (hA : 96 ≤ prime + K) {n : ℕ} (hbig : Big n)
     ∃ (F' : SrcF 6 (prime + K)) (g' : MnR → List (Fin (prime + K + 4))),
       SrcRuns body mnRg mnι (mnSynPre σ) (mnChain fwdP oppP) (mnGlob E g) (mnGlob F' g')
         (mnChainCost n w
-          (srcPCost mnM n w W cF cO (srcHd0 hbig) V₀ σ₀
+          (srcDirectPCost mnM n w W cF cO (srcHd0 hbig) V₀ σ₀
               (preRecsA n W (srcHd0 hbig) 0 ++ (preRecsA n W (srcHd0 hbig) 0 ++ restA))
               (preRecsB n W (srcHd0 hbig) 0 ++ (preRecsB n W (srcHd0 hbig) 0 ++ restB)) +
-            srcPCost mnM n w W cF cO (srcHd0 hbig)
+            srcDirectPCost mnM n w W cF cO (srcHd0 hbig)
               (preCfgA V₀ crtHd n w W (srcHd0 hbig)
                 (preRecsA n W (srcHd0 hbig) 0 ++ (preRecsA n W (srcHd0 hbig) 0 ++ restA)) (d n - 1))
               (preCfgB σ₀ crtHd n w W (srcHd0 hbig)
                 (preRecsB n W (srcHd0 hbig) 0 ++ (preRecsB n W (srcHd0 hbig) 0 ++ restB)) (d n - 1))
               (preRecsA n W (srcHd0 hbig) 0 ++ restA) (preRecsB n W (srcHd0 hbig) 0 ++ restB) +
-            oppPCost mnM n w W cF cO (srcHd0 hbig)
+            oppDirectPCost mnM n w W cF cO (srcHd0 hbig)
               (preCfgA (preCfgA V₀ crtHd n w W (srcHd0 hbig)
                 (preRecsA n W (srcHd0 hbig) 0 ++ (preRecsA n W (srcHd0 hbig) 0 ++ restA)) (d n - 1))
                 crtHd n w W (srcHd0 hbig) (preRecsA n W (srcHd0 hbig) 0 ++ restA) (d n - 1))
@@ -566,8 +566,8 @@ theorem mn_chain_runs (hA : 96 ≤ prime + K) {n : ℕ} (hbig : Big n)
           (preRecsB n W hd0 0 ++ (preRecsB n W hd0 0 ++ restB)) (d n - 1)) [] axsB []
         c := Function.update F₁.c .str []
         x := Function.update F₁.x .sb (BX ++ F₁.x .sb) } := ⟨_, rfl⟩
-  replace s2 : SrcRuns body mnRg mnι (mnSynPre σ) (srcP mnM fwdP oppP) (mnGlob F₁ g₁)
-      (mnGlob F₂ g₁) (srcPCost mnM n w W cF cO hd0 V₀ σ₀
+  replace s2 : SrcRuns body mnRg mnι (mnSynPre σ) (srcDirectP mnM fwdP oppP) (mnGlob F₁ g₁)
+      (mnGlob F₂ g₁) (srcDirectPCost mnM n w W cF cO hd0 V₀ σ₀
         (preRecsA n W hd0 0 ++ (preRecsA n W hd0 0 ++ restA))
         (preRecsB n W hd0 0 ++ (preRecsB n W hd0 0 ++ restB))) := by subst hF₂; exact s2
   have hF₂sb : F₂.x .sb = BX := by subst hF₂ hF₁; simp [hsb]
@@ -622,8 +622,8 @@ theorem mn_chain_runs (hA : 96 ≤ prime + K) {n : ℕ} (hbig : Big n)
           (preRecsB n W hd0 0 ++ restB) (d n - 1)) [] axsB []
         c := Function.update F₄.c .str []
         x := Function.update F₄.x .sb (BY ++ F₄.x .sb) } := ⟨_, rfl⟩
-  replace s5 : SrcRuns body mnRg mnι (mnSynPre σ) (srcP mnM fwdP oppP) (mnGlob F₄ g₄)
-      (mnGlob F₅ g₄) (srcPCost mnM n w W cF cO hd0
+  replace s5 : SrcRuns body mnRg mnι (mnSynPre σ) (srcDirectP mnM fwdP oppP) (mnGlob F₄ g₄)
+      (mnGlob F₅ g₄) (srcDirectPCost mnM n w W cF cO hd0
         (preCfgA V₀ crtHd n w W hd0 (preRecsA n W hd0 0 ++ (preRecsA n W hd0 0 ++ restA)) (d n - 1))
         (preCfgB σ₀ crtHd n w W hd0 (preRecsB n W hd0 0 ++ (preRecsB n W hd0 0 ++ restB)) (d n - 1))
         (preRecsA n W hd0 0 ++ restA) (preRecsB n W hd0 0 ++ restB)) := by subst hF₅; exact s5
@@ -744,8 +744,8 @@ theorem mn_chain_runs (hA : 96 ≤ prime + K) {n : ℕ} (hbig : Big n)
           (preRecsB n W hd0 0 ++ restB) (d n - 1)) crtHd n w W hd0 restB (d n - 1)) [] axsB []
         c := Function.update F₁₁.c .str CO
         x := Function.update F₁₁.x .sb [] } := ⟨_, rfl⟩
-  replace s12 : SrcRuns body mnRg mnι (mnSynPre σ) (oppP' mnM fwdP oppP) (mnGlob F₁₁ g₆)
-      (mnGlob F₁₂ g₆) (oppPCost mnM n w W cF cO hd0
+  replace s12 : SrcRuns body mnRg mnι (mnSynPre σ) (oppDirectP mnM fwdP oppP) (mnGlob F₁₁ g₆)
+      (mnGlob F₁₂ g₆) (oppDirectPCost mnM n w W cF cO hd0
         (preCfgA (preCfgA V₀ crtHd n w W hd0 (preRecsA n W hd0 0 ++ (preRecsA n W hd0 0 ++ restA))
           (d n - 1)) crtHd n w W hd0 (preRecsA n W hd0 0 ++ restA) (d n - 1))
         (preCfgB (preCfgB σ₀ crtHd n w W hd0 (preRecsB n W hd0 0 ++ (preRecsB n W hd0 0 ++ restB))

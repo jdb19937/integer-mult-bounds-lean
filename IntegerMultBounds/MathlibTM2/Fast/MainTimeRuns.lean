@@ -2,16 +2,19 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Fast.MainProg
 public import IntegerMultBounds.MathlibTM2.Cost.MatchStages
+public import IntegerMultBounds.MathlibTM2.Cost.DirectTotal
+public import IntegerMultBounds.MathlibTM2.Cost.CRTDirectEntry
+public import IntegerMultBounds.MathlibTM2.Fast.SrcDirectStage
 
 /-!
-# The three source-transform runs against `totBound`
+# The three source-transform runs against `totDirectBound`
 
 `mn_runs_le`: the step bound `mnRuns` of the three source-transform runs of the fast
-multiplier (`srcP` on both operands, `oppP'`, `Fast/MainProg`) is eventually at most a constant
-times `totCRT + totResamp + totConv + T M(p) + T p`.
+multiplier (`srcDirectP` on both operands, `oppDirectP`, `Fast/MainProg`) is eventually at most a constant
+times `totDirectCRT + totResamp + totConv + T M(p) + T p`.
 
 * `mn_core_le`: one run of `srcCore` on base files whose first cleared registers hold at most
-  `T w` symbols costs at most `C (totCRT + totResamp + totConv + T M(p) + T p) + 2 cF + cO`:
+  `T w` symbols costs at most `C (totDirectCRT + totResamp + totConv + T M(p) + T p) + 2 cF + cO`:
   `Ã` and `B̃₀` by `mt_rsa_stage_le`, `mt_rsb_stage_le`; the chirp kernel by `mt_ch_kernel_le`
   and the stored descriptions (`ldcBlocks`, at most `2 T` symbols each); the chirp products by
   `mt_ch_chirpMul_le`; the convolution box without its transforms by `mt_cv_box_le_conv`
@@ -22,7 +25,7 @@ times `totCRT + totResamp + totConv + T M(p) + T p`.
   registers the next first loader step clears hold at most `T w` symbols (from
   `mt_rsa_clr_load_le`, `mt_rsb_clear_le`, with `b^k r = o(T)`), so the base files `mnV₁`,
   `mnV₂`, `mnσ₁`, `mnσ₂` of the second and third runs meet the hypothesis of `mn_core_le`.
-* `mn_srcP_le`, `mn_oppP_le`: `srcPCost`, `oppPCost` add the CRT layouts (`mt_crt_le_pre`), the
+* `mn_srcP_le`, `mn_oppP_le`: `srcDirectPCost`, `oppDirectPCost` add the CRT layouts (`mt_crt_le_pre`), the
   conjugations (`mt_ch_conj_le`) and a transfer.
 -/
 
@@ -49,12 +52,12 @@ noncomputable section
 
 /-- The sum of the terms against which the runs are matched. -/
 def mnRunSum (n : ℕ) : ℝ :=
-  totCRT n + totResamp n + totConv n + (T n : ℝ) * totMp n + (T n : ℝ) * p n
+  totDirectCRT n + totResamp n + totConv n + (T n : ℝ) * totMp n + (T n : ℝ) * p n
 
 lemma mn_runSum_parts {n : ℕ} (h : Big n) :
-    0 ≤ totCRT n ∧ 0 ≤ totResamp n ∧ 0 ≤ totConv n ∧ 0 ≤ (T n : ℝ) * totMp n ∧
+    0 ≤ totDirectCRT n ∧ 0 ≤ totResamp n ∧ 0 ≤ totConv n ∧ 0 ≤ (T n : ℝ) * totMp n ∧
       0 ≤ (T n : ℝ) * p n :=
-  ⟨mt_crt_nonneg n, mt_resamp_nonneg n, tot_conv_nonneg h, mt_Tmp_nonneg n, mt_Tp_nonneg n⟩
+  ⟨mt_directCRT_nonneg n, mt_resamp_nonneg n, tot_conv_nonneg h, mt_Tmp_nonneg n, mt_Tp_nonneg n⟩
 
 /-- A bound `a ≤ c Y` by a part `Y` of a nonnegative sum `Σ` gives `a ≤ max c 0 · Σ`. -/
 lemma mn_le_max_mul {a c Y Z : ℝ} (h : a ≤ c * Y) (hY : 0 ≤ Y) (hYZ : Y ≤ Z) :
@@ -178,9 +181,9 @@ lemma mn_clrB_cfg (cw cW : ℕ) :
 /-! ### One run of the source transform -/
 
 lemma mn_runSum_ge {n : ℕ} (h : Big n) :
-    totResamp n + totCRT n + (T n : ℝ) * p n ≤ mnRunSum n ∧
+    totResamp n + totDirectCRT n + (T n : ℝ) * p n ≤ mnRunSum n ∧
       (T n : ℝ) * totMp n ≤ mnRunSum n ∧ totConv n + (T n : ℝ) * totMp n ≤ mnRunSum n ∧
-      (T n : ℝ) * p n ≤ mnRunSum n ∧ totCRT n ≤ mnRunSum n ∧ totConv n ≤ mnRunSum n := by
+      (T n : ℝ) * p n ≤ mnRunSum n ∧ totDirectCRT n ≤ mnRunSum n ∧ totConv n ≤ mnRunSum n := by
   obtain ⟨h1, h2, h3, h4, h5⟩ := mn_runSum_parts h
   unfold mnRunSum
   refine ⟨by linarith, by linarith, by linarith, by linarith, by linarith, by linarith⟩
@@ -206,7 +209,7 @@ lemma mn_core_small {n XW LT LS H cw w : ℕ} (h : Big n) (hXW : XW ≤ cw * (T 
   omega
 
 /-- **One run of `srcCore`** on base files whose first cleared registers hold at most `T w`
-symbols: at most `C (totCRT + totResamp + totConv + T M(p) + T p) + 2 cF + cO`. -/
+symbols: at most `C (totDirectCRT + totResamp + totConv + T M(p) + T p) + 2 cF + cO`. -/
 lemma mn_core_le {K : ℕ} (cw cW : ℕ) :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ᶠ n in atTop, ∀ (hd0 : 0 < d n) (w W cF cO : ℕ)
       (V₀ : RsaV (RsaX 6) (prime + K)) (σ₀ : RsbR ⊕ RsbX 6 → List (Fin (prime + K + 4)))
@@ -216,8 +219,8 @@ lemma mn_core_le {K : ℕ} (cw cW : ℕ) :
       (∀ r ∈ preClrB crtHd, (σ₀ r).length ≤ T n * w) →
       (srcCoreCost mnM n w W cF cO hd0 V₀ σ₀ restA restB : ℝ) ≤
         C * mnRunSum n + ((2 * cF + cO : ℕ) : ℝ) := by
-  obtain ⟨CA, hCA⟩ := mt_rsa_stage_le mnT 6 K cw cW
-  obtain ⟨CB, hCB⟩ := mt_rsb_stage_le mnT 6 K cw cW
+  obtain ⟨CA, hCA⟩ := mt_rsa_stage_le_linear mnT 6 K cw cW
+  obtain ⟨CB, hCB⟩ := mt_rsb_stage_le_linear mnT 6 K cw cW
   obtain ⟨CK, hCK⟩ := mt_ch_kernel_le mnT cw cW
   set c4 : ℝ := mtCM mnT cw + 21 * cw + 28
   set c5 : ℝ := 6 * cw + 19
@@ -230,7 +233,7 @@ lemma mn_core_le {K : ℕ} (cw cW : ℕ) :
   intro hd0 w W cF cO V₀ σ₀ restA restB hpw hwc hWc hclrA hclrB
   obtain ⟨g1, g2, g3, g4, -, -⟩ := mn_runSum_ge h
   obtain ⟨-, -, -, q4, q5⟩ := mn_runSum_parts h
-  have q0 : 0 ≤ totResamp n + totCRT n + (T n : ℝ) * p n := by
+  have q0 : 0 ≤ totResamp n + totDirectCRT n + (T n : ℝ) * p n := by
     obtain ⟨r1, r2, -, -, r5⟩ := mn_runSum_parts h; linarith
   have q3 : 0 ≤ totConv n + (T n : ℝ) * totMp n := by
     obtain ⟨-, -, r3, r4, -⟩ := mn_runSum_parts h; linarith
@@ -262,10 +265,27 @@ lemma mn_core_le {K : ℕ} (cw cW : ℕ) :
         max c7 0 * mnRunSum n + (2 * (cF : ℝ) + cO) := by linarith
     _ = _ := by ring
 
+/-- Match the actual direct CRT call at the source-stage dimensions. -/
+lemma mn_direct_crt_le (Tm cw K : ℕ) :
+    ∀ᶠ n in atTop, ∀ w : ℕ, w ≤ cw * p n → ∀ fwd : Bool,
+      (srcDirectCrtCost (K := K) fwd Tm n w : ℝ) ≤
+        mtCrtDirectEntryC Tm cw * totDirectCRT n := by
+  filter_upwards [crtDirectSource_pipeline_le Tm cw K, eventually_big] with n h hb w hw fwd
+  apply h (d n) w (srcAx n) (s n)
+    (fun j => (crtMu (s n) (s_pairwise n) j : ZMod (s n j)).val) rfl
+  · rw [← crtControl_fullWidth]
+    exact mt_crt_pre_eq hb
+  · exact fun j => (pre_log_t j).symm
+  · exact fun j => (src_crt_hs hb j).2.le
+  · intro j
+    have : NeZero (s n j) := ⟨ne_of_gt (src_crt_hs hb j).1⟩
+    exact (ZMod.val_lt _).le
+  · exact hw
+
 /-! ### The transforms -/
 
-/-- **`srcP` and `oppP'`** on base files whose first cleared registers hold at most `T w`
-symbols: each at most `C (totCRT + totResamp + totConv + T M(p) + T p) + 2 cF + cO`. -/
+/-- **`srcDirectP` and `oppDirectP`** on base files whose first cleared registers hold at most `T w`
+symbols: each at most `C (totDirectCRT + totResamp + totConv + T M(p) + T p) + 2 cF + cO`. -/
 lemma mn_srcP_le {K : ℕ} (cw cW : ℕ) :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ᶠ n in atTop, ∀ (hd0 : 0 < d n) (w W cF cO : ℕ)
       (V₀ : RsaV (RsaX 6) (prime + K)) (σ₀ : RsbR ⊕ RsbX 6 → List (Fin (prime + K + 4)))
@@ -273,32 +293,31 @@ lemma mn_srcP_le {K : ℕ} (cw cW : ℕ) :
       p n + 2 ≤ w → w ≤ cw * p n → W ≤ cW * p n →
       (∀ x ∈ preClrA crtHd, (V₀.get x).length ≤ T n * w) →
       (∀ r ∈ preClrB crtHd, (σ₀ r).length ≤ T n * w) →
-      (srcPCost mnM n w W cF cO hd0 V₀ σ₀ restA restB : ℝ) ≤
+      (srcDirectPCost mnM n w W cF cO hd0 V₀ σ₀ restA restB : ℝ) ≤
           C * mnRunSum n + ((2 * cF + cO : ℕ) : ℝ) ∧
-        (oppPCost mnM n w W cF cO hd0 V₀ σ₀ restA restB : ℝ) ≤
+        (oppDirectPCost mnM n w W cF cO hd0 V₀ σ₀ restA restB : ℝ) ≤
           C * mnRunSum n + ((2 * cF + cO : ℕ) : ℝ) := by
   obtain ⟨C0, hC0, hcore⟩ := mn_core_le (K := K) cw cW
-  set c1 : ℝ := mtCrtC mnT cw
+  set c1 : ℝ := mtCrtDirectEntryC mnT cw
   set c2 : ℝ := ((4 * cw + 4 : ℕ) : ℝ)
   set c3 : ℝ := 5 * cw + 8
   set c4 : ℝ := ((2 * cw + 2 : ℕ) : ℝ)
   refine ⟨C0 + max c1 0 + max c2 0 + 2 * max c3 0 + 2 * max c4 0, by positivity, ?_⟩
-  filter_upwards [eventually_big, hcore, mt_crt_le_pre mnT cw, mt_ch_conj_le cw]
+  filter_upwards [eventually_big, hcore, mn_direct_crt_le mnT cw K, mt_ch_conj_le cw]
     with n h hco hcr hcj
   intro hd0 w W cF cO V₀ σ₀ restA restB hpw hwc hWc hclrA hclrB
   obtain ⟨-, -, -, g4, g5, -⟩ := mn_runSum_ge h
   obtain ⟨q1, -, -, -, q5⟩ := mn_runSum_parts h
   have a0 := hco hd0 w W cF cO V₀ σ₀ restA restB hpw hwc hWc hclrA hclrB
-  have a1 := mn_le_max_mul (hcr w (ℓ n) (ℓ n - 1) hwc le_rfl) q1 g5
+  have a1f := mn_le_max_mul (hcr w hwc true) q1 g5
+  have a1i := mn_le_max_mul (hcr w hwc false) q1 g5
   have hX : (∏ i, t n i) ≤ T n := (mt_prod_t h).le
   have a2 := mn_le_max_mul (c := c2) (mn_lin_le (a := 4) (c := 4) h hX hwc) q5 g4
   have a3 := mn_le_max_mul (c := c3) (hcj w hwc) q5 g4
   have a4 := mn_le_max_mul (c := c4) (mn_lin_le (a := 2) (c := 2) h hX hwc) q5 g4
-  have hsrc : srcAx n = fun j => Nat.log 2 (t n j) := rfl
   refine ⟨?_, ?_⟩
-  · unfold srcPCost
-    rw [hsrc]
-    push_cast at a0 a1 a2 ⊢
+  · unfold srcDirectPCost
+    push_cast at a0 a1f a2 ⊢
     calc _ ≤ max c1 0 * mnRunSum n + max c2 0 * mnRunSum n +
           (C0 * mnRunSum n + (2 * (cF : ℝ) + cO)) := by linarith
       _ ≤ (C0 + max c1 0 + max c2 0 + 2 * max c3 0 + 2 * max c4 0) * mnRunSum n +
@@ -306,9 +325,8 @@ lemma mn_srcP_le {K : ℕ} (cw cW : ℕ) :
         have : 0 ≤ (2 * max c3 0 + 2 * max c4 0) * mnRunSum n :=
           mul_nonneg (by positivity) (q5.trans g4)
         nlinarith
-  · unfold oppPCost srcConjCost
-    rw [hsrc]
-    push_cast at a0 a1 a3 a4 ⊢
+  · unfold oppDirectPCost srcConjCost
+    push_cast at a0 a1i a3 a4 ⊢
     calc _ ≤ max c1 0 * mnRunSum n + 2 * (max c3 0 * mnRunSum n) +
           2 * (max c4 0 * mnRunSum n) + (C0 * mnRunSum n + (2 * (cF : ℝ) + cO)) := by
           linarith
@@ -319,13 +337,13 @@ lemma mn_srcP_le {K : ℕ} (cw cW : ℕ) :
 
 /-! ### The three runs -/
 
-/-- **The three source-transform runs against `totBound`**: eventually
-`mnRuns ≤ C (totCRT + totResamp + totConv + T M(p) + T p)`. -/
+/-- **The three source-transform runs against `totDirectBound`**: eventually
+`mnRuns ≤ C (totDirectCRT + totResamp + totConv + T M(p) + T p)`. -/
 theorem mn_runs_le {K : ℕ} {Lb : LProc → MnPr (prime + K)} {w : ℕ → ℕ}
     {σ : ℕ → LReg SXReg → List (Fin (prime + K + 4))} (D : MnDist K Lb w σ)
     (Y : MnSyn K Lb w σ) :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ᶠ n in atTop, (mnRuns D Y n : ℝ) ≤
-      C * (IntegerMultBounds.MathlibTM2.Cost.totCRT n + IntegerMultBounds.MathlibTM2.Cost.totResamp n + IntegerMultBounds.MathlibTM2.Cost.totConv n +
+      C * (IntegerMultBounds.MathlibTM2.Cost.totDirectCRT n + IntegerMultBounds.MathlibTM2.Cost.totResamp n + IntegerMultBounds.MathlibTM2.Cost.totConv n +
         (T n : ℝ) * IntegerMultBounds.MathlibTM2.Cost.totMp n + (T n : ℝ) * p n) := by
   obtain ⟨cw, cW, hratio⟩ := D.ratio
   obtain ⟨Cs, hCs⟩ := Y.cost
@@ -348,7 +366,7 @@ theorem mn_runs_le {K : ℕ} {Lb : LProc → MnPr (prime + K)} {w : ℕ → ℕ}
   have hcs' := mn_le_max_mul hcs hconv g6
   have hS0 : 0 ≤ mnRunSum n := hconv.trans g6
   unfold mnRuns
-  rw [dif_pos hd0]
+  rw [dite_eq_left hd0]
   set RA := preRecsA (A := prime + K) n (D.Wt n) hd0 0 with hRA
   set RB := preRecsB (A := prime + K) n (D.Wt n) hd0 0 with hRB
   have b1 := (hr hd0 (w n) (D.Wt n) (Y.cF n) (Y.cO n) (D.V₀ n) (D.σ₀ n) (RA ++ (RA ++ D.restA n))
