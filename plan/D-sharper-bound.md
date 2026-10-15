@@ -1575,3 +1575,12 @@ one-sided coefficient sum. For `ρ≤1/8` the corner is at least `6/7`
 (the source needs `x₀>1/2`) and the Gohberg–Semencul factorization holds.
 The guarded check and namespace standard-axiom audit pass. The actual
 phase-cell kernel bound, rounded factors and convolution costs remain open.
+
+The actual shared within-cell kernel now meets these conditions: executable
+off-diagonal samples are at most `20^-δ` once `u≥1`, so every Toeplitz block
+has row mass at most `1/8` (the source assumed `u≥4`). Each interior block
+of any length has an actual inverse with corner at least `6/7` and the
+Gohberg–Semencul factorization, and actual cell entries are exactly its
+diagonal similarity. The guarded check and10-declaration standard-axiom audit
+pass. Block composition of interior inverses with the boundary solve, rounded
+factors and convolution costs remain open.
