@@ -1399,3 +1399,11 @@ The remaining M7 work includes actual continuous-linear-map/inverse packaging,
 sharp inverse norm, structured solve and boundary composition, bulk/core/halo
 execution, prime supply and charged machine costs. Public saving remains
 `2^-34`.
+
+The1004 literal source-greedy extension matrices are now imported with checked
+inverse/dual equations and retained initial columns. Native inverse-Z and
+relative X-block rank theorems cover every original climb/center event in both
+orientations without extension hypotheses. All35 new modules and the combined
+5185-declaration standard-axiom audit pass; the38-file generated checkpoint is
+deterministic. Complex Pauli realization, phases/tableau completeness, monomial
+factors, adapters, dirty routing and hosted costs remain open.

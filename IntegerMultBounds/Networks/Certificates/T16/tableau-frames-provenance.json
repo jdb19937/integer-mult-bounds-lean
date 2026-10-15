@@ -1,0 +1,11 @@
+{
+  "dimension": 9,
+  "frame_count": 1004,
+  "inverse_witness": "Unique dual masks, equal to the inverse matrix rows.",
+  "pins": {
+    "research/complex-sw4-frame8/vendor/main/research/complex-k492-owner-repair/vendor/multicold/vendor/pr558/vendor/pr552/complex-global/vendor531/vendor/clifford/clifford_exact.py": "2982ead07721e83358dc67c6f49c2b4c16a236a6bebdfd72f58221be1f5d0962",
+    "research/r480-owner-optimum/inputs/local/CANONICAL-WORD.json.gz": "16bc0ebb04b4be6c0ade74badc6a0c0cdba4215eda86e4ff9f13abf8ecebd219"
+  },
+  "scope": "Actual invertible source extension matrices and initial-column retention; binary tableaus only. No complex operator or phase proof.",
+  "selection": "Greedily retain original ordered columns, then standard units in increasing bit order iff outside the accumulated XOR span."
+}
