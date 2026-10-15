@@ -1374,3 +1374,12 @@ checks and a1760-declaration standard-axiom audit. These identities apply to
 a supplied frame interpretation; actual rational E8 operator interpretation,
 compatibility with binary scalar values, distinct-frame COPY execution,
 geometric ranks and hosted costs remain open.
+
+The stopped replacement now reaches the actual original-parameter root
+constructor through reservation arithmetic, active scanner and cleanup. The
+constructor returns its fresh exponent sum; the actual configured width gives
+piece precision from the existing geometric fit and activeD≤globalD, with no
+new assumed stopped precision bound. Four guarded checks and seven principal
+contract audits pass. The back reservation remains unchanged and is outside
+the active-digit leaf bound. Top adapter/layer replacement, the separate back
+leaf bound and asymptotic cost absorption remain to connect.
