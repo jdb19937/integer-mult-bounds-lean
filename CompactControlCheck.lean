@@ -1,3 +1,7 @@
+import IntegerMultBounds.MathlibTM2.Cost.CompactBasis
+import IntegerMultBounds.MathlibTM2.Node.CompactFactor
+import IntegerMultBounds.MathlibTM2.Fast.CompactTopOriginal
+import IntegerMultBounds.MathlibTM2.Cost.CompactCallerSelectedRows
 import IntegerMultBounds.MathlibTM2.Node.CompactBasisRegisters
 import IntegerMultBounds.MathlibTM2.Fast.CompactTopSetup
 import IntegerMultBounds.MathlibTM2.Cost.CompactCallerCapacity
@@ -132,7 +136,18 @@ run_cmd do
     ``IntegerMultBounds.MathlibTM2.Fast.sg_compactTopCoordinates,
     ``IntegerMultBounds.MathlibTM2.Fast.sg_compactTopSetup,
     ``IntegerMultBounds.MathlibTM2.Fast.sg_compactTopRecordSetup,
-    ``IntegerMultBounds.MathlibTM2.LayerMachine.compactBasisW_exec]
+    ``IntegerMultBounds.MathlibTM2.LayerMachine.compactBasisW_exec,
+    ``IntegerMultBounds.MathlibTM2.Fast.sg_compactTopOriginal,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactCaller_selected_split,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactCaller_selected_native_rows,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactCaller_selected_rows_le,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactCaller_selected_extra_le,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactCaller_selected_eventually_packed,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactDescriptorBank_actual_le,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactBasisSlotCost_le,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactBasisCost_le,
+    ``IntegerMultBounds.MathlibTM2.LayerMachine.compactBasisW_factor_exec,
+    ``IntegerMultBounds.MathlibTM2.LayerMachine.compactFactorProg_spec]
   for name in names do
     for ax in ← collectAxioms name do
       unless #[``propext, ``Quot.sound, ``Classical.choice].contains ax do

@@ -2415,3 +2415,11 @@ import IntegerMultBounds.MathlibTM2.Node.CompactBasis
 import IntegerMultBounds.MathlibTM2.Fast.CompactTopSetup
 
 import IntegerMultBounds.MathlibTM2.Node.CompactBasisRegisters
+
+import IntegerMultBounds.MathlibTM2.Fast.CompactTopOriginal
+
+import IntegerMultBounds.MathlibTM2.Cost.CompactCallerSelectedRows
+
+import IntegerMultBounds.MathlibTM2.Cost.CompactBasis
+
+import IntegerMultBounds.MathlibTM2.Node.CompactFactor

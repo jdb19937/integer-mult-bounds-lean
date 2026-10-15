@@ -569,10 +569,18 @@ for padding; fitting this exponent into `6*b` remains a caller obligation.
 remaining coordinates from original inputs, composing actual root records
 with a fresh reservation-count pass and complete cleanup. They preserve
 original sources and emit the piece record, exponent and four top coordinates.
-The role adapter into the configuration serializer remains to be connected.
+`Fast/CompactTopOriginal.lean` now composes record setup, the role adapter,
+configuration generation and cleanup from original inputs. Only piece record,
+configuration and working width change; arbitrary outside-row source and all
+original metadata are preserved. No derived-coordinate inputs remain.
+`Cost/CompactCallerSelectedRows.lean` proves the exact top split: reserved row
+bits plus original high spectators. The native address exactly matches the
+reserved shape, so no extra high-address multiplier remains in native rows.
+Actual padded descendant stock now supplies repair packing directly, under
+the original address/row precision budget and coefficient-width premises.
 
-**Next integration boundary:** connect original-input configuration production
-to `TopProc`. `Fast/CompactTopReady.lean` proves the exact mask predicate, selection length,
+**Next integration boundary:** connect the complete original-input constructor
+to a compact-compatible top runner. `Fast/CompactTopReady.lean` proves the exact mask predicate, selection length,
 computed shift, piece-width validity and complete reserved `topZ` semantics.
 `Node/CompactBasisSlot.lean` computes the parent length from the divided live
 length, seeds slot indices, executes the computed slot and clears its controls.
@@ -580,9 +588,15 @@ length, seeds slot indices, executes the computed slot and clears its controls.
 with summed execution costs and full frame restoration.
 `Node/CompactBasisRegisters.lean` supplies a concrete finite register bank and
 persistent reservation predicate, aliases the live layer counters, and proves
-`compactBasisW_exec` changes only its selected wire. Compact factor/layer
-wrappers remain, including preservation of globals across child calls and top
-wrappers currently specialized to `SXReg`.
+`compactBasisW_exec` changes only its selected wire. `Node/CompactFactorBasis.lean` and `CompactFactor.lean` now execute the full
+factor with both compact basis passes, preserving global counters and proving
+exact factor semantics. Only the existing child `CallSpec` remains as the
+recursive induction boundary. `Cost/CompactBasis.lean` bounds every descriptor,
+seed, header, native execution and cleanup cost at actual local volume times
+compact width to `tau`; the fixed coefficient is `2^(slotExponent(T,D)+49)`.
+The quadratic descriptor arithmetic is absorbed into the actual address volume,
+not hidden in a full-width transport factor. Closing the recursive layer and
+generalizing the top wrappers currently specialized to `SXReg` remain.
 Propagate the complete execution costs and discharge remaining caller sizing; record coverage alone
 does not establish the complete reserved transform. M3 remains open and public
 saving remains `2^-66`.

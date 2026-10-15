@@ -6209,3 +6209,9 @@ Parameters and asymptotics.
 - `MathlibTM2/Fast/CompactTopCoordinates.lean`, `Fast/CompactTopSetup.lean`: Actual original-input root record and top-coordinate computation, regenerating cleared reservation counts and restoring all intermediates. The configuration serializer role adapter remains separate.
 
 - `MathlibTM2/Node/CompactBasisRegisters.lean`: Concrete finite compact register bank, persistent global reservation predicate and layer-counter aliases; actual basis execution changes only its selected wire. Factor/layer and top-wrapper integration remain separate.
+
+- `MathlibTM2/Fast/CompactTopOriginal.lean`: Complete original-input piece/configuration/working-width constructor, including role adaptation and cleanup. Arbitrary persistent outside-row source and every input/scratch tape are restored.
+- `MathlibTM2/Cost/CompactCallerSelectedRows.lean`: Exact selected top split, native-row identity, padded descendant bound and actual repair packing from original address/row precision premises.
+
+- `MathlibTM2/Cost/CompactBasis.lean`: Complete computed-slot and basis costs bounded by actual local volume times compact width to `tau`, including quadratic descriptor arithmetic, seed/header/native execution and cleanup, with fixed power-of-two coefficients.
+- `MathlibTM2/Node/CompactFactorBasis.lean`, `Node/CompactFactor.lean`: Complete compact factor program and exact factor contract, replacing both basis calls while restoring persistent globals; recursive child execution remains the existing `CallSpec` induction boundary.
