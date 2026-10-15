@@ -1,3 +1,6 @@
+import IntegerMultBounds.MathlibTM2.Cost.CompactTopCompleteBound
+import IntegerMultBounds.MathlibTM2.Cost.CompactTopOriginalGeometry
+import IntegerMultBounds.MathlibTM2.Host.StateLift
 import IntegerMultBounds.MathlibTM2.Cost.CompactTopControlPower
 import IntegerMultBounds.MathlibTM2.Cost.CompactTopCoordinates
 import IntegerMultBounds.MathlibTM2.Fast.CompactMainBootstrapFrame
@@ -344,7 +347,28 @@ run_cmd do
     ``IntegerMultBounds.MathlibTM2.Fast.compactSynLayerPrepare_basis,
     ``IntegerMultBounds.MathlibTM2.Fast.compactSynLayerPark_runs,
     ``IntegerMultBounds.MathlibTM2.Fast.compactSynLayerCleanup_runs,
-    ``IntegerMultBounds.MathlibTM2.Fast.compactSynLayerClear_projection]
+    ``IntegerMultBounds.MathlibTM2.Fast.compactSynLayerClear_projection,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactTopCallCost_eq_piece,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactActiveCost_sum_with,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactReservedCost_sum_with,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactTopCallCost_reserved_sum,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactTopCallCost_kernel,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactTopCost_complete,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactTopConfigFieldsCost_linear,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactTopConfigWriteCost_linear,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactTopConfigPaddingCost_bound,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactTopConfigRowsAfterCost_bound,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactTopOriginalAdapterCost_bound,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactTopConfigRowsCost_volume,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactTopOriginalAdapterCost_volume,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactUnaryPaddingBudget_volume,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactTopOriginal_division_volume,
+    ``IntegerMultBounds.MathlibTM2.Host.stateMapAct_run,
+    ``IntegerMultBounds.MathlibTM2.Host.stateMap_exec,
+    ``IntegerMultBounds.MathlibTM2.Host.stateMap_exec_normalized,
+    ``IntegerMultBounds.MathlibTM2.Host.stateLiftDown_up,
+    ``IntegerMultBounds.MathlibTM2.Host.stateLift_exec,
+    ``IntegerMultBounds.MathlibTM2.Host.stateLift_exec_normalized]
   for name in names do
     for ax in ← collectAxioms name do
       unless #[``propext, ``Quot.sound, ``Classical.choice].contains ax do

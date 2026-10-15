@@ -655,7 +655,16 @@ remains. `CompactTopPieceCount` bounds the actual record count by
 `2+log_m(d)`, including empty active/back cases; `CompactTopControlPower`
 absorbs complete actual control work into padded volume times any fixed
 positive dimension power, with a fixed dyadic coefficient. Complete
-constructor/setup costs and recursive-call summation still require assembly.
+constructor/setup costs and complete multiplier propagation still require assembly.
+`CompactTopActualBound/CompactTopAbsoluteBound/CompactTopCompleteBound` now
+sum the actual reserved recursive calls, charge the actual widened kernel,
+and combine both with all controls in a single padded-volume bound.
+Absolute-to-relative coordinates preserve volume without counting the low
+offset twice. `CompactTopOriginalBound/CompactTopOriginalVolume` bound
+configuration serialization, literal source restoration and unary row padding.
+`CompactTopOriginalGeometry` derives the row-division budget from actual
+reserved axes plus three selected address bits. Record generation, computing
+the original divisor and complete round-overhead absorption remain separate.
 Specializing that envelope to the actual canonical layer costs,
 original-caller initialization and complete multiplier cost propagation
 remain necessary before claiming another public saving.
@@ -744,8 +753,12 @@ but preserves this capacity, so the old `MnPr` programs cannot silently be
 reused at a different `Q`. Either instantiate the polymorphic stages at the
 new capacity and port their main contracts, or prove exact local-state
 transport with an in-image invariant/normalization for `HS.st` and `HS.nxt`.
-The existing `Host.liftQ` is for multitape programs; it does not supply this
-host-program bridge. This remains part of actual main-stage integration.
+The existing `Host.liftQ` is for multitape programs. The new checked
+`Host/StateTransport` and `Host/StateLift` supply exact host-program transport,
+including current/pending states, with unchanged stacks and user data.
+A charged one-step normalization admits arbitrary larger-capacity states.
+Instantiating this transport for the main procedure table and its contracts
+remains part of actual main-stage integration.
 Then compose shared-host setup, record construction,
 rest initialization, stash, top execution, pop, unstash and cleanup, charging
 every stage and restoring the original round frame. Keep a proved fallback

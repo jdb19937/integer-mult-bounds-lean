@@ -1,3 +1,6 @@
+import IntegerMultBounds.MathlibTM2.Cost.CompactTopCompleteBound
+import IntegerMultBounds.MathlibTM2.Cost.CompactTopOriginalGeometry
+import IntegerMultBounds.MathlibTM2.Host.StateLift
 import IntegerMultBounds.MathlibTM2.Cost.CompactTopControlPower
 import IntegerMultBounds.MathlibTM2.Cost.CompactTopCoordinates
 import IntegerMultBounds.MathlibTM2.Fast.CompactMainBootstrapFrame

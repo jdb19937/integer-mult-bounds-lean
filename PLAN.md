@@ -33,7 +33,7 @@ machine that multiplies every input pair correctly in worst-case time
 
 | Part of the proof | Source | Mathematics | Tape | Files |
 | --- | --- | --- | --- | --- |
-| [Proved Mathlib end-to-end multiplier](plan/C-mathlib-end-to-end.md) | — | ✅ 1/1 | ✅ 1/1 | 422 |
+| [Proved Mathlib end-to-end multiplier](plan/C-mathlib-end-to-end.md) | — | ✅ 1/1 | ✅ 1/1 | 430 |
 
 The [proof details](plan/C-mathlib-end-to-end.md) cover the numerical
 algorithm, recursive layers, transforms, resampling, CRT routing, exact
@@ -104,7 +104,7 @@ criteria are in the [implementation plan](plan/D-sharper-bound.md).
 | Persistent original guard/dimension, per-round refresh and cleanup | ✅ | Checked from explicit original parameter sources. |
 | Individual round stages and expanded main-host placement | ✅ | Checked staging/frame contracts and register embeddings. |
 | Complete chunk round and main-stage integration | 🟡 | Preparation and parking are checked; compose top execution/restoration and connect the main contracts. |
-| Complete transform cost and multiplier bound | 🟡 | Control overhead is absorbed; close recursive-call, setup and complete caller estimates. |
+| Complete transform cost and multiplier bound | 🟡 | Complete top-transform costs are checked; close constructor/setup, whole-round and multiplier estimates. |
 | Stopped recursion | ⬜ | Required for the later selected construction; not yet implemented. |
 
 **Execution order:** M1–M2 complete → M3–M5 → M6/M7 → M8. Use current
