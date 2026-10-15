@@ -1,3 +1,9 @@
+import IntegerMultBounds.MathlibTM2.Cost.CompactLayerBound
+import IntegerMultBounds.MathlibTM2.Fast.CompactPieceGeometry
+import IntegerMultBounds.MathlibTM2.Fast.CompactTopExecution
+import IntegerMultBounds.MathlibTM2.Cost.CompactPiecePacking
+import IntegerMultBounds.MathlibTM2.Node.CompactBasisSetupCounts
+import IntegerMultBounds.MathlibTM2.Node.CompactBasisSetupPlacement
 import IntegerMultBounds.Machine
 import IntegerMultBounds.Compact.DirtyControl
 import IntegerMultBounds.Compact.Repair

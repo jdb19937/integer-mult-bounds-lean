@@ -622,12 +622,26 @@ using this proved budget and local packing, without an arbitrary cost premise.
 `Fast/CompactTopPrecision.lean` proves the pre-shift array fits the exact
 computed working width from the original numerator norm bound. Complete
 caller specialization, actual initialization of persistent basis inputs,
-recurrence solving and stopped recursion remain open.
+and stopped recursion remain open.
 `Cost/CompactLayerNormalized.lean` now proves the exact per-volume recurrence:
 child coefficient `factorCount/NW`, compact basis ratio bounded by
 `3*compactBasisConst*max(1,(bits-1)*guard)^tau` plus inverse volume, and explicit
 linear address/payload overhead `1+(o+n)/(r*w)`. The actual level-zero leaf
 term remains `200*u*(1+(o+n)/(r*w))`; no new stopping rule is claimed.
+`Fast/CompactTopExecution.lean` now specializes all seven stages to the actual
+placed compact layer, eliminating the generic execution/call-contract premise.
+`Fast/CompactPieceGeometry.lean` supplies the actual piece offsets, recursive
+layouts and kernel extent. `Cost/CompactPiecePacking.lean` derives recursive
+readiness from original row/address precision and runtime sizes, including
+canonical numeric budgets; primitive guard and record inequalities remain.
+`Cost/CompactLayerBound.lean` solves the normalized recurrence with a fixed
+power-of-two coefficient, retaining the leaf term and explicit address/payload
+condition. The resulting local charge has no full chunk-width power. Actual
+top-piece summation, original-caller initialization and complete multiplier
+cost propagation remain necessary before claiming another public saving.
+`Node/CompactBasisSetupCounts.lean` and `CompactBasisSetupPlacement.lean`
+compute and place the seven persistent reservation values; complete setup and
+cleanup execution are still being integrated.
 Propagate the complete execution costs and discharge remaining caller sizing; record coverage alone
 does not establish the complete reserved transform. M3 remains open and public
 saving remains `2^-66`.

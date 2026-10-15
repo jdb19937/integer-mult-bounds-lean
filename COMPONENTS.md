@@ -6227,3 +6227,8 @@ Parameters and asymptotics.
 - `MathlibTM2/Fast/CompactTopPrecision.lean`: Original numerator bounds imply input fit and intermediate fit at the exact computed working width.
 
 - `MathlibTM2/Cost/CompactLayerNormalized.lean`: Exact per-volume recurrence, original level-zero leaf term and compact-width basis ratio; address-to-payload overhead remains explicit.
+
+- `MathlibTM2/Fast/CompactPieceGeometry.lean`, `Fast/CompactTopExecution.lean`: Actual reserved piece layouts, offsets and kernel extent, plus full top execution on the concrete placed compact layer. Recursive readiness and primitive layout parameters remain explicit at this interface.
+- `MathlibTM2/Cost/CompactPiecePacking.lean`: Uniform descendant packing and canonical recursive readiness from original address/row precision, runtime size bounds and primitive guard/record inequalities.
+- `MathlibTM2/Cost/CompactLayerBound.lean`: Closed normalized layer recurrence with a fixed power-of-two coefficient, compact-width charge and retained leaf term; full top summation and caller cost propagation remain separate.
+- `MathlibTM2/Node/CompactBasisSetupCounts.lean`, `Node/CompactBasisSetupPlacement.lean`: Actual persistent reservation arithmetic and injective placement into the seven shared-host work registers, preserving source roles.

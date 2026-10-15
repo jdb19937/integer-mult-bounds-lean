@@ -1,3 +1,9 @@
+import IntegerMultBounds.MathlibTM2.Cost.CompactLayerBound
+import IntegerMultBounds.MathlibTM2.Fast.CompactPieceGeometry
+import IntegerMultBounds.MathlibTM2.Fast.CompactTopExecution
+import IntegerMultBounds.MathlibTM2.Cost.CompactPiecePacking
+import IntegerMultBounds.MathlibTM2.Node.CompactBasisSetupCounts
+import IntegerMultBounds.MathlibTM2.Node.CompactBasisSetupPlacement
 import IntegerMultBounds.MathlibTM2.Cost.CompactLayerNormalized
 import IntegerMultBounds.MathlibTM2.Node.CompactLayerPlaced
 import IntegerMultBounds.MathlibTM2.Node.CompactTopProc
@@ -189,7 +195,19 @@ run_cmd do
     ``IntegerMultBounds.MathlibTM2.Fast.compactTopInput_fits,
     ``IntegerMultBounds.MathlibTM2.Cost.compactLayerNormalized_succ,
     ``IntegerMultBounds.MathlibTM2.Cost.compactLayerNormalized_zero,
-    ``IntegerMultBounds.MathlibTM2.Cost.compactLayerBasisBound_ratio]
+    ``IntegerMultBounds.MathlibTM2.Cost.compactLayerBasisBound_ratio,
+    ``IntegerMultBounds.MathlibTM2.Fast.compactTopPcs_offset,
+    ``IntegerMultBounds.MathlibTM2.Fast.compactTopPcs_layout,
+    ``IntegerMultBounds.MathlibTM2.Fast.compactTopKernel_geometry,
+    ``IntegerMultBounds.MathlibTM2.Fast.compactTopActual_callSpec,
+    ``IntegerMultBounds.MathlibTM2.Fast.compactTopActual_exec_Hl,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactLayerNormalized_closed,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactLayerCost_closed,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactLayer_br_logb,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactPiece_descendant_rows,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactPiece_eventually_packed,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactPiece_eventually_ready,
+    ``IntegerMultBounds.MathlibTM2.Fast.sg_compactBasisCounts]
   for name in names do
     for ax in ← collectAxioms name do
       unless #[``propext, ``Quot.sound, ``Classical.choice].contains ax do
