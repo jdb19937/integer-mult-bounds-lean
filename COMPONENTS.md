@@ -6336,3 +6336,5 @@ Parameters and asymptotics.
 - `MathlibTM2/Cost/CompactSharpBase.lean`: Actual real/complex multiplication costs matched to a sharper `p^(33/32)` budget with dyadic coefficients; resampling integration is a separate next step.
 - `MathlibTM2/Mult/CompactEighthRoom.lean`: Generic eighth-power dimension room, modulus and guard inequalities for future executable dimension retuning.
 - `MathlibTM2/Fast/CompactStoppedPiece.lean`: Cutoff-rebased piece records preserve covered bits, final rows, offset and padding; validity requires the explicitly recomputed exponent width. Runtime record generation and scanner integration remain open.
+
+- `MathlibTM2/Cost/CompactSharpRound.lean`: Actual rounded-output and square-stage costs bounded using the sharper multiplication budget and dyadic coefficients.
