@@ -723,12 +723,26 @@ with initialized global dimension/guard and a blank compact bank; it returns
 the entire original register file with only transformed I/O. Geometry,
 precision and array bounds remain explicit caller obligations, but no
 prepared-state execution or readiness oracle remains. `CompactSynLayerStepSemantics/Stream` also identify its selected coordinates
-and output stream with the original synthetic butterfly round. Runtime
-dispatch and the full forward/opposite loop contracts are the next execution
-gate; the main multiplier is not yet switched.
+and output stream with the original synthetic butterfly round. `CompactSynCompare/Dispatch/MainLegacyRuns/SynDirect/SynMainProjection/
+SynHybridRound` now execute the real counter-driven compact/direct choice,
+derive both branch executions, retain original butterfly semantics and
+restore the entire main file except its source stream. Selected-address fit
+and row padding follow from the existing layout invariant and reservation
+capacity. Forward/opposite round composition and full loops are the next
+execution gate; the main multiplier is not yet switched.
 `Cost/CompactTopCoordinates` translates the actual serialized records into
 relative layer coordinates without changing row stock or counting the low
 offset twice in volume.
+
+Actual runtime cost integration now has checked `CompactCallerFullDimension`
+reservation capacity for `d-1`, `CompactCallerWorkingWidth` for the complete
+precision shift, and `CompactRoundVolume` for the factor-four padded-volume
+envelope. `CompactRuntimePolynomial` absorbs fixed polynomial setup charges
+into the actual coefficient count. `CompactSynLayerOverheadBound` includes
+all actual overhead and record lengths. `CompactSynLayerOverheadRuntime`
+absorbs its polynomial term into `2^15*V + 2*stash` given the caller scalar
+polynomial bound. Uniform scalar-budget discharge,
+round summation and the stronger public machine theorem remain unfinished.
 
 **Conditional first numerical gate after compact integration:** retain
 `epsilon=2^-5` and test `c=2^-3` only after the actual compact caller and
@@ -762,11 +776,14 @@ and phase explicitly. Concrete global sources exist: `MainProg.mnUs` copies
 original precision into unary `Main.mnIo .dpn` (also `mnRnd .pn`), retained by
 `MainCorrect.MnMid`. The initial `SynV.p.D` contains the transform axis
 count `d-1`, as established by `DistSynMain.dsyV₀` and `ConvBox.cvAx`; it
-must not be treated as original `d`. A concrete bootstrap must copy this
-source and add one unit (charging and clearing the copy), or read original
-`d` from the parameter output. The direct source-copy bootstrap theorem
-requires its dimension source to have the supplied length; it does not
-itself establish this main-pipeline provenance.
+must not be treated as original `d`. `CompactMainBootstrapPipeline` now copies this source and charges one
+additional tick on retained depth. `PipelineSource/Precision` prove the
+actual `d-1` distribution source and the original precision from
+`MainCorrect.MnMid.dpn`. `PipelineGlobals/Exit/Compose` provide one corrected
+bootstrap per transform, preserved original globals across rounds, and
+charged exit cleanup; the source-based composition derives entry execution
+internally. `CompactMainBootstrapRuntime` identifies its words with the
+exact runtime dimension/guard, and proves round I/O updates preserve them.
 `CompactMainConstants` fixes a state capacity covering both the original main
 and compact native programs. `Host.embProg` changes register/procedure layouts
 but preserves this capacity, so the old `MnPr` programs cannot silently be
