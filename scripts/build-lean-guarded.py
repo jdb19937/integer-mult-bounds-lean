@@ -25,6 +25,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('targets', nargs='*', help='lake build targets (default: the default target)')
     parser.add_argument('--budget-gib', type=int, default=BUDGET_GIB)
+    parser.add_argument('--project-dir', type=Path,
+                        help='build a source snapshot while retaining this workspace\'s lock')
     args = parser.parse_args()
 
     def interrupted(_signal, _frame):
@@ -33,6 +35,9 @@ def main():
     signal.signal(signal.SIGINT, interrupted)
 
     root = Path(__file__).resolve().parent.parent
+    build_root = args.project_dir.resolve() if args.project_dir else root
+    if not build_root.is_dir():
+        parser.error(f'project directory does not exist: {build_root}')
     key = hashlib.sha256(str(root).encode()).hexdigest()[:16]
     # Same lock as check-lean-safe.py: never run a build and a guarded check at once.
     lock_path = Path(tempfile.gettempdir()) / ('integer-mult-lean-' + key + '.lock')
@@ -49,7 +54,7 @@ def main():
                        if len(f := line.split()) == 2 and int(f[0]) == group)
         usage(-1)
 
-        proc = subprocess.Popen(['lake', 'build', *args.targets], cwd=root, start_new_session=True)
+        proc = subprocess.Popen(['lake', 'build', *args.targets], cwd=build_root, start_new_session=True)
         peak = 0
         stopped = False
         start = time.monotonic()

@@ -232,7 +232,33 @@ theorem divRes_self (K x : ℕ) : SigmaConstsTape.divRes K x x = x % K := by
   unfold SigmaConstsTape.divRes
   rw [min_eq_right (Nat.div_le_self x K), Nat.mod_eq_sub_mul_div, mul_comm]
 
-set_option maxHeartbeats 16000000 in
+-- Match the generated cost expression exactly so applying the bound needs no arithmetic
+-- unification. Normalize its nested sums before asking omega for the inequality.
+private theorem divPost_cost_le {x r q ticksCost dropCost trimCost : ℕ}
+    (hr : r ≤ x) (hq : q ≤ x) (hticks : ticksCost ≤ r + 5)
+    (hdrop : dropCost ≤ x + r + 6) (htrim : trimCost ≤ r + 1 + 6) :
+    ticksCost + 1 +
+      (r + 1 + 2 + 1 +
+        (r + 2 + 1 +
+          (dropCost + 1 +
+            (x + 1 + 2 + 1 +
+              (r + 1 + 2 + 1 +
+                (x - r + 1 + 2 + 1 +
+                  (trimCost + 1 +
+                    (r + 1 + 2 + 1 +
+                      (5 +
+                        (x - r + 6 + 1 +
+                          (x - r + 1 + 2 + 1 +
+                            (r - 1 + 1 + 2 + 1 +
+                              (r - 1 + 6 + 1 +
+                                (r - 1 + 1 + 2 + 1 +
+                                  (x - r + (r - 1) + 1 + 2 + 1 +
+                                    (2 * (r - 1 + 1) + 2 + 1 +
+                                      (q + 2 + 1 + (2 * x + 2 + 1 + (2 * (r + 1) + 2))))))))))))))))))) ≤
+    80 * x + 500 := by
+  ring_nf
+  omega
+
 theorem runs_divPhase {ℓ K : ℕ} (hK : 0 < K) (w D : ℕ) (f : List Bool) :
     Runs divPhase (stC ℓ K w D f) (· = stD ℓ K w D f)
       ((ℓ - 1) * (16 * (ℓ - 1) + 10 * K + 110) + 100 * ℓ + 600) := by
@@ -282,8 +308,19 @@ theorem runs_divPhase {ℓ K : ℕ} (hK : 0 < K) (w D : ℕ) (f : List Bool) :
     · funext i; fin_cases i <;> first | rfl | tsimp [hσ₂, hσ₁, hσ, stD, stC, stB, stA, lstart, reg, ones,
         List.reverse_replicate, List.replicate_add, Nat.sub_sub, ← hx]
     · simp [time_copy, clen, WTape.words] at t1 t2 t3 ⊢
-      omega
+      -- Keep the arithmetic solver from unfolding the tape programs' running times.
+      generalize time Rules.ticks (List.replicate (x % K) true) (fun j => j.elim0) = ticksCost at t1 ⊢
+      generalize time Rules.drop (List.replicate x true)
+        (fun _ => List.replicate (x % K) true) = dropCost at t2 ⊢
+      generalize time Rules.drop (List.replicate (x % K) true)
+        (fun _ => [true]) = trimCost at t3 ⊢
+      generalize x % K = remainder at t1 t2 t3 hmod ⊢
+      generalize x / K = quotient at hdiv ⊢
+      clear * - t1 t2 t3 hmod hdiv
+      clear_value x
+      exact divPost_cost_le hmod hdiv t1 t2 t3
   refine (Runs.then s1 (Runs.then s2 s3)).mono (fun τ h => h) ?_
+  clear * - hx hmod hdiv
   omega
 
 /-! ### Setup, part four: the binary words and `n - 2K` -/

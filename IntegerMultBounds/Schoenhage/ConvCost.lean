@@ -163,37 +163,42 @@ theorem rest_bound {T p w k H l r2 CwR Cl CH : ℝ} (hp : 2 ≤ p) (hpT : p ≤ 
   have hpp : p * p ≤ T * p := mul_le_mul_of_nonneg_right hpT hp0
   have hTp2 : 2 * T ≤ T * p := by have := mul_le_mul_of_nonneg_left hp hT0; linarith
   have hpTp : 2 * p ≤ T * p := by have := mul_le_mul_of_nonneg_right (le_trans hp hpT) hp0; linarith
-  have hTp4 : 4 ≤ T * p := by have := mul_le_mul hp hp (by norm_num) hp0; nlinarith
+  have hTp4 : 4 ≤ T * p := by
+    linarith only [mul_le_mul hp hp (by norm_num) hp0, hpp]
   have hpTp1 : p ≤ T * p := by linarith
   have b1 : 600 * H ≤ 600 * CH * (T * p) := by
-    have := mul_le_mul_of_nonneg_left hpTp1 hCH; nlinarith
+    have := mul_le_mul_of_nonneg_left hpTp1 hCH
+    linarith only [hH, this]
   have b2 : 70 * (2 * T * w) ≤ 140 * CwR * (T * p) := by
-    have := mul_le_mul_of_nonneg_left hwp hT0; nlinarith
-  have b3 : 2 * T * (4 * k + 60) ≤ (8 * Cl + 60) * (T * p) := by
-    have := mul_le_mul_of_nonneg_left hkp hT0; nlinarith
-  have b4 : 8 * (T * (w + k)) ≤ 8 * (CwR + Cl) * (T * p) := by
     have := mul_le_mul_of_nonneg_left hwp hT0
-    have := mul_le_mul_of_nonneg_left hkp hT0; nlinarith
+    linarith only [this]
+  have b3 : 2 * T * (4 * k + 60) ≤ (8 * Cl + 60) * (T * p) := by
+    have := mul_le_mul_of_nonneg_left hkp hT0
+    linarith only [this, hTp2]
+  have b4 : 8 * (T * (w + k)) ≤ 8 * (CwR + Cl) * (T * p) := by
+    have hTw := mul_le_mul_of_nonneg_left hwp hT0
+    have hTk := mul_le_mul_of_nonneg_left hkp hT0
+    linarith only [hTw, hTk]
   have b5 : 42 * (p * (2 * p + 10) + (l + 1) * (l + 1 + r2 + 10)) ≤ 630 * (T * p) := by
-    have : (l + 1) * (l + 1 + r2 + 10) ≤ p * (p + T + 10) :=
+    have hphase : (l + 1) * (l + 1 + r2 + 10) ≤ p * (p + T + 10) :=
       mul_le_mul hlp (by linarith) (by positivity) hp0
-    have : p * T ≤ T * p := by rw [mul_comm]
-    nlinarith
+    linarith only [hphase, hpp, hpTp, hTp4]
   have b6 : 42 * (w * (2 * w + 10)) ≤ 42 * (2 * CwR ^ 2 + 5 * CwR) * (T * p) := by
     have hww : w * w ≤ (CwR * p) * (CwR * p) := mul_le_mul hwp hwp hw0 (by positivity)
     have h1 : (CwR * p) * (CwR * p) ≤ CwR ^ 2 * (T * p) := by
-      have := mul_le_mul_of_nonneg_left hpp (sq_nonneg CwR); nlinarith
+      have := mul_le_mul_of_nonneg_left hpp (sq_nonneg CwR)
+      linarith only [this]
     have h2 : w * 10 ≤ 5 * CwR * (T * p) := by
-      have := mul_le_mul_of_nonneg_left hpTp hCw; nlinarith
-    nlinarith
+      have := mul_le_mul_of_nonneg_left hpTp hCw
+      linarith only [this, hwp]
+    linarith only [hww, h1, h2]
   have b7 : 300 * (p + w + k + r2) ≤ 300 * (2 + CwR + Cl) * (T * p) := by
-    have := mul_le_mul_of_nonneg_left hpTp1 hCw
-    have := mul_le_mul_of_nonneg_left hpTp1 hCl
-    have : T ≤ T * p := by nlinarith
-    nlinarith
-  nlinarith
+    have hCwp := mul_le_mul_of_nonneg_left hpTp1 hCw
+    have hClp := mul_le_mul_of_nonneg_left hpTp1 hCl
+    have hTTp : T ≤ T * p := by linarith only [hTp2, hT0]
+    linarith only [hpTp1, hwp, hkp, hr, hCwp, hClp, hTTp]
+  linarith only [b1, b2, b3, b4, b5, b6, b7, hTp4]
 
-set_option maxHeartbeats 4000000 in
 /-- The convolution program's remainder is within a constant times the paper's cost for large `p`. -/
 theorem convExtra_le_cost (P : TransformParams) (hε0 : 0 < P.ε) (hε1 : P.ε < 1) (hlam : 0 < P.lam')
     (had : 0 < P.ad) (har : 0 < P.ar) (hbd : 0 < P.bd) :
@@ -278,7 +283,7 @@ theorem convExtra_le_cost (P : TransformParams) (hε0 : 0 < P.ε) (hε1 : P.ε <
   have htc : (T : ℝ) * p * (ℓ * (d : ℝ) ^ P.lam') ≤ transformCost P p d ℓ K ts := by
     rw [htc_eq]
     have : (0 : ℝ) ≤ (T : ℝ) * p * (d * K + p * (K : ℝ) ^ (P.τ - 1)) := by positivity
-    nlinarith
+    linarith only [this]
   have hconv : convolutionCost P p d ℓ K ts = transformCost P p d ℓ K ts + (T : ℝ) * p * (L + 1) := rfl
   have hTp : (T : ℝ) * p ≤ convolutionCost P p d ℓ K ts := by
     rw [hconv]
@@ -296,8 +301,9 @@ theorem convExtra_le_cost (P : TransformParams) (hε0 : 0 < P.ε) (hε1 : P.ε <
       (hCp p ℓ M H (by omega) hp2 hℓp hM1)
   have hLLR : ((L : ℝ) + 1) * ((LL : ℝ) + 1) ≤ 2 * (ℓ * (d : ℝ) ^ P.lam') := by
     have a : (L : ℝ) + 1 ≤ 2 * ℓ := by exact_mod_cast hL1
-    have b : (0 : ℝ) ≤ (L : ℝ) + 1 := by positivity
-    nlinarith
+    calc
+      _ ≤ (2 * ℓ) * (d : ℝ) ^ P.lam' := mul_le_mul a hLLd (by positivity) (by positivity)
+      _ = _ := by ring
   have hpwR : (pwCost p d ℓ K w H M (2 * 2 ^ ℓ * w * M) : ℝ) ≤
       Cp * (2 * transformCost P p d ℓ K ts + H) := by
     have := (Nat.cast_le (α := ℝ)).mpr hpw'
@@ -306,8 +312,10 @@ theorem convExtra_le_cost (P : TransformParams) (hε0 : 0 < P.ε) (hε1 : P.ε <
       have : (T : ℝ) * p * (((L : ℝ) + 1) * ((LL : ℝ) + 1)) ≤ (T : ℝ) * p * (2 * (ℓ * (d : ℝ) ^ P.lam')) :=
         mul_le_mul_of_nonneg_left hLLR (by positivity)
       linarith
-    have hCp0 : (0 : ℝ) ≤ Cp := Nat.cast_nonneg _
-    nlinarith
+    have hTpC : (T : ℝ) * p * (L + 1) * (LL + 1) ≤
+        2 * transformCost P p d ℓ K ts := hTpL.trans (by linarith only [htc])
+    exact this.trans (mul_le_mul_of_nonneg_left
+      (add_le_add hTpC (le_refl (H : ℝ))) (Nat.cast_nonneg _))
   -- the header
   have hdlR : ((d * ℓ : ℕ) : ℝ) ≤ Cl * p := le_trans hdl (mul_le_mul_of_nonneg_right (le_max_left _ _) hp0.le)
   have hHn := length_header_le (p := p) (K := K) (w := w) hax
@@ -316,7 +324,7 @@ theorem convExtra_le_cost (P : TransformParams) (hε0 : 0 < P.ε) (hε1 : P.ε <
     push_cast at a hdlR
     have hdd : (d : ℝ) ≤ d * ℓ := by
       have : (1 : ℝ) ≤ ℓ := by exact_mod_cast (by omega : 1 ≤ ℓ)
-      nlinarith
+      nlinarith only [this, hd0]
     have hKp : (K : ℝ) ≤ p := by exact_mod_cast (by omega : K ≤ p)
     have hℓp' : (ℓ : ℝ) ≤ p := by exact_mod_cast hℓp.le
     have hwp : (w : ℝ) ≤ CwR * p := by
@@ -324,7 +332,7 @@ theorem convExtra_le_cost (P : TransformParams) (hε0 : 0 < P.ε) (hε1 : P.ε <
       calc (w : ℝ) ≤ ((Cw * p : ℕ) : ℝ) := by exact_mod_cast h
         _ = CwR * p := by push_cast; rfl
     simp only [CH]
-    nlinarith
+    linarith only [a, hdd, hKp, hℓp', hwp, hdlR, hpR]
   -- the remainder
   have hrest := convExtra_le (p := p) (d := d) (ℓ := ℓ) (K := K) (w := w) (H := H) (M := M)
   have hkR : (k : ℝ) ≤ Cl * p := by
@@ -356,12 +364,12 @@ theorem convExtra_le_cost (P : TransformParams) (hε0 : 0 < P.ε) (hε1 : P.ε <
     linarith
   have hCp0 : (0 : ℝ) ≤ Cp := Nat.cast_nonneg _
   have hHT : (H : ℝ) ≤ CH * (T * p) := by
-    have : CH * (p : ℝ) ≤ CH * (T * p) := mul_le_mul_of_nonneg_left (by nlinarith) hCH0
+    have : CH * (p : ℝ) ≤ CH * (T * p) := mul_le_mul_of_nonneg_left (by nlinarith only [hTR, hpR]) hCH0
     linarith
   calc (convExtra p d ℓ K w H M : ℝ)
-      ≤ Cp * (2 * transformCost P p d ℓ K ts + H) + Rc * (T * p) := by linarith
+      ≤ Cp * (2 * transformCost P p d ℓ K ts + H) + Rc * (T * p) := by linarith only [hsplit, hpwR]
     _ ≤ (2 * Cp + Cp * CH + Rc) * convolutionCost P p d ℓ K ts := by
-        nlinarith [mul_le_mul_of_nonneg_left hHT hCp0, mul_le_mul_of_nonneg_left htc_le hCp0,
+        linarith only [mul_le_mul_of_nonneg_left hHT hCp0, mul_le_mul_of_nonneg_left htc_le hCp0,
           mul_le_mul_of_nonneg_left hTp hRc0, mul_le_mul_of_nonneg_left hTp (mul_nonneg hCp0 hCH0)]
 
 /-! ### The convolution target -/

@@ -86,7 +86,6 @@ def ptC (Cw : ℕ) : ℕ :=
   4 * ptK Cw + 10000 * (7 + 4 * Cw) +
     42 * (Nat.size (7 + 4 * Cw) + 1) * (Nat.size (7 + 4 * Cw) + (7 + 4 * Cw) + 11) + 300000
 
-set_option maxHeartbeats 4000000 in
 theorem term_le {Cw p l M H w : ℕ} (hp : 2 ≤ p) (hl : 1 ≤ l) (hlp : l < p) (hM : 1 ≤ M) (hw : w ≤ Cw * p) :
     pwCost p 0 l 0 w H M (2 * (2 ^ l * M) * w) + 4 * (H + 3 * (2 * (2 ^ l * M) * w)) + 60 ≤
       ptC Cw * ((2 ^ l * M) * p * (Nat.log 2 (2 ^ l * p) + 1) *
@@ -108,15 +107,16 @@ theorem term_le {Cw p l M H w : ℕ} (hp : 2 ≤ p) (hl : 1 ≤ l) (hlp : l < p)
   have hLlt : L < 2 ^ LL := lt_two_pow_log_succ _
   have hL1 : 1 ≤ L := by omega
   have hLL1 : 1 ≤ LL := by omega
-  have hRp4 : 4 ≤ R * p := by nlinarith
+  have hRp4 : 4 ≤ R * p := by nlinarith only [hR2, hp]
   have hLRp : L ≤ R * p := log_succ_le_self (by omega)
   have hWA : W ≤ A * p := wOf_le (by omega) hlp hw
   have hwA : w ≤ A * p := le_trans hw (Nat.mul_le_mul_right _ (by omega))
-  have hpRp : p ≤ R * p := by nlinarith
+  have hpRp : p ≤ R * p := Nat.le_mul_of_pos_left _ (by omega)
   have hlRp : l ≤ R * p := by omega
-  have hRRp : R ≤ R * p := by nlinarith
+  have hRRp : R ≤ R * p := Nat.le_mul_of_pos_right _ (by omega)
   -- the multiplier
-  have hN : W * R ≤ A * (R * p) := by nlinarith
+  have hN : W * R ≤ A * (R * p) := by
+    simpa [mul_assoc, mul_left_comm, mul_comm] using Nat.mul_le_mul_right R hWA
   have hcost := cost_N_le (N := W * R) hAa hN hRp hLlt hL1 hLL1 (by omega)
   have hK : costC cA cB cC0 * (A + 1) * (a + 2) * (3 * a + 7) = K := rfl
   rw [hK] at hcost
@@ -131,13 +131,13 @@ theorem term_le {Cw p l M H w : ℕ} (hp : 2 ≤ p) (hl : 1 ≤ l) (hlp : l < p)
   set U := R * p * L
   set Q := R * M * p * L * LL
   have hUQ : U ≤ Q := by
-    have : R * p * L * 1 ≤ R * p * L * (M * LL) := Nat.mul_le_mul_left _ (by nlinarith)
+    have : R * p * L * 1 ≤ R * p * L * (M * LL) := Nat.mul_le_mul_left _ (by nlinarith only [hM, hLL1])
     calc U = R * p * L * 1 := by ring
       _ ≤ R * p * L * (M * LL) := this
       _ = Q := by ring
   have hRpU : R * p ≤ U := Nat.le_mul_of_pos_right _ (by omega)
   have hMRpQ : M * (R * p) ≤ Q := by
-    have : M * (R * p) * 1 ≤ M * (R * p) * (L * LL) := Nat.mul_le_mul_left _ (by nlinarith)
+    have : M * (R * p) * 1 ≤ M * (R * p) * (L * LL) := Nat.mul_le_mul_left _ (by nlinarith only [hL1, hLL1])
     calc M * (R * p) = M * (R * p) * 1 := by ring
       _ ≤ M * (R * p) * (L * LL) := this
       _ = Q := by ring
@@ -149,17 +149,18 @@ theorem term_le {Cw p l M H w : ℕ} (hp : 2 ≤ p) (hl : 1 ≤ l) (hlp : l < p)
     calc Nat.size R * (Nat.size R + R + 10) ≤ L * (12 * (R * p)) := Nat.mul_le_mul hsR (by omega)
       _ = 12 * U := by ring
   have P3 : Nat.size w * (Nat.size w + w + 10) ≤ (a + 1) * (a + A + 11) * U := by
-    have h1 : Nat.size w ≤ (a + 1) * L := by nlinarith
+    have h1 : Nat.size w ≤ (a + 1) * L := by nlinarith only [hsw, hL1]
     have h2 : Nat.size w + w + 10 ≤ (a + A + 11) * (R * p) := by
       have : A * p ≤ A * (R * p) := Nat.mul_le_mul_left _ hpRp
-      nlinarith
+      nlinarith only [hsw, hwA, hLRp, hRp4, this]
     calc Nat.size w * (Nat.size w + w + 10) ≤ ((a + 1) * L) * ((a + A + 11) * (R * p)) := Nat.mul_le_mul h1 h2
       _ = (a + 1) * (a + A + 11) * U := by ring
   have P4 : M * cost cA cB cC0 (W * R) ≤ K * Q := by
     calc M * cost cA cB cC0 (W * R) ≤ M * (K * (R * p * L * LL)) := Nat.mul_le_mul_left _ hcost
       _ = K * Q := by ring
   have P5 : M * (R * w) ≤ A * Q := by
-    have : R * w ≤ A * (R * p) := by nlinarith
+    have : R * w ≤ A * (R * p) := by
+      simpa [mul_assoc, mul_left_comm, mul_comm] using Nat.mul_le_mul_left R hwA
     calc M * (R * w) ≤ M * (A * (R * p)) := Nat.mul_le_mul_left _ this
       _ = A * (M * (R * p)) := by ring
       _ ≤ A * Q := Nat.mul_le_mul_left _ hMRpQ
@@ -168,11 +169,14 @@ theorem term_le {Cw p l M H w : ℕ} (hp : 2 ≤ p) (hl : 1 ≤ l) (hlp : l < p)
       _ = A * (M * (R * p)) := by ring
       _ ≤ A * Q := Nat.mul_le_mul_left _ hMRpQ
   have P7 : M * (R * (p + l)) ≤ 2 * Q := by
-    have : R * (p + l) ≤ 2 * (R * p) := by nlinarith
+    have : R * (p + l) ≤ 2 * (R * p) := by
+      have := Nat.mul_le_mul_left R (Nat.add_le_add_left hlp.le p)
+      linarith only [this]
     calc M * (R * (p + l)) ≤ M * (2 * (R * p)) := Nat.mul_le_mul_left _ this
       _ = 2 * (M * (R * p)) := by ring
       _ ≤ 2 * Q := Nat.mul_le_mul_left _ hMRpQ
-  have P8 : M * R ≤ Q := le_trans (by nlinarith) hMRpQ
+  have P8 : M * R ≤ Q := le_trans (by
+    simpa [mul_assoc] using Nat.le_mul_of_pos_right (M * R) (by omega : 0 < p)) hMRpQ
   have P9 : W * R ≤ A * U := le_trans hN (Nat.mul_le_mul_left _ hRpU)
   have P10 : R * W ≤ A * U := by rw [mul_comm]; exact P9
   have P11 : W ≤ A * U := le_trans hWA (Nat.mul_le_mul_left _ (le_trans hpRp hRpU))
@@ -187,7 +191,7 @@ theorem term_le {Cw p l M H w : ℕ} (hp : 2 ≤ p) (hl : 1 ≤ l) (hlp : l < p)
   rw [e2]
   have e3 : 2 * (2 ^ l * M) * w = 2 * (R * M * w) := by ring
   rw [e3]
-  have hMQ : M ≤ Q := le_trans (by nlinarith) P8
+  have hMQ : M ≤ Q := le_trans (Nat.le_mul_of_pos_right _ (by omega)) P8
   have hptC : ptC Cw = 4 * K + 10000 * A + 42 * (a + 1) * (a + A + 11) + 300000 := rfl
   rw [hptC]
   have hl' : l ≤ U := le_trans hlRp hRpU
@@ -200,8 +204,10 @@ theorem term_le {Cw p l M H w : ℕ} (hp : 2 ≤ p) (hl : 1 ≤ l) (hlp : l < p)
   generalize Nat.size w * (Nat.size w + w + 10) = S3 at *
   have X1 : A * U ≤ A * Q := Nat.mul_le_mul_left _ hUQ
   have X2 : (a + 1) * (a + A + 11) * U ≤ (a + 1) * (a + A + 11) * Q := Nat.mul_le_mul_left _ hUQ
-  have X3 : 0 ≤ K * H := Nat.zero_le _
-  nlinarith [X1, X2, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, hUQ, hMQ, hl', hp', hR', h1U]
+  have hheader : 0 ≤ (4 * K + 10000 * A + 42 * (a + 1) * (a + A + 11)) * H := Nat.zero_le _
+  have hAQ : 0 ≤ A * Q := Nat.zero_le _
+  linarith only [hheader, hAQ, Nat.zero_le H, X1, X2, P1, P2, P3, P4, P5, P6,
+    P7, P8, P9, P10, P11, P12, P13, hUQ, hMQ, hl', hp', hR', h1U]
 
 /-! ### Every width -/
 
