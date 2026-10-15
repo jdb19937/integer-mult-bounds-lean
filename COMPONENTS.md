@@ -6338,3 +6338,5 @@ Parameters and asymptotics.
 - `MathlibTM2/Fast/CompactStoppedPiece.lean`: Cutoff-rebased piece records preserve covered bits, final rows, offset and padding; validity requires the explicitly recomputed exponent width. Runtime record generation and scanner integration remain open.
 
 - `MathlibTM2/Cost/CompactSharpRound.lean`: Actual rounded-output and square-stage costs bounded using the sharper multiplication budget and dyadic coefficients.
+
+- `MathlibTM2/Fast/CompactStoppedPower.lean`, `CompactStoppedRebase.lean`, `CompactStoppedRecord.lean`: Executable cutoff-aware depth/leaf rebasing and record emission with fresh scaling exponent, exact charged costs and register frame. Cutoff computation and scanner save/restore remain to be integrated.
