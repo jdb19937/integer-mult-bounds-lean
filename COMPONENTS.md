@@ -6346,3 +6346,5 @@ Parameters and asymptotics.
 - `MathlibTM2/Mult/CompactDyadicRootRoom.lean`: Checked universal squared-cap fit in `4*b+32` bits for the sixty-fourth root of `b^9`, plus seventh-power dimension room. Arithmetic groundwork only.
 - `MathlibTM2/Fast/CompactDimensionPower.lean`: Five-atom table program computes `b^9`, preserves input and accumulator, and proves exact word-fit and execution contracts.
 - `MathlibTM2/Fast/CompactDyadicDimension.lean`: Checked composition computes `iroot 64 (b^9)` with charged cost `58+44*iroot 64 (b^9)`, preserving input and accumulator. Actual parameter allocation and changed sizing definitions remain separate. Both executable helpers pass a focused standard-axiom audit.
+
+- `MathlibTM2/Mult/CompactDyadicDimensionSizes.lean`: Checked floor characterization, seventh-power cap, upper/lower real bounds and eventual growth for `iroot 64 (b^9)`, with wrappers at input length `n`. Standalone standard-axiom audit covers 22 declarations; executable sizing definitions are unchanged.
