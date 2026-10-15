@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Recompute the summary tables in PLAN.md from the detail files in plan/.
 
-Each plan/NN-*.md file (or plan/X-*.md for parts outside the manuscript) starts
+Each active plan/NN-*.md file (or plan/X-*.md for parts outside the manuscript) starts
 with '# N. Title (Source)' and lists its
 sub-problems as '### Name' headings, each followed by a table of rows
 '| Subcomponent | Files | Mathematics | Tape | Notes |'. This script rewrites
@@ -15,6 +15,9 @@ sorry there. A sub-problem shows ✅ when its milestone is done, 🟡 with its
 finished-row count when only some rows are done, and ⬜ otherwise. The overview
 counts done milestones per section. Files counts the distinct Lean files named
 in the Files column (names that match no file count as planned).
+
+Historical detail files live under plan/archive/ and are intentionally excluded
+from discovery, regeneration and --list. Their tables are archived snapshots.
 
 Usage: python3 scripts/plan-status.py [--check] [--list]
 """

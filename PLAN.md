@@ -1,194 +1,66 @@
 # Plan and progress
 
-A detailed breakdown of the [README](README.md) status table. Each section
-matches one README row and splits it into subcomponents. *Mathematics* means
-the statements the algorithm relies on are proved in Lean. *Tape* means a
-program in the literal machine model is proved correct with a runtime bound.
-See [COMPONENTS.md](COMPONENTS.md) for what each file proves.
+**Integer multiplication below `n log n` is proved.**
+`IntegerMultBounds.MathlibTM2.statement` constructs a fixed finite Mathlib
+machine that multiplies every input pair correctly in worst-case time
+`O(n (log n)^(1-kappa))`, with positive saving
+`kappa = 296 / (10^11 * 2^131)`. No algorithmic or runtime assumption remains.
 
-**Multiplication below `n log n` is proved:**
-`IntegerMultBounds.MathlibTM2.statement` supplies an unconditional fixed finite
-Mathlib machine and worst-case bound with positive saving
-`296 / (10^11 * 2^131)`. [Part C](plan/C-mathlib-end-to-end.md) records this
-completed route. Parts 2–B retain the original native-machine interfaces and
-the stronger `83/10^12` compact-control target; their open entries do not
-invalidate the completed Mathlib theorem.
-
-[Retention audit](docs/proof-retention.md): the completed route is primary;
-651 retired native-controller modules and wrappers have been removed; 864 conservative
-candidates remain. The completed proof, its public interfaces and every
-focused audit dependency are preserved. See the [controller retirement](docs/retired-compact-complex.md) and
-[actual-stage retirement](docs/retired-compact-actual.md) records.
-
-✅ done · 🟡 partial · ⬜ not started · 🚧 drafted, not yet in the build.
-
-## Overview
+## Completed proof
 
 | Part of the proof | Source | Mathematics | Tape | Files |
 | --- | --- | --- | --- | --- |
 | [Proved Mathlib end-to-end multiplier](plan/C-mathlib-end-to-end.md) | — | ✅ 1/1 | ✅ 1/1 | 227 |
-| [The machine model and elementary streams](plan/02-machine-model-streams.md) | §2 | ✅ 9/9 | ✅ 9/9 | 258 |
-| [Two finite networks with a rank saving](plan/03-finite-networks-rank.md) | §3 | ✅ 8/8 | 🟡 2/6 | 358 |
-| [Faster interchange of address chunks](plan/04-faster-interchange-address.md) | §4 | ✅ 10/10 | ✅ 9/9 | 376 |
-| [Fast simultaneous synthetic butterfly layers](plan/05-simultaneous-butterfly-layers.md) | §5, §11, CrocSwap | 🟡 3/5 | 🟡 0/7 | 1167 |
-| [Synthetic transforms and their tape layout](plan/06-synthetic-transforms-tape.md) | §6 | ✅ 2/2 | 🟡 0/2 | 79 |
-| [Resampling with the permutations left in the transform](plan/07-gaussian-resampling.md) | §7 | ✅ 6/6 | 🟡 3/4 | 79 |
-| [Exact integer multiplication and its cost](plan/08-exact-multiplication.md) | §8 | 🟡 3/4 | 🟡 1/3 | 108 |
-| [Fast multiplication subroutine](plan/A-schoenhage-strassen.md) | Schönhage–Strassen | ✅ 6/6 | 🟡 3/4 | 96 |
-| [End-to-end theorem `EndToEnd`](plan/B-end-to-end.md) | — | 🟡 2/3 | 🟡 2/3 | 6 |
 
-Every sub-problem has a math milestone and a tape milestone: one named Lean
-theorem stating that part is done, listed in its section's detail file under
-`plan/`. A milestone is ✅ once that theorem is declared in the library, which
-the axiom audit keeps sorry-free. An open milestone shows 🟡, with its
-finished-row count when some rows are still open. The overview counts proved
-milestones per section; Files counts the Lean files, existing or planned,
-behind each part. Each detail file also outlines the section's proof and keeps
-the full per-row status. Add new rows to the detail file under the matching
-sub-problem, then run `python3 scripts/plan-status.py` to refresh the tables
-here.
+The [proof details](plan/C-mathlib-end-to-end.md) cover the numerical
+algorithm, recursive layers, transforms, resampling, CRT routing, exact
+recovery, fixed-machine assembly and actual step bound. All are complete.
+The machine model is Mathlib's `Turing.FinTM2`, with standard binary encodings.
+The Files column counts the components listed in that detail file; the full
+transitive proof dependency set is larger, as recorded by the
+[retention audit](docs/proof-retention.md).
 
+The guarded build and library-wide axiom audit passed after the latest
+native-wrapper retirement. `CompletedProofCheck.lean` independently audits
+the completed theorem's import closure; the library and focused checks allow
+only `propext`, `Classical.choice` and `Quot.sound`.
 
-## 2. The machine model and elementary streams (§2)
+## Next direction: sharper exponent bounds
 
-Details: [plan/02-machine-model-streams.md](plan/02-machine-model-streams.md)
+The next research goal is to reproduce the stronger bounds developed in
+[CrocSwap/integer-mult-bounds](https://github.com/CrocSwap/integer-mult-bounds)
+using the completed Mathlib machine proof as the foundation. These are new
+milestones, not prerequisites for the result above.
 
-| Sub-problem | Mathematics | Tape | Files |
-| --- | --- | --- | --- |
-| Machine model and target statement | ✅ | ✅ | 1 |
-| Axiom audit | — | — | 1 |
-| Machine combinators and frames | ✅ | ✅ | 14 |
-| Counters and counted loops | ✅ | ✅ | 28 |
-| Binary and radix arithmetic machines | ✅ | ✅ | 51 |
-| Rational scaling of one coordinate | ✅ | ✅ | 46 |
-| Controlled shift of one coordinate | ✅ | ✅ | 36 |
-| Common coordinates and schedule assembly | ✅ | ✅ | 56 |
-| Packed-line and window gadgets | ✅ | ✅ | 9 |
-| Tape radix sort | ✅ | ✅ | 17 |
+| Milestone | Status | Completion criterion |
+| --- | --- | --- |
+| Pin the external construction and its obligations | Next | Record an exact upstream revision, selected certificate, target saving and every inherited assumption. |
+| Connect the finite construction to the existing library | Planned | Prove the selected circuit, frame, restoration and rank/cost contracts, identifying reusable local lemmas. |
+| Realize and price the construction on the Mathlib machine | Planned | Prove the required uniform execution, routing, precision and recovery contracts with bounds on actual steps. |
+| Close the sharper end-to-end bound | Planned | Instantiate the recurrence and total-cost analysis and prove an unconditional multiplication theorem with the new explicit saving. |
 
-## 3. Two finite networks with a rank saving (§3)
+The external project's currently reviewed saving is approximately
+`0.001672660197076918`, but its complete asymptotic multiplication theorem
+remains conditional. Reproducing finite certificates alone will not complete
+this roadmap. Pin and recheck the selected result before implementation;
+its [selected record](https://github.com/CrocSwap/integer-mult-bounds/blob/main/certificates/selected-result.json)
+tracks a moving research frontier.
 
-Details: [plan/03-finite-networks-rank.md](plan/03-finite-networks-rank.md)
+## Archived route and reusable work
 
-| Sub-problem | Mathematics | Tape | Files |
-| --- | --- | --- | --- |
-| Scalar shear and bank exchange circuits | ✅ | ⬜ | 8 |
-| Wire counts and bilinear label spaces | ✅ | — | 9 |
-| Grouped gates and binary residual units | ✅ | ⬜ | 15 |
-| Projection-rank trace and h=25 saving | ✅ | ⬜ | 15 |
-| Shared-point h=50 network and compilation | ✅ | ✅ | 251 |
-| Optimized global rank trace | ✅ | — | 22 |
-| Optimized physical program and interchange | ✅ | ✅ | 22 |
-| Tape realization of the network | ✅ | 🟡 1/3 rows | 18 |
+The [archived native-machine roadmap](plan/archive/native-roadmap.md)
+preserves the old manuscript-section tables and the separate `83/10^12`
+compact-control target. Its yellow rows describe unfinished historical native
+interfaces; they are not gaps in the completed Mathlib proof and are not the
+active work queue. The archive is preserved for reference, not automatically
+refreshed against the current library.
 
-## 4. Faster interchange of address chunks (§4)
+Reusable mathematics and surviving implementations remain indexed in
+[COMPONENTS.md](COMPONENTS.md). The [retention audit](docs/proof-retention.md)
+and retirement records document which code supports the completed theorem,
+what remains unused and how to recover retired code. Archiving a roadmap
+does not itself remove any Lean modules.
 
-Details: [plan/04-faster-interchange-address.md](plan/04-faster-interchange-address.md)
-
-| Sub-problem | Mathematics | Tape | Files |
-| --- | --- | --- | --- |
-| Interchange recurrence and padding arithmetic | ✅ | — | 2 |
-| Triangular factorization and shear (Lemmas 4.1-4.2) | ✅ | ✅ | 4 |
-| Tape primitives: role transport, stacks, descriptors | ✅ | ✅ | 37 |
-| Single-digit base case | ✅ | ✅ | 11 |
-| Recursive node operations | ✅ | ✅ | 59 |
-| Recursive call protocol and child headers | ✅ | ✅ | 34 |
-| Power-width recursive machine (Prop 4.3) | ✅ | ✅ | 60 |
-| Row/range padding and radix digit movement | ✅ | ✅ | 34 |
-| Arbitrary-width piece dispatcher (Lemma 4.4) | ✅ | ✅ | 120 |
-| Binary interchange wrapper | ✅ | ✅ | 17 |
-
-## 5. Fast simultaneous synthetic butterfly layers (§5, §11, CrocSwap)
-
-Details: [plan/05-simultaneous-butterfly-layers.md](plan/05-simultaneous-butterfly-layers.md)
-
-| Sub-problem | Mathematics | Tape | Files |
-| --- | --- | --- | --- |
-| Packed arithmetic and fixed control gadgets | 🟡 | 🟡 | 192 |
-| Active-target compact controls | ✅ | 🟡 193/194 rows | 274 |
-| Exceptional-address destination repair | ✅ | 🟡 | 256 |
-| Row padding, reservation and allowances | — | 🟡 56/57 rows | 69 |
-| Binary basis stages and phase schedules | 🟡 | 🟡 | 83 |
-| Butterfly and unit-phase record arithmetic | — | 🟡 | 133 |
-| Butterfly axes, spectators and native roles | — | 🟡 | 78 |
-| Recursive geometry, controller and child headers | — | — | 5 |
-| Exact scalar grids and stopped calls | — | — | 22 |
-| Nonleaf calls and the fixed node table | — | — | 2 |
-| Source-ready table, orientation and endpoints | ✅ | — | 17 |
-| Full recursive execution and runtime | — | — | 37 |
-
-## 6. Synthetic transforms and their tape layout (§6)
-
-Details: [plan/06-synthetic-transforms-tape.md](plan/06-synthetic-transforms-tape.md)
-
-| Sub-problem | Mathematics | Tape | Files |
-| --- | --- | --- | --- |
-| Synthetic ring and synthetic FFT | ✅ | 🟡 6/12 rows | 46 |
-| Tape layout and cost bracket | ✅ | 🟡 12/17 rows | 34 |
-
-## 7. Resampling with the permutations left in the transform (§7)
-
-Details: [plan/07-gaussian-resampling.md](plan/07-gaussian-resampling.md)
-
-| Sub-problem | Mathematics | Tape | Files |
-| --- | --- | --- | --- |
-| Exact Gaussian resampling factorization | ✅ | — | 8 |
-| Numerical resampling maps and error bounds | ✅ | — | 11 |
-| Fixed-point word and record layer | ✅ | ✅ | 12 |
-| Gaussian weight tables on tapes | ✅ | ✅ | 12 |
-| Resampling maps on tapes | ✅ | ✅ | 13 |
-| Tensor interface line costs | ✅ | 🟡 0/2 rows | 23 |
-
-## 8. Exact integer multiplication and its cost (§8)
-
-Details: [plan/08-exact-multiplication.md](plan/08-exact-multiplication.md)
-
-| Sub-problem | Mathematics | Tape | Files |
-| --- | --- | --- | --- |
-| Parameters, asymptotics and coprime source lengths | ✅ | — | 5 |
-| Exact recovery of the product | ✅ | ✅ | 58 |
-| Cost table and time bound | 🟡 1/2 rows | ⬜ | 5 |
-| Chirp (Bluestein) reduction | ✅ | 🟡 0/1 rows | 40 |
-
-## A. Fast multiplication subroutine (Schönhage–Strassen)
-
-Details: [plan/A-schoenhage-strassen.md](plan/A-schoenhage-strassen.md)
-
-| Sub-problem | Mathematics | Tape | Files |
-| --- | --- | --- | --- |
-| Fourier and fixed-point foundations | ✅ | — | 25 |
-| Schönhage–Strassen level, schedule and cost | ✅ | — | 4 |
-| Word-tape programming layer | ✅ | ✅ | 10 |
-| Schönhage–Strassen multiplier on tapes | ✅ | ✅ | 15 |
-| Packed signed ring products | ✅ | ✅ | 28 |
-| Paper-format transform layer statements | ✅ | 🟡 2/5 rows | 14 |
-
-## B. End-to-end theorem `EndToEnd`
-
-Details: [plan/B-end-to-end.md](plan/B-end-to-end.md)
-
-| Sub-problem | Mathematics | Tape | Files |
-| --- | --- | --- | --- |
-| Literal input front end | ✅ | ✅ | 1 |
-| Quadratic fallback multiplier | ✅ | ✅ | 4 |
-| Fast program assembly and final bound | 🟡 0/3 rows | 🟡 0/3 rows | 2 |
-## C. Proved Mathlib end-to-end multiplier
-
-Details: [plan/C-mathlib-end-to-end.md](plan/C-mathlib-end-to-end.md)
-
-| Sub-problem | Mathematics | Tape | Files |
-| --- | --- | --- | --- |
-| Complete fixed machine and sub-n-log-n bound | ✅ | ✅ | 227 |
-
-## Remaining work for the stronger compact-control target
-
-The sub-n-log-n existence result is complete through part C. The items below
-belong to the original route and its stronger specified exponent.
-
-- Assemble synthesized piece descriptors with repeated scaling, repeat inverse scaling, then compose signed rational scales and computed varying-offset translations.
-
-- Compute repair keys and run extraction, sorting and reinsertion on tapes, with the `RepairPipeline` composition as the specification.
-- Compile the proved optimized h=50 modular physical network and its fixed rational control schedule to literal tape execution and prove its recursive time bound.
-- Account for complex endpoint corrections in the tape implementation.
-- Finish the `NegacyclicKronecker` subroutine component.
-- Compose the proved rational digit arithmetic into matrix routines and compile the finite network address permutations to literal tape steps.
+Run `python3 scripts/plan-status.py --check` to check the active proof summary;
+`--list` lists its theorem milestones. Detail files under `plan/archive/`
+are excluded from regeneration and the active milestone list.

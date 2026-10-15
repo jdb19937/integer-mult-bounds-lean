@@ -15,8 +15,9 @@ The construction uses `Cost.totKappa = 296 / (10^11 * 2^131)`, approximately
 `tot_kappa_eq`. This establishes multiplication below `n log n`. It does not
 establish the larger saving `83/10^12` in the original compact-control target
 `Machine.EndToEnd`, or the particular native-bank interfaces tracked in parts
-2–B. Those targets remain separately recorded rather than being silently
-weakened or marked complete by a different theorem.
+2–B of the [archived native roadmap](archive/native-roadmap.md). Those
+targets remain historical alternatives; their open rows are not gaps in this
+completed theorem.
 
 ## How the proof closes
 

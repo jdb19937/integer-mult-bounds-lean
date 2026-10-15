@@ -5285,7 +5285,7 @@ Transform, fixed-point, Kronecker and Gaussian resampling mathematics used by th
   compression records the tensor of the padded tabled `B̃₀` maps
   (`compress_hoare`), each within `driveCost` steps.
 - `Resampling/Milestones.lean`: the §7 milestone theorems of
-  `plan/07-gaussian-resampling.md` that package proved results:
+  `plan/archive/07-gaussian-resampling.md` that package proved results:
   `FixedMul.signed_word_ops`, `Schoenhage.wordRecordLayer_hoare`,
   `TableValue.tables_on_tapes`, `B0Value.maps_value_W`, `B0Tape.maps_hoareF`,
   `LineCost.tensor_line_costs`; and `NLogN.permuted_multi_numeric_manuscript`,
