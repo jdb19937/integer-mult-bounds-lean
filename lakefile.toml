@@ -9,5 +9,3 @@ rev = "v4.34.1"
 
 [[lean_lib]]
 name = "IntegerMultBounds"
-# Report expensive declarations during builds; keep the default proof limits.
-moreLeanArgs = ["-Dprofiler=true", "-Dprofiler.threshold=1000"]

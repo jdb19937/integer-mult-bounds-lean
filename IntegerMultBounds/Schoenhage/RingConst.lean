@@ -302,7 +302,6 @@ noncomputable def constC1 : Cmd 0 𝕌 :=
   .seq (op0 Rules.copy true (ι tO1) (ι tO2) (by decide)) <| .seq (rewind (ι tO1)) <| .seq (rewind (ι tO2)) <|
   .seq (emit [[]] (ι tC)) (rewind (ι tC))
 
-set_option maxHeartbeats 4000000 in
 theorem runs_constC1 {r W : ℕ} (τ : Fin 𝕌 → WTape) (hR : τ (ι qR) = reg (ones r)) (h1 : τ (ι c1) = reg [true])
     (hK : τ kW = reg (ones W)) (hS : τ (ι sT2) = emp) (hT : τ (ι qT) = emp) (hU : τ (ι tU) = emp)
     (hV : τ (ι tV) = emp) (hO : τ (ι tO1) = emp) (hO2 : τ (ι tO2) = emp) (hC : τ (ι tC) = emp) :
@@ -331,11 +330,13 @@ theorem runs_constC1 {r W : ℕ} (τ : Fin 𝕌 → WTape) (hR : τ (ι qR) = re
   generalize time Rules.drop (ones r) (fun _ => [true]) = T1 at t1 ⊢
   refine ⟨?_, ?_⟩
   · funext x
-    simp only [Function.update_apply]
-    split_ifs <;> (try subst_vars) <;> tsimp [hR, h1, hK, hS, hT, hU, hV, hO, hO2, hC, emp, reg, ones_append,
-      ones, rep_tt] at *
+    fin_cases x <;> tsimp [hR, h1, hK, hS, hT, hU, hV, hO, hO2, hC, emp, reg, ones_append,
+      ones, rep_tt]
+    all_goals first | exact h1.symm | exact hS.symm | exact hR.symm
   · simp only [time_copy, length_ones, clen_replicate_nil, List.length_cons, List.length_nil, WTape.words,
       clen_cons, clen_nil, List.reverse_cons, List.reverse_nil, List.nil_append, List.append_nil]
+    clear * - t1 t2
+    ring_nf at t1 t2 ⊢
     omega
 
 /-- Move the ruler to `kR` and clear the drivers. -/
