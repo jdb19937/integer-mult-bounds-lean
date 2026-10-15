@@ -1,0 +1,62 @@
+{
+  "chunk_size": 32,
+  "event_hashes": {
+    "backward": "f36c5831106f5637102c6bedeec76ed2b223c6671ce42fd0eceed9ef24725b23",
+    "forward": "071ecdacc0bb3ac16046aad4119ed551a945cb0ed6c57002a548a3e2232503d8"
+  },
+  "events_per_orientation": 24767,
+  "notices": {
+    "LICENSE": [
+      "UPSTREAM-LICENSE",
+      "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+    ],
+    "NOTICE": [
+      "UPSTREAM-NOTICE",
+      "b49022cb4104d90b182e4c335f670faf45529025b15db77bf0291835083c28bd"
+    ],
+    "research/r480-owner-optimum/NOTICE.md": [
+      "R480-NOTICE.md",
+      "b97fb4731e84aef736c58a9c126334eb5b8d3a057a8d9d45b4ffff24af65c38b"
+    ],
+    "research/r480-owner-optimum/vendor/pr1074/NOTICE.md": [
+      "PR1074-NOTICE.md",
+      "7a8d17b04da1e6c9d0ec217fb5bda72faa09d9a21695128722dd1e2827870fcf"
+    ],
+    "research/r480-owner-optimum/vendor/pr1074/UPSTREAM-NOTICE.md": [
+      "PR1074-UPSTREAM-NOTICE.md",
+      "a75967ebc34e3bf2ff2c25c08e6c7f1a61b0c0d171cfd1b62196ae2caaf2c610"
+    ],
+    "research/r480-owner-optimum/vendor/pr1074/t16/NOTICE.md": [
+      "T16-NOTICE.md",
+      "902370e6bfcd39dbea2ece474f15fccbcce3b8e966b2b94066bd03e5174591b5"
+    ]
+  },
+  "phases": [
+    "zero_frame_precondition",
+    "entry_adapters",
+    "A",
+    "centers",
+    "B",
+    "cleanup_tail",
+    "final",
+    "exit_adapters",
+    "full_frame_cleanup",
+    "done"
+  ],
+  "pins": {
+    "CANONICAL-WORD.json.gz": "16bc0ebb04b4be6c0ade74badc6a0c0cdba4215eda86e4ff9f13abf8ecebd219",
+    "LOCAL-PROGRAMS.json.gz": "241fde27d4e43f5a9cb6b128f9f76c5131a53d09f0371676163f914d0b0fef3a"
+  },
+  "scope": "Exact scalar gates and label continuity only; endpoint adapters are retained metadata, not proved operators. No frame equivalences or dirty restoration theorem.",
+  "state_representation": "deduplicated ten-level binary label tries; low bit selects branch",
+  "wire_namespace": {
+    "C": [
+      704,
+      712
+    ],
+    "L": [
+      0,
+      704
+    ]
+  }
+}
