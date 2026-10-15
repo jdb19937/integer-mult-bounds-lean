@@ -30,7 +30,7 @@ up to `T`) that it reads and turns into interchange headers. The tables cost
 **Misfit.** The `2 (d - 1)` interchanges of axis `i` with the last axis cost
 `Θ(d T w ℓ^τ)` in total. This is not `O(totResamp)`: `totResamp = d T p^{1/2} α M(p)` and
 `ℓ^τ / (p^{1/2+δ} α) ≈ (B/d)^τ / (6^{5/8} 12^{1/4} B^{7/8} d^{1/2}) → ∞` (`ℓ ≈ B/d`,
-`α ≈ (12 d² B)^{1/4}`, `d = B^{2^{-75}}`). It is `O(totCRT)`, since
+`α ≈ (12 d² B)^{1/4}`, `d = B^{2^{-30}}`). It is `O(totCRT)`, since
 `d T w ℓ^τ ≤ cw T p d² ℓ^τ`.
 -/
 

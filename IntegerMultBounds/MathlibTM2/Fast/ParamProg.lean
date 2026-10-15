@@ -15,8 +15,8 @@ exactly, in words of `W ≥ 4 b + 16` bits (`b = ⌈log₂ n⌉`). Variable `i <
 | 0 | `n` | input |
 | 1 | `b = ⌈log₂ n⌉` | `Sizes.b` |
 | 2 | `p = 6 b` | `Sizes.p` |
-| 3 | `d = iroot (2^75) b` | `Sizes.d` |
-| 4 | `K = iroot (2^56) d` | `Sizes.K` |
+| 3 | `d = iroot (2^30) b` | `Sizes.d` |
+| 4 | `K = iroot (2^34) d` | `Sizes.K` |
 | 5 | `log₂ T` | `Sizes.logT` |
 | 6 | `T` | `Sizes.T` |
 | 7 | `ℓ` | `Sizes.ℓ` |
@@ -229,22 +229,22 @@ theorem pm_const_lt (hW : 4 * b n + 16 ≤ W) {k : ℕ} (hk : k < 2 ^ 16) : k < 
   lt_of_lt_of_le hk (pm_W_pow hW (by omega))
 
 theorem pm_s3 (hW : 4 * b n + 16 ≤ W) :
-    ∀ s, PmF n 3 acc s → TblDo A W w ((pmIrootC 75).rename ![1, 3, 31, 32, 33, 34]) s
-      (PmF n 4 acc) (7 * 75 + 11 + d n * (6 * 75 + 8)) :=
+    ∀ s, PmF n 3 acc s → TblDo A W w ((pmIrootC 30).rename ![1, 3, 31, 32, 33, 34]) s
+      (PmF n 4 acc) (7 * 30 + 11 + d n * (6 * 30 + 8)) :=
   pm_stage (by decide) 1 rfl fun s hs => by
     have h0 : (s.restrict ![1, 3, 31, 32, 33, 34]).val 0 = b n := by simpa [pmVal, pmNV] using hs.val 1
-    refine (pmIrootC_do 75 _ h0 (pm_sq_lt hW le_rfl) (pm_const_lt hW (by norm_num))).mono ?_
+    refine (pmIrootC_do 30 _ h0 (pm_sq_lt hW le_rfl) (pm_const_lt hW (by norm_num))).mono ?_
       le_rfl
     rintro s' ⟨e0, e1, ea⟩
     refine ⟨by rw [ea]; exact hs.1, by rw [e1]; rfl, fun y hy => ?_⟩
     fin_cases y <;> simp [pmVal, pmNV] at hy ⊢ <;> assumption
 
 theorem pm_s4 (hW : 4 * b n + 16 ≤ W) :
-    ∀ s, PmF n 4 acc s → TblDo A W w ((pmIrootC 56).rename ![3, 4, 31, 32, 33, 34]) s
-      (PmF n 5 acc) (7 * 56 + 11 + K n * (6 * 56 + 8)) :=
+    ∀ s, PmF n 4 acc s → TblDo A W w ((pmIrootC 34).rename ![3, 4, 31, 32, 33, 34]) s
+      (PmF n 5 acc) (7 * 34 + 11 + K n * (6 * 34 + 8)) :=
   pm_stage (by decide) 1 rfl fun s hs => by
     have h0 : (s.restrict ![3, 4, 31, 32, 33, 34]).val 0 = d n := by simpa [pmVal, pmNV] using hs.val 3
-    refine (pmIrootC_do 56 _ h0 (pm_sq_lt hW (d_le_b n)) (pm_const_lt hW (by norm_num))).mono ?_
+    refine (pmIrootC_do 34 _ h0 (pm_sq_lt hW (d_le_b n)) (pm_const_lt hW (by norm_num))).mono ?_
       le_rfl
     rintro s' ⟨e0, e1, ea⟩
     refine ⟨by rw [ea]; exact hs.1, by rw [e1]; rfl, fun y hy => ?_⟩
@@ -758,8 +758,8 @@ end Stages
 def pmStages : TblCode pmNV :=
   pmClogC.rename ![0, 1, 31] ;;
   (pmLinC 6 0).rename ![1, 2, 31, 32] ;;
-  (pmIrootC 75).rename ![1, 3, 31, 32, 33, 34] ;;
-  (pmIrootC 56).rename ![3, 4, 31, 32, 33, 34] ;;
+  (pmIrootC 30).rename ![1, 3, 31, 32, 33, 34] ;;
+  (pmIrootC 34).rename ![3, 4, 31, 32, 33, 34] ;;
   pmLogTC.rename ![0, 1, 5, 31, 32] ;;
   (tblPow2 1 0 2).rename ![5, 6, 31] ;;
   (pmCeilDivC 1).rename ![5, 3, 7, 31] ;;
@@ -808,8 +808,8 @@ variable {n : ℕ} {acc : List (Fin (A + 4))}
 
 theorem pmStages_do (hn : 2 ≤ n) (hW : 4 * b n + 16 ≤ W) :
     ∀ s, PmF n 1 acc s → TblDo A W w pmStages s (PmF n 31 acc)
-      ((4 * b n + 5) + (10 + ((7 * 75 + 11 + d n * (6 * 75 + 8)) +
-        ((7 * 56 + 11 + K n * (6 * 56 + 8)) + ((4 * logT n + 16) + ((4 * logT n + 5) + (8 +
+      ((4 * b n + 5) + (10 + ((7 * 30 + 11 + d n * (6 * 30 + 8)) +
+        ((7 * 34 + 11 + K n * (6 * 34 + 8)) + ((4 * logT n + 16) + ((4 * logT n + 5) + (8 +
         ((4 * ℓ n + 5) + (3 + ((4 * (ℓ n - 1) + 5) + (2 + ((5 * alpha n + 20) + (1 + (4 + (8 +
         ((12 * d n + 6) + (11 + ((13 * d n + 5) + ((6 * Nat.sqrt (p n * alpha n ^ 2) + 9) +
         ((6 * Nat.sqrt (p n) + 10) + ((4 * Nat.clog 2 (d n) + 4 + 7) + ((1 + 14 + 4) +

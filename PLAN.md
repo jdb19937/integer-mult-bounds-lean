@@ -7,8 +7,9 @@ time `O(n (log n)^(1-kappa))`. Larger saving means a smaller time exponent.
 
 | Bound | Exponent saving `kappa` | Status |
 | --- | --- | --- |
-| **Current unconditional result** | **`296 / (10^11 * 2^131)`, approximately `1.09e-48`** | Proved on one fixed finite Mathlib machine, for all input pairs. |
-| **Next improvement: tune the existing construction** | **Candidate: approximately `1.60e-28`; not yet proved** | First check admissible parameters, then prove the improved actual-step bound. |
+| **Current unconditional result** | **`2^-93`** | Proved on one fixed finite Mathlib machine, for all input pairs. |
+| **Previous unconditional result** | `296 / (10^11 * 2^131)` (between `2^-160` and `2^-159`) | Superseded by M1; the existential theorem remains compatible. |
+| **Next improvement: direct CRT routing** | To be proved after retuning | M2 removes the quadratic routing restriction; §6 remains the active bottleneck. |
 | **Goal: match the selected community construction** | **`836330098538459 / 500000000000000000 = 0.001672660197076918`** | Upstream construction is conditional; our goal is an unconditional machine theorem at this exact saving. |
 
 The goal corresponds to a log exponent of `0.998327339802923082`.
@@ -21,7 +22,7 @@ certificate alone does not improve the proved multiplication bound.
 `IntegerMultBounds.MathlibTM2.statement` constructs a fixed finite Mathlib
 machine that multiplies every input pair correctly in worst-case time
 `O(n (log n)^(1-kappa))`, with positive saving
-`kappa = 296 / (10^11 * 2^131)`. No algorithmic or runtime assumption remains.
+`kappa = 2^-93`. No algorithmic or runtime assumption remains.
 
 ## Completed proof
 
@@ -37,8 +38,9 @@ The Files column counts the components listed in that detail file; the full
 transitive proof dependency set is larger, as recorded by the
 [retention audit](docs/proof-retention.md).
 
-The guarded build and library-wide axiom audit passed after the latest
-native-wrapper retirement. `CompletedProofCheck.lean` independently audits
+The guarded theorem-only build and focused axiom audit passed for M1. The
+earlier library-wide build and audit passed after native-wrapper retirement.
+`CompletedProofCheck.lean` independently audits
 the completed theorem's import closure; the library and focused checks allow
 only `propext`, `Classical.choice` and `Quot.sound`.
 
@@ -62,7 +64,7 @@ archived plans used inconsistent source-filename numbering.
 | §3 Finite networks | Current bit/complex primitive savings are `2.96e-9` and `4.18e-10`. | Selected PR589 bit supplier and T16 complex supplier, with checked words, restoration, owner schedules and variable-rank moments. |
 | §4 Address interchange | All field moves inherit the bit exponent; current CRT routing uses quadratic adjacent swaps. | Direct distant-field routing first, then selected arbitrary-source routing contracts. |
 | §5 Butterfly layers; Appendix A | Full-slot overhead pays `K^tau`; actual piece matching requires `c < lambda'-lambda`. | Compact dirty controls, stopped recursion, linear semantic precision and proved recursive stock. |
-| **§6 Synthetic transforms/layout** | **`p K^(tau-1)` gives saving `epsilon c (1-tau) ≈ 1.09e-48`.** | First tune epsilon/c; ultimately replace this charge by selected coordinate routing and a balanced prefix. |
+| **§6 Synthetic transforms/layout** | **`p K^(tau-1)` gives saving `epsilon c (1-tau) > 2^-93`.** | M1 retuned epsilon/c; next replace this charge by selected coordinate routing and a balanced prefix. |
 | §7 Exact polynomial products | Packing widths and extra logarithms must remain within budget. | Reuse the proved fast subroutine and exact algebra; revalidate under new widths. Not currently binding. |
 | §8 Resampling | Current Gaussian exponent is `7/8 + 3 epsilon/2`, preventing epsilon near one. | Faster rounded inverse, bulk core/halo execution and proved error/normalization bounds. |
 | §9 Exact multiplication/cost | CRT charge `d^2 ell^tau` forces epsilon below about `3e-9`; final bound is the smallest stage margin. | Linear CRT routing, seven-stage bootstrap, all 47 linked target inequalities and unchanged exact output semantics. |
@@ -76,8 +78,8 @@ criteria are in the [implementation plan](plan/D-sharper-bound.md).
 
 | ID | Original sections | Concrete deliverable | Status / bound effect |
 | --- | --- | --- | --- |
-| **M1** | **§§5, 6, 9** | **Try `epsilon=2^-30`, `c=2^-34`; reprove dependent sizing, cost and machine lemmas.** | **Next.** Candidate `kappa=296/(10^11 * 2^64) ≈ 1.6046e-28`; listed rational cost comparisons pass, Lean validation remains. Prospective gain: `2^67`. |
-| M2 | §§4.3, 8.2, 9.3 | Replace adjacent CRT walks by direct nonadjacent swaps; reuse already linear resampling exposure and price residual CRT arithmetic separately. | Planned. Replace `d^2(1+ell^tau)` by `d(1+ell^tau)`; remove the CRT cap forcing epsilon to be as small as the bit saving. Retune and prove a new bound. |
+| **M1** | **§§5, 6, 9** | **Set `epsilon=2^-30`, `c=2^-34`; reprove dependent sizing, executable parameter generation, cost and machine lemmas.** | **Complete.** Public saving `kappa=2^-93`; exact internal margin `296/(10^11 * 2^64)` lies between `2^-93` and `2^-92`. Internal margin improved by `2^67`; public saving improves the former exact bound by more than `2^66`. |
+| M2 | §§4.3, 8.2, 9.3 | Replace adjacent CRT walks by direct nonadjacent swaps; reuse already linear resampling exposure and price residual CRT arithmetic separately. | **Next.** Replace `d^2(1+ell^tau)` by `d(1+ell^tau)`; remove the CRT cap forcing epsilon to be as small as the bit saving. Retune and prove a new bound. |
 | M3 | §5.2–5.3, Appendix A | Compact dirty-control host adapter, stopped recursion and locally charged exceptional repair. | Planned. Remove `K^tau` from node overhead, with complete temporary-field restoration. |
 | M4 | §5.4, §9.7 | Linear completed-child precision bound and explicit recursive workspace/stock contracts. | Planned. Remove conservative guard-growth restrictions and prove the reserve coefficients required at selected cutoffs. |
 | M5 | §6.2, §4 | Balanced prefix and arbitrary-source coordinate routing in both transform directions. | Planned. Replace layout saving `epsilon c a_b` by direct movement saving `a_b`; restore spectators and frequency order. |
@@ -85,7 +87,7 @@ criteria are in the [implementation plan](plan/D-sharper-bound.md).
 | M7 | §8.1–8.3, §9.2/9.7 | Prove faster rounded Gaussian inverse and bulk core/halo tape execution, including prime supply and exact recovery interfaces. | Planned. Remove the current Gaussian restriction on epsilon; establish the selected near-one-dimension parameter regime. |
 | M8 | §9.1–9.8 | Prove bootstrap base/stages, link all 47 inequalities to actual stages and close the audited fixed-machine theorem. | Planned. Goal: exact unconditional saving `0.001672660197076918`. |
 
-**Execution order:** M1 → M2 → M3–M5 → M6/M7 → M8. Use current
+**Execution order:** M1 complete → M2 → M3–M5 → M6/M7 → M8. Use current
 smaller networks while establishing the structural interfaces; then plug in
 the selected suppliers. M6 and M7 are separate major requirements, both needed
 for M8. The bootstrap base saving `0.0000384599` must itself be proved or

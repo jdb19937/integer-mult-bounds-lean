@@ -36,15 +36,23 @@ open IntegerMultBounds.Networks.Shared50ModularControl (prime)
 
 /-- **The statement from the two bundles**: the synthetic transforms (`MnSyn`) and the
 parameter distribution (`MnDist`). -/
+theorem mulInTime_of_bundles
+    (h : ∃ (K : ℕ) (Lb : LProc → MnPr (prime + K)) (w : ℕ → ℕ)
+      (σ : ℕ → LReg SXReg → List (Fin (prime + K + 4))),
+      Nonempty (MnSyn K Lb w σ) ∧ Nonempty (MnDist K Lb w σ)) :
+    IntegerMultBounds.MathlibTM2.MulInTime IntegerMultBounds.MathlibTM2.Cost.totKappa := by
+  obtain ⟨K, Lb, w, σ, ⟨Y⟩, ⟨D⟩⟩ := h
+  obtain ⟨C, hC⟩ := mnTime_le D Y (mnC D Y)
+  exact mulInTime_of_dispatch (mnTable D Y) .main mnV₀ (mnTime D Y (mnC D Y)) (mnN₀ D Y)
+    (mn_hostMul_ge D Y) (IntegerMultBounds.MathlibTM2.Cost.tot_htime C hC)
+
+/-- The existential statement, retaining the quantitative bundle theorem. -/
 theorem statement_of_bundles
     (h : ∃ (K : ℕ) (Lb : LProc → MnPr (prime + K)) (w : ℕ → ℕ)
       (σ : ℕ → LReg SXReg → List (Fin (prime + K + 4))),
       Nonempty (MnSyn K Lb w σ) ∧ Nonempty (MnDist K Lb w σ)) :
-    IntegerMultBounds.MathlibTM2.Statement := by
-  obtain ⟨K, Lb, w, σ, ⟨Y⟩, ⟨D⟩⟩ := h
-  obtain ⟨C, hC⟩ := mnTime_le D Y (mnC D Y)
-  exact statement_of_dispatch (mnTable D Y) .main mnV₀ (mnTime D Y (mnC D Y)) (mnN₀ D Y)
-    IntegerMultBounds.MathlibTM2.Cost.tot_kappa_pos (mn_hostMul_ge D Y) (IntegerMultBounds.MathlibTM2.Cost.tot_htime C hC)
+    IntegerMultBounds.MathlibTM2.Statement :=
+  ⟨_, IntegerMultBounds.MathlibTM2.Cost.tot_kappa_pos, mulInTime_of_bundles h⟩
 
 /-- **The statement from the layout programs and the distribution.** -/
 theorem statement_of_specs

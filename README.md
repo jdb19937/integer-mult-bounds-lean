@@ -8,7 +8,7 @@
 `Turing.FinTM2` machine multiplies every pair of natural numbers, with standard
 binary input/output encodings, in worst-case time `O(n (log n)^(1-kappa))`.
 The construction proves the positive saving
-`kappa = 296 / (10^11 * 2^131)`, approximately `1.09e-48`, where `n` is the
+`kappa = 2^-93`, exposed by `MathlibTM2.mulInTime`, where `n` is the
 total encoded input length. See [the completed plan](plan/C-mathlib-end-to-end.md).
 
 This completed proof is the primary route. The [retention audit](docs/proof-retention.md)

@@ -19,7 +19,8 @@ The sharper target is the **selected** community construction at revision
 in individual notes. The [source pin](../docs/sharper-bound-source.json)
 records the selected certificate, supporting sources and manuscript digests.
 The original manuscript proves saving `2^-182`; our present Lean theorem proves
-`296 / (10^11 * 2^131)`, approximately `1.0873e-48`. The selected upstream
+`2^-93` after M1. The exact internal margin is `296 / (10^11 * 2^64)`,
+between `2^-93` and `2^-92`. The selected upstream
 conditional saving is `0.001672660197076918`.
 
 ## Diagnosis: where our current bound is lost
@@ -47,37 +48,36 @@ piece estimate remains, `c` must stay below `2e-10` with the current lambdas.
 Thus tuning alone cannot approach `0.00167`. It is an inexpensive first
 improvement and a way to expose the constraints before changing algorithms.
 
-## First deliverable: a concrete stronger-bound candidate
+## M1 completed: retune the existing construction
 
-**M1 — §§5, 6, 9: retune the existing construction.** Try
-`epsilon = 2^-30` and `c = 2^-34`, keeping `tau`, `sigma`, `lambda = 1-3e-10`
-and `lambda' = 1-1e-10`. The prospective saving is
-`296 / (10^11 * 2^64) ≈ 1.6046192153e-28`, an increase by `2^67`.
+**M1 — §§5, 6, 9:** `epsilon = 2^-30` and `c = 2^-34`, keeping the existing
+primitive exponents and layer exponents. The public theorem is now
+`MathlibTM2.mulInTime : MulInTime (2 ^ 93 : ℝ)⁻¹`.
 
-Exact rational arithmetic checked the current total-cost exponent comparisons,
-`tau(1+2c) < lambda`, `lambda+c < lambda'`, the leaf inequality and
-`20 epsilon < 1`. This is **arithmetic evidence only**: all parameter-dependent
-sizing, layout, width and machine proofs must still check. In particular,
-`20 epsilon < 1` checks the original guard comparison, not the entire width
-contract of the current implementation. No stronger Lean theorem is claimed.
+The exact internal saving, exposed separately by `mulInTime_exact`, is
+`296 / (10^11 * 2^64)`, between `2^-93` and `2^-92`. It is `2^67` times the
+previous internal saving; the rounded public saving improves the previous
+exact bound by more than `2^66`. These are improvements in the asymptotic
+exponent saving, not measured runtime speedups.
 
-Implementation sequence:
+Implementation completed:
 
-1. Change the two root indices and their value lemmas in `Mult/Sizes.lean`;
-   audit uses in `Fast/ParamMath.lean`, `Fast/DistWidth.lean`, `Cost/Growth.lean`,
-   `Cost/MatchSynPcs.lean` and `Cost/Total.lean`. Recheck eventual size estimates,
-   exceptional-address bounds and all finite cutoffs, not only `tot_exp_facts`.
-2. Update the exact `tot_kappa_eq` and prove the resulting explicit
-   `MulInTime` bound through the existing machine assembly. Preserve the old
-   saving as a corollary or compatible public result; the existing existence
-   theorem must continue to pass.
-3. Guarded build and focused/full axiom checks; record the achieved saving in
-   PLAN.md, commit and push. If the candidate fails, record the exact binding
-   lemma and choose the largest safe candidate supported by the proof.
+1. Changed the root indices and value lemmas in `Mult/Sizes.lean`, and the
+   executable root programs, stage proofs and step counts in `Fast/ParamProg.lean`.
+   The existing sizing, width, finite-cutoff and cost proofs check unchanged.
+2. Updated `Cost/Total.tot_kappa_eq`; exposed `MainStatement.mulInTime_of_bundles`
+   and the explicit theorem in `Theorem.lean`. `statement : Statement` remains
+   available through the stronger bound. The power-of-two corollary follows
+   from the existing monotonicity of the logarithmic time exponent.
+3. Verified the theorem's dependencies with the guarded targeted build and
+   its import closure with `CompletedProofCheck.lean`, which also checks the
+   explicit public bound and allows only the three standard axioms. Use these
+   focused checks for this change; a full-library rebuild is unnecessary.
 
-**Done means:** a stronger unconditional machine theorem, not a parameter file
-edit. This is the next execution task. Runtime for the required rebuild is a
-separate cost from the mathematical amount of work.
+**Remaining minimum margin:** §6's layout term still gives the exact internal
+saving `epsilon c (1-tau)`. The next smallest current stage margin is the layer
+term `epsilon (1-lambda')`; CRT routing is still the restriction on increasing
+epsilon substantially. **Next task: M2**, direct CRT routing followed by retuning.
 
 ## Section-by-section implementation work
 
@@ -329,8 +329,8 @@ reduction interfaces and encoding overhead if those corollaries are desired.
 
 ## Execution order and decision gates
 
-1. **M1 now:** strongest easy validated parameter improvement; preserve the
-   existing completed theorem and report an exact new saving.
+1. **M1 complete:** public saving `2^-93`; exact internal margin between
+   `2^-93` and `2^-92`, with the existing existential theorem preserved.
 2. **M2 next:** linear nonadjacent CRT/axis schedules, then retune and publish
    the resulting stronger theorem. This yields a structural improvement
    without importing the large selected supplier inventory.
@@ -349,8 +349,7 @@ its manuscript section and the next binding lemma. A milestone can finish
 without changing the bound, but must say which restriction it removed.
 Retain reusable frame/rank/precision mathematics until its role is resolved.
 Use only guarded Lean scripts, preserve proof limits and integrity, exclude
-unrelated work, and commit/push each checked logical section. This planning
-update checked documentation, the proposed M1 rational comparisons, all seven
-recorded bootstrap exponents/gaps and all seven selected final margin slacks
-against the pinned assembly, using exact rational arithmetic. It did not run
-Lean or claim any new theorem.
+unrelated work, and commit/push each checked logical section. The original
+planning update checked the selected bootstrap and final-margin
+arithmetic against the pinned assembly. M1 now additionally has a checked
+Lean machine theorem and focused axiom audit; M2–M8 remain unfinished.
