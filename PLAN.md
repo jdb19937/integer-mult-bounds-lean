@@ -34,7 +34,7 @@ machine that multiplies every input pair correctly in worst-case time
 
 | Part of the proof | Source | Mathematics | Tape | Files |
 | --- | --- | --- | --- | --- |
-| [Proved Mathlib end-to-end multiplier](plan/C-mathlib-end-to-end.md) | — | ✅ 1/1 | ✅ 1/1 | 466 |
+| [Proved Mathlib end-to-end multiplier](plan/C-mathlib-end-to-end.md) | — | ✅ 1/1 | ✅ 1/1 | 490 |
 
 The [proof details](plan/C-mathlib-end-to-end.md) cover the numerical
 algorithm, recursive layers, transforms, resampling, CRT routing, exact
@@ -95,7 +95,7 @@ criteria are in the [implementation plan](plan/D-sharper-bound.md).
 | --- | --- | --- | --- | --- |
 | **M1** | ✅ | **§§5, 6, 9** | **Set `epsilon=2^-30`, `c=2^-34`; reprove dependent sizing, executable parameter generation, cost and machine lemmas.** | **Complete, historical.** Public saving `kappa=2^-93`; exact internal margin `296/(10^11 * 2^64)` lies between `2^-93` and `2^-92`. Internal margin improved by `2^67`; public saving improves the former exact bound by more than `2^66`. |
 | M2 | ✅ | §§4.3, 8.2, 9.3 | Replace adjacent CRT walks by direct nonadjacent swaps; preserve exact semantics and price setup, controls, movement and cleanup. | **Complete.** The running multiplier uses linear CRT routing and sharp linear resampling costs. Final parameters `epsilon=2^-5`, `c=2^-32`, `lambda'=1-1/10^11` give exact margin `296/(10^11 * 2^37)` and public saving `2^-66`; theorem and focused audit pass. |
-| M3 | 🟡 | §5.2–5.3, Appendix A | Compact dirty controls, actual caller integration, stopped recursion and local repair costs. | **In progress.** Compact runtime, recursive layers, persistent setup/refresh/cleanup and individual round stages are checked. The complete chunk round and top costs are checked; the corrected bootstrap and hybrid dispatch are also checked. Next compose transform loops, discharge uniform cost budgets and connect the main caller, then add stopped recursion. Public saving remains `2^-66`. |
+| M3 | 🟡 | §5.2–5.3, Appendix A | Compact dirty controls, actual caller integration, stopped recursion and local repair costs. | **In progress.** Compact runtime, recursive layers, persistent setup/refresh/cleanup and individual round stages are checked. The complete chunk round and top costs are checked; the corrected bootstrap and hybrid dispatch are also checked. Complete forward/opposite scans and the source-derived bootstrap frame are now checked. Next finish transform specifications, discharge uniform cost budgets and connect the main caller, then add stopped recursion. Public saving remains `2^-66`. |
 | M4 | ⬜ | §5.4, §9.7 | Linear completed-child precision bound and explicit recursive workspace/stock contracts. | Planned. Remove conservative guard-growth restrictions and prove the reserve coefficients required at selected cutoffs. |
 | M5 | ⬜ | §6.2, §4 | Balanced prefix and arbitrary-source coordinate routing in both transform directions. | Planned. Replace layout saving `epsilon c a_b` by direct movement saving `a_b`; restore spectators and frequency order. |
 | M6 | ⬜ | §3.1–3.6, §§4–5 interfaces | Prove both selected finite suppliers, their variable-rank moments and the 144-call owner schedule. | Planned. Target primitive endpoints about `0.00173343` (bit) and `0.00167546` (complex); component bounds alone do not update the final bound. |
@@ -113,9 +113,13 @@ criteria are in the [implementation plan](plan/D-sharper-bound.md).
 | Complete compact chunk round | ✅ | Checked actual preparation, top execution, restoration and cleanup from original round state. |
 | Original-input bootstrap and transform-boundary cleanup | ✅ | Checked the dimension-minus-one correction, parameter precision source, retained globals and charged exit. |
 | Counter-driven compact/direct dispatch | ✅ | Checked both actual branches, original butterfly semantics and full main-register frame. |
-| Main-stage integration | 🟡 | Compose forward/opposite rounds and loops, then connect their main contracts. |
+| Forward/opposite rounds and complete scans | ✅ | Checked original transform stream semantics and full-register restoration except I/O. |
+| Bootstrap-to-transform frame | ✅ | Derives setup from real sources, establishes readiness and restores the original file except output after charged exit. |
+| Main-stage integration | 🟡 | Connect full forward/opposite specifications and the assembled main contracts. |
 | Concrete round and setup cost accounting | ✅ | Checked actual records, setup, recursive calls, controls and cleanup; scalar-budget obligations remain explicit. |
-| Uniform transform cost and multiplier bound | 🟡 | Discharge scalar budgets, sum round costs and close the stronger fixed-machine theorem. |
+| Scalar and divisor budget foundations | ✅ | Checked common scalar bounds, dyadic polynomial divisor bound and uniform packing for larger chunks; combined caller specialization remains below. |
+| Larger eighth-root chunk sizing | 🟡 | Checked sizes, reservation capacity and uniform packing; executable parameter/distribution and total-cost integration remain. |
+| Uniform transform cost and multiplier bound | 🟡 | Combine and specialize caller budgets, sum round costs and close the stronger fixed-machine theorem. |
 | Stopped recursion | ⬜ | Required for the later selected construction; not yet implemented. |
 
 **Execution order:** M1–M2 complete → M3–M5 → M6/M7 → M8. Use current

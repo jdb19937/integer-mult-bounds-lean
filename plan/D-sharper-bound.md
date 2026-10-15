@@ -808,6 +808,31 @@ rest initialization, stash, top execution, pop, unstash and cleanup, charging
 every stage and restoring the original round frame. Keep a proved fallback
 for selections below the reservation cutoff.
 
+**Checked scan/bootstrap checkpoint (2026-10-15).**
+`CompactSynRound` and `CompactSynLoopF/O` now execute complete hybrid rounds
+and scans with the original numerical semantics, restored counters and exact
+full-register frame except I/O. `CompactSynInitialGeometry/Contract/Loops`
+derive initial contracts from actual distributed-transform parameters.
+`CompactMainBootstrapView/TransformFrame` derive setup execution from the
+real precision and predecessor-dimension registers plus blank scratch, prove
+that setup preserves the original synthetic view and establishes readiness,
+and prove exact exit restoration. `CompactMainTransformPipeline` composes
+these charged boundaries around a core. Full transform specifications and
+main assembly remain unfinished.
+
+The scalar caller fields now have a common quadratic precision budget;
+`CompactCallerDivisorPolynomial` supplies an explicit dyadic polynomial
+bound for the original divisor. `Mult/CompactSizes` provides parallel
+eighth-root chunks, `CompactCallerRetunedCapacity` proves reservation
+capacity, and `CompactCallerUniformRuntime` proves actual packing uniformly
+for chunk sizes between the old size and original dimension. These are
+foundations: the executable parameter/distribution bridge and compact total
+recurrence still need integration. The legacy total recurrence must not be
+reused unchanged at the larger chunk exponent.
+
+The focused compact axiom audit passed for 351 contracts with peak RSS below
+4.2 GiB; no full build or limit increase ran. Public saving remains `2^-66`.
+
 Prove complete temporary address ranges survive every role split, arbitrary
 initial temporary values are restored, and exceptional extraction, sorting,
 reinsertion and cleanup are charged at each node's own volume. Add an actual

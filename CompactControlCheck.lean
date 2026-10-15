@@ -1,3 +1,27 @@
+import IntegerMultBounds.MathlibTM2.Cost.CompactCallerDivisorPolynomial
+import IntegerMultBounds.MathlibTM2.Cost.CompactCallerRetunedCapacity
+import IntegerMultBounds.MathlibTM2.Cost.CompactCallerScalarBudget
+import IntegerMultBounds.MathlibTM2.Cost.CompactCallerUniformRuntime
+import IntegerMultBounds.MathlibTM2.Mult.CompactSizes
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynRoundFrame
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerContract
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynTwiddle
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynRound
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynLoopBody
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynLoopCost
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynScanFrame
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynLoopFStep
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynLoopOStep
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynLoopF
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynLoopO
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynLoopsContract
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynInitialGeometry
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynInitialContract
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynInitialLoops
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayoutTransport
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainBootstrapView
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainBootstrapTransformFrame
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainTransformPipeline
 import IntegerMultBounds.MathlibTM2.Cost.CompactSynLayerOverheadRuntime
 import IntegerMultBounds.MathlibTM2.Cost.CompactRuntimePolynomial
 import IntegerMultBounds.MathlibTM2.Cost.CompactRoundVolume
@@ -453,7 +477,31 @@ run_cmd do
     ``IntegerMultBounds.MathlibTM2.Fast.Main.compactMainDirect_runs,
     ``IntegerMultBounds.MathlibTM2.Fast.Main.compactMnLayerReg_legacy,
     ``IntegerMultBounds.MathlibTM2.Fast.Main.compactSynDispatch_eventually_exec_stream,
-    ``IntegerMultBounds.MathlibTM2.Cost.compactSynLayerRoundOverhead_eventually]
+    ``IntegerMultBounds.MathlibTM2.Cost.compactSynLayerRoundOverhead_eventually,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactCaller_divisor_polynomial,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactCaller_runtime_divisor_polynomial,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactReservationFits_mono_chunk,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactCaller_retuned_eventually_full_dimension,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactCaller_runtime_eventually_scalarBudget,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactCaller_uniform_eventually_packed,
+    ``IntegerMultBounds.MathlibTM2.Mult.CompactSizes.K_pow_le,
+    ``IntegerMultBounds.MathlibTM2.Mult.CompactSizes.old_K_le_K,
+    ``IntegerMultBounds.MathlibTM2.Mult.CompactSizes.eventually_guard_room,
+    ``IntegerMultBounds.MathlibTM2.Mult.CompactSizes.eventually_K_le_predecessor,
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.compactSynRoundF_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.compactSynRoundO_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.compactSynLoopF_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.compactSynLoopO_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.compactSynLoopsContract_of_layer,
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.compactSynInitialGeometry_eventually,
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.compactSynInitialContract_eventually,
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.compactSynInitialLoops_eventually,
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.compactMnOriginalBootstrap_from_sources,
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.compactMnBootstrapFinal_globalsOnly,
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.compactMnBootstrapFinal_view,
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.compactMnBootstrapFinal_ready,
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.compactMnGlobalsExit_after_transform,
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.compactMnTransformPipeline_from_sources]
   for name in names do
     for ax in ← collectAxioms name do
       unless #[``propext, ``Quot.sound, ``Classical.choice].contains ax do
