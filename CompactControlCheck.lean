@@ -1,3 +1,23 @@
+import IntegerMultBounds.MathlibTM2.Cost.CompactTopControlPower
+import IntegerMultBounds.MathlibTM2.Cost.CompactTopCoordinates
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainBootstrapFrame
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepPrepare
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepBasis
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepPark
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepCleanup
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepClear
+import IntegerMultBounds.MathlibTM2.Cost.CompactTopPieceCount
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainConstants
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepSeq
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepProjection
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepWires
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepRecords
+import IntegerMultBounds.MathlibTM2.Cost.CompactTopRecordBound
+import IntegerMultBounds.MathlibTM2.Cost.CompactTopBlockBound
+import IntegerMultBounds.MathlibTM2.Cost.CompactTopOverhead
+import IntegerMultBounds.MathlibTM2.Cost.CompactTopControlVolume
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainBootstrap
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepSources
 import IntegerMultBounds.MathlibTM2.Fast.CompactMainRegs
 import IntegerMultBounds.MathlibTM2.Fast.CompactSynRoundGlobal
 import IntegerMultBounds.MathlibTM2.Fast.CompactSynRoundRegs
@@ -277,7 +297,54 @@ run_cmd do
     ``IntegerMultBounds.MathlibTM2.Fast.compactSynTopIn_of_legacy,
     ``IntegerMultBounds.MathlibTM2.LayerMachine.compactGlobalBootstrap_exec,
     ``IntegerMultBounds.MathlibTM2.LayerMachine.compactGlobalBootstrap_initialized,
-    ``IntegerMultBounds.MathlibTM2.LayerMachine.compactBasisRefresh_actual_rest]
+    ``IntegerMultBounds.MathlibTM2.LayerMachine.compactBasisRefresh_actual_rest,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactTopPc_header_bounds,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactTopPcCost_control,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactTopPcsCost_control,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactTopPcRecLen_control,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactTopBlockCost_control,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactTopControlCost_le,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactTopControlCost_volume,
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.compactMnBootstrapRead_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.compactMnBootstrap_exec,
+    ``IntegerMultBounds.MathlibTM2.Fast.CompactPlacedRuns.layRuns,
+    ``IntegerMultBounds.MathlibTM2.Fast.compactSynOutsideRowPush_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.compactSynSourceClear_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.compactSynLayerSources_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.compactSynLayerStep,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactTopPcs_length_log,
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.compactMnQ_pos,
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.compactMnQ_legacy,
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.compactMnQ_runtime,
+    ``IntegerMultBounds.MathlibTM2.Fast.LayRuns.compact_seq_assoc,
+    ``IntegerMultBounds.MathlibTM2.Fast.LayRuns.compact_seq_assoc_rev,
+    ``IntegerMultBounds.MathlibTM2.Fast.compactSynLayerSourcesOut_projection,
+    ``IntegerMultBounds.MathlibTM2.Fast.compactSynLayerSourcesOut_compact,
+    ``IntegerMultBounds.MathlibTM2.Fast.compactSynRaised_prepared,
+    ``IntegerMultBounds.MathlibTM2.Fast.compactSynRaised_prepared_synXS,
+    ``IntegerMultBounds.MathlibTM2.Fast.compactSynParkedW_empty,
+    ``IntegerMultBounds.MathlibTM2.Fast.compactSynRaised_restore,
+    ``IntegerMultBounds.MathlibTM2.Fast.compactSynLayerRecords_runs,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactTopPcs_length_power,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactTopControlCost_power,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactRelativePc_rebase,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactRelativePc_synPcs,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactRelativePc_reserved,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactRelativePc_ok,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactRelative_volume,
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.compactMnBootstrap_copies_cleared,
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.compactMnBootstrap_frame,
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.compactMnBootstrap_preserves_precision,
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.compactMnBootstrap_preserves_depth,
+    ``IntegerMultBounds.MathlibTM2.LayerMachine.compactBasisRefresh_input,
+    ``IntegerMultBounds.MathlibTM2.Fast.compactSynLayerRefresh_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.compactSynLayerRefresh_projection,
+    ``IntegerMultBounds.MathlibTM2.Fast.compactSynLayerRecordsRefresh_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.compactSynLayerPrepare_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.compactSynLayerPrepare_basis,
+    ``IntegerMultBounds.MathlibTM2.Fast.compactSynLayerPark_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.compactSynLayerCleanup_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.compactSynLayerClear_projection]
   for name in names do
     for ax in ← collectAxioms name do
       unless #[``propext, ``Quot.sound, ``Classical.choice].contains ax do

@@ -645,8 +645,17 @@ all executable top control work from kernel and recursive-call costs.
 unit multiplication linearly in actual stream volume, retaining configuration
 reads and unary headers explicitly. Widening and truncation now have checked
 working-volume bounds, and `Cost/CompactTopRowControlBound.lean` bounds row
-reshaping, padding and unpadding by actual stream volume. Piece-loop
-controls and complete constructor/setup absorption still require assembly.
+reshaping, padding and unpadding by actual stream volume.
+`Cost/CompactTopRecordBound.lean` derives every piece header length from its
+actual `TopPc.Ok` contract and charges dispatch, loop transitions and record
+erasure. `CompactTopBlockBound/CompactTopOverhead/CompactTopControlVolume`
+combine every nonrecursive top stage into the checked bound
+`2^14 * (pieceCount+1) * paddedVolume`; no unspecified control-cost premise
+remains. `CompactTopPieceCount` bounds the actual record count by
+`2+log_m(d)`, including empty active/back cases; `CompactTopControlPower`
+absorbs complete actual control work into padded volume times any fixed
+positive dimension power, with a fixed dyadic coefficient. Complete
+constructor/setup costs and recursive-call summation still require assembly.
 Specializing that envelope to the actual canonical layer costs,
 original-caller initialization and complete multiplier cost propagation
 remain necessary before claiming another public saving.
@@ -676,8 +685,25 @@ individual global reads, rest setup/teardown, register contracts, stash,
 configuration push/drop, unstash and sequential frame composition.
 `Fast/CompactMainRegs.lean` supplies a fixed expanded main host, injects all
 original stages, shares the actual source stream and separates the private
-compact bank. Complete round composition and main-level original-input
-bootstrap remain; the public machine has not switched to this host.
+compact bank. Complete round composition and integration with the main-stage contracts
+remain; the public machine has not switched to this host.
+`Fast/CompactMainBootstrapRead/CompactMainBootstrap` now execute the concrete
+copies from the named original precision register and initial transform
+dimension source, then initialize persistent globals with all costs explicit.
+The complete chunk-round program is defined in `CompactSynLayerStep`;
+`CompactSynLayerStepFrame/Sources` prove the actual singleton outside-row
+setup, original counter/global sourcing and source cleanup. This is not yet
+a theorem executing the complete round or multiplier.
+`CompactMainBootstrapFrame` now verifies preserved original sources and
+cleared input copies; `CompactMainConstants` covers the old and compact
+state capacities. `CompactSynLayerStepProjection/Wires/Records/Refresh/
+Prepare/Basis/Park/Clear/Cleanup/Seq` derive actual record production,
+refresh inputs/invariants, source restoration, complete preparation and
+parking, and exact final cleanup from the original round invariant.
+Whole-round top/restoration composition is the remaining local execution gate.
+`Cost/CompactTopCoordinates` translates the actual serialized records into
+relative layer coordinates without changing row stock or counting the low
+offset twice in volume.
 
 **Conditional first numerical gate after compact integration:** retain
 `epsilon=2^-5` and test `c=2^-3` only after the actual compact caller and
@@ -712,6 +738,14 @@ original precision into unary `Main.mnIo .dpn` (also `mnRnd .pn`), retained by
 `MainCorrect.MnMid`; the initial `SynV.p.D` is the original axis count and can
 be retained before selection changes. The bootstrap must connect those
 sources through the expanded main-host embedding and price their copies.
+`CompactMainConstants` fixes a state capacity covering both the original main
+and compact native programs. `Host.embProg` changes register/procedure layouts
+but preserves this capacity, so the old `MnPr` programs cannot silently be
+reused at a different `Q`. Either instantiate the polymorphic stages at the
+new capacity and port their main contracts, or prove exact local-state
+transport with an in-image invariant/normalization for `HS.st` and `HS.nxt`.
+The existing `Host.liftQ` is for multitape programs; it does not supply this
+host-program bridge. This remains part of actual main-stage integration.
 Then compose shared-host setup, record construction,
 rest initialization, stash, top execution, pop, unstash and cleanup, charging
 every stage and restoring the original round frame. Keep a proved fallback
