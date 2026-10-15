@@ -6405,3 +6405,7 @@ Parameters and asymptotics.
 - `MathlibTM2/Fast/CompactStoppedDigitsSpec.lean`: Executed stopped fields equal topPcRec of the actual synPcs mapped by compactStoppedPiece; actual summed expSeq/expZ agree, yielding semantic scanner contracts with unchanged frame/cost. Guarded check and five standard-axiom theorem audits pass.
 
 - `MathlibTM2/Fast/CompactStoppedCutoff.lean`: Generic-source program computes unary floor-log cutoff from an explicitly supplied positive threshold, preserves the source and live wires, and returns scratch empty with exact cost. Guarded check and two standard-axiom theorem audits pass. Global threshold generation, caller composition and precision/layer-cost matching remain open.
+
+- `NLogN/PhaseCellCrossCell.lean`: Executable direct cross-cell samples and a combined retained-band entry with actual phase selection, literal unit diagonal and band zeros; selected entry error is uniform across within-cell and cross-cell branches. Guarded check passed.
+
+- `NLogN/PhaseCell{TailBounds,SelectedTail}.lean`: Dimension-independent entire-lattice omitted-tail estimate, including all periodic aliases among omitted offsets. Both signed tails sum to at most2^(-46p) under explicit16p≤u*w². Guarded checks and the combined26-declaration cross-cell/tail standard-axiom audit pass. Executable band selection, periodic matrix assembly, operator row estimates and machine costs remain open.

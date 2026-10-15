@@ -1319,3 +1319,14 @@ improvements above.
 The cycle-free dyadic stage core stays below ParamProg; independent arithmetic
 witness modules do not introduce import cycles into actual sizing. The selected
 state-of-the-art target remains open.
+
+### Gaussian retained entries and entire-lattice tails
+
+The actual rational cross-cell evaluator now joins the structured within-cell
+coefficients with a uniform selected entry-error bound. The omitted signed
+entire-lattice tails, including omitted aliases, sum to at most `2^(-46p)`
+under the explicit band-width condition `16*p ≤ u*w²`. Three guarded source
+checks and a combined26-declaration standard-axiom audit pass. This completes
+coefficient and tail prerequisites, not the periodic rounded operator:
+executable band choice, row-error assembly, sharp inverse bounds and charged
+bulk execution remain. The public saving stays `2^-34`.
