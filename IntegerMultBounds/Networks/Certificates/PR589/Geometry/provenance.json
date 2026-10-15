@@ -1,0 +1,12 @@
+{
+  "artifact": "research/e8-bit-p111-tuned/tune/bitE8mut-p111-tuned.json.gz",
+  "artifact_sha256": "e3e301e62bc2b41dbf1ceac0acf3d35824ebeab1848c5a2142d4577b109da52f",
+  "exporter": "research/e8-bit-carrier-skeleton/code/bit/export_records.py",
+  "exporter_sha256": "8a5999601f917dbb492bb9ae9a344611f18cc7cedc53dc3c76496a369e530eb3",
+  "selected_source_manifest_sha256": "79b3de5db3dbcb9829789ba58e9e45758926031e2a7d80667a08429d369be53b",
+  "upstream_notice": "Dylan Crow, with Anthropic Claude assistance; Apache-2.0.",
+  "scope": "Concrete rational frame operators and decoded nine-lifecycle COPY semantics; actual ranks seven for all nine COPY operators, summing to 63; actual first phase-A MOVE rank one. No complete MOVE-rank profile, weighted moments, hosting, or tape-cost claim.",
+  "source_readme": "research/e8-bit-carrier-skeleton/README.md",
+  "source_readme_sha256": "e5212e8058c92a2b02cc12b4e174a65ce1cef7b4d7977ae770e64f5ff91b7204",
+  "convention": "Rational eight-dimensional address space with dot/2 form; shear pullbacks on F2-valued streams. Rational address coordinates are not reduced modulo two."
+}

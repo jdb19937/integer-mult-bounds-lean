@@ -1461,3 +1461,16 @@ bound, including small selected dimensions. Five modules and seven principal
 standard-axiom audits pass. The selected list is explicitly nonempty here;
 downstream refresh/prepare, the empty fallback and active recurrence absorption
 remain to connect.
+
+### Concrete PR589 rational frame operators
+
+The frame interpretation now uses actual rational E8 root spans with dot/2
+form, proving nondegeneracy by positivity. It acts by ShearFrame pullback on
+F2-valued streams over rational address pairs; rational geometry is not
+identified with binary coordinate geometry. COPY is the inverse projector
+shear, with rank equal to the actual root-span dimension. Comparable MOVE
+ranks are actual projector-difference ranks. All nine retained COPY ranks are
+seven (total63); the first literal MOVE0→2 has rank one. The guarded module
+checks and99-declaration standard-axiom audit pass; all511 earlier files remain
+unchanged. Complete selected label dimensions/nesting, occurrence MOVE profile,
+weighted moments and hosted machine costs remain open.
