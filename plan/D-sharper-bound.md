@@ -250,22 +250,32 @@ explicit bounds must be added when matching the complete pass.
 the next fiber's canonical bank, costing `8W+8+10*tblC W w`.
 `CRTControlLoop.lean` supplies a fixed indexed loop exposing that address to
 each body, including initialization, runtime count construction and cleanup.
-Its bound is `2^L*(bodyCost+4W+16)+6W+9L+17`. The body remains an explicit
-interface obligation until the all-fiber pass is assembled.
+Its bound is `2^L*(bodyCost+4W+16)+6W+9L+17`. The body contract is discharged by `CRTControlAllFibers.lean`, including
+output reversal and exact ordered execution of every fiber.
+`CRTControlRotation.lean` specializes this execution to the original `crtRotC`
+semantics with automatically proved arithmetic fits at width `3B+1`.
+`CRTControlWorkspace.lean`, `CRTControlSetup.lean` and
+`CRTControlAllWorkspace.lean` initialize and clear the bank and construct the
+actual unary word width. The rotation wrapper changes only the data source
+and restores every other register.
+`Cost/CRTControlAllFibers.lean` bounds all passes, bank setup/cleanup and width
+setup/cleanup by `2^21*(cw+1)*d*T*p` eventually, excluding descriptor generation.
 
 `CRTControlGenerate.lean` provides actual packet emission, binary powers
 without unary expansion, exposed-place/active-field arithmetic, and original
-weight advancement. The complete parameter-stream traversal, target omission,
-saved-zero insertion and source restoration are still unfinished. The generator
+weight advancement. `CRTControlGenerateLayout.lean` proves that ascending
+traversal with target omission and saved-zero insertion produces exactly the
+required descriptors in physical exposed-axis order. The concrete complete
+parameter-stream traversal and source restoration remain unfinished. The generator
 kernels and one-fiber pass are audited; neither constitutes a new complete CRT
 driver or a stronger public bound.
 
 Remaining integration steps, in order:
 
 1. **M2b — rotation scanner:** the complete one-fiber scan/rotation and indexed
-   loop setup are proved. Finish the runtime descriptor-stream producer and
-   instantiate the loop with the fiber contract; prove the all-fiber semantic
-   result, complete actual cost, bank initialization and cleanup.
+   loop, all-fiber semantic result, bank initialization/cleanup and width
+   setup are proved, with matching actual costs. Finish the runtime
+   descriptor-stream producer and include its cost.
    Preserve the existing order of triangular arithmetic passes.
 2. **M2c — driver and matching:** generate runtime unary widths and assemble
    the proved exposure/unexposure steps into the forward/inverse schedule; replace the

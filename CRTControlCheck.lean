@@ -1,3 +1,8 @@
+import IntegerMultBounds.MathlibTM2.Fast.CRTControlAllWorkspace
+import IntegerMultBounds.MathlibTM2.Fast.CRTControlGenerateLayout
+import IntegerMultBounds.MathlibTM2.Fast.CRTControlRotation
+import IntegerMultBounds.MathlibTM2.Fast.CRTControlSetup
+import IntegerMultBounds.MathlibTM2.Cost.CRTControlAllFibers
 import IntegerMultBounds.MathlibTM2.Fast.CRTControlPass
 import IntegerMultBounds.MathlibTM2.Fast.CRTControlGenerate
 import IntegerMultBounds.MathlibTM2.Fast.CRTControlLoop
@@ -14,8 +19,9 @@ import IntegerMultBounds.MathlibTM2.Cost.CRTControl
 import Lean.Util.CollectAxioms
 
 /-! Audit the replacement CRT control semantics and arithmetic kernels.
-Includes the concrete runtime descriptor scanner, offset conversion and distant
-exposure; the outer rotation loop and multiplier integration remain separate work. -/
+Includes the complete all-fiber rotation and its semantic specialization,
+workspace restoration and distant exposure. Runtime descriptor production and
+complete driver/multiplier integration remain separate work. -/
 
 open Lean in
 run_cmd do
@@ -79,7 +85,21 @@ run_cmd do
     ``IntegerMultBounds.MathlibTM2.Fast.crtControlGeneratePacket_runs,
     ``IntegerMultBounds.MathlibTM2.Fast.crtControlGeneratedField_spec,
     ``IntegerMultBounds.MathlibTM2.Fast.crtControlAdvanceWeight_runs,
-    ``IntegerMultBounds.MathlibTM2.Cost.crtControlOffsetUnaryCost_pipeline_le]
+    ``IntegerMultBounds.MathlibTM2.Cost.crtControlOffsetUnaryCost_pipeline_le,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtControlAllBody_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtControlAllFibers_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtControlAllFibersWorkspace_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtControlRotation_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtControlWorkspaceInit_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtControlWorkspace_restore,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtControlWidthSetup_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtControlWidthClear_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtControlGeneratedFields_full,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtControlGeneratedFields_zero_target,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtControlGeneratedField_eq_axisField,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtControlRotationWorkspace_runs,
+    ``IntegerMultBounds.MathlibTM2.Cost.crtControlAllWorkspace_pipeline_le,
+    ``IntegerMultBounds.MathlibTM2.Cost.crtControlAllFibersCost_pipeline_le]
   for name in names do
     for ax in ← collectAxioms name do
       unless #[``propext, ``Quot.sound, ``Classical.choice].contains ax do
