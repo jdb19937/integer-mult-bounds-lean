@@ -148,6 +148,48 @@ rounding and numerical correctness proofs can be reused. Price descriptors,
 cleanup and all intermediate data movement. Merely tightening `totCRT` would
 be unsound: the current CRT machine actually performs the quadratic schedule.
 
+**M2 implementation status:** the first bridge is proved in
+`Fast/CRTGap.lean`. `crtSwapGapBox` and `crtSwapGapBoxBits` connect the
+arbitrary-gap interchange to CRT record layouts; `crtGapHeaderP_runs`
+constructs the middle-count header in `4g+8` host steps while restoring its
+scratch register. `crtGapHdrBits_canonical` and `crtGapHdrBits_value` establish
+the full header contract. `crtSwapGapPass_runs` proves the executable pass,
+its volume/width cost, and restoration of all other registers. The pass assumes
+prepared headers; it does not absorb their generation or cleanup for free.
+The public fast-path aggregator imports this module, and `CRTGapCheck.lean`
+audits the new contracts against the standard axiom set.
+
+The driver is **not** a one-swap substitution. `crtFwdWalk_runs` moves
+`i :: reverse(range i)` to `reverse(range i) ++ [i]`. For three axes,
+`[2,1,0]` must become `[1,0,2]`; swapping the endpoints instead produces
+`[0,1,2]`. More importantly, `crtRotP_runs` in `Fast/CRTRot.lean` expects
+exactly `crtRevAx i` before the target: its address-validity count supplies
+`crtKI`, the weighted mixed-radix control value. Arbitrarily reordering that
+prefix changes the interpretation of the counter. The pure CRT content
+lemmas in `CRTSpec.lean` remain reusable once that machine interface is proved.
+
+Remaining integration steps, in order:
+
+1. **M2b — rotation scanner:** implement and prove a scanner for the chosen
+   direct-swap layouts, recovering the same `crtKI` and invalid-address behavior.
+   Preserve the existing order of triangular arithmetic passes. Price the
+   changed control computation, including descriptors and workspace cleanup.
+2. **M2c — driver and matching:** prove the forward/inverse linear routing
+   schedule and connect the header upgrade and swap pass to it; replace the
+   actual driver, establish round-trip correctness, and match its actual costs.
+   Separate the already-linear resampling exposure from `totCRT`, retaining
+   the residual quadratic arithmetic charge.
+3. **M2d — bound:** retune power-of-two parameters only after all machine
+   costs match; check the theorem target and its focused axiom audit, then
+   update the scoreboard.
+
+The current unconditional saving remains **`2^-93`**. M2a removes a primitive
+integration obligation, not the quadratic charge in the running multiplier.
+Targeted verification for M2a: compile `Fast/CRTGap.lean` with
+`check-lean-safe.py` and `-o .lake/build/lib/lean/IntegerMultBounds/MathlibTM2/Fast/CRTGap.olean`,
+then run the same guarded checker on `CRTGapCheck.lean`. Reuse existing
+dependency artifacts; no full build is needed.
+
 **Done means:** proved linear CRT swap count, reuse of the already linear
 resampling exposure, exact permutation equivalence,
 actual-step matching and a retuned end-to-end theorem showing the gain. This
@@ -331,7 +373,8 @@ reduction interfaces and encoding overhead if those corollaries are desired.
 
 1. **M1 complete:** public saving `2^-93`; exact internal margin between
    `2^-93` and `2^-92`, with the existing existential theorem preserved.
-2. **M2 next:** linear nonadjacent CRT/axis schedules, then retune and publish
+2. **M2 in progress:** distant-swap bridge checked; next prove the compatible
+   rotation scanner and linear CRT/axis schedules, then retune and publish
    the resulting stronger theorem. This yields a structural improvement
    without importing the large selected supplier inventory.
 3. **M3–M5:** compact controls, width/stock contracts and balanced coordinate
