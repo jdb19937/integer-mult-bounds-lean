@@ -34,7 +34,7 @@ machine that multiplies every input pair correctly in worst-case time
 
 | Part of the proof | Source | Mathematics | Tape | Files |
 | --- | --- | --- | --- | --- |
-| [Proved Mathlib end-to-end multiplier](plan/C-mathlib-end-to-end.md) | — | ✅ 1/1 | ✅ 1/1 | 543 |
+| [Proved Mathlib end-to-end multiplier](plan/C-mathlib-end-to-end.md) | — | ✅ 1/1 | ✅ 1/1 | 556 |
 
 The [proof details](plan/C-mathlib-end-to-end.md) cover the numerical
 algorithm, recursive layers, transforms, resampling, CRT routing, exact
@@ -125,6 +125,9 @@ criteria are in the [implementation plan](plan/D-sharper-bound.md).
 | Executable eighth-root parameters and distribution | ✅ | Charged table-slot overwrite and distribution wrapper preserve other fields; derived synthetic/layout fields consistently use the new chunk. |
 | Complete eighth-root transforms | ✅ | Actual forward/opposite specifications use the new initial wires and existing executable layouts, with no execution/layout/readiness oracles. |
 | Retuned reservation and complete top-cost exponent | ✅ | All reserved axes and the actual recursive top program, kernels and controls fit the proposed layer exponent with dyadic coefficients. |
+| Retuned distribution-to-transform entry | ✅ | Actual charged distribution preserves the main invariant and supplies the new transform entry state. |
+| Retuned aggregate analytic bound | ✅ | Stage envelope has saving `2^-37` with dyadic constants; actual machine costs must still be matched. |
+| Replaceable main procedure entry | ✅ | Checked restricted-call transport preserves layer execution when installing the expanded main body. |
 | Uniform transform cost and multiplier bound | 🟡 | Match full compact transform costs, sum rounds and close the stronger fixed-machine theorem. |
 | Stopped recursion | ⬜ | Required for the later selected construction; not yet implemented. |
 

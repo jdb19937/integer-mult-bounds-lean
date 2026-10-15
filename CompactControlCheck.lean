@@ -197,6 +197,19 @@ import IntegerMultBounds.MathlibTM2.Fast.CompactTopSelection
 import IntegerMultBounds.MathlibTM2.Node.CompactDescriptorBankOps
 import IntegerMultBounds.MathlibTM2.Node.CompactDescriptorBank
 import Lean.Util.CollectAxioms
+import IntegerMultBounds.MathlibTM2.Cost.CompactGrowth
+import IntegerMultBounds.MathlibTM2.Cost.CompactStageGrowth
+import IntegerMultBounds.MathlibTM2.Cost.CompactTotal
+import IntegerMultBounds.MathlibTM2.Cost.CompactRetunedCallerSlack
+import IntegerMultBounds.MathlibTM2.Cost.CompactRetunedCallerTopCost
+import IntegerMultBounds.MathlibTM2.Fast.CompactBdRetune
+import IntegerMultBounds.MathlibTM2.Fast.CompactBdWiresCost
+import IntegerMultBounds.MathlibTM2.Fast.CompactBundleWires
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynRetunedMainFrame
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynRetunedMainEntry
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynRetunedDistributionEntry
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainCalls
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainEntryTable
 
 /-! Focused integrity audit for the compact-control host primitives.
 These are prepared execution contracts, not an improved layer or multiplier theorem. -/
@@ -636,7 +649,47 @@ run_cmd do
     ``IntegerMultBounds.MathlibTM2.Fast.Main.compactSynUniformOpp_eventually,
     ``IntegerMultBounds.MathlibTM2.Fast.Main.compactSynRetunedGeometry_eventually,
     ``IntegerMultBounds.MathlibTM2.Fast.Main.compactSynRetunedFwd_eventually,
-    ``IntegerMultBounds.MathlibTM2.Fast.Main.compactSynRetunedOpp_eventually]
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.compactSynRetunedOpp_eventually,
+    ``IntegerMultBounds.MathlibTM2.Cost.CompactTotal.compact_cParam_pos,
+    ``IntegerMultBounds.MathlibTM2.Cost.CompactTotal.compact_cParam_le_one,
+    ``IntegerMultBounds.MathlibTM2.Cost.CompactTotal.compact_K_le_d_rpow,
+    ``IntegerMultBounds.MathlibTM2.Cost.CompactTotal.compact_d_rpow_le_two_K,
+    ``IntegerMultBounds.MathlibTM2.Cost.CompactTotal.compact_K_le_rpow,
+    ``IntegerMultBounds.MathlibTM2.Cost.CompactTotal.compact_rpow_le_four_K_rpow,
+    ``IntegerMultBounds.MathlibTM2.Cost.CompactTotal.exp_facts,
+    ``IntegerMultBounds.MathlibTM2.Cost.CompactTotal.mp_le,
+    ``IntegerMultBounds.MathlibTM2.Cost.CompactTotal.resamp_le,
+    ``IntegerMultBounds.MathlibTM2.Cost.CompactTotal.conv_inner_nonneg,
+    ``IntegerMultBounds.MathlibTM2.Cost.CompactTotal.conv_le,
+    ``IntegerMultBounds.MathlibTM2.Cost.CompactTotal.conv_nonneg,
+    ``IntegerMultBounds.MathlibTM2.Cost.CompactTotal.regime,
+    ``IntegerMultBounds.MathlibTM2.Cost.CompactTotal.bound_le,
+    ``IntegerMultBounds.MathlibTM2.Cost.CompactTotal.bound_isBigO,
+    ``IntegerMultBounds.MathlibTM2.Cost.CompactTotal.htime,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactRetuned_caller_eventually_slack,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactRetuned_caller_guard,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactRetuned_caller_top_cost,
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.compactBdRetuneFile_off,
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.compactBdRetuneFile_pre,
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.compactBdRetune_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.compactBdWires_spec,
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.compactDsyWiresCost_le,
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.compactDsRetuneCost_le,
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.compactBdWiresCost_le,
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.compactDsy_initial_depth,
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.compactSynRetunedMainPre_entry,
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.compactSynRetunedMainFwd_eventually,
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.compactSynRetunedMainOpp_eventually,
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.compactSynRetunedMainPre_placed,
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.compactSynRetunedPre_placed,
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.compactSynRetunedMainPre_of_distribution,
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.compactBdDist_entry_eventually,
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.exec_of_callsWithin,
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.callsWithin_embProg,
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.callsWithin_embProg_iff,
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.callsWithin_stateLiftPr_iff,
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.compactMainBody_layers_closed,
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.compactMainEntry_exec]
   for name in names do
     for ax in ← collectAxioms name do
       unless #[``propext, ``Quot.sound, ``Classical.choice].contains ax do

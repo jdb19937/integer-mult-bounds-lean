@@ -888,6 +888,17 @@ contracts with peak RSS below 4.2 GiB. All new modules passed guarded
 single-file checks; no full build ran or proof limits increased. Public
 saving remains `2^-66`.
 
+The next checked bridge specializes the top-cost geometry to actual caller
+records and proves the full-dimension capacity slack. The retuned distribution
+bundle now runs from the original distribution precondition, with dyadic costs,
+and establishes the placed transform entry state. Restricted-call transport
+also permits replacing the main entry while preserving recursive layer execution.
+`CompactGrowth`, `CompactStageGrowth` and `CompactTotal` prove the complete
+analytic stage envelope at saving `2^-37`, including unchanged point products,
+resampling and direct CRT costs. This remains conditional on matching actual
+machine runtime to that envelope: full transform-cost matching and expanded
+main-chain assembly remain open. Public saving is still `2^-66`.
+
 Prove complete temporary address ranges survive every role split, arbitrary
 initial temporary values are restored, and exceptional extraction, sorting,
 reinsertion and cleanup are charged at each node's own volume. Add an actual

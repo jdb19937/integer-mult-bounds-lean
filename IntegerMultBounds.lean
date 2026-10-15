@@ -2586,3 +2586,16 @@ import IntegerMultBounds.MathlibTM2.Fast.CompactSynUniformOppSpec
 import IntegerMultBounds.MathlibTM2.Fast.CompactSynUniformTransforms
 import IntegerMultBounds.MathlibTM2.Fast.CompactSynRetunedGeometry
 import IntegerMultBounds.MathlibTM2.Fast.CompactSynRetunedTransforms
+import IntegerMultBounds.MathlibTM2.Cost.CompactGrowth
+import IntegerMultBounds.MathlibTM2.Cost.CompactStageGrowth
+import IntegerMultBounds.MathlibTM2.Cost.CompactTotal
+import IntegerMultBounds.MathlibTM2.Cost.CompactRetunedCallerSlack
+import IntegerMultBounds.MathlibTM2.Cost.CompactRetunedCallerTopCost
+import IntegerMultBounds.MathlibTM2.Fast.CompactBdRetune
+import IntegerMultBounds.MathlibTM2.Fast.CompactBdWiresCost
+import IntegerMultBounds.MathlibTM2.Fast.CompactBundleWires
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynRetunedMainFrame
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynRetunedMainEntry
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynRetunedDistributionEntry
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainCalls
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainEntryTable
