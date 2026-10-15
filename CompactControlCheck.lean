@@ -227,6 +227,13 @@ import IntegerMultBounds.MathlibTM2.Fast.CompactMainRunsTime
 import IntegerMultBounds.MathlibTM2.Fast.CompactMainStableFrame
 import IntegerMultBounds.MathlibTM2.Fast.CompactMainSourceLift
 import IntegerMultBounds.MathlibTM2.Fast.CompactMainSourceStages
+import IntegerMultBounds.MathlibTM2.Cost.CompactRetunedLayoutMatch
+import IntegerMultBounds.MathlibTM2.Cost.CompactRetunedStashMatch
+import IntegerMultBounds.MathlibTM2.Cost.CompactRetunedTransformMatch
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainPrimitiveEntry
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainDispatch
+import IntegerMultBounds.MathlibTM2.Fast.CompactRetunedMainBound
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainChain
 
 /-! Focused integrity audit for the compact-control host primitives.
 These are prepared execution contracts, not an improved layer or multiplier theorem. -/
@@ -745,7 +752,28 @@ run_cmd do
     ``IntegerMultBounds.MathlibTM2.Fast.Main.compactMainStablePre_entry,
     ``IntegerMultBounds.MathlibTM2.Fast.Main.compactMainSourceRuns,
     ``IntegerMultBounds.MathlibTM2.Fast.Main.compactMainSrcFwd_eventually,
-    ``IntegerMultBounds.MathlibTM2.Fast.Main.compactMainSrcOpp_eventually]
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.compactMainSrcOpp_eventually,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactRetuned_ml_counts,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactRetuned_ml_writer_le,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactRetuned_ml_stage_le,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactRetuned_ml_lay_cost_le_gen,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactRetuned_stash_le,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactRetuned_finStash,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactRetuned_transform_cost_le,
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.compactMainEntry_srcRuns,
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.compactMainStage_calls,
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.compactMainEntry_primitive,
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.compactMainDigits_calls,
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.compactMainMv_calls,
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.compactMainPoint_calls,
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.compactMainRound_calls,
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.compactMainClearCm_calls,
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.compactMainReadLen_calls,
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.compactMainOut_calls,
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.compactMulInTime_of_main_exec,
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.compactRetunedTime_isBigO,
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.compactRetuned_mulInTime_of_exec,
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.compactMainChain_eventually]
   for name in names do
     for ax in ← collectAxioms name do
       unless #[``propext, ``Quot.sound, ``Classical.choice].contains ax do

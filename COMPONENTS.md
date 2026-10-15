@@ -6320,3 +6320,9 @@ Parameters and asymptotics.
 - `MathlibTM2/Fast/CompactSourceCost.lean`, `CompactMainRunsCost.lean`, `CompactMainRunsTime.lean`: Expanded-host source core and forward/opposite costs; all three source runs and full main-cost envelope yield the stronger asymptotic bound once complete transform costs are matched.
 
 - `MathlibTM2/Fast/CompactMainStableFrame.lean`, `CompactMainSourceLift.lean`, `CompactMainSourceStages.lean`: Main-chain invariant stable under main-register changes, and placed source stages that recover their precision source at entry.
+
+- `MathlibTM2/Cost/CompactRetunedLayoutMatch.lean`, `CompactRetunedStashMatch.lean`, `CompactRetunedTransformMatch.lean`: Complete concrete forward/opposite costs, including layouts, actual stored wires, original-source bootstrap, loops and cleanup, fit the retuned convolution envelope without supplied stage-cost hypotheses.
+- `MathlibTM2/Fast/CompactMainPrimitiveEntry.lean`: Original primitive executions and call support transported under the replaced main entry, preserving private registers with one charged normalization step.
+- `MathlibTM2/Fast/CompactMainDispatch.lean`, `CompactRetunedMainBound.lean`: Concrete full-time estimate at saving `2^-37` and final finite-machine packaging, conditional only on eventual execution within that estimate; public multiplier theorem remains unchanged.
+
+- `MathlibTM2/Fast/CompactMainChain.lean`: Complete fifteen-stage retuned arithmetic chain with exact source-stage costs, twelve wrapper steps and original coefficient-output contract, checked under default proof limits.

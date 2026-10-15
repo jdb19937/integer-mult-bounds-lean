@@ -914,6 +914,15 @@ and `compactMain_runs_time_isBigO` reduces the complete main-time estimate to
 the sum of the two complete transform costs. Actual stash/layout/bootstrap
 closure and whole-main execution assembly remain; the public bound is unchanged.
 
+The complete cost estimate is now closed. `compactRetuned_transform_cost_le`
+includes actual layouts, stored wires, original-source bootstrap, both loop
+directions and cleanup. `compactRetunedTime_isBigO` instantiates the actual
+retuned distribution and transform costs and proves the full main-time envelope
+at saving `2^-37` without stage-cost hypotheses. The remaining condition in
+`compactRetuned_mulInTime_of_exec` is eventual actual execution of the assembled
+main within this estimate. Until that condition is discharged, the public
+fixed-machine saving stays `2^-66`.
+
 Prove complete temporary address ranges survive every role split, arbitrary
 initial temporary values are restored, and exceptional extraction, sorting,
 reinsertion and cleanup are charged at each node's own volume. Add an actual
