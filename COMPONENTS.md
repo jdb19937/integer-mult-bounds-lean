@@ -6330,3 +6330,5 @@ Parameters and asymptotics.
 - `MathlibTM2/Fast/CompactMainParamCalls.lean`, `CompactMainDistributionCalls.lean`, `CompactMainInputDistribution.lean`: Actual input, parameter and retuned distribution execution under the final recursive table, with one normalized entry and no call-support premise.
 - `MathlibTM2/Fast/CompactMainRunsAt.lean`, `CompactMainChainExec.lean`, `CompactMainChainEntry.lean`, `CompactMainCoefficients.lean`, `CompactMainOutput.lean`: Concrete distributed-state entry to the full arithmetic chain, exact source-cost identity, coefficient correctness and canonical binary output.
 - `MathlibTM2/Fast/CompactMainCleanup.lean`, `CompactMainHost.lean`, `CompactMainPrefixCost.lean`, `CompactFinal.lean`: Complete private-register cleanup, finite push bound, exact prefix accounting and unconditional `MulInTime (2^37)⁻¹`, now exported by the public theorem.
+
+- `MathlibTM2/Cost/CompactLogGrowth.lean`: Dimension-independent dyadic bounds for binary logarithms and the Schönhage–Strassen polylogarithmic overhead, with logarithmic loss `2^-5`; integration into resampling costs remains separate.
