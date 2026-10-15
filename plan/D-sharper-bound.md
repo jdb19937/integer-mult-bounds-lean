@@ -1009,6 +1009,12 @@ All 12 declarations pass the standard-axiom audit; guarded single-file checking
 passes at default limits. This is not yet a statement about the full periodic
 matrix: alias sums, truncation and rounded inverse/boundary algorithms remain.
 
+`NLogN/PhaseCellScan.lean` additionally gives an executable integer
+addition/comparison scan, exact remainder invariant and exact phase/offset
+outputs at every natural physical index for `0<s<=t<2s`. At most one correction
+is needed per step. Guarded checking and all seven theorem axiom audits pass;
+tape encoding, physical cell/boundary selection and bit costs remain open.
+
 **M7b — bulk exposure and microbox tape execution.** Build ordered core/halo
 windows of that same rounded matrix, bound truncation/locality errors, retain
 period cuts and show tensor errors accumulate without a volume factor. Price
