@@ -1,0 +1,364 @@
+\documentclass[11pt]{amsart}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage[margin=1.1in]{geometry}
+\usepackage{newtxtext,newtxmath}
+\usepackage{microtype}
+\usepackage{booktabs}
+\usepackage[colorlinks=true, linkcolor=blue, citecolor=blue, urlcolor=blue]{hyperref}
+\usepackage{listings}
+\usepackage{upquote}
+\lstdefinelanguage{Lean}{
+  morekeywords={def,theorem,abbrev,open,namespace,end},
+  sensitive=true,
+  morecomment=[l]{--},
+}
+\lstset{language=Lean, basicstyle=\small\fontfamily{lmtt}\selectfont\upshape, keywordstyle=\bfseries,
+  columns=fullflexible, keepspaces=true, breaklines=false,
+  xleftmargin=1em, aboveskip=6pt, belowskip=6pt,
+  literate={ℕ}{{$\mathbb{N}$}}1 {ℝ}{{$\mathbb{R}$}}1 {ℤ}{{$\mathbb{Z}$}}1
+    {→}{{$\rightarrow$}}1 {×}{{$\times$}}1 {∃}{{$\exists$}}1 {∀}{{$\forall$}}1
+    {κ}{{$\kappa$}}1 {≤}{{$\le$}}1 {≥}{{$\ge$}}1 {∧}{{$\wedge$}}1
+    {¬}{{$\neg$}}1 {∈}{{$\in$}}1 {₀}{{$_0$}}1 {₁}{{$_1$}}1 {₂}{{$_2$}}1 {⊕}{{$\oplus$}}1
+    {ᶠ}{{$^{f}$}}1 {ℓ}{{$\ell$}}1
+}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\begin{document}
+
+\title[A fast Mathlib multiplier]{Integer multiplication below $n\log n$\\ on Mathlib's Turing machines}
+
+\author{Dan Brown$^*$}
+\email{jdb1729@gmail.com}
+\thanks{$^*$Author of \emph{The Da Vinci Code}.}
+
+\author{Kenny Daniel}
+\email{platypii@gmail.com}
+
+\date{October 14, 2026}
+
+\begin{abstract}
+We prove in Lean, against Mathlib's \texttt{Turing.FinTM2} and \texttt{TM2ComputableInTime},
+that a fixed finite multi-stack machine multiplies two naturals in worst-case time
+$O(n(\log n)^{1-\kappa})$ for some $\kappa>0$. The machine is one host program whose stages are
+the numeric algorithm of the paper: a CRT reindexing, two linewise resamplings, chirp
+products, a complex convolution through computed synthetic transforms whose rounds are the
+simultaneous butterfly layer of \S5, pointwise products, and a final rounding. Every stage is
+a verified machine with an explicit step bound, and the sum of the bounds is
+$O(n(\log n)^{1-\kappa})$ with $\kappa=\varepsilon c(1-\tau)$ explicit. The vendored library
+of Kenny Daniel supplies the network, the interchange, the Schönhage--Strassen products and
+the resampling mathematics. The development has 248 modules and 134\,932 lines; every main
+theorem depends only on \texttt{propext}, \texttt{Classical.choice} and \texttt{Quot.sound}.
+\end{abstract}
+
+\maketitle
+
+\section{The theorem}
+
+The statement (\texttt{Statement.lean}) is Mathlib vocabulary. The input $(a,b)$ is
+\texttt{encodingProd} of two copies of \texttt{encodingNatBool}: the LSB-first binary word of
+$a$ over \texttt{Sum.inl} symbols followed by that of $b$ over \texttt{Sum.inr}; its length is
+$n=\texttt{Nat.size}\,a+\texttt{Nat.size}\,b$. The output is the canonical LSB-first word of
+$ab$. The time function of \texttt{TM2ComputableInTime} bounds the step count on every input
+of length $n$, so the bound is worst case.
+
+\begin{lstlisting}
+abbrev pairEnc : ℕ × ℕ → List (Bool ⊕ Bool) :=
+  (encodingProd encodingNatBool encodingNatBool).encode
+
+def MulInTime (κ : ℝ) : Prop :=
+  ∃ M : TM2ComputableInTime pairEnc encodingNatBool.encode
+          (fun p : ℕ × ℕ => p.1 * p.2),
+    (fun n : ℕ => (M.time n : ℝ)) =O[atTop]
+      fun n : ℕ => (n : ℝ) * Real.log n ^ (1 - κ)
+
+def Statement : Prop := ∃ κ : ℝ, 0 < κ ∧ MulInTime κ
+\end{lstlisting}
+
+\begin{theorem}[\texttt{Theorem.lean}]
+\texttt{theorem statement : Statement}.
+\end{theorem}
+
+The proof is one line: \texttt{Fast/Final.fast\_statement\_of} applied to
+\texttt{Cost/MatchSynLoop.mr\_loop\_cost\_le}. The first is the host program with every bundle
+instantiated; it takes as its only hypothesis a bound on the cost of the round loops of the
+synthetic transforms, and the second proves that bound. \texttt{FastPathCheck.lean} asserts with
+\texttt{\#guard\_msgs} that \texttt{statement} and the main intermediate theorems depend on
+\texttt{propext}, \texttt{Classical.choice} and \texttt{Quot.sound} only. The exponent is
+$\kappa=\varepsilon c(1-\tau)=296/(10^{11}\cdot 2^{131})$ (\texttt{Cost/Total.tot\_kappa\_eq}).
+
+\section{The reduction to one program}
+
+A \emph{host program} is a procedure table in the structured stack language over the Mathlib
+input and output stacks and a bank of register stacks. \texttt{HostMulWithin body pm v$_0$ time x
+y} says that from the store holding $x\#y$ on the input register the procedure \texttt{pm}
+halts in the exact final configuration required by \texttt{TM2ComputableInTime}, with the
+product on the output register, in at most $\texttt{time}(n)-2$ steps.
+
+\begin{theorem}[\texttt{Fast/Glue.statement\_of\_dispatch}]
+If a host program satisfies \texttt{HostMulWithin} on every input of encoded length at least
+$n_0$ and its time is $O(n(\log n)^{1-\kappa})$ with $\kappa>0$, then \texttt{Statement} holds.
+\end{theorem}
+
+A dispatcher reads up to $n_0$ symbols into its finite control, answers a short input from a
+finite table, and otherwise pushes the symbols back and runs the program.
+\texttt{Cost/Total.tot\_htime} turns any eventual bound $\texttt{time}(n)\le\texttt{totBound}\,C\,n$
+on an $\mathbb N$-valued time into the hypothesis \texttt{htime} at $\kappa=\texttt{totKappa}$.
+
+\section{The numeric algorithm}
+
+\texttt{Mult/Pipeline.pipelineCoeffs n x y} is the computation of the paper with every
+ingredient fixed: the parameters $b,p,d,K,T,r,\ell,t_i,s_i,\alpha,\gamma$ of
+\texttt{Mult/Sizes}; the CRT reindexing $\Phi$ of \texttt{Mult/CRT}; the line maps
+$\widetilde A$ and $\widetilde B_0$ with the vendored weight tables; the chirp table; the
+computed complex convolution through twisted synthetic transforms; pointwise products; the
+final scaling and rounding.
+
+\begin{lstlisting}
+theorem pipeline_correct :
+    ∀ᶠ n in Filter.atTop, ∀ x y : ℕ, Nat.size x ≤ n → Nat.size y ≤ n →
+      evalBase (2 ^ b n) (pipelineCoeffs n x y) = x * y
+\end{lstlisting}
+
+The moduli are pairwise coprime (\texttt{Mult/Moduli.src\_good}): group A moduli $Nx+1$ and
+group B moduli $Ny+2$ with $N$ the product of the odd numbers below $4d$, so no prime number
+theorem is used. The source transform is within $9\cdot 2^\gamma T\log_2T$ grid units of the
+exact one (\texttt{Mult/SourceErr}), the synthetic convolution error is
+$\sqrt2\,M(3\ell+1)$ (\texttt{Mult/SynthErr}), and the forward and opposite synthetic
+transforms are exactly $\ell$ rounds of normalized butterflies on one selected bit per axis
+followed by per-record twiddles $y^{\mp E}$ (\texttt{Mult/Rounds}). $\widetilde B_0$ runs
+$\alpha^2$ Neumann steps on a window of $\lfloor\sqrt p\rfloor/(2\alpha)+1$ terms
+(\texttt{Mult/FastB0}). Fixed-point products inside the per-entry stages go through the
+vendored Schönhage--Strassen multiplier.
+
+\section{The host program}
+
+\texttt{Fast/MainProg.mnFast} is the single host program. Its register file
+(\texttt{Fast/MainRegs}) is $\texttt{MnAll}=\texttt{MnR}\oplus\texttt{Fin 64}\oplus
+\texttt{LReg SXReg}$: the stage registers, the 64 registers of the Schönhage--Strassen
+multiplier, and a reserved copy of the register file of the layer machine for the synthetic
+transforms and the parameter distribution. The stages, with the cost term of each in
+\texttt{Cost/Total.totBound}:
+
+\begin{center}\small
+\begin{tabular}{@{}llll@{}}
+\toprule
+& stage & semantics & cost term\\
+\midrule
+F1 & read $x$, $y$ & \texttt{readInput\_exec} & $n$\\
+F2 & parameters, tables & \texttt{pmParams\_exec}, table machines & $n+B^C$, $Tp$\\
+F3 & scaled digit records & \texttt{digitRecords\_exec} & $n$\\
+F4 & $\Phi$: stream to padded box & \texttt{crtForward\_runs} & $Tp\,d^2(1+\ell^\tau)$\\
+F5, F6 & $F'$ on $x$ and on $y$ & \texttt{srcP\_runs} & resampling, convolution, $TM(p)$\\
+F7 & pointwise products & \texttt{cst\_point\_runs} & $TM(p)$\\
+F8 & $G'=\overline{F'(\bar\cdot)}$ & \texttt{srcOpp\_runs} & as F5\\
+F9 & $\Phi^{-1}$: box to stream & \texttt{crtInverse\_runs} & $Tp\,d^2(1+\ell^\tau)$\\
+F10 & rounding & \texttt{roundStage\_exec} & $S\,M(p)$\\
+F11 & carries, output & \texttt{carryOut\_exec} & $n$\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Here $B=b(n)=\lceil\log_2n\rceil$, $M(p)=p^{1+\delta}$ with $\delta=1/8$ is the cost of one
+$p$-bit product, the resampling term is $d\,T\,p^{3/2+\delta}\alpha$, and the convolution term
+is $Tp\,(dK+pK^{\tau-1}+\ell d^{\lambda'}+\log(rp)\log\log(rp))$. The program ends by emptying
+every register and resetting its local state.
+
+Two parts of \texttt{mnFast} are abstract parameters with contracts: the parameter
+distribution (\texttt{MnDistSpec}) and the synthetic transforms (\texttt{SynFwdSpec},
+\texttt{SynOppSpec}, \texttt{Fast/ConvSpec}). \texttt{Fast/MainCorrect} proves correctness beyond
+the threshold $n_0$ and \texttt{Fast/MainTime} the bound $\texttt{mnTime}\le\texttt{totBound}\,C$.
+
+\begin{theorem}[\texttt{Fast/MainStatement.statement\_of\_specs}]
+If for some coefficient width $w$ there are a layout bundle $L:\texttt{MnLay}\ w$ and a
+distribution bundle \texttt{MnDist mnKa mnLb w (mn$\sigma$L L)}, then \texttt{Statement} holds.
+\end{theorem}
+
+\texttt{Fast/BundleMnLay.blLay} builds \texttt{MnLay} from the verified layout programs
+\texttt{slyFwd}, \texttt{slyOpp} (\texttt{Fast/SynLayFwd}, \texttt{Fast/SynLayOpp}), the
+parameter wires $v_0$ and the transform cost bound. \texttt{Fast/BundleDist.bdDist} builds
+\texttt{MnDist} from the verified distribution machine \texttt{dsMain}, the rounding parameters
+(\texttt{Fast/BundleRnd}) and a wires program that writes the transform parameters on the
+reserved layer registers; the wires program is \texttt{Fast/DistSynMain.dsyProg}
+(\texttt{Fast/BundleWires}). \texttt{Fast/MainFinal.statement\_of\_wires} needs only the layout
+bundle and the wires program, and \texttt{Fast/Final.fast\_statement\_of} supplies both from
+the loop-cost bound.
+
+\section{The stage machines}
+
+Every machine comes with an \texttt{\_exec} or \texttt{\_runs} theorem giving its exact final
+register contents and an explicit step bound.
+
+\begin{itemize}
+\item \emph{Input and output} (\texttt{Fast/Input}, \texttt{Fast/Output}): the operands LSB
+first, the unary input length, the digit records $\mathrm{digit}\cdot 2^{p-b-2}$ zero padded
+to $S$; carry propagation in radix $2^b$ and the Mathlib-encoded output.
+\item \emph{Parameters} (\texttt{Fast/Param*}): a binary table machine with 40 variables of
+$4\,\texttt{size}\,n+16$ bits computes every parameter of \texttt{Mult/Sizes},
+\texttt{Mult/Moduli}, \texttt{Mult/Pipeline} and \texttt{Mult/Chirp} exactly from the unary
+input length, emits the axis lengths as word streams, and pushes unary copies
+(\texttt{pmParams\_exec}, cost $16n+O((\texttt{size}\,n)^4)$ plus the unary copies).
+\item \emph{Tables} (\texttt{Fast/Table*}): the same register machine
+(\texttt{Fast/TableVM}, at most $32(W+4)^2+8w$ host steps per atom) computes Machin's $\pi$
+(\texttt{tblPi\_eq\_piQ}), the Taylor exponentials and the weight tables of $\widetilde A$ and
+$\widetilde B_0$, the chirp axis tables and the twist tables, as streams of Gaussian numerators
+in the order the pipeline consumes them.
+\item \emph{Distribution} (\texttt{Fast/Dist*}): one fixed program after the parameter machine
+writes the record and stream formats read by every stage loader (the per-axis records of the
+resamplings, the chirp blocks, the layout parameters, the ring header, the layer constants)
+and the register file between runs of the source transform
+(\texttt{dsAll\_exec}, \texttt{dsAll\_base}; cost $2\cdot10^{10}(n+(b+1)^5)$).
+\item \emph{CRT reindexing} (\texttt{Fast/CRT*}): per target axis a walk moving the axis below
+the preceding ones and a rotation pass; forward with a padding scan, inverse with a deletion
+scan (\texttt{crtForward\_runs}, \texttt{crtInverse\_runs}, round trip
+\texttt{crtRoundTrip\_runs}).
+\item \emph{Resampling} (\texttt{Fast/Prep*}, \texttt{Fast/Resamp*}): the line machines of
+$\widetilde A$ and of the fast $\widetilde B_0$ applied along every axis of the padded box in
+the order of \texttt{tensorZR}, the last axis directly and every other axis through the
+vendored interchange with the last one (\texttt{rsaStage\_exec}, \texttt{rsbStage\_exec};
+\texttt{rsa\_all\_lineA}, \texttt{rsb\_all\_tensor}).
+\item \emph{Chirp and pointwise} (\texttt{Fast/Chirp*}, \texttt{Fast/Point*},
+\texttt{Fast/CMul*}): the chirp kernel box from the axis tables by repetition passes and table
+products (\texttt{cst\_chirpBox\_kernel}); entrywise chirp products, conjugation, the exact
+scale by $2^\gamma$ and the pointwise product (\texttt{cst\_point\_runs}), each through the
+complex multiplier \texttt{cmulStream} over Schönhage--Strassen.
+\item \emph{Convolution} (\texttt{Fast/Conv*}, \texttt{Fast/Ring*}, \texttt{Fast/Load*}): the
+twist, the synthetic convolution and the untwist on box streams
+(\texttt{cvBox\_convBox}, the instance \texttt{Pipeline.convBox n}); the pointwise negacyclic
+ring products of two record streams by one placed run of the vendored signed ring product
+(\texttt{rpProg\_exec}); the loaders of the chirp kernel, the layout stage and the ring header
+(\texttt{ldChirpStage\_exec}, \texttt{ldLayGenStage\_exec}, \texttt{ldRpStage\_exec}).
+\item \emph{Rounding} (\texttt{Fast/Round}): coefficient $i$ is
+$\mathrm{round}(2^{2b+4}S^2\,\mathrm{re}\,N_i/2^p)$, computed by a sign mask, one
+Schönhage--Strassen product and a shift (\texttt{roundStage\_exec}, \texttt{rndSquare\_exec}).
+\end{itemize}
+
+\section{The synthetic transforms and the layer machine}
+
+\subsection*{The layer machine}
+\texttt{Node/*} is the machine of \S5. One procedure \texttt{layer} on the register file
+\texttt{LReg} (the array \texttt{io}, the bank of wire registers with temps, a LIFO parking
+register for the parent's wires during a child call, gate and shift counters, phase, leaf,
+basis-change and route registers, unary parameter registers) computes the recursive
+\texttt{layerZ} on Gaussian integers modulo $2^w$: at a node the array is split into roles,
+the input phases are applied, the instruction list of the vendored network runs with
+\texttt{gateProg} for gates and \texttt{factorProg} for factors (a basis change by slot XORs,
+a child call with the other wires parked, the basis change undone), the output phases and the
+unit $i^{27k}$ are applied, and the roles merge. \texttt{Node/LayerProc.layer\_exec} is proved
+by strong induction on the level. \texttt{Node/TopProc.topProg} is one fixed program computing
+\texttt{topZ} (phase $S$, kernels on the top chunks, rows and padding, the base-$m$ pieces
+through \texttt{layer}, phase $S$, the unit $(1-i)^D2^{-\lfloor D/2\rfloor}$, the truncating
+shift); every size and configuration value is read from registers at run time, the pieces from
+a record consumed by a loop (\texttt{topProg\_exec}).
+
+\subsection*{The synthetic transforms}
+\texttt{Fast/Syn*} runs the rounds of \texttt{Mult/Rounds} on the layer machine. The records
+stay in the physical order of the layout $L=\texttt{layPerm}\;es\;\ell\;K$, written by the
+layout programs. For each round $h$ the program \texttt{synRec} computes the configuration and
+piece records of \texttt{topProg} from unary parameters (\texttt{Fast/SynRec}). A chunk round
+selects the bits $\rho+K(c_0+j)$, $j<D$; the highest
+\[
+ q_0=\min\bigl(46\lfloor\log_mD\rfloor,\,D\bigr)
+\]
+of them are top kernels, the rows are the top $a+Kq_0$ address bits, and the remaining
+$D'=D-q_0$ bits are selected by one piece per nonzero base-$m$ digit of $D'$ on
+$R_2=2^X\,NW^{J'}$ rows with $2^{a'}\le R_2<2^{a'+1}$: the padding at most doubles the volume.
+The forward and opposite transforms are one loop over the round counter
+(\texttt{Fast/SynFwd.synFwd\_spec\_br}, \texttt{synOpp\_spec\_br}), with the twiddles of
+\texttt{Fast/Twiddle*}.
+
+\subsection*{Register embedding}
+The transforms are proved on the register file of the layer machine and run inside the
+multiplier's file. \texttt{Host/Embed.exec\_emb}: an execution of $p$ in $n$ steps on $T$
+tapes gives an execution of \texttt{embProg e $\iota$ p} in exactly $n$ steps on $T'$ tapes along an
+injective $e:\texttt{Fin}\,T\to\texttt{Fin}\,T'$, from every big store that reads back to the
+small one, ending in a store that reads back to the small final one and is unchanged off the
+image of $e$. \texttt{Fast/SynFrame.embSynFwd\_spec} restates both contracts in the big file.
+
+\section{The cost}
+
+\subsection*{The analytic bound}
+\texttt{Cost/Total.totBound C n} is $C$ times the sum of the stage terms of the table above,
+written in the parameters of \texttt{Mult/Sizes}. The exponents in force are the vendored
+$\tau=1-296/10^{11}$ (interchange) and $\sigma=1-418/10^{12}$ (branching),
+$\beta=1/2$, $\lambda=1-3/10^{10}$, $\lambda'=1-1/10^{10}$, $\delta=1/8$, and
+$\varepsilon=2^{-75}$, $c=2^{-56}$ from the sizes. With $Tp\le48n$ each term is at most a
+constant times $nB^x$; the largest exponent is $1-\kappa$, from the convolution's
+$Tp\cdot pK^{\tau-1}$, since $B^{\varepsilon c}\le 4K$. The ring-product term
+$Tp\,\log(rp)\log\log(rp)$ has exponent $1-\varepsilon+\varepsilon c$.
+
+\begin{lstlisting}
+theorem totBound_isBigO (C : ℕ) :
+    ∃ κ : ℝ, 0 < κ ∧
+      (fun n => totBound C n) =O[atTop]
+        fun n : ℕ => (n : ℝ) * Real.log n ^ (1 - κ)
+\end{lstlisting}
+
+\texttt{Cost/Growth} holds the bounds on the parameters in powers of $B$ ($d\le B^\varepsilon\le
+2d$, $K\le B^{\varepsilon c}$, $24n\le Tp\le 48n$, $d\ell\le 2B$, $\alpha\le 4d^{1/2}B^{1/4}$)
+and the closure lemmas for \texttt{IsBigO} against $n(\log n)^e$, including the
+Schönhage--Strassen step bound $m(\log m+1)(\log\log m+1)\le 625\,m^{9/8}$.
+
+\subsection*{The layer recurrence}
+\texttt{Cost/Branching} computes the factor count $F$ of the vendored network's program as the
+rank sum of its edges and proves $F/NW<m^\sigma$ with $NW=58645352620000$.
+\texttt{Cost/LayerCost} puts the step bound of \texttt{layer} in per-volume form:
+$G(0)\le 200u(1+n/(rw))$ and
+$G(j+1)\le (F/NW)\,G(j)+C_1(1+\epsilon)((Km^ju)^\tau+1)$ with $\epsilon\le1$ at admissible
+nodes. \texttt{Layer/Recurrence.layer\_cost\_bound} solves the recurrence: under
+$\max(\tau,\sigma)<\lambda<\lambda'$, $\tau(1+c/\beta)\le\lambda$ and
+$\sigma+\beta(1-\sigma)<\lambda'$, the base-$m$ pieces of $D'\le d$ chunks plus
+$q_0\le Q(1+\log_md)$ kernels cost at most $C\,d^{\lambda'}$ normalized, with one constant for
+all $d$, $K$, cutoffs and piece decompositions. \texttt{Cost/Total.tot\_lam\_conditions}
+checks the inequalities at the exponents in force.
+
+\subsection*{Matching the machines}
+\texttt{Cost/Match*} bounds every stage machine by its term, eventually, with constants
+depending only on the fixed data (the register count, the interchange bank size, the alphabet,
+the vendored constants, the width ratios $w\le c_wp$, $W\le c_Wp^2$). Two charges go beyond
+the intended terms. The resamplings interchange each axis with the last one, $2(d-1)$
+interchanges of volume $3Tw$ at $\Theta(dTp\ell^\tau)$ in all; this exceeds the resampling
+term and is charged to the CRT term $Tp\,d^2(1+\ell^\tau)$. The layout writer's table word has
+$rw+N^2+N+4$ bits, about $r\cdot w$, and the writer costs a polynomial in $B$ and $r$, inside
+$Tp$ (\texttt{ml\_poly\_r\_le\_T}). The synthetic transforms are matched in three parts: the
+layout programs against $Tp(dK+pK^{\tau-1})$ (\texttt{Cost/MatchSynLay}), the layer of a chunk
+round against $Tp\,d^{\lambda'}$ through \texttt{layer\_cost\_bound}
+(\texttt{Cost/MatchSynPcs}, \texttt{MatchSynTop}), and the records, rest states, parking and
+twiddles against $Tp$ per round (\texttt{Cost/MatchSynOver}).
+
+\begin{theorem}[\texttt{Cost/MatchSynLoop.mr\_loop\_cost\_le}]
+For every $C_s$ and $k$ there is $C$ such that for all large $n$ and every parking cost
+$\mathrm{stk}\le C_s(r+(b+1)^k)$, the forward and opposite round loops of the synthetic
+transforms at the pipeline parameters cost at most $C\cdot\texttt{totConv}\,n$ steps.
+\end{theorem}
+
+\section{The vendored library}
+
+The directory \texttt{IntegerMultBounds/} is the library of Kenny Daniel (MIT license). The
+development uses its network (\texttt{Networks/}: the compact complex network with
+$W=58645352620000$ wires and label dimension $m=25^3$, its directions and the branching bound
+\texttt{ComplexRank25.branching\_bound}), its interchange of address chunks
+(\texttt{Swap/}, \texttt{BinaryInterchangeRun.uniform\_bound}, cost $CV\max(1,L)^\tau$), its
+Schönhage--Strassen multiplier and signed ring product (\texttt{Schoenhage/}), its resampling
+mathematics (\texttt{Resampling/}: the weight tables, the Neumann series of $\widetilde B_0$,
+the operator-norm bound \texttt{opNorm\_offDiagCLM\_le\_rpow}), and \texttt{ExactRecovery}.
+Each vendored program runs inside the host as a foreign call with a \texttt{HoareTime}
+contract on host registers (\texttt{Host/Core}, \texttt{Host/Placed}).
+
+\section{Size and verification}
+
+\texttt{IntMul.lean} imports 248 modules, 134\,932 lines in all: \texttt{Fast} (144 modules,
+78\,548 lines), \texttt{Node} (20, 21\,268), \texttt{Cost} (21, 9\,054), \texttt{Host}
+(18, 8\,732), \texttt{Mult} (16, 8\,234), \texttt{Layer} (19, 6\,442), \texttt{Bridge}
+(7, 2\,085), \texttt{Machine} (1, 512), and \texttt{Statement.lean}, \texttt{Theorem.lean}.
+\texttt{lake build} of the library passes. \texttt{FastPathCheck.lean} asserts with
+\texttt{\#guard\_msgs} that \texttt{statement} and the main intermediate theorems depend on
+\texttt{propext}, \texttt{Classical.choice} and \texttt{Quot.sound} only, and
+\texttt{MathlibTM2Check.lean} does the same for the bridge theorems of \texttt{Bridge/Main}
+(\texttt{mul\_quadratic}, \texttt{statement\_of\_endToEnd}, \texttt{tm2\_of\_runsWithin},
+\texttt{mulInTime\_of\_computesWithin}); CI runs both.
+
+\end{document}

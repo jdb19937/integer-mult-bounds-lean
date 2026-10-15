@@ -1,6 +1,9 @@
 import IntegerMultBounds.MathlibTM2
 
-/-! The main theorems of the fast-path foundations depend only on Lean's three standard axioms. -/
+/-! The theorem and the main intermediate results depend only on Lean's three standard axioms. -/
+
+/-- info: 'IntegerMultBounds.MathlibTM2.statement' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs (whitespace := lax) in #print axioms IntegerMultBounds.MathlibTM2.statement
 
 /-- info: 'IntegerMultBounds.MathlibTM2.Fast.statement_of_dispatch' depends on axioms: [propext, Classical.choice, Quot.sound] -/
 #guard_msgs (whitespace := lax) in #print axioms IntegerMultBounds.MathlibTM2.Fast.statement_of_dispatch
