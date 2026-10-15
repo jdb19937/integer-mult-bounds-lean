@@ -9,6 +9,12 @@ import IntegerMultBounds.MathlibTM2.Node.CompactGeometryRecursive
 import IntegerMultBounds.MathlibTM2.Node.CompactEncoding
 import IntegerMultBounds.MathlibTM2.Node.CompactSlotXor
 import IntegerMultBounds.MathlibTM2.Fast.CompactSynRecArithmetic
+import IntegerMultBounds.MathlibTM2.Cost.CompactSlotXor
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynRecPieces
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynRec
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynRecRows
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynSel
+import IntegerMultBounds.MathlibTM2.Node.CompactEncodingOffset
 import Lean.Util.CollectAxioms
 
 /-! Focused integrity audit for the compact-control host primitives.
@@ -39,7 +45,17 @@ run_cmd do
     ``IntegerMultBounds.MathlibTM2.Cost.compactRuntimeProg_exec_le,
     ``IntegerMultBounds.MathlibTM2.Cost.compactRuntimePacked_of_dyadic,
     ``IntegerMultBounds.MathlibTM2.Fast.sg_compactCeil,
-    ``IntegerMultBounds.MathlibTM2.Fast.sg_compactReserveCounts]
+    ``IntegerMultBounds.MathlibTM2.Fast.sg_compactReserveCounts,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactSlotXorCost_le,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactSlotXor_exec_le,
+    ``IntegerMultBounds.MathlibTM2.Fast.sg_compactReservedPieces,
+    ``IntegerMultBounds.MathlibTM2.Fast.sg_compactSynRec,
+    ``IntegerMultBounds.MathlibTM2.Fast.sg_compactRowReserve,
+    ``IntegerMultBounds.MathlibTM2.Fast.compactReservedPcs_ok,
+    ``IntegerMultBounds.MathlibTM2.Fast.compactReservedPcs_exp_sum,
+    ``IntegerMultBounds.MathlibTM2.Node.compactOffsetArray_encZ,
+    ``IntegerMultBounds.MathlibTM2.Node.compactOffsetArray_encZ_pullM,
+    ``IntegerMultBounds.MathlibTM2.Node.compactOffset_volume]
   for name in names do
     for ax in ← collectAxioms name do
       unless #[``propext, ``Quot.sound, ``Classical.choice].contains ax do

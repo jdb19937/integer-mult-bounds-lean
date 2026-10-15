@@ -426,7 +426,7 @@ This is not yet a compact Mathlib layer: their inputs require full reserved
 front/control/back fields. Prove the live `encZ` layout supplies those ranges,
 construct the original shape/node/slot descriptors, normalize the host bank
 with charged cleanup, and discharge local density and payload-width premises.
-The late endpoint also needs `f>1` and `guard>=2`; handle smaller leaves explicitly.
+The unified runtime bridge below handles singleton slots as well as both native orders.
 Then replace the actual `slotXorProg` calls and their cost matching together.
 
 **Checked host primitives:** `Node/CompactSwap.lean` executes a genuine
@@ -437,8 +437,8 @@ its cost in compact width and volume with explicit bank-size bounds.
 width counters and restores source/parameters/scratch, with exact linear cost.
 The guarded checks and `CompactControlCheck.lean` pass for all four audited
 contracts. These prepared primitives do not yet change the running layer or
-the public saving `2^-66`; the complete native-stage bridge and reservation
-invariant above are the next integration work.
+the public saving `2^-66`; their subsequent native-stage and reservation
+bridges are recorded below.
 
 **Complete host-stage bridge checked:** `Node/CompactRotHost.lean` normalizes
 placed native banks with exact frame restoration. `Node/CompactRotStage.lean`
@@ -470,12 +470,44 @@ must fit both the payload and the cube of the chosen global size parameter.
 `Fast/CompactSynRecArithmetic.lean` executes ceiling division and computes
 front/back reservation counts, remaining active width and offset from runtime
 registers, with exact costs and restored scratch. The row-axis count is still
-an input. All 23 focused axiom contracts pass.
+an input. The focused audit covers these execution, cost and validity contracts.
 
-Root reservation and row-axis production, actual recursive records, header
-materialization, caller size inequalities, the stopped branch and recurrence,
-and integration into the running layer remain open. These checked bridges do
+**Runtime reservation records checked:** `Fast/CompactSynRecRows.lean` computes the
+exact native row-axis reservation from the original runtime axis count.
+`CompactSynRecPieces.lean` and `CompactSynRec.lean`
+compose reservation arithmetic with active base-m pieces and an optional back
+leaf, then restore all temporary counters. Only the serialized piece records
+and their total exponent remain. `CompactSynSel.lean` proves their validity
+at any sufficient shared row depth and their exact exponent sum.
+`Cost/CompactSlotXor.lean` bounds complete symbol-stream execution with a fixed
+power-of-two coefficient, including codecs and transfers.
+
+`Node/CompactEncodingOffset.lean` folds low spectator address bits into the
+coefficient index without moving the encoded stream. The shifted slot action
+commutes with this reshape, and expanded payload and volume agree exactly.
+This resolves the low-offset mismatch in the prepared compact executor.
+
+The row-axis and piece-building executions are checked separately. Their final
+root wrapper remains unverified after excessive proof-memory growth and is
+excluded from this checkpoint; proof limits were preserved. The actual padded row count and shared
+depth must still be connected to these records: serialized records omit the
+base-row count. Reservation capacity and complete selected-bit coverage,
+top-level configuration and fallback, header materialization,
+caller size inequalities, the stopped branch and recurrence, and integration
+into the running layer remain open. These checked bridges do
 not yet improve the public saving `2^-66`.
+
+**Next integration boundary:** generate only the thirteen original canonical
+headers: chunk, global axes, guard, active axes, native rows, payload, slot
+count, slot width, left/right spectators, selected residue and reversed
+source/target slots. The complete native dispatcher already synthesizes its
+derived headers. Reuse `sxBinConv_exec` for unary-to-binary header conversion
+and charge the separator, setup and cleanup. The root builder clears derived
+active count, so preserve it in the caller or rederive it explicitly. After
+folding low offset `oS`, use payload `2^oS * (3*r*w)` and native rows
+`R * 2^(n-oS-s.bits)`, with the corresponding address-fit proof. Establish
+actual padding/depth, capacity and coverage before connecting these records
+to `TopProc`; piece validity alone does not establish transform coverage.
 
 Prove complete temporary address ranges survive every role split, arbitrary
 initial temporary values are restored, and exceptional extraction, sorting,

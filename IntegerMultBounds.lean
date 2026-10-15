@@ -2376,3 +2376,9 @@ import IntegerMultBounds.MathlibTM2.Node.CompactGeometryRecursive
 import IntegerMultBounds.MathlibTM2.Node.CompactEncoding
 import IntegerMultBounds.MathlibTM2.Node.CompactSlotXor
 import IntegerMultBounds.MathlibTM2.Fast.CompactSynRecArithmetic
+import IntegerMultBounds.MathlibTM2.Cost.CompactSlotXor
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynRecPieces
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynRec
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynRecRows
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynSel
+import IntegerMultBounds.MathlibTM2.Node.CompactEncodingOffset
