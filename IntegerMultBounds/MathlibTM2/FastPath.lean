@@ -34,6 +34,8 @@ public import IntegerMultBounds.MathlibTM2.Fast.CRTControlTape
 public import IntegerMultBounds.MathlibTM2.Fast.CRTControlBank
 public import IntegerMultBounds.MathlibTM2.Fast.CRTControlScan
 public import IntegerMultBounds.MathlibTM2.Fast.CRTControlScanner
+public import IntegerMultBounds.MathlibTM2.Fast.CRTControlDriverSpec
+public import IntegerMultBounds.MathlibTM2.Fast.CRTControlExposeRotation
 public import IntegerMultBounds.MathlibTM2.Fast.CRTControlAllFibers
 public import IntegerMultBounds.MathlibTM2.Fast.CRTControlAllWorkspace
 public import IntegerMultBounds.MathlibTM2.Fast.CRTControlGenerateLayout

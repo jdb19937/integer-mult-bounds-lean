@@ -270,6 +270,15 @@ parameter-stream traversal and source restoration remain unfinished. The generat
 kernels and one-fiber pass are audited; neither constitutes a new complete CRT
 driver or a stronger public bound.
 
+`CRTControlExposeRotation.lean` now composes the actual distant exposure,
+workspace rotation and unexposure for a nonzero target, returning the fixed
+reversed layout and restoring every register except the data source. Its
+routing parameters and descriptor/constants tapes are still prepared inputs.
+`CRTControlDriverSpec.lean` identifies descending and ascending target folds
+with the existing `crtFwdC` and `crtInvC`, independently of physical layout;
+target zero is an identity and can be omitted. The executable paired reversal
+and full runtime parameter preparation remain driver obligations.
+
 Remaining integration steps, in order:
 
 1. **M2b — rotation scanner:** the complete one-fiber scan/rotation and indexed
@@ -476,9 +485,9 @@ reduction interfaces and encoding overhead if those corollaries are desired.
 
 1. **M1 complete:** public saving `2^-93`; exact internal margin between
    `2^-93` and `2^-92`, with the existing existential theorem preserved.
-2. **M2 in progress:** one-fiber scanner/rotation, indexed-loop setup, generator
-   kernels, linear schedule and distant exposure/cleanup checked; next finish
-   descriptor traversal, outer rotation pass and complete driver, then retune and publish
+2. **M2 in progress:** complete all-fiber rotation, workspace restoration,
+   width setup, generator kernels, linear schedule and distant exposure/cleanup
+   checked; next finish descriptor traversal and complete driver, then retune and publish
    the resulting stronger theorem. This yields a structural improvement
    without importing the large selected supplier inventory.
 3. **M3–M5:** compact controls, width/stock contracts and balanced coordinate
