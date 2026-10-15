@@ -2,7 +2,7 @@
 
 ✅ Complete · 🟡 In progress / partially complete · ⬜ Not started.
 
-**Bound improvement progress:** M1 ✅ · M2 ✅ · M3 🟡 · M4 ⬜ · M5 ⬜ · M6 🟡 · M7 ⬜ · M8 ⬜.
+**Bound improvement progress:** M1 ✅ · M2 ✅ · M3 🟡 · M4 ⬜ · M5 ⬜ · M6 🟡 · M7 🟡 · M8 ⬜.
 The completed compact multiplier proves saving `2^-35`; further structural improvements remain in progress.
 
 ## Bound scoreboard
@@ -104,7 +104,7 @@ criteria are in the [implementation plan](plan/D-sharper-bound.md).
 | M4 | ⬜ | §5.4, §9.7 | Linear completed-child precision bound and explicit recursive workspace/stock contracts. | Planned. Remove conservative guard-growth restrictions and prove the reserve coefficients required at selected cutoffs. |
 | M5 | ⬜ | §6.2, §4 | Balanced prefix and arbitrary-source coordinate routing in both transform directions. | Planned. Replace layout saving `epsilon c a_b` by direct movement saving `a_b`; restore spectators and frequency order. |
 | M6 | 🟡 | §3.1–3.6, §§4–5 interfaces | Prove both selected finite suppliers, their variable-rank moments and the 144-call owner schedule. | The complete selected PR589 scalar word and finite-register dirty endpoint are checked, including source/helper restoration. T16 charge profile, finite owner-row bounds and both complete native-event label traces are checked. Framed execution, full T16 routing semantics, physical hosting and variable-rank costs remain. Target primitive endpoints about `0.00173343` (bit) and `0.00167546` (complex); component bounds alone do not update the final bound. |
-| M7 | ⬜ | §8.1–8.3, §9.2/9.7 | Prove faster rounded Gaussian inverse and bulk core/halo tape execution, including prime supply and exact recovery interfaces. | Planned. Remove the current Gaussian restriction on epsilon; establish the selected near-one-dimension parameter regime. |
+| M7 | 🟡 | §8.1–8.3, §9.2/9.7 | Prove faster rounded Gaussian inverse and bulk core/halo tape execution, including prime supply and exact recovery interfaces. | Exact phase-cell identity for the existing resampling coefficients and similarity-weight bounds checked and audited. Rounded inverse, periodic/boundary composition and bulk execution remain; these must remove the Gaussian restriction and support near-one dimensions. |
 | M8 | ⬜ | §9.1–9.8 | Prove bootstrap base/stages, link all 47 inequalities to actual stages and close the audited fixed-machine theorem. | Planned. Goal: exact unconditional saving `0.001672660197076918`. |
 
 ### M3 integration progress

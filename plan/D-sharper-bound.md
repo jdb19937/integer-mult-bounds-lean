@@ -1001,6 +1001,14 @@ the same matrix and rounding errors used by the implementation. Existing
 `NLogN/Neumann*.lean`, Gaussian and resampling lemmas are candidates for reuse;
 they do not by their names establish the new banded inverse theorem.
 
+**Checked M7a foundation:** `NLogN/PhaseCell.lean` uses the existing
+`nearest`, `beta` and `normExp`, proving the exact affine offset relation on a
+constant integer phase, the Gaussian-distance/diagonal-potential factorization
+of each lattice coefficient, positivity and upper bounds on similarity weights.
+All 12 declarations pass the standard-axiom audit; guarded single-file checking
+passes at default limits. This is not yet a statement about the full periodic
+matrix: alias sums, truncation and rounded inverse/boundary algorithms remain.
+
 **M7b — bulk exposure and microbox tape execution.** Build ordered core/halo
 windows of that same rounded matrix, bound truncation/locality errors, retain
 period cuts and show tensor errors accumulate without a volume factor. Price
