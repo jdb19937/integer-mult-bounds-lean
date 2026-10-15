@@ -10,7 +10,6 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 - `Machine/ChirpRoundCalls.lean`: Two fixed injective placements share one scalar truncation workspace. The real call retains the imaginary numerator, and the imaginary call retains the rounded real output; four original operands remain outside both calls.
 - `Machine/ChirpRoundedValue.lean`: Mathematical bridge from signed integer numerator quotients to componentwise dyadic rounding toward zero. Full complex numerator sums at doubled precision equal the original product, and their once-truncated values equal manuscript `rhoC`.
 
-- `Machine/CompactActualStagePadding.lean`: Closes the PLAN row-padding mathematics milestone. One eventual certificate derives nonfallback reservation fit, a half-sized active middle, positive/divisible descendant rows, no repeated padding, at-most-twofold reserved volume, a fixed original-volume physical padding budget, readiness and both density-one repair allowances for every original stage/order, and the charged native-volume bound at every recursive depth. The cutoff itself eventually fits the actual dimension, so the admissible range is not vacuous. This does not assert the still-open physical padding/reservation-to-stage handoff.
 
 - `Machine/CountedSymbolCopy.lean`: A fixed five-tape copier retains arbitrary literal native symbols, including field separators, under an actual copied binary span descriptor. It preserves the source and original count, advances both cursors exactly and erases both private loop controls within `7 * span + 11 * descriptorLength + 35` transitions. No Boolean/native recoding or source-erasure certificate is assumed.
 - `Machine/NativePolynomialPadding.lean`: A fixed nine-tape EOF-controlled stream copies each original polynomial span, then emits the requested number of valid native signed-zero complex records. Every polynomial gets its own padding, rather than one suffix appended to the entire array. Span/width/deficit descriptors are retained, all four loop work tapes are blank between blocks, both final stream heads return to origin and the empty-array case halts safely.
@@ -3133,7 +3132,6 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 - `Machine/ActiveRepairLayoutRecordsFullLatePlaced.lean`: The complete later low/high machine executes on arbitrary twenty-three original caller ports, changing only raw array, preserving descriptors and caller frame, restoring every private tape and retaining actual native cost.
 
-- `Machine/CompactActualStageAllowance.lean`: Every original-slot stage of the actual multiplier on once-padded descendant rows has paid complete repair width and both density bounds at constant one for sufficiently large inputs. Cubic size, selected count, guard and payload allowances are derived from actual d,K,p and literal polynomial-record bits; reservation fit remains the explicit nonfallback condition.
 
 - `Machine/CompactGuardGrowth.lean`: The actual precision logarithm is little-o of the actual chunk width, with arbitrary positive eventual coefficients.
 
@@ -3173,9 +3171,7 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 - `Machine/ActivePrefixStageSingletonSelected.lean`: Actual singleton endpoints XOR exactly the sole selected original target bit by its original source bit, retain source and spectator fields and identify literal source/target slot bit positions.
 
-- `Machine/CompactActualStageGeometry.lean`: Actual multiplier choices, the nonfallback cutoff and once-padded descendant depth derive positive rows, guard room, record and full repair address allowances, and highest-bit geometry for every original stage node.
 
-- `Machine/CompactActualStageInputs.lean`: Actual scalar/row readiness fills original-input stage records, and both generated source-order descriptor banks have full repair width and density allowances at constant one from original multiplier choices.
 
 - `Machine/ActivePrefixStageDispatchCommon.lean`: Generic bank padding, clean branch placement and runtime-bit branch composition preserve exact endpoints and charge only the selected actual branch.
 
@@ -3199,9 +3195,7 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 - `Machine/ActivePrefixStageWidthOriginal.lean`: The original stage f word at port seven physically determines packed versus singleton selection on the shared original caller; exact predicates and linear full-volume overhead are proved.
 
-- `Machine/CompactActualStageRuns.lean`: Both actual original-input source-order stage machines execute at density constant one with no supplied per-node repair-width or density hypotheses. Literal multiplier scalar/record contracts and the nonfallback cutoff discharge those prerequisites; later packed execution requires at least two axes.
 
-- `Machine/CompactActualStageDispatch.lean`: Actual multiplier scalar/cutoff/global-row choices instantiate the fixed runtime source-order dispatcher at density constant one, deriving geometry and both repair envelopes; the ready-runs theorem supplies all per-node geometry and direction decisions from original inputs.
 
 - `Machine/ActivePrefixStageSingletonDispatch.lean`: One fixed singleton machine compares original source and target slots, executes the selected one-axis stage and erases its direction flag with exact original-input endpoints.
 
@@ -3223,9 +3217,7 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 - `Machine/ActivePrefixStageSlotRewrite.lean`: Physical fixed-control replacement of original source and target slot descriptors between row-addition instructions scans and erases both old words, writes and rewinds the literal next pair, frames every other tape and pays all joins with a linear index-bound cost.
 
-- `Machine/CompactActualStageRuntime.lean`: Actual multiplier scalar, cutoff and once-padded descendant-row choices instantiate the fixed all-positive-width stage at density one, synthesizing readiness and all packed allowances without an external branch, direction or width-case premise.
 
-- `Machine/CompactActualStageRuntimeBudget.lean`: One positive uniform constant bounds the actual all-width runtime stage on every admissible descendant row level by full physical volume times the certified compact-width exponent; both actual selectors and singleton execution are paid.
 
 - `Machine/CompactBinaryBasisSchedule.lean`: Actual old/new binary bases determine literal selected-bit Stage instructions on a supplied consecutive-slot Node, retaining its width and selected column; fixed word length and independent-column basis-change semantics are proved. Ambient phase-basis extension, physical address-coordinate correspondence and repeated tape execution remain separate.
 
@@ -3239,7 +3231,6 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 - `Machine/ActivePrefixStageInverseBudget.lean`: Full-stage and direction-dispatch round trips pay two physical executions and their join while retaining the certified width exponent.
 
-- `Machine/CompactActualStageInverse.lean`: Actual multiplier scalar, cutoff and descendant-row choices provide the packed original-input direction-dispatch reverse and round trip at density one, deriving readiness and repair allowances.
 
 - `Machine/ActivePrefixStageSingletonInverseData.lean`: Both actual singleton coordinate and array actions, including runtime source-order selection, square to identity with original source preserved.
 
@@ -3247,7 +3238,6 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 - `Machine/ActivePrefixStageRuntimeInverseBudget.lean`: Complete all-width runtime round trips have a uniform full-volume bound at the same certified exponent, paying both actual executions and the join.
 
-- `Machine/CompactActualStageRuntimeInverse.lean`: Actual scalar/cutoff/global-row choices instantiate complete all-positive-width physical reverse and round-trip execution at density one without caller-supplied readiness or branch decisions.
 
 - `Machine/BinaryPairFrame.lean`: A physical wrapper saves two original binary descriptors on one private stack, runs a native routine, erases its replacement descriptors and restores both originals and the blank stack with all joins charged.
 
@@ -3259,9 +3249,7 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 - `Machine/ActivePrefixStagePairBudget.lean`: Complete pair wrappers and fixed literal lists retain the certified width exponent; physical saving, rewriting, restoring and every join are paid, with only the fixed word length multiplying the uniform full-volume bound.
 
-- `Machine/CompactActualPairSchedule.lean`: Actual multiplier scalar/cutoff/global-row choices derive density-one repair allowances for every literal pair and execute the complete fixed list on original inputs, synthesizing readiness without supplied per-stage bounds or runtime branch decisions.
 
-- `Machine/CompactActualPairScheduleBudget.lean`: One positive uniform constant bounds complete actual fixed-list execution by fixed word length times full physical volume and the certified width exponent, including pair saving, rewriting, execution, restoration and all joins.
 
 - `Machine/ActivePrefixStagePairInverse.lean`: Reversing the actual literal stage list undoes its complete array action; the physical reverse has exactly the forward charged sum, restores the complete caller, and paid forward/reverse round trips retain the certified width exponent, including the empty word.
 
@@ -3273,7 +3261,6 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 - `Machine/ActivePrefixStagePairCoordinates.lean`: The actual physical literal-list array action equals chronological Boolean row additions on canonical original addresses, with exact entrywise semantics; its selected coordinates perform the requested binary basis change without an assumed address action.
 
-- `Machine/CompactActualPairInverse.lean`: Actual multiplier scalar/cutoff/global-row choices instantiate physical reverse-list and full-bank round-trip execution on original symbolic stage banks whose row count is the inherited global count; every literal pair allowance is derived at density one, with no supplied branch or direction.
 
 - `Machine/RawLinearCombinationCleanup.lean`: Direct radix-expression execution physically erases all temporary copied leaves with exact output retention and an affine word-width runtime; no value-linear binary conversion is used.
 
@@ -3473,7 +3460,6 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 - `Machine/BinaryDescriptorQueueRead.lean`: Physical delimited canonical-field reader retains the generated queue, installs a real numeric descriptor and pays cursor advance and rewind.
 
-- `Machine/CompactActualNativeStage.lean`: Actual multiplier scalar choices select a triple-aligned payload of six times(b+one) times two to ell, prove the existing payload allowance and a fixed-factor volume increase when b is positive. One fixed native stage machine and one uniform constant handle all eventual nonfallback node widths, source orders and padded descendant row levels; readiness and packed-cost allowances are derived from original choices, without caller-supplied branches or stage oracles.
 
 - `Machine/UnitPhaseAddressHeaders.lean`: Physically derives the full binary address width from original stage geometry, preserving original headers and charging all additions and multiplication.
 
@@ -3503,7 +3489,6 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 - `Machine/UnitPhaseFullStreamArray.lean`: Connects the actual full-count physical phase machine to literal finite arrays containing one coefficient per address, with exact pointwise output words and paid serialized-volume runtime. Repeating phases over the polynomial coefficients within each native payload remains separate.
 
-- `Machine/CompactActualNativeWidth.lean`: One fixed native stage machine uniformly handles every actual stored signed field width above the precision allowance. Literal complex serialization includes both fields and separators and equals the selected native symbol capacity exactly; an explicit finite native row reconstructs that word and derives its nonblank converter condition from actual digits and delimiters. Readiness and packed costs follow from original multiplier choices at every eventual nonfallback descendant; a linear stored-width bound gives fixed-factor Boolean payload overhead, including arithmetic guard bits.
 
 - `Machine/CompactFallbackAxisPorts.lean`: Actual sparse-axis caller shares five original headers D/K/rho/ell/q and an ordinal with the real native-axis bank, retaining all original descriptors and coefficient data.
 
@@ -3525,7 +3510,6 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 - `Machine/CompactFallbackReservedBudget.lean`: Original nonfallback low-back and high-row/front reservation positions have genuine paid sparse-axis call costs and a certified aggregate complexity allowance. These positions are distinct and exhaust the reservation; their physical occurrence controller remains separate.
 
-- `Machine/CompactActualNativeBudget.lean`: One fixed native stage machine has a uniform actual original-polynomial-volume cost bound with the certified stage exponent. Multiplying descendant costs by their exact role divisor recovers the single global padding, whose overhead is at most two; stored signed guard widths and Boolean conversion contribute only a fixed factor. No recursive network or repeated-call execution is supplied by this cost-row bridge.
 
 - `Machine/CompactFallbackInverseAxis.lean`: One fixed sparse inverse-axis body reuses original-header geometry synthesis, executes the genuine negative-phase inverse butterfly, clears derived headers and increments the ordinal.
 

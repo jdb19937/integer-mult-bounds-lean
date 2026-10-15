@@ -1,0 +1,24 @@
+{
+  "baseline": "7415d773d14212c68b523979aaac6db9dc0ba542",
+  "reason": "Retired unused native CompactActual stage scheduling, readiness and budget wrappers.",
+  "total_files": 16,
+  "total_lines": 1317,
+  "files": [
+    "IntegerMultBounds/Machine/CompactActualNativeBudget.lean",
+    "IntegerMultBounds/Machine/CompactActualNativeStage.lean",
+    "IntegerMultBounds/Machine/CompactActualNativeWidth.lean",
+    "IntegerMultBounds/Machine/CompactActualPairInverse.lean",
+    "IntegerMultBounds/Machine/CompactActualPairSchedule.lean",
+    "IntegerMultBounds/Machine/CompactActualPairScheduleBudget.lean",
+    "IntegerMultBounds/Machine/CompactActualStageAllowance.lean",
+    "IntegerMultBounds/Machine/CompactActualStageDispatch.lean",
+    "IntegerMultBounds/Machine/CompactActualStageGeometry.lean",
+    "IntegerMultBounds/Machine/CompactActualStageInputs.lean",
+    "IntegerMultBounds/Machine/CompactActualStageInverse.lean",
+    "IntegerMultBounds/Machine/CompactActualStagePadding.lean",
+    "IntegerMultBounds/Machine/CompactActualStageRuns.lean",
+    "IntegerMultBounds/Machine/CompactActualStageRuntime.lean",
+    "IntegerMultBounds/Machine/CompactActualStageRuntimeBudget.lean",
+    "IntegerMultBounds/Machine/CompactActualStageRuntimeInverse.lean"
+  ]
+}

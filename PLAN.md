@@ -15,9 +15,10 @@ the stronger `83/10^12` compact-control target; their open entries do not
 invalidate the completed Mathlib theorem.
 
 [Retention audit](docs/proof-retention.md): the completed route is primary;
-635 retired native-controller modules have been removed; 880 conservative
+651 retired native-controller modules and wrappers have been removed; 864 conservative
 candidates remain. The completed proof, its public interfaces and every
-focused audit dependency are preserved. See the [retirement record](docs/retired-compact-complex.md).
+focused audit dependency are preserved. See the [controller retirement](docs/retired-compact-complex.md) and
+[actual-stage retirement](docs/retired-compact-actual.md) records.
 
 ✅ done · 🟡 partial · ⬜ not started · 🚧 drafted, not yet in the build.
 
@@ -29,7 +30,7 @@ focused audit dependency are preserved. See the [retirement record](docs/retired
 | [The machine model and elementary streams](plan/02-machine-model-streams.md) | §2 | ✅ 9/9 | ✅ 9/9 | 258 |
 | [Two finite networks with a rank saving](plan/03-finite-networks-rank.md) | §3 | ✅ 8/8 | 🟡 2/6 | 358 |
 | [Faster interchange of address chunks](plan/04-faster-interchange-address.md) | §4 | ✅ 10/10 | ✅ 9/9 | 376 |
-| [Fast simultaneous synthetic butterfly layers](plan/05-simultaneous-butterfly-layers.md) | §5, §11, CrocSwap | 🟡 4/6 | 🟡 0/7 | 1183 |
+| [Fast simultaneous synthetic butterfly layers](plan/05-simultaneous-butterfly-layers.md) | §5, §11, CrocSwap | 🟡 3/5 | 🟡 0/7 | 1167 |
 | [Synthetic transforms and their tape layout](plan/06-synthetic-transforms-tape.md) | §6 | ✅ 2/2 | 🟡 0/2 | 79 |
 | [Resampling with the permutations left in the transform](plan/07-gaussian-resampling.md) | §7 | ✅ 6/6 | 🟡 3/4 | 79 |
 | [Exact integer multiplication and its cost](plan/08-exact-multiplication.md) | §8 | 🟡 3/4 | 🟡 1/3 | 108 |
@@ -106,8 +107,8 @@ Details: [plan/05-simultaneous-butterfly-layers.md](plan/05-simultaneous-butterf
 | Packed arithmetic and fixed control gadgets | 🟡 | 🟡 | 192 |
 | Active-target compact controls | ✅ | 🟡 193/194 rows | 274 |
 | Exceptional-address destination repair | ✅ | 🟡 | 256 |
-| Row padding, reservation and allowances | ✅ | 🟡 56/57 rows | 73 |
-| Binary basis stages and phase schedules | 🟡 | 🟡 | 95 |
+| Row padding, reservation and allowances | — | 🟡 56/57 rows | 69 |
+| Binary basis stages and phase schedules | 🟡 | 🟡 | 83 |
 | Butterfly and unit-phase record arithmetic | — | 🟡 | 133 |
 | Butterfly axes, spectators and native roles | — | 🟡 | 78 |
 | Recursive geometry, controller and child headers | — | — | 5 |
