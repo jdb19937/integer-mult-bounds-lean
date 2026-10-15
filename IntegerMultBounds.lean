@@ -2387,3 +2387,5 @@ import IntegerMultBounds.MathlibTM2.Fast.CompactSynCoverage
 import IntegerMultBounds.MathlibTM2.Node.CompactHeaderBuild
 import IntegerMultBounds.MathlibTM2.Node.CompactHeaderBank
 import IntegerMultBounds.MathlibTM2.Node.CompactHeaderClear
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynRows
+import IntegerMultBounds.MathlibTM2.Node.CompactSlotPrepared

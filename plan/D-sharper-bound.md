@@ -489,10 +489,14 @@ This resolves the low-offset mismatch in the prepared compact executor.
 
 The row-axis and piece-building executions are checked separately. Their final
 root wrapper remains unverified after excessive proof-memory growth and is
-excluded from this checkpoint; proof limits were preserved. The actual padded row count and shared
-depth must still be connected to these records: serialized records omit the
-base-row count. Discharging reservation capacity at actual caller sizes,
-top-level configuration and fallback, header arithmetic and executor composition,
+excluded from this checkpoint; proof limits were preserved.
+
+`Fast/CompactSynRows.lean` now connects the actual padded row count: each
+piece's base-row metadata is the exact quotient by its level's wire-count power.
+The emitted record is literally unchanged. The native global padding proves
+divisibility, and the active-axis bound proves sufficient shared depth.
+Discharging reservation capacity at actual caller sizes,
+top-level configuration and fallback, and header arithmetic,
 caller size inequalities, the stopped branch and recurrence, and integration
 into the running layer remain open. These checked bridges do
 not yet improve the public saving `2^-66`.
@@ -510,9 +514,12 @@ new top configuration remains separate.
 to canonical separator-prefixed headers while preserving sources and scratch.
 `CompactHeaderBank.lean` identifies the thirteen original headers with the
 native bank; the existing dispatcher still synthesizes its own derived headers.
-`CompactHeaderClear.lean` restores the bank to empty. Conversion, separator and
-cleanup have explicit costs; their composition with the slot executor remains
-separate until checked.
+`CompactHeaderClear.lean` restores the bank to empty.
+`Node/CompactSlotPrepared.lean` composes build, actual encoded slot execution
+and cleanup, with all three costs included. Only the live stream changes;
+unary sources, scratch and the initially empty native bank are restored.
+Runtime computation of the original unary descriptor values remains explicit
+caller work. The focused audit now passes for 45 contracts.
 
 **Next integration boundary:** supply the thirteen runtime unary values: chunk,
 global axes, guard, active axes, native rows, payload, slot count, slot width,
@@ -520,8 +527,9 @@ left/right spectators, selected residue and reversed source/target slots.
 The root builder clears derived active count, so preserve it in the caller or
 rederive it explicitly. After folding low offset `oS`, use payload
 `2^oS * (3*r*w)` and native rows `R * 2^(n-oS-s.bits)`, with the corresponding
-address-fit proof. Connect actual padded row metadata, header setup/execution/
-cleanup, and the new top configuration to `TopProc`. Record coverage alone does
+address-fit proof. Connect the checked padded-row metadata and prepared slot
+executor, together
+with the new top configuration, to `TopProc`. Record coverage alone does
 not establish execution of the complete reserved transform.
 
 Prove complete temporary address ranges survive every role split, arbitrary
