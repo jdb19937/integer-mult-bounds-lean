@@ -968,6 +968,15 @@ record, offset and accumulated exponent receive their proved updates. Runtime
 cutoff provisioning, replacement of the complete digit loop, precision and
 stopped-layer cost matching remain; this is not yet a stopped scanner theorem.
 
+**Full supplied-cutoff scanner checked:** `Fast/CompactStoppedDigBody.lean`
+and `CompactStoppedDigits.lean` execute the entire digit scan. Nonzero digits
+emit the literal stopped record and recomputed exponent; zero digits emit
+nothing. The tail clears the actual rebased leaf count, and every saved/live
+wire is restored. Exact costs include each pass's live-prefix length and the
+save/restore overhead. Both guarded checks and the three contract axiom audits
+pass at default limits. Runtime cutoff computation, semantic stopped-piece
+identification, precision, caller replacement and layer-cost absorption remain.
+
 #### §6 — Synthetic transforms and their tape layout
 
 **M5 — remove the multiplicative layout loss.** The existing synthetic loop
