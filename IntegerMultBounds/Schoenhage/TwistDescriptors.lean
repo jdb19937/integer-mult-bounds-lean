@@ -842,6 +842,19 @@ theorem descRev_succ (D : ℕ → List Bool) (Y k : ℕ) : descRev D Y (k + 1) =
   congr 3
   funext j; simp; ring_nf
 
+/-- A second descriptor update overwrites all six fields from the first one.
+Keep this calculation abstract so recursive proofs do not reduce descriptor words. -/
+private theorem descriptor_updates_overwrite (σ : Fin 18 → WTape)
+    (y c h t f g y' c' h' t' f' g' : WTape) :
+    Function.update (Function.update (Function.update (Function.update (Function.update
+      (Function.update (Function.update (Function.update (Function.update (Function.update
+        (Function.update (Function.update σ gY y) gC c) gdH h) gdT t) gdF f) gdG g)
+        gY y') gC c') gdH h') gdT t') gdF f') gdG g' =
+    Function.update (Function.update (Function.update (Function.update (Function.update
+      (Function.update σ gY y') gC c') gdH h') gdT t') gdF f') gdG g' := by
+  funext i
+  fin_cases i <;> rfl
+
 set_option maxHeartbeats 8000000 in
 /-- `runs_gen`: over `k` ticks the program appends the descriptor words of records
 `Y, …, Y + k - 1`. -/
@@ -859,8 +872,11 @@ theorem runs_gen {r n : ℕ} (hr : 1 ≤ r) {es : List Entry} (hok : TableOK r n
   | 0, σ, Y, LC, LH, LT, LF, LG, _, hY, _, _, _, hC, hH, hDT, hF, hG => by
     refine (Runs.loop_done (by simp [hC]) rfl).mono (fun τ e => ?_) (by simp)
     subst e
-    funext i
-    fin_cases i <;> first | rfl | tsimp [hY, hC, hH, hDT, hF, hG, descRev]
+    simp only [Nat.add_zero, descRev, List.range_zero, List.map_nil, List.reverse_nil,
+      List.replicate_zero, List.nil_append]
+    simp only [List.replicate_zero] at hC
+    rw [← hY, ← hC, ← hH, ← hDT, ← hF, ← hG]
+    simp only [Function.update_eq_self]
   | k + 1, σ, Y, LC, LH, LT, LF, LG, hR, hY, hT, hA, hE, hC, hH, hDT, hF, hG => by
     have hC' : σ gC = ⟨LC, [] :: List.replicate k []⟩ := by rw [hC]; rfl
     have s1 := runs_record hr hok σ hR hY hT hA hE hC' hH hDT hF hG
@@ -881,9 +897,9 @@ theorem runs_gen {r n : ℕ} (hr : 1 ≤ r) {es : List Entry} (hok : TableOK r n
       (by tsimp [hσ₁, hE]) (by tsimp [hσ₁]) (by tsimp [hσ₁]) (by tsimp [hσ₁]) (by tsimp [hσ₁]) (by tsimp [hσ₁])
     refine (Runs.loop_step (by simp [hC']) (s1.mono (fun τ h => by rw [h]; exact ih) le_rfl)).mono
       (fun τ h => ?_) ?_
-    · rw [h]; funext i
-      fin_cases i <;> first | rfl |
-        tsimp [hσ₁, descRev_succ, hdD, tlD, hfD, tfD, List.replicate_succ', add_assoc, add_comm 1 k]
+    · rw [h]
+      simp only [hσ₁, descriptor_updates_overwrite, descRev_succ, hdD, tlD, hfD, tfD,
+        List.replicate_succ', add_assoc, add_comm 1 k, List.append_assoc, List.singleton_append]
     · simp only [recordCost]; ring_nf; omega
 
 /-! ### The slot round's descriptors -/
@@ -1236,8 +1252,11 @@ theorem runs_genOpp {r n : ℕ} (hr : 1 ≤ r) {es : List Entry} (hok : TableOK 
   | 0, σ, Y, LC, LH, LT, LF, LG, _, hY, _, _, _, hC, hH, hDT, hF, hG => by
     refine (Runs.loop_done (by simp [hC]) rfl).mono (fun τ e => ?_) (by simp)
     subst e
-    funext i
-    fin_cases i <;> first | rfl | tsimp [hY, hC, hH, hDT, hF, hG, descRev]
+    simp only [Nat.add_zero, descRev, List.range_zero, List.map_nil, List.reverse_nil,
+      List.replicate_zero, List.nil_append]
+    simp only [List.replicate_zero] at hC
+    rw [← hY, ← hC, ← hH, ← hDT, ← hF, ← hG]
+    simp only [Function.update_eq_self]
   | k + 1, σ, Y, LC, LH, LT, LF, LG, hR, hY, hT, hA, hE, hC, hH, hDT, hF, hG => by
     have hC' : σ gC = ⟨LC, [] :: List.replicate k []⟩ := by rw [hC]; rfl
     have s1 := runs_recordOpp hr hok σ hR hY hT hA hE hC' hH hDT hF hG
@@ -1258,9 +1277,9 @@ theorem runs_genOpp {r n : ℕ} (hr : 1 ≤ r) {es : List Entry} (hok : TableOK 
       (by tsimp [hσ₁, hE]) (by tsimp [hσ₁]) (by tsimp [hσ₁]) (by tsimp [hσ₁]) (by tsimp [hσ₁]) (by tsimp [hσ₁])
     refine (Runs.loop_step (by simp [hC']) (s1.mono (fun τ h => by rw [h]; exact ih) le_rfl)).mono
       (fun τ h => ?_) ?_
-    · rw [h]; funext i
-      fin_cases i <;> first | rfl |
-        tsimp [hσ₁, descRev_succ, hdO, tlO, hfO, tfO, List.replicate_succ', add_assoc, add_comm 1 k]
+    · rw [h]
+      simp only [hσ₁, descriptor_updates_overwrite, descRev_succ, hdO, tlO, hfO, tfO,
+        List.replicate_succ', add_assoc, add_comm 1 k, List.append_assoc, List.singleton_append]
     · simp only [recordCost]; ring_nf; omega
 
 theorem desc_slotOpp {n : ℕ} (π : BitPerm n) {r : ℕ} (hr : 1 ≤ r) (ts Is : List ℕ) (h : ℕ)
