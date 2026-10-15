@@ -1,5 +1,7 @@
 module
 
+public import IntegerMultBounds.MathlibTM2.Cost.CRTDirectSetup
+
 public import IntegerMultBounds.MathlibTM2.Fast.CRTDirectSetup
 
 public import IntegerMultBounds.MathlibTM2.Fast.CRTDirectBacking

@@ -346,7 +346,10 @@ existing rest-empty contract. Focused checks of `CRTMachine`, `SrcStage`,
 `CRTDirectSetup.lean` now constructs the ascending streams, cached axis-zero
 width, dimension count, encoded record width and bank width directly from
 legacy inputs. Its six-output frame and exact cleanup back to the original
-register state are proved. Final driver start/restore, reversal and padding
+register state are proved. `Cost/CRTDirectSetup.lean` bounds actual setup plus
+all six-output cleanup by one padded volume eventually. The allocation
+verification also refreshed all 19 affected dependency modules through
+`MainRegs` and `DistSpec`, with no full build. Final driver start/restore, reversal and padding
 composition remain before the replacement machine can enter the pipeline.
 
 Remaining integration steps, in order:

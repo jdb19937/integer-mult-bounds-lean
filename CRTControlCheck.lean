@@ -1,3 +1,4 @@
+import IntegerMultBounds.MathlibTM2.Cost.CRTDirectSetup
 import IntegerMultBounds.MathlibTM2.Fast.CRTDirectSetup
 import IntegerMultBounds.MathlibTM2.Fast.CRTDirectBacking
 import IntegerMultBounds.MathlibTM2.Fast.MainDirectCore
@@ -50,6 +51,7 @@ separate work. -/
 open Lean in
 run_cmd do
   let names := #[
+    ``IntegerMultBounds.MathlibTM2.Cost.crtDirectSetup_pipeline_le,
     ``IntegerMultBounds.MathlibTM2.Fast.crtDirectReverseCopy_runs,
     ``IntegerMultBounds.MathlibTM2.Fast.crtDirectCacheHead_runs,
     ``IntegerMultBounds.MathlibTM2.Fast.crtDirectCountAxes_runs,
