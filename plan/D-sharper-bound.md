@@ -1567,3 +1567,11 @@ triangular Toeplitz products. Only `x₀≠0` is assumed. The guarded check and
 24-declaration standard-axiom audit pass. Instantiating it on phase-cell
 interior blocks, the `x₀>1/2` and column-norm bounds, rounded factors and
 convolution costs remain open.
+
+A dominant symmetric Toeplitz block with unit diagonal and off-diagonal row
+mass `ρ<1` now has an actual two-sided inverse, inverse row sums at most
+`1/(1-ρ)` and corner at least `1-ρ/(1-ρ)`; row mass is at most twice the
+one-sided coefficient sum. For `ρ≤1/8` the corner is at least `6/7`
+(the source needs `x₀>1/2`) and the Gohberg–Semencul factorization holds.
+The guarded check and namespace standard-axiom audit pass. The actual
+phase-cell kernel bound, rounded factors and convolution costs remain open.
