@@ -6353,3 +6353,6 @@ Parameters and asymptotics.
 - `MathlibTM2/Mult/CompactDyadicPrecision.lean`: Seventh-power size room supplies modulus inequalities for `d≥2` and the exact-recovery gamma guard for `d≥64`. These and the candidate width passed a 19-declaration standard-axiom audit; no new multiplier bound is asserted.
 
 - `MathlibTM2/Mult/CompactDyadicDimensionBounds.lean`: Candidate root64/input9 retains the coarse eighth-power upper bound, the existing factor12 real precision sandwich and the `6*b` upper estimate. The exact root index, real exponent, lower power cap and coarse upper power are kept distinct. Guarded check and standard-axiom audit pass.
+
+- `MathlibTM2/Fast/CompactDyadicParamStageCore.lean`: Candidate dimension stage on the forty-variable parameter table, preserving all other parameters and accumulator, clearing borrowed scratch, within the previous dimension-stage allowance. The generic core stays below ParamProg in the import graph.
+- `MathlibTM2/Fast/CompactDyadicParamStage.lean`: The candidate32-bit-slack allocation supplies all concrete word-fit premises for that stage. Both stage modules pass guarded checks and a12-declaration standard-axiom audit; actual pmStages integration remains separate.
