@@ -908,6 +908,12 @@ normalizations and expanded-host cleanup. Its stronger asymptotic conclusion
 still requires the actual source-run cost bound. Loop summation and whole-chain
 execution assembly remain open; these contracts do not advance the public bound.
 
+Both actual compact loop directions now fit the retuned convolution envelope
+under an explicit stash budget. Expanded-host source costs are also matched,
+and `compactMain_runs_time_isBigO` reduces the complete main-time estimate to
+the sum of the two complete transform costs. Actual stash/layout/bootstrap
+closure and whole-main execution assembly remain; the public bound is unchanged.
+
 Prove complete temporary address ranges survive every role split, arbitrary
 initial temporary values are restored, and exceptional extraction, sorting,
 reinsertion and cleanup are charged at each node's own volume. Add an actual

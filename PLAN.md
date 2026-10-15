@@ -34,7 +34,7 @@ machine that multiplies every input pair correctly in worst-case time
 
 | Part of the proof | Source | Mathematics | Tape | Files |
 | --- | --- | --- | --- | --- |
-| [Proved Mathlib end-to-end multiplier](plan/C-mathlib-end-to-end.md) | — | ✅ 1/1 | ✅ 1/1 | 565 |
+| [Proved Mathlib end-to-end multiplier](plan/C-mathlib-end-to-end.md) | — | ✅ 1/1 | ✅ 1/1 | 573 |
 
 The [proof details](plan/C-mathlib-end-to-end.md) cover the numerical
 algorithm, recursive layers, transforms, resampling, CRT routing, exact
@@ -117,7 +117,7 @@ criteria are in the [implementation plan](plan/D-sharper-bound.md).
 | Bootstrap-to-transform frame | ✅ | Derives setup from real sources, establishes readiness and restores the original file except output after charged exit. |
 | Complete forward/opposite transform specifications | ✅ | Existing layouts, actual distributed parameters and charged setup/exit; no layout, execution or readiness oracle remains. |
 | Expanded main/source-stage entry and execution | ✅ | Original main invariant supplies entry; concrete source forward/opposite stages run with exact costs. |
-| Main-stage integration | 🟡 | Assemble the expanded main chain and its recursive entry table. |
+| Main-stage integration | 🟡 | Stable whole-chain frame and placed source stages are checked; assemble the expanded main chain. |
 | Concrete round and setup cost accounting | ✅ | Checked actual records, setup, recursive calls, controls and cleanup; scalar-budget obligations remain explicit. |
 | Uniform caller budgets and round overhead | ✅ | Combined scalar/divisor budgets, actual record validity and full overhead are derived for the old and larger chunks. |
 | Larger-chunk recursive readiness and top execution | ✅ | Uniform shape, selected rows, descendant packing and actual parked top execution; full retuned chunk/transform composition remains. |
@@ -131,7 +131,9 @@ criteria are in the [implementation plan](plan/D-sharper-bound.md).
 | Actual retuned layer costs | ✅ | Complete chunk layer and direct branch costs match the retuned envelope; loop summation remains. |
 | Retuned source transforms under replaceable main entry | ✅ | Full source stages execute with exact costs under the expanded recursive procedure table. |
 | Main overhead, normalization and cleanup cost bridge | ✅ | Original primitive costs, fixed wrapper steps and expanded-host cleanup fit the sharper bound given the actual source-run match. |
-| Uniform transform cost and multiplier bound | 🟡 | Match full compact transform costs, sum rounds and close the stronger fixed-machine theorem. |
+| Actual compact round and loop cost sums | ✅ | Both loop directions fit the retuned convolution envelope given the explicit stash budget. |
+| Expanded source and total-time aggregation | ✅ | All three actual source-run costs plus main overhead fit the stronger asymptotic bound, conditional on the two complete transform costs. |
+| Uniform transform cost and multiplier bound | 🟡 | Close actual stash/layout/bootstrap costs, assemble the full main chain and audit the stronger fixed-machine theorem. |
 | Stopped recursion | ⬜ | Required for the later selected construction; not yet implemented. |
 
 **Execution order:** M1–M2 complete → M3–M5 → M6/M7 → M8. Use current

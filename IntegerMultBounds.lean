@@ -2608,3 +2608,11 @@ import IntegerMultBounds.MathlibTM2.Fast.CompactSrcRetunedStages
 import IntegerMultBounds.MathlibTM2.Fast.CompactMainTimeGlue
 import IntegerMultBounds.MathlibTM2.Fast.CompactMainTimeBound
 import IntegerMultBounds.MathlibTM2.Fast.CompactMainPrimitiveRuns
+import IntegerMultBounds.MathlibTM2.Cost.CompactRetunedRoundMatch
+import IntegerMultBounds.MathlibTM2.Cost.CompactRetunedLoopMatch
+import IntegerMultBounds.MathlibTM2.Fast.CompactSourceCost
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainRunsCost
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainRunsTime
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainStableFrame
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainSourceLift
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainSourceStages

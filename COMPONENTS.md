@@ -6315,3 +6315,8 @@ Parameters and asymptotics.
 - `MathlibTM2/Fast/CompactMainTransformCalls.lean`, `CompactSynRetunedEntrySpecs.lean`, `CompactSrcRetunedFrame.lean`, `CompactSrcRetunedStages.lean`: Full retuned source transforms under an arbitrary expanded main entry, with restricted-call transport, preserved source frame and exact stage costs.
 - `MathlibTM2/Fast/CompactMainPrimitiveRuns.lean`: Legacy source primitives transported into the expanded host with preserved private bank and one charged normalization step.
 - `MathlibTM2/Fast/CompactMainTimeGlue.lean`, `CompactMainTimeBound.lean`: Aggregate unchanged primitive costs with supplied expanded source costs and symbolic host cleanup; fixed normalization overhead is absorbed, yielding the stronger asymptotic bound conditional on the source-run cost match.
+
+- `MathlibTM2/Cost/CompactRetunedRoundMatch.lean`, `CompactRetunedLoopMatch.lean`: Actual compact/direct round costs and both loop sums fit the retuned convolution envelope with an explicit stash budget.
+- `MathlibTM2/Fast/CompactSourceCost.lean`, `CompactMainRunsCost.lean`, `CompactMainRunsTime.lean`: Expanded-host source core and forward/opposite costs; all three source runs and full main-cost envelope yield the stronger asymptotic bound once complete transform costs are matched.
+
+- `MathlibTM2/Fast/CompactMainStableFrame.lean`, `CompactMainSourceLift.lean`, `CompactMainSourceStages.lean`: Main-chain invariant stable under main-register changes, and placed source stages that recover their precision source at entry.
