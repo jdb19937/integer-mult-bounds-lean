@@ -6340,3 +6340,5 @@ Parameters and asymptotics.
 - `MathlibTM2/Cost/CompactSharpRound.lean`: Actual rounded-output and square-stage costs bounded using the sharper multiplication budget and dyadic coefficients.
 
 - `MathlibTM2/Fast/CompactStoppedPower.lean`, `CompactStoppedRebase.lean`, `CompactStoppedRecord.lean`: Executable cutoff-aware depth/leaf rebasing and record emission with fresh scaling exponent, exact charged costs and register frame. Cutoff computation and scanner save/restore remain to be integrated.
+
+- `MathlibTM2/Cost/CompactSupplierCeiling.lean`: Checked route-specific ceiling below `2^-33` for the current complex supplier and coarse Gaussian estimate; a dyadic `9/64` dimension candidate satisfies all five stage margins and recurrence slacks for `2^-34`. Arithmetic only: wider executable parameter words and generalized sizing remain unproved. Standalone axiom audit passes for 25 declarations.
