@@ -957,6 +957,17 @@ cannot substitute for that proof.
 precision and proved workspace contracts. These remove constraints preventing
 large c and, later, large epsilon; neither alone removes §6's layout loss.
 
+**Stopped-piece scanner frame checked:**
+`Fast/CompactStoppedScannerRecord.lean` wraps the existing charged rebase/record
+program, preserving the digit scanner's arbitrary live quotient and prefix
+lists and restoring its original unary power/depth counters. It uses spare
+wires 24 and 29–31; live wires 27/28 and the supplied cutoff on 22 are preserved.
+Its full-frame execution theorem and exact save/restore costs pass guarded
+checking and the standard-axiom audit. The leaf count, serialized stopped
+record, offset and accumulated exponent receive their proved updates. Runtime
+cutoff provisioning, replacement of the complete digit loop, precision and
+stopped-layer cost matching remain; this is not yet a stopped scanner theorem.
+
 #### §6 — Synthetic transforms and their tape layout
 
 **M5 — remove the multiplicative layout loss.** The existing synthetic loop
