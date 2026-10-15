@@ -1330,3 +1330,11 @@ checks and a combined26-declaration standard-axiom audit pass. This completes
 coefficient and tail prerequisites, not the periodic rounded operator:
 executable band choice, row-error assembly, sharp inverse bounds and charged
 bulk execution remain. The public saving stays `2^-34`.
+
+The stopped scanner now has a checked composed threshold-to-record pipeline:
+it computes the floor-log cutoff, emits exactly the mapped stopped pieces and
+actual exponent sum, then clears the cutoff with its full cost charged. Source
+preservation and both contracts pass the standard-axiom audit. The next caller
+bridge must derive the cutoff from actual global dimension and establish
+rebased-leaf size, precision and layer-cost bounds; a supplied threshold is
+not yet the global stopped-recursion implementation.
