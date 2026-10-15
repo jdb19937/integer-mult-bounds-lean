@@ -1474,3 +1474,14 @@ seven (total63); the first literal MOVE0→2 has rank one. The guarded module
 checks and99-declaration standard-axiom audit pass; all511 earlier files remain
 unchanged. Complete selected label dimensions/nesting, occurrence MOVE profile,
 weighted moments and hosted machine costs remain open.
+
+### Boundary elimination invariants
+
+Literal real Schur elimination on arbitrary active vertex sets now preserves
+the positive row-dominance margin and never increases absolute row mass.
+Successive elimination has both invariants for any pivot list, with absent or
+duplicate vertices skipped, and the one-step right-hand-side update is proved
+from the original pivot equation. No symmetry or positive-definiteness is
+assumed. Both guarded source checks and the17-declaration standard-axiom audit
+pass. Connecting the actual rounded Gaussian matrix, boundary index geometry,
+LU/Woodbury realization and tape costs remains open.
