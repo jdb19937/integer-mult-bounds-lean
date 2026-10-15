@@ -12,7 +12,39 @@
     "research/community-frontier1094-audit/SELECTED-SOURCE.json": "79b3de5db3dbcb9829789ba58e9e45758926031e2a7d80667a08429d369be53b",
     "docs/research/community-batch1099-review.md": "7e76d2c38e5fce30587835b7251df1430488ae4dd372611ef69a3f03f476b6cb",
     "docs/research/bottleneck-brief.md": "bbc9396c5cc390457d348bad076fc33bd3f98b7183f81b57af5b5666f6d887ab",
-    "research/selected-bootstrap-stock-audit/README.md": "0f3cda98c8382d41dc4f5d905460a4b4ed2854d6f94f20035b150e14825827c6"
+    "research/selected-bootstrap-stock-audit/README.md": "0f3cda98c8382d41dc4f5d905460a4b4ed2854d6f94f20035b150e14825827c6",
+    "notes/nonadjacent-axis-note.tex": "bcf9204aa24f7a2a257ceb8ce71c9ec0f2c99b6eccb25b61ca91f841c1dd9767",
+    "notes/compact-control-note.tex": "cd1c90828b8ff3ae46d129e087e70f5fdc272768e77f1b67f6bcecc556ea40bb",
+    "notes/compact-control-layout.tex": "2bc28e50f3eb092195294cafa81213e520f6d42e7935e9905ad8a6199e2a7c87",
+    "notes/compact-control-guard.tex": "38eac1e967ca30dd7df111943e41e8fbb93cafbe0356e8ebc8cb2db78089067f",
+    "notes/structured-bulk-assembly.tex": "048c67f6473ee4712d37033266a2e507dee9dcd2bb3b0fd177708100e2404d94",
+    "notes/fast-gaussian-resampling.tex": "1a81e6b7f9228adace139ef891684db3a894e2a8b6f41b5234275627d25fe455",
+    "research/complex-sw4-frame8/code/assemble.py": "bb32035aefe575da3335da4e907553e2e6fdca0a0f997db569cab651c2ddb008",
+    "research/complex-sw4-frame8/vendor/main/research/complex-k492-owner-repair/vendor/multicold/engines/outer.py": "c1ebb52163a7219504c728a5c2b098bf1e50bf20148a2879c5a74c3cadc7c03c",
+    "research/complex-t16-rare-pattern-exchanges/README.md": "da542711a6a3eb01ce1ebdf8f28a748e6195512687f61d003b95ac5ff281a7b2",
+    "research/e8-bit-p111-tuned/tune/README.md": "46c7917fb252949f38b7bcd88cf568efc282e3ea065b61d11e457e41673d0b2d"
   },
-  "verification_scope": "Retrieved pinned records and verified assembly digest against selected-result.json; no supplier replay or Lean certificate validation performed."
+  "verification_scope": "Read original manuscript PDF contents and source sections 2\u201311 and Appendix A; inspected sharper routing, compact-control, semantic/bulk assembly, selected assembler and inherited balanced outer engine. Verified pinned record digests. No supplier replay or Lean certificate validation performed.",
+  "original_manuscript": {
+    "repository": "https://github.com/openai/math",
+    "revision": "adc7f1241b42e322a6451854ab7e4b4c146bf78a",
+    "path": "preprints/Integer-multiplication-below-n-log-n-September-23-2026",
+    "numbering": "Verified against paper.pdf contents and main.tex include order; 06-transforms.tex contains both sections 6 and 7.",
+    "files_sha256": {
+      "paper.pdf": "834f644c3ce67932b9f7357d3615fb8fea4a7ff198d90e4f6883a15ba9df7129",
+      "10-transposition.tex": "c14ad8d56112f6578678a58211bc8d63c3a4b60e55078ac73bc38f7348e713cb",
+      "08-assembly.tex": "763d7945b1e1ec4ebae9b799bcefcc45fa9bae6e2ffad799868a9c3d513dbd4a",
+      "03-motifs.tex": "ed76761194988a01af77ead0ea6469cb5dcd29690ab985a0b5a4006b0f2b69bb",
+      "05-layers.tex": "20cfc8d12099d4e4ed9e3e7eeb6162edd9b6e0e076f24693364cd24377252594",
+      "00-introduction.tex": "98721f03682ccf1cc7d0850b07adabaa2d8f3afe552e3861753eba9d284d0da0",
+      "06-transforms.tex": "924316e4bc905066281d8f9e8746a49d8829aeb393688608deb1e61c3c87853c",
+      "main.tex": "42f0f506976bc2084374a71e97edc1549689a7accf35dda4db2a18af4f13c1aa",
+      "09-exact-arithmetic.tex": "5714e5d0656c78c6a1fde8d01fd11f1ba856a7ea94149b283bd9a50fdbf516c3",
+      "01-history.tex": "798956c8150c31e3e2f5f29c47110d25ce619faad1374f4d3a0f15fa3ee33ead",
+      "04-swap.tex": "412b170ccaab38dba96e95e3cbfae09f4876a9818f8d278776a746b0f8044906",
+      "11-grouped-rectangles.tex": "6525cd0a01980e56accfeaf06e9d875bc699197ba42c6e22b69435e352275174",
+      "02-streams.tex": "606c80db61cad13aa0c3b6060dc4b88dbbe7ac60cdd831aa93f28d908fd09dab",
+      "07-resampling.tex": "8a6b91670f9163afb54892489fa2210c77fe1b058f0325ec7d18b44b94be6e2c"
+    }
+  }
 }

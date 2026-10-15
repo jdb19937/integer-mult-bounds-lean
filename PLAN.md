@@ -8,7 +8,7 @@ time `O(n (log n)^(1-kappa))`. Larger saving means a smaller time exponent.
 | Bound | Exponent saving `kappa` | Status |
 | --- | --- | --- |
 | **Current unconditional result** | **`296 / (10^11 * 2^131)`, approximately `1.09e-48`** | Proved on one fixed finite Mathlib machine, for all input pairs. |
-| **Next improvement: tune the existing construction** | **To be established; must exceed the current saving** | First check admissible parameters, then prove the improved actual-step bound. |
+| **Next improvement: tune the existing construction** | **Candidate: approximately `1.60e-28`; not yet proved** | First check admissible parameters, then prove the improved actual-step bound. |
 | **Goal: match the selected community construction** | **`836330098538459 / 500000000000000000 = 0.001672660197076918`** | Upstream construction is conditional; our goal is an unconditional machine theorem at this exact saving. |
 
 The goal corresponds to a log exponent of `0.998327339802923082`.
@@ -42,44 +42,66 @@ native-wrapper retirement. `CompletedProofCheck.lean` independently audits
 the completed theorem's import closure; the library and focused checks allow
 only `propext`, `Classical.choice` and `Quot.sound`.
 
-## Improvement milestones
+## Bottlenecks by original manuscript section
 
-The next research goal is to reproduce the stronger bounds developed in
-[CrocSwap/integer-mult-bounds](https://github.com/CrocSwap/integer-mult-bounds)
-using the completed Mathlib machine proof as the foundation. These are new
-milestones, not prerequisites for the result above.
+The [section-by-section implementation plan](plan/D-sharper-bound.md) is based
+on the original OpenAI manuscript and the pinned selected community
+construction. **Today's binding cost is §6 transform-layout movement.**
+Increasing its parameters then runs into §9's quadratic CRT schedule and §5's
+full-slot control costs; reaching the selected target also requires §8's new
+Gaussian/bulk analysis and §3's stronger suppliers.
 
-The [implementation plan](plan/D-sharper-bound.md) pins the selected source,
-maps the reuse candidates and orders the work. Start by tuning the existing
-construction: its saving is `epsilon * cParam * (1 - tau)`, where currently
-`epsilon = 2^-75` and `cParam = 2^-56`. Larger admissible values may improve the
-bound while reusing the existing algorithm and correctness infrastructure.
-The achievable improvement remains unproved. Importing better finite circuits
-alone retains these very small parameter factors.
+Section numbers below are the manuscript's **printed numbers**, verified
+against its PDF contents. §7 is polynomial products, §8 is resampling,
+§9 is multiplication, and grouped packed additions are Appendix A. Earlier
+archived plans used inconsistent source-filename numbering.
 
-| ID | Milestone | Status | Completion criterion and effect on bound |
+| Manuscript section | What limits our bound | Improvement needed |
+| --- | --- | --- |
+| §2 Machine model and streams | Every new algorithm needs actual finite-machine costs and clean returned state. | Reuse Mathlib FinTM2 and existing host primitives; price new schedules. |
+| §3 Finite networks | Current bit/complex primitive savings are `2.96e-9` and `4.18e-10`. | Selected PR589 bit supplier and T16 complex supplier, with checked words, restoration, owner schedules and variable-rank moments. |
+| §4 Address interchange | All field moves inherit the bit exponent; current CRT routing uses quadratic adjacent swaps. | Direct distant-field routing first, then selected arbitrary-source routing contracts. |
+| §5 Butterfly layers; Appendix A | Full-slot overhead pays `K^tau`; actual piece matching requires `c < lambda'-lambda`. | Compact dirty controls, stopped recursion, linear semantic precision and proved recursive stock. |
+| **§6 Synthetic transforms/layout** | **`p K^(tau-1)` gives saving `epsilon c (1-tau) ≈ 1.09e-48`.** | First tune epsilon/c; ultimately replace this charge by selected coordinate routing and a balanced prefix. |
+| §7 Exact polynomial products | Packing widths and extra logarithms must remain within budget. | Reuse the proved fast subroutine and exact algebra; revalidate under new widths. Not currently binding. |
+| §8 Resampling | Current Gaussian exponent is `7/8 + 3 epsilon/2`, preventing epsilon near one. | Faster rounded inverse, bulk core/halo execution and proved error/normalization bounds. |
+| §9 Exact multiplication/cost | CRT charge `d^2 ell^tau` forces epsilon below about `3e-9`; final bound is the smallest stage margin. | Linear CRT routing, seven-stage bootstrap, all 47 linked target inequalities and unchanged exact output semantics. |
+| §§10–11 Arithmetic/transposition corollaries | Downstream consequences, not multiplication bottlenecks. | Defer until the multiplication bound advances. |
+
+## Ordered implementation milestones
+
+All rows below concern **improvements to an already completed theorem**.
+Detailed source references, code integration points, contracts and acceptance
+criteria are in the [implementation plan](plan/D-sharper-bound.md).
+
+| ID | Original sections | Concrete deliverable | Status / bound effect |
 | --- | --- | --- | --- |
-| P1 | Find safe parameter headroom | **Next** | Inventory every constraint on `epsilon` and `cParam`, including sizing, layouts, precision and actual costs; give an exact feasible candidate and its prospective saving. No proved-bound change yet. |
-| P2 | Prove the first parameter improvement | Planned | Implement the P1 candidate, reprove all affected bounds and expose an explicit stronger `MulInTime` theorem. Pass guarded verification and axiom checks; record the exact new saving in the scoreboard. |
-| P3 | Generalize the bound for further tuning | Planned | Parameterize the cost and size contracts needed for repeated tuning, recover the existing instances and identify the active bottleneck. Record any further improvement only when its machine theorem is proved. |
-| S0 | Pin the selected source | **Done: source identity only** | Exact upstream revision, selected target and six record digests are recorded in the source pin. Full supplier replay and obligation proofs remain below. |
-| S1 | Map the target to our host | Planned | Trace each inherited assumption to its precise source definition and map all 47 outer inequalities to local stages. Identify required analytic or program changes and explain how the target saving survives the transfer. |
-| S2 | Prove both selected finite suppliers | Planned | Reproduce pinned replay and prove complex and bit words, dirty restoration, frames, complete rank/cost profiles and strict endpoint inequalities in Lean. This proves component bounds, not the final saving. |
-| S3 | Prove uniform recursion and workspace | Planned | Discharge all-size compilation, common labels, mutable sources, seven bootstrap stages, reserve coefficients and cutoff conditions for the selected suppliers. |
-| S4 | Realize and price the new Mathlib program | Planned | Prove whole-call hosting, routing, precision, exact recovery and all actual-step costs at the required sharp exponents. |
-| S5 | Prove the exact target end to end | Planned | Prove unconditional `MulInTime` at the exact goal saving; pass the guarded build and full/focused axiom audits, then update the scoreboard. |
+| **M1** | **§§5, 6, 9** | **Try `epsilon=2^-30`, `c=2^-34`; reprove dependent sizing, cost and machine lemmas.** | **Next.** Candidate `kappa=296/(10^11 * 2^64) ≈ 1.6046e-28`; listed rational cost comparisons pass, Lean validation remains. Prospective gain: `2^67`. |
+| M2 | §§4.3, 8.2, 9.3 | Replace adjacent CRT walks by direct nonadjacent swaps; reuse already linear resampling exposure and price residual CRT arithmetic separately. | Planned. Replace `d^2(1+ell^tau)` by `d(1+ell^tau)`; remove the CRT cap forcing epsilon to be as small as the bit saving. Retune and prove a new bound. |
+| M3 | §5.2–5.3, Appendix A | Compact dirty-control host adapter, stopped recursion and locally charged exceptional repair. | Planned. Remove `K^tau` from node overhead, with complete temporary-field restoration. |
+| M4 | §5.4, §9.7 | Linear completed-child precision bound and explicit recursive workspace/stock contracts. | Planned. Remove conservative guard-growth restrictions and prove the reserve coefficients required at selected cutoffs. |
+| M5 | §6.2, §4 | Balanced prefix and arbitrary-source coordinate routing in both transform directions. | Planned. Replace layout saving `epsilon c a_b` by direct movement saving `a_b`; restore spectators and frequency order. |
+| M6 | §3.1–3.6, §§4–5 interfaces | Prove both selected finite suppliers, their variable-rank moments and the 144-call owner schedule. | Planned. Target primitive endpoints about `0.00173343` (bit) and `0.00167546` (complex); component bounds alone do not update the final bound. |
+| M7 | §8.1–8.3, §9.2/9.7 | Prove faster rounded Gaussian inverse and bulk core/halo tape execution, including prime supply and exact recovery interfaces. | Planned. Remove the current Gaussian restriction on epsilon; establish the selected near-one-dimension parameter regime. |
+| M8 | §9.1–9.8 | Prove bootstrap base/stages, link all 47 inequalities to actual stages and close the audited fixed-machine theorem. | Planned. Goal: exact unconditional saving `0.001672660197076918`. |
 
-P1–P2 are the shortest route to a stronger proved bound. P3 and S1 establish
-the interfaces for the larger supplier integration. Each completed logical
-section gets its own checked commit and push. These planning statuses are
-maintained explicitly; the completed-proof table above is generated separately.
+**Execution order:** M1 → M2 → M3–M5 → M6/M7 → M8. Use current
+smaller networks while establishing the structural interfaces; then plug in
+the selected suppliers. M6 and M7 are separate major requirements, both needed
+for M8. The bootstrap base saving `0.0000384599` must itself be proved or
+replaced by a sufficiently strong proved base; our current theorem does not
+supply it.
 
-The external project's currently reviewed saving is approximately
-`0.001672660197076918`, but its complete asymptotic multiplication theorem
-remains conditional. Reproducing finite certificates alone will not complete
-this roadmap. Pin and recheck the selected result before implementation;
-its [selected record](https://github.com/CrocSwap/integer-mult-bounds/blob/main/certificates/selected-result.json)
-tracks a moving research frontier.
+After each integration, record the **achieved saving**, the **smallest remaining
+cost margin**, and its **manuscript section**. Commit and push each checked
+logical section. Source records are pinned, but full supplier replay and
+inherited machine/analytic obligations remain unfinished. Planning statuses
+are maintained explicitly; the completed-proof summary above is generated.
+
+The external selected result remains conditional. Its
+[selected record](https://github.com/CrocSwap/integer-mult-bounds/blob/0fdd7d82de03e43c9e5a1000dfbcd380d1b687d2/certificates/selected-result.json)
+and [pinned source evidence](docs/sharper-bound-source.json) distinguish it
+from our unconditional result and from older intermediate research witnesses.
 
 ## Archived route and reusable work
 
