@@ -2365,3 +2365,5 @@ import IntegerMultBounds.Machine.ChirpRoundCalls
 import IntegerMultBounds.Machine.ChirpRoundedValue
 import IntegerMultBounds.Machine.ChirpRoundedProduct
 import IntegerMultBounds.MathlibTM2
+import IntegerMultBounds.MathlibTM2.Cost.CompactSwap
+import IntegerMultBounds.MathlibTM2.Node.CompactRotParity

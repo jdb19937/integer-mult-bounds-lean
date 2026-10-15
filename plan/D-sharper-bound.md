@@ -412,6 +412,34 @@ mathematics where their contracts match. Build an adapter to the live Mathlib
 `Node/Basis.lean` and `Cost/LayerCost.lean` contracts rather than reviving the
 retired native controller architecture.
 
+**Reuse route identified for M3:** the retained native modules
+`Machine/ActivePrefixStageFullEarlyRun.lean` and
+`Machine/ActivePrefixStageFullLateRun.lean` already execute complete selected
+toggles, including descriptor synthesis, exceptional repair and cleanup.
+`ActivePrefixStageFullSelected.lean` proves the literal address action, and
+`ActivePrefixStageFullBudget.lean` bounds the actual runs by local volume times
+`max(1,(f-1)*guard)^tau`. The live host's `foreign_exec` and placed-machine
+bridge can import fixed native programs with constant-factor overhead.
+Use these complete routines instead of rebuilding their arithmetic and repair.
+
+This is not yet a compact Mathlib layer: their inputs require full reserved
+front/control/back fields. Prove the live `encZ` layout supplies those ranges,
+construct the original shape/node/slot descriptors, normalize the host bank
+with charged cleanup, and discharge local density and payload-width premises.
+The late endpoint also needs `f>1` and `guard>=2`; handle smaller leaves explicitly.
+Then replace the actual `slotXorProg` calls and their cost matching together.
+
+**Checked host primitives:** `Node/CompactSwap.lean` executes a genuine
+two-field interchange on bit streams, preserving arbitrary dirty fields,
+spectators and the full register frame. `Cost/CompactSwap.lean` normalizes
+its cost in compact width and volume with explicit bank-size bounds.
+`Node/CompactRotParity.lean` physically packs block low bits using runtime
+width counters and restores source/parameters/scratch, with exact linear cost.
+The guarded checks and `CompactControlCheck.lean` pass for all four audited
+contracts. These prepared primitives do not yet change the running layer or
+the public saving `2^-66`; the complete native-stage bridge and reservation
+invariant above are the next integration work.
+
 Prove complete temporary address ranges survive every role split, arbitrary
 initial temporary values are restored, and exceptional extraction, sorting,
 reinsertion and cleanup are charged at each node's own volume. Add an actual

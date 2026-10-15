@@ -35,3 +35,4 @@ jobs:
       - run: lake env lean MathlibTM2Check.lean
       - run: lake env lean FastPathCheck.lean
       - run: lake env lean CompletedProofCheck.lean
+      - run: lake env lean CompactControlCheck.lean
