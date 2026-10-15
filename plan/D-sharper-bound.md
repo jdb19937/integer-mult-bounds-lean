@@ -332,6 +332,11 @@ its logarithmic time-bound bridge, using the direct routing margin. It is
 checked at the existing parameters; the executable pipeline has not yet
 been matched to this envelope. No stronger public saving is claimed.
 
+`MainDirectCore.lean` connects both linear resampling bounds to the existing
+source-transform core. `mn_core_le_linear` bounds its actual `srcCoreCost` by
+the linear stage sum plus the explicit forward/inverse transform charges.
+Those charges still await the concrete direct-machine cost match.
+
 Remaining integration steps, in order:
 
 1. **M2b — rotation scanner and producer: complete.** The actual all-fiber

@@ -1,3 +1,4 @@
+import IntegerMultBounds.MathlibTM2.Fast.MainDirectCore
 import IntegerMultBounds.MathlibTM2.Cost.DirectTotal
 import IntegerMultBounds.MathlibTM2.Fast.CRTControlTarget
 import IntegerMultBounds.MathlibTM2.Cost.CRTControlTarget
@@ -47,6 +48,7 @@ separate work. -/
 open Lean in
 run_cmd do
   let names := #[
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.mn_core_le_linear,
     ``IntegerMultBounds.MathlibTM2.Cost.tot_direct_le,
     ``IntegerMultBounds.MathlibTM2.Cost.totDirectBound_isBigO_kappa,
     ``IntegerMultBounds.MathlibTM2.Cost.tot_direct_htime,
