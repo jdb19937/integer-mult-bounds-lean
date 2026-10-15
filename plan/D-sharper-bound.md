@@ -833,6 +833,32 @@ reused unchanged at the larger chunk exponent.
 The focused compact axiom audit passed for 351 contracts with peak RSS below
 4.2 GiB; no full build or limit increase ran. Public saving remains `2^-66`.
 
+**Concrete transform and retuned-cost checkpoint (2026-10-15).**
+`CompactSynConcreteTransforms` now specializes both original transform
+specifications to the canonical expanded main table, actual `dsyV₀` and
+existing forward/opposite layouts. It derives layout execution, complete
+scan contracts, bootstrap readiness and cleanup internally. Actual main-stage
+and assembled multiplier integration remain separate.
+
+`CompactCallerCombinedBudget/OverheadRuntime` discharge the scalar, divisor,
+piece-validity and volume budgets for actual records. The uniform versions
+cover every chunk between the legacy chunk and original dimension, with an
+explicit eighth-root corollary. `CompactCallerUniformReadiness`,
+`CompactPieceUniformPacking`, `CompactTopUniformRuntimeExecution` and
+`CompactSynLayerStepUniformRuntime` derive shared shapes, descendant packing
+and actual top execution for these larger chunks. Full retuned chunk/scan
+composition and coherent executable parameter/distribution changes remain.
+
+`CompactCallerGuardPower/LayerGrowth` prove that the actual original-precision
+guard fits any positive original-dimension power, with dyadic coefficients,
+and absorb its factor in the closed compact recurrence into the proposed
+layer exponent. This replaces the obsolete chunk-width penalty at that
+analytic step; a complete compact transform/total bound is still required.
+The focused axiom audit passed for 378 contracts, with peak RSS below
+4.2 GiB; all new modules passed guarded single-file checks. No full build
+ran and no proof limits were raised. Public saving remains `2^-66`, with
+`2^-37` the next integration target.
+
 Prove complete temporary address ranges survive every role split, arbitrary
 initial temporary values are restored, and exceptional extraction, sorting,
 reinsertion and cleanup are charged at each node's own volume. Add an actual

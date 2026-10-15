@@ -1,3 +1,20 @@
+import IntegerMultBounds.MathlibTM2.Cost.CompactCallerCombinedBudget
+import IntegerMultBounds.MathlibTM2.Cost.CompactCallerOverheadRuntime
+import IntegerMultBounds.MathlibTM2.Cost.CompactCallerUniformBudget
+import IntegerMultBounds.MathlibTM2.Cost.CompactCallerUniformOverhead
+import IntegerMultBounds.MathlibTM2.Cost.CompactCallerUniformReadiness
+import IntegerMultBounds.MathlibTM2.Cost.CompactPieceUniformPacking
+import IntegerMultBounds.MathlibTM2.Fast.CompactTopUniformRuntimeExecution
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepUniformRuntime
+import IntegerMultBounds.MathlibTM2.Cost.CompactCallerGuardPower
+import IntegerMultBounds.MathlibTM2.Cost.CompactCallerLayerGrowth
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynFwd
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynOpp
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynTransformPre
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynFwdSpec
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynOppSpec
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynInitialTransforms
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynConcreteTransforms
 import IntegerMultBounds.MathlibTM2.Cost.CompactCallerDivisorPolynomial
 import IntegerMultBounds.MathlibTM2.Cost.CompactCallerRetunedCapacity
 import IntegerMultBounds.MathlibTM2.Cost.CompactCallerScalarBudget
@@ -501,7 +518,34 @@ run_cmd do
     ``IntegerMultBounds.MathlibTM2.Fast.Main.compactMnBootstrapFinal_view,
     ``IntegerMultBounds.MathlibTM2.Fast.Main.compactMnBootstrapFinal_ready,
     ``IntegerMultBounds.MathlibTM2.Fast.Main.compactMnGlobalsExit_after_transform,
-    ``IntegerMultBounds.MathlibTM2.Fast.Main.compactMnTransformPipeline_from_sources]
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.compactMnTransformPipeline_from_sources,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactCaller_runtime_eventually_combinedBudget,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactCaller_runtime_eventually_roundOverhead,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactCaller_uniform_eventually_workingWidth,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactCaller_uniform_eventually_scalarBudget,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactCaller_uniform_eventually_combinedBudget,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactCaller_uniform_eventually_roundOverhead,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactCaller_retuned_eventually_roundOverhead,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactCaller_uniform_eventually_shape,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactCaller_uniform_selected_eventually_packed,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactCaller_retuned_eventually_shape,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactCaller_retuned_selected_eventually_packed,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactPiece_uniform_eventually_packed,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactPiece_uniform_eventually_ready,
+    ``IntegerMultBounds.MathlibTM2.Fast.compactTopRuntime_uniform_eventually_exec_Hl,
+    ``IntegerMultBounds.MathlibTM2.Fast.compactSynParkedRuntime_uniform_eventually_exec_Hl,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactCaller_guard_log,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactCaller_guard_power,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactCaller_layer_guard_absorbed,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactCaller_interim_layer_growth,
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.compactSynFwdCore_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.compactSynOppCore_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.compactSynFwd_spec,
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.compactSynOpp_spec,
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.compactSynInitialFwd_eventually,
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.compactSynInitialOpp_eventually,
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.compactSynConcreteFwd_eventually,
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.compactSynConcreteOpp_eventually]
   for name in names do
     for ax in ← collectAxioms name do
       unless #[``propext, ``Quot.sound, ``Classical.choice].contains ax do
