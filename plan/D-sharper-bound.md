@@ -231,16 +231,41 @@ absorbs all fibers of all pipeline axes into `2^19*T` eventually.
 both directional lengths to unary, and clears those counters afterward.
 Conversion costs `W*(4*S+22)+2*S+12`, separate from the three-atom
 binary kernel and the `2*S+4` counter cleanup. This linear-in-modulus work
-is **not** part of the polynomial descriptor-scan absorption. Connecting
-the ten-variable control bank to the five-variable offset bank, generating
-descriptors and assembling the fiber rotation loop remain unfinished.
+is **not** part of the polynomial descriptor-scan absorption. `Fast/CRTControlBridge.lean` now computes offsets directly in the scanner's
+ten-variable bank, preserving its control sum and validity flag; the separate
+five-variable interface is no longer required for this path.
+`CRTControlConstants.lean` loads permanent target constants while preserving
+sources. `CRTControlFiber.lean` selects rotation or copying from the binary
+validity flag, and `CRTControlRotate.lean` composes offset computation,
+materialization, physical movement and counter cleanup. `CRTControlPass.lean`
+combines the actual scanner, constants load and rotation into one fiber with
+no assumed execution contract. Descriptor tape and scratch return restored.
+
+`Cost/CRTControlOffset.lean` separately bounds materialization plus cleanup
+across all fibers by `2^7*d*T*p`, a linear number of full-volume record passes.
+This does not include binary arithmetic or physical data movement; their
+explicit bounds must be added when matching the complete pass.
+
+`CRTControlReset.lean` loads the outer loop's binary address and establishes
+the next fiber's canonical bank, costing `8W+8+10*tblC W w`.
+`CRTControlLoop.lean` supplies a fixed indexed loop exposing that address to
+each body, including initialization, runtime count construction and cleanup.
+Its bound is `2^L*(bodyCost+4W+16)+6W+9L+17`. The body remains an explicit
+interface obligation until the all-fiber pass is assembled.
+
+`CRTControlGenerate.lean` provides actual packet emission, binary powers
+without unary expansion, exposed-place/active-field arithmetic, and original
+weight advancement. The complete parameter-stream traversal, target omission,
+saved-zero insertion and source restoration are still unfinished. The generator
+kernels and one-fiber pass are audited; neither constitutes a new complete CRT
+driver or a stronger public bound.
 
 Remaining integration steps, in order:
 
-1. **M2b — rotation scanner:** concrete descriptor scanning and unary offset
-   conversion are proved. Connect their banks, generate descriptors and
-   assemble the outer fiber loop feeding `crtRotFib`; prove the complete
-   actual cost and state restoration.
+1. **M2b — rotation scanner:** the complete one-fiber scan/rotation and indexed
+   loop setup are proved. Finish the runtime descriptor-stream producer and
+   instantiate the loop with the fiber contract; prove the all-fiber semantic
+   result, complete actual cost, bank initialization and cleanup.
    Preserve the existing order of triangular arithmetic passes.
 2. **M2c — driver and matching:** generate runtime unary widths and assemble
    the proved exposure/unexposure steps into the forward/inverse schedule; replace the
@@ -441,9 +466,9 @@ reduction interfaces and encoding overhead if those corollaries are desired.
 
 1. **M1 complete:** public saving `2^-93`; exact internal margin between
    `2^-93` and `2^-92`, with the existing existential theorem preserved.
-2. **M2 in progress:** concrete descriptor scanner, unary offsets, linear
-   schedule and distant exposure/cleanup checked; next assemble descriptor
-   generation, outer rotation loop and complete driver, then retune and publish
+2. **M2 in progress:** one-fiber scanner/rotation, indexed-loop setup, generator
+   kernels, linear schedule and distant exposure/cleanup checked; next finish
+   descriptor traversal, outer rotation pass and complete driver, then retune and publish
    the resulting stronger theorem. This yields a structural improvement
    without importing the large selected supplier inventory.
 3. **M3–M5:** compact controls, width/stock contracts and balanced coordinate

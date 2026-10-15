@@ -3,6 +3,7 @@ module
 public import IntegerMultBounds.MathlibTM2.Cost.Branching
 public import IntegerMultBounds.MathlibTM2.Cost.CRTControl
 public import IntegerMultBounds.MathlibTM2.Cost.CRTControlScan
+public import IntegerMultBounds.MathlibTM2.Cost.CRTControlOffset
 public import IntegerMultBounds.MathlibTM2.Cost.Growth
 public import IntegerMultBounds.MathlibTM2.Cost.LayerCost
 public import IntegerMultBounds.MathlibTM2.Cost.LayerCostNat
@@ -32,6 +33,14 @@ public import IntegerMultBounds.MathlibTM2.Fast.CRTControlTape
 public import IntegerMultBounds.MathlibTM2.Fast.CRTControlBank
 public import IntegerMultBounds.MathlibTM2.Fast.CRTControlScan
 public import IntegerMultBounds.MathlibTM2.Fast.CRTControlScanner
+public import IntegerMultBounds.MathlibTM2.Fast.CRTControlBridge
+public import IntegerMultBounds.MathlibTM2.Fast.CRTControlConstants
+public import IntegerMultBounds.MathlibTM2.Fast.CRTControlFiber
+public import IntegerMultBounds.MathlibTM2.Fast.CRTControlGenerate
+public import IntegerMultBounds.MathlibTM2.Fast.CRTControlLoop
+public import IntegerMultBounds.MathlibTM2.Fast.CRTControlPass
+public import IntegerMultBounds.MathlibTM2.Fast.CRTControlReset
+public import IntegerMultBounds.MathlibTM2.Fast.CRTControlRotate
 public import IntegerMultBounds.MathlibTM2.Fast.CRTControlOffset
 public import IntegerMultBounds.MathlibTM2.Fast.CRTLinear
 public import IntegerMultBounds.MathlibTM2.Fast.CRTSchedule

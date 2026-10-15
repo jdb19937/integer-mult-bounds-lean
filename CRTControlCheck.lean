@@ -1,3 +1,8 @@
+import IntegerMultBounds.MathlibTM2.Fast.CRTControlPass
+import IntegerMultBounds.MathlibTM2.Fast.CRTControlGenerate
+import IntegerMultBounds.MathlibTM2.Fast.CRTControlLoop
+import IntegerMultBounds.MathlibTM2.Fast.CRTControlReset
+import IntegerMultBounds.MathlibTM2.Cost.CRTControlOffset
 import IntegerMultBounds.MathlibTM2.Fast.CRTControlScanner
 import IntegerMultBounds.MathlibTM2.Fast.CRTControlOffset
 import IntegerMultBounds.MathlibTM2.Fast.CRTLinear
@@ -57,7 +62,24 @@ run_cmd do
     ``IntegerMultBounds.MathlibTM2.Fast.crtGapSwapStep_runs,
     ``IntegerMultBounds.MathlibTM2.Fast.crtExposeStep_runs,
     ``IntegerMultBounds.MathlibTM2.Fast.crtUnexposeStep_runs,
-    ``IntegerMultBounds.MathlibTM2.Cost.crtControlScanCost_pipeline_le]
+    ``IntegerMultBounds.MathlibTM2.Cost.crtControlScanCost_pipeline_le,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtControlOffsets_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtControlUnary10Clear_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtControlConstants_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtControlFiber_shift_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtControlRotate_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtControlPass_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtControlPassReset_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtControlReset_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtControlBegin_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtControlIndexedLoop_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtControlIndexedFull_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtControlEmitPacket_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtControlPow2_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtControlGeneratePacket_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtControlGeneratedField_spec,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtControlAdvanceWeight_runs,
+    ``IntegerMultBounds.MathlibTM2.Cost.crtControlOffsetUnaryCost_pipeline_le]
   for name in names do
     for ax in ← collectAxioms name do
       unless #[``propext, ``Quot.sound, ``Classical.choice].contains ax do
