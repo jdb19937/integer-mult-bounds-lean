@@ -816,7 +816,9 @@ run_cmd do
     ``IntegerMultBounds.MathlibTM2.Cost.CompactDimension.next_supplier_obstruction,
     ``IntegerMultBounds.MathlibTM2.Cost.CompactDimension.next_gaussian_obstruction,
     ``IntegerMultBounds.MathlibTM2.Cost.CompactDimension.Eighth.margin_covers,
-    ``IntegerMultBounds.MathlibTM2.Cost.CompactDimension.Eighth.gaussian_margin]
+    ``IntegerMultBounds.MathlibTM2.Cost.CompactDimension.Eighth.gaussian_margin,
+    ``IntegerMultBounds.MathlibTM2.Cost.CompactDimension.Eighth.supplier_obstruction,
+    ``IntegerMultBounds.MathlibTM2.Cost.CompactDimension.Eighth.fourth_root_gaussian_obstruction]
   for name in names do
     for ax in ← collectAxioms name do
       unless #[``propext, ``Quot.sound, ``Classical.choice].contains ax do

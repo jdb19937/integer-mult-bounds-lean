@@ -1122,8 +1122,10 @@ Lean machine theorems and focused axiom audits; M3–M8 remain unfinished.
 
 ## Completed compact integration checkpoint
 
-The public `MathlibTM2.mulInTime` now proves saving `2^-36` unconditionally,
-after the sixteenth-root dimension retune of the original `2^-37` compact result.
+The public `MathlibTM2.mulInTime` now proves saving `2^-35` unconditionally,
+after the eighth-root dimension retune and sharper logarithmic cost matching.
+The intermediate sixteenth-root result proved `2^-36`; the original compact
+result proved `2^-37`.
 `CompactFinal.compactRetunedPrefix_exec` composes actual input/parameter/distribution
 execution, the fifteen-stage chain and canonical output. `CompactMainHost` bounds
 all cleanup using a finite push constant and installs the completed main in the
@@ -1134,17 +1136,74 @@ within the sixteen-step allowance. No execution or cost premise remains in
 M3 remains yellow only for stopped recursion and local repair work needed for
 later improvements; M4–M8 and the selected state-of-the-art goal remain open.
 
-### Follow-on logarithmic estimate under investigation
+### Completed sharper logarithmic estimate and eighth-root integration
 
-The `epsilon<1/12` condition above belongs to the current coarse resampling
-cost estimate, not necessarily its executable algorithm. The existing
-Schönhage–Strassen polylogarithmic overhead is bounded using loss `delta=1/8`.
-A proposed sharper bound uses `delta=2^-5`, log exponent `2^-6`, and dyadic
-coefficients `2^7` and `2^14`. If checked and propagated into actual stage costs,
-its resampling margin becomes `1/4-delta-3epsilon/2`; at `epsilon=2^-3` this is
-`2^-5`, leaving room for public saving `2^-35`. This is not yet a machine theorem.
-Existing precision and workspace arguments appear to support the eighth-root
-dimension with a power-eight sizing cap. New supplier or Gaussian mathematics
-is still necessary after this route: at epsilon one eighth the existing complex
-supplier cannot certify `2^-34`, and epsilon one quarter fails the resampling
-margin even with arbitrarily small positive logarithmic loss.
+The old `epsilon<1/12` condition belonged to the coarse resampling cost
+estimate. The checked sharper Schönhage–Strassen logarithmic loss is now
+`delta=2^-5`, using logarithm exponent `2^-6` and dyadic coefficients `2^7`
+and `2^14`. Actual multiplication and rounding costs use this sharper budget;
+the Gaussian margin is `1/4-delta-3epsilon/2`, equal to `2^-5` at the actual
+`epsilon=2^-3`. Both executable dimension-root calls use exponent three.
+
+All 294 affected dependencies passed guarded single-file verification. The
+complete-proof axiom audit passed for 124962 declarations and the focused
+compact audit passed for 565 contracts. The public theorem now proves
+`2^-35`; this includes every input, actual costs and fixed-machine assembly.
+
+`CompactDimension.Eighth.supplier_obstruction` proves that the current complex
+supplier cannot reach `2^-34` at this dimension, even with an ideal layer bound.
+`fourth_root_gaussian_obstruction` proves that the present resampling estimate
+cannot support `epsilon=2^-2` even at zero logarithmic loss. Both are checked:
+the next structural improvements must address these restrictions rather than
+only doubling the dimension again.
+
+### Further parameter route under evaluation
+
+A standalone checked arithmetic candidate in `Cost/CompactSupplierCeiling.lean`
+uses `epsilon=9/64`, `c=1/4`, logarithmic loss `1/32`, and layer gap `57/2^37`.
+All five margins cover public saving `2^-34`; this is not an executable theorem.
+The proposed dimension and layer gap are dyadic fractions rather than pure
+powers of two; the public bound remains a pure power of two.
+
+The existing root machine could compute `d=iroot 64 (b^9)`, but its temporary
+square does not fit the current parameter-word width for some small inputs.
+A wider fixed word allowance and corresponding runtime/cost contracts are
+required, alongside generalized root-sizing identities. A seventh-root
+alternative preserves more sizing identities but requires a new root machine.
+Neither alternative has been integrated. Independently, the checked generic
+supplier ceiling proves that the current supplier plus this resampling estimate
+cannot reach `2^-33`, even with arbitrary admissible dimension and layer choices.
+Thus this possible extra step does not replace the selected-supplier and
+resampling milestones needed for the state-of-the-art goal.
+
+### Selected-supplier integration boundary
+
+Initial inspection found no Lean replay certificates for the selected suppliers.
+The pinned PR589 word is now imported, with generic dirty-input replay semantics
+and its first scalar prefix checked; the full endpoint remains open. Existing
+Shared50/Paired49 and h25 proofs concern different suppliers. Complete selected
+dirty-input restoration will reuse
+`FramedCircuit.common_frame_identity` and `BoundedFramedCircuit.restrict_run`.
+For T16, the physical owner schedule and its literal occurrence-indexed child
+rank profile must also be proved. The existing uniform `factorCount` recurrence
+cannot consume a variable-rank histogram by changing a scalar constant; it
+requires a weighted moment recurrence including source/frame/owner costs.
+This work is separate from the small parameter improvements above.
+
+## Integration gates for the `2^-34` candidate
+
+| Gate | Progress | Acceptance |
+| --- | --- | --- |
+| Exact candidate margins and recurrence slack | ✅ | `CompactSupplierCeiling.NineSixtyFourths`; layer margin is `513/2^43`, strictly above target `512/2^43`. Preserve the inequality rather than the old equality. |
+| Independent dimension arithmetic and precision | ✅ | Root64/input9, real exponent9/64, lower cap7, coarse upper power8, large-dimension threshold64; checked sizing and gamma/modulus lemmas. |
+| Executable candidate dimension and clean table stage | ✅ | Helper, generic40-variable core, scratch cleanup and concrete width wrapper are checked and audited; the core can be imported below ParamProg. |
+| Actual global size and parameter definitions | ⬜ | Retune Sizes and PmF chain, preserve all40 values and emitted streams, widen literal pmW/prelude from16 to32, reprice actual costs. |
+| Actual fourth-root compact chunks | ⬜ | Update compact chunk root3→2, literal overwrite and exact costs, recurrence and source matching. |
+| Actual wider distribution and precision | 🟡 | Generic width/guard bounds checked; reprove small-input axis facts under the new dimension and use the actual allocated width. |
+| Public theorem and audits | ⬜ | All changed dependencies, actual execution costs and final axiom audits pass at `2^-34`. |
+
+The `2^-35` dependency checks and final audits are complete. The new candidate
+modules above were independently checked while those sources remained fixed.
+When integrating, transplant checked arithmetic or move generic foundations below
+Sizes: the current independent test modules import Sizes and cannot be imported
+back into it. The dimension-stage core must similarly stay below ParamProg.

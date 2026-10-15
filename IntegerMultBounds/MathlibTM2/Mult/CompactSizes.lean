@@ -89,7 +89,7 @@ theorem eventually_K_le_predecessor : ∀ᶠ n in atTop, K n≤d n-1 := by
 theorem eventually_mul_K_le_ℓ (C : ℕ) : ∀ᶠ n in atTop, C*K n≤ℓ n := by
   filter_upwards [Sizes.eventually_big, tendsto_atTop.1 Sizes.tendsto_d (2*C)] with n h hC
   have h1 := h.pow_le_two_ℓ
-  have h2 : d n^2≤d n^15 := Nat.pow_le_pow_right h.one_le_d (by norm_num)
+  have h2 : d n^2≤d n^7 := Nat.pow_le_pow_right h.one_le_d (by norm_num)
   have h3 : C*K n≤C*d n := Nat.mul_le_mul_left _ (K_le_d n)
   have h4 : 2*C*d n≤d n*d n := Nat.mul_le_mul_right _ hC
   nlinarith

@@ -9,10 +9,10 @@ public import Mathlib.Analysis.SpecificLimits.Normed
 # Size parameters of the multiplication algorithm
 
 Integer definitions of the parameters of the paper's `§8` "Input and transform sizes" as
-functions of the operand length `n`, with the retuned constants `ε = 2^{-4}`, `c = 2^{-32}`:
+functions of the operand length `n`, with the retuned constants `ε = 2^{-3}`, `c = 2^{-32}`:
 
 * `b = ⌈log₂ n⌉`, `p = 6b`;
-* `d = ⌊b^ε⌋`, the largest `d` with `d^(2^4) ≤ b`; `K = ⌊d^c⌋`, the largest `K` with
+* `d = ⌊b^ε⌋`, the largest `d` with `d^(2^3) ≤ b`; `K = ⌊d^c⌋`, the largest `K` with
   `K^(2^32) ≤ d`;
 * `T = 2^logT`, the power of two in `[4n/b, 8n/b)`; `ℓ = ⌈logT / d⌉`, `r = 2^ℓ`;
 * axis lengths `t_i ∈ {r/2, r}`: the first `numHalf = dℓ - logT` are `r/2`, the rest (in
@@ -121,15 +121,15 @@ theorem eventually_mul_pow_le_two_pow (A k : ℕ) : ∀ᶠ m : ℕ in atTop, A *
   exact_mod_cast this
 
 /-- `c x^k ≤ (c x)^k`. Stated for a variable exponent `k`, so that instances at
-`k = 2^4` never ask the kernel to evaluate a power of a numeral. -/
+`k = 2^3` never ask the kernel to evaluate a power of a numeral. -/
 theorem mul_pow_le_mul_pow {k : ℕ} (hk : k ≠ 0) (c x : ℕ) : c * x ^ k ≤ (c * x) ^ k := by
   rw [mul_pow]
   exact Nat.mul_le_mul_right _ (Nat.le_self_pow hk c)
 
 /-! ### Fixed exponents -/
 
-/-- `2^4`, the root index of `d = ⌊b^ε⌋`, `ε = 2^{-4}`. -/
-def epsExp : ℕ := 2 ^ 4
+/-- `2^3`, the root index of `d = ⌊b^ε⌋`, `ε = 2^{-3}`. -/
+def epsExp : ℕ := 2 ^ 3
 
 /-- `2^32`, the root index of `K = ⌊d^c⌋`, `c = 2^{-32}`. -/
 def cExp : ℕ := 2 ^ 32
@@ -138,14 +138,14 @@ theorem epsExp_ne : epsExp ≠ 0 := by unfold epsExp; positivity
 
 theorem cExp_ne : cExp ≠ 0 := by unfold cExp; positivity
 
-theorem sixteen_le_epsExp : 16 ≤ epsExp := by unfold epsExp; norm_num
+theorem eight_le_epsExp : 8 ≤ epsExp := by unfold epsExp; norm_num
 
 theorem one_le_cExp : 1 ≤ cExp := by unfold cExp; norm_num
 
-/-- `ε = 2^{-4}` as a real number. -/
+/-- `ε = 2^{-3}` as a real number. -/
 noncomputable def epsilon : ℝ := ((epsExp : ℕ) : ℝ)⁻¹
 
-theorem epsilon_eq : epsilon = (2 ^ 4 : ℝ)⁻¹ := by
+theorem epsilon_eq : epsilon = (2 ^ 3 : ℝ)⁻¹ := by
   norm_num [epsilon, epsExp]
 
 /-- `c = 2^{-32}` as a real number. -/
@@ -189,7 +189,7 @@ def b (n : ℕ) : ℕ := Nat.clog 2 n
 /-- The working precision `p = 6b`. -/
 def p (n : ℕ) : ℕ := 6 * b n
 
-/-- The dimension `d = ⌊b^ε⌋`: the largest `d` with `d^(2^4) ≤ b`. -/
+/-- The dimension `d = ⌊b^ε⌋`: the largest `d` with `d^(2^3) ≤ b`. -/
 def d (n : ℕ) : ℕ := iroot epsExp (b n)
 
 /-- `K = ⌊d^c⌋`: the largest `K` with `K^(2^32) ≤ d`. -/
@@ -454,7 +454,7 @@ theorem volume_bounds (hn : 2 ≤ n) : 24 * n ≤ T n * p n ∧ T n * p n < 48 *
   have e : T n * p n = 6 * (b n * T n) := by unfold p; ring
   omega
 
-/-- `p^ε / 12 ≤ d ≤ p^ε`, integer form: `d^(2^4) ≤ p < (12 d)^(2^4)`. -/
+/-- `p^ε / 12 ≤ d ≤ p^ε`, integer form: `d^(2^3) ≤ p < (12 d)^(2^3)`. -/
 theorem d_pow_le_p (n : ℕ) : d n ^ epsExp ≤ p n := by
   have := d_pow_le n
   unfold p
@@ -469,7 +469,7 @@ theorem p_lt_pow (hn : 2 ≤ n) : p n < (12 * d n) ^ epsExp := by
     _ ≤ (6 * (2 * d n)) ^ epsExp := mul_pow_le_mul_pow epsExp_ne 6 _
     _ = (12 * d n) ^ epsExp := by rw [show 6 * (2 * d n) = 12 * d n by ring]
 
-/-- `p^ε / 12 ≤ d ≤ p^ε`, `ε = 2^{-4}`. -/
+/-- `p^ε / 12 ≤ d ≤ p^ε`, `ε = 2^{-3}`. -/
 theorem d_rpow_bounds (hn : 2 ≤ n) :
     (p n : ℝ) ^ epsilon / 12 ≤ d n ∧ (d n : ℝ) ≤ (p n : ℝ) ^ epsilon := by
   have hE : (epsExp : ℝ) ≠ 0 := by exact_mod_cast epsExp_ne
@@ -550,7 +550,7 @@ theorem T_bounds_real (hn : 2 ≤ n) :
   · rw [div_le_iff₀ hb]; linarith
   · rw [lt_div_iff₀ hb]; linarith
 
-/-- `log₂ p ≤ 3 + 2^36 ⌈log₂ (K + 1)⌉`. -/
+/-- `log₂ p ≤ 3 + 2^35 ⌈log₂ (K + 1)⌉`. -/
 theorem clog_p_le (n : ℕ) : Nat.clog 2 (p n) ≤ 3 + cExp * epsExp * Nat.clog 2 (K n + 1) := by
   apply Nat.clog_le_of_le_pow
   have h1 := b_lt_d_succ_pow n
@@ -571,7 +571,7 @@ end Small
 /-! ### The large regime -/
 
 /-- The regime of the deterministic size relations: `n ≥ 2` and `d ≥ 16`, so that
-`b ≥ d^(2^4) ≥ d^16`. -/
+`b ≥ d^(2^3) ≥ d^8`. -/
 def Big (n : ℕ) : Prop := 2 ≤ n ∧ 16 ≤ d n
 
 theorem eventually_big : ∀ᶠ n in atTop, Big n :=
@@ -585,8 +585,8 @@ theorem Big.one_le_d (h : Big n) : 1 ≤ d n := by have := h.2; omega
 
 theorem Big.two_le_d (h : Big n) : 2 ≤ d n := by have := h.2; omega
 
-theorem Big.pow_le_b (h : Big n) {k : ℕ} (hk : k ≤ 16) : d n ^ k ≤ b n :=
-  pow_le_b_of (hk.trans sixteen_le_epsExp) h.one_le_d
+theorem Big.pow_le_b (h : Big n) {k : ℕ} (hk : k ≤ 8) : d n ^ k ≤ b n :=
+  pow_le_b_of (hk.trans eight_le_epsExp) h.one_le_d
 
 theorem Big.sixteen_le_b (h : Big n) : 16 ≤ b n := by
   have := h.pow_le_b (k := 1) (by norm_num)
@@ -606,21 +606,21 @@ theorem Big.b_le_two_dℓ (h : Big n) : b n ≤ 2 * (d n * ℓ n) := by
   have := logT_le_dℓ h.one_le_d
   omega
 
-/-- `d^15 ≤ 2ℓ`. -/
-theorem Big.pow_le_two_ℓ (h : Big n) : d n ^ 15 ≤ 2 * ℓ n := by
+/-- `d^7 ≤ 2ℓ`. -/
+theorem Big.pow_le_two_ℓ (h : Big n) : d n ^ 7 ≤ 2 * ℓ n := by
   have h1 := h.b_le_two_dℓ
-  have h2 := h.pow_le_b (k := 16) le_rfl
+  have h2 := h.pow_le_b (k := 8) le_rfl
   have hd := h.one_le_d
-  have : d n * d n ^ 15 ≤ d n * (2 * ℓ n) := by
+  have : d n * d n ^ 7 ≤ d n * (2 * ℓ n) := by
     rw [← pow_succ']
-    calc d n ^ 16 ≤ b n := h2
+    calc d n ^ 8 ≤ b n := h2
       _ ≤ 2 * (d n * ℓ n) := h1
       _ = d n * (2 * ℓ n) := by ring
   exact Nat.le_of_mul_le_mul_left this hd
 
 theorem Big.d_le_ℓ (h : Big n) : d n + 1 ≤ ℓ n := by
   have h1 := h.pow_le_two_ℓ
-  have h2 : d n ^ 2 ≤ d n ^ 15 := Nat.pow_le_pow_right h.one_le_d (by norm_num)
+  have h2 : d n ^ 2 ≤ d n ^ 7 := Nat.pow_le_pow_right h.one_le_d (by norm_num)
   have h3 := h.2
   nlinarith
 
@@ -675,8 +675,8 @@ theorem Big.moduli_room (h : Big n) : 8 * d n ^ 2 * N n + 4 * d n ≤ 2 ^ (ℓ n
     omega
   have h1' : D ^ 2 * N n ≤ 2 ^ (2 * D) * 2 ^ (2 * D * (2 * D)) := Nat.mul_le_mul hD2 hN
   have h2 : 4 + 2 * D + 2 * D * (2 * D) ≤ ℓ n - 1 := by
-    have h3 : D ^ 15 ≤ 2 * ℓ n := h.pow_le_two_ℓ
-    have h4 : D ^ 3 ≤ D ^ 15 := Nat.pow_le_pow_right (by omega) (by norm_num)
+    have h3 : D ^ 7 ≤ 2 * ℓ n := h.pow_le_two_ℓ
+    have h4 : D ^ 3 ≤ D ^ 7 := Nat.pow_le_pow_right (by omega) (by norm_num)
     have h5 : 16 * D ^ 2 ≤ D ^ 3 := by
       calc 16 * D ^ 2 ≤ D * D ^ 2 := Nat.mul_le_mul_right _ hD
         _ = D ^ 3 := by ring
@@ -807,19 +807,19 @@ theorem Big.p_mul_s_lt (h : Big n) (i : Fin (d n)) :
 /-- `γ ≤ b/4`, integer form `4γ ≤ b`. -/
 theorem Big.four_gamma_le_b (h : Big n) : 4 * gamma n ≤ b n := by
   have h1 := alpha_pow_four_le h.1
-  have h16 := h.pow_le_b (k := 16) le_rfl
+  have h8 := h.pow_le_b (k := 8) le_rfl
   have hD := h.2
   set D := d n
   set B := b n
   set A := alpha n
   -- `49152 D^4 ≤ B`
   have h2 : 49152 * D ^ 4 ≤ B := by
-    have : 49152 ≤ D ^ 12 := by
-      calc 49152 ≤ 16 ^ 12 := by norm_num
-        _ ≤ D ^ 12 := Nat.pow_le_pow_left hD 12
-    calc 49152 * D ^ 4 ≤ D ^ 12 * D ^ 4 := Nat.mul_le_mul_right _ this
-      _ = D ^ 16 := by ring
-      _ ≤ B := h16
+    have : 49152 ≤ D ^ 4 := by
+      calc 49152 ≤ 16 ^ 4 := by norm_num
+        _ ≤ D ^ 4 := Nat.pow_le_pow_left hD 4
+    calc 49152 * D ^ 4 ≤ D ^ 4 * D ^ 4 := Nat.mul_le_mul_right _ this
+      _ = D ^ 8 := by ring
+      _ ≤ B := h8
   -- `16 D A² ≤ B`
   have h3 : (16 * D * A ^ 2) ^ 2 ≤ B ^ 2 := by
     calc (16 * D * A ^ 2) ^ 2 = 256 * D ^ 2 * A ^ 4 := by ring
@@ -974,7 +974,7 @@ theorem eventually_logb_p_le_K (C : ℝ) : ∀ᶠ n in atTop, C * Real.logb 2 (p
 theorem eventually_mul_K_le_ℓ (C : ℕ) : ∀ᶠ n in atTop, C * K n ≤ ℓ n := by
   filter_upwards [eventually_big, tendsto_atTop.1 tendsto_d (2 * C)] with n h hC
   have h1 := h.pow_le_two_ℓ
-  have h2 : d n ^ 2 ≤ d n ^ 15 := Nat.pow_le_pow_right h.one_le_d (by norm_num)
+  have h2 : d n ^ 2 ≤ d n ^ 7 := Nat.pow_le_pow_right h.one_le_d (by norm_num)
   have h3 : C * K n ≤ C * d n := Nat.mul_le_mul_left _ (K_le_d n)
   have h4 : 2 * C * d n ≤ d n * d n := Nat.mul_le_mul_right _ hC
   have h5 : d n ^ 2 = d n * d n := by ring

@@ -46,8 +46,8 @@ theorem compactRetunedPrefix_exec : ∀ᶠ n in atTop, ∀ x y, (pairEnc (x,y)).
     exact hs₁.1 k
 
 /-- One fixed finite Mathlib machine multiplies every pair in worst-case time
-`O(n (log n)^(1-2^-36))`. All stage costs and execution premises are discharged. -/
-theorem compact_mulInTime : MulInTime ((2^36:ℝ)⁻¹) :=
+`O(n (log n)^(1-2^-35))`. All stage costs and execution premises are discharged. -/
+theorem compact_mulInTime : MulInTime ((2^35:ℝ)⁻¹) :=
   compactCompleted_mulInTime compactRetunedPrefix 16 compactRetunedPrefix_exec
 
 end

@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Cost.Total
+public import IntegerMultBounds.MathlibTM2.Cost.CompactLogGrowth
 public import IntegerMultBounds.MathlibTM2.Fast.CRTSwap
 public import IntegerMultBounds.MathlibTM2.Fast.CMul
 public import IntegerMultBounds.MathlibTM2.Fast.ParamMachine
@@ -18,7 +19,7 @@ number of stacks of the final machine), the coefficient width `w` and the parame
   writers of the stages (`O(r · poly(B))` steps) cost `o(T)`.
 * `mt_mLogLog_le`, `mt_cmul_le`, `mt_rmul_le`: one Schönhage–Strassen product at width
   `w ≤ cw · p` costs at most a constant (`mtCM Tm cw`) times `M(p) = p^{1+δ}` (`totMp`), from
-  `gr_mLogLog_le`.
+  `compact_mLogLog_le`.
 * `mt_swapN_le`, `mt_swap_le`: the vendored interchange bound `crtSwapCostN V h w` is at most
   `swapConst V max(1, h, w)^τ + 1`; `mt_rpow_tau_le`: `max(1, h, w)^τ ≤ L^τ` for `h, w ≤ L`.
 * `mt_length_sxBits_le`: a canonical binary header of `x` has at most `x` bits.
@@ -100,7 +101,7 @@ theorem mt_p_le_mp (h : Big n) : (p n : ℝ) ≤ totMp n := by
 theorem mt_one_le_mp (h : Big n) : (1 : ℝ) ≤ totMp n :=
   (mt_one_le_p h).trans (mt_p_le_mp h)
 
-theorem mt_mp_eq (n : ℕ) : totMp n = (p n : ℝ) ^ (9 / 8 : ℝ) := by
+theorem mt_mp_eq (n : ℕ) : totMp n = (p n : ℝ) ^ (33 / 32 : ℝ) := by
   rw [totMp, totDelta]; norm_num
 
 theorem mt_Tp_nonneg (n : ℕ) : (0 : ℝ) ≤ (T n : ℝ) * p n :=
@@ -216,10 +217,10 @@ theorem mt_small_le (A k : ℕ) :
 
 /-! ### Schönhage–Strassen products -/
 
-/-- `mLogLog w ≤ 625 cw² M(p)` for `1 ≤ w ≤ cw p`. -/
+/-- `mLogLog w ≤ 16384 cw² M(p)` for `1 ≤ w ≤ cw p`. -/
 theorem mt_mLogLog_le {n w cw : ℕ} (h : Big n) (hw : 1 ≤ w) (hwc : w ≤ cw * p n) :
-    (mLogLog w : ℝ) ≤ 625 * (cw : ℝ) ^ 2 * totMp n := by
-  have h1 := gr_mLogLog_le hw
+    (mLogLog w : ℝ) ≤ 16384 * (cw : ℝ) ^ 2 * totMp n := by
+  have h1 := compact_mLogLog_le hw
   have hcw : 1 ≤ cw := by
     rcases Nat.eq_zero_or_pos cw with rfl | hc
     · simp at hwc; omega
@@ -227,28 +228,28 @@ theorem mt_mLogLog_le {n w cw : ℕ} (h : Big n) (hw : 1 ≤ w) (hwc : w ≤ cw 
   have hcw' : (1 : ℝ) ≤ cw := by exact_mod_cast hcw
   have hp := mt_p_pos h
   have hw' : (w : ℝ) ≤ cw * p n := by exact_mod_cast hwc
-  have h2 : (w : ℝ) ^ (9 / 8 : ℝ) ≤ ((cw : ℝ) * p n) ^ (9 / 8 : ℝ) :=
+  have h2 : (w : ℝ) ^ (33 / 32 : ℝ) ≤ ((cw : ℝ) * p n) ^ (33 / 32 : ℝ) :=
     Real.rpow_le_rpow (Nat.cast_nonneg _) hw' (by norm_num)
-  have h3 : ((cw : ℝ) * p n) ^ (9 / 8 : ℝ) = (cw : ℝ) ^ (9 / 8 : ℝ) * (p n : ℝ) ^ (9 / 8 : ℝ) :=
+  have h3 : ((cw : ℝ) * p n) ^ (33 / 32 : ℝ) = (cw : ℝ) ^ (33 / 32 : ℝ) * (p n : ℝ) ^ (33 / 32 : ℝ) :=
     Real.mul_rpow (Nat.cast_nonneg _) hp.le
-  have h4 : (cw : ℝ) ^ (9 / 8 : ℝ) ≤ (cw : ℝ) ^ 2 := by
+  have h4 : (cw : ℝ) ^ (33 / 32 : ℝ) ≤ (cw : ℝ) ^ 2 := by
     rw [show ((cw : ℝ) ^ 2) = (cw : ℝ) ^ (2 : ℝ) by norm_num]
     exact Real.rpow_le_rpow_of_exponent_le hcw' (by norm_num)
-  have h5 : (0 : ℝ) ≤ (p n : ℝ) ^ (9 / 8 : ℝ) := Real.rpow_nonneg hp.le _
+  have h5 : (0 : ℝ) ≤ (p n : ℝ) ^ (33 / 32 : ℝ) := Real.rpow_nonneg hp.le _
   have e : (mLogLog w : ℝ) =
       ((w * (Nat.log 2 w + 1) * (Nat.log 2 (Nat.log 2 w) + 1) : ℕ) : ℝ) := rfl
   rw [e, mt_mp_eq]
-  calc _ ≤ 625 * (w : ℝ) ^ (9 / 8 : ℝ) := h1
-    _ ≤ 625 * ((cw : ℝ) ^ 2 * (p n : ℝ) ^ (9 / 8 : ℝ)) := by
+  calc _ ≤ 16384 * (w : ℝ) ^ (33 / 32 : ℝ) := h1
+    _ ≤ 16384 * ((cw : ℝ) ^ 2 * (p n : ℝ) ^ (33 / 32 : ℝ)) := by
         rw [h3] at h2
         have := mul_le_mul_of_nonneg_right h4 h5
         nlinarith
-    _ = 625 * (cw : ℝ) ^ 2 * (p n : ℝ) ^ (9 / 8 : ℝ) := by ring
+    _ = 16384 * (cw : ℝ) ^ 2 * (p n : ℝ) ^ (33 / 32 : ℝ) := by ring
 
 /-- The constant of one complex fixed-point product at width `w ≤ cw p` on a host of `Tm`
 stacks, against `M(p)`. -/
 noncomputable def mtCM (Tm cw : ℕ) : ℝ :=
-  2500 * ssMulConst * (Tm + 1) * (cw : ℝ) ^ 2 + 160 * cw + 128
+  65536 * ssMulConst * (Tm + 1) * (cw : ℝ) ^ 2 + 256 * cw + 128
 
 theorem mt_CM_nonneg (Tm cw : ℕ) : 0 ≤ mtCM Tm cw := by unfold mtCM; positivity
 

@@ -189,19 +189,19 @@ theorem pm_room (hn : 2 ≤ n) (hd : 2 ≤ d n) : 8 * d n ^ 2 * N n + 4 * d n �
     omega
   have h1' : D ^ 2 * N n ≤ 2 ^ (2 * D) * 2 ^ (2 * D * (2 * D)) := Nat.mul_le_mul hD2 hN
   have h2 : 4 + 2 * D + 2 * D * (2 * D) ≤ ℓ n - 1 := by
-    have h16 : D ^ 16 ≤ b n := pow_le_b_of (k := 16) sixteen_le_epsExp (by omega)
+    have h8 : D ^ 8 ≤ b n := pow_le_b_of (k := 8) eight_le_epsExp (by omega)
     have hbl : b n ≤ 2 * logT n := b_le_two_mul_logT hn
     have hld : logT n ≤ D * ℓ n := logT_le_dℓ (by omega)
-    have h3 : D ^ 15 ≤ 2 * ℓ n := by
-      have : D * D ^ 15 ≤ D * (2 * ℓ n) := by
-        calc D * D ^ 15 = D ^ 16 := by ring
+    have h3 : D ^ 7 ≤ 2 * ℓ n := by
+      have : D * D ^ 7 ≤ D * (2 * ℓ n) := by
+        calc D * D ^ 7 = D ^ 8 := by ring
           _ ≤ 2 * (D * ℓ n) := by omega
           _ = D * (2 * ℓ n) := by ring
       exact Nat.le_of_mul_le_mul_left this (by omega)
-    have h4 : D ^ 3 * 2 ^ 12 ≤ D ^ 15 := by
-      have : 2 ^ 12 ≤ D ^ 12 := Nat.pow_le_pow_left hd 12
-      calc D ^ 3 * 2 ^ 12 ≤ D ^ 3 * D ^ 12 := Nat.mul_le_mul_left _ this
-        _ = D ^ 15 := by ring
+    have h4 : D ^ 3 * 2 ^ 4 ≤ D ^ 7 := by
+      have : 2 ^ 4 ≤ D ^ 4 := Nat.pow_le_pow_left hd 4
+      calc D ^ 3 * 2 ^ 4 ≤ D ^ 3 * D ^ 4 := Nat.mul_le_mul_left _ this
+        _ = D ^ 7 := by ring
     have h5 : 2 * D ^ 2 ≤ D ^ 3 := by
       calc 2 * D ^ 2 ≤ D * D ^ 2 := Nat.mul_le_mul_right _ hd
         _ = D ^ 3 := by ring
