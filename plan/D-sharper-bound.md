@@ -989,6 +989,17 @@ save/restore overhead. Both guarded checks and the three contract axiom audits
 pass at default limits. Runtime cutoff computation, semantic stopped-piece
 identification, precision, caller replacement and layer-cost absorption remain.
 
+**Semantic stopped records and cutoff execution checked:**
+`Fast/CompactStoppedDigitsSpec.lean` identifies emitted fields with `topPcRec`
+of the existing actual `synPcs` mapped by `compactStoppedPiece`; their recomputed
+exponents agree with summed `expSeq` and actual `expZ`. The semantic execution
+corollaries retain the exact frame and cost. `CompactStoppedCutoff.lean` computes
+`Nat.log m T` from a generic preserved source of positive length `T`, emits its
+unary cutoff and returns scratch empty. Both modules and their seven theorem
+axiom audits pass. The threshold is still supplied; selecting/generating it
+from the global budget, composing the caller, precision and complete layer-cost
+absorption remain explicit obligations.
+
 #### §6 — Synthetic transforms and their tape layout
 
 **M5 — remove the multiplicative layout loss.** The existing synthetic loop

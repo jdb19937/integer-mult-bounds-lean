@@ -37,7 +37,7 @@ machine that multiplies every input pair correctly in worst-case time
 
 | Part of the proof | Source | Mathematics | Tape | Files |
 | --- | --- | --- | --- | --- |
-| [Proved Mathlib end-to-end multiplier](plan/C-mathlib-end-to-end.md) | — | ✅ 1/1 | ✅ 1/1 | 614 |
+| [Proved Mathlib end-to-end multiplier](plan/C-mathlib-end-to-end.md) | — | ✅ 1/1 | ✅ 1/1 | 616 |
 
 The [proof details](plan/C-mathlib-end-to-end.md) cover the numerical
 algorithm, recursive layers, transforms, resampling, CRT routing, exact
@@ -141,7 +141,7 @@ criteria are in the [implementation plan](plan/D-sharper-bound.md).
 | Expanded source and total-time aggregation | ✅ | All three actual source-run costs plus main overhead fit the stronger asymptotic bound, conditional on the two complete transform costs. |
 | Complete transform and concrete main-time estimate | ✅ | Actual stash, layout, bootstrap, loops, source runs and main overhead satisfy the `2^-34` envelope with no remaining stage-cost hypotheses. |
 | Stronger fixed-machine theorem | ✅ | Public `MathlibTM2.mulInTime` proves `2^-34` for every input pair; complete actual execution and cost hypotheses are discharged. |
-| Stopped recursion | 🟡 | The full supplied-cutoff digit scanner, rebased records and exact local costs are checked; runtime cutoff, semantic/precision integration and final layer-cost matching remain. |
+| Stopped recursion | 🟡 | The full stopped digit scanner, semantic rebased records and cutoff from a supplied threshold are checked; global threshold generation, caller/precision integration and final layer-cost matching remain. |
 
 **Execution order:** M1–M2 complete → M3–M5 → M6/M7 → M8. Use current
 smaller networks while establishing the structural interfaces; then plug in
