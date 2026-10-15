@@ -6348,3 +6348,6 @@ Parameters and asymptotics.
 - `MathlibTM2/Fast/CompactDyadicDimension.lean`: Checked composition computes `iroot 64 (b^9)` with charged cost `58+44*iroot 64 (b^9)`, preserving input and accumulator. Actual parameter allocation and changed sizing definitions remain separate. Both executable helpers pass a focused standard-axiom audit.
 
 - `MathlibTM2/Mult/CompactDyadicDimensionSizes.lean`: Checked floor characterization, seventh-power cap, upper/lower real bounds and eventual growth for `iroot 64 (b^9)`, with wrappers at input length `n`. Standalone standard-axiom audit covers 22 declarations; executable sizing definitions are unchanged.
+
+- `MathlibTM2/Fast/CompactParameterWidth.lean`: Candidate `4*size(n)+32` word width fits the current distribution layout for every `n≥2`; a generic arithmetic core isolates the small-axis hypothesis needed under future dimensions. Actual allocation remains unchanged.
+- `MathlibTM2/Mult/CompactDyadicPrecision.lean`: Seventh-power size room supplies modulus inequalities for `d≥2` and the exact-recovery gamma guard for `d≥64`. These and the candidate width passed a 19-declaration standard-axiom audit; no new multiplier bound is asserted.
