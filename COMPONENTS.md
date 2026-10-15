@@ -6381,3 +6381,5 @@ Parameters and asymptotics.
 - `NLogN/PhaseCellScan.lean`: Executable integer phase/remainder scan, one comparison and at most one correction per index, with invariant identifying exact existing nearest-rounding phases and offsets (including ties). Guarded check and seven standard-axiom theorem audits pass. Tape representation, physical cell/boundary sizing and actual bit costs remain separate.
 
 - `NLogN/PhaseCellIntervals.lean`: Monotone nearest-rounding phase, order-convex physical cells, strict within-cell offset gap and selected4d+1 interval-cardinality bound, including truncated end cells, with a concrete scan corollary. Guarded checking and nine standard-axiom theorem audits pass. Boundary extraction, full-cell lower lengths where required, inverse execution and tape costs remain open.
+
+- `NLogN/InversePerturbation.lean`: Actual two-sided continuous-linear-map inverse stability, with explicit M/(1-M*eta) inverse norm and M^2*eta/(1-M*eta) inverse error, plus half-gap specialization. Guarded checking and both standard-axiom theorem audits pass. Construction and approximation bounds for the selected rounded operator remain explicit premises.

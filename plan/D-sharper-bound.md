@@ -1021,6 +1021,13 @@ bound, including truncated end cells. All nine theorem axiom audits and guarded
 checking pass. Physical boundary extraction and any required full-cell lower
 bound remain separate; no end-cell lower length is assumed.
 
+`NLogN/InversePerturbation.lean` supplies the quantitative operator bridge:
+an exact inverse of norm at most `M` and actual perturbation at most `eta`
+with `M*eta<1` give a two-sided inverse of norm at most `M/(1-M*eta)` and
+inverse difference at most `M^2*eta/(1-M*eta)`. The half-gap specialization,
+guarded checks and both theorem axiom audits pass. The selected rounded
+operator and its approximation bound still have to be constructed and proved.
+
 **M7b — bulk exposure and microbox tape execution.** Build ordered core/halo
 windows of that same rounded matrix, bound truncation/locality errors, retain
 period cuts and show tensor errors accumulate without a volume factor. Price
