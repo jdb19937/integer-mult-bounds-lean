@@ -1048,6 +1048,17 @@ specification, not the selected corrected exponential evaluator; its four-unit
 error, the selected lower weights, cross-cell and periodic terms, truncation,
 row/operator norms and execution costs remain to be proved.
 
+`NLogN/PhaseCellWeightBounds.lean` discharges the denominator premise from
+the selected gap/normalization budgets: exact weights are at least `2^(-8p)`,
+and precision `2^15*p` preserves positive rounded weights and proves the actual
+ideal-grid entry-error bound. All six contracts pass guarded checking and axiom
+audits. `PhaseCellExpSample.lean` separately reuses the executable `expPiNat`
+Taylor evaluator, subtracts two and clamps at zero, proving downward rational
+samples within four grid units. All seven theorem audits and guarded checking
+pass. This corrected sample need not equal the ideal floor. Mapping actual
+phase-cell rational arguments, replacing ideal coefficients, executing the
+correction and matching its Mathlib backend costs remain integration work.
+
 **M7b — bulk exposure and microbox tape execution.** Build ordered core/halo
 windows of that same rounded matrix, bound truncation/locality errors, retain
 period cuts and show tensor errors accumulate without a volume factor. Price
