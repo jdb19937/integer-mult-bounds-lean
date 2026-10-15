@@ -2623,3 +2623,15 @@ import IntegerMultBounds.MathlibTM2.Fast.CompactMainPrimitiveEntry
 import IntegerMultBounds.MathlibTM2.Fast.CompactMainDispatch
 import IntegerMultBounds.MathlibTM2.Fast.CompactRetunedMainBound
 import IntegerMultBounds.MathlibTM2.Fast.CompactMainChain
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainParamCalls
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainCleanup
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainRunsAt
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainChainExec
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainChainEntry
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainCoefficients
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainHost
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainPrefixCost
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainDistributionCalls
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainInputDistribution
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainOutput
+import IntegerMultBounds.MathlibTM2.Fast.CompactFinal

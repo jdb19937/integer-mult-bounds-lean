@@ -10,10 +10,11 @@ multiplies every pair of natural numbers with the standard Mathlib binary
 encodings in worst-case time `O(n (log n)^(1-kappa))`, where `n` is the total
 encoded input length and `kappa > 0`.
 
-The public theorem `MathlibTM2.mulInTime` proves saving `2^-66`. The exact
-internal margin is `Cost.totKappa = 296 / (10^11 * 2^37)`, between `2^-66`
-and `2^-65`, with positivity and the exact value proved by `tot_kappa_pos`
-and `tot_kappa_eq`. This establishes multiplication below `n log n`. It does not
+The public theorem `MathlibTM2.mulInTime` now proves saving `2^-37` through
+`Fast.Main.compact_mulInTime`: the complete compact machine, actual source
+execution, output and cleanup, and final finite-machine dispatch. The historical
+M2 exact margin remains available through `mulInTime_exact` for compatibility.
+This establishes multiplication below `n log n`. It does not
 establish the larger saving `83/10^12` in the original compact-control target
 `Machine.EndToEnd`, or the particular native-bank interfaces tracked in parts
 2–B of the [archived native roadmap](archive/native-roadmap.md). Those

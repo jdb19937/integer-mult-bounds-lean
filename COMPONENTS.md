@@ -6326,3 +6326,7 @@ Parameters and asymptotics.
 - `MathlibTM2/Fast/CompactMainDispatch.lean`, `CompactRetunedMainBound.lean`: Concrete full-time estimate at saving `2^-37` and final finite-machine packaging, conditional only on eventual execution within that estimate; public multiplier theorem remains unchanged.
 
 - `MathlibTM2/Fast/CompactMainChain.lean`: Complete fifteen-stage retuned arithmetic chain with exact source-stage costs, twelve wrapper steps and original coefficient-output contract, checked under default proof limits.
+
+- `MathlibTM2/Fast/CompactMainParamCalls.lean`, `CompactMainDistributionCalls.lean`, `CompactMainInputDistribution.lean`: Actual input, parameter and retuned distribution execution under the final recursive table, with one normalized entry and no call-support premise.
+- `MathlibTM2/Fast/CompactMainRunsAt.lean`, `CompactMainChainExec.lean`, `CompactMainChainEntry.lean`, `CompactMainCoefficients.lean`, `CompactMainOutput.lean`: Concrete distributed-state entry to the full arithmetic chain, exact source-cost identity, coefficient correctness and canonical binary output.
+- `MathlibTM2/Fast/CompactMainCleanup.lean`, `CompactMainHost.lean`, `CompactMainPrefixCost.lean`, `CompactFinal.lean`: Complete private-register cleanup, finite push bound, exact prefix accounting and unconditional `MulInTime (2^37)⁻¹`, now exported by the public theorem.

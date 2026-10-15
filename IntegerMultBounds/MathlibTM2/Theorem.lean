@@ -1,5 +1,6 @@
 module
 
+public import IntegerMultBounds.MathlibTM2.Fast.CompactFinal
 public import IntegerMultBounds.MathlibTM2.Fast.Final
 public import IntegerMultBounds.MathlibTM2.Cost.MatchSynLoop
 
@@ -7,8 +8,8 @@ public import IntegerMultBounds.MathlibTM2.Cost.MatchSynLoop
 # Integer multiplication below `n log n` on Mathlib's Turing machines
 
 `mulInTime` exposes the explicit improved saving; `statement` retains the existential
-interface in `Statement.lean`. Both follow from the fast host multiplier bundles and
-the cost bound of its synthetic transforms (`Cost/MatchSynLoop.mr_loop_cost_le`).
+interface in `Statement.lean`. Both follow from the complete compact host multiplier and its checked runtime bound.
+The historical exact margin remains available through `mulInTime_exact`.
 -/
 
 @[expose] public section
@@ -16,7 +17,7 @@ the cost bound of its synthetic transforms (`Cost/MatchSynLoop.mr_loop_cost_le`)
 
 namespace IntegerMultBounds.MathlibTM2
 
-/-- The explicit saving after retuning the dimension and chunk root indices. -/
+/-- Historical M2 exact saving, retained for compatibility. -/
 theorem mulInTime_exact : MulInTime (296 / (10 ^ 11 * 2 ^ 37)) := by
   rw [← Cost.tot_kappa_eq]
   let L := Fast.Main.blLayDs Fast.Main.dsyV₀ Fast.Main.dsyV₀_wires
@@ -30,10 +31,9 @@ theorem mulInTime_exact : MulInTime (296 / (10 ^ 11 * 2 ^ 37)) := by
     ⟨Fast.Main.mnKa, Fast.Main.mnLb, Fast.Main.bdW, Fast.Main.mnσL L,
       ⟨Fast.Main.mnSynOfLay L hw⟩, ⟨D⟩⟩
 
-/-- A power-of-two saving supported by the exact cost margin. -/
-theorem mulInTime : MulInTime (2 ^ 66 : ℝ)⁻¹ := by
-  obtain ⟨M, hM⟩ := mulInTime_exact
-  exact ⟨M, hM.trans (Cost.gr_isBigO_rpow_mono (by norm_num))⟩
+/-- The complete compact multiplier has the explicit power-of-two saving `2^-37`. -/
+theorem mulInTime : MulInTime (2 ^ 37 : ℝ)⁻¹ :=
+  Fast.Main.compact_mulInTime
 
 theorem statement : Statement :=
   ⟨_, by positivity, mulInTime⟩

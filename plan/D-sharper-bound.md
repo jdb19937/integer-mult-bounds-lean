@@ -1112,3 +1112,16 @@ unrelated work, and commit/push each checked logical section. The original
 planning update checked the selected bootstrap and final-margin
 arithmetic against the pinned assembly. M1 and M2 have checked
 Lean machine theorems and focused axiom audits; M3–M8 remain unfinished.
+
+## Completed compact integration checkpoint
+
+The public `MathlibTM2.mulInTime` now proves saving `2^-37` unconditionally.
+`CompactFinal.compactRetunedPrefix_exec` composes actual input/parameter/distribution
+execution, the fifteen-stage chain and canonical output. `CompactMainHost` bounds
+all cleanup using a finite push constant and installs the completed main in the
+actual recursive table. Small-input dispatch produces one fixed finite Mathlib
+machine for every input pair. The source prefix uses thirteen normalization steps,
+within the sixteen-step allowance. No execution or cost premise remains in
+`compact_mulInTime`; earlier progress paragraphs above describe historical gates.
+M3 remains yellow only for stopped recursion and local repair work needed for
+later improvements; M4–M8 and the selected state-of-the-art goal remain open.
