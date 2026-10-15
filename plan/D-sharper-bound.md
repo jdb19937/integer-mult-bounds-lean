@@ -1556,3 +1556,14 @@ for the Schur boundary, with wrap entries kept as band entries. Both guarded
 checks and the10-declaration standard-axiom audit pass. Boundary count and
 bandwidth in boundary order, Gohberg–Semencul interior inverses, rounded
 structured solves and tape costs remain open.
+
+### Gohberg–Semencul interior inverse identity
+
+Any two-sided inverse of a symmetric Toeplitz matrix over a field is now
+proved symmetric and persymmetric, and satisfies the Trench diagonal
+recurrence. With its first column `x` and shifted reversed column `z`
+(`z₀=0`), it equals `(L(x)L(x)ᵀ-L(z)L(z)ᵀ)/x₀` entrywise, the source's four
+triangular Toeplitz products. Only `x₀≠0` is assumed. The guarded check and
+24-declaration standard-axiom audit pass. Instantiating it on phase-cell
+interior blocks, the `x₀>1/2` and column-norm bounds, rounded factors and
+convolution costs remain open.
