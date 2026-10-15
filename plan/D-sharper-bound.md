@@ -265,8 +265,16 @@ setup/cleanup by `2^21*(cw+1)*d*T*p` eventually, excluding descriptor generation
 without unary expansion, exposed-place/active-field arithmetic, and original
 weight advancement. `CRTControlGenerateLayout.lean` proves that ascending
 traversal with target omission and saved-zero insertion produces exactly the
-required descriptors in physical exposed-axis order. The concrete complete
-parameter-stream traversal and source restoration remain unfinished. The generator
+required descriptors in physical exposed-axis order.
+`CRTControlGenerateLoop.lean` now proves the concrete per-axis operation:
+read both unary entries, construct the power directly in binary, emit/select
+its packet, advance the original mixed-radix weight, and save the entries.
+`CRTControlGenerateSetup.lean` provisions the bank and target constants from
+unary inputs, preserving those sources. `Cost/CRTControlGenerate.lean` proves
+that all target setup costs and all per-axis generation costs are each
+absorbed by one padded volume eventually. Loop overhead and terminal stream
+cleanup still need separate matching; the concrete complete traversal and
+its exposed descriptor-tape invariant remain unfinished. The generator
 kernels and one-fiber pass are audited; neither constitutes a new complete CRT
 driver or a stronger public bound.
 

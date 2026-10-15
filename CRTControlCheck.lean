@@ -1,3 +1,5 @@
+import IntegerMultBounds.MathlibTM2.Fast.CRTControlGenerateSetup
+import IntegerMultBounds.MathlibTM2.Cost.CRTControlGenerate
 import IntegerMultBounds.MathlibTM2.Fast.CRTControlDriverSpec
 import IntegerMultBounds.MathlibTM2.Fast.CRTControlExposeRotation
 import IntegerMultBounds.MathlibTM2.Fast.CRTControlAllWorkspace
@@ -28,6 +30,14 @@ complete driver/multiplier integration remain separate work. -/
 open Lean in
 run_cmd do
   let names := #[
+    ``IntegerMultBounds.MathlibTM2.Fast.crtControlReadUnary_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtControlGenerateAxis_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtControlBankPow2_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtControlGenerateInit_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtControlGenerateSetup_runs,
+    ``IntegerMultBounds.MathlibTM2.Cost.crtControlGenerateAxisCost_le,
+    ``IntegerMultBounds.MathlibTM2.Cost.crtControlGenerateAxes_pipeline_le,
+    ``IntegerMultBounds.MathlibTM2.Cost.crtControlGenerateSetup_pipeline_le,
     ``IntegerMultBounds.MathlibTM2.Fast.crtControlExposeRotation_runs,
     ``IntegerMultBounds.MathlibTM2.Fast.crtControlRot_zero,
     ``IntegerMultBounds.MathlibTM2.Fast.crtControlDriver_forward,
