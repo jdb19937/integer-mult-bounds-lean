@@ -1383,3 +1383,19 @@ new assumed stopped precision bound. Four guarded checks and seven principal
 contract audits pass. The back reservation remains unchanged and is outside
 the active-digit leaf bound. Top adapter/layer replacement, the separate back
 leaf bound and asymptotic cost absorption remain to connect.
+
+### Completed periodic rounded-row error
+
+`PhaseCellRow` defines the actual finite corrected periodic row by wrapping
+every retained integer offset into `ZMod s` and accumulating repeated residues.
+Its exact target is the existing normalized operator `normN`, identified with
+its entire lattice series. Symmetric lattice splitting accounts for both
+omitted signed tails, including every alias. `PhaseCellRowBudget` bounds
+retained rounding amplification and proves row error at most `2^(-45p)` for
+vectors of sup norm at most one, using the selected executable square-root
+band and existing gap/precision conditions. No dimension factor occurs.
+Both guarded source checks and the22-declaration standard-axiom audit pass.
+The remaining M7 work includes actual continuous-linear-map/inverse packaging,
+sharp inverse norm, structured solve and boundary composition, bulk/core/halo
+execution, prime supply and charged machine costs. Public saving remains
+`2^-34`.
