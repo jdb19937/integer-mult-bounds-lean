@@ -7159,6 +7159,13 @@ Schönhage–Strassen multiplication, the fast multiplier used for the packed pr
   disk (`layerOut_norm_le`) and within `√2 2^(-p)` of `ℋ z` (`layerOut_close`).
 
 
+## MathlibTM2 integration
+
+- `MathlibTM2/Mult/PipelineOutput.lean`: Instantiates exact-width carry normalization and the literal output contract with the contribution's concrete numerical multiplication pipeline. For all large input lengths, original equal-length MSB words yield exactly twice-length product bits with no supplied coefficient or transform-error hypothesis. Physical execution and compatibility of the contribution's original-paper size parameters with the compact-control runtime target remain open.
+- `MathlibTM2/Mult/TransformRecords.lean`: Converts both computed synthetic transforms to explicit public signed records. Original disk-grid records imply exact output record count, disk-grid numerator bounds and the existing strict forward/opposite `Close` guarantees. The bridge proves the numerical clauses with identity layout; tape execution and total runtime remain separate.
+- `MathlibTM2/Layer/LayerZ.lean`, `NodeZ.lean`, `TopZ.lean`: The contributed scaled Gaussian recursion has unconditional mathematical correctness by induction over children; the normalized top-level function includes phases, padding, piece composition and final truncation. This is a different representation from the native event schedule and its ledger.
+- `MathlibTM2/Layer/Recurrence.lean`, `MathlibTM2/Node/Body.lean`: The contributed recurrence solution and conditional node-body execution are proved. Instantiating the recurrence with actual recursive factor programs and reconciling its parameter inequalities with the compact-control witness remain open.
+
 ## Removed modules
 
 Modules the proof does not use, removed after commit `4f27086`; restore with `git checkout 4f27086 -- <file>`.

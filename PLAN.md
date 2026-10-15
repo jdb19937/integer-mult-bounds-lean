@@ -15,10 +15,10 @@ See [COMPONENTS.md](COMPONENTS.md) for what each file proves.
 | [The machine model and elementary streams](plan/02-machine-model-streams.md) | §2 | ✅ 9/9 | ✅ 9/9 | 258 |
 | [Two finite networks with a rank saving](plan/03-finite-networks-rank.md) | §3 | ✅ 8/8 | 🟡 2/6 | 358 |
 | [Faster interchange of address chunks](plan/04-faster-interchange-address.md) | §4 | ✅ 10/10 | ✅ 9/9 | 376 |
-| [Fast simultaneous synthetic butterfly layers](plan/05-simultaneous-butterfly-layers.md) | §5, §11, CrocSwap | 🟡 8/12 | 🟡 0/12 | 1808 |
-| [Synthetic transforms and their tape layout](plan/06-synthetic-transforms-tape.md) | §6 | ✅ 2/2 | 🟡 0/2 | 71 |
+| [Fast simultaneous synthetic butterfly layers](plan/05-simultaneous-butterfly-layers.md) | §5, §11, CrocSwap | 🟡 8/12 | 🟡 0/12 | 1816 |
+| [Synthetic transforms and their tape layout](plan/06-synthetic-transforms-tape.md) | §6 | ✅ 2/2 | 🟡 0/2 | 74 |
 | [Resampling with the permutations left in the transform](plan/07-gaussian-resampling.md) | §7 | ✅ 6/6 | 🟡 3/4 | 79 |
-| [Exact integer multiplication and its cost](plan/08-exact-multiplication.md) | §8 | 🟡 3/4 | 🟡 1/3 | 100 |
+| [Exact integer multiplication and its cost](plan/08-exact-multiplication.md) | §8 | 🟡 3/4 | 🟡 1/3 | 102 |
 | [Fast multiplication subroutine](plan/A-schoenhage-strassen.md) | Schönhage–Strassen | ✅ 6/6 | 🟡 3/4 | 96 |
 | [End-to-end theorem `EndToEnd`](plan/B-end-to-end.md) | — | 🟡 2/3 | 🟡 2/3 | 6 |
 
@@ -100,7 +100,7 @@ Details: [plan/05-simultaneous-butterfly-layers.md](plan/05-simultaneous-butterf
 | Exact scalar grids and stopped calls | ✅ | 🟡 | 96 |
 | Nonleaf calls and the fixed node table | 🟡 | 🟡 | 48 |
 | Source-ready table, orientation and endpoints | ✅ | 🟡 | 168 |
-| Full recursive execution and runtime | 🟡 | 🟡 | 203 |
+| Full recursive execution and runtime | 🟡 | 🟡 109/110 rows | 211 |
 
 ## 6. Synthetic transforms and their tape layout (§6)
 
@@ -108,7 +108,7 @@ Details: [plan/06-synthetic-transforms-tape.md](plan/06-synthetic-transforms-tap
 
 | Sub-problem | Mathematics | Tape | Files |
 | --- | --- | --- | --- |
-| Synthetic ring and synthetic FFT | ✅ | 🟡 5/10 rows | 38 |
+| Synthetic ring and synthetic FFT | ✅ | 🟡 5/11 rows | 41 |
 | Tape layout and cost bracket | ✅ | 🟡 12/17 rows | 34 |
 
 ## 7. Resampling with the permutations left in the transform (§7)
@@ -131,7 +131,7 @@ Details: [plan/08-exact-multiplication.md](plan/08-exact-multiplication.md)
 | Sub-problem | Mathematics | Tape | Files |
 | --- | --- | --- | --- |
 | Parameters, asymptotics and coprime source lengths | ✅ | — | 5 |
-| Exact recovery of the product | ✅ | ✅ | 50 |
+| Exact recovery of the product | ✅ | ✅ | 52 |
 | Cost table and time bound | 🟡 1/2 rows | ⬜ | 5 |
 | Chirp (Bluestein) reduction | ✅ | 🟡 0/1 rows | 40 |
 

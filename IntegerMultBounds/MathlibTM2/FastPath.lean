@@ -46,6 +46,7 @@ public import IntegerMultBounds.MathlibTM2.Mult.FastB0
 public import IntegerMultBounds.MathlibTM2.Mult.FastB0Sizes
 public import IntegerMultBounds.MathlibTM2.Mult.Moduli
 public import IntegerMultBounds.MathlibTM2.Mult.Pipeline
+public import IntegerMultBounds.MathlibTM2.Mult.PipelineOutput
 public import IntegerMultBounds.MathlibTM2.Mult.Rounds
 public import IntegerMultBounds.MathlibTM2.Mult.RoundsBasic
 public import IntegerMultBounds.MathlibTM2.Mult.RoundsForward
@@ -55,6 +56,7 @@ public import IntegerMultBounds.MathlibTM2.Mult.SourceErr
 public import IntegerMultBounds.MathlibTM2.Mult.SourceErrChirp
 public import IntegerMultBounds.MathlibTM2.Mult.SynthErr
 public import IntegerMultBounds.MathlibTM2.Mult.SynthErrRounds
+public import IntegerMultBounds.MathlibTM2.Mult.TransformRecords
 public import IntegerMultBounds.MathlibTM2.Node.Body
 public import IntegerMultBounds.MathlibTM2.Node.FixPass
 public import IntegerMultBounds.MathlibTM2.Node.Gate
