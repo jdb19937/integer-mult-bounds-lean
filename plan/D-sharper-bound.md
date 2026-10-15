@@ -440,6 +440,26 @@ contracts. These prepared primitives do not yet change the running layer or
 the public saving `2^-66`; the complete native-stage bridge and reservation
 invariant above are the next integration work.
 
+**Complete host-stage bridge checked:** `Node/CompactRotHost.lean` normalizes
+placed native banks with exact frame restoration. `Node/CompactRotStage.lean`
+instantiates it with the actual full early/late native executions; descriptor
+synthesis, repaired action and cleanup are included. `Cost/CompactStage.lean`
+and `CompactStageExec.lean` prove that the initial bank occupies at most forty
+times local volume and that actual host steps retain the compact-width bound.
+The fixed coefficient depends on the host bank and a uniform repair bound `D`,
+not runtime dimensions. All thirteen focused axiom contracts pass.
+
+`Node/CompactGeometry.lean` proves the actual native destination matches live
+slot XOR, including untouched bits, with exact serialized rank and entry
+transport. Native slot order is reversed relative to the live layer. This
+checkpoint still folds outer native rows into the address width; it is not
+yet the separate-row `encZ` contract. Next preserve the original row and payload
+offset explicitly, and connect the three-bit coefficient-symbol serialization.
+Maintain one global reserved shape through recursion using native left/right
+spectators, rather than allocating extra address bits at each child. Root
+reservation, original input production, uniform density and width bounds,
+and the stopped recurrence remain open; the public saving is still `2^-66`.
+
 Prove complete temporary address ranges survive every role split, arbitrary
 initial temporary values are restored, and exceptional extraction, sorting,
 reinsertion and cleanup are charged at each node's own volume. Add an actual
