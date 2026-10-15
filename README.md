@@ -1,10 +1,19 @@
 # Integer multiplication in Lean
 
-**Work in progress. The end-to-end multiplication theorem is not proved.**
+**Integer multiplication below `n log n` is proved in Lean on Mathlib's finite Turing machines.**
 
 ## Main result
 
-The target is an actual deterministic machine with a fixed finite alphabet and
+`IntegerMultBounds.MathlibTM2.statement` is unconditional: one fixed
+`Turing.FinTM2` machine multiplies every pair of natural numbers, with standard
+binary input/output encodings, in worst-case time `O(n (log n)^(1-kappa))`.
+The construction proves the positive saving
+`kappa = 296 / (10^11 * 2^131)`, approximately `1.09e-48`, where `n` is the
+total encoded input length. See [the completed plan](plan/C-mathlib-end-to-end.md).
+
+## Stronger compact-control target
+
+The original target is an actual deterministic machine with a fixed finite alphabet and
 a fixed number of one-dimensional tapes, correct on every positive input
 length, with worst-case runtime
 `O(n (max(ceil(log₂ n), 1))^(1 - 83/10^12))`.
@@ -36,7 +45,12 @@ machine and the proof.
 
 ## Status
 
-Section 5 remains open. Its complete scalar-prefix/stopped-call and original
+The complete Mathlib host route, including recursive calls, transforms,
+resampling, table generation, CRT routing, products, output and the total
+step bound, is proved by `MathlibTM2.statement`. The remaining work below is
+for the original native-machine route and its larger saving `83/10^12`.
+
+On that route, Section 5 remains open. Its complete scalar-prefix/stopped-call and original
 corrected-network orientation math milestones are proved. For a nonroot node
 of exponent at least two whose children all stop, original coefficient and
 tape readiness now gives actual classification, preorientation, corrected
@@ -292,6 +306,7 @@ the literal machine model is proved correct with a runtime bound.
 
 | Part of the proof | Source | Mathematics | Tape | Main gaps |
 | --- | --- | --- | --- | --- |
+| [Proved Mathlib end-to-end multiplier](plan/C-mathlib-end-to-end.md) | Full host route | ✅ | ✅ | None for the existential sub-n-log-n statement: `MathlibTM2.statement` is unconditional, with positive saving `296 / (10^11 * 2^131)`. The remaining rows track the original native route and its stronger fixed exponent. |
 | The machine model and elementary streams | §2 | ✅ | ✅ | Fixed machines execute initialized mixed affine schedules and actual nonrecursive Shared50 segments from sole array and canonical b/W inputs. Exact output, retained headers, dimension synthesis and complete private-workspace cleanup are proved in linear-volume time; every private tape and tracker returns blank at head zero. Counted pointwise finite-symbol operations also have exact tape proofs, including encoded XOR. Cross-view composition and the full recursive call controller remain open. |
 | Two finite networks with a rank saving | §3 | ✅ | 🟡 | Optimized finite network algebra and rank certificates are proved. The actual local/global Shared50 scalar XOR lists now execute on fixed tapes with exact data exchange, dirty-scratch restoration and linear stream-time bounds. One width-independent interleaved control list now preserves every role, address operation and scalar gate, with exact recursive-call count and transpose semantics. Certified segment/gate tape machines and explicit call boundaries are available; recursive calls and full network tape assembly remain open. |
 | Faster interchange of address chunks | §4 | ✅ | ✅ | The main binary interchange theorem is proved: one fixed machine uses original five canonical headers, physically selects equal or adjacent widths, returns exact binary rectangular transpose, and restores all private storage. Its actual runtime, including comparisons and dispatch, has the certified exponent 1−296/10^11, including zero widths. Multiplication EndToEnd remains open. |
@@ -323,22 +338,23 @@ end-to-end result.
 
 ## Building and verification
 
-Install the version of Lean in `lean-toolchain`, then run:
+Install the version of Lean in `lean-toolchain`, then use the guarded local
+verification commands:
 
 ```sh
-lake update
-lake exe cache get
-lake build
-lake env lean AxiomAudit.lean
+python3 scripts/build-lean-guarded.py IntegerMultBounds
+python3 scripts/check-lean-safe.py AxiomAudit.lean
+python3 scripts/check-lean-safe.py MathlibTM2Check.lean
+python3 scripts/check-lean-safe.py FastPathCheck.lean
 ```
 
 For local component checks, use `python3 scripts/check-lean-safe.py FILE`.
 This runner permits one check per workspace, uses one Lean thread and a
-6144 MiB Lean memory limit, and stops the process group if its observed RSS
-exceeds 7168 MiB or the check runs past twenty minutes. It also stops child
+24576 MiB Lean memory limit, and stops the process group if its observed RSS
+exceeds 28672 MiB or the check runs past twenty minutes. It also stops child
 processes if monitoring fails or the check is interrupted. Dependencies must already have compiled artifacts;
-it does not launch a broad build. The full build commands above are for CI
-or a machine with sufficient memory.
+it does not launch a broad build. The guarded build stops at 80 GiB combined
+RSS or three hours. Both runners share one workspace-wide lock.
 
 Lean and mathlib are pinned to v4.34.1; `lake-manifest.json` pins transitive
 dependencies. No theorem in this project uses a custom axiom or an admitted

@@ -4,6 +4,12 @@ Part of the [plan](../PLAN.md). See [COMPONENTS.md](../COMPONENTS.md) for what e
 
 ## How the proof goes
 
+The general sub-n-log-n result is now proved unconditionally by the Mathlib
+host route in [part C](C-mathlib-end-to-end.md). This part retains the stronger
+fixed `83/10^12` exponent and the original literal native-machine output
+contract; the smaller positive saving of `MathlibTM2.statement` does not
+discharge these specific milestones.
+
 Part B proves `EndToEnd` itself by assembling one fixed machine. The machine parses the literal input, decides between a fast path for large inputs and an ordinary quadratic multiplier for the finitely many small ones, and installs the exact twice-length product. The quadratic fallback is complete; the fast path needs the components of sections 2–9 and the time bound of section 9.
 
 1. Input front end (`MultiplicationInputSplit`): a fixed parser reads the literal input, keeps it, and produces reversed operands in linear time, including empty operands.
