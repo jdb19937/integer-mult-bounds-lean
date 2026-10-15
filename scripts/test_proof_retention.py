@@ -31,6 +31,17 @@ class ImportAuditTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'Missing local module'):
             audit.closure({'main': {'absent'}}, ['main'])
 
+    def test_removal_includes_transitive_legacy_importers(self):
+        graph = {'retired': set(), 'wrapper': {'retired'}, 'outer': {'wrapper'},
+                 'proof': set(), 'IntegerMultBounds': {'outer', 'proof'}}
+        self.assertEqual(audit.removal_closure(graph, {'retired'}, {'proof'}),
+                         {'retired', 'wrapper', 'outer'})
+
+    def test_removal_cannot_reach_protected_proof(self):
+        graph = {'shared': set(), 'proof': {'shared'}}
+        with self.assertRaisesRegex(ValueError, 'protected modules'):
+            audit.removal_closure(graph, {'shared'}, {'proof'})
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -81,11 +81,33 @@ def module_path(module):
     return module.replace('.', '/') + '.lean'
 
 
+def removal_closure(graph, selected, protected=(), aggregators=('IntegerMultBounds',)):
+    """Include dependent wrappers while rejecting any protected dependency."""
+    reverse = collections.defaultdict(set)
+    for module, dependencies in graph.items():
+        for dependency in dependencies:
+            reverse[dependency].add(module)
+    removed, pending = set(selected), list(selected)
+    while pending:
+        for module in reverse[pending.pop()]:
+            if module not in removed and module not in aggregators:
+                removed.add(module)
+                pending.append(module)
+    conflict = removed & set(protected)
+    if conflict:
+        raise ValueError(f'Removal reaches protected modules: {sorted(conflict)}')
+    return removed
+
+
 def inventory(root=ROOT):
     paths = sorted((root / 'IntegerMultBounds').rglob('*.lean')) + sorted(root.glob('*.lean'))
     files = {str(path.relative_to(root))[:-5].replace('/', '.'): path for path in paths}
     sources = {module: path.read_text() for module, path in files.items()}
     graph = {module: imports(source) for module, source in sources.items()}
+    for module, dependencies in graph.items():
+        missing = dependencies - graph.keys()
+        if missing:
+            raise ValueError(f'{module} imports missing local modules: {sorted(missing)}')
     proof = closure(graph, [THEOREM])
     public = closure(graph, PUBLIC_ROOTS)
     package = {module for module in graph if module.startswith('IntegerMultBounds.')}
