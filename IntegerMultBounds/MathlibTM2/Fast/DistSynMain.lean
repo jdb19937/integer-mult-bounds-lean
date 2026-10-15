@@ -67,10 +67,10 @@ def dsyRg (r : TblR 40) : Fin mnT := mnι (dsyIdx r)
 
 theorem dsyRg_inj : Function.Injective dsyRg := fun _ _ h => dsyIdx_inj (mnι_inj h)
 
-theorem dsyRg_ne_lay (r : TblR 40) (x : LReg SXReg) : dsyRg r ≠ mnLay x := mnι_ne_lay _ _
+theorem dsyRg_ne_lay (r : TblR 40) (x : LReg CReg) : dsyRg r ≠ mnLay x := mnι_ne_lay _ _
 
 @[simp] theorem dsyOv_lay (R : Regs mnT bdA) (ρ : TblR 40 → List (Fin (bdA + 4)))
-    (x : LReg SXReg) : dsOv dsyRg R ρ (mnLay x) = R (mnLay x) :=
+    (x : LReg CReg) : dsOv dsyRg R ρ (mnLay x) = R (mnLay x) :=
   dsOv_off _ _ fun r => dsyRg_ne_lay r x
 
 /-- The wire register of a transform register. -/
@@ -249,7 +249,7 @@ theorem dsy_mnσ_wire_off (P₀ : List (Fin (bdA + 4))) (v₀ : SynW → List (F
   simp [synIdle, Function.update_apply]
 
 @[simp] theorem dsy_wire_ne_bdLayX (v : NWire) (z : DsX) :
-    (LReg.wire v : LReg SXReg) ≠ bdLayX z := fun h => bdLayX_ne_wire z v h.symm
+    (LReg.wire v : LReg CReg) ≠ bdLayX z := fun h => bdLayX_ne_wire z v h.symm
 
 /-- The outputs of the machine are pairwise distinct. -/
 theorem dsy_outs_nodup :
@@ -479,7 +479,7 @@ theorem dsyWires_spec : ∀ᶠ n in atTop, ∀ mainP : MnPr bdA,
   · -- the layer registers
     rw [hR]
     have hlayW' : ∀ y : SynW, S.R (mnLay (.wire (synWire y))) = [] := hlayW
-    have hev : ∀ x : LReg SXReg, x ≠ .park → (∀ y, x ≠ .wire (synWire y)) →
+    have hev : ∀ x : LReg CReg, x ≠ .park → (∀ y, x ≠ .wire (synWire y)) →
         (∀ z, x ≠ bdLayX z) → F₁₀ (mnLay x) = S.R (mnLay x) := fun x h1 h2 h3 => by
       have h1' : ∀ y, mnLay x ≠ dsyWr y := fun y e => h2 y (mnLay_inj e)
       have h3' : ∀ z, mnLay x ≠ bdIo z := fun z e => h3 z (mnLay_inj e)

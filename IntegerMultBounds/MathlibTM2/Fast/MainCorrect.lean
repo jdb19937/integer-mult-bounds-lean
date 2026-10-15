@@ -361,7 +361,7 @@ def mnRunsAt (n w W cF cO : ℕ) (hd0 : 0 < d n) (V₀ : RsaV (RsaX 6) (prime + 
       restA restB
 
 lemma mn_runs_eq {Lb : LProc → MnPr (prime + K)} {w : ℕ → ℕ}
-    {σ : ℕ → LReg SXReg → List (Fin (prime + K + 4))} (D : MnDist K Lb w σ)
+    {σ : ℕ → LReg CReg → List (Fin (prime + K + 4))} (D : MnDist K Lb w σ)
     (Y : MnSyn K Lb w σ) {n : ℕ} (hd0 : 0 < d n) :
     mnRuns D Y n = mnRunsAt n (w n) (D.Wt n) (Y.cF n) (Y.cO n) hd0 (D.V₀ n) (D.σ₀ n) (D.restA n)
       (D.restB n) := by
@@ -374,7 +374,7 @@ theorem mn_chain_exec (hA : 96 ≤ prime + K) {n : ℕ} (hbig : Big n)
     (hsmall : 2 * d n * p n ^ 2 ≤ Sizes.T n * logT n)
     (hEs : 9 * (2 : ℝ) ^ gamma n * Sizes.T n * logT n ≤ 2 ^ p n / 100)
     {fwdP oppP : MnPr (prime + K)} {w W cF cO : ℕ} {π : ℕ → ℕ}
-    {σ : LReg SXReg → List (Fin (prime + K + 4))}
+    {σ : LReg CReg → List (Fin (prime + K + 4))}
     (hF : SynFwdSpec body fwdP (mnSrc (.v .io)) (mnSynPre σ) w (p n) (ℓ n) (cvAx (t n)) π cF)
     (hO : SynOppSpec body oppP (mnSrc (.v .io)) (mnSynPre σ) w (p n) (ℓ n) (cvAx (t n)) π cO)
     (hπ : ∀ m < cvM (cvAx (t n)), π m < cvM (cvAx (t n)))
@@ -469,7 +469,7 @@ end Finish
 section Main
 
 variable {K : ℕ} {Lb : LProc → MnPr (prime + K)} {w : ℕ → ℕ}
-  {σ : ℕ → LReg SXReg → List (Fin (prime + K + 4))}
+  {σ : ℕ → LReg CReg → List (Fin (prime + K + 4))}
 
 /-- The pushes of the stages before the cleanup are bounded by the push constant. -/
 lemma mn_push_pre (D : MnDist K Lb w σ) (Y : MnSyn K Lb w σ) :

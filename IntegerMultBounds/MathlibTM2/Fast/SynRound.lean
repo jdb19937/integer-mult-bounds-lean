@@ -16,10 +16,11 @@ physical order of the layout `L = layPerm es ℓ K`.
 * `synIdle io P₀`: `io` holding `io`, `park` holding `P₀`, every other register empty. Between
   rounds the file is `synG (synIdle io P₀) v` with `v` the transform wires (`SynBase`).
 * `synRestFile`: the registers of the layer machine at rest for `N` address bits, `r`
-  coefficients, words of `w'` symbols, stride `K`, offset `ρ` and piece record `pr`
-  (`synRest_topRegs`: `TopRegs`).
+  coefficients, words of `w'` symbols, stride `K`, offset `ρ`, control width `Gd` of the
+  compact slot XORs (register `bc (.inr .G)`) and piece record `pr` (`synRest_topRegs`:
+  `TopRegs`); `synRestFile0` is the same file without the control width.
 * `synRestUp`, `synRestDown`: build them from the wires `p .w2`, `p .N`, `p .r`, `p .kh`, `p .rh`,
-  `p .pr`, and clear them.
+  `p .pr` (`synGdUp` computes `Gd = synGd N` from `p .N`), and clear them.
 -/
 
 @[expose] public section
@@ -46,58 +47,65 @@ section Rest
 variable {A : ℕ}
 
 /-- The idle file: `io` holding `io`, `park` holding `P₀`, every other register empty. -/
-noncomputable def synIdle (io P₀ : List (Fin (A + 4))) : Fin (nT SXReg) → List (Fin (A + 4)) :=
-  Function.update (Function.update (fun _ => []) (reg (BReg := SXReg) .io) io)
-    (reg (BReg := SXReg) .park) P₀
+noncomputable def synIdle (io P₀ : List (Fin (A + 4))) : Fin (nT CReg) → List (Fin (A + 4)) :=
+  Function.update (Function.update (fun _ => []) (reg (BReg := CReg) .io) io)
+    (reg (BReg := CReg) .park) P₀
 
-/-- The rest state of the layer machine on top of `Ro`. -/
-noncomputable def synRestFile (Ro : Fin (nT SXReg) → List (Fin (A + 4))) (N r w' K ρ : ℕ)
-    (pr : List (Fin (A + 4))) : Fin (nT SXReg) → List (Fin (A + 4)) :=
+/-- The rest state of the layer machine on top of `Ro`, apart from the control width. -/
+noncomputable def synRestFile0 (Ro : Fin (nT CReg) → List (Fin (A + 4))) (N r w' K ρ : ℕ)
+    (pr : List (Fin (A + 4))) : Fin (nT CReg) → List (Fin (A + 4)) :=
   Function.update (Function.update (Function.update (Function.update (Function.update
   (Function.update (Function.update (Function.update (Function.update (Function.update
   (Function.update (Function.update (Function.update (Function.update (Function.update
   (Function.update Ro
-    (reg (BReg := SXReg) .ctr) (List.replicate w' tick))
-    (reg (BReg := SXReg) .cS) [tick])
-    (reg (BReg := SXReg) .cR) (List.replicate (w' - 1) tick))
-    (reg (BReg := SXReg) (.ph .rc)) (List.replicate (r * w') tick))
-    (reg (BReg := SXReg) (.ph .wc)) (List.replicate w' tick))
-    (reg (BReg := SXReg) (.ph .af)) (binSyms N 0))
-    (reg (BReg := SXReg) (.lf (.k .rctr))) (List.replicate (r * w') tick))
-    (reg (BReg := SXReg) (.lf (.k .wctr))) (List.replicate w' tick))
-    (reg (BReg := SXReg) (.lf (.k .cf))) (binSyms N 0))
-    (reg (BReg := SXReg) .rowctr) (List.replicate (2 ^ N * (r * w')) tick))
-    (reg (BReg := SXReg) .n) (List.replicate N tick))
-    (reg (BReg := SXReg) .w) (List.replicate w' tick))
-    (reg (BReg := SXReg) .rw) (List.replicate (r * w') tick))
-    (reg (BReg := SXReg) .K) (List.replicate K tick))
-    (reg (BReg := SXReg) .ρ) (List.replicate ρ tick))
-    (reg (BReg := SXReg) (.ph .arr)) pr
+    (reg (BReg := CReg) .ctr) (List.replicate w' tick))
+    (reg (BReg := CReg) .cS) [tick])
+    (reg (BReg := CReg) .cR) (List.replicate (w' - 1) tick))
+    (reg (BReg := CReg) (.ph .rc)) (List.replicate (r * w') tick))
+    (reg (BReg := CReg) (.ph .wc)) (List.replicate w' tick))
+    (reg (BReg := CReg) (.ph .af)) (binSyms N 0))
+    (reg (BReg := CReg) (.lf (.k .rctr))) (List.replicate (r * w') tick))
+    (reg (BReg := CReg) (.lf (.k .wctr))) (List.replicate w' tick))
+    (reg (BReg := CReg) (.lf (.k .cf))) (binSyms N 0))
+    (reg (BReg := CReg) .rowctr) (List.replicate (2 ^ N * (r * w')) tick))
+    (reg (BReg := CReg) .n) (List.replicate N tick))
+    (reg (BReg := CReg) .w) (List.replicate w' tick))
+    (reg (BReg := CReg) .rw) (List.replicate (r * w') tick))
+    (reg (BReg := CReg) .K) (List.replicate K tick))
+    (reg (BReg := CReg) .ρ) (List.replicate ρ tick))
+    (reg (BReg := CReg) (.ph .arr)) pr
 
-theorem synG_reg_nonwire {Ro : Fin (nT SXReg) → List (Fin (A + 4))} {v : SynW → List (Fin (A + 4))}
-    {x : LReg SXReg} (hx : ∀ w, x ≠ .wire w) :
-    synG Ro v (reg (BReg := SXReg) x) = Ro (reg (BReg := SXReg) x) :=
+/-- The rest state of the layer machine on top of `Ro`: `synRestFile0` and the control width
+`Gd` of the compact slot XORs on the register `bc (.inr .G)`. -/
+noncomputable def synRestFile (Ro : Fin (nT CReg) → List (Fin (A + 4))) (N r w' K ρ Gd : ℕ)
+    (pr : List (Fin (A + 4))) : Fin (nT CReg) → List (Fin (A + 4)) :=
+  synRestFile0 (Function.update Ro (reg (BReg := CReg) (.bc (.inr .G))) (List.replicate Gd tick))
+    N r w' K ρ pr
+
+theorem synG_reg_nonwire {Ro : Fin (nT CReg) → List (Fin (A + 4))} {v : SynW → List (Fin (A + 4))}
+    {x : LReg CReg} (hx : ∀ w, x ≠ .wire w) :
+    synG Ro v (reg (BReg := CReg) x) = Ro (reg (BReg := CReg) x) :=
   synG_of_ne fun _ => sreg_ne_reg hx
 
 theorem synIdle_wire (io P₀ : List (Fin (A + 4))) (w : NWire) :
-    synIdle io P₀ (reg (BReg := SXReg) (.wire w)) = [] := by
+    synIdle io P₀ (reg (BReg := CReg) (.wire w)) = [] := by
   simp [synIdle, Function.update_apply]
 
 /-- The rest state is at rest: `TopRegs` for every empty wire file. -/
-theorem synRest_topRegs (io P₀ pr : List (Fin (A + 4))) (N r w' K ρ : ℕ)
+theorem synRest_topRegs (io P₀ pr : List (Fin (A + 4))) (N r w' K ρ Gd : ℕ)
     (v : SynW → List (Fin (A + 4))) (hv : ∀ x, v x = []) :
-    TopRegs (synG (synRestFile (synIdle io P₀) N r w' K ρ pr) v) N r w' K ρ := by
+    TopRegs (synG (synRestFile (synIdle io P₀) N r w' K ρ Gd pr) v) N r w' K ρ Gd := by
   have hw : ∀ w : NWire,
-      synG (synRestFile (synIdle io P₀) N r w' K ρ pr) v (reg (BReg := SXReg) (.wire w)) = [] := by
+      synG (synRestFile (synIdle io P₀) N r w' K ρ Gd pr) v (reg (BReg := CReg) (.wire w)) = [] := by
     intro w
-    by_cases h : ∃ x, sreg x = reg (BReg := SXReg) (.wire w)
+    by_cases h : ∃ x, sreg x = reg (BReg := CReg) (.wire w)
     · obtain ⟨x, hx⟩ := h
       rw [← hx, synG_sreg, hv]
     · rw [synG_of_ne (fun x hx => h ⟨x, hx⟩)]
-      simp [synRestFile, synIdle, Function.update_apply]
-  have hnw : ∀ x : LReg SXReg, (∀ w, x ≠ .wire w) →
-      synG (synRestFile (synIdle io P₀) N r w' K ρ pr) v (reg (BReg := SXReg) x) =
-        synRestFile (synIdle io P₀) N r w' K ρ pr (reg (BReg := SXReg) x) :=
+      simp [synRestFile, synRestFile0, synIdle, Function.update_apply]
+  have hnw : ∀ x : LReg CReg, (∀ w, x ≠ .wire w) →
+      synG (synRestFile (synIdle io P₀) N r w' K ρ Gd pr) v (reg (BReg := CReg) x) =
+        synRestFile (synIdle io P₀) N r w' K ρ Gd pr (reg (BReg := CReg) x) :=
     fun x hx => synG_reg_nonwire hx
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · intro x
@@ -105,25 +113,31 @@ theorem synRest_topRegs (io P₀ pr : List (Fin (A + 4))) (N r w' K ρ : ℕ)
     | wire w => rw [hw]; rfl
     | ph y =>
         rw [hnw _ (by simp)]
-        cases y <;> simp [restSpec, phRest, synRestFile, synIdle, Function.update_apply]
+        cases y <;> simp [restSpec, phRest, synRestFile, synRestFile0, synIdle, Function.update_apply]
     | lf y =>
         rw [hnw _ (by simp)]
         cases y with
-        | k z => cases z <;> simp [restSpec, lfRest, synRestFile, synIdle, Function.update_apply]
-        | _ => simp [restSpec, lfRest, synRestFile, synIdle, Function.update_apply]
+        | k z => cases z <;> simp [restSpec, lfRest, synRestFile, synRestFile0, synIdle, Function.update_apply]
+        | _ => simp [restSpec, lfRest, synRestFile, synRestFile0, synIdle, Function.update_apply]
+    | bc y =>
+        rw [hnw _ (by simp)]
+        rcases y with y | y
+        · simp [restSpec, bcRestC, synRestFile, synRestFile0, synIdle, Function.update_apply]
+        · cases y <;>
+            simp [restSpec, bcRestC, synRestFile, synRestFile0, synIdle, Function.update_apply]
     | _ =>
         rw [hnw _ (by simp)]
-        simp [restSpec, synRestFile, synIdle, Function.update_apply, bcEmpty, Nat.mul_assoc]
+        simp [restSpec, synRestFile, synRestFile0, synIdle, Function.update_apply, Nat.mul_assoc]
   all_goals
     rw [hnw _ (by simp)]
-    simp [synRestFile, synIdle, Function.update_apply]
+    simp [synRestFile, synRestFile0, synIdle, Function.update_apply]
 
 end Rest
 
 /-- A register of the layer machine. -/
-noncomputable abbrev lreg (x : LReg SXReg) : Fin (nT SXReg) := reg (BReg := SXReg) x
+noncomputable abbrev lreg (x : LReg CReg) : Fin (nT CReg) := reg (BReg := CReg) x
 
-theorem lreg_out {x : LReg SXReg} (hx : ∀ w, x ≠ .wire w) : ∀ z, sreg z ≠ lreg x :=
+theorem lreg_out {x : LReg CReg} (hx : ∀ w, x ≠ .wire w) : ∀ z, sreg z ≠ lreg x :=
   fun _ => sreg_ne_reg hx
 
 /-! ### Building and clearing the rest state -/
@@ -134,7 +148,7 @@ variable {Q A : ℕ} {U P : Type}
 
 /-- Build the rest state of the layer machine from the wires `p .w2` (`w'`), `p .N`, `p .r`, and
 move `K_h`, `ρ_h` and the piece record from `p .kh`, `p .rh`, `p .pr`; `p .w2` is cleared. -/
-noncomputable def synRestUp : Pr P (nT SXReg) Q A U :=
+noncomputable def synRestUp0 : Pr P (nT CReg) Q A U :=
   .seq (ucopy (sreg (.p .w2)) (lreg .ctr) (sreg (.s 2))) <|
   .seq (synPush (lreg .cS) tick) <|
   .seq (ucopy (sreg (.p .w2)) (lreg .cR) (sreg (.s 2))) <| .seq (synPop (lreg .cR)) <|
@@ -155,7 +169,7 @@ noncomputable def synRestUp : Pr P (nT SXReg) Q A U :=
     (uclear (sreg (.p .w2)))
 
 /-- Clear the rest state of the layer machine. -/
-noncomputable def synRestDown : Pr P (nT SXReg) Q A U :=
+noncomputable def synRestDown0 : Pr P (nT CReg) Q A U :=
   .seq (uclear (lreg .ctr)) <| .seq (uclear (lreg .cS)) <| .seq (uclear (lreg .cR)) <|
   .seq (uclear (lreg (.ph .rc))) <| .seq (uclear (lreg (.ph .wc))) <|
   .seq (uclear (lreg (.ph .af))) <| .seq (uclear (lreg (.lf (.k .rctr)))) <|
@@ -164,20 +178,40 @@ noncomputable def synRestDown : Pr P (nT SXReg) Q A U :=
   .seq (uclear (lreg .rw)) <| .seq (uclear (lreg .K)) <| .seq (uclear (lreg .ρ))
     (uclear (lreg (.ph .arr)))
 
+/-- The control width `Gd = synGd N` onto the register `bc (.inr .G)`, from the wire `p .N`
+(scratch `s 5`, `s 6`, `s 7`). -/
+noncomputable def synGdUp : Pr P (nT CReg) Q A U :=
+  .seq (ucopy (sreg (.p .N)) (sreg (.s 5)) (sreg (.s 2))) <|
+  .seq (synCntLoop 2 (.s 5) (.s 6) (.p .N)) <|
+  .seq (umul 2 (sreg (.s 6)) (sreg (.s 7)) (sreg (.s 2))) <|
+  .seq (uclear (sreg (.s 6))) <|
+  .seq (synPush (sreg (.s 7)) tick) <| .seq (synPush (sreg (.s 7)) tick) <|
+  .seq (synPush (sreg (.s 7)) tick) <| .seq (synPush (sreg (.s 7)) tick) <|
+  .seq (synPush (sreg (.s 7)) tick) <| .seq (synPush (sreg (.s 7)) tick)
+    (moveR (sreg (.s 7)) (lreg (.bc (.inr .G))) id)
+
+/-- Build the rest state of the layer machine: the control width (`synGdUp`), then the other
+registers (`synRestUp0`). -/
+noncomputable def synRestUp : Pr P (nT CReg) Q A U := .seq synGdUp synRestUp0
+
+/-- Clear the rest state of the layer machine. -/
+noncomputable def synRestDown : Pr P (nT CReg) Q A U :=
+  .seq synRestDown0 (uclear (lreg (.bc (.inr .G))))
+
 end RestProg
 
 section RestRuns
 
-variable {Q A : ℕ} {U P : Type} (body : P → Pr P (nT SXReg) Q A U)
+variable {Q A : ℕ} {U P : Type} (body : P → Pr P (nT CReg) Q A U)
 
 /-- The step bound of `synRestUp`. -/
-def synRestUpCost (N r w' K ρ prl : ℕ) : ℕ :=
+def synRestUp0Cost (N r w' K ρ prl : ℕ) : ℕ :=
   (4 * w' + 4) + 1 + (4 * w' + 4) + 1 + synMulRCost r w' + (4 * w' + 4) + (4 * N + 4) +
     synMulRCost r w' + (4 * w' + 4) + (4 * N + 4) + synMulRCost r w' +
     (4 * (2 ^ N * (r * w')) + 9 * N + 4) + (4 * N + 4) + (4 * w' + 4) + synMulRCost r w' +
     (2 * K + 2) + (2 * ρ + 2) + (2 * prl + 2) + (2 * prl + 2) + (2 * w' + 2)
 
-theorem lr_synRestUp (Ro : Fin (nT SXReg) → List (Fin (A + 4))) (v : SynW → List (Fin (A + 4)))
+theorem lr_synRestUp0 (Ro : Fin (nT CReg) → List (Fin (A + 4))) (v : SynW → List (Fin (A + 4)))
     (N r w' K ρ : ℕ) (pr : List (Fin (A + 4)))
     (hRo : ∀ x ∈ [LReg.ctr, .cS, .cR, .ph .rc, .ph .wc, .ph .af, .lf (.k .rctr), .lf (.k .wctr),
       .lf (.k .cf), .rowctr, .n, .w, .rw, .K, .ρ, .ph .arr], Ro (lreg x) = [])
@@ -185,10 +219,10 @@ theorem lr_synRestUp (Ro : Fin (nT SXReg) → List (Fin (A + 4))) (v : SynW → 
     (hr : (v (.p .r)).length = r) (hkh : v (.p .kh) = List.replicate K tick)
     (hrh : v (.p .rh) = List.replicate ρ tick) (hpr : v (.p .pr) = pr)
     (h2 : v (.s 2) = []) (h3 : v (.s 3) = []) (h4 : v (.s 4) = []) :
-    LayRuns body synRestUp (synG Ro v)
-      (synG (synRestFile Ro N r w' K ρ pr) (Function.update (Function.update (Function.update
+    LayRuns body synRestUp0 (synG Ro v)
+      (synG (synRestFile0 Ro N r w' K ρ pr) (Function.update (Function.update (Function.update
         (Function.update v (.p .kh) []) (.p .rh) []) (.p .pr) []) (.p .w2) []))
-      (synRestUpCost N r w' K ρ pr.length) := by
+      (synRestUp0Cost N r w' K ρ pr.length) := by
   have e := fun x hx => hRo x hx
   refine lr_weaken body
     ((so_copy body (o := lreg .ctr) (a := .p .w2) (t := .s 2) (x := w') (y := 0)
@@ -238,61 +272,61 @@ theorem lr_synRestUp (Ro : Fin (nT SXReg) → List (Fin (A + 4))) (v : SynW → 
       (lreg_out (by simp)) (by simp) (by simp [Function.update_apply, e])).seq <|
     sgU_clear body (a := .p .w2) (x := w') (by simp [hw2])) ?_ ?_
   · congr 1
-    · simp only [synRestFile, List.reverse_replicate, List.append_nil, List.reverse_reverse,
+    · simp only [synRestFile0, List.reverse_replicate, List.append_nil, List.reverse_reverse,
         Nat.add_zero, Nat.mul_assoc, Function.update_idem]
     · funext y
       simp only [Function.update_apply]
       split_ifs <;> simp_all
-  · simp only [synRestUpCost, List.length_replicate, List.length_append, List.length_reverse,
+  · simp only [synRestUp0Cost, List.length_replicate, List.length_append, List.length_reverse,
       List.length_nil, Nat.add_zero]
     omega
 
 /-- The step bound of `synRestDown`. -/
-def synRestDownCost (N r w' K ρ prl : ℕ) : ℕ :=
+def synRestDown0Cost (N r w' K ρ prl : ℕ) : ℕ :=
   (2 * w' + 2) + (2 * 1 + 2) + (2 * (w' - 1) + 2) + (2 * (r * w') + 2) + (2 * w' + 2) +
     (2 * N + 2) + (2 * (r * w') + 2) + (2 * w' + 2) + (2 * N + 2) +
     (2 * (2 ^ N * (r * w')) + 2) + (2 * N + 2) + (2 * w' + 2) + (2 * (r * w') + 2) +
     (2 * K + 2) + (2 * ρ + 2) + (2 * prl + 2)
 
-theorem lr_synRestDown (Ro : Fin (nT SXReg) → List (Fin (A + 4))) (v : SynW → List (Fin (A + 4)))
+theorem lr_synRestDown0 (Ro : Fin (nT CReg) → List (Fin (A + 4))) (v : SynW → List (Fin (A + 4)))
     (N r w' K ρ : ℕ) (pr : List (Fin (A + 4)))
     (hRo : ∀ x ∈ [LReg.ctr, .cS, .cR, .ph .rc, .ph .wc, .ph .af, .lf (.k .rctr), .lf (.k .wctr),
       .lf (.k .cf), .rowctr, .n, .w, .rw, .K, .ρ, .ph .arr], Ro (lreg x) = []) :
-    LayRuns body synRestDown (synG (synRestFile Ro N r w' K ρ pr) v) (synG Ro v)
-      (synRestDownCost N r w' K ρ pr.length) := by
+    LayRuns body synRestDown0 (synG (synRestFile0 Ro N r w' K ρ pr) v) (synG Ro v)
+      (synRestDown0Cost N r w' K ρ pr.length) := by
   refine lr_weaken body
     ((so_clear body (o := lreg .ctr) (lreg_out (by simp)) (x := w')
-      (by simp [synRestFile, Function.update_apply])).seq <|
+      (by simp [synRestFile0, Function.update_apply])).seq <|
     (so_clear body (o := lreg .cS) (lreg_out (by simp)) (x := 1)
-      (by simp [synRestFile, Function.update_apply])).seq <|
+      (by simp [synRestFile0, Function.update_apply])).seq <|
     (so_clear body (o := lreg .cR) (lreg_out (by simp)) (x := w' - 1)
-      (by simp [synRestFile, Function.update_apply])).seq <|
+      (by simp [synRestFile0, Function.update_apply])).seq <|
     (so_clear body (o := lreg (.ph .rc)) (lreg_out (by simp)) (x := r * w')
-      (by simp [synRestFile, Function.update_apply])).seq <|
+      (by simp [synRestFile0, Function.update_apply])).seq <|
     (so_clear body (o := lreg (.ph .wc)) (lreg_out (by simp)) (x := w')
-      (by simp [synRestFile, Function.update_apply])).seq <|
+      (by simp [synRestFile0, Function.update_apply])).seq <|
     (so_clear body (o := lreg (.ph .af)) (lreg_out (by simp)) (x := N)
-      (by simp [synRestFile, Function.update_apply, binSyms])).seq <|
+      (by simp [synRestFile0, Function.update_apply, binSyms])).seq <|
     (so_clear body (o := lreg (.lf (.k .rctr))) (lreg_out (by simp)) (x := r * w')
-      (by simp [synRestFile, Function.update_apply])).seq <|
+      (by simp [synRestFile0, Function.update_apply])).seq <|
     (so_clear body (o := lreg (.lf (.k .wctr))) (lreg_out (by simp)) (x := w')
-      (by simp [synRestFile, Function.update_apply])).seq <|
+      (by simp [synRestFile0, Function.update_apply])).seq <|
     (so_clear body (o := lreg (.lf (.k .cf))) (lreg_out (by simp)) (x := N)
-      (by simp [synRestFile, Function.update_apply, binSyms])).seq <|
+      (by simp [synRestFile0, Function.update_apply, binSyms])).seq <|
     (so_clear body (o := lreg .rowctr) (lreg_out (by simp)) (x := 2 ^ N * (r * w'))
-      (by simp [synRestFile, Function.update_apply])).seq <|
+      (by simp [synRestFile0, Function.update_apply])).seq <|
     (so_clear body (o := lreg .n) (lreg_out (by simp)) (x := N)
-      (by simp [synRestFile, Function.update_apply])).seq <|
+      (by simp [synRestFile0, Function.update_apply])).seq <|
     (so_clear body (o := lreg .w) (lreg_out (by simp)) (x := w')
-      (by simp [synRestFile, Function.update_apply])).seq <|
+      (by simp [synRestFile0, Function.update_apply])).seq <|
     (so_clear body (o := lreg .rw) (lreg_out (by simp)) (x := r * w')
-      (by simp [synRestFile, Function.update_apply])).seq <|
+      (by simp [synRestFile0, Function.update_apply])).seq <|
     (so_clear body (o := lreg .K) (lreg_out (by simp)) (x := K)
-      (by simp [synRestFile, Function.update_apply])).seq <|
+      (by simp [synRestFile0, Function.update_apply])).seq <|
     (so_clear body (o := lreg .ρ) (lreg_out (by simp)) (x := ρ)
-      (by simp [synRestFile, Function.update_apply])).seq <|
+      (by simp [synRestFile0, Function.update_apply])).seq <|
     so_clear body (o := lreg (.ph .arr)) (lreg_out (by simp)) (x := pr.length)
-      (by simp [synRestFile, Function.update_apply])) ?_ ?_
+      (by simp [synRestFile0, Function.update_apply])) ?_ ?_
   · congr 1
     funext z
     by_cases hz : ∃ x ∈ [LReg.ctr, .cS, .cR, .ph .rc, .ph .wc, .ph .af, .lf (.k .rctr),
@@ -321,11 +355,108 @@ theorem lr_synRestDown (Ro : Fin (nT SXReg) → List (Fin (A + 4))) (v : SynW �
       have n14 := nz _ (by simp : LReg.K ∈ _)
       have n15 := nz _ (by simp : LReg.ρ ∈ _)
       have n16 := nz _ (by simp : LReg.ph .arr ∈ _)
-      simp only [synRestFile, Function.update_apply, Ne.symm n1, Ne.symm n2, Ne.symm n3,
+      simp only [synRestFile0, Function.update_apply, Ne.symm n1, Ne.symm n2, Ne.symm n3,
         Ne.symm n4, Ne.symm n5, Ne.symm n6, Ne.symm n7, Ne.symm n8, Ne.symm n9, Ne.symm n10,
         Ne.symm n11, Ne.symm n12, Ne.symm n13, Ne.symm n14, Ne.symm n15, Ne.symm n16, if_false]
-  · simp only [synRestDownCost]
+  · simp only [synRestDown0Cost]
     omega
+
+/-- The step bound of `synGdUp`. -/
+def synGdUpCost (N : ℕ) : ℕ :=
+  (4 * N + 4) + synCntCost 2 N N + (4 * synJk 2 N N + 4) + (2 * synJk 2 N N + 2) + 6 +
+    (2 * synGd N + 2)
+
+theorem lr_synGdUp (Ro : Fin (nT CReg) → List (Fin (A + 4))) (v : SynW → List (Fin (A + 4)))
+    (N : ℕ) (hN : (v (.p .N)).length = N) (h2 : v (.s 2) = []) (h5 : v (.s 5) = [])
+    (h6 : v (.s 6) = []) (h7 : v (.s 7) = []) (h17 : v (.s 17) = []) (h23 : v (.s 23) = [])
+    (hG : Ro (lreg (.bc (.inr .G))) = []) :
+    LayRuns body synGdUp (synG Ro v)
+      (synG (Function.update Ro (lreg (.bc (.inr .G))) (List.replicate (synGd N) tick)) v)
+      (synGdUpCost N) := by
+  set J := synJk 2 N N with hJ
+  have hGd : 2 * J + 0 + 1 + 1 + 1 + 1 + 1 + 1 = synGd N := by unfold synGd; omega
+  refine lr_weaken body
+    ((sgU_copy body (a := .p .N) (b := .s 5) (t := .s 2) (x := N) (y := 0) (by decide)
+      (by decide) (by decide) h2 hN (by simp [h5])).seq <|
+    (sg_synCntLoop body 2 (by norm_num) (x := .s 5) (cnt := .s 6) (ctr := .p .N) _ N N
+      (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide)
+      (by decide) (by decide) (by decide) (by decide) (by decide)
+      (by simp) (by simp [h6]) (by simp [hN]) (by simp [h17]) (by simp [h2])
+      (by simp [h23])).seq <|
+    (sgU_umul body 2 (a := .s 6) (b := .s 7) (t := .s 2) (x := J) (y := 0) (by decide)
+      (by decide) (by decide) (by simp [h2]) (by simp [hJ]) (by simp [h7])).seq <|
+    (sgU_clear body (a := .s 6) (x := J) (by simp [hJ])).seq <|
+    (sgU_push body (a := .s 7) (y := 2 * J + 0) (by simp)).seq <|
+    (sgU_push body (a := .s 7) (y := 2 * J + 0 + 1) (by simp)).seq <|
+    (sgU_push body (a := .s 7) (y := 2 * J + 0 + 1 + 1) (by simp)).seq <|
+    (sgU_push body (a := .s 7) (y := 2 * J + 0 + 1 + 1 + 1) (by simp)).seq <|
+    (sgU_push body (a := .s 7) (y := 2 * J + 0 + 1 + 1 + 1 + 1) (by simp)).seq <|
+    (sgU_push body (a := .s 7) (y := 2 * J + 0 + 1 + 1 + 1 + 1 + 1) (by simp)).seq <|
+    so_moveWOV body (o := lreg (.bc (.inr .G))) (a := .s 7)
+      (l := List.replicate (2 * J + 0 + 1 + 1 + 1 + 1 + 1 + 1) tick) (l' := [])
+      (lreg_out (by simp)) (by simp) (by simp [hG])) ?_ ?_
+  · congr 1
+    · rw [List.reverse_replicate, List.append_nil, hGd]
+    · funext y
+      simp only [Function.update_apply]
+      split_ifs <;> simp_all [div_two_pow_self]
+  · simp only [synGdUpCost, List.length_replicate, ← hJ, ← hGd]
+    omega
+
+/-- The step bound of `synRestUp`. -/
+def synRestUpCost (N r w' K ρ prl : ℕ) : ℕ := synGdUpCost N + synRestUp0Cost N r w' K ρ prl
+
+theorem synRest_G_ne {x : LReg CReg} (hx : x ∈ [LReg.ctr, .cS, .cR, .ph .rc, .ph .wc, .ph .af, .lf (.k .rctr), .lf (.k .wctr),
+      .lf (.k .cf), .rowctr, .n, .w, .rw, .K, .ρ, .ph .arr]) :
+    lreg x ≠ lreg (.bc (.inr .G)) := by
+  simp only [List.mem_cons, List.not_mem_nil, or_false] at hx
+  rcases hx with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl |
+    rfl | rfl | rfl <;> exact reg_ne (by simp)
+
+theorem synRest_G_of {Ro : Fin (nT CReg) → List (Fin (A + 4))}
+    (hRo : ∀ x ∈ [LReg.ctr, .cS, .cR, .ph .rc, .ph .wc, .ph .af, .lf (.k .rctr), .lf (.k .wctr),
+      .lf (.k .cf), .rowctr, .n, .w, .rw, .K, .ρ, .ph .arr, .bc (.inr .G)], Ro (lreg x) = []) (Gd : ℕ) :
+    ∀ x ∈ [LReg.ctr, .cS, .cR, .ph .rc, .ph .wc, .ph .af, .lf (.k .rctr), .lf (.k .wctr),
+      .lf (.k .cf), .rowctr, .n, .w, .rw, .K, .ρ, .ph .arr],
+      Function.update Ro (lreg (.bc (.inr .G))) (List.replicate Gd tick) (lreg x) = [] := by
+  intro x hx
+  rw [Function.update_of_ne (synRest_G_ne hx)]
+  exact hRo x (by simp only [List.mem_cons, List.not_mem_nil, or_false] at hx ⊢; tauto)
+
+theorem lr_synRestUp (Ro : Fin (nT CReg) → List (Fin (A + 4))) (v : SynW → List (Fin (A + 4)))
+    (N r w' K ρ : ℕ) (pr : List (Fin (A + 4)))
+    (hRo : ∀ x ∈ [LReg.ctr, .cS, .cR, .ph .rc, .ph .wc, .ph .af, .lf (.k .rctr), .lf (.k .wctr),
+      .lf (.k .cf), .rowctr, .n, .w, .rw, .K, .ρ, .ph .arr, .bc (.inr .G)], Ro (lreg x) = [])
+    (hw2 : v (.p .w2) = List.replicate w' tick) (hN : (v (.p .N)).length = N)
+    (hr : (v (.p .r)).length = r) (hkh : v (.p .kh) = List.replicate K tick)
+    (hrh : v (.p .rh) = List.replicate ρ tick) (hpr : v (.p .pr) = pr)
+    (h2 : v (.s 2) = []) (h3 : v (.s 3) = []) (h4 : v (.s 4) = []) (h5 : v (.s 5) = [])
+    (h6 : v (.s 6) = []) (h7 : v (.s 7) = []) (h17 : v (.s 17) = []) (h23 : v (.s 23) = []) :
+    LayRuns body synRestUp (synG Ro v)
+      (synG (synRestFile Ro N r w' K ρ (synGd N) pr) (Function.update (Function.update
+        (Function.update (Function.update v (.p .kh) []) (.p .rh) []) (.p .pr) []) (.p .w2) []))
+      (synRestUpCost N r w' K ρ pr.length) :=
+  lr_weaken body ((lr_synGdUp body Ro v N hN h2 h5 h6 h7 h17 h23 (hRo _ (by simp))).seq
+    (lr_synRestUp0 body _ v N r w' K ρ pr (synRest_G_of hRo _) hw2 hN hr hkh hrh hpr h2 h3 h4))
+    rfl (by unfold synRestUpCost; omega)
+
+/-- The step bound of `synRestDown`. -/
+def synRestDownCost (N r w' K ρ Gd prl : ℕ) : ℕ := synRestDown0Cost N r w' K ρ prl + (2 * Gd + 2)
+
+theorem lr_synRestDown (Ro : Fin (nT CReg) → List (Fin (A + 4))) (v : SynW → List (Fin (A + 4)))
+    (N r w' K ρ Gd : ℕ) (pr : List (Fin (A + 4)))
+    (hRo : ∀ x ∈ [LReg.ctr, .cS, .cR, .ph .rc, .ph .wc, .ph .af, .lf (.k .rctr), .lf (.k .wctr),
+      .lf (.k .cf), .rowctr, .n, .w, .rw, .K, .ρ, .ph .arr, .bc (.inr .G)], Ro (lreg x) = []) :
+    LayRuns body synRestDown (synG (synRestFile Ro N r w' K ρ Gd pr) v) (synG Ro v)
+      (synRestDownCost N r w' K ρ Gd pr.length) := by
+  have s1 := lr_synRestDown0 body
+    (Function.update Ro (lreg (.bc (.inr .G))) (List.replicate Gd tick)) v N r w' K ρ pr
+    (synRest_G_of hRo Gd)
+  have s2 := so_clear body
+    (R := Function.update Ro (lreg (.bc (.inr .G))) (List.replicate Gd tick)) (v := v)
+    (o := lreg (.bc (.inr .G))) (lreg_out (by simp)) (x := Gd) (by simp)
+  refine lr_weaken body (s1.seq s2) ?_ (by unfold synRestDownCost; omega)
+  rw [Function.update_idem, Function.update_eq_self_iff.mpr (hRo _ (by simp)).symm]
 
 end RestRuns
 
@@ -342,7 +473,7 @@ theorem twRoles_snoc (A h : ℕ) : ∀ (l : List ℕ) (e : ℕ),
       rw [List.cons_append, twRoles, twRoles_snoc A h l e, twRoles, List.append_assoc]
 
 /-- Push the roles `twSeg A e h` of one axis from `s 27 = e` and `p .h`. -/
-noncomputable def synSegP : Pr P (nT SXReg) Q A U :=
+noncomputable def synSegP : Pr P (nT CReg) Q A U :=
   .seq (.seq (ucopy (sreg (.s 27)) (sreg (.s 28)) (sreg (.s 2)))
     (usub (sreg (.p .h)) (sreg (.s 28)) (sreg (.s 2)))) <|
   synIfNE (sreg (.s 28))
@@ -354,15 +485,15 @@ noncomputable def synSegP : Pr P (nT SXReg) Q A U :=
     (umulSym 1 (bitSymbol false) (sreg (.s 27)) (sreg (.tw .rl)) (sreg (.s 2)))
 
 /-- One axis of the roles: its field of `p .es` onto `s 26` (its ticks onto `s 27`), its roles. -/
-noncomputable def synRoleStep : Pr P (nT SXReg) Q A U :=
+noncomputable def synRoleStep : Pr P (nT CReg) Q A U :=
   .seq (topField (sreg (.p .es)) (sreg (.s 26)) (sreg (.s 27)) true) <|
   .seq synSegP (uclear (sreg (.s 27)))
 
 /-- `tw .rl := twRoles A es h` from the axis record `p .es = topRec es` and `p .h`. -/
-noncomputable def synRoles : Pr P (nT SXReg) Q A U :=
+noncomputable def synRoles : Pr P (nT CReg) Q A U :=
   .seq (scanP (sreg (.p .D)) (sreg (.s 23)) synRoleStep) (moveR (sreg (.s 26)) (sreg (.p .es)) id)
 
-variable (body : P → Pr P (nT SXReg) Q A U) {R : Fin (nT SXReg) → List (Fin (A + 4))}
+variable (body : P → Pr P (nT CReg) Q A U) {R : Fin (nT CReg) → List (Fin (A + 4))}
 
 /-- The step bound of `synSegP`. -/
 def synSegCost (e h : ℕ) : ℕ :=
@@ -500,9 +631,9 @@ theorem twStream_eq_cstream (A w : ℕ) {r : ℕ} (M : ℕ) (Z : ℕ → Fin r �
     twStream A w (List.range M) Z = cstream A w (IntegerMultBounds.MathlibTM2.Fast.rpStream M Z) := by
   simp only [twStream, cstream, IntegerMultBounds.MathlibTM2.Fast.rpStream, List.flatMap_assoc]
 
-theorem sg_of_twRuns (body : P → Pr P (nT SXReg) Q A U) {p : Pr P (nT SXReg) Q A U}
+theorem sg_of_twRuns (body : P → Pr P (nT CReg) Q A U) {p : Pr P (nT CReg) Q A U}
     {ρ ρ' : TwReg → List (Fin (A + 4))} {b : ℕ} (h : TwRuns body synTg p ρ ρ' b)
-    (Ro : Fin (nT SXReg) → List (Fin (A + 4))) (v : SynW → List (Fin (A + 4)))
+    (Ro : Fin (nT CReg) → List (Fin (A + 4))) (v : SynW → List (Fin (A + 4)))
     (hv : ∀ x, v (.tw x) = ρ x) :
     LayRuns body p (synG Ro v) (synG Ro (synTwSet v ρ')) b := by
   intro vv S _ hS
@@ -546,7 +677,7 @@ variable {Q A : ℕ} {U P : Type}
 /-- The twiddle registers from the wires: the stream from `io` onto `tw .src`, the physical
 address `binSyms N 0`, the counters `N`, `N`, the roles of round `h`, `w`, `2^l w`, `h + 1`,
 `l - h`. -/
-noncomputable def synTwUp : Pr P (nT SXReg) Q A U :=
+noncomputable def synTwUp : Pr P (nT CReg) Q A U :=
   .seq (moveR (lreg .io) (sreg (.s 25)) id) <|
   .seq (moveR (sreg (.s 25)) (sreg (.tw .src)) id) <|
   .seq (zeroBits (sreg (.p .N)) (sreg (.tw .pa)) (sreg (.s 2))) <|
@@ -561,7 +692,7 @@ noncomputable def synTwUp : Pr P (nT SXReg) Q A U :=
     (usub (sreg (.p .h)) (sreg (.tw .lh)) (sreg (.s 2)))
 
 /-- The output stream back onto `io` and the twiddle registers cleared. -/
-noncomputable def synTwDown : Pr P (nT SXReg) Q A U :=
+noncomputable def synTwDown : Pr P (nT CReg) Q A U :=
   .seq (moveR (sreg (.tw .dst)) (sreg (.s 25)) id) <|
   .seq (moveR (sreg (.s 25)) (lreg .io) id) <|
   .seq (uclear (sreg (.tw .pa))) <| .seq (uclear (sreg (.tw .nn))) <|
@@ -570,7 +701,7 @@ noncomputable def synTwDown : Pr P (nT SXReg) Q A U :=
   .seq (uclear (sreg (.tw .hn))) (uclear (sreg (.tw .lh)))
 
 /-- The twiddle of round `h` on the stream of `io` (`fwd`: `y^(-E)`, else `y^E`). -/
-noncomputable def synTwStep (fwd : Bool) : Pr P (nT SXReg) Q A U :=
+noncomputable def synTwStep (fwd : Bool) : Pr P (nT CReg) Q A U :=
   .seq synTwUp (.seq (twPassLP synTg fwd) synTwDown)
 
 /-- The step bound of `synTwStep`. -/
@@ -597,9 +728,9 @@ theorem cstream_rpStream_length (A w : ℕ) {r : ℕ} (M : ℕ) (Y : ℕ → Fin
   simp [IntegerMultBounds.MathlibTM2.Fast.rpStream, List.length_flatMap]
   ring
 
-theorem sg_synTwStep (body : P → Pr P (nT SXReg) Q A U) (fwd : Bool) (hA : 5 ≤ A)
+theorem sg_synTwStep (body : P → Pr P (nT CReg) Q A U) (fwd : Bool) (hA : 5 ≤ A)
     {es : List ℕ} {l w h : ℕ} (hw1 : 1 ≤ w) (hhl : h ≤ l) (L : Equiv.Perm (Fin es.sum))
-    (Ro : Fin (nT SXReg) → List (Fin (A + 4))) (v : SynW → List (Fin (A + 4)))
+    (Ro : Fin (nT CReg) → List (Fin (A + 4))) (v : SynW → List (Fin (A + 4)))
     (Y : ℕ → Fin (2 ^ l) → GaussianInt)
     (hio : Ro (lreg .io) = cstream A w (IntegerMultBounds.MathlibTM2.Fast.rpStream (2 ^ es.sum) Y))
     (hpz : v (.tw .pz) = twPosReg A es.sum (twPosL L)) (htw : ∀ x, x ≠ .pz → v (.tw x) = [])
@@ -740,28 +871,41 @@ theorem synIdle_update_park (io P₀ X : List (Fin (A + 4))) :
   simp only [synIdle, lreg, Function.update_apply]
   split_ifs <;> simp_all
 
-theorem synRestFile_update {x : LReg SXReg}
+theorem synRestFile0_update {x : LReg CReg}
     (hx : x ∉ [LReg.ctr, .cS, .cR, .ph .rc, .ph .wc, .ph .af, .lf (.k .rctr), .lf (.k .wctr),
       .lf (.k .cf), .rowctr, .n, .w, .rw, .K, .ρ, .ph .arr])
-    (Ro : Fin (nT SXReg) → List (Fin (A + 4))) (N r w' K ρ : ℕ) (pr X : List (Fin (A + 4))) :
-    Function.update (synRestFile Ro N r w' K ρ pr) (lreg x) X =
-      synRestFile (Function.update Ro (lreg x) X) N r w' K ρ pr := by
+    (Ro : Fin (nT CReg) → List (Fin (A + 4))) (N r w' K ρ : ℕ) (pr X : List (Fin (A + 4))) :
+    Function.update (synRestFile0 Ro N r w' K ρ pr) (lreg x) X =
+      synRestFile0 (Function.update Ro (lreg x) X) N r w' K ρ pr := by
   simp only [List.mem_cons, List.not_mem_nil, or_false, not_or] at hx
   obtain ⟨n1, n2, n3, n4, n5, n6, n7, n8, n9, n10, n11, n12, n13, n14, n15, n16⟩ := hx
   funext z
   by_cases hz : z = lreg x
   · subst hz
-    simp [synRestFile, lreg, Function.update_apply, n1, n2, n3, n4, n5, n6, n7, n8, n9, n10, n11,
+    simp [synRestFile0, lreg, Function.update_apply, n1, n2, n3, n4, n5, n6, n7, n8, n9, n10, n11,
       n12, n13, n14, n15, n16]
-  · simp only [synRestFile, Function.update_apply, hz, if_false]
+  · simp only [synRestFile0, Function.update_apply, hz, if_false]
+
+theorem synRestFile_update {x : LReg CReg}
+    (hx : x ∉ [LReg.ctr, .cS, .cR, .ph .rc, .ph .wc, .ph .af, .lf (.k .rctr), .lf (.k .wctr),
+      .lf (.k .cf), .rowctr, .n, .w, .rw, .K, .ρ, .ph .arr, .bc (.inr .G)])
+    (Ro : Fin (nT CReg) → List (Fin (A + 4))) (N r w' K ρ Gd : ℕ) (pr X : List (Fin (A + 4))) :
+    Function.update (synRestFile Ro N r w' K ρ Gd pr) (lreg x) X =
+      synRestFile (Function.update Ro (lreg x) X) N r w' K ρ Gd pr := by
+  have hx0 : x ∉ [LReg.ctr, .cS, .cR, .ph .rc, .ph .wc, .ph .af, .lf (.k .rctr), .lf (.k .wctr),
+      .lf (.k .cf), .rowctr, .n, .w, .rw, .K, .ρ, .ph .arr] := fun h =>
+    hx (by simp only [List.mem_cons, List.not_mem_nil, or_false] at h ⊢; tauto)
+  have hxG : lreg (.bc (.inr .G)) ≠ lreg x := reg_ne (fun h => hx (by rw [← h]; simp))
+  unfold synRestFile
+  rw [synRestFile0_update hx0, Function.update_comm hxG]
 
 theorem synIdle_rest (io P₀ : List (Fin (A + 4))) :
     ∀ x ∈ [LReg.ctr, .cS, .cR, .ph .rc, .ph .wc, .ph .af, .lf (.k .rctr), .lf (.k .wctr),
-      .lf (.k .cf), .rowctr, .n, .w, .rw, .K, .ρ, .ph .arr], synIdle io P₀ (lreg x) = [] := by
+      .lf (.k .cf), .rowctr, .n, .w, .rw, .K, .ρ, .ph .arr, .bc (.inr .G)], synIdle io P₀ (lreg x) = [] := by
   intro x hx
   simp only [List.mem_cons, List.not_mem_nil, or_false] at hx
   rcases hx with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl |
-    rfl | rfl | rfl <;> simp [synIdle, lreg, Function.update_apply]
+    rfl | rfl | rfl | rfl <;> simp [synIdle, lreg, Function.update_apply]
 
 end LayerStep
 
@@ -771,15 +915,15 @@ section LayerProg
 
 variable {Q Ka : ℕ} {U : Type}
 
-/-- Drop the configuration record (ten fields) from `park`. -/
-noncomputable def synPopCfg : Pr LProc (nT SXReg) Q (prime + Ka) U :=
-  .seq (topSkips (lreg .park) (sreg (.s 30)) (sreg (.s 31)) 10) (uclear (sreg (.s 30)))
+/-- Drop the configuration record (thirteen fields) from `park`. -/
+noncomputable def synPopCfg : Pr LProc (nT CReg) Q (prime + Ka) U :=
+  .seq (topSkips (lreg .park) (sreg (.s 30)) (sreg (.s 31)) 13) (uclear (sreg (.s 30)))
 
 /-- **The layer step of round `h`**: the records (`synRec`), the rest state of the layer machine
 (`synRestUp`), the persistent wires parked on `park` with the configuration record on top,
 `topProg`, the record dropped, the wires restored, the rest state cleared. -/
 noncomputable def synLayerStep (ds : ComplexFramedExecution.Directions) :
-    Pr LProc (nT SXReg) Q (prime + Ka) U :=
+    Pr LProc (nT CReg) Q (prime + Ka) U :=
   .seq (synRec (gateCount (program ds)) (factorCount (program ds))) <|
   .seq synRestUp <|
   .seq (synStash (lreg .park) blank (synXS.map sreg)) <|
@@ -798,8 +942,8 @@ noncomputable def synLayerStepCost (ds : ComplexFramedExecution.Directions) (es 
   let cfl := topRecLen (synCfg es ℓ K G F w h)
   synRecCost G F es ℓ K w h + synRestUpCost es.sum (2 ^ l) W2 (synKh ℓ K h) (synRh ℓ K h) prl +
     (stk + 1) + (2 * cfl + 2) + synLayerCost ds es ℓ K l w h +
-    (2 * cfl + 10 + 1 + (2 * cfl + 2)) + (stk + 1) +
-    synRestDownCost es.sum (2 ^ l) W2 (synKh ℓ K h) (synRh ℓ K h) prl
+    (2 * cfl + 13 + 1 + (2 * cfl + 2)) + (stk + 1) +
+    synRestDownCost es.sum (2 ^ l) W2 (synKh ℓ K h) (synRh ℓ K h) (synGd es.sum) prl
 
 end LayerProg
 
@@ -817,7 +961,8 @@ theorem sg_synLayerStep (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
     (hA : 14 ≤ prime + Ka) (hA9 : 9 ^ 4 ≤ prime + Ka + 4) (hNW : NW ≤ prime + Ka + 4)
     (hgate : ∀ g, Instr.gate g ∈ program ds →
       (2 * gateBound g + 1) ^ (2 * (gateWires g).length) ≤ prime + Ka + 4)
-    {es : List ℕ} {ℓ K : ℕ} (H : LayHyp es ℓ K) {l w p h : ℕ} (hh : h + 1 ≤ ℓ)
+    {es : List ℕ} {ℓ K : ℕ} (H : LayHyp es ℓ K) (hGK : m ≤ es.length → synGd es.sum + 3 ≤ K)
+    {l w p h : ℕ} (hh : h + 1 ≤ ℓ)
     (hpw : p + 2 ≤ w) (v : SynW → List (Fin (prime + Ka + 4)))
     (hv : SynV v es ℓ K w l h (layPerm es ℓ K)) (P₀ : List (Fin (prime + Ka + 4)))
     (Y : ℕ → Fin (2 ^ l) → GaussianInt) (hY : ∀ x c, ‖GaussianInt.toComplex (Y x c)‖ ≤ 2 ^ p) :
@@ -849,8 +994,10 @@ theorem sg_synLayerStep (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
     (by simp [hv₁, synRecOut, hv.hr]) (by simp [hv₁, synRecOut, hKh])
     (by simp [hv₁, synRecOut, hρh]) (by simp [hv₁, synRecOut, hprRec, hKh])
     (by simp [hv₁, synRecOut, hv.hs]) (by simp [hv₁, synRecOut, hv.hs])
-    (by simp [hv₁, synRecOut, hv.hs])
-  set RF := synRestFile (synIdle io P₀) es.sum (2 ^ l) W2 Kh ρh prRec with hRF
+    (by simp [hv₁, synRecOut, hv.hs]) (by simp [hv₁, synRecOut, hv.hs])
+    (by simp [hv₁, synRecOut, hv.hs]) (by simp [hv₁, synRecOut, hv.hs])
+    (by simp [hv₁, synRecOut, hv.hs]) (by simp [hv₁, synRecOut, hv.hs])
+  set RF := synRestFile (synIdle io P₀) es.sum (2 ^ l) W2 Kh ρh (synGd es.sum) prRec with hRF
   set v₂ := Function.update (Function.update (Function.update (Function.update v₁ (.p .kh) [])
     (.p .rh) []) (.p .pr) []) (.p .w2) [] with hv₂
   have hv₂X : ∀ x ∈ synXS, v₂ x = v x := by
@@ -862,7 +1009,7 @@ theorem sg_synLayerStep (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
   have s3 := sg_synStash body (R := RF) (v := v₂) (pk := lreg .park) (lreg_out (by simp)) blank
     synXS synXS_nodup
   have hRFp : RF (lreg .park) = P₀ := by
-    simp [hRF, synRestFile, synIdle, lreg, Function.update_apply]
+    simp [hRF, synRestFile, synRestFile0, synIdle, lreg, Function.update_apply]
   rw [hRFp] at s3
   set X3 := synStkW v₂ blank synXS ++ blank :: P₀ with hX3
   -- 4. the configuration record on top
@@ -887,41 +1034,41 @@ theorem sg_synLayerStep (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
         · simp [hv₂, hv₁, synRecOut, hv.hs i]
   -- 5. the layer
   have hpark : ∀ X, Function.update RF (lreg .park) X =
-      synRestFile (synIdle io X) es.sum (2 ^ l) W2 Kh ρh prRec := fun X => by
+      synRestFile (synIdle io X) es.sum (2 ^ l) W2 Kh ρh (synGd es.sum) prRec := fun X => by
     rw [hRF, synRestFile_update (by simp), synIdle_update_park]
-  have hioU : ∀ X Y', Function.update (synRestFile (synIdle Y' X) es.sum (2 ^ l) W2 Kh ρh prRec)
-      (lreg .io) io' = synRestFile (synIdle io' X) es.sum (2 ^ l) W2 Kh ρh prRec := fun X Y' => by
+  have hioU : ∀ X Y', Function.update (synRestFile (synIdle Y' X) es.sum (2 ^ l) W2 Kh ρh (synGd es.sum) prRec)
+      (lreg .io) io' = synRestFile (synIdle io' X) es.sum (2 ^ l) W2 Kh ρh (synGd es.sum) prRec := fun X Y' => by
     rw [synRestFile_update (by simp), synIdle_update_io]
   simp only [hpark] at s4 s3
-  have hcfl : cfg.length = 10 := by simp [hcfg, synCfg, topCfg]
-  have s5 := synLayer_runs (U := U) hQ ds hd hA hA9 hNW hgate H hh hpw Y hY
-    (synG (synRestFile (synIdle io (topRec cfg ++ X3)) es.sum (2 ^ l) W2 Kh ρh prRec) v₄)
-    (synRest_topRegs _ _ _ _ _ _ _ _ _ hv₄0)
+  have hcfl : cfg.length = 13 := by simp [hcfg, synCfg, topCfg]
+  have s5 := synLayer_runs (U := U) hQ ds hd hA hA9 hNW hgate H hGK hh hpw Y hY
+    (synG (synRestFile (synIdle io (topRec cfg ++ X3)) es.sum (2 ^ l) W2 Kh ρh (synGd es.sum) prRec) v₄)
+    (synRest_topRegs _ _ _ _ _ _ _ _ _ _ hv₄0)
     ⟨⟨X3, by
         rw [synG_of_ne (lreg_out (by simp))]
-        simp [synRestFile, synIdle, lreg, Function.update_apply, hcfg, hG, hF]⟩,
+        simp [synRestFile, synRestFile0, synIdle, lreg, Function.update_apply, hcfg, hG, hF]⟩,
       by rw [synG_of_ne (lreg_out (by simp))]
-         simp [synRestFile, synIdle, lreg, Function.update_apply, hprRec, hKh],
+         simp [synRestFile, synRestFile0, synIdle, lreg, Function.update_apply, hprRec, hKh],
       by rw [synG_of_ne (lreg_out (by simp))]
-         simp [synRestFile, synIdle, lreg, Function.update_apply],
+         simp [synRestFile, synRestFile0, synIdle, lreg, Function.update_apply],
       by rw [synG_of_ne (lreg_out (by simp))]
-         simp [synRestFile, synIdle, lreg, Function.update_apply],
+         simp [synRestFile, synRestFile0, synIdle, lreg, Function.update_apply],
       by rw [synG_of_ne (lreg_out (by simp))]
-         simp [synRestFile, synIdle, lreg, Function.update_apply]⟩
+         simp [synRestFile, synRestFile0, synIdle, lreg, Function.update_apply]⟩
     (by rw [synG_of_ne (lreg_out (by simp))]
-        simp [synRestFile, synIdle, lreg, Function.update_apply, hio])
+        simp [synRestFile, synRestFile0, synIdle, lreg, Function.update_apply, hio])
   rw [synG_update_out (lreg_out (by simp)), hioU] at s5
   -- 6. drop the record
   have s6 := (so_topSkips (layerTable (Ka := Ka) (U := U) hQ ds)
-      (R := synRestFile (synIdle io' (topRec cfg ++ X3)) es.sum (2 ^ l) W2 Kh ρh prRec) (v := v₄)
-      (o := lreg .park) (b := .s 30) (c := .s 31) (lreg_out (by simp)) (by decide) 10 cfg X3
-      (by omega) (by simp [synRestFile, synIdle, lreg, Function.update_apply])).seq
+      (R := synRestFile (synIdle io' (topRec cfg ++ X3)) es.sum (2 ^ l) W2 Kh ρh (synGd es.sum) prRec) (v := v₄)
+      (o := lreg .park) (b := .s 30) (c := .s 31) (lreg_out (by simp)) (by decide) 13 cfg X3
+      (by omega) (by simp [synRestFile, synRestFile0, synIdle, lreg, Function.update_apply])).seq
     (sgU_clear (layerTable (Ka := Ka) (U := U) hQ ds) (a := .s 30)
-      (x := (topRec (cfg.take 10) : List (Fin (prime + Ka + 4))).length) (by simp [hv₄0]))
-  rw [synRestFile_update (by simp), synIdle_update_park, show cfg.drop 10 = [] by
+      (x := (topRec (cfg.take 13) : List (Fin (prime + Ka + 4))).length) (by simp [hv₄0]))
+  rw [synRestFile_update (by simp), synIdle_update_park, show cfg.drop 13 = [] by
       rw [List.drop_eq_nil_iff]; omega, topRec_nil, List.nil_append] at s6
   have hv6 : Function.update (Function.update v₄ (.s 30)
-      ((topRec (cfg.take 10)).reverse ++ v₄ (.s 30))) (.s 30) [] = v₄ := by
+      ((topRec (cfg.take 13)).reverse ++ v₄ (.s 30))) (.s 30) [] = v₄ := by
     rw [Function.update_idem]; funext x; simp [Function.update_apply, hv₄0]
   rw [hv6] at s6
   -- 7. restore the wires
@@ -931,7 +1078,7 @@ theorem sg_synLayerStep (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
     have : x ≠ .p .cf := by intro h; subst h; simp [synXS] at hx
     simp [hv₂', this]
   have s7 := sg_synUnstash (layerTable (Ka := Ka) (U := U) hQ ds)
-    (R := synRestFile (synIdle io' P₀) es.sum (2 ^ l) W2 Kh ρh prRec) (v := v₂')
+    (R := synRestFile (synIdle io' P₀) es.sum (2 ^ l) W2 Kh ρh (synGd es.sum) prRec) (v := v₂')
     (pk := lreg .park) (lreg_out (by simp)) blank synXS P₀ synXS_nodup
     (fun x hx => by rw [hv₂'X x hx, hv₂X x hx]; exact hv.hblank x hx)
   rw [synStkW_congr blank synXS hv₂'X, synRestFile_update (by simp), synIdle_update_park,
@@ -943,7 +1090,7 @@ theorem sg_synLayerStep (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
   rw [hclr] at s7
   -- 8. clear the rest state
   have s8 := lr_synRestDown (layerTable (Ka := Ka) (U := U) hQ ds) (synIdle io' P₀) v₂' es.sum
-    (2 ^ l) W2 Kh ρh prRec (synIdle_rest io' P₀)
+    (2 ^ l) W2 Kh ρh (synGd es.sum) prRec (synIdle_rest io' P₀)
   refine lr_weaken body (s1.seq (s2.seq (s3.seq (s4.seq (s5.seq (s6.seq (s7.seq s8))))))) ?_ ?_
   · refine congrArg (synG (synIdle io' P₀)) ?_
     funext x
@@ -951,7 +1098,7 @@ theorem sg_synLayerStep (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
     split_ifs <;> simp_all [hv.hw2, hv.hcf, hv.hkh, hv.hrh, hv.hpr]
   · rw [synStashCostW_congr synXS hv₂X, synStashCostW_congr synXS
       (fun x hx => (hv₂'X x hx).trans (hv₂X x hx))]
-    have htake : cfg.take 10 = cfg := List.take_of_length_le (by omega)
+    have htake : cfg.take 13 = cfg := List.take_of_length_le (by omega)
     rw [htake]
     simp only [synLayerStepCost]
     simp only [hcfg, hW2, hKh, hρh, hprRec, hG, hF]

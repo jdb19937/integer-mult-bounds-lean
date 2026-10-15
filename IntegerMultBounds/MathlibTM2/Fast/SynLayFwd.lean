@@ -52,9 +52,9 @@ theorem sly_post_fwd_R (io P' str' : List (Fin (prime + Ka + 4))) (N wX : ℕ)
         (List.replicate N tick)) (slyT 3) (List.replicate wX tick)) (slyT 0) [])
         (ldlH slyRg sxHd 0) (hs 0)) (ldlH slyRg sxHd 1) (hs 1)) (ldlH slyRg sxHd 2) (hs 2))
         (ldlH slyRg sxHd 3) (hs 3)) (ldlH slyRg sxHd 4) (hs 4)) (slyT 1) [])
-        (reg (BReg := SXReg) .io) str' = slyRo str' P' N wX hs := by
+        (reg (BReg := CReg) .io) str' = slyRo str' P' N wX hs := by
   funext z
-  by_cases h0 : z = reg (BReg := SXReg) .io
+  by_cases h0 : z = reg (BReg := CReg) .io
   · subst h0; simp [slyRo, ldlSetH, synIdle]
   by_cases h1 : z = slyT 0
   · subst h1; simp [slyRo, ldlSetH, synIdle]
@@ -121,17 +121,17 @@ variable {Q Ka : ℕ} {U : Type}
 /-- **The forward layout program**: the setup, the layout stage (writer and `layApply`), the
 cleanup. -/
 noncomputable def slyFwd (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q) :
-    Pr LProc (nT SXReg) Q (prime + Ka) U :=
+    Pr LProc (nT CReg) Q (prime + Ka) U :=
   .seq slySetup (.seq (ldgStage sxHd sxPay sxHd_inj hQ slyRg sly_sw_injective sly_swapT slyLr slyGr
     ldxCode) slyClean)
 
 /-- The step bound of the layout stage on the file `R` (`ldLayGenStage_exec`). -/
 noncomputable def slyStageCost (Ka : ℕ) (es : List ℕ) (ℓ K B W : ℕ)
-    (R : Fin (nT SXReg) → List (Fin (prime + Ka + 4))) : ℕ :=
+    (R : Fin (nT CReg) → List (Fin (prime + Ka + 4))) : ℕ :=
   ldgWriterCost W es.sum ℓ K es.length B (layB ℓ K) (layBits es ℓ K).length
       (layXcs es ℓ K B).length (ldxAtoms es.sum es.length (layQ ℓ K)) +
     (layBitCost es.sum B (fun _ => 14 * es.sum + 12) (layBits es ℓ K).length +
-      layXcLoopCost (nT SXReg) 6 es.sum K B slyRg
+      layXcLoopCost (nT CReg) 6 es.sum K B slyRg
         (fun j => ldlW slyRg slyLr sxHd (prime + Ka) es.sum (es.sum + B + 2)
           (ldgPost slyRg slyLr R es ℓ K B (layXcs es ℓ K B)) (layBits es ℓ K) (layXcs es ℓ K B)
           ((layBits es ℓ K).length + j)) (fun _ => 60 * (es.sum + B + 2) + 75)
@@ -139,7 +139,7 @@ noncomputable def slyStageCost (Ka : ℕ) (es : List ℕ) (ℓ K B W : ℕ)
 
 /-- The canonical file of the layout stage: empty `io` and `park`, the wires `slyV₂`. -/
 noncomputable def slyR₂ (Ka : ℕ) (W E N B : ℕ) (v₀ : SynW → List (Fin (prime + Ka + 4))) :
-    Fin (nT SXReg) → List (Fin (prime + Ka + 4)) :=
+    Fin (nT CReg) → List (Fin (prime + Ka + 4)) :=
   synG (synIdle [] []) (slyV₂ W E N B v₀)
 
 /-- The step bound of `slyFwd`. -/
@@ -152,10 +152,10 @@ noncomputable def slyFwdCost (Ka : ℕ) (es : List ℕ) (ℓ K l w W E : ℕ)
 
 /-- The cost of the layout stage depends on the bank registers of the file only. -/
 theorem slyStageCost_congr (es : List ℕ) (ℓ K B W : ℕ)
-    (R R' : Fin (nT SXReg) → List (Fin (prime + Ka + 4)))
+    (R R' : Fin (nT CReg) → List (Fin (prime + Ka + 4)))
     (hR : ∀ i, R (slyRg (.sw i)) = R' (slyRg (.sw i))) :
     slyStageCost Ka es ℓ K B W R = slyStageCost Ka es ℓ K B W R' := by
-  have e := sly_layXcLoopCost_congr (T := nT SXReg) (t₀ := 6) (Ka := Ka) es.sum K B slyRg
+  have e := sly_layXcLoopCost_congr (T := nT CReg) (t₀ := 6) (Ka := Ka) es.sum K B slyRg
     (fun j => ldlW slyRg slyLr sxHd (prime + Ka) es.sum (es.sum + B + 2)
       (ldgPost slyRg slyLr R es ℓ K B (layXcs es ℓ K B)) (layBits es ℓ K) (layXcs es ℓ K B)
       ((layBits es ℓ K).length + j))

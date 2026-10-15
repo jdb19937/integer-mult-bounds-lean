@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.SynMath
+public import IntegerMultBounds.MathlibTM2.Node.UDiv
 
 /-!
 # The round records of the layer, computed at run time
@@ -22,24 +23,31 @@ by one `moveR`), `p .pr` the piece record, `p .kh` the bit stride `K_h`, `p .rh`
 ## The records (`synCfg`, `synPcsR`)
 
 The prefix bits of the layout (`|layPre| = a = Lg + b D`, `synA`) are the top `a` address bits;
-the layer turns them into rows. The rounds come in three kinds:
+the layer turns them into rows. The record of a round is
+`topCfg w s a_R 1 R₂ q aT K_h oS D_R q₂ oS`: `q` top kernels at `aT`, a front block of `q₂`
+kernels at `oS`, and the pieces. The rounds come in three kinds:
 * top round `h = ℓ - 1` (`¬ h + 1 < ℓ`): the `Lg` long axes, selected bits `N - Lg, …, N - 1`;
-  stride `1`, all bits are top kernels (`q = Lg`, `aT = N - Lg`), no pieces, `2^a` rows;
-* low rounds `h < b`: `D` consecutive bits from `N - Lg - (b - h) D`, stride `1`, top kernels,
+  stride `1`, all bits are top kernels (`q = Lg`, `aT = N - Lg`), no front block, no pieces,
   `2^a` rows;
-* chunk rounds `b ≤ h < ℓ - 1` (`synChunk`): the bits `ρ + K (c₀ + j)`, `j < D`,
-  `ρ = (h - b) mod K`, `c₀ = ⌊(h - b)/K⌋ D`, all below the prefix. The highest
-  `q₀ = min (46 J) D` of them (`synQK`, `J = ⌊log_m D⌋`, `m = 25³`, `NW ≤ 2^46`) are top
-  kernels at `aT = oS + K D'`, `D' = D - q₀`; the rows are the top `a' = a + K q₀` address bits
-  (`synAc`), so that `2^a' ≥ NW^J'` for the top level `J' = ⌊log_m D'⌋` of the pieces. The
-  remaining `D'` bits are selected by one piece per nonzero base-`m` digit `d_j` of `D'`
-  (`synDg`): level `j`, `d_j` leaf bits, offset `oS + K (D' mod m^j)`, on
-  `R₂ = 2^X NW^J'` rows (`synR2c`), `X = a' - ⌊log₂ NW^J'⌋` (`synX`, `synLb`), so that
-  `2^a' ≤ R₂ < 2^(a'+1)` (`synR2c_ge`, `synR2c_lt` in `SynRecB`): the padding at most doubles
-  the volume.
+* low rounds `h < b`: `D` consecutive bits from `N - Lg - (b - h) D`, stride `1`, top kernels,
+  no front block, `2^a` rows;
+* chunk rounds `b ≤ h < ℓ - 1` (`synChunk`): the bits `ρ + oS + K j`, `j < D`,
+  `ρ = (h - b) mod K`, `oS = K c₀`, `c₀ = ⌊(h - b)/K⌋ D`, all below the prefix.
+  `q₀ = min (46 J) D` kernel bits (`synQK`, `J = ⌊log_m D⌋`, `m = 25³`, `NW ≤ 2^46`) make the
+  rows the top `a' = a + K q₀` address bits (`synAc`), so that `2^a' ≥ NW^J'` for the top level
+  `J' = ⌊log_m D'⌋` of the pieces. The round reserves `qR = ⌊3 D Gd / K⌋ + 1` chunks (`synQR`)
+  with `Gd = 2 (⌊log₂ N⌋ + 1) + 6` (`synGd`): their `K qR > 3 D Gd` bits hold the three control
+  fields of a piece. The lowest `q₂ = min qR (D - q₀)` selected bits (`synQF`) are the front
+  block at `oS`; the highest `q = q₀ + min qR (D - q₀ - q₂)` (`synQB`) are the top kernels at
+  `aT = oS + K (q₂ + D')` (`synAT`); the `D' = D - q - q₂` bits between them (`synDpp`), from
+  `oP = oS + K q₂` (`synOP`), are selected by one piece per nonzero base-`m` digit `d_j` of `D'`
+  (`synDg`): level `j`, `d_j` leaf bits, offset `oP + K (D' mod m^j)`, on `R₂ = 2^X NW^J'` rows
+  (`synR2c`), `X = a' - ⌊log₂ NW^J'⌋` (`synX`, `synLb`), so that `2^a' ≤ R₂ < 2^(a'+1)`
+  (`synR2c_ge`, `synR2c_lt` in `SynRecB`): the padding at most doubles the volume. When
+  `D' ≠ 0` both reservations are full: `q₂ = qR` and `q = q₀ + qR`.
 
-The shift is `s = ⌈D'/2⌉ + q + E` (`D'` the selected bits, `E` the sum of the piece exponents),
-the working width is `w' = w + s + D` and `R = 1` row.
+The shift is `s = ⌈D_R/2⌉ + (q + q₂) + E` (`D_R` the selected bits, `E` the sum of the piece
+exponents), the working width is `w' = w + s + D` and `R = 1` row.
 -/
 
 @[expose] public section
@@ -75,6 +83,20 @@ def synCW : ℕ := 46
 
 /-- The kernel bits `q₀ = min (46 J) D` of a chunk round, as the machine computes them. -/
 def synQKn (D J : ℕ) : ℕ := D - (D - synCW * J)
+
+/-- The control width `Gd = 2 (⌊log₂ N⌋ + 1) + 6` of the compact slot XORs, as the machine
+computes it (`synJk 2 N N` is the bit length of `N`). -/
+def synGd (N : ℕ) : ℕ := 2 * synJk 2 N N + 6
+
+/-- The reserved chunks `⌊3 D Gd / K⌋ + 1` of a chunk round: `K` of them hold at least `3 D Gd`
+bits, the three control fields of a piece of at most `D` bits. -/
+def synQRn (K D Gd : ℕ) : ℕ := 3 * D * Gd / K + 1
+
+/-- The front block `q₂ = min qR (D - q₀)` as the machine computes it. -/
+def synQFn (D q₀ qR : ℕ) : ℕ := (D - q₀) - ((D - q₀) - qR)
+
+/-- The top kernels `q = q₀ + min qR (D - q₀ - q₂)` as the machine computes them. -/
+def synQBn (D q₀ q₂ qR : ℕ) : ℕ := q₀ + ((D - q₀ - q₂) - ((D - q₀ - q₂) - qR))
 
 /-- The piece of digit `j`: level `j`, `d_j` leaf bits, base rows `rowsAt (2^X) (J - j)`, offset
 `oS + K (D mod m^j)`. -/
@@ -125,30 +147,45 @@ def synJt : ℕ := synJ es.length es.length - 1
 /-- The kernel bits `q₀ = min (46 J) D` of a chunk round. -/
 def synQK : ℕ := synQKn es.length (synJt es)
 
-/-- The piece bits `D' = D - q₀` of a chunk round. -/
-def synDpp : ℕ := es.length - synQK es
+/-- The reserved chunks `qR = ⌊3 D Gd / K⌋ + 1` of a chunk round, `Gd = synGd N`. -/
+def synQR : ℕ := synQRn K es.length (synGd es.sum)
+
+/-- The front block `q₂ = min qR (D - q₀)` of a chunk round. -/
+def synQF : ℕ := synQFn es.length (synQK es) (synQR es K)
+
+/-- The top kernels `q = q₀ + min qR (D - q₀ - q₂)` of a chunk round. -/
+def synQB : ℕ := synQBn es.length (synQK es) (synQF es K) (synQR es K)
+
+/-- The piece bits `D' = D - q - q₂` of a chunk round. -/
+def synDpp : ℕ := es.length - synQB es K - synQF es K
 
 /-- The row bits `a' = K q₀ + a` of a chunk round. -/
 def synAc : ℕ := K * synQK es + synA es ℓ K
 
 /-- The top level `J' = ⌊log_m D'⌋` of the pieces of a chunk round. -/
-def synJp : ℕ := synJ (synDpp es) (synDpp es) - 1
+def synJp : ℕ := synJ (synDpp es K) (synDpp es K) - 1
 
 /-- `L = ⌊log₂ NW^J'⌋`: the division count of `NW^J'` by `2` over `a' + 1` passes, less one. -/
-noncomputable def synLb : ℕ := synJk 2 (NW ^ synJp es) (synAc es ℓ K + 1) - 1
+noncomputable def synLb : ℕ := synJk 2 (NW ^ synJp es K) (synAc es ℓ K + 1) - 1
 
 /-- The base row exponent `X = a' - L` of a chunk round. -/
 noncomputable def synX : ℕ := synAc es ℓ K - synLb es ℓ K
 
 /-- The padded rows `R₂ = 2^X NW^J'` of a chunk round. -/
-noncomputable def synR2c : ℕ := 2 ^ synX es ℓ K * NW ^ synJp es
+noncomputable def synR2c : ℕ := 2 ^ synX es ℓ K * NW ^ synJp es K
 
 /-- The number of top kernels of round `h`. -/
-def synQ (h : ℕ) : ℕ := if synChunk ℓ K h then synQK es else synDp es ℓ h
+def synQ (h : ℕ) : ℕ := if synChunk ℓ K h then synQB es K else synDp es ℓ h
+
+/-- The number of front kernels of round `h`. -/
+def synQ2 (h : ℕ) : ℕ := if synChunk ℓ K h then synQF es K else 0
 
 /-- The offset of the top kernels of round `h`. -/
 def synAT (h : ℕ) : ℕ :=
-  if synChunk ℓ K h then synOS es ℓ K h + K * synDpp es else synOS es ℓ K h
+  if synChunk ℓ K h then synOS es ℓ K h + K * (synQF es K + synDpp es K) else synOS es ℓ K h
+
+/-- The offset `oS + K q₂` of the pieces of a chunk round. -/
+def synOP (h : ℕ) : ℕ := synOS es ℓ K h + K * synQF es K
 
 /-- The number of row address bits of round `h`. -/
 def synAR (h : ℕ) : ℕ := if synChunk ℓ K h then synAc es ℓ K else synA es ℓ K
@@ -156,16 +193,18 @@ def synAR (h : ℕ) : ℕ := if synChunk ℓ K h then synAc es ℓ K else synA e
 /-- The pieces of round `h`. -/
 noncomputable def synPcsR (h : ℕ) : List TopPc :=
   if synChunk ℓ K h then
-    synPcs K (synX es ℓ K) (synDpp es) (synOS es ℓ K h) (synJp es) (synDpp es)
+    synPcs K (synX es ℓ K) (synDpp es K) (synOP es ℓ K h) (synJp es K) (synDpp es K)
   else []
 
 variable (G F : ℕ)
 
 /-- The piece exponents of round `h` (`G`, `F` the gate and factor counts of the node). -/
-def synER (h : ℕ) : ℕ := if synChunk ℓ K h then synE G F (synDpp es) (synDpp es) else 0
+def synER (h : ℕ) : ℕ :=
+  if synChunk ℓ K h then synE G F (synDpp es K) (synDpp es K) else 0
 
 /-- The shift of round `h`. -/
-def synS (h : ℕ) : ℕ := (synDp es ℓ h + 1) / 2 + synQ es ℓ K h + synER es ℓ K G F h
+def synS (h : ℕ) : ℕ :=
+  (synDp es ℓ h + 1) / 2 + (synQ es ℓ K h + synQ2 es ℓ K h) + synER es ℓ K G F h
 
 /-- The padded row count of round `h`. -/
 noncomputable def synR2 (h : ℕ) : ℕ :=
@@ -174,10 +213,11 @@ noncomputable def synR2 (h : ℕ) : ℕ :=
 /-- The working width of round `h`. -/
 def synW2 (w h : ℕ) : ℕ := w + synS es ℓ K G F h + es.length
 
-/-- The configuration record of round `h`. -/
+/-- The configuration record of round `h`: the front kernels sit at `oS`. -/
 noncomputable def synCfg (w h : ℕ) : List ℕ :=
   topCfg w (synS es ℓ K G F h) (synAR es ℓ K h) 1 (synR2 es ℓ K h) (synQ es ℓ K h)
-    (synAT es ℓ K h) (synKh ℓ K h) (synOS es ℓ K h) (synDp es ℓ h)
+    (synAT es ℓ K h) (synKh ℓ K h) (synOS es ℓ K h) (synDp es ℓ h) (synQ2 es ℓ K h)
+    (synOS es ℓ K h)
 
 end Records
 
@@ -297,6 +337,8 @@ theorem div_pow_self (D : ℕ) : D / m ^ D = 0 := by
   calc D < 2 ^ D := Nat.lt_two_pow_self
     _ ≤ m ^ D := Nat.pow_le_pow_left (by norm_num [m]) D
 
+theorem div_two_pow_self (N : ℕ) : N / 2 ^ N = 0 := Nat.div_eq_of_lt Nat.lt_two_pow_self
+
 theorem mod_pow_self (D : ℕ) : D % m ^ D = D := by
   apply Nat.mod_eq_of_lt
   calc D < 2 ^ D := Nat.lt_two_pow_self
@@ -346,33 +388,33 @@ section Programs
 variable {Q A : ℕ} {U P : Type}
 
 /-- `s 0 := Lg + b D`. -/
-noncomputable def synPreA : Pr P (nT SXReg) Q A U :=
+noncomputable def synPreA : Pr P (nT CReg) Q A U :=
   .seq (synMulR (sreg (.p .b)) (sreg (.p .D)) (sreg (.s 0)) (sreg (.s 2)) (sreg (.s 3)))
     (ucopy (sreg (.p .Lg)) (sreg (.s 0)) (sreg (.s 2)))
 
 /-- `s 5 := (|x| + 1)/2 + |y|`. -/
-noncomputable def synHalfAdd (x y : SynW) : Pr P (nT SXReg) Q A U :=
+noncomputable def synHalfAdd (x y : SynW) : Pr P (nT CReg) Q A U :=
   .seq (ucopy (sreg x) (sreg (.s 1)) (sreg (.s 2))) (.seq (synPush (sreg (.s 1)) tick)
     (.seq (udiv 2 (sreg (.s 1)) (sreg (.s 5)) (sreg (.s 2))) (.seq (uclear (sreg (.s 1)))
       (ucopy (sreg y) (sreg (.s 5)) (sreg (.s 2))))))
 
 /-- `s 5 := (|x| + 1)/2 + |x|`. -/
-noncomputable def synHalfPlus (x : SynW) : Pr P (nT SXReg) Q A U := synHalfAdd x x
+noncomputable def synHalfPlus (x : SynW) : Pr P (nT CReg) Q A U := synHalfAdd x x
 
 /-- Push a reversed field of `|x|` ticks onto `p .cf`. -/
-noncomputable def synCF (x : SynW) : Pr P (nT SXReg) Q A U :=
+noncomputable def synCF (x : SynW) : Pr P (nT CReg) Q A U :=
   synFieldR (sreg x) (sreg (.p .cf)) (sreg (.s 2))
 
 /-- `p .w2 := w + |x| + D`. -/
-noncomputable def synW2P (x : SynW) : Pr P (nT SXReg) Q A U :=
+noncomputable def synW2P (x : SynW) : Pr P (nT CReg) Q A U :=
   .seq (ucopy (sreg (.p .w)) (sreg (.p .w2)) (sreg (.s 2)))
     (.seq (ucopy (sreg x) (sreg (.p .w2)) (sreg (.s 2)))
       (ucopy (sreg (.p .D)) (sreg (.p .w2)) (sreg (.s 2))))
 
 /-- The prefix branches from `s 6 = oS`: `K_h = 1`, `s = (D' + 1)/2 + D'` (`D'` on `dp`),
-`R₂ = 2^a`, the record `w, s, a, 1, 2^a, D', oS, D', oS, D'`, `w' = w + s + D`; scratch
-cleared. -/
-noncomputable def synPreBr (dp : SynW) : Pr P (nT SXReg) Q A U :=
+`R₂ = 2^a`, the record `w, s, a, 1, 2^a, D', oS, D', oS, D', 0, oS, 0` (no front block),
+`w' = w + s + D`; scratch cleared. -/
+noncomputable def synPreBr (dp : SynW) : Pr P (nT CReg) Q A U :=
   .seq (synPush (sreg (.p .kh)) tick) <|
   .seq (synHalfPlus dp) <|
   .seq (synPush (sreg (.s 7)) tick) <|
@@ -381,17 +423,19 @@ noncomputable def synPreBr (dp : SynW) : Pr P (nT SXReg) Q A U :=
   .seq (.seq (synPush (sreg (.p .cf)) tick) (synPush (sreg (.p .cf)) topSep)) <|
   .seq (synCF (.s 7)) <| .seq (synCF dp) <| .seq (synCF (.s 6)) <| .seq (synCF dp) <|
   .seq (synCF (.s 6)) <| .seq (synCF dp) <|
+  .seq (synPush (sreg (.p .cf)) topSep) <| .seq (synCF (.s 6)) <|
+  .seq (synPush (sreg (.p .cf)) topSep) <|
   .seq (synW2P (.s 5)) <|
   .seq (uclear (sreg (.s 5))) <| .seq (uclear (sreg (.s 6))) <| .seq (uclear (sreg (.s 7)))
     (uclear (sreg (.s 0)))
 
 /-- The top round: `oS = N - Lg`, `D' = Lg`. -/
-noncomputable def synTopB : Pr P (nT SXReg) Q A U :=
+noncomputable def synTopB : Pr P (nT CReg) Q A U :=
   .seq (ucopy (sreg (.p .N)) (sreg (.s 6)) (sreg (.s 2)))
     (.seq (usub (sreg (.p .Lg)) (sreg (.s 6)) (sreg (.s 2))) (synPreBr (.p .Lg)))
 
 /-- A low round, from `s 1 = b - h`: `oS = N - Lg - (b - h) D`, `D' = D`. -/
-noncomputable def synLowB : Pr P (nT SXReg) Q A U :=
+noncomputable def synLowB : Pr P (nT CReg) Q A U :=
   .seq (ucopy (sreg (.p .N)) (sreg (.s 6)) (sreg (.s 2))) <|
   .seq (usub (sreg (.p .Lg)) (sreg (.s 6)) (sreg (.s 2))) <|
   .seq (synMulR (sreg (.s 1)) (sreg (.p .D)) (sreg (.s 8)) (sreg (.s 2)) (sreg (.s 3))) <|
@@ -400,7 +444,7 @@ noncomputable def synLowB : Pr P (nT SXReg) Q A U :=
 
 /-- One piece of the digit loop, from `s 18 = d`, `s 13 = m^t`, `s 14 = t`, `s 15 = a₀`:
 the fields `t, d, a₀, K d m^t` onto `p .pr`, `s 16 += expSeq G F d t`, `s 15 += K d m^t`. -/
-noncomputable def synPieceP (G F : ℕ) : Pr P (nT SXReg) Q A U :=
+noncomputable def synPieceP (G F : ℕ) : Pr P (nT CReg) Q A U :=
   .seq (synMulR (sreg (.s 18)) (sreg (.s 13)) (sreg (.s 19)) (sreg (.s 2)) (sreg (.s 3))) <|
   .seq (synMulR (sreg (.p .K)) (sreg (.s 19)) (sreg (.s 20)) (sreg (.s 2)) (sreg (.s 3))) <|
   .seq (synFieldF (sreg (.s 20)) (sreg (.p .pr)) (sreg (.s 2))) <|
@@ -416,7 +460,7 @@ noncomputable def synPieceP (G F : ℕ) : Pr P (nT SXReg) Q A U :=
 
 /-- One pass of the digit loop from `s 12 = x`: `y = x / m`, the digit `d = x - m y`, the piece
 when `d ≠ 0`, then `x := y`, `m^t := m^(t+1)`, `t := t + 1`. -/
-noncomputable def synDigBody (G F : ℕ) : Pr P (nT SXReg) Q A U :=
+noncomputable def synDigBody (G F : ℕ) : Pr P (nT CReg) Q A U :=
   .seq (udiv m (sreg (.s 12)) (sreg (.s 17)) (sreg (.s 2))) <|
   .seq (umul m (sreg (.s 17)) (sreg (.s 24)) (sreg (.s 2))) <|
   .seq (ucopy (sreg (.s 12)) (sreg (.s 18)) (sreg (.s 2))) <|
@@ -428,19 +472,20 @@ noncomputable def synDigBody (G F : ℕ) : Pr P (nT SXReg) Q A U :=
   .seq (moveR (sreg (.s 17)) (sreg (.s 12)) id) <|
   .seq (synMulIn m (sreg (.s 13)) (sreg (.s 2)) (sreg (.s 3))) (synPush (sreg (.s 14)) tick)
 
-/-- The digit loop over the `D'` passes of the counter `s 26` (spare `s 23`), from `s 6 = oS`.
+/-- The digit loop over the `D'` passes of the counter `s 26` (spare `s 23`), from the piece
+offset `s 11 = oP`.
 It leaves the piece record on `p .pr`, the exponent sum on `s 16` and the number of levels on
 `s 14`. -/
-noncomputable def synDigits (G F : ℕ) : Pr P (nT SXReg) Q A U :=
+noncomputable def synDigits (G F : ℕ) : Pr P (nT CReg) Q A U :=
   .seq (ucopy (sreg (.s 26)) (sreg (.s 12)) (sreg (.s 2))) <|
   .seq (synPush (sreg (.s 13)) tick) <|
-  .seq (ucopy (sreg (.s 6)) (sreg (.s 15)) (sreg (.s 2))) <|
+  .seq (ucopy (sreg (.s 11)) (sreg (.s 15)) (sreg (.s 2))) <|
   .seq (scanP (sreg (.s 26)) (sreg (.s 23)) (synIfNE (sreg (.s 12)) (synDigBody G F) synSkip)) <|
   .seq (uclear (sreg (.s 12))) <| .seq (uclear (sreg (.s 13))) (uclear (sreg (.s 15)))
 
 /-- One pass of a division count by `k`: when `x` is nonempty, `x := |x| / k` and one tick onto
 `cnt`. -/
-noncomputable def synCntBody (k : ℕ) (x cnt : SynW) : Pr P (nT SXReg) Q A U :=
+noncomputable def synCntBody (k : ℕ) (x cnt : SynW) : Pr P (nT CReg) Q A U :=
   synIfNE (sreg x)
     (.seq (udiv k (sreg x) (sreg (.s 17)) (sreg (.s 2))) <| .seq (uclear (sreg x)) <|
       .seq (moveR (sreg (.s 17)) (sreg x) id) (synPush (sreg cnt) tick))
@@ -448,16 +493,16 @@ noncomputable def synCntBody (k : ℕ) (x cnt : SynW) : Pr P (nT SXReg) Q A U :=
 
 /-- The division count of `x` by `k` over the counter `ctr` (spare `s 23`): `cnt` gains one tick
 per pass with `x` nonempty. -/
-noncomputable def synCntLoop (k : ℕ) (x cnt ctr : SynW) : Pr P (nT SXReg) Q A U :=
+noncomputable def synCntLoop (k : ℕ) (x cnt ctr : SynW) : Pr P (nT CReg) Q A U :=
   scanP (sreg ctr) (sreg (.s 23)) (synCntBody k x cnt)
 
 /-- `R₂`: `s 7 := NW^|s 22| · |s 7|` (counter `s 22`, spare `s 23`). -/
-noncomputable def synNWLoop : Pr P (nT SXReg) Q A U :=
+noncomputable def synNWLoop : Pr P (nT CReg) Q A U :=
   scanP (sreg (.s 22)) (sreg (.s 23)) (synMulIn NW (sreg (.s 7)) (sreg (.s 2)) (sreg (.s 3)))
 
 /-- Chunk round, first stage: `K_h = K` on `p .kh`, `ρ_h = (h - b) mod K` on `p .rh`,
 `oS = K (⌊(h - b)/K⌋ D)` on `s 6`. -/
-noncomputable def synChunkA : Pr P (nT SXReg) Q A U :=
+noncomputable def synChunkA : Pr P (nT CReg) Q A U :=
   .seq (ucopy (sreg (.p .K)) (sreg (.p .kh)) (sreg (.s 2))) <|
   .seq (ucopy (sreg (.p .h)) (sreg (.s 9)) (sreg (.s 2))) <|
   .seq (usub (sreg (.p .b)) (sreg (.s 9)) (sreg (.s 2))) <|
@@ -469,10 +514,9 @@ noncomputable def synChunkA : Pr P (nT SXReg) Q A U :=
   .seq (synMulR (sreg (.p .K)) (sreg (.s 8)) (sreg (.s 6)) (sreg (.s 2)) (sreg (.s 3))) <|
   .seq (uclear (sreg (.s 8))) (uclear (sreg (.s 10)))
 
-/-- Chunk round, kernels: from `s 6 = oS` and `s 0 = a`: `s 14 := synJ D D` (the division count
-of `D` by `m`), `q₀ = D - (D - 46 J)` on `s 25` (`J = synJ D D - 1`), `D' = D - q₀` on `s 26`,
-`K q₀` on `s 27`, `a' = K q₀ + a` on `s 0`, `aT = oS + K D'` on `s 28`. -/
-noncomputable def synChunkQ : Pr P (nT SXReg) Q A U :=
+/-- Chunk round, row kernels: from `s 0 = a`: the division count `synJ D D` of `D` by `m`,
+`q₀ = D - (D - 46 J)` on `s 25` (`J = synJ D D - 1`), `a' = K q₀ + a` on `s 0`. -/
+noncomputable def synChunkQ0 : Pr P (nT CReg) Q A U :=
   .seq (ucopy (sreg (.p .D)) (sreg (.s 12)) (sreg (.s 2))) <|
   .seq (synCntLoop m (.s 12) (.s 14) (.p .D)) <|
   .seq (ucopy (sreg (.s 14)) (sreg (.s 22)) (sreg (.s 2))) <|
@@ -482,19 +526,72 @@ noncomputable def synChunkQ : Pr P (nT SXReg) Q A U :=
   .seq (usub (sreg (.s 9)) (sreg (.s 10)) (sreg (.s 2))) <|
   .seq (ucopy (sreg (.p .D)) (sreg (.s 25)) (sreg (.s 2))) <|
   .seq (usub (sreg (.s 10)) (sreg (.s 25)) (sreg (.s 2))) <|
-  .seq (ucopy (sreg (.p .D)) (sreg (.s 26)) (sreg (.s 2))) <|
-  .seq (usub (sreg (.s 25)) (sreg (.s 26)) (sreg (.s 2))) <|
-  .seq (synMulR (sreg (.p .K)) (sreg (.s 25)) (sreg (.s 27)) (sreg (.s 2)) (sreg (.s 3))) <|
-  .seq (ucopy (sreg (.s 27)) (sreg (.s 0)) (sreg (.s 2))) <|
-  .seq (synMulR (sreg (.p .K)) (sreg (.s 26)) (sreg (.s 28)) (sreg (.s 2)) (sreg (.s 3))) <|
-  .seq (ucopy (sreg (.s 6)) (sreg (.s 28)) (sreg (.s 2))) <|
+  .seq (synMulR (sreg (.p .K)) (sreg (.s 25)) (sreg (.s 0)) (sreg (.s 2)) (sreg (.s 3))) <|
   .seq (uclear (sreg (.s 14))) <| .seq (uclear (sreg (.s 22))) <| .seq (uclear (sreg (.s 9)))
     (uclear (sreg (.s 10)))
+
+/-- Chunk round, reservation: the division count `synJk 2 N N` of `N` by `2`,
+`Gd = 2 synJk 2 N N + 6`, and `qR = ⌊3 D Gd / K⌋ + 1` on `s 11`. -/
+noncomputable def synChunkQR : Pr P (nT CReg) Q A U :=
+  .seq (ucopy (sreg (.p .N)) (sreg (.s 12)) (sreg (.s 2))) <|
+  .seq (synCntLoop 2 (.s 12) (.s 14) (.p .N)) <|
+  .seq (umul 2 (sreg (.s 14)) (sreg (.s 22)) (sreg (.s 2))) <|
+  .seq (synPush (sreg (.s 22)) tick) <| .seq (synPush (sreg (.s 22)) tick) <|
+  .seq (synPush (sreg (.s 22)) tick) <| .seq (synPush (sreg (.s 22)) tick) <|
+  .seq (synPush (sreg (.s 22)) tick) <| .seq (synPush (sreg (.s 22)) tick) <|
+  .seq (umul 3 (sreg (.p .D)) (sreg (.s 9)) (sreg (.s 2))) <|
+  .seq (synMulR (sreg (.s 9)) (sreg (.s 22)) (sreg (.s 10)) (sreg (.s 2)) (sreg (.s 3))) <|
+  .seq (udivU (sreg (.s 10)) (sreg (.p .K)) (sreg (.s 11)) (sreg (.s 12)) (sreg (.s 13))
+    (sreg (.s 2))) <|
+  .seq (synPush (sreg (.s 11)) tick) <|
+  .seq (uclear (sreg (.s 14))) <| .seq (uclear (sreg (.s 22))) <| .seq (uclear (sreg (.s 9)))
+    (uclear (sreg (.s 10)))
+
+/-- Chunk round, blocks: from `s 25 = q₀` and `s 11 = qR`: the front block
+`q₂ = (D - q₀) - ((D - q₀) - qR)` on `s 9`, the top kernels
+`q = q₀ + ((D - q₀ - q₂) - ((D - q₀ - q₂) - qR))` on `s 25`, `D' = D - q - q₂` on `s 26`;
+`s 11` cleared. -/
+noncomputable def synChunkQ2 : Pr P (nT CReg) Q A U :=
+  .seq (ucopy (sreg (.p .D)) (sreg (.s 26)) (sreg (.s 2))) <|
+  .seq (usub (sreg (.s 25)) (sreg (.s 26)) (sreg (.s 2))) <|
+  .seq (ucopy (sreg (.s 26)) (sreg (.s 29)) (sreg (.s 2))) <|
+  .seq (usub (sreg (.s 11)) (sreg (.s 29)) (sreg (.s 2))) <|
+  .seq (ucopy (sreg (.s 26)) (sreg (.s 9)) (sreg (.s 2))) <|
+  .seq (usub (sreg (.s 29)) (sreg (.s 9)) (sreg (.s 2))) <|
+  .seq (uclear (sreg (.s 29))) <|
+  .seq (usub (sreg (.s 9)) (sreg (.s 26)) (sreg (.s 2))) <|
+  .seq (ucopy (sreg (.s 26)) (sreg (.s 29)) (sreg (.s 2))) <|
+  .seq (usub (sreg (.s 11)) (sreg (.s 29)) (sreg (.s 2))) <|
+  .seq (ucopy (sreg (.s 26)) (sreg (.s 30)) (sreg (.s 2))) <|
+  .seq (usub (sreg (.s 29)) (sreg (.s 30)) (sreg (.s 2))) <|
+  .seq (usub (sreg (.s 30)) (sreg (.s 26)) (sreg (.s 2))) <|
+  .seq (ucopy (sreg (.s 25)) (sreg (.s 30)) (sreg (.s 2))) <|
+  .seq (uclear (sreg (.s 25))) <|
+  .seq (moveR (sreg (.s 30)) (sreg (.s 25)) id) <|
+  .seq (uclear (sreg (.s 29))) (uclear (sreg (.s 11)))
+
+/-- Chunk round, offsets: from `s 6 = oS`, `s 25 = q`, `s 9 = q₂`, `s 26 = D'`: `K q` on
+`s 27`, `K q₂` on `s 10`, the piece offset `oP = oS + K q₂` on `s 11`,
+`aT = oS + K (q₂ + D')` on `s 28`. -/
+noncomputable def synChunkQK : Pr P (nT CReg) Q A U :=
+  .seq (synMulR (sreg (.p .K)) (sreg (.s 25)) (sreg (.s 27)) (sreg (.s 2)) (sreg (.s 3))) <|
+  .seq (synMulR (sreg (.p .K)) (sreg (.s 9)) (sreg (.s 10)) (sreg (.s 2)) (sreg (.s 3))) <|
+  .seq (ucopy (sreg (.s 10)) (sreg (.s 11)) (sreg (.s 2))) <|
+  .seq (ucopy (sreg (.s 6)) (sreg (.s 11)) (sreg (.s 2))) <|
+  .seq (ucopy (sreg (.s 26)) (sreg (.s 29)) (sreg (.s 2))) <|
+  .seq (ucopy (sreg (.s 9)) (sreg (.s 29)) (sreg (.s 2))) <|
+  .seq (synMulR (sreg (.p .K)) (sreg (.s 29)) (sreg (.s 28)) (sreg (.s 2)) (sreg (.s 3))) <|
+  .seq (ucopy (sreg (.s 6)) (sreg (.s 28)) (sreg (.s 2))) (uclear (sreg (.s 29)))
+
+/-- Chunk round, kernels: `q₀` and `a'` (`synChunkQ0`), `qR` (`synChunkQR`), `q₂`, `q`, `D'`
+(`synChunkQ2`) and the offsets `K q`, `K q₂`, `oP`, `aT` (`synChunkQK`). -/
+noncomputable def synChunkQ : Pr P (nT CReg) Q A U :=
+  .seq synChunkQ0 <| .seq synChunkQR <| .seq synChunkQ2 synChunkQK
 
 /-- Chunk round, rows: from `s 0 = a'` and `s 14 = J' + 1`: `NW^J'` on `s 7`, its division
 count by `2` over `a' + 1` passes on `s 30` (counter `s 31`), `X = a' - (|s 30| - 1)` on `s 8`,
 then `s 7 := 2^X NW^J'`. -/
-noncomputable def synChunkR2 : Pr P (nT SXReg) Q A U :=
+noncomputable def synChunkR2 : Pr P (nT CReg) Q A U :=
   .seq (synPush (sreg (.s 7)) tick) <|
   .seq (ucopy (sreg (.s 14)) (sreg (.s 22)) (sreg (.s 2))) <| .seq (synPop (sreg (.s 22))) <|
   .seq synNWLoop <| .seq (uclear (sreg (.s 22))) <|
@@ -508,35 +605,41 @@ noncomputable def synChunkR2 : Pr P (nT SXReg) Q A U :=
   .seq (upow2 (sreg (.s 8)) (sreg (.s 7)) (sreg (.s 2)) (sreg (.s 3))) <|
   .seq (uclear (sreg (.s 8))) (uclear (sreg (.s 30)))
 
-/-- Chunk round, record: `s 5 := (D + 1)/2 + q₀`, `s 16 := s = (D + 1)/2 + q₀ + E` and the fields
-`w, s, a', 1, R₂, q₀, aT, K q₀, oS, D`. -/
-noncomputable def synChunkCfg : Pr P (nT SXReg) Q A U :=
-  .seq (synHalfAdd (.p .D) (.s 25)) <|
+/-- Chunk round, record: `s 5 := (D + 1)/2 + (q + q₂)`, `s 16 := s = (D + 1)/2 + (q + q₂) + E`
+and the fields `w, s, a', 1, R₂, q, aT, K q, oS, D, q₂, oS, K q₂`. -/
+noncomputable def synChunkCfg : Pr P (nT CReg) Q A U :=
+  .seq (ucopy (sreg (.s 9)) (sreg (.s 29)) (sreg (.s 2))) <|
+  .seq (ucopy (sreg (.s 25)) (sreg (.s 29)) (sreg (.s 2))) <|
+  .seq (synHalfAdd (.p .D) (.s 29)) <| .seq (uclear (sreg (.s 29))) <|
   .seq (ucopy (sreg (.s 5)) (sreg (.s 16)) (sreg (.s 2))) <|
   .seq (synCF (.p .w)) <| .seq (synCF (.s 16)) <| .seq (synCF (.s 0)) <|
   .seq (.seq (synPush (sreg (.p .cf)) tick) (synPush (sreg (.p .cf)) topSep)) <|
   .seq (synCF (.s 7)) <| .seq (synCF (.s 25)) <| .seq (synCF (.s 28)) <| .seq (synCF (.s 27)) <|
-  .seq (synCF (.s 6)) (synCF (.p .D))
+  .seq (synCF (.s 6)) <| .seq (synCF (.p .D)) <| .seq (synCF (.s 9)) <| .seq (synCF (.s 6))
+    (synCF (.s 10))
 
 /-- Chunk round, end: `w' = w + s + D` and the scratch cleared. -/
-noncomputable def synChunkEnd : Pr P (nT SXReg) Q A U :=
+noncomputable def synChunkEnd : Pr P (nT CReg) Q A U :=
   .seq (synW2P (.s 16)) <|
   .seq (uclear (sreg (.s 5))) <| .seq (uclear (sreg (.s 6))) <| .seq (uclear (sreg (.s 7))) <|
   .seq (uclear (sreg (.s 14))) <| .seq (uclear (sreg (.s 16))) <| .seq (uclear (sreg (.s 25))) <|
-  .seq (uclear (sreg (.s 26))) <| .seq (uclear (sreg (.s 27))) <| .seq (uclear (sreg (.s 28)))
-    (uclear (sreg (.s 0)))
+  .seq (uclear (sreg (.s 26))) <| .seq (uclear (sreg (.s 27))) <| .seq (uclear (sreg (.s 28))) <|
+  .seq (uclear (sreg (.s 0))) <| .seq (uclear (sreg (.s 9))) <| .seq (uclear (sreg (.s 10)))
+    (uclear (sreg (.s 11)))
 
 /-- A chunk round, from `s 0 = a`: `K_h = K`, `ρ_h = (h - b) mod K`, `oS = K (⌊(h - b)/K⌋ D)`,
-the kernel bits `q₀` and `a' = K q₀ + a` (`synChunkQ`), the pieces of the base-`m` digits of
-`D' = D - q₀` (`synDigits`), `R₂ = 2^X NW^J'` (`synChunkR2`), `s = (D + 1)/2 + q₀ + E`, the
-record `w, s, a', 1, R₂, q₀, oS + K D', K q₀, oS, D`, `w' = w + s + D`; scratch cleared. -/
-noncomputable def synChunkB (G F : ℕ) : Pr P (nT SXReg) Q A U :=
+the kernel bits `q₀`, `a' = K q₀ + a`, the reservation `qR`, the front block `q₂`, the top
+kernels `q` and `D' = D - q - q₂` (`synChunkQ`), the pieces of the base-`m` digits of `D'` from
+`oP = oS + K q₂` (`synDigits`), `R₂ = 2^X NW^J'` (`synChunkR2`), `s = (D + 1)/2 + (q + q₂) + E`,
+the record `w, s, a', 1, R₂, q, oS + K (q₂ + D'), K q, oS, D, q₂, oS, K q₂`, `w' = w + s + D`;
+scratch cleared. -/
+noncomputable def synChunkB (G F : ℕ) : Pr P (nT CReg) Q A U :=
   .seq synChunkA <| .seq synChunkQ <| .seq (synDigits G F) <| .seq synChunkR2 <|
     .seq synChunkCfg synChunkEnd
 
 /-- **The record builder of round `h`.** `s 0 := a`; `s 1 := ℓ - h - 1`: the top round when it
 is empty; otherwise `s 1 := b - h`: a low round when it is nonempty, else a chunk round. -/
-noncomputable def synRec (G F : ℕ) : Pr P (nT SXReg) Q A U :=
+noncomputable def synRec (G F : ℕ) : Pr P (nT CReg) Q A U :=
   .seq synPreA <|
   .seq (.seq (ucopy (sreg (.p .ℓ)) (sreg (.s 1)) (sreg (.s 2)))
     (.seq (usub (sreg (.p .h)) (sreg (.s 1)) (sreg (.s 2))) (synPop (sreg (.s 1))))) <|
@@ -552,8 +655,30 @@ end Programs
 
 section PreBr
 
-variable {Q A : ℕ} {U P : Type} (body : P → Pr P (nT SXReg) Q A U)
-  {R : Fin (nT SXReg) → List (Fin (A + 4))}
+variable {Q A : ℕ} {U P : Type} (body : P → Pr P (nT CReg) Q A U)
+  {R : Fin (nT CReg) → List (Fin (A + 4))}
+
+theorem lr_udivU {R₀ : Fin (nT CReg) → List (Fin (A + 4))} {a b q c s t : Fin (nT CReg)}
+    (hreg : [a, b, q, c, s, t].Nodup) (hb : 1 ≤ (R₀ b).length) (hc : R₀ c = [])
+    (hs : R₀ s = []) (ht : R₀ t = []) :
+    LayRuns body (udivU a b q c s t) R₀
+      (Function.update R₀ q (List.replicate ((R₀ a).length / (R₀ b).length) tick ++ R₀ q))
+      (12 * ((R₀ a).length + (R₀ b).length) + 12) :=
+  lr_of_exec_le body fun v S hS => by subst hS; exact udivU_exec body hreg v S hb hc hs ht
+
+/-- The division `|a| / |b|` by a register on the transform wires, onto `q`. -/
+theorem sgU_udivU {a b q c s t : SynW} {v : SynW → List (Fin (A + 4))} {x y z : ℕ}
+    (hreg : [a, b, q, c, s, t].Nodup) (hy : 1 ≤ y) (ha : (v a).length = x)
+    (hb : (v b).length = y) (hq : v q = List.replicate z tick) (hc : v c = []) (hs : v s = [])
+    (ht : v t = []) :
+    LayRuns body (udivU (sreg a) (sreg b) (sreg q) (sreg c) (sreg s) (sreg t)) (synG R v)
+      (synG R (Function.update v q (List.replicate (x / y + z) tick))) (12 * (x + y) + 12) := by
+  have hreg' : [sreg a, sreg b, sreg q, sreg c, sreg s, sreg t].Nodup := by
+    simpa [List.nodup_cons, sreg_injective.eq_iff] using hreg
+  refine lr_weaken body (lr_udivU body hreg' (by simpa [hb] using hy) (by simpa using hc)
+    (by simpa using hs) (by simpa using ht)) ?_ (by simp [ha, hb])
+  simp only [synG_update, synG_sreg]
+  rw [ha, hb, hq, List.replicate_append_replicate]
 
 theorem sg_synHalfAdd {x y : SynW} (hx1 : x ≠ .s 1) (hx2 : x ≠ .s 2) (hy1 : y ≠ .s 1)
     (hy2 : y ≠ .s 2) (hy5 : y ≠ .s 5)
@@ -626,8 +751,8 @@ def synPreBrCost (w a dp oS D : ℕ) : ℕ :=
   1 + (4 * dp + 4 + (1 + (4 * (dp + 1) + 4 + (2 * (dp + 1) + 2 + (4 * dp + 4))))) + 1 +
     (4 * (2 ^ a * 1) + 9 * a + 4) +
     (4 * w + 5) + (4 * ((dp + 1) / 2 + dp) + 5) + (4 * a + 5) + 2 + (4 * (2 ^ a * 1) + 5) +
-    (4 * dp + 5) + (4 * oS + 5) + (4 * dp + 5) + (4 * oS + 5) + (4 * dp + 5) +
-    (4 * w + 4 + (4 * ((dp + 1) / 2 + dp) + 4 + (4 * D + 4))) +
+    (4 * dp + 5) + (4 * oS + 5) + (4 * dp + 5) + (4 * oS + 5) + (4 * dp + 5) + 1 +
+    (4 * oS + 5) + 1 + (4 * w + 4 + (4 * ((dp + 1) / 2 + dp) + 4 + (4 * D + 4))) +
     (2 * ((dp + 1) / 2 + dp) + 2) + (2 * oS + 2) + (2 * (2 ^ a * 1) + 2) + (2 * a + 2)
 
 theorem sg_synPreBr {dp : SynW} (hdp : ∀ i, dp ≠ .s i) (hdp1 : dp ≠ .p .cf)
@@ -640,7 +765,8 @@ theorem sg_synPreBr {dp : SynW} (hdp : ∀ i, dp ≠ .s i) (hdp1 : dp ≠ .p .cf
     LayRuns body (synPreBr dp) (synG R v)
       (synG R (Function.update (Function.update (Function.update (Function.update
         (Function.update v (.s 0) []) (.s 6) []) (.p .kh) [tick]) (.p .cf)
-          (topRec [W, (Dp + 1) / 2 + Dp, a, 1, 2 ^ a * 1, Dp, oS, Dp, oS, Dp]).reverse) (.p .w2)
+          (topRec [W, (Dp + 1) / 2 + Dp, a, 1, 2 ^ a * 1, Dp, oS, Dp, oS, Dp, 0, oS, 0]).reverse)
+          (.p .w2)
           (List.replicate (W + ((Dp + 1) / 2 + Dp) + Dv) tick)))
       (synPreBrCost W a Dp oS Dv) := by
   have h1 : v (.s 1) = [] := hs 1 (by decide) (by decide)
@@ -682,6 +808,13 @@ theorem sg_synPreBr {dp : SynW} (hdp : ∀ i, dp ≠ .s i) (hdp1 : dp ≠ .p .cf
       (by simp)).seq <|
     (sg_synCF body (x := dp) hdp1 hd2 _ [W, (Dp + 1) / 2 + Dp, a, 1, 2 ^ a * 1, Dp, oS, Dp, oS] Dp
       (by simp [h2]) (by simp [hdp1, hdp2, hd7, hd5, hDp]) (by simp)).seq <|
+    (sg_synCF0 body _ [W, (Dp + 1) / 2 + Dp, a, 1, 2 ^ a * 1, Dp, oS, Dp, oS, Dp]
+      (by simp)).seq <|
+    (sg_synCF body (x := .s 6) (by decide) (by decide) _
+      [W, (Dp + 1) / 2 + Dp, a, 1, 2 ^ a * 1, Dp, oS, Dp, oS, Dp, 0] oS (by simp [h2])
+      (by simp [hoS]) (by simp)).seq <|
+    (sg_synCF0 body _ [W, (Dp + 1) / 2 + Dp, a, 1, 2 ^ a * 1, Dp, oS, Dp, oS, Dp, 0, oS]
+      (by simp)).seq <|
     (sg_synW2P body (x := .s 5) (by decide) (by decide) _ W
       ((Dp + 1) / 2 + Dp) Dv (by simp [h2]) (by simp [hw2]) (by simp [hW]) (by simp)
       (by simp [hD])).seq <|
@@ -704,7 +837,8 @@ theorem sg_synTopB (v : SynW → List (Fin (A + 4))) (a Nv Lg W Dv : ℕ)
     LayRuns body synTopB (synG R v)
       (synG R (Function.update (Function.update (Function.update (Function.update v (.s 0) [])
         (.p .kh) [tick]) (.p .cf)
-          (topRec [W, (Lg + 1) / 2 + Lg, a, 1, 2 ^ a * 1, Lg, Nv - Lg, Lg, Nv - Lg, Lg]).reverse)
+          (topRec [W, (Lg + 1) / 2 + Lg, a, 1, 2 ^ a * 1, Lg, Nv - Lg, Lg, Nv - Lg, Lg, 0,
+            Nv - Lg, 0]).reverse)
           (.p .w2) (List.replicate (W + ((Lg + 1) / 2 + Lg) + Dv) tick)))
       (4 * Nv + 4 + (4 * Lg + 4 + synPreBrCost W a Lg (Nv - Lg) Dv)) := by
   have h2 : v (.s 2) = [] := hs 2 (by decide)
@@ -733,7 +867,7 @@ theorem sg_synLowB (v : SynW → List (Fin (A + 4))) (a Nv Lg W Dv bh : ℕ)
       (synG R (Function.update (Function.update (Function.update (Function.update
         (Function.update v (.s 0) []) (.s 1) []) (.p .kh) [tick]) (.p .cf)
           (topRec [W, (Dv + 1) / 2 + Dv, a, 1, 2 ^ a * 1, Dv, Nv - Lg - bh * Dv, Dv,
-            Nv - Lg - bh * Dv, Dv]).reverse)
+            Nv - Lg - bh * Dv, Dv, 0, Nv - Lg - bh * Dv, 0]).reverse)
           (.p .w2) (List.replicate (W + ((Dv + 1) / 2 + Dv) + Dv) tick)))
       (4 * Nv + 4 + (4 * Lg + 4 + (synMulRCost bh Dv + (4 * (bh * Dv) + 4 +
         (2 * (bh * Dv) + 2 + (2 * bh + 2 + synPreBrCost W a Dv (Nv - Lg - bh * Dv) Dv)))))) := by
@@ -773,8 +907,8 @@ end PreBr
 
 section DigitLoop
 
-variable {Q A : ℕ} {U P : Type} (body : P → Pr P (nT SXReg) Q A U)
-  {R : Fin (nT SXReg) → List (Fin (A + 4))}
+variable {Q A : ℕ} {U P : Type} (body : P → Pr P (nT CReg) Q A U)
+  {R : Fin (nT CReg) → List (Fin (A + 4))}
 
 /-- The step bound of pass `t` of a division count by `k` on `X`. -/
 def synCntPassCost (k X t : ℕ) : ℕ :=
@@ -1065,7 +1199,7 @@ theorem synDigSt_zero_pass {G F Kv a oS J D : ℕ} (v : SynW → List (Fin (A + 
     synDg_of_zero h, if_true, add_zero, List.nil_append]
 
 theorem sg_synDigits (G F : ℕ) (v : SynW → List (Fin (A + 4))) (Kv a oS J D : ℕ)
-    (hoS : v (.s 6) = List.replicate oS tick) (hK : (v (.p .K)).length = Kv)
+    (hoS : v (.s 11) = List.replicate oS tick) (hK : (v (.p .K)).length = Kv)
     (hD : (v (.s 26)).length = D) (hpr : v (.p .pr) = [])
     (hs : ∀ i, 12 ≤ i → i ≤ 24 → v (.s i) = []) (h2 : v (.s 2) = []) (h3 : v (.s 3) = [])
     (h4 : v (.s 4) = []) :
@@ -1156,7 +1290,7 @@ theorem sg_synDigits (G F : ℕ) (v : SynW → List (Fin (A + 4))) (Kv a oS J D 
     ((sgU_copy body (a := .s 26) (b := .s 12) (t := .s 2) (x := D) (y := 0) (by decide)
       (by decide) (by decide) h2 hD (by simp [h12])).seq <|
     (sgU_push body (a := .s 13) (y := 0) (by simp [h13])).seq <|
-    (sgU_copy body (a := .s 6) (b := .s 15) (t := .s 2) (x := oS) (y := 0) (by decide)
+    (sgU_copy body (a := .s 11) (b := .s 15) (t := .s 2) (x := oS) (y := 0) (by decide)
       (by decide) (by decide) (by simp [h2]) (by simp [hoS]) (by simp [h15])).seq <|
     (lr_congr_left body hscan ?_).seq <|
     (sgU_clear body (a := .s 12) (x := 0) (by simp [hΦ, synDigSt, div_pow_self])).seq <|

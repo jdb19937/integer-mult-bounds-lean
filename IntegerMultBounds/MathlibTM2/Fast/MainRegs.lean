@@ -23,7 +23,7 @@ This file fixes it.
 * `rnd r` (`r : RndReg`): the rounding stage (`Fast/Round`);
 * `out r` (`r : OReg`): the carries and the output (`Fast/Output`).
 
-The whole file is `MnAll = MnR ⊕ Fin 64 ⊕ LReg SXReg`: the stage registers, the 64 registers of
+The whole file is `MnAll = MnR ⊕ Fin 64 ⊕ LReg CReg`: the stage registers, the 64 registers of
 the Schönhage–Strassen multiplier (`Host/SSMul`), and a reserved copy of the register file of the
 layer machine (`Node/Regs`) for the synthetic transforms and the parameter distribution. The
 host has `mnT = card MnAll` registers, numbered by `mnEq : MnAll ≃ Fin mnT`; the three layouts
@@ -36,8 +36,8 @@ arguments.
 **Procedures.** `MnProc` has the main procedure and the layer procedures `LProc` of
 `Node/LayerProc` (`MnProc.lay`, injective); `mnBody Lb mainP` runs `mainP` as the main procedure
 and `Lb f` as the layer procedure `f`. The layer table `Lb` is a parameter: the layer machine is
-a program on `nT SXReg` registers, and runs here on the reserved copy, embedded by
-`mnLayE : Fin (nT SXReg) → Fin mnT` (injective, meeting `mnRg` exactly in `src (.v .io)`, the
+a program on `nT CReg` registers, and runs here on the reserved copy, embedded by
+`mnLayE : Fin (nT CReg) → Fin mnT` (injective, meeting `mnRg` exactly in `src (.v .io)`, the
 layer register `lreg .io` on which the transforms act, and disjoint from `mnι`), so `Lb f` is the
 embedded `layerTable hQ ds f` with calls renamed through `MnProc.lay` (`Fast/MainEmbed`).
 
@@ -184,7 +184,7 @@ instance mnFintypeMnR : Fintype MnR :=
 
 /-- The whole register file: the stage registers, the multiplier registers and the reserved copy
 of the layer machine's register file. -/
-abbrev MnAll := MnR ⊕ Fin 64 ⊕ LReg SXReg
+abbrev MnAll := MnR ⊕ Fin 64 ⊕ LReg CReg
 
 /-- The number of host registers. -/
 def mnT : ℕ := Fintype.card MnAll
@@ -199,7 +199,7 @@ def mnRg (r : MnR) : Fin mnT := mnEq (.inl r)
 def mnι (j : Fin 64) : Fin mnT := mnEq (.inr (.inl j))
 
 /-- The reserved copy of the layer machine's registers. -/
-def mnLay (x : LReg SXReg) : Fin mnT := mnEq (.inr (.inr x))
+def mnLay (x : LReg CReg) : Fin mnT := mnEq (.inr (.inr x))
 
 lemma mnRg_inj : Function.Injective mnRg := fun _ _ h => Sum.inl_injective (mnEq.injective h)
 
@@ -212,28 +212,28 @@ lemma mnLay_inj : Function.Injective mnLay :=
 lemma mnRg_ne_ι (r : MnR) (j : Fin 64) : mnRg r ≠ mnι j := fun h => by
   have := mnEq.injective h; simp at this
 
-lemma mnRg_ne_lay (r : MnR) (x : LReg SXReg) : mnRg r ≠ mnLay x := fun h => by
+lemma mnRg_ne_lay (r : MnR) (x : LReg CReg) : mnRg r ≠ mnLay x := fun h => by
   have := mnEq.injective h; simp at this
 
-lemma mnι_ne_lay (j : Fin 64) (x : LReg SXReg) : mnι j ≠ mnLay x := fun h => by
+lemma mnι_ne_lay (j : Fin 64) (x : LReg CReg) : mnι j ≠ mnLay x := fun h => by
   have := mnEq.injective h; simp at this
 
 @[simp] lemma mnRg_eq_iff {r r' : MnR} : mnRg r = mnRg r' ↔ r = r' := mnRg_inj.eq_iff
 
 /-- The register `lreg .io` of the layer machine: the array of the current call, the register the
 synthetic transforms read and write. -/
-abbrev mnLio : Fin (nT SXReg) := reg (BReg := SXReg) .io
+abbrev mnLio : Fin (nT CReg) := reg (BReg := CReg) .io
 
-/-- The layer machine's register file `Fin (nT SXReg)` inside the host's: its register `lreg .io`
+/-- The layer machine's register file `Fin (nT CReg)` inside the host's: its register `lreg .io`
 is the convolution register `src (.v .io)` (the transforms act on it), every other register is the
 reserved copy `mnLay` through the numbering `regEquiv`. -/
-def mnLayE (i : Fin (nT SXReg)) : Fin mnT :=
-  if i = mnLio then mnRg (.src (.v .io)) else mnLay ((regEquiv SXReg).symm i)
+def mnLayE (i : Fin (nT CReg)) : Fin mnT :=
+  if i = mnLio then mnRg (.src (.v .io)) else mnLay ((regEquiv CReg).symm i)
 
 @[simp] lemma mnLayE_io : mnLayE mnLio = mnRg (.src (.v .io)) := if_pos rfl
 
-lemma mnLayE_of_ne {i : Fin (nT SXReg)} (h : i ≠ mnLio) :
-    mnLayE i = mnLay ((regEquiv SXReg).symm i) := if_neg h
+lemma mnLayE_of_ne {i : Fin (nT CReg)} (h : i ≠ mnLio) :
+    mnLayE i = mnLay ((regEquiv CReg).symm i) := if_neg h
 
 lemma mnLayE_inj : Function.Injective mnLayE := by
   intro i j h
@@ -242,20 +242,20 @@ lemma mnLayE_inj : Function.Injective mnLayE := by
   · rw [mnLayE_of_ne hj, hi, mnLayE_io] at h; exact absurd h (mnRg_ne_lay _ _)
   · rw [mnLayE_of_ne hi, hj, mnLayE_io] at h; exact absurd h.symm (mnRg_ne_lay _ _)
   · rw [mnLayE_of_ne hi, mnLayE_of_ne hj] at h
-    exact (regEquiv SXReg).symm.injective (mnLay_inj h)
+    exact (regEquiv CReg).symm.injective (mnLay_inj h)
 
 /-- Off `lreg .io`, the layer file is outside the stage registers. -/
-lemma mnLayE_ne_rg {i : Fin (nT SXReg)} (hi : i ≠ mnLio) (r : MnR) : mnLayE i ≠ mnRg r := by
+lemma mnLayE_ne_rg {i : Fin (nT CReg)} (hi : i ≠ mnLio) (r : MnR) : mnLayE i ≠ mnRg r := by
   rw [mnLayE_of_ne hi]; exact fun h => mnRg_ne_lay r _ h.symm
 
 /-- Every stage register other than `src (.v .io)` is outside the layer file. -/
-lemma mnRg_ne_layE {r : MnR} (hr : r ≠ .src (.v .io)) (i : Fin (nT SXReg)) :
+lemma mnRg_ne_layE {r : MnR} (hr : r ≠ .src (.v .io)) (i : Fin (nT CReg)) :
     mnRg r ≠ mnLayE i := by
   by_cases hi : i = mnLio
   · rw [hi, mnLayE_io]; exact fun h => hr (mnRg_inj h)
   · exact (mnLayE_ne_rg hi r).symm
 
-lemma mnLayE_ne_ι (i : Fin (nT SXReg)) (j : Fin 64) : mnLayE i ≠ mnι j := by
+lemma mnLayE_ne_ι (i : Fin (nT CReg)) (j : Fin 64) : mnLayE i ≠ mnι j := by
   by_cases hi : i = mnLio
   · rw [hi, mnLayE_io]; exact mnRg_ne_ι _ j
   · rw [mnLayE_of_ne hi]; exact fun h => mnι_ne_lay j _ h.symm

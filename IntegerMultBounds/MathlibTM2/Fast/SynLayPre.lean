@@ -43,7 +43,7 @@ section Regs
 
 variable {A : ℕ}
 
-theorem slyT_eq (c : Fin 64) : slyT c = reg (BReg := SXReg) (.wtmp (wireOf (Fin.castLE sly_NW c))) :=
+theorem slyT_eq (c : Fin 64) : slyT c = reg (BReg := CReg) (.wtmp (wireOf (Fin.castLE sly_NW c))) :=
   rfl
 
 @[simp] theorem synIdle_slyT (io P₀ : List (Fin (A + 4))) (c : Fin 64) :
@@ -59,13 +59,13 @@ theorem slyRg_sw_out (j : Fin (swapT 6)) : ∀ x, sreg x ≠ slyRg (.sw j) := fu
 
 theorem slyH_out (k : Fin 5) : ∀ x, sreg x ≠ ldlH slyRg sxHd k := slyRg_sw_out _
 
-@[simp] theorem sreg_eq_io_iff (x : SynW) : sreg x = reg (BReg := SXReg) .io ↔ False :=
+@[simp] theorem sreg_eq_io_iff (x : SynW) : sreg x = reg (BReg := CReg) .io ↔ False :=
   ⟨fun h => sreg_ne_reg (by simp) h, False.elim⟩
 
-@[simp] theorem sreg_eq_park_iff (x : SynW) : sreg x = reg (BReg := SXReg) .park ↔ False :=
+@[simp] theorem sreg_eq_park_iff (x : SynW) : sreg x = reg (BReg := CReg) .park ↔ False :=
   ⟨fun h => sreg_ne_reg (by simp) h, False.elim⟩
 
-@[simp] theorem sreg_eq_bc_iff (x : SynW) (b : SXReg) : sreg x = reg (BReg := SXReg) (.bc b) ↔ False :=
+@[simp] theorem sreg_eq_bc_iff (x : SynW) (b : CReg) : sreg x = reg (BReg := CReg) (.bc b) ↔ False :=
   ⟨fun h => sreg_ne_reg (by simp) h, False.elim⟩
 
 @[simp] theorem sreg_eq_sw_iff (x : SynW) (j : Fin (swapT 6)) : sreg x = slyRg (.sw j) ↔ False :=
@@ -77,15 +77,15 @@ theorem slyH_out (k : Fin 5) : ∀ x, sreg x ≠ ldlH slyRg sxHd k := slyRg_sw_o
 theorem slyH_ne_slyT (k : Fin 5) (c : Fin 64) : ldlH slyRg sxHd k ≠ slyT c := by
   simp [ldlH, slyRg, slyT_eq]
 
-theorem slyH_ne_io (k : Fin 5) : ldlH slyRg sxHd k ≠ reg (BReg := SXReg) .io := by
+theorem slyH_ne_io (k : Fin 5) : ldlH slyRg sxHd k ≠ reg (BReg := CReg) .io := by
   simp [ldlH, slyRg]
 
-theorem slyH_ne_park (k : Fin 5) : ldlH slyRg sxHd k ≠ reg (BReg := SXReg) .park := by
+theorem slyH_ne_park (k : Fin 5) : ldlH slyRg sxHd k ≠ reg (BReg := CReg) .park := by
   simp [ldlH, slyRg]
 
-theorem slyT_ne_io (c : Fin 64) : slyT c ≠ reg (BReg := SXReg) .io := by simp [slyT_eq]
+theorem slyT_ne_io (c : Fin 64) : slyT c ≠ reg (BReg := CReg) .io := by simp [slyT_eq]
 
-theorem slyT_ne_park (c : Fin 64) : slyT c ≠ reg (BReg := SXReg) .park := by simp [slyT_eq]
+theorem slyT_ne_park (c : Fin 64) : slyT c ≠ reg (BReg := CReg) .park := by simp [slyT_eq]
 
 theorem slyH_injective : Function.Injective (ldlH slyRg sxHd) :=
   ldlH_injective slyRg_injective sxHd_inj
@@ -99,28 +99,28 @@ theorem slyH_injective : Function.Injective (ldlH slyRg sxHd) :=
 @[simp] theorem slyH_eq_slyT_iff (k : Fin 5) (c : Fin 64) : ldlH slyRg sxHd k = slyT c ↔ False :=
   ⟨slyH_ne_slyT k c, False.elim⟩
 
-@[simp] theorem slyT_eq_io_iff (c : Fin 64) : slyT c = reg (BReg := SXReg) .io ↔ False :=
+@[simp] theorem slyT_eq_io_iff (c : Fin 64) : slyT c = reg (BReg := CReg) .io ↔ False :=
   ⟨slyT_ne_io c, False.elim⟩
 
-@[simp] theorem io_eq_slyT_iff (c : Fin 64) : reg (BReg := SXReg) .io = slyT c ↔ False :=
+@[simp] theorem io_eq_slyT_iff (c : Fin 64) : reg (BReg := CReg) .io = slyT c ↔ False :=
   ⟨fun h => slyT_ne_io c h.symm, False.elim⟩
 
-@[simp] theorem slyT_eq_park_iff (c : Fin 64) : slyT c = reg (BReg := SXReg) .park ↔ False :=
+@[simp] theorem slyT_eq_park_iff (c : Fin 64) : slyT c = reg (BReg := CReg) .park ↔ False :=
   ⟨slyT_ne_park c, False.elim⟩
 
-@[simp] theorem park_eq_slyT_iff (c : Fin 64) : reg (BReg := SXReg) .park = slyT c ↔ False :=
+@[simp] theorem park_eq_slyT_iff (c : Fin 64) : reg (BReg := CReg) .park = slyT c ↔ False :=
   ⟨fun h => slyT_ne_park c h.symm, False.elim⟩
 
-@[simp] theorem slyH_eq_io_iff (k : Fin 5) : ldlH slyRg sxHd k = reg (BReg := SXReg) .io ↔ False :=
+@[simp] theorem slyH_eq_io_iff (k : Fin 5) : ldlH slyRg sxHd k = reg (BReg := CReg) .io ↔ False :=
   ⟨slyH_ne_io k, False.elim⟩
 
-@[simp] theorem io_eq_slyH_iff (k : Fin 5) : reg (BReg := SXReg) .io = ldlH slyRg sxHd k ↔ False :=
+@[simp] theorem io_eq_slyH_iff (k : Fin 5) : reg (BReg := CReg) .io = ldlH slyRg sxHd k ↔ False :=
   ⟨fun h => slyH_ne_io k h.symm, False.elim⟩
 
-@[simp] theorem slyH_eq_park_iff (k : Fin 5) : ldlH slyRg sxHd k = reg (BReg := SXReg) .park ↔ False :=
+@[simp] theorem slyH_eq_park_iff (k : Fin 5) : ldlH slyRg sxHd k = reg (BReg := CReg) .park ↔ False :=
   ⟨slyH_ne_park k, False.elim⟩
 
-@[simp] theorem park_eq_slyH_iff (k : Fin 5) : reg (BReg := SXReg) .park = ldlH slyRg sxHd k ↔ False :=
+@[simp] theorem park_eq_slyH_iff (k : Fin 5) : reg (BReg := CReg) .park = ldlH slyRg sxHd k ↔ False :=
   ⟨fun h => slyH_ne_park k h.symm, False.elim⟩
 
 theorem slyH_ne_rg (k : Fin 5) {y : LayReg 6} (hy : ∀ j, y ≠ .sw j) : ldlH slyRg sxHd k ≠ slyRg y :=
@@ -128,9 +128,9 @@ theorem slyH_ne_rg (k : Fin 5) {y : LayReg 6} (hy : ∀ j, y ≠ .sw j) : ldlH s
 
 theorem slyH_ne_lr (k : Fin 5) (y : LdlReg) : ldlH slyRg sxHd k ≠ slyLr y := sly_regs.l.disj _ _
 
-theorem sreg_io_out : ∀ z, sreg z ≠ reg (BReg := SXReg) .io := fun z => sreg_ne_reg (by simp)
+theorem sreg_io_out : ∀ z, sreg z ≠ reg (BReg := CReg) .io := fun z => sreg_ne_reg (by simp)
 
-theorem slyRg_str : slyRg .str = reg (BReg := SXReg) .io := rfl
+theorem slyRg_str : slyRg .str = reg (BReg := CReg) .io := rfl
 theorem slyRg_mA : slyRg .mA = sreg (.ly 14) := rfl
 theorem slyRg_mB : slyRg .mB = sreg (.ly 15) := rfl
 theorem slyRg_cM : slyRg .cM = sreg (.ly 19) := rfl
@@ -202,11 +202,11 @@ end Park
 
 section Setup
 
-variable {Q A : ℕ} {U P : Type} (body : P → Pr P (nT SXReg) Q A U)
+variable {Q A : ℕ} {U P : Type} (body : P → Pr P (nT CReg) Q A U)
 
 /-- Unpark `W`, `E`; `s 0 := |p .r| |p .w|`; `cnt := 2^N` ticks (`N = |p .N|`); `fld := binSyms
 N 0`; `ctrB := |s 0|`. -/
-noncomputable def slySetup : Pr P (nT SXReg) Q A U :=
+noncomputable def slySetup : Pr P (nT CReg) Q A U :=
   .seq (synUnstash (lreg .park) blank ([SynW.s 1, .s 2].map sreg)) <|
   .seq (synMulR (sreg (.p .r)) (sreg (.p .w)) (sreg (.s 0)) (sreg (.s 3)) (sreg (.s 4))) <|
   .seq (synPush (sreg (.ly 10)) tick) <|
@@ -355,12 +355,12 @@ end Pre
 
 section Clean
 
-variable {Q A : ℕ} {U P : Type} (body : P → Pr P (nT SXReg) Q A U)
+variable {Q A : ℕ} {U P : Type} (body : P → Pr P (nT CReg) Q A U)
 
 /-- The registers outside the wires after the layout machine: the headers `hs`, the word
 counters `cN`, `cW`. -/
 noncomputable def slyRo (io P' : List (Fin (A + 4))) (N wX : ℕ) (hs : Fin 5 → List (Fin (A + 4))) :
-    Fin (nT SXReg) → List (Fin (A + 4)) :=
+    Fin (nT CReg) → List (Fin (A + 4)) :=
   Function.update (Function.update (ldlSetH slyRg sxHd (synIdle io P') hs) (slyT 2)
     (List.replicate N tick)) (slyT 3) (List.replicate wX tick)
 
@@ -372,7 +372,7 @@ def slyV₃ (W E N B : ℕ) (v₀ : SynW → List (Fin (A + 4))) (csM csX mA mB 
 
 /-- Clear the loop counters, masks, word counters, headers, the counters of the moves and `B`,
 then park `W`, `E`. -/
-noncomputable def slyClean : Pr P (nT SXReg) Q A U :=
+noncomputable def slyClean : Pr P (nT CReg) Q A U :=
   .seq (uclear (sreg (.ly 19))) <| .seq (uclear (sreg (.ly 21))) <|
   .seq (uclear (sreg (.ly 14))) <| .seq (uclear (sreg (.ly 15))) <|
   .seq (uclear (slyT 2)) <| .seq (uclear (slyT 3)) <|

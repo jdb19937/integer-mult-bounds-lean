@@ -10,7 +10,7 @@ public import IntegerMultBounds.MathlibTM2.Cost.Branching
 # Registers and run contracts of the synthetic transform machines
 
 Paper §6, the computed transforms of `lem:synthetic-transform-cost`. The machines run on the
-register file of the layer machine (`nT SXReg` registers, `IntegerMultBounds.MathlibTM2.LayerMachine.reg`), because the
+register file of the layer machine (`nT CReg` registers, `IntegerMultBounds.MathlibTM2.LayerMachine.reg`), because the
 layer (`topProg`) is a fixed program on that file.
 
 ## Registers
@@ -101,16 +101,16 @@ theorem synWire_inj : Function.Injective synWire := by
   synWire_inj.eq_iff
 
 /-- The host register of a transform register. -/
-noncomputable def sreg (x : SynW) : Fin (nT SXReg) := reg (BReg := SXReg) (.wire (synWire x))
+noncomputable def sreg (x : SynW) : Fin (nT CReg) := reg (BReg := CReg) (.wire (synWire x))
 
-theorem sreg_eq (x : SynW) : sreg x = reg (BReg := SXReg) (.wire (synWire x)) := rfl
+theorem sreg_eq (x : SynW) : sreg x = reg (BReg := CReg) (.wire (synWire x)) := rfl
 
 theorem sreg_injective : Function.Injective sreg := by
   intro x y h
   simpa [sreg_eq] using h
 
 /-- The twiddle registers. -/
-noncomputable def synTg (x : TwReg) : Fin (nT SXReg) := sreg (.tw x)
+noncomputable def synTg (x : TwReg) : Fin (nT CReg) := sreg (.tw x)
 
 theorem synTg_injective : Function.Injective synTg := by
   intro x y h
@@ -118,7 +118,7 @@ theorem synTg_injective : Function.Injective synTg := by
 
 /-- The layout registers: the interchange bank on the bank `swp 0` of the layer machine, the
 others on wires. -/
-noncomputable def synLayRg : LayReg 6 → Fin (nT SXReg)
+noncomputable def synLayRg : LayReg 6 → Fin (nT CReg)
   | .str => sreg (.ly 0)
   | .r0 => sreg (.ly 1)
   | .r1 => sreg (.ly 2)
@@ -136,7 +136,7 @@ noncomputable def synLayRg : LayReg 6 → Fin (nT SXReg)
   | .mA => sreg (.ly 14)
   | .mB => sreg (.ly 15)
   | .us r => sreg (.ly ⟨16 + r.val, by omega⟩)
-  | .sw j => reg (BReg := SXReg) (.bc (.swp 0 j))
+  | .sw j => reg (BReg := CReg) (.bc (.inl (.sx (.swp 0 j))))
   | .cM => sreg (.ly 19)
   | .tM => sreg (.ly 20)
   | .cX => sreg (.ly 21)
@@ -145,7 +145,7 @@ noncomputable def synLayRg : LayReg 6 → Fin (nT SXReg)
 theorem synLayRg_injective : Function.Injective synLayRg := by
   intro x y h
   cases x <;> cases y <;> simp only [synLayRg, sreg_eq, reg_inj, LReg.wire.injEq,
-    synWire_eq_iff, SynW.ly.injEq, LReg.bc.injEq, SXReg.swp.injEq, reduceCtorEq, true_and,
+    synWire_eq_iff, SynW.ly.injEq, LReg.bc.injEq, Sum.inl.injEq, CXReg.sx.injEq, SXReg.swp.injEq, reduceCtorEq, true_and,
     LayReg.us.injEq, LayReg.sw.injEq] at h ⊢ <;>
     first
     | rfl
@@ -810,14 +810,14 @@ end Kit
 
 section Wires
 
-variable {Q A : ℕ} {U P : Type} (body : P → Pr P (nT SXReg) Q A U)
+variable {Q A : ℕ} {U P : Type} (body : P → Pr P (nT CReg) Q A U)
 
 /-- The file `R` with every transform wire `sreg x` replaced by `v x`. -/
-noncomputable def synG (R : Fin (nT SXReg) → List (Fin (A + 4))) (v : SynW → List (Fin (A + 4))) :
-    Fin (nT SXReg) → List (Fin (A + 4)) :=
+noncomputable def synG (R : Fin (nT CReg) → List (Fin (A + 4))) (v : SynW → List (Fin (A + 4))) :
+    Fin (nT CReg) → List (Fin (A + 4)) :=
   fun z => if h : ∃ x, sreg x = z then v h.choose else R z
 
-variable {R : Fin (nT SXReg) → List (Fin (A + 4))} {v : SynW → List (Fin (A + 4))}
+variable {R : Fin (nT CReg) → List (Fin (A + 4))} {v : SynW → List (Fin (A + 4))}
 
 @[simp] theorem synG_sreg (x : SynW) : synG R v (sreg x) = v x := by
   have h : ∃ y, sreg y = sreg x := ⟨x, rfl⟩
@@ -825,7 +825,7 @@ variable {R : Fin (nT SXReg) → List (Fin (A + 4))} {v : SynW → List (Fin (A 
   congr
   exact sreg_injective h.choose_spec
 
-theorem synG_of_ne {z : Fin (nT SXReg)} (hz : ∀ x, sreg x ≠ z) : synG R v z = R z := by
+theorem synG_of_ne {z : Fin (nT CReg)} (hz : ∀ x, sreg x ≠ z) : synG R v z = R z := by
   have : ¬ ∃ x, sreg x = z := fun ⟨x, hx⟩ => hz x hx
   simp only [synG, dif_neg this]
 
@@ -838,7 +838,7 @@ theorem synG_update (x : SynW) (l : List (Fin (A + 4))) :
   · have hz' : ∀ y, sreg y ≠ z := fun y hy => hz ⟨y, hy⟩
     rw [synG_of_ne hz', Function.update_of_ne (hz' x).symm, synG_of_ne hz']
 
-theorem synG_update_out {z : Fin (nT SXReg)} (hz : ∀ x, sreg x ≠ z) (l : List (Fin (A + 4))) :
+theorem synG_update_out {z : Fin (nT CReg)} (hz : ∀ x, sreg x ≠ z) (l : List (Fin (A + 4))) :
     Function.update (synG R v) z l = synG (Function.update R z l) v := by
   funext y
   by_cases hy : ∃ x, sreg x = y
@@ -850,7 +850,7 @@ theorem synG_update_out {z : Fin (nT SXReg)} (hz : ∀ x, sreg x ≠ z) (l : Lis
     · subst hyz; simp
     · rw [Function.update_of_ne hyz, Function.update_of_ne hyz, synG_of_ne hy']
 
-theorem sreg_ne_reg {x : SynW} {y : LReg SXReg} (hy : ∀ v, y ≠ .wire v) : sreg x ≠ reg y := by
+theorem sreg_ne_reg {x : SynW} {y : LReg CReg} (hy : ∀ v, y ≠ .wire v) : sreg x ≠ reg y := by
   rw [sreg_eq]; intro h; exact hy _ (reg_injective h).symm
 
 /-! Contracts on the transform wires. -/
@@ -997,21 +997,21 @@ theorem sg_synFieldF (hab : a ≠ b) (hat : a ≠ t) (hbt : b ≠ t) (ht : v t =
     (sreg_injective.ne hbt) (by simpa using ht)) (by rw [synG_update, synG_sreg, synG_sreg])
     (by simp)
 
-theorem sg_ifNE_pos {x : SynW} {p q : Pr P (nT SXReg) Q A U}
-    {R' : Fin (nT SXReg) → List (Fin (A + 4))} {k : ℕ} (hx : v x ≠ [])
+theorem sg_ifNE_pos {x : SynW} {p q : Pr P (nT CReg) Q A U}
+    {R' : Fin (nT CReg) → List (Fin (A + 4))} {k : ℕ} (hx : v x ≠ [])
     (hp : LayRuns body p (synG R v) R' k) :
     LayRuns body (synIfNE (sreg x) p q) (synG R v) R' (k + 2) :=
   lr_ifNE_pos body (by simpa using hx) hp
 
-theorem sg_ifNE_neg {x : SynW} {p q : Pr P (nT SXReg) Q A U}
-    {R' : Fin (nT SXReg) → List (Fin (A + 4))} {k : ℕ} (hx : v x = [])
+theorem sg_ifNE_neg {x : SynW} {p q : Pr P (nT CReg) Q A U}
+    {R' : Fin (nT CReg) → List (Fin (A + 4))} {k : ℕ} (hx : v x = [])
     (hq : LayRuns body q (synG R v) R' k) :
     LayRuns body (synIfNE (sreg x) p q) (synG R v) R' (k + 2) :=
   lr_ifNE_neg body (by simpa using hx) hq
 
 /-- The scan loop on a transform wire: iteration `j` of `p` takes the wires `Φ j` to `Φ (j + 1)`
 (the counter `a` and its spare `t` as in `layScan_exec`). -/
-theorem sg_scan (hat : a ≠ t) {p : Pr P (nT SXReg) Q A U} (Φ : ℕ → SynW → List (Fin (A + 4)))
+theorem sg_scan (hat : a ≠ t) {p : Pr P (nT CReg) Q A U} (Φ : ℕ → SynW → List (Fin (A + 4)))
     (cs : List (Fin (A + 4))) (bnd : ℕ → ℕ)
     (hstep : ∀ j < cs.length, LayRuns body p
       (synG R (Function.update (Function.update (Φ j) a (cs.drop (j + 1))) t
@@ -1163,7 +1163,7 @@ theorem sgR_push (y : Fin (A + 4)) {l : List (Fin (A + 4))} (hb : v a = l) :
 
 /-! Contracts mixing transform wires and other registers (`b` with `∀ x, sreg x ≠ b`). -/
 
-variable {o : Fin (nT SXReg)}
+variable {o : Fin (nT CReg)}
 
 theorem so_copy {x y : ℕ} (ho : ∀ z, sreg z ≠ o) (hat : a ≠ t) (ht : v t = [])
     (ha : (v a).length = x) (hb : R o = List.replicate y tick) :
@@ -1331,7 +1331,7 @@ theorem synClr_synG (xs : List SynW) : synClr (synG R v) (xs.map sreg) = synG R 
     simp only [synClr, this, if_false]
     rw [synG_of_ne hz', synG_of_ne hz']
 
-theorem sg_synStash {pk : Fin (nT SXReg)} (hpk : ∀ z, sreg z ≠ pk) (mkr : Fin (A + 4))
+theorem sg_synStash {pk : Fin (nT CReg)} (hpk : ∀ z, sreg z ≠ pk) (mkr : Fin (A + 4))
     (xs : List SynW) (hd : xs.Nodup) :
     LayRuns body (synStash pk mkr (xs.map sreg)) (synG R v)
       (synG (Function.update R pk (synStkW v mkr xs ++ mkr :: R pk)) (synClrW v xs))
@@ -1341,7 +1341,7 @@ theorem sg_synStash {pk : Fin (nT SXReg)} (hpk : ∀ z, sreg z ≠ pk) (mkr : Fi
   rw [synStk_synG, synStashCost_synG, synClr_synG, synG_of_ne hpk, synG_update_out hpk] at h
   exact h
 
-theorem sg_synUnstash {pk : Fin (nT SXReg)} (hpk : ∀ z, sreg z ≠ pk) (mkr : Fin (A + 4))
+theorem sg_synUnstash {pk : Fin (nT CReg)} (hpk : ∀ z, sreg z ≠ pk) (mkr : Fin (A + 4))
     (xs : List SynW) (P₀ : List (Fin (A + 4))) (hd : xs.Nodup) (hmk : ∀ x ∈ xs, mkr ∉ v x) :
     LayRuns body (synUnstash pk mkr (xs.map sreg))
       (synG (Function.update R pk (synStkW v mkr xs ++ mkr :: P₀)) (synClrW v xs))

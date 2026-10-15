@@ -71,11 +71,11 @@ lemma mn_body_lay (mainP : MnPr (prime + mnKa)) (f : LProc) :
   rfl
 
 /-- The forward transform of the host for a layout program `layP`. -/
-def mnFwdP (layP : Pr LProc (nT SXReg) mnQ (prime + mnKa) Unit) : MnPr (prime + mnKa) :=
+def mnFwdP (layP : Pr LProc (nT CReg) mnQ (prime + mnKa) Unit) : MnPr (prime + mnKa) :=
   embProg mnLayE MnProc.lay (synFwd Cost.brDirs layP)
 
 /-- The opposite transform of the host for a layout program `layQ`. -/
-def mnOppP (layQ : Pr LProc (nT SXReg) mnQ (prime + mnKa) Unit) : MnPr (prime + mnKa) :=
+def mnOppP (layQ : Pr LProc (nT CReg) mnQ (prime + mnKa) Unit) : MnPr (prime + mnKa) :=
   embProg mnLayE MnProc.lay (synOpp Cost.brDirs layQ)
 
 /-! ### The transforms' parameter registers -/
@@ -83,8 +83,8 @@ def mnOppP (layQ : Pr LProc (nT SXReg) mnQ (prime + mnKa) Unit) : MnPr (prime + 
 /-- The contents of the reserved block: the file `synG (synIdle [] P₀) v₀` of the layer machine
 (parking `P₀`, wires `v₀`, everything else empty) read on the register names. -/
 def mnσ (P₀ : List (Fin (prime + mnKa + 4))) (v₀ : SynW → List (Fin (prime + mnKa + 4)))
-    (x : LReg SXReg) : List (Fin (prime + mnKa + 4)) :=
-  synG (synIdle [] P₀) v₀ (reg (BReg := SXReg) x)
+    (x : LReg CReg) : List (Fin (prime + mnKa + 4)) :=
+  synG (synIdle [] P₀) v₀ (reg (BReg := CReg) x)
 
 section Sigma
 
@@ -94,8 +94,8 @@ variable (P₀ : List (Fin (prime + mnKa + 4))) (v₀ : SynW → List (Fin (prim
 lemma mnσ_wire (x : SynW) : mnσ P₀ v₀ (.wire (synWire x)) = v₀ x := synG_sreg x
 
 /-- A register that is not a wire is as in the idle file. -/
-lemma mnσ_of_not_wire {y : LReg SXReg} (hy : ∀ v, y ≠ .wire v) :
-    mnσ P₀ v₀ y = synIdle [] P₀ (reg (BReg := SXReg) y) :=
+lemma mnσ_of_not_wire {y : LReg CReg} (hy : ∀ v, y ≠ .wire v) :
+    mnσ P₀ v₀ y = synIdle [] P₀ (reg (BReg := CReg) y) :=
   synG_of_ne (lreg_out hy)
 
 /-- The parking register holds `P₀`. -/
@@ -109,7 +109,7 @@ lemma mnσ_io : mnσ P₀ v₀ .io = [] := by
   simp [synIdle]
 
 /-- Every other register is empty. -/
-lemma mnσ_eq_nil {y : LReg SXReg} (hy : ∀ v, y ≠ .wire v) (hp : y ≠ .park) :
+lemma mnσ_eq_nil {y : LReg CReg} (hy : ∀ v, y ≠ .wire v) (hp : y ≠ .park) :
     mnσ P₀ v₀ y = [] := by
   rw [mnσ_of_not_wire _ _ hy]
   simp [synIdle, hp]
@@ -177,8 +177,8 @@ parking predicates `Pk n` with contents `P₀ n`, the parameter wires `v₀ n` (
 `cvAx (t n)`, `ℓ n`, `K n`, width `w n`), the layout contracts `layF`, `layO` within `cL n`,
 `cL' n` steps, and the cost bound `cF + cO = O(totConv)`. -/
 structure MnLay (w : ℕ → ℕ) where
-  layP : Pr LProc (nT SXReg) mnQ (prime + mnKa) Unit
-  layQ : Pr LProc (nT SXReg) mnQ (prime + mnKa) Unit
+  layP : Pr LProc (nT CReg) mnQ (prime + mnKa) Unit
+  layQ : Pr LProc (nT CReg) mnQ (prime + mnKa) Unit
   Pk : ℕ → List (Fin (prime + mnKa + 4)) → Prop
   P₀ : ℕ → List (Fin (prime + mnKa + 4))
   v₀ : ℕ → SynW → List (Fin (prime + mnKa + 4))
@@ -210,7 +210,7 @@ structure MnLay (w : ℕ → ℕ) where
       C * IntegerMultBounds.MathlibTM2.Cost.totConv n
 
 /-- The transforms' parameter registers of a layout bundle. -/
-def mnσL {w : ℕ → ℕ} (L : MnLay w) (n : ℕ) : LReg SXReg → List (Fin (prime + mnKa + 4)) :=
+def mnσL {w : ℕ → ℕ} (L : MnLay w) (n : ℕ) : LReg CReg → List (Fin (prime + mnKa + 4)) :=
   mnσ (L.P₀ n) (L.v₀ n)
 
 /-! ### The bundle -/

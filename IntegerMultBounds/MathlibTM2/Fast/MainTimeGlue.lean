@@ -86,7 +86,7 @@ theorem mn_us_small : ∀ x ∈ mnUs, x.1 ∈ mtPmSmall := by
 
 /-- **The time bound**, given the bound of the three source-transform runs. -/
 theorem mn_time_le_of_runs {K : ℕ} {Lb : LProc → MnPr (prime + K)} {w : ℕ → ℕ}
-    {σ : ℕ → LReg SXReg → List (Fin (prime + K + 4))} (D : MnDist K Lb w σ)
+    {σ : ℕ → LReg CReg → List (Fin (prime + K + 4))} (D : MnDist K Lb w σ)
     (Y : MnSyn K Lb w σ) (c : ℕ) {Cr : ℝ}
     (hR : ∀ᶠ n in atTop, (mnRuns D Y n : ℝ) ≤
       Cr * (IntegerMultBounds.MathlibTM2.Cost.totCRT n + IntegerMultBounds.MathlibTM2.Cost.totResamp n + IntegerMultBounds.MathlibTM2.Cost.totConv n +

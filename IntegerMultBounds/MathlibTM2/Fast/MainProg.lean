@@ -242,7 +242,7 @@ structure MnPostParam (R : Fin mnT → List (Fin (A + 4))) (n : ℕ) : Prop wher
 /-- The registers the distribution writes: the source file `E`, the transforms' parameter
 registers `σ`, and the unary and binary parameters of the digit, rounding and output stages. -/
 structure MnDistOut (R : Fin mnT → List (Fin (A + 4))) (n w : ℕ) (E : SrcF 6 A)
-    (σ : LReg SXReg → List (Fin (A + 4))) : Prop where
+    (σ : LReg CReg → List (Fin (A + 4))) : Prop where
   src : ∀ r, R (mnSrc r) = E.get r
   lay : ∀ x, R (mnLay x) = σ x
   dwn : (R (mnIo .dwn)).length = w
@@ -256,7 +256,7 @@ structure MnDistOut (R : Fin mnT → List (Fin (A + 4))) (n w : ℕ) (E : SrcF 6
 /-- **The distribution contract** at `n`, coefficient width `w`, output file `E`, transform
 parameters `σ`, within `c` steps. -/
 def MnDistSpec (body : MnProc → MnPr A) (distP : MnPr A) (n w : ℕ) (E : SrcF 6 A)
-    (σ : LReg SXReg → List (Fin (A + 4))) (c : ℕ) : Prop :=
+    (σ : LReg CReg → List (Fin (A + 4))) (c : ℕ) : Prop :=
   ∀ (v : HS mnT mnQ A Unit) (S : Stacks mnT A), (∀ y, S.L y = []) → (∀ j, S.R (mnι j) = []) →
     MnPostParam S.R n →
     ∃ (v' : HS mnT mnQ A Unit) (S' : Stacks mnT A) (m : ℕ), m ≤ c ∧
@@ -268,14 +268,14 @@ def MnDistSpec (body : MnProc → MnPr A) (distP : MnPr A) (n w : ℕ) (E : SrcF
 
 /-- The precondition of the transforms: empty left stacks and multiplier registers, and the
 reserved layer registers holding `σ`. -/
-def mnSynPre (σ : LReg SXReg → List (Fin (A + 4))) (S : Stacks mnT A) : Prop :=
+def mnSynPre (σ : LReg CReg → List (Fin (A + 4))) (S : Stacks mnT A) : Prop :=
   (∀ y, S.L y = []) ∧ (∀ j, S.R (mnι j) = []) ∧ ∀ x, S.R (mnLay x) = σ x
 
 /-- **The synthetic transforms**: programs meeting the transform contracts of `Fast/ConvSpec` on
 `src (.v .io)` for every main program, from stores meeting `mnSynPre (σ n)`, with record order `π n`
 and step bounds `cF n`, `cO n`, `cF + cO = O(totConv)`, over an alphabet `prime + K ≥ 96`. -/
 structure MnSyn (K : ℕ) (Lb : LProc → MnPr (prime + K)) (w : ℕ → ℕ)
-    (σ : ℕ → LReg SXReg → List (Fin (prime + K + 4))) where
+    (σ : ℕ → LReg CReg → List (Fin (prime + K + 4))) where
   fwdP : MnPr (prime + K)
   oppP : MnPr (prime + K)
   π : ℕ → ℕ → ℕ
@@ -295,7 +295,7 @@ structure MnSyn (K : ℕ) (Lb : LProc → MnPr (prime + K)) (w : ℕ → ℕ)
 CRT and result registers empty, the table word size `Wt`, the width conditions of the stages,
 the lengths of the registers the first loaders clear, and the cost bound. -/
 structure MnDist (K : ℕ) (Lb : LProc → MnPr (prime + K)) (w : ℕ → ℕ)
-    (σ : ℕ → LReg SXReg → List (Fin (prime + K + 4))) where
+    (σ : ℕ → LReg CReg → List (Fin (prime + K + 4))) where
   distP : MnPr (prime + K)
   Wt : ℕ → ℕ
   E : ℕ → SrcF 6 (prime + K)
@@ -333,7 +333,7 @@ structure MnDist (K : ℕ) (Lb : LProc → MnPr (prime + K)) (w : ℕ → ℕ)
 section Costs
 
 variable {K : ℕ} {Lb : LProc → MnPr (prime + K)} {w : ℕ → ℕ}
-  {σ : ℕ → LReg SXReg → List (Fin (prime + K + 4))}
+  {σ : ℕ → LReg CReg → List (Fin (prime + K + 4))}
 
 /-- The base file of `Ã` for the second run. -/
 def mnV₁ (D : MnDist K Lb w σ) (n : ℕ) (hd0 : 0 < d n) : RsaV (RsaX 6) (prime + K) :=

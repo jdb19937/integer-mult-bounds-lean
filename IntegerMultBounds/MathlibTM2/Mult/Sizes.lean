@@ -9,11 +9,11 @@ public import Mathlib.Analysis.SpecificLimits.Normed
 # Size parameters of the multiplication algorithm
 
 Integer definitions of the parameters of the paper's `§8` "Input and transform sizes" as
-functions of the operand length `n`, with the paper's constants `ε = 2^{-75}`, `c = 2^{-56}`:
+functions of the operand length `n`, with the constants `ε = 2^{-29}`, `c = 2^{-32}`:
 
 * `b = ⌈log₂ n⌉`, `p = 6b`;
-* `d = ⌊b^ε⌋`, the largest `d` with `d^(2^75) ≤ b`; `K = ⌊d^c⌋`, the largest `K` with
-  `K^(2^56) ≤ d`;
+* `d = ⌊b^ε⌋`, the largest `d` with `d^(2^29) ≤ b`; `K = ⌊d^c⌋`, the largest `K` with
+  `K^(2^32) ≤ d`;
 * `T = 2^logT`, the power of two in `[4n/b, 8n/b)`; `ℓ = ⌈logT / d⌉`, `r = 2^ℓ`;
 * axis lengths `t_i ∈ {r/2, r}`: the first `numHalf = dℓ - logT` are `r/2`, the rest (in
   particular the last) are `r`;
@@ -121,18 +121,18 @@ theorem eventually_mul_pow_le_two_pow (A k : ℕ) : ∀ᶠ m : ℕ in atTop, A *
   exact_mod_cast this
 
 /-- `c x^k ≤ (c x)^k`. Stated for a variable exponent `k`, so that instances at
-`k = 2^75` never ask the kernel to evaluate a power of a numeral. -/
+`k = 2^29` never ask the kernel to evaluate a power of a numeral. -/
 theorem mul_pow_le_mul_pow {k : ℕ} (hk : k ≠ 0) (c x : ℕ) : c * x ^ k ≤ (c * x) ^ k := by
   rw [mul_pow]
   exact Nat.mul_le_mul_right _ (Nat.le_self_pow hk c)
 
 /-! ### Fixed exponents -/
 
-/-- `2^75`, the root index of `d = ⌊b^ε⌋`, `ε = 2^{-75}`. -/
-def epsExp : ℕ := 2 ^ 75
+/-- `2^29`, the root index of `d = ⌊b^ε⌋`, `ε = 2^{-29}`. -/
+def epsExp : ℕ := 2 ^ 29
 
-/-- `2^56`, the root index of `K = ⌊d^c⌋`, `c = 2^{-56}`. -/
-def cExp : ℕ := 2 ^ 56
+/-- `2^32`, the root index of `K = ⌊d^c⌋`, `c = 2^{-32}`. -/
+def cExp : ℕ := 2 ^ 32
 
 theorem epsExp_ne : epsExp ≠ 0 := by unfold epsExp; positivity
 
@@ -142,16 +142,16 @@ theorem twenty_le_epsExp : 20 ≤ epsExp := by unfold epsExp; norm_num
 
 theorem one_le_cExp : 1 ≤ cExp := by unfold cExp; norm_num
 
-/-- `ε = 2^{-75}` as a real number. -/
+/-- `ε = 2^{-29}` as a real number. -/
 noncomputable def epsilon : ℝ := ((epsExp : ℕ) : ℝ)⁻¹
 
-theorem epsilon_eq : epsilon = (2 ^ 75 : ℝ)⁻¹ := by
+theorem epsilon_eq : epsilon = (2 ^ 29 : ℝ)⁻¹ := by
   norm_num [epsilon, epsExp]
 
-/-- `c = 2^{-56}` as a real number. -/
+/-- `c = 2^{-32}` as a real number. -/
 noncomputable def cParam : ℝ := ((cExp : ℕ) : ℝ)⁻¹
 
-theorem cParam_eq : cParam = (2 ^ 56 : ℝ)⁻¹ := by
+theorem cParam_eq : cParam = (2 ^ 32 : ℝ)⁻¹ := by
   norm_num [cParam, cExp]
 
 /-- `iroot k x = ⌊x^(1/k)⌋`. -/
@@ -189,10 +189,10 @@ def b (n : ℕ) : ℕ := Nat.clog 2 n
 /-- The working precision `p = 6b`. -/
 def p (n : ℕ) : ℕ := 6 * b n
 
-/-- The dimension `d = ⌊b^ε⌋`: the largest `d` with `d^(2^75) ≤ b`. -/
+/-- The dimension `d = ⌊b^ε⌋`: the largest `d` with `d^(2^29) ≤ b`. -/
 def d (n : ℕ) : ℕ := iroot epsExp (b n)
 
-/-- `K = ⌊d^c⌋`: the largest `K` with `K^(2^56) ≤ d`. -/
+/-- `K = ⌊d^c⌋`: the largest `K` with `K^(2^32) ≤ d`. -/
 def K (n : ℕ) : ℕ := iroot cExp (d n)
 
 /-- `log₂ T`: the least `L` with `4n ≤ b 2^L`, i.e. `⌈log₂ ⌈4n/b⌉⌉`. -/
@@ -454,7 +454,7 @@ theorem volume_bounds (hn : 2 ≤ n) : 24 * n ≤ T n * p n ∧ T n * p n < 48 *
   have e : T n * p n = 6 * (b n * T n) := by unfold p; ring
   omega
 
-/-- `p^ε / 12 ≤ d ≤ p^ε`, integer form: `d^(2^75) ≤ p < (12 d)^(2^75)`. -/
+/-- `p^ε / 12 ≤ d ≤ p^ε`, integer form: `d^(2^29) ≤ p < (12 d)^(2^29)`. -/
 theorem d_pow_le_p (n : ℕ) : d n ^ epsExp ≤ p n := by
   have := d_pow_le n
   unfold p
@@ -469,7 +469,7 @@ theorem p_lt_pow (hn : 2 ≤ n) : p n < (12 * d n) ^ epsExp := by
     _ ≤ (6 * (2 * d n)) ^ epsExp := mul_pow_le_mul_pow epsExp_ne 6 _
     _ = (12 * d n) ^ epsExp := by rw [show 6 * (2 * d n) = 12 * d n by ring]
 
-/-- `p^ε / 12 ≤ d ≤ p^ε`, `ε = 2^{-75}`. -/
+/-- `p^ε / 12 ≤ d ≤ p^ε`, `ε = 2^{-29}`. -/
 theorem d_rpow_bounds (hn : 2 ≤ n) :
     (p n : ℝ) ^ epsilon / 12 ≤ d n ∧ (d n : ℝ) ≤ (p n : ℝ) ^ epsilon := by
   have hE : (epsExp : ℝ) ≠ 0 := by exact_mod_cast epsExp_ne
@@ -571,7 +571,7 @@ end Small
 /-! ### The large regime -/
 
 /-- The regime of the deterministic size relations: `n ≥ 2` and `d ≥ 16`, so that
-`b ≥ d^(2^75) ≥ d^20`. -/
+`b ≥ d^(2^29) ≥ d^20`. -/
 def Big (n : ℕ) : Prop := 2 ≤ n ∧ 16 ≤ d n
 
 theorem eventually_big : ∀ᶠ n in atTop, Big n :=

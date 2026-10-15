@@ -164,7 +164,7 @@ theorem mr_chunk_layer_le : ∃ C : ℝ, 0 ≤ C ∧ ∀ᶠ n in atTop, ∀ h, s
     (synLayerCost Cost.brDirs (List.ofFn (cvAx (t n))) (ℓ n) (K n) (ℓ n) (dsW n) h : ℝ) ≤
       C * ((T n : ℝ) * p n) * (d n : ℝ) ^ totLam' := by
   obtain ⟨CB, hCB⟩ := mrT_topCost_le Cost.brDirs
-  obtain ⟨CP, hCP0, hCP⟩ := mrP_pieces_le (nT SXReg) Cost.brDirs mrP_logb_branching
+  obtain ⟨CP, hCP0, hCP⟩ := mrP_pieces_le (nT CReg) Cost.brDirs mrP_logb_branching
   obtain ⟨CL, hCL0, hCL⟩ := mrP_one_add_logb_le
   refine ⟨(48 * CB * CL + 2 * CP) * (gateCount (program Cost.brDirs) + m + 6), by positivity, ?_⟩
   filter_upwards [eventually_big, mr_b_pow_le_r 2, mr_p_pow_le_two_pow_K 3] with n hbig hbr hpK
@@ -292,7 +292,7 @@ theorem mr_chunk_layer_le : ∃ C : ℝ, 0 ≤ C ∧ ∀ᶠ n in atTop, ∀ h, s
       CB * (((synQ es (ℓ n) (K n) h + 1 + (synPcsR es (ℓ n) (K n) h).length : ℕ) : ℝ) *
         ((2 ^ es.sum * (2 ^ ℓ n * W) : ℕ) : ℝ)) +
       (((synPcsR es (ℓ n) (K n) h).map fun pc =>
-        layerCost (nT SXReg) Cost.brDirs pc.u (synKh (ℓ n) (K n) h) (synRh (ℓ n) (K n) h) pc.R₀
+        layerCost (nT CReg) Cost.brDirs pc.u (synKh (ℓ n) (K n) h) (synRh (ℓ n) (K n) h) pc.R₀
           (es.sum - synAR es (ℓ n) (K n) h) (2 ^ ℓ n) W pc.j pc.a₀).sum : ℝ) := by
     unfold synLayerCost
     rw [hAR, hWe]
@@ -301,7 +301,7 @@ theorem mr_chunk_layer_le : ∃ C : ℝ, 0 ≤ C ∧ ∀ᶠ n in atTop, ∀ h, s
   have hdl : 0 ≤ (d n : ℝ) ^ totLam' := Real.rpow_nonneg (Nat.cast_nonneg _) _
   have hsum : ((((synPcs (K n) (synX es (ℓ n) (K n)) (synDpp es) (synOS es (ℓ n) (K n) h)
       (synJp es) (synDpp es)).map fun pc =>
-        layerCost (nT SXReg) Cost.brDirs pc.u (K n) (synRh (ℓ n) (K n) h) pc.R₀
+        layerCost (nT CReg) Cost.brDirs pc.u (K n) (synRh (ℓ n) (K n) h) pc.R₀
           (es.sum - synAc es (ℓ n) (K n)) (2 ^ ℓ n) W pc.j pc.a₀).sum : ℕ) : ℝ) ≤
       CP * (d n : ℝ) ^ totLam' * (2 * ((T n : ℝ) * ((gateCount (program Cost.brDirs) + m + 6) * p n))) := by
     unfold synJp

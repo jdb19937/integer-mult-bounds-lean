@@ -13,18 +13,18 @@ loaders (`Fast/LoadLayout.lean`) and the writer of the description streams
 
 ## Register maps
 
-* `slyRg : LayReg 6 → Fin (nT SXReg)`: the record stream `str` is `io` itself, the interchange
+* `slyRg : LayReg 6 → Fin (nT CReg)`: the record stream `str` is `io` itself, the interchange
   bank is the bank `swp 0` of the layer machine, every other register is the layout wire `ly i`
   of `synLayRg`.
 * `slyT c` (`c < 64`): the temporaries `wtmp (wireOf c)` of the bank of the layer machine, empty
   whenever a transform runs (`synIdle`).
-* `slyLr : LdlReg → Fin (nT SXReg)`: the loader registers on `slyT 0 … slyT 6`.
-* `slyGr : LdgReg → Fin (nT SXReg)`: the writer's unary inputs `N, ℓ, K, D` are the persistent
+* `slyLr : LdlReg → Fin (nT CReg)`: the loader registers on `slyT 0 … slyT 6`.
+* `slyGr : LdgReg → Fin (nT CReg)`: the writer's unary inputs `N, ℓ, K, D` are the persistent
   wires `p .N`, `p .ℓ`, `p .K`, `p .D` (read only), `B` is `s 0`, the axis word `E` is `s 2`, the
   word width register `wr` of the table machine is `s 1`; the other table registers and the spare
   `tc` are on `slyT 7 … slyT 61`.
 
-`sly_regs : LdgRegs slyRg slyLr slyGr`; `sly_swapT : swapT 6 ≤ nT SXReg`.
+`sly_regs : LdgRegs slyRg slyLr slyGr`; `sly_swapT : swapT 6 ≤ nT CReg`.
 -/
 
 @[expose] public section
@@ -45,8 +45,8 @@ set_option linter.constructorNameAsVariable false
 theorem sly_NW : 64 ≤ NW := by rw [IntegerMultBounds.MathlibTM2.Cost.br_NW_eq]; norm_num
 
 /-- The temporary `c` of the layout programs: the bank temporary of wire `c`. -/
-noncomputable def slyT (c : Fin 64) : Fin (nT SXReg) :=
-  reg (BReg := SXReg) (.wtmp (wireOf (Fin.castLE sly_NW c)))
+noncomputable def slyT (c : Fin 64) : Fin (nT CReg) :=
+  reg (BReg := CReg) (.wtmp (wireOf (Fin.castLE sly_NW c)))
 
 @[simp] theorem slyT_inj {a b : Fin 64} : slyT a = slyT b ↔ a = b := by
   constructor
@@ -70,8 +70,8 @@ theorem slyT_out (c : Fin 64) : ∀ x, sreg x ≠ slyT c := fun x => slyT_ne_sre
 
 /-- The layout registers: `str` is `io`, the bank is `swp 0`, the others are the wires
 `ly i`. -/
-noncomputable def slyRg : LayReg 6 → Fin (nT SXReg)
-  | .str => reg (BReg := SXReg) .io
+noncomputable def slyRg : LayReg 6 → Fin (nT CReg)
+  | .str => reg (BReg := CReg) .io
   | .r0 => sreg (.ly 1)
   | .r1 => sreg (.ly 2)
   | .r2 => sreg (.ly 3)
@@ -88,14 +88,14 @@ noncomputable def slyRg : LayReg 6 → Fin (nT SXReg)
   | .mA => sreg (.ly 14)
   | .mB => sreg (.ly 15)
   | .us r => sreg (.ly ⟨16 + r.val, by omega⟩)
-  | .sw j => reg (BReg := SXReg) (.bc (.swp 0 j))
+  | .sw j => reg (BReg := CReg) (.bc (.inl (.sx (.swp 0 j))))
   | .cM => sreg (.ly 19)
   | .tM => sreg (.ly 20)
   | .cX => sreg (.ly 21)
   | .tX => sreg (.ly 22)
 
 /-- The loader registers. -/
-noncomputable def slyLr : LdlReg → Fin (nT SXReg)
+noncomputable def slyLr : LdlReg → Fin (nT CReg)
   | .dM => slyT 0
   | .dX => slyT 1
   | .cN => slyT 2
@@ -105,7 +105,7 @@ noncomputable def slyLr : LdlReg → Fin (nT SXReg)
   | .tS => slyT 6
 
 /-- The registers of the writer. -/
-noncomputable def slyGr : LdgReg → Fin (nT SXReg)
+noncomputable def slyGr : LdgReg → Fin (nT CReg)
   | .tbl (.v i) => slyT ⟨8 + i.val, by omega⟩
   | .tbl .wr => sreg (.s 1)
   | .tbl .wn => slyT 48
@@ -122,7 +122,7 @@ noncomputable def slyGr : LdgReg → Fin (nT SXReg)
 theorem slyRg_injective : Function.Injective slyRg := by
   intro x y h
   cases x <;> cases y <;> simp only [slyRg, sreg_eq, reg_inj, LReg.wire.injEq,
-    synWire_eq_iff, SynW.ly.injEq, LReg.bc.injEq, SXReg.swp.injEq, reduceCtorEq, true_and,
+    synWire_eq_iff, SynW.ly.injEq, LReg.bc.injEq, Sum.inl.injEq, CXReg.sx.injEq, SXReg.swp.injEq, reduceCtorEq, true_and,
     LayReg.us.injEq, LayReg.sw.injEq] at h ⊢ <;>
     first
     | rfl
@@ -160,8 +160,8 @@ theorem slyGr_slyLr (x : LdgReg) (y : LdlReg) : slyGr x ≠ slyLr y := by
 theorem sly_regs : LdgRegs slyRg slyLr slyGr :=
   ⟨⟨slyRg_injective, slyLr_injective, slyRg_slyLr⟩, slyGr_injective, slyGr_slyRg, slyGr_slyLr⟩
 
-theorem sly_swapT : swapT 6 ≤ nT SXReg := by
-  have h : Function.Injective fun j : Fin (swapT 6) => reg (BReg := SXReg) (.bc (.swp 0 j)) := by
+theorem sly_swapT : swapT 6 ≤ nT CReg := by
+  have h : Function.Injective fun j : Fin (swapT 6) => reg (BReg := CReg) (.bc (.inl (.sx (.swp 0 j)))) := by
     intro a b e
     simpa using e
   simpa using Fintype.card_le_of_injective _ h

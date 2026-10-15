@@ -122,7 +122,7 @@ variable {K : ℕ} {body : MnProc → MnPr (prime + K)}
 lemma mn_hdisj : ∀ r j, mnRg r ≠ mnι j := mnRg_ne_ι
 
 /-- `mnSynPre` survives every change confined to the stage layout. -/
-lemma mn_framed (σ : LReg SXReg → List (Fin (prime + K + 4))) :
+lemma mn_framed (σ : LReg CReg → List (Fin (prime + K + 4))) :
     SrcFramed mnRg (mnSynPre (A := prime + K) σ) := by
   intro S S' ⟨hL, hι, hl⟩ ⟨_, _, hL', hk⟩
   refine ⟨fun y => by rw [hL']; exact hL y, fun j => ?_, fun x => ?_⟩
@@ -450,7 +450,7 @@ theorem mn_chain_runs (hA : 96 ≤ prime + K) {n : ℕ} (hbig : Big n)
     (hsmall : 2 * d n * p n ^ 2 ≤ Sizes.T n * logT n)
     (hEs : 9 * (2 : ℝ) ^ gamma n * Sizes.T n * logT n ≤ 2 ^ p n / 100)
     {fwdP oppP : MnPr (prime + K)} {w W cF cO : ℕ} {π : ℕ → ℕ}
-    {σ : LReg SXReg → List (Fin (prime + K + 4))}
+    {σ : LReg CReg → List (Fin (prime + K + 4))}
     (hF : SynFwdSpec body fwdP (mnSrc (.v .io)) (mnSynPre σ) w (p n) (ℓ n) (cvAx (t n)) π cF)
     (hO : SynOppSpec body oppP (mnSrc (.v .io)) (mnSynPre σ) w (p n) (ℓ n) (cvAx (t n)) π cO)
     (hπ : ∀ m < cvM (cvAx (t n)), π m < cvM (cvAx (t n)))

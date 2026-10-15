@@ -8,7 +8,7 @@
 `Turing.FinTM2` machine multiplies every pair of natural numbers, with standard
 binary input/output encodings, in worst-case time `O(n (log n)^(1-kappa))`.
 The construction proves the positive saving
-`kappa = 296 / (10^11 * 2^131)`, approximately `1.09e-48`, where `n` is the
+`kappa = 296 / (10^11 * 2^61)`, approximately `1.28e-27`, where `n` is the
 total encoded input length. See [the completed plan](plan/C-mathlib-end-to-end.md).
 
 This completed proof is the primary route. The [retention audit](docs/proof-retention.md)
@@ -310,7 +310,7 @@ the literal machine model is proved correct with a runtime bound.
 
 | Part of the proof | Source | Mathematics | Tape | Main gaps |
 | --- | --- | --- | --- | --- |
-| [Proved Mathlib end-to-end multiplier](plan/C-mathlib-end-to-end.md) | Full host route | ✅ | ✅ | None for the existential sub-n-log-n statement: `MathlibTM2.statement` is unconditional, with positive saving `296 / (10^11 * 2^131)`. The remaining rows track the original native route and its stronger fixed exponent. |
+| [Proved Mathlib end-to-end multiplier](plan/C-mathlib-end-to-end.md) | Full host route | ✅ | ✅ | None for the existential sub-n-log-n statement: `MathlibTM2.statement` is unconditional, with positive saving `296 / (10^11 * 2^61)`. The remaining rows track the original native route and its stronger fixed exponent. |
 | The machine model and elementary streams | §2 | ✅ | ✅ | Fixed machines execute initialized mixed affine schedules and actual nonrecursive Shared50 segments from sole array and canonical b/W inputs. Exact output, retained headers, dimension synthesis and complete private-workspace cleanup are proved in linear-volume time; every private tape and tracker returns blank at head zero. Counted pointwise finite-symbol operations also have exact tape proofs, including encoded XOR. Cross-view composition and the full recursive call controller remain open. |
 | Two finite networks with a rank saving | §3 | ✅ | 🟡 | Optimized finite network algebra and rank certificates are proved. The actual local/global Shared50 scalar XOR lists now execute on fixed tapes with exact data exchange, dirty-scratch restoration and linear stream-time bounds. One width-independent interleaved control list now preserves every role, address operation and scalar gate, with exact recursive-call count and transpose semantics. Certified segment/gate tape machines and explicit call boundaries are available; recursive calls and full network tape assembly remain open. |
 | Faster interchange of address chunks | §4 | ✅ | ✅ | The main binary interchange theorem is proved: one fixed machine uses original five canonical headers, physically selects equal or adjacent widths, returns exact binary rectangular transpose, and restores all private storage. Its actual runtime, including comparisons and dispatch, has the certified exponent 1−296/10^11, including zero widths. Multiplication EndToEnd remains open. |

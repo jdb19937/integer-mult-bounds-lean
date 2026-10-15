@@ -168,25 +168,25 @@ variable {Q Ka : ℕ} {U : Type}
 /-- One pass of the forward loop: `h := |p .c|` (the rounds left), the forward round, `p .h`
 cleared. -/
 noncomputable def synBodyF (ds : ComplexFramedExecution.Directions) :
-    Pr LProc (nT SXReg) Q (prime + Ka) U :=
+    Pr LProc (nT CReg) Q (prime + Ka) U :=
   .seq (ucopy (sreg (.p .c)) (sreg (.p .h)) (sreg (.s 2)))
     (.seq (synRoundF ds) (uclear (sreg (.p .h))))
 
 /-- One pass of the opposite loop: `h := |p .t| - 1` (the rounds done), the opposite round,
 `p .h` cleared. -/
 noncomputable def synBodyO (ds : ComplexFramedExecution.Directions) :
-    Pr LProc (nT SXReg) Q (prime + Ka) U :=
+    Pr LProc (nT CReg) Q (prime + Ka) U :=
   .seq (ucopy (sreg (.p .t)) (sreg (.p .h)) (sreg (.s 2)))
     (.seq (synPop (sreg (.p .h))) (.seq (synRoundO ds) (uclear (sreg (.p .h)))))
 
 /-- The loop of forward rounds over the counter `p .c`. -/
 noncomputable def synLoopF (ds : ComplexFramedExecution.Directions) :
-    Pr LProc (nT SXReg) Q (prime + Ka) U :=
+    Pr LProc (nT CReg) Q (prime + Ka) U :=
   scanP (sreg (.p .c)) (sreg (.p .t)) (synBodyF ds)
 
 /-- The loop of opposite rounds over the counter `p .c`. -/
 noncomputable def synLoopO (ds : ComplexFramedExecution.Directions) :
-    Pr LProc (nT SXReg) Q (prime + Ka) U :=
+    Pr LProc (nT CReg) Q (prime + Ka) U :=
   scanP (sreg (.p .c)) (sreg (.p .t)) (synBodyO ds)
 
 /-- The step bound of the forward loop of `A` rounds, `stk` bounding the parking costs. -/
@@ -243,7 +243,7 @@ theorem sg_synLoopF {es : List ℕ} {ℓ K : ℕ} (H : LayHyp es ℓ K) {l w p A
   set L := layPerm es ℓ K with hL
   set cs := v (.p .c) with hcs
   set stk := synStashCostW v synXS + 6 * A + 6 with hstk
-  let Φ : ℕ → Fin (nT SXReg) → List (Fin (prime + Ka + 4)) := fun j =>
+  let Φ : ℕ → Fin (nT CReg) → List (Fin (prime + Ka + 4)) := fun j =>
     synG (synIdle (cstream (prime + Ka) w (IntegerMultBounds.MathlibTM2.Fast.rpStream (2 ^ es.sum)
       (synYnum p L (synUF p es A z j)))) P₀) v
   have hstep : ∀ j < cs.length, LayRuns (layerTable (Ka := Ka) (U := U) hQ ds) (synBodyF ds)
@@ -313,7 +313,7 @@ theorem sg_synLoopO {es : List ℕ} {ℓ K : ℕ} (H : LayHyp es ℓ K) {l w p A
   set L := layPerm es ℓ K with hL
   set cs := v (.p .c) with hcs
   set stk := synStashCostW v synXS + 6 * A + 6 with hstk
-  let Φ : ℕ → Fin (nT SXReg) → List (Fin (prime + Ka + 4)) := fun j =>
+  let Φ : ℕ → Fin (nT CReg) → List (Fin (prime + Ka + 4)) := fun j =>
     synG (synIdle (cstream (prime + Ka) w (IntegerMultBounds.MathlibTM2.Fast.rpStream (2 ^ es.sum)
       (synYnum p L (oppRoundsC p es j z)))) P₀) v
   have hstep : ∀ j < cs.length, LayRuns (layerTable (Ka := Ka) (U := U) hQ ds) (synBodyO ds)
@@ -402,23 +402,23 @@ theorem synYnum_rpGrid {N p : ℕ} (L : Equiv.Perm (Fin N)) {r : ℕ} (Z : ℕ �
 /-- The forward transform: the layout program `layP` (records into the physical order of the
 layout), then the loop of forward rounds. -/
 noncomputable def synFwd (ds : ComplexFramedExecution.Directions)
-    (layP : Pr LProc (nT SXReg) Q (prime + Ka) U) : Pr LProc (nT SXReg) Q (prime + Ka) U :=
+    (layP : Pr LProc (nT CReg) Q (prime + Ka) U) : Pr LProc (nT CReg) Q (prime + Ka) U :=
   .seq layP (synLoopF ds)
 
 /-- The opposite transform: the loop of opposite rounds, then the program `layQ` (records back
 into the natural order). -/
 noncomputable def synOpp (ds : ComplexFramedExecution.Directions)
-    (layQ : Pr LProc (nT SXReg) Q (prime + Ka) U) : Pr LProc (nT SXReg) Q (prime + Ka) U :=
+    (layQ : Pr LProc (nT CReg) Q (prime + Ka) U) : Pr LProc (nT CReg) Q (prime + Ka) U :=
   .seq (synLoopO ds) layQ
 
 /-- The precondition of the transforms: empty left stacks, and every register other than `io`
 as in the file `synG (synIdle [] P₀) v₀` for some contents `P₀` of `park` with `Pk P₀`. -/
 def synPre {A : ℕ} (Pk : List (Fin (A + 4)) → Prop) (v₀ : SynW → List (Fin (A + 4)))
-    (S : Stacks (nT SXReg) A) : Prop :=
+    (S : Stacks (nT CReg) A) : Prop :=
   (∀ y, S.L y = []) ∧ ∃ P₀, Pk P₀ ∧ ∀ k, k ≠ lreg .io → S.R k = synG (synIdle [] P₀) v₀ k
 
 theorem synPre_R {A : ℕ} {Pk : List (Fin (A + 4)) → Prop} {v₀ : SynW → List (Fin (A + 4))}
-    {S : Stacks (nT SXReg) A} (h : synPre Pk v₀ S) :
+    {S : Stacks (nT CReg) A} (h : synPre Pk v₀ S) :
     ∃ P₀, Pk P₀ ∧ S.R = synG (synIdle (S.R (lreg .io)) P₀) v₀ := by
   obtain ⟨-, P₀, hPk, hP⟩ := h
   refine ⟨P₀, hPk, funext fun k => ?_⟩
@@ -456,7 +456,7 @@ theorem synFwd_spec {d : ℕ} (a : Fin d → ℕ) {ℓ K l w p : ℕ}
     (hvh : v₀ (.p .h) = []) (hvt : v₀ (.p .t) = []) (hvc : (v₀ (.p .c)).length = nRounds a)
     (hcb : blank ∉ v₀ (.p .c))
     (Pk : List (Fin (prime + Ka + 4)) → Prop)
-    (layP : Pr LProc (nT SXReg) Q (prime + Ka) U) (cL : ℕ)
+    (layP : Pr LProc (nT CReg) Q (prime + Ka) U) (cL : ℕ)
     (hLay : ∀ (P₀ : List (Fin (prime + Ka + 4))), Pk P₀ → ∀ (Z : ℕ → Fin (2 ^ l) → GaussianInt),
       LayRuns (layerTable (Ka := Ka) (U := U) hQ ds) layP
         (synG (synIdle (cstream (prime + Ka) w (rpStream (cvM a) Z)) P₀) v₀)
@@ -486,7 +486,7 @@ theorem synOpp_spec {d : ℕ} (a : Fin d → ℕ) {ℓ K l w p : ℕ}
     (hvh : v₀ (.p .h) = []) (hvt : v₀ (.p .t) = []) (hvc : (v₀ (.p .c)).length = nRounds a)
     (hcb : blank ∉ v₀ (.p .c))
     (Pk : List (Fin (prime + Ka + 4)) → Prop)
-    (layQ : Pr LProc (nT SXReg) Q (prime + Ka) U) (cL : ℕ)
+    (layQ : Pr LProc (nT CReg) Q (prime + Ka) U) (cL : ℕ)
     (hLay : ∀ (P₀ : List (Fin (prime + Ka + 4))), Pk P₀ → ∀ (Y : ℕ → Fin (2 ^ l) → GaussianInt),
       LayRuns (layerTable (Ka := Ka) (U := U) hQ ds) layQ
         (synG (synIdle (cstream (prime + Ka) w (rpStream (cvM a) Y)) P₀) v₀)
@@ -565,7 +565,7 @@ theorem synFwd_spec_br {d : ℕ} (a : Fin d → ℕ) {ℓ K l w p : ℕ}
     (hvh : v₀ (.p .h) = []) (hvt : v₀ (.p .t) = []) (hvc : (v₀ (.p .c)).length = nRounds a)
     (hcb : blank ∉ v₀ (.p .c))
     (Pk : List (Fin (prime + Ka + 4)) → Prop)
-    (layP : Pr LProc (nT SXReg) Q (prime + Ka) U) (cL : ℕ)
+    (layP : Pr LProc (nT CReg) Q (prime + Ka) U) (cL : ℕ)
     (hLay : ∀ (P₀ : List (Fin (prime + Ka + 4))), Pk P₀ → ∀ (Z : ℕ → Fin (2 ^ l) → GaussianInt),
       LayRuns (layerTable (Ka := Ka) (U := U) hQ Cost.brDirs) layP
         (synG (synIdle (cstream (prime + Ka) w (rpStream (cvM a) Z)) P₀) v₀)
@@ -586,7 +586,7 @@ theorem synOpp_spec_br {d : ℕ} (a : Fin d → ℕ) {ℓ K l w p : ℕ}
     (hvh : v₀ (.p .h) = []) (hvt : v₀ (.p .t) = []) (hvc : (v₀ (.p .c)).length = nRounds a)
     (hcb : blank ∉ v₀ (.p .c))
     (Pk : List (Fin (prime + Ka + 4)) → Prop)
-    (layQ : Pr LProc (nT SXReg) Q (prime + Ka) U) (cL : ℕ)
+    (layQ : Pr LProc (nT CReg) Q (prime + Ka) U) (cL : ℕ)
     (hLay : ∀ (P₀ : List (Fin (prime + Ka + 4))), Pk P₀ → ∀ (Y : ℕ → Fin (2 ^ l) → GaussianInt),
       LayRuns (layerTable (Ka := Ka) (U := U) hQ Cost.brDirs) layQ
         (synG (synIdle (cstream (prime + Ka) w (rpStream (cvM a) Y)) P₀) v₀)

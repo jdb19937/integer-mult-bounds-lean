@@ -24,7 +24,7 @@ open IntegerMultBounds.Networks.Shared50ModularControl (prime)
 
 /-- **The time bound of the fast multiplier.** -/
 theorem mnTime_le {K : ℕ} {Lb : LProc → MnPr (prime + K)} {w : ℕ → ℕ}
-    {σ : ℕ → LReg SXReg → List (Fin (prime + K + 4))} (D : MnDist K Lb w σ)
+    {σ : ℕ → LReg CReg → List (Fin (prime + K + 4))} (D : MnDist K Lb w σ)
     (Y : MnSyn K Lb w σ) (c : ℕ) :
     ∃ C : ℕ, ∀ᶠ n in atTop, (mnTime D Y c n : ℝ) ≤ IntegerMultBounds.MathlibTM2.Cost.totBound C n := by
   obtain ⟨Cr, -, hR⟩ := mn_runs_le D Y

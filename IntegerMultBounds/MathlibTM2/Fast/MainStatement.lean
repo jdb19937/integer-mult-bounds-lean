@@ -38,7 +38,7 @@ open IntegerMultBounds.Networks.Shared50ModularControl (prime)
 parameter distribution (`MnDist`). -/
 theorem statement_of_bundles
     (h : ∃ (K : ℕ) (Lb : LProc → MnPr (prime + K)) (w : ℕ → ℕ)
-      (σ : ℕ → LReg SXReg → List (Fin (prime + K + 4))),
+      (σ : ℕ → LReg CReg → List (Fin (prime + K + 4))),
       Nonempty (MnSyn K Lb w σ) ∧ Nonempty (MnDist K Lb w σ)) :
     IntegerMultBounds.MathlibTM2.Statement := by
   obtain ⟨K, Lb, w, σ, ⟨Y⟩, ⟨D⟩⟩ := h

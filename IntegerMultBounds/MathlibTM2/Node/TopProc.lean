@@ -9,17 +9,17 @@ public import IntegerMultBounds.MathlibTM2.Node.LayerProc
 # The host machine of the simultaneous layer
 
 `topProg` computes `topZ` (`Layer/TopZ.lean`) on the array stored on `io`. It is one fixed program
-on the register file of the layer machine (`nT SXReg` registers, procedure table
+on the register file of the layer machine (`nT CReg` registers, procedure table
 `layerTable hQ ds`): every size and configuration value is read from registers at run time, word
 lengths and shift amounts are lengths of counter registers, and the pieces are a record consumed
 by a loop.
 
 **Register interface** (`topProg_exec`).
 * `io`: `encZ A w Z` in, `encZ A w (topZ …)` out (`A = prime + Ka`).
-* `TopRegs S.R (n + a) r w' K ρ`: every register at rest for `n + a` address bits, `r`
+* `TopRegs S.R (n + a) r w' K ρ`: Gd every register at rest for `n + a` address bits, `r`
   coefficients and words of `w'` symbols; `lev`, `u`, `a₀`, `L`, `rows` empty; `n`, `w`, `rw`,
   `K`, `ρ` holding `n + a`, `w'`, `r w'`, `K`, `ρ` symbols.
-* `park`: the configuration record `topRec (topCfg w s a R R₂ q aT K oS D)` on top of any
+* `park`: the configuration record `topRec (topCfg w s a R R₂ q aT K oS D q₂ aT₂)` on top of any
   contents. A record is a list of unary fields, each `x` ticks followed by the separator
   `topSep = bitSymbol false` (`Node/TopRec.lean`). Fields: `0` the input and output width `w`,
   `1` the shift `s`, `2` the number `a` of top address bits, `3` the rows `R`, `4` the padded
@@ -76,6 +76,8 @@ open IntegerMultBounds IntegerMultBounds.Networks IntegerMultBounds.Machine Inte
 open IntegerMultBounds.MathlibTM2.Node hiding LReg
 open IntegerMultBounds.Networks.Shared50ModularControl (prime)
 
+variable {Gd : ℕ}
+
 set_option linter.unusedSimpArgs false
 
 /-- Evaluate register updates at register names. -/
@@ -92,8 +94,8 @@ variable {A : ℕ}
 /-- The registers of the host machine between its stages: every register at rest for `N`
 address bits, `r` coefficients and words of `w` symbols; the per-call parameters `lev`, `u`,
 `a₀`, `L`, `rows` empty; `n`, `w`, `rw`, `K`, `ρ` holding `N`, `w`, `r w`, `K`, `ρ` symbols. -/
-structure TopRegs (Rg : Fin (nT SXReg) → List (Fin (A + 4))) (N r w K ρ : ℕ) : Prop where
-  rest : Rest bcEmpty N r w Rg
+structure TopRegs (Rg : Fin (nT CReg) → List (Fin (A + 4))) (N r w K ρ Gd : ℕ) : Prop where
+  rest : Rest (bcRestC Gd) N r w Rg
   hlev : Rg (reg .lev) = []
   hu : Rg (reg .u) = []
   ha₀ : Rg (reg .a₀) = []
@@ -106,9 +108,9 @@ structure TopRegs (Rg : Fin (nT SXReg) → List (Fin (A + 4))) (N r w K ρ : ℕ
   hρ : (Rg (reg .ρ)).length = ρ
 
 /-- `TopRegs` does not read `io`. -/
-lemma TopRegs.update_io {Rg : Fin (nT SXReg) → List (Fin (A + 4))} {N r w K ρ : ℕ}
-    (h : TopRegs Rg N r w K ρ) (l : List (Fin (A + 4))) :
-    TopRegs (Function.update Rg (reg .io) l) N r w K ρ where
+lemma TopRegs.update_io {Rg : Fin (nT CReg) → List (Fin (A + 4))} {N r w K ρ : ℕ}
+    (h : TopRegs Rg N r w K ρ Gd) (l : List (Fin (A + 4))) :
+    TopRegs (Function.update Rg (reg .io) l) N r w K ρ Gd where
   rest := h.rest.update_io l
   hlev := by rw [Function.update_of_ne (reg_ne (by simp))]; exact h.hlev
   hu := by rw [Function.update_of_ne (reg_ne (by simp))]; exact h.hu
@@ -123,8 +125,8 @@ lemma TopRegs.update_io {Rg : Fin (nT SXReg) → List (Fin (A + 4))} {N r w K ρ
 
 /-- Outside `ph .af`, `lf (.k .cf)` and `rowctr`, the rest state does not depend on the number
 of address bits. -/
-lemma topRestSpec_bits {bc : SXReg → List (Fin (A + 4)) → Prop} {N N' r w : ℕ}
-    {x : LReg SXReg} {l : List (Fin (A + 4))} (h1 : x ≠ .ph .af) (h2 : x ≠ .lf (.k .cf))
+lemma topRestSpec_bits {bc : CReg → List (Fin (A + 4)) → Prop} {N N' r w : ℕ}
+    {x : LReg CReg} {l : List (Fin (A + 4))} (h1 : x ≠ .ph .af) (h2 : x ≠ .lf (.k .cf))
     (h3 : x ≠ .rowctr) : restSpec bc N r w x l ↔ restSpec bc N' r w x l := by
   cases x with
   | ph y => cases y <;> simp_all [restSpec, phRest]
@@ -135,8 +137,8 @@ lemma topRestSpec_bits {bc : SXReg → List (Fin (A + 4)) → Prop} {N N' r w : 
   | _ => simp_all [restSpec]
 
 /-- The parameter registers are unconstrained at rest. -/
-lemma topRestSpec_par {bc : SXReg → List (Fin (A + 4)) → Prop} {N r w : ℕ} {x : LReg SXReg}
-    (hx : x ∈ parRegs (BReg := SXReg)) (l : List (Fin (A + 4))) : restSpec bc N r w x l := by
+lemma topRestSpec_par {bc : CReg → List (Fin (A + 4)) → Prop} {N r w : ℕ} {x : LReg CReg}
+    (hx : x ∈ parRegs (BReg := CReg)) (l : List (Fin (A + 4))) : restSpec bc N r w x l := by
   simp only [parRegs, List.mem_cons, List.not_mem_nil, or_false] at hx
   rcases hx with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;> trivial
 
@@ -153,13 +155,16 @@ structure TopPc where
   a₀ : ℕ
 
 /-- The conditions of a piece on `R₂` rows of `n` address bits with words of `w` symbols. -/
-structure TopPc.Ok (ds : ComplexFramedExecution.Directions) (K n w R₂ : ℕ) (pc : TopPc) :
+structure TopPc.Ok (ds : ComplexFramedExecution.Directions) (K n w R₂ Gd : ℕ) (pc : TopPc) :
     Prop where
   hu : 1 ≤ pc.u
   hR₀ : 1 ≤ pc.R₀
   hR : R₂ = rowsAt pc.R₀ pc.j
   hTw : ∀ i < pc.j, expZ pc.u ds i ≤ w
   hfit : pc.a₀ + K * bits pc.u pc.j ≤ n
+  hres : 1 ≤ pc.j → 2 ≤ bits pc.u (pc.j - 1) → 1 ≤ Gd ∧ Gd + 3 ≤ K ∧
+    (bits pc.u (pc.j - 1) - 1) * Gd ≤ pc.a₀ ∧
+    pc.a₀ + K * bits pc.u pc.j + 3 * ((bits pc.u (pc.j - 1) - 1) * Gd) ≤ n
 
 lemma topFit {ρ K a₀ k n : ℕ} (hρ : ρ < K) (h : a₀ + K * k ≤ n) : ∀ i < k, a₀ + ρ + K * i < n :=
   fun i hi => by
@@ -168,13 +173,13 @@ lemma topFit {ρ K a₀ k n : ℕ} (hρ : ρ < K) (h : a₀ + K * k ≤ n) : ∀
     omega
 
 /-- The piece of `TopZ` computed by a machine piece. -/
-noncomputable def TopPc.piece {ds : ComplexFramedExecution.Directions} {ρ K n w R₂ : ℕ}
-    (hρ : ρ < K) (pc : TopPc) (h : pc.Ok ds K n w R₂) : Piece n R₂ :=
+noncomputable def TopPc.piece {ds : ComplexFramedExecution.Directions} {ρ K n w R₂ Gd : ℕ}
+    (hρ : ρ < K) (pc : TopPc) (h : pc.Ok ds K n w R₂ Gd) : Piece n R₂ :=
   ⟨pc.u, pc.j, pc.R₀, h.hR, actMap pc.a₀ ρ K (bits pc.u pc.j) n (topFit hρ h.hfit)⟩
 
 /-- The pieces of a list of machine pieces. -/
-noncomputable def topPieces {ds : ComplexFramedExecution.Directions} {ρ K n w R₂ : ℕ}
-    (hρ : ρ < K) : (pcs : List TopPc) → (∀ pc ∈ pcs, pc.Ok ds K n w R₂) → List (Piece n R₂)
+noncomputable def topPieces {ds : ComplexFramedExecution.Directions} {ρ K n w R₂ Gd : ℕ}
+    (hρ : ρ < K) : (pcs : List TopPc) → (∀ pc ∈ pcs, pc.Ok ds K n w R₂ Gd) → List (Piece n R₂)
   | [], _ => []
   | pc :: pcs, h => pc.piece hρ (h pc List.mem_cons_self) ::
       topPieces hρ pcs (fun q hq => h q (List.mem_cons_of_mem _ hq))
@@ -189,7 +194,8 @@ variable {A : ℕ}
 /-- The configuration record on `park`: the input width `w`, the shift `s`, the number `a` of
 top address bits, the rows `R` and `R₂`, the top kernels (`q` bits at `aT + ρ + K i`, `L = K q`),
 and the selected bits `oS + ρ + K i`, `i < D`. -/
-def topCfg (w s a R R₂ q aT K oS D : ℕ) : List ℕ := [w, s, a, R, R₂, q, aT, K * q, oS, D]
+def topCfg (w s a R R₂ q aT K oS D q₂ aT₂ : ℕ) : List ℕ :=
+  [w, s, a, R, R₂, q, aT, K * q, oS, D, q₂, aT₂, K * q₂]
 
 /-- The fields of one piece: level, leaf bits, offset and slot width. -/
 def topPcFields (K : ℕ) (pc : TopPc) : List ℕ := [pc.j, pc.u, pc.a₀, K * bits pc.u pc.j]
@@ -199,14 +205,14 @@ def topPcRec (K : ℕ) (pcs : List TopPc) : List ℕ := pcs.flatMap (topPcFields
 
 /-- The storage registers: `park` holds the configuration record on top of anything, `ph .arr`
 holds the piece record, `lf (.k .arr)`, `st` and `cs` are empty. -/
-structure TopIn (Rg : Fin (nT SXReg) → List (Fin (A + 4))) (cfg pfs : List ℕ) : Prop where
+structure TopIn (Rg : Fin (nT CReg) → List (Fin (A + 4))) (cfg pfs : List ℕ) : Prop where
   cf : ∃ rest, Rg (reg .park) = topRec cfg ++ rest
   pl : Rg (reg (.ph .arr)) = topRec pfs
   pb : Rg (reg (.lf (.k .arr))) = []
   x : Rg (reg .st) = []
   y : Rg (reg .cs) = []
 
-lemma TopIn.update_io {Rg : Fin (nT SXReg) → List (Fin (A + 4))} {cfg pfs : List ℕ}
+lemma TopIn.update_io {Rg : Fin (nT CReg) → List (Fin (A + 4))} {cfg pfs : List ℕ}
     (h : TopIn Rg cfg pfs) (l : List (Fin (A + 4))) :
     TopIn (Function.update Rg (reg .io) l) cfg pfs where
   cf := by rw [Function.update_of_ne (reg_ne (by simp))]; exact h.cf
@@ -225,7 +231,7 @@ section Call
 variable {Q Ka : ℕ} {U : Type}
 
 /-- Call the layer procedure and clear `lev`, `u`, `a₀`, `L`, `rows`. -/
-noncomputable def topCallClr : Pr LProc (nT SXReg) Q (prime + Ka) U :=
+noncomputable def topCallClr : Pr LProc (nT CReg) Q (prime + Ka) U :=
   .seq (.call .layer)
   (.seq (uclear (reg .lev)) (.seq (uclear (reg .u)) (.seq (uclear (reg .a₀))
   (.seq (uclear (reg .L)) (uclear (reg .rows))))))
@@ -240,12 +246,15 @@ theorem topCallClr_exec (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
       (2 * gateBound g + 1) ^ (2 * (gateWires g).length) ≤ prime + Ka + 4)
     {N r w K ρ R₀ j u a₀ : ℕ} (hr : 1 ≤ r) (hw : 1 ≤ w) (hρ : ρ < K) (hu : 1 ≤ u)
     (hR₀ : 1 ≤ R₀) (hTw : ∀ i < j, expZ u ds i ≤ w) (hfit : ∀ i < bits u j, a₀ + ρ + K * i < N)
-    (hfitL : a₀ + K * bits u j ≤ N) (Z : ZArr (Fin (rowsAt R₀ j) × Fin r) N)
-    (v : HS (nT SXReg) Q (prime + Ka) U) (S : Stacks (nT SXReg) (prime + Ka))
+    (hfitL : a₀ + K * bits u j ≤ N)
+    (hres : 1 ≤ j → 2 ≤ bits u (j - 1) → 1 ≤ Gd ∧ Gd + 3 ≤ K ∧ (bits u (j - 1) - 1) * Gd ≤ a₀ ∧
+      a₀ + K * bits u j + 3 * ((bits u (j - 1) - 1) * Gd) ≤ N)
+    (Z : ZArr (Fin (rowsAt R₀ j) × Fin r) N)
+    (v : HS (nT CReg) Q (prime + Ka) U) (S : Stacks (nT CReg) (prime + Ka))
     (hL : ∀ y, S.L y = []) (hpar : ParState S.R j u K ρ a₀ (K * bits u j) (rowsAt R₀ j) N w (r * w))
-    (hrest : Rest bcEmpty N r w S.R) (hio : S.R (reg .io) = encZ (prime + Ka) w Z) :
-    ∃ (v' : HS (nT SXReg) Q (prime + Ka) U) (c : ℕ), v'.user = v.user ∧
-      c ≤ layerCost (nT SXReg) ds u K ρ R₀ N r w j a₀ +
+    (hrest : Rest (bcRestC Gd) N r w S.R) (hio : S.R (reg .io) = encZ (prime + Ka) w Z) :
+    ∃ (v' : HS (nT CReg) Q (prime + Ka) U) (c : ℕ), v'.user = v.user ∧
+      c ≤ layerCost (prime + Ka) (nT CReg) ds u K ρ R₀ N r w Gd j a₀ +
         (2 * j + 2 * u + 2 * a₀ + 2 * (K * bits u j) + 2 * rowsAt R₀ j + 10) ∧
       Exec (layerTable hQ ds) topCallClr (mk v S) c
         (mk v' { S with
@@ -254,8 +263,8 @@ theorem topCallClr_exec (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
               (encZ (prime + Ka) w (layerZ u ds R₀ j (actMap a₀ ρ K (bits u j) N hfit) Z)))
             (reg .lev) []) (reg .u) []) (reg .a₀) []) (reg .L) []) (reg .rows) [] }) := by
   set body := layerTable (Ka := Ka) (U := U) hQ ds
-  obtain ⟨v₁, c₁, hu₁, hc₁, e₁⟩ := layer_exec hQ ds hA hA9 hNW hgate hr hw hρ hu hR₀ j hTw a₀
-    hfit hfitL Z v S hL hpar hrest hio
+  obtain ⟨v₁, c₁, hu₁, hc₁, e₁⟩ := layer_exec hQ ds hA hA9 hNW hgate hr hw hρ hu hR₀ j
+    hTw a₀ hfit hfitL hres Z v S hL hpar hrest hio
   set X := encZ (prime + Ka) w (layerZ u ds R₀ j (actMap a₀ ρ K (bits u j) N hfit) Z)
   set R₁ := Function.update S.R (reg .io) X with hR₁
   obtain ⟨v₂, hu₂, e₂⟩ := uclear_exec body (reg .lev) v₁ { S with R := R₁ }
@@ -299,18 +308,18 @@ lemma topIo {T A : ℕ} (S : Stacks T A) (i : Fin T) (X Y : List (Fin (A + 4))) 
 
 section Stages
 
-variable {Q A : ℕ} {U P : Type} (body : P → Pr P (nT SXReg) Q A U)
+variable {Q A : ℕ} {U P : Type} (body : P → Pr P (nT CReg) Q A U)
 
 /-- Read field `i` of the configuration record onto `dst`. -/
-noncomputable def topRd (dst : Fin (nT SXReg)) (i : ℕ) : Pr P (nT SXReg) Q A U :=
+noncomputable def topRd (dst : Fin (nT CReg)) (i : ℕ) : Pr P (nT CReg) Q A U :=
   topGet (reg .park) (reg .lenctr) dst i
 
 /-- `topRd`: `dst` gains `cfg[i]` ticks; every other register ends as it started. -/
-theorem topRd_exec {x : LReg SXReg} (hx1 : x ≠ .park) (hx2 : x ≠ .lenctr) {cfg : List ℕ}
-    (i : ℕ) (hi : i < cfg.length) (v : HS (nT SXReg) Q A U)
-    (S : Stacks (nT SXReg) A) (hlc : S.R (reg .lenctr) = [])
+theorem topRd_exec {x : LReg CReg} (hx1 : x ≠ .park) (hx2 : x ≠ .lenctr) {cfg : List ℕ}
+    (i : ℕ) (hi : i < cfg.length) (v : HS (nT CReg) Q A U)
+    (S : Stacks (nT CReg) A) (hlc : S.R (reg .lenctr) = [])
     (hcf : ∃ rest, S.R (reg .park) = topRec cfg ++ rest) :
-    ∃ (v' : HS (nT SXReg) Q A U) (c : ℕ), v'.user = v.user ∧ c ≤ topGetCost cfg ∧
+    ∃ (v' : HS (nT CReg) Q A U) (c : ℕ), v'.user = v.user ∧ c ≤ topGetCost cfg ∧
       Exec body (topRd (reg x) i) (mk v S) c
         (mk v' { S with
           R := Function.update S.R (reg x) (List.replicate cfg[i] tick ++ S.R (reg x)) }) := by
@@ -319,7 +328,7 @@ theorem topRd_exec {x : LReg SXReg} (hx1 : x ≠ .park) (hx2 : x ≠ .lenctr) {c
     (by simp [Ne.symm hx1, Ne.symm hx2])) cfg i hi rest v S hcf hlc
 
 /-- Widening from the input width `w` (field `0`) to the working width `w'` (register `w`). -/
-noncomputable def topWidenS : Pr P (nT SXReg) Q A U :=
+noncomputable def topWidenS : Pr P (nT CReg) Q A U :=
   .seq (topRd (reg (.sc 0)) 0)
   (.seq (ucopy (reg .w) (reg (.sc 1)) (reg .tS))
   (.seq (usub (reg (.sc 0)) (reg (.sc 1)) (reg .tS))
@@ -334,9 +343,9 @@ def topWidenSCost (cfg : List ℕ) (R N r w w' : ℕ) : ℕ :=
 
 theorem topWidenS_exec {cfg pfs : List ℕ} {R N r w w' K ρ : ℕ} (hcfg : cfg[0]? = some w)
     (hw : 1 ≤ w) (hww : w ≤ w') (Z : ZArr (Fin R × Fin r) N) (hZ : ∀ p, TopFitsZ w (Z p))
-    (v : HS (nT SXReg) Q A U) (S : Stacks (nT SXReg) A) (hT : TopRegs S.R N r w' K ρ)
+    (v : HS (nT CReg) Q A U) (S : Stacks (nT CReg) A) (hT : TopRegs S.R N r w' K ρ Gd)
     (hI : TopIn S.R cfg pfs) (hio : S.R (reg .io) = encZ A w Z) :
-    ∃ (v' : HS (nT SXReg) Q A U) (c : ℕ), v'.user = v.user ∧ c ≤ topWidenSCost cfg R N r w w' ∧
+    ∃ (v' : HS (nT CReg) Q A U) (c : ℕ), v'.user = v.user ∧ c ≤ topWidenSCost cfg R N r w w' ∧
       Exec body topWidenS (mk v S) c
         (mk v' { S with R := Function.update S.R (reg .io) (encZ A w' Z) }) := by
   have hi : 0 < cfg.length := by
@@ -397,7 +406,7 @@ theorem topWidenS_exec {cfg pfs : List ℕ} {R N r w w' K ρ : ℕ} (hcfg : cfg[
 /-- The phase stage: the strided mask of the selected bits `oS + ρ + K i`, `i < D` (fields `8`,
 `9`) on `ph .msk`, the record count `R 2^N` (field `3`) on `ph .cnt`, `phaseProg` with `c = 1`
 on `io`, and the scratch registers cleared. -/
-noncomputable def topPhaseS : Pr P (nT SXReg) Q A U :=
+noncomputable def topPhaseS : Pr P (nT CReg) Q A U :=
   .seq (topRd (reg (.sc 0)) 8)
   (.seq (uadd (reg .ρ) (reg (.sc 0)) (reg .tS))
   (.seq (topRd (reg (.sc 1)) 9)
@@ -422,9 +431,9 @@ def topMaskOf (N ρ K oS D : ℕ) : Fin N → ZMod 2 :=
 theorem topPhaseS_exec (hA : 5 ≤ A) {cfg pfs : List ℕ} {R N r w K ρ oS D : ℕ}
     (h3 : cfg[3]? = some R) (h8 : cfg[8]? = some oS) (h9 : cfg[9]? = some D)
     (hr : 1 ≤ r) (hw : 1 ≤ w) (hK : 1 ≤ K) (Z : ZArr (Fin R × Fin r) N)
-    (v : HS (nT SXReg) Q A U) (S : Stacks (nT SXReg) A) (hT : TopRegs S.R N r w K ρ)
+    (v : HS (nT CReg) Q A U) (S : Stacks (nT CReg) A) (hT : TopRegs S.R N r w K ρ Gd)
     (hI : TopIn S.R cfg pfs) (hio : S.R (reg .io) = encZ A w Z) :
-    ∃ (v' : HS (nT SXReg) Q A U) (c : ℕ), v'.user = v.user ∧
+    ∃ (v' : HS (nT CReg) Q A U) (c : ℕ), v'.user = v.user ∧
       c ≤ topPhaseSCost cfg N R r w K ρ oS D ∧
       Exec body topPhaseS (mk v S) c
         (mk v' { S with
@@ -442,7 +451,7 @@ theorem topPhaseS_exec (hA : 5 ≤ A) {cfg pfs : List ℕ} {R N r w K ρ oS D : 
   have hlc : S.R (reg .lenctr) = [] := hrest .lenctr
   have hmsk : S.R (reg (.ph .msk)) = [] := hrest (.ph .msk)
   have hcnt : S.R (reg (.ph .cnt)) = [] := hrest (.ph .cnt)
-  have hph : ∀ x, x ≠ PhaseReg.arr → phMap (reg (BReg := SXReg) .io) x = reg (.ph x) :=
+  have hph : ∀ x, x ≠ PhaseReg.arr → phMap (reg (BReg := CReg) .io) x = reg (.ph x) :=
     fun x hx => phMap_of_ne _ hx
   -- `sc 0 := ρ + oS`
   obtain ⟨v₁, c₁, hu₁, hc₁, e₁⟩ := topRd_exec body (x := .sc 0) (by simp) (by simp) 8 hl8 v S
@@ -497,7 +506,7 @@ theorem topPhaseS_exec (hA : 5 ≤ A) {cfg pfs : List ℕ} {R N r w K ρ oS D : 
     rw [hkk, length_flatMap_replicate, List.length_replicate, Nat.mul_comm]
   set R₆ := Function.update R₅ (reg (.ph .cnt)) kk with hR₆
   -- the phase
-  have hR₆o : ∀ x : LReg SXReg, x ≠ .sc 0 → x ≠ .sc 1 → x ≠ .ph .msk → x ≠ .ph .cnt →
+  have hR₆o : ∀ x : LReg CReg, x ≠ .sc 0 → x ≠ .sc 1 → x ≠ .ph .msk → x ≠ .ph .cnt →
       R₆ (reg x) = S.R (reg x) := by
     intro x h1 h2 h3 h4
     simp [hR₆, hR₅, hR₄, hR₃, hR₂, hR₁, Function.update_apply, h1, h2, h3, h4]
@@ -506,7 +515,7 @@ theorem topPhaseS_exec (hA : 5 ≤ A) {cfg pfs : List ℕ} {R N r w K ρ oS D : 
     fun x h1 h2 h3 => by
       rw [hph x h1, hR₆o _ (by simp) (by simp) (by simpa using h2) (by simpa using h3)]
   obtain ⟨v₇, m₇, hu₇, hm₇, e₇⟩ := phaseProg_exec body
-    (ρ := phMap (reg (BReg := SXReg) .io)) (st := reg .st)
+    (ρ := phMap (reg (BReg := CReg) .io)) (st := reg .st)
     (phMap_injective (fun x => reg_ne (by simp)))
     (fun x hx => by
       simp only [List.mem_cons, List.not_mem_nil, or_false] at hx
@@ -573,8 +582,8 @@ theorem topPhaseS_exec (hA : 5 ≤ A) {cfg pfs : List ℕ} {R N r w K ρ oS D : 
         h3]
 
 /-- Multiply every coefficient of `io` by the Gaussian integer `g` (through `racc`). -/
-noncomputable def topUnit (g : GaussianInt) : Pr P (nT SXReg) Q A U :=
-  .seq (autoWords (fun _ : Fin 1 => reg (BReg := SXReg) .io) (fun _ => reg .racc) (reg .st)
+noncomputable def topUnit (g : GaussianInt) : Pr P (nT CReg) Q A U :=
+  .seq (autoWords (fun _ : Fin 1 => reg (BReg := CReg) .io) (fun _ => reg .racc) (reg .st)
       (reg .ctr) (reg .tmp) (gaussAuto A ![![(g.re, g.im)]] (g.re.natAbs + g.im.natAbs) false))
     (moveR (reg .racc) (reg .io) id)
 
@@ -585,13 +594,13 @@ def topUnitCost (R n r w : ℕ) : ℕ :=
 /-- **The unit.** `io` holding the stream of `Z` ends holding the stream of `g Z`. -/
 theorem topUnit_exec (hA : 4 ≤ A) (g : GaussianInt)
     (hg : (2 * (g.re.natAbs + g.im.natAbs) + 1) ^ 2 ≤ A + 4) {R r n w : ℕ} (hw : 1 ≤ w)
-    (Z : ZArr (Fin R × Fin r) n) (v : HS (nT SXReg) Q A U) (S : Stacks (nT SXReg) A)
+    (Z : ZArr (Fin R × Fin r) n) (v : HS (nT CReg) Q A U) (S : Stacks (nT CReg) A)
     (hracc : S.R (reg .racc) = []) (hctr : (S.R (reg .ctr)).length = w)
     (htmp : S.R (reg .tmp) = []) (hio : S.R (reg .io) = encZ A w Z) :
-    ∃ (v' : HS (nT SXReg) Q A U) (c : ℕ), v'.user = v.user ∧ c ≤ topUnitCost R n r w ∧
+    ∃ (v' : HS (nT CReg) Q A U) (c : ℕ), v'.user = v.user ∧ c ≤ topUnitCost R n r w ∧
       Exec body (topUnit g) (mk v S) c
         (mk v' { S with R := Function.update S.R (reg .io) (encZ A w (fun p => g * Z p)) }) := by
-  have hne : reg (BReg := SXReg) .io ≠ reg .racc := reg_ne (by simp)
+  have hne : reg (BReg := CReg) .io ≠ reg .racc := reg_ne (by simp)
   obtain ⟨v₁, m₁, S₁, hu₁, hm₁, e₁, hi₁, ho₁, hl₁, hin₁, hout₁, hoth₁⟩ := mulG_exec body
     (autoLayout_one (x := .io) (y := .racc) (by simp) (by simp) (by simp) (by simp) (by simp)
       (by simp)) g.re g.im hA hg hw (ctrs := S.R (reg .ctr)) hctr (coeffList w Z) v S rfl
@@ -626,7 +635,7 @@ theorem topUnit_exec (hA : 4 ≤ A) (g : GaussianInt)
 
 end Stages
 
-lemma topParState {A : ℕ} {Rg : Fin (nT SXReg) → List (Fin (A + 4))}
+lemma topParState {A : ℕ} {Rg : Fin (nT CReg) → List (Fin (A + 4))}
     {j u K ρ a₀ L rows n w rw : ℕ} (h1 : (Rg (reg .lev)).length = j)
     (h2 : (Rg (reg .u)).length = u) (h3 : (Rg (reg .K)).length = K)
     (h4 : (Rg (reg .ρ)).length = ρ) (h5 : (Rg (reg .a₀)).length = a₀)
@@ -637,11 +646,11 @@ lemma topParState {A : ℕ} {Rg : Fin (nT SXReg) → List (Fin (A + 4))}
   cases x <;> first | exact trivial | assumption
 
 /-- A register file agreeing with one at rest outside the parameter registers is at rest. -/
-lemma topRest_par {A : ℕ} {Rg Rg' : Fin (nT SXReg) → List (Fin (A + 4))} {N r w : ℕ}
-    (h : Rest bcEmpty N r w Rg) (hR : ∀ x, x ∉ parRegs (BReg := SXReg) → Rg' (reg x) = Rg (reg x)) :
-    Rest bcEmpty N r w Rg' := by
+lemma topRest_par {A : ℕ} {Rg Rg' : Fin (nT CReg) → List (Fin (A + 4))} {N r w : ℕ}
+    (h : Rest (bcRestC Gd) N r w Rg) (hR : ∀ x, x ∉ parRegs (BReg := CReg) → Rg' (reg x) = Rg (reg x)) :
+    Rest (bcRestC Gd) N r w Rg' := by
   intro x
-  by_cases hx : x ∈ parRegs (BReg := SXReg)
+  by_cases hx : x ∈ parRegs (BReg := CReg)
   · exact topRestSpec_par hx _
   · rw [hR x hx]; exact h x
 
@@ -651,17 +660,17 @@ variable {Q Ka : ℕ} {U : Type}
 
 /-- The top kernels: `q` (field `5`) leaf bits at offset `aT` (field `6`), `L = K q` (field `7`),
 `R` rows (field `3`); one call of the layer procedure at level `0`, skipped when `q = 0`. -/
-noncomputable def topKerS : Pr LProc (nT SXReg) Q (prime + Ka) U :=
-  .seq (topRd (reg .u) 5)
+noncomputable def topKerS (iq ia iL : ℕ) : Pr LProc (nT CReg) Q (prime + Ka) U :=
+  .seq (topRd (reg .u) iq)
   (.seq (.act (peekR (reg .u)))
   (.cond (·.flag)
-    (.seq (topRd (reg .a₀) 6) (.seq (topRd (reg .L) 7) (.seq (topRd (reg .rows) 3) topCallClr)))
+    (.seq (topRd (reg .a₀) ia) (.seq (topRd (reg .L) iL) (.seq (topRd (reg .rows) 3) topCallClr)))
     (uclear (reg .u))))
 
 /-- The step bound of `topKerS`. -/
-noncomputable def topKerSCost (ds : ComplexFramedExecution.Directions) (cfg : List ℕ)
+noncomputable def topKerSCost (A Gd : ℕ) (ds : ComplexFramedExecution.Directions) (cfg : List ℕ)
     (K ρ R N r w q aT : ℕ) : ℕ :=
-  4 * topGetCost cfg + layerCost (nT SXReg) ds q K ρ R N r w 0 aT +
+  4 * topGetCost cfg + layerCost A (nT CReg) ds q K ρ R N r w Gd 0 aT +
     (2 * q + 2 * aT + 2 * (K * q) + 2 * R + 16)
 
 theorem topKerS_exec (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
@@ -669,30 +678,30 @@ theorem topKerS_exec (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
     (hA9 : 9 ^ 4 ≤ prime + Ka + 4) (hNW : NW ≤ prime + Ka + 4)
     (hgate : ∀ g, Instr.gate g ∈ program ds →
       (2 * gateBound g + 1) ^ (2 * (gateWires g).length) ≤ prime + Ka + 4)
-    {cfg pfs : List ℕ} {N R r w K ρ q aT : ℕ} (h3 : cfg[3]? = some R) (h5 : cfg[5]? = some q)
-    (h6 : cfg[6]? = some aT) (h7 : cfg[7]? = some (K * q))
+    {cfg pfs : List ℕ} {N R r w K ρ q aT : ℕ} (iq ia iL : ℕ) (h3 : cfg[3]? = some R)
+    (h5 : cfg[iq]? = some q) (h6 : cfg[ia]? = some aT) (h7 : cfg[iL]? = some (K * q))
     (hr : 1 ≤ r) (hw : 1 ≤ w) (hρ : ρ < K) (hR : 1 ≤ R)
     (hfitT : ∀ i < q, aT + ρ + K * i < N) (hTL : aT + K * q ≤ N) (Z : ZArr (Fin R × Fin r) N)
-    (v : HS (nT SXReg) Q (prime + Ka) U) (S : Stacks (nT SXReg) (prime + Ka))
-    (hL : ∀ y, S.L y = []) (hT : TopRegs S.R N r w K ρ) (hI : TopIn S.R cfg pfs)
+    (v : HS (nT CReg) Q (prime + Ka) U) (S : Stacks (nT CReg) (prime + Ka))
+    (hL : ∀ y, S.L y = []) (hT : TopRegs S.R N r w K ρ Gd) (hI : TopIn S.R cfg pfs)
     (hio : S.R (reg .io) = encZ (prime + Ka) w Z) :
-    ∃ (v' : HS (nT SXReg) Q (prime + Ka) U) (c : ℕ), v'.user = v.user ∧
-      c ≤ topKerSCost ds cfg K ρ R N r w q aT ∧
-      Exec (layerTable hQ ds) topKerS (mk v S) c
+    ∃ (v' : HS (nT CReg) Q (prime + Ka) U) (c : ℕ), v'.user = v.user ∧
+      c ≤ topKerSCost (prime + Ka) Gd ds cfg K ρ R N r w q aT ∧
+      Exec (layerTable hQ ds) (topKerS iq ia iL) (mk v S) c
         (mk v' { S with
           R := Function.update S.R (reg .io)
             (encZ (prime + Ka) w (k2s ((List.finRange q).map (actMap aT ρ K q N hfitT)) Z)) }) := by
   set body := layerTable (Ka := Ka) (U := U) hQ ds
   have hl3 : 3 < cfg.length := (List.getElem?_eq_some_iff.1 h3).1
-  have hl5 : 5 < cfg.length := (List.getElem?_eq_some_iff.1 h5).1
-  have hl6 : 6 < cfg.length := (List.getElem?_eq_some_iff.1 h6).1
-  have hl7 : 7 < cfg.length := (List.getElem?_eq_some_iff.1 h7).1
+  have hl5 : iq < cfg.length := (List.getElem?_eq_some_iff.1 h5).1
+  have hl6 : ia < cfg.length := (List.getElem?_eq_some_iff.1 h6).1
+  have hl7 : iL < cfg.length := (List.getElem?_eq_some_iff.1 h7).1
   have hc3 : cfg[3] = R := (List.getElem?_eq_some_iff.1 h3).2
-  have hc5 : cfg[5] = q := (List.getElem?_eq_some_iff.1 h5).2
-  have hc6 : cfg[6] = aT := (List.getElem?_eq_some_iff.1 h6).2
-  have hc7 : cfg[7] = K * q := (List.getElem?_eq_some_iff.1 h7).2
+  have hc5 : cfg[iq] = q := (List.getElem?_eq_some_iff.1 h5).2
+  have hc6 : cfg[ia] = aT := (List.getElem?_eq_some_iff.1 h6).2
+  have hc7 : cfg[iL] = K * q := (List.getElem?_eq_some_iff.1 h7).2
   have hlc : S.R (reg .lenctr) = [] := hT.rest .lenctr
-  obtain ⟨v₁, c₁, hu₁, hc₁, e₁⟩ := topRd_exec body (x := .u) (by simp) (by simp) 5 hl5 v S
+  obtain ⟨v₁, c₁, hu₁, hc₁, e₁⟩ := topRd_exec body (x := .u) (by simp) (by simp) iq hl5 v S
     hlc hI.cf
   rw [hc5, hT.hu, List.append_nil] at e₁
   set R₁ := Function.update S.R (reg .u) (List.replicate q tick) with hR₁
@@ -706,7 +715,7 @@ theorem topKerS_exec (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
       simp only [List.replicate_zero, List.head?_nil, Option.isSome_none] at e₂
       obtain ⟨v₃, hu₃, e₃⟩ := uclear_exec body (reg .u) { v₁ with flag := false } { S with R := R₁ }
       have e₃' := Exec.cond_false (body := body) (f := (·.flag))
-        (p := .seq (topRd (reg .a₀) 6) (.seq (topRd (reg .L) 7) (.seq (topRd (reg .rows) 3)
+        (p := .seq (topRd (reg .a₀) ia) (.seq (topRd (reg .L) iL) (.seq (topRd (reg .rows) 3)
           topCallClr))) (by rfl) e₃
       refine ⟨v₃, _, by rw [hu₃, hu₁], ?_, Exec.cast (Exec.seq e₁ (Exec.seq e₂ e₃')) rfl ?_⟩
       · unfold topKerSCost; simp [hR₁]; omega
@@ -720,13 +729,13 @@ theorem topKerS_exec (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
   | succ q =>
       rw [hu₁'] at e₂
       simp only [List.replicate_succ, List.head?_cons, Option.isSome_some] at e₂
-      obtain ⟨v₃, c₃, hu₃, hc₃', e₃⟩ := topRd_exec body (x := .a₀) (by simp) (by simp) 6 hl6
+      obtain ⟨v₃, c₃, hu₃, hc₃', e₃⟩ := topRd_exec body (x := .a₀) (by simp) (by simp) ia hl6
         { v₁ with flag := true } { S with R := R₁ } (by simp [hR₁, hlc])
         (by simpa [hR₁] using hI.cf)
       dsimp only at e₃
       rw [hc6, show R₁ (reg .a₀) = [] by simp [hR₁, hT.ha₀], List.append_nil] at e₃
       set R₃ := Function.update R₁ (reg .a₀) (List.replicate aT tick) with hR₃
-      obtain ⟨v₄, c₄, hu₄, hc₄', e₄⟩ := topRd_exec body (x := .L) (by simp) (by simp) 7 hl7
+      obtain ⟨v₄, c₄, hu₄, hc₄', e₄⟩ := topRd_exec body (x := .L) (by simp) (by simp) iL hl7
         v₃ { S with R := R₃ } (by simp [hR₃, hR₁, hlc]) (by simpa [hR₃, hR₁] using hI.cf)
       dsimp only at e₄
       rw [hc7, show R₃ (reg .L) = [] by simp [hR₃, hR₁, hT.hL], List.append_nil] at e₄
@@ -737,12 +746,12 @@ theorem topKerS_exec (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
       dsimp only at e₅
       rw [hc3, show R₄ (reg .rows) = [] by simp [hR₄, hR₃, hR₁, hT.hrows], List.append_nil] at e₅
       set R₅ := Function.update R₄ (reg .rows) (List.replicate R tick) with hR₅
-      have hR₅o : ∀ x : LReg SXReg, x ≠ .u → x ≠ .a₀ → x ≠ .L → x ≠ .rows →
+      have hR₅o : ∀ x : LReg CReg, x ≠ .u → x ≠ .a₀ → x ≠ .L → x ≠ .rows →
           R₅ (reg x) = S.R (reg x) := by
         intro x h1 h2 h3 h4
         simp [hR₅, hR₄, hR₃, hR₁, Function.update_apply, h1, h2, h3, h4]
       have hpar : ParState R₅ 0 (q + 1) K ρ aT (K * bits (q + 1) 0) (rowsAt R 0) N w (r * w) := by
-        have hh : ∀ x : LReg SXReg, x ∈ [LReg.lev, .K, .ρ, .n, .w, .rw] →
+        have hh : ∀ x : LReg CReg, x ∈ [LReg.lev, .K, .ρ, .n, .w, .rw] →
             R₅ (reg x) = S.R (reg x) := by
           intro x hx
           simp only [List.mem_cons, List.not_mem_nil, or_false] at hx
@@ -759,11 +768,12 @@ theorem topKerS_exec (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
         · rw [hh _ (by simp)]; exact hT.hn
         · rw [hh _ (by simp)]; exact hT.hw
         · rw [hh _ (by simp)]; exact hT.hrw
-      have hrest₅ : Rest bcEmpty N r w R₅ := topRest_par hT.rest fun x hx =>
+      have hrest₅ : Rest (bcRestC Gd) N r w R₅ := topRest_par hT.rest fun x hx =>
         hR₅o x (fun h => hx (by simp [h, parRegs])) (fun h => hx (by simp [h, parRegs]))
           (fun h => hx (by simp [h, parRegs])) (fun h => hx (by simp [h, parRegs]))
       obtain ⟨v₆, c₆, hu₆, hc₆, e₆⟩ := topCallClr_exec hQ ds hA hA9 hNW hgate (j := 0) (u := q + 1)
-        (R₀ := R) hr hw hρ (by omega) hR (fun i hi => absurd hi (Nat.not_lt_zero _)) hfitT hTL Z v₅
+        (R₀ := R) hr hw hρ (by omega) hR (fun i hi => absurd hi (Nat.not_lt_zero _))
+        hfitT hTL (fun h => absurd h (by omega)) Z v₅
         { S with R := R₅ } hL hpar hrest₅
         ((hR₅o .io (by simp) (by simp) (by simp) (by simp)).trans hio)
       have e₇ := Exec.cond_true (body := body) (f := (·.flag)) (q := uclear (reg .u))
@@ -814,11 +824,11 @@ lemma topUnitD_bound (D : ℕ) : (unitD D).re.natAbs + (unitD D).im.natAbs ≤ 2
 
 section UnitShift
 
-variable {Q A : ℕ} {U P : Type} (body : P → Pr P (nT SXReg) Q A U)
+variable {Q A : ℕ} {U P : Type} (body : P → Pr P (nT CReg) Q A U)
 
 /-- The unit stage: `D` (field `9`) modulo `8` into the scan slot `lev`, then the multiplication
 by `unitD D` chosen by an eight-way dispatch. -/
-noncomputable def topUnitS : Pr P (nT SXReg) Q A U :=
+noncomputable def topUnitS : Pr P (nT CReg) Q A U :=
   .seq (topRd (reg (.sc 0)) 9)
   (.seq (topResid 8 (reg (.sc 0)) (reg (.sc 3)) (reg .lev))
   (.seq (topDisp8 (reg .lev) (fun q => topUnit (unitD q.val))) (uclear (reg (.sc 0)))))
@@ -829,9 +839,9 @@ def topUnitSCost (cfg : List ℕ) (R N r w D : ℕ) : ℕ :=
 
 theorem topUnitS_exec (hA : 21 ≤ A) {cfg pfs : List ℕ} {R N r w K ρ D : ℕ}
     (h9 : cfg[9]? = some D) (hw : 1 ≤ w) (Z : ZArr (Fin R × Fin r) N)
-    (v : HS (nT SXReg) Q A U) (S : Stacks (nT SXReg) A) (hT : TopRegs S.R N r w K ρ)
+    (v : HS (nT CReg) Q A U) (S : Stacks (nT CReg) A) (hT : TopRegs S.R N r w K ρ Gd)
     (hI : TopIn S.R cfg pfs) (hio : S.R (reg .io) = encZ A w Z) :
-    ∃ (v' : HS (nT SXReg) Q A U) (c : ℕ), v'.user = v.user ∧ c ≤ topUnitSCost cfg R N r w D ∧
+    ∃ (v' : HS (nT CReg) Q A U) (c : ℕ), v'.user = v.user ∧ c ≤ topUnitSCost cfg R N r w D ∧
       Exec body topUnitS (mk v S) c
         (mk v' { S with
           R := Function.update S.R (reg .io) (encZ A w (fun p => unitD D * Z p)) }) := by
@@ -875,7 +885,7 @@ theorem topUnitS_exec (hA : 21 ≤ A) {cfg pfs : List ℕ} {R N r w K ρ D : ℕ
 
 /-- The shift stage: `s` (field `1`), `w` (field `0`) and `w' - s - w` on `sc 0`, `sc 1`,
 `sc 2`; the truncating shift pass (spares `racc`, `rctmp`, `sc 3`, `sc 4`, `sc 5`). -/
-noncomputable def topShiftS : Pr P (nT SXReg) Q A U :=
+noncomputable def topShiftS : Pr P (nT CReg) Q A U :=
   .seq (topRd (reg (.sc 0)) 1)
   (.seq (topRd (reg (.sc 1)) 0)
   (.seq (ucopy (reg .w) (reg (.sc 2)) (reg .tS))
@@ -893,9 +903,9 @@ def topShiftSCost (cfg : List ℕ) (R N r w' s w : ℕ) : ℕ :=
 theorem topShiftS_exec (hA : 4 ≤ A) {cfg pfs : List ℕ} {R N r w' K ρ s w : ℕ}
     (h0 : cfg[0]? = some w) (h1 : cfg[1]? = some s) (hw' : 1 ≤ w') (hsw : s + w ≤ w')
     (Z : ZArr (Fin R × Fin r) N) (hZ : ∀ p, TopFitsZ w' (Z p))
-    (v : HS (nT SXReg) Q A U) (S : Stacks (nT SXReg) A) (hT : TopRegs S.R N r w' K ρ)
+    (v : HS (nT CReg) Q A U) (S : Stacks (nT CReg) A) (hT : TopRegs S.R N r w' K ρ Gd)
     (hI : TopIn S.R cfg pfs) (hio : S.R (reg .io) = encZ A w' Z) :
-    ∃ (v' : HS (nT SXReg) Q A U) (c : ℕ), v'.user = v.user ∧ c ≤ topShiftSCost cfg R N r w' s w ∧
+    ∃ (v' : HS (nT CReg) Q A U) (c : ℕ), v'.user = v.user ∧ c ≤ topShiftSCost cfg R N r w' s w ∧
       Exec body topShiftS (mk v S) c
         (mk v' { S with
           R := Function.update S.R (reg .io) (encZ A w (fun p => tdivZ s (Z p))) }) := by
@@ -979,12 +989,12 @@ end UnitShift
 
 section Down
 
-variable {Q A : ℕ} {U P : Type} (body : P → Pr P (nT SXReg) Q A U)
+variable {Q A : ℕ} {U P : Type} (body : P → Pr P (nT CReg) Q A U)
 
 /-- The registers for the pieces: `a` symbols of `n` on `st`, `rowctr` on `cs`, `rowctr` rebuilt
 with `2^n r w` symbols, the address fields `binSyms n 0`. -/
-noncomputable def topDownR (Rg : Fin (nT SXReg) → List (Fin (A + 4))) (a n r w : ℕ) :
-    Fin (nT SXReg) → List (Fin (A + 4)) :=
+noncomputable def topDownR (Rg : Fin (nT CReg) → List (Fin (A + 4))) (a n r w : ℕ) :
+    Fin (nT CReg) → List (Fin (A + 4)) :=
   Function.update (Function.update (Function.update (Function.update (Function.update
     (Function.update Rg (reg .n) ((Rg (reg .n)).drop a)) (reg .st) ((Rg (reg .n)).take a).reverse)
     (reg (.ph .af)) (binSyms n 0)) (reg (.lf (.k .cf))) (binSyms n 0)) (reg .cs)
@@ -992,20 +1002,20 @@ noncomputable def topDownR (Rg : Fin (nT SXReg) → List (Fin (A + 4))) (a n r w
     ((List.replicate (r * w) tick).flatMap (List.replicate (2 ^ n)))
 
 /-- `topDownR` keeps every register outside `n`, `st`, `ph .af`, `lf (.k .cf)`, `cs`, `rowctr`. -/
-lemma topDownR_of_ne {Rg : Fin (nT SXReg) → List (Fin (A + 4))} {a n r w : ℕ} {x : LReg SXReg}
+lemma topDownR_of_ne {Rg : Fin (nT CReg) → List (Fin (A + 4))} {a n r w : ℕ} {x : LReg CReg}
     (h1 : x ≠ .n) (h2 : x ≠ .st) (h3 : x ≠ .ph .af) (h4 : x ≠ .lf (.k .cf)) (h5 : x ≠ .cs)
     (h6 : x ≠ .rowctr) : topDownR Rg a n r w (reg x) = Rg (reg x) := by
   simp [topDownR, Function.update_apply, h1, h2, h3, h4, h5, h6]
 
-lemma topDownR_par {Rg : Fin (nT SXReg) → List (Fin (A + 4))} {a n r w : ℕ} {x : LReg SXReg}
+lemma topDownR_par {Rg : Fin (nT CReg) → List (Fin (A + 4))} {a n r w : ℕ} {x : LReg CReg}
     (hx : x ∈ [LReg.lev, .u, .a₀, .L, .rows, .w, .rw, .K, .ρ]) :
     topDownR Rg a n r w (reg x) = Rg (reg x) := by
   simp only [List.mem_cons, List.not_mem_nil, or_false] at hx
   rcases hx with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;>
     exact topDownR_of_ne (by simp) (by simp) (by simp) (by simp) (by simp) (by simp)
 
-lemma topDownR_regs {Rg : Fin (nT SXReg) → List (Fin (A + 4))} {n a r w K ρ : ℕ}
-    (hT : TopRegs Rg (n + a) r w K ρ) : TopRegs (topDownR Rg a n r w) n r w K ρ where
+lemma topDownR_regs {Rg : Fin (nT CReg) → List (Fin (A + 4))} {n a r w K ρ : ℕ}
+    (hT : TopRegs Rg (n + a) r w K ρ Gd) : TopRegs (topDownR Rg a n r w) n r w K ρ Gd where
   rest := fun x => by
     by_cases h1 : x = .n
     · subst h1; trivial
@@ -1035,7 +1045,7 @@ lemma topDownR_regs {Rg : Fin (nT SXReg) → List (Fin (A + 4))} {n a r w K ρ :
   hρ := by rw [topDownR_par (by simp)]; exact hT.hρ
 
 /-- From the rest state for `n + a` address bits to the one for `n` (`a` from field `2`). -/
-noncomputable def topDownS : Pr P (nT SXReg) Q A U :=
+noncomputable def topDownS : Pr P (nT CReg) Q A U :=
   .seq (topRd (reg (.sc 0)) 2)
   (.seq (Shift.counted (reg (.sc 0)) (reg (.sc 3)) (Shift.copyStep (reg (.sc 0)) (reg (.sc 3))
       (reg .n) (reg .st)))
@@ -1052,9 +1062,9 @@ def topDownCost (cfg : List ℕ) (n a r w : ℕ) : ℕ :=
     (4 * (r * w) + 4) + (4 * (2 ^ n * (r * w)) + 9 * n + 4) + (2 * a + 2)
 
 theorem topDownS_exec {cfg pfs : List ℕ} {n a r w K ρ : ℕ} (h2 : cfg[2]? = some a)
-    (v : HS (nT SXReg) Q A U) (S : Stacks (nT SXReg) A) (hT : TopRegs S.R (n + a) r w K ρ)
+    (v : HS (nT CReg) Q A U) (S : Stacks (nT CReg) A) (hT : TopRegs S.R (n + a) r w K ρ Gd)
     (hI : TopIn S.R cfg pfs) :
-    ∃ (v' : HS (nT SXReg) Q A U) (c : ℕ), v'.user = v.user ∧ c ≤ topDownCost cfg n a r w ∧
+    ∃ (v' : HS (nT CReg) Q A U) (c : ℕ), v'.user = v.user ∧ c ≤ topDownCost cfg n a r w ∧
       Exec body topDownS (mk v S) c (mk v' { S with R := topDownR S.R a n r w }) := by
   have hl2 : 2 < cfg.length := (List.getElem?_eq_some_iff.1 h2).1
   have hc2 : cfg[2] = a := (List.getElem?_eq_some_iff.1 h2).2
@@ -1153,7 +1163,7 @@ theorem topDownS_exec {cfg pfs : List ℕ} {n a r w K ρ : ℕ} (h2 : cfg[2]? = 
       h0, h1, h2, h3, h4, h5, h6]
 
 /-- Back to the rest state for `n + a` address bits. -/
-noncomputable def topUpS : Pr P (nT SXReg) Q A U :=
+noncomputable def topUpS : Pr P (nT CReg) Q A U :=
   .seq (topRd (reg (.sc 0)) 2)
   (.seq (uclear (reg .rowctr))
   (.seq (moveR (reg .cs) (reg .rowctr) id)
@@ -1167,9 +1177,9 @@ def topUpCost (cfg : List ℕ) (n a r w : ℕ) : ℕ :=
     (4 * a + 4) + (2 * a + 2) + (2 * a + 2)
 
 theorem topUpS_exec {cfg pfs : List ℕ} {n a r w K ρ : ℕ} (h2 : cfg[2]? = some a)
-    (v : HS (nT SXReg) Q A U) (S : Stacks (nT SXReg) A) (hT : TopRegs S.R (n + a) r w K ρ)
+    (v : HS (nT CReg) Q A U) (S : Stacks (nT CReg) A) (hT : TopRegs S.R (n + a) r w K ρ Gd)
     (hI : TopIn S.R cfg pfs) (X : List (Fin (A + 4))) :
-    ∃ (v' : HS (nT SXReg) Q A U) (c : ℕ), v'.user = v.user ∧ c ≤ topUpCost cfg n a r w ∧
+    ∃ (v' : HS (nT CReg) Q A U) (c : ℕ), v'.user = v.user ∧ c ≤ topUpCost cfg n a r w ∧
       Exec body topUpS (mk v { S with R := Function.update (topDownR S.R a n r w) (reg .io) X }) c
         (mk v' { S with R := Function.update S.R (reg .io) X }) := by
   have hl2 : 2 < cfg.length := (List.getElem?_eq_some_iff.1 h2).1
@@ -1261,7 +1271,7 @@ theorem topUpS_exec {cfg pfs : List ℕ} {n a r w K ρ : ℕ} (h2 : cfg[2]? = so
     · subst h7; simp [hR₆, movedR, hR₅, hR₄, hR₃, hR₂, hR₁, hRd]
     simp only [hR₆, movedR, hR₅, hR₄, hR₃, hR₂, hR₁, hRd, Function.update_apply, h0, h1, h2, h3,
       h4, h5, h6, h7, ↓reduceIte]
-    obtain ⟨x, rfl⟩ := (regEquiv SXReg).surjective k
+    obtain ⟨x, rfl⟩ := (regEquiv CReg).surjective k
     exact topDownR_of_ne (fun h => h1 (by rw [h]; rfl)) (fun h => h2 (by rw [h]; rfl))
       (fun h => h4 (by rw [h]; rfl)) (fun h => h3 (by rw [h]; rfl)) (fun h => h6 (by rw [h]; rfl))
       (fun h => h5 (by rw [h]; rfl))
@@ -1270,7 +1280,7 @@ theorem topUpS_exec {cfg pfs : List ℕ} {n a r w K ρ : ℕ} (h2 : cfg[2]? = so
 
 /-- Pad to `R₂` rows (field `4`) from `R 2^a` rows (fields `3`, `2`): `io` moved onto `racc`,
 `(R₂ - R 2^a) · |rowctr|` zero pairs pushed onto `io`, `racc` moved back. -/
-noncomputable def topPadS : Pr P (nT SXReg) Q A U :=
+noncomputable def topPadS : Pr P (nT CReg) Q A U :=
   .seq (topRd (reg (.sc 0)) 2)
   (.seq (topRd (reg (.sc 1)) 3)
   (.seq (upow2 (reg (.sc 0)) (reg (.sc 1)) (reg (.sc 4)) (reg (.sc 5)))
@@ -1289,10 +1299,10 @@ def topPadCost (cfg : List ℕ) (a R R₂ L V : ℕ) : ℕ :=
     (2 * (2 ^ a * R) + 2) + (2 * (R₂ - 2 ^ a * R) + 2)
 
 theorem topPadS_exec {cfg : List ℕ} {n a R R₂ r w K ρ : ℕ} (h2 : cfg[2]? = some a)
-    (h3 : cfg[3]? = some R) (h4 : cfg[4]? = some R₂) (v : HS (nT SXReg) Q A U)
-    (S : Stacks (nT SXReg) A) (hT : TopRegs S.R n r w K ρ)
+    (h3 : cfg[3]? = some R) (h4 : cfg[4]? = some R₂) (v : HS (nT CReg) Q A U)
+    (S : Stacks (nT CReg) A) (hT : TopRegs S.R n r w K ρ Gd)
     (hcf : ∃ rest, S.R (reg .park) = topRec cfg ++ rest) :
-    ∃ (v' : HS (nT SXReg) Q A U) (c : ℕ), v'.user = v.user ∧
+    ∃ (v' : HS (nT CReg) Q A U) (c : ℕ), v'.user = v.user ∧
       c ≤ topPadCost cfg a R R₂ (2 ^ n * r * w) (S.R (reg .io)).length ∧
       Exec body topPadS (mk v S) c
         (mk v' { S with
@@ -1350,7 +1360,7 @@ theorem topPadS_exec {cfg : List ℕ} {n a R R₂ r w K ρ : ℕ} (h2 : cfg[2]? 
   have hR₆row : (R₆ (reg .rowctr)).length = L := by
     simp [hR₆, movedR, hR₅, hR₄, hR₃, hR₂', hR₁, hrow, hL]
   -- the zero rows
-  let Ψ : ℕ → Regs (nT SXReg) A := fun j =>
+  let Ψ : ℕ → Regs (nT CReg) A := fun j =>
     Function.update R₆ (reg .io) (List.replicate (j * L) (pairSym A false false))
   have hp : IterSpec body (umulSym 1 (pairSym A false false) (reg .rowctr) (reg .io) (reg (.sc 4)))
       (reg (.sc 2)) (reg (.sc 3)) Ψ (fun _ => 4 * L + 4) M := by
@@ -1447,7 +1457,7 @@ theorem topPadS_exec {cfg : List ℕ} {n a R R₂ r w K ρ : ℕ} (h2 : cfg[2]? 
 
 /-- Keep the first `R 2^a` rows (fields `3`, `2`): one counted copy of a row from `io` onto
 `racc` per row, then `io` cleared and `racc` moved back. -/
-noncomputable def topUnpadS : Pr P (nT SXReg) Q A U :=
+noncomputable def topUnpadS : Pr P (nT CReg) Q A U :=
   .seq (topRd (reg (.sc 0)) 2)
   (.seq (topRd (reg (.sc 1)) 3)
   (.seq (upow2 (reg (.sc 0)) (reg (.sc 1)) (reg (.sc 4)) (reg (.sc 5)))
@@ -1464,10 +1474,10 @@ def topUnpadCost (cfg : List ℕ) (a R L V : ℕ) : ℕ :=
     (2 * (2 ^ a * R) + 2)
 
 theorem topUnpadS_exec {cfg : List ℕ} {n a R r w K ρ : ℕ} (h2 : cfg[2]? = some a)
-    (h3 : cfg[3]? = some R) (v : HS (nT SXReg) Q A U) (S : Stacks (nT SXReg) A)
-    (hT : TopRegs S.R n r w K ρ) (hcf : ∃ rest, S.R (reg .park) = topRec cfg ++ rest)
+    (h3 : cfg[3]? = some R) (v : HS (nT CReg) Q A U) (S : Stacks (nT CReg) A)
+    (hT : TopRegs S.R n r w K ρ Gd) (hcf : ∃ rest, S.R (reg .park) = topRec cfg ++ rest)
     (hlen : 2 ^ a * R * (2 ^ n * r * w) ≤ (S.R (reg .io)).length) :
-    ∃ (v' : HS (nT SXReg) Q A U) (c : ℕ), v'.user = v.user ∧
+    ∃ (v' : HS (nT CReg) Q A U) (c : ℕ), v'.user = v.user ∧
       c ≤ topUnpadCost cfg a R (2 ^ n * r * w) (S.R (reg .io)).length ∧
       Exec body topUnpadS (mk v S) c
         (mk v' { S with
@@ -1505,7 +1515,7 @@ theorem topUnpadS_exec {cfg : List ℕ} {n a R r w K ρ : ℕ} (h2 : cfg[2]? = s
   have h3l : (R₃ (reg (.sc 1))).length = N₁ := by
     simp [hR₃, length_flatMap_replicate, hN₁]; ring
   -- the rows kept
-  let Ψ : ℕ → Regs (nT SXReg) A := fun j =>
+  let Ψ : ℕ → Regs (nT CReg) A := fun j =>
     Function.update (Function.update R₃ (reg .io) (Xs.drop (j * L))) (reg .racc)
       (Xs.take (j * L)).reverse
   have hp : IterSpec body (Shift.counted (reg .rowctr) (reg .rowtmp)
@@ -1610,11 +1620,11 @@ end Down
 
 /-! ### The pieces -/
 
-lemma TopRegs.update_store {A : ℕ} {Rg : Fin (nT SXReg) → List (Fin (A + 4))} {N r w K ρ : ℕ}
-    (h : TopRegs Rg N r w K ρ) {x : LReg SXReg}
+lemma TopRegs.update_store {A : ℕ} {Rg : Fin (nT CReg) → List (Fin (A + 4))} {N r w K ρ : ℕ}
+    (h : TopRegs Rg N r w K ρ Gd) {x : LReg CReg}
     (hx : x = .io ∨ x = .ph .arr ∨ x = .lf (.k .arr)) (l : List (Fin (A + 4))) :
-    TopRegs (Function.update Rg (reg x) l) N r w K ρ := by
-  have hne : ∀ y : LReg SXReg, y ∈ parRegs (BReg := SXReg) → reg y ≠ reg x := by
+    TopRegs (Function.update Rg (reg x) l) N r w K ρ Gd := by
+  have hne : ∀ y : LReg CReg, y ∈ parRegs (BReg := CReg) → reg y ≠ reg x := by
     intro y hy
     apply reg_ne
     simp only [parRegs, List.mem_cons, List.not_mem_nil, or_false] at hy
@@ -1651,7 +1661,7 @@ variable {Q Ka : ℕ} {U : Type}
 /-- One piece: its fields `j`, `u`, `a₀`, `L` from `ph .arr` onto `lev`, `u`, `a₀`, `L` (the
 fields kept on `lf (.k .arr)`), `rows := R₂` (field `4`), the call, and `flag` for the next
 piece. -/
-noncomputable def topPcBody : Pr LProc (nT SXReg) Q (prime + Ka) U :=
+noncomputable def topPcBody : Pr LProc (nT CReg) Q (prime + Ka) U :=
   .seq (topField (reg (.ph .arr)) (reg (.lf (.k .arr))) (reg .lev) true)
   (.seq (topField (reg (.ph .arr)) (reg (.lf (.k .arr))) (reg .u) true)
   (.seq (topField (reg (.ph .arr)) (reg (.lf (.k .arr))) (reg .a₀) true)
@@ -1660,18 +1670,18 @@ noncomputable def topPcBody : Pr LProc (nT SXReg) Q (prime + Ka) U :=
   (.seq topCallClr (.act (peekR (reg (.ph .arr)))))))))
 
 /-- The step bound of one piece. -/
-noncomputable def topPcCost (ds : ComplexFramedExecution.Directions) (cfg : List ℕ)
+noncomputable def topPcCost (A Gd : ℕ) (ds : ComplexFramedExecution.Directions) (cfg : List ℕ)
     (K ρ n r w : ℕ) (pc : TopPc) : ℕ :=
   (2 * pc.j + 3) + (2 * pc.u + 3) + (2 * pc.a₀ + 3) + (2 * (K * bits pc.u pc.j) + 3) +
-    topGetCost cfg + (layerCost (nT SXReg) ds pc.u K ρ pc.R₀ n r w pc.j pc.a₀ +
+    topGetCost cfg + (layerCost A (nT CReg) ds pc.u K ρ pc.R₀ n r w Gd pc.j pc.a₀ +
       (2 * pc.j + 2 * pc.u + 2 * pc.a₀ + 2 * (K * bits pc.u pc.j) + 2 * rowsAt pc.R₀ pc.j + 10)) +
     1
 
 /-- The step bound of the loop over the pieces. -/
-noncomputable def topPcsCost (ds : ComplexFramedExecution.Directions) (cfg : List ℕ)
+noncomputable def topPcsCost (A Gd : ℕ) (ds : ComplexFramedExecution.Directions) (cfg : List ℕ)
     (K ρ n r w : ℕ) : List TopPc → ℕ
   | [] => 1
-  | pc :: pcs => topPcCost ds cfg K ρ n r w pc + 1 + topPcsCost ds cfg K ρ n r w pcs
+  | pc :: pcs => topPcCost A Gd ds cfg K ρ n r w pc + 1 + topPcsCost A Gd ds cfg K ρ n r w pcs
 
 theorem topPcBody_exec (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
     (ds : ComplexFramedExecution.Directions) (hA : 14 ≤ prime + Ka)
@@ -1679,14 +1689,14 @@ theorem topPcBody_exec (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
     (hgate : ∀ g, Instr.gate g ∈ program ds →
       (2 * gateBound g + 1) ^ (2 * (gateWires g).length) ≤ prime + Ka + 4)
     {cfg : List ℕ} {n r w K ρ R₂ : ℕ} (h4 : cfg[4]? = some R₂) (hr : 1 ≤ r) (hw : 1 ≤ w)
-    (hρ : ρ < K) (pc : TopPc) (hok : pc.Ok ds K n w R₂) (restPL : List (Fin (prime + Ka + 4)))
-    (Y : ZArr (Fin R₂ × Fin r) n) (v : HS (nT SXReg) Q (prime + Ka) U)
-    (S : Stacks (nT SXReg) (prime + Ka)) (hL : ∀ y, S.L y = []) (hT : TopRegs S.R n r w K ρ)
+    (hρ : ρ < K) (pc : TopPc) (hok : pc.Ok ds K n w R₂ Gd) (restPL : List (Fin (prime + Ka + 4)))
+    (Y : ZArr (Fin R₂ × Fin r) n) (v : HS (nT CReg) Q (prime + Ka) U)
+    (S : Stacks (nT CReg) (prime + Ka)) (hL : ∀ y, S.L y = []) (hT : TopRegs S.R n r w K ρ Gd)
     (hcf : ∃ rest, S.R (reg .park) = topRec cfg ++ rest)
     (hPL : S.R (reg (.ph .arr)) = topRec (topPcFields K pc) ++ restPL)
     (hio : S.R (reg .io) = encZ (prime + Ka) w Y) :
-    ∃ (v' : HS (nT SXReg) Q (prime + Ka) U) (c : ℕ), v'.user = v.user ∧
-      v'.flag = restPL.head?.isSome ∧ c ≤ topPcCost ds cfg K ρ n r w pc ∧
+    ∃ (v' : HS (nT CReg) Q (prime + Ka) U) (c : ℕ), v'.user = v.user ∧
+      v'.flag = restPL.head?.isSome ∧ c ≤ topPcCost (prime + Ka) Gd ds cfg K ρ n r w pc ∧
       Exec (layerTable hQ ds) topPcBody (mk v S) c
         (mk v' { S with
           R := Function.update (Function.update (Function.update S.R (reg .io)
@@ -1698,10 +1708,10 @@ theorem topPcBody_exec (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
   have hl4 : 4 < cfg.length := (List.getElem?_eq_some_iff.1 h4).1
   have hc4 : cfg[4] = R₂ := (List.getElem?_eq_some_iff.1 h4).2
   have hlc : S.R (reg .lenctr) = [] := hT.rest .lenctr
-  set PL : Fin (nT SXReg) := reg (.ph .arr) with hPLd
-  set PB : Fin (nT SXReg) := reg (.lf (.k .arr)) with hPBd
+  set PL : Fin (nT CReg) := reg (.ph .arr) with hPLd
+  set PB : Fin (nT CReg) := reg (.lf (.k .arr)) with hPBd
   set Lv := K * bits pc.u pc.j with hLv
-  have hd : ∀ x : LReg SXReg, x ∈ [LReg.lev, .u, .a₀, .L] →
+  have hd : ∀ x : LReg CReg, x ∈ [LReg.lev, .u, .a₀, .L] →
       PL ≠ reg x ∧ PB ≠ reg x := by
     intro x hx
     simp only [List.mem_cons, List.not_mem_nil, or_false] at hx
@@ -1741,7 +1751,7 @@ theorem topPcBody_exec (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
   set F₄ := Function.update (Function.update (Function.update F₃ PL restPL) PB
     (topSep :: List.replicate Lv tick ++ F₃ PB))
     (reg .L) (List.replicate Lv tick ++ F₃ (reg .L)) with hF₄
-  have hF₄o : ∀ x : LReg SXReg, x ≠ .lev → x ≠ .u → x ≠ .a₀ → x ≠ .L → x ≠ .ph .arr →
+  have hF₄o : ∀ x : LReg CReg, x ≠ .lev → x ≠ .u → x ≠ .a₀ → x ≠ .L → x ≠ .ph .arr →
       x ≠ .lf (.k .arr) → F₄ (reg x) = S.R (reg x) := by
     intro x h1 h2 h3 h4 h5 h6
     simp [hF₄, hF₃, hF₂, hF₁, hPLd, hPBd, Function.update_apply, h1, h2, h3, h4, h5, h6]
@@ -1759,13 +1769,13 @@ theorem topPcBody_exec (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
   -- the call
   set Z : ZArr (Fin (rowsAt pc.R₀ pc.j) × Fin r) n :=
     fun q => Y ((Fin.cast hok.hR.symm q.1.1, q.1.2), q.2) with hZ
-  have hF₅o : ∀ x : LReg SXReg, x ≠ .lev → x ≠ .u → x ≠ .a₀ → x ≠ .L → x ≠ .rows →
+  have hF₅o : ∀ x : LReg CReg, x ≠ .lev → x ≠ .u → x ≠ .a₀ → x ≠ .L → x ≠ .rows →
       x ≠ .ph .arr → x ≠ .lf (.k .arr) → F₅ (reg x) = S.R (reg x) := by
     intro x h1 h2 h3 h4 h5 h6 h7
     rw [hF₅, Function.update_of_ne (reg_ne h5), hF₄o x h1 h2 h3 h4 h6 h7]
   have hpar : ParState F₅ pc.j pc.u K ρ pc.a₀ (K * bits pc.u pc.j) (rowsAt pc.R₀ pc.j) n w
       (r * w) := by
-    have hh : ∀ x : LReg SXReg, x ∈ [LReg.K, .ρ, .n, .w, .rw] → F₅ (reg x) = S.R (reg x) := by
+    have hh : ∀ x : LReg CReg, x ∈ [LReg.K, .ρ, .n, .w, .rw] → F₅ (reg x) = S.R (reg x) := by
       intro x hx
       simp only [List.mem_cons, List.not_mem_nil, or_false] at hx
       rcases hx with rfl | rfl | rfl | rfl | rfl <;>
@@ -1781,9 +1791,9 @@ theorem topPcBody_exec (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
     · rw [hh _ (by simp)]; exact hT.hn
     · rw [hh _ (by simp)]; exact hT.hw
     · rw [hh _ (by simp)]; exact hT.hrw
-  have hrest₅ : Rest bcEmpty n r w F₅ := by
+  have hrest₅ : Rest (bcRestC Gd) n r w F₅ := by
     intro x
-    by_cases hx : x ∈ parRegs (BReg := SXReg)
+    by_cases hx : x ∈ parRegs (BReg := CReg)
     · exact topRestSpec_par hx _
     by_cases h6 : x = .ph .arr
     · subst h6; trivial
@@ -1794,7 +1804,8 @@ theorem topPcBody_exec (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
       (fun h => hx (by simp [h, parRegs])) h6 h7]
     exact hT.rest x
   obtain ⟨v₆, c₆, hu₆, hc₆, e₆⟩ := topCallClr_exec hQ ds hA hA9 hNW hgate hr hw hρ hok.hu
-    hok.hR₀ hok.hTw (topFit hρ hok.hfit) hok.hfit Z v₅ { S with R := F₅ } hL hpar hrest₅
+    hok.hR₀ hok.hTw (topFit hρ hok.hfit) hok.hfit hok.hres Z v₅
+    { S with R := F₅ } hL hpar hrest₅
     ((hF₅o .io (by simp) (by simp) (by simp) (by simp) (by simp) (by simp) (by simp)).trans
       (hio.trans (topEnc_cast hok.hR.symm Y).symm))
   set X := encZ (prime + Ka) w (pieceZ (pc.piece hρ hok).u ds (pc.piece hρ hok).R₀
@@ -1839,7 +1850,7 @@ theorem topPcBody_exec (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
     by_cases h8 : k = reg .rows
     · subst h8; simp [hF₆, hPLd, hPBd, hT.hrows]
     simp only [hF₆, Function.update_apply, h1, h2, h3, h4, h5, h6, h7, h8, ↓reduceIte]
-    obtain ⟨x, rfl⟩ := (regEquiv SXReg).surjective k
+    obtain ⟨x, rfl⟩ := (regEquiv CReg).surjective k
     exact hF₅o x (fun h => h4 (by rw [h]; rfl)) (fun h => h5 (by rw [h]; rfl))
       (fun h => h6 (by rw [h]; rfl)) (fun h => h7 (by rw [h]; rfl)) (fun h => h8 (by rw [h]; rfl))
       (fun h => h2 (by rw [h]; rfl)) (fun h => h1 (by rw [h]; rfl))
@@ -1851,15 +1862,15 @@ theorem topPcLoop_loop (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
       (2 * gateBound g + 1) ^ (2 * (gateWires g).length) ≤ prime + Ka + 4)
     {cfg : List ℕ} {n r w K ρ R₂ : ℕ} (h4 : cfg[4]? = some R₂) (hr : 1 ≤ r) (hw : 1 ≤ w)
     (hρ : ρ < K) :
-    ∀ (pcs : List TopPc) (hpcs : ∀ pc ∈ pcs, pc.Ok ds K n w R₂) (Y : ZArr (Fin R₂ × Fin r) n)
-      (v : HS (nT SXReg) Q (prime + Ka) U) (S : Stacks (nT SXReg) (prime + Ka)),
-      (∀ y, S.L y = []) → TopRegs S.R n r w K ρ →
+    ∀ (pcs : List TopPc) (hpcs : ∀ pc ∈ pcs, pc.Ok ds K n w R₂ Gd) (Y : ZArr (Fin R₂ × Fin r) n)
+      (v : HS (nT CReg) Q (prime + Ka) U) (S : Stacks (nT CReg) (prime + Ka)),
+      (∀ y, S.L y = []) → TopRegs S.R n r w K ρ Gd →
       (∃ rest, S.R (reg .park) = topRec cfg ++ rest) →
       S.R (reg (.ph .arr)) = topRec (topPcRec K pcs) →
       v.flag = (S.R (reg (.ph .arr))).head?.isSome →
       S.R (reg .io) = encZ (prime + Ka) w Y →
-      ∃ (v' : HS (nT SXReg) Q (prime + Ka) U) (c : ℕ), v'.user = v.user ∧
-        c ≤ topPcsCost ds cfg K ρ n r w pcs ∧
+      ∃ (v' : HS (nT CReg) Q (prime + Ka) U) (c : ℕ), v'.user = v.user ∧
+        c ≤ topPcsCost (prime + Ka) Gd ds cfg K ρ n r w pcs ∧
         Exec (layerTable hQ ds) (.loop (·.flag) topPcBody) (mk v S) c
           (mk v' { S with
             R := Function.update (Function.update (Function.update S.R (reg .io)
@@ -1873,7 +1884,7 @@ theorem topPcLoop_loop (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
             (encZ (prime + Ka) w (piecesZ ds (topPieces hρ [] hpcs) Y))) (reg (.ph .arr)) [])
             (reg (.lf (.k .arr)))
             ((topRec (topPcRec K [])).reverse ++ S.R (reg (.lf (.k .arr)))) } :
-            Stacks (nT SXReg) (prime + Ka)) = S := by
+            Stacks (nT CReg) (prime + Ka)) = S := by
         cases S with
         | mk inp out L R =>
           simp only at hio hPL ⊢
@@ -1895,12 +1906,12 @@ theorem topPcLoop_loop (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
         hok (topRec (topPcRec K pcs)) Y v S hL hT hcf hPL' hio
       set P := pc.piece hρ hok
       set Y' := pieceZ P.u ds P.R₀ P.j P.hR P.e Y with hY'
-      set S₁ : Stacks (nT SXReg) (prime + Ka) := { S with
+      set S₁ : Stacks (nT CReg) (prime + Ka) := { S with
         R := Function.update (Function.update (Function.update S.R (reg .io)
           (encZ (prime + Ka) w Y')) (reg (.ph .arr)) (topRec (topPcRec K pcs)))
           (reg (.lf (.k .arr)))
           ((topRec (topPcFields K pc)).reverse ++ S.R (reg (.lf (.k .arr)))) } with hS₁
-      have hT₁ : TopRegs S₁.R n r w K ρ :=
+      have hT₁ : TopRegs S₁.R n r w K ρ Gd :=
         ((hT.update_store (Or.inl rfl) _).update_store (Or.inr (Or.inl rfl)) _).update_store
           (Or.inr (Or.inr rfl)) _
       obtain ⟨v₂, c₂, hu₂, hc₂, e₂⟩ := topPcLoop_loop hQ ds hA hA9 hNW hgate h4 hr hw hρ pcs
@@ -1919,7 +1930,7 @@ theorem topPcLoop_loop (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
 
 /-- The pieces: run the piece record of `ph .arr` through `topPcBody`, keeping the consumed
 fields on the empty `lf (.k .arr)`, and move them back. -/
-noncomputable def topPcLoop : Pr LProc (nT SXReg) Q (prime + Ka) U :=
+noncomputable def topPcLoop : Pr LProc (nT CReg) Q (prime + Ka) U :=
   .seq (.act (peekR (reg (.ph .arr))))
     (.seq (.loop (·.flag) topPcBody) (moveR (reg (.lf (.k .arr))) (reg (.ph .arr)) id))
 
@@ -1929,14 +1940,14 @@ theorem topPcLoop_exec (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
     (hgate : ∀ g, Instr.gate g ∈ program ds →
       (2 * gateBound g + 1) ^ (2 * (gateWires g).length) ≤ prime + Ka + 4)
     {cfg : List ℕ} {n r w K ρ R₂ : ℕ} (h4 : cfg[4]? = some R₂) (hr : 1 ≤ r) (hw : 1 ≤ w)
-    (hρ : ρ < K) (pcs : List TopPc) (hpcs : ∀ pc ∈ pcs, pc.Ok ds K n w R₂)
-    (Y : ZArr (Fin R₂ × Fin r) n) (v : HS (nT SXReg) Q (prime + Ka) U)
-    (S : Stacks (nT SXReg) (prime + Ka)) (hL : ∀ y, S.L y = []) (hT : TopRegs S.R n r w K ρ)
+    (hρ : ρ < K) (pcs : List TopPc) (hpcs : ∀ pc ∈ pcs, pc.Ok ds K n w R₂ Gd)
+    (Y : ZArr (Fin R₂ × Fin r) n) (v : HS (nT CReg) Q (prime + Ka) U)
+    (S : Stacks (nT CReg) (prime + Ka)) (hL : ∀ y, S.L y = []) (hT : TopRegs S.R n r w K ρ Gd)
     (hcf : ∃ rest, S.R (reg .park) = topRec cfg ++ rest)
     (hPL : S.R (reg (.ph .arr)) = topRec (topPcRec K pcs)) (hPB : S.R (reg (.lf (.k .arr))) = [])
     (hio : S.R (reg .io) = encZ (prime + Ka) w Y) :
-    ∃ (v' : HS (nT SXReg) Q (prime + Ka) U) (c : ℕ), v'.user = v.user ∧
-      c ≤ topPcsCost ds cfg K ρ n r w pcs + 1 + (2 * topRecLen (topPcRec K pcs) + 2) ∧
+    ∃ (v' : HS (nT CReg) Q (prime + Ka) U) (c : ℕ), v'.user = v.user ∧
+      c ≤ topPcsCost (prime + Ka) Gd ds cfg K ρ n r w pcs + 1 + (2 * topRecLen (topPcRec K pcs) + 2) ∧
       Exec (layerTable hQ ds) topPcLoop (mk v S) c
         (mk v' { S with
           R := Function.update S.R (reg .io)
@@ -1964,14 +1975,14 @@ theorem topPcLoop_exec (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
 
 /-- The pieces on the array with the top bits as rows: the rest state for `n` address bits,
 padding, the pieces, unpadding, and the rest state for `n + a` address bits again. -/
-noncomputable def topBlockS : Pr LProc (nT SXReg) Q (prime + Ka) U :=
+noncomputable def topBlockS : Pr LProc (nT CReg) Q (prime + Ka) U :=
   .seq topDownS (.seq topPadS (.seq topPcLoop (.seq topUnpadS topUpS)))
 
 /-- The step bound of `topBlockS`. -/
-noncomputable def topBlockCost (ds : ComplexFramedExecution.Directions) (cfg : List ℕ)
+noncomputable def topBlockCost (A Gd : ℕ) (ds : ComplexFramedExecution.Directions) (cfg : List ℕ)
     (K ρ n a r w R R₂ : ℕ) (pcs : List TopPc) : ℕ :=
   topDownCost cfg n a r w + topPadCost cfg a R R₂ (2 ^ n * r * w) (R * 2 ^ a * 2 ^ n * r * w) +
-    (topPcsCost ds cfg K ρ n r w pcs + 1 + (2 * topRecLen (topPcRec K pcs) + 2)) +
+    (topPcsCost A Gd ds cfg K ρ n r w pcs + 1 + (2 * topRecLen (topPcRec K pcs) + 2)) +
     topUnpadCost cfg a R (2 ^ n * r * w) (R₂ * 2 ^ n * r * w) + topUpCost cfg n a r w
 
 theorem topBlockS_exec (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
@@ -1981,13 +1992,13 @@ theorem topBlockS_exec (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
       (2 * gateBound g + 1) ^ (2 * (gateWires g).length) ≤ prime + Ka + 4)
     {cfg : List ℕ} {n a R R₂ r w K ρ : ℕ} (h2 : cfg[2]? = some a) (h3 : cfg[3]? = some R)
     (h4 : cfg[4]? = some R₂) (hr : 1 ≤ r) (hw : 1 ≤ w) (hρ : ρ < K) (hR₂ : R * 2 ^ a ≤ R₂)
-    (pcs : List TopPc) (hpcs : ∀ pc ∈ pcs, pc.Ok ds K n w R₂)
-    (Y : ZArr (Fin (R * 2 ^ a) × Fin r) n) (v : HS (nT SXReg) Q (prime + Ka) U)
-    (S : Stacks (nT SXReg) (prime + Ka)) (hL : ∀ y, S.L y = [])
-    (hT : TopRegs S.R (n + a) r w K ρ) (hI : TopIn S.R cfg (topPcRec K pcs))
+    (pcs : List TopPc) (hpcs : ∀ pc ∈ pcs, pc.Ok ds K n w R₂ Gd)
+    (Y : ZArr (Fin (R * 2 ^ a) × Fin r) n) (v : HS (nT CReg) Q (prime + Ka) U)
+    (S : Stacks (nT CReg) (prime + Ka)) (hL : ∀ y, S.L y = [])
+    (hT : TopRegs S.R (n + a) r w K ρ Gd) (hI : TopIn S.R cfg (topPcRec K pcs))
     (hio : S.R (reg .io) = encZ (prime + Ka) w Y) :
-    ∃ (v' : HS (nT SXReg) Q (prime + Ka) U) (c : ℕ), v'.user = v.user ∧
-      c ≤ topBlockCost ds cfg K ρ n a r w R R₂ pcs ∧
+    ∃ (v' : HS (nT CReg) Q (prime + Ka) U) (c : ℕ), v'.user = v.user ∧
+      c ≤ topBlockCost (prime + Ka) Gd ds cfg K ρ n a r w R R₂ pcs ∧
       Exec (layerTable hQ ds) topBlockS (mk v S) c
         (mk v' { S with
           R := Function.update S.R (reg .io) (encZ (prime + Ka) w
@@ -1996,7 +2007,7 @@ theorem topBlockS_exec (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
   -- down
   obtain ⟨v₁, c₁, hu₁, hc₁, e₁⟩ := topDownS_exec body h2 v S hT hI
   set Rd := topDownR S.R a n r w with hRd
-  have hTd : TopRegs Rd n r w K ρ := topDownR_regs hT
+  have hTd : TopRegs Rd n r w K ρ Gd := topDownR_regs hT
   have hcfd : ∃ rest, Rd (reg .park) = topRec cfg ++ rest := by
     rw [hRd, topDownR_of_ne (by simp) (by simp) (by simp) (by simp) (by simp) (by simp)]
     exact hI.cf
@@ -2063,6 +2074,12 @@ def topSel {n : ℕ} (a : ℕ) (low : List (Fin n)) (top : List (Fin (n + a))) :
     List (Fin (n + a)) :=
   low.map (Fin.castAdd a) ++ top
 
+/-- The kernels of a concatenation. -/
+lemma k2s_append {R r n : ℕ} : ∀ (l₁ l₂ : List (Fin n)) (f : ZArr (Fin R × Fin r) n),
+    k2s (l₁ ++ l₂) f = k2s l₂ (k2s l₁ f)
+  | [], _, _ => rfl
+  | t :: ts, l₂, f => by rw [List.cons_append, k2s, k2s, k2s_append ts l₂]
+
 /-- The array `topZ` shifts: the unit times the phased result of the kernels. -/
 noncomputable def topPre {R r n : ℕ} (ds : ComplexFramedExecution.Directions) (a : ℕ)
     (low : List (Fin n)) (top : List (Fin (n + a))) {R₂ : ℕ} (hR₂ : R * 2 ^ a ≤ R₂)
@@ -2105,25 +2122,26 @@ variable {Q Ka : ℕ} {U : Type}
 the phase (`topPhaseS`), the top kernels (`topKerS`), the pieces with the top bits as rows
 (`topBlockS`), the phase, the unit (`topUnitS`) and the truncating shift (`topShiftS`). All sizes
 come from the registers. -/
-noncomputable def topProg : Pr LProc (nT SXReg) Q (prime + Ka) U :=
-  .seq topWidenS (.seq topPhaseS (.seq topKerS (.seq topBlockS (.seq topPhaseS
-    (.seq topUnitS topShiftS)))))
+noncomputable def topProg : Pr LProc (nT CReg) Q (prime + Ka) U :=
+  .seq topWidenS (.seq topPhaseS (.seq (topKerS 5 6 7) (.seq (topKerS 10 11 12) (.seq topBlockS
+    (.seq topPhaseS (.seq topUnitS topShiftS))))))
 
 /-- The step bound of `topProg`: the sum of the stage bounds. -/
-noncomputable def topCost (ds : ComplexFramedExecution.Directions)
-    (w w' s n a R r K ρ q aT oS D R₂ : ℕ) (pcs : List TopPc) : ℕ :=
-  topWidenSCost (topCfg w s a R R₂ q aT K oS D) R (n + a) r w w' +
-    topPhaseSCost (topCfg w s a R R₂ q aT K oS D) (n + a) R r w' K ρ oS D +
-    topKerSCost ds (topCfg w s a R R₂ q aT K oS D) K ρ R (n + a) r w' q aT +
-    topBlockCost ds (topCfg w s a R R₂ q aT K oS D) K ρ n a r w' R R₂ pcs +
-    topPhaseSCost (topCfg w s a R R₂ q aT K oS D) (n + a) R r w' K ρ oS D +
-    topUnitSCost (topCfg w s a R R₂ q aT K oS D) R (n + a) r w' D +
-    topShiftSCost (topCfg w s a R R₂ q aT K oS D) R (n + a) r w' s w
+noncomputable def topCost (A Gd : ℕ) (ds : ComplexFramedExecution.Directions)
+    (w w' s n a R r K ρ q aT oS D R₂ q₂ aT₂ : ℕ) (pcs : List TopPc) : ℕ :=
+  topWidenSCost (topCfg w s a R R₂ q aT K oS D q₂ aT₂) R (n + a) r w w' +
+    topPhaseSCost (topCfg w s a R R₂ q aT K oS D q₂ aT₂) (n + a) R r w' K ρ oS D +
+    topKerSCost A Gd ds (topCfg w s a R R₂ q aT K oS D q₂ aT₂) K ρ R (n + a) r w' q aT +
+    topKerSCost A Gd ds (topCfg w s a R R₂ q aT K oS D q₂ aT₂) K ρ R (n + a) r w' q₂ aT₂ +
+    topBlockCost A Gd ds (topCfg w s a R R₂ q aT K oS D q₂ aT₂) K ρ n a r w' R R₂ pcs +
+    topPhaseSCost (topCfg w s a R R₂ q aT K oS D q₂ aT₂) (n + a) R r w' K ρ oS D +
+    topUnitSCost (topCfg w s a R R₂ q aT K oS D q₂ aT₂) R (n + a) r w' D +
+    topShiftSCost (topCfg w s a R R₂ q aT K oS D q₂ aT₂) R (n + a) r w' s w
 
 /-- **The host machine of the simultaneous layer** (`topProg`). The configuration is read from
-the registers: `park` holds the record `topCfg w s a R R₂ q aT K oS D` (on top of anything),
+the registers: `park` holds the record `topCfg w s a R R₂ q aT K oS D q₂ aT₂` (on top of anything),
 `ph .arr` the piece record `topPcRec K pcs`, `lf (.k .arr)`, `st`, `cs` are empty, and
-`TopRegs S.R (n + a) r w' K ρ` holds (the per-call parameters empty, `n`, `w`, `rw`, `K`, `ρ`
+`TopRegs S.R (n + a) r w' K ρ` Gd holds (the per-call parameters empty, `n`, `w`, `rw`, `K`, `ρ`
 holding `n + a`, `w'`, `r w'`, `K`, `ρ`, every register at rest). With every left stack empty
 and `io` holding the `w`-bit stream of `Z` (coefficients fitting `w` signed bits), the machine
 ends with `io` holding the `w`-bit stream of `topZ ds a low top hR₂ Ps s Z`, `top` the bits
@@ -2135,37 +2153,40 @@ theorem topProg_exec (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
     (hA9 : 9 ^ 4 ≤ prime + Ka + 4) (hNW : NW ≤ prime + Ka + 4)
     (hgate : ∀ g, Instr.gate g ∈ program ds →
       (2 * gateBound g + 1) ^ (2 * (gateWires g).length) ≤ prime + Ka + 4)
-    {w w' s n a R r K ρ q aT oS D R₂ : ℕ} (low : List (Fin n)) (pcs : List TopPc)
+    {w w' s n a R r K ρ q aT oS D R₂ q₂ aT₂ : ℕ} (low : List (Fin n)) (pcs : List TopPc)
     (hr : 1 ≤ r) (hw : 1 ≤ w) (hsw : s + w ≤ w') (hρ : ρ < K) (hR : 1 ≤ R)
     (hfitT : ∀ i < q, aT + ρ + K * i < n + a) (hTL : aT + K * q ≤ n + a)
-    (hR₂ : R * 2 ^ a ≤ R₂) (hpcs : ∀ pc ∈ pcs, pc.Ok ds K n w' R₂)
-    (hselm : ∀ t : Fin (n + a), t ∈ topSel a low (topTop aT ρ K q (n + a) hfitT) ↔
+    (hfitT₂ : ∀ i < q₂, aT₂ + ρ + K * i < n + a) (hTL₂ : aT₂ + K * q₂ ≤ n + a)
+    (hR₂ : R * 2 ^ a ≤ R₂) (hpcs : ∀ pc ∈ pcs, pc.Ok ds K n w' R₂ Gd)
+    (hselm : ∀ t : Fin (n + a), t ∈ topSel a low (topTop aT ρ K q (n + a) hfitT ++ topTop aT₂ ρ K q₂ (n + a) hfitT₂) ↔
       ∃ i < D, (t : ℕ) = ρ + oS + K * i)
-    (hsel : (topSel a low (topTop aT ρ K q (n + a) hfitT)).Nodup)
-    (hD : (topSel a low (topTop aT ρ K q (n + a) hfitT)).length = D)
+    (hsel : (topSel a low (topTop aT ρ K q (n + a) hfitT ++ topTop aT₂ ρ K q₂ (n + a) hfitT₂)).Nodup)
+    (hD : (topSel a low (topTop aT ρ K q (n + a) hfitT ++ topTop aT₂ ρ K q₂ (n + a) hfitT₂)).length = D)
     (Z : ZArr (Fin R × Fin r) (n + a)) (hZ : ∀ p, TopFitsZ w (Z p))
-    (hX : ∀ p, TopFitsZ w' (topPre ds a low (topTop aT ρ K q (n + a) hfitT) hR₂
+    (hX : ∀ p, TopFitsZ w' (topPre ds a low (topTop aT ρ K q (n + a) hfitT ++ topTop aT₂ ρ K q₂ (n + a) hfitT₂) hR₂
       (topPieces hρ pcs hpcs) Z p))
-    (v : HS (nT SXReg) Q (prime + Ka) U) (S : Stacks (nT SXReg) (prime + Ka))
-    (hL : ∀ y, S.L y = []) (hT : TopRegs S.R (n + a) r w' K ρ)
-    (hI : TopIn S.R (topCfg w s a R R₂ q aT K oS D) (topPcRec K pcs))
+    (v : HS (nT CReg) Q (prime + Ka) U) (S : Stacks (nT CReg) (prime + Ka))
+    (hL : ∀ y, S.L y = []) (hT : TopRegs S.R (n + a) r w' K ρ Gd)
+    (hI : TopIn S.R (topCfg w s a R R₂ q aT K oS D q₂ aT₂) (topPcRec K pcs))
     (hio : S.R (reg .io) = encZ (prime + Ka) w Z) :
-    ∃ (v' : HS (nT SXReg) Q (prime + Ka) U) (c : ℕ), v'.user = v.user ∧
-      c ≤ topCost ds w w' s n a R r K ρ q aT oS D R₂ pcs ∧
+    ∃ (v' : HS (nT CReg) Q (prime + Ka) U) (c : ℕ), v'.user = v.user ∧
+      c ≤ topCost (prime + Ka) Gd ds w w' s n a R r K ρ q aT oS D R₂ q₂ aT₂ pcs ∧
       Exec (layerTable hQ ds) topProg (mk v S) c
         (mk v' { S with
           R := Function.update S.R (reg .io) (encZ (prime + Ka) w (topZ ds a low
-            (topTop aT ρ K q (n + a) hfitT) hR₂ (topPieces hρ pcs hpcs) s Z)) }) := by
+            (topTop aT ρ K q (n + a) hfitT ++ topTop aT₂ ρ K q₂ (n + a) hfitT₂) hR₂ (topPieces hρ pcs hpcs) s Z)) }) := by
   set body := layerTable (Ka := Ka) (U := U) hQ ds
-  set cfg := topCfg w s a R R₂ q aT K oS D with hcfg
-  set top := topTop aT ρ K q (n + a) hfitT with htop
+  set cfg := topCfg w s a R R₂ q aT K oS D q₂ aT₂ with hcfg
+  set top₁ := topTop aT ρ K q (n + a) hfitT with htop₁
+  set top₂ := topTop aT₂ ρ K q₂ (n + a) hfitT₂ with htop₂
+  set top := top₁ ++ top₂ with htop
   set sel := topSel a low top with hseldef
   set Ps := topPieces hρ pcs hpcs with hPs
   have hw' : 1 ≤ w' := by omega
   have hK : 1 ≤ K := by omega
   have hA5 : 5 ≤ prime + Ka := by omega
   have hmask : topMaskOf (n + a) ρ K oS D = topSelMask sel := topMaskOf_eq hK sel hselm
-  have hT' : ∀ X, TopRegs (Function.update S.R (reg .io) X) (n + a) r w' K ρ :=
+  have hT' : ∀ X, TopRegs (Function.update S.R (reg .io) X) (n + a) r w' K ρ Gd :=
     fun X => hT.update_io X
   have hI' : ∀ X, TopIn (Function.update S.R (reg .io) X) cfg (topPcRec K pcs) :=
     fun X => hI.update_io X
@@ -2188,16 +2209,27 @@ theorem topProg_exec (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
     (by simp)
   rw [hmask, topPhase_sZ sel hsel, topIo] at e₂
   -- 3. the top kernels
-  obtain ⟨v₃, c₃, hu₃, hc₃, e₃⟩ := topKerS_exec hQ ds hA hA9 hNW hgate (cfg := cfg)
+  obtain ⟨v₃, c₃, hu₃, hc₃, e₃⟩ := topKerS_exec hQ ds hA hA9 hNW hgate (cfg := cfg) 5 6 7
     (by simp [hcfg, topCfg]) (by simp [hcfg, topCfg]) (by simp [hcfg, topCfg])
     (by simp [hcfg, topCfg]) hr hw' hρ hR hfitT hTL Z₁ v₂
     { S with R := Function.update S.R (reg .io) (encZ (prime + Ka) w' Z₁) } hL (hT' _) (hI' _)
     (by simp)
   rw [topIo] at e₃
+  set Z₁' := k2s top₁ Z₁ with hZ₁'
+  obtain ⟨v₃', c₃', hu₃', hc₃', e₃'⟩ := topKerS_exec hQ ds hA hA9 hNW hgate (cfg := cfg) 10 11 12
+    (by simp [hcfg, topCfg]) (by simp [hcfg, topCfg]) (by simp [hcfg, topCfg])
+    (by simp [hcfg, topCfg]) hr hw' hρ hR hfitT₂ hTL₂ Z₁' v₃
+    { S with R := Function.update S.R (reg .io) (encZ (prime + Ka) w' Z₁') } hL (hT' _) (hI' _)
+    (by simp)
+  rw [topIo] at e₃'
+  have hZ₂' : k2s ((List.finRange q₂).map (actMap aT₂ ρ K q₂ (n + a) hfitT₂)) Z₁' = Z₂ := by
+    rw [hZ₂, htop, k2s_append]; rfl
+  rw [hZ₂'] at e₃'
   -- 4. the pieces with the top bits as rows
   obtain ⟨v₄, c₄, hu₄, hc₄, e₄⟩ := topBlockS_exec hQ ds hA hA9 hNW hgate (cfg := cfg)
-    (by simp [hcfg, topCfg]) (by simp [hcfg, topCfg]) (by simp [hcfg, topCfg]) hr hw' hρ hR₂ pcs
-    hpcs (toRows a Z₂) v₃
+    (by simp [hcfg, topCfg]) (by simp [hcfg, topCfg]) (by simp [hcfg, topCfg]) hr hw' hρ
+    hR₂ pcs
+    hpcs (toRows a Z₂) v₃'
     { S with R := Function.update S.R (reg .io) (encZ (prime + Ka) w' Z₂) } hL (hT' _) (hI' _)
     (by simp [topEnc_toRows])
   rw [topIo, ← hG, ← topEnc_ofRows a G, ← hZ₃] at e₄
@@ -2220,9 +2252,9 @@ theorem topProg_exec (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
     { S with R := Function.update S.R (reg .io) (encZ (prime + Ka) w' Z₅) } (hT' _) (hI' _)
     (by simp)
   rw [topIo] at e₇
-  refine ⟨v₇, _, by rw [hu₇, hu₆, hu₅, hu₄, hu₃, hu₂, hu₁], ?_,
-    Exec.cast (Exec.seq e₁ (Exec.seq e₂ (Exec.seq e₃ (Exec.seq e₄ (Exec.seq e₅ (Exec.seq e₆
-      e₇)))))) rfl (by rw [topZ_eq_pre])⟩
+  refine ⟨v₇, _, by rw [hu₇, hu₆, hu₅, hu₄, hu₃', hu₃, hu₂, hu₁], ?_,
+    Exec.cast (Exec.seq e₁ (Exec.seq e₂ (Exec.seq e₃ (Exec.seq e₃' (Exec.seq e₄ (Exec.seq e₅
+      (Exec.seq e₆ e₇))))))) rfl (by rw [topZ_eq_pre])⟩
   unfold topCost
   rw [← hcfg]
   omega
@@ -2235,38 +2267,41 @@ theorem topProg_exec_Hl (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
     (hA : 14 ≤ prime + Ka) (hA9 : 9 ^ 4 ≤ prime + Ka + 4) (hNW : NW ≤ prime + Ka + 4)
     (hgate : ∀ g, Instr.gate g ∈ program ds →
       (2 * gateBound g + 1) ^ (2 * (gateWires g).length) ≤ prime + Ka + 4)
-    {w w' s n a R r K ρ q aT oS D R₂ : ℕ} (low : List (Fin n)) (pcs : List TopPc)
+    {w w' s n a R r K ρ q aT oS D R₂ q₂ aT₂ : ℕ} (low : List (Fin n)) (pcs : List TopPc)
     (hr : 1 ≤ r) (hw : 1 ≤ w) (hsw : s + w ≤ w') (hρ : ρ < K) (hR : 1 ≤ R)
     (hfitT : ∀ i < q, aT + ρ + K * i < n + a) (hTL : aT + K * q ≤ n + a)
-    (hR₂ : R * 2 ^ a ≤ R₂) (hpcs : ∀ pc ∈ pcs, pc.Ok ds K n w' R₂)
+    (hfitT₂ : ∀ i < q₂, aT₂ + ρ + K * i < n + a) (hTL₂ : aT₂ + K * q₂ ≤ n + a)
+    (hR₂ : R * 2 ^ a ≤ R₂) (hpcs : ∀ pc ∈ pcs, pc.Ok ds K n w' R₂ Gd)
     (hinj : ∀ P ∈ topPieces hρ pcs hpcs, Function.Injective P.e)
     (hcover : ((topPieces hρ pcs hpcs).flatMap Piece.bitsList).Perm low)
-    (hselm : ∀ t : Fin (n + a), t ∈ topSel a low (topTop aT ρ K q (n + a) hfitT) ↔
+    (hselm : ∀ t : Fin (n + a), t ∈ topSel a low (topTop aT ρ K q (n + a) hfitT ++ topTop aT₂ ρ K q₂ (n + a) hfitT₂) ↔
       ∃ i < D, (t : ℕ) = ρ + oS + K * i)
-    (hsel : (topSel a low (topTop aT ρ K q (n + a) hfitT)).Nodup)
-    (hD : (topSel a low (topTop aT ρ K q (n + a) hfitT)).length = D)
-    (hs : s = (low.length + q + 1) / 2 + q + ((topPieces hρ pcs hpcs).map (Piece.exp ds)).sum)
+    (hsel : (topSel a low (topTop aT ρ K q (n + a) hfitT ++ topTop aT₂ ρ K q₂ (n + a) hfitT₂)).Nodup)
+    (hD : (topSel a low (topTop aT ρ K q (n + a) hfitT ++ topTop aT₂ ρ K q₂ (n + a) hfitT₂)).length = D)
+    (hs : s = (low.length + (q + q₂) + 1) / 2 + (q + q₂) +
+      ((topPieces hρ pcs hpcs).map (Piece.exp ds)).sum)
     (Z : ZArr (Fin R × Fin r) (n + a)) (hZ : ∀ p, TopFitsZ w (Z p))
-    (hX : ∀ p, TopFitsZ w' (topPre ds a low (topTop aT ρ K q (n + a) hfitT) hR₂
+    (hX : ∀ p, TopFitsZ w' (topPre ds a low (topTop aT ρ K q (n + a) hfitT ++ topTop aT₂ ρ K q₂ (n + a) hfitT₂) hR₂
       (topPieces hρ pcs hpcs) Z p))
-    (v : HS (nT SXReg) Q (prime + Ka) U) (S : Stacks (nT SXReg) (prime + Ka))
-    (hL : ∀ y, S.L y = []) (hT : TopRegs S.R (n + a) r w' K ρ)
-    (hI : TopIn S.R (topCfg w s a R R₂ q aT K oS D) (topPcRec K pcs))
+    (v : HS (nT CReg) Q (prime + Ka) U) (S : Stacks (nT CReg) (prime + Ka))
+    (hL : ∀ y, S.L y = []) (hT : TopRegs S.R (n + a) r w' K ρ Gd)
+    (hI : TopIn S.R (topCfg w s a R R₂ q aT K oS D q₂ aT₂) (topPcRec K pcs))
     (hio : S.R (reg .io) = encZ (prime + Ka) w Z) :
-    ∃ (v' : HS (nT SXReg) Q (prime + Ka) U) (c : ℕ), v'.user = v.user ∧
-      c ≤ topCost ds w w' s n a R r K ρ q aT oS D R₂ pcs ∧
+    ∃ (v' : HS (nT CReg) Q (prime + Ka) U) (c : ℕ), v'.user = v.user ∧
+      c ≤ topCost (prime + Ka) Gd ds w w' s n a R r K ρ q aT oS D R₂ q₂ aT₂ pcs ∧
       Exec (layerTable hQ ds) topProg (mk v S) c
         (mk v' { S with
           R := Function.update S.R (reg .io) (encZ (prime + Ka) w (fun p =>
-            (⟨truncR (Hl _ (topSel a low (topTop aT ρ K q (n + a) hfitT)) (toC Z) p).re,
-              truncR (Hl _ (topSel a low (topTop aT ρ K q (n + a) hfitT)) (toC Z) p).im⟩ :
+            (⟨truncR (Hl _ (topSel a low (topTop aT ρ K q (n + a) hfitT ++ topTop aT₂ ρ K q₂ (n + a) hfitT₂)) (toC Z) p).re,
+              truncR (Hl _ (topSel a low (topTop aT ρ K q (n + a) hfitT ++ topTop aT₂ ρ K q₂ (n + a) hfitT₂)) (toC Z) p).im⟩ :
               GaussianInt))) }) := by
   obtain ⟨v', c, hu, hc, he⟩ := topProg_exec hQ ds hA hA9 hNW hgate low pcs hr hw hsw hρ hR
-    hfitT hTL hR₂ hpcs hselm hsel hD Z hZ hX v S hL hT hI hio
+    hfitT hTL hfitT₂ hTL₂ hR₂ hpcs hselm hsel hD Z hZ hX v S hL hT hI hio
   refine ⟨v', c, hu, hc, Exec.cast he rfl ?_⟩
   congr 4
   funext p
-  have hq : (topTop aT ρ K q (n + a) hfitT).length = q := by simp [topTop]
+  have hq : (topTop aT ρ K q (n + a) hfitT ++ topTop aT₂ ρ K q₂ (n + a) hfitT₂).length =
+      q + q₂ := by simp [topTop]
   exact topZ_correct ds hd a low _ hR₂ _ hinj hcover hsel s (by rw [hq]; exact hs) Z p
 
 end Layer

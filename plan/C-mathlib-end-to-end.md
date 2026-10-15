@@ -10,8 +10,8 @@ multiplies every pair of natural numbers with the standard Mathlib binary
 encodings in worst-case time `O(n (log n)^(1-kappa))`, where `n` is the total
 encoded input length and `kappa > 0`.
 
-The construction uses `Cost.totKappa = 296 / (10^11 * 2^131)`, approximately
-`1.09e-48`, with positivity and the exact value proved by `tot_kappa_pos` and
+The construction uses `Cost.totKappa = 296 / (10^11 * 2^61)`, approximately
+`1.28e-27`, with positivity and the exact value proved by `tot_kappa_pos` and
 `tot_kappa_eq`. This establishes multiplication below `n log n`. It does not
 establish the larger saving `83/10^12` in the original compact-control target
 `Machine.EndToEnd`, or the particular native-bank interfaces tracked in parts

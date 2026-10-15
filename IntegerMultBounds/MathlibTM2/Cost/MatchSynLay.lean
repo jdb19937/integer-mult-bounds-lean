@@ -478,7 +478,7 @@ theorem ml_aux_le :
 /-! ### The pipeline instance -/
 
 /-- The bank registers of `slyRw'` are those of the base file. -/
-theorem ml_slyRw'_sw {Ka : ℕ} (R : Fin (nT SXReg) → List (Fin (prime + Ka + 4))) (es : List ℕ)
+theorem ml_slyRw'_sw {Ka : ℕ} (R : Fin (nT CReg) → List (Fin (prime + Ka + 4))) (es : List ℕ)
     (ℓ K B : ℕ) (i : Fin (swapT 6)) :
     slyRw' R es ℓ K B (slyRg (.sw i)) = R (slyRg (.sw i)) := by
   rw [slyRw'_eq, Function.update_of_ne (sly_regs.l.disj _ _),
@@ -503,7 +503,7 @@ theorem ml_lay_cost_le_gen :
         slyOppCost mnKa (List.ofFn (cvAx (t n))) (ℓ n) (K n) (ℓ n) (dsW n)
           (slyW (List.ofFn (cvAx (t n))).sum (2 ^ ℓ n * dsW n) (ℓ n) (d n - 1)) E v₀ : ℕ) : ℝ) ≤
         C * totConv n := by
-  obtain ⟨Cs, hCs0, hst⟩ := ml_stage_le (nT SXReg) 6 mnKa 3
+  obtain ⟨Cs, hCs0, hst⟩ := ml_stage_le (nT CReg) 6 mnKa 3
   refine ⟨2 * Cs + 16, ?_⟩
   filter_upwards [eventually_big, hst, ml_writer_le 18 26, ml_aux_le, gr_one_le_K] with n h hst
     hwr haux hK1

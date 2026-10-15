@@ -47,8 +47,8 @@ theorem map_val_actMap {a₀ ρ K N n : ℕ} (hfit : ∀ i < N, a₀ + ρ + K * 
   intro i h1 h2
   simp [actMap]
 
-theorem topPieces_vals {ds : ComplexFramedExecution.Directions} {ρ K n w R₂ : ℕ} (hρ : ρ < K) :
-    ∀ (pcs : List TopPc) (h : ∀ pc ∈ pcs, pc.Ok ds K n w R₂),
+theorem topPieces_vals {ds : ComplexFramedExecution.Directions} {ρ K n w R₂ Gd : ℕ} (hρ : ρ < K) :
+    ∀ (pcs : List TopPc) (h : ∀ pc ∈ pcs, pc.Ok ds K n w R₂ Gd),
       ((topPieces hρ pcs h).flatMap Piece.bitsList).map Fin.val = pcs.flatMap (synPcVals ρ K)
   | [], _ => rfl
   | pc :: pcs, h => by
@@ -145,17 +145,24 @@ theorem mem_synPcs {K a D oS J t : ℕ} {pc : TopPc} (h : pc ∈ synPcs K a D oS
   · rw [if_neg h0, Option.some.injEq] at hpc
     exact ⟨j, hj, h0, hpc.symm⟩
 
-/-- **The pieces of a chunk round meet `TopPc.Ok`.** -/
-theorem synPcs_ok (ds : ComplexFramedExecution.Directions) {K a D oS n w' : ℕ}
-    (hfit : oS + K * D ≤ n)
+/-- **The pieces of the digits of `D` meet `TopPc.Ok`.** The pieces sit at `oS + K i`, `i < D`;
+`D Gd` bits below them and `H ≥ 3 D Gd` bits above them stay inside the `n` address bits, so
+every node finds the control fields of its compact slot XORs (`hres`); a node needs `D ≥ m`. -/
+theorem synPcs_ok (ds : ComplexFramedExecution.Directions) {K a D oS n w' Gd H : ℕ}
+    (hfit : oS + K * D + H ≤ n) (hfront : D * Gd ≤ oS) (hback : 3 * (D * Gd) ≤ H)
+    (hGK : m ≤ D → 1 ≤ Gd ∧ Gd + 3 ≤ K)
     (hw : synE (gateCount (program ds)) (factorCount (program ds)) D D + D ≤ w') :
     ∀ pc ∈ synPcs K a D oS (synJ D D - 1) D,
-      pc.Ok ds K n w' (rowsAt (2 ^ a) (synJ D D - 1)) := by
+      pc.Ok ds K n w' (rowsAt (2 ^ a) (synJ D D - 1)) Gd := by
   intro pc hpc
   obtain ⟨j, hj, h0, rfl⟩ := mem_synPcs hpc
   have hpos := synDg_pos_div h0
   have hJ := lt_synJ hj hpos
-  refine ⟨Nat.pos_of_ne_zero h0, ?_, ?_, ?_, ?_⟩
+  have h1 : D % m ^ j + synDg D j * m ^ j ≤ D := by
+    rw [← mod_pow_succ_dg]; exact Nat.mod_le _ _
+  have h2 : K * (D % m ^ j) + K * (synDg D j * m ^ j) ≤ K * D := by
+    rw [← Nat.mul_add]; exact Nat.mul_le_mul_left _ h1
+  refine ⟨Nat.pos_of_ne_zero h0, ?_, ?_, ?_, ?_, ?_⟩
   · simp only [synPc, rowsAt_eq]
     have : 0 < NW := Nat.pos_of_ne_zero (NeZero.ne _)
     exact Nat.mul_pos (pow_pos this _) (by positivity)
@@ -171,11 +178,20 @@ theorem synPcs_ok (ds : ComplexFramedExecution.Directions) {K a D oS n w' : ℕ}
     have h3 := synDg_le D j
     omega
   · simp only [synPc, bits_eq_mul]
-    have h1 : D % m ^ j + synDg D j * m ^ j ≤ D := by
-      rw [← mod_pow_succ_dg]; exact Nat.mod_le _ _
-    have h2 : K * (D % m ^ j) + K * (synDg D j * m ^ j) ≤ K * D := by
-      rw [← Nat.mul_add]; exact Nat.mul_le_mul_left _ h1
     omega
+  · intro hj1 _
+    simp only [synPc, bits_eq_mul]
+    have hmj : m ^ j ≤ D := (div_pow_pos_iff m_pos).1 hpos
+    have hm1 : m ≤ m ^ j := by
+      calc m = m ^ 1 := (pow_one m).symm
+        _ ≤ m ^ j := Nat.pow_le_pow_right m_pos hj1
+    obtain ⟨hG1, hGK'⟩ := hGK (hm1.trans hmj)
+    have h3 : synDg D j * m ^ (j - 1) ≤ synDg D j * m ^ j :=
+      Nat.mul_le_mul_left _ (Nat.pow_le_pow_right m_pos (by omega))
+    have h4 : (synDg D j * m ^ (j - 1) - 1) * Gd ≤ D * Gd :=
+      Nat.mul_le_mul_right _ ((Nat.sub_le _ _).trans (h3.trans ((Nat.le_add_left _ _).trans h1)))
+    generalize (synDg D j * m ^ (j - 1) - 1) * Gd = P at h4 ⊢
+    refine ⟨hG1, hGK', by omega, by omega⟩
 
 end Ok
 
@@ -292,8 +308,8 @@ theorem synPcs_exp_sum (ds : ComplexFramedExecution.Directions) (K a D oS J : �
       · simp [h0]
       · simp [h0, synPc, expZ_eq_expSeq, Nat.add_comm]
 
-theorem topPieces_exp {ds : ComplexFramedExecution.Directions} {ρ K n w R₂ : ℕ} (hρ : ρ < K) :
-    ∀ (pcs : List TopPc) (h : ∀ pc ∈ pcs, pc.Ok ds K n w R₂),
+theorem topPieces_exp {ds : ComplexFramedExecution.Directions} {ρ K n w R₂ Gd : ℕ} (hρ : ρ < K) :
+    ∀ (pcs : List TopPc) (h : ∀ pc ∈ pcs, pc.Ok ds K n w R₂ Gd),
       (topPieces hρ pcs h).map (Piece.exp ds) = pcs.map fun pc => expZ pc.u ds pc.j
   | [], _ => rfl
   | pc :: pcs, h => by
@@ -301,6 +317,67 @@ theorem topPieces_exp {ds : ComplexFramedExecution.Directions} {ρ K n w R₂ : 
       rfl
 
 end Exps
+
+/-! ### The step bounds do not depend on the alphabet
+
+The alphabet size `A` enters the step bound of the layer only through the lengths of the
+register contents cleared by the compact slot XORs, which do not depend on it. -/
+
+section Indep
+
+theorem sxBc_length_indep (A A' : ℕ) (d : SxD) (x : SXReg) :
+    (sxBc A d x).length = (sxBc A' d x).length := by
+  cases x <;> simp [sxBc] <;> split_ifs <;> simp
+
+theorem cxBc_length_indep (A A' : ℕ) (d : CxD) (x : CXReg) :
+    (cxBc A d x).length = (cxBc A' d x).length := by
+  cases x with
+  | sx r => exact sxBc_length_indep A A' _ r
+  | _ => simp [cxBc]
+
+theorem cxCleanupCost_indep (A A' : ℕ) (d : CxD) :
+    cxCleanupCost (A := A) d = cxCleanupCost (A := A') d := by
+  unfold cxCleanupCost
+  simp only [sxBc_length_indep A A', cxBc_length_indep A A']
+
+theorem cxCost_indep (A A' : ℕ) (d : CxD) (T : ℕ) : cxCost A d T = cxCost A' d T := by
+  unfold cxCost
+  rw [cxCleanupCost_indep A A']
+
+theorem basisCostN_indep (A A' T a₀ K ρ L R n rw k G : ℕ) (vv : BinaryWalsh.Address m)
+    (s : Fin m) :
+    basisCostN A T a₀ K ρ L R n rw k G vv s = basisCostN A' T a₀ K ρ L R n rw k G vv s := by
+  simp only [basisCostN, basisCostNC, basisCostC, cxCost_indep A A']
+
+theorem factorCost_indep (A A' T : ℕ) (ds : ComplexFramedExecution.Directions)
+    (j u K ρ a₀ R₀ n r w Gd : ℕ) (g : ZMod 4 × BinaryWalsh.Address m) (cc : ℕ) :
+    factorCost A T ds j u K ρ a₀ R₀ n r w Gd g cc =
+      factorCost A' T ds j u K ρ a₀ R₀ n r w Gd g cc := by
+  simp only [factorCost, basisCostN_indep A A']
+
+theorem layerCost_indep (A A' T : ℕ) (ds : ComplexFramedExecution.Directions)
+    (u K ρ R₀ n r w Gd : ℕ) : ∀ j a₀,
+    layerCost A T ds u K ρ R₀ n r w Gd j a₀ = layerCost A' T ds u K ρ R₀ n r w Gd j a₀
+  | 0, _ => rfl
+  | j + 1, a₀ => by
+      simp only [layerCost, factorCost_indep A A', layerCost_indep A A' T ds u K ρ R₀ n r w Gd j]
+
+theorem topPcsCost_indep (A A' Gd : ℕ) (ds : ComplexFramedExecution.Directions)
+    (cfg : List ℕ) (K ρ n r w : ℕ) : ∀ pcs : List TopPc,
+    topPcsCost A Gd ds cfg K ρ n r w pcs = topPcsCost A' Gd ds cfg K ρ n r w pcs
+  | [] => rfl
+  | pc :: pcs => by
+      simp only [topPcsCost, topPcCost, layerCost_indep A A',
+        topPcsCost_indep A A' Gd ds cfg K ρ n r w pcs]
+
+theorem topCost_indep (A A' Gd : ℕ) (ds : ComplexFramedExecution.Directions)
+    (w w' s n a R r K ρ q aT oS D R₂ q₂ aT₂ : ℕ) (pcs : List TopPc) :
+    topCost A Gd ds w w' s n a R r K ρ q aT oS D R₂ q₂ aT₂ pcs =
+      topCost A' Gd ds w w' s n a R r K ρ q aT oS D R₂ q₂ aT₂ pcs := by
+  simp only [topCost, topKerSCost, topBlockCost, layerCost_indep A A',
+    topPcsCost_indep A A']
+
+end Indep
 
 /-! ### The layer of round `h` -/
 
@@ -312,14 +389,15 @@ variable {Q Ka : ℕ} {U : Type}
 noncomputable def synTrunc {r : ℕ} (B : Recs r) : ℕ → Fin r → GaussianInt :=
   fun x c => ⟨IntegerMultBounds.MathlibTM2.Layer.truncR (B x c).re, IntegerMultBounds.MathlibTM2.Layer.truncR (B x c).im⟩
 
-/-- The step bound of the layer in round `h`. -/
+/-- The step bound of the layer in round `h` (`topCost_indep`: for every alphabet). -/
 noncomputable def synLayerCost (ds : ComplexFramedExecution.Directions) (es : List ℕ)
     (ℓ K l w h : ℕ) : ℕ :=
-  topCost ds w (synW2 es ℓ K (gateCount (program ds)) (factorCount (program ds)) w h)
+  topCost 0 (synGd es.sum) ds w
+    (synW2 es ℓ K (gateCount (program ds)) (factorCount (program ds)) w h)
     (synS es ℓ K (gateCount (program ds)) (factorCount (program ds)) h)
     (es.sum - synAR es ℓ K h) (synAR es ℓ K h) 1 (2 ^ l) (synKh ℓ K h) (synRh ℓ K h)
-    (synQ es ℓ K h)
-    (synAT es ℓ K h) (synOS es ℓ K h) (synDp es ℓ h) (synR2 es ℓ K h) (synPcsR es ℓ K h)
+    (synQ es ℓ K h) (synAT es ℓ K h) (synOS es ℓ K h) (synDp es ℓ h) (synR2 es ℓ K h)
+    (synQ2 es ℓ K h) (synOS es ℓ K h) (synPcsR es ℓ K h)
 
 theorem synKh_pos {ℓ K h : ℕ} (hK : 1 ≤ K) : 1 ≤ synKh ℓ K h := by
   unfold synKh; split_ifs <;> omega
@@ -346,10 +424,17 @@ theorem synChunk_fit {es : List ℕ} {ℓ K : ℕ} (H : LayHyp es ℓ K) {h : �
   simp only [synLg] at hcs hAN ⊢
   omega
 
-/-- `K D' + K q₀ = K D`. -/
+/-- `K q₂ + K D' + K q = K D`. -/
 theorem synK_mul_split (es : List ℕ) (K : ℕ) :
-    K * synDpp es + K * synQK es = K * es.length := by
-  rw [← Nat.mul_add, synDpp_add_synQK]
+    K * synQF es K + K * synDpp es K + K * synQB es K = K * es.length := by
+  rw [← Nat.mul_add, ← Nat.mul_add]
+  congr 1
+  have := synDpp_add_synQB_add_synQF es K
+  omega
+
+/-- `K q₀ ≤ K q`. -/
+theorem synK_mul_le (es : List ℕ) (K : ℕ) : K * synQK es ≤ K * synQB es K :=
+  Nat.mul_le_mul_left _ (synQK_le_synQB es K)
 
 /-- The row bits of every round lie inside the address bits. -/
 theorem synAR_le {es : List ℕ} {ℓ K : ℕ} (H : LayHyp es ℓ K) (h : ℕ) :
@@ -358,103 +443,157 @@ theorem synAR_le {es : List ℕ} {ℓ K : ℕ} (H : LayHyp es ℓ K) (h : ℕ) :
   split_ifs with hc
   · have hf := synChunk_fit H hc
     have := synK_mul_split es K
+    have := synK_mul_le es K
     unfold synAc
     omega
   · exact synA_le H
 
-/-- The values of the selected bits of the layer in round `h`. -/
-theorem synSel_vals {es : List ℕ} {ℓ K : ℕ} (_H : LayHyp es ℓ K) (ds : ComplexFramedExecution.Directions)
-    {h n a w' R₂ : ℕ} (hρ : synRh ℓ K h < synKh ℓ K h)
-    (hpcs : ∀ pc ∈ synPcsR es ℓ K h, pc.Ok ds (synKh ℓ K h) n w' R₂)
-    (hfitT : ∀ i < synQ es ℓ K h, synAT es ℓ K h + synRh ℓ K h + synKh ℓ K h * i < n + a) :
+/-- `oS ≤ N` in every round. -/
+theorem synOS_le {es : List ℕ} {ℓ K : ℕ} (H : LayHyp es ℓ K) (h : ℕ) :
+    synOS es ℓ K h ≤ es.sum := by
+  by_cases hc : synChunk ℓ K h
+  · have := synChunk_fit H hc
+    omega
+  · unfold synChunk at hc
+    unfold synOS
+    split_ifs <;> omega
+
+/-- The values of the selected bits of the layer in round `h`: the pieces, the top kernels and
+the front kernels together are `ρ + oS + K_h i`, `i < D`, once each. -/
+theorem synSel_vals {es : List ℕ} {ℓ K : ℕ} (_H : LayHyp es ℓ K)
+    (ds : ComplexFramedExecution.Directions) {h n a w' R₂ Gd : ℕ}
+    (hρ : synRh ℓ K h < synKh ℓ K h)
+    (hpcs : ∀ pc ∈ synPcsR es ℓ K h, pc.Ok ds (synKh ℓ K h) n w' R₂ Gd)
+    (hfitT : ∀ i < synQ es ℓ K h, synAT es ℓ K h + synRh ℓ K h + synKh ℓ K h * i < n + a)
+    (hfitT₂ : ∀ i < synQ2 es ℓ K h,
+      synOS es ℓ K h + synRh ℓ K h + synKh ℓ K h * i < n + a) :
     ((topSel a ((topPieces hρ (synPcsR es ℓ K h) hpcs).flatMap Piece.bitsList)
-      (topTop (synAT es ℓ K h) (synRh ℓ K h) (synKh ℓ K h) (synQ es ℓ K h) (n + a) hfitT)).map
-        Fin.val).Perm
+      (topTop (synAT es ℓ K h) (synRh ℓ K h) (synKh ℓ K h) (synQ es ℓ K h) (n + a) hfitT ++
+        topTop (synOS es ℓ K h) (synRh ℓ K h) (synKh ℓ K h) (synQ2 es ℓ K h) (n + a)
+          hfitT₂)).map Fin.val).Perm
       ((List.range (synDp es ℓ h)).map fun i =>
         synRh ℓ K h + synOS es ℓ K h + synKh ℓ K h * i) := by
   have e1 : (topSel a ((topPieces hρ (synPcsR es ℓ K h) hpcs).flatMap Piece.bitsList)
-      (topTop (synAT es ℓ K h) (synRh ℓ K h) (synKh ℓ K h) (synQ es ℓ K h) (n + a) hfitT)).map
-        Fin.val = (synPcsR es ℓ K h).flatMap (synPcVals (synRh ℓ K h) (synKh ℓ K h)) ++
-          (List.range (synQ es ℓ K h)).map fun i =>
-            synAT es ℓ K h + synRh ℓ K h + synKh ℓ K h * i := by
-    rw [topSel, List.map_append, List.map_map]
+      (topTop (synAT es ℓ K h) (synRh ℓ K h) (synKh ℓ K h) (synQ es ℓ K h) (n + a) hfitT ++
+        topTop (synOS es ℓ K h) (synRh ℓ K h) (synKh ℓ K h) (synQ2 es ℓ K h) (n + a)
+          hfitT₂)).map Fin.val =
+      (synPcsR es ℓ K h).flatMap (synPcVals (synRh ℓ K h) (synKh ℓ K h)) ++
+        (((List.range (synQ es ℓ K h)).map fun i =>
+            synAT es ℓ K h + synRh ℓ K h + synKh ℓ K h * i) ++
+          (List.range (synQ2 es ℓ K h)).map fun i =>
+            synOS es ℓ K h + synRh ℓ K h + synKh ℓ K h * i) := by
+    rw [topSel, List.map_append, List.map_append, List.map_map]
     have : (Fin.val ∘ Fin.castAdd a) = (Fin.val : Fin n → ℕ) := rfl
-    rw [this, topPieces_vals, topTop, map_val_actMap]
+    rw [this, topPieces_vals, topTop, topTop, map_val_actMap, map_val_actMap]
   rw [e1]
   by_cases hc : synChunk ℓ K h
-  · have hq : synQ es ℓ K h = synQK es := by simp [synQ, hc]
-    have hD : synDp es ℓ h = es.length := by simp [synDp, hc.1]
-    have hat : synAT es ℓ K h = synOS es ℓ K h + K * synDpp es := by simp [synAT, hc]
+  · have hq : synQ es ℓ K h = synQB es K := by simp [synQ, hc]
+    have hq₂ : synQ2 es ℓ K h = synQF es K := by simp [synQ2, hc]
+    have hD : synDp es ℓ h = synQF es K + (synDpp es K + synQB es K) := by
+      have := synDpp_add_synQB_add_synQF es K
+      simp only [synDp, hc.1, if_true]
+      omega
+    have hat : synAT es ℓ K h = synOS es ℓ K h + K * (synQF es K + synDpp es K) := by
+      simp [synAT, hc]
     have hKh : synKh ℓ K h = K := by simp [synKh, hc]
-    have hr : (List.range es.length).map (fun i => synRh ℓ K h + synOS es ℓ K h + K * i) =
-        (List.range (synDpp es)).map (fun i => synRh ℓ K h + synOS es ℓ K h + K * i) ++
-          (List.range (synQK es)).map
-            (fun i => synRh ℓ K h + synOS es ℓ K h + K * (synDpp es + i)) := by
-      conv_lhs => rw [← synDpp_add_synQK es]
-      exact range_add_map _ _ _
-    rw [hq, hD, hat, hKh, hr]
+    rw [hq, hq₂, hD, hat, hKh, range_add_map, range_add_map]
     simp only [synPcsR, hc, if_true]
-    refine List.Perm.append (synPcs_vals_full _ _ _ _ _ _) (List.Perm.of_eq ?_)
-    refine List.map_congr_left fun i _ => ?_
-    ring
+    rw [← List.append_assoc]
+    refine List.Perm.trans (List.Perm.append (List.Perm.append
+      ((synPcs_vals_full _ _ _ _ _ _).trans (List.Perm.of_eq ?_)) (List.Perm.of_eq ?_))
+      (List.Perm.of_eq ?_)) List.perm_append_comm
+    all_goals
+      refine List.map_congr_left fun i _ => ?_
+      try simp only [synOP]
+      ring
   · have hp : synPcsR es ℓ K h = [] := by simp [synPcsR, hc]
-    rw [hp, List.flatMap_nil, List.nil_append]
     have hq : synQ es ℓ K h = synDp es ℓ h := by simp [synQ, hc]
-    rw [hq]
+    have hq₂ : synQ2 es ℓ K h = 0 := by simp [synQ2, hc]
+    rw [hp, hq, hq₂]
+    simp only [List.flatMap_nil, List.nil_append, List.range_zero, List.map_nil,
+      List.append_nil]
     refine List.Perm.of_eq (List.map_congr_left fun i _ => ?_)
     simp [synAT, synRh, synKh, hc]
 
 /-- **The layer of round `h`.** With the records of round `h` on `park` and `ph .arr`
-(`TopIn`), the layer machine at rest for `N` address bits, `2^l` coefficients and words of
-`w' = synW2` symbols (`TopRegs`), and the stream of the physical numerator records `Y` (modulus at
-most `2^p`, `p + 2 ≤ w`) on `io`, `topProg` leaves on `io` the stream of the componentwise
-truncation toward zero of the normalized butterflies on the physical selected bits of the round
-in the layout `L = layPerm es ℓ K`. -/
+(`TopIn`), the layer machine at rest for `N` address bits, `2^l` coefficients, words of
+`w' = synW2` symbols and the control width `Gd = synGd N` (`TopRegs`), and the stream of the
+physical numerator records `Y` (modulus at most `2^p`, `p + 2 ≤ w`) on `io`, `topProg` leaves on
+`io` the stream of the componentwise truncation toward zero of the normalized butterflies on the
+physical selected bits of the round in the layout `L = layPerm es ℓ K`. The compact slot XORs
+of the pieces need `Gd + 3 ≤ K` once a piece has a node, which needs `D ≥ m` (`hGK`). -/
 theorem synLayer_runs (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
     (ds : ComplexFramedExecution.Directions) (hd : ComplexPhaseBudget.Realizes ds)
     (hA : 14 ≤ prime + Ka) (hA9 : 9 ^ 4 ≤ prime + Ka + 4) (hNW : NW ≤ prime + Ka + 4)
     (hgate : ∀ g, Instr.gate g ∈ program ds →
       (2 * gateBound g + 1) ^ (2 * (gateWires g).length) ≤ prime + Ka + 4)
-    {es : List ℕ} {ℓ K : ℕ} (H : LayHyp es ℓ K) {l w p h : ℕ} (hh : h + 1 ≤ ℓ)
+    {es : List ℕ} {ℓ K : ℕ} (H : LayHyp es ℓ K) (hGK : m ≤ es.length → synGd es.sum + 3 ≤ K)
+    {l w p h : ℕ} (hh : h + 1 ≤ ℓ)
     (hpw : p + 2 ≤ w) (Y : ℕ → Fin (2 ^ l) → GaussianInt)
     (hY : ∀ x c, ‖GaussianInt.toComplex (Y x c)‖ ≤ 2 ^ p)
-    (R : Fin (nT SXReg) → List (Fin (prime + Ka + 4)))
+    (R : Fin (nT CReg) → List (Fin (prime + Ka + 4)))
     (hT : TopRegs R es.sum (2 ^ l)
       (synW2 es ℓ K (gateCount (program ds)) (factorCount (program ds)) w h)
-      (synKh ℓ K h) (synRh ℓ K h))
+      (synKh ℓ K h) (synRh ℓ K h) (synGd es.sum))
     (hI : TopIn R (synCfg es ℓ K (gateCount (program ds)) (factorCount (program ds)) w h)
       (topPcRec (synKh ℓ K h) (synPcsR es ℓ K h)))
-    (hio : R (reg (BReg := SXReg) .io) = cstream (prime + Ka) w (rpStream (2 ^ es.sum) Y)) :
+    (hio : R (reg (BReg := CReg) .io) = cstream (prime + Ka) w (rpStream (2 ^ es.sum) Y)) :
     LayRuns (layerTable (Ka := Ka) (U := U) hQ ds) topProg R
-      (Function.update R (reg (BReg := SXReg) .io) (cstream (prime + Ka) w (rpStream (2 ^ es.sum)
+      (Function.update R (reg (BReg := CReg) .io) (cstream (prime + Ka) w (rpStream (2 ^ es.sum)
         (synTrunc (bflyL ((selBits es h).map (twPosL (layPerm es ℓ K)))
           (fun x c => GaussianInt.toComplex (Y x c)))))))
       (synLayerCost ds es ℓ K l w h) := by
   intro v S hL hS
   set a := synAR es ℓ K h with ha
   set n := es.sum - a with hn
+  set Gd := synGd es.sum with hGd
   have hna : n + a = es.sum := Nat.sub_add_cancel (synAR_le H h)
   have hK1 : 1 ≤ synKh ℓ K h := synKh_pos H.K_pos
   have hρ : synRh ℓ K h < synKh ℓ K h := synRh_lt H.K_pos
+  have hAN : synA es ℓ K ≤ es.sum := synA_le H
+  have hOS := synOS_le H h
   have hpcs : ∀ pc ∈ synPcsR es ℓ K h,
       pc.Ok ds (synKh ℓ K h) n
         (synW2 es ℓ K (gateCount (program ds)) (factorCount (program ds)) w h)
-        (synR2 es ℓ K h) := by
+        (synR2 es ℓ K h) Gd := by
     by_cases hc : synChunk ℓ K h
     · simp only [synPcsR, hc, if_true, synKh]
       rw [synR2_chunk es ℓ K hc]
-      apply synPcs_ok
-      · have hf := synChunk_fit H hc
-        have hmul := synK_mul_split es K
-        rw [hn, ha]
-        simp only [synAR, hc, if_true, synAc]
+      have hf := synChunk_fit H hc
+      have hmul := synK_mul_split es K
+      have hle := synK_mul_le es K
+      have hsub : K * (synQB es K - synQK es) + K * synQK es = K * synQB es K := by
+        rw [← Nat.mul_add, Nat.sub_add_cancel (synQK_le_synQB es K)]
+      have hDl : synDpp es K ≤ es.length := by
+        have := synDpp_add_synQB_add_synQF es K; omega
+      have hG6 : 6 ≤ Gd := by rw [hGd]; unfold synGd; omega
+      -- the reservation is full when there are piece bits
+      have hres : synDpp es K * Gd ≤ K * synQF es K ∧
+          3 * (synDpp es K * Gd) ≤ K * (synQB es K - synQK es) := by
+        by_cases hD0 : synDpp es K = 0
+        · simp [hD0]
+        obtain ⟨hF, hB⟩ := synQF_synQB_of_synDpp_ne_zero es K hD0
+        have hR : K * synQB es K - K * synQK es = K * synQR es K := by
+          rw [hB, Nat.mul_add]; omega
+        have hlt : 3 * es.length * Gd < K * synQR es K := by
+          simp only [synQR, synQRn, ← hGd]
+          exact Nat.lt_mul_div_succ _ H.K_pos
+        have h1 : synDpp es K * Gd ≤ es.length * Gd := Nat.mul_le_mul_right _ hDl
+        have h3 : 3 * es.length * Gd = 3 * (es.length * Gd) := by ring
+        rw [hF]
         omega
-      · simp only [synW2, synS, synER, synDp, synQ, hc, hc.1, if_true]
-        have := synQK_le es
-        unfold synDpp
+      apply synPcs_ok (H := K * (synQB es K - synQK es))
+      · rw [hn, ha]
+        simp only [synAR, hc, if_true, synAc, synOP]
+        omega
+      · simp only [synOP]
+        omega
+      · exact hres.2
+      · intro hmD
+        exact ⟨by omega, hGK (le_trans hmD hDl)⟩
+      · simp only [synW2, synS, synER, hc, if_true]
         omega
     · simp [synPcsR, hc]
-  have hAN : synA es ℓ K ≤ es.sum := synA_le H
   have hfitT : ∀ i < synQ es ℓ K h, synAT es ℓ K h + synRh ℓ K h + synKh ℓ K h * i < n + a := by
     intro i hi
     rw [hna]
@@ -463,8 +602,9 @@ theorem synLayer_runs (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
       have hf := synChunk_fit H hc
       have hmul := synK_mul_split es K
       have hρ' : (h - layB ℓ K) % K < K := Nat.mod_lt _ H.K_pos
-      have h1 : K * (i + 1) ≤ K * synQK es := Nat.mul_le_mul_left _ hi
+      have h1 : K * (i + 1) ≤ K * synQB es K := Nat.mul_le_mul_left _ hi
       rw [Nat.mul_succ] at h1
+      rw [Nat.mul_add]
       omega
     · simp only [synQ, synAT, synRh, synKh, hc, if_false] at hi ⊢
       unfold synA at hAN
@@ -483,6 +623,7 @@ theorem synLayer_runs (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
     · simp only [synQ, synAT, synKh, hc, if_true]
       have hf := synChunk_fit H hc
       have hmul := synK_mul_split es K
+      rw [Nat.mul_add]
       omega
     · simp only [synQ, synAT, synKh, hc, if_false, one_mul]
       unfold synA at hAN
@@ -495,6 +636,28 @@ theorem synLayer_runs (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
         omega
       · simp only [synDp, synOS, ht, if_false]
         omega
+  have hfitT₂ : ∀ i < synQ2 es ℓ K h,
+      synOS es ℓ K h + synRh ℓ K h + synKh ℓ K h * i < n + a := by
+    intro i hi
+    rw [hna]
+    by_cases hc : synChunk ℓ K h
+    · simp only [synQ2, synRh, synKh, hc, if_true] at hi ⊢
+      have hf := synChunk_fit H hc
+      have hmul := synK_mul_split es K
+      have hρ' : (h - layB ℓ K) % K < K := Nat.mod_lt _ H.K_pos
+      have h1 : K * (i + 1) ≤ K * synQF es K := Nat.mul_le_mul_left _ hi
+      rw [Nat.mul_succ] at h1
+      omega
+    · simp [synQ2, hc] at hi
+  have hTL₂ : synOS es ℓ K h + synKh ℓ K h * synQ2 es ℓ K h ≤ n + a := by
+    rw [hna]
+    by_cases hc : synChunk ℓ K h
+    · simp only [synQ2, synKh, hc, if_true]
+      have hf := synChunk_fit H hc
+      have hmul := synK_mul_split es K
+      omega
+    · simp only [synQ2, hc, if_false, mul_zero, add_zero]
+      exact hOS
   have hR₂ : 1 * 2 ^ a ≤ synR2 es ℓ K h := by
     rw [one_mul, ha]
     unfold synR2 synAR
@@ -504,7 +667,8 @@ theorem synLayer_runs (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
   have hinj : ∀ P ∈ topPieces hρ (synPcsR es ℓ K h) hpcs, Function.Injective P.e := by
     intro P hP
     have : ∀ (pcs : List TopPc) (h' : ∀ pc ∈ pcs, pc.Ok ds (synKh ℓ K h) n
-        (synW2 es ℓ K (gateCount (program ds)) (factorCount (program ds)) w h) (synR2 es ℓ K h)),
+        (synW2 es ℓ K (gateCount (program ds)) (factorCount (program ds)) w h) (synR2 es ℓ K h)
+        Gd),
         ∀ P ∈ topPieces hρ pcs h', Function.Injective P.e := by
       intro pcs
       induction pcs with
@@ -517,9 +681,12 @@ theorem synLayer_runs (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
             exact actMap_injective hK1 _
           · exact ih _ P hP
     exact this _ hpcs P hP
-  have hvals := synSel_vals (n := n) (a := a) H ds hρ hpcs hfitT
-  set sel := topSel a ((topPieces hρ (synPcsR es ℓ K h) hpcs).flatMap Piece.bitsList)
-    (topTop (synAT es ℓ K h) (synRh ℓ K h) (synKh ℓ K h) (synQ es ℓ K h) (n + a) hfitT) with hsel
+  have hvals := synSel_vals (n := n) (a := a) H ds hρ hpcs hfitT hfitT₂
+  set top := topTop (synAT es ℓ K h) (synRh ℓ K h) (synKh ℓ K h) (synQ es ℓ K h) (n + a) hfitT ++
+    topTop (synOS es ℓ K h) (synRh ℓ K h) (synKh ℓ K h) (synQ2 es ℓ K h) (n + a) hfitT₂
+    with htop
+  set sel := topSel a ((topPieces hρ (synPcsR es ℓ K h) hpcs).flatMap Piece.bitsList) top
+    with hsel
   have hnodupT : ((List.range (synDp es ℓ h)).map fun i =>
       synRh ℓ K h + synOS es ℓ K h + synKh ℓ K h * i).Nodup := by
     refine List.nodup_range.map fun i j hij => ?_
@@ -561,18 +728,18 @@ theorem synLayer_runs (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
         simp only [synDp, synRh, synOS, synKh, ht, hc, if_false]
         refine List.map_congr_left fun i _ => ?_
         ring
+  have htl : top.length = synQ es ℓ K h + synQ2 es ℓ K h := by simp [htop, topTop]
   have hs : synS es ℓ K (gateCount (program ds)) (factorCount (program ds)) h =
       (((topPieces hρ (synPcsR es ℓ K h) hpcs).flatMap Piece.bitsList).length +
-        synQ es ℓ K h + 1) / 2 + synQ es ℓ K h +
+        (synQ es ℓ K h + synQ2 es ℓ K h) + 1) / 2 + (synQ es ℓ K h + synQ2 es ℓ K h) +
         ((topPieces hρ (synPcsR es ℓ K h) hpcs).map (Piece.exp ds)).sum := by
     have hl : ((topPieces hρ (synPcsR es ℓ K h) hpcs).flatMap Piece.bitsList).length +
-        synQ es ℓ K h = synDp es ℓ h := by
-      rw [← hD, hsel, topSel, List.length_append, List.length_map]
-      simp [topTop]
+        (synQ es ℓ K h + synQ2 es ℓ K h) = synDp es ℓ h := by
+      rw [← hD, hsel, topSel, List.length_append, List.length_map, htl]
     rw [hl, topPieces_exp]
     unfold synS synER
     by_cases hc : synChunk ℓ K h
-    · simp only [hc, if_true, synPcsR, synKh, synQ]
+    · simp only [hc, if_true, synPcsR]
       rw [synPcs_exp_sum]
     · simp [hc, synPcsR]
   have hZ : ∀ q, TopFitsZ w (synZ (n + a) Y q) := fun q => topFitsZ_of_norm (hY _ _) hpw
@@ -580,22 +747,22 @@ theorem synLayer_runs (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
       synW2 es ℓ K (gateCount (program ds)) (factorCount (program ds)) w h := by
     unfold synW2; omega
   have hX := topPre_fits ds hd a ((topPieces hρ (synPcsR es ℓ K h) hpcs).flatMap Piece.bitsList)
-    (topTop (synAT es ℓ K h) (synRh ℓ K h) (synKh ℓ K h) (synQ es ℓ K h) (n + a) hfitT) hR₂
-    (topPieces hρ (synPcsR es ℓ K h) hpcs) hinj (List.Perm.refl _) hselN _
-    (by simp [hs, topTop]) (synZ (n + a) Y) (fun q => hY _ _) hw'
+    top hR₂ (topPieces hρ (synPcsR es ℓ K h) hpcs) hinj (List.Perm.refl _) hselN _
+    (by rw [htl]; exact hs) (synZ (n + a) Y) (fun q => hY _ _) hw'
   have hT' : TopRegs S.R (n + a) (2 ^ l)
       (synW2 es ℓ K (gateCount (program ds)) (factorCount (program ds)) w h)
-      (synKh ℓ K h) (synRh ℓ K h) := by rw [hS, hna]; exact hT
+      (synKh ℓ K h) (synRh ℓ K h) Gd := by rw [hS, hna]; exact hT
   have hI' : TopIn S.R (topCfg w (synS es ℓ K (gateCount (program ds))
       (factorCount (program ds)) h) a 1 (synR2 es ℓ K h) (synQ es ℓ K h) (synAT es ℓ K h)
-      (synKh ℓ K h) (synOS es ℓ K h) (synDp es ℓ h)) (topPcRec (synKh ℓ K h) (synPcsR es ℓ K h)) :=
+      (synKh ℓ K h) (synOS es ℓ K h) (synDp es ℓ h) (synQ2 es ℓ K h) (synOS es ℓ K h))
+      (topPcRec (synKh ℓ K h) (synPcsR es ℓ K h)) :=
     by rw [hS]; exact hI
-  have hio' : S.R (reg (BReg := SXReg) .io) = encZ (prime + Ka) w (synZ (n + a) Y) := by
+  have hio' : S.R (reg (BReg := CReg) .io) = encZ (prime + Ka) w (synZ (n + a) Y) := by
     rw [hS, hio, encZ_synZ, hna]
   obtain ⟨v', c, hu, hc, he⟩ := topProg_exec_Hl (U := U) hQ ds hd hA hA9 hNW hgate
     ((topPieces hρ (synPcsR es ℓ K h) hpcs).flatMap Piece.bitsList) (synPcsR es ℓ K h)
-    (Nat.one_le_two_pow) (by omega) (by unfold synW2; omega) hρ le_rfl hfitT hTL hR₂ hpcs hinj
-    (List.Perm.refl _) hselm hselN hD (by simp [hs, topTop]) (synZ (n + a) Y) hZ hX v S hL
+    (Nat.one_le_two_pow) (by omega) (by unfold synW2; omega) hρ le_rfl hfitT hTL hfitT₂ hTL₂
+    hR₂ hpcs hinj (List.Perm.refl _) hselm hselN hD hs (synZ (n + a) Y) hZ hX v S hL
     hT' hI' hio'
   have hH := Hl_synZ (n := n + a) Y sel
   have e1 : (fun q : (Fin 1 × Fin (2 ^ l)) × (Fin (n + a) → ZMod 2) =>
@@ -608,7 +775,8 @@ theorem synLayer_runs (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
     rfl
   have hio_eq := congrArg (encZ (prime + Ka) w) e1
   rw [encZ_synZ, bflyL_perm hphys hselnd] at hio_eq
-  refine ⟨v', c, hu, hc, Exec.cast he rfl ?_⟩
+  refine ⟨v', c, hu, hc.trans (topCost_indep _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _).le,
+    Exec.cast he rfl ?_⟩
   rw [hS, hio_eq, hna]
 
 end LayerRound

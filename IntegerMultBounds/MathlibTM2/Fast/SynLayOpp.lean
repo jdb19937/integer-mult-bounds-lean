@@ -41,12 +41,12 @@ set_option linter.constructorNameAsVariable false
 
 section Rev
 
-variable {Q Ka : ℕ} {U P : Type} (body : P → Pr P (nT SXReg) Q (prime + Ka) U)
+variable {Q Ka : ℕ} {U P : Type} (body : P → Pr P (nT CReg) Q (prime + Ka) U)
 
 /-- Reverse the records of the single-bit move stream `dM` (counter `cM`, records of `|cN|`
 symbols, real and imaginary bits exchanged) and of the exchange stream `dX` (counter `cX`,
 records of `5 |cW|` symbols), through the spare wires `s 5`, `s 6`, `s 7`. -/
-noncomputable def slyRevStreams : Pr P (nT SXReg) Q (prime + Ka) U :=
+noncomputable def slyRevStreams : Pr P (nT CReg) Q (prime + Ka) U :=
   .seq (slyRevStream (slyRg .cM) (slyRg .tM) (slyLr .cN) (slyLr .tS) (slyLr .dM) (sreg (.s 6))
     (sreg (.s 5)) (slyPairSw (prime + Ka))) <|
   .seq (umul 5 (slyLr .cW) (sreg (.s 7)) (slyLr .tB)) <|
@@ -60,13 +60,13 @@ def slyRevStreamsCost (m n x wX : ℕ) : ℕ :=
   slyRevStreamCost m n + (4 * wX + 4) + slyRevStreamCost x (5 * wX) + (2 * (5 * wX) + 2)
 
 /-- The file after the writer with the streams of the inverse layout. -/
-noncomputable def slyRw' (R : Fin (nT SXReg) → List (Fin (prime + Ka + 4))) (es : List ℕ)
-    (ℓ K B : ℕ) : Fin (nT SXReg) → List (Fin (prime + Ka + 4)) :=
+noncomputable def slyRw' (R : Fin (nT CReg) → List (Fin (prime + Ka + 4))) (es : List ℕ)
+    (ℓ K B : ℕ) : Fin (nT CReg) → List (Fin (prime + Ka + 4)) :=
   Function.update (Function.update (ldgPost slyRg slyLr R es ℓ K B (layXcs es ℓ K B)) (slyLr .dM)
     (ldlBitStream (prime + Ka) es.sum ((layBits es ℓ K).map Prod.swap).reverse)) (slyLr .dX)
     (ldlXcStream (prime + Ka) (es.sum + B + 2) (layXcs es ℓ K B).reverse)
 
-theorem slyRw'_eq (R : Fin (nT SXReg) → List (Fin (prime + Ka + 4))) (es : List ℕ) (ℓ K B : ℕ) :
+theorem slyRw'_eq (R : Fin (nT CReg) → List (Fin (prime + Ka + 4))) (es : List ℕ) (ℓ K B : ℕ) :
     slyRw' R es ℓ K B = Function.update (Function.update
       (ldgPost slyRg slyLr R es ℓ K B (layXcs es ℓ K B)) (slyLr .dM)
       (ldlBitStream (prime + Ka) es.sum ((layBits es ℓ K).map Prod.swap).reverse)) (slyLr .dX)
@@ -183,9 +183,9 @@ theorem sly_post_opp_R (io P' str' : List (Fin (prime + Ka + 4))) (N wX : ℕ)
         (slyT 1) sX) (slyT 2) (List.replicate N tick)) (slyT 3) (List.replicate wX tick)) (slyT 0) sM')
         (slyT 1) sX') (ldlH slyRg sxHd 0) (hs 0)) (ldlH slyRg sxHd 1) (hs 1))
         (ldlH slyRg sxHd 2) (hs 2)) (ldlH slyRg sxHd 3) (hs 3)) (ldlH slyRg sxHd 4) (hs 4))
-        (slyT 1) []) (slyT 0) []) (reg (BReg := SXReg) .io) str' = slyRo str' P' N wX hs := by
+        (slyT 1) []) (slyT 0) []) (reg (BReg := CReg) .io) str' = slyRo str' P' N wX hs := by
   funext z
-  by_cases h0 : z = reg (BReg := SXReg) .io
+  by_cases h0 : z = reg (BReg := CReg) .io
   · subst h0; simp [slyRo, ldlSetH, synIdle]
   by_cases h1 : z = slyT 0
   · subst h1; simp [slyRo, ldlSetH, synIdle]
@@ -235,7 +235,7 @@ variable {Q Ka : ℕ} {U : Type}
 /-- **The opposite layout program**: the setup, the writer, the reversal of the streams, the
 restoring machine, the cleanup. -/
 noncomputable def slyOpp (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q) :
-    Pr LProc (nT SXReg) Q (prime + Ka) U :=
+    Pr LProc (nT CReg) Q (prime + Ka) U :=
   .seq slySetup <|
   .seq (ldgWriter slyRg slyLr slyGr ldxCode) <|
   .seq slyRevStreams <|
@@ -245,11 +245,11 @@ noncomputable def slyOpp (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q) :
 
 /-- The step bound of the writer, the reversal and the restoring machine on the file `R`. -/
 noncomputable def slyUnstageCost (Ka : ℕ) (es : List ℕ) (ℓ K B W : ℕ)
-    (R : Fin (nT SXReg) → List (Fin (prime + Ka + 4))) : ℕ :=
+    (R : Fin (nT CReg) → List (Fin (prime + Ka + 4))) : ℕ :=
   ldgWriterCost W es.sum ℓ K es.length B (layB ℓ K) (layBits es ℓ K).length
       (layXcs es ℓ K B).length (ldxAtoms es.sum es.length (layQ ℓ K)) +
     slyRevStreamsCost (layBits es ℓ K).length es.sum (layXcs es ℓ K B).length (es.sum + B + 2) +
-    (layXcLoopCost (nT SXReg) 6 es.sum K B slyRg
+    (layXcLoopCost (nT CReg) 6 es.sum K B slyRg
         (ldlWU slyRg slyLr sxHd (prime + Ka) es.sum (es.sum + B + 2) (slyRw' R es ℓ K B)
           (layXcs es ℓ K B).reverse ((layBits es ℓ K).map Prod.swap).reverse)
         (fun _ => 60 * (es.sum + B + 2) + 75) (layXcs es ℓ K B).reverse +
@@ -287,7 +287,7 @@ theorem sly_ldlWU_sw_congr {T t₀ A : ℕ} {rg : LayReg t₀ → Fin T} {lr : L
   · rw [ldlWM_rg n _ bs _ h (by simp) (by simp), ldlWM_rg n _ bs _ h (by simp) (by simp)]
     exact hX R R' (hR i) _
 
-theorem slyRw'_sw (R R' : Fin (nT SXReg) → List (Fin (prime + Ka + 4))) (es : List ℕ) (ℓ K B : ℕ)
+theorem slyRw'_sw (R R' : Fin (nT CReg) → List (Fin (prime + Ka + 4))) (es : List ℕ) (ℓ K B : ℕ)
     (hR : ∀ i, R (slyRg (.sw i)) = R' (slyRg (.sw i))) (i : Fin (swapT 6)) :
     slyRw' R es ℓ K B (slyRg (.sw i)) = slyRw' R' es ℓ K B (slyRg (.sw i)) := by
   rw [slyRw'_eq, slyRw'_eq, Function.update_of_ne (sly_regs.l.disj _ _),
@@ -297,10 +297,10 @@ theorem slyRw'_sw (R R' : Fin (nT SXReg) → List (Fin (prime + Ka + 4))) (es : 
 
 /-- The cost of the restoring stage depends on the bank registers of the file only. -/
 theorem slyUnstageCost_congr (es : List ℕ) (ℓ K B W : ℕ)
-    (R R' : Fin (nT SXReg) → List (Fin (prime + Ka + 4)))
+    (R R' : Fin (nT CReg) → List (Fin (prime + Ka + 4)))
     (hR : ∀ i, R (slyRg (.sw i)) = R' (slyRg (.sw i))) :
     slyUnstageCost Ka es ℓ K B W R = slyUnstageCost Ka es ℓ K B W R' := by
-  have e := sly_layXcLoopCost_congr (T := nT SXReg) (t₀ := 6) (Ka := Ka) es.sum K B slyRg
+  have e := sly_layXcLoopCost_congr (T := nT CReg) (t₀ := 6) (Ka := Ka) es.sum K B slyRg
     (ldlWU slyRg slyLr sxHd (prime + Ka) es.sum (es.sum + B + 2) (slyRw' R es ℓ K B)
       (layXcs es ℓ K B).reverse ((layBits es ℓ K).map Prod.swap).reverse)
     (ldlWU slyRg slyLr sxHd (prime + Ka) es.sum (es.sum + B + 2) (slyRw' R' es ℓ K B)

@@ -7,9 +7,14 @@ public import IntegerMultBounds.MathlibTM2.Fast.SynRec
 
 Paper §6, proof of `lem:synthetic-transform-cost`. The chunk branch `synChunkB` of the record
 builder (`Fast/SynRec.lean`): `synChunkA` (stride, offset `ρ_h`, `oS`), `synChunkQ` (the kernel
-bits `q₀`, `D'`, `a'`, `aT`), `synDigits` (the pieces of the base-`m` digits of `D'`),
-`synChunkR2` (the rows `R₂ = 2^X NW^J'`), `synChunkCfg` (the configuration record) and
-`synChunkEnd` (`w'`, scratch cleared). `sg_synRec` is the contract of the whole builder.
+bits `q₀` and `a'` in `synChunkQ0`, the reservation `qR` in `synChunkQR`, the front block `q₂`,
+the top kernels `q` and `D'` in `synChunkQ2`, the offsets `K q`, `K q₂`, `oP`, `aT` in
+`synChunkQK`), `synDigits` (the pieces of the base-`m` digits of `D'`), `synChunkR2` (the rows
+`R₂ = 2^X NW^J'`), `synChunkCfg` (the configuration record) and `synChunkEnd` (`w'`, scratch
+cleared). `sg_synRec` is the contract of the whole builder.
+
+**Blocks.** `synDpp_add_synQB_add_synQF`: `D' + q + q₂ = D`; when `D' ≠ 0` both reservations
+are full (`synQF_synQB_of_synDpp_ne_zero`: `q₂ = qR`, `q = q₀ + qR`).
 
 **Rows.** `synR2c_ge`, `synR2c_lt`: `2^a' ≤ R₂ < 2^(a' + 1)` for `K ≥ 1`, since
 `NW^J' ≤ 2^a'` (`NW_pow_synJp_le`: `a' ≥ K q₀ ≥ 46 J ≥ 46 J'` when `46 J ≤ D`, and `J' = 0`
@@ -43,11 +48,32 @@ theorem synQK_le : synQK es ≤ es.length := Nat.sub_le _ _
 theorem synQK_eq_min : synQK es = min (synCW * synJt es) es.length := by
   unfold synQK synQKn; omega
 
-theorem synDpp_add_synQK : synDpp es + synQK es = es.length := Nat.sub_add_cancel (synQK_le es)
+/-- The piece bits, the top kernels and the front block fill the `D` selected bits. -/
+theorem synDpp_add_synQB_add_synQF : synDpp es K + synQB es K + synQF es K = es.length := by
+  have := synQK_le es
+  simp only [synDpp, synQB, synQBn, synQF, synQFn]
+  omega
 
-theorem synJp_le_synJt : synJp es ≤ synJt es := by
+theorem synQK_le_synQB : synQK es ≤ synQB es K := by
+  simp only [synQB, synQBn]
+  omega
+
+theorem synDpp_le : synDpp es K ≤ es.length - synQK es := by
+  have := synQK_le_synQB es K
+  unfold synDpp
+  omega
+
+/-- With piece bits, both reservations are full: `q₂ = qR` and `q = q₀ + qR`. -/
+theorem synQF_synQB_of_synDpp_ne_zero (h : synDpp es K ≠ 0) :
+    synQF es K = synQR es K ∧ synQB es K = synQK es + synQR es K := by
+  have := synQK_le es
+  simp only [synDpp, synQB, synQBn, synQF, synQFn] at h ⊢
+  omega
+
+theorem synJp_le_synJt : synJp es K ≤ synJt es := by
   unfold synJp synJt
-  have := synJ_self_mono (D := es.length) (D' := synDpp es) (Nat.sub_le _ _)
+  have := synJ_self_mono (D := es.length) (D' := synDpp es K)
+    ((synDpp_le es K).trans (Nat.sub_le _ _))
   omega
 
 theorem NW_le_pow_synCW : NW ≤ 2 ^ synCW := by
@@ -56,30 +82,30 @@ theorem NW_le_pow_synCW : NW ≤ 2 ^ synCW := by
 theorem NW_pos : 0 < NW := Nat.pos_of_ne_zero (NeZero.ne _)
 
 /-- `NW^J' ≤ 2^a'` for `K ≥ 1`. -/
-theorem NW_pow_synJp_le (hK : 1 ≤ K) : NW ^ synJp es ≤ 2 ^ synAc es ℓ K := by
+theorem NW_pow_synJp_le (hK : 1 ≤ K) : NW ^ synJp es K ≤ 2 ^ synAc es ℓ K := by
   by_cases h : synCW * synJt es ≤ es.length
   · have hq : synQK es = synCW * synJt es := by rw [synQK_eq_min, min_eq_left h]
-    have hJ := synJp_le_synJt es
-    calc NW ^ synJp es ≤ (2 ^ synCW) ^ synJp es := Nat.pow_le_pow_left NW_le_pow_synCW _
-      _ = 2 ^ (synCW * synJp es) := by rw [← pow_mul]
+    have hJ := synJp_le_synJt es K
+    calc NW ^ synJp es K ≤ (2 ^ synCW) ^ synJp es K := Nat.pow_le_pow_left NW_le_pow_synCW _
+      _ = 2 ^ (synCW * synJp es K) := by rw [← pow_mul]
       _ ≤ 2 ^ synAc es ℓ K := by
           apply Nat.pow_le_pow_right (by norm_num)
           unfold synAc
           rw [hq]
-          have h1 : synCW * synJp es ≤ synCW * synJt es := Nat.mul_le_mul_left _ hJ
+          have h1 : synCW * synJp es K ≤ synCW * synJt es := Nat.mul_le_mul_left _ hJ
           have h2 : 1 * (synCW * synJt es) ≤ K * (synCW * synJt es) :=
             Nat.mul_le_mul_right _ hK
           omega
   · have hq : synQK es = es.length := by rw [synQK_eq_min, min_eq_right (by omega)]
-    have hD' : synDpp es = 0 := by unfold synDpp; omega
-    have hJ : synJp es = 0 := by unfold synJp; rw [hD']; simp [synJ, synJk_zero_left]
+    have hD' : synDpp es K = 0 := by have := synDpp_le es K; omega
+    have hJ : synJp es K = 0 := by unfold synJp; rw [hD']; simp [synJ, synJk_zero_left]
     rw [hJ, pow_zero]
     exact Nat.one_le_two_pow
 
-theorem synLb_eq (hK : 1 ≤ K) : synLb es ℓ K = Nat.log 2 (NW ^ synJp es) := by
+theorem synLb_eq (hK : 1 ≤ K) : synLb es ℓ K = Nat.log 2 (NW ^ synJp es K) := by
   unfold synLb
-  have hB : NW ^ synJp es ≠ 0 := (pow_pos NW_pos _).ne'
-  have hlt : NW ^ synJp es < 2 ^ (synAc es ℓ K + 1) :=
+  have hB : NW ^ synJp es K ≠ 0 := (pow_pos NW_pos _).ne'
+  have hlt : NW ^ synJp es K < 2 ^ (synAc es ℓ K + 1) :=
     lt_of_le_of_lt (NW_pow_synJp_le es ℓ K hK) (Nat.pow_lt_pow_right (by norm_num) (by omega))
   have := Nat.log_lt_of_lt_pow hB hlt
   rw [synJk_eq_min (by norm_num) hB]
@@ -87,17 +113,17 @@ theorem synLb_eq (hK : 1 ≤ K) : synLb es ℓ K = Nat.log 2 (NW ^ synJp es) := 
 
 theorem synLb_le (hK : 1 ≤ K) : synLb es ℓ K ≤ synAc es ℓ K := by
   rw [synLb_eq es ℓ K hK]
-  have hB : NW ^ synJp es ≠ 0 := (pow_pos NW_pos _).ne'
+  have hB : NW ^ synJp es K ≠ 0 := (pow_pos NW_pos _).ne'
   exact (Nat.log_mono_right (NW_pow_synJp_le es ℓ K hK)).trans (by rw [Nat.log_pow (by norm_num)])
 
 /-- `2^a' ≤ R₂`. -/
 theorem synR2c_ge (hK : 1 ≤ K) : 2 ^ synAc es ℓ K ≤ synR2c es ℓ K := by
   unfold synR2c synX
-  have hB : NW ^ synJp es ≠ 0 := (pow_pos NW_pos _).ne'
+  have hB : NW ^ synJp es K ≠ 0 := (pow_pos NW_pos _).ne'
   have hL := synLb_le es ℓ K hK
   calc 2 ^ synAc es ℓ K = 2 ^ (synAc es ℓ K - synLb es ℓ K) * 2 ^ synLb es ℓ K := by
         rw [← pow_add, Nat.sub_add_cancel hL]
-    _ ≤ 2 ^ (synAc es ℓ K - synLb es ℓ K) * NW ^ synJp es := by
+    _ ≤ 2 ^ (synAc es ℓ K - synLb es ℓ K) * NW ^ synJp es K := by
         apply Nat.mul_le_mul_left
         rw [synLb_eq es ℓ K hK]
         exact Nat.pow_log_le_self 2 hB
@@ -106,7 +132,7 @@ theorem synR2c_ge (hK : 1 ≤ K) : 2 ^ synAc es ℓ K ≤ synR2c es ℓ K := by
 theorem synR2c_lt (hK : 1 ≤ K) : synR2c es ℓ K < 2 * 2 ^ synAc es ℓ K := by
   unfold synR2c synX
   have hL := synLb_le es ℓ K hK
-  calc 2 ^ (synAc es ℓ K - synLb es ℓ K) * NW ^ synJp es
+  calc 2 ^ (synAc es ℓ K - synLb es ℓ K) * NW ^ synJp es K
       < 2 ^ (synAc es ℓ K - synLb es ℓ K) * 2 ^ (synLb es ℓ K + 1) := by
         apply Nat.mul_lt_mul_of_pos_left _ (pow_pos (by norm_num) _)
         rw [synLb_eq es ℓ K hK]
@@ -118,7 +144,7 @@ theorem synR2c_lt (hK : 1 ≤ K) : synR2c es ℓ K < 2 * 2 ^ synAc es ℓ K := b
 
 /-- The pieces' rows: `R₂ = rowsAt (2^X) J'`. -/
 theorem synR2_chunk {h : ℕ} (hc : synChunk ℓ K h) :
-    synR2 es ℓ K h = rowsAt (2 ^ synX es ℓ K) (synJ (synDpp es) (synDpp es) - 1) := by
+    synR2 es ℓ K h = rowsAt (2 ^ synX es ℓ K) (synJ (synDpp es K) (synDpp es K) - 1) := by
   simp [synR2, hc, synR2c, synJp, rowsAt_eq, Nat.mul_comm]
 
 end Rows
@@ -127,8 +153,8 @@ end Rows
 
 section ChunkBr
 
-variable {Q A : ℕ} {U P : Type} (body : P → Pr P (nT SXReg) Q A U)
-  {R : Fin (nT SXReg) → List (Fin (A + 4))}
+variable {Q A : ℕ} {U P : Type} (body : P → Pr P (nT CReg) Q A U)
+  {R : Fin (nT CReg) → List (Fin (A + 4))}
 
 /-- The step bound of `synChunkA`. -/
 def synChunkACost (hv bv Kv Dv : ℕ) : ℕ :=
@@ -178,32 +204,27 @@ theorem sg_synChunkA (v : SynW → List (Fin (A + 4))) (hv bv Kv Dv : ℕ) (hk :
   · simp only [synChunkACost]
     omega
 
-/-- The step bound of `synChunkQ`. -/
-def synChunkQCost (oS Kv Dv : ℕ) : ℕ :=
+/-- The step bound of `synChunkQ0`. -/
+def synChunkQ0Cost (Kv Dv : ℕ) : ℕ :=
   let Jn := synJ Dv Dv
   let J := Jn - 1
-  let q := Dv - (Dv - synCW * J)
   (4 * Dv + 4) + synCntCost m Dv Dv + (4 * Jn + 4) + 1 + (4 * J + 4) + (4 * Dv + 4) +
-    (4 * (synCW * J) + 4) + (4 * Dv + 4) + (4 * (Dv - synCW * J) + 4) + (4 * Dv + 4) +
-    (4 * q + 4) + synMulRCost Kv q + (4 * (Kv * q) + 4) + synMulRCost Kv (Dv - q) +
-    (4 * oS + 4) + (2 * Jn + 2) + (2 * J + 2) + (2 * (synCW * J) + 2) +
+    (4 * (synCW * J) + 4) + (4 * Dv + 4) + (4 * (Dv - synCW * J) + 4) +
+    synMulRCost Kv (synQKn Dv J) + (2 * Jn + 2) + (2 * J + 2) + (2 * (synCW * J) + 2) +
     (2 * (Dv - synCW * J) + 2)
 
-theorem sg_synChunkQ (v : SynW → List (Fin (A + 4))) (a oS Kv Dv : ℕ)
-    (ha : v (.s 0) = List.replicate a tick) (hoS : v (.s 6) = List.replicate oS tick)
-    (hK : (v (.p .K)).length = Kv) (hD : (v (.p .D)).length = Dv)
+theorem sg_synChunkQ0 (v : SynW → List (Fin (A + 4))) (a Kv Dv q₀ : ℕ)
+    (hq₀ : q₀ = synQKn Dv (synJ Dv Dv - 1))
+    (ha : v (.s 0) = List.replicate a tick) (hK : (v (.p .K)).length = Kv)
+    (hD : (v (.p .D)).length = Dv)
     (h2 : v (.s 2) = []) (h3 : v (.s 3) = []) (h9 : v (.s 9) = []) (h10 : v (.s 10) = [])
     (h12 : v (.s 12) = []) (h14 : v (.s 14) = []) (h17 : v (.s 17) = []) (h22 : v (.s 22) = [])
-    (h23 : v (.s 23) = []) (h25 : v (.s 25) = []) (h26 : v (.s 26) = []) (h27 : v (.s 27) = [])
-    (h28 : v (.s 28) = []) :
-    LayRuns body synChunkQ (synG R v)
-      (synG R (Function.update (Function.update (Function.update (Function.update
-        (Function.update v (.s 0) (List.replicate (Kv * synQKn Dv (synJ Dv Dv - 1) + a) tick))
-        (.s 25) (List.replicate (synQKn Dv (synJ Dv Dv - 1)) tick))
-        (.s 26) (List.replicate (Dv - synQKn Dv (synJ Dv Dv - 1)) tick))
-        (.s 27) (List.replicate (Kv * synQKn Dv (synJ Dv Dv - 1)) tick))
-        (.s 28) (List.replicate (oS + Kv * (Dv - synQKn Dv (synJ Dv Dv - 1))) tick)))
-      (synChunkQCost oS Kv Dv) := by
+    (h23 : v (.s 23) = []) (h25 : v (.s 25) = []) :
+    LayRuns body synChunkQ0 (synG R v)
+      (synG R (Function.update (Function.update v (.s 0) (List.replicate (Kv * q₀ + a) tick))
+        (.s 25) (List.replicate q₀ tick)))
+      (synChunkQ0Cost Kv Dv) := by
+  subst hq₀
   set Jn := synJ Dv Dv with hJn
   set q := synQKn Dv (Jn - 1) with hq
   have hq' : q = Dv - (Dv - synCW * (Jn - 1)) := by rw [hq, synQKn]
@@ -228,20 +249,9 @@ theorem sg_synChunkQ (v : SynW → List (Fin (A + 4))) (a oS Kv Dv : ℕ)
       (by decide) (by decide) (by simp [h2]) (by simp [hD]) (by simp [h25])).seq <|
     (sgU_sub body (a := .s 10) (b := .s 25) (t := .s 2) (x := Dv - synCW * (Jn - 1)) (y := Dv)
       (by decide) (by decide) (by decide) (by simp [h2]) (by simp) (by simp)).seq <|
-    (sgU_copy body (a := .p .D) (b := .s 26) (t := .s 2) (x := Dv) (y := 0) (by decide)
-      (by decide) (by decide) (by simp [h2]) (by simp [hD]) (by simp [h26])).seq <|
-    (sgU_sub body (a := .s 25) (b := .s 26) (t := .s 2) (x := q) (y := Dv)
-      (by decide) (by decide) (by decide) (by simp [h2]) (by simp [hq']) (by simp)).seq <|
-    (sgU_mulR body (a := .p .K) (b := .s 25) (c := .s 27) (t₁ := .s 2) (t₂ := .s 3) (x := Kv)
-      (y := q) (z := 0) (by decide) (by simp [h2]) (by simp [h3]) (by simp [hK])
-      (by simp [hq']) (by simp [h27])).seq <|
-    (sgU_copy body (a := .s 27) (b := .s 0) (t := .s 2) (x := Kv * q) (y := a) (by decide)
-      (by decide) (by decide) (by simp [h2]) (by simp) (by simp [ha])).seq <|
-    (sgU_mulR body (a := .p .K) (b := .s 26) (c := .s 28) (t₁ := .s 2) (t₂ := .s 3) (x := Kv)
-      (y := Dv - q) (z := 0) (by decide) (by simp [h2]) (by simp [h3]) (by simp [hK])
-      (by simp [hq']) (by simp [h28])).seq <|
-    (sgU_copy body (a := .s 6) (b := .s 28) (t := .s 2) (x := oS) (y := Kv * (Dv - q))
-      (by decide) (by decide) (by decide) (by simp [h2]) (by simp [hoS]) (by simp)).seq <|
+    (sgU_mulR body (a := .p .K) (b := .s 25) (c := .s 0) (t₁ := .s 2) (t₂ := .s 3) (x := Kv)
+      (y := q) (z := a) (by decide) (by simp [h2]) (by simp [h3]) (by simp [hK])
+      (by simp [hq']) (by simp [ha])).seq <|
     (sgU_clear body (a := .s 14) (x := Jn) (by simp [hJn, synJ])).seq <|
     (sgU_clear body (a := .s 22) (x := Jn - 1) (by simp)).seq <|
     (sgU_clear body (a := .s 9) (x := synCW * (Jn - 1)) (by simp)).seq <|
@@ -250,7 +260,176 @@ theorem sg_synChunkQ (v : SynW → List (Fin (A + 4))) (a oS Kv Dv : ℕ)
     funext y
     simp only [Function.update_apply]
     split_ifs <;> (try simp_all [div_pow_self]) <;> omega
-  · simp only [synChunkQCost, ← hJn, ← hq']
+  · simp only [synChunkQ0Cost, ← hJn, ← hq]
+    omega
+
+/-- The step bound of `synChunkQR`. -/
+def synChunkQRCost (Kv Dv Nv : ℕ) : ℕ :=
+  let Jb := synJk 2 Nv Nv
+  (4 * Nv + 4) + synCntCost 2 Nv Nv + (4 * Jb + 4) + 6 + (4 * Dv + 4) +
+    synMulRCost (3 * Dv) (2 * Jb + 6) + (12 * (3 * Dv * (2 * Jb + 6) + Kv) + 12) + 1 +
+    (2 * Jb + 2) + (2 * (2 * Jb + 6) + 2) + (2 * (3 * Dv) + 2) +
+    (2 * (3 * Dv * (2 * Jb + 6)) + 2)
+
+theorem sg_synChunkQR (v : SynW → List (Fin (A + 4))) (Kv Dv Nv qR : ℕ)
+    (hqR : qR = synQRn Kv Dv (synGd Nv)) (hk : 1 ≤ Kv)
+    (hK : (v (.p .K)).length = Kv) (hD : (v (.p .D)).length = Dv)
+    (hN : (v (.p .N)).length = Nv)
+    (h2 : v (.s 2) = []) (h3 : v (.s 3) = []) (h9 : v (.s 9) = []) (h10 : v (.s 10) = [])
+    (h11 : v (.s 11) = []) (h12 : v (.s 12) = []) (h13 : v (.s 13) = []) (h14 : v (.s 14) = [])
+    (h17 : v (.s 17) = []) (h22 : v (.s 22) = []) (h23 : v (.s 23) = []) :
+    LayRuns body synChunkQR (synG R v)
+      (synG R (Function.update v (.s 11) (List.replicate qR tick)))
+      (synChunkQRCost Kv Dv Nv) := by
+  subst hqR
+  refine lr_weaken body
+    ((sgU_copy body (a := .p .N) (b := .s 12) (t := .s 2) (x := Nv) (y := 0) (by decide)
+      (by decide) (by decide) h2 hN (by simp [h12])).seq <|
+    (sg_synCntLoop body 2 (by norm_num) (x := .s 12) (cnt := .s 14) (ctr := .p .N) _ Nv Nv
+      (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide)
+      (by decide) (by decide) (by decide) (by decide) (by decide)
+      (by simp) (by simp [h14]) (by simp [hN]) (by simp [h17]) (by simp [h2])
+      (by simp [h23])).seq <|
+    (sgU_umul body 2 (a := .s 14) (b := .s 22) (t := .s 2) (x := synJk 2 Nv Nv) (y := 0)
+      (by decide) (by decide) (by decide) (by simp [h2]) (by simp) (by simp [h22])).seq <|
+    (sgU_push body (a := .s 22) (y := 2 * synJk 2 Nv Nv + 0) (by simp)).seq <|
+    (sgU_push body (a := .s 22) (y := 2 * synJk 2 Nv Nv + 0 + 1) (by simp)).seq <|
+    (sgU_push body (a := .s 22) (y := 2 * synJk 2 Nv Nv + 0 + 1 + 1) (by simp)).seq <|
+    (sgU_push body (a := .s 22) (y := 2 * synJk 2 Nv Nv + 0 + 1 + 1 + 1) (by simp)).seq <|
+    (sgU_push body (a := .s 22) (y := 2 * synJk 2 Nv Nv + 0 + 1 + 1 + 1 + 1) (by simp)).seq <|
+    (sgU_push body (a := .s 22) (y := 2 * synJk 2 Nv Nv + 0 + 1 + 1 + 1 + 1 + 1)
+      (by simp)).seq <|
+    (sgU_umul body 3 (a := .p .D) (b := .s 9) (t := .s 2) (x := Dv) (y := 0)
+      (by decide) (by decide) (by decide) (by simp [h2]) (by simp [hD]) (by simp [h9])).seq <|
+    (sgU_mulR body (a := .s 9) (b := .s 22) (c := .s 10) (t₁ := .s 2) (t₂ := .s 3) (x := 3 * Dv)
+      (y := 2 * synJk 2 Nv Nv + 6) (z := 0) (by decide) (by simp [h2]) (by simp [h3])
+      (by simp) (by simp <;> omega) (by simp [h10])).seq <|
+    (sgU_udivU body (a := .s 10) (b := .p .K) (q := .s 11) (c := .s 12) (s := .s 13) (t := .s 2)
+      (x := 3 * Dv * (2 * synJk 2 Nv Nv + 6)) (y := Kv) (z := 0) (by decide) hk (by simp)
+      (by simp [hK]) (by simp [h11]) (by simp [div_two_pow_self]) (by simp [h13])
+      (by simp [h2])).seq <|
+    (sgU_push body (a := .s 11) (y := 3 * Dv * (2 * synJk 2 Nv Nv + 6) / Kv) (by simp)).seq <|
+    (sgU_clear body (a := .s 14) (x := synJk 2 Nv Nv) (by simp)).seq <|
+    (sgU_clear body (a := .s 22) (x := 2 * synJk 2 Nv Nv + 6) (by simp <;> omega)).seq <|
+    (sgU_clear body (a := .s 9) (x := 3 * Dv) (by simp)).seq <|
+    sgU_clear body (a := .s 10) (x := 3 * Dv * (2 * synJk 2 Nv Nv + 6)) (by simp)) ?_ ?_
+  · refine congrArg (synG R) ?_
+    simp only [synQRn, synGd]
+    funext y
+    simp only [Function.update_apply]
+    split_ifs <;> (try simp_all [div_two_pow_self]) <;> omega
+  · simp only [synChunkQRCost]
+    omega
+
+/-- The step bound of `synChunkQ2`. -/
+def synChunkQ2Cost (Dv q₀ qR : ℕ) : ℕ :=
+  let q₂ := synQFn Dv q₀ qR
+  let r := Dv - q₀ - q₂
+  let m₁ := r - (r - qR)
+  (4 * Dv + 4) + (4 * q₀ + 4) + (4 * (Dv - q₀) + 4) + (4 * qR + 4) + (4 * (Dv - q₀) + 4) +
+    (4 * (Dv - q₀ - qR) + 4) + (2 * (Dv - q₀ - qR) + 2) + (4 * q₂ + 4) + (4 * r + 4) +
+    (4 * qR + 4) + (4 * r + 4) + (4 * (r - qR) + 4) + (4 * m₁ + 4) + (4 * q₀ + 4) +
+    (2 * q₀ + 2) + (2 * (q₀ + m₁) + 2) + (2 * (r - qR) + 2) + (2 * qR + 2)
+
+theorem sg_synChunkQ2 (v : SynW → List (Fin (A + 4))) (Dv q₀ qR q₂ q Dp : ℕ)
+    (hq₂ : q₂ = synQFn Dv q₀ qR) (hq : q = synQBn Dv q₀ q₂ qR) (hDp : Dp = Dv - q - q₂)
+    (hD : (v (.p .D)).length = Dv) (h25 : v (.s 25) = List.replicate q₀ tick)
+    (h11 : v (.s 11) = List.replicate qR tick)
+    (h2 : v (.s 2) = []) (h9 : v (.s 9) = []) (h26 : v (.s 26) = []) (h29 : v (.s 29) = [])
+    (h30 : v (.s 30) = []) :
+    LayRuns body synChunkQ2 (synG R v)
+      (synG R (Function.update (Function.update (Function.update (Function.update v (.s 11) [])
+        (.s 9) (List.replicate q₂ tick)) (.s 25) (List.replicate q tick))
+        (.s 26) (List.replicate Dp tick)))
+      (synChunkQ2Cost Dv q₀ qR) := by
+  rw [synQFn] at hq₂
+  have hm : ∃ m₁, m₁ = Dv - q₀ - q₂ - (Dv - q₀ - q₂ - qR) := ⟨_, rfl⟩
+  obtain ⟨m₁, hm₁⟩ := hm
+  have hq' : q = q₀ + m₁ := by rw [hq, synQBn, hm₁]
+  subst hDp
+  refine lr_weaken body
+    ((sgU_copy body (a := .p .D) (b := .s 26) (t := .s 2) (x := Dv) (y := 0) (by decide)
+      (by decide) (by decide) h2 hD (by simp [h26])).seq <|
+    (sgU_sub body (a := .s 25) (b := .s 26) (t := .s 2) (x := q₀) (y := Dv) (by decide)
+      (by decide) (by decide) (by simp [h2]) (by simp [h25]) (by simp)).seq <|
+    (sgU_copy body (a := .s 26) (b := .s 29) (t := .s 2) (x := Dv - q₀) (y := 0) (by decide)
+      (by decide) (by decide) (by simp [h2]) (by simp) (by simp [h29])).seq <|
+    (sgU_sub body (a := .s 11) (b := .s 29) (t := .s 2) (x := qR) (y := Dv - q₀) (by decide)
+      (by decide) (by decide) (by simp [h2]) (by simp [h11]) (by simp)).seq <|
+    (sgU_copy body (a := .s 26) (b := .s 9) (t := .s 2) (x := Dv - q₀) (y := 0) (by decide)
+      (by decide) (by decide) (by simp [h2]) (by simp) (by simp [h9])).seq <|
+    (sgU_sub body (a := .s 29) (b := .s 9) (t := .s 2) (x := Dv - q₀ - qR) (y := Dv - q₀)
+      (by decide) (by decide) (by decide) (by simp [h2]) (by simp) (by simp)).seq <|
+    (sgU_clear body (a := .s 29) (x := Dv - q₀ - qR) (by simp)).seq <|
+    (sgU_sub body (a := .s 9) (b := .s 26) (t := .s 2) (x := q₂) (y := Dv - q₀) (by decide)
+      (by decide) (by decide) (by simp [h2]) (by simp <;> omega) (by simp)).seq <|
+    (sgU_copy body (a := .s 26) (b := .s 29) (t := .s 2) (x := Dv - q₀ - q₂) (y := 0)
+      (by decide) (by decide) (by decide) (by simp [h2]) (by simp) (by simp)).seq <|
+    (sgU_sub body (a := .s 11) (b := .s 29) (t := .s 2) (x := qR) (y := Dv - q₀ - q₂)
+      (by decide) (by decide) (by decide) (by simp [h2]) (by simp [h11]) (by simp)).seq <|
+    (sgU_copy body (a := .s 26) (b := .s 30) (t := .s 2) (x := Dv - q₀ - q₂) (y := 0)
+      (by decide) (by decide) (by decide) (by simp [h2]) (by simp) (by simp [h30])).seq <|
+    (sgU_sub body (a := .s 29) (b := .s 30) (t := .s 2) (x := Dv - q₀ - q₂ - qR)
+      (y := Dv - q₀ - q₂) (by decide) (by decide) (by decide) (by simp [h2]) (by simp)
+      (by simp)).seq <|
+    (sgU_sub body (a := .s 30) (b := .s 26) (t := .s 2) (x := m₁) (y := Dv - q₀ - q₂)
+      (by decide) (by decide) (by decide) (by simp [h2]) (by simp <;> omega) (by simp)).seq <|
+    (sgU_copy body (a := .s 25) (b := .s 30) (t := .s 2) (x := q₀) (y := m₁) (by decide)
+      (by decide) (by decide) (by simp [h2]) (by simp [h25]) (by simp <;> omega)).seq <|
+    (sgU_clear body (a := .s 25) (x := q₀) (by simp [h25])).seq <|
+    (sgU_move body (a := .s 30) (b := .s 25) (x := q₀ + m₁) (by decide) (by simp)
+      (by simp)).seq <|
+    (sgU_clear body (a := .s 29) (x := Dv - q₀ - q₂ - qR) (by simp)).seq <|
+    sgU_clear body (a := .s 11) (x := qR) (by simp [h11])) ?_ ?_
+  · refine congrArg (synG R) ?_
+    funext y
+    simp only [Function.update_apply]
+    split_ifs <;> (try simp_all) <;> omega
+  · simp only [synChunkQ2Cost, synQFn]
+    omega
+
+/-- The step bound of `synChunkQK`. -/
+def synChunkQKCost (Kv oS q q₂ Dp : ℕ) : ℕ :=
+  synMulRCost Kv q + synMulRCost Kv q₂ + (4 * (Kv * q₂) + 4) + (4 * oS + 4) + (4 * Dp + 4) +
+    (4 * q₂ + 4) + synMulRCost Kv (q₂ + Dp) + (4 * oS + 4) + (2 * (q₂ + Dp) + 2)
+
+theorem sg_synChunkQK (v : SynW → List (Fin (A + 4))) (Kv oS q q₂ Dp : ℕ)
+    (hK : (v (.p .K)).length = Kv) (hoS : v (.s 6) = List.replicate oS tick)
+    (hq : v (.s 25) = List.replicate q tick) (hq₂ : v (.s 9) = List.replicate q₂ tick)
+    (hDp : v (.s 26) = List.replicate Dp tick)
+    (h2 : v (.s 2) = []) (h3 : v (.s 3) = []) (h10 : v (.s 10) = []) (h11 : v (.s 11) = [])
+    (h27 : v (.s 27) = []) (h28 : v (.s 28) = []) (h29 : v (.s 29) = []) :
+    LayRuns body synChunkQK (synG R v)
+      (synG R (Function.update (Function.update (Function.update (Function.update v
+        (.s 27) (List.replicate (Kv * q) tick)) (.s 10) (List.replicate (Kv * q₂) tick))
+        (.s 11) (List.replicate (oS + Kv * q₂) tick))
+        (.s 28) (List.replicate (oS + Kv * (q₂ + Dp)) tick)))
+      (synChunkQKCost Kv oS q q₂ Dp) := by
+  refine lr_weaken body
+    ((sgU_mulR body (a := .p .K) (b := .s 25) (c := .s 27) (t₁ := .s 2) (t₂ := .s 3) (x := Kv)
+      (y := q) (z := 0) (by decide) h2 h3 hK (by simp [hq]) (by simp [h27])).seq <|
+    (sgU_mulR body (a := .p .K) (b := .s 9) (c := .s 10) (t₁ := .s 2) (t₂ := .s 3) (x := Kv)
+      (y := q₂) (z := 0) (by decide) (by simp [h2]) (by simp [h3]) (by simp [hK])
+      (by simp [hq₂]) (by simp [h10])).seq <|
+    (sgU_copy body (a := .s 10) (b := .s 11) (t := .s 2) (x := Kv * q₂) (y := 0) (by decide)
+      (by decide) (by decide) (by simp [h2]) (by simp) (by simp [h11])).seq <|
+    (sgU_copy body (a := .s 6) (b := .s 11) (t := .s 2) (x := oS) (y := Kv * q₂) (by decide)
+      (by decide) (by decide) (by simp [h2]) (by simp [hoS]) (by simp)).seq <|
+    (sgU_copy body (a := .s 26) (b := .s 29) (t := .s 2) (x := Dp) (y := 0) (by decide)
+      (by decide) (by decide) (by simp [h2]) (by simp [hDp]) (by simp [h29])).seq <|
+    (sgU_copy body (a := .s 9) (b := .s 29) (t := .s 2) (x := q₂) (y := Dp) (by decide)
+      (by decide) (by decide) (by simp [h2]) (by simp [hq₂]) (by simp)).seq <|
+    (sgU_mulR body (a := .p .K) (b := .s 29) (c := .s 28) (t₁ := .s 2) (t₂ := .s 3) (x := Kv)
+      (y := q₂ + Dp) (z := 0) (by decide) (by simp [h2]) (by simp [h3]) (by simp [hK])
+      (by simp) (by simp [h28])).seq <|
+    (sgU_copy body (a := .s 6) (b := .s 28) (t := .s 2) (x := oS) (y := Kv * (q₂ + Dp))
+      (by decide) (by decide) (by decide) (by simp [h2]) (by simp [hoS]) (by simp)).seq <|
+    sgU_clear body (a := .s 29) (x := q₂ + Dp) (by simp)) ?_ ?_
+  · refine congrArg (synG R) ?_
+    funext y
+    simp only [Function.update_apply]
+    split_ifs <;> (try simp_all) <;> omega
+  · simp only [synChunkQKCost]
     omega
 
 /-- The step bound of `synChunkR2`. -/
@@ -312,52 +491,73 @@ theorem sg_synChunkR2 (v : SynW → List (Fin (A + 4))) (a' Jn : ℕ)
     omega
 
 /-- The step bound of `synChunkCfg`. -/
-def synChunkCfgCost (W a' Dv q E R2 aT Kq oS : ℕ) : ℕ :=
-  (4 * Dv + 4 + (1 + (4 * (Dv + 1) + 4 + (2 * (Dv + 1) + 2 + (4 * q + 4))))) +
-    (4 * ((Dv + 1) / 2 + q) + 4) +
-    (4 * W + 5) + (4 * ((Dv + 1) / 2 + q + E) + 5) + (4 * a' + 5) + 2 + (4 * R2 + 5) +
-    (4 * q + 5) + (4 * aT + 5) + (4 * Kq + 5) + (4 * oS + 5) + (4 * Dv + 5)
+def synChunkCfgCost (W a' Dv q q₂ E R2 aT Kq oS Kq₂ : ℕ) : ℕ :=
+  (4 * q₂ + 4) + (4 * q + 4) +
+    (4 * Dv + 4 + (1 + (4 * (Dv + 1) + 4 + (2 * (Dv + 1) + 2 + (4 * (q + q₂) + 4))))) +
+    (2 * (q + q₂) + 2) + (4 * ((Dv + 1) / 2 + (q + q₂)) + 4) +
+    (4 * W + 5) + (4 * ((Dv + 1) / 2 + (q + q₂) + E) + 5) + (4 * a' + 5) + 2 + (4 * R2 + 5) +
+    (4 * q + 5) + (4 * aT + 5) + (4 * Kq + 5) + (4 * oS + 5) + (4 * Dv + 5) + (4 * q₂ + 5) +
+    (4 * oS + 5) + (4 * Kq₂ + 5)
 
-theorem sg_synChunkCfg (v : SynW → List (Fin (A + 4))) (W a' Dv q E R2 aT Kq oS : ℕ)
+theorem sg_synChunkCfg (v : SynW → List (Fin (A + 4))) (W a' Dv q q₂ E R2 aT Kq oS Kq₂ : ℕ)
     (ha : v (.s 0) = List.replicate a' tick) (hE : v (.s 16) = List.replicate E tick)
     (hR : v (.s 7) = List.replicate R2 tick) (hoS : v (.s 6) = List.replicate oS tick)
-    (hq : v (.s 25) = List.replicate q tick) (haT : v (.s 28) = List.replicate aT tick)
-    (hKq : v (.s 27) = List.replicate Kq tick)
-    (h1 : v (.s 1) = []) (h2 : v (.s 2) = []) (h5 : v (.s 5) = []) (hcf : v (.p .cf) = [])
-    (hW : (v (.p .w)).length = W) (hD : (v (.p .D)).length = Dv) :
+    (hq : v (.s 25) = List.replicate q tick) (hq₂ : v (.s 9) = List.replicate q₂ tick)
+    (haT : v (.s 28) = List.replicate aT tick) (hKq : v (.s 27) = List.replicate Kq tick)
+    (hKq₂ : v (.s 10) = List.replicate Kq₂ tick)
+    (h1 : v (.s 1) = []) (h2 : v (.s 2) = []) (h5 : v (.s 5) = []) (h29 : v (.s 29) = [])
+    (hcf : v (.p .cf) = []) (hW : (v (.p .w)).length = W) (hD : (v (.p .D)).length = Dv) :
     LayRuns body synChunkCfg (synG R v)
       (synG R (Function.update (Function.update (Function.update v (.s 5)
-        (List.replicate ((Dv + 1) / 2 + q) tick)) (.s 16)
-        (List.replicate ((Dv + 1) / 2 + q + E) tick)) (.p .cf)
-        (topRec [W, (Dv + 1) / 2 + q + E, a', 1, R2, q, aT, Kq, oS, Dv]).reverse))
-      (synChunkCfgCost W a' Dv q E R2 aT Kq oS) := by
+        (List.replicate ((Dv + 1) / 2 + (q + q₂)) tick)) (.s 16)
+        (List.replicate ((Dv + 1) / 2 + (q + q₂) + E) tick)) (.p .cf)
+        (topRec [W, (Dv + 1) / 2 + (q + q₂) + E, a', 1, R2, q, aT, Kq, oS, Dv, q₂, oS,
+          Kq₂]).reverse))
+      (synChunkCfgCost W a' Dv q q₂ E R2 aT Kq oS Kq₂) := by
   refine lr_weaken body
-    ((sg_synHalfAdd body (x := .p .D) (y := .s 25) (by decide) (by decide) (by decide)
-      (by decide) (by decide) _ Dv q hD (by simp [hq]) h1 h2 h5).seq <|
-    (sgU_copy body (a := .s 5) (b := .s 16) (t := .s 2) (x := (Dv + 1) / 2 + q) (y := E)
+    ((sgU_copy body (a := .s 9) (b := .s 29) (t := .s 2) (x := q₂) (y := 0) (by decide)
+      (by decide) (by decide) h2 (by simp [hq₂]) (by simp [h29])).seq <|
+    (sgU_copy body (a := .s 25) (b := .s 29) (t := .s 2) (x := q) (y := q₂) (by decide)
+      (by decide) (by decide) (by simp [h2]) (by simp [hq]) (by simp)).seq <|
+    (sg_synHalfAdd body (x := .p .D) (y := .s 29) (by decide) (by decide) (by decide)
+      (by decide) (by decide) _ Dv (q + q₂) (by simp [hD]) (by simp) (by simp [h1])
+      (by simp [h2]) (by simp [h5])).seq <|
+    (sgU_clear body (a := .s 29) (x := q + q₂) (by simp)).seq <|
+    (sgU_copy body (a := .s 5) (b := .s 16) (t := .s 2) (x := (Dv + 1) / 2 + (q + q₂)) (y := E)
       (by decide) (by decide) (by decide) (by simp [h2]) (by simp) (by simp [hE])).seq <|
     (sg_synCF body (x := .p .w) (by decide) (by decide) _ [] W (by simp [h2]) (by simp [hW])
       (by simp [hcf])).seq <|
-    (sg_synCF body (x := .s 16) (by decide) (by decide) _ [W] ((Dv + 1) / 2 + q + E)
+    (sg_synCF body (x := .s 16) (by decide) (by decide) _ [W] ((Dv + 1) / 2 + (q + q₂) + E)
       (by simp [h2]) (by simp) (by simp)).seq <|
-    (sg_synCF body (x := .s 0) (by decide) (by decide) _ [W, (Dv + 1) / 2 + q + E] a'
+    (sg_synCF body (x := .s 0) (by decide) (by decide) _ [W, (Dv + 1) / 2 + (q + q₂) + E] a'
       (by simp [h2]) (by simp [ha]) (by simp)).seq <|
-    (sg_synCF1 body _ [W, (Dv + 1) / 2 + q + E, a'] (by simp)).seq <|
-    (sg_synCF body (x := .s 7) (by decide) (by decide) _ [W, (Dv + 1) / 2 + q + E, a', 1] R2
-      (by simp [h2]) (by simp [hR]) (by simp)).seq <|
-    (sg_synCF body (x := .s 25) (by decide) (by decide) _ [W, (Dv + 1) / 2 + q + E, a', 1, R2]
-      q (by simp [h2]) (by simp [hq]) (by simp)).seq <|
+    (sg_synCF1 body _ [W, (Dv + 1) / 2 + (q + q₂) + E, a'] (by simp)).seq <|
+    (sg_synCF body (x := .s 7) (by decide) (by decide) _
+      [W, (Dv + 1) / 2 + (q + q₂) + E, a', 1] R2 (by simp [h2]) (by simp [hR]) (by simp)).seq <|
+    (sg_synCF body (x := .s 25) (by decide) (by decide) _
+      [W, (Dv + 1) / 2 + (q + q₂) + E, a', 1, R2] q (by simp [h2]) (by simp [hq])
+      (by simp)).seq <|
     (sg_synCF body (x := .s 28) (by decide) (by decide) _
-      [W, (Dv + 1) / 2 + q + E, a', 1, R2, q] aT (by simp [h2]) (by simp [haT]) (by simp)).seq <|
+      [W, (Dv + 1) / 2 + (q + q₂) + E, a', 1, R2, q] aT (by simp [h2]) (by simp [haT])
+      (by simp)).seq <|
     (sg_synCF body (x := .s 27) (by decide) (by decide) _
-      [W, (Dv + 1) / 2 + q + E, a', 1, R2, q, aT] Kq (by simp [h2]) (by simp [hKq])
+      [W, (Dv + 1) / 2 + (q + q₂) + E, a', 1, R2, q, aT] Kq (by simp [h2]) (by simp [hKq])
       (by simp)).seq <|
     (sg_synCF body (x := .s 6) (by decide) (by decide) _
-      [W, (Dv + 1) / 2 + q + E, a', 1, R2, q, aT, Kq] oS (by simp [h2]) (by simp [hoS])
+      [W, (Dv + 1) / 2 + (q + q₂) + E, a', 1, R2, q, aT, Kq] oS (by simp [h2]) (by simp [hoS])
       (by simp)).seq <|
-    sg_synCF body (x := .p .D) (by decide) (by decide) _
-      [W, (Dv + 1) / 2 + q + E, a', 1, R2, q, aT, Kq, oS] Dv (by simp [h2]) (by simp [hD])
-      (by simp)) ?_ ?_
+    (sg_synCF body (x := .p .D) (by decide) (by decide) _
+      [W, (Dv + 1) / 2 + (q + q₂) + E, a', 1, R2, q, aT, Kq, oS] Dv (by simp [h2]) (by simp [hD])
+      (by simp)).seq <|
+    (sg_synCF body (x := .s 9) (by decide) (by decide) _
+      [W, (Dv + 1) / 2 + (q + q₂) + E, a', 1, R2, q, aT, Kq, oS, Dv] q₂ (by simp [h2])
+      (by simp [hq₂]) (by simp)).seq <|
+    (sg_synCF body (x := .s 6) (by decide) (by decide) _
+      [W, (Dv + 1) / 2 + (q + q₂) + E, a', 1, R2, q, aT, Kq, oS, Dv, q₂] oS (by simp [h2])
+      (by simp [hoS]) (by simp)).seq <|
+    sg_synCF body (x := .s 10) (by decide) (by decide) _
+      [W, (Dv + 1) / 2 + (q + q₂) + E, a', 1, R2, q, aT, Kq, oS, Dv, q₂, oS] Kq₂ (by simp [h2])
+      (by simp [hKq₂]) (by simp)) ?_ ?_
   · refine congrArg (synG R) ?_
     funext y
     simp only [Function.update_apply]
@@ -366,26 +566,30 @@ theorem sg_synChunkCfg (v : SynW → List (Fin (A + 4))) (W a' Dv q E R2 aT Kq o
     omega
 
 /-- The step bound of `synChunkEnd`. -/
-def synChunkEndCost (W S Dv S5 oS R2 Jn q Dp Kq aT a' : ℕ) : ℕ :=
+def synChunkEndCost (W S Dv S5 oS R2 Jn q Dp Kq aT a' q₂ Kq₂ oP : ℕ) : ℕ :=
   (4 * W + 4 + (4 * S + 4 + (4 * Dv + 4))) + (2 * S5 + 2) + (2 * oS + 2) + (2 * R2 + 2) +
     (2 * Jn + 2) + (2 * S + 2) + (2 * q + 2) + (2 * Dp + 2) + (2 * Kq + 2) + (2 * aT + 2) +
-    (2 * a' + 2)
+    (2 * a' + 2) + (2 * q₂ + 2) + (2 * Kq₂ + 2) + (2 * oP + 2)
 
-theorem sg_synChunkEnd (v : SynW → List (Fin (A + 4))) (W S Dv S5 oS R2 Jn q Dp Kq aT a' : ℕ)
+theorem sg_synChunkEnd (v : SynW → List (Fin (A + 4)))
+    (W S Dv S5 oS R2 Jn q Dp Kq aT a' q₂ Kq₂ oP : ℕ)
     (h5 : v (.s 5) = List.replicate S5 tick) (h6 : v (.s 6) = List.replicate oS tick)
     (h7 : v (.s 7) = List.replicate R2 tick) (h14 : v (.s 14) = List.replicate Jn tick)
     (h16 : v (.s 16) = List.replicate S tick) (h25 : v (.s 25) = List.replicate q tick)
     (h26 : v (.s 26) = List.replicate Dp tick) (h27 : v (.s 27) = List.replicate Kq tick)
     (h28 : v (.s 28) = List.replicate aT tick) (h0 : v (.s 0) = List.replicate a' tick)
+    (h9 : v (.s 9) = List.replicate q₂ tick) (h10 : v (.s 10) = List.replicate Kq₂ tick)
+    (h11 : v (.s 11) = List.replicate oP tick)
     (h2 : v (.s 2) = []) (hw2 : v (.p .w2) = [])
     (hW : (v (.p .w)).length = W) (hD : (v (.p .D)).length = Dv) :
     LayRuns body synChunkEnd (synG R v)
       (synG R (Function.update (Function.update (Function.update (Function.update
         (Function.update (Function.update (Function.update (Function.update (Function.update
-        (Function.update (Function.update v (.p .w2)
-          (List.replicate (W + S + Dv) tick)) (.s 5) []) (.s 6) []) (.s 7) []) (.s 14) [])
-          (.s 16) []) (.s 25) []) (.s 26) []) (.s 27) []) (.s 28) []) (.s 0) []))
-      (synChunkEndCost W S Dv S5 oS R2 Jn q Dp Kq aT a') := by
+        (Function.update (Function.update (Function.update (Function.update (Function.update v
+          (.p .w2) (List.replicate (W + S + Dv) tick)) (.s 5) []) (.s 6) []) (.s 7) [])
+          (.s 14) []) (.s 16) []) (.s 25) []) (.s 26) []) (.s 27) []) (.s 28) []) (.s 0) [])
+          (.s 9) []) (.s 10) []) (.s 11) []))
+      (synChunkEndCost W S Dv S5 oS R2 Jn q Dp Kq aT a' q₂ Kq₂ oP) := by
   refine lr_weaken body
     ((sg_synW2P body (x := .s 16) (by decide) (by decide) _ W S Dv h2 hw2 hW (by simp [h16])
       hD).seq <|
@@ -398,57 +602,63 @@ theorem sg_synChunkEnd (v : SynW → List (Fin (A + 4))) (W S Dv S5 oS R2 Jn q D
     (sgU_clear body (a := .s 26) (x := Dp) (by simp [h26])).seq <|
     (sgU_clear body (a := .s 27) (x := Kq) (by simp [h27])).seq <|
     (sgU_clear body (a := .s 28) (x := aT) (by simp [h28])).seq <|
-    sgU_clear body (a := .s 0) (x := a') (by simp [h0])) rfl ?_
+    (sgU_clear body (a := .s 0) (x := a') (by simp [h0])).seq <|
+    (sgU_clear body (a := .s 9) (x := q₂) (by simp [h9])).seq <|
+    (sgU_clear body (a := .s 10) (x := Kq₂) (by simp [h10])).seq <|
+    sgU_clear body (a := .s 11) (x := oP) (by simp [h11])) rfl ?_
   simp only [synChunkEndCost]
   omega
 
 /-- The step bound of `synChunkB`. -/
-noncomputable def synChunkCost (G F a hv bv Kv Dv W : ℕ) : ℕ :=
+noncomputable def synChunkCost (G F a hv bv Kv Dv Nv W : ℕ) : ℕ :=
   let oS := Kv * ((hv - bv) / Kv * Dv)
-  let q := synQKn Dv (synJ Dv Dv - 1)
-  let Dp := Dv - q
-  let a' := Kv * q + a
+  let q₀ := synQKn Dv (synJ Dv Dv - 1)
+  let qR := synQRn Kv Dv (synGd Nv)
+  let q₂ := synQFn Dv q₀ qR
+  let q := synQBn Dv q₀ q₂ qR
+  let Dp := Dv - q - q₂
+  let a' := Kv * q₀ + a
   let E := synE G F Dp Dp
   let Jn := synJ Dp Dp
   let R2 := 2 ^ (a' - (synJk 2 (NW ^ (Jn - 1)) (a' + 1) - 1)) * NW ^ (Jn - 1)
-  synChunkACost hv bv Kv Dv + (synChunkQCost oS Kv Dv + (synDigitsCost G F Kv oS Dp +
-    (synChunkR2Cost a' Jn + (synChunkCfgCost W a' Dv q E R2 (oS + Kv * Dp) (Kv * q) oS +
-      synChunkEndCost W ((Dv + 1) / 2 + q + E) Dv ((Dv + 1) / 2 + q) oS R2 Jn q Dp (Kv * q)
-        (oS + Kv * Dp) a'))))
+  synChunkACost hv bv Kv Dv + ((synChunkQ0Cost Kv Dv + (synChunkQRCost Kv Dv Nv +
+    (synChunkQ2Cost Dv q₀ qR + synChunkQKCost Kv oS q q₂ Dp))) +
+    (synDigitsCost G F Kv (oS + Kv * q₂) Dp + (synChunkR2Cost a' Jn +
+      (synChunkCfgCost W a' Dv q q₂ E R2 (oS + Kv * (q₂ + Dp)) (Kv * q) oS (Kv * q₂) +
+        synChunkEndCost W ((Dv + 1) / 2 + (q + q₂) + E) Dv ((Dv + 1) / 2 + (q + q₂)) oS R2 Jn
+          q Dp (Kv * q) (oS + Kv * (q₂ + Dp)) a' q₂ (Kv * q₂) (oS + Kv * q₂)))))
 
-theorem sg_synChunkB (G F : ℕ) (v : SynW → List (Fin (A + 4))) (a hv bv Kv Dv W Xp Jp : ℕ)
+theorem sg_synChunkB (G F : ℕ) (v : SynW → List (Fin (A + 4)))
+    (a hv bv Kv Dv Nv W Xp Jp q₀ qR q₂ q Dp : ℕ)
+    (hq₀ : q₀ = synQKn Dv (synJ Dv Dv - 1)) (hqR : qR = synQRn Kv Dv (synGd Nv))
+    (hq₂ : q₂ = synQFn Dv q₀ qR) (hq : q = synQBn Dv q₀ q₂ qR) (hDp : Dp = Dv - q - q₂)
     (hk : 1 ≤ Kv) (hs : ∀ i, i ≠ 0 → v (.s i) = []) (ha : v (.s 0) = List.replicate a tick)
     (hcf : v (.p .cf) = []) (hkh : v (.p .kh) = []) (hrh : v (.p .rh) = [])
     (hpr : v (.p .pr) = []) (hw2 : v (.p .w2) = [])
     (hh : (v (.p .h)).length = hv) (hb : (v (.p .b)).length = bv) (hK : (v (.p .K)).length = Kv)
-    (hD : (v (.p .D)).length = Dv) (hW : (v (.p .w)).length = W) :
+    (hD : (v (.p .D)).length = Dv) (hN : (v (.p .N)).length = Nv)
+    (hW : (v (.p .w)).length = W) :
     LayRuns body (synChunkB G F) (synG R v)
       (synG R (Function.update (Function.update (Function.update (Function.update
         (Function.update (Function.update v (.s 0) []) (.p .kh) (List.replicate Kv tick))
           (.p .rh) (List.replicate ((hv - bv) % Kv) tick)) (.p .pr)
-          (topRec (topPcRec Kv (synPcs Kv Xp (Dv - synQKn Dv (synJ Dv Dv - 1))
-            (Kv * ((hv - bv) / Kv * Dv)) Jp (Dv - synQKn Dv (synJ Dv Dv - 1))))))
-        (.p .cf) (topRec [W,
-          (Dv + 1) / 2 + synQKn Dv (synJ Dv Dv - 1) +
-            synE G F (Dv - synQKn Dv (synJ Dv Dv - 1)) (Dv - synQKn Dv (synJ Dv Dv - 1)),
-          Kv * synQKn Dv (synJ Dv Dv - 1) + a, 1,
-          2 ^ (Kv * synQKn Dv (synJ Dv Dv - 1) + a -
-            (synJk 2 (NW ^ (synJ (Dv - synQKn Dv (synJ Dv Dv - 1))
-              (Dv - synQKn Dv (synJ Dv Dv - 1)) - 1))
-              (Kv * synQKn Dv (synJ Dv Dv - 1) + a + 1) - 1)) *
-            NW ^ (synJ (Dv - synQKn Dv (synJ Dv Dv - 1)) (Dv - synQKn Dv (synJ Dv Dv - 1)) - 1),
-          synQKn Dv (synJ Dv Dv - 1),
-          Kv * ((hv - bv) / Kv * Dv) + Kv * (Dv - synQKn Dv (synJ Dv Dv - 1)),
-          Kv * synQKn Dv (synJ Dv Dv - 1), Kv * ((hv - bv) / Kv * Dv), Dv]).reverse)
-        (.p .w2) (List.replicate (W + ((Dv + 1) / 2 + synQKn Dv (synJ Dv Dv - 1) +
-          synE G F (Dv - synQKn Dv (synJ Dv Dv - 1)) (Dv - synQKn Dv (synJ Dv Dv - 1))) + Dv)
-          tick)))
-      (synChunkCost G F a hv bv Kv Dv W) := by
+          (topRec (topPcRec Kv (synPcs Kv Xp Dp (Kv * ((hv - bv) / Kv * Dv) + Kv * q₂) Jp Dp))))
+        (.p .cf) (topRec [W, (Dv + 1) / 2 + (q + q₂) + synE G F Dp Dp, Kv * q₀ + a, 1,
+          2 ^ (Kv * q₀ + a - (synJk 2 (NW ^ (synJ Dp Dp - 1)) (Kv * q₀ + a + 1) - 1)) *
+            NW ^ (synJ Dp Dp - 1),
+          q, Kv * ((hv - bv) / Kv * Dv) + Kv * (q₂ + Dp), Kv * q, Kv * ((hv - bv) / Kv * Dv), Dv,
+          q₂, Kv * ((hv - bv) / Kv * Dv), Kv * q₂]).reverse)
+        (.p .w2) (List.replicate (W + ((Dv + 1) / 2 + (q + q₂) + synE G F Dp Dp) + Dv) tick)))
+      (synChunkCost G F a hv bv Kv Dv Nv W) := by
+  subst hq₀ hqR hq₂ hq hDp
   have hz : ∀ i : Fin 32, i ≠ 0 → v (.s i) = [] := hs
   set oS := Kv * ((hv - bv) / Kv * Dv) with hoS
-  set q := synQKn Dv (synJ Dv Dv - 1) with hq
-  set Dp := Dv - q with hDp
-  set a' := Kv * q + a with ha'
+  set q₀ := synQKn Dv (synJ Dv Dv - 1) with hq₀
+  set qR := synQRn Kv Dv (synGd Nv) with hqR
+  set q₂ := synQFn Dv q₀ qR with hq₂
+  set q := synQBn Dv q₀ q₂ qR with hq
+  set Dp := Dv - q - q₂ with hDp
+  set a' := Kv * q₀ + a with ha'
   set E := synE G F Dp Dp with hE
   set Jn := synJ Dp Dp with hJn
   set R2 := 2 ^ (a' - (synJk 2 (NW ^ (Jn - 1)) (a' + 1) - 1)) * NW ^ (Jn - 1) with hR2
@@ -458,69 +668,103 @@ theorem sg_synChunkB (G F : ℕ) (v : SynW → List (Fin (A + 4))) (a hv bv Kv D
   set vA := Function.update (Function.update (Function.update v (.p .kh)
     (List.replicate Kv tick)) (.p .rh) (List.replicate ((hv - bv) % Kv) tick)) (.s 6)
     (List.replicate oS tick) with hvA
-  have sQ := sg_synChunkQ body (R := R) vA a oS Kv Dv (by simp [hvA, ha]) (by simp [hvA])
-    (by simp [hvA, hK]) (by simp [hvA, hD]) (by simp [hvA, hz 2 (by decide)])
-    (by simp [hvA, hz 3 (by decide)]) (by simp [hvA, hz 9 (by decide)])
-    (by simp [hvA, hz 10 (by decide)]) (by simp [hvA, hz 12 (by decide)])
-    (by simp [hvA, hz 14 (by decide)]) (by simp [hvA, hz 17 (by decide)])
-    (by simp [hvA, hz 22 (by decide)]) (by simp [hvA, hz 23 (by decide)])
-    (by simp [hvA, hz 25 (by decide)]) (by simp [hvA, hz 26 (by decide)])
-    (by simp [hvA, hz 27 (by decide)]) (by simp [hvA, hz 28 (by decide)])
-  set vQ := Function.update (Function.update (Function.update (Function.update
-    (Function.update vA (.s 0) (List.replicate a' tick)) (.s 25) (List.replicate q tick))
-    (.s 26) (List.replicate Dp tick)) (.s 27) (List.replicate (Kv * q) tick))
-    (.s 28) (List.replicate (oS + Kv * Dp) tick) with hvQ
-  have sD := sg_synDigits body (R := R) G F vQ Kv Xp oS Jp Dp (by simp [hvQ, hvA])
-    (by simp [hvQ, hvA, hK]) (by simp [hvQ]) (by simp [hvQ, hvA, hpr]) (fun i hi1 hi2 => by
+  have sQ0 := sg_synChunkQ0 body (R := R) vA a Kv Dv q₀ hq₀ (by simp [hvA, ha])
+    (by simp [hvA, hK]) (by simp [hvA, hD]) (by simp [hvA, hz]) (by simp [hvA, hz])
+    (by simp [hvA, hz]) (by simp [hvA, hz]) (by simp [hvA, hz]) (by simp [hvA, hz])
+    (by simp [hvA, hz]) (by simp [hvA, hz]) (by simp [hvA, hz]) (by simp [hvA, hz])
+  set vQ0 := Function.update (Function.update vA (.s 0) (List.replicate a' tick)) (.s 25)
+    (List.replicate q₀ tick) with hvQ0
+  have sQR := sg_synChunkQR body (R := R) vQ0 Kv Dv Nv qR hqR hk (by simp [hvQ0, hvA, hK])
+    (by simp [hvQ0, hvA, hD]) (by simp [hvQ0, hvA, hN]) (by simp [hvQ0, hvA, hz])
+    (by simp [hvQ0, hvA, hz]) (by simp [hvQ0, hvA, hz]) (by simp [hvQ0, hvA, hz])
+    (by simp [hvQ0, hvA, hz]) (by simp [hvQ0, hvA, hz]) (by simp [hvQ0, hvA, hz])
+    (by simp [hvQ0, hvA, hz]) (by simp [hvQ0, hvA, hz]) (by simp [hvQ0, hvA, hz])
+    (by simp [hvQ0, hvA, hz])
+  set vQR := Function.update vQ0 (.s 11) (List.replicate qR tick) with hvQR
+  have sQ2 := sg_synChunkQ2 body (R := R) vQR Dv q₀ qR q₂ q Dp hq₂ hq hDp
+    (by simp [hvQR, hvQ0, hvA, hD]) (by simp [hvQR, hvQ0]) (by simp [hvQR])
+    (by simp [hvQR, hvQ0, hvA, hz]) (by simp [hvQR, hvQ0, hvA, hz])
+    (by simp [hvQR, hvQ0, hvA, hz]) (by simp [hvQR, hvQ0, hvA, hz])
+    (by simp [hvQR, hvQ0, hvA, hz])
+  set vQ2 := Function.update (Function.update (Function.update (Function.update vQR (.s 11) [])
+    (.s 9) (List.replicate q₂ tick)) (.s 25) (List.replicate q tick)) (.s 26)
+    (List.replicate Dp tick) with hvQ2
+  have sQK := sg_synChunkQK body (R := R) vQ2 Kv oS q q₂ Dp
+    (by simp [hvQ2, hvQR, hvQ0, hvA, hK]) (by simp [hvQ2, hvQR, hvQ0, hvA]) (by simp [hvQ2])
+    (by simp [hvQ2]) (by simp [hvQ2]) (by simp [hvQ2, hvQR, hvQ0, hvA, hz])
+    (by simp [hvQ2, hvQR, hvQ0, hvA, hz]) (by simp [hvQ2, hvQR, hvQ0, hvA, hz])
+    (by simp [hvQ2]) (by simp [hvQ2, hvQR, hvQ0, hvA, hz])
+    (by simp [hvQ2, hvQR, hvQ0, hvA, hz]) (by simp [hvQ2, hvQR, hvQ0, hvA, hz])
+  set vQ := Function.update (Function.update (Function.update (Function.update vQ2
+    (.s 27) (List.replicate (Kv * q) tick)) (.s 10) (List.replicate (Kv * q₂) tick))
+    (.s 11) (List.replicate (oS + Kv * q₂) tick)) (.s 28)
+    (List.replicate (oS + Kv * (q₂ + Dp)) tick) with hvQ
+  have sD := sg_synDigits body (R := R) G F vQ Kv Xp (oS + Kv * q₂) Jp Dp (by simp [hvQ])
+    (by simp [hvQ, hvQ2, hvQR, hvQ0, hvA, hK]) (by simp [hvQ, hvQ2])
+    (by simp [hvQ, hvQ2, hvQR, hvQ0, hvA, hpr]) (fun i hi1 hi2 => by
       have hi0 : i ≠ 0 := by intro h; subst h; simp at hi1
       have hi6 : i ≠ 6 := by intro h; subst h; simp at hi1
+      have hi9 : i ≠ 9 := by intro h; subst h; simp at hi1
+      have hi10 : i ≠ 10 := by intro h; subst h; simp at hi1
+      have hi11 : i ≠ 11 := by intro h; subst h; simp at hi1
       have hi25 : i ≠ 25 := by intro h; subst h; simp at hi2
       have hi26 : i ≠ 26 := by intro h; subst h; simp at hi2
       have hi27 : i ≠ 27 := by intro h; subst h; simp at hi2
       have hi28 : i ≠ 28 := by intro h; subst h; simp at hi2
-      simp [hvQ, hvA, hi0, hi6, hi25, hi26, hi27, hi28, hz i hi0])
-    (by simp [hvQ, hvA, hz 2 (by decide)]) (by simp [hvQ, hvA, hz 3 (by decide)])
-    (by simp [hvQ, hvA, hz 4 (by decide)])
+      simp [hvQ, hvQ2, hvQR, hvQ0, hvA, hi0, hi6, hi9, hi10, hi11, hi25, hi26, hi27, hi28,
+        hz i hi0])
+    (by simp [hvQ, hvQ2, hvQR, hvQ0, hvA, hz]) (by simp [hvQ, hvQ2, hvQR, hvQ0, hvA, hz])
+    (by simp [hvQ, hvQ2, hvQR, hvQ0, hvA, hz])
   set vD := Function.update (Function.update (Function.update vQ (.s 14)
     (List.replicate Jn tick)) (.s 16) (List.replicate E tick)) (.p .pr)
-    (topRec (topPcRec Kv (synPcs Kv Xp Dp oS Jp Dp))) with hvD
-  have sR := sg_synChunkR2 body (R := R) vD a' Jn (by simp [hvD, hvQ]) (by simp [hvD])
-    (by simp [hvD, hvQ, hvA, hz 2 (by decide)]) (by simp [hvD, hvQ, hvA, hz 3 (by decide)])
-    (by simp [hvD, hvQ, hvA, hz 7 (by decide)]) (by simp [hvD, hvQ, hvA, hz 8 (by decide)])
-    (by simp [hvD, hvQ, hvA, hz 17 (by decide)]) (by simp [hvD, hvQ, hvA, hz 22 (by decide)])
-    (by simp [hvD, hvQ, hvA, hz 23 (by decide)]) (by simp [hvD, hvQ, hvA, hz 29 (by decide)])
-    (by simp [hvD, hvQ, hvA, hz 30 (by decide)]) (by simp [hvD, hvQ, hvA, hz 31 (by decide)])
+    (topRec (topPcRec Kv (synPcs Kv Xp Dp (oS + Kv * q₂) Jp Dp))) with hvD
+  have sR := sg_synChunkR2 body (R := R) vD a' Jn (by simp [hvD, hvQ, hvQ2, hvQR, hvQ0])
+    (by simp [hvD]) (by simp [hvD, hvQ, hvQ2, hvQR, hvQ0, hvA, hz])
+    (by simp [hvD, hvQ, hvQ2, hvQR, hvQ0, hvA, hz]) (by simp [hvD, hvQ, hvQ2, hvQR, hvQ0, hvA, hz])
+    (by simp [hvD, hvQ, hvQ2, hvQR, hvQ0, hvA, hz]) (by simp [hvD, hvQ, hvQ2, hvQR, hvQ0, hvA, hz])
+    (by simp [hvD, hvQ, hvQ2, hvQR, hvQ0, hvA, hz]) (by simp [hvD, hvQ, hvQ2, hvQR, hvQ0, hvA, hz])
+    (by simp [hvD, hvQ, hvQ2, hvQR, hvQ0, hvA, hz]) (by simp [hvD, hvQ, hvQ2, hvQR, hvQ0, hvA, hz])
+    (by simp [hvD, hvQ, hvQ2, hvQR, hvQ0, hvA, hz])
   set vR := Function.update vD (.s 7) (List.replicate R2 tick) with hvR
-  have sC := sg_synChunkCfg body (R := R) vR W a' Dv q E R2 (oS + Kv * Dp) (Kv * q) oS
-    (by simp [hvR, hvD, hvQ]) (by simp [hvR, hvD]) (by simp [hvR])
-    (by simp [hvR, hvD, hvQ, hvA]) (by simp [hvR, hvD, hvQ]) (by simp [hvR, hvD, hvQ])
-    (by simp [hvR, hvD, hvQ]) (by simp [hvR, hvD, hvQ, hvA, hz 1 (by decide)])
-    (by simp [hvR, hvD, hvQ, hvA, hz 2 (by decide)])
-    (by simp [hvR, hvD, hvQ, hvA, hz 5 (by decide)]) (by simp [hvR, hvD, hvQ, hvA, hcf])
-    (by simp [hvR, hvD, hvQ, hvA, hW]) (by simp [hvR, hvD, hvQ, hvA, hD])
-  set S := (Dv + 1) / 2 + q + E with hS
+  have sC := sg_synChunkCfg body (R := R) vR W a' Dv q q₂ E R2 (oS + Kv * (q₂ + Dp)) (Kv * q) oS
+    (Kv * q₂) (by simp [hvR, hvD, hvQ, hvQ2, hvQR, hvQ0]) (by simp [hvR, hvD]) (by simp [hvR])
+    (by simp [hvR, hvD, hvQ, hvQ2, hvQR, hvQ0, hvA]) (by simp [hvR, hvD, hvQ, hvQ2])
+    (by simp [hvR, hvD, hvQ, hvQ2]) (by simp [hvR, hvD, hvQ]) (by simp [hvR, hvD, hvQ])
+    (by simp [hvR, hvD, hvQ]) (by simp [hvR, hvD, hvQ, hvQ2, hvQR, hvQ0, hvA, hz])
+    (by simp [hvR, hvD, hvQ, hvQ2, hvQR, hvQ0, hvA, hz])
+    (by simp [hvR, hvD, hvQ, hvQ2, hvQR, hvQ0, hvA, hz])
+    (by simp [hvR, hvD, hvQ, hvQ2, hvQR, hvQ0, hvA, hz])
+    (by simp [hvR, hvD, hvQ, hvQ2, hvQR, hvQ0, hvA, hcf])
+    (by simp [hvR, hvD, hvQ, hvQ2, hvQR, hvQ0, hvA, hW])
+    (by simp [hvR, hvD, hvQ, hvQ2, hvQR, hvQ0, hvA, hD])
+  set S := (Dv + 1) / 2 + (q + q₂) + E with hS
   set vC := Function.update (Function.update (Function.update vR (.s 5)
-    (List.replicate ((Dv + 1) / 2 + q) tick)) (.s 16) (List.replicate S tick)) (.p .cf)
-    (topRec [W, S, a', 1, R2, q, oS + Kv * Dp, Kv * q, oS, Dv]).reverse with hvC
-  have sE := sg_synChunkEnd body (R := R) vC W S Dv ((Dv + 1) / 2 + q) oS R2 Jn q Dp (Kv * q)
-    (oS + Kv * Dp) a'
-    (by simp [hvC]) (by simp [hvC, hvR, hvD, hvQ, hvA]) (by simp [hvC, hvR])
-    (by simp [hvC, hvR, hvD]) (by simp [hvC]) (by simp [hvC, hvR, hvD, hvQ])
-    (by simp [hvC, hvR, hvD, hvQ]) (by simp [hvC, hvR, hvD, hvQ])
-    (by simp [hvC, hvR, hvD, hvQ]) (by simp [hvC, hvR, hvD, hvQ])
-    (by simp [hvC, hvR, hvD, hvQ, hvA, hz 2 (by decide)])
-    (by simp [hvC, hvR, hvD, hvQ, hvA, hw2]) (by simp [hvC, hvR, hvD, hvQ, hvA, hW])
-    (by simp [hvC, hvR, hvD, hvQ, hvA, hD])
-  refine lr_weaken body (sA.seq (sQ.seq (sD.seq (sR.seq (sC.seq sE))))) ?_ le_rfl
+    (List.replicate ((Dv + 1) / 2 + (q + q₂)) tick)) (.s 16) (List.replicate S tick)) (.p .cf)
+    (topRec [W, S, a', 1, R2, q, oS + Kv * (q₂ + Dp), Kv * q, oS, Dv, q₂, oS,
+      Kv * q₂]).reverse with hvC
+  have sE := sg_synChunkEnd body (R := R) vC W S Dv ((Dv + 1) / 2 + (q + q₂)) oS R2 Jn q Dp
+    (Kv * q) (oS + Kv * (q₂ + Dp)) a' q₂ (Kv * q₂) (oS + Kv * q₂)
+    (by simp [hvC]) (by simp [hvC, hvR, hvD, hvQ, hvQ2, hvQR, hvQ0, hvA]) (by simp [hvC, hvR])
+    (by simp [hvC, hvR, hvD]) (by simp [hvC]) (by simp [hvC, hvR, hvD, hvQ, hvQ2])
+    (by simp [hvC, hvR, hvD, hvQ, hvQ2]) (by simp [hvC, hvR, hvD, hvQ])
+    (by simp [hvC, hvR, hvD, hvQ]) (by simp [hvC, hvR, hvD, hvQ, hvQ2, hvQR, hvQ0])
+    (by simp [hvC, hvR, hvD, hvQ, hvQ2]) (by simp [hvC, hvR, hvD, hvQ])
+    (by simp [hvC, hvR, hvD, hvQ])
+    (by simp [hvC, hvR, hvD, hvQ, hvQ2, hvQR, hvQ0, hvA, hz])
+    (by simp [hvC, hvR, hvD, hvQ, hvQ2, hvQR, hvQ0, hvA, hw2])
+    (by simp [hvC, hvR, hvD, hvQ, hvQ2, hvQR, hvQ0, hvA, hW])
+    (by simp [hvC, hvR, hvD, hvQ, hvQ2, hvQR, hvQ0, hvA, hD])
+  refine lr_weaken body (sA.seq ((sQ0.seq (sQR.seq (sQ2.seq sQK))).seq
+    (sD.seq (sR.seq (sC.seq sE))))) ?_ le_rfl
   refine congrArg (synG R) ?_
-  clear sA sQ sD sR sC sE
-  clear_value oS q Dp a' E Jn R2 S
-  clear hoS hq hDp ha' hE hJn hR2 hS
+  clear sA sQ0 sQR sQ2 sQK sD sR sC sE
+  clear_value oS q₀ qR q₂ q Dp a' E Jn R2 S
+  clear hoS hq₀ hqR hq₂ hq hDp ha' hE hJn hR2 hS
   funext y
-  simp only [hvC, hvR, hvD, hvQ, hvA]
-  clear hvC hvR hvD hvQ hvA
-  clear_value vC vR vD vQ vA
-  clear vC vR vD vQ vA
+  simp only [hvC, hvR, hvD, hvQ, hvQ2, hvQR, hvQ0, hvA]
+  clear hvC hvR hvD hvQ hvQ2 hvQR hvQ0 hvA
+  clear_value vC vR vD vQ vQ2 vQR vQ0 vA
+  clear vC vR vD vQ vQ2 vQR vQ0 vA
   rcases y with x | i | x | i
   · cases x <;> simp
   · fin_cases i <;> simp
@@ -533,8 +777,8 @@ end ChunkBr
 
 section Rec
 
-variable {Q A : ℕ} {U P : Type} (body : P → Pr P (nT SXReg) Q A U)
-  {R : Fin (nT SXReg) → List (Fin (A + 4))}
+variable {Q A : ℕ} {U P : Type} (body : P → Pr P (nT CReg) Q A U)
+  {R : Fin (nT CReg) → List (Fin (A + 4))}
 
 /-- The wire file after `synRec`: the outputs of round `h`. -/
 noncomputable def synRecOut (G F : ℕ) (es : List ℕ) (ℓ K w h : ℕ)
@@ -559,7 +803,7 @@ noncomputable def synRecCost (G F : ℕ) (es : List ℕ) (ℓ K w h : ℕ) : ℕ
           4 * es.sum + 4 + (4 * Lg + 4 + (synMulRCost (b - h) D + (4 * ((b - h) * D) + 4 +
             (2 * ((b - h) * D) + 2 + (2 * (b - h) + 2 +
               synPreBrCost w a D (es.sum - Lg - (b - h) * D) D)))))
-        else 2 * (b - h) + 2 + synChunkCost G F a h b K D w)
+        else 2 * (b - h) + 2 + synChunkCost G F a h b K D es.sum w)
     else 4 * es.sum + 4 + (4 * Lg + 4 + synPreBrCost w a Lg (es.sum - Lg) D))
 
 /-- **The record builder of round `h`.** From unary `h, K ≥ 1, ℓ, b = (ℓ - 1) mod K, D = |es|,
@@ -632,7 +876,7 @@ theorem sg_synRec (G F : ℕ) (es : List ℕ) (ℓ K w h : ℕ) (hK1 : 1 ≤ K)
       · have hc : ¬ synChunk ℓ K h := by unfold synChunk; omega
         refine congrArg (synG R) ?_
         funext y
-        simp only [synRecOut, synKh, synRh, synPcsR, synCfg, topCfg, synS, synDp, synQ, synOS,
+        simp only [synRecOut, synKh, synRh, synPcsR, synCfg, topCfg, synS, synDp, synQ, synQ2, synOS,
           synAT, synER, synR2, synW2, synAR, hc, if_false, htop, hlow, if_true, hv₃, hv₁, hv₀,
           Function.update_apply, topPcRec, List.flatMap_nil, topRec_nil]
         split_ifs <;> simp_all [synA]
@@ -641,8 +885,9 @@ theorem sg_synRec (G F : ℕ) (es : List ℕ) (ℓ K w h : ℕ) (hK1 : 1 ≤ K)
     · have hc : synChunk ℓ K h := ⟨htop, by omega⟩
       have he3 : v₃ (.s 1) = [] := by rw [e3]; simp; omega
       set v₄ := Function.update v₃ (.s 1) [] with hv₄
-      have sC := sg_synChunkB body (R := R) G F v₄ a h (layB ℓ K) K es.length w (synX es ℓ K)
-        (synJp es) hK1
+      have sC := sg_synChunkB body (R := R) G F v₄ a h (layB ℓ K) K es.length es.sum w
+        (synX es ℓ K) (synJp es K) (synQK es) (synQR es K) (synQF es K) (synQB es K)
+        (synDpp es K) rfl rfl rfl rfl rfl hK1
         (fun i h0 => by
           by_cases h1 : i = 1
           · subst h1; simp [hv₄]
@@ -651,16 +896,17 @@ theorem sg_synRec (G F : ℕ) (es : List ℕ) (ℓ K w h : ℕ) (hK1 : 1 ≤ K)
         (by simp [hv₄, hv₃, hv₁, hv₀, hrh]) (by simp [hv₄, hv₃, hv₁, hv₀, hpr])
         (by simp [hv₄, hv₃, hv₁, hv₀, hw2]) (by simp [hv₄, hv₃, hv₁, hv₀, hh])
         (by simp [hv₄, hv₃, hv₁, hv₀, hb]) (by simp [hv₄, hv₃, hv₁, hv₀, hKv])
-        (by simp [hv₄, hv₃, hv₁, hv₀, hD]) (by simp [hv₄, hv₃, hv₁, hv₀, hW])
+        (by simp [hv₄, hv₃, hv₁, hv₀, hD]) (by simp [hv₄, hv₃, hv₁, hv₀, hN])
+        (by simp [hv₄, hv₃, hv₁, hv₀, hW])
       have sIf := sg_ifNE_neg body (p := synLowB) he3
         ((sgU_clear body (a := .s 1) (x := 0) (by simp [he3])).seq sC)
       have sIf0 := sg_ifNE_pos body (q := .seq (uclear (sreg (.s 1))) synTopB) hne (sB.seq sIf)
       refine lr_weaken body (sP.seq (sT.seq sIf0)) ?_ ?_
       · refine congrArg (synG R) ?_
         funext y
-        simp only [synRecOut, synKh, synRh, synPcsR, synCfg, topCfg, synS, synDp, synQ, synOS,
-          synAT, synER, synR2, synW2, synAR, synR2c, synX, synLb, synAc, synJp, synDpp, synQK,
-          synJt, hc, htop, hlow, if_false, if_true, hv₄, hv₃, hv₁, hv₀, Function.update_apply]
+        simp only [synRecOut, synKh, synRh, synPcsR, synCfg, topCfg, synS, synDp, synQ, synQ2,
+          synOS, synAT, synOP, synER, synR2, synW2, synAR, synR2c, synX, synLb, synAc, synJp, hc,
+          htop, hlow, if_false, if_true, hv₄, hv₃, hv₁, hv₀, Function.update_apply]
         split_ifs <;> simp_all [synA]
       · simp only [synRecCost, htop, hlow, if_true, if_false, ← ha]
         have : layB ℓ K - h = 0 := by omega
@@ -684,7 +930,7 @@ theorem sg_synRec (G F : ℕ) (es : List ℕ) (ℓ K w h : ℕ) (hK1 : 1 ≤ K)
     refine lr_weaken body (sP.seq (sT.seq sIf0)) ?_ ?_
     · refine congrArg (synG R) ?_
       funext y
-      simp only [synRecOut, synKh, synRh, synPcsR, synCfg, topCfg, synS, synDp, synQ, synOS,
+      simp only [synRecOut, synKh, synRh, synPcsR, synCfg, topCfg, synS, synDp, synQ, synQ2, synOS,
         synAT, synER, synR2, synW2, synAR, hc, htop, if_false, hv₁, hv₀, Function.update_apply,
         topPcRec, List.flatMap_nil, topRec_nil]
       split_ifs <;> simp_all [synA]

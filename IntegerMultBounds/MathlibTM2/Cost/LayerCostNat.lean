@@ -5,8 +5,9 @@ public import IntegerMultBounds.MathlibTM2.Node.LayerProc
 /-!
 # Step counts of the layer machine: the linear parts
 
-Natural-number bounds on the step bound `layerCost T ds u K ρ R₀ n r w j a₀` of
-`Node/LayerProc.lean`. At a node of level `j + 1` write `R = rowsAt R₀ j` for the rows of one
+Natural-number bounds on the step bound `layerCost A T ds u K ρ R₀ n r w Gd j a₀` of
+`Node/LayerProc.lean` (`A` the alphabet, `T` the host registers, `Gd` the digit width of the
+compact slot XORs). At a node of level `j + 1` write `R = rowsAt R₀ j` for the rows of one
 wire, `V = R 2^n (r w)` for the volume of a wire (the volume of a child array), `W = R 2^n n`, and
 `X = NW (V + W)`; the level-`j + 1` array has volume `NW V`, so `X = V_{j+1} (1 + n / (r w))`.
 Let `F = factorCount (program ds)`, `G = gateCount (program ds)`, `c₂₅ = |Wires.Address 25|`.
@@ -14,7 +15,8 @@ Let `F = factorCount (program ds)`, `G = gateCount (program ds)`, `c₂₅ = |Wi
 * `lc_leaf_nat`: `layerCost … 0 a₀ ≤ 200 u (R₀ 2^n (r w) + R₀ 2^n n)`.
 * `lc_signStage_le`: a sign stage costs at most `(4 m c₂₅ + 200 c₂₅ + 200) X`.
 * `lc_factor_nat`: the factor program of `(fw, g)` costs at most `cc + 2 B + 400 NW (V + W)`,
-  for a child call within `cc` steps and basis changes within `B` steps each.
+  for a child call within `cc` steps and basis changes within `B` steps each
+  (`basisCostN … ≤ B`).
 * `lc_node_nat`: `layerCost … (j + 1) a₀ ≤ F (M + 2 B) + lcLin ds · X` when every child call
   (offset `a₀ + s K bits u j`, `s < m`) is within `M` steps and every basis change within `B`
   steps; `lcLin ds = 400 F + 50 G + 8 m c₂₅ + 500 c₂₅ + 500`.
@@ -181,13 +183,13 @@ theorem lc_signStage_le {u K ρ a₀ R n r w j : ℕ} (hF : LcFacts u K a₀ R n
   nlinarith [hF.ha₀, hF.hun, hF.hjle, hF.hk1, hF.hkn, hF.hKn, hF.hnW]
 
 /-- **The factor program**: `factorCost … g cc ≤ cc + 2 B + 400 NW (V + W)`. -/
-theorem lc_factor_nat (T : ℕ) (ds : ComplexFramedExecution.Directions)
-    {j u K ρ a₀ R₀ n r w : ℕ} (g : ZMod 4 × BinaryWalsh.Address m) (cc B : ℕ)
+theorem lc_factor_nat (A T : ℕ) (ds : ComplexFramedExecution.Directions)
+    {j u K ρ a₀ R₀ n r w Gd : ℕ} (g : ZMod 4 × BinaryWalsh.Address m) (cc B : ℕ)
     (hu : 1 ≤ u) (hr : 1 ≤ r) (hw : 1 ≤ w) (hR₀ : 1 ≤ R₀) (hρ : ρ < K)
     (hfit : a₀ + K * bits u (j + 1) ≤ n) (hTw : ∀ i ≤ j, expZ u ds i ≤ w)
     (hB : ∀ (vv : BinaryWalsh.Address m) (s : Fin m),
-      basisCostN T a₀ K ρ (K * bits u j) (rowsAt R₀ j) n (r * w) (bits u j) vv s ≤ B) :
-    factorCost T ds j u K ρ a₀ R₀ n r w g cc ≤
+      basisCostN A T a₀ K ρ (K * bits u j) (rowsAt R₀ j) n (r * w) (bits u j) Gd vv s ≤ B) :
+    factorCost A T ds j u K ρ a₀ R₀ n r w Gd g cc ≤
       cc + 2 * B + 400 * NW * (rowsAt R₀ j * 2 ^ n * (r * w) + rowsAt R₀ j * 2 ^ n * n) := by
   have hF : LcFacts u K a₀ (rowsAt R₀ j) n r w j :=
     lcFacts_of hu hr hw (rowsAt_pos hR₀ j) hρ hfit
@@ -257,25 +259,25 @@ noncomputable def lcLin (ds : ComplexFramedExecution.Directions) : ℕ :=
 
 /-- **The node in natural numbers.** With every child call within `M` steps and every basis
 change within `B` steps, `layerCost … (j + 1) a₀ ≤ F (M + 2 B) + lcLin ds · NW (V + W)`. -/
-theorem lc_node_nat (T : ℕ) (ds : ComplexFramedExecution.Directions)
-    {u K ρ R₀ n r w j a₀ M B : ℕ}
+theorem lc_node_nat (A T : ℕ) (ds : ComplexFramedExecution.Directions)
+    {u K ρ R₀ n r w Gd j a₀ M B : ℕ}
     (hu : 1 ≤ u) (hr : 1 ≤ r) (hw : 1 ≤ w) (hR₀ : 1 ≤ R₀) (hρ : ρ < K)
     (hfit : a₀ + K * bits u (j + 1) ≤ n) (hTw : ∀ i ≤ j, expZ u ds i ≤ w)
-    (hM : ∀ s < m, layerCost T ds u K ρ R₀ n r w j (a₀ + s * (K * bits u j)) ≤ M)
+    (hM : ∀ s < m, layerCost A T ds u K ρ R₀ n r w Gd j (a₀ + s * (K * bits u j)) ≤ M)
     (hB : ∀ (vv : BinaryWalsh.Address m) (s : Fin m),
-      basisCostN T a₀ K ρ (K * bits u j) (rowsAt R₀ j) n (r * w) (bits u j) vv s ≤ B) :
-    layerCost T ds u K ρ R₀ n r w (j + 1) a₀ ≤
+      basisCostN A T a₀ K ρ (K * bits u j) (rowsAt R₀ j) n (r * w) (bits u j) Gd vv s ≤ B) :
+    layerCost A T ds u K ρ R₀ n r w Gd (j + 1) a₀ ≤
       factorCount (program ds) * (M + 2 * B) +
         lcLin ds * (NW * (rowsAt R₀ j * 2 ^ n * (r * w) + rowsAt R₀ j * 2 ^ n * n)) := by
   have hF : LcFacts u K a₀ (rowsAt R₀ j) n r w j :=
     lcFacts_of hu hr hw (rowsAt_pos hR₀ j) hρ hfit
   obtain ⟨hX1, hXV, hXW⟩ := lc_X_ge hF.hV1
   have hNW : 1 ≤ NW := one_le_NW
-  have hcf : facMax ds (fun _ g => factorCost T ds j u K ρ a₀ R₀ n r w g
-      (layerCost T ds u K ρ R₀ n r w j (a₀ + pivotOf g.2 * (K * bits u j)))) ≤
+  have hcf : facMax ds (fun _ g => factorCost A T ds j u K ρ a₀ R₀ n r w Gd g
+      (layerCost A T ds u K ρ R₀ n r w Gd j (a₀ + pivotOf g.2 * (K * bits u j)))) ≤
       M + 2 * B + 400 * NW * (rowsAt R₀ j * 2 ^ n * (r * w) + rowsAt R₀ j * 2 ^ n * n) := by
     refine lc_facMax_le ds _ _ fun fw g _ => ?_
-    refine le_trans (lc_factor_nat T ds g _ B hu hr hw hR₀ hρ hfit hTw hB) ?_
+    refine le_trans (lc_factor_nat A T ds g _ B hu hr hw hR₀ hρ hfit hTw hB) ?_
     have := hM _ (lc_pivotOf_lt g.2)
     omega
   have hSS := lc_signStage_le hF hρ
@@ -334,10 +336,11 @@ theorem lc_node_nat (T : ℕ) (ds : ComplexFramedExecution.Directions)
 /-! ### The leaf -/
 
 /-- **The leaf in natural numbers**: `layerCost … 0 a₀ ≤ 200 u (R₀ 2^n (r w) + R₀ 2^n n)`. -/
-theorem lc_leaf_nat (T : ℕ) (ds : ComplexFramedExecution.Directions) {u K ρ R₀ n r w a₀ : ℕ}
+theorem lc_leaf_nat (A T : ℕ) (ds : ComplexFramedExecution.Directions)
+    {u K ρ R₀ n r w Gd a₀ : ℕ}
     (hu : 1 ≤ u) (hr : 1 ≤ r) (hw : 1 ≤ w) (hR₀ : 1 ≤ R₀) (hρ : ρ < K)
     (hfit : a₀ + K * u ≤ n) :
-    layerCost T ds u K ρ R₀ n r w 0 a₀ ≤
+    layerCost A T ds u K ρ R₀ n r w Gd 0 a₀ ≤
       200 * u * (R₀ * 2 ^ n * (r * w) + R₀ * 2 ^ n * n) := by
   have hK : K ≤ K * u := Nat.le_mul_of_pos_right K hu
   have hu' : u ≤ K * u := Nat.le_mul_of_pos_left u (by omega)

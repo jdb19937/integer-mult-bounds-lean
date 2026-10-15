@@ -638,14 +638,14 @@ end Base
 
 section Clear
 
-variable {Q A : ℕ} {U P : Type} (body : P → Pr P (nT SXReg) Q A U)
-  {R : Fin (nT SXReg) → List (Fin (A + 4))} {v : SynW → List (Fin (A + 4))}
+variable {Q A : ℕ} {U P : Type} (body : P → Pr P (nT CReg) Q A U)
+  {R : Fin (nT CReg) → List (Fin (A + 4))} {v : SynW → List (Fin (A + 4))}
 
 theorem sgL_clear {a : SynW} {x : ℕ} (ha : (v a).length ≤ x) :
     LayRuns body (uclear (sreg a)) (synG R v) (synG R (Function.update v a [])) (2 * x + 2) :=
   lr_weaken body (sg_uclear body a) rfl (by omega)
 
-theorem soL_clear {o : Fin (nT SXReg)} (ho : ∀ z, sreg z ≠ o) {x : ℕ} (hx : (R o).length ≤ x) :
+theorem soL_clear {o : Fin (nT CReg)} (ho : ∀ z, sreg z ≠ o) {x : ℕ} (hx : (R o).length ≤ x) :
     LayRuns body (uclear o) (synG R v) (synG (Function.update R o []) v) (2 * x + 2) :=
   lr_weaken body (lr_uclear body o) (by rw [synG_update_out ho]) (by rw [synG_of_ne ho]; omega)
 

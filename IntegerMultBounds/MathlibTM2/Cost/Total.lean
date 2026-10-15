@@ -25,8 +25,8 @@ count `m (log m + 1)(log log m + 1)` of `Host/SSMul` by `625 m^{1+δ}`.
 | `n + B^C` | F2 parameter machine | |
 
 Exponents: `τ = 1 - 296/10¹¹`, `σ = 1 - 418/10¹²` (`IntegerMultBounds.Parameters`), `β = 1/2`,
-`λ = 1 - 3/10¹⁰` (`totLam`), `λ' = 1 - 1/10¹⁰` (`totLam'`), and
-`κ = ε c (1 - τ) = 296 / (10¹¹ · 2¹³¹)` (`totKappa`, `tot_kappa_eq`). The ring-product factor is
+`λ = 1 - 4/10¹⁰` (`totLam`), `λ' = 1 - 1/10¹⁰` (`totLam'`), and
+`κ = ε c (1 - τ) = 296 / (10¹¹ · 2⁶¹)` (`totKappa`, `tot_kappa_eq`). The ring-product factor is
 `grLogLog X = (log₂ X + 1)(log₂ (log₂ X + 1) + 1)` (`Cost/Growth`); `gr_ringBound_le` bounds the
 packed ring product `rpRingBound N` of `Fast/RingProd` on `N ≤ A r p` bits by a constant times
 `r p · grLogLog (r p)`.
@@ -67,8 +67,8 @@ open IntegerMultBounds.MathlibTM2.Mult.Sizes Filter Asymptotics IntegerMultBound
 /-- `δ = 1/8`: one `p`-bit product costs `O(p^{1+δ})`. -/
 noncomputable def totDelta : ℝ := 1 / 8
 
-/-- `λ = 1 - 3/10¹⁰`, the exponent of the layer recursion. -/
-noncomputable def totLam : ℝ := 1 - 3 / 10 ^ 10
+/-- `λ = 1 - 4/10¹⁰`, the exponent of the layer recursion. -/
+noncomputable def totLam : ℝ := 1 - 4 / 10 ^ 10
 
 /-- `λ' = 1 - 1/10¹⁰`, the exponent of the layer cost `O(V d^{λ'})`. -/
 noncomputable def totLam' : ℝ := 1 - 1 / 10 ^ 10
@@ -76,7 +76,7 @@ noncomputable def totLam' : ℝ := 1 - 1 / 10 ^ 10
 /-- `κ = ε c (1 - τ)`. -/
 noncomputable def totKappa : ℝ := epsilon * cParam * (1 - Parameters.tau)
 
-theorem tot_kappa_eq : totKappa = 296 / (10 ^ 11 * 2 ^ 131) := by
+theorem tot_kappa_eq : totKappa = 296 / (10 ^ 11 * 2 ^ 61) := by
   rw [totKappa, epsilon_eq, cParam_eq, Parameters.tau]; norm_num
 
 theorem tot_kappa_pos : 0 < totKappa := by rw [tot_kappa_eq]; norm_num

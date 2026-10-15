@@ -60,7 +60,7 @@ lemma bd_NW : 19 ≤ NW := by rw [IntegerMultBounds.MathlibTM2.Cost.br_NW_eq]; n
 
 /-- The reserved layer register holding the converter's register `x`: the wire temporary of
 wire `bdIdx x`. -/
-def bdLayX (x : DsX) : LReg SXReg := .wtmp (wireOf (Fin.castLE bd_NW (bdIdx x)))
+def bdLayX (x : DsX) : LReg CReg := .wtmp (wireOf (Fin.castLE bd_NW (bdIdx x)))
 
 lemma bdLayX_inj : Function.Injective bdLayX := by
   intro x y h
@@ -102,7 +102,7 @@ lemma bdG_ne_ι (y : DsY 6) (j : Fin 64) : bdG y ≠ mnι j := by
   | o x => exact (mnι_ne_lay j _).symm
 
 /-- A reserved register that is not a parking register is off the family. -/
-lemma bdG_ne_lay {x : LReg SXReg} (hx : ∀ y, bdLayX y ≠ x) (y : DsY 6) : bdG y ≠ mnLay x := by
+lemma bdG_ne_lay {x : LReg CReg} (hx : ∀ y, bdLayX y ≠ x) (y : DsY 6) : bdG y ≠ mnLay x := by
   cases y with
   | s q => exact mnRg_ne_lay _ x
   | o z => exact fun h => hx z (mnLay_inj h)
@@ -192,7 +192,7 @@ lemma bdR₁_rg (n : ℕ) (R : Regs mnT bdA) {r : MnR} (hp : ∀ q, r ≠ .pm q)
 lemma bdR₁_ι (n : ℕ) (R : Regs mnT bdA) (j : Fin 64) : bdR₁ n R (mnι j) = R (mnι j) :=
   bdR₁_off n R (fun _ => mnRg_ne_ι _ j) (fun y => bdG_ne_ι y j)
 
-lemma bdR₁_lay (n : ℕ) (R : Regs mnT bdA) {x : LReg SXReg} (hx : ∀ y, bdLayX y ≠ x) :
+lemma bdR₁_lay (n : ℕ) (R : Regs mnT bdA) {x : LReg CReg} (hx : ∀ y, bdLayX y ≠ x) :
     bdR₁ n R (mnLay x) = R (mnLay x) :=
   bdR₁_off n R (fun _ => mnRg_ne_lay _ x) (bdG_ne_lay hx)
 

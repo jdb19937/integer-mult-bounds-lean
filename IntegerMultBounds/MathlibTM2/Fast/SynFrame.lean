@@ -7,10 +7,10 @@ public import IntegerMultBounds.MathlibTM2.Fast.ConvSynth
 /-!
 # The synthetic transforms in a larger register file
 
-`synFwd_spec_br`, `synOpp_spec_br` (`Fast/SynFwd`) hold on the register file `nT SXReg` of the
+`synFwd_spec_br`, `synOpp_spec_br` (`Fast/SynFwd`) hold on the register file `nT CReg` of the
 layer machine. The convolution stage (`Fast/ConvSynth`, `cvSynth_runs`) runs both transforms in
 a host of `T'` tapes next to its own registers. This file places the layer machine's file in the
-big one along an injective `e : Fin (nT SXReg) → Fin T'` (`Host/Embed`) and restates both
+big one along an injective `e : Fin (nT CReg) → Fin T'` (`Host/Embed`) and restates both
 contracts there.
 
 **Programs.** `embProg e ι (synFwd Cost.brDirs layP)` and `embProg e ι (synOpp Cost.brDirs layQ)`,
@@ -101,7 +101,7 @@ end Alphabet
 
 section Pre
 
-variable {T' A : ℕ} (e : Fin (nT SXReg) → Fin T')
+variable {T' A : ℕ} (e : Fin (nT CReg) → Fin T')
 
 /-- The precondition of the embedded transforms: the stacks read along `e` meet `synPre Pk v₀`. -/
 def embPre (Pk : List (Fin (A + 4)) → Prop) (v₀ : SynW → List (Fin (A + 4)))
@@ -141,7 +141,7 @@ end Pre
 section Lift
 
 variable {Q Ka : ℕ} {U : Type} (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q) (hKa : embKa ≤ Ka)
-  {T' : ℕ} {e : Fin (nT SXReg) → Fin T'} (he : Function.Injective e)
+  {T' : ℕ} {e : Fin (nT CReg) → Fin T'} (he : Function.Injective e)
   {P' : Type} {ι : LProc → P'} {body' : P' → Pr P' T' Q (prime + Ka) U}
   (hbody : ∀ f, body' (ι f) = embProg e ι (layerTable (Ka := Ka) (U := U) hQ Cost.brDirs f))
 include hKa he hbody
@@ -155,7 +155,7 @@ theorem embSynFwd_spec {d : ℕ} (a : Fin d → ℕ) {ℓ K l w p : ℕ}
     (hvh : v₀ (.p .h) = []) (hvt : v₀ (.p .t) = []) (hvc : (v₀ (.p .c)).length = nRounds a)
     (hcb : blank ∉ v₀ (.p .c))
     (Pk : List (Fin (prime + Ka + 4)) → Prop)
-    (layP : Pr LProc (nT SXReg) Q (prime + Ka) U) (cL : ℕ)
+    (layP : Pr LProc (nT CReg) Q (prime + Ka) U) (cL : ℕ)
     (hLay : ∀ (P₀ : List (Fin (prime + Ka + 4))), Pk P₀ → ∀ (Z : ℕ → Fin (2 ^ l) → GaussianInt),
       LayRuns (layerTable (Ka := Ka) (U := U) hQ Cost.brDirs) layP
         (synG (synIdle (cstream (prime + Ka) w (rpStream (cvM a) Z)) P₀) v₀)
@@ -184,7 +184,7 @@ theorem embSynOpp_spec {d : ℕ} (a : Fin d → ℕ) {ℓ K l w p : ℕ}
     (hvh : v₀ (.p .h) = []) (hvt : v₀ (.p .t) = []) (hvc : (v₀ (.p .c)).length = nRounds a)
     (hcb : blank ∉ v₀ (.p .c))
     (Pk : List (Fin (prime + Ka + 4)) → Prop)
-    (layQ : Pr LProc (nT SXReg) Q (prime + Ka) U) (cL : ℕ)
+    (layQ : Pr LProc (nT CReg) Q (prime + Ka) U) (cL : ℕ)
     (hLay : ∀ (P₀ : List (Fin (prime + Ka + 4))), Pk P₀ → ∀ (Y : ℕ → Fin (2 ^ l) → GaussianInt),
       LayRuns (layerTable (Ka := Ka) (U := U) hQ Cost.brDirs) layQ
         (synG (synIdle (cstream (prime + Ka) w (rpStream (cvM a) Y)) P₀) v₀)

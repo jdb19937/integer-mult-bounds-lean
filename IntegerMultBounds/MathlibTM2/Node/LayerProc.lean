@@ -8,7 +8,8 @@ public import IntegerMultBounds.MathlibTM2.Node.Factor
 The layer machine runs one recursive procedure, `LProc.layer`, with body `layerBody hQ ds`:
 `peekR lev`, then the leaf `leafP` when `lev` is empty and the node
 `nodeBody ds (factorProg hQ (.call .layer) ds)` otherwise; `layerTable hQ ds` is the procedure
-table. Registers: `LReg SXReg`, the basis-change registers `bc x` empty at rest (`bcEmpty`).
+table. Registers: `LReg CReg`, the basis-change registers `bc x` at rest (`bcRestC Gd`: all empty
+except the digit width `Gd`).
 
 **Parameters.** At level `j` the parameter registers hold `j` (`lev`), `u`, `K`, `ρ`, `a₀`,
 `L = K · bits u j` (the width of the active region), `rows = rowsAt R₀ j`, `n`, `w` and `r w`.
@@ -36,7 +37,7 @@ the peek and the dispatch.
 From the parameters of level `j`, every register at rest, every left stack empty and `io` holding
 `encZ A w Z`, the call of the layer procedure ends with `io` holding
 `encZ A w (layerZ u ds R₀ j (actMap a₀ ρ K (bits u j) n hfit) Z)`, every other register and `user`
-as before, within `layerCost (nT SXReg) ds u K ρ R₀ n r w j a₀` steps. The level-`j + 1` case is
+as before, within `layerCost (nT CReg) ds u K ρ R₀ n r w j a₀` steps. The level-`j + 1` case is
 `nodeBody_execL_layerZ` with `factorProg_spec` for every factor, whose child calls are the
 induction hypothesis at level `j`.
 -/
@@ -581,13 +582,13 @@ inductive LProc
 /-- **The body of the layer procedure**: peek `lev`; the leaf when `lev` is empty, the node
 otherwise, with the factor programs calling the layer procedure for the child. -/
 noncomputable def layerBody (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
-    (ds : ComplexFramedExecution.Directions) : Pr LProc (nT SXReg) Q (prime + Ka) U :=
+    (ds : ComplexFramedExecution.Directions) : Pr LProc (nT CReg) Q (prime + Ka) U :=
   .seq (.act (peekR (reg .lev)))
     (.cond (fun v => !v.flag) leafP (nodeBody ds (factorProg hQ (.call .layer) ds)))
 
 /-- The procedure table of the layer machine. -/
 noncomputable def layerTable (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
-    (ds : ComplexFramedExecution.Directions) : LProc → Pr LProc (nT SXReg) Q (prime + Ka) U :=
+    (ds : ComplexFramedExecution.Directions) : LProc → Pr LProc (nT CReg) Q (prime + Ka) U :=
   fun _ => layerBody hQ ds
 
 /-- The pivot of a factor direction, `0` without a pivot. -/
@@ -619,18 +620,27 @@ lemma le_facMax (ds : ComplexFramedExecution.Directions)
 the leaf at level `0`; at level `j + 1` the node (`nodeCost`) with the factor bound `facMax` of
 `factorCost`, each factor with the bound of the call of its child at level `j`, offset
 `a₀ + s · K · bits u j` for the pivot `s`; plus the call, the peek and the dispatch. -/
-noncomputable def layerCost (T : ℕ) (ds : ComplexFramedExecution.Directions)
-    (u K ρ R₀ n r w : ℕ) : ℕ → ℕ → ℕ
+noncomputable def layerCost (A T : ℕ) (ds : ComplexFramedExecution.Directions)
+    (u K ρ R₀ n r w Gd : ℕ) : ℕ → ℕ → ℕ
   | 0, a₀ => leafCost u K ρ a₀ R₀ n r w + 4
   | j + 1, a₀ => nodeCost ds u j K ρ a₀ (rowsAt R₀ j) n r w
-      (facMax ds fun _ g => factorCost T ds j u K ρ a₀ R₀ n r w g
-        (layerCost T ds u K ρ R₀ n r w j (a₀ + pivotOf g.2 * (K * bits u j)))) + 4
+      (facMax ds fun _ g => factorCost A T ds j u K ρ a₀ R₀ n r w Gd g
+        (layerCost A T ds u K ρ R₀ n r w Gd j (a₀ + pivotOf g.2 * (K * bits u j)))) + 4
+
+/-- The leaf bits grow with the level. -/
+lemma bits_le_succ (u j : ℕ) : bits u j ≤ bits u (j + 1) := by
+  show bits u j ≤ m * bits u j
+  exact Nat.le_mul_of_pos_left _ (by norm_num [m])
+
+lemma le_bits (u : ℕ) : ∀ j, u ≤ bits u j
+  | 0 => le_rfl
+  | j + 1 => (le_bits u j).trans (bits_le_succ u j)
 
 /-- **The layer procedure.** From the parameters of level `j` (`L = K · bits u j`,
 `rows = rowsAt R₀ j`, `rw = r w`), every register at rest (the `bc` registers empty), every left
 stack empty and `io` holding the stream of `Z`, the call of the layer procedure ends with `io`
 holding the stream of `layerZ u ds R₀ j e Z`, `e i = a₀ + ρ + K i`, every other register and `user`
-as before, within `layerCost (nT SXReg) ds u K ρ R₀ n r w j a₀` steps. Hypotheses: the alphabet
+as before, within `layerCost (nT CReg) ds u K ρ R₀ n r w j a₀` steps. Hypotheses: the alphabet
 covers the slot XORs (`14 ≤ A`), the leaf (`9 ^ 4 ≤ A + 4`), the row roles (`NW ≤ A + 4`) and the
 gate automata; `ρ < K`; the active bits fit (`a₀ + K · bits u j ≤ n`); the child exponents fit the
 word (`expZ u ds i ≤ w`, `i < j`); `1 ≤ u, r, w, R₀`. -/
@@ -639,22 +649,24 @@ theorem layer_exec (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
     (hA9 : 9 ^ 4 ≤ prime + Ka + 4) (hNW : NW ≤ prime + Ka + 4)
     (hgate : ∀ g, Instr.gate g ∈ program ds →
       (2 * gateBound g + 1) ^ (2 * (gateWires g).length) ≤ prime + Ka + 4)
-    {u K ρ R₀ n r w : ℕ} (hr : 1 ≤ r) (hw : 1 ≤ w) (hρ : ρ < K) (hu : 1 ≤ u) (hR₀ : 1 ≤ R₀) :
+    {u K ρ R₀ n r w Gd : ℕ} (hr : 1 ≤ r) (hw : 1 ≤ w) (hρ : ρ < K) (hu : 1 ≤ u) (hR₀ : 1 ≤ R₀) :
     ∀ (j : ℕ), (∀ i < j, expZ u ds i ≤ w) →
     ∀ (a₀ : ℕ) (hfit : ∀ i < bits u j, a₀ + ρ + K * i < n), a₀ + K * bits u j ≤ n →
-    ∀ (Z : ZArr (Fin (rowsAt R₀ j) × Fin r) n) (v : HS (nT SXReg) Q (prime + Ka) U)
-      (S : Stacks (nT SXReg) (prime + Ka)), (∀ y, S.L y = []) →
+      (1 ≤ j → 2 ≤ bits u (j - 1) → 1 ≤ Gd ∧ Gd + 3 ≤ K ∧ (bits u (j - 1) - 1) * Gd ≤ a₀ ∧
+        a₀ + K * bits u j + 3 * ((bits u (j - 1) - 1) * Gd) ≤ n) →
+    ∀ (Z : ZArr (Fin (rowsAt R₀ j) × Fin r) n) (v : HS (nT CReg) Q (prime + Ka) U)
+      (S : Stacks (nT CReg) (prime + Ka)), (∀ y, S.L y = []) →
       ParState S.R j u K ρ a₀ (K * bits u j) (rowsAt R₀ j) n w (r * w) →
-      Rest bcEmpty n r w S.R → S.R (reg .io) = encZ (prime + Ka) w Z →
-      ∃ (v' : HS (nT SXReg) Q (prime + Ka) U) (c : ℕ), v'.user = v.user ∧
-        c ≤ layerCost (nT SXReg) ds u K ρ R₀ n r w j a₀ ∧
+      Rest (bcRestC Gd) n r w S.R → S.R (reg .io) = encZ (prime + Ka) w Z →
+      ∃ (v' : HS (nT CReg) Q (prime + Ka) U) (c : ℕ), v'.user = v.user ∧
+        c ≤ layerCost (prime + Ka) (nT CReg) ds u K ρ R₀ n r w Gd j a₀ ∧
         Exec (layerTable hQ ds) (.call .layer) (mk v S) c (mk v' { S with
           R := Function.update S.R (reg .io)
             (encZ (prime + Ka) w (layerZ u ds R₀ j (actMap a₀ ρ K (bits u j) n hfit) Z)) }) := by
   intro j
   induction j with
   | zero =>
-      intro _ a₀ hfit _ Z v S _ hpar hrest hio
+      intro _ a₀ hfit _ _ Z v S _ hpar hrest hio
       have hlev : S.R (reg .lev) = [] := List.eq_nil_of_length_eq_zero (hpar .lev)
       have hp := Exec.act (body := layerTable (U := U) hQ ds) (peekR (reg .lev)) (mk v S)
       rw [peekR_run] at hp
@@ -665,7 +677,15 @@ theorem layer_exec (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
       · simp only [layerCost]; omega
       · exact Exec.call (Exec.seq hp (Exec.cond_true (by simp [hlev]) he₁))
   | succ j ih =>
-      intro hTw a₀ hfit hfitL Z v S hL hpar hrest hio
+      intro hTw a₀ hfit hfitL hres Z v S hL hpar hrest hio
+      have hL₁ : K * bits u (j + 1) = m * (K * bits u j) := by
+        rw [show bits u (j + 1) = m * bits u j from rfl]; ring
+      have hres' : 2 ≤ bits u j → 1 ≤ Gd ∧ Gd + 3 ≤ K ∧ (bits u j - 1) * Gd ≤ a₀ ∧
+          a₀ + m * (K * bits u j) + 3 * ((bits u j - 1) * Gd) ≤ n := by
+        intro hk2
+        have := hres (by omega) (by simpa using hk2)
+        simp only [Nat.add_sub_cancel] at this
+        rw [← hL₁]; exact this
       have hlev : (S.R (reg .lev)).length = j + 1 := hpar .lev
       obtain ⟨x₀, rest, hl⟩ : ∃ x₀ rest, S.R (reg .lev) = x₀ :: rest := by
         cases h : S.R (reg .lev) with
@@ -673,20 +693,22 @@ theorem layer_exec (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
         | cons x rest => exact ⟨x, rest, rfl⟩
       have hp := Exec.act (body := layerTable (U := U) hQ ds) (peekR (reg .lev)) (mk v S)
       rw [peekR_run] at hp
-      set cf := facMax ds fun _ g => factorCost (nT SXReg) ds j u K ρ a₀ R₀ n r w g
-        (layerCost (nT SXReg) ds u K ρ R₀ n r w j (a₀ + pivotOf g.2 * (K * bits u j))) with hcf
+      set cf := facMax ds fun _ g => factorCost (prime + Ka) (nT CReg) ds j u K ρ a₀ R₀ n r w Gd g
+        (layerCost (prime + Ka) (nT CReg) ds u K ρ R₀ n r w Gd j (a₀ + pivotOf g.2 * (K * bits u j)))
+        with hcf
       have hfac : ∀ fw g, Instr.factor fw g ∈ program ds →
           FactorSpecL (layerTable (Ka := Ka) (U := U) hQ ds)
-            (factorProg (Ka := Ka) (U := U) hQ (.call .layer) ds fw g) bcEmpty j u K ρ a₀
+            (factorProg (Ka := Ka) (U := U) hQ (.call .layer) ds fw g) (bcRestC Gd) j u K ρ a₀
             (K * bits u (j + 1)) (rowsAt R₀ (j + 1)) n r w (k := bits u j)
             (actMap a₀ ρ K (bits u (j + 1)) n hfit)
             (fun s => layerZ u ds R₀ j fun c => actMap a₀ ρ K (bits u (j + 1)) n hfit (bitIdx s c))
             (expZ u ds j) fw g cf := by
         intro fw g hg
         refine (factorProg_spec (layerTable hQ ds) hQ (.call .layer) ds hA hr hw hρ hu hR₀ hfit
-          hfitL (hTw j (by omega)) fw g _ ?_).mono (le_facMax ds (fun _ g =>
-            factorCost (nT SXReg) ds j u K ρ a₀ R₀ n r w g
-              (layerCost (nT SXReg) ds u K ρ R₀ n r w j (a₀ + pivotOf g.2 * (K * bits u j)))) hg)
+          hfitL (hTw j (by omega)) hres' fw g _ ?_).mono (le_facMax ds
+            (fun _ g => factorCost (prime + Ka) (nT CReg) ds j u K ρ a₀ R₀ n r w Gd g
+              (layerCost (prime + Ka) (nT CReg) ds u K ρ R₀ n r w Gd j
+                (a₀ + pivotOf g.2 * (K * bits u j)))) hg)
         intro hs hfit'
         have hpv : pivotOf g.2 = (Fin.find _ hs : ℕ) := by simp [pivotOf, hs]
         rw [hpv]
@@ -699,8 +721,26 @@ theorem layer_exec (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
           have h3 : ((Fin.find _ hs : ℕ) + 1) * (K * bits u j) =
               (Fin.find _ hs : ℕ) * (K * bits u j) + K * bits u j := by ring
           omega
+        have hres'' : 1 ≤ j → 2 ≤ bits u (j - 1) → 1 ≤ Gd ∧ Gd + 3 ≤ K ∧
+            (bits u (j - 1) - 1) * Gd ≤ a₀ + (Fin.find _ hs : ℕ) * (K * bits u j) ∧
+            a₀ + (Fin.find _ hs : ℕ) * (K * bits u j) + K * bits u j +
+              3 * ((bits u (j - 1) - 1) * Gd) ≤ n := by
+          intro hj hk2'
+          have hbl : bits u (j - 1) ≤ bits u j := by
+            obtain ⟨j', rfl⟩ : ∃ j', j = j' + 1 := ⟨j - 1, by omega⟩
+            simpa using bits_le_succ u j'
+          obtain ⟨hGd, hGK, hfront, hback⟩ := hres' (by omega)
+          have h1 : (bits u (j - 1) - 1) * Gd ≤ (bits u j - 1) * Gd :=
+            Nat.mul_le_mul_right _ (by omega)
+          refine ⟨hGd, hGK, by omega, ?_⟩
+          have h2 : ((Fin.find _ hs : ℕ) + 1) * (K * bits u j) ≤ m * (K * bits u j) :=
+            Nat.mul_le_mul_right _ hsm
+          have h3 : ((Fin.find _ hs : ℕ) + 1) * (K * bits u j) =
+              (Fin.find _ hs : ℕ) * (K * bits u j) + K * bits u j := by ring
+          omega
         intro Z' v' S' hL' hpar' hrest' hio'
-        exact ih (fun i hi => hTw i (by omega)) _ hfit' hfitL' Z' v' S' hL' hpar' hrest' hio'
+        exact ih (fun i hi => hTw i (by omega)) _ hfit' hfitL' hres'' Z' v' S' hL' hpar' hrest'
+          hio'
       obtain ⟨v₁, c₁, hu₁, hc₁, he₁⟩ := nodeBody_execL_layerZ (layerTable hQ ds) ds
         (factorProg hQ (.call .layer) ds) (by omega) hNW hgate hr hw (by omega) hfit hfac Z
         { v with flag := (S.R (reg .lev)).head?.isSome } S hL hpar hrest hio
@@ -714,13 +754,16 @@ theorem layer_callSpec (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
     (hA9 : 9 ^ 4 ≤ prime + Ka + 4) (hNW : NW ≤ prime + Ka + 4)
     (hgate : ∀ g, Instr.gate g ∈ program ds →
       (2 * gateBound g + 1) ^ (2 * (gateWires g).length) ≤ prime + Ka + 4)
-    {u K ρ R₀ n r w : ℕ} (hr : 1 ≤ r) (hw : 1 ≤ w) (hρ : ρ < K) (hu : 1 ≤ u) (hR₀ : 1 ≤ R₀)
-    (j : ℕ) (hTw : ∀ i < j, expZ u ds i ≤ w) (a₀ : ℕ)
-    (hfit : ∀ i < bits u j, a₀ + ρ + K * i < n) (hfitL : a₀ + K * bits u j ≤ n) :
-    CallSpec (layerTable (Ka := Ka) (U := U) hQ ds) (.call .layer) bcEmpty ds R₀ j u K ρ a₀
-      (K * bits u j) n r w hfit (layerCost (nT SXReg) ds u K ρ R₀ n r w j a₀) :=
+    {u K ρ R₀ n r w Gd : ℕ} (hr : 1 ≤ r) (hw : 1 ≤ w) (hρ : ρ < K) (hu : 1 ≤ u) (hR₀ : 1 ≤ R₀)
+    (j : ℕ) (hTw : ∀ i < j, expZ u ds i ≤ w) (a₀ : ℕ) (hfit : ∀ i < bits u j, a₀ + ρ + K * i < n)
+    (hfitL : a₀ + K * bits u j ≤ n)
+    (hres : 1 ≤ j → 2 ≤ bits u (j - 1) → 1 ≤ Gd ∧ Gd + 3 ≤ K ∧ (bits u (j - 1) - 1) * Gd ≤ a₀ ∧
+      a₀ + K * bits u j + 3 * ((bits u (j - 1) - 1) * Gd) ≤ n) :
+    CallSpec (layerTable (Ka := Ka) (U := U) hQ ds) (.call .layer) (bcRestC Gd) ds R₀ j u K ρ a₀
+      (K * bits u j) n r w hfit (layerCost (prime + Ka) (nT CReg) ds u K ρ R₀ n r w Gd j a₀) :=
   fun Z v S hL hpar hrest hio =>
-    layer_exec hQ ds hA hA9 hNW hgate hr hw hρ hu hR₀ j hTw a₀ hfit hfitL Z v S hL hpar hrest hio
+    layer_exec hQ ds hA hA9 hNW hgate hr hw hρ hu hR₀ j hTw a₀ hfit hfitL hres Z v S hL
+      hpar hrest hio
 
 end Layer
 

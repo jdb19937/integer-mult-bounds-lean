@@ -1,7 +1,7 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Node.Body
-public import IntegerMultBounds.MathlibTM2.Node.Basis
+public import IntegerMultBounds.MathlibTM2.Node.BasisC
 
 /-!
 # The factor programs of the layer machine
@@ -14,7 +14,7 @@ program `cp` for the call of the child:
   shift counters `Tc` and `sc 0`, which holds `w - |Tc|` symbols);
 * pivot `s = Fin.find (v · = 1)`: `saveDiv NW .rows` and `saveDiv m .L` put the child's row count
   and slot width on `rows` and `L` (the parent's contents go onto `park`); `basisW v s` on
-  `wire fw` (`basisProg` with `BReg = SXReg`, registers `bc x`); `condConj q fw` (conjugation
+  `wire fw` (`basisProgC` with `BReg = CReg`, registers `bc x`); `condConj q fw` (conjugation
   unless `q = 1`); `childCall`; `condConj q fw`; `basisW v s`; `restoreMul m .L` and
   `restoreMul NW .rows` bring the parent's contents back from `park`; `shiftTc` on the other wires.
 
@@ -39,7 +39,7 @@ stacks and are specified from empty left stacks.
 `rows = rowsAt R₀ (j + 1)`) with `ρ < K`, `a₀ + K · bits u (j + 1) ≤ n`, `expZ u ds j ≤ w`,
 `14 ≤ A`, `1 ≤ u, r, w, R₀`, and `CallSpec` for the child of the pivot (offset
 `a₀ + s · K · bits u j`, slot width `K · bits u j`) within `cc` steps, `factorProg` satisfies
-`FactorSpecL` with the step bound `factorCost (nT SXReg) ds j u K ρ a₀ R₀ n r w g cc`: the sum of
+`FactorSpecL` with the step bound `factorCost (nT CReg) ds j u K ρ a₀ R₀ n r w g cc`: the sum of
 the bounds of its stages (`basisCostN` rounds the real bound of `basisProg_exec` up, `childCost`
 contains `cc`).
 -/
@@ -1205,67 +1205,395 @@ end Spec
 
 section BasisW
 
-variable {Q Ka : ℕ} {U P : Type} (body : P → Pr P (nT SXReg) Q (prime + Ka) U)
+variable {Q Ka : ℕ} {U P : Type} (body : P → Pr P (nT CReg) Q (prime + Ka) U)
 
-/-- The rest state of the basis-change registers: empty. -/
-def bcEmpty {A : ℕ} : SXReg → List (Fin (A + 4)) → Prop := fun _ l => l = []
+/-- The registers of the compact machine inside the layer machine. -/
+noncomputable def bcRegC (x : CXReg) : Fin (nT CReg) := reg (.bc (.inl x))
 
-/-- The basis-change registers `bc x` of the layer machine. -/
-noncomputable def bcReg (x : SXReg) : Fin (nT SXReg) := reg (.bc x)
-
-/-- The layer-machine register of a slot-XOR parameter. -/
-def sxParL : SXPar → LReg SXReg
+/-- The layer-machine register of a parameter of the compact slot XOR. -/
+def cxParL : CXPar → LReg CReg
   | .K => .K | .ρ => .ρ | .a₀ => .a₀ | .L => .L | .rows => .rows | .n => .n | .rw => .rw
+  | .G => .bc (.inr .G) | .k => .bc (.inr .kk) | .bB => .bc (.inr .bB) | .pT => .bc (.inr .pT)
+  | .pU => .bc (.inr .pU)
 
-/-- The host register of a slot-XOR parameter. -/
-noncomputable def sxParReg (p : SXPar) : Fin (nT SXReg) := reg (sxParL p)
+/-- The host register of a parameter of the compact slot XOR. -/
+noncomputable def cxParReg (p : CXPar) : Fin (nT CReg) := reg (cxParL p)
 
-lemma bcReg_injective : Function.Injective bcReg := fun a b h => by
-  simpa [bcReg] using h
+/-- The layer-machine register of the layout computation. -/
+def prmL : PrmReg → LReg CReg
+  | .a₀ => .a₀ | .L => .L | .k => .bc (.inr .kk) | .G => .bc (.inr .G) | .bB => .bc (.inr .bB)
+  | .pT => .bc (.inr .pT) | .pU => .bc (.inr .pU)
+  | .t₁ => .bc (.inl (.ts 0)) | .t₂ => .bc (.inl (.ts 1)) | .t₃ => .bc (.inl (.ts 2))
+  | .t₄ => .bc (.inl (.ts 3)) | .t₅ => .bc (.inl (.ts 4)) | .t₆ => .bc (.inl (.ts 5))
 
-/-- The slot-XOR registers of the layer machine. -/
-lemma sxEnv_layer : SxEnv bcReg sxParReg where
-  hι := bcReg_injective
+/-- The host register of the layout computation. -/
+noncomputable def prmReg (x : PrmReg) : Fin (nT CReg) := reg (prmL x)
+
+lemma bcRegC_injective : Function.Injective bcRegC := fun a b h => by
+  simpa [bcRegC] using h
+
+lemma prmReg_injective : Function.Injective prmReg := fun a b h => by
+  cases a <;> cases b <;> first | rfl | (simp [prmReg, prmL] at h)
+
+/-- The compact slot-XOR registers of the layer machine. -/
+lemma cxEnv_layer (x : NWire) : CxEnv bcRegC cxParReg (reg (.wire x)) where
+  hι := bcRegC_injective
   hpar := fun a b h => by
-    cases a <;> cases b <;> first | rfl | (simp [sxParReg, sxParL] at h)
-  hpι := fun x p => by cases p <;> simp [bcReg, sxParReg, sxParL]
+    cases a <;> cases b <;> first | rfl | (simp [cxParReg, cxParL] at h)
+  hpι := fun y p => by cases p <;> simp [bcRegC, cxParReg, cxParL]
+  hsrc := fun y => by simp [bcRegC]
+  hsrcp := fun p => by cases p <;> simp [cxParReg, cxParL]
 
-/-- The basis change along `vv` at `s` on wire `x`. -/
+/-- The compact basis change along `vv` at `s` on wire `x`, with `k ≥ 2` on `kk`: the layout
+values `bB`, `pT`, `pU` (`cxParams`), the compact slot XORs (`basisProgC`), and the clearing of
+the layout registers. -/
+noncomputable def basisWC (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q) (x : NWire)
+    (vv : BinaryWalsh.Address m) (s : Fin m) : Pr P (nT CReg) Q (prime + Ka) U :=
+  .seq (cxParams m prmReg)
+  (.seq (basisProgC (cxEnv_layer x) hQ (reg .st) vv s)
+  (.seq (uclear (reg (.bc (.inr .kk))))
+  (.seq (uclear (reg (.bc (.inr .bB))))
+  (.seq (uclear (reg (.bc (.inr .pT))))
+    (uclear (reg (.bc (.inr .pU))))))))
+
+/-- The single-column basis change along `vv` at `s` on wire `x`, with `k = 1` on `kk`. -/
+noncomputable def basisW1 (x : NWire) (vv : BinaryWalsh.Address m) (s : Fin m) :
+    Pr P (nT CReg) Q (prime + Ka) U :=
+  .seq (basisProg1 bcRegC cxParReg (reg (.wire x)) (reg .st) vv s) (uclear (reg (.bc (.inr .kk))))
+
+/-- The basis change along `vv` at `s` on wire `x`: `k = L / K` onto `kk`; the compact basis
+change when `k ≥ 2`, the single-column one when `k = 1`. -/
 noncomputable def basisW (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q) (x : NWire)
-    (vv : BinaryWalsh.Address m) (s : Fin m) : Pr P (nT SXReg) Q (prime + Ka) U :=
-  basisProg bcReg_injective hQ sxParReg (reg (.wire x)) (reg .st) vv s
+    (vv : BinaryWalsh.Address m) (s : Fin m) : Pr P (nT CReg) Q (prime + Ka) U :=
+  .seq (udivU (reg .L) (reg .K) (reg (.bc (.inr .kk))) (bcRegC (.ts 0)) (bcRegC (.ts 1))
+      (bcRegC (.ts 2)))
+  (.seq (ucopy (reg (.bc (.inr .kk))) (bcRegC (.ts 0)) (bcRegC (.ts 1)))
+  (.seq (.act (popTop (bcRegC (.ts 0))))
+  (.seq (.act (peekR (bcRegC (.ts 0))))
+  (.cond (·.flag) (.seq (uclear (bcRegC (.ts 0))) (basisWC hQ x vv s))
+    (.seq (uclear (bcRegC (.ts 0))) (basisW1 x vv s))))))
 
-/-- The step bound of `basisW` (`basisProg_exec`), rounded up. -/
-noncomputable def basisCostN (T a₀ K ρ L R n rw k : ℕ) (vv : BinaryWalsh.Address m) (s : Fin m) :
-    ℕ :=
-  ⌈((basisTargets vv s).map fun j' => basisCost T (basisData a₀ K ρ L R n rw k s j')).sum + 1⌉₊
+/-- The step bound of `basisWC` (`basisProgC_exec` rounded up, the layout computation and the
+clearing). -/
+noncomputable def basisCostNC (A T a₀ K ρ L R n rw k G : ℕ) (vv : BinaryWalsh.Address m)
+    (s : Fin m) : ℕ :=
+  ⌈((basisTargets vv s).map fun j' => basisCostC A T a₀ K ρ L R n rw k G s j').sum + 1⌉₊ +
+    (20 * (a₀ + k * G + k + L + m * L + (k - 1) * G) + 60) +
+    (2 * k + 2) + (2 * a₀ + 2) + (2 * (m * L + 2) + 2) + (2 * (m * L + 3) + 2)
 
-/-- **The basis change on a wire.** With every left stack and every `bc` register empty and the
-parameter registers holding `K, ρ, a₀, L = K k, R, n, r w`, `basisW` takes wire `x` from the
-stream of `Z` to the stream of `pullM e (basisMap vv s) Z`. -/
-theorem basisW_exec (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q) (hA : 14 ≤ prime + Ka)
-    {a₀ K ρ k L R n r w : ℕ} (hρ : ρ < K) (hLK : L = K * k) (hk : 1 ≤ k) (hR : 1 ≤ R)
-    (hrw : 1 ≤ r * w) (hfit : a₀ + m * L ≤ n) {e : Fin (m * k) → Fin n}
+/-- The step bound of `basisW`: the division, the test and the branch taken. -/
+noncomputable def basisCostN (A T a₀ K ρ L R n rw k G : ℕ) (vv : BinaryWalsh.Address m)
+    (s : Fin m) : ℕ :=
+  (12 * (L + K) + 12) + (4 * k + 4) + 1 + 1 + (2 * k + 2) + 1 +
+    if 2 ≤ k then basisCostNC A T a₀ K ρ L R n rw k G vv s
+    else basisCost1 a₀ ρ L R n rw + (2 * k + 2)
+
+set_option maxHeartbeats 1000000 in
+/-- **The compact basis change on a wire.** With every left stack empty, the basis-change
+registers at rest except `kk` holding `k ≥ 2`, and the parameter registers holding
+`K, ρ, a₀, L = K k, R, n, r w`, `basisWC` takes wire `x` from the stream of `Z` to the stream of
+`pullM e (basisMap vv s) Z` and clears `kk`. -/
+theorem basisWC_exec (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q) (hA : 14 ≤ prime + Ka)
+    {a₀ K ρ k L R n r w G : ℕ} (hρ : ρ < K) (hLK : L = K * k) (hk : 2 ≤ k) (hR : 1 ≤ R)
+    (hrw : 1 ≤ r * w) (hG : 1 ≤ G) (hGK : G + 3 ≤ K) (hfront : (k - 1) * G ≤ a₀)
+    (hback : a₀ + m * L + 3 * ((k - 1) * G) ≤ n) {e : Fin (m * k) → Fin n}
     (he : ∀ i, (e i : ℕ) = a₀ + ρ + K * i) (x : NWire) (vv : BinaryWalsh.Address m) (s : Fin m)
-    (hvs : vv s = 1) (Z : ZArr (Fin R × Fin r) n) (v : HS (nT SXReg) Q (prime + Ka) U)
-    (S : Stacks (nT SXReg) (prime + Ka)) (hL : ∀ y, S.L y = [])
+    (hvs : vv s = 1) (Z : ZArr (Fin R × Fin r) n) (v : HS (nT CReg) Q (prime + Ka) U)
+    (S : Stacks (nT CReg) (prime + Ka)) (hL : ∀ y, S.L y = [])
     (hx : S.R (reg (.wire x)) = encZ (prime + Ka) w Z)
     (hK : (S.R (reg .K)).length = K) (hρr : (S.R (reg .ρ)).length = ρ)
     (ha₀ : (S.R (reg .a₀)).length = a₀) (hLr : (S.R (reg .L)).length = L)
     (hrows : (S.R (reg .rows)).length = R) (hn : (S.R (reg .n)).length = n)
-    (hrwr : (S.R (reg .rw)).length = r * w) (hbc : ∀ y, S.R (reg (.bc y)) = []) :
-    ∃ (v' : HS (nT SXReg) Q (prime + Ka) U) (c : ℕ), v'.user = v.user ∧
-      c ≤ basisCostN (nT SXReg) a₀ K ρ L R n (r * w) k vv s ∧
+    (hrwr : (S.R (reg .rw)).length = r * w)
+    (hbc : ∀ y, y ≠ .inr .kk → bcRestC G y (S.R (reg (.bc y))))
+    (hkk : S.R (reg (.bc (.inr .kk))) = List.replicate k tick) :
+    ∃ (v' : HS (nT CReg) Q (prime + Ka) U) (c : ℕ), v'.user = v.user ∧
+      c ≤ basisCostNC (prime + Ka) (nT CReg) a₀ K ρ L R n (r * w) k G vv s ∧
+      Exec body (basisWC hQ x vv s) (mk v S) c (mk v' { S with
+        R := Function.update (Function.update S.R (reg (.bc (.inr .kk))) []) (reg (.wire x))
+          (encZ (prime + Ka) w (pullM e (basisMap vv s) Z)) }) := by
+  have hbcl : ∀ y : CXReg, S.R (bcRegC y) = [] := fun y => hbc (.inl y) (by simp)
+  have hGr : (S.R (reg (.bc (.inr .G)))).length = G := hbc (.inr .G) (by simp)
+  have hbB : S.R (reg (.bc (.inr .bB))) = [] := hbc (.inr .bB) (by simp)
+  have hpT : S.R (reg (.bc (.inr .pT))) = [] := hbc (.inr .pT) (by simp)
+  have hpU : S.R (reg (.bc (.inr .pU))) = [] := hbc (.inr .pU) (by simp)
+  have hK1 : 1 ≤ K := by omega
+  have hH : 1 ≤ (k - 1) * G := Nat.one_le_iff_ne_zero.mpr (Nat.mul_ne_zero (by omega) (by omega))
+  -- the layout
+  obtain ⟨v₂, R₂, m₂, hu₂, hm₂, he₂, hbB₂, hpT₂, hpU₂, hfr₂⟩ := cxParams_exec body m
+    prmReg_injective (a₀ := a₀) (L := L) (k := k) (G := G) hH v S ha₀ hLr
+    (by show (S.R (reg (.bc (.inr .kk)))).length = k; rw [hkk, List.length_replicate]) hGr hbB
+    hpT hpU (hbcl _) (hbcl _) (hbcl _) (hbcl _) (hbcl _) (hbcl _)
+  have hR₂f : ∀ t, t ≠ reg (.bc (.inr .bB)) → t ≠ reg (.bc (.inr .pT)) →
+      t ≠ reg (.bc (.inr .pU)) → t ≠ reg (.bc (.inr .kk)) → R₂ t = S.R t :=
+    fun t h1 h2 h3 _ => hfr₂ t h1 h2 h3
+  have hR₂k : R₂ (reg (.bc (.inr .kk))) = List.replicate k tick := by
+    rw [hfr₂ (reg (.bc (.inr .kk))) (by simp [prmReg, prmL]) (by simp [prmReg, prmL])
+      (by simp [prmReg, prmL])]
+    exact hkk
+  -- the slot XORs
+  obtain ⟨v₃, c₃, hu₃, hc₃, he₃⟩ := basisProgC_exec body (cxEnv_layer x) (st := reg .st)
+    (fun y => by simp [bcRegC]) (by simp) (by omega) hQ hρ hLK hk hR hrw hG hGK hfront hback he
+    vv s hvs Z v₂ { S with R := R₂ } hL
+    (by
+      show R₂ (reg (.wire x)) = _
+      rw [hR₂f (reg (.wire x)) (by simp) (by simp) (by simp) (by simp)]
+      exact hx)
+    (fun p => by
+      cases p
+      · show (R₂ (reg .K)).length = _
+        rw [hR₂f (reg .K) (by simp) (by simp) (by simp) (by simp), hK]; rfl
+      · show (R₂ (reg .ρ)).length = _
+        rw [hR₂f (reg .ρ) (by simp) (by simp) (by simp) (by simp), hρr]; rfl
+      · show (R₂ (reg .a₀)).length = _
+        rw [hR₂f (reg .a₀) (by simp) (by simp) (by simp) (by simp), ha₀]; rfl
+      · show (R₂ (reg .L)).length = _
+        rw [hR₂f (reg .L) (by simp) (by simp) (by simp) (by simp), hLr]; rfl
+      · show (R₂ (reg .rows)).length = _
+        rw [hR₂f (reg .rows) (by simp) (by simp) (by simp) (by simp), hrows]; rfl
+      · show (R₂ (reg .n)).length = _
+        rw [hR₂f (reg .n) (by simp) (by simp) (by simp) (by simp), hn]; rfl
+      · show (R₂ (reg .rw)).length = _
+        rw [hR₂f (reg .rw) (by simp) (by simp) (by simp) (by simp), hrwr]; rfl
+      · show (R₂ (reg (.bc (.inr .G)))).length = _
+        rw [hR₂f (reg (.bc (.inr .G))) (by simp) (by simp) (by simp) (by simp), hGr]; rfl
+      · show (R₂ (reg (.bc (.inr .kk)))).length = _
+        rw [hR₂k, List.length_replicate]; rfl
+      · show (R₂ (prmReg .bB)).length = _
+        rw [hbB₂, List.length_replicate]; rfl
+      · show (R₂ (prmReg .pT)).length = _
+        rw [hpT₂, List.length_replicate]; rfl
+      · show (R₂ (prmReg .pU)).length = _
+        rw [hpU₂, List.length_replicate]; rfl)
+    (fun y => by
+      show R₂ (bcRegC y) = []
+      rw [hR₂f (bcRegC y) (by simp [bcRegC]) (by simp [bcRegC]) (by simp [bcRegC])
+        (by simp [bcRegC])]
+      exact hbcl y)
+  set R₃ := Function.update R₂ (reg (.wire x)) (encZ (prime + Ka) w (pullM e (basisMap vv s) Z))
+    with hR₃
+  -- the clearing
+  obtain ⟨v₄, hu₄, he₄⟩ := uclear_exec body (reg (.bc (.inr .kk))) v₃ { S with R := R₃ }
+  dsimp only at he₄
+  set R₄ := Function.update R₃ (reg (.bc (.inr .kk))) [] with hR₄
+  obtain ⟨v₅, hu₅, he₅⟩ := uclear_exec body (reg (.bc (.inr .bB))) v₄ { S with R := R₄ }
+  dsimp only at he₅
+  set R₅ := Function.update R₄ (reg (.bc (.inr .bB))) [] with hR₅
+  obtain ⟨v₆, hu₆, he₆⟩ := uclear_exec body (reg (.bc (.inr .pT))) v₅ { S with R := R₅ }
+  dsimp only at he₆
+  set R₆ := Function.update R₅ (reg (.bc (.inr .pT))) [] with hR₆
+  obtain ⟨v₇, hu₇, he₇⟩ := uclear_exec body (reg (.bc (.inr .pU))) v₆ { S with R := R₆ }
+  dsimp only at he₇
+  have hR₃k : R₃ (reg (.bc (.inr .kk))) = List.replicate k tick := by
+    rw [hR₃, Function.update_of_ne (by simp), hR₂k]
+  have hR₃b : R₃ (reg (.bc (.inr .bB))) = List.replicate (a₀ - (k - 1) * G) tick := by
+    rw [hR₃, Function.update_of_ne (by simp)]; exact hbB₂
+  have hR₃t : R₃ (reg (.bc (.inr .pT))) =
+      List.replicate ((m * L - 1) / ((k - 1) * G) + 2) tick := by
+    rw [hR₃, Function.update_of_ne (by simp)]; exact hpT₂
+  have hR₃u : R₃ (reg (.bc (.inr .pU))) =
+      List.replicate ((m * L - 1) / ((k - 1) * G) + 3) tick := by
+    rw [hR₃, Function.update_of_ne (by simp)]; exact hpU₂
+  have hfinal : Function.update R₆ (reg (.bc (.inr .pU))) [] =
+      Function.update (Function.update S.R (reg (.bc (.inr .kk))) []) (reg (.wire x))
+        (encZ (prime + Ka) w (pullM e (basisMap vv s) Z)) := by
+    funext t
+    rw [hR₆, hR₅, hR₄]
+    by_cases h1 : t = reg (.bc (.inr .pU))
+    · subst h1
+      rw [Function.update_self, Function.update_of_ne (by simp), Function.update_of_ne (by simp),
+        hpU]
+    by_cases h2 : t = reg (.bc (.inr .pT))
+    · subst h2
+      rw [Function.update_of_ne h1, Function.update_self, Function.update_of_ne (by simp),
+        Function.update_of_ne (by simp), hpT]
+    by_cases h3 : t = reg (.bc (.inr .bB))
+    · subst h3
+      rw [Function.update_of_ne h1, Function.update_of_ne h2, Function.update_self,
+        Function.update_of_ne (by simp), Function.update_of_ne (by simp), hbB]
+    by_cases h4 : t = reg (.bc (.inr .kk))
+    · subst h4
+      rw [Function.update_of_ne h1, Function.update_of_ne h2, Function.update_of_ne h3,
+        Function.update_self, Function.update_of_ne (by simp), Function.update_self]
+    rw [Function.update_of_ne h1, Function.update_of_ne h2, Function.update_of_ne h3,
+      Function.update_of_ne h4, hR₃, Function.update_apply, Function.update_apply,
+      Function.update_of_ne h4]
+    split_ifs with h5
+    · rfl
+    · exact hR₂f t h3 h2 h1 h4
+  refine ⟨v₇, _, by rw [hu₇, hu₆, hu₅, hu₄, hu₃, hu₂], ?_,
+    Exec.cast (Exec.seq he₂ (Exec.seq he₃ (Exec.seq he₄ (Exec.seq he₅
+      (Exec.seq he₆ he₇))))) rfl (by rw [hfinal])⟩
+  -- the step bound
+  have hc₃' : c₃ ≤ ⌈((basisTargets vv s).map fun j' =>
+      basisCostC (prime + Ka) (nT CReg) a₀ K ρ L R n (r * w) k G s j').sum + 1⌉₊ := by
+    exact_mod_cast hc₃.trans (Nat.le_ceil _)
+  have hq : (m * L - 1) / ((k - 1) * G) ≤ m * L :=
+    le_trans (Nat.div_le_self _ _) (Nat.sub_le _ _)
+  have hb : a₀ - (k - 1) * G ≤ a₀ := Nat.sub_le _ _
+  simp only [hR₆, hR₅, hR₄, Function.update_apply, reg_inj, reduceCtorEq, ↓reduceIte,
+    Sum.inr.injEq, LReg.bc.injEq, eq_self_iff_true, hR₃k, hR₃b, hR₃t, hR₃u,
+    List.length_replicate]
+  unfold basisCostNC
+  omega
+
+/-- **The single-column basis change on a wire** (`k = 1` on `kk`). -/
+theorem basisW1_exec (hA : 14 ≤ prime + Ka) {a₀ K ρ L R n r w G : ℕ} (hρ : ρ < K) (hLK : L = K)
+    (hR : 1 ≤ R) (hrw : 1 ≤ r * w) (hfit : a₀ + m * L ≤ n) {e : Fin (m * 1) → Fin n}
+    (he : ∀ i, (e i : ℕ) = a₀ + ρ + K * i) (x : NWire) (vv : BinaryWalsh.Address m) (s : Fin m)
+    (hvs : vv s = 1) (Z : ZArr (Fin R × Fin r) n) (v : HS (nT CReg) Q (prime + Ka) U)
+    (S : Stacks (nT CReg) (prime + Ka)) (hx : S.R (reg (.wire x)) = encZ (prime + Ka) w Z)
+    (hK : (S.R (reg .K)).length = K) (hρr : (S.R (reg .ρ)).length = ρ)
+    (ha₀ : (S.R (reg .a₀)).length = a₀) (hLr : (S.R (reg .L)).length = L)
+    (hrows : (S.R (reg .rows)).length = R) (hn : (S.R (reg .n)).length = n)
+    (hrwr : (S.R (reg .rw)).length = r * w)
+    (hbc : ∀ y, y ≠ .inr .kk → bcRestC G y (S.R (reg (.bc y))))
+    (hkk : S.R (reg (.bc (.inr .kk))) = List.replicate 1 tick) :
+    ∃ (v' : HS (nT CReg) Q (prime + Ka) U) (c : ℕ), v'.user = v.user ∧
+      c ≤ basisCost1 a₀ ρ L R n (r * w) + (2 * 1 + 2) ∧
+      Exec body (basisW1 x vv s) (mk v S) c (mk v' { S with
+        R := Function.update (Function.update S.R (reg (.bc (.inr .kk))) []) (reg (.wire x))
+          (encZ (prime + Ka) w (pullM e (basisMap vv s) Z)) }) := by
+  have hbcl : ∀ y : CXReg, S.R (bcRegC y) = [] := fun y => hbc (.inl y) (by simp)
+  obtain ⟨v₁, c₁, hu₁, hc₁, he₁⟩ := basisProg1_exec body (cxEnv_layer x) (st := reg .st)
+    (fun y => by simp [bcRegC]) (by simp) (by omega) hρ hLK hR hrw hfit he vv s hvs Z v S hx
+    hK hρr ha₀ hLr hrows hn hrwr hbcl
+  obtain ⟨v₂, hu₂, he₂⟩ := uclear_exec body (reg (.bc (.inr .kk))) v₁
+    { S with R := Function.update S.R (reg (.wire x)) (encZ (prime + Ka) w (pullM e (basisMap vv s) Z)) }
+  dsimp only at he₂
+  refine ⟨v₂, _, by rw [hu₂, hu₁], ?_, Exec.cast (Exec.seq he₁ he₂) rfl ?_⟩
+  · rw [Function.update_of_ne (by simp), hkk, List.length_replicate]
+    omega
+  · congr 2
+    funext t
+    by_cases h1 : t = reg (.bc (.inr .kk))
+    · subst h1; rw [Function.update_self, Function.update_of_ne (by simp), Function.update_self]
+    by_cases h2 : t = reg (.wire x)
+    · subst h2; rw [Function.update_of_ne h1, Function.update_self, Function.update_self]
+    rw [Function.update_of_ne h1, Function.update_of_ne h2, Function.update_of_ne h2,
+      Function.update_of_ne h1]
+
+set_option maxHeartbeats 1000000 in
+/-- **The basis change on a wire.** With every left stack empty, the basis-change registers at
+rest (`bcRestC G`) and the parameter registers holding `K, ρ, a₀, L = K k, R, n, r w`, `basisW`
+takes wire `x` from the stream of `Z` to the stream of `pullM e (basisMap vv s) Z`; when `k ≥ 2`
+the control fields must fit (`hres`). -/
+theorem basisW_exec (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q) (hA : 14 ≤ prime + Ka)
+    {a₀ K ρ k L R n r w G : ℕ} (hρ : ρ < K) (hLK : L = K * k) (hk : 1 ≤ k) (hR : 1 ≤ R)
+    (hrw : 1 ≤ r * w) (hfit : a₀ + m * L ≤ n)
+    (hres : 2 ≤ k → 1 ≤ G ∧ G + 3 ≤ K ∧ (k - 1) * G ≤ a₀ ∧ a₀ + m * L + 3 * ((k - 1) * G) ≤ n)
+    {e : Fin (m * k) → Fin n}
+    (he : ∀ i, (e i : ℕ) = a₀ + ρ + K * i) (x : NWire) (vv : BinaryWalsh.Address m) (s : Fin m)
+    (hvs : vv s = 1) (Z : ZArr (Fin R × Fin r) n) (v : HS (nT CReg) Q (prime + Ka) U)
+    (S : Stacks (nT CReg) (prime + Ka)) (hL : ∀ y, S.L y = [])
+    (hx : S.R (reg (.wire x)) = encZ (prime + Ka) w Z)
+    (hK : (S.R (reg .K)).length = K) (hρr : (S.R (reg .ρ)).length = ρ)
+    (ha₀ : (S.R (reg .a₀)).length = a₀) (hLr : (S.R (reg .L)).length = L)
+    (hrows : (S.R (reg .rows)).length = R) (hn : (S.R (reg .n)).length = n)
+    (hrwr : (S.R (reg .rw)).length = r * w) (hbc : ∀ y, bcRestC G y (S.R (reg (.bc y)))) :
+    ∃ (v' : HS (nT CReg) Q (prime + Ka) U) (c : ℕ), v'.user = v.user ∧
+      c ≤ basisCostN (prime + Ka) (nT CReg) a₀ K ρ L R n (r * w) k G vv s ∧
       Exec body (basisW hQ x vv s) (mk v S) c (mk v' { S with
         R := Function.update S.R (reg (.wire x))
           (encZ (prime + Ka) w (pullM e (basisMap vv s) Z)) }) := by
-  obtain ⟨v', c, hu, hc, hex⟩ := basisProg_exec body sxEnv_layer (src := reg (.wire x))
-    (st := reg .st) (fun y => reg_ne (by simp))
-    (fun p => by cases p <;> exact reg_ne (by simp [sxParL]))
-    (fun y => reg_ne (by simp)) hA hQ hρ hLK hk hR hrw hfit he vv s hvs Z v S hL hx
-    (fun p => by cases p <;> assumption) hbc
-  refine ⟨v', c, hu, ?_, hex⟩
-  exact_mod_cast hc.trans (Nat.le_ceil _)
+  have hbcl : ∀ y : CXReg, S.R (bcRegC y) = [] := fun y => hbc (.inl y)
+  have hkk : S.R (reg (.bc (.inr .kk))) = [] := hbc (.inr .kk)
+  have hK1 : 1 ≤ K := by omega
+  have hne01 : bcRegC (.ts 0) ≠ bcRegC (.ts 1) := by simp [bcRegC]
+  have hnek0 : reg (.bc (.inr .kk)) ≠ bcRegC (.ts 0) := by simp [bcRegC]
+  have hnek1 : reg (.bc (.inr .kk)) ≠ bcRegC (.ts 1) := by simp [bcRegC]
+  -- `k = L / K`
+  obtain ⟨v₁, m₁, hu₁, hm₁, he₁⟩ := udivU_exec body (a := reg .L) (b := reg .K)
+    (q := reg (.bc (.inr .kk))) (c := bcRegC (.ts 0)) (s := bcRegC (.ts 1)) (t := bcRegC (.ts 2))
+    (by simp [bcRegC, List.nodup_cons, reg_inj]) v S (by rw [hK]; exact hK1) (hbcl _) (hbcl _)
+    (hbcl _)
+  rw [hkk, List.append_nil, hLr, hK, hLK, Nat.mul_div_cancel_left _ hK1] at he₁
+  rw [hLr, hK] at hm₁
+  set R₁ := Function.update S.R (reg (.bc (.inr .kk))) (List.replicate k tick) with hR₁
+  have hR₁f : ∀ t, t ≠ reg (.bc (.inr .kk)) → R₁ t = S.R t := fun t ht => by
+    rw [hR₁, Function.update_of_ne ht]
+  have hR₁k : R₁ (reg (.bc (.inr .kk))) = List.replicate k tick := by
+    rw [hR₁, Function.update_self]
+  -- the test `k ≥ 2`
+  obtain ⟨v₂, hu₂, he₂⟩ := ucopy_exec body (a := reg (.bc (.inr .kk))) (b := bcRegC (.ts 0))
+    (t := bcRegC (.ts 1)) hnek0 hnek1 hne01 v₁ { S with R := R₁ }
+    (by show R₁ _ = []; rw [hR₁f _ hnek1.symm]; exact hbcl _)
+  dsimp only at he₂
+  rw [hR₁k, List.length_replicate, hR₁f _ hnek0.symm, hbcl, List.append_nil] at he₂
+  set R₂ := Function.update R₁ (bcRegC (.ts 0)) (List.replicate k tick) with hR₂
+  have he₃ := Exec.act (body := body) (popTop (bcRegC (.ts 0))) (mk v₂ { S with R := R₂ })
+  rw [popTop_run] at he₃
+  dsimp only at he₃
+  rw [hR₂, Function.update_idem, Function.update_self, List.tail_replicate] at he₃
+  set R₃ := Function.update R₁ (bcRegC (.ts 0)) (List.replicate (k - 1) tick) with hR₃
+  have he₄ := Exec.act (body := body) (peekR (bcRegC (.ts 0))) (mk v₂ { S with R := R₃ })
+  rw [peekR_run] at he₄
+  dsimp only at he₄
+  rw [hR₃, Function.update_self] at he₄
+  -- clearing the test register
+  obtain ⟨v₅, hu₅, he₅⟩ := uclear_exec body (bcRegC (.ts 0))
+    { v₂ with flag := (List.replicate (k - 1) tick).head?.isSome } { S with R := R₃ }
+  dsimp only at he₅
+  rw [hR₃, Function.update_idem, Function.update_self, List.length_replicate] at he₅
+  have hR₃' : Function.update R₁ (bcRegC (.ts 0)) [] = R₁ := by
+    rw [← hbcl (.ts 0), ← hR₁f _ hnek0.symm, Function.update_eq_self]
+  rw [hR₃'] at he₅
+  have hbc' : ∀ y, y ≠ .inr .kk → bcRestC G y (R₁ (reg (.bc y))) := fun y hy => by
+    rw [hR₁f _ (by simpa using hy)]; exact hbc y
+  have hpar₁ : ∀ p : LReg CReg, p ≠ .bc (.inr .kk) → R₁ (reg p) = S.R (reg p) :=
+    fun p hp => hR₁f _ (by simpa using hp)
+  by_cases hk2 : 2 ≤ k
+  · -- the compact branch
+    have hflag : (List.replicate (k - 1) (tick : Fin (prime + Ka + 4))).head?.isSome = true := by
+      obtain ⟨k', hk'⟩ : ∃ k', k - 1 = k' + 1 := ⟨k - 2, by omega⟩
+      rw [hk', List.replicate_succ]; rfl
+    obtain ⟨hG, hGK, hfront, hback⟩ := hres hk2
+    obtain ⟨v₆, c₆, hu₆, hc₆, he₆⟩ := basisWC_exec body hQ hA hρ hLK hk2 hR hrw hG hGK hfront
+      hback he x vv s hvs Z v₅ { S with R := R₁ } hL
+      (by show R₁ _ = _; rw [hpar₁ _ (by simp)]; exact hx)
+      (by show (R₁ _).length = _; rw [hpar₁ _ (by simp)]; exact hK)
+      (by show (R₁ _).length = _; rw [hpar₁ _ (by simp)]; exact hρr)
+      (by show (R₁ _).length = _; rw [hpar₁ _ (by simp)]; exact ha₀)
+      (by show (R₁ _).length = _; rw [hpar₁ _ (by simp)]; exact hLr)
+      (by show (R₁ _).length = _; rw [hpar₁ _ (by simp)]; exact hrows)
+      (by show (R₁ _).length = _; rw [hpar₁ _ (by simp)]; exact hn)
+      (by show (R₁ _).length = _; rw [hpar₁ _ (by simp)]; exact hrwr) hbc' hR₁k
+    dsimp only at he₆
+    have hfin : Function.update (Function.update R₁ (reg (.bc (.inr .kk))) []) (reg (.wire x))
+        (encZ (prime + Ka) w (pullM e (basisMap vv s) Z)) =
+        Function.update S.R (reg (.wire x)) (encZ (prime + Ka) w (pullM e (basisMap vv s) Z)) := by
+      rw [hR₁, Function.update_idem, ← hkk, Function.update_eq_self]
+    rw [hfin] at he₆
+    refine ⟨v₆, _, by rw [hu₆, hu₅, hu₂, hu₁], ?_, Exec.seq he₁ (Exec.seq he₂ (Exec.seq he₃
+      (Exec.seq he₄ (Exec.cond_true (by simpa using hflag) (Exec.seq he₅ he₆)))))⟩
+    unfold basisCostN
+    rw [if_pos hk2]
+    omega
+  · -- the single-column branch
+    have hk1 : k = 1 := by omega
+    subst hk1
+    have hflag : (List.replicate (1 - 1) (tick : Fin (prime + Ka + 4))).head?.isSome = false := rfl
+    obtain ⟨v₆, c₆, hu₆, hc₆, he₆⟩ := basisW1_exec body hA hρ (by rw [hLK]; ring) hR hrw hfit he
+      x vv s hvs Z v₅ { S with R := R₁ }
+      (by show R₁ _ = _; rw [hpar₁ _ (by simp)]; exact hx)
+      (by show (R₁ _).length = _; rw [hpar₁ _ (by simp)]; exact hK)
+      (by show (R₁ _).length = _; rw [hpar₁ _ (by simp)]; exact hρr)
+      (by show (R₁ _).length = _; rw [hpar₁ _ (by simp)]; exact ha₀)
+      (by show (R₁ _).length = _; rw [hpar₁ _ (by simp)]; exact hLr)
+      (by show (R₁ _).length = _; rw [hpar₁ _ (by simp)]; exact hrows)
+      (by show (R₁ _).length = _; rw [hpar₁ _ (by simp)]; exact hn)
+      (by show (R₁ _).length = _; rw [hpar₁ _ (by simp)]; exact hrwr) hbc' hR₁k
+    dsimp only at he₆
+    have hfin : Function.update (Function.update R₁ (reg (.bc (.inr .kk))) []) (reg (.wire x))
+        (encZ (prime + Ka) w (pullM e (basisMap vv s) Z)) =
+        Function.update S.R (reg (.wire x)) (encZ (prime + Ka) w (pullM e (basisMap vv s) Z)) := by
+      rw [hR₁, Function.update_idem, ← hkk, Function.update_eq_self]
+    rw [hfin] at he₆
+    refine ⟨v₆, _, by rw [hu₆, hu₅, hu₂, hu₁], ?_, Exec.seq he₁ (Exec.seq he₂ (Exec.seq he₃
+      (Exec.seq he₄ (Exec.cond_false (by simpa using hflag) (Exec.seq he₅ he₆)))))⟩
+    unfold basisCostN
+    rw [if_neg (by omega)]
+    omega
 
 end BasisW
 
@@ -1273,7 +1601,7 @@ end BasisW
 
 section FactorProg
 
-variable {Q Ka : ℕ} {U P : Type} (body : P → Pr P (nT SXReg) Q (prime + Ka) U)
+variable {Q Ka : ℕ} {U P : Type} (body : P → Pr P (nT CReg) Q (prime + Ka) U)
 
 /-- All wires, once each. -/
 noncomputable def allW : List NWire := Finset.univ.toList
@@ -1315,8 +1643,8 @@ the child's values (`rows / NW`, `L / m`); `basisW v s` on `fw`; conjugate unles
 child call; conjugate unless `q = 1`; `basisW v s`; restore `L` and `rows`; multiply every other
 wire by `2 ^ Tc`. -/
 noncomputable def factorProg (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
-    (cp : Pr P (nT SXReg) Q (prime + Ka) U) (ds : ComplexFramedExecution.Directions)
-    (fw : NWire) (g : ZMod 4 × BinaryWalsh.Address m) : Pr P (nT SXReg) Q (prime + Ka) U :=
+    (cp : Pr P (nT CReg) Q (prime + Ka) U) (ds : ComplexFramedExecution.Directions)
+    (fw : NWire) (g : ZMod 4 × BinaryWalsh.Address m) : Pr P (nT CReg) Q (prime + Ka) U :=
   if h : ∃ i, g.2 i = 1 then
     .seq (saveDiv NW .rows)
     (.seq (saveDiv m .L)
@@ -1332,16 +1660,16 @@ noncomputable def factorProg (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
 
 /-- The step bound of the factor program of `(fw, g)` at level `j + 1`, with `T` host registers
 and child calls within `cc` steps. -/
-noncomputable def factorCost (T : ℕ) (ds : ComplexFramedExecution.Directions)
-    (j u K ρ a₀ R₀ n r w : ℕ) (g : ZMod 4 × BinaryWalsh.Address m) (cc : ℕ) : ℕ :=
+noncomputable def factorCost (A T : ℕ) (ds : ComplexFramedExecution.Directions)
+    (j u K ρ a₀ R₀ n r w Gd : ℕ) (g : ZMod 4 × BinaryWalsh.Address m) (cc : ℕ) : ℕ :=
   if h : ∃ i, g.2 i = 1 then
     (8 * (NW * rowsAt R₀ j) + 8) + (8 * (K * bits u (j + 1)) + 8) +
-      basisCostN T a₀ K ρ (K * bits u j) (rowsAt R₀ j) n (r * w) (bits u j) g.2 (Fin.find _ h) +
+      basisCostN A T a₀ K ρ (K * bits u j) (rowsAt R₀ j) n (r * w) (bits u j) Gd g.2 (Fin.find _ h) +
       (conjCost (rowsAt R₀ j) n r w + 1) +
       childCost (rowsAt R₀ j * 2 ^ n * (r * w)) (gateCount (program ds))
         (factorCount (program ds)) u j (K * bits u j) (Fin.find _ h) (expZ u ds j) cc +
       (conjCost (rowsAt R₀ j) n r w + 1) +
-      basisCostN T a₀ K ρ (K * bits u j) (rowsAt R₀ j) n (r * w) (bits u j) g.2 (Fin.find _ h) +
+      basisCostN A T a₀ K ρ (K * bits u j) (rowsAt R₀ j) n (r * w) (bits u j) Gd g.2 (Fin.find _ h) +
       (6 * (K * bits u j) + 6 * (K * bits u (j + 1)) + 13) +
       (6 * rowsAt R₀ j + 6 * (NW * rowsAt R₀ j) + 13) +
       shiftCost NW (rowsAt R₀ j) n r w (expZ u ds j)
@@ -1354,26 +1682,28 @@ computing the layer at level `j` for the pivot's offset within `cc` steps (`Call
 program implements the factor `(fw, g)` on empty left stacks (`FactorSpecL`) within
 `factorCost … g cc` steps. -/
 theorem factorProg_spec (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
-    (cp : Pr P (nT SXReg) Q (prime + Ka) U) (ds : ComplexFramedExecution.Directions)
-    (hA : 14 ≤ prime + Ka) {R₀ j u K ρ a₀ n r w : ℕ} (hr : 1 ≤ r) (hw : 1 ≤ w) (hρ : ρ < K)
+    (cp : Pr P (nT CReg) Q (prime + Ka) U) (ds : ComplexFramedExecution.Directions)
+    (hA : 14 ≤ prime + Ka) {R₀ j u K ρ a₀ n r w Gd : ℕ} (hr : 1 ≤ r) (hw : 1 ≤ w) (hρ : ρ < K)
     (hu : 1 ≤ u) (hR₀ : 1 ≤ R₀) (hfit : ∀ i < bits u (j + 1), a₀ + ρ + K * i < n)
-    (hfitL : a₀ + K * bits u (j + 1) ≤ n) (hTw : expZ u ds j ≤ w) (fw : NWire)
+    (hfitL : a₀ + K * bits u (j + 1) ≤ n) (hTw : expZ u ds j ≤ w)
+    (hres : 2 ≤ bits u j → 1 ≤ Gd ∧ Gd + 3 ≤ K ∧ (bits u j - 1) * Gd ≤ a₀ ∧
+      a₀ + m * (K * bits u j) + 3 * ((bits u j - 1) * Gd) ≤ n) (fw : NWire)
     (g : ZMod 4 × BinaryWalsh.Address m) (cc : ℕ)
     (hcall : ∀ (hs : ∃ i, g.2 i = 1)
       (hfit' : ∀ i < bits u j, a₀ + (Fin.find _ hs : ℕ) * (K * bits u j) + ρ + K * i < n),
-      CallSpec body cp bcEmpty ds R₀ j u K ρ (a₀ + (Fin.find _ hs : ℕ) * (K * bits u j))
+      CallSpec body cp (bcRestC Gd) ds R₀ j u K ρ (a₀ + (Fin.find _ hs : ℕ) * (K * bits u j))
         (K * bits u j) n r w hfit' cc) :
-    FactorSpecL body (factorProg hQ cp ds fw g) bcEmpty j u K ρ a₀ (K * bits u (j + 1))
+    FactorSpecL body (factorProg hQ cp ds fw g) (bcRestC Gd) j u K ρ a₀ (K * bits u (j + 1))
       (rowsAt R₀ (j + 1)) n r w (k := bits u j) (actMap a₀ ρ K (bits u (j + 1)) n hfit)
       (fun s => layerZ u ds R₀ j fun c => actMap a₀ ρ K (bits u (j + 1)) n hfit (bitIdx s c))
-      (expZ u ds j) fw g (factorCost (nT SXReg) ds j u K ρ a₀ R₀ n r w g cc) := by
+      (expZ u ds j) fw g (factorCost (prime + Ka) (nT CReg) ds j u K ρ a₀ R₀ n r w Gd g cc) := by
   intro B v S hL hN hB
   set Lc := K * bits u j with hLc
   set Tc := expZ u ds j with hTcd
   set e := actMap a₀ ρ K (bits u (j + 1)) n hfit with he_def
   have hs : ∀ i, S.R (reg (.sc i)) = [] := fun i => hN.rest (.sc i) (by simp)
-  have hrs : ∀ x : LReg SXReg, (∀ y, x ≠ .wire y) → x ≠ .Tc →
-      restSpec bcEmpty n r w x (S.R (reg x)) := fun x h1 h2 =>
+  have hrs : ∀ x : LReg CReg, (∀ y, x ≠ .wire y) → x ≠ .Tc →
+      restSpec (bcRestC Gd) n r w x (S.R (reg x)) := fun x h1 h2 =>
     hN.rest x (by rintro (⟨y, hy⟩ | hy); exacts [h1 y hy, h2 hy])
   have hTcS : (S.R (reg .Tc)).length = Tc := hN.tc
   have hwS : (S.R (reg .w)).length = w := hN.par .w
@@ -1439,7 +1769,7 @@ theorem factorProg_spec (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
   rw [h1L] at hc₂
   set R₂ := Function.update (Function.update R₁ (reg .park) (L₀.reverse ++
     (rows₀.reverse ++ park₀))) (reg .L) (List.replicate (L₀.length / m) tick) with hR₂
-  have h2o : ∀ x : LReg SXReg, x ≠ .park → x ≠ .L → x ≠ .rows → R₂ (reg x) = S.R (reg x) := by
+  have h2o : ∀ x : LReg CReg, x ≠ .park → x ≠ .L → x ≠ .rows → R₂ (reg x) = S.R (reg x) := by
     intro x h1 h2 h3
     rw [hR₂, Function.update_of_ne (reg_ne h2), Function.update_of_ne (reg_ne h1), hR₁,
       Function.update_of_ne (reg_ne h3), Function.update_of_ne (reg_ne h1)]
@@ -1450,14 +1780,14 @@ theorem factorProg_spec (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
     rw [hrows₀l, Nat.mul_div_cancel_left _ (Nat.pos_of_neZero NW)]
   have h2p : R₂ (reg .park) = L₀.reverse ++ (rows₀.reverse ++ park₀) := by rw [hR₂]; fupd
   -- the first basis change
-  have hpar2 : ∀ x : LReg SXReg, x ∈ [.K, .ρ, .a₀, .n, .rw, .w, .u, .lev] →
+  have hpar2 : ∀ x : LReg CReg, x ∈ [.K, .ρ, .a₀, .n, .rw, .w, .u, .lev] →
       R₂ (reg x) = S.R (reg x) := by
     intro x hx
     simp only [List.mem_cons, List.not_mem_nil, or_false] at hx
     apply h2o <;> rcases hx with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;> simp
   obtain ⟨v₃, c₃, hu₃, hc₃, he₃⟩ := basisW_exec body hQ hA (k := bits u j) (R := (rowsAt R₀ j))
     (e := e)
-    hρ rfl hk1 hRw1 hrw hfitm he fw g.2 s hvs (B fw) v₂ { S with R := R₂ } hL
+    hρ rfl hk1 hRw1 hrw hfitm hres he fw g.2 s hvs (B fw) v₂ { S with R := R₂ } hL
     (by dsimp only; rw [h2o _ (by simp) (by simp) (by simp)]; exact hB fw)
     (by dsimp only; rw [hpar2 .K (by simp)]; exact hN.par .K)
     (by dsimp only; rw [hpar2 .ρ (by simp)]; exact hN.par .ρ)
@@ -1470,7 +1800,7 @@ theorem factorProg_spec (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
       dsimp only; rw [h2o _ (by simp) (by simp) (by simp)]; exact hrs (.bc y) (by simp) (by simp))
   set Z₁ := pullM e (basisMap g.2 s) (B fw) with hZ₁
   set R₃ := Function.update R₂ (reg (.wire fw)) (encZ (prime + Ka) w Z₁) with hR₃
-  have h3o : ∀ x : LReg SXReg, x ≠ .park → x ≠ .L → x ≠ .rows → x ≠ .wire fw →
+  have h3o : ∀ x : LReg CReg, x ≠ .park → x ≠ .L → x ≠ .rows → x ≠ .wire fw →
       R₃ (reg x) = S.R (reg x) := fun x h1 h2 h3 h4 => by
     rw [hR₃, Function.update_of_ne (reg_ne h4), h2o x h1 h2 h3]
   -- the first conjugation
@@ -1489,7 +1819,7 @@ theorem factorProg_spec (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
   set R₄ := Function.update R₃ (reg (.wire fw)) (encZ (prime + Ka) w Z₂) with hR₄
   have hR₄' : R₄ = Function.update R₂ (reg (.wire fw)) (encZ (prime + Ka) w Z₂) := by
     rw [hR₄, hR₃, Function.update_idem]
-  have h4o : ∀ x : LReg SXReg, x ≠ .park → x ≠ .L → x ≠ .rows → (∀ y, x ≠ .wire y) →
+  have h4o : ∀ x : LReg CReg, x ≠ .park → x ≠ .L → x ≠ .rows → (∀ y, x ≠ .wire y) →
       R₄ (reg x) = S.R (reg x) := fun x h1 h2 h3 h4 => by
     rw [hR₄', Function.update_of_ne (reg_ne (h4 fw)), h2o x h1 h2 h3]
   -- the child call
@@ -1564,7 +1894,7 @@ theorem factorProg_spec (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
   -- the second basis change
   obtain ⟨v₇, c₇, hu₇, hc₇, he₇⟩ := basisW_exec body hQ hA (k := bits u j) (R := (rowsAt R₀ j))
     (e := e)
-    hρ rfl hk1 hRw1 hrw hfitm he fw g.2 s hvs Z₄ v₆ { S with R := R₆ } hL
+    hρ rfl hk1 hRw1 hrw hfitm hres he fw g.2 s hvs Z₄ v₆ { S with R := R₆ } hL
     (by dsimp only; rw [hR₆', Function.update_self])
     (by dsimp only
         rw [hR₆', Function.update_of_ne (reg_ne (by simp)), hpar2 .K (by simp)]
@@ -1639,7 +1969,7 @@ theorem factorProg_spec (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
       Function.update_of_ne h2, hR₇', Function.update_apply, Function.update_apply]
     split_ifs with h4
     · rfl
-    · obtain ⟨x, rfl⟩ := (regEquiv SXReg).surjective k
+    · obtain ⟨x, rfl⟩ := (regEquiv CReg).surjective k
       exact h2o x (fun h => h2 (by rw [h]; rfl)) (fun h => h3 (by rw [h]; rfl))
         (fun h => h1 (by rw [h]; rfl))
   -- the other wires
@@ -1679,13 +2009,13 @@ theorem factorProg_spec (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
     rw [hR₈] at hc₉
     simp only [Function.update_apply, reg_inj, reduceCtorEq, ↓reduceIte, hR₇'] at hc₉
     rw [h2r, List.length_replicate, List.length_reverse, hrows₀l] at hc₉
-    have hfc : factorCost (nT SXReg) ds j u K ρ a₀ R₀ n r w g cc =
+    have hfc : factorCost (prime + Ka) (nT CReg) ds j u K ρ a₀ R₀ n r w Gd g cc =
         (8 * (NW * (rowsAt R₀ j)) + 8) + (8 * (K * bits u (j + 1)) + 8) +
-        basisCostN (nT SXReg) a₀ K ρ Lc (rowsAt R₀ j) n (r * w) (bits u j) g.2 s +
+        basisCostN (prime + Ka) (nT CReg) a₀ K ρ Lc (rowsAt R₀ j) n (r * w) (bits u j) Gd g.2 s +
         (conjCost (rowsAt R₀ j) n r w + 1) +
         childCost ((rowsAt R₀ j) * 2 ^ n * (r * w)) G F u j Lc s Tc cc +
         (conjCost (rowsAt R₀ j) n r w + 1) +
-        basisCostN (nT SXReg) a₀ K ρ Lc (rowsAt R₀ j) n (r * w) (bits u j) g.2 s +
+        basisCostN (prime + Ka) (nT CReg) a₀ K ρ Lc (rowsAt R₀ j) n (r * w) (bits u j) Gd g.2 s +
         (6 * Lc + 6 * (K * bits u (j + 1)) + 13) +
         (6 * (rowsAt R₀ j) + 6 * (NW * (rowsAt R₀ j)) + 13) +
         shiftCost NW (rowsAt R₀ j) n r w Tc := by
@@ -1697,7 +2027,7 @@ theorem factorProg_spec (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
   · -- the wires
     intro x
     by_cases hx : x = fw
-    · have hfw : ∀ y ∈ otherW fw, reg (BReg := SXReg) (.wire x) ≠ reg (.wire y) := by
+    · have hfw : ∀ y ∈ otherW fw, reg (BReg := CReg) (.wire x) ≠ reg (.wire y) := by
         intro y hy h
         rw [reg_inj, LReg.wire.injEq] at h
         exact mem_otherW.1 hy (h ▸ hx)

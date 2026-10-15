@@ -322,7 +322,7 @@ lemma mn_srcP_le {K : ℕ} (cw cW : ℕ) :
 /-- **The three source-transform runs against `totBound`**: eventually
 `mnRuns ≤ C (totCRT + totResamp + totConv + T M(p) + T p)`. -/
 theorem mn_runs_le {K : ℕ} {Lb : LProc → MnPr (prime + K)} {w : ℕ → ℕ}
-    {σ : ℕ → LReg SXReg → List (Fin (prime + K + 4))} (D : MnDist K Lb w σ)
+    {σ : ℕ → LReg CReg → List (Fin (prime + K + 4))} (D : MnDist K Lb w σ)
     (Y : MnSyn K Lb w σ) :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ᶠ n in atTop, (mnRuns D Y n : ℝ) ≤
       C * (IntegerMultBounds.MathlibTM2.Cost.totCRT n + IntegerMultBounds.MathlibTM2.Cost.totResamp n + IntegerMultBounds.MathlibTM2.Cost.totConv n +

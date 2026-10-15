@@ -83,7 +83,7 @@ lemma bdR₂_io (x : DsX) : bdR₂ n R (bdIo x) = bdO n x := by
   rw [bdR₂_off (fun q => mnRg_ne_lay _ _), bdRndF_lay]
   exact dsOv_rg bdLay.ig R _ (.o x)
 
-lemma bdR₂_lay {x : LReg SXReg} (hx : ∀ y, bdLayX y ≠ x) : bdR₂ n R (mnLay x) = R (mnLay x) := by
+lemma bdR₂_lay {x : LReg CReg} (hx : ∀ y, bdLayX y ≠ x) : bdR₂ n R (mnLay x) = R (mnLay x) := by
   rw [bdR₂_off (fun q => mnRg_ne_lay _ _), bdRndF_lay, dsOv_off _ _ (bdG_ne_lay hx)]
 
 lemma bdR₂_ι (j : Fin 64) : bdR₂ n R (mnι j) = R (mnι j) := by
@@ -166,7 +166,7 @@ procedures `mnLb`) to a store with the reserved layer registers holding `σ n`, 
 registers empty and every register of `bdWKeep` unchanged; `cost n = O((b n + 1)^k + r n · dsW n)`
 (the park record of `σ n` alone has `≥ 2^ℓ · dsW n` symbols, so the second term cannot be
 avoided). -/
-structure BdWires (σ : ℕ → LReg SXReg → List (Fin (bdA + 4))) where
+structure BdWires (σ : ℕ → LReg CReg → List (Fin (bdA + 4))) where
   prog : MnPr bdA
   cost : ℕ → ℕ
   spec : ∀ᶠ n in atTop, ∀ mainP : MnPr bdA, ∀ (v : HS mnT mnQ bdA Unit) (S : Stacks mnT bdA),
@@ -179,7 +179,7 @@ structure BdWires (σ : ℕ → LReg SXReg → List (Fin (bdA + 4))) where
 
 /-! ### The distribution -/
 
-variable {σ : ℕ → LReg SXReg → List (Fin (bdA + 4))}
+variable {σ : ℕ → LReg CReg → List (Fin (bdA + 4))}
 
 /-- **The distribution program**: the distribution machine, the rounding and output parameters,
 the wires program. -/

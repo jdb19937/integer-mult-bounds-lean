@@ -367,7 +367,7 @@ lemma bdRndF_rg {r : MnR} (hr : r ∉ bdRndRegs) : bdRndF n R (mnRg r) = R (mnRg
 lemma bdRndF_ι (j : Fin 64) : bdRndF n R (mnι j) = R (mnι j) :=
   bdRndF_off fun q _ => mnRg_ne_ι q j
 
-lemma bdRndF_lay (x : LReg SXReg) : bdRndF n R (mnLay x) = R (mnLay x) :=
+lemma bdRndF_lay (x : LReg CReg) : bdRndF n R (mnLay x) = R (mnLay x) :=
   bdRndF_off fun q _ => mnRg_ne_lay q x
 
 end Final

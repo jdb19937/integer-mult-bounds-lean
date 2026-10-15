@@ -188,12 +188,12 @@ variable {Q Ka : ℕ} {U : Type}
 
 /-- The forward round: the layer step, then the twiddle `y^(-E)`. -/
 noncomputable def synRoundF (ds : ComplexFramedExecution.Directions) :
-    Pr LProc (nT SXReg) Q (prime + Ka) U :=
+    Pr LProc (nT CReg) Q (prime + Ka) U :=
   .seq (synLayerStep ds) (synTwStep true)
 
 /-- The opposite round: the twiddle `y^E`, then the layer step. -/
 noncomputable def synRoundO (ds : ComplexFramedExecution.Directions) :
-    Pr LProc (nT SXReg) Q (prime + Ka) U :=
+    Pr LProc (nT CReg) Q (prime + Ka) U :=
   .seq (synTwStep false) (synLayerStep ds)
 
 /-- The step bound of one round. -/
