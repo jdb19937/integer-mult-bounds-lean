@@ -1031,7 +1031,9 @@ theorem crtInvLoop_runs {d : ℕ} (a s μ : Fin d → ℕ) (hs : ∀ j, 0 < s j 
 /-! ### The machines -/
 
 /-- The registers that are empty at rest. -/
-def crtRestEmpty : List CrtReg := crtIdle ++ [.wD, .sD, .mD, .preU, .postU, .e3B, .t3B, .bU]
+def crtRestEmpty : List CrtReg :=
+  crtIdle ++ ([.wD, .sD, .mD, .preU, .postU, .e3B, .t3B, .bU] ++
+    (List.finRange 32).map CrtReg.extra)
 
 /-- The forward map: the counter of `3 B`, `preU := L`, the padding scan, one iteration per
 target `d - 1, …, 0`, and the restoration of the axis lists. -/

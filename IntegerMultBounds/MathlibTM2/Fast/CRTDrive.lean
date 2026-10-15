@@ -41,6 +41,7 @@ inductive CrtReg
   | e3B | t3B | tu | stmp
   | rbU | tsU | lo | hi | ov
   | nF | tN | fc | sg | mq | c0 | c1 | c2 | it | st | cy
+  | extra (i : Fin 32)
   deriving DecidableEq
 
 section Regs

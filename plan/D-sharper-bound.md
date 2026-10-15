@@ -337,6 +337,12 @@ source-transform core. `mn_core_le_linear` bounds its actual `srcCoreCost` by
 the linear stage sum plus the explicit forward/inverse transform charges.
 Those charges still await the concrete direct-machine cost match.
 
+`CRTDirectBacking.lean` embeds the 40 direct-driver registers and 25 arithmetic
+bank registers into the expanded finite CRT register family. The seven
+persistent input aliases are preserved; all 58 scratch slots belong to the
+existing rest-empty contract. Focused checks of `CRTMachine`, `SrcStage`,
+`MainRegs` and `DistSpec` confirm the old entry contracts supply that backing.
+
 Remaining integration steps, in order:
 
 1. **M2b — rotation scanner and producer: complete.** The actual all-fiber

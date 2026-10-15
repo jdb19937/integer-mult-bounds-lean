@@ -80,9 +80,10 @@ instance mnFintypeCvR : Fintype CvR :=
     (by intro x; cases x <;> simp)
 
 instance mnFintypeCrtReg : Fintype CrtReg :=
-  Fintype.ofList [.str, .acc, .tA, .tB, .tc, .tr, .u1, .u2, .zr, .bU, .sig, .msk, .wT, .sT, .mT, .wD,
+  Fintype.ofList ([.str, .acc, .tA, .tB, .tc, .tr, .u1, .u2, .zr, .bU, .sig, .msk, .wT, .sT, .mT, .wD,
     .sD, .mD, .wW, .aI, .sI, .muI, .aK, .preU, .postU, .uU, .vU, .vacc, .e3B, .t3B, .tu, .stmp, .rbU,
-    .tsU, .lo, .hi, .ov, .nF, .tN, .fc, .sg, .mq, .c0, .c1, .c2, .it, .st, .cy]
+    .tsU, .lo, .hi, .ov, .nF, .tN, .fc, .sg, .mq, .c0, .c1, .c2, .it, .st, .cy] ++
+      (List.finRange 32).map CrtReg.extra)
     (by intro x; cases x <;> simp)
 
 instance mnFintypeSrcX : Fintype SrcX :=
