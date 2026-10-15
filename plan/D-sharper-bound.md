@@ -1344,3 +1344,14 @@ and integer square root: `sqrt(16*p/u)+1`. Checked strict upper-square and
 preceding-square bounds preserve the intended square-root scale, and the
 selected full-tail estimate no longer takes a band-condition oracle. The
 six-declaration standard-axiom audit passes; machine costs remain open.
+
+### T16 actual binary tableau ranks
+
+The source-faithful canonical binary tableau, including identity at rank zero
+and the full C gate at rank nine, now has a proved inverse-Z subspace identity.
+Kernel transport and rank-nullity give the actual relative X-block rank, with
+no assumption that a selected frame has nondegenerate restricted dot product.
+An explicit initial-column extension API connects these formulas to native
+trace ranks; the1004 literal invertible extension witnesses remain to import.
+Four guarded checks and104-declaration standard-axiom audit pass. Complex
+Pauli realization, global phases, dirty routing and tape costs remain open.
