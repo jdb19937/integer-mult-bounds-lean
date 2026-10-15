@@ -1529,3 +1529,17 @@ earlier supplier files. Concrete nesting/rank certificates for29250 phase
 incidences plus661 final-alignment incidences, weighted moments, hosting and
 tape realization remain open. This checkpoint supplies complete label
 dimensions, not the complete ordered MOVE profile.
+
+### Exact boundary solve through elimination
+
+Successive Schur elimination now carries its right-hand side: every full
+solution restricts to a solution of the eliminated system, and eliminated
+vertices are recovered from their pivot rows. A positive dominance margin
+bounds and determines active solutions. On the actual rounded Gaussian
+matrix, the reduced boundary system after any interior elimination has
+exactly the restricted full solution, bounded by `8p` times its right-hand
+side, with no positive-definiteness assumption. Both guarded checks and the
+10-declaration standard-axiom audit pass. This is the exact algebra of the
+source's two interior passes and one boundary solve. Boundary sparsity and
+ordering, Gohberg–Semencul interior inverses, rounded structured solves and
+tape costs remain open.
