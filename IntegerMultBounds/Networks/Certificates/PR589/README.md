@@ -24,3 +24,25 @@ The running multiplication theorem does not import this checkpoint.
 
 The pinned source digest, generator and original licenses/notices accompany the
 literal word. No source supplier program is executed during import.
+
+## Checked frame-state compiler bridge
+
+`Frames/` now tracks every physical register's frame through D/A, the literal
+527-incidence logical scatter boundary, B/C and final alignment. The complete29250 phase
+incidences are retained, including identity transitions. The exact old/new
+frame pair lists and phase endpoints are identified with the existing
+`FramedCircuit` compiler for any supplied frame interpretation. Scatter sources
+keep their frames510–518 and targets use frame0; no common-frame replacement
+is assumed. All230 non-scatter replay chunks, section composition, generic
+compilation and boundary modules pass guarded checks. The focused namespace
+audit covers1760 declarations using only the standard three axioms.
+
+These are exact frame-state and compiler identities. They do not supply
+the selected rational E8 frame operators, their compatibility with binary
+scalar data, distinct-frame COPY execution, geometric ranks, physical hosting
+or tape costs. Those remain prerequisites for a primitive-bound improvement.
+
+The logical scatter incidences are not physical COPY counts: the source uses
+nine COPY/ERASE buffer lifecycles through temporary register661, with527
+intervening frame-zero ADD incidences. Those charged buffer lifecycles have
+not yet been implemented by this frame-state checkpoint.

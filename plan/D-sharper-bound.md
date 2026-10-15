@@ -1364,3 +1364,13 @@ has `leaf^(10^24) ≤ D` when `10^24 ≤ log_m(D)`. Below that threshold the
 cutoff is explicitly zero, with no unsupported leaf bound. Both modules and
 standard-axiom audits pass. Actual compact caller replacement, precision,
 small-input handling and layer-cost absorption remain open.
+
+### Selected PR589 frame-state bridge
+
+The selected scalar word now has exact occurrence-indexed frame-state replay
+and compiler phase/boundary identities, retaining all29250 phase incidences
+and527 logical scatter incidences. The240-file frozen checkpoint passes guarded
+checks and a1760-declaration standard-axiom audit. These identities apply to
+a supplied frame interpretation; actual rational E8 operator interpretation,
+compatibility with binary scalar values, distinct-frame COPY execution,
+geometric ranks and hosted costs remain open.
