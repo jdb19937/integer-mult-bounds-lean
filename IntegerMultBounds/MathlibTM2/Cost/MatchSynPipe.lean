@@ -8,7 +8,7 @@ public import IntegerMultBounds.MathlibTM2.Cost.MatchSynLay
 Growth facts and the bookkeeping of the round loops `synLoopFCost`, `synLoopOCost`
 (`Fast/SynFwd.lean`) at the pipeline parameters, used by `Cost/MatchSynLoop.lean`.
 
-* `mr_b_pow_le_r`: `b^k ≤ r = 2^ℓ` eventually (`b < (d+1)^{2^30}`, `(d+1)^E ≤ 2^d`, `d ≤ ℓ`).
+* `mr_b_pow_le_r`: `b^k ≤ r = 2^ℓ` eventually (`b < (d+1)^{2^5}`, `(d+1)^E ≤ 2^d`, `d ≤ ℓ`).
 * `mr_p_pow_le_two_pow_K`: `p^k ≤ 2^K` eventually (`eventually_logb_p_le_K`).
 * `mr_small_le`: every `x ≤ A (b + 1)^k` is eventually at most `T p`.
 * `mr_loops_le`: both loops cost at most `∑_{h < A} synRoundCost h + 6 A² + 14 A + 4`.

@@ -10,9 +10,9 @@ multiplies every pair of natural numbers with the standard Mathlib binary
 encodings in worst-case time `O(n (log n)^(1-kappa))`, where `n` is the total
 encoded input length and `kappa > 0`.
 
-The public theorem `MathlibTM2.mulInTime` proves saving `2^-93`. The exact
-internal margin is `Cost.totKappa = 296 / (10^11 * 2^64)`, between `2^-93`
-and `2^-92`, with positivity and the exact value proved by `tot_kappa_pos`
+The public theorem `MathlibTM2.mulInTime` proves saving `2^-66`. The exact
+internal margin is `Cost.totKappa = 296 / (10^11 * 2^37)`, between `2^-66`
+and `2^-65`, with positivity and the exact value proved by `tot_kappa_pos`
 and `tot_kappa_eq`. This establishes multiplication below `n log n`. It does not
 establish the larger saving `83/10^12` in the original compact-control target
 `Machine.EndToEnd`, or the particular native-bank interfaces tracked in parts
@@ -42,8 +42,14 @@ The actual stage costs are matched to `Cost.totBound`, and
 | Complete numerical algorithm and exact recovery | `MathlibTM2/Mult/*` | ✅ | — | The CRT/resampling/chirp/synthetic-convolution pipeline returns the exact product coefficients; the existing `PipelineOutput` bridge also provides exact-width native output semantics. |
 | Recursive factors, layer and normalized public kernel | `MathlibTM2/Node/*` | ✅ | ✅ | `layer_exec` supplies recursive factor execution by level induction; `topProg_exec` and `topProg_exec_Hl` include phases, row padding, base-m pieces, normalization and truncation. The earlier abstract factor-program premise is discharged by this implementation. |
 | Complete host stages and assembled multiplier | `MathlibTM2/Fast/*`, `MathlibTM2/Host/*` | ✅ | ✅ | Runtime-generated parameters, tables, layouts, CRT, resampling, synthetic forward/opposite transforms, chirps, products, scaling, carry output, cleanup and small-input dispatch compose into a single fixed host program and hence a finite Mathlib machine. |
-| Actual step costs and final exponent | `MathlibTM2/Cost/*` | ✅ | ✅ | Component execution costs match the analytic bounds; `mr_loop_cost_le` discharges the final loop-cost premise, and `tot_htime` supplies the sub-n-log-n bound with the positive `totKappa` witness. |
+| Actual step costs and final exponent | `MathlibTM2/Cost/*` | ✅ | ✅ | Component execution costs match the analytic bounds; `mr_loop_cost_le` discharges the final loop-cost premise, and `tot_direct_htime` supplies the sub-n-log-n bound with the positive `totKappa` witness. |
 | Unconditional theorem and axiom checks | `MathlibTM2/Theorem`, `MathlibTM2/Statement`, `FastPathCheck`, `MathlibTM2Check`, `CompletedProofCheck`, `AxiomAudit` | ✅ | ✅ | `statement` proves the Mathlib-only proposition without arguments. The library audit and focused checks reject dependencies beyond `propext`, `Classical.choice` and `Quot.sound`. `CompletedProofCheck` independently audits the theorem's import closure without the all-components root, protecting the primary route during legacy retirement. |
+
+M2 uses actual direct CRT routing linear in the axis count, with complete
+runtime setup and cleanup, and reuses the existing linear resampling exposure.
+The final parameters are `epsilon=2^-5`, `c=2^-32`, and `lambda'=1-1/10^11`.
+The public exponent saving is `2^27` times the historical M1 value `2^-93`;
+this ratio is not a measured runtime speedup.
 
 ## Validation
 
@@ -52,7 +58,12 @@ Use the repository's guarded build and single-file checker for the library,
 includes private project declarations transitively; the focused fast-path
 check asserts the final theorem's exact three-axiom dependency set.
 
-Validated on 2026-10-14 against merge `9a7e575f` (PR #3):
+Final M2 verification on 2026-10-15 refreshed 113 affected modules and checks
+with the guarded single-file checker. `CompletedProofCheck.lean` audited
+111,887 declarations; `CRTControlCheck.lean` audited 172 contracts. Both passed,
+with peak RSS below 4.3 GiB. No full build ran and no proof limits were raised.
+
+Historical library-wide validation on 2026-10-14 against merge `9a7e575f` (PR #3):
 
 - Guarded library build: passed, 7,559 jobs, 5.0 minutes, 26.8 GiB peak combined RSS.
 - Full axiom audit: passed for 158,434 declarations.

@@ -30,7 +30,7 @@ up to `T`) that it reads and turns into interchange headers. The tables cost
 **Misfit.** The `2 (d - 1)` interchanges of axis `i` with the last axis cost
 `Θ(d T w ℓ^τ)` in total. This is not `O(totResamp)`: `totResamp = d T p^{1/2} α M(p)` and
 `ℓ^τ / (p^{1/2+δ} α) ≈ (B/d)^τ / (6^{5/8} 12^{1/4} B^{7/8} d^{1/2}) → ∞` (`ℓ ≈ B/d`,
-`α ≈ (12 d² B)^{1/4}`, `d = B^{2^{-30}}`). The sharp routing charge is `O(totDirectCRT) = O(T p d (1 + ℓ^τ))`.
+`α ≈ (12 d² B)^{1/4}`, `d = B^{2^{-5}}`). The sharp routing charge is `O(totDirectCRT) = O(T p d (1 + ℓ^τ))`.
 `mt_rsa_stage_le` retains the old quadratic envelope as a compatibility wrapper.
 -/
 

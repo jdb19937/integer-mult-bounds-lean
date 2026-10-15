@@ -19,8 +19,10 @@ The sharper target is the **selected** community construction at revision
 in individual notes. The [source pin](../docs/sharper-bound-source.json)
 records the selected certificate, supporting sources and manuscript digests.
 The original manuscript proves saving `2^-182`; our present Lean theorem proves
-`2^-93` after M1. The exact internal margin is `296 / (10^11 * 2^64)`,
-between `2^-93` and `2^-92`. The selected upstream
+`2^-66` after M2. The exact internal margin is `296 / (10^11 * 2^37)`,
+between `2^-66` and `2^-65`. Final parameters are `epsilon=2^-5`,
+`c=2^-32`, and `lambda'=1-1/10^11`. The public saving is `2^27` times
+the historical M1 saving `2^-93`, not a measured timing speedup. The selected upstream
 conditional saving is `0.001672660197076918`.
 
 ## Diagnosis: where our current bound is lost
@@ -28,30 +30,36 @@ conditional saving is `0.001672660197076918`.
 Write `a_b = 1 - tau = 296/10^11`, `a_c = 1 - sigma = 418/10^12`,
 `d ≍ p^epsilon`, `K ≍ d^c`, and `p ≍ log n`. Costs below are divided by
 input-scale volume `Tp ≍ n`. A term of size `p^x` allows saving at most `1-x`.
-These are the **current local** estimates in `MathlibTM2/Cost/Total.lean`,
+These are the **current local** estimates in `MathlibTM2/Cost/Total.lean` and `DirectTotal.lean`,
 not an assumption that every row already matches the sharper manuscript.
 
 | Original section | Current normalized charge or restriction | Consequence for the saving | Concrete bottleneck |
 | --- | --- | --- | --- |
 | §3.6, finite-network exponents | `tau = 1 - 2.96e-9`, `sigma = 1 - 4.18e-10` | Both primitive savings are tiny. | Local fixed networks have not been replaced by the selected suppliers. |
 | §4.2–4.3, address interchange | `O(u^tau)` per volume | Every routed field move inherits `tau`. | Arbitrary-gap correctness alone does not prove a cheaper whole schedule. |
-| §5.2–5.3 and Appendix A, layer control | Node overhead includes `(K e)^tau`; actual piece estimate is `d^(lambda+c)` times logarithms | `c < lambda' - lambda = 2e-10` in `mrP_eps_pos`; also the generic stopped-layer condition involves `tau(1+c/beta)`. | Full slot width is paid during basis/control changes. The actual current host recurses to level zero; the generic stopped recurrence is not itself a stopped implementation. |
+| §5.2–5.3 and Appendix A, layer control | Node overhead includes `(K e)^tau`; actual piece estimate is `d^(lambda+c)` times logarithms | `c < lambda' - lambda = 2.9e-10` in `mrP_eps_pos`; also the generic stopped-layer condition involves `tau(1+c/beta)`. | Full slot width is paid during basis/control changes. The actual current host recurses to level zero; the generic stopped recurrence is not itself a stopped implementation. |
 | §6.2, transform layout | `p K^(tau-1)` | **Current active bottleneck:** `epsilon c a_b`, exactly our proved `kappa`. | Moving many K-bit chunks multiplies the primitive saving by both small parameters. |
-| §§8.2, 9.3, CRT and axis exposure | `d^2 (1 + ell^tau)` | Saving `a_b - epsilon(1+a_b)`; positivity forces `epsilon < a_b/(1+a_b)`. | Quadratic adjacent field routing prevents a large dimension exponent even after tuning. |
+| §§8.2, 9.3, CRT and axis exposure | `d (1 + ell^tau)` | Saving `a_b(1-epsilon)`. | M2 connects actual direct routing and complete control/setup/cleanup costs to the running multiplier. |
 | §8.1–8.2, Gaussian arithmetic | Local bound has exponent `7/8 + 3 epsilon/2` | Saving `1/8 - 3 epsilon/2`; it would force `epsilon < 1/12`. | Present Gaussian width, inverse and line-by-line implementation cannot support the selected near-one dimension exponent. |
 | §7, packed ring products | Local logarithmic product factor has exponent bounded by `1-epsilon+epsilon c` | Saving `epsilon(1-c)`. | Must preserve a fast conventional subroutine and account for its extra logarithms under new parameters. Not currently binding. |
 | §9.7–9.8, precision and assembly | Maximum of all stage exponents, with exact recovery and fixed-machine assembly | The smallest surviving saving wins; isolated network improvement is insufficient. | Every changed stage must match actual costs and the exact recovery interface. |
 
-The direct optimization has a ceiling: as long as the quadratic CRT charge
-remains, `epsilon` must stay below about `3e-9`; as long as the current layer
-piece estimate remains, `c` must stay below `2e-10` with the current lambdas.
-Thus tuning alone cannot approach `0.00167`. It is an inexpensive first
-improvement and a way to expose the constraints before changing algorithms.
+Further scalar tuning has a ceiling. The preserved integer sizing contracts
+require `epsExp >= 20`, so `epsilon=2^-5` is the largest admissible dyadic
+choice; Gaussian arithmetic separately requires `epsilon<1/12`. The actual
+`MatchSynPcs.mrP_eps_pos` condition is `lambda+c<lambda'`, while
+`sigma<lambda` and the convolution margin require `1-lambda'>=c(1-tau)`.
+Together these force `c < (1-sigma)/(2-tau)`, approximately `4.18e-10`;
+`c=2^-32` is the largest dyadic choice even if the layer exponents are retuned.
+The retained leaf condition is `sigma+(1-sigma)/2<lambda'`, and the internal
+recurrence still requires `tau(1+2c)<=lambda`. All hold at the M2 parameters.
+The next structural task is M3 compact dirty controls, followed by width/stock
+contracts and balanced coordinate routing in M4–M5.
 
-## M1 completed: retune the existing construction
+## Historical M1: retune the existing construction
 
 **M1 — §§5, 6, 9:** `epsilon = 2^-30` and `c = 2^-34`, keeping the existing
-primitive exponents and layer exponents. The public theorem is now
+primitive exponents and layer exponents. The public theorem at that milestone was
 `MathlibTM2.mulInTime : MulInTime (2 ^ 93 : ℝ)⁻¹`.
 
 The exact internal saving, exposed separately by `mulInTime_exact`, is
@@ -74,10 +82,10 @@ Implementation completed:
    explicit public bound and allows only the three standard axioms. Use these
    focused checks for this change; a full-library rebuild is unnecessary.
 
-**Remaining minimum margin:** §6's layout term still gives the exact internal
-saving `epsilon c (1-tau)`. The next smallest current stage margin is the layer
-term `epsilon (1-lambda')`; CRT routing is still the restriction on increasing
-epsilon substantially. **Next task: M2**, direct CRT routing followed by retuning.
+**Historical M1 bottleneck:** layout gave `epsilon c (1-tau)`, and quadratic
+CRT limited epsilon. M2 has removed that routing restriction. The current
+minimum margin remains the layout term; the next smallest is the layer term
+`epsilon(1-lambda')`. M3 is the next implementation milestone.
 
 ## Section-by-section implementation work
 
@@ -127,7 +135,9 @@ that is a distinct fallback waypoint, not the exact selected target.
 
 #### §4 — Faster interchange of address chunks
 
-**M2 — direct nonadjacent axis routing, also §§8.2 and 9.3.**
+**M2 — complete: direct nonadjacent axis routing, also §§8.2 and 9.3.**
+The implementation chronology below records the original obligations and
+intermediate states; the completion summary gives the final status.
 The sharper [nonadjacent-axis note](https://github.com/CrocSwap/integer-mult-bounds/blob/0fdd7d82de03e43c9e5a1000dfbcd380d1b687d2/notes/nonadjacent-axis-note.tex)
 uses the existing arbitrary-gap primitive to reverse axes with paired distant
 swaps and expose each resampling axis with one swap and its inverse. It replaces
@@ -146,7 +156,7 @@ delete that term. Retain its exponent `2 epsilon` or prove the stronger
 controlled-rotation schedule needed by later near-one epsilon parameters. Keep the original axis arithmetic order so
 rounding and numerical correctness proofs can be reused. Price descriptors,
 cleanup and all intermediate data movement. Merely tightening `totCRT` would
-be unsound: the current CRT machine actually performs the quadratic schedule.
+be unsound: the historical CRT machine performed the quadratic schedule.
 
 **M2 implementation status:** the first bridge is proved in
 `Fast/CRTGap.lean`. `crtSwapGapBox` and `crtSwapGapBoxBits` connect the
@@ -315,7 +325,7 @@ The existing resampling programs now have sharp matching theorems
 `DirectGrowth.lean` proves the corresponding routing exponent margin
 `(1-epsilon)*(1-tau)`. The old cost APIs remain compatibility wrappers;
 the running main multiplier now uses direct routing and this aggregate scale.
-Retuning is still required to publish a stronger saving.
+The final retune below publishes the stronger saving.
 
 `CRTControlTarget.lean` now composes unary parameter preparation, descriptor
 production, routing-gap setup, distant exposure, rotation and full cleanup.
@@ -328,8 +338,9 @@ instantiation below, including runtime setup and padding/reversal assembly. Thes
 
 `DirectTotal.lean` supplies the aggregate envelope with linear routing and
 its logarithmic time-bound bridge, using the direct routing margin. It is
-checked at the existing parameters. The actual executable pipeline is now
-matched to this envelope; no stronger public saving is claimed before retuning.
+checked at the final M2 parameters and matched to the actual executable
+pipeline. Legacy quadratic asymptotic bounds now require an explicit exponent
+hypothesis; they do not justify the new public result.
 
 `MainDirectCore.lean` connects both linear resampling bounds to the existing
 source-transform core. `mn_core_le_linear` bounds its actual `srcCoreCost` by
@@ -373,33 +384,22 @@ programs and preserve exact multiplication semantics. `MainTimeRuns`,
 `CompletedProofCheck.lean` passed for 111885 declarations (peak 4.3 GiB),
 including the actual public fixed-machine theorem. No full build was used.
 
-Remaining integration steps, in order:
+**M2 completion summary:**
 
-1. **M2b — rotation scanner and producer: complete.** The actual all-fiber
-   rotation, workspace provisioning/restoration, runtime descriptor producer,
-   exact exposed tape, and matching production/rotation costs are proved.
-   These components preserve the existing triangular arithmetic semantics.
-2. **M2c — driver and matching: complete.** runtime parameter preparation, paired
-   reversal, complete entries and source transforms are proved with linear
-   costs. The running main multiplier and its final cost theorem now use
-   them; theorem dependencies and the completed-proof audit pass.
-   Resampling's linear exposure cost is now separated from the old quadratic
-   envelope; connect these sharper stage theorems to the aggregate budget.
-3. **M2d — bound:** retune power-of-two parameters only after all machine
-   costs match; check the theorem target and its focused axiom audit, then
-   update the scoreboard.
+1. **M2b complete:** actual all-fiber rotation, restored workspaces, runtime
+   descriptor production and actual production/rotation cost matching.
+2. **M2c complete:** runtime preparation, paired reversal, complete entries,
+   both source transforms and the running multiplier use direct routing.
+   Linear resampling costs are connected to the aggregate budget.
+3. **M2d complete:** executable roots use `epsilon=2^-5`, `c=2^-32`;
+   `lambda=1-3/10^10`, `lambda'=1-1/10^11`. The exact margin is
+   `296/(10^11 * 2^37)` and the public saving is **`2^-66`**. Guarded theorem
+   checks and the focused axiom audit validate the complete fixed machine.
 
-The current unconditional saving remains **`2^-93`**. M2a removes a primitive
-integration obligation, not the quadratic charge in the running multiplier.
-Targeted verification for M2a: compile `Fast/CRTGap.lean` with
-`check-lean-safe.py` and `-o .lake/build/lib/lean/IntegerMultBounds/MathlibTM2/Fast/CRTGap.olean`,
-then run the same guarded checker on `CRTGapCheck.lean`. Reuse existing
-dependency artifacts; no full build is needed.
-
-**Done means:** proved linear CRT swap count, reuse of the already linear
-resampling exposure, exact permutation equivalence,
-actual-step matching and a retuned end-to-end theorem showing the gain. This
-is the first structural change after M1 and removes the tight cap on epsilon.
+The CRT charge is genuinely linear in the axis count, including all setup,
+controls, physical movement and cleanup. M2 preserves the exact multiplication
+semantics and improves the public exponent saving by `2^27` over historical M1.
+It does not claim a corresponding wall-clock speedup. M3 is next.
 
 #### §5 — Fast simultaneous synthetic butterfly layers; Appendix A
 
@@ -577,14 +577,11 @@ reduction interfaces and encoding overhead if those corollaries are desired.
 
 ## Execution order and decision gates
 
-1. **M1 complete:** public saving `2^-93`; exact internal margin between
+1. **M1 complete, historical:** public saving `2^-93`; exact internal margin between
    `2^-93` and `2^-92`, with the existing existential theorem preserved.
-2. **M2 in progress:** complete all-fiber rotation, workspace restoration,
-   width setup, generator kernels, linear schedule and distant exposure/cleanup
-   checked; descriptor production and full target execution are complete. Finish
-   concrete driver integration, then retune and publish
-   the resulting stronger theorem. This yields a structural improvement
-   without importing the large selected supplier inventory.
+2. **M2 complete:** actual linear direct CRT and linear resampling costs feed
+   the public fixed-machine theorem. Final retuning proves public saving
+   `2^-66`, with exact margin `296/(10^11 * 2^37)`.
 3. **M3–M5:** compact controls, width/stock contracts and balanced coordinate
    routing. Establish these interfaces first using the current smaller
    networks. Prove and record intermediate unconditional bounds after each
@@ -602,5 +599,5 @@ Retain reusable frame/rank/precision mathematics until its role is resolved.
 Use only guarded Lean scripts, preserve proof limits and integrity, exclude
 unrelated work, and commit/push each checked logical section. The original
 planning update checked the selected bootstrap and final-margin
-arithmetic against the pinned assembly. M1 now additionally has a checked
-Lean machine theorem and focused axiom audit; M2–M8 remain unfinished.
+arithmetic against the pinned assembly. M1 and M2 have checked
+Lean machine theorems and focused axiom audits; M3–M8 remain unfinished.

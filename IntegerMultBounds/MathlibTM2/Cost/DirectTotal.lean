@@ -29,7 +29,8 @@ theorem tot_direct_le (C : ℕ) :
   have hBe : 1 ≤ (b n : ℝ) ^ (1 - totKappa) := Real.one_le_rpow hB1 he0
   have hW : (n : ℝ) ≤ (n : ℝ) * (b n : ℝ) ^ (1 - totKappa) := le_mul_of_one_le_right hN hBe
   have hmargin : totKappa ≤ (1 - epsilon) * (1 - Parameters.tau) := by
-    rw [tot_kappa_eq, epsilon_eq]; norm_num [Parameters.tau]
+    have hdirect := tot_exp_facts.2.2.1
+    nlinarith
   have hcrt := tot_directCRT_le h totKappa hmargin
   have hres := tot_resamp_le h
   have hconv := tot_conv_le h hK hlog

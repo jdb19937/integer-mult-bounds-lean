@@ -5,7 +5,7 @@ public import IntegerMultBounds.MathlibTM2.Layer.Recurrence
 public import IntegerMultBounds.Parameters
 
 /-!
-# The analytic total-time bound of the fast multiplier
+# Shared analytic bounds and the legacy quadratic CRT envelope
 
 `totBound C n` is `C` times the sum of the stage costs of `docs/fast-pipeline.md` at operand
 length `n`, each written in the parameters of `Mult/Sizes.lean`. One `p`-bit product costs
@@ -25,8 +25,8 @@ count `m (log m + 1)(log log m + 1)` of `Host/SSMul` by `625 m^{1+δ}`.
 | `n + B^C` | F2 parameter machine | |
 
 Exponents: `τ = 1 - 296/10¹¹`, `σ = 1 - 418/10¹²` (`IntegerMultBounds.Parameters`), `β = 1/2`,
-`λ = 1 - 3/10¹⁰` (`totLam`), `λ' = 1 - 1/10¹⁰` (`totLam'`), and
-`κ = ε c (1 - τ) = 296 / (10¹¹ · 2⁶⁴)` (`totKappa`, `tot_kappa_eq`). The ring-product factor is
+`λ = 1 - 3/10¹⁰` (`totLam`), `λ' = 1 - 1/10¹¹` (`totLam'`), and
+`κ = ε c (1 - τ) = 296 / (10¹¹ · 2³⁷)` (`totKappa`, `tot_kappa_eq`). The ring-product factor is
 `grLogLog X = (log₂ X + 1)(log₂ (log₂ X + 1) + 1)` (`Cost/Growth`); `gr_ringBound_le` bounds the
 packed ring product `rpRingBound N` of `Fast/RingProd` on `N ≤ A r p` bits by a constant times
 `r p · grLogLog (r p)`.
@@ -44,14 +44,17 @@ With `B = b n` and `T p ≤ 48 n` (`gr_Tp_le`), each term is at most a constant 
 | `T M(p)`, `S M(p)` | `δ` |
 | `n`, `T p`, `n + B^C` | `0` |
 
-The largest is `1 - κ`, from the term `T p · p K^{τ-1}`.
+For the direct CRT envelope, the largest exponent is `1 - κ`, from
+`T p · p K^{τ-1}`. The legacy quadratic CRT exponent exceeds this bound at the
+retuned dimension. Its bounds below therefore require an explicit `hCRT`
+comparison; the executable pipeline uses the unconditional results in `DirectTotal`.
 
 * `tot_lam_conditions`: `max τ σ < λ < 1`, `τ (1 + c/β) ≤ λ`, `max λ (σ + β(1-σ)) < λ' < 1`;
   `tot_layer_cost_bound` is `Layer.Recurrence.layer_cost_bound` at these exponents.
 * `tot_crt_le`, `tot_resamp_le`, `tot_conv_le`, `tot_mp_le`: the term bounds.
-* `tot_le`: eventually `totBound C n ≤ 40000 C n B^{1-κ}`.
-* `totBound_isBigO_kappa`, `totBound_isBigO`: `totBound C = O(n (log n)^{1-κ})`.
-* `tot_htime`: an `ℕ`-valued `time` with `time n ≤ totBound C n` eventually satisfies the
+* Under `hCRT`, `tot_le`: eventually `totBound C n ≤ 40000 C n B^{1-κ}`.
+* Under `hCRT`, `totBound_isBigO_kappa`, `totBound_isBigO`: `totBound C = O(n (log n)^{1-κ})`.
+* Under `hCRT`, `tot_htime`: an `ℕ`-valued `time` with `time n ≤ totBound C n` eventually satisfies the
   hypothesis `htime` of `Fast.statement_of_dispatch` at `κ = totKappa`.
 -/
 
@@ -70,13 +73,13 @@ noncomputable def totDelta : ℝ := 1 / 8
 /-- `λ = 1 - 3/10¹⁰`, the exponent of the layer recursion. -/
 noncomputable def totLam : ℝ := 1 - 3 / 10 ^ 10
 
-/-- `λ' = 1 - 1/10¹⁰`, the exponent of the layer cost `O(V d^{λ'})`. -/
-noncomputable def totLam' : ℝ := 1 - 1 / 10 ^ 10
+/-- `λ' = 1 - 1/10¹¹`, the exponent of the layer cost `O(V d^{λ'})`. -/
+noncomputable def totLam' : ℝ := 1 - 1 / 10 ^ 11
 
 /-- `κ = ε c (1 - τ)`. -/
 noncomputable def totKappa : ℝ := epsilon * cParam * (1 - Parameters.tau)
 
-theorem tot_kappa_eq : totKappa = 296 / (10 ^ 11 * 2 ^ 64) := by
+theorem tot_kappa_eq : totKappa = 296 / (10 ^ 11 * 2 ^ 37) := by
   rw [totKappa, epsilon_eq, cParam_eq, Parameters.tau]; norm_num
 
 theorem tot_kappa_pos : 0 < totKappa := by rw [tot_kappa_eq]; norm_num
@@ -136,10 +139,10 @@ theorem tot_layer_cost_bound {m : ℕ} {a C₀ C₁ C₂ Q : ℝ} (hm : 2 ≤ m)
     tot_sigma_lt_lam tot_tau_nonneg (by norm_num) gr_cParam_pos.le tot_tau_c_le tot_lam_lt_lam'
     tot_leaf_lt_lam' hC₀ hC₁ hC₂ hQ
 
-/-- The exponent comparisons of the term bounds against `1 - κ`. -/
+/-- The direct CRT and shared stage exponent comparisons against `1 - κ`. -/
 theorem tot_exp_facts :
     0 ≤ 1 - totKappa ∧ 2 * epsilon ≤ 1 - totKappa ∧
-      epsilon * (2 - Parameters.tau) + Parameters.tau ≤ 1 - totKappa ∧
+      epsilon * (1 - Parameters.tau) + Parameters.tau ≤ 1 - totKappa ∧
       epsilon + (epsilon * (1 / 2) + 1 / 4) + (1 / 2 + totDelta) ≤ 1 - totKappa ∧
       1 - epsilon * (1 - totLam') ≤ 1 - totKappa ∧
       1 - epsilon + epsilon * cParam ≤ 1 - totKappa ∧ totDelta ≤ 1 - totKappa := by
@@ -207,9 +210,12 @@ theorem tot_mp_le (h : Big n) :
         mul_le_mul h2 h1 (by positivity) (by positivity)
     _ = 288 * ((n : ℝ) * (b n : ℝ) ^ (1 - totKappa)) := by ring
 
-/-- `T p d² (1 + ℓ^τ) ≤ 144 n B^{1-κ}`. -/
-theorem tot_crt_le (h : Big n) : totCRT n ≤ 144 * ((n : ℝ) * (b n : ℝ) ^ (1 - totKappa)) := by
-  obtain ⟨-, h2e, hcrt, -, -, -, -⟩ := tot_exp_facts
+/-- The legacy quadratic CRT bound, conditional on its exponent comparison. -/
+theorem tot_crt_le
+    (hCRT : epsilon * (2 - Parameters.tau) + Parameters.tau ≤ 1 - totKappa) (h : Big n) :
+    totCRT n ≤ 144 * ((n : ℝ) * (b n : ℝ) ^ (1 - totKappa)) := by
+  obtain ⟨-, h2e, -, -, -, -, -⟩ := tot_exp_facts
+  have hcrt := hCRT
   have hB1 := tot_one_le_b h
   have hB : (0 : ℝ) < b n := by linarith
   have hD : (0 : ℝ) < d n := by exact_mod_cast h.one_le_d
@@ -410,7 +416,8 @@ theorem tot_eventually (C : ℕ) :
   exact ⟨h1, h2, h3, h4, h5⟩
 
 /-- `0 ≤ totBound C n ≤ 40000 C n B^{1-κ}` for all large `n`. -/
-theorem tot_le (C : ℕ) :
+theorem tot_le
+    (hCRT : epsilon * (2 - Parameters.tau) + Parameters.tau ≤ 1 - totKappa) (C : ℕ) :
     ∀ᶠ n in atTop, 0 ≤ totBound C n ∧
       totBound C n ≤ 40000 * C * ((n : ℝ) * (b n : ℝ) ^ (1 - totKappa)) := by
   filter_upwards [tot_eventually C] with n ⟨h, hK, hlog, hbC, _⟩
@@ -419,7 +426,7 @@ theorem tot_le (C : ℕ) :
   have hN : (0 : ℝ) ≤ n := Nat.cast_nonneg _
   have hBe : 1 ≤ (b n : ℝ) ^ (1 - totKappa) := Real.one_le_rpow hB1 he0
   have hW : (n : ℝ) ≤ (n : ℝ) * (b n : ℝ) ^ (1 - totKappa) := le_mul_of_one_le_right hN hBe
-  have hcrt := tot_crt_le h
+  have hcrt := tot_crt_le hCRT h
   have hres := tot_resamp_le h
   have hconv := tot_conv_le h hK hlog
   have hmp := tot_mp_le h
@@ -455,31 +462,35 @@ theorem tot_le (C : ℕ) :
     _ = 40000 * C * ((n : ℝ) * (b n : ℝ) ^ (1 - totKappa)) := by ring
 
 /-- **The total-time bound**: `totBound C = O(n (log n)^{1-κ})` at `κ = totKappa`. -/
-theorem totBound_isBigO_kappa (C : ℕ) :
+theorem totBound_isBigO_kappa
+    (hCRT : epsilon * (2 - Parameters.tau) + Parameters.tau ≤ 1 - totKappa) (C : ℕ) :
     (fun n => totBound C n) =O[atTop] fun n : ℕ => (n : ℝ) * Real.log n ^ (1 - totKappa) := by
   have h1 : (fun n => totBound C n) =O[atTop]
       fun n : ℕ => (n : ℝ) * (b n : ℝ) ^ (1 - totKappa) := by
     apply IsBigO.of_bound (40000 * C)
-    filter_upwards [tot_le C] with n ⟨h0, h⟩
+    filter_upwards [tot_le hCRT C] with n ⟨h0, h⟩
     rw [Real.norm_of_nonneg h0, Real.norm_of_nonneg (by positivity)]
     exact h
   exact h1.trans (gr_isBigO_b_rpow tot_exp_facts.1)
 
 /-- **The total-time bound**: `totBound C = O(n (log n)^{1-κ})` for some `κ > 0`. -/
-theorem totBound_isBigO (C : ℕ) :
+theorem totBound_isBigO
+    (hCRT : epsilon * (2 - Parameters.tau) + Parameters.tau ≤ 1 - totKappa) (C : ℕ) :
     ∃ κ : ℝ, 0 < κ ∧
       (fun n => totBound C n) =O[atTop] fun n : ℕ => (n : ℝ) * Real.log n ^ (1 - κ) :=
-  ⟨totKappa, tot_kappa_pos, totBound_isBigO_kappa C⟩
+  ⟨totKappa, tot_kappa_pos, totBound_isBigO_kappa hCRT C⟩
 
 /-- **The hypothesis `htime` of `Fast.statement_of_dispatch`** at `κ = totKappa`, for an
 `ℕ`-valued `time` bounded by `totBound C` for all large `n`. -/
-theorem tot_htime (C : ℕ) {time : ℕ → ℕ} (h : ∀ᶠ n in atTop, (time n : ℝ) ≤ totBound C n) :
+theorem tot_htime
+    (hCRT : epsilon * (2 - Parameters.tau) + Parameters.tau ≤ 1 - totKappa) (C : ℕ)
+    {time : ℕ → ℕ} (h : ∀ᶠ n in atTop, (time n : ℝ) ≤ totBound C n) :
     (fun n => (time n : ℝ)) =O[atTop] fun n : ℕ => (n : ℝ) * Real.log n ^ (1 - totKappa) := by
   have h1 : (fun n => (time n : ℝ)) =O[atTop] fun n => totBound C n := by
     apply IsBigO.of_bound 1
-    filter_upwards [h, tot_le C] with n hn ⟨h0, _⟩
+    filter_upwards [h, tot_le hCRT C] with n hn ⟨h0, _⟩
     rw [Real.norm_of_nonneg (Nat.cast_nonneg _), Real.norm_of_nonneg h0, one_mul]
     exact hn
-  exact h1.trans (totBound_isBigO_kappa C)
+  exact h1.trans (totBound_isBigO_kappa hCRT C)
 
 end IntegerMultBounds.MathlibTM2.Cost
