@@ -2,7 +2,8 @@
 """Inventory modules removable from the completed proof's import graph.
 
 This is an import-dependency audit, not a declaration-use analysis or a deletion
-command. The public Mathlib entry point and focused checks are protected too.
+command. Public interfaces, focused checks and active compact development are
+protected too. An unprotected module is not automatically obsolete.
 """
 import argparse
 import collections
@@ -14,6 +15,11 @@ ROOT = Path(__file__).resolve().parent.parent
 THEOREM = 'IntegerMultBounds.MathlibTM2.Theorem'
 PUBLIC_ROOTS = ('IntegerMultBounds.MathlibTM2', 'FastPathCheck',
                 'MathlibTM2Check', 'CompletedProofCheck')
+DEVELOPMENT_ROOTS = ('CompactControlCheck', 'CRTControlCheck', 'CRTGapCheck',
+                     'IntegerMultBounds.Schoenhage.LayoutSequencePilot',
+                     'IntegerMultBounds.Schoenhage.LayoutAdapterPilot')
+DEVELOPMENT_PREFIXES = tuple(f'IntegerMultBounds.MathlibTM2.{directory}.Compact'
+                             for directory in ('Node', 'Fast', 'Cost'))
 
 
 def imports(source):
@@ -110,10 +116,15 @@ def inventory(root=ROOT):
             raise ValueError(f'{module} imports missing local modules: {sorted(missing)}')
     proof = closure(graph, [THEOREM])
     public = closure(graph, PUBLIC_ROOTS)
+    # New compact-host modules may not yet be wired into their focused check.
+    development_roots = set(DEVELOPMENT_ROOTS) | {
+        module for module in graph if module.startswith(DEVELOPMENT_PREFIXES)}
+    development = closure(graph, development_roots)
     package = {module for module in graph if module.startswith('IntegerMultBounds.')}
-    candidates = package - public
+    protected = public | development
+    candidates = package - protected
     # No retained module may have an import into the proposed removal set.
-    incoming = {(m, dep) for m in public for dep in graph[m] if dep in candidates}
+    incoming = {(m, dep) for m in protected for dep in graph[m] if dep in candidates}
     if incoming:
         raise ValueError(f'Retained imports into candidate set: {sorted(incoming)}')
 
@@ -123,7 +134,7 @@ def inventory(root=ROOT):
                 'by_directory': dict(sorted(collections.Counter(
                     module_path(m).rsplit('/', 1)[0] for m in modules).items()))}
 
-    # Legacy check files are outside the primary verification surface, but
+    # Legacy check files are outside the primary/development verification surface, but
     # their direct imports must be retired or retained when a purge is made.
     legacy_checks = {}
     legacy_roots = set()
@@ -133,20 +144,23 @@ def inventory(root=ROOT):
         used = direct & candidates
         if used:
             legacy_checks[str(path.relative_to(root))] = sorted(map(module_path, used))
-    legacy_extra = closure(graph, legacy_roots) - public
+    legacy_extra = closure(graph, legacy_roots) - protected
     conservative = candidates - legacy_extra
 
     return {
         'theorem_root': THEOREM,
         'protected_roots': list(PUBLIC_ROOTS),
-        'scope': 'Import closure only; candidates may still support the stronger native target.',
+        'development_roots': sorted(development_roots),
+        'scope': 'Import closure only; unprotected candidates are retained unless separately reviewed as obsolete.',
         'primary_proof': stats(proof),
         'public_compatibility_extra': stats((public - proof) & package),
+        'development_extra': stats((development - public) & package),
         'candidates': stats(candidates),
         'legacy_audit_extra': stats(legacy_extra),
         'conservative_candidates': stats(conservative),
         'retain_for_proof': sorted(map(module_path, proof)),
         'retain_for_public_compatibility': sorted(map(module_path, (public - proof) & package)),
+        'retain_for_development': sorted(map(module_path, (development - public) & package)),
         'candidate_files': sorted(map(module_path, candidates)),
         'retain_for_legacy_audits': sorted(map(module_path, legacy_extra)),
         'conservative_candidate_files': sorted(map(module_path, conservative)),
@@ -170,7 +184,7 @@ def main():
                 parser.exit(1, 'Proof-retention manifest is out of date.\n')
         else:
             args.manifest.write_text(rendered)
-    for key in ('primary_proof', 'public_compatibility_extra', 'candidates',
+    for key in ('primary_proof', 'public_compatibility_extra', 'development_extra', 'candidates',
                 'legacy_audit_extra', 'conservative_candidates'):
         info = data[key]
         print(f'{key}: {info["modules"]} modules, {info["lines"]:,} lines')

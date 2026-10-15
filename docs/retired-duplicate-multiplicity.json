@@ -1,0 +1,10 @@
+{
+  "baseline": "d79930539fa9c0bd3a38b1bdd45def69de94c7ab",
+  "reason": "Duplicate native multiplicity construction; UnitPhasePolynomialMultiplicity retains the same slots, machine, output and cost, with equivalent encoded-input hypotheses.",
+  "total_files": 1,
+  "total_lines": 57,
+  "files": [
+    "IntegerMultBounds/Machine/UnitPhaseMultiplicity.lean"
+  ],
+  "replacement": "IntegerMultBounds/Machine/UnitPhasePolynomialMultiplicity.lean"
+}
