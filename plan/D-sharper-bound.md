@@ -527,12 +527,21 @@ retains the compact-width bound with coefficient `2^(slotExponent(T,D)+9)`,
 independent of runtime dimensions. `Fast/CompactTopRows.lean` includes every
 outside row and high spectator when padding: the resulting row count is at
 most twice the original stock, is divisible by the global recursive divisor,
-and validates the unchanged piece records. The focused audit now covers 50
-contracts.
+and validates the unchanged piece records.
 
-**Next integration boundary:** supply the thirteen runtime unary values: chunk,
-global axes, guard, active axes, native rows, payload, slot count, slot width,
-left/right spectators, selected residue and reversed source/target slots.
+**Runtime stage descriptor arithmetic checked:**
+`Node/CompactDescriptorArithmetic.lean` and `CompactDescriptorPadding.lean`
+compute width `L/(m*K)`, right spectators `(a0-oS-backBits)/K`, and left
+spectators `active-m*width-right`, preserving inputs and restoring scratch
+with exact costs. `compactDescriptorStage_exact` proves these are the desired
+counts when `L=K*(m*k)`, `a0=oS+backBits+K*right`, and
+`active=left+m*k+right`. The start offset excludes the selected residue;
+`backBits=K*backChunks`, not merely the chunk count. Dispatch level-zero leaves
+separately. The focused audit now covers 53 contracts.
+
+**Next integration boundary:** connect the computed width/left/right outputs
+to their header positions, and supply the remaining runtime unary values: chunk,
+global axes, guard, active axes, native rows, payload, fixed slot count, selected residue and reversed source/target slots.
 The root builder clears derived active count, so preserve it in the caller or
 rederive it explicitly. After folding low offset `oS`, use payload
 `2^oS * (3*r*w)` and native rows `R * 2^(n-oS-s.bits)`, with the corresponding

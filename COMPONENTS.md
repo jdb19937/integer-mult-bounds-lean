@@ -6191,3 +6191,5 @@ Parameters and asymptotics.
 - `MathlibTM2/Fast/CompactSynRecRoot.lean`: Concrete original-input composition of exact row-axis calculation, reserved piece production and scratch cleanup; its generic internal composition is discharged by actual executions.
 - `MathlibTM2/Cost/CompactPrepared.lean`: Setup and cleanup are bounded by 274 and 105 times native volume; the complete prepared slot operation retains compact-width cost with fixed power-of-two coefficient.
 - `MathlibTM2/Fast/CompactTopRows.lean`: Actual top-level row padding includes outside rows and high spectators, is at most twice original row stock, and validates the rebased piece records using the single global divisor.
+
+- `MathlibTM2/Node/CompactDescriptorArithmetic.lean`, `Node/CompactDescriptorPadding.lean`: Actual runtime quotient and width/right/left descriptor calculation with preserved inputs, restored scratch and exact costs. Exact physical-layout equations identify the outputs with the intended slot and spectator counts; remaining descriptor values and header placement stay explicit.
