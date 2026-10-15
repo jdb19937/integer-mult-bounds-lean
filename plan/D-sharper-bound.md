@@ -646,6 +646,20 @@ Propagate the complete execution costs and discharge remaining caller sizing; re
 does not establish the complete reserved transform. M3 remains open and public
 saving remains `2^-66`.
 
+**Actual caller integration gate:** `Fast/SynRound.lean`'s `SynV` starts
+all scratch registers empty. The new constructor's `s0=d`, `s1=guard` and
+`s7=offset` must therefore be computed or loaded from retained original
+parameters, not assumed at multiplier entry. `SynP.D` stores the current
+axis-list length; retain the original dimension when selections shrink, and
+retain original precision to compute `guard=4*clog2(p)+6` (working width is
+not that precision). The existing rest-state initializer also consumes
+`p.kh` and `p.rh`, whereas compact configuration production returns only
+piece/configuration records and working width: initialize the actual stride
+and phase explicitly. Then compose shared-host setup, record construction,
+rest initialization, stash, top execution, pop, unstash and cleanup, charging
+every stage and restoring the original round frame. Keep a proved fallback
+for selections below the reservation cutoff.
+
 Prove complete temporary address ranges survive every role split, arbitrary
 initial temporary values are restored, and exceptional extraction, sorting,
 reinsertion and cleanup are charged at each node's own volume. Add an actual
