@@ -1435,3 +1435,18 @@ back leaf costs at most `512*B*V`, with actual floor-chunk bound
 principal standard-axiom audits pass. Hosting/layer replacement, the relation
 between selected-axis cutoff and ambient dimension, and asymptotic active
 cost absorption remain to connect.
+
+### Completed small-gap Gaussian inverse mathematics
+
+Pairing the nearest positive and negative offsets proves that only one can
+attain the worst rounding error. Together with the entire-lattice tail, this
+gives the actual normalized operator a row gap `1/(4p)` when `p≥2`,
+`8p≤2^u`, `alpha²=u`, and `theta≥1/(4p)`. The exact two-sided inverse has
+norm at most `4p`. The actual corrected periodic rounded matrix then has a
+two-sided inverse of norm at most `8p`, differing from the exact inverse by at
+most `32p²/2^(45p)` under the checked similarity/precision conditions.
+The older restriction `alpha²*theta≥1` is absent. All three guarded checks and
+the eight-declaration standard-axiom audit pass. These are actual operator
+inverses; their fast Toeplitz/Schur/core/halo realization, boundary composition,
+prime supply, normalization and charged machine costs remain open. The public
+fixed-machine saving is still `2^-34`.
