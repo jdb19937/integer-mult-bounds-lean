@@ -28,7 +28,7 @@ machine that multiplies every input pair correctly in worst-case time
 
 | Part of the proof | Source | Mathematics | Tape | Files |
 | --- | --- | --- | --- | --- |
-| [Proved Mathlib end-to-end multiplier](plan/C-mathlib-end-to-end.md) | — | ✅ 1/1 | ✅ 1/1 | 380 |
+| [Proved Mathlib end-to-end multiplier](plan/C-mathlib-end-to-end.md) | — | ✅ 1/1 | ✅ 1/1 | 397 |
 
 The [proof details](plan/C-mathlib-end-to-end.md) cover the numerical
 algorithm, recursive layers, transforms, resampling, CRT routing, exact
@@ -82,12 +82,24 @@ criteria are in the [implementation plan](plan/D-sharper-bound.md).
 | --- | --- | --- | --- | --- |
 | **M1** | ✅ | **§§5, 6, 9** | **Set `epsilon=2^-30`, `c=2^-34`; reprove dependent sizing, executable parameter generation, cost and machine lemmas.** | **Complete, historical.** Public saving `kappa=2^-93`; exact internal margin `296/(10^11 * 2^64)` lies between `2^-93` and `2^-92`. Internal margin improved by `2^67`; public saving improves the former exact bound by more than `2^66`. |
 | M2 | ✅ | §§4.3, 8.2, 9.3 | Replace adjacent CRT walks by direct nonadjacent swaps; preserve exact semantics and price setup, controls, movement and cleanup. | **Complete.** The running multiplier uses linear CRT routing and sharp linear resampling costs. Final parameters `epsilon=2^-5`, `c=2^-32`, `lambda'=1-1/10^11` give exact margin `296/(10^11 * 2^37)` and public saving `2^-66`; theorem and focused audit pass. |
-| M3 | 🟡 | §5.2–5.3, Appendix A | Compact dirty-control host adapter, stopped recursion and locally charged exceptional repair. | **In progress.** Compact slot execution, runtime headers and complete costs, root records, reserved geometry/coverage and padded-row contracts are checked. All slot descriptors are computed, executed and cleared; top selection and the configuration constructor are checked. Exact compact transform semantics, computed basis execution, and actual runtime packing/reservation bounds are checked. Concrete basis registers are wired. Original-input configuration and exact row-stock bridges are complete. The compact factor executes, and complete basis costs retain compact width. Recursive layer execution and the generic top kernel are checked; factor costs preserve compact width. The complete generic top runner and compact layer placement are checked, with canonical basis budgets and intermediate precision proved. Concrete top execution, actual piece readiness and the closed layer recurrence are checked. Next initialize and integrate the complete caller, sum top costs, and add stopped recursion. Public saving remains `2^-66`. |
+| M3 | 🟡 | §5.2–5.3, Appendix A | Compact dirty controls, actual caller integration, stopped recursion and local repair costs. | **In progress.** Compact runtime, recursive layers, persistent setup/refresh/cleanup and individual round stages are checked. Next compose the chunk round and main caller, assemble complete costs, then add stopped recursion. Public saving remains `2^-66`. |
 | M4 | ⬜ | §5.4, §9.7 | Linear completed-child precision bound and explicit recursive workspace/stock contracts. | Planned. Remove conservative guard-growth restrictions and prove the reserve coefficients required at selected cutoffs. |
 | M5 | ⬜ | §6.2, §4 | Balanced prefix and arbitrary-source coordinate routing in both transform directions. | Planned. Replace layout saving `epsilon c a_b` by direct movement saving `a_b`; restore spectators and frequency order. |
 | M6 | ⬜ | §3.1–3.6, §§4–5 interfaces | Prove both selected finite suppliers, their variable-rank moments and the 144-call owner schedule. | Planned. Target primitive endpoints about `0.00173343` (bit) and `0.00167546` (complex); component bounds alone do not update the final bound. |
 | M7 | ⬜ | §8.1–8.3, §9.2/9.7 | Prove faster rounded Gaussian inverse and bulk core/halo tape execution, including prime supply and exact recovery interfaces. | Planned. Remove the current Gaussian restriction on epsilon; establish the selected near-one-dimension parameter regime. |
 | M8 | ⬜ | §9.1–9.8 | Prove bootstrap base/stages, link all 47 inequalities to actual stages and close the audited fixed-machine theorem. | Planned. Goal: exact unconditional saving `0.001672660197076918`. |
+
+### M3 integration progress
+
+| Deliverable | Progress | Remaining gate |
+| --- | --- | --- |
+| Compact slot, basis, factor and recursive layer execution | ✅ | Checked actual programs and local costs. |
+| Full runtime top transform and original size/precision bridges | ✅ | No per-piece readiness or execution premise remains. |
+| Persistent original guard/dimension, per-round refresh and cleanup | ✅ | Checked from explicit original parameter sources. |
+| Individual round stages and expanded main-host placement | ✅ | Checked staging/frame contracts and register embeddings. |
+| Complete chunk round and actual main-input bootstrap | 🟡 | Compose stages and connect named original sources. |
+| Complete transform cost and multiplier bound | 🟡 | Sum actual calls, controls and setup; retain direct early/terminal rounds. |
+| Stopped recursion | ⬜ | Required for the later selected construction; not yet implemented. |
 
 **Execution order:** M1–M2 complete → M3–M5 → M6/M7 → M8. Use current
 smaller networks while establishing the structural interfaces; then plug in

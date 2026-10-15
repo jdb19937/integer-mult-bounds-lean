@@ -33,4 +33,36 @@ theorem compactTopUnitSCost_linear (cfg : List ℕ) (R N r w D : ℕ)
   unfold compactTopUnitSCost compactTopUnitCost
   nlinarith only [hcoeff, Nat.zero_le (R*2^N*r*w)]
 
+/-- Widening charges the output width, including both unary header cleanups. -/
+theorem compactTopWidenSCost_linear (cfg : List ℕ) (R N r w w' : ℕ)
+    (hw' : 1 ≤ w') (hww : w ≤ w') :
+    compactTopWidenSCost cfg R N r w w' ≤
+      topGetCost cfg + 16*(R*2^N*(r*w')) + 12*w' + 16 := by
+  have hcoeff : R*2^N*r ≤ R*2^N*r*w' := Nat.le_mul_of_pos_right _ hw'
+  have hsub : w'-w+w=w' := Nat.sub_add_cancel hww
+  have hsubmul := congrArg (fun x => (R*2^N*r)*x) hsub
+  unfold compactTopWidenSCost topWidenCost
+  nlinarith only [hcoeff,hsubmul,hww,Nat.sub_le w' w,Nat.zero_le (R*2^N*r*w')]
+
+/-- Per-word truncation is linear in the working width. -/
+theorem compactTopShiftWordCost_linear (w' s w : ℕ) (hsw : s+w ≤ w') :
+    topShiftWordCost w' s w ≤ 16*w'+22 := by
+  have hsub : w'-s-w+s+w=w' := by omega
+  unfold topShiftWordCost
+  omega
+
+/-- Final truncation charges actual working-width volume and explicit headers. -/
+theorem compactTopShiftSCost_linear (cfg : List ℕ) (R N r w' s w : ℕ)
+    (hw' : 1 ≤ w') (hsw : s+w ≤ w') :
+    compactTopShiftSCost cfg R N r w' s w ≤
+      2*topGetCost cfg + 64*(R*2^N*(r*w')) + 16*w'+24 := by
+  have hc := compactTopShiftWordCost_linear w' s w hsw
+  have hcoeff : R*2^N*r ≤ R*2^N*r*w' := Nat.le_mul_of_pos_right _ hw'
+  have hmul := Nat.mul_le_mul_left (R*2^N*r) hc
+  have hw : w ≤ w' := by omega
+  have hvol := Nat.mul_le_mul_left (R*2^N*r) hw
+  have hsub : w'-s-w ≤ w' := (Nat.sub_le _ _).trans (Nat.sub_le _ _)
+  unfold compactTopShiftSCost topShiftCost
+  nlinarith only [hmul,hcoeff,hvol,hsw,hsub,Nat.zero_le (R*2^N*r*w')]
+
 end IntegerMultBounds.MathlibTM2.Cost

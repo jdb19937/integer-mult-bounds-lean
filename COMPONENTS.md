@@ -3529,7 +3529,6 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 - `Machine/SparsePhaseFlagsCaller.lean`: Original stage geometry and live address produce sparse headers and phase flags once per address, preserving an arbitrary coefficient workspace and charging preparation independently of polynomial multiplicity.
 
-
 - `Machine/UnitPhaseSharedCoefficient.lean`: A real read/phase/emit/reset body applies retained computed phase flags to one coefficient, preserves those flags and every other caller tape, and erases numerator work with exact native output and linear stored-width cost.
 
 - `Machine/UnitPhasePolynomialLoop.lean`: One fixed counted loop applies shared phase flags across the actual polynomial multiplicity, preserving the count and flags while erasing loop workspace. Runtime pays every coefficient and counted-control transition.
@@ -6239,3 +6238,14 @@ Parameters and asymptotics.
 - `MathlibTM2/Node/CompactBasisSetupFrame.lean`, `CompactBasisSetupOutput.lean`, `CompactBasisSetup.lean`: Actual shared-host persistent-bank initialization from original source words with exact seven-register output, preserved sources, restored scratch and unchanged execution costs.
 
 - `MathlibTM2/Cost/CompactTopControlBound.lean`: Actual full-array phase scans and final unit multiplication have linear volume bounds under explicit address/payload conditions; configuration reads and unary headers remain charged separately.
+
+- `MathlibTM2/Fast/CompactTopRuntimeExecution.lean`: Actual runtime top execution derives all recursive readiness and primitive shape conditions internally from original precision, runtime sizes and reservation capacity, with the prepared machine state explicit.
+- `MathlibTM2/Fast/CompactSynRoundSources.lean`: Actual chunk-round stride, phase and current low-offset production from the existing round counters, with empty scratch and a preserved compact bank on the union host.
+
+- `MathlibTM2/Cost/CompactInterimParameters.lean`: Exact conditional compact-integration candidate with dyadic chunk/dimension constants and saving `2^-37`; all five listed stage margins cover it, while the old full-width internal inequality is proved to fail. This is parameter arithmetic, not a stronger public machine theorem.
+- `MathlibTM2/Cost/CompactTopRowControlBound.lean`: Linear actual-volume bounds for row reshaping and padding/unpadding, including unary counters and discarded rows.
+- `MathlibTM2/Fast/CompactMainRegs.lean`: One fixed expanded main-host register family, injective old-main and compact-transform placements, shared actual source stream and private-bank separation. The public multiplier has not switched hosts.
+- `MathlibTM2/Node/CompactBasisSetupRest.lean`, `CompactBasisCleanup.lean`: Persistent reservation rest invariant and actual exact cleanup.
+- `MathlibTM2/Node/CompactGlobalBootstrapCounts.lean`, `CompactGlobalBootstrap.lean`: Actual original-precision guard/dimension setup from copied unary sources, preserving source roles and clearing input copies.
+- `MathlibTM2/Node/CompactBasisRefreshPlacement.lean`, `CompactBasisRefresh.lean`, `CompactBasisRefreshRest.lean`: Actual five-field per-round refresh, restored temporary outputs, preserved original guard/dimension and proved rest invariant/cleanup.
+- `MathlibTM2/Fast/CompactSynRoundGlobal.lean`, `CompactSynRoundRest.lean`, `CompactSynRoundRegs.lean`, `CompactSynRoundPark.lean`, `CompactSynRoundCompose.lean`: Checked individual round stages and register/frame bridges for global reads, rest setup/teardown, stashing, configuration push/drop, unstashing and sequential composition. Full chunk-round composition remains separate.

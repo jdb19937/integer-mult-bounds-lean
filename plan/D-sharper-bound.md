@@ -643,8 +643,10 @@ geometrically without a logarithmic piece-count loss, and exactly separates
 all executable top control work from kernel and recursive-call costs.
 `Cost/CompactTopControlBound.lean` bounds both phase scans and the final
 unit multiplication linearly in actual stream volume, retaining configuration
-reads and unary headers explicitly. Widening, shift, padding, piece-loop
-controls and full constructor/setup absorption still require assembly.
+reads and unary headers explicitly. Widening and truncation now have checked
+working-volume bounds, and `Cost/CompactTopRowControlBound.lean` bounds row
+reshaping, padding and unpadding by actual stream volume. Piece-loop
+controls and complete constructor/setup absorption still require assembly.
 Specializing that envelope to the actual canonical layer costs,
 original-caller initialization and complete multiplier cost propagation
 remain necessary before claiming another public saving.
@@ -652,8 +654,12 @@ remain necessary before claiming another public saving.
 compute and place the seven persistent reservation values.
 `CompactBasisSetupFrame/Output` and `CompactBasisSetup.lean` now execute
 the complete setup on the shared host with exact seven-register output,
-source preservation and restored scratch. Rest-predicate initialization and
-cleanup are still being integrated.
+source preservation and restored scratch. `CompactBasisSetupRest` and
+`CompactBasisCleanup` close its rest invariant and exact cleanup.
+`CompactGlobalBootstrapCounts/CompactGlobalBootstrap` compute the original
+guard and dimension on the persistent bank and clear copied inputs;
+`CompactBasisRefreshPlacement/Refresh/RefreshRest` refresh the five per-round
+fields while preserving those globals, with exact cleanup and invariants.
 Propagate the complete execution costs and discharge remaining caller sizing; record coverage alone
 does not establish the complete reserved transform. M3 remains open and public
 saving remains `2^-66`.
@@ -665,20 +671,32 @@ reservation capacity and the actual prepared machine state; no per-layer
 execution or arbitrary cost premise remains. `Fast/CompactSynRoundSources.lean`
 executes the existing chunk-round arithmetic on the shared host to obtain
 the stride, phase and current low offset from empty scratch, preserving the
-compact bank. Full round staging and the original global bootstrap remain.
+compact bank. `CompactSynRoundGlobal/Rest/Regs/Park/Compose` now check the
+individual global reads, rest setup/teardown, register contracts, stash,
+configuration push/drop, unstash and sequential frame composition.
+`Fast/CompactMainRegs.lean` supplies a fixed expanded main host, injects all
+original stages, shares the actual source stream and separates the private
+compact bank. Complete round composition and main-level original-input
+bootstrap remain; the public machine has not switched to this host.
 
 **Conditional first numerical gate after compact integration:** retain
 `epsilon=2^-5` and test `c=2^-3` only after the actual compact caller and
-fallback costs are proved. The local reservation term becomes
+complete costs are proved. The local reservation term becomes
 `d^(7/8)*guard`, while the checked active recurrence uses
-`d^lambda*guard^tau`. Layout then permits exact saving
-`37/3200000000000`. Choosing `lambda'=1-2^-33` would give layer margin
-`2^-38` and preserve the old half-leaf inequality; `lambda'=1-2^-32`
-would give `2^-37` but fails that old inequality and requires replacing its
-use with the proved full-depth compact recurrence. These are arithmetic
-candidates, not proved machine bounds: complete control/setup absorption,
-terminal rounds, noncompact fallback and actual executable size generation
-must all pass before retuning or updating the scoreboard.
+`d^lambda*guard^tau`. `Cost/CompactInterimParameters.lean` checks exact
+candidate stage margins for `lambda'=1-2^-32` and saving `2^-37`; layout
+permits `37/3200000000000`, above that candidate layer margin.
+The same certificate proves that the old full-width internal estimate
+exceeds one at these chunks. Neither changing lambda' nor retaining its old
+half-leaf condition repairs that estimate: replace it on the compact path.
+Use compact execution only on chunk rounds, whose selected count is the
+full original dimension and eventually pays the reservations. Keep the
+existing direct early/terminal leaf schedule (no recursive pieces); its
+exponent `1-epsilon+epsilon*c=249/256` has ample arithmetic slack.
+Small global inputs still need the existing finite-input dispatch. These
+are checked parameter inequalities, not a multiplication-time theorem:
+actual scheduling, precision, complete control/setup absorption and
+executable size generation must pass before updating the scoreboard.
 
 **Actual caller integration gate:** `Fast/SynRound.lean`'s `SynV` starts
 all scratch registers empty. The new constructor's `s0=d`, `s1=guard` and
