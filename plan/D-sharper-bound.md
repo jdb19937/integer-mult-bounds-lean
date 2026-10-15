@@ -1496,3 +1496,14 @@ standard-axiom audit pass without warnings; the eight-file checkpoint leaves
 all previous trace/geometry/tableau imports unchanged. Canonical-word/native
 tableau identification, monomial residual equality, tableau-plus-zero-state
 completeness, adapters, routing and tape costs remain open.
+
+### Actual rounded-matrix boundary margin
+
+The executable rational periodic matrix now accumulates every retained alias
+and agrees exactly with the existing rounded operator's matrix-vector action.
+Its entries are nonnegative and its diagonal is at least one. The selected
+small-gap estimates imply an actual matrix row-dominance margin `1/(8p)`,
+preserved by arbitrary successive interior elimination. Both guarded source
+checks and the12-declaration standard-axiom audit pass. Boundary sparsity and
+ordering, identification with the block Schur complement, fast structured
+solve, normalization and tape costs remain open.
