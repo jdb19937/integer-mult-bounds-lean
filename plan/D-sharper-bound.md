@@ -1015,6 +1015,12 @@ outputs at every natural physical index for `0<s<=t<2s`. At most one correction
 is needed per step. Guarded checking and all seven theorem axiom audits pass;
 tape encoding, physical cell/boundary selection and bit costs remain open.
 
+`NLogN/PhaseCellIntervals.lean` proves phase monotonicity, physical cell
+contiguity, the strict within-cell gap and the selected `4d+1` upper cardinality
+bound, including truncated end cells. All nine theorem axiom audits and guarded
+checking pass. Physical boundary extraction and any required full-cell lower
+bound remain separate; no end-cell lower length is assumed.
+
 **M7b — bulk exposure and microbox tape execution.** Build ordered core/halo
 windows of that same rounded matrix, bound truncation/locality errors, retain
 period cuts and show tensor errors accumulate without a volume factor. Price
