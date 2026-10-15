@@ -1068,6 +1068,17 @@ pass, reusing the exposed `PhaseCellRounded.ratio_error` estimate. Concrete
 phase arguments and their selected margins are being connected; cross-cell,
 periodic, tail/operator and tape-cost obligations remain separate.
 
+`NLogN/PhaseCellRationalArgs.lean` computes nearest rounding by integer
+division and constructs rational phase-potential/Gaussian exponents, proving
+exact agreement with the existing real definitions and lossless nonnegative
+natural encoding. All 15 declarations pass the axiom audit and guarded checking.
+`PhaseCellConcreteCoefficients.lean` instantiates the executable coefficient
+constructor with those actual arguments. At selected precision `2^15*p`, its
+four-unit error leaves positive weights and yields exact similarity and entry
+accuracy without mapping/denominator oracles. All fourteen theorem audits and
+guarded checking pass. Cross-cell coefficients, periodic aliases, tails,
+operator row bounds and tape costs remain integration obligations.
+
 **M7b — bulk exposure and microbox tape execution.** Build ordered core/halo
 windows of that same rounded matrix, bound truncation/locality errors, retain
 period cuts and show tensor errors accumulate without a volume factor. Price
