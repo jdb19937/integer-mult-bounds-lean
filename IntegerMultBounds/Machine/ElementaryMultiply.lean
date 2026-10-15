@@ -167,9 +167,9 @@ theorem runs_correct {n : ℕ} {x y : List Bool} (hx : x.length = n) (hy : y.len
       run (program a) k (Machine.input (program a) x y) = some c ∧
       step (program a) c = none ∧ outputCorrect (program a) n x y c := by
   obtain ⟨k,c,hk,hr,hh,hout⟩ := multiplies (a := a) hx hy _ rfl
+  obtain ⟨hlength,hvalue⟩ := ElementaryMultiplyOutputData.horner_output_spec (a := a) hx hy
   refine ⟨k,hk,c,by simpa only [input_start] using hr,hh,out (a := a) n x y,
-    ElementaryMultiplyOutputData.horner_output_length hx hy,
-    ElementaryMultiplyOutputData.horner_output_value hx hy,?_⟩
+    hlength,hvalue,?_⟩
   change c.tapes.tape ⟨0,(program a).tapes_pos⟩ = _
   rw [hout]
   change putWord (fun _ => blank) 0 ((out (a := a) n x y).map bitSymbol) = _

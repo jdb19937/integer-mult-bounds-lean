@@ -1769,7 +1769,7 @@ Machine model, execution, composition, and tape routines.
 
 - `Machine/CountedPackedInverse.lean`: Fixed twenty-six-tape inverse packed arithmetic composes five runtime-driven lines, proves a true packedEarly preimage and restores original q/b/n and fourteen private metadata tapes with the same uniform stride bound. Intermediate payload words remain; physical permutation and reusable payload cleanup are separate.
 
-- `Machine/ElementaryMultiplyOutputData.lean`: Connects literal descending accumulator reads to exactly twice-length MSB product bits, padding blanks as zero. Proves output length and value for the Horner accumulator including empty operands; actual output installation is provided separately.
+- `Machine/ElementaryMultiplyOutputData.lean`: Connects literal descending accumulator reads to exactly twice-length MSB product bits, padding blanks as zero. `horner_output_spec` combines output length and value for the Horner accumulator including empty operands, closing the fallback mathematics milestone and supplying the joint contract used by `ElementaryMultiply.runs_correct`.
 
 - `Machine/ElementaryMultiply.lean`: One fixed four-tape machine parses original multiplication input, computes the Horner accumulator, physically erases input and copies exactly twice-length MSB product bits using an operand clock. Genuine halting, literal outputCorrect and Assembly.RunsWithin at40 times n squared plus n plus one hold for every equal input length, including zero. This completes the ordinary quadratic fallback; fast-path assembly and the sub-n-log-n bound remain open.
 

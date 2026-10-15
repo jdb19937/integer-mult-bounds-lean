@@ -20,7 +20,7 @@ See [COMPONENTS.md](COMPONENTS.md) for what each file proves.
 | [Resampling with the permutations left in the transform](plan/07-gaussian-resampling.md) | §7 | ✅ 6/6 | 🟡 3/4 | 79 |
 | [Exact integer multiplication and its cost](plan/08-exact-multiplication.md) | §8 | 🟡 3/4 | 🟡 1/3 | 100 |
 | [Fast multiplication subroutine](plan/A-schoenhage-strassen.md) | Schönhage–Strassen | ✅ 6/6 | 🟡 3/4 | 96 |
-| [End-to-end theorem `EndToEnd`](plan/B-end-to-end.md) | — | 🟡 1/3 | 🟡 2/3 | 6 |
+| [End-to-end theorem `EndToEnd`](plan/B-end-to-end.md) | — | 🟡 2/3 | 🟡 2/3 | 6 |
 
 Every sub-problem has a math milestone and a tape milestone: one named Lean
 theorem stating that part is done, listed in its section's detail file under
@@ -155,7 +155,7 @@ Details: [plan/B-end-to-end.md](plan/B-end-to-end.md)
 | Sub-problem | Mathematics | Tape | Files |
 | --- | --- | --- | --- |
 | Literal input front end | ✅ | ✅ | 1 |
-| Quadratic fallback multiplier | 🟡 | ✅ | 4 |
+| Quadratic fallback multiplier | ✅ | ✅ | 4 |
 | Fast program assembly and final bound | 🟡 0/3 rows | 🟡 0/3 rows | 2 |
 ## Next steps
 

@@ -113,4 +113,12 @@ theorem horner_output_value {n : ℕ} {x y : List Bool} (hx : x.length = n) (hy 
       binaryValue x*binaryValue y := by
   rw [horner_output hx hy,padded_value,ElementaryMultiplyCore.accumulator_value]
 
+/-- The literal accumulator readout is an exactly twice-length MSB product
+word for every equal input length, including empty operands. -/
+theorem horner_output_spec {n : ℕ} {x y : List Bool} (hx : x.length = n) (hy : y.length = n) :
+    let output := copied (putWord (fun _ => (blank : Fin (a+4))) (-(n : ℤ))
+      ((BinaryMultiply.horner x.reverse y.reverse).map bitSymbol)) (n-1) n
+    output.length = 2*n ∧ binaryValue output = binaryValue x*binaryValue y :=
+  ⟨horner_output_length hx hy, horner_output_value hx hy⟩
+
 end IntegerMultBounds.Machine.ElementaryMultiplyOutputData
