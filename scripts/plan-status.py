@@ -59,7 +59,7 @@ def imported_modules():
         if not os.path.exists(path):
             continue
         for line in open(path):
-            found = re.match(r'^import\s+(IntegerMultBounds\S*)', line)
+            found = re.match(r'^(?:public\s+)?import\s+(IntegerMultBounds\S*)', line)
             if found:
                 pending.append(found.group(1))
     return seen

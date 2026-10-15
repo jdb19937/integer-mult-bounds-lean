@@ -3015,3 +3015,4 @@ import IntegerMultBounds.Machine.ChirpRoundCalls
 import IntegerMultBounds.Machine.ChirpRoundedValue
 import IntegerMultBounds.Machine.ChirpRoundedProduct
 import IntegerMultBounds.MathlibTM2
+import IntegerMultBounds.Machine.ButterflyPhaseRecordSemantics

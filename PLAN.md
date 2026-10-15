@@ -12,14 +12,14 @@ See [COMPONENTS.md](COMPONENTS.md) for what each file proves.
 
 | Part of the proof | Source | Mathematics | Tape | Files |
 | --- | --- | --- | --- | --- |
-| [The machine model and elementary streams](plan/02-machine-model-streams.md) | §2 | ✅ 9/9 | ✅ 9/9 | 257 |
+| [The machine model and elementary streams](plan/02-machine-model-streams.md) | §2 | ✅ 9/9 | ✅ 9/9 | 258 |
 | [Two finite networks with a rank saving](plan/03-finite-networks-rank.md) | §3 | ✅ 8/8 | 🟡 2/6 | 358 |
-| [Faster interchange of address chunks](plan/04-faster-interchange-address.md) | §4 | ✅ 10/10 | ✅ 9/9 | 375 |
-| [Fast simultaneous synthetic butterfly layers](plan/05-simultaneous-butterfly-layers.md) | §5, §11, CrocSwap | 🟡 7/12 | 🟡 0/12 | 1804 |
+| [Faster interchange of address chunks](plan/04-faster-interchange-address.md) | §4 | ✅ 10/10 | ✅ 9/9 | 376 |
+| [Fast simultaneous synthetic butterfly layers](plan/05-simultaneous-butterfly-layers.md) | §5, §11, CrocSwap | 🟡 8/12 | 🟡 0/12 | 1808 |
 | [Synthetic transforms and their tape layout](plan/06-synthetic-transforms-tape.md) | §6 | ✅ 2/2 | 🟡 0/2 | 71 |
 | [Resampling with the permutations left in the transform](plan/07-gaussian-resampling.md) | §7 | ✅ 6/6 | 🟡 3/4 | 79 |
-| [Exact integer multiplication and its cost](plan/08-exact-multiplication.md) | §8 | 🟡 3/4 | 🟡 1/3 | 97 |
-| [Fast multiplication subroutine](plan/A-schoenhage-strassen.md) | Schönhage–Strassen | ✅ 6/6 | 🟡 3/4 | 94 |
+| [Exact integer multiplication and its cost](plan/08-exact-multiplication.md) | §8 | 🟡 3/4 | 🟡 1/3 | 100 |
+| [Fast multiplication subroutine](plan/A-schoenhage-strassen.md) | Schönhage–Strassen | ✅ 6/6 | 🟡 3/4 | 96 |
 | [End-to-end theorem `EndToEnd`](plan/B-end-to-end.md) | — | 🟡 1/3 | 🟡 2/3 | 6 |
 
 Every sub-problem has a math milestone and a tape milestone: one named Lean
@@ -49,7 +49,7 @@ Details: [plan/02-machine-model-streams.md](plan/02-machine-model-streams.md)
 | Controlled shift of one coordinate | ✅ | ✅ | 36 |
 | Common coordinates and schedule assembly | ✅ | ✅ | 56 |
 | Packed-line and window gadgets | ✅ | ✅ | 9 |
-| Tape radix sort | ✅ | ✅ | 16 |
+| Tape radix sort | ✅ | ✅ | 17 |
 
 ## 3. Two finite networks with a rank saving (§3)
 
@@ -72,7 +72,7 @@ Details: [plan/04-faster-interchange-address.md](plan/04-faster-interchange-addr
 
 | Sub-problem | Mathematics | Tape | Files |
 | --- | --- | --- | --- |
-| Interchange recurrence and padding arithmetic | ✅ | — | 1 |
+| Interchange recurrence and padding arithmetic | ✅ | — | 2 |
 | Triangular factorization and shear (Lemmas 4.1-4.2) | ✅ | ✅ | 4 |
 | Tape primitives: role transport, stacks, descriptors | ✅ | ✅ | 37 |
 | Single-digit base case | ✅ | ✅ | 11 |
@@ -81,7 +81,7 @@ Details: [plan/04-faster-interchange-address.md](plan/04-faster-interchange-addr
 | Power-width recursive machine (Prop 4.3) | ✅ | ✅ | 60 |
 | Row/range padding and radix digit movement | ✅ | ✅ | 34 |
 | Arbitrary-width piece dispatcher (Lemma 4.4) | ✅ | ✅ | 120 |
-| Binary interchange wrapper | ✅ | ✅ | 16 |
+| Binary interchange wrapper | ✅ | ✅ | 17 |
 
 ## 5. Fast simultaneous synthetic butterfly layers (§5, §11, CrocSwap)
 
@@ -89,12 +89,12 @@ Details: [plan/05-simultaneous-butterfly-layers.md](plan/05-simultaneous-butterf
 
 | Sub-problem | Mathematics | Tape | Files |
 | --- | --- | --- | --- |
-| Packed arithmetic and fixed control gadgets | 🟡 | 🟡 | 191 |
+| Packed arithmetic and fixed control gadgets | 🟡 | 🟡 | 192 |
 | Active-target compact controls | ✅ | 🟡 193/194 rows | 274 |
 | Exceptional-address destination repair | ✅ | 🟡 | 256 |
 | Row padding, reservation and allowances | ✅ | 🟡 56/57 rows | 73 |
 | Binary basis stages and phase schedules | ✅ | 🟡 | 104 |
-| Butterfly and unit-phase record arithmetic | 🟡 | 🟡 | 207 |
+| Butterfly and unit-phase record arithmetic | ✅ | 🟡 | 210 |
 | Butterfly axes, spectators and native roles | 🟡 | 🟡 | 140 |
 | Recursive geometry, controller and child headers | ✅ | 🟡 | 45 |
 | Exact scalar grids and stopped calls | ✅ | 🟡 | 96 |
@@ -130,9 +130,9 @@ Details: [plan/08-exact-multiplication.md](plan/08-exact-multiplication.md)
 
 | Sub-problem | Mathematics | Tape | Files |
 | --- | --- | --- | --- |
-| Parameters, asymptotics and coprime source lengths | ✅ | — | 4 |
-| Exact recovery of the product | ✅ | ✅ | 49 |
-| Cost table and time bound | 🟡 1/2 rows | ⬜ | 4 |
+| Parameters, asymptotics and coprime source lengths | ✅ | — | 5 |
+| Exact recovery of the product | ✅ | ✅ | 50 |
+| Cost table and time bound | 🟡 1/2 rows | ⬜ | 5 |
 | Chirp (Bluestein) reduction | ✅ | 🟡 0/1 rows | 40 |
 
 ## A. Fast multiplication subroutine (Schönhage–Strassen)
@@ -141,7 +141,7 @@ Details: [plan/A-schoenhage-strassen.md](plan/A-schoenhage-strassen.md)
 
 | Sub-problem | Mathematics | Tape | Files |
 | --- | --- | --- | --- |
-| Fourier and fixed-point foundations | ✅ | — | 23 |
+| Fourier and fixed-point foundations | ✅ | — | 25 |
 | Schönhage–Strassen level, schedule and cost | ✅ | — | 4 |
 | Word-tape programming layer | ✅ | ✅ | 10 |
 | Schönhage–Strassen multiplier on tapes | ✅ | ✅ | 15 |
