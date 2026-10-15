@@ -6342,3 +6342,7 @@ Parameters and asymptotics.
 - `MathlibTM2/Fast/CompactStoppedPower.lean`, `CompactStoppedRebase.lean`, `CompactStoppedRecord.lean`: Executable cutoff-aware depth/leaf rebasing and record emission with fresh scaling exponent, exact charged costs and register frame. Cutoff computation and scanner save/restore remain to be integrated.
 
 - `MathlibTM2/Cost/CompactSupplierCeiling.lean`: Checked route-specific ceiling below `2^-33` for the current complex supplier and coarse Gaussian estimate; a dyadic `9/64` dimension candidate satisfies all five stage margins and recurrence slacks for `2^-34`. Arithmetic only: wider executable parameter words and generalized sizing remain unproved. Standalone axiom audit passes for 25 declarations.
+
+- `MathlibTM2/Mult/CompactDyadicRootRoom.lean`: Checked universal squared-cap fit in `4*b+32` bits for the sixty-fourth root of `b^9`, plus seventh-power dimension room. Arithmetic groundwork only.
+- `MathlibTM2/Fast/CompactDimensionPower.lean`: Five-atom table program computes `b^9`, preserves input and accumulator, and proves exact word-fit and execution contracts.
+- `MathlibTM2/Fast/CompactDyadicDimension.lean`: Checked composition computes `iroot 64 (b^9)` with charged cost `58+44*iroot 64 (b^9)`, preserving input and accumulator. Actual parameter allocation and changed sizing definitions remain separate. Both executable helpers pass a focused standard-axiom audit.
