@@ -663,8 +663,14 @@ Absolute-to-relative coordinates preserve volume without counting the low
 offset twice. `CompactTopOriginalBound/CompactTopOriginalVolume` bound
 configuration serialization, literal source restoration and unary row padding.
 `CompactTopOriginalGeometry` derives the row-division budget from actual
-reserved axes plus three selected address bits. Record generation, computing
-the original divisor and complete round-overhead absorption remain separate.
+reserved axes plus three selected address bits. `CompactTopRecordSetupBound` now bounds actual record generation and
+original-divisor computation by fixed polynomials with dyadic coefficients.
+`CompactTopOriginalRuntime` derives the row-division budget from actual
+integer-root sizes for selected intervals at least one chunk long. Complete
+round-overhead absorption and multiplier propagation remain separate.
+`CompactTopOriginalCompleteBound` combines every actual constructor stage
+into `2^17*(G+m+1)*B^7 + 2^13*V`, deriving unary division from geometry.
+Its scalar budgets still need to be discharged at the full caller.
 Specializing that envelope to the actual canonical layer costs,
 original-caller initialization and complete multiplier cost propagation
 remain necessary before claiming another public saving.
@@ -694,8 +700,9 @@ individual global reads, rest setup/teardown, register contracts, stash,
 configuration push/drop, unstash and sequential frame composition.
 `Fast/CompactMainRegs.lean` supplies a fixed expanded main host, injects all
 original stages, shares the actual source stream and separates the private
-compact bank. Complete round composition and integration with the main-stage contracts
-remain; the public machine has not switched to this host.
+compact bank. Whole-round composition is checked below; integration with
+the main-stage contracts remains, and the public machine has not switched
+to this host.
 `Fast/CompactMainBootstrapRead/CompactMainBootstrap` now execute the concrete
 copies from the named original precision register and initial transform
 dimension source, then initialize persistent globals with all costs explicit.
@@ -709,7 +716,16 @@ state capacities. `CompactSynLayerStepProjection/Wires/Records/Refresh/
 Prepare/Basis/Park/Clear/Cleanup/Seq` derive actual record production,
 refresh inputs/invariants, source restoration, complete preparation and
 parking, and exact final cleanup from the original round invariant.
-Whole-round top/restoration composition is the remaining local execution gate.
+`CompactSynLayerStepReady/TopRegs/Runtime/Unpark/Compose/Algebra/Cost/Execution`
+now close whole-round execution, including the actual top call, restoration
+and final cleanup. The theorem starts at the original synthetic round state
+with initialized global dimension/guard and a blank compact bank; it returns
+the entire original register file with only transformed I/O. Geometry,
+precision and array bounds remain explicit caller obligations, but no
+prepared-state execution or readiness oracle remains. `CompactSynLayerStepSemantics/Stream` also identify its selected coordinates
+and output stream with the original synthetic butterfly round. Runtime
+dispatch and the full forward/opposite loop contracts are the next execution
+gate; the main multiplier is not yet switched.
 `Cost/CompactTopCoordinates` translates the actual serialized records into
 relative layer coordinates without changing row stock or counting the low
 offset twice in volume.
@@ -744,9 +760,13 @@ not that precision). The existing rest-state initializer also consumes
 piece/configuration records and working width: initialize the actual stride
 and phase explicitly. Concrete global sources exist: `MainProg.mnUs` copies
 original precision into unary `Main.mnIo .dpn` (also `mnRnd .pn`), retained by
-`MainCorrect.MnMid`; the initial `SynV.p.D` is the original axis count and can
-be retained before selection changes. The bootstrap must connect those
-sources through the expanded main-host embedding and price their copies.
+`MainCorrect.MnMid`. The initial `SynV.p.D` contains the transform axis
+count `d-1`, as established by `DistSynMain.dsyV₀` and `ConvBox.cvAx`; it
+must not be treated as original `d`. A concrete bootstrap must copy this
+source and add one unit (charging and clearing the copy), or read original
+`d` from the parameter output. The direct source-copy bootstrap theorem
+requires its dimension source to have the supplied length; it does not
+itself establish this main-pipeline provenance.
 `CompactMainConstants` fixes a state capacity covering both the original main
 and compact native programs. `Host.embProg` changes register/procedure layouts
 but preserves this capacity, so the old `MnPr` programs cannot silently be
@@ -757,8 +777,15 @@ The existing `Host.liftQ` is for multitape programs. The new checked
 `Host/StateTransport` and `Host/StateLift` supply exact host-program transport,
 including current/pending states, with unchanged stacks and user data.
 A charged one-step normalization admits arbitrary larger-capacity states.
-Instantiating this transport for the main procedure table and its contracts
-remains part of actual main-stage integration.
+`Host/StatePlacement` and `Fast/CompactMainTransport` now instantiate the
+transport for the expanded main machine, with disjoint old/compact procedure
+branches and concrete read/parameters/point/round/output wrappers. Their
+execution contracts preserve original I/O and the private compact bank.
+`CompactMainLayer` supplies the canonical compact procedure branch and
+places the actual chunk round on the same main source stream at identical
+cost, preserving the full surrounding main register file. The main
+forward/opposite specifications, corrected bootstrap placement and complete
+main assembly still require integration.
 Then compose shared-host setup, record construction,
 rest initialization, stash, top execution, pop, unstash and cleanup, charging
 every stage and restoring the original round frame. Keep a proved fallback

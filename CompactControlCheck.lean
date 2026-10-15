@@ -1,3 +1,10 @@
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainLayer
+import IntegerMultBounds.MathlibTM2.Cost.CompactTopOriginalCompleteBound
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepStream
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainTransport
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepExecution
+import IntegerMultBounds.MathlibTM2.Cost.CompactTopRecordSetupBound
+import IntegerMultBounds.MathlibTM2.Cost.CompactTopOriginalRuntime
 import IntegerMultBounds.MathlibTM2.Cost.CompactTopCompleteBound
 import IntegerMultBounds.MathlibTM2.Cost.CompactTopOriginalGeometry
 import IntegerMultBounds.MathlibTM2.Host.StateLift
@@ -368,7 +375,40 @@ run_cmd do
     ``IntegerMultBounds.MathlibTM2.Host.stateMap_exec_normalized,
     ``IntegerMultBounds.MathlibTM2.Host.stateLiftDown_up,
     ``IntegerMultBounds.MathlibTM2.Host.stateLift_exec,
-    ``IntegerMultBounds.MathlibTM2.Host.stateLift_exec_normalized]
+    ``IntegerMultBounds.MathlibTM2.Host.stateLift_exec_normalized,
+    ``IntegerMultBounds.MathlibTM2.Fast.compactSynLayerPrepare_projection,
+    ``IntegerMultBounds.MathlibTM2.Fast.compactSynParkedFile_topRegs,
+    ``IntegerMultBounds.MathlibTM2.Fast.compactSynParkedFile_topIn,
+    ``IntegerMultBounds.MathlibTM2.Fast.compactSynParkedRuntime_eventually_exec_Hl,
+    ``IntegerMultBounds.MathlibTM2.Fast.compactSynLayerUnpark_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.compactSynLayerStep_compose,
+    ``IntegerMultBounds.MathlibTM2.Fast.compactSynLayer_final_background,
+    ``IntegerMultBounds.MathlibTM2.Fast.compactSynLayerStep_eventually_exec_Hl,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactRowReserveCost_poly,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactCeilCost_poly,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactReserveCountsCost_poly,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactBackPieceCost_poly,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactTopCoordinatesCost_poly,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactReservedPiecesCost_poly,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactTopRecordSetupCost_poly,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactTopConfigDivisorCost_poly,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactCaller_runtime_eventually_row_room,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactTopOriginal_runtime_eventually_division,
+    ``IntegerMultBounds.MathlibTM2.Host.statePlaced_exec,
+    ``IntegerMultBounds.MathlibTM2.Host.statePlaced_exec_normalized,
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.compactMainTransport_exec,
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.compactMainStage_exec,
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.compactMainFinalStacks_projection,
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.compactMainFinalStacks_io,
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.compactMainFinalStacks_private,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactTopOriginalCost_complete,
+    ``IntegerMultBounds.MathlibTM2.Fast.compactSynSelection_physical,
+    ``IntegerMultBounds.MathlibTM2.Fast.compactSynSelection_stream,
+    ``IntegerMultBounds.MathlibTM2.Fast.compactSynLayerStep_eventually_exec_stream,
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.compactMainBody_layer,
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.compactMainLayer_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.compactMainLayer_io_restore,
+    ``IntegerMultBounds.MathlibTM2.Fast.Main.compactMainChunk_runs]
   for name in names do
     for ax in ← collectAxioms name do
       unless #[``propext, ``Quot.sound, ``Classical.choice].contains ax do
