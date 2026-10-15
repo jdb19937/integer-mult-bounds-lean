@@ -1,3 +1,7 @@
+import IntegerMultBounds.MathlibTM2.Fast.CRTControlScanner
+import IntegerMultBounds.MathlibTM2.Fast.CRTControlOffset
+import IntegerMultBounds.MathlibTM2.Fast.CRTLinear
+import IntegerMultBounds.MathlibTM2.Cost.CRTControlScan
 import IntegerMultBounds.MathlibTM2.Fast.CRTControlTape
 import IntegerMultBounds.MathlibTM2.Fast.CRTControlBounds
 import IntegerMultBounds.MathlibTM2.Fast.CRTSchedule
@@ -5,7 +9,8 @@ import IntegerMultBounds.MathlibTM2.Cost.CRTControl
 import Lean.Util.CollectAxioms
 
 /-! Audit the replacement CRT control semantics and arithmetic kernels.
-The descriptor-tape loop and multiplier integration are still separate work. -/
+Includes the concrete runtime descriptor scanner, offset conversion and distant
+exposure; the outer rotation loop and multiplier integration remain separate work. -/
 
 open Lean in
 run_cmd do
@@ -35,7 +40,24 @@ run_cmd do
     ``IntegerMultBounds.MathlibTM2.Fast.crtLinear_route,
     ``IntegerMultBounds.MathlibTM2.Fast.crtLinear_inverse_route,
     ``IntegerMultBounds.MathlibTM2.Fast.crtSchedule_swap_count,
-    ``IntegerMultBounds.MathlibTM2.Cost.crtControl_polynomial_pipeline_le]
+    ``IntegerMultBounds.MathlibTM2.Cost.crtControl_polynomial_pipeline_le,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtRuns_of_tbl,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtControlConsume_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtControlLoad_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtControlState_consume,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtControlScan_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtControlScan_result,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtControlPacket_concrete,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtControlScanner_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtControlScanner_exact_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtControlScanner_width_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtControlOffsetHost_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtControlOffsetRho_spec,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtControlOffsetClear_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtGapSwapStep_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtExposeStep_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtUnexposeStep_runs,
+    ``IntegerMultBounds.MathlibTM2.Cost.crtControlScanCost_pipeline_le]
   for name in names do
     for ax in ← collectAxioms name do
       unless #[``propext, ``Quot.sound, ``Classical.choice].contains ax do

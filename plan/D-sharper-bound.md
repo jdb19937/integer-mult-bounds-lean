@@ -185,7 +185,8 @@ spectators preserved. `crtControlStep_host` gives the actual host bound
 kernel computes the modular offset and complement. `CRTControlCheck.lean`
 audits the semantic and executable contracts. No descriptor generation,
 loading, fiber-loop or conversion cost has been silently included in these
-kernel bounds.
+kernel bounds. The subsequent loader/scanner and conversion contracts below
+price these additional operations explicitly.
 
 **Chosen driver design:** retain the fully reversed axis layout during the
 triangular arithmetic passes. Expose each nonzero target by swapping it with
@@ -194,8 +195,10 @@ back. Finish the forward machine with paired distant swaps reversing the
 whole axis list; perform that reversal first in the inverse machine. This
 preserves the original target order and content maps while using at most
 `2(d-1) + floor(d/2)` swaps in either direction. `Fast/CRTSchedule.lean` proves the exact forward/inverse route and count,
-including exposure-prefix completeness and restoration. The finite-host
-implementation remains to be completed.
+including exposure-prefix completeness and restoration. `Fast/CRTLinear.lean`
+now implements each distant exposure and unexposure, including header
+construction, upgrade and cleanup, with all scratch restored. Runtime unary
+width generation and the complete driver remain to be assembled.
 
 For each target, the new scan visits `2^(L-a_i)` fibers. There are at most `d`
 descriptors per fiber, so the proved arithmetic kernel would contribute at
@@ -205,26 +208,42 @@ values below `2^(2L)` even for invalid controls, and final products below
 `2^(3L+1)`. Its budget invariant discharges intermediate overflow.
 `Cost/CRTControl.lean` uses `mr_b_pow_le_r` to absorb any fixed polynomial
 per-fiber budget over all axes into a constant times padded volume. The
-scanner must still supply that actual-step polynomial budget.
+actual scanner now supplies that budget through the contracts below.
 
 `Fast/CRTControlTape.lean` proves the fixed four-word loader costs at most
 `48 W + 56` host steps, with descriptor reversal saved for restoration.
 The complete saved tape restores in `8 d W + 2` steps. A positive width
 makes tape emptiness exactly descriptor-list emptiness; the arithmetic step
 plus descriptor cleanup uses at most 13 interpreter atoms. These contracts
-are included in the focused axiom audit. Descriptor generation, the bank
-embedding, the runtime scanner and the fiber loop are still separate work.
+are included in the focused axiom audit.
+
+`Fast/CRTControlBank.lean`, `CRTControlScan.lean` and `CRTControlScanner.lean`
+now compose the loader with the interpreter and a fixed runtime `while` loop.
+The concrete scanner has no assumed packet-execution premise: arithmetic
+fit follows from the preserved budget, including invalid controls. Its output
+is the exact control sum and sticky validity flag, with descriptor tape restored
+and other registers preserved. The scan costs at most
+`2^10 * d * (W+4)^2 + 4` actual host steps. `Cost/CRTControlScan.lean`
+bounds the exact scan cost by `2^15*(L+1)^3` for `d≤L`, `W≤3L+1`, and
+absorbs all fibers of all pipeline axes into `2^19*T` eventually.
+
+`Fast/CRTControlOffset.lean` compiles the modular-offset kernel, converts
+both directional lengths to unary, and clears those counters afterward.
+Conversion costs `W*(4*S+22)+2*S+12`, separate from the three-atom
+binary kernel and the `2*S+4` counter cleanup. This linear-in-modulus work
+is **not** part of the polynomial descriptor-scan absorption. Connecting
+the ten-variable control bank to the five-variable offset bank, generating
+descriptors and assembling the fiber rotation loop remain unfinished.
 
 Remaining integration steps, in order:
 
-1. **M2b — rotation scanner:** the semantics and arithmetic kernels are proved.
-   Connect the proved loader/restorer, width bounds and arithmetic kernel to
-   a runtime descriptor scan. Implement descriptor generation, the outer fiber
-   loop and binary-to-unary offset conversion feeding `crtRotFib`; prove
-   unchanged state outside the workspace and the complete actual cost.
+1. **M2b — rotation scanner:** concrete descriptor scanning and unary offset
+   conversion are proved. Connect their banks, generate descriptors and
+   assemble the outer fiber loop feeding `crtRotFib`; prove the complete
+   actual cost and state restoration.
    Preserve the existing order of triangular arithmetic passes.
-2. **M2c — driver and matching:** connect the proved forward/inverse routing
-   schedule to the header upgrade and swap pass; replace the
+2. **M2c — driver and matching:** generate runtime unary widths and assemble
+   the proved exposure/unexposure steps into the forward/inverse schedule; replace the
    actual driver, establish round-trip correctness, and match its actual costs.
    Separate the already-linear resampling exposure from `totCRT`, retaining
    the residual quadratic arithmetic charge.
@@ -422,8 +441,9 @@ reduction interfaces and encoding overhead if those corollaries are desired.
 
 1. **M1 complete:** public saving `2^-93`; exact internal margin between
    `2^-93` and `2^-92`, with the existing existential theorem preserved.
-2. **M2 in progress:** distant-swap bridge checked; control semantics and kernels checked; next assemble the
-   rotation scanner and prove the linear CRT/axis schedules, then retune and publish
+2. **M2 in progress:** concrete descriptor scanner, unary offsets, linear
+   schedule and distant exposure/cleanup checked; next assemble descriptor
+   generation, outer rotation loop and complete driver, then retune and publish
    the resulting stronger theorem. This yields a structural improvement
    without importing the large selected supplier inventory.
 3. **M3–M5:** compact controls, width/stock contracts and balanced coordinate
