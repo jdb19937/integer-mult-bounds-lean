@@ -1407,3 +1407,11 @@ orientations without extension hypotheses. All35 new modules and the combined
 5185-declaration standard-axiom audit pass; the38-file generated checkpoint is
 deterministic. Complex Pauli realization, phases/tableau completeness, monomial
 factors, adapters, dirty routing and hosted costs remain open.
+
+The periodic corrected row is now packaged as an actual continuous linear map,
+with operator norm error at most `2^(-45p)`. Inverse perturbation consumes this
+proved estimate directly: any actual exact inverse bounded by `2^(16p)` yields
+a two-sided rounded inverse bounded by `2^(16p+1)`, within `2^(-12p)` of the
+exact inverse. The guarded check and14-declaration standard-axiom audit pass.
+This closes the approximation-to-operator bridge; constructing the exact sharp
+inverse and executing its structured solve remain separate obligations.
