@@ -1179,11 +1179,14 @@ resampling milestones needed for the state-of-the-art goal.
 ### Selected-supplier integration boundary
 
 Initial inspection found no Lean replay certificates for the selected suppliers.
-The pinned PR589 word is now imported, with generic dirty-input replay semantics
-and its first scalar prefix checked; the full endpoint remains open. Existing
-Shared50/Paired49 and h25 proofs concern different suppliers. Complete selected
-dirty-input restoration will reuse
-`FramedCircuit.common_frame_identity` and `BoundedFramedCircuit.restrict_run`.
+The complete pinned PR589 scalar word, arbitrary-dirty endpoint, source/helper
+restoration and finite661-register execution are now checked. Existing
+Shared50/Paired49 and h25 proofs concern different suppliers. Selected framed
+restoration remains open: actual occurrence-indexed frame updates and the
+scatter COPY boundary must be interpreted explicitly before applying existing
+framed/finite restriction machinery. T16 now has checked complete native-event
+label continuity in both orientations; this does not prove its frame operators
+or dirty scalar endpoint.
 For T16, the physical owner schedule and its literal occurrence-indexed child
 rank profile must also be proved. The existing uniform `factorCount` recurrence
 cannot consume a variable-rank histogram by changing a scalar constant; it
