@@ -12,7 +12,8 @@ namespace IntegerMultBounds.NLogN.PhaseCellRounded
 
 noncomputable section
 
-private theorem ratio_error {a b g A B G eps r : ℝ}
+/-- Entrywise perturbation bound reusable by certified exponential samplers. -/
+theorem ratio_error {a b g A B G eps r : ℝ}
     (heps : 0 ≤ eps) (hr : 0 < r) (hb : r ≤ b) (hB : r ≤ B)
     (ha0 : 0 ≤ a) (ha1 : a ≤ 1) (hb1 : b ≤ 1)
     (hg0 : 0 ≤ g) (hg1 : g ≤ 1) (hG0 : 0 ≤ G) (hG1 : G ≤ 1)

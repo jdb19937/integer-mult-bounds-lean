@@ -1059,6 +1059,15 @@ pass. This corrected sample need not equal the ideal floor. Mapping actual
 phase-cell rational arguments, replacing ideal coefficients, executing the
 correction and matching its Mathlib backend costs remain integration work.
 
+`NLogN/PhaseCellExecutableCoefficients.lean` now replaces ideal floor samples
+with corrected executable exponential samples in an actual rational kernel and
+entry constructor. Exact diagonal similarity, distance symmetry and coefficient
+error at most `12 eta/r^2` are proved from explicit rational-target mappings and
+positive denominator margin. Guarded checking and all nine theorem axiom audits
+pass, reusing the exposed `PhaseCellRounded.ratio_error` estimate. Concrete
+phase arguments and their selected margins are being connected; cross-cell,
+periodic, tail/operator and tape-cost obligations remain separate.
+
 **M7b — bulk exposure and microbox tape execution.** Build ordered core/halo
 windows of that same rounded matrix, bound truncation/locality errors, retain
 period cuts and show tensor errors accumulate without a volume factor. Price
