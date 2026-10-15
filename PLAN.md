@@ -13,7 +13,7 @@ time `O(n (log n)^(1-kappa))`. Larger saving means a smaller time exponent.
 | Bound | Exponent saving `kappa` | Status |
 | --- | --- | --- |
 | **Current unconditional result** | **`2^-35`** | ✅ Complete compact runtime, all-input correctness and cost bound on one fixed finite Mathlib machine. |
-| **Next dimension-retune target** | **`2^-34`** | 🟡 Candidate margins, executable dimension stage, sizing and width bridges checked; actual global parameter/cost integration remains. |
+| **Next dimension-retune target** | **`2^-34`** | 🟡 Actual sizing, parameter program, fourth-root pipeline and analytic envelope checked; wider-machine cost and final assembly verification remain. |
 | **Previous dimension result** | `2^-36` | ✅ Superseded by the audited eighth-root retune and sharper logarithmic cost estimates. |
 | **Previous compact result** | `2^-37` | ✅ Superseded by the checked sixteenth-root dimension retune. |
 | **Historical M2 result** | `2^-66` | ✅ Superseded; compact integration improves the saving by `2^31`, not a measured runtime speedup. |
@@ -103,7 +103,7 @@ criteria are in the [implementation plan](plan/D-sharper-bound.md).
 | M3 | 🟡 | §5.2–5.3, Appendix A | Compact dirty controls, actual caller integration, stopped recursion and local repair costs. | **Compact integration complete:** actual eighth-root transforms, main input/distribution, full arithmetic chain, output, cleanup and finite-machine dispatch prove public saving `2^-35`. **Remaining:** actual stopped recursion and its local repair costs for later improvements. |
 | M4 | ⬜ | §5.4, §9.7 | Linear completed-child precision bound and explicit recursive workspace/stock contracts. | Planned. Remove conservative guard-growth restrictions and prove the reserve coefficients required at selected cutoffs. |
 | M5 | ⬜ | §6.2, §4 | Balanced prefix and arbitrary-source coordinate routing in both transform directions. | Planned. Replace layout saving `epsilon c a_b` by direct movement saving `a_b`; restore spectators and frequency order. |
-| M6 | 🟡 | §3.1–3.6, §§4–5 interfaces | Prove both selected finite suppliers, their variable-rank moments and the 144-call owner schedule. | Pinned PR589 word imported; first scalar prefix and generic dirty-input replay semantics checked. Full restoration, framed execution and T16 profile/owner proofs remain. Target primitive endpoints about `0.00173343` (bit) and `0.00167546` (complex); component bounds alone do not update the final bound. |
+| M6 | 🟡 | §3.1–3.6, §§4–5 interfaces | Prove both selected finite suppliers, their variable-rank moments and the 144-call owner schedule. | Pinned PR589 word and complete D/A/scatter prefixes checked; full dirty-input replay verification is in progress. T16 charge profile and finite owner-row bounds are checked. Framed execution, full restoration, physical hosting and variable-rank costs remain. Target primitive endpoints about `0.00173343` (bit) and `0.00167546` (complex); component bounds alone do not update the final bound. |
 | M7 | ⬜ | §8.1–8.3, §9.2/9.7 | Prove faster rounded Gaussian inverse and bulk core/halo tape execution, including prime supply and exact recovery interfaces. | Planned. Remove the current Gaussian restriction on epsilon; establish the selected near-one-dimension parameter regime. |
 | M8 | ⬜ | §9.1–9.8 | Prove bootstrap base/stages, link all 47 inequalities to actual stages and close the audited fixed-machine theorem. | Planned. Goal: exact unconditional saving `0.001672660197076918`. |
 

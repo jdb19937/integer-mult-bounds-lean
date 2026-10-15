@@ -18,50 +18,50 @@ The sharper target is the **selected** community construction at revision
 `0fdd7d82de03e43c9e5a1000dfbcd380d1b687d2`, not the older numerical witnesses
 in individual notes. The [source pin](../docs/sharper-bound-source.json)
 records the selected certificate, supporting sources and manuscript digests.
-The original manuscript proves saving `2^-182`; our present Lean theorem proves
-`2^-66` after M2. The exact internal margin is `296 / (10^11 * 2^37)`,
-between `2^-66` and `2^-65`. Final parameters are `epsilon=2^-5`,
-`c=2^-32`, and `lambda'=1-1/10^11`. The public saving is `2^27` times
-the historical M1 saving `2^-93`, not a measured timing speedup. The selected upstream
-conditional saving is `0.001672660197076918`.
+The original manuscript proves saving `2^-182`; our published, audited Lean
+theorem proves `2^-35`. Its active compact parameters are `epsilon=2^-3`,
+`c=2^-3`, and `lambda'=1-2^-32`. The selected upstream conditional saving is
+`0.001672660197076918`; matching it unconditionally remains the goal.
 
 ## Diagnosis: where our current bound is lost
 
 Write `a_b = 1 - tau = 296/10^11`, `a_c = 1 - sigma = 418/10^12`,
-`d ≍ p^epsilon`, `K ≍ d^c`, and `p ≍ log n`. Costs below are divided by
-input-scale volume `Tp ≍ n`. A term of size `p^x` allows saving at most `1-x`.
-These are the **current local** estimates in `MathlibTM2/Cost/Total.lean` and `DirectTotal.lean`,
-not an assumption that every row already matches the sharper manuscript.
+`d ≍ p^epsilon`, `K ≍ d^c`, and `p ≍ log n`. Larger exponent saving means
+less asymptotic time; these are not measured timing speedups.
 
-| Original section | Current normalized charge or restriction | Consequence for the saving | Concrete bottleneck |
-| --- | --- | --- | --- |
-| §3.6, finite-network exponents | `tau = 1 - 2.96e-9`, `sigma = 1 - 4.18e-10` | Both primitive savings are tiny. | Local fixed networks have not been replaced by the selected suppliers. |
-| §4.2–4.3, address interchange | `O(u^tau)` per volume | Every routed field move inherits `tau`. | Arbitrary-gap correctness alone does not prove a cheaper whole schedule. |
-| §5.2–5.3 and Appendix A, layer control | Node overhead includes `(K e)^tau`; actual piece estimate is `d^(lambda+c)` times logarithms | `c < lambda' - lambda = 2.9e-10` in `mrP_eps_pos`; also the generic stopped-layer condition involves `tau(1+c/beta)`. | Full slot width is paid during basis/control changes. The actual current host recurses to level zero; the generic stopped recurrence is not itself a stopped implementation. |
-| §6.2, transform layout | `p K^(tau-1)` | **Current active bottleneck:** `epsilon c a_b`, exactly our proved `kappa`. | Moving many K-bit chunks multiplies the primitive saving by both small parameters. |
-| §§8.2, 9.3, CRT and axis exposure | `d (1 + ell^tau)` | Saving `a_b(1-epsilon)`. | M2 connects actual direct routing and complete control/setup/cleanup costs to the running multiplier. |
-| §8.1–8.2, Gaussian arithmetic | Local bound has exponent `7/8 + 3 epsilon/2` | Saving `1/8 - 3 epsilon/2`; it would force `epsilon < 1/12`. | Present Gaussian width, inverse and line-by-line implementation cannot support the selected near-one dimension exponent. |
-| §7, packed ring products | Local logarithmic product factor has exponent bounded by `1-epsilon+epsilon c` | Saving `epsilon(1-c)`. | Must preserve a fast conventional subroutine and account for its extra logarithms under new parameters. Not currently binding. |
-| §9.7–9.8, precision and assembly | Maximum of all stage exponents, with exact recovery and fixed-machine assembly | The smallest surviving saving wins; isolated network improvement is insufficient. | Every changed stage must match actual costs and the exact recovery interface. |
+| Original section | Published compact restriction | Concrete bottleneck / next work |
+| --- | --- | --- |
+| §3.6, finite-network exponents | Bit saving `a_b`; complex saving `a_c`. | Replace the existing suppliers by selected PR589 and T16 words, with framed correctness, charged schedules and variable-rank moments. |
+| §4.2–4.3, address interchange | Field moves inherit `tau`. | Direct CRT routing is complete; selected arbitrary-source routing still needs an actual schedule and costs. |
+| §5.2–5.3 and Appendix A, layer control | **Binding saving `epsilon (1-lambda') = 2^-35`.** | Compact controls and full-depth execution are complete. Retune dimensions/layer first; selected suppliers, stopped recursion and local repair costs are structural follow-ups. |
+| §6.2, transform layout | Saving `epsilon c a_b`, above the published bound. | Larger chunks support the next retune; selected coordinate routing and balanced prefixes are needed beyond this route. |
+| §§8.2, 9.3, CRT and axis exposure | Saving `(1-epsilon) a_b`. | Direct routing is integrated; preserve it under new sizing and selected routing. |
+| §8.1–8.2, Gaussian arithmetic | Saving `1/4 - 2^-5 - 3 epsilon/2 = 1/32`. | The sharpened logarithmic charge supports the eighth-root dimension; selected near-one dimensions require faster inverse and bulk core/halo execution. |
+| §7, packed ring products | Saving `epsilon (1-c)`, above the published bound. | Preserve the conventional subroutine, widths and logarithmic allowance under each retune. |
+| §9.7–9.8, precision and assembly | The smallest surviving stage margin wins. | Link every improved estimate to actual fixed-machine execution, exact recovery and a standard-axiom audit. |
 
-The preceding restrictions describe the historical M2 implementation. Compact
-integration removed its full-slot chunk restriction and proves `2^-37` with
-`c=2^-3`. The completed dimension retune doubles epsilon to `2^-4`, retaining the
-same chunk and layer exponent, for saving `2^-36`. Its executable sixteenth-root
-parameter generation, sharpened size bounds and all 289 affected dependencies
-passed guarded checks. The complete axiom audit passed for 124960 declarations
-and the focused audit passed for 563 contracts. The former `epsExp>=20` condition was excess
-proof slack, not an intrinsic runtime requirement: the modulus-room and precision
-arguments can use sixteenth powers, while compact working width needs only
-`d^7<=b`.
+The old full-slot restriction `c < lambda' - lambda` belongs to the historical
+M2 implementation; it no longer restricts the running compact branch. The
+completed `2^-37`, `2^-36` and `2^-35` checkpoints successively integrated compact
+execution, sixteenth-root dimensions and eighth-root dimensions with sharper
+logarithmic costs. The published proof audit covers 124962 declarations and the
+focused audit covers 565 contracts.
 
-At the old epsilon `2^-5`, even approaching the existing complex-supplier
-exponent cannot reach `2^-36`. The completed retune has positive Gaussian margin
-`1/32`; the following dyadic dimension `epsilon=2^-3` fails the current Gaussian
-condition `epsilon<1/12`. Further doubling beyond this candidate therefore needs
-new stage mathematics or stronger suppliers, rather than another parameter-only
-claim. Stopped recursion and precision/workspace remain structural milestones
-for the selected state-of-the-art construction.
+**Current integration target: `2^-34`.** Use the dyadic rational dimension
+`epsilon=9/64`, fourth-root chunks `c=1/4`, and
+`lambda'=1-57/2^37`. The exact layer margin is `513/2^43`, above the public target
+`512/2^43`; the Gaussian margin is `2^-7`. Sizing, executable parameter generation,
+chunk generation, analytic envelopes and main-time glue have passed targeted
+checks. Wider-machine costs, final theorem closure and both final audits must
+pass before this becomes the published bound. Internal parameters remain exact
+dyadic rationals; public savings remain powers of two.
+
+The checked `CompactSupplierCeiling.saving_lt_ceiling` proves that the existing
+complex supplier together with the current coarse Gaussian restriction cannot
+reach `2^-33`, even with nonnegative logarithmic loss and arbitrary admissible
+dimension/layer retuning. Thus `2^-34` is the last dyadic checkpoint available
+through this route; the selected supplier and structural milestones below are
+necessary to continue toward the state of the art.
 
 ## Historical M1: retune the existing construction
 
@@ -1197,8 +1197,8 @@ This work is separate from the small parameter improvements above.
 | Exact candidate margins and recurrence slack | ✅ | `CompactSupplierCeiling.NineSixtyFourths`; layer margin is `513/2^43`, strictly above target `512/2^43`. Preserve the inequality rather than the old equality. |
 | Independent dimension arithmetic and precision | ✅ | Root64/input9, real exponent9/64, lower cap7, coarse upper power8, large-dimension threshold64; checked sizing and gamma/modulus lemmas. |
 | Executable candidate dimension and clean table stage | ✅ | Helper, generic40-variable core, scratch cleanup and concrete width wrapper are checked and audited; the core can be imported below ParamProg. |
-| Actual global size and parameter definitions | ⬜ | Retune Sizes and PmF chain, preserve all40 values and emitted streams, widen literal pmW/prelude from16 to32, reprice actual costs. |
-| Actual fourth-root compact chunks | ⬜ | Update compact chunk root3→2, literal overwrite and exact costs, recurrence and source matching. |
+| Actual global size and parameter definitions | 🟡 | New Sizes and full PmF chain are checked; actual32-bit-slack prelude and exact setup cost are checked. Distribution and remaining machine costs are being revalidated. |
+| Actual fourth-root compact chunks | 🟡 | Literal root2 overwrite, exact29+20K cost and parameter pipeline are checked. Full recurrence/source matching remains in the final assembly check. |
 | Actual wider distribution and precision | 🟡 | Generic width/guard bounds checked; reprove small-input axis facts under the new dimension and use the actual allocated width. |
 | Public theorem and audits | ⬜ | All changed dependencies, actual execution costs and final axiom audits pass at `2^-34`. |
 
