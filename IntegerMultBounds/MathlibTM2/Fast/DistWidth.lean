@@ -370,21 +370,44 @@ theorem ds_dsWW_le (hn : 2 ≤ n) : dsWW n ≤ 200 * (b n + 1) := by
   have := ds_dsW_le hn
   unfold dsWW p; omega
 
+/-- Width comparison independent of the dimension implementation. -/
+theorem parameter_width_le_core {b L r w a : ℕ}
+    (hb : 1 ≤ b) (hL : L ≤ b + 1) (hw : 6 * b + 7 ≤ w)
+    (hr : 2 ≤ r) (hsmall : b ≤ 2 → 4 ≤ r) :
+    4 * L + 32 ≤ r * w + (a ^ 2 + a + 4) := by
+  by_cases h : b ≤ 2
+  · have h4 := hsmall h
+    have := Nat.mul_le_mul_right w h4
+    nlinarith
+  · have := Nat.mul_le_mul_right w hr
+    nlinarith
+
+/-- The candidate dimension is one at the smallest precisions. -/
+theorem parameter_width_small_r {n : ℕ} (hn : 2≤n) (hb : b n≤2) : 4≤r n := by
+  have hd : d n=1 := by
+    have hcap := d_seventh_le n
+    change d n^7≤b n at hcap
+    have hd1 := one_le_d hn
+    by_contra h
+    have h2 : 2≤d n := by omega
+    have hp := Nat.pow_le_pow_left h2 7
+    norm_num at hp
+    omega
+  have hn4 : n≤4 := (le_two_pow_b n).trans (Nat.pow_le_pow_right (by decide) hb)
+  rw [r, ℓ, hd]
+  interval_cases n <;> decide
+
 /-- The hypotheses of `dsIoAll_runs` at `w = dsW n`, `Wt = dsWW n`. -/
 theorem ds_widths_dist (hn : 2 ≤ n) :
     dsWW n < 2 ^ pmW n ∧ 4 * dsW n + 2 < 2 ^ pmW n ∧ pmW n ≤ dsWL n (dsW n) := by
   have h1 := ds_dsWW_le hn
   have h2 := ds_dsW_le hn
   refine ⟨ds_small n (by omega), ds_small n (by omega), ?_⟩
-  have hs := pm_size_le (n := n)
-  have hb := one_le_b hn
-  have hr := ds_two_le_r hn
   have hw : 6 * b n + 7 ≤ dsW n := by
     have : 4 ≤ Chirp.chirpGuard (d n) := by unfold Chirp.chirpGuard; omega
     unfold dsW p; omega
-  have : 2 * dsW n ≤ r n * dsW n := Nat.mul_le_mul_right _ hr
-  unfold dsWL pmW
-  omega
+  exact parameter_width_le_core (one_le_b hn) pm_size_le hw (ds_two_le_r hn)
+    (parameter_width_small_r hn)
 
 end Dist
 

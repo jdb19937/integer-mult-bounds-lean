@@ -51,13 +51,13 @@ theorem compactDsyWiresCost_le : ∀ᶠ n in atTop,
 
 /-- The retune is charged separately, including clearing the old unary chunk. -/
 theorem compactDsRetuneCost_le (n : ℕ) :
-    compactDsRetuneCost n (pmW n) (K n)≤2^21*(b n+1)^3 := by
+    compactDsRetuneCost n (pmW n) (K n)≤2^23*(b n+1)^3 := by
   have hpatch := compactPmOverwriteAtoms_le n
   have htable := ds_tblC_le n
   have hprod := Nat.mul_le_mul hpatch htable
   have hk : CompactSizes.K n≤b n := (CompactSizes.K_le_d n).trans (d_le_b n)
   have hold : K n≤b n := (K_le_d n).trans (d_le_b n)
-  have hW : pmW n≤20*(b n+1) := by
+  have hW : pmW n≤36*(b n+1) := by
     have hs := pm_size_le (n:=n)
     unfold pmW
     omega

@@ -3,7 +3,7 @@ module
 public import IntegerMultBounds.MathlibTM2.Fast.ParamProg
 public import IntegerMultBounds.MathlibTM2.Mult.CompactSizes
 
-/-! Charged eighth-root overwrite of the clean parameter table. The legacy
+/-! Charged fourth-root overwrite of the clean parameter table. The legacy
 parameter program and table contracts retain their original meanings. -/
 @[expose] public section
 namespace IntegerMultBounds.MathlibTM2.Fast.TableVM
@@ -21,9 +21,9 @@ def compactPmRootClear : TblCode pmNV :=
   tblBlock pmNV [.zero 31,.zero 32,.zero 33] (.zero 34)
 
 def compactPmOverwrite : TblCode pmNV :=
-  (pmIrootC 3).rename compactPmRootReg ;; compactPmRootClear
+  (pmIrootC 2).rename compactPmRootReg ;; compactPmRootClear
 
-def compactPmOverwriteAtoms (n : ℕ) : ℕ := 36+26*CompactSizes.K n
+def compactPmOverwriteAtoms (n : ℕ) : ℕ := 29+20*CompactSizes.K n
 
 private theorem compactPm_clear (n : ℕ) (s : TblSt pmNV A) (acc : List (Fin (A+4)))
     (ha : s.acc=acc) (h3 : s.val 3=d n) (h4 : s.val 4=CompactSizes.K n)
@@ -43,14 +43,14 @@ private theorem compactPm_clear (n : ℕ) (s : TblSt pmNV A) (acc : List (Fin (A
 
 /-- Recompute slot 4 from original slot 3, restoring all scratch cells to zero.
 Every other parameter and the accumulator are preserved exactly. -/
-theorem compactPmOverwrite_do (n : ℕ) (hW : 4*b n+16≤W) (s : TblSt pmNV A)
+theorem compactPmOverwrite_do (n : ℕ) (hW : 4*b n+32≤W) (s : TblSt pmNV A)
     (hs : s.val=pmVals n) :
     TblDo A W w compactPmOverwrite s
       (fun s' => s'.val=compactPmVals n ∧ s'.acc=s.acc) (compactPmOverwriteAtoms n) := by
   have hd : (s.restrict compactPmRootReg).val 0=d n := by
     simp [TblSt.restrict,compactPmRootReg,hs,pmVals,pmVal,pmNV]
   have hroot := TblDo.rename (f:=compactPmRootReg) (by decide : Function.Injective compactPmRootReg)
-    (pmIrootC_do (w:=w) 3 (s.restrict compactPmRootReg) hd (pm_sq_lt hW (d_le_b n))
+    (pmIrootC_do (w:=w) 2 (s.restrict compactPmRootReg) hd (pm_sq_lt hW (d_le_b n))
       (pm_const_lt hW (by norm_num)))
   refine (hroot.seq (fun s' h => compactPm_clear n s' s.acc h.1.2.2 h.1.1 h.1.2.1
     (fun i hi => (h.2 i hi).trans (congrFun hs i)))).mono (fun _ h => h) ?_

@@ -17,7 +17,7 @@ def compactPmCode1 : TblCode pmNV := pmCode1 ;; compactPmOverwrite
 def compactPmAtoms1 (n : ℕ) : ℕ := pmAtoms1 n+compactPmOverwriteAtoms n
 
 /-- Populate the compact table from the input length, retaining the accumulator. -/
-theorem compactPmStages_do (n : ℕ) (hn : 2≤n) (hW : 4*b n+16≤W)
+theorem compactPmStages_do (n : ℕ) (hn : 2≤n) (hW : 4*b n+32≤W)
     (s : TblSt pmNV A) (acc : List (Fin (A+4))) (hs : PmF n 1 acc s) :
     TblDo A W w compactPmStages s (fun s' => s'.val=compactPmVals n ∧ s'.acc=acc)
       (compactPmAtoms1 n) := by
@@ -28,7 +28,7 @@ theorem compactPmStages_do (n : ℕ) (hn : 2≤n) (hW : 4*b n+16≤W)
   omega
 
 /-- Reuse the existing complete first parameter program, including emitted axes. -/
-theorem compactPmCode1_do (n : ℕ) (hn : 2≤n) (hW : 4*b n+16≤W)
+theorem compactPmCode1_do (n : ℕ) (hn : 2≤n) (hW : 4*b n+32≤W)
     (s : TblSt pmNV A) (acc : List (Fin (A+4))) (hs : PmF n 1 acc s) :
     TblDo A W w compactPmCode1 s
       (fun s' => s'.val=compactPmVals n ∧ s'.acc=(pmTList A w n).reverse++acc)

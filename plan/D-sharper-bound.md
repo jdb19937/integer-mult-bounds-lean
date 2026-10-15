@@ -19,8 +19,8 @@ The sharper target is the **selected** community construction at revision
 in individual notes. The [source pin](../docs/sharper-bound-source.json)
 records the selected certificate, supporting sources and manuscript digests.
 The original manuscript proves saving `2^-182`; our published, audited Lean
-theorem proves `2^-35`. Its active compact parameters are `epsilon=2^-3`,
-`c=2^-3`, and `lambda'=1-2^-32`. The selected upstream conditional saving is
+theorem proves `2^-34`. Its active compact parameters are `epsilon=9/64`,
+`c=2^-2`, and `lambda'=1-57/2^37`. The selected upstream conditional saving is
 `0.001672660197076918`; matching it unconditionally remains the goal.
 
 ## Diagnosis: where our current bound is lost
@@ -33,10 +33,10 @@ less asymptotic time; these are not measured timing speedups.
 | --- | --- | --- |
 | §3.6, finite-network exponents | Bit saving `a_b`; complex saving `a_c`. | Replace the existing suppliers by selected PR589 and T16 words, with framed correctness, charged schedules and variable-rank moments. |
 | §4.2–4.3, address interchange | Field moves inherit `tau`. | Direct CRT routing is complete; selected arbitrary-source routing still needs an actual schedule and costs. |
-| §5.2–5.3 and Appendix A, layer control | **Binding saving `epsilon (1-lambda') = 2^-35`.** | Compact controls and full-depth execution are complete. Retune dimensions/layer first; selected suppliers, stopped recursion and local repair costs are structural follow-ups. |
-| §6.2, transform layout | Saving `epsilon c a_b`, above the published bound. | Larger chunks support the next retune; selected coordinate routing and balanced prefixes are needed beyond this route. |
+| §5.2–5.3 and Appendix A, layer control | **Binding margin `epsilon (1-lambda') = 513/2^43`, covering `2^-34`.** | Compact controls and full-depth execution are complete. Dimension/layer retuning is complete; selected suppliers, stopped recursion and local repair costs are structural follow-ups. |
+| §6.2, transform layout | Saving `epsilon c a_b`, above the published bound. | Fourth-root chunks are integrated; selected coordinate routing and balanced prefixes are needed beyond this route. |
 | §§8.2, 9.3, CRT and axis exposure | Saving `(1-epsilon) a_b`. | Direct routing is integrated; preserve it under new sizing and selected routing. |
-| §8.1–8.2, Gaussian arithmetic | Saving `1/4 - 2^-5 - 3 epsilon/2 = 1/32`. | The sharpened logarithmic charge supports the eighth-root dimension; selected near-one dimensions require faster inverse and bulk core/halo execution. |
+| §8.1–8.2, Gaussian arithmetic | Saving `1/4 - 2^-5 - 3 epsilon/2 = 1/128`. | The sharpened logarithmic charge supports the dyadic dimension; selected near-one dimensions require faster inverse and bulk core/halo execution. |
 | §7, packed ring products | Saving `epsilon (1-c)`, above the published bound. | Preserve the conventional subroutine, widths and logarithmic allowance under each retune. |
 | §9.7–9.8, precision and assembly | The smallest surviving stage margin wins. | Link every improved estimate to actual fixed-machine execution, exact recovery and a standard-axiom audit. |
 
@@ -44,16 +44,15 @@ The old full-slot restriction `c < lambda' - lambda` belongs to the historical
 M2 implementation; it no longer restricts the running compact branch. The
 completed `2^-37`, `2^-36` and `2^-35` checkpoints successively integrated compact
 execution, sixteenth-root dimensions and eighth-root dimensions with sharper
-logarithmic costs. The published proof audit covers 124962 declarations and the
-focused audit covers 565 contracts.
+logarithmic costs. The published proof audit covers 125034 declarations and the
+focused audit covers 572 contracts.
 
-**Current integration target: `2^-34`.** Use the dyadic rational dimension
+**Completed dyadic integration: `2^-34`.** Uses the dyadic rational dimension
 `epsilon=9/64`, fourth-root chunks `c=1/4`, and
 `lambda'=1-57/2^37`. The exact layer margin is `513/2^43`, above the public target
 `512/2^43`; the Gaussian margin is `2^-7`. Sizing, executable parameter generation,
-chunk generation, analytic envelopes and main-time glue have passed targeted
-checks. Wider-machine costs, final theorem closure and both final audits must
-pass before this becomes the published bound. Internal parameters remain exact
+chunk generation, analytic envelopes, wider-machine costs and final theorem
+closure have passed all 298 affected dependency checks and both final audits. Internal parameters remain exact
 dyadic rationals; public savings remain powers of two.
 
 The checked `CompactSupplierCeiling.saving_lt_ceiling` proves that the existing
@@ -1149,8 +1148,9 @@ Lean machine theorems and focused axiom audits; M3–M8 remain unfinished.
 
 ## Completed compact integration checkpoint
 
-The public `MathlibTM2.mulInTime` now proves saving `2^-35` unconditionally,
-after the eighth-root dimension retune and sharper logarithmic cost matching.
+The public `MathlibTM2.mulInTime` now proves saving `2^-34` unconditionally,
+after the dyadic dimension retune and fourth-root chunk integration. The earlier
+eighth-root dimension and logarithmic retune proved `2^-35`.
 The intermediate sixteenth-root result proved `2^-36`; the original compact
 result proved `2^-37`.
 `CompactFinal.compactRetunedPrefix_exec` composes actual input/parameter/distribution
@@ -1174,7 +1174,7 @@ the Gaussian margin is `1/4-delta-3epsilon/2`, equal to `2^-5` at the actual
 
 All 294 affected dependencies passed guarded single-file verification. The
 complete-proof axiom audit passed for 124962 declarations and the focused
-compact audit passed for 565 contracts. The public theorem now proves
+compact audit passed for 565 contracts. At that checkpoint the public theorem proved
 `2^-35`; this includes every input, actual costs and fixed-machine assembly.
 
 `CompactDimension.Eighth.supplier_obstruction` proves that the current complex
@@ -1184,24 +1184,19 @@ cannot support `epsilon=2^-2` even at zero logarithmic loss. Both are checked:
 the next structural improvements must address these restrictions rather than
 only doubling the dimension again.
 
-### Further parameter route under evaluation
+### Completed further dyadic parameter route
 
-A standalone checked arithmetic candidate in `Cost/CompactSupplierCeiling.lean`
-uses `epsilon=9/64`, `c=1/4`, logarithmic loss `1/32`, and layer gap `57/2^37`.
-All five margins cover public saving `2^-34`; this is not an executable theorem.
-The proposed dimension and layer gap are dyadic fractions rather than pure
-powers of two; the public bound remains a pure power of two.
+The actual multiplier now uses `epsilon=9/64`, `c=1/4`, logarithmic loss
+`1/32`, and layer gap `57/2^37`, with public saving `2^-34`. The executable
+dimension stage computes `d=iroot64(b^9)`, returning scratch clean; its widened
+parameter word is `4*size(n)+32`. Literal prelude, setup, fourth-root overwrite,
+distribution and machine costs are matched to those parameters. All 298 affected
+dependencies and both final audits passed. Internal dimension/layer parameters
+are exact dyadic rationals; the public saving remains a pure power of two.
 
-The existing root machine could compute `d=iroot 64 (b^9)`, but its temporary
-square does not fit the current parameter-word width for some small inputs.
-A wider fixed word allowance and corresponding runtime/cost contracts are
-required, alongside generalized root-sizing identities. A seventh-root
-alternative preserves more sizing identities but requires a new root machine.
-Neither alternative has been integrated. Independently, the checked generic
-supplier ceiling proves that the current supplier plus this resampling estimate
-cannot reach `2^-33`, even with arbitrary admissible dimension and layer choices.
-Thus this possible extra step does not replace the selected-supplier and
-resampling milestones needed for the state-of-the-art goal.
+The checked supplier ceiling still excludes `2^-33` with the existing supplier
+and coarse Gaussian restriction. The selected-supplier and resampling milestones
+are therefore required for progress beyond this parameter route.
 
 ### Selected-supplier integration boundary
 
@@ -1226,20 +1221,17 @@ complete local/leaf costs and numerical moment certificate remain explicit
 instantiation obligations. This work is separate from the small parameter
 improvements above.
 
-## Integration gates for the `2^-34` candidate
+## Completed integration gates for `2^-34`
 
-| Gate | Progress | Acceptance |
+| Gate | Progress | Evidence |
 | --- | --- | --- |
-| Exact candidate margins and recurrence slack | ✅ | `CompactSupplierCeiling.NineSixtyFourths`; layer margin is `513/2^43`, strictly above target `512/2^43`. Preserve the inequality rather than the old equality. |
-| Independent dimension arithmetic and precision | ✅ | Root64/input9, real exponent9/64, lower cap7, coarse upper power8, large-dimension threshold64; checked sizing and gamma/modulus lemmas. |
-| Executable candidate dimension and clean table stage | ✅ | Helper, generic40-variable core, scratch cleanup and concrete width wrapper are checked and audited; the core can be imported below ParamProg. |
-| Actual global size and parameter definitions | 🟡 | New Sizes and full PmF chain are checked; actual32-bit-slack prelude and exact setup cost are checked. Distribution and remaining machine costs are being revalidated. |
-| Actual fourth-root compact chunks | 🟡 | Literal root2 overwrite, exact29+20K cost and parameter pipeline are checked. Full recurrence/source matching remains in the final assembly check. |
-| Actual wider distribution and precision | 🟡 | Generic width/guard bounds checked; reprove small-input axis facts under the new dimension and use the actual allocated width. |
-| Public theorem and audits | ⬜ | All changed dependencies, actual execution costs and final axiom audits pass at `2^-34`. |
+| Exact margins and recurrence slack | ✅ | Layer margin `513/2^43` exceeds public target `512/2^43`; all other stage margins cover it. |
+| Actual dimension arithmetic and precision | ✅ | Root64/input9, exponent9/64, lower cap7, upper power8, threshold64; gamma and modulus room proved. |
+| Executable dimension and clean table stage | ✅ | Actual forty-variable stage, scratch cleanup, full PmF chain and charged wider prelude. |
+| Actual fourth-root compact chunks | ✅ | Literal root2 overwrite, exact29+20K cost, distribution, source/recurrence matching and main assembly checked. |
+| Wider distribution and machine costs | ✅ | All116 width/cost dependencies through CompactBdWiresCost checked; small-input bounds and actual allocated width proved. |
+| Public theorem and audits | ✅ | All298 affected dependencies, complete 125034-declaration audit and focused 572-contract audit passed. |
 
-The `2^-35` dependency checks and final audits are complete. The new candidate
-modules above were independently checked while those sources remained fixed.
-When integrating, transplant checked arithmetic or move generic foundations below
-Sizes: the current independent test modules import Sizes and cannot be imported
-back into it. The dimension-stage core must similarly stay below ParamProg.
+The cycle-free dyadic stage core stays below ParamProg; independent arithmetic
+witness modules do not introduce import cycles into actual sizing. The selected
+state-of-the-art target remains open.

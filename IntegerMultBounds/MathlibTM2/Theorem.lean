@@ -18,7 +18,7 @@ The historical exact margin remains available through `mulInTime_exact`.
 namespace IntegerMultBounds.MathlibTM2
 
 /-- Exact saving of the legacy execution path, retained for compatibility. -/
-theorem mulInTime_exact : MulInTime (296 / (10 ^ 11 * 2 ^ 35)) := by
+theorem mulInTime_exact : MulInTime (333 / (10 ^ 11 * 2 ^ 35)) := by
   rw [← Cost.tot_kappa_eq]
   let L := Fast.Main.blLayDs Fast.Main.dsyV₀ Fast.Main.dsyV₀_wires
     (Fast.Main.finCost Cost.mr_loop_cost_le)
@@ -31,8 +31,8 @@ theorem mulInTime_exact : MulInTime (296 / (10 ^ 11 * 2 ^ 35)) := by
     ⟨Fast.Main.mnKa, Fast.Main.mnLb, Fast.Main.bdW, Fast.Main.mnσL L,
       ⟨Fast.Main.mnSynOfLay L hw⟩, ⟨D⟩⟩
 
-/-- The complete compact multiplier has the explicit power-of-two saving `2^-35`. -/
-theorem mulInTime : MulInTime (2 ^ 35 : ℝ)⁻¹ :=
+/-- The complete compact multiplier has the explicit power-of-two saving `2^-34`. -/
+theorem mulInTime : MulInTime (2 ^ 34 : ℝ)⁻¹ :=
   Fast.Main.compact_mulInTime
 
 theorem statement : Statement :=

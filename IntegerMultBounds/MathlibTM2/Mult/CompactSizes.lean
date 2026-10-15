@@ -15,14 +15,14 @@ abbrev ℓ := Sizes.ℓ
 abbrev r := Sizes.r
 abbrev t := Sizes.t
 
-/-- Eighth-root chunk, corresponding to the proposed compact exponent `1/8`. -/
-def cExp : ℕ := 2^3
+/-- Fourth-root chunk, corresponding to the proposed compact exponent `1/4`. -/
+def cExp : ℕ := 2^2
 noncomputable def cParam : ℝ := (cExp : ℝ)⁻¹
 def K (n : ℕ) : ℕ := Sizes.iroot cExp (d n)
 
-theorem cExp_eq : cExp=8 := by norm_num [cExp]
+theorem cExp_eq : cExp=4 := by norm_num [cExp]
 theorem cExp_ne : cExp≠0 := by norm_num [cExp]
-theorem cParam_eq : cParam=(2^3 : ℝ)⁻¹ := by norm_num [cParam,cExp]
+theorem cParam_eq : cParam=(2^2 : ℝ)⁻¹ := by norm_num [cParam,cExp]
 theorem cParam_pos : 0<cParam := by norm_num [cParam,cExp]
 
 theorem K_pow_le (n : ℕ) : K n^cExp≤d n := Sizes.iroot_pow_le cExp_ne _
@@ -33,7 +33,7 @@ theorem one_le_K {n : ℕ} (hn : 2≤n) : 1≤K n :=
   Sizes.one_le_iroot cExp_ne (Sizes.one_le_d hn)
 theorem K_eq_floor (n : ℕ) : K n=⌊(d n : ℝ)^cParam⌋₊ := Sizes.iroot_eq_floor cExp_ne _
 
-/-- Increasing the exponent from `2^-32` to `2^-3` increases the chunk. -/
+/-- Increasing the exponent from `2^-32` to `2^-2` increases the chunk. -/
 theorem old_K_le_K (n : ℕ) : Sizes.K n≤K n := by
   apply le_K_iff.mpr
   rcases Nat.eq_zero_or_pos (Sizes.K n) with h | h
@@ -89,7 +89,7 @@ theorem eventually_K_le_predecessor : ∀ᶠ n in atTop, K n≤d n-1 := by
 theorem eventually_mul_K_le_ℓ (C : ℕ) : ∀ᶠ n in atTop, C*K n≤ℓ n := by
   filter_upwards [Sizes.eventually_big, tendsto_atTop.1 Sizes.tendsto_d (2*C)] with n h hC
   have h1 := h.pow_le_two_ℓ
-  have h2 : d n^2≤d n^7 := Nat.pow_le_pow_right h.one_le_d (by norm_num)
+  have h2 : d n^2≤d n^6 := Nat.pow_le_pow_right h.one_le_d (by norm_num)
   have h3 : C*K n≤C*d n := Nat.mul_le_mul_left _ (K_le_d n)
   have h4 : 2*C*d n≤d n*d n := Nat.mul_le_mul_right _ hC
   nlinarith

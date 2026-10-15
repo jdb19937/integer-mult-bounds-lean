@@ -14,14 +14,14 @@ numeric pipeline (`Fast/ParamProg.lean`: the sizes of `Mult/Sizes.lean`, the mod
 ## Program (`pmParams rg uN oT oS us`)
 
 The table machine has `pmNV = 40` variables on the injective register layout `rg`, in words of
-`pmW n = 4 · size n + 16` bits (`pmW_ge`: at least `4 b + 16`).
+`pmW n = 4 · size n + 32` bits (`pmW_ge`: at least `4 b + 32`).
 
 1. **Prelude** (`pmPrelude`). `sxBinConv` turns the unary register `uN` (`n` symbols, kept) into the
    canonical binary digits of `n` on variable `0`, `binSyms (size n) n` (`pm_sxBits_syms`), in at
-   most `16 n + 4` steps. Then (`pmPrelude2`, `pm_prelude2_runs`) `wr` gets `4 · size n + 16` ticks
+   most `16 n + 4` steps. Then (`pmPrelude2`, `pm_prelude2_runs`) `wr` gets `4 · size n + 32` ticks
    (`umul`, a constant push), `wn` a copy, variable `0` is widened to `pmW n` bits (`bwiden`), and
    variables `1, …, 39` are set to `0` (`pmZeroList`): the layout carries the state `pmSt0 A n`
-   (`pm_prelude_exec`), within `pmPreCost n = 4 size n + 172 pmW n + 184` more steps.
+   (`pm_prelude_exec`), within `pmPreCost n = 4 size n + 172 pmW n + 200` more steps.
 2. **`pmCode1`** (`pmHost`, `pm_host_runs`): all parameters, the axis lengths emitted as pair
    symbols, then moved onto `oT` through `pmBitOfPair`, which gives the stream `pmTStream` of
    `pmW n`-bit words `t_0, …, t_{d-1}` (`pm_TList_map`).
@@ -34,9 +34,9 @@ The table machine has `pmNV = 40` variables on the injective register layout `rg
 `pmParams_exec`: exact final contents of every register (variables `binSyms (pmW n) (pmVals n i)`,
 width registers `pmW n` ticks, `acc` and scratch empty, the two streams and the unary copies on
 top of their registers, every other register unchanged), within `pmCost n us` steps.
-`pmCost_le`: `pmCost n us ≤ 16 n + 1400000 (size n + 5)^4 + pmUnaryCost (pmW n) (pmVals n) us`.
+`pmCost_le`: `pmCost n us ≤ 16 n + (2^23) (size n + 5)^4 + pmUnaryCost (pmW n) (pmVals n) us`.
 The unary copies of the parameters bounded by a polynomial in `b` cost `poly(log n)`; those of
-`T` and `r` cost `O(n)` (`pm_W_T_le`: `pmW n · T ≤ 192 n`, `pm_r_le_T`).
+`T` and `r` cost `O(n)` (`pm_W_T_le`: `pmW n · T ≤ (2^9) n`, `pm_r_le_T`).
 -/
 
 @[expose] public section
@@ -109,10 +109,10 @@ theorem pm_sxBits_syms {A : ℕ} (n : ℕ) :
 theorem pm_b_le_size (n : ℕ) : b n ≤ Nat.size n :=
   (Nat.clog_le_iff_le_pow one_lt_two).2 (Nat.size_le.1 le_rfl).le
 
-/-- The word width of the parameter machine: `4 · size n + 16` bits. -/
-def pmW (n : ℕ) : ℕ := 4 * Nat.size n + 16
+/-- The word width of the parameter machine: `4 · size n + 32` bits. -/
+def pmW (n : ℕ) : ℕ := 4 * Nat.size n + 32
 
-theorem pmW_ge (n : ℕ) : 4 * b n + 16 ≤ pmW n := by
+theorem pmW_ge (n : ℕ) : 4 * b n + 32 ≤ pmW n := by
   have := pm_b_le_size n; unfold pmW; omega
 
 theorem pm_n_lt_W (n : ℕ) : n < 2 ^ pmW n :=
@@ -318,11 +318,11 @@ variable {T Q A : ℕ} {U : Type} {P : Type} {body : P → Pr P T Q A U}
   {rg : TblR pmNV → Fin T}
 
 /-- The prelude after the conversion of `n` to binary: the width registers `wr`, `wn` get
-`pmW n = 4 · size n + 16` ticks, variable `0` is widened to `pmW n` bits, and the other variables
+`pmW n = 4 · size n + 32` ticks, variable `0` is widened to `pmW n` bits, and the other variables
 are set to `0`. -/
 def pmPrelude2 (rg : TblR pmNV → Fin T) : Pr P T Q A U :=
   .seq (umul 4 (rg (.v 0)) (rg .wr) (rg (.z 0)))
-    (.seq (.act (pushN (rg .wr) (fun _ => tick) 16 .done))
+    (.seq (.act (pushN (rg .wr) (fun _ => tick) 32 .done))
       (.seq (ucopy (rg .wr) (rg .wn) (rg (.z 0)))
         (.seq (bwiden (rg (.v 0)) (rg .wr) (rg (.z 0)) (rg (.z 1)) (rg (.z 2)))
           (pmZeroList rg pmZeroIdx))))
@@ -338,7 +338,7 @@ def pmSt0 (A n : ℕ) : TblSt pmNV A := ⟨Function.update (fun _ => 0) 0 n, []�
 def pmTicks (A W : ℕ) : List (Fin (A + 4)) := List.replicate W tick
 
 /-- The steps of `pmPrelude2`. -/
-def pmPreCost (n : ℕ) : ℕ := 4 * Nat.size n + 172 * pmW n + 184
+def pmPreCost (n : ℕ) : ℕ := 4 * Nat.size n + 172 * pmW n + 200
 
 theorem pm_prelude2_runs (hrg : Function.Injective rg) (n : ℕ) :
     tblRuns body rg (pmPrelude2 rg)
@@ -347,13 +347,13 @@ theorem pm_prelude2_runs (hrg : Function.Injective rg) (n : ℕ) :
   set L := Nat.size n
   set W := pmW n with hW
   have hLW : L ≤ W := by rw [hW]; unfold pmW; omega
-  have hWL : W = 4 * L + 16 := rfl
+  have hWL : W = 4 * L + 32 := rfl
   set ρ₁ : TblR pmNV → List (Fin (A + 4)) := Function.update (fun _ => []) (.v 0) (binSyms L n)
   have ha := pm_umul_runs (body := body) hrg 4 (a := .v 0) (b := .wr) (t := .z 0) (by decide)
     (by decide) (by decide) ρ₁ (by simp [ρ₁])
   set ρ₂ := Function.update ρ₁ .wr (List.replicate (4 * (ρ₁ (.v 0)).length) tick ++ ρ₁ .wr)
-  have hb := pm_push_runs (body := body) hrg .wr 16 ρ₂
-  set ρ₃ := Function.update ρ₂ .wr (List.replicate 16 tick ++ ρ₂ .wr)
+  have hb := pm_push_runs (body := body) hrg .wr 32 ρ₂
+  set ρ₃ := Function.update ρ₂ .wr (List.replicate 32 tick ++ ρ₂ .wr)
   have h3w : ρ₃ .wr = List.replicate W tick := by
     have e1 : ρ₂ .wr = List.replicate (4 * L) tick := by simp [ρ₂, ρ₁]
     simp only [ρ₃, Function.update_self, e1, List.replicate_append_replicate, hWL]
@@ -583,7 +583,7 @@ theorem pm_st0_F (n : ℕ) : PmF n 1 [] (pmSt0 A n) := by
 layout `rg`, `pmParams` ends, within `pmCost n us` steps, with:
 
 * variable `i` holding `binSyms (pmW n) (pmVals n i)`, the value table of `Fast/ParamProg.lean`
-  (`pm_b_eq`, `pm_d_eq`, …), in words of `pmW n = 4 · size n + 16` bits;
+  (`pm_b_eq`, `pm_d_eq`, …), in words of `pmW n = 4 · size n + 32` bits;
 * `wr` and `wn` holding `pmW n` ticks, `acc` and the scratch registers empty;
 * `oT` and `oS` gaining the streams `pmTStream` (`t_0, …, t_{d-1}`) and `pmSStream`
   (`s_0, …, s_{d-1}`) of `pmW n`-bit words on top;
@@ -605,7 +605,7 @@ theorem pmParams_exec (hA : 4 ≤ A) (hrg : Function.Injective rg) {uN oT oS : F
       (∀ x ∈ us, S'.R x.2 = List.replicate (pmVals n x.1) tick ++ S.R x.2) ∧
       (∀ k, (∀ r, rg r ≠ k) → k ≠ oT → k ≠ oS → (∀ x ∈ us, x.2 ≠ k) → S'.R k = S.R k) := by
   set W := pmW n with hW
-  have hW' : 4 * b n + 16 ≤ W := pmW_ge n
+  have hW' : 4 * b n + 32 ≤ W := pmW_ge n
   have hwl : (pmTicks A W).length = W := by simp [pmTicks]
   -- the prelude
   obtain ⟨v₁, S₁, m₁, hu₁, hm₁, he₁, hS₁, hf₁⟩ := pm_prelude_exec (body := body) hrg huN n v S hlen hS
@@ -662,10 +662,10 @@ end Machine
 theorem pm_size_le {n : ℕ} : Nat.size n ≤ b n + 1 :=
   Nat.size_le.2 ((le_two_pow_b n).trans_lt (Nat.pow_lt_pow_right (by norm_num) (by omega)))
 
-/-- `pmCost n us ≤ 16 n + 1400000 (size n + 5)^4 + pmUnaryCost`: linear in `n` for the
+/-- `pmCost n us ≤ 16 n + (2^23) (size n + 5)^4 + pmUnaryCost`: linear in `n` for the
 conversion of `n` to binary, polynomial in `log n` for everything else but the unary copies. -/
 theorem pmCost_le {n : ℕ} (hn : 2 ≤ n) {α : Type} (us : List (Fin pmNV × α)) :
-    pmCost n us ≤ 16 * n + 1400000 * (Nat.size n + 5) ^ 4 + pmUnaryCost (pmW n) (pmVals n) us := by
+    pmCost n us ≤ 16 * n + (2^23) * (Nat.size n + 5) ^ 4 + pmUnaryCost (pmW n) (pmVals n) us := by
   have h1 := pmAtoms1_le hn
   have h2 := pmAtoms2_le n
   have hb := pm_b_le_size n
@@ -674,26 +674,26 @@ theorem pmCost_le {n : ℕ} (hn : 2 ≤ n) {α : Type} (us : List (Fin pmNV × �
   have hA : pmAtoms1 n + pmAtoms2 n ≤ 2525 * (L + 5) ^ 2 := by
     have : (b n + 1) ^ 2 ≤ (L + 5) ^ 2 := Nat.pow_le_pow_left (by omega) 2
     omega
-  have hC : tblC (pmW n) (pmW n) ≤ 520 * (L + 5) ^ 2 := by
+  have hC : tblC (pmW n) (pmW n) ≤ (2^11) * (L + 5) ^ 2 := by
     unfold tblC pmW
     nlinarith
   have hP : (pmAtoms1 n + pmAtoms2 n) * tblC (pmW n) (pmW n) ≤
-      2525 * (L + 5) ^ 2 * (520 * (L + 5) ^ 2) := Nat.mul_le_mul hA hC
-  have hdW : 4 * d n * pmW n ≤ 16 * (L + 5) ^ 2 := by
+      2525 * (L + 5) ^ 2 * ((2^11) * (L + 5) ^ 2) := Nat.mul_le_mul hA hC
+  have hdW : 4 * d n * pmW n ≤ 32 * (L + 5) ^ 2 := by
     unfold pmW
     have : d n ≤ L := hd.trans hb
     nlinarith
-  have e : 2525 * (L + 5) ^ 2 * (520 * (L + 5) ^ 2) = 1313000 * (L + 5) ^ 4 := by ring
+  have e : 2525 * (L + 5) ^ 2 * ((2^11) * (L + 5) ^ 2) = 5171200 * (L + 5) ^ 4 := by ring
   have h4 : 1 ≤ (L + 5) ^ 2 := Nat.one_le_pow _ _ (by omega)
   have h5 : (L + 5) ^ 2 ≤ (L + 5) ^ 4 := Nat.pow_le_pow_right (by omega) (by norm_num)
   have h6 : L + 5 ≤ (L + 5) ^ 4 := Nat.le_self_pow (by norm_num) _
   unfold pmCost pmPreCost
-  have hW : pmW n = 4 * L + 16 := rfl
+  have hW : pmW n = 4 * L + 32 := rfl
   rw [hW] at hdW hP ⊢
   omega
 
-/-- The unary copy of `T` (and of `r ≤ T`) costs `O(n)`: `pmW n · T ≤ 192 n`. -/
-theorem pm_W_T_le {n : ℕ} (hn : 2 ≤ n) : pmW n * T n ≤ 192 * n := by
+/-- The unary copy of `T` (and of `r ≤ T`) costs `O(n)`: `pmW n · T ≤ (2^9) n`. -/
+theorem pm_W_T_le {n : ℕ} (hn : 2 ≤ n) : pmW n * T n ≤ (2^9) * n := by
   have h1 := bT_lt hn
   have h2 : Nat.size n ≤ b n + 1 := pm_size_le
   have hb := one_le_b hn

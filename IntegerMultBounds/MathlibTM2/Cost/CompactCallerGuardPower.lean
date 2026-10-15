@@ -26,7 +26,7 @@ private theorem clog_succ_log (d : ℕ) (hd : 1≤d) :
 
 /-- A dyadic coefficient bounding the actual guard by one plus log dimension. -/
 def compactCallerGuardLogCoeff : ℝ :=
-  compactLayerDyadic (18+8*((Mult.Sizes.cExp*Mult.Sizes.epsExp:ℕ):ℝ))
+  compactLayerDyadic (18+8*((Mult.Sizes.cExp*Mult.Sizes.upperPower:ℕ):ℝ))
 
 /-- Includes the concrete original precision, integer roots and ceiling logarithm. -/
 theorem compactCaller_guard_log (M : ℕ) (hM : 2≤M) :
@@ -37,19 +37,19 @@ theorem compactCaller_guard_log (M : ℕ) (hM : 2≤M) :
   have hp := (Mult.Sizes.clog_p_le M).trans
     (Nat.add_le_add_left (Nat.mul_le_mul_left _ hmono) 3)
   have hpR : (Nat.clog 2 (Mult.Sizes.p M):ℝ)≤
-      3+((Mult.Sizes.cExp*Mult.Sizes.epsExp:ℕ):ℝ)*(Nat.clog 2 (Mult.Sizes.d M+1):ℝ) := by
+      3+((Mult.Sizes.cExp*Mult.Sizes.upperPower:ℕ):ℝ)*(Nat.clog 2 (Mult.Sizes.d M+1):ℝ) := by
     exact_mod_cast hp
   have hlog := clog_succ_log (Mult.Sizes.d M) hd
   have hnonneg : 0≤Real.logb 2 (Mult.Sizes.d M) :=
     Real.logb_nonneg (by norm_num) (by exact_mod_cast hd)
-  have hC := compactLayerDyadic_le (18+8*((Mult.Sizes.cExp*Mult.Sizes.epsExp:ℕ):ℝ))
+  have hC := compactLayerDyadic_le (18+8*((Mult.Sizes.cExp*Mult.Sizes.upperPower:ℕ):ℝ))
   have hbound : (Mult.CompactSizes.guard M:ℝ)≤
-      (18+8*((Mult.Sizes.cExp*Mult.Sizes.epsExp:ℕ):ℝ))*(1+Real.logb 2 (Mult.Sizes.d M)) := by
+      (18+8*((Mult.Sizes.cExp*Mult.Sizes.upperPower:ℕ):ℝ))*(1+Real.logb 2 (Mult.Sizes.d M)) := by
     have hprod := mul_le_mul_of_nonneg_left hlog
-      (Nat.cast_nonneg (α:=ℝ) (Mult.Sizes.cExp*Mult.Sizes.epsExp))
+      (Nat.cast_nonneg (α:=ℝ) (Mult.Sizes.cExp*Mult.Sizes.upperPower))
     simp only [Mult.CompactSizes.guard,Mult.CompactSizes.p,Nat.cast_add,Nat.cast_mul,Nat.cast_ofNat]
     push_cast at hpR hprod
-    nlinarith [mul_nonneg (show (0:ℝ)≤Mult.Sizes.cExp*Mult.Sizes.epsExp by positivity) hnonneg]
+    nlinarith [mul_nonneg (show (0:ℝ)≤Mult.Sizes.cExp*Mult.Sizes.upperPower by positivity) hnonneg]
   exact hbound.trans (mul_le_mul_of_nonneg_right hC (by linarith))
 
 /-- All coefficients are rounded upward to powers of two. -/

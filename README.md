@@ -8,14 +8,15 @@
 `Turing.FinTM2` machine multiplies every pair of natural numbers, with standard
 binary input/output encodings, in worst-case time `O(n (log n)^(1-kappa))`.
 The construction proves the positive saving
-`kappa = 2^-35`, exposed by `MathlibTM2.mulInTime`, where `n` is the
+`kappa = 2^-34`, exposed by `MathlibTM2.mulInTime`, where `n` is the
 total encoded input length. See [the completed plan](plan/C-mathlib-end-to-end.md).
 
 The running multiplier combines linear direct CRT routing with compact controls
-and eighth-root chunks. Its parameters are `epsilon = 2^-3`, `c = 2^-3`, and
-`lambda' = 1-2^-32`. Complete input preparation, distribution, transforms,
+and fourth-root chunks. Its parameters are `epsilon = 9/64`, `c = 2^-2`, and
+`lambda' = 1-57/2^37`. Internal parameters are exact dyadic rationals; the public
+saving remains a power of two. Complete input preparation, distribution, transforms,
 output and cleanup are included in the fixed-machine proof. The public saving
-is `2^31` times the historical M2 saving `2^-66`; this is an exponent improvement,
+is `2^32` times the historical M2 saving `2^-66`; this is an exponent improvement,
 not a measured runtime speedup.
 
 This completed proof is the primary route. The [retention audit](docs/proof-retention.md)
@@ -43,14 +44,15 @@ chosen before quantifying over inputs.
 so an auditor of the final result reads only that statement and its axioms. Applied to the
 elementary multiplier, the same bridge gives the unconditional `MathlibTM2.mul_quadratic`, a
 quadratic-time Mathlib machine. [The note](docs/mathlib-tm2/mathlib-tm2.pdf) explains the
-statement and the simulation; `lake env lean MathlibTM2Check.lean` checks the axioms.
+statement and the simulation; `python3 scripts/check-lean-safe.py MathlibTM2Check.lean` checks the axioms.
 
 `IntegerMultBounds/MathlibTM2/Theorem.lean` proves `MathlibTM2.statement : MathlibTM2.Statement`:
 a fixed `Turing.FinTM2` machine multiplies in worst-case time `O(n (log n)^(1-κ))` for an
-explicit `κ > 0`. To verify it: read `Statement.lean` (its imports are Mathlib only), run
-`lake build`, then `lake env lean FastPathCheck.lean`, which prints nothing when `statement` and
-the main intermediate theorems depend on `propext`, `Classical.choice` and `Quot.sound` only
-(`#guard_msgs` fails loudly otherwise). [The note](docs/fast-mult/fast-mult.pdf) describes the
+explicit `κ > 0`. Read `Statement.lean` (its imports are Mathlib only). With the
+required dependency artifacts available, run
+`python3 scripts/check-lean-safe.py CompletedProofCheck.lean` to check the public
+bound and audit its complete proof import closure. The audit permits only
+`propext`, `Classical.choice` and `Quot.sound`; an unapproved axiom fails the check. [The note](docs/fast-mult/fast-mult.pdf) describes the
 machine and the proof.
 
 ## Status

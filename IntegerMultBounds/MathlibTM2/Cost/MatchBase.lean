@@ -38,7 +38,7 @@ open IntegerMultBounds.MathlibTM2.Mult.Sizes Filter IntegerMultBounds.MathlibTM2
 /-- `T = 2^(logT - ℓ) · r` with `b ≤ 4 (logT - ℓ)`. -/
 theorem mt_T_split {n : ℕ} (h : Big n) :
     T n = 2 ^ (logT n - ℓ n) * r n ∧ b n ≤ 4 * (logT n - ℓ n) := by
-  have hd := h.2
+  have hd : 16 ≤ d n := by have := h.2; omega
   have h1 := dℓ_lt h.one_le_d
   have h2 := h.logT_bounds
   have hdb : d n ≤ b n := d_le_b n
@@ -123,7 +123,7 @@ theorem mt_K_le_b (n : ℕ) : K n ≤ b n := (K_le_d n).trans (d_le_b n)
 theorem mt_logT_le_b (h : Big n) : logT n ≤ b n := h.logT_bounds.2.le
 
 theorem mt_ℓ_le_logT (h : Big n) : ℓ n ≤ logT n := by
-  have hd := h.2
+  have hd : 16 ≤ d n := by have := h.2; omega
   have h1 := dℓ_lt h.one_le_d
   have h2 := h.logT_bounds
   have hdb : d n ≤ b n := d_le_b n

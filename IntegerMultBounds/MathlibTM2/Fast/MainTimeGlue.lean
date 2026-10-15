@@ -96,7 +96,7 @@ theorem mn_time_le_of_runs {K : ℕ} {Lb : LProc → MnPr (prime + K)} {w : ℕ 
   obtain ⟨cw, cW, hrat⟩ := D.ratio
   obtain ⟨Cd, kd, hcost⟩ := D.costBound
   set k := kd + 4 with hk
-  set Pm : ℝ := 3361400018 + 1100 * 6 with hPm
+  set Pm : ℝ := 2^36 + 2^12 * 6 with hPm
   set CP : ℝ := mtCM mnT cw + 6 * cw + 10 with hCP
   set CR : ℝ := mtRndC mnT (cw + 3) cw 1 with hCR
   set Cr' : ℝ := max Cr 0 with hCr'

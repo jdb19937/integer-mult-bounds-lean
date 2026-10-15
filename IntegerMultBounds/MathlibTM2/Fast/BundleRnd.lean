@@ -262,7 +262,7 @@ lemma bd_stepB_nil (hn : 2 ≤ n) (oE oWL : Fin mnT) (hoE : ∀ r, mnPm r ≠ oE
 /-- `pmW n ≤ bdMw n` under `Big n`. -/
 lemma bd_pmW_le_Mw (hbig : Big n) : pmW n ≤ bdMw n := by
   have h1 : Nat.size n ≤ b n + 1 := pm_size_le
-  have h2 := hbig.sixteen_le_b
+  have h2 : 64≤b n := hbig.2.trans (d_le_b n)
   have h3 : dsW n = p n + Chirp.chirpGuard (d n) + 3 + (logT n - ℓ n) := rfl
   unfold pmW bdMw p at *
   omega

@@ -102,8 +102,17 @@ theorem ds_sum_s (hn : 2 ≤ n) : (List.ofFn (s n)).sum ≤ 2 * T n + 23 * d n :
   have := ds_d_mul_r_le hn
   nlinarith
 
-theorem ds_tblC_le (n : ℕ) : tblC (pmW n) (pmW n) ≤ 18600 * (b n + 1) ^ 2 := by
+theorem ds_tblC_le (n : ℕ) : tblC (pmW n) (pmW n) ≤ 2^16 * (b n + 1) ^ 2 := by
   have hs := pm_size_le (n := n)
+  unfold tblC pmW
+  norm_num only [Nat.reducePow]
+  nlinarith
+
+/-- The sharper distribution allowance applies to actual inputs of length at least two. -/
+theorem ds_tblC_le_of_two {n : ℕ} (hn : 2≤n) :
+    tblC (pmW n) (pmW n) ≤ 18600 * (b n + 1) ^ 2 := by
+  have hs := pm_size_le (n := n)
+  have hb := one_le_b hn
   unfold tblC pmW
   nlinarith
 

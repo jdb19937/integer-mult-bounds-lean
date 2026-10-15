@@ -58,7 +58,8 @@ theorem mr_inst {n : ℕ} (h : Big n) :
   obtain ⟨hT, -⟩ := mt_T_split h
   have hw := ds_dsW_le h.1
   refine ⟨H, hs, ds_length_cvAx n, ?_, by rw [hs]; exact hT.symm, nRounds_le H, H.K_pos,
-    mt_ℓ_le_b h, mt_K_le_b n, mt_d_le_b n, h.sixteen_le_b, h.2, ?_⟩
+    mt_ℓ_le_b h, mt_K_le_b n, mt_d_le_b n, h.sixteen_le_b,
+    (by have := h.2; omega), ?_⟩
   · rw [hs]; have := mt_logT_le_b h; omega
   · have := h.sixteen_le_b; omega
 

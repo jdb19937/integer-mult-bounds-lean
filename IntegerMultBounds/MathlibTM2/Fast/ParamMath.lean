@@ -1,5 +1,6 @@
 module
 
+public import IntegerMultBounds.MathlibTM2.Mult.CompactDyadicPrecision
 public import IntegerMultBounds.MathlibTM2.Mult.Pipeline
 
 /-!
@@ -126,7 +127,7 @@ theorem pm_four_d_sq_le (hn : 2 ≤ n) : 4 * d n ^ 2 ≤ b n + 4 := by
   · have := one_le_d hn
     have e : d n = 1 := by omega
     rw [e]; omega
-  · have h4 : d n ^ 4 ≤ b n := pow_le_b_of (k := 4) (by unfold epsExp; norm_num) (one_le_d hn)
+  · have h4 : d n ^ 4 ≤ b n := pow_le_b_of (k := 4) (by unfold powerCap; norm_num) (one_le_d hn)
     have h2 : 4 ≤ d n ^ 2 := by nlinarith
     have : 4 * d n ^ 2 ≤ d n ^ 4 := by
       calc 4 * d n ^ 2 ≤ d n ^ 2 * d n ^ 2 := Nat.mul_le_mul_right _ h2
@@ -172,46 +173,16 @@ theorem pm_one_le_modulus (N x₀ a i : ℕ) : 1 ≤ modulus N x₀ a i := by
 
 /-- The room `8 d² N + 4 d ≤ 2^(ℓ - 1)` for `d ≥ 2`, as in `Sizes.Big.moduli_room`. -/
 theorem pm_room (hn : 2 ≤ n) (hd : 2 ≤ d n) : 8 * d n ^ 2 * N n + 4 * d n ≤ 2 ^ (ℓ n - 1) := by
-  set D := d n
-  have hN1 : 1 ≤ N n := oddProd_pos D
-  have hN : N n ≤ 2 ^ (2 * D * (2 * D)) := by
-    calc N n ≤ (4 * D) ^ (2 * D) := oddProd_le D
-      _ ≤ (2 ^ (2 * D)) ^ (2 * D) := Nat.pow_le_pow_left (le_two_pow_two_mul hd) _
-      _ = 2 ^ (2 * D * (2 * D)) := by rw [← pow_mul]
-  have hD2 : D ^ 2 ≤ 2 ^ (2 * D) := by
-    calc D ^ 2 ≤ (2 ^ D) ^ 2 := Nat.pow_le_pow_left Nat.lt_two_pow_self.le 2
-      _ = 2 ^ (2 * D) := by rw [← pow_mul, mul_comm]
-  have hDN : D ≤ D ^ 2 * N n := by
-    calc D ≤ D ^ 2 := Nat.le_self_pow (by norm_num) D
-      _ ≤ D ^ 2 * N n := Nat.le_mul_of_pos_right _ hN1
-  have h1 : 8 * D ^ 2 * N n + 4 * D ≤ 16 * (D ^ 2 * N n) := by
-    have e : 8 * D ^ 2 * N n = 8 * (D ^ 2 * N n) := by ring
-    omega
-  have h1' : D ^ 2 * N n ≤ 2 ^ (2 * D) * 2 ^ (2 * D * (2 * D)) := Nat.mul_le_mul hD2 hN
-  have h2 : 4 + 2 * D + 2 * D * (2 * D) ≤ ℓ n - 1 := by
-    have h8 : D ^ 8 ≤ b n := pow_le_b_of (k := 8) eight_le_epsExp (by omega)
-    have hbl : b n ≤ 2 * logT n := b_le_two_mul_logT hn
-    have hld : logT n ≤ D * ℓ n := logT_le_dℓ (by omega)
-    have h3 : D ^ 7 ≤ 2 * ℓ n := by
-      have : D * D ^ 7 ≤ D * (2 * ℓ n) := by
-        calc D * D ^ 7 = D ^ 8 := by ring
-          _ ≤ 2 * (D * ℓ n) := by omega
-          _ = D * (2 * ℓ n) := by ring
-      exact Nat.le_of_mul_le_mul_left this (by omega)
-    have h4 : D ^ 3 * 2 ^ 4 ≤ D ^ 7 := by
-      have : 2 ^ 4 ≤ D ^ 4 := Nat.pow_le_pow_left hd 4
-      calc D ^ 3 * 2 ^ 4 ≤ D ^ 3 * D ^ 4 := Nat.mul_le_mul_left _ this
-        _ = D ^ 7 := by ring
-    have h5 : 2 * D ^ 2 ≤ D ^ 3 := by
-      calc 2 * D ^ 2 ≤ D * D ^ 2 := Nat.mul_le_mul_right _ hd
-        _ = D ^ 3 := by ring
-    have h6 : 10 + 4 * D ≤ 8 * D ^ 2 := by nlinarith
-    have e : 2 * D * (2 * D) = 4 * D ^ 2 := by ring
-    omega
-  calc 8 * D ^ 2 * N n + 4 * D ≤ 16 * (D ^ 2 * N n) := h1
-    _ ≤ 16 * (2 ^ (2 * D) * 2 ^ (2 * D * (2 * D))) := Nat.mul_le_mul_left _ h1'
-    _ = 2 ^ (4 + 2 * D + 2 * D * (2 * D)) := by rw [pow_add, pow_add]; norm_num; ring
-    _ ≤ 2 ^ (ℓ n - 1) := pm_two_pow_le h2
+  apply CompactDyadicPrecision.modulus_room hd
+    (pow_le_b_of (k := 7) (by decide : 7 ≤ powerCap) (by omega))
+  · have hb := b_le_two_mul_logT hn
+    have hlog := logT_le_dℓ (by omega : 1 ≤ d n)
+    calc
+      b n ≤ 2 * logT n := hb
+      _ ≤ 2 * (d n * ℓ n) := Nat.mul_le_mul_left 2 hlog
+      _ = 2 * d n * ℓ n := by ring
+  · exact oddProd_pos (d n)
+  · exact oddProd_le (d n)
 
 /-- The start of the moduli at `n`. -/
 def pmX0 (n : ℕ) : ℕ := start (d n) (N n) (2 ^ (ℓ n - 1))

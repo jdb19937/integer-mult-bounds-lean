@@ -1,13 +1,15 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.ParamSub
+public import IntegerMultBounds.MathlibTM2.Fast.CompactDyadicParamStageCore
+public import IntegerMultBounds.MathlibTM2.Mult.CompactDyadicRootRoom
 
 /-!
 # The parameter program
 
 `pmCode1` and `pmCode2` are table programs (`TblCode pmNV`, `pmNV = 40` variables) computing,
 from the operand length `n ≥ 2` in variable `0`, every parameter of the numeric pipeline
-exactly, in words of `W ≥ 4 b + 16` bits (`b = ⌈log₂ n⌉`). Variable `i < 31` ends holding
+exactly, in words of `W ≥ 4 b + 32` bits (`b = ⌈log₂ n⌉`). Variable `i < 31` ends holding
 `pmVal n i`; the scratch variables `31, …, 39` end at `0`.
 
 | var | value | source |
@@ -15,7 +17,7 @@ exactly, in words of `W ≥ 4 b + 16` bits (`b = ⌈log₂ n⌉`). Variable `i <
 | 0 | `n` | input |
 | 1 | `b = ⌈log₂ n⌉` | `Sizes.b` |
 | 2 | `p = 6 b` | `Sizes.p` |
-| 3 | `d = iroot (2^3) b` | `Sizes.d` |
+| 3 | `d = iroot 64 (b^9)` | `Sizes.d` |
 | 4 | `K = iroot (2^32) d` | `Sizes.K` |
 | 5 | `log₂ T` | `Sizes.logT` |
 | 6 | `T` | `Sizes.T` |
@@ -166,13 +168,13 @@ theorem pm_seq {c d : TblCode pmNV} {n j k l K₁ K₂ : ℕ} {a₁ a₂ a₃ : 
 theorem PmF.val {n k : ℕ} {acc : List (Fin (A + 4))} {s : TblSt pmNV A} (h : PmF n k acc s)
     (i : Fin pmNV) (hi : i.val < k := by decide) : s.val i = pmVal n i := h.2 i hi
 
-/-! ### Size bounds in words of `W ≥ 4 b + 16` bits -/
+/-! ### Size bounds in words of `W ≥ 4 b + 32` bits -/
 
 section Bounds
 
 variable {n : ℕ}
 
-theorem pm_W_pow (hW : 4 * b n + 16 ≤ W) {k : ℕ} (hk : k ≤ 4 * b n + 16) : 2 ^ k ≤ 2 ^ W :=
+theorem pm_W_pow (hW : 4 * b n + 32 ≤ W) {k : ℕ} (hk : k ≤ 4 * b n + 32) : 2 ^ k ≤ 2 ^ W :=
   pm_two_pow_le (hk.trans hW)
 
 theorem pm_n_le (n : ℕ) : n ≤ 2 ^ b n := le_two_pow_b n
@@ -191,7 +193,7 @@ section Stages
 
 variable {n : ℕ} {acc : List (Fin (A + 4))}
 
-theorem pm_s1 (hn : 2 ≤ n) (hW : 4 * b n + 16 ≤ W) :
+theorem pm_s1 (hn : 2 ≤ n) (hW : 4 * b n + 32 ≤ W) :
     ∀ s, PmF n 1 acc s → TblDo A W w (pmClogC.rename ![0, 1, 31]) s (PmF n 2 acc)
       (4 * b n + 5) :=
   pm_stage (by decide) 1 rfl fun s hs => by
@@ -205,7 +207,7 @@ theorem pm_s1 (hn : 2 ≤ n) (hW : 4 * b n + 16 ≤ W) :
     refine ⟨by rw [ea]; exact hs.1, e1, fun y hy => ?_⟩
     fin_cases y <;> simp [pmVal, pmNV] at hy ⊢ <;> assumption
 
-theorem pm_s2 (hW : 4 * b n + 16 ≤ W) :
+theorem pm_s2 (hW : 4 * b n + 32 ≤ W) :
     ∀ s, PmF n 2 acc s → TblDo A W w ((pmLinC 6 0).rename ![1, 2, 31, 32]) s (PmF n 3 acc) 10 :=
   pm_stage (by decide) 1 rfl fun s hs => by
     have h0 : (s.restrict ![1, 2, 31, 32]).val 0 = b n := by simpa [pmVal, pmNV] using hs.val 1
@@ -217,7 +219,7 @@ theorem pm_s2 (hW : 4 * b n + 16 ≤ W) :
     refine ⟨by rw [ea]; exact hs.1, by rw [e1]; simp [pmVal, pmNV, p], fun y hy => ?_⟩
     fin_cases y <;> simp [pmVal, pmNV] at hy ⊢ <;> assumption
 
-theorem pm_sq_lt (hW : 4 * b n + 16 ≤ W) {x : ℕ} (hx : x ≤ b n) : (x + 1) * (x + 1) < 2 ^ W := by
+theorem pm_sq_lt (hW : 4 * b n + 32 ≤ W) {x : ℕ} (hx : x ≤ b n) : (x + 1) * (x + 1) < 2 ^ W := by
   have h1 : x + 1 ≤ 2 ^ b n := by have := pm_b_lt n; omega
   have h2 : (x + 1) * (x + 1) ≤ 2 ^ b n * 2 ^ b n := Nat.mul_le_mul h1 h1
   have e : 2 ^ (2 * b n + 1) = 2 * (2 ^ b n * 2 ^ b n) := by rw [pow_succ, two_mul, pow_add]; ring
@@ -225,22 +227,33 @@ theorem pm_sq_lt (hW : 4 * b n + 16 ≤ W) {x : ℕ} (hx : x ≤ b n) : (x + 1) 
   have : 1 ≤ 2 ^ b n * 2 ^ b n := Nat.one_le_iff_ne_zero.2 (by positivity)
   omega
 
-theorem pm_const_lt (hW : 4 * b n + 16 ≤ W) {k : ℕ} (hk : k < 2 ^ 16) : k < 2 ^ W :=
+theorem pm_const_lt (hW : 4 * b n + 32 ≤ W) {k : ℕ} (hk : k < 2 ^ 16) : k < 2 ^ W :=
   lt_of_lt_of_le hk (pm_W_pow hW (by omega))
 
 /-- The new root computation fits the existing parameter-stage budget. -/
-theorem pm_s3 (hW : 4 * b n + 16 ≤ W) :
-    ∀ s, PmF n 3 acc s → TblDo A W w ((pmIrootC 3).rename ![1, 3, 31, 32, 33, 34]) s
-      (PmF n 4 acc) (7 * 30 + 11 + d n * (6 * 30 + 8)) :=
-  pm_stage (by decide) 1 rfl fun s hs => by
-    have h0 : (s.restrict ![1, 3, 31, 32, 33, 34]).val 0 = b n := by simpa [pmVal, pmNV] using hs.val 1
-    refine (pmIrootC_do 3 _ h0 (pm_sq_lt hW le_rfl) (pm_const_lt hW (by norm_num))).mono ?_
-      (by change 7 * 3 + 11 + d n * (6 * 3 + 8) ≤ 7 * 30 + 11 + d n * (6 * 30 + 8); omega)
-    rintro s' ⟨e0, e1, ea⟩
-    refine ⟨by rw [ea]; exact hs.1, by rw [e1]; rfl, fun y hy => ?_⟩
-    fin_cases y <;> simp [pmVal, pmNV] at hy ⊢ <;> assumption
+theorem pm_s3 (hW : 4 * b n + 32 ≤ W) :
+    ∀ s, PmF n 3 acc s → TblDo A W w compactDyadicParamStage s
+      (PmF n 4 acc) (7 * 30 + 11 + d n * (6 * 30 + 8)) := by
+  intro s hs
+  have hb : s.val 1 = b n := by simpa [pmVal, pmNV] using hs.2 1 (by decide)
+  have hfit : (b n ^ 9 + 1)^2 < 2^W :=
+    (CompactDyadicRootRoom.squared_ninth_cap_lt (b n)).trans_le
+      (Nat.pow_le_pow_right (by decide) hW)
+  refine (compactDyadicParamStage_do s hb hfit (pm_const_lt hW (by norm_num))).mono ?_ ?_
+  · intro z hz
+    refine ⟨hz.2.trans hs.1, fun i hi => ?_⟩
+    rw [hz.1]
+    by_cases hi3 : i = 3
+    · subst i
+      simp [compactDyadicParamVals, pmVal, pmNV, d, rootExp, rootNumerator]
+    · have hi3v : i.val ≠ 3 := fun h => hi3 (Fin.ext h)
+      have hil : i.val < 3 := by omega
+      have hscratch : ¬ (31 ≤ i.val ∧ i.val ≤ 35) := by omega
+      simpa [compactDyadicParamVals, hi3, hscratch] using hs.2 i hil
+  · simpa [compactDyadicParamAtoms, d, rootExp, rootNumerator] using
+      compactDyadicParamAtoms_le (b n)
 
-theorem pm_s4 (hW : 4 * b n + 16 ≤ W) :
+theorem pm_s4 (hW : 4 * b n + 32 ≤ W) :
     ∀ s, PmF n 4 acc s → TblDo A W w ((pmIrootC 32).rename ![3, 4, 31, 32, 33, 34]) s
       (PmF n 5 acc) (7 * 34 + 11 + K n * (6 * 34 + 8)) :=
   pm_stage (by decide) 1 rfl fun s hs => by
@@ -251,7 +264,7 @@ theorem pm_s4 (hW : 4 * b n + 16 ≤ W) :
     refine ⟨by rw [ea]; exact hs.1, by rw [e1]; rfl, fun y hy => ?_⟩
     fin_cases y <;> simp [pmVal, pmNV] at hy ⊢ <;> assumption
 
-theorem pm_s5 (hn : 2 ≤ n) (hW : 4 * b n + 16 ≤ W) :
+theorem pm_s5 (hn : 2 ≤ n) (hW : 4 * b n + 32 ≤ W) :
     ∀ s, PmF n 5 acc s → TblDo A W w (pmLogTC.rename ![0, 1, 5, 31, 32]) s (PmF n 6 acc)
       (4 * logT n + 16) :=
   pm_stage (by decide) 2 rfl fun s hs => by
@@ -285,13 +298,13 @@ theorem pm_pow2_stage {j : ℕ} {e c t : Fin pmNV} (hf : Function.Injective ![e,
     · change c.val < j at hy; omega
     · change t.val < j at hy; omega
 
-theorem pm_s6 (hn : 2 ≤ n) (hW : 4 * b n + 16 ≤ W) :
+theorem pm_s6 (hn : 2 ≤ n) (hW : 4 * b n + 32 ≤ W) :
     ∀ s, PmF n 6 acc s → TblDo A W w ((tblPow2 1 0 2).rename ![5, 6, 31]) s (PmF n 7 acc)
       (4 * logT n + 5) :=
   pm_pow2_stage (e := 5) (c := 6) (t := 31) (j := 6) (v := logT n) (by decide) rfl (by decide)
     (by decide) rfl rfl (by have := pm_logT_le hn; omega)
 
-theorem pm_s7 (hn : 2 ≤ n) (hW : 4 * b n + 16 ≤ W) :
+theorem pm_s7 (hn : 2 ≤ n) (hW : 4 * b n + 32 ≤ W) :
     ∀ s, PmF n 7 acc s → TblDo A W w ((pmCeilDivC 1).rename ![5, 3, 7, 31]) s (PmF n 8 acc) 8 :=
   pm_stage (by decide) 2 rfl fun s hs => by
     have h0 : (s.restrict ![5, 3, 7, 31]).val 0 = logT n := by simpa [pmVal, pmNV] using hs.val 5
@@ -306,13 +319,13 @@ theorem pm_s7 (hn : 2 ≤ n) (hW : 4 * b n + 16 ≤ W) :
     refine ⟨by rw [ea]; exact hs.1, by rw [e2]; simp [pmVal, pmNV, ℓ], fun y hy => ?_⟩
     fin_cases y <;> simp [pmVal, pmNV] at hy ⊢ <;> assumption
 
-theorem pm_s8 (hn : 2 ≤ n) (hW : 4 * b n + 16 ≤ W) :
+theorem pm_s8 (hn : 2 ≤ n) (hW : 4 * b n + 32 ≤ W) :
     ∀ s, PmF n 8 acc s → TblDo A W w ((tblPow2 1 0 2).rename ![7, 8, 31]) s (PmF n 9 acc)
       (4 * ℓ n + 5) :=
   pm_pow2_stage (e := 7) (c := 8) (t := 31) (j := 8) (v := ℓ n) (by decide) rfl (by decide)
     (by decide) rfl rfl (by have := pm_ℓ_le hn; omega)
 
-theorem pm_s9 (hn : 2 ≤ n) (hW : 4 * b n + 16 ≤ W) :
+theorem pm_s9 (hn : 2 ≤ n) (hW : 4 * b n + 32 ≤ W) :
     ∀ s, PmF n 9 acc s → TblDo A W w ((pmSubKC 1).rename ![7, 9, 31]) s (PmF n 10 acc) 3 :=
   pm_stage (by decide) 1 rfl fun s hs => by
     have h0 : (s.restrict ![7, 9, 31]).val 0 = ℓ n := by simpa [pmVal, pmNV] using hs.val 7
@@ -325,13 +338,13 @@ theorem pm_s9 (hn : 2 ≤ n) (hW : 4 * b n + 16 ≤ W) :
     refine ⟨by rw [ea]; exact hs.1, by rw [e1]; simp [pmVal, pmNV], fun y hy => ?_⟩
     fin_cases y <;> simp [pmVal, pmNV] at hy ⊢ <;> assumption
 
-theorem pm_s10 (hn : 2 ≤ n) (hW : 4 * b n + 16 ≤ W) :
+theorem pm_s10 (hn : 2 ≤ n) (hW : 4 * b n + 32 ≤ W) :
     ∀ s, PmF n 10 acc s → TblDo A W w ((tblPow2 1 0 2).rename ![9, 10, 31]) s (PmF n 11 acc)
       (4 * (ℓ n - 1) + 5) :=
   pm_pow2_stage (e := 9) (c := 10) (t := 31) (j := 10) (v := ℓ n - 1) (by decide) rfl (by decide)
     (by decide) rfl rfl (by have := pm_ℓ_le hn; omega)
 
-theorem pm_s11 (hn : 2 ≤ n) (hW : 4 * b n + 16 ≤ W) :
+theorem pm_s11 (hn : 2 ≤ n) (hW : 4 * b n + 32 ≤ W) :
     ∀ s, PmF n 11 acc s → TblDo A W w (pmMulSubC.rename ![3, 7, 5, 11]) s (PmF n 12 acc) 2 :=
   pm_stage (by decide) 3 rfl fun s hs => by
     have h0 : (s.restrict ![3, 7, 5, 11]).val 0 = d n := by simpa [pmVal, pmNV] using hs.val 3
@@ -356,7 +369,7 @@ theorem pm_s11 (hn : 2 ≤ n) (hW : 4 * b n + 16 ≤ W) :
       rw [efr 2 (by decide), h2]; simp [pmVal]
     · simp [pmNV] at hy
 
-theorem pm_s12 (hn : 2 ≤ n) (hW : 4 * b n + 16 ≤ W) :
+theorem pm_s12 (hn : 2 ≤ n) (hW : 4 * b n + 32 ≤ W) :
     ∀ s, PmF n 12 acc s → TblDo A W w (pmAlphaC.rename ![3, 1, 12, 31, 32]) s (PmF n 13 acc)
       (5 * alpha n + 20) :=
   pm_stage (by decide) 2 rfl fun s hs => by
@@ -377,7 +390,7 @@ theorem pm_s12 (hn : 2 ≤ n) (hW : 4 * b n + 16 ≤ W) :
     refine ⟨by rw [ea]; exact hs.1, by rw [e2]; simp [pmVal, pmNV], fun y hy => ?_⟩
     fin_cases y <;> simp [pmVal, pmNV] at hy ⊢ <;> assumption
 
-theorem pm_s13 (hn : 2 ≤ n) (hW : 4 * b n + 16 ≤ W) :
+theorem pm_s13 (hn : 2 ≤ n) (hW : 4 * b n + 32 ≤ W) :
     ∀ s, PmF n 13 acc s → TblDo A W w (pmSqC.rename ![12, 13]) s (PmF n 14 acc) 1 :=
   pm_stage (by decide) 1 rfl fun s hs => by
     have h0 : (s.restrict ![12, 13]).val 0 = alpha n := by simpa [pmVal, pmNV] using hs.val 12
@@ -388,7 +401,7 @@ theorem pm_s13 (hn : 2 ≤ n) (hW : 4 * b n + 16 ≤ W) :
     refine ⟨by rw [ea]; exact hs.1, by rw [e1]; simp [pmVal, pmNV], fun y hy => ?_⟩
     fin_cases y <;> simp [pmVal, pmNV] at hy ⊢ <;> assumption
 
-theorem pm_s14 (hn : 2 ≤ n) (hW : 4 * b n + 16 ≤ W) :
+theorem pm_s14 (hn : 2 ≤ n) (hW : 4 * b n + 32 ≤ W) :
     ∀ s, PmF n 14 acc s → TblDo A W w (pmGammaC.rename ![3, 13, 14, 31]) s (PmF n 15 acc) 4 :=
   pm_stage (by decide) 2 rfl fun s hs => by
     have h0 : (s.restrict ![3, 13, 14, 31]).val 0 = d n := by simpa [pmVal, pmNV] using hs.val 3
@@ -410,7 +423,7 @@ theorem pm_s14 (hn : 2 ≤ n) (hW : 4 * b n + 16 ≤ W) :
     refine ⟨by rw [ea]; exact hs.1, by rw [e2]; simp [pmVal, pmNV, gamma], fun y hy => ?_⟩
     fin_cases y <;> simp [pmVal, pmNV] at hy ⊢ <;> assumption
 
-theorem pm_s15 (hn : 2 ≤ n) (hW : 4 * b n + 16 ≤ W) :
+theorem pm_s15 (hn : 2 ≤ n) (hW : 4 * b n + 32 ≤ W) :
     ∀ s, PmF n 15 acc s → TblDo A W w ((pmCeilDivC 1).rename ![0, 1, 15, 31]) s
       (PmF n 16 acc) 8 :=
   pm_stage (by decide) 2 rfl fun s hs => by
@@ -425,7 +438,7 @@ theorem pm_s15 (hn : 2 ≤ n) (hW : 4 * b n + 16 ≤ W) :
     refine ⟨by rw [ea]; exact hs.1, by rw [e2]; simp [pmVal, pmNV, q], fun y hy => ?_⟩
     fin_cases y <;> simp [pmVal, pmNV] at hy ⊢ <;> assumption
 
-theorem pm_s16 (hn : 2 ≤ n) (hW : 4 * b n + 16 ≤ W) :
+theorem pm_s16 (hn : 2 ≤ n) (hW : 4 * b n + 32 ≤ W) :
     ∀ s, PmF n 16 acc s → TblDo A W w (pmOddC.rename ![3, 16, 31, 32, 33]) s (PmF n 17 acc)
       (12 * d n + 6) :=
   pm_stage (by decide) 1 rfl fun s hs => by
@@ -442,7 +455,7 @@ theorem pm_s16 (hn : 2 ≤ n) (hW : 4 * b n + 16 ≤ W) :
     refine ⟨by rw [ea]; exact hs.1, by rw [e1]; simp [pmVal, pmNV, N], fun y hy => ?_⟩
     fin_cases y <;> simp [pmVal, pmNV] at hy ⊢ <;> assumption
 
-theorem pm_s17 (hn : 2 ≤ n) (hW : 4 * b n + 16 ≤ W) :
+theorem pm_s17 (hn : 2 ≤ n) (hW : 4 * b n + 32 ≤ W) :
     ∀ s, PmF n 17 acc s → TblDo A W w (pmStartC.rename ![3, 10, 16, 17, 31, 32]) s
       (PmF n 18 acc) 11 :=
   pm_stage (by decide) 3 rfl fun s hs => by
@@ -471,7 +484,7 @@ theorem pm_s17 (hn : 2 ≤ n) (hW : 4 * b n + 16 ≤ W) :
     refine ⟨by rw [ea]; exact hs.1, by rw [e3]; simp [pmVal, pmNV, pmX0], fun y hy => ?_⟩
     fin_cases y <;> simp [pmVal, pmNV] at hy ⊢ <;> assumption
 
-theorem pm_s18 (hn : 2 ≤ n) (hW : 4 * b n + 16 ≤ W) :
+theorem pm_s18 (hn : 2 ≤ n) (hW : 4 * b n + 32 ≤ W) :
     ∀ s, PmF n 18 acc s → TblDo A W w (pmProdSC.rename ![16, 17, 11, 3, 18, 31, 32, 33]) s
       (PmF n 19 acc) (13 * d n + 5) :=
   pm_stage (by decide) 4 rfl fun s hs => by
@@ -492,7 +505,7 @@ theorem pm_s18 (hn : 2 ≤ n) (hW : 4 * b n + 16 ≤ W) :
     refine ⟨by rw [ea]; exact hs.1, by rw [e4, hS]; simp [pmVal, pmNV], fun y hy => ?_⟩
     fin_cases y <;> simp [pmVal, pmNV] at hy ⊢ <;> assumption
 
-theorem pm_s19 (hn : 2 ≤ n) (hW : 4 * b n + 16 ≤ W) :
+theorem pm_s19 (hn : 2 ≤ n) (hW : 4 * b n + 32 ≤ W) :
     ∀ s, PmF n 19 acc s → TblDo A W w (pmWinAC.rename ![2, 13, 19, 31, 32, 33]) s
       (PmF n 20 acc) (6 * Nat.sqrt (p n * alpha n ^ 2) + 9) :=
   pm_stage (by decide) 2 rfl fun s hs => by
@@ -508,7 +521,7 @@ theorem pm_s19 (hn : 2 ≤ n) (hW : 4 * b n + 16 ≤ W) :
     refine ⟨by rw [ea]; exact hs.1, by rw [e2]; simp [pmVal, pmNV, windowA], fun y hy => ?_⟩
     fin_cases y <;> simp [pmVal, pmNV] at hy ⊢ <;> assumption
 
-theorem pm_s20 (hn : 2 ≤ n) (hW : 4 * b n + 16 ≤ W) :
+theorem pm_s20 (hn : 2 ≤ n) (hW : 4 * b n + 32 ≤ W) :
     ∀ s, PmF n 20 acc s → TblDo A W w (pmWinBC.rename ![2, 12, 20, 31, 32, 33, 34]) s
       (PmF n 21 acc) (6 * Nat.sqrt (p n) + 10) :=
   pm_stage (by decide) 2 rfl fun s hs => by
@@ -531,7 +544,7 @@ theorem pm_s20 (hn : 2 ≤ n) (hW : 4 * b n + 16 ≤ W) :
     fin_cases y <;> simp [pmVal, pmNV] at hy ⊢ <;> assumption
 
 /-- Bounds for the precision stages: every value at most `64 b + 64`. -/
-theorem pm_small_lt (hW : 4 * b n + 16 ≤ W) {x : ℕ} (hx : x ≤ 64 * b n + 64) : x < 2 ^ W := by
+theorem pm_small_lt (hW : 4 * b n + 32 ≤ W) {x : ℕ} (hx : x ≤ 64 * b n + 64) : x < 2 ^ W := by
   have hb := pm_W_pow hW (k := b n + 7) (by omega)
   have e : 2 ^ (b n + 7) = 128 * 2 ^ b n := by rw [pow_add]; ring
   have := pm_b_lt n
@@ -548,7 +561,7 @@ theorem pm_tg_le (p g : ℕ) : taylorGuard p g ≤ p + g + 18 := by
   have := pm_clog_le_self (p + g + 14)
   omega
 
-theorem pm_s21 (hW : 4 * b n + 16 ≤ W) :
+theorem pm_s21 (hW : 4 * b n + 32 ≤ W) :
     ∀ s, PmF n 21 acc s → TblDo A W w ((pmClogAddC 4).rename ![3, 21, 31, 32]) s (PmF n 22 acc)
       (4 * Nat.clog 2 (d n) + 4 + 7) :=
   pm_stage (by decide) 1 rfl fun s hs => by
@@ -559,7 +572,7 @@ theorem pm_s21 (hW : 4 * b n + 16 ≤ W) :
     refine ⟨by rw [ea]; exact hs.1, by rw [e1]; simp [pmVal, pmNV, chirpGuard], fun y hy => ?_⟩
     fin_cases y <;> simp [pmVal, pmNV] at hy ⊢ <;> assumption
 
-theorem pm_s22 (hW : 4 * b n + 16 ≤ W) :
+theorem pm_s22 (hW : 4 * b n + 32 ≤ W) :
     ∀ s, PmF n 22 acc s → TblDo A W w ((pmLinC 1 14).rename ![2, 22, 31, 32]) s (PmF n 23 acc)
       (1 + 14 + 4) :=
   pm_stage (by decide) 1 rfl fun s hs => by
@@ -570,7 +583,7 @@ theorem pm_s22 (hW : 4 * b n + 16 ≤ W) :
     refine ⟨by rw [ea]; exact hs.1, by rw [e1]; simp [pmVal, pmNV, taylorTerms], fun y hy => ?_⟩
     fin_cases y <;> simp [pmVal, pmNV] at hy ⊢ <;> assumption
 
-theorem pm_s23 (hW : 4 * b n + 16 ≤ W) :
+theorem pm_s23 (hW : 4 * b n + 32 ≤ W) :
     ∀ s, PmF n 23 acc s → TblDo A W w ((pmClogAddC 4).rename ![22, 23, 31, 32]) s
       (PmF n 24 acc) (4 * Nat.clog 2 (taylorTerms (p n) 0) + 4 + 7) :=
   pm_stage (by decide) 1 rfl fun s hs => by
@@ -582,7 +595,7 @@ theorem pm_s23 (hW : 4 * b n + 16 ≤ W) :
     refine ⟨by rw [ea]; exact hs.1, by rw [e1]; simp [pmVal, pmNV, taylorGuard], fun y hy => ?_⟩
     fin_cases y <;> simp [pmVal, pmNV] at hy ⊢ <;> assumption
 
-theorem pm_s24 (hW : 4 * b n + 16 ≤ W) :
+theorem pm_s24 (hW : 4 * b n + 32 ≤ W) :
     ∀ s, PmF n 24 acc s → TblDo A W w ((pmLin2C 1 2).rename ![2, 23, 24, 31, 32]) s
       (PmF n 25 acc) (1 + 2 + 5) :=
   pm_stage (by decide) 2 rfl fun s hs => by
@@ -596,7 +609,7 @@ theorem pm_s24 (hW : 4 * b n + 16 ≤ W) :
     refine ⟨by rw [ea]; exact hs.1, by rw [e2]; simp [pmVal, pmNV]; ring, fun y hy => ?_⟩
     fin_cases y <;> simp [pmVal, pmNV] at hy ⊢ <;> assumption
 
-theorem pm_s25 (hW : 4 * b n + 16 ≤ W) :
+theorem pm_s25 (hW : 4 * b n + 32 ≤ W) :
     ∀ s, PmF n 25 acc s → TblDo A W w ((pmLinC 5 4).rename ![2, 25, 31, 32]) s (PmF n 26 acc)
       (5 + 4 + 4) :=
   pm_stage (by decide) 1 rfl fun s hs => by
@@ -607,7 +620,7 @@ theorem pm_s25 (hW : 4 * b n + 16 ≤ W) :
     refine ⟨by rw [ea]; exact hs.1, by rw [e1]; simp [pmVal, pmNV], fun y hy => ?_⟩
     fin_cases y <;> simp [pmVal, pmNV] at hy ⊢ <;> assumption
 
-theorem pm_s26 (hW : 4 * b n + 16 ≤ W) :
+theorem pm_s26 (hW : 4 * b n + 32 ≤ W) :
     ∀ s, PmF n 26 acc s → TblDo A W w ((pmLin2C 1 14).rename ![2, 21, 26, 31, 32]) s
       (PmF n 27 acc) (1 + 14 + 5) :=
   pm_stage (by decide) 2 rfl fun s hs => by
@@ -621,7 +634,7 @@ theorem pm_s26 (hW : 4 * b n + 16 ≤ W) :
     refine ⟨by rw [ea]; exact hs.1, by rw [e2]; simp [pmVal, pmNV, taylorTerms], fun y hy => ?_⟩
     fin_cases y <;> simp [pmVal, pmNV] at hy ⊢ <;> assumption
 
-theorem pm_s27 (hW : 4 * b n + 16 ≤ W) :
+theorem pm_s27 (hW : 4 * b n + 32 ≤ W) :
     ∀ s, PmF n 27 acc s → TblDo A W w ((pmClogAddC 4).rename ![26, 27, 31, 32]) s
       (PmF n 28 acc) (4 * Nat.clog 2 (taylorTerms (p n) (chirpGuard (d n))) + 4 + 7) :=
   pm_stage (by decide) 1 rfl fun s hs => by
@@ -634,7 +647,7 @@ theorem pm_s27 (hW : 4 * b n + 16 ≤ W) :
     refine ⟨by rw [ea]; exact hs.1, by rw [e1]; simp [pmVal, pmNV, taylorGuard], fun y hy => ?_⟩
     fin_cases y <;> simp [pmVal, pmNV] at hy ⊢ <;> assumption
 
-theorem pm_s28 (hW : 4 * b n + 16 ≤ W) :
+theorem pm_s28 (hW : 4 * b n + 32 ≤ W) :
     ∀ s, PmF n 28 acc s → TblDo A W w ((pmLin2C 1 0).rename ![2, 21, 28, 31, 32]) s
       (PmF n 29 acc) (1 + 0 + 5) :=
   pm_stage (by decide) 2 rfl fun s hs => by
@@ -648,7 +661,7 @@ theorem pm_s28 (hW : 4 * b n + 16 ≤ W) :
     refine ⟨by rw [ea]; exact hs.1, by rw [e2]; simp [pmVal, pmNV], fun y hy => ?_⟩
     fin_cases y <;> simp [pmVal, pmNV] at hy ⊢ <;> assumption
 
-theorem pm_s29 (hW : 4 * b n + 16 ≤ W) :
+theorem pm_s29 (hW : 4 * b n + 32 ≤ W) :
     ∀ s, PmF n 29 acc s → TblDo A W w ((pmLin2C 1 2).rename ![28, 27, 29, 31, 32]) s
       (PmF n 30 acc) (1 + 2 + 5) :=
   pm_stage (by decide) 2 rfl fun s hs => by
@@ -664,7 +677,7 @@ theorem pm_s29 (hW : 4 * b n + 16 ≤ W) :
     refine ⟨by rw [ea]; exact hs.1, by rw [e2]; simp [pmVal, pmNV]; ring, fun y hy => ?_⟩
     fin_cases y <;> simp [pmVal, pmNV] at hy ⊢ <;> assumption
 
-theorem pm_s30 (hW : 4 * b n + 16 ≤ W) :
+theorem pm_s30 (hW : 4 * b n + 32 ≤ W) :
     ∀ s, PmF n 30 acc s → TblDo A W w ((pmLinC 5 4).rename ![28, 30, 31, 32]) s (PmF n 31 acc)
       (5 + 4 + 4) :=
   pm_stage (by decide) 1 rfl fun s hs => by
@@ -685,7 +698,7 @@ def pmTList (A w n : ℕ) : List (Fin (A + 4)) :=
 def pmSList (A w n : ℕ) : List (Fin (A + 4)) :=
   pmEmitList A w (modulus (N n) (pmX0 n) (numHalf n)) (d n)
 
-theorem pm_s31 (hW : 4 * b n + 16 ≤ W) :
+theorem pm_s31 (hW : 4 * b n + 32 ≤ W) :
     ∀ s, PmF n 31 acc s → TblDo A W w (pmEmitTC.rename ![3, 11, 10, 8, 31, 32]) s
       (PmF n 31 ((pmTList A w n).reverse ++ acc)) (6 * d n + 3) :=
   pm_stage_acc (by decide) fun s hs => by
@@ -703,7 +716,7 @@ theorem pm_s31 (hW : 4 * b n + 16 ≤ W) :
     refine ⟨by rw [ea]; simp [hs.1, pmTList], fun y hy => ?_⟩
     fin_cases y <;> simp [pmVal, pmNV] at hy ⊢ <;> assumption
 
-theorem pm_s32 (hn : 2 ≤ n) (hW : 4 * b n + 16 ≤ W) :
+theorem pm_s32 (hn : 2 ≤ n) (hW : 4 * b n + 32 ≤ W) :
     ∀ s, PmF n 31 acc s → TblDo A W w (pmEmitSC.rename ![16, 17, 11, 3, 31, 32, 33]) s
       (PmF n 31 ((pmSList A w n).reverse ++ acc)) (13 * d n + 3) :=
   pm_stage_acc (by decide) fun s hs => by
@@ -759,7 +772,7 @@ end Stages
 def pmStages : TblCode pmNV :=
   pmClogC.rename ![0, 1, 31] ;;
   (pmLinC 6 0).rename ![1, 2, 31, 32] ;;
-  (pmIrootC 3).rename ![1, 3, 31, 32, 33, 34] ;;
+  compactDyadicParamStage ;;
   (pmIrootC 32).rename ![3, 4, 31, 32, 33, 34] ;;
   pmLogTC.rename ![0, 1, 5, 31, 32] ;;
   (tblPow2 1 0 2).rename ![5, 6, 31] ;;
@@ -807,7 +820,7 @@ section Main
 
 variable {n : ℕ} {acc : List (Fin (A + 4))}
 
-theorem pmStages_do (hn : 2 ≤ n) (hW : 4 * b n + 16 ≤ W) :
+theorem pmStages_do (hn : 2 ≤ n) (hW : 4 * b n + 32 ≤ W) :
     ∀ s, PmF n 1 acc s → TblDo A W w pmStages s (PmF n 31 acc)
       ((4 * b n + 5) + (10 + ((7 * 30 + 11 + d n * (6 * 30 + 8)) +
         ((7 * 34 + 11 + K n * (6 * 34 + 8)) + ((4 * logT n + 16) + ((4 * logT n + 5) + (8 +
@@ -828,9 +841,9 @@ theorem pmStages_do (hn : 2 ≤ n) (hW : 4 * b n + 16 ≤ W) :
   pm_seq (pm_s28 hW) <| pm_seq (pm_s29 hW) (pm_s30 hW)
 
 /-- **The first parameter program.** From `n ≥ 2` in variable `0` (`PmF n 1 acc`) and words of
-`W ≥ 4 b + 16` bits, `pmCode1` ends with every variable `i` holding `pmVals n i` and the axis
+`W ≥ 4 b + 32` bits, `pmCode1` ends with every variable `i` holding `pmVals n i` and the axis
 lengths emitted in front of `acc`, within `pmAtoms1 n` atoms. -/
-theorem pmCode1_do (hn : 2 ≤ n) (hW : 4 * b n + 16 ≤ W) (st : TblSt pmNV A)
+theorem pmCode1_do (hn : 2 ≤ n) (hW : 4 * b n + 32 ≤ W) (st : TblSt pmNV A)
     (hst : PmF n 1 acc st) :
     TblDo A W w pmCode1 st (fun s => s.val = pmVals n ∧ s.acc = (pmTList A w n).reverse ++ acc)
       (pmAtoms1 n) := by
@@ -842,7 +855,7 @@ theorem pmCode1_do (hn : 2 ≤ n) (hW : 4 * b n + 16 ≤ W) (st : TblSt pmNV A)
 
 /-- **The second parameter program.** From the final state of `pmCode1` with `acc` emptied,
 `pmCode2` ends in the same values with the source lengths emitted, within `pmAtoms2 n` atoms. -/
-theorem pmCode2_do (hn : 2 ≤ n) (hW : 4 * b n + 16 ≤ W) (st : TblSt pmNV A)
+theorem pmCode2_do (hn : 2 ≤ n) (hW : 4 * b n + 32 ≤ W) (st : TblSt pmNV A)
     (hst : PmF n 31 acc st) :
     TblDo A W w pmCode2 st (fun s => s.val = pmVals n ∧ s.acc = (pmSList A w n).reverse ++ acc)
       (pmAtoms2 n) :=

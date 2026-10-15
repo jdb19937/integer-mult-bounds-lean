@@ -10,7 +10,7 @@ public import IntegerMultBounds.MathlibTM2.Fast.Output
 The stages F1, F2 (parameter machine), F3 and F11 of `docs/fast-pipeline.md` against the terms
 `n` and `n + B^C` of `Cost/Total.totBound` (`B = b n`, `n` the input length).
 
-* `mt_pm_le` (F2, `pmParams_exec`): `pmCost n us ≤ (17 + 1100 |us|) n + 3361400001 B⁴` whenever
+* `mt_pm_le` (F2, `pmParams_exec`): `pmCost n us ≤ (17 + (2^12) |us|) n + (2^35) B⁴` whenever
   every requested unary copy is a value at most `T` (`pmCost_le`, `pm_W_T_le`); the unary copies
   of `T` and `r` cost `O(n)` each. `mt_pm_vals_le_T`: the values `b, p, d, K, log T, T, ℓ, r,
   ℓ - 1, 2^(ℓ-1), numHalf, α, α², γ, q, S` are eventually at most `T`. `mt_pm_le_real`: the
@@ -30,9 +30,9 @@ open IntegerMultBounds.MathlibTM2.Mult.Sizes Filter IntegerMultBounds.MathlibTM2
 
 /-! ### The parameter machine -/
 
-/-- One unary copy of a value `x ≤ T` costs at most `1100 n`. -/
+/-- One unary copy of a value `x ≤ T` costs at most `(2^12) n`. -/
 theorem mt_pm_unary_one {n x : ℕ} (hn : 2 ≤ n) (hx : x ≤ T n) :
-    pmW n * (4 * x + 11) + 2 * x + 6 ≤ 1100 * n := by
+    pmW n * (4 * x + 11) + 2 * x + 6 ≤ (2^12) * n := by
   have h1 := pm_W_T_le hn
   have h2 : Nat.size n ≤ b n + 1 := pm_size_le
   have h3 := b_lt_two_mul hn
@@ -40,20 +40,20 @@ theorem mt_pm_unary_one {n x : ℕ} (hn : 2 ≤ n) (hx : x ≤ T n) :
   have hb := one_le_b hn
   have hT : T n ≤ 8 * n := by nlinarith
   have h5 : pmW n * x ≤ pmW n * T n := Nat.mul_le_mul_left _ hx
-  have hW : pmW n = 4 * Nat.size n + 16 := rfl
+  have hW : pmW n = 4 * Nat.size n + 32 := rfl
   have e : pmW n * (4 * x + 11) = 4 * (pmW n * x) + 11 * pmW n := by ring
   rw [e]
   omega
 
-/-- The unary copies of values at most `T` cost at most `1100 n` each. -/
+/-- The unary copies of values at most `T` cost at most `(2^12) n` each. -/
 theorem mt_pm_unary_le {n : ℕ} (hn : 2 ≤ n) {α : Type} (us : List (Fin pmNV × α))
     (hus : ∀ x ∈ us, pmVals n x.1 ≤ T n) :
-    pmUnaryCost (pmW n) (pmVals n) us ≤ 1100 * us.length * n + 1 := by
+    pmUnaryCost (pmW n) (pmVals n) us ≤ (2^12) * us.length * n + 1 := by
   unfold pmUnaryCost
   have : (us.map fun x => pmW n * (4 * pmVals n x.1 + 11) + 2 * pmVals n x.1 + 6).sum ≤
-      us.length * (1100 * n) := by
+      us.length * ((2^12) * n) := by
     have := List.sum_le_card_nsmul (us.map fun x => pmW n * (4 * pmVals n x.1 + 11) +
-      2 * pmVals n x.1 + 6) (1100 * n) (by
+      2 * pmVals n x.1 + 6) ((2^12) * n) (by
         intro y hy
         obtain ⟨x, hx, rfl⟩ := List.mem_map.1 hy
         exact mt_pm_unary_one hn (hus x hx))
@@ -61,10 +61,10 @@ theorem mt_pm_unary_le {n : ℕ} (hn : 2 ≤ n) {α : Type} (us : List (Fin pmNV
   nlinarith
 
 /-- **The parameter machine** (`pmParams_exec`): for `n ≥ 2` and unary copies of values at most
-`T`, `pmCost n us ≤ (17 + 1100 |us|) n + 3361400001 B⁴`. -/
+`T`, `pmCost n us ≤ (17 + (2^12) |us|) n + (2^35) B⁴`. -/
 theorem mt_pm_le {n : ℕ} (hn : 2 ≤ n) {α : Type} (us : List (Fin pmNV × α))
     (hus : ∀ x ∈ us, pmVals n x.1 ≤ T n) :
-    pmCost n us ≤ (17 + 1100 * us.length) * n + 3361400001 * b n ^ 4 := by
+    pmCost n us ≤ (17 + (2^12) * us.length) * n + (2^35) * b n ^ 4 := by
   have h1 := pmCost_le hn us
   have h2 := mt_pm_unary_le hn us hus
   have h3 : Nat.size n ≤ b n + 1 := pm_size_le
@@ -77,13 +77,13 @@ theorem mt_pm_le {n : ℕ} (hn : 2 ≤ n) {α : Type} (us : List (Fin pmNV × α
 /-- `mt_pm_le` against `n + B^C` for `C ≥ 4`. -/
 theorem mt_pm_le_real {n C : ℕ} (hn : 2 ≤ n) (hC : 4 ≤ C) {α : Type} (us : List (Fin pmNV × α))
     (hus : ∀ x ∈ us, pmVals n x.1 ≤ T n) :
-    (pmCost n us : ℝ) ≤ (3361400018 + 1100 * us.length) * ((n : ℝ) + (b n : ℝ) ^ C) := by
+    (pmCost n us : ℝ) ≤ ((2^36) + (2^12) * us.length) * ((n : ℝ) + (b n : ℝ) ^ C) := by
   have h := mt_pm_le hn us hus
   have hb : 1 ≤ b n := one_le_b hn
   have hbC : b n ^ 4 ≤ b n ^ C := Nat.pow_le_pow_right hb hC
-  have h' : (pmCost n us : ℝ) ≤ (17 + 1100 * us.length) * n + 3361400001 * (b n : ℝ) ^ C := by
-    have : pmCost n us ≤ (17 + 1100 * us.length) * n + 3361400001 * b n ^ C := by
-      have := Nat.mul_le_mul_left 3361400001 hbC
+  have h' : (pmCost n us : ℝ) ≤ (17 + (2^12) * us.length) * n + (2^35) * (b n : ℝ) ^ C := by
+    have : pmCost n us ≤ (17 + (2^12) * us.length) * n + (2^35) * b n ^ C := by
+      have := Nat.mul_le_mul_left (2^35) hbC
       omega
     exact_mod_cast this
   have hn0 : (0 : ℝ) ≤ n := Nat.cast_nonneg _
@@ -147,11 +147,11 @@ theorem mt_pm_vals_le_T : ∀ᶠ n in atTop, ∀ i ∈ mtPmSmall, pmVals n i ≤
 
 /-- **The parameter machine against `n + B^C`**: for every list of unary copies `us` of the
 values `mtPmSmall` and every `C ≥ 4`, eventually
-`pmCost n us ≤ (3361400018 + 1100 |us|) (n + B^C)`. -/
+`pmCost n us ≤ ((2^36) + (2^12) |us|) (n + B^C)`. -/
 theorem mt_pm_stage_le (C : ℕ) (hC : 4 ≤ C) {α : Type} (us : List (Fin pmNV × α))
     (hus : ∀ x ∈ us, x.1 ∈ mtPmSmall) :
     ∀ᶠ n in atTop,
-      (pmCost n us : ℝ) ≤ (3361400018 + 1100 * us.length) * ((n : ℝ) + (b n : ℝ) ^ C) := by
+      (pmCost n us : ℝ) ≤ ((2^36) + (2^12) * us.length) * ((n : ℝ) + (b n : ℝ) ^ C) := by
   filter_upwards [eventually_big, mt_pm_vals_le_T] with n h hv
   exact mt_pm_le_real h.1 hC us fun x hx => hv x.1 (hus x hx)
 

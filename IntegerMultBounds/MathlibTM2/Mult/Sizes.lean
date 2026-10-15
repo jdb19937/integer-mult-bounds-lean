@@ -9,10 +9,10 @@ public import Mathlib.Analysis.SpecificLimits.Normed
 # Size parameters of the multiplication algorithm
 
 Integer definitions of the parameters of the paper's `§8` "Input and transform sizes" as
-functions of the operand length `n`, with the retuned constants `ε = 2^{-3}`, `c = 2^{-32}`:
+functions of the operand length `n`, with the retuned constants `ε = 9/64`, `c = 2^{-32}`:
 
 * `b = ⌈log₂ n⌉`, `p = 6b`;
-* `d = ⌊b^ε⌋`, the largest `d` with `d^(2^3) ≤ b`; `K = ⌊d^c⌋`, the largest `K` with
+* `d = ⌊b^ε⌋`, the largest `d` with `d^64 ≤ b^9`; `K = ⌊d^c⌋`, the largest `K` with
   `K^(2^32) ≤ d`;
 * `T = 2^logT`, the power of two in `[4n/b, 8n/b)`; `ℓ = ⌈logT / d⌉`, `r = 2^ℓ`;
 * axis lengths `t_i ∈ {r/2, r}`: the first `numHalf = dℓ - logT` are `r/2`, the rest (in
@@ -22,7 +22,7 @@ functions of the operand length `n`, with the retuned constants `ε = 2^{-3}`, `
 * source lengths `s_i` from `Moduli.src` with `N = oddProd d`, and `S = ∏ s_i`.
 
 Every relation used downstream is proved for all large `n`, as a `Filter.Eventually` along
-`atTop`. Most of them follow deterministically from the regime `Big n : 2 ≤ n ∧ 16 ≤ d n`
+`atTop`. Most of them follow deterministically from the regime `Big n : 2 ≤ n ∧ 64 ≤ d n`
 (`eventually_big`), whose consequences are the `Big.*` lemmas:
 
 * `prod_t`, `t_last`, `t_eq`: `∏ t_i = T`, `t_d = r`, `t_i ∈ {r/2, r}`;
@@ -128,25 +128,30 @@ theorem mul_pow_le_mul_pow {k : ℕ} (hk : k ≠ 0) (c x : ℕ) : c * x ^ k ≤ 
 
 /-! ### Fixed exponents -/
 
-/-- `2^3`, the root index of `d = ⌊b^ε⌋`, `ε = 2^{-3}`. -/
-def epsExp : ℕ := 2 ^ 3
+/-- Exact integer-root degree for the dyadic dimension. -/
+def rootExp : ℕ := 64
 
-/-- `2^32`, the root index of `K = ⌊d^c⌋`, `c = 2^{-32}`. -/
+/-- The power applied before taking the integer root. -/
+def rootNumerator : ℕ := 9
+
+/-- The available integer lower size cap, distinct from the root degree. -/
+def powerCap : ℕ := 7
+
+/-- A coarse upper growth power, not the reciprocal of `epsilon`. -/
+def upperPower : ℕ := 8
+
+/-- `2^32`, the root index of the legacy chunk. -/
 def cExp : ℕ := 2 ^ 32
 
-theorem epsExp_ne : epsExp ≠ 0 := by unfold epsExp; positivity
-
+theorem rootExp_ne : rootExp ≠ 0 := by decide
+theorem upperPower_ne : upperPower ≠ 0 := by decide
 theorem cExp_ne : cExp ≠ 0 := by unfold cExp; positivity
-
-theorem eight_le_epsExp : 8 ≤ epsExp := by unfold epsExp; norm_num
-
 theorem one_le_cExp : 1 ≤ cExp := by unfold cExp; norm_num
 
-/-- `ε = 2^{-3}` as a real number. -/
-noncomputable def epsilon : ℝ := ((epsExp : ℕ) : ℝ)⁻¹
+/-- The dyadic dimension exponent `9/64`. -/
+noncomputable def epsilon : ℝ := (rootNumerator : ℝ) / rootExp
 
-theorem epsilon_eq : epsilon = (2 ^ 3 : ℝ)⁻¹ := by
-  norm_num [epsilon, epsExp]
+theorem epsilon_eq : epsilon = (9 : ℝ) / 64 := by norm_num [epsilon, rootNumerator, rootExp]
 
 /-- `c = 2^{-32}` as a real number. -/
 noncomputable def cParam : ℝ := ((cExp : ℕ) : ℝ)⁻¹
@@ -189,8 +194,8 @@ def b (n : ℕ) : ℕ := Nat.clog 2 n
 /-- The working precision `p = 6b`. -/
 def p (n : ℕ) : ℕ := 6 * b n
 
-/-- The dimension `d = ⌊b^ε⌋`: the largest `d` with `d^(2^3) ≤ b`. -/
-def d (n : ℕ) : ℕ := iroot epsExp (b n)
+/-- The dimension `d = ⌊b^ε⌋`: the largest `d` with `d^64 ≤ b^9`. -/
+def d (n : ℕ) : ℕ := iroot rootExp (b n ^ rootNumerator)
 
 /-- `K = ⌊d^c⌋`: the largest `K` with `K^(2^32) ≤ d`. -/
 def K (n : ℕ) : ℕ := iroot cExp (d n)
@@ -268,21 +273,59 @@ theorem tendsto_b : Tendsto b atTop atTop :=
 
 /-! ### `d` and `K` -/
 
-theorem d_pow_le (n : ℕ) : d n ^ epsExp ≤ b n := iroot_pow_le epsExp_ne _
+theorem d_pow_le (n : ℕ) : d n ^ rootExp ≤ b n ^ rootNumerator :=
+  iroot_pow_le rootExp_ne _
 
-theorem b_lt_d_succ_pow (n : ℕ) : b n < (d n + 1) ^ epsExp := lt_succ_iroot_pow epsExp_ne _
+theorem b_pow_lt_d_succ_pow (n : ℕ) : b n ^ rootNumerator < (d n + 1) ^ rootExp :=
+  lt_succ_iroot_pow rootExp_ne _
 
-theorem le_d_iff {D : ℕ} : D ≤ d n ↔ D ^ epsExp ≤ b n := le_iroot_iff epsExp_ne
+theorem b_lt_d_succ_pow (n : ℕ) : b n < (d n + 1) ^ upperPower := by
+  by_contra h
+  have hb : (d n+1)^8≤b n := Nat.le_of_not_gt h
+  have hp := Nat.pow_le_pow_left hb 9
+  have hroot := b_pow_lt_d_succ_pow n
+  have hmono : (d n+1)^64≤(d n+1)^72 := Nat.pow_le_pow_right (by omega) (by decide)
+  rw [←pow_mul] at hp
+  norm_num only [Nat.mul] at hp
+  change b n ^ 9 < (d n+1)^64 at hroot
+  omega
 
-theorem one_le_d (hn : 2 ≤ n) : 1 ≤ d n := one_le_iroot epsExp_ne (one_le_b hn)
+theorem le_d_iff {D : ℕ} : D ≤ d n ↔ D ^ rootExp ≤ b n ^ rootNumerator :=
+  le_iroot_iff rootExp_ne
 
-theorem d_le_b (n : ℕ) : d n ≤ b n := iroot_le_self epsExp_ne _
+theorem one_le_d (hn : 2 ≤ n) : 1 ≤ d n :=
+  one_le_iroot rootExp_ne (one_le_pow₀ (one_le_b hn))
 
-theorem pow_le_b_of {k : ℕ} (hk : k ≤ epsExp) (hd : 1 ≤ d n) : d n ^ k ≤ b n :=
-  (Nat.pow_le_pow_right hd hk).trans (d_pow_le n)
+theorem d_seventh_le (n : ℕ) : d n ^ powerCap ≤ b n := by
+  have hroot := d_pow_le n
+  rcases Nat.eq_zero_or_pos (b n) with hb | hb
+  · have hd : d n = 0 := by simpa [hb, rootNumerator, rootExp] using hroot
+    simp [hd, powerCap]
+  · apply (Nat.pow_le_pow_iff_left (by decide : 64≠0)).mp
+    change d n ^ 64 ≤ b n ^ 9 at hroot
+    change (d n ^ 7)^64 ≤ b n ^ 64
+    calc
+      (d n^7)^64=(d n^64)^7 := by rw [←pow_mul,←pow_mul]
+      _ ≤ (b n^9)^7 := Nat.pow_le_pow_left hroot 7
+      _ = b n^63 := by rw [←pow_mul]
+      _ ≤ b n^64 := Nat.pow_le_pow_right hb (by decide)
+
+theorem d_le_b (n : ℕ) : d n ≤ b n :=
+  (Nat.le_self_pow (by decide : powerCap≠0) _).trans (d_seventh_le n)
+
+theorem pow_le_b_of {k : ℕ} (hk : k ≤ powerCap) (hd : 1 ≤ d n) : d n ^ k ≤ b n :=
+  (Nat.pow_le_pow_right hd hk).trans (d_seventh_le n)
 
 theorem tendsto_d : Tendsto d atTop atTop :=
-  tendsto_atTop.2 fun D => (tendsto_atTop.1 tendsto_b (D ^ epsExp)).mono fun _ h => le_d_iff.2 h
+  tendsto_atTop.2 fun D => (tendsto_atTop.1 tendsto_b (D ^ rootExp)).mono fun n h =>
+    le_d_iff.2 (h.trans (Nat.le_self_pow (by decide : rootNumerator≠0) _))
+
+/-- The integer dimension is exactly the floor of the real dyadic power. -/
+theorem d_eq_floor (n : ℕ) : d n = ⌊(b n : ℝ) ^ epsilon⌋₊ := by
+  rw [d, iroot_eq_floor rootExp_ne]
+  push_cast
+  rw [← Real.rpow_natCast_mul (Nat.cast_nonneg (b n))]
+  norm_num [epsilon, rootNumerator, rootExp]
 
 theorem K_pow_le (n : ℕ) : K n ^ cExp ≤ d n := iroot_pow_le cExp_ne _
 
@@ -454,38 +497,38 @@ theorem volume_bounds (hn : 2 ≤ n) : 24 * n ≤ T n * p n ∧ T n * p n < 48 *
   have e : T n * p n = 6 * (b n * T n) := by unfold p; ring
   omega
 
-/-- `p^ε / 12 ≤ d ≤ p^ε`, integer form: `d^(2^3) ≤ p < (12 d)^(2^3)`. -/
-theorem d_pow_le_p (n : ℕ) : d n ^ epsExp ≤ p n := by
-  have := d_pow_le n
-  unfold p
-  omega
+/-- The exact root cap also holds with the larger precision parameter. -/
+theorem d_pow_le_p (n : ℕ) : d n ^ rootExp ≤ p n ^ rootNumerator :=
+  (d_pow_le n).trans (Nat.pow_le_pow_left (by unfold p; omega) _)
 
-theorem p_lt_pow (hn : 2 ≤ n) : p n < (12 * d n) ^ epsExp := by
+theorem p_lt_pow (hn : 2 ≤ n) : p n < (12 * d n) ^ upperPower := by
   have hd := one_le_d hn
-  have h2 : (d n + 1) ^ epsExp ≤ (2 * d n) ^ epsExp := Nat.pow_le_pow_left (by omega) _
+  have h2 : (d n + 1) ^ upperPower ≤ (2 * d n) ^ upperPower := Nat.pow_le_pow_left (by omega) _
   calc p n = 6 * b n := rfl
-    _ < 6 * (d n + 1) ^ epsExp := by have := b_lt_d_succ_pow n; omega
-    _ ≤ 6 * (2 * d n) ^ epsExp := Nat.mul_le_mul_left _ h2
-    _ ≤ (6 * (2 * d n)) ^ epsExp := mul_pow_le_mul_pow epsExp_ne 6 _
-    _ = (12 * d n) ^ epsExp := by rw [show 6 * (2 * d n) = 12 * d n by ring]
+    _ < 6 * (d n + 1) ^ upperPower := by have := b_lt_d_succ_pow n; omega
+    _ ≤ 6 * (2 * d n) ^ upperPower := Nat.mul_le_mul_left _ h2
+    _ ≤ (6 * (2 * d n)) ^ upperPower := mul_pow_le_mul_pow upperPower_ne 6 _
+    _ = (12 * d n) ^ upperPower := by rw [show 6 * (2 * d n) = 12 * d n by ring]
 
-/-- `p^ε / 12 ≤ d ≤ p^ε`, `ε = 2^{-3}`. -/
+/-- The real dimension sandwich retains its constants at `ε = 9/64`. -/
 theorem d_rpow_bounds (hn : 2 ≤ n) :
     (p n : ℝ) ^ epsilon / 12 ≤ d n ∧ (d n : ℝ) ≤ (p n : ℝ) ^ epsilon := by
-  have hE : (epsExp : ℝ) ≠ 0 := by exact_mod_cast epsExp_ne
-  have hd0 : (0 : ℝ) ≤ d n := Nat.cast_nonneg _
-  have he : (0 : ℝ) ≤ epsilon := by unfold epsilon; positivity
+  have hfloor : (d n : ℝ) ≤ (b n : ℝ)^epsilon ∧
+      (b n : ℝ)^epsilon < (d n : ℝ)+1 :=
+    (Nat.floor_eq_iff (by positivity)).mp (d_eq_floor n).symm
+  have hd : (1:ℝ) ≤ d n := by exact_mod_cast one_le_d hn
+  have hhalf : (b n : ℝ)^epsilon/2 ≤ d n := by linarith [hfloor.2]
+  have he : (0:ℝ)≤epsilon := by rw [epsilon_eq]; norm_num
+  have h6 : (6:ℝ)^epsilon≤6 := Real.rpow_le_self_of_one_le (by norm_num)
+    (by rw [epsilon_eq]; norm_num)
+  have hp : (p n : ℝ)=6*(b n : ℝ) := by simp [p]
+  rw [hp]
   constructor
-  · have h : (p n : ℝ) ≤ ((12 * d n : ℕ) : ℝ) ^ epsExp := by
-      exact_mod_cast (p_lt_pow hn).le
-    have h' := Real.rpow_le_rpow (Nat.cast_nonneg _) h he
-    rw [epsilon, Real.pow_rpow_inv_natCast (Nat.cast_nonneg _) epsExp_ne] at h'
-    push_cast at h'
-    rw [epsilon]
+  · have hscale : (6*(b n:ℝ))^epsilon≤6*(b n:ℝ)^epsilon := by
+      rw [Real.mul_rpow (by norm_num) (Nat.cast_nonneg _)]
+      exact mul_le_mul_of_nonneg_right h6 (by positivity)
     linarith
-  · have h : ((d n : ℝ)) ^ epsExp ≤ p n := by exact_mod_cast d_pow_le_p n
-    have h' := Real.rpow_le_rpow (by positivity) h he
-    rwa [epsilon, Real.pow_rpow_inv_natCast hd0 epsExp_ne] at h'
+  · exact hfloor.1.trans (Real.rpow_le_rpow (Nat.cast_nonneg _) (by nlinarith) he)
 
 theorem alpha_spec (n : ℕ) : 12 * d n ^ 2 * b n ≤ alpha n ^ 4 := Nat.find_spec (exists_alpha n)
 
@@ -527,9 +570,6 @@ theorem gamma_eq_ceil (n : ℕ) : gamma n = d n * (2 * ⌈((alpha n : ℝ)) ^ 2�
   rw [← Nat.cast_pow, Nat.ceil_natCast]
   rfl
 
-/-- `d = ⌊b^ε⌋`. -/
-theorem d_eq_floor (n : ℕ) : d n = ⌊(b n : ℝ) ^ epsilon⌋₊ := iroot_eq_floor epsExp_ne _
-
 /-- `K = ⌊d^c⌋`. -/
 theorem K_eq_floor (n : ℕ) : K n = ⌊(d n : ℝ) ^ cParam⌋₊ := iroot_eq_floor cExp_ne _
 
@@ -551,16 +591,16 @@ theorem T_bounds_real (hn : 2 ≤ n) :
   · rw [lt_div_iff₀ hb]; linarith
 
 /-- `log₂ p ≤ 3 + 2^35 ⌈log₂ (K + 1)⌉`. -/
-theorem clog_p_le (n : ℕ) : Nat.clog 2 (p n) ≤ 3 + cExp * epsExp * Nat.clog 2 (K n + 1) := by
+theorem clog_p_le (n : ℕ) : Nat.clog 2 (p n) ≤ 3 + cExp * upperPower * Nat.clog 2 (K n + 1) := by
   apply Nat.clog_le_of_le_pow
   have h1 := b_lt_d_succ_pow n
   have h2 : d n + 1 ≤ (K n + 1) ^ cExp := d_lt_K_succ_pow n
-  have h3 : (d n + 1) ^ epsExp ≤ ((K n + 1) ^ cExp) ^ epsExp := Nat.pow_le_pow_left h2 _
+  have h3 : (d n + 1) ^ upperPower ≤ ((K n + 1) ^ cExp) ^ upperPower := Nat.pow_le_pow_left h2 _
   have h4 : K n + 1 ≤ 2 ^ Nat.clog 2 (K n + 1) := Nat.le_pow_clog one_lt_two _
-  have h5 : ((K n + 1) ^ cExp) ^ epsExp ≤ ((2 ^ Nat.clog 2 (K n + 1)) ^ cExp) ^ epsExp :=
+  have h5 : ((K n + 1) ^ cExp) ^ upperPower ≤ ((2 ^ Nat.clog 2 (K n + 1)) ^ cExp) ^ upperPower :=
     Nat.pow_le_pow_left (Nat.pow_le_pow_left h4 _) _
-  have e : 2 ^ (3 + cExp * epsExp * Nat.clog 2 (K n + 1)) =
-      8 * ((2 ^ Nat.clog 2 (K n + 1)) ^ cExp) ^ epsExp := by
+  have e : 2 ^ (3 + cExp * upperPower * Nat.clog 2 (K n + 1)) =
+      8 * ((2 ^ Nat.clog 2 (K n + 1)) ^ cExp) ^ upperPower := by
     rw [← pow_mul, ← pow_mul, pow_add]; ring_nf
   rw [e]
   unfold p
@@ -570,12 +610,12 @@ end Small
 
 /-! ### The large regime -/
 
-/-- The regime of the deterministic size relations: `n ≥ 2` and `d ≥ 16`, so that
-`b ≥ d^(2^3) ≥ d^8`. -/
-def Big (n : ℕ) : Prop := 2 ≤ n ∧ 16 ≤ d n
+/-- The regime of the deterministic size relations: `n ≥ 2` and `d ≥ 64`,
+with the seventh-power cap `d^7 ≤ b`. -/
+def Big (n : ℕ) : Prop := 2 ≤ n ∧ 64 ≤ d n
 
 theorem eventually_big : ∀ᶠ n in atTop, Big n :=
-  (eventually_ge_atTop 2).and (tendsto_atTop.1 tendsto_d 16)
+  (eventually_ge_atTop 2).and (tendsto_atTop.1 tendsto_d 64)
 
 section Big
 
@@ -585,8 +625,8 @@ theorem Big.one_le_d (h : Big n) : 1 ≤ d n := by have := h.2; omega
 
 theorem Big.two_le_d (h : Big n) : 2 ≤ d n := by have := h.2; omega
 
-theorem Big.pow_le_b (h : Big n) {k : ℕ} (hk : k ≤ 8) : d n ^ k ≤ b n :=
-  pow_le_b_of (hk.trans eight_le_epsExp) h.one_le_d
+theorem Big.pow_le_b (h : Big n) {k : ℕ} (hk : k ≤ 7) : d n ^ k ≤ b n :=
+  pow_le_b_of hk h.one_le_d
 
 theorem Big.sixteen_le_b (h : Big n) : 16 ≤ b n := by
   have := h.pow_le_b (k := 1) (by norm_num)
@@ -606,21 +646,21 @@ theorem Big.b_le_two_dℓ (h : Big n) : b n ≤ 2 * (d n * ℓ n) := by
   have := logT_le_dℓ h.one_le_d
   omega
 
-/-- `d^7 ≤ 2ℓ`. -/
-theorem Big.pow_le_two_ℓ (h : Big n) : d n ^ 7 ≤ 2 * ℓ n := by
+/-- `d^6 ≤ 2ℓ`. -/
+theorem Big.pow_le_two_ℓ (h : Big n) : d n ^ 6 ≤ 2 * ℓ n := by
   have h1 := h.b_le_two_dℓ
-  have h2 := h.pow_le_b (k := 8) le_rfl
+  have h2 := h.pow_le_b (k := 7) le_rfl
   have hd := h.one_le_d
-  have : d n * d n ^ 7 ≤ d n * (2 * ℓ n) := by
+  have : d n * d n ^ 6 ≤ d n * (2 * ℓ n) := by
     rw [← pow_succ']
-    calc d n ^ 8 ≤ b n := h2
+    calc d n ^ 7 ≤ b n := h2
       _ ≤ 2 * (d n * ℓ n) := h1
       _ = d n * (2 * ℓ n) := by ring
   exact Nat.le_of_mul_le_mul_left this hd
 
 theorem Big.d_le_ℓ (h : Big n) : d n + 1 ≤ ℓ n := by
   have h1 := h.pow_le_two_ℓ
-  have h2 : d n ^ 2 ≤ d n ^ 7 := Nat.pow_le_pow_right h.one_le_d (by norm_num)
+  have h2 : d n ^ 2 ≤ d n ^ 6 := Nat.pow_le_pow_right h.one_le_d (by norm_num)
   have h3 := h.2
   nlinarith
 
@@ -675,10 +715,10 @@ theorem Big.moduli_room (h : Big n) : 8 * d n ^ 2 * N n + 4 * d n ≤ 2 ^ (ℓ n
     omega
   have h1' : D ^ 2 * N n ≤ 2 ^ (2 * D) * 2 ^ (2 * D * (2 * D)) := Nat.mul_le_mul hD2 hN
   have h2 : 4 + 2 * D + 2 * D * (2 * D) ≤ ℓ n - 1 := by
-    have h3 : D ^ 7 ≤ 2 * ℓ n := h.pow_le_two_ℓ
-    have h4 : D ^ 3 ≤ D ^ 7 := Nat.pow_le_pow_right (by omega) (by norm_num)
+    have h3 : D ^ 6 ≤ 2 * ℓ n := h.pow_le_two_ℓ
+    have h4 : D ^ 3 ≤ D ^ 6 := Nat.pow_le_pow_right (by omega) (by norm_num)
     have h5 : 16 * D ^ 2 ≤ D ^ 3 := by
-      calc 16 * D ^ 2 ≤ D * D ^ 2 := Nat.mul_le_mul_right _ hD
+      calc 16 * D ^ 2 ≤ D * D ^ 2 := Nat.mul_le_mul_right _ (by omega : 16≤D)
         _ = D ^ 3 := by ring
     have h6 : 10 + 4 * D ≤ 8 * D ^ 2 := by nlinarith
     have e : 2 * D * (2 * D) = 4 * D ^ 2 := by ring
@@ -807,19 +847,19 @@ theorem Big.p_mul_s_lt (h : Big n) (i : Fin (d n)) :
 /-- `γ ≤ b/4`, integer form `4γ ≤ b`. -/
 theorem Big.four_gamma_le_b (h : Big n) : 4 * gamma n ≤ b n := by
   have h1 := alpha_pow_four_le h.1
-  have h8 := h.pow_le_b (k := 8) le_rfl
+  have h7 := h.pow_le_b (k := 7) le_rfl
   have hD := h.2
   set D := d n
   set B := b n
   set A := alpha n
   -- `49152 D^4 ≤ B`
   have h2 : 49152 * D ^ 4 ≤ B := by
-    have : 49152 ≤ D ^ 4 := by
-      calc 49152 ≤ 16 ^ 4 := by norm_num
-        _ ≤ D ^ 4 := Nat.pow_le_pow_left hD 4
-    calc 49152 * D ^ 4 ≤ D ^ 4 * D ^ 4 := Nat.mul_le_mul_right _ this
-      _ = D ^ 8 := by ring
-      _ ≤ B := h8
+    have : 49152 ≤ D ^ 3 := by
+      calc 49152 ≤ 64 ^ 3 := by norm_num
+        _ ≤ D ^ 3 := Nat.pow_le_pow_left hD 3
+    calc 49152 * D ^ 4 ≤ D ^ 3 * D ^ 4 := Nat.mul_le_mul_right _ this
+      _ = D ^ 7 := by ring
+      _ ≤ B := h7
   -- `16 D A² ≤ B`
   have h3 : (16 * D * A ^ 2) ^ 2 ≤ B ^ 2 := by
     calc (16 * D * A ^ 2) ^ 2 = 256 * D ^ 2 * A ^ 4 := by ring
@@ -830,7 +870,7 @@ theorem Big.four_gamma_le_b (h : Big n) : 4 * gamma n ≤ b n := by
   have h4 : 16 * D * A ^ 2 ≤ B := (Nat.pow_le_pow_iff_left (by norm_num)).1 h3
   have h5 : 16 * D ≤ B := by
     have : 16 * D ≤ D ^ 4 := by
-      calc 16 * D ≤ D * D := Nat.mul_le_mul_right D hD
+      calc 16 * D ≤ D * D := Nat.mul_le_mul_right D (by omega : 16≤D)
         _ = D ^ 2 := by ring
         _ ≤ D ^ 4 := Nat.pow_le_pow_right (by omega) (by norm_num)
     have := h.pow_le_b (k := 4) (by norm_num)
@@ -946,7 +986,7 @@ theorem eventually_log_le (C M : ℕ) :
 
 /-- `K / log p → ∞`: for every `C`, eventually `C ⌈log₂ p⌉ ≤ K`. -/
 theorem eventually_clog_p_le_K (C : ℕ) : ∀ᶠ n in atTop, C * Nat.clog 2 (p n) ≤ K n := by
-  filter_upwards [tendsto_K.eventually (eventually_log_le C (cExp * epsExp))] with n hn
+  filter_upwards [tendsto_K.eventually (eventually_log_le C (cExp * upperPower))] with n hn
   exact (Nat.mul_le_mul_left _ (clog_p_le n)).trans hn
 
 /-- `K / log p → ∞` with the real logarithm: for every real `C`, eventually
@@ -974,7 +1014,7 @@ theorem eventually_logb_p_le_K (C : ℝ) : ∀ᶠ n in atTop, C * Real.logb 2 (p
 theorem eventually_mul_K_le_ℓ (C : ℕ) : ∀ᶠ n in atTop, C * K n ≤ ℓ n := by
   filter_upwards [eventually_big, tendsto_atTop.1 tendsto_d (2 * C)] with n h hC
   have h1 := h.pow_le_two_ℓ
-  have h2 : d n ^ 2 ≤ d n ^ 7 := Nat.pow_le_pow_right h.one_le_d (by norm_num)
+  have h2 : d n ^ 2 ≤ d n ^ 6 := Nat.pow_le_pow_right h.one_le_d (by norm_num)
   have h3 : C * K n ≤ C * d n := Nat.mul_le_mul_left _ (K_le_d n)
   have h4 : 2 * C * d n ≤ d n * d n := Nat.mul_le_mul_right _ hC
   have h5 : d n ^ 2 = d n * d n := by ring

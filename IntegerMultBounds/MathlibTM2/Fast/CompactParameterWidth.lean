@@ -24,21 +24,11 @@ the stronger lower bound on the long axis. -/
 theorem compactParameterWidth_le_core {b L r w a : ℕ}
     (hb : 1 ≤ b) (hL : L ≤ b + 1) (hw : 6 * b + 7 ≤ w)
     (hr : 2 ≤ r) (hsmall : b ≤ 2 → 4 ≤ r) :
-    4 * L + 32 ≤ r * w + (a ^ 2 + a + 4) := by
-  by_cases h : b ≤ 2
-  · have h4 := hsmall h
-    have := Nat.mul_le_mul_right w h4
-    nlinarith
-  · have := Nat.mul_le_mul_right w hr
-    nlinarith
+    4 * L + 32 ≤ r * w + (a ^ 2 + a + 4) := parameter_width_le_core hb hL hw hr hsmall
 
 /-- The current dimension gives a long axis of at least four at precision one or two. -/
 theorem compactParameterWidth_small_r {n : ℕ} (hn : 2 ≤ n) (hb : b n ≤ 2) :
-    4 ≤ r n := by
-  have hpow : 2 ^ b n ≤ 2 ^ 2 := Nat.pow_le_pow_right (by omega) hb
-  have hn4 := (le_two_pow_b n).trans hpow
-  norm_num at hn4
-  interval_cases n <;> decide
+    4 ≤ r n := parameter_width_small_r hn hb
 
 /-- The candidate width fits the actual distribution long-axis word for every input `n ≥ 2`. -/
 theorem compactParameterWidth_le_dsWL {n : ℕ} (hn : 2 ≤ n) :

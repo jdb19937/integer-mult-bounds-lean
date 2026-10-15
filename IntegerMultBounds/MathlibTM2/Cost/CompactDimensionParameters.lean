@@ -9,6 +9,11 @@ before it supplies a multiplication-time theorem. -/
 namespace IntegerMultBounds.MathlibTM2.Cost.CompactDimension
 noncomputable section
 
+/-- Fixed historical chunk and layer parameters keep these prior candidates independent
+of later executable retunes. -/
+def spacing : ℝ := (2^3:ℝ)⁻¹
+def layer : ℝ := 1-(2^32:ℝ)⁻¹
+
 def epsilon : ℝ := (2^4:ℝ)⁻¹
 def kappa : ℝ := (2^36:ℝ)⁻¹
 
@@ -24,18 +29,18 @@ theorem prior_dimension_obstruction {layer : ℝ} (h : Parameters.sigma ≤ laye
 /-- All five analytic stage margins cover the next dyadic saving after doubling
  epsilon; this does not establish the larger executable dimension or its guard. -/
 def margin : Fin 5 → ℝ := ![
-  epsilon*CompactInterim.spacing*(1-Parameters.tau),
-  epsilon*(1-CompactInterim.lam'),
-  epsilon*(1-CompactInterim.spacing),
+  epsilon*spacing*(1-Parameters.tau),
+  epsilon*(1-layer),
+  epsilon*(1-spacing),
   (1-epsilon)*(1-Parameters.tau),
   1/8-3*epsilon/2]
 
 theorem margin_covers (i : Fin 5) : kappa ≤ margin i := by
-  fin_cases i <;> norm_num [margin,kappa,epsilon,CompactInterim.spacing,
-    CompactInterim.lam',Parameters.tau]
+  fin_cases i <;> norm_num [margin,kappa,epsilon,spacing,
+    layer,Parameters.tau]
 
 theorem layer_margin : margin 1 = kappa := by
-  norm_num [margin,kappa,epsilon,CompactInterim.lam']
+  norm_num [margin,kappa,epsilon,layer]
 
 /-- The old twentieth-power width requirement cannot survive a sixteenth-root
  dimension: the executable precision contracts must be sharpened first. -/
@@ -62,17 +67,17 @@ def delta : ℝ := (2^5:ℝ)⁻¹
 def kappa : ℝ := (2^35:ℝ)⁻¹
 
 def margin : Fin 5 → ℝ := ![
-  epsilon*CompactInterim.spacing*(1-Parameters.tau),
-  epsilon*(1-CompactInterim.lam'),
-  epsilon*(1-CompactInterim.spacing),
+  epsilon*spacing*(1-Parameters.tau),
+  epsilon*(1-layer),
+  epsilon*(1-spacing),
   (1-epsilon)*(1-Parameters.tau),
   1/4-delta-3*epsilon/2]
 
 /-- Analytic feasibility only; larger runtime sizing and sharper stage-cost
  matching must still be proved before exposing this saving. -/
 theorem margin_covers (i : Fin 5) : kappa ≤ margin i := by
-  fin_cases i <;> norm_num [margin,kappa,epsilon,delta,CompactInterim.spacing,
-    CompactInterim.lam',Parameters.tau]
+  fin_cases i <;> norm_num [margin,kappa,epsilon,delta,spacing,
+    layer,Parameters.tau]
 
 theorem gaussian_margin : margin 4 = (2^5:ℝ)⁻¹ := by
   norm_num [margin,epsilon,delta]

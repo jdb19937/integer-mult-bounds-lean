@@ -48,7 +48,7 @@ variable {n : ℕ}
 
 theorem ds_T_split (h : Big n) :
     T n = 2 ^ (logT n - ℓ n) * r n ∧ b n ≤ 4 * (logT n - ℓ n) := by
-  have hd := h.2
+  have hd : 16≤d n := by have := h.2; omega
   have h1 := dℓ_lt h.one_le_d
   have h2 := h.logT_bounds
   have hdb : d n ≤ b n := d_le_b n
@@ -80,8 +80,11 @@ section Basic
 
 variable {n : ℕ}
 
-theorem ds_pmW_le (n : ℕ) : pmW n ≤ 20 * (b n + 1) := by
-  have := pm_size_le (n := n); unfold pmW; omega
+theorem ds_pmW_le {n : ℕ} (hn : 2≤n) : pmW n ≤ 20 * (b n + 1) := by
+  have := pm_size_le (n := n)
+  have := one_le_b hn
+  unfold pmW
+  omega
 
 theorem ds_g_le (n : ℕ) : Chirp.chirpGuard (d n) ≤ 5 * (b n + 1) := by
   have := pm_g_le n; omega
@@ -381,9 +384,9 @@ theorem ds_main_bound (hbig : Big n) :
   have hB3 : (b n + 1) ^ 2 ≤ (b n + 1) ^ 3 := Nat.pow_le_pow_right hB1 (by norm_num)
   have hB4 : (b n + 1) ^ 3 ≤ (b n + 1) ^ 4 := Nat.pow_le_pow_right hB1 (by norm_num)
   have hB5 : (b n + 1) ^ 4 ≤ (b n + 1) ^ 5 := Nat.pow_le_pow_right hB1 (by norm_num)
-  have hW : pmW n ≤ 20 * (b n + 1) := ds_pmW_le n
+  have hW : pmW n ≤ 20 * (b n + 1) := ds_pmW_le hn
   have hW1 : 1 ≤ pmW n := by have := pmW_ge n; omega
-  have hC : tblC (pmW n) (pmW n) ≤ 18600 * (b n + 1) ^ 2 := ds_tblC_le n
+  have hC : tblC (pmW n) (pmW n) ≤ 18600 * (b n + 1) ^ 2 := ds_tblC_le_of_two hn
   have hw : dsW n ≤ 9 * (b n + 1) := by have := ds_dsW_le hn; omega
   have hWt : dsWW n ≤ 200 * (b n + 1) := ds_dsWW_le hn
   have hp : p n ≤ 6 * (b n + 1) := by unfold p; omega

@@ -24,7 +24,7 @@ def compactDsRetuneCost (n W oldLength : ℕ) : ℕ :=
 current registers, including distribution output records, are preserved. -/
 theorem compactDsRetune_runs (body : P → Pr P T Q A U)
     (rg : TblR pmNV → Fin T) (hrg : Function.Injective rg)
-    (o : Fin T) (ho : ∀ r,rg r≠o) (n W : ℕ) (hW : 4*b n+16≤W)
+    (o : Fin T) (ho : ∀ r,rg r≠o) (n W : ℕ) (hW : 4*b n+32≤W)
     (wl : List (Fin (A+4))) (hwl : wl.length=W) (R : Regs T A)
     (hvals : ∀ i,pmVals n i<2^W) :
     dsRuns body (compactDsRetune rg o)
