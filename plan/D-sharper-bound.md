@@ -1191,7 +1191,13 @@ For T16, the physical owner schedule and its literal occurrence-indexed child
 rank profile must also be proved. The existing uniform `factorCount` recurrence
 cannot consume a variable-rank histogram by changing a scalar constant; it
 requires a weighted moment recurrence including source/frame/owner costs.
-This work is separate from the small parameter improvements above.
+`Layer/OccurrenceRecurrence.lean` now proves the occurrence-indexed induction,
+per-call rank/size power estimate and exact uniform-volume moment identity.
+All four contracts pass guarded checking and the standard-axiom audit. The
+actual selected execution recurrence, decreasing child sizes, per-call ranks,
+complete local/leaf costs and numerical moment certificate remain explicit
+instantiation obligations. This work is separate from the small parameter
+improvements above.
 
 ## Integration gates for the `2^-34` candidate
 
