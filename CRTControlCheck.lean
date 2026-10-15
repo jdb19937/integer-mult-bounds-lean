@@ -30,6 +30,12 @@ complete driver/multiplier integration remain separate work. -/
 open Lean in
 run_cmd do
   let names := #[
+    ``IntegerMultBounds.MathlibTM2.Fast.crtControlUnaryWord_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtControlPadding_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtControlPrefixWidth_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtControlParameters_runs,
+    ``IntegerMultBounds.MathlibTM2.Fast.crtControlParametersClear_runs,
+    ``IntegerMultBounds.MathlibTM2.Cost.crtControlParameters_pipeline_le,
     ``IntegerMultBounds.MathlibTM2.Fast.crtControlReadUnary_runs,
     ``IntegerMultBounds.MathlibTM2.Fast.crtControlGenerateAxis_runs,
     ``IntegerMultBounds.MathlibTM2.Fast.crtControlBankPow2_runs,

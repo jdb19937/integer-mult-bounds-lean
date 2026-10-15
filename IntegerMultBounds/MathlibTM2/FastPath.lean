@@ -40,6 +40,7 @@ public import IntegerMultBounds.MathlibTM2.Fast.CRTControlExposeRotation
 public import IntegerMultBounds.MathlibTM2.Fast.CRTControlAllFibers
 public import IntegerMultBounds.MathlibTM2.Fast.CRTControlAllWorkspace
 public import IntegerMultBounds.MathlibTM2.Fast.CRTControlGenerateLoop
+public import IntegerMultBounds.MathlibTM2.Fast.CRTControlParameters
 public import IntegerMultBounds.MathlibTM2.Fast.CRTControlGenerateSetup
 public import IntegerMultBounds.MathlibTM2.Fast.CRTControlGenerateLayout
 public import IntegerMultBounds.MathlibTM2.Fast.CRTControlRotation

@@ -1,6 +1,6 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Fast.CRTControlGenerateSetup
+public import IntegerMultBounds.MathlibTM2.Fast.CRTControlParameters
 public import IntegerMultBounds.MathlibTM2.Cost.MatchBase
 
 /-! # Cost of actual runtime CRT descriptor production
@@ -108,6 +108,70 @@ theorem crtControlGenerateSetup_pipeline_le :
     _ ≤ b n * (2 ^ 17 * b n ^ 3) := Nat.mul_le_mul_right _ hd
     _ = 2 ^ 17 * b n ^ 4 := by ring
     _ ≤ 2 ^ 17 * b n ^ 4 * r n := Nat.le_mul_of_pos_right _ hr
+    _ ≤ T n := hpoly
+
+/-- A preserved unary source is encoded with a restored arithmetic bank. -/
+theorem crtControlUnaryWordCost_le {W w n L : ℕ}
+    (hW : W ≤ 3 * L + 1) (hw : w ≤ W) :
+    crtControlUnaryWordCost W w n ≤ 2 ^ 14 * (n + 1) * (L + 1) ^ 2 := by
+  have ht := crtGenerate_tbl_le hW hw
+  have hm := Nat.mul_le_mul_left (n + 3) ht
+  have hsq : L + 1 ≤ (L + 1) ^ 2 := by nlinarith
+  have hnsq : n ≤ n * (L + 1) ^ 2 := Nat.le_mul_of_pos_right _ (by positivity)
+  unfold crtControlUnaryWordCost
+  norm_num at ht hm ⊢
+  nlinarith
+
+/-- Both permanent words, unary padding and fiber-address width, followed by
+clearing those four outputs after the preserved-input rotation. -/
+def crtControlParametersCost (W w S μ a L : ℕ) : ℕ :=
+  crtControlParametersSetupCost W w S μ a L +
+    (4 * W + 2 * (2 ^ a - S) + 2 * (L - a) + 8)
+
+/-- Parameter preparation has only radix times polynomial cost per target. -/
+theorem crtControlParametersCost_le {W w S μ a L radix : ℕ}
+    (hW : W ≤ 3 * L + 1) (hw : w ≤ W) (ha : a ≤ L)
+    (hS : S ≤ radix) (hμ : μ ≤ radix) (hr : 2 ^ a ≤ radix) :
+    crtControlParametersCost W w S μ a L ≤ 2 ^ 17 * radix * (L + 1) ^ 2 := by
+  have hs := crtControlUnaryWordCost_le (n := S) hW hw
+  have hm := crtControlUnaryWordCost_le (n := μ) hW hw
+  have hrad : 1 ≤ radix := Nat.one_le_two_pow.trans hr
+  have hs' := Nat.mul_le_mul_right ((L + 1) ^ 2) (Nat.mul_le_mul_left (2 ^ 14) (show S + 1 ≤ 2 * radix by omega))
+  have hm' := Nat.mul_le_mul_right ((L + 1) ^ 2) (Nat.mul_le_mul_left (2 ^ 14) (show μ + 1 ≤ 2 * radix by omega))
+  have hsq : L + 1 ≤ (L + 1) ^ 2 := by nlinarith
+  have hrl : (L + 1) ^ 2 ≤ radix * (L + 1) ^ 2 := Nat.le_mul_of_pos_left _ hrad
+  have hrr : radix ≤ radix * (L + 1) ^ 2 := Nat.le_mul_of_pos_right _ (by positivity)
+  have hsub : 2 ^ a - S ≤ 2 ^ a := Nat.sub_le _ _
+  have hsub' : L - a ≤ L := Nat.sub_le _ _
+  unfold crtControlParametersCost crtControlParametersSetupCost
+  norm_num at hs hm hs' hm' ⊢
+  nlinarith
+
+/-- The complete parameter budget for all targets is eventually below one
+padded volume. Each constituent is the actual checked program's step budget. -/
+theorem crtControlParameters_pipeline_le :
+    ∀ᶠ n in atTop, ∀ W w S μ a : Fin (d n) → ℕ,
+      (∀ j, W j ≤ 3 * logT n + 1) → (∀ j, w j ≤ W j) →
+      (∀ j, a j ≤ logT n) → (∀ j, S j ≤ r n) →
+      (∀ j, μ j ≤ r n) → (∀ j, 2 ^ a j ≤ r n) →
+      (∑ j, crtControlParametersCost (W j) (w j) (S j) (μ j) (a j) (logT n)) ≤ T n := by
+  filter_upwards [mt_poly_r_le_T (2 ^ 19) 3, eventually_big] with n hpoly hb W w S μ a hW hw ha hS hμ hr
+  have hL : logT n + 1 ≤ 2 * b n := by have := mt_logT_le_b hb; have := hb.sixteen_le_b; omega
+  have hd : d n ≤ b n := d_le_b n
+  have hpoint : ∀ j, crtControlParametersCost (W j) (w j) (S j) (μ j) (a j) (logT n) ≤
+      2 ^ 19 * b n ^ 2 * r n := by
+    intro j
+    calc
+      _ ≤ 2 ^ 17 * r n * (logT n + 1) ^ 2 :=
+        crtControlParametersCost_le (hW j) (hw j) (ha j) (hS j) (hμ j) (hr j)
+      _ ≤ 2 ^ 17 * r n * (2 * b n) ^ 2 :=
+        Nat.mul_le_mul_left _ (Nat.pow_le_pow_left hL 2)
+      _ = _ := by ring
+  calc
+    _ ≤ ∑ _ : Fin (d n), 2 ^ 19 * b n ^ 2 * r n := Finset.sum_le_sum fun j _ => hpoint j
+    _ = d n * (2 ^ 19 * b n ^ 2 * r n) := by simp
+    _ ≤ b n * (2 ^ 19 * b n ^ 2 * r n) := Nat.mul_le_mul_right _ hd
+    _ = 2 ^ 19 * b n ^ 3 * r n := by ring
     _ ≤ T n := hpoly
 
 end IntegerMultBounds.MathlibTM2.Cost

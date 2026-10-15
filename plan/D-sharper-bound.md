@@ -287,6 +287,13 @@ with the existing `crtFwdC` and `crtInvC`, independently of physical layout;
 target zero is an identity and can be omitted. The executable paired reversal
 and full runtime parameter preparation remain driver obligations.
 
+`CRTControlParameters.lean` now executes the complete conversion from unary
+modulus, multiplier, axis width and total width into the two binary constants,
+unary padding and fiber-address width. It preserves all inputs and returns
+its arithmetic bank and temporary registers empty. Its checked disposal
+returns the four outputs empty; preparation plus disposal over all targets
+is absorbed by one padded volume in `Cost/CRTControlGenerate.lean`.
+
 Remaining integration steps, in order:
 
 1. **M2b — rotation scanner:** the complete one-fiber scan/rotation and indexed
