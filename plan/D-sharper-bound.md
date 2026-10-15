@@ -552,18 +552,35 @@ nonduplication, padded-piece validity and exponent sum. The six
 ten top fields and working width, then restore sources and scratch. Their
 current interface still takes derived coordinates and the root exponent sum.
 `Cost/CompactCallerParameters.lean` discharges repair packing for manuscript
-`Sizes`, conditional on reservation, row-stock and width bounds; identification
-with the running `MathlibTM2.Mult.Sizes` generator remains open.
+`Sizes`, conditional on reservation, row-stock and width bounds; the running size generator has a different dimension/chunk regime.
+`Cost/CompactCallerRuntimeParameters.lean` now proves repair packing directly
+for actual `Mult.Sizes`, using its integer-root growth facts. Only precision
+is identified with the manuscript regime. Row stock, coefficient sizes and
+reservation premises remain explicit.
+`Cost/CompactCallerCapacity.lean` proves actual reserved axes are eventually
+below `d/M` for each fixed positive natural `M`, and certifies actual
+nonterminal `synDp` rounds. Small selected sets still need capacity testing
+or fallback; this does not assign a whole global reservation to every piece.
 `Cost/CompactCallerRows.lean` bounds actual padded top rows and every descendant
 quotient by the initial stock times `2^(rowBits+outsideBits+1)`. One bit pays
 for padding; fitting this exponent into `6*b` remains a caller obligation.
 
-**Next integration boundary:** derive the remaining top coordinates from original
-inputs and connect configuration production to `TopProc`. Implement compact
-basis/factor/layer wrappers through the existing generic `BReg`/`bcRest`
-contracts, retaining global reservation parameters across child calls. Account
-for the parent length before the factor's live-length division. Propagate the
-actual execution costs and discharge runtime sizing; record coverage alone
+`Fast/CompactTopCoordinates.lean` and `CompactTopSetup.lean` now compute all
+remaining coordinates from original inputs, composing actual root records
+with a fresh reservation-count pass and complete cleanup. They preserve
+original sources and emit the piece record, exponent and four top coordinates.
+The role adapter into the configuration serializer remains to be connected.
+
+**Next integration boundary:** connect original-input configuration production
+to `TopProc`. `Fast/CompactTopReady.lean` proves the exact mask predicate, selection length,
+computed shift, piece-width validity and complete reserved `topZ` semantics.
+`Node/CompactBasisSlot.lean` computes the parent length from the divided live
+length, seeds slot indices, executes the computed slot and clears its controls.
+`Node/CompactBasis.lean` composes these actual steps to realize `basisMap`,
+with summed execution costs and full frame restoration. Concrete register
+wiring and compact factor/layer wrappers remain, including persistent globals
+across child calls and top wrappers currently specialized to `SXReg`.
+Propagate the complete execution costs and discharge remaining caller sizing; record coverage alone
 does not establish the complete reserved transform. M3 remains open and public
 saving remains `2^-66`.
 

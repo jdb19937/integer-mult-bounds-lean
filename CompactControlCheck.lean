@@ -1,3 +1,8 @@
+import IntegerMultBounds.MathlibTM2.Fast.CompactTopSetup
+import IntegerMultBounds.MathlibTM2.Cost.CompactCallerCapacity
+import IntegerMultBounds.MathlibTM2.Node.CompactBasis
+import IntegerMultBounds.MathlibTM2.Fast.CompactTopReady
+import IntegerMultBounds.MathlibTM2.Cost.CompactCallerRuntimeParameters
 import IntegerMultBounds.MathlibTM2.Cost.CompactCallerRows
 import IntegerMultBounds.MathlibTM2.Node.CompactSlotComputed
 import IntegerMultBounds.MathlibTM2.Fast.CompactTopConfig
@@ -106,7 +111,26 @@ run_cmd do
     ``IntegerMultBounds.MathlibTM2.Node.compactSlotComputed_exec,
     ``IntegerMultBounds.MathlibTM2.Fast.sg_compactTopConfig,
     ``IntegerMultBounds.MathlibTM2.Cost.compactCaller_topRows_le,
-    ``IntegerMultBounds.MathlibTM2.Cost.compactCaller_topRows_quotient_le]
+    ``IntegerMultBounds.MathlibTM2.Cost.compactCaller_topRows_quotient_le,
+    ``IntegerMultBounds.MathlibTM2.Fast.compactSelection_mem,
+    ``IntegerMultBounds.MathlibTM2.Fast.compactSelection_length,
+    ``IntegerMultBounds.MathlibTM2.Fast.compactTop_shift,
+    ``IntegerMultBounds.MathlibTM2.Fast.compactTop_working_pcs_ok,
+    ``IntegerMultBounds.MathlibTM2.Fast.compactTopPieces_injective,
+    ``IntegerMultBounds.MathlibTM2.Fast.compactTopZ_correct,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactCaller_runtime_guardLog,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactCaller_runtime_eventually_guard,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactCaller_runtime_eventually_packed,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactCaller_runtime_fits_iff,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactCaller_runtime_eventually_reservation,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactCaller_runtime_eventually_capacity,
+    ``IntegerMultBounds.MathlibTM2.Cost.compactCaller_runtime_eventually_synDp,
+    ``IntegerMultBounds.MathlibTM2.Node.compactBasisSlot_exec,
+    ``IntegerMultBounds.MathlibTM2.Node.compactBasisList_exec,
+    ``IntegerMultBounds.MathlibTM2.Node.compactBasis_exec,
+    ``IntegerMultBounds.MathlibTM2.Fast.sg_compactTopCoordinates,
+    ``IntegerMultBounds.MathlibTM2.Fast.sg_compactTopSetup,
+    ``IntegerMultBounds.MathlibTM2.Fast.sg_compactTopRecordSetup]
   for name in names do
     for ax in ← collectAxioms name do
       unless #[``propext, ``Quot.sound, ``Classical.choice].contains ax do

@@ -2404,3 +2404,12 @@ import IntegerMultBounds.MathlibTM2.Node.CompactSlotComputed
 import IntegerMultBounds.MathlibTM2.Fast.CompactTopConfig
 
 import IntegerMultBounds.MathlibTM2.Cost.CompactCallerRows
+
+import IntegerMultBounds.MathlibTM2.Fast.CompactTopReady
+import IntegerMultBounds.MathlibTM2.Cost.CompactCallerRuntimeParameters
+
+import IntegerMultBounds.MathlibTM2.Cost.CompactCallerCapacity
+
+import IntegerMultBounds.MathlibTM2.Node.CompactBasis
+
+import IntegerMultBounds.MathlibTM2.Fast.CompactTopSetup

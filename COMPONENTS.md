@@ -6200,3 +6200,10 @@ Parameters and asymptotics.
 - `MathlibTM2/Cost/CompactCallerParameters.lean`: Eventual repair packing from manuscript sizes, explicit reservation/row/width premises; runtime size-generator identification remains separate.
 
 - `MathlibTM2/Cost/CompactCallerRows.lean`: Actual padded top-row and descendant-quotient bounds, paying one exponent bit for padding; the combined outside-row/spectator allowance remains explicit.
+
+- `MathlibTM2/Fast/CompactTopReady.lean`: Exact selection mask/length, computed shift, piece-width validity and reserved top-transform semantics. This is mathematical correctness; actual compact layer replacement remains separate.
+- `MathlibTM2/Cost/CompactCallerRuntimeParameters.lean`: Repair packing directly for the running integer-root size generator, without equating its dimension/chunk with the manuscript regime.
+- `MathlibTM2/Cost/CompactCallerCapacity.lean`: Actual reservation cutoff, eventual fractional-dimension bounds and capacity for nonterminal synthetic rounds. Small selected sets retain a capacity/fallback obligation.
+- `MathlibTM2/Node/CompactBasisSlot.lean`, `Node/CompactBasis.lean`: Actual parent-length preparation after division, slot-index setup, computed compact execution and cleanup; list composition realizes the exact basis map with restored frame and summed costs. Concrete register wiring remains separate.
+
+- `MathlibTM2/Fast/CompactTopCoordinates.lean`, `Fast/CompactTopSetup.lean`: Actual original-input root record and top-coordinate computation, regenerating cleared reservation counts and restoring all intermediates. The configuration serializer role adapter remains separate.
