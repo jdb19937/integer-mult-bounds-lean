@@ -288,6 +288,74 @@ lemma BandPreFree.withRsb {σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4)
 
 end Frames
 
+section Contract
+
+variable {T Q : ℕ} {U F : Type}
+variable {body : F → Pr F T Q (prime + K) U} {rg : RsbR → Fin T} {rgx : RsbX t₀ → Fin T}
+  {ι : Fin 64 → Fin T}
+
+/-- **The contract `hprep` of `rsb_allG_runs` for the band loader.** -/
+theorem bandPreB_rsbWith (hrg₂ : Function.Injective (Sum.elim rg rgx)) (hι : Function.Injective ι)
+    (hdisj₂ : ∀ r j, Sum.elim rg rgx r ≠ ι j) (hT : 64 ≤ T) (hQ : SS.states ≤ Q)
+    (hA : 96 ≤ prime + K) {hd : Fin 5 → Fin t₀} (hdi : Function.Injective hd)
+    (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (D : PreAxB) [NeZero D.s]
+    (rest : List (Fin (prime + K + 4))) (w : ℕ) (hw : 1 ≤ w) (hok : BandPreOk D w)
+    (hF : BandPreFree σ) (hprm : σ (.inl .prm) = preRec D.fields ++ rest)
+    (hwn : (σ (.inl (.cm .wn))).length = w)
+    (hnn : (σ (.inl (.cm .nn))).length = IntegerMultBounds.Schoenhage.Schedule.topN w)
+    (hfit : ∀ m < D.s, FacFits w D.bP D.bK (facState D.bP D.bK
+      (bandRows D.bWd D.s (Mult.BandFactor.coefZ D.s D.t D.α D.bP))
+      (bandInputs D.bWd D.s (Mult.BandFactor.coefZ D.s D.t D.α D.bP)) m))
+    (l a a' : List (Fin (prime + K + 4))) :
+    RsbRuns body (Sum.elim rg rgx) ι (bandPreB rg rgx ι hd hι hT hQ) (rsbWith σ l a a')
+      (rsbWith (bandLoad σ hd w D rest) l a a') (bandPreCost T σ hd w D rest) := by
+  have hag := rsbWith_agree σ l a a'
+  have e : ∀ r : RsbR, r ≠ .src → rsbWith σ l a a' (.inl r) = σ (.inl r) := fun r hr =>
+    hag _ (fun e => hr (Sum.inl_injective e)) (by simp) (by simp)
+  have h := band_preB_runs (body := body) hrg₂ hι hdisj₂ hT hQ hA hdi (rsbWith σ l a a') D rest w hw
+    hok (hF.withRsb l a a') (by rw [e _ (by decide)]; exact hprm)
+    (by rw [e _ (by simp)]; exact hwn) (by rw [e _ (by simp)]; exact hnn) hfit
+  rwa [bandLoad_rsbWith, bandPreCost_agree hag] at h
+
+/-- **One axis after loading.** The loaded register file runs the band lines of the axis on any
+box stream of admissible lines. -/
+theorem band_axis_loaded (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ : SS.states ≤ Q)
+    (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠ ι j) (hA : 96 ≤ prime + K)
+    {σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))} (hF : BandPreFree σ)
+    (hd : Fin 5 → Fin t₀) (w : ℕ) (D : PreAxB) [NeZero D.s] [NeZero D.t]
+    (rest : List (Fin (prime + K + 4)))
+    (hwn : (σ (.inl (.cm .wn))).length = w)
+    (hnn : (σ (.inl (.cm .nn))).length = IntegerMultBounds.Schoenhage.Schedule.topN w)
+    (hst : D.s < D.t) (hw1 : 1 ≤ w) (hPw : D.bP ≤ w)
+    (htab : BandTabOk w D.s D.bB
+      (bandLc D.bP D.bK D.bWd D.s (Mult.BandFactor.coefZ D.s D.t D.α D.bP))
+      (bandUc D.bP D.bK D.bWd D.s (Mult.BandFactor.coefZ D.s D.t D.α D.bP))
+      (bandRcs D.bP D.bK D.bWd D.s (Mult.BandFactor.coefZ D.s D.t D.α D.bP)) (bandDl D)
+      (2 ^ (9 * D.p - 1)) (2 ^ (D.p - D.α * D.α)))
+    (lines : List (List GaussianInt))
+    (hok : ∀ L ∈ lines, BandLineOk w D.bP D.s D.t D.bB
+      (bandLc D.bP D.bK D.bWd D.s (Mult.BandFactor.coefZ D.s D.t D.α D.bP))
+      (bandUc D.bP D.bK D.bWd D.s (Mult.BandFactor.coefZ D.s D.t D.α D.bP))
+      (bandRcs D.bP D.bK D.bWd D.s (Mult.BandFactor.coefZ D.s D.t D.α D.bP))
+      (2 ^ (9 * D.p - 1)) (2 ^ (D.p - D.α * D.α)) L) :
+    RsbRuns body rg ι (bandAxisP rg hι hT hQ)
+      (Function.update (fun r => bandLoad σ hd w D rest (.inl r)) .src
+        (cstream (prime + K) w lines.flatten))
+      (Function.update (fun r => bandLoad σ hd w D rest (.inl r)) .src
+        (cstream (prime + K) w (lines.flatMap (bandLineT D.bP D.s D.t D.bB
+          (bandLc D.bP D.bK D.bWd D.s (Mult.BandFactor.coefZ D.s D.t D.α D.bP))
+          (bandUc D.bP D.bK D.bWd D.s (Mult.BandFactor.coefZ D.s D.t D.α D.bP))
+          (bandRcs D.bP D.bK D.bWd D.s (Mult.BandFactor.coefZ D.s D.t D.α D.bP)) (bandDl D)
+          (2 ^ (9 * D.p - 1)) (2 ^ (D.p - D.α * D.α))))))
+      (bandAxisCost T w D.s D.t D.bB lines.length) := by
+  have c := (bandLoad_cfg σ hd D rest w hF hwn hnn (by omega)).with_src
+    (cstream (prime + K) w lines.flatten)
+  have h := band_axis_runs (body := body) (rg := rg) hι hT hQ hrg hdisj hA hst hw1 hPw _ _ _ _ _ _ htab lines
+    hok _ c (by simp)
+  rwa [Function.update_idem] at h
+
+end Contract
+
 end
 
 end IntegerMultBounds.MathlibTM2.Fast
