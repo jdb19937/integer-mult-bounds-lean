@@ -75,6 +75,9 @@ noncomputable def bandFacStepP : Pr P T Q A U :=
   (.seq (rsbMv (rg .smwn) (rg .tC) (rg .src) (rg .sr))
   (moveR (rg .sr) (rg .vk) id))))))))))))))
 
+/-- The window factorization: one window step per symbol of `sn`. -/
+noncomputable def bandFacLoopP : Pr P T Q A U := rsbRep (rg .sn) (rg .sel) (bandFacStepP rg hι hT hQ)
+
 end Programs
 
 /-- A Newton step on real records. -/
@@ -313,6 +316,55 @@ def facMul (P : ℕ) (r : ℤ) (row : List ℤ) : ℤ := (row.headD 0*r).tdiv (2
 /-- The updated, shifted row. -/
 def facRow (P : ℕ) (r : ℤ) (tail0 row : List ℤ) : List ℤ :=
   Mult.BandFactor.subRowZ P (facMul P r row) tail0 row.tail++[0]
+
+/-- The window after `m` steps of the numerator factorization. -/
+def facState (P K : ℕ) (rows inputs : List (List ℤ)) : ℕ → List (List ℤ)
+  | 0 => rows
+  | m+1 => Mult.BandFactor.stepRowsZ P K (facState P K rows inputs m) (inputs.getD m [])
+
+lemma facMul_eq (P K : ℕ) (c : ℤ) (row : List ℤ) :
+    facMul P (Mult.BandFactor.newtonZ P c K) row=Mult.BandFactor.mulZ P K (row.headD 0) c := rfl
+
+lemma stepRowsZ_cons (P K : ℕ) (c : ℤ) (tail0 next : List ℤ) (rest : List (List ℤ)) :
+    Mult.BandFactor.stepRowsZ P K ((c :: tail0) :: rest) next=
+      rest.map (fun row => facRow P (Mult.BandFactor.newtonZ P c K) tail0 row)++[next] := by
+  simp [Mult.BandFactor.stepRowsZ, facRow, facMul_eq]
+
+lemma lcolZ_cons (P K : ℕ) (c : ℤ) (tail0 : List ℤ) (rest : List (List ℤ)) :
+    Mult.BandFactor.lcolZ P K ((c :: tail0) :: rest)=
+      rest.map (fun row => facMul P (Mult.BandFactor.newtonZ P c K) row) := by
+  simp [Mult.BandFactor.lcolZ, facMul_eq]
+
+/-- The window keeps its shape: `B+1` rows of `2B+1` entries. -/
+lemma facState_shape (P K B : ℕ) (rows inputs : List (List ℤ)) (hrows : rows.length=B+1)
+    (hrl : ∀ row ∈ rows, row.length=2*B+1) (hin : ∀ row ∈ inputs, row.length=2*B+1) (m : ℕ)
+    (hm : m ≤ inputs.length) :
+    (facState P K rows inputs m).length=B+1 ∧
+      ∀ row ∈ facState P K rows inputs m, row.length=2*B+1 := by
+  induction m with
+  | zero => exact ⟨hrows, hrl⟩
+  | succ m ih =>
+    obtain ⟨h1, h2⟩ := ih (by omega)
+    simp only [facState]
+    obtain ⟨row0, rest, hr⟩ : ∃ row0 rest, facState P K rows inputs m=row0 :: rest := by
+      cases h : facState P K rows inputs m with
+      | nil => rw [h] at h1; simp at h1
+      | cons a l => exact ⟨a, l, rfl⟩
+    have hr0 := h2 row0 (by rw [hr]; simp)
+    obtain ⟨c, tail0, hc⟩ : ∃ c tail0, row0=c :: tail0 := by
+      cases row0 with
+      | nil => simp at hr0
+      | cons a l => exact ⟨a, l, rfl⟩
+    rw [hr, hc, stepRowsZ_cons]
+    have hnx : (inputs.getD m []).length=2*B+1 := by
+      rw [List.getD_eq_getElem _ _ (by omega)]; exact hin _ (List.getElem_mem _)
+    have htl : tail0.length=2*B := by rw [hc] at hr0; simp at hr0; omega
+    refine ⟨by rw [hr] at h1; simp at h1 ⊢; omega, fun row hrow => ?_⟩
+    simp only [List.mem_append, List.mem_map, List.mem_singleton] at hrow
+    rcases hrow with ⟨row', hrow', rfl⟩ | rfl
+    · have := h2 row' (by rw [hr]; exact List.mem_cons_of_mem _ hrow')
+      simp [facRow, Mult.BandFactor.subRowZ, htl, this]
+    · exact hnx
 
 /-- The `B` non-pivot rows of a window step. -/
 theorem band_facRows_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠ ι j)
@@ -633,6 +685,134 @@ theorem band_facStep_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r �
         List.sum_replicate, hrest, smul_eq_mul]
     rw [hsum, hnext]
     nlinarith
+
+/-- The record-width conditions of one window step. -/
+def FacFits (w P K : ℕ) : List (List ℤ) → Prop
+  | (c :: tail0) :: rest => Fits w (⟨c, 0⟩ : GaussianInt) ∧
+      (∀ n < K, Fits w (⟨Mult.BandFactor.newtonZ P c n, 0⟩ : GaussianInt) ∧
+        Fits w (⟨(c*Mult.BandFactor.newtonZ P c n).tdiv (2^P), 0⟩ : GaussianInt)) ∧
+      Fits w (⟨Mult.BandFactor.newtonZ P c K, 0⟩ : GaussianInt) ∧
+      (∀ a ∈ tail0, Fits w (⟨a, 0⟩ : GaussianInt)) ∧
+      ∀ row ∈ rest, Fits w (⟨row.headD 0, 0⟩ : GaussianInt) ∧
+        Fits w (⟨facMul P (Mult.BandFactor.newtonZ P c K) row, 0⟩ : GaussianInt)
+  | _ => False
+
+/-- The pivot of a window. -/
+def facPiv (rows : List (List ℤ)) : ℤ := (rows.headD []).headD 0
+
+/-- **The window factorization.** After `s` steps: `vk` holds the final window,
+`hf` the pivot rows (last on top), `df` the Newton reciprocals of the pivots
+(last on top), and `dout` all multipliers in reverse order. -/
+theorem band_facLoop_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠ ι j)
+    (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ : SS.states ≤ Q) (hA : 96 ≤ A)
+    {w P B K s : ℕ} (σ : RsbR → List (Fin (A + 4))) (hready : RsbReady σ w P) (hw : 1 ≤ w)
+    (hp : P ≤ w) (rows inputs : List (List ℤ)) (hrows : rows.length = B + 1)
+    (hrl : ∀ row ∈ rows, row.length = 2 * B + 1) (hin : ∀ row ∈ inputs, row.length = 2 * B + 1)
+    (hs : inputs.length = s) (hfit : ∀ m < s, FacFits w P K (facState P K rows inputs m))
+    (hr0 : ∀ m < s, σ .bx = csyms A w ⟨Mult.BandFactor.newtonZ P (facPiv (facState P K rows inputs m)) 0, 0⟩)
+    (SRC HF DF D : List (Fin (A + 4)))
+    (hvk : σ .vk = cstream A w (rows.map colC).flatten)
+    (hsrc : σ .src = cstream A w (inputs.map colC).flatten ++ SRC)
+    (hhf : σ .hf = HF) (hdf : σ .df = DF) (hdout : σ .dout = D) (hmsk : σ .msk = csyms A w 0)
+    (hef : σ .ef = []) (htb : σ .tb = []) (hsr : σ .sr = []) (hbo : σ .bo = [])
+    (hhv : σ .hv = []) (hxa : σ .xa = []) (hhc : σ .hc = []) (hya : σ .ya = []) (hxs : σ .xs = [])
+    (hpr : σ .pr = []) (hac : σ .ac = []) (hac2 : σ .ac2 = []) (hnv : σ .nv = [])
+    (hb1 : σ .b1 = []) (htC : σ .tC = []) (htA : σ .tA = []) (htJ : σ .tJ = [])
+    (htK : σ .tK = []) (htL : σ .tL = []) (hsel : σ .sel = []) (hsn : (σ .sn).length = s)
+    (hkn : (σ .kn).length = K) (hms : (σ .ms).length = B) (hm2n : (σ .m2n).length = 2 * B)
+    (hmwn : (σ .mwn).length = 2 * B * w) (hsmwn : (σ .smwn).length = (2 * B + 1) * w) :
+    RsbRuns body rg ι (bandFacLoopP rg hι hT hQ) σ
+      (Function.update (Function.update (Function.update (Function.update (Function.update σ .vk
+        (cstream A w ((facState P K rows inputs s).map colC).flatten)) .src SRC)
+        .hf (cstream A w ((List.range s).reverse.map fun j =>
+          colC ((facState P K rows inputs j).headD [])).flatten ++ HF))
+        .df (cstream A w ((List.range s).reverse.map fun j =>
+          (⟨Mult.BandFactor.newtonZ P (facPiv (facState P K rows inputs j)) K, 0⟩ : GaussianInt)) ++ DF))
+        .dout (cstream A w (((List.range s).map fun j =>
+          colC (Mult.BandFactor.lcolZ P K (facState P K rows inputs j))).flatten.reverse) ++ D))
+      (s * (bandFacStepCost T w B K + 6) + 4) := by
+  obtain ⟨Ψ, hΨ⟩ : ∃ Ψ : ℕ → RsbR → List (Fin (A + 4)), Ψ = fun m =>
+      Function.update (Function.update (Function.update (Function.update (Function.update σ .vk
+        (cstream A w ((facState P K rows inputs m).map colC).flatten))
+        .src (cstream A w ((inputs.drop m).map colC).flatten ++ SRC))
+        .hf (cstream A w ((List.range m).reverse.map fun j =>
+          colC ((facState P K rows inputs j).headD [])).flatten ++ HF))
+        .df (cstream A w ((List.range m).reverse.map fun j =>
+          (⟨Mult.BandFactor.newtonZ P (facPiv (facState P K rows inputs j)) K, 0⟩ : GaussianInt)) ++ DF))
+        .dout (cstream A w (((List.range m).map fun j =>
+          colC (Mult.BandFactor.lcolZ P K (facState P K rows inputs j))).flatten.reverse) ++ D) := ⟨_, rfl⟩
+  have hbody : ∀ j < (σ .sn).length, ∀ X Y, RsbRuns body rg ι (bandFacStepP rg hι hT hQ)
+      (rsbUpd2 (Ψ j) .sn X .sel Y) (rsbUpd2 (Ψ (j + 1)) .sn X .sel Y) (bandFacStepCost T w B K) := by
+    intro j hj X Y
+    rw [hsn] at hj
+    obtain ⟨hlen, hrlen⟩ := facState_shape P K B rows inputs hrows hrl hin j (by omega)
+    obtain ⟨row0, rest, hr⟩ : ∃ row0 rest, facState P K rows inputs j=row0 :: rest := by
+      cases h : facState P K rows inputs j with
+      | nil => rw [h] at hlen; simp at hlen
+      | cons a l => exact ⟨a, l, rfl⟩
+    have hr0l := hrlen row0 (by rw [hr]; simp)
+    obtain ⟨c, tail0, hc⟩ : ∃ c tail0, row0=c :: tail0 := by
+      cases row0 with
+      | nil => simp at hr0l
+      | cons a l => exact ⟨a, l, rfl⟩
+    subst hc
+    have hfj := hfit j hj
+    rw [hr] at hfj
+    obtain ⟨hfc, hfn, hfr, hft, hfh⟩ := hfj
+    have htl : tail0.length=2*B := by simp at hr0l; omega
+    have hrest : rest.length=B := by rw [hr] at hlen; simp at hlen; omega
+    have hjin : j < inputs.length := by omega
+    set next := inputs[j]'hjin with hnextdef
+    have hnl : next.length=2*B+1 := hin next (List.getElem_mem _)
+    have hready' : RsbReady (rsbUpd2 (Ψ j) .sn X .sel Y) w P := by
+      simp only [rsbUpd2, hΨ]
+      exact ((((((hready.update .vk (fun c => by simp) _).update .src (fun c => by simp) _).update
+        .hf (fun c => by simp) _).update .df (fun c => by simp) _).update .dout (fun c => by simp)
+        _).update .sn (fun c => by simp) _).update .sel (fun c => by simp) _
+    have hpiv : facPiv (facState P K rows inputs j)=c := by simp [facPiv, hr]
+    have hstep := band_facStep_runs (body := body) (ι := ι) (w := w) (B := B) (K := K) hrg hdisj hι
+      hT hQ hA (rsbUpd2 (Ψ j) .sn X .sel Y) hready' hw hp c tail0 next rest htl hnl hrest
+      (fun row hrow => hrlen row (by rw [hr]; exact List.mem_cons_of_mem _ hrow))
+      hfc hfn hfr hft hfh (cstream A w ((inputs.drop (j+1)).map colC).flatten ++ SRC)
+      (cstream A w ((List.range j).reverse.map fun j =>
+          colC ((facState P K rows inputs j).headD [])).flatten ++ HF)
+      (cstream A w ((List.range j).reverse.map fun j =>
+          (⟨Mult.BandFactor.newtonZ P (facPiv (facState P K rows inputs j)) K, 0⟩ : GaussianInt)) ++ DF)
+      (cstream A w (((List.range j).map fun j =>
+          colC (Mult.BandFactor.lcolZ P K (facState P K rows inputs j))).flatten.reverse) ++ D)
+      (by simp [rsbUpd2, hΨ, hr, colC])
+      (by
+        have hdj : (inputs.map colC).drop j=colC next :: (inputs.map colC).drop (j+1) := by
+          rw [List.drop_eq_getElem_cons (by simpa using hjin), List.getElem_map]
+        simp [rsbUpd2, hΨ, hdj])
+      (by simp [rsbUpd2, hΨ]) (by simp [rsbUpd2, hΨ]) (by simp [rsbUpd2, hΨ])
+      (by have := hr0 j hj; rw [hpiv] at this; simp [rsbUpd2, hΨ, this]) (by simp [rsbUpd2, hΨ, hmsk])
+      (by simp [rsbUpd2, hΨ, hef]) (by simp [rsbUpd2, hΨ, htb]) (by simp [rsbUpd2, hΨ, hsr])
+      (by simp [rsbUpd2, hΨ, hbo]) (by simp [rsbUpd2, hΨ, hhv]) (by simp [rsbUpd2, hΨ, hxa])
+      (by simp [rsbUpd2, hΨ, hhc]) (by simp [rsbUpd2, hΨ, hya]) (by simp [rsbUpd2, hΨ, hxs])
+      (by simp [rsbUpd2, hΨ, hpr]) (by simp [rsbUpd2, hΨ, hac]) (by simp [rsbUpd2, hΨ, hac2])
+      (by simp [rsbUpd2, hΨ, hnv]) (by simp [rsbUpd2, hΨ, hb1]) (by simp [rsbUpd2, hΨ, htC])
+      (by simp [rsbUpd2, hΨ, htA]) (by simp [rsbUpd2, hΨ, htJ]) (by simp [rsbUpd2, hΨ, htK])
+      (by simp [rsbUpd2, hΨ, htL]) (by simp [rsbUpd2, hΨ, hkn]) (by simp [rsbUpd2, hΨ, hms])
+      (by simp [rsbUpd2, hΨ, hm2n]) (by simp [rsbUpd2, hΨ, hmwn]) (by simp [rsbUpd2, hΨ, hsmwn])
+    refine hstep.congr ?_
+    have hnext' : inputs.getD j []=next := by rw [List.getD_eq_getElem _ _ hjin]
+    have hst : facState P K rows inputs (j+1)=
+        rest.map (fun row => facRow P (Mult.BandFactor.newtonZ P c K) tail0 row)++[next] := by
+      simp only [facState, hr, hnext', stepRowsZ_cons]
+    have hlc : Mult.BandFactor.lcolZ P K (facState P K rows inputs j)=
+        rest.map (fun row => facMul P (Mult.BandFactor.newtonZ P c K) row) := by
+      rw [hr, lcolZ_cons]
+    funext x; cases x <;> simp [rsbUpd2, hΨ, hst, List.range_succ, hr, hpiv, hlc, colC,
+      List.reverse_append, facPiv, lcolZ_cons, Function.comp_def]
+  have h := rsb_rep_runs hrg hdisj (ra := .sn) (rt := .sel) (by decide) (bandFacStepP rg hι hT hQ)
+    (σ .sn) Ψ _ hbody
+  refine (h.congr_pre ?_ |>.congr ?_).mono ?_
+  · funext x; cases x <;> simp [rsbUpd2, hΨ, hvk, hsrc, hhf, hdf, hdout, hsel, facState]
+  · rw [hsn]
+    have hd : (inputs.map colC).drop s=[] := List.drop_of_length_le (by simp; omega)
+    funext x; cases x <;> simp [rsbUpd2, hΨ, hsel, hd]
+  · rw [hsn]
 
 end Contracts
 
