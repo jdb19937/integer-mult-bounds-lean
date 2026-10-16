@@ -1657,3 +1657,16 @@ closes the block-Schur identification left open above and gives the boundary
 system a concrete dominant matrix for its factorization. The guarded check and
 4-declaration standard-axiom audit pass. The rounded boundary factorization
 error and tape costs remain open.
+
+### Boundary LU factors and residual bound
+
+Elimination in list order now yields explicit factors `A=LU` on the active
+set. Each pivot consumes `μ|A_ik|/A_kk` of every other row's mass, so
+multiplier rows sum to at most `1+mass/μ` (at most `1+16p` for the actual
+matrix, versus the source's looser `65p²`), and pivot rows keep the margin
+and never exceed the original mass. Computed forward and back substitutions
+with residuals `εf`, `εb` against the exact factors solve the system within
+`(Λεb+εf)/μ`. No Woodbury correction is needed for this bound: cyclic wrap
+entries are ordinary fill in the same factors. The guarded check and
+5-declaration standard-axiom audit pass. Instantiating residuals for rounded
+triangular solves, the boundary ordering and tape costs remain open.
