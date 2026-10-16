@@ -38,6 +38,15 @@ def bandILeaveP (a b z n tn : RsbR) : Pr P T Q A U :=
 def bandDeILeaveP (x e o n tn : RsbR) : Pr P T Q A U :=
   rsbRep (rg n) (rg tn) (.seq (bandRec1P rg x e) (bandRec1P rg x o))
 
+/-- Fold the line on `sel` onto `vk`: first half to `ya` in order, the rest reversed onto
+`xs`, pairs interleaved onto `nv`, the odd last record, then `nv` reversed onto `vk`. -/
+def bandFoldLineP : Pr P T Q A U :=
+  .seq (rsbMv (rg .tswn) (rg .tC) (rg .sel) (rg .ac2)) (.seq (moveR (rg .ac2) (rg .ya) id)
+  (.seq (bandRevP rg .sel .xs (.cm .wn) .m2wn .tK)
+  (.seq (bandILeaveP rg .ya .xs .nv .m2wn .tK)
+  (.seq (rsbRep (rg .kn) (rg .tK) (bandRec1P rg .ya .nv))
+  (bandRevP rg .nv .vk (.cm .wn) .sn .tK)))))
+
 end Programs
 
 section Contracts
@@ -341,6 +350,182 @@ theorem band_deileave_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r 
         Function.update_of_ne (Ne.symm hen), Function.update_of_ne (Ne.symm hon)]
     simp [rsbUpd2, hΨ, hro, hre, hrx, hrt, hrn]
   · rw [hn]
+
+theorem interleave_append_left {α : Type*} (as₂ : List α) : ∀ (as₁ bs : List α),
+    as₁.length = bs.length →
+    Mult.BandFactor.interleave (as₁ ++ as₂) bs = Mult.BandFactor.interleave as₁ bs ++ as₂
+  | [], [], _ => by cases as₂ <;> rfl
+  | a :: as₁, b :: bs, h => by
+    simp only [List.cons_append, Mult.BandFactor.interleave]
+    rw [interleave_append_left as₂ as₁ bs (by simpa using h)]
+  | [], _ :: _, h => by simp at h
+  | _ :: _, [], h => by simp at h
+
+/-- Move `|n|` records of `x` one by one onto `y`. -/
+theorem band_rec1Rep_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠ ι j)
+    {x y n tn : RsbR} (hd : [x, y, n, tn, .cm .wn, .tC, .ac2].Nodup) {w : ℕ}
+    (σ : RsbR → List (Fin (A + 4))) (l : List GaussianInt) (R : List (Fin (A + 4)))
+    (hn : (σ n).length = l.length) (hx : σ x = cstream A w l ++ R)
+    (hwn : (σ (.cm .wn)).length = w) (htC : σ .tC = []) (hac2 : σ .ac2 = []) (htn : σ tn = []) :
+    RsbRuns body rg ι (rsbRep (rg n) (rg tn) (bandRec1P rg x y)) σ
+      (Function.update (Function.update σ x R) y (cstream A w l.reverse ++ σ y))
+      (l.length * (6 * w + 6 + 6) + 4) := by
+  have hd5 : [x, y, RsbR.cm .wn, RsbR.tC, RsbR.ac2].Nodup := by
+    simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or] at hd ⊢
+    tauto
+  have hd' := hd
+  simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or] at hd'
+  obtain ⟨⟨hxy, hxn, hxt, -⟩, ⟨hyn, hyt, -⟩, ⟨hnt, -⟩, -⟩ := hd'
+  obtain ⟨Ψ, hΨ⟩ : ∃ Ψ : ℕ → RsbR → List (Fin (A + 4)), Ψ = fun j =>
+      Function.update (Function.update σ x (cstream A w (l.drop j) ++ R)) y
+        (cstream A w (l.take j).reverse ++ σ y) := ⟨_, rfl⟩
+  have hbody : ∀ j < (σ n).length, ∀ X Y, RsbRuns body rg ι (bandRec1P rg x y)
+      (rsbUpd2 (Ψ j) n X tn Y) (rsbUpd2 (Ψ (j + 1)) n X tn Y) (6 * w + 6) := by
+    intro j hj X Y
+    rw [hn] at hj
+    have hda : l.drop j = l[j] :: l.drop (j + 1) := List.drop_eq_getElem_cons hj
+    have h := band_rec1_runs (body := body) (ι := ι) hrg hdisj (x := x) (y := y) (w := w) hd5
+      (rsbUpd2 (Ψ j) n X tn Y) l[j] (cstream A w (l.drop (j + 1)) ++ R)
+      (by
+        rw [show rsbUpd2 (Ψ j) n X tn Y x = cstream A w (l.drop j) ++ R by
+          simp [rsbUpd2, hΨ, Function.update_of_ne hxn, Function.update_of_ne hxt,
+            Function.update_of_ne hxy], hda, cstream_cons, List.append_assoc])
+      (by simp only [rsbUpd2, hΨ, Function.update_apply]; split_ifs <;> simp_all)
+      (by simp only [rsbUpd2, hΨ, Function.update_apply]; split_ifs <;> simp_all)
+      (by simp only [rsbUpd2, hΨ, Function.update_apply]; split_ifs <;> simp_all)
+    refine h.congr ?_
+    have htk : (l.take (j + 1)).reverse = l[j] :: (l.take j).reverse := by
+      rw [List.take_succ_eq_append_getElem hj]; simp
+    funext r
+    by_cases hry : r = y
+    · subst hry; simp [rsbUpd2, hΨ, Function.update_of_ne hyn, Function.update_of_ne hyt, htk,
+        Function.update_of_ne (Ne.symm hxy)]
+    by_cases hrx : r = x
+    · subst hrx; simp [rsbUpd2, hΨ, Function.update_of_ne hry, Function.update_of_ne hxn,
+        Function.update_of_ne hxt]
+    simp only [rsbUpd2, hΨ, Function.update_apply, hry, hrx, ite_false]
+  have h := rsb_rep_runs hrg hdisj (ra := n) (rt := tn) hnt _ (σ n) Ψ _ hbody
+  refine (h.congr_pre ?_ |>.congr ?_).mono ?_
+  · funext r
+    by_cases hry : r = y
+    · subst hry; simp [rsbUpd2, hΨ, Function.update_of_ne hyn, Function.update_of_ne hyt]
+    by_cases hrx : r = x
+    · subst hrx; simp [rsbUpd2, hΨ, Function.update_of_ne hry, Function.update_of_ne hxn,
+        Function.update_of_ne hxt, hx]
+    by_cases hrt : r = tn
+    · subst hrt; simp [rsbUpd2, htn, Function.update_of_ne (Ne.symm hxt), Function.update_of_ne (Ne.symm hyt)]
+    by_cases hrn : r = n
+    · subst hrn; simp [rsbUpd2, Function.update_of_ne hrt, Function.update_of_ne (Ne.symm hxn),
+        Function.update_of_ne (Ne.symm hyn)]
+    simp [rsbUpd2, hΨ, hry, hrx, hrt, hrn]
+  · funext r
+    by_cases hry : r = y
+    · subst hry; simp [rsbUpd2, hΨ, Function.update_of_ne hyn, Function.update_of_ne hyt, hn]
+    by_cases hrx : r = x
+    · subst hrx; simp [rsbUpd2, hΨ, Function.update_of_ne hry, Function.update_of_ne hxn,
+        Function.update_of_ne hxt, hn]
+    by_cases hrt : r = tn
+    · subst hrt; simp [rsbUpd2, htn, Function.update_of_ne (Ne.symm hxt), Function.update_of_ne (Ne.symm hyt)]
+    by_cases hrn : r = n
+    · subst hrn; simp [rsbUpd2, Function.update_of_ne hrt, Function.update_of_ne (Ne.symm hxn),
+        Function.update_of_ne (Ne.symm hyn)]
+    simp [rsbUpd2, hΨ, hry, hrx, hrt, hrn]
+  · rw [hn]
+
+/-- **Fold a line.** `sel` holding the line `v` (`s` records) becomes empty and `vk`
+receives the folded line. -/
+theorem band_foldLine_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠ ι j) {w : ℕ}
+    (σ : RsbR → List (Fin (A + 4))) (v : List GaussianInt) (hsel : σ .sel = cstream A w v)
+    (htswn : (σ .tswn).length = (v.length + 1) / 2 * w) (hm2wn : (σ .m2wn).length = v.length / 2)
+    (hkn : (σ .kn).length = (v.length + 1) / 2 - v.length / 2) (hsn : (σ .sn).length = v.length)
+    (hwn : (σ (.cm .wn)).length = w) (hvk : σ .vk = []) (hya : σ .ya = []) (hxs : σ .xs = [])
+    (hnv : σ .nv = []) (htK : σ .tK = []) (htC : σ .tC = []) (hac2 : σ .ac2 = []) :
+    RsbRuns body rg ι (bandFoldLineP rg) σ
+      (Function.update (Function.update σ .sel []) .vk (cstream A w (Mult.BandFactor.foldList v)))
+      (60 * (v.length + 1) * w + 60 * v.length + 60) := by
+  have hsing : ∀ l : List GaussianInt, (l.map fun a => [a]).flatten = l := by
+    intro l; induction l <;> simp_all
+  set h := (v.length + 1) / 2 with hh
+  set r := v.length / 2 with hr
+  have hrh : r ≤ h := by omega
+  -- the first half
+  have h₁ := rsb_mv_runs (body := body) (ι := ι) hrg (c := .tswn) (t := .tC) (x := .sel) (y := .ac2)
+    (by decide) σ htC (by rw [htswn, hsel, length_cstream]; exact Nat.mul_le_mul_right _ (by omega))
+  have hl1 : (σ .tswn).length = (v.take h).length * w := by rw [htswn]; simp; omega
+  have hsplit : σ .sel = cstream A w (v.take h) ++ cstream A w (v.drop h) := by
+    rw [hsel, ← cstream_append, List.take_append_drop]
+  rw [hl1, hsplit, take_cstream _ _ le_rfl, drop_cstream, List.take_length, List.drop_length,
+    Nat.sub_self, zero_mul, List.drop_zero, cstream_nil, List.nil_append, hac2, List.append_nil] at h₁
+  set σ₁ := Function.update (Function.update σ .sel (cstream A w (v.drop h))) .ac2
+    (cstream A w (v.take h)).reverse
+  have h₂ := rsb_moveR_runs (body := body) (ι := ι) hrg (a := .ac2) (b := .ya) (by decide) σ₁
+  set σ₂ := Function.update (Function.update σ₁ .ac2 []) .ya ((σ₁ .ac2).reverse ++ σ₁ .ya)
+  -- the rest, reversed
+  have h₃ := band_rev_runs (body := body) (ι := ι) hrg hdisj (x := .sel) (y := .xs) (c := .cm .wn)
+    (n := .m2wn) (tn := .tK) (by decide) (w := w) (L := 1) σ₂ ((v.drop h).map fun a => [a])
+    (by intro b hb; obtain ⟨a, -, rfl⟩ := List.mem_map.mp hb; rfl) [] []
+    (by rw [hsing]; simp [σ₂, σ₁]) (by simp [σ₂, σ₁, hxs])
+    (by simp [σ₂, σ₁, hwn]) (by simp [σ₂, σ₁, hm2wn]; omega) (by simp [σ₂, σ₁, htK])
+    (by simp [σ₂, σ₁, htC]) (by simp [σ₂, σ₁])
+  set as := (v.take h).take r
+  set bs := (v.drop h).reverse
+  set l := (v.take h).drop r
+  have hasl : as.length = r := by simp [as]; omega
+  have hbsl : bs.length = r := by simp [bs]; omega
+  set σ₃ := Function.update (Function.update σ₂ .sel []) .xs
+    (cstream A w ((v.drop h).map fun a => [a]).reverse.flatten ++ [])
+  have h₄ := band_ileave_runs (body := body) (ι := ι) hrg hdisj (a := .ya) (b := .xs) (z := .nv)
+    (n := .m2wn) (tn := .tK) (by decide) (w := w) σ₃ as bs (cstream A w l) []
+    (by omega) (by simp [σ₃, σ₂, σ₁, hm2wn, hasl])
+    (by simp [σ₃, σ₂, σ₁, hya, as, l, ← cstream_append])
+    (by
+      have : ((v.drop h).map fun a => [a]).reverse.flatten = bs := by
+        rw [← List.map_reverse, hsing]
+      simp only [σ₃, Function.update_self]
+      rw [this])
+    (by simp [σ₃, σ₂, σ₁, hwn]) (by simp [σ₃, σ₂, σ₁, htC]) (by simp [σ₃, σ₂, σ₁])
+    (by simp [σ₃, σ₂, σ₁, htK])
+  set σ₄ := Function.update (Function.update (Function.update σ₃ .ya (cstream A w l)) .xs []) .nv
+    (cstream A w (Mult.BandFactor.interleave as bs).reverse ++ σ₃ .nv)
+  have h₅ := band_rec1Rep_runs (body := body) (ι := ι) hrg hdisj (x := .ya) (y := .nv) (n := .kn)
+    (tn := .tK) (by decide) (w := w) σ₄ l [] (by simp [σ₄, σ₃, σ₂, σ₁, hkn, l]; omega)
+    (by simp [σ₄]) (by simp [σ₄, σ₃, σ₂, σ₁, hwn]) (by simp [σ₄, σ₃, σ₂, σ₁, htC])
+    (by simp [σ₄, σ₃, σ₂, σ₁]) (by simp [σ₄, σ₃, σ₂, σ₁, htK])
+  set L := Mult.BandFactor.interleave as bs ++ l
+  have hL : L = Mult.BandFactor.foldList v := by
+    simp only [L, Mult.BandFactor.foldList, ← hh]
+    rw [← interleave_append_left l as bs (by omega)]
+    simp only [as, l, List.take_append_drop]
+    rfl
+  have hLl : L.length = v.length := by
+    simp only [L, List.length_append, Mult.BandFactor.length_interleave as bs (by omega) (by omega), hasl, hbsl, l,
+      List.length_drop, List.length_take]
+    omega
+  set σ₅ := Function.update (Function.update σ₄ .ya []) .nv (cstream A w l.reverse ++ σ₄ .nv)
+  have h₆ := band_rev_runs (body := body) (ι := ι) hrg hdisj (x := .nv) (y := .vk) (c := .cm .wn)
+    (n := .sn) (tn := .tK) (by decide) (w := w) (L := 1) σ₅ (L.reverse.map fun a => [a])
+    (by intro b hb; obtain ⟨a, -, rfl⟩ := List.mem_map.mp hb; rfl) [] []
+    (by rw [hsing]; simp [σ₅, σ₄, σ₃, σ₂, σ₁, hnv, L, ← cstream_append])
+    (by simp [σ₅, σ₄, σ₃, σ₂, σ₁, hvk]) (by simp [σ₅, σ₄, σ₃, σ₂, σ₁, hwn])
+    (by simp [σ₅, σ₄, σ₃, σ₂, σ₁, hsn, hLl]) (by simp [σ₅, σ₄, σ₃, σ₂, σ₁, htK])
+    (by simp [σ₅, σ₄, σ₃, σ₂, σ₁, htC]) (by simp [σ₅, σ₄, σ₃, σ₂, σ₁])
+  have hrev : (L.reverse.map fun a => [a]).reverse.flatten = L := by
+    rw [← List.map_reverse, List.reverse_reverse, hsing]
+  refine ((RsbRuns.seq hdisj h₁ (RsbRuns.seq hdisj h₂ (RsbRuns.seq hdisj h₃ (RsbRuns.seq hdisj h₄
+    (RsbRuns.seq hdisj h₅ h₆))))).congr ?_).mono ?_
+  · funext x; cases x <;> simp [σ₅, σ₄, σ₃, σ₂, σ₁, hrev, hL, hya, hxs, hnv, hac2, hsing]
+  · simp only [σ₁, Function.update_self, length_cstream, List.length_reverse, List.length_drop,
+      List.length_map, List.length_take, hasl, hLl, l, htswn]
+    simp only [List.length_take, List.length_drop] at *
+    set n := v.length
+    have a1 : min h n * w ≤ n * w := Nat.mul_le_mul_right _ (min_le_right _ _)
+    have a2 : (n - h) * (6 * (1 * w) + 6 + 6) ≤ n * (6 * (1 * w) + 6 + 6) :=
+      Nat.mul_le_mul_right _ (Nat.sub_le _ _)
+    have a3 : r * (2 * (6 * w + 6) + 6) ≤ n * (2 * (6 * w + 6) + 6) := Nat.mul_le_mul_right _ (by omega)
+    have a4 : (min h n - r) * (6 * w + 6 + 6) ≤ n * (6 * w + 6 + 6) :=
+      Nat.mul_le_mul_right _ (by omega)
+    ring_nf at a1 a2 a3 a4 ⊢
+    omega
 
 end Contracts
 
