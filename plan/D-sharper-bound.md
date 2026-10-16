@@ -1852,3 +1852,14 @@ step-indexed lists of `Mult.BandList`, which reproduce `fwdZC`/`bwdZC` and so th
 concrete `bandJtF` map. Remaining for the line: fold/unfold and scaling of the
 line records, dropping the `B` dummies, the per-axis factor tables from the
 table VM, axis/box wrappers, and costs.
+
+Loader redesign: the table VM has a fixed set of scalar variables and no
+arrays, so it cannot hold the band for elimination, and records have no
+divider. The per-axis factorization will therefore run on record tapes with
+pivot reciprocals by rounded Newton iteration (`NLogN/NewtonRecip`:
+quadratic convergence under perturbation, `|r_K-1/b|≤60η/β²` after
+O(log(pP)) steps). Rounded elimination is now generic in the multiplier rule
+(`SchurLUBackward`), and `recipMul` (Newton reciprocal times entry) satisfies
+it with error `η(1+60M/β²)`. Matrix entries can come from the existing `E`
+weight table code at working precision. Guarded checks and standard-axiom
+audits pass.
