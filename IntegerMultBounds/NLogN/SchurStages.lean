@@ -37,6 +37,56 @@ theorem lur_map (ks : List ι) : ∀ (A : Matrix ι ι ℝ) (A' : Matrix κ κ �
     · simp only [List.map_cons, luLr, luUr, hmem, hk, ite_false]
       exact ih A A' S hA i j
 
+theorem fwdM_map (L : Matrix ι ι ℝ) (L' : Matrix κ κ ℝ) (hL : ∀ a c, L' (f a) (f c)=L a c)
+    (b : ι → ℝ) (b' : κ → ℝ) (hb : ∀ a, b' (f a)=b a) (ks : List ι) :
+    ∀ (done : Finset ι) (y : ι → ℝ) (y' : κ → ℝ), (∀ a, y' (f a)=y a) →
+      ∀ a, fwdM rd L' b' (done.image f) y' (ks.map f) (f a)=fwdM rd L b done y ks a := by
+  induction ks with
+  | nil => intro _ _ _ hy a; exact hy a
+  | cons k ks ih =>
+    intro done y y' hy a
+    simp only [List.map_cons, fwdM]
+    rw [← image_insert]
+    refine ih _ _ _ (fun c => ?_) a
+    by_cases hc : c=k
+    · subst hc
+      simp only [Function.update_self, hb]
+      rw [sum_image (fun x _ z _ h => hf h)]
+      simp only [hL, hy]
+    · simp only [Function.update_of_ne (hf.ne hc), Function.update_of_ne hc, hy]
+
+theorem bwdM_map (U : Matrix ι ι ℝ) (U' : Matrix κ κ ℝ) (hU : ∀ a c, U' (f a) (f c)=U a c)
+    (r y : ι → ℝ) (r' y' : κ → ℝ) (hr : ∀ a, r' (f a)=r a) (hy : ∀ a, y' (f a)=y a) (ks : List ι) :
+    ∀ (done : Finset ι) (x : ι → ℝ) (x' : κ → ℝ), (∀ a, x' (f a)=x a) →
+      ∀ a, bwdM rd U' r' y' (done.image f) x' (ks.map f) (f a)=bwdM rd U r y done x ks a := by
+  induction ks with
+  | nil => intro _ _ _ hx a; exact hx a
+  | cons k ks ih =>
+    intro done x x' hx a
+    simp only [List.map_cons, bwdM]
+    rw [← image_insert]
+    refine ih _ _ _ (fun c => ?_) a
+    by_cases hc : c=k
+    · subst hc
+      simp only [Function.update_self, hy, hr]
+      rw [sum_image (fun x _ z _ h => hf h)]
+      simp only [hU, hx]
+    · simp only [Function.update_of_ne (hf.ne hc), Function.update_of_ne hc, hx]
+
+/-- Relabelling the vertices relabels the solve. -/
+theorem bandSolveG_map (rec : ℝ → ℝ) (A : Matrix ι ι ℝ) (A' : Matrix κ κ ℝ)
+    (hA : ∀ a c, A' (f a) (f c)=A a c) (S : Finset ι) (ks : List ι) (b : ι → ℝ) (b' : κ → ℝ)
+    (hb : ∀ a, b' (f a)=b a) (a : ι) :
+    bandSolveG rd mul rec A' (S.image f) (ks.map f) b' (f a)=bandSolveG rd mul rec A S ks b a := by
+  have hlu := lur_map rd mul f hf ks A A' S hA
+  unfold bandSolveG
+  rw [← List.map_reverse]
+  have h0 := image_empty (f := f)
+  rw [← h0]
+  refine bwdM_map rd f hf _ _ (fun a c => (hlu a c).2) _ _ _ _ (fun c => by simp only [(hlu c c).2])
+    (fun c => ?_) _ _ _ _ (fun _ => rfl) a
+  exact fwdM_map rd f hf _ _ (fun a c => (hlu a c).1) b b' hb ks _ _ _ (fun _ => rfl) c
+
 end Relabel
 
 section Stages

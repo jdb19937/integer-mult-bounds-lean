@@ -1892,3 +1892,13 @@ and `Big.concreteB0N_conditions` discharge every precondition with final error
 at most `p²`. Remaining for the swap: the backward-pass column table from the
 pivot rows (a per-axis transpose), the factorization and transpose machines on
 tapes, the line wrapper, and pipeline and cost integration.
+
+`Mult/BandSolveList` closes the list level of the line solve. For a banded
+grid matrix `AZ` (zero outside `s × s`), `lineSolveZ` runs the integer window
+factorization, the forward pass on the padded multiplier columns, and the
+backward pass on the transposed pivot rows (`ucolZ`) with Newton reciprocals;
+`lineSolveZ_eq` shows its grid values are the machine-rule `bandSolveG` of the
+natural order. `bandSolveG_map` (`SchurStages`) relabels a solve along an
+injection, which carries the folded order to natural positions. Open: the
+matrix the machine factors is a grid rounding of the phase-cell matrix, so the
+error analysis needs a perturbation step from `realMatrix` to its rounding.
