@@ -98,6 +98,11 @@ def bandTStepP : Pr P T Q A U :=
 /-- The transpose: one transpose step per symbol of `sn`. -/
 def bandTLoopP : Pr P T Q A U := rsbRep (rg .sn) (rg .sel) (bandTStepP rg)
 
+/-- Reverse the order of the blocks of `x` onto `y`: each block (`|c|` symbols) moves
+through `ac2`, one block per symbol of `n`. -/
+def bandRevP (x y c n tn : RsbR) : Pr P T Q A U :=
+  rsbRep (rg n) (rg tn) (.seq (rsbMv (rg c) (rg .tC) (rg x) (rg .ac2)) (moveR (rg .ac2) (rg y) id))
+
 end Programs
 
 /-- A Newton step on real records. -/
@@ -1130,6 +1135,70 @@ theorem band_tLoop_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠
     have hd : (Ur.map colC).drop s=[] := List.drop_of_length_le (by simp; omega)
     funext x; cases x <;> simp [rsbUpd2, hΨ, hsel, hd]
   · rw [hsn]
+
+/-- **Block reversal.** The blocks of `x` (each `L` records) land on `y` in reverse order. -/
+theorem band_rev_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠ ι j)
+    {x y c n tn : RsbR} (hd : [x, y, c, n, tn, .tC, .ac2].Nodup) {w L : ℕ}
+    (σ : RsbR → List (Fin (A + 4))) (blocks : List (List GaussianInt))
+    (hbl : ∀ b ∈ blocks, b.length = L) (XR YR : List (Fin (A + 4)))
+    (hx : σ x = cstream A w blocks.flatten ++ XR) (hy : σ y = YR) (hc : (σ c).length = L * w)
+    (hn : (σ n).length = blocks.length) (htn : σ tn = []) (htC : σ .tC = []) (hac2 : σ .ac2 = []) :
+    RsbRuns body rg ι (bandRevP rg x y c n tn) σ
+      (Function.update (Function.update σ x XR) y (cstream A w blocks.reverse.flatten ++ YR))
+      (blocks.length * (6 * (L * w) + 6 + 6) + 4) := by
+  simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or] at hd
+  obtain ⟨⟨hxy, hxc, hxn, hxt, hxC, hxa⟩, ⟨hyc, hyn, hyt, hyC, hya⟩, ⟨hcn, hct, hcC, hca⟩,
+    ⟨hnt, hnC, hna⟩, ⟨htC', hta⟩, hCa, -⟩ := hd
+  obtain ⟨Ψ, hΨ⟩ : ∃ Ψ : ℕ → RsbR → List (Fin (A + 4)), Ψ = fun j =>
+      Function.update (Function.update σ x (cstream A w (blocks.drop j).flatten ++ XR)) y
+        (cstream A w (blocks.take j).reverse.flatten ++ YR) := ⟨_, rfl⟩
+  have hbody : ∀ j < (σ n).length, ∀ X Y, RsbRuns body rg ι
+      (.seq (rsbMv (rg c) (rg .tC) (rg x) (rg .ac2)) (moveR (rg .ac2) (rg y) id))
+      (rsbUpd2 (Ψ j) n X tn Y) (rsbUpd2 (Ψ (j + 1)) n X tn Y) (6 * (L * w) + 6) := by
+    intro j hj X Y
+    rw [hn] at hj
+    set b := blocks[j]'hj
+    have hbL : b.length = L := hbl b (List.getElem_mem _)
+    have hdj : blocks.drop j = b :: blocks.drop (j+1) := List.drop_eq_getElem_cons hj
+    set ρ := rsbUpd2 (Ψ j) n X tn Y
+    have hρx : ρ x = cstream A w b ++ (cstream A w (blocks.drop (j+1)).flatten ++ XR) := by
+      simp only [ρ, rsbUpd2, hΨ, Function.update_apply]
+      split_ifs <;> simp_all
+    have hρc : (ρ c).length = b.length * w := by
+      simp only [ρ, rsbUpd2, hΨ, Function.update_apply]
+      split_ifs <;> simp_all
+    have hρt : ρ .tC = [] := by
+      simp only [ρ, rsbUpd2, hΨ, Function.update_apply]
+      split_ifs <;> simp_all
+    have hρa : ρ .ac2 = [] := by
+      simp only [ρ, rsbUpd2, hΨ, Function.update_apply]
+      split_ifs <;> simp_all
+    have hd4 : [c, RsbR.tC, x, RsbR.ac2].Nodup := by
+      simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
+        List.nodup_nil, and_true]
+      exact ⟨⟨hcC, Ne.symm hxc, hca⟩, ⟨Ne.symm hxC, hCa⟩, hxa, not_false⟩
+    have h₁ := rsb_mv_runs (body := body) (ι := ι) hrg (c := c) (t := .tC) (x := x) (y := .ac2)
+      hd4 ρ hρt (by rw [hρc, hρx]; simp)
+    rw [hρc, hρx, take_cstream _ _ le_rfl, drop_cstream, List.take_length, List.drop_length,
+      Nat.sub_self, zero_mul, List.drop_zero, cstream_nil, List.nil_append, hρa, List.append_nil] at h₁
+    set ρ₁ := Function.update (Function.update ρ x (cstream A w (blocks.drop (j+1)).flatten ++ XR))
+      .ac2 (cstream A w b).reverse
+    have h₂ := rsb_moveR_runs (body := body) (ι := ι) hrg (a := .ac2) (b := y) (Ne.symm hya) ρ₁
+    refine ((RsbRuns.seq hdisj h₁ h₂).congr ?_).mono ?_
+    · have htk : (blocks.take (j+1)).reverse.flatten = b ++ (blocks.take j).reverse.flatten := by
+        rw [List.take_succ_eq_append_getElem hj, List.reverse_append, List.reverse_singleton,
+          List.singleton_append, List.flatten_cons]
+      funext z
+      simp only [ρ₁, ρ, rsbUpd2, hΨ, Function.update_apply]
+      split_ifs <;> simp_all [htk]
+    · simp [ρ₁, hbL]; omega
+  have h := rsb_rep_runs hrg hdisj (ra := n) (rt := tn) hnt _ (σ n) Ψ _ hbody
+  refine (h.congr_pre ?_ |>.congr ?_).mono ?_
+  · funext z; simp only [rsbUpd2, hΨ, Function.update_apply]
+    split_ifs <;> simp_all
+  · funext z; simp only [rsbUpd2, hΨ, Function.update_apply, hn]
+    split_ifs <;> simp_all [List.drop_of_length_le, List.take_of_length_le]
+  · rw [hn]
 
 end Contracts
 

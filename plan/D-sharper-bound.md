@@ -1928,3 +1928,13 @@ positions as `foldZ` (banded with half width `2w+1`, `foldZ_band`), run through
 work: a table program emitting the folded rows of `foldZ` at precision `5p`,
 the window factorization and transpose machines, the line wrapper around the
 existing forward/backward line machine, and pipeline and cost integration.
+
+Tape machines for the per-axis factor data are in `Fast/BandFactor`: Newton
+reciprocals (`band_newton_runs`), the window step and loop
+(`band_facStep_runs`, `band_facLoop_runs`, state `facState` iterating
+`stepRowsZ`), the pivot-row transpose (`Mult/BandTranspose`, `tRun_eq`;
+`band_tLoop_runs`), and block reversal (`band_rev_runs`). Next: the per-axis
+driver that sets the counters and constants, runs the factorization, reverses
+the multipliers into the forward table and the pivot rows into transpose order,
+and runs the transpose; then the per-line driver around the existing banded line
+passes, and the table program for the folded rows.
