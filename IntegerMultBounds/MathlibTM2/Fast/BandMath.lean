@@ -89,10 +89,15 @@ theorem band_prec (h : Big n) (hwidth : 8 * p n ≤ 2 ^ (alpha n ^ 2)) {w : ℕ}
   obtain ⟨hβ, hβp, hηβ, -, -⟩ := h.newton_conditions
   exact ⟨hβ, hβp, hηβ, band_newton h hwidth, hw⟩
 
-/-- **The numeric facts of every axis.** -/
-theorem band_axis_math (h : Big n) (hwidth : 8 * p n ≤ 2 ^ (alpha n ^ 2))
+/-- **The numeric facts of every axis**, and the line map approximates `2^-α² ℬ₀` within `p²`
+for every left inverse `J` of the exact normalized operator. -/
+theorem band_axis_full (h : Big n) (hwidth : 8 * p n ≤ 2 ^ (alpha n ^ 2))
     (hbudget : ((alpha n : ℝ)) ^ 2 * (d n : ℝ) ≤ p n) (i : Fin (d n)) :
-    BandAxisMath n (1 / (32 * (p n : ℝ))) i := by
+    BandAxisMath n (1 / (32 * (p n : ℝ))) i ∧
+      ∀ J : (ZMod (s n i) → ℂ) →L[ℂ] (ZMod (s n i) → ℂ),
+        J ∘L PhaseCellOperator.exact (s n i) (t n i) (alpha n : ℝ) = 1 →
+        ApproxMap (p n) (bandA n i) (((2 : ℂ) ^ (alpha n * alpha n))⁻¹ •
+          resampB₀ (s n i) (t n i) (alpha n : ℝ) J) ((p n : ℝ) ^ 2) := by
   have hp13 := h.thirteen_le_p
   have hp64 := h.sixty_four_le_p
   have hα2 := two_le_alpha h.1
@@ -127,46 +132,51 @@ theorem band_axis_math (h : Big n) (hwidth : 8 * p n ≤ 2 ^ (alpha n ^ 2))
       NLogN.PhaseCellMatrix.realMatrix (s n i) (t n i) (p n) (alpha n ^ 2) j l| ≤ ε := fun j =>
     (NLogN.PhaseCellMatrix.windowMatrix_close (s n i) (t n i) hst hα (p n) (alpha n ^ 2) (by omega)
       (by nlinarith) hαu hθpos hgap hbudget wd hband a δ ha j).trans hεdef
-  obtain ⟨hε1, hprec, hsm, -⟩ := h.concreteB0P_conditions i ε (by positivity) le_rfl
+  obtain ⟨hε1, hprec, hsm, hfin⟩ := h.concreteB0P_conditions i ε (by positivity) le_rfl
   have hwidthR : 8 * p n ≤ 2 ^ (alpha n ^ 2) := hwidth
   have hinv := NLogN.PhaseCellMatrix.perturb_stageInv (s n i) (t n i) hst hα (p n) (alpha n ^ 2)
     (by omega) hwidthR hαu hθ hgap hbudget _ ε hε hε1
   obtain ⟨hβ, hβp, hηβ, hK, -⟩ := h.newton_conditions
-  refine ⟨hinv, hprec, ?_, ?_⟩
-  · have h0 : 0 ≤ 64 * (p n : ℝ) ^ 2 * ε := by positivity
-    have h1 : (0 : ℝ) ≤ 2 / 2 ^ p n := by positivity
-    have h2 : (0 : ℝ) ≤ 32 * (p n : ℝ) ^ 2 / (2 : ℝ) ^ (45 * p n) / 2 := by positivity
-    linarith
-  · intro v hv
-    obtain ⟨J, -, hJ, -⟩ := PhaseCellDominance.selected_rounded_inverse (s n i) (t n i) hst hα (p n)
-      (alpha n ^ 2) (by omega) hwidthR hαu hθ hgap hbudget
-    have hj : 4 * (p n : ℝ) ≤ 2 ^ (alpha n * alpha n) := by
-      have : 4 * p n ≤ 2 ^ (alpha n * alpha n) := by rw [← sq]; omega
-      exact_mod_cast this
-    have hK' := band_newton h hwidth
-    set df : ZMod (s n i) → ℝ := fun ℓ => (tableD (s n i) (t n i) (alpha n) (p n) ℓ : ℝ) / 2 ^ p n
-    have hP : (0 : ℝ) < 2 ^ p n := by positivity
-    have hrd : ∀ ℓ, rhoC (p n) (df ℓ : ℂ) = ((df ℓ : ℝ) : ℂ) := fun ℓ => by
-      rw [Resampling.WindowSum.rhoC_real, mul_div_cancel₀ _ hP.ne', Resampling.NeumannWords.rho0_int]
-    have hD := fun ℓ => tableD_spec (s n i) (t n i) (alpha n) (p n) hp13 (by omega) h.alpha_sq_le_p ℓ
-    have hdf : ∀ ℓ, 2 ^ p n * ‖rhoC (p n) (df ℓ : ℂ) - (dPrime (s n i) (t n i) (alpha n : ℝ) ℓ : ℂ)‖ ≤ 2 := by
-      intro ℓ
-      rw [hrd, ← Complex.ofReal_sub, Complex.norm_real, Real.norm_eq_abs]
-      have e : 2 ^ p n * |df ℓ - dPrime (s n i) (t n i) (alpha n : ℝ) ℓ| =
-          |(tableD (s n i) (t n i) (alpha n) (p n) ℓ : ℝ) - 2 ^ p n * dPrime (s n i) (t n i) (alpha n : ℝ) ℓ| := by
-        rw [← abs_of_pos hP, ← abs_mul, abs_of_pos hP]; congr 1; simp only [df]; field_simp
-      rw [e]; exact (hD ℓ).1
-    have hdf1 : ∀ ℓ, ‖rhoC (p n) (df ℓ : ℂ)‖ ≤ 1 := by
-      intro ℓ
-      rw [hrd, Complex.norm_real, Real.norm_eq_abs]
-      have h0 : (0 : ℝ) ≤ tableD (s n i) (t n i) (alpha n) (p n) ℓ := by exact_mod_cast (hD ℓ).2.1
-      have h1 : (tableD (s n i) (t n i) (alpha n) (p n) ℓ : ℝ) ≤ 2 ^ p n := by exact_mod_cast (hD ℓ).2.2
-      simp only [df]
-      rw [abs_of_nonneg (div_nonneg h0 hP.le), div_le_one hP]; exact h1
-    exact (Mult.FastB0.concrete_resampB₀_specW hst hα (p n) (alpha n ^ 2) (alpha n * alpha n)
+  have hj : 4 * (p n : ℝ) ≤ 2 ^ (alpha n * alpha n) := by
+    have : 4 * p n ≤ 2 ^ (alpha n * alpha n) := by rw [← sq]; omega
+    exact_mod_cast this
+  have hK' := band_newton h hwidth
+  set df : ZMod (s n i) → ℝ := fun ℓ => (tableD (s n i) (t n i) (alpha n) (p n) ℓ : ℝ) / 2 ^ p n
+  have hP : (0 : ℝ) < 2 ^ p n := by positivity
+  have hrd : ∀ ℓ, rhoC (p n) (df ℓ : ℂ) = ((df ℓ : ℝ) : ℂ) := fun ℓ => by
+    rw [Resampling.WindowSum.rhoC_real, mul_div_cancel₀ _ hP.ne', Resampling.NeumannWords.rho0_int]
+  have hD := fun ℓ => tableD_spec (s n i) (t n i) (alpha n) (p n) hp13 (by omega) h.alpha_sq_le_p ℓ
+  have hdf : ∀ ℓ, 2 ^ p n * ‖rhoC (p n) (df ℓ : ℂ) - (dPrime (s n i) (t n i) (alpha n : ℝ) ℓ : ℂ)‖ ≤ 2 := by
+    intro ℓ
+    rw [hrd, ← Complex.ofReal_sub, Complex.norm_real, Real.norm_eq_abs]
+    have e : 2 ^ p n * |df ℓ - dPrime (s n i) (t n i) (alpha n : ℝ) ℓ| =
+        |(tableD (s n i) (t n i) (alpha n) (p n) ℓ : ℝ) - 2 ^ p n * dPrime (s n i) (t n i) (alpha n : ℝ) ℓ| := by
+      rw [← abs_of_pos hP, ← abs_mul, abs_of_pos hP]; congr 1; simp only [df]; field_simp
+    rw [e]; exact (hD ℓ).1
+  have hdf1 : ∀ ℓ, ‖rhoC (p n) (df ℓ : ℂ)‖ ≤ 1 := by
+    intro ℓ
+    rw [hrd, Complex.norm_real, Real.norm_eq_abs]
+    have h0 : (0 : ℝ) ≤ tableD (s n i) (t n i) (alpha n) (p n) ℓ := by exact_mod_cast (hD ℓ).2.1
+    have h1 : (tableD (s n i) (t n i) (alpha n) (p n) ℓ : ℝ) ≤ 2 ^ p n := by exact_mod_cast (hD ℓ).2.2
+    simp only [df]
+    rw [abs_of_nonneg (div_nonneg h0 hP.le), div_le_one hP]; exact h1
+  have hspec := fun (J : (ZMod (s n i) → ℂ) →L[ℂ] (ZMod (s n i) → ℂ))
+      (hJ : J ∘L PhaseCellOperator.exact (s n i) (t n i) (alpha n : ℝ) = 1) =>
+    Mult.FastB0.concrete_resampB₀_specW hst hα (p n) (alpha n ^ 2) (alpha n * alpha n)
       (by omega) hwidthR hαu hθ hgap hbudget hj wd hband a δ ha ε hεdef hε1 (rdP (5 * p n))
       (1 / 2 ^ (5 * p n)) (rdP_err _) (rdP_zero _) _ hβ hβp hηβ (4 * (alpha n * alpha n)) hK' hprec
-      hsm J hJ df hdf hdf1).2 v hv
+      hsm J hJ df hdf hdf1
+  obtain ⟨J₀, -, hJ₀, -⟩ := PhaseCellDominance.selected_rounded_inverse (s n i) (t n i) hst hα (p n)
+    (alpha n ^ 2) (by omega) hwidthR hαu hθ hgap hbudget
+  refine ⟨⟨hinv, hprec, ?_, (hspec J₀ hJ₀).2⟩, fun J hJ v hv => ((hspec J hJ).1 v hv).trans hfin⟩
+  have h0 : 0 ≤ 64 * (p n : ℝ) ^ 2 * ε := by positivity
+  have h1 : (0 : ℝ) ≤ 2 / 2 ^ p n := by positivity
+  have h2 : (0 : ℝ) ≤ 32 * (p n : ℝ) ^ 2 / (2 : ℝ) ^ (45 * p n) / 2 := by positivity
+  linarith
 end
+
+theorem band_axis_math (h : Big n) (hwidth : 8 * p n ≤ 2 ^ (alpha n ^ 2))
+    (hbudget : ((alpha n : ℝ)) ^ 2 * (d n : ℝ) ≤ p n) (i : Fin (d n)) :
+    BandAxisMath n (1 / (32 * (p n : ℝ))) i := (band_axis_full h hwidth hbudget i).1
 
 end IntegerMultBounds.MathlibTM2.Fast
