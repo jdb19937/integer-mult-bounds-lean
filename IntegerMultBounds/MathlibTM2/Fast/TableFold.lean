@@ -2,6 +2,7 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Fast.TableWeight
 public import IntegerMultBounds.MathlibTM2.Mult.BandFoldRows
+public import IntegerMultBounds.MathlibTM2.Fast.CMulStream
 
 /-!
 # The folded matrix rows as a table stream
@@ -662,5 +663,67 @@ theorem tblFoldStream_do {A W w : ℕ} (st : TblSt 60 A) {s t α P wd B NR N : �
       rw [Function.update_of_ne h48, hk x hx, u x hx h48]
   · intro s' ⟨hacc, _⟩ _ _
     exact hacc
+
+theorem tblFoldStream_cstream (A w s t α P wd B NR : ℕ) [NeZero s] :
+    tblFoldStream A w s t α P wd B NR = cstream A w
+      (((List.range' 0 NR).map (Mult.BandFactor.foldRowZ s t α P wd B)).flatten.map
+        fun x => (⟨x, 0⟩ : GaussianInt)) := by
+  have hrow : ∀ i, (List.range (2 * B + 1)).flatMap (fun j =>
+      tblFoldSyms A w s t α P wd i (i - min i B + j)) =
+      cstream A w ((Mult.BandFactor.foldRowZ s t α P wd B i).map fun x => (⟨x, 0⟩ : GaussianInt)) := by
+    intro i
+    simp only [Mult.BandFactor.foldRowZ, List.range'_eq_map_range, cstream, List.map_map,
+      List.flatMap_map]
+    rfl
+  have hl : ∀ l : List ℕ, l.flatMap (fun i => (List.range (2 * B + 1)).flatMap (fun j =>
+      tblFoldSyms A w s t α P wd i (i - min i B + j))) =
+      cstream A w ((l.map (Mult.BandFactor.foldRowZ s t α P wd B)).flatten.map
+        fun x => (⟨x, 0⟩ : GaussianInt)) := by
+    intro l
+    induction l with
+    | nil => rfl
+    | cons i l ih =>
+      rw [List.flatMap_cons, ih, hrow, List.map_cons, List.flatten_cons, List.map_append,
+        cstream_append]
+  rw [tblFoldStream, hl, List.range_eq_range']
+
+theorem length_tblFoldStream (A w s t α P wd B NR : ℕ) [NeZero s] :
+    (tblFoldStream A w s t α P wd B NR).length = NR * (2 * B + 1) * w := by
+  simp [tblFoldStream, tblFoldSyms, List.length_flatMap, coeffSyms, List.sum_replicate]
+  ring
+
+section Host
+
+variable {T Q A : ℕ} {U : Type} {P' : Type} {body : P' → IntegerMultBounds.MathlibTM2.Host.Pr P' T Q A U}
+  {rg : TblR 60 → Fin T}
+
+/-- **The folded row stream on the host.** -/
+theorem tblFoldStream_host (hrg : Function.Injective rg) {out : Fin T} (hout : ∀ r, rg r ≠ out)
+    {W w : ℕ} (wl nl : List (Fin (A + 4))) (hwl : wl.length = W) (hnl : nl.length = w)
+    (hw : w ≤ W) (st : TblSt 60 A) (hst : ∀ j, st.val j < 2 ^ W) (hacc : st.acc = [])
+    {s t α P wd B NR N : ℕ} [NeZero s]
+    (h19 : st.val 19 = P) (h34 : st.val 34 = s) (h35 : st.val 35 = t) (h36 : st.val 36 = α)
+    (h39 : st.val 39 = wd) (h49 : st.val 49 = NR) (h51 : st.val 51 = 2 * B + 1) (h52 : st.val 52 = B)
+    (hws : 2 * wd + 1 < s) (hP : 13 ≤ P) (hW : TblOffW W P α s t wd N) (hW5 : 5 * P + 16 ≤ W)
+    (hsW : 2 * s * (t + 1) < 2 ^ W) (hss : s * s < 2 ^ W) (hαW : α * α < 2 ^ W)
+    (hPW : 2 ^ P < 2 ^ W) (hNW : NR + 2 * B + 1 < 2 ^ W)
+    (v : IntegerMultBounds.MathlibTM2.Host.HS T Q A U) (S : IntegerMultBounds.MathlibTM2.Host.Stacks T A)
+    (hS : tblHolds rg S (tblRho W wl nl st)) :
+    ∃ v' S' m, v'.user = v.user ∧
+      m ≤ (1 + (150 * P + 400) + 8 + (1 + (P * (1 + 1 + 2) + 2)) +
+        (1 + (NR * (11 + 2 + (1 + ((2 * B + 1) * (310 * P + 201 + 1 + 2) + 2)) + 1 + 2) + 2))) *
+          tblC W w + 2 * (NR * (2 * B + 1) * w) + 2 ∧
+      IntegerMultBounds.MathlibTM2.Stack.Exec body (tblHost rg tblFoldStreamCode out)
+        (IntegerMultBounds.MathlibTM2.Host.mk v S) m (IntegerMultBounds.MathlibTM2.Host.mk v' S') ∧
+      S'.R out = tblFoldStream A w s t α P wd B NR ++ S.R out ∧
+      (∃ st' : TblSt 60 A, tblHolds rg S' (tblRho W wl nl st')) ∧
+      S'.inp = S.inp ∧ S'.out = S.out ∧ S'.L = S.L ∧
+      ∀ k, k ≠ out → (∀ r, rg r ≠ k) → S'.R k = S.R k := by
+  have h := tbl_stream_host (body := body) hrg hout wl nl hwl hnl hw
+    (tblFoldStream_do (W := W) (w := w) st h19 h34 h35 h36 h39 h49 h51 h52 hws hP hW hW5 hsW hss hαW
+      hPW hNW) hst hacc v S hS
+  rwa [length_tblFoldStream] at h
+
+end Host
 
 end IntegerMultBounds.MathlibTM2.Fast
