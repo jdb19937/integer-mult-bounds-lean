@@ -1809,3 +1809,12 @@ solve is within `2700s²p²η` of the exact solution whenever `128ps²η≤1`
 (`PhaseCellBandSolve`). With `η=2^-P` and `P≥p+2log₂s+O(log p)` this meets
 the `B̃₀` interface error `p²`. The guarded check and3-declaration
 standard-axiom audit pass.
+
+The new `B̃₀` line map is now fully concrete (`Mult/ConcreteB0`): `bandJt`
+computes the inverse by two rounded band solves of the rounded matrix (real
+and imaginary parts of `v/2`), scales by `2^-j` and rounds to the `p`-grid.
+Under `128ps²η≤1` and an explicit smallness condition it satisfies the
+pipeline `B̃₀` interface for the normalized factorization target, for the
+exact inverse of `N`. The guarded check and2-declaration standard-axiom audit
+pass. Its tape machine and cost, the per-axis factor setup, the `ε=5/16`
+sizing and the final assembly remain.
