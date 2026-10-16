@@ -1481,6 +1481,599 @@ theorem band_preE (hg : Function.Injective g) (σ : RsbR ⊕ RsbX t₀ → List 
 end StepE
 
 
+/-! ### The loader, part 1: record, folded rows, factor-phase counters -/
+
+section Part1
+
+variable (rg : RsbR → Fin T) (rgx : RsbX t₀ → Fin T) (ι : Fin 64 → Fin T) (hd : Fin 5 → Fin t₀)
+
+/-- Steps 1 and 2. -/
+def bandPreB1 : Pr F T Q (prime + K) U :=
+  .seq (bandPreA (Sum.elim rg rgx) hd) (.seq (bandPreF1 (Sum.elim rg rgx))
+  (.seq (bandPreFold rg rgx ι) (.seq (bandPreF2 (Sum.elim rg rgx)) (bandPreF3 (Sum.elim rg rgx) ι))))
+
+variable {A : ℕ}
+
+/-- The register file after steps 1 and 2. -/
+def bandFB1 (σ : RsbR ⊕ RsbX t₀ → List (Fin (A + 4))) (hd : Fin 5 → Fin t₀) (w : ℕ)
+    (D : PreAxB) [NeZero D.s] (rest : List (Fin (A + 4))) : RsbR ⊕ RsbX t₀ → List (Fin (A + 4)) :=
+  Function.update (bandFF2 (Function.update (bandFF1 (bandFA σ hd w D rest) D) (.inl .src)
+    (tblFoldStream A w D.s D.t D.α D.bP D.bWd D.bB (D.bB + 1 + D.s) ++ σ (.inl .src))) D w
+    (pairSym A false false))
+    (.inl .bx) (tblPairs A w (2 ^ (5 * D.p - 2)) 0)
+
+/-- The step bound of steps 1 and 2. -/
+def bandCostB1 (σ : RsbR ⊕ RsbX t₀ → List (Fin (A + 4))) (hd : Fin 5 → Fin t₀) (w : ℕ)
+    (D : PreAxB) : ℕ :=
+  bandCostA σ hd w D + (bandCostF1 D +
+    (preVMCost 60 D.W w [D.bP, D.s, D.t, D.α, D.bWd, D.bB + 1 + D.s, 2 * D.bB + 1, D.bB]
+      (bandKFold D) ((D.bB + 1 + D.s) * (2 * D.bB + 1) * w) +
+    (bandCostF2 D w + bandCostF3 D w)))
+
+theorem rsb_of_tw {R : Type} [DecidableEq R] {body : F → Pr F T Q (prime + K) U}
+    {g : R → Fin T} {p : Pr F T Q (prime + K) U} {ρ ρ' : R → List (Fin (prime + K + 4))} {b : ℕ}
+    (h : TwRuns body g p ρ ρ' b) : RsbRuns body g ι p ρ ρ' b :=
+  fun v S _ hS => h v S hS
+
+variable {body : F → Pr F T Q (prime + K) U} {rg : RsbR → Fin T} {rgx : RsbX t₀ → Fin T}
+  {ι : Fin 64 → Fin T}
+
+/-- Registers outside step 1. -/
+def bandLA : List RsbR :=
+  [.msk, .bo, .hf, .df, .dtab, .padc, .sn, .mwn, .m2wn, .m2n, .smwn, .tswn, .kn, .ms, .bx, .cm .pn,
+    .prm, .ya, .b1, .hc, .ac, .hv]
+
+set_option maxRecDepth 4000 in
+theorem bandFA_frame (σ : RsbR ⊕ RsbX t₀ → List (Fin (A + 4))) (hd : Fin 5 → Fin t₀) (w : ℕ)
+    (D : PreAxB) (rest : List (Fin (A + 4))) (r : RsbR) (hr : r ∉ bandLA) :
+    bandFA σ hd w D rest (.inl r) = σ (.inl r) := by
+  simp only [bandLA, List.mem_cons, List.not_mem_nil, or_false, not_or] at hr
+  simp [bandFA, preBankB, Function.update_apply, bandF0, bandClrB, preHB, hr]
+
+theorem bandFA_vx (σ : RsbR ⊕ RsbX t₀ → List (Fin (A + 4))) (hd : Fin 5 → Fin t₀) (w : ℕ)
+    (D : PreAxB) (rest : List (Fin (A + 4))) (j : Fin 12) :
+    bandFA σ hd w D rest (.inr (.vx j)) = σ (.inr (.vx j)) := by
+  simp [bandFA, preBankB, bandF0, bandClrB, preHB]
+
+set_option maxRecDepth 4000 in
+theorem bandFA_vals (σ : RsbR ⊕ RsbX t₀ → List (Fin (A + 4))) (hd : Fin 5 → Fin t₀) (w : ℕ)
+    (D : PreAxB) (rest : List (Fin (A + 4))) :
+    bandFA σ hd w D rest (.inl .ya) = List.replicate D.t tick ∧
+    bandFA σ hd w D rest (.inl .sn) = List.replicate D.s tick ∧
+    bandFA σ hd w D rest (.inl .b1) = List.replicate D.m tick ∧
+    bandFA σ hd w D rest (.inl .hc) = List.replicate D.α tick ∧
+    bandFA σ hd w D rest (.inl .ac) = List.replicate D.p tick ∧
+    bandFA σ hd w D rest (.inl .hv) = List.replicate D.W tick ∧
+    bandFA σ hd w D rest (.inl .prm) = rest ∧
+    (∀ r ∈ [RsbR.msk, .bo, .hf, .df, .dtab, .padc, .mwn, .m2wn, .m2n, .smwn, .tswn, .kn, .ms, .bx,
+      .cm .pn], bandFA σ hd w D rest (.inl r) = []) := by
+  refine ⟨by simp [bandFA, preBankB], by simp [bandFA, preBankB], by simp [bandFA, preBankB],
+    by simp [bandFA, preBankB], by simp [bandFA, preBankB], by simp [bandFA, preBankB],
+    by simp [bandFA, preBankB], fun r hr => ?_⟩
+  simp only [List.mem_cons, List.not_mem_nil, or_false] at hr
+  rcases hr with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl |
+    rfl <;> simp [bandFA, preBankB, bandF0, bandClrB, preHB]
+
+variable {body : F → Pr F T Q (prime + K) U} {rg : RsbR → Fin T} {rgx : RsbX t₀ → Fin T}
+  {ι : Fin 64 → Fin T}
+
+/-- Steps 2b–2d from the state after step 2a. -/
+theorem band_preB1b (hrg₂ : Function.Injective (Sum.elim rg rgx)) (hι : Function.Injective ι)
+    (hdisj₂ : ∀ r j, Sum.elim rg rgx r ≠ ι j) (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4)))
+    (D : PreAxB) [NeZero D.s] (w : ℕ) (hwW : w ≤ D.W) (hW : BandFoldW D) (hp1 : 1 ≤ D.p)
+    (hwn : (σ (.inl (.cm .wn))).length = w)
+    (hpn : σ (.inl (.cm .pn)) = List.replicate D.bP tick)
+    (hsn : σ (.inl .sn) = List.replicate D.s tick) (hya : σ (.inl .ya) = List.replicate D.t tick)
+    (hhc : σ (.inl .hc) = List.replicate D.α tick) (hac : σ (.inl .ac) = List.replicate D.p tick)
+    (hhv : σ (.inl .hv) = List.replicate D.W tick) (htA : σ (.inl .tA) = List.replicate D.bWd tick)
+    (hxs : σ (.inl .xs) = List.replicate (D.bB + 1 + D.s) tick)
+    (htL : σ (.inl .tL) = List.replicate (2 * D.bB + 1) tick)
+    (htJ : σ (.inl .tJ) = List.replicate D.bB tick) (hvx : ∀ j, σ (.inr (.vx j)) = [])
+    (hms : σ (.inl .ms) = []) (hm2n : σ (.inl .m2n) = []) (hdst : σ (.inl .dst) = [])
+    (hm2wn : σ (.inl .m2wn) = []) (hmwn : σ (.inl .mwn) = []) (hsmwn : σ (.inl .smwn) = [])
+    (htswn : σ (.inl .tswn) = []) (hkn : σ (.inl .kn) = []) (hmsk : σ (.inl .msk) = [])
+    (hbx : σ (.inl .bx) = [])
+    (htC : σ (.inl .tC) = []) (htK : σ (.inl .tK) = []) (hac2 : σ (.inl .ac2) = [])
+    (hnv : σ (.inl .nv) = []) :
+    RsbRuns body (Sum.elim rg rgx) ι (.seq (bandPreFold rg rgx ι) (.seq (bandPreF2 (Sum.elim rg rgx))
+        (bandPreF3 (Sum.elim rg rgx) ι))) σ
+      (Function.update (bandFF2 (Function.update σ (.inl .src)
+        (tblFoldStream (prime + K) w D.s D.t D.α D.bP D.bWd D.bB (D.bB + 1 + D.s) ++ σ (.inl .src)))
+        D w (pairSym (prime + K) false false))
+        (.inl .bx) (tblPairs (prime + K) w (2 ^ (5 * D.p - 2)) 0))
+      (preVMCost 60 D.W w [D.bP, D.s, D.t, D.α, D.bWd, D.bB + 1 + D.s, 2 * D.bB + 1, D.bB]
+        (bandKFold D) ((D.bB + 1 + D.s) * (2 * D.bB + 1) * w) +
+        (bandCostF2 D w + bandCostF3 D w)) := by
+  have hpW : 5 * D.p < D.W := by have := hW.w5; unfold PreAxB.bP at this; omega
+  have hFold := band_preFold (body := body) hrg₂ hι hdisj₂ σ D w hwW hW hpn hsn hya hhc htA hxs htL
+    htJ (by rw [hhv]) hwn hvx
+  set σFo := Function.update σ (.inl .src) (tblFoldStream (prime + K) w D.s D.t D.α D.bP D.bWd D.bB
+    (D.bB + 1 + D.s) ++ σ (.inl .src)) with hσFo
+  have hF2 := pre_rsbRuns (band_preF2 (body := body) (ι := ι) hrg₂ hι hdisj₂ σFo D w
+    (by simp [hσFo, hwn]) (by simp [hσFo, hxs]) (by simp [hσFo, htA]) (by simp [hσFo, htJ])
+    (by simp [hσFo, htL]) (by simp [hσFo, hhc]) (by simp [hσFo, hms]) (by simp [hσFo, hm2n])
+    (by simp [hσFo, hdst]) (by simp [hσFo, hm2wn]) (by simp [hσFo, hmwn]) (by simp [hσFo, hsmwn])
+    (by simp [hσFo, htswn]) (by simp [hσFo, hkn]) (by simp [hσFo, hmsk]) (by simp [hσFo, htC])
+    (by simp [hσFo, htK]) (by simp [hσFo, hac2]) (by simp [hσFo, hnv]))
+  have hF3 := pre_rsbRuns (band_preF3 (body := body) (ι := ι) hrg₂ hι hdisj₂
+    (bandFF2 σFo D w (pairSym (prime + K) false false)) D w
+    (by simp [bandFF2, bandFF2a, bandFF2b, bandFF2c, bandFF2d, hσFo, hwn]) hwW hp1 hpW
+    (by simp [bandFF2, bandFF2a, bandFF2b, bandFF2c, bandFF2d, hσFo, hac])
+    (by simp [bandFF2, bandFF2a, bandFF2b, bandFF2c, bandFF2d, hσFo, hhv])
+    (by simp [bandFF2, bandFF2a, bandFF2b, bandFF2c, bandFF2d, hσFo, hbx])
+    (by simp [bandFF2, bandFF2a, bandFF2b, bandFF2c, bandFF2d, hσFo, htC])
+    (by simp [bandFF2, bandFF2a, bandFF2b, bandFF2c, bandFF2d, hσFo, htK])
+    (by simp [bandFF2, bandFF2a, bandFF2b, bandFF2c, bandFF2d, hσFo, hac2]))
+  exact RsbRuns.seq hdisj₂ hFold (RsbRuns.seq hdisj₂ hF2 hF3)
+
+set_option maxRecDepth 4000 in
+theorem band_preB1 (hrg₂ : Function.Injective (Sum.elim rg rgx)) (hι : Function.Injective ι)
+    (hdisj₂ : ∀ r j, Sum.elim rg rgx r ≠ ι j) {hd : Fin 5 → Fin t₀} (hdi : Function.Injective hd)
+    (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (D : PreAxB) [NeZero D.s]
+    (rest : List (Fin (prime + K + 4))) (w : ℕ) (hwW : w ≤ D.W) (hW : BandFoldW D)
+    (hp1 : 1 ≤ D.p)
+    (hprm : σ (.inl .prm) = preRec D.fields ++ rest) (hwn : (σ (.inl (.cm .wn))).length = w)
+    (hya : σ (.inl .ya) = []) (hb1 : σ (.inl .b1) = []) (htb : σ (.inl .tb) = [])
+    (hxa : σ (.inl .xa) = []) (hxs : σ (.inl .xs) = []) (hpr : σ (.inl .pr) = [])
+    (hhc : σ (.inl .hc) = []) (hac : σ (.inl .ac) = []) (hhv : σ (.inl .hv) = [])
+    (htL : σ (.inl .tL) = []) (hac2 : σ (.inl .ac2) = []) (hnv : σ (.inl .nv) = [])
+    (htA : σ (.inl .tA) = []) (htJ : σ (.inl .tJ) = []) (hdst : σ (.inl .dst) = [])
+    (htC : σ (.inl .tC) = []) (htK : σ (.inl .tK) = []) (hvx : ∀ j, σ (.inr (.vx j)) = []) :
+    RsbRuns body (Sum.elim rg rgx) ι (bandPreB1 rg rgx ι hd) σ (bandFB1 σ hd w D rest)
+      (bandCostB1 σ hd w D) := by
+  have hA := pre_rsbRuns (band_preA (body := body) hrg₂ hι hdisj₂ hdi σ D rest w hprm hwn hya hb1
+    htb hxa hxs hpr hhc hac hhv htL hac2 hnv)
+  obtain ⟨vya, vsn, vb1, vhc, vac, vhv, -, vclr⟩ := bandFA_vals σ hd w D rest
+  have fr : ∀ r, r ∉ bandLA → bandFA σ hd w D rest (.inl r) = σ (.inl r) :=
+    bandFA_frame σ hd w D rest
+  have hF1 := pre_rsbRuns (band_preF1 (body := body) (ι := ι) hrg₂ hι hdisj₂ (bandFA σ hd w D rest)
+    D vac vb1 vsn (vclr _ (by simp)) (by rw [fr _ (by decide)]; exact htA)
+    (by rw [fr _ (by decide)]; exact htJ) (by rw [fr _ (by decide)]; exact htL)
+    (by rw [fr _ (by decide)]; exact hxs) (by rw [fr _ (by decide)]; exact hac2))
+  set σ1 := bandFF1 (bandFA σ hd w D rest) D with hσ1
+  have e1 : ∀ r, r ∉ [RsbR.cm .pn, .tA, .tJ, .tL, .xs] → σ1 (.inl r) = bandFA σ hd w D rest (.inl r) := by
+    intro r hr
+    simp only [hσ1, bandFF1]
+    repeat rw [Function.update_of_ne (by rintro ⟨⟩; simp at hr)]
+  have hB := band_preB1b (body := body) hrg₂ hι hdisj₂ σ1 D w hwW hW hp1
+    (by rw [e1 _ (by decide), fr _ (by decide)]; exact hwn) (by simp [hσ1, bandFF1])
+    (by rw [e1 _ (by decide)]; exact vsn) (by rw [e1 _ (by decide)]; exact vya)
+    (by rw [e1 _ (by decide)]; exact vhc) (by rw [e1 _ (by decide)]; exact vac)
+    (by rw [e1 _ (by decide)]; exact vhv) (by simp [hσ1, bandFF1]) (by simp [hσ1, bandFF1])
+    (by simp [hσ1, bandFF1]) (by simp [hσ1, bandFF1])
+    (fun j => by
+      simp only [hσ1, bandFF1]
+      repeat rw [Function.update_of_ne (by simp)]
+      rw [bandFA_vx]; exact hvx j)
+    (by rw [e1 _ (by decide)]; exact vclr _ (by simp))
+    (by rw [e1 _ (by decide)]; exact vclr _ (by simp))
+    (by rw [e1 _ (by decide), fr _ (by decide)]; exact hdst)
+    (by rw [e1 _ (by decide)]; exact vclr _ (by simp))
+    (by rw [e1 _ (by decide)]; exact vclr _ (by simp))
+    (by rw [e1 _ (by decide)]; exact vclr _ (by simp))
+    (by rw [e1 _ (by decide)]; exact vclr _ (by simp))
+    (by rw [e1 _ (by decide)]; exact vclr _ (by simp))
+    (by rw [e1 _ (by decide)]; exact vclr _ (by simp))
+    (by rw [e1 _ (by decide)]; exact vclr _ (by simp))
+    (by rw [e1 _ (by decide), fr _ (by decide)]; exact htC)
+    (by rw [e1 _ (by decide), fr _ (by decide)]; exact htK)
+    (by rw [e1 _ (by decide), fr _ (by decide)]; exact hac2)
+    (by rw [e1 _ (by decide), fr _ (by decide)]; exact hnv)
+  have hsrc : σ1 (.inl .src) = σ (.inl .src) := by rw [e1 _ (by decide), fr _ (by decide)]
+  rw [hsrc] at hB
+  exact RsbRuns.seq hdisj₂ hA (RsbRuns.seq hdisj₂ hF1 hB)
+
+end Part1
+
+/-! ### The loader, part 2: the line-phase values -/
+
+section Part2
+
+variable (rg : RsbR → Fin T) (rgx : RsbX t₀ → Fin T) (ι : Fin 64 → Fin T)
+
+/-- Step 3, first half: padding counter, mask, constants, fold counters. -/
+def bandPreB2a : Pr F T Q (prime + K) U :=
+  .seq (bandPreL1 (Sum.elim rg rgx)) (.seq (bandPreL2g (Sum.elim rg rgx) ι)
+  (.seq (bandPreL3 (Sum.elim rg rgx) ι) (.seq (bandPreL4 (Sum.elim rg rgx) ι)
+    (bandPreL5g (Sum.elim rg rgx)))))
+
+variable {A : ℕ}
+
+/-- The register file after the first half of step 3. -/
+def bandFB2a (σ : RsbR ⊕ RsbX t₀ → List (Fin (A + 4))) (D : PreAxB) (w : ℕ) :
+    RsbR ⊕ RsbX t₀ → List (Fin (A + 4)) :=
+  Function.update (Function.update (Function.update (Function.update (Function.update
+    (Function.update (Function.update σ
+    (.inl .padc) (List.replicate ((D.t - D.s) * w) tick))
+    (bvx 0) ((preMaskE A D.s D.t D.t).map preBitOf))
+    (bvx 1) (tblPairs A w (2 ^ (9 * D.p - 1)) 0))
+    (bvx 2) (tblPairs A w (2 ^ (D.p - D.α * D.α)) 0))
+    (bvx 3) (List.replicate ((D.s + 1) / 2 * w) tick))
+    (bvx 4) (List.replicate (D.s / 2) tick))
+    (bvx 5) (List.replicate ((D.s + 1) / 2 - D.s / 2) tick)
+
+/-- The step bound of the first half of step 3. -/
+def bandCostB2a (D : PreAxB) (w : ℕ) : ℕ :=
+  ((4 * D.t + 4) + ((4 * D.s + 4) + (((D.t - D.s) * (4 * w + 7) + 2 * (D.t - D.s) + 4) +
+    (2 * (D.t - D.s) + 2)))) +
+  ((1 + (preVMCost 48 D.W 1 [D.s, D.t] (preKM D) D.t + ((2 * D.t + 2) + ((2 * D.t + 2) +
+    (2 * 1 + 2))))) +
+  (((4 * D.p + 4) + (preVMCost 48 D.W w [9 * D.p] (bandKH (9 * D.p)) w + (2 * (9 * D.p) + 2))) +
+  (((4 * D.p + 4) + (1 + ((4 * (D.α * D.α) + 4) + (preVMCost 48 D.W w [D.p + 1 - D.α * D.α]
+    (bandKH (D.p + 1 - D.α * D.α)) w + (2 * (D.p + 1 - D.α * D.α) + 2))))) +
+  ((4 * D.s + 4) + (1 + ((4 * (D.s + 1) + 4) + (((D.s + 1) / 2 * (4 * w + 7) +
+    2 * ((D.s + 1) / 2) + 4) + ((4 * D.s + 4) + ((4 * (D.s / 2) + 4) +
+    ((2 * ((D.s + 1) / 2 - D.s / 2) + 2) + (2 * (D.s + 1) + 2)))))))))))
+
+variable {body : F → Pr F T Q (prime + K) U} {rg : RsbR → Fin T} {rgx : RsbX t₀ → Fin T}
+  {ι : Fin 64 → Fin T}
+
+set_option maxRecDepth 4000 in
+theorem band_preB2a (hrg₂ : Function.Injective (Sum.elim rg rgx)) (hι : Function.Injective ι)
+    (hdisj₂ : ∀ r j, Sum.elim rg rgx r ≠ ι j) (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4)))
+    (D : PreAxB) (w : ℕ) (hwW : w ≤ D.W) (hp1 : 1 ≤ D.p) (hpW : 9 * D.p < D.W)
+    (hjp : D.α * D.α ≤ D.p) (hs : 0 < D.s) (hst : D.s < D.t)
+    (hWM : 4 * D.t * (D.s + 1) < 2 ^ D.W)
+    (hwn : (σ (.inl (.cm .wn))).length = w)
+    (hya : σ (.inl .ya) = List.replicate D.t tick) (hsn : σ (.inl .sn) = List.replicate D.s tick)
+    (hac : σ (.inl .ac) = List.replicate D.p tick) (hhv : σ (.inl .hv) = List.replicate D.W tick)
+    (hxs : σ (.inl .xs) = List.replicate (D.α * D.α) tick)
+    (hpadc : σ (.inl .padc) = []) (htC : σ (.inl .tC) = []) (htK : σ (.inl .tK) = [])
+    (hac2 : σ (.inl .ac2) = []) (hnv : σ (.inl .nv) = []) (hsr : σ (.inl .sr) = [])
+    (hsel : σ (.inl .sel) = []) (hvx : ∀ j, σ (.inr (.vx j)) = []) :
+    RsbRuns body (Sum.elim rg rgx) ι (bandPreB2a rg rgx ι) σ (bandFB2a σ D w)
+      (bandCostB2a D w) := by
+  set g := Sum.elim rg rgx
+  have h1 := pre_rsbRuns (band_preL1 (body := body) (ι := ι) hrg₂ hι hdisj₂ σ D w hwn hya hsn hpadc
+    htC hac2 hnv)
+  set σ1 := Function.update σ (.inl .padc) (List.replicate ((D.t - D.s) * w) tick) with hσ1
+  have h2 := pre_rsbRuns (band_preL2 (body := body) (ι := ι) hrg₂ hι hdisj₂ σ1 D
+    (by simp [hσ1, hsn]) (by simp [hσ1, hya]) (by simp [hσ1, hhv]) (by simp [hσ1, htK])
+    (by simp [hσ1, hsr]) (by simp [hσ1, hsel]) (by simp [hσ1, hvx]) hs hst (by omega) hWM)
+  set σ2 := Function.update σ1 (bvx 0) ((preMaskE (prime + K) D.s D.t D.t).map preBitOf) with hσ2
+  have h3 := pre_rsbRuns (band_preL3 (body := body) (ι := ι) hrg₂ hι hdisj₂ σ2 D w
+    (by simp [hσ2, hσ1, hwn]) hwW hp1 hpW (by simp [hσ2, hσ1, hac]) (by simp [hσ2, hσ1, hhv])
+    (by simp [hσ2, hσ1, hvx]) (by simp [hσ2, hσ1, htC]) (by simp [hσ2, hσ1, hac2]))
+  set σ3 := Function.update σ2 (bvx 1) (tblPairs (prime + K) w (2 ^ (9 * D.p - 1)) 0) with hσ3
+  have h4 := pre_rsbRuns (band_preL4 (body := body) (ι := ι) hrg₂ hι hdisj₂ σ3 D w
+    (by simp [hσ3, hσ2, hσ1, hwn]) hwW hjp (by omega) (by simp [hσ3, hσ2, hσ1, hac])
+    (by simp [hσ3, hσ2, hσ1, hhv]) (by simp [hσ3, hσ2, hσ1, hxs]) (by simp [hσ3, hσ2, hσ1, hvx])
+    (by simp [hσ3, hσ2, hσ1, htC]) (by simp [hσ3, hσ2, hσ1, hac2]))
+  set σ4 := Function.update σ3 (bvx 2) (tblPairs (prime + K) w (2 ^ (D.p - D.α * D.α)) 0) with hσ4
+  have h5 := pre_rsbRuns (band_preL5 (body := body) (ι := ι) hrg₂ hι hdisj₂ σ4 D w
+    (by simp [hσ4, hσ3, hσ2, hσ1, hwn]) (by simp [hσ4, hσ3, hσ2, hσ1, hsn])
+    (by simp [hσ4, hσ3, hσ2, hσ1, htC]) (by simp [hσ4, hσ3, hσ2, hσ1, htK])
+    (by simp [hσ4, hσ3, hσ2, hσ1, hac2]) (by simp [hσ4, hσ3, hσ2, hσ1, hnv])
+    (by simp [hσ4, hσ3, hσ2, hσ1, hvx]) (by simp [hσ4, hσ3, hσ2, hσ1, hvx])
+    (by simp [hσ4, hσ3, hσ2, hσ1, hvx]))
+  exact RsbRuns.seq hdisj₂ h1 (RsbRuns.seq hdisj₂ h2 (RsbRuns.seq hdisj₂ h3
+    (RsbRuns.seq hdisj₂ h4 h5)))
+
+/-- Step 3, second half: the diagonal table, then the scratch cleared. -/
+def bandPreB2b (rg : RsbR → Fin T) (rgx : RsbX t₀ → Fin T) (ι : Fin 64 → Fin T)
+    (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ : SS.states ≤ Q) : Pr F T Q (prime + K) U :=
+  .seq (bandPreL8g (Sum.elim rg rgx) ι) (.seq (bandPreL9 (Sum.elim rg rgx) ι)
+  (.seq (bandScaleP rg hι hT hQ .ef .tb .dtab) (preClears (bandScrL.map (Sum.elim rg rgx)))))
+
+open Classical in
+/-- The register file after step 3. -/
+def bandFB2b (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (D : PreAxB) [NeZero D.s] (w : ℕ) :
+    RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4)) :=
+  fun r => if r ∈ bandScrL then [] else
+    Function.update σ (.inl .dtab) (cstream (prime + K) w ((rsbArr fun ℓ =>
+      rsbReal (tableD D.s D.t D.α D.p ℓ)).map fun a => tdivN D.bP (a * ⟨2 ^ (9 * D.p), 0⟩))) r
+
+/-- The step bound of the second half of step 3. -/
+def bandCostB2b (T : ℕ) (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (D : PreAxB) (w : ℕ) : ℕ :=
+  preVMCost 48 D.W w [D.s, D.t, D.α, D.p] (preKD D) (D.s * w) +
+  (((4 * D.p + 4) + (1 + (preVMCost 48 D.W w [9 * D.p + 1] (bandKH (9 * D.p + 1)) w +
+    (2 * (9 * D.p + 1) + 2)))) +
+  ((D.s * (rmulCost T w + 6 * w + 8) + 6 + (2 * (D.s * w) + 2)) +
+  ((bandScrL.map fun r => 2 * (σ r).length + 2).sum + 1 + 2 * w + 2)))
+
+set_option maxRecDepth 4000 in
+theorem band_preB2b (hrg₂ : Function.Injective (Sum.elim rg rgx)) (hι : Function.Injective ι)
+    (hdisj₂ : ∀ r j, Sum.elim rg rgx r ≠ ι j) (hT : 64 ≤ T) (hQ : SS.states ≤ Q)
+    (hA : 96 ≤ prime + K) (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (D : PreAxB)
+    [NeZero D.s] (w : ℕ) (hwW : w ≤ D.W) (hpW : 9 * D.p + 1 < D.W)
+    (hready : RsbReady (fun r => σ (.inl r)) w D.bP) (hw : 1 ≤ w) (hpw : D.bP ≤ w)
+    (hp : 13 ≤ D.p) (hα : 2 ≤ D.α) (hαp : D.α ^ 2 ≤ D.p) (hs : 0 < D.s) (hst : D.s < D.t)
+    (hW : D.α ^ 2 * ((D.s + D.t) * (D.m + 1)) ^ 2 * 2 ^ (13 * D.p + 8) < 2 ^ D.W)
+    (hfx : ∀ ℓ : ZMod D.s, Fits w (rsbReal (tableD D.s D.t D.α D.p ℓ)))
+    (hfc : Fits w (⟨2 ^ (9 * D.p), 0⟩ : GaussianInt))
+    (hya : σ (.inl .ya) = List.replicate D.t tick) (hsn : σ (.inl .sn) = List.replicate D.s tick)
+    (hhc : σ (.inl .hc) = List.replicate D.α tick) (hac : σ (.inl .ac) = List.replicate D.p tick)
+    (hhv : σ (.inl .hv) = List.replicate D.W tick)
+    (hef : σ (.inl .ef) = []) (htb : σ (.inl .tb) = []) (hdtab : σ (.inl .dtab) = [])
+    (htC : σ (.inl .tC) = []) (hac2 : σ (.inl .ac2) = []) :
+    RsbRuns body (Sum.elim rg rgx) ι (bandPreB2b rg rgx ι hι hT hQ) σ (bandFB2b σ D w)
+      (bandCostB2b T σ D w) := by
+  have hwn := hready.wn
+  have h1 := pre_rsbRuns (band_preL8 (body := body) (ι := ι) hrg₂ hι hdisj₂ σ D w hsn hya hhc hac hhv
+    hwn hef hp hα hαp hs hst hwW hW)
+  set σ1 := Function.update σ (.inl .ef) (tblStreamD (prime + K) w D.s D.t D.α D.p) with hσ1
+  have h2 := pre_rsbRuns (band_preL9 (body := body) (ι := ι) hrg₂ hι hdisj₂ σ1 D w
+    (by simp [hσ1, hwn]) hwW hpW (by simp [hσ1, hac]) (by simp [hσ1, hhv]) (by simp [hσ1, htb])
+    (by simp [hσ1, htC]) (by simp [hσ1, hac2]))
+  set σ2 := Function.update σ1 (.inl .tb) (tblPairs (prime + K) w (2 ^ (9 * D.p)) 0) with hσ2
+  have hr2 : RsbReady (fun r => σ2 (.inl r)) w D.bP := by
+    have := (hready.update .ef (fun c => by simp) (tblStreamD (prime + K) w D.s D.t D.α D.p)).update
+      .tb (fun c => by simp) (tblPairs (prime + K) w (2 ^ (9 * D.p)) 0)
+    convert this using 1
+    funext r
+    simp only [hσ2, hσ1, Function.update_apply, Sum.inl.injEq]
+  have h3 := band_preL10 (body := body) hrg₂ hdisj₂ hι hT hQ hA σ2 D w hr2 hw hpw (by simp [hσ2, hσ1]) (by simp [hσ2]) (by simp [hσ2, hσ1, hdtab]) hfx hfc
+  set σ3 := Function.update (Function.update σ2 (.inl .dtab) (cstream (prime + K) w
+    ((rsbArr fun ℓ => rsbReal (tableD D.s D.t D.α D.p ℓ)).map
+      fun a => tdivN D.bP (a * ⟨2 ^ (9 * D.p), 0⟩)))) (.inl .ef) [] with hσ3
+  have h4 := rsb_of_tw (ι := ι) (twRuns_congr (preClears_runs (body := body) hrg₂ bandScrL
+    (by simp [bandScrL]) σ3) (show _ = bandFB2b σ D w by
+      funext r
+      by_cases hr : r ∈ bandScrL
+      · simp [bandFB2b, hr]
+      · simp only [bandFB2b, hr, ite_false]
+        simp only [bandScrL, List.mem_cons, List.not_mem_nil, or_false, not_or] at hr
+        by_cases he : r = .inl .ef
+        · subst he; simp [hσ3, hef]
+        · simp [hσ3, hσ2, hσ1, Function.update_apply, hr, he]))
+  refine (RsbRuns.seq hdisj₂ h1 (RsbRuns.seq hdisj₂ h2 (RsbRuns.seq hdisj₂ h3 h4))).mono ?_
+  simp only [bandCostB2b, hσ3, hσ2, hσ1, bandScrL, List.map_cons, List.map_nil, List.sum_cons,
+    List.sum_nil, Function.update_apply, Sum.inl.injEq, reduceCtorEq, ite_false, ite_true,
+    tblPairs, coeffSyms, List.length_replicate, List.length_map, List.length_range,
+    List.length_ofFn, htb, List.length_nil]
+  omega
+
+end Part2
+
+/-! ### The loader, part 3 and the whole loader -/
+
+section Whole
+
+variable (rg : RsbR → Fin T) (rgx : RsbX t₀ → Fin T) (ι : Fin 64 → Fin T) (hd : Fin 5 → Fin t₀)
+  (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ : SS.states ≤ Q)
+
+/-- **The loader of the banded `B̃₀`.** -/
+def bandPreB : Pr F T Q (prime + K) U :=
+  .seq (bandPreB1 rg rgx ι hd) (.seq (bandPreB2a rg rgx ι) (.seq (bandPreB2b rg rgx ι hι hT hQ)
+    (.seq (bandAxisPrepP rg hι hT hQ) (bandPreE (Sum.elim rg rgx)))))
+
+/-- The register file after loading. -/
+def bandLoad (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (hd : Fin 5 → Fin t₀) (w : ℕ)
+    (D : PreAxB) [NeZero D.s] (rest : List (Fin (prime + K + 4))) :
+    RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4)) :=
+  bandFE (bandFP (bandFB2b (bandFB2a (bandFB1 σ hd w D rest) D w) D w) D w (σ (.inl .src)))
+
+variable {body : F → Pr F T Q (prime + K) U} {rg : RsbR → Fin T} {rgx : RsbX t₀ → Fin T}
+  {ι : Fin 64 → Fin T}
+
+theorem bandFB2a_frame (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (D : PreAxB) (w : ℕ)
+    (r : RsbR) (hr : r ≠ .padc) : bandFB2a σ D w (.inl r) = σ (.inl r) := by
+  simp [bandFB2a, Function.update_apply, hr]
+
+theorem bandFB2b_frame (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (D : PreAxB) [NeZero D.s]
+    (w : ℕ) (r : RsbR) (hr : r ∉ [RsbR.tb, .ya, .b1, .hc, .ac, .hv, .xs, .tA, .tJ, .tL, .dtab]) :
+    bandFB2b σ D w (.inl r) = σ (.inl r) := by
+  simp only [List.mem_cons, List.not_mem_nil, or_false, not_or] at hr
+  simp [bandFB2b, bandScrL, Function.update_apply, hr]
+
+theorem bandFB2b_scr (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (D : PreAxB) [NeZero D.s]
+    (w : ℕ) (r : RsbR) (hr : r ∈ [RsbR.tb, .ya, .b1, .hc, .ac, .hv, .xs, .tA, .tJ, .tL]) :
+    bandFB2b σ D w (.inl r) = [] := by
+  simp only [List.mem_cons, List.not_mem_nil, or_false] at hr
+  rcases hr with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;> simp [bandFB2b, bandScrL]
+
+/-- Registers changed by part 1. -/
+def bandLB1 : List RsbR := bandLA ++ [.tA, .tJ, .tL, .xs, .src, .dst]
+
+set_option maxRecDepth 4000 in
+theorem bandFB1_frame (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (hd : Fin 5 → Fin t₀)
+    (w : ℕ) (D : PreAxB) [NeZero D.s] (rest : List (Fin (prime + K + 4))) (r : RsbR)
+    (hr : r ∉ bandLB1) : bandFB1 σ hd w D rest (.inl r) = σ (.inl r) := by
+  have hA : r ∉ bandLA := fun h => hr (List.mem_append_left _ h)
+  have h2 : r ∉ [RsbR.tA, .tJ, .tL, .xs, .src, .dst] := fun h => hr (List.mem_append_right _ h)
+  simp only [List.mem_cons, List.not_mem_nil, or_false, not_or] at h2
+  simp only [bandLA, List.mem_cons, List.not_mem_nil, or_false, not_or] at hA
+  rw [← bandFA_frame σ hd w D rest r (by simp [bandLA, hA])]
+  simp [bandFB1, bandFF2, bandFF2a, bandFF2b, bandFF2c, bandFF2d, bandFF1, Function.update_apply,
+    hA, h2]
+
+theorem bandFB1_vx (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (hd : Fin 5 → Fin t₀)
+    (w : ℕ) (D : PreAxB) [NeZero D.s] (rest : List (Fin (prime + K + 4))) (j : Fin 12) :
+    bandFB1 σ hd w D rest (.inr (.vx j)) = σ (.inr (.vx j)) := by
+  rw [← bandFA_vx σ hd w D rest j]
+  simp [bandFB1, bandFF2, bandFF2a, bandFF2b, bandFF2c, bandFF2d, bandFF1]
+
+set_option maxRecDepth 4000 in
+theorem bandFB1_vals (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (hd : Fin 5 → Fin t₀)
+    (w : ℕ) (D : PreAxB) [NeZero D.s] (rest : List (Fin (prime + K + 4))) :
+    let τ := bandFB1 σ hd w D rest
+    τ (.inl (.cm .pn)) = List.replicate D.bP tick ∧ τ (.inl .ya) = List.replicate D.t tick ∧
+    τ (.inl .sn) = List.replicate D.s tick ∧ τ (.inl .hc) = List.replicate D.α tick ∧
+    τ (.inl .ac) = List.replicate D.p tick ∧ τ (.inl .hv) = List.replicate D.W tick ∧
+    τ (.inl .xs) = List.replicate (D.α * D.α) tick ∧ τ (.inl .ms) = List.replicate D.bB tick ∧
+    τ (.inl .m2n) = List.replicate (2 * D.bB) tick ∧ τ (.inl .dst) = List.replicate (2 * D.bWd) tick ∧
+    τ (.inl .m2wn) = List.replicate (2 * D.bWd * w) tick ∧
+    τ (.inl .mwn) = List.replicate (2 * D.bB * w) tick ∧
+    τ (.inl .smwn) = List.replicate ((2 * D.bB + 1) * w) tick ∧
+    τ (.inl .tswn) = List.replicate ((D.bB + 1) * (2 * D.bB + 1) * w) tick ∧
+    τ (.inl .kn) = List.replicate (4 * (D.α * D.α)) tick ∧
+    τ (.inl .msk) = List.replicate w (pairSym (prime + K) false false) ∧
+    τ (.inl .bx) = tblPairs (prime + K) w (2 ^ (5 * D.p - 2)) 0 ∧
+    τ (.inl .src) = tblFoldStream (prime + K) w D.s D.t D.α D.bP D.bWd D.bB (D.bB + 1 + D.s) ++
+      σ (.inl .src) ∧
+    τ (.inl .prm) = rest ∧
+    (∀ r ∈ [RsbR.bo, .hf, .df, .dtab, .padc], τ (.inl r) = []) := by
+  intro τ
+  obtain ⟨vya, vsn, -, vhc, vac, vhv, vprm, vclr⟩ := bandFA_vals σ hd w D rest
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, fun r hr => ?_⟩
+  all_goals try (simp [τ, bandFB1, bandFF2, bandFF2a, bandFF2b, bandFF2c, bandFF2d, bandFF1,
+    Function.update_apply, vya, vsn, vhc, vac, vhv, vprm]; done)
+  · simp only [List.mem_cons, List.not_mem_nil, or_false] at hr
+    rcases hr with rfl | rfl | rfl | rfl | rfl <;>
+      simp [τ, bandFB1, bandFF2, bandFF2a, bandFF2b, bandFF2c, bandFF2d, bandFF1,
+        Function.update_apply, vclr]
+
+/-- The scratch registers of the loader are empty. -/
+structure BandPreFree (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) : Prop where
+  ya : σ (.inl .ya) = []
+  b1 : σ (.inl .b1) = []
+  tb : σ (.inl .tb) = []
+  xa : σ (.inl .xa) = []
+  xs : σ (.inl .xs) = []
+  pr : σ (.inl .pr) = []
+  hc : σ (.inl .hc) = []
+  ac : σ (.inl .ac) = []
+  hv : σ (.inl .hv) = []
+  tL : σ (.inl .tL) = []
+  ac2 : σ (.inl .ac2) = []
+  nv : σ (.inl .nv) = []
+  tA : σ (.inl .tA) = []
+  tJ : σ (.inl .tJ) = []
+  dst : σ (.inl .dst) = []
+  tC : σ (.inl .tC) = []
+  tK : σ (.inl .tK) = []
+  sr : σ (.inl .sr) = []
+  sel : σ (.inl .sel) = []
+  ef : σ (.inl .ef) = []
+  dout : σ (.inl .dout) = []
+  vk : σ (.inl .vk) = []
+  vx : ∀ j, σ (.inr (.vx j)) = []
+  cm : ∀ c, c ≠ .xs → c ≠ .ys → c ≠ .out → c ≠ .wn → c ≠ .pn → c ≠ .nn → σ (.inl (.cm c)) = []
+
+/-- The conditions on the parameters of an axis. -/
+structure BandPreOk (D : PreAxB) (w : ℕ) : Prop where
+  fold : BandFoldW D
+  wW : w ≤ D.W
+  p13 : 13 ≤ D.p
+  α2 : 2 ≤ D.α
+  αp : D.α ^ 2 ≤ D.p
+  s0 : 0 < D.s
+  st : D.s < D.t
+  W : D.α ^ 2 * ((D.s + D.t) * (D.m + 1)) ^ 2 * 2 ^ (13 * D.p + 8) < 2 ^ D.W
+  pW : 9 * D.p + 1 < D.W
+  Pw : D.bP ≤ w
+  fD : ∀ ℓ : ZMod D.s, Fits w (rsbReal (tableD D.s D.t D.α D.p ℓ))
+  fc : Fits w (⟨2 ^ (9 * D.p), 0⟩ : GaussianInt)
+
+/-- The step bound of the loader. -/
+def bandPreCost (T : ℕ) (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (hd : Fin 5 → Fin t₀)
+    (w : ℕ) (D : PreAxB) [NeZero D.s] (rest : List (Fin (prime + K + 4))) : ℕ :=
+  bandCostB1 σ hd w D + (bandCostB2a D w + (bandCostB2b T (bandFB2a (bandFB1 σ hd w D rest) D w) D w +
+    (bandAxisPrepCost T w (2 * D.bWd) D.bK D.s +
+      bandCostE (bandFP (bandFB2b (bandFB2a (bandFB1 σ hd w D rest) D w) D w) D w (σ (.inl .src))))))
+
+set_option maxRecDepth 4000 in
+/-- **The loader of the banded `B̃₀`.** -/
+theorem band_preB_runs (hrg₂ : Function.Injective (Sum.elim rg rgx)) (hι : Function.Injective ι)
+    (hdisj₂ : ∀ r j, Sum.elim rg rgx r ≠ ι j) (hT : 64 ≤ T) (hQ : SS.states ≤ Q)
+    (hA : 96 ≤ prime + K) {hd : Fin 5 → Fin t₀} (hdi : Function.Injective hd)
+    (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (D : PreAxB) [NeZero D.s]
+    (rest : List (Fin (prime + K + 4))) (w : ℕ) (hw : 1 ≤ w) (hok : BandPreOk D w)
+    (hF : BandPreFree σ) (hprm : σ (.inl .prm) = preRec D.fields ++ rest)
+    (hwn : (σ (.inl (.cm .wn))).length = w)
+    (hnn : (σ (.inl (.cm .nn))).length = IntegerMultBounds.Schoenhage.Schedule.topN w)
+    (hfit : ∀ m < D.s, FacFits w D.bP D.bK (facState D.bP D.bK
+      (bandRows D.bWd D.s (Mult.BandFactor.coefZ D.s D.t D.α D.bP))
+      (bandInputs D.bWd D.s (Mult.BandFactor.coefZ D.s D.t D.α D.bP)) m)) :
+    RsbRuns body (Sum.elim rg rgx) ι (bandPreB rg rgx ι hd hι hT hQ) σ (bandLoad σ hd w D rest)
+      (bandPreCost T σ hd w D rest) := by
+  have hp1 : 1 ≤ D.p := by have := hok.p13; omega
+  have hjp : D.α * D.α ≤ D.p := by have := hok.αp; nlinarith
+  obtain ⟨-, -, -, -, -, -, hWM⟩ := pre_W_facts hok.α2 hok.s0 hok.st hok.W
+  have hsw := hok.fold.ws
+  have h1 := band_preB1 (body := body) hrg₂ hι hdisj₂ hdi σ D rest w hok.wW hok.fold hp1 hprm hwn
+    hF.ya hF.b1 hF.tb hF.xa hF.xs hF.pr hF.hc hF.ac hF.hv hF.tL hF.ac2 hF.nv hF.tA hF.tJ hF.dst hF.tC
+    hF.tK hF.vx
+  obtain ⟨vpn, vya, vsn, vhc, vac, vhv, vxs, vms, vm2n, vdst, vm2wn, vmwn, vsmwn, vtswn, vkn, vmsk,
+    vbx, vsrc, -, vclr⟩ := bandFB1_vals σ hd w D rest
+  have hvx1 : ∀ j, bandFB1 σ hd w D rest (.inr (.vx j)) = [] := fun j => by
+    rw [bandFB1_vx]; exact hF.vx j
+  set τ1 := bandFB1 σ hd w D rest with hτ1
+  have f1 : ∀ r, r ∉ bandLB1 → τ1 (.inl r) = σ (.inl r) := bandFB1_frame σ hd w D rest
+  have h2 := band_preB2a (body := body) hrg₂ hι hdisj₂ τ1 D w hok.wW hp1 (by have := hok.pW; omega)
+    hjp hok.s0 hok.st hWM (by rw [f1 _ (by decide)]; exact hwn) vya vsn vac vhv vxs
+    (vclr _ (by simp)) (by rw [f1 _ (by decide)]; exact hF.tC) (by rw [f1 _ (by decide)]; exact hF.tK)
+    (by rw [f1 _ (by decide)]; exact hF.ac2) (by rw [f1 _ (by decide)]; exact hF.nv)
+    (by rw [f1 _ (by decide)]; exact hF.sr) (by rw [f1 _ (by decide)]; exact hF.sel)
+    hvx1
+  set τ2 := bandFB2a τ1 D w with hτ2
+  have f2 : ∀ r, r ≠ .padc → τ2 (.inl r) = τ1 (.inl r) := bandFB2a_frame τ1 D w
+  have hcm : ∀ c, c ≠ .xs → c ≠ .ys → c ≠ .out → c ≠ .wn → c ≠ .pn → c ≠ .nn →
+      τ2 (.inl (.cm c)) = [] := by
+    intro c h1 h2 h3 h4 h5 h6
+    rw [f2 _ (by simp), f1 _ (by simp [bandLB1, bandLA, h5])]
+    exact hF.cm c h1 h2 h3 h4 h5 h6
+  have hready2 : RsbReady (fun r => τ2 (.inl r)) w D.bP :=
+    ⟨by rw [f2 _ (by simp), f1 _ (by decide)]; exact hwn,
+      by rw [f2 _ (by simp), vpn]; simp,
+      by rw [f2 _ (by simp), f1 _ (by decide)]; exact hnn, hcm⟩
+  have h3 := band_preB2b (body := body) hrg₂ hι hdisj₂ hT hQ hA τ2 D w hok.wW hok.pW hready2 hw hok.Pw
+    hok.p13 hok.α2 hok.αp hok.s0 hok.st hok.W hok.fD hok.fc
+    (by rw [f2 _ (by decide)]; exact vya) (by rw [f2 _ (by decide)]; exact vsn)
+    (by rw [f2 _ (by decide)]; exact vhc) (by rw [f2 _ (by decide)]; exact vac)
+    (by rw [f2 _ (by decide)]; exact vhv)
+    (by rw [f2 _ (by decide), f1 _ (by decide)]; exact hF.ef)
+    (by rw [f2 _ (by decide), f1 _ (by decide)]; exact hF.tb)
+    (by rw [f2 _ (by decide)]; exact vclr _ (by simp))
+    (by rw [f2 _ (by decide), f1 _ (by decide)]; exact hF.tC)
+    (by rw [f2 _ (by decide), f1 _ (by decide)]; exact hF.ac2)
+  set τ3 := bandFB2b τ2 D w with hτ3
+  have f3 : ∀ r, r ∉ [RsbR.tb, .ya, .b1, .hc, .ac, .hv, .xs, .tA, .tJ, .tL, .dtab] →
+      τ3 (.inl r) = τ2 (.inl r) := bandFB2b_frame τ2 D w
+  have s3 : ∀ r, r ∈ [RsbR.tb, .ya, .b1, .hc, .ac, .hv, .xs, .tA, .tJ, .tL] → τ3 (.inl r) = [] :=
+    bandFB2b_scr τ2 D w
+  have g3 : ∀ r, r ∉ [RsbR.tb, .ya, .b1, .hc, .ac, .hv, .xs, .tA, .tJ, .tL, .dtab] → r ≠ .padc →
+      r ∉ bandLB1 → τ3 (.inl r) = σ (.inl r) := fun r h1 h2 h3 => by
+    rw [f3 r h1, f2 r h2, f1 r h3]
+  have hready3 : RsbReady (fun r => τ3 (.inl r)) w D.bP :=
+    ⟨by rw [f3 _ (by decide)]; exact hready2.wn, by rw [f3 _ (by decide)]; exact hready2.pn,
+      by rw [f3 _ (by decide)]; exact hready2.nn,
+      fun c h1 h2 h3 h4 h5 h6 => by rw [f3 _ (by simp)]; exact hcm c h1 h2 h3 h4 h5 h6⟩
+  have e3 : ∀ r, r ∉ [RsbR.tb, .ya, .b1, .hc, .ac, .hv, .xs, .tA, .tJ, .tL, .dtab] → r ≠ .padc →
+      τ3 (.inl r) = τ1 (.inl r) := fun r h1 h2 => by rw [f3 r h1, f2 r h2]
+  have h4 := band_preP (body := body) hrg₂ hdisj₂ hι hT hQ hA τ3 D w hready3 hw hok.Pw hsw hfit
+    (by rw [e3 _ (by decide) (by decide)]; exact vbx) (σ (.inl .src))
+    (by rw [e3 _ (by decide) (by decide)]; exact vsrc)
+    (by rw [e3 _ (by decide) (by decide), vtswn]; simp)
+    (by rw [e3 _ (by decide) (by decide)]; exact vclr _ (by simp))
+    (by rw [e3 _ (by decide) (by decide)]; exact vclr _ (by simp))
+    (by rw [g3 _ (by decide) (by decide) (by decide)]; exact hF.dout)
+    (by rw [e3 _ (by decide) (by decide), vmsk, csyms_zero'])
+    (by rw [g3 _ (by decide) (by decide) (by decide)]; exact hF.vk)
+    (by simp only [hτ3, bandFB2b, bandScrL]; simp; rw [f2 _ (by decide), f1 _ (by decide)]; exact hF.ef)
+    (s3 _ (by simp))
+    (by rw [g3 _ (by decide) (by decide) (by decide)]; exact hF.sr)
+    (by rw [e3 _ (by decide) (by decide)]; exact vclr _ (by simp))
+    (s3 _ (by simp))
+    (by rw [g3 _ (by decide) (by decide) (by decide)]; exact hF.xa)
+    (s3 _ (by simp)) (s3 _ (by simp)) (s3 _ (by simp))
+    (by rw [g3 _ (by decide) (by decide) (by decide)]; exact hF.pr)
+    (s3 _ (by simp))
+    (by rw [g3 _ (by decide) (by decide) (by decide)]; exact hF.ac2)
+    (by rw [g3 _ (by decide) (by decide) (by decide)]; exact hF.nv)
+    (s3 _ (by simp))
+    (by rw [g3 _ (by decide) (by decide) (by decide)]; exact hF.tC)
+    (s3 _ (by simp)) (s3 _ (by simp))
+    (by rw [g3 _ (by decide) (by decide) (by decide)]; exact hF.tK)
+    (s3 _ (by simp))
+    (by rw [g3 _ (by decide) (by decide) (by decide)]; exact hF.sel)
+    (by rw [e3 _ (by decide) (by decide), vsn]; simp)
+    (by rw [e3 _ (by decide) (by decide), vkn]; simp [PreAxB.bK])
+    (by rw [e3 _ (by decide) (by decide), vms]; simp)
+    (by rw [e3 _ (by decide) (by decide), vm2n]; simp)
+    (by rw [e3 _ (by decide) (by decide), vmwn]; simp)
+    (by rw [e3 _ (by decide) (by decide), vsmwn]; simp)
+    (by rw [e3 _ (by decide) (by decide), vm2wn]; simp)
+    (by rw [e3 _ (by decide) (by decide), vdst]; simp)
+  have h5 := rsb_of_tw (ι := ι) (band_preE (body := body) hrg₂ (bandFP τ3 D w (σ (.inl .src)))
+    (by simp only [bandFP, Function.update_apply, Sum.inl.injEq, reduceCtorEq, ite_false]
+        rw [g3 _ (by decide) (by decide) (by decide)]; exact hF.ac2))
+  exact RsbRuns.seq hdisj₂ h1 (RsbRuns.seq hdisj₂ h2 (RsbRuns.seq hdisj₂ h3
+    (RsbRuns.seq hdisj₂ h4 h5)))
+
+end Whole
+
+
 end
 
 end IntegerMultBounds.MathlibTM2.Fast
