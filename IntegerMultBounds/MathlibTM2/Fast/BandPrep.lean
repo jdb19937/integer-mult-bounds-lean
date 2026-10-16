@@ -2074,6 +2074,155 @@ theorem band_preB_runs (hrg₂ : Function.Injective (Sum.elim rg rgx)) (hι : Fu
 end Whole
 
 
+/-! ### The loaded configuration -/
+
+section Cfg
+
+variable {body : F → Pr F T Q (prime + K) U}
+
+theorem tdivN_dscale (p : ℕ) (d : ℤ) :
+    tdivN (5 * p) (rsbReal d * ⟨2 ^ (9 * p), 0⟩) = rsbReal (d * 2 ^ (4 * p)) := by
+  have e : (2 : ℤ) ^ (9 * p) = 2 ^ (4 * p) * 2 ^ (5 * p) := by rw [← pow_add]; congr 1; ring
+  ext <;> simp [tdivN, rsbReal, Zsqrtd.re_mul, Zsqrtd.im_mul, e, ← mul_assoc,
+    Int.mul_tdiv_cancel _ (show (2 : ℤ) ^ (5 * p) ≠ 0 by positivity)]
+
+/-- The diagonal table of an axis at precision `5p`: `D · 2^(4p)`. -/
+noncomputable def bandDl (D : PreAxB) [NeZero D.s] : List ℤ :=
+  rsbArr fun ℓ : ZMod D.s => tableD D.s D.t D.α D.p ℓ * 2 ^ (4 * D.p)
+
+theorem bandFE_frame (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (r : RsbR)
+    (hr : r ∉ [RsbR.kn, .ms, .dst, .msk, .tswn, .smwn, .m2wn, .bx, .ac2]) :
+    bandFE σ (.inl r) = σ (.inl r) := by
+  simp only [List.mem_cons, List.not_mem_nil, or_false, not_or] at hr
+  simp [bandFE, bandMvF, bandFE0, bandClrE, bvx, Function.update_apply, hr]
+
+set_option maxRecDepth 4000 in
+theorem bandFE_vals (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4)))
+    (hac2 : σ (.inl .ac2) = []) :
+    bandFE σ (.inl .msk) = σ (bvx 0) ∧ bandFE σ (.inl .smwn) = σ (bvx 1) ∧
+    bandFE σ (.inl .bx) = σ (bvx 2) ∧ bandFE σ (.inl .tswn) = (σ (bvx 3)).reverse ∧
+    bandFE σ (.inl .m2wn) = (σ (bvx 4)).reverse ∧ bandFE σ (.inl .kn) = (σ (bvx 5)).reverse ∧
+    bandFE σ (.inl .ms) = [] ∧ bandFE σ (.inl .dst) = [] ∧ bandFE σ (.inl .ac2) = [] := by
+  simp (config := { decide := true }) [bandFE, bandMvF, bandFE0, bandClrE, bvx,
+    Function.update_apply, hac2]
+
+theorem bandFP_frame (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (D : PreAxB) [NeZero D.s]
+    (w : ℕ) (l : List (Fin (prime + K + 4))) (r : RsbR)
+    (hr : r ∉ [RsbR.src, .bo, .hf, .df, .dout, .vk, .m2n, .kn, .ms, .mwn, .ef, .xs]) :
+    bandFP σ D w l (.inl r) = σ (.inl r) := by
+  simp only [List.mem_cons, List.not_mem_nil, or_false, not_or] at hr
+  simp [bandFP, Function.update_apply, hr]
+
+theorem bandFP_inr (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (D : PreAxB) [NeZero D.s]
+    (w : ℕ) (l : List (Fin (prime + K + 4))) (x : RsbX t₀) :
+    bandFP σ D w l (.inr x) = σ (.inr x) := by
+  simp [bandFP]
+
+theorem bandFB2b_inr (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (D : PreAxB) [NeZero D.s]
+    (w : ℕ) (x : RsbX t₀) : bandFB2b σ D w (.inr x) = σ (.inr x) := by
+  simp [bandFB2b, bandScrL]
+
+set_option maxRecDepth 4000 in
+/-- **The loaded register file is configured for the banded line of its axis.** -/
+theorem bandLoad_cfg (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (hd : Fin 5 → Fin t₀)
+    (D : PreAxB) [NeZero D.s] (rest : List (Fin (prime + K + 4))) (w : ℕ) (hF : BandPreFree σ)
+    (hwn : (σ (.inl (.cm .wn))).length = w)
+    (hnn : (σ (.inl (.cm .nn))).length = IntegerMultBounds.Schoenhage.Schedule.topN w)
+    (hA3 : 3 ≤ prime + K) :
+    BandAxisCfg (fun r => bandLoad σ hd w D rest (.inl r)) w D.bP D.s D.t D.bB
+      (bandLc D.bP D.bK D.bWd D.s (Mult.BandFactor.coefZ D.s D.t D.α D.bP))
+      (bandUc D.bP D.bK D.bWd D.s (Mult.BandFactor.coefZ D.s D.t D.α D.bP))
+      (bandRcs D.bP D.bK D.bWd D.s (Mult.BandFactor.coefZ D.s D.t D.α D.bP)) (bandDl D)
+      (2 ^ (9 * D.p - 1)) (2 ^ (D.p - D.α * D.α)) := by
+  obtain ⟨vpn, vya, vsn, vhc, vac, vhv, vxs, vms, vm2n, vdst, vm2wn, vmwn, vsmwn, vtswn, vkn, vmsk,
+    vbx, vsrc, -, vclr⟩ := bandFB1_vals σ hd w D rest
+  set τ1 := bandFB1 σ hd w D rest with hτ1
+  have f1 : ∀ r, r ∉ bandLB1 → τ1 (.inl r) = σ (.inl r) := bandFB1_frame σ hd w D rest
+  set τ2 := bandFB2a τ1 D w with hτ2
+  have f2 : ∀ r, r ≠ .padc → τ2 (.inl r) = τ1 (.inl r) := bandFB2a_frame τ1 D w
+  set τ3 := bandFB2b τ2 D w with hτ3
+  have f3 : ∀ r, r ∉ [RsbR.tb, .ya, .b1, .hc, .ac, .hv, .xs, .tA, .tJ, .tL, .dtab] →
+      τ3 (.inl r) = τ2 (.inl r) := bandFB2b_frame τ2 D w
+  have s3 : ∀ r, r ∈ [RsbR.tb, .ya, .b1, .hc, .ac, .hv, .xs, .tA, .tJ, .tL] → τ3 (.inl r) = [] :=
+    bandFB2b_scr τ2 D w
+  set τ4 := bandFP τ3 D w (σ (.inl .src)) with hτ4
+  have f4 : ∀ r, r ∉ [RsbR.src, .bo, .hf, .df, .dout, .vk, .m2n, .kn, .ms, .mwn, .ef, .xs] →
+      τ4 (.inl r) = τ3 (.inl r) := bandFP_frame τ3 D w (σ (.inl .src))
+  have hac2 : τ4 (.inl .ac2) = [] := by
+    rw [f4 _ (by decide), f3 _ (by decide), f2 _ (by decide), f1 _ (by decide)]; exact hF.ac2
+  obtain ⟨emsk, esmwn, ebx, etswn, em2wn, ekn, ems, edst, eac2⟩ := bandFE_vals τ4 hac2
+  have f5 : ∀ r, r ∉ [RsbR.kn, .ms, .dst, .msk, .tswn, .smwn, .m2wn, .bx, .ac2] →
+      bandFE τ4 (.inl r) = τ4 (.inl r) := bandFE_frame τ4
+  have hL : ∀ r, bandLoad σ hd w D rest (.inl r) = bandFE τ4 (.inl r) := fun r => rfl
+  have vx4 : ∀ j, τ4 (bvx j) = τ2 (bvx j) := fun j => by
+    simp only [bvx, hτ4, bandFP_inr, hτ3, bandFB2b_inr]
+  -- the generic route of an untouched register
+  have gL : ∀ r, r ∉ [RsbR.kn, .ms, .dst, .msk, .tswn, .smwn, .m2wn, .bx, .ac2] →
+      r ∉ [RsbR.src, .bo, .hf, .df, .dout, .vk, .m2n, .kn, .ms, .mwn, .ef, .xs] →
+      r ∉ [RsbR.tb, .ya, .b1, .hc, .ac, .hv, .xs, .tA, .tJ, .tL, .dtab] → r ≠ .padc → r ∉ bandLB1 →
+      bandLoad σ hd w D rest (.inl r) = σ (.inl r) := fun r h5 h4 h3 h2 h1 => by
+    rw [hL, f5 r h5, f4 r h4, f3 r h3, f2 r h2, f1 r h1]
+  have zL : ∀ r, r ∉ [RsbR.kn, .ms, .dst, .msk, .tswn, .smwn, .m2wn, .bx, .ac2] →
+      r ∉ [RsbR.src, .bo, .hf, .df, .dout, .vk, .m2n, .kn, .ms, .mwn, .ef, .xs] →
+      r ∈ [RsbR.tb, .ya, .b1, .hc, .ac, .hv, .xs, .tA, .tJ, .tL] →
+      bandLoad σ hd w D rest (.inl r) = [] := fun r h5 h4 h3 => by
+    rw [hL, f5 r h5, f4 r h4, s3 r h3]
+  have dL : ∀ r, r ∈ [RsbR.dout, .vk, .ef, .xs] → bandLoad σ hd w D rest (.inl r) = [] := by
+    intro r hr
+    simp only [List.mem_cons, List.not_mem_nil, or_false] at hr
+    rcases hr with rfl | rfl | rfl | rfl <;> rw [hL, f5 _ (by decide)] <;> simp [hτ4, bandFP]
+  refine ⟨⟨?_, ?_, ?_, ?_⟩, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_,
+    ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  · rw [gL _ (by decide) (by decide) (by decide) (by decide) (by decide)]; exact hwn
+  · rw [hL, f5 _ (by decide), f4 _ (by decide), f3 _ (by decide), f2 _ (by decide), vpn]
+    simp
+  · rw [gL _ (by decide) (by decide) (by decide) (by decide) (by decide)]; exact hnn
+  · intro c h1 h2 h3 h4 h5 h6
+    rw [gL _ (by simp) (by simp) (by simp) (by simp) (by simp [bandLB1, bandLA, h5])]
+    exact hF.cm c h1 h2 h3 h4 h5 h6
+  · rw [hL]; exact edst
+  · rw [hL, emsk, vx4]
+    simp [hτ2, bandFB2a, bvx, preMaskE_map hA3]
+  · rw [hL, esmwn, vx4]
+    simp [hτ2, bandFB2a, bvx, tblPairs_csyms]
+  · rw [hL, ebx, vx4]
+    simp [hτ2, bandFB2a, bvx, tblPairs_csyms]
+  · rw [hL, f5 _ (by decide)]; simp [hτ4, bandFP]
+  · rw [hL, f5 _ (by decide)]; simp [hτ4, bandFP]
+  · rw [hL, f5 _ (by decide)]; simp [hτ4, bandFP]
+  · rw [hL, f5 _ (by decide), f4 _ (by decide)]
+    simp only [hτ3, bandFB2b, bandScrL]
+    have hdsc : ∀ d : ℤ, tdivN (5 * D.p) ((⟨d, 0⟩ : GaussianInt) * ⟨2 ^ (9 * D.p), 0⟩) =
+        ⟨d * 2 ^ (4 * D.p), 0⟩ := fun d => tdivN_dscale D.p d
+    simp [bandDl, rsbArr, List.map_map, Function.comp_def, hdsc, PreAxB.bP, rsbReal]
+  · rw [hL, f5 _ (by decide), f4 _ (by decide), f3 _ (by decide)]
+    simp [hτ2, bandFB2a]
+  · rw [hL, etswn, vx4]; simp [hτ2, bandFB2a, bvx]
+  · rw [hL, em2wn, vx4]; simp [hτ2, bandFB2a, bvx]
+  · rw [hL, ekn, vx4]; simp [hτ2, bandFB2a, bvx]
+  · rw [hL, f5 _ (by decide), f4 _ (by decide), f3 _ (by decide), f2 _ (by decide), vsn]
+    simp
+  · rw [hL, f5 _ (by decide)]
+    simp only [hτ4, bandFP, Function.update_apply, Sum.inl.injEq, reduceCtorEq, ite_true, ite_false]
+    simp only [List.length_append, PreAxB.bB]
+    rw [f3 (.cm .wn) (by decide), f2 _ (by decide), f1 _ (by decide), hwn,
+      f3 .m2wn (by decide), f2 _ (by decide), vm2wn]
+    simp; ring
+  · rw [hL, f5 _ (by decide)]
+    simp only [hτ4, bandFP, Function.update_apply, Sum.inl.injEq, reduceCtorEq, ite_true, ite_false]
+    rw [f3 _ (by decide), f2 _ (by decide), vms]; simp
+  · rw [hL]; exact ems
+  all_goals first
+    | (exact dL _ (by decide))
+    | (exact zL _ (by decide) (by decide) (by decide))
+    | (rw [hL]; exact eac2)
+    | (rw [gL _ (by decide) (by decide) (by decide) (by decide) (by decide)]
+       first
+         | exact hF.sr | exact hF.sel | exact hF.nv | exact hF.tK | exact hF.tC | exact hF.pr
+         | exact hF.xa)
+
+end Cfg
+
 end
 
 end IntegerMultBounds.MathlibTM2.Fast
