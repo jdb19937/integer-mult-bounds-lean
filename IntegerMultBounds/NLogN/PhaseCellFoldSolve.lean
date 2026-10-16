@@ -3,6 +3,7 @@ module
 public import IntegerMultBounds.NLogN.PhaseCellBandSolve
 public import IntegerMultBounds.NLogN.PhaseCellFold
 public import IntegerMultBounds.NLogN.NewtonRecip
+public import IntegerMultBounds.NLogN.SchurCongr
 
 /-! The machine-faithful band solve of the actual rounded matrix in folded
 order, where the factors are an ordinary band of half width `2w+1`. -/
@@ -115,5 +116,50 @@ theorem bandSolveN_fold (hst : s<t) {α d : ℝ} (hα : 0<α)
   have e : 3*(η*(1+60*3/β^2))=3*η+3*(180*η/β^2) := by ring
   have h0 : 0≤180*η/β^2 := by positivity
   rw [e]; linarith
+
+/-- The tape machine's multiplier rule: entry times the Newton reciprocal of the
+pivot, rounded, with no range test. -/
+noncomputable def machMul (rd : ℝ → ℝ) (K : ℕ) (a c : ℝ) : ℝ := rd (a*NewtonRecip.newtonR rd c K)
+
+/-- The tape machine's band solve error: the unguarded Newton rules agree with
+the guarded ones on every pivot and entry the elimination meets, so the bound
+of `bandSolveN_fold` holds for the machine rules. -/
+theorem bandSolveMach_fold (hst : s<t) {α d : ℝ} (hα : 0<α)
+    (p u : ℕ) (hp : 2≤p) (hwidth : 8*p≤2^u) (hαu : α^2=(u : ℝ))
+    (hθ : 1/(4*(p : ℝ))≤(t : ℝ)/s-1)
+    (hgap : (1 : ℝ)/4≤d*((t : ℝ)/s-1)) (hbudget : α^2*d≤p)
+    (rd : ℝ → ℝ) (η : ℝ) (hrd : ∀ x, |rd x-x|≤η) (hrd0 : rd 0=0)
+    (β : ℝ) (hβ : 0<β) (hβp : β≤1/(8*(p : ℝ))/2) (hηβ : 5*η≤2*(β/4)/9) (K : ℕ)
+    (hK : (1-β/4/2)^(2^K)≤3*(5*η)/(β/4))
+    (hsmall : 2^16*(p : ℝ)^2*(s : ℝ)^2*(η*(1+60*3/β^2))≤1)
+    (x b : ZMod s → ℝ) (hx : Matrix.mulVec (realMatrix s t p u) x=b) (hb : ∀ i, |b i|≤1/2)
+    (j : ZMod s) :
+    |bandSolveG rd (machMul rd K) (fun c => NewtonRecip.newtonR rd c K)
+        (realMatrix s t p u) univ (foldOrder s) b j-x j|≤
+      62000*(p : ℝ)^3*(s : ℝ)^2*(η*(1+60*3/β^2)) := by
+  have hpR : (2 : ℝ)≤p := by exact_mod_cast hp
+  have hs1 : (1 : ℝ)≤s := by exact_mod_cast Nat.one_le_iff_ne_zero.mpr (NeZero.ne s)
+  have hη : 0≤η := le_trans (abs_nonneg _) (hrd 0)
+  have hext : 0≤η*(60*3/β^2) := by positivity
+  have hle : η≤η*(1+60*3/β^2) := by nlinarith
+  have hrd' : ∀ x, |rd x-x|≤η*(1+60*3/β^2) := fun x => (hrd x).trans hle
+  have hμ : (0 : ℝ)<1/(8*(p : ℝ)) := by positivity
+  have hA := matrix_gap s t hst hα p u hp hwidth hαu hθ hgap hbudget
+  have hinv : StageInv (realMatrix s t p u) univ (1/(8*(p : ℝ))) 2 :=
+    ⟨hA, fun i _ => row_mass s t hst hα p u hp hwidth hαu hθ hgap hbudget i⟩
+  have hcard : ((univ : Finset (ZMod s)).card : ℝ)≤s := by simp [ZMod.card]
+  have hlen := foldOrder_length s
+  obtain ⟨hm', hmu', -, -, -⟩ := bandM_arith (p : ℝ) (s : ℝ) _ hpR hs1 (by positivity) hsmall
+  rw [bandSolveG_congr rd (NewtonRecip.recipMul rd 3 β K) (η*(1+60*3/β^2)) hrd'
+    (NewtonRecip.recipMul_err rd η hrd 3 β (by norm_num) hβ hηβ K hK) (machMul rd K)
+    (NewtonRecip.recipNewton rd β K) _ (realMatrix s t p u) univ (1/(8*(p : ℝ))) 2 3 s hμ
+    (by norm_num) (by norm_num) hinv hcard (foldOrder s) (foldOrder_toFinset s)
+    (by rw [hlen]; exact hm') (by rw [hlen]; exact hmu')
+    (fun a c ha hc hc3 => by
+      simp only [machMul, NewtonRecip.recipMul, hβp.trans hc, hc3, ha, and_self, ite_true])
+    (fun c hc hc3 => by
+      simp only [NewtonRecip.recipNewton, hβp.trans hc, hc3, and_self, ite_true]) b]
+  exact bandSolveN_fold s t hst hα p u hp hwidth hαu hθ hgap hbudget rd η hrd hrd0 β hβ hβp hηβ K
+    hK hsmall x b hx hb j
 
 end IntegerMultBounds.NLogN.PhaseCellMatrix

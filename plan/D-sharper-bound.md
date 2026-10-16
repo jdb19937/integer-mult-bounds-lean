@@ -1871,3 +1871,13 @@ rounds the product and subtracts exactly (`relim`), as fixed-point records do.
 reciprocals (`recipMul`, `recipNewton`): on the phase-cell matrix in folded
 order the error is at most `62000 p³ s² η(1+180/β²)` for a Newton floor
 `β ≤ 1/(16p)`. Guarded checks and standard-axiom audits pass.
+
+The tape machine may use unguarded Newton rules: `bandSolveG_congr`
+(`SchurCongr`) shows two rules agreeing on entries of size at most `M` and
+pivots in `[μ/2, M]` give the same solve, so `bandSolveMach_fold` bounds the
+machine rules (`machMul`, raw `newtonR`) by the same `62000 p³ s² η(1+180/β²)`.
+`SchurStages` reads the factors of the natural order off the stage matrices
+(`lur_range`) and relabels factors by an injection (`lur_map`, for the folded
+order). `SchurWindow` is the real-valued sliding-window factorization: a window
+of `B+1` rows on `2B+1` columns, one step per pivot, and `factorRows_run` shows
+the run emits each stage's eliminated column and pivot row.
