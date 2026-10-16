@@ -1729,3 +1729,10 @@ that keeps the unit disk and is within `εJ` of `J(v/2)` yields `hB'`/`hB'1`
 with error `6+εJ`, and `B₀(J/2^j)=B₀(J)/2^j`. A phase-cell solve of `N` scaled
 by `2^-j` therefore enters the existing source-error theorem unchanged. The
 guarded check and3-declaration standard-axiom audit pass.
+
+A small-gap computed inverse within `e` of `L(v/2)/2^j`, where `L` inverts
+the rounded operator within `δ₀` of the exact inverse (`‖J‖≤4p`, `4p≤2^j`),
+now gives the pipeline `B̃₀` interface for the normalized factorization target
+`B₀(J)/2^j` with error `6+2^p(e+δ₀/2)`. With the four-step error bounds this
+reduces the new inverse line map to its concrete rounded computation. The
+guarded check and2-declaration standard-axiom audit pass.
