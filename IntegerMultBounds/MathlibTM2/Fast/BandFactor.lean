@@ -1622,7 +1622,9 @@ theorem band_axisPrep_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r 
         (⟨Mult.BandFactor.newtonZ P (facPiv (facState P K rows inputs j)) K, 0⟩ : GaussianInt)) ∧
       σ' .src = SRC ∧ (σ' .m2n).length = k + 1 ∧ (σ' .mwn).length = (k + 1) * w ∧
       (σ' .sn).length = s ∧ σ' .dout = [] ∧ σ' .vk = [] ∧ σ' .ef = [] ∧ σ' .xs = [] ∧
-      (σ' .kn).length = s * (k + 1) ∧ σ' .ms = σ .dst ∧ RsbReady σ' w P ∧
+      (σ' .kn).length = s * (k + 1) ∧ σ' .ms = σ .dst ∧ σ' .m2n = σ .ms ∧
+      σ' .kn = (List.replicate s (σ .ms)).flatten ∧ σ' .mwn = σ (.cm .wn) ++ σ .m2wn ∧
+      RsbReady σ' w P ∧
       ∀ r, r ∉ ([.src, .hf, .df, .dout, .bo, .vk, .m2n, .kn, .ms, .mwn, .ef, .xs] : List RsbR) →
         σ' r = σ r := by
   have hwn := hready.wn
@@ -1701,7 +1703,8 @@ theorem band_axisPrep_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r 
   refine ⟨_, (RsbRuns.seq hdisj h₁ (RsbRuns.seq hdisj h₂ h₃)).mono (le_of_eq rfl), by simp [σ₂], by simp,
     by simp [σ₂, σ₁], by simp [σ₂, σ₁], by simp [σ₂, σ₁, hms], by simp [σ₂, σ₁, hwn, hm2wn]; ring,
     by simp [σ₂, σ₁, hsn], by simp [σ₂, σ₁], by simp [σ₂, σ₁], by simp [σ₂, σ₁, hef],
-    by simp [σ₂, σ₁, hxs], by simp [σ₂, σ₁, hms], by simp [σ₂, σ₁], ⟨by simp [σ₂, σ₁, hwn], by simp [σ₂, σ₁, hready.pn],
+    by simp [σ₂, σ₁, hxs], by simp [σ₂, σ₁, hms], by simp [σ₂, σ₁], by simp [σ₂, σ₁],
+    by simp [σ₂, σ₁], by simp [σ₂, σ₁], ⟨by simp [σ₂, σ₁, hwn], by simp [σ₂, σ₁, hready.pn],
       by simp [σ₂, σ₁, hready.nn], fun c h1 h2 h3 h4 h5 h6 => by
         simp [σ₂, σ₁, hready.empty c h1 h2 h3 h4 h5 h6]⟩, fun r hr => ?_⟩
   cases r <;> simp [σ₂, σ₁] at hr ⊢
