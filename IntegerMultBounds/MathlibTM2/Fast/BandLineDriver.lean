@@ -274,4 +274,113 @@ theorem band_linePass_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r 
 
 end Contracts
 
+/-- Extra registers of the banded line: the scaled diagonal table and the padding counter. -/
+inductive BandX
+  | dtab
+  | padc
+  deriving DecidableEq
+
+section Out
+
+variable (rg : RsbR ⊕ BandX → Fin T) {ι : Fin 64 → Fin T} (hι : Function.Injective ι) (hT : 64 ≤ T)
+  (hQ : SS.states ≤ Q)
+
+/-- The output phase: unfold, scale by the constant on `bx`, multiply by the diagonal table,
+move onto `dst` and pad with `t - s` zero records. -/
+noncomputable def bandLineOutP : Pr P T Q A U :=
+  .seq (bandUnfoldLineP (rg ∘ Sum.inl)) (.seq (bandScaleP (rg ∘ Sum.inl) hι hT hQ .sel .bx .hv)
+  (.seq (copyR (rg (.inr .dtab)) (rg (.inl .ac2)) (rg (.inl .tC)) id)
+  (.seq (moveR (rg (.inl .ac2)) (rg (.inl .ef)) id)
+  (.seq (cmulStream (rsbCr (rg ∘ Sum.inl) .hv .ef .dout) (rmulOne ι hι hT hQ (rsbCr (rg ∘ Sum.inl) .hv .ef .dout)))
+  (.seq (emptyR (rg (.inl .hv))) (.seq (emptyR (rg (.inl .ef)))
+  (.seq (moveR (rg (.inl .dout)) (rg (.inl .dst)) id)
+  (umulSym 1 (pairSym A false false) (rg (.inr .padc)) (rg (.inl .dst)) (rg (.inl .tC))))))))))
+
+end Out
+
+section OutContract
+
+variable {body : P → Pr P T Q A U} {ι : Fin 64 → Fin T}
+
+/-- **The output phase of a line.** -/
+theorem band_lineOut_runs (rg : RsbR ⊕ BandX → Fin T) (hrg : Function.Injective rg)
+    (hdisj : ∀ r j, rg r ≠ ι j) (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ : SS.states ≤ Q)
+    (hA : 96 ≤ A) {w P s t : ℕ} (σ : RsbR → List (Fin (A + 4))) (τ : BandX → List (Fin (A + 4)))
+    (hready : RsbReady σ w P) (hw : 1 ≤ w) (hp : P ≤ w) (x : List GaussianInt) (hxl : x.length = s)
+    (cout : ℤ) (Dl : List ℤ) (hDl : Dl.length = s)
+    (hfx : ∀ a ∈ Mult.BandFactor.unfoldList x, Fits w a) (hfc : Fits w (⟨cout, 0⟩ : GaussianInt))
+    (hfu : ∀ a ∈ Mult.BandFactor.unfoldList x, Fits w (tdivN P (a * ⟨cout, 0⟩)))
+    (hfD : ∀ d ∈ Dl, Fits w (⟨d, 0⟩ : GaussianInt))
+    (hdout : σ .dout = cstream A w x) (hm2wn : (σ .m2wn).length = s / 2)
+    (hkn : (σ .kn).length = (s + 1) / 2 - s / 2) (hbx : σ .bx = csyms A w ⟨cout, 0⟩)
+    (hdtab : τ .dtab = cstream A w (Dl.map fun d => (⟨d, 0⟩ : GaussianInt)))
+    (hpadc : (τ .padc).length = (t - s) * w)
+    (hsel : σ .sel = []) (hya : σ .ya = []) (hxs : σ .xs = []) (htK : σ .tK = []) (htC : σ .tC = [])
+    (hac2 : σ .ac2 = []) (hhv : σ .hv = []) (hef : σ .ef = []) :
+    ∃ b, RsbRuns body rg ι (bandLineOutP rg hι hT hQ) (Sum.elim σ τ)
+      (Sum.elim (Function.update (Function.update σ .dout []) .dst
+        ((cstream A w (List.zipWith (fun a b => tdivN P (a * b))
+          ((Mult.BandFactor.unfoldList x).map fun a => tdivN P (a * ⟨cout, 0⟩))
+          (Dl.map fun d => (⟨d, 0⟩ : GaussianInt)) ++ List.replicate (t - s) 0)).reverse ++ σ .dst)) τ) b := by
+  set rgR := rg ∘ (Sum.inl : RsbR → RsbR ⊕ BandX)
+  have hrgR : Function.Injective rgR := hrg.comp Sum.inl_injective
+  have hdisjR : ∀ r j, rgR r ≠ ι j := fun r j => hdisj _ j
+  have hwn := hready.wn
+  obtain ⟨b₁, h₁⟩ := band_unfoldLine_runs (body := body) (ι := ι) hrgR hdisjR (w := w) σ x hdout
+    (by rw [hm2wn, hxl]) (by rw [hkn, hxl]) hwn hsel hya hxs htK htC hac2
+  set σ₁ := Function.update (Function.update σ .dout []) .sel (cstream A w (Mult.BandFactor.unfoldList x))
+  have hready₁ : RsbReady σ₁ w P :=
+    (hready.update .dout (fun c => by simp) _).update .sel (fun c => by simp) _
+  have h₂ := band_scale_runs (body := body) (ι := ι) hrgR hdisjR hι hT hQ hA (x := .sel) (y := .bx)
+    (o := .hv) ⟨by decide, by decide, by decide, fun _ => ⟨by simp, by simp, by simp⟩⟩ σ₁ hready₁ hw hp
+    (Mult.BandFactor.unfoldList x) cout hfx hfc (by simp [σ₁]) (by simp [σ₁, hbx]) (by simp [σ₁, hhv])
+  set u := (Mult.BandFactor.unfoldList x).map fun a => tdivN P (a * ⟨cout, 0⟩)
+  set σ₂ := Function.update (Function.update σ₁ .hv (cstream A w u)) .sel []
+  have h₃ := rsb_copyR_runs (body := body) (ι := ι) hrg (a := .inr .dtab) (b := .inl .ac2)
+    (t := .inl .tC) (by simp) (by simp) (by simp) (Sum.elim σ₂ τ) (by simp [σ₂, σ₁, htC])
+  rw [update_elim_inl] at h₃
+  set σ₃ := Function.update σ₂ .ac2 ((Sum.elim σ₂ τ (.inr .dtab)).reverse ++ Sum.elim σ₂ τ (.inl .ac2))
+  have h₄ := (rsb_moveR_runs (body := body) (ι := ι) (rg := rgR) hrgR (a := .ac2) (b := .ef) (by decide)
+    σ₃).lift hrg τ
+  set σ₄ := Function.update (Function.update σ₃ .ac2 []) .ef ((σ₃ .ac2).reverse ++ σ₃ .ef)
+  have hready₄ : RsbReady σ₄ w P := by
+    simp only [σ₄, σ₃, σ₂]
+    exact ((((hready₁.update .hv (fun c => by simp) _).update .sel (fun c => by simp) _).update .ac2
+      (fun c => by simp) _).update .ac2 (fun c => by simp) _).update .ef (fun c => by simp) _
+  have hu : ∀ a ∈ u, Fits w a := by
+    intro a ha; obtain ⟨b, hb, rfl⟩ := List.mem_map.mp ha; exact hfu b hb
+  have h₅ := (rsb_rmulStream_runs (body := body) (rg := rgR) hrgR hdisjR hι hT hQ hA (x := .hv) (y := .ef)
+    (o := .dout) ⟨by decide, by decide, by decide, fun _ => ⟨by simp, by simp, by simp⟩⟩ (ρ := σ₄)
+    hready₄ hw hp u (Dl.map fun d => (⟨d, 0⟩ : GaussianInt)) (by simp [u, hDl, hxl, Mult.BandFactor.unfoldList,
+      Mult.BandFactor.length_evens, Mult.BandFactor.length_odds]; omega) hu
+    (by intro a ha; obtain ⟨d, hd, rfl⟩ := List.mem_map.mp ha; exact ⟨hfD d hd, rfl⟩)
+    (by simp [σ₄, σ₃, σ₂]) (by simp [σ₄, σ₃, σ₂, σ₁, hdtab, hac2, hef])).lift hrg τ
+  set σ₅ := Function.update σ₄ .dout
+    (cstream A w (List.zipWith (fun a b => tdivN P (a * b)) u (Dl.map fun d => (⟨d, 0⟩ : GaussianInt)))
+      ++ σ₄ .dout)
+  have h₆ := (rsb_emptyR_runs (body := body) (ι := ι) hrgR .hv σ₅).lift hrg τ
+  set σ₆ := Function.update σ₅ .hv []
+  have h₇ := (rsb_emptyR_runs (body := body) (ι := ι) hrgR .ef σ₆).lift hrg τ
+  set σ₇ := Function.update σ₆ .ef []
+  have h₈ := (rsb_moveR_runs (body := body) (ι := ι) hrgR (a := .dout) (b := .dst) (by decide) σ₇).lift hrg τ
+  set σ₈ := Function.update (Function.update σ₇ .dout []) .dst ((σ₇ .dout).reverse ++ σ₇ .dst)
+  have h₉ := rsb_umulSym_runs (body := body) (ι := ι) hrg (pairSym A false false) (c := .inr .padc)
+    (a := .inl .dst) (t := .inl .tC) (by simp) (by simp) (by simp) (Sum.elim σ₈ τ)
+    (by simp [σ₈, σ₇, σ₆, σ₅, σ₄, σ₃, σ₂, σ₁, htC])
+  rw [update_elim_inl] at h₉
+  refine ⟨_, (RsbRuns.seq hdisj (h₁.lift hrg τ) (RsbRuns.seq hdisj (h₂.lift hrg τ) (RsbRuns.seq hdisj h₃
+    (RsbRuns.seq hdisj h₄ (RsbRuns.seq hdisj h₅ (RsbRuns.seq hdisj h₆ (RsbRuns.seq hdisj h₇
+    (RsbRuns.seq hdisj h₈ h₉)))))))).congr ?_⟩
+  have hz : (cstream A w (List.zipWith (fun a b => tdivN P (a * b)) u
+      (Dl.map fun d => (⟨d, 0⟩ : GaussianInt)) ++ List.replicate (t - s) 0)).reverse =
+      List.replicate ((t - s) * w) (pairSym A false false) ++
+        (cstream A w (List.zipWith (fun a b => tdivN P (a * b)) u
+          (Dl.map fun d => (⟨d, 0⟩ : GaussianInt)))).reverse := by
+    rw [reverse_cstream_append, cstream_replicate_zero, List.reverse_replicate]
+  rw [hz, List.append_assoc]
+  congr 1
+  funext x; cases x <;> simp [σ₈, σ₇, σ₆, σ₅, σ₄, σ₃, σ₂, σ₁, hpadc, hhv, hef, hsel, hac2]
+
+end OutContract
+
 end IntegerMultBounds.MathlibTM2.Fast

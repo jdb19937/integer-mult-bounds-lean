@@ -36,4 +36,18 @@ theorem RsbRuns.lift {rg : R ⊕ X → Fin T} (hrg : Function.Injective rg) {p :
       exact hs (.inr x)
   · exact hfr.2.2.2 k (fun r e => hk (.inl r) e)
 
+theorem update_elim_inl [DecidableEq R] [DecidableEq X] {L : Type} (σ : R → L) (τ : X → L) (r : R) (v : L) :
+    Function.update (Sum.elim σ τ) (.inl r) v = Sum.elim (Function.update σ r v) τ := by
+  funext z
+  cases z with
+  | inl a => by_cases h : a = r <;> simp [Function.update_apply, h]
+  | inr x => simp [Function.update_apply]
+
+theorem update_elim_inr [DecidableEq R] [DecidableEq X] {L : Type} (σ : R → L) (τ : X → L) (x : X) (v : L) :
+    Function.update (Sum.elim σ τ) (.inr x) v = Sum.elim σ (Function.update τ x v) := by
+  funext z
+  cases z with
+  | inl a => simp [Function.update_apply]
+  | inr y => by_cases h : y = x <;> simp [Function.update_apply, h]
+
 end IntegerMultBounds.MathlibTM2.Fast
