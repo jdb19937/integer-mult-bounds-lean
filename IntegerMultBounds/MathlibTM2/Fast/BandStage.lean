@@ -356,6 +356,88 @@ theorem band_axis_loaded (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ : SS.
 
 end Contract
 
+/-! ### The configured register files of the stage -/
+
+section StageDefs
+
+open IntegerMultBounds.MathlibTM2.Mult.Pipeline IntegerMultBounds.MathlibTM2.Mult.Sizes
+
+instance preDB_neZero_s (n W : ℕ) (hd0 : 0 < d n) (k : ℕ) : NeZero (preDB n W hd0 k).s :=
+  neZero_s n _
+
+instance preDB_neZero_t (n W : ℕ) (hd0 : 0 < d n) (k : ℕ) : NeZero (preDB n W hd0 k).t :=
+  neZero_t n _
+
+/-- The register file configured for step `k` of the band stage. -/
+def bandCfgB (σ₀ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (hd : Fin 5 → Fin t₀)
+    (n w W : ℕ) (hd0 : 0 < d n) (rest : List (Fin (prime + K + 4))) :
+    ℕ → RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))
+  | 0 => bandLoad σ₀ hd w (preDB n W hd0 0) (preRecsB n W hd0 1 ++ rest)
+  | k + 1 => bandLoad (bandCfgB σ₀ hd n w W hd0 rest k) hd w (preDB n W hd0 (k + 1))
+      (preRecsB n W hd0 (k + 2) ++ rest)
+
+/-- The step bound of the band loader at step `k`. -/
+def bandCpB (T : ℕ) (σ₀ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (hd : Fin 5 → Fin t₀)
+    (n w W : ℕ) (hd0 : 0 < d n) (rest : List (Fin (prime + K + 4))) : ℕ → ℕ
+  | 0 => bandPreCost T σ₀ hd w (preDB n W hd0 0) (preRecsB n W hd0 1 ++ rest)
+  | k + 1 => bandPreCost T (bandCfgB σ₀ hd n w W hd0 rest k) hd w (preDB n W hd0 (k + 1))
+      (preRecsB n W hd0 (k + 2) ++ rest)
+
+/-- A base register file for the band stage. -/
+structure BandBase (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (w : ℕ) (hd : Fin 5 → Fin t₀) :
+    Prop where
+  free : BandPreFree σ
+  wn : (σ (.inl (.cm .wn))).length = w
+  nn : (σ (.inl (.cm .nn))).length = IntegerMultBounds.Schoenhage.Schedule.topN w
+  bank : ∀ j, (∀ k, reg (hd k) ≠ j) → σ (.inr (.sw j)) = []
+  xt : σ (.inr .xt) = []
+  e1 : σ (.inr .e1) = []
+  e2 : σ (.inr .e2) = []
+
+lemma BandBase.load {σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))} {w : ℕ}
+    {hd : Fin 5 → Fin t₀} (h : BandBase σ w hd) (hA3 : 3 ≤ prime + K) (D : PreAxB) [NeZero D.s]
+    (rest : List (Fin (prime + K + 4))) : BandBase (bandLoad σ hd w D rest) w hd := by
+  have c := bandLoad_cfg σ hd D rest w h.free h.wn h.nn hA3
+  refine ⟨bandLoad_free h.free hd w D rest h.wn h.nn hA3, c.ready.wn, c.ready.nn, fun j hj => ?_,
+    by rw [bandLoad_xt _ _ _ _ _ _ (Or.inl rfl)]; exact h.xt,
+    by rw [bandLoad_xt _ _ _ _ _ _ (Or.inr (Or.inl rfl))]; exact h.e1,
+    by rw [bandLoad_xt _ _ _ _ _ _ (Or.inr (Or.inr rfl))]; exact h.e2⟩
+  rw [bandLoad_sw]
+  split_ifs with hk
+  · exact absurd hk (fun ⟨k, e⟩ => hj k e)
+  · exact h.bank j hj
+
+variable {σ₀ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))} {hd : Fin 5 → Fin t₀} {n w W : ℕ}
+  {hd0 : 0 < d n} {rest : List (Fin (prime + K + 4))}
+
+lemma bandCfgB_base (h : BandBase σ₀ w hd) (hA3 : 3 ≤ prime + K) :
+    ∀ k, BandBase (bandCfgB σ₀ hd n w W hd0 rest k) w hd
+  | 0 => h.load hA3 _ _
+  | k + 1 => (bandCfgB_base h hA3 k).load hA3 _ _
+
+lemma bandCfgB_prm (k : ℕ) :
+    bandCfgB σ₀ hd n w W hd0 rest k (.inl .prm) = preRecsB n W hd0 (k + 1) ++ rest := by
+  cases k <;> exact bandLoad_prm _ _ _ _ _
+
+lemma bandCfgB_sw (h : BandBase σ₀ w hd) (hA3 : 3 ≤ prime + K) (k : ℕ) (j : Fin (swapT t₀)) :
+    bandCfgB σ₀ hd n w W hd0 rest k (.inr (.sw j)) = rsbBank hd (preHsB n w hd0 (rsbAx hd0 k)) j := by
+  have e : ∀ σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4)), (∀ j, (∀ k, reg (hd k) ≠ j) →
+      σ (.inr (.sw j)) = []) → ∀ (D : PreAxB) [NeZero D.s] (r : List (Fin (prime + K + 4))),
+      D.hs w = preHsB n w hd0 (rsbAx hd0 k) →
+      bandLoad σ hd w D r (.inr (.sw j)) = rsbBank hd (preHsB n w hd0 (rsbAx hd0 k)) j := by
+    intro σ hσ D _ r hD
+    rw [bandLoad_sw]
+    split_ifs with hj
+    · rw [hD]
+    · have hj' : ∀ k, reg (hd k) ≠ j := fun k e => hj ⟨k, e⟩
+      rw [hσ j hj', rsbBank_other _ hj']
+  cases k with
+  | zero => exact e σ₀ h.bank _ _ rfl
+  | succ k => exact e _ (bandCfgB_base (n := n) (W := W) (hd0 := hd0) (rest := rest) h
+      hA3 k).bank _ _ rfl
+
+end StageDefs
+
 end
 
 end IntegerMultBounds.MathlibTM2.Fast
