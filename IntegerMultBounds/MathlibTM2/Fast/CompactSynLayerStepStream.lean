@@ -79,8 +79,7 @@ theorem compactSynLayerStep_eventually_exec_stream (hQ : compactRuntimeStates≤
   filter_upwards [compactSynLayerStep_eventually_exec_Hl (Q := Q) (Ka := Ka) (U := U) hQ hA hA9 hNW] with M hexec
   intro ds hd hgate es ℓ W l h p
   dsimp only
-  intro hdpos hKpos hchunk H hcap hD haddr ha hprecision hrun hwrun hW
-  intro v L hv P₀ Y hY R hlegacy hblank hdepth hguard
+  intro hdpos hKpos hchunk H hcap hD haddr ha hprecision hrun hwrun hW v L hv P₀ Y hY R hlegacy hblank hdepth hguard
   have hn : Mult.Sizes.K M*((h-layB ℓ (Mult.Sizes.K M))/Mult.Sizes.K M*es.length)+
       Mult.Sizes.K M*(es.length-CompactGlobalRowPadding.rowAxes NW m (Mult.Sizes.d M))≤es.sum := by
     exact (Nat.add_le_add_left (Nat.mul_le_mul_left _ (Nat.sub_le _ _)) _).trans haddr

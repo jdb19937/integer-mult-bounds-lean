@@ -259,9 +259,7 @@ theorem mn_params_exec {x y N : ℕ} (hN : 2 ≤ N) (hA : 4 ≤ A) (v : HS mnT m
   have husT : ∀ z ∈ (mnUs : List (Fin pmNV × Fin mnT)), z.2 ≠ mnIo .oT := by simp [mnUs]
   have husS : ∀ z ∈ (mnUs : List (Fin pmNV × Fin mnT)), z.2 ≠ mnIo .oS := by simp [mnUs]
   have hnd : ((mnUs : List (Fin pmNV × Fin mnT)).map Prod.snd).Nodup := by
-    have := mn_nodup_map (l := [.io .dbn, .io .dpn, .io .dsn, .rnd .bn, .rnd .pn, .out .br])
-      (by simp)
-    simpa [mnUs] using this
+    simp [mnUs]
   obtain ⟨v', St', m, -, hm, e, hinp, hout, hL, hvar, hwr, hwn, hacc, hz, hoT, hoS, hus', hfr⟩ :=
     pmParams_exec (body := body) (rg := mnPm) hA (fun _ _ h => MnR.pm.inj (mnRg_inj h))
       (fun r => mn_rg_ne' _ _) (fun r => mn_rg_ne' _ _) (fun r => mn_rg_ne' _ _) (mn_rg_ne' _ _)

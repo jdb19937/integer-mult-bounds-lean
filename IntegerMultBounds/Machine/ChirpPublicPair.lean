@@ -51,11 +51,9 @@ theorem runs_pair (rulerBits real imaginary : List Bool)
   rw [appended] at imaginaryRun
   have sourceEnd : origin+real.length+imaginary.length=origin+2*rulerBits.length := by
     rw [realWidth,imaginaryWidth]
-    push_cast
     ring
   have destinationEnd : destinationHead+real.length+1+imaginary.length+1=destinationHead+2*(rulerBits.length+1) := by
     rw [realWidth,imaginaryWidth]
-    push_cast
     ring
   rw [sourceEnd,destinationEnd] at imaginaryRun
   unfold program

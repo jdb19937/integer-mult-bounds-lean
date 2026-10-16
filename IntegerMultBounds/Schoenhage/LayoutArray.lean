@@ -216,7 +216,7 @@ theorem moveAfter_split {k : ℕ} {s : α} {ord : List α} (hnd : ord.Nodup) (hs
   · simp only [moveAfter, hXR, List.erase_append_right _ hsX, List.erase_cons_head]
   · simp only [moveParams, hXR, List.idxOf_append_of_notMem hsX, List.idxOf_cons_self,
       List.length_append, List.length_cons]
-    ext <;> simp <;> omega
+    ext <;> simp
 
 theorem moveAfter_perm {k : ℕ} {s : α} {ord : List α} (hnd : ord.Nodup) (hs : s ∈ ord.drop k) :
     (moveAfter k s ord).Perm ord := by
@@ -282,7 +282,7 @@ theorem split_two {γ : Type*} (L : List γ) {u v : ℕ} (huv : u < v) (hv : v <
   intro n h1 h2
   simp only [List.getElem_append, List.length_take, List.getElem_cons, List.length_drop,
     List.getElem_take, List.getElem_drop]
-  split_ifs <;> first | rfl | (congr 1; omega) | omega
+  split_ifs <;> first | rfl | (congr 1; omega)
 
 /-- The index map exchanging `u` and `v`. -/
 def swapIdx (u v n : ℕ) : ℕ := if n = u then v else if n = v then u else n

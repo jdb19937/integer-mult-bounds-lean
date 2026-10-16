@@ -29,8 +29,7 @@ theorem gslot_injective : Function.Injective (gslot tL nL) := by
   have hx := x.isLt; have hy := y.isLt
   change x.val < 91 at hx; change y.val < 91 at hy
   unfold gslot at e'
-  split_ifs at e' with h1 h2 h2 <;> simp [pt, drv] at e' <;> first | (subst_vars; rfl) | omega |
-    exact Fin.ext (by omega)
+  split_ifs at e' with h1 h2 h2 <;> simp [pt, drv] at e' <;> first | (subst_vars; rfl) | omega
 
 /-- The decoder's start: the header on its header tape, every other tape empty. -/
 def decStart (hdr : List Bool) : Fin 𝕌 → WTape := fun x => if x = zH then reg hdr else emp

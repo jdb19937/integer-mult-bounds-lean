@@ -69,20 +69,24 @@ noncomputable def oppEnd {ts : List ℕ} {ℓ K : ℕ} (hL : LayoutOK r ts ℓ K
 /-- The zero record. -/
 def zeroRec (r : ℕ) : Rec r := (fun _ => 0, fun _ => 0)
 
+omit [NeZero r] in
 theorem ofFn_getD {N : ℕ} (fs : List (Rec r)) (hl : fs.length = N) :
     List.ofFn (fun y : Fin N => fs.getD y (zeroRec r)) = fs := by
   apply List.ext_getElem (by simp [hl])
   intro i h1 h2
   simp [List.getElem?_eq_getElem h2]
 
+omit [NeZero r] in
 theorem arrayVec_ofFn (p : ℕ) {N : ℕ} (g : ℕ → Rec r) {y : ℕ} (hy : y < N) :
     arrayVec p (List.ofFn fun x : Fin N => g x) y = gridPoly p (g y).1 (g y).2 := by
   simp [arrayVec, hy]
 
+omit [NeZero r] in
 theorem arrayVec_getD_zero (p : ℕ) {fs : List (Rec r)} {y : ℕ} (hy : y < fs.length) :
     gridPoly p (fs.getD y (zeroRec r)).1 (fs.getD y (zeroRec r)).2 = arrayVec p fs y := by
   simp [arrayVec, List.getElem?_eq_getElem hy]
 
+omit [NeZero r] in
 theorem driveCost_le_layout {ts : List ℕ} {ℓ K : ℕ} (hL : LayoutOK r ts ℓ K) {w : ℕ} (hw : 0 < 2 * r * w)
     (z : ℕ → Rec r) :
     driveCost layoutSpec ((layoutOpList ts ℓ K).map (opRec (addrBits ts) (2 * r * w)))

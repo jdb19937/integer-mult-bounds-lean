@@ -27,7 +27,7 @@ theorem prodRec_disk {r : ℕ} [NeZero r] {p : ℕ} {f g : Rec r} (hf : DiskGrid
   have hu : ‖u‖ ≤ 1 := by
     have h1 := (norm_le_pi_norm (negacyclicMul F G) j).trans (norm_negacyclicMul_le F G)
     rw [norm_div, Complex.norm_natCast, div_le_one hr]
-    have hFG : ‖F‖ * ‖G‖ ≤ 1 := mul_le_one₀ hF (norm_nonneg _) hG
+    have hFG : ‖F‖ * ‖G‖ ≤ 1 := (mul_le_mul hF hG (norm_nonneg _) zero_le_one).trans_eq (one_mul 1)
     have := mul_le_mul_of_nonneg_left hFG hr.le
     rw [mul_assoc] at h1
     linarith

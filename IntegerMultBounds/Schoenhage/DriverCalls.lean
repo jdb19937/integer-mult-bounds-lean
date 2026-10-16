@@ -53,8 +53,7 @@ theorem pslot_injective : Function.Injective (pslot tL nL) := by
   have hx := x.isLt; have hy := y.isLt
   change x.val < 91 at hx; change y.val < 91 at hy
   apply Fin.ext
-  split_ifs at e' <;> (try subst_vars) <;> simp only [Fin.ext_iff] at * <;> first | rfl | omega |
-    (simp at *; omega)
+  split_ifs at e' <;> (try subst_vars) <;> simp only [Fin.ext_iff] at * <;> first | rfl | omega
 
 /-- What the prefix-round machine sees: its five data tapes from named tapes 0–4, all else empty. -/
 def pview (v : Fin 13 → WTape) : Fin 𝕌 → WTape := fun x =>

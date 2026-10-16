@@ -232,7 +232,6 @@ theorem layerCalls_of_meets {LP : LayerParams} {P : TransformParams} (hc : Compa
     refine hk.trans ?_
     rw [hzn]
     push_cast
-    unfold chunkHdr at hhdr
     nlinarith
   unfold layerCL
   exact (Nat.cast_le (α := ℝ)).mp (hX.trans (Nat.le_ceil _))

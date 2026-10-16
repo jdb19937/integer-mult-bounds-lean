@@ -81,8 +81,8 @@ theorem words_of_tape {T T' : WTape} (h : T.tape (a := a) = T'.tape) : T.words =
 
 theorem split_clen : ∀ (A B A' B' : List (List Bool)), A ++ B = A' ++ B' → clen A = clen A' → A = A'
   | [], _, [], _, _, _ => rfl
-  | [], _, a' :: A', _, _, hc => by simp at hc <;> omega
-  | a :: A, _, [], _, _, hc => by simp at hc <;> omega
+  | [], _, a' :: A', _, _, hc => by simp at hc; omega
+  | a :: A, _, [], _, _, hc => by simp at hc
   | a :: A, B, a' :: A', B', h, hc => by
     simp only [List.cons_append, List.cons.injEq] at h
     obtain ⟨rfl, h⟩ := h

@@ -36,7 +36,7 @@ theorem transformHeader_length_small {P : TransformParams} {p d ℓ K w : ℕ} {
   have g5 := hdrGamma_le w
   have hts : (ts.map fun t => (gamma t).length).sum ≤ ts.length * (2 * ℓ + 1) :=
     sum_map_le ts _ (fun t ht => by
-      rcases mem_axisLengths hax ht with rfl | rfl <;> rw [hdrGamma_pow] <;> omega)
+      rcases mem_axisLengths hax ht with rfl | rfl <;> rw [hdrGamma_pow]; omega)
   set C := ⌈P.Cl⌉₊
   have hw : 1 ≤ w := by omega
   have hww : w ≤ w * w := Nat.le_mul_of_pos_left _ hw
@@ -75,7 +75,7 @@ theorem gen_arith {p d K l w D n r M H C : ℕ} (hp : p ≤ w) (hd : d ≤ C * w
       _ ≤ r * w * M := by gcongr
   have hMX : M ≤ X := by
     rw [hX]; calc M = 1 * 1 * M := by ring
-      _ ≤ r * w * M := by gcongr <;> omega
+      _ ≤ r * w * M := by gcongr
   have hnMX : n * M ≤ C * X := by
     rw [hX]; calc n * M ≤ C * w * M := Nat.mul_le_mul_right _ hn
       _ = C * (1 * w * M) := by ring
@@ -108,7 +108,7 @@ theorem gen_arith {p d K l w D n r M H C : ℕ} (hp : p ≤ w) (hd : d ≤ C * w
       _ = 12 * (w * w) := by ring
       _ ≤ 12 * X := Nat.mul_le_mul_left _ hwwX
   have q3 : Nat.size w * (Nat.size w + w + 10) ≤ 12 * X := by
-    calc Nat.size w * (Nat.size w + w + 10) ≤ w * (w + w + 10 * w) := by gcongr <;> omega
+    calc Nat.size w * (Nat.size w + w + 10) ≤ w * (w + w + 10 * w) := by gcongr; omega
       _ = 12 * (w * w) := by ring
       _ ≤ 12 * X := Nat.mul_le_mul_left _ hwwX
   have q4 : Nat.size d * (Nat.size d + d + 10) ≤ 12 * (C * C) * X := by

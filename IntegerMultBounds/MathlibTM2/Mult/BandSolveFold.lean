@@ -28,6 +28,7 @@ theorem window_eq_zero {E : Type*} [AddCommMonoid E] (f : ℤ → E) (w : ℕ)
 def wmZ (w : ℕ) (aZ : ZMod s → ℤ → ℤ) (j l : ZMod s) : ℤ :=
   PhaseCellRow.window (fun k => if j+(k : ZMod s)=l then aZ j k else 0) w
 
+omit [NeZero s] in
 theorem wmZ_gv (w : ℕ) (aZ : ZMod s → ℤ → ℤ) (j l : ZMod s) :
     gv P (wmZ s w aZ j l)=windowMatrix s w (fun j k => gv P (aZ j k)) j l := by
   simp only [wmZ, windowMatrix, PhaseCellRow.window, gv]
@@ -66,6 +67,7 @@ theorem image_foldPos : (Finset.univ : Finset (ZMod s)).image (foldPos s)=Finset
   · rintro ⟨a, rfl⟩; exact foldPos_lt s a
   · intro hx; exact ⟨foldAt s x, foldPos_foldAt s x hx⟩
 
+omit [NeZero s] in
 theorem foldOrder_map_foldPos : (foldOrder s).map (foldPos s)=List.range' 0 s := by
   rw [foldOrder, List.map_map, List.range_eq_range']
   conv_rhs => rw [← List.map_id (List.range' 0 s)]

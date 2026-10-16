@@ -442,7 +442,7 @@ theorem crtReverseCleanup_runs {r : CrtReverseReg → Fin T}
   have h₅ := crtClear_runs (body := body) (r .post) R₄
   have h := crtRuns_seq h₁ (crtRuns_seq h₂ (crtRuns_seq h₃ (crtRuns_seq h₄ h₅)))
   convert h using 1 <;> simp [crtReverseCleanup, crtReverseCleanupRegs,
-    crtReverseCleanupCost, R₁, R₂, R₃, R₄, hr.eq_iff] <;> omega
+    crtReverseCleanupCost, R₁, R₂, R₃, R₄, hr.eq_iff]; omega
 
 /-- Stream conservation gives exact recovery, while cleanup leaves the data
 and all unrelated registers unchanged. -/

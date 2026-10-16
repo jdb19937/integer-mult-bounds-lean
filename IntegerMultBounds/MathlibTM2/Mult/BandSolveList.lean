@@ -209,6 +209,7 @@ theorem lcols_eq : (cols (LzN P K s AZ) (List.range' 0 s)).map (padCol B)=
     simp [mulZ]
 
 include hP hA in
+omit hout in
 /-- Multiplier columns vanish beyond the band. -/
 theorem banded_LzN : Banded B (LzN P K s AZ) (List.range' 0 s) := by
   suffices h : ∀ a n, Banded B (LzN P K s AZ) (List.range' a n) from h 0 s
@@ -262,6 +263,7 @@ theorem getD_range'_map {α : Type*} (f : ℕ → α) (a n i : ℕ) (d : α) (hi
     ((List.range' a n).map f).getD i d=f (a+i) := by
   simp [List.getD_eq_getElem?_getD, hi]
 
+omit hout in
 /-- The padded backward table is the transpose of the window's pivot rows. -/
 theorem ucols_eq : (cols (UzN P K s AZ) (List.range' 0 s).reverse).map (padCol B)=
     (List.range' 0 s).reverse.map (ucolZ B ((List.range' 0 s).map fun m => winRowZ B (stgZ P K AZ m) m m)) := by
@@ -390,12 +392,12 @@ theorem lineSolveZ_eq (bZ : List ℤ) (hlen : bZ.length=s) :
   rw [hc, hcy, hr] at hb
   have hpadU := bwdZ_pad P B (UzN P K s AZ) ks.reverse (banded_UzN P K B s hP AZ hA)
     (ks.reverse.map rzF) (ks.reverse.map yZ) (by simp)
-  have hpadL := fwdZ_pad P B (LzN P K s AZ) ks (banded_LzN P K B s hP AZ hA hout) bZ hlenk
+  have hpadL := fwdZ_pad P B (LzN P K s AZ) ks (banded_LzN P K B s hP AZ hA) bZ hlenk
   have e : (bwdZ P (cols (UzN P K s AZ) ks.reverse) (ks.reverse.map rzF) (ks.reverse.map yZ)).map (gv P)=
       ks.reverse.map (bandSolveG (rdP P) (mRule P K) (fun c => NewtonRecip.newtonR (rdP P) c K) (gvM P AZ)
         (Finset.Ico 0 s) ks b) := hb
   simp only [lineSolveZ, hLc, hUr, hrz, hpadL]
-  rw [← ucols_eq P K B s AZ hout, ← hks, show fwdZ P (cols (LzN P K s AZ) ks) bZ=ks.map yZ from hyZ,
+  rw [← ucols_eq P K B s AZ, ← hks, show fwdZ P (cols (LzN P K s AZ) ks) bZ=ks.map yZ from hyZ,
     show (ks.map yZ).reverse=ks.reverse.map yZ from List.map_reverse.symm]
   simp only [← List.map_reverse]
   rw [hpadU, List.map_reverse]

@@ -331,12 +331,12 @@ variable (q S X Y Z η' ε : ℝ) (hq : 64≤q) (hX0 : 0<X) (hXs : X≤1/2^64) (
   (hs : S^2*X≤1) (hη0 : 0≤η') (hη : η'≤X^4) (hε0 : 0≤ε) (hε : ε≤X^3) (hYX : Y*X=1)
   (hZ : Z≤X) (hYZ : Y*Z≤X)
 
-include hq hX0 hXs hq3X in
+include hq hX0 hq3X in
 private theorem pcore_q2X : q^2*X≤1/2^20 := by
   have hq23 : q^2≤q^3 := by nlinarith
   exact (mul_le_mul_of_nonneg_right hq23 hX0.le).trans hq3X
 
-include hq hX0 hXs hq3X hs hη0 hη hε0 hε in
+include hq hX0 hq3X hs hη hε in
 private theorem pcore_T : 62000*(2*q)^3*S^2*η'+64*q^2*ε≤X^2/2 := by
   have hq23 : q^2≤q^3 := by nlinarith
   have hsη : S^2*η'≤X^3 := by
@@ -370,14 +370,14 @@ private theorem pcore_1 : ε≤1/(32*q) := by
   have h4 : X^2*(q*X)≤1*(1/2^20) := mul_le_mul hX2 h1 (by positivity) (by norm_num)
   linarith
 
-include hq hX0 hXs hq3X hs hη0 hη in
+include hq hX0 hXs hq3X hs hη in
 private theorem pcore_2 : 2^16*(2*q)^2*S^2*η'≤1 := by
   have hsη : S^2*η'≤X^3 := by
     calc S^2*η'≤S^2*X^4 := mul_le_mul_of_nonneg_left hη (sq_nonneg S)
       _=(S^2*X)*X^3 := by ring
       _≤1*X^3 := mul_le_mul_of_nonneg_right hs (by positivity)
       _=X^3 := one_mul _
-  have hq2X := pcore_q2X q X hq hX0 hXs hq3X
+  have hq2X := pcore_q2X q X hq hX0 hq3X
   have e : 2^16*(2*q)^2*S^2*η'=2^18*(q^2*(S^2*η')) := by ring
   rw [e]
   have h1 := mul_le_mul_of_nonneg_left hsη (show (0 : ℝ)≤q^2 by positivity)
@@ -389,19 +389,19 @@ private theorem pcore_2 : 2^16*(2*q)^2*S^2*η'≤1 := by
   have h4 := mul_le_mul_of_nonneg_left (h1.trans h2) (show (0 : ℝ)≤2^18 by norm_num)
   linarith
 
-include hq hX0 hXs hq3X hs hη0 hη hε0 hε hZ in
+include hq hX0 hXs hq3X hs hη hε hZ in
 private theorem pcore_3 : 2*(62000*(2*q)^3*S^2*η'+64*q^2*ε)+2*X+32*q^2*Z/2≤1/2 := by
-  have hT := pcore_T q S X η' ε hq hX0 hXs hq3X hs hη0 hη hε0 hε
-  have hq2X := pcore_q2X q X hq hX0 hXs hq3X
+  have hT := pcore_T q S X η' ε hq hX0 hq3X hs hη hε
+  have hq2X := pcore_q2X q X hq hX0 hq3X
   have hX1 : X≤1 := hXs.trans (by norm_num)
   have hX2 : X^2≤X := by nlinarith
   have hD : q^2*Z≤q^2*X := mul_le_mul_of_nonneg_left hZ (sq_nonneg q)
   linarith
 
-include hq hX0 hXs hq3X hs hη0 hη hε0 hε hYX hYZ in
+include hq hX0 hXs hq3X hs hη hε hYX hYZ in
 private theorem pcore_4 : 6+Y*((2*(62000*(2*q)^3*S^2*η'+64*q^2*ε)+2*X)+32*q^2*Z/2)≤q^2 := by
-  have hT := pcore_T q S X η' ε hq hX0 hXs hq3X hs hη0 hη hε0 hε
-  have hq2X := pcore_q2X q X hq hX0 hXs hq3X
+  have hT := pcore_T q S X η' ε hq hX0 hq3X hs hη hε
+  have hq2X := pcore_q2X q X hq hX0 hq3X
   have hY0 : 0≤Y := by
     by_contra hneg; push Not at hneg; nlinarith
   have e : Y*((2*(62000*(2*q)^3*S^2*η'+64*q^2*ε)+2*X)+32*q^2*Z/2)=
@@ -420,7 +420,7 @@ end PCore
 
 /-- The conditions of `FastB0.concrete_resampB₀_specP` at precision `5p` for a
 matrix perturbation `ε ≤ 2^-3p`, with final error at most `p²`. -/
-theorem Big.concreteB0P_conditions (h : Big n) (i : Fin (d n)) (ε : ℝ) (hε0 : 0≤ε)
+theorem Big.concreteB0P_conditions (h : Big n) (i : Fin (d n)) (ε : ℝ) (_hε0 : 0≤ε)
     (hε : ε≤1/2^(3*p n)) :
     ε≤1/(32*(p n : ℝ)) ∧
     2^16*(2*(p n : ℝ))^2*(s n i : ℝ)^2*(1/2^(5*p n)*(1+60*3/(1/(32*(p n : ℝ)))^2))≤1 ∧
@@ -465,9 +465,9 @@ theorem Big.concreteB0P_conditions (h : Big n) (i : Fin (d n)) (ε : ℝ) (hε0 
   have eD : 32*(q : ℝ)^2/(2 : ℝ)^(45*q)/2=32*(q : ℝ)^2*(1/(2 : ℝ)^(45*q))/2 := by ring
   rw [h2q, eD]
   exact ⟨pcore_1 q X ε hqR hX0 hXs hq3X hε,
-    pcore_2 q (s n i) X η' hqR hX0 hXs hq3X hs hη0 hη,
-    pcore_3 q (s n i) X _ η' ε hqR hX0 hXs hq3X hs hη0 hη hε0 hε hX45,
-    pcore_4 q (s n i) X _ _ η' ε hqR hX0 hXs hq3X hs hη0 hη hε0 hε hmul hY⟩
+    pcore_2 q (s n i) X η' hqR hX0 hXs hq3X hs hη,
+    pcore_3 q (s n i) X _ η' ε hqR hX0 hXs hq3X hs hη hε hX45,
+    pcore_4 q (s n i) X _ _ η' ε hqR hX0 hXs hq3X hs hη hε hmul hY⟩
 
 /-- The window-matrix perturbation at entry precision `5q`: with `2w+1 ≤ 2^q`
 and `q ≥ 2`, `(2w+1)·2/2^(5q) + 2^-46q + 2^-45q ≤ 2^-3q`. -/

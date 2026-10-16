@@ -149,7 +149,7 @@ theorem runs_binPrep (v : ℕ) :
   simp only [binPrep, WP, wp_op0, wp_rewind, wp_emit]
   tsimp [bbank, reg, emp, Rules.output_ticks, length_ones]
   refine ⟨?_, ?_⟩
-  · funext i; fin_cases i <;> first | rfl | tsimp [bbank, reg, emp, bin_zero, List.reverse_replicate]
+  · funext i; fin_cases i <;> rfl
   · omega
 
 set_option maxHeartbeats 8000000 in
@@ -268,14 +268,14 @@ theorem runs_innerBody {D : ℕ} {O : List (List Bool)} {Dt A : WTape} {LQ : Lis
     (by tsimp [hσ₀, hσ, abank])
   set σ₁ := abank D ⟨ones v :: O, []⟩ Dt ⟨LQ, List.replicate (e + 1) []⟩ A (endv v) with hσ₁
   have e1 : Function.update (Function.update σ₀ aV (σ₀ aV).next) aOut ((σ₀ aOut).put false [(σ₀ aV).cur]) = σ₁ := by
-    funext i; fin_cases i <;> first | rfl | tsimp [hσ₁, hσ₀, hσ, abank, endv, WTape.put]
+    funext i; fin_cases i <;> rfl
   rw [e1] at s1
   have s2 := runs_addA (c := D) (v := v) (show aKN ≠ aV by decide) σ₁ (by tsimp [hσ₁, abank]) (by tsimp [hσ₁, abank])
   set σ₂ := Function.update σ₁ aV (endv (v + D)) with hσ₂
   have s3 := runs_skp (a := 0) (show aQt ≠ aJ by decide) σ₂ (by tsimp [hσ₂, hσ₁, abank, List.replicate_succ])
     (by tsimp [hσ₂, hσ₁, abank, emp])
   refine (Runs.then s0 (Runs.then s1 (Runs.then s2 s3))).mono (fun τ h => ?_) ?_
-  · rw [h]; funext i; fin_cases i <;> first | rfl | tsimp [hσ₂, hσ₁, abank, WTape.next, List.replicate_succ]
+  · rw [h]; funext i; fin_cases i <;> rfl
   · tsimp [hσ₂, hσ₁, hσ₀, hσ, abank, endv, WTape.cur, List.replicate_succ, length_ones]; omega
 
 theorem range_succ_map_reverse {β : Type*} (f : ℕ → β) (e : ℕ) :
@@ -325,7 +325,7 @@ theorem runs_outerBody {D q : ℕ} {O LD : List (List Bool)} {e a vp V : ℕ} (h
     (by tsimp [hσb, hσa])
   have e0 : Function.update (Function.update σb aA (σb aA).next) aV ((σb aV).put false [(σb aA).cur]) =
       abank D ⟨O, []⟩ ⟨LD, List.replicate (e + 1) []⟩ ⟨[], List.replicate q []⟩ (endv a) (endv a) := by
-    funext i; fin_cases i <;> first | rfl | tsimp [hσb, hσa, hσ, abank, endv, WTape.put]
+    funext i; fin_cases i <;> rfl
   rw [e0] at c3
   set σ₁ := abank D ⟨O, []⟩ ⟨LD, List.replicate (e + 1) []⟩ ⟨[], List.replicate q []⟩ (endv a) (endv a) with hσ₁
   have s2 := runs_innerLoop (D := D) (Dt := ⟨LD, List.replicate (e + 1) []⟩) (A := endv a) q a O []
@@ -407,7 +407,7 @@ theorem runs_arrGen {D q V : ℕ} (hV : D + q * D ≤ V) :
   have c2 := runs_emit (a := 0) [[]] aV σa (by tsimp [hσa, hσ0, abank, emp])
   have e0 : Function.update σa aV ⟨[[]].reverse ++ (σa aV).left, []⟩ =
       abank D ⟨(arrWords D q 0).reverse, []⟩ ⟨[], List.replicate D []⟩ ⟨[], List.replicate q []⟩ (endv 0) (endv 0) := by
-    funext i; fin_cases i <;> first | rfl | tsimp [hσa, hσ0, abank, emp, endv, arrWords]
+    funext i; fin_cases i <;> rfl
   rw [e0] at c2
   have s2 := runs_outerLoop (D := D) (q := q) (V := V) hV D 0 [] 0 (by omega) (by omega)
   obtain ⟨σ₂', k₂, hx₂, ⟨vf, hvf, h₂⟩, hk₂⟩ := s2
@@ -496,7 +496,7 @@ theorem runs_axLoop {lm1 : ℕ} {Fl : WTape} : ∀ (e v : ℕ) (L : List (List B
       (by tsimp [hσ₁, hσ, nbank, emp])
     have ih := runs_axLoop (lm1 := lm1) (Fl := Fl) e (v + lm1) ([] :: L)
     have e1 : Function.update σ₁ nAx (σ₁ nAx).next = nbank lm1 (endv (v + lm1)) ⟨[] :: L, List.replicate e []⟩ Fl := by
-      funext i; fin_cases i <;> first | rfl | tsimp [hσ₁, hσ, nbank, WTape.next, List.replicate_succ]
+      funext i; fin_cases i <;> rfl
     rw [e1] at s2
     refine (Runs.loop_step (by tsimp [hσ, nbank, List.replicate_succ])
       ((Runs.then s1 s2).mono (fun τ h => by rw [h]; exact ih) le_rfl)).mono (fun τ h => ?_) ?_
@@ -519,22 +519,22 @@ theorem runs_flLoop {lm1 : ℕ} {Ax : WTape} : ∀ (f : List Bool) (v : ℕ) (L 
       cases b
       · refine (Runs.cond_false (by simp [hσ, nbank, startsOne_mk]) (runs_rewind (a := 0) nJ σ)).mono
           (fun τ h => ?_) (by simp [hσ, nbank, clen, emp])
-        rw [h]; funext i; fin_cases i <;> first | rfl | tsimp [hσ, nbank, emp]
+        rw [h]; funext i; fin_cases i <;> rfl
       · refine (Runs.cond_true (by simp [hσ, nbank, startsOne_mk])
           (runs_addN (c := 1) (v := v) (show nOne ≠ nN by decide) σ (by tsimp [hσ, nbank])
             (by tsimp [hσ, nbank]))).mono (fun τ h => ?_) (by omega)
-        rw [h]; funext i; fin_cases i <;> first | rfl | tsimp [hσ, nbank]
+        rw [h]; funext i; fin_cases i <;> rfl
     set σ₁ := nbank lm1 (endv (v + if b then 1 else 0)) Ax ⟨L, (b :: f).map fun b => [b]⟩ with hσ₁
     have s2 := runs_skp (a := 0) (show nFl ≠ nJ by decide) σ₁ (by tsimp [hσ₁, nbank])
       (by tsimp [hσ₁, nbank, emp])
     have ih := runs_flLoop (lm1 := lm1) (Ax := Ax) f (v + if b then 1 else 0) ([b] :: L)
     have e1 : Function.update σ₁ nFl (σ₁ nFl).next = nbank lm1 (endv (v + if b then 1 else 0)) Ax
         ⟨[b] :: L, f.map fun b => [b]⟩ := by
-      funext i; fin_cases i <;> first | rfl | tsimp [hσ₁, nbank, WTape.next]
+      funext i; fin_cases i <;> rfl
     rw [e1] at s2
     refine (Runs.loop_step (by tsimp [hσ, nbank])
       ((Runs.then s1 s2).mono (fun τ h => by rw [h]; exact ih) le_rfl)).mono (fun τ h => ?_) ?_
-    · rw [h]; cases b <;> simp <;> ring_nf
+    · rw [h]; cases b <;> simp; ring_nf
     · have hc : (σ₁ nFl).cur.length = 1 := by tsimp [hσ₁, nbank, WTape.cur]
       rw [hc]; simp only [List.length_cons]; rw [add_mul, one_mul]; omega
 
@@ -549,7 +549,7 @@ theorem runs_nCalc (lm1 D : ℕ) (f : List Bool) :
   have c1 := runs_emit (a := 0) [[]] nN σ0 (by tsimp [hσ0, nbank, emp])
   have e0 : Function.update σ0 nN ⟨[[]].reverse ++ (σ0 nN).left, []⟩ =
       nbank lm1 (endv 0) ⟨[], List.replicate D []⟩ ⟨[], f.map fun b => [b]⟩ := by
-    funext i; fin_cases i <;> first | rfl | tsimp [hσ0, nbank, emp, endv]
+    funext i; fin_cases i <;> rfl
   rw [e0] at c1
   have c2 := runs_axLoop (lm1 := lm1) (Fl := ⟨[], f.map fun b => [b]⟩) D 0 []
   set σ₂ := nbank lm1 (endv (0 + D * lm1)) ⟨List.replicate D [] ++ [], []⟩ ⟨[], f.map fun b => [b]⟩ with hσ₂

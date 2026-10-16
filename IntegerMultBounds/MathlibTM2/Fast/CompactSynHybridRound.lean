@@ -81,8 +81,7 @@ theorem compactSynDispatch_eventually_exec_stream
     compactMnQ_runtime hA hA9 hNW] with M hexec
   intro ds hd hgate legacy hbody es ℓ W l h p
   dsimp only
-  intro hdpos hKpos H hh hcap hD hprecision hrun hwrun hW
-  intro v hv P₀ Y hY R hlegacy hblank hdepth hguard
+  intro hdpos hKpos H hh hcap hD hprecision hrun hwrun hW v hv P₀ Y hY R hlegacy hblank hdepth hguard
   have hwire (x : SynW) : R (compactSynDispatchReg x)=v x := by
     change (((R ∘ compactMnLegacyReg) ∘ mnLayE) (sreg x))=v x
     rw [hlegacy,synG_sreg]

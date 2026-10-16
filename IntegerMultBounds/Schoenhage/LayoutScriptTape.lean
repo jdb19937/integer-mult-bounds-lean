@@ -538,7 +538,7 @@ theorem runs_levelLoop {R lm1 c0 n s N : ℕ} (hR0 : 0 < R) (hnN : n ≤ N) {fl 
     have hσ₃ : Function.update σ₂ gAx (σ₂ gAx).next = bank R lm1 c0 n ((swapWords R (n - m - 1 - (L - m - 1)) m (L - m - 1) 0 1).reverse ++ O)
         (swapWords R (n - m - 1 - (L - m - 1)) m (L - m - 1) 1 0 ++ U) (k + 1) (L - 1) (m + s) s fl
         ⟨[] :: done, List.replicate e []⟩ lev := by
-      funext i; fin_cases i <;> first | rfl | simp [hσ₂, hσ₁, bank, WTape.next, List.replicate_succ]
+      funext i; fin_cases i <;> rfl
     have ih := runs_levelLoop (R := R) (lm1 := lm1) (c0 := c0) (n := n) (s := s) (N := N) (fl := fl) (lev := lev) hR0 hnN e
       ([] :: done) ((swapWords R (n - m - 1 - (L - m - 1)) m (L - m - 1) 0 1).reverse ++ O) (swapWords R (n - m - 1 - (L - m - 1)) m (L - m - 1) 1 0 ++ U)
       (k + 1) (L - 1) (m + s) (by omega) (by omega) (by rw [Nat.add_mul, one_mul] at hm; omega)
@@ -605,7 +605,7 @@ theorem runs_levelStep {R lm1 c0 n N D : ℕ} (hR0 : 0 < R) {fl : WTape} {done :
     simp only [loadM, cpy, WP, wp_op0, wp_rewind, wp_clear]
     tsimp [hσ, bank, endv, emp, reg, Rules.output_copy]
     refine ⟨?_, ?_⟩
-    · funext i; fin_cases i <;> first | rfl | tsimp [bank, endv, emp, reg]
+    · funext i; fin_cases i <;> rfl
     · simp [time_copy, clen, WTape.words]; omega
   have s2 := runs_levelLoop (R := R) (lm1 := lm1) (c0 := c0) (n := n) (s := s) (N := N) (fl := fl)
     (lev := ⟨done, [] :: lev⟩) hR0 hnN D [] O U k L c0 hk hL hc

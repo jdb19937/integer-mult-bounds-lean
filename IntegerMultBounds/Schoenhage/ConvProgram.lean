@@ -209,7 +209,7 @@ theorem fView_eq_start2 {v : Fin 9 → WTape} {i o : Fin 9} {hdr F : List Bool} 
     (hi : v i = reg F) (ho : v o = emp) : fView t v i o = start2 t hdr F := by
   funext x
   simp only [fView, start2]
-  split_ifs <;> first | rfl | omega | simp_all
+  split_ifs <;> first | rfl | omega
 
 /-- A transform call: data tape `o` receives the output word. -/
 theorem runs_fwdCall (M : Program t q₁ a) (ht : 4 ≤ t) {i o : Fin 9} (hi : i ≠ 0) (ho : o ≠ 0) (hio : i ≠ o)
@@ -469,8 +469,7 @@ theorem convProg_hoare (Mf : Program t q₁ a) (Mo : Program t q₂ a) (ht : 4 �
       simp only [u2, u1, u0]
       fin_cases j <;> simp [dt_ne, bank5_low, n30, n31, n32, n40, n41,
         n42, Ne.symm n10, Ne.symm n20, Ne.symm n21, 
-        emp_tape', wordAt_nil', reg] <;>
-        first | rfl | simp [dt, Fin.ext_iff, bank5]
+        emp_tape', wordAt_nil', reg]
     · rw [enc_cb_high _ hx]
       simp only [u2, u1, u0]
       have hne : ∀ j : Fin 9, x ≠ dt t j := fun j e => by
@@ -504,7 +503,7 @@ theorem convProg_hoare (Mf : Program t q₁ a) (Mo : Program t q₂ a) (ht : 4 �
       fin_cases j <;> simp [Function.update_apply, 
         Ne.symm n10, Ne.symm n20, Ne.symm n21, Ne.symm n30, Ne.symm n31, Ne.symm n32, Ne.symm n40,
         Ne.symm n41, Ne.symm n42, Ne.symm n43, enc_cb_low, emp_tape'] <;>
-        first | rfl | simp [dt, Fin.ext_iff, enc, cb, emp_tape']
+        rfl
     · rw [bank5_high _ _ _ _ _ hx]
       simp only [w4, w3, w2, w1, w0]
       have hne : ∀ j : Fin 9, x ≠ dt t j := fun j e => by

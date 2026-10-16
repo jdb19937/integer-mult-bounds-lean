@@ -36,6 +36,7 @@ variable {r : ℕ} [NeZero r]
 def twLoad (n w : ℕ) (fs : List (Rec r)) (tab : List (List Bool)) : Fin 29 → WTape :=
   Function.update (Function.update (twRest r n (2 ^ n)) 0 ⟨[], cut w (array w fs)⟩) 16 ⟨[], tab⟩
 
+omit [NeZero r] in
 theorem genPre_twLoad {n : ℕ} (π : BitPerm n) (ts Is : List ℕ) (h w : ℕ) (fs : List (Rec r))
     (hM : fs.length = 2 ^ n) :
     GenPre π r ts Is h fs.length (twLoad n w fs (tableWords (slotTable π r ts Is h)) ∘ φ) := by
@@ -43,6 +44,7 @@ theorem genPre_twLoad {n : ℕ} (π : BitPerm n) (ts Is : List ℕ) (h w : ℕ) 
   refine ⟨⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;>
     simp (config := {decide := true}) [twLoad, twRest, φ]
 
+omit [NeZero r] in
 theorem idle_twLoad (n w : ℕ) (fs : List (Rec r)) (tab : List (List Bool)) :
     TwistArray.Idle r (twLoad n w fs tab ∘ ψ) := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;>

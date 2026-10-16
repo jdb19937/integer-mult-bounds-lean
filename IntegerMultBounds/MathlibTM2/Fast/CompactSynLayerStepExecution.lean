@@ -79,8 +79,7 @@ theorem compactSynLayerStep_eventually_exec_Hl (hQ : compactRuntimeStates≤Q)
   filter_upwards [compactSynParkedRuntime_eventually_exec_Hl (Q := Q) (Ka := Ka) (U := U) hQ hA hA9 hNW] with M htopRuntime
   intro ds hd hgate es ℓ W l h p
   dsimp only
-  intro hdpos hKpos hchunk hcap hD haddr ha hprecision hrun hwrun hW
-  intro v L hv P₀ Z hZ R hlegacy hblank hdepth hguard
+  intro hdpos hKpos hchunk hcap hD haddr ha hprecision hrun hwrun hW v L hv P₀ Z hZ R hlegacy hblank hdepth hguard
   let d := Mult.Sizes.d M
   let g := CompactReservationGrowth.guard M
   let K := Mult.Sizes.K M

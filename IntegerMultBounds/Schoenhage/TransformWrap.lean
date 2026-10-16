@@ -174,6 +174,7 @@ noncomputable def coreOf (gen : Cmd A (4 + DB tL NL)) (D : Cmd A (DB tL NL)) : C
   regMove (drv tL NL (nm tL NL 0)) (pt tL NL 3) (fun e => pt_ne_drv _ _ e.symm)
 
 set_option maxHeartbeats 8000000 in
+omit [NeZero r] in
 /-- `coreOf` from the paper's start tapes, given the generator and a driver run ending with the
 result `G` in the drivers' end state. -/
 theorem runs_coreOf (gen : Cmd A (4 + DB tL NL)) (D : Cmd A (DB tL NL)) {hdr F G : List Bool}

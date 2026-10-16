@@ -202,7 +202,7 @@ lemma agree_disjoint (i : Fin n) (l : List (Fin n)) (hi : i ∉ l) (a b : Fin n 
   rw [flip_self] at e2
   rw [e1] at e2
   have h2' : (1 : ZMod 2) ≠ 0 := by decide
-  exact h2' (by simpa using e2)
+  exact h2' (by simp at e2)
 
 /-- Normalized butterflies on distinct bits `l` in explicit form. -/
 theorem Hl_apply (l : List (Fin n)) (hl : l.Nodup) (f : Arr X n) (x : X) (a : Fin n → ZMod 2) :
@@ -232,7 +232,7 @@ theorem Hl_apply (l : List (Fin n)) (hl : l.Nodup) (f : Arr X n) (x : X) (a : Fi
         simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hb
         simp only [sgn, List.map_cons, List.prod_cons]
         rw [hb i hl.1]
-        rcases zmod2_cases (a i) with h | h <;> simp [h] <;> ring
+        rcases zmod2_cases (a i) with h | h <;> simp [h]
       have hB : ∀ b ∈ Finset.univ.filter (agree l (flip i a)), sgn (i :: l) a b * f (x, b) =
           sgn l (flip i a) b * f (x, b) := by
         intro b hb

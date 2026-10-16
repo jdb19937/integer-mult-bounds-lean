@@ -61,7 +61,7 @@ theorem getD_interleave {α : Type*} (d : α) : ∀ (a b : List α), b.length �
     | cons x as =>
       simp at h2
       subst h2
-      rcases i with _ | _ | i <;> simp [interleave] <;> split_ifs <;> simp <;> omega
+      rcases i with _ | _ | i <;> simp [interleave]
   | [], _ :: _, h, _, _ => by simp at h
 
 /-- The index of the folded position `i` in the natural order. -/

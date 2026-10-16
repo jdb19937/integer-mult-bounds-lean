@@ -33,23 +33,23 @@ theorem blockPass_cons {B : ℕ} (xs ys R : List (List Bool)) (hx : xs.length = 
   by_cases k1 : k < B
   · have hkB : k / B % 2 = 0 := by rw [Nat.div_eq_of_lt k1]
     rw [ite_eq_left hkB]
-    rw [List.getElem_append_left (by simp [hx, hy] <;> omega), List.getElem_append_left (by simp [hx, hy] <;> omega)]
+    rw [List.getElem_append_left (by simp [hx, hy]; omega), List.getElem_append_left (by simp [hx, hy]; omega)]
     simp only [List.getElem_zipWith]
     rw [List.getD_eq_getElem _ _ (by rw [hl]; omega), List.getD_eq_getElem _ _ (by rw [hl]; omega)]
-    rw [List.getElem_append_left (by simp [hx, hy] <;> omega), List.getElem_append_left (by simp [hx] <;> omega),
-      List.getElem_append_left (by simp [hx, hy] <;> omega), List.getElem_append_right (by simp [hx] <;> omega)]
-    congr 2 <;> (try simp [hx])
+    rw [List.getElem_append_left (by simp [hx, hy]; omega), List.getElem_append_left (by simp [hx]; omega),
+      List.getElem_append_left (by simp [hx, hy]; omega), List.getElem_append_right (by simp [hx])]
+    congr 2; (try simp [hx])
   · by_cases k2 : k < 2 * B
     · have hkB : k / B % 2 = 1 := by
         rw [show k / B = 1 by rw [Nat.div_eq_iff (by omega)]; omega]
       rw [ite_eq_right (by omega)]
-      rw [List.getElem_append_left (by simp [hx, hy] <;> omega), List.getElem_append_right (by simp [hx, hy] <;> omega)]
+      rw [List.getElem_append_left (by simp [hx, hy]; omega), List.getElem_append_right (by simp [hx, hy]; omega)]
       simp only [List.getElem_zipWith, List.length_zipWith, hx, hy, min_self]
       rw [List.getD_eq_getElem _ _ (by rw [hl]; omega), List.getD_eq_getElem _ _ (by rw [hl]; omega)]
-      rw [List.getElem_append_left (by simp [hx, hy] <;> omega), List.getElem_append_left (by simp [hx] <;> omega),
-        List.getElem_append_left (by simp [hx, hy] <;> omega), List.getElem_append_right (by simp [hx] <;> omega)]
-      congr 2 <;> (try simp [hx]) <;> (try omega)
-    · rw [List.getElem_append_right (by simp [hx, hy] <;> omega)]
+      rw [List.getElem_append_left (by simp [hx, hy]; omega), List.getElem_append_left (by simp [hx]; omega),
+        List.getElem_append_left (by simp [hx, hy]; omega), List.getElem_append_right (by simp [hx]; omega)]
+      congr 2; (try simp [hx])
+    · rw [List.getElem_append_right (by simp [hx, hy]; omega)]
       simp only [List.length_append, List.length_zipWith, hx, hy, min_self, List.getElem_ofFn]
       have hkB : k / B % 2 = (k - (B + B)) / B % 2 := by
         have : k = (k - (B + B)) + B * 2 := by omega
@@ -60,11 +60,11 @@ theorem blockPass_cons {B : ℕ} (xs ys R : List (List Bool)) (hx : xs.length = 
       split_ifs with hpar
       · congr 1
         · rw [List.getD_eq_getElem _ _ (by rw [hl]; omega), List.getD_eq_getElem _ _ (by omega),
-            List.getElem_append_right (by simp [hx, hy] <;> omega)]
-          congr 1; (try simp [hx, hy]); (try omega)
+            List.getElem_append_right (by simp [hx, hy]; omega)]
+          congr 1; (try simp [hx, hy])
         · by_cases hk' : k + B < (xs ++ ys ++ R).length
           · rw [List.getD_eq_getElem _ _ hk', List.getD_eq_getElem _ _ (by omega),
-              List.getElem_append_right (by simp [hx, hy] <;> omega)]
+              List.getElem_append_right (by simp [hx, hy]; omega)]
             congr 1; (try simp [hx, hy]); (try omega)
           · rw [List.getD_eq_default _ _ (by omega), List.getD_eq_default _ _ (by omega)]
       · have hge : B ≤ k - (B + B) := by
@@ -72,11 +72,11 @@ theorem blockPass_cons {B : ℕ} (xs ys R : List (List Bool)) (hx : xs.length = 
           exact hpar (by rw [Nat.div_eq_of_lt (by omega)])
         congr 1
         · rw [List.getD_eq_getElem _ _ (by rw [hl]; omega), List.getD_eq_getElem _ _ (by omega),
-            List.getElem_append_right (by simp [hx, hy] <;> omega)]
+            List.getElem_append_right (by simp [hx, hy]; omega)]
           congr 1; (try simp [hx, hy]); (try omega)
         · rw [List.getD_eq_getElem _ _ (by rw [hl]; omega), List.getD_eq_getElem _ _ (by omega),
-            List.getElem_append_right (by simp [hx, hy] <;> omega)]
-          congr 2; (try simp [hx, hy]); (try omega)
+            List.getElem_append_right (by simp [hx, hy]; omega)]
+          congr 2; (try simp [hx, hy])
 
 /-! ### One block pair -/
 
@@ -217,7 +217,7 @@ theorem runs_blockStep {B W : ℕ} (σ : Fin 𝕌 → WTape) {Ls M xs ys R : Lis
         tsimp [σ₈, σ₇, σ₆, σ₅, σ₄, σ₃, σ₂, σ₁, hT, hJ, hF, hG, hO, hK, emp] <;>
         first | rfl | exact hG.symm | exact hF.symm | exact hT.symm | exact hO.symm | exact hK.symm |
           (split_ifs <;> (try subst_vars) <;>
-            first | rfl | exact hG.symm | exact hF.symm | exact hT.symm | exact hO.symm | exact hK.symm) |
+            first | rfl | exact hG.symm | exact hF.symm | exact hT.symm) |
           simp_all (config := {decide := true})
     · have h3 := clen_uniform Za (W + 1) hZa
       have h4 := clen_uniform Zn (W + 1) hZn

@@ -52,6 +52,7 @@ def LayerCalls {q a : ℕ} (M : Program tL q a) (ht : 2 ≤ tL) (r p d w : ℕ) 
 
 variable {r : ℕ} [NeZero r]
 
+omit [NeZero r] in
 theorem length_hadOut (p : ℕ) {ts : List ℕ} {ℓ K : ℕ} (hL : LayoutOK r ts ℓ K) (h : ℕ) (R : List (Rec r))
     (hR : R.length = ts.prod) : (hadOut p ts ℓ K h R).length = ts.prod := by
   unfold hadOut
@@ -73,6 +74,7 @@ theorem disk_untwistRecs {p : ℕ} (f : ℕ → ℕ) {R : List (Rec r)} (hR : �
   obtain ⟨y, hy, rfl⟩ := hg
   exact diskGrid_twistRec (hR _ (List.getElem_mem hy))
 
+omit [NeZero r] in
 theorem disk_of_step {n p : ℕ} {G : (ℕ → Fin r → ℂ) → ℕ → Fin r → ℂ} (hG : Contracts n G) {R R' : List (Rec r)}
     (hRl : R'.length = 2 ^ n) (hd : ∀ f ∈ R, DiskGrid p f.1 f.2) (hs : RoundStep n p G R R') :
     ∀ f ∈ R', DiskGrid p f.1 f.2 :=

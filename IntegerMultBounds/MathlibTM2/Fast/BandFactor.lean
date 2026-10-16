@@ -240,7 +240,7 @@ theorem band_newtonStep_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg 
     ((csyms A w (⟨r, 0⟩-(⟨q, 0⟩-⟨r, 0⟩))).reverse ++ σ₁₀ .ac2)
   have h₁₂ := rsb_moveR_runs (body := body) (ι := ι) hrg (a := .ac2) (b := .xa) (by decide) σ₁₁
   have hval : (⟨r, 0⟩ : GaussianInt)-(⟨q, 0⟩-⟨r, 0⟩)=⟨newtonStepZ P c r, 0⟩ := by
-    ext <;> simp [newtonStepZ, hq, ht] <;> ring
+    ext <;> simp [newtonStepZ, hq, ht]; ring
   refine ((RsbRuns.seq hdisj h₁ (RsbRuns.seq hdisj h₂ (RsbRuns.seq hdisj h₃
     (RsbRuns.seq hdisj h₄ (RsbRuns.seq hdisj h₅ (RsbRuns.seq hdisj h₆ (RsbRuns.seq hdisj h₇
     (RsbRuns.seq hdisj h₈ (RsbRuns.seq hdisj h₉ (RsbRuns.seq hdisj h₁₀
@@ -1132,7 +1132,7 @@ theorem band_tStep_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠
       simp [hlht]
     have hct : ∀ blk : List ℤ, (blk.map (fun x => (⟨x, 0⟩ : GaussianInt))).tail ++ [⟨0, 0⟩] =
         (blk.tail ++ [0]).map (fun x => (⟨x, 0⟩ : GaussianInt)) := by
-      intro blk; cases blk <;> simp <;> rfl
+      intro blk; cases blk <;> simp
     have hmapk : ∀ {β : Type} (g : List ℤ → β), (W.map g).take k ++ [g last] = W.map g := by
       intro β g
       conv_rhs => rw [hWsplit]
@@ -1249,7 +1249,7 @@ theorem band_rev_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠ �
     set ρ := rsbUpd2 (Ψ j) n X tn Y
     have hρx : ρ x = cstream A w b ++ (cstream A w (blocks.drop (j+1)).flatten ++ XR) := by
       simp only [ρ, rsbUpd2, hΨ, Function.update_apply]
-      split_ifs <;> simp_all
+      split_ifs; simp_all
     have hρc : (ρ c).length = b.length * w := by
       simp only [ρ, rsbUpd2, hΨ, Function.update_apply]
       split_ifs <;> simp_all
@@ -1305,7 +1305,7 @@ theorem band_copyRepG_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r 
       (by simp only [rsbUpd2, hΨ, Function.update_apply]; split_ifs <;> simp_all)
       (by simp only [rsbUpd2, hΨ, Function.update_apply]; split_ifs <;> simp_all)
     have hA : rsbUpd2 (Ψ j) n X tn Y a=σ a := by
-      simp only [rsbUpd2, hΨ, Function.update_apply]; split_ifs <;> simp_all
+      simp only [rsbUpd2, hΨ, Function.update_apply]; split_ifs; simp_all
     rw [hA] at h
     refine h.congr ?_
     funext x

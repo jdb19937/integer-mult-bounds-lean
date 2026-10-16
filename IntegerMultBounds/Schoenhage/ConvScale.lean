@@ -70,7 +70,7 @@ theorem go_parity (q : Bool) (bs : List Bool) (ws : Fin 0 → List Bool) :
     simp only [go, Option.toList_none, List.nil_append]
     refine ⟨(ih _ _).1, ?_⟩
     rw [(ih _ _).2]
-    cases q <;> simp <;> omega
+    cases q <;> simp; omega
 
 theorem output_parity (bs : List Bool) (ws : Fin 0 → List Bool) :
     output parity bs ws = syms [[decide (bs.length % 2 = 1)]] := by

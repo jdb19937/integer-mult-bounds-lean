@@ -521,14 +521,14 @@ theorem twWords_arith {C n r w M E L : ℕ} (hr : 1 ≤ r) (hw : 1 ≤ w) (hwr :
     omega
   have hrw : r * w ≤ 2 * r * w * M := by
     calc r * w = 1 * r * w * 1 := by ring
-      _ ≤ 2 * r * w * M := by gcongr <;> omega
+      _ ≤ 2 * r * w * M := by gcongr; omega
   have h1 : E * (2 * n + 4 * r + 3) ≤ C * (2 * C + 7) * (2 * r * w * M) := by
     calc E * (2 * n + 4 * r + 3) ≤ C * w * ((2 * C + 7) * r) := Nat.mul_le_mul hE hsum
       _ = C * (2 * C + 7) * (r * w) := by ring
       _ ≤ C * (2 * C + 7) * (2 * r * w * M) := Nat.mul_le_mul_left _ hrw
   have hwV : w ≤ 2 * r * w * M := by
     calc w = 1 * 1 * w * 1 := by ring
-      _ ≤ 2 * r * w * M := by gcongr <;> omega
+      _ ≤ 2 * r * w * M := by gcongr; omega
   have h2 : 3 * E ≤ 3 * C * (2 * r * w * M) := by
     calc 3 * E ≤ 3 * (C * w) := Nat.mul_le_mul_left _ hE
       _ ≤ 3 * (C * (2 * r * w * M)) := Nat.mul_le_mul_left _ (Nat.mul_le_mul_left _ hwV)
@@ -617,7 +617,7 @@ theorem ops_word_le {n r w : ℕ} (hr : 1 ≤ r) (hw : 1 ≤ w) :
   have hn : n < 2 ^ n := Nat.lt_two_pow_self
   have h1 : 2 ^ n ≤ 2 * r * w * 2 ^ n := by
     calc 2 ^ n = 1 * 1 * 1 * 2 ^ n := by ring
-      _ ≤ 2 * r * w * 2 ^ n := by gcongr <;> omega
+      _ ≤ 2 * r * w * 2 ^ n := by gcongr; omega
   have h2 : 1 ≤ 2 ^ n := Nat.one_le_two_pow
   have e : 2 ^ n * (2 * r * w) = 2 * r * w * 2 ^ n := by ring
   omega
@@ -658,13 +658,13 @@ theorem transformHeader_length_le {P : TransformParams} {p d ℓ K w : ℕ} {ts 
   rw [← hV]
   have hrV : 2 ^ ℓ ≤ V := by
     rw [hV]; calc 2 ^ ℓ = 1 * 2 ^ ℓ * 1 * 1 := by ring
-      _ ≤ 2 * 2 ^ ℓ * w * ts.prod := by gcongr <;> omega
+      _ ≤ 2 * 2 ^ ℓ * w * ts.prod := by gcongr; omega
   have hwV : w ≤ V := by
     rw [hV]; calc w = 1 * 1 * w * 1 := by ring
-      _ ≤ 2 * 2 ^ ℓ * w * ts.prod := by gcongr <;> omega
+      _ ≤ 2 * 2 ^ ℓ * w * ts.prod := by gcongr; omega
   have hwrV : w * 2 ^ ℓ ≤ V := by
     rw [hV]; calc w * 2 ^ ℓ = 1 * 2 ^ ℓ * w * 1 := by ring
-      _ ≤ 2 * 2 ^ ℓ * w * ts.prod := by gcongr <;> omega
+      _ ≤ 2 * 2 ^ ℓ * w * ts.prod := by gcongr; omega
   unfold transformHeader
   simp only [List.length_append, List.length_flatMap]
   have g1 := hdrGamma_le p
@@ -716,7 +716,7 @@ theorem wrapCost_fwd_le {P : TransformParams} {p d ℓ K w : ℕ} {ts : List ℕ
       _ ≤ 2 * 2 ^ ℓ * w * ts.prod := by gcongr <;> omega
   have hrV : 2 ^ ℓ ≤ V := by
     rw [hV]; calc 2 ^ ℓ = 1 * 2 ^ ℓ * 1 * 1 := by ring
-      _ ≤ 2 * 2 ^ ℓ * w * ts.prod := by gcongr <;> omega
+      _ ≤ 2 * 2 ^ ℓ * w * ts.prod := by gcongr; omega
   have hMV : ts.prod ≤ V := by
     rw [hV]; calc ts.prod = 1 * 1 * 1 * ts.prod := by ring
       _ ≤ 2 * 2 ^ ℓ * w * ts.prod := by gcongr <;> omega
@@ -757,7 +757,7 @@ theorem wrapCost_opp_le {P : TransformParams} {p d ℓ K w : ℕ} {ts : List ℕ
       _ ≤ 2 * 2 ^ ℓ * w * ts.prod := by gcongr <;> omega
   have hrV : 2 ^ ℓ ≤ V := by
     rw [hV]; calc 2 ^ ℓ = 1 * 2 ^ ℓ * 1 * 1 := by ring
-      _ ≤ 2 * 2 ^ ℓ * w * ts.prod := by gcongr <;> omega
+      _ ≤ 2 * 2 ^ ℓ * w * ts.prod := by gcongr; omega
   have hMV : ts.prod ≤ V := by
     rw [hV]; calc ts.prod = 1 * 1 * 1 * ts.prod := by ring
       _ ≤ 2 * 2 ^ ℓ * w * ts.prod := by gcongr <;> omega

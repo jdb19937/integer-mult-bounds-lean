@@ -984,7 +984,6 @@ theorem band_preL4 (hg : Function.Injective g) (hι : Function.Injective ι)
     · cases r <;> simp only [Function.update_apply, preStB, hσ1, Sum.elim_inl, Sum.inl.injEq,
         reduceCtorEq, ite_false, ite_true, RsbR.cm.injEq]
       all_goals simp [hac, hxs, htC, List.drop_replicate, rep_tick_cons]
-      all_goals (try (rw [List.eq_replicate_iff]; refine ⟨by simp; omega, by simp⟩))
     · simp only [Function.update_apply, preStB, hσ1, Sum.elim_inl, Sum.inl.injEq, reduceCtorEq,
         ite_false]
     · simp only [Function.update_apply, reduceCtorEq, ite_false, preStB, Sum.elim_inr]
@@ -1173,8 +1172,6 @@ theorem band_preL5 (hg : Function.Injective g) (hι : Function.Injective ι)
         ite_false, ite_true]
       rcases x with j | _ | _ | _ | _ | _ | j
       all_goals simp [h3, h4, h5, hsn, htC, htK, hwn, List.drop_replicate]
-      all_goals (try (split_ifs <;> simp_all [List.drop_replicate]))
-      all_goals (try (rw [List.eq_replicate_iff]; refine ⟨by simp; omega, by simp⟩))
     · simp only [Function.update_apply, reduceCtorEq, ite_false, preStB, Sum.elim_inr]
 
 theorem band_preL8 (hg : Function.Injective g) (hι : Function.Injective ι)

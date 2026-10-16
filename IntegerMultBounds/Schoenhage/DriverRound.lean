@@ -42,6 +42,7 @@ theorem length_le_clen : ∀ {L : List (List Bool)} {x : List Bool}, x ∈ L →
 
 variable {r : ℕ} [NeZero r]
 
+omit [NeZero r] in
 theorem hpos_slot {ts : List ℕ} (hts : PowAxes r ts) (h : ℕ) :
     ∀ i ∈ slotAxes ts h, axOff ts i + h < Nat.log 2 ts.prod := by
   intro i hi
@@ -50,6 +51,7 @@ theorem hpos_slot {ts : List ℕ} (hts : PowAxes r ts) (h : ℕ) :
   omega
 
 set_option maxHeartbeats 8000000 in
+omit [NeZero r] in
 /-- The twist (`tc = slotTwistClean`) or untwist (`tc = slotUntwistClean`) of slot `h` between rest states. -/
 theorem runs_twistPart {ts : List ℕ} (hts : PowAxes r ts) (π : BitPerm (Nat.log 2 ts.prod)) {w : ℕ}
     (hw : 1 ≤ w) (h : ℕ) (tc : Cmd 0 29) (g : List (Rec r) → List (Rec r))

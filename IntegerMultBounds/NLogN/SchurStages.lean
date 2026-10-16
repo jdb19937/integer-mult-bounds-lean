@@ -236,9 +236,8 @@ theorem stg_congr (hrd0 : rd 0=0) (mul' : ℝ → ℝ → ℝ) (hmul0 : ∀ c, m
     have hcM : stg rd mul A 0 m m m≤M := by
       have := single_le_sum (f := fun j => |stg rd mul A 0 m m j|) (fun _ _ => abs_nonneg _) hmem
       have hle := le_abs_self (stg rd mul A 0 m m m)
-      push_cast at hmass
       nlinarith
-    have hcμ : μ/2≤stg rd mul A 0 m m m := by push_cast at hdom; nlinarith
+    have hcμ : μ/2≤stg rd mul A 0 m m m := by nlinarith
     have hmul_eq : mul' (stg rd mul A 0 m i m) (stg rd mul A 0 m m m)=
         mul (stg rd mul A 0 m i m) (stg rd mul A 0 m m m) := by
       by_cases his : i<s
@@ -246,7 +245,6 @@ theorem stg_congr (hrd0 : rd 0=0) (mul' : ℝ → ℝ → ℝ) (hmul0 : ∀ c, m
         have hiS : i ∈ Ico m s := mem_Ico.mpr ⟨by omega, his⟩
         have := single_le_sum (f := fun j => |stg rd mul A 0 m i j|) (fun _ _ => abs_nonneg _) hmem
         have hmi := hst.2 i hiS
-        push_cast at hmi
         nlinarith
       · rw [stg_out rd mul hrd0 hmul0 s A hout m i m (Or.inl (by omega)), hmul0, hmul0']
     simp only [stg, zero_add, relim]

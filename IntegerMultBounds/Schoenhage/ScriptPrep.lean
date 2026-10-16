@@ -301,8 +301,7 @@ theorem runs_prepC {p d ℓ K w : ℕ} {ts : List ℕ} (hL : LayoutOK (2 ^ ℓ) 
     (Runs.then s9 (Runs.then s10 (Runs.then s11 (Runs.then s12 (Runs.then s13 s14)))))))))))).mono
     (fun τ e => ?_) ?_
   · rw [e]
-    funext i; fin_cases i <;> first | rfl | tsimp [stC, hσ₁₂, hσ₁₁, hσ₁₀, hσ₉, hσ₈, hσ₇, hσ₆, hσ₅, hσ₄, hσ₃,
-      hσ₂, hσ₁, hσ, stB, wIn, decoded, decStart, emp]
+    funext i; fin_cases i <;> rfl
   · simp only [costC, clen, WTape.words, reg, emp, SigmaRowsTape.endv, SigmaRowsTape.ticks, List.map_cons,
       List.map_nil, List.sum_cons, List.sum_nil, List.length_cons, List.length_nil, List.reverse_nil,
       List.nil_append, List.append_nil, length_ones, List.length_singleton, List.reverse_reverse,
@@ -442,8 +441,7 @@ theorem runs_prepD {p d ℓ K w : ℕ} {ts : List ℕ} (hd : 1 ≤ d) (_hD : ts.
     (Runs.then s8 (Runs.then s9 (Runs.then s10 (Runs.then s11 (Runs.then s12 (Runs.then s13 (Runs.then s14
     (Runs.then s15 s16))))))))))))))).mono (fun τ e => ?_) ?_
   · rw [e]
-    funext i; fin_cases i <;> first | rfl | tsimp [stD, hσ₁₅, hσ₁₄, hσ₁₃, hσ₁₂, hσ₁₁, hσ₁₀, hσ₉, hσ₈, hσ₇, hσ₆,
-      hσ₅, hσ₄, hσ₃, hσ₂, hσ₁, hσ, stC, wIn, decoded, decStart, emp]
+    funext i; fin_cases i <;> rfl
   · simp only [costD, clen, WTape.words, reg, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil,
       List.length_cons, List.length_nil, List.reverse_nil, List.nil_append, List.append_nil, length_ones,
       List.length_singleton]

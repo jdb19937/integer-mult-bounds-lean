@@ -221,7 +221,6 @@ theorem hadamard_succ {D K ρ s : ℕ} (hρ : ρ < K) (z : ℕ → Fin r → ℂ
   apply Finset.sum_congr rfl
   intro b _
   rw [card_sel_cons hρ, setSel_cons hρ, pow_add]
-  push_cast
   ring
 
 /-- The selected physical bits, top chunk first: `s + (D-1)K + ρ, …, s + ρ`. -/
@@ -344,6 +343,7 @@ noncomputable def roundRun (p : ℕ) : List ((ℕ → Fin r → ℂ) → ℕ →
   | [], w => w
   | G :: L, w => roundRun p L (roundArr p (G w))
 
+omit [NeZero r] in
 theorem roundRun_le (p n : ℕ) : ∀ (L : List ((ℕ → Fin r → ℂ) → ℕ → Fin r → ℂ)),
     (∀ G ∈ L, Contracts n G ∧ Additive G) → ∀ (w₁ w₂ : ℕ → Fin r → ℂ) (δ : ℝ),
     (∀ y < 2 ^ n, ∀ k, ‖w₁ y k - w₂ y k‖ ≤ δ) →
@@ -365,6 +365,7 @@ theorem roundRun_le (p n : ℕ) : ∀ (L : List ((ℕ → Fin r → ℂ) → ℕ
     simp only [roundRun, run, List.length_cons, Nat.cast_succ] at this ⊢
     linarith
 
+omit [NeZero r] in
 theorem roundRun_disk (p n : ℕ) : ∀ (L : List ((ℕ → Fin r → ℂ) → ℕ → Fin r → ℂ)),
     (∀ G ∈ L, Contracts n G) → ∀ (w : ℕ → Fin r → ℂ), (∀ y < 2 ^ n, ∀ k, ‖w y k‖ ≤ 1) →
     ∀ y < 2 ^ n, ∀ k, ‖roundRun p L w y k‖ ≤ 1
@@ -372,6 +373,7 @@ theorem roundRun_disk (p n : ℕ) : ∀ (L : List ((ℕ → Fin r → ℂ) → �
   | G :: L, hL, w, h => roundRun_disk p n L (fun G' hG' => hL G' (by simp [hG'])) _
       (fun y hy k => (norm_rhoC_le _ _).trans (hL G (by simp) w 1 h y hy k))
 
+omit [NeZero r] in
 /-- A finite family of numbers each below `c` has a common bound below `c`. -/
 theorem exists_uniform_lt {N : ℕ} (f : ℕ → Fin r → ℝ) {c : ℝ} (h : ∀ y < N, ∀ k, f y k < c) :
     ∃ c' < c, ∀ y < N, ∀ k, f y k ≤ c' := by
@@ -386,6 +388,7 @@ theorem exists_uniform_lt {N : ℕ} (f : ℕ → Fin r → ℝ) {c : ℝ} (h : �
     refine ⟨f q.1 q.2, h _ (Finset.mem_range.mp hq'.1) _, fun y hy k => ?_⟩
     exact hmax (y, k) (Finset.mem_product.mpr ⟨Finset.mem_range.mpr hy, Finset.mem_univ _⟩)
 
+omit [NeZero r] in
 /-- With at least one round the error is strictly below `length · √2 · 2^(-p)`. -/
 theorem roundRun_lt (p n : ℕ) (L : List ((ℕ → Fin r → ℂ) → ℕ → Fin r → ℂ)) (hne : L ≠ [])
     (hL : ∀ G ∈ L, Contracts n G ∧ Additive G) (w : ℕ → Fin r → ℂ) :

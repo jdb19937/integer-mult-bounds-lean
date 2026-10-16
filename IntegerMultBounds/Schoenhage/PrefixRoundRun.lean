@@ -74,7 +74,7 @@ theorem runs_prefixHad {r w D s c : ℕ} (hr : 1 ≤ r) (hw : 2 ≤ w) (hc : 1 �
       ⟨(cut w x).reverse ++ (τ xA).left, []⟩)
     refine (Runs.then c1 c2).mono (fun σ h => ?_) ?_
     · rw [h]; funext y; simp only [Function.update_apply]
-      split_ifs <;> (try subst_vars) <;> tsimp [hA, emp] <;> rfl
+      split_ifs <;> (try subst_vars) <;> tsimp [hA, emp]; rfl
     · have h1 : clen (cut w x) = N * (w + 1) := by rw [← hwsl]; exact clen_uniform ws w hwsw
       tsimp [hA, emp, clen_reverse, h1, hxl]
       nlinarith
@@ -192,7 +192,7 @@ theorem runs_prefixHad {r w D s c : ℕ} (hr : 1 ≤ r) (hw : 2 ≤ w) (hc : 1 �
     tsimp [σ₉, σ₈, σ₇, hO, emp]
     refine ⟨?_, ?_⟩
     · funext y; simp only [Function.update_apply]
-      split_ifs <;> (try subst_vars) <;> tsimp [hz, emp] <;> first | rfl | simp_all (config := {decide := true})
+      split_ifs <;> (try subst_vars) <;> tsimp [hz, emp]
     · have h1 : clen outs = N * (w + 1) := by
         rw [clen_uniform outs w houtw]; simp [outs, hesl]
       have h2 : clen (es.map (bits (Wd + 1))) = N * (Wd + 2) := by

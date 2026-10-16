@@ -314,7 +314,7 @@ def wmap (tL nL : ℕ) (i : Fin 102) : Fin (4 + DB tL nL) :=
 theorem wmap_val (i : Fin 102) : (wmap tL nL i).val =
     if i.val < 91 then (if i.val = 87 then 0 else 54 + i.val) else if i.val = 91 then 10 else i.val + 53 := by
   unfold wmap
-  split_ifs with h1 h2 h3 h3 <;> simp_all [gslot, pt, drv, nm, Fin.ext_iff] <;> omega
+  split_ifs with h1 h2 <;> simp_all [gslot, pt, drv, nm, Fin.ext_iff] <;> omega
 
 theorem wmap_injective : Function.Injective (wmap tL nL) := by
   intro i j e

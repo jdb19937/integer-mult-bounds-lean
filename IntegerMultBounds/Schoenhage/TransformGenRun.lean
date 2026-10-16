@@ -48,7 +48,7 @@ def wbank (S0 : Fin 4 → WTape) (dec : Fin 𝕌 → WTape) (v : Fin 13 → WTap
     Fin (4 + DB tL nL) → WTape :=
   wst S0 fun x => if h : x.val < 13 then v ⟨x.val, h⟩
     else if h' : 20 ≤ x.val ∧ x.val < 49 then tw ⟨x.val - 20, by omega⟩
-    else if h'' : 50 ≤ x.val ∧ x.val < 141 ∧ x.val ≠ 137 then dec ⟨x.val - 50, by change _ < 91; omega⟩ else emp
+    else if h'' : 50 ≤ x.val ∧ x.val < 141 ∧ x.val ≠ 137 then dec ⟨x.val - 50, by omega⟩ else emp
 
 theorem gslot_val (x : Fin 𝕌) : (gslot tL nL x).val = if x = zH then 0 else 54 + x.val := by
   unfold gslot; split_ifs <;> simp [pt, drv]; omega
@@ -403,7 +403,7 @@ theorem runs_genCmd {A : ℕ} (sg lg : Cmd A (4 + DB tL nL)) {ℓ K : ℕ} {ts :
   have hd7 : ∀ x, x ≠ zH → Function.update d6 xA ⟨[], []⟩ x = emp := by
     intro x hx
     simp only [d6, d4, d2, dec, decoded, decStart, Function.update_apply]
-    split_ifs <;> first | rfl | (exfalso; tauto)
+    split_ifs <;> rfl
   rw [wbank_dstate _ _ _ _ hd7] at c7
   refine (Runs.then s1 (Runs.then s2 (Runs.then s3 (Runs.then s4 (Runs.then c1 (Runs.then c2 (Runs.then c3
     (Runs.then c4 (Runs.then c5 (Runs.then c6 c7)))))))))).mono (fun τ e => ?_) ?_

@@ -77,7 +77,7 @@ theorem runs_kOf {p d l K w : ℕ} {ts : List ℕ} (hp : 1 ≤ p) (hd : 1 ≤ d)
     refine ⟨?_, ?_⟩
     · funext y
       simp only [Function.update_apply]
-      split_ifs <;> (try subst_vars) <;> (try tsimp [hz, hk, reg, emp]) <;> tsimp at *
+      split_ifs <;> (try subst_vars) <;> (try tsimp [hz, hk, reg, emp])
     · have hb : Rules.zhalf.B = 1 := rfl
       rw [hb] at t1
       have hc : tsc.count false ≤ tsc.length := List.count_le_length
@@ -209,8 +209,7 @@ theorem runs_gammaOut {w k : ℕ} (τ : Fin 𝕌 → WTape) (hc : Clean τ) (hW 
     refine ⟨?_, ?_⟩
     · funext y
       simp only [Function.update_apply]
-      split_ifs <;> (try subst_vars) <;> (try tsimp [hz, hW, hK, reg, emp, ones, n]) <;>
-        (try tsimp at *)
+      split_ifs <;> (try subst_vars) <;> (try tsimp [hz, hW, hK, reg, emp, ones, n])
     · simp [time_copy, n]; omega
   set τA := Function.update τ (ι qR) (reg (ones n))
   have sB := runs_ticksFrom (show ι qR ≠ ι qT by decide) τA (b := n) (by tsimp [τA]) (by tsimp [τA, hz])
@@ -236,7 +235,7 @@ theorem runs_gammaOut {w k : ℕ} (τ : Fin 𝕌 → WTape) (hc : Clean τ) (hW 
     refine ⟨?_, ?_⟩
     · funext y
       simp only [Function.update_apply]
-      split_ifs <;> (try subst_vars) <;> (try tsimp [hz, reg, emp]) <;> tsimp at *
+      split_ifs <;> (try subst_vars) <;> (try tsimp [hz, reg, emp]); tsimp at *
     · simp [clen, WTape.words, length_lsb, ones]; omega
   set τE := Function.update (Function.update τ (ι qB) (reg (lsb n))) (ι qT) emp
   have sF := runs_revw (a := 0) (show ι qB ≠ ι tD by decide) τE (L := []) (R := []) (w := lsb n)
@@ -252,7 +251,7 @@ theorem runs_gammaOut {w k : ℕ} (τ : Fin 𝕌 → WTape) (hc : Clean τ) (hW 
     refine ⟨?_, ?_⟩
     · funext y
       simp only [Function.update_apply]
-      split_ifs <;> (try subst_vars) <;> (try tsimp [hz, hG, reg, emp, gamma_eq_lsb]) <;> tsimp at *
+      split_ifs <;> (try subst_vars) <;> (try tsimp [hz, hG, reg, emp, gamma_eq_lsb])
     · have hb : Rules.tailFill.B = 1 := rfl
       rw [hb] at t1
       simp [time_copy, clen, WTape.words, length_lsb] at t1 ⊢; omega

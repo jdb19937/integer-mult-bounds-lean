@@ -30,7 +30,7 @@ theorem length_gamma_pow (e : ℕ) : (gamma (2 ^ e)).length = 2 * e + 1 := by
 theorem length_axes_le {d ℓ : ℕ} {ts : List ℕ} (h : AxisLengths d ℓ ts) :
     (ts.flatMap gamma).length ≤ (2 * ℓ + 1) * ts.length := by
   have : ∀ t ∈ ts, (gamma t).length ≤ 2 * ℓ + 1 := fun t ht => by
-    rcases h.2 t ht with rfl | rfl <;> rw [length_gamma_pow] <;> omega
+    rcases h.2 t ht with rfl | rfl <;> rw [length_gamma_pow]; omega
   clear h
   induction ts with
   | nil => simp

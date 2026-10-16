@@ -68,7 +68,7 @@ theorem runs_constsA (ℓ K w D : ℕ) (f : List Bool) :
   apply Runs.of_wp
   simp only [constsA, WP, wp_rewind, wp_emit]
   tsimp [lstart, emp]
-  funext i; fin_cases i <;> first | rfl | tsimp [lstart, stA, emp, endv, reg, ones]
+  funext i; fin_cases i <;> rfl
 
 /-- Copy the flags to the move generator's flag tape. -/
 noncomputable def copyFlags : Cmd 0 48 := .seq (rewind 36) <| .seq (appendAll 36 11 (by decide)) (rewind 11)
@@ -122,7 +122,7 @@ theorem runs_copies (ℓ K w D : ℕ) (f : List Bool) :
     simp only [lm1Calc, WP, wp_op1, wp_rewind]
     tsimp [hσ₆, hσ₅, hσ₄, hσ₃, hσ₂, hσ₁, hσ, stA, lstart, emp, reg, Rules.output_drop, ones, List.drop_replicate]
     refine ⟨?_, ?_⟩
-    · funext i; fin_cases i <;> first | rfl | tsimp [hσ₆, hσ₅, hσ₄, hσ₃, hσ₂, hσ₁, hσ, stA, lstart, reg, ones]
+    · funext i; fin_cases i <;> rfl
     · simp at t1 ⊢; omega
   refine (Runs.seq (Runs.then a1 (Runs.then a2 a3) |>.mono (fun τ h => by
     rw [h]; exact Runs.seq (Runs.then b1 (Runs.then b2 b3) |>.mono (fun τ' h' => by rw [h']; exact c1) le_rfl))
@@ -185,7 +185,7 @@ theorem runs_nPhase (ℓ K w D : ℕ) (f : List Bool) :
     simp only [cpy, WP, wp_op0, wp_rewind]
     tsimp [hσ, stB, stA, lstart, emp, reg, Rules.output_copy]
     refine ⟨?_, ?_⟩
-    · funext i; fin_cases i <;> first | rfl | tsimp [hσ, stC, stB, stA, lstart, reg, endv]
+    · funext i; fin_cases i <;> rfl
     · simp [time_copy, length_ones]; omega
   refine (Runs.seq (s1'.mono (fun τ h => by rw [h]; exact s2) le_rfl)).mono (fun τ h => h) ?_
   omega
@@ -272,7 +272,7 @@ theorem runs_divPhase {ℓ K : ℕ} (hK : 0 < K) (w D : ℕ) (f : List Bool) :
     simp only [divPrep, cpy, WP, wp_op0, wp_rewind]
     tsimp [hσ, stC, stB, stA, lstart, emp, reg, Rules.output_ticks, Rules.output_copy, length_ones, ← hx]
     refine ⟨?_, ?_⟩
-    · funext i; fin_cases i <;> first | rfl | tsimp [hσ, stC, stB, stA, lstart, reg, List.reverse_replicate, ← hx]
+    · funext i; fin_cases i <;> rfl
     · simp [time_copy, length_ones] at t0 ⊢; omega
   set σ₁ := Function.update (Function.update σ 40 ⟨[], List.replicate x []⟩) 39 (reg (ones x)) with hσ₁
   have hd := SigmaConstsTape.runs_divLoop hK x x (σ₁ ∘ fd) [] []
@@ -305,8 +305,7 @@ theorem runs_divPhase {ℓ K : ℕ} (hK : 0 < K) (w D : ℕ) (f : List Bool) :
     tsimp [hσ₂, hσ₁, hσ, stC, stB, stA, lstart, emp, reg, Rules.output_ticks, Rules.output_copy,
       Rules.output_drop, ones, List.drop_replicate, length_ones, ← hx]
     refine ⟨?_, ?_⟩
-    · funext i; fin_cases i <;> first | rfl | tsimp [hσ₂, hσ₁, hσ, stD, stC, stB, stA, lstart, reg, ones,
-        List.reverse_replicate, List.replicate_add, Nat.sub_sub, ← hx]
+    · funext i; fin_cases i <;> rfl
     · simp [time_copy, clen, WTape.words] at t1 t2 t3 ⊢
       -- Keep the arithmetic solver from unfolding the tape programs' running times.
       generalize time Rules.ticks (List.replicate (x % K) true) (fun j => j.elim0) = ticksCost at t1 ⊢
@@ -420,8 +419,7 @@ theorem runs_binPhase {ℓ K w : ℕ} (hw : 0 < w) (D : ℕ) (f : List Bool) :
     tsimp [hσ₃, hσ₂, hσ, stD, stC, stB, stA, lstart, emp, reg, Rules.output_copy, Rules.output_drop, ones,
       List.drop_replicate]
     refine ⟨?_, ?_⟩
-    · funext i; fin_cases i <;> first | rfl | tsimp [hσ₃, hσ₂, hσ, stE, stD, stC, stB, stA, lstart, reg, ones,
-        Nat.sub_sub]
+    · funext i; fin_cases i <;> rfl
     · simp [time_copy, clen, WTape.words] at t1 t2 ⊢; omega
   refine (Runs.then s1' (Runs.then s2 (Runs.then s3' s4))).mono (fun τ h => h) ?_
   nlinarith

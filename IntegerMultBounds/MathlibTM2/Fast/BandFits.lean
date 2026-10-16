@@ -231,7 +231,7 @@ theorem lineFwd_eq (P K B s : ℕ) (hP : 2 ≤ P) (AZ : ℕ → ℕ → ℤ) (hA
       (cols (LzN P K s AZ) ks).map (padCol B) := by
     rw [hfac, List.map_map, lcols_eq P K B s AZ hout]; rfl
   have hlenk : bZ.length = ks.length := by rw [hlen, hks, List.length_range']
-  rw [hLc, fwdZ_pad P B (LzN P K s AZ) ks (banded_LzN P K B s hP AZ hA hout) bZ hlenk]
+  rw [hLc, fwdZ_pad P B (LzN P K s AZ) ks (banded_LzN P K B s hP AZ hA) bZ hlenk]
   have hbZ : bZ = ks.map fun i => bZ.getD i 0 := by rw [hks, ← hlen, range'_getD]
   have h1 := fwdZ_eq P (luLr (rdP P) (mRule P K) (gvM P AZ) (Ico 0 s) ks) (LzN P K s AZ)
     (fun i k => luLr_natural P K s hP AZ i k) ks hnd (fun _ => 0) (fun i => bZ.getD i 0)

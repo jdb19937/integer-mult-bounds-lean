@@ -149,6 +149,7 @@ section Steps
 
 variable [NeZero r] {ts : List ℕ} {ℓ K : ℕ} (hL : LayoutOK r ts ℓ K) (p : ℕ)
 
+omit [NeZero r] in
 theorem agree_of_eq {n : ℕ} {u v : ℕ → Fin r → ℂ} (h : u = v) : Agree n u v := fun _ _ => by rw [h]
 
 /-- A forward prefix round on records. -/
