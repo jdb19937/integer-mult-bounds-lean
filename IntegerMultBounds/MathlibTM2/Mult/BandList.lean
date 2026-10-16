@@ -160,4 +160,161 @@ theorem subCol_append_zeros (P : ℕ) (c₁ c₂ : List ℤ) (hz : ∀ x∈c₂,
     | nil => rfl
     | cons r rs => simp only [List.cons_append, subCol, ih]
 
+/-! ### Complex records, padded columns
+
+The machine stores complex numerators and applies real column entries to both
+parts at once; columns are padded to a fixed length with zeros and the pending
+list carries the same number of zero dummies. -/
+
+/-- Real column entries applied to complex pending numerators. -/
+def subColC (P : ℕ) : List ℤ → GaussianInt → List GaussianInt → List GaussianInt
+  | c::cs, y, r::rs => (r-Fast.tdivN P (⟨c, 0⟩*y))::subColC P cs y rs
+  | _, _, rs => rs
+
+def fwdZC (P : ℕ) : List (List ℤ) → List GaussianInt → List GaussianInt
+  | c::cs, y::rest => y::fwdZC P cs (subColC P c y rest)
+  | _, _ => []
+
+theorem subColC_re (P : ℕ) : ∀ (c : List ℤ) (y : GaussianInt) (rs : List GaussianInt),
+    (subColC P c y rs).map (·.re)=subCol P c y.re (rs.map (·.re))
+  | c::cs, y, r::rs => by
+      simp only [subColC, subCol, List.map_cons, Zsqrtd.re_sub, Fast.tdivN_re, Zsqrtd.re_mul]
+      rw [subColC_re P cs y rs]
+      simp
+  | [], _, rs => by cases rs <;> rfl
+  | _::_, _, [] => rfl
+
+theorem subColC_im (P : ℕ) : ∀ (c : List ℤ) (y : GaussianInt) (rs : List GaussianInt),
+    (subColC P c y rs).map (·.im)=subCol P c y.im (rs.map (·.im))
+  | c::cs, y, r::rs => by
+      simp only [subColC, subCol, List.map_cons, Zsqrtd.im_sub, Fast.tdivN_im, Zsqrtd.im_mul]
+      rw [subColC_im P cs y rs]
+      simp
+  | [], _, rs => by cases rs <;> rfl
+  | _::_, _, [] => rfl
+
+theorem fwdZC_re (P : ℕ) : ∀ (cs : List (List ℤ)) (pend : List GaussianInt),
+    (fwdZC P cs pend).map (·.re)=fwdZ P cs (pend.map (·.re))
+  | c::cs, y::rest => by
+      simp only [fwdZC, fwdZ, List.map_cons]
+      rw [fwdZC_re P cs, subColC_re]
+  | [], pend => by cases pend <;> rfl
+  | _::_, [] => rfl
+
+theorem fwdZC_im (P : ℕ) : ∀ (cs : List (List ℤ)) (pend : List GaussianInt),
+    (fwdZC P cs pend).map (·.im)=fwdZ P cs (pend.map (·.im))
+  | c::cs, y::rest => by
+      simp only [fwdZC, fwdZ, List.map_cons]
+      rw [fwdZC_im P cs, subColC_im]
+  | [], pend => by cases pend <;> rfl
+  | _::_, [] => rfl
+
+def bwdZC (P : ℕ) : List (List ℤ) → List ℤ → List GaussianInt → List GaussianInt
+  | c::cs, r::rs, q::rest => Fast.tdivN P (q*⟨r, 0⟩)::
+      bwdZC P cs rs (subColC P c (Fast.tdivN P (q*⟨r, 0⟩)) rest)
+  | _, _, _ => []
+
+theorem bwdZC_re (P : ℕ) : ∀ (cs : List (List ℤ)) (rs : List ℤ) (pend : List GaussianInt),
+    (bwdZC P cs rs pend).map (·.re)=bwdZ P cs rs (pend.map (·.re))
+  | c::cs, r::rs, q::rest => by
+      simp only [bwdZC, bwdZ, List.map_cons, Fast.tdivN_re, Zsqrtd.re_mul]
+      rw [bwdZC_re P cs rs, subColC_re]
+      simp [Fast.tdivN_re, Zsqrtd.re_mul]
+  | [], _, pend => by cases pend <;> rfl
+  | _::_, [], pend => by cases pend <;> rfl
+  | _::_, _::_, [] => rfl
+
+theorem bwdZC_im (P : ℕ) : ∀ (cs : List (List ℤ)) (rs : List ℤ) (pend : List GaussianInt),
+    (bwdZC P cs rs pend).map (·.im)=bwdZ P cs rs (pend.map (·.im))
+  | c::cs, r::rs, q::rest => by
+      simp only [bwdZC, bwdZ, List.map_cons, Fast.tdivN_im, Zsqrtd.im_mul]
+      rw [bwdZC_im P cs rs, subColC_im]
+      simp [Fast.tdivN_im, Zsqrtd.im_mul]
+  | [], _, pend => by cases pend <;> rfl
+  | _::_, [], pend => by cases pend <;> rfl
+  | _::_, _::_, [] => rfl
+
+/-! ### Padding to a fixed band -/
+
+theorem length_subCol (P : ℕ) : ∀ (c : List ℤ) (y : ℤ) (rs : List ℤ),
+    (subCol P c y rs).length=rs.length
+  | c::cs, y, r::rs => by simp [subCol, length_subCol P cs y rs]
+  | [], _, rs => by cases rs <;> rfl
+  | _::_, _, [] => rfl
+
+
+/-- A column truncated to its first `B` entries and padded with zeros to length `B`. -/
+def padCol (B : ℕ) (c : List ℤ) : List ℤ := c.take B++List.replicate (B-(c.take B).length) 0
+
+theorem subCol_append_rest (P : ℕ) : ∀ (c : List ℤ) (y : ℤ) (rs D : List ℤ),
+    c.length≤rs.length → subCol P c y (rs++D)=subCol P c y rs++D
+  | [], _, rs, D, _ => by cases rs <;> rfl
+  | c::cs, y, r::rs, D, h => by
+      simp only [List.cons_append, subCol]
+      rw [subCol_append_rest P cs y rs D (by simp at h; omega)]
+  | _::_, _, [], _, h => by simp at h
+
+theorem subCol_pad (P B : ℕ) (c : List ℤ) (y : ℤ) (rs : List ℤ) (hlen : c.length=rs.length)
+    (hz : ∀ x∈c.drop B, x=0) :
+    subCol P (padCol B c) y (rs++List.replicate B 0)=subCol P c y rs++List.replicate B 0 := by
+  unfold padCol
+  rw [subCol_append_zeros P _ _ (fun x hx => (List.mem_replicate.mp hx).2),
+    subCol_append_rest P _ y rs _ (by simp [List.length_take]; omega)]
+  congr 1
+  conv_rhs => rw [←List.take_append_drop B c]
+  rw [subCol_append_zeros P _ _ hz]
+
+/-- Each column vanishes beyond its first `B` entries. -/
+def Banded (B : ℕ) (Lz : ι → ι → ℤ) : List ι → Prop
+  | [] => True
+  | k::rest => (∀ x∈rest.drop B, Lz x k=0) ∧ Banded B Lz rest
+
+omit [DecidableEq ι] in
+theorem cols_drop_zero (B : ℕ) (Lz : ι → ι → ℤ) (k : ι) (rest : List ι)
+    (h : ∀ x∈rest.drop B, Lz x k=0) : ∀ z∈(rest.map fun i => Lz i k).drop B, z=0 := by
+  intro z hz
+  rw [←List.map_drop] at hz
+  obtain ⟨x, hx, rfl⟩ := List.mem_map.mp hz
+  exact h x hx
+
+omit [DecidableEq ι] in
+/-- Padded columns and `B` dummy zeros reproduce the full forward computation. -/
+theorem fwdZ_pad (P B : ℕ) (Lz : ι → ι → ℤ) (ks : List ι) (hb : Banded B Lz ks) :
+    ∀ pend : List ℤ, pend.length=ks.length →
+      fwdZ P ((cols Lz ks).map (padCol B)) (pend++List.replicate B 0)=fwdZ P (cols Lz ks) pend := by
+  induction ks with
+  | nil => intro pend _; simp [cols, fwdZ]
+  | cons k rest ih =>
+    intro pend hlen
+    obtain ⟨hk, hrest⟩ := hb
+    cases pend with
+    | nil => simp at hlen
+    | cons y ps =>
+      simp only [cols, List.map_cons, List.cons_append, fwdZ]
+      have hl : ps.length=rest.length := by simpa using hlen
+      rw [subCol_pad P B _ y ps (by simp [hl]) (cols_drop_zero B Lz k rest hk)]
+      rw [ih hrest _ (by rw [length_subCol, hl])]
+
+omit [DecidableEq ι] in
+/-- The same for the backward computation with stored reciprocals. -/
+theorem bwdZ_pad (P B : ℕ) (Uz : ι → ι → ℤ) (ks : List ι) (hb : Banded B Uz ks) (rs : List ℤ) :
+    ∀ pend : List ℤ, pend.length=ks.length →
+      bwdZ P ((cols Uz ks).map (padCol B)) rs (pend++List.replicate B 0)=
+        bwdZ P (cols Uz ks) rs pend := by
+  induction ks generalizing rs with
+  | nil => intro pend _; simp [cols, bwdZ]
+  | cons k rest ih =>
+    intro pend hlen
+    obtain ⟨hk, hrest⟩ := hb
+    cases pend with
+    | nil => simp at hlen
+    | cons q ps =>
+      cases rs with
+      | nil => simp [cols, bwdZ]
+      | cons r rs =>
+        simp only [cols, List.map_cons, List.cons_append, bwdZ]
+        have hl : ps.length=rest.length := by simpa using hlen
+        rw [subCol_pad P B _ _ ps (by simp [hl]) (cols_drop_zero B Uz k rest hk)]
+        rw [ih hrest rs _ (by rw [length_subCol, hl])]
+
 end IntegerMultBounds.MathlibTM2.Mult.BandList
