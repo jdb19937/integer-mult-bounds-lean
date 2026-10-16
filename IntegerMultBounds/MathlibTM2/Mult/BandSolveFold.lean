@@ -2,6 +2,7 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Mult.BandSolveList
 public import IntegerMultBounds.MathlibTM2.Mult.ConcreteB0
+public import IntegerMultBounds.NLogN.PhaseCellInteriorRow
 
 /-! The banded line solve in folded positions. The machine stores the window
 matrix of coefficient numerators `aZ` at folded positions: row `i` and column
@@ -91,5 +92,78 @@ theorem lineSolveFold_eq (hP : 2 ≤ P) (w : ℕ) (aZ : ZMod s → ℤ → ℤ) 
     (fun i => gv P (bZ.getD i 0)) (fun _ => rfl) (foldAt s i)
   rw [image_foldPos, foldOrder_map_foldPos, foldPos_foldAt s i hi'] at hmap
   exact hmap
+
+/-- The forward residue of `l - j`. -/
+def fdist (j l : ZMod s) : ℕ := (l.val+s-j.val) % s
+
+theorem cast_fdist (j l : ZMod s) : j+((fdist s j l : ℕ) : ZMod s)=l := by
+  have hs : 0 < s := Nat.pos_of_ne_zero (NeZero.ne s)
+  have hj := ZMod.val_lt j
+  unfold fdist
+  rw [ZMod.natCast_mod, Nat.cast_sub (by omega), Nat.cast_add, ZMod.natCast_self,
+    ZMod.natCast_zmod_val, ZMod.natCast_zmod_val]
+  ring
+
+theorem fdist_unique (j l : ZMod s) (k : ℤ) (h : j+(k : ZMod s)=l) :
+    ((fdist s j l : ℕ) : ℤ) ≡ k [ZMOD s] := by
+  have h2 := (cast_fdist s j l).trans h.symm
+  have h3 : ((fdist s j l : ℕ) : ZMod s)=(k : ZMod s) := add_left_cancel h2
+  rw [← ZMod.intCast_eq_intCast_iff]
+  push_cast
+  exact h3
+
+/-- When the line is longer than the band, a window entry is the single coefficient at
+the centered residue. -/
+theorem wmZ_single (w : ℕ) (hsw : 2*w+1 < s) (aZ : ZMod s → ℤ → ℤ) (j l : ZMod s) :
+    wmZ s w aZ j l=if fdist s j l ≤ w then aZ j (fdist s j l)
+      else if s-w ≤ fdist s j l then aZ j ((fdist s j l : ℤ)-s) else 0 := by
+  have hs : 0 < s := Nat.pos_of_ne_zero (NeZero.ne s)
+  have hd : fdist s j l < s := Nat.mod_lt _ hs
+  set d := fdist s j l with hddef
+  -- the indicator of `j + k = l` on the window is the indicator of `k ≡ d`
+  have hind : ∀ k : ℤ, k.natAbs ≤ w → (j+(k : ZMod s)=l ↔ k=(if d ≤ w then (d : ℤ) else (d : ℤ)-s)) := by
+    intro k hk
+    constructor
+    · intro h
+      have hm := fdist_unique s j l k h
+      rw [← hddef] at hm
+      obtain ⟨q, hq⟩ := Int.ModEq.dvd hm.symm
+      have hkb : -(w : ℤ) ≤ k ∧ k ≤ w := by omega
+      have : -(s : ℤ) < (d : ℤ)-k ∧ (d : ℤ)-k < 2*s := by omega
+      have hq' : (d : ℤ)-k=s*q := by linarith
+      have hq0 : q=0 ∨ q=1 := by
+        rcases lt_trichotomy q 0 with h | h | h
+        · nlinarith
+        · left; exact h
+        · have : q ≤ 1 := by nlinarith
+          right; omega
+      split_ifs with hdw
+      · rcases hq0 with rfl | rfl
+        · linarith
+        · omega
+      · rcases hq0 with rfl | rfl
+        · omega
+        · linarith
+    · intro h
+      rw [h]
+      split_ifs
+      · simpa [hddef] using cast_fdist s j l
+      · push_cast; rw [ZMod.natCast_self, sub_zero]; simpa [hddef] using cast_fdist s j l
+  set k0 : ℤ := if d ≤ w then (d : ℤ) else (d : ℤ)-s with hk0
+  rw [wmZ, NLogN.PhaseCellMatrix.window_eq_Icc]
+  rw [Finset.sum_congr rfl (g := fun k => if k=k0 then aZ j k else 0) (fun k hk => by
+    have hk' := Finset.mem_Icc.mp hk
+    have hka : k.natAbs ≤ w := by omega
+    by_cases hc : j+(k : ZMod s)=l
+    · rw [if_pos hc, if_pos ((hind k hka).mp hc)]
+    · rw [if_neg hc, if_neg (fun h => hc ((hind k hka).mpr h))]), Finset.sum_ite_eq']
+  by_cases hdw : d ≤ w
+  · rw [if_pos (Finset.mem_Icc.mpr ⟨by simp [hk0, hdw], by simp [hk0, hdw]⟩), if_pos hdw]
+    simp [hk0, hdw]
+  · rw [if_neg hdw]
+    by_cases hsd : s-w ≤ d
+    · rw [if_pos (Finset.mem_Icc.mpr ⟨by simp [hk0, hdw]; omega, by simp [hk0, hdw]; omega⟩), if_pos hsd]
+      simp [hk0, hdw]
+    · rw [if_neg hsd, if_neg (fun h => by have := Finset.mem_Icc.mp h; simp [hk0, hdw] at this; omega)]
 
 end IntegerMultBounds.MathlibTM2.Mult.BandFactor
