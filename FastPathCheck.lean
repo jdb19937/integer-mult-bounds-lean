@@ -26,9 +26,6 @@ import IntegerMultBounds.MathlibTM2
 /-- info: 'IntegerMultBounds.MathlibTM2.Mult.Rounds.opp_rounds' depends on axioms: [propext, Classical.choice, Quot.sound] -/
 #guard_msgs (whitespace := lax) in #print axioms IntegerMultBounds.MathlibTM2.Mult.Rounds.opp_rounds
 
-/-- info: 'IntegerMultBounds.MathlibTM2.Mult.FastB0.resampB₀NumK_spec' depends on axioms: [propext, Classical.choice, Quot.sound] -/
-#guard_msgs (whitespace := lax) in #print axioms IntegerMultBounds.MathlibTM2.Mult.FastB0.resampB₀NumK_spec
-
 /-- info: 'IntegerMultBounds.MathlibTM2.Layer.nodeM_correct' depends on axioms: [propext, Classical.choice, Quot.sound] -/
 #guard_msgs (whitespace := lax) in #print axioms IntegerMultBounds.MathlibTM2.Layer.nodeM_correct
 

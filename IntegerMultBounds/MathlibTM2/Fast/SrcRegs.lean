@@ -17,7 +17,7 @@ lifts the stage contracts to it, and proves the stream identities between the st
 Schönhage–Strassen registers `ι`). One family per stage, each with the register type of its
 stage theorem:
 * `a r` (`r : RsaR (RsaX t₀)`): `Ã` (`Fast/PrepA.rsaStage_exec`), box register `a .ln`;
-* `b r` (`r : RsbR ⊕ RsbX t₀`): `B̃₀` (`Fast/PrepB.rsbStage_exec`), box register `b (.inl .src)`;
+* `b r` (`r : RsbR ⊕ RsbX t₀`): `B̃₀` (`Fast/BandStage.bandStage_exec`), box register `b (.inl .src)`;
 * `k r` (`r : CsR ldcX`): the chirp kernel (`Fast/LoadChirp.ldChirpStage_exec`), kernel on
   `k .kr`;
 * `v r` (`r : CvR`): the complex convolution (`Fast/ConvBox.cvBox_convBox`); its complex-product

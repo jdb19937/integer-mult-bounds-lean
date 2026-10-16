@@ -17,10 +17,6 @@ box `∏ [0, t i)`, with zeros at every address with some coordinate `x i ≥ s 
 * `rsb_tensor`: line maps `g i` related to `A i` along all axes, in the order of `tensorZR`
   (`rsbAxesL`), turn the stream of the numerators of `u` into the padded stream of the
   numerators of `tensorZR d M N A u`.
-* `rsb_lineG_rel`: the line map `rsbLineG` of the machine is related to
-  `Mult.FastB0.resampB₀NumK p K m (E/2^p) (D/2^p)` at scale `2^p`.
-* `rsb_tensor_B₀`: the two together: the line maps `rsbLineG` along all axes compute
-  `tensorZR d t s (fun i => resampB₀NumK …)` on the padded box, exactly.
 -/
 
 @[expose] public section
@@ -141,48 +137,6 @@ section LineRel
 variable {s t : ℕ}
 
 lemma tdivN_zero (p : ℕ) : tdivN p 0 = 0 := by ext <;> simp [tdivN]
-
-lemma rsbIter_zero (p m : ℕ) (E : ZMod s → ℤ → ℤ) :
-    ∀ k, rsbIter p m E (fun _ => 0) k = fun _ => 0
-  | 0 => rfl
-  | k + 1 => by
-      funext ℓ
-      simp [rsbIter, rsbIter_zero p m E k, rsbStep, zero_mul, tdivN_zero]
-
-lemma rsbLineNum_zero (p K m : ℕ) (E : ZMod s → ℤ → ℤ) (D : ZMod s → ℤ) :
-    rsbLineNum (t := t) p K m E D (fun _ => 0) = fun _ => 0 := by
-  have h : rsbHalf (s := s) (t := t) (fun _ => 0) = fun _ => 0 := by
-    funext ℓ; simp [rsbHalf, tdivN_zero]
-  funext ℓ
-  simp [rsbLineNum, h, rsbIter_zero, tdivN_zero]
-
-/-- **The machine's line map is `B̃₀` on numerators.** -/
-theorem rsb_lineG_rel [NeZero s] (p K m : ℕ) (E : ZMod s → ℤ → ℤ) (D : ZMod s → ℤ) :
-    RsbLineRel t s (Mult.FastB0.resampB₀NumK p K m (fun ℓ h => (E ℓ h : ℝ) / 2 ^ p)
-      (fun ℓ => (D ℓ : ℝ) / 2 ^ p)) (rsbLineG s t p K m E D) p where
-  num := by
-    intro L v hv k hk
-    have hv' : v = fun j => rsbGrid p (rsbVec (t := t) L j) := funext hv
-    rw [hv', rsb_resampB₀NumK, rsbLineG,
-      List.getD_append _ _ _ _ (by simpa [length_rsbArr] using hk),
-      List.getD_eq_getElem _ _ (by simpa [length_rsbArr] using hk)]
-    simp [rsbArr, rsbGrid]
-  pad := by
-    intro L k hk
-    rw [rsbLineG, List.getD_append_right _ _ _ _ (by simpa [length_rsbArr] using hk)]
-    simp [List.getD_eq_getElem?_getD, List.getElem?_replicate]
-    split_ifs <;> rfl
-  zero := by
-    intro L hL k
-    have h0 : rsbVec (t := t) L = fun _ => 0 := by
-      funext j
-      simp only [rsbVec]
-      by_cases hj : j.val < L.length
-      · rw [List.getD_eq_getElem _ _ hj]; exact hL _ (List.getElem_mem hj)
-      · rw [List.getD_eq_default _ _ (by omega)]
-    rw [rsbLineG, h0, rsbLineNum_zero]
-    simp [List.getD_eq_getElem?_getD, rsbArr, List.getElem?_replicate]
-    split_ifs <;> simp
 
 end LineRel
 

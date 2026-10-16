@@ -6,7 +6,7 @@ public import IntegerMultBounds.MathlibTM2.Fast.BandLineSpec
 # The banded `B̃₀` along the innermost axis of a padded box
 
 `bandAxisP` runs the banded line `bandLineP` while `src` is nonempty, collecting the outputs
-(reversed) on `dst`, and moves them back onto `src`, as `rsbAxisP` does for the Neumann line.
+(reversed) on `dst`, and moves them back onto `src`.
 
 * `BandAxisCfg`: the line registers configured for one axis: the tables `bo`, `hf`, `df`,
   `dtab`, the constants on `smwn` and `bx`, the counters and the empty scratch registers.

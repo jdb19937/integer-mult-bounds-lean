@@ -16,7 +16,7 @@ times `totDirectCRT + totResamp + totConv + T M(p) + T p`.
 
 * `mn_core_le`: one run of `srcCore` on base files whose first cleared registers hold at most
   `T w` symbols costs at most `C (totDirectCRT + totResamp + totConv + T M(p) + T p) + 2 cF + cO`:
-  `Ã` and `B̃₀` by `mt_rsa_stage_le`, `mt_rsb_stage_le`; the chirp kernel by `mt_ch_kernel_le`
+  `Ã` and `B̃₀` by `mt_rsa_stage_le`, `mt_band_stage_le_linear`; the chirp kernel by `mt_ch_kernel_le`
   and the stored descriptions (`ldcBlocks`, at most `2 T` symbols each); the chirp products by
   `mt_ch_chirpMul_le`; the convolution box without its transforms by `mt_cv_box_le_conv`
   (`cvBoxCost … cF cO = cvBoxCost … 0 0 + 2 cF + cO`, `mn_cvBoxCost_split`), the ring header and

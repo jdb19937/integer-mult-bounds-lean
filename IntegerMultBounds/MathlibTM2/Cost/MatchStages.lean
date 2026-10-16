@@ -27,7 +27,7 @@ ratios `w ≤ cw p` (coefficients), `W ≤ cW p` (table words), `m ≤ cm p` (ro
 | F3 digits | `digitRecords_exec` | `mt_digit_le` | `n` |
 | F4, F9 CRT | `crtForward_runs`, `crtInverse_runs` | `mt_crt_le`, `mt_crt_le_pre` | `totCRT` |
 | `Ã` with loader | `rsaStage_exec` | `mt_rsa_stage_le` | `totResamp + totCRT + T p` |
-| `B̃₀` with loader | `rsbStage_exec` | `mt_rsb_stage_le` | `totResamp + totCRT + T p` |
+| `B̃₀` with loader | `bandStage_exec` | `mt_band_stage_le_linear` | `totResamp + totDirectCRT + T p` |
 | chirp kernel | `ldChirpStage_exec` | `mt_ch_kernel_le` | `T M(p)` |
 | chirp products, twists | `cst_chirpMulKeep_runs` | `mt_ch_chirpMul_le` | `T M(p)` |
 | conjugation, `× 2^γ` | `cst_conj_runs`, `cst_conjKeep_runs`, `cst_scale_runs` | `mt_ch_conj_le`, `mt_ch_conjKeep_le`, `mt_ch_scale_le` | `T p` |

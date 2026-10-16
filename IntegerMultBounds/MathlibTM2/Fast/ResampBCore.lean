@@ -108,12 +108,6 @@ theorem RsbRuns.congr {p : Pr P T Q A U} {ρ ρ' ρ'' : R → List (Fin (A + 4))
 theorem RsbRuns.congr_pre {p : Pr P T Q A U} {ρ₀ ρ ρ' : R → List (Fin (A + 4))} {b : ℕ}
     (h : RsbRuns body rg ι p ρ ρ' b) (he : ρ₀ = ρ) : RsbRuns body rg ι p ρ₀ ρ' b := he ▸ h
 
-/-- The empty program `act done`, one step. -/
-theorem rsb_done_runs (ρ : R → List (Fin (A + 4))) :
-    RsbRuns body rg ι (.act .done) ρ ρ 1 := by
-  intro v S _ hS
-  exact ⟨v, S, 1, rfl, le_rfl, Exec.act _ _, hS, RsbFr.refl S⟩
-
 /-! ### Valuations under updates -/
 
 lemma rsb_upd_comp [DecidableEq R] (hrg : Function.Injective rg) {β : Type} (g : Fin T → β)
@@ -224,19 +218,9 @@ variable {T Q A : ℕ} {U : Type} {P : Type}
 def rsbMvTop (x y : Fin T) (k : Act T Q A U) : Act T Q A U :=
   .pop (.rt x) (fun v o => { v with sym := o }) (.push (.rt y) (fun v => v.sym.getD blank) k)
 
-/-- Pop `x` and push the symbol onto `y` and `z`, then continue with `k`. -/
-def rsbMv2Top (x y z : Fin T) (k : Act T Q A U) : Act T Q A U :=
-  .pop (.rt x) (fun v o => { v with sym := o })
-    (.push (.rt y) (fun v => v.sym.getD blank) (.push (.rt z) (fun v => v.sym.getD blank) k))
-
 /-- The effect of `rsbMvTop x y`. -/
 def rsbMvFx (x y : Fin T) : Fin (A + 4) → Regs T A → Regs T A :=
   fun _ R => Function.update (Function.update R x (R x).tail) y ((R x).head?.getD blank :: R y)
-
-/-- The effect of `rsbMv2Top x y z`. -/
-def rsbMv2Fx (x y z : Fin T) : Fin (A + 4) → Regs T A → Regs T A :=
-  fun _ R => Function.update (Function.update (Function.update R x (R x).tail) y
-    ((R x).head?.getD blank :: R y)) z ((R x).head?.getD blank :: R z)
 
 lemma regFx_rsbMvTop {x y : Fin T} (hxy : x ≠ y) :
     RegFx (rsbMvTop (Q := Q) (U := U) x y) (rsbMvFx (A := A) x y) := by
@@ -246,27 +230,12 @@ lemma regFx_rsbMvTop {x y : Fin T} (hxy : x ≠ y) :
   congr 2
   rw [Function.update_of_ne hxy.symm]
 
-lemma regFx_rsbMv2Top {x y z : Fin T} (hxy : x ≠ y) (hxz : x ≠ z) (hyz : y ≠ z) :
-    RegFx (rsbMv2Top (Q := Q) (U := U) x y z) (rsbMv2Fx (A := A) x y z) := by
-  intro s k v S _
-  refine ⟨{ v with sym := (S.R x).head? }, rfl, ?_⟩
-  simp only [rsbMv2Top, rsbMv2Fx, Action.run, mk_var, mk_stk, get_rt, update_rt, store_mk,
-    Function.update_of_ne hxy.symm, Function.update_of_ne hyz.symm, Function.update_of_ne hxz.symm]
-
 lemma frame_rsbMvFx {a x y : Fin T} (hax : a ≠ x) (hay : a ≠ y) :
     Frame a (rsbMvFx (A := A) x y) := by
   intro s R l
   simp only [rsbMvFx]
   rw [Function.update_of_ne hax.symm, Function.update_of_ne hay.symm,
     Function.update_comm hax, Function.update_comm hay]
-
-lemma frame_rsbMv2Fx {a x y z : Fin T} (hax : a ≠ x) (hay : a ≠ y) (haz : a ≠ z) :
-    Frame a (rsbMv2Fx (A := A) x y z) := by
-  intro s R l
-  simp only [rsbMv2Fx]
-  rw [Function.update_of_ne hax.symm, Function.update_of_ne hay.symm,
-    Function.update_of_ne haz.symm, Function.update_comm hax, Function.update_comm hay,
-    Function.update_comm haz]
 
 lemma foldl_rsbMvFx {x y : Fin T} (hxy : x ≠ y) :
     ∀ (l : List (Fin (A + 4))) (R : Regs T A), l.length ≤ (R x).length →
@@ -293,43 +262,8 @@ lemma foldl_rsbMvFx {x y : Fin T} (hxy : x ≠ y) :
       · subst hkx; simp [hky]
       · simp [hkx, hky]
 
-lemma foldl_rsbMv2Fx {x y z : Fin T} (hxy : x ≠ y) (hxz : x ≠ z) (hyz : y ≠ z) :
-    ∀ (l : List (Fin (A + 4))) (R : Regs T A), l.length ≤ (R x).length →
-      l.foldl (fun R s => rsbMv2Fx x y z s R) R =
-        Function.update (Function.update (Function.update R x ((R x).drop l.length)) y
-          (((R x).take l.length).reverse ++ R y)) z (((R x).take l.length).reverse ++ R z)
-  | [], R, _ => by simp
-  | s :: l, R, hl => by
-      obtain ⟨e, rest, hR⟩ : ∃ e rest, R x = e :: rest := by
-        cases h : R x with
-        | nil => rw [h] at hl; simp at hl
-        | cons e rest => exact ⟨e, rest, rfl⟩
-      have hR1 : rsbMv2Fx x y z s R = Function.update (Function.update (Function.update R x rest)
-          y (e :: R y)) z (e :: R z) := by
-        simp [rsbMv2Fx, hR, Function.update_of_ne hxy.symm, Function.update_of_ne hxz.symm,
-          Function.update_of_ne hyz.symm]
-      have hx1 : rsbMv2Fx x y z s R x = rest := by
-        rw [hR1, Function.update_of_ne hxz, Function.update_of_ne hxy, Function.update_self]
-      have hy1 : rsbMv2Fx x y z s R y = e :: R y := by
-        rw [hR1, Function.update_of_ne hyz, Function.update_self]
-      have hz1 : rsbMv2Fx x y z s R z = e :: R z := by rw [hR1, Function.update_self]
-      simp only [List.foldl_cons]
-      rw [foldl_rsbMv2Fx hxy hxz hyz l _ (by rw [hx1]; simp [hR] at hl; omega), hx1, hy1, hz1,
-        hR1, hR]
-      funext k
-      by_cases hkz : k = z
-      · subst hkz; simp [List.take_succ_cons]
-      by_cases hky : k = y
-      · subst hky; simp [hkz, List.take_succ_cons]
-      by_cases hkx : k = x
-      · subst hkx; simp [hky, hkz]
-      · simp [hkx, hky, hkz]
-
 /-- Move `|c|` symbols from `x` onto `y`, one at a time; `c` is kept on the empty `t`. -/
 def rsbMv (c t x y : Fin T) : Pr P T Q A U := scanR c t (rsbMvTop x y)
-
-/-- Move `|c|` symbols from `x` onto both `y` and `z`, one at a time. -/
-def rsbMv2 (c t x y z : Fin T) : Pr P T Q A U := scanR c t (rsbMv2Top x y z)
 
 variable {R : Type} [DecidableEq R] {body : P → Pr P T Q A U} {rg : R → Fin T} {ι : Fin 64 → Fin T}
 
@@ -350,29 +284,6 @@ theorem rsb_mv_runs (hrg : Function.Injective rg) {c t x y : R} (hd : [c, t, x, 
     rw [foldl_rsbMvFx (hrg.ne hxy) _ _ (by rw [hS, hS]; exact hlen)] at he
     exact ⟨v', _, hu, by rw [hS], he⟩
   · rw [rsb_holds_upd hrg (rsb_holds_upd hrg hR x _) y, hR, hR, hR]
-  · simp only [rsb_upd_off _ _ _ hk]
-
-theorem rsb_mv2_runs (hrg : Function.Injective rg) {c t x y z : R}
-    (hd : [c, t, x, y, z].Nodup) (ρ : R → List (Fin (A + 4))) (ht : ρ t = [])
-    (hlen : (ρ c).length ≤ (ρ x).length) :
-    RsbRuns body rg ι (rsbMv2 (rg c) (rg t) (rg x) (rg y) (rg z)) ρ
-      (Function.update (Function.update (Function.update ρ x ((ρ x).drop (ρ c).length)) y
-        (((ρ x).take (ρ c).length).reverse ++ ρ y)) z
-        (((ρ x).take (ρ c).length).reverse ++ ρ z)) (4 * (ρ c).length + 4) := by
-  simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or] at hd
-  obtain ⟨⟨hct, hcx, hcy, hcz⟩, ⟨htx, hty, htz⟩, ⟨hxy, hxz⟩, hyz, -⟩ := hd
-  refine rsb_of_exec (fun R => Function.update (Function.update (Function.update R (rg x)
-      ((R (rg x)).drop (R (rg c)).length)) (rg y) (((R (rg x)).take (R (rg c)).length).reverse ++
-        R (rg y))) (rg z) (((R (rg x)).take (R (rg c)).length).reverse ++ R (rg z)))
-    (fun v S hS => ?_) (fun R hR r => ?_) (fun R k hk => ?_)
-  · obtain ⟨v', hu, he⟩ := scanR_exec' body (hrg.ne hct)
-      (regFx_rsbMv2Top (Q := Q) (U := U) (A := A) (hrg.ne hxy) (hrg.ne hxz) (hrg.ne hyz))
-      (frame_rsbMv2Fx (hrg.ne hcx) (hrg.ne hcy) (hrg.ne hcz))
-      (frame_rsbMv2Fx (hrg.ne htx) (hrg.ne hty) (hrg.ne htz)) v S (by rw [hS, ht])
-    rw [foldl_rsbMv2Fx (hrg.ne hxy) (hrg.ne hxz) (hrg.ne hyz) _ _ (by rw [hS, hS]; exact hlen)]
-      at he
-    exact ⟨v', _, hu, by rw [hS], he⟩
-  · rw [rsb_holds_upd hrg (rsb_holds_upd hrg (rsb_holds_upd hrg hR x _) y _) z, hR, hR, hR, hR]
   · simp only [rsb_upd_off _ _ _ hk]
 
 end Moves
@@ -736,8 +647,6 @@ lemma rsbRemap_injective {x y o : RsbR} (h : RsbFree x y o) :
   simp_all [rsbRemap] <;> first
     | exact hc1 _ e.symm | exact hc2 _ e.symm | exact hc3 _ e.symm
 
-lemma rsbRemap_xs (x y o : RsbR) : rsbRemap x y o .xs = x := rfl
-lemma rsbRemap_ys (x y o : RsbR) : rsbRemap x y o .ys = y := rfl
 lemma rsbRemap_out (x y o : RsbR) : rsbRemap x y o .out = o := rfl
 
 lemma rsbRemap_other {x y o : RsbR} {c : CR} (h1 : c ≠ .xs) (h2 : c ≠ .ys) (h3 : c ≠ .out) :

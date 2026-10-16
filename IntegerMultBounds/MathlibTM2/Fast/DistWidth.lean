@@ -16,7 +16,8 @@ values:
   `s_k t_k² < 2^W` (`ds_chirp_sN`), `8 (p + g) + size t_k + 80 ≤ W` (`ds_chirp_W`);
 * `Ã` (`rsaStage_exec`): `p + 3 ≤ w`, `w ≤ W`, `α² ((s + t)(windowA + 1))² 2^(13p+8) < 2^W`
   (`ds_A_W`);
-* `B̃₀` (`rsbStage_exec`): `p + 2 ≤ w`, `w ≤ W`, the same with `fastWindow` (`ds_B_W`);
+* `B̃₀` (`bandStage_exec`): `9p + 2 ≤ w` and `α² ((s + t)(8 fastWindow + 1))² 2^(65p+8) < 2^W`
+  (`ds_B_W65`);
 * ring and convolution (`ldRpStage_exec`, `cvBox_convBox`): `p + 2 ≤ w`, `Σ aᵢ ≤ w`
   (`ds_conv_w`, `ds_sum_cvAx`: `Σ aᵢ = logT - ℓ`);
 * layout (`ldLayGenStage_exec`) at `es = List.ofFn (cvAx t)`, `W_L = dsWL n w`, `B = r w`,

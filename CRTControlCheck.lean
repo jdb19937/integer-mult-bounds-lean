@@ -127,7 +127,7 @@ run_cmd do
 
     ``IntegerMultBounds.MathlibTM2.Cost.tot_directCRT_le,
     ``IntegerMultBounds.MathlibTM2.Cost.mt_rsa_stage_le_linear,
-    ``IntegerMultBounds.MathlibTM2.Cost.mt_rsb_stage_le_linear,
+    ``IntegerMultBounds.MathlibTM2.Cost.mt_band_stage_le_linear,
     ``IntegerMultBounds.MathlibTM2.Fast.crtControlProducer_runs,
     ``IntegerMultBounds.MathlibTM2.Fast.crtControlAscendingEntries_runs,
     ``IntegerMultBounds.MathlibTM2.Cost.crtControlProducer_actualCost_le,

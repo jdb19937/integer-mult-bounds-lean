@@ -53,10 +53,10 @@ The results keep as hypotheses only:
 
 * `srcCore_runs`: `x .sb` gains `srcPad p s t (sourceApprox s t p γ (lineA n) (lineB n)
   (chirpKernel n) (convBox n) v)`; the resampling families end configured for axis `0`
-  (`preCfgA`, `preCfgB`), every other register as it began.
+  (`preCfgA`, `bandCfgB`), every other register as it began.
 * `srcP_runs`, `srcOpp_runs`: the two transforms, with the costs `srcPCost`, `oppPCost`.
 * `SrcBase.next`: with the records of several runs stacked on the parameter registers, the file
-  after a run is again a file between runs (`src_preBaseA_load`, `src_preBaseB_load`), so
+  after a run is again a file between runs (`src_preBaseA_load`, `BandBase.load`), so
   `srcP`, `srcP`, `oppP'` run in sequence on one register file.
 
 ## Costs and `Cost/Total.totBound`
@@ -815,71 +815,9 @@ lemma src_preBaseA_load {A w : ℕ} {V : RsaV (RsaX t₀) A} {hd : Fin 5 → Fin
     e1 := h.e1
     e2 := h.e2 }
 
-/-- A loaded `B̃₀` file is again a base file. -/
-lemma src_preBaseB_load {A w : ℕ} {σ : RsbR ⊕ RsbX t₀ → List (Fin (A + 4))}
-    {hd : Fin 5 → Fin t₀} (h : PreBaseB σ w hd) (D : PreAxB) (r : List (Fin (A + 4))) :
-    PreBaseB (preLoadB σ hd w D r) w hd := by
-  have e : ∀ x : RsbX t₀, preLoadB σ hd w D r (.inr x) = preBankB σ hd (D.hs w) (.inr x) := by
-    intro x
-    simp only [preLoadB, Function.update_apply, reduceCtorEq, if_false]
-  exact {
-    free := h.free.load hd w D r
-    wn := by
-      rw [preLoadB_inl _ _ _ _ _ (by decide) (by decide) (by decide) (by decide) (by decide)
-        (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide)
-        (by decide)]
-      exact h.wn
-    nn := by
-      rw [preLoadB_inl _ _ _ _ _ (by decide) (by decide) (by decide) (by decide) (by decide)
-        (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide)
-        (by decide)]
-      exact h.nn
-    cm := fun c h1 h2 h3 h4 h5 h6 => by
-      rw [preLoadB_inl _ _ _ _ _ (by simp) (by simp) (by simpa using h5) (by simp) (by simp)
-        (by simp) (by simp) (by simp) (by simp) (by simp) (by simp) (by simp) (by simp)]
-      exact h.cm c h1 h2 h3 h4 h5 h6
-    dst := by
-      rw [preLoadB_inl _ _ _ _ _ (by decide) (by decide) (by decide) (by decide) (by decide)
-        (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide)
-        (by decide)]
-      exact h.dst
-    ms := by
-      rw [preLoadB_inl _ _ _ _ _ (by decide) (by decide) (by decide) (by decide) (by decide)
-        (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide)
-        (by decide)]
-      exact h.ms
-    hv := by
-      rw [preLoadB_inl _ _ _ _ _ (by decide) (by decide) (by decide) (by decide) (by decide)
-        (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide)
-        (by decide)]
-      exact h.hv
-    vk := by
-      rw [preLoadB_inl _ _ _ _ _ (by decide) (by decide) (by decide) (by decide) (by decide)
-        (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide)
-        (by decide)]
-      exact h.vk
-    dout := by
-      rw [preLoadB_inl _ _ _ _ _ (by decide) (by decide) (by decide) (by decide) (by decide)
-        (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide)
-        (by decide)]
-      exact h.dout
-    bank := fun j hj => by
-      rw [e]
-      simp only [preBankB]
-      rw [if_neg (fun ⟨k, e⟩ => hj k e)]
-      exact h.bank j hj
-    xt := by rw [e]; exact h.xt
-    e1 := by rw [e]; exact h.e1
-    e2 := by rw [e]; exact h.e2 }
-
 lemma src_preRecsA_end {A : ℕ} {n W : ℕ} (hd0 : 0 < d n) :
     (preRecsA (A := A) n W hd0 (d n - 1 + 1)) = [] := by
   rw [preRecsA, List.drop_eq_nil_of_le (by simp; omega)]
-  rfl
-
-lemma src_preRecsB_end {A : ℕ} {n W : ℕ} (hd0 : 0 < d n) :
-    (preRecsB (A := A) n W hd0 (d n - 1 + 1)) = [] := by
-  rw [preRecsB, List.drop_eq_nil_of_le (by simp; omega)]
   rfl
 
 lemma src_preRecsB_end' {A : ℕ} {n W : ℕ} (hd0 : 0 < d n) :

@@ -29,7 +29,7 @@ register file `E` to `{E with …}`: only the named families change.
   convolution's complex-product registers (`PointStage.cst_chirpMulKeep_runs`, shift `p`), the
   operand and the kernel cleared: `v (.cm .out)` holds `C̃ x₁ = Q_p(ā' · y₀)`.
 * `srcPB` (`srcB_runs`): `C̃ x₁` moved onto the box register `b (.inl .src)` and `B̃₀` along every
-  axis (`PrepB.rsbStage_exec`): the padded stream of `z = tensorZR t s (lineB n) (C̃ x₁)`.
+  axis (`BandStage.bandStage_exec`): the padded stream of `z = tensorZR t s (lineB n) (C̃ x₁)`.
 * `srcPG` (`srcG_runs`): the exact scale by `2^γ` (`PointStage.cst_scale_runs`) onto `x .sb`.
 -/
 

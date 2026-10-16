@@ -4,7 +4,7 @@ public import IntegerMultBounds.MathlibTM2.Fast.ResampBSwap
 public import IntegerMultBounds.MathlibTM2.Fast.ResampBBox
 
 /-!
-# The fast `B̃₀` along every axis of the padded box
+# `B̃₀` along every axis of the padded box: the generic driver
 
 The machine runs on the registers `RsbR ⊕ RsbX t₀`: the registers of the line machine (`inl`)
 and the interchange bank `sw j`, the bit spare `xt`, the axis counter `ax` with its spare `ax'`,
@@ -14,30 +14,17 @@ the padded box stream (`rsbBox`), axis `0` most significant.
 * `rsbLineAt H Q L p q`: the line `(p, ·, q)` of a list laid out as `[P] × [H] × [Q]`;
   `rsb_chunks_swap`, `rsb_chunks_inner`: the lines the machine feeds to the line map are lines
   of the box along the axis.
-* `RsbAxisCfg`: the line registers configured for one axis (`RsbEnv`, mask, tables, halving
-  constant, step count, padding counter, empty scratch).
-* `rsbStepAxP`: `B̃₀` along an axis `i` other than the last: interchange it with the last axis
-  (`swapPass`, `rsb_swap`), `rsbAxisP`, exchange the two width headers of the bank (`rsbXchgP`),
-  interchange back, exchange the headers back. `rsb_stepAx_runs`: the box register holding the
-  stream of `L` ends holding `rsbAxisL (rsbPre t i) (t i) (rsbSuf t i) g L`, `g` the line map of
-  the axis (`rsbAxisL_swap`).
-* `rsbAllP prep`: `prep` loads the parameters of the last axis and `B̃₀` runs along it; then for
-  each other axis (one symbol of the counter `ax` per axis) `prep` loads its parameters and
-  `rsbStepAxP` runs. The program `prep` is a parameter, specified by its effect on the register
-  file (`hprep₀`, `hprep`). `rsb_all_runs`: the box register ends holding `rsbFlat d t g 0 l₀`,
-  the line maps along the axes `d - 1, …, 0`.
-* `rsb_all_tensor`: with the box register holding the padded stream of the numerators of `u`,
-  it ends holding the padded stream of the numerators of
-  `tensorZR d t s (fun i => resampB₀NumK p K m (E_i/2^p) (D_i/2^p)) u` (`rsb_tensor`,
-  `rsb_lineG_rel`, `rsbAxesL_flat`).
+* `rsbStepAxG`: an axis program along an axis `i` other than the last: interchange it with the
+  last axis, run the axis program, exchange the two width headers of the bank (`rsbXchgP`),
+  interchange back, exchange the headers back (`rsb_stepAxG_runs`, cost `rsbStepAxCostG`).
+* `rsbAllG prep`: `prep` loads the parameters of the last axis and the axis program runs along
+  it; then for each other axis `prep` loads its parameters and `rsbStepAxG` runs.
+  `rsb_allG_runs`, `rsb_allG_tensor`: with line maps related to numeric maps
+  (`RsbLineRel`), the box register ends holding the padded stream of `tensorZR d t s A u`;
+  cost `rsbAllCostG`.
 
-**Cost** (`rsbAllCost`): `prep` (`cp k`), `rsbAxisCost` along the last axis, and per other axis
-two interchanges, the line machine on the `n / t_i` lines, and two header exchanges
-(`rsbStepAxCost`). Bounds: `rsbAxisCost_le`, at most
-`(n / t) ((K s 2m + 2s) (rmulCost T w + 96 w + 96) + 34 t w + 16 t + 134 K + 66) + 4` for `n / t`
-lines; `rsbSwapCost_le`, one interchange of a box of `n` records at most
-`(T + 12 swapT t₀ + 5) · swapConst · 3 n w · max(1, h, d)^τ` plus `O(n w + T + swapT t₀)` and six
-steps per bank symbol.
+The Neumann instance (`rsbAllP`, `rsb_all_tensor`, `rsbAllCost`) was removed with the Neumann
+`B̃₀`; restore from `1cb2723b`.
 -/
 
 @[expose] public section
@@ -293,26 +280,6 @@ variable {s t : ℕ} [NeZero s] [NeZero t]
 variable {T Q A : ℕ} {U : Type} {P : Type} {body : P → Pr P T Q A U} {rg : RsbR → Fin T}
   {ι : Fin 64 → Fin T}
 
-/-- The step bound of `rsbAxisP` on `n` lines. -/
-def rsbAxisCost (T w s t m K n : ℕ) : ℕ :=
-  n * (rsbLineCost T w s t m K + 2) + 2 * (n * t * w) + 4
-
-/-- `rsb_axis_runs` for a configured register file. -/
-theorem rsb_axis_cfg (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠ ι j)
-    (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ : SS.states ≤ Q) (hA : 96 ≤ A)
-    {w p m K : ℕ} (hst : s < t) (hm : m ≤ s) (hp1 : 1 ≤ p) (hpw : p < w)
-    (E : ZMod s → ℤ → ℤ) (D : ZMod s → ℤ)
-    (hfE : ∀ ℓ, ∀ h ∈ rsbHs m, Fits w (rsbReal (E ℓ h))) (hfD : ∀ ℓ, Fits w (rsbReal (D ℓ)))
-    (lines : List (List GaussianInt)) (hok : ∀ L ∈ lines, RsbLineOk s t w p K m E L)
-    (σ : RsbR → List (Fin (A + 4))) (hcfg : RsbAxisCfg σ w p s t m K E D)
-    (hsrc : σ .src = cstream A w lines.flatten) :
-    RsbRuns body rg ι (rsbAxisP rg hι hT hQ) σ
-      (Function.update σ .src (cstream A w (lines.flatMap (rsbLineG s t p K m E D))))
-      (rsbAxisCost T w s t m K lines.length) :=
-  rsb_axis_runs hι hT hQ hrg hdisj hA hst hm hp1 hpw E D hfE hfD lines hok σ hcfg.env hsrc
-    hcfg.dst hcfg.msk hcfg.ef hcfg.df hcfg.hf hcfg.kn hcfg.tswn hcfg.ms hcfg.sr hcfg.sel hcfg.hv
-    hcfg.vk hcfg.dout hcfg.tK
-
 end Cfg
 
 /-! ### One axis other than the last -/
@@ -334,32 +301,11 @@ def rsbStepAxG (rg : RsbR → Fin T) (rgx : RsbX t₀ → Fin T) (ax : Pr F T Q 
   (.seq (swapPass hd pay hi hQs (fun j => rgx (.sw j)) hsw hTs (rg .src) (rgx .xt))
     (rsbXchgP rgx (.sw (reg (hd 3))) (.sw (reg (hd 4))) .e1 .e2))))
 
-/-- `B̃₀` along a non-last axis: `rsbStepAxG` with the Neumann line machine. -/
-def rsbStepAxP (rg : RsbR → Fin T) (rgx : RsbX t₀ → Fin T) {ι : Fin 64 → Fin T}
-    (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ : SS.states ≤ Q) (hd : Fin 5 → Fin t₀)
-    (pay : Fin t₀) (hi : Function.Injective hd) (hQs : swapStates hd pay hi ≤ Q)
-    (hsw : Function.Injective fun j => rgx (.sw j)) (hTs : swapT t₀ ≤ T) :
-    Pr F T Q (prime + K) U :=
-  rsbStepAxG rg rgx (rsbAxisP rg hι hT hQ) hd pay hi hQs hsw hTs
-
 /-- The step bound of `B̃₀` along a non-last axis of a box of `n` records: the two interchanges
 (`c₁`, `c₂` interchange steps, `b₁`, `b₂` bank symbols), the `n / ti` lines, and the two header
 exchanges (headers of `e` symbols). -/
 def rsbStepAxCostG (T t₀ w a n c₁ c₂ b₁ b₂ e : ℕ) : ℕ :=
   rsbSwapCost T t₀ c₁ b₁ (n * w) + a + (4 * e + 8) + rsbSwapCost T t₀ c₂ b₂ (n * w) + (4 * e + 8)
-
-/-- The step bound with the Neumann line machine on the `n / ti` lines. -/
-def rsbStepAxCost (T t₀ w s ti m Kn n c₁ c₂ b₁ b₂ e : ℕ) : ℕ :=
-  rsbStepAxCostG T t₀ w (rsbAxisCost T w s ti m Kn (n / ti)) n c₁ c₂ b₁ b₂ e
-
-lemma rsb_mem_swapList {α : Type} {P H G D B : ℕ} {dflt : α} {l : List α} {y : α}
-    (hy : y ∈ swapList P H G D B dflt l) : y ∈ l ∨ y = dflt := by
-  simp only [swapList, List.mem_map, List.mem_range] at hy
-  obtain ⟨z, _, rfl⟩ := hy
-  rw [List.getD_eq_getElem?_getD]
-  cases h : l[swapSrc H G D B z]? with
-  | none => right; rfl
-  | some a => left; exact List.mem_of_getElem? h
 
 variable {body : F → Pr F T Q (prime + K) U} {rg : RsbR → Fin T} {rgx : RsbX t₀ → Fin T}
   {ι : Fin 64 → Fin T}
@@ -539,56 +485,6 @@ theorem rsb_stepAxG_runs (ax : Pr F T Q (prime + K) U) (hrg₂ : Function.Inject
   simp only [hhs']
   omega
 
-/-- **`B̃₀` along a non-last axis `i`.** The box register `src` holds the stream of `L` (the
-box `∏ [0, t j)`); afterwards it holds the line map along axis `i`
-(`rsbAxisL (rsbPre t i) (t i) (rsbSuf t i)`) of the line machine, and every other register is as
-before. The line registers are configured for the axis (`RsbAxisCfg`), every line of `L` along
-axis `i` is admissible (`RsbLineOk`), the spares are empty, and the bank holds the headers of the
-interchange of axis `i` (width `2^Lb`) with the last axis (width `2^Ld`). -/
-theorem rsb_stepAx_runs (hrg₂ : Function.Injective (Sum.elim rg rgx))
-    (hdisj₂ : ∀ r j, Sum.elim rg rgx r ≠ ι j) (hι : Function.Injective ι) (hT : 64 ≤ T)
-    (hQ : SS.states ≤ Q) (hA : 96 ≤ prime + K) (hd : Fin 5 → Fin t₀) (pay : Fin t₀)
-    (hi : Function.Injective hd) (hQs : swapStates hd pay hi ≤ Q)
-    (hsw : Function.Injective fun j => rgx (.sw j)) (hTs : swapT t₀ ≤ T) (hdpay : ∀ k, hd k ≠ pay)
-    {d : ℕ} (t : Fin d → ℕ) (i : Fin d) (hi1 : (i : ℕ) + 1 < d)
-    {w p s m Kn Lb Ld : ℕ} [NeZero s] [NeZero (t i)] (ht : t i = 2 ^ Lb)
-    (htd : t ⟨d - 1, by omega⟩ = 2 ^ Ld) (hhd : Lb ≤ Ld + 1) (hdh : Ld ≤ Lb + 1)
-    (hst : s < t i) (hm : m ≤ s) (hp1 : 1 ≤ p) (hpw : p < w) (E : ZMod s → ℤ → ℤ)
-    (D : ZMod s → ℤ) (hfE : ∀ ℓ, ∀ h ∈ rsbHs m, Fits w (rsbReal (E ℓ h)))
-    (hfD : ∀ ℓ, Fits w (rsbReal (D ℓ)))
-    (hP : 0 < rsbPre t i) (hG : 0 < rsbMid t i) (hs : Fin 5 → List Bool)
-    (hv : ∀ k, Counter.value (hs k) =
-      BinaryInterchangeRun.values (rsbPre t i) (rsbMid t i) (3 * w) Lb Ld k)
-    (hc : ∀ k, GrowingCounterData.Canonical (hs k))
-    (ρ : RsbR → List (Fin (prime + K + 4))) (ξ : RsbX t₀ → List (Fin (prime + K + 4)))
-    (hcfg : RsbAxisCfg ρ w p s (t i) m Kn E D)
-    (hbank : ∀ j, ξ (.sw j) = rsbBank hd hs j) (hxt : ξ .xt = []) (he1 : ξ .e1 = [])
-    (he2 : ξ .e2 = []) (L : List GaussianInt) (hL : L.length = ∏ j, t j)
-    (hsrc : ρ .src = cstream (prime + K) w L)
-    (hok : ∀ p' < rsbPre t i, ∀ q < rsbSuf t i,
-      RsbLineOk s (t i) w p Kn m E (rsbLineAt (t i) (rsbSuf t i) L p' q)) :
-    RsbRuns body (Sum.elim rg rgx) ι (rsbStepAxP rg rgx hι hT hQ hd pay hi hQs hsw hTs)
-      (Sum.elim ρ ξ)
-      (Sum.elim (Function.update ρ .src (cstream (prime + K) w
-        (rsbAxisL (rsbPre t i) (t i) (rsbSuf t i) (rsbLineG s (t i) p Kn m E D) L))) ξ)
-      (rsbStepAxCost T t₀ w s (t i) m Kn L.length
-        (BinaryInterchangeRun.cost (rsbPre t i) (rsbMid t i) (3 * w) Lb Ld hs)
-        (BinaryInterchangeRun.cost (rsbPre t i) (rsbMid t i) (3 * w) Ld Lb
-          (fun k => hs (Equiv.swap 3 4 k)))
-        (∑ j, (rsbBank hd hs j : List (Fin (prime + K + 4))).length)
-        (∑ j, (rsbBank hd (fun k => hs (Equiv.swap 3 4 k)) j :
-          List (Fin (prime + K + 4))).length)
-        ((hs 3).length + (hs 4).length + 2)) := by
-  have hrg : Function.Injective rg := fun a b h => Sum.inl_injective (hrg₂ (a₁ := .inl a) h)
-  have hdisj : ∀ r j, rg r ≠ ι j := fun r j => hdisj₂ (.inl r) j
-  exact rsb_stepAxG_runs (rsbAxisP rg hι hT hQ) hrg₂ hdisj₂ hA hd pay hi hQs hsw hTs hdpay t i hi1 (by omega) ht
-    htd hhd hdh (rsbLineG s (t i) p Kn m E D) (fun x => length_rsbLineG p Kn m E D x hst.le)
-    (RsbLineOk s (t i) w p Kn m E) (rsbAxisCost T w s (t i) m Kn) hP hG hs hv hc ρ ξ
-    (fun lines hok => (rsb_axis_cfg hrg hdisj hι hT hQ hA hst hm hp1 hpw E D hfE hfD lines hok
-      (Function.update ρ .src (cstream (prime + K) w lines.flatten)) (hcfg.with_src _)
-      (by rw [Function.update_self])).congr (by rw [Function.update_idem]))
-    hbank hxt he1 he2 L hL hsrc hok
-
 end StepAx
 
 /-! ### All axes -/
@@ -639,16 +535,6 @@ def rsbAllG (prep ax : Pr F T Q (prime + K) U) (rg : RsbR → Fin T) (rgx : RsbX
   .seq prep (.seq ax
     (rsbRep (rgx .ax) (rgx .ax') (.seq prep (rsbStepAxG rg rgx ax hd pay hi hQs hsw hTs))))
 
-/-- `B̃₀` along all axes: `prep` loads the parameters of the last axis and `B̃₀` runs along it;
-then for each other axis (the counter `ax` holds one symbol per axis) `prep` loads its
-parameters and `rsbStepAxP` runs. -/
-def rsbAllP (prep : Pr F T Q (prime + K) U) (rg : RsbR → Fin T) (rgx : RsbX t₀ → Fin T)
-    {ι : Fin 64 → Fin T} (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ : SS.states ≤ Q)
-    (hd : Fin 5 → Fin t₀) (pay : Fin t₀) (hi : Function.Injective hd)
-    (hQs : swapStates hd pay hi ≤ Q) (hsw : Function.Injective fun j => rgx (.sw j))
-    (hTs : swapT t₀ ≤ T) : Pr F T Q (prime + K) U :=
-  rsbAllG prep (rsbAxisP rg hι hT hQ) rg rgx hd pay hi hQs hsw hTs
-
 /-- The step bound of an axis program along all axes of a box of `n` records; `cax i` bounds the
 axis program on `n / t i` lines of axis `i`. -/
 def rsbAllCostG (T t₀ w d : ℕ) (t : Fin d → ℕ) (hd0 : 0 < d) (Lb : Fin d → ℕ)
@@ -668,26 +554,6 @@ def rsbAllCostG (T t₀ w d : ℕ) (t : Fin d → ℕ) (hd0 : 0 < d) (Lb : Fin d
       (∑ i, (rsbBank hd (fun k => hs (rsbAx hd0 (j + 1)) (Equiv.swap 3 4 k)) i :
         List (Fin (A + 4))).length)
       ((hs (rsbAx hd0 (j + 1)) 3).length + (hs (rsbAx hd0 (j + 1)) 4).length + 2) +
-      4)) + 2 * (d - 1) + 4)
-
-/-- The step bound of `B̃₀` along all axes of a box of `n` records. -/
-def rsbAllCost (T t₀ w m Kn d : ℕ) (t : Fin d → ℕ) (hd0 : 0 < d) (Dt : Fin d → RsbAxisData)
-    (A : ℕ) (hd : Fin 5 → Fin t₀) (cp : ℕ → ℕ) (n : ℕ) : ℕ :=
-  cp 0 + rsbAxisCost T w (Dt (rsbAx hd0 0)).s (t (rsbAx hd0 0)) m Kn
-    (n / t (rsbAx hd0 0)) +
-  ((∑ j ∈ Finset.range (d - 1), (cp (j + 1) +
-    rsbStepAxCost T t₀ w (Dt (rsbAx hd0 (j + 1))).s (t (rsbAx hd0 (j + 1))) m Kn n
-      (BinaryInterchangeRun.cost (rsbPre t (rsbAx hd0 (j + 1)))
-        (rsbMid t (rsbAx hd0 (j + 1))) (3 * w) (Dt (rsbAx hd0 (j + 1))).Lb
-        (Dt (rsbAx hd0 0)).Lb (Dt (rsbAx hd0 (j + 1))).hs)
-      (BinaryInterchangeRun.cost (rsbPre t (rsbAx hd0 (j + 1)))
-        (rsbMid t (rsbAx hd0 (j + 1))) (3 * w) (Dt (rsbAx hd0 0)).Lb
-        (Dt (rsbAx hd0 (j + 1))).Lb
-        (fun k => (Dt (rsbAx hd0 (j + 1))).hs (Equiv.swap 3 4 k)))
-      (∑ i, (rsbBank hd (Dt (rsbAx hd0 (j + 1))).hs i : List (Fin (A + 4))).length)
-      (∑ i, (rsbBank hd (fun k => (Dt (rsbAx hd0 (j + 1))).hs (Equiv.swap 3 4 k)) i :
-        List (Fin (A + 4))).length)
-      (((Dt (rsbAx hd0 (j + 1))).hs 3).length + ((Dt (rsbAx hd0 (j + 1))).hs 4).length + 2) +
       4)) + 2 * (d - 1) + 4)
 
 end All
@@ -888,65 +754,6 @@ theorem rsb_allG_runs (prep ax : Pr F T Q (prime + K) U)
   simp only [← hlast]
   omega
 
-/-- **`B̃₀` along all axes of the padded box.** The box register holds the stream `l₀` of the
-padded box `∏_{i<d} [0, t_i)`; the axis counter `ax` holds `d - 1` symbols. `prep` takes the
-register file `V₀` (resp. `cfg k`) to `cfg 0` (resp. `cfg (k + 1)`), whatever the box stream
-and the axis counter, where `cfg k` is configured for the axis `rsbAx k = d - 1 - k` with the
-parameters `Dt` (`RsbAxisCfg`; for `k > 0` the bank holding the headers of the interchange of the
-axis with the last one, the spares empty). Every line along axis `i` of the box before axis `i`
-is processed is admissible (`RsbLineOk`). Afterwards the box register holds the line maps along
-the axes `d - 1, …, 0` of `l₀` (`rsbFlat d t g 0 l₀`, `g i` the line map of axis `i`), the
-register file is `cfg (d - 1)` and the counter is restored. -/
-theorem rsb_all_runs (prep : Pr F T Q (prime + K) U)
-    (hrg₂ : Function.Injective (Sum.elim rg rgx)) (hdisj₂ : ∀ r j, Sum.elim rg rgx r ≠ ι j)
-    (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ : SS.states ≤ Q) (hA : 96 ≤ prime + K)
-    (hd : Fin 5 → Fin t₀) (pay : Fin t₀) (hi : Function.Injective hd)
-    (hQs : swapStates hd pay hi ≤ Q) (hsw : Function.Injective fun j => rgx (.sw j))
-    (hTs : swapT t₀ ≤ T) (hdpay : ∀ k, hd k ≠ pay)
-    {d : ℕ} (hd0 : 0 < d) (t : Fin d → ℕ) {w p m Kn : ℕ} (hp1 : 1 ≤ p) (hpw : p < w)
-    (Dt : Fin d → RsbAxisData)
-    (hDt : ∀ i, t i = 2 ^ (Dt i).Lb ∧ (Dt i).s < t i ∧ m ≤ (Dt i).s ∧ 0 < (Dt i).s ∧
-      (∀ ℓ, ∀ h ∈ rsbHs m, Fits w (rsbReal ((Dt i).E ℓ h))) ∧ ∀ ℓ, Fits w (rsbReal ((Dt i).D ℓ)))
-    (hDw : ∀ i : Fin d, (i : ℕ) + 1 < d → (Dt i).Lb ≤ (Dt (rsbAx hd0 0)).Lb + 1 ∧
-      (Dt (rsbAx hd0 0)).Lb ≤ (Dt i).Lb + 1 ∧
-      (∀ k, Counter.value ((Dt i).hs k) = BinaryInterchangeRun.values (rsbPre t i) (rsbMid t i)
-        (3 * w) (Dt i).Lb (Dt (rsbAx hd0 0)).Lb k) ∧
-      ∀ k, GrowingCounterData.Canonical ((Dt i).hs k))
-    (V₀ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4)))
-    (cfg : ℕ → RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4)))
-    (hcfg : ∀ k < d, RsbAxisCfg (fun r => cfg k (.inl r)) w p (Dt (rsbAx hd0 k)).s
-        (t (rsbAx hd0 k)) m Kn (Dt (rsbAx hd0 k)).E (Dt (rsbAx hd0 k)).D ∧
-      (0 < k → (∀ j, cfg k (.inr (.sw j)) = rsbBank hd (Dt (rsbAx hd0 k)).hs j) ∧
-        cfg k (.inr .xt) = [] ∧ cfg k (.inr .e1) = [] ∧ cfg k (.inr .e2) = []))
-    (cp : ℕ → ℕ)
-    (hprep₀ : ∀ l a a', RsbRuns body (Sum.elim rg rgx) ι prep (rsbWith V₀ l a a')
-      (rsbWith (cfg 0) l a a') (cp 0))
-    (hprep : ∀ k, k + 1 < d → ∀ l a a', RsbRuns body (Sum.elim rg rgx) ι prep
-      (rsbWith (cfg k) l a a') (rsbWith (cfg (k + 1)) l a a') (cp (k + 1)))
-    (l₀ : List GaussianInt) (hl₀ : l₀.length = ∏ i, t i)
-    (hok : ∀ i : Fin d, ∀ p' < rsbPre t i, ∀ q < rsbSuf t i,
-      RsbLineOk (Dt i).s (t i) w p Kn m (Dt i).E (rsbLineAt (t i) (rsbSuf t i)
-        (rsbFlat d t (fun i => (Dt i).g p Kn m (t i)) (i + 1) l₀) p' q))
-    (axs : List (Fin (prime + K + 4))) (haxs : axs.length = d - 1) :
-    RsbRuns body (Sum.elim rg rgx) ι (rsbAllP prep rg rgx hι hT hQ hd pay hi hQs hsw hTs)
-      (rsbWith V₀ (cstream (prime + K) w l₀) axs [])
-      (rsbWith (cfg (d - 1)) (cstream (prime + K) w
-        (rsbFlat d t (fun i => (Dt i).g p Kn m (t i)) 0 l₀)) axs [])
-      (rsbAllCost T t₀ w m Kn d t hd0 Dt (prime + K) hd cp l₀.length) := by
-  have hrg : Function.Injective rg := fun a b h => Sum.inl_injective (hrg₂ (a₁ := .inl a) h)
-  have hdisj : ∀ r j, rg r ≠ ι j := fun r j => hdisj₂ (.inl r) j
-  have : ∀ i, NeZero (Dt i).s := fun i => ⟨(hDt i).2.2.2.1.ne'⟩
-  have : ∀ i, NeZero (t i) := fun i => ⟨(by rw [(hDt i).1]; positivity : 0 < t i).ne'⟩
-  exact rsb_allG_runs prep (rsbAxisP rg hι hT hQ) hrg₂ hdisj₂ hA hd pay hi hQs hsw hTs hdpay hd0 t
-    (by omega) (fun i => (Dt i).Lb) (fun i => (Dt i).hs) (fun i => (Dt i).g p Kn m (t i))
-    (fun i x => length_rsbLineG p Kn m (Dt i).E (Dt i).D x (hDt i).2.1.le)
-    (fun i => RsbLineOk (Dt i).s (t i) w p Kn m (Dt i).E)
-    (fun i n => rsbAxisCost T w (Dt i).s (t i) m Kn n) (fun i => (hDt i).1) hDw V₀ cfg
-    (fun k hk => ⟨fun lines hok => (rsb_axis_cfg hrg hdisj hι hT hQ hA (hDt _).2.1 (hDt _).2.2.1
-      hp1 hpw _ _ (hDt _).2.2.2.2.1 (hDt _).2.2.2.2.2 lines hok _ ((hcfg k hk).1.with_src _)
-      (by rw [Function.update_self])).congr (by rw [Function.update_idem]; rfl), (hcfg k hk).2⟩)
-    cp hprep₀ hprep l₀ hl₀ hok axs haxs
-
 end AllProof
 
 /-! ### The tensor semantics -/
@@ -956,68 +763,6 @@ section AllTensor
 variable {t₀ T Q K : ℕ} {U F : Type}
 variable {body : F → Pr F T Q (prime + K) U} {rg : RsbR → Fin T} {rgx : RsbX t₀ → Fin T}
   {ι : Fin 64 → Fin T}
-
-open IntegerMultBounds.NLogN in
-set_option maxHeartbeats 4000000 in
-/-- **`B̃₀` along all axes of the padded box, exactly.** Under the hypotheses of
-`rsb_all_runs`, let the box register hold the padded stream `rsbBox d t F` of the numerators
-`F` (scale `2^p`) of an array `u` on `∏ ZMod (t i)`. Then the machine leaves on the box register
-the padded stream `rsbBox d t G`, where `G x` is the numerator of
-`tensorZR d t s (fun i => resampB₀NumK p K m (E_i / 2^p) (D_i / 2^p)) u` at every address with
-`x i < s i` (`s i = (Dt i).s`) and `G x = 0` at every other address. -/
-theorem rsb_all_tensor (prep : Pr F T Q (prime + K) U)
-    (hrg₂ : Function.Injective (Sum.elim rg rgx)) (hdisj₂ : ∀ r j, Sum.elim rg rgx r ≠ ι j)
-    (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ : SS.states ≤ Q) (hA : 96 ≤ prime + K)
-    (hd : Fin 5 → Fin t₀) (pay : Fin t₀) (hi : Function.Injective hd)
-    (hQs : swapStates hd pay hi ≤ Q) (hsw : Function.Injective fun j => rgx (.sw j))
-    (hTs : swapT t₀ ≤ T) (hdpay : ∀ k, hd k ≠ pay)
-    {d : ℕ} (hd0 : 0 < d) (t : Fin d → ℕ) {w p m Kn : ℕ} (hp1 : 1 ≤ p) (hpw : p < w)
-    (Dt : Fin d → RsbAxisData) [∀ i, NeZero (t i)] [∀ i, NeZero (Dt i).s]
-    (hDt : ∀ i, t i = 2 ^ (Dt i).Lb ∧ (Dt i).s < t i ∧ m ≤ (Dt i).s ∧ 0 < (Dt i).s ∧
-      (∀ ℓ, ∀ h ∈ rsbHs m, Fits w (rsbReal ((Dt i).E ℓ h))) ∧ ∀ ℓ, Fits w (rsbReal ((Dt i).D ℓ)))
-    (hDw : ∀ i : Fin d, (i : ℕ) + 1 < d → (Dt i).Lb ≤ (Dt (rsbAx hd0 0)).Lb + 1 ∧
-      (Dt (rsbAx hd0 0)).Lb ≤ (Dt i).Lb + 1 ∧
-      (∀ k, Counter.value ((Dt i).hs k) = BinaryInterchangeRun.values (rsbPre t i) (rsbMid t i)
-        (3 * w) (Dt i).Lb (Dt (rsbAx hd0 0)).Lb k) ∧
-      ∀ k, GrowingCounterData.Canonical ((Dt i).hs k))
-    (V₀ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4)))
-    (cfg : ℕ → RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4)))
-    (hcfg : ∀ k < d, RsbAxisCfg (fun r => cfg k (.inl r)) w p (Dt (rsbAx hd0 k)).s
-        (t (rsbAx hd0 k)) m Kn (Dt (rsbAx hd0 k)).E (Dt (rsbAx hd0 k)).D ∧
-      (0 < k → (∀ j, cfg k (.inr (.sw j)) = rsbBank hd (Dt (rsbAx hd0 k)).hs j) ∧
-        cfg k (.inr .xt) = [] ∧ cfg k (.inr .e1) = [] ∧ cfg k (.inr .e2) = []))
-    (cp : ℕ → ℕ)
-    (hprep₀ : ∀ l a a', RsbRuns body (Sum.elim rg rgx) ι prep (rsbWith V₀ l a a')
-      (rsbWith (cfg 0) l a a') (cp 0))
-    (hprep : ∀ k, k + 1 < d → ∀ l a a', RsbRuns body (Sum.elim rg rgx) ι prep
-      (rsbWith (cfg k) l a a') (rsbWith (cfg (k + 1)) l a a') (cp (k + 1)))
-    (u : ((i : Fin d) → ZMod (t i)) → ℂ) (Fn : ((i : Fin d) → Fin (t i)) → GaussianInt)
-    (hF : ∀ x : (i : Fin d) → Fin (t i),
-      u (fun i => ((x i : ℕ) : ZMod (t i))) = GaussianInt.toComplex (Fn x) / 2 ^ p)
-    (hok : ∀ i : Fin d, ∀ p' < rsbPre t i, ∀ q < rsbSuf t i,
-      RsbLineOk (Dt i).s (t i) w p Kn m (Dt i).E (rsbLineAt (t i) (rsbSuf t i)
-        (rsbFlat d t (fun i => (Dt i).g p Kn m (t i)) (i + 1) (rsbBox d t Fn)) p' q))
-    (axs : List (Fin (prime + K + 4))) (haxs : axs.length = d - 1) :
-    ∃ G : ((i : Fin d) → Fin (t i)) → GaussianInt,
-      (∀ x : (i : Fin d) → Fin (t i), (∀ i, (x i : ℕ) < (Dt i).s) →
-        tensorZR d t (fun i => (Dt i).s) (fun i => Mult.FastB0.resampB₀NumK p Kn m
-          (fun ℓ h => ((Dt i).E ℓ h : ℝ) / 2 ^ p) (fun ℓ => ((Dt i).D ℓ : ℝ) / 2 ^ p)) u
-          (fun i => ((x i : ℕ) : ZMod (Dt i).s)) = GaussianInt.toComplex (G x) / 2 ^ p) ∧
-      (∀ x : (i : Fin d) → Fin (t i), (∃ i, (Dt i).s ≤ x i) → G x = 0) ∧
-      RsbRuns body (Sum.elim rg rgx) ι (rsbAllP prep rg rgx hι hT hQ hd pay hi hQs hsw hTs)
-        (rsbWith V₀ (cstream (prime + K) w (rsbBox d t Fn)) axs [])
-        (rsbWith (cfg (d - 1)) (cstream (prime + K) w (rsbBox d t G)) axs [])
-        (rsbAllCost T t₀ w m Kn d t hd0 Dt (prime + K) hd cp (∏ i, t i)) := by
-  obtain ⟨G, hG1, hG2, hG3⟩ := rsb_tensor d t (fun i => (Dt i).s) (fun i => (hDt i).2.1.le)
-    (fun i => Mult.FastB0.resampB₀NumK p Kn m (fun ℓ h => ((Dt i).E ℓ h : ℝ) / 2 ^ p)
-      (fun ℓ => ((Dt i).D ℓ : ℝ) / 2 ^ p)) (fun i => (Dt i).g p Kn m (t i)) p
-    (fun i => rsb_lineG_rel p Kn m (Dt i).E (Dt i).D) u Fn hF
-  have hl₀ : (rsbBox d t Fn).length = ∏ i, t i := length_rsbBox d t Fn
-  have H := rsb_all_runs (body := body) prep hrg₂ hdisj₂ hι hT hQ hA hd pay hi hQs hsw hTs hdpay
-    hd0 t
-    hp1 hpw Dt hDt hDw V₀ cfg hcfg cp hprep₀ hprep (rsbBox d t Fn) hl₀ hok axs haxs
-  rw [← rsbAxesL_flat d t _ _ hl₀, hG3, hl₀] at H
-  exact ⟨G, hG1, hG2, H⟩
 
 open IntegerMultBounds.NLogN in
 /-- **An axis program along all axes, exactly.** The tensor semantics of `rsb_allG_runs` for line
@@ -1080,103 +825,6 @@ theorem rsb_allG_tensor (prep ax : Pr F T Q (prime + K) U)
 
 end AllTensor
 
-/-! ### Cost bounds -/
-
-section Costs
-
-/-- One line: `K` Horner steps of `s · 2m` products each, `2 s` more products (halving and the
-diagonal), and linear work. -/
-theorem rsbLineCost_le (T w s t m K : ℕ) (hm : 1 ≤ m) :
-    rsbLineCost T w s t m K ≤
-      (K * (s * (2 * m)) + 2 * s) * (rmulCost T w + 96 * w + 96) + 32 * t * w + 16 * t +
-        134 * K + 64 := by
-  unfold rsbLineCost rsbStepCost
-  generalize rmulCost T w = R
-  have h1 : s * w ≤ m * s * w := by
-    rw [Nat.mul_assoc]; exact Nat.le_mul_of_pos_left _ hm
-  have h2 : s ≤ m * s := Nat.le_mul_of_pos_left _ hm
-  have h3 : K * (64 * s * w + 64 * s) ≤ K * (2 * m * s * (32 * w + 32)) := by
-    apply Nat.mul_le_mul_left; nlinarith
-  nlinarith
-
-/-- One axis of `n` lines. -/
-theorem rsbAxisCost_le (T w s t m K n : ℕ) (hm : 1 ≤ m) :
-    rsbAxisCost T w s t m K n ≤
-      n * ((K * (s * (2 * m)) + 2 * s) * (rmulCost T w + 96 * w + 96)) +
-        n * (34 * t * w + 16 * t + 134 * K + 66) + 4 := by
-  unfold rsbAxisCost
-  have := rsbLineCost_le T w s t m K hm
-  have h2 : n * (rsbLineCost T w s t m K + 2) ≤ n * ((K * (s * (2 * m)) + 2 * s) *
-      (rmulCost T w + 96 * w + 96) + 32 * t * w + 16 * t + 134 * K + 66) :=
-    Nat.mul_le_mul_left _ (by omega)
-  nlinarith
-
-/-- One interchange of a box of `n = P 2^h G 2^d` records of `w` symbols: the vendored bound
-`O(n · 3w · max(1, h, d)^τ)` (`swapConst`, `Parameters.tau`) on the interchange machine, each of
-whose steps costs `T + 12 swapT t₀ + 5` host steps, plus linear work. -/
-theorem rsbSwapCost_le (T t₀ : ℕ) {P G h d w : ℕ} (hs : Fin 5 → List Bool) (hP : 0 < P)
-    (hG : 0 < G) (hw : 0 < w) (hhd : h ≤ d + 1) (hdh : d ≤ h + 1)
-    (hv : ∀ k, Counter.value (hs k) = BinaryInterchangeRun.values P G (3 * w) h d k)
-    (hc : ∀ k, GrowingCounterData.Canonical (hs k)) (sb : ℕ) :
-    (rsbSwapCost T t₀ (BinaryInterchangeRun.cost P G (3 * w) h d hs) sb
-        (P * 2 ^ h * G * 2 ^ d * w) : ℝ) ≤
-      (T + 12 * swapT t₀ + 5 : ℕ) * (swapConst * ((P * 2 ^ h * G * 2 ^ d) * (3 * w) : ℕ) *
-        ((max 1 (max h d) : ℕ) : ℝ) ^ Parameters.tau) +
-      (6 * sb + 34 * (P * 2 ^ h * G * 2 ^ d * w) + 2 * T + 6 * swapT t₀ + 23 : ℕ) := by
-  have hC := (Classical.choose_spec BinaryInterchangeRun.uniform_bound).2 P G (3 * w) h d hs hP hG
-    (by omega) hhd hdh hv hc
-  rw [BinaryAdjacentWidthInterchange.volume] at hC
-  unfold rsbSwapCost
-  have hsc : swapConst = Classical.choose BinaryInterchangeRun.uniform_bound := rfl
-  rw [hsc]
-  generalize Classical.choose BinaryInterchangeRun.uniform_bound = C at hC ⊢
-  generalize swapT t₀ = S
-  generalize BinaryInterchangeRun.cost P G (3 * w) h d hs = c at hC ⊢
-  generalize ((max 1 (max h d) : ℕ) : ℝ) ^ Parameters.tau = F at hC ⊢
-  have hT0 : (0 : ℝ) ≤ (T + 12 * S + 5 : ℕ) := by positivity
-  have hmul := mul_le_mul_of_nonneg_left hC hT0
-  push_cast at hmul ⊢
-  nlinarith
-
-end Costs
-
-section CostStep
-
-/-- **One non-last axis.** The two interchanges are bounded by the vendored interchange bound
-(`rsbSwapCost_le`), the lines by `rsbAxisCost_le`; the rest is linear in the bank and header
-sizes. Here `n = P 2^h G 2^d` is the number of records of the box, `ti = 2^h` the length of the
-axis. -/
-theorem rsbStepAxCost_le (T t₀ : ℕ) {P G h d w s m Kn : ℕ} (hs : Fin 5 → List Bool)
-    (hP : 0 < P) (hG : 0 < G) (hw : 0 < w) (hm : 1 ≤ m) (hhd : h ≤ d + 1) (hdh : d ≤ h + 1)
-    (hv : ∀ k, Counter.value (hs k) = BinaryInterchangeRun.values P G (3 * w) h d k)
-    (hc : ∀ k, GrowingCounterData.Canonical (hs k)) (b₁ b₂ e : ℕ) :
-    (rsbStepAxCost T t₀ w s (2 ^ h) m Kn (P * 2 ^ h * G * 2 ^ d)
-        (BinaryInterchangeRun.cost P G (3 * w) h d hs)
-        (BinaryInterchangeRun.cost P G (3 * w) d h (fun k => hs (Equiv.swap 3 4 k)))
-        b₁ b₂ e : ℝ) ≤
-      2 * ((T + 12 * swapT t₀ + 5 : ℕ) * (swapConst * ((P * 2 ^ h * G * 2 ^ d) * (3 * w) : ℕ) *
-        ((max 1 (max h d) : ℕ) : ℝ) ^ Parameters.tau)) +
-      (((P * 2 ^ h * G * 2 ^ d) / 2 ^ h * ((Kn * (s * (2 * m)) + 2 * s) *
-        (rmulCost T w + 96 * w + 96)) : ℕ) : ℝ) +
-      ((6 * b₁ + 6 * b₂ + 68 * (P * 2 ^ h * G * 2 ^ d * w) + 4 * T + 12 * swapT t₀ + 46 +
-        (P * 2 ^ h * G * 2 ^ d) / 2 ^ h * (34 * 2 ^ h * w + 16 * 2 ^ h + 134 * Kn + 66) + 4 +
-        2 * (4 * e + 8) : ℕ) : ℝ) := by
-  have h1 := rsbSwapCost_le T t₀ hs hP hG hw hhd hdh hv hc b₁
-  have h2 := rsbSwapCost_le (h := d) (d := h) T t₀ (fun k => hs (Equiv.swap 3 4 k)) hP hG hw hdh hhd
-    (fun k => by rw [hv, rsb_values_swap34]) (fun k => hc _) b₂
-  have e₁ : P * 2 ^ d * G * 2 ^ h = P * 2 ^ h * G * 2 ^ d := by ring
-  rw [e₁, max_comm d h] at h2
-  have ha := rsbAxisCost_le T w s (2 ^ h) m Kn ((P * 2 ^ h * G * 2 ^ d) / 2 ^ h) hm
-  unfold rsbStepAxCost rsbStepAxCostG
-  have ha' : (rsbAxisCost T w s (2 ^ h) m Kn ((P * 2 ^ h * G * 2 ^ d) / 2 ^ h) : ℝ) ≤
-      (((P * 2 ^ h * G * 2 ^ d) / 2 ^ h * ((Kn * (s * (2 * m)) + 2 * s) *
-        (rmulCost T w + 96 * w + 96)) +
-        (P * 2 ^ h * G * 2 ^ d) / 2 ^ h * (34 * 2 ^ h * w + 16 * 2 ^ h + 134 * Kn + 66) + 4 : ℕ) :
-          ℝ) := by exact_mod_cast ha
-  push_cast at h1 h2 ha' ⊢
-  linarith
-
-end CostStep
 
 end
 

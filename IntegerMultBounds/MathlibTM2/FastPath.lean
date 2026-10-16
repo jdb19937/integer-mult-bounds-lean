@@ -276,7 +276,6 @@ public import IntegerMultBounds.MathlibTM2.Layer.TopZ
 public import IntegerMultBounds.MathlibTM2.Mult.CRT
 public import IntegerMultBounds.MathlibTM2.Mult.Chirp
 public import IntegerMultBounds.MathlibTM2.Mult.ComplexConv
-public import IntegerMultBounds.MathlibTM2.Mult.FastB0
 public import IntegerMultBounds.MathlibTM2.Mult.FastB0Sizes
 public import IntegerMultBounds.MathlibTM2.Mult.Moduli
 public import IntegerMultBounds.MathlibTM2.Mult.Pipeline

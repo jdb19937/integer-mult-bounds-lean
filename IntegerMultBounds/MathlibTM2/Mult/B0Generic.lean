@@ -1,12 +1,10 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Mult.FastB0
+public import IntegerMultBounds.Resampling.TabledMaps
 
-/-! `B̃₀ = D̃' J̃ C` for any computed inverse `J̃`. The proof of
-`FastB0.resampB₀NumK_spec` uses only that the computed inverse keeps the unit
-disk and approximates `J (v/2)` within a scaled error; this file states that
-interface for an arbitrary computed map, so a different inverse algorithm
-(such as the phase-cell solve) plugs into the source-error theorem unchanged. -/
+/-! `B̃₀ = D̃' J̃ C` for any computed inverse `J̃`: a computed inverse that keeps the unit
+disk and approximates `J (v/2)` within a scaled error gives the source-error interface of
+`B̃₀`, so the banded solve plugs into the source-error theorem. -/
 @[expose] public section
 namespace IntegerMultBounds.MathlibTM2.Mult.FastB0
 

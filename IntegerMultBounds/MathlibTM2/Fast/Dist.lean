@@ -16,13 +16,13 @@ registers (`dsVal`):
 | register | contents | reader |
 |---|---|---|
 | `recA` | `preRecsA n Wt hd0 0` | `Fast/PrepA.lean`, `rsaStage_exec` |
-| `recB` | `preRecsB n Wt hd0 0` | `Fast/PrepB.lean`, `rsbStage_exec` |
+| `recB` | `preRecsB n Wt hd0 0` | `Fast/PrepB.lean`, `bandStage_exec` |
 | `tS`, `sS` | `ldcBlocks (List.ofFn t)`, `ldcBlocks (List.ofFn s)` | `Fast/LoadChirp.lean` (`tS`, `sS`) |
 | `pU`, `gU` | `p`, `g = chirpGuard d` ticks | chirp loader (`pU`, `gU`); ring header (`pR`) |
 | `lN`, `lL`, `lK`, `lD`, `lB` | `N = Σ aᵢ = logT - ℓ`, `ℓ`, `K`, `D = d - 1`, `B = r w` ticks | `LdgPre` (`uN`, `uL`, `uK`, `uD`, `uB`); `lL` is the ring header's `lR` |
 | `lW`, `lE` | `W_L = r w + N² + N + 4` ticks, `binSyms W_L E` | the layout table width `wr`, `LdgPre.eW` |
 | `rR` | `r` ticks | the per-round `r w'` of `TopRegs` |
-| `nn` | `topN w` ticks | `PreBaseA.nn`, `PreBaseB.nn` |
+| `nn` | `topN w` ticks | `PreBaseA.nn`, `BandBase.nn` |
 
 `E = 2^(d-1) - 2^numHalf` has bit `i` set iff axis `i` of the synthetic transform is long
 (`numHalf ≤ i < d - 1`). The per-transform constants of the layer machine (`TopRegs`) are

@@ -52,7 +52,7 @@ theorem compactSrcFwd_eventually : ∀ᶠ n : ℕ in atTop,
     compactSrcM mnKa_alpha hbig hsmall hEs (by simpa only [compactSrcM_rg] using hF mainP)
     (by simpa only [compactSrcM_rg] using hO mainP)
     (fun _ h => h) (fun _ h => h) (fun m _ => mn_synPi_lt n m) (compactSynPre_source_framed n)
-    hw hwW hWA hWB hWs hWk E (compactSrcBase_of_legacy hE) hC hln u hu huf hstr
+    hw hwW hWA ⟨by unfold dsW; omega, hWB⟩ hWs hWk E (compactSrcBase_of_legacy hE) hC hln u hu huf hstr
 
 theorem compactSrcOpp_eventually : ∀ᶠ n : ℕ in atTop,
     ∀ (mainP : MnPr (prime+mnKa)) (hbig : Big n)
@@ -87,7 +87,7 @@ theorem compactSrcOpp_eventually : ∀ᶠ n : ℕ in atTop,
     compactSrcM mnKa_alpha hbig hsmall hEs (by simpa only [compactSrcM_rg] using hF mainP)
     (by simpa only [compactSrcM_rg] using hO mainP)
     (fun _ h => h) (fun _ h => h) (fun m _ => mn_synPi_lt n m) (compactSynPre_source_framed n)
-    hw hwW hWA hWB hWs hWk E (compactSrcBase_of_legacy hE) hC hln hstr y hy hyf hsb
+    hw hwW hWA ⟨by unfold dsW; omega, hWB⟩ hWs hWk E (compactSrcBase_of_legacy hE) hC hln hstr y hy hyf hsb
 
 end
 end IntegerMultBounds.MathlibTM2.Fast.Main
