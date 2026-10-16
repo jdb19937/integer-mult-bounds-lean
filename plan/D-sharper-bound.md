@@ -1712,3 +1712,14 @@ bounds, every stage error of the rounded four-step solve is now proved on the
 actual matrix in terms of local rounding contracts. Guarded check and
 2-declaration standard-axiom audit pass. The concrete computation meeting
 those contracts and its tape cost remain open.
+
+### Small-gap factorization for the pipeline interface
+
+The pipeline's source-error theorem needs contraction factors, but in the
+small-gap regime the exact inverse of `N` has norm up to `4p`. The
+permutation-left factorization is now proved there without `α²θ≥1`:
+`P_s F_s = 2^(2⌈α²⌉+2+j) B₀' P_t F_t A` with `B₀'=B₀/2^j` a contraction when
+`2p≤2^j`, matching the source's extra normalization. It plugs into the
+already generic `sourceApprox_err` with `γ=d(2⌈α²⌉+2+j)`. The guarded check
+and standard-axiom audit pass. The new line maps (chirp forward, phase-cell
+inverse) on tapes, their costs and the `ε=5/8` sizing remain open.
