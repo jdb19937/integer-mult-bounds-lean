@@ -64,7 +64,24 @@ noncomputable def bandLineInP : Pr P T Q A U :=
   (.seq (umulSym 1 (pairSym A false false) (rg .mwn) (rg .vk) (rg .tC))
   (.seq (moveR (rg .ya) (rg .ac2) id) (moveR (rg .ac2) (rg .vk) id)))))
 
+/-- The two banded passes with the stored tables: forward table `bo`, backward table `hf`,
+reciprocals `df`; the forward outputs return to `vk` over fresh zero records. -/
+noncomputable def bandLinePassP : Pr P T Q A U :=
+  .seq (rsbCopyTo rg .bo .ef) (.seq (bandFwdLoopP rg hι hT hQ) (.seq (emptyR (rg .vk))
+  (.seq (umulSym 1 (pairSym A false false) (rg .mwn) (rg .vk) (rg .tC))
+  (.seq (moveR (rg .dout) (rg .ac2) id) (.seq (moveR (rg .ac2) (rg .vk) id)
+  (.seq (rsbCopyTo rg .hf .ef) (.seq (rsbCopyTo rg .df .tb)
+  (.seq (bandBwdLoopP rg hι hT hQ) (emptyR (rg .vk))))))))))
+
 end Programs
+
+theorem length_fwdZC (P : ℕ) : ∀ (cs : List (List ℤ)) (pend : List GaussianInt),
+    cs.length ≤ pend.length → (Mult.BandList.fwdZC P cs pend).length = cs.length
+  | [], pend, _ => by cases pend <;> rfl
+  | c :: cs, y :: rest, h => by
+    simp only [Mult.BandList.fwdZC, List.length_cons]
+    rw [length_fwdZC P cs _ (by rw [Mult.BandList.length_subColC]; simp at h; omega)]
+  | _ :: _, [], h => by simp at h
 
 section Contracts
 
@@ -153,6 +170,107 @@ theorem band_lineIn_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r �
   have hz : List.replicate (σ .mwn).length (pairSym A false false) = cstream A w (List.replicate B 0) := by
     rw [cstream_replicate_zero, hmwn]
   funext x; cases x <;> simp [σ₅, σ₄, σ₃, σ₂, σ₁, hya, hac2, hsel, hz, cstream_append]
+
+/-- **The passes of a line.** -/
+theorem band_linePass_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠ ι j)
+    (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ : SS.states ≤ Q) (hA : 96 ≤ A)
+    {w P B s : ℕ} (σ : RsbR → List (Fin (A + 4))) (hready : RsbReady σ w P) (hw : 1 ≤ w)
+    (hp : P ≤ w) (Lc Uc : List (List ℤ)) (rcs : List ℤ) (hLc : Lc.length = s) (hUc : Uc.length = s)
+    (hLl : ∀ c ∈ Lc, c.length = B) (hUl : ∀ c ∈ Uc, c.length = B) (hrcs : rcs.length = s)
+    (b : List GaussianInt) (hb : b.length = s)
+    (hfL : ∀ c ∈ Lc, ∀ x ∈ c, Fits w (⟨x, 0⟩ : GaussianInt))
+    (hfU : ∀ c ∈ Uc, ∀ x ∈ c, Fits w (⟨x, 0⟩ : GaussianInt))
+    (hfr : ∀ x ∈ rcs, Fits w (⟨x, 0⟩ : GaussianInt))
+    (hfit₁ : ∀ j < s, Fits w ((Mult.BandList.bandPend P Lc (b ++ List.replicate B 0) j).headD 0))
+    (hfit₂ : ∀ j < s, Fits w ((Mult.BandList.bandPendB P Uc rcs
+      ((Mult.BandList.fwdZC P Lc (b ++ List.replicate B 0)).reverse ++ List.replicate B 0) j).headD 0))
+    (hfit₃ : ∀ j < s, Fits w (tdivN P ((Mult.BandList.bandPendB P Uc rcs
+      ((Mult.BandList.fwdZC P Lc (b ++ List.replicate B 0)).reverse ++ List.replicate B 0) j).headD 0 *
+        ⟨rcs.getD j 0, 0⟩)))
+    (hvk : σ .vk = cstream A w (b ++ List.replicate B 0))
+    (hbo : σ .bo = cstream A w (Lc.map colC).flatten) (hhf : σ .hf = cstream A w (Uc.map colC).flatten)
+    (hdf : σ .df = cstream A w (rcs.map fun x => (⟨x, 0⟩ : GaussianInt)))
+    (hef : σ .ef = []) (htb : σ .tb = []) (hdout : σ .dout = [])
+    (hhv : σ .hv = []) (hya : σ .ya = []) (hxs : σ .xs = [])
+    (hpr : σ .pr = []) (hnv : σ .nv = []) (hac : σ .ac = []) (hac2 : σ .ac2 = [])
+    (htC : σ .tC = []) (htA : σ .tA = []) (htJ : σ .tJ = []) (hb1 : σ .b1 = [])
+    (htL : σ .tL = []) (hsn : (σ .sn).length = s) (hxa : σ .xa = []) (hhc : σ .hc = [])
+    (hm2n : (σ .m2n).length = B) (hmwn : (σ .mwn).length = B * w) :
+    ∃ c, RsbRuns body rg ι (bandLinePassP rg hι hT hQ) σ
+      (Function.update (Function.update σ .vk []) .dout
+        (cstream A w (Mult.BandList.bwdZC P Uc rcs
+          ((Mult.BandList.fwdZC P Lc (b ++ List.replicate B 0)).reverse ++ List.replicate B 0)).reverse)) c := by
+  set pend := b ++ List.replicate B (0 : GaussianInt) with hpend
+  have hpl : pend.length = s + B := by simp [hpend, hb]
+  have h₁ := rsb_copyTo_runs (body := body) (ι := ι) hrg hdisj (a := .bo) (b := .ef)
+    ⟨by decide, by decide⟩ ⟨by decide, by decide⟩ (by decide) σ hb1 htC
+  set σ₁ := Function.update σ .ef (σ .bo ++ σ .ef)
+  have hready₁ : RsbReady σ₁ w P := hready.update .ef (fun c => by simp) _
+  have h₂ := band_fwdLoop_runs (body := body) (ι := ι) (w := w) (B := B) (s := s) hrg hdisj hι
+    hT hQ hA σ₁ hready₁ hw hp Lc hLc hLl pend hpl hfit₁ hfL []
+    (by simp [σ₁, hvk]) (by simp [σ₁, hbo, hef]) (by simp [σ₁, hdout]) (by simp [σ₁, hhv])
+    (by simp [σ₁, hya]) (by simp [σ₁, hxs]) (by simp [σ₁, hpr]) (by simp [σ₁, hnv])
+    (by simp [σ₁, hac]) (by simp [σ₁, hac2]) (by simp [σ₁, htC]) (by simp [σ₁, htA])
+    (by simp [σ₁, htJ]) (by simp [σ₁, hb1]) (by simp [σ₁, htL]) (by simp [σ₁, hsn])
+    (by simp [σ₁, hm2n]) (by simp [σ₁, hmwn])
+  set σ₂ := Function.update (Function.update (Function.update σ₁ .vk
+    (cstream A w (Mult.BandList.bandPend P Lc pend s))) .ef []) .dout
+    (cstream A w (Mult.BandList.bandOut P Lc pend s) ++ [])
+  have h₃ := rsb_emptyR_runs (body := body) (ι := ι) hrg .vk σ₂
+  set σ₃ := Function.update σ₂ .vk []
+  have h₄ := rsb_umulSym_runs (body := body) (ι := ι) hrg (pairSym A false false) (c := .mwn) (a := .vk)
+    (t := .tC) (by decide) (by decide) (by decide) σ₃ (by simp [σ₃, σ₂, σ₁, htC])
+  set σ₄ := Function.update σ₃ .vk (List.replicate (σ₃ .mwn).length (pairSym A false false) ++ σ₃ .vk)
+  have h₅ := rsb_moveR_runs (body := body) (ι := ι) hrg (a := .dout) (b := .ac2) (by decide) σ₄
+  set σ₅ := Function.update (Function.update σ₄ .dout []) .ac2 ((σ₄ .dout).reverse ++ σ₄ .ac2)
+  have h₆ := rsb_moveR_runs (body := body) (ι := ι) hrg (a := .ac2) (b := .vk) (by decide) σ₅
+  set σ₆ := Function.update (Function.update σ₅ .ac2 []) .vk ((σ₅ .ac2).reverse ++ σ₅ .vk)
+  have h₇ := rsb_copyTo_runs (body := body) (ι := ι) hrg hdisj (a := .hf) (b := .ef)
+    ⟨by decide, by decide⟩ ⟨by decide, by decide⟩ (by decide) σ₆ (by simp [σ₆, σ₅, σ₄, σ₃, σ₂, σ₁, hb1])
+    (by simp [σ₆, σ₅, σ₄, σ₃, σ₂, σ₁, htC])
+  set σ₇ := Function.update σ₆ .ef (σ₆ .hf ++ σ₆ .ef)
+  have h₈ := rsb_copyTo_runs (body := body) (ι := ι) hrg hdisj (a := .df) (b := .tb)
+    ⟨by decide, by decide⟩ ⟨by decide, by decide⟩ (by decide) σ₇
+    (by simp [σ₇, σ₆, σ₅, σ₄, σ₃, σ₂, σ₁, hb1]) (by simp [σ₇, σ₆, σ₅, σ₄, σ₃, σ₂, σ₁, htC])
+  set σ₈ := Function.update σ₇ .tb (σ₇ .df ++ σ₇ .tb)
+  have hfz : Mult.BandList.bandOut P Lc pend s = (Mult.BandList.fwdZC P Lc pend).reverse := by
+    rw [Mult.BandList.fwdZC_eq_bandOut P Lc pend (by omega), hLc, List.reverse_reverse]
+  set pend' := (Mult.BandList.fwdZC P Lc pend).reverse ++ List.replicate B (0 : GaussianInt)
+  have hpl' : pend'.length = s + B := by
+    simp [pend', length_fwdZC P Lc pend (by omega), hLc]
+  have hready₈ : RsbReady σ₈ w P := by
+    simp only [σ₈, σ₇, σ₆, σ₅, σ₄, σ₃, σ₂]
+    exact (((((((((hready₁.update .vk (fun c => by simp) _).update .ef (fun c => by simp) _).update
+      .dout (fun c => by simp) _).update .vk (fun c => by simp) _).update .vk (fun c => by simp)
+      _).update .dout (fun c => by simp) _).update .ac2 (fun c => by simp) _).update .ac2
+      (fun c => by simp) _).update .vk (fun c => by simp) _).update .ef (fun c => by simp) _ |>.update
+      .tb (fun c => by simp) _
+  have hz : List.replicate (σ .mwn).length (pairSym A false false) = cstream A w (List.replicate B 0) := by
+    rw [cstream_replicate_zero, hmwn]
+  have h₉ := band_bwdLoop_runs (body := body) (ι := ι) (w := w) (B := B) (s := s) hrg hdisj hι
+    hT hQ hA σ₈ hready₈ hw hp Uc hUc hUl rcs hrcs hfr pend' hpl' hfit₂ hfit₃ hfU []
+    (by simp [σ₈, σ₇, σ₆, σ₅, σ₄, σ₃, σ₂, σ₁, hfz, hz, pend', hac2, cstream_append])
+    (by simp [σ₈, σ₇, σ₆, σ₅, σ₄, σ₃, σ₂, σ₁, hhf])
+    (by simp [σ₈, σ₇, σ₆, σ₅, σ₄, σ₃, σ₂, σ₁]) (by simp [σ₈, σ₇, σ₆, σ₅, σ₄, σ₃, σ₂, σ₁, hhv])
+    (by simp [σ₈, σ₇, σ₆, σ₅, σ₄, σ₃, σ₂, σ₁, hya]) (by simp [σ₈, σ₇, σ₆, σ₅, σ₄, σ₃, σ₂, σ₁, hxs])
+    (by simp [σ₈, σ₇, σ₆, σ₅, σ₄, σ₃, σ₂, σ₁, hpr]) (by simp [σ₈, σ₇, σ₆, σ₅, σ₄, σ₃, σ₂, σ₁, hnv])
+    (by simp [σ₈, σ₇, σ₆, σ₅, σ₄, σ₃, σ₂, σ₁, hac]) (by simp [σ₈, σ₇, σ₆, σ₅, σ₄, σ₃, σ₂, σ₁, hac2])
+    (by simp [σ₈, σ₇, σ₆, σ₅, σ₄, σ₃, σ₂, σ₁, htC]) (by simp [σ₈, σ₇, σ₆, σ₅, σ₄, σ₃, σ₂, σ₁, htA])
+    (by simp [σ₈, σ₇, σ₆, σ₅, σ₄, σ₃, σ₂, σ₁, htJ]) (by simp [σ₈, σ₇, σ₆, σ₅, σ₄, σ₃, σ₂, σ₁, hb1])
+    (by simp [σ₈, σ₇, σ₆, σ₅, σ₄, σ₃, σ₂, σ₁, htL]) (by simp [σ₈, σ₇, σ₆, σ₅, σ₄, σ₃, σ₂, σ₁, hsn])
+    (by simp [σ₈, σ₇, σ₆, σ₅, σ₄, σ₃, σ₂, σ₁, hxa]) (by simp [σ₈, σ₇, σ₆, σ₅, σ₄, σ₃, σ₂, σ₁, hhc])
+    (by simp [σ₈, σ₇, σ₆, σ₅, σ₄, σ₃, σ₂, σ₁, hdf, htb])
+    (by simp [σ₈, σ₇, σ₆, σ₅, σ₄, σ₃, σ₂, σ₁, hm2n]) (by simp [σ₈, σ₇, σ₆, σ₅, σ₄, σ₃, σ₂, σ₁, hmwn])
+  set σ₉ := Function.update (Function.update (Function.update (Function.update σ₈ .vk
+    (cstream A w (Mult.BandList.bandPendB P Uc rcs pend' s))) .tb []) .ef []) .dout
+    (cstream A w (Mult.BandList.bandOutB P Uc rcs pend' s) ++ [])
+  have h₁₀ := rsb_emptyR_runs (body := body) (ι := ι) hrg .vk σ₉
+  refine ⟨_, (RsbRuns.seq hdisj h₁ (RsbRuns.seq hdisj h₂ (RsbRuns.seq hdisj h₃ (RsbRuns.seq hdisj h₄
+    (RsbRuns.seq hdisj h₅ (RsbRuns.seq hdisj h₆ (RsbRuns.seq hdisj h₇ (RsbRuns.seq hdisj h₈
+    (RsbRuns.seq hdisj h₉ h₁₀))))))))).congr ?_⟩
+  have hbz : Mult.BandList.bandOutB P Uc rcs pend' s = (Mult.BandList.bwdZC P Uc rcs pend').reverse := by
+    rw [Mult.BandList.bwdZC_eq_bandOutB P Uc rcs pend' (by omega) (by omega), hUc, List.reverse_reverse]
+  funext x; cases x <;> simp [σ₉, σ₈, σ₇, σ₆, σ₅, σ₄, σ₃, σ₂, σ₁, hbz, hef, htb, hdout, hac2]
 
 end Contracts
 
