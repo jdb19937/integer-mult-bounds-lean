@@ -372,6 +372,7 @@ def preBankB (σ : RsbR ⊕ RsbX t₀ → List (Fin (A + 4))) (hd : Fin 5 → Fi
   | .inr .ax' => σ (.inr .ax')
   | .inr .e1 => σ (.inr .e1)
   | .inr .e2 => σ (.inr .e2)
+  | .inr (.vx j) => σ (.inr (.vx j))
 
 /-- The bank after clearing the headers. -/
 def preClrXB (xr : RsbX t₀ → List (Fin (A + 4))) (hd : Fin 5 → Fin t₀) :

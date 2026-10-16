@@ -138,6 +138,7 @@ header exchange. -/
 inductive RsbX (t₀ : ℕ) where
   | sw (j : Fin (swapT t₀))
   | xt | ax | ax' | e1 | e2
+  | vx (j : Fin 12)
   deriving DecidableEq
 
 section Bank
