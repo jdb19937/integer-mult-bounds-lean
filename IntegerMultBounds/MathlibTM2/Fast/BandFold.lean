@@ -542,9 +542,9 @@ theorem band_unfoldLine_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg 
     (hm2wn : (σ .m2wn).length = x.length / 2) (hkn : (σ .kn).length = (x.length + 1) / 2 - x.length / 2)
     (hwn : (σ (.cm .wn)).length = w) (hsel : σ .sel = []) (hya : σ .ya = []) (hxs : σ .xs = [])
     (htK : σ .tK = []) (htC : σ .tC = []) (hac2 : σ .ac2 = []) :
-    ∃ b, RsbRuns body rg ι (bandUnfoldLineP rg) σ
+    RsbRuns body rg ι (bandUnfoldLineP rg) σ
       (Function.update (Function.update σ .dout []) .sel
-        (cstream A w (Mult.BandFactor.unfoldList x))) b := by
+        (cstream A w (Mult.BandFactor.unfoldList x))) (60 * (x.length + 1) * w + 60 * x.length + 60) := by
   have hsing : ∀ l : List GaussianInt, (l.map fun a => [a]).flatten = l := by
     intro l; induction l <;> simp_all
   set n := x.length
@@ -601,8 +601,27 @@ theorem band_unfoldLine_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg 
     (by rw [hsing]; simp [σ₅]) rfl (by simp [σ₅, σ₄, σ₃, σ₂, σ₁, hwn])
     (by simp [σ₅, σ₄, σ₃, σ₂, σ₁, hkn, hE, hrdef]) (by simp [σ₅, σ₄, σ₃, σ₂, σ₁, htK])
     (by simp [σ₅, σ₄, σ₃, σ₂, σ₁, htC]) (by simp [σ₅, σ₄, σ₃, σ₂, σ₁])
-  refine ⟨_, (RsbRuns.seq hdisj h₁ (RsbRuns.seq hdisj h₂ (RsbRuns.seq hdisj h₃ (RsbRuns.seq hdisj h₄
-    (RsbRuns.seq hdisj h₅ h₆))))).congr ?_⟩
+  refine ((RsbRuns.seq hdisj h₁ (RsbRuns.seq hdisj h₂ (RsbRuns.seq hdisj h₃ (RsbRuns.seq hdisj h₄
+    (RsbRuns.seq hdisj h₅ h₆))))).congr ?_).mono ?_
+  swap
+  · simp only [σ₄, σ₃, σ₂, σ₁, Function.update_self, Function.update_of_ne (by decide : RsbR.xs ≠ RsbR.ac2),
+      Function.update_of_ne (by decide : RsbR.xs ≠ RsbR.ya), Function.update_of_ne (by decide : RsbR.xs ≠ RsbR.dout),
+      Function.update_of_ne (by decide : RsbR.ac2 ≠ RsbR.xs), Function.update_of_ne (by decide : RsbR.ac2 ≠ RsbR.ya),
+      Function.update_of_ne (by decide : RsbR.ac2 ≠ RsbR.dout), hxs, hac2, length_cstream, List.length_append,
+      List.length_reverse, List.length_nil, List.length_map, List.length_take, List.length_drop, hE, hO, hll,
+      List.length_reverse]
+    have hE1 : E1.length = r := by simp [E1, hE]; omega
+    rw [hE1, show min r ((n + 1) / 2) = r by omega]
+    have a1 : r * (2 * (6 * w + 6) + 6) ≤ n * (12 * w + 18) := Nat.mul_le_mul (by omega) (by omega)
+    have a2 : ((n + 1) / 2 - r) * (6 * w + 6 + 6) ≤ n * (6 * w + 12) + (6 * w + 12) := by
+      have : (n + 1) / 2 - r ≤ n + 1 := by omega
+      nlinarith
+    have a3 : n / 2 * w ≤ n * w := Nat.mul_le_mul_right _ (by omega)
+    have a4 : r * (6 * (1 * w) + 6 + 6) ≤ n * (6 * w + 12) := Nat.mul_le_mul (by omega) (by omega)
+    have a5 : ((n + 1) / 2 - r) * (6 * (1 * w) + 6 + 6) ≤ n * (6 * w + 12) + (6 * w + 12) := by
+      have : (n + 1) / 2 - r ≤ n + 1 := by omega
+      nlinarith
+    nlinarith
   have hfin : ((E.reverse.drop r).map fun a => [a]).reverse.flatten ++
       ((E.reverse.take r).map fun a => [a]).reverse.flatten = E := by
     rw [← List.map_reverse, ← List.map_reverse, hsing, hsing, ← List.reverse_append,

@@ -1,7 +1,7 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.BandFold
-public import IntegerMultBounds.MathlibTM2.Fast.BandRegs
+
 
 /-!
 # The banded line driver
@@ -88,6 +88,39 @@ theorem length_fwdZC (P : ℕ) : ∀ (cs : List (List ℤ)) (pend : List Gaussia
     rw [length_fwdZC P cs _ (by rw [Mult.BandList.length_subColC]; simp at h; omega)]
   | _ :: _, [], h => by simp at h
 
+/-- The step bound of the input phase. -/
+def bandLineInCost (T w s t B : ℕ) : ℕ :=
+  t * (6 * w + 10) + 6 + (60 * (s + 1) * w + 60 * s + 60) +
+    (s * (rmulCost T w + 6 * w + 8) + 6 + (2 * (s * w) + 2)) + (4 * (B * w) + 4) +
+    (2 * (s * w) + 2) + (2 * (s * w) + 2)
+
+/-- The step bound of the passes. -/
+def bandLinePassCost (T w s B : ℕ) : ℕ :=
+  (6 * (s * B * w) + 6) + (s * (bandFwdStepCost T w B + 6) + 4) + (2 * (B * w) + 2) +
+    (4 * (B * w) + 4) + (2 * (s * w) + 2) + (2 * (s * w) + 2) + (6 * (s * B * w) + 6) +
+    (6 * (s * w) + 6) + (s * (rmulCost T w + 30 * w + 40 + bandFwdStepCost T w B + 6) + 4) +
+    (2 * (B * w) + 2)
+
+/-- The step bound of the output phase. -/
+def bandLineOutCost (T w s t : ℕ) : ℕ :=
+  (60 * (s + 1) * w + 60 * s + 60) + (s * (rmulCost T w + 6 * w + 8) + 6 + (2 * (s * w) + 2)) +
+    (4 * (s * w) + 4) + (2 * (s * w) + 2) + (s * (rmulCost T w + 6 * w + 2) + 8) +
+    (2 * (s * w) + 2) + (2 * (s * w) + 2) + (2 * (s * w) + 2) + (4 * ((t - s) * w) + 4)
+
+/-- The step bound of one line. -/
+def bandLineCost (T w s t B : ℕ) : ℕ :=
+  bandLineInCost T w s t B + bandLinePassCost T w s B + bandLineOutCost T w s t
+
+theorem length_bandOut (P : ℕ) (cs : List (List ℤ)) (pend : List GaussianInt) :
+    ∀ j, (Mult.BandList.bandOut P cs pend j).length = j
+  | 0 => rfl
+  | j + 1 => by simp [Mult.BandList.bandOut, length_bandOut P cs pend j]
+
+theorem length_bandOutB (P : ℕ) (cs : List (List ℤ)) (rs : List ℤ) (pend : List GaussianInt) :
+    ∀ j, (Mult.BandList.bandOutB P cs rs pend j).length = j
+  | 0 => rfl
+  | j + 1 => by simp [Mult.BandList.bandOutB, length_bandOutB P cs rs pend j]
+
 section Contracts
 
 variable {body : P → Pr P T Q A U} {rg : RsbR → Fin T} {ι : Fin 64 → Fin T}
@@ -130,10 +163,10 @@ theorem band_lineIn_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r �
     (hms : σ .ms = []) (hsr : σ .sr = []) (hsel : σ .sel = []) (hvk : σ .vk = [])
     (hya : σ .ya = []) (hxs : σ .xs = []) (hnv : σ .nv = []) (htK : σ .tK = [])
     (htC : σ .tC = []) (hac2 : σ .ac2 = []) :
-    ∃ b, RsbRuns body rg ι (bandLineInP rg hι hT hQ) σ
+    RsbRuns body rg ι (bandLineInP rg hι hT hQ) σ
       (Function.update (Function.update σ .src rest) .vk
         (cstream A w ((Mult.BandFactor.foldList (rsbArr fun ℓ : ZMod s => N (rowIndex s t ℓ))).map
-          (fun a => tdivN P (a * ⟨cin, 0⟩)) ++ List.replicate B 0))) b := by
+          (fun a => tdivN P (a * ⟨cin, 0⟩)) ++ List.replicate B 0))) (bandLineInCost T w s t B) := by
   have hwn := hr.wn
   have hlen : (rsbArr N).length = (rsbMask s t).length := by rw [length_rsbArr, length_rsbMask]
   set SL := rsbArr fun ℓ : ZMod s => N (rowIndex s t ℓ) with hSL
@@ -170,8 +203,12 @@ theorem band_lineIn_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r �
   have h₅ := rsb_moveR_runs (body := body) (ι := ι) hrg (a := .ya) (b := .ac2) (by decide) σ₄
   set σ₅ := Function.update (Function.update σ₄ .ya []) .ac2 ((σ₄ .ya).reverse ++ σ₄ .ac2)
   have h₆ := rsb_moveR_runs (body := body) (ι := ι) hrg (a := .ac2) (b := .vk) (by decide) σ₅
-  refine ⟨_, (RsbRuns.seq hdisj h₁ (RsbRuns.seq hdisj h₂ (RsbRuns.seq hdisj h₃ (RsbRuns.seq hdisj h₄
-    (RsbRuns.seq hdisj h₅ h₆))))).congr ?_⟩
+  refine ((RsbRuns.seq hdisj h₁ (RsbRuns.seq hdisj h₂ (RsbRuns.seq hdisj h₃ (RsbRuns.seq hdisj h₄
+    (RsbRuns.seq hdisj h₅ h₆))))).congr ?_).mono ?_
+  swap
+  · simp [σ₅, σ₄, σ₃, σ₂, σ₁, hSLl, length_foldList, hmwn, hya, hac2, length_rsbMask, bandLineInCost,
+      sc]
+    omega
   have hz : List.replicate (σ .mwn).length (pairSym A false false) = cstream A w (List.replicate B 0) := by
     rw [cstream_replicate_zero, hmwn]
   funext x; cases x <;> simp [σ₅, σ₄, σ₃, σ₂, σ₁, hya, hac2, hsel, hz, cstream_append]
@@ -201,10 +238,11 @@ theorem band_linePass_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r 
     (htC : σ .tC = []) (htA : σ .tA = []) (htJ : σ .tJ = []) (hb1 : σ .b1 = [])
     (htL : σ .tL = []) (hsn : (σ .sn).length = s) (hxa : σ .xa = []) (hhc : σ .hc = [])
     (hm2n : (σ .m2n).length = B) (hmwn : (σ .mwn).length = B * w) :
-    ∃ c, RsbRuns body rg ι (bandLinePassP rg hι hT hQ) σ
+    RsbRuns body rg ι (bandLinePassP rg hι hT hQ) σ
       (Function.update (Function.update σ .vk []) .dout
         (cstream A w (Mult.BandList.bwdZC P Uc rcs
-          ((Mult.BandList.fwdZC P Lc (b ++ List.replicate B 0)).reverse ++ List.replicate B 0)).reverse)) c := by
+          ((Mult.BandList.fwdZC P Lc (b ++ List.replicate B 0)).reverse ++ List.replicate B 0)).reverse))
+      (bandLinePassCost T w s B) := by
   set pend := b ++ List.replicate B (0 : GaussianInt) with hpend
   have hpl : pend.length = s + B := by simp [hpend, hb]
   have h₁ := rsb_copyTo_runs (body := body) (ι := ι) hrg hdisj (a := .bo) (b := .ef)
@@ -270,36 +308,42 @@ theorem band_linePass_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r 
     (cstream A w (Mult.BandList.bandPendB P Uc rcs pend' s))) .tb []) .ef []) .dout
     (cstream A w (Mult.BandList.bandOutB P Uc rcs pend' s) ++ [])
   have h₁₀ := rsb_emptyR_runs (body := body) (ι := ι) hrg .vk σ₉
-  refine ⟨_, (RsbRuns.seq hdisj h₁ (RsbRuns.seq hdisj h₂ (RsbRuns.seq hdisj h₃ (RsbRuns.seq hdisj h₄
+  refine ((RsbRuns.seq hdisj h₁ (RsbRuns.seq hdisj h₂ (RsbRuns.seq hdisj h₃ (RsbRuns.seq hdisj h₄
     (RsbRuns.seq hdisj h₅ (RsbRuns.seq hdisj h₆ (RsbRuns.seq hdisj h₇ (RsbRuns.seq hdisj h₈
-    (RsbRuns.seq hdisj h₉ h₁₀))))))))).congr ?_⟩
+    (RsbRuns.seq hdisj h₉ h₁₀))))))))).congr ?_).mono ?_
+  swap
+  · simp [σ₉, σ₈, σ₇, σ₆, σ₅, σ₄, σ₃, σ₂, σ₁, hbo, hhf, hdf, hef, htb, hdout, hac2, hvk, hmwn,
+      length_bandOut, Mult.BandList.length_bandPend, Mult.BandList.length_bandPendB, hpl, hpl',
+      bandLinePassCost, colC, List.length_flatten, hLl, hUl, hLc, hUc, hrcs]
+    have hsL : (List.map (List.length ∘ colC) Lc).sum = s * B := by
+      rw [List.map_congr_left (g := fun _ => B) (fun c hc => by simp [colC, hLl c hc]),
+        List.map_const', List.sum_replicate, hLc, smul_eq_mul]
+    have hsU : (List.map (List.length ∘ colC) Uc).sum = s * B := by
+      rw [List.map_congr_left (g := fun _ => B) (fun c hc => by simp [colC, hUl c hc]),
+        List.map_const', List.sum_replicate, hUc, smul_eq_mul]
+    rw [hsL, hsU]
+    omega
   have hbz : Mult.BandList.bandOutB P Uc rcs pend' s = (Mult.BandList.bwdZC P Uc rcs pend').reverse := by
     rw [Mult.BandList.bwdZC_eq_bandOutB P Uc rcs pend' (by omega) (by omega), hUc, List.reverse_reverse]
   funext x; cases x <;> simp [σ₉, σ₈, σ₇, σ₆, σ₅, σ₄, σ₃, σ₂, σ₁, hbz, hef, htb, hdout, hac2]
 
 end Contracts
 
-/-- Extra registers of the banded line: the scaled diagonal table and the padding counter. -/
-inductive BandX
-  | dtab
-  | padc
-  deriving DecidableEq
-
 section Out
 
-variable (rg : RsbR ⊕ BandX → Fin T) {ι : Fin 64 → Fin T} (hι : Function.Injective ι) (hT : 64 ≤ T)
+variable (rg : RsbR → Fin T) {ι : Fin 64 → Fin T} (hι : Function.Injective ι) (hT : 64 ≤ T)
   (hQ : SS.states ≤ Q)
 
 /-- The output phase: unfold, scale by the constant on `bx`, multiply by the diagonal table,
 move onto `dst` and pad with `t - s` zero records. -/
 noncomputable def bandLineOutP : Pr P T Q A U :=
-  .seq (bandUnfoldLineP (rg ∘ Sum.inl)) (.seq (bandScaleP (rg ∘ Sum.inl) hι hT hQ .sel .bx .hv)
-  (.seq (copyR (rg (.inr .dtab)) (rg (.inl .ac2)) (rg (.inl .tC)) id)
-  (.seq (moveR (rg (.inl .ac2)) (rg (.inl .ef)) id)
-  (.seq (cmulStream (rsbCr (rg ∘ Sum.inl) .hv .ef .dout) (rmulOne ι hι hT hQ (rsbCr (rg ∘ Sum.inl) .hv .ef .dout)))
-  (.seq (emptyR (rg (.inl .hv))) (.seq (emptyR (rg (.inl .ef)))
-  (.seq (moveR (rg (.inl .dout)) (rg (.inl .dst)) id)
-  (umulSym 1 (pairSym A false false) (rg (.inr .padc)) (rg (.inl .dst)) (rg (.inl .tC))))))))))
+  .seq (bandUnfoldLineP rg) (.seq (bandScaleP rg hι hT hQ .sel .bx .hv)
+  (.seq (copyR (rg (.dtab)) (rg (.ac2)) (rg (.tC)) id)
+  (.seq (moveR (rg (.ac2)) (rg (.ef)) id)
+  (.seq (cmulStream (rsbCr rg .hv .ef .dout) (rmulOne ι hι hT hQ (rsbCr rg .hv .ef .dout)))
+  (.seq (emptyR (rg (.hv))) (.seq (emptyR (rg (.ef)))
+  (.seq (moveR (rg (.dout)) (rg (.dst)) id)
+  (umulSym 1 (pairSym A false false) (rg (.padc)) (rg (.dst)) (rg (.tC))))))))))
 
 end Out
 
@@ -308,9 +352,9 @@ section OutContract
 variable {body : P → Pr P T Q A U} {ι : Fin 64 → Fin T}
 
 /-- **The output phase of a line.** -/
-theorem band_lineOut_runs (rg : RsbR ⊕ BandX → Fin T) (hrg : Function.Injective rg)
+theorem band_lineOut_runs (rg : RsbR → Fin T) (hrg : Function.Injective rg)
     (hdisj : ∀ r j, rg r ≠ ι j) (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ : SS.states ≤ Q)
-    (hA : 96 ≤ A) {w P s t : ℕ} (σ : RsbR → List (Fin (A + 4))) (τ : BandX → List (Fin (A + 4)))
+    (hA : 96 ≤ A) {w P s t : ℕ} (σ : RsbR → List (Fin (A + 4)))
     (hready : RsbReady σ w P) (hw : 1 ≤ w) (hp : P ≤ w) (x : List GaussianInt) (hxl : x.length = s)
     (cout : ℤ) (Dl : List ℤ) (hDl : Dl.length = s)
     (hfx : ∀ a ∈ Mult.BandFactor.unfoldList x, Fits w a) (hfc : Fits w (⟨cout, 0⟩ : GaussianInt))
@@ -318,35 +362,32 @@ theorem band_lineOut_runs (rg : RsbR ⊕ BandX → Fin T) (hrg : Function.Inject
     (hfD : ∀ d ∈ Dl, Fits w (⟨d, 0⟩ : GaussianInt))
     (hdout : σ .dout = cstream A w x) (hm2wn : (σ .m2wn).length = s / 2)
     (hkn : (σ .kn).length = (s + 1) / 2 - s / 2) (hbx : σ .bx = csyms A w ⟨cout, 0⟩)
-    (hdtab : τ .dtab = cstream A w (Dl.map fun d => (⟨d, 0⟩ : GaussianInt)))
-    (hpadc : (τ .padc).length = (t - s) * w)
+    (hdtab : σ .dtab = cstream A w (Dl.map fun d => (⟨d, 0⟩ : GaussianInt)))
+    (hpadc : (σ .padc).length = (t - s) * w)
     (hsel : σ .sel = []) (hya : σ .ya = []) (hxs : σ .xs = []) (htK : σ .tK = []) (htC : σ .tC = [])
     (hac2 : σ .ac2 = []) (hhv : σ .hv = []) (hef : σ .ef = []) :
-    ∃ b, RsbRuns body rg ι (bandLineOutP rg hι hT hQ) (Sum.elim σ τ)
-      (Sum.elim (Function.update (Function.update σ .dout []) .dst
+    RsbRuns body rg ι (bandLineOutP rg hι hT hQ) σ
+      (Function.update (Function.update σ .dout []) .dst
         ((cstream A w (List.zipWith (fun a b => tdivN P (a * b))
           ((Mult.BandFactor.unfoldList x).map fun a => tdivN P (a * ⟨cout, 0⟩))
-          (Dl.map fun d => (⟨d, 0⟩ : GaussianInt)) ++ List.replicate (t - s) 0)).reverse ++ σ .dst)) τ) b := by
-  set rgR := rg ∘ (Sum.inl : RsbR → RsbR ⊕ BandX)
-  have hrgR : Function.Injective rgR := hrg.comp Sum.inl_injective
-  have hdisjR : ∀ r j, rgR r ≠ ι j := fun r j => hdisj _ j
+          (Dl.map fun d => (⟨d, 0⟩ : GaussianInt)) ++ List.replicate (t - s) 0)).reverse ++ σ .dst))
+      (bandLineOutCost T w s t) := by
   have hwn := hready.wn
-  obtain ⟨b₁, h₁⟩ := band_unfoldLine_runs (body := body) (ι := ι) hrgR hdisjR (w := w) σ x hdout
+  have h₁ := band_unfoldLine_runs (body := body) (ι := ι) hrg hdisj (w := w) σ x hdout
     (by rw [hm2wn, hxl]) (by rw [hkn, hxl]) hwn hsel hya hxs htK htC hac2
   set σ₁ := Function.update (Function.update σ .dout []) .sel (cstream A w (Mult.BandFactor.unfoldList x))
   have hready₁ : RsbReady σ₁ w P :=
     (hready.update .dout (fun c => by simp) _).update .sel (fun c => by simp) _
-  have h₂ := band_scale_runs (body := body) (ι := ι) hrgR hdisjR hι hT hQ hA (x := .sel) (y := .bx)
+  have h₂ := band_scale_runs (body := body) (ι := ι) hrg hdisj hι hT hQ hA (x := .sel) (y := .bx)
     (o := .hv) ⟨by decide, by decide, by decide, fun _ => ⟨by simp, by simp, by simp⟩⟩ σ₁ hready₁ hw hp
     (Mult.BandFactor.unfoldList x) cout hfx hfc (by simp [σ₁]) (by simp [σ₁, hbx]) (by simp [σ₁, hhv])
   set u := (Mult.BandFactor.unfoldList x).map fun a => tdivN P (a * ⟨cout, 0⟩)
   set σ₂ := Function.update (Function.update σ₁ .hv (cstream A w u)) .sel []
-  have h₃ := rsb_copyR_runs (body := body) (ι := ι) hrg (a := .inr .dtab) (b := .inl .ac2)
-    (t := .inl .tC) (by simp) (by simp) (by simp) (Sum.elim σ₂ τ) (by simp [σ₂, σ₁, htC])
-  rw [update_elim_inl] at h₃
-  set σ₃ := Function.update σ₂ .ac2 ((Sum.elim σ₂ τ (.inr .dtab)).reverse ++ Sum.elim σ₂ τ (.inl .ac2))
-  have h₄ := (rsb_moveR_runs (body := body) (ι := ι) (rg := rgR) hrgR (a := .ac2) (b := .ef) (by decide)
-    σ₃).lift hrg τ
+  have h₃ := rsb_copyR_runs (body := body) (ι := ι) hrg (a := .dtab) (b := .ac2)
+    (t := .tC) (by decide) (by decide) (by decide) σ₂ (by simp [σ₂, σ₁, htC])
+  set σ₃ := Function.update σ₂ .ac2 ((σ₂ .dtab).reverse ++ σ₂ .ac2)
+  have h₄ := (rsb_moveR_runs (body := body) (ι := ι) hrg (a := .ac2) (b := .ef) (by decide)
+    σ₃)
   set σ₄ := Function.update (Function.update σ₃ .ac2 []) .ef ((σ₃ .ac2).reverse ++ σ₃ .ef)
   have hready₄ : RsbReady σ₄ w P := by
     simp only [σ₄, σ₃, σ₂]
@@ -354,28 +395,33 @@ theorem band_lineOut_runs (rg : RsbR ⊕ BandX → Fin T) (hrg : Function.Inject
       (fun c => by simp) _).update .ac2 (fun c => by simp) _).update .ef (fun c => by simp) _
   have hu : ∀ a ∈ u, Fits w a := by
     intro a ha; obtain ⟨b, hb, rfl⟩ := List.mem_map.mp ha; exact hfu b hb
-  have h₅ := (rsb_rmulStream_runs (body := body) (rg := rgR) hrgR hdisjR hι hT hQ hA (x := .hv) (y := .ef)
+  have h₅ := (rsb_rmulStream_runs (body := body) hrg hdisj hι hT hQ hA (x := .hv) (y := .ef)
     (o := .dout) ⟨by decide, by decide, by decide, fun _ => ⟨by simp, by simp, by simp⟩⟩ (ρ := σ₄)
     hready₄ hw hp u (Dl.map fun d => (⟨d, 0⟩ : GaussianInt)) (by simp [u, hDl, hxl, Mult.BandFactor.unfoldList,
       Mult.BandFactor.length_evens, Mult.BandFactor.length_odds]; omega) hu
     (by intro a ha; obtain ⟨d, hd, rfl⟩ := List.mem_map.mp ha; exact ⟨hfD d hd, rfl⟩)
-    (by simp [σ₄, σ₃, σ₂]) (by simp [σ₄, σ₃, σ₂, σ₁, hdtab, hac2, hef])).lift hrg τ
+    (by simp [σ₄, σ₃, σ₂]) (by simp [σ₄, σ₃, σ₂, σ₁, hdtab, hac2, hef]))
   set σ₅ := Function.update σ₄ .dout
     (cstream A w (List.zipWith (fun a b => tdivN P (a * b)) u (Dl.map fun d => (⟨d, 0⟩ : GaussianInt)))
       ++ σ₄ .dout)
-  have h₆ := (rsb_emptyR_runs (body := body) (ι := ι) hrgR .hv σ₅).lift hrg τ
+  have h₆ := (rsb_emptyR_runs (body := body) (ι := ι) hrg .hv σ₅)
   set σ₆ := Function.update σ₅ .hv []
-  have h₇ := (rsb_emptyR_runs (body := body) (ι := ι) hrgR .ef σ₆).lift hrg τ
+  have h₇ := (rsb_emptyR_runs (body := body) (ι := ι) hrg .ef σ₆)
   set σ₇ := Function.update σ₆ .ef []
-  have h₈ := (rsb_moveR_runs (body := body) (ι := ι) hrgR (a := .dout) (b := .dst) (by decide) σ₇).lift hrg τ
+  have h₈ := (rsb_moveR_runs (body := body) (ι := ι) hrg (a := .dout) (b := .dst) (by decide) σ₇)
   set σ₈ := Function.update (Function.update σ₇ .dout []) .dst ((σ₇ .dout).reverse ++ σ₇ .dst)
-  have h₉ := rsb_umulSym_runs (body := body) (ι := ι) hrg (pairSym A false false) (c := .inr .padc)
-    (a := .inl .dst) (t := .inl .tC) (by simp) (by simp) (by simp) (Sum.elim σ₈ τ)
+  have h₉ := rsb_umulSym_runs (body := body) (ι := ι) hrg (pairSym A false false) (c := .padc)
+    (a := .dst) (t := .tC) (by decide) (by decide) (by decide) σ₈
     (by simp [σ₈, σ₇, σ₆, σ₅, σ₄, σ₃, σ₂, σ₁, htC])
-  rw [update_elim_inl] at h₉
-  refine ⟨_, (RsbRuns.seq hdisj (h₁.lift hrg τ) (RsbRuns.seq hdisj (h₂.lift hrg τ) (RsbRuns.seq hdisj h₃
+  refine ((RsbRuns.seq hdisj h₁ (RsbRuns.seq hdisj h₂ (RsbRuns.seq hdisj h₃
     (RsbRuns.seq hdisj h₄ (RsbRuns.seq hdisj h₅ (RsbRuns.seq hdisj h₆ (RsbRuns.seq hdisj h₇
-    (RsbRuns.seq hdisj h₈ h₉)))))))).congr ?_⟩
+    (RsbRuns.seq hdisj h₈ h₉)))))))).congr ?_).mono ?_
+  swap
+  · simp [σ₈, σ₇, σ₆, σ₅, σ₄, σ₃, σ₂, σ₁, hxl, hdtab, hpadc, hDl, hhv, hef, hac2, hsel, u,
+      bandLineOutCost, Mult.BandFactor.unfoldList, Mult.BandFactor.length_evens, Mult.BandFactor.length_odds]
+    have hs2 : (s + 1) / 2 + s / 2 = s := by omega
+    simp only [← Nat.add_mul, hs2, min_self]
+    omega
   have hz : (cstream A w (List.zipWith (fun a b => tdivN P (a * b)) u
       (Dl.map fun d => (⟨d, 0⟩ : GaussianInt)) ++ List.replicate (t - s) 0)).reverse =
       List.replicate ((t - s) * w) (pairSym A false false) ++
@@ -383,7 +429,6 @@ theorem band_lineOut_runs (rg : RsbR ⊕ BandX → Fin T) (hrg : Function.Inject
           (Dl.map fun d => (⟨d, 0⟩ : GaussianInt)))).reverse := by
     rw [reverse_cstream_append, cstream_replicate_zero, List.reverse_replicate]
   rw [hz, List.append_assoc]
-  congr 1
   funext x; cases x <;> simp [σ₈, σ₇, σ₆, σ₅, σ₄, σ₃, σ₂, σ₁, hpadc, hhv, hef, hsel, hac2]
 
 end OutContract
@@ -417,12 +462,12 @@ def bandOutVec (P : ℕ) (cout : ℤ) (Dl : List ℤ) (x : List GaussianInt) : L
 
 section Line
 
-variable (rg : RsbR ⊕ BandX → Fin T) {ι : Fin 64 → Fin T} (hι : Function.Injective ι) (hT : 64 ≤ T)
+variable (rg : RsbR → Fin T) {ι : Fin 64 → Fin T} (hι : Function.Injective ι) (hT : 64 ≤ T)
   (hQ : SS.states ≤ Q)
 
 /-- One banded line: input, passes, output. -/
 noncomputable def bandLineP : Pr P T Q A U :=
-  .seq (bandLineInP (rg ∘ Sum.inl) hι hT hQ) (.seq (bandLinePassP (rg ∘ Sum.inl) hι hT hQ)
+  .seq (bandLineInP rg hι hT hQ) (.seq (bandLinePassP rg hι hT hQ)
     (bandLineOutP rg hι hT hQ))
 
 end Line
@@ -434,10 +479,10 @@ variable {body : P → Pr P T Q A U} {ι : Fin 64 → Fin T}
 /-- **One banded line on tapes.** `src` holds the line `N` on top of `rest`; afterwards `dst`
 gains, reversed on top, `bandOutVec` of the banded solve of the scaled folded rows followed by
 `t - s` zero records, and `src` holds `rest`. -/
-theorem band_line_runs (rg : RsbR ⊕ BandX → Fin T) (hrg : Function.Injective rg)
+theorem band_line_runs (rg : RsbR → Fin T) (hrg : Function.Injective rg)
     (hdisj : ∀ r j, rg r ≠ ι j) (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ : SS.states ≤ Q)
     (hA : 96 ≤ A) {w P s t B : ℕ} [NeZero s] [NeZero t] (hst : s < t)
-    (σ : RsbR → List (Fin (A + 4))) (τ : BandX → List (Fin (A + 4)))
+    (σ : RsbR → List (Fin (A + 4)))
     (hready : RsbReady σ w P) (hw : 1 ≤ w) (hp : P ≤ w) (N : ZMod t → GaussianInt)
     (hfN : ∀ j, Fits w (N j)) (cin cout : ℤ) (hfci : Fits w (⟨cin, 0⟩ : GaussianInt))
     (hfco : Fits w (⟨cout, 0⟩ : GaussianInt))
@@ -465,8 +510,8 @@ theorem band_line_runs (rg : RsbR ⊕ BandX → Fin T) (hrg : Function.Injective
     (hbx : σ .bx = csyms A w ⟨cout, 0⟩)
     (hbo : σ .bo = cstream A w (Lc.map colC).flatten) (hhf : σ .hf = cstream A w (Uc.map colC).flatten)
     (hdf : σ .df = cstream A w (rcs.map fun x => (⟨x, 0⟩ : GaussianInt)))
-    (hdtab : τ .dtab = cstream A w (Dl.map fun d => (⟨d, 0⟩ : GaussianInt)))
-    (hpadc : (τ .padc).length = (t - s) * w)
+    (hdtab : σ .dtab = cstream A w (Dl.map fun d => (⟨d, 0⟩ : GaussianInt)))
+    (hpadc : (σ .padc).length = (t - s) * w)
     (htswn : (σ .tswn).length = (s + 1) / 2 * w) (hm2wn : (σ .m2wn).length = s / 2)
     (hkn : (σ .kn).length = (s + 1) / 2 - s / 2) (hsn : (σ .sn).length = s)
     (hmwn : (σ .mwn).length = B * w) (hm2n : (σ .m2n).length = B)
@@ -476,23 +521,20 @@ theorem band_line_runs (rg : RsbR ⊕ BandX → Fin T) (hrg : Function.Injective
     (hdout : σ .dout = []) (hhv : σ .hv = []) (hpr : σ .pr = []) (hac : σ .ac = [])
     (htA : σ .tA = []) (htJ : σ .tJ = []) (hb1 : σ .b1 = []) (htL : σ .tL = [])
     (hxa : σ .xa = []) (hhc : σ .hc = []) :
-    ∃ b, RsbRuns body rg ι (bandLineP rg hι hT hQ) (Sum.elim σ τ)
-      (Sum.elim (Function.update (Function.update σ .src rest) .dst
+    RsbRuns body rg ι (bandLineP rg hι hT hQ) σ
+      (Function.update (Function.update σ .src rest) .dst
         ((cstream A w (bandOutVec P cout Dl (bandSolveVec P B Lc Uc rcs (bandInVec P s t cin N)) ++
-          List.replicate (t - s) 0)).reverse ++ σ .dst)) τ) b := by
-  set rgR := rg ∘ (Sum.inl : RsbR → RsbR ⊕ BandX)
-  have hrgR : Function.Injective rgR := hrg.comp Sum.inl_injective
-  have hdisjR : ∀ r j, rgR r ≠ ι j := fun r j => hdisj _ j
+          List.replicate (t - s) 0)).reverse ++ σ .dst)) (bandLineCost T w s t B) := by
   set b := bandInVec P s t cin N with hbdef
   have hbl : b.length = s := by
     simp [hbdef, bandInVec, length_foldList, length_rsbArr]
-  obtain ⟨c₁, h₁⟩ := band_lineIn_runs (body := body) (ι := ι) (B := B) hrgR hdisjR hι hT hQ hA hst σ
+  have h₁ := band_lineIn_runs (body := body) (ι := ι) (B := B) hrg hdisj hι hT hQ hA hst σ
     hready hw hp N hfN cin hfci rest hsrc hmsk hcin htswn hm2wn hkn hsn hmwn hms hsr hsel hvk hya hxs
     hnv htK htC hac2
   set σ₁ := Function.update (Function.update σ .src rest) .vk (cstream A w (b ++ List.replicate B 0))
   have hready₁ : RsbReady σ₁ w P :=
     (hready.update .src (fun c => by simp) _).update .vk (fun c => by simp) _
-  obtain ⟨c₂, h₂⟩ := band_linePass_runs (body := body) (ι := ι) hrgR hdisjR hι hT hQ hA σ₁ hready₁
+  have h₂ := band_linePass_runs (body := body) (ι := ι) hrg hdisj hι hT hQ hA σ₁ hready₁
     hw hp Lc Uc rcs hLc hUc hLl hUl hrcs b hbl hfL hfU hfr hfit₁ hfit₂ hfit₃
     (by simp [σ₁]) (by simp [σ₁, hbo]) (by simp [σ₁, hhf]) (by simp [σ₁, hdf]) (by simp [σ₁, hef])
     (by simp [σ₁, htb]) (by simp [σ₁, hdout]) (by simp [σ₁, hhv]) (by simp [σ₁, hya])
@@ -509,13 +551,12 @@ theorem band_line_runs (rg : RsbR ⊕ BandX → Fin T) (hrg : Function.Injective
   set σ₂ := Function.update (Function.update σ₁ .vk []) .dout (cstream A w x)
   have hready₂ : RsbReady σ₂ w P :=
     (hready₁.update .vk (fun c => by simp) _).update .dout (fun c => by simp) _
-  obtain ⟨c₃, h₃⟩ := band_lineOut_runs (body := body) (ι := ι) rg hrg hdisj hι hT hQ hA (t := t) σ₂ τ
+  have h₃ := band_lineOut_runs (body := body) (ι := ι) rg hrg hdisj hι hT hQ hA (t := t) σ₂
     hready₂ hw hp x hxl cout Dl hDl hfx hfco hfu hfD (by simp [σ₂]) (by simp [σ₂, σ₁, hm2wn])
-    (by simp [σ₂, σ₁, hkn]) (by simp [σ₂, σ₁, hbx]) hdtab hpadc (by simp [σ₂, σ₁, hsel])
+    (by simp [σ₂, σ₁, hkn]) (by simp [σ₂, σ₁, hbx]) (by simp [σ₂, σ₁, hdtab]) (by simp [σ₂, σ₁, hpadc]) (by simp [σ₂, σ₁, hsel])
     (by simp [σ₂, σ₁, hya]) (by simp [σ₂, σ₁, hxs]) (by simp [σ₂, σ₁, htK]) (by simp [σ₂, σ₁, htC])
     (by simp [σ₂, σ₁, hac2]) (by simp [σ₂, σ₁, hhv]) (by simp [σ₂, σ₁, hef])
-  refine ⟨_, (RsbRuns.seq hdisj (h₁.lift hrg τ) (RsbRuns.seq hdisj (h₂.lift hrg τ) h₃)).congr ?_⟩
-  congr 1
+  refine ((RsbRuns.seq hdisj h₁ (RsbRuns.seq hdisj h₂ h₃)).mono (by unfold bandLineCost; omega)).congr ?_
   funext r; cases r <;> simp [σ₂, σ₁, bandOutVec, hvk, hdout]
 
 end LineContract

@@ -94,7 +94,7 @@ instance mnFintypeRsbR : Fintype RsbR :=
   Fintype.ofList ((Finset.univ : Finset CR).toList.map RsbR.cm ++
     [.src, .dst, .msk, .ms, .mwn, .m2wn, .m2n, .kn, .sn, .smwn, .tswn, .ef, .df, .hf, .tK, .tL, .tJ,
       .tC, .tA, .sr, .sel, .hv, .vk, .b1, .ya, .tb, .xa, .xs, .pr, .hc, .ac, .ac2, .nv, .dout, .bx,
-      .bo])
+      .bo, .dtab, .padc])
     (by intro x; cases x <;> simp)
 
 instance mnFintypeTblR (k : ℕ) : Fintype (TblR k) :=

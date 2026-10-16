@@ -51,7 +51,7 @@ inductive RsbR
   | src | dst | msk | ms | mwn | m2wn | m2n | kn | sn | smwn | tswn | ef | df | hf
   | tK | tL | tJ | tC | tA
   | sr | sel | hv | vk | b1 | ya | tb | xa | xs | pr | hc | ac | ac2 | nv | dout
-  | bx | bo
+  | bx | bo | dtab | padc
   deriving DecidableEq
 
 section Contracts
