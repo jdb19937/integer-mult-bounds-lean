@@ -36,8 +36,6 @@ open IntegerMultBounds IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.St
 open IntegerMultBounds.MathlibTM2.Fast
 open IntegerMultBounds.Networks.Shared50ModularControl (prime)
 
-set_option linter.unusedSimpArgs false
-set_option linter.unusedSectionVars false
 
 /-! ### Interchanges of lists of records -/
 

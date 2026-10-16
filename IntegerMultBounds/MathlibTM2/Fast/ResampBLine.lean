@@ -23,7 +23,6 @@ namespace IntegerMultBounds.MathlibTM2.Fast
 open IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.Stack IntegerMultBounds.MathlibTM2 IntegerMultBounds.MathlibTM2.Host IntegerMultBounds.MathlibTM2.Layer IntegerMultBounds.MathlibTM2.Node
 open IntegerMultBounds.NLogN (rowIndex)
 
-set_option linter.unusedSimpArgs false
 
 noncomputable section
 
@@ -156,15 +155,15 @@ theorem rsb_sel_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠ ι
         (by simp [hΨ, htC]) (by rw [hsrcj]; simp [hΨ, hwn])).congr ?_).mono (by simp [hΨ, hwn])
       rw [hsrcj]
       funext r
-      cases r <;> simp [hΨ, hwn, drop_csyms_append, take_csyms_append,
+      cases r <;> simp [hΨ, hwn, 
         rsbSel_succ ln mask j hjl hjm,
-        hm, reverse_cstream_snoc]
+        hm]
     · rw [ite_eq_right hm]
       refine ((rsb_usub_runs hrg (c := .cm .wn) (a := .src) (t := .tC) (by decide) (by decide)
         (by decide) _ (by simp [hΨ, htC])).congr ?_).mono (by simp [hΨ, hwn])
       rw [hsrcj]
       funext r
-      cases r <;> simp [hΨ, hwn, drop_csyms_append, rsbSel_succ ln mask j hjl hjm, hm]
+      cases r <;> simp [hΨ, hwn, rsbSel_succ ln mask j hjl hjm, hm]
   have h₁ := rsb_scanIf_runs (body := body) hrg hdisj (ra := .msk) (rt := .ms) (by decide)
     (fun x : Fin (A + 4) => decide (x = bitSymbol true))
     (rsbMv (rg (.cm .wn)) (rg .tC) (rg .src) (rg .sr)) (usub (rg (.cm .wn)) (rg .src) (rg .tC))
@@ -180,7 +179,7 @@ theorem rsb_sel_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠ ι
   · have hsl := length_rsbSel_le ln mask mask.length
     have hsl' := Nat.mul_le_mul_right w hsl
     simp only [Finset.sum_const, Finset.card_range, smul_eq_mul, rsbUpd2, hΨ,
-      Function.update_self, List.length_reverse, length_cstream]
+      ]
     rw [Function.update_of_ne (by decide), Function.update_of_ne (by decide),
       Function.update_self, List.length_reverse, length_cstream]
     nlinarith
@@ -315,11 +314,11 @@ theorem rsb_copyTo_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠
   refine ((RsbRuns.seq hdisj h₁ h₂).congr ?_).mono ?_
   · funext r
     by_cases hr : r = b
-    · subst hr; simp [hb1, Function.update_of_ne hb.1, Function.update_of_ne hab.symm]
+    · subst hr; simp [hb1, Function.update_of_ne hb.1]
     by_cases hr' : r = .b1
     · subst hr'; simp [hr, hb1]
     simp [hr, hr']
-  · simp [hb1, Function.update_of_ne ha.1]; omega
+  · simp [hb1]; omega
 
 end Step
 

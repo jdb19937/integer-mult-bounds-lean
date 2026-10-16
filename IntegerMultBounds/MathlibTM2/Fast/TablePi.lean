@@ -28,7 +28,6 @@ namespace IntegerMultBounds.MathlibTM2.Fast.TableVM
 
 open IntegerMultBounds.Resampling IntegerMultBounds.Resampling.PiNat
 
-set_option linter.unusedSimpArgs false
 
 /-! ### Variables -/
 
@@ -161,7 +160,7 @@ theorem tblAtan_do {A W w : ℕ} (m : ℕ) (out : Fin 18) (hm : 5 ≤ m) (hmW : 
       have hev1 := hEvle (j + 1)
       have hod1 := hOdle (j + 1)
       refine TblDo.block _ _ ?_ ?_
-      · simp [tblFitsList, TblIns.fits, TblIns.exact, Function.update_apply, hD', hEv', hOd', hT',
+      · simp [tblFitsList, TblIns.fits, TblIns.exact, hD', hEv', hOd', hT',
           hPar', hMM', hone']
         have h1 : dSeq m q j / (2 * j + 1) * (1 - j % 2) ≤ 2 ^ q :=
           (Nat.mul_le_mul_left _ (by omega : 1 - j % 2 ≤ 1)).trans (by simpa using htm)
@@ -267,7 +266,7 @@ theorem tblPi_do {A W w : ℕ} (st : TblSt 18 A) {P : ℕ} (hP : 2 ≤ P) (hin :
       (by omega)).seq (fun s₄ ⟨ha239, hfr₄, hacc₄⟩ => ?_)
     refine (hfin s₄ (by rw [hfr₄ vA5 (by decide) (by decide), ha5]) ha239).mono
       (fun s ⟨h1, h2⟩ => ⟨h1, by rw [h2, hacc₄, hacc₃, hacc₂, hacc₁]⟩) le_rfl
-  · simp only [List.length_append, length_tblConstL, List.length_singleton]
+  · simp only [List.length_append, length_tblConstL]
     omega
 
 /-- `piN P` is `piQ P` for `P ≥ 2`. -/

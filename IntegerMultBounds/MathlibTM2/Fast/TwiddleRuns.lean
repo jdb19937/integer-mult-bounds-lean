@@ -37,8 +37,6 @@ namespace IntegerMultBounds.MathlibTM2.Fast
 
 open IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.Stack IntegerMultBounds.MathlibTM2 IntegerMultBounds.MathlibTM2.Host IntegerMultBounds.MathlibTM2.Layer IntegerMultBounds.MathlibTM2.Node
 
-set_option linter.unusedSimpArgs false
-set_option linter.unusedSectionVars false
 
 section Contracts
 
@@ -493,7 +491,7 @@ theorem twRuns_neg {ins outs ctr tmp : R} (hreg : [ins, outs, ctr, tmp].Nodup) {
   refine ⟨v', S', m, hu, hm, he, fun r => ?_, ⟨hi, ho, hL', fun k hk => hoth k
     (fun h => hk ins h.symm) (fun h => hk outs h.symm)⟩⟩
   by_cases h1 : r = outs
-  · subst h1; rw [houts, hS]; simp [Function.update_of_ne ‹ins ≠ r›.symm]
+  · subst h1; rw [houts, hS]; simp
   · by_cases h2 : r = ins
     · subst h2; rw [hins]; simp [Function.update_of_ne h1]
     · rw [hoth _ (htg.ne h2) (htg.ne h1), hS]
@@ -655,9 +653,9 @@ theorem twRuns_scanP {a t : R} (hat : a ≠ t) {p : Pr P T Q A U} (l : List (Fin
   · intro r
     rw [hS₂ r]
     by_cases hr : r = t
-    · subst hr; simp [twAT, Function.update_apply, hat, hat.symm]
+    · subst hr; simp [twAT, hat, hat.symm]
     · by_cases hra : r = a
-      · subst hra; simp [twAT, Function.update_apply, hat, hat.symm]
+      · subst hra; simp [twAT, hat]
       · simp [twAT, Function.update_of_ne hr, Function.update_of_ne hra]
 
 /-- Repeat `p` while register `g` is nonempty. -/

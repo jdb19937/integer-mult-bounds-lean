@@ -30,7 +30,6 @@ namespace IntegerMultBounds.MathlibTM2.Host
 
 open IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.Node
 
-set_option linter.unusedSimpArgs false
 
 /-- A bit-serial transducer: from the state bit and one bit of each operand, the new state and
 the output bit. -/

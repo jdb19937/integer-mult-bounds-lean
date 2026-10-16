@@ -50,8 +50,6 @@ namespace IntegerMultBounds.MathlibTM2.Fast
 open IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.Stack IntegerMultBounds.MathlibTM2 IntegerMultBounds.MathlibTM2.Host IntegerMultBounds.MathlibTM2.Layer IntegerMultBounds.MathlibTM2.Node
 open IntegerMultBounds.NLogN IntegerMultBounds.Spec.SignedRingProduct
 
-set_option linter.unusedSimpArgs false
-set_option linter.unusedSectionVars false
 set_option maxHeartbeats 1000000
 
 /-- The registers of the twiddle machines. -/
@@ -187,7 +185,7 @@ theorem twRuns_dbl {ℓ w e : ℕ} (ρ : TwReg → List (Fin (A + 4)))
         (twRunsS_of (twRuns_congr (twRuns_seq hcm hud) ?_))) ?_
       · rw [hdr]
         funext r
-        cases r <;> simp [Function.update_apply, twAT, twATin, twDblSt, hrep, ← htk]
+        cases r <;> simp [twAT, twATin, twDblSt, hrep, ← htk]
       · simp [hc]
         omega
   | false =>
@@ -199,7 +197,7 @@ theorem twRuns_dbl {ℓ w e : ℕ} (ρ : TwReg → List (Fin (A + 4)))
         (twRunsS_of (twRuns_congr hud ?_))) ?_
       · rw [hc, hrep]
         funext r
-        cases r <;> simp [Function.update_apply, twAT, twATin, twDblSt, hq1]
+        cases r <;> simp [twAT, twATin, twDblSt, hq1]
       · rw [hc]; simp; omega
 
 /-- The sign step on a tail `TL` and a head `HD`. -/
@@ -223,7 +221,7 @@ theorem twRuns_sign (hA : 5 ≤ A) {w : ℕ} (hw : 1 ≤ w) (ρ : TwReg → List
     refine twRuns_mono (twRuns_congr (twRuns_seq h1 h2) ?_) ?_
     · rw [tw_cstream_neg, htl]
       funext r
-      cases r <;> simp [Function.update_apply]
+      cases r <;> simp
     · simp [htl]
       nlinarith
   · rintro rfl
@@ -236,7 +234,7 @@ theorem twRuns_sign (hA : 5 ≤ A) {w : ℕ} (hw : 1 ≤ w) (ρ : TwReg → List
     refine twRuns_mono (twRuns_congr (twRuns_seq h1 h2) ?_) ?_
     · rw [tw_cstream_neg]
       funext r
-      cases r <;> simp [Function.update_apply, hhd]
+      cases r <;> simp [hhd]
     · simp [hhd]
       nlinarith
 
@@ -289,7 +287,7 @@ theorem twRec_runs (hA : 5 ≤ A) {ℓ w e : ℕ} (hw : 1 ≤ w) (ρ : TwReg →
     (by simp [hρ₅, hρ₄, hρ₃, hρ₁, ht3])
   have h6' := twRuns_congr_left h6 (ρ := ρ₅) (by
     funext r
-    cases r <;> simp [Function.update_apply, twAT, twDblSt, hρ₅, hρ₄, hρ₃, hρ₁, htl, ht1,
+    cases r <;> simp [twAT, twDblSt, hρ₅, hρ₄, hρ₃, hρ₁, htl, 
       Nat.mod_one])
   set ρ₆ := Function.update (Function.update (twDblSt ρ₅ (cstream A w rec).reverse w e ℓ) .f
     (binSyms ℓ e)) .t1 [] with hρ₆
@@ -304,7 +302,7 @@ theorem twRec_runs (hA : 5 ≤ A) {ℓ w e : ℕ} (hw : 1 ≤ w) (ρ : TwReg →
   have hsw : 2 ^ ℓ * w - w * s = (2 ^ ℓ - s) * w := by rw [Nat.sub_mul]; ring_nf
   have hx₆ : (Function.update ρ₆ .c [] .x).reverse = cstream A w (rec.take (2 ^ ℓ - s)) := by
     simp only [Function.update_apply, hρ₆, twDblSt]
-    simp only [reduceCtorEq, ↓reduceIte, Function.update_self]
+    simp only [reduceCtorEq, ↓reduceIte]
     rw [List.drop_reverse, List.reverse_reverse, hX0, hsw, tw_cstream_take]
   have hx₆l : (Function.update ρ₆ .c [] .x).length = 2 ^ ℓ * w - w * s := by
     simp [hρ₆, twDblSt, hX0, ← hs]
@@ -345,7 +343,7 @@ theorem twRec_runs (hA : 5 ≤ A) {ℓ w e : ℕ} (hw : 1 ≤ w) (ρ : TwReg →
   refine twRuns_mono (twRuns_congr hall ?_) ?_
   · have hacc : ρ₈ .acc = ρ .acc := by simp [hρ₈, hρ₆, twDblSt, hρ₅, hρ₄, hρ₃, hρ₁]
     funext r
-    cases r <;> simp [Function.update_apply, hρ₉, hρ₈, hρ₆, twDblSt, hρ₅, hρ₄, hρ₃, hρ₁, hacc,
+    cases r <;> simp [hρ₉, hρ₈, hρ₆, twDblSt, hρ₅, hρ₄, hρ₃, hρ₁, 
       twShiftL, ← hs, hx, htl, hhd, hc, hsg, ht1]
   · have := tw_sum_pow_two w ℓ
     have h2w : 2 ^ ℓ ≤ 2 ^ ℓ * w := Nat.le_mul_of_pos_right _ hw
@@ -397,8 +395,8 @@ theorem twRuns_negE {u : TwReg} (hu : [u, TwReg.z, TwReg.f, TwReg.g, TwReg.t1, T
   refine twRuns_mono (twRuns_congr (twRuns_seq h1 (twRuns_seq h2 (twRuns_seq h3 (twRuns_seq h4
     (twRuns_seq h5 h6))))) ?_) ?_
   · funext r
-    cases r <;> simp [Function.update_apply, hz, hg, ht1, Function.update_of_ne, ‹u ≠ TwReg.z›,
-      ‹u ≠ TwReg.f›, ‹u ≠ TwReg.g›, ‹u ≠ TwReg.t1›]
+    cases r <;> simp [hz, hg, ht1, Function.update_of_ne, 
+      ]
   · simp [hf, hg, ht1]
     unfold twNegECost
     omega
@@ -426,7 +424,7 @@ theorem twRecInv_runs (hA : 5 ≤ A) {ℓ w e : ℕ} (hw : 1 ≤ w) (ρ : TwReg 
   refine twRuns_congr (twRuns_seq h1 h2) ?_
   rw [show 2 * 2 ^ ℓ = 2 ^ (ℓ + 1) by ring, Nat.zero_add]
   funext r
-  cases r <;> simp [Function.update_apply]
+  cases r <;> simp
 
 /-! ### Records given by their coefficient functions -/
 

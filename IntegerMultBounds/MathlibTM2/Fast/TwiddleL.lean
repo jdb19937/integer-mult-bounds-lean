@@ -50,8 +50,6 @@ namespace IntegerMultBounds.MathlibTM2.Fast
 open IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.Stack IntegerMultBounds.MathlibTM2 IntegerMultBounds.MathlibTM2.Host IntegerMultBounds.MathlibTM2.Layer IntegerMultBounds.MathlibTM2.Node
 open IntegerMultBounds.NLogN IntegerMultBounds.Spec.SignedRingProduct IntegerMultBounds.MathlibTM2.Mult.Rounds
 
-set_option linter.unusedSimpArgs false
-set_option linter.unusedSectionVars false
 set_option maxHeartbeats 1000000
 
 /-! ### Logical addresses -/
@@ -184,7 +182,7 @@ theorem twRuns_gatherOne {N p : ℕ} (hp : p < N) (R : TwReg → List (Fin (A + 
     (p := twFetchStep tg) (R .nm) (twWalkSt R B rest abits p) (fun _ => 3) ?_
   · have h0 : twAT .nm .t2 (R .nm) (twWalkSt R B rest abits p) 0 = R := by
       funext r
-      cases r <;> simp [Function.update_apply, twAT, twWalkSt, hpz, hpa, hpv, ht2, hB]
+      cases r <;> simp [twAT, twWalkSt, hpz, hpa, hpv, ht2, hB]
     rw [h0] at hsc
     set R₁ := Function.update (Function.update (twWalkSt R B rest abits p (R .nm).length) .nm
       (R .nm)) .t2 [] with hR₁
@@ -210,8 +208,8 @@ theorem twRuns_gatherOne {N p : ℕ} (hp : p < N) (R : TwReg → List (Fin (A + 
           (abits.drop p).map (bitSymbol (a := A)) = abits.map bitSymbol := by
         rw [List.reverse_reverse, ← List.map_append, List.take_append_drop]
       funext r
-      cases r <;> simp [Function.update_apply, hR₁, twWalkSt, hnm, min_eq_right hp.le, hpa',
-        ← List.map_reverse, hpa, hBl, hB, List.drop_of_length_le, hBl', ht2, hpv]
+      cases r <;> simp [hR₁, twWalkSt, hnm, min_eq_right hp.le, 
+        ← List.map_reverse, hpa, hB, List.drop_of_length_le, hBl', ht2, hpv]
     · simp [hR₁, twWalkSt, hnm, min_eq_right hp.le, Finset.sum_const]
       omega
   · intro i hi
@@ -245,10 +243,10 @@ theorem twRuns_gatherOne {N p : ℕ} (hp : p < N) (R : TwReg → List (Fin (A + 
         have htk2 : (abits.take (i + 1)).reverse.map (bitSymbol (a := A)) =
             bitSymbol (abits[i]'(by omega)) :: (abits.take i).reverse.map bitSymbol := by
           simp only [List.take_add_one, List.getElem?_eq_getElem (show i < abits.length by omega),
-            Option.toList_some, List.reverse_append, List.map_append, List.reverse_cons,
-            List.reverse_nil, List.nil_append, List.map_cons, List.map_nil, List.singleton_append]
+            Option.toList_some, List.reverse_append, List.reverse_cons,
+            List.reverse_nil, List.nil_append, List.map_cons, List.singleton_append]
         funext r
-        cases r <;> simp [Function.update_apply, twAT, twATin, twWalkSt, hmin,
+        cases r <;> simp [twAT, twATin, twWalkSt, 
           min_eq_left hip.le, htk, htk2, hBi i hiB, hip]
       · rw [hBi i hiB]
         simp only [hip, ↓reduceIte]
@@ -259,7 +257,7 @@ theorem twRuns_gatherOne {N p : ℕ} (hp : p < N) (R : TwReg → List (Fin (A + 
         have hmin : min (i + 1) p = p := min_eq_right (by omega)
         have hmin' : min i p = p := min_eq_right (by omega)
         funext r
-        cases r <;> simp [Function.update_apply, twAT, twATin, twWalkSt, hmin, hmin', htk,
+        cases r <;> simp [twAT, twATin, twWalkSt, hmin, hmin', htk,
           hBi i hiB, hip]
 
 /-- The file of the gather after `t` logical bits (blocks `N - 1, …, N - t`). -/
@@ -281,7 +279,7 @@ theorem twGather_runs {N m : ℕ} (pos : ℕ → ℕ) (hpos : ∀ k < N, pos k <
     (p := twGatherOne tg) (R .nn) (twGatherSt R N m pos) (fun _ => 10 * N + 7) ?_
   · have h0 : twAT .nn .t1 (R .nn) (twGatherSt R N m pos) 0 = R := by
       funext r
-      cases r <;> simp [Function.update_apply, twAT, twGatherSt, hpz, twPosReg, had, hps, ht1]
+      cases r <;> simp [twAT, twGatherSt, hpz, twPosReg, had, hps, ht1]
     rw [h0, hnn] at hsc
     have hmv := twRuns_moveR (body := body) htg (a := .ps) (b := .pz) (by decide)
       (Function.update (Function.update (twGatherSt R N m pos N) .nn (R .nn)) .t1 [])
@@ -305,7 +303,7 @@ theorem twGather_runs {N m : ℕ} (pos : ℕ → ℕ) (hpos : ∀ k < N, pos k <
         rw [hpz, ← List.range_eq_range']
         rfl
       funext r
-      cases r <;> simp [Function.update_apply, twGatherSt, had', ht1, hps, hpz']
+      cases r <;> simp [twGatherSt, had', ht1, hps, hpz']
     · simp [Finset.sum_const, twGatherCost]
       nlinarith
   · intro t ht
@@ -335,7 +333,7 @@ theorem twGather_runs {N m : ℕ} (pos : ℕ → ℕ) (hpos : ∀ k < N, pos k <
       rw [hrange', List.reverse_cons, List.flatMap_append, List.reverse_append]
       simp
     funext r
-    cases r <;> simp [Function.update_apply, twAT, twATin, twGatherSt, hbit, hrange', ← hps']
+    cases r <;> simp [twAT, twATin, twGatherSt, hbit, hrange']
 
 /-- The register file of the permuted pass after `j` records. -/
 def twPassLSt (ρ : TwReg → List (Fin (A + 4))) (w N m₀ M : ℕ) {r : ℕ}
@@ -420,12 +418,12 @@ theorem twPassL_runs (fwd : Bool) (hA : 5 ≤ A) {es : List ℕ} {ℓ h w m₀ M
       rw [List.range'_concat]
       simp [twStream, hZ', hn]
     funext r
-    cases r <;> simp [Function.update_apply, hF, hst, twPassLSt, hacc', hf, had, Nat.add_assoc]
+    cases r <;> simp [hF, hst, twPassLSt, hacc', hf, had, Nat.add_assoc]
   have hne : ∀ j < M, st j .src ≠ [] := by
     intro j hj hnil
     have hl := congrArg List.length hnil
     simp only [hst, twPassLSt, Function.update_apply, reduceCtorEq, ↓reduceIte,
-      Function.update_self] at hl
+      ] at hl
     rw [twStream_length, List.length_range'] at hl
     have : 0 < (M - j) * (2 ^ ℓ * w) :=
       Nat.mul_pos (by omega) (Nat.mul_pos (by positivity) hw)
@@ -439,11 +437,11 @@ theorem twPassL_runs (fwd : Bool) (hA : 5 ≤ A) {es : List ℕ} {ℓ h w m₀ M
   rw [hacc_len] at hmv
   have h0 : st 0 = ρ := by
     funext r
-    cases r <;> simp [hst, twPassLSt, Function.update_apply, hsrc, hacc, hpa, twStream]
+    cases r <;> simp [hst, twPassLSt, hsrc, hacc, hpa, twStream]
   rw [h0] at hwh
   refine twRuns_mono (twRuns_congr (twRuns_seq hwh hmv) ?_) ?_
   · funext r
-    cases r <;> simp [Function.update_apply, hst, twPassLSt, hacc, hZ']
+    cases r <;> simp [hst, twPassLSt, hacc, hZ']
   · unfold twPassLCost
     apply le_of_eq
     ring

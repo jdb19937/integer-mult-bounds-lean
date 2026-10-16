@@ -40,7 +40,6 @@ namespace IntegerMultBounds.MathlibTM2.Fast.TableVM
 
 open IntegerMultBounds.MathlibTM2.Fast.TableNum IntegerMultBounds.MathlibTM2.Mult.Chirp IntegerMultBounds.MathlibTM2.Layer
 
-set_option linter.unusedSimpArgs false
 
 local notation "wPi" => (15 : Fin 84)
 local notation "wY" => (18 : Fin 84)
@@ -117,7 +116,7 @@ theorem tbl_angleNum_eq (p g N s j : ℕ) (hj : j < N) :
     simp [tblSgn]
   · have h1 : tblSdNeg N u = 1 := by omega
     rw [h1]
-    simp only [tblSgn, decide_true, ite_true, one_mul, neg_mul, mul_neg, neg_inj]
+    simp only [tblSgn, decide_true, ite_true, one_mul, neg_mul, mul_neg]
     have e := tbl_neg_ediv (pi * tblCMag N u + (N - 1)) N hN
     rw [← e]
     congr 1
@@ -222,7 +221,7 @@ theorem tblChirpA_do {A W w : ℕ} (st : TblSt 84 A) {L : List (Fin 84 × ℕ)} 
     have := Nat.mul_le_mul_left (N + N - u) hcb; simpa using this
   have hsN' : s * N ≤ s * N * N := Nat.le_mul_of_pos_right _ hN0
   refine tblKV_block [wT1, wT2, wU, wCn, wCm, wY, wX] hL hd ?_ ?_ ?_ ?_
-  · simp [tblChirpAL, tblFitsList, TblIns.fits, TblIns.exact, Function.update_apply, hpi, hs, hN,
+  · simp [tblChirpAL, tblFitsList, TblIns.fits, TblIns.exact, hpi, hs, hN,
       h2N, hNm1, hone, hjv, ← hu, tbl_sd_neg, tbl_cmag_fold]
     have hBB : 2 ^ (5 * (p + g + 4) + 5) * (N + N) * 2 = N * 2 ^ (5 * (p + g + 4) + 7) := by
       rw [hBe]; ring
@@ -233,12 +232,12 @@ theorem tblChirpA_do {A W w : ℕ} (st : TblSt 84 A) {L : List (Fin 84 × ℕ)} 
     and_intros <;> omega
   · intro x hx
     simp only [List.mem_cons, List.not_mem_nil, or_false, not_or] at hx
-    simp [tblChirpAL, tblExactList, TblIns.exact, Function.update_apply, hx]
+    simp [tblChirpAL, tblExactList, TblIns.exact, hx]
   · simp [tblChirpAL, tblExactList, TblIns.exact]
   · intro e he
     simp only [List.mem_cons, List.not_mem_nil, or_false] at he
     rcases he with rfl | rfl <;>
-      simp [tblChirpAL, tblExactList, TblIns.exact, Function.update_apply, hpi, hs, hN, h2N, hNm1,
+      simp [tblChirpAL, tblExactList, TblIns.exact, hpi, hs, hN, h2N, hNm1,
         hone, hjv, ← hu, tbl_sd_neg, tbl_cmag_fold, tblYm]
 
 /-- The value computed by `tblSignedL`. -/
@@ -290,14 +289,14 @@ theorem tblChirpB_do {A W w : ℕ} (st : TblSt 84 A) {L : List (Fin 84 × ℕ)} 
   have m1 := tbl_signedM_le w rn R1 hrn
   have m2 := tbl_signedM_le w i_n R2 hin
   refine TblDo.block _ _ ?_ ⟨fun e he => ?_, ?_⟩
-  · simp [tblChirpBL, tblSignedL, tblFitsList, TblIns.fits, TblIns.exact, Function.update_apply,
+  · simp [tblChirpBL, tblSignedL, tblFitsList, TblIns.fits, TblIns.exact, 
       hH, hHH, hPw, hone, h38, h39, h40, h41, ← hR1, ← hR2, tbl_signedM_fold]
     and_intros <;> omega
   · rw [← hL e he]
     have hx := hd e he
     simp only [List.mem_cons, List.not_mem_nil, or_false, not_or] at hx
-    simp [tblChirpBL, tblSignedL, tblExactList, TblIns.exact, Function.update_apply, hx]
-  · simp [tblChirpBL, tblSignedL, tblExactList, TblIns.exact, Function.update_apply,
+    simp [tblChirpBL, tblSignedL, tblExactList, TblIns.exact, hx]
+  · simp [tblChirpBL, tblSignedL, tblExactList, TblIns.exact, 
       hH, hHH, hPw, hone, h38, h39, h40, h41, ← hR1, ← hR2, tbl_signedM_fold,
       tbl_signedM_eq w rn R1 hrn, tbl_signedM_eq w i_n R2 hin]
 

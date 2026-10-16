@@ -34,8 +34,6 @@ open IntegerMultBounds IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.St
   IntegerMultBounds.MathlibTM2.Fast IntegerMultBounds.MathlibTM2.Mult.Rounds
 open IntegerMultBounds.Networks.Shared50ModularControl (prime)
 
-set_option linter.unusedSimpArgs false
-set_option linter.unusedSectionVars false
 
 section Pre
 
@@ -112,13 +110,13 @@ variable {T Q t₀ Ka : ℕ} {U F : Type} {rg : LayReg t₀ → Fin T} {lr : Ldl
 theorem ldgPost_rg (hg : LdgRegs rg lr gr) (R : Fin T → List (Fin (prime + Ka + 4)))
     (es : List ℕ) (ℓ K B : ℕ) (xs : List LayXcD) {x : LayReg t₀} (h1 : x ≠ .cM) (h2 : x ≠ .cX) :
     ldgPost rg lr R es ℓ K B xs (rg x) = R (rg x) := by
-  simp [ldgPost, Function.update_apply, hg.l.rl, hg.l.rg_inj.eq_iff, h1, h2]
+  simp [ldgPost, hg.l.rl, hg.l.rg_inj.eq_iff, h1, h2]
 
 theorem ldgPost_lr (hg : LdgRegs rg lr gr) (R : Fin T → List (Fin (prime + Ka + 4)))
     (es : List ℕ) (ℓ K B : ℕ) (xs : List LayXcD) {y : LdlReg} (h1 : y ≠ .dM) (h2 : y ≠ .dX)
     (h3 : y ≠ .cN) (h4 : y ≠ .cW) :
     ldgPost rg lr R es ℓ K B xs (lr y) = R (lr y) := by
-  simp [ldgPost, Function.update_apply, hg.l.lr', hg.l.lr_inj.eq_iff, h1, h2, h3, h4]
+  simp [ldgPost, hg.l.lr', hg.l.lr_inj.eq_iff, h1, h2, h3, h4]
 
 /-- After the writer the file is a base file of the layout stage. -/
 theorem ldgPre_base (hg : LdgRegs rg lr gr) {hd : Fin 5 → Fin t₀} {pay : Fin t₀}
@@ -152,10 +150,10 @@ theorem ldgPre_base (hg : LdgRegs rg lr gr) {hd : Fin 5 → Fin t₀} {pay : Fin
   · intro k
     rw [show ldlH rg hd k = rg (.sw (reg (hd k))) from rfl, e _ (by simp) (by simp)]
     exact hp.hdr k
-  · simp [ldgPost, Function.update_apply, hg.l.rl, hg.l.lr', hg.l.lr_inj.eq_iff]
-  · simp [ldgPost, Function.update_apply, hg.l.rl, hg.l.lr', hg.l.lr_inj.eq_iff]
-  · simp [ldgPost, Function.update_apply, hg.l.rl, hg.l.lr', hg.l.lr_inj.eq_iff]
-  · simp [ldgPost, Function.update_apply, hg.l.rl, hg.l.lr', hg.l.lr_inj.eq_iff]
+  · simp [ldgPost, hg.l.lr', hg.l.lr_inj.eq_iff]
+  · simp [ldgPost, hg.l.lr', hg.l.lr_inj.eq_iff]
+  · simp [ldgPost, hg.l.lr_inj.eq_iff]
+  · simp [ldgPost]
   · rw [f _ (by simp) (by simp) (by simp) (by simp)]; exact hp.tA
   · rw [f _ (by simp) (by simp) (by simp) (by simp)]; exact hp.tB
   · rw [f _ (by simp) (by simp) (by simp) (by simp)]; exact hp.tS
@@ -219,11 +217,11 @@ theorem ldg_stage_gen {es : List ℕ} {ℓ K B E W : ℕ} (H : LayHyp es ℓ K)
     have e1 : Rw (rg .str) = l.flatten := by
       rw [hRw, ldgPost_rg hg _ _ _ _ _ _ (by simp) (by simp)]; exact hp.str
     have e2 : Rw (rg .cM) = ldlBitStream (prime + Ka) 1 (layBits es ℓ K) := by
-      simp [hRw, ldgPost, Function.update_apply, hg.l.rl, hg.l.rg_inj.eq_iff]
+      simp [hRw, ldgPost, hg.l.rl, hg.l.rg_inj.eq_iff]
     have e3 : Rw (rg .tM) = [] := by
       rw [hRw, ldgPost_rg hg _ _ _ _ _ _ (by simp) (by simp)]; exact hp.tM
     have e4 : Rw (rg .cX) = List.replicate (layXcs es ℓ K B).length tick := by
-      simp [hRw, ldgPost, Function.update_apply, hg.l.rl, hg.l.rg_inj.eq_iff]
+      simp [hRw, ldgPost, hg.l.rl]
     have e5 : Rw (rg .tX) = [] := by
       rw [hRw, ldgPost_rg hg _ _ _ _ _ _ (by simp) (by simp)]; exact hp.tX
     calc layDyn rg Rw l.flatten (ldlBitStream (prime + Ka) 1 (layBits es ℓ K)) []

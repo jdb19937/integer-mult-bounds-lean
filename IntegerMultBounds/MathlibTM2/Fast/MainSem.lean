@@ -39,7 +39,6 @@ open IntegerMultBounds IntegerMultBounds.NLogN IntegerMultBounds.MathlibTM2.Stac
 open IntegerMultBounds.MathlibTM2.Fast IntegerMultBounds.MathlibTM2.Fast.Src IntegerMultBounds.MathlibTM2.Fast.ResampA IntegerMultBounds.MathlibTM2.Fast.ChirpSt IntegerMultBounds.MathlibTM2.Fast.ConvSt
 open IntegerMultBounds.MathlibTM2.Mult IntegerMultBounds.MathlibTM2.Mult.Sizes IntegerMultBounds.MathlibTM2.Mult.Pipeline
 
-set_option linter.unusedSimpArgs false
 
 noncomputable section
 

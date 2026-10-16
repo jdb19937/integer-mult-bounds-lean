@@ -34,7 +34,6 @@ first `w` symbols and every output gaining its outputs in reverse; `rpWhile_runs
 @[expose] public section
 
 
-set_option linter.unusedSimpArgs false
 
 namespace IntegerMultBounds.MathlibTM2.Fast
 

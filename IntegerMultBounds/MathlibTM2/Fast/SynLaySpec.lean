@@ -33,7 +33,6 @@ open IntegerMultBounds IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.St
 open IntegerMultBounds.MathlibTM2.Node hiding LReg
 open IntegerMultBounds.Networks.Shared50ModularControl (prime)
 
-set_option linter.unusedSectionVars false
 
 /-! ### A word width -/
 

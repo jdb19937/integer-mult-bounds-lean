@@ -29,8 +29,6 @@ namespace IntegerMultBounds.MathlibTM2.Fast.TableVM
 open IntegerMultBounds IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.Stack IntegerMultBounds.MathlibTM2.Node IntegerMultBounds.MathlibTM2.Host
   IntegerMultBounds.MathlibTM2.Layer
 
-set_option linter.unusedSimpArgs false
-set_option linter.unusedSectionVars false
 
 /-! ### Single operations -/
 
@@ -322,12 +320,12 @@ theorem ds_narrow {x : Fin m} {uL tm tb tx o : Fin T} (hreg : [uL, tm, tb, tx, o
       Function.update R o (binSyms L (st.val x) ++ R o) := by
     funext k
     simp only [hR₂, Function.update_apply]
-    split_ifs <;> subst_vars <;> simp_all [htake]
+    split_ifs <;> subst_vars <;> simp_all
   rw [e] at s4
   refine (s1.seq (s2.seq (s3.seq s4))).mono ?_
-  simp only [List.length_drop, List.length_take, List.length_reverse, length_binSyms, hR₂,
+  simp only [length_binSyms, hR₂,
     Function.update_apply]
-  simp [‹tb ≠ tx›, Ne.symm ‹tb ≠ tx›, ‹tx ≠ o›.symm, ‹tb ≠ o›]
+  simp [‹tb ≠ tx›, Ne.symm ‹tb ≠ tx›]
   omega
 
 end Vars
@@ -395,7 +393,7 @@ theorem ds_twist (hrg : Function.Injective rg) {uP uR uW out : Fin T}
   have hin : tblKV (⟨σ, []⟩ : TblSt 84 A) [(54, p), (55, 0), (56, r), (57, 0), (58, w)] := by
     intro e he
     simp only [List.mem_cons, List.not_mem_nil, or_false] at he
-    rcases he with rfl | rfl | rfl | rfl | rfl <;> simp [hσ, Function.update_apply, hP, hR, hW]
+    rcases he with rfl | rfl | rfl | rfl | rfl <;> simp [hσ, hP, hR, hW]
   -- the table program and the clearing
   have s5 : dsRuns body (.seq (tblHost rg (tblTwistCode conj) out) (dsClearVars rg (List.finRange 84)))
       (dsOv rg R (tblRho W wl nl ⟨σ, []⟩))

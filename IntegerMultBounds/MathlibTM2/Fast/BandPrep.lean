@@ -34,8 +34,6 @@ open IntegerMultBounds.MathlibTM2.Fast.TableVM
 open IntegerMultBounds.Resampling.WeightTable (tableD)
 open IntegerMultBounds.Networks.Shared50ModularControl (prime)
 
-set_option linter.unusedSimpArgs false
-set_option linter.unusedSectionVars false
 
 noncomputable section
 
@@ -181,7 +179,7 @@ theorem band_preA (hg : Function.Injective g) (hι : Function.Injective ι)
         · simp [h]
         · have : ¬∃ a, a ∈ bandClrB hd ∧ Sum.inl a = (Sum.inl r : (RsbR ⊕ RsbX t₀) ⊕ TblR 48) := by
             rintro ⟨a, ha, e⟩; cases e; exact h ha
-          simp [h, this]
+          simp [h]
       · simp [preStB])
   -- 2. take the fields
   set σ1 := bandF0 σ hd with hσ1
@@ -201,18 +199,18 @@ theorem band_preA (hg : Function.Injective g) (hι : Function.Injective ι)
   -- 3. the headers
   have hv2 : σ2 (.inl .xs) = List.replicate D.P tick ∧ σ2 (.inl .pr) = List.replicate D.G tick ∧
       σ2 (.inl .tb) = List.replicate D.L tick ∧ σ2 (.inl .xa) = List.replicate D.Ld tick := by
-    simp [hσ2, preTV, bandDstB, PreAxB.fields, Function.update_apply]
+    simp [hσ2, preTV, bandDstB, PreAxB.fields]
   have h3 := preB_hdr (body := body) hg hι hdisj hdi σ2 D w hv2.1 hv2.2.1 hv2.2.2.1 hv2.2.2.2
-    (by simp [hσ2, preTV, bandDstB, PreAxB.fields, Function.update_apply, hσ1, bandF0, bandClrB,
+    (by simp [hσ2, preTV, bandDstB, PreAxB.fields, hσ1, bandF0, bandClrB,
       preHB, hwn])
-    (by simp [hσ2, preTV, bandDstB, PreAxB.fields, Function.update_apply, hσ1, bandF0, bandClrB,
+    (by simp [hσ2, preTV, bandDstB, PreAxB.fields, hσ1, bandF0, bandClrB,
       preHB, htL])
-    (by simp [hσ2, preTV, bandDstB, PreAxB.fields, Function.update_apply, hσ1, bandF0, bandClrB,
+    (by simp [hσ2, preTV, bandDstB, PreAxB.fields, hσ1, bandF0, bandClrB,
       preHB, hac2])
-    (by simp [hσ2, preTV, bandDstB, PreAxB.fields, Function.update_apply, hσ1, bandF0, bandClrB,
+    (by simp [hσ2, preTV, bandDstB, PreAxB.fields, hσ1, bandF0, bandClrB,
       preHB, hnv])
     (fun k => by
-      simp [hσ2, preTV, bandDstB, PreAxB.fields, Function.update_apply, hσ1, bandF0, bandClrB,
+      simp [hσ2, preTV, bandDstB, PreAxB.fields, hσ1, bandF0, bandClrB,
         preHB]
       fin_cases k <;> simp)
   -- 4. clear the header fields
@@ -229,13 +227,13 @@ theorem band_preA (hg : Function.Injective g) (hι : Function.Injective ι)
   · funext r
     rcases r with (r | x) | y
     · cases r <;> simp [preStB, hσ3, hσ2, hσ1, bandFA, preBankB, preTV, bandDstB, PreAxB.fields,
-        Function.update_apply, bandF0, bandClrB, preHB, htb, hxa, hxs, hpr]
+        bandF0, bandClrB, preHB, htb, hxa, hxs, hpr]
     · have hx : σ2 (.inr x) = (Function.update (Function.update (Function.update (Function.update
           (Function.update (Function.update (Function.update (bandF0 σ hd) (.inl .prm) rest)
           (.inl .ya) (List.replicate D.t tick)) (.inl .sn) (List.replicate D.s tick))
           (.inl .b1) (List.replicate D.m tick)) (.inl .hc) (List.replicate D.α tick))
           (.inl .ac) (List.replicate D.p tick)) (.inl .hv) (List.replicate D.W tick)) (.inr x) := by
-        simp [hσ2, hσ1, preTV, bandDstB, PreAxB.fields, Function.update_apply]
+        simp [hσ2, hσ1, preTV, bandDstB, PreAxB.fields]
       simp only [preStB, Sum.elim_inl]
       rw [ite_eq_right (by simp)]
       simp only [hσ3, bandFA]
@@ -320,10 +318,10 @@ theorem band_preF1 (hg : Function.Injective g) (hι : Function.Injective ι)
       (twRuns_ucopy (body := body) htg (a := .inl (.inl .sn)) (b := .inl (.inl .xs))
       (t := .inl (.inl .ac2)) (by simp) (by simp) (by simp) _ ?_))))))))) ?_) ?_
   all_goals try (simp only [preStB, Function.update_apply, Sum.elim_inl, Sum.inl.injEq,
-    reduceCtorEq, ite_false, ite_true, RsbR.cm.injEq, hac2]; done)
+    reduceCtorEq, ite_false, ite_true, hac2]; done)
   · simp only [preStB, Function.update_apply, Sum.elim_inl, Sum.inl.injEq, reduceCtorEq, ite_false,
-      ite_true, RsbR.cm.injEq, hac, hb1, hsn, htA, htJ, htL, hxs, hpn, List.length_replicate,
-      List.length_cons, List.append_nil, List.length_append]
+      ite_true, hac, hb1, hsn, htA, htJ, htL, hxs, hpn, List.length_replicate,
+      List.length_cons, List.append_nil]
     unfold bandCostF1 PreAxB.bB PreAxB.bWd
     omega
   · funext r
@@ -331,7 +329,7 @@ theorem band_preF1 (hg : Function.Injective g) (hι : Function.Injective ι)
     · cases r <;> simp only [Function.update_apply, preStB, bandFF1, Sum.elim_inl, Sum.inl.injEq,
         reduceCtorEq, ite_false, ite_true, RsbR.cm.injEq]
       all_goals simp [hac, hb1, hsn, htA, htJ, htL, hxs, hpn, List.replicate_succ,
-        ← List.replicate_add, PreAxB.bB, PreAxB.bWd, PreAxB.bP]
+        PreAxB.bB, PreAxB.bWd, PreAxB.bP]
       all_goals (rw [List.eq_replicate_iff]; refine ⟨by simp; omega, by simp; tauto⟩)
     · simp only [Function.update_apply, preStB, bandFF1, Sum.elim_inl, Sum.inl.injEq, reduceCtorEq,
         ite_false]
@@ -418,14 +416,14 @@ theorem band_preFold (hrg₂ : Function.Injective (Sum.elim rg rgx)) (hι : Func
     (Sum.elim ρ fun _ => []) (fun _ => rfl) (by simp [hρ, hhv]) (by simp [hρ, hwn]) hwW hst
     (tblFoldStream_do (A := prime + K) (W := D.W) (w := w) ⟨_, []⟩ (s := D.s) (t := D.t)
       (α := D.α) (P := D.bP) (wd := D.bWd) (B := D.bB) (NR := D.bB + 1 + D.s)
-      (by rw [hv]; simp (config := { decide := true }) [Function.update_apply])
-      (by rw [hv]; simp (config := { decide := true }) [Function.update_apply])
-      (by rw [hv]; simp (config := { decide := true }) [Function.update_apply])
-      (by rw [hv]; simp (config := { decide := true }) [Function.update_apply])
-      (by rw [hv]; simp (config := { decide := true }) [Function.update_apply])
-      (by rw [hv]; simp (config := { decide := true }) [Function.update_apply])
-      (by rw [hv]; simp (config := { decide := true }) [Function.update_apply])
-      (by rw [hv]; simp (config := { decide := true }) [Function.update_apply])
+      (by rw [hv]; simp (config := { decide := true }))
+      (by rw [hv]; simp (config := { decide := true }))
+      (by rw [hv]; simp (config := { decide := true }))
+      (by rw [hv]; simp (config := { decide := true }))
+      (by rw [hv]; simp (config := { decide := true }))
+      (by rw [hv]; simp (config := { decide := true }))
+      (by rw [hv]; simp (config := { decide := true }))
+      (by rw [hv]; simp (config := { decide := true }))
       hW.ws hW.p13 hW.off hW.w5 hW.sW hW.ss hW.αW hW.PW (by have := hW.NW; omega))
     (tblFoldStream (prime + K) w D.s D.t D.α D.bP D.bWd D.bB (D.bB + 1 + D.s))
     (fun s' hs' => by simp only at hs'; rw [hs', List.append_nil, List.reverse_reverse])
@@ -560,15 +558,15 @@ theorem band_preF2a (hg : Function.Injective g) (hι : Function.Injective ι)
       (twRuns_umul (body := body) htg 2 (a := .inl (.inl .tA)) (b := .inl (.inl .dst))
       (t := .inl (.inl .ac2)) (by simp) (by simp) (by simp) _ ?_)))) ?_) ?_
   all_goals try (simp only [preStB, Function.update_apply, Sum.elim_inl, Sum.inl.injEq,
-    reduceCtorEq, ite_false, ite_true, RsbR.cm.injEq, hac2]; done)
+    reduceCtorEq, ite_false, hac2]; done)
   · simp only [preStB, Function.update_apply, Sum.elim_inl, Sum.inl.injEq, reduceCtorEq, ite_false,
-      ite_true, RsbR.cm.injEq, hxs, htA, htJ, List.length_replicate]
+      hxs, htA, htJ, List.length_replicate]
     unfold bandCostF2a; omega
   · funext r
     rcases r with (r | x) | y
     · cases r <;> simp only [Function.update_apply, preStB, bandFF2a, Sum.elim_inl, Sum.inl.injEq,
-        reduceCtorEq, ite_false, ite_true, RsbR.cm.injEq]
-      all_goals simp [htA, htJ, hms, hm2n, hdst, Nat.mul_comm]
+        reduceCtorEq, ite_false, ite_true]
+      all_goals simp [htA, htJ, hms, hm2n, hdst]
     · simp only [Function.update_apply, preStB, bandFF2a, Sum.elim_inl, Sum.inl.injEq, reduceCtorEq,
         ite_false]
     · simp only [Function.update_apply, reduceCtorEq, ite_false, preStB, Sum.elim_inr]
@@ -596,14 +594,14 @@ theorem band_preF2b (hg : Function.Injective g) (hι : Function.Injective ι)
       (b := .inl (.inl (.cm .wn))) (c := .inl (.inl .smwn)) (t₁ := .inl (.inl .ac2))
       (t₂ := .inl (.inl .nv)) (by simp) _ ?_ ?_))) ?_) ?_
   all_goals try (simp only [preStB, Function.update_apply, Sum.elim_inl, Sum.inl.injEq,
-    reduceCtorEq, ite_false, ite_true, RsbR.cm.injEq, hac2, hnv]; done)
+    reduceCtorEq, ite_false, hac2, hnv]; done)
   · simp only [preStB, Function.update_apply, Sum.elim_inl, Sum.inl.injEq, reduceCtorEq, ite_false,
-      ite_true, RsbR.cm.injEq, hwn, hdst, hm2n, htL, List.length_replicate]
+      hwn, hdst, hm2n, htL, List.length_replicate]
     unfold bandCostF2b; omega
   · funext r
     rcases r with (r | x) | y
     · cases r <;> simp only [Function.update_apply, preStB, bandFF2b, Sum.elim_inl, Sum.inl.injEq,
-        reduceCtorEq, ite_false, ite_true, RsbR.cm.injEq]
+        reduceCtorEq, ite_false, ite_true]
       all_goals simp [hwn, hdst, hm2n, htL, hm2wn, hmwn, hsmwn]
     · simp only [Function.update_apply, preStB, bandFF2b, Sum.elim_inl, Sum.inl.injEq, reduceCtorEq,
         ite_false]
@@ -633,15 +631,15 @@ theorem band_preF2c (hg : Function.Injective g) (hι : Function.Injective ι)
     (twRuns_seq (twRuns_uclear (body := body) htg (.inl (.inl .tC)) _)
       (twRuns_uclear (body := body) htg (.inl (.inl .tK)) _)))))) ?_) ?_
   all_goals try (simp only [preStB, Function.update_apply, Sum.elim_inl, Sum.inl.injEq,
-    reduceCtorEq, ite_false, ite_true, RsbR.cm.injEq, hac2, hnv]; done)
+    reduceCtorEq, ite_false, ite_true, hac2, hnv]; done)
   · simp only [preStB, Function.update_apply, Sum.elim_inl, Sum.inl.injEq, reduceCtorEq, ite_false,
-      ite_true, RsbR.cm.injEq, hwn, htJ, htL, htC, htK, List.length_replicate, List.length_cons,
-      List.append_nil, List.length_append]
+      ite_true, hwn, htJ, htL, htC, htK, List.length_replicate, List.length_cons,
+      List.append_nil]
     unfold bandCostF2c; ring_nf; omega
   · funext r
     rcases r with (r | x) | y
     · cases r <;> simp only [Function.update_apply, preStB, bandFF2c, Sum.elim_inl, Sum.inl.injEq,
-        reduceCtorEq, ite_false, ite_true, RsbR.cm.injEq]
+        reduceCtorEq, ite_false, ite_true]
       all_goals simp [hwn, htJ, htL, htswn, htC, htK]
     · simp only [Function.update_apply, preStB, bandFF2c, Sum.elim_inl, Sum.inl.injEq, reduceCtorEq,
         ite_false]
@@ -669,14 +667,14 @@ theorem band_preF2d (hg : Function.Injective g) (hι : Function.Injective ι)
       (twRuns_umulSym htg 1 (pairSym (prime + K) false false) (a := .inl (.inl (.cm .wn)))
         (b := .inl (.inl .msk)) (t := .inl (.inl .tC)) (by simp) (by simp) (by simp) _ ?_))))) ?_) ?_
   all_goals try (simp only [preStB, Function.update_apply, Sum.elim_inl, Sum.inl.injEq,
-    reduceCtorEq, ite_false, ite_true, RsbR.cm.injEq, hac2, hnv]; done)
+    reduceCtorEq, ite_false, ite_true, hac2, hnv]; done)
   · simp only [preStB, Function.update_apply, Sum.elim_inl, Sum.inl.injEq, reduceCtorEq, ite_false,
-      ite_true, RsbR.cm.injEq, hwn, hhc, hxs, htC, List.length_replicate, List.append_nil]
+      ite_true, hwn, hhc, hxs, htC, List.length_replicate, List.append_nil]
     unfold bandCostF2d; omega
   · funext r
     rcases r with (r | x) | y
     · cases r <;> simp only [Function.update_apply, preStB, bandFF2d, Sum.elim_inl, Sum.inl.injEq,
-        reduceCtorEq, ite_false, ite_true, RsbR.cm.injEq]
+        reduceCtorEq, ite_false, ite_true]
       all_goals simp [hwn, hhc, hxs, hkn, hmsk, htC]
     · simp only [Function.update_apply, preStB, bandFF2d, Sum.elim_inl, Sum.inl.injEq, reduceCtorEq,
         ite_false]
@@ -809,11 +807,11 @@ theorem band_preF3 (hg : Function.Injective g) (hι : Function.Injective ι)
       (twRuns_seq h2 h3)))) ?_) ?_
   · simp only [preStB, Sum.elim_inl, hac2]
   · simp only [preStB, Function.update_apply, Sum.elim_inl, Sum.inl.injEq, reduceCtorEq, ite_false,
-      ite_true, hac2]
+      hac2]
   · funext r
     rcases r with (r | x) | y
     · cases r <;> simp only [Function.update_apply, preStB, hσ1, Sum.elim_inl, Sum.inl.injEq,
-        reduceCtorEq, ite_false, ite_true, RsbR.cm.injEq]
+        reduceCtorEq, ite_false, ite_true]
       all_goals simp [hac, htC, htK, hac2, List.drop_replicate]
     · simp only [Function.update_apply, preStB, hσ1, Sum.elim_inl, Sum.inl.injEq, reduceCtorEq,
         ite_false]
@@ -826,7 +824,7 @@ theorem band_preF3 (hg : Function.Injective g) (hι : Function.Injective ι)
     funext r
     rcases r with (r | x) | y
     · cases r <;> simp only [Function.update_apply, preStB, hσ1, Sum.elim_inl, Sum.inl.injEq,
-        reduceCtorEq, ite_false, ite_true, RsbR.cm.injEq]
+        reduceCtorEq, ite_false, ite_true]
       all_goals simp [htC, htK, hac2]
     · simp only [Function.update_apply, preStB, hσ1, Sum.elim_inl, Sum.inl.injEq, reduceCtorEq,
         ite_false]
@@ -897,15 +895,15 @@ theorem band_preL1 (hg : Function.Injective g) (hι : Function.Injective ι)
       (t₂ := .inl (.inl .nv)) (by simp) _ ?_ ?_)
       (twRuns_uclear (body := body) htg (.inl (.inl .tC)) _)))) ?_) ?_
   all_goals try (simp only [preStB, Function.update_apply, Sum.elim_inl, Sum.inl.injEq,
-    reduceCtorEq, ite_false, ite_true, RsbR.cm.injEq, hac2, hnv]; done)
+    reduceCtorEq, ite_false, ite_true, hac2, hnv]; done)
   · simp only [preStB, Function.update_apply, Sum.elim_inl, Sum.inl.injEq, reduceCtorEq, ite_false,
-      ite_true, RsbR.cm.injEq, hwn, hya, hsn, htC, List.length_replicate, List.append_nil,
-      List.length_drop, List.drop_replicate]
+      ite_true, hwn, hya, hsn, htC, List.length_replicate, List.append_nil,
+      List.drop_replicate]
     omega
   · funext r
     rcases r with (r | x) | y
     · cases r <;> simp only [Function.update_apply, preStB, Sum.elim_inl, Sum.inl.injEq,
-        reduceCtorEq, ite_false, ite_true, RsbR.cm.injEq]
+        reduceCtorEq, ite_false, ite_true]
       all_goals simp [hwn, hya, hsn, hpadc, htC, List.drop_replicate]
     · simp only [Function.update_apply, preStB, Sum.elim_inl, Sum.inl.injEq, reduceCtorEq,
         ite_false]
@@ -934,18 +932,18 @@ theorem band_preL3 (hg : Function.Injective g) (hι : Function.Injective ι)
   · funext r
     rcases r with (r | x) | y
     · cases r <;> simp only [Function.update_apply, preStB, hσ1, Sum.elim_inl, Sum.inl.injEq,
-        reduceCtorEq, ite_false, ite_true, RsbR.cm.injEq]
+        reduceCtorEq, ite_false, ite_true]
       all_goals simp [hac, htC]
     · simp only [Function.update_apply, preStB, hσ1, Sum.elim_inl, Sum.inl.injEq, reduceCtorEq,
         ite_false]
     · simp only [Function.update_apply, reduceCtorEq, ite_false, preStB, Sum.elim_inr]
-  · simp only [preStB, Function.update_apply, Sum.elim_inl, Sum.inl.injEq, reduceCtorEq, ite_false,
+  · simp only [preStB, Function.update_apply, Sum.elim_inl, reduceCtorEq, ite_false,
       ite_true, hσ1, hac, List.length_replicate]
     omega
   · funext r
     rcases r with (r | x) | y
     · cases r <;> simp only [Function.update_apply, preStB, hσ1, Sum.elim_inl, Sum.inl.injEq,
-        reduceCtorEq, ite_false, ite_true, RsbR.cm.injEq]
+        reduceCtorEq, ite_false, ite_true]
       all_goals simp [htC]
     · simp only [Function.update_apply, preStB, hσ1, Sum.elim_inl, Sum.inl.injEq, reduceCtorEq,
         ite_false]
@@ -982,18 +980,18 @@ theorem band_preL4 (hg : Function.Injective g) (hι : Function.Injective ι)
   · funext r
     rcases r with (r | x) | y
     · cases r <;> simp only [Function.update_apply, preStB, hσ1, Sum.elim_inl, Sum.inl.injEq,
-        reduceCtorEq, ite_false, ite_true, RsbR.cm.injEq]
+        reduceCtorEq, ite_false, ite_true]
       all_goals simp [hac, hxs, htC, List.drop_replicate, rep_tick_cons]
     · simp only [Function.update_apply, preStB, hσ1, Sum.elim_inl, Sum.inl.injEq, reduceCtorEq,
         ite_false]
     · simp only [Function.update_apply, reduceCtorEq, ite_false, preStB, Sum.elim_inr]
   · simp only [preStB, Function.update_apply, Sum.elim_inl, Sum.inl.injEq, reduceCtorEq, ite_false,
-      ite_true, hσ1, hac, hxs, htC, List.length_replicate, List.length_cons, List.append_nil]
+      ite_true, hσ1, hac, hxs, htC, List.length_replicate, List.append_nil]
     omega
   · funext r
     rcases r with (r | x) | y
     · cases r <;> simp only [Function.update_apply, preStB, hσ1, Sum.elim_inl, Sum.inl.injEq,
-        reduceCtorEq, ite_false, ite_true, RsbR.cm.injEq]
+        reduceCtorEq, ite_false, ite_true]
       all_goals simp [htC]
     · simp only [Function.update_apply, preStB, hσ1, Sum.elim_inl, Sum.inl.injEq, reduceCtorEq,
         ite_false]
@@ -1025,7 +1023,7 @@ theorem band_preL9 (hg : Function.Injective g) (hι : Function.Injective ι)
   · funext r
     rcases r with (r | x) | y
     · cases r <;> simp only [Function.update_apply, preStB, hσ1, Sum.elim_inl, Sum.inl.injEq,
-        reduceCtorEq, ite_false, ite_true, RsbR.cm.injEq]
+        reduceCtorEq, ite_false, ite_true]
       all_goals simp [hac, htC]
       all_goals (try (rw [List.eq_replicate_iff]; refine ⟨by simp, by simp⟩))
     · simp only [Function.update_apply, preStB, hσ1, Sum.elim_inl, Sum.inl.injEq, reduceCtorEq,
@@ -1037,7 +1035,7 @@ theorem band_preL9 (hg : Function.Injective g) (hι : Function.Injective ι)
   · funext r
     rcases r with (r | x) | y
     · cases r <;> simp only [Function.update_apply, preStB, hσ1, Sum.elim_inl, Sum.inl.injEq,
-        reduceCtorEq, ite_false, ite_true, RsbR.cm.injEq]
+        reduceCtorEq, ite_false, ite_true]
       all_goals simp [htC]
     · simp only [Function.update_apply, preStB, hσ1, Sum.elim_inl, Sum.inl.injEq, reduceCtorEq,
         ite_false]
@@ -1092,8 +1090,8 @@ theorem band_preL2 (hg : Function.Injective g) (hι : Function.Injective ι)
       simp only [Function.update_apply]
       split_ifs <;> first | assumption | exact Nat.two_pow_pos _)
     (preMaskCode_do (A := prime + K) (W := D.W) ⟨_, []⟩ (s := D.s) (t := D.t)
-      (by rw [hv]; simp (config := { decide := true }) [Function.update_apply])
-      (by rw [hv]; simp (config := { decide := true }) [Function.update_apply]) hs hst rfl hWM)
+      (by rw [hv]; simp (config := { decide := true }))
+      (by rw [hv]; simp (config := { decide := true })) hs hst rfl hWM)
     (preMaskE (prime + K) D.s D.t D.t) (fun s' hs' => by
       rw [hs', List.reverse_reverse])
   rw [preStB_upd, preStB_inl] at h
@@ -1114,12 +1112,12 @@ theorem band_preL2 (hg : Function.Injective g) (hι : Function.Injective ι)
   · funext r
     rcases r with (r | x) | y
     · cases r <;> simp only [Function.update_apply, preStB, hσ1, Sum.elim_inl, Sum.inl.injEq,
-        reduceCtorEq, ite_false, ite_true, RsbR.cm.injEq]
+        reduceCtorEq, ite_false, ite_true]
       all_goals simp [hsr, hsel, htK]
     · simp only [Function.update_apply, preStB, hσ1, Sum.elim_inl, Sum.inl.injEq, reduceCtorEq,
         ite_false, ite_true]
       by_cases hx : x = .vx 0
-      · subst hx; simp [ho, hsel, hsr, List.map_reverse]
+      · subst hx; simp [ho, hsel, hsr]
       · simp [hx]
     · simp only [Function.update_apply, reduceCtorEq, ite_false, preStB, Sum.elim_inr]
 
@@ -1156,17 +1154,17 @@ theorem band_preL5 (hg : Function.Injective g) (hι : Function.Injective ι)
       (by simp) _)
       (twRuns_uclear (body := body) htg (.inl (.inl .tC)) _)))))))) ?_) ?_
   all_goals try (simp only [preStB, Function.update_apply, Sum.elim_inl, Sum.inl.injEq,
-    reduceCtorEq, ite_false, ite_true, RsbR.cm.injEq, hac2, hnv]; done)
+    reduceCtorEq, ite_false, ite_true, hac2, hnv]; done)
   · simp (config := { decide := true }) only [preStB, Function.update_apply, Sum.elim_inl,
       Sum.inl.injEq, Sum.inr.injEq, RsbX.vx.injEq, bvx, reduceCtorEq, ite_false, ite_true,
-      RsbR.cm.injEq, hwn, hsn, htC, htK, h3, h4, h5, List.length_replicate, List.length_cons,
-      List.append_nil, List.length_drop, List.drop_replicate, List.length_reverse,
-      List.length_append, List.length_nil]
+      hwn, hsn, htC, htK, h3, h4, h5, List.length_replicate, List.length_cons,
+      List.append_nil, List.drop_replicate, 
+      ]
     omega
   · funext r
     rcases r with (r | x) | y
     · cases r <;> simp only [Function.update_apply, preStB, Sum.elim_inl, Sum.inl.injEq,
-        reduceCtorEq, ite_false, ite_true, RsbR.cm.injEq]
+        reduceCtorEq, ite_false, ite_true]
       all_goals simp [htC, htK]
     · simp only [Function.update_apply, preStB, Sum.elim_inl, Sum.inl.injEq, reduceCtorEq,
         ite_false, ite_true]
@@ -1204,10 +1202,10 @@ theorem band_preL8 (hg : Function.Injective g) (hι : Function.Injective ι)
       split_ifs <;> first | assumption | exact Nat.two_pow_pos _)
     (tblStreamD_do (A := prime + K) (W := D.W) (w := w) ⟨_, []⟩ (s := D.s) (t := D.t) (α := D.α)
       (p := D.p)
-      (by rw [hv]; simp (config := { decide := true }) [Function.update_apply])
-      (by rw [hv]; simp (config := { decide := true }) [Function.update_apply])
-      (by rw [hv]; simp (config := { decide := true }) [Function.update_apply])
-      (by rw [hv]; simp (config := { decide := true }) [Function.update_apply]) hp hα hαp hs hWD)
+      (by rw [hv]; simp (config := { decide := true }))
+      (by rw [hv]; simp (config := { decide := true }))
+      (by rw [hv]; simp (config := { decide := true }))
+      (by rw [hv]; simp (config := { decide := true })) hp hα hαp hs hWD)
     (tblStreamD (prime + K) w D.s D.t D.α D.p) (fun s' hs' => by
       simp only at hs'; rw [hs', List.append_nil, List.reverse_reverse])
   rw [length_tblStreamD, preStB_upd, preStB_inl, hef, List.append_nil] at h
@@ -1264,7 +1262,7 @@ theorem band_preL10 (hrg₂ : Function.Injective (Sum.elim rg rgx))
       · subst h1; simp
       · by_cases h2 : r = .dtab
         · subst h2; simp
-        · simp [Function.update_apply, h1, h2]
+        · simp [h1, h2]
     · simp
   · simp [length_rsbArr]
 
@@ -1282,7 +1280,7 @@ theorem tblFoldStream_rows (A w s t α P wd : ℕ) [NeZero s] (hsw : 2 * wd + 1 
       cstream A w (((bandRows wd s (coefZ s t α P)).map colC).flatten ++
         ((bandInputs wd s (coefZ s t α P)).map colC).flatten) := by
   rw [tblFoldStream_cstream, foldRows_eq s t α P wd (2 * wd + 1) hsw, bandRows, bandInputs]
-  simp [colC, List.map_flatten, List.flatten_append]
+  simp [List.map_flatten, List.flatten_append]
   rfl
 
 theorem prep_hf_eq' (P K w s : ℕ) [NeZero s] (aZ : ZMod s → ℤ → ℤ) :
@@ -1392,11 +1390,11 @@ theorem band_preP (hrg₂ : Function.Injective (Sum.elim rg rgx))
       · simp only [List.mem_cons, List.not_mem_nil, or_false] at hr
         rcases hr with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;>
           simp [bandFP, hsrc', hhf', hdf', hdout', hbo', hvk', hm2nv, hknv, hms', hmwnv, hef', hxs',
-            prep_bo_eq, prep_hf_eq', prep_df_eq', rows, inputs, aZ, Function.update_apply]
+            prep_bo_eq, prep_hf_eq', prep_df_eq', rows, inputs, aZ]
       · rw [hframe r hr]
         simp only [List.mem_cons, List.not_mem_nil, or_false, not_or] at hr
         obtain ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12⟩ := hr
-        simp [bandFP, Function.update_apply, h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12]
+        simp [bandFP, h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12]
     · simp [bandFP]
 
 end StepP
@@ -1525,7 +1523,7 @@ theorem bandFA_frame (σ : RsbR ⊕ RsbX t₀ → List (Fin (A + 4))) (hd : Fin 
     (D : PreAxB) (rest : List (Fin (A + 4))) (r : RsbR) (hr : r ∉ bandLA) :
     bandFA σ hd w D rest (.inl r) = σ (.inl r) := by
   simp only [bandLA, List.mem_cons, List.not_mem_nil, or_false, not_or] at hr
-  simp [bandFA, preBankB, Function.update_apply, bandF0, bandClrB, preHB, hr]
+  simp [bandFA, preBankB, bandF0, bandClrB, preHB, hr]
 
 theorem bandFA_vx (σ : RsbR ⊕ RsbX t₀ → List (Fin (A + 4))) (hd : Fin 5 → Fin t₀) (w : ℕ)
     (D : PreAxB) (rest : List (Fin (A + 4))) (j : Fin 12) :
@@ -1816,7 +1814,7 @@ theorem band_preB2b (hrg₂ : Function.Injective (Sum.elim rg rgx)) (hι : Funct
   refine (RsbRuns.seq hdisj₂ h1 (RsbRuns.seq hdisj₂ h2 (RsbRuns.seq hdisj₂ h3 h4))).mono ?_
   simp only [bandCostB2b, hσ3, hσ2, hσ1, bandScrL, List.map_cons, List.map_nil, List.sum_cons,
     List.sum_nil, Function.update_apply, Sum.inl.injEq, reduceCtorEq, ite_false, ite_true,
-    tblPairs, coeffSyms, List.length_replicate, List.length_map, List.length_range,
+    tblPairs, coeffSyms, 
     List.length_ofFn, htb, List.length_nil]
   omega
 
@@ -1845,13 +1843,13 @@ variable {body : F → Pr F T Q (prime + K) U} {rg : RsbR → Fin T} {rgx : RsbX
 
 theorem bandFB2a_frame (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (D : PreAxB) (w : ℕ)
     (r : RsbR) (hr : r ≠ .padc) : bandFB2a σ D w (.inl r) = σ (.inl r) := by
-  simp [bandFB2a, Function.update_apply, hr]
+  simp [bandFB2a, hr]
 
 theorem bandFB2b_frame (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (D : PreAxB) [NeZero D.s]
     (w : ℕ) (r : RsbR) (hr : r ∉ [RsbR.tb, .ya, .b1, .hc, .ac, .hv, .xs, .tA, .tJ, .tL, .dtab]) :
     bandFB2b σ D w (.inl r) = σ (.inl r) := by
   simp only [List.mem_cons, List.not_mem_nil, or_false, not_or] at hr
-  simp [bandFB2b, bandScrL, Function.update_apply, hr]
+  simp [bandFB2b, bandScrL, hr]
 
 theorem bandFB2b_scr (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (D : PreAxB) [NeZero D.s]
     (w : ℕ) (r : RsbR) (hr : r ∈ [RsbR.tb, .ya, .b1, .hc, .ac, .hv, .xs, .tA, .tJ, .tL]) :
@@ -1871,7 +1869,7 @@ theorem bandFB1_frame (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (
   simp only [List.mem_cons, List.not_mem_nil, or_false, not_or] at h2
   simp only [bandLA, List.mem_cons, List.not_mem_nil, or_false, not_or] at hA
   rw [← bandFA_frame σ hd w D rest r (by simp [bandLA, hA])]
-  simp [bandFB1, bandFF2, bandFF2a, bandFF2b, bandFF2c, bandFF2d, bandFF1, Function.update_apply,
+  simp [bandFB1, bandFF2, bandFF2a, bandFF2b, bandFF2c, bandFF2d, bandFF1, 
     hA, h2]
 
 theorem bandFB1_vx (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (hd : Fin 5 → Fin t₀)
@@ -1908,7 +1906,7 @@ theorem bandFB1_vals (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (h
   · simp only [List.mem_cons, List.not_mem_nil, or_false] at hr
     rcases hr with rfl | rfl | rfl | rfl | rfl <;>
       simp [τ, bandFB1, bandFF2, bandFF2a, bandFF2b, bandFF2c, bandFF2d, bandFF1,
-        Function.update_apply, vclr]
+        vclr]
 
 /-- The scratch registers of the loader are empty. -/
 structure BandPreFree (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) : Prop where
@@ -2091,7 +2089,7 @@ theorem bandFE_frame (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (r
     (hr : r ∉ [RsbR.kn, .ms, .dst, .msk, .tswn, .smwn, .m2wn, .bx, .ac2]) :
     bandFE σ (.inl r) = σ (.inl r) := by
   simp only [List.mem_cons, List.not_mem_nil, or_false, not_or] at hr
-  simp [bandFE, bandMvF, bandFE0, bandClrE, bvx, Function.update_apply, hr]
+  simp [bandFE, bandMvF, bandFE0, bandClrE, bvx, hr]
 
 set_option maxRecDepth 4000 in
 theorem bandFE_vals (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4)))
@@ -2101,14 +2099,14 @@ theorem bandFE_vals (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4)))
     bandFE σ (.inl .m2wn) = (σ (bvx 4)).reverse ∧ bandFE σ (.inl .kn) = (σ (bvx 5)).reverse ∧
     bandFE σ (.inl .ms) = [] ∧ bandFE σ (.inl .dst) = [] ∧ bandFE σ (.inl .ac2) = [] := by
   simp (config := { decide := true }) [bandFE, bandMvF, bandFE0, bandClrE, bvx,
-    Function.update_apply, hac2]
+    hac2]
 
 theorem bandFP_frame (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (D : PreAxB) [NeZero D.s]
     (w : ℕ) (l : List (Fin (prime + K + 4))) (r : RsbR)
     (hr : r ∉ [RsbR.src, .bo, .hf, .df, .dout, .vk, .m2n, .kn, .ms, .mwn, .ef, .xs]) :
     bandFP σ D w l (.inl r) = σ (.inl r) := by
   simp only [List.mem_cons, List.not_mem_nil, or_false, not_or] at hr
-  simp [bandFP, Function.update_apply, hr]
+  simp [bandFP, hr]
 
 theorem bandFP_inr (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (D : PreAxB) [NeZero D.s]
     (w : ℕ) (l : List (Fin (prime + K + 4))) (x : RsbX t₀) :

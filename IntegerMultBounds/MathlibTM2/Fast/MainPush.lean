@@ -25,7 +25,6 @@ namespace IntegerMultBounds.MathlibTM2.Fast.Main
 open IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.Stack IntegerMultBounds.MathlibTM2 IntegerMultBounds.MathlibTM2.Host IntegerMultBounds.MathlibTM2.Layer IntegerMultBounds.MathlibTM2.Node
 open IntegerMultBounds.MathlibTM2.Fast
 
-set_option linter.unusedSimpArgs false
 
 /-! ### Stack sizes -/
 
@@ -170,14 +169,14 @@ theorem mn_clearList_exec (body : P → Pr P T Q A U) :
             l.map fun j => 2 * (S.R j).length + 2 := by
           refine List.map_congr_left fun j hj => ?_
           rw [Function.update_of_ne (fun h => hnd.1 (by rw [← h]; exact hj))]
-        simp only [List.map_cons, List.sum_cons, List.map_map]
+        simp only [List.map_cons, List.sum_cons]
         rw [e]
         ring
       · congr 2
         funext k
         by_cases hk : k = i
         · subst hk; simp
-        · simp [hk, Function.update_of_ne hk]
+        · simp [hk]
 
 /-- Emptying every register, in `2 ∑ |R i| + 2 T + 1` steps. -/
 theorem mn_clearAll_exec (body : P → Pr P T Q A U) (v : HS T Q A U) (S : Stacks T A) :

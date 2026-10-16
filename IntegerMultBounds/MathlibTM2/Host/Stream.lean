@@ -19,7 +19,6 @@ namespace IntegerMultBounds.MathlibTM2.Host
 
 open IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.Stack IntegerMultBounds.MathlibTM2
 
-set_option linter.unusedSimpArgs false
 
 variable {T Q A : ℕ} {U : Type} {P : Type} (body : P → Pr P T Q A U)
 
@@ -88,7 +87,7 @@ theorem moveR_loop (i j : Fin T) (hij : i ≠ j) (f : Fin (A + 4) → Fin (A + 4
       congr 2
       funext k
       by_cases hk : k = j
-      · subst hk; simp [movedR, Function.update_of_ne hij.symm]
+      · subst hk; simp [movedR]
       · by_cases hk' : k = i
         · subst hk'; simp [movedR, hk]
         · simp [movedR, hk, hk']

@@ -62,7 +62,6 @@ namespace IntegerMultBounds.MathlibTM2.Node
 
 open IntegerMultBounds.MathlibTM2.Host IntegerMultBounds.MathlibTM2.Layer
 
-set_option linter.unusedSimpArgs false
 
 /-! ### The phase on arrays -/
 
@@ -264,7 +263,7 @@ lemma recKeys_snd (i : ℕ) (hi : i < (recKeys R n).length) : ((recKeys R n)[i])
     omega
   simp only [recKeys] at hi ⊢
   rw [getElem_flatMap_const _ (2 ^ n) (by simp) _ u a hu ha]
-  simp [Nat.mul_add_mod, Nat.mod_eq_of_lt ha]
+  simp [Nat.mod_eq_of_lt ha]
 
 lemma blk_coeffList (Z : ZArr (Fin R × Fin r) n) (i : ℕ) (hi : i < (recKeys R n).length) :
     blk (coeffList w Z) r i = recOf w Z (recKeys R n)[i] := by

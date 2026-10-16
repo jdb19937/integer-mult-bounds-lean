@@ -19,8 +19,6 @@ open IntegerMultBounds IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.St
   IntegerMultBounds.MathlibTM2.Layer
 open IntegerMultBounds.MathlibTM2.Mult IntegerMultBounds.MathlibTM2.Mult.Sizes IntegerMultBounds.MathlibTM2.Fast IntegerMultBounds.MathlibTM2.Fast.Src
 
-set_option linter.unusedSimpArgs false
-set_option linter.unusedSectionVars false
 
 section Batch
 

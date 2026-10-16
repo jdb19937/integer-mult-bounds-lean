@@ -22,7 +22,6 @@ namespace IntegerMultBounds.MathlibTM2.Fast
 open IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.Stack IntegerMultBounds.MathlibTM2 IntegerMultBounds.MathlibTM2.Host IntegerMultBounds.MathlibTM2.Layer IntegerMultBounds.MathlibTM2.Node
 open IntegerMultBounds.NLogN (rowIndex)
 
-set_option linter.unusedSimpArgs false
 
 noncomputable section
 
@@ -39,7 +38,7 @@ lemma rsbArr_rsbVec (L : List GaussianInt) (hL : L.length = t) :
   apply List.ext_getElem (by simp [length_rsbArr, hL])
   intro i h₁ h₂
   have hi : i < t := by simpa [length_rsbArr] using h₁
-  simp [rsbArr, rsbVec, ZMod.val_natCast_of_lt hi, List.getD_eq_getElem?_getD,
+  simp [rsbArr, rsbVec, List.getD_eq_getElem?_getD,
     List.getElem?_eq_getElem h₂, Nat.mod_eq_of_lt hi]
 
 variable (s t) in

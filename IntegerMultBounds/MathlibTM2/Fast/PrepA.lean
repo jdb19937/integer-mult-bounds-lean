@@ -67,8 +67,6 @@ open IntegerMultBounds IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.St
 open IntegerMultBounds.MathlibTM2.Fast.ResampA IntegerMultBounds.MathlibTM2.Fast.TableVM
 open IntegerMultBounds.Networks.Shared50ModularControl (prime)
 
-set_option linter.unusedSimpArgs false
-set_option linter.unusedSectionVars false
 
 noncomputable section
 
@@ -357,20 +355,20 @@ theorem preA_num (V : RsaV (RsaX t₀) (prime + K)) (D : PreAxA) (w : ℕ)
   all_goals try (simp only [preSt, Function.update_apply, Sum.elim_inl, Sum.inl.injEq, reduceCtorEq,
     ite_false, ite_true, RsaV.get_sm, RsaV.get_pz, RsaV.get_sm2, RsaV.get_ea, RsaV.get_eb,
     RsaV.get_er, RsaV.get_cT, RsaV.get_cW, RsaV.get_cS, RsaV.get_cM, RsaV.get_cP, RsaV.get_rr,
-    RsaV.get_bS, RsaV.get_c, RsaR.c.injEq, hea, heb, her, hT, hwn, hW, hS, hM, hP, hrr, hbS, hsm,
+    RsaV.get_bS, RsaV.get_c, hea, heb, her, hT, hwn, hW, hS, hM, hP, hrr, hbS, hsm,
     hpz, hsm2, List.append_nil, List.length_replicate]; done)
   · simp only [preSt, Function.update_apply, Sum.elim_inl, Sum.inl.injEq, reduceCtorEq,
-      ite_false, ite_true, RsaV.get_sm, RsaV.get_pz, RsaV.get_sm2, RsaV.get_ea, RsaV.get_eb,
+      ite_false, ite_true, RsaV.get_sm2, RsaV.get_ea, RsaV.get_eb,
       RsaV.get_er, RsaV.get_cT, RsaV.get_cW, RsaV.get_cS, RsaV.get_cM, RsaV.get_cP, RsaV.get_rr,
-      RsaV.get_bS, RsaV.get_c, RsaR.c.injEq, hea, heb, her, hT, hwn, hW, hS, hM, hP, hrr, hbS, hsm,
-      hpz, hsm2, List.append_nil, List.length_replicate, List.length_drop, List.length_cons]
+      RsaV.get_c, hea, heb, her, hT, hwn, hW, hS, hM, hP, hrr, 
+      hsm2, List.append_nil, List.length_replicate, List.length_drop]
     unfold preNumCost
     exact le_of_eq (by ring)
   · funext r
     rcases r with r | x
     · cases r <;> simp only [Function.update_apply, preSt, preV3, RsaV.get, Sum.elim_inl,
-        Sum.inl.injEq, reduceCtorEq, ite_false, ite_true, RsaR.c.injEq]
-      all_goals simp [hea, heb, her, hT, hwn, hW, hS, hM, hP, hrr, hbS, hsm, hpz, hsm2,
+        Sum.inl.injEq, reduceCtorEq, ite_false, ite_true]
+      all_goals simp [hea, heb, her, hT, hwn, hW, hS, hM, hP, hrr, hsm2,
         List.replicate_succ]
     · simp only [Function.update_apply, reduceCtorEq, ite_false, preSt, Sum.elim_inr]
 
@@ -402,14 +400,14 @@ theorem preA_hdr {hd : Fin 5 → Fin t₀} (hdi : Function.Injective hd)
       (twRuns_uclear (body := body) htg (.inl .sm2) _))))))) ?_) ?_
   all_goals try (simp (config := { decide := true }) only [preSt, preHA, Function.update_apply,
     Sum.elim_inl, Sum.inl.injEq, reduceCtorEq, ite_false, ite_true, RsaV.get_sm, RsaV.get_pz,
-    RsaV.get_sm2, RsaV.get_ea, RsaV.get_eb, RsaV.get_er, RsaV.get_ka, RsaV.get_kb, RsaV.get_kx,
-    RsaV.get_x, RsaV.get_c, RsaR.c.injEq, RsaR.x.injEq, RsaX.sw.injEq, hinj, hkb, hkx, her, hka,
+    RsaV.get_sm2, RsaV.get_er, RsaV.get_ka, RsaV.get_kb, RsaV.get_kx,
+    RsaV.get_x, RsaV.get_c, RsaR.x.injEq, RsaX.sw.injEq, hinj, hkb, hkx, her, hka,
     hwn, hsm, hpz, hsm2, hH, List.append_nil, List.length_replicate]; done)
   · simp (config := { decide := true }) only [preSt, preHA, Function.update_apply,
-      Sum.elim_inl, Sum.inl.injEq, reduceCtorEq, ite_false, ite_true, RsaV.get_sm, RsaV.get_pz,
-      RsaV.get_sm2, RsaV.get_ea, RsaV.get_eb, RsaV.get_er, RsaV.get_ka, RsaV.get_kb, RsaV.get_kx,
-      RsaV.get_x, RsaV.get_c, RsaR.c.injEq, RsaR.x.injEq, RsaX.sw.injEq, hinj, hkb, hkx, her, hka,
-      hwn, hsm, hpz, hsm2, hH, List.append_nil, List.length_replicate]
+      Sum.elim_inl, Sum.inl.injEq, reduceCtorEq, ite_false, ite_true, 
+      RsaV.get_sm2, RsaV.get_er, RsaV.get_ka, RsaV.get_kb, RsaV.get_kx,
+      RsaV.get_c, hkb, hkx, her, hka,
+      hwn, hsm2, List.append_nil, List.length_replicate]
     unfold preHdrCost
     exact le_of_eq (by ring)
   · funext r
@@ -427,7 +425,7 @@ theorem preA_hdr {hd : Fin 5 → Fin t₀} (hdi : Function.Injective hd)
             simp [preBankA, hj, hne]
         all_goals simp [preBankA]
       all_goals simp only [Function.update_apply, preSt, preHA, RsaV.get, Sum.elim_inl,
-        Sum.inl.injEq, reduceCtorEq, ite_false, ite_true, RsaR.c.injEq]
+        Sum.inl.injEq, reduceCtorEq, ite_false, ite_true]
       all_goals simp [hsm2]
     · simp only [Function.update_apply, reduceCtorEq, ite_false, preSt, Sum.elim_inr]
 
@@ -470,11 +468,11 @@ theorem preA_vm (V : RsaV (RsaX t₀) (prime + K)) (D : PreAxA) (w : ℕ)
       split_ifs <;> first | assumption | exact Nat.two_pow_pos _)
     (tblStreamA_do (A := prime + K) (W := D.W) (w := w) ⟨_, []⟩
       (s := D.s) (t := D.t) (α := D.α) (p := D.p) (m := D.m)
-      (by rw [hv]; simp (config := { decide := true }) [Function.update_apply])
-      (by rw [hv]; simp (config := { decide := true }) [Function.update_apply])
-      (by rw [hv]; simp (config := { decide := true }) [Function.update_apply])
-      (by rw [hv]; simp (config := { decide := true }) [Function.update_apply])
-      (by rw [hv]; simp (config := { decide := true }) [Function.update_apply]) hp hα ht hW)
+      (by rw [hv]; simp (config := { decide := true }))
+      (by rw [hv]; simp (config := { decide := true }))
+      (by rw [hv]; simp (config := { decide := true }))
+      (by rw [hv]; simp (config := { decide := true }))
+      (by rw [hv]; simp (config := { decide := true })) hp hα ht hW)
     (tblStreamA (prime + K) w D.s D.t D.α D.p D.m) (fun s' hs' => by
       simp only at hs'; rw [hs', List.append_nil, List.reverse_reverse])
   rw [length_tblStreamA] at h
@@ -618,7 +616,7 @@ lemma preLoadA_rsaWith (V : RsaV (RsaX t₀) A) (hd : Fin 5 → Fin t₀) (w : �
   simp only [preLoadA, rsaWith]
   congr 1
   funext x
-  cases x <;> simp [preBankA, Function.update_apply]
+  cases x <;> simp [preBankA]
 
 lemma PreFreeA.rsaWith {V : RsaV (RsaX t₀) A} (h : PreFreeA V) (l a a' : List (Fin (A + 4))) :
     PreFreeA (rsaWith V l a a') :=

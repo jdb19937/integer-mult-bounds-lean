@@ -76,7 +76,6 @@ open IntegerMultBounds IntegerMultBounds.Networks IntegerMultBounds.Machine Inte
 open IntegerMultBounds.MathlibTM2.Node hiding LReg
 open IntegerMultBounds.Networks.Shared50ModularControl (prime)
 
-set_option linter.unusedSimpArgs false
 
 /-- Evaluate register updates at register names. -/
 local macro "topfupd" : tactic => `(tactic| (simp only [Function.update_apply, reg_inj,
@@ -500,7 +499,7 @@ theorem topPhaseS_exec (hA : 5 ≤ A) {cfg pfs : List ℕ} {R N r w K ρ oS D : 
   have hR₆o : ∀ x : LReg SXReg, x ≠ .sc 0 → x ≠ .sc 1 → x ≠ .ph .msk → x ≠ .ph .cnt →
       R₆ (reg x) = S.R (reg x) := by
     intro x h1 h2 h3 h4
-    simp [hR₆, hR₅, hR₄, hR₃, hR₂, hR₁, Function.update_apply, h1, h2, h3, h4]
+    simp [hR₆, hR₅, hR₄, hR₃, hR₂, hR₁, h1, h2, h3, h4]
   have hP : ∀ x, x ≠ PhaseReg.arr → x ≠ .msk → x ≠ .cnt →
       R₆ (phMap (reg .io) x) = S.R (reg (.ph x)) :=
     fun x h1 h2 h3 => by
@@ -617,7 +616,7 @@ theorem topUnit_exec (hA : 4 ≤ A) (g : GaussianInt)
     by_cases h1 : k = reg .io
     · subst h1
       have hin' : S₁.R (reg .io) = [] := by simpa using hin₁
-      simp [movedR, hne, hout₁, hin']
+      simp [movedR, hout₁, hin']
     by_cases h2 : k = reg .racc
     · subst h2; simp [movedR, hne.symm, hracc]
     simp only [movedR, Function.update_apply, h1, h2, ↓reduceIte]
@@ -740,7 +739,7 @@ theorem topKerS_exec (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
       have hR₅o : ∀ x : LReg SXReg, x ≠ .u → x ≠ .a₀ → x ≠ .L → x ≠ .rows →
           R₅ (reg x) = S.R (reg x) := by
         intro x h1 h2 h3 h4
-        simp [hR₅, hR₄, hR₃, hR₁, Function.update_apply, h1, h2, h3, h4]
+        simp [hR₅, hR₄, hR₃, hR₁, h1, h2, h3, h4]
       have hpar : ParState R₅ 0 (q + 1) K ρ aT (K * bits (q + 1) 0) (rowsAt R 0) N w (r * w) := by
         have hh : ∀ x : LReg SXReg, x ∈ [LReg.lev, .K, .ρ, .n, .w, .rw] →
             R₅ (reg x) = S.R (reg x) := by
@@ -995,7 +994,7 @@ noncomputable def topDownR (Rg : Fin (nT SXReg) → List (Fin (A + 4))) (a n r w
 lemma topDownR_of_ne {Rg : Fin (nT SXReg) → List (Fin (A + 4))} {a n r w : ℕ} {x : LReg SXReg}
     (h1 : x ≠ .n) (h2 : x ≠ .st) (h3 : x ≠ .ph .af) (h4 : x ≠ .lf (.k .cf)) (h5 : x ≠ .cs)
     (h6 : x ≠ .rowctr) : topDownR Rg a n r w (reg x) = Rg (reg x) := by
-  simp [topDownR, Function.update_apply, h1, h2, h3, h4, h5, h6]
+  simp [topDownR, h1, h2, h3, h4, h5, h6]
 
 lemma topDownR_par {Rg : Fin (nT SXReg) → List (Fin (A + 4))} {a n r w : ℕ} {x : LReg SXReg}
     (hx : x ∈ [LReg.lev, .u, .a₀, .L, .rows, .w, .rw, .K, .ρ]) :
@@ -1019,7 +1018,7 @@ lemma topDownR_regs {Rg : Fin (nT SXReg) → List (Fin (A + 4))} {n a r w K ρ :
     · subst h5; trivial
     by_cases h6 : x = .rowctr
     · subst h6
-      simp [topDownR, restSpec, length_flatMap_replicate]
+      simp [topDownR, restSpec]
       ring
     rw [topDownR_of_ne h1 h2 h3 h4 h5 h6]
     exact (topRestSpec_bits h3 h4 h6).1 (hT.rest x)
@@ -1149,7 +1148,7 @@ theorem topDownS_exec {cfg pfs : List ℕ} {n a r w K ρ : ℕ} (h2 : cfg[2]? = 
     · subst h5; simp [hR₇, hR₆, hR₅, movedR, hR₄, hR₃, hR₂, topDownR, hI.x, hR₁, hln]
     by_cases h6 : k = reg .n
     · subst h6; simp [hR₇, hR₆, hR₅, movedR, hR₄, hR₃, hR₂, topDownR, hln]
-    simp [hR₇, hR₆, hR₅, movedR, hR₄, hR₃, hR₂, hR₁, topDownR, Function.update_apply,
+    simp [hR₇, hR₆, hR₅, movedR, hR₄, hR₃, hR₂, hR₁, topDownR, 
       h0, h1, h2, h3, h4, h5, h6]
 
 /-- Back to the rest state for `n + a` address bits. -/
@@ -1227,7 +1226,7 @@ theorem topUpS_exec {cfg pfs : List ℕ} {n a r w K ρ : ℕ} (h2 : cfg[2]? = so
     Exec.cast (Exec.seq e₁ (Exec.seq e₂ (Exec.seq e₃ (Exec.seq e₄ (Exec.seq e₅ (Exec.seq e₆
       e₇)))))) rfl ?_⟩
   · have h1 : (R₁ (reg .rowctr)).length = 2 ^ n * (r * w) := by
-      simp [hR₁, hRd, topDownR, length_flatMap_replicate]; ring
+      simp [hR₁, hRd, topDownR]; ring
     have h6 : (R₆ (reg (.sc 0))).length = a := by simp [hR₆, movedR, hR₅, hR₄, hR₃, hR₂, hR₁]
     rw [h1, h6]
     simp only [List.length_reverse, List.length_take, hlnl, hlrl]
@@ -1328,7 +1327,7 @@ theorem topPadS_exec {cfg : List ℕ} {n a R R₂ r w K ρ : ℕ} (h2 : cfg[2]? 
   set R₃ := Function.update R₂' (reg (.sc 1))
     ((List.replicate R tick).flatMap (List.replicate (2 ^ a))) with hR₃
   have h3l : (R₃ (reg (.sc 1))).length = 2 ^ a * R := by
-    simp [hR₃, length_flatMap_replicate]; ring
+    simp [hR₃]; ring
   obtain ⟨v₄, c₄, hu₄, hc₄, e₄⟩ := topRd_exec body (x := .sc 2) (by simp) (by simp) 4 hl4 v₃
     { S with R := R₃ } (by simp [hR₃, hR₂', hR₁, hlc]) (by simpa [hR₃, hR₂', hR₁] using hcf)
   dsimp only at e₄
@@ -1378,7 +1377,7 @@ theorem topPadS_exec {cfg : List ℕ} {n a R R₂ r w K ρ : ℕ} (h2 : cfg[2]? 
   have h3e : R₆ (reg (.sc 3)) = [] := by simp [hR₆, movedR, hR₅, hR₄, hR₃, hR₂', hR₁, hsc]
   have h2e : R₆ (reg (.sc 2)) = List.replicate M tick := by simp [hR₆, movedR, hR₅]
   rw [h3e, h2e] at hm₇ h7a
-  simp only [List.length_replicate, Nat.zero_add, Finset.sum_const, Finset.card_range,
+  simp only [List.length_replicate, Finset.sum_const, Finset.card_range,
     smul_eq_mul, List.length_nil, List.reverse_nil, List.nil_append] at hm₇ h7a
   -- `racc` back onto `io`
   obtain ⟨v₈, hu₈, e₈⟩ := moveR_exec body (reg .racc) (reg .io) (reg_ne (by simp)) id v₇
@@ -1420,7 +1419,7 @@ theorem topPadS_exec {cfg : List ℕ} {n a R R₂ r w K ρ : ℕ} (h2 : cfg[2]? 
     try rw [hs0]
     try rw [hs1]
     try rw [hs2]
-    simp only [List.length_reverse, List.length_map]
+    simp only [List.length_reverse]
     simp only [List.length_replicate] at hm₃
     unfold topPadCost
     rw [← hM]
@@ -1443,7 +1442,7 @@ theorem topPadS_exec {cfg : List ℕ} {n a R R₂ r w K ρ : ℕ} (h2 : cfg[2]? 
     by_cases h5 : k = reg (.sc 3)
     · subst h5; rw [h7t, hsc]
     rw [hR₇o k h2 h5 h3]
-    simp [hR₆, movedR, hR₅, hR₄, hR₃, hR₂', hR₁, Function.update_apply, h0, h1, h2, h3, h4]
+    simp [hR₆, movedR, hR₅, hR₄, hR₃, hR₂', hR₁, h0, h1, h2, h3, h4]
 
 /-- Keep the first `R 2^a` rows (fields `3`, `2`): one counted copy of a row from `io` onto
 `racc` per row, then `io` cleared and `racc` moved back. -/
@@ -1503,7 +1502,7 @@ theorem topUnpadS_exec {cfg : List ℕ} {n a R r w K ρ : ℕ} (h2 : cfg[2]? = s
   set R₃ := Function.update R₂' (reg (.sc 1))
     ((List.replicate R tick).flatMap (List.replicate (2 ^ a))) with hR₃
   have h3l : (R₃ (reg (.sc 1))).length = N₁ := by
-    simp [hR₃, length_flatMap_replicate, hN₁]; ring
+    simp [hR₃, hN₁]; ring
   -- the rows kept
   let Ψ : ℕ → Regs (nT SXReg) A := fun j =>
     Function.update (Function.update R₃ (reg .io) (Xs.drop (j * L))) (reg .racc)
@@ -1516,7 +1515,7 @@ theorem topUnpadS_exec {cfg : List ℕ} {n a R r w K ρ : ℕ} (h2 : cfg[2]? = s
     have hjL' : j * L + L ≤ Xs.length := by rw [← Nat.succ_mul]; exact hjL
     have hio' : S'.R (reg .io) = (Xs.drop (j * L)).take L ++ Xs.drop (j * L + L) := by
       rw [hS' _ (reg_ne (by simp)) (reg_ne (by simp))]
-      simp [Ψ, List.take_append_drop, List.drop_drop, Nat.add_comm]
+      simp [Ψ, Nat.add_comm]
     obtain ⟨v'', hv'', he''⟩ := topCopyC_exec body (c := reg .rowctr) (t := reg .rowtmp)
       (src := reg .io) (dst := reg .racc)
       (nodup_map_reg (l := [.rowctr, .rowtmp, .io, .racc]) (by simp))
@@ -1547,7 +1546,7 @@ theorem topUnpadS_exec {cfg : List ℕ} {n a R r w K ρ : ℕ} (h2 : cfg[2]? = s
   have h3e : R₃ (reg (.sc 3)) = [] := by simp [hR₃, hR₂', hR₁, hsc]
   rw [h3e, h3l] at hm₄
   rw [h3e] at h4a
-  simp only [Nat.zero_add, Finset.sum_const, Finset.card_range, smul_eq_mul, List.length_nil,
+  simp only [Finset.sum_const, Finset.card_range, smul_eq_mul, List.length_nil,
     List.reverse_nil, List.nil_append] at hm₄ h4a
   have h4i : R₄ (reg .io) = Xs.drop (N₁ * L) := by
     rw [h4o _ (reg_ne (by simp)) (reg_ne (by simp)), h3l]; simp [Ψ]
@@ -1580,7 +1579,7 @@ theorem topUnpadS_exec {cfg : List ℕ} {n a R r w K ρ : ℕ} (h2 : cfg[2]? = s
     have hs1 : (Function.update R₆ (reg (.sc 0)) [] (reg (.sc 1))).length = N₁ := by
       simp only [hR₆, movedR]; topfupd; rw [h4a, h3l]
     rw [hs0, hs1]
-    simp only [List.length_reverse, List.length_map, List.length_take, List.length_drop]
+    simp only [List.length_reverse, List.length_take, List.length_drop]
     simp only [List.length_replicate] at hm₃
     have hmin : min (N₁ * L) Xs.length = N₁ * L := by
       apply min_eq_left; rw [hN₁]; nlinarith [hlen]
@@ -1597,14 +1596,14 @@ theorem topUnpadS_exec {cfg : List ℕ} {n a R r w K ρ : ℕ} (h2 : cfg[2]? = s
     · subst h1; simp [hsc]
     simp only [Function.update_apply, h0, h1, ↓reduceIte, hR₆, movedR]
     by_cases h3 : k = reg .io
-    · subst h3; simp [Function.update_self]
+    · subst h3; simp
     by_cases h4 : k = reg .racc
     · subst h4; simp [h3, hracc]
     simp only [h3, h4, ↓reduceIte]
     by_cases h5 : k = reg (.sc 3)
     · subst h5; rw [h4t, hsc]
     rw [hR₄o k h1 h5 h3 h4]
-    simp [hR₃, hR₂', hR₁, Function.update_apply, h0, h1]
+    simp [hR₃, hR₂', hR₁, h0, h1]
 
 end Down
 
@@ -1719,7 +1718,7 @@ theorem topPcBody_exec (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
     (reg .lev) (List.replicate pc.j tick) with hF₁
   obtain ⟨v₂, hu₂, e₂⟩ := topField_exec body hPB (hd .u (by simp)).1 (hd .u (by simp)).2 true
     pc.u (topRec [pc.a₀, Lv] ++ restPL) v₁ { S with R := F₁ }
-    (by simp [hF₁, (hd .lev (by simp)).1, topRec_cons, hPB, Function.update_apply])
+    (by simp [hF₁, (hd .lev (by simp)).1, topRec_cons, hPB])
   simp only [ite_true] at e₂
   try dsimp only at e₂
   set F₂ := Function.update (Function.update (Function.update F₁ PL
@@ -1727,7 +1726,7 @@ theorem topPcBody_exec (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
     (reg .u) (List.replicate pc.u tick ++ F₁ (reg .u)) with hF₂
   obtain ⟨v₃, hu₃, e₃⟩ := topField_exec body hPB (hd .a₀ (by simp)).1 (hd .a₀ (by simp)).2 true
     pc.a₀ (topRec [Lv] ++ restPL) v₂ { S with R := F₂ }
-    (by simp [hF₂, (hd .u (by simp)).1, topRec_cons, hPB, Function.update_apply])
+    (by simp [hF₂, (hd .u (by simp)).1, topRec_cons, hPB])
   simp only [ite_true] at e₃
   try dsimp only at e₃
   set F₃ := Function.update (Function.update (Function.update F₂ PL
@@ -1735,7 +1734,7 @@ theorem topPcBody_exec (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
     (reg .a₀) (List.replicate pc.a₀ tick ++ F₂ (reg .a₀)) with hF₃
   obtain ⟨v₄, hu₄, e₄⟩ := topField_exec body hPB (hd .L (by simp)).1 (hd .L (by simp)).2 true
     Lv restPL v₃ { S with R := F₃ }
-    (by simp [hF₃, (hd .a₀ (by simp)).1, topRec_cons, hPB, Function.update_apply])
+    (by simp [hF₃, (hd .a₀ (by simp)).1, topRec_cons, hPB])
   simp only [ite_true] at e₄
   try dsimp only at e₄
   set F₄ := Function.update (Function.update (Function.update F₃ PL restPL) PB
@@ -1744,7 +1743,7 @@ theorem topPcBody_exec (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
   have hF₄o : ∀ x : LReg SXReg, x ≠ .lev → x ≠ .u → x ≠ .a₀ → x ≠ .L → x ≠ .ph .arr →
       x ≠ .lf (.k .arr) → F₄ (reg x) = S.R (reg x) := by
     intro x h1 h2 h3 h4 h5 h6
-    simp [hF₄, hF₃, hF₂, hF₁, hPLd, hPBd, Function.update_apply, h1, h2, h3, h4, h5, h6]
+    simp [hF₄, hF₃, hF₂, hF₁, hPLd, hPBd, h1, h2, h3, h4, h5, h6]
   -- `rows := F₂`
   obtain ⟨v₅, c₅, hu₅, hc₅, e₅⟩ := topRd_exec body (x := .rows) (by simp) (by simp) 4 hl4 v₄
     { S with R := F₄ }
@@ -1914,7 +1913,7 @@ theorem topPcLoop_loop (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
       congr 2
       funext k
       simp only [hS₁, Function.update_apply]
-      split_ifs <;> simp_all [topPcRec, topRec_append, List.reverse_append, piecesZ, topPieces, hY']
+      split_ifs <;> simp_all [topPcRec, topRec_append, List.reverse_append, piecesZ, topPieces]
       rfl
 
 /-- The pieces: run the piece record of `ph .arr` through `topPcBody`, keeping the consumed

@@ -40,7 +40,6 @@ namespace IntegerMultBounds.MathlibTM2.Host
 
 open IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.Stack IntegerMultBounds.MathlibTM2
 
-set_option linter.unusedSimpArgs false
 
 variable {T Q A : ℕ} {U : Type} {P : Type} (body : P → Pr P T Q A U) {nd : ℕ}
 
@@ -178,7 +177,7 @@ theorem moveR_loop_scan (i j : Fin T) (hij : i ≠ j) (f : Fin (A + 4) → Fin (
       congr 2
       funext k
       by_cases hk : k = j
-      · subst hk; simp [movedR, Function.update_of_ne hij.symm]
+      · subst hk; simp [movedR]
       · by_cases hk' : k = i
         · subst hk'; simp [movedR, hk]
         · simp [movedR, hk, hk']
@@ -219,8 +218,8 @@ lemma xferStep_run (src dst : Fin nd → Fin T) (ctr tmp cs : Fin T) (sel : ℕ 
   simp [xferStep, peekR, Action.run, selDispatch_run, hc, hs, hsel, update_rt,
     Function.update_of_ne h1, Function.update_of_ne h2, Function.update_of_ne h3,
     Function.update_of_ne h4, Function.update_of_ne h5, Function.update_of_ne h6,
-    Function.update_of_ne h1.symm, Function.update_of_ne h2.symm, Function.update_of_ne h3.symm,
-    Function.update_of_ne h4.symm, Function.update_of_ne h5.symm, Function.update_of_ne h6.symm]
+    Function.update_of_ne h1.symm, Function.update_of_ne h3.symm,
+    Function.update_of_ne h5.symm]
 
 /-- The symbol loop of one block: it empties `ctr` onto `tmp` and moves `|ctr|` symbols from
 `src d` to `dst d`, where `d` is the destination selected by the counter. -/
@@ -264,7 +263,7 @@ theorem xferStep_loop (src dst : Fin nd → Fin T) (ctr tmp cs : Fin T) (sel : �
             (hrun ▸ Exec.act (body := body) _ (mk v S)) he) (by simp; ring) rfl
         · rw [htmp]
           simp [Function.update_of_ne h2.symm, Function.update_of_ne h6.symm,
-            Function.update_of_ne h3.symm]
+            ]
         · rw [hdst]
           simp
         · intro k hk1 hk2 hk3 hk4
@@ -738,7 +737,7 @@ theorem roundTrip_exec (src : Fin T) (dst aux : Fin nd → Fin T) (ctr tmp cs cn
     by_cases hk7 : ∃ d, aux d = k
     · obtain ⟨d, rfl⟩ := hk7; rw [hsrc₃, ha]
     simp only [not_exists] at hk7
-    rw [hoth₃ k (by simp [hk1, hk2, hk3, hk4, hk5, hk6]) hk7]
+    rw [hoth₃ k (by simp [hk2, hk3, hk4, hk5, hk6]) hk7]
     dsimp only
     by_cases hk8 : ∃ d, dst d = k
     · obtain ⟨d, rfl⟩ := hk8; rw [(hds₂ d (List.mem_finRange d)).1, hd]

@@ -35,7 +35,6 @@ namespace IntegerMultBounds.MathlibTM2.Host
 
 open IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.Stack IntegerMultBounds.MathlibTM2.Node
 
-set_option linter.unusedSimpArgs false
 
 variable {T Q A : ℕ} {U : Type} {P : Type} (body : P → Pr P T Q A U)
 
@@ -141,7 +140,7 @@ theorem hornerIter_exec {w t₂ : Fin T} (hwt : w ≠ t₂) {n : ℕ} (bit : Boo
   | true =>
       have he₂ := Exec.act (body := body) (.push (.rt w) (fun _ => tick) .done)
         (mk v₁ { S with R := Function.update S.R w (List.replicate (n * 2) tick) })
-      simp only [Action.run, mk_var, mk_stk, get_rt, update_rt, store_mk, run_done] at he₂
+      simp only [Action.run, mk_var, mk_stk, get_rt, update_rt, store_mk] at he₂
       refine ⟨v₁, _, hu₁, ?_, Exec.cast (Exec.cond_true hsym' (Exec.seq he₁ he₂)) rfl ?_⟩
       · omega
       · congr 2

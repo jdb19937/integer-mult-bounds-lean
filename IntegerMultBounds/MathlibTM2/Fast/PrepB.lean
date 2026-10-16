@@ -25,8 +25,6 @@ open IntegerMultBounds IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.St
 open IntegerMultBounds.MathlibTM2.Fast.TableVM
 open IntegerMultBounds.Networks.Shared50ModularControl (prime)
 
-set_option linter.unusedSimpArgs false
-set_option linter.unusedSectionVars false
 
 noncomputable section
 
@@ -140,14 +138,14 @@ theorem preMaskCode_do {A W : ℕ} (st : TblSt 48 A) {s t : ℕ} (hs' : st.val 3
           PreMaskInv A s t (j + 1) ⟨Function.update s'.val 0 (j + 1), s'.acc⟩) ?_))
         (fun _ h => h) (by simp)
       · simp (config := { decide := true }) [tblFitsList, TblIns.fits, TblIns.exact,
-          Function.update_apply, h1, h4, h34]
+          h1, h4, h34]
         exact ⟨by omega, by nlinarith, by nlinarith⟩
       · have hq1 : (2 * t * (a + 1) + s) / (2 * s) = RowSelect.q s t (a + 1) := by
           unfold RowSelect.q; ring_nf
         refine ⟨by simp (config := { decide := true }) [tblExactList, TblIns.exact,
-            Function.update_apply, hj0],
+            hj0],
           by simp (config := { decide := true }) [tblExactList, TblIns.exact,
-            Function.update_apply, h35'], a + 1, ?_⟩
+            h35'], a + 1, ?_⟩
         simp (config := { decide := true }) only [tblExactList, TblIns.exact,
           Function.update_apply, List.cons_append, List.nil_append, ite_true, ite_false]
         refine ⟨by simp [h1], ?_, by simp [h3], by simp [h4], by simp [h6], by simp [h7],
@@ -182,7 +180,7 @@ theorem preHfCode_do {A W w : ℕ} (st : TblSt 48 A) {p : ℕ} (hp' : st.val 19 
     omega
   subst hs₁
   have h2 : (tblExactList A w ([.zero 1, .inc 1] ++ [.sub 19 1 2]) st).val 2 = p - 1 := by
-    simp (config := { decide := true }) [tblExactList, TblIns.exact, Function.update_apply, hp']
+    simp (config := { decide := true }) [tblExactList, TblIns.exact, hp']
   have hacc₁ : (tblExactList A w ([.zero 1, .inc 1] ++ [.sub 19 1 2]) st).acc = [] := by
     simp [tblExactList, TblIns.exact, hacc]
   refine TblDo.mono ((tblPow2_do (A := A) (W := W) (w := w) (c := (3 : Fin 48)) (e := 2) (i := 4)
@@ -192,8 +190,8 @@ theorem preHfCode_do {A W w : ℕ} (st : TblSt 48 A) {p : ℕ} (hp' : st.val 19 
   obtain ⟨h3, -, -, hacc₂⟩ := hs₂
   rw [h2] at h3
   refine TblDo.block _ _ (by simp [tblFitsList, TblIns.fits]) ?_
-  simp (config := { decide := true }) [tblExactList, TblIns.exact, Function.update_apply, h3,
-    hacc₂, hacc₁, hacc]
+  simp (config := { decide := true }) [tblExactList, TblIns.exact, h3,
+    hacc₂, hacc]
 
 end Half
 
@@ -366,19 +364,19 @@ theorem preB_hdr {hd : Fin 5 → Fin t₀} (hdi : Function.Injective hd)
       (t₁ := .inl (.inl .ac2)) (t₂ := .inl (.inl .nv)) (by simp [preHB]) _ ?_ ?_ ?_)
       (twRuns_uclear (body := body) htg (.inl (.inl .tL)) _))))))) ?_) ?_
   all_goals try (simp (config := { decide := true }) only [preStB, preHB, Function.update_apply,
-    Sum.elim_inl, Sum.inl.injEq, Sum.inr.injEq, reduceCtorEq, ite_false, ite_true, RsbR.cm.injEq,
+    Sum.elim_inl, Sum.inl.injEq, Sum.inr.injEq, reduceCtorEq, ite_false, ite_true, 
     RsbX.sw.injEq, hinj, hxs, hpr, htb, hxa, hwn, htL, hac2, hnv, hH, List.append_nil,
     List.length_replicate]; done)
   · simp (config := { decide := true }) only [preStB, preHB, Function.update_apply,
-      Sum.elim_inl, Sum.inl.injEq, Sum.inr.injEq, reduceCtorEq, ite_false, ite_true, RsbR.cm.injEq,
-      RsbX.sw.injEq, hinj, hxs, hpr, htb, hxa, hwn, htL, hac2, hnv, hH, List.append_nil,
+      Sum.elim_inl, Sum.inl.injEq, reduceCtorEq, ite_false, ite_true, 
+      hxs, hpr, htb, hxa, hwn, htL, List.append_nil,
       List.length_replicate]
     unfold preHdrCostB
     exact le_of_eq (by ring)
   · funext r
     rcases r with (r | x) | y
     · cases r <;> simp only [Function.update_apply, preStB, preHB, preBankB, Sum.elim_inl,
-        Sum.inl.injEq, reduceCtorEq, ite_false, ite_true, RsbR.cm.injEq]
+        Sum.inl.injEq, reduceCtorEq, ite_false, ite_true]
       all_goals simp [htL]
     · simp only [Function.update_apply, preStB, preHB, Sum.elim_inl, Sum.inl.injEq,
         reduceCtorEq, ite_false, ite_true]

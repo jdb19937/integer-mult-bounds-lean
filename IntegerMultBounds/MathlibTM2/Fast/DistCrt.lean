@@ -34,8 +34,6 @@ open IntegerMultBounds IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.St
   IntegerMultBounds.MathlibTM2.Layer
 open IntegerMultBounds.MathlibTM2.Mult IntegerMultBounds.MathlibTM2.Mult.Sizes IntegerMultBounds.MathlibTM2.Mult.Moduli IntegerMultBounds.MathlibTM2.Fast
 
-set_option linter.unusedSimpArgs false
-set_option linter.unusedSectionVars false
 
 /-! ### Values -/
 
@@ -246,7 +244,7 @@ theorem dsCC₁_do (hn : 2 ≤ n) {j : ℕ} (hj : j < d n) :
   have hM := pmModC_do (A := A) (W := pmW n) (w := w) (N := N n) (x₀ := pmX0 n)
     (a := numHalf n) (i := j) ((⟨dsCV n j, []⟩ : TblSt pmNV A).restrict ![16, 17, 11, 31, 36, 39])
     (by simp [dsCV, pmVal, pmNV]) (by simp [dsCV, pmVal, pmNV]) (by simp [dsCV, pmVal, pmNV])
-    (by simp [dsCV, pmVal, pmNV]) (pm_one_le_N n) hB
+    (by simp [dsCV, pmNV]) (pm_one_le_N n) hB
   have hA : TblDo A (pmW n) w (pmModC.rename ![16, 17, 11, 31, 36, 39]) ⟨dsCV n j, []⟩
       (fun s => s.acc = [] ∧ s.val 36 = dsS n j ∧
         ∀ x : Fin pmNV, x.val < 36 → s.val x = dsCV n j x) 9 := by
@@ -382,7 +380,7 @@ theorem dsCC₂_do (hbig : Big n) {j : ℕ} (hj : j < d n) :
     · simp only [tblExactList, TblIns.exact, List.cons_append, List.nil_append]
       congr 1
       funext x
-      fin_cases x <;> simp [σ2, σ1, dsCW, dsCV, Function.update_apply, Fin.ext_iff, pmNV, e1,
+      fin_cases x <;> simp [σ2, σ1, dsCW, dsCV, Fin.ext_iff, pmNV, e1,
         dsSP_succ, dsSig_succ, dsMsk_succ]
   exact ((hB1.seq fun s hs => hs ▸ (hI.seq fun s hs => hs ▸ hB2))).mono (fun _ h => h)
     (by norm_num)

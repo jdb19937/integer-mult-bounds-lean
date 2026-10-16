@@ -40,7 +40,6 @@ namespace IntegerMultBounds.MathlibTM2.Node
 
 open IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.Stack IntegerMultBounds.MathlibTM2 IntegerMultBounds.MathlibTM2.Host IntegerMultBounds.MathlibTM2.Layer.PackedXor
 
-set_option linter.unusedSimpArgs false
 
 /-! ### The index fields of the rectangle -/
 
@@ -93,7 +92,7 @@ lemma digit_nest8 (d : Fin 8 → ℕ) (hd : ∀ j, d j < 2 ^ idxLen n₀ n₁ n�
   have h7 : d 7 < 2 ^ rb := hd 7
   fin_cases j <;>
     simp [digit, fieldOff, idxLen, Finset.sum_filter, Fin.sum_univ_eight, nest8, div_pow_add',
-      peel, low, Nat.mod_eq_of_lt, *]
+      peel, Nat.mod_eq_of_lt, *]
 
 /-- Binary digits of a two-part number. -/
 lemma binBits_add_mul (p q a b : ℕ) (ha : a < 2 ^ p) :
@@ -597,14 +596,14 @@ theorem xorF_exec (cy cx cm t0 t1 t2 acc st : Fin T)
     rfl
   have hR₁2 : R₁ t2 = (binSyms L mm).reverse := by
     have := hout₁ 2
-    simp only [Matrix.cons_val_two, Matrix.cons_val_one, Matrix.cons_val_zero, Matrix.tail_cons,
+    simp only [Matrix.cons_val_two, Matrix.tail_cons,
       Matrix.head_cons] at this
     rw [this, colsR_map 2 _ ws (by simp [ws]), ht2, List.append_nil]
     rfl
   have hR₁a : R₁ acc = (binSyms L (y ^^^ (x &&& mm))).reverse ++ S.R acc := by
     have := hout₁ 3
-    simp only [Matrix.cons_val_three, Matrix.cons_val_two, Matrix.cons_val_one,
-      Matrix.cons_val_zero, Matrix.tail_cons, Matrix.head_cons] at this
+    simp only [Matrix.cons_val_three, 
+      Matrix.tail_cons, Matrix.head_cons] at this
     rw [this, ← map_xorBit]
   have hR₁y : R₁ cy = [] := hin₁ 0
   have hR₁x : R₁ cx = [] := hin₁ 1
@@ -617,63 +616,63 @@ theorem xorF_exec (cy cx cm t0 t1 t2 acc st : Fin T)
   refine ⟨v₄, by rw [hu₄, hu₃, hu₂, hu₁], Exec.cast (Exec.seq
     (Exec.act (body := body) (peekR cy) (mk v S)) (Exec.seq he₁ (Exec.seq he₂ (Exec.seq he₃ he₄))))
     ?_ ?_⟩
-  · simp [hR₃, hR₂, movedR, hR₁0, hR₁1, hR₁2, a1, a2, a3, a4, a5, a6, b1, b2, b3, b4, b5, c1, c2,
-      c3, c4, d1, d2, d3, e1, e2, f1, Ne.symm a1, Ne.symm a2, Ne.symm a3, Ne.symm a4, Ne.symm a5,
-      Ne.symm a6, Ne.symm b1, Ne.symm b2, Ne.symm b3, Ne.symm b4, Ne.symm b5, Ne.symm c1,
-      Ne.symm c2, Ne.symm c3, Ne.symm c4, Ne.symm d1, Ne.symm d2, Ne.symm d3, Ne.symm e1,
-      Ne.symm e2, Ne.symm f1]
+  · simp [hR₃, hR₂, movedR, hR₁0, hR₁1, hR₁2, b2, 
+      Ne.symm a1, Ne.symm a4, Ne.symm a5,
+      Ne.symm b4, 
+      Ne.symm d1, Ne.symm d2, Ne.symm e1,
+      ]
     ring
   · congr 2
     funext k
     by_cases hka : k = acc
     · subst hka
-      simp [hR₃, hR₂, movedR, hR₁a, a1, a2, a3, a4, a5, a6, b1, b2, b3, b4, b5, c1, c2, c3, c4, d1,
-          d2, d3, e1, e2, f1, Ne.symm a1, Ne.symm a2, Ne.symm a3, Ne.symm a4, Ne.symm a5,
-          Ne.symm a6, Ne.symm b1, Ne.symm b2, Ne.symm b3, Ne.symm b4, Ne.symm b5, Ne.symm c1,
-          Ne.symm c2, Ne.symm c3, Ne.symm c4, Ne.symm d1, Ne.symm d2, Ne.symm d3, Ne.symm e1,
+      simp [hR₃, hR₂, movedR, hR₁a, b2, c1, c2, 
+          Ne.symm a1, Ne.symm a2, Ne.symm a4, Ne.symm a5,
+          Ne.symm a6, Ne.symm b1, Ne.symm b4, Ne.symm b5, 
+          Ne.symm c4, Ne.symm d1, Ne.symm d2, Ne.symm d3, Ne.symm e1,
           Ne.symm e2, Ne.symm f1]
     by_cases hky : k = cy
     · subst hky
-      simp [hR₃, hR₂, movedR, hka, hR₁0, hR₁y, hy, a1, a2, a3, a4, a5, a6, b1, b2, b3, b4, b5, c1,
-          c2, c3, c4, d1, d2, d3, e1, e2, f1, Ne.symm a1, Ne.symm a2, Ne.symm a3, Ne.symm a4,
-          Ne.symm a5, Ne.symm a6, Ne.symm b1, Ne.symm b2, Ne.symm b3, Ne.symm b4, Ne.symm b5,
-          Ne.symm c1, Ne.symm c2, Ne.symm c3, Ne.symm c4, Ne.symm d1, Ne.symm d2, Ne.symm d3,
-          Ne.symm e1, Ne.symm e2, Ne.symm f1]
+      simp [hR₃, hR₂, movedR, hka, hR₁0, hR₁y, hy, a1, a2, a4, a5, b2, c1,
+          c2, Ne.symm a1, Ne.symm a2, Ne.symm a4,
+          Ne.symm a5, Ne.symm b1, Ne.symm b4, 
+          Ne.symm d1, Ne.symm d2, 
+          Ne.symm e1]
     by_cases hkx : k = cx
     · subst hkx
-      simp [hR₃, hR₂, movedR, hka, hky, hR₁1, hR₁x, hx, a1, a2, a3, a4, a5, a6, b1, b2, b3, b4, b5,
-          c1, c2, c3, c4, d1, d2, d3, e1, e2, f1, Ne.symm a1, Ne.symm a2, Ne.symm a3, Ne.symm a4,
-          Ne.symm a5, Ne.symm a6, Ne.symm b1, Ne.symm b2, Ne.symm b3, Ne.symm b4, Ne.symm b5,
-          Ne.symm c1, Ne.symm c2, Ne.symm c3, Ne.symm c4, Ne.symm d1, Ne.symm d2, Ne.symm d3,
-          Ne.symm e1, Ne.symm e2, Ne.symm f1]
+      simp [hR₃, hR₂, movedR, hka, hky, hR₁1, hR₁x, hx, b1, b2, b4, 
+          c1, c2, Ne.symm a2, Ne.symm a4,
+          Ne.symm a5, Ne.symm b1, Ne.symm b4, 
+          Ne.symm d1, Ne.symm d2, 
+          Ne.symm e1]
     by_cases hkm : k = cm
     · subst hkm
-      simp [hR₃, hR₂, movedR, hka, hky, hkx, hR₁2, hR₁m, hm, a1, a2, a3, a4, a5, a6, b1, b2, b3,
-          b4, b5, c1, c2, c3, c4, d1, d2, d3, e1, e2, f1, Ne.symm a1, Ne.symm a2, Ne.symm a3,
-          Ne.symm a4, Ne.symm a5, Ne.symm a6, Ne.symm b1, Ne.symm b2, Ne.symm b3, Ne.symm b4,
-          Ne.symm b5, Ne.symm c1, Ne.symm c2, Ne.symm c3, Ne.symm c4, Ne.symm d1, Ne.symm d2,
-          Ne.symm d3, Ne.symm e1, Ne.symm e2, Ne.symm f1]
+      simp [hR₃, hR₂, movedR, hka, hky, hkx, hR₁2, hR₁m, hm, b2, 
+          c1, c2, Ne.symm a1, 
+          Ne.symm a4, Ne.symm a5, Ne.symm b4,
+          Ne.symm d1, Ne.symm d2,
+          Ne.symm e1]
     by_cases hk0 : k = t0
     · subst hk0
-      simp [hR₃, hR₂, movedR, hka, hky, hkx, hkm, ht0, a1, a2, a3, a4, a5, a6, b1, b2, b3, b4, b5,
-          c1, c2, c3, c4, d1, d2, d3, e1, e2, f1, Ne.symm a1, Ne.symm a2, Ne.symm a3, Ne.symm a4,
-          Ne.symm a5, Ne.symm a6, Ne.symm b1, Ne.symm b2, Ne.symm b3, Ne.symm b4, Ne.symm b5,
-          Ne.symm c1, Ne.symm c2, Ne.symm c3, Ne.symm c4, Ne.symm d1, Ne.symm d2, Ne.symm d3,
-          Ne.symm e1, Ne.symm e2, Ne.symm f1]
+      simp [hR₃, hR₂, movedR, hka, hky, hkx, hkm, ht0, b2, 
+          c1, c2, d1, d2, Ne.symm a1, Ne.symm a2, Ne.symm a4,
+          Ne.symm a5, Ne.symm b1, Ne.symm b4, 
+          Ne.symm d1, Ne.symm d2, 
+          Ne.symm e1]
     by_cases hk1 : k = t1
     · subst hk1
-      simp [hR₃, hR₂, movedR, hka, hky, hkx, hkm, hk0, ht1, a1, a2, a3, a4, a5, a6, b1, b2, b3, b4,
-          b5, c1, c2, c3, c4, d1, d2, d3, e1, e2, f1, Ne.symm a1, Ne.symm a2, Ne.symm a3,
-          Ne.symm a4, Ne.symm a5, Ne.symm a6, Ne.symm b1, Ne.symm b2, Ne.symm b3, Ne.symm b4,
-          Ne.symm b5, Ne.symm c1, Ne.symm c2, Ne.symm c3, Ne.symm c4, Ne.symm d1, Ne.symm d2,
-          Ne.symm d3, Ne.symm e1, Ne.symm e2, Ne.symm f1]
+      simp [hR₃, hR₂, movedR, hka, hky, hkx, hkm, hk0, ht1, b2, 
+          c1, c2, e1, Ne.symm a1, Ne.symm a2, 
+          Ne.symm a5, Ne.symm b1, Ne.symm b4,
+          Ne.symm d2,
+          Ne.symm e1]
     by_cases hk2 : k = t2
     · subst hk2
-      simp [hR₃, hR₂, movedR, hka, hky, hkx, hkm, hk0, hk1, ht2, a1, a2, a3, a4, a5, a6, b1, b2,
-          b3, b4, b5, c1, c2, c3, c4, d1, d2, d3, e1, e2, f1, Ne.symm a1, Ne.symm a2, Ne.symm a3,
-          Ne.symm a4, Ne.symm a5, Ne.symm a6, Ne.symm b1, Ne.symm b2, Ne.symm b3, Ne.symm b4,
-          Ne.symm b5, Ne.symm c1, Ne.symm c2, Ne.symm c3, Ne.symm c4, Ne.symm d1, Ne.symm d2,
-          Ne.symm d3, Ne.symm e1, Ne.symm e2, Ne.symm f1]
+      simp [hR₃, hR₂, movedR, hka, hky, hkx, hkm, hk0, hk1, ht2, b2,
+          c1, c2, Ne.symm a1, Ne.symm a2, 
+          Ne.symm a4, Ne.symm b1, 
+          Ne.symm d1, 
+          ]
     simp only [hR₃, hR₂, movedR, Function.update_of_ne hka, Function.update_of_ne hky,
       Function.update_of_ne hkx, Function.update_of_ne hkm, Function.update_of_ne hk0,
       Function.update_of_ne hk1, Function.update_of_ne hk2]
@@ -1037,7 +1036,7 @@ theorem keyPassAt_exec {yF xF : Fin 8} (hyx : yF ≠ xF) {src acc ctrB tmp cm t0
   obtain ⟨v₂, hu₂, he₂⟩ := moveR_exec body acc src (Ne.symm h.src_acc) id v₁ { S with R := R₁ }
   set R₂ := movedR R₁ acc src id (R₁ acc) with hR₂
   have hR₂src : R₂ src = (keyedFrom (keyBitsAt yF xF len mm) 0 l).flatten := by
-    simp [hR₂, movedR, h.src_acc, hacc₁, hsrc₁]
+    simp [hR₂, movedR, hacc₁, hsrc₁]
   have hR₂acc : R₂ acc = [] := by simp [hR₂, movedR, Ne.symm h.src_acc]
   have hR₂f : ∀ k, k ≠ src → k ≠ acc → R₂ k = R₁ k := fun k hk1 hk2 => by
     simp [hR₂, movedR, hk1, hk2]

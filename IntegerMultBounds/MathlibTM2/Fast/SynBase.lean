@@ -50,10 +50,7 @@ open IntegerMultBounds IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.St
   IntegerMultBounds.MathlibTM2.Layer IntegerMultBounds.MathlibTM2.LayerMachine
 open IntegerMultBounds.MathlibTM2.Node hiding LReg
 
-set_option linter.unusedSimpArgs false
-set_option linter.constructorNameAsVariable false
 set_option maxHeartbeats 1000000
-set_option linter.unnecessarySeqFocus false
 
 /-! ### Registers -/
 
@@ -150,7 +147,7 @@ theorem synLayRg_injective : Function.Injective synLayRg := by
     first
     | rfl
     | exact h
-    | (simp only [Fin.ext_iff, Fin.val_ofNat] at h; omega)
+    | (simp only [Fin.ext_iff] at h; omega)
 
 theorem synLayRg_sw_injective : Function.Injective fun j => synLayRg (.sw j) :=
   fun _ _ h => by simpa using synLayRg_injective h
@@ -389,7 +386,7 @@ theorem lr_synMulR {a b c t₁ t₂ : Fin T} (hreg : [a, b, c, t₁, t₂].Nodup
   · funext k
     simp only [Φ, Function.update_apply]
     split_ifs <;> simp_all
-  · simp [synMulRCost, ht₁]
+  · simp [synMulRCost]
 
 /-- `x` becomes `k |x|` ticks, through the empty `t` and `t'`. -/
 def synMulIn (k : ℕ) (x t t' : Fin T) : Pr P T Q A U :=
@@ -472,7 +469,7 @@ theorem lr_synDivModR {x k q r t₁ t₂ t₃ : Fin T} (hreg : [x, k, q, r, t₁
     have er₂ : R₂ r = List.replicate (j % K + 1) tick := by
       simp [hR₂, hR₁, Function.update_apply, hrt₂, e0, List.replicate_succ]
     have et₂' : R₂ t₂ = List.replicate K tick := by
-      simp [hR₂, hR₁, Function.update_apply, hrt₂.symm, et₂]
+      simp [hR₂, hR₁, hrt₂.symm, et₂]
     rw [er₂, et₂', List.length_replicate, List.drop_replicate] at h3
     set R₃ := Function.update R₂ t₂ (List.replicate (K - (j % K + 1)) tick) with hR₃
     by_cases hlt : j % K + 1 < K
@@ -495,8 +492,8 @@ theorem lr_synDivModR {x k q r t₁ t₂ t₃ : Fin T} (hreg : [x, k, q, r, t₁
         simp only [hR₃, hR₂, hR₁, hR₀, Φ, Function.update_apply, hm, hd]
         clear hm hd hlt hne hjK
         split_ifs <;> simp_all [List.replicate_succ]
-      · simp only [hR₃, Function.update_self, List.length_replicate, hR₁, e0,
-          List.length_cons]
+      · simp only [hR₃, Function.update_self, List.length_replicate, 
+          ]
         omega
     · have hKe : j % K + 1 = K := by omega
       have he : R₃ t₂ = [] := by simp [hR₃]; omega
@@ -530,7 +527,7 @@ theorem lr_synDivModR {x k q r t₁ t₂ t₃ : Fin T} (hreg : [x, k, q, r, t₁
   · funext z
     simp only [Φ, Function.update_apply]
     split_ifs <;> simp_all
-  · simp [synDivModCost, ht₁]
+  · simp [synDivModCost]
 
 /-- Push a unary field of `|x|` ticks and then its separator onto `c` (the field reversed). -/
 def synFieldR (x c t : Fin T) : Pr P T Q A U := .seq (ucopy x c t) (synPush c topSep)
@@ -617,7 +614,7 @@ theorem synMoveUntil_loop {src dst : Fin T} (hsd : src ≠ dst) (mkr : Fin (A + 
         simp only [synMvStep, synPeekNe, Action.run, mk_var, mk_stk, get_rt, hS,
           List.cons_append, List.head?_cons, List.tail_cons, update_rt, store_mk,
           Function.update_of_ne hsd.symm, Option.getD_some]
-        simp only [Function.update_apply, ite_eq_right hsd, ite_eq_left rfl, ite_true, ↓reduceIte] at this ⊢
+        simp only [Function.update_apply, ite_eq_right hsd, ↓reduceIte] at this ⊢
         rw [this]
       obtain ⟨v', hu, he⟩ := ih { v with sym := some x, flag := decide (l ≠ []) }
         { S with
@@ -718,13 +715,13 @@ theorem lr_synStashL {pk : Fin T} (mkr : Fin (A + 4)) :
         intro y hy
         have hyx : y ≠ x := fun h => hd.1 (h ▸ hy)
         have hyp : y ≠ pk := fun h => hpk' (h ▸ hy)
-        simp [Function.update_apply, hyx, hyp]
+        simp [hyx, hyp]
       rw [synStk_congr mkr xs hag, synStashCost_congr xs hag] at h3
       refine lr_weaken body (h1.seq (h2.seq h3)) ?_ ?_
       · funext k
         simp only [synClr, synStk, Function.update_apply, List.mem_cons]
         by_cases hk : k = pk
-        · subst hk; simp [hxp.symm, hpk']
+        · subst hk; simp
         · by_cases hkx : k = x
           · subst hkx; simp [hk]
           · simp [hk, hkx]
@@ -739,7 +736,7 @@ theorem lr_synStash {pk : Fin T} (mkr : Fin (A + 4)) (xs : List (Fin T)) (hd : x
   have hag : ∀ y ∈ xs, Function.update R pk (mkr :: R pk) y = R y := by
     intro y hy
     have hyp : y ≠ pk := fun h => hpk (h ▸ hy)
-    simp [Function.update_apply, hyp]
+    simp [hyp]
   rw [synStk_congr mkr xs hag, synStashCost_congr xs hag] at h2
   refine lr_weaken body ((lr_push body pk mkr).seq h2) ?_ (by omega)
   funext k

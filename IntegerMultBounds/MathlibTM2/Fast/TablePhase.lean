@@ -42,7 +42,6 @@ values off the written variables. `tblPow2_kv` and `tblClog_kv` (`⌈log₂ N⌉
 namespace IntegerMultBounds.MathlibTM2.Fast.TableVM
 open IntegerMultBounds.MathlibTM2.Fast.TableNum
 
-set_option linter.unusedSimpArgs false
 
 /-- The comparison bit `[E < F]`. -/
 def tblSdNeg (E F : ℕ) : ℕ := if E < F then 1 else 0
@@ -196,11 +195,11 @@ theorem tblTaylor_do {A W w : ℕ} (st : TblSt 36 A) {Y q Q n : ℕ} (xneg : Boo
     calc 4 = 2 ^ 2 := by norm_num
       _ ≤ 2 ^ W := Nat.pow_le_pow_right (by norm_num) (by omega)
   refine TblDo.block _ _ ?_ ?_
-  · simp [tblSdL, tblFitsList, TblIns.fits, TblIns.exact, Function.update_apply, h0, h1, h2, h3,
-      hx1, hone1, tbl_sd_neg, tbl_sd_mag, tbl_sd_min]
+  · simp [tblSdL, tblFitsList, TblIns.fits, TblIns.exact, h0, h1, h2, h3,
+      hx1, hone1, tbl_sd_neg, tbl_sd_min]
     and_intros
     all_goals omega
-  · simp [tblSdL, tblExactList, TblIns.exact, Function.update_apply, h0, h1, h2, h3,
+  · simp [tblSdL, tblExactList, TblIns.exact, h0, h1, h2, h3,
       hx1, hone1, tbl_sd_neg, tbl_sd_mag, hpq1, hpQ1, hn1]
     obtain ⟨hxa, hxs⟩ := tbl_xor_val _ _ n13 hxb
     have m02 := tbl_sdMag_le (tblSum Y q Q 0 n) (tblSum Y q Q 2 n)
@@ -277,7 +276,7 @@ theorem tblRound_do {A W w : ℕ} (st : TblSt 5 A) (neg : Bool) {D d : ℕ}
       s.acc = st.acc) 3 := by
   have hb : neg.toNat ≤ 1 := Bool.toNat_le neg
   refine TblDo.block _ _ ?_ ?_
-  · simp [tblFitsList, TblIns.fits, TblIns.exact, h0, h1, h2, h3]
+  · simp [tblFitsList, TblIns.fits, TblIns.exact, h0, h1, h2]
     have : 1 ≤ 2 ^ d := Nat.one_le_two_pow
     omega
   · simp [tblExactList, TblIns.exact, h0, h1, h2, h3, tbl_round_signed]
@@ -296,7 +295,7 @@ theorem tblDisk_do {A W w : ℕ} (st : TblSt 5 A) (neg : Bool) {D p q : ℕ}
       tblSgn neg * (s.val 3 : ℤ) = ((2 ^ (p + 2) - 1) * (tblSgn neg * (D : ℤ))).tdiv (2 ^ (q + 2)) ∧
       s.acc = st.acc) 2 := by
   refine TblDo.block _ _ ?_ ?_
-  · simp [tblFitsList, TblIns.fits, TblIns.exact, h0, h1, h2]
+  · simp [tblFitsList, TblIns.fits, h0, h1]
     exact hW
   · have hv : (tblExactList A w ([.mul 1 0 3] ++ [.div 3 2 3]) st).val 3 =
         (2 ^ (p + 2) - 1) * D / 2 ^ (q + 2) := by

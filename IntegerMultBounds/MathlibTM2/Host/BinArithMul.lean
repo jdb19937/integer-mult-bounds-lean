@@ -25,7 +25,6 @@ namespace IntegerMultBounds.MathlibTM2.Host
 
 open IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.Stack IntegerMultBounds.MathlibTM2.Node
 
-set_option linter.unusedSimpArgs false
 
 variable {T Q A : ℕ} {U : Type} {P : Type} (body : P → Pr P T Q A U)
 
@@ -114,17 +113,17 @@ theorem bmul_exec {a b c s t tx ty tz cy : Fin T} (hreg : [a, b, c, s, t, tx, ty
   set R₁ := Function.update S.R s (S.R b ++ S.R s) with hR₁
   -- pad `s` with `La` high zeros
   obtain ⟨v₂, hu₂, he₂⟩ := bpad_exec body (a := s) (eR := a) (t₁ := tx) (t₂ := ty) (by regs_nodup)
-    hy v₁ { S with R := R₁ } (by simp [hR₁, hb, hs]) (by simp [hR₁, Function.update_of_ne, *, Ne.symm])
-    (by simp [hR₁, Function.update_of_ne, *, Ne.symm])
-  have hR₁a : R₁ a = binSyms La x := by simp [hR₁, Function.update_of_ne, *, Ne.symm]
+    hy v₁ { S with R := R₁ } (by simp [hR₁, hb, hs]) (by simp [Function.update_of_ne, *, Ne.symm])
+    (by simp [Function.update_of_ne, *, Ne.symm])
+  have hR₁a : R₁ a = binSyms La x := by simp [Function.update_of_ne, *]
   dsimp only at he₂
   rw [hR₁a, length_binSyms] at he₂
   set R₂ := Function.update R₁ s (binSyms W y) with hR₂
   -- `c := W` zeros
   obtain ⟨v₃, hu₃, he₃⟩ := bzero_exec body (wR := s) (c := c) (t := tx) (by regs_nodup) v₂
-    { S with R := R₂ } (by simp [hR₂, hR₁, Function.update_of_ne, *, Ne.symm])
+    { S with R := R₂ } (by simp [Function.update_of_ne, *, Ne.symm])
   have hR₂s : R₂ s = binSyms W y := by simp [hR₂]
-  have hR₂c : R₂ c = [] := by simp [hR₂, hR₁, Function.update_of_ne, *, Ne.symm]
+  have hR₂c : R₂ c = [] := by simp [Function.update_of_ne, *]
   dsimp only at he₃
   rw [hR₂s, length_binSyms, hR₂c, List.append_nil] at he₃
   set R₃ := Function.update R₂ c (binSyms W 0) with hR₃
@@ -132,7 +131,7 @@ theorem bmul_exec {a b c s t tx ty tz cy : Fin T} (hreg : [a, b, c, s, t, tx, ty
   let Ψ : ℕ → Regs T A := fun j =>
     Function.update (Function.update R₃ c (binSyms W (y * (x % 2 ^ j)))) s (binSyms W (2 ^ j * y))
   have hR₃a : R₃ a = binSyms La x := by
-    simp [hR₃, hR₂, hR₁, Function.update_of_ne, *, Ne.symm]
+    simp [Function.update_of_ne, *]
   have hp : SymSpec body (mulIter c s tx ty tz cy) a t (R₃ a) Ψ (12 * W + 17) := by
     intro j hj w S' hsym hS'
     rw [hR₃a, length_binSyms] at hj
@@ -146,21 +145,21 @@ theorem bmul_exec {a b c s t tx ty tz cy : Fin T} (hreg : [a, b, c, s, t, tx, ty
       (lt_of_lt_of_le (Nat.mul_lt_mul_of_lt_of_lt hy hm) (by rw [Nat.mul_comm]; exact hpow))
       (lt_of_lt_of_le (Nat.mul_lt_mul_of_pos_left hy (Nat.two_pow_pos j)) hpow)
       (x.testBit j) w S' (by rw [hsym, hbit])
-      (by rw [hS' c ‹a ≠ c›.symm ‹c ≠ t›]; simp [Ψ, Function.update_of_ne, *, Ne.symm])
+      (by rw [hS' c ‹a ≠ c›.symm ‹c ≠ t›]; simp [Ψ, Function.update_of_ne, *])
       (by rw [hS' s ‹a ≠ s›.symm ‹s ≠ t›]; simp [Ψ])
       (by rw [hS' tx ‹a ≠ tx›.symm ‹t ≠ tx›.symm]
-          simp [Ψ, hR₃, hR₂, hR₁, Function.update_of_ne, *, Ne.symm])
+          simp [Ψ, Function.update_of_ne, *, Ne.symm])
       (by rw [hS' ty ‹a ≠ ty›.symm ‹t ≠ ty›.symm]
-          simp [Ψ, hR₃, hR₂, hR₁, Function.update_of_ne, *, Ne.symm])
+          simp [Ψ, Function.update_of_ne, *, Ne.symm])
       (by rw [hS' tz ‹a ≠ tz›.symm ‹t ≠ tz›.symm]
-          simp [Ψ, hR₃, hR₂, hR₁, Function.update_of_ne, *, Ne.symm])
-    refine ⟨w', _, m, hw', hm', he, by simp [Function.update_of_ne, *, Ne.symm],
+          simp [Ψ, Function.update_of_ne, *, Ne.symm])
+    refine ⟨w', _, m, hw', hm', he, by simp [Function.update_of_ne, *],
       by simp [Function.update_of_ne, *, Ne.symm], fun k hka hkt => ?_⟩
     have hval : y * (x % 2 ^ j) + (x.testBit j).toNat * (2 ^ j * y) = y * (x % 2 ^ (j + 1)) := by
       rw [mod_two_pow_succ_testBit]; ring
     rw [hval, show 2 * (2 ^ j * y) = 2 ^ (j + 1) * y by ring]
     by_cases hkc : k = c
-    · subst hkc; simp [Ψ, Function.update_of_ne, *, Ne.symm]
+    · subst hkc; simp [Ψ, Function.update_of_ne, *]
     by_cases hks : k = s
     · subst hks; simp [Ψ]
     simp only [Function.update_of_ne hkc, Function.update_of_ne hks, hS' k hka hkt, Ψ]
@@ -173,7 +172,7 @@ theorem bmul_exec {a b c s t tx ty tz cy : Fin T} (hreg : [a, b, c, s, t, tx, ty
   rw [hR₃a, length_binSyms] at hm₄ hΨ₄
   rw [hR₃a] at ht₄
   -- restore `a` and clear `s`
-  have hR₃t : R₃ t = [] := by simp [hR₃, hR₂, hR₁, Function.update_of_ne, *, Ne.symm]
+  have hR₃t : R₃ t = [] := by simp [Function.update_of_ne, *, Ne.symm]
   rw [hR₃t, List.append_nil] at ht₄
   obtain ⟨v₅, hu₅, he₅⟩ := moveR_exec body t a ‹a ≠ t›.symm id v₄ { S with R := R₄ }
   obtain ⟨v₆, hu₆, -, he₆⟩ := bclear_exec body s v₅
@@ -196,14 +195,14 @@ theorem bmul_exec {a b c s t tx ty tz cy : Fin T} (hreg : [a, b, c, s, t, tx, ty
     · subst hks; simp [Function.update_of_ne, *, Ne.symm]
     rw [Function.update_of_ne hks]
     by_cases hka : k = a
-    · subst hka; simp [movedR, Function.update_of_ne, *, Ne.symm]
+    · subst hka; simp [movedR, Function.update_of_ne, *]
     by_cases hkt : k = t
     · subst hkt; simp [movedR, Function.update_of_ne, *, Ne.symm]
     simp only [movedR, Function.update_of_ne hka, Function.update_of_ne hkt]
     rw [hΨ₄ k hka hkt]
     by_cases hkc : k = c
     · subst hkc
-      simp [Ψ, Function.update_of_ne, *, Ne.symm, hW, Nat.mul_comm, Nat.add_comm]
-    simp [Ψ, hR₃, hR₂, hR₁, Function.update_of_ne, *, Ne.symm]
+      simp [Ψ, Function.update_of_ne, *, Nat.mul_comm, Nat.add_comm]
+    simp [Ψ, Function.update_of_ne, *]
 
 end IntegerMultBounds.MathlibTM2.Host

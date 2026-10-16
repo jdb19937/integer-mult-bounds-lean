@@ -23,7 +23,6 @@ namespace IntegerMultBounds.MathlibTM2.Fast
 open IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.Stack IntegerMultBounds.MathlibTM2
   IntegerMultBounds.MathlibTM2.Host IntegerMultBounds.MathlibTM2.Layer IntegerMultBounds.MathlibTM2.Node
 
-set_option linter.unusedSimpArgs false
 
 variable {T Q A : ℕ} {U : Type} {P : Type}
 
@@ -149,7 +148,7 @@ theorem band_pop_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠ �
     (Function.update (Function.update σ .vk VK) .ac2 (csyms A w y).reverse)
   refine ((RsbRuns.seq hdisj h₁ h₂).congr ?_).mono ?_
   · funext r; cases r <;> simp [hhv, hac2]
-  · simp [hwn]; omega
+  · simp; omega
 
 theorem band_col_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠ ι j) {w B : ℕ}
     (σ : RsbR → List (Fin (A + 4))) (col rest : List GaussianInt) (hcol : col.length = B)
@@ -226,7 +225,7 @@ theorem band_sub_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠ �
     (Function.update (Function.update σ₂ .ac (csyms A w (x - z))) .pr PR)
   refine ((RsbRuns.seq hdisj h₁ (RsbRuns.seq hdisj h₂ (RsbRuns.seq hdisj h₃ h₄))).congr ?_).mono ?_
   · funext r; cases r <;> simp [hσ₂, hnv, hac, hac2]
-  · simp [hσ₂, hwn, hac]; omega
+  · simp [hσ₂, hac]; omega
 
 /-- `B` pending updates against `B` products, rebuilding the records on `nv`. -/
 theorem band_subLoop_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠ ι j) (hA : 96 ≤ A)
@@ -260,7 +259,7 @@ theorem band_subLoop_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r �
         (List.zipWith (· - ·) rs zs).take j ++ [rs[j] - zs[j]] := by
       rw [List.take_add_one, List.getElem?_zipWith]
       simp [List.getElem?_eq_getElem hjr, List.getElem?_eq_getElem hjz]
-    funext r; cases r <;> simp [hΨ, htake, reverse_cstream_snoc]
+    funext r; cases r <;> simp [hΨ, htake]
   have h := rsb_rep_runs hrg hdisj (ra := .m2n) (rt := .tJ) (by decide) (bandSubP rg)
     (σ .m2n) Ψ _ hbody
   refine (h.congr_pre ?_ |>.congr ?_).mono ?_
@@ -347,7 +346,7 @@ theorem band_fwdStep_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r �
     (RsbRuns.seq hdisj h₈ (RsbRuns.seq hdisj h₉ h₁₀))))))))).congr ?_).mono ?_
   · funext r; cases r <;> simp [σ₉, σ₈, σ₅, σ₄, σ₃, σ₂, σ₁, hhv, hya, hxs, hpr, hnv, hdout,
       cstream_append]
-  · simp [σ₉, σ₈, σ₅, σ₄, σ₃, σ₂, σ₁, bandFwdStepCost, hhv, hya, hxs, hpr, hnv, hdout, hwn,
+  · simp [σ₉, σ₈, σ₅, σ₄, σ₃, σ₂, σ₁, bandFwdStepCost, hpr, hdout, 
       hcol, hprl, cstream, sum_zipWith_const, hrs]
     nlinarith
 
@@ -475,7 +474,7 @@ theorem band_recip_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠
     (RsbRuns.seq hdisj h₄ (RsbRuns.seq hdisj h₅ (RsbRuns.seq hdisj h₆
     (RsbRuns.seq hdisj h₇ h₈))))))).congr ?_).mono ?_
   · funext x; cases x <;> simp [σ₇, σ₆, σ₄, σ₃, σ₂, σ₁, hhv, hxa, hhc, hac2]
-  · simp [σ₇, σ₆, σ₄, σ₃, σ₂, σ₁, hhv, hxa, hhc, hac2, hwn, cstream]
+  · simp [σ₇, σ₆, σ₄, σ₃, σ₂, σ₁, hxa, hhc, cstream]
     omega
 
 /-- One backward column step. -/

@@ -43,7 +43,6 @@ open IntegerMultBounds.MathlibTM2.Mult IntegerMultBounds.MathlibTM2.Mult.Sizes I
 open IntegerMultBounds.Networks.Shared50ModularControl (prime)
 open Filter IntegerMultBounds.MathlibTM2.Cost
 
-set_option linter.unusedSimpArgs false
 
 attribute [local irreducible] mnT mnQ
 

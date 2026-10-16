@@ -52,7 +52,6 @@ open IntegerMultBounds.MathlibTM2.Fast.TableNum IntegerMultBounds.Resampling Int
 open IntegerMultBounds.Resampling.WeightTable (tableA tableE tableD rr)
 open IntegerMultBounds.MathlibTM2.Layer
 
-set_option linter.unusedSimpArgs false
 
 /-! ### Written variables -/
 
@@ -81,7 +80,7 @@ def TblCode.tblDsts : TblCode n → List (Fin n)
 
 theorem TblIns.run_keep (i : TblIns n) (st : TblSt n A) (x : Fin n) (hx : x ∉ i.tblDst) :
     (i.run A W w st).val x = st.val x := by
-  cases i <;> simp_all [TblIns.tblDst, TblIns.run, Function.update_of_ne, Ne.symm]
+  cases i <;> simp_all [TblIns.tblDst, TblIns.run, Function.update_of_ne]
 
 theorem TblBig.keep {c : TblCode n} {st st' : TblSt n A} {k : ℕ} (h : TblBig A W w c st st' k)
     (x : Fin n) (hx : x ∉ c.tblDsts) : st'.val x = st.val x := by
@@ -319,7 +318,7 @@ theorem tblDiagBody_do {A W w : ℕ} (st : TblSt 48 A) {s t α p j : ℕ}
   have hmmW : m * m < 2 ^ W := by omega
   have ha : α * α * (m * m) ≤ α * α * ((s + t) * (s + t)) := Nat.mul_le_mul_left _ (by omega)
   refine (TblDo.block _ _ ?_ rfl).seq (fun s₃ hs₃ => ?_)
-  · simp [tblFitsList, TblIns.fits, TblIns.exact, hAA]
+  · simp [tblFitsList, TblIns.fits, TblIns.exact]
     refine ⟨hmmW, ?_⟩
     rw [hs₁]; simp [tblExactList, TblIns.exact, hAA]
     omega
@@ -338,7 +337,7 @@ theorem tblDiagBody_do {A W w : ℕ} (st : TblSt 48 A) {s t α p j : ℕ}
   refine hexp.seq (K₂ := 2) (fun s₄ ⟨⟨hres, _, _, _, _, _, hacc₄⟩, hfr₄⟩ => ?_)
   have hres' : s₄.val 23 = expPiNat false p (α * α * (m * m)) (s * s) := hres
   have hacc₄' : s₄.acc = s₃.acc := hacc₄
-  refine TblDo.block _ _ (by simp [tblFitsList, TblIns.fits, TblIns.exact]) ?_
+  refine TblDo.block _ _ (by simp [tblFitsList, TblIns.fits]) ?_
   have hPw₄ : s₄.val kPw = 2 ^ (α * α + α * α) := by rw [hfr₄ _ (hfx _ (by decide)), gPw]
   have hZ₄ : s₄.val kZ = 0 := by rw [hfr₄ _ (hfx _ (by decide)), gZ]
   simp [tblExactList, TblIns.exact, hres', hPw₄, hZ₄, hacc₄', gacc]
@@ -433,7 +432,7 @@ theorem tblStreamD_do {A W w : ℕ} (st : TblSt 48 A) {s t α p : ℕ}
       (fun s'' ⟨hacc'', hk⟩ => ?_) le_rfl
     refine ⟨by rw [hk _ (by decide), hL'], by rw [hk _ (by decide), hS'], ?_, ?_, ?_, ?_, ?_, ?_,
       ?_, ?_, ?_, ?_⟩
-    · simp only [Inv]; rw [hacc'', hacc', tbl_range_flatMap_succ, List.append_assoc]
+    · simp only; rw [hacc'', hacc', tbl_range_flatMap_succ, List.append_assoc]
     all_goals
       dsimp only
       rwa [Function.update_of_ne (by decide), hk _ (by decide)]
@@ -627,7 +626,7 @@ theorem tblGaussBody_do {A W w : ℕ} (st : TblSt 48 A) {s t α p m k i : ℕ}
   refine hexp.seq (K₂ := 2) (fun s₃ ⟨⟨hres, _, _, _, _, _, hacc₃⟩, hfr₃⟩ => ?_)
   have hres' : s₃.val 23 = expPiNat true p (x * x) (α * α * (t * t)) := hres
   have hacc₃' : s₃.acc = s₂.acc := hacc₃
-  refine TblDo.block _ _ (by simp [tblFitsList, TblIns.fits, TblIns.exact]) ?_
+  refine TblDo.block _ _ (by simp [tblFitsList, TblIns.fits]) ?_
   have hAl₃ : s₃.val kAl = α := by rw [hfr₃ _ (hfx _ (by decide)), fAl]
   have hZ₃ : s₃.val kZ = 0 := by rw [hfr₃ _ (hfx _ (by decide)), fZ]
   rw [tbl_tableA_eq s t α p m k i ht hk hp, ← hx, ← tbl_pairs_red]
@@ -659,7 +658,7 @@ theorem tblRowABody_do {A W w : ℕ} (st : TblSt 48 A) {s t α p m k : ℕ}
     lt_of_le_of_lt (Nat.mul_le_mul_right _ (by nlinarith)) hW4
   have h2m : 2 * m + 1 < 2 ^ W := by omega
   refine (TblDo.block _ _ ?_ rfl).seq (fun s₁ hs₁ => ?_)
-  · simp [tblFitsList, TblIns.fits, TblIns.exact, hS, hK]; omega
+  · simp [tblFitsList, TblIns.fits, hS, hK]; omega
   subst hs₁
   set s₁ := tblExactList A w ([.mul kS aK aU] ++ [.mod aU kT aU]) st with hs₁
   have hv₁ : s₁.val aU = s * k % t ∧ s₁.val 18 = piN p ∧ s₁.val 19 = p ∧
@@ -679,7 +678,7 @@ theorem tblRowABody_do {A W w : ℕ} (st : TblSt 48 A) {s t α p m k : ℕ}
       hW).keep.mono (fun s'' ⟨hacc'', hkp⟩ => ?_) le_rfl
     refine ⟨by rw [hkp _ (by decide), hI'], by rw [hkp _ (by decide), hCnt'], ?_, ?_, ?_, ?_, ?_,
       ?_, ?_, ?_, ?_, ?_⟩
-    · simp only [Inv]; rw [hacc'', hacc', tbl_range_flatMap_succ, List.append_assoc]; rfl
+    · simp only; rw [hacc'', hacc', tbl_range_flatMap_succ, List.append_assoc]; rfl
     all_goals
       dsimp only
       rwa [Function.update_of_ne (by decide), hkp _ (by decide)]
@@ -759,7 +758,7 @@ theorem tblStreamA_do {A W w : ℕ} (st : TblSt 48 A) {s t α p m : ℕ}
       hW).keep.mono (fun s'' ⟨hacc'', hkp⟩ => ?_) le_rfl
     refine ⟨by rw [hkp _ (by decide), hK'], by rw [hkp _ (by decide), hT'], ?_, ?_, ?_, ?_, ?_,
       ?_, ?_, ?_, ?_, ?_, ?_⟩
-    · simp only [Inv]; rw [hacc'', hacc', tbl_range_flatMap_succ G k, List.append_assoc]
+    · simp only; rw [hacc'', hacc', tbl_range_flatMap_succ G k, List.append_assoc]
     all_goals
       dsimp only
       rwa [Function.update_of_ne (by decide), hkp _ (by decide)]
@@ -1088,7 +1087,7 @@ theorem tblOffNegBody_do {A W w : ℕ} (st : TblSt 48 A) {s t α p m ℓ i N : �
       have hts : t * s ≤ N * N := Nat.mul_le_mul (by omega) (by omega)
       refine TblDo.iteF (by rw [eL₂, e24]; exact hc) ((TblDo.block _ _ ?_ ?_).mono (fun _ h => h)
         (by simp))
-      · simp [tblFitsList, TblIns.fits, TblIns.exact, e24, eL₂, eT, eS]; omega
+      · simp [tblFitsList, TblIns.fits, TblIns.exact, e24, eL₂, eT]; omega
       · simp [tblExactList, TblIns.exact, e24, eL₂, eT, eS, c27, c18, c19, c21, c22, cAA, cZ, cacc,
           hR, tblOffR, show g ≤ ℓ by omega]
   refine hres.seq (fun s₃ ⟨g28, g27, g18, g19, g21, g22, gS, gAA, gZ, gacc⟩ => ?_)

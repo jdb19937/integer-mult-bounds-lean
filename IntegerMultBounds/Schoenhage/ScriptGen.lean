@@ -10,7 +10,6 @@ it leaves the forward or opposite round script on tape 91 and restores every oth
 @[expose] public section
 
 set_option maxRecDepth 100000
-set_option linter.unusedSimpArgs false
 
 namespace IntegerMultBounds.Schoenhage
 
@@ -163,8 +162,8 @@ theorem runs_hdrW {p d ℓ K w : ℕ} {ts : List ℕ} (hL : LayoutOK (2 ^ ℓ) t
     funext i; fin_cases i <;> first | rfl | tsimp [stH, hσ₅, hσ₄, hσ₃, hσ₂, hσ₁, hσ, stD, wIn, decoded, decStart,
       emp, hall, hdFull]
   · simp only [costH, clen, WTape.words, reg, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil,
-      List.length_cons, List.length_nil, List.reverse_nil, List.nil_append, List.append_nil, length_ones,
-      List.map_replicate, List.sum_replicate, smul_eq_mul, Nat.sub_self, List.replicate_zero, List.length_replicate,
+      List.length_nil, List.reverse_nil, List.nil_append, List.append_nil, length_ones,
+      List.map_replicate, List.sum_replicate, smul_eq_mul, Nat.sub_self, List.replicate_zero, 
       List.reverse_replicate]
     omega
 
@@ -276,7 +275,7 @@ theorem runs_finish {p d ℓ K w : ℕ} {ts : List ℕ} (S : List (List Bool)) :
     funext i; fin_cases i <;> first | rfl | tsimp [hσ₁₁, hσ₁₀, hσ₉, hσ₈, hσ₇, hσ₆, hσ₅, hσ₄, hσ₃, hσ₂, hσ₁, hσ,
       stH, wIn, decoded, decStart, emp]
   · simp only [costZ, clen, WTape.words, reg, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil,
-      List.length_cons, List.length_nil, List.reverse_nil, List.nil_append, List.append_nil, length_ones,
+      List.length_cons, List.length_nil, List.reverse_nil, List.nil_append, length_ones,
       List.map_reverse, List.sum_reverse]
     have := Nat.mod_le (ℓ - 1) K
     omega

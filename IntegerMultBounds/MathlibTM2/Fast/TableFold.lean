@@ -28,7 +28,6 @@ namespace IntegerMultBounds.MathlibTM2.Fast
 open IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.Fast.TableVM
 open IntegerMultBounds.Resampling.WeightTable IntegerMultBounds.MathlibTM2.Layer IntegerMultBounds.Resampling.WeightNat
 
-set_option linter.unusedSimpArgs false
 
 /-- The weight layout inside the fold layout. -/
 def tblFoldMap : Fin 48 → Fin 60 := Fin.castLE (by norm_num)
@@ -62,13 +61,13 @@ theorem tblFoldAt_do {A W w : ℕ} (st : TblSt 60 A) (src dst : Fin 60) {s m : �
   have v58 : s₁.val 58 = m / 2 := by
     simp [s₁, tblExactList, TblIns.exact, hsrc, h59, Function.update_of_ne h4.symm]
   have vd : s₁.val dst = m % 2 := by
-    simp [s₁, tblExactList, TblIns.exact, hsrc, h59, Function.update_of_ne h4, hs58]
+    simp [s₁, tblExactList, TblIns.exact, hsrc, h59, hs58]
   have v22 : s₁.val 22 = 1 := by
     simp [s₁, tblExactList, TblIns.exact, h22, Function.update_of_ne h2.symm,
-      Function.update_of_ne (show (22 : Fin 60) ≠ 58 by decide)]
+      ]
   have v34 : s₁.val 34 = s := by
     simp [s₁, tblExactList, TblIns.exact, hS, Function.update_of_ne h3.symm,
-      Function.update_of_ne (show (34 : Fin 60) ≠ 58 by decide)]
+      ]
   have vacc : s₁.acc = st.acc := by simp [s₁, tblExactList, TblIns.exact]
   have vkeep : ∀ x, x ≠ dst → x ≠ 58 → s₁.val x = st.val x := by
     intro x hx1 hx2

@@ -45,7 +45,6 @@ namespace IntegerMultBounds.MathlibTM2.Host
 
 open IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.Stack IntegerMultBounds.MathlibTM2
 
-set_option linter.unusedSimpArgs false
 
 variable {T Q A : ℕ} {U : Type} {P : Type} (body : P → Pr P T Q A U) {nf nr nd : ℕ}
 
@@ -284,7 +283,7 @@ theorem mergeIdxList_perm (B nb : ℕ) (l : List α) (hl : l.length = nb * B)
         congr 1
         congr 1
         funext j
-        simp only [Function.comp_apply, Nat.succ_eq_add_one]
+        simp only [Nat.succ_eq_add_one]
         rw [show k + (j + 1) = k + 1 + j by ring]
   have h0 : src 0 = fun d => blocksIdx l B nb cin i₀ d ++ rest d := by
     funext d

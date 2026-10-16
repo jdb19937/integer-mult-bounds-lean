@@ -56,7 +56,6 @@ namespace IntegerMultBounds.MathlibTM2.Host
 
 open IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.Stack IntegerMultBounds.MathlibTM2
 
-set_option linter.unusedSimpArgs false
 
 noncomputable section
 
@@ -378,8 +377,8 @@ lemma padStep_run_some {c c' s s' u : Fin T} (h : Dist5 c c' s s' u) (d : Fin (A
           (Function.update S.R c cs) c' (x :: S.R c')) s ys) s' (y :: S.R s')) u
           (y :: S.R u) } := by
   obtain ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9, h10⟩ := h
-  simp [padStep, peekR, Action.run, hc, hs, update_rt, Function.update_of_ne, h1, h2, h3, h4, h5,
-    h6, h7, h8, h9, h10, h1.symm, h2.symm, h3.symm, h4.symm, h5.symm, h6.symm, h7.symm, h8.symm,
+  simp [padStep, peekR, Action.run, hc, hs, update_rt, Function.update_of_ne, h1, h2, h3, h4, 
+    h1.symm, h2.symm, h3.symm, h4.symm, h5.symm, h6.symm, h7.symm, h8.symm,
     h9.symm, h10.symm]
 
 /-- One padding step with an empty source. -/
@@ -391,9 +390,9 @@ lemma padStep_run_none {c c' s s' u : Fin T} (h : Dist5 c c' s s' u) (d : Fin (A
         R := Function.update (Function.update (Function.update
           (Function.update S.R c cs) c' (x :: S.R c')) s []) u (d :: S.R u) } := by
   obtain ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9, h10⟩ := h
-  simp [padStep, peekR, Action.run, hc, hs, update_rt, Function.update_of_ne, h1, h2, h3, h4, h5,
-    h6, h7, h8, h9, h10, h1.symm, h2.symm, h3.symm, h4.symm, h5.symm, h6.symm, h7.symm, h8.symm,
-    h9.symm, h10.symm]
+  simp [padStep, peekR, Action.run, hc, hs, update_rt, Function.update_of_ne, h1, h2, h4, 
+    h1.symm, h2.symm, h4.symm, h5.symm, h7.symm, 
+    h9.symm]
 
 /-- Moving one copy of `d` across `List.replicate n d`. -/
 lemma replicate_append_cons {α : Type} (n : ℕ) (d : α) (l : List α) :
@@ -438,8 +437,8 @@ theorem padLoop {c c' s s' u : Fin T} (h : Dist5 c c' s s' u) (d : Fin (A + 4)) 
         obtain ⟨v', hu, he⟩ := ih [] { v with sym := none, flag := cs.head?.isSome } { S with
             R := Function.update (Function.update (Function.update
               (Function.update S.R c cs) c' (x :: S.R c')) s []) u (d :: S.R u) }
-          (by simp [Function.update_of_ne, h2, h4, h1, h2.symm, h4.symm, h1.symm])
-          (by simp [Function.update_of_ne, h9, h9.symm]) (by simp) rfl
+          (by simp [Function.update_of_ne, h2, h4, h1])
+          (by simp [Function.update_of_ne, h9]) (by simp) rfl
         refine ⟨v', hu, ?_⟩
         refine Exec.cast (Exec.loop_true (body := body) (f := (·.flag)) (by simpa using hf)
           (hrun ▸ Exec.act (body := body) (padStep c c' s s' u d) (mk v S)) he)
@@ -450,20 +449,20 @@ theorem padLoop {c c' s s' u : Fin T} (h : Dist5 c c' s s' u) (d : Fin (A + 4)) 
         by_cases k1 : k = c
         · rw [k1]; simp
         by_cases k2 : k = c'
-        · rw [k2]; simp [k1, h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, g1, g2, g3, g4, g5,
-            g6, g7, g8, g9, g10, hs, Function.update_of_ne, replicate_append_cons,
-            List.replicate_succ]
+        · rw [k2]; simp [h5, h7, g1, 
+            Function.update_of_ne, 
+            ]
         by_cases k3 : k = s
-        · rw [k3]; simp [k1, h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, g1, g2, g3, g4, g5,
-            g6, g7, g8, g9, g10, hs, Function.update_of_ne, replicate_append_cons,
-            List.replicate_succ]
+        · rw [k3]; simp [g2, g5,
+            
+            ]
         by_cases k4 : k = s'
-        · rw [k4]; simp [k1, h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, g1, g2, g3, g4, g5,
-            g6, g7, g8, g9, g10, hs, Function.update_of_ne, replicate_append_cons,
-            List.replicate_succ]
+        · rw [k4]; simp [h10, g3, 
+            g6, g8, Function.update_of_ne, 
+            ]
         by_cases k5 : k = u
-        · rw [k5]; simp [k1, h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, g1, g2, g3, g4, g5,
-            g6, g7, g8, g9, g10, hs, Function.update_of_ne, replicate_append_cons,
+        · rw [k5]; simp [g4, 
+            g7, g9, g10, replicate_append_cons,
             List.replicate_succ]
         · simp [k1, k2, k3, k4, k5, Function.update_of_ne]
       · have hrun := padStep_run_some (U := U) ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9, h10⟩ d
@@ -471,8 +470,8 @@ theorem padLoop {c c' s s' u : Fin T} (h : Dist5 c c' s s' u) (d : Fin (A + 4)) 
         obtain ⟨v', hu, he⟩ := ih ys { v with sym := some y, flag := cs.head?.isSome } { S with
             R := Function.update (Function.update (Function.update (Function.update
               (Function.update S.R c cs) c' (x :: S.R c')) s ys) s' (y :: S.R s')) u (y :: S.R u) }
-          (by simp [Function.update_of_ne, h2, h4, h1, h3, h2.symm, h4.symm, h1.symm, h3.symm])
-          (by simp [Function.update_of_ne, h9, h9.symm, h8, h8.symm])
+          (by simp [Function.update_of_ne, h2, h4, h1, h3])
+          (by simp [Function.update_of_ne, h9, h8])
           (by simpa using hl) rfl
         refine ⟨v', hu, ?_⟩
         refine Exec.cast (Exec.loop_true (body := body) (f := (·.flag)) (by simpa using hf)
@@ -484,21 +483,21 @@ theorem padLoop {c c' s s' u : Fin T} (h : Dist5 c c' s s' u) (d : Fin (A + 4)) 
         by_cases k1 : k = c
         · rw [k1]; simp
         by_cases k2 : k = c'
-        · rw [k2]; simp [k1, h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, g1, g2, g3, g4, g5,
-            g6, g7, g8, g9, g10, hs, Function.update_of_ne, replicate_append_cons,
-            List.replicate_succ]
+        · rw [k2]; simp [h5, h6, h7, g1, 
+            Function.update_of_ne, 
+            ]
         by_cases k3 : k = s
-        · rw [k3]; simp [k1, h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, g1, g2, g3, g4, g5,
-            g6, g7, g8, g9, g10, hs, Function.update_of_ne, replicate_append_cons,
-            List.replicate_succ]
+        · rw [k3]; simp [g2, g5,
+            
+            ]
         by_cases k4 : k = s'
-        · rw [k4]; simp [k1, h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, g1, g2, g3, g4, g5,
-            g6, g7, g8, g9, g10, hs, Function.update_of_ne, replicate_append_cons,
-            List.replicate_succ]
+        · rw [k4]; simp [h10, g3, 
+            g6, g8, Function.update_of_ne, 
+            ]
         by_cases k5 : k = u
-        · rw [k5]; simp [k1, h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, g1, g2, g3, g4, g5,
-            g6, g7, g8, g9, g10, hs, Function.update_of_ne, replicate_append_cons,
-            List.replicate_succ]
+        · rw [k5]; simp [g4, 
+            g7, g9, g10, 
+            ]
         · simp [k1, k2, k3, k4, k5, Function.update_of_ne]
 
 /-- Push onto register `t` a copy of register `s` padded with `d` to the length of register `c`,
@@ -537,10 +536,10 @@ theorem padCopy_exec {c s t c' s' u : Fin T} (h : Dist5 c c' s s' u) (htc : t �
   obtain ⟨v₄, hu₄, he₄⟩ := moveR_exec body u t htu.symm id v₃ S₃
   have l₁ : (S₁.R c').length = L := by simp [S₁, padRes, g1, hc', L]
   have l₂ : (S₂.R s').length = ls := by
-    simp [S₂, S₁, movedR, padRes, Function.update_of_ne, g3, g6, g8, hs', ls, h3, h6]
+    simp [S₂, S₁, movedR, padRes, Function.update_of_ne, g3, g6, g8, hs', ls]
   have l₃ : (S₃.R u).length = L := by
-    simp [S₃, S₂, S₁, movedR, padRes, Function.update_of_ne, g4, g7, g9, g10, hu, h4, h7, h9,
-      h10, L, ls]
+    simp [S₃, S₂, S₁, movedR, padRes, Function.update_of_ne, g4, g7, g9, g10, hu, 
+      L]
     omega
   refine ⟨v₄, hu₄.trans (hu₃.trans (hu₂.trans hu₁)), Exec.cast
     (Exec.seq (peekR_run c v S ▸ Exec.act (body := body) (peekR c) (mk v S))
@@ -550,28 +549,28 @@ theorem padCopy_exec {c s t c' s' u : Fin T} (h : Dist5 c c' s s' u) (htc : t �
     funext k
     simp only [S₃, S₂, S₁, movedR]
     by_cases k1 : k = c
-    · rw [k1]; simp [padRes, Function.update_of_ne, h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, g1,
-        g2, g3, g4, g5, g6, g7, g8, g9, g10, f1, f2, f3, f4, f5, hc']
+    · rw [k1]; simp [padRes, Function.update_of_ne, h2, h3, h4, g1,
+        g2, g3, g4, g5, g6, g7, g8, g9, g10, f1, hc']
     by_cases k2 : k = c'
-    · rw [k2]; simp [padRes, Function.update_of_ne, h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, g1,
-        g2, g3, g4, g5, g6, g7, g8, g9, g10, f1, f2, f3, f4, f5, hc']
+    · rw [k2]; simp [padRes, Function.update_of_ne, h5, h6, h7, g1,
+        g2, g3, g4, g5, g6, g7, g8, g9, g10, f3, hc']
     by_cases k3 : k = s
-    · rw [k3]; simp [padRes, Function.update_of_ne, h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, g1,
-        g2, g3, g4, g5, g6, g7, g8, g9, g10, f1, f2, f3, f4, f5, hs']
+    · rw [k3]; simp [padRes, Function.update_of_ne, h9, g1,
+        g2, g3, g4, g5, g6, g7, g8, g9, g10, f2, hs']
     by_cases k4 : k = s'
-    · rw [k4]; simp [padRes, Function.update_of_ne, h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, g1,
-        g2, g3, g4, g5, g6, g7, g8, g9, g10, f1, f2, f3, f4, f5, hs']
+    · rw [k4]; simp [padRes, Function.update_of_ne, h10, g1,
+        g2, g3, g4, g5, g6, g7, g8, g9, g10, f4, hs']
     by_cases k5 : k = u
-    · rw [k5]; simp [padRes, Function.update_of_ne, h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, g1,
-        g2, g3, g4, g5, g6, g7, g8, g9, g10, f1, f2, f3, f4, f5, hu]
+    · rw [k5]; simp [padRes, Function.update_of_ne, g1,
+        g2, g3, g4, g5, g6, g7, g8, g9, g10, f5, hu]
     by_cases k6 : k = t
     · rw [k6]
       have e1 : padRes S.R c c' s s' u d (S.R c) (S.R s) t = S.R t := by
         simp [padRes, htc, hts, htc', hts', htu]
       rw [Function.update_self, Function.update_self]
       have e2 : S₃.R u = (S.R s ++ List.replicate (L - ls) d).reverse := by
-        simp [S₃, S₂, S₁, movedR, padRes, Function.update_of_ne, g4, g7, g9, g10, hu, h4, h7,
-          h9, h10, L, ls]
+        simp [S₃, S₂, S₁, movedR, padRes, Function.update_of_ne, g4, g7, g9, g10, hu, 
+          L, ls]
       have e3 : S₃.R t = S.R t := by
         simp only [S₃, S₂, S₁, movedR, Function.update_of_ne hts, Function.update_of_ne hts',
           Function.update_of_ne htc, Function.update_of_ne htc', e1]
@@ -671,12 +670,12 @@ theorem layout_exec {rI rN rE s₁ s₂ s₃ xa xb xn : Fin T}
     by_cases k1 : k = rN
     · rw [k1]
       simp [S₇, S₆, S₅, S₄, S₃, S₂, S₁, Function.update_of_ne i1.symm,
-        Function.update_of_ne i7, Function.update_of_ne i8.symm, Function.update_of_ne n1.symm,
+        Function.update_of_ne i8.symm, Function.update_of_ne n1.symm,
         Function.update_of_ne n2.symm, hE, L, i7.symm]
     by_cases k2 : k = rI
     · rw [k2]
       simp [S₇, S₆, S₅, S₄, S₃, S₂, S₁, Function.update_of_ne i1.symm,
-        Function.update_of_ne i2.symm, Function.update_of_ne i3.symm, Function.update_of_ne i7, i7,
+        Function.update_of_ne i2.symm, Function.update_of_ne i3.symm, i7,
         padded, L, f]
     · simp [S₇, S₆, S₅, S₄, S₃, S₂, S₁, Function.update_of_ne k1, Function.update_of_ne k2]
 
@@ -890,7 +889,7 @@ theorem ssMul_exec (body : F → Pr F T Q A U) (ι : Fin 64 → Fin T) (hι : Fu
         ring
       · simp [S₁, Function.update_of_ne (i0 hc.1), Function.update_of_ne (i0 hc.2), hR]
     rw [hsum, show T + 12 * 64 + 5 = T + 773 by norm_num] at hn₂
-    simp only [List.length_append, length_binSyms, List.length_cons, List.length_nil]
+    simp only [length_binSyms]
     rw [ssCostBound, Nat.mul_add (T + 773)]
     generalize (T + 773) * SS.cleanBound m = X at *
     omega

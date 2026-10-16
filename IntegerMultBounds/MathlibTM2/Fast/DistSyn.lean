@@ -37,8 +37,6 @@ namespace IntegerMultBounds.MathlibTM2.Fast.TableVM
 open IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.Stack IntegerMultBounds.MathlibTM2.Node IntegerMultBounds.MathlibTM2.Host IntegerMultBounds.MathlibTM2.Layer IntegerMultBounds.MathlibTM2.Fast
   IntegerMultBounds.MathlibTM2.Mult.Rounds
 
-set_option linter.unusedSimpArgs false
-set_option linter.unusedSectionVars false
 
 variable {T Q A : ℕ} {U P : Type} {body : P → Pr P T Q A U}
 
@@ -152,8 +150,8 @@ theorem dsyParkP_runs {rg : TblR 40 → Fin T} {io : DsX → Fin T} (hrg : Funct
     · subst hk
       rw [Function.update_self, Function.update_self, hR₉, Function.update_self, e8z, e8o,
         dsy_rep3, dsyParkL]
-      simp only [List.replicate_one, List.singleton_append, List.cons_append, List.append_assoc,
-        List.append_nil, List.nil_append]
+      simp only [List.replicate_one, List.cons_append, List.append_assoc,
+        List.nil_append]
     · rw [Function.update_of_ne hk, Function.update_of_ne hk, hR₉, Function.update_of_ne hk]
       by_cases hk9 : k = rg (.z 9)
       · rw [hk9, Function.update_self, h9]
@@ -664,77 +662,77 @@ theorem dsySyn_runs (hA : 4 ≤ A) {rg : TblR 40 → Fin T} (hrg : Function.Inje
       ((l.map (dsyEnc A)).reverse).reverse.map (dsyH A) = l := fun l hl => by
     rw [List.reverse_reverse, dsyH_map hA l hl]
   -- B
-  obtain ⟨st₁, ⟨hinv₁, hacc₁⟩, hlt₁, s1⟩ := dsyPhase_runs (body := body) hrg (hor oB (by simp only [List.mem_cons, eq_self_iff_true, true_or, or_true]))
+  obtain ⟨st₁, ⟨hinv₁, hacc₁⟩, hlt₁, s1⟩ := dsyPhase_runs (body := body) hrg (hor oB (by simp only [List.mem_cons, true_or, or_true]))
     wl nl hwll hnll h1W (dsyCodeB_do (W := W) ⟨st₀.val, []⟩ (hinv₀.reacc []) hℓW (by omega)) hlt₀
     (dsOv rg R₀ (tblRho W wl nl ⟨st₀.val, []⟩)) (fun r => dsOv_rg hrg _ _ r)
   simp only [List.append_nil] at hacc₁
-  rw [hacc₁, hrep, dsOv_off _ _ (hor oB (by simp only [List.mem_cons, eq_self_iff_true, true_or, or_true])), l0 _ ‹oPark ≠ oB›.symm,
-    dsOv_update _ _ (hor oB (by simp only [List.mem_cons, eq_self_iff_true, true_or, or_true])), dsOv_dsOv] at s1
+  rw [hacc₁, hrep, dsOv_off _ _ (hor oB (by simp only [List.mem_cons, true_or, or_true])), l0 _ ‹oPark ≠ oB›.symm,
+    dsOv_update _ _ (hor oB (by simp only [List.mem_cons, true_or, or_true])), dsOv_dsOv] at s1
   set R₁ := Function.update R₀ oB (List.replicate (layB ℓ K) tick ++ R oB) with hR₁
   have l1 : ∀ k, k ≠ oPark → k ≠ oB → R₁ k = R k := fun k h0 h1 => by
     rw [hR₁, Function.update_of_ne h1, l0 _ h0]
   have hc₁ : st₁.acc.length ≤ K := by rw [hacc₁, List.length_replicate]; exact H.b_lt.le
   -- Lg
-  obtain ⟨st₂, ⟨hinv₂, hacc₂⟩, hlt₂, s2⟩ := dsyPhase_runs (body := body) hrg (hor oLg (by simp only [List.mem_cons, eq_self_iff_true, true_or, or_true]))
+  obtain ⟨st₂, ⟨hinv₂, hacc₂⟩, hlt₂, s2⟩ := dsyPhase_runs (body := body) hrg (hor oLg (by simp only [List.mem_cons, true_or, or_true]))
     wl nl hwll hnll h1W (dsyCodeLg_do (W := W) ⟨st₁.val, []⟩ (hinv₁.reacc []) hNW2 hDL) hlt₁
     (dsOv rg R₁ (tblRho W wl nl ⟨st₁.val, []⟩)) (fun r => dsOv_rg hrg _ _ r)
   simp only [List.append_nil] at hacc₂
-  rw [hacc₂, hrep, hLg, dsOv_off _ _ (hor oLg (by simp only [List.mem_cons, eq_self_iff_true, true_or, or_true])), l1 _ ‹oPark ≠ oLg›.symm ‹oB ≠ oLg›.symm,
-    dsOv_update _ _ (hor oLg (by simp only [List.mem_cons, eq_self_iff_true, true_or, or_true])), dsOv_dsOv] at s2
+  rw [hacc₂, hrep, hLg, dsOv_off _ _ (hor oLg (by simp only [List.mem_cons, true_or, or_true])), l1 _ ‹oPark ≠ oLg›.symm ‹oB ≠ oLg›.symm,
+    dsOv_update _ _ (hor oLg (by simp only [List.mem_cons, true_or, or_true])), dsOv_dsOv] at s2
   set R₂ := Function.update R₁ oLg (List.replicate (layLongs es ℓ).length tick ++ R oLg) with hR₂
   have l2 : ∀ k, k ≠ oPark → k ≠ oB → k ≠ oLg → R₂ k = R k := fun k h0 h1 h2 => by
     rw [hR₂, Function.update_of_ne h2, l1 _ h0 h1]
   have hc₂ : st₂.acc.length ≤ N := by rw [hacc₂, List.length_replicate]; omega
   -- L
-  obtain ⟨st₃, ⟨hinv₃, hacc₃⟩, hlt₃, s3⟩ := dsyPhase_runs (body := body) hrg (hor oL (by simp only [List.mem_cons, eq_self_iff_true, true_or, or_true]))
+  obtain ⟨st₃, ⟨hinv₃, hacc₃⟩, hlt₃, s3⟩ := dsyPhase_runs (body := body) hrg (hor oL (by simp only [List.mem_cons, true_or, or_true]))
     wl nl hwll hnll h1W (dsyCodeL_do (W := W) ⟨st₂.val, []⟩ (hinv₂.reacc []) hℓW) hlt₂
     (dsOv rg R₂ (tblRho W wl nl ⟨st₂.val, []⟩)) (fun r => dsOv_rg hrg _ _ r)
   simp only [List.append_nil] at hacc₃
-  rw [hacc₃, hrep, dsOv_off _ _ (hor oL (by simp only [List.mem_cons, eq_self_iff_true, true_or, or_true])),
+  rw [hacc₃, hrep, dsOv_off _ _ (hor oL (by simp only [List.mem_cons, true_or, or_true])),
     l2 _ ‹oPark ≠ oL›.symm ‹oB ≠ oL›.symm ‹oLg ≠ oL›.symm,
-    dsOv_update _ _ (hor oL (by simp only [List.mem_cons, eq_self_iff_true, true_or, or_true])), dsOv_dsOv] at s3
+    dsOv_update _ _ (hor oL (by simp only [List.mem_cons, true_or, or_true])), dsOv_dsOv] at s3
   set R₃ := Function.update R₂ oL (List.replicate ℓ tick ++ R oL) with hR₃
   have l3 : ∀ k, k ≠ oPark → k ≠ oB → k ≠ oLg → k ≠ oL → R₃ k = R k := fun k h0 h1 h2 h3 => by
     rw [hR₃, Function.update_of_ne h3, l2 _ h0 h1 h2]
   have hc₃ : st₃.acc.length ≤ ℓ := by rw [hacc₃, List.length_replicate]
   -- Nr
-  obtain ⟨st₄, ⟨hinv₄, hacc₄⟩, hlt₄, s4⟩ := dsyPhase_runs (body := body) hrg (hor oNr (by simp only [List.mem_cons, eq_self_iff_true, true_or, or_true]))
+  obtain ⟨st₄, ⟨hinv₄, hacc₄⟩, hlt₄, s4⟩ := dsyPhase_runs (body := body) hrg (hor oNr (by simp only [List.mem_cons, true_or, or_true]))
     wl nl hwll hnll h1W (dsyCodeNr_do (W := W) ⟨st₃.val, []⟩ (hinv₃.reacc []) hNW2 hℓW hDL) hlt₃
     (dsOv rg R₃ (tblRho W wl nl ⟨st₃.val, []⟩)) (fun r => dsOv_rg hrg _ _ r)
   simp only [List.append_nil] at hacc₄
-  rw [hacc₄, hrep, dsOv_off _ _ (hor oNr (by simp only [List.mem_cons, eq_self_iff_true, true_or, or_true])),
+  rw [hacc₄, hrep, dsOv_off _ _ (hor oNr (by simp only [List.mem_cons, true_or, or_true])),
     l3 _ ‹oPark ≠ oNr›.symm ‹oB ≠ oNr›.symm ‹oLg ≠ oNr›.symm ‹oL ≠ oNr›.symm,
-    dsOv_update _ _ (hor oNr (by simp only [List.mem_cons, eq_self_iff_true, true_or, or_true])), dsOv_dsOv] at s4
+    dsOv_update _ _ (hor oNr (by simp only [List.mem_cons, true_or, or_true])), dsOv_dsOv] at s4
   set R₄ := Function.update R₃ oNr (List.replicate (dsyNr N D ℓ) tick ++ R oNr) with hR₄
   have l4 : ∀ k, k ≠ oPark → k ≠ oB → k ≠ oLg → k ≠ oL → k ≠ oNr → R₄ k = R k :=
     fun k h0 h1 h2 h3 h4 => by rw [hR₄, Function.update_of_ne h4, l3 _ h0 h1 h2 h3]
   have hc₄ : st₄.acc.length ≤ ℓ := by
     rw [hacc₄, List.length_replicate]; unfold dsyNr; split_ifs <;> omega
   -- the record
-  obtain ⟨st₅, ⟨hinv₅, hacc₅⟩, hlt₅, s5⟩ := dsyPhase_runs (body := body) hrg (hor oRec (by simp only [List.mem_cons, eq_self_iff_true, true_or, or_true]))
+  obtain ⟨st₅, ⟨hinv₅, hacc₅⟩, hlt₅, s5⟩ := dsyPhase_runs (body := body) hrg (hor oRec (by simp only [List.mem_cons, true_or, or_true]))
     wl nl hwll hnll h1W (dsyCodeRec_do (W := W) H hE ⟨st₄.val, []⟩ (hinv₄.reacc []) hNW hℓW) hlt₄
     (dsOv rg R₄ (tblRho W wl nl ⟨st₄.val, []⟩)) (fun r => dsOv_rg hrg _ _ r)
   simp only [List.append_nil] at hacc₅
-  rw [hacc₅, hlist _ (dsy_mem_topRec es), dsOv_off _ _ (hor oRec (by simp only [List.mem_cons, eq_self_iff_true, true_or, or_true])),
+  rw [hacc₅, hlist _ (dsy_mem_topRec es), dsOv_off _ _ (hor oRec (by simp only [List.mem_cons, true_or, or_true])),
     l4 _ ‹oPark ≠ oRec›.symm ‹oB ≠ oRec›.symm ‹oLg ≠ oRec›.symm ‹oL ≠ oRec›.symm
       ‹oNr ≠ oRec›.symm,
-    dsOv_update _ _ (hor oRec (by simp only [List.mem_cons, eq_self_iff_true, true_or, or_true])), dsOv_dsOv] at s5
+    dsOv_update _ _ (hor oRec (by simp only [List.mem_cons, true_or, or_true])), dsOv_dsOv] at s5
   set R₅ := Function.update R₄ oRec (topRec es ++ R oRec) with hR₅
   have l5 : ∀ k, k ≠ oPark → k ≠ oB → k ≠ oLg → k ≠ oL → k ≠ oNr → k ≠ oRec → R₅ k = R k :=
     fun k h0 h1 h2 h3 h4 h5 => by rw [hR₅, Function.update_of_ne h5, l4 _ h0 h1 h2 h3 h4]
   have hc₅ : st₅.acc.length ≤ D * (ℓ + 1) := by
     rw [hacc₅, List.length_reverse, List.length_map]; exact dsy_length_topRec_le H
   -- the positions
-  obtain ⟨st₆, ⟨hinv₆, hacc₆⟩, hlt₆, s6⟩ := dsyPhase_runs (body := body) hrg (hor oPos (by simp only [List.mem_cons, eq_self_iff_true, true_or, or_true]))
+  obtain ⟨st₆, ⟨hinv₆, hacc₆⟩, hlt₆, s6⟩ := dsyPhase_runs (body := body) hrg (hor oPos (by simp only [List.mem_cons, true_or, or_true]))
     wl nl hwll hnll h1W (dsyCodePos_do (W := W) H ⟨st₅.val, []⟩ (hinv₅.reacc []) hW1 hNW) hlt₅
     (dsOv rg R₅ (tblRho W wl nl ⟨st₅.val, []⟩)) (fun r => dsOv_rg hrg _ _ r)
   simp only [List.append_nil] at hacc₆
   have hposeq : twPosReg A N (dsyPos es ℓ K) = twPosReg A N (twPosL (layPerm es ℓ K)) :=
     dsyPosReg_congr N _ _ fun k hk => dsyPos_eq H hk
-  rw [hacc₆, hlist _ (dsy_mem_twPosReg _ _), hposeq, dsOv_off _ _ (hor oPos (by simp only [List.mem_cons, eq_self_iff_true, true_or, or_true])),
+  rw [hacc₆, hlist _ (dsy_mem_twPosReg _ _), hposeq, dsOv_off _ _ (hor oPos (by simp only [List.mem_cons, true_or, or_true])),
     l5 _ ‹oPark ≠ oPos›.symm ‹oB ≠ oPos›.symm ‹oLg ≠ oPos›.symm ‹oL ≠ oPos›.symm
       ‹oNr ≠ oPos›.symm ‹oRec ≠ oPos›.symm,
-    dsOv_update _ _ (hor oPos (by simp only [List.mem_cons, eq_self_iff_true, true_or, or_true])), dsOv_dsOv] at s6
+    dsOv_update _ _ (hor oPos (by simp only [List.mem_cons, true_or, or_true])), dsOv_dsOv] at s6
   have hc₆ : st₆.acc.length ≤ N * N := by
     rw [hacc₆, List.length_reverse, List.length_map, hposeq,
       dsy_length_twPosReg N _ (fun k hk => (twPosL_lt _ k hk).le)]

@@ -30,8 +30,6 @@ open IntegerMultBounds IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.St
   IntegerMultBounds.MathlibTM2.Layer
 open IntegerMultBounds.MathlibTM2.Mult IntegerMultBounds.MathlibTM2.Mult.Sizes IntegerMultBounds.MathlibTM2.Mult.Moduli IntegerMultBounds.MathlibTM2.Fast Filter
 
-set_option linter.unusedSimpArgs false
-set_option linter.unusedSectionVars false
 
 /-- The step bound of the width program: `w = dsW n` by a code of at most `15` atoms and
 `Wt = dsWW n` by a code of at most `43` atoms, each pushed in unary. -/

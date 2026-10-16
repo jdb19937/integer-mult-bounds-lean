@@ -31,9 +31,8 @@ every padded length up to `N + 1`. -/
 noncomputable def bridgeTime (C₁ C₂ : ℕ) (total : ℕ → ℝ) (N : ℕ) : ℕ :=
   C₁ * (N + 1) + C₂ * ((Finset.range (N + 2)).sup fun n => ⌈total n⌉₊)
 
-set_option linter.unusedVariables false in
 /-- Each `total n` with `n ≤ N + 1` is below the supremum term of `bridgeTime`. -/
-lemma le_bridgeTime_sup (C₁ C₂ : ℕ) (total : ℕ → ℝ) {n N : ℕ} (hn : n ≤ N + 1) :
+lemma le_bridgeTime_sup (_C₁ _C₂ : ℕ) (total : ℕ → ℝ) {n N : ℕ} (hn : n ≤ N + 1) :
     ⌈total n⌉₊ ≤ (Finset.range (N + 2)).sup fun n => ⌈total n⌉₊ :=
   Finset.le_sup (f := fun n => ⌈total n⌉₊) (Finset.mem_range.2 (by omega))
 
@@ -128,10 +127,9 @@ lemma one_le_log_of_three_le {N : ℕ} (hN : 3 ≤ N) : 1 ≤ Real.log N := by
   have := Real.log_le_log (Real.exp_pos 1) (by linarith : Real.exp 1 ≤ N)
   rwa [Real.log_exp] at this
 
-set_option linter.unusedVariables false in
 /-- The bridge time is `O(N (log N)^(1-κ))` when the multitape time is eventually
 `O(targetTime κ)`, for `0 < κ ≤ 1`. -/
-theorem isBigO_bridgeTime (C₁ C₂ : ℕ) (total : ℕ → ℝ) {κ : ℝ} (hκ : 0 < κ) (hκ1 : κ ≤ 1)
+theorem isBigO_bridgeTime (C₁ C₂ : ℕ) (total : ℕ → ℝ) {κ : ℝ} (_hκ : 0 < κ) (hκ1 : κ ≤ 1)
     {C : ℝ} {n₀ : ℕ} (hC : ∀ n, n₀ ≤ n → total n ≤ C * targetTime κ n) :
     (fun N : ℕ => (bridgeTime C₁ C₂ total N : ℝ)) =O[atTop]
       fun N : ℕ => (N : ℝ) * Real.log N ^ (1 - κ) := by

@@ -54,8 +54,6 @@ open IntegerMultBounds IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.St
 open IntegerMultBounds.MathlibTM2.Mult IntegerMultBounds.MathlibTM2.Mult.Sizes IntegerMultBounds.MathlibTM2.Mult.Moduli
 open IntegerMultBounds.MathlibTM2.Fast IntegerMultBounds.MathlibTM2.Fast.ResampA IntegerMultBounds.MathlibTM2.Fast.ChirpSt
 
-set_option linter.unusedSimpArgs false
-set_option linter.unusedSectionVars false
 
 /-- The registers of the distribution machine off the parameter layout: the inputs `uW`, `uw`,
 the outputs, and the work registers `uD`, `tm`, `xT`, `xS`. -/
@@ -412,24 +410,24 @@ theorem ds_phase2 (hrg : Function.Injective rg) (hio : Function.Injective io)
   -- `B = w r`, `W_L`
   have v1 := ds_umul (body := body) (a := io .uw) (b := io .rR) (c := io .lB) (t₁ := io .tm)
     (t₂ := io .xT) (by simp [List.nodup_cons, hio.eq_iff]) (dsOv rg R₇ ρ)
-    (by rw [dsOv_off _ _ (ho .tm)]; simp [R₇, R₆, R₅, R₄, R₃, R₂, R₁, Function.update_apply,
+    (by rw [dsOv_off _ _ (ho .tm)]; simp [R₇, R₆, R₅, R₄, R₃, R₂, R₁, 
       hio.eq_iff, hR0])
-    (by rw [dsOv_off _ _ (ho .xT)]; simp [R₇, R₆, R₅, R₄, R₃, R₂, R₁, Function.update_apply,
+    (by rw [dsOv_off _ _ (ho .xT)]; simp [R₇, R₆, R₅, R₄, R₃, R₂, R₁, 
       hio.eq_iff, hR0])
   have euw : (dsOv rg R₇ ρ (io .uw)).length = w := by
-    rw [dsOv_off _ _ (ho .uw)]; simp [R₇, R₆, R₅, R₄, R₃, R₂, R₁, Function.update_apply,
+    rw [dsOv_off _ _ (ho .uw)]; simp [R₇, R₆, R₅, R₄, R₃, R₂, R₁, 
       hio.eq_iff, huw]
   have erR : (dsOv rg R₇ ρ (io .rR)).length = r n := by
-    rw [dsOv_off _ _ (ho .rR)]; simp [R₇, R₆, R₅, R₄, R₃, R₂, R₁, Function.update_apply,
+    rw [dsOv_off _ _ (ho .rR)]; simp [R₇, R₆, R₅, R₄, R₃, R₂, R₁, 
       hio.eq_iff, hR0, dsV1, pmNV, pmVal]
   rw [euw, erR, dsOv_off _ _ (ho .lB), dsOv_update _ _ (ho .lB)] at v1
   set R₈ := Function.update R₇ (io .lB) (List.replicate (w * r n) tick ++ R₇ (io .lB))
   have v2 := ds_ucopy (body := body) (a := io .lB) (b := io .lW) (t := io .tm) (hne (by decide))
     (hne (by decide)) (hne (by decide)) (dsOv rg R₈ ρ)
-    (by rw [dsOv_off _ _ (ho .tm)]; simp [R₈, R₇, R₆, R₅, R₄, R₃, R₂, R₁, Function.update_apply,
+    (by rw [dsOv_off _ _ (ho .tm)]; simp [R₈, R₇, R₆, R₅, R₄, R₃, R₂, R₁, 
       hio.eq_iff, hR0])
   have elB : (dsOv rg R₈ ρ (io .lB)).length = w * r n := by
-    rw [dsOv_off _ _ (ho .lB)]; simp [R₈, R₇, R₆, R₅, R₄, R₃, R₂, R₁, Function.update_apply,
+    rw [dsOv_off _ _ (ho .lB)]; simp [R₈, R₇, R₆, R₅, R₄, R₃, R₂, R₁, 
       hio.eq_iff, hR0]
   rw [elB, dsOv_off _ _ (ho .lW), dsOv_update _ _ (ho .lW)] at v2
   set R₉ := Function.update R₈ (io .lW) (List.replicate (w * r n) tick ++ R₈ (io .lW))
@@ -439,11 +437,11 @@ theorem ds_phase2 (hrg : Function.Injective rg) (hio : Function.Injective io)
     tick ++ R₉ (io .lW))
   -- `E`
   have elW : (R₁₀ (io .lW)).length = dsWL n w := by
-    simp [R₁₀, R₉, R₈, R₇, R₆, R₅, R₄, R₃, R₂, R₁, Function.update_apply, hio.eq_iff, hR0, dsWL]
+    simp [R₁₀, R₉, R₈, R₇, R₆, R₅, R₄, R₃, R₂, R₁, hio.eq_iff, hR0, dsWL]
     ring
   have t4 := ds_stepB (body := body) hrg (ho .lE) (ho .lW) (hne (by decide)) wl hwl
     (dsCE_do (A := A) (w' := pmW n) (n := n) (Wt := Wt) (w := w) hn) hσ0 h1 hWL R₁₀
-    (by simp [R₁₀, R₉, R₈, R₇, R₆, R₅, R₄, R₃, R₂, R₁, Function.update_apply, hio.eq_iff, hR0])
+    (by simp [R₁₀, R₉, R₈, R₇, R₆, R₅, R₄, R₃, R₂, R₁, hio.eq_iff, hR0])
     elW
   set R₁₁ := Function.update R₁₀ (io .lE) (binSyms (dsWL n w) (dsE n))
   -- `topN w`
@@ -457,7 +455,7 @@ theorem ds_phase2 (hrg : Function.Injective rg) (hio : Function.Injective io)
     funext k
     by_cases hk : ∃ x, io x = k
     · obtain ⟨x, rfl⟩ := hk
-      cases x <;> simp [R₁₂, R₁₁, R₁₀, R₉, R₈, R₇, R₆, R₅, R₄, R₃, R₂, R₁, Function.update_apply,
+      cases x <;> simp [R₁₂, R₁₁, R₁₀, R₉, R₈, R₇, R₆, R₅, R₄, R₃, R₂, R₁, 
         hio.eq_iff, hR0, dsR2, dsV1, pmNV, pmVal, dsWL] <;> ring
     · push Not at hk
       have hk' : ∀ x, k ≠ io x := fun x h => hk x h.symm
@@ -531,22 +529,22 @@ theorem dsIoAll_runs (hrg : Function.Injective rg) (hio : Function.Injective io)
         exact hR0 _ (by decide) (by decide))
   have h2 := ds_phase2 (body := body) (Wt := Wt) hrg hio hdisj hn hWt hw hWL wl hwl
     (dsR1 io n Wt hd0 R)
-    (by simp [dsR1, Function.update_apply, hio.eq_iff, huw])
+    (by simp [dsR1, hio.eq_iff, huw])
     (fun x hx => by
       simp only [List.mem_cons, List.not_mem_nil, or_false] at hx
       rcases hx with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;>
-        simp [dsR1, Function.update_apply, hio.eq_iff, hR0])
+        simp [dsR1, hio.eq_iff, hR0])
   refine (h1.seq (h2.congr ?_))
   congr 1
   funext k
   by_cases hk : ∃ x, io x = k
   · obtain ⟨x, rfl⟩ := hk
     rw [dsOv_rg hio]
-    cases x <;> simp [dsR2, dsR1, Function.update_apply, hio.eq_iff, dsVal, hR0]
+    cases x <;> simp [dsR2, dsR1, hio.eq_iff, dsVal, hR0]
   · push Not at hk
     rw [dsOv_off _ _ hk]
     have hk' : ∀ x, k ≠ io x := fun x h => hk x h.symm
-    simp [dsR2, dsR1, Function.update_apply, hk']
+    simp [dsR2, dsR1, hk']
 
 end All
 

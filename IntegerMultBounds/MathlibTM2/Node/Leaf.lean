@@ -42,7 +42,6 @@ namespace IntegerMultBounds.MathlibTM2.Node
 
 open IntegerMultBounds.MathlibTM2.Layer IntegerMultBounds.MathlibTM2.Host
 
-set_option linter.unusedSimpArgs false
 
 /-! ### Bit arithmetic -/
 
@@ -154,7 +153,7 @@ lemma recAt_k2_lo (Z : ZArr (Fin R × Fin r) n) {t i : ℕ} (ht : t < n) (hb : i
   simp only [List.getElem_ofFn, List.getElem_zipWith, red_k2, GR.kernel2,
     addrBits_add_two_pow ht hb]
   congr 4
-  simp only [Prod.mk.injEq, Fin.mk.injEq, div_add_two_pow ht hb, and_self]
+  simp only [div_add_two_pow ht hb]
 
 /-- The doubled kernel on a record pair: the record with bit `t` set. -/
 lemma recAt_k2_hi (Z : ZArr (Fin R × Fin r) n) {t i : ℕ} (ht : t < n) (hb : i.testBit t = false)
@@ -169,7 +168,7 @@ lemma recAt_k2_hi (Z : ZArr (Fin R × Fin r) n) {t i : ℕ} (ht : t < n) (hb : i
     addrBits_add_two_pow ht hb, Layer.flip_flip]
   rw [add_comm]
   congr 4
-  simp only [Prod.mk.injEq, Fin.mk.injEq, div_add_two_pow ht hb, and_self]
+  simp only [div_add_two_pow ht hb]
 
 /-! ### Lists of blocks -/
 
@@ -286,7 +285,7 @@ lemma filter_bitCode (t M : ℕ) (d : Fin 2) :
         simp [eq_comm]
       rw [List.filter_congr hlo, List.filter_congr hhi]
       fin_cases d
-      · simp [List.map_map, Function.comp_def]
+      · simp
       · simp [List.map_map, Function.comp_def, Nat.add_assoc]
 
 
@@ -612,13 +611,13 @@ theorem kernelPass_exec (hreg : Function.Injective reg) (hA : 9 ^ 4 ≤ A + 4) {
   obtain ⟨v₄, m₄, S₄, hu₄, hm₄, he₄, hi₄, ho₄, hl₄, hin0, hin1, hout0, hout1, hoth₄⟩ :=
     kernel2_exec body (autoLayout_kernel hreg) hA hw haux.wctr (bitClassCoeffs w t Z 0)
       (bitClassCoeffs w t Z 1) (length_bitClassCoeffs_one ht Z) v₃ { S with R := R₃ }
-      (by rw [← hR₃, ← hR₂, hR₁]; simp [movedR, Function.update_apply, hreg.eq_iff])
-      (by rw [← hR₃, ← hR₂, hR₁]; simp [movedR, Function.update_apply, hreg.eq_iff, e_tmp])
-      (by rw [← hR₃, ← hR₂, hR₁]; simp [movedR, Function.update_apply, hreg.eq_iff, e_e0])
-      (by rw [← hR₃, ← hR₂, hR₁]; simp [movedR, Function.update_apply, hreg.eq_iff, e_e1])
+      (by rw [← hR₃, ← hR₂, hR₁]; simp [movedR, hreg.eq_iff])
+      (by rw [← hR₃, ← hR₂, hR₁]; simp [movedR, hreg.eq_iff, e_tmp])
+      (by rw [← hR₃, ← hR₂, hR₁]; simp [movedR, hreg.eq_iff, e_e0])
+      (by rw [← hR₃, ← hR₂, hR₁]; simp [movedR, hreg.eq_iff, e_e1])
   obtain ⟨R₄, rfl⟩ : ∃ R₄, S₄ = { S with R := R₄ } := ⟨S₄.R, Stacks.ext hi₄ ho₄ hl₄ rfl⟩
   dsimp only at hin0 hin1 hout0 hout1 hoth₄
-  simp only [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons] at hin0 hin1 hout0 hout1
+  simp only [Matrix.cons_val_zero, Matrix.cons_val_one] at hin0 hin1 hout0 hout1
   rw [zipWith_bitClassCoeffs_fst ht] at hout0
   rw [zipWith_bitClassCoeffs_snd ht] at hout1
   have hR₄ : R₄ = Function.update (Function.update (Function.update (Function.update R₃
@@ -626,8 +625,8 @@ theorem kernelPass_exec (hreg : Function.Injective reg) (hA : 9 ^ 4 ≤ A + 4) {
       ((bitClassCoeffs w t (k2 ⟨t, ht⟩ Z) 0).flatMap (coeffSyms A w)).reverse) (reg .o1)
       ((bitClassCoeffs w t (k2 ⟨t, ht⟩ Z) 1).flatMap (coeffSyms A w)).reverse :=
     update_frame4 _ _ _ _ _ _ _ _ hin0 hin1
-      (by rw [hout0, ← hR₃, ← hR₂, hR₁]; simp [movedR, Function.update_apply, hreg.eq_iff, e_o0])
-      (by rw [hout1, ← hR₃, ← hR₂, hR₁]; simp [movedR, Function.update_apply, hreg.eq_iff, e_o1])
+      (by rw [hout0, ← hR₃, ← hR₂, hR₁]; simp [movedR, hreg.eq_iff, e_o0])
+      (by rw [hout1, ← hR₃, ← hR₂, hR₁]; simp [movedR, hreg.eq_iff, e_o1])
       (fun k h1 h2 h3 h4 => hoth₄ k
         (by rintro ⟨i, hi⟩; fin_cases i; exacts [h1 hi.symm, h2 hi.symm])
         (by rintro ⟨i, hi⟩; fin_cases i; exacts [h3 hi.symm, h4 hi.symm]))
@@ -651,19 +650,19 @@ theorem kernelPass_exec (hreg : Function.Injective reg) (hA : 9 ^ 4 ≤ A + 4) {
     (by
       intro d
       rw [idxCode_bitAuto ht, blocksIdx_encZ, ← hR₆, ← hR₅, hR₄, ← hR₃, ← hR₂, hR₁]
-      fin_cases d <;> simp [movedR, Function.update_apply, hreg.eq_iff, e_r0, e_r1])
+      fin_cases d <;> simp [movedR, hreg.eq_iff])
     (by
       rw [← hR₆, ← hR₅, hR₄, ← hR₃, ← hR₂, hR₁]
-      simp [movedR, Function.update_apply, hreg.eq_iff])
+      simp [movedR, hreg.eq_iff])
     (by
       rw [← hR₆, ← hR₅, hR₄, ← hR₃, ← hR₂, hR₁]
-      simp [movedR, Function.update_apply, hreg.eq_iff, e_tmp])
+      simp [movedR, hreg.eq_iff, e_tmp])
     (by
       rw [← hR₆, ← hR₅, hR₄, ← hR₃, ← hR₂, hR₁]
-      simp [movedR, Function.update_apply, hreg.eq_iff])
+      simp [movedR, hreg.eq_iff])
     (by
       rw [← hR₆, ← hR₅, hR₄, ← hR₃, ← hR₂, hR₁]
-      simp [movedR, Function.update_apply, hreg.eq_iff, e_ctmp])
+      simp [movedR, hreg.eq_iff, e_ctmp])
     (by
       have h6 : ∀ x, x ≠ KReg.arr → x ≠ .r0 → x ≠ .r1 → x ≠ .e0 → x ≠ .e1 → x ≠ .o0 → x ≠ .o1 →
           R₆ (reg x) = S.R (reg x) := by
@@ -693,7 +692,7 @@ theorem kernelPass_exec (hreg : Function.Injective reg) (hA : 9 ^ 4 ≤ A + 4) {
       (S.R (reg .cf)) :=
     update_frame4 _ _ _ _ _ _ _ _
       (by rw [hdst₇, ← hR₆, ← hR₅, hR₄, ← hR₃, ← hR₂, hR₁]
-          simp [movedR, Function.update_apply, hreg.eq_iff, e_e0])
+          simp [movedR, hreg.eq_iff, e_e0])
       (hsrc₇ 0) (hsrc₇ 1)
       (by rw [hcf₇ 0, digit_one_field, haux.cf]; simp)
       (fun k h1 h2 h3 h4 => hoth₇ k h1
@@ -707,21 +706,21 @@ theorem kernelPass_exec (hreg : Function.Injective reg) (hA : 9 ^ 4 ≤ A + 4) {
     funext k
     rw [hR₇, ← hR₆, ← hR₅, hR₄, ← hR₃, ← hR₂, hR₁]
     by_cases ha : k = reg .arr
-    · subst ha; simp [movedR, Function.update_apply, hreg.eq_iff]
+    · subst ha; simp [movedR, hreg.eq_iff]
     by_cases h1 : k = reg .e0
-    · subst h1; simp [movedR, Function.update_apply, hreg.eq_iff, e_e0]
+    · subst h1; simp [movedR, hreg.eq_iff, e_e0]
     by_cases h2 : k = reg .e1
-    · subst h2; simp [movedR, Function.update_apply, hreg.eq_iff, e_e1]
+    · subst h2; simp [movedR, hreg.eq_iff, e_e1]
     by_cases h3 : k = reg .o0
-    · subst h3; simp [movedR, Function.update_apply, hreg.eq_iff, e_o0]
+    · subst h3; simp [movedR, hreg.eq_iff, e_o0]
     by_cases h4 : k = reg .o1
-    · subst h4; simp [movedR, Function.update_apply, hreg.eq_iff, e_o1]
+    · subst h4; simp [movedR, hreg.eq_iff, e_o1]
     by_cases h5 : k = reg .r0
-    · subst h5; simp [movedR, Function.update_apply, hreg.eq_iff, e_r0]
+    · subst h5; simp [movedR, hreg.eq_iff, e_r0]
     by_cases h6 : k = reg .r1
-    · subst h6; simp [movedR, Function.update_apply, hreg.eq_iff, e_r1]
+    · subst h6; simp [movedR, hreg.eq_iff, e_r1]
     by_cases h7 : k = reg .cf
-    · subst h7; simp [movedR, Function.update_apply, hreg.eq_iff]
+    · subst h7; simp [movedR, hreg.eq_iff]
     simp [movedR, Function.update_apply, ha, h1, h2, h3, h4, h5, h6, h7]
   -- step count
   have hl2 : (R₁ (reg .r0)).length ≤ R * 2 ^ n * (r * w) := by
@@ -738,7 +737,7 @@ theorem kernelPass_exec (hreg : Function.Injective reg) (hA : 9 ^ 4 ≤ A + 4) {
     simpa [movedR, Function.update_apply, hreg.eq_iff] using
       length_bitClassSyms (A := A) t (k2 ⟨t, ht⟩ Z) 1
   have hl8 : (R₇ (reg .e0)).length = R * 2 ^ n * (r * w) := by
-    rw [hR₇]; simp [Function.update_apply, hreg.eq_iff, length_encZ]
+    rw [hR₇]; simp [hreg.eq_iff, length_encZ]
   have hc0 : (bitClassCoeffs w t Z 0).length * (5 * w + 6) ≤ R * 2 ^ n * (r * w) * 11 := by
     rw [length_bitClassCoeffs]
     have h1 := length_bitClass_le t (R * 2 ^ n) 0
@@ -815,8 +814,8 @@ theorem padStep_loop (ms kr kt : Fin T) (h1 : ms ≠ kr) (h2 : ms ≠ kt) (h3 : 
           mk { v with sym := some e, flag := rest.head?.isSome }
             { S with R := Function.update (Function.update (Function.update S.R ms
               (bitSymbol false :: S.R ms)) kr rest) kt (e :: S.R kt) } := by
-        simp [padStep, moveStep, peekR, Action.run, hS, update_rt, Function.update_of_ne h1,
-          Function.update_of_ne h1.symm, Function.update_of_ne h2, Function.update_of_ne h2.symm,
+        simp [padStep, moveStep, peekR, Action.run, hS, update_rt, 
+          Function.update_of_ne h1.symm, Function.update_of_ne h2.symm,
           Function.update_of_ne h3, Function.update_of_ne h3.symm]
       refine Exec.cast (Exec.loop_true (body := body) (f := (·.flag)) (by simpa using hf)
         (hrun ▸ Exec.act (body := body) (padStep ms kr kt) (mk v S)) he) (by simp; ring) ?_
@@ -827,7 +826,7 @@ theorem padStep_loop (ms kr kt : Fin T) (h1 : ms ≠ kr) (h2 : ms ≠ kt) (h3 : 
         simp [Function.update_of_ne h1, Function.update_of_ne h2, replicate_append_cons,
           List.replicate_succ]
       · by_cases hk' : k = kt
-        · subst hk'; simp [hk, Function.update_of_ne h3.symm]
+        · subst hk'; simp [hk]
         · by_cases hk'' : k = kr
           · subst hk''; simp [hk, hk']
           · simp [hk, hk', hk'']
@@ -873,8 +872,8 @@ theorem dropStep_loop (kr kt tmp : Fin T) (h1 : tmp ≠ kt) (h2 : tmp ≠ kr) (h
           mk { v with sym := some e, flag := rest.head?.isSome }
             { S with R := Function.update (Function.update (Function.update S.R tmp
               (S.R tmp).tail) kt rest) kr (e :: S.R kr) } := by
-        simp [dropStep, moveStep, peekR, Action.run, hS, update_rt, Function.update_of_ne h1,
-          Function.update_of_ne h1.symm, Function.update_of_ne h2, Function.update_of_ne h2.symm,
+        simp [dropStep, moveStep, peekR, Action.run, hS, update_rt, 
+          Function.update_of_ne h1.symm, Function.update_of_ne h2.symm,
           Function.update_of_ne h3, Function.update_of_ne h3.symm]
       refine Exec.cast (Exec.loop_true (body := body) (f := (·.flag)) (by simpa using hf)
         (hrun ▸ Exec.act (body := body) (dropStep kr kt tmp) (mk v S)) he) (by simp; ring) ?_
@@ -884,7 +883,7 @@ theorem dropStep_loop (kr kt tmp : Fin T) (h1 : tmp ≠ kt) (h2 : tmp ≠ kr) (h
       · subst hk
         simp [Function.update_of_ne h1, Function.update_of_ne h2, List.drop_tail]
       · by_cases hk' : k = kr
-        · subst hk'; simp [hk, Function.update_of_ne h3.symm]
+        · subst hk'; simp [hk]
         · by_cases hk'' : k = kt
           · subst hk''; simp [hk, hk']
           · simp [hk, hk', hk'']
@@ -942,15 +941,15 @@ theorem shiftMask_exec (ms kr kt tmp : Fin T) (h : [ms, kr, kt, tmp].Nodup) (n a
   have h6' := Ne.symm h6
   have hkt₂ : R₂ kt = (S.R kr).reverse := by
     rw [← hR₂, ← hR₁]
-    simp [movedR, Function.update_apply, h1, h2, h3, h4, h5, h6, h1', h2', h3', h4', h5', h6', hkt]
+    simp [movedR, h6, h2', h3', h5', h6', hkt]
   have htmp₂ :
       R₂ tmp = (List.replicate (S.R kr).length (bitSymbol false) ++ binSyms n a).reverse := by
     rw [← hR₂, ← hR₁]
-    simp [movedR, Function.update_apply, h1, h2, h3, h4, h5, h6, h1', h2', h3', h4', h5', h6', hms,
+    simp [movedR, h3', h5', h6', hms,
       htmp]
   have hms₃ : R₃ ms = [] := by
     rw [← hR₃, ← hR₂]
-    simp [movedR, Function.update_apply, h1, h2, h3, h4, h5, h6, h1', h2', h3', h4', h5', h6']
+    simp [movedR, h1, h2, h3, h5, h6, h1', h2']
   have htmp₃ : R₃ tmp = (binSyms n (a * 2 ^ (S.R kr).length)).reverse := by
     rw [← hR₃, htmp₂, hkt₂, List.length_reverse]
     simp only [Function.update_self]
@@ -969,7 +968,7 @@ theorem shiftMask_exec (ms kr kt tmp : Fin T) (h : [ms, kr, kt, tmp].Nodup) (n a
     by_cases hk2 : k = tmp
     · subst hk2; simp [movedR, h3', htmp]
     rw [movedR, Function.update_of_ne hk1, Function.update_of_ne hk2, ← hR₃, ← hR₂, ← hR₁]
-    simp [movedR, Function.update_apply, h1, h2, h3, h4, h5, h6, h1', h2', h3', h4', h5', h6',
+    simp [movedR, Function.update_apply, h4, h5, h6, h1', h2', h3', h5', h6',
       hk1, hk2, hkt]
     split_ifs <;> subst_vars <;> simp [hkt]
 
@@ -1004,7 +1003,7 @@ lemma bitsFrom_eq (n K : ℕ) : ∀ (m s : ℕ) (h : ∀ i < m, s + K * i < n),
   | 0, _, _ => rfl
   | m + 1, s, h => by
       rw [bitsFrom, bitsFrom_eq n K m, List.finRange_succ, List.map_cons, List.map_map]
-      simp only [List.cons.injEq, Fin.mk.injEq, Fin.val_zero, Nat.mul_zero, Nat.add_zero,
+      simp only [List.cons.injEq, Fin.val_zero, Nat.mul_zero, Nat.add_zero,
         true_and]
       refine List.map_congr_left fun i _ => ?_
       simp only [Function.comp_apply, Fin.val_succ, Fin.mk.injEq]
@@ -1091,7 +1090,7 @@ theorem leafLoop (hreg : Function.Injective lreg) (hA : 9 ^ 4 ≤ A + 4) {R r n 
       generalize hR₁ : Function.update (Function.update S.R (lreg .ur) rest) (lreg .ut)
         (e :: S.R (lreg .ut)) = R₁ at hea
       have hR₁k : ∀ x, R₁ (lreg (.k x)) = S.R (lreg (.k x)) := by
-        intro x; rw [← hR₁]; simp [Function.update_apply, hreg.eq_iff]
+        intro x; rw [← hR₁]; simp [hreg.eq_iff]
       -- the kernel pass on bit `s`
       obtain ⟨v₂, m₂, hu₂, hm₂, he₂⟩ := kernelPass_exec body hkreg hA hr hw hs Z
         { v with sym := some e, flag := rest.head?.isSome } { S with R := R₁ }
@@ -1100,13 +1099,13 @@ theorem leafLoop (hreg : Function.Injective lreg) (hA : 9 ^ 4 ≤ A + 4) {R r n 
       dsimp only at he₂
       generalize hR₂ : Function.update R₁ (lreg (.k .arr)) (encZ A w (k2 ⟨s, hs⟩ Z)) = R₂ at he₂
       have hR₂ur : R₂ (lreg .ur) = rest := by
-        rw [← hR₂, ← hR₁]; simp [Function.update_apply, hreg.eq_iff]
+        rw [← hR₂, ← hR₁]; simp [hreg.eq_iff]
       have heb := Exec.act (body := body) (peekR (lreg .ur)) (mk v₂ { S with R := R₂ })
       rw [peekR_run] at heb
       dsimp only at heb
       rw [hR₂ur] at heb
       have hR₂k : ∀ x, x ≠ .arr → R₂ (lreg (.k x)) = S.R (lreg (.k x)) := by
-        intro x hx; rw [← hR₂, ← hR₁]; simp [Function.update_apply, hreg.eq_iff, hx]
+        intro x hx; rw [← hR₂, ← hR₁]; simp [hreg.eq_iff, hx]
       rcases rest with _ | ⟨e', rest'⟩
       · -- the last pass: no shift
         have hec := Exec.cond_false (body := body) (f := (·.flag))
@@ -1190,7 +1189,7 @@ theorem leafLoop (hreg : Function.Injective lreg) (hA : 9 ^ 4 ≤ A + 4) {R r n 
             simp [h1, hreg.eq_iff]
             rw [show s + K + K * rest'.length = s + K * (rest'.length + 1) by ring]
           by_cases h3 : k = lreg .ut
-          · subst h3; simp [h1, h2, hreg.eq_iff]
+          · subst h3; simp [h1, h2]
           by_cases h4 : k = lreg .ur
           · subst h4; simp [h1, h2, h3]
           simp [h1, h2, h3, h4]
@@ -1240,13 +1239,13 @@ theorem leafProg_exec (hreg : Function.Injective lreg) (hA : 9 ^ 4 ≤ A + 4) {R
   have hne : ∀ x y : LReg, x ≠ y → lreg x ≠ lreg y := fun x y h => hreg.ne h
   refine ⟨v₂, _, by simp [hu₂, hu₁], ?_, Exec.cast (Exec.seq he₀ (Exec.seq he₁ he₂)) rfl
     (congrArg (mk _) ?_)⟩
-  · simp [Function.update_apply, hreg.eq_iff, hut]
+  · simp [hreg.eq_iff, hut]
     nlinarith
   · congr 1
     funext k
     by_cases h1 : k = lreg (.k .arr)
     · subst h1
-      simp [movedR, Function.update_apply, hreg.eq_iff, bitsFrom_eq]
+      simp [movedR, hreg.eq_iff, bitsFrom_eq]
       have hlist : (List.finRange l.length).map (fun i : Fin l.length =>
           (⟨ρ + K * c₀ + K * i, hfit' i i.2⟩ : Fin n)) =
           (List.finRange l.length).map (fun i : Fin l.length =>
@@ -1255,13 +1254,13 @@ theorem leafProg_exec (hreg : Function.Injective lreg) (hA : 9 ^ 4 ≤ A + 4) {R
       rw [hlist]
     by_cases h2 : k = lreg (.k .mask)
     · subst h2
-      simp [movedR, Function.update_apply, hreg.eq_iff]
+      simp [movedR, hreg.eq_iff]
       congr 2
       ring
     by_cases h3 : k = lreg .ut
-    · subst h3; simp [movedR, Function.update_apply, hreg.eq_iff, hut]
+    · subst h3; simp [movedR, hreg.eq_iff, hut]
     by_cases h4 : k = lreg .ur
-    · subst h4; simp [movedR, Function.update_apply, hreg.eq_iff, hut, hl]
+    · subst h4; simp [movedR, hreg.eq_iff, hut, hl]
     simp [movedR, Function.update_apply, h1, h2, h3, h4]
 
 end Machine

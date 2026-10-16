@@ -36,7 +36,6 @@ open IntegerMultBounds IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.St
   IntegerMultBounds.MathlibTM2.Layer IntegerMultBounds.MathlibTM2.Node
 open IntegerMultBounds.Networks.Shared50ModularControl (prime)
 
-set_option linter.unusedSimpArgs false
 
 noncomputable section
 
@@ -211,8 +210,8 @@ theorem rsb_xchg (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠ ι j) 
   · funext r
     simp only [Function.update_apply]
     split_ifs <;> subst_vars <;> simp_all
-  · simp [Function.update_apply, Ne.symm hab, hae₁, hbe₂, Ne.symm hae₂, Ne.symm hbe₁, he₁₂,
-      Ne.symm he₁₂, Ne.symm hae₁, Ne.symm hbe₂, hab, hae₂, hbe₁, h₁, h₂]
+  · simp [Ne.symm hab, hae₁, Ne.symm hae₂, Ne.symm hbe₁, he₁₂,
+      Ne.symm he₁₂, Ne.symm hae₁, hab, hae₂, hbe₁, h₁, h₂]
     omega
 
 end Xchg
@@ -478,8 +477,8 @@ theorem rsb_stepAxG_runs (ax : Pr F T Q (prime + K) U) (hrg₂ : Function.Inject
       ∑ j, (rsbBank hd hs' j : List (Fin (prime + K + 4))).length := by
     simp only [Sum.elim_inr, hbank']
   rw [hb1, hb2, hnl, hlax]
-  simp only [Sum.elim_inr, Sum.elim_inl, hbank, hξ'3, hξ'4, rsbBank_hd hi, List.length_cons,
-    List.length_map, Function.update_self]
+  simp only [Sum.elim_inr, hbank, hξ'3, hξ'4, rsbBank_hd hi, List.length_cons,
+    List.length_map]
   unfold rsbStepAxCostG
   rw [show Pp * 2 ^ Ld * G * 2 ^ Lb = L.length by rw [hL', ← ht, ← htd]; ring]
   simp only [hhs']
@@ -675,7 +674,7 @@ theorem rsb_allG_runs (prep ax : Pr F T Q (prime + K) U)
   have h2 := rsb_lift hrg₂ Sum.inl h2a (rsbWith (cfg 0) (cstream (prime + K) w l₀) axs [])
     (rsbWith (cfg 0) (cstream (prime + K) w (rsbFlat d t g (d - 1) l₀)) axs [])
     (fun x => rfl)
-    (fun x => by simp only [rsbWith, Sum.elim_inl, Function.update_idem, hbox1]; rfl)
+    (fun x => by simp only [rsbWith, Sum.elim_inl, hbox1]; rfl)
     (fun r hr => by
       cases r with
       | inl x => exact absurd rfl (hr x)

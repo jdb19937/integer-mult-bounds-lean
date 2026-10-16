@@ -31,7 +31,6 @@ namespace IntegerMultBounds.MathlibTM2.Fast.TableVM
 
 open IntegerMultBounds.MathlibTM2.Fast.TableNum
 
-set_option linter.unusedSimpArgs false
 
 local notation "wP" => (0 : Fin 84)
 local notation "wPq" => (19 : Fin 84)
@@ -159,7 +158,7 @@ theorem tblPhB2_do {A W w : ℕ} (st : TblSt 84 A) {L : List (Fin 84 × ℕ)} (h
   · intro x hx
     simp only [List.mem_cons, List.not_mem_nil, or_false, not_or] at hx
     rw [e]
-    simp [tblExactList, TblIns.exact, Function.update_apply, hx]
+    simp [tblExactList, TblIns.exact, hx]
   · rw [e]; simp [tblExactList, TblIns.exact]
   · rw [e]
     intro e' he'
@@ -200,7 +199,7 @@ theorem tblPhB3_do {A W w : ℕ} (st : TblSt 84 A) {L : List (Fin 84 × ℕ)} (h
   · intro x hx
     simp only [List.mem_cons, List.not_mem_nil, or_false, not_or] at hx
     rw [e]
-    simp [tblExactList, TblIns.exact, Function.update_apply, hx]
+    simp [tblExactList, TblIns.exact, hx]
   · rw [e]; simp [tblExactList, TblIns.exact]
   · rw [e]
     intro e' he'
@@ -215,7 +214,7 @@ theorem tblPhB4_do {A W w : ℕ} (st : TblSt 84 A) {L : List (Fin 84 × ℕ)} (h
   · simp [tblFitsList, TblIns.fits, TblIns.exact, hGv]; exact hW
   · intro x hx
     simp only [List.mem_cons, List.not_mem_nil, or_false] at hx
-    simp [tblExactList, TblIns.exact, Function.update_apply, hx]
+    simp [tblExactList, TblIns.exact, hx]
   · simp [tblExactList, TblIns.exact]
   · intro e' he'
     simp only [List.mem_cons, List.not_mem_nil, or_false] at he'
@@ -246,7 +245,7 @@ theorem tblPhB5_do {A W w : ℕ} (st : TblSt 84 A) {L : List (Fin 84 × ℕ)} (h
   · intro x hx
     simp only [List.mem_cons, List.not_mem_nil, or_false, not_or] at hx
     rw [e]
-    simp [tblExactList, TblIns.exact, Function.update_apply, hx]
+    simp [tblExactList, TblIns.exact, hx]
   · rw [e]; simp [tblExactList, TblIns.exact]
   · rw [e]
     intro e' he'
@@ -262,7 +261,7 @@ theorem tblPhB6_do {A W w : ℕ} (st : TblSt 84 A) {L : List (Fin 84 × ℕ)} (h
   · simp [tblFitsList, TblIns.fits, hcv, hone]; omega
   · intro x hx
     simp only [List.mem_cons, List.not_mem_nil, or_false] at hx
-    simp [tblExactList, TblIns.exact, Function.update_apply, hx]
+    simp [tblExactList, TblIns.exact, hx]
   · simp [tblExactList, TblIns.exact]
   · intro e' he'
     simp only [List.mem_cons, List.not_mem_nil, or_false] at he'

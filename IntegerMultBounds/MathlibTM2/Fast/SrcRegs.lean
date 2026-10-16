@@ -57,8 +57,6 @@ open IntegerMultBounds IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.St
   IntegerMultBounds.MathlibTM2.Layer IntegerMultBounds.MathlibTM2.Node
 open IntegerMultBounds.MathlibTM2.Fast IntegerMultBounds.MathlibTM2.Fast.ResampA IntegerMultBounds.MathlibTM2.Fast.ChirpSt IntegerMultBounds.MathlibTM2.Fast.ConvSt
 
-set_option linter.unusedSimpArgs false
-set_option linter.unusedSectionVars false
 
 /-! ### Registers -/
 
@@ -315,7 +313,7 @@ theorem src_mv_runs {a b sp : R} (hab : a ≠ b) (ha : a ≠ sp) (hb : b ≠ sp)
     (Function.update (Function.update ρ a []) sp ((ρ a).reverse ++ ρ sp))
   refine ((RsaRuns.seq hdisj h1 h2).congr ?_).mono ?_
   · funext k
-    simp only [Function.update_apply, ht, List.append_nil, List.reverse_reverse]
+    simp only [Function.update_apply, ht, List.append_nil]
     split_ifs <;> subst_vars <;> simp_all
   · simp only [Function.update_self, ht, List.append_nil, List.length_reverse]
     omega
@@ -347,7 +345,7 @@ theorem src_crtDec_succ {d : ℕ} (a : Fin (d + 1) → ℕ) :
         simp [crtW, List.map_map, Function.comp_def]
       rw [List.map_cons, crtDec_cons, crtDec_cons, src_crtDec_succ a o, hw]
       congr 1
-      simp [Function.update_of_ne (Fin.succ_ne_zero j).symm, Fin.tail_update_succ]
+      simp [Fin.tail_update_succ]
 
 theorem src_crtBox_succ {α : Type} {d : ℕ} (a : Fin (d + 1) → ℕ) (o : List (Fin d))
     (C : (Fin (d + 1) → ℕ) → α) (x : Fin (d + 1) → ℕ) :

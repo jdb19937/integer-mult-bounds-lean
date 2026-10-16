@@ -81,7 +81,6 @@ open IntegerMultBounds.Networks.Shared50ModularControl (prime)
 open IntegerMultBounds.Schoenhage.Schedule (topN)
 open Filter
 
-set_option linter.unusedSimpArgs false
 
 noncomputable section
 

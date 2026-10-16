@@ -75,11 +75,6 @@ open IntegerMultBounds IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.St
 open IntegerMultBounds.MathlibTM2.Layer (ZArr encZ recList coeffList addrBits addrNum pullAddr pullM colBits merge
   ofCols toCols bitIdx)
 
-set_option linter.unusedSimpArgs false
-set_option linter.unnecessarySeqFocus false
-set_option linter.unusedTactic false
-set_option linter.unreachableTactic false
-set_option linter.unusedVariables false
 
 
 /-! ### Canonical binary counters on a register -/
@@ -221,7 +216,7 @@ lemma sx_carry_loop (d t : Fin T) (hdt : d ≠ t) (rest : List Bool)
       funext k
       by_cases hk : k = t
       · subst hk
-        simp [hR', Function.update_of_ne hdt.symm, List.replicate_succ']
+        simp [hR', List.replicate_succ']
       · by_cases hk' : k = d
         · subst hk'; simp [hk, hR']
         · simp [hk, hk', hR']
@@ -466,7 +461,7 @@ theorem sxItems_exec {kR KR cnt w t₁ t₂ : Fin T} (hreg : [kR, KR, cnt, w, t�
   have hSk : S.R kR = R₀ kR := by rw [hS, maskRegs_of_ne hkc hkw]
   have hSt : S.R t₁ = [] := by rw [hS, maskRegs_of_ne hc1.symm hw1.symm, ht₁]
   refine ⟨v', m, hu, ?_, Exec.cast he rfl ?_⟩
-  · simp only [Finset.sum_const, Finset.card_range, smul_eq_mul, Nat.zero_add, hSk, hSt,
+  · simp only [Finset.sum_const, Finset.card_range, smul_eq_mul, hSk, hSt,
       List.length_nil, Nat.mul_zero, Nat.add_zero] at hm
     nlinarith
   · congr 2
@@ -1464,7 +1459,7 @@ theorem sxDupR_exec {a b t t₂ : Fin T} (hreg : [a, b, t, t₂].Nodup) (v : HS 
   · congr 2
     funext k
     simp only [movedR, Function.update_apply, ht₂, List.append_nil, List.map_id, id]
-    split_ifs with h1 h2 <;> subst_vars <;> simp_all [flatMap_replicate_one]
+    split_ifs with h1 h2 <;> subst_vars <;> simp_all
 
 lemma sx_then_dupR (he : Exec body p s m (mk v₁ S₁)) {a b t t₂ : Fin T}
     (hreg : [a, b, t, t₂].Nodup) (ht : S₁.R t = []) (ht₂ : S₁.R t₂ = []) :
@@ -1696,7 +1691,7 @@ lemma sxStage_1 (henv : SxEnv ι par) (hR₀ : ∀ p, (R₀ (par p)).length = d.
   · simp only [sxStageCost]; sxsimp <;> omega
   · congr 2
     refine sx_finish2 henv hS (x := .n3) rfl ?_ ?_
-    · sxsimp <;> simp [SxD.n3, sxN3, List.replicate_append_replicate]; ring
+    · sxsimp <;> simp [SxD.n3, sxN3]; ring
     · intro t ht; sxsimp <;> simp [ht]
 
 lemma sxStage_2 (henv : SxEnv ι par) (hR₀ : ∀ p, (R₀ (par p)).length = d.par p) :
@@ -1731,7 +1726,7 @@ lemma sxStage_4 (henv : SxEnv ι par) (hR₀ : ∀ p, (R₀ (par p)).length = d.
   · simp only [sxStageCost]; sxsimp <;> ring_nf <;> omega
   · congr 2
     refine sx_finish2 henv hS (x := .n0) rfl ?_ ?_
-    · sxsimp <;> simp [SxD.n0, sxN0, List.drop_replicate]; omega
+    · sxsimp <;> simp [SxD.n0, sxN0]; omega
     · intro t ht
       by_cases h1 : t = ι (.sc 1)
       · subst h1; sxsimp
@@ -1770,6 +1765,8 @@ lemma sxStage_5 (henv : SxEnv ι par) (hR₀ : ∀ p, (R₀ (par p)).length = d.
     · sxsimp
     · intro t ht; sxsimp <;> simp [ht]
 
+-- `hR₀` is used by the unhygienic `sxsimp` macro, which the linter cannot see.
+set_option linter.unusedVariables false in
 lemma sxStage_6 (henv : SxEnv ι par) (hR₀ : ∀ p, (R₀ (par p)).length = d.par p) :
     SxStageSpec body ι par d R₀ 5 := by
   intro v S hS
@@ -1784,6 +1781,8 @@ lemma sxStage_6 (henv : SxEnv ι par) (hR₀ : ∀ p, (R₀ (par p)).length = d.
     · sxsimp <;> simp [SxD.rb]
     · intro t ht; sxsimp <;> simp [ht]
 
+-- `hR₀` is used by the unhygienic `sxsimp` macro, which the linter cannot see.
+set_option linter.unusedVariables false in
 lemma sxStage_cf0 (henv : SxEnv ι par) (hR₀ : ∀ p, (R₀ (par p)).length = d.par p) :
     SxStageSpec body ι par d R₀ 6 := by
   intro v S hS
@@ -1812,6 +1811,8 @@ lemma sxStage_cf1 (henv : SxEnv ι par) (hR₀ : ∀ p, (R₀ (par p)).length = 
     · sxsimp <;> simp [SxD.len, idxLen, SxD.n3, SxD.n2, SxD.n1, SxD.n0]
     · intro t ht; sxsimp <;> simp [ht]
 
+-- `hR₀` is used by the unhygienic `sxsimp` macro, which the linter cannot see.
+set_option linter.unusedVariables false in
 lemma sxStage_cf2 (henv : SxEnv ι par) (hR₀ : ∀ p, (R₀ (par p)).length = d.par p) :
     SxStageSpec body ι par d R₀ 8 := by
   intro v S hS
@@ -1840,6 +1841,8 @@ lemma sxStage_cf3 (henv : SxEnv ι par) (hR₀ : ∀ p, (R₀ (par p)).length = 
     · sxsimp <;> simp [SxD.len, idxLen, SxD.n3, SxD.n2, SxD.n1, SxD.n0]
     · intro t ht; sxsimp <;> simp [ht]
 
+-- `hR₀` is used by the unhygienic `sxsimp` macro, which the linter cannot see.
+set_option linter.unusedVariables false in
 lemma sxStage_cf4 (henv : SxEnv ι par) (hR₀ : ∀ p, (R₀ (par p)).length = d.par p) :
     SxStageSpec body ι par d R₀ 10 := by
   intro v S hS
@@ -1868,6 +1871,8 @@ lemma sxStage_cf5 (henv : SxEnv ι par) (hR₀ : ∀ p, (R₀ (par p)).length = 
     · sxsimp <;> simp [SxD.len, idxLen, SxD.n3, SxD.n2, SxD.n1, SxD.n0]
     · intro t ht; sxsimp <;> simp [ht]
 
+-- `hR₀` is used by the unhygienic `sxsimp` macro, which the linter cannot see.
+set_option linter.unusedVariables false in
 lemma sxStage_cf6 (henv : SxEnv ι par) (hR₀ : ∀ p, (R₀ (par p)).length = d.par p) :
     SxStageSpec body ι par d R₀ 12 := by
   intro v S hS
@@ -1882,6 +1887,8 @@ lemma sxStage_cf6 (henv : SxEnv ι par) (hR₀ : ∀ p, (R₀ (par p)).length = 
     · sxsimp <;> simp [SxD.len, idxLen, SxD.n3, SxD.n2, SxD.n1, SxD.n0]
     · intro t ht; sxsimp <;> simp [ht]
 
+-- `hR₀` is used by the unhygienic `sxsimp` macro, which the linter cannot see.
+set_option linter.unusedVariables false in
 lemma sxStage_cf7 (henv : SxEnv ι par) (hR₀ : ∀ p, (R₀ (par p)).length = d.par p) :
     SxStageSpec body ι par d R₀ 13 := by
   intro v S hS
@@ -1923,7 +1930,7 @@ lemma sxStage_16 (henv : SxEnv ι par) (hR₀ : ∀ p, (R₀ (par p)).length = d
   · simp only [sxStageCost]; sxsimp <;> simp [SxD.rb]; omega
   · congr 2
     refine sx_finish2 henv hS (x := .ctrK) rfl ?_ ?_
-    · sxsimp <;> simp [SxD.kl, SxD.rb, List.replicate_append_replicate]; omega
+    · sxsimp <;> simp [SxD.kl, SxD.rb]; omega
     · intro t ht; sxsimp <;> simp [ht]
 
 lemma sxStage_17 (henv : SxEnv ι par) (hR₀ : ∀ p, (R₀ (par p)).length = d.par p) :
@@ -1939,7 +1946,7 @@ lemma sxStage_17 (henv : SxEnv ι par) (hR₀ : ∀ p, (R₀ (par p)).length = d
   · simp only [sxStageCost]; sxsimp <;> omega
   · congr 2
     refine sx_finish2 henv hS (x := .ctrKB) rfl ?_ ?_
-    · sxsimp <;> simp [SxD.Bk, List.replicate_append_replicate]
+    · sxsimp <;> simp [SxD.Bk]
     · intro t ht; sxsimp <;> simp [ht]
 
 lemma sxStage_18 (henv : SxEnv ι par) (hR₀ : ∀ p, (R₀ (par p)).length = d.par p) :
@@ -1958,6 +1965,8 @@ lemma sxStage_18 (henv : SxEnv ι par) (hR₀ : ∀ p, (R₀ (par p)).length = d
     · sxsimp <;> simp [SxD.M, flatMap_replicate_of_replicate]
     · intro t ht; sxsimp <;> simp [ht]
 
+-- `hR₀` is used by the unhygienic `sxsimp` macro, which the linter cannot see.
+set_option linter.unusedVariables false in
 lemma sxStage_19 (henv : SxEnv ι par) (hR₀ : ∀ p, (R₀ (par p)).length = d.par p) :
     SxStageSpec body ι par d R₀ 18 := by
   intro v S hS
@@ -2023,7 +2032,7 @@ lemma sx_sel_bits {K ρ : ℕ} (hK : 0 < K) (k' : ℕ) :
     rw [Nat.mul_succ] at this
     nlinarith
 
-lemma sx_grd_bits {K ρ : ℕ} (hK : 0 < K) (k' L : ℕ) (hL : ρ + K * k' ≤ L) :
+lemma sx_grd_bits {K ρ : ℕ} (_hK : 0 < K) (k' L : ℕ) (hL : ρ + K * k' ≤ L) :
     (∀ q < ρ, (guardMask K ρ k' L).testBit q = false) ∧
     (∀ i, (guardMask K ρ k' L).testBit (ρ + K * i) = false) ∧
     (∀ i s, 0 < s → s < K → ρ + K * i + s < ρ + K * k' →
@@ -2191,6 +2200,8 @@ lemma sxStage_23 (henv : SxEnv ι par) (hR₀ : ∀ p, (R₀ (par p)).length = d
       · subst h3; sxsimp
       simp [Function.update_of_ne h3, Function.update_of_ne ht]
 
+-- `hR₀` is used by the unhygienic `sxsimp` macro, which the linter cannot see.
+set_option linter.unusedVariables false in
 lemma sxStage_h00 (henv : SxEnv ι par) (hR₀ : ∀ p, (R₀ (par p)).length = d.par p) :
     SxStageSpec body ι par d R₀ 23 := by
   intro v S hS
@@ -2211,11 +2222,13 @@ lemma sxStage_h00 (henv : SxEnv ι par) (hR₀ : ∀ p, (R₀ (par p)).length = 
   · simp only [sxStageCost]; sxsimp <;> simp [SxD.rb, SxD.n3, SxD.n2, SxD.n1, SxD.n0] <;> (have := length_sxBits_le (3 * d.Bk); have := length_sxBits_le d.L; omega)
   · congr 2
     refine sx_finish2 henv hS (x := .swp 0 (reg (Fin.castSucc (0 : Fin 5) : Fin 6))) rfl ?_ ?_
-    · sxsimp <;> simp [sxHs, sxHe, sxHbits, binSyms_zero_right, SxD.n3, SxD.n2, SxD.n1, SxD.n0,
-        List.replicate_append_replicate] <;>
+    · sxsimp <;> simp [sxHs, sxHe, sxHbits, binSyms_zero_right, SxD.n0,
+        ] <;>
         (simp only [← List.append_assoc, List.replicate_append_replicate]; congr 2 <;> omega)
     · intro t ht; simp only [Function.update_of_ne ht]
 
+-- `hR₀` is used by the unhygienic `sxsimp` macro, which the linter cannot see.
+set_option linter.unusedVariables false in
 lemma sxStage_h01 (henv : SxEnv ι par) (hR₀ : ∀ p, (R₀ (par p)).length = d.par p) :
     SxStageSpec body ι par d R₀ 24 := by
   intro v S hS
@@ -2235,8 +2248,8 @@ lemma sxStage_h01 (henv : SxEnv ι par) (hR₀ : ∀ p, (R₀ (par p)).length = 
   · simp only [sxStageCost]; sxsimp <;> simp [SxD.rb, SxD.n3, SxD.n2, SxD.n1, SxD.n0] <;> (have := length_sxBits_le (3 * d.Bk); have := length_sxBits_le d.L; omega)
   · congr 2
     refine sx_finish2 henv hS (x := .swp 0 (reg (Fin.castSucc (1 : Fin 5) : Fin 6))) rfl ?_ ?_
-    · sxsimp <;> simp [sxHs, sxHe, sxHbits, binSyms_zero_right, SxD.n3, SxD.n2, SxD.n1, SxD.n0,
-        List.replicate_append_replicate] <;>
+    · sxsimp <;> simp [sxHs, sxHe, sxHbits, binSyms_zero_right, SxD.n1, 
+        ] <;>
         (simp only [← List.append_assoc, List.replicate_append_replicate]; congr 2 <;> omega)
     · intro t ht; simp only [Function.update_of_ne ht]
 
@@ -2260,11 +2273,13 @@ lemma sxStage_h02 (henv : SxEnv ι par) (hR₀ : ∀ p, (R₀ (par p)).length = 
   · simp only [sxStageCost]; sxsimp <;> simp [SxD.rb, SxD.n3, SxD.n2, SxD.n1, SxD.n0] <;> (have := length_sxBits_le (3 * d.Bk); have := length_sxBits_le d.L; omega)
   · congr 2
     refine sx_finish2 henv hS (x := .swp 0 (reg (Fin.castSucc (2 : Fin 5) : Fin 6))) rfl ?_ ?_
-    · sxsimp <;> simp [sxHs, sxHe, sxHbits, binSyms_zero_right, SxD.n3, SxD.n2, SxD.n1, SxD.n0,
-        List.replicate_append_replicate] <;>
+    · sxsimp <;> simp [sxHs, sxHe, sxHbits, binSyms_zero_right, SxD.n3, SxD.n2, 
+        ] <;>
         (simp only [← List.append_assoc, List.replicate_append_replicate]; congr 2 <;> omega)
     · intro t ht; simp only [Function.update_of_ne ht]
 
+-- `hR₀` is used by the unhygienic `sxsimp` macro, which the linter cannot see.
+set_option linter.unusedVariables false in
 lemma sxStage_h03 (henv : SxEnv ι par) (hR₀ : ∀ p, (R₀ (par p)).length = d.par p) :
     SxStageSpec body ι par d R₀ 26 := by
   intro v S hS
@@ -2285,11 +2300,13 @@ lemma sxStage_h03 (henv : SxEnv ι par) (hR₀ : ∀ p, (R₀ (par p)).length = 
   · simp only [sxStageCost]; sxsimp <;> simp [SxD.rb, SxD.n3, SxD.n2, SxD.n1, SxD.n0] <;> (have := length_sxBits_le (3 * d.Bk); have := length_sxBits_le d.L; omega)
   · congr 2
     refine sx_finish2 henv hS (x := .swp 0 (reg (Fin.castSucc (3 : Fin 5) : Fin 6))) rfl ?_ ?_
-    · sxsimp <;> simp [sxHs, sxHe, sxHbits, binSyms_zero_right, SxD.n3, SxD.n2, SxD.n1, SxD.n0,
-        List.replicate_append_replicate] <;>
+    · sxsimp <;> simp [sxHs, sxHe, sxHbits, binSyms_zero_right, 
+        ] <;>
         (simp only [← List.append_assoc, List.replicate_append_replicate]; congr 2 <;> omega)
     · intro t ht; simp only [Function.update_of_ne ht]
 
+-- `hR₀` is used by the unhygienic `sxsimp` macro, which the linter cannot see.
+set_option linter.unusedVariables false in
 lemma sxStage_h04 (henv : SxEnv ι par) (hR₀ : ∀ p, (R₀ (par p)).length = d.par p) :
     SxStageSpec body ι par d R₀ 27 := by
   intro v S hS
@@ -2310,8 +2327,8 @@ lemma sxStage_h04 (henv : SxEnv ι par) (hR₀ : ∀ p, (R₀ (par p)).length = 
   · simp only [sxStageCost]; sxsimp <;> simp [SxD.rb, SxD.n3, SxD.n2, SxD.n1, SxD.n0] <;> (have := length_sxBits_le (3 * d.Bk); have := length_sxBits_le d.L; omega)
   · congr 2
     refine sx_finish2 henv hS (x := .swp 0 (reg (Fin.castSucc (4 : Fin 5) : Fin 6))) rfl ?_ ?_
-    · sxsimp <;> simp [sxHs, sxHe, sxHbits, binSyms_zero_right, SxD.n3, SxD.n2, SxD.n1, SxD.n0,
-        List.replicate_append_replicate] <;>
+    · sxsimp <;> simp [sxHs, sxHe, sxHbits, binSyms_zero_right, 
+        ] <;>
         (simp only [← List.append_assoc, List.replicate_append_replicate]; congr 2 <;> omega)
     · intro t ht; simp only [Function.update_of_ne ht]
 
@@ -2335,11 +2352,13 @@ lemma sxStage_h10 (henv : SxEnv ι par) (hR₀ : ∀ p, (R₀ (par p)).length = 
   · simp only [sxStageCost]; sxsimp <;> simp [SxD.rb, SxD.n3, SxD.n2, SxD.n1, SxD.n0] <;> (have := length_sxBits_le (3 * d.Bk); have := length_sxBits_le d.L; omega)
   · congr 2
     refine sx_finish2 henv hS (x := .swp 1 (reg (Fin.castSucc (0 : Fin 5) : Fin 6))) rfl ?_ ?_
-    · sxsimp <;> simp [sxHs, sxHe, sxHbits, binSyms_zero_right, SxD.n3, SxD.n2, SxD.n1, SxD.n0,
-        List.replicate_append_replicate] <;>
+    · sxsimp <;> simp [sxHs, sxHe, sxHbits, binSyms_zero_right, SxD.n1, SxD.n0,
+        ] <;>
         (simp only [← List.append_assoc, List.replicate_append_replicate]; congr 2 <;> omega)
     · intro t ht; simp only [Function.update_of_ne ht]
 
+-- `hR₀` is used by the unhygienic `sxsimp` macro, which the linter cannot see.
+set_option linter.unusedVariables false in
 lemma sxStage_h11 (henv : SxEnv ι par) (hR₀ : ∀ p, (R₀ (par p)).length = d.par p) :
     SxStageSpec body ι par d R₀ 29 := by
   intro v S hS
@@ -2359,11 +2378,13 @@ lemma sxStage_h11 (henv : SxEnv ι par) (hR₀ : ∀ p, (R₀ (par p)).length = 
   · simp only [sxStageCost]; sxsimp <;> simp [SxD.rb, SxD.n3, SxD.n2, SxD.n1, SxD.n0] <;> (have := length_sxBits_le (3 * d.Bk); have := length_sxBits_le d.L; omega)
   · congr 2
     refine sx_finish2 henv hS (x := .swp 1 (reg (Fin.castSucc (1 : Fin 5) : Fin 6))) rfl ?_ ?_
-    · sxsimp <;> simp [sxHs, sxHe, sxHbits, binSyms_zero_right, SxD.n3, SxD.n2, SxD.n1, SxD.n0,
-        List.replicate_append_replicate] <;>
+    · sxsimp <;> simp [sxHs, sxHe, sxHbits, binSyms_zero_right, SxD.n2, 
+        ] <;>
         (simp only [← List.append_assoc, List.replicate_append_replicate]; congr 2 <;> omega)
     · intro t ht; simp only [Function.update_of_ne ht]
 
+-- `hR₀` is used by the unhygienic `sxsimp` macro, which the linter cannot see.
+set_option linter.unusedVariables false in
 lemma sxStage_h12 (henv : SxEnv ι par) (hR₀ : ∀ p, (R₀ (par p)).length = d.par p) :
     SxStageSpec body ι par d R₀ 30 := by
   intro v S hS
@@ -2384,11 +2405,13 @@ lemma sxStage_h12 (henv : SxEnv ι par) (hR₀ : ∀ p, (R₀ (par p)).length = 
   · simp only [sxStageCost]; sxsimp <;> simp [SxD.rb, SxD.n3, SxD.n2, SxD.n1, SxD.n0] <;> (have := length_sxBits_le (3 * d.Bk); have := length_sxBits_le d.L; omega)
   · congr 2
     refine sx_finish2 henv hS (x := .swp 1 (reg (Fin.castSucc (2 : Fin 5) : Fin 6))) rfl ?_ ?_
-    · sxsimp <;> simp [sxHs, sxHe, sxHbits, binSyms_zero_right, SxD.n3, SxD.n2, SxD.n1, SxD.n0,
-        List.replicate_append_replicate] <;>
+    · sxsimp <;> simp [sxHs, sxHe, sxHbits, binSyms_zero_right, SxD.n3, 
+        ] <;>
         (simp only [← List.append_assoc, List.replicate_append_replicate]; congr 2 <;> omega)
     · intro t ht; simp only [Function.update_of_ne ht]
 
+-- `hR₀` is used by the unhygienic `sxsimp` macro, which the linter cannot see.
+set_option linter.unusedVariables false in
 lemma sxStage_h13 (henv : SxEnv ι par) (hR₀ : ∀ p, (R₀ (par p)).length = d.par p) :
     SxStageSpec body ι par d R₀ 31 := by
   intro v S hS
@@ -2409,11 +2432,13 @@ lemma sxStage_h13 (henv : SxEnv ι par) (hR₀ : ∀ p, (R₀ (par p)).length = 
   · simp only [sxStageCost]; sxsimp <;> simp [SxD.rb, SxD.n3, SxD.n2, SxD.n1, SxD.n0] <;> (have := length_sxBits_le (3 * d.Bk); have := length_sxBits_le d.L; omega)
   · congr 2
     refine sx_finish2 henv hS (x := .swp 1 (reg (Fin.castSucc (3 : Fin 5) : Fin 6))) rfl ?_ ?_
-    · sxsimp <;> simp [sxHs, sxHe, sxHbits, binSyms_zero_right, SxD.n3, SxD.n2, SxD.n1, SxD.n0,
-        List.replicate_append_replicate] <;>
+    · sxsimp <;> simp [sxHs, sxHe, sxHbits, binSyms_zero_right, 
+        ] <;>
         (simp only [← List.append_assoc, List.replicate_append_replicate]; congr 2 <;> omega)
     · intro t ht; simp only [Function.update_of_ne ht]
 
+-- `hR₀` is used by the unhygienic `sxsimp` macro, which the linter cannot see.
+set_option linter.unusedVariables false in
 lemma sxStage_h14 (henv : SxEnv ι par) (hR₀ : ∀ p, (R₀ (par p)).length = d.par p) :
     SxStageSpec body ι par d R₀ 32 := by
   intro v S hS
@@ -2434,11 +2459,13 @@ lemma sxStage_h14 (henv : SxEnv ι par) (hR₀ : ∀ p, (R₀ (par p)).length = 
   · simp only [sxStageCost]; sxsimp <;> simp [SxD.rb, SxD.n3, SxD.n2, SxD.n1, SxD.n0] <;> (have := length_sxBits_le (3 * d.Bk); have := length_sxBits_le d.L; omega)
   · congr 2
     refine sx_finish2 henv hS (x := .swp 1 (reg (Fin.castSucc (4 : Fin 5) : Fin 6))) rfl ?_ ?_
-    · sxsimp <;> simp [sxHs, sxHe, sxHbits, binSyms_zero_right, SxD.n3, SxD.n2, SxD.n1, SxD.n0,
-        List.replicate_append_replicate] <;>
+    · sxsimp <;> simp [sxHs, sxHe, sxHbits, binSyms_zero_right, 
+        ] <;>
         (simp only [← List.append_assoc, List.replicate_append_replicate]; congr 2 <;> omega)
     · intro t ht; simp only [Function.update_of_ne ht]
 
+-- `hR₀` is used by the unhygienic `sxsimp` macro, which the linter cannot see.
+set_option linter.unusedVariables false in
 lemma sxStage_h20 (henv : SxEnv ι par) (hR₀ : ∀ p, (R₀ (par p)).length = d.par p) :
     SxStageSpec body ι par d R₀ 33 := by
   intro v S hS
@@ -2459,8 +2486,8 @@ lemma sxStage_h20 (henv : SxEnv ι par) (hR₀ : ∀ p, (R₀ (par p)).length = 
   · simp only [sxStageCost]; sxsimp <;> simp [SxD.rb, SxD.n3, SxD.n2, SxD.n1, SxD.n0] <;> (have := length_sxBits_le (3 * d.Bk); have := length_sxBits_le d.L; omega)
   · congr 2
     refine sx_finish2 henv hS (x := .swp 2 (reg (Fin.castSucc (0 : Fin 5) : Fin 6))) rfl ?_ ?_
-    · sxsimp <;> simp [sxHs, sxHe, sxHbits, binSyms_zero_right, SxD.n3, SxD.n2, SxD.n1, SxD.n0,
-        List.replicate_append_replicate] <;>
+    · sxsimp <;> simp [sxHs, sxHe, sxHbits, binSyms_zero_right, SxD.n0,
+        ] <;>
         (simp only [← List.append_assoc, List.replicate_append_replicate]; congr 2 <;> omega)
     · intro t ht; simp only [Function.update_of_ne ht]
 
@@ -2483,11 +2510,13 @@ lemma sxStage_h21 (henv : SxEnv ι par) (hR₀ : ∀ p, (R₀ (par p)).length = 
   · simp only [sxStageCost]; sxsimp <;> simp [SxD.rb, SxD.n3, SxD.n2, SxD.n1, SxD.n0] <;> (have := length_sxBits_le (3 * d.Bk); have := length_sxBits_le d.L; omega)
   · congr 2
     refine sx_finish2 henv hS (x := .swp 2 (reg (Fin.castSucc (1 : Fin 5) : Fin 6))) rfl ?_ ?_
-    · sxsimp <;> simp [sxHs, sxHe, sxHbits, binSyms_zero_right, SxD.n3, SxD.n2, SxD.n1, SxD.n0,
-        List.replicate_append_replicate] <;>
+    · sxsimp <;> simp [sxHs, sxHe, sxHbits, binSyms_zero_right, SxD.n2, SxD.n1, 
+        ] <;>
         (simp only [← List.append_assoc, List.replicate_append_replicate]; congr 2 <;> omega)
     · intro t ht; simp only [Function.update_of_ne ht]
 
+-- `hR₀` is used by the unhygienic `sxsimp` macro, which the linter cannot see.
+set_option linter.unusedVariables false in
 lemma sxStage_h22 (henv : SxEnv ι par) (hR₀ : ∀ p, (R₀ (par p)).length = d.par p) :
     SxStageSpec body ι par d R₀ 35 := by
   intro v S hS
@@ -2508,11 +2537,13 @@ lemma sxStage_h22 (henv : SxEnv ι par) (hR₀ : ∀ p, (R₀ (par p)).length = 
   · simp only [sxStageCost]; sxsimp <;> simp [SxD.rb, SxD.n3, SxD.n2, SxD.n1, SxD.n0] <;> (have := length_sxBits_le (3 * d.Bk); have := length_sxBits_le d.L; omega)
   · congr 2
     refine sx_finish2 henv hS (x := .swp 2 (reg (Fin.castSucc (2 : Fin 5) : Fin 6))) rfl ?_ ?_
-    · sxsimp <;> simp [sxHs, sxHe, sxHbits, binSyms_zero_right, SxD.n3, SxD.n2, SxD.n1, SxD.n0,
-        List.replicate_append_replicate] <;>
+    · sxsimp <;> simp [sxHs, sxHe, sxHbits, binSyms_zero_right, SxD.n3, 
+        ] <;>
         (simp only [← List.append_assoc, List.replicate_append_replicate]; congr 2 <;> omega)
     · intro t ht; simp only [Function.update_of_ne ht]
 
+-- `hR₀` is used by the unhygienic `sxsimp` macro, which the linter cannot see.
+set_option linter.unusedVariables false in
 lemma sxStage_h23 (henv : SxEnv ι par) (hR₀ : ∀ p, (R₀ (par p)).length = d.par p) :
     SxStageSpec body ι par d R₀ 36 := by
   intro v S hS
@@ -2533,11 +2564,13 @@ lemma sxStage_h23 (henv : SxEnv ι par) (hR₀ : ∀ p, (R₀ (par p)).length = 
   · simp only [sxStageCost]; sxsimp <;> simp [SxD.rb, SxD.n3, SxD.n2, SxD.n1, SxD.n0] <;> (have := length_sxBits_le (3 * d.Bk); have := length_sxBits_le d.L; omega)
   · congr 2
     refine sx_finish2 henv hS (x := .swp 2 (reg (Fin.castSucc (3 : Fin 5) : Fin 6))) rfl ?_ ?_
-    · sxsimp <;> simp [sxHs, sxHe, sxHbits, binSyms_zero_right, SxD.n3, SxD.n2, SxD.n1, SxD.n0,
-        List.replicate_append_replicate] <;>
+    · sxsimp <;> simp [sxHs, sxHe, sxHbits, binSyms_zero_right, 
+        ] <;>
         (simp only [← List.append_assoc, List.replicate_append_replicate]; congr 2 <;> omega)
     · intro t ht; simp only [Function.update_of_ne ht]
 
+-- `hR₀` is used by the unhygienic `sxsimp` macro, which the linter cannot see.
+set_option linter.unusedVariables false in
 lemma sxStage_h24 (henv : SxEnv ι par) (hR₀ : ∀ p, (R₀ (par p)).length = d.par p) :
     SxStageSpec body ι par d R₀ 37 := by
   intro v S hS
@@ -2558,8 +2591,8 @@ lemma sxStage_h24 (henv : SxEnv ι par) (hR₀ : ∀ p, (R₀ (par p)).length = 
   · simp only [sxStageCost]; sxsimp <;> simp [SxD.rb, SxD.n3, SxD.n2, SxD.n1, SxD.n0] <;> (have := length_sxBits_le (3 * d.Bk); have := length_sxBits_le d.L; omega)
   · congr 2
     refine sx_finish2 henv hS (x := .swp 2 (reg (Fin.castSucc (4 : Fin 5) : Fin 6))) rfl ?_ ?_
-    · sxsimp <;> simp [sxHs, sxHe, sxHbits, binSyms_zero_right, SxD.n3, SxD.n2, SxD.n1, SxD.n0,
-        List.replicate_append_replicate] <;>
+    · sxsimp <;> simp [sxHs, sxHe, sxHbits, binSyms_zero_right, 
+        ] <;>
         (simp only [← List.append_assoc, List.replicate_append_replicate]; congr 2 <;> omega)
     · intro t ht; simp only [Function.update_of_ne ht]
 
@@ -2725,7 +2758,7 @@ lemma sx_canonical_rep_false (e : ℕ) {bs : List Bool} (h : bs ≠ [])
 
 variable {d : SxD}
 
-lemma sxHs_value (hv : d.Valid) (a b : Fin 3) (k : Fin 5) :
+lemma sxHs_value (_hv : d.Valid) (a b : Fin 3) (k : Fin 5) :
     Counter.value (sxHs d (sxCls a b) k) = BinaryInterchangeRun.values
       (swapDims d.N₀ d.N₁ d.N₂ d.N₃ d.L a b).1 (swapDims d.N₀ d.N₁ d.N₂ d.N₃ d.L a b).2.1
       ((swapDims d.N₀ d.N₁ d.N₂ d.N₃ d.L a b).2.2 * (3 * d.Bk)) d.L d.L k := by
@@ -2934,7 +2967,7 @@ lemma sx_moveRecs_refl {α : Type*} {M : ℕ} (l : List (List α)) (hl : l.lengt
   subst hl
   apply List.ext_getElem (by simp [length_moveRecs])
   intro j h1 h2
-  simp [moveRecs, List.getD_eq_getElem?_getD, h2]
+  simp [moveRecs, List.getD_eq_getElem?_getD]
 
 /-- **The instruction list.** -/
 theorem sxInstrs_exec (henv : SxEnv ι par) (hsrc : ∀ x, ι x ≠ src) (hst : ∀ x, ι x ≠ st)
@@ -3040,7 +3073,7 @@ lemma sxKey_exec (henv : SxEnv ι par) (hsrc : ∀ x, ι x ≠ src) (hst : ∀ x
       have := sx_nodup henv hsrc (l := [.kacc, .ctrB, .ktmp, .kt 0, .kt 1, .kt 2, .msel] ++
         List.ofFn SXReg.cf) (by decide)
       simpa [List.map_ofFn] using this)
-    (by simp [List.mem_ofFn, fun x => (hst x).symm])
+    (by simp [fun x => (hst x).symm])
     hv.hrw l (hl.trans hrect.symm) hlB v S (by rw [hS, sxFill_out _ _ _ hsrc, hR₁])
     (hF _) (by rw [hF]; simp [sxBc]) (hF _) (hF _) (hF _) (hF _) (by rw [hF]; rfl)
     (fun j => by rw [hF]; rfl)
@@ -3081,7 +3114,7 @@ lemma sxRepair_exec (henv : SxEnv ι par) (hsrc : ∀ x, ι x ≠ src) (hst : �
       have := sx_nodup henv hsrc (l := [.pgR, .pbR, .pg, .pb, .ctrKB, .ctrB, .ctrK, .cnt, .ptmp] ++
         [.msel, .mgrd] ++ List.ofFn SXReg.pus ++ List.ofFn SXReg.cf) (by decide)
       simpa [List.map_ofFn] using this)
-    (by simp [List.mem_ofFn, fun x => (hst x).symm])
+    (by simp [fun x => (hst x).symm])
     hv.hrw l (hl.trans hrect.symm) hlB v S (by rw [hS, sxFill_out _ _ _ hsrc, hR₁, hkl])
     (hF _) (hF _) (hF _) (hF _)
     (by rw [hF, hkl]; simp [sxBc, SxD.Bk]; omega)
@@ -3120,7 +3153,7 @@ lemma sxFix_exec (henv : SxEnv ι par) (hsrc : ∀ x, ι x ≠ src) (hst : ∀ x
       have := sx_nodup henv hsrc (l := [.fr 0, .fr 1, .fr 2, .fr 3, .fq 0, .fq 1, .fq 2, .fq 3,
         .ctrB, .cnt, .ftmp] ++ [.mtop] ++ List.ofFn SXReg.fus ++ List.ofFn SXReg.cf) (by decide)
       simpa [List.map_ofFn] using this)
-    (by simp [List.mem_ofFn, fun x => (hst x).symm])
+    (by simp [fun x => (hst x).symm])
     hv.hrw l (hl.trans hrect.symm) hlB v S (by rw [hS, sxFill_out _ _ _ hsrc, hR₁])
     (hF _) (hF _) (hF _) (hF _) (hF _) (hF _) (hF _) (hF _)
     (by rw [hF]; simp [sxBc])
@@ -3156,7 +3189,7 @@ lemma sx_addrPerm_trans {N₀ N₁ N₂ N₃ L : ℕ} (σ : Equiv.Perm (Fin 3)) 
       addrPerm N₀ N₁ N₂ N₃ L σ (Pm.trans Pm') := by
   ext j
   simp only [addrPerm, liftA, Equiv.trans_apply, Equiv.symm_apply_apply, Equiv.prodCongr_apply,
-    Equiv.refl_apply]
+    ]
   rfl
 
 lemma sx_pairSym_lt_eight {A : ℕ} (hA : 4 ≤ A) (re im : Bool) :

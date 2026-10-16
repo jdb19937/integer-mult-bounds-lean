@@ -26,8 +26,6 @@ open IntegerMultBounds IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.St
   IntegerMultBounds.MathlibTM2.Layer
 open IntegerMultBounds.MathlibTM2.Fast IntegerMultBounds.MathlibTM2.Fast.Src
 
-set_option linter.unusedSimpArgs false
-set_option linter.unusedSectionVars false
 
 /-- The converter's own registers: the inputs `uW` (`Wt` symbols) and `uw` (`w` symbols), the
 loop counter `uD`, spares, and the outputs for the synthetic transform and its layout. -/

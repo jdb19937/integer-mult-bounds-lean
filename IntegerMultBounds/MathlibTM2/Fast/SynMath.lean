@@ -42,7 +42,6 @@ open IntegerMultBounds IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.St
   IntegerMultBounds.Networks
 open IntegerMultBounds.MathlibTM2.Node hiding LReg
 
-set_option linter.unusedSimpArgs false
 set_option maxHeartbeats 1000000
 
 /-! ### The physical order of a layout -/

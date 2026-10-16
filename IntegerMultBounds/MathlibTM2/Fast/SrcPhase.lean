@@ -45,8 +45,6 @@ open IntegerMultBounds.MathlibTM2.Mult IntegerMultBounds.MathlibTM2.Mult.Sizes I
 open IntegerMultBounds.Networks.Shared50ModularControl (prime)
 open IntegerMultBounds.Spec.SignedRingProduct (header)
 
-set_option linter.unusedSimpArgs false
-set_option linter.unusedSectionVars false
 
 noncomputable section
 
@@ -305,7 +303,7 @@ theorem srcK_runs (M : SrcMach t₀ T Q) (hA : 96 ≤ prime + K) (n : ℕ) {w W 
     funext r
     simp only [Function.update_apply]
     split_ifs <;> subst_vars <;> simp_all
-  · simp only [srcCostK, SrcF.get_x, htSp, hsSp]
+  · simp only [srcCostK]
     ring
 
 end PhaseK
@@ -645,7 +643,7 @@ theorem srcV_runs (M : SrcMach t₀ T Q) (hA : 96 ≤ prime + K) {n : ℕ} (hn :
     funext y
     simp only [Function.update_apply]
     split_ifs <;> subst_vars <;> simp_all [hv.fi, hv.gi, hv.fo, hv.rpi]
-  · simp only [srcCostV, SrcF.get_k, SrcF.get_v, hK, hE₄, hE₃, hE₂, hE₁, hX, hY, hH,
+  · simp only [srcCostV, SrcF.get_v, hK, hE₄, hE₃, hE₂, hE₁, hX, hY, hH,
       length_cstream, cst_length_numBox, Function.update_self, List.length_map,
       Function.update_of_ne (show CvR.fi ≠ .fo by decide),
       Function.update_of_ne (show CvR.gi ≠ .fo by decide),

@@ -37,7 +37,6 @@ namespace IntegerMultBounds.MathlibTM2.Fast
 
 open IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.Stack IntegerMultBounds.MathlibTM2 IntegerMultBounds.MathlibTM2.Host IntegerMultBounds.MathlibTM2.Layer IntegerMultBounds.MathlibTM2.Node
 
-set_option linter.unusedSimpArgs false
 
 /-! ### State codes -/
 
@@ -304,7 +303,7 @@ theorem selectP_exec {X Y M Sg : Fin T} (hd : [X, Y, M, Sg].Nodup) (v : HS T Q A
       by_cases k1 : k = Sg
       · rw [k1]; simp [Ne.symm hXS, Ne.symm hYS, Ne.symm hMS]
       by_cases k2 : k = M
-      · rw [k2]; simp [Ne.symm hXM, Ne.symm hYM, hMS, hYS, hXS]
+      · rw [k2]; simp [Ne.symm hXM, hMS, hYS]
       by_cases k3 : k = Y
       · rw [k3]; simp [Ne.symm hXY, hYM, hYS]
       by_cases k4 : k = X
@@ -321,9 +320,9 @@ theorem selectP_exec {X Y M Sg : Fin T} (hd : [X, Y, M, Sg].Nodup) (v : HS T Q A
       by_cases k1 : k = Sg
       · rw [k1]; simp [Ne.symm hXS, Ne.symm hYS, Ne.symm hMS]
       by_cases k2 : k = M
-      · rw [k2]; simp [Ne.symm hXM, Ne.symm hYM, hMS, hYS, hXS]
+      · rw [k2]; simp [Ne.symm hYM, hMS, hXS]
       by_cases k3 : k = Y
-      · rw [k3]; simp [Ne.symm hXY, hYM, hYS]
+      · rw [k3]; simp [hYM, hYS]
       by_cases k4 : k = X
       · rw [k4]; simp [hXY, hXM, hXS]
       · simp [k1, k2, k3, k4]

@@ -55,8 +55,6 @@ namespace IntegerMultBounds.MathlibTM2.Fast.ResampA
 open IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.Stack IntegerMultBounds.MathlibTM2 IntegerMultBounds.MathlibTM2.Host IntegerMultBounds.MathlibTM2.Layer IntegerMultBounds.MathlibTM2.Node
 open IntegerMultBounds.MathlibTM2.Fast
 
-set_option linter.unusedSimpArgs false
-set_option linter.unusedSectionVars false
 set_option maxHeartbeats 1000000
 
 /-! ### Registers -/
@@ -419,8 +417,8 @@ theorem rsa_term (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ : SS.states �
       (rmulCost T w) :=
     (RsaRuns.of_c (c := RsaR.c) hrg RsaR.c_injective
       (rmulOne_runs (body := body) hcr hdisj' hι hT hQ hA (rsa_ready_cr hr _ _ _ _) hw hq ha hb hbi
-        (rx := cstream A w xr) (ry := cstream A w tr) (by simp [hV₁, rsaCr])
-        (by simp [hV₁, rsaCr])) V₁.get (fun _ => rfl)).congr (RsaV.extend_c _ _)
+        (rx := cstream A w xr) (ry := cstream A w tr) (by simp [rsaCr])
+        (by simp [rsaCr])) V₁.get (fun _ => rfl)).congr (RsaV.extend_c _ _)
   have h2 : RsaRuns body rg ι (moveR (rg (.c .acc)) (rg .pz) id) V₂.get V₃.get (2 * w + 2) :=
     ((rsa_moveR (body := body) (ι := ι) hrg (a := .c .acc) (b := .pz) (by simp) V₂.get).congr
       (by rw [RsaV.upd_c, RsaV.upd_pz]; simp [hV₃, hV₂, hV₁, oneSt, rsaCr, hacc])).mono
@@ -664,7 +662,7 @@ theorem rsa_rows (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ : SS.states �
     have ht0 : 0 < t := by omega
     have e1 : outs.take t = outs := List.take_of_length_le (by simp [houts, rsaOut])
     congr 1
-    ext1 <;> simp [rsaRV, hkT, rsaCen_self ht0, Nat.mul_mod_left, e1, Nat.mul_comm s t]
+    ext1 <;> simp [rsaRV, hkT, rsaCen_self ht0, e1, Nat.mul_comm s t]
 
 /-- The step bound of one line of `s` records, `t` outputs, window `2m + 1`, `t = 2^L`. -/
 def rsaLineCost (T w s t m L : ℕ) : ℕ :=

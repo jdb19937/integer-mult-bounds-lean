@@ -39,7 +39,6 @@ namespace IntegerMultBounds.MathlibTM2.Fast
 open IntegerMultBounds.MathlibTM2.Mult
 open scoped Function
 
-set_option linter.unusedSimpArgs false
 
 section Spec
 

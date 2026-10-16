@@ -22,7 +22,6 @@ instance : Fintype Move := Fintype.ofList [.left, .stay, .right] (by intro m; ca
 
 variable {S : Type}
 
-set_option linter.unusedSimpArgs false
 
 /-- The cell at offset `d` from the head. -/
 def readAt (blank : S) (L R : List S) (d : ℤ) : S :=
@@ -211,6 +210,6 @@ theorem filterMap_window {a : ℕ} (L R : List (Fin (a + 4))) (h : ℤ) (out : L
           rfl
         · rfl
   rw [hsplit]
-  simp [List.filterMap_append, List.filterMap_replicate, List.filterMap_map, Function.comp_def]
+  simp [List.filterMap_append, List.filterMap_map]
 
 end IntegerMultBounds.MathlibTM2

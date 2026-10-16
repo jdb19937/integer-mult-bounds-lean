@@ -45,8 +45,6 @@ namespace IntegerMultBounds.MathlibTM2.Fast
 open IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.Stack IntegerMultBounds.MathlibTM2 IntegerMultBounds.MathlibTM2.Host IntegerMultBounds.MathlibTM2.Layer IntegerMultBounds.MathlibTM2.Node
 open IntegerMultBounds.MathlibTM2.Mult.Rounds
 
-set_option linter.unusedSimpArgs false
-set_option linter.unusedSectionVars false
 set_option maxHeartbeats 1000000
 
 section Programs
@@ -139,7 +137,7 @@ theorem twRuns_roleStep {h : ℕ} (R : TwReg → List (Fin (A + 4))) (rest : Lis
               (12 * h + 23) := by
             refine twRuns_mono (twRuns_congr (twRuns_uclear (body := body) htg .v R₁) ?_) ?_
             · funext r
-              cases r <;> simp [twRoleSt, twStep, Function.update_apply, hR₁, hf]
+              cases r <;> simp [twRoleSt, twStep, hR₁, hf]
             · simp [hR₁, hv, hVl]; omega
           exact twRunsS_cond_false (fun v hv => by simp [hv]) (twRunsS_of hcl)
       | true =>
@@ -175,7 +173,7 @@ theorem twRuns_roleStep {h : ℕ} (R : TwReg → List (Fin (A + 4))) (rest : Lis
             refine twRuns_mono (twRuns_congr (twRuns_seq h1 (twRuns_seq h2 (twRuns_seq h3 h4)))
               ?_) ?_
             · funext r
-              cases r <;> simp [twRoleSt, twStep, Function.update_apply, hR₁, hvp]
+              cases r <;> simp [twRoleSt, twStep, hR₁, hvp]
             · simp [hR₁, hv, hVl]; omega
           exact twRunsS_cond_true (fun v hv => by simp [hv]) (twRunsS_of hsel)
     have hin := twRuns_mvTop_seqS (body := body) htg (src := .ad) (dst := .as) (by decide) had hq
@@ -187,7 +185,7 @@ theorem twRuns_roleStep {h : ℕ} (R : TwReg → List (Fin (A + 4))) (rest : Lis
         refine twRuns_congr (twRuns_mvTop2 (body := body) htg (src := .ad) (d₁ := .as) (d₂ := .v)
           (by decide) (by decide) (by decide) had) ?_
         funext r
-        cases r <;> simp [twRoleSt, twStep, hx, Function.update_apply, hv, hf]
+        cases r <;> simp [twRoleSt, twStep, hx, hv, hf]
       exact twRunsS_mono (twRunsS_cond_false (fun v hv => by simp [hv, tw_sep_ne_true.symm])
         (twRunsS_cond_true (fun v hv => by simp [hv]) (twRunsS_of hin))) (by omega)
     · have hin : TwRuns body tg (.act (twMvTop (tg .ad) (tg .as) .done)) R
@@ -195,7 +193,7 @@ theorem twRuns_roleStep {h : ℕ} (R : TwReg → List (Fin (A + 4))) (rest : Lis
         refine twRuns_congr (twRuns_mvTop (body := body) htg (src := .ad) (dst := .as) (by decide)
           had) ?_
         funext r
-        cases r <;> simp [twRoleSt, twStep, hx, hl, Function.update_apply, hv, hf]
+        cases r <;> simp [twRoleSt, twStep, hx, hl, hv, hf]
       exact twRunsS_mono (twRunsS_cond_false (fun v hv => by simp [hv, hx])
         (twRunsS_cond_false (fun v hv => by simp [hv, hl]) (twRunsS_of hin))) (by omega)
 
@@ -228,8 +226,8 @@ theorem twRuns_roleScan {es : List ℕ} {h n : ℕ} (ρ : TwReg → List (Fin (A
     (p := twRoleBody tg) l (twScanSt h ρ L bits) (fun _ => 12 * h + 26) ?_
   · refine twRuns_mono (twRuns_congr (twRuns_congr_left hsc ?_) ?_) ?_
     · funext r
-      cases r <;> simp [Function.update_apply, twAT, twScanSt, twSt, hrl, had, hf, hv, has, ht1,
-        binSyms_eq, ← hl, ← hbits]
+      cases r <;> simp [twAT, twScanSt, twSt, hrl, had, hf, hv, has, ht1,
+        binSyms_eq, ← hbits]
     · have hfin : twSt h L ([], 0) l.length = ([], twF h es n % 2 ^ (h + 1)) := by
         unfold twSt
         rw [hll, ← hLl, List.take_length, hL, hl, hbits, twFold_roles h es n 0 (by positivity),
@@ -237,7 +235,7 @@ theorem twRuns_roleScan {es : List ℕ} {h n : ℕ} (ρ : TwReg → List (Fin (A
       simp only [twScanSt, hfin]
       rw [hll, ← hbl]
       funext r
-      cases r <;> simp [Function.update_apply, hrl, hv, ht1]
+      cases r <;> simp [hrl, hv, ht1]
     · simp [Finset.sum_const, hll]
   · intro j hj
     have hjb : j < bits.length := by omega
@@ -261,9 +259,9 @@ theorem twRuns_roleScan {es : List ℕ} {h n : ℕ} (ρ : TwReg → List (Fin (A
         (bitSymbol bits[j] : Fin (A + 4)) :: (bits.take j).reverse.map bitSymbol := by
       rw [List.take_add_one, List.getElem?_eq_getElem hjb, Option.toList_some]
       simp only [List.reverse_append, List.reverse_cons, List.reverse_nil, List.nil_append,
-        List.map_append, List.map_cons, List.map_nil, List.singleton_append]
+        List.map_cons, List.singleton_append]
     funext r
-    cases r <;> simp [Function.update_apply, twRoleSt, twAT, twATin, twScanSt, hsucc, htk]
+    cases r <;> simp [twRoleSt, twAT, twATin, twScanSt, hsucc, htk]
 
 /-- **The exponent of the record at the address on `ad`.** -/
 theorem twExp_runs (neg : Bool) {es : List ℕ} {ℓ h n : ℕ} (hh : h ≤ ℓ)
@@ -295,7 +293,7 @@ theorem twExp_runs (neg : Bool) {es : List ℕ} {ℓ h n : ℕ} (hh : h ≤ ℓ)
         (binSyms (h + 1) 0)) .ad []) .as ((binBits es.sum n).reverse.map bitSymbol)) .f
         (binSyms (h + 1) Fm) .ad) = Function.update ρ .f (binSyms (h + 1) Fm) := by
     funext r
-    cases r <;> simp [Function.update_apply, had, has, binSyms_eq, ← List.map_reverse]
+    cases r <;> simp [had, has, binSyms_eq, ← List.map_reverse]
   rw [hρ₃] at h3
   have hc23 : (Function.update (Function.update (Function.update (Function.update ρ .f
       (binSyms (h + 1) 0)) .ad []) .as ((binBits es.sum n).reverse.map bitSymbol)) .f
@@ -317,7 +315,7 @@ theorem twExp_runs (neg : Bool) {es : List ℕ} {ℓ h n : ℕ} (hh : h ≤ ℓ)
         rw [tw_binSyms_shift, show ℓ - h + (h + 1) = ℓ + 1 by omega, twEx_false, twE_mod hh]
       rw [hf4] at h4
       refine twRuns_mono (twRuns_congr (twRuns_seq h1 (twRuns_seq h2 (twRuns_seq h3 h4))) ?_) ?_
-      · funext r; cases r <;> simp [Function.update_apply]
+      · funext r; cases r <;> simp
       · simp [hlh]
         unfold twExpCost
         rw [show es.sum * (12 * h + 33) = es.sum * (12 * h + 29) + 4 * es.sum by ring]
@@ -341,7 +339,7 @@ theorem twExp_runs (neg : Bool) {es : List ℕ} {ℓ h n : ℕ} (hh : h ≤ ℓ)
       rw [hf5] at h5
       refine twRuns_mono (twRuns_congr (twRuns_seq h1 (twRuns_seq h2 (twRuns_seq h3
         (twRuns_seq h4 h5)))) ?_) ?_
-      · funext r; cases r <;> simp [Function.update_apply]
+      · funext r; cases r <;> simp
       · simp [hlh]
         unfold twExpCost twNegECost
         rw [show es.sum * (12 * h + 33) = es.sum * (12 * h + 29) + 4 * es.sum by ring]

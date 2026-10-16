@@ -37,8 +37,6 @@ open IntegerMultBounds IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.St
 open IntegerMultBounds.MathlibTM2.Node hiding LReg
 open IntegerMultBounds.Networks.Shared50ModularControl (prime)
 
-set_option linter.unusedSimpArgs false
-set_option linter.constructorNameAsVariable false
 
 /-! ### The temporaries -/
 
@@ -127,12 +125,12 @@ theorem slyRg_injective : Function.Injective slyRg := by
     first
     | rfl
     | exact h
-    | (simp only [Fin.ext_iff, Fin.val_ofNat] at h; omega)
+    | (simp only [Fin.ext_iff] at h; omega)
 
 theorem slyLr_injective : Function.Injective slyLr := by
   intro x y h
   cases x <;> cases y <;> simp only [slyLr, slyT_inj] at h ⊢ <;>
-    first | rfl | (simp only [Fin.ext_iff, Fin.val_ofNat] at h; omega)
+    first | rfl | (simp only [Fin.ext_iff] at h; omega)
 
 theorem slyGr_injective : Function.Injective slyGr := by
   intro x y h
@@ -142,7 +140,7 @@ theorem slyGr_injective : Function.Injective slyGr := by
       sreg_injective.eq_iff, SynW.s.injEq, SynW.p.injEq, reduceCtorEq,
       LdgReg.tbl.injEq, TblR.v.injEq, TblR.z.injEq] at h ⊢ <;>
     first | rfl | (exact absurd h (by decide)) |
-      (simp only [Fin.ext_iff, Fin.val_ofNat] at h ⊢; omega)
+      (simp only [Fin.ext_iff] at h ⊢; omega)
 
 theorem slyRg_slyLr (x : LayReg 6) (y : LdlReg) : slyRg x ≠ slyLr y := by
   cases x <;> cases y <;> simp [slyRg, slyLr, slyT, sreg_eq]
@@ -154,7 +152,7 @@ theorem slyGr_slyRg (x : LdgReg) (y : LayReg 6) : slyGr x ≠ slyRg y := by
 theorem slyGr_slyLr (x : LdgReg) (y : LdlReg) : slyGr x ≠ slyLr y := by
   rcases x with ((i | _ | _ | _ | j)) | _ | _ | _ | _ | _ | _ | _ <;> cases y <;>
     simp only [slyGr, slyLr, slyT_inj, sreg_eq_slyT_iff, ne_eq, not_false_eq_true] <;>
-    simp only [Fin.ext_iff, Fin.val_ofNat] <;> omega
+    simp only [Fin.ext_iff] <;> omega
 
 /-- The three register maps of the layout stage. -/
 theorem sly_regs : LdgRegs slyRg slyLr slyGr :=

@@ -38,8 +38,6 @@ open IntegerMultBounds.MathlibTM2.Mult IntegerMultBounds.MathlibTM2.Mult.Sizes
 open IntegerMultBounds.Networks.Shared50ModularControl (prime)
 open Filter
 
-set_option linter.unusedSimpArgs false
-set_option linter.unusedSectionVars false
 
 noncomputable section
 
@@ -101,7 +99,7 @@ theorem dsy_tick_ne_blank' {A : ℕ} : (tick : Fin (A + 4)) ≠ blank := by
   simp [tick, bitSymbol, blank, Fin.ext_iff]
 
 theorem dsy_false_ne_blank' {A : ℕ} : (bitSymbol false : Fin (A + 4)) ≠ blank := by
-  simp [bitSymbol, blank, Fin.ext_iff]
+  simp [bitSymbol, blank]
 
 theorem dsy_tick_ne_blank : (tick : Fin (bdA + 4)) ≠ blank := dsy_tick_ne_blank'
 
@@ -246,7 +244,7 @@ theorem dsy_mnσ_wire_off (P₀ : List (Fin (bdA + 4))) (v₀ : SynW → List (F
     {v : NWire} (hv : ∀ y, synWire y ≠ v) : mnσ P₀ v₀ (.wire v) = [] := by
   unfold mnσ
   rw [synG_of_ne fun y h => hv y (LReg.wire.inj (reg_injective h))]
-  simp [synIdle, Function.update_apply]
+  simp [synIdle]
 
 @[simp] theorem dsy_wire_ne_bdLayX (v : NWire) (z : DsX) :
     (LReg.wire v : LReg SXReg) ≠ bdLayX z := fun h => bdLayX_ne_wire z v h.symm
@@ -504,7 +502,7 @@ theorem dsyWires_spec : ∀ᶠ n in atTop, ∀ mainP : MnPr bdA,
           exact ⟨hy.2.2.2.2.2.2.1, hy.2.2.2.2.2.2.2.1, hy.2.2.2.2.2.2.2.2.1,
             hy.2.2.2.2.2.2.2.2.2.1, hy.2.2.2.2.2.2.2.2.2.2.1, hy.2.2.2.2.2.2.2.2.2.2.2⟩)]
     have hpw : ∀ y, mnLay .park ≠ dsyWr y := fun y e => by
-      have := mnLay_inj e; simp [dsyWr] at this
+      have := mnLay_inj e; simp at this
     cases x
     case park =>
       rw [mnσ_park, hF₁₀, Function.update_of_ne (hpne _).symm, hF₉,
@@ -526,7 +524,7 @@ theorem dsyWires_spec : ∀ᶠ n in atTop, ∀ mainP : MnPr bdA,
           · subst hw
             simp only [hF₁₀, hF₉, hF₈, hF₇, hF₆, hF₅, hF₄, hF₃, hF₂, hF₁, hF₀, dsyOv_lay, hR₇,
               Function.update_apply, dsyWr, bdIo, mnLay_inj.eq_iff, LReg.wire.injEq,
-              synWire_eq_iff, SynW.p.injEq, SynW.tw.injEq, dsy_wire_ne_bdLayX, reduceCtorEq,
+              synWire_eq_iff, dsy_wire_ne_bdLayX, reduceCtorEq,
               ite_true, ite_false, hlayW', List.append_nil]
             rfl
           · rw [hevw _ (by simp [hw])]
@@ -537,7 +535,7 @@ theorem dsyWires_spec : ∀ᶠ n in atTop, ∀ mainP : MnPr bdA,
             | (rw [hevw _ (by decide)]; rfl)
             | (simp only [hF₁₀, hF₉, hF₈, hF₇, hF₆, hF₅, hF₄, hF₃, hF₂, hF₁, hF₀, dsyOv_lay,
                 hR₇, Function.update_apply, dsyWr, bdIo, mnLay_inj.eq_iff, LReg.wire.injEq,
-                synWire_eq_iff, SynW.p.injEq, SynW.tw.injEq, dsy_wire_ne_bdLayX, reduceCtorEq,
+                synWire_eq_iff, SynW.p.injEq, dsy_wire_ne_bdLayX, reduceCtorEq,
                 ite_true, ite_false, hlayW', List.append_nil]
                rfl)
         · rw [hevw _ (by simp)]; rfl

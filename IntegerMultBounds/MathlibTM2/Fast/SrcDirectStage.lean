@@ -16,8 +16,6 @@ open IntegerMultBounds.MathlibTM2.Mult IntegerMultBounds.MathlibTM2.Mult.Sizes I
 open IntegerMultBounds.Networks.Shared50ModularControl (prime)
 open scoped Function
 
-set_option linter.unusedSimpArgs false
-set_option linter.unusedSectionVars false
 
 noncomputable section
 
@@ -193,7 +191,7 @@ theorem srcDirectOpp_runs (M : SrcMach t₀ T Q) (hA : 96 ≤ prime + K) {n : �
                 (srcPad (p n) (s n) (t n) fun k => starRingEnd ℂ (SA k)))) } with hE₃
   replace s3 := s3.congr (ρ'' := E₃.get) (by
     congr 1
-    simp only [hE₃, hE₂, hE₁, SrcF.get_c, hstr, List.append_nil])
+    simp only [hE₃, hE₂, hE₁, hstr, List.append_nil])
   -- the inverse layout
   have s4 := srcDirectCrtI_runs (body := body) M hA hbig (w := w) (by omega) E₃ (hC.upd_str _)
     (fun k => starRingEnd ℂ (SA k)) (by simp [hE₃])

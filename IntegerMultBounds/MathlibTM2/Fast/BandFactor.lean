@@ -20,7 +20,6 @@ namespace IntegerMultBounds.MathlibTM2.Fast
 open IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.Stack IntegerMultBounds.MathlibTM2
   IntegerMultBounds.MathlibTM2.Host IntegerMultBounds.MathlibTM2.Layer IntegerMultBounds.MathlibTM2.Node
 
-set_option linter.unusedSimpArgs false
 
 variable {T Q A : ℕ} {U : Type} {P : Type}
 
@@ -247,8 +246,8 @@ theorem band_newtonStep_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg 
     (RsbRuns.seq hdisj h₁₁ h₁₂))))))))))).congr ?_).mono ?_
   · funext x; cases x <;> simp [σ₁₁, σ₁₀, σ₉, σ₈, σ₇, σ₅, σ₄, σ₃, σ₂, σ₁, hhc, hya, hxs, hpr,
       hac, hac2, hnv, hval]
-  · simp [σ₁₁, σ₁₀, σ₉, σ₈, σ₇, σ₅, σ₄, σ₃, σ₂, σ₁, hhc, hya, hxs, hpr, hac, hac2, hnv, hxa,
-      hwn, bandNewtonStepCost, cstream]
+  · simp [σ₁₁, σ₁₀, σ₉, σ₈, σ₇, σ₅, σ₄, σ₃, σ₂, σ₁, hya, hxs, hpr, hac, hac2, hnv, hxa,
+      bandNewtonStepCost]
     omega
 
 /-- The Newton loop: `xa` ends with `newtonZ P c K`. -/
@@ -358,7 +357,7 @@ theorem band_facRow_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r �
   refine ((RsbRuns.seq hdisj h₁ (RsbRuns.seq hdisj (h₂'.congr ?_) h₃)).congr ?_).mono ?_
   · simp only [σ₂, σ₁, cstream_append]
   · funext x; cases x <;> simp [σ₂, σ₁, hmsk, cstream_append, List.reverse_append]
-  · simp [σ₂, σ₁, hmsk, bandFacRowCost, hmwn, hrs'l, csyms]
+  · simp [σ₂, σ₁, hmsk, bandFacRowCost, hrs'l, csyms]
     nlinarith
 
 /-- The multiplier of a row with head `h` and pivot reciprocal `r`. -/
@@ -541,7 +540,7 @@ theorem band_facRows_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r �
       (cstream A w (List.replicate (B-(j+1)) ⟨r, 0⟩) ++ TB)
       ((cstream A w ((rest.take j).map fun row => colC (facRow P r tail0 row)).flatten).reverse ++ SR)
       (by
-        simp only [rsbUpd2, hΨ, Function.update_self, Function.update_of_ne (by decide : RsbR.vk ≠ RsbR.tL),
+        simp only [rsbUpd2, hΨ, Function.update_of_ne (by decide : RsbR.vk ≠ RsbR.tL),
           Function.update_of_ne (by decide : RsbR.vk ≠ RsbR.ms)]
         rw [List.drop_eq_getElem_cons hjr, ← hrowdef, hht]
         simp [colC])
@@ -752,7 +751,7 @@ theorem band_facStep_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r �
     (by simp [σ₁₂, σ₉, σ₈, σ₇, σ₆, σ₅, σ₄, σ₃, σ₂, σ₁, hpr])
     (by simp [σ₁₂, σ₉, σ₈, σ₇, σ₆, σ₅, σ₄, σ₃, σ₂, σ₁, hnv])
     (by simp [σ₁₂, σ₉, σ₈, σ₇, σ₆, σ₅, σ₄, σ₃, σ₂, σ₁, hac])
-    (by simp [σ₁₂, σ₉, σ₈, σ₇, σ₆, σ₅, σ₄, σ₃, σ₂, σ₁, hac2])
+    (by simp [σ₁₂, σ₉, σ₈, σ₇, σ₆, σ₅, σ₄, σ₃, σ₂, σ₁])
     (by simp [σ₁₂, σ₉, σ₈, σ₇, σ₆, σ₅, σ₄, σ₃, σ₂, σ₁, htC])
     (by simp [σ₁₂, σ₉, σ₈, σ₇, σ₆, σ₅, σ₄, σ₃, σ₂, σ₁, htA])
     (by simp [σ₁₂, σ₉, σ₈, σ₇, σ₆, σ₅, σ₄, σ₃, σ₂, σ₁, htJ])
@@ -787,8 +786,8 @@ theorem band_facStep_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r �
     h₁₅)))))))))))))).congr ?_).mono ?_
   · funext x; cases x <;> simp [σ₁₄, σ₁₃, σ₁₂, σ₉, σ₈, σ₇, σ₆, σ₅, σ₄, σ₃, σ₂, σ₁, hef, htb, hsr,
       hbo, hhv, hxa, hac2, hhf, hdf, NR, colC, List.reverse_append]
-  · simp [σ₁₄, σ₁₃, σ₁₂, σ₉, σ₈, σ₇, σ₆, σ₅, σ₄, σ₃, σ₂, σ₁, hef, htb, hsr, hbo, hhv, hxa, hac2,
-      hhf, hdf, hwn, bandFacStepCost, htl', hnl, hmwn, csyms, colC, htl, NR, hRS]
+  · simp [σ₁₄, σ₁₃, σ₁₂, σ₉, σ₈, σ₇, σ₆, σ₅, σ₄, σ₃, σ₂, σ₁, hef, htb, hbo, 
+      hhf, hdf, bandFacStepCost, csyms, colC, htl, NR, hRS]
     have hsum : (List.map (List.length ∘ fun row => List.map (fun x => (⟨x, 0⟩ : GaussianInt))
         (facRow P r tail0 row)) rest).sum=B*(2*B+1) := by
       rw [List.map_congr_left (g := fun _ => 2*B+1) (fun row hr => by
@@ -914,7 +913,7 @@ theorem band_facLoop_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r �
     have hlc : Mult.BandFactor.lcolZ P K (facState P K rows inputs j)=
         rest.map (fun row => facMul P (Mult.BandFactor.newtonZ P c K) row) := by
       rw [hr, lcolZ_cons]
-    funext x; cases x <;> simp [rsbUpd2, hΨ, hst, List.range_succ, hr, hpiv, hlc, colC,
+    funext x; cases x <;> simp [rsbUpd2, hΨ, hst, List.range_succ, hr, colC,
       List.reverse_append, facPiv, lcolZ_cons, Function.comp_def]
   have h := rsb_rep_runs hrg hdisj (ra := .sn) (rt := .sel) (by decide) (bandFacStepP rg hι hT hQ)
     (σ .sn) Ψ _ hbody
@@ -960,7 +959,7 @@ theorem band_tBlk_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠ 
     (by decide) (by decide) (by decide) σ₂ (by simp [σ₂, σ₁, htC])
   refine ((RsbRuns.seq hdisj h₁ (RsbRuns.seq hdisj h₂' h₃)).congr ?_).mono ?_
   · funext x; cases x <;> simp [σ₂, σ₁, hmsk, List.reverse_append]
-  · simp [σ₂, σ₁, hmsk, csyms, hm2wn, hbs]; omega
+  · simp [σ₂, σ₁, hmsk, csyms, hbs]; omega
 
 /-- The cost of one transpose step with `k+1` blocks. -/
 def bandTStepCost (w k : ℕ) : ℕ := 40 * (k + 2) * (k + 2) * w + 40 * k + 100
@@ -1143,8 +1142,8 @@ theorem band_tStep_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠
     all_goals
       conv_rhs => rw [← hmapk (fun blk : List ℤ => (⟨blk.head?.getD 0, 0⟩ : GaussianInt))]
       simp [hlht]
-  · simp [σ₁₁, σ₁₀, σ₉, σ₈, σ₇, σ₆, rsbUpd2, hΨ, σ₅, σ₄, σ₃, σ₂, σ₁, hef, hxs, hpr, hya, hnv,
-      hwn, hmwn, hm2wn, colC, hul, hvl, hltl, bandTStepCost, csyms, hW]
+  · simp [σ₁₁, σ₁₀, σ₉, σ₈, σ₇, σ₆, rsbUpd2, hΨ, σ₅, σ₄, σ₃, σ₂, σ₁, hef, hxs, 
+      colC, hul, hvl, hltl, bandTStepCost, csyms, hW]
     have hsum : (List.take k (List.map (List.length ∘ fun blk =>
         (List.map (fun x => (⟨x, 0⟩ : GaussianInt)) blk).tail ++ [(⟨0, 0⟩ : GaussianInt)]) W)).sum =
         k * (k + 1) := by
@@ -1276,7 +1275,7 @@ theorem band_rev_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠ �
           List.singleton_append, List.flatten_cons]
       funext z
       simp only [ρ₁, ρ, rsbUpd2, hΨ, Function.update_apply]
-      split_ifs <;> simp_all [htk]
+      split_ifs <;> simp_all
     · simp [ρ₁, hbL]; omega
   have h := rsb_rep_runs hrg hdisj (ra := n) (rt := tn) hnt _ (σ n) Ψ _ hbody
   refine (h.congr_pre ?_ |>.congr ?_).mono ?_
@@ -1381,7 +1380,7 @@ theorem band_axisOrg_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r �
   have h₅ := band_rev_runs (body := body) (ι := ι) hrg hdisj (x := .dout) (y := .bo) (c := .cm .wn)
     (n := .kn) (tn := .tK) (by decide) (w := w) (L := 1) σ₄ (Lf.map fun x => [C x]).reverse
     (by intro b hb; simp at hb; obtain ⟨x, -, rfl⟩ := hb; rfl) [] []
-    (by simp [σ₄, σ₃, σ₂, σ₁, hdout, List.map_reverse, List.flatten_reverse, hsing'])
+    (by simp [σ₄, σ₃, σ₂, σ₁, hdout, List.flatten_reverse, hsing'])
     (by simp [σ₄, σ₃, σ₂, σ₁, hbo]) (by simp [σ₄, σ₃, σ₂, σ₁, hwn]) hkn4
     (by simp [σ₄, σ₃, σ₂, σ₁, htK]) (by simp [σ₄, σ₃, σ₂, σ₁, htC]) (by simp [σ₄, σ₃, σ₂, σ₁, hac2])
   set σ₅ := Function.update (Function.update σ₄ .dout []) .bo
@@ -1431,7 +1430,7 @@ theorem band_axisOrg_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r �
     (RsbRuns.seq hdisj h₈ (RsbRuns.seq hdisj h₉ (RsbRuns.seq hdisj h₁₀ (RsbRuns.seq hdisj h₁₁
     (RsbRuns.seq hdisj h₁₂ (RsbRuns.seq hdisj h₁₃ h₁₄))))))))))))).congr ?_).mono ?_
   · funext x; cases x <;> simp [σ₁₃, σ₁₂, σ₁₁, σ₁₀, σ₈, σ₇, σ₆, σ₅, σ₄, σ₃, σ₂, σ₁, hvk, hxs,
-      hmsk, hsn, List.flatten_reverse, List.map_reverse, hsing]
+      hmsk, hsn, hsing]
   · simp [σ₁₃, σ₁₂, σ₁₁, σ₁₀, σ₈, σ₇, σ₆, σ₅, σ₄, σ₃, σ₂, σ₁, hvk, hxs, hmsk, hsn, hms, hm2n, hkn,
       hmwn, hm2wn, hdst, hwn, hLf, hUr, bandAxisOrgCost, csyms, List.length_flatten,
       List.sum_replicate]
@@ -1513,8 +1512,8 @@ theorem band_axisFac_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r �
       List.map_const', List.sum_replicate, hl, smul_eq_mul]
   refine ((RsbRuns.seq hdisj h₁ (RsbRuns.seq hdisj h₂ (RsbRuns.seq hdisj h₃ h₄))).congr ?_).mono ?_
   · funext x; cases x <;> simp [σ₃, σ₂, σ₁, hvk, hac2]
-  · simp only [σ₃, Function.update_self, hfl, σ₁, σ₂, length_cstream, List.length_reverse, hwl]
-    simp [hac2, hvk]
+  · simp only [σ₃, Function.update_self, σ₁, σ₂, length_cstream, List.length_reverse, hwl]
+    simp [hvk]
     have hsum : (List.map (List.length ∘ colC) (facState P K rows inputs s)).sum = (B + 1) * (2 * B + 1) := by
       obtain ⟨hl, hrl'⟩ := facState_shape P K B rows inputs hrows hrl hin s (by omega)
       rw [List.map_congr_left (g := fun _ => 2 * B + 1) (fun r hr => by simp [colC, hrl' r hr]),
@@ -1567,11 +1566,11 @@ theorem band_axisTr_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r �
       List.map_const', List.sum_replicate, smul_eq_mul]
     simp
   refine ((RsbRuns.seq hdisj h₁ (RsbRuns.seq hdisj h₂ (RsbRuns.seq hdisj h₃ h₄))).congr ?_).mono ?_
-  · funext x; cases x <;> simp [σ₁, hvk, hef, hhf, hac2]
+  · funext x; cases x <;> simp [σ₁, hef, hhf, hac2]
   · simp only [σ₁, Function.update_self, Function.update_of_ne (by decide : RsbR.ef ≠ RsbR.vk),
       Function.update_of_ne (by decide : RsbR.ac2 ≠ RsbR.ef),
       Function.update_of_ne (by decide : RsbR.ac2 ≠ RsbR.vk), Function.update_of_ne (by decide : RsbR.ac2 ≠ RsbR.src),
-      List.append_nil, hwin, hcols, List.length_append, List.length_reverse, hac2, List.length_nil]
+      List.append_nil, hcols, List.length_reverse, hac2]
     rw [Function.update_of_ne (by decide : RsbR.vk ≠ RsbR.ef), Function.update_self, hwin]
     omega
 

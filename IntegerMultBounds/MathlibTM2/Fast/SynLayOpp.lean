@@ -33,9 +33,6 @@ open IntegerMultBounds IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.St
 open IntegerMultBounds.MathlibTM2.Node hiding LReg
 open IntegerMultBounds.Networks.Shared50ModularControl (prime)
 
-set_option linter.unusedSimpArgs false
-set_option linter.unusedSectionVars false
-set_option linter.constructorNameAsVariable false
 
 /-! ### The reversal of the description streams -/
 
@@ -88,7 +85,7 @@ theorem sg_slyRevStreams (hA : 4 ≤ prime + Ka) {es : List ℕ} {ℓ K w l : �
   have hwire : ∀ i : Fin 32, 3 ≤ i.val → Rw (sreg (.s i)) = [] := by
     intro i hi
     rw [hRw]
-    simp only [ldgPost, Function.update_apply, slyLr, slyRg, slyT_eq_sreg_iff, sreg_eq_slyT_iff,
+    simp only [ldgPost, Function.update_apply, slyLr, slyRg, sreg_eq_slyT_iff,
       sreg_injective.eq_iff, ite_false, synG_sreg, slyV₂, slyPV, SynW.s.injEq, reduceCtorEq]
     split_ifs <;> first | exact hs i |
       (exfalso; rename_i h; have := congrArg Fin.val h; simp at this; omega)
@@ -96,10 +93,10 @@ theorem sg_slyRevStreams (hA : 4 ≤ prime + Ka) {es : List ℕ} {ℓ K w l : �
     (sp2 := slyLr .tS) (src := slyLr .dM) (tmp := sreg (.s 6)) (dst := sreg (.s 5))
     (by simp [slyRg, slyLr, slyT_inj, sreg_injective.eq_iff]) (slyPairSw (prime + Ka)) Rw
     ((layBits es ℓ K).map (ldlBitRec (prime + Ka) es.sum)) es.sum (sly_mem_bitRec_length _ _)
-    (by simp [hRw, ldgPost, Function.update_apply, slyLr, slyRg, slyT_inj, slyBitStream_eq_flatten])
-    (by simp [hRw, ldgPost, Function.update_apply, slyLr, slyRg, slyT_inj, sreg_injective.eq_iff,
+    (by simp [hRw, ldgPost, slyLr, slyRg, slyT_inj, slyBitStream_eq_flatten])
+    (by simp [hRw, ldgPost, slyLr, slyRg, sreg_injective.eq_iff,
       length_ldlBitStream_one])
-    (by simp [hRw, ldgPost, Function.update_apply, slyLr, slyRg, slyT_inj])
+    (by simp [hRw, ldgPost, slyLr, slyRg, slyT_inj])
     (by rw [hRw, ldgPost_rg sly_regs _ _ _ _ _ _ (by simp) (by simp), slyRg_tM, synG_sreg]
         simp [slyV₂, slyPV, hly])
     (by rw [hRw, ldgPost_lr sly_regs _ _ _ _ _ _ (by simp) (by simp) (by simp) (by simp), slyLr_tS,
@@ -120,7 +117,7 @@ theorem sg_slyRevStreams (hA : 4 ≤ prime + Ka) {es : List ℕ} {ℓ K w l : �
           (by simp), slyLr_tB, synG_of_ne (slyT_out _), synIdle_slyT])
   have hcW : R1 (slyLr .cW) = List.replicate (es.sum + B + 2) tick := by
     rw [hR1lr _ (by simp), hRw]
-    simp [ldgPost, Function.update_apply, slyLr, slyRg, slyT_inj]
+    simp [ldgPost, slyLr, slyRg]
   have hs7 : R1 (sreg (.s 7)) = [] := by rw [hR1w, hwire 7 (by norm_num)]
   rw [hcW, hs7, List.length_replicate, List.append_nil] at hU
   set R2 := Function.update R1 (sreg (.s 7)) (List.replicate (5 * (es.sum + B + 2)) tick) with hR2
@@ -139,9 +136,9 @@ theorem sg_slyRevStreams (hA : 4 ≤ prime + Ka) {es : List ℕ} {ℓ K w l : �
     (5 * (es.sum + B + 2))
     (sly_mem_xcRec_length _ _)
     (by rw [hR2lr, hR1lr _ (by simp), hRw]
-        simp [ldgPost, Function.update_apply, slyLr, slyRg, slyT_inj, slyXcStream_eq_flatten])
+        simp [ldgPost, slyLr, slyRg, slyT_inj, slyXcStream_eq_flatten])
     (by rw [hR2rg _ (by simp) (by simp), hRw]
-        simp [ldgPost, Function.update_apply, slyLr, slyRg, slyT_inj, sreg_injective.eq_iff])
+        simp [ldgPost, slyLr, slyRg])
     (by rw [hR2, Function.update_self, List.length_replicate])
     (by rw [hR2rg _ (by simp) (by simp), hRw, ldgPost_rg sly_regs _ _ _ _ _ _ (by simp) (by simp),
           slyRg_tX, synG_sreg]
@@ -162,7 +159,7 @@ theorem sg_slyRevStreams (hA : 4 ≤ prime + Ka) {es : List ℕ} {ℓ K w l : �
   · rw [hR3, hR2, hR1, slyRw'_eq, ← hRw]
     funext z
     simp only [Function.update_apply]
-    split_ifs <;> simp_all [hwire 7 (by norm_num)]
+    split_ifs <;> simp_all
   · simp only [slyRevStreamsCost, List.length_map]
     omega
 
@@ -383,7 +380,7 @@ theorem slyOpp_lay {d : ℕ} (a : Fin d → ℕ) {ℓ K l w : ℕ} (H : LayHyp (
     have e2 : Rw' (slyRg .cM) = ldlBitStream (prime + Ka) 1 (layBits es ℓ K) := by
       rw [hRw', slyRw'_eq, Function.update_of_ne (sly_regs.l.disj _ _),
         Function.update_of_ne (sly_regs.l.disj _ _)]
-      simp [ldgPost, Function.update_apply, sly_regs.l.rl, sly_regs.l.rg_inj.eq_iff]
+      simp [ldgPost, sly_regs.l.rl, sly_regs.l.rg_inj.eq_iff]
     have e3 : Rw' (slyRg .tM) = [] := by
       rw [hRw', slyRw'_eq, Function.update_of_ne (sly_regs.l.disj _ _),
         Function.update_of_ne (sly_regs.l.disj _ _), ldgPost_rg sly_regs _ _ _ _ _ _ (by simp) (by simp)]
@@ -391,7 +388,7 @@ theorem slyOpp_lay {d : ℕ} (a : Fin d → ℕ) {ℓ K l w : ℕ} (H : LayHyp (
     have e4 : Rw' (slyRg .cX) = List.replicate (layXcs es ℓ K B).length tick := by
       rw [hRw', slyRw'_eq, Function.update_of_ne (sly_regs.l.disj _ _),
         Function.update_of_ne (sly_regs.l.disj _ _)]
-      simp [ldgPost, Function.update_apply, sly_regs.l.rl, sly_regs.l.rg_inj.eq_iff]
+      simp [ldgPost, sly_regs.l.rl]
     have e5 : Rw' (slyRg .tX) = [] := by
       rw [hRw', slyRw'_eq, Function.update_of_ne (sly_regs.l.disj _ _),
         Function.update_of_ne (sly_regs.l.disj _ _), ldgPost_rg sly_regs _ _ _ _ _ _ (by simp) (by simp)]
@@ -440,7 +437,7 @@ theorem slyOpp_lay {d : ℕ} (a : Fin d → ℕ) {ℓ K l w : ℕ} (H : LayHyp (
       (fun i => by rw [hR₂, slyR₂, synG_synIdle_sw, synG_synIdle_sw])
     simp only [slyOppCost, ← hB]
     rw [← e]
-    simp only [slyUnstageCost, hRw', hR₂, ← hes]
+    simp only [slyUnstageCost, hR₂, ← hes]
     omega
 
 end Lay

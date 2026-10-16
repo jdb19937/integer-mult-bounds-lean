@@ -40,8 +40,6 @@ open IntegerMultBounds IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.St
   IntegerMultBounds.MathlibTM2.Layer
 open IntegerMultBounds.MathlibTM2.Mult IntegerMultBounds.MathlibTM2.Mult.Sizes IntegerMultBounds.MathlibTM2.Mult.Moduli
 
-set_option linter.unusedSimpArgs false
-set_option linter.unusedSectionVars false
 
 /-! ### Values -/
 
@@ -276,10 +274,10 @@ theorem dsAxC_B (hn : 2 ≤ n) (hi : i < d n) :
 @[simp] theorem dsSB_3 : dsSB n Wt i 3 = d n := by simp [dsSB, dsSA, dsLV, pmVal, pmNV]
 @[simp] theorem dsSB_6 : dsSB n Wt i 6 = T n := by simp [dsSB, dsSA, dsLV, pmVal, pmNV]
 @[simp] theorem dsSB_8 : dsSB n Wt i 8 = r n := by simp [dsSB, dsSA, dsLV, pmVal, pmNV]
-@[simp] theorem dsSB_32 : dsSB n Wt i 32 = dsP n i := by simp [dsSB, dsSA, dsLV, pmVal, pmNV]
-@[simp] theorem dsSB_33 : dsSB n Wt i 33 = dsT n i := by simp [dsSB, dsSA, dsLV, pmVal, pmNV]
-@[simp] theorem dsSB_36 : dsSB n Wt i 36 = p n := by simp [dsSB, dsSA, dsLV, pmVal, pmNV]
-@[simp] theorem dsSB_39 : dsSB n Wt i 39 = i + 1 := by simp [dsSB, dsSA, dsLV, pmVal, pmNV]
+@[simp] theorem dsSB_32 : dsSB n Wt i 32 = dsP n i := by simp [dsSB, dsSA, dsLV, pmNV]
+@[simp] theorem dsSB_33 : dsSB n Wt i 33 = dsT n i := by simp [dsSB, dsSA, pmNV]
+@[simp] theorem dsSB_36 : dsSB n Wt i 36 = p n := by simp [dsSB, dsSA, pmNV]
+@[simp] theorem dsSB_39 : dsSB n Wt i 39 = i + 1 := by simp [dsSB, dsSA, pmNV]
 
 theorem dsAxC_C (hn : 2 ≤ n) (hi : i < d n) :
     TblDo A (pmW n) w (.ite 39 3 (tblBlock pmNV [.inc 36, .div 6 8 37, .mul 32 33 39]
@@ -314,7 +312,7 @@ theorem dsAxC_C (hn : 2 ≤ n) (hi : i < d n) :
       · simp [dsSC, dsG, h]
       rcases eq_or_ne j 36 with rfl | h36
       · simp [dsSC, dsQ, h]
-      simp [dsSC, Function.update_of_ne h37, Function.update_of_ne h36, Function.update_of_ne hj]
+      simp [dsSC, Function.update_of_ne h37, Function.update_of_ne h36]
 
 theorem dsAxC_D (hn : 2 ≤ n) (hi : i < d n) (s : TblSt pmNV A) (hacc : s.acc = [])
     (hs : ∀ j, j ≠ 39 → s.val j = dsSC n Wt i j) :
@@ -328,7 +326,7 @@ theorem dsAxC_D (hn : 2 ≤ n) (hi : i < d n) (s : TblSt pmNV A) (hacc : s.acc =
     (by simp [hs, dsSC, dsSB, dsSA, dsLV, pmVal, pmNV])
     (by simp [hs, dsSC, dsSB, dsSA, dsLV, pmVal, pmNV])
     (by simp [hs, dsSC, dsSB, dsSA, dsLV, pmVal, pmNV])
-    (by simp [hs, dsSC, dsSB, dsSA, dsLV, pmVal, pmNV]) (pm_one_le_N n) hB
+    (by simp [hs, dsSC, dsSB, dsSA, dsLV, pmNV]) (pm_one_le_N n) hB
   refine ((TblDo.rename hf hM).seq (K₂ := 1)
     (fun s₁ ⟨⟨hv, hfr, hac₁⟩, hout⟩ => TblDo.ins _ ?_)).mono (fun _ h => h) (by norm_num)
   simp only [TblIns.run]
@@ -377,7 +375,7 @@ theorem dsUpC_do {n Wt i : ℕ} (hn : 2 ≤ n) (hi : i < d n) :
   · simp only [tblExactList, TblIns.exact, List.cons_append, List.nil_append]
     congr 1
     funext j
-    fin_cases j <;> simp [dsAV, dsLV, Function.update_apply, dsP_succ, Fin.ext_iff, pmNV]
+    fin_cases j <;> simp [dsAV, dsLV, dsP_succ, Fin.ext_iff, pmNV]
 
 end Code
 

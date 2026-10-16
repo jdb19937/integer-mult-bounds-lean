@@ -17,7 +17,6 @@ open IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.Stack
 
 variable {t q a : ℕ}
 
-set_option linter.unusedSimpArgs false
 
 @[simp] lemma store_mk (v : BS t q a) (S : Stacks t a) :
     (⟨v, S.get⟩ : Store (BΓ (t := t) a) (BS t q a)) = mk v S := rfl
@@ -330,7 +329,7 @@ lemma peekScan_run_aux (M : Program t q a) (S : Stacks t a) :
         funext j
         by_cases h : j = i
         · subst h; split_ifs <;> simp_all
-        · simp [h, Function.update_of_ne h]
+        · simp [h]
       simp only [hscan]
 
 lemma peekScan_run (M : Program t q a) (v : BS t q a) (S : Stacks t a) :
@@ -361,7 +360,7 @@ lemma tapeAct_run (i : Fin t) (v : BS t q a) (S : Stacks t a) {st' : Fin q}
     refine ⟨(S.L i).head?, ?_⟩
     simp [tapeAct, Action.run, hw, hm, hmv, newL, newR, stepStacks, update_lt, update_rt]
   · refine ⟨v.sym, ?_⟩
-    simp [tapeAct, Action.run, hw, hm, hmv, newL, newR, stepStacks, update_lt, update_rt]
+    simp [tapeAct, Action.run, hw, hm, hmv, newL, newR, stepStacks, update_rt]
   · refine ⟨v.sym, ?_⟩
     simp [tapeAct, Action.run, hw, hm, hmv, newL, newR, stepStacks, update_lt, update_rt]
 
@@ -403,11 +402,11 @@ theorem tapes_exec {st' : Fin q} {act : Fin t → Fin (a + 4) × Move} :
       · funext j
         by_cases hj : j = i
         · subst hj; simp [hnd.1, newL]
-        · simp [hj, Function.update_of_ne hj, newL]
+        · simp [hj, newL]
       · funext j
         by_cases hj : j = i
         · subst hj; simp [hnd.1, newR]
-        · simp [hj, Function.update_of_ne hj, newR]
+        · simp [hj, newR]
 
 lemma scan_eq {c : Config t q a} {S : Stacks t a} (h : Rep c S.L S.R) :
     (fun i => (S.R i).head?.getD blank) = fun i => c.tape i (c.head i) := by
@@ -565,8 +564,8 @@ lemma emitted_cons (lead : Bool) (s : Fin (a + 4)) (W : List (Fin (a + 4))) :
       | some b => if b || !lead then emitted false W ++ [b] else emitted lead W
       | none => emitted lead W := by
   rcases h : decodeBit s with _ | b
-  · simp [emitted, List.filterMap_cons, h]
-  · cases lead <;> cases b <;> simp [emitted, List.filterMap_cons, h, List.dropWhile_cons]
+  · simp [emitted, h]
+  · cases lead <;> cases b <;> simp [emitted, h]
 
 theorem extract_loop (i : Fin t) : ∀ (W : List (Fin (a + 4))) (v : BS t q a) (S : Stacks t a),
     S.R i = W → v.flag = W.head?.isSome →

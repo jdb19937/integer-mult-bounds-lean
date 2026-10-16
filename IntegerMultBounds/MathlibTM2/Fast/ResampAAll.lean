@@ -58,8 +58,6 @@ open IntegerMultBounds IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.St
 open IntegerMultBounds.MathlibTM2.Fast
 open IntegerMultBounds.Networks.Shared50ModularControl (prime)
 
-set_option linter.unusedSimpArgs false
-set_option linter.unusedSectionVars false
 
 noncomputable section
 
@@ -652,7 +650,7 @@ theorem rsa_all (prep : Pr F T Q (prime + K) U) (hrg : Function.Injective rg)
           rsaFlat d t g (d - 1 - (j + 1)) l₀ := by
         rw [rsaFlat_lt d t g (show d - 1 - (j + 1) < d by omega)]
         have hfin : (⟨d - 1 - (j + 1), by omega⟩ : Fin d) = i :=
-          Fin.ext (by simp only [Fin.val_mk]; rw [hiv]; omega)
+          Fin.ext (by simp only; rw [hiv]; omega)
         rw [hfin, show d - 1 - (j + 1) + 1 = d - 1 - j by omega]
         rfl
       rw [hnext] at hstep

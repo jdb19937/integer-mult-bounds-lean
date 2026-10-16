@@ -28,8 +28,6 @@ open IntegerMultBounds IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.St
   IntegerMultBounds.MathlibTM2.Layer
 open IntegerMultBounds.MathlibTM2.Mult IntegerMultBounds.MathlibTM2.Mult.Sizes IntegerMultBounds.MathlibTM2.Fast IntegerMultBounds.MathlibTM2.Fast.Src
 
-set_option linter.unusedSimpArgs false
-set_option linter.unusedSectionVars false
 
 /-! ### The codes -/
 
@@ -142,10 +140,10 @@ theorem dsWWC₄_do (hn : 2 ≤ n) {a c : ℕ}
   have hs := ds_wid_small hn
   obtain ⟨hg, hℓ, hlT, hℓT, hW, hWW, h200⟩ := ds_wid_bounds hn
   refine TblDo.block _ _ ?_ ?_
-  · simp [tblFitsList, TblIns.fits, TblIns.exact, dsV2, pmVals, pmNV, pmVal]
+  · simp [tblFitsList, TblIns.fits, TblIns.exact, dsV2, pmNV]
     repeat' (refine And.intro ?_ ?_)
     all_goals first | exact hℓT | (have := pmW_ge n; omega) | (apply hs; unfold dsWW dsW p; omega)
-  · simp [tblExactList, TblIns.exact, dsV2, pmVals, pmNV, pmVal]
+  · simp [tblExactList, TblIns.exact, dsV2, pmNV]
     funext j
     fin_cases j <;> simp [dsV2, pmVals, pmNV, pmVal]
     all_goals (unfold dsWW; omega)

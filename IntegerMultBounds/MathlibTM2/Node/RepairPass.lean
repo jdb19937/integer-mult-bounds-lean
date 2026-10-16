@@ -40,7 +40,6 @@ namespace IntegerMultBounds.MathlibTM2.Node
 
 open IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.Stack IntegerMultBounds.MathlibTM2 IntegerMultBounds.MathlibTM2.Host IntegerMultBounds.MathlibTM2.Layer.PackedXor
 
-set_option linter.unusedSimpArgs false
 
 /-! ### Masks -/
 
@@ -488,7 +487,7 @@ theorem stripStep_loop (src ctr tmp : Fin T) (h1 : src ≠ ctr) (h2 : src ≠ tm
                 (e :: S.R tmp)) src (ys ++ rest) } := by
           simp [stripStep, peekR, Action.run, hc, hs, update_rt, Function.update_of_ne h1,
             Function.update_of_ne h2, Function.update_of_ne h3, Function.update_of_ne h1.symm,
-            Function.update_of_ne h2.symm, Function.update_of_ne h3.symm]
+            Function.update_of_ne h3.symm]
         refine ⟨v', R', hu, Exec.cast (Exec.loop_true (body := body) (f := (·.flag))
           (by simpa using hf) (hrun ▸ Exec.act (body := body) _ (mk v S)) he)
           (by simp; ring) rfl, ?_⟩
@@ -497,7 +496,7 @@ theorem stripStep_loop (src ctr tmp : Fin T) (h1 : src ≠ ctr) (h2 : src ≠ tm
         by_cases hk : k = src
         · subst hk; simp
         by_cases hk' : k = tmp
-        · subst hk'; simp [hk, Function.update_of_ne h3.symm]
+        · subst hk'; simp [hk]
         by_cases hk'' : k = ctr
         · subst hk''; simp [hk, hk']
         simp [hk, hk', hk'']
@@ -517,7 +516,7 @@ theorem dropBlock_exec (src ctr tmp : Fin T) (h1 : src ≠ ctr) (h2 : src ≠ tm
   have he₀ := Exec.act (body := body) (peekR ctr) (mk v S)
   rw [peekR_run, hc] at he₀
   refine ⟨v₂, by rw [hu₂, hu₁], Exec.cast (Exec.seq he₀ (Exec.seq he₁ he₂)) ?_ ?_⟩
-  · simp [hR₁, Function.update_of_ne h2.symm, Function.update_of_ne h3.symm, ht]; ring
+  · simp [hR₁, Function.update_of_ne h2.symm, ht]; ring
   · congr 2
     funext k
     rw [hR₁]
@@ -527,7 +526,7 @@ theorem dropBlock_exec (src ctr tmp : Fin T) (h1 : src ≠ ctr) (h2 : src ≠ tm
     · subst hk'; simp [movedR, hk, Function.update_of_ne h3.symm, ht]
     by_cases hk'' : k = ctr
     · subst hk''; simp [movedR, hk, hk', Function.update_of_ne h2.symm, hc,
-        Function.update_of_ne h3.symm, ht]
+        ht]
     simp [movedR, hk, hk', hk'']
 
 /-- One record of the strip pass: `|ctrB|` symbols from `src` onto `dst`, then `|ctrK|` symbols
@@ -565,7 +564,7 @@ theorem stripLoop_exec (src dst ctrB ctrK tmp st : Fin T)
       funext x
       show S.R x = _
       by_cases hx : x = dst
-      · subst hx; simp [Ne.symm a1]
+      · subst hx; simp
       by_cases hx' : x = src
       · subst hx'; simp [hx, hs]
       simp [hx, hx']
@@ -794,7 +793,7 @@ theorem repairAt_exec {src gR bR g b ctrKB ctrB ctrK cnt tmp st : Fin T} {cf : F
     (by simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
       List.nodup_nil, and_true, not_false_eq_true]; exact ⟨⟨a5, a9⟩, f4⟩)
     (by intro d; fin_cases d <;> simp [Ne.symm a1, b4, b8, Ne.symm a2, c3, c7])
-    (by intro i j hij; fin_cases i <;> fin_cases j <;> simp_all [b1, Ne.symm b1])
+    (by intro i j hij; fin_cases i <;> fin_cases j <;> simp_all [Ne.symm b1])
     (l := X.flatten) (c := S.R ctrKB) (nb := X.length) (B := k + B) (i₀ := 0) (by omega) hXl
     hctr v S
     hsrc rfl htmp hI
@@ -919,7 +918,7 @@ theorem repairAt_exec {src gR bR g b ctrKB ctrB ctrK cnt tmp st : Fin T} {cf : F
       fin_cases d
       · simp [Ne.symm b2, d2, d6, d5, Ne.symm c1]
       · simp [Ne.symm b3, e1, e5, e4, Ne.symm c2])
-    (by intro i j hij; fin_cases i <;> fin_cases j <;> simp_all [d1, Ne.symm d1])
+    (by intro i j hij; fin_cases i <;> fin_cases j <;> simp_all [Ne.symm d1])
     (l := Y.flatten) (c := S.R ctrKB) (kk := S.R cnt) (nb := X.length) (B := k + B) (i₀ := 0)
     hYl hctr hcnt (fun _ => []) v₅ { S with R := R₅ }
     (by

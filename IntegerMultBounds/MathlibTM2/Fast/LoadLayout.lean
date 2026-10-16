@@ -57,8 +57,6 @@ open IntegerMultBounds IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.St
   IntegerMultBounds.MathlibTM2.Node IntegerMultBounds.MathlibTM2.Layer IntegerMultBounds.MathlibTM2.Fast.TableVM
 open IntegerMultBounds.Networks.Shared50ModularControl (prime)
 
-set_option linter.unusedSimpArgs false
-set_option linter.unusedSectionVars false
 
 /-! ### Runs of the basic programs -/
 
@@ -142,7 +140,7 @@ theorem ldl_word_runs {src cnt sp a b : Fin T} (hreg : [src, cnt, sp, a, b].Nodu
     (hsrc : R src = ws ++ rest) (hcnt : (R cnt).length = ws.length) (hsp : R sp = []) :
     LayRuns body (ldlWord src cnt sp a b) R (ldlWordFile src a b R ws rest ws.length)
       (6 * ws.length + 4) := by
-  simp only [List.nodup_cons, List.mem_cons, List.mem_singleton, not_or, List.not_mem_nil,
+  simp only [List.nodup_cons, List.mem_cons, not_or, List.not_mem_nil,
     not_false_eq_true, List.nodup_nil, and_true] at hreg
   obtain ⟨⟨h1, h2, h3, h4⟩, ⟨h5, h6, h7⟩, ⟨h8, h9⟩, h10⟩ := hreg
   have hit : IterSpec body (.act (ldlSplit src a b)) cnt sp (ldlWordFile src a b R ws rest)
@@ -168,13 +166,13 @@ theorem ldl_word_runs {src cnt sp a b : Fin T} (hreg : [src, cnt, sp, a, b].Nodu
       by_cases hkb : k = b
       · rw [hkb, Function.update_self, hS b (Ne.symm h7) (Ne.symm h9)]
         simp only [ldlWordFile, Function.update_self, htake, ldlIm, List.map_append,
-          List.map_singleton, List.reverse_append, List.reverse_singleton, List.singleton_append,
-          List.cons_append, List.nil_append, List.append_assoc]
+          List.map_singleton, List.reverse_append, List.reverse_singleton, 
+          List.cons_append, List.nil_append]
       · by_cases hka : k = a
         · rw [hka, Function.update_of_ne h10, Function.update_self, hS a (Ne.symm h6) (Ne.symm h8)]
           simp only [ldlWordFile, Function.update_of_ne h10, Function.update_self, htake, ldlRe,
             List.map_append, List.map_singleton, List.reverse_append, List.reverse_singleton,
-            List.singleton_append, List.cons_append, List.nil_append, List.append_assoc]
+            List.cons_append, List.nil_append]
         · by_cases hks : k = src
           · rw [hks, Function.update_of_ne h4, Function.update_of_ne h3, Function.update_self]
             simp only [ldlWordFile, Function.update_of_ne h4, Function.update_of_ne h3,
@@ -325,14 +323,14 @@ theorem ldlRe_tblPairs (hA : 4 ≤ A) (w x y : ℕ) :
   simp only [ldlRe, tblPairs, coeffSyms, binSyms, List.map_ofFn]
   congr 1
   funext t
-  simp [pairRe_pairSym hA, ZMod.val_natCast, Nat.testBit_mod_two_pow, t.isLt]
+  simp [pairRe_pairSym hA, ZMod.val_natCast, Nat.testBit_mod_two_pow]
 
 theorem ldlIm_tblPairs (hA : 4 ≤ A) (w x y : ℕ) :
     ldlIm (tblPairs A w x y) = (binSyms w y : List (Fin (A + 4))) := by
   simp only [ldlIm, tblPairs, coeffSyms, binSyms, List.map_ofFn]
   congr 1
   funext t
-  simp [pairIm_pairSym hA, ZMod.val_natCast, Nat.testBit_mod_two_pow, t.isLt]
+  simp [pairIm_pairSym hA, ZMod.val_natCast, Nat.testBit_mod_two_pow]
 
 @[simp] theorem length_tblPairs (w x y : ℕ) : (tblPairs A w x y).length = w := by
   simp [tblPairs]
@@ -402,7 +400,7 @@ def ldlPrepM (rg : LayReg t₀ → Fin T) (lr : LdlReg → Fin T) : Pr F T Q A U
 theorem ldl_nodup5 (h : LdlRegs rg lr) :
     [lr .dM, lr .cN, lr .tS, lr .tA, lr .tB].Nodup ∧ [lr .dX, lr .cW, lr .tS, lr .tA, lr .tB].Nodup := by
   constructor <;>
-  · simp only [List.nodup_cons, List.mem_cons, List.mem_singleton, List.not_mem_nil,
+  · simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil,
       List.nodup_nil, h.lr_inj.eq_iff]
     decide
 
@@ -428,50 +426,50 @@ theorem ldl_prepM_runs (hA : 4 ≤ A) (h : LdlRegs rg lr) (R : Fin T → List (F
   have s2 := ldl_uclear_runs (body := body) (rg .mB) R1
   set R2 := Function.update R1 (rg .mB) [] with hR2
   have s3 := ldl_word_runs (body := body) (ldl_nodup5 h).1 R2 ws rest
-    (by simp [Function.update_apply, rl, lr', li, ri, hR2, hR1, rl, hdM]) (by simp [Function.update_apply, rl, lr', li, ri, hR2, hR1, rl, hcN, hwl]) (by simp [Function.update_apply, rl, lr', li, ri, hR2, hR1, rl, htS])
+    (by simp [lr', hR2, hR1, hdM]) (by simp [lr', hR2, hR1, hcN, hwl]) (by simp [lr', hR2, hR1, htS])
   set R3 := ldlWordFile (lr .dM) (lr .tA) (lr .tB) R2 ws rest ws.length with hR3
   have s4 := ldl_moveR_runs (body := body) (show lr .tA ≠ rg .mA from fun e => h.disj _ _ e.symm) R3
   set R4 := Function.update (Function.update R3 (lr .tA) []) (rg .mA)
     ((R3 (lr .tA)).reverse ++ R3 (rg .mA)) with hR4
   have s5 := ldl_moveR_runs (body := body) (show lr .tB ≠ rg .mB from fun e => h.disj _ _ e.symm) R4
   have e3A : R3 (lr .tA) = (binSyms n (2 ^ a) : List (Fin (A + 4))).reverse := by
-    simp [Function.update_apply, rl, lr', li, ri, hR3, ldlWordFile, li, hR2, hR1, lr', htA, hws, ldlRe_tblPairs hA,
+    simp [hR3, ldlWordFile, li, hR2, hR1, lr', htA, hws, ldlRe_tblPairs hA,
       List.take_of_length_le]
   have e3B : R3 (lr .tB) = (binSyms n (2 ^ b) : List (Fin (A + 4))).reverse := by
-    simp [Function.update_apply, rl, lr', li, ri, hR3, ldlWordFile, li, hR2, hR1, lr', htB, hws, ldlIm_tblPairs hA,
+    simp [hR3, ldlWordFile, hR2, hR1, lr', htB, hws, ldlIm_tblPairs hA,
       List.take_of_length_le]
   refine ((s1.seq (s2.seq (s3.seq (s4.seq s5)))).mono ?_).congr ?_
-  · have l1 : (R1 (rg .mB)).length = (R (rg .mB)).length := by simp [Function.update_apply, rl, lr', li, ri, hR1, ri]
+  · have l1 : (R1 (rg .mB)).length = (R (rg .mB)).length := by simp [hR1, ri]
     have l3 : (R3 (lr .tA)).length = n := by simp [e3A]
     have l4 : (R4 (lr .tB)).length = n := by
-      simp [Function.update_apply, rl, lr', li, ri, hR4, li, lr', e3B]
+      simp [hR4, li, lr', e3B]
     rw [l1, l3, l4, hwl]
     omega
   · have e4B : R4 (lr .tB) = (binSyms n (2 ^ b) : List (Fin (A + 4))).reverse := by
-      simp [Function.update_apply, rl, lr', li, hR4, e3B]
+      simp [lr', li, hR4, e3B]
     have e4mB : R4 (rg .mB) = [] := by
-      simp [Function.update_apply, rl, lr', li, ri, hR4, hR3, ldlWordFile, hR2]
+      simp [rl, lr', li, ri, hR4, hR3, ldlWordFile, hR2]
     have e3mA : R3 (rg .mA) = [] := by
-      simp [Function.update_apply, rl, lr', li, ri, hR3, ldlWordFile, hR2, hR1]
+      simp [rl, lr', ri, hR3, ldlWordFile, hR2, hR1]
     funext y
     rw [e4B, e4mB, List.reverse_reverse, List.append_nil]
     by_cases y1 : y = rg .mB
-    · subst y1; simp [Function.update_apply, rl, lr', ri]
+    · subst y1; simp [rl]
     by_cases y2 : y = lr .tB
-    · subst y2; simp [Function.update_apply, rl, lr', li, htB]
+    · subst y2; simp [lr', li, htB]
     rw [Function.update_of_ne y1, Function.update_of_ne y2, hR4, e3A, e3mA, List.reverse_reverse,
       List.append_nil]
     by_cases y3 : y = rg .mA
-    · subst y3; simp [Function.update_apply, rl, lr', ri]
+    · subst y3; simp [rl, ri]
     by_cases y4 : y = lr .tA
-    · subst y4; simp [Function.update_apply, rl, lr', li, htA]
+    · subst y4; simp [lr', li, htA]
     rw [Function.update_of_ne y3, Function.update_of_ne y4, hR3]
     simp only [ldlWordFile]
     rw [Function.update_of_ne y2, Function.update_of_ne y4]
     by_cases y5 : y = lr .dM
-    · subst y5; simp [Function.update_apply, rl, lr', li]
+    · subst y5; simp
     rw [Function.update_of_ne y5, hR2, hR1, Function.update_of_ne y1, Function.update_of_ne y3]
-    simp [Function.update_apply, y1, y3, y5]
+    simp [y1, y3, y5]
 
 /-- The words of one header: the five counters `hs k` as `w`-bit words. -/
 def ldlXcRec (A w : ℕ) (hs : Fin 5 → List Bool) : List (Fin (A + 4)) :=
@@ -504,30 +502,30 @@ theorem ldl_hdr_runs (hA : 4 ≤ A) (hlr : Function.Injective lr) {dst : Fin T}
   set ws := tblPairs A w (Counter.value bs) 0 with hws
   have hwl : ws.length = w := length_tblPairs _ _ _
   have hnd : [lr .dX, lr .cW, lr .tS, lr .tA, lr .tB].Nodup := by
-    simp only [List.nodup_cons, List.mem_cons, List.mem_singleton, List.not_mem_nil,
+    simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil,
       List.nodup_nil, li]
     decide
   have s1 := ldl_uclear_runs (body := body) dst R
   set R1 := Function.update R dst [] with hR1
-  have s2 := ldl_word_runs (body := body) hnd R1 ws rest (by simp [Function.update_apply, li, hd', hd'', hR1, hd', hdX])
-    (by simp [Function.update_apply, li, hd', hd'', hR1, hd', hcW, hwl]) (by simp [Function.update_apply, li, hd', hd'', hR1, hd', htS])
+  have s2 := ldl_word_runs (body := body) hnd R1 ws rest (by simp [hR1, hd', hdX])
+    (by simp [hR1, hd', hcW, hwl]) (by simp [hR1, hd', htS])
   set R2 := ldlWordFile (lr .dX) (lr .tA) (lr .tB) R1 ws rest ws.length with hR2
   have s3 := ldl_uclear_runs (body := body) (lr .tB) R2
   set R3 := Function.update R2 (lr .tB) [] with hR3
   have s4 := ldl_strip_runs (body := body) (lr .tA) R3
   have e3A : R3 (lr .tA) = (binSyms w (Counter.value bs) : List (Fin (A + 4))).reverse := by
-    simp [Function.update_apply, li, hd', hd'', hR3, hR2, hR1, ldlWordFile, li, hd', htA, hws, ldlRe_tblPairs hA,
+    simp [hR3, hR2, hR1, ldlWordFile, li, hd', htA, hws, ldlRe_tblPairs hA,
       List.take_of_length_le]
   obtain ⟨hdrop, hnf⟩ := ldl_strip_value (A := A) hc w hw
   set R4 := Function.update R3 (lr .tA) (ldlDropF (R3 (lr .tA))) with hR4
-  have e4A : R4 (lr .tA) = (bs.map bitSymbol).reverse := by simp [Function.update_apply, li, hd', hd'', hR4, e3A, hdrop]
+  have e4A : R4 (lr .tA) = (bs.map bitSymbol).reverse := by simp [hR4, e3A, hdrop]
   have s5 := ldl_moveR_runs (body := body) (hdst .tA) R4
   set R5 := Function.update (Function.update R4 (lr .tA) []) dst ((R4 (lr .tA)).reverse ++ R4 dst)
     with hR5
   have s6 := ldl_push_runs (body := body) dst separator R5
   refine ((s1.seq (s2.seq (s3.seq (s4.seq (s5.seq s6))))).mono ?_).congr ?_
   · have l2 : (R2 (lr .tB)).length = w := by
-      simp [Function.update_apply, li, hd', hd'', hR2, ldlWordFile, hR1, hd', htB, hws, ldlIm_tblPairs hA,
+      simp [hR2, ldlWordFile, hR1, hd', htB, hws, ldlIm_tblPairs hA,
         List.take_of_length_le]
     have l3 : ldlNF (R3 (lr .tA)) = w - bs.length := by rw [e3A, hnf]
     have l4 : (R4 (lr .tA)).length = bs.length := by simp [e4A]
@@ -535,7 +533,7 @@ theorem ldl_hdr_runs (hA : 4 ≤ A) (hlr : Function.Injective lr) {dst : Fin T}
     omega
   · funext y
     have e4d : R4 dst = [] := by
-      simp [Function.update_apply, li, hd', hd'', hR4, hR3, hR2, hR1, ldlWordFile, hd'']
+      simp [li, hd', hR4, hR3, hR2, hR1, ldlWordFile, hd'']
     simp only [hR5, Function.update_apply, e4A, e4d]
     simp only [hR4, hR3, hR2, hR1, ldlWordFile, Function.update_apply]
     split_ifs <;> simp_all
@@ -572,9 +570,9 @@ theorem ldlSetH_apply (hrg : Function.Injective rg) {hd : Fin 5 → Fin t₀}
     generalize hy.choose = k at hk
     subst hk
     fin_cases k <;>
-      simp [ldlSetH, Function.update_apply, hinj.eq_iff]
+      simp [ldlSetH, hinj.eq_iff]
   · simp only [not_exists] at hy
-    simp [ldlSetH, Function.update_apply, Ne.symm (hy _)]
+    simp [ldlSetH, Ne.symm (hy _)]
 
 theorem ldlSetH_H (hrg : Function.Injective rg) {hd : Fin 5 → Fin t₀}
     (hi : Function.Injective hd) (R : Fin T → List (Fin (A + 4))) (h : Fin 5 → List (Fin (A + 4)))
@@ -616,46 +614,46 @@ theorem ldl_prepX_runs (hA : 4 ≤ A) (h : LdlRegs rg lr) {hd : Fin 5 → Fin t�
     (w1 ++ (w2 ++ (w3 ++ (w4 ++ rest)))) with hR1
   have s1 := ldl_hdr_runs (body := body) hA h.lr_inj (hH 1) R1 (hs 1) (hc 1) (hw 1)
     (w2 ++ (w3 ++ (w4 ++ rest))) (by simp [hR1, w1])
-    (by simp [hR1, Function.update_apply, li, hH'', hcW]) (by simp [hR1, Function.update_apply, li, hH'', htA])
-    (by simp [hR1, Function.update_apply, li, hH'', htB]) (by simp [hR1, Function.update_apply, li, hH'', htS])
+    (by simp [hR1, li, hH'', hcW]) (by simp [hR1, li, hH'', htA])
+    (by simp [hR1, li, hH'', htB]) (by simp [hR1, li, hH'', htS])
   set R2 := Function.update (Function.update R1 (ldlH rg hd 1) (hdr 1)) (lr .dX)
     (w2 ++ (w3 ++ (w4 ++ rest))) with hR2
   have s2 := ldl_hdr_runs (body := body) hA h.lr_inj (hH 2) R2 (hs 2) (hc 2) (hw 2)
     (w3 ++ (w4 ++ rest)) (by simp [hR2, w2])
-    (by simp [hR2, hR1, Function.update_apply, li, hH'', hcW])
-    (by simp [hR2, hR1, Function.update_apply, li, hH'', htA])
-    (by simp [hR2, hR1, Function.update_apply, li, hH'', htB])
-    (by simp [hR2, hR1, Function.update_apply, li, hH'', htS])
+    (by simp [hR2, hR1, li, hH'', hcW])
+    (by simp [hR2, hR1, li, hH'', htA])
+    (by simp [hR2, hR1, li, hH'', htB])
+    (by simp [hR2, hR1, li, hH'', htS])
   set R3 := Function.update (Function.update R2 (ldlH rg hd 2) (hdr 2)) (lr .dX)
     (w3 ++ (w4 ++ rest)) with hR3
   have s3 := ldl_hdr_runs (body := body) hA h.lr_inj (hH 3) R3 (hs 3) (hc 3) (hw 3)
     (w4 ++ rest) (by simp [hR3, w3])
-    (by simp [hR3, hR2, hR1, Function.update_apply, li, hH'', hcW])
-    (by simp [hR3, hR2, hR1, Function.update_apply, li, hH'', htA])
-    (by simp [hR3, hR2, hR1, Function.update_apply, li, hH'', htB])
-    (by simp [hR3, hR2, hR1, Function.update_apply, li, hH'', htS])
+    (by simp [hR3, hR2, hR1, li, hH'', hcW])
+    (by simp [hR3, hR2, hR1, li, hH'', htA])
+    (by simp [hR3, hR2, hR1, li, hH'', htB])
+    (by simp [hR3, hR2, hR1, li, hH'', htS])
   set R4 := Function.update (Function.update R3 (ldlH rg hd 3) (hdr 3)) (lr .dX)
     (w4 ++ rest) with hR4
   have s4 := ldl_hdr_runs (body := body) hA h.lr_inj (hH 4) R4 (hs 4) (hc 4) (hw 4)
     rest (by simp [hR4, w4])
-    (by simp [hR4, hR3, hR2, hR1, Function.update_apply, li, hH'', hcW])
-    (by simp [hR4, hR3, hR2, hR1, Function.update_apply, li, hH'', htA])
-    (by simp [hR4, hR3, hR2, hR1, Function.update_apply, li, hH'', htB])
-    (by simp [hR4, hR3, hR2, hR1, Function.update_apply, li, hH'', htS])
+    (by simp [hR4, hR3, hR2, hR1, li, hH'', hcW])
+    (by simp [hR4, hR3, hR2, hR1, li, hH'', htA])
+    (by simp [hR4, hR3, hR2, hR1, li, hH'', htB])
+    (by simp [hR4, hR3, hR2, hR1, li, hH'', htS])
   refine ((s0.seq (s1.seq (s2.seq (s3.seq s4)))).mono (le_of_eq ?_)).congr ?_
   · simp only [Fin.sum_univ_five]
-    simp [hR4, hR3, hR2, hR1, Function.update_apply, hH', hHH]
+    simp [hR4, hR3, hR2, hR1, hH', hHH]
     ring
   · funext y
     by_cases hy : y = lr .dX
-    · subst hy; simp [Function.update_apply]
+    · subst hy; simp
     by_cases hk : ∃ k, ldlH rg hd k = y
     · obtain ⟨k, rfl⟩ := hk
       rw [Function.update_of_ne hy, Function.update_of_ne hy, ldlSetH_H h.rg_inj hi]
-      fin_cases k <;> simp [hR4, hR3, hR2, hR1, Function.update_apply, hH', hHH, hhdr]
+      fin_cases k <;> simp [hR4, hR3, hR2, hR1, hH', hHH, hhdr]
     · simp only [not_exists] at hk
       rw [Function.update_of_ne hy, Function.update_of_ne hy, ldlSetH_of_ne h.rg_inj hi _ _ hk]
-      simp [hR4, hR3, hR2, hR1, Function.update_apply, hy, Ne.symm (hk _)]
+      simp [hR4, hR3, hR2, hR1, hy, Ne.symm (hk _)]
 
 end Loaders
 
@@ -730,7 +728,7 @@ theorem ldlWM_lr (n : ℕ) (R₀ : Fin T → List (Fin (A + 4))) (bs : List (ℕ
   cases j with
   | zero => rfl
   | succ j =>
-      simp [ldlWM, Function.update_apply, h.lr', (h.lr_inj.ne hy)]
+      simp [ldlWM, h.lr', (h.lr_inj.ne hy)]
 
 theorem ldlWM_rg (n : ℕ) (R₀ : Fin T → List (Fin (A + 4))) (bs : List (ℕ × ℕ)) (j : ℕ)
     (h : LdlRegs rg lr) {x : LayReg t₀} (h1 : x ≠ .mA) (h2 : x ≠ .mB) :
@@ -738,7 +736,7 @@ theorem ldlWM_rg (n : ℕ) (R₀ : Fin T → List (Fin (A + 4))) (bs : List (ℕ
   cases j with
   | zero => rfl
   | succ j =>
-      simp [ldlWM, Function.update_apply, h.rl, h.rg_inj.ne h1, h.rg_inj.ne h2]
+      simp [ldlWM, h.rl, h.rg_inj.ne h1, h.rg_inj.ne h2]
 
 theorem ldlWM_dM {n : ℕ} {R₀ : Fin T → List (Fin (A + 4))} {bs : List (ℕ × ℕ)}
     (hdM : R₀ (lr .dM) = ldlBitStream A n bs) (j : ℕ) :
@@ -824,7 +822,7 @@ variable {T Q A t₀ : ℕ} {U F : Type} {body : F → Pr F T Q A U} {rg : LayRe
 
 theorem ldl_layDyn_lr (h : LdlRegs rg lr) (R : Fin T → List (Fin (A + 4)))
     (s dm tm dx tx : List (Fin (A + 4))) (y : LdlReg) : layDyn rg R s dm tm dx tx (lr y) = R (lr y) := by
-  simp [layDyn, Function.update_apply, h.lr']
+  simp [layDyn, h.lr']
 
 theorem ldl_layDyn_upd (R : Fin T → List (Fin (A + 4))) (s dm tm dx tx : List (Fin (A + 4)))
     {y : Fin T} (h1 : y ≠ rg .str) (h2 : y ≠ rg .cM) (h3 : y ≠ rg .tM) (h4 : y ≠ rg .cX)
@@ -872,11 +870,11 @@ theorem ldl_prepM_loads (hA : 4 ≤ A) (h : LdlRegs rg lr) {n : ℕ} {R₀ : Fin
     have l1 : (X (rg .mA)).length ≤ n := by
       rw [hX]; cases j with
       | zero => exact hmA
-      | succ j => simp [ldlWM, Function.update_apply, h.rl, h.rg_inj.eq_iff]
+      | succ j => simp [ldlWM, h.rl, h.rg_inj.eq_iff]
     have l2 : (X (rg .mB)).length ≤ n := by
       rw [hX]; cases j with
       | zero => exact hmB
-      | succ j => simp [ldlWM, Function.update_apply, h.rl, h.rg_inj.eq_iff]
+      | succ j => simp [ldlWM, h.rl]
     omega
   · rw [← ldlWM_step hj, ldl_layDyn_upd, ldl_layDyn_upd, ldl_layDyn_upd] <;>
       simp [h.rg_inj.eq_iff, h.lr']
@@ -1022,8 +1020,8 @@ theorem ldl_stage_gen (body : F → Pr F T Q (prime + Ka) U) (hd : Fin 5 → Fin
         by rw [e _ (by simp) (by simp)]; exact hb.q2, by rw [e _ (by simp) (by simp)]; exact hb.q3,
         by rw [e _ (by simp) (by simp)]; exact hb.tmp, by rw [e _ (by simp) (by simp)]; exact hb.ctrB,
         by rw [e _ (by simp) (by simp)]; exact hb.cnt, by rw [e _ (by simp) (by simp)]; exact hb.fld,
-        by simp only [ldlWM]; rw [hg]; simp [Function.update_apply, h.rl, h.rg_inj.eq_iff],
-        by simp only [ldlWM]; rw [hg]; simp [Function.update_apply, h.rl, h.rg_inj.eq_iff],
+        by simp only [ldlWM]; rw [hg]; simp [h.rl, h.rg_inj.eq_iff],
+        by simp only [ldlWM]; rw [hg]; simp [h.rl],
         fun r => by rw [e _ (by simp) (by simp)]; exact hb.us r⟩)
     (fun j hj => by
       rw [hWX1]
@@ -1111,7 +1109,7 @@ theorem ldl_canonical_length {bs : List Bool} (hc : GrowingCounterData.Canonical
       have key : ∀ init : List Bool, 2 ^ init.length ≤ Counter.value (init ++ [true]) := by
         intro init
         induction init with
-        | nil => simp [Counter.value]
+        | nil => simp
         | cons b bs ih =>
             rw [List.cons_append, Counter.value, List.length_cons, pow_succ]
             cases b <;> simp <;> omega

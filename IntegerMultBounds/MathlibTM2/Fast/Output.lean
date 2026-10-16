@@ -56,7 +56,6 @@ namespace IntegerMultBounds.MathlibTM2.Fast
 open IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.Stack IntegerMultBounds.MathlibTM2 IntegerMultBounds.MathlibTM2.Host Computability
 open IntegerMultBounds.NLogN (evalBase)
 
-set_option linter.unusedSimpArgs false
 
 /-! ### Arithmetic -/
 
@@ -343,7 +342,7 @@ lemma addStep_run (hreg : Function.Injective oreg) (v : HS T Q A U) (S : Stacks 
           (oreg .sm) (bitSymbol (fullSum (symBit ((S.R (oreg .dat)).head?.getD blank))
             (symBit ((S.R (oreg .cr)).head?.getD blank)) (symBit (v.scan (oreg .sm)))) ::
               S.R (oreg .sm)) } := by
-  simp [addStep, Action.run, peekR, update_rt, hw, hreg.eq_iff, Function.update_apply]
+  simp [addStep, Action.run, peekR, update_rt, hw, hreg.eq_iff]
 
 lemma addStep_var (hreg : Function.Injective oreg) (v : HS T Q A U) (S : Stacks T A)
     {e : Fin (A + 4)} {lw : List (Fin (A + 4))} (hw : S.R (oreg .wr) = e :: lw) :
@@ -352,7 +351,7 @@ lemma addStep_var (hreg : Function.Injective oreg) (v : HS T Q A U) (S : Stacks 
     symBit (((addStep oreg).run (mk v S)).var.scan (oreg .sm)) =
       fullCarry (symBit ((S.R (oreg .dat)).head?.getD blank))
             (symBit ((S.R (oreg .cr)).head?.getD blank)) (symBit (v.scan (oreg .sm))) := by
-  simp [addStep, Action.run, peekR, update_rt, hw, hreg.eq_iff, Function.update_apply]
+  simp [addStep, Action.run, peekR, update_rt, hw, hreg.eq_iff]
 
 /-- The addition loop, by induction on the counter `lw`: the word `d` on top of `dat` plus the
 carry register `binSyms L x` plus the carry bit `cb` goes onto `sm`, most significant bit on
@@ -408,7 +407,7 @@ theorem addStep_loop (hreg : Function.Injective oreg) :
       have hfr₁ : Fr oreg [.wr, .ct, .dat, .cr, .sm] S S₁ := by
         refine ⟨rfl, rfl, rfl, fun k hk => ?_⟩
         simp only [List.mem_cons, List.not_mem_nil, or_false, forall_eq_or_imp, forall_eq] at hk
-        simp [S₁, Function.update_apply, hk]
+        simp [S₁, hk]
       obtain ⟨v', S', hu, hcarry, he, hw', hct', hdat'', hcr', hsm', hfr⟩ :=
         ih (d / 2) (x / 2) (L - 1) (fullCarry (d.testBit 0) (x.testBit 0) cb) rest v₁ S₁
           (by rw [Nat.div_lt_iff_lt_mul (by norm_num), ← pow_succ]; simpa using hd)
@@ -423,7 +422,7 @@ theorem addStep_loop (hreg : Function.Injective oreg) :
           (hrun ▸ Exec.act (body := body) (addStep oreg) (mk v S)) he) (by simp; ring) rfl
       · rw [hct']; simp [S₁, hreg.eq_iff]
       · rw [hsm', List.length_cons, binSyms_succ, hs0, ← hs1]
-        simp [S₁, hreg.eq_iff]
+        simp [S₁]
       · exact hfr₁.trans hfr (by decide) (by decide)
 
 /-! ### The emission loop -/
@@ -437,13 +436,13 @@ lemma emitStep_run (hreg : Function.Injective oreg) (v : HS T Q A U) (S : Stacks
           (oreg .cr) (S.R (oreg .cr)).tail)
           (oreg .acc) (bitSymbol (symBit ((S.R (oreg .cr)).head?.getD blank)) ::
             S.R (oreg .acc)) } := by
-  simp [emitStep, Action.run, peekR, update_rt, hb, hreg.eq_iff, Function.update_apply]
+  simp [emitStep, Action.run, peekR, update_rt, hb, hreg.eq_iff]
 
 lemma emitStep_var (hreg : Function.Injective oreg) (v : HS T Q A U) (S : Stacks T A)
     {e : Fin (A + 4)} {lb : List (Fin (A + 4))} (hb : S.R (oreg .br) = e :: lb) :
     ((emitStep oreg).run (mk v S)).var.user = v.user ∧
     ((emitStep oreg).run (mk v S)).var.flag = lb.head?.isSome := by
-  simp [emitStep, Action.run, peekR, update_rt, hb, hreg.eq_iff, Function.update_apply]
+  simp [emitStep, Action.run, peekR, update_rt, hb, hreg.eq_iff]
 
 /-- The emission loop, by induction on the counter `lb`: the low `lb.length` bits of the
 carry register `binSyms L y` move onto `acc`. -/
@@ -480,7 +479,7 @@ theorem emitStep_loop (hreg : Function.Injective oreg) :
       have hfr₁ : Fr oreg [.br, .ct, .cr, .acc] S S₁ := by
         refine ⟨rfl, rfl, rfl, fun k hk => ?_⟩
         simp only [List.mem_cons, List.not_mem_nil, or_false, forall_eq_or_imp, forall_eq] at hk
-        simp [S₁, Function.update_apply, hk]
+        simp [S₁, hk]
       obtain ⟨v', S', hu, he, hb', hct', hcr', hacc', hfr⟩ :=
         ih (y / 2) (L - 1) v₁ S₁ (div_two_lt hy) (by simp [S₁, hreg.eq_iff])
           (by simp [S₁, hreg.eq_iff, hcr, tail_binSyms]) hf₁
@@ -491,7 +490,7 @@ theorem emitStep_loop (hreg : Function.Injective oreg) :
       · rw [hcr', List.length_cons, Nat.div_div_eq_div_mul, ← pow_succ']
         congr 1; omega
       · rw [hacc', List.length_cons, binBits_succ]
-        simp [S₁, hreg.eq_iff]
+        simp [S₁]
 
 /-! ### Moving and clearing a register -/
 
@@ -508,7 +507,7 @@ theorem moveR_fr (hreg : Function.Injective oreg) {ri rj : OReg} (hij : ri ≠ r
   · simp [movedR, hreg.eq_iff, hij]
   · simp [movedR]
   · simp only [List.mem_cons, List.not_mem_nil, or_false, forall_eq_or_imp, forall_eq] at hk
-    simp [movedR, Function.update_apply, hk]
+    simp [movedR, hk]
 
 theorem clearStep_loop (i : Fin T) : ∀ (l : List (Fin (A + 4))) (v : HS T Q A U) (S : Stacks T A),
     S.R i = l → v.flag = l.head?.isSome →
@@ -587,8 +586,8 @@ theorem wordIter_exec (hreg : Function.Injective oreg) {W b : ℕ}
   have hrun₃ : (pushCarry oreg).run (mk v₂ S₂) = mk v₂ S₃ := pushCarry_run v₂ S₂
   have hfr₃ : Fr oreg [.sm] S₂ S₃ := by
     refine ⟨rfl, rfl, rfl, fun k hk => ?_⟩
-    simp only [List.mem_cons, List.not_mem_nil, or_false, forall_eq_or_imp, forall_eq] at hk
-    simp [S₃, Function.update_apply, hk]
+    simp only [List.mem_cons, List.not_mem_nil, or_false, forall_eq] at hk
+    simp [S₃, hk]
   have hsm₃ : S₃.R (oreg .sm) = (binSyms (lw.length + 1) (c + x)).reverse := by
     simp [S₃, hsm₂, hc₂, hsm, binSyms_succ_last]
   have hct₃ : S₃.R (oreg .ct) = lw.reverse := by
@@ -717,7 +716,7 @@ theorem dropZStep_loop (i : Fin T) : ∀ (l : List Bool) (v : HS T Q A U) (S : S
       have : ({ S with
           R := Function.update S.R i ((([] : List Bool).dropWhile (fun b => !b)).map bitSymbol) } :
             Stacks T A) = S := by
-        simp only [List.dropWhile_nil, List.map_nil, ← hS, List.map_nil, Function.update_eq_self]
+        simp only [List.dropWhile_nil, ← hS, Function.update_eq_self]
       rw [this]
       exact .loop_false (by simp [hf, hS, isZero])
   | cons b l ih =>
@@ -881,7 +880,7 @@ theorem carryOut_exec (hreg : Function.Injective oreg) {W b : ℕ} (hb : 1 ≤ b
         have hdat₂ : S₂.R (oreg .dat) = [] := by rw [hfr₂.get hreg .dat (by decide), hdat₁]
         have hct₂ : S₂.R (oreg .ct) = [] := by rw [hfr₂.get hreg .ct (by decide), hct₁]
         have hsm₂ : S₂.R (oreg .sm) = [] := by rw [hfr₂.get hreg .sm (by decide), hsm₁]
-        cases r <;> simp [Function.update_apply, hreg.eq_iff, hdat₂, hct₂, hsm₂, hcr₂, hct, hcr,
+        cases r <;> simp [hreg.eq_iff, hdat₂, hct₂, hsm₂, hcr₂, hct, hcr,
           hsm, hacc]
       · simp only [not_exists] at hk
         have h1 : ∀ r ∈ allRegs, k ≠ oreg r := fun r _ => hk r

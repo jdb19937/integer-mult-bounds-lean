@@ -33,9 +33,6 @@ open IntegerMultBounds IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.St
 open IntegerMultBounds.MathlibTM2.Node hiding LReg
 open IntegerMultBounds.Networks.Shared50ModularControl (prime)
 
-set_option linter.unusedSimpArgs false
-set_option linter.unusedSectionVars false
-set_option linter.constructorNameAsVariable false
 
 /-! ### Registers -/
 
@@ -48,11 +45,11 @@ theorem slyT_eq (c : Fin 64) : slyT c = reg (BReg := SXReg) (.wtmp (wireOf (Fin.
 
 @[simp] theorem synIdle_slyT (io P₀ : List (Fin (A + 4))) (c : Fin 64) :
     synIdle io P₀ (slyT c) = [] := by
-  simp [synIdle, slyT_eq, Function.update_apply]
+  simp [synIdle, slyT_eq]
 
 @[simp] theorem synIdle_sw (io P₀ : List (Fin (A + 4))) (j : Fin (swapT 6)) :
     synIdle io P₀ (slyRg (.sw j)) = [] := by
-  simp [synIdle, slyRg, Function.update_apply]
+  simp [synIdle, slyRg]
 
 theorem slyRg_sw_out (j : Fin (swapT 6)) : ∀ x, sreg x ≠ slyRg (.sw j) := fun x => by
   simp [slyRg, sreg_eq]
@@ -188,8 +185,8 @@ theorem slyPV_blank (v₀ : SynW → List (Fin (A + 4))) (W E : ℕ) :
   intro x hx
   simp only [List.mem_cons, List.not_mem_nil, or_false] at hx
   rcases hx with rfl | rfl
-  · simp only [slyPV, Function.update_apply, ite_false, Fin.reduceEq, reduceCtorEq,
-      SynW.s.injEq, ↓reduceIte, Function.update_self, List.mem_replicate, not_and]
+  · simp only [slyPV, Function.update_apply, Fin.reduceEq, 
+      SynW.s.injEq, ↓reduceIte, List.mem_replicate, not_and]
     intro _ h
     exact tick_ne_blank h.symm
   · simp only [slyPV, Function.update_self, binSyms, List.mem_ofFn, not_exists]
@@ -268,7 +265,7 @@ theorem sg_slySetup {es : List ℕ} {ℓ K w l : ℕ} {L : Equiv.Perm (Fin es.su
     simp only [slyV₂, Function.update_apply, Nat.add_zero, Nat.mul_one, List.append_nil]
     split_ifs <;> simp_all
   · simp only [slySetupCost, synStashCostW, slyPV, Function.update_apply, ite_true,
-      Function.update_self]
+      ]
     simp
     omega
 
@@ -321,7 +318,7 @@ theorem sly_ldgPre {es : List ℕ} {ℓ K w l : ℕ} {L : Equiv.Perm (Fin es.sum
   · intro i _ _ s hs'; rw [hb] at hs'; simp at hs'
   · intro k; simp only [ldlH]; rw [hb]; simp
   · rw [show slyRg .str = lreg .io from rfl, synG_of_ne (lreg_out (by simp))]
-    simp [synIdle, lreg, Function.update_apply]
+    simp [synIdle, lreg]
   · exact (hw (.ly 19)).trans (by simp [slyV₂, slyPV, hly])
   · exact (hw (.ly 20)).trans (by simp [slyV₂, slyPV, hly])
   · exact (hw (.ly 21)).trans (by simp [slyV₂, slyPV, hly])
@@ -391,7 +388,7 @@ def slyCleanCost (xM xX N wX B W : ℕ) : ℕ :=
 
 theorem slyRo_T2 (io P' : List (Fin (A + 4))) (N wX : ℕ) (hs : Fin 5 → List (Fin (A + 4))) :
     slyRo io P' N wX hs (slyT 2) = List.replicate N tick := by
-  simp [slyRo, Function.update_apply]
+  simp [slyRo]
 
 theorem slyRo_T3 (io P' : List (Fin (A + 4))) (N wX : ℕ) (hs : Fin 5 → List (Fin (A + 4))) :
     slyRo io P' N wX hs (slyT 3) = List.replicate wX tick := by
@@ -416,11 +413,11 @@ theorem slyRo_clean (io P' : List (Fin (A + 4))) (N wX : ℕ) (hs : Fin 5 → Li
     simp [synIdle, lreg]
   by_cases hi : z = lreg .io
   · subst hi
-    simp [slyRo, ldlSetH, synIdle, lreg, Function.update_apply, (slyH_ne_io 0).symm,
+    simp [slyRo, ldlSetH, synIdle, lreg, (slyH_ne_io 0).symm,
       (slyH_ne_io 1).symm, (slyH_ne_io 2).symm, (slyH_ne_io 3).symm, (slyH_ne_io 4).symm,
       (slyT_ne_io 2).symm, (slyT_ne_io 3).symm, hp]
   simp only [Function.update_apply, ite_eq_right hp]
-  split_ifs <;> simp_all [slyRo, ldlSetH, synIdle, lreg, Function.update_apply]
+  split_ifs <;> simp_all [slyRo, ldlSetH, synIdle, lreg]
 
 theorem slyRo_chain_park (io P' : List (Fin (A + 4))) (N wX : ℕ)
     (hs : Fin 5 → List (Fin (A + 4))) :
@@ -436,7 +433,7 @@ theorem slyRo_chain_park (io P' : List (Fin (A + 4))) (N wX : ℕ)
     ldlSetH, Function.update_of_ne (slyH_ne_park 4).symm, Function.update_of_ne (slyH_ne_park 3).symm,
     Function.update_of_ne (slyH_ne_park 2).symm, Function.update_of_ne (slyH_ne_park 1).symm,
     Function.update_of_ne (slyH_ne_park 0).symm]
-  simp [synIdle, lreg]
+  simp [synIdle]
 
 /-- The wires after the cleanup. -/
 theorem slyV₃_clean {es : List ℕ} {ℓ K w l : ℕ} {L : Equiv.Perm (Fin es.sum)}

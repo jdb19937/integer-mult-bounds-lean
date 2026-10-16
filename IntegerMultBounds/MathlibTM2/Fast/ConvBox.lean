@@ -71,8 +71,6 @@ open IntegerMultBounds.MathlibTM2.Fast IntegerMultBounds.MathlibTM2.Fast.ResampA
 open IntegerMultBounds.MathlibTM2.Mult.Rounds IntegerMultBounds.MathlibTM2.Mult.SynthErr IntegerMultBounds.MathlibTM2.Mult.ComplexConv
 open IntegerMultBounds.Spec.SignedRingProduct
 
-set_option linter.unusedSimpArgs false
-set_option linter.unusedSectionVars false
 
 noncomputable section
 
@@ -115,7 +113,7 @@ theorem cv_addrs_eq : ∀ ns : List ℕ, cstAddrs ns = (List.range ns.prod).map 
     have hn' := List.mem_range.1 hn
     have hP : 0 < ns.prod := Nat.pos_of_ne_zero fun h0 => by rw [h0, Nat.mul_zero] at hn'; omega
     simp only [cvDigs, List.length_cons, List.range_succ_eq_map, List.map_cons, List.map_map,
-      Function.comp, digit_cons_zero, digit_cons_succ]
+      digit_cons_zero]
     rw [Nat.mod_eq_of_lt (Nat.div_lt_of_lt_mul (by rwa [Nat.mul_comm] at hn'))]
     congr 1
     apply List.map_congr_left

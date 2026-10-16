@@ -18,7 +18,6 @@ namespace IntegerMultBounds.MathlibTM2.Fast
 open IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.Stack IntegerMultBounds.MathlibTM2
   IntegerMultBounds.MathlibTM2.Host IntegerMultBounds.MathlibTM2.Layer IntegerMultBounds.MathlibTM2.Node
 
-set_option linter.unusedSimpArgs false
 
 open IntegerMultBounds.NLogN (rowIndex)
 
@@ -206,7 +205,7 @@ theorem band_lineIn_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r �
   refine ((RsbRuns.seq hdisj h₁ (RsbRuns.seq hdisj h₂ (RsbRuns.seq hdisj h₃ (RsbRuns.seq hdisj h₄
     (RsbRuns.seq hdisj h₅ h₆))))).congr ?_).mono ?_
   swap
-  · simp [σ₅, σ₄, σ₃, σ₂, σ₁, hSLl, length_foldList, hmwn, hya, hac2, length_rsbMask, bandLineInCost,
+  · simp [σ₅, σ₄, σ₃, σ₂, σ₁, hSLl, length_foldList, hmwn, hac2, bandLineInCost,
       sc]
     omega
   have hz : List.replicate (σ .mwn).length (pairSym A false false) = cstream A w (List.replicate B 0) := by
@@ -312,9 +311,9 @@ theorem band_linePass_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r 
     (RsbRuns.seq hdisj h₅ (RsbRuns.seq hdisj h₆ (RsbRuns.seq hdisj h₇ (RsbRuns.seq hdisj h₈
     (RsbRuns.seq hdisj h₉ h₁₀))))))))).congr ?_).mono ?_
   swap
-  · simp [σ₉, σ₈, σ₇, σ₆, σ₅, σ₄, σ₃, σ₂, σ₁, hbo, hhf, hdf, hef, htb, hdout, hac2, hvk, hmwn,
+  · simp [σ₉, σ₈, σ₇, σ₆, σ₅, σ₄, σ₃, σ₂, σ₁, hbo, hhf, hdf, hef, htb, hac2, hmwn,
       length_bandOut, Mult.BandList.length_bandPend, Mult.BandList.length_bandPendB, hpl, hpl',
-      bandLinePassCost, colC, List.length_flatten, hLl, hUl, hLc, hUc, hrcs]
+      bandLinePassCost, List.length_flatten, hrcs]
     have hsL : (List.map (List.length ∘ colC) Lc).sum = s * B := by
       rw [List.map_congr_left (g := fun _ => B) (fun c hc => by simp [colC, hLl c hc]),
         List.map_const', List.sum_replicate, hLc, smul_eq_mul]
@@ -325,7 +324,7 @@ theorem band_linePass_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r 
     omega
   have hbz : Mult.BandList.bandOutB P Uc rcs pend' s = (Mult.BandList.bwdZC P Uc rcs pend').reverse := by
     rw [Mult.BandList.bwdZC_eq_bandOutB P Uc rcs pend' (by omega) (by omega), hUc, List.reverse_reverse]
-  funext x; cases x <;> simp [σ₉, σ₈, σ₇, σ₆, σ₅, σ₄, σ₃, σ₂, σ₁, hbz, hef, htb, hdout, hac2]
+  funext x; cases x <;> simp [σ₉, σ₈, σ₇, σ₆, σ₅, σ₄, σ₃, σ₂, σ₁, hbz, hef, htb, hac2]
 
 end Contracts
 
@@ -417,7 +416,7 @@ theorem band_lineOut_runs (rg : RsbR → Fin T) (hrg : Function.Injective rg)
     (RsbRuns.seq hdisj h₄ (RsbRuns.seq hdisj h₅ (RsbRuns.seq hdisj h₆ (RsbRuns.seq hdisj h₇
     (RsbRuns.seq hdisj h₈ h₉)))))))).congr ?_).mono ?_
   swap
-  · simp [σ₈, σ₇, σ₆, σ₅, σ₄, σ₃, σ₂, σ₁, hxl, hdtab, hpadc, hDl, hhv, hef, hac2, hsel, u,
+  · simp [σ₈, σ₇, σ₆, σ₅, σ₄, σ₃, σ₂, σ₁, hxl, hdtab, hpadc, hDl, hef, hac2, u,
       bandLineOutCost, Mult.BandFactor.unfoldList, Mult.BandFactor.length_evens, Mult.BandFactor.length_odds]
     have hs2 : (s + 1) / 2 + s / 2 = s := by omega
     simp only [← Nat.add_mul, hs2, min_self]

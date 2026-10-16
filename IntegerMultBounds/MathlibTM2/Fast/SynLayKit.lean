@@ -33,9 +33,6 @@ open IntegerMultBounds IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.St
 open IntegerMultBounds.MathlibTM2.Node hiding LReg
 open IntegerMultBounds.Networks.Shared50ModularControl (prime)
 
-set_option linter.unusedSimpArgs false
-set_option linter.unusedSectionVars false
-set_option linter.constructorNameAsVariable false
 
 /-! ### Block moves -/
 
@@ -75,7 +72,7 @@ theorem lr_slyBlk {cn sp src dst : Fin T} (hreg : [src, cn, sp, dst].Nodup)
     LayRuns body (slyBlk cn sp src dst f) R
       (Function.update (Function.update R src rest) dst ((ws.map f).reverse ++ R dst))
       (6 * ws.length + 4) := by
-  simp only [List.nodup_cons, List.mem_cons, List.mem_singleton, not_or, List.not_mem_nil,
+  simp only [List.nodup_cons, List.mem_cons, not_or, List.not_mem_nil,
     not_false_eq_true, List.nodup_nil, and_true] at hreg
   obtain ⟨⟨h1, h2, h3⟩, ⟨h4, h5⟩, h6⟩ := hreg
   have hit : IterSpec body (.act (slyMvF src dst f)) cn sp (slyBlkFile src dst R f ws rest)
@@ -99,8 +96,8 @@ theorem lr_slyBlk {cn sp src dst : Fin T} (hreg : [src, cn, sp, dst].Nodup)
       by_cases hkd : k = dst
       · rw [hkd, Function.update_self, hS dst (Ne.symm h5) (Ne.symm h6)]
         simp only [slyBlkFile, Function.update_self, htake, List.map_append,
-          List.map_singleton, List.reverse_append, List.reverse_singleton, List.singleton_append,
-          List.cons_append, List.nil_append, List.append_assoc]
+          List.map_singleton, List.reverse_append, List.reverse_singleton, 
+          List.cons_append, List.nil_append]
       · by_cases hks : k = src
         · rw [hks, Function.update_of_ne h3, Function.update_self]
           simp only [slyBlkFile, Function.update_of_ne h3, Function.update_self]
@@ -191,7 +188,7 @@ theorem lr_slyRev {cnt sp1 cn sp2 src tmp dst : Fin T}
       (Function.update (Function.update R src []) dst
         ((rs.map (List.map f)).reverse.flatten ++ R dst))
       (rs.length * (12 * n + 11) + 2 * rs.length + 4) := by
-  simp only [List.nodup_cons, List.mem_cons, List.mem_singleton, not_or, List.not_mem_nil,
+  simp only [List.nodup_cons, List.mem_cons, not_or, List.not_mem_nil,
     not_false_eq_true, List.nodup_nil, and_true] at hreg
   obtain ⟨⟨a1, a2, a3, a4, a5, a6⟩, ⟨b1, b2, b3, b4, b5⟩, ⟨c1, c2, c3, c4⟩, ⟨d1, d2, d3⟩,
     ⟨e1, e2⟩, g1⟩ := hreg
@@ -312,7 +309,7 @@ theorem lr_slyRevStream {cnt sp1 cn sp2 src tmp dst : Fin T}
       (slyRevStreamCost rs.length n) := by
   have hr := lr_slyRev (body := body) hreg f R rs n hrs hsrc hcnt hcn hsp1 hsp2 htmp
   have hn := hreg
-  simp only [List.nodup_cons, List.mem_cons, List.mem_singleton, not_or, List.not_mem_nil,
+  simp only [List.nodup_cons, List.mem_cons, not_or, List.not_mem_nil,
     not_false_eq_true, List.nodup_nil, and_true] at hn
   obtain ⟨-, -, -, -, ⟨e1, e2⟩, g1⟩ := hn
   rw [hdst, List.append_nil] at hr
@@ -464,7 +461,7 @@ theorem sly_moveRecs_fwd {N : ℕ} (L : Equiv.Perm (Fin N)) (Z : ℕ → Fin r �
   simp only [moveRecs, List.getElem_ofFn]
   rw [slyRecs_getD _ (Fin.isLt _), slyRecs_getElem]
   have e := synPi_layRec L ⟨i, hi⟩
-  simp only [Fin.val_mk] at e
+  simp only at e
   rw [e]
 
 /-- The records moved back by the inverse layout. -/

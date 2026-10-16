@@ -23,11 +23,6 @@ open IntegerMultBounds.MathlibTM2.Mult.Sizes Filter IntegerMultBounds.MathlibTM2
   IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.Fast.TableVM
 open IntegerMultBounds.Networks.Shared50ModularControl (prime)
 
-set_option linter.unusedSimpArgs false
-set_option linter.unusedVariables false
-set_option linter.unusedTactic false
-set_option linter.unreachableTactic false
-set_option linter.unnecessarySeqFocus false
 
 section Columns
 
@@ -95,7 +90,7 @@ theorem band_load_msk (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (
     (bandLoad σ hd w D rest (.inl .msk)).length = (σ (.inl .ac2)).length + D.t := by
   simp [bandLoad, bandFE, bandMvF, bandFE0, bandClrE, bandFP, bandFB2b, bandScrL,
     bandFB2a, bandFB1, bandFF2, bandFF2a, bandFF2b, bandFF2c, bandFF2d, bandFF1, bandFA, bandF0,
-    preBankB, Function.update_apply, bandClrB, preHB, length_preMaskE]
+    preBankB, bandClrB, preHB, length_preMaskE]
 
 theorem band_load_bo (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (hd : Fin 5 → Fin t₀)
     (w : ℕ) (D : PreAxB) [NeZero D.s] (rest : List (Fin (prime + K + 4))) :
@@ -103,7 +98,7 @@ theorem band_load_bo (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (h
       (List.length ∘ colC)).sum * w := by
   simp [bandLoad, bandFE, bandMvF, bandFE0, bandClrE, bandFP, bandFB2b, bandScrL,
     bandFB2a, bandFB1, bandFF2, bandFF2a, bandFF2b, bandFF2c, bandFF2d, bandFF1, bandFA, bandF0,
-    preBankB, Function.update_apply, bandClrB, preHB, length_preMaskE]
+    preBankB, bandClrB, preHB]
 
 theorem band_load_hf (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (hd : Fin 5 → Fin t₀)
     (w : ℕ) (D : PreAxB) [NeZero D.s] (rest : List (Fin (prime + K + 4))) :
@@ -111,21 +106,21 @@ theorem band_load_hf (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (h
       (List.length ∘ colC)).sum * w := by
   simp [bandLoad, bandFE, bandMvF, bandFE0, bandClrE, bandFP, bandFB2b, bandScrL,
     bandFB2a, bandFB1, bandFF2, bandFF2a, bandFF2b, bandFF2c, bandFF2d, bandFF1, bandFA, bandF0,
-    preBankB, Function.update_apply, bandClrB, preHB, length_preMaskE]
+    preBankB, bandClrB, preHB]
 
 theorem band_load_df (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (hd : Fin 5 → Fin t₀)
     (w : ℕ) (D : PreAxB) [NeZero D.s] (rest : List (Fin (prime + K + 4))) :
     (bandLoad σ hd w D rest (.inl .df)).length = (bandRcs D.bP D.bK D.bWd D.s (Mult.BandFactor.coefZ D.s D.t D.α D.bP)).length * w := by
   simp [bandLoad, bandFE, bandMvF, bandFE0, bandClrE, bandFP, bandFB2b, bandScrL,
     bandFB2a, bandFB1, bandFF2, bandFF2a, bandFF2b, bandFF2c, bandFF2d, bandFF1, bandFA, bandF0,
-    preBankB, Function.update_apply, bandClrB, preHB, length_preMaskE]
+    preBankB, bandClrB, preHB]
 
 theorem band_load_dtab (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (hd : Fin 5 → Fin t₀)
     (w : ℕ) (D : PreAxB) [NeZero D.s] (rest : List (Fin (prime + K + 4))) :
     (bandLoad σ hd w D rest (.inl .dtab)).length = D.s * w := by
   simp [bandLoad, bandFE, bandMvF, bandFE0, bandClrE, bandFP, bandFB2b, bandScrL,
     bandFB2a, bandFB1, bandFF2, bandFF2a, bandFF2b, bandFF2c, bandFF2d, bandFF1, bandFA, bandF0,
-    preBankB, Function.update_apply, bandClrB, preHB, length_preMaskE]
+    preBankB, bandClrB, preHB]
   exact Or.inl (length_rsbArr _)
 
 theorem band_load_padc (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (hd : Fin 5 → Fin t₀)
@@ -133,98 +128,98 @@ theorem band_load_padc (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) 
     (bandLoad σ hd w D rest (.inl .padc)).length = (D.t - D.s) * w := by
   simp [bandLoad, bandFE, bandMvF, bandFE0, bandClrE, bandFP, bandFB2b, bandScrL,
     bandFB2a, bandFB1, bandFF2, bandFF2a, bandFF2b, bandFF2c, bandFF2d, bandFF1, bandFA, bandF0,
-    preBankB, Function.update_apply, bandClrB, preHB, length_preMaskE]
+    preBankB, bandClrB, preHB]
 
 theorem band_load_sn (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (hd : Fin 5 → Fin t₀)
     (w : ℕ) (D : PreAxB) [NeZero D.s] (rest : List (Fin (prime + K + 4))) :
     (bandLoad σ hd w D rest (.inl .sn)).length = D.s := by
   simp [bandLoad, bandFE, bandMvF, bandFE0, bandClrE, bandFP, bandFB2b, bandScrL,
     bandFB2a, bandFB1, bandFF2, bandFF2a, bandFF2b, bandFF2c, bandFF2d, bandFF1, bandFA, bandF0,
-    preBankB, Function.update_apply, bandClrB, preHB, length_preMaskE]
+    preBankB, bandClrB, preHB]
 
 theorem band_load_mwn (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (hd : Fin 5 → Fin t₀)
     (w : ℕ) (D : PreAxB) [NeZero D.s] (rest : List (Fin (prime + K + 4))) :
     (bandLoad σ hd w D rest (.inl .mwn)).length = (σ (.inl (.cm .wn))).length + 2 * D.bWd * w := by
   simp [bandLoad, bandFE, bandMvF, bandFE0, bandClrE, bandFP, bandFB2b, bandScrL,
     bandFB2a, bandFB1, bandFF2, bandFF2a, bandFF2b, bandFF2c, bandFF2d, bandFF1, bandFA, bandF0,
-    preBankB, Function.update_apply, bandClrB, preHB, length_preMaskE]
+    preBankB, bandClrB, preHB]
 
 theorem band_load_m2wn (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (hd : Fin 5 → Fin t₀)
     (w : ℕ) (D : PreAxB) [NeZero D.s] (rest : List (Fin (prime + K + 4))) :
     (bandLoad σ hd w D rest (.inl .m2wn)).length = D.s / 2 := by
   simp [bandLoad, bandFE, bandMvF, bandFE0, bandClrE, bandFP, bandFB2b, bandScrL,
     bandFB2a, bandFB1, bandFF2, bandFF2a, bandFF2b, bandFF2c, bandFF2d, bandFF1, bandFA, bandF0,
-    preBankB, Function.update_apply, bandClrB, preHB, length_preMaskE]
+    preBankB, bandClrB, preHB]
 
 theorem band_load_m2n (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (hd : Fin 5 → Fin t₀)
     (w : ℕ) (D : PreAxB) [NeZero D.s] (rest : List (Fin (prime + K + 4))) :
     (bandLoad σ hd w D rest (.inl .m2n)).length = D.bB := by
   simp [bandLoad, bandFE, bandMvF, bandFE0, bandClrE, bandFP, bandFB2b, bandScrL,
     bandFB2a, bandFB1, bandFF2, bandFF2a, bandFF2b, bandFF2c, bandFF2d, bandFF1, bandFA, bandF0,
-    preBankB, Function.update_apply, bandClrB, preHB, length_preMaskE]
+    preBankB, bandClrB, preHB]
 
 theorem band_load_smwn (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (hd : Fin 5 → Fin t₀)
     (w : ℕ) (D : PreAxB) [NeZero D.s] (rest : List (Fin (prime + K + 4))) :
     (bandLoad σ hd w D rest (.inl .smwn)).length = w := by
   simp [bandLoad, bandFE, bandMvF, bandFE0, bandClrE, bandFP, bandFB2b, bandScrL,
     bandFB2a, bandFB1, bandFF2, bandFF2a, bandFF2b, bandFF2c, bandFF2d, bandFF1, bandFA, bandF0,
-    preBankB, Function.update_apply, bandClrB, preHB, length_preMaskE]
+    preBankB, bandClrB, preHB]
 
 theorem band_load_tswn (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (hd : Fin 5 → Fin t₀)
     (w : ℕ) (D : PreAxB) [NeZero D.s] (rest : List (Fin (prime + K + 4))) :
     (bandLoad σ hd w D rest (.inl .tswn)).length = (D.s + 1) / 2 * w := by
   simp [bandLoad, bandFE, bandMvF, bandFE0, bandClrE, bandFP, bandFB2b, bandScrL,
     bandFB2a, bandFB1, bandFF2, bandFF2a, bandFF2b, bandFF2c, bandFF2d, bandFF1, bandFA, bandF0,
-    preBankB, Function.update_apply, bandClrB, preHB, length_preMaskE]
+    preBankB, bandClrB, preHB]
 
 theorem band_load_kn (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (hd : Fin 5 → Fin t₀)
     (w : ℕ) (D : PreAxB) [NeZero D.s] (rest : List (Fin (prime + K + 4))) :
     (bandLoad σ hd w D rest (.inl .kn)).length = (D.s + 1) / 2 - D.s / 2 := by
   simp [bandLoad, bandFE, bandMvF, bandFE0, bandClrE, bandFP, bandFB2b, bandScrL,
     bandFB2a, bandFB1, bandFF2, bandFF2a, bandFF2b, bandFF2c, bandFF2d, bandFF1, bandFA, bandF0,
-    preBankB, Function.update_apply, bandClrB, preHB, length_preMaskE]
+    preBankB, bandClrB, preHB]
 
 theorem band_load_ms (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (hd : Fin 5 → Fin t₀)
     (w : ℕ) (D : PreAxB) [NeZero D.s] (rest : List (Fin (prime + K + 4))) :
     (bandLoad σ hd w D rest (.inl .ms)).length = 0 := by
   simp [bandLoad, bandFE, bandMvF, bandFE0, bandClrE, bandFP, bandFB2b, bandScrL,
     bandFB2a, bandFB1, bandFF2, bandFF2a, bandFF2b, bandFF2c, bandFF2d, bandFF1, bandFA, bandF0,
-    preBankB, Function.update_apply, bandClrB, preHB, length_preMaskE]
+    preBankB, bandClrB, preHB]
 
 theorem band_load_bx (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (hd : Fin 5 → Fin t₀)
     (w : ℕ) (D : PreAxB) [NeZero D.s] (rest : List (Fin (prime + K + 4))) :
     (bandLoad σ hd w D rest (.inl .bx)).length = w := by
   simp [bandLoad, bandFE, bandMvF, bandFE0, bandClrE, bandFP, bandFB2b, bandScrL,
     bandFB2a, bandFB1, bandFF2, bandFF2a, bandFF2b, bandFF2c, bandFF2d, bandFF1, bandFA, bandF0,
-    preBankB, Function.update_apply, bandClrB, preHB, length_preMaskE]
+    preBankB, bandClrB, preHB]
 
 theorem band_load_pn (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (hd : Fin 5 → Fin t₀)
     (w : ℕ) (D : PreAxB) [NeZero D.s] (rest : List (Fin (prime + K + 4))) :
     (bandLoad σ hd w D rest (.inl (.cm .pn))).length = D.bP := by
   simp [bandLoad, bandFE, bandMvF, bandFE0, bandClrE, bandFP, bandFB2b, bandScrL,
     bandFB2a, bandFB1, bandFF2, bandFF2a, bandFF2b, bandFF2c, bandFF2d, bandFF1, bandFA, bandF0,
-    preBankB, Function.update_apply, bandClrB, preHB, length_preMaskE]
+    preBankB, bandClrB, preHB]
 
 theorem band_load_tb (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (hd : Fin 5 → Fin t₀)
     (w : ℕ) (D : PreAxB) [NeZero D.s] (rest : List (Fin (prime + K + 4))) :
     (bandLoad σ hd w D rest (.inl .tb)).length = 0 := by
   simp [bandLoad, bandFE, bandMvF, bandFE0, bandClrE, bandFP, bandFB2b, bandScrL,
     bandFB2a, bandFB1, bandFF2, bandFF2a, bandFF2b, bandFF2c, bandFF2d, bandFF1, bandFA, bandF0,
-    preBankB, Function.update_apply, bandClrB, preHB, length_preMaskE]
+    preBankB, bandClrB, preHB]
 
 theorem band_load_ac2 (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (hd : Fin 5 → Fin t₀)
     (w : ℕ) (D : PreAxB) [NeZero D.s] (rest : List (Fin (prime + K + 4))) :
     (bandLoad σ hd w D rest (.inl .ac2)).length = 0 := by
   simp [bandLoad, bandFE, bandMvF, bandFE0, bandClrE, bandFP, bandFB2b, bandScrL,
     bandFB2a, bandFB1, bandFF2, bandFF2a, bandFF2b, bandFF2c, bandFF2d, bandFF1, bandFA, bandF0,
-    preBankB, Function.update_apply, bandClrB, preHB, length_preMaskE]
+    preBankB, bandClrB, preHB]
 
 theorem band_load_wn (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (hd : Fin 5 → Fin t₀)
     (w : ℕ) (D : PreAxB) [NeZero D.s] (rest : List (Fin (prime + K + 4))) :
     (bandLoad σ hd w D rest (.inl (.cm .wn))).length = (σ (.inl (.cm .wn))).length := by
   simp [bandLoad, bandFE, bandMvF, bandFE0, bandClrE, bandFP, bandFB2b, bandScrL,
     bandFB2a, bandFB1, bandFF2, bandFF2a, bandFF2b, bandFF2c, bandFF2d, bandFF1, bandFA, bandF0,
-    preBankB, Function.update_apply, bandClrB, preHB, length_preMaskE]
+    preBankB, bandClrB, preHB]
 
 theorem band_load_hb (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (hd : Fin 5 → Fin t₀)
     (w : ℕ) (D : PreAxB) [NeZero D.s] (rest : List (Fin (prime + K + 4))) (k : Fin 5) :
@@ -233,7 +228,7 @@ theorem band_load_hb (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (h
   have hb : ∀ k, ∃ k', reg (hd k') = reg (hd k) := fun k => ⟨k, rfl⟩
   simp [bandLoad, bandFE, bandMvF, bandFE0, bandClrE, bandFP, bandFB2b, bandScrL,
     bandFB2a, bandFB1, bandFF2, bandFF2a, bandFF2b, bandFF2c, bandFF2d, bandFF1, bandFA, bandF0,
-    preBankB, Function.update_apply, bandClrB, preHB, length_preMaskE, hb]
+    preBankB, bandClrB, preHB, hb]
 
 end Frames
 
@@ -252,14 +247,14 @@ theorem band_mono {S T1 u q : ℕ} (hS : 1 ≤ S) (hT : 1 ≤ T1) (hu : 1 ≤ u)
   have h4 : q ^ k ≤ q ^ 5 := Nat.pow_le_pow_right hq hk
   exact Nat.mul_le_mul (Nat.mul_le_mul (Nat.mul_le_mul h1 h2) h3) h4
 
-theorem band_costF1_le (D : PreAxB) {T w q u S T1 : ℕ} (hm : D.m ≤ q) (hα : D.α ≤ q)
-    (hp : D.p ≤ q) (hW : D.W ≤ q) (hw : w ≤ q) (hs : D.s ≤ u) (ht : D.t ≤ u) (hq : 1 ≤ q)
-    (hu : 1 ≤ u) (hS : 1 ≤ S) (hT : 1 ≤ T1) (hR : rmulCost T w ≤ 288 * S * T1 * q ^ 3) :
+theorem band_costF1_le (D : PreAxB) {T w q u S T1 : ℕ} (hm : D.m ≤ q) (_hα : D.α ≤ q)
+    (hp : D.p ≤ q) (_hW : D.W ≤ q) (_hw : w ≤ q) (hs : D.s ≤ u) (_ht : D.t ≤ u) (hq : 1 ≤ q)
+    (hu : 1 ≤ u) (hS : 1 ≤ S) (hT : 1 ≤ T1) (_hR : rmulCost T w ≤ 288 * S * T1 * q ^ 3) :
     bandCostF1 D ≤ 207 * (S * T1 * u * q ^ 5) := by
-  simp only [bandCostF1, bandCostF2, bandCostF2a, bandCostF2b, bandCostF2c, bandCostF2d, bandCostF3,
-    bandCostB2a, bandCostB2b, bandAxisPrepCost, bandFacStepCost, bandNewtonStepCost, bandFacRowCost,
-    bandFwdStepCost, bandTStepCost, bandAxisOrgCost, preVMCost, bandKFold, bandKH, preKD, preKM, tblC,
-    PreAxB.bP, PreAxB.bWd, PreAxB.bB, PreAxB.bK, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil]
+  simp only [bandCostF1, 
+    
+    
+    PreAxB.bWd, PreAxB.bB]
   calc _ ≤ 4 * q + 4 + (4 * q + 4) + (4 * (8 * q) + 4) + 1 + (4 * (2 * (8 * q) + 1) + 4) + 1 + (4 * (2
           * (8 * q) + 1) + 4) + 1 + (4 * u + 4) := by
         gcongr <;> omega
@@ -318,13 +313,13 @@ theorem band_costF1_le (D : PreAxB) {T w q u S T1 : ℕ} (hm : D.m ≤ q) (hα :
 
 theorem band_costVM_le (D : PreAxB) {T w q u S T1 : ℕ} (hm : D.m ≤ q) (hα : D.α ≤ q)
     (hp : D.p ≤ q) (hW : D.W ≤ q) (hw : w ≤ q) (hs : D.s ≤ u) (ht : D.t ≤ u) (hq : 1 ≤ q)
-    (hu : 1 ≤ u) (hS : 1 ≤ S) (hT : 1 ≤ T1) (hR : rmulCost T w ≤ 288 * S * T1 * q ^ 3) :
+    (hu : 1 ≤ u) (hS : 1 ≤ S) (hT : 1 ≤ T1) (_hR : rmulCost T w ≤ 288 * S * T1 * q ^ 3) :
     preVMCost 60 D.W w [D.bP, D.s, D.t, D.α, D.bWd, D.bB + 1 + D.s, 2 * D.bB + 1, D.bB]
       (bandKFold D) ((D.bB + 1 + D.s) * (2 * D.bB + 1) * w) ≤ 943711899 * (S * T1 * u * q ^ 5) := by
-  simp only [bandCostF1, bandCostF2, bandCostF2a, bandCostF2b, bandCostF2c, bandCostF2d, bandCostF3,
-    bandCostB2a, bandCostB2b, bandAxisPrepCost, bandFacStepCost, bandNewtonStepCost, bandFacRowCost,
-    bandFwdStepCost, bandTStepCost, bandAxisOrgCost, preVMCost, bandKFold, bandKH, preKD, preKM, tblC,
-    PreAxB.bP, PreAxB.bWd, PreAxB.bB, PreAxB.bK, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil]
+  simp only [
+    
+    preVMCost, bandKFold, tblC,
+    PreAxB.bP, PreAxB.bWd, PreAxB.bB, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil]
   calc _ ≤ 4 * q + 4 + (4 * q + 4) + (60 * (4 * q + 4) + 1) + (5 * q * (4 * q + 10) + 6 * q + 10 + (u *
           (4 * q + 10) + 6 * q + 10 + (u * (4 * q + 10) + 6 * q + 10 + (q * (4 * q + 10) + 6 * q + 10
           + (8 * q * (4 * q + 10) + 6 * q + 10 + ((2 * (8 * q) + 1 + 1 + u) * (4 * q + 10) + 6 * q +
@@ -389,13 +384,13 @@ theorem band_costVM_le (D : PreAxB) {T w q u S T1 : ℕ} (hm : D.m ≤ q) (hα :
       linarith
 
 theorem band_costF2_le (D : PreAxB) {T w q u S T1 : ℕ} (hm : D.m ≤ q) (hα : D.α ≤ q)
-    (hp : D.p ≤ q) (hW : D.W ≤ q) (hw : w ≤ q) (hs : D.s ≤ u) (ht : D.t ≤ u) (hq : 1 ≤ q)
-    (hu : 1 ≤ u) (hS : 1 ≤ S) (hT : 1 ≤ T1) (hR : rmulCost T w ≤ 288 * S * T1 * q ^ 3) :
+    (_hp : D.p ≤ q) (_hW : D.W ≤ q) (hw : w ≤ q) (hs : D.s ≤ u) (_ht : D.t ≤ u) (hq : 1 ≤ q)
+    (hu : 1 ≤ u) (hS : 1 ≤ S) (hT : 1 ≤ T1) (_hR : rmulCost T w ≤ 288 * S * T1 * q ^ 3) :
     bandCostF2 D w ≤ 13635 * (S * T1 * u * q ^ 5) := by
-  simp only [bandCostF1, bandCostF2, bandCostF2a, bandCostF2b, bandCostF2c, bandCostF2d, bandCostF3,
-    bandCostB2a, bandCostB2b, bandAxisPrepCost, bandFacStepCost, bandNewtonStepCost, bandFacRowCost,
-    bandFwdStepCost, bandTStepCost, bandAxisOrgCost, preVMCost, bandKFold, bandKH, preKD, preKM, tblC,
-    PreAxB.bP, PreAxB.bWd, PreAxB.bB, PreAxB.bK, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil]
+  simp only [bandCostF2, bandCostF2a, bandCostF2b, bandCostF2c, bandCostF2d, 
+    
+    
+    PreAxB.bWd, PreAxB.bB]
   calc _ ≤ 2 * (2 * (8 * q) + 1 + 1 + u) + 2 + (4 * (2 * (8 * q) + 1) + 4 + (4 * (2 * (8 * q) + 1) + 4
           + (4 * (8 * q) + 4))) + (2 * (8 * q) * (4 * q + 7) + 2 * (2 * (8 * q)) + 4 + (2 * (2 * (8 *
           q) + 1) * (4 * q + 7) + 2 * (2 * (2 * (8 * q) + 1)) + 4 + ((2 * (2 * (8 * q) + 1) + 1) * (4
@@ -459,14 +454,14 @@ theorem band_costF2_le (D : PreAxB) {T w q u S T1 : ℕ} (hm : D.m ≤ q) (hα :
       ring_nf at f0000 f0001 f0002 f0003 f0004 f0005 f0010 f0011 f0012 f0013 f0014 f0015 f0100 f0101 f0102 f0103 f0104 f0105 f0110 f0111 f0112 f0113 f0114 f0115 f1000 f1001 f1002 f1003 f1004 f1005 f1010 f1011 f1012 f1013 f1014 f1015 f1100 f1101 f1102 f1103 f1104 f1105 f1110 f1111 f1112 f1113 f1114 f1115
       linarith
 
-theorem band_costF3_le (D : PreAxB) {T w q u S T1 : ℕ} (hm : D.m ≤ q) (hα : D.α ≤ q)
-    (hp : D.p ≤ q) (hW : D.W ≤ q) (hw : w ≤ q) (hs : D.s ≤ u) (ht : D.t ≤ u) (hq : 1 ≤ q)
-    (hu : 1 ≤ u) (hS : 1 ≤ S) (hT : 1 ≤ T1) (hR : rmulCost T w ≤ 288 * S * T1 * q ^ 3) :
+theorem band_costF3_le (D : PreAxB) {T w q u S T1 : ℕ} (hm : D.m ≤ q) (_hα : D.α ≤ q)
+    (hp : D.p ≤ q) (hW : D.W ≤ q) (hw : w ≤ q) (_hs : D.s ≤ u) (_ht : D.t ≤ u) (hq : 1 ≤ q)
+    (hu : 1 ≤ u) (hS : 1 ≤ S) (hT : 1 ≤ T1) (_hR : rmulCost T w ≤ 288 * S * T1 * q ^ 3) :
     bandCostF3 D w ≤ 24992 * (S * T1 * u * q ^ 5) := by
-  simp only [bandCostF1, bandCostF2, bandCostF2a, bandCostF2b, bandCostF2c, bandCostF2d, bandCostF3,
-    bandCostB2a, bandCostB2b, bandAxisPrepCost, bandFacStepCost, bandNewtonStepCost, bandFacRowCost,
-    bandFwdStepCost, bandTStepCost, bandAxisOrgCost, preVMCost, bandKFold, bandKH, preKD, preKM, tblC,
-    PreAxB.bP, PreAxB.bWd, PreAxB.bB, PreAxB.bK, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil]
+  simp only [bandCostF3,
+    
+    preVMCost, bandKH, tblC,
+    List.map_cons, List.map_nil, List.sum_cons, List.sum_nil]
   calc _ ≤ 4 * q + 4 + (1 + (4 * 1 + 4 + (4 * q + 4 + (4 * q + 4) + (48 * (4 * q + 4) + 1) + ((5 * q) *
           (4 * q + 10) + 6 * q + 10 + 0 + 1) + ((3 + (4 * (5 * q) + 5 + 2)) * (32 * (q + 4) ^ 2 + 8 *
           q) + 2 * q + 2) + (48 * (2 * q + 2) + 2 * q + 2 * q + 31) + (2 * (5 * q) + 2 + (2 * 1 +
@@ -527,12 +522,12 @@ theorem band_costF3_le (D : PreAxB) {T w q u S T1 : ℕ} (hm : D.m ≤ q) (hα :
 
 theorem band_costB2a_le (D : PreAxB) {T w q u S T1 : ℕ} (hm : D.m ≤ q) (hα : D.α ≤ q)
     (hp : D.p ≤ q) (hW : D.W ≤ q) (hw : w ≤ q) (hs : D.s ≤ u) (ht : D.t ≤ u) (hq : 1 ≤ q)
-    (hu : 1 ≤ u) (hS : 1 ≤ S) (hT : 1 ≤ T1) (hR : rmulCost T w ≤ 288 * S * T1 * q ^ 3) :
+    (hu : 1 ≤ u) (hS : 1 ≤ S) (hT : 1 ≤ T1) (_hR : rmulCost T w ≤ 288 * S * T1 * q ^ 3) :
     bandCostB2a D w ≤ 69374 * (S * T1 * u * q ^ 5) := by
-  simp only [bandCostF1, bandCostF2, bandCostF2a, bandCostF2b, bandCostF2c, bandCostF2d, bandCostF3,
-    bandCostB2a, bandCostB2b, bandAxisPrepCost, bandFacStepCost, bandNewtonStepCost, bandFacRowCost,
-    bandFwdStepCost, bandTStepCost, bandAxisOrgCost, preVMCost, bandKFold, bandKH, preKD, preKM, tblC,
-    PreAxB.bP, PreAxB.bWd, PreAxB.bB, PreAxB.bK, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil]
+  simp only [
+    bandCostB2a, 
+    preVMCost, bandKH, preKM, tblC,
+    List.map_cons, List.map_nil, List.sum_cons, List.sum_nil]
   calc _ ≤ 4 * u + 4 + (4 * u + 4 + ((u) * (4 * q + 7) + 2 * (u) + 4 + (2 * (u) + 2))) + (1 + (4 * q +
           4 + (4 * 1 + 4) + (48 * (4 * q + 4) + 1) + (u * (4 * q + 10) + 6 * q + 10 + (u * (4 * q +
           10) + 6 * q + 10 + 0) + 1) + ((7 + (1 + (u * (6 + 1 + 2) + 2))) * (32 * (q + 4) ^ 2 + 8 * 1)
@@ -599,14 +594,14 @@ theorem band_costB2a_le (D : PreAxB) {T w q u S T1 : ℕ} (hm : D.m ≤ q) (hα 
       ring_nf at f0000 f0001 f0002 f0003 f0004 f0005 f0010 f0011 f0012 f0013 f0014 f0015 f0100 f0101 f0102 f0103 f0104 f0105 f0110 f0111 f0112 f0113 f0114 f0115 f1000 f1001 f1002 f1003 f1004 f1005 f1010 f1011 f1012 f1013 f1014 f1015 f1100 f1101 f1102 f1103 f1104 f1105 f1110 f1111 f1112 f1113 f1114 f1115
       linarith
 
-theorem band_costB2b_le (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (D : PreAxB) {T w q u S T1 : ℕ} (hm : D.m ≤ q) (hα : D.α ≤ q)
+theorem band_costB2b_le (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (D : PreAxB) {T w q u S T1 : ℕ} (_hm : D.m ≤ q) (hα : D.α ≤ q)
     (hp : D.p ≤ q) (hW : D.W ≤ q) (hw : w ≤ q) (hs : D.s ≤ u) (ht : D.t ≤ u) (hq : 1 ≤ q)
     (hu : 1 ≤ u) (hS : 1 ≤ S) (hT : 1 ≤ T1) (hR : rmulCost T w ≤ 288 * S * T1 * q ^ 3) :
     bandCostB2b T σ D w ≤ 885034 * (S * T1 * u * q ^ 5) + (List.map (fun r => 2 * (σ r).length + 2) bandScrL).sum := by
-  simp only [bandCostF1, bandCostF2, bandCostF2a, bandCostF2b, bandCostF2c, bandCostF2d, bandCostF3,
-    bandCostB2a, bandCostB2b, bandAxisPrepCost, bandFacStepCost, bandNewtonStepCost, bandFacRowCost,
-    bandFwdStepCost, bandTStepCost, bandAxisOrgCost, preVMCost, bandKFold, bandKH, preKD, preKM, tblC,
-    PreAxB.bP, PreAxB.bWd, PreAxB.bB, PreAxB.bK, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil]
+  simp only [
+    bandCostB2b, 
+    preVMCost, bandKH, preKD, tblC,
+    List.map_cons, List.map_nil, List.sum_cons, List.sum_nil]
   calc _ ≤ 4 * q + 4 + (4 * q + 4) + (48 * (4 * q + 4) + 1) + (u * (4 * q + 10) + 6 * q + 10 + (u * (4
           * q + 10) + 6 * q + 10 + (q * (4 * q + 10) + 6 * q + 10 + (q * (4 * q + 10) + 6 * q + 10 +
           0))) + 1) + ((u * (310 * q + 123) + (160 * q + 450)) * (32 * (q + 4) ^ 2 + 8 * q) + 2 * (u *
@@ -670,13 +665,13 @@ theorem band_costB2b_le (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4)))
       linarith
 
 theorem band_costPrep_le (D : PreAxB) {T w q u S T1 : ℕ} (hm : D.m ≤ q) (hα : D.α ≤ q)
-    (hp : D.p ≤ q) (hW : D.W ≤ q) (hw : w ≤ q) (hs : D.s ≤ u) (ht : D.t ≤ u) (hq : 1 ≤ q)
+    (_hp : D.p ≤ q) (_hW : D.W ≤ q) (hw : w ≤ q) (hs : D.s ≤ u) (_ht : D.t ≤ u) (hq : 1 ≤ q)
     (hu : 1 ≤ u) (hS : 1 ≤ S) (hT : 1 ≤ T1) (hR : rmulCost T w ≤ 288 * S * T1 * q ^ 3) :
     bandAxisPrepCost T w (2 * D.bWd) D.bK D.s ≤ 358262 * (S * T1 * u * q ^ 5) := by
-  simp only [bandCostF1, bandCostF2, bandCostF2a, bandCostF2b, bandCostF2c, bandCostF2d, bandCostF3,
-    bandCostB2a, bandCostB2b, bandAxisPrepCost, bandFacStepCost, bandNewtonStepCost, bandFacRowCost,
-    bandFwdStepCost, bandTStepCost, bandAxisOrgCost, preVMCost, bandKFold, bandKH, preKD, preKM, tblC,
-    PreAxB.bP, PreAxB.bWd, PreAxB.bB, PreAxB.bK, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil]
+  simp only [
+    bandAxisPrepCost, bandFacStepCost, bandNewtonStepCost, bandFacRowCost,
+    bandFwdStepCost, bandTStepCost, bandAxisOrgCost, 
+    PreAxB.bWd, PreAxB.bK]
   calc _ ≤ 4 * ((2 * (8 * q) + 1 + 1) * (2 * (2 * (8 * q) + 1) + 1) * q) + 4 + (2 * ((2 * (8 * q) + 1 +
           1) * (2 * (2 * (8 * q) + 1) + 1) * q) + 2) + (u * (100 * (2 * (8 * q) + 1 + 1) * (2 * (8 *
           q) + 1 + 1) * q + 200 + (4 * (q * q) * (2 * (288 * S * T1 * q ^ 3) + 80 * q + 120 + 6) + 4)
@@ -741,8 +736,8 @@ theorem band_costPrep_le (D : PreAxB) {T w q u S T1 : ℕ} (hm : D.m ≤ q) (hα
       ring_nf at f0000 f0001 f0002 f0003 f0004 f0005 f0010 f0011 f0012 f0013 f0014 f0015 f0100 f0101 f0102 f0103 f0104 f0105 f0110 f0111 f0112 f0113 f0114 f0115 f1000 f1001 f1002 f1003 f1004 f1005 f1010 f1011 f1012 f1013 f1014 f1015 f1100 f1101 f1102 f1103 f1104 f1105 f1110 f1111 f1112 f1113 f1114 f1115
       linarith
 
-theorem band_polyE_le (D : PreAxB) {w q u S T1 : ℕ} (hm : D.m ≤ q) (hα : D.α ≤ q)
-    (hp : D.p ≤ q) (hW : D.W ≤ q) (hw : w ≤ q) (hs : D.s ≤ u) (ht : D.t ≤ u) (hq : 1 ≤ q)
+theorem band_polyE_le (D : PreAxB) {w q u S T1 : ℕ} (hm : D.m ≤ q) (_hα : D.α ≤ q)
+    (_hp : D.p ≤ q) (_hW : D.W ≤ q) (hw : w ≤ q) (hs : D.s ≤ u) (ht : D.t ≤ u) (hq : 1 ≤ q)
     (hu : 1 ≤ u) (hS : 1 ≤ S) (hT : 1 ≤ T1) :
     2 * (D.s * D.bB) + 2 * (2 * D.bWd) + 2 * (2 * D.bWd) + 2 * w + 2 * ((D.bB + 1) * (2 * D.bB +
     1) * w) + 2 * ((2 * D.bB + 1) * w) + 2 * (2 * D.bWd * w) + 2 * w + 16 + 1 + (2 * (2 * D.t +
@@ -808,7 +803,7 @@ theorem band_polyE_le (D : PreAxB) {w q u S T1 : ℕ} (hm : D.m ≤ q) (hα : D.
       linarith
 
 theorem band_polyScr_le (D : PreAxB) {w q u S T1 : ℕ} (hm : D.m ≤ q) (hα : D.α ≤ q)
-    (hp : D.p ≤ q) (hW : D.W ≤ q) (hw : w ≤ q) (hs : D.s ≤ u) (ht : D.t ≤ u) (hq : 1 ≤ q)
+    (hp : D.p ≤ q) (hW : D.W ≤ q) (_hw : w ≤ q) (_hs : D.s ≤ u) (ht : D.t ≤ u) (hq : 1 ≤ q)
     (hu : 1 ≤ u) (hS : 1 ≤ S) (hT : 1 ≤ T1) :
     2 * (D.t + D.m + D.α + D.p + D.W + D.α * D.α + D.bWd + D.bB + (2 * D.bB + 1)) + 20 ≤ 152 * (S * T1 * u * q ^ 5) := by
   simp only [PreAxB.bB, PreAxB.bWd]

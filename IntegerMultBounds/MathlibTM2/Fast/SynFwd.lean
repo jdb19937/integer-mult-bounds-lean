@@ -24,9 +24,7 @@ open IntegerMultBounds IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.St
 open IntegerMultBounds.MathlibTM2.Node hiding LReg
 open IntegerMultBounds.Networks.Shared50ModularControl (prime)
 
-set_option linter.unusedSimpArgs false
 set_option maxHeartbeats 4000000
-set_option linter.constructorNameAsVariable false
 
 /-! ### Numerators of grid arrays -/
 
@@ -283,7 +281,7 @@ theorem sg_synLoopF {es : List ℕ} {ℓ K : ℕ} (H : LayHyp es ℓ K) {l w p A
       simp only [synSetH, Function.update_idem]
       funext y
       simp only [Function.update_apply]
-      split_ifs <;> simp_all [synUF]
+      split_ifs <;> simp_all
     · have := synRoundCost_mono ds es ℓ K w l (A - 1 - j) hst
       omega
   have hscan := layScan_exec (body := layerTable (Ka := Ka) (U := U) hQ ds)
@@ -361,7 +359,7 @@ theorem sg_synLoopO {es : List ℕ} {ℓ K : ℕ} (H : LayHyp es ℓ K) {l w p A
       simp only [synSetH, Function.update_idem]
       funext y
       simp only [Function.update_apply]
-      split_ifs <;> simp_all [oppRoundsC]
+      split_ifs <;> simp_all
     · have := synLayerStepCost_mono ds es ℓ K w l j hst
       omega
   have hscan := layScan_exec (body := layerTable (Ka := Ka) (U := U) hQ ds)
@@ -425,7 +423,7 @@ theorem synPre_R {A : ℕ} {Pk : List (Fin (A + 4)) → Prop} {v₀ : SynW → L
   by_cases hk : k = lreg .io
   · subst hk
     rw [synG_of_ne (lreg_out (by simp))]
-    simp [synIdle, lreg, Function.update_apply]
+    simp [synIdle, lreg]
   · rw [hP k hk]
     by_cases hw : ∃ x, sreg x = k
     · obtain ⟨x, rfl⟩ := hw

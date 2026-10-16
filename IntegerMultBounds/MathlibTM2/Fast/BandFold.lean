@@ -18,7 +18,6 @@ namespace IntegerMultBounds.MathlibTM2.Fast
 open IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.Stack IntegerMultBounds.MathlibTM2
   IntegerMultBounds.MathlibTM2.Host IntegerMultBounds.MathlibTM2.Layer IntegerMultBounds.MathlibTM2.Node
 
-set_option linter.unusedSimpArgs false
 
 variable {T Q A : ℕ} {U : Type} {P : Type}
 
@@ -82,7 +81,7 @@ theorem band_rec1_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠ 
   · funext z
     simp only [Function.update_apply]
     split_ifs <;> simp_all
-  · simp [hwn]; omega
+  · simp; omega
 
 theorem interleave_snoc {α : Type*} (x y : α) : ∀ (l₁ l₂ : List α), l₁.length = l₂.length →
     Mult.BandFactor.interleave (l₁ ++ [x]) (l₂ ++ [y]) =
@@ -118,9 +117,9 @@ theorem band_ileave_step (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r �
   refine ((RsbRuns.seq hdisj h₁ h₂).congr ?_).mono (by omega)
   funext r
   by_cases hrz : r = z
-  · subst hrz; simp [Function.update_of_ne (Ne.symm hbz), Function.update_of_ne (Ne.symm haz)]
+  · subst hrz; simp
   by_cases hrb : r = b
-  · subst hrb; simp [Function.update_of_ne hrz, Function.update_of_ne (Ne.symm hab)]
+  · subst hrb; simp [Function.update_of_ne hrz]
   by_cases hra : r = a
   · subst hra; simp [Function.update_of_ne hrz, Function.update_of_ne hrb]
   simp [Function.update_of_ne hrz, Function.update_of_ne hrb, Function.update_of_ne hra]
@@ -184,7 +183,7 @@ theorem band_ileave_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r �
     by_cases hrz : r = z
     · subst hrz
       simp [rsbUpd2, hΨ, Function.update_of_ne hzn, Function.update_of_ne hzt, hti,
-        Function.update_of_ne (Ne.symm hbz), Function.update_of_ne (Ne.symm haz)]
+        ]
     by_cases hrb : r = b
     · subst hrb; simp [rsbUpd2, hΨ, Function.update_of_ne hrz, Function.update_of_ne hbn,
         Function.update_of_ne hbt]
@@ -205,11 +204,11 @@ theorem band_ileave_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r �
     · subst hra; simp [rsbUpd2, hΨ, Function.update_of_ne hrz, Function.update_of_ne hrb,
         Function.update_of_ne han, Function.update_of_ne hat, ha]
     by_cases hrt : r = tn
-    · subst hrt; simp [rsbUpd2, htn, Function.update_of_ne (Ne.symm hat), Function.update_of_ne (Ne.symm hbt),
-        Function.update_of_ne (Ne.symm hzt)]
+    · subst hrt; simp [rsbUpd2, htn, 
+        ]
     by_cases hrn : r = n
-    · subst hrn; simp [rsbUpd2, Function.update_of_ne hrt, Function.update_of_ne (Ne.symm han),
-        Function.update_of_ne (Ne.symm hbn), Function.update_of_ne (Ne.symm hzn)]
+    · subst hrn; simp [rsbUpd2, Function.update_of_ne hrt, 
+        ]
     simp [rsbUpd2, hΨ, hrz, hrb, hra, hrt, hrn]
   · funext r
     by_cases hrz : r = z
@@ -312,10 +311,10 @@ theorem band_deileave_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r 
     funext r
     by_cases hro : r = o
     · subst hro; simp [rsbUpd2, hΨ, Function.update_of_ne hon, Function.update_of_ne hot, htb,
-        Function.update_of_ne (Ne.symm heo), Function.update_of_ne (Ne.symm hxo)]
+        ]
     by_cases hre : r = e
     · subst hre; simp [rsbUpd2, hΨ, Function.update_of_ne hro, Function.update_of_ne hen,
-        Function.update_of_ne het, hta, Function.update_of_ne (Ne.symm hxe)]
+        Function.update_of_ne het, hta]
     by_cases hrx : r = x
     · subst hrx; simp [rsbUpd2, hΨ, Function.update_of_ne hro, Function.update_of_ne hre,
         Function.update_of_ne hxn, Function.update_of_ne hxt]
@@ -332,11 +331,11 @@ theorem band_deileave_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r 
     · subst hrx; simp [rsbUpd2, hΨ, Function.update_of_ne hro, Function.update_of_ne hre,
         Function.update_of_ne hxn, Function.update_of_ne hxt, hx]
     by_cases hrt : r = tn
-    · subst hrt; simp [rsbUpd2, htn, Function.update_of_ne (Ne.symm hxt), Function.update_of_ne (Ne.symm het),
-        Function.update_of_ne (Ne.symm hot)]
+    · subst hrt; simp [rsbUpd2, htn, 
+        ]
     by_cases hrn : r = n
-    · subst hrn; simp [rsbUpd2, Function.update_of_ne hrt, Function.update_of_ne (Ne.symm hxn),
-        Function.update_of_ne (Ne.symm hen), Function.update_of_ne (Ne.symm hon)]
+    · subst hrn; simp [rsbUpd2, Function.update_of_ne hrt, 
+        ]
     simp [rsbUpd2, hΨ, hro, hre, hrx, hrt, hrn]
   · funext r
     have hda : as.drop as.length = [] := List.drop_length
@@ -407,7 +406,7 @@ theorem band_rec1Rep_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r �
     funext r
     by_cases hry : r = y
     · subst hry; simp [rsbUpd2, hΨ, Function.update_of_ne hyn, Function.update_of_ne hyt, htk,
-        Function.update_of_ne (Ne.symm hxy)]
+        ]
     by_cases hrx : r = x
     · subst hrx; simp [rsbUpd2, hΨ, Function.update_of_ne hry, Function.update_of_ne hxn,
         Function.update_of_ne hxt]
@@ -421,10 +420,10 @@ theorem band_rec1Rep_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r �
     · subst hrx; simp [rsbUpd2, hΨ, Function.update_of_ne hry, Function.update_of_ne hxn,
         Function.update_of_ne hxt, hx]
     by_cases hrt : r = tn
-    · subst hrt; simp [rsbUpd2, htn, Function.update_of_ne (Ne.symm hxt), Function.update_of_ne (Ne.symm hyt)]
+    · subst hrt; simp [rsbUpd2, htn]
     by_cases hrn : r = n
-    · subst hrn; simp [rsbUpd2, Function.update_of_ne hrt, Function.update_of_ne (Ne.symm hxn),
-        Function.update_of_ne (Ne.symm hyn)]
+    · subst hrn; simp [rsbUpd2, Function.update_of_ne hrt, 
+        ]
     simp [rsbUpd2, hΨ, hry, hrx, hrt, hrn]
   · funext r
     by_cases hry : r = y
@@ -521,10 +520,10 @@ theorem band_foldLine_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r 
     rw [← List.map_reverse, List.reverse_reverse, hsing]
   refine ((RsbRuns.seq hdisj h₁ (RsbRuns.seq hdisj h₂ (RsbRuns.seq hdisj h₃ (RsbRuns.seq hdisj h₄
     (RsbRuns.seq hdisj h₅ h₆))))).congr ?_).mono ?_
-  · funext x; cases x <;> simp [σ₅, σ₄, σ₃, σ₂, σ₁, hrev, hL, hya, hxs, hnv, hac2, hsing]
+  · funext x; cases x <;> simp [σ₅, σ₄, σ₃, σ₂, σ₁, hL, hya, hxs, hnv, hac2, hsing]
   · simp only [σ₁, Function.update_self, length_cstream, List.length_reverse, List.length_drop,
-      List.length_map, List.length_take, hasl, hLl, l, htswn]
-    simp only [List.length_take, List.length_drop] at *
+      List.length_map, List.length_take, hasl, hLl, l]
+    simp only [List.length_take] at *
     set n := v.length
     have a1 : min h n * w ≤ n * w := Nat.mul_le_mul_right _ (min_le_right _ _)
     have a2 : (n - h) * (6 * (1 * w) + 6 + 6) ≤ n * (6 * (1 * w) + 6 + 6) :=
@@ -604,7 +603,7 @@ theorem band_unfoldLine_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg 
   refine ((RsbRuns.seq hdisj h₁ (RsbRuns.seq hdisj h₂ (RsbRuns.seq hdisj h₃ (RsbRuns.seq hdisj h₄
     (RsbRuns.seq hdisj h₅ h₆))))).congr ?_).mono ?_
   swap
-  · simp only [σ₄, σ₃, σ₂, σ₁, Function.update_self, Function.update_of_ne (by decide : RsbR.xs ≠ RsbR.ac2),
+  · simp only [σ₃, σ₂, σ₁, Function.update_self, 
       Function.update_of_ne (by decide : RsbR.xs ≠ RsbR.ya), Function.update_of_ne (by decide : RsbR.xs ≠ RsbR.dout),
       Function.update_of_ne (by decide : RsbR.ac2 ≠ RsbR.xs), Function.update_of_ne (by decide : RsbR.ac2 ≠ RsbR.ya),
       Function.update_of_ne (by decide : RsbR.ac2 ≠ RsbR.dout), hxs, hac2, length_cstream, List.length_append,
@@ -633,7 +632,7 @@ theorem band_unfoldLine_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg 
   funext z
   by_cases hz : z = .sel
   · subst hz
-    simp only [Function.update_self, Function.update_of_ne (by decide : RsbR.sel ≠ RsbR.ya)]
+    simp only [Function.update_self]
     exact hsel
   cases z <;> first | exact absurd rfl hz | simp [σ₅, σ₄, σ₃, σ₂, σ₁, hya, hxs, hac2]
 

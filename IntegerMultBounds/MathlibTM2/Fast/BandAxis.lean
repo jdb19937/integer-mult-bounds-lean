@@ -22,7 +22,6 @@ open IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.Stack IntegerMultBou
   IntegerMultBounds.MathlibTM2.Host IntegerMultBounds.MathlibTM2.Layer IntegerMultBounds.MathlibTM2.Node
 open IntegerMultBounds.NLogN (rowIndex)
 
-set_option linter.unusedSimpArgs false
 
 noncomputable section
 
@@ -206,7 +205,7 @@ theorem band_axis_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠ 
     funext r
     by_cases hr : r = .dst
     · subst hr
-      simp only [hΨ, Function.update_self, Function.update_of_ne (show RsbR.dst ≠ .src by decide)]
+      simp only [hΨ, Function.update_self]
       rw [htk]; simp only [reverse_cstream_append, hg, bandLineT, List.append_assoc]
     · cases r <;> first | exact absurd rfl hr | simp [hΨ]
   have H := rsb_while_runs (body := body) hdisj (ra := .src) (bandLineP rg hι hT hQ) Ψ

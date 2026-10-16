@@ -33,7 +33,6 @@ namespace IntegerMultBounds.MathlibTM2.Host
 
 open IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.Stack IntegerMultBounds.MathlibTM2.Node
 
-set_option linter.unusedSimpArgs false
 
 variable {T Q A : ℕ} {U : Type} {P : Type} (body : P → Pr P T Q A U)
 
@@ -43,7 +42,7 @@ def pushBit (q : Fin T) (b : Bool) : Act T Q A U := .push (.rt q) (fun _ => bitS
 lemma pushBit_run (q : Fin T) (b : Bool) (v : HS T Q A U) (S : Stacks T A) :
     (pushBit q b).run (mk v S) =
       mk v { S with R := Function.update S.R q (bitSymbol b :: S.R q) } := by
-  simp only [pushBit, Action.run, mk_var, mk_stk, get_rt, update_rt, store_mk, run_done]
+  simp only [pushBit, Action.run, mk_var, mk_stk, get_rt, update_rt, store_mk]
 
 /-- One step of restoring division, with a dividend bit in `sym`: shift the bit into the
 remainder `rr`, subtract the divisor `bw` with the borrow in slot `cy`, keep the difference when
@@ -81,7 +80,7 @@ theorem divIter_exec {rr bw q tx ty tz cy : Fin T} (hreg : [rr, bw, q, tx, ty, t
   -- subtract
   obtain ⟨v₂, hu₂, hc₂, -, he₂⟩ := zipPass_exec body (x := rr) (y := bw) (tx := tx) (ty := ty)
     (tz := tz) (by regs_nodup) hcr hcb subF false (L := W) (a := u) (b := y) v₁
-    { S with R := R₁ } (by simp [hR₁]) (by simp [hR₁, Function.update_of_ne, *, Ne.symm])
+    { S with R := R₁ } (by simp [hR₁]) (by simp [Function.update_of_ne, *, Ne.symm])
   rw [zipFin_subF_binBits W u y hu hy] at hc₂
   rw [zipOut_subF_binBits W u y hy] at he₂
   set R₂ := zipRegs R₁ rr bw tx ty tz (binBits W u) (binBits W y) (binBits W (u + 2 ^ W - y))
@@ -104,7 +103,7 @@ theorem divIter_exec {rr bw q tx ty tz cy : Fin T} (hreg : [rr, bw, q, tx, ty, t
     rw [hR₃, movedR, Function.update_of_ne ‹bw ≠ tz›.symm, Function.update_of_ne ‹ty ≠ tz›.symm,
       h2tz]
   have h2ty : (R₂ ty).length = W := by
-    simp [hR₂, zipRegs, hR₁, Function.update_of_ne, *, Ne.symm]
+    simp [zipRegs, Function.update_of_ne, *, Ne.symm]
   have h3 : ∀ k, k ≠ rr → k ≠ tx → k ≠ tz → R₃ k = S.R k := by
     intro k h1 h2 h3
     simp only [hR₃, hR₂, hR₁, zipRegs, movedR, Function.update_apply]

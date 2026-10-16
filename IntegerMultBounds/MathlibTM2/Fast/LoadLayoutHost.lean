@@ -30,8 +30,6 @@ namespace IntegerMultBounds.MathlibTM2.Fast.TableVM
 
 open IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.Stack IntegerMultBounds.MathlibTM2.Node IntegerMultBounds.MathlibTM2.Host IntegerMultBounds.MathlibTM2.Fast
 
-set_option linter.unusedSimpArgs false
-set_option linter.unusedSectionVars false
 
 section Defs
 
@@ -292,11 +290,11 @@ theorem ldg_loadBin_runs (hrv : Function.Injective rv) {W : ℕ} (wl nl : List (
     have hreg : [e, rv (.v i), rv (.z 0), rv (.z 1)].Nodup := by
       refine List.nodup_cons.2 ⟨?_, List.nodup_cons.2 ⟨?_, List.nodup_cons.2 ⟨?_,
         List.nodup_singleton _⟩⟩⟩
-      · simp only [List.mem_cons, List.mem_singleton, List.not_mem_nil, or_false, not_or]
+      · simp only [List.mem_cons, List.not_mem_nil, or_false, not_or]
         exact ⟨fun h => he _ h.symm, fun h => he _ h.symm, fun h => he _ h.symm⟩
-      · simp only [List.mem_cons, List.mem_singleton, List.not_mem_nil, or_false, not_or]
+      · simp only [List.mem_cons, List.not_mem_nil, or_false, not_or]
         exact ⟨hrv.ne (by simp), hrv.ne (by simp)⟩
-      · simp only [List.mem_cons, List.mem_singleton, List.not_mem_nil, or_false, not_or]
+      · simp only [List.mem_cons, List.not_mem_nil, or_false]
         exact hrv.ne (by simp)
     obtain ⟨v', hu, hex⟩ := bcopy_exec body hreg v S
       (by rw [hS, hR1, Function.update_of_ne (hrv.ne (by simp)), hR]; rfl)
@@ -757,23 +755,23 @@ theorem ldg_writer_runs (hg : LdgRegs rg lr gr) {es : List ℕ} {ℓ K B E W : �
     (fun r => nv r _ (by simp)) (fun r => nv r _ (by simp)) (fun r => nv r _ (by simp))
     (fun r => nv r _ (by simp)) (fun r => nv r _ (by simp)) (fun r => nlr r _) wl
     (List.replicate es.sum tick) hwl (by simp) R1
-    (idle R1 _ (fun r hr => by simp [hR1, Function.update_apply, ldgRv, gi, hr, g1, g2, g3, g4, rl, lr', ri, li])
-      (by simp [hR1, g1, g2, g3, g4, rl, lr', ri, li, gi]))
-    (by simp [hR1, Function.update_apply, ldgRv, gi, hN, g1, g2, g3, g4, rl, lr', ri, li])
-    (by simp [hR1, Function.update_apply, ldgRv, gi, hL, g1, g2, g3, g4, rl, lr', ri, li])
-    (by simp [hR1, Function.update_apply, ldgRv, gi, hK, g1, g2, g3, g4, rl, lr', ri, li])
-    (by simp [hR1, Function.update_apply, ldgRv, gi, hD, g1, g2, g3, g4, rl, lr', ri, li])
-    (by simp [hR1, Function.update_apply, ldgRv, gi, hEv, g1, g2, g3, g4, rl, lr', ri, li])
-  rw [show R1 (lr .dM) = [] by simp [hR1, Function.update_apply, ldgRv, g4, hdM, g1, g2, g3, rl, lr', ri, li, gi],
+    (idle R1 _ (fun r hr => by simp [hR1, ldgRv, gi, hr])
+      (by simp [hR1]))
+    (by simp [hR1, ldgRv, gi, hN])
+    (by simp [hR1, ldgRv, gi, hL])
+    (by simp [hR1, ldgRv, gi, hK])
+    (by simp [hR1, ldgRv, gi, hD])
+    (by simp [hR1, ldgRv, gi, hEv])
+  rw [show R1 (lr .dM) = [] by simp [hR1, ldgRv, g4, hdM],
     List.append_nil] at s2
   set R2 := Function.update R1 (lr .dM) (ldlBitStream A es.sum (layBits es ℓ K)) with hR2
   -- 3. wn := []; 4. wn := one tick
   have s3 := ldl_uclear_runs (body := body) (ldgRv gr .wn) R2
   rw [show (R2 (ldgRv gr .wn)).length = es.sum by
-    simp [hR2, hR1, Function.update_apply, ldgRv, g3, g1, g2, g4, rl, lr', ri, li, gi]] at s3
+    simp [hR2, hR1, ldgRv, g3]] at s3
   set R3 := Function.update R2 (ldgRv gr .wn) [] with hR3
   have s4 := ldg_tick_runs (body := body) (ldgRv gr .wn) R3
-  rw [show R3 (ldgRv gr .wn) = [] by simp [hR3, g1, g2, g3, g4, rl, lr', ri, li, gi]] at s4
+  rw [show R3 (ldgRv gr .wn) = [] by simp [hR3]] at s4
   set R4 := Function.update R3 (ldgRv gr .wn) [tick] with hR4
   -- 5. one symbol per move onto cM
   have s5 := ldg_run1_runs (body := body) hrv H hE hEW hW hNW h2W hℓW (w := 1) (by omega)
@@ -781,36 +779,36 @@ theorem ldg_writer_runs (hg : LdgRegs rg lr gr) {es : List ℕ} {ℓ K B E W : �
     (fun r => nv r _ (by simp)) (fun r => nv r _ (by simp)) (fun r => nv r _ (by simp))
     (fun r => nv r _ (by simp)) (fun r => nv r _ (by simp)) (fun r => nrg r _) wl
     [tick] hwl (by simp) R4
-    (idle R4 _ (fun r hr => by simp [hR4, hR3, hR2, hR1, Function.update_apply, ldgRv, gi, g3, hr, g1, g2, g4, rl, lr', ri, li])
-      (by simp [hR4, g1, g2, g3, g4, rl, lr', ri, li, gi]))
-    (by simp [hR4, hR3, hR2, hR1, Function.update_apply, ldgRv, gi, g4, hN, g1, g2, g3, rl, lr', ri, li])
-    (by simp [hR4, hR3, hR2, hR1, Function.update_apply, ldgRv, gi, g4, hL, g1, g2, g3, rl, lr', ri, li])
-    (by simp [hR4, hR3, hR2, hR1, Function.update_apply, ldgRv, gi, g4, hK, g1, g2, g3, rl, lr', ri, li])
-    (by simp [hR4, hR3, hR2, hR1, Function.update_apply, ldgRv, gi, g4, hD, g1, g2, g3, rl, lr', ri, li])
-    (by simp [hR4, hR3, hR2, hR1, Function.update_apply, ldgRv, gi, g4, hEv, g1, g2, g3, rl, lr', ri, li])
-  rw [show R4 (rg .cM) = [] by simp [hR4, hR3, hR2, hR1, Function.update_apply, ldgRv, g2, rl, hcM, g1, g3, g4, lr', ri, li, gi],
+    (idle R4 _ (fun r hr => by simp [hR4, hR3, hR2, hR1, ldgRv, gi, g3, hr])
+      (by simp [hR4]))
+    (by simp [hR4, hR3, hR2, hR1, ldgRv, gi, hN, g3])
+    (by simp [hR4, hR3, hR2, hR1, ldgRv, gi, hL, g3])
+    (by simp [hR4, hR3, hR2, hR1, ldgRv, gi, hK, g3])
+    (by simp [hR4, hR3, hR2, hR1, ldgRv, gi, hD, g3])
+    (by simp [hR4, hR3, hR2, hR1, ldgRv, gi, hEv, g3])
+  rw [show R4 (rg .cM) = [] by simp [hR4, hR3, hR2, hR1, ldgRv, g2, rl, hcM],
     List.append_nil] at s5
   set R5 := Function.update R4 (rg .cM) (ldlBitStream A 1 (layBits es ℓ K)) with hR5
   -- 6. wn := []; 7–10. wn := N + B + 2 ticks
   have s6 := ldl_uclear_runs (body := body) (ldgRv gr .wn) R5
-  rw [show (R5 (ldgRv gr .wn)).length = 1 by simp [hR5, hR4, Function.update_apply, ldgRv, g1, g2, g3, g4, rl, lr', ri, li, gi]]
+  rw [show (R5 (ldgRv gr .wn)).length = 1 by simp [hR5, hR4, ldgRv, g1]]
     at s6
   set R6 := Function.update R5 (ldgRv gr .wn) [] with hR6
   have s7 := ldg_ucopy_runs (body := body) (a := gr .uN) (b := ldgRv gr .wn) (t := ldgRv gr (.z 0))
     (fun e => nv .wn .uN (by simp) e.symm) (fun e => nv (.z 0) .uN (by simp) e.symm)
     (hrv.ne (by simp)) R6
-    (by simp [hR6, hR5, hR4, hR3, hR2, hR1, Function.update_apply, ldgRv, gi, g1, g3, hz0', hz0, g2, g4, rl, lr', ri, li])
+    (by simp [hR6, hR5, hR4, hR3, hR2, hR1, ldgRv, gi, g1, g3, hz0'])
   rw [show (R6 (gr .uN)).length = es.sum by
-      simp [hR6, hR5, hR4, hR3, hR2, hR1, Function.update_apply, ldgRv, gi, g2, g4, hN, g1, g3, rl, lr', ri, li],
-    show R6 (ldgRv gr .wn) = [] by simp [hR6, g1, g2, g3, g4, rl, lr', ri, li, gi], List.append_nil] at s7
+      simp [hR6, hR5, hR4, hR3, hR2, hR1, ldgRv, gi, hN, g1, g3],
+    show R6 (ldgRv gr .wn) = [] by simp [hR6], List.append_nil] at s7
   set R7 := Function.update R6 (ldgRv gr .wn) (List.replicate es.sum tick) with hR7
   have s8 := ldg_ucopy_runs (body := body) (a := gr .uB) (b := ldgRv gr .wn) (t := ldgRv gr (.z 0))
     (fun e => nv .wn .uB (by simp) e.symm) (fun e => nv (.z 0) .uB (by simp) e.symm)
     (hrv.ne (by simp)) R7
-    (by simp [hR7, hR6, hR5, hR4, hR3, hR2, hR1, Function.update_apply, ldgRv, gi, g1, g3, hz0', hz0, g2, g4, rl, lr', ri, li])
+    (by simp [hR7, hR6, hR5, hR4, hR3, hR2, hR1, ldgRv, gi, g1, g3, hz0'])
   rw [show (R7 (gr .uB)).length = B by
-      simp [hR7, hR6, hR5, hR4, hR3, hR2, hR1, Function.update_apply, ldgRv, gi, g2, g4, hB, g1, g3, rl, lr', ri, li],
-    show R7 (ldgRv gr .wn) = List.replicate es.sum tick by simp [hR7, g1, g2, g3, g4, rl, lr', ri, li, gi]] at s8
+      simp [hR7, hR6, hR5, hR4, hR3, hR2, hR1, ldgRv, gi, hB, g1, g3],
+    show R7 (ldgRv gr .wn) = List.replicate es.sum tick by simp [hR7]] at s8
   set R8 := Function.update R7 (ldgRv gr .wn) (List.replicate B tick ++ List.replicate es.sum tick)
     with hR8
   have s9 := ldg_tick_runs (body := body) (ldgRv gr .wn) R8
@@ -820,7 +818,7 @@ theorem ldg_writer_runs (hg : LdgRegs rg lr gr) {es : List ℕ} {ℓ K B E W : �
   have hwn10 : R10 (ldgRv gr .wn) = List.replicate (es.sum + B + 2) tick := by
     simp only [hR10, hR9, hR8, Function.update_self]
     rw [List.replicate_append_replicate]
-    simp [List.replicate_succ, show es.sum + B + 2 = (B + es.sum) + 1 + 1 by omega, g1, g2, g3, g4, rl, lr', ri, li, gi]
+    simp [List.replicate_succ, show es.sum + B + 2 = (B + es.sum) + 1 + 1 by omega]
   -- 11. the exchange stream onto dX
   have hXa : ∀ w, ∀ st : TblSt 40 A, st.val 0 = es.sum → st.val 1 = ℓ → st.val 2 = K →
       st.val 3 = es.length → st.val 4 = B → st.acc = [] →
@@ -837,14 +835,14 @@ theorem ldg_writer_runs (hg : LdgRegs rg lr gr) {es : List ℕ} {ℓ K B E W : �
     (fun r => nv r _ (by simp)) (fun r => nv r _ (by simp)) (fun r => nlr r _) wl
     (List.replicate (es.sum + B + 2) tick) hwl (by simp) R10
     (idle R10 _ (fun r hr => by
-      simp [hR10, hR9, hR8, hR7, hR6, hR5, hR4, hR3, hR2, hR1, Function.update_apply, ldgRv, gi, g3, g1, hr, g2, g4, rl, lr', ri, li]) hwn10)
-    (by simp [hR10, hR9, hR8, hR7, hR6, hR5, hR4, hR3, hR2, hR1, Function.update_apply, ldgRv, gi, g2, g4, hN, g1, g3, rl, lr', ri, li])
-    (by simp [hR10, hR9, hR8, hR7, hR6, hR5, hR4, hR3, hR2, hR1, Function.update_apply, ldgRv, gi, g2, g4, hL, g1, g3, rl, lr', ri, li])
-    (by simp [hR10, hR9, hR8, hR7, hR6, hR5, hR4, hR3, hR2, hR1, Function.update_apply, ldgRv, gi, g2, g4, hK, g1, g3, rl, lr', ri, li])
-    (by simp [hR10, hR9, hR8, hR7, hR6, hR5, hR4, hR3, hR2, hR1, Function.update_apply, ldgRv, gi, g2, g4, hD, g1, g3, rl, lr', ri, li])
-    (by simp [hR10, hR9, hR8, hR7, hR6, hR5, hR4, hR3, hR2, hR1, Function.update_apply, ldgRv, gi, g2, g4, hB, g1, g3, rl, lr', ri, li])
+      simp [hR10, hR9, hR8, hR7, hR6, hR5, hR4, hR3, hR2, hR1, ldgRv, gi, g3, g1, hr]) hwn10)
+    (by simp [hR10, hR9, hR8, hR7, hR6, hR5, hR4, hR3, hR2, hR1, ldgRv, gi, hN, g1, g3])
+    (by simp [hR10, hR9, hR8, hR7, hR6, hR5, hR4, hR3, hR2, hR1, ldgRv, gi, hL, g1, g3])
+    (by simp [hR10, hR9, hR8, hR7, hR6, hR5, hR4, hR3, hR2, hR1, ldgRv, gi, hK, g1, g3])
+    (by simp [hR10, hR9, hR8, hR7, hR6, hR5, hR4, hR3, hR2, hR1, ldgRv, gi, hD, g1, g3])
+    (by simp [hR10, hR9, hR8, hR7, hR6, hR5, hR4, hR3, hR2, hR1, ldgRv, gi, hB, g1, g3])
   rw [show R10 (lr .dX) = [] by
-    simp [hR10, hR9, hR8, hR7, hR6, hR5, hR4, hR3, hR2, hR1, Function.update_apply, ldgRv, g4, li, rl, hdX, g1, g2, g3, lr', ri, gi], List.append_nil] at s11
+    simp [hR10, hR9, hR8, hR7, hR6, hR5, hR4, hR3, hR2, hR1, ldgRv, g4, li, hdX, lr'], List.append_nil] at s11
   set R11 := Function.update R10 (lr .dX) (ldlXcStream A (es.sum + B + 2) xs) with hR11
   -- 12. wn := []; 13. one tick
   have s12 := ldl_uclear_runs (body := body) (ldgRv gr .wn) R11
@@ -865,68 +863,68 @@ theorem ldg_writer_runs (hg : LdgRegs rg lr gr) {es : List ℕ} {ℓ K B E W : �
     (fun r => nv r _ (by simp)) (fun r => nv r _ (by simp)) (fun r => nv r _ (by simp)) wl
     [tick] hwl (by simp) R13
     (idle R13 _ (fun r hr => by
-      simp [hR13, hR12, hR11, hR10, hR9, hR8, hR7, hR6, hR5, hR4, hR3, hR2, hR1, Function.update_apply, ldgRv, gi, g1, g2, g3, g4, rl, lr', ri, li, hr]) (by simp [hR13]))
-    (by simp [hR13, hR12, hR11, hR10, hR9, hR8, hR7, hR6, hR5, hR4, hR3, hR2, hR1, Function.update_apply, ldgRv, gi, g1, g2, g3, g4, rl, lr', ri, li, hN])
-    (by simp [hR13, hR12, hR11, hR10, hR9, hR8, hR7, hR6, hR5, hR4, hR3, hR2, hR1, Function.update_apply, ldgRv, gi, g1, g2, g3, g4, rl, lr', ri, li, hL])
-    (by simp [hR13, hR12, hR11, hR10, hR9, hR8, hR7, hR6, hR5, hR4, hR3, hR2, hR1, Function.update_apply, ldgRv, gi, g1, g2, g3, g4, rl, lr', ri, li, hK])
-    (by simp [hR13, hR12, hR11, hR10, hR9, hR8, hR7, hR6, hR5, hR4, hR3, hR2, hR1, Function.update_apply, ldgRv, gi, g1, g2, g3, g4, rl, lr', ri, li, hD])
-    (by simp [hR13, hR12, hR11, hR10, hR9, hR8, hR7, hR6, hR5, hR4, hR3, hR2, hR1, Function.update_apply, ldgRv, gi, g1, g2, g3, g4, rl, lr', ri, li, hB])
+      simp [hR13, hR12, hR11, hR10, hR9, hR8, hR7, hR6, hR5, hR4, hR3, hR2, hR1, ldgRv, gi, g1, g3, hr]) (by simp [hR13]))
+    (by simp [hR13, hR12, hR11, hR10, hR9, hR8, hR7, hR6, hR5, hR4, hR3, hR2, hR1, ldgRv, gi, g1, g3, hN])
+    (by simp [hR13, hR12, hR11, hR10, hR9, hR8, hR7, hR6, hR5, hR4, hR3, hR2, hR1, ldgRv, gi, g1, g3, hL])
+    (by simp [hR13, hR12, hR11, hR10, hR9, hR8, hR7, hR6, hR5, hR4, hR3, hR2, hR1, ldgRv, gi, g1, g3, hK])
+    (by simp [hR13, hR12, hR11, hR10, hR9, hR8, hR7, hR6, hR5, hR4, hR3, hR2, hR1, ldgRv, gi, g1, g3, hD])
+    (by simp [hR13, hR12, hR11, hR10, hR9, hR8, hR7, hR6, hR5, hR4, hR3, hR2, hR1, ldgRv, gi, g1, g3, hB])
   rw [show R13 (gr .tc) = [] by
-    simp [hR13, hR12, hR11, hR10, hR9, hR8, hR7, hR6, hR5, hR4, hR3, hR2, hR1, Function.update_apply, ldgRv, gi, g1, g2, g3, g4, rl, lr', ri, li, htc],
+    simp [hR13, hR12, hR11, hR10, hR9, hR8, hR7, hR6, hR5, hR4, hR3, hR2, hR1, ldgRv, gi, g1, g3, htc],
     List.append_nil] at s14
   set R14 := Function.update R13 (gr .tc) (ldlXcStream A 1 xs) with hR14
   -- 15. wn := []
   have s15 := ldl_uclear_runs (body := body) (ldgRv gr .wn) R14
   rw [show (R14 (ldgRv gr .wn)).length = 1 by
-    simp [hR14, hR13, Function.update_apply, ldgRv, gi]] at s15
+    simp [hR14, hR13, ldgRv, gi]] at s15
   set R15 := Function.update R14 (ldgRv gr .wn) [] with hR15
   -- 16. cX := |tc| / 5 ticks; 17. tc := []
   have s16 := ldg_udiv_runs (body := body) (c := 5) (by norm_num) (a := gr .tc) (b := rg .cX)
     (t := ldgRv gr (.z 0)) (hg.disj_rg _ _) (fun e => nv (.z 0) .tc (by simp) e.symm)
     (fun e => hg.disj_rg _ _ e.symm) R15
-    (by simp [hR15, hR14, hR13, hR12, hR11, hR10, hR9, hR8, hR7, hR6, hR5, hR4, hR3, hR2, hR1, Function.update_apply, ldgRv, gi, g1, g2, g3,
-      g4, rl, lr', ri, li, hz0', hz0])
+    (by simp [hR15, hR14, hR13, hR12, hR11, hR10, hR9, hR8, hR7, hR6, hR5, hR4, hR3, hR2, hR1, ldgRv, gi, g1, g3,
+      hz0'])
   rw [show (R15 (gr .tc)).length = 5 * 1 * xs.length by
-      simp [hR15, hR14, Function.update_apply, ldgRv, gi, length_ldlXcStream],
+      simp [hR15, hR14, ldgRv, gi, length_ldlXcStream],
     show 5 * 1 * xs.length / 5 = xs.length by omega,
     show R15 (rg .cX) = [] by
-      simp [hR15, hR14, hR13, hR12, hR11, hR10, hR9, hR8, hR7, hR6, hR5, hR4, hR3, hR2, hR1, Function.update_apply, ldgRv, gi, g1, g2, g3, g4,
-        ri, rl, lr', li, hcX], List.append_nil] at s16
+      simp [hR15, hR14, hR13, hR12, hR11, hR10, hR9, hR8, hR7, hR6, hR5, hR4, hR3, hR2, hR1, ldgRv, g2, 
+        ri, rl, hcX], List.append_nil] at s16
   set R16 := Function.update R15 (rg .cX) (List.replicate xs.length tick) with hR16
   have s17 := ldl_uclear_runs (body := body) (gr .tc) R16
   rw [show (R16 (gr .tc)).length = 5 * 1 * xs.length by
-    simp [hR16, hR15, hR14, Function.update_apply, ldgRv, gi, g1, length_ldlXcStream]] at s17
+    simp [hR16, hR15, hR14, ldgRv, gi, g1, length_ldlXcStream]] at s17
   set R17 := Function.update R16 (gr .tc) [] with hR17
   -- 18. cN := N ticks; 19–22. cW := N + B + 2 ticks
   have s18 := ldg_ucopy_runs (body := body) (a := gr .uN) (b := lr .cN) (t := ldgRv gr (.z 0))
     (hg.disj_lr _ _) (fun e => nv (.z 0) .uN (by simp) e.symm) (fun e => hg.disj_lr _ _ e.symm) R17
-    (by simp [hR17, hR16, hR15, hR14, hR13, hR12, hR11, hR10, hR9, hR8, hR7, hR6, hR5, hR4, hR3, hR2, hR1, Function.update_apply, ldgRv, gi, g1,
-      g2, g3, g4, rl, lr', ri, li, hz0', hz0])
+    (by simp [hR17, hR16, hR15, hR14, hR13, hR12, hR11, hR10, hR9, hR8, hR7, hR6, hR5, hR4, hR3, hR2, hR1, ldgRv, gi, g1,
+      g3, hz0'])
   rw [show (R17 (gr .uN)).length = es.sum by
-      simp [hR17, hR16, hR15, hR14, hR13, hR12, hR11, hR10, hR9, hR8, hR7, hR6, hR5, hR4, hR3, hR2, hR1, Function.update_apply, ldgRv, gi, g1,
-        g2, g3, g4, rl, lr', ri, li, hN],
+      simp [hR17, hR16, hR15, hR14, hR13, hR12, hR11, hR10, hR9, hR8, hR7, hR6, hR5, hR4, hR3, hR2, hR1, ldgRv, gi, g1,
+        g3, hN],
     show R17 (lr .cN) = [] by
-      simp [hR17, hR16, hR15, hR14, hR13, hR12, hR11, hR10, hR9, hR8, hR7, hR6, hR5, hR4, hR3, hR2, hR1, Function.update_apply, ldgRv, gi, g1,
-        g2, g3, g4, li, rl, lr', ri, hcN], List.append_nil] at s18
+      simp [hR17, hR16, hR15, hR14, hR13, hR12, hR11, hR10, hR9, hR8, hR7, hR6, hR5, hR4, hR3, hR2, hR1, ldgRv, 
+        g4, li, lr', hcN], List.append_nil] at s18
   set R18 := Function.update R17 (lr .cN) (List.replicate es.sum tick) with hR18
   have s19 := ldg_ucopy_runs (body := body) (a := gr .uN) (b := lr .cW) (t := ldgRv gr (.z 0))
     (hg.disj_lr _ _) (fun e => nv (.z 0) .uN (by simp) e.symm) (fun e => hg.disj_lr _ _ e.symm) R18
-    (by simp [hR18, hR17, hR16, hR15, hR14, hR13, hR12, hR11, hR10, hR9, hR8, hR7, hR6, hR5, hR4, hR3, hR2, hR1, Function.update_apply, ldgRv,
-      gi, g1, g2, g3, g4, rl, lr', ri, li, hz0', hz0])
+    (by simp [hR18, hR17, hR16, hR15, hR14, hR13, hR12, hR11, hR10, hR9, hR8, hR7, hR6, hR5, hR4, hR3, hR2, hR1, ldgRv,
+      gi, g1, g3, hz0'])
   rw [show (R18 (gr .uN)).length = es.sum by
-      simp [hR18, hR17, hR16, hR15, hR14, hR13, hR12, hR11, hR10, hR9, hR8, hR7, hR6, hR5, hR4, hR3, hR2, hR1, Function.update_apply, ldgRv, gi,
-        g1, g2, g3, g4, rl, lr', ri, li, hN],
+      simp [hR18, hR17, hR16, hR15, hR14, hR13, hR12, hR11, hR10, hR9, hR8, hR7, hR6, hR5, hR4, hR3, hR2, hR1, ldgRv, gi,
+        g1, g3, hN],
     show R18 (lr .cW) = [] by
-      simp [hR18, hR17, hR16, hR15, hR14, hR13, hR12, hR11, hR10, hR9, hR8, hR7, hR6, hR5, hR4, hR3, hR2, hR1, Function.update_apply, ldgRv, gi,
-        g1, g2, g3, g4, li, rl, lr', ri, hcW], List.append_nil] at s19
+      simp [hR18, hR17, hR16, hR15, hR14, hR13, hR12, hR11, hR10, hR9, hR8, hR7, hR6, hR5, hR4, hR3, hR2, hR1, ldgRv, 
+        g4, li, lr', hcW], List.append_nil] at s19
   set R19 := Function.update R18 (lr .cW) (List.replicate es.sum tick) with hR19
   have s20 := ldg_ucopy_runs (body := body) (a := gr .uB) (b := lr .cW) (t := ldgRv gr (.z 0))
     (hg.disj_lr _ _) (fun e => nv (.z 0) .uB (by simp) e.symm) (fun e => hg.disj_lr _ _ e.symm) R19
-    (by simp [hR19, hR18, hR17, hR16, hR15, hR14, hR13, hR12, hR11, hR10, hR9, hR8, hR7, hR6, hR5, hR4, hR3, hR2, hR1, Function.update_apply,
-      ldgRv, gi, g1, g2, g3, g4, rl, lr', ri, li, hz0', hz0])
+    (by simp [hR19, hR18, hR17, hR16, hR15, hR14, hR13, hR12, hR11, hR10, hR9, hR8, hR7, hR6, hR5, hR4, hR3, hR2, hR1, 
+      ldgRv, gi, g1, g3, hz0'])
   rw [show (R19 (gr .uB)).length = B by
-      simp [hR19, hR18, hR17, hR16, hR15, hR14, hR13, hR12, hR11, hR10, hR9, hR8, hR7, hR6, hR5, hR4, hR3, hR2, hR1, Function.update_apply,
-        ldgRv, gi, g1, g2, g3, g4, rl, lr', ri, li, hB],
+      simp [hR19, hR18, hR17, hR16, hR15, hR14, hR13, hR12, hR11, hR10, hR9, hR8, hR7, hR6, hR5, hR4, hR3, hR2, hR1, 
+        ldgRv, gi, g1, g3, hB],
     show R19 (lr .cW) = List.replicate es.sum tick by simp [hR19]] at s20
   set R20 := Function.update R19 (lr .cW) (List.replicate B tick ++ List.replicate es.sum tick)
     with hR20
@@ -949,27 +947,27 @@ theorem ldg_writer_runs (hg : LdgRegs rg lr gr) {es : List ℕ} {ℓ K B E W : �
     · subst h1; simp only [Function.update_self]
     by_cases h2 : y = lr .cN
     · subst h2
-      simp [hR21, hR20, hR19, hR18, hR17, hR16, hR15, hR14, hR13, hR12, hR11, hR10, hR9, hR8, hR7, hR6, hR5, hR4, hR3, hR2, hR1, Function.update_apply, ldgRv, gi, g1, g2, g3, g4, rl, lr', ri, li]
+      simp [hR21, hR20, hR19, hR18, hR17, hR16, hR15, hR14, hR13, hR12, hR11, hR10, hR9, hR8, hR7, hR6, hR5, hR4, hR3, hR2, hR1, ldgRv, li]
     by_cases h3 : y = lr .dM
     · subst h3
-      simp [hR21, hR20, hR19, hR18, hR17, hR16, hR15, hR14, hR13, hR12, hR11, hR10, hR9, hR8, hR7, hR6, hR5, hR4, hR3, hR2, hR1, Function.update_apply, ldgRv, gi, g1, g2, g3, g4, rl, lr', ri, li]
+      simp [hR21, hR20, hR19, hR18, hR17, hR16, hR15, hR14, hR13, hR12, hR11, hR10, hR9, hR8, hR7, hR6, hR5, hR4, hR3, hR2, hR1, ldgRv, g4, lr', li]
     by_cases h4 : y = lr .dX
     · subst h4
-      simp [hR21, hR20, hR19, hR18, hR17, hR16, hR15, hR14, hR13, hR12, hR11, hR10, hR9, hR8, hR7, hR6, hR5, hR4, hR3, hR2, hR1, Function.update_apply, ldgRv, gi, g1, g2, g3, g4, rl, lr', ri, li]
+      simp [hR21, hR20, hR19, hR18, hR17, hR16, hR15, hR14, hR13, hR12, hR11, hR10, hR9, hR8, hR7, hR6, hR5, hR4, hR3, hR2, hR1, ldgRv, g4, lr', li]
     by_cases h5 : y = rg .cM
     · subst h5
-      simp [hR21, hR20, hR19, hR18, hR17, hR16, hR15, hR14, hR13, hR12, hR11, hR10, hR9, hR8, hR7, hR6, hR5, hR4, hR3, hR2, hR1, Function.update_apply, ldgRv, gi, g1, g2, g3, g4, rl, lr', ri, li]
+      simp [hR21, hR20, hR19, hR18, hR17, hR16, hR15, hR14, hR13, hR12, hR11, hR10, hR9, hR8, hR7, hR6, hR5, hR4, hR3, hR2, hR1, ldgRv, g2, rl, ri]
     by_cases h6 : y = rg .cX
     · subst h6
-      simp [hR21, hR20, hR19, hR18, hR17, hR16, hR15, hR14, hR13, hR12, hR11, hR10, hR9, hR8, hR7, hR6, hR5, hR4, hR3, hR2, hR1, Function.update_apply, ldgRv, gi, g1, g2, g3, g4, rl, lr', ri, li]
+      simp [hR21, hR20, hR19, hR18, hR17, hR16, hR15, hR14, hR13, hR12, hR11, hR10, hR9, hR8, hR7, hR6, hR5, hR4, hR3, hR2, hR1, ldgRv, g2, rl]
     by_cases h7 : y = ldgRv gr .wn
     · subst h7
-      simp [hR21, hR20, hR19, hR18, hR17, hR16, hR15, hR14, hR13, hR12, hR11, hR10, hR9, hR8, hR7, hR6, hR5, hR4, hR3, hR2, hR1, Function.update_apply, ldgRv, gi, g1, g2, g3, g4, rl, lr', ri, li, hwn']
+      simp [hR21, hR20, hR19, hR18, hR17, hR16, hR15, hR14, hR13, hR12, hR11, hR10, hR9, hR8, hR7, hR6, hR5, hR4, hR3, hR2, hR1, ldgRv, gi, g1, g3, hwn']
     by_cases h8 : y = gr .tc
     · subst h8
-      simp [hR21, hR20, hR19, hR18, hR17, hR16, hR15, hR14, hR13, hR12, hR11, hR10, hR9, hR8, hR7, hR6, hR5, hR4, hR3, hR2, hR1, Function.update_apply, ldgRv, gi, g1, g2, g3, g4, rl, lr', ri, li, htc]
+      simp [hR21, hR20, hR19, hR18, hR17, hR16, hR15, hR14, hR13, hR12, hR11, hR10, hR9, hR8, hR7, hR6, hR5, hR4, hR3, hR2, hR1, ldgRv, g1, g3, htc]
     have h7' : ¬ y = gr (.tbl .wn) := h7
-    simp [h7', hR21, hR20, hR19, hR18, hR17, hR16, hR15, hR14, hR13, hR12, hR11, hR10, hR9, hR8, hR7, hR6, hR5, hR4, hR3, hR2, hR1, Function.update_apply, h1, h2, h3, h4, h5, h6, h7, h8]
+    simp [hR21, hR20, hR19, hR18, hR17, hR16, hR15, hR14, hR13, hR12, hR11, hR10, hR9, hR8, hR7, hR6, hR5, hR4, hR3, hR2, hR1, h1, h2, h3, h4, h5, h6, h7, h8]
 
 end WriterRuns
 

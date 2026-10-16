@@ -37,7 +37,6 @@ namespace IntegerMultBounds.MathlibTM2.Node
 open IntegerMultBounds.MathlibTM2.Layer.PackedXor IntegerMultBounds IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.Stack IntegerMultBounds.MathlibTM2.Host
   IntegerMultBounds.MathlibTM2
 
-set_option linter.unusedSimpArgs false
 
 section Bits
 
@@ -386,7 +385,7 @@ theorem toBitsPass_loop (i j : Fin T) (hij : i ≠ j) :
       congr 2
       funext k
       by_cases hk : k = j
-      · subst hk; simp [pushedR, hR₁, Function.update_of_ne hij.symm, toBits_cons]
+      · subst hk; simp [pushedR, hR₁, toBits_cons]
       · by_cases hk' : k = i
         · subst hk'; simp [pushedR, hR₁, hk]
         · simp [pushedR, hR₁, hk, hk']
@@ -470,7 +469,7 @@ theorem ofBitsPass_loop (i j : Fin T) (hij : i ≠ j) :
       congr 2
       funext k
       by_cases hk : k = j
-      · subst hk; simp [pushedR, hR₁, Function.update_of_ne hij.symm]
+      · subst hk; simp [pushedR, hR₁]
       · by_cases hk' : k = i
         · subst hk'; simp [pushedR, hR₁, hk]
         · simp [pushedR, hR₁, hk, hk']

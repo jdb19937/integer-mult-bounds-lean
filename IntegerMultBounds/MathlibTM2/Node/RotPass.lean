@@ -50,7 +50,6 @@ namespace IntegerMultBounds.MathlibTM2.Node
 
 open IntegerMultBounds.MathlibTM2.Layer.PackedXor IntegerMultBounds.MathlibTM2.Host IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.Stack IntegerMultBounds.MathlibTM2
 
-set_option linter.unusedSimpArgs false
 
 /-! ### The offset read bit by bit -/
 
@@ -301,7 +300,7 @@ lemma wrapOut_rot (L : ℕ) (neg : Bool) (v : Fin (2 ^ L)) {off : ℕ} (ho : off
   cases neg <;> cases hw : wrapIn L _ off v <;>
     simp only [wrapIn, Bool.false_eq_true, ite_false, ite_true, decide_eq_true_eq,
       decide_eq_false_iff_not] at hw <;>
-    simp only [rotShift, hw, Bool.false_eq_true, ite_false, ite_true, wrapOut, decide_eq_true_eq,
+    simp only [rotShift, Bool.false_eq_true, ite_false, ite_true, wrapOut, decide_eq_true_eq,
       decide_eq_false_iff_not, hP] at h ⊢ <;> omega
 
 /-! ### Ranks -/
@@ -357,10 +356,10 @@ def rotAddr (p : Addr N₀ N₁ N₂ N₃ L) : Addr N₀ N₁ N₂ N₃ L :=
   (p.1, crot L 2 0 1 (fun c₀ c₁ => sgn neg * offMag K ρ n b c₀ c₁) p.2)
 
 lemma rotAddr_0 (p : Addr N₀ N₁ N₂ N₃ L) : (rotAddr K ρ n neg b p).2 0 = p.2 0 := by
-  simp [rotAddr, crot, Function.update_of_ne (show (0 : Fin 3) ≠ 2 by decide)]
+  simp [rotAddr, crot]
 
 lemma rotAddr_1 (p : Addr N₀ N₁ N₂ N₃ L) : (rotAddr K ρ n neg b p).2 1 = p.2 1 := by
-  simp [rotAddr, crot, Function.update_of_ne (show (1 : Fin 3) ≠ 2 by decide)]
+  simp [rotAddr, crot]
 
 lemma rotAddr_2 (p : Addr N₀ N₁ N₂ N₃ L) :
     (rotAddr K ρ n neg b p).2 2 = rot L (p.2 2) (sgn neg * offMag K ρ n b (p.2 0) (p.2 1)) := by

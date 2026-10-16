@@ -28,7 +28,6 @@ namespace IntegerMultBounds.MathlibTM2.Node
 
 open IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.Stack IntegerMultBounds.MathlibTM2 IntegerMultBounds.MathlibTM2.Host
 
-set_option linter.unusedSimpArgs false
 
 variable {T Q A : ℕ} {U : Type} {P : Type} (body : P → Pr P T Q A U)
 
@@ -128,7 +127,7 @@ theorem topField_loop {src bk dst : Fin T} (hsb : src ≠ bk) (hsd : src ≠ dst
                   (if b then tick :: S.R dst else S.R dst) } := by
         cases b <;> cases k <;>
           simp [topFieldStep, peekTick, Action.run, hs, update_rt, Function.update_of_ne hsb,
-            Function.update_of_ne hsd, Function.update_of_ne hbd, Function.update_of_ne hsb.symm,
+            Function.update_of_ne hsd, Function.update_of_ne hsb.symm,
             Function.update_of_ne hsd.symm, Function.update_of_ne hbd.symm, List.replicate_succ,
             topSep_ne_tick] <;>
           (congr 2; funext j; simp only [Function.update_apply]; split_ifs <;> simp_all)
@@ -143,9 +142,9 @@ theorem topField_loop {src bk dst : Fin T} (hsb : src ≠ bk) (hsd : src ≠ dst
       congr 2
       funext j
       by_cases hj : j = dst
-      · subst hj; cases b <;> simp [List.replicate_succ', hbd.symm, hsd.symm]
+      · subst hj; cases b <;> simp [List.replicate_succ']
       · by_cases hj' : j = bk
-        · subst hj'; simp [hj, List.replicate_succ', hsb.symm]
+        · subst hj'; simp [hj, List.replicate_succ']
         · by_cases hj'' : j = src
           · subst hj''; simp [hj, hj']
           · simp [hj, hj', hj'']
@@ -180,7 +179,7 @@ theorem topField_exec {src bk dst : Fin T} (hsb : src ≠ bk) (hsd : src ≠ dst
   by_cases hj : j = dst
   · subst hj; simp [hR₁, hbd.symm, hsd.symm]
   · by_cases hj' : j = bk
-    · subst hj'; simp [hR₁, hj, hsb.symm, hbd]
+    · subst hj'; simp [hR₁, hj]
     · by_cases hj'' : j = src
       · subst hj''; simp [hR₁, hj, hj']
       · simp [hR₁, hj, hj', hj'']
@@ -231,7 +230,7 @@ theorem topSkips_exec {src bk dst : Fin T} (hsb : src ≠ bk) (hsd : src ≠ dst
       · congr 2
         funext j
         by_cases hj : j = bk
-        · subst hj; simp [hsb.symm, hbd, topRec_cons, List.replicate_append_replicate]
+        · subst hj; simp [hbd, topRec_cons]
         · by_cases hj' : j = src
           · subst hj'; simp [hj]
           · simp only [Function.update_apply]; split_ifs <;> simp_all
@@ -257,7 +256,7 @@ theorem topGet_exec {cf t₁ dst : Fin T} (hreg : [cf, t₁, dst].Nodup) (l : Li
     ∃ (v' : HS T Q A U) (c : ℕ), v'.user = v.user ∧ c ≤ topGetCost l ∧
       Exec body (topGet cf t₁ dst i) (mk v S) c
         (mk v' { S with R := Function.update S.R dst (List.replicate l[i] tick ++ S.R dst) }) := by
-  simp only [List.nodup_cons, List.mem_cons, List.mem_singleton, not_or, List.not_mem_nil,
+  simp only [List.nodup_cons, List.mem_cons, not_or, List.not_mem_nil,
     not_false_eq_true, and_true, List.nodup_nil] at hreg
   obtain ⟨⟨hct, hcd⟩, htd⟩ := hreg
   obtain ⟨v₁, hu₁, h1⟩ := topSkips_exec body hct hcd htd i l rest v S hi.le hcf
@@ -371,7 +370,7 @@ theorem topCntStep_loop {W : ℕ} (hW1 : 1 ≤ W) (hW : W ≤ A + 4) {i j : Fin 
       congr 2
       funext k
       by_cases hk : k = j
-      · subst hk; simp [movedR, Function.update_of_ne hij.symm]
+      · subst hk; simp [movedR]
       · by_cases hk' : k = i
         · subst hk'; simp [movedR, hk]
         · simp [movedR, hk, hk']

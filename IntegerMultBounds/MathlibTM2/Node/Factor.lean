@@ -54,7 +54,6 @@ open IntegerMultBounds IntegerMultBounds.Networks IntegerMultBounds.Machine Inte
 open IntegerMultBounds.MathlibTM2.Node hiding LReg
 open IntegerMultBounds.Networks.Shared50ModularControl (prime)
 
-set_option linter.unusedSimpArgs false
 
 section Counted
 

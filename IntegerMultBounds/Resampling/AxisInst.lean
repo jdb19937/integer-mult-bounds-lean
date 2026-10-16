@@ -102,7 +102,6 @@ theorem eDec_eWords (wt : List (List Bool)) (s t m w L : ℕ) (sW tW : List Bool
     eDec w (eWords wt s t m w L sW tW) = (wt, s, t, L, sW, tW) := by
   simp [eDec, eWords, cut_flatten_words hw wt hwt, htv]
 
-set_option linter.unusedSimpArgs false in
 /-- The expansion axis as a driver axis program, for the global `m, p, w, W`. -/
 def expandSpec (m p w W : ℕ) : AxisSpec EB where
   cmd := expandCmd
@@ -151,10 +150,10 @@ def expandSpec (m p w W : ℕ) : AxisSpec EB where
       simp only [σ0]; rw [setRegs_other _ _ _ _ hr, Function.update_of_ne hX]
     have s4 := runs_expandStep (a := prime) σ3 A wt s t m p w W L sW tW hw hpw hwW hwt hwtl hms hst hs hsv htv
       hsl hAl hA
-      (by simp (config := {decide := true}) [σ3, σ2, σ1, σ0, Function.update_apply, setRegs, eRegs, eWords, eRest]) (by simp (config := {decide := true}) [σ3, σ2, σ1, σ0, Function.update_apply, setRegs, eRegs, eWords, eRest])
-      (by simp (config := {decide := true}) [σ3, σ2, σ1, σ0, Function.update_apply, setRegs, eRegs, eWords, eRest]) (by simp (config := {decide := true}) [σ3, σ2, σ1, σ0, Function.update_apply, setRegs, eRegs, eWords, eRest])
-      (by simp (config := {decide := true}) [σ3, σ2, σ1, σ0, Function.update_apply, setRegs, eRegs, eWords, eRest]) (by simp (config := {decide := true}) [σ3, σ2, σ1, σ0, Function.update_apply, setRegs, eRegs, eWords, eRest])
-      (by simp (config := {decide := true}) [σ3, σ2, σ1, σ0, Function.update_apply, setRegs, eRegs, eWords, eRest]) (by simp (config := {decide := true}) [σ3, σ2, σ1, σ0, Function.update_apply, setRegs, eRegs, eWords, eRest])
+      (by simp (config := {decide := true}) [σ3, σ2, σ1, σ0, setRegs, eRegs, eWords]) (by simp (config := {decide := true}) [σ3, σ2, σ1, σ0, setRegs, eRegs, eWords])
+      (by simp (config := {decide := true}) [σ3, σ2, σ1, σ0, setRegs, eRegs, eWords]) (by simp (config := {decide := true}) [σ3, σ2, σ1, σ0, setRegs, eRegs, eWords, eRest])
+      (by simp (config := {decide := true}) [σ3, σ2, σ1, σ0, setRegs, eRegs, eWords, eRest]) (by simp (config := {decide := true}) [σ3, σ2, σ1, σ0, setRegs, eRegs, eWords, eRest])
+      (by simp (config := {decide := true}) [σ3, σ2, σ1, σ0, setRegs, eRegs, eWords, eRest]) (by simp (config := {decide := true}) [σ3, σ2, σ1, σ0, setRegs, eRegs, eWords, eRest])
     have hfl : wt.flatten.length = wt.length * w := by
       rw [List.length_flatten, List.map_congr_left (g := fun _ => w) (fun x hx => hwt x hx)]; simp
     have hcl : (cut w wt.flatten).length ≤ wt.flatten.length := by
@@ -162,19 +161,19 @@ def expandSpec (m p w W : ℕ) : AxisSpec EB where
     have hflat : wt.flatten.length + 1 ≤ clen (eWords wt s t m w L sW tW) := clen_le_of_mem (by simp [eWords])
     refine (Runs.then s1 (Runs.then s2 (Runs.then s3 s4))).mono (fun τ e => ?_) ?_
     · subst e
-      refine ⟨by simp [expandCmd], fun x hj hX => ?_, fun j hj => ?_⟩
+      refine ⟨by simp, fun x hj hX => ?_, fun j hj => ?_⟩
       · have h0 : x ≠ 0 := fun e => hj (by rw [e]; decide)
         rw [Function.update_of_ne hX, Function.update_of_ne h0]; exact hlit x hj hX
       · have hjX : j ≠ tX := fun e => by rw [e] at hj; exact absurd hj (by decide)
         rw [Function.update_of_ne hjX]
         simp only [eJunk, eRegs, List.mem_cons, List.not_mem_nil, or_false] at hj
         rcases hj with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;>
-          simp (config := {decide := true}) [σ3, σ2, σ1, σ0, Function.update_apply, setRegs, eRegs, eWords, emp,
+          simp (config := {decide := true}) [σ3, σ2, σ1, σ0, setRegs, eRegs, eWords, emp,
             WTape.words, reg] <;>
           omega
     · simp only [σ2, σ1, Function.update_self, WTape.words]
-      simp (config := {decide := true}) only [emp, List.append_nil, clen_reverse, List.reverse_nil,
-        List.nil_append, Function.update_apply, ite_false, ite_true]
+      simp (config := {decide := true}) only [emp, List.append_nil, clen_reverse, 
+        Function.update_apply, ite_false, ite_true]
       rw [clen_eq, cut_flatten]
       simp only [clen, List.length_flatten] at hflat ⊢
       simp [List.length_flatten] at hcl
@@ -295,7 +294,6 @@ theorem cDec_cWords (wtE wtH wtD zeros : List (List Bool)) (s t m w L : ℕ) (sW
 theorem flatten_dvd {w : ℕ} (l : List (List Bool)) (h : ∀ x ∈ l, x.length = w) : w ∣ l.flatten.length :=
   ⟨l.length, by rw [List.length_flatten, List.map_congr_left (g := fun _ => w) h]; simp; ring⟩
 
-set_option linter.unusedSimpArgs false in
 set_option maxHeartbeats 1000000 in
 /-- The compression axis as a driver axis program, for the global `m, p, w, W`. -/
 def compressSpec (m p w W : ℕ) : AxisSpec CB where
@@ -327,25 +325,25 @@ def compressSpec (m p w W : ℕ) : AxisSpec CB where
       cDec_cWords wtE wtH wtD zeros s t m w L sW tW hw hwtE hwtH hwtD hzw]
     set σ0 := setRegs (Function.update (cRest m p w W) cX (reg A)) cRegs (cWords wtE wtH wtD zeros s t m w L sW tW)
     have u1 := runs_unpack (src := 37) (dst := 0) (by decide) (by decide) (by decide) σ0 (x := wtE.flatten) hw (flatten_dvd _ hwtE)
-      (by simp (config := {decide := true}) [σ0, setRegs, cRegs, cWords, Function.update_apply]; try rfl)
+      (by simp (config := {decide := true}) [σ0, setRegs, cRegs, cWords]; try rfl)
       (by simp (config := {decide := true}) [σ0, setRegs, cRegs, cWords, cRest])
       (by simp (config := {decide := true}) [σ0, setRegs, cRegs, cWords, cRest])
     rw [cut_flatten_words hw _ hwtE] at u1
     set σ1 := Function.update (Function.update σ0 37 emp) 0 ⟨[], wtE⟩
     have u2 := runs_unpack (src := 41) (dst := 27) (by decide) (by decide) (by decide) σ1 (x := wtH.flatten) hw (flatten_dvd _ hwtH)
-      (by simp (config := {decide := true}) [σ1, σ0, setRegs, cRegs, cWords, Function.update_apply]; try rfl)
+      (by simp (config := {decide := true}) [σ1, σ0, setRegs, cRegs, cWords]; try rfl)
       (by simp (config := {decide := true}) [σ1, σ0, setRegs, cRegs, cWords, cRest])
       (by simp (config := {decide := true}) [σ1, σ0, setRegs, cRegs, cWords, cRest])
     rw [cut_flatten_words hw _ hwtH] at u2
     set σ2 := Function.update (Function.update σ1 41 emp) 27 ⟨[], wtH⟩
     have u3 := runs_unpack (src := 43) (dst := 28) (by decide) (by decide) (by decide) σ2 (x := wtD.flatten) hw (flatten_dvd _ hwtD)
-      (by simp (config := {decide := true}) [σ2, σ1, σ0, setRegs, cRegs, cWords, Function.update_apply]; try rfl)
+      (by simp (config := {decide := true}) [σ2, σ1, σ0, setRegs, cRegs, cWords]; try rfl)
       (by simp (config := {decide := true}) [σ2, σ1, σ0, setRegs, cRegs, cWords, cRest])
       (by simp (config := {decide := true}) [σ2, σ1, σ0, setRegs, cRegs, cWords, cRest])
     rw [cut_flatten_words hw _ hwtD] at u3
     set σ3 := Function.update (Function.update σ2 43 emp) 28 ⟨[], wtD⟩
     have u4 := runs_unpack (src := 48) (dst := 33) (by decide) (by decide) (by decide) σ3 (x := zeros.flatten) hw (flatten_dvd _ hzw)
-      (by simp (config := {decide := true}) [σ3, σ2, σ1, σ0, setRegs, cRegs, cWords, Function.update_apply]; try rfl)
+      (by simp (config := {decide := true}) [σ3, σ2, σ1, σ0, setRegs, cRegs, cWords]; try rfl)
       (by simp (config := {decide := true}) [σ3, σ2, σ1, σ0, setRegs, cRegs, cWords, cRest])
       (by simp (config := {decide := true}) [σ3, σ2, σ1, σ0, setRegs, cRegs, cWords, cRest])
     rw [cut_flatten_words hw _ hzw] at u4
@@ -354,9 +352,9 @@ def compressSpec (m p w W : ℕ) : AxisSpec CB where
     have s5 := runs_compressStep (a := prime) σ4 A wtE wtH wtD zeros s t m p w W L sW tW hw hpw hwW hp2 hwtE hwtEl
       hwtH hwtHl hwtD hwtDl hz hzw hms hs hst hsv htv hsl hAl
       (fun i => by rw [hσ4]; exact cLoaded_slot A wtE wtH wtD zeros s t m p w W L sW tW i)
-      (by simp (config := {decide := true}) [σ4, σ3, σ2, σ1, σ0, setRegs, cRegs, cWords, cRest])
-      (by simp (config := {decide := true}) [σ4, σ3, σ2, σ1, σ0, setRegs, cRegs, cWords, cRest])
-      (by simp (config := {decide := true}) [σ4, σ3, σ2, σ1, σ0, setRegs, cRegs, cWords, cRest])
+      (by simp (config := {decide := true}) [σ4, σ3, σ2, σ1, σ0, setRegs, cRegs, cWords])
+      (by simp (config := {decide := true}) [σ4, σ3, σ2, σ1, σ0, setRegs, cRegs, cWords])
+      (by simp (config := {decide := true}) [σ4, σ3, σ2, σ1, σ0, setRegs, cRegs, cWords])
       (by simp (config := {decide := true}) [σ4, σ3, σ2, σ1, σ0, setRegs, cRegs, cWords, cRest])
       (by simp (config := {decide := true}) [σ4, σ3, σ2, σ1, σ0, setRegs, cRegs, cWords, cRest])
     have hlit : ∀ x : Fin CB, x ∉ cJunk → x ≠ cX → σ4 x = cRest m p w W x := fun x hj hX => by
@@ -390,7 +388,7 @@ def compressSpec (m p w W : ℕ) : AxisSpec CB where
         simp only [cJunk, cRegs, List.mem_cons, List.not_mem_nil, or_false] at hj
         rcases hj with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl |
           rfl | rfl | rfl | rfl | rfl <;>
-          simp (config := {decide := true}) [σ4, σ3, σ2, σ1, σ0, Function.update_apply, setRegs, cRegs, cWords, emp,
+          simp (config := {decide := true}) [σ4, σ3, σ2, σ1, σ0, setRegs, cRegs, cWords, emp,
             WTape.words, reg] <;>
           omega
     · have h1 := hlen _ (show wtE.flatten ∈ cWords wtE wtH wtD zeros s t m w L sW tW by simp [cWords])

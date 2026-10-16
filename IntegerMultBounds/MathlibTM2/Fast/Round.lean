@@ -68,7 +68,6 @@ namespace IntegerMultBounds.MathlibTM2.Fast
 open IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.Stack IntegerMultBounds.MathlibTM2 IntegerMultBounds.MathlibTM2.Host IntegerMultBounds.MathlibTM2.Layer IntegerMultBounds.MathlibTM2.Node
 open IntegerMultBounds.Schoenhage.Schedule (topN topN_facts)
 
-set_option linter.unusedSimpArgs false
 
 /-! ### Rounding arithmetic -/
 
@@ -357,7 +356,7 @@ private lemma regFx_drop {xc cy : Fin T} (hxc : xc ≠ cy) :
   intro x k v S _
   refine ⟨{ v with sym := (S.R xc).head? }, rfl, ?_⟩
   simp [rndDropAct, Action.run, update_rt, dropFx, Function.update_of_ne hxc.symm,
-    Function.update_of_ne hxc]
+    ]
 
 private lemma frame_drop {a xc cy : Fin T} (h1 : a ≠ xc) (h2 : a ≠ cy) :
     Frame a (fun _ => dropFx (T := T) (A := A) xc cy) := by
@@ -416,7 +415,7 @@ private lemma regFx_inc {xc cy acc : Fin T} (h1 : xc ≠ cy) (h2 : xc ≠ acc) (
     sym := (S.R xc).head?
     scan := Function.update v.scan cy ((S.R cy).head?.getD blank) }, rfl, ?_⟩
   simp [rndIncAct, Action.run, update_rt, incFx, Function.update_of_ne h1.symm,
-    Function.update_of_ne h1, Function.update_of_ne h2.symm, Function.update_of_ne h3.symm,
+    Function.update_of_ne h2.symm, Function.update_of_ne h3.symm,
     Function.update_of_ne h3]
   rw [Function.update_comm h3, Function.update_idem]
 

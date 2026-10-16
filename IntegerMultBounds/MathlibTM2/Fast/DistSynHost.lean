@@ -28,8 +28,6 @@ namespace IntegerMultBounds.MathlibTM2.Fast.TableVM
 
 open IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.Stack IntegerMultBounds.MathlibTM2.Node IntegerMultBounds.MathlibTM2.Host IntegerMultBounds.MathlibTM2.Layer IntegerMultBounds.MathlibTM2.Fast
 
-set_option linter.unusedSimpArgs false
-set_option linter.unusedSectionVars false
 
 variable {T Q A : ℕ} {U P : Type} {body : P → Pr P T Q A U}
 

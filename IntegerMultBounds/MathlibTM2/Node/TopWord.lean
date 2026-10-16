@@ -46,7 +46,6 @@ namespace IntegerMultBounds.MathlibTM2.Node
 
 open IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.Stack IntegerMultBounds.MathlibTM2 IntegerMultBounds.MathlibTM2.Host IntegerMultBounds.MathlibTM2.Layer
 
-set_option linter.unusedSimpArgs false
 
 variable {T Q A : ℕ} {U : Type} {P : Type} (body : P → Pr P T Q A U)
 
@@ -180,7 +179,7 @@ theorem topCopyC_exec {c t src dst : Fin T} (hreg : [c, t, src, dst].Nodup)
       Exec body (Shift.counted c t (Shift.copyStep c t src dst)) (mk v S) (4 * ys.length + 4)
         (mk v' { S with
           R := Function.update (Function.update S.R src rest) dst (ys.reverse ++ S.R dst) }) := by
-  simp only [List.nodup_cons, List.mem_cons, List.mem_singleton, not_or, List.not_mem_nil,
+  simp only [List.nodup_cons, List.mem_cons, not_or, List.not_mem_nil,
     not_false_eq_true, and_true, List.nodup_nil] at hreg
   obtain ⟨⟨hct, hcs, hcd⟩, ⟨hts, htd⟩, hsd⟩ := hreg
   obtain ⟨v₁, R₁, hv₁, he₁, hc₁, ht₁, hs₁, hd₁, ho₁⟩ := Shift.copyStep_loop body c t src dst hct
@@ -338,7 +337,7 @@ theorem topWidenWord_spec {src dst c₁ c₂ sp : Fin T} (hreg : [src, dst, c₁
     TopWordSpec body (topWidenWord src dst c₁ c₂ sp) src dst (topWidenG c₁ c₂ sp w w') w
       (topWidenF w w') ((4 * w + 4) + ((4 * (w' - w) + 4) + 1)) := by
   have hreg' := hreg
-  simp only [List.nodup_cons, List.mem_cons, List.mem_singleton, not_or, List.not_mem_nil,
+  simp only [List.nodup_cons, List.mem_cons, not_or, List.not_mem_nil,
     not_false_eq_true, and_true, List.nodup_nil] at hreg'
   obtain ⟨⟨hsd, hs1, hs2, hss⟩, ⟨hd1, hd2, hds⟩, ⟨h12, h1s⟩, h2s⟩ := hreg'
   intro x rest v S hx hs ⟨hc₁, hc₂, hsp⟩
@@ -645,7 +644,7 @@ lemma regFx_topEmit {src dst cy : Fin T} (hsd : src ≠ dst) (hsc : src ≠ cy) 
     scan := Function.update v.scan cy ((S.R cy).head?.getD blank) }, rfl, ?_⟩
   simp only [topEmitF, topEmitFx, Action.run, mk_var, mk_stk, get_rt, update_rt, store_mk,
     Function.update_of_ne hsc.symm, Function.update_of_ne hsd.symm, Function.update_of_ne hdc,
-    Function.update_of_ne hdc.symm, Function.update_self, Function.update_idem]
+    Function.update_of_ne hdc.symm, Function.update_self]
   rw [Function.update_comm hdc, Function.update_idem]
 
 lemma frame_topEmit {a src dst cy : Fin T} (has : a ≠ src) (had : a ≠ dst) (hac : a ≠ cy) :
@@ -738,7 +737,7 @@ theorem topShiftWord_spec (hA : 4 ≤ A) {src dst tmp cW cS cE cD sp sg cy : Fin
       (topShiftG tmp cW cS cE cD sp sg cy w' s w) w' (topShiftF A s w)
       (topShiftWordCost w' s w) := by
   have hreg' := hreg
-  simp only [List.nodup_cons, List.mem_cons, List.mem_singleton, not_or, List.not_mem_nil,
+  simp only [List.nodup_cons, List.mem_cons, not_or, List.not_mem_nil,
     not_false_eq_true, and_true, List.nodup_nil] at hreg'
   obtain ⟨⟨hsd, hst, hsW, hsS, hsE, hsD, hsp, hsg, hsc⟩, ⟨hdt, hdW, hdS, hdE, hdD, hdp, hdg, hdc⟩,
     ⟨htW, htS, htE, htD, htp, htg, htc⟩, ⟨hWS, hWE, hWD, hWp, hWg, hWc⟩,
@@ -858,7 +857,7 @@ theorem topShiftWord_spec (hA : 4 ≤ A) {src dst tmp cW cS cE cD sp sg cy : Fin
         { S with R := Function.update (Function.update R₆ sg []) cy [] } := by
     have hR₆s : R₆ src = rest := by rw [hR₆, Function.update_self]
     simp [topEndAct, peekR, Action.run, update_rt, hR₆g, hR₆c, Function.update_of_ne (Ne.symm hgc),
-      Function.update_of_ne hsg, Function.update_of_ne hsc, hR₆s, Function.update_of_ne hgc]
+      Function.update_of_ne hsg, Function.update_of_ne hsc, hR₆s]
   rw [hrun] at e₇
   have houtF : out = topShiftF A s w x := by
     rw [hout, hcr, hci, hσ]
@@ -946,12 +945,12 @@ theorem topWidenP_exec {src dst c₁ c₂ sp : Fin T} (hreg : [src, dst, c₁, c
         (topWidenCost R n r w w')
         (mk v' { S with R := Function.update S.R src (encZ A w' Z) }) := by
   have hreg' := hreg
-  simp only [List.nodup_cons, List.mem_cons, List.mem_singleton, not_or, List.not_mem_nil,
+  simp only [List.nodup_cons, List.mem_cons, not_or, List.not_mem_nil,
     not_false_eq_true, and_true, List.nodup_nil] at hreg'
   obtain ⟨⟨hsd, hs1, hs2, hss⟩, ⟨hd1, hd2, hds⟩, _, _⟩ := hreg'
   have hG : TopWordFrame src dst (topWidenG c₁ c₂ sp (A := A) w w') := by
     intro R l l' ⟨h1, h2, h3⟩
-    refine ⟨?_, ?_, ?_⟩ <;> simp_all [Function.update_apply, Ne.symm hs1, Ne.symm hd1,
+    refine ⟨?_, ?_, ?_⟩ <;> simp_all [Ne.symm hs1, Ne.symm hd1,
       Ne.symm hs2, Ne.symm hd2, Ne.symm hss, Ne.symm hds]
   have hmap : ((cellList R r n).map fun p => coeffSyms A w (red w (Z p))).map (topWidenF w w') =
       (cellList R r n).map fun p => coeffSyms A w' (red w' (Z p)) := by
@@ -986,14 +985,14 @@ theorem topShiftP_exec (hA : 4 ≤ A) {src dst tmp cW cS cE cD sp sg cy : Fin T}
         (topShiftCost R n r w' s w)
         (mk v' { S with R := Function.update S.R src (encZ A w (fun p => tdivZ s (Z p))) }) := by
   have hreg' := hreg
-  simp only [List.nodup_cons, List.mem_cons, List.mem_singleton, not_or, List.not_mem_nil,
+  simp only [List.nodup_cons, List.mem_cons, not_or, List.not_mem_nil,
     not_false_eq_true, and_true, List.nodup_nil] at hreg'
   obtain ⟨⟨hsd, hst, hsW, hsS, hsE, hsD, hsp, hsg, hsc⟩, ⟨hdt, hdW, hdS, hdE, hdD, hdp, hdg, hdc⟩,
     -, -, -, -, -, -, -⟩ := hreg'
   have hG : TopWordFrame src dst (topShiftG tmp cW cS cE cD sp sg cy (A := A) w' s w) := by
     intro R l l' ⟨h1, h2, h3, h4, h5, h6, h7, h8⟩
     refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;>
-      simp_all [Function.update_apply, Ne.symm hst, Ne.symm hsW, Ne.symm hsS, Ne.symm hsE,
+      simp_all [Ne.symm hst, Ne.symm hsW, Ne.symm hsS, Ne.symm hsE,
         Ne.symm hsD, Ne.symm hsp, Ne.symm hsg, Ne.symm hsc, Ne.symm hdt, Ne.symm hdW,
         Ne.symm hdS, Ne.symm hdE, Ne.symm hdD, Ne.symm hdp, Ne.symm hdg, Ne.symm hdc]
   have hmap : ((cellList R r n).map fun p => coeffSyms A w' (red w' (Z p))).map

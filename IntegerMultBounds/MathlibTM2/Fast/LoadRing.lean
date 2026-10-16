@@ -42,7 +42,6 @@ started, within `ldrHeaderCost p l w + rpCost T p l w M` steps.
 @[expose] public section
 
 
-set_option linter.unusedSimpArgs false
 
 namespace IntegerMultBounds.MathlibTM2.Fast
 

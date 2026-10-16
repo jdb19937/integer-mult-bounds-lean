@@ -51,7 +51,6 @@ open IntegerMultBounds IntegerMultBounds.Networks IntegerMultBounds.Machine Inte
 open IntegerMultBounds.MathlibTM2.Node hiding LReg
 open IntegerMultBounds.Networks.Shared50ModularControl (prime)
 
-set_option linter.unusedSimpArgs false
 
 /-- Evaluate register updates at register names. -/
 local macro "fupd" : tactic => `(tactic| (simp only [Function.update_apply, reg_inj, reduceCtorEq,

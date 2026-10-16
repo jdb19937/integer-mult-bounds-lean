@@ -72,7 +72,6 @@ instance (t q a : ℕ) : Fintype (BS t q a) := Fintype.ofEquiv _ (BS.equiv t q a
 
 variable {t q a : ℕ}
 
-set_option linter.unusedSimpArgs false
 
 /-- Straight-line code and programs of the bridge machine. -/
 abbrev Act (t q a : ℕ) := Action (BΓ (t := t) a) (BS t q a)
@@ -127,25 +126,25 @@ lemma update_b0 (S : Stacks t a) (l : List Bool) :
     Function.update S.get (.bit 0) l = Stacks.get { S with b0 := l } := by
   funext k
   rcases k with _ | _ | j | _ | _ <;> try simp [Stacks.get, Function.update]
-  fin_cases j <;> simp [Stacks.get, Function.update]
+  fin_cases j <;> simp
 
 lemma update_b1 (S : Stacks t a) (l : List Bool) :
     Function.update S.get (.bit 1) l = Stacks.get { S with b1 := l } := by
   funext k
   rcases k with _ | _ | j | _ | _ <;> try simp [Stacks.get, Function.update]
-  fin_cases j <;> simp [Stacks.get, Function.update]
+  fin_cases j <;> simp
 
 lemma update_b2 (S : Stacks t a) (l : List Bool) :
     Function.update S.get (.bit 2) l = Stacks.get { S with b2 := l } := by
   funext k
   rcases k with _ | _ | j | _ | _ <;> try simp [Stacks.get, Function.update]
-  fin_cases j <;> simp [Stacks.get, Function.update]
+  fin_cases j <;> simp
 
 lemma update_b3 (S : Stacks t a) (l : List Bool) :
     Function.update S.get (.bit 3) l = Stacks.get { S with b3 := l } := by
   funext k
   rcases k with _ | _ | j | _ | _ <;> try simp [Stacks.get, Function.update]
-  fin_cases j <;> simp [Stacks.get, Function.update]
+  fin_cases j <;> simp
 
 lemma update_lt (S : Stacks t a) (i : Fin t) (l : List (Fin (a + 4))) :
     Function.update S.get (.lt i) l = Stacks.get { S with L := Function.update S.L i l } := by

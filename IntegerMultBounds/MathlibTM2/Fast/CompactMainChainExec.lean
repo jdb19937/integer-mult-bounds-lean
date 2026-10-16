@@ -15,8 +15,6 @@ open IntegerMultBounds.Networks.Shared50ModularControl (prime)
 open IntegerMultBounds.Schoenhage.Schedule (topN)
 open Computability
 
-set_option linter.unusedSimpArgs false
-set_option linter.unusedSectionVars false
 
 attribute [local irreducible] mnT mnQ
 

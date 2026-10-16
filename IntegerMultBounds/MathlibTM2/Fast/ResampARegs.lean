@@ -41,8 +41,6 @@ namespace IntegerMultBounds.MathlibTM2.Fast.ResampA
 open IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.Stack IntegerMultBounds.MathlibTM2 IntegerMultBounds.MathlibTM2.Host IntegerMultBounds.MathlibTM2.Layer IntegerMultBounds.MathlibTM2.Node
 open IntegerMultBounds.MathlibTM2.Fast
 
-set_option linter.unusedSimpArgs false
-set_option linter.unusedSectionVars false
 
 section Contracts
 
@@ -276,7 +274,7 @@ theorem rsa_add {x y o ctr tmp st : R} (hd : [x, y, o, ctr, tmp].Nodup) (hxs : x
   · by_cases h1 : r = o
     · subst h1
       have := houts 0
-      simp only [Matrix.cons_val_zero, Matrix.cons_val_fin_one] at this
+      simp only [Matrix.cons_val_fin_one] at this
       rw [this, hS]
       have hg : ∀ f : Fin 2 → GR W, f 0 = z₁ → f 1 = z₂ →
           glin ![![((1 : ℤ), (0 : ℤ)), (1, 0)]] f 0 = z₁ + z₂ := by

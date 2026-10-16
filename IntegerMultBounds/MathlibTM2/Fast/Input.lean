@@ -56,7 +56,6 @@ namespace IntegerMultBounds.MathlibTM2.Fast
 open IntegerMultBounds.Machine IntegerMultBounds.NLogN IntegerMultBounds.MathlibTM2.Stack IntegerMultBounds.MathlibTM2 IntegerMultBounds.MathlibTM2.Host
   IntegerMultBounds.MathlibTM2.Layer Computability
 
-set_option linter.unusedSimpArgs false
 
 /-! ### Bits and digits -/
 
@@ -252,10 +251,10 @@ theorem inputStep_loop (tx ty : Fin T) (hxy : tx ≠ ty) :
           funext k
           by_cases h1 : k = ty
           · subst h1
-            simp [leftSyms, rightSyms, List.filterMap_cons, Function.update_of_ne hxy.symm]
+            simp [leftSyms, rightSyms, List.filterMap_cons]
           · by_cases h2 : k = tx
             · subst h2
-              simp [leftSyms, rightSyms, List.filterMap_cons, Function.update_of_ne hxy, h1]
+              simp [leftSyms, rightSyms, List.filterMap_cons, h1]
             · simp [leftSyms, rightSyms, List.filterMap_cons, Function.update_of_ne h1,
                 Function.update_of_ne h2]
 
@@ -321,10 +320,10 @@ theorem readInput_exec (tx ty rx ry : Fin T) (hreg : [tx, ty, rx, ry].Nodup) (x 
         (encodingNatBool.encode y).length := by
       simp [hS₁, movedR, Function.update_apply, b1, Ne.symm a1]
     have h2 : (S₁.R tx).length = (encodingNatBool.encode x).length := by
-      simp [hS₁, Function.update_apply, a1]
+      simp [hS₁, a1]
     simp only [h1, h2, length_pairEnc_encode]
     ring
-  · simp only [peekInput, Action.run, mk_var, mk_stk]
+  · simp only
     rw [← hR]
 
 /-! ### Counted copies, drops and emptying -/
@@ -377,7 +376,7 @@ theorem copyStep_loop (src dst tmp : Fin T) (h1 : src ≠ dst) (h2 : src ≠ tmp
               tmp (e :: S.R tmp)) dst (f e :: S.R dst) } := by
         simp [copyStep, peekR, Action.run, hS, update_rt, Function.update_of_ne h1,
           Function.update_of_ne h2, Function.update_of_ne h3, Function.update_of_ne h1.symm,
-          Function.update_of_ne h2.symm, Function.update_of_ne h3.symm]
+          Function.update_of_ne h2.symm]
       refine Exec.cast (Exec.loop_true (body := body) (f := (·.flag)) (by simpa using hf)
         (hrun ▸ Exec.act (body := body) (copyStep src dst tmp f) (mk v S)) he) (by simp; ring) ?_
       congr 2
@@ -458,7 +457,7 @@ theorem dropStep_loop (cnt dst tmp : Fin T) (h1 : cnt ≠ dst) (h2 : cnt ≠ tmp
               tmp (e :: S.R tmp)) dst (S.R dst).tail } := by
         simp [dropStep, peekR, Action.run, hS, update_rt, Function.update_of_ne h1,
           Function.update_of_ne h2, Function.update_of_ne h3, Function.update_of_ne h1.symm,
-          Function.update_of_ne h2.symm, Function.update_of_ne h3.symm]
+          Function.update_of_ne h2.symm]
       refine Exec.cast (Exec.loop_true (body := body) (f := (·.flag)) (by simpa using hf)
         (hrun ▸ Exec.act (body := body) (dropStep cnt dst tmp) (mk v S)) he) (by simp; ring) ?_
       congr 2
@@ -705,7 +704,7 @@ theorem recStep_loop (tpl tmp rx acc : Fin T) (hreg : [tpl, tmp, rx, acc].Nodup)
             R := Function.update (Function.update (Function.update (Function.update S.R tpl t)
               tmp (separator :: S.R tmp)) rx (l.tail.map bitSymbol))
               acc (pairSym A (l.headD false) false :: S.R acc) }
-          (by simp [Function.update_apply, a1, a2, a3]) (by simp [Function.update_apply, c1, b1])
+          (by simp [a1, a2, a3]) (by simp [c1])
           rfl
         refine ⟨v', hu, ?_⟩
         have hrun : (recStep tpl tmp rx acc : Act T Q A U).run (mk v S) =
@@ -715,7 +714,7 @@ theorem recStep_loop (tpl tmp rx acc : Fin T) (hreg : [tpl, tmp, rx, acc].Nodup)
                   tmp (separator :: S.R tmp)) rx (l.tail.map bitSymbol))
                   acc (pairSym A (l.headD false) false :: S.R acc) } := by
           simp only [recStep, peekR, Action.run, mk_var, mk_stk, get_rt, hS, update_rt]
-          simp [Function.update_apply, a1, a2, a3, b1, b2, c1, Ne.symm a1, Ne.symm a2, Ne.symm a3,
+          simp [a1, a2, a3, Ne.symm a1, Ne.symm a2, Ne.symm a3,
             Ne.symm b1, Ne.symm b2, Ne.symm c1, hx]
           cases l with
           | nil => simp
@@ -732,8 +731,8 @@ theorem recStep_loop (tpl tmp rx acc : Fin T) (hreg : [tpl, tmp, rx, acc].Nodup)
           { S with
             R := Function.update (Function.update (Function.update S.R tpl t)
               tmp (s :: S.R tmp)) acc (pairSym A false false :: S.R acc) }
-          (by simp [Function.update_apply, a1, a3])
-          (by simp [Function.update_apply, c1, Ne.symm b1, Ne.symm a2, hx]) rfl
+          (by simp [a1, a3])
+          (by simp [c1, Ne.symm b1, Ne.symm a2, hx]) rfl
         refine ⟨v', hu, ?_⟩
         have hrun : (recStep tpl tmp rx acc : Act T Q A U).run (mk v S) =
             mk { v with sym := some s, flag := t.head?.isSome }
@@ -741,15 +740,15 @@ theorem recStep_loop (tpl tmp rx acc : Fin T) (hreg : [tpl, tmp, rx, acc].Nodup)
                 R := Function.update (Function.update (Function.update S.R tpl t)
                   tmp (s :: S.R tmp)) acc (pairSym A false false :: S.R acc) } := by
           simp only [recStep, peekR, Action.run, mk_var, mk_stk, get_rt, hS, update_rt]
-          simp [Function.update_apply, a1, a2, a3, b1, b2, c1, Ne.symm a1, Ne.symm a2, Ne.symm a3,
-            Ne.symm b1, Ne.symm b2, Ne.symm c1, hs]
+          simp [a1, a3, Ne.symm a1, Ne.symm a3,
+            Ne.symm b2, hs]
         refine Exec.cast (Exec.loop_true (body := body) (f := (·.flag)) (by simpa using hf)
           (hrun ▸ Exec.act (body := body) (recStep tpl tmp rx acc) (mk v S)) he)
           (by simp; ring) ?_
         congr 2
         funext k
         simp only [Function.update_apply]
-        split_ifs <;> simp_all [emitT, List.count_cons]
+        split_ifs <;> simp_all [emitT]
 
 /-- Pop `sn` onto `stmp`. -/
 def popTo (sn stmp : Fin T) : Act T Q A U :=
@@ -777,7 +776,7 @@ theorem recBody_exec (sn stmp tpl tmp rx acc : Fin T)
   have hn := hreg
   have hr := List.nodup_reverse.2 hreg
   simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append,
-    List.singleton_append] at hr
+    ] at hr
   simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
     List.nodup_nil, and_true, not_false_eq_true] at hn hr
   set S₀ : Stacks T A := { S with
@@ -786,16 +785,16 @@ theorem recBody_exec (sn stmp tpl tmp rx acc : Fin T)
   have he₀ : Exec body (.act (popTo sn stmp)) (mk v S) 1 (mk { v with sym := some s } S₀) := by
     have := Exec.act (body := body) (popTo sn stmp) (mk v S)
     convert this using 1
-    simp [popTo, Action.run, hsn, update_rt, hS₀, hn, hr]
+    simp [popTo, Action.run, hsn, update_rt, hS₀, hr]
   obtain ⟨v₁, hu₁, he₁⟩ := recStep_loop body tpl tmp rx acc
-    (by simp [List.nodup_cons, hn, hr]) t l
+    (by simp [List.nodup_cons, hn]) t l
     { v with sym := some s, flag := (S₀.R tpl).head?.isSome } S₀
-    (by simp [hS₀, Function.update_apply, hn, hr, htpl])
-    (by simp [hS₀, Function.update_apply, hn, hr, hx])
-    (by simp [hS₀, Function.update_apply, hn, hr, htpl])
+    (by simp [hS₀, hr, htpl])
+    (by simp [hS₀, hr, hx])
+    (by simp [hS₀, hr, htpl])
   have hw₁ :=
     Exec.seq (Exec.act (body := body) (peekR tpl) (mk { v with sym := some s } S₀)) he₁
-  obtain ⟨v₂, hu₂, he₂⟩ := moveR_exec body tmp tpl (by simp [hn, hr]) id v₁ { S₀ with
+  obtain ⟨v₂, hu₂, he₂⟩ := moveR_exec body tmp tpl (by simp [hr]) id v₁ { S₀ with
     R := Function.update (Function.update (Function.update (Function.update S₀.R tpl []) tmp
       (t.reverse ++ S₀.R tmp)) rx (List.map bitSymbol (List.drop (List.count separator t) l)))
       acc ((emitT A t l).reverse ++ S₀.R acc) }
@@ -809,18 +808,18 @@ theorem recBody_exec (sn stmp tpl tmp rx acc : Fin T)
   rw [peekR_run] at he₃
   refine ⟨{ v₂ with flag := rest.head?.isSome }, by simp [hu₂, hu₁], rfl,
     Exec.cast (Exec.seq he₀ (Exec.seq hw₁ (Exec.seq he₂ he₃))) ?_ ?_⟩
-  · simp [hS₀, Function.update_apply, hn, hr, htmp]; ring
+  · simp [hS₀, hn, hr, htmp]; ring
   · clear he₀ hw₁ he₁ he₂ he₃ hu₁ hu₂
     subst hS₀
     congr 2
     · simp only [movedR, Function.update_apply]
-      simp [hn, hr]
+      simp [hn]
     · funext k
       simp only [movedR, Function.update_apply]
       by_cases h1 : k = sn
-      · subst h1; simp [hn, hr, hsn]
+      · subst h1; simp [hn]
       by_cases h2 : k = stmp
-      · subst h2; simp [hn, hr]
+      · subst h2; simp [hn]
       by_cases h3 : k = tpl
       · subst h3; simp [hn, hr, htpl, htmp]
       by_cases h4 : k = tmp
@@ -828,7 +827,7 @@ theorem recBody_exec (sn stmp tpl tmp rx acc : Fin T)
       by_cases h5 : k = rx
       · subst h5; simp [hn, hr]
       by_cases h6 : k = acc
-      · subst h6; simp [hn, hr]
+      · subst h6; simp [hr]
       simp [h1, h2, h3, h4, h5, h6]
 
 /-- The pair symbols of `n` records along the template `t`, reading the bits `l`: each record
@@ -853,7 +852,7 @@ theorem records_loop (sn stmp tpl tmp rx acc : Fin T)
   have hn := hreg
   have hr := List.nodup_reverse.2 hreg
   simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append,
-    List.singleton_append] at hr
+    ] at hr
   simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
     List.nodup_nil, and_true, not_false_eq_true] at hn hr
   intro sl
@@ -874,13 +873,13 @@ theorem records_loop (sn stmp tpl tmp rx acc : Fin T)
           funext k
           simp only [Function.update_apply]
           by_cases h1 : k = sn
-          · subst h1; simp [hn, hr, hsn]
+          · subst h1; simp [hn, hsn]
           by_cases h2 : k = stmp
-          · subst h2; simp [hn, hr]
+          · subst h2; simp [hn]
           by_cases h5 : k = rx
-          · subst h5; simp [hn, hr, hx]
+          · subst h5; simp [hn, hx]
           by_cases h6 : k = acc
-          · subst h6; simp [hn, hr, emitN]
+          · subst h6; simp [emitN]
           simp [h1, h2, h5, h6]
       rw [this]
       refine Exec.cast (Exec.loop_false (f := fun v : HS T Q A U => v.flag) (by simpa using hf))
@@ -893,10 +892,10 @@ theorem records_loop (sn stmp tpl tmp rx acc : Fin T)
         R := Function.update (Function.update (Function.update (Function.update S.R sn rest)
           stmp (s :: S.R stmp)) rx ((l.drop (t.count separator)).map bitSymbol))
           acc ((emitT A t l).reverse ++ S.R acc) }
-        (by simp [Function.update_apply, hn, hr])
-        (by simp [Function.update_apply, hn, hr, htpl])
-        (by simp [Function.update_apply, hn, hr, htmp])
-        (by simp [Function.update_apply, hn, hr]) hf₁
+        (by simp [hn])
+        (by simp [hn, hr, htpl])
+        (by simp [hn, hr, htmp])
+        (by simp [hn]) hf₁
       refine ⟨v', by rw [hu, hu₁], Exec.cast (Exec.loop_true (body := body) (f := (·.flag))
         (by simpa using hf) he₁ he) (by simp; ring) ?_⟩
       clear he he₁ ih
@@ -907,13 +906,13 @@ theorem records_loop (sn stmp tpl tmp rx acc : Fin T)
           l.drop ((rest.length + 1) * t.count separator) := by
         rw [List.drop_drop]; congr 1; ring
       by_cases h1 : k = sn
-      · subst h1; simp [hn, hr]
+      · subst h1; simp [hn]
       by_cases h2 : k = stmp
-      · subst h2; simp [hn, hr]
+      · subst h2; simp [hn]
       by_cases h5 : k = rx
-      · subst h5; simp [hn, hr, hdrop]
+      · subst h5; simp [hn, hdrop]
       by_cases h6 : k = acc
-      · subst h6; simp [hn, hr, emitN]
+      · subst h6; simp [emitN]
       simp [h1, h2, h5, h6]
 
 /-! ### Emitted symbols -/
@@ -939,7 +938,7 @@ lemma emitT_append : ∀ (t₁ t₂ : List (Fin (A + 4))) (l : List Bool),
       by_cases hs : s = separator
       · subst hs
         simp [emitT, emitT_append t₁ t₂ l.tail, List.drop_tail]
-      · simp [emitT, hs, emitT_append t₁ t₂ l, List.count_cons]
+      · simp [emitT, hs, emitT_append t₁ t₂ l]
 
 lemma emitT_zeros (n : ℕ) (l : List Bool) :
     emitT A (List.replicate n blank) l = List.replicate n (pairSym A false false) := by
@@ -1052,7 +1051,7 @@ theorem digitRecords_exec_bits (rx bn pn wn sn tpl tmp stmp acc dst : Fin T)
   have hn := hreg
   have hr := List.nodup_reverse.2 hreg
   simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append,
-    List.singleton_append] at hr
+    ] at hr
   simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
     List.nodup_nil, and_true, not_false_eq_true] at hn hr
   obtain ⟨t, ht⟩ : ∃ t, t = tplOf A (p - b - 2) b (w - p + 2) := ⟨_, rfl⟩
@@ -1061,7 +1060,7 @@ theorem digitRecords_exec_bits (rx bn pn wn sn tpl tmp stmp acc dst : Fin T)
   rw [← ht]
   -- the template
   obtain ⟨v₁, hu₁, he₁⟩ := buildTpl_exec body bn pn wn tpl tmp
-    (by simp [List.nodup_cons, hn, hr]) hbp v St hbn hpn hwn htpl htmp
+    (by simp [List.nodup_cons, hn]) hbp v St hbn hpn hwn htpl htmp
   rw [← ht] at he₁
   -- the records
   have he₂ :=
@@ -1071,33 +1070,33 @@ theorem digitRecords_exec_bits (rx bn pn wn sn tpl tmp stmp acc dst : Fin T)
     (by simp [List.nodup_cons, hn, hr]) t (St.R sn) l
     { v₁ with flag := (Function.update St.R tpl t sn).head?.isSome }
     { St with R := Function.update St.R tpl t }
-    (by simp [Function.update_apply, hn, hr]) (by simp)
-    (by simp [Function.update_apply, hn, hr, htmp]) (by simp [Function.update_apply, hn, hr, hx])
-    (by simp [Function.update_apply, hn, hr])
+    (by simp [hn]) (by simp)
+    (by simp [hr, htmp]) (by simp [hn, hx])
+    (by simp [hn])
   dsimp only at he₃
   generalize hR₃ : Function.update (Function.update (Function.update (Function.update
     (Function.update St.R tpl t) sn []) stmp ((St.R sn).reverse ++ Function.update St.R tpl t stmp))
     rx (List.map bitSymbol (List.drop ((St.R sn).length * List.count separator t) l))) acc
     ((emitN A t (St.R sn).length l).reverse ++ Function.update St.R tpl t acc) = R₃ at he₃
   -- restore `sn`
-  obtain ⟨v₄, hu₄, he₄⟩ := moveR_exec body stmp sn (by simp [hn, hr]) id v₃
+  obtain ⟨v₄, hu₄, he₄⟩ := moveR_exec body stmp sn (by simp [hr]) id v₃
     { St with R := R₃ }
   dsimp only at he₄
   generalize hR₄ : movedR R₃ stmp sn id (R₃ stmp) = R₄ at he₄
   -- the stream onto `dst`
   obtain ⟨v₅, hu₅, he₅⟩ :=
-    moveR_exec body acc dst (by simp [hn, hr]) id v₄ { St with R := R₄ }
+    moveR_exec body acc dst (by simp [hn]) id v₄ { St with R := R₄ }
   dsimp only at he₅
   generalize hR₅ : movedR R₄ acc dst id (R₄ acc) = R₅ at he₅
   -- empty the template
   obtain ⟨v₆, hu₆, he₆⟩ := emptyR_exec body tpl v₅ { St with R := R₅ }
   dsimp only at he₆
   have h₃stmp : R₃ stmp = (St.R sn).reverse := by
-    rw [← hR₃]; simp [Function.update_apply, hn, hr, hstmp]
+    rw [← hR₃]; simp [hn, hr, hstmp]
   have h₄acc : R₄ acc = (emitN A t (St.R sn).length l).reverse := by
-    rw [← hR₄, ← hR₃]; simp [movedR, Function.update_apply, hn, hr, hacc]
+    rw [← hR₄, ← hR₃]; simp [movedR, hn, hr, hacc]
   have h₅tpl : R₅ tpl = t := by
-    rw [← hR₅, ← hR₄, ← hR₃]; simp [movedR, Function.update_apply, hn, hr]
+    rw [← hR₅, ← hR₄, ← hR₃]; simp [movedR, hn, hr]
   refine ⟨v₆, by rw [hu₆, hu₅, hu₄, hu₃, hu₁],
     Exec.cast (Exec.seq he₁ (Exec.seq he₂ (Exec.seq he₃ (Exec.seq he₄ (Exec.seq he₅ he₆)))))
       ?_ ?_⟩
@@ -1110,7 +1109,7 @@ theorem digitRecords_exec_bits (rx bn pn wn sn tpl tmp stmp acc dst : Fin T)
     rw [← hR₅, ← hR₄, ← hR₃]
     simp only [movedR, Function.update_apply]
     by_cases h1 : k = rx
-    · subst h1; simp [hn, hr, hsn, htc]
+    · subst h1; simp [hn, hsn, htc]
     by_cases h2 : k = sn
     · subst h2; simp [hn, hr, hstmp]
     by_cases h3 : k = tpl
@@ -1120,7 +1119,7 @@ theorem digitRecords_exec_bits (rx bn pn wn sn tpl tmp stmp acc dst : Fin T)
     by_cases h5 : k = acc
     · subst h5; simp [hn, hr, hacc]
     by_cases h6 : k = dst
-    · subst h6; simp [hn, hr, hacc, hsn]
+    · subst h6; simp [hr, hacc, hsn]
     simp [h1, h2, h3, h4, h5, h6]
 
 /-- **The digit stage.** For `1 ≤ b`, `b + 2 ≤ p ≤ w` and an MSB-first word `xs` of value `x`

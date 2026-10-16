@@ -46,8 +46,6 @@ namespace IntegerMultBounds.MathlibTM2.Fast
 
 open IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.Stack IntegerMultBounds.MathlibTM2 IntegerMultBounds.MathlibTM2.Host IntegerMultBounds.MathlibTM2.Layer IntegerMultBounds.MathlibTM2.Node
 
-set_option linter.unusedSimpArgs false
-set_option linter.unusedSectionVars false
 
 /-! ### Unary fields -/
 
@@ -254,10 +252,10 @@ theorem preUMul_runs {a b c t₁ t₂ : R} (hreg : [a, b, c, t₁, t₂].Nodup)
     (fun j hj => by
       refine twRunsS_of ?_
       have hu := twRuns_ucopy (body := body) htg ‹b ≠ c› ‹b ≠ t₂› ‹c ≠ t₂› (twATin a t₁ (ρ a) Ψ j)
-        (by simp [twATin, Ψ, Function.update_apply, ‹a ≠ t₂›.symm, ‹t₁ ≠ t₂›.symm, ‹c ≠ t₂›.symm,
+        (by simp [twATin, Ψ, ‹a ≠ t₂›.symm, ‹t₁ ≠ t₂›.symm, ‹c ≠ t₂›.symm,
           ht₂])
       have hb : twATin a t₁ (ρ a) Ψ j b = ρ b := by
-        simp [twATin, Ψ, Function.update_apply, ‹a ≠ b›.symm, ‹b ≠ t₁›, ‹b ≠ c›]
+        simp [twATin, Ψ, ‹a ≠ b›.symm, ‹b ≠ t₁›, ‹b ≠ c›]
       rw [hb] at hu
       refine twRuns_congr hu ?_
       funext r
@@ -308,7 +306,7 @@ theorem preClears_runs (l : List R) (hl : l.Nodup) (ρ : R → List (Fin (A + 4)
       funext r
       by_cases hr : r = a
       · subst hr; simp
-      · simp [hr, Function.update_of_ne hr]
+      · simp [hr]
 
 /-- Take consecutive fields from `src` onto the registers `ds`. -/
 def preTakes (src : Fin T) : List (Fin T) → Pr P T Q A U

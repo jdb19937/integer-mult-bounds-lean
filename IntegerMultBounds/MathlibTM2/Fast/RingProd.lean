@@ -60,7 +60,6 @@ conversions. `rpCost_eq`: `rpCost = M · rpRecCost + rpFixCost`, with
 @[expose] public section
 
 
-set_option linter.unusedSimpArgs false
 set_option maxHeartbeats 1000000
 set_option maxRecDepth 10000
 
@@ -176,7 +175,7 @@ theorem rp_encBody_runs (h : RpLayout rg ι) (hA : 4 ≤ A) {src : RpReg}
       have m2 : RpReg.sv ≠ r := hr₂ 0
       have m3 : RpReg.ta ≠ r := hr₂ 1
       have m4 : RpReg.tb ≠ r := hr₂ 2
-      simp [ρ₁, Function.update_apply, m1.symm, m2.symm, m3.symm, m4.symm]
+      simp [ρ₁, m1.symm, m2.symm, m3.symm, m4.symm]
   have s2 := rp_moveR_runs (body := body) h (show RpReg.ta ≠ .acc by decide) (ρ := ρ₁) (n := w)
     (by simp [ρ₁, re])
   have s3 := rp_moveR_runs (body := body) h (show RpReg.tb ≠ .acc by decide)
@@ -188,7 +187,7 @@ theorem rp_encBody_runs (h : RpLayout rg ι) (hA : 4 ≤ A) {src : RpReg}
   · subst hr
     simp [ρ₁, n1, n2, n3, n4]
   · cases r <;> simp [ρ₁, hta, htb, rpChunk, rp_compWord_eq_rev, re, im, List.map_reverse,
-      Function.update_apply, hr, Ne.symm hr]
+      Function.update_apply, hr]
 
 /-- Decoding one coefficient `z` from the top of `d3`: `15 w + 18` steps. -/
 theorem rp_decBody_runs (h : RpLayout rg ι) {w : ℕ} {ρ : RpReg → List (Fin (A + 4))}
@@ -221,7 +220,7 @@ theorem rp_decBody_runs (h : RpLayout rg ι) {w : ℕ} {ρ : RpReg → List (Fin
     · intro r hr₁ hr₂
       have m1 : RpReg.d3 ≠ r := hr₁ 0
       have m2 : RpReg.ta ≠ r := hr₂ 0
-      simp [ρ₁, Function.update_apply, m1.symm, m2.symm]
+      simp [ρ₁, m1.symm, m2.symm]
   set ρ₂ := Function.update (Function.update ρ₁ .d3 rest) .tb im.reverse with hρ₂
   have s2 : RpRuns body rg ι (rpWord rg (![.d3] : Fin 1 → RpReg) (![.tb] : Fin 1 → RpReg)
       (rpCpyAuto A)) ρ₁ ρ₂ (5 * w + 6) := by
@@ -241,7 +240,7 @@ theorem rp_decBody_runs (h : RpLayout rg ι) {w : ℕ} {ρ : RpReg → List (Fin
     · intro r hr₁ hr₂
       have m1 : RpReg.d3 ≠ r := hr₁ 0
       have m2 : RpReg.tb ≠ r := hr₂ 0
-      simp [ρ₂, Function.update_apply, m1.symm, m2.symm]
+      simp [ρ₂, m1.symm, m2.symm]
   set ρ₃ := Function.update (Function.update (Function.update ρ₂ .ta []) .tb [])
     .acc ((csyms A w z).reverse ++ ρ .acc) with hρ₃
   have e₁ : re.reverse = (rpLsb w (z.re : ZMod (2 ^ w)).val).map bitSymbol := by
@@ -271,7 +270,7 @@ theorem rp_decBody_runs (h : RpLayout rg ι) {w : ℕ} {ρ : RpReg → List (Fin
       have m1 : RpReg.ta ≠ r := hr₁ 0
       have m2 : RpReg.tb ≠ r := hr₁ 1
       have m3 : RpReg.acc ≠ r := hr₂ 0
-      simp [ρ₃, Function.update_apply, m1.symm, m2.symm, m3.symm]
+      simp [ρ₃, m1.symm, m2.symm, m3.symm]
   refine ((s1.seq h (s2.seq h s3)).mono (by omega)).congr ?_
   funext r
   cases r <;> simp [ρ₃, ρ₂, ρ₁, hta, htb]
@@ -312,7 +311,7 @@ theorem rp_enc_runs (h : RpLayout rg ι) (hA : 4 ≤ A) {src dst : RpReg}
     funext r
     by_cases hr : r = src
     · subst hr; simp [F, n1, n4, hsrc]
-    · cases r <;> simp [F, Function.update_apply, hr, Ne.symm hr, hsv, hacc]
+    · cases r <;> simp [F, hr, hsv, hacc]
   have hFsrc : ∀ k, F k src = cstream A w (zs.drop k) := fun k => by simp [F, n1, n4]
   have hloop := rpWhile_runs (body := body) (src := src) (p := rpEncBody rg src) h K F
     (fun k hk => by
@@ -340,7 +339,7 @@ theorem rp_enc_runs (h : RpLayout rg ι) (hA : 4 ≤ A) {src dst : RpReg}
   set ρ₁ := Function.update (Function.update (Function.update ρ src [])
       .sv (cstream A w zs).reverse) .acc ((zs.flatMap (rpChunk w)).map bitSymbol).reverse
   have s2 := rp_moveR_runs (body := body) h (show RpReg.acc ≠ dst from m4.symm) (ρ := ρ₁)
-    (n := K * (2 * w)) (by simp [ρ₁, rp_length_chunks, hK])
+    (n := K * (2 * w)) (by simp [ρ₁, hK])
   have s3 := rp_moveR_runs (body := body) h (show RpReg.sv ≠ src from n1.symm)
     (ρ := Function.update (Function.update ρ₁ .acc []) dst ((ρ₁ .acc).reverse ++ ρ₁ dst))
     (n := K * w) (by simp [ρ₁, Function.update_apply, m1.symm, length_cstream, hK])
@@ -350,9 +349,9 @@ theorem rp_enc_runs (h : RpLayout rg ι) (hA : 4 ≤ A) {src dst : RpReg}
     omega
   · funext r
     by_cases hr : r = src
-    · subst hr; simp [ρ₁, Function.update_apply, n1, n4, m0, m0.symm, m1.symm, m4.symm, hsrc]
+    · subst hr; simp [ρ₁, Function.update_apply, n1, n4, m0, m0.symm, m1.symm, hsrc]
     by_cases hr' : r = dst
-    · subst hr'; simp [ρ₁, Function.update_apply, m0, m1, m4, m0.symm, m1.symm, m4.symm]
+    · subst hr'; simp [ρ₁, Function.update_apply, m0, m1, m4, m0.symm, m1.symm]
     · cases r <;> simp [ρ₁, Function.update_apply, hr, Ne.symm hr, hr', Ne.symm hr', hsv, hacc]
 
 /-- Decoding the output array on `d3` onto `out`: `|zs| (17 w + 20) + 4` steps. -/
@@ -422,7 +421,7 @@ lemma rp_sum_cells (A : ℕ) (hdr F G out : List Bool) :
       simp only [Finset.mem_Ico] at hi
       simp only [hf]
       split_ifs <;> omega)]
-  simp [Finset.sum_Ico_eq_sum_range, Finset.sum_range_succ, hf]
+  simp [Finset.sum_range_succ, hf]
 
 /-- A register outside the data registers is not a placed register. -/
 lemma RpLayout.ι_ne (h : RpLayout rg ι) {r : RpReg} (h0 : r ≠ .d0) (h1 : r ≠ .d1) (h2 : r ≠ .d2)
@@ -648,9 +647,9 @@ theorem rpProg_runs (h : RpLayout rg ι) (hT : 91 ≤ T) (hQ : rpStates ≤ Q) (
     (by simp [ρ₂, ρ₁, hd2, hG]) (by simp [ρ₂, ρ₁, hd3])
   set ρ₃ := Function.update ρ₂ .d3 ((array w (List.zipWith (prodRec p) fs gs)).map bitSymbol)
   have s4 := rp_uclear_runs (body := body) h .d1 (ρ := ρ₃) (n := 2 * 2 ^ l * w * M)
-    (by simp [ρ₃, ρ₂, ρ₁, hd1, rp_length_chunks]; ring)
+    (by simp [ρ₃, ρ₂, ρ₁, hd1]; ring)
   have s5 := rp_uclear_runs (body := body) h .d2 (ρ := Function.update ρ₃ .d1 [])
-    (n := 2 * 2 ^ l * w * M) (by simp [ρ₃, ρ₂, ρ₁, hd2, rp_length_chunks]; ring)
+    (n := 2 * 2 ^ l * w * M) (by simp [ρ₃, ρ₂, ρ₁, hd2]; ring)
   have s6 := rp_dec_runs (body := body) h hw1 (rpStream M (rpOut p X Y))
     (ρ := Function.update (Function.update ρ₃ .d1 []) .d2 [])
     (by simp [ρ₃, hO]) (by simp [ρ₃, ρ₂, ρ₁, hwn]) (by simp [ρ₃, ρ₂, ρ₁, hta])

@@ -43,7 +43,6 @@ namespace IntegerMultBounds.MathlibTM2.Fast
 
 open IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.Stack IntegerMultBounds.MathlibTM2 IntegerMultBounds.MathlibTM2.Host IntegerMultBounds.MathlibTM2.Layer IntegerMultBounds.MathlibTM2.Node
 
-set_option linter.unusedSimpArgs false
 
 /-- The registers of the `B̃₀` machines. -/
 inductive RsbR

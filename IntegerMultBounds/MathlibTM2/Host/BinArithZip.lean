@@ -49,7 +49,6 @@ namespace IntegerMultBounds.MathlibTM2.Host
 
 open IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.Stack IntegerMultBounds.MathlibTM2.Node
 
-set_option linter.unusedSimpArgs false
 
 /-- Split the hypothesis that a register list is duplicate-free into pairwise inequalities. -/
 macro "regs_ne " h:ident : tactic =>
@@ -121,7 +120,7 @@ theorem zipStep_run {x y tx ty tz cy : Fin T} (hreg : [x, y, tx, ty, tz].Nodup) 
             (Function.update S.R x xs) y ys) tx (bitSymbol p :: S.R tx)) ty (bitSymbol q :: S.R ty))
             tz (bitSymbol (f s p q).2 :: S.R tz) } := by
   regs_ne hreg
-  simp [zipStep, zipNext, peekR, Action.run, hx, hy, hs, update_rt, Function.update_of_ne, *,
+  simp [zipStep, zipNext, peekR, Action.run, update_rt, Function.update_of_ne, *,
     Ne.symm, ne_comm]
 
 theorem zipLoop {x y tx ty tz cy : Fin T} (hreg : [x, y, tx, ty, tz].Nodup) (hcx : cy ≠ x)
@@ -164,9 +163,9 @@ theorem zipLoop {x y tx ty tz cy : Fin T} (hreg : [x, y, tx, ty, tz].Nodup) (hcx
             (bitSymbol p :: S.R tx)) ty (bitSymbol q :: S.R ty))
             tz (bitSymbol (f s p q).2 :: S.R tz) } with hS₁
       have h1x : S₁.R x = xs.map bitSymbol := by
-        simp [hS₁, Function.update_of_ne, *, Ne.symm]
+        simp [Function.update_of_ne, *]
       obtain ⟨v', hu, hc, hsc, he⟩ := zipLoop hreg hcx hcy f xs ys (f s p q).1 v₁ S₁
-        (by simpa using hl) h1x (by simp [hS₁, Function.update_of_ne, *, Ne.symm])
+        (by simpa using hl) h1x (by simp [Function.update_of_ne, *])
         (by simp [hv₁]) (by rw [h1x])
       refine ⟨v', hu, hc, fun k h1 h2 h3 => ?_, ?_⟩
       · rw [hsc k h1 h2 h3]
@@ -272,7 +271,7 @@ theorem zipKeep_exec {x y tx ty tz cy : Fin T} (hreg : [x, y, tx, ty, tz].Nodup)
   refine ⟨v₃, by rw [hu₃, hu₂, hu₁], by rw [hsc₃, hsc₂, hc₁],
     fun k h1 h2 h3 => by rw [hsc₃, hsc₂, hsc₁ k h1 h2 h3],
     Exec.cast (Exec.seq he₁ (Exec.seq he₂ he₃)) ?_ ?_⟩
-  · simp [hR₁, zipRegs, movedR, Function.update_of_ne, *, Ne.symm]; ring
+  · simp [zipRegs, movedR, Function.update_of_ne, *, Ne.symm]; ring
   · congr 2
     simp only [hR₁, zipRegs]
     regs_ext
@@ -377,7 +376,7 @@ theorem baddTo_exec {a b tx ty tz cy : Fin T} (hreg : [a, b, tx, ty, tz].Nodup)
     fun k h1 h2 h3 => by rw [hsc₄, hsc₃, hsc₂, hsc₁ k h1 h2 h3],
     Exec.cast (Exec.seq he₁ (Exec.seq he₂ (Exec.seq he₃ he₄))) ?_ ?_⟩
   · rw [hsc₄, hsc₃, hsc₂, hc₁, zipFin_addF_lt false L x y hx hy]; simp
-  · simp [hR₁, zipRegs, movedR, Function.update_of_ne, *, Ne.symm]; ring
+  · simp [zipRegs, movedR, Function.update_of_ne, *, Ne.symm]; ring
   · congr 2
     rw [binSyms_mod, binSyms_eq]
     simp only [hR₁, zipRegs, Bool.toNat_false, Nat.add_zero]
@@ -522,7 +521,7 @@ theorem bpad_exec {a eR t₁ t₂ : Fin T} (hreg : [a, eR, t₁, t₂].Nodup) {L
         (movedR S.R a t₁ id (S.R a)) t₁) } with hS₂
   obtain ⟨v₃, hu₃, he₃⟩ := moveR_exec body t₁ a (Ne.symm ‹a ≠ t₁›) id v₂ S₂
   refine ⟨v₃, by rw [hu₃, hu₂, hu₁], Exec.cast (Exec.seq he₁ (Exec.seq he₂ he₃)) ?_ ?_⟩
-  · simp [hS₂, movedR, Function.update_of_ne, *, Ne.symm]; ring
+  · simp [movedR, Function.update_of_ne, *, Ne.symm]; ring
   · congr 2
     rw [binSyms_pad L _ x hx]
     simp only [hS₂, ← ha]
@@ -541,13 +540,13 @@ theorem bpad1_exec {a t : Fin T} (hat : a ≠ t) {L x : ℕ} (hx : x < 2 ^ L) (v
   obtain ⟨v₁, hu₁, he₁⟩ := moveR_exec body a t hat id v S
   have he₂ := Exec.act (body := body) (.push (.rt t) (fun _ => bitSymbol false) .done)
     (mk v₁ { S with R := movedR S.R a t id (S.R a) })
-  simp only [Action.run, mk_var, mk_stk, get_rt, update_rt, store_mk, run_done] at he₂
+  simp only [Action.run, mk_var, mk_stk, get_rt, update_rt, store_mk] at he₂
   obtain ⟨v₃, hu₃, he₃⟩ := moveR_exec body t a hat.symm id v₁
     { S with
       R := Function.update (movedR S.R a t id (S.R a)) t
         (bitSymbol false :: movedR S.R a t id (S.R a) t) }
   refine ⟨v₃, by rw [hu₃, hu₁], Exec.cast (Exec.seq he₁ (Exec.seq he₂ he₃)) ?_ ?_⟩
-  · simp [movedR, Function.update_of_ne hat, ht, ha]; ring
+  · simp [movedR, ht, ha]; ring
   · congr 2
     rw [binSyms_pad L 1 x hx]
     regs_ext
@@ -569,21 +568,21 @@ theorem bwiden_exec {a wR cnt t₁ t₂ : Fin T} (hreg : [a, wR, cnt, t₁, t₂
     ‹cnt ≠ t₁› v S ht₁
   set R₁ := Function.update S.R cnt (List.replicate (S.R wR).length tick ++ S.R cnt) with hR₁
   obtain ⟨v₂, hu₂, he₂⟩ := usub_exec body (a := a) (b := cnt) (t := t₁) ‹a ≠ cnt› ‹a ≠ t₁›
-    ‹cnt ≠ t₁› v₁ { S with R := R₁ } (by simp [hR₁, Function.update_of_ne, *, Ne.symm])
+    ‹cnt ≠ t₁› v₁ { S with R := R₁ } (by simp [Function.update_of_ne, *, Ne.symm])
   set R₂ := Function.update R₁ cnt ((R₁ cnt).drop (R₁ a).length) with hR₂
   have h2c : R₂ cnt = List.replicate (W - L) tick := by
-    simp [hR₂, hR₁, Function.update_of_ne, *, Ne.symm, List.drop_replicate]
+    simp [Function.update_of_ne, *, List.drop_replicate]
   obtain ⟨v₃, hu₃, he₃⟩ := bpad_exec body (a := a) (eR := cnt) (t₁ := t₁) (t₂ := t₂)
-    (by regs_nodup) hx v₂ { S with R := R₂ } (by simp [hR₂, hR₁, Function.update_of_ne, *, Ne.symm])
-    (by simp [hR₂, hR₁, Function.update_of_ne, *, Ne.symm])
-    (by simp [hR₂, hR₁, Function.update_of_ne, *, Ne.symm])
+    (by regs_nodup) hx v₂ { S with R := R₂ } (by simp [Function.update_of_ne, *])
+    (by simp [Function.update_of_ne, *, Ne.symm])
+    (by simp [Function.update_of_ne, *, Ne.symm])
   obtain ⟨v₄, hu₄, he₄⟩ := uclear_exec body cnt v₃
     { S with R := Function.update R₂ a (binSyms (L + (R₂ cnt).length) x) }
   refine ⟨v₄, by rw [hu₄, hu₃, hu₂, hu₁], Exec.cast (Exec.seq he₁ (Exec.seq he₂
     (Exec.seq he₃ he₄))) ?_ ?_⟩
   · simp only [h2c, List.length_replicate, Function.update_of_ne ‹a ≠ cnt›.symm,
-      Function.update_self]
-    simp [hR₁, ha, Function.update_of_ne, *, Ne.symm]
+      ]
+    simp [Function.update_of_ne, *]
     omega
   · congr 2
     rw [h2c, List.length_replicate, show L + (W - L) = W by omega]
@@ -606,7 +605,7 @@ theorem bmoveLow_exec {s t d : Fin T} (hst : s ≠ t) (hdt : d ≠ t) (v : HS T 
   obtain ⟨v₁, hu₁, he₁⟩ := moveR_exec body s t hst id v S
   have he₂ := Exec.act (body := body) (dropTop t .done)
     (mk v₁ { S with R := movedR S.R s t id (S.R s) })
-  simp only [dropTop, Action.run, mk_var, mk_stk, get_rt, update_rt, store_mk, run_done] at he₂
+  simp only [dropTop, Action.run, mk_var, mk_stk, get_rt, update_rt, store_mk] at he₂
   obtain ⟨v₃, hu₃, he₃⟩ := moveR_exec body t d hdt.symm id v₁
     { S with
       R := Function.update (movedR S.R s t id (S.R s)) t (movedR S.R s t id (S.R s) t).tail }
@@ -614,8 +613,8 @@ theorem bmoveLow_exec {s t d : Fin T} (hst : s ≠ t) (hdt : d ≠ t) (v : HS T 
   · simp [movedR, ht, List.tail_reverse]; ring
   · congr 2
     funext k
-    simp only [Function.update_apply, movedR, List.map_id, ht, List.append_nil, List.tail_reverse,
-      List.reverse_reverse]
+    simp only [Function.update_apply, movedR, List.map_id, ht, List.append_nil, 
+      ]
     split_ifs <;> simp_all
 
 /-- Shift: push `g v` onto `s`, then drop the last symbol of `s` through `t`. On a numeral of
@@ -630,7 +629,7 @@ theorem bshift_exec {s t : Fin T} (hst : s ≠ t) (g : HS T Q A U → Fin (A + 4
       Exec body (bshift s t g) (mk v S) (4 * (S.R s).length + 8)
         (mk v' { S with R := Function.update S.R s (g v :: S.R s).dropLast }) := by
   have he₁ := Exec.act (body := body) (.push (.rt s) g .done) (mk v S)
-  simp only [Action.run, mk_var, mk_stk, get_rt, update_rt, store_mk, run_done] at he₁
+  simp only [Action.run, mk_var, mk_stk, get_rt, update_rt, store_mk] at he₁
   obtain ⟨v₂, hu₂, he₂⟩ := bmoveLow_exec body hst hst v
     { S with R := Function.update S.R s (g v :: S.R s) } (by simp [Function.update_of_ne hst.symm, ht])
   refine ⟨v₂, hu₂, Exec.cast (Exec.seq he₁ he₂) ?_ ?_⟩

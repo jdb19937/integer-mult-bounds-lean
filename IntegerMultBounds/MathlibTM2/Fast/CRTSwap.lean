@@ -38,7 +38,6 @@ namespace IntegerMultBounds.MathlibTM2.Fast
 open IntegerMultBounds IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.Stack IntegerMultBounds.MathlibTM2 IntegerMultBounds.MathlibTM2.Host
   IntegerMultBounds.MathlibTM2.Node
 
-set_option linter.unusedSimpArgs false
 
 variable {T Q A : ℕ} {U P : Type} {body : P → Pr P T Q A U}
 
@@ -187,7 +186,7 @@ theorem crtEncP_runs {u tu e t : Fin T} (hreg : [u, tu, e, t].Nodup) (R : Regs T
   refine crtRuns_mono (crtRuns_congr h ?_) (by nlinarith)
   funext k
   by_cases k1 : k = u
-  · rw [k1]; simp [crtForRegs, Ψ, ‹u ≠ e›]
+  · rw [k1]; simp [crtForRegs, ‹u ≠ e›]
   · by_cases k2 : k = tu
     · rw [k2]; simp [crtForRegs, Ψ, Ne.symm ‹u ≠ tu›, ‹tu ≠ e›, htu]
     · simp [crtForRegs, k1, k2, Ψ]
@@ -429,7 +428,7 @@ lemma crtHdrBits_value (u v h w : ℕ) (e : List Bool) :
   intro k
   fin_cases k
   · simp [crtHdrBits, BinaryInterchangeRun.values, crt_value_replicate_false, Counter.value]
-  · simp [crtHdrBits, BinaryInterchangeRun.values, Counter.value]
+  · simp [crtHdrBits, BinaryInterchangeRun.values]
   · simp [crtHdrBits, BinaryInterchangeRun.values, crt_value_replicate_false]
   · simp [crtHdrBits, BinaryInterchangeRun.values, GrowingCounterData.empty_value]
   · simp [crtHdrBits, BinaryInterchangeRun.values, GrowingCounterData.empty_value]
@@ -471,7 +470,7 @@ theorem crtHdrP_runs {uU vU aJ aK e3B tu t₁ t₂ : Fin T} {hdr : Fin 5 → Fin
   have s₁ := crtPush_runs (body := body) (hdr 0) (bitSymbol true) R
   set R₁ := Function.update R (hdr 0) (bitSymbol true :: R (hdr 0)) with hR₁
   have s₂ := crtZeroBits_runs (body := body) ‹uU ≠ hdr 0› ‹uU ≠ t₁› (Ne.symm ‹t₁ ≠ hdr 0›) R₁
-    (by simp [hR₁, ‹t₁ ≠ hdr 0›, Ne.symm ‹t₁ ≠ hdr 0›, ht₁])
+    (by simp [hR₁, ‹t₁ ≠ hdr 0›, ht₁])
   set R₂ := Function.update R₁ (hdr 0) (binSyms (R₁ uU).length 0 ++ R₁ (hdr 0)) with hR₂
   have s₃ := crtPush_runs (body := body) (hdr 0) separator R₂
   set R₃ := Function.update R₂ (hdr 0) (separator :: R₂ (hdr 0)) with hR₃
@@ -482,25 +481,25 @@ theorem crtHdrP_runs {uU vU aJ aK e3B tu t₁ t₂ : Fin T} {hdr : Fin 5 → Fin
   set R₅ := Function.update R₄ (hdr 1) (separator :: R₄ (hdr 1)) with hR₅
   -- header 2
   have s₆ := crtBcopy_runs (body := body) (a := e3B) (c := hdr 2) (t₁ := t₁) (t₂ := t₂)
-    (by regs_nodup) R₅ (by simp [hR₅, hR₄, hR₃, hR₂, hR₁, ‹t₁ ≠ hdr 0›, Ne.symm ‹t₁ ≠ hdr 0›,
-      ‹t₁ ≠ hdr 1›, Ne.symm ‹t₁ ≠ hdr 1›, ht₁])
-    (by simp [hR₅, hR₄, hR₃, hR₂, hR₁, ‹t₂ ≠ hdr 0›, Ne.symm ‹t₂ ≠ hdr 0›, ‹t₂ ≠ hdr 1›, Ne.symm ‹t₂ ≠ hdr 1›, ht₂])
+    (by regs_nodup) R₅ (by simp [hR₅, hR₄, hR₃, hR₂, hR₁, ‹t₁ ≠ hdr 0›, 
+      ‹t₁ ≠ hdr 1›, ht₁])
+    (by simp [hR₅, hR₄, hR₃, hR₂, hR₁, ‹t₂ ≠ hdr 0›, ‹t₂ ≠ hdr 1›, ht₂])
   set R₆ := Function.update R₅ (hdr 2) (R₅ e3B ++ R₅ (hdr 2)) with hR₆
   have s₇ := crtZeroBits_runs (body := body) ‹vU ≠ hdr 2› ‹vU ≠ t₁› (Ne.symm ‹t₁ ≠ hdr 2›) R₆
-    (by simp [hR₆, hR₅, hR₄, hR₃, hR₂, hR₁, ‹t₁ ≠ hdr 0›, Ne.symm ‹t₁ ≠ hdr 0›, ‹t₁ ≠ hdr 1›, Ne.symm ‹t₁ ≠ hdr 1›,
-      ‹t₁ ≠ hdr 2›, Ne.symm ‹t₁ ≠ hdr 2›, ht₁])
+    (by simp [hR₆, hR₅, hR₄, hR₃, hR₂, hR₁, ‹t₁ ≠ hdr 0›, ‹t₁ ≠ hdr 1›, 
+      ‹t₁ ≠ hdr 2›, ht₁])
   set R₇ := Function.update R₆ (hdr 2) (binSyms (R₆ vU).length 0 ++ R₆ (hdr 2)) with hR₇
   have s₈ := crtPush_runs (body := body) (hdr 2) separator R₇
   set R₈ := Function.update R₇ (hdr 2) (separator :: R₇ (hdr 2)) with hR₈
   -- header 3
   have s₉ := crtEncP_runs (body := body) (u := aJ) (tu := tu) (e := hdr 3) (t := t₁)
     (by regs_nodup) R₈
-    (by simp [hR₈, hR₇, hR₆, hR₅, hR₄, hR₃, hR₂, hR₁, ‹tu ≠ hdr 0›, Ne.symm ‹tu ≠ hdr 0›, ‹tu ≠ hdr 1›, Ne.symm ‹tu ≠ hdr 1›,
-      ‹tu ≠ hdr 2›, Ne.symm ‹tu ≠ hdr 2›, htu])
-    (by simp [hR₈, hR₇, hR₆, hR₅, hR₄, hR₃, hR₂, hR₁, ‹hdr 0 ≠ hdr 3›, Ne.symm ‹hdr 0 ≠ hdr 3›, ‹hdr 1 ≠ hdr 3›, Ne.symm ‹hdr 1 ≠ hdr 3›,
-      ‹hdr 2 ≠ hdr 3›, Ne.symm ‹hdr 2 ≠ hdr 3›, hh])
-    (by simp [hR₈, hR₇, hR₆, hR₅, hR₄, hR₃, hR₂, hR₁, ‹t₁ ≠ hdr 0›, Ne.symm ‹t₁ ≠ hdr 0›, ‹t₁ ≠ hdr 1›, Ne.symm ‹t₁ ≠ hdr 1›,
-      ‹t₁ ≠ hdr 2›, Ne.symm ‹t₁ ≠ hdr 2›, ht₁])
+    (by simp [hR₈, hR₇, hR₆, hR₅, hR₄, hR₃, hR₂, hR₁, ‹tu ≠ hdr 0›, ‹tu ≠ hdr 1›, 
+      ‹tu ≠ hdr 2›, htu])
+    (by simp [hR₈, hR₇, hR₆, hR₅, hR₄, hR₃, hR₂, hR₁, Ne.symm ‹hdr 0 ≠ hdr 3›, Ne.symm ‹hdr 1 ≠ hdr 3›,
+      Ne.symm ‹hdr 2 ≠ hdr 3›, hh])
+    (by simp [hR₈, hR₇, hR₆, hR₅, hR₄, hR₃, hR₂, hR₁, ‹t₁ ≠ hdr 0›, ‹t₁ ≠ hdr 1›, 
+      ‹t₁ ≠ hdr 2›, ht₁])
   set R₉ := Function.update R₈ (hdr 3)
     ((GrowingCounterData.advance (R₈ aJ).length []).map bitSymbol) with hR₉
   have s₁₀ := crtPush_runs (body := body) (hdr 3) separator R₉
@@ -508,12 +507,12 @@ theorem crtHdrP_runs {uU vU aJ aK e3B tu t₁ t₂ : Fin T} {hdr : Fin 5 → Fin
   -- header 4
   have s₁₁ := crtEncP_runs (body := body) (u := aK) (tu := tu) (e := hdr 4) (t := t₁)
     (by regs_nodup) R₁₀
-    (by simp [hR₁₀, hR₉, hR₈, hR₇, hR₆, hR₅, hR₄, hR₃, hR₂, hR₁, ‹tu ≠ hdr 0›, Ne.symm ‹tu ≠ hdr 0›,
-      ‹tu ≠ hdr 1›, Ne.symm ‹tu ≠ hdr 1›, ‹tu ≠ hdr 2›, Ne.symm ‹tu ≠ hdr 2›, ‹tu ≠ hdr 3›, Ne.symm ‹tu ≠ hdr 3›, htu])
-    (by simp [hR₁₀, hR₉, hR₈, hR₇, hR₆, hR₅, hR₄, hR₃, hR₂, hR₁, ‹hdr 0 ≠ hdr 4›, Ne.symm ‹hdr 0 ≠ hdr 4›,
-      ‹hdr 1 ≠ hdr 4›, Ne.symm ‹hdr 1 ≠ hdr 4›, ‹hdr 2 ≠ hdr 4›, Ne.symm ‹hdr 2 ≠ hdr 4›, ‹hdr 3 ≠ hdr 4›, Ne.symm ‹hdr 3 ≠ hdr 4›, hh])
-    (by simp [hR₁₀, hR₉, hR₈, hR₇, hR₆, hR₅, hR₄, hR₃, hR₂, hR₁, ‹t₁ ≠ hdr 0›, Ne.symm ‹t₁ ≠ hdr 0›,
-      ‹t₁ ≠ hdr 1›, Ne.symm ‹t₁ ≠ hdr 1›, ‹t₁ ≠ hdr 2›, Ne.symm ‹t₁ ≠ hdr 2›, ‹t₁ ≠ hdr 3›, Ne.symm ‹t₁ ≠ hdr 3›, ht₁])
+    (by simp [hR₁₀, hR₉, hR₈, hR₇, hR₆, hR₅, hR₄, hR₃, hR₂, hR₁, ‹tu ≠ hdr 0›, 
+      ‹tu ≠ hdr 1›, ‹tu ≠ hdr 2›, ‹tu ≠ hdr 3›, htu])
+    (by simp [hR₁₀, hR₉, hR₈, hR₇, hR₆, hR₅, hR₄, hR₃, hR₂, hR₁, Ne.symm ‹hdr 0 ≠ hdr 4›,
+      Ne.symm ‹hdr 1 ≠ hdr 4›, Ne.symm ‹hdr 2 ≠ hdr 4›, Ne.symm ‹hdr 3 ≠ hdr 4›, hh])
+    (by simp [hR₁₀, hR₉, hR₈, hR₇, hR₆, hR₅, hR₄, hR₃, hR₂, hR₁, ‹t₁ ≠ hdr 0›, 
+      ‹t₁ ≠ hdr 1›, ‹t₁ ≠ hdr 2›, ‹t₁ ≠ hdr 3›, ht₁])
   set R₁₁ := Function.update R₁₀ (hdr 4)
     ((GrowingCounterData.advance (R₁₀ aK).length []).map bitSymbol) with hR₁₁
   have s₁₂ := crtPush_runs (body := body) (hdr 4) separator R₁₁
@@ -537,13 +536,13 @@ theorem crtHdrP_runs {uU vU aJ aK e3B tu t₁ t₂ : Fin T} {hdr : Fin 5 → Fin
     · obtain ⟨k, rfl⟩ := hr
       rw [crtHdrRegs_hdr hinj]
       fin_cases k
-      · simp [hR₁₁, hR₁₀, hR₉, hR₈, hR₇, hR₆, hR₅, hR₄, hR₃, hR₂, hR₁, hh, lu, crtHdrBits,
+      · simp [crtHdrBits,
           binSyms_zero_right, List.map_replicate, *]
-      · simp [hR₁₁, hR₁₀, hR₉, hR₈, hR₇, hR₆, hR₅, hR₄, hR₃, hR₂, hR₁, hh, crtHdrBits, *]
-      · simp [hR₁₁, hR₁₀, hR₉, hR₈, hR₇, hR₆, hR₅, hR₄, hR₃, hR₂, hR₁, hh, crtHdrBits,
-          binSyms_zero_right, List.map_replicate, lv, he3, *]
-      · simp [hR₁₁, hR₁₀, hR₉, hR₈, hR₇, hR₆, hR₅, hR₄, hR₃, hR₂, hR₁, hh, crtHdrBits, lj, *]
-      · simp [hR₁₁, hR₁₀, hR₉, hR₈, hR₇, hR₆, hR₅, hR₄, hR₃, hR₂, hR₁, hh, crtHdrBits, lk, *]
+      · simp [crtHdrBits, *]
+      · simp [crtHdrBits,
+          binSyms_zero_right, List.map_replicate, *]
+      · simp [crtHdrBits, *]
+      · simp [crtHdrBits, *]
     · have hr' : ∀ k, hdr k ≠ r := fun k hk => hr ⟨k, hk⟩
       rw [crtHdrRegs_of_ne R _ _ _ _ e hr']
       simp [hR₁₁, hR₁₀, hR₉, hR₈, hR₇, hR₆, hR₅, hR₄, hR₃, hR₂, hR₁, Function.update_of_ne
@@ -756,7 +755,7 @@ theorem crtSwapStep_runs {body : F → Pr F T Q (prime + K) U}
     by_cases hr : ∃ k', hdr k' = r
     · obtain ⟨k', rfl⟩ := hr
       rw [Function.update_of_ne (hb str (by simp) k'), show R (hdr k') = [] from hι0 _]
-      fin_cases k' <;> simp [Function.update_apply, hdr_inj.eq_iff]
+      fin_cases k' <;> simp [hdr_inj.eq_iff]
     · have hr' : ∀ k', hdr k' ≠ r := fun k' hk' => hr ⟨k', hk'⟩
       simp only [Function.update_of_ne (Ne.symm (hr' 0)), Function.update_of_ne (Ne.symm (hr' 1)),
         Function.update_of_ne (Ne.symm (hr' 2)), Function.update_of_ne (Ne.symm (hr' 3)),

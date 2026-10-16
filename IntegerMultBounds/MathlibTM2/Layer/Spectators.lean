@@ -21,7 +21,6 @@ open IntegerMultBounds.Networks BinaryWalsh BinaryPhase
 
 variable {X Y : Type} {n k : ℕ}
 
-set_option linter.unusedSimpArgs false
 
 /-! ### Products of commuting kernels -/
 
@@ -71,10 +70,10 @@ lemma merge_flip (e : Fin k → Fin n) (he : Function.Injective e) (r : Fin n �
     by_cases hi : h.choose = i
     · rw [hi] at hj ⊢; subst hj; simp
     · have : t ≠ e i := fun ht => hi (he (hj.trans ht))
-      simp [Pi.single_apply, hi, this]
+      simp [hi, this]
   · rw [dite_eq_right h, dite_eq_right h]
     have : t ≠ e i := fun ht => h ⟨i, ht.symm⟩
-    simp [Pi.single_apply, this]
+    simp [this]
 
 lemma kBit_view (e : Fin k → Fin n) (he : Function.Injective e) (q : ZMod 4) (i : Fin k)
     (f : Arr Y n) : kBit q i (view e f) = view e (kBit q (e i) f) := by

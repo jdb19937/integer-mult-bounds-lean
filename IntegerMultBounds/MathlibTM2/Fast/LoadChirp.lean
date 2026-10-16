@@ -67,8 +67,6 @@ open IntegerMultBounds IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.St
   IntegerMultBounds.MathlibTM2.Layer IntegerMultBounds.MathlibTM2.Node
 open IntegerMultBounds.MathlibTM2.Fast IntegerMultBounds.MathlibTM2.Fast.ResampA IntegerMultBounds.MathlibTM2.Fast.TableVM IntegerMultBounds.MathlibTM2.Fast.TableNum IntegerMultBounds.MathlibTM2.Mult.Chirp
 
-set_option linter.unusedSimpArgs false
-set_option linter.unusedSectionVars false
 
 noncomputable section
 
@@ -155,7 +153,7 @@ theorem ldc_tickLoop (i j : Fin T) (hij : i ≠ j) (rest : List (Fin (A + 4))) :
       · congr 2
         funext k
         by_cases hk : k = j
-        · subst hk; simp [Function.update_of_ne hij.symm, List.replicate_succ']
+        · subst hk; simp [List.replicate_succ']
         · by_cases hk' : k = i
           · subst hk'; simp [hk]
           · simp [hk, hk']
@@ -659,7 +657,7 @@ theorem ldc_prep_runs {W w : ℕ} (wl nl : List (Fin (A + 4))) (hwl : wl.length 
   have hin : tblKV (ldcSt A p g N s w) [((54 : Fin 84), p), (55, g), (56, N), (57, s), (58, w)] := by
     intro e he
     simp only [List.mem_cons, List.mem_nil_iff, or_false] at he
-    rcases he with rfl | rfl | rfl | rfl | rfl <;> simp [ldcSt, Function.update_apply]
+    rcases he with rfl | rfl | rfl | rfl | rfl <;> simp [ldcSt]
   have s9 := ldc_hostClear_runs (body := body) (ι := ι) hrg hdisj wl nl hwl hnl hw
     (ldcSt A p g N s w) hst rfl hin hN hsN hW ρ8 (fun r => rfl)
   set ρ9 := Function.update (ldcSetVars ρ8 (List.finRange 84) []) (.c .ys)
@@ -683,16 +681,16 @@ theorem ldc_prep_runs {W w : ℕ} (wl nl : List (Fin (A + 4))) (hwl : wl.length 
       · subst hy
         simp [hρ10, hρ9, hρ8, hρ7, hρ6, hρ5, hρ4, hρ3, hρ2, hρ1, ldcSetVars_of, ldcSetTbl_of]
       · simp [hρ10, hρ9, hρ8, hρ7, hρ6, hρ5, hρ4, hρ3, hρ2, hρ1, ldcSetVars_of, ldcSetTbl_of,
-          Function.update_apply, hy]
-    all_goals try (simp [hρ10, hρ9, hρ8, hρ7, hρ6, hρ5, hρ4, hρ3, hρ2, hρ1, hT9, ldcSetVars_of,
+          hy]
+    all_goals try (simp [hρ10, hρ9, hρ8, hρ7, hρ6, hρ5, hρ4, hρ3, hρ2, hρ1, ldcSetVars_of,
       ldcSetTbl_of, Function.update_apply]; done)
     · rw [Function.update_of_ne (by simp), hρ10, Function.update_self, hT9, List.reverse_replicate]
       simp [hρ9, hρ8, hρ7, hρ6, hρ5, hρ4, hρ3, hρ2, hρ1, ldcSetVars_of, ldcSetTbl_of]
     rcases j with t | _ | _ | _ | _ | _ | _ | _
     · cases t <;> simp [hρ10, hρ9, hρ8, hρ7, hρ6, hρ5, hρ4, hρ3, hρ2, hρ1, ldcSetVars_of,
-        ldcSetTbl_of, Function.update_apply, htb, ldcIdle, ldcSt]
-    all_goals simp [hρ10, hρ9, hρ8, hρ7, hρ6, hρ5, hρ4, hρ3, hρ2, hρ1, hT9, ldcSetVars_of,
-      ldcSetTbl_of, Function.update_apply, htU, hsU]
+        ldcSetTbl_of, htb, ldcIdle, ldcSt]
+    all_goals simp [hρ10, hρ9, hρ8, hρ7, hρ6, hρ5, hρ4, hρ3, hρ2, hρ1, ldcSetVars_of,
+      ldcSetTbl_of, htU, hsU]
   · rw [hT9, hS10]
     simp only [List.length_replicate, List.length_finRange]
     unfold ldcAxisCost ldcLoadCost
@@ -779,10 +777,10 @@ theorem ldc_prep_hprep {W w p g d : ℕ} (t s : Fin d → ℕ) (xx : ldcX → Li
   · by_cases hy : y = .ys
     · subst hy
       simp [hys, ldc_cstream_axTab A w p g t s hk]
-    · simp [Function.update_apply, hy]
+    · simp [hy]
   all_goals try (simp [Function.update_apply, hcL]; done)
   rcases j with r | _ | _ | _ | _ | _ | _ | _
-  all_goals simp [Function.update_apply, hx, ldcCfg]
+  all_goals simp [hx, ldcCfg]
 
 /-- **The chirp stage without a loader hypothesis.** The kernel box of the pipeline
 (`cst_chirpBox_kernel`) with the loader `ldcPrep`: the caller registers carry the description
@@ -841,7 +839,7 @@ theorem ldChirpStage_exec (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ : SS
   rcases r with y | _ | _ | _ | _ | _ | _ | _ | _ | _ | _ | _ | j
   all_goals try (simp [Function.update_apply]; done)
   rcases j with r | _ | _ | _ | _ | _ | _ | _
-  all_goals simp [Function.update_apply, ldcCfg, hd1, hd2, ldcBlocks, hxx]
+  all_goals simp [ldcCfg, hd1, hd2, ldcBlocks, hxx]
 
 end Contract
 

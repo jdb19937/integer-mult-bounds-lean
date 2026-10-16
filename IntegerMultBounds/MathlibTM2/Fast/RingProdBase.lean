@@ -50,7 +50,6 @@ outputs are the symbolwise images of its input columns (`rp_runWord_stateless`,
 
 
 set_option maxRecDepth 10000
-set_option linter.unusedSimpArgs false
 
 namespace IntegerMultBounds.MathlibTM2.Fast
 
@@ -123,7 +122,7 @@ lemma rp_bitSymbol_ne_blank {A : ℕ} (b : Bool) : (bitSymbol b : Fin (A + 4)) �
 lemma rp_blank_not_mem_cells (A : ℕ) (hdr F G out : List Bool) (j : Fin 91) :
     blank ∉ rpCells A hdr F G out j := by
   unfold rpCells
-  split_ifs <;> simp [rp_bitSymbol_ne_blank, eq_comm]
+  split_ifs <;> simp [rp_bitSymbol_ne_blank]
 
 /-- The encoded vendored bank is the raw host bank. -/
 lemma rp_map_bank (A : ℕ) (hdr F G out : List Bool) :

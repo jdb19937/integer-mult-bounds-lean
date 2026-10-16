@@ -36,7 +36,6 @@ open IntegerMultBounds.Networks.Shared50ModularControl (prime)
 open IntegerMultBounds.Schoenhage.Schedule (topN)
 open Filter
 
-set_option linter.unusedSimpArgs false
 
 noncomputable section
 
@@ -329,25 +328,25 @@ section Final
 variable {n : ℕ} {R : Regs mnT bdA}
 
 lemma bdRndF_dwn : bdRndF n R (mnIo .dwn) = List.replicate (dsW n) tick := by
-  simp [bdRndF, Function.update_apply]
+  simp [bdRndF]
 
 lemma bdRndF_rwn : bdRndF n R (mnRnd .wn) = List.replicate (dsW n) tick := by
-  simp [bdRndF, Function.update_apply]
+  simp [bdRndF]
 
 lemma bdRndF_rmn : bdRndF n R (mnRnd .mn) = List.replicate (bdMw n) tick := by
-  simp [bdRndF, Function.update_apply]
+  simp [bdRndF]
 
 lemma bdRndF_rnn : bdRndF n R (mnRnd .nn) = List.replicate (dsTopN (bdMw n)) tick := by
-  simp [bdRndF, Function.update_apply]
+  simp [bdRndF]
 
 lemma bdRndF_rsq : bdRndF n R (mnRnd .sq) = binSyms (bdMw n) (S n * S n) := by
-  simp [bdRndF, Function.update_apply]
+  simp [bdRndF]
 
 lemma bdRndF_rwo : bdRndF n R (mnRnd .wo) = List.replicate (bdWo n) tick := by
-  simp [bdRndF, Function.update_apply]
+  simp [bdRndF]
 
 lemma bdRndF_owr : bdRndF n R (mnOutR .wr) = List.replicate (bdWo n) tick := by
-  simp [bdRndF, Function.update_apply]
+  simp [bdRndF]
 
 /-- Off the seven registers the file is unchanged. -/
 lemma bdRndF_off {k : Fin mnT} (hk : ∀ r ∈ bdRndRegs, mnRg r ≠ k) : bdRndF n R k = R k := by

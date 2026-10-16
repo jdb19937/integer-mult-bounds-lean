@@ -84,7 +84,6 @@ namespace IntegerMultBounds.MathlibTM2.Host
 
 open IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.Stack IntegerMultBounds.MathlibTM2 IntegerMultBounds.MathlibTM2.Layer
 
-set_option linter.unusedSimpArgs false
 
 variable {T Q A : ℕ} {U : Type} {P : Type} (body : P → Pr P T Q A U)
 
@@ -157,7 +156,7 @@ theorem moveR_loop (i j : Fin T) (hij : i ≠ j) (f : Fin (A + 4) → Fin (A + 4
       congr 2
       funext k
       by_cases hk : k = j
-      · subst hk; simp [movedR, Function.update_of_ne hij.symm]
+      · subst hk; simp [movedR]
       · by_cases hk' : k = i
         · subst hk'; simp [movedR, hk]
         · simp [movedR, hk, hk']
@@ -219,7 +218,7 @@ theorem zeroStep_loop (c t dst : Fin T) (z : Fin (A + 4)) (h1 : c ≠ t) (h2 : d
               (z :: S.R dst) } := by
         simp [zeroStep, peekR, Action.run, hc, update_rt, Function.update_of_ne h1,
           Function.update_of_ne h2, Function.update_of_ne h3, Function.update_of_ne h1.symm,
-          Function.update_of_ne h2.symm, Function.update_of_ne h3.symm]
+          Function.update_of_ne h2.symm]
       obtain ⟨v', R', hv, he, hc', ht', hd', hoth⟩ :=
         ih { v with sym := some e, flag := cl.head?.isSome } { S with
           R := Function.update (Function.update (Function.update S.R c cl) t (e :: S.R t)) dst
@@ -265,8 +264,8 @@ theorem copyStep_loop (c t src dst : Fin T) (h1 : c ≠ t) (h2 : src ≠ c) (h3 
             Function.update_of_ne h1, Function.update_of_ne h2, Function.update_of_ne h3,
             Function.update_of_ne h4, Function.update_of_ne h5, Function.update_of_ne h6,
             Function.update_of_ne h1.symm, Function.update_of_ne h2.symm,
-            Function.update_of_ne h3.symm, Function.update_of_ne h4.symm,
-            Function.update_of_ne h5.symm, Function.update_of_ne h6.symm]
+            Function.update_of_ne h4.symm,
+            ]
         obtain ⟨v', R', hv, he, hc', ht', hs', hd', hoth⟩ := ih ys rest
           { v with sym := some x, flag := cl.head?.isSome } { S with
             R := Function.update (Function.update (Function.update (Function.update S.R c cl) t
@@ -312,7 +311,7 @@ theorem dropStep_loop (c t src : Fin T) (h1 : c ≠ t) (h2 : src ≠ c) (h3 : sr
           simp [dropStep, peekR, Action.run, hc, hs, update_rt,
             Function.update_of_ne h1, Function.update_of_ne h2, Function.update_of_ne h3,
             Function.update_of_ne h1.symm, Function.update_of_ne h2.symm,
-            Function.update_of_ne h3.symm]
+            ]
         obtain ⟨v', R', hv, he, hc', ht', hs', hoth⟩ := ih ys rest
           { v with sym := some x, flag := cl.head?.isSome } { S with
             R := Function.update (Function.update (Function.update S.R c cl) t

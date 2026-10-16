@@ -19,7 +19,6 @@ namespace IntegerMultBounds.MathlibTM2.Layer
 
 open IntegerMultBounds.Networks BinaryWalsh BinaryPhase BinaryColumns ComplexEndpoints
 
-set_option linter.unusedSimpArgs false
 
 variable {Y : Type} {h k : ℕ}
 
@@ -62,8 +61,8 @@ lemma ofCols_shift_single (c : Fin k) (j : Fin h) (x : BinaryColumns.Address h k
   · subst hc
     by_cases hj : j' = j
     · subst hj; simp [bitIdx]
-    · simp [Function.update_self, Pi.single_apply, hj, bitIdx, finProdFinEquiv.apply_eq_iff_eq]
-  · simp [Function.update_of_ne hc, Pi.single_apply, bitIdx, finProdFinEquiv.apply_eq_iff_eq, hc]
+    · simp [Function.update_self, hj, bitIdx, finProdFinEquiv.apply_eq_iff_eq]
+  · simp [bitIdx, finProdFinEquiv.apply_eq_iff_eq, hc]
 
 lemma lift_columnKernel (c : Fin k) (j : Fin h) (q : ZMod 4) (f : Arr Y (h * k)) :
     lift (fun g => columnKernel c q (Pi.single j 1) g) f = kBit q (bitIdx j c) f := by
@@ -191,7 +190,7 @@ lemma basisMap_single (v : BinaryWalsh.Address h) (j : Fin h) :
   have h2 : (Pi.single j 1 : BinaryWalsh.Address h) + Pi.single j 1 = 0 := by
     funext i; by_cases hi : i = j
     · subst hi; simp; decide
-    · simp [Pi.single_apply, hi]
+    · simp [hi]
   simp only [basisMap, Pi.single_eq_same, one_smul]
   calc Pi.single j 1 + (v + Pi.single j 1) = v + (Pi.single j 1 + Pi.single j 1) := by abel
     _ = v := by rw [h2, add_zero]
@@ -200,7 +199,7 @@ lemma basisMap_invol (v : BinaryWalsh.Address h) (j : Fin h) (hv : v j = 1) (a :
     basisMap v j (basisMap v j a) = a := by
   have h2 : (1 : ZMod 2) + 1 = 0 := by decide
   have hj : basisMap v j a j = a j := by
-    simp [basisMap, hv, h2, CharTwo.add_self_eq_zero]
+    simp [basisMap, hv, CharTwo.add_self_eq_zero]
   rw [basisMap, hj, basisMap, add_assoc, ← add_smul, CharTwo.add_self_eq_zero, zero_smul, add_zero]
 
 lemma pullCols_invol (v : BinaryWalsh.Address h) (j : Fin h) (hv : v j = 1)
@@ -232,8 +231,8 @@ theorem vectorFactor_neg (w : BinaryWalsh.Address h) (f : BinaryColumns.Arrays h
         intro f
         simp only [List.map_cons, List.prod_cons, Module.End.mul_apply, ih]
         funext x
-        simp only [columnKernel_apply, conjA, phase_one, phase_neg_one, star_add, star_mul', star_star,
-          star_div₀, star_ofNat, Complex.star_def, map_add, map_sub, map_one, Complex.conj_I]
+        simp only [columnKernel_apply, conjA, phase_one, phase_neg_one, star_add, star_mul', 
+          star_div₀, star_ofNat, Complex.star_def, map_sub, map_one, Complex.conj_I]
   have h1 : (List.ofFn fun c : Fin k => columnKernel c (-1) w) =
       (List.ofFn fun c : Fin k => c).map fun c => columnKernel c (-1) w := by
     rw [List.map_ofFn]; rfl

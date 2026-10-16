@@ -39,7 +39,6 @@ namespace IntegerMultBounds.MathlibTM2.Host
 
 open IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.Stack
 
-set_option linter.unusedSimpArgs false
 
 variable {T T' Q A : ℕ} {U : Type}
 

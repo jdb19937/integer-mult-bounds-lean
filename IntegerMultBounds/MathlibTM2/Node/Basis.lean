@@ -33,7 +33,6 @@ open IntegerMultBounds IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.St
 open IntegerMultBounds.Networks (BinaryWalsh.Address)
 open IntegerMultBounds.MathlibTM2.Layer (ZArr encZ pullM colBits merge ofCols toCols bitIdx basisMap m)
 
-set_option linter.unusedSimpArgs false
 
 /-! ### The slot XORs of a basis change -/
 
@@ -86,7 +85,7 @@ lemma basisFold_apply (j : Fin m) :
       by_cases hi : i = j'
       · subst hi
         simp [hnd.1]
-      · simp [Pi.single_apply, hi]
+      · simp [hi]
 
 /-- **The basis change as slot XORs.** -/
 lemma basisFold_eq (v : BinaryWalsh.Address m) (j : Fin m) (hv : v j = 1) :

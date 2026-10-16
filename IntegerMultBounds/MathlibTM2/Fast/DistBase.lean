@@ -31,8 +31,6 @@ namespace IntegerMultBounds.MathlibTM2.Fast.TableVM
 open IntegerMultBounds IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.Stack IntegerMultBounds.MathlibTM2.Node IntegerMultBounds.MathlibTM2.Host
   IntegerMultBounds.MathlibTM2.Layer
 
-set_option linter.unusedSimpArgs false
-set_option linter.unusedSectionVars false
 
 /-! ### The contract -/
 
@@ -272,8 +270,8 @@ theorem dsOut_cons (val : Fin n → ℕ) (o : Fin T) (x : Fin n) (b : DsMode)
       dsOut val l k ++ if o = k then dsBlk b (val x) else [] := by
   unfold dsOut
   by_cases h : o = k
-  · simp [List.filter_cons, h]
-  · simp [List.filter_cons, h]
+  · simp [h]
+  · simp [h]
 
 theorem dsOut_append (val : Fin n → ℕ) (l₁ l₂ : List (Fin T × Fin n × DsMode)) (k : Fin T) :
     dsOut (A := A) val (l₁ ++ l₂) k = dsOut val l₂ k ++ dsOut val l₁ k := by

@@ -56,7 +56,6 @@ namespace IntegerMultBounds.MathlibTM2.Host
 
 open IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.Stack IntegerMultBounds.MathlibTM2
 
-set_option linter.unusedSimpArgs false
 
 variable {T Q A : ℕ} {U : Type} {P : Type} (body : P → Pr P T Q A U)
 
@@ -279,10 +278,10 @@ theorem radixPass_loop (src ctr ctmp tc ttmp buf b0 b1 ck : Fin T)
         rw [hbk1] at k1 k2 k3 k4 k5 k6 ⊢
         by_cases kb1 : k = b1
         · subst kb1
-          simp [hb, hb', List.filter_cons]
+          simp [hb']
         by_cases kb0 : k = b0
         · subst kb0
-          simp [hb, hb', List.filter_cons, Function.update_of_ne g1,
+          simp [hb', Function.update_of_ne g1,
             Function.update_of_ne (Ne.symm s6)]
         by_cases ks : k = src
         · subst ks
@@ -292,11 +291,11 @@ theorem radixPass_loop (src ctr ctmp tc ttmp buf b0 b1 ck : Fin T)
         rw [hbk1] at k1 k2 k3 k4 k5 k6 ⊢
         by_cases kb1 : k = b1
         · subst kb1
-          simp [hb, hb', List.filter_cons, Function.update_of_ne (Ne.symm g1),
+          simp [hb', Function.update_of_ne (Ne.symm g1),
             Function.update_of_ne (Ne.symm s7)]
         by_cases kb0 : k = b0
         · subst kb0
-          simp [hb, hb', List.filter_cons, Function.update_of_ne g1]
+          simp [hb', Function.update_of_ne g1]
         by_cases ks : k = src
         · subst ks
           simp [Function.update_of_ne s6, Function.update_of_ne s7]

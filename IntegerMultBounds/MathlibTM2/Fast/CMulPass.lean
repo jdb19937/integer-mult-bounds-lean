@@ -26,7 +26,6 @@ namespace IntegerMultBounds.MathlibTM2.Fast
 
 open IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.Stack IntegerMultBounds.MathlibTM2 IntegerMultBounds.MathlibTM2.Host IntegerMultBounds.MathlibTM2.Layer IntegerMultBounds.MathlibTM2.Node
 
-set_option linter.unusedSimpArgs false
 
 /-- The coefficient symbols of a Gaussian integer. -/
 abbrev csyms (A w : ℕ) (N : GaussianInt) : List (Fin (A + 4)) := coeffSyms A w (red w N)
@@ -138,16 +137,16 @@ theorem split_runs (hcr : Function.Injective cr) (hA : 96 ≤ A) {I Sv O₀ O₁
     simp only [Fin.zero_eta, Fin.isValue, Matrix.cons_val_fin_one, hI]
     exact getD_cs_append N rest t
   · fin_cases i
-    simp [Function.update_apply, h01, h02, h03, h04, h05, hI]
+    simp [h01, h02, h03, h04, h05, hI]
   · fin_cases j
-    · simp [Function.update_apply, h12, h13, h14, h15, splitD]
+    · simp [h12, h13, h14, h15, splitD]
       rfl
-    · simp [Function.update_apply, h23, h24, h25, splitD, splitCol, pairRe_pairSym hA4]
+    · simp [h23, h24, h25, splitD, splitCol, pairRe_pairSym hA4]
       rfl
     · simp only [Fin.reduceFinMk, Fin.isValue, Matrix.cons_val, Function.update_apply, h34, h35,
         ite_false, ite_true, splitD_out, splitD_bitsA hA4, getD_ofFn_bool]
       rfl
-    · simp [Function.update_apply, h45, splitD, splitCol, pairIm_pairSym hA4]
+    · simp [h45, splitD, splitCol, pairIm_pairSym hA4]
       rfl
     · simp only [Fin.reduceFinMk, Fin.isValue, Matrix.cons_val, Function.update_apply,
         ite_true, splitD_out, splitD_bitsB hA4, getD_ofFn_bool]
@@ -155,7 +154,7 @@ theorem split_runs (hcr : Function.Injective cr) (hA : 96 ≤ A) {I Sv O₀ O₁
   · have a0 := h1 0
     have b0 := h2 0; have b1 := h2 1; have b2 := h2 2; have b3 := h2 3; have b4 := h2 4
     simp only [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val, Fin.isValue] at a0 b0 b1 b2 b3 b4
-    simp [Function.update_apply, Ne.symm a0, Ne.symm b0, Ne.symm b1, Ne.symm b2, Ne.symm b3,
+    simp [Ne.symm a0, Ne.symm b0, Ne.symm b1, Ne.symm b2, Ne.symm b3,
       Ne.symm b4]
 
 /-- The combination pass: inputs `I₁`, `I₂`, outputs `O₁`, `O₂`, mode bits from the top bits of
@@ -190,8 +189,8 @@ theorem comb_runs (hcr : Function.Injective cr) (hA : 96 ≤ A)
     · simp only [Fin.mk_one, Fin.isValue, Matrix.cons_val_one, Matrix.cons_val_fin_one, h₂]
       exact getD_binSyms_append X₂ e₂ t
   · fin_cases i
-    · simp [Function.update_apply, h01, h02, h03, h₁]
-    · simp [Function.update_apply, h12, h13, h₂]
+    · simp [h01, h02, h03, h₁]
+    · simp [h12, h13, h₂]
   · fin_cases j
     · simp only [Fin.zero_eta, Fin.isValue, Matrix.cons_val_zero, Function.update_apply, h23,
         ite_false, ite_true, combD_out, combD_bitsA, getD_ofFn_bool]
@@ -203,7 +202,7 @@ theorem comb_runs (hcr : Function.Injective cr) (hA : 96 ≤ A)
     have b0 := h2 0; have b1 := h2 1
     simp only [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_fin_one,
       Fin.isValue] at a0 a1 b0 b1
-    simp [Function.update_apply, Ne.symm a0, Ne.symm a1, Ne.symm b0, Ne.symm b1]
+    simp [Ne.symm a0, Ne.symm a1, Ne.symm b0, Ne.symm b1]
 
 /-- The final pass: inputs `I₁`, `I₂`, output `O`, signs from the top bits of `ra`, `rb`. -/
 def finP (cr : CR → Fin T) (ra rb I₁ I₂ O C Tm : CR) : Pr P T Q A U :=
@@ -234,8 +233,8 @@ theorem fin_runs (hcr : Function.Injective cr) (hA : 96 ≤ A) (ra rb : CR) {I�
     · simp only [Fin.mk_one, Fin.isValue, Matrix.cons_val_one, Matrix.cons_val_fin_one, h₂]
       exact getD_binSyms_append X₂ e₂ t
   · fin_cases i
-    · simp [Function.update_apply, h01, h02, h₁]
-    · simp [Function.update_apply, h12, h₂]
+    · simp [h01, h02, h₁]
+    · simp [h12, h₂]
   · fin_cases j
     simp only [Fin.zero_eta, Fin.isValue, Matrix.cons_val_fin_one, Function.update_apply,
       ite_true, finD_out, finD_bitsA, finD_bitsB, getD_ofFn_bool]
@@ -244,7 +243,7 @@ theorem fin_runs (hcr : Function.Injective cr) (hA : 96 ≤ A) (ra rb : CR) {I�
     have b0 := h2 0
     simp only [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_fin_one,
       Fin.isValue] at a0 a1 b0
-    simp [Function.update_apply, Ne.symm a0, Ne.symm a1, Ne.symm b0]
+    simp [Ne.symm a0, Ne.symm a1, Ne.symm b0]
 
 end Passes
 

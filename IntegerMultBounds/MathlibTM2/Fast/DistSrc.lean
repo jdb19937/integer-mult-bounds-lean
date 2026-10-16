@@ -22,8 +22,6 @@ open IntegerMultBounds IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.St
   IntegerMultBounds.MathlibTM2.Layer
 open IntegerMultBounds.MathlibTM2.Mult IntegerMultBounds.MathlibTM2.Mult.Sizes IntegerMultBounds.MathlibTM2.Fast IntegerMultBounds.MathlibTM2.Fast.Src IntegerMultBounds.MathlibTM2.Fast.ChirpSt
 
-set_option linter.unusedSimpArgs false
-set_option linter.unusedSectionVars false
 
 section Src
 
@@ -65,7 +63,7 @@ theorem dsP2_keys (n w Wt : ℕ) :
       y ∉ (dsP1Out : List (DsY t₀)) ∧ y ∉ (dsPCOut : List (DsY t₀)) ∧ y ≠ .o .uW ∧ y ≠ .o .uw ∧
       y ≠ .o .tm ∧ y ≠ .o .xT ∧ y ≠ .o .uq ∧ ∀ r, y ≠ .s (.k (.x (.tbl (.v r)))) := by
   rw [List.forall_mem_map]
-  simp only [dsP2aW, dsP2aW₁, dsP2wcp, dsP2dcp, dsP2ncp, dsP2bW, dsP2cW, List.map_append,
+  simp only [dsP2aW, dsP2aW₁, dsP2wcp, dsP2dcp, dsP2ncp, dsP2bW, dsP2cW, 
     List.map_cons, List.map_nil, List.forall_mem_append, List.forall_mem_cons]
   simp [dsP1Out, dsPCOut]
 

@@ -31,7 +31,6 @@ namespace IntegerMultBounds.MathlibTM2.Fast
 
 open IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.Stack IntegerMultBounds.MathlibTM2 IntegerMultBounds.MathlibTM2.Host IntegerMultBounds.MathlibTM2.Node IntegerMultBounds.MathlibTM2.Mult
 
-set_option linter.unusedSimpArgs false
 
 variable {T Q A : ℕ} {U P : Type} {body : P → Pr P T Q A U}
 
@@ -162,7 +161,7 @@ theorem crtSlots_runs {c tc r tr src dst : Fin T} (hreg : [c, tc, r, tr, src, ds
   refine crtRuns_mono (crtRuns_congr h ?_) (by nlinarith)
   funext x
   by_cases x1 : x = c
-  · rw [x1]; simp [crtForRegs, Ψ, ‹c ≠ src›, ‹c ≠ dst›]
+  · rw [x1]; simp [crtForRegs, ‹c ≠ src›, ‹c ≠ dst›]
   · by_cases x2 : x = tc
     · rw [x2]; simp [crtForRegs, Ψ, Ne.symm ‹c ≠ tc›, ‹tc ≠ src›, ‹tc ≠ dst›, htc]
     · simp [crtForRegs, x1, x2, Ψ]
@@ -188,7 +187,7 @@ variable {α : Type*}
 lemma crt_rot_slots (sl : List (List α)) (a b : ℕ) (hs : a + b ≤ sl.length) :
     (sl.drop a).take b ++ sl.take a = (sl.take (a + b)).rotate a := by
   rw [List.rotate_eq_drop_append_take (by simp; omega), List.drop_take, List.take_take]
-  simp [Nat.min_eq_left (show a ≤ a + b by omega), Nat.add_sub_cancel_left]
+  simp
 
 lemma crt_take_flatten_append (k : ℕ) (sl : List (List α)) (h : ∀ x ∈ sl, x.length = k)
     (rest : List α) (a : ℕ) (ha : a ≤ sl.length) :
@@ -237,7 +236,7 @@ theorem crtRotFib_runs {cA cB ts rb tc tr str acc tA tB : Fin T}
   have hsl₁ := crt_uniform_drop k sl hsl a
   obtain ⟨t₂, d₂⟩ := crt_take_flatten_append k (sl.drop a) hsl₁ rest b (by simp; omega)
   have s₂ := crtSlots_runs (body := body) (c := cB) (tc := tc) (r := rb) (tr := tr) (src := str)
-    (dst := acc) (by regs_nodup) R₁ (by simp [hR₁, *]) (by simp [hR₁, *])
+    (dst := acc) (by regs_nodup) R₁ (by simp [*]) (by simp [*])
     (by
       simp only [hR₁, Function.update_of_ne ‹cB ≠ tA›, Function.update_of_ne ‹cB ≠ str›,
         Function.update_of_ne ‹rb ≠ tA›, Function.update_of_ne ‹rb ≠ str›,
@@ -285,7 +284,7 @@ theorem crtRotFib_runs {cA cB ts rb tc tr str acc tA tB : Fin T}
         Function.update_of_ne ‹acc ≠ tA›, Function.update_of_ne ‹tB ≠ acc›,
         Function.update_of_ne ‹tB ≠ tA›, Function.update_of_ne ‹tA ≠ acc›,
         Function.update_of_ne ‹tA ≠ str›, Function.update_of_ne ‹tB ≠ str›,
-        Function.update_of_ne ‹acc ≠ str›, htB, htA, List.append_nil, List.reverse_reverse]
+        Function.update_of_ne ‹acc ≠ str›, htB, List.append_nil, List.reverse_reverse]
       rw [← hrot]
       simp
     · rw [Function.update_of_ne x1]
@@ -300,7 +299,7 @@ theorem crtRotFib_runs {cA cB ts rb tc tr str acc tA tB : Fin T}
     have l₂ : (R₂ tA).length = a * k := by
       simp [hR₂, hR₁, ‹tA ≠ acc›, ‹tA ≠ str›, hta]
     have l₃ : (R₃ tB).length = a * k := by
-      simp [hR₃, Function.update_of_ne ‹tB ≠ tA›, hR₂, hR₁, ‹tB ≠ acc›, ‹tB ≠ str›, htB, l₂]
+      simp [hR₃, Function.update_of_ne ‹tB ≠ tA›, hR₂, hR₁, ‹tB ≠ acc›, ‹tB ≠ str›, htB]
       simpa [hR₂, hR₁, ‹tA ≠ acc›, ‹tA ≠ str›] using hta
     rw [l₂, l₃, hlen]
     nlinarith
@@ -337,7 +336,7 @@ theorem crtCopyFib_runs {cA cB ts rb tc tr str acc : Fin T}
   have e₁b : (R₁ cB).length = b := by simp [hR₁, ‹cB ≠ acc›, ‹cB ≠ str›, hb]
   have e₁k : (R₁ rb).length = k := by simp [hR₁, ‹rb ≠ acc›, ‹rb ≠ str›, hk]
   have s₂ := crtSlots_runs (body := body) (c := cB) (tc := tc) (r := rb) (tr := tr) (src := str)
-    (dst := acc) (by regs_nodup) R₁ (by simp [hR₁, *]) (by simp [hR₁, *])
+    (dst := acc) (by regs_nodup) R₁ (by simp [*]) (by simp [*])
     (by
       rw [e₁b, e₁k, e₁, List.length_append, crt_length_flatten_uniform k _ hsl₁, List.length_drop,
         hlen, show a + b + c - a = b + c by omega]
@@ -353,7 +352,7 @@ theorem crtCopyFib_runs {cA cB ts rb tc tr str acc : Fin T}
     simp [hR₂, hR₁, ‹ts ≠ acc›, ‹ts ≠ str›, hc]
   have e₂k : (R₂ rb).length = k := by simp [hR₂, hR₁, ‹rb ≠ acc›, ‹rb ≠ str›, hk]
   have s₃ := crtSlots_runs (body := body) (c := ts) (tc := tc) (r := rb) (tr := tr) (src := str)
-    (dst := acc) (by regs_nodup) R₂ (by simp [hR₂, hR₁, *]) (by simp [hR₂, hR₁, *])
+    (dst := acc) (by regs_nodup) R₂ (by simp [*]) (by simp [*])
     (by rw [e₂c, e₂k, e₂, List.length_append, crt_length_flatten_uniform k _ hsl₂, hc']; nlinarith)
   have hdrop3 : (sl.drop (a + b)).drop c = [] := List.drop_eq_nil_of_le (by rw [hc'])
   have htake3 : (sl.drop (a + b)).take c = sl.drop (a + b) := List.take_of_length_le (by rw [hc'])
@@ -364,7 +363,7 @@ theorem crtCopyFib_runs {cA cB ts rb tc tr str acc : Fin T}
     funext x
     by_cases x1 : x = acc
     · rw [x1]
-      simp only [Function.update_self, hR₂, hR₁, Function.update_of_ne ‹acc ≠ str›]
+      simp only [Function.update_self, hR₂, hR₁]
       have hf : sl.flatten = (sl.take a).flatten ++ ((sl.drop a).take b).flatten ++
           (sl.drop (a + b)).flatten := by
         rw [← List.flatten_append, ← List.flatten_append, ← hsplit]
@@ -459,11 +458,11 @@ theorem crtOffP_runs {mu tc lo hi ov t : Fin T} (hreg : [mu, tc, lo, hi, ov, t].
       · rw [not_or] at hk
         simp only [hk.1, hk.2, or_self, ↓reduceIte, Ψ]
         by_cases k1 : k = lo
-        · rw [k1]; simp [‹lo ≠ ov›, ‹lo ≠ hi›, ‹hi ≠ lo›, hRlo, ← List.replicate_succ]; omega
+        · rw [k1]; simp [‹lo ≠ ov›, ‹lo ≠ hi›, hRlo, ← List.replicate_succ]; omega
         · by_cases k2 : k = hi
           · rw [k2]; simp [‹hi ≠ ov›, ‹hi ≠ lo›, ‹lo ≠ hi›]; omega
           · by_cases k3 : k = ov
-            · rw [k3]; simp [‹ov ≠ lo›, ‹ov ≠ hi›, ‹lo ≠ ov›, ‹hi ≠ ov›, hRov]; omega
+            · rw [k3]; simp [‹ov ≠ lo›, ‹ov ≠ hi›, hRov]; omega
             · simp [k1, k2, k3, hR' k hk.1 hk.2, Ψ]
     · have hnil : R' hi = [] := by rw [hRhi]; simp; omega
       refine ⟨{ v with flag := false }, rfl, ?_⟩
@@ -478,11 +477,11 @@ theorem crtOffP_runs {mu tc lo hi ov t : Fin T} (hreg : [mu, tc, lo, hi, ov, t].
       · rw [not_or] at hk
         simp only [hk.1, hk.2, or_self, ↓reduceIte, Ψ]
         by_cases k1 : k = ov
-        · rw [k1]; simp [‹ov ≠ hi›, ‹hi ≠ ov›, hRov, ← List.replicate_succ]; omega
+        · rw [k1]; simp [‹ov ≠ hi›, hRov, ← List.replicate_succ]; omega
         · by_cases k2 : k = hi
-          · rw [k2]; simp [‹hi ≠ ov›, ‹ov ≠ hi›, hnil]; omega
+          · rw [k2]; simp [‹hi ≠ ov›, ‹ov ≠ hi›]; omega
           · by_cases k3 : k = lo
-            · rw [k3]; simp [‹lo ≠ ov›, ‹lo ≠ hi›, ‹ov ≠ lo›, ‹hi ≠ lo›, hRlo]; omega
+            · rw [k3]; simp [‹lo ≠ ov›, ‹lo ≠ hi›, hRlo]; omega
             · simp [k1, k2, k3, hR' k hk.1 hk.2, Ψ]
   have h₁ := crtFor_runs (body := body) ‹mu ≠ tc› hit (R mu) hμd
   have e0 : crtForRegs mu tc (Ψ 0) (R mu) [] = R := by
@@ -759,27 +758,27 @@ theorem crtRotSetup_runs {sig msk preU postU aI sI zr rbU tsU hi u₁ u₂ sg mq
     (by regs_nodup) R hu₁ hu₂ hpre₁
   set R₁ := Function.update R sg ((R sig).take (R preU).length ++ R sg) with hR₁
   have s₂ := crtCpy_runs (body := body) (c := preU) (t := u₁) (src := msk) (dst := mq) (u := u₂)
-    (by regs_nodup) R₁ (by simp [hR₁, *]) (by simp [hR₁, *]) (by simp [hR₁, *])
+    (by regs_nodup) R₁ (by simp [*]) (by simp [*]) (by simp [*])
   set R₂ := Function.update R₁ mq ((R₁ msk).take (R₁ preU).length ++ R₁ mq) with hR₂
   have s₃ := crtUcopy_runs (body := body) (a := zr) (b := rbU) (t := u₁) (by assumption)
-    (by assumption) (by assumption) R₂ (by simp [hR₂, hR₁, *])
+    (by assumption) (by assumption) R₂ (by simp [*])
   set R₃ := Function.update R₂ rbU (List.replicate (R₂ zr).length tick ++ R₂ rbU) with hR₃
   have s₄ := crtUpow2_runs (body := body) (a := postU) (b := rbU) (t₁ := u₁) (t₂ := u₂)
-    (by regs_nodup) R₃ (by simp [hR₃, hR₂, hR₁, *]) (by simp [hR₃, hR₂, hR₁, *])
+    (by regs_nodup) R₃ (by simp [*]) (by simp [*])
   set R₄ := Function.update R₃ rbU ((R₃ rbU).flatMap (List.replicate (2 ^ (R₃ postU).length)))
     with hR₄
   have s₅ := crtPush_runs (body := body) tsU tick R₄
   set R₅ := Function.update R₄ tsU (tick :: R₄ tsU) with hR₅
   have s₆ := crtUpow2_runs (body := body) (a := aI) (b := tsU) (t₁ := u₁) (t₂ := u₂)
-    (by regs_nodup) R₅ (by simp [hR₅, hR₄, hR₃, hR₂, hR₁, *])
-    (by simp [hR₅, hR₄, hR₃, hR₂, hR₁, *])
+    (by regs_nodup) R₅ (by simp [*])
+    (by simp [*])
   set R₆ := Function.update R₅ tsU ((R₅ tsU).flatMap (List.replicate (2 ^ (R₅ aI).length)))
     with hR₆
   have s₇ := crtUsub_runs (body := body) (a := sI) (b := tsU) (t := u₁) (by assumption)
-    (by assumption) (by assumption) R₆ (by simp [hR₆, hR₅, hR₄, hR₃, hR₂, hR₁, *])
+    (by assumption) (by assumption) R₆ (by simp [*])
   set R₇ := Function.update R₆ tsU ((R₆ tsU).drop (R₆ sI).length) with hR₇
   have s₈ := crtUcopy_runs (body := body) (a := sI) (b := hi) (t := u₁) (by assumption)
-    (by assumption) (by assumption) R₇ (by simp [hR₇, hR₆, hR₅, hR₄, hR₃, hR₂, hR₁, *])
+    (by assumption) (by assumption) R₇ (by simp [*])
   refine crtRuns_mono (crtRuns_congr (crtRuns_seq s₁ (crtRuns_seq s₂ (crtRuns_seq s₃
     (crtRuns_seq s₄ (crtRuns_seq s₅ (crtRuns_seq s₆ (crtRuns_seq s₇ s₈))))))) ?_) ?_
   · funext k
@@ -1075,7 +1074,7 @@ theorem crtRotP_runs (fwd : Bool) (L : CrtAL T) (hL : L.Ok)
   have hΨlo : ∀ F, Ψ F lo = List.replicate (loF F) tick := fun F => by
     simp (disch := assumption) only [Ψ, Function.update_of_ne, Function.update_self]
   have hΨhi : ∀ F, Ψ F hi = List.replicate (S - loF F) tick := fun F => by
-    simp (disch := assumption) only [Ψ, Function.update_of_ne, Function.update_self]
+    simp (disch := assumption) only [Ψ, Function.update_self]
   have hΨoth : ∀ F k, k ≠ str → k ≠ acc → k ≠ lo → k ≠ hi → Ψ F k = R₁ k := fun F k k1 k2 k3 k4 => by
     simp (disch := assumption) only [Ψ, Function.update_of_ne]
   have hstrF : ∀ F < N, strF F = (slots F).flatten ++ strF (F + 1) := fun F hF => by

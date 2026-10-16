@@ -34,7 +34,6 @@ namespace IntegerMultBounds.MathlibTM2.Fast
 
 open IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.Stack IntegerMultBounds.MathlibTM2 IntegerMultBounds.MathlibTM2.Host IntegerMultBounds.MathlibTM2.Node IntegerMultBounds.MathlibTM2.Mult
 
-set_option linter.unusedSimpArgs false
 
 variable {T Q A : ℕ} {U P : Type} {body : P → Pr P T Q A U}
 
@@ -149,7 +148,7 @@ theorem crtALBody_iter (L : CrtAL T) (hL : L.Ok) {m : ℕ} (hm : m ≤ d)
     have := hs j; rw [h0] at this; omega
   have hμW : μ < 2 ^ W := crtMask_lt a ha m hm
   have hrun := crtVA_run (A := A) a s hs m hm ![F, σ, μ] true
-    (by simp only [Matrix.cons_val_one, Matrix.head_cons]; exact Nat.mod_eq_of_lt hσW)
+    (by simp only [Matrix.cons_val_one]; exact Nat.mod_eq_of_lt hσW)
     (by simp only [Matrix.cons_val_two, Matrix.tail_cons, Matrix.head_cons]
         exact Nat.mod_eq_of_lt hμW)
   simp only [Bool.true_and, Matrix.cons_val_zero] at hrun
@@ -280,7 +279,7 @@ theorem crtALFull_runs (L : CrtAL T) (hL : L.Ok) {m : ℕ} (hm : m ≤ d)
   have h₂ := crtPush_runs (body := body) L.nF tick R₁
   set R₂ := Function.update R₁ L.nF (tick :: R₁ L.nF) with hR₂
   have h₃ := crtUpow2_runs (body := body) (a := L.mq) (b := L.nF) (t₁ := L.c0) (t₂ := L.c1)
-    (by regs_nodup) R₂ (by simp [hR₂, hR₁, *, Ne.symm]) (by simp [hR₂, hR₁, *, Ne.symm])
+    (by regs_nodup) R₂ (by simp [*, Ne.symm]) (by simp [*, Ne.symm])
   set R₃ := Function.update R₂ L.nF ((R₂ L.nF).flatMap (List.replicate (2 ^ (R₂ L.mq).length)))
     with hR₃
   have hmqlen : (R₀ L.mq).length = W := by rw [hmq, length_binSyms]
@@ -606,15 +605,15 @@ theorem crtPad_runs (L : CrtAL T) (hL : L.Ok) {str acc zr bU tA tB u : Fin T}
       · by_cases k2 : k = str
         · rw [k2]; simp [Ψ, Function.update_of_ne ‹str ≠ acc›, hR₁, Function.update_of_ne ‹str ≠ bU›, hstr, crtCnt]
         · simp [Ψ, Function.update_of_ne k1, Function.update_of_ne k2])
-    (by simp [hR₁, (CrtAL.ne_of_not_prot pbU).1.symm, hnF, hW])
-    (by simp [hR₁, (CrtAL.ne_of_not_prot pbU).2.1.symm, htN, hW])
-    (by simp [hR₁, (CrtAL.ne_of_not_prot pbU).2.2.1.symm, hfc, hW])
+    (by simp [hR₁, (CrtAL.ne_of_not_prot pbU).1.symm, hnF])
+    (by simp [hR₁, (CrtAL.ne_of_not_prot pbU).2.1.symm, htN])
+    (by simp [hR₁, (CrtAL.ne_of_not_prot pbU).2.2.1.symm, hfc])
     (by simp [hR₁, (CrtAL.ne_of_not_prot pbU).2.2.2.1.symm, hsg, hW])
     (by simp [hR₁, (CrtAL.ne_of_not_prot pbU).2.2.2.2.1.symm, hmq, hW])
-    (by simp [hR₁, (CrtAL.ne_of_not_prot pbU).2.2.2.2.2.1.symm, hc0, hW])
-    (by simp [hR₁, (CrtAL.ne_of_not_prot pbU).2.2.2.2.2.2.1.symm, hc1, hW])
-    (by simp [hR₁, (CrtAL.ne_of_not_prot pbU).2.2.2.2.2.2.2.1.symm, hc2, hW])
-    (by simp [hR₁, (CrtAL.ne_of_not_prot pbU).2.2.2.2.2.2.2.2.symm, hit, hW])
+    (by simp [hR₁, (CrtAL.ne_of_not_prot pbU).2.2.2.2.2.1.symm, hc0])
+    (by simp [hR₁, (CrtAL.ne_of_not_prot pbU).2.2.2.2.2.2.1.symm, hc1])
+    (by simp [hR₁, (CrtAL.ne_of_not_prot pbU).2.2.2.2.2.2.2.1.symm, hc2])
+    (by simp [hR₁, (CrtAL.ne_of_not_prot pbU).2.2.2.2.2.2.2.2.symm, hit])
   set R₂ := fun k => if L.Prot k then R₁ k else Ψ N k with hR₂
   have h₃ := crtClear_runs (body := body) bU R₂
   have h₄ := crtMv_runs (body := body) ‹str ≠ acc›.symm (Function.update R₂ bU [])
@@ -630,7 +629,7 @@ theorem crtPad_runs (L : CrtAL T) (hL : L.Ok) {str acc zr bU tA tB u : Fin T}
     by_cases k1 : k = str
     · rw [k1]
       simp only [Function.update_self, Function.update_of_ne ‹str ≠ bU›, hR₂str, hR₂acc,
-        Function.update_of_ne ‹acc ≠ bU›, Function.update_of_ne ‹str ≠ acc›, List.reverse_reverse,
+        Function.update_of_ne ‹acc ≠ bU›, List.reverse_reverse,
         List.append_nil, hN, hW, crtPadRecs_top a s hsle]
     · rw [Function.update_of_ne k1, Function.update_of_ne k1]
       by_cases k2 : k = acc
@@ -800,7 +799,7 @@ theorem crtDel_runs (L : CrtAL T) (hL : L.Ok) {str acc zr bU tA : Fin T}
       simp only [Function.update_self, pacc, ↓reduceIte, hΨacc, crtDelRecs, hcs,
         List.range_succ, List.map_append, List.flatten_append, List.reverse_append,
         hRbU F R hR, List.length_replicate, hRstr, htake, hRacc, hrec]
-      simp [crtDelRecs]
+      simp
     · rw [Function.update_of_ne k1]
       by_cases k2 : k = str
       · rw [k2]
@@ -868,7 +867,7 @@ theorem crtDel_runs (L : CrtAL T) (hL : L.Ok) {str acc zr bU tA : Fin T}
     by_cases k1 : k = str
     · rw [k1]
       simp only [Function.update_self, Function.update_of_ne ‹str ≠ bU›, hR₂str, hR₂acc,
-        Function.update_of_ne ‹acc ≠ bU›, Function.update_of_ne ‹str ≠ acc›, List.reverse_reverse,
+        Function.update_of_ne ‹acc ≠ bU›, List.reverse_reverse,
         List.append_nil, crtDelRecs, hcN]
     · rw [Function.update_of_ne k1, Function.update_of_ne k1]
       by_cases k2 : k = acc

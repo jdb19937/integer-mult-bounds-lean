@@ -39,7 +39,6 @@ namespace IntegerMultBounds.MathlibTM2.Fast.TableVM
 
 open IntegerMultBounds.MathlibTM2.Fast.TableNum
 
-set_option linter.unusedSimpArgs false
 
 /-! ### The magnitude loop -/
 
@@ -181,14 +180,14 @@ theorem tblMag_do {A W w : ℕ} (st : TblSt 18 A) {Y q Q N : ℕ} (hY : st.val t
         · rw [show 1 - ((j + 1) % 4 + 3) / 4 = 1 by omega]; simp
         · rw [show 1 - ((j + 1) % 4 + 3) / 4 = 0 by omega]; simp
       refine (TblDo.block _ _ ?_ ?_).mono (fun _ h => h) (by simp [tblMagBody, tblMagAcc])
-      · simp [tblMagBody, tblMagAcc, tblFitsList, TblIns.fits, TblIns.exact, Function.update_apply,
-          h0, h1, h2, h3, hm, hk1, hk2, hk3, hk4, hy, hpq', hpQ', hj', tblMagY, tblMagPQ, tblMagPq,
-          tblMagN]
+      · simp [tblMagBody, tblMagAcc, tblFitsList, TblIns.fits, TblIns.exact, 
+          h0, h1, h2, h3, hm, hk1, hk2, hk3, hk4, hy, hpQ', hj', tblMagY, tblMagPQ, 
+          ]
         rw [e0, e1, e2, e3]
         and_intros <;> omega
-      · simp [Inv, tblMagBody, tblMagAcc, tblExactList, TblIns.exact, Function.update_apply,
+      · simp [Inv, tblMagBody, tblMagAcc, tblExactList, TblIns.exact, 
           h0, h1, h2, h3, hm, hk1, hk2, hk3, hk4, hy, hpq', hpQ', hj', hn', hacc, tblMagY, tblMagPQ,
-          tblMagPq, tblMagN]
+          tblMagN]
         exact ⟨e0, e1, e2, e3, rfl⟩
     · intro s ⟨h0, h1, h2, h3, hm, hk1, hk2, hk3, hk4, hy, hpq', hpQ', hacc⟩ hj' hn'
       refine ⟨fun r => ?_, hy, hpq', hpQ', hn', hacc⟩
@@ -345,13 +344,13 @@ theorem tblExp_do {A W w : ℕ} (st : TblSt 34 A) {p a b : ℕ} (neg : Bool)
     .add eQ eP eQ, .add eQ eP eQ, .add eQ eP eN, .add eN eP eN, .add eP eP eE4, .add eE4 eP eE4,
     .add eE4 eP eE4, .zero eOne, .inc eOne] with hl₁
   have hf₁ : tblFitsList A W w (l₁ ++ [.zero eRes]) st := by
-    simp [hl₁, tblFitsList, TblIns.fits, TblIns.exact, Function.update_apply, hpiN, ha, hp']
+    simp [hl₁, tblFitsList, TblIns.fits, TblIns.exact, hpiN, ha, hp']
     omega
   set s₁ := tblExactList A w (l₁ ++ [.zero eRes]) st with hs₁
   have hv₁ : s₁.val eY = Y ∧ s₁.val eQ = q ∧ s₁.val eN = 7 * p ∧ s₁.val eE4 = 4 * p ∧
       s₁.val eOne = 1 ∧ s₁.val 18 = st.val 18 ∧ s₁.val 19 = st.val 19 ∧ s₁.val 20 = st.val 20 ∧
       s₁.val 21 = st.val 21 ∧ s₁.val 22 = st.val 22 ∧ s₁.acc = st.acc := by
-    simp [hs₁, hl₁, tblExactList, TblIns.exact, Function.update_apply, hpiN, ha, hp', hb, hY]
+    simp [hs₁, hl₁, tblExactList, TblIns.exact, hpiN, ha, hp', hb, hY]
     omega
   obtain ⟨hY₁, hQ₁, hN₁, hE₁, hO₁, h18₁, h19₁, h20₁, h21₁, h22₁, hacc₁⟩ := hv₁
   have hqW : q < W := by omega
@@ -462,16 +461,16 @@ theorem tblExp_do {A W w : ℕ} (st : TblSt 34 A) {p a b : ℕ} (neg : Bool)
         refine (TblDo.iteT (by rw [hNeg2, hOne2]; decide) (TblDo.insX _ (by trivial) ?_)).mono
           (fun _ h => h) (by norm_num)
         refine hfin _ ?_
-        simp [TblIns.exact, hT, hD2, hval]
+        simp [hT, hD2, hval]
       | true =>
         have hle := odd_le_even p Y hp (by rw [← hq]; exact hlt)
         rw [← hq] at hle
         refine (TblDo.iteF (by rw [hNeg2, hOne2]; decide) (TblDo.block _ _ ?_ ?_)).mono
           (fun _ h => h) (by norm_num)
-        · simp [tblFitsList, TblIns.fits, TblIns.exact, hEv2, hOd2]
+        · simp [tblFitsList, TblIns.fits, hEv2, hOd2]
           exact ⟨hle, by omega⟩
         · refine hfin _ ?_
-          simp [tblExactList, TblIns.exact, hEv2, hOd2, hD2, hval, hlt.not_ge]
+          simp [TblIns.exact, hEv2, hOd2, hD2, hval, hlt.not_ge]
     · refine (TblDo.iteF (by rw [hYs, hThrs]; exact hlt) (TblDo.insX _ (by trivial) ?_)).mono
         (fun _ h => h) (by omega)
       refine ⟨?_, ?_, ?_, ?_, ?_, ?_, by simp [TblIns.exact, haccs]⟩

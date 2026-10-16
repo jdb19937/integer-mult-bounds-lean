@@ -31,7 +31,6 @@ namespace IntegerMultBounds.MathlibTM2.Fast
 open IntegerMultBounds IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.Stack IntegerMultBounds.MathlibTM2 IntegerMultBounds.MathlibTM2.Host
   IntegerMultBounds.MathlibTM2.Node IntegerMultBounds.MathlibTM2.Mult
 
-set_option linter.unusedSimpArgs false
 
 /-- The registers of the CRT layout machines. -/
 inductive CrtReg
@@ -171,7 +170,7 @@ theorem crtPushEnt_runs {src dst : Fin T} (h : src ≠ dst) (R : Regs T A) (x : 
   funext k
   by_cases k1 : k = dst
   · rw [k1]
-    simp [hR₂, hR₁, Function.update_of_ne h, hsrc, crtEnt, List.reverse_replicate, Ne.symm h]
+    simp [hR₂, hR₁, Function.update_of_ne h, hsrc, crtEnt, List.reverse_replicate]
   · by_cases k2 : k = src
     · rw [k2]; simp [hR₂, h]
     · simp [hR₂, hR₁, k1, k2]

@@ -48,8 +48,6 @@ open IntegerMultBounds IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.St
   IntegerMultBounds.MathlibTM2.Layer
 open IntegerMultBounds.MathlibTM2.Mult IntegerMultBounds.MathlibTM2.Mult.Sizes IntegerMultBounds.MathlibTM2.Mult.Moduli
 
-set_option linter.unusedSimpArgs false
-set_option linter.unnecessarySeqFocus false
 
 /-! ### Binary words -/
 
@@ -390,7 +388,7 @@ theorem pm_prelude2_runs (hrg : Function.Injective rg) (n : ℕ) :
       · have : ∃ j ∈ pmZeroIdx, (TblR.v i : TblR pmNV) = .v j :=
           ⟨i, (pm_mem_zeroIdx i).2 hi, rfl⟩
         rw [ite_eq_left this]
-        simp [ρ₅, ρ₄, ρ₃, ρ₂, ρ₁, tblRho, pmSt0, Function.update_of_ne hi, hi]
+        simp [ρ₅, ρ₄, ρ₃, ρ₂, ρ₁, tblRho, pmSt0, hi]
     · rw [ite_eq_right (show ¬ ∃ j ∈ pmZeroIdx, (TblR.wr : TblR pmNV) = .v j by simp)]
       simp only [ρ₅]
       rw [Function.update_of_ne (by decide), h4w]

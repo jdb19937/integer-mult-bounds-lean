@@ -32,8 +32,6 @@ namespace IntegerMultBounds.MathlibTM2.Fast.TableVM
 
 open IntegerMultBounds.MathlibTM2.Fast IntegerMultBounds.MathlibTM2.Mult.Rounds
 
-set_option linter.unusedSimpArgs false
-set_option linter.unusedSectionVars false
 
 local notation "vN" => (0 : Fin 40)
 local notation "vL" => (1 : Fin 40)
@@ -990,11 +988,11 @@ theorem ldw1_do {es : List ℕ} {ℓ K E : ℕ} (H : LayHyp es ℓ K)
       (fun s => ldwCore s es.sum ℓ K es.length E ∧ s.val vV = 0 ∧ s.val vj = 0 ∧
         s.acc = st.acc) (l.length + 1) := by
     refine TblDo.block l (.zero vj) ?_ ?_
-    · simp [hl, tblFitsList, TblIns.fits, TblIns.exact, Function.update_apply, hL, hN]
+    · simp [hl, tblFitsList, TblIns.fits, TblIns.exact, hL, hN]
       exact ⟨by omega, by omega, ⟨by omega, hℓW⟩, hW2 _ le_rfl⟩
     · simp only [hl, List.cons_append, List.nil_append, tblExactList, TblIns.exact]
       refine ⟨⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩, ?_, ?_, ?_⟩ <;>
-        simp [Function.update_apply, hL, hN, hK, hD, hEv, layB]
+        simp [hL, hN, hK, hD, hEv]
   refine TblDo.mono (K := (10 + 1 + (es.sum * (1 + 8) + 7)) + (ldwPart1Atoms es.sum es.length +
     ldwPart2Atoms es.sum es.length (layB ℓ K))) ?_ (fun _ h => h) (by unfold ldw1Atoms; omega)
   refine TblDo.seq (K₁ := 10 + 1 + (es.sum * (1 + 8) + 7))

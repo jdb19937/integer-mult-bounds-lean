@@ -40,7 +40,6 @@ namespace IntegerMultBounds.MathlibTM2.Fast.TableVM
 
 open IntegerMultBounds.MathlibTM2.Mult IntegerMultBounds.MathlibTM2.Mult.Sizes IntegerMultBounds.MathlibTM2.Mult.Moduli Finset
 
-set_option linter.unusedSimpArgs false
 
 variable {A W w : ℕ}
 
@@ -75,7 +74,7 @@ theorem pmClogC_do (st : TblSt 3 A) {x : ℕ} (hx : st.val 0 = x) (hW : 2 * x + 
     have hp := pm_pow_lt_of_lt_clog hj
     have hj' : j < 2 ^ j := Nat.lt_two_pow_self
     refine ⟨by rw [h2, h0]; exact hp, TblDo.block _ _ ?_ ?_⟩
-    · simp [tblFitsList, TblIns.fits, TblIns.exact, h0, h1, h2]; omega
+    · simp [tblFitsList, TblIns.fits, TblIns.exact, h1, h2]; omega
     · simp [tblExactList, TblIns.exact, h0, h1, h2, ha, pow_succ]; ring
   · intro s ⟨h0, h1, h2, ha⟩
     have : x ≤ 2 ^ N := Nat.le_pow_clog one_lt_two x
@@ -129,7 +128,7 @@ theorem pmCapPowC_do (s : TblSt 6 A) {y c k : ℕ} (hy : s.val 1 = y) (hc : s.va
   refine TblDo.for k 3 hk₁ hkW (by decide)
     (fun j s' => s'.val 3 = (pmSq c)^[j] (y + 1) ∧ (∀ i, i ≠ 3 → i ≠ 4 → s'.val i = s.val i) ∧
       s'.acc = s.acc) ⟨?_, fun i hi3 hi4 => ?_, ha⟩ ?_ ?_
-  · simp [Function.update_of_ne (show (3 : Fin 6) ≠ 4 by decide), h3]
+  · simp [h3]
   · simp [Function.update_of_ne hi4, hfr i hi3]
   · intro j hj s' ⟨hz, hfr', ha'⟩ hi hn
     have hc' : s'.val 2 = c := by rw [hfr' 2 (by decide) (by decide), hc]
@@ -137,7 +136,7 @@ theorem pmCapPowC_do (s : TblSt 6 A) {y c k : ℕ} (hy : s.val 1 = y) (hc : s.va
     rintro s'' ⟨h3'', hfr'', ha''⟩
     refine ⟨by rw [hfr'' 4 (by decide), hi], by rw [hfr'' 5 (by decide), hn], ?_, fun i hi3 hi4 => ?_,
       by simp [ha'', ha']⟩
-    · simp [Function.update_of_ne (show (3 : Fin 6) ≠ 4 by decide), h3'',
+    · simp [h3'',
         Function.iterate_succ_apply']
     · simp [Function.update_of_ne hi4, hfr'' i hi3, hfr' i hi3 hi4]
   · rintro s' ⟨hz, hfr', ha'⟩ - -
@@ -304,7 +303,7 @@ theorem pmOddC_do (st : TblSt 5 A) {d : ℕ} (hd : st.val 0 = d)
     refine TblDo.block _ _ ?_ ?_
     · simp [tblFitsList, TblIns.fits, TblIns.exact, hi, h1, e]
       omega
-    · simp [tblExactList, TblIns.exact, hi, hn, h0, h1, h3, hac, e, pmOddPart_succ]
+    · simp [tblExactList, TblIns.exact, hi, hn, h0, h1, hac, e, pmOddPart_succ]
   · rintro s ⟨h0, h1, h3, hac⟩ - -
     exact ⟨h0, h1, hac⟩
 
@@ -593,7 +592,7 @@ theorem pmSubKC_do (k : ℕ) (st : TblSt 3 A) {a : ℕ} (ha : st.val 0 = a) (hka
   · rw [show tblConstL (2 : Fin 3) k ++ [TblIns.sub 0 2 1] =
       tblConstL (2 : Fin 3) k ++ ([TblIns.sub 0 2 1] : List (TblIns 3)) from rfl]
     refine pm_fits_const _ _ _ _ (by omega) ?_
-    simp [tblFitsList, TblIns.fits, TblIns.exact, ha]; omega
+    simp [tblFitsList, TblIns.fits, ha]; omega
   · rw [pm_exact_const]
     simp [tblExactList, TblIns.exact, ha]
 
@@ -633,8 +632,8 @@ theorem pmGammaC_do (st : TblSt 4 A) {d a : ℕ} (hd : st.val 0 = d) (ha : st.va
   have e' : a + a + a = 3 * a := by ring
   have e3 : 3 * a + 1 + 1 = 3 * a + 2 := by ring
   refine TblDo.block _ _ ?_ ?_
-  · simp [tblFitsList, TblIns.fits, TblIns.exact, hd, ha, e, e', e3]; omega
-  · simp [tblExactList, TblIns.exact, hd, ha, e, e', e3]
+  · simp [tblFitsList, TblIns.fits, TblIns.exact, hd, ha, e', e3]; omega
+  · simp [tblExactList, TblIns.exact, hd, ha, e', e3]
 
 /-- `x₀ := start d N R = 2 ((2d - 1) R / (4 d N) + 1)`: `d` in `0`, `R` in `1`, `N` in `2`, `x₀`
 in `3`, scratch `4`, `5`. -/
@@ -747,7 +746,7 @@ theorem pmClogAddC_do (k : ℕ) (st : TblSt 4 A) {x : ℕ} (hx : st.val 0 = x)
   refine (TblDo.block _ _ ?_ ?_).mono (fun _ h => h)
     (by pm_len)
   · refine pm_fits_const _ _ _ _ (by omega) ?_
-    simp [tblFitsList, TblIns.fits, TblIns.exact, e1]; omega
+    simp [tblFitsList, TblIns.fits, e1]; omega
   · rw [pm_exact_const]
     simp [tblExactList, TblIns.exact, e0, e1, ea]
 

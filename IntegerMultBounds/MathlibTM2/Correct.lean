@@ -19,7 +19,6 @@ open IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.Stack Computability
 
 variable {t q a : ℕ}
 
-set_option linter.unusedSimpArgs false
 
 /-- Stacks holding only the input. -/
 def inputStacks (l : List (Bool ⊕ Bool)) : Stacks t a :=
@@ -121,7 +120,7 @@ theorem prepare_exec (M : Program t q a) (A B : ℕ) (v : BS t q a) :
       b0 := x
       b1 := y } := by
     have h4 : S₄.b0 = (padTo n' eA).reverse ∧ S₄.b1 = (padTo n' eB).reverse := by
-      simp [S₄, S₃, S₂, S₁, hS₃2, hS₃3, inputStacks, hPl, hPr]
+      simp [S₄, S₃, S₂, S₁, inputStacks, hPl, hPr]
     by_cases hz : n' = 0
     · have hA : eA = [] := List.length_eq_zero_iff.1 (by omega)
       have hB : eB = [] := List.length_eq_zero_iff.1 (by omega)
@@ -175,7 +174,7 @@ theorem prepare_exec (M : Program t q a) (A B : ℕ) (v : BS t q a) :
     refine Stacks.ext ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_
     · simp [S₁₀, S₉, S₈, S₇, S₆, h5, hS₄e.1, tapeStacks]
     · simp [S₁₀, S₉, S₈, S₇, S₆, h5, hS₄e.2.1, tapeStacks]
-    · simp [S₁₀, S₉, S₈, S₇, S₆, tapeStacks]
+    · simp [S₁₀, S₉, tapeStacks]
     · simp [S₁₀, S₉, S₈, S₇, S₆, tapeStacks]
     · simp [S₁₀, tapeStacks]
     · simp [S₁₀, S₉, S₈, S₇, tapeStacks]
@@ -185,7 +184,7 @@ theorem prepare_exec (M : Program t q a) (A B : ℕ) (v : BS t q a) :
       · subst hi
         simp [S₁₀, S₉, S₈, S₇, S₆, h5, hS₄e.2.2.1, hS₄e.2.2.2.1, hS₄e.2.2.2.2.2, tapeStacks, i₀,
           List.map_reverse]
-      · simp [S₁₀, S₉, S₈, S₇, S₆, h5, hS₄e.2.2.2.2.2, tapeStacks, hi, i₀, Function.update_of_ne hi]
+      · simp [S₁₀, S₉, S₈, S₇, S₆, h5, hS₄e.2.2.2.2.2, tapeStacks, hi, i₀]
   -- lengths
   have hlP : P.length = eA.length + eB.length := by simp [hP]
   have hn1 : n ≤ eA.length + eB.length + 1 := by show max n' 1 ≤ _; omega
@@ -274,11 +273,11 @@ theorem cleanup_exec : ∀ (l : List (Fin t)) (v : BS t q a) (S : Stacks t a),
         · funext j
           by_cases hj : j = i
           · subst hj; simp [S₂, S₁]
-          · simp [S₂, S₁, hj, Function.update_of_ne hj]
+          · simp [S₂, S₁, hj]
         · funext j
           by_cases hj : j = i
           · subst hj; simp [S₂, S₁]
-          · simp [S₂, S₁, hj, Function.update_of_ne hj]
+          · simp [S₂, S₁, hj]
 
 theorem finish_exec (M : Program t q a) (v : BS t q a) (S : Stacks t a) (cf : Config t q a)
     (out : List Bool) (hv : v.lead = true) (hrep : Rep cf S.L S.R)

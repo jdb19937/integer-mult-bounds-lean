@@ -15,8 +15,6 @@ open IntegerMultBounds.MathlibTM2.Mult IntegerMultBounds.MathlibTM2.Mult.Sizes
 open IntegerMultBounds.Networks.Shared50ModularControl (prime)
 open Filter
 
-set_option linter.unusedSimpArgs false
-set_option linter.unusedSectionVars false
 
 noncomputable section
 
@@ -100,7 +98,7 @@ theorem compactDsyWires_spec : ∀ᶠ n in atTop, ∀ mainP : MnPr bdA,
       hy, ite_false, reduceCtorEq]
     exact hlayW y
   -- the tail
-  have hK : (compactBdO n .lK).length = CompactSizes.K n := by simp [compactBdO,bdO, dsSrcO]
+  have hK : (compactBdO n .lK).length = CompactSizes.K n := by simp [compactBdO]
   have hL : (compactBdO n .lL).length = ℓ n := by simp [compactBdO,bdO, dsSrcO]
   have hD : (compactBdO n .lD).length = es.length := by simp [compactBdO,bdO, dsSrcO, hes, hlen]
   have hN : (compactBdO n .lN).length = es.sum := by simp [compactBdO,bdO, dsSrcO, hes, hsum]
@@ -275,7 +273,7 @@ theorem compactDsyWires_spec : ∀ᶠ n in atTop, ∀ mainP : MnPr bdA,
           exact ⟨hy.2.2.2.2.2.2.1, hy.2.2.2.2.2.2.2.1, hy.2.2.2.2.2.2.2.2.1,
             hy.2.2.2.2.2.2.2.2.2.1, hy.2.2.2.2.2.2.2.2.2.2.1, hy.2.2.2.2.2.2.2.2.2.2.2⟩)]
     have hpw : ∀ y, mnLay .park ≠ dsyWr y := fun y e => by
-      have := mnLay_inj e; simp [dsyWr] at this
+      have := mnLay_inj e; simp at this
     cases x
     case park =>
       rw [mnσ_park, hF₁₀, Function.update_of_ne (hpne _).symm, hF₉,
@@ -297,7 +295,7 @@ theorem compactDsyWires_spec : ∀ᶠ n in atTop, ∀ mainP : MnPr bdA,
           · subst hw
             simp only [hF₁₀, hF₉, hF₈, hF₇, hF₆, hF₅, hF₄, hF₃, hF₂, hF₁, hF₀, dsyOv_lay, hR₇,
               Function.update_apply, dsyWr, bdIo, mnLay_inj.eq_iff, LReg.wire.injEq,
-              synWire_eq_iff, SynW.p.injEq, SynW.tw.injEq, dsy_wire_ne_bdLayX, reduceCtorEq,
+              synWire_eq_iff, dsy_wire_ne_bdLayX, reduceCtorEq,
               ite_true, ite_false, hlayW', List.append_nil]
             rfl
           · rw [hevw _ (by simp [hw])]
@@ -308,7 +306,7 @@ theorem compactDsyWires_spec : ∀ᶠ n in atTop, ∀ mainP : MnPr bdA,
             | (rw [hevw _ (by decide)]; rfl)
             | (simp only [hF₁₀, hF₉, hF₈, hF₇, hF₆, hF₅, hF₄, hF₃, hF₂, hF₁, hF₀, dsyOv_lay,
                 hR₇, Function.update_apply, dsyWr, bdIo, mnLay_inj.eq_iff, LReg.wire.injEq,
-                synWire_eq_iff, SynW.p.injEq, SynW.tw.injEq, dsy_wire_ne_bdLayX, reduceCtorEq,
+                synWire_eq_iff, SynW.p.injEq, dsy_wire_ne_bdLayX, reduceCtorEq,
                 ite_true, ite_false, hlayW', List.append_nil]
                rfl)
         · rw [hevw _ (by simp)]; rfl

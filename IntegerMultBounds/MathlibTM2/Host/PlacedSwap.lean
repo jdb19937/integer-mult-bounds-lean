@@ -35,7 +35,6 @@ namespace IntegerMultBounds.MathlibTM2.Host
 
 open IntegerMultBounds IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.Stack IntegerMultBounds.MathlibTM2
 
-set_option linter.unusedSimpArgs false
 
 noncomputable section
 

@@ -39,7 +39,6 @@ namespace IntegerMultBounds.MathlibTM2.Fast
 open IntegerMultBounds.Machine IntegerMultBounds.NLogN IntegerMultBounds.MathlibTM2.Host IntegerMultBounds.MathlibTM2.Layer
 open IntegerMultBounds.MathlibTM2.Mult.Rounds
 
-set_option linter.unusedSimpArgs false
 
 /-! ### Monomials on numerators -/
 
@@ -206,7 +205,7 @@ lemma tw_cstream_drop : ∀ (l : List GaussianInt) (k : ℕ),
 
 lemma tw_cstream_eq (l : List GaussianInt) :
     cstream A w l = (l.map (red w)).flatMap (coeffSyms A w) := by
-  simp [cstream, csyms, List.flatMap_map]
+  simp [cstream, List.flatMap_map]
 
 lemma tw_cstream_neg (l : List GaussianInt) :
     ((l.map (red w)).map (fun z => -z)).flatMap (coeffSyms A w) =
@@ -401,7 +400,7 @@ lemma twFold_seg {h : ℕ} (a x F : ℕ) (hF : F < 2 ^ (h + 1)) :
   unfold twTerm
   by_cases hh : h < a
   · rw [tw_seg_split hh, List.foldl_append, twFold_low, List.foldl_cons, twFold_skip, ite_eq_left hh]
-    simp only [twStep, ite_eq_left rfl, List.append_nil, List.reverse_reverse, twVal_binBits]
+    simp only [twStep, List.append_nil, List.reverse_reverse, twVal_binBits]
     rw [tw_testBit_eq]
     rcases Nat.mod_two_eq_zero_or_one (x / 2 ^ h) with hb | hb
     · simp [hb, Nat.mod_eq_of_lt hF]

@@ -39,7 +39,6 @@ namespace IntegerMultBounds.MathlibTM2.Fast.TableVM
 
 open IntegerMultBounds.MathlibTM2.Fast.TableNum IntegerMultBounds.MathlibTM2.Mult.Chirp IntegerMultBounds.MathlibTM2.Mult.Pipeline IntegerMultBounds.MathlibTM2.Layer
 
-set_option linter.unusedSimpArgs false
 
 local notation "wPi" => (15 : Fin 84)
 local notation "wY" => (18 : Fin 84)
@@ -124,10 +123,10 @@ theorem tblTwistA_do {A W w : ℕ} (st : TblSt 84 A) {L : List (Fin 84 × ℕ)} 
     TblDo A W w (tblBlock 84 tblTwistAL (.zero wX)) st (fun s' =>
       tblKV s' ([(wY, pi * k / r), (wX, 0)] ++ L) ∧ s'.acc = st.acc) (2 + 1) := by
   refine tblKV_block [wT1, wY, wX] hL hd ?_ ?_ ?_ ?_
-  · simp [tblTwistAL, tblFitsList, TblIns.fits, TblIns.exact, hpi, hk]; exact hb
+  · simp [tblTwistAL, tblFitsList, TblIns.fits, hpi, hk]; exact hb
   · intro x hx
     simp only [List.mem_cons, List.not_mem_nil, or_false, not_or] at hx
-    simp [tblTwistAL, tblExactList, TblIns.exact, Function.update_apply, hx]
+    simp [tblTwistAL, tblExactList, TblIns.exact, hx]
   · simp [tblTwistAL, tblExactList, TblIns.exact]
   · intro e he
     simp only [List.mem_cons, List.not_mem_nil, or_false] at he
@@ -159,26 +158,26 @@ theorem tblTwistB_do {A W w : ℕ} (conj : Bool) (st : TblSt 84 A) {L : List (Fi
   cases conj
   · simp only [Bool.false_eq_true, ite_false] at g1 g2 g3 m2 hsg ⊢
     refine TblDo.block _ _ ?_ ⟨fun e he => ?_, ?_⟩
-    · simp [tblTwistBL, tblSignedL, tblFitsList, TblIns.fits, TblIns.exact, Function.update_apply,
+    · simp [tblTwistBL, tblSignedL, tblFitsList, TblIns.fits, TblIns.exact, 
         hCC, hDen, hPw, hone, h38, h39, h40, h41, tbl_signedM_fold]
       and_intros <;> omega
     · rw [← hL e he]
       have hx := hd e he
       simp only [List.mem_cons, List.not_mem_nil, or_false, not_or] at hx
-      simp [tblTwistBL, tblSignedL, tblExactList, TblIns.exact, Function.update_apply, hx]
-    · simp [tblTwistBL, tblSignedL, tblExactList, TblIns.exact, Function.update_apply,
+      simp [tblTwistBL, tblSignedL, tblExactList, TblIns.exact, hx]
+    · simp [tblTwistBL, tblSignedL, tblExactList, TblIns.exact, 
         hCC, hDen, hPw, hone, h38, h39, h40, h41, tbl_signedM_fold,
         tbl_signedM_eq w rn _ hrn, tbl_signedM_eq w i_n _ hin]
   · simp only [ite_true] at g1 g2 g3 m2 hsg ⊢
     refine TblDo.block _ _ ?_ ⟨fun e he => ?_, ?_⟩
-    · simp [tblTwistBL, tblSignedL, tblFitsList, TblIns.fits, TblIns.exact, Function.update_apply,
+    · simp [tblTwistBL, tblSignedL, tblFitsList, TblIns.fits, TblIns.exact, 
         hCC, hDen, hPw, hone, h38, h39, h40, h41, tbl_signedM_fold]
       and_intros <;> omega
     · rw [← hL e he]
       have hx := hd e he
       simp only [List.mem_cons, List.not_mem_nil, or_false, not_or] at hx
-      simp [tblTwistBL, tblSignedL, tblExactList, TblIns.exact, Function.update_apply, hx]
-    · simp [tblTwistBL, tblSignedL, tblExactList, TblIns.exact, Function.update_apply,
+      simp [tblTwistBL, tblSignedL, tblExactList, TblIns.exact, hx]
+    · simp [tblTwistBL, tblSignedL, tblExactList, TblIns.exact, 
         hCC, hDen, hPw, hone, h38, h39, h40, h41, tbl_signedM_fold,
         tbl_signedM_eq w rn _ hrn, tbl_signedM_eq w (1 - i_n) _ hsg]
 

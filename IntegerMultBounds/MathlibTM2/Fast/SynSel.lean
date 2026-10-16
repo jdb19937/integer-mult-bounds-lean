@@ -28,7 +28,6 @@ open IntegerMultBounds IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.St
 open IntegerMultBounds.MathlibTM2.Node hiding LReg
 open IntegerMultBounds.Networks.Shared50ModularControl (prime)
 
-set_option linter.unusedSimpArgs false
 set_option maxHeartbeats 4000000
 
 /-! ### Active bits of the pieces -/
@@ -572,7 +571,7 @@ theorem synLayer_runs (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
     rw [hl, topPieces_exp]
     unfold synS synER
     by_cases hc : synChunk ℓ K h
-    · simp only [hc, ite_true, synPcsR, synKh, synQ]
+    · simp only [hc, ite_true, synPcsR, synQ]
       rw [synPcs_exp_sum]
     · simp [hc, synPcsR]
   have hZ : ∀ q, TopFitsZ w (synZ (n + a) Y q) := fun q => topFitsZ_of_norm (hY _ _) hpw
@@ -595,7 +594,7 @@ theorem synLayer_runs (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
   obtain ⟨v', c, hu, hc, he⟩ := topProg_exec_Hl (U := U) hQ ds hd hA hA9 hNW hgate
     ((topPieces hρ (synPcsR es ℓ K h) hpcs).flatMap Piece.bitsList) (synPcsR es ℓ K h)
     (Nat.one_le_two_pow) (by omega) (by unfold synW2; omega) hρ le_rfl hfitT hTL hR₂ hpcs hinj
-    (List.Perm.refl _) hselm hselN hD (by simp [hs, topTop]) (synZ (n + a) Y) hZ hX v S hL
+    (List.Perm.refl _) hselm hselN hD (by simp [hs]) (synZ (n + a) Y) hZ hX v S hL
     hT' hI' hio'
   have hH := Hl_synZ (n := n + a) Y sel
   have e1 : (fun q : (Fin 1 × Fin (2 ^ l)) × (Fin (n + a) → ZMod 2) =>

@@ -33,9 +33,6 @@ open IntegerMultBounds IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.St
 open IntegerMultBounds.MathlibTM2.Node hiding LReg
 open IntegerMultBounds.Networks.Shared50ModularControl (prime)
 
-set_option linter.unusedSimpArgs false
-set_option linter.unusedSectionVars false
-set_option linter.constructorNameAsVariable false
 
 /-! ### The file after the layout stage -/
 
@@ -88,7 +85,7 @@ theorem sly_post_fwd_v {es : List ℕ} {ℓ K w l : ℕ} {L : Equiv.Perm (Fin es
   funext x
   rcases x with x | i | x | i
   · simp [slyV₃, slyV₂, slyPV]
-  · simp only [slyV₃, Function.update_apply, SynW.ly.injEq, reduceCtorEq, ite_false]
+  · simp only [slyV₃, Function.update_apply, SynW.ly.injEq]
     split_ifs <;> simp_all [slyV₂, slyPV]
   · simp [slyV₃, slyV₂, slyPV]
   · simp [slyV₃, slyV₂, slyPV]
@@ -217,7 +214,7 @@ theorem slyFwd_lay {d : ℕ} (a : Fin d → ℕ) {ℓ K l w : ℕ} (H : LayHyp (
   set R₂ := synG (synIdle rl.flatten P') (slyV₂ W E es.sum B v₀) with hR₂
   set Rw := ldgPost slyRg slyLr R₂ es ℓ K B (layXcs es ℓ K B) with hRw
   obtain ⟨mA, mB, hmA, hmB, eM⟩ := sly_ldlWM_full sly_regs.l (n := es.sum) Rw (layBits es ℓ K)
-    (by simp [hRw, ldgPost, Function.update_apply, sly_regs.l.rl, sly_regs.l.lr',
+    (by simp [hRw, ldgPost, sly_regs.l.lr',
       sly_regs.l.lr_inj.eq_iff])
     (by rw [hRw, ldgPost_rg sly_regs _ _ _ _ _ _ (by simp) (by simp)]; exact hpre.mA)
     (by rw [hRw, ldgPost_rg sly_regs _ _ _ _ _ _ (by simp) (by simp)]; exact hpre.mB)
@@ -229,7 +226,7 @@ theorem slyFwd_lay {d : ℕ} (a : Fin d → ℕ) {ℓ K l w : ℕ} (H : LayHyp (
           Function.update_of_ne (by simp : slyT 1 ≠ slyT 0),
           Function.update_of_ne (Ne.symm (slyT_ne_sreg (.ly 15) 1)),
           Function.update_of_ne (Ne.symm (slyT_ne_sreg (.ly 14) 1)), hRw]
-        simp [ldgPost, Function.update_apply, slyLr, slyRg])
+        simp [ldgPost, slyLr, slyRg])
     (fun k => by
       rw [hRm, Function.update_of_ne (slyH_ne_lr k _), Function.update_of_ne (slyH_ne_rg k (by simp)),
         Function.update_of_ne (slyH_ne_rg k (by simp)), hRw]

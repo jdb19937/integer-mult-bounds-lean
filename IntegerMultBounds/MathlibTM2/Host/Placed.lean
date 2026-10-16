@@ -23,7 +23,6 @@ namespace IntegerMultBounds.MathlibTM2.Host
 
 open IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.Stack IntegerMultBounds.MathlibTM2
 
-set_option linter.unusedSimpArgs false
 
 variable {T Q A : ℕ} {U : Type}
 
@@ -187,7 +186,7 @@ theorem eachR_exec (a : Fin T → Act T Q A U) (g : List (Fin (A + 4)) → List 
       funext j
       by_cases hj : j = i
       · subst hj; simp [hnd.1]
-      · simp [hj, Function.update_of_ne hj]
+      · simp [hj]
 
 /-- Push a blank onto the right stack of tape `i`. -/
 def markStep (i : Fin T) : Act T Q A U := .push (.rt i) (fun _ => blank) .done

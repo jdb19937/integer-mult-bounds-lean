@@ -16,8 +16,6 @@ open IntegerMultBounds.MathlibTM2.Mult IntegerMultBounds.MathlibTM2.Mult.Sizes
 open IntegerMultBounds.Networks.Shared50ModularControl (prime)
 open Filter
 
-set_option linter.unusedSimpArgs false
-set_option linter.unusedSectionVars false
 
 noncomputable section
 

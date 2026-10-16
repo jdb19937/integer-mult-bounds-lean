@@ -40,8 +40,6 @@ open IntegerMultBounds IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.St
   IntegerMultBounds.MathlibTM2.Layer
 open IntegerMultBounds.MathlibTM2.Mult IntegerMultBounds.MathlibTM2.Mult.Sizes IntegerMultBounds.MathlibTM2.Mult.Moduli
 
-set_option linter.unusedSimpArgs false
-set_option linter.unusedSectionVars false
 
 /-- The coefficient width: `10 p + chirpGuard d + 3 + Σ aᵢ`, `Σ aᵢ = logT - ℓ`; the banded `B̃₀` needs about `10 p`. -/
 def dsW (n : ℕ) : ℕ := 10 * p n + Chirp.chirpGuard (d n) + 3 + (logT n - ℓ n)

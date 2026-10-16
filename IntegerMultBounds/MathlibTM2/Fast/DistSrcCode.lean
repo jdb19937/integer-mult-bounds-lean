@@ -20,8 +20,6 @@ open IntegerMultBounds IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.St
   IntegerMultBounds.MathlibTM2.Layer
 open IntegerMultBounds.MathlibTM2.Mult IntegerMultBounds.MathlibTM2.Mult.Sizes
 
-set_option linter.unusedSimpArgs false
-set_option linter.unusedSectionVars false
 
 section Codes
 
@@ -85,7 +83,7 @@ theorem dsCInit_do :
   · simp only [tblExactList, TblIns.exact, List.nil_append, List.cons_append]
     congr 1
     funext j
-    fin_cases j <;> simp [dsCV, pmVals, Function.update_apply, Fin.ext_iff, pmNV, dsSP, dsP,
+    fin_cases j <;> simp [dsCV, pmVals, Fin.ext_iff, pmNV, dsSP, dsP,
       dsSig, dsMsk, pmVal_ge]
 
 theorem dsCEnd_do :
@@ -94,7 +92,7 @@ theorem dsCEnd_do :
   simp only [tblExactList, TblIns.exact, List.nil_append, List.cons_append]
   congr 1
   funext j
-  fin_cases j <;> simp [dsCV, pmVals, Function.update_apply, Fin.ext_iff, pmNV, pmVal_ge]
+  fin_cases j <;> simp [dsCV, pmVals, Fin.ext_iff, pmNV, pmVal_ge]
 
 section Post
 

@@ -40,8 +40,6 @@ open IntegerMultBounds.MathlibTM2.Fast IntegerMultBounds.MathlibTM2.Fast.ResampA
 open IntegerMultBounds.MathlibTM2.Mult
 open scoped Function
 
-set_option linter.unusedSimpArgs false
-set_option linter.unusedSectionVars false
 
 noncomputable section
 

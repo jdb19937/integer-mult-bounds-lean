@@ -24,7 +24,6 @@ open Asymptotics Filter
 
 variable {t q a : ℕ}
 
-set_option linter.unusedSimpArgs false
 
 lemma tapeStacks_R (M : Program t q a) (w : List (Fin (a + 4))) :
     (tapeStacks M w : Stacks t a).R = fun i => if i.val = 0 then w else [] := by
@@ -161,7 +160,7 @@ theorem tm2_of_runsWithin (M : Program t q a) (total : ℕ → ℝ) (h : RunsWit
   have e := Classical.choose_spec (hrun p)
   have o := Exec.toOutputs (body := fun _ : Unit => main M) () (BK.inp (t := t)) (BK.out (t := t))
     (init M) e.2 e.1
-  simp only [Equiv.refl, Equiv.invFun_as_coe, List.map_id', id]
+  simp only [Equiv.refl]
   erw [List.map_id, List.map_id]
   exact o
 

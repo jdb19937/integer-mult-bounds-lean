@@ -12,10 +12,6 @@ blank before and after every step (`line_hoareF`). -/
 
 @[expose] public section
 
-set_option linter.unusedTactic false
-set_option linter.unreachableTactic false
-set_option linter.unusedVariables false
-set_option linter.unusedSimpArgs false
 
 namespace IntegerMultBounds.Machine.GaussianLine
 
@@ -38,10 +34,10 @@ def seg2 := (seq (seq (seq (seq (seq (seq (seq (seq (seq (seq (scanU (a := a)) r
 
 theorem seg1_hoare (wtWords uWords : List (List Bool)) (s t m p w W : ℕ) (sW tW : List Bool)
     (pXs pYs pP pP2 pO1 pO2 pRp pRw pR2 pF1 pF2 pA1 pA2 pOut pRm pRW pCr pCs pCt pFc : ℤ)
-    (hw : 1 ≤ w) (hpw : p ≤ w) (hwW : w ≤ W) (hwt : ∀ x ∈ wtWords, x.length = w)
+    (hw : 1 ≤ w) (_hpw : p ≤ w) (hwW : w ≤ W) (hwt : ∀ x ∈ wtWords, x.length = w)
     (hu : ∀ x ∈ uWords, x.length = w) (hwtl : wtWords.length = t * (2 * m + 1))
-    (hul : 2 * (s + 2 * m + 1) ≤ uWords.length) (hst : s ≤ t) (hs : 0 < s)
-    (hsv : Counter.value sW = s) (htv : Counter.value tW = t) (hsl : sW.length ≤ tW.length + 1) (k i : ℕ) (hk : k < t) (hi : i < 2 * m + 1) :
+    (hul : 2 * (s + 2 * m + 1) ≤ uWords.length) (_hst : s ≤ t) (hs : 0 < s)
+    (hsv : Counter.value sW = s) (_htv : Counter.value tW = t) (_hsl : sW.length ≤ tW.length + 1) (k i : ℕ) (hk : k < t) (hi : i < 2 * m + 1) :
     ∃ c, HoareTime (seg1 (a := a)) (fun v => v = bank (inTape (wordRecs (a := a) wtWords)) (inTape (wordRecs (a := a) uWords)) ((fun _ => blank)) ((fun _ => blank)) ((fun _ => blank)) ((fun _ => blank)) (putWord (fun _ => blank) pO1 ((result (wtWords.getD (k * (2 * m + 1) + i) []) (uWords.getD (2 * centre s t k + 2 * i) []) p w).map bitSymbol)) ((fun _ => blank)) (putWord (fun _ => blank) pRp (ruler p)) (putWord (fun _ => blank) pRw (ruler w)) (putWord (fun _ => blank) pR2 (ruler (2 * w))) ((fun _ => blank)) ((fun _ => blank)) (putWord (fun _ => blank) pA1 ((accR wtWords uWords s t m p w W k i).map bitSymbol)) (putWord (fun _ => blank) pA2 ((accI wtWords uWords s t m p w W k i).map bitSymbol)) (putWord (fun _ => blank) pOut (flat (wordRecs (a := a) (outWords wtWords uWords s t m p w W k)))) (putWord (fun _ => blank) pRm (ruler (2 * m + 1))) (putWord (fun _ => blank) pRW (ruler W)) (putWord (fun _ => blank) pCr ((OrderedSelect.rWord sW tW [] k).map bitSymbol)) (putWord (fun _ => blank) pCs ((sW).map bitSymbol)) (putWord (fun _ => blank) pCt ((tW).map bitSymbol)) ((fun _ => blank)) ((start (wordRecs (a := a) wtWords) (k * (2 * m + 1) + i) : ℤ)) ((start (wordRecs (a := a) uWords) (2 * centre s t k + 2 * i) : ℤ)) (pXs) (pYs) (pP) (pP2) (pO1) (pO2) (pRp) (pRw) (pR2) (pF1) (pF2) (pA1) (pA2) (pOut + ↑(flat (wordRecs (a := a) (outWords wtWords uWords s t m p w W k))).length) (pRm + ↑i) (pRW) (pCr) (pCs) (pCt) (pFc))
       (fun v => v = bank (inTape (wordRecs (a := a) wtWords)) (inTape (wordRecs (a := a) uWords)) ((fun _ => blank)) ((fun _ => blank)) ((fun _ => blank)) ((fun _ => blank)) (putWord (fun _ => blank) pO1 ((result (wtWords.getD (k * (2 * m + 1) + i) []) (uWords.getD (2 * centre s t k + 2 * i) []) p w).map bitSymbol)) ((fun _ => blank)) (putWord (fun _ => blank) pRp (ruler p)) (putWord (fun _ => blank) pRw (ruler w)) (putWord (fun _ => blank) pR2 (ruler (2 * w))) ((fun _ => blank)) ((fun _ => blank)) (putWord (fun _ => blank) pA1 ((accR wtWords uWords s t m p w W k i).map bitSymbol)) (putWord (fun _ => blank) pA2 ((accI wtWords uWords s t m p w W k i).map bitSymbol)) (putWord (fun _ => blank) pOut (flat (wordRecs (a := a) (outWords wtWords uWords s t m p w W k)))) (putWord (fun _ => blank) pRm (ruler (2 * m + 1))) (putWord (fun _ => blank) pRW (ruler W)) (putWord (fun _ => blank) pCr ((OrderedSelect.rWord sW tW [] k).map bitSymbol)) (putWord (fun _ => blank) pCs ((sW).map bitSymbol)) (putWord (fun _ => blank) pCt ((tW).map bitSymbol)) ((fun _ => blank)) ((start (wordRecs (a := a) wtWords) (k * (2 * m + 1) + i) : ℤ)) ((start (wordRecs (a := a) uWords) (2 * centre s t k + 2 * i + 1) : ℤ)) (pXs) (pYs) (pP) (pP2) (pO1) (pO2) (pRp) (pRw) (pR2) (pF1) (pF2) (pA1) (pA2) (pOut + ↑(flat (wordRecs (a := a) (outWords wtWords uWords s t m p w W k))).length) (pRm + ↑i) (pRW) (pCr) (pCs) (pCt) (pFc)) c ∧ c ≤ 2 * w + 10 := by
   have hcen : centre s t k < s := by
@@ -78,10 +74,10 @@ theorem seg1_hoare (wtWords uWords : List (List Bool)) (s t m p w W : ℕ) (sW t
 
 theorem seg2_hoare (wtWords uWords : List (List Bool)) (s t m p w W : ℕ) (sW tW : List Bool)
     (pXs pYs pP pP2 pO1 pO2 pRp pRw pR2 pF1 pF2 pA1 pA2 pOut pRm pRW pCr pCs pCt pFc : ℤ)
-    (hw : 1 ≤ w) (hpw : p ≤ w) (hwW : w ≤ W) (hwt : ∀ x ∈ wtWords, x.length = w)
+    (hw : 1 ≤ w) (_hpw : p ≤ w) (hwW : w ≤ W) (hwt : ∀ x ∈ wtWords, x.length = w)
     (hu : ∀ x ∈ uWords, x.length = w) (hwtl : wtWords.length = t * (2 * m + 1))
-    (hul : 2 * (s + 2 * m + 1) ≤ uWords.length) (hst : s ≤ t) (hs : 0 < s)
-    (hsv : Counter.value sW = s) (htv : Counter.value tW = t) (hsl : sW.length ≤ tW.length + 1) (k i : ℕ) (hk : k < t) (hi : i < 2 * m + 1) :
+    (hul : 2 * (s + 2 * m + 1) ≤ uWords.length) (_hst : s ≤ t) (hs : 0 < s)
+    (hsv : Counter.value sW = s) (_htv : Counter.value tW = t) (_hsl : sW.length ≤ tW.length + 1) (k i : ℕ) (hk : k < t) (hi : i < 2 * m + 1) :
     ∃ c, HoareTime (seg2 (a := a)) (fun v => v = bank (inTape (wordRecs (a := a) wtWords)) (inTape (wordRecs (a := a) uWords)) ((fun _ => blank)) ((fun _ => blank)) ((fun _ => blank)) ((fun _ => blank)) (putWord (fun _ => blank) pO1 ((result (wtWords.getD (k * (2 * m + 1) + i) []) (uWords.getD (2 * centre s t k + 2 * i) []) p w).map bitSymbol)) (putWord (fun _ => blank) pO2 ((result (wtWords.getD (k * (2 * m + 1) + i) []) (uWords.getD (2 * centre s t k + 2 * i + 1) []) p w).map bitSymbol)) (putWord (fun _ => blank) pRp (ruler p)) (putWord (fun _ => blank) pRw (ruler w)) (putWord (fun _ => blank) pR2 (ruler (2 * w))) ((fun _ => blank)) ((fun _ => blank)) (putWord (fun _ => blank) pA1 ((accR wtWords uWords s t m p w W k i).map bitSymbol)) (putWord (fun _ => blank) pA2 ((accI wtWords uWords s t m p w W k i).map bitSymbol)) (putWord (fun _ => blank) pOut (flat (wordRecs (a := a) (outWords wtWords uWords s t m p w W k)))) (putWord (fun _ => blank) pRm (ruler (2 * m + 1))) (putWord (fun _ => blank) pRW (ruler W)) (putWord (fun _ => blank) pCr ((OrderedSelect.rWord sW tW [] k).map bitSymbol)) (putWord (fun _ => blank) pCs ((sW).map bitSymbol)) (putWord (fun _ => blank) pCt ((tW).map bitSymbol)) ((fun _ => blank)) ((start (wordRecs (a := a) wtWords) (k * (2 * m + 1) + i) : ℤ)) ((start (wordRecs (a := a) uWords) (2 * centre s t k + 2 * i + 1) : ℤ)) (pXs) (pYs) (pP) (pP2) (pO1) (pO2) (pRp) (pRw) (pR2) (pF1) (pF2) (pA1) (pA2) (pOut + ↑(flat (wordRecs (a := a) (outWords wtWords uWords s t m p w W k))).length) (pRm + ↑i) (pRW) (pCr) (pCs) (pCt) (pFc))
       (fun v => v = bank (inTape (wordRecs (a := a) wtWords)) (inTape (wordRecs (a := a) uWords)) ((fun _ => blank)) ((fun _ => blank)) ((fun _ => blank)) ((fun _ => blank)) ((fun _ => blank)) ((fun _ => blank)) (putWord (fun _ => blank) pRp (ruler p)) (putWord (fun _ => blank) pRw (ruler w)) (putWord (fun _ => blank) pR2 (ruler (2 * w))) ((fun _ => blank)) ((fun _ => blank)) (putWord (fun _ => blank) pA1 ((accR wtWords uWords s t m p w W k (i + 1)).map bitSymbol)) (putWord (fun _ => blank) pA2 ((accI wtWords uWords s t m p w W k (i + 1)).map bitSymbol)) (putWord (fun _ => blank) pOut (flat (wordRecs (a := a) (outWords wtWords uWords s t m p w W k)))) (putWord (fun _ => blank) pRm (ruler (2 * m + 1))) (putWord (fun _ => blank) pRW (ruler W)) (putWord (fun _ => blank) pCr ((OrderedSelect.rWord sW tW [] k).map bitSymbol)) (putWord (fun _ => blank) pCs ((sW).map bitSymbol)) (putWord (fun _ => blank) pCt ((tW).map bitSymbol)) ((fun _ => blank)) ((start (wordRecs (a := a) wtWords) (k * (2 * m + 1) + (i + 1)) : ℤ)) ((start (wordRecs (a := a) uWords) (2 * centre s t k + 2 * (i + 1)) : ℤ)) (pXs) (pYs) (pP) (pP2) (pO1) (pO2) (pRp) (pRw) (pR2) (pF1) (pF2) (pA1) (pA2) (pOut + ↑(flat (wordRecs (a := a) (outWords wtWords uWords s t m p w W k))).length) (pRm + ↑(i + 1)) (pRW) (pCr) (pCs) (pCt) (pFc)) c ∧ c ≤ 4 * W + 8 * w + 40 := by
   have hcen : centre s t k < s := by
@@ -251,7 +247,7 @@ theorem inner_hoareF (wtWords uWords : List (List Bool)) (s t m p w W : ℕ) (sW
     simp only [Y, Tapes.reads, bank, ↓reduceIte, decide_eq_false_iff_not, ne_eq, not_not, Fin.isValue]
     exact ruler_end pRm (2 * m + 1)
 
-noncomputable def outerBoundF (p w W m L : ℕ) : ℕ :=
+noncomputable def outerBoundF (_p w W m L : ℕ) : ℕ :=
   (2 * m + 1) * (bodyBoundF w W + 2) + partABound m W + (2 * m + 1) * (rewindBodyBound w + 2) +
     2 * m + 12 * L + 8 * w + 70
 

@@ -27,7 +27,6 @@ namespace IntegerMultBounds.MathlibTM2.Layer
 open IntegerMultBounds.Networks BinaryWalsh BinaryPhase BinaryColumns ComplexEndpoints
   ComplexFramedExecution
 
-set_option linter.unusedSimpArgs false
 
 /-- Gaussian-integer arrays. -/
 abbrev ZArr (Y : Type) (n : ℕ) := Y × (Fin n → ZMod 2) → GaussianInt
@@ -226,7 +225,7 @@ lemma view_pullM (he : Function.Injective e) (L : BinaryWalsh.Address m → Bina
   simp only [view, toC, pullM, pullArr, colBits_merge he, merge_merge]
 
 lemma view_conjZ (u : ZArr Y n) : view e (toC (conjZ u)) = conjArr (view e (toC u)) := by
-  funext p; simp [view, toC, conjZ, conjArr, GaussianInt.toComplex_star, Complex.star_def]
+  funext p; simp [view, toC, conjZ, conjArr, GaussianInt.toComplex_star]
 
 lemma view_child (he : Function.Injective e) (child : Fin m → ZArr Y n → ZArr Y n) (Tc : ℕ)
     (hchild : ∀ (j : Fin m) (f : ZArr Y n), toC (child j f) =
@@ -307,7 +306,7 @@ lemma pullArr_smul (L : BinaryWalsh.Address m → BinaryWalsh.Address m) (c : �
 
 lemma conjArr_two_pow_smul (s : ℕ) (u : Arr Y (m * k)) :
     conjArr ((2 : ℂ) ^ s • u) = (2 : ℂ) ^ s • conjArr u := by
-  funext p; simp [conjArr, Complex.star_def]
+  funext p; simp [conjArr]
 
 lemma facImpl_two_pow_smul (g : ZMod 4 × BinaryWalsh.Address m) (s : ℕ) (u : Arr Y (m * k)) :
     facImpl g ((2 : ℂ) ^ s • u) = (2 : ℂ) ^ s • facImpl g u := by

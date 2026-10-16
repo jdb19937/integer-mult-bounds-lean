@@ -44,7 +44,6 @@ namespace IntegerMultBounds.MathlibTM2.Fast
 open IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.Stack IntegerMultBounds.MathlibTM2 IntegerMultBounds.MathlibTM2.Host IntegerMultBounds.MathlibTM2.Layer IntegerMultBounds.MathlibTM2.Node
 open IntegerMultBounds.Schoenhage.Schedule (topN)
 
-set_option linter.unusedSimpArgs false
 
 /-- The registers of the complex fixed-point product. -/
 inductive CR
@@ -221,7 +220,7 @@ lemma head_reverse_binSyms {K x : ℕ} (hK : 1 ≤ K) :
       bitSymbol (x.testBit (K - 1)) := by
   obtain ⟨k, rfl⟩ : ∃ k, K = k + 1 := ⟨K - 1, by omega⟩
   rw [binSyms_add, List.reverse_append]
-  simp [binSyms, Nat.testBit_div_two_pow, Nat.testBit_eq_decide_div_mod_eq]
+  simp [binSyms, Nat.testBit_eq_decide_div_mod_eq]
 
 /-- Sign and magnitude of `x` from the residues of `x` and `-x` modulo `2^K`, most significant
 bit on top, when `|x| < 2^(K-1)`. -/
@@ -254,7 +253,7 @@ lemma layout_of_nodup {ni no : ℕ} {insR : Fin ni → CR} {outsR : Fin no → C
   obtain ⟨⟨h1, h2, h3⟩, h4, h5⟩ := h
   rw [List.nodup_ofFn] at h1 h2
   simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, List.mem_append,
-    List.mem_ofFn, Set.mem_range] at h4 h5 h3
+    List.mem_ofFn] at h4 h5 h3
   have hCT : C ≠ Tm := h4.1
   refine ⟨hcr.comp h1, hcr.comp h2, fun i j he => ?_, fun i he => ?_, fun i he => ?_,
     fun j he => ?_, fun j he => ?_, hcr.ne hCT, fun i he => ?_⟩

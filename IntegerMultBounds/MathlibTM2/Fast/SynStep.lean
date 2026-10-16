@@ -29,7 +29,6 @@ open IntegerMultBounds IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.St
 open IntegerMultBounds.MathlibTM2.Node hiding LReg
 open IntegerMultBounds.Networks.Shared50ModularControl (prime)
 
-set_option linter.unusedSimpArgs false
 set_option maxHeartbeats 4000000
 
 /-! ### Numerators of physical arrays -/
@@ -233,7 +232,7 @@ theorem sg_synRoundF {es : List ℕ} {ℓ K : ℕ} (H : LayHyp es ℓ K) {l w p 
         (fun x c => GaussianInt.toComplex (synMask (2 ^ es.sum) Y x c)))))) P₀) v
     (synTrunc (bflyL ((selBits es h).map (twPosL (layPerm es ℓ K)))
         (fun x c => GaussianInt.toComplex (synMask (2 ^ es.sum) Y x c))))
-    (by simp [synIdle, lreg, Function.update_apply]) hv.hpz hv.htw hv.hN
+    (by simp [synIdle, lreg]) hv.hpz hv.htw hv.hN
     hv.hw hv.hr hv.hlr hv.hh hv.hes hv.hD (hv.hs 2) (hv.hs 3) (hv.hs 23) (hv.hs 25) (hv.hs 26)
     (hv.hs 27) (hv.hs 28)
   rw [synIdle_update_io] at s2
@@ -258,7 +257,7 @@ theorem sg_synRoundO {es : List ℕ} {ℓ K : ℕ} (H : LayHyp es ℓ K) {l w p 
   refine ⟨_, synRoundO_math2 es (layPerm es ℓ K) p h u Ym (synNum_mask hY₁'), ?_⟩
   have s1 := sg_synTwStep (layerTable (Ka := Ka) (U := U) hQ ds) false (by omega) (by omega) hhl
     (layPerm es ℓ K) (synIdle (cstream (prime + Ka) w (IntegerMultBounds.MathlibTM2.Fast.rpStream (2 ^ es.sum) Y)) P₀) v
-    Y (by simp [synIdle, lreg, Function.update_apply]) hv.hpz hv.htw hv.hN
+    Y (by simp [synIdle, lreg]) hv.hpz hv.htw hv.hN
     hv.hw hv.hr hv.hlr hv.hh hv.hes hv.hD (hv.hs 2) (hv.hs 3) (hv.hs 23) (hv.hs 25) (hv.hs 26)
     (hv.hs 27) (hv.hs 28)
   rw [synIdle_update_io] at s1

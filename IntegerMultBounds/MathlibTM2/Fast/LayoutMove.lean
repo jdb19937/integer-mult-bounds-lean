@@ -54,7 +54,6 @@ open IntegerMultBounds IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.St
   IntegerMultBounds.MathlibTM2.Node IntegerMultBounds.MathlibTM2.Layer.PackedXor
 open IntegerMultBounds.Networks.Shared50ModularControl (prime)
 
-set_option linter.unusedSimpArgs false
 
 /-! ### Registers -/
 

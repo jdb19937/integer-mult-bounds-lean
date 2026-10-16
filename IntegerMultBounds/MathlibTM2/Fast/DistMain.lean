@@ -40,8 +40,6 @@ open IntegerMultBounds IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.St
 open IntegerMultBounds.MathlibTM2.Mult IntegerMultBounds.MathlibTM2.Mult.Sizes IntegerMultBounds.MathlibTM2.Fast IntegerMultBounds.MathlibTM2.Fast.Src
 open IntegerMultBounds.Networks.Shared50ModularControl (prime)
 
-set_option linter.unusedSimpArgs false
-set_option linter.unusedSectionVars false
 
 section Main
 
@@ -84,7 +82,7 @@ theorem ds_main_runs (R : Regs T A) {n : ℕ} (hbig : Big n) (wl : List (Fin (A 
     (.o .uw) (List.replicate (dsW n) tick)) (.o .uW) (List.replicate (dsWW n) tick) with hX₁
   have hX₁W : X₁ (.o .uW) = List.replicate (dsWW n) tick := by simp [hX₁]
   have hX₁w : X₁ (.o .uw) = List.replicate (dsW n) tick := by
-    simp [hX₁, Function.update_of_ne (show (DsY.o DsX.uw : DsY t₀) ≠ .o .uW by simp)]
+    simp [hX₁]
   have hX₁0 : ∀ y, y ≠ .o .uW → y ≠ .o .uw → X₁ y = [] := fun y h1 h2 => by
     simp [hX₁, Function.update_of_ne h1, Function.update_of_ne h2]
   obtain ⟨X', hv, ho, s2⟩ := ds_src_runs (body := body) h R hbig (srcHd0 hbig) c7 c8 c9 c10 c11

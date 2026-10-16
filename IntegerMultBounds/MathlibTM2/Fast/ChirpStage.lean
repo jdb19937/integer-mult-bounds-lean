@@ -68,8 +68,6 @@ open IntegerMultBounds IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.St
 open IntegerMultBounds.MathlibTM2.Fast IntegerMultBounds.MathlibTM2.Fast.ResampA
 open IntegerMultBounds.Schoenhage.Schedule (topN)
 
-set_option linter.unusedSimpArgs false
-set_option linter.unusedSectionVars false
 
 noncomputable section
 
@@ -378,7 +376,7 @@ theorem cst_step_runs (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ : SS.sta
   have hcr : Function.Injective (cstCr rg) := fun a b h => CsR.c_injective (hrg h)
   have hdisj' : ∀ r j, cstCr rg r ≠ ι j := fun r j => hdisj _ j
   have hr₁ : Ready (fun x => ρ₁ (.c x)) w q :=
-    cst_ready_of_eq hr (fun x h1 h2 h3 h4 h5 h6 => by simp [hρ₁, Function.update_apply, *])
+    cst_ready_of_eq hr (fun x h1 h2 h3 h4 h5 h6 => by simp [*])
   have hflat : (B.map (List.replicate ts.length)).flatten = B.flatMap (List.replicate ts.length) :=
     by simp [List.flatMap_def]
   have h2 := RsaRuns.of_c hrg CsR.c_injective
@@ -408,13 +406,13 @@ theorem cst_step_runs (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ : SS.sta
     simp only [hρ₂, hρ₁]
     cst_upd
   · have e1 : (ρ₂ (.c .xs)).length = B.length * ts.length * w := by
-      simp [hρ₂, hρ₁, Function.update_apply, List.length_flatMap, List.map_const',
+      simp [hρ₂, hρ₁, List.length_flatMap, List.map_const',
         List.sum_replicate]
     have e2 : (Function.update ρ₂ (.c .xs) [] (.c .ys)).length = ts.length * w := by
-      simp [hρ₂, hρ₁, Function.update_apply, hys]
+      simp [hρ₂, hρ₁, hys]
     have e3 : (Function.update (Function.update ρ₂ (.c .xs) []) (.c .ys) [] .cL).length =
         ts.length := by
-      simp [hρ₂, hρ₁, Function.update_apply, hcL]
+      simp [hρ₂, hρ₁, hcL]
     have e4 : (B.map (List.replicate ts.length)).flatten.length = B.length * ts.length := by
       rw [hflat]; simp [List.length_flatMap, List.map_const', List.sum_replicate]
     rw [e1, e2, e3, e4]
@@ -629,7 +627,7 @@ theorem cst_chirpBox_runs (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ : SS
         (cstream A w (cstTab ts tab (j + 1)))) .cL (cnt (j + 1))) (cfg (j + 1 + 1)) with hτ
       have hS := cst_step_runs (body := body) (ι := ι) hrg hdisj hι hT hQ hA hw1 hqw τ
         (cst_ready_of_eq hb.ready (fun x h1 h2 h3 h4 h5 h6 => by
-          simp [hτ, hσ, hΦ, Function.update_apply, *]))
+          simp [*]))
         (cstBoxK q ts tab j) (cstTab ts tab (j + 1))
         (by simp only [cstTab, List.length_map, List.length_range]; exact hgetD _ hj1)
         (cst_fits_boxK hfE (by omega)) (cst_fits_tab hfT hj1)
@@ -645,17 +643,17 @@ theorem cst_chirpBox_runs (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ : SS
       refine (RsaRuns.seq hdisj hP hS).congr ?_
       funext r
       cases r with
-      | c y => cases y <;> simp [hτ, hσ, hΦ, Function.update_apply, hb.ys, hb.cL]
+      | c y => cases y <;> simp [hτ, hσ, hΦ, hb.ys]
       | x j' => simp [hτ, hσ, hΦ]
-      | _ => simp [hτ, hσ, hΦ, Function.update_apply, hb.ys, hb.cL])
+      | _ => simp [hτ, hσ, hΦ, hb.cL])
   have hstart : Function.update (Function.update σ₁ (.c .ys) []) .cL [] =
       Function.update (Function.update (Φ 0) .ax cs) .ax' [] := by
     funext r
     cases r with
     | c y =>
-        cases y <;> simp [hσ₁, hσ₀, hΦ, Function.update_apply, hb.ys, cstBoxK_zero q hd tab]
+        cases y <;> simp [hσ₁, hσ₀, hΦ, hb.ys, cstBoxK_zero q hd tab]
     | x j' => simp [hσ₁, hσ₀, hΦ]
-    | _ => simp [hσ₁, hσ₀, hΦ, Function.update_apply, hb.ys, hb.cL, hcs, hb.ax']
+    | _ => simp [hσ₁, hσ₀, hΦ, hb.cL, hcs, hb.ax']
   rw [← hstart] at hloop
   -- the disk rounding
   set σL := Function.update (Function.update (Φ cs.length) .ax cs) .ax' [] with hσL
@@ -667,7 +665,7 @@ theorem cst_chirpBox_runs (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ : SS
   have hrd : Ready (fun x => σL (cstDmap x)) w (q + 2) := by
     obtain ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, h13, h14, h15, h16, h17, h18, h19,
       h20, h21, h22, h23, h24⟩ := hb.ready
-    constructor <;> simp [hσL, hΦ, cstDmap, Function.update_apply, hb.pn2, *]
+    constructor <;> simp [cstDmap, hb.pn2, *]
   set Bx := (cstAddrs ts).map (cstEnt q tab) with hBx
   have hsingle : (Bx.map fun e => [e]).flatten = Bx := cst_flatten_singleton Bx
   have hD := RsaRuns.of_c hrg cstDmap_injective
@@ -694,9 +692,9 @@ theorem cst_chirpBox_runs (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ : SS
       (RsaRuns.seq hdisj hD hUo)))))).congr ?_).mono ?_
   · funext r
     cases r with
-    | c y => cases y <;> simp [hσL, hΦ, cstDmap, Function.update_apply, hboxL, hb.out]
+    | c y => cases y <;> simp [hσL, hΦ, cstDmap, hboxL, hb.out]
     | x j' => simp [hσL, hΦ, cstDmap, hlast, Nat.sub_add_cancel hd]
-    | _ => simp [hσL, hΦ, cstDmap, Function.update_apply, hcs, hb.ax']
+    | _ => simp [hσL, hΦ, cstDmap, hcs, hb.ax']
   · have l1 : (cstream A w (cstTab ts tab 0)).length = ts.getD 0 0 * w := by simp [cstTab]
     have l2 : (σ₁ (.c .ys)).length = ts.getD 0 0 * w := by simp [hσ₁, hσ₀, cstTab]
     have l3 : (Function.update σ₁ (.c .ys) [] .cL).length = ts.getD 0 0 := by

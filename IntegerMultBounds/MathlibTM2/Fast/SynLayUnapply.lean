@@ -28,8 +28,6 @@ open IntegerMultBounds IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.St
 open IntegerMultBounds.MathlibTM2.Node hiding LReg
 open IntegerMultBounds.Networks.Shared50ModularControl (prime)
 
-set_option linter.unusedSimpArgs false
-set_option linter.unusedSectionVars false
 
 section Files
 
@@ -142,8 +140,8 @@ theorem sly_unstage_gen (body : F → Pr F T Q (prime + Ka) U) (hd : Fin 5 → F
         by rw [e _ (by simp) (by simp) (by simp)]; exact hb.ctrB,
         by rw [e _ (by simp) (by simp) (by simp)]; exact hb.cnt,
         by rw [e _ (by simp) (by simp) (by simp)]; exact hb.fld,
-        by simp only [ldlWM]; rw [hg]; simp [Function.update_apply, h.rl, h.rg_inj.eq_iff],
-        by simp only [ldlWM]; rw [hg]; simp [Function.update_apply, h.rl, h.rg_inj.eq_iff],
+        by simp only [ldlWM]; rw [hg]; simp [h.rl, h.rg_inj.eq_iff],
+        by simp only [ldlWM]; rw [hg]; simp [h.rl],
         fun r => by rw [e _ (by simp) (by simp) (by simp)]; exact hb.us r⟩)
     (fun _ => 14 * n + 12) (fun _ => 60 * wX + 75)
     (fun j hj => by

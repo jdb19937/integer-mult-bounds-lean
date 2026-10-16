@@ -66,7 +66,6 @@ open IntegerMultBounds.Networks IntegerMultBounds.Machine IntegerMultBounds.Math
   IntegerMultBounds.MathlibTM2.Layer
 open IntegerMultBounds.MathlibTM2.Node hiding LReg
 
-set_option linter.unusedSimpArgs false
 
 /-! ### Instruction counts -/
 
@@ -220,7 +219,7 @@ theorem cntStep_loop {i j : Fin T} (hij : i ≠ j) (cs : Fin T) :
       congr 2
       funext k
       by_cases hk : k = j
-      · subst hk; simp [movedR, Function.update_of_ne hij.symm]
+      · subst hk; simp [movedR]
       · by_cases hk' : k = i
         · subst hk'; simp [movedR, hk]
         · simp [movedR, hk, hk']

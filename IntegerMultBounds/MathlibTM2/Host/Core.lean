@@ -28,7 +28,6 @@ namespace IntegerMultBounds.MathlibTM2.Host
 
 open IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.Stack IntegerMultBounds.MathlibTM2
 
-set_option linter.unusedSimpArgs false
 
 /-- Stacks: the input, the output, and two stacks per tape. -/
 inductive HK (T : ℕ) where
@@ -196,7 +195,7 @@ lemma peekScan_run_aux (M : Program T Q A) (S : Stacks T A) :
         funext j
         by_cases h : j = i
         · subst h; split_ifs <;> simp_all
-        · simp [h, Function.update_of_ne h]
+        · simp [h]
       simp only [hscan]
 
 lemma peekScan_run (M : Program T Q A) (v : HS T Q A U) (S : Stacks T A) :
@@ -227,7 +226,7 @@ lemma tapeAct_run (i : Fin T) (v : HS T Q A U) (S : Stacks T A) {st' : Fin Q}
     refine ⟨(S.L i).head?, ?_⟩
     simp [tapeAct, Action.run, hw, hm, hmv, newL, newR, stepStacks, update_lt, update_rt]
   · refine ⟨v.sym, ?_⟩
-    simp [tapeAct, Action.run, hw, hm, hmv, newL, newR, stepStacks, update_lt, update_rt]
+    simp [tapeAct, Action.run, hw, hm, hmv, newL, newR, stepStacks, update_rt]
   · refine ⟨v.sym, ?_⟩
     simp [tapeAct, Action.run, hw, hm, hmv, newL, newR, stepStacks, update_lt, update_rt]
 
@@ -269,11 +268,11 @@ theorem tapes_exec {st' : Fin Q} {act : Fin T → Fin (A + 4) × Move} :
       · funext j
         by_cases hj : j = i
         · subst hj; simp [hnd.1, newL]
-        · simp [hj, Function.update_of_ne hj, newL]
+        · simp [hj, newL]
       · funext j
         by_cases hj : j = i
         · subst hj; simp [hnd.1, newR]
-        · simp [hj, Function.update_of_ne hj, newR]
+        · simp [hj, newR]
 
 lemma scan_eq {c : Config T Q A} {S : Stacks T A} (h : Rep c S.L S.R) :
     (fun i => (S.R i).head?.getD blank) = fun i => c.tape i (c.head i) := by

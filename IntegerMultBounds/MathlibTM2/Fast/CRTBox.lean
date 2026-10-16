@@ -41,7 +41,6 @@ namespace IntegerMultBounds.MathlibTM2.Fast
 
 open IntegerMultBounds.MathlibTM2.Mult IntegerMultBounds.MathlibTM2.Host IntegerMultBounds.Machine
 
-set_option linter.unusedSimpArgs false
 
 /-! ### Flattened lists of uniform blocks -/
 
@@ -70,7 +69,7 @@ lemma crt_getElem?_flatMap_range (M E : ℕ) (g : ℕ → List α) (hg : ∀ i, 
       · have hi' : i = M := by omega
         subst hi'
         rw [List.getElem?_append_right (by rw [hlen]; omega), hlen]
-        simp [Nat.add_sub_cancel_left]
+        simp
 
 lemma crt_flatten_flatMap {β : Type*} (l : List β) (f : β → List (List α)) :
     (l.flatMap f).flatten = l.flatMap fun x => (f x).flatten := by
@@ -469,7 +468,7 @@ lemma crt_sum_ite_lt (x s c : ℕ) :
   | succ x ih =>
       rw [List.range_succ, List.map_append, List.sum_append, ih]
       by_cases hx : x < s
-      · simp [hx, Nat.min_eq_left (by omega : x + 1 ≤ s), Nat.min_eq_left (by omega : x ≤ s)]
+      · simp [hx, Nat.min_eq_left (by omega : x ≤ s)]
         ring
       · simp [hx, Nat.min_eq_right (by omega : s ≤ x + 1), Nat.min_eq_right (by omega : s ≤ x)]
 

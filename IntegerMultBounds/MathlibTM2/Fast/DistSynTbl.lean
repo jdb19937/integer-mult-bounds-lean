@@ -33,8 +33,6 @@ namespace IntegerMultBounds.MathlibTM2.Fast.TableVM
 
 open IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.Fast IntegerMultBounds.MathlibTM2.Mult.Rounds IntegerMultBounds.MathlibTM2.Node IntegerMultBounds.MathlibTM2.Layer IntegerMultBounds.MathlibTM2.Host
 
-set_option linter.unusedSimpArgs false
-set_option linter.unusedSectionVars false
 
 local notation "vN" => (0 : Fin 40)
 local notation "vL" => (1 : Fin 40)
@@ -327,11 +325,11 @@ theorem dsyLay_do {es : List ℕ} {ℓ K E : ℕ} (H : LayHyp es ℓ K)
       (fun s => ldwCore s es.sum ℓ K es.length E ∧ s.val vV = 0 ∧ s.val vj = 0 ∧
         s.acc = st.acc) (l.length + 1) := by
     refine TblDo.block l (.zero vj) ?_ ?_
-    · simp [hl, tblFitsList, TblIns.fits, TblIns.exact, Function.update_apply, hL, hN]
+    · simp [hl, tblFitsList, TblIns.fits, TblIns.exact, hL, hN]
       exact ⟨by omega, by omega, ⟨by omega, hℓW⟩, hW2 _ le_rfl⟩
     · simp only [hl, List.cons_append, List.nil_append, tblExactList, TblIns.exact]
       refine ⟨⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩, ?_, ?_, ?_⟩ <;>
-        simp [Function.update_apply, hL, hN, hK, hD, hEv, layB]
+        simp [hL, hN, hK, hD, hEv]
   refine TblDo.mono (K := (10 + 1 + (es.sum * (1 + 8) + 7)) + (ldwPart1Atoms es.sum es.length +
     ldwPart2Atoms es.sum es.length (layB ℓ K))) ?_ (fun _ h => h) (by unfold ldw1Atoms; omega)
   refine TblDo.seq (K₁ := 10 + 1 + (es.sum * (1 + 8) + 7))
@@ -655,18 +653,18 @@ theorem dsyChunk_do {K D q N : ℕ} (s : TblSt 40 A) (hK : s.val vK = K) (hD : s
       rfl
     unfold dsyChunkBlk
     refine TblDo.block _ _ ?_ ?_
-    · simp [tblFitsList, TblIns.fits, TblIns.exact, Function.update_apply, hK, hD, hq, hydef]
+    · simp [tblFitsList, TblIns.fits, TblIns.exact, hK, hD, hq, hydef]
       have hg : K * (D * q) < 2 ^ W := lt_of_le_of_lt hmN hNW
       refine ⟨lt_of_le_of_lt (le_trans (Nat.le_add_right _ _) hc'.le) (lt_of_le_of_lt hle hg),
         lt_of_lt_of_le hc' (hle.trans hg.le), lt_of_le_of_lt hle2 (lt_trans hres hg),
         lt_trans hres hg⟩
     · simp only [List.cons_append, List.nil_append, tblExactList, TblIns.exact]
       refine ⟨?_, fun x hx => ?_, by simp⟩
-      · simp [Function.update_apply, hK, hD, hq, hydef, e]
+      · simp [hK, hD, hq, hydef, e]
       · simp only [List.mem_cons, List.not_mem_nil, or_false, not_or] at hx
         dsimp only
         simp only [Function.update_apply, hx.1, hx.2.1, hx.2.2.1, hx.2.2.2.1, hx.2.2.2.2.1,
-          hx.2.2.2.2.2, ite_false]
+          ite_false]
   · refine TblDo.mono (K := 1 + 1) ?_ (fun _ h => h) (by norm_num)
     refine TblDo.iteF (by rw [hKm, hydef]; exact h) (TblDo.ins _ ⟨?_, fun x hx => ?_, rfl⟩)
     · show Function.update s.val vtmp 0 vp = _

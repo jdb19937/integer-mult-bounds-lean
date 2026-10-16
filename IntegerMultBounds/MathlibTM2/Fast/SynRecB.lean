@@ -25,12 +25,7 @@ open IntegerMultBounds IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.St
   IntegerMultBounds.MathlibTM2.Layer IntegerMultBounds.MathlibTM2.LayerMachine IntegerMultBounds.MathlibTM2.Mult.Rounds IntegerMultBounds.Networks
 open IntegerMultBounds.MathlibTM2.Node hiding LReg
 
-set_option linter.unusedSimpArgs false
 set_option maxHeartbeats 4000000
-set_option linter.unnecessarySeqFocus false
-set_option linter.unusedTactic false
-set_option linter.unreachableTactic false
-set_option linter.constructorNameAsVariable false
 
 /-! ### The rows of a chunk round -/
 

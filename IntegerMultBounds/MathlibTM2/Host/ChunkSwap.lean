@@ -34,7 +34,6 @@ namespace IntegerMultBounds.MathlibTM2.Host
 
 open IntegerMultBounds IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.Stack IntegerMultBounds.MathlibTM2
 
-set_option linter.unusedSimpArgs false
 
 section Tape
 
@@ -154,7 +153,7 @@ theorem filter_window (L R : List (Fin (a + 4))) (h : ℤ) (w : List (Fin (a + 4
   rw [hsplit]
   have hw' : w.filter (· ≠ blank) = w := List.filter_eq_self.2 (fun x hx => by
     simp only [ne_eq, decide_eq_true_eq]; rintro rfl; exact hw hx)
-  simp [List.filter_append, List.filter_replicate, hw']
+  simp [List.filter_append]
   exact fun x hx hb => hw (hb ▸ hx)
 
 end Tape
@@ -293,7 +292,7 @@ theorem sieve_loop (i : Fin T) :
         have hrun : (sieveStep i : Act T Q A U).run (mk v S) =
             mk { v with sym := some e, flag := rest.head?.isSome }
               { S with R := Function.update S.R i rest } := by
-          simp [sieveStep, peekR, Action.run, hS, update_rt, update_lt, he]
+          simp [sieveStep, peekR, Action.run, hS, update_rt, he]
         refine Exec.cast (Exec.loop_true (body := body) (f := (·.flag)) (by simpa using hf)
           (hrun ▸ Exec.act (body := body) (sieveStep i) (mk v S)) hx) (by simp; ring) ?_
         congr 2
@@ -407,11 +406,11 @@ theorem normList_exec : ∀ (l : List (Fin T)), l.Nodup → ∀ (v : HS T Q A U)
         · funext j
           by_cases hj : j = i
           · subst hj; simp [hnd.1]
-          · simp [hj, Function.update_of_ne hj]
+          · simp [hj]
         · funext j
           by_cases hj : j = i
           · subst hj; simp [hnd.1]
-          · simp [hj, Function.update_of_ne hj]
+          · simp [hj]
 
 /-- Move the top of the right stack of tape `i` to its left stack. -/
 def shiftStep (i : Fin T) : Act T Q A U :=
@@ -454,11 +453,11 @@ theorem shiftList_exec : ∀ (l : List (Fin T)), l.Nodup → ∀ (v : HS T Q A U
       · funext j
         by_cases hj : j = i
         · subst hj; simp [hnd.1]
-        · simp [hj, Function.update_of_ne hj]
+        · simp [hj]
       · funext j
         by_cases hj : j = i
         · subst hj; simp [hnd.1]
-        · simp [hj, Function.update_of_ne hj]
+        · simp [hj]
 
 end Loops
 

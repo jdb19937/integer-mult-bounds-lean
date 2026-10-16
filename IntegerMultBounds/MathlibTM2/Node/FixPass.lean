@@ -36,7 +36,6 @@ namespace IntegerMultBounds.MathlibTM2.Node
 
 open IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.Stack IntegerMultBounds.MathlibTM2 IntegerMultBounds.MathlibTM2.Host IntegerMultBounds.MathlibTM2.Layer.PackedXor
 
-set_option linter.unusedSimpArgs false
 
 /-! ### The code automata of the top bits -/
 
@@ -154,14 +153,14 @@ def slotW (N₁ N₂ N₃ L : ℕ) : Fin 3 → ℕ := ![N₃ * 2 ^ L * N₂ * 2 
 lemma rank_update (s : Spec N₀ N₁ N₂ N₃) (c : Tri L) (q : Fin 3) (w : Fin (2 ^ L)) :
     (rank N₀ N₁ N₂ N₃ L (s, Function.update c q w) : ℤ) =
       rank N₀ N₁ N₂ N₃ L (s, c) + slotW N₁ N₂ N₃ L q * ((w : ℤ) - (c q : ℤ)) := by
-  fin_cases q <;> simp [rank, slotW, Function.update_apply] <;> ring
+  fin_cases q <;> simp [rank, slotW] <;> ring
 
 /-- The rank change of the top fixup: `y` gains `± 2^p` at the slot of `y` when `x_p = 1`. -/
 def fixShift (p : ℕ) (x y : Bool) : ℤ := if x then (if y then -(2 ^ p : ℤ) else 2 ^ p) else 0
 
 lemma topFix_apply_zero (K ρ f : ℕ) (v : Tri L) : topFix L K ρ f v 0 = v 0 := by
   show xorMask L (2 ^ (ρ + (f - 1) * K)) v 0 = _
-  simp [xorMask, Function.update_of_ne (show (0 : Fin 3) ≠ 1 by decide)]
+  simp [xorMask]
 
 lemma topFix_apply_ne (K ρ f : ℕ) (v : Tri L) (k : Fin 3) (hk : k ≠ 1) :
     topFix L K ρ f v k = v k := by
@@ -418,18 +417,18 @@ theorem fixAt_exec {src r0 r1 r2 r3 q0 q1 q2 q3 ctrB cnt tmp st : Fin T} {cf : F
   have hR₁q : ∀ x, x = q0 ∨ x = q1 ∨ x = q2 ∨ x = q3 → R₁ x = [] := by
     intro x hx
     rcases hx with rfl | rfl | rfl | rfl
-    · rw [hoth₁ _ (Ne.symm n_src_q0) (fun d => by fin_cases d <;> simp [n_r0_q0, n_r0_q1, n_r0_q2,
-        n_r0_q3, n_r1_q0, n_r1_q1, n_r1_q2, n_r1_q3, n_r2_q0, n_r2_q1, n_r2_q2, n_r2_q3, n_r3_q0,
-        n_r3_q1, n_r3_q2, n_r3_q3]) (fun f => hcf f _ (by simp)), hq0]
-    · rw [hoth₁ _ (Ne.symm n_src_q1) (fun d => by fin_cases d <;> simp [n_r0_q0, n_r0_q1, n_r0_q2,
-        n_r0_q3, n_r1_q0, n_r1_q1, n_r1_q2, n_r1_q3, n_r2_q0, n_r2_q1, n_r2_q2, n_r2_q3, n_r3_q0,
-        n_r3_q1, n_r3_q2, n_r3_q3]) (fun f => hcf f _ (by simp)), hq1]
-    · rw [hoth₁ _ (Ne.symm n_src_q2) (fun d => by fin_cases d <;> simp [n_r0_q0, n_r0_q1, n_r0_q2,
-        n_r0_q3, n_r1_q0, n_r1_q1, n_r1_q2, n_r1_q3, n_r2_q0, n_r2_q1, n_r2_q2, n_r2_q3, n_r3_q0,
-        n_r3_q1, n_r3_q2, n_r3_q3]) (fun f => hcf f _ (by simp)), hq2]
-    · rw [hoth₁ _ (Ne.symm n_src_q3) (fun d => by fin_cases d <;> simp [n_r0_q0, n_r0_q1, n_r0_q2,
-        n_r0_q3, n_r1_q0, n_r1_q1, n_r1_q2, n_r1_q3, n_r2_q0, n_r2_q1, n_r2_q2, n_r2_q3, n_r3_q0,
-        n_r3_q1, n_r3_q2, n_r3_q3]) (fun f => hcf f _ (by simp)), hq3]
+    · rw [hoth₁ _ (Ne.symm n_src_q0) (fun d => by fin_cases d <;> simp [n_r0_q0, 
+        n_r1_q0, n_r2_q0, n_r3_q0,
+        ]) (fun f => hcf f _ (by simp)), hq0]
+    · rw [hoth₁ _ (Ne.symm n_src_q1) (fun d => by fin_cases d <;> simp [n_r0_q1, 
+        n_r1_q1, n_r2_q1, 
+        n_r3_q1]) (fun f => hcf f _ (by simp)), hq1]
+    · rw [hoth₁ _ (Ne.symm n_src_q2) (fun d => by fin_cases d <;> simp [n_r0_q2,
+        n_r1_q2, n_r2_q2, 
+        n_r3_q2]) (fun f => hcf f _ (by simp)), hq2]
+    · rw [hoth₁ _ (Ne.symm n_src_q3) (fun d => by fin_cases d <;> simp [
+        n_r0_q3, n_r1_q3, n_r2_q3, 
+        n_r3_q3]) (fun f => hcf f _ (by simp)), hq3]
 
   -- stages 2 to 5: forward order
   have hmv : ∀ (R : Fin T → List (Fin (A + 4))) (i j x : Fin T), x ≠ i → x ≠ j →
@@ -634,12 +633,12 @@ theorem fixAt_exec {src r0 r1 r2 r3 q0 q1 q2 q3 ctrB cnt tmp st : Fin T} {cf : F
       · have := hsrcs₇ 1; simp only [Matrix.cons_val_one, Matrix.cons_val_zero] at this
         rw [this, hq1]
       · have := hsrcs₇ 2
-        simp only [Matrix.cons_val_two, Matrix.cons_val_one, Matrix.cons_val_zero,
+        simp only [Matrix.cons_val_two, 
           Matrix.tail_cons, Matrix.head_cons] at this
         rw [this, hq2]
       · have := hsrcs₇ 3
-        simp only [Matrix.cons_val_three, Matrix.cons_val_two, Matrix.cons_val_one,
-          Matrix.cons_val_zero, Matrix.tail_cons, Matrix.head_cons] at this
+        simp only [Matrix.cons_val_three, 
+          Matrix.tail_cons, Matrix.head_cons] at this
         rw [this, hq3]
     simp only [not_or] at hq
     obtain ⟨hq0', hq1', hq2', hq3'⟩ := hq
@@ -735,7 +734,7 @@ theorem fixPass_exec (hN₀ : N₀ = R * 2 ^ n₀) (hR : R ≤ 2 ^ rb) (hN₁ : 
       tmps_inj := husinj
       rs_tmps := by
         intro r r'
-        fin_cases r <;> simp [rs, hucf, Ne.symm (hucf _ _), htmus]
+        fin_cases r <;> simp [rs, Ne.symm (hucf _ _), htmus]
       rs_st := by
         intro r
         fin_cases r <;> simp [rs]

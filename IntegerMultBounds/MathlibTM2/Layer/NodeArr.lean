@@ -20,7 +20,6 @@ namespace IntegerMultBounds.MathlibTM2.Layer
 open IntegerMultBounds.Networks BinaryWalsh BinaryPhase BinaryColumns ComplexEndpoints
   ComplexFramedExecution
 
-set_option linter.unusedSimpArgs false
 
 variable {Y : Type} {k : ℕ}
 

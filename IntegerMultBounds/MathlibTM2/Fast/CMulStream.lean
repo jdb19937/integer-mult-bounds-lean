@@ -41,7 +41,6 @@ namespace IntegerMultBounds.MathlibTM2.Fast
 open IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.Stack IntegerMultBounds.MathlibTM2 IntegerMultBounds.MathlibTM2.Host IntegerMultBounds.MathlibTM2.Layer IntegerMultBounds.MathlibTM2.Node
 open IntegerMultBounds.Schoenhage.Schedule (topN topN_facts)
 
-set_option linter.unusedSimpArgs false
 set_option maxHeartbeats 1000000
 
 noncomputable section

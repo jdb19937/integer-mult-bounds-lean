@@ -85,8 +85,6 @@ open IntegerMultBounds.MathlibTM2.Mult IntegerMultBounds.MathlibTM2.Mult.Sizes I
 open IntegerMultBounds.Networks.Shared50ModularControl (prime)
 open scoped Function
 
-set_option linter.unusedSimpArgs false
-set_option linter.unusedSectionVars false
 
 noncomputable section
 
@@ -485,7 +483,7 @@ theorem src_conj_runs (M : SrcMach t₀ T Q) (hA : 96 ≤ prime + K) {w : ℕ} (
       ((cstream (prime + K) w (l.map star)).reverse ++ ρ (.x .cB)))
   refine ((RsaRuns.seq M.hdisj h1 h2).congr ?_).mono (le_of_eq ?_)
   · funext r
-    simp only [Function.update_apply, hcB, List.append_nil, List.reverse_reverse]
+    simp only [Function.update_apply, hcB, List.append_nil]
     split_ifs <;> subst_vars <;> simp_all
   · simp only [Function.update_self, hcB, List.append_nil, List.length_reverse, length_cstream,
       List.length_map]
@@ -769,7 +767,7 @@ theorem srcOpp_runs (M : SrcMach t₀ T Q) (hA : 96 ≤ prime + K) {n : ℕ} (hb
                 (srcPad (p n) (s n) (t n) fun k => starRingEnd ℂ (SA k)))) } with hE₃
   replace s3 := s3.congr (ρ'' := E₃.get) (by
     congr 1
-    simp only [hE₃, hE₂, hE₁, SrcF.get_c, hstr, List.append_nil])
+    simp only [hE₃, hE₂, hE₁, hstr, List.append_nil])
   -- the inverse layout
   have s4 := srcCrtI_runs (body := body) M hA hbig (w := w) (by omega) E₃ (hC.upd_str _)
     (fun k => starRingEnd ℂ (SA k)) (by simp [hE₃])

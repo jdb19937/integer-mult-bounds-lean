@@ -38,8 +38,6 @@ open IntegerMultBounds.Networks.Shared50ModularControl (prime)
 open IntegerMultBounds.Schoenhage.Schedule (topN)
 open Computability
 
-set_option linter.unusedSimpArgs false
-set_option linter.unusedSectionVars false
 
 attribute [local irreducible] mnT mnQ
 
@@ -84,21 +82,21 @@ lemma mn_upd_c (F : SrcF 6 A) (g : MnR → List (Fin (A + 4))) (r : CrtReg) (l :
   funext y
   cases y with
   | src z => cases z <;> simp [SrcF.get, Function.update_apply]
-  | _ => simp [mnGlob, Function.update_apply]
+  | _ => simp [mnGlob]
 
 lemma mn_upd_x (F : SrcF 6 A) (g : MnR → List (Fin (A + 4))) (r : SrcX) (l : List (Fin (A + 4))) :
     Function.update (mnGlob F g) (.src (.x r)) l = mnGlob { F with x := Function.update F.x r l } g := by
   funext y
   cases y with
   | src z => cases z <;> simp [SrcF.get, Function.update_apply]
-  | _ => simp [mnGlob, Function.update_apply]
+  | _ => simp [mnGlob]
 
 lemma mn_upd_v (F : SrcF 6 A) (g : MnR → List (Fin (A + 4))) (r : CvR) (l : List (Fin (A + 4))) :
     Function.update (mnGlob F g) (.src (.v r)) l = mnGlob { F with v := Function.update F.v r l } g := by
   funext y
   cases y with
   | src z => cases z <;> simp [SrcF.get, Function.update_apply]
-  | _ => simp [mnGlob, Function.update_apply]
+  | _ => simp [mnGlob]
 
 lemma mn_src_inj : Function.Injective (MnR.src : SrcR 6 → MnR) := fun _ _ h => MnR.src.inj h
 

@@ -13,7 +13,6 @@ within a fixed multiple of `ℓ` record volumes (`writerCost_le_volume`), hence 
 @[expose] public section
 
 set_option maxRecDepth 100000
-set_option linter.unusedSimpArgs false
 
 namespace IntegerMultBounds.Schoenhage
 
@@ -192,7 +191,7 @@ macro_rules
 theorem clen_rowWords_le {ℓ K : ℕ} {ts : List ℕ} (hL : LayoutOK (2 ^ ℓ) ts ℓ K) :
     clen (rowWords ts ℓ K) ≤ ts.length * (ℓ - 1) * (Nat.log 2 ts.prod + 1) := by
   have hlen : (rowWords ts ℓ K).length = ts.length * (ℓ - 1) := by
-    simp [rowWords, List.length_flatMap, List.sum_replicate, Nat.mul_comm]
+    simp [rowWords, List.length_flatMap, List.sum_replicate]
   rw [← hlen]
   refine clen_le_of fun x hx => ?_
   simp only [rowWords, List.mem_flatMap, List.mem_map, List.mem_range] at hx
@@ -412,7 +411,7 @@ theorem dom_chunkHdrs (P : TransformParams) {E : Inst → ℕ} :
   obtain ⟨k, c, hk⟩ := dom_chunkHdr P (E := fun _ => 0)
   refine dom_mul_bound (n := fun i => i.ℓ) (by dom_tac) k c fun i hi => ?_
   refine (clen_le_of (W := c * (sizeB P i + 1) ^ k * (0 + 1)) fun x hx => ?_).trans ?_
-  · simp only [chunkHdrs, List.mem_map, List.mem_drop_iff_getElem, List.mem_range] at hx
+  · simp only [chunkHdrs, List.mem_map, List.mem_drop_iff_getElem] at hx
     obtain ⟨h, hh, rfl⟩ := hx
     have hh' : h < i.ℓ := by
       obtain ⟨j, hj, e⟩ := hh

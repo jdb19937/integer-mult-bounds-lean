@@ -51,7 +51,6 @@ namespace IntegerMultBounds.MathlibTM2.Fast
 open IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.Stack IntegerMultBounds.MathlibTM2 IntegerMultBounds.MathlibTM2.Host IntegerMultBounds.MathlibTM2.Layer IntegerMultBounds.MathlibTM2.Node
 open IntegerMultBounds.Schoenhage.Schedule (topN topN_facts)
 
-set_option linter.unusedSimpArgs false
 set_option maxHeartbeats 1000000
 
 noncomputable section
@@ -165,7 +164,7 @@ theorem pre_runs (hcr : Function.Injective cr) (hdisj : ∀ r j, cr r ≠ ι j) 
       (x := N₂.im) h₂.2 (by simp [rbits, hr.u2]) (by simp [rbits, hr.u3]))))))
   refine (H.congr ?_).mono (by omega)
   funext r
-  cases r <;> simp [magSt, opSt, Function.update_apply, hr.u0, hr.u1, hr.u2, hr.u3, hr.ma, hr.mb,
+  cases r <;> simp [magSt, opSt, hr.u0, hr.u1, hr.u2, hr.u3, hr.ma, hr.mb,
     hr.mc, hr.md, hr.sa, hr.sb, hr.sc, hr.sd]
 
 /-! ### Products -/
@@ -217,7 +216,7 @@ theorem prods_runs (hcr : Function.Injective cr) (hdisj : ∀ r j, cr r ≠ ι j
       (natAbs_lt_of_fits h₂.1) (by simp [magSt]) (by simp [magSt]) (by simp [magSt, hr.nn]))))
   refine (H.congr ?_).mono (by omega)
   funext r
-  cases r <;> simp [prodSt, magSt, Function.update_apply, hr.p1, hr.p2, hr.p3, hr.p4,
+  cases r <;> simp [prodSt, magSt, hr.p1, hr.p2, hr.p3, hr.p4,
     binSyms_add]
 
 variable (ι) in
@@ -250,7 +249,7 @@ theorem rprods_runs (hcr : Function.Injective cr) (hdisj : ∀ r j, cr r ≠ ι 
       (natAbs_lt_of_fits h₂.1) (by simp [magSt]) (by simp [magSt]) (by simp [magSt, hr.nn]))))
   refine (H.congr ?_).mono (by omega)
   funext r
-  cases r <;> simp [prodSt, magSt, Function.update_apply, hr.p1, hr.p2, hr.p3, hr.p4,
+  cases r <;> simp [prodSt, magSt, hr.p1, hr.p2, hr.p3, hr.p4,
     binSyms_add]
 
 /-! ### Combination, truncation and output -/
@@ -380,7 +379,7 @@ theorem post_runs (hcr : Function.Injective cr) (hdisj : ∀ r j, cr r ≠ ι j)
     rw [show p + w + k - p - w = k by omega]
     linarith
   funext r
-  cases r <;> simp [prodSt, magSt, tq, Function.update_apply, hr.u0, hr.u1, hr.u2, hr.u3,
+  cases r <;> simp [prodSt, magSt, tq, hr.u0, hr.u1, hr.u2, hr.u3,
     hr.ma, hr.mb, hr.mc, hr.md, hr.sa, hr.sb, hr.sc, hr.sd, hr.p1, hr.p2, hr.p3, hr.p4, hr.qr,
     hr.qi, hr.sr, hr.si]
 

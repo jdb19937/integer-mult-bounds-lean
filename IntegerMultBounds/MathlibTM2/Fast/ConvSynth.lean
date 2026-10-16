@@ -60,8 +60,6 @@ open IntegerMultBounds.MathlibTM2.Fast IntegerMultBounds.MathlibTM2.Fast.ResampA
 open IntegerMultBounds.MathlibTM2.Mult.Rounds IntegerMultBounds.MathlibTM2.Mult.SynthErr
 open IntegerMultBounds.Spec.SignedRingProduct
 
-set_option linter.unusedSimpArgs false
-set_option linter.unusedSectionVars false
 
 noncomputable section
 
@@ -327,7 +325,7 @@ theorem cv_xfer_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠ ι
     (Function.update (Function.update ρ a []) .t1 ((ρ a).reverse ++ ρ .t1))
   refine CvRuns.of_rsa (((RsaRuns.seq hdisj h1 h2).congr ?_).mono ?_)
   · funext k
-    simp only [Function.update_apply, ht, List.append_nil, List.reverse_reverse]
+    simp only [Function.update_apply, ht, List.append_nil]
     split_ifs <;> subst_vars <;> simp_all
   · simp only [Function.update_self, ht, List.append_nil, List.length_reverse]
     omega

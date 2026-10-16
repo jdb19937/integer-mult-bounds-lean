@@ -49,8 +49,6 @@ namespace IntegerMultBounds.MathlibTM2.Fast
 open IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.Stack IntegerMultBounds.MathlibTM2 IntegerMultBounds.MathlibTM2.Host IntegerMultBounds.MathlibTM2.Layer IntegerMultBounds.MathlibTM2.Node
 open IntegerMultBounds.NLogN IntegerMultBounds.Spec.SignedRingProduct IntegerMultBounds.MathlibTM2.Mult.Rounds
 
-set_option linter.unusedSimpArgs false
-set_option linter.unusedSectionVars false
 set_option maxHeartbeats 1000000
 
 section Programs
@@ -157,12 +155,12 @@ theorem twPass_runs (fwd : Bool) (hA : 5 ≤ A) {es : List ℕ} {ℓ h w n₀ M 
       rw [List.range'_concat]
       simp [twStream, hZ']
     funext r
-    cases r <;> simp [Function.update_apply, hst, twPassSt, hacc', hf, Nat.add_assoc]
+    cases r <;> simp [hst, twPassSt, hacc', hf, Nat.add_assoc]
   have hne : ∀ j < M, st j .src ≠ [] := by
     intro j hj hnil
     have hl := congrArg List.length hnil
     simp only [hst, twPassSt, Function.update_apply, reduceCtorEq, ↓reduceIte,
-      Function.update_self] at hl
+      ] at hl
     rw [twStream_length, List.length_range'] at hl
     have : 0 < (M - j) * (2 ^ ℓ * w) :=
       Nat.mul_pos (by omega) (Nat.mul_pos (by positivity) hw)
@@ -176,11 +174,11 @@ theorem twPass_runs (fwd : Bool) (hA : 5 ≤ A) {es : List ℕ} {ℓ h w n₀ M 
   rw [hacc_len] at hmv
   have h0 : st 0 = ρ := by
     funext r
-    cases r <;> simp [hst, twPassSt, Function.update_apply, hsrc, hacc, had, twStream]
+    cases r <;> simp [hst, twPassSt, hsrc, hacc, had, twStream]
   rw [h0] at hwh
   refine twRuns_mono (twRuns_congr (twRuns_seq hwh hmv) ?_) ?_
   · funext r
-    cases r <;> simp [Function.update_apply, hst, twPassSt, hacc, hZ']
+    cases r <;> simp [hst, twPassSt, hacc, hZ']
   · unfold twPassCost
     apply le_of_eq
     ring

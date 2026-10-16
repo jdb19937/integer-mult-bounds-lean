@@ -39,7 +39,6 @@ namespace IntegerMultBounds.MathlibTM2.Fast
 
 open IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.Stack IntegerMultBounds.MathlibTM2 IntegerMultBounds.MathlibTM2.Host IntegerMultBounds.MathlibTM2.Node
 
-set_option linter.unusedSimpArgs false
 
 open Lean Elab Tactic Meta in
 /-- Add the symmetric form `b ≠ a` of every hypothesis `a ≠ b` of the main goal. -/
@@ -272,7 +271,7 @@ theorem crtFor_runs {c t : Fin T} (hct : c ≠ t) {p : Pr P T Q A U} {Ψ : ℕ �
     · congr 2
       funext k
       by_cases hk : k = c
-      · subst hk; simp [crtForRegs, movedR, hct, Ne.symm hct]
+      · subst hk; simp [crtForRegs, movedR, Ne.symm hct]
       · by_cases hk' : k = t
         · subst hk'; simp [crtForRegs, movedR, hct.symm]
         · simp [crtForRegs, movedR, hk, hk']
@@ -416,7 +415,7 @@ lemma crtFoldl_ppFx {src dst : Fin T} (hsd : src ≠ dst) :
         funext k
         by_cases hk : k = dst
         · subst hk
-          simp [Function.update_of_ne hsd.symm, hsd, List.take_succ_cons]
+          simp [hsd, List.take_succ_cons]
         · by_cases hk' : k = src
           · subst hk'; simp [hk]
           · simp [hk, hk']
@@ -478,7 +477,7 @@ lemma crtFoldl_p2Fx {d₁ d₂ : Fin T} (hd : d₁ ≠ d₂) :
       rw [crtFoldl_p2Fx hd rest]
       funext k
       by_cases hk : k = d₂
-      · subst hk; simp [crtP2Fx, Function.update_of_ne hd.symm]
+      · subst hk; simp [crtP2Fx]
       · by_cases hk' : k = d₁
         · subst hk'; simp [crtP2Fx, hk]
         · simp [crtP2Fx, hk, hk']
@@ -515,7 +514,7 @@ theorem crtCpy_runs {c t src dst u : Fin T} (hreg : [c, t, src, dst, u].Nodup)
     by_cases k1 : k = u
     · rw [k1]; simp [hu, Ne.symm ‹dst ≠ u›]
     · by_cases k2 : k = dst
-      · rw [k2]; simp [hu, ‹src ≠ dst›, Ne.symm ‹src ≠ dst›, ‹dst ≠ u›]
+      · rw [k2]; simp [hu, Ne.symm ‹src ≠ dst›, ‹dst ≠ u›]
       · by_cases k3 : k = src
         · rw [k3]; simp [hu, ‹src ≠ u›, ‹src ≠ dst›, List.take_append_drop]
         · simp [k1, k2, k3]
@@ -585,7 +584,7 @@ theorem crtMvWhile_loop {src dst : Fin T} (hsd : src ≠ dst) (x : Fin (A + 4))
       congr 2
       funext k
       by_cases hk : k = dst
-      · subst hk; simp [S₁, Function.update_of_ne hsd.symm, crt_replicate_cons, List.replicate_succ]
+      · subst hk; simp [S₁, crt_replicate_cons, List.replicate_succ]
       · by_cases hk' : k = src
         · subst hk'; simp [S₁, hk]
         · simp [S₁, hk, hk']

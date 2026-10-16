@@ -32,8 +32,6 @@ namespace IntegerMultBounds.MathlibTM2.Fast.TableVM
 
 open IntegerMultBounds.MathlibTM2.Fast IntegerMultBounds.MathlibTM2.Mult.Rounds
 
-set_option linter.unusedSimpArgs false
-set_option linter.unusedSectionVars false
 
 local notation "xN" => (0 : Fin 40)
 local notation "xL" => (1 : Fin 40)
@@ -860,13 +858,13 @@ theorem ldxInitMap_do (s : TblSt 40 A) {D q j : ℕ} (hD : s.val xD = D) (hq : s
   show TblDo A W w (tblBlock 40 [.mod xc xD xtmp, .mul xtmp xq xtmp, .div xc xD xtmp2]
     (.add xtmp xtmp2 xy2)) s _ (3 + 1)
   refine TblDo.block _ _ ?_ ?_
-  · simp [tblFitsList, TblIns.fits, TblIns.exact, Function.update_apply, hc, hD, hq]
+  · simp [tblFitsList, TblIns.fits, TblIns.exact, hc, hD, hq]
     exact ⟨h1, h2⟩
   · simp only [List.cons_append, List.nil_append, tblExactList, TblIns.exact]
     refine ⟨?_, fun x hx => ?_, by simp⟩
-    · simp [Function.update_apply, hc, hD, hq]
+    · simp [hc, hD, hq]
     · simp only [List.mem_cons, List.not_mem_nil, or_false, not_or] at hx
-      simp [Function.update_apply, hx.1, hx.2.1, hx.2.2]
+      simp [hx.1, hx.2.1, hx.2.2]
 
 /-- **The writer of the chunk exchange stream.** From the inputs `N = es.sum`, `ℓ`, `K`,
 `D = es.length` and `B` in the variables `0 … 4`, `ldxCode` emits the description stream
@@ -903,7 +901,7 @@ theorem ldx_do {es : List ℕ} {ℓ K B : ℕ} (H : LayHyp es ℓ K) (st : TblSt
       (fun s => ldxCore s es.sum ℓ K es.length B (layQ ℓ K) ∧ s.val xV = 0 ∧ s.acc = st.acc)
       (l.length + 1) := by
     refine TblDo.block l (.zero xV) ?_ ?_
-    · simp [hl, tblFitsList, TblIns.fits, TblIns.exact, Function.update_apply, hL, hN, hK, hD, hB]
+    · simp [hl, tblFitsList, TblIns.fits, TblIns.exact, hL, hK, hD, hB]
       refine ⟨by omega, by omega, ⟨by omega, hℓW⟩, ?_, ?_, ?_⟩
       · show es.length * ((ℓ - 1) / K) < 2 ^ W
         have : es.length * layQ ℓ K ≤ es.sum := hmN
@@ -914,7 +912,7 @@ theorem ldx_do {es : List ℕ} {ℓ K B : ℕ} (H : LayHyp es ℓ K) (st : TblSt
       · omega
     · simp only [hl, List.cons_append, List.nil_append, tblExactList, TblIns.exact]
       refine ⟨⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩, ?_, ?_⟩ <;>
-        simp [Function.update_apply, hL, hN, hK, hD, hB, layQ]
+        simp [hL, hN, hK, hD, hB, layQ]
   refine TblDo.mono (K := (l.length + 1) + ((es.length * layQ ℓ K * (4 + 8) + 7) +
     (1 + (es.length * layQ ℓ K * (ldxBodyAtoms es.sum (es.length * layQ ℓ K) + 1 + 2) + 2))))
     ?_ (fun _ h => h) (by unfold ldxAtoms; simp [hl]; omega)

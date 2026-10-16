@@ -65,8 +65,6 @@ namespace IntegerMultBounds.MathlibTM2.Fast.TableVM
 open IntegerMultBounds.MathlibTM2.Mult IntegerMultBounds.MathlibTM2.Mult.Sizes IntegerMultBounds.MathlibTM2.Mult.Moduli IntegerMultBounds.MathlibTM2.Mult.Chirp IntegerMultBounds.MathlibTM2.Mult.Pipeline
   IntegerMultBounds.MathlibTM2.Mult.FastB0 Finset
 
-set_option linter.unusedSimpArgs false
-set_option linter.unnecessarySeqFocus false
 
 variable {A W w : ℕ}
 
@@ -216,7 +214,7 @@ theorem pm_s2 (hW : 4 * b n + 32 ≤ W) :
     have := pm_b_lt n
     refine (pmLinC_do 6 0 _ h0 (by omega)).mono ?_ le_rfl
     rintro s' ⟨e0, e1, ea⟩
-    refine ⟨by rw [ea]; exact hs.1, by rw [e1]; simp [pmVal, pmNV, p], fun y hy => ?_⟩
+    refine ⟨by rw [ea]; exact hs.1, by rw [e1]; simp [pmVal, p], fun y hy => ?_⟩
     fin_cases y <;> simp [pmVal, pmNV] at hy ⊢ <;> assumption
 
 theorem pm_sq_lt (hW : 4 * b n + 32 ≤ W) {x : ℕ} (hx : x ≤ b n) : (x + 1) * (x + 1) < 2 ^ W := by
@@ -316,7 +314,7 @@ theorem pm_s7 (hn : 2 ≤ n) (hW : 4 * b n + 32 ≤ W) :
     have := d_le_b n
     refine (pmCeilDivC_do 1 _ h0 h1 (one_le_d hn) (by omega)).mono ?_ le_rfl
     rintro s' ⟨e0, e1, e2, ea⟩
-    refine ⟨by rw [ea]; exact hs.1, by rw [e2]; simp [pmVal, pmNV, ℓ], fun y hy => ?_⟩
+    refine ⟨by rw [ea]; exact hs.1, by rw [e2]; simp [pmVal, ℓ], fun y hy => ?_⟩
     fin_cases y <;> simp [pmVal, pmNV] at hy ⊢ <;> assumption
 
 theorem pm_s8 (hn : 2 ≤ n) (hW : 4 * b n + 32 ≤ W) :
@@ -335,7 +333,7 @@ theorem pm_s9 (hn : 2 ≤ n) (hW : 4 * b n + 32 ≤ W) :
     have := pm_ℓ_le hn
     refine (pmSubKC_do 1 _ h0 (pm_one_le_ℓ hn) (by omega)).mono ?_ le_rfl
     rintro s' ⟨e0, e1, ea⟩
-    refine ⟨by rw [ea]; exact hs.1, by rw [e1]; simp [pmVal, pmNV], fun y hy => ?_⟩
+    refine ⟨by rw [ea]; exact hs.1, by rw [e1]; simp [pmVal], fun y hy => ?_⟩
     fin_cases y <;> simp [pmVal, pmNV] at hy ⊢ <;> assumption
 
 theorem pm_s10 (hn : 2 ≤ n) (hW : 4 * b n + 32 ≤ W) :
@@ -359,7 +357,7 @@ theorem pm_s11 (hn : 2 ≤ n) (hW : 4 * b n + 32 ≤ W) :
     have : 1 ≤ 2 ^ (2 * b n + 2) := Nat.one_le_two_pow
     refine (pmMulSubC_do _ h0 h1 h2 (logT_le_dℓ (one_le_d hn)) (by omega)).mono ?_ le_rfl
     rintro s' ⟨efr, e3, ea⟩
-    refine ⟨by rw [ea]; exact hs.1, by rw [e3]; simp [pmVal, pmNV, numHalf], fun y hy => ?_⟩
+    refine ⟨by rw [ea]; exact hs.1, by rw [e3]; simp [pmVal, numHalf], fun y hy => ?_⟩
     fin_cases y
     · show s'.val 0 = pmVal n 3
       rw [efr 0 (by decide), h0]; simp [pmVal]
@@ -387,7 +385,7 @@ theorem pm_s12 (hn : 2 ≤ n) (hW : 4 * b n + 32 ≤ W) :
     refine (pmAlphaC_do _ h0 h1 (one_le_b hn) (pmQuart_alpha n) (by omega)
       (lt_of_lt_of_le (pm_alpha_four_lt hn) (pm_W_pow hW (by omega)))).mono ?_ le_rfl
     rintro s' ⟨e0, e1, e2, ea⟩
-    refine ⟨by rw [ea]; exact hs.1, by rw [e2]; simp [pmVal, pmNV], fun y hy => ?_⟩
+    refine ⟨by rw [ea]; exact hs.1, by rw [e2]; simp [pmVal], fun y hy => ?_⟩
     fin_cases y <;> simp [pmVal, pmNV] at hy ⊢ <;> assumption
 
 theorem pm_s13 (hn : 2 ≤ n) (hW : 4 * b n + 32 ≤ W) :
@@ -398,7 +396,7 @@ theorem pm_s13 (hn : 2 ≤ n) (hW : 4 * b n + 32 ≤ W) :
     have h2 := lt_of_lt_of_le (pm_alpha_four_lt hn) (pm_W_pow hW (by omega))
     refine (pmSqC_do _ h0 (by rw [← sq]; omega)).mono ?_ le_rfl
     rintro s' ⟨e0, e1, ea⟩
-    refine ⟨by rw [ea]; exact hs.1, by rw [e1]; simp [pmVal, pmNV], fun y hy => ?_⟩
+    refine ⟨by rw [ea]; exact hs.1, by rw [e1]; simp [pmVal], fun y hy => ?_⟩
     fin_cases y <;> simp [pmVal, pmNV] at hy ⊢ <;> assumption
 
 theorem pm_s14 (hn : 2 ≤ n) (hW : 4 * b n + 32 ≤ W) :
@@ -420,7 +418,7 @@ theorem pm_s14 (hn : 2 ≤ n) (hW : 4 * b n + 32 ≤ W) :
             Nat.mul_le_mul hd1 h2
         _ ≤ 2 ^ W := by rw [e2]; exact hb
     rintro s' ⟨e0, e1, e2, ea⟩
-    refine ⟨by rw [ea]; exact hs.1, by rw [e2]; simp [pmVal, pmNV, gamma], fun y hy => ?_⟩
+    refine ⟨by rw [ea]; exact hs.1, by rw [e2]; simp [pmVal, gamma], fun y hy => ?_⟩
     fin_cases y <;> simp [pmVal, pmNV] at hy ⊢ <;> assumption
 
 theorem pm_s15 (hn : 2 ≤ n) (hW : 4 * b n + 32 ≤ W) :
@@ -435,7 +433,7 @@ theorem pm_s15 (hn : 2 ≤ n) (hW : 4 * b n + 32 ≤ W) :
     have := pm_b_lt n
     refine (pmCeilDivC_do 1 _ h0 h1 (one_le_b hn) (by omega)).mono ?_ le_rfl
     rintro s' ⟨e0, e1, e2, ea⟩
-    refine ⟨by rw [ea]; exact hs.1, by rw [e2]; simp [pmVal, pmNV, q], fun y hy => ?_⟩
+    refine ⟨by rw [ea]; exact hs.1, by rw [e2]; simp [pmVal, q], fun y hy => ?_⟩
     fin_cases y <;> simp [pmVal, pmNV] at hy ⊢ <;> assumption
 
 theorem pm_s16 (hn : 2 ≤ n) (hW : 4 * b n + 32 ≤ W) :
@@ -452,7 +450,7 @@ theorem pm_s16 (hn : 2 ≤ n) (hW : 4 * b n + 32 ≤ W) :
     have hN : N n = oddProd (d n) := rfl
     refine (pmOddC_do _ h0 (by omega)).mono ?_ le_rfl
     rintro s' ⟨e0, e1, ea⟩
-    refine ⟨by rw [ea]; exact hs.1, by rw [e1]; simp [pmVal, pmNV, N], fun y hy => ?_⟩
+    refine ⟨by rw [ea]; exact hs.1, by rw [e1]; simp [pmVal, N], fun y hy => ?_⟩
     fin_cases y <;> simp [pmVal, pmNV] at hy ⊢ <;> assumption
 
 theorem pm_s17 (hn : 2 ≤ n) (hW : 4 * b n + 32 ≤ W) :
@@ -481,7 +479,7 @@ theorem pm_s17 (hn : 2 ≤ n) (hW : 4 * b n + 32 ≤ W) :
     have e7 : 4 * d n * 2 ^ (ℓ n - 1) = 4 * (d n * 2 ^ (ℓ n - 1)) := by ring
     refine (pmStartC_do _ h0 h1 h2 (one_le_d hn) (pm_one_le_N n) (by omega)).mono ?_ le_rfl
     rintro s' ⟨e0, e1, e2, e3, ea⟩
-    refine ⟨by rw [ea]; exact hs.1, by rw [e3]; simp [pmVal, pmNV, pmX0], fun y hy => ?_⟩
+    refine ⟨by rw [ea]; exact hs.1, by rw [e3]; simp [pmVal, pmX0], fun y hy => ?_⟩
     fin_cases y <;> simp [pmVal, pmNV] at hy ⊢ <;> assumption
 
 theorem pm_s18 (hn : 2 ≤ n) (hW : 4 * b n + 32 ≤ W) :
@@ -502,7 +500,7 @@ theorem pm_s18 (hn : 2 ≤ n) (hW : 4 * b n + 32 ≤ W) :
       (by rw [hS]; exact lt_of_lt_of_le (pm_S_lt hn) (pm_W_pow hW (by omega)))
       (lt_of_lt_of_le ((d_le_b n).trans_lt (pm_b_lt n)) (pm_W_pow hW (by omega)))).mono ?_ le_rfl
     rintro s' ⟨e0, e1, e2, e3, e4, ea⟩
-    refine ⟨by rw [ea]; exact hs.1, by rw [e4, hS]; simp [pmVal, pmNV], fun y hy => ?_⟩
+    refine ⟨by rw [ea]; exact hs.1, by rw [e4, hS]; simp [pmVal], fun y hy => ?_⟩
     fin_cases y <;> simp [pmVal, pmNV] at hy ⊢ <;> assumption
 
 theorem pm_s19 (hn : 2 ≤ n) (hW : 4 * b n + 32 ≤ W) :
@@ -518,7 +516,7 @@ theorem pm_s19 (hn : 2 ≤ n) (hW : 4 * b n + 32 ≤ W) :
     have hb := pm_W_pow hW (k := 4 * b n + 13) (by omega)
     refine (pmWinAC_do _ h0 h1 (by omega)).mono ?_ le_rfl
     rintro s' ⟨e0, e1, e2, ea⟩
-    refine ⟨by rw [ea]; exact hs.1, by rw [e2]; simp [pmVal, pmNV, windowA], fun y hy => ?_⟩
+    refine ⟨by rw [ea]; exact hs.1, by rw [e2]; simp [pmVal, windowA], fun y hy => ?_⟩
     fin_cases y <;> simp [pmVal, pmNV] at hy ⊢ <;> assumption
 
 theorem pm_s20 (hn : 2 ≤ n) (hW : 4 * b n + 32 ≤ W) :
@@ -540,7 +538,7 @@ theorem pm_s20 (hn : 2 ≤ n) (hW : 4 * b n + 32 ≤ W) :
     have hb := pm_W_pow hW (k := 3 * b n + 10) (by omega)
     refine (pmWinBC_do _ h0 h1 (by omega)).mono ?_ le_rfl
     rintro s' ⟨e0, e1, e2, ea⟩
-    refine ⟨by rw [ea]; exact hs.1, by rw [e2]; simp [pmVal, pmNV, fastWindow], fun y hy => ?_⟩
+    refine ⟨by rw [ea]; exact hs.1, by rw [e2]; simp [pmVal, fastWindow], fun y hy => ?_⟩
     fin_cases y <;> simp [pmVal, pmNV] at hy ⊢ <;> assumption
 
 /-- Bounds for the precision stages: every value at most `64 b + 64`. -/
@@ -569,7 +567,7 @@ theorem pm_s21 (hW : 4 * b n + 32 ≤ W) :
     have := d_le_b n
     refine (pmClogAddC_do 4 _ h0 (pm_small_lt hW (by omega)).le).mono ?_ le_rfl
     rintro s' ⟨e0, e1, ea⟩
-    refine ⟨by rw [ea]; exact hs.1, by rw [e1]; simp [pmVal, pmNV, chirpGuard], fun y hy => ?_⟩
+    refine ⟨by rw [ea]; exact hs.1, by rw [e1]; simp [pmVal, chirpGuard], fun y hy => ?_⟩
     fin_cases y <;> simp [pmVal, pmNV] at hy ⊢ <;> assumption
 
 theorem pm_s22 (hW : 4 * b n + 32 ≤ W) :
@@ -580,7 +578,7 @@ theorem pm_s22 (hW : 4 * b n + 32 ≤ W) :
     have hp : p n = 6 * b n := rfl
     refine (pmLinC_do 1 14 _ h0 (pm_small_lt hW (by omega)).le).mono ?_ le_rfl
     rintro s' ⟨e0, e1, ea⟩
-    refine ⟨by rw [ea]; exact hs.1, by rw [e1]; simp [pmVal, pmNV, taylorTerms], fun y hy => ?_⟩
+    refine ⟨by rw [ea]; exact hs.1, by rw [e1]; simp [pmVal, taylorTerms], fun y hy => ?_⟩
     fin_cases y <;> simp [pmVal, pmNV] at hy ⊢ <;> assumption
 
 theorem pm_s23 (hW : 4 * b n + 32 ≤ W) :
@@ -592,7 +590,7 @@ theorem pm_s23 (hW : 4 * b n + 32 ≤ W) :
     have hp : taylorTerms (p n) 0 = 6 * b n + 0 + 14 := rfl
     refine (pmClogAddC_do 4 _ h0 (pm_small_lt hW (by omega)).le).mono ?_ le_rfl
     rintro s' ⟨e0, e1, ea⟩
-    refine ⟨by rw [ea]; exact hs.1, by rw [e1]; simp [pmVal, pmNV, taylorGuard], fun y hy => ?_⟩
+    refine ⟨by rw [ea]; exact hs.1, by rw [e1]; simp [pmVal, taylorGuard], fun y hy => ?_⟩
     fin_cases y <;> simp [pmVal, pmNV] at hy ⊢ <;> assumption
 
 theorem pm_s24 (hW : 4 * b n + 32 ≤ W) :
@@ -606,7 +604,7 @@ theorem pm_s24 (hW : 4 * b n + 32 ≤ W) :
     have := pm_tg_le (p n) 0
     refine (pmLin2C_do 1 2 _ h0 h1 (pm_small_lt hW (by omega)).le).mono ?_ le_rfl
     rintro s' ⟨e0, e1, e2, ea⟩
-    refine ⟨by rw [ea]; exact hs.1, by rw [e2]; simp [pmVal, pmNV]; ring, fun y hy => ?_⟩
+    refine ⟨by rw [ea]; exact hs.1, by rw [e2]; simp [pmVal]; ring, fun y hy => ?_⟩
     fin_cases y <;> simp [pmVal, pmNV] at hy ⊢ <;> assumption
 
 theorem pm_s25 (hW : 4 * b n + 32 ≤ W) :
@@ -617,7 +615,7 @@ theorem pm_s25 (hW : 4 * b n + 32 ≤ W) :
     have hp : p n = 6 * b n := rfl
     refine (pmLinC_do 5 4 _ h0 (pm_small_lt hW (by omega)).le).mono ?_ le_rfl
     rintro s' ⟨e0, e1, ea⟩
-    refine ⟨by rw [ea]; exact hs.1, by rw [e1]; simp [pmVal, pmNV], fun y hy => ?_⟩
+    refine ⟨by rw [ea]; exact hs.1, by rw [e1]; simp [pmVal], fun y hy => ?_⟩
     fin_cases y <;> simp [pmVal, pmNV] at hy ⊢ <;> assumption
 
 theorem pm_s26 (hW : 4 * b n + 32 ≤ W) :
@@ -631,7 +629,7 @@ theorem pm_s26 (hW : 4 * b n + 32 ≤ W) :
     have := pm_g_le n
     refine (pmLin2C_do 1 14 _ h0 h1 (pm_small_lt hW (by omega)).le).mono ?_ le_rfl
     rintro s' ⟨e0, e1, e2, ea⟩
-    refine ⟨by rw [ea]; exact hs.1, by rw [e2]; simp [pmVal, pmNV, taylorTerms], fun y hy => ?_⟩
+    refine ⟨by rw [ea]; exact hs.1, by rw [e2]; simp [pmVal, taylorTerms], fun y hy => ?_⟩
     fin_cases y <;> simp [pmVal, pmNV] at hy ⊢ <;> assumption
 
 theorem pm_s27 (hW : 4 * b n + 32 ≤ W) :
@@ -644,7 +642,7 @@ theorem pm_s27 (hW : 4 * b n + 32 ≤ W) :
     have := pm_g_le n
     refine (pmClogAddC_do 4 _ h0 (pm_small_lt hW (by omega)).le).mono ?_ le_rfl
     rintro s' ⟨e0, e1, ea⟩
-    refine ⟨by rw [ea]; exact hs.1, by rw [e1]; simp [pmVal, pmNV, taylorGuard], fun y hy => ?_⟩
+    refine ⟨by rw [ea]; exact hs.1, by rw [e1]; simp [pmVal, taylorGuard], fun y hy => ?_⟩
     fin_cases y <;> simp [pmVal, pmNV] at hy ⊢ <;> assumption
 
 theorem pm_s28 (hW : 4 * b n + 32 ≤ W) :
@@ -658,7 +656,7 @@ theorem pm_s28 (hW : 4 * b n + 32 ≤ W) :
     have := pm_g_le n
     refine (pmLin2C_do 1 0 _ h0 h1 (pm_small_lt hW (by omega)).le).mono ?_ le_rfl
     rintro s' ⟨e0, e1, e2, ea⟩
-    refine ⟨by rw [ea]; exact hs.1, by rw [e2]; simp [pmVal, pmNV], fun y hy => ?_⟩
+    refine ⟨by rw [ea]; exact hs.1, by rw [e2]; simp [pmVal], fun y hy => ?_⟩
     fin_cases y <;> simp [pmVal, pmNV] at hy ⊢ <;> assumption
 
 theorem pm_s29 (hW : 4 * b n + 32 ≤ W) :
@@ -674,7 +672,7 @@ theorem pm_s29 (hW : 4 * b n + 32 ≤ W) :
     have := pm_tg_le (p n) (chirpGuard (d n))
     refine (pmLin2C_do 1 2 _ h0 h1 (pm_small_lt hW (by omega)).le).mono ?_ le_rfl
     rintro s' ⟨e0, e1, e2, ea⟩
-    refine ⟨by rw [ea]; exact hs.1, by rw [e2]; simp [pmVal, pmNV]; ring, fun y hy => ?_⟩
+    refine ⟨by rw [ea]; exact hs.1, by rw [e2]; simp [pmVal]; ring, fun y hy => ?_⟩
     fin_cases y <;> simp [pmVal, pmNV] at hy ⊢ <;> assumption
 
 theorem pm_s30 (hW : 4 * b n + 32 ≤ W) :
@@ -687,7 +685,7 @@ theorem pm_s30 (hW : 4 * b n + 32 ≤ W) :
     have := pm_g_le n
     refine (pmLinC_do 5 4 _ h0 (pm_small_lt hW (by omega)).le).mono ?_ le_rfl
     rintro s' ⟨e0, e1, ea⟩
-    refine ⟨by rw [ea]; exact hs.1, by rw [e1]; simp [pmVal, pmNV, anglePrec], fun y hy => ?_⟩
+    refine ⟨by rw [ea]; exact hs.1, by rw [e1]; simp [pmVal, anglePrec], fun y hy => ?_⟩
     fin_cases y <;> simp [pmVal, pmNV] at hy ⊢ <;> assumption
 
 /-- The emitted axis lengths `t_0, …, t_{d-1}`, as pair symbols. -/
@@ -761,7 +759,7 @@ theorem pm_clear_do (s : TblSt pmNV A) (hs : PmF n 31 acc s) :
       simp only at hi
       rw [pmVals, pmVal_ge n k (by omega)]
       simp [pmNV] at hk
-      interval_cases k <;> simp [tblExactList, TblIns.exact, Function.update_apply, Fin.ext_iff, pmNV]
+      interval_cases k <;> simp [tblExactList, TblIns.exact, Fin.ext_iff, pmNV]
   · simp [tblExactList, TblIns.exact, hs.1]
 
 end Stages

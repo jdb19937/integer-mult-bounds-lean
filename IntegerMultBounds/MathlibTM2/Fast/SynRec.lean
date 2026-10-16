@@ -51,11 +51,7 @@ open IntegerMultBounds IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.St
   IntegerMultBounds.MathlibTM2.Layer IntegerMultBounds.MathlibTM2.LayerMachine IntegerMultBounds.MathlibTM2.Mult.Rounds IntegerMultBounds.Networks
 open IntegerMultBounds.MathlibTM2.Node hiding LReg
 
-set_option linter.unusedSimpArgs false
 set_option maxHeartbeats 4000000
-set_option linter.unnecessarySeqFocus false
-set_option linter.unusedTactic false
-set_option linter.unreachableTactic false
 
 /-! ### The records -/
 
@@ -823,13 +819,13 @@ theorem sg_synCntLoop (k : ℕ) (hk : 1 ≤ k) {x cnt ctr : SynW} (v : SynW → 
     set w := Function.update (Function.update (Φ t) ctr (cs.drop (t + 1))) (.s 23)
       (cs.take (t + 1)).reverse with hw
     have wx : w x = List.replicate (X / k ^ t) tick := by
-      simp [hw, Φ, Function.update_apply, hxr, hx23, hxc]
+      simp [hw, Φ, hxr, hx23, hxc]
     have wc : w cnt = List.replicate (synJk k X t) tick := by
-      simp [hw, Φ, Function.update_apply, hcr, hc23]
+      simp [hw, Φ, hcr, hc23]
     have w17 : w (.s 17) = [] := by
-      simp [hw, Φ, Function.update_apply, h17r, h17c, h17x, h17]
+      simp [hw, Φ, h17r, h17c, h17x, h17]
     have w2 : w (.s 2) = [] := by
-      simp [hw, Φ, Function.update_apply, hr2.symm, h2c, h2x, h2]
+      simp [hw, Φ, hr2.symm, h2c, h2x, h2]
     by_cases hz : X / k ^ t = 0
     · have e : Φ (t + 1) = Φ t := by
         simp only [Φ, div_pow_succ_gen, hz, synJk_eq_of_zero hz, Nat.zero_div]
@@ -842,11 +838,11 @@ theorem sg_synCntLoop (k : ℕ) (hk : 1 ≤ k) {x cnt ctr : SynW} (v : SynW → 
       refine lr_weaken body (sg_ifNE_pos body (q := synSkip) hne
         ((sgU_div body (k := k) (a := x) (b := .s 17) (t := .s 2) (x := X / k ^ t) (y := 0) hk
           hx17 hx2 (by decide) w2 (by rw [wx]; simp) (by simp [w17])).seq <|
-        (sgU_clear body (a := x) (x := X / k ^ t) (by simp [Function.update_apply, hx17, wx])).seq <|
+        (sgU_clear body (a := x) (x := X / k ^ t) (by simp [hx17, wx])).seq <|
         (sgU_move body (a := .s 17) (b := x) (x := X / k ^ t / k) h17x
-          (by simp [Function.update_apply, h17x]) (by simp)).seq <|
+          (by simp [h17x]) (by simp)).seq <|
         sgU_push body (a := cnt) (y := synJk k X t)
-          (by simp [Function.update_apply, hcx, hc17, wc]))) ?_ ?_
+          (by simp [hcx, hc17, wc]))) ?_ ?_
       · refine congrArg (synG R) ?_
         funext y
         simp only [hw, Φ, Function.update_apply, hJ, div_pow_succ_gen]
@@ -1170,7 +1166,7 @@ theorem sg_synDigits (G F : ℕ) (v : SynW → List (Fin (A + 4))) (Kv a oS J D 
   · refine congrArg (synG R) ?_
     funext y
     simp only [hΦ, synDigSt, Function.update_apply]
-    split_ifs <;> simp_all [div_pow_self]
+    split_ifs <;> simp_all
   · simp only [synDigitsCost]
     omega
 

@@ -13,7 +13,6 @@ header pass. -/
 @[expose] public section
 
 set_option maxRecDepth 100000
-set_option linter.unusedSimpArgs false
 
 namespace IntegerMultBounds.Schoenhage
 
@@ -173,9 +172,9 @@ theorem runs_prepAB {p d ℓ K w : ℕ} {ts : List ℕ} (hL : LayoutOK (2 ^ ℓ)
       SigmaConstsTape.paperFlags_count, hv, htop]
     funext i; fin_cases i <;> first | rfl | tsimp [stB, cmap, hσ₆, hσ₅, hσ₄, hσ₃, hσ₂, hσ₁, hσ, hF, flagsW_eq,
       topsW, reg, ones, wIn, decoded, hfl]
-  · simp only [costAB, clen, reg, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil,
-      List.length_cons, List.length_nil, List.reverse_nil, List.nil_append, List.append_nil, length_ones,
-      List.length_singleton, List.reverse_reverse, List.map_reverse, List.sum_reverse, SigmaConstsTape.paperFlags_count]
+  · simp only [costAB, clen, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil,
+      List.length_cons, List.length_nil, length_ones,
+      List.map_reverse, List.sum_reverse, SigmaConstsTape.paperFlags_count]
     have hlen : (SigmaConstsTape.paperFlags ts ℓ).length = ts.length := by simp [SigmaConstsTape.paperFlags]
     have hc : clen F = 2 * ts.length := by rw [hF, SigmaConstsTape.clen_flags, hlen]
     simp only [clen] at hc
@@ -302,9 +301,9 @@ theorem runs_prepC {p d ℓ K w : ℕ} {ts : List ℕ} (hL : LayoutOK (2 ^ ℓ) 
     (fun τ e => ?_) ?_
   · rw [e]
     funext i; fin_cases i <;> rfl
-  · simp only [costC, clen, WTape.words, reg, emp, SigmaRowsTape.endv, SigmaRowsTape.ticks, List.map_cons,
-      List.map_nil, List.sum_cons, List.sum_nil, List.length_cons, List.length_nil, List.reverse_nil,
-      List.nil_append, List.append_nil, length_ones, List.length_singleton, List.reverse_reverse,
+  · simp only [costC, clen, WTape.words, SigmaRowsTape.endv, SigmaRowsTape.ticks, List.map_cons,
+      List.map_nil, List.sum_cons, List.sum_nil, List.length_nil, List.reverse_nil,
+      List.nil_append, List.append_nil, length_ones, 
       List.map_reverse, List.sum_reverse, List.map_replicate, List.sum_replicate, smul_eq_mul]
     have := Nat.mod_le (ℓ - 1) K
     omega
@@ -443,8 +442,8 @@ theorem runs_prepD {p d ℓ K w : ℕ} {ts : List ℕ} (hd : 1 ≤ d) (_hD : ts.
   · rw [e]
     funext i; fin_cases i <;> rfl
   · simp only [costD, clen, WTape.words, reg, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil,
-      List.length_cons, List.length_nil, List.reverse_nil, List.nil_append, List.append_nil, length_ones,
-      List.length_singleton]
+      List.length_cons, List.length_nil, List.reverse_nil, List.nil_append, length_ones,
+      ]
     omega
 
 /-! ### The preparation -/

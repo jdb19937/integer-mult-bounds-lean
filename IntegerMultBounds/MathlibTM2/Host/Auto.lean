@@ -20,7 +20,6 @@ namespace IntegerMultBounds.MathlibTM2.Host
 
 open IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.Stack IntegerMultBounds.MathlibTM2
 
-set_option linter.unusedSimpArgs false
 
 variable {T Q A : ℕ} {U : Type} {P : Type} (body : P → Pr P T Q A U)
 
@@ -95,11 +94,11 @@ lemma popIn_run (ins : Fin ni → Fin T) (a : Act T Q A U) :
       · funext k
         by_cases hk : k = ins i
         · subst hk; simp [hnd.1]
-        · simp [hk, Function.update_of_ne hk]
+        · simp [hk]
       · funext k
         by_cases hk : k = ins i
         · subst hk; simp [hnd.1]
-        · simp [hk, Function.update_of_ne hk]
+        · simp [hk]
 
 lemma pushOut_run (ins : Fin ni → Fin T) (outs : Fin no → Fin T) (st : Fin T) (M : Auto A ni no)
     (a : Act T Q A U) :
@@ -189,7 +188,7 @@ theorem autoStep_run {ins : Fin ni → Fin T} {outs : Fin no → Fin T} {st : Fi
   unfold autoStep
   rw [popIn_run ins _ _ v S hnd, pushOut_run]
   refine ⟨_, _, rfl, rfl, rfl, ?_, rfl, rfl, rfl, ?_, ?_, ?_⟩
-  · simp [setAutoState, autoNext, Action.run, hst'']; rfl
+  · simp [autoNext, hst'']; rfl
   · intro i
     have h1 : ins i ∉ Set.range outs := by rintro ⟨j, hj⟩; exact hio i j hj.symm
     simp [filter_outs_nil h1, List.mem_map, List.mem_finRange]
@@ -552,7 +551,7 @@ lemma cols_stream {len : ℕ} (w : List (Fin ni → Fin (A + 4)))
       List.getElem?_eq_getElem ht, Option.some.injEq]
     funext i
     simp [stream, List.getD_eq_getElem?_getD, List.getElem?_append_left, ht]
-  · simp [cols, List.getElem?_eq_none (Nat.le_of_not_lt ht), ht]
+  · simp [cols, ht]
 
 /-- Output `j` of `M` run from `M.init` on each word of `W`, concatenated in step order. -/
 def outWords (W : List (List (Fin ni → Fin (A + 4)))) (j : Fin no) : List (Fin (A + 4)) :=

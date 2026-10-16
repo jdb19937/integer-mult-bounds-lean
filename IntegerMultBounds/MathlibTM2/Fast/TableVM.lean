@@ -61,7 +61,6 @@ namespace IntegerMultBounds.MathlibTM2.Fast.TableVM
 
 open IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.Stack IntegerMultBounds.MathlibTM2.Node IntegerMultBounds.MathlibTM2.Host IntegerMultBounds.MathlibTM2.Layer
 
-set_option linter.unusedSimpArgs false
 
 /-! ### Register roles -/
 
@@ -505,7 +504,7 @@ omit hrg in
 omit hrg in
 lemma tbl_pairs_getElem (A N x y j : ℕ) (hj : j < N) :
     (tblPairs A N x y)[j]'(by simp; omega) = pairSym A (x.testBit j) (y.testBit j) := by
-  simp [tblPairs, coeffSyms, ZMod.val_natCast, Nat.testBit_mod_two_pow, hj]
+  simp [tblPairs, coeffSyms, ZMod.val_natCast, Nat.testBit_mod_two_pow]
 
 omit hrg in
 lemma tbl_drop_binSyms (W x j : ℕ) (hj : j < W) :
@@ -555,7 +554,7 @@ theorem tbl_emitScan_runs {W x y : ℕ} (ρ : TblR n → List (Fin (A + 4)))
       simp only [tblEmitStep, Action.run, mk_var, mk_stk, get_rt, h0, List.head?_cons,
         List.tail_cons, Option.getD_some, update_rt, store_mk] at this
       rw [Function.update_of_ne ‹rg (.z 0) ≠ rg (.z 1)›.symm, h1] at this
-      simp only [List.head?_cons, List.tail_cons, Option.getD_some, update_rt, store_mk,
+      simp only [List.head?_cons, List.tail_cons, Option.getD_some, 
         Function.update_self, Function.update_of_ne h1011, symBit_bitSymbol] at this
       rw [Function.update_of_ne ‹rg (.z 1) ≠ rg .acc›.symm,
         Function.update_of_ne ‹rg (.z 0) ≠ rg .acc›.symm] at this

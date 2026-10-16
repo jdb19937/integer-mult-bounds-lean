@@ -57,7 +57,6 @@ namespace IntegerMultBounds.MathlibTM2.Node
 
 open IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.Stack IntegerMultBounds.MathlibTM2 IntegerMultBounds.MathlibTM2.Host
 
-set_option linter.unusedSimpArgs false
 
 /-- Register contents of a host: the right stacks. -/
 abbrev Regs (T A : ℕ) := Fin T → List (Fin (A + 4))
@@ -575,11 +574,11 @@ theorem udiv_exec {c : ℕ} (hc : 1 ≤ c) {a b t : Fin T} (hab : a ≠ b) (hat 
         ((S.R a).reverse ++ S.R t)) b (List.replicate ((S.R a).length / c) tick ++ S.R b) }
   refine ⟨v₂, _, by rw [hu₂, hu₁], ?_, Exec.cast (Exec.seq (peekR_run a v S ▸
     Exec.act (body := body) (peekR a) (mk v S)) (Exec.seq he₁ he₂)) rfl ?_⟩
-  · simp [Function.update_of_ne hbt.symm, Function.update_of_ne hat.symm, ht]; omega
+  · simp [Function.update_of_ne hbt.symm, ht]; omega
   · congr 2
     funext k
     simp only [movedR, Function.update_apply, List.map_id, ht, List.append_nil,
-      List.reverse_reverse]
+      ]
     split_ifs <;> simp_all
 
 /-! ### Scanning with a program body -/
@@ -719,7 +718,7 @@ theorem udbl_exec {b t₂ : Fin T} (hbt : b ≠ t₂) (v : HS T Q A U) (S : Stac
     rw [foldl_pushFx]
     funext k
     simp only [movedR, Function.update_apply, List.map_id, ht, List.append_nil, id,
-      List.reverse_reverse]
+      ]
     split_ifs <;> simp_all [List.replicate]
 
 /-- Make `b` hold `2 ^ |a|` copies of each of its symbols: double `b` once per symbol of `a`
@@ -829,7 +828,7 @@ theorem expStep_exec (G F : ℕ) {e t₂ t₃ : Fin T} (hreg : [e, t₂, t₃].N
   · congr 2
     funext k
     simp only [hS₂, hS₁, movedR, Function.update_apply, List.map_id, ht₂, List.append_nil,
-      List.length_reverse]
+      ]
     split_ifs <;> simp_all [List.replicate_append_replicate, Nat.add_comm]
 
 /-- The exponent program: copy `|uR|` ticks onto the empty `eR` (through `t₁`), then run
@@ -1177,7 +1176,7 @@ theorem strideSlot_exec {kR KR cnt w t₁ t₂ : Fin T} (hreg : [kR, KR, cnt, w,
   have hSk : S.R kR = R₀ kR := by rw [hS, maskRegs_of_ne hkc hkw]
   have hSt : S.R t₁ = [] := by rw [hS, maskRegs_of_ne hc1.symm hw1.symm, ht₁]
   refine ⟨v', m, hu, ?_, Exec.cast he rfl ?_⟩
-  · simp only [Finset.sum_const, Finset.card_range, smul_eq_mul, Nat.zero_add, hSk, hSt,
+  · simp only [Finset.sum_const, Finset.card_range, smul_eq_mul, hSk, hSt,
       List.length_nil, Nat.mul_zero, Nat.add_zero] at hm
     nlinarith
   · congr 2

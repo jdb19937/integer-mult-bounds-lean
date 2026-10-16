@@ -27,8 +27,6 @@ open IntegerMultBounds IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.St
 open IntegerMultBounds.MathlibTM2.Mult IntegerMultBounds.MathlibTM2.Mult.Sizes IntegerMultBounds.MathlibTM2.Fast IntegerMultBounds.MathlibTM2.Fast.Src IntegerMultBounds.MathlibTM2.Fast.ResampA
   IntegerMultBounds.MathlibTM2.Fast.ChirpSt
 
-set_option linter.unusedSimpArgs false
-set_option linter.unusedSectionVars false
 
 section P1
 
@@ -101,7 +99,7 @@ theorem ds_preRec_length (l : List ℕ) : (preRec (A := A) l).length = l.sum + l
   | nil => rfl
   | cons x l ih =>
     simp only [preRec, List.flatMap_cons, List.length_append, preFld, List.length_replicate,
-      List.length_singleton, List.sum_cons, List.length_cons] at ih ⊢
+      List.sum_cons, List.length_cons] at ih ⊢
     rw [ih]; simp; ring
 
 theorem ds_flatMap_rev_length (m : ℕ) (f : ℕ → List (Fin (A + 4))) :
@@ -349,7 +347,7 @@ theorem ds_P1 (R : Regs T A) {n Wt : ℕ} (hn : 2 ≤ n) (hd0 : 0 < d n) (hWt : 
     by_cases hS : y = .o .xS
     · subst hS; simp [hX₁₂, hX₁₁, hX₁₀, hX₉, hX₈, hX₇, hX₆, hX₅, hX₄, hX₃, eXS]
     simp only [hX₁₂, hX₁₁, hX₁₀, hX₉, hX₈, hX₇, hX₆, hX₅, hX₄, hX₃, Function.update_apply, hR,
-      hT, hS, h1, h2, h3, h4, h5, h6, h7, ite_false]
+      hT, hS, h2, h3, h6, h7, ite_false]
     exact hX₂X y h2 h3 hT hS h4 h5 h1
   · simp [hX₁₂, hX₁₁, hX₁₀, hX₉, hX₈, hX₇, hX₆, hX₅, hX₄, hX₃]
     rw [hoff _ (fun e => by cases e) (fun e => by cases e) (fun e => by cases e)
@@ -365,7 +363,7 @@ theorem ds_P1 (R : Regs T A) {n Wt : ℕ} (hn : 2 ≤ n) (hd0 : 0 < d n) (hWt : 
       (s11.seq (s12.seq (s13.seq (s14.seq (s15.seq s16))))))))))))))).congr_left
       (by rw [dsV1_pm]) |>.mono ?_
     simp only [List.length_reverse, ds_ldcBlocks_length, List.length_ofFn, lA, lB,
-      List.length_append]
+      ]
     unfold dsP1Cost
     omega
 

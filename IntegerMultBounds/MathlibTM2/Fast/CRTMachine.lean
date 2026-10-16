@@ -27,7 +27,6 @@ open IntegerMultBounds IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.St
   IntegerMultBounds.MathlibTM2.Node IntegerMultBounds.MathlibTM2.Mult
 open scoped Function
 
-set_option linter.unusedSimpArgs false
 
 /-- The bound of the rotation pass of a target with `pre` control bits, width `ai`, `post`
 spectator bits, length `S`, offset step `μ` and records of `B` symbols. -/
@@ -240,7 +239,7 @@ theorem crtFwdIter_runs {d : ℕ} (a s μ : Fin d → ℕ) (hs : ∀ j, 0 < s j 
   have vRstr : R (r .str) = (crtBox a (crtLay (i + 1)) C 0).flatten := by
     rw [hR]; simp (disch := decide) only [crtSt, upd, Function.update_self]
   have vRpost : R (r .postU) = List.replicate (crtW a P) tick := by
-    rw [hR]; simp (disch := decide) only [crtSt, upd, Function.update_self]
+    rw [hR]; simp (disch := decide) only [crtSt, Function.update_self]
   have ιR : ∀ j, R (ι j) = R₀ (ι j) := fun j => by
     rw [hR, crtSt_of_ne]
     intro y _; exact (hrι y j).symm
@@ -439,7 +438,7 @@ theorem crtFwdIter_runs {d : ℕ} (a s μ : Fin d → ℕ) (hs : ∀ j, 0 < s j 
         v₇ .postU (by decide) (by decide) (by decide) (by decide) (by decide) (by decide)
           (by decide) (by decide) (by decide) (by decide), vRpost, List.length_replicate,
         List.replicate_append_replicate]
-      simp (disch := decide) only [crtSt, upd, Function.update_self]
+      simp (disch := decide) only [crtSt, Function.update_self]
       rw [crt_drop_finRange hi, crtW_cons]
     by_cases x8 : x = r .str
     · rw [x8, Function.update_of_ne (ne (by decide)), Function.update_of_ne (ne (by decide)),
@@ -609,7 +608,7 @@ theorem crtInvIter_runs {d : ℕ} (a s μ : Fin d → ℕ) (hs : ∀ j, 0 < s j 
   have v₄post : R₄ (r .postU) = List.replicate (crtW a P) tick := by
     rw [hR₄, Function.update_self, v₃aI, g₃ .postU (by decide) (by decide) (by decide) (by decide)
       (by decide) (by decide), vR]
-    simp (disch := decide) only [crtSt, upd, Function.update_self]
+    simp (disch := decide) only [crtSt, Function.update_self]
     rw [List.length_replicate, List.drop_replicate, crt_drop_finRange hi, crtW_cons,
       Nat.add_sub_cancel_left]
   have g₄ : ∀ x : CrtReg, x ≠ .wD → x ≠ .aI → x ≠ .sD → x ≠ .sI → x ≠ .mD → x ≠ .muI →
@@ -825,7 +824,7 @@ theorem crtInvIter_runs {d : ℕ} (a s μ : Fin d → ℕ) (hs : ∀ j, 0 < s j 
       Function.update_of_ne x5, f₅ _ x8]
     by_cases x11 : x = r .postU
     · rw [x11, v₄post]
-      simp (disch := decide) only [crtSt, upd, Function.update_self]
+      simp (disch := decide) only [crtSt, Function.update_self]
     rw [f₄ _ x11]
     by_cases x12 : x = r .wD
     · rw [x12, f₃ _ (ne (by decide)) (ne (by decide)), f₂ _ (ne (by decide)) (ne (by decide)),
@@ -1101,7 +1100,7 @@ lemma crtSt_eq_self {r : CrtReg → Fin T} (hr : Function.Injective r) (R₀ : R
   by_cases x8 : x = r .preU
   · rw [x8, h₈]; simp (disch := decide) only [crtSt, upd, Function.update_self]
   by_cases x9 : x = r .postU
-  · rw [x9, h₉]; simp (disch := decide) only [crtSt, upd, Function.update_self]
+  · rw [x9, h₉]; simp (disch := decide) only [crtSt, Function.update_self]
   rw [crtSt_of_ne]
   simp only [List.mem_cons, List.not_mem_nil, or_false, forall_eq_or_imp, forall_eq]
   exact ⟨x1, x2, x3, x4, x5, x6, x7, x8, x9⟩
@@ -1318,7 +1317,7 @@ theorem crtForward_runs {d : ℕ} (a s : Fin d → ℕ) (hs : ∀ j, 0 < s j ∧
     rw [hR₆]; simp (disch := decide) only [crtFwdSt, crtSt, upd, Function.update_self,
       crtPre_zero, List.replicate_zero]
   have r6post : R₆ (r .postU) = List.replicate (crtPre a d) tick := by
-    rw [hR₆]; simp (disch := decide) only [crtFwdSt, crtSt, upd, Function.update_self]
+    rw [hR₆]; simp (disch := decide) only [crtFwdSt, crtSt, Function.update_self]
     rw [List.drop_zero, crtW_finRange]
   have hrev : ∀ g : Fin d → ℕ, (crtEnts (A := prime + K) ((List.finRange d).map g)).reverse =
       crtEnts ((crtRevAx d).map g) := fun g => by
@@ -1346,24 +1345,24 @@ theorem crtForward_runs {d : ℕ} (a s : Fin d → ℕ) (hs : ∀ j, 0 < s j ∧
     · subst x4; rw [hR₉]; simp (disch := decide) only [upd, Function.update_self]
       rw [z0 .mD (by decide)]
     by_cases x5 : x = r .sT
-    · subst x5; rw [hR₉]; simp (disch := decide) only [upd, Function.update_self]
-      rw [hR₈]; simp (disch := decide) only [upd, Function.update_self]
+    · subst x5; rw [hR₉]; simp (disch := decide) only [upd]
+      rw [hR₈]; simp (disch := decide) only [Function.update_self]
       rw [g₇ .sD (by decide) (by decide), g₇ .sT (by decide) (by decide),
         r6D .sD s (Or.inr (Or.inl ⟨rfl, rfl⟩)), r6 .sT s (Or.inr (Or.inl ⟨rfl, rfl⟩)), hrev,
         List.append_nil, hsT]
     by_cases x6 : x = r .sD
-    · subst x6; rw [hR₉]; simp (disch := decide) only [upd, Function.update_self]
+    · subst x6; rw [hR₉]; simp (disch := decide) only [upd]
       rw [hR₈]; simp (disch := decide) only [upd, Function.update_self]
       rw [z0 .sD (by decide)]
     by_cases x7 : x = r .wT
-    · subst x7; rw [hR₉]; simp (disch := decide) only [upd, Function.update_self]
-      rw [hR₈]; simp (disch := decide) only [upd, Function.update_self]
-      rw [hR₇]; simp (disch := decide) only [upd, Function.update_self]
+    · subst x7; rw [hR₉]; simp (disch := decide) only [upd]
+      rw [hR₈]; simp (disch := decide) only [upd]
+      rw [hR₇]; simp (disch := decide) only [Function.update_self]
       rw [r6D .wD a (Or.inl ⟨rfl, rfl⟩), r6 .wT a (Or.inl ⟨rfl, rfl⟩), hrev,
         List.append_nil, hwT]
     by_cases x8 : x = r .wD
-    · subst x8; rw [hR₉]; simp (disch := decide) only [upd, Function.update_self]
-      rw [hR₈]; simp (disch := decide) only [upd, Function.update_self]
+    · subst x8; rw [hR₉]; simp (disch := decide) only [upd]
+      rw [hR₈]; simp (disch := decide) only [upd]
       rw [hR₇]; simp (disch := decide) only [upd, Function.update_self]
       rw [z0 .wD (by decide)]
     by_cases x9 : x = r .str

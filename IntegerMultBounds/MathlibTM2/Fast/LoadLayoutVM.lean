@@ -23,8 +23,6 @@ Frames: `ldwFr s s' M` says that `s'` agrees with `s` on every variable outside 
 
 namespace IntegerMultBounds.MathlibTM2.Fast.TableVM
 
-set_option linter.unusedSimpArgs false
-set_option linter.unusedSectionVars false
 
 /-- Close goals `a ≠ b`, `¬ a = b`, `x ∉ [a, b, …]` and their conjunctions from distinctness
 hypotheses in either direction. -/

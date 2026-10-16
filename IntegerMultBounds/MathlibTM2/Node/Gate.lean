@@ -34,7 +34,6 @@ namespace IntegerMultBounds.MathlibTM2.Node
 open IntegerMultBounds.Networks IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.Stack IntegerMultBounds.MathlibTM2
   IntegerMultBounds.MathlibTM2.Host IntegerMultBounds.MathlibTM2.Layer
 
-set_option linter.unusedSimpArgs false
 
 /-! ### The gate matrix -/
 

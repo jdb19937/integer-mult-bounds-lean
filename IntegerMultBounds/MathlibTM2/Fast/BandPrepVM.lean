@@ -22,7 +22,6 @@ open IntegerMultBounds IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.St
   IntegerMultBounds.MathlibTM2.Host IntegerMultBounds.MathlibTM2.Layer IntegerMultBounds.MathlibTM2.Node
 open IntegerMultBounds.MathlibTM2.Fast.TableVM
 
-set_option linter.unusedSimpArgs false
 
 noncomputable section
 
@@ -91,7 +90,7 @@ theorem band_toRuns (hrg₂ : Function.Injective (Sum.elim rg rgx))
   obtain ⟨v', S', n, hu, hn, he, hS', hf⟩ := h v S (fun r => by
     rcases r with r | x
     · exact hS (.inl r)
-    · simp only [bandLay, Sum.elim_inr, Sum.elim_inl]
+    · simp only [bandLay, Sum.elim_inr]
       cases bandIdx x with
       | inl i => exact hc.2 i
       | inr j => exact (hS (.inr (.vx j))).trans (hξ j))

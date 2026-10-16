@@ -30,8 +30,6 @@ open IntegerMultBounds IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.St
   IntegerMultBounds.MathlibTM2.Layer
 open IntegerMultBounds.MathlibTM2.Mult IntegerMultBounds.MathlibTM2.Mult.Sizes IntegerMultBounds.MathlibTM2.Mult.Moduli
 
-set_option linter.unusedSimpArgs false
-set_option linter.unusedSectionVars false
 
 /-! ### States -/
 
@@ -451,7 +449,7 @@ theorem ds_umul {a b c t₁ t₂ : Fin T} (hreg : [a, b, c, t₁, t₂].Nodup) (
     (by rw [hS]; omega) (fun k _ _ => by rw [hS, hΨ]; simp)
   refine ⟨v', m, hu, ?_, ?_⟩
   · rw [hS, ht₁] at hm
-    simp only [Finset.sum_const, Finset.card_range, smul_eq_mul, Nat.zero_add] at hm
+    simp only [Finset.sum_const, Finset.card_range, smul_eq_mul] at hm
     simp only [List.length_nil] at hm
     nlinarith
   · have e : R' = Function.update R c (List.replicate ((R a).length * (R b).length) tick ++ R c) := by

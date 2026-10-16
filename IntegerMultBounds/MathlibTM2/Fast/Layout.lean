@@ -70,7 +70,6 @@ open IntegerMultBounds IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.St
   IntegerMultBounds.MathlibTM2.Node IntegerMultBounds.MathlibTM2.Layer.PackedXor
 open IntegerMultBounds.Networks.Shared50ModularControl (prime)
 
-set_option linter.unusedSimpArgs false
 
 /-! ### Runs between register files -/
 
@@ -224,7 +223,7 @@ theorem lay_moveRecs_one {α : Type*} {M : ℕ} (l : List (List α)) (hl : l.len
   subst hl
   apply List.ext_getElem (by simp [length_moveRecs])
   intro j h1 h2
-  simp [moveRecs, List.getD_eq_getElem _ _ h2]
+  simp [moveRecs]
   rfl
 
 theorem layStream_nil {α : Type*} (K n : ℕ) (l : List (List α)) (hl : l.length = 2 ^ n) :
@@ -263,17 +262,17 @@ variable {rg : LayReg t₀ → Fin T}
 theorem layDyn_other (hrg : Function.Injective rg) (R : Fin T → List (Fin (A + 4)))
     (s dm tm dx tx : List (Fin (A + 4))) {y : LayReg t₀} (h1 : y ≠ .str) (h2 : y ≠ .cM)
     (h3 : y ≠ .tM) (h4 : y ≠ .cX) (h5 : y ≠ .tX) : layDyn rg R s dm tm dx tx (rg y) = R (rg y) := by
-  simp [layDyn, Function.update_apply, hrg.eq_iff, h1, h2, h3, h4, h5]
+  simp [layDyn, hrg.eq_iff, h1, h2, h3, h4, h5]
 
 theorem layDyn_str (hrg : Function.Injective rg) (R : Fin T → List (Fin (A + 4)))
     (s dm tm dx tx : List (Fin (A + 4))) : layDyn rg R s dm tm dx tx (rg .str) = s := by
-  simp [layDyn, Function.update_apply, hrg.eq_iff]
+  simp [layDyn, hrg.eq_iff]
 
 theorem layDyn_upd_str (hrg : Function.Injective rg) (R : Fin T → List (Fin (A + 4)))
     (s s' dm tm dx tx : List (Fin (A + 4))) :
     Function.update (layDyn rg R s dm tm dx tx) (rg .str) s' = layDyn rg R s' dm tm dx tx := by
   funext y
-  simp only [layDyn, Function.update_apply, hrg.eq_iff]
+  simp only [layDyn, Function.update_apply]
   split_ifs <;> simp_all [hrg.eq_iff]
 
 theorem layDyn_upd_M (hrg : Function.Injective rg) (R : Fin T → List (Fin (A + 4)))
@@ -281,7 +280,7 @@ theorem layDyn_upd_M (hrg : Function.Injective rg) (R : Fin T → List (Fin (A +
     Function.update (Function.update (layDyn rg R s dm tm dx tx) (rg .cM) dm') (rg .tM) tm' =
       layDyn rg R s dm' tm' dx tx := by
   funext y
-  simp only [layDyn, Function.update_apply, hrg.eq_iff]
+  simp only [layDyn, Function.update_apply]
   split_ifs <;> simp_all [hrg.eq_iff]
 
 theorem layDyn_upd_X (R : Fin T → List (Fin (A + 4)))

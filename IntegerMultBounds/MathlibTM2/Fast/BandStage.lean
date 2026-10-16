@@ -24,7 +24,6 @@ open IntegerMultBounds.Resampling.WeightTable (tableE tableD)
 open IntegerMultBounds.Networks.Shared50ModularControl (prime)
 open IntegerMultBounds.MathlibTM2.Mult.BandSpec
 
-set_option linter.unusedSimpArgs false
 
 noncomputable section
 
@@ -163,7 +162,7 @@ variable {σ τ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))}
 lemma bandLoad_src (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (hd : Fin 5 → Fin t₀)
     (w : ℕ) (D : PreAxB) [NeZero D.s] (rest : List (Fin (prime + K + 4))) :
     bandLoad σ hd w D rest (.inl .src) = σ (.inl .src) := by
-  simp [bandLoad, bandFE, bandMvF, bandFE0, bandClrE, bandFP, Function.update_apply]
+  simp [bandLoad, bandFE, bandMvF, bandFE0, bandClrE, bandFP]
 
 open Classical in
 lemma bandLoad_axr (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (hd : Fin 5 → Fin t₀)
@@ -172,7 +171,7 @@ lemma bandLoad_axr (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (hd 
   rcases hx with rfl | rfl <;>
   simp [bandLoad, bandFE, bandMvF, bandFE0, bandClrE, bandFP, bandFB2b, bandScrL, bandFB2a, bandFB1,
     bandFF2, bandFF2a, bandFF2b, bandFF2c, bandFF2d, bandFF1, bandFA, preBankB, bandF0, bandClrB,
-    preHB, Function.update_apply]
+    preHB]
 
 /-- **The loader commutes with the box and axis registers.** -/
 theorem bandLoad_rsbWith (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (hd : Fin 5 → Fin t₀)
@@ -226,7 +225,7 @@ open Classical in
 lemma bandLoad_prm : bandLoad σ hd w D rest (.inl .prm) = rest := by
   simp [bandLoad, bandFE, bandMvF, bandFE0, bandClrE, bandFP, bandFB2b, bandScrL, bandFB2a, bandFB1,
     bandFF2, bandFF2a, bandFF2b, bandFF2c, bandFF2d, bandFF1, bandFA, preBankB, bandF0, bandClrB,
-    preHB, Function.update_apply]
+    preHB]
 
 open Classical in
 lemma bandLoad_xt (x : RsbX t₀) (hx : x = .xt ∨ x = .e1 ∨ x = .e2) :
@@ -234,7 +233,7 @@ lemma bandLoad_xt (x : RsbX t₀) (hx : x = .xt ∨ x = .e1 ∨ x = .e2) :
   rcases hx with rfl | rfl | rfl <;>
   simp [bandLoad, bandFE, bandMvF, bandFE0, bandClrE, bandFP, bandFB2b, bandScrL, bandFB2a, bandFB1,
     bandFF2, bandFF2a, bandFF2b, bandFF2c, bandFF2d, bandFF1, bandFA, preBankB, bandF0, bandClrB,
-    preHB, Function.update_apply]
+    preHB]
 
 open Classical in
 lemma bandLoad_sw (j : Fin (swapT t₀)) :
@@ -242,12 +241,12 @@ lemma bandLoad_sw (j : Fin (swapT t₀)) :
       if ∃ k, reg (hd k) = j then rsbBank hd (D.hs w) j else σ (.inr (.sw j)) := by
   by_cases hj : ∃ k, reg (hd k) = j
   · simp [bandLoad, bandFE, bandMvF, bandFE0, bandClrE, bandFP, bandFB2b, bandScrL, bandFB2a, bandFB1,
-      bandFF2, bandFF2a, bandFF2b, bandFF2c, bandFF2d, bandFF1, bandFA, preBankB, Function.update_apply,
+      bandFF2, bandFF2a, bandFF2b, bandFF2c, bandFF2d, bandFF1, bandFA, preBankB, 
       hj]
   · have hj' : ∀ k, ¬ reg (hd k) = j := fun k e => hj ⟨k, e⟩
     simp [bandLoad, bandFE, bandMvF, bandFE0, bandClrE, bandFP, bandFB2b, bandScrL, bandFB2a, bandFB1,
       bandFF2, bandFF2a, bandFF2b, bandFF2c, bandFF2d, bandFF1, bandFA, preBankB, bandF0, bandClrB, preHB,
-      Function.update_apply, hj, hj']
+      hj']
     intro h
     exfalso
     rcases h with h | h | h | h | h <;> exact hj' _ h.symm
