@@ -214,6 +214,80 @@ theorem bandPreCost_agree (h : AgreeOff σ τ) (T : ℕ) (hd : Fin 5 → Fin t�
 
 end Commute
 
+section Frames
+
+variable (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (hd : Fin 5 → Fin t₀) (w : ℕ)
+  (D : PreAxB) [NeZero D.s] (rest : List (Fin (prime + K + 4)))
+
+open Classical in
+lemma bandLoad_prm : bandLoad σ hd w D rest (.inl .prm) = rest := by
+  simp [bandLoad, bandFE, bandMvF, bandFE0, bandClrE, bandFP, bandFB2b, bandScrL, bandFB2a, bandFB1,
+    bandFF2, bandFF2a, bandFF2b, bandFF2c, bandFF2d, bandFF1, bandFA, preBankB, bandF0, bandClrB,
+    preHB, Function.update_apply]
+
+open Classical in
+lemma bandLoad_xt (x : RsbX t₀) (hx : x = .xt ∨ x = .e1 ∨ x = .e2) :
+    bandLoad σ hd w D rest (.inr x) = σ (.inr x) := by
+  rcases hx with rfl | rfl | rfl <;>
+  simp [bandLoad, bandFE, bandMvF, bandFE0, bandClrE, bandFP, bandFB2b, bandScrL, bandFB2a, bandFB1,
+    bandFF2, bandFF2a, bandFF2b, bandFF2c, bandFF2d, bandFF1, bandFA, preBankB, bandF0, bandClrB,
+    preHB, Function.update_apply]
+
+open Classical in
+lemma bandLoad_sw (j : Fin (swapT t₀)) :
+    bandLoad σ hd w D rest (.inr (.sw j)) =
+      if ∃ k, reg (hd k) = j then rsbBank hd (D.hs w) j else σ (.inr (.sw j)) := by
+  by_cases hj : ∃ k, reg (hd k) = j
+  · simp [bandLoad, bandFE, bandMvF, bandFE0, bandClrE, bandFP, bandFB2b, bandScrL, bandFB2a, bandFB1,
+      bandFF2, bandFF2a, bandFF2b, bandFF2c, bandFF2d, bandFF1, bandFA, preBankB, Function.update_apply,
+      hj]
+  · have hj' : ∀ k, ¬ reg (hd k) = j := fun k e => hj ⟨k, e⟩
+    simp [bandLoad, bandFE, bandMvF, bandFE0, bandClrE, bandFP, bandFB2b, bandScrL, bandFB2a, bandFB1,
+      bandFF2, bandFF2a, bandFF2b, bandFF2c, bandFF2d, bandFF1, bandFA, preBankB, bandF0, bandClrB, preHB,
+      Function.update_apply, hj, hj']
+    intro h
+    exfalso
+    rcases h with h | h | h | h | h <;> exact hj' _ h.symm
+
+open Classical in
+lemma bandLoad_vx (hvx : ∀ j, σ (.inr (.vx j)) = []) (j : Fin 12) :
+    bandLoad σ hd w D rest (.inr (.vx j)) = [] := by
+  simp only [bandLoad, bandFE, bandMvF, bandFE0, bandClrE, bandFP, bandFB2b, bandScrL, bandFB2a,
+    bandFB1, bandFF2, bandFF2a, bandFF2b, bandFF2c, bandFF2d, bandFF1, bandFA, bandF0, bandClrB,
+    preHB, preBankB, Function.update_apply, bvx]
+  fin_cases j <;> simp [hvx]
+
+/-- The loaded register file is again a loader input. -/
+lemma bandLoad_free {σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))} (hF : BandPreFree σ)
+    (hd : Fin 5 → Fin t₀) (w : ℕ) (D : PreAxB) [NeZero D.s] (rest : List (Fin (prime + K + 4)))
+    (hwn : (σ (.inl (.cm .wn))).length = w)
+    (hnn : (σ (.inl (.cm .nn))).length = IntegerMultBounds.Schoenhage.Schedule.topN w)
+    (hA3 : 3 ≤ prime + K) : BandPreFree (bandLoad σ hd w D rest) := by
+  have c := bandLoad_cfg σ hd D rest w hF hwn hnn hA3
+  exact ⟨c.ya, c.b1, c.tb, c.xa, c.xs, c.pr, c.hc, c.ac, c.hv, c.tL, c.ac2, c.nv, c.tA, c.tJ, c.dst,
+    c.tC, c.tK, c.sr, c.sel, c.ef, c.dout, c.vk, bandLoad_vx σ hd w D rest hF.vx, c.ready.empty⟩
+
+lemma BandPreFree.withRsb {σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))} (hF : BandPreFree σ)
+    (l a a' : List (Fin (prime + K + 4))) : BandPreFree (rsbWith σ l a a') := by
+  have h := rsbWith_agree σ l a a'
+  have e : ∀ r : RsbR, r ≠ .src → rsbWith σ l a a' (.inl r) = σ (.inl r) := fun r hr =>
+    h _ (fun e => hr (Sum.inl_injective e)) (by simp) (by simp)
+  exact ⟨by rw [e _ (by decide)]; exact hF.ya, by rw [e _ (by decide)]; exact hF.b1,
+    by rw [e _ (by decide)]; exact hF.tb, by rw [e _ (by decide)]; exact hF.xa,
+    by rw [e _ (by decide)]; exact hF.xs, by rw [e _ (by decide)]; exact hF.pr,
+    by rw [e _ (by decide)]; exact hF.hc, by rw [e _ (by decide)]; exact hF.ac,
+    by rw [e _ (by decide)]; exact hF.hv, by rw [e _ (by decide)]; exact hF.tL,
+    by rw [e _ (by decide)]; exact hF.ac2, by rw [e _ (by decide)]; exact hF.nv,
+    by rw [e _ (by decide)]; exact hF.tA, by rw [e _ (by decide)]; exact hF.tJ,
+    by rw [e _ (by decide)]; exact hF.dst, by rw [e _ (by decide)]; exact hF.tC,
+    by rw [e _ (by decide)]; exact hF.tK, by rw [e _ (by decide)]; exact hF.sr,
+    by rw [e _ (by decide)]; exact hF.sel, by rw [e _ (by decide)]; exact hF.ef,
+    by rw [e _ (by decide)]; exact hF.dout, by rw [e _ (by decide)]; exact hF.vk,
+    fun j => by rw [h _ (by simp) (by simp) (by simp)]; exact hF.vx j,
+    fun c h1 h2 h3 h4 h5 h6 => by rw [e _ (by simp)]; exact hF.cm c h1 h2 h3 h4 h5 h6⟩
+
+end Frames
+
 end
 
 end IntegerMultBounds.MathlibTM2.Fast
