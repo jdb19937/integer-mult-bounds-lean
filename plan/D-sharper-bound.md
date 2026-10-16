@@ -1823,3 +1823,12 @@ At the existing sizes the concrete `B̃₀` meets all its precision conditions
 with working precision `3p` and `j=⌈log₂(4p)⌉`, with interface error at most
 `p²` (`Mult/ConcreteB0Sizes`). The guarded check and4-declaration
 standard-axiom audit pass.
+
+The tape library has no record division, so the line machine must multiply
+by stored pivot reciprocals and rounds each product separately. The numeric
+specification now matches that: `bandSolveM` rounds every product with exact
+sums and uses stored rounded reciprocals, with residuals `nη` and
+`(n+M+2θM)η+2θMB`, and `bandSolveM_error` bounds it through the
+size-dependent backward theorem `backward_lu_k`. Factors and reciprocals are
+computed per axis in the table VM, which has exact division. Both guarded
+checks and the standard-axiom audits pass.
