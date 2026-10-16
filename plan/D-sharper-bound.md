@@ -1902,3 +1902,11 @@ natural order. `bandSolveG_map` (`SchurStages`) relabels a solve along an
 injection, which carries the folded order to natural positions. Open: the
 matrix the machine factors is a grid rounding of the phase-cell matrix, so the
 error analysis needs a perturbation step from `realMatrix` to its rounding.
+
+Superseding the `specN` route above: the machine factors a grid rounding `Ã`
+of the phase-cell matrix. `NLogN/PhaseCellPerturb` shows a row-sum perturbation
+`ε ≤ 1/(32p)` keeps margin `1/(16p)` and mass `9/4`, and the machine solve of
+`Ã` is within `62000(2p)³s²η' + 64p²ε` of the phase-cell solution
+(`bandSolveMach_perturb`). `concrete_resampB₀_specP` gives the pipeline
+interface, and `Big.concreteB0P_conditions` discharges it at precision `5p`,
+`β = 1/(32p)`, `newtonK p = 2(log₂p+1)+11` and `ε ≤ 2^-3p`, error at most `p²`.

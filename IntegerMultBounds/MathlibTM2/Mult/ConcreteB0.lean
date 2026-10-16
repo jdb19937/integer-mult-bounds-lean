@@ -3,6 +3,7 @@ module
 public import IntegerMultBounds.MathlibTM2.Mult.BandedB0
 public import IntegerMultBounds.NLogN.PhaseCellBandSolve
 public import IntegerMultBounds.NLogN.PhaseCellFoldSolve
+public import IntegerMultBounds.NLogN.PhaseCellPerturb
 public import IntegerMultBounds.NLogN.ToeplitzLocal
 
 /-! The concrete small-gap `B̃₀` line map. The inverse is computed by the
@@ -252,34 +253,40 @@ theorem concrete_resampB₀_specX (hst : s<t) {α d : ℝ} (hα : 0<α)
     unfold bandJtX
     exact (norm_rhoC_sub_le_two p _)
 
-/-- The tape machine's solver: band solve in folded order with unguarded Newton
-reciprocals for multipliers and pivots. -/
-noncomputable def machSolve (p u K : ℕ) (rd : ℝ → ℝ) (b : ZMod s → ℝ) : ZMod s → ℝ :=
+/-- The tape machine's solver on a matrix `At` (the grid rounding of the
+phase-cell matrix it builds). -/
+noncomputable def machSolveT (K : ℕ) (rd : ℝ → ℝ) (At : Matrix (ZMod s) (ZMod s) ℝ)
+    (b : ZMod s → ℝ) : ZMod s → ℝ :=
   SchurDominance.bandSolveG rd (PhaseCellMatrix.machMul rd K) (fun c => NewtonRecip.newtonR rd c K)
-    (PhaseCellMatrix.realMatrix s t p u) univ (PhaseCellMatrix.foldOrder s) b
+    At univ (PhaseCellMatrix.foldOrder s) b
 
-theorem concrete_resampB₀_specN (hst : s<t) {α d : ℝ} (hα : 0<α)
+/-- The pipeline interface for the machine solve of a row-sum perturbation `At`
+of the phase-cell matrix. -/
+theorem concrete_resampB₀_specP (hst : s<t) {α d : ℝ} (hα : 0<α)
     (p u j : ℕ) (hp : 2≤p) (hwidth : 8*p≤2^u) (hαu : α^2=(u : ℝ))
     (hθ : 1/(4*(p : ℝ))≤(t : ℝ)/s-1)
     (hgap : (1 : ℝ)/4≤d*((t : ℝ)/s-1)) (hbudget : α^2*d≤p) (hj : 4*(p : ℝ)≤2^j)
+    (At : Matrix (ZMod s) (ZMod s) ℝ) (ε : ℝ)
+    (hε : ∀ j, ∑ l, |At j l-PhaseCellMatrix.realMatrix s t p u j l|≤ε) (hε1 : ε≤1/(32*(p : ℝ)))
     (rd : ℝ → ℝ) (η : ℝ) (hrd : ∀ x, |rd x-x|≤η) (hrd0 : rd 0=0)
-    (β : ℝ) (hβ : 0<β) (hβp : β≤1/(8*(p : ℝ))/2) (hηβ : 5*η≤2*(β/4)/9) (K : ℕ)
+    (β : ℝ) (hβ : 0<β) (hβp : β≤1/(8*(2*(p : ℝ)))/2) (hηβ : 5*η≤2*(β/4)/9) (K : ℕ)
     (hK : (1-β/4/2)^(2^K)≤3*(5*η)/(β/4))
-    (hprec : 2^16*(p : ℝ)^2*(s : ℝ)^2*(η*(1+60*3/β^2))≤1)
-    (hsmall : 2*(62000*(p : ℝ)^3*(s : ℝ)^2*(η*(1+60*3/β^2)))+2/2^p+
+    (hprec : 2^16*(2*(p : ℝ))^2*(s : ℝ)^2*(η*(1+60*3/β^2))≤1)
+    (hsmall : 2*(62000*(2*(p : ℝ))^3*(s : ℝ)^2*(η*(1+60*3/β^2))+64*(p : ℝ)^2*ε)+2/2^p+
       (32*(p : ℝ)^2/(2 : ℝ)^(45*p))/2≤1/2)
     (J : (ZMod s → ℂ) →L[ℂ] (ZMod s → ℂ)) (hJ : J ∘L PhaseCellOperator.exact s t α=1)
     (df : ZMod s → ℝ) (hdf : ∀ ℓ, 2^p*‖rhoC p (df ℓ : ℂ)-(dPrime s t α ℓ : ℂ)‖≤2)
     (hdf1 : ∀ ℓ, ‖rhoC p (df ℓ : ℂ)‖≤1) :
-    ApproxMap p (resampB₀Of (t := t) p (bandJtX (s := s) p j (machSolve (t := t) p u K rd)) df)
+    ApproxMap p (resampB₀Of (t := t) p (bandJtX (s := s) p j (machSolveT K rd At)) df)
         (((2 : ℂ)^j)⁻¹ • resampB₀ s t α J)
-        (6+2^p*((2*(62000*(p : ℝ)^3*(s : ℝ)^2*(η*(1+60*3/β^2)))+2/2^p)+
+        (6+2^p*((2*(62000*(2*(p : ℝ))^3*(s : ℝ)^2*(η*(1+60*3/β^2))+64*(p : ℝ)^2*ε)+2/2^p)+
           (32*(p : ℝ)^2/(2 : ℝ)^(45*p))/2)) ∧
       ∀ w : ZMod t → ℂ, ‖w‖≤1 →
-        ‖resampB₀Of (t := t) p (bandJtX (s := s) p j (machSolve (t := t) p u K rd)) df w‖≤1 := by
+        ‖resampB₀Of (t := t) p (bandJtX (s := s) p j (machSolveT K rd At)) df w‖≤1 := by
   have hη : 0≤η := le_trans (abs_nonneg _) (hrd 0)
+  have hε0 : 0≤ε := le_trans (sum_nonneg fun _ _ => abs_nonneg _) (hε 0)
   exact concrete_resampB₀_specX hst hα p u j hp hwidth hαu hθ hgap hbudget hj _ _ (by positivity)
-    (fun x b hx hb i => PhaseCellMatrix.bandSolveMach_fold s t hst hα p u hp hwidth hαu hθ hgap
-      hbudget rd η hrd hrd0 β hβ hβp hηβ K hK hprec x b hx hb i) hsmall J hJ df hdf hdf1
+    (fun x b hx hb i => PhaseCellMatrix.bandSolveMach_perturb s t hst hα p u hp hwidth hαu hθ hgap
+      hbudget At ε hε hε1 rd η hrd hrd0 β hβ hβp hηβ K hK hprec x b hx hb i) hsmall J hJ df hdf hdf1
 
 end IntegerMultBounds.MathlibTM2.Mult.FastB0
