@@ -1679,3 +1679,9 @@ values bootstrapped from the maximum error. This is the boundary stage error
 `e₃` in terms of factor and online rounding. The guarded check and
 2-declaration standard-axiom audit pass. Actual rounded Schur factors, the
 boundary ordering and tape costs remain open.
+
+Actual similarity weights lie in `[2^-(8p+1),1]`, and the rounded interior
+solve of one actual phase-cell interval reproduces the exact interior solution
+of the actual rounded Gaussian matrix within `η+64LηV+2(η+Cη)`. This supplies
+the actual stage errors `e₁`/`e₅` per cell. Both guarded checks and the
+2-declaration standard-axiom audit pass.
