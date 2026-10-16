@@ -194,6 +194,65 @@ theorem stg_inv (μ M n : ℝ) (hM : 0≤M) (s : ℕ) (hn : (s : ℝ)≤n) (A : 
     · push_cast; nlinarith
     · push_cast; nlinarith
 
+omit η hrd hmul in
+/-- Rows and columns outside `s` stay zero. -/
+theorem stg_out (hrd0 : rd 0=0) (hmul0 : ∀ c, mul 0 c=0) (s : ℕ) (A : Matrix ℕ ℕ ℝ)
+    (hout : ∀ i j, (s ≤ i ∨ s ≤ j) → A i j=0) :
+    ∀ m i j, (s ≤ i ∨ s ≤ j) → stg rd mul A 0 m i j=0
+  | 0, i, j, h => hout i j h
+  | m+1, i, j, h => by
+    simp only [stg, zero_add, relim]
+    rcases h with h | h
+    · rw [stg_out hrd0 hmul0 s A hout m i j (Or.inl h), stg_out hrd0 hmul0 s A hout m i m (Or.inl h),
+        hmul0, zero_mul, hrd0, sub_zero]
+    · rw [stg_out hrd0 hmul0 s A hout m i j (Or.inr h), stg_out hrd0 hmul0 s A hout m m j (Or.inr h),
+        mul_zero, hrd0, sub_zero]
+
+include hrd hmul in
+/-- The stages of two rules agreeing on the working range coincide on the active
+block, for a matrix vanishing outside `s × s`. -/
+theorem stg_congr (hrd0 : rd 0=0) (mul' : ℝ → ℝ → ℝ) (hmul0 : ∀ c, mul 0 c=0)
+    (hmul0' : ∀ c, mul' 0 c=0)
+    (μ M n : ℝ) (hM : 0≤M) (s : ℕ) (hn : (s : ℝ)≤n) (A : Matrix ℕ ℕ ℝ)
+    (hout : ∀ i j, (s ≤ i ∨ s ≤ j) → A i j=0) (μ₀ m₀ : ℝ)
+    (hinv : StageInv A (Ico 0 s) μ₀ m₀) (hm : m₀+s*(η*(n+M))≤M) (hmu : μ/2+2*s*(η*(n+M))≤μ₀)
+    (hμ : 0<μ) (hagree : ∀ a c, |a|≤M → μ/2≤c → c≤M → mul' a c=mul a c) :
+    ∀ m ≤ s, ∀ i j, m ≤ i → m ≤ j → stg rd mul' A 0 m i j=stg rd mul A 0 m i j := by
+  have hη : 0≤η := le_trans (abs_nonneg _) (hrd 0)
+  have hQ : 0≤η*(n+M) := by
+    have : 0≤n := le_trans (Nat.cast_nonneg _) hn
+    positivity
+  intro m
+  induction m with
+  | zero => intro _ i j _ _; rfl
+  | succ m ih =>
+    intro hms i j hi hj
+    have hst := stg_inv rd mul η hrd hmul μ M n hM s hn A μ₀ m₀ hinv hm hmu hμ m (by omega)
+    have hmR : (m : ℝ)+1≤s := by exact_mod_cast hms
+    have hmem : m ∈ Ico m s := mem_Ico.mpr ⟨le_rfl, by omega⟩
+    have hmass := hst.2 m hmem
+    have hdom := hst.1 m hmem
+    have h0 : 0≤∑ j∈(Ico m s).erase m, |stg rd mul A 0 m m j| := sum_nonneg fun _ _ => abs_nonneg _
+    have hcM : stg rd mul A 0 m m m≤M := by
+      have := single_le_sum (f := fun j => |stg rd mul A 0 m m j|) (fun _ _ => abs_nonneg _) hmem
+      have hle := le_abs_self (stg rd mul A 0 m m m)
+      push_cast at hmass
+      nlinarith
+    have hcμ : μ/2≤stg rd mul A 0 m m m := by push_cast at hdom; nlinarith
+    have hmul_eq : mul' (stg rd mul A 0 m i m) (stg rd mul A 0 m m m)=
+        mul (stg rd mul A 0 m i m) (stg rd mul A 0 m m m) := by
+      by_cases his : i<s
+      · refine hagree _ _ ?_ hcμ hcM
+        have hiS : i ∈ Ico m s := mem_Ico.mpr ⟨by omega, his⟩
+        have := single_le_sum (f := fun j => |stg rd mul A 0 m i j|) (fun _ _ => abs_nonneg _) hmem
+        have hmi := hst.2 i hiS
+        push_cast at hmi
+        nlinarith
+      · rw [stg_out rd mul hrd0 hmul0 s A hout m i m (Or.inl (by omega)), hmul0, hmul0']
+    simp only [stg, zero_add, relim]
+    rw [ih (by omega) i j (by omega) (by omega), ih (by omega) i m (by omega) le_rfl,
+      ih (by omega) m m le_rfl le_rfl, ih (by omega) m j le_rfl (by omega), hmul_eq]
+
 end Stages
 
 end IntegerMultBounds.NLogN.SchurDominance

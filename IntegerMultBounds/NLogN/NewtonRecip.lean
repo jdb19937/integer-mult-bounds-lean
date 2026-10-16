@@ -147,6 +147,23 @@ theorem newtonR_err (rd : ℝ → ℝ) (η : ℝ) (hrd : ∀ x, |rd x-x|≤η) (
     rw [hnext]
     exact step_bound b r δ (5*η) _ ih hδ
 
+/-- Every Newton iterate keeps `0 ≤ b r ≤ 2`. -/
+theorem newtonR_range (rd : ℝ → ℝ) (η : ℝ) (hrd : ∀ x, |rd x-x|≤η) (β b : ℝ) (hβ : 0<β)
+    (hβb : β≤b) (hb3 : b≤3) (hη : 5*η≤2*(β/4)/9) (k : ℕ) :
+    0≤b*newtonR rd b k ∧ b*newtonR rd b k≤2 := by
+  have hη0 : 0≤η := le_trans (abs_nonneg _) (hrd 0)
+  have hκ1 : β/4≤1 := by linarith
+  have hseq := errSeq_quad (1-b/4) (5*η) (β/4) (by positivity) hκ1 (by positivity) hη
+    (by linarith) (by linarith) k
+  have hE1 : errSeq (1-b/4) (5*η) k≤1 := by
+    rcases hseq.2 with h | h
+    · have hp : (1-β/4/2)^(2^k)≤1 := pow_le_one₀ (by linarith) (by linarith)
+      nlinarith [hseq.1]
+    · have : 3*(5*η)/(β/4)≤1 := by rw [div_le_one (by positivity)]; linarith
+      linarith
+  have h := (newtonR_err rd η hrd β b hβ hβb hb3 hη k).trans hE1
+  constructor <;> linarith [abs_le.mp h]
+
 /-- The reciprocal error after enough steps. -/
 theorem newtonR_recip (rd : ℝ → ℝ) (η : ℝ) (hrd : ∀ x, |rd x-x|≤η) (β b : ℝ) (hβ : 0<β)
     (hβb : β≤b) (hb3 : b≤3) (hη : 5*η≤2*(β/4)/9) (K : ℕ)
