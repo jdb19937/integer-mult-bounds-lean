@@ -529,4 +529,73 @@ theorem bandSolveM_error (rd : ℝ → ℝ) (η : ℝ) (hrd : ∀ x, |rd x-x|≤
     (bandSolveM rd A S ks b) _ hx _ _ (n*η) _ (2*(M*η)*M) X hΛ0 (by positivity) (by positivity) hX
     (fun i hi => luLr_diag rd A S ks i hi) hL hεS hxX hfη hbB hsmall j hj
 
+/-! ### Column-oriented substitution
+
+The tape machine updates pending right-hand sides column by column. With exact
+sums this produces the same values as the row-oriented substitutions. -/
+
+/-- Forward substitution by columns: the head's pending value is final, then
+every later pending value loses the rounded product with it. -/
+noncomputable def colFwd (rd : ℝ → ℝ) (L : Matrix ι ι ℝ) : (ι → ℝ) → (ι → ℝ) → List ι → ι → ℝ
+  | y, _, [] => y
+  | y, pend, k::ks => colFwd rd L (Function.update y k (pend k))
+      (fun i => if i∈ks then pend i-rd (L i k*pend k) else pend i) ks
+
+theorem colFwd_eq (rd : ℝ → ℝ) (L : Matrix ι ι ℝ) (b : ι → ℝ) (ks : List ι) (hnd : ks.Nodup) :
+    ∀ (done : Finset ι) (y pend : ι → ℝ), (∀ k∈ks, k∉done) →
+      (∀ k∈ks, pend k=b k-∑ j∈done, rd (L k j*y j)) →
+      colFwd rd L y pend ks=fwdM rd L b done y ks := by
+  induction ks with
+  | nil => intro _ _ _ _ _; rfl
+  | cons k ks ih =>
+    intro done y pend hdis hpend
+    have hnd' := List.nodup_cons.mp hnd
+    simp only [colFwd, fwdM]
+    have hk := hpend k List.mem_cons_self
+    rw [hk]
+    apply ih hnd'.2
+    · intro x hx
+      simp only [mem_insert, not_or]
+      exact ⟨fun h => hnd'.1 (h ▸ hx), hdis x (List.mem_cons_of_mem _ hx)⟩
+    · intro x hx
+      have hkd : k∉done := hdis k List.mem_cons_self
+      have hs : ∑ j∈done, rd (L x j*Function.update y k (b k-∑ j∈done, rd (L k j*y j)) j)=
+          ∑ j∈done, rd (L x j*y j) :=
+        sum_congr rfl fun j hj => by rw [Function.update_of_ne (fun h : j=k => hkd (h ▸ hj))]
+      simp only [hx, ↓reduceIte]
+      rw [hpend x (List.mem_cons_of_mem _ hx), sum_insert hkd, Function.update_self, hs]
+      ring
+
+/-- Back substitution by columns, with the stored reciprocal. -/
+noncomputable def colBwd (rd : ℝ → ℝ) (U : Matrix ι ι ℝ) (r : ι → ℝ) :
+    (ι → ℝ) → (ι → ℝ) → List ι → ι → ℝ
+  | x, _, [] => x
+  | x, pend, k::ks => colBwd rd U r (Function.update x k (rd (pend k*r k)))
+      (fun i => if i∈ks then pend i-rd (U i k*rd (pend k*r k)) else pend i) ks
+
+theorem colBwd_eq (rd : ℝ → ℝ) (U : Matrix ι ι ℝ) (r y : ι → ℝ) (ks : List ι) (hnd : ks.Nodup) :
+    ∀ (done : Finset ι) (x pend : ι → ℝ), (∀ k∈ks, k∉done) →
+      (∀ k∈ks, pend k=y k-∑ j∈done, rd (U k j*x j)) →
+      colBwd rd U r x pend ks=bwdM rd U r y done x ks := by
+  induction ks with
+  | nil => intro _ _ _ _ _; rfl
+  | cons k ks ih =>
+    intro done x pend hdis hpend
+    have hnd' := List.nodup_cons.mp hnd
+    simp only [colBwd, bwdM]
+    have hk := hpend k List.mem_cons_self
+    rw [hk]
+    apply ih hnd'.2
+    · intro z hz
+      simp only [mem_insert, not_or]
+      exact ⟨fun h => hnd'.1 (h ▸ hz), hdis z (List.mem_cons_of_mem _ hz)⟩
+    · intro z hz
+      have hkd : k∉done := hdis k List.mem_cons_self
+      have hs : ∑ j∈done, rd (U z j*Function.update x k
+            (rd ((y k-∑ j∈done, rd (U k j*x j))*r k)) j)=∑ j∈done, rd (U z j*x j) :=
+        sum_congr rfl fun j hj => by rw [Function.update_of_ne (fun h : j=k => hkd (h ▸ hj))]
+      simp only [hz, ↓reduceIte]
+      rw [hpend z (List.mem_cons_of_mem _ hz), sum_insert hkd, Function.update_self, hs]
+      ring
+
 end IntegerMultBounds.NLogN.SchurDominance
