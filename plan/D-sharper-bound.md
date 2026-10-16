@@ -1795,3 +1795,11 @@ rounded matrix in physical order keeps every factor entry within the band or
 the `w`-wide cyclic border, so every non-border factor row has at most `3w+1`
 entries and a line solve with stored factors touches `O(sw)` entries. Both
 guarded checks and the5-declaration standard-axiom audit pass.
+
+The banded solve is now a concrete function: `SchurSubst.bandSolve` performs
+rounded elimination and rounded forward/back substitution (quotients by the
+pivot rounded once) in elimination order, and `bandSolve_error` bounds its
+error end to end for any dominant system. Rounded factors are triangular in
+that order and stay inside the exact fill (`fill_support_r`). This is the
+numeric specification the new `B̃₀` tape machine must implement. The guarded
+check and5-declaration standard-axiom audit pass.
