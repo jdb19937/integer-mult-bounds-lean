@@ -48,6 +48,16 @@ record on `bx`, then one step per symbol of `kn`. -/
 noncomputable def bandNewtonP : Pr P T Q A U :=
   .seq (rsbCopyTo rg .bx .xa) (rsbRep (rg .kn) (rg .tK) (bandNewtonStepP rg hι hT hQ))
 
+/-- One non-pivot row of a window step: multiplier by the stored reciprocal,
+row update against the pivot-row copy on `ef`, then the updated row moves to
+the new window `sr` (reversed) followed by the zero record of `msk`. -/
+noncomputable def bandFacRowP : Pr P T Q A U :=
+  .seq (bandBwdStepP rg hι hT hQ) (.seq (rsbMv (rg .mwn) (rg .tC) (rg .vk) (rg .sr))
+    (copyR (rg .msk) (rg .sr) (rg .tC) id))
+
+/-- The `B` non-pivot rows of a window step, one per symbol of `ms`. -/
+noncomputable def bandFacRowsP : Pr P T Q A U := rsbRep (rg .ms) (rg .tL) (bandFacRowP rg hι hT hQ)
+
 end Programs
 
 /-- A Newton step on real records. -/
@@ -59,6 +69,21 @@ lemma tdivN_real (P : ℕ) (a b : ℤ) :
 
 lemma newtonZ_succ (P : ℕ) (c : ℤ) (n : ℕ) :
     Mult.BandFactor.newtonZ P c (n+1)=newtonStepZ P c (Mult.BandFactor.newtonZ P c n) := rfl
+
+lemma machine_row (P : ℕ) (x : ℤ) : ∀ (n : ℕ) (u v : List ℤ), u.length=n → v.length=n →
+    List.zipWith (· - ·) (colC v) (List.zipWith (fun a b => tdivN P (a * b))
+      (List.replicate n (⟨x, 0⟩ : GaussianInt)) (colC u))=colC (Mult.BandFactor.subRowZ P x u v)
+  | 0, [], [], _, _ => rfl
+  | n+1, a::u, b::v, hu, hv => by
+    have ih := machine_row P x n u v (by simpa using hu) (by simpa using hv)
+    simp only [colC, List.map_cons, List.replicate_succ, List.zipWith_cons_cons,
+      Mult.BandFactor.subRowZ] at ih ⊢
+    rw [ih, tdivN_real]
+    congr 1
+  | 0, _::_, _, hu, _ => by simp at hu
+  | 0, [], _::_, _, hv => by simp at hv
+  | _+1, [], _, hu, _ => by simp at hu
+  | _+1, _::_, [], _, hv => by simp at hv
 
 section Contracts
 
@@ -201,6 +226,171 @@ theorem band_newton_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r �
   · funext r; cases r <;> simp [rsbUpd2, hΨ, σ₁, htK]
   · funext r; cases r <;> simp [rsbUpd2, hΨ, σ₁, htK, hkn]
   · simp [σ₁, hkn]
+
+/-- The cost of one non-pivot row (rows of `2B` tail records). -/
+def bandFacRowCost (T w B : ℕ) : ℕ :=
+  rmulCost T w + 30 * w + 40 + bandFwdStepCost T w (2 * B) + 4 * (2 * B * w) + 4 * w + 8
+
+/-- One non-pivot row: `vk` loses the row, `dout` gains its multiplier `x`, and `sr`
+gains the updated tail followed by a zero record, reversed. -/
+theorem band_facRow_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠ ι j)
+    (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ : SS.states ≤ Q) (hA : 96 ≤ A)
+    {w P B : ℕ} (σ : RsbR → List (Fin (A + 4))) (hready : RsbReady σ w P) (hw : 1 ≤ w)
+    (hp : P ≤ w) (q : GaussianInt) (r : ℤ) (rs more col cols : List GaussianInt)
+    (hrs : rs.length = 2 * B) (hcol : col.length = 2 * B) (hfq : Fits w q)
+    (hfr : Fits w (⟨r, 0⟩ : GaussianInt)) (hfx : Fits w (tdivN P (q * ⟨r, 0⟩)))
+    (hfc : ∀ a ∈ col, Fits w a ∧ a.im = 0) (D TB SR : List (Fin (A + 4)))
+    (hvk : σ .vk = cstream A w (q :: (rs ++ more))) (htb : σ .tb = csyms A w ⟨r, 0⟩ ++ TB)
+    (hef : σ .ef = cstream A w (col ++ cols)) (hsr : σ .sr = SR)
+    (hmsk : σ .msk = csyms A w 0)
+    (hdout : σ .dout = D) (hhv : σ .hv = []) (hya : σ .ya = []) (hxs : σ .xs = [])
+    (hpr : σ .pr = []) (hnv : σ .nv = []) (hac : σ .ac = []) (hac2 : σ .ac2 = [])
+    (htC : σ .tC = []) (htA : σ .tA = []) (htJ : σ .tJ = []) (hb1 : σ .b1 = [])
+    (hxa : σ .xa = []) (hhc : σ .hc = [])
+    (hm2n : (σ .m2n).length = 2 * B) (hmwn : (σ .mwn).length = 2 * B * w) :
+    RsbRuns body rg ι (bandFacRowP rg hι hT hQ) σ
+      (Function.update (Function.update (Function.update (Function.update (Function.update σ .vk
+        (cstream A w more)) .tb TB) .ef (cstream A w cols)) .dout
+        (csyms A w (tdivN P (q * ⟨r, 0⟩)) ++ D)) .sr
+        ((cstream A w (List.zipWith (· - ·) rs
+          (List.zipWith (fun a b => tdivN P (a * b))
+            (List.replicate (2 * B) (tdivN P (q * ⟨r, 0⟩))) col) ++ [0])).reverse ++ SR))
+      (bandFacRowCost T w B) := by
+  set rs' := List.zipWith (· - ·) rs (List.zipWith (fun a b => tdivN P (a * b))
+    (List.replicate (2 * B) (tdivN P (q * ⟨r, 0⟩))) col) with hrs'
+  have hrs'l : rs'.length = 2 * B := by simp [hrs', hrs, hcol]
+  have h₁ := band_bwdStep_runs (body := body) (ι := ι) (w := w) (B := 2 * B) hrg hdisj hι
+    hT hQ hA σ hready hw hp q r rs more col cols hrs hcol hfq hfr hfx hfc D TB hvk htb hef hdout
+    hhv hya hxs hpr hnv hac hac2 htC htA htJ hb1 hxa hhc hm2n hmwn
+  rw [← hrs'] at h₁
+  set σ₁ := Function.update (Function.update (Function.update (Function.update σ .vk
+    (cstream A w (rs' ++ more))) .tb TB) .ef (cstream A w cols)) .dout
+    (csyms A w (tdivN P (q * ⟨r, 0⟩)) ++ D)
+  have h₂ := rsb_mv_runs (body := body) (ι := ι) hrg (c := .mwn) (t := .tC) (x := .vk) (y := .sr)
+    (by decide) σ₁ (by simp [σ₁, htC]) (by simp [σ₁, hmwn, hrs'l])
+  have hmw : (σ₁ .mwn).length = rs'.length * w := by simp [σ₁, hmwn, hrs'l]
+  rw [hmw] at h₂
+  simp only [σ₁, Function.update_of_ne (by decide : RsbR.vk ≠ RsbR.dout),
+    Function.update_of_ne (by decide : RsbR.vk ≠ RsbR.ef),
+    Function.update_of_ne (by decide : RsbR.vk ≠ RsbR.tb), Function.update_self,
+    Function.update_of_ne (by decide : RsbR.sr ≠ RsbR.dout),
+    Function.update_of_ne (by decide : RsbR.sr ≠ RsbR.ef),
+    Function.update_of_ne (by decide : RsbR.sr ≠ RsbR.tb),
+    Function.update_of_ne (by decide : RsbR.sr ≠ RsbR.vk), hsr, cstream_append,
+    take_cstream rs' rs'.length le_rfl, drop_cstream, List.take_length, List.drop_length,
+    Nat.sub_self, zero_mul, List.drop_zero, cstream_nil, List.nil_append] at h₂
+  set σ₂ := Function.update (Function.update σ₁ .vk (cstream A w more)) .sr
+    ((cstream A w rs').reverse ++ SR)
+  have h₃ := rsb_copyR_runs (body := body) (ι := ι) hrg (a := .msk) (b := .sr) (t := .tC)
+    (by decide) (by decide) (by decide) σ₂ (by simp [σ₂, σ₁, htC])
+  have h₂' := h₂.congr_pre (ρ₀ := σ₁) (by simp only [σ₁, cstream_append])
+  refine ((RsbRuns.seq hdisj h₁ (RsbRuns.seq hdisj (h₂'.congr ?_) h₃)).congr ?_).mono ?_
+  · simp only [σ₂, σ₁, cstream_append]
+  · funext x; cases x <;> simp [σ₂, σ₁, hmsk, cstream_append, List.reverse_append]
+  · simp [σ₂, σ₁, hmsk, bandFacRowCost, hmwn, hrs'l, csyms]
+    nlinarith
+
+/-- The multiplier of a row with head `h` and pivot reciprocal `r`. -/
+def facMul (P : ℕ) (r : ℤ) (row : List ℤ) : ℤ := (row.headD 0*r).tdiv (2^P)
+
+/-- The updated, shifted row. -/
+def facRow (P : ℕ) (r : ℤ) (tail0 row : List ℤ) : List ℤ :=
+  Mult.BandFactor.subRowZ P (facMul P r row) tail0 row.tail++[0]
+
+/-- The `B` non-pivot rows of a window step. -/
+theorem band_facRows_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠ ι j)
+    (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ : SS.states ≤ Q) (hA : 96 ≤ A)
+    {w P B : ℕ} (σ : RsbR → List (Fin (A + 4))) (hready : RsbReady σ w P) (hw : 1 ≤ w)
+    (hp : P ≤ w) (r : ℤ) (tail0 : List ℤ) (rest : List (List ℤ)) (htl : tail0.length = 2 * B)
+    (hrest : rest.length = B) (hrow : ∀ row ∈ rest, row.length = 2 * B + 1)
+    (hfr : Fits w (⟨r, 0⟩ : GaussianInt)) (hft : ∀ a ∈ tail0, Fits w (⟨a, 0⟩ : GaussianInt))
+    (hfh : ∀ row ∈ rest, Fits w (⟨row.headD 0, 0⟩ : GaussianInt) ∧
+      Fits w (⟨facMul P r row, 0⟩ : GaussianInt))
+    (D TB SR : List (Fin (A + 4)))
+    (hvk : σ .vk = cstream A w (rest.map colC).flatten)
+    (htb : σ .tb = cstream A w (List.replicate B ⟨r, 0⟩) ++ TB)
+    (hef : σ .ef = cstream A w (List.replicate B (colC tail0)).flatten) (hsr : σ .sr = SR)
+    (hmsk : σ .msk = csyms A w 0)
+    (hdout : σ .dout = D) (hhv : σ .hv = []) (hya : σ .ya = []) (hxs : σ .xs = [])
+    (hpr : σ .pr = []) (hnv : σ .nv = []) (hac : σ .ac = []) (hac2 : σ .ac2 = [])
+    (htC : σ .tC = []) (htA : σ .tA = []) (htJ : σ .tJ = []) (hb1 : σ .b1 = [])
+    (hxa : σ .xa = []) (hhc : σ .hc = []) (htL : σ .tL = []) (hms : (σ .ms).length = B)
+    (hm2n : (σ .m2n).length = 2 * B) (hmwn : (σ .mwn).length = 2 * B * w) :
+    RsbRuns body rg ι (bandFacRowsP rg hι hT hQ) σ
+      (Function.update (Function.update (Function.update (Function.update (Function.update σ .vk
+        []) .tb TB) .ef []) .dout
+        (cstream A w ((rest.map fun row => (⟨facMul P r row, 0⟩ : GaussianInt)).reverse) ++ D)) .sr
+        ((cstream A w (rest.map fun row => colC (facRow P r tail0 row)).flatten).reverse ++ SR))
+      (B * (bandFacRowCost T w B + 6) + 4) := by
+  obtain ⟨Ψ, hΨ⟩ : ∃ Ψ : ℕ → RsbR → List (Fin (A + 4)), Ψ = fun j =>
+      Function.update (Function.update (Function.update (Function.update (Function.update σ .vk
+        (cstream A w ((rest.drop j).map colC).flatten)) .tb
+        (cstream A w (List.replicate (B-j) ⟨r, 0⟩) ++ TB)) .ef
+        (cstream A w (List.replicate (B-j) (colC tail0)).flatten)) .dout
+        (cstream A w (((rest.take j).map fun row => (⟨facMul P r row, 0⟩ : GaussianInt)).reverse) ++ D))
+        .sr ((cstream A w ((rest.take j).map fun row => colC (facRow P r tail0 row)).flatten).reverse ++
+          SR) := ⟨_, rfl⟩
+  have hbody : ∀ j < (σ .ms).length, ∀ X Y, RsbRuns body rg ι (bandFacRowP rg hι hT hQ)
+      (rsbUpd2 (Ψ j) .ms X .tL Y) (rsbUpd2 (Ψ (j + 1)) .ms X .tL Y) (bandFacRowCost T w B) := by
+    intro j hj X Y
+    rw [hms] at hj
+    have hjr : j < rest.length := by omega
+    set row := rest[j]'hjr with hrowdef
+    have hrl := hrow row (List.getElem_mem hjr)
+    obtain ⟨h, tl, hht⟩ : ∃ h tl, row = h :: tl := by
+      cases hr : row with
+      | nil => rw [hr] at hrl; simp at hrl
+      | cons h tl => exact ⟨h, tl, rfl⟩
+    have htll : tl.length = 2 * B := by rw [hht] at hrl; simp at hrl; omega
+    have hfhj := hfh row (List.getElem_mem hjr)
+    rw [hht] at hfhj
+    have hready' : RsbReady (rsbUpd2 (Ψ j) .ms X .tL Y) w P := by
+      simp only [rsbUpd2, hΨ]
+      exact ((((((hready.update .vk (fun c => by simp) _).update .tb (fun c => by simp) _).update
+        .ef (fun c => by simp) _).update .dout (fun c => by simp) _).update .sr (fun c => by simp)
+        _).update .ms (fun c => by simp) _).update .tL (fun c => by simp) _
+    have hBj : B-j=(B-(j+1))+1 := by omega
+    have hstep := band_facRow_runs (body := body) (ι := ι) (w := w) (B := B) hrg hdisj hι hT hQ hA
+      (rsbUpd2 (Ψ j) .ms X .tL Y) hready' hw hp ⟨h, 0⟩ r (colC tl)
+      ((rest.drop (j+1)).map colC).flatten (colC tail0)
+      (List.replicate (B-(j+1)) (colC tail0)).flatten (by simp [colC, htll])
+      (by simp [colC, htl]) hfhj.1 hfr (by rw [tdivN_real]; simpa [facMul, hht] using hfhj.2)
+      (by intro a ha; simp only [colC, List.mem_map] at ha; obtain ⟨x, hx, rfl⟩ := ha
+          exact ⟨hft x hx, rfl⟩)
+      (cstream A w (((rest.take j).map fun row => (⟨facMul P r row, 0⟩ : GaussianInt)).reverse) ++ D)
+      (cstream A w (List.replicate (B-(j+1)) ⟨r, 0⟩) ++ TB)
+      ((cstream A w ((rest.take j).map fun row => colC (facRow P r tail0 row)).flatten).reverse ++ SR)
+      (by
+        simp only [rsbUpd2, hΨ, Function.update_self, Function.update_of_ne (by decide : RsbR.vk ≠ RsbR.tL),
+          Function.update_of_ne (by decide : RsbR.vk ≠ RsbR.ms)]
+        rw [List.drop_eq_getElem_cons hjr, ← hrowdef, hht]
+        simp [colC])
+      (by simp [rsbUpd2, hΨ, hBj, List.replicate_succ])
+      (by simp [rsbUpd2, hΨ, hBj, List.replicate_succ])
+      (by simp [rsbUpd2, hΨ]) (by simp [rsbUpd2, hΨ, hmsk]) (by simp [rsbUpd2, hΨ])
+      (by simp [rsbUpd2, hΨ, hhv]) (by simp [rsbUpd2, hΨ, hya]) (by simp [rsbUpd2, hΨ, hxs])
+      (by simp [rsbUpd2, hΨ, hpr]) (by simp [rsbUpd2, hΨ, hnv]) (by simp [rsbUpd2, hΨ, hac])
+      (by simp [rsbUpd2, hΨ, hac2]) (by simp [rsbUpd2, hΨ, htC]) (by simp [rsbUpd2, hΨ, htA])
+      (by simp [rsbUpd2, hΨ, htJ]) (by simp [rsbUpd2, hΨ, hb1]) (by simp [rsbUpd2, hΨ, hxa])
+      (by simp [rsbUpd2, hΨ, hhc]) (by simp [rsbUpd2, hΨ, hm2n]) (by simp [rsbUpd2, hΨ, hmwn])
+    refine hstep.congr ?_
+    have htake : ∀ {β : Type} (F : List ℤ → β), (rest.map F).take (j+1)=(rest.map F).take j++[F row] := by
+      intro β F
+      rw [List.take_succ_eq_append_getElem (by simpa using hjr), List.getElem_map]
+    have hmr := machine_row P (facMul P r row) (2 * B) tail0 tl htl htll
+    rw [tdivN_real]
+    have hfm : facMul P r row=(h*r).tdiv (2^P) := by simp [facMul, hht]
+    rw [← hfm, hmr]
+    have h0 : (0 : GaussianInt)=⟨0, 0⟩ := rfl
+    funext x; cases x <;> simp [rsbUpd2, hΨ, htake, facRow, hht, colC, List.reverse_append, h0]
+  have h := rsb_rep_runs hrg hdisj (ra := .ms) (rt := .tL) (by decide) (bandFacRowP rg hι hT hQ)
+    (σ .ms) Ψ _ hbody
+  refine (h.congr_pre ?_ |>.congr ?_).mono ?_
+  · funext x; cases x <;> simp [rsbUpd2, hΨ, hvk, htb, hef, hdout, hsr, htL]
+  · rw [hms]
+    have hd : (rest.map colC).drop B=[] := List.drop_of_length_le (by simp [hrest])
+    funext x; cases x <;> simp [rsbUpd2, hΨ, htL, hrest, List.take_of_length_le, hd]
+  · rw [hms]
 
 end Contracts
 
