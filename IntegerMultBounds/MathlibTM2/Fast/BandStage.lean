@@ -2,6 +2,7 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Fast.BandPrep
 public import IntegerMultBounds.MathlibTM2.Fast.BandFits
+public import IntegerMultBounds.MathlibTM2.Fast.ResampBPipe
 
 /-!
 # The banded `B̃₀` stage
@@ -437,6 +438,95 @@ lemma bandCfgB_sw (h : BandBase σ₀ w hd) (hA3 : 3 ≤ prime + K) (k : ℕ) (j
       hA3 k).bank _ _ rfl
 
 end StageDefs
+
+/-! ### The line maps of the stage -/
+
+section Lines
+
+open IntegerMultBounds.MathlibTM2.Mult.Pipeline IntegerMultBounds.MathlibTM2.Mult.Sizes
+
+/-- A line map related to a map of the unit ball into itself keeps lines in the unit disk. -/
+theorem lineRel_ball {M N q : ℕ} [NeZero M] [NeZero N] {A : (ZMod M → ℂ) → ZMod N → ℂ}
+    {g : List GaussianInt → List GaussianInt} (hrel : RsbLineRel M N A g q)
+    (hA : ∀ v, ‖v‖ ≤ 1 → ‖A v‖ ≤ 1) (L : List GaussianInt) (hL : ∀ y ∈ L, ‖rsbGrid q y‖ ≤ 1) :
+    ∀ x ∈ g L, ‖rsbGrid q x‖ ≤ 1 := by
+  set v : ZMod M → ℂ := fun j => rsbGrid q (L.getD j.val 0)
+  have hv : ‖v‖ ≤ 1 := by
+    refine (pi_norm_le_iff_of_nonneg (by norm_num)).mpr fun j => ?_
+    simp only [v]
+    by_cases hj : j.val < L.length
+    · rw [List.getD_eq_getElem _ _ hj]; exact hL _ (List.getElem_mem hj)
+    · rw [List.getD_eq_default _ _ (by omega)]; simp [rsbGrid]
+  intro x hx
+  obtain ⟨k, hk, rfl⟩ := List.getElem_of_mem hx
+  by_cases hkN : k < N
+  · have e := hrel.num L v (fun j => rfl) k hkN
+    rw [List.getD_eq_getElem _ _ hk] at e
+    rw [rsbGrid, ← e]
+    exact (norm_le_pi_norm (A v) _).trans (hA v hv)
+  · have e := hrel.pad L k (by omega)
+    rw [List.getD_eq_getElem _ _ hk] at e
+    rw [e]; simp [rsbGrid]
+
+variable (n : ℕ)
+
+/-- The diagonal table of axis `i` at precision `5p`. -/
+noncomputable def bandDlN (i : Fin (d n)) : List ℤ :=
+  rsbArr fun ℓ : ZMod (s n i) => tableD (s n i) (t n i) (alpha n) (p n) ℓ * 2 ^ (4 * p n)
+
+/-- The coefficient numerators of axis `i` at precision `5p`. -/
+noncomputable abbrev bandAZ (i : Fin (d n)) : ZMod (s n i) → ℤ → ℤ :=
+  Mult.BandFactor.coefZ (s n i) (t n i) (alpha n) (5 * p n)
+
+/-- The band line map of axis `i`. -/
+noncomputable def bandG (i : Fin (d n)) : List GaussianInt → List GaussianInt :=
+  bandLineT (5 * p n) (s n i) (t n i) (2 * (8 * Mult.FastB0.fastWindow (p n) (alpha n)) + 1)
+    (bandLc (5 * p n) (4 * (alpha n * alpha n)) (8 * Mult.FastB0.fastWindow (p n) (alpha n)) (s n i)
+      (bandAZ n i))
+    (bandUc (5 * p n) (4 * (alpha n * alpha n)) (8 * Mult.FastB0.fastWindow (p n) (alpha n)) (s n i)
+      (bandAZ n i))
+    (bandRcs (5 * p n) (4 * (alpha n * alpha n)) (8 * Mult.FastB0.fastWindow (p n) (alpha n)) (s n i)
+      (bandAZ n i))
+    (bandDlN n i) (2 ^ (9 * p n - 1)) (2 ^ (p n - alpha n * alpha n))
+
+/-- The real map of the band line of axis `i`: the normalized machine solve of the Gaussian
+window matrix, then the diagonal table. -/
+noncomputable def bandA (i : Fin (d n)) : (ZMod (t n i) → ℂ) → ZMod (s n i) → ℂ :=
+  Mult.FastB0.resampB₀Of (t := t n i) (p n) (Mult.FastB0.bandJtX (s := s n i) (p n)
+    (alpha n * alpha n) (Mult.FastB0.machSolveT (4 * (alpha n * alpha n)) (rdP (5 * p n))
+      (NLogN.PhaseCellMatrix.windowMatrix (s n i) (8 * Mult.FastB0.fastWindow (p n) (alpha n))
+        fun a k => Mult.BandFactor.gv (5 * p n) (bandAZ n i a k))))
+    fun ℓ => (tableD (s n i) (t n i) (alpha n) (p n) ℓ : ℝ) / 2 ^ p n
+
+variable {n}
+
+/-- **The band line of axis `i` computes `bandA` on numerators.** -/
+theorem band_axis_rel (h : Big n) (i : Fin (d n)) :
+    RsbLineRel (t n i) (s n i) (bandA n i) (bandG n i) (p n) := by
+  have hp13 := h.thirteen_le_p
+  have hαp := h.alpha_sq_le_p
+  have hjp : alpha n * alpha n ≤ p n := by nlinarith
+  have hrel := band_lineG_rel (5 * p n) (4 * (alpha n * alpha n))
+    (8 * Mult.FastB0.fastWindow (p n) (alpha n)) (p n) (alpha n * alpha n) (s n i) (t n i)
+    (by omega) (by omega) hjp (bandAZ n i) (bandDlN n i)
+    (fun ℓ => tableD (s n i) (t n i) (alpha n) (p n) ℓ) (by simp [bandDlN, rsbArr])
+    (fun ℓ => by
+      rw [bandDlN, rsbArr, List.getD_eq_getElem _ _ (by simpa using ZMod.val_lt ℓ), List.getElem_map,
+        List.getElem_range, ZMod.natCast_zmod_val, show 5 * p n - p n = 4 * p n by omega])
+    (fun ℓ => (tableD (s n i) (t n i) (alpha n) (p n) ℓ : ℝ) / 2 ^ p n)
+    (fun ℓ => by
+      rw [Resampling.WindowSum.rhoC_real, mul_div_cancel₀ _ (by positivity : (2 : ℝ) ^ p n ≠ 0),
+        Resampling.NeumannWords.rho0_int]
+      apply Complex.ext <;> simp [rsbGrid, rsbReal, GaussianInt.toComplex_def])
+  have e : bandLineG (5 * p n) (4 * (alpha n * alpha n)) (8 * Mult.FastB0.fastWindow (p n) (alpha n))
+      (p n) (alpha n * alpha n) (s n i) (t n i) (bandAZ n i) (bandDlN n i) = bandG n i := by
+    funext L
+    simp only [bandLineG, bandG, bandLineT]
+    rw [show 2 * (5 * p n) - p n - 1 = 9 * p n - 1 by omega]
+  rw [e] at hrel
+  exact hrel
+
+end Lines
 
 end
 
