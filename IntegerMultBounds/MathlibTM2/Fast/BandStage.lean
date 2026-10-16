@@ -500,6 +500,22 @@ noncomputable def bandA (i : Fin (d n)) : (ZMod (t n i) → ℂ) → ZMod (s n i
 
 variable {n}
 
+theorem bandG_eq (h : Big n) (i : Fin (d n)) :
+    bandLineG (5 * p n) (4 * (alpha n * alpha n)) (8 * Mult.FastB0.fastWindow (p n) (alpha n))
+      (p n) (alpha n * alpha n) (s n i) (t n i) (bandAZ n i) (bandDlN n i) = bandG n i := by
+  have hp13 := h.thirteen_le_p
+  funext L
+  simp only [bandLineG, bandG, bandLineT]
+  rw [show 2 * (5 * p n) - p n - 1 = 9 * p n - 1 by omega]
+
+theorem length_bandG (h : Big n) (i : Fin (d n)) (L : List GaussianInt) :
+    (bandG n i L).length = t n i := by
+  have hp13 := h.thirteen_le_p
+  have hst := (h.good.lt i).le
+  rw [← bandG_eq h i, bandLineG, List.length_append, length_bandOutVec _ _ _ _ _ _ _ (by omega) _ _
+    (by simp [bandDlN, rsbArr])]
+  simp; omega
+
 /-- **The band line of axis `i` computes `bandA` on numerators.** -/
 theorem band_axis_rel (h : Big n) (i : Fin (d n)) :
     RsbLineRel (t n i) (s n i) (bandA n i) (bandG n i) (p n) := by
@@ -518,12 +534,7 @@ theorem band_axis_rel (h : Big n) (i : Fin (d n)) :
       rw [Resampling.WindowSum.rhoC_real, mul_div_cancel₀ _ (by positivity : (2 : ℝ) ^ p n ≠ 0),
         Resampling.NeumannWords.rho0_int]
       apply Complex.ext <;> simp [rsbGrid, rsbReal, GaussianInt.toComplex_def])
-  have e : bandLineG (5 * p n) (4 * (alpha n * alpha n)) (8 * Mult.FastB0.fastWindow (p n) (alpha n))
-      (p n) (alpha n * alpha n) (s n i) (t n i) (bandAZ n i) (bandDlN n i) = bandG n i := by
-    funext L
-    simp only [bandLineG, bandG, bandLineT]
-    rw [show 2 * (5 * p n) - p n - 1 = 9 * p n - 1 by omega]
-  rw [e] at hrel
+  rw [bandG_eq h i] at hrel
   exact hrel
 
 end Lines
@@ -678,6 +689,76 @@ theorem band_stage_hprep (h : Big n) (hd0 : 0 < d n) (hι : Function.Injective �
       (wd := 8 * Mult.FastB0.fastWindow (p n) (alpha n)) (aZ := bandAZ n i) (p n) (by omega)
       (by omega) (hax i).inv β hpre.pos hpre.le hpre.eta hpre.newton (hax i).small w hpre.width m hm)
     l a a'
+
+/-- **The banded `B̃₀` stage with its loader.** At operand length `n` in the regime `Big n`, with
+the numeric facts of every axis (`BandAxisMath`), the Newton precision and record width
+(`BandPrec`), the loader conditions of every axis and fitting diagonal tables: from a base
+register file `σ₀` whose parameter register `prm` holds the records of the pipeline followed by
+`rest`, with the box register holding the padded stream of the numerators of `u` at scale `p n`
+(`‖u‖ ≤ 1`), the stage ends with the box register holding the numerators of
+`tensorZR (d n) (t n) (s n) (bandA n) u` at scale `p n` (zero off the source box). -/
+theorem bandStage_exec (n : ℕ) (h : Big n) (hd0 : 0 < d n)
+    (hrg₂ : Function.Injective (Sum.elim rg rgx)) (hdisj₂ : ∀ r j, Sum.elim rg rgx r ≠ ι j)
+    (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ : SS.states ≤ Q) (hA : 96 ≤ prime + K)
+    (hd : Fin 5 → Fin t₀) (pay : Fin t₀) (hi : Function.Injective hd)
+    (hQs : swapStates hd pay hi ≤ Q) (hsw : Function.Injective fun j => rgx (.sw j))
+    (hTs : swapT t₀ ≤ T) (hdpay : ∀ k, hd k ≠ pay) {β : ℝ} {w W : ℕ} (hw1 : 1 ≤ w)
+    (hpre : BandPrec n β w) (hax : ∀ i, BandAxisMath n β i)
+    (hok : ∀ k < d n, BandPreOk (preDB n W hd0 k) w)
+    (hDfit : ∀ i, ∀ x ∈ bandDlN n i, Fits w (⟨x, 0⟩ : GaussianInt))
+    (σ₀ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (hσ₀ : BandBase σ₀ w hd)
+    (rest : List (Fin (prime + K + 4))) (hprm : σ₀ (.inl .prm) = preRecsB n W hd0 0 ++ rest)
+    (u : ((i : Fin (d n)) → ZMod (t n i)) → ℂ)
+    (Fn : ((i : Fin (d n)) → Fin (t n i)) → GaussianInt)
+    (hF : ∀ x : (i : Fin (d n)) → Fin (t n i),
+      u (fun i => ((x i : ℕ) : ZMod (t n i))) = GaussianInt.toComplex (Fn x) / 2 ^ p n)
+    (hu : ∀ x : (i : Fin (d n)) → Fin (t n i), ‖u (fun i => ((x i : ℕ) : ZMod (t n i)))‖ ≤ 1)
+    (axs : List (Fin (prime + K + 4))) (haxs : axs.length = d n - 1) :
+    ∃ G : ((i : Fin (d n)) → Fin (t n i)) → GaussianInt,
+      (∀ x : (i : Fin (d n)) → Fin (t n i), (∀ i, (x i : ℕ) < s n i) →
+        tensorZR (d n) (t n) (s n) (bandA n) u (fun i => ((x i : ℕ) : ZMod (s n i))) =
+          GaussianInt.toComplex (G x) / 2 ^ p n) ∧
+      (∀ x : (i : Fin (d n)) → Fin (t n i), (∃ i, s n i ≤ x i) → G x = 0) ∧
+      RsbRuns body (Sum.elim rg rgx) ι (rsbAllG (bandPreB rg rgx ι hd hι hT hQ)
+          (bandAxisP rg hι hT hQ) rg rgx hd pay hi hQs hsw hTs)
+        (rsbWith σ₀ (cstream (prime + K) w (rsbBox (d n) (t n) Fn)) axs [])
+        (rsbWith (bandCfgB σ₀ hd n w W hd0 rest (d n - 1))
+          (cstream (prime + K) w (rsbBox (d n) (t n) G)) axs [])
+        (rsbAllCostG T t₀ w (d n) (t n) hd0 (fun i => Nat.log 2 (t n i)) (preHsB n w hd0)
+          (fun i nl => bandAxisCost T w (s n i) (t n i)
+            (2 * (8 * Mult.FastB0.fastWindow (p n) (alpha n)) + 1) nl)
+          (prime + K) hd (bandCpB T σ₀ hd n w W hd0 rest) (∏ i, t n i)) := by
+  have hp13 := h.thirteen_le_p
+  have hA3 : 3 ≤ prime + K := by omega
+  have hbox : ∀ y ∈ rsbBox (d n) (t n) Fn, ‖rsbGrid (p n) y‖ ≤ 1 := by
+    intro y hy
+    obtain ⟨a, rfl⟩ := rsb_mem_rsbBox _ _ _ hy
+    rw [rsbGrid, ← hF a]
+    exact hu a
+  have hflat := rsb_flat_mem (t n) (bandG n) (fun y => ‖rsbGrid (p n) y‖ ≤ 1) (by simp [rsbGrid])
+    (fun i L _ hL => lineRel_ball (band_axis_rel h i) (hax i).ball L hL) _ hbox
+  have hlast : rsbAx hd0 0 = ResampA.rsaStepAx hd0 0 := rfl
+  refine rsb_allG_tensor (body := body) (bandPreB rg rgx ι hd hι hT hQ) (bandAxisP rg hι hT hQ)
+    hrg₂ hdisj₂ hA hd pay hi hQs hsw hTs hdpay hd0 (t n) hw1 (fun i => Nat.log 2 (t n i))
+    (preHsB n w hd0) (bandG n) (fun i x => length_bandG h i x) (BandOk n) _ (t_pow_log n)
+    (fun i hi1 => ?_) σ₀ (bandCfgB σ₀ hd n w W hd0 rest)
+    (fun k hk => band_stage_hcfg (body := body) h hd0 hι hT hQ hrg₂ hdisj₂ hA hpre hax hok hw1 hDfit
+      hσ₀ rest k hk) (bandCpB T σ₀ hd n w W hd0 rest)
+    (fun l a a' => band_stage_hprep (body := body) h hd0 hι hT hQ hrg₂ hdisj₂ hA hpre hax hok hw1 hi
+      hσ₀ rest 0 hd0 hprm l a a')
+    (fun k hk l a a' => band_stage_hprep (body := body) h hd0 hι hT hQ hrg₂ hdisj₂ hA hpre hax hok hw1
+      hi (bandCfgB_base hσ₀ hA3 k) rest (k + 1) hk (bandCfgB_prm k) l a a')
+    (s n) (fun i => (h.good.lt i).le) (bandA n) (p n) (fun i => band_axis_rel h i) u Fn hF
+    (fun i p' _ q _ => ⟨length_rsbLineAt _ _ _ _ _, fun y hy =>
+      (rsb_mem_rsbLineAt hy).elim (fun e => by rw [e]; simp [rsbGrid]) (fun hy' => hflat _ y hy')⟩)
+    axs haxs
+  have hl := pre_log_last h hd0
+  rw [← hlast] at hl
+  refine ⟨?_, ?_, fun k => ?_, fun k => canonical_sxBits _⟩
+  · rw [hl]; rcases pre_log_t (n := n) i with e | e <;> omega
+  · rw [hl]
+    rcases pre_log_t (n := n) i with e | e <;> rw [e] <;> have := h.two_le_ℓ <;> omega
+  · simp only [preHsB, value_sxBits]
 
 end Stage
 
