@@ -1818,3 +1818,8 @@ pipeline `B̃₀` interface for the normalized factorization target, for the
 exact inverse of `N`. The guarded check and2-declaration standard-axiom audit
 pass. Its tape machine and cost, the per-axis factor setup, the `ε=5/16`
 sizing and the final assembly remain.
+
+At the existing sizes the concrete `B̃₀` meets all its precision conditions
+with working precision `3p` and `j=⌈log₂(4p)⌉`, with interface error at most
+`p²` (`Mult/ConcreteB0Sizes`). The guarded check and4-declaration
+standard-axiom audit pass.
