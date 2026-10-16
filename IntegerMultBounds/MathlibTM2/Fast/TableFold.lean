@@ -294,4 +294,238 @@ theorem tblFoldEntry_do {A W w : ℕ} (st : TblSt 60 A) {s t α P wd i c N : ℕ
   · refine TblDo.iteF (by rw [h48, h34]; exact hi) hz |>.mono (fun _ h => ?_) (by omega)
     rw [h, tblFoldSyms, Mult.BandFactor.foldEntryZ, if_neg (fun h' => hi h'.1)]
 
+/-- The row prelude: `ℓ = foldAt i` into `37`, `t ℓ mod s` into `41`, the centring `42`. -/
+def tblFoldRowPre : TblCode 60 :=
+  tblFoldAt 48 37 ;; tblBlock 60 [.mul 35 37 41, .mod 41 34 41] (.add 41 41 0) ;;
+    .ite 0 34 (.ins (.zero 42)) (.ins (.copy 34 42))
+
+/-- One folded row: the prelude when `i < s`, the first column into `56`, the entries. -/
+def tblFoldRow : TblCode 60 :=
+  .ite 48 34 tblFoldRowPre (.ins (.zero 58)) ;;
+    .ite 48 52 (.ins (.zero 56)) (.ins (.sub 48 52 56)) ;;
+    tblFor 50 51 (tblBlock 60 [] (.add 56 50 53) ;; tblFoldEntry)
+
+theorem tblFoldRowPre_do {A W w : ℕ} (st : TblSt 60 A) {s t i : ℕ} [NeZero s]
+    (h48 : st.val 48 = i) (hi : i < s) (h59 : st.val 59 = 2) (h22 : st.val 22 = 1)
+    (h34 : st.val 34 = s) (h35 : st.val 35 = t) (hW : 2 * s * (t + 1) < 2 ^ W) :
+    TblDo A W w tblFoldRowPre st (fun s' =>
+      s'.val 37 = (NLogN.PhaseCellMatrix.foldAt s i).val ∧
+      s'.val 41 = t * (NLogN.PhaseCellMatrix.foldAt s i).val % s ∧
+      s'.val 42 = (if t * (NLogN.PhaseCellMatrix.foldAt s i).val % s +
+        t * (NLogN.PhaseCellMatrix.foldAt s i).val % s < s then 0 else s) ∧
+      s'.acc = st.acc ∧ ∀ x : Fin 60, x ≠ 0 → x ≠ 37 → x ≠ 41 → x ≠ 42 → x ≠ 58 →
+        s'.val x = st.val x) 10 := by
+  have hs0 : 0 < s := Nat.pos_of_ne_zero (NeZero.ne s)
+  have hsW : s < 2 ^ W := lt_of_le_of_lt (by nlinarith) hW
+  have htsW : t * s < 2 ^ W := lt_of_le_of_lt (by nlinarith) hW
+  refine (tblFoldAt_do (W := W) (w := w) st 48 37 h48 hi h59 h22 h34 (by decide) (by decide) hsW).seq
+    (K₂ := 5) (fun s₁ ⟨f37, facc, fkeep⟩ => ?_) |>.mono (fun _ h => h) (by norm_num)
+  set ℓ := (NLogN.PhaseCellMatrix.foldAt s i).val with hℓdef
+  have hℓ : ℓ < s := ZMod.val_lt _
+  have k₁ : ∀ y : Fin 60, y ≠ 37 → y ≠ 58 → s₁.val y = st.val y := fkeep
+  have v34 := k₁ 34 (by decide) (by decide)
+  have v35 := k₁ 35 (by decide) (by decide)
+  have htl : t * ℓ ≤ t * s := Nat.mul_le_mul_left _ hℓ.le
+  have hmod := Nat.mod_lt (t * ℓ) hs0
+  refine (TblDo.block [.mul 35 37 41, .mod 41 34 41] (.add 41 41 0) ?_ rfl).seq (K₂ := 2)
+    (fun s₂ hs₂ => ?_) |>.mono (fun _ h => h) (by simp)
+  · simp [tblFitsList, TblIns.fits, TblIns.exact, f37, v34, v35, h34, h35]
+    constructor <;> nlinarith
+  subst hs₂
+  set s₂ := tblExactList A w ([.mul 35 37 41, .mod 41 34 41] ++ [.add 41 41 0]) s₁
+  have v0 : s₂.val 0 = t * ℓ % s + t * ℓ % s := by
+    simp [s₂, tblExactList, TblIns.exact, f37, v34, v35, h34, h35]
+  have v41 : s₂.val 41 = t * ℓ % s := by
+    simp [s₂, tblExactList, TblIns.exact, f37, v34, v35, h34, h35]
+  have v37 : s₂.val 37 = ℓ := by simp [s₂, tblExactList, TblIns.exact, f37]
+  have v34' : s₂.val 34 = s := by simp [s₂, tblExactList, TblIns.exact, v34, h34]
+  have k₂ : ∀ y : Fin 60, y ≠ 0 → y ≠ 37 → y ≠ 41 → y ≠ 58 → s₂.val y = st.val y := by
+    intro y h0 h1 h2 h3
+    simp [s₂, tblExactList, TblIns.exact, Function.update_of_ne h0, Function.update_of_ne h2,
+      k₁ y h1 h3]
+  have acc₂ : s₂.acc = st.acc := by simp [s₂, tblExactList, TblIns.exact, facc]
+  by_cases hc : t * ℓ % s + t * ℓ % s < s
+  · refine TblDo.iteT (by rw [v0, v34']; exact hc) (TblDo.insX (.zero 42) trivial ?_)
+    refine ⟨?_, ?_, ?_, ?_, fun x h0 h1 h2 h3 h4 => ?_⟩
+    · simp [TblIns.exact, v37]
+    · simp [TblIns.exact, v41]
+    · simp [TblIns.exact, hc]
+    · simp [TblIns.exact, acc₂]
+    · simp [TblIns.exact, Function.update_of_ne h3, k₂ x h0 h1 h2 h4]
+  · refine TblDo.iteF (by rw [v0, v34']; exact hc) (TblDo.insX (.copy 34 42) trivial ?_)
+    refine ⟨?_, ?_, ?_, ?_, fun x h0 h1 h2 h3 h4 => ?_⟩
+    · simp [TblIns.exact, v37]
+    · simp [TblIns.exact, v41]
+    · simp [TblIns.exact, hc, v34']
+    · simp [TblIns.exact, acc₂]
+    · simp [TblIns.exact, Function.update_of_ne h3, k₂ x h0 h1 h2 h4]
+
+/-- Variables an entry keeps. -/
+def tblFoldKeepE : List (Fin 60) := [18, 19, 21, 22, 34, 35, 37, 38, 39, 41, 42, 43, 48, 49, 50, 51,
+  52, 55, 56, 59]
+
+theorem tblFoldEntry_keep : ∀ x ∈ tblFoldKeepE, x ∉ tblFoldEntry.tblDsts := by decide
+
+/-- One column of a row: its index `56 + 50` into `53`, then the entry. -/
+theorem tblFoldCol_do {A W w : ℕ} (s' : TblSt 60 A) {s t α P wd i N st0 j : ℕ} [NeZero s]
+    (h18 : s'.val 18 = piN P) (h19 : s'.val 19 = P) (h21 : s'.val 21 = s * s)
+    (h22 : s'.val 22 = 1) (h34 : s'.val 34 = s) (h35 : s'.val 35 = t) (h43 : s'.val 43 = α * α)
+    (h38 : s'.val 38 = 0) (h39 : s'.val 39 = wd)
+    (hrow : i < s → s'.val 37 = (NLogN.PhaseCellMatrix.foldAt s i).val ∧
+      s'.val 41 = t * (NLogN.PhaseCellMatrix.foldAt s i).val % s ∧
+      s'.val 42 = if t * (NLogN.PhaseCellMatrix.foldAt s i).val % s +
+        t * (NLogN.PhaseCellMatrix.foldAt s i).val % s < s then 0 else s)
+    (h48 : s'.val 48 = i) (h50 : s'.val 50 = j) (h56 : s'.val 56 = st0) (h55 : s'.val 55 = 2 ^ P)
+    (h59 : s'.val 59 = 2) (hws : 2 * wd + 1 < s) (hP : 13 ≤ P) (hW : TblOffW W P α s t wd N)
+    (hsW : 2 * s < 2 ^ W) (hjW : st0 + j < 2 ^ W) :
+    TblDo A W w (tblBlock 60 [] (.add 56 50 53) ;; tblFoldEntry) s' (fun s'' =>
+      s''.acc = (tblFoldSyms A w s t α P wd i (st0 + j)).reverse ++ s'.acc ∧
+      ∀ x ∈ tblFoldKeepE, s''.val x = s'.val x) (1 + (310 * P + 200)) := by
+  refine (TblDo.block [] (.add 56 50 53) ?_ rfl).seq (fun s₃ hs₃ => ?_)
+  · simp [tblFitsList, TblIns.fits, h56, h50]; exact hjW
+  subst hs₃
+  set s₃ := tblExactList A w ([] ++ [.add 56 50 53]) s'
+  have w3 : ∀ x : Fin 60, x ≠ 53 → s₃.val x = s'.val x := by
+    intro x hx
+    simp [s₃, tblExactList, TblIns.exact, Function.update_of_ne hx]
+  have w53 : s₃.val 53 = st0 + j := by simp [s₃, tblExactList, TblIns.exact, h56, h50]
+  have wacc : s₃.acc = s'.acc := by simp [s₃, tblExactList, TblIns.exact]
+  have he := (tblFoldEntry_do (W := W) (w := w) s₃ (s := s) (t := t) (α := α) (P := P) (wd := wd)
+    (i := i) (c := st0 + j) (N := N)
+    (by rw [w3 18 (by decide), h18]) (by rw [w3 19 (by decide), h19])
+    (by rw [w3 21 (by decide), h21]) (by rw [w3 22 (by decide), h22])
+    (by rw [w3 34 (by decide), h34]) (by rw [w3 35 (by decide), h35])
+    (by rw [w3 43 (by decide), h43]) (by rw [w3 38 (by decide), h38])
+    (by rw [w3 39 (by decide), h39])
+    (fun hi => by
+      obtain ⟨a, b, c⟩ := hrow hi
+      exact ⟨by rw [w3 37 (by decide), a], by rw [w3 41 (by decide), b], by rw [w3 42 (by decide), c]⟩)
+    (by rw [w3 48 (by decide), h48]) w53 (by rw [w3 55 (by decide), h55])
+    (by rw [w3 59 (by decide), h59]) hws hP hW hsW).keep
+  refine he.mono (fun s'' ⟨hacc'', hk⟩ => ⟨by rw [hacc'', wacc], fun x hx => ?_⟩) le_rfl
+  rw [hk x (tblFoldEntry_keep x hx), w3 x (by
+    simp only [tblFoldKeepE, List.mem_cons, List.not_mem_nil, or_false] at hx
+    rcases hx with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl |
+      rfl | rfl | rfl | rfl | rfl | rfl | rfl <;> decide)]
+
+/-- Variables a row keeps. -/
+def tblFoldLst : List (Fin 60) := [18, 19, 21, 22, 34, 35, 38, 39, 43, 48, 49, 51, 52, 55, 59]
+
+/-- Variables the column loop keeps. -/
+def tblFoldL2 : List (Fin 60) := [18, 19, 21, 22, 34, 35, 37, 38, 39, 41, 42, 43, 48, 49, 51, 52, 55,
+  56, 59]
+
+theorem tblFoldLst_pre : ∀ x ∈ tblFoldLst, x ≠ 0 ∧ x ≠ 37 ∧ x ≠ 41 ∧ x ≠ 42 ∧ x ≠ 58 := by decide
+theorem tblFoldLst_ne56 : ∀ x ∈ tblFoldLst, x ≠ 56 := by decide
+theorem tblFoldLst_L2 : ∀ x ∈ tblFoldLst, x ∈ tblFoldL2 := by decide
+theorem tblFoldL2_ne50 : ∀ x ∈ tblFoldL2, x ≠ 50 := by decide
+theorem tblFoldL2_keepE : ∀ x ∈ tblFoldL2, x ∈ tblFoldKeepE := by decide
+
+/-- One folded row: the entries of row `i` on its `2B+1` columns. -/
+theorem tblFoldRow_do {A W w : ℕ} (st : TblSt 60 A) {s t α P wd B i N : ℕ} [NeZero s]
+    (h18 : st.val 18 = piN P) (h19 : st.val 19 = P) (h21 : st.val 21 = s * s)
+    (h22 : st.val 22 = 1) (h34 : st.val 34 = s) (h35 : st.val 35 = t) (h43 : st.val 43 = α * α)
+    (h38 : st.val 38 = 0) (h39 : st.val 39 = wd) (h48 : st.val 48 = i) (h51 : st.val 51 = 2 * B + 1)
+    (h52 : st.val 52 = B) (h55 : st.val 55 = 2 ^ P) (h59 : st.val 59 = 2)
+    (hws : 2 * wd + 1 < s) (hP : 13 ≤ P) (hW : TblOffW W P α s t wd N)
+    (hsW : 2 * s * (t + 1) < 2 ^ W) (hiW : i + 2 * B + 1 < 2 ^ W) :
+    TblDo A W w tblFoldRow st (fun s' => s'.acc =
+      ((List.range (2 * B + 1)).flatMap fun j =>
+        tblFoldSyms A w s t α P wd i (i - min i B + j)).reverse ++ st.acc ∧
+      ∀ x ∈ tblFoldLst, s'.val x = st.val x)
+      (11 + 2 + (1 + ((2 * B + 1) * (310 * P + 201 + 1 + 2) + 2))) := by
+  have hs0 : 0 < s := Nat.pos_of_ne_zero (NeZero.ne s)
+  -- phase 1: the row prelude
+  have h₁ : TblDo A W w (.ite 48 34 tblFoldRowPre (.ins (.zero 58))) st (fun s₁ =>
+      s₁.acc = st.acc ∧ (∀ x ∈ tblFoldLst, s₁.val x = st.val x) ∧
+      (i < s → s₁.val 37 = (NLogN.PhaseCellMatrix.foldAt s i).val ∧
+        s₁.val 41 = t * (NLogN.PhaseCellMatrix.foldAt s i).val % s ∧
+        s₁.val 42 = (if t * (NLogN.PhaseCellMatrix.foldAt s i).val % s +
+          t * (NLogN.PhaseCellMatrix.foldAt s i).val % s < s then 0 else s))) 11 := by
+    by_cases hi : i < s
+    · refine TblDo.iteT (by rw [h48, h34]; exact hi) ((tblFoldRowPre_do (W := W) (w := w) st h48 hi h59
+        h22 h34 h35 hsW).mono (fun s' ⟨a, b, c, d, e⟩ => ⟨d, fun x hx => e x (tblFoldLst_pre x hx).1
+          (tblFoldLst_pre x hx).2.1 (tblFoldLst_pre x hx).2.2.1 (tblFoldLst_pre x hx).2.2.2.1
+          (tblFoldLst_pre x hx).2.2.2.2, fun _ => ⟨a, b, c⟩⟩) le_rfl)
+    · refine TblDo.iteF (by rw [h48, h34]; exact hi) (TblDo.insX (.zero 58) trivial ?_) |>.mono
+        (fun _ h => h) (by norm_num)
+      refine ⟨by simp [TblIns.exact], fun x hx => ?_, fun h => absurd h hi⟩
+      simp [TblIns.exact, Function.update_of_ne (tblFoldLst_pre x hx).2.2.2.2]
+  refine h₁.seq (K₂ := 2 + (1 + ((2 * B + 1) * (310 * P + 201 + 1 + 2) + 2)))
+    (fun s₁ ⟨acc₁, keep₁, row₁⟩ => ?_) |>.mono (fun _ h => h) (by omega)
+  have g : ∀ x ∈ tblFoldLst, s₁.val x = st.val x := keep₁
+  have g48 : s₁.val 48 = i := by rw [g 48 (by decide), h48]
+  have g52 : s₁.val 52 = B := by rw [g 52 (by decide), h52]
+  -- phase 2: the first column
+  have h₂ : TblDo A W w (.ite 48 52 (.ins (.zero 56)) (.ins (.sub 48 52 56))) s₁
+      (fun s₂ => s₂ = ⟨Function.update s₁.val 56 (i - min i B), s₁.acc⟩) 2 := by
+    by_cases hib : i < B
+    · exact TblDo.iteT (by rw [g48, g52]; exact hib) (TblDo.insX (.zero 56) trivial
+        (by simp [TblIns.exact, show i - min i B = 0 by omega]))
+    · exact TblDo.iteF (by rw [g48, g52]; exact hib) (TblDo.insX (.sub 48 52 56)
+        (by simp [TblIns.fits, g48, g52]; omega)
+        (by simp [TblIns.exact, g48, g52, show min i B = B by omega]))
+  refine h₂.seq (fun s₂ hs₂ => ?_)
+  subst hs₂
+  set st0 := i - min i B with hst0
+  set s₂ : TblSt 60 A := ⟨Function.update s₁.val 56 st0, s₁.acc⟩
+  have v2 : ∀ x ∈ tblFoldLst, s₂.val x = st.val x := by
+    intro x hx
+    simp [s₂, Function.update_of_ne (tblFoldLst_ne56 x hx), g x hx]
+  have v18 : s₂.val 18 = piN P := by rw [v2 18 (by decide), h18]
+  have v19 : s₂.val 19 = P := by rw [v2 19 (by decide), h19]
+  have v21 : s₂.val 21 = s * s := by rw [v2 21 (by decide), h21]
+  have v22 : s₂.val 22 = 1 := by rw [v2 22 (by decide), h22]
+  have v34 : s₂.val 34 = s := by rw [v2 34 (by decide), h34]
+  have v35 : s₂.val 35 = t := by rw [v2 35 (by decide), h35]
+  have v38 : s₂.val 38 = 0 := by rw [v2 38 (by decide), h38]
+  have v39 : s₂.val 39 = wd := by rw [v2 39 (by decide), h39]
+  have v43 : s₂.val 43 = α * α := by rw [v2 43 (by decide), h43]
+  have v48 : s₂.val 48 = i := by rw [v2 48 (by decide), h48]
+  have v51 : s₂.val 51 = 2 * B + 1 := by rw [v2 51 (by decide), h51]
+  have v55 : s₂.val 55 = 2 ^ P := by rw [v2 55 (by decide), h55]
+  have v59 : s₂.val 59 = 2 := by rw [v2 59 (by decide), h59]
+  have v56 : s₂.val 56 = st0 := by simp [s₂]
+  have vrow : i < s → s₂.val 37 = (NLogN.PhaseCellMatrix.foldAt s i).val ∧
+      s₂.val 41 = t * (NLogN.PhaseCellMatrix.foldAt s i).val % s ∧
+      s₂.val 42 = (if t * (NLogN.PhaseCellMatrix.foldAt s i).val % s +
+        t * (NLogN.PhaseCellMatrix.foldAt s i).val % s < s then 0 else s) := by
+    intro hi
+    obtain ⟨a, b, c⟩ := row₁ hi
+    exact ⟨by simp [s₂, a], by simp [s₂, b], by simp [s₂, c]⟩
+  set F : ℕ → List (Fin (A + 4)) := fun j => tblFoldSyms A w s t α P wd i (st0 + j)
+  have hNW : 2 * B + 1 < 2 ^ W := by omega
+  have h2s : 2 * s < 2 ^ W := lt_of_le_of_lt (Nat.le_mul_of_pos_right _ (Nat.succ_pos t)) hsW
+  have hst0 : st0 ≤ i := Nat.sub_le _ _
+  refine TblDo.for (2 * B + 1) (310 * P + 201) v51 hNW (by decide)
+    (fun j s' => s'.acc = ((List.range j).flatMap F).reverse ++ st.acc ∧ ∀ x ∈ tblFoldL2, s'.val x = s₂.val x)
+    ⟨by simp [s₂, acc₁], fun x hx => ?_⟩ ?_ ?_
+  · simp [Function.update_of_ne (tblFoldL2_ne50 x hx)]
+  · intro j hj s' ⟨hacc, hv⟩ h50 h51
+    have u : ∀ x ∈ tblFoldL2, s'.val x = s₂.val x := hv
+    have hc := tblFoldCol_do (W := W) (w := w) s' (s := s) (t := t) (α := α) (P := P) (wd := wd)
+      (i := i) (N := N) (st0 := st0) (j := j)
+      (by rw [u 18 (by decide), v18]) (by rw [u 19 (by decide), v19])
+      (by rw [u 21 (by decide), v21]) (by rw [u 22 (by decide), v22])
+      (by rw [u 34 (by decide), v34]) (by rw [u 35 (by decide), v35])
+      (by rw [u 43 (by decide), v43]) (by rw [u 38 (by decide), v38])
+      (by rw [u 39 (by decide), v39])
+      (fun hi => by
+        obtain ⟨a, b, c⟩ := vrow hi
+        exact ⟨by rw [u 37 (by decide), a], by rw [u 41 (by decide), b],
+          by rw [u 42 (by decide), c]⟩)
+      (by rw [u 48 (by decide), v48]) h50 (by rw [u 56 (by decide), v56])
+      (by rw [u 55 (by decide), v55]) (by rw [u 59 (by decide), v59]) hws hP hW
+      h2s (by omega)
+    refine hc.mono (fun s'' ⟨hacc'', kE⟩ => ?_) (by omega)
+    refine ⟨by rw [kE 50 (by decide), h50], by rw [kE 51 (by decide), h51],
+      ?_, fun x hx => ?_⟩
+    · show _ = _
+      rw [hacc'', hacc, tbl_range_flatMap_succ F j, List.append_assoc]
+    · show (Function.update s''.val 50 (j + 1)) x = _
+      rw [Function.update_of_ne (tblFoldL2_ne50 x hx), kE x (tblFoldL2_keepE x hx), u x hx]
+  · intro s' ⟨hacc, hv⟩ _ _
+    refine ⟨hacc, fun x hx => ?_⟩
+    rw [hv x (tblFoldLst_L2 x hx), v2 x hx]
+
 end IntegerMultBounds.MathlibTM2.Fast
