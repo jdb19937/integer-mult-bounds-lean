@@ -528,6 +528,159 @@ theorem band_axis_rel (h : Big n) (i : Fin (d n)) :
 
 end Lines
 
+/-! ### The stage -/
+
+section Stage
+
+open IntegerMultBounds.MathlibTM2.Mult.Pipeline IntegerMultBounds.MathlibTM2.Mult.Sizes
+open IntegerMultBounds.NLogN IntegerMultBounds.NLogN.SchurDominance
+
+/-- The numeric facts of the band line on axis `i`. -/
+structure BandAxisMath (n : ℕ) (β : ℝ) (i : Fin (d n)) : Prop where
+  inv : StageInv (NLogN.PhaseCellMatrix.windowMatrix (s n i) (8 * Mult.FastB0.fastWindow (p n) (alpha n))
+    fun a k => Mult.BandFactor.gv (5 * p n) (bandAZ n i a k)) Finset.univ
+      (1 / (8 * (2 * (p n : ℝ)))) (9 / 4)
+  small : 2 ^ 16 * (2 * (p n : ℝ)) ^ 2 * (s n i : ℝ) ^ 2 *
+    ((1 / 2 ^ (5 * p n) : ℝ) * (1 + 60 * 3 / β ^ 2)) ≤ 1
+  err : 62000 * (2 * (p n : ℝ)) ^ 3 * (s n i : ℝ) ^ 2 *
+    ((1 / 2 ^ (5 * p n) : ℝ) * (1 + 60 * 3 / β ^ 2)) ≤ 1
+  ball : ∀ v, ‖v‖ ≤ 1 → ‖bandA n i v‖ ≤ 1
+
+/-- The precision of the Newton reciprocals of the band. -/
+structure BandPrec (n : ℕ) (β : ℝ) (w : ℕ) : Prop where
+  pos : 0 < β
+  le : β ≤ 1 / (8 * (2 * (p n : ℝ))) / 2
+  eta : 5 * (1 / 2 ^ (5 * p n) : ℝ) ≤ 2 * (β / 4) / 9
+  newton : (1 - β / 4 / 2) ^ (2 ^ (4 * (alpha n * alpha n))) ≤
+    3 * (5 * (1 / 2 ^ (5 * p n) : ℝ)) / (β / 4)
+  width : (6 / β + 1) * 2 ^ (5 * p n) < (2 : ℝ) ^ (w - 1)
+
+variable {T Q : ℕ} {U F : Type}
+variable {body : F → Pr F T Q (prime + K) U} {rg : RsbR → Fin T} {rgx : RsbX t₀ → Fin T}
+  {ι : Fin 64 → Fin T}
+
+variable {n : ℕ}
+
+/-- The admissible lines of axis `i`: length `t_i`, entries in the unit disk. -/
+def BandOk (n : ℕ) (i : Fin (d n)) (L : List GaussianInt) : Prop :=
+  L.length = t n i ∧ ∀ y ∈ L, ‖rsbGrid (p n) y‖ ≤ 1
+
+theorem band_lineOk_of (h : Big n) {β : ℝ} {w : ℕ} (hpre : BandPrec n β w) (i : Fin (d n))
+    (hax : BandAxisMath n β i) (L : List GaussianInt) (hL : BandOk n i L) :
+    BandLineOk w (5 * p n) (s n i) (t n i) (2 * (8 * Mult.FastB0.fastWindow (p n) (alpha n)) + 1)
+      (bandLc (5 * p n) (4 * (alpha n * alpha n)) (8 * Mult.FastB0.fastWindow (p n) (alpha n)) (s n i)
+        (bandAZ n i))
+      (bandUc (5 * p n) (4 * (alpha n * alpha n)) (8 * Mult.FastB0.fastWindow (p n) (alpha n)) (s n i)
+        (bandAZ n i))
+      (bandRcs (5 * p n) (4 * (alpha n * alpha n)) (8 * Mult.FastB0.fastWindow (p n) (alpha n)) (s n i)
+        (bandAZ n i))
+      (2 ^ (9 * p n - 1)) (2 ^ (p n - alpha n * alpha n)) L := by
+  have hp13 := h.thirteen_le_p
+  have hαp := h.alpha_sq_le_p
+  have hjp : alpha n * alpha n ≤ p n := by nlinarith
+  have hLb : ∀ x ∈ L, |x.re| ≤ 2 ^ p n ∧ |x.im| ≤ 2 ^ p n := by
+    intro x hx
+    have hn := hL.2 x hx
+    have hP : (0 : ℝ) < 2 ^ p n := by positivity
+    have h1 := (Complex.abs_re_le_norm (rsbGrid (p n) x)).trans hn
+    have h2 := (Complex.abs_im_le_norm (rsbGrid (p n) x)).trans hn
+    rw [rsbGrid, two_pow_complex, toComplex_div_re, abs_div, abs_of_pos hP, div_le_one hP] at h1
+    rw [rsbGrid, two_pow_complex, toComplex_div_im, abs_div, abs_of_pos hP, div_le_one hP] at h2
+    exact ⟨by exact_mod_cast h1, by exact_mod_cast h2⟩
+  have H := band_lineOk (K := 4 * (alpha n * alpha n)) (wd := 8 * Mult.FastB0.fastWindow (p n) (alpha n))
+    (aZ := bandAZ n i) (p n) (alpha n * alpha n) (t n i) (by omega) (by omega) hjp hax.inv β hpre.pos
+    hpre.le hpre.eta hpre.newton hax.small hax.err w hpre.width L hL.1 hLb
+  rwa [show 2 * (5 * p n) - p n - 1 = 9 * p n - 1 by omega] at H
+
+lemma bandCfgB_eq {σ₀ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))} {w : ℕ} {hd : Fin 5 → Fin t₀}
+    (hσ₀ : BandBase σ₀ w hd) (hA3 : 3 ≤ prime + K) (W : ℕ) (hd0 : 0 < d n)
+    (rest : List (Fin (prime + K + 4))) (k : ℕ) :
+    ∃ σ, BandBase σ w hd ∧ bandCfgB σ₀ hd n w W hd0 rest k =
+      bandLoad σ hd w (preDB n W hd0 k) (preRecsB n W hd0 (k + 1) ++ rest) := by
+  cases k with
+  | zero => exact ⟨σ₀, hσ₀, rfl⟩
+  | succ k => exact ⟨_, bandCfgB_base hσ₀ hA3 k, rfl⟩
+
+lemma fits_pow_le {w a b : ℕ} (hab : a ≤ b) (h : Fits w (⟨2 ^ b, 0⟩ : GaussianInt)) :
+    Fits w (⟨2 ^ a, 0⟩ : GaussianInt) := by
+  refine ⟨lt_of_le_of_lt ?_ h.1, h.2⟩
+  simp only [abs_pow, abs_two]
+  exact pow_le_pow_right₀ (by norm_num) hab
+
+/-- **The axis contract of the band stage.** -/
+theorem band_stage_hcfg (h : Big n) (hd0 : 0 < d n) (hι : Function.Injective ι) (hT : 64 ≤ T)
+    (hQ : SS.states ≤ Q) (hrg₂ : Function.Injective (Sum.elim rg rgx))
+    (hdisj₂ : ∀ r j, Sum.elim rg rgx r ≠ ι j) (hA : 96 ≤ prime + K) {β : ℝ} {w W : ℕ}
+    (hpre : BandPrec n β w) (hax : ∀ i, BandAxisMath n β i)
+    (hok : ∀ k < d n, BandPreOk (preDB n W hd0 k) w) (hw1 : 1 ≤ w)
+    (hDfit : ∀ i, ∀ x ∈ bandDlN n i, Fits w (⟨x, 0⟩ : GaussianInt))
+    {hd : Fin 5 → Fin t₀} {σ₀ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))}
+    (hσ₀ : BandBase σ₀ w hd) (rest : List (Fin (prime + K + 4))) (k : ℕ) (hk : k < d n) :
+    (∀ lines : List (List GaussianInt), (∀ c ∈ lines, BandOk n (rsbAx hd0 k) c) →
+      RsbRuns body rg ι (bandAxisP rg hι hT hQ)
+        (Function.update (fun r => bandCfgB σ₀ hd n w W hd0 rest k (.inl r)) .src
+          (cstream (prime + K) w lines.flatten))
+        (Function.update (fun r => bandCfgB σ₀ hd n w W hd0 rest k (.inl r)) .src
+          (cstream (prime + K) w (lines.flatMap (bandG n (rsbAx hd0 k)))))
+        (bandAxisCost T w (s n (rsbAx hd0 k)) (t n (rsbAx hd0 k))
+          (2 * (8 * Mult.FastB0.fastWindow (p n) (alpha n)) + 1) lines.length)) ∧
+    (0 < k → (∀ j, bandCfgB σ₀ hd n w W hd0 rest k (.inr (.sw j)) =
+        rsbBank hd (preHsB n w hd0 (rsbAx hd0 k)) j) ∧
+      bandCfgB σ₀ hd n w W hd0 rest k (.inr .xt) = [] ∧
+      bandCfgB σ₀ hd n w W hd0 rest k (.inr .e1) = [] ∧
+      bandCfgB σ₀ hd n w W hd0 rest k (.inr .e2) = []) := by
+  have hA3 : 3 ≤ prime + K := by omega
+  have hp13 := h.thirteen_le_p
+  refine ⟨fun lines hlines => ?_, fun _ => ⟨bandCfgB_sw hσ₀ hA3 k, (bandCfgB_base hσ₀ hA3 k).xt,
+    (bandCfgB_base hσ₀ hA3 k).e1, (bandCfgB_base hσ₀ hA3 k).e2⟩⟩
+  obtain ⟨σ, hσ, e⟩ := bandCfgB_eq hσ₀ hA3 W hd0 rest k
+  rw [e]
+  set i := rsbAx hd0 k
+  have hrg : Function.Injective rg := fun a b hab => Sum.inl_injective (hrg₂ (a₁ := .inl a) hab)
+  have hdisj : ∀ r j, rg r ≠ ι j := fun r j => hdisj₂ (.inl r) j
+  have hO : Fits w (⟨2 ^ (p n - alpha n * alpha n), 0⟩ : GaussianInt) := by
+    refine ⟨?_, by simp⟩
+    have h1 : (2 : ℝ) ^ (p n - alpha n * alpha n) ≤ 2 ^ (5 * p n) :=
+      pow_le_pow_right₀ (by norm_num) (by omega)
+    have h2 : (2 : ℝ) ^ (5 * p n) ≤ (6 / β + 1) * 2 ^ (5 * p n) := by
+      have : 0 ≤ 6 / β := div_nonneg (by norm_num) hpre.pos.le
+      exact le_mul_of_one_le_left (by positivity) (by linarith)
+    have h3 := lt_of_le_of_lt (h1.trans h2) hpre.width
+    simp only [abs_pow, abs_two]
+    exact_mod_cast h3
+  have htab := band_tabOk (K := 4 * (alpha n * alpha n))
+    (wd := 8 * Mult.FastB0.fastWindow (p n) (alpha n)) (aZ := bandAZ n i) (p n) (by omega)
+    (by omega) (hax i).inv β hpre.pos hpre.le hpre.eta hpre.newton (hax i).small w hpre.width
+    (bandDlN n i) (by simp [bandDlN, rsbArr]) (hDfit i) _ _
+    (fits_pow_le (show 9 * p n - 1 ≤ 9 * p n by omega) (hok k hk).fc) hO
+  exact band_axis_loaded (body := body) hι hT hQ hrg hdisj hA hσ.free hd w (preDB n W hd0 k) _ hσ.wn
+    hσ.nn (h.good.lt i) hw1 (hok k hk).Pw htab lines
+    (fun L hL => band_lineOk_of h hpre i (hax i) L (hlines L hL))
+
+/-- **The loader contract of the band stage.** -/
+theorem band_stage_hprep (h : Big n) (hd0 : 0 < d n) (hι : Function.Injective ι) (hT : 64 ≤ T)
+    (hQ : SS.states ≤ Q) (hrg₂ : Function.Injective (Sum.elim rg rgx))
+    (hdisj₂ : ∀ r j, Sum.elim rg rgx r ≠ ι j) (hA : 96 ≤ prime + K) {β : ℝ} {w W : ℕ}
+    (hpre : BandPrec n β w) (hax : ∀ i, BandAxisMath n β i)
+    (hok : ∀ k < d n, BandPreOk (preDB n W hd0 k) w) (hw1 : 1 ≤ w)
+    {hd : Fin 5 → Fin t₀} (hdi : Function.Injective hd)
+    {σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))} (hσ : BandBase σ w hd)
+    (rest : List (Fin (prime + K + 4))) (k : ℕ) (hk : k < d n)
+    (hprm : σ (.inl .prm) = preRecsB n W hd0 k ++ rest) (l a a' : List (Fin (prime + K + 4))) :
+    RsbRuns body (Sum.elim rg rgx) ι (bandPreB rg rgx ι hd hι hT hQ) (rsbWith σ l a a')
+      (rsbWith (bandLoad σ hd w (preDB n W hd0 k) (preRecsB n W hd0 (k + 1) ++ rest)) l a a')
+      (bandPreCost T σ hd w (preDB n W hd0 k) (preRecsB n W hd0 (k + 1) ++ rest)) := by
+  have hp13 := h.thirteen_le_p
+  set i := rsbAx hd0 k
+  exact bandPreB_rsbWith (body := body) hrg₂ hι hdisj₂ hT hQ hA hdi σ _ _ w hw1 (hok k hk) hσ.free
+    (by rw [hprm, preRecsB_succ n W hd0 hk, List.append_assoc]) hσ.wn hσ.nn
+    (fun m hm => band_facFits (K := 4 * (alpha n * alpha n))
+      (wd := 8 * Mult.FastB0.fastWindow (p n) (alpha n)) (aZ := bandAZ n i) (p n) (by omega)
+      (by omega) (hax i).inv β hpre.pos hpre.le hpre.eta hpre.newton (hax i).small w hpre.width m hm)
+    l a a'
+
+end Stage
+
 end
 
 end IntegerMultBounds.MathlibTM2.Fast
