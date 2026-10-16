@@ -1780,3 +1780,12 @@ with `u=⌈log₂(8p)⌉` and the dimension as cell parameter, every axis satisf
 `8p≤2^u`, `1/(4p)≤θ_i`, `1/4≤dθ_i` and `u d≤p`. The guarded check and
 4-declaration standard-axiom audit pass. These hold at `ε=9/64`; the `ε=5/16`
 sizing must re-establish them.
+
+`Mult/BandedB0` closes the numeric side of the inverse-only route: real solves
+of the rounded matrix (for example by the backward-stable banded elimination)
+within `e`, applied to real and imaginary parts and normalized within `η`,
+give the pipeline `B̃₀` interface for the small-gap factorization target with
+error `6+2^p((2e+η)+δ₀/2)`. The guarded check and3-declaration standard-axiom
+audit pass. Remaining for this route: cyclic fill and substitution cost,
+`ε=5/16` sizing, the new `B̃₀` machine with per-axis stored factors, the
+retuned `Ã` costs and the final assembly.
