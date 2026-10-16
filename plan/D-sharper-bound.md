@@ -1774,3 +1774,9 @@ solves, the computed boundary solution is within
 solve is therefore fully specified by fixed-point operations, with no exact
 rational setup; with `η=2^-P` the polynomial factors in the line length are
 negligible. The guarded check and5-declaration standard-axiom audit pass.
+
+`Mult/SmallGapSizes` checks the route's sizing claim at the current sizes:
+with `u=⌈log₂(8p)⌉` and the dimension as cell parameter, every axis satisfies
+`8p≤2^u`, `1/(4p)≤θ_i`, `1/4≤dθ_i` and `u d≤p`. The guarded check and
+4-declaration standard-axiom audit pass. These hold at `ε=9/64`; the `ε=5/16`
+sizing must re-establish them.
