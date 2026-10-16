@@ -1919,3 +1919,12 @@ The matrix the machine builds is the wrapped window of Gaussian coefficients
 `concrete_resampB₀_specW` gives the pipeline interface for its machine solve,
 and `window_eps_le` makes the perturbation at most `2^-3p` for entries at
 precision `5p` (the `tableE` routine at precision `5p` gives `δ = 2/2^(5p)`).
+
+`Mult/BandSolveFold` closes the list-level spec in folded positions: the
+numerator window matrix `wmZ` of coefficient numerators `aZ`, stored at folded
+positions as `foldZ` (banded with half width `2w+1`, `foldZ_band`), run through
+`lineSolveZ`, gives at folded position `i` exactly `machSolveT` at vertex
+`foldAt i` (`lineSolveFold_eq`). What remains for the swap is mechanical tape
+work: a table program emitting the folded rows of `foldZ` at precision `5p`,
+the window factorization and transpose machines, the line wrapper around the
+existing forward/backward line machine, and pipeline and cost integration.
