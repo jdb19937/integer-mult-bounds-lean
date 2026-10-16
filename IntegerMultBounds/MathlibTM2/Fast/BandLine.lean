@@ -59,6 +59,10 @@ noncomputable def bandFwdStepP : Pr P T Q A U :=
     (.seq (emptyR (rg .ya)) (.seq (emptyR (rg .xs)) (.seq (emptyR (rg .hv))
     (.seq (rsbRep (rg .m2n) (rg .tJ) (bandSubP rg)) (moveR (rg .nv) (rg .vk) id)))))))))
 
+/-- The forward pass: one column step per symbol of `sn`. -/
+noncomputable def bandFwdLoopP : Pr P T Q A U :=
+  rsbRep (rg .sn) (rg .tL) (bandFwdStepP rg hι hT hQ)
+
 /-- The step bound of one forward column step. -/
 def bandFwdStepCost (T w B : ℕ) : ℕ := B * (rmulCost T w + 40 * w + 60) + 30 * w + 60
 
@@ -75,6 +79,38 @@ lemma sum_zipWith_const {α β : Type*} (c : ℕ) : ∀ (l₁ : List α) (l₂ :
 
 lemma bandFree_ya : RsbFree .ya .xs .pr := ⟨by decide, by decide, by decide, fun _ => ⟨by simp,
   by simp, by simp⟩⟩
+
+/-- Complex records of a real column. -/
+def colC (c : List ℤ) : List GaussianInt := c.map fun x => ⟨x, 0⟩
+
+lemma machine_sub_eq (P B : ℕ) (y : GaussianInt) (c : List ℤ) (rs : List GaussianInt) :
+    List.zipWith (· - ·) rs (List.zipWith (fun a b => tdivN P (a * b)) (List.replicate B y) (colC c))=
+      List.zipWith (fun r x => r - tdivN P (⟨x, 0⟩ * y)) rs (c.take B) := by
+  induction c generalizing rs B with
+  | nil => simp [colC]
+  | cons x c ih =>
+    cases B with
+    | zero => simp [colC]
+    | succ B =>
+      cases rs with
+      | nil => simp [colC]
+      | cons r rs =>
+        simp only [colC, List.map_cons, List.replicate_succ, List.zipWith_cons_cons,
+          List.take_succ_cons]
+        rw [mul_comm y]
+        congr 1
+        exact ih B rs
+
+lemma subColC_split (P : ℕ) (y : GaussianInt) : ∀ (c : List ℤ) (rest : List GaussianInt),
+    c.length≤rest.length → Mult.BandList.subColC P c y rest=
+      List.zipWith (fun r x => r - tdivN P (⟨x, 0⟩ * y)) (rest.take c.length) c ++
+        rest.drop c.length
+  | [], rest, _ => by cases rest <;> simp [Mult.BandList.subColC]
+  | x::c, r::rest, h => by
+      simp only [Mult.BandList.subColC, List.length_cons, List.take_succ_cons, List.drop_succ_cons,
+        List.zipWith_cons_cons, List.cons_append]
+      rw [subColC_split P y c rest (by simp at h; omega)]
+  | _::_, [], h => by simp at h
 
 section Contracts
 
@@ -294,6 +330,84 @@ theorem band_fwdStep_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r �
   · simp [σ₉, σ₈, σ₅, σ₄, σ₃, σ₂, σ₁, bandFwdStepCost, hhv, hya, hxs, hpr, hnv, hdout, hwn,
       hcol, hprl, cstream, sum_zipWith_const, hrs]
     nlinarith
+
+/-- The forward pass over `s` columns. -/
+theorem band_fwdLoop_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠ ι j)
+    (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ : SS.states ≤ Q) (hA : 96 ≤ A)
+    {w P B s : ℕ} (σ : RsbR → List (Fin (A + 4))) (hready : RsbReady σ w P) (hw : 1 ≤ w)
+    (hp : P ≤ w) (cs : List (List ℤ)) (hcs : cs.length = s) (hcl : ∀ c ∈ cs, c.length = B)
+    (pend : List GaussianInt) (hpl : pend.length = s + B)
+    (hfit : ∀ j < s, Fits w ((Mult.BandList.bandPend P cs pend j).headD 0))
+    (hfc : ∀ c ∈ cs, ∀ x ∈ c, Fits w (⟨x, 0⟩ : GaussianInt)) (D : List (Fin (A + 4)))
+    (hvk : σ .vk = cstream A w pend) (hef : σ .ef = cstream A w (cs.map colC).flatten)
+    (hdout : σ .dout = D) (hhv : σ .hv = []) (hya : σ .ya = []) (hxs : σ .xs = [])
+    (hpr : σ .pr = []) (hnv : σ .nv = []) (hac : σ .ac = []) (hac2 : σ .ac2 = [])
+    (htC : σ .tC = []) (htA : σ .tA = []) (htJ : σ .tJ = []) (hb1 : σ .b1 = [])
+    (htL : σ .tL = []) (hsn : (σ .sn).length = s)
+    (hm2n : (σ .m2n).length = B) (hmwn : (σ .mwn).length = B * w) :
+    RsbRuns body rg ι (bandFwdLoopP rg hι hT hQ) σ
+      (Function.update (Function.update (Function.update σ .vk
+        (cstream A w (Mult.BandList.bandPend P cs pend s))) .ef []) .dout
+        (cstream A w (Mult.BandList.bandOut P cs pend s) ++ D))
+      (s * (bandFwdStepCost T w B + 6) + 4) := by
+  obtain ⟨Ψ, hΨ⟩ : ∃ Ψ : ℕ → RsbR → List (Fin (A + 4)), Ψ = fun j =>
+      Function.update (Function.update (Function.update σ .vk
+        (cstream A w (Mult.BandList.bandPend P cs pend j))) .ef
+        (cstream A w ((cs.map colC).drop j).flatten)) .dout
+        (cstream A w (Mult.BandList.bandOut P cs pend j) ++ D) := ⟨_, rfl⟩
+  have hbody : ∀ j < (σ .sn).length, ∀ X Y, RsbRuns body rg ι (bandFwdStepP rg hι hT hQ)
+      (rsbUpd2 (Ψ j) .sn X .tL Y) (rsbUpd2 (Ψ (j + 1)) .sn X .tL Y) (bandFwdStepCost T w B) := by
+    intro j hj X Y
+    rw [hsn] at hj
+    have hlenj := Mult.BandList.length_bandPend P cs pend j (by omega)
+    obtain ⟨y, rest, hyr⟩ : ∃ y rest, Mult.BandList.bandPend P cs pend j = y :: rest := by
+      cases h : Mult.BandList.bandPend P cs pend j with
+      | nil => rw [h] at hlenj; simp at hlenj; omega
+      | cons y rest => exact ⟨y, rest, rfl⟩
+    have hrl : rest.length = s + B - j - 1 := by rw [hyr] at hlenj; simp at hlenj; omega
+    have hjc : j < cs.length := by omega
+    have hcj := hcl (cs[j]'hjc) (List.getElem_mem hjc)
+    have hready' : RsbReady (rsbUpd2 (Ψ j) .sn X .tL Y) w P := by
+      simp only [rsbUpd2, hΨ]
+      exact ((((hready.update .vk (fun c => by simp) _).update .ef (fun c => by simp) _).update
+        .dout (fun c => by simp) _).update .sn (fun c => by simp) _).update .tL
+        (fun c => by simp) _
+    have hstep := band_fwdStep_runs (body := body) (ι := ι) (w := w) (p := P) (B := B) hrg hdisj
+      hι hT hQ hA
+      (rsbUpd2 (Ψ j) .sn X .tL Y) hready' hw hp y (rest.take B) (rest.drop B) (colC (cs[j]'hjc))
+      ((cs.map colC).drop (j + 1)).flatten (by simp only [List.length_take]; omega) (by simp [colC, hcj])
+      (by have := hfit j hj; rwa [hyr] at this)
+      (by intro a ha; simp only [colC, List.mem_map] at ha; obtain ⟨x, hx, rfl⟩ := ha
+          exact ⟨hfc _ (List.getElem_mem hjc) x hx, rfl⟩)
+      (cstream A w (Mult.BandList.bandOut P cs pend j) ++ D)
+      (by simp [hΨ, hyr]) (by
+        have hjm : j < (cs.map colC).length := by simpa using hjc
+        simp [hΨ]; rw [List.drop_eq_getElem_cons hjm]; simp)
+      (by simp [hΨ]) (by simp [hΨ, hhv]) (by simp [hΨ, hya]) (by simp [hΨ, hxs])
+      (by simp [hΨ, hpr]) (by simp [hΨ, hnv]) (by simp [hΨ, hac]) (by simp [hΨ, hac2])
+      (by simp [hΨ, htC]) (by simp [hΨ, htA]) (by simp [hΨ, htJ]) (by simp [hΨ, hb1])
+      (by simp [hΨ, hm2n]) (by simp [hΨ, hmwn])
+    refine hstep.congr ?_
+    have hnext : Mult.BandList.bandPend P cs pend (j + 1) =
+        List.zipWith (· - ·) (rest.take B)
+          (List.zipWith (fun a b => tdivN P (a * b)) (List.replicate B y) (colC (cs[j]'hjc))) ++
+          rest.drop B := by
+      have e1 : (cs[j]'hjc).take B = cs[j]'hjc := List.take_of_length_le (le_of_eq hcj)
+      rw [machine_sub_eq, e1]
+      simp only [Mult.BandList.bandPend, hyr, List.getD_eq_getElem _ _ hjc]
+      rw [subColC_split P y (cs[j]'hjc) rest (by omega), hcj]
+    have hout : Mult.BandList.bandOut P cs pend (j + 1) = y :: Mult.BandList.bandOut P cs pend j := by
+      simp [Mult.BandList.bandOut, hyr]
+    funext r; cases r <;> simp [hΨ, hnext, hout]
+  have h := rsb_rep_runs hrg hdisj (ra := .sn) (rt := .tL) (by decide) (bandFwdStepP rg hι hT hQ)
+    (σ .sn) Ψ _ hbody
+  refine (h.congr_pre ?_ |>.congr ?_).mono ?_
+  · funext r; cases r <;> simp [hΨ, hvk, hef, hdout, htL, Mult.BandList.bandPend,
+      Mult.BandList.bandOut]
+  · rw [hsn]
+    have hd : (cs.map colC).drop s = [] := List.drop_of_length_le (by simp [hcs])
+    funext r; cases r <;> simp [hΨ, htL, hd]
+  · rw [hsn]
 
 end Contracts
 

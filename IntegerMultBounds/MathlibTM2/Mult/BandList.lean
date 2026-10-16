@@ -317,4 +317,65 @@ theorem bwdZ_pad (P B : ℕ) (Uz : ι → ι → ℤ) (ks : List ι) (hb : Bande
         rw [subCol_pad P B _ _ ps (by simp [hl]) (cols_drop_zero B Uz k rest hk)]
         rw [ih hrest rs _ (by rw [length_subCol, hl])]
 
+/-! ### Step-indexed states of the forward computation -/
+
+/-- Pending list after `j` forward steps. -/
+def bandPend (P : ℕ) (cs : List (List ℤ)) (pend : List GaussianInt) : ℕ → List GaussianInt
+  | 0 => pend
+  | j+1 => match bandPend P cs pend j with
+    | y::rest => subColC P (cs.getD j []) y rest
+    | [] => []
+
+/-- Outputs after `j` forward steps, most recent first. -/
+def bandOut (P : ℕ) (cs : List (List ℤ)) (pend : List GaussianInt) : ℕ → List GaussianInt
+  | 0 => []
+  | j+1 => (bandPend P cs pend j).headD 0::bandOut P cs pend j
+
+theorem bandPend_cons (P : ℕ) (c : List ℤ) (cs : List (List ℤ)) (y : GaussianInt)
+    (rest : List GaussianInt) : ∀ j,
+    bandPend P (c::cs) (y::rest) (j+1)=bandPend P cs (subColC P c y rest) j
+  | 0 => rfl
+  | j+1 => by
+      rw [bandPend, bandPend_cons P c cs y rest j, bandPend]
+      rfl
+
+theorem bandOut_cons (P : ℕ) (c : List ℤ) (cs : List (List ℤ)) (y : GaussianInt)
+    (rest : List GaussianInt) : ∀ j,
+    bandOut P (c::cs) (y::rest) (j+1)=bandOut P cs (subColC P c y rest) j++[y]
+  | 0 => rfl
+  | j+1 => by
+      rw [bandOut, bandOut_cons P c cs y rest j, bandPend_cons, bandOut]
+      rfl
+
+theorem length_subColC (P : ℕ) : ∀ (c : List ℤ) (y : GaussianInt) (rs : List GaussianInt),
+    (subColC P c y rs).length=rs.length
+  | c::cs, y, r::rs => by simp [subColC, length_subColC P cs y rs]
+  | [], _, rs => by cases rs <;> rfl
+  | _::_, _, [] => rfl
+
+/-- The step-indexed outputs give the forward computation. -/
+theorem fwdZC_eq_bandOut (P : ℕ) : ∀ (cs : List (List ℤ)) (pend : List GaussianInt),
+    cs.length≤pend.length → fwdZC P cs pend=(bandOut P cs pend cs.length).reverse
+  | [], pend, _ => by cases pend <;> rfl
+  | c::cs, y::rest, h => by
+      simp only [fwdZC, List.length_cons]
+      rw [bandOut_cons, List.reverse_append, fwdZC_eq_bandOut P cs _ (by
+        rw [length_subColC]; simp at h; omega)]
+      rfl
+  | _::_, [], h => by simp at h
+
+theorem length_bandPend (P : ℕ) (cs : List (List ℤ)) (pend : List GaussianInt) :
+    ∀ j, j≤pend.length → (bandPend P cs pend j).length=pend.length-j
+  | 0, _ => by simp [bandPend]
+  | j+1, h => by
+      have ih := length_bandPend P cs pend j (by omega)
+      simp only [bandPend]
+      split
+      · rename_i y rest heq
+        rw [length_subColC]
+        rw [heq] at ih
+        simp at ih; omega
+      · rename_i heq
+        rw [heq] at ih; simp at ih; omega
+
 end IntegerMultBounds.MathlibTM2.Mult.BandList
