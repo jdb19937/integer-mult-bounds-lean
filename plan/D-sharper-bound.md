@@ -1938,3 +1938,22 @@ driver that sets the counters and constants, runs the factorization, reverses
 the multipliers into the forward table and the pivot rows into transpose order,
 and runs the transpose; then the per-line driver around the existing banded line
 passes, and the table program for the folded rows.
+
+All per-axis pieces of the banded `B̃₀` are now proven machines: the folded row
+stream of the table VM at precision `P` (`Fast/TableFold`, `tblFoldStream_host`,
+rows `foldRowZ` = initial window then factorization inputs), the window
+factorization (`band_facLoop_runs`) with its record widths discharged
+(`facFits_all`), block reversal (`band_rev_runs`), and the transpose
+(`band_tLoop_runs`). The remaining integration, in order:
+1. A per-axis driver: table stream onto `src`, split off the initial window,
+   factor, reverse the multipliers into the forward table, reverse the pivot rows
+   into transpose order, zero window, transpose; counters differ between the
+   phases (`m2n`, `mwn` are `2B`, `2Bw` while factoring and `B`, `Bw` in the line
+   passes), so the driver copies them from spare registers between phases.
+2. A per-line driver around `bandFwdLoopP`/`bandBwdLoopP` (BandLine): fold and
+   scale the input, copy the stored tables onto `ef`/`tb`, the two passes, unfold,
+   scale and round; its list spec is `lineSolveFold_eq` composed with `bandJtX`.
+3. Record-width conditions of the line passes from the solution bounds.
+4. Generalize `rsbAxisP`/`RsbAxisCfg`/`RsbAxisData` (currently hard-wired to the
+   Neumann line) or add the banded variant, the loader for the band counters and
+   constants, the cost bounds, the `ε`/`α` retune and the final theorem.
