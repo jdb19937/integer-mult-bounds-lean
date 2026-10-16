@@ -1685,3 +1685,9 @@ solve of one actual phase-cell interval reproduces the exact interior solution
 of the actual rounded Gaussian matrix within `η+64LηV+2(η+Cη)`. This supplies
 the actual stage errors `e₁`/`e₅` per cell. Both guarded checks and the
 2-declaration standard-axiom audit pass.
+
+Interior vertices of each phase cell are now proved convex in physical order:
+every interior vertex lies in a consecutive in-array interval containing all
+interior vertices of its cell, discharging the interval hypotheses of the
+exact and rounded cell solves for the choice `I` = all interior vertices. The
+guarded check and2-declaration standard-axiom audit pass.
