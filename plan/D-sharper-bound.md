@@ -1881,3 +1881,14 @@ machine rules (`machMul`, raw `newtonR`) by the same `62000 p³ s² η(1+180/β�
 order). `SchurWindow` is the real-valued sliding-window factorization: a window
 of `B+1` rows on `2B+1` columns, one step per pivot, and `factorRows_run` shows
 the run emits each stage's eliminated column and pivot row.
+
+`Mult/BandFactor` runs the window factorization on integer numerators
+(`newtonZ`, `mulZ`, `factorRowsZ`) and maps it onto the real run
+(`factorRowsZ_map`). `FastB0.concrete_resampB₀_specX` gives the pipeline
+interface for any line solver within `e`, and `concrete_resampB₀_specN` for the
+machine solver `machSolve`. At working precision `4p`, Newton floor
+`β = 1/(16p)` and `newtonK p = 2(log₂p+1)+9` iterations, `Big.newton_conditions`
+and `Big.concreteB0N_conditions` discharge every precondition with final error
+at most `p²`. Remaining for the swap: the backward-pass column table from the
+pivot rows (a per-axis transpose), the factorization and transpose machines on
+tapes, the line wrapper, and pipeline and cost integration.

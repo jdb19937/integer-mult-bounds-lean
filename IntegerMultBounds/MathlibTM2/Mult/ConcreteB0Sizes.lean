@@ -243,4 +243,120 @@ theorem Big.concreteB0M_conditions (h : Big n) (i : Fin (d n)) :
     have : (124000 : ℝ)*(1/2^20)+32*(1/2^20)/2≤1 := by norm_num
     nlinarith
 
+/-- Newton iteration count for the pivot reciprocals at precision `4p`. -/
+def newtonK (q : ℕ) : ℕ := 2*(Nat.log 2 q+1)+9
+
+private theorem one_sub_pow_le (x : ℝ) (hx0 : 0≤x) (hx1 : x≤1) (m : ℕ) :
+    (1-x)^m*(1+m*x)≤1 := by
+  have hb := one_add_mul_le_pow (show (-2 : ℝ)≤x by linarith) m
+  have h1 : (1-x)^m*(1+x)^m≤1 := by
+    rw [← mul_pow]; exact pow_le_one₀ (by nlinarith) (by nlinarith)
+  exact le_trans (mul_le_mul_of_nonneg_left hb (pow_nonneg (by linarith) _)) h1
+
+/-- The Newton conditions at precision `4p` with floor `β = 1/(16p)` and
+`newtonK p` iterations, and the effective rounding `η(1+180/β²) ≤ 2^-3p`. -/
+theorem Big.newton_conditions (h : Big n) :
+    let q := p n
+    let η : ℝ := 1/2^(4*q)
+    let β : ℝ := 1/(16*(q : ℝ))
+    0<β ∧ β≤1/(8*(q : ℝ))/2 ∧ 5*η≤2*(β/4)/9 ∧ (1-β/4/2)^(2^newtonK q)≤3*(5*η)/(β/4) ∧
+      η*(1+60*3/β^2)≤1/2^(3*q) := by
+  intro q η β
+  have hq64 : 64≤q := h.sixty_four_le_p
+  have hqR : (64 : ℝ)≤q := by exact_mod_cast hq64
+  have hroom3 : (2 : ℝ)^20*(q : ℝ)^3≤2^q := by exact_mod_cast cube_le_two_pow q hq64
+  have hP0 : (0 : ℝ)<2^q := by positivity
+  have hβ0 : 0<β := by positivity
+  have e4 : (2 : ℝ)^(4*q)=2^q*2^(3*q) := by rw [← pow_add]; congr 1; ring
+  have h3 : (0 : ℝ)<2^(3*q) := by positivity
+  refine ⟨hβ0, ?_, ?_, ?_, ?_⟩
+  · simp only [β]; rw [div_div]; ring_nf; rfl
+  · simp only [η, β]
+    rw [e4]
+    have h1 : (1 : ℝ)≤2^(3*q) := one_le_pow₀ (by norm_num)
+    have hl : 5*(1/(2^q*2^(3*q)))≤5/(2 : ℝ)^q := by
+      rw [show 5*(1/((2 : ℝ)^q*2^(3*q)))=5/2^q/2^(3*q) by ring]
+      exact div_le_self (by positivity) h1
+    have hr : 2*(1/(16*(q : ℝ))/4)/9=1/(288*(q : ℝ)) := by field_simp; ring
+    rw [hr]
+    refine hl.trans ?_
+    rw [div_le_div_iff₀ hP0 (by positivity)]
+    have h2 : (1 : ℝ)≤(q : ℝ)^2 := by nlinarith
+    have : (q : ℝ)≤(q : ℝ)^3 := by
+      have := mul_le_mul_of_nonneg_left h2 (show (0 : ℝ)≤q by linarith)
+      linarith [show (q : ℝ)*(q : ℝ)^2=(q : ℝ)^3 by ring]
+    nlinarith
+  · -- `(1-x)^(128q) ≤ 1/2` with `x = 1/(128q)`, raised to the power `4q`
+    have hx : β/4/2=1/(128*(q : ℝ)) := by simp only [β]; field_simp; ring
+    rw [hx]
+    set x : ℝ := 1/(128*(q : ℝ)) with hxdef
+    have hx0 : 0≤x := by positivity
+    have hx1 : x≤1 := by rw [hxdef, div_le_one (by positivity)]; linarith
+    have hhalf : (1-x)^(128*q)≤1/2 := by
+      have := one_sub_pow_le x hx0 hx1 (128*q)
+      have e : (1 : ℝ)+((128*q : ℕ) : ℝ)*x=2 := by
+        rw [hxdef]; push_cast; field_simp; ring
+      rw [e] at this; linarith
+    have hpow : 128*q*(4*q)≤2^newtonK q := by
+      have hs := Nat.lt_pow_succ_log_self (by norm_num : 1<2) q
+      have : q*q<2^(Nat.log 2 q+1)*2^(Nat.log 2 q+1) := Nat.mul_lt_mul'' hs hs
+      have e : 2^newtonK q=2^(Nat.log 2 q+1)*2^(Nat.log 2 q+1)*512 := by
+        simp only [newtonK]; rw [pow_add, two_mul, pow_add]; norm_num
+      rw [e]
+      calc 128*q*(4*q)=512*(q*q) := by ring
+        _≤512*(2^(Nat.log 2 q+1)*2^(Nat.log 2 q+1)) := Nat.mul_le_mul_left _ this.le
+        _=_ := by ring
+    have hmono : (1-x)^(2^newtonK q)≤(1-x)^(128*q*(4*q)) :=
+      pow_le_pow_of_le_one (by linarith) (by linarith) hpow
+    have h2 : (1-x)^(128*q*(4*q))≤(1/2)^(4*q) := by
+      rw [pow_mul]; exact pow_le_pow_left₀ (pow_nonneg (by linarith) _) hhalf _
+    refine hmono.trans (h2.trans ?_)
+    simp only [η, β]
+    rw [one_div_pow]
+    have e : (3 : ℝ)*(5*(1/2^(4*q)))/(1/(16*(q : ℝ))/4)=960*(q : ℝ)/2^(4*q) := by
+      field_simp; ring
+    rw [e, div_le_div_iff_of_pos_right (by positivity)]
+    linarith
+  · simp only [η, β]
+    have e : (1 : ℝ)/2^(4*q)*(1+60*3/(1/(16*(q : ℝ)))^2)=(1+46080*(q : ℝ)^2)/2^q*(1/2^(3*q)) := by
+      rw [e4]; field_simp; ring
+    rw [e]
+    have hc : (1+46080*(q : ℝ)^2)/2^q≤1 := by
+      rw [div_le_one hP0]; nlinarith
+    calc _≤1*(1/2^(3*q)) := mul_le_mul_of_nonneg_right hc (by positivity)
+      _=_ := one_mul _
+
+/-- The conditions of `FastB0.concrete_resampB₀_specN` at precision `4p`, with
+final error at most `p²`. -/
+theorem Big.concreteB0N_conditions (h : Big n) (i : Fin (d n)) :
+    2^16*(p n : ℝ)^2*(s n i : ℝ)^2*(1/2^(4*p n)*(1+60*3/(1/(16*(p n : ℝ)))^2))≤1 ∧
+    2*(62000*(p n : ℝ)^3*(s n i : ℝ)^2*(1/2^(4*p n)*(1+60*3/(1/(16*(p n : ℝ)))^2)))+2/2^p n+
+        (32*(p n : ℝ)^2/(2 : ℝ)^(45*p n))/2≤1/2 ∧
+    6+2^p n*((2*(62000*(p n : ℝ)^3*(s n i : ℝ)^2*(1/2^(4*p n)*(1+60*3/(1/(16*(p n : ℝ)))^2)))+
+        2/2^p n)+(32*(p n : ℝ)^2/(2 : ℝ)^(45*p n))/2)≤(p n : ℝ)^2 := by
+  obtain ⟨-, -, -, -, hη⟩ := h.newton_conditions
+  set q := p n with hq
+  set η' : ℝ := 1/2^(4*q)*(1+60*3/(1/(16*(q : ℝ)))^2) with hη'
+  obtain ⟨c1, c2, c3⟩ := h.concreteB0M_conditions i
+  have hA : (0 : ℝ)≤(q : ℝ)^2*(s n i : ℝ)^2 := by positivity
+  have hB : (0 : ℝ)≤(q : ℝ)^3*(s n i : ℝ)^2 := by positivity
+  have m1 := mul_le_mul_of_nonneg_left hη hA
+  have m2 := mul_le_mul_of_nonneg_left hη hB
+  have hP : (0 : ℝ)≤2^q := by positivity
+  refine ⟨?_, ?_, ?_⟩
+  · have e1 : 2^16*(q : ℝ)^2*(s n i : ℝ)^2*η'=2^16*((q : ℝ)^2*(s n i : ℝ)^2*η') := by ring
+    have e2 : 2^16*(q : ℝ)^2*(s n i : ℝ)^2*(1/2^(3*q))=2^16*((q : ℝ)^2*(s n i : ℝ)^2*(1/2^(3*q))) := by
+      ring
+    rw [e1]; rw [e2] at c1; linarith
+  · have e1 : 62000*(q : ℝ)^3*(s n i : ℝ)^2*η'=62000*((q : ℝ)^3*(s n i : ℝ)^2*η') := by ring
+    have e2 : 62000*(q : ℝ)^3*(s n i : ℝ)^2*(1/2^(3*q))=62000*((q : ℝ)^3*(s n i : ℝ)^2*(1/2^(3*q))) := by
+      ring
+    rw [e1]; rw [e2] at c2; linarith
+  · have e1 : 62000*(q : ℝ)^3*(s n i : ℝ)^2*η'=62000*((q : ℝ)^3*(s n i : ℝ)^2*η') := by ring
+    have e2 : 62000*(q : ℝ)^3*(s n i : ℝ)^2*(1/2^(3*q))=62000*((q : ℝ)^3*(s n i : ℝ)^2*(1/2^(3*q))) := by
+      ring
+    rw [e1]; rw [e2] at c3
+    have := mul_le_mul_of_nonneg_left m2 (show (0 : ℝ)≤2^q*124000 by positivity)
+    nlinarith
+
 end IntegerMultBounds.MathlibTM2.Mult.Sizes
