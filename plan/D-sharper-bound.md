@@ -1803,3 +1803,9 @@ error end to end for any dominant system. Rounded factors are triangular in
 that order and stay inside the exact fill (`fill_support_r`). This is the
 numeric specification the new `B̃₀` tape machine must implement. The guarded
 check and5-declaration standard-axiom audit pass.
+
+On the actual rounded Gaussian matrix in physical order, the concrete band
+solve is within `2700s²p²η` of the exact solution whenever `128ps²η≤1`
+(`PhaseCellBandSolve`). With `η=2^-P` and `P≥p+2log₂s+O(log p)` this meets
+the `B̃₀` interface error `p²`. The guarded check and3-declaration
+standard-axiom audit pass.
