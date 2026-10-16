@@ -469,4 +469,29 @@ theorem Big.concreteB0P_conditions (h : Big n) (i : Fin (d n)) (ε : ℝ) (hε0 
     pcore_3 q (s n i) X _ η' ε hqR hX0 hXs hq3X hs hη0 hη hε0 hε hX45,
     pcore_4 q (s n i) X _ _ η' ε hqR hX0 hXs hq3X hs hη0 hη hε0 hε hmul hY⟩
 
+/-- The window-matrix perturbation at entry precision `5q`: with `2w+1 ≤ 2^q`
+and `q ≥ 2`, `(2w+1)·2/2^(5q) + 2^-46q + 2^-45q ≤ 2^-3q`. -/
+theorem window_eps_le (q w : ℕ) (hq : 2≤q) (hw : (2*w+1 : ℝ)≤2^q) :
+    (2*w+1 : ℝ)*(2/2^(5*q))+1/(2 : ℝ)^(46*q)+1/(2 : ℝ)^(45*q)≤1/2^(3*q) := by
+  have hP0 : (0 : ℝ)<2^q := by positivity
+  set X : ℝ := 1/2^q with hX
+  have hX0 : 0<X := by positivity
+  have hpow : ∀ k, (1 : ℝ)/2^(k*q)=X^k := fun k => by rw [hX, one_div_pow, ← pow_mul, mul_comm]
+  have hX4 : X≤1/4 := by
+    rw [hX]; exact one_div_le_one_div_of_le (by norm_num)
+      (by calc (4 : ℝ)=2^2 := by norm_num
+            _≤2^q := pow_le_pow_right₀ (by norm_num) hq)
+  have e5 : (2 : ℝ)/2^(5*q)=2*X^5 := by rw [← hpow 5]; ring
+  rw [e5, hpow 46, hpow 45, hpow 3]
+  have hwX : (2*w+1 : ℝ)*X≤1 := by
+    rw [hX, mul_one_div, div_le_one hP0]; exact hw
+  have h1 : (2*w+1 : ℝ)*(2*X^5)=2*X^4*((2*w+1 : ℝ)*X) := by ring
+  have h2 : (2*w+1 : ℝ)*(2*X^5)≤2*X^4 := by
+    rw [h1]; exact mul_le_of_le_one_right (by positivity) hwX
+  have h3 : X^46≤X^45 := pow_le_pow_of_le_one hX0.le (by linarith) (by norm_num)
+  have h4 : X^45≤X^4 := pow_le_pow_of_le_one hX0.le (by linarith) (by norm_num)
+  have h5 : X^4=X*X^3 := by ring
+  have h6 : X*X^3≤(1/4)*X^3 := mul_le_mul_of_nonneg_right hX4 (by positivity)
+  nlinarith
+
 end IntegerMultBounds.MathlibTM2.Mult.Sizes

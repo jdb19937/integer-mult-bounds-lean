@@ -1910,3 +1910,12 @@ of the phase-cell matrix. `NLogN/PhaseCellPerturb` shows a row-sum perturbation
 (`bandSolveMach_perturb`). `concrete_resampB₀_specP` gives the pipeline
 interface, and `Big.concreteB0P_conditions` discharges it at precision `5p`,
 `β = 1/(32p)`, `newtonK p = 2(log₂p+1)+11` and `ε ≤ 2^-3p`, error at most `p²`.
+
+The matrix the machine builds is the wrapped window of Gaussian coefficients
+`exp(normExp j k)`, `|k| ≤ w = width p u` (about `4√(p/u)`), each within `δ`
+(`NLogN/PhaseCellMachMatrix`, `windowMatrix`). Its rows are within
+`(2w+1)δ + 2^-46p + 2^-45p` of the phase-cell rows in absolute sum
+(`windowMatrix_close`, through the exact window, `N`, and `‖rounded - exact‖`).
+`concrete_resampB₀_specW` gives the pipeline interface for its machine solve,
+and `window_eps_le` makes the perturbation at most `2^-3p` for entries at
+precision `5p` (the `tableE` routine at precision `5p` gives `δ = 2/2^(5p)`).
