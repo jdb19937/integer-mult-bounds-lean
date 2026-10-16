@@ -1723,3 +1723,9 @@ permutation-left factorization is now proved there without `α²θ≥1`:
 already generic `sourceApprox_err` with `γ=d(2⌈α²⌉+2+j)`. The guarded check
 and standard-axiom audit pass. The new line maps (chirp forward, phase-cell
 inverse) on tapes, their costs and the `ε=5/8` sizing remain open.
+
+The pipeline's `B̃₀` interface is now generic in the computed inverse: any J̃
+that keeps the unit disk and is within `εJ` of `J(v/2)` yields `hB'`/`hB'1`
+with error `6+εJ`, and `B₀(J/2^j)=B₀(J)/2^j`. A phase-cell solve of `N` scaled
+by `2^-j` therefore enters the existing source-error theorem unchanged. The
+guarded check and3-declaration standard-axiom audit pass.
