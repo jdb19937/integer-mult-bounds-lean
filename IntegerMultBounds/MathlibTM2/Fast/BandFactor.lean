@@ -120,6 +120,11 @@ noncomputable def bandAxisFacP : Pr P T Q A U :=
   .seq (rsbMv (rg .tswn) (rg .tC) (rg .src) (rg .ac2)) (.seq (moveR (rg .ac2) (rg .vk) id)
     (.seq (bandFacLoopP rg hι hT hQ) (emptyR (rg .vk))))
 
+/-- Transpose, drop the final window, store the backward columns on `hf`. -/
+def bandAxisTrP : Pr P T Q A U :=
+  .seq (bandTLoopP rg) (.seq (emptyR (rg .vk)) (.seq (moveR (rg .ef) (rg .ac2) id)
+    (moveR (rg .ac2) (rg .hf) id)))
+
 end Programs
 
 /-- A Newton step on real records. -/
@@ -1492,6 +1497,60 @@ theorem band_axisFac_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r �
       rw [List.map_congr_left (g := fun _ => 2 * B + 1) (fun r hr => by simp [colC, hrl' r hr]),
         List.map_const', List.sum_replicate, hl, smul_eq_mul]
     rw [hsum]; omega
+
+/-- **Transpose and store.** -/
+theorem band_axisTr_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠ ι j) {w k s : ℕ}
+    (σ : RsbR → List (Fin (A + 4))) (Ur : List (List ℤ)) (hUr : Ur.length = s)
+    (hrow : ∀ row ∈ Ur, row.length = 2 * (k + 1) + 1) (SRC : List (Fin (A + 4)))
+    (hsrc : σ .src = cstream A w (Ur.map colC).flatten ++ SRC)
+    (hvk : σ .vk = cstream A w ((Mult.BandFactor.tWin (k + 1) Ur 0).map colC).flatten)
+    (hef : σ .ef = []) (hhf : σ .hf = []) (hmsk : σ .msk = csyms A w 0) (hpr : σ .pr = [])
+    (hxs : σ .xs = []) (hya : σ .ya = []) (hnv : σ .nv = []) (htC : σ .tC = []) (htL : σ .tL = [])
+    (hsel : σ .sel = []) (hac2 : σ .ac2 = []) (hsn : (σ .sn).length = s)
+    (hwn : (σ (.cm .wn)).length = w) (hmwn : (σ .mwn).length = (k + 1) * w)
+    (hm2wn : (σ .m2wn).length = k * w) (hms : (σ .ms).length = k) :
+    RsbRuns body rg ι (bandAxisTrP rg) σ
+      (Function.update (Function.update (Function.update σ .src SRC) .vk []) .hf
+        (cstream A w ((List.range s).reverse.map fun m =>
+          colC (Mult.BandFactor.ucolZ (k + 1) Ur m)).flatten))
+      (s * (bandTStepCost w k + 6) + 4 + (2 * ((k + 1) * (k + 1) * w) + 2) +
+        (2 * (s * (k + 1) * w) + 2) + (2 * (s * (k + 1) * w) + 2)) := by
+  have h₁ := band_tLoop_runs (body := body) (ι := ι) hrg hdisj σ Ur hUr hrow SRC [] hsrc hvk hef hmsk
+    hpr hxs hya hnv htC htL hsel hsn hwn hmwn hm2wn hms
+  set σ₁ := Function.update (Function.update (Function.update σ .src SRC) .vk
+    (cstream A w ((Mult.BandFactor.tWin (k + 1) Ur s).map colC).flatten))
+    .ef (cstream A w ((List.range s).reverse.map fun m =>
+      colC (Mult.BandFactor.ucolZ (k + 1) Ur m)).flatten ++ [])
+  have h₂ := rsb_emptyR_runs (body := body) (ι := ι) hrg .vk σ₁
+  have h₃ := rsb_moveR_runs (body := body) (ι := ι) hrg (a := .ef) (b := .ac2) (by decide)
+    (Function.update σ₁ .vk [])
+  have h₄ := rsb_moveR_runs (body := body) (ι := ι) hrg (a := .ac2) (b := .hf) (by decide)
+    (Function.update (Function.update (Function.update σ₁ .vk []) .ef [])
+      .ac2 (((Function.update σ₁ .vk []) .ef).reverse ++ (Function.update σ₁ .vk []) .ac2))
+  have hwin : ∀ m, (cstream A w ((Mult.BandFactor.tWin (k + 1) Ur m).map colC).flatten).length =
+      (k + 1) * (k + 1) * w := by
+    intro m
+    rw [length_cstream, List.length_flatten, List.map_map,
+      List.map_congr_left (g := fun _ => k + 1) (fun r hr => by
+        simp only [Mult.BandFactor.tWin, List.mem_map] at hr
+        obtain ⟨d, -, rfl⟩ := hr
+        simp [colC]),
+      List.map_const', List.sum_replicate, smul_eq_mul]
+    simp [Mult.BandFactor.tWin]
+  have hcols : (cstream A w ((List.range s).reverse.map fun m =>
+      colC (Mult.BandFactor.ucolZ (k + 1) Ur m)).flatten).length = s * (k + 1) * w := by
+    rw [length_cstream, List.length_flatten, List.map_map,
+      List.map_congr_left (g := fun _ => k + 1) (fun m _ => by simp [colC, Mult.BandFactor.ucolZ]),
+      List.map_const', List.sum_replicate, smul_eq_mul]
+    simp
+  refine ((RsbRuns.seq hdisj h₁ (RsbRuns.seq hdisj h₂ (RsbRuns.seq hdisj h₃ h₄))).congr ?_).mono ?_
+  · funext x; cases x <;> simp [σ₁, hvk, hef, hhf, hac2]
+  · simp only [σ₁, Function.update_self, Function.update_of_ne (by decide : RsbR.ef ≠ RsbR.vk),
+      Function.update_of_ne (by decide : RsbR.ac2 ≠ RsbR.ef),
+      Function.update_of_ne (by decide : RsbR.ac2 ≠ RsbR.vk), Function.update_of_ne (by decide : RsbR.ac2 ≠ RsbR.src),
+      List.append_nil, hwin, hcols, List.length_append, List.length_reverse, hac2, List.length_nil]
+    rw [Function.update_of_ne (by decide : RsbR.vk ≠ RsbR.ef), Function.update_self, hwin]
+    omega
 
 end Contracts
 
