@@ -112,7 +112,7 @@ theorem band_stgZ_sizes (p : ℕ) (hp : 2 ≤ p) (hP : 2 ≤ P)
   · rw [hmap]; exact hpiv.2
   · by_cases his : i < s ∧ l < s
     · rw [hmap]; exact hent i l hi his.1 hl his.2
-    · rw [stgZ_out P K s _ (fun i j h => by unfold foldZ; rw [if_neg (by omega)]) m i l
+    · rw [stgZ_out P K s _ (fun i j h => by unfold foldZ; split_ifs <;> omega) m i l
         (by omega), gv_zero]
       norm_num
 
@@ -192,5 +192,169 @@ theorem band_facFits (p : ℕ) (hp : 2 ≤ p) (hP : 2 ≤ P)
     simp only [C]; linarith
 
 end Stages
+
+/-- The arithmetic of the line bounds under `2^16 (2p)² s² η ≤ 1`. -/
+theorem band_line_arith (p s η : ℝ) (hp : 2 ≤ p) (hs : 1 ≤ s) (hη : 0 ≤ η)
+    (hsmall : 2 ^ 16 * (2 * p) ^ 2 * s ^ 2 * η ≤ 1) :
+    9 / 4 + s * (η * (s + 3)) ≤ 3 ∧ (s + 3 + 2 * (3 * η) * 3) * η ≤ 1 / 2 ∧
+      2 * (3 * η) * 3 * (8 * p + 1) ≤ 1 / 2 := by
+  have hq : (16 : ℝ) ≤ (2 * p) ^ 2 := by nlinarith
+  have h0 : 0 ≤ s ^ 2 * η := by positivity
+  have hs2 : s ^ 2 * η * 2 ^ 20 ≤ 1 := by
+    have := mul_le_mul_of_nonneg_left hq (by positivity : (0 : ℝ) ≤ s ^ 2 * η * 2 ^ 16)
+    nlinarith
+  have hs1' : (1 : ℝ) ≤ s ^ 2 := by nlinarith
+  have hp2 : p ^ 2 * η * 2 ^ 18 ≤ 1 := by
+    have := mul_le_mul_of_nonneg_left hs1' (by positivity : (0 : ℝ) ≤ p ^ 2 * η * 2 ^ 18)
+    nlinarith
+  have hpη : p * η ≤ p ^ 2 * η := mul_le_mul_of_nonneg_right (by nlinarith) hη
+  have hsη : s * η ≤ s ^ 2 * η := mul_le_mul_of_nonneg_right (by nlinarith) hη
+  have hηs : η ≤ s ^ 2 * η := le_mul_of_one_le_left hη hs1'
+  have hηη : η * η ≤ η := by nlinarith
+  refine ⟨by nlinarith, by nlinarith, by nlinarith⟩
+
+section Line
+
+/-- The forward values of the numerator line solve are the forward substitution of the
+machine-rule band solve in natural order. -/
+theorem lineFwd_eq (P K B s : ℕ) (hP : 2 ≤ P) (AZ : ℕ → ℕ → ℤ) (hA : BandFrom B (gvM P AZ) 0)
+    (hout : ∀ i j, (s ≤ i ∨ s ≤ j) → AZ i j = 0) (bZ : List ℤ) (hlen : bZ.length = s) :
+    (fwdZ P ((factorRowsZ P K (windowZ B AZ) (inputsZ B AZ s)).map Prod.fst)
+      (bZ ++ List.replicate B 0)).map (gv P) =
+      (List.range' 0 s).map (fwdM (rdP P) (luLr (rdP P) (mRule P K) (gvM P AZ) (Ico 0 s)
+        (List.range' 0 s)) (fun i => gv P (bZ.getD i 0)) ∅ (fun _ => 0) (List.range' 0 s)) := by
+  set ks := List.range' 0 s with hks
+  have hnd : ks.Nodup := List.nodup_range'
+  have hfac := factorRowsZ_run P K B hP AZ hA s
+  have hLc : (factorRowsZ P K (windowZ B AZ) (inputsZ B AZ s)).map Prod.fst =
+      (cols (LzN P K s AZ) ks).map (padCol B) := by
+    rw [hfac, List.map_map, lcols_eq P K B s AZ hout]; rfl
+  have hlenk : bZ.length = ks.length := by rw [hlen, hks, List.length_range']
+  rw [hLc, fwdZ_pad P B (LzN P K s AZ) ks (banded_LzN P K B s hP AZ hA hout) bZ hlenk]
+  have hbZ : bZ = ks.map fun i => bZ.getD i 0 := by rw [hks, ← hlen, range'_getD]
+  have h1 := fwdZ_eq P (luLr (rdP P) (mRule P K) (gvM P AZ) (Ico 0 s) ks) (LzN P K s AZ)
+    (fun i k => luLr_natural P K s hP AZ i k) ks hnd (fun _ => 0) (fun i => bZ.getD i 0)
+  rw [← hbZ] at h1
+  have h2 := colFwd_eq (rdP P) (luLr (rdP P) (mRule P K) (gvM P AZ) (Ico 0 s) ks)
+    (fun i => gv P (bZ.getD i 0)) ks hnd ∅ (fun _ => 0) (fun i => ((bZ.getD i 0 : ℤ) : ℝ) / 2 ^ P)
+    (fun k _ => Finset.notMem_empty k) (fun k _ => by simp [gv])
+  exact h1.trans (by rw [h2])
+
+variable {P K wd s : ℕ} [NeZero s] {aZ : ZMod s → ℤ → ℤ}
+
+/-- **Sizes of the line solve.** For a right-hand side of grid values at most `1/2`, the
+computed solution is at most `8p + 1` and every forward value at most `3(8p + 1) + 1`. -/
+theorem band_line_sizes (p : ℕ) (hp : 2 ≤ p) (hP : 2 ≤ P)
+    (hinv : StageInv (windowMatrix s wd fun j k => gv P (aZ j k)) univ (1 / (8 * (2 * (p : ℝ))))
+      (9 / 4))
+    (β : ℝ) (hβ : 0 < β) (hβp : β ≤ 1 / (8 * (2 * (p : ℝ))) / 2)
+    (hηβ : 5 * (1 / 2 ^ P : ℝ) ≤ 2 * (β / 4) / 9)
+    (hK : (1 - β / 4 / 2) ^ (2 ^ K) ≤ 3 * (5 * (1 / 2 ^ P : ℝ)) / (β / 4))
+    (hsmall : 2 ^ 16 * (2 * (p : ℝ)) ^ 2 * (s : ℝ) ^ 2 * ((1 / 2 ^ P : ℝ) * (1 + 60 * 3 / β ^ 2)) ≤ 1)
+    (hE : 62000 * (2 * (p : ℝ)) ^ 3 * (s : ℝ) ^ 2 * ((1 / 2 ^ P : ℝ) * (1 + 60 * 3 / β ^ 2)) ≤ 1)
+    (bZ : List ℤ) (hlen : bZ.length = s) (hb : ∀ i < s, |gv P (bZ.getD i 0)| ≤ 1 / 2) :
+    (∀ i < s, |gv P ((lineSolveZ P K (2 * wd + 1) s (foldZ s wd aZ) bZ).getD i 0)| ≤ 8 * p + 1) ∧
+      ∀ i < s, |gv P ((fwdZ P (bandLc P K wd s aZ) (bZ ++ List.replicate (2 * wd + 1) 0)).getD i 0)|
+        ≤ 3 * (8 * p + 1) + 1 := by
+  set η : ℝ := 1 / 2 ^ P
+  have hη : 0 ≤ η := by positivity
+  set η' := η * (1 + 60 * 3 / β ^ 2) with hη'
+  have hle : η ≤ η' := by
+    have : 0 ≤ η * (60 * 3 / β ^ 2) := by positivity
+    nlinarith
+  have hη'0 : 0 ≤ η' := by positivity
+  have hrd' : ∀ x, |rdP P x - x| ≤ η' := fun x => (rdP_err P x).trans (by simpa [η] using hle)
+  have hrd0 := rdP_zero P
+  have hpR : (2 : ℝ) ≤ p := by exact_mod_cast hp
+  have hqR : (2 : ℝ) ≤ 2 * (p : ℝ) := by linarith
+  have hs1 : (1 : ℝ) ≤ s := by exact_mod_cast Nat.one_le_iff_ne_zero.mpr (NeZero.ne s)
+  have hμ : (0 : ℝ) < 1 / (8 * (2 * (p : ℝ))) := by positivity
+  set At := windowMatrix s wd fun j k => gv P (aZ j k)
+  set b : ZMod s → ℝ := fun a => gv P (bZ.getD (foldPos s a) 0)
+  obtain ⟨R, hR⟩ := exists_solver At univ _ hμ hinv.1
+  set xt := R b
+  have hxt := hR b
+  have hcard : ((univ : Finset (ZMod s)).card : ℝ) ≤ s := by simp [ZMod.card]
+  have hlenO := foldOrder_length s
+  have hX : ∀ i ∈ (univ : Finset (ZMod s)), |xt i| ≤ 4 * (2 * (p : ℝ)) := by
+    intro i hi
+    have h := solves_bound _ _ _ hμ hinv.1 xt b hxt (1 / 2)
+      (fun i _ => hb _ (foldPos_lt s i)) i hi
+    rw [div_div_eq_mul_div, div_one] at h
+    linarith
+  obtain ⟨hm', hmu', hMη, hsm', hfin⟩ :=
+    bandM_arith (2 * (p : ℝ)) (s : ℝ) η' hqR hs1 hη'0 hsmall
+  obtain ⟨hA0, hA1, hA2⟩ := band_line_arith (p : ℝ) (s : ℝ) η' hpR hs1 hη'0 hsmall
+  have hm'' : 9 / 4 + (foldOrder s).length * (η' * (s + 3)) ≤ 3 := by rw [hlenO]; exact hA0
+  have hmul := NewtonRecip.recipMul_err (rdP P) η (rdP_err P) 3 β (by norm_num) hβ hηβ K hK
+  have hagree : ∀ a c, |a| ≤ 3 → 1 / (8 * (2 * (p : ℝ))) / 2 ≤ c → c ≤ 3 →
+      PhaseCellMatrix.machMul (rdP P) K a c = NewtonRecip.recipMul (rdP P) 3 β K a c :=
+    fun a c ha hc hc3 => by
+      simp only [machMul, NewtonRecip.recipMul, hβp.trans hc, hc3, ha, and_self, ite_true]
+  have hrecA : ∀ c, 1 / (8 * (2 * (p : ℝ))) / 2 ≤ c → c ≤ 3 →
+      NewtonRecip.newtonR (rdP P) c K = NewtonRecip.recipNewton (rdP P) β K c := fun c hc hc3 => by
+    simp only [NewtonRecip.recipNewton, hβp.trans hc, hc3, and_self, ite_true]
+  have hrec : ∀ c, 1 / (8 * (2 * (p : ℝ))) / 2 ≤ c → c ≤ 3 →
+      |c * NewtonRecip.recipNewton (rdP P) β K c - 1| ≤ 3 * η' := fun c hc hc3 => by
+    have h := NewtonRecip.recipNewton_residual (rdP P) η (rdP_err P) β hβ hηβ K hK c (hβp.trans hc) hc3
+    have e : 3 * (η * (1 + 60 * 3 / β ^ 2)) = 3 * η + 3 * (180 * η / β ^ 2) := by ring
+    have h0 : 0 ≤ 180 * η / β ^ 2 := by positivity
+    rw [hη', e]; linarith
+  obtain ⟨hsol, hfwd, -⟩ := bandSolveG_sizes (rdP P) (NewtonRecip.recipMul (rdP P) 3 β K)
+    (NewtonRecip.recipNewton (rdP P) β K) η' (3 * η') hrd' hrd0 hmul
+    (NewtonRecip.recipMul_zero (rdP P) hrd0 3 β K) (foldPos s) (foldPos_injective s) At univ _ (9 / 4)
+    3 s hμ (by norm_num) (by norm_num) hinv hcard (foldOrder s) (foldOrder_toFinset s)
+    (foldOrder_sorted s) hm'' (by rw [hlenO]; exact hmu') hrec hMη xt b hxt _ (by positivity) hX
+    (by rw [hlenO]; exact hsm') (8 * p + 1) (by rw [hlenO]; linarith [hfin, hE])
+  -- machine rules agree with the analysed ones
+  have hcongr := bandSolveG_congr (rdP P) (NewtonRecip.recipMul (rdP P) 3 β K) η' hrd' hmul
+    (machMul (rdP P) K) (NewtonRecip.recipNewton (rdP P) β K) (fun c => NewtonRecip.newtonR (rdP P) c K)
+    At univ _ (9 / 4) 3 s hμ (by norm_num) (by norm_num) hinv hcard (foldOrder s)
+    (foldOrder_toFinset s) hm'' (by rw [hlenO]; exact hmu') hagree hrecA b
+  have hL := lur_congr (rdP P) (NewtonRecip.recipMul (rdP P) 3 β K) η' hrd' hmul (machMul (rdP P) K)
+    _ 3 s hμ (by norm_num) (by linarith) hagree (foldOrder s) At At univ _ (9 / 4) hinv
+    (fun _ _ _ => rfl) hcard (by norm_num) hm'' (by rw [hlenO]; linarith)
+  have hgetD : ∀ (l : List ℤ) (i : ℕ), gv P (l.getD i 0) = (l.map (gv P)).getD i 0 := by
+    intro l i
+    by_cases h : i < l.length
+    · rw [List.getD_eq_getElem _ _ h, List.getD_eq_getElem _ _ (by simpa using h), List.getElem_map]
+    · rw [List.getD_eq_default _ _ (by omega), List.getD_eq_default _ _ (by simpa using h), gv_zero]
+  have hrange : ∀ (F : ℕ → ℝ) (i : ℕ), i < s → ((List.range' 0 s).map F).getD i 0 = F i :=
+    fun F i hi => by
+      rw [List.getD_eq_getElem _ _ (by simpa using hi), List.getElem_map, List.getElem_range']
+      simp
+  refine ⟨fun i hi => ?_, fun i hi => ?_⟩
+  · rw [hgetD, lineSolveFold_eq P K s hP wd aZ bZ hlen, hrange _ i hi]
+    have e : Mult.FastB0.machSolveT K (rdP P) At (fun a => gv P (bZ.getD (foldPos s a) 0)) (foldAt s i) =
+        bandSolveG (rdP P) (NewtonRecip.recipMul (rdP P) 3 β K) (NewtonRecip.recipNewton (rdP P) β K)
+          At univ (foldOrder s) b (foldAt s i) := by
+      rw [← hcongr]; rfl
+    rw [e]; exact hsol _ (mem_univ _)
+  · have hband := foldZ_band P s wd aZ
+    have hout : ∀ i j, (s ≤ i ∨ s ≤ j) → foldZ s wd aZ i j = 0 := fun i j h => by
+      unfold foldZ; split_ifs <;> omega
+    rw [hgetD, show bandLc P K wd s aZ = (factorRowsZ P K (windowZ (2 * wd + 1) (foldZ s wd aZ))
+      (inputsZ (2 * wd + 1) (foldZ s wd aZ) s)).map Prod.fst from rfl,
+      lineFwd_eq P K (2 * wd + 1) s hP (foldZ s wd aZ) hband hout bZ hlen, hrange _ i hi]
+    have hlu := lur_map (rdP P) (mRule P K) (foldPos s) (foldPos_injective s) (foldOrder s) At
+      (gvM P (foldZ s wd aZ)) univ (fun a c => by
+        simp only [gvM, foldZ, foldPos_lt, and_self, ite_true, foldAt_foldPos]
+        exact wmZ_gv P s wd aZ a c)
+    have hmap := fwdM_map (rdP P) (foldPos s) (foldPos_injective s)
+      (luLr (rdP P) (mRule P K) At univ (foldOrder s))
+      (luLr (rdP P) (mRule P K) (gvM P (foldZ s wd aZ)) (univ.image (foldPos s))
+        ((foldOrder s).map (foldPos s))) (fun a c => (hlu a c).1) b
+      (fun i => gv P (bZ.getD i 0)) (fun _ => rfl) (foldOrder s) ∅ (fun _ => 0) (fun _ => 0)
+      (fun _ => rfl) (foldAt s i)
+    rw [image_foldPos, foldOrder_map_foldPos, image_empty, foldPos_foldAt s i hi] at hmap
+    rw [hmap]
+    have hLe : luLr (rdP P) (mRule P K) At univ (foldOrder s) =
+        luLr (rdP P) (NewtonRecip.recipMul (rdP P) 3 β K) At univ (foldOrder s) := by
+      funext a c; exact (hL a (mem_univ a) c).1
+    rw [hLe]
+    have h := hfwd _ (mem_univ (foldAt s i))
+    linarith
+
+end Line
 
 end IntegerMultBounds.MathlibTM2.Fast
