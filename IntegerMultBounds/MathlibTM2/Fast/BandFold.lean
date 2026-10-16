@@ -34,6 +34,10 @@ def bandRec1P (x y : RsbR) : Pr P T Q A U :=
 def bandILeaveP (a b z n tn : RsbR) : Pr P T Q A U :=
   rsbRep (rg n) (rg tn) (.seq (bandRec1P rg a z) (bandRec1P rg b z))
 
+/-- Split records of `x` alternately onto `e` and `o`, one pair per symbol of `n`. -/
+def bandDeILeaveP (x e o n tn : RsbR) : Pr P T Q A U :=
+  rsbRep (rg n) (rg tn) (.seq (bandRec1P rg x e) (bandRec1P rg x o))
+
 end Programs
 
 section Contracts
@@ -208,6 +212,134 @@ theorem band_ileave_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r �
     · subst hrn; simp [rsbUpd2, Function.update_of_ne hrt, Function.update_of_ne (Ne.symm han),
         Function.update_of_ne (Ne.symm hbn), Function.update_of_ne (Ne.symm hzn)]
     simp [rsbUpd2, hΨ, hrz, hrb, hra, hrt, hrn]
+  · rw [hn]
+
+/-- One pair of the deinterleave loop. -/
+theorem band_deileave_step (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠ ι j)
+    {x e o : RsbR} (hd : [x, e, o, .cm .wn, .tC, .ac2].Nodup) {w : ℕ}
+    (ρ : RsbR → List (Fin (A + 4))) (a b : GaussianInt) (R : List (Fin (A + 4)))
+    (hx : ρ x = csyms A w a ++ csyms A w b ++ R)
+    (hwn : (ρ (.cm .wn)).length = w) (htC : ρ .tC = []) (hac2 : ρ .ac2 = []) :
+    RsbRuns body rg ι (.seq (bandRec1P rg x e) (bandRec1P rg x o)) ρ
+      (Function.update (Function.update (Function.update ρ x R) e (csyms A w a ++ ρ e)) o
+        (csyms A w b ++ ρ o)) (2 * (6 * w + 6)) := by
+  have hd' := hd
+  simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or] at hd'
+  obtain ⟨⟨hxe, hxo, hxw, hxC, hxa⟩, ⟨heo, hew, heC, hea⟩, ⟨how, hoC, hoa⟩, ⟨hwC, hwa⟩, hCa, -⟩ := hd'
+  have h₁ := band_rec1_runs (body := body) (ι := ι) hrg hdisj (x := x) (y := e) (w := w)
+    (by simp [hxe, hxw, hxC, hxa, hew, heC, hea, hwC, hwa, hCa]) ρ a (csyms A w b ++ R)
+    (by rw [hx, List.append_assoc]) hwn htC hac2
+  have h₂ := band_rec1_runs (body := body) (ι := ι) hrg hdisj (x := x) (y := o) (w := w)
+    (by simp [hxo, hxw, hxC, hxa, how, hoC, hoa, hwC, hwa, hCa])
+    (Function.update (Function.update ρ x (csyms A w b ++ R)) e (csyms A w a ++ ρ e)) b R
+    (by rw [Function.update_of_ne hxe, Function.update_self])
+    (by rw [Function.update_of_ne (Ne.symm hew), Function.update_of_ne (Ne.symm hxw), hwn])
+    (by rw [Function.update_of_ne (Ne.symm heC), Function.update_of_ne (Ne.symm hxC), htC])
+    (by rw [Function.update_of_ne (Ne.symm hea), Function.update_of_ne (Ne.symm hxa), hac2])
+  refine ((RsbRuns.seq hdisj h₁ h₂).congr ?_).mono (by omega)
+  funext r
+  by_cases hro : r = o
+  · subst hro; simp [Function.update_of_ne (Ne.symm heo), Function.update_of_ne (Ne.symm hxo)]
+  by_cases hre : r = e
+  · subst hre; simp [Function.update_of_ne hro, Function.update_of_ne (Ne.symm hxe)]
+  by_cases hrx : r = x
+  · subst hrx; simp [Function.update_of_ne hro, Function.update_of_ne hre]
+  simp [Function.update_of_ne hro, Function.update_of_ne hre, Function.update_of_ne hrx]
+
+/-- **Deinterleave loop.** -/
+theorem band_deileave_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠ ι j)
+    {x e o n tn : RsbR} (hd : [x, e, o, n, tn, .cm .wn, .tC, .ac2].Nodup) {w : ℕ}
+    (σ : RsbR → List (Fin (A + 4))) (as bs : List GaussianInt) (R : List (Fin (A + 4)))
+    (hlen : as.length = bs.length) (hn : (σ n).length = as.length)
+    (hx : σ x = cstream A w (Mult.BandFactor.interleave as bs) ++ R)
+    (hwn : (σ (.cm .wn)).length = w) (htC : σ .tC = []) (hac2 : σ .ac2 = []) (htn : σ tn = []) :
+    RsbRuns body rg ι (bandDeILeaveP rg x e o n tn) σ
+      (Function.update (Function.update (Function.update σ x R) e
+        (cstream A w as.reverse ++ σ e)) o (cstream A w bs.reverse ++ σ o))
+      (as.length * (2 * (6 * w + 6) + 6) + 4) := by
+  have hd6 : [x, e, o, RsbR.cm .wn, RsbR.tC, RsbR.ac2].Nodup := by
+    simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or] at hd ⊢
+    tauto
+  have hd' := hd
+  simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or] at hd'
+  obtain ⟨⟨hxe, hxo, hxn, hxt, -⟩, ⟨heo, hen, het, -⟩, ⟨hon, hot, -⟩, ⟨hnt, -⟩, -⟩ := hd'
+  obtain ⟨Ψ, hΨ⟩ : ∃ Ψ : ℕ → RsbR → List (Fin (A + 4)), Ψ = fun j =>
+      Function.update (Function.update (Function.update σ x
+        (cstream A w (Mult.BandFactor.interleave (as.drop j) (bs.drop j)) ++ R)) e
+        (cstream A w (as.take j).reverse ++ σ e)) o (cstream A w (bs.take j).reverse ++ σ o) := ⟨_, rfl⟩
+  have hbody : ∀ j < (σ n).length, ∀ X Y, RsbRuns body rg ι
+      (.seq (bandRec1P rg x e) (bandRec1P rg x o))
+      (rsbUpd2 (Ψ j) n X tn Y) (rsbUpd2 (Ψ (j + 1)) n X tn Y) (2 * (6 * w + 6)) := by
+    intro j hj X Y
+    rw [hn] at hj
+    have hjb : j < bs.length := by omega
+    have hda : as.drop j = as[j] :: as.drop (j + 1) := List.drop_eq_getElem_cons hj
+    have hdb : bs.drop j = bs[j] :: bs.drop (j + 1) := List.drop_eq_getElem_cons hjb
+    have h := band_deileave_step (body := body) (ι := ι) hrg hdisj hd6 (w := w)
+      (rsbUpd2 (Ψ j) n X tn Y) as[j] bs[j]
+      (cstream A w (Mult.BandFactor.interleave (as.drop (j + 1)) (bs.drop (j + 1))) ++ R)
+      (by
+        rw [show rsbUpd2 (Ψ j) n X tn Y x = cstream A w (Mult.BandFactor.interleave (as.drop j)
+            (bs.drop j)) ++ R by
+          simp [rsbUpd2, hΨ, Function.update_of_ne hxn, Function.update_of_ne hxt,
+            Function.update_of_ne hxe, Function.update_of_ne hxo], hda, hdb]
+        simp [Mult.BandFactor.interleave])
+      (by simp only [rsbUpd2, hΨ, Function.update_apply]; split_ifs <;> simp_all)
+      (by simp only [rsbUpd2, hΨ, Function.update_apply]; split_ifs <;> simp_all)
+      (by simp only [rsbUpd2, hΨ, Function.update_apply]; split_ifs <;> simp_all)
+    refine h.congr ?_
+    have hta : (as.take (j + 1)).reverse = as[j] :: (as.take j).reverse := by
+      rw [List.take_succ_eq_append_getElem hj]; simp
+    have htb : (bs.take (j + 1)).reverse = bs[j] :: (bs.take j).reverse := by
+      rw [List.take_succ_eq_append_getElem hjb]; simp
+    funext r
+    by_cases hro : r = o
+    · subst hro; simp [rsbUpd2, hΨ, Function.update_of_ne hon, Function.update_of_ne hot, htb,
+        Function.update_of_ne (Ne.symm heo), Function.update_of_ne (Ne.symm hxo)]
+    by_cases hre : r = e
+    · subst hre; simp [rsbUpd2, hΨ, Function.update_of_ne hro, Function.update_of_ne hen,
+        Function.update_of_ne het, hta, Function.update_of_ne (Ne.symm hxe)]
+    by_cases hrx : r = x
+    · subst hrx; simp [rsbUpd2, hΨ, Function.update_of_ne hro, Function.update_of_ne hre,
+        Function.update_of_ne hxn, Function.update_of_ne hxt]
+    simp only [rsbUpd2, hΨ, Function.update_apply, hro, hre, hrx, ite_false]
+  have h := rsb_rep_runs hrg hdisj (ra := n) (rt := tn) hnt _ (σ n) Ψ _ hbody
+  refine (h.congr_pre ?_ |>.congr ?_).mono ?_
+  · funext r
+    by_cases hro : r = o
+    · subst hro; simp [rsbUpd2, hΨ, Function.update_of_ne hon, Function.update_of_ne hot]
+    by_cases hre : r = e
+    · subst hre; simp [rsbUpd2, hΨ, Function.update_of_ne hro, Function.update_of_ne hen,
+        Function.update_of_ne het]
+    by_cases hrx : r = x
+    · subst hrx; simp [rsbUpd2, hΨ, Function.update_of_ne hro, Function.update_of_ne hre,
+        Function.update_of_ne hxn, Function.update_of_ne hxt, hx]
+    by_cases hrt : r = tn
+    · subst hrt; simp [rsbUpd2, htn, Function.update_of_ne (Ne.symm hxt), Function.update_of_ne (Ne.symm het),
+        Function.update_of_ne (Ne.symm hot)]
+    by_cases hrn : r = n
+    · subst hrn; simp [rsbUpd2, Function.update_of_ne hrt, Function.update_of_ne (Ne.symm hxn),
+        Function.update_of_ne (Ne.symm hen), Function.update_of_ne (Ne.symm hon)]
+    simp [rsbUpd2, hΨ, hro, hre, hrx, hrt, hrn]
+  · funext r
+    have hda : as.drop as.length = [] := List.drop_length
+    have hdb : bs.drop as.length = [] := List.drop_of_length_le (by omega)
+    by_cases hro : r = o
+    · subst hro; simp [rsbUpd2, hΨ, Function.update_of_ne hon, Function.update_of_ne hot, hn,
+        List.take_of_length_le (by omega : bs.length ≤ as.length)]
+    by_cases hre : r = e
+    · subst hre; simp [rsbUpd2, hΨ, Function.update_of_ne hro, Function.update_of_ne hen,
+        Function.update_of_ne het, hn]
+    by_cases hrx : r = x
+    · subst hrx; simp [rsbUpd2, hΨ, Function.update_of_ne hro, Function.update_of_ne hre,
+        Function.update_of_ne hxn, Function.update_of_ne hxt, hn, hdb, Mult.BandFactor.interleave]
+    by_cases hrt : r = tn
+    · subst hrt; simp [rsbUpd2, htn, Function.update_of_ne (Ne.symm hxt), Function.update_of_ne (Ne.symm het),
+        Function.update_of_ne (Ne.symm hot)]
+    by_cases hrn : r = n
+    · subst hrn; simp [rsbUpd2, Function.update_of_ne hrt, Function.update_of_ne (Ne.symm hxn),
+        Function.update_of_ne (Ne.symm hen), Function.update_of_ne (Ne.symm hon)]
+    simp [rsbUpd2, hΨ, hro, hre, hrx, hrt, hrn]
   · rw [hn]
 
 end Contracts
