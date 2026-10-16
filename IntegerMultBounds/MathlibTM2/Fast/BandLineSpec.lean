@@ -58,6 +58,48 @@ theorem bandSolveVec_im_eq (P K w s : ℕ) [NeZero s] (aZ : ZMod s → ℤ → �
       (·.im) = lineSolveZ P K (2 * w + 1) s (foldZ s w aZ) (b.map (·.im)) := by
   rw [bandSolveVec_im]; rfl
 
+/-! ### The tables the preparation writes -/
+
+section Tables
+
+variable (P K w s : ℕ) [NeZero s] (aZ : ZMod s → ℤ → ℤ)
+
+/-- The initial window of the folded matrix. -/
+def bandRows : List (List ℤ) := windowZ (2 * w + 1) (foldZ s w aZ)
+
+/-- The factorization inputs of the folded matrix. -/
+def bandInputs : List (List ℤ) := inputsZ (2 * w + 1) (foldZ s w aZ) s
+
+theorem length_bandInputs : (bandInputs w s aZ).length = s := by simp [bandInputs, inputsZ]
+
+theorem bandFac_eq : bandFac P K w s aZ = (List.range s).map fun j =>
+    (lcolZ P K (facState P K (bandRows w s aZ) (bandInputs w s aZ) j),
+      (facState P K (bandRows w s aZ) (bandInputs w s aZ) j).headD []) := by
+  rw [bandFac, factorRowsZ_facState, ← bandRows, ← bandInputs, length_bandInputs]
+
+/-- The forward table of the preparation is the multiplier columns `bandLc`. -/
+theorem prep_bo_eq : (facLf P K (bandRows w s aZ) (bandInputs w s aZ) s).map
+    (fun x => (⟨x, 0⟩ : GaussianInt)) = ((bandLc P K w s aZ).map colC).flatten := by
+  simp [facLf, bandLc, bandFac_eq, colC, List.map_flatten, List.map_map, Function.comp_def]
+
+theorem facUr_eq : facUr P K (bandRows w s aZ) (bandInputs w s aZ) s =
+    (bandFac P K w s aZ).map Prod.snd := by
+  simp [facUr, bandFac_eq, List.map_map, Function.comp_def]
+
+/-- The backward table of the preparation is the transposed rows `bandUc`. -/
+theorem prep_hf_eq : ((List.range s).reverse.map fun m =>
+    colC (ucolZ (2 * w + 1) (facUr P K (bandRows w s aZ) (bandInputs w s aZ) s) m)).flatten =
+      ((bandUc P K w s aZ).map colC).flatten := by
+  rw [facUr_eq, bandUc, List.map_map, List.range_eq_range']; rfl
+
+/-- The reciprocal table of the preparation is `bandRcs`. -/
+theorem prep_df_eq : (List.range s).reverse.map (fun j =>
+    (⟨newtonZ P (facPiv (facState P K (bandRows w s aZ) (bandInputs w s aZ) j)) K, 0⟩ :
+      GaussianInt)) = (bandRcs P K w s aZ).map fun x => (⟨x, 0⟩ : GaussianInt) := by
+  simp [bandRcs, bandFac_eq, List.map_reverse, List.map_map, Function.comp_def, facPiv]
+
+end Tables
+
 /-! ### Exact rescalings -/
 
 theorem tdiv_pow_mul (x : ℤ) (a b : ℕ) : (x * 2 ^ a).tdiv (2 ^ (a + b)) = x.tdiv (2 ^ b) := by
