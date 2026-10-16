@@ -1638,3 +1638,12 @@ its phase cell, every interior solution of the actual matrix equals the
 similarity-scaled Gohberg–Semencul inverse of the shared Toeplitz kernel.
 Both guarded checks and standard-axiom audits pass. Rounded similarity
 scaling, the boundary elimination error and tape costs remain open.
+
+The complete rounded block solve is now bounded: with weights in `(0,1]`,
+rounded reciprocal weights and inputs, the five rounded Gohberg–Semencul
+stages and rounded rescaling, a dominant Toeplitz block with `ρ≤1/8` is
+solved within `η+64LηV+2(η+Cη)` of the exact scaled inverse, for inputs
+bounded by `C` and scaled inputs by `V≥1`. With the actual cell solve this
+supplies the interior stage errors `e₁`/`e₅` once actual weight bounds and
+the factor rounding are instantiated. The guarded check and namespace
+standard-axiom audit pass.
