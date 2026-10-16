@@ -47,6 +47,14 @@ def bandFoldLineP : Pr P T Q A U :=
   (.seq (rsbRep (rg .kn) (rg .tK) (bandRec1P rg .ya .nv))
   (bandRevP rg .nv .vk (.cm .wn) .sn .tK)))))
 
+/-- Unfold the line on `dout` onto `sel`: even and odd records split, the odd ones kept in
+reverse, the even ones reversed back on top. -/
+def bandUnfoldLineP : Pr P T Q A U :=
+  .seq (bandDeILeaveP rg .dout .ya .xs .m2wn .tK)
+  (.seq (rsbRep (rg .kn) (rg .tK) (bandRec1P rg .dout .ya))
+  (.seq (moveR (rg .xs) (rg .ac2) id) (.seq (moveR (rg .ac2) (rg .sel) id)
+  (.seq (bandRevP rg .ya .sel (.cm .wn) .m2wn .tK) (bandRevP rg .ya .sel (.cm .wn) .kn .tK)))))
+
 end Programs
 
 section Contracts
@@ -526,6 +534,89 @@ theorem band_foldLine_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r 
       Nat.mul_le_mul_right _ (by omega)
     ring_nf at a1 a2 a3 a4 ⊢
     omega
+
+/-- **Unfold a line.** `dout` holding the folded line `x` becomes empty and `sel` receives
+the line in natural order. -/
+theorem band_unfoldLine_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠ ι j) {w : ℕ}
+    (σ : RsbR → List (Fin (A + 4))) (x : List GaussianInt) (hdout : σ .dout = cstream A w x)
+    (hm2wn : (σ .m2wn).length = x.length / 2) (hkn : (σ .kn).length = (x.length + 1) / 2 - x.length / 2)
+    (hwn : (σ (.cm .wn)).length = w) (hsel : σ .sel = []) (hya : σ .ya = []) (hxs : σ .xs = [])
+    (htK : σ .tK = []) (htC : σ .tC = []) (hac2 : σ .ac2 = []) :
+    ∃ b, RsbRuns body rg ι (bandUnfoldLineP rg) σ
+      (Function.update (Function.update σ .dout []) .sel
+        (cstream A w (Mult.BandFactor.unfoldList x))) b := by
+  have hsing : ∀ l : List GaussianInt, (l.map fun a => [a]).flatten = l := by
+    intro l; induction l <;> simp_all
+  set n := x.length
+  set r := n / 2 with hrdef
+  set E := Mult.BandFactor.evens x
+  set O := Mult.BandFactor.odds x
+  have hE : E.length = (n + 1) / 2 := Mult.BandFactor.length_evens x
+  have hO : O.length = n / 2 := Mult.BandFactor.length_odds x
+  have hsplit := Mult.BandFactor.split_evens_odds x
+  set E1 := E.take r
+  set l := E.drop r
+  have h₁ := band_deileave_runs (body := body) (ι := ι) hrg hdisj (x := .dout) (e := .ya) (o := .xs)
+    (n := .m2wn) (tn := .tK) (by decide) (w := w) σ E1 O (cstream A w l)
+    (by simp [E1, hE, hO]; omega) (by simp [hm2wn, E1, hE]; omega)
+    (by rw [hdout]; conv_lhs => rw [hsplit]
+        rw [cstream_append])
+    hwn htC hac2 htK
+  set σ₁ := Function.update (Function.update (Function.update σ .dout (cstream A w l)) .ya
+    (cstream A w E1.reverse ++ σ .ya)) .xs (cstream A w O.reverse ++ σ .xs)
+  have hll : l.length = (n + 1) / 2 - r := by simp [l, hE]
+  have h₂ := band_rec1Rep_runs (body := body) (ι := ι) hrg hdisj (x := .dout) (y := .ya) (n := .kn)
+    (tn := .tK) (by decide) (w := w) σ₁ l []
+    (by simp only [σ₁, Function.update_of_ne (by decide : RsbR.kn ≠ RsbR.xs),
+      Function.update_of_ne (by decide : RsbR.kn ≠ RsbR.ya),
+      Function.update_of_ne (by decide : RsbR.kn ≠ RsbR.dout), hkn, hll])
+    (by simp [σ₁]) (by simp [σ₁, hwn]) (by simp [σ₁, htC]) (by simp [σ₁, hac2]) (by simp [σ₁, htK])
+  set σ₂ := Function.update (Function.update σ₁ .dout []) .ya (cstream A w l.reverse ++ σ₁ .ya)
+  have hya2 : σ₂ .ya = cstream A w E.reverse := by
+    have : E = E1 ++ l := (List.take_append_drop r E).symm
+    simp [σ₂, σ₁, hya, ← cstream_append, this]
+  have h₃ := rsb_moveR_runs (body := body) (ι := ι) hrg (a := .xs) (b := .ac2) (by decide) σ₂
+  set σ₃ := Function.update (Function.update σ₂ .xs []) .ac2 ((σ₂ .xs).reverse ++ σ₂ .ac2)
+  have h₄ := rsb_moveR_runs (body := body) (ι := ι) hrg (a := .ac2) (b := .sel) (by decide) σ₃
+  set σ₄ := Function.update (Function.update σ₃ .ac2 []) .sel ((σ₃ .ac2).reverse ++ σ₃ .sel)
+  have hsel4 : σ₄ .sel = cstream A w O.reverse := by simp [σ₄, σ₃, σ₂, σ₁, hxs, hac2, hsel]
+  have hya4 : σ₄ .ya = cstream A w (E.reverse.take r) ++ cstream A w (E.reverse.drop r) := by
+    rw [← cstream_append, List.take_append_drop]
+    simp only [σ₄, σ₃, Function.update_of_ne (by decide : RsbR.ya ≠ RsbR.sel),
+      Function.update_of_ne (by decide : RsbR.ya ≠ RsbR.ac2),
+      Function.update_of_ne (by decide : RsbR.ya ≠ RsbR.xs)]
+    exact hya2
+  have h₅ := band_rev_runs (body := body) (ι := ι) hrg hdisj (x := .ya) (y := .sel) (c := .cm .wn)
+    (n := .m2wn) (tn := .tK) (by decide) (w := w) (L := 1) σ₄ ((E.reverse.take r).map fun a => [a])
+    (by intro b hb; obtain ⟨a, -, rfl⟩ := List.mem_map.mp hb; rfl)
+    (cstream A w (E.reverse.drop r)) (cstream A w O.reverse)
+    (by rw [hsing, hya4]) hsel4 (by simp [σ₄, σ₃, σ₂, σ₁, hwn])
+    (by simp [σ₄, σ₃, σ₂, σ₁, hm2wn, hE, hrdef]; omega) (by simp [σ₄, σ₃, σ₂, σ₁, htK])
+    (by simp [σ₄, σ₃, σ₂, σ₁, htC]) (by simp [σ₄, σ₃, σ₂, σ₁])
+  set σ₅ := Function.update (Function.update σ₄ .ya (cstream A w (E.reverse.drop r))) .sel
+    (cstream A w ((E.reverse.take r).map fun a => [a]).reverse.flatten ++ cstream A w O.reverse)
+  have h₆ := band_rev_runs (body := body) (ι := ι) hrg hdisj (x := .ya) (y := .sel) (c := .cm .wn)
+    (n := .kn) (tn := .tK) (by decide) (w := w) (L := 1) σ₅ ((E.reverse.drop r).map fun a => [a])
+    (by intro b hb; obtain ⟨a, -, rfl⟩ := List.mem_map.mp hb; rfl) [] _
+    (by rw [hsing]; simp [σ₅]) rfl (by simp [σ₅, σ₄, σ₃, σ₂, σ₁, hwn])
+    (by simp [σ₅, σ₄, σ₃, σ₂, σ₁, hkn, hE, hrdef]) (by simp [σ₅, σ₄, σ₃, σ₂, σ₁, htK])
+    (by simp [σ₅, σ₄, σ₃, σ₂, σ₁, htC]) (by simp [σ₅, σ₄, σ₃, σ₂, σ₁])
+  refine ⟨_, (RsbRuns.seq hdisj h₁ (RsbRuns.seq hdisj h₂ (RsbRuns.seq hdisj h₃ (RsbRuns.seq hdisj h₄
+    (RsbRuns.seq hdisj h₅ h₆))))).congr ?_⟩
+  have hfin : ((E.reverse.drop r).map fun a => [a]).reverse.flatten ++
+      ((E.reverse.take r).map fun a => [a]).reverse.flatten = E := by
+    rw [← List.map_reverse, ← List.map_reverse, hsing, hsing, ← List.reverse_append,
+      List.take_append_drop, List.reverse_reverse]
+  have hsel : cstream A w ((E.reverse.drop r).map fun a => [a]).reverse.flatten ++
+      (cstream A w ((E.reverse.take r).map fun a => [a]).reverse.flatten ++ cstream A w O.reverse) =
+      cstream A w (Mult.BandFactor.unfoldList x) := by
+    rw [← List.append_assoc, ← cstream_append, hfin, Mult.BandFactor.unfoldList, cstream_append]
+  funext z
+  by_cases hz : z = .sel
+  · subst hz
+    simp only [Function.update_self, Function.update_of_ne (by decide : RsbR.sel ≠ RsbR.ya)]
+    exact hsel
+  cases z <;> first | exact absurd rfl hz | simp [σ₅, σ₄, σ₃, σ₂, σ₁, hya, hxs, hac2]
 
 end Contracts
 

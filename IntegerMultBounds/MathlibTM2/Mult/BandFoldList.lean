@@ -136,4 +136,16 @@ theorem getD_unfoldList {α : Type*} (d : α) (x : List α) (ℓ : ℕ) (hℓ : 
     congr 1
     rw [ho, he]; omega
 
+/-- A list is its first even entries interleaved with its odd entries, then the last even
+entry when its length is odd. -/
+theorem split_evens_odds {α : Type*} : ∀ x : List α,
+    x = interleave ((evens x).take (x.length / 2)) (odds x) ++ (evens x).drop (x.length / 2)
+  | [] => by simp [evens, odds, interleave]
+  | [a] => by simp [evens, odds, interleave]
+  | a :: b :: rest => by
+    have ih := split_evens_odds rest
+    simp only [evens, odds, List.length_cons]
+    rw [show (rest.length + 1 + 1) / 2 = rest.length / 2 + 1 by omega, List.take_succ_cons,
+      List.drop_succ_cons, interleave, List.cons_append, List.cons_append, ← ih]
+
 end IntegerMultBounds.MathlibTM2.Mult.BandFactor
