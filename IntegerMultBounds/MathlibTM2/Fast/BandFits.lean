@@ -671,6 +671,107 @@ theorem band_lineOk (p j t : ℕ) (hp : 2 ≤ p) (hpP : p + 1 ≤ P) (hjp : j �
     nlinarith [mul_le_mul_of_nonneg_right this (by positivity : (0 : ℝ) ≤ 2 ^ P)]
   exact fitsC_of_gv (hbound _ (hLb x hx).1) (hbound _ (hLb x hx).2) hw
 
+/-- **The stored tables meet the record widths.** -/
+theorem band_tabOk (p : ℕ) (hp : 2 ≤ p) (hP : 2 ≤ P)
+    (hinv : StageInv (windowMatrix s wd fun j k => gv P (aZ j k)) univ (1 / (8 * (2 * (p : ℝ))))
+      (9 / 4))
+    (β : ℝ) (hβ : 0 < β) (hβp : β ≤ 1 / (8 * (2 * (p : ℝ))) / 2)
+    (hηβ : 5 * (1 / 2 ^ P : ℝ) ≤ 2 * (β / 4) / 9)
+    (hK : (1 - β / 4 / 2) ^ (2 ^ K) ≤ 3 * (5 * (1 / 2 ^ P : ℝ)) / (β / 4))
+    (hsmall : 2 ^ 16 * (2 * (p : ℝ)) ^ 2 * (s : ℝ) ^ 2 * ((1 / 2 ^ P : ℝ) * (1 + 60 * 3 / β ^ 2)) ≤ 1)
+    (w : ℕ) (hw : (6 / β + 1) * 2 ^ P < (2 : ℝ) ^ (w - 1))
+    (Dl : List ℤ) (hDl : Dl.length = s) (hfitD : ∀ d ∈ Dl, Fits w (⟨d, 0⟩ : GaussianInt))
+    (cin cout : ℤ) (hI : Fits w (⟨cin, 0⟩ : GaussianInt)) (hO : Fits w (⟨cout, 0⟩ : GaussianInt)) :
+    BandTabOk w s (2 * wd + 1) (bandLc P K wd s aZ) (bandUc P K wd s aZ) (bandRcs P K wd s aZ) Dl
+      cin cout := by
+  set C : ℝ := 6 / β + 1
+  have hβ1 : β ≤ 1 := hβp.trans (by
+    have : (2 : ℝ) ≤ p := by exact_mod_cast hp
+    rw [div_div, div_le_one (by positivity)]; nlinarith)
+  have h3C : (3 : ℝ) ≤ C := by
+    have : 6 ≤ 6 / β := by rw [le_div_iff₀ hβ]; linarith
+    simp only [C]; linarith
+  have h2C : 2 / β ≤ C := by
+    have : 0 ≤ 4 / β := by positivity
+    have e : 6 / β = 2 / β + 4 / β := by ring
+    simp only [C]; linarith
+  have hfit : ∀ z : ℤ, |gv P z| ≤ C → Fits w (⟨z, 0⟩ : GaussianInt) := fun z hz => fits_of_gv hz hw
+  have hfac := factorRowsZ_run P K (2 * wd + 1) hP (foldZ s wd aZ) (foldZ_band P s wd aZ) s
+  -- pivots and Newton reciprocals
+  have hnew : ∀ m < s, ∀ n, |gv P (newtonZ P (stgZ P K (foldZ s wd aZ) m m m) n)| ≤ 2 / β := by
+    intro m hm n
+    obtain ⟨hpiv, -⟩ := band_stgZ_sizes (K := K) p hp hP hinv β hβ hβp hηβ hK hsmall m hm
+    have h := NewtonRecip.newtonR_range (rdP P) _ (rdP_err P) β _ hβ hpiv.1 hpiv.2 hηβ n
+    rw [newtonZ_eq P hP _ n] at h
+    have hc0 : 0 < gv P (stgZ P K (foldZ s wd aZ) m m m) := lt_of_lt_of_le hβ hpiv.1
+    have hr0 : 0 ≤ gv P (newtonZ P (stgZ P K (foldZ s wd aZ) m m m) n) := by
+      by_contra hneg; have := not_le.mp hneg; nlinarith
+    have hβr : β * gv P (newtonZ P (stgZ P K (foldZ s wd aZ) m m m) n) ≤ 2 :=
+      le_trans (mul_le_mul_of_nonneg_right hpiv.1 hr0) h.2
+    rw [abs_of_nonneg hr0, le_div_iff₀ hβ]; linarith
+  have hrd : ∀ a r : ℤ, |gv P ((a * r).tdiv (2 ^ P))| ≤ |gv P a * gv P r| + 1 := by
+    intro a r
+    have e := rdP_mul_grid P a r
+    have h := rdP_err P (gv P a * gv P r)
+    have hη1 : (1 : ℝ) / 2 ^ P ≤ 1 := by
+      rw [div_le_one (by positivity)]; exact one_le_pow₀ (by norm_num)
+    simp only [gv] at e h ⊢
+    rw [← e]
+    have := abs_sub_abs_le_abs_sub (rdP P ((a : ℝ) / 2 ^ P * ((r : ℝ) / 2 ^ P)))
+      ((a : ℝ) / 2 ^ P * ((r : ℝ) / 2 ^ P))
+    linarith
+  -- the pivot rows
+  have hrow : ∀ k, ∀ x ∈ ((bandFac P K wd s aZ).map Prod.snd).getD k [], |gv P x| ≤ 3 := by
+    intro k x hx
+    rw [bandFac, hfac, List.map_map] at hx
+    by_cases hk : k < s
+    · rw [List.getD_eq_getElem _ _ (by simpa using hk), List.getElem_map, List.getElem_range'] at hx
+      simp only [Function.comp, winRowZ, zero_add, one_mul] at hx
+      obtain ⟨l, hl, rfl⟩ := List.mem_map.mp hx
+      obtain ⟨-, hent⟩ := band_stgZ_sizes (K := K) p hp hP hinv β hβ hβp hηβ hK hsmall k hk
+      exact hent k l le_rfl (by have := (List.mem_range'_1.mp hl).1; omega)
+    · rw [List.getD_eq_default _ _ (by simpa using hk)] at hx; simp at hx
+  have hlenL := length_bandLc (K := K) (wd := wd) (aZ := aZ) hP
+  have hlenR := length_bandRcs (K := K) (wd := wd) (aZ := aZ) hP
+  refine ⟨hlenL, length_bandUc, fun c hc => ?_, fun c hc => ?_, hlenR, hDl, fun c hc x hx => ?_,
+    fun c hc x hx => ?_, fun x hx => ?_, hfitD, hI, hO⟩
+  · rw [bandLc, bandFac, hfac, List.map_map] at hc
+    obtain ⟨m, -, rfl⟩ := List.mem_map.mp hc
+    simp
+  · obtain ⟨m, -, rfl⟩ := List.mem_map.mp hc
+    simp [ucolZ]
+  · rw [bandLc, bandFac, hfac, List.map_map] at hc
+    obtain ⟨m, hm, rfl⟩ := List.mem_map.mp hc
+    have hm' := List.mem_range'_1.mp hm
+    simp only [Function.comp] at hx
+    obtain ⟨i, hi, rfl⟩ := List.mem_map.mp hx
+    have hi' := List.mem_range'_1.mp hi
+    obtain ⟨-, hent⟩ := band_stgZ_sizes (K := K) p hp hP hinv β hβ hβp hηβ hK hsmall m (by omega)
+    refine hfit _ ((hrd _ _).trans ?_)
+    rw [abs_mul]
+    have h1 := hent i m (by omega) le_rfl
+    have h2 := hnew m (by omega) K
+    have : |gv P (stgZ P K (foldZ s wd aZ) m i m)| *
+        |gv P (newtonZ P (stgZ P K (foldZ s wd aZ) m m m) K)| ≤ 3 * (2 / β) :=
+      mul_le_mul h1 h2 (abs_nonneg _) (by norm_num)
+    have e6 : 3 * (2 / β) = 6 / β := by ring
+    simp only [C]; linarith
+  · obtain ⟨m, -, rfl⟩ := List.mem_map.mp hc
+    simp only [ucolZ] at hx
+    obtain ⟨d, -, rfl⟩ := List.mem_map.mp hx
+    refine hfit _ (le_trans ?_ h3C)
+    split_ifs
+    · set row := ((bandFac P K wd s aZ).map Prod.snd).getD (m - d) []
+      by_cases hd : d < row.length
+      · rw [List.getD_eq_getElem _ _ hd]; exact hrow _ _ (List.getElem_mem hd)
+      · rw [List.getD_eq_default _ _ (by omega), gv_zero]; norm_num
+    · rw [gv_zero]; norm_num
+  · rw [bandRcs, bandFac, hfac, List.map_map, List.map_map, List.mem_reverse] at hx
+    obtain ⟨m, hm, rfl⟩ := List.mem_map.mp hx
+    have hm' := List.mem_range'_1.mp hm
+    simp only [Function.comp, winRowZ, List.range'_succ, List.map_cons, List.headD_cons]
+    exact hfit _ ((hnew m (by omega) K).trans h2C)
+
 end LineOk
 
 end IntegerMultBounds.MathlibTM2.Fast
