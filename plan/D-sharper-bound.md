@@ -1842,3 +1842,13 @@ backward pass with stored factors and reciprocals (column-oriented, equal to
 the row-oriented specification by `colFwd_eq`/`colBwd_eq`), unfold. The target
 map is `Mult/ConcreteB0.bandJtF`. Guarded checks and standard-axiom audits
 pass.
+
+Tape machine progress for the banded `B̃₀` line (`Fast/BandLine`): the forward
+and backward passes are proved on the `RsbR` registers. Each pass is `s`
+column steps (pop the final head, one truncated stream product of `B` stored
+column entries, `B` pending updates), with the backward step preceded by a
+product with the stored pivot reciprocal; the passes leave exactly the
+step-indexed lists of `Mult.BandList`, which reproduce `fwdZC`/`bwdZC` and so the
+concrete `bandJtF` map. Remaining for the line: fold/unfold and scaling of the
+line records, dropping the `B` dummies, the per-axis factor tables from the
+table VM, axis/box wrappers, and costs.
