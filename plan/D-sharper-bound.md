@@ -1972,3 +1972,15 @@ phase runs the band stage with records on `prm` and widths `dsW ≈ 10p`,
 statement uses only standard axioms. The public bound is unchanged at
 `2^-34`: remaining are the small-`α` retune at `ε = 5/16`, the matching
 sizing lemmas and the final theorem.
+
+Next blocker for `2^-33`: the margin `ε(1-λ')` needs `ε ≥ 16/57`, but the
+synthetic layers bound their precision shift by `(G+m)·D^6` and use `d^6 ≤ b`
+and `d^7 ≤ b` (`Cost/MatchSynOver.mrO_synE_le`,
+`CompactCallerWorkingWidth`), which needs `ε < 1/6`. The shift is the piece
+exponent `E_{j+1} = G + F E_j` (`Node/Params.expSeq`), so it grows like
+`F^j ≤ D^{log_m F} ≈ D^4.28` with `F ≈ 9.2·10^17`, `m = 15625`. At `ε = 1/6`,
+`ε(1-λ') = 608/2^43` is still below `2^-33`. Reaching `2^-33` therefore also
+needs bounded precision in the synthetic layers, for example rounding the
+pieces between levels, so that the working width stays `O(p)` at
+`ε ≈ 9/32`. The other `d^k ≤ b` uses (`Fast/ParamMath`, `Mult/Sizes`) are
+sizing conveniences.
