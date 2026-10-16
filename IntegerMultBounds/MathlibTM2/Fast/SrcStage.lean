@@ -35,8 +35,8 @@ The results keep as hypotheses only:
   order `π` (`hπ`) and bounds `cF`, `cO`, their precondition `Pre` framed by the layout
   (`SrcFramed`), `Pre → PreF`, `Pre → PreO`;
 * the parameter registers (`SrcBase`, `SrcCrtBase`): the `Ã` records `preRecsA` on `a (.c .out)`
-  and the `B̃₀` records `preRecsB` on `b (.inl .bo)` over base files `V₀`, `σ₀` (`PreBaseA`,
-  `PreBaseB`), the axis counters (`d - 1` symbols), the chirp loader's unary parameters and idle
+  and the `B̃₀` records `preRecsB` on `b (.inl .prm)` over base files `V₀`, `σ₀` (`PreBaseA`,
+  `BandBase`), the axis counters (`d - 1` symbols), the chirp loader's unary parameters and idle
   table registers (`SrcKerBase`), the stored axis descriptions `ldcBlocks t`, `ldcBlocks s` on
   `x .tSp`, `x .sSp`, the twist tables `tblTwistStream` and the shift counters of the
   convolution (`SrcConvBase`), the product registers ready for `w` and `p + 1` (`SrcMulBase`),
@@ -190,7 +190,7 @@ structure SrcXBase {A : ℕ} (ρ : SrcX → List (Fin (A + 4))) (n w : ℕ) : Pr
 
 /-- **The register file between runs.** The `Ã` family is `rsaWith V₀ _ axsA []` (any box
 stream) over a base file `V₀` with the records of the pipeline followed by `restA` on `c .out`;
-the `B̃₀` family is `rsbWith σ₀ [] axsB []` with the records followed by `restB` on `bo`; the
+the `B̃₀` family is `rsbWith σ₀ [] axsB []` with the records followed by `restB` on `prm`; the
 kernel, convolution, product and transfer families as in `SrcKerBase`, `SrcConvBase`,
 `SrcMulBase`, `SrcXBase`. -/
 structure SrcBase (M : SrcMach t₀ T Q) (E : SrcF t₀ (prime + K)) (n w W : ℕ) (hd0 : 0 < d n)
@@ -201,8 +201,8 @@ structure SrcBase (M : SrcMach t₀ T Q) (E : SrcF t₀ (prime + K)) (n w W : �
   aOut : V₀.cr .out = preRecsA n W hd0 0 ++ restA
   aAx : axsA.length = d n - 1
   b : E.b = rsbWith σ₀ [] axsB []
-  bBase : PreBaseB σ₀ w M.hd
-  bOut : σ₀ (.inl .bo) = preRecsB n W hd0 0 ++ restB
+  bBase : BandBase σ₀ w M.hd
+  bOut : σ₀ (.inl .prm) = preRecsB n W hd0 0 ++ restB
   bAx : axsB.length = d n - 1
   k : SrcKerBase E.k n w W
   v : SrcConvBase E.v n w
@@ -301,8 +301,8 @@ theorem srcCore_runs (M : SrcMach t₀ T Q) (hA : 96 ≤ prime + K) {n : ℕ} (h
     (hw : p n + Chirp.chirpGuard (d n) + 3 ≤ w) (hwW : w < W)
     (hWA : ∀ i : Fin (d n), alpha n ^ 2 * ((s n i + t n i) * (windowA (p n) (alpha n) + 1)) ^ 2 *
       2 ^ (13 * p n + 8) < 2 ^ W)
-    (hWB : ∀ i : Fin (d n), alpha n ^ 2 * ((s n i + t n i) *
-      (FastB0.fastWindow (p n) (alpha n) + 1)) ^ 2 * 2 ^ (13 * p n + 8) < 2 ^ W)
+(hWB : 9 * p n + 2 ≤ w ∧ ∀ i : Fin (d n), alpha n ^ 2 * ((s n i + t n i) *
+      (8 * FastB0.fastWindow (p n) (alpha n) + 1)) ^ 2 * 2 ^ (65 * p n + 8) < 2 ^ W)
     (hWs : ∀ k, s n k * t n k * t n k < 2 ^ W)
     (hWk : ∀ k, 8 * (p n + Chirp.chirpGuard (d n)) + Nat.size (t n k) + 80 ≤ W)
     {V₀ : RsaV (RsaX t₀) (prime + K)} {σ₀ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))}
@@ -313,7 +313,7 @@ theorem srcCore_runs (M : SrcMach t₀ T Q) (hA : 96 ≤ prime + K) {n : ℕ} (h
     (hln : E.a .ln = cstream (prime + K) w (srcPad (p n) (s n) (t n) v)) :
     SrcRuns body M.rg M.ι Pre (srcCore M fwdP oppP) E.get
       { E with a := (rsaWith (preCfgA V₀ M.hd n w W (srcHd0 hbig) restA (d n - 1)) [] axsA []).get,
-               b := rsbWith (preCfgB σ₀ M.hd n w W (srcHd0 hbig) restB (d n - 1)) [] axsB [],
+               b := rsbWith (bandCfgB σ₀ M.hd n w W (srcHd0 hbig) restB (d n - 1)) [] axsB [],
                x := (Function.update E.x .sb (cstream (prime + K) w (srcPad (p n) (s n) (t n)
                  (SourceErr.sourceApprox (s n) (t n) (p n) (gamma n) (lineA n) (lineB n)
                    (chirpKernel n) (convBox n) v)) ++ E.x .sb)) }.get
@@ -385,7 +385,7 @@ theorem srcCore_runs (M : SrcMach t₀ T Q) (hA : 96 ≤ prime + K) {n : ℕ} (h
     { E₄ with k := Function.update E₄.k .kr [],
               v := (Function.update (Function.update E₄.v .fo []) (.cm .out) C₁) } with hE₅
   -- `B̃₀`
-  obtain ⟨hfixz, sB⟩ := srcB_runs (body := body) M hA hbig hd0 (by omega) hwW.le hWB σ₀ hE.bBase
+  obtain ⟨hfixz, sB⟩ := srcB_runs (body := body) M hA hbig hd0 hWB.1 hwW.le hWB.2 σ₀ hE.bBase
     restB hE.bOut axsB hE.bAx c₁ (fun y => isFixed_rhoC _ _)
     (fun y => (norm_le_pi_norm c₁ y).trans (m4.trans (by norm_num))) E₅ (by simp [hE₅, hE₄,
       hE₃, hE₂, hE₁, hE.b]) (by simp [hE₅, hC₁]) hx.tr
@@ -393,7 +393,7 @@ theorem srcCore_runs (M : SrcMach t₀ T Q) (hA : 96 ≤ prime + K) {n : ℕ} (h
   set Z := cstream (prime + K) w (srcPad (p n) (s n) (t n) z) with hZ
   set E₆ : SrcF t₀ (prime + K) :=
     { E₅ with v := Function.update E₅.v (.cm .out) [],
-              b := rsbWith (preCfgB σ₀ M.hd n w W hd0 restB (d n - 1)) Z axsB [] } with hE₆
+              b := rsbWith (bandCfgB σ₀ M.hd n w W hd0 restB (d n - 1)) Z axsB [] } with hE₆
   -- the scale
   have sG := srcG_runs (body := body) M (q := p n) (γ := gamma n) (w := w) (s n) (t n)
     (by omega) ((src_gamma_le hbig).trans (by omega)) z hfixz E₆
@@ -649,8 +649,8 @@ theorem srcP_runs (M : SrcMach t₀ T Q) (hA : 96 ≤ prime + K) {n : ℕ} (hbig
     (hw : p n + Chirp.chirpGuard (d n) + 3 ≤ w) (hwW : w < W)
     (hWA : ∀ i : Fin (d n), alpha n ^ 2 * ((s n i + t n i) * (windowA (p n) (alpha n) + 1)) ^ 2 *
       2 ^ (13 * p n + 8) < 2 ^ W)
-    (hWB : ∀ i : Fin (d n), alpha n ^ 2 * ((s n i + t n i) *
-      (FastB0.fastWindow (p n) (alpha n) + 1)) ^ 2 * 2 ^ (13 * p n + 8) < 2 ^ W)
+(hWB : 9 * p n + 2 ≤ w ∧ ∀ i : Fin (d n), alpha n ^ 2 * ((s n i + t n i) *
+      (8 * FastB0.fastWindow (p n) (alpha n) + 1)) ^ 2 * 2 ^ (65 * p n + 8) < 2 ^ W)
     (hWs : ∀ k, s n k * t n k * t n k < 2 ^ W)
     (hWk : ∀ k, 8 * (p n + Chirp.chirpGuard (d n)) + Nat.size (t n k) + 80 ≤ W)
     {V₀ : RsaV (RsaX t₀) (prime + K)} {σ₀ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))}
@@ -661,7 +661,7 @@ theorem srcP_runs (M : SrcMach t₀ T Q) (hA : 96 ≤ prime + K) {n : ℕ} (hbig
     (hstr : E.c .str = cstream (prime + K) w (srcCoef (p n) (∏ i, s n i) u)) :
     SrcRuns body M.rg M.ι Pre (srcP M fwdP oppP) E.get
       { E with a := (rsaWith (preCfgA V₀ M.hd n w W (srcHd0 hbig) restA (d n - 1)) [] axsA []).get,
-               b := rsbWith (preCfgB σ₀ M.hd n w W (srcHd0 hbig) restB (d n - 1)) [] axsB [],
+               b := rsbWith (bandCfgB σ₀ M.hd n w W (srcHd0 hbig) restB (d n - 1)) [] axsB [],
                c := Function.update E.c .str [],
                x := (Function.update E.x .sb
                  (cstream (prime + K) w (srcPad (p n) (s n) (t n) (srcMap n u)) ++ E.x .sb)) }.get
@@ -714,8 +714,8 @@ theorem srcOpp_runs (M : SrcMach t₀ T Q) (hA : 96 ≤ prime + K) {n : ℕ} (hb
     (hw : p n + Chirp.chirpGuard (d n) + 3 ≤ w) (hwW : w < W)
     (hWA : ∀ i : Fin (d n), alpha n ^ 2 * ((s n i + t n i) * (windowA (p n) (alpha n) + 1)) ^ 2 *
       2 ^ (13 * p n + 8) < 2 ^ W)
-    (hWB : ∀ i : Fin (d n), alpha n ^ 2 * ((s n i + t n i) *
-      (FastB0.fastWindow (p n) (alpha n) + 1)) ^ 2 * 2 ^ (13 * p n + 8) < 2 ^ W)
+(hWB : 9 * p n + 2 ≤ w ∧ ∀ i : Fin (d n), alpha n ^ 2 * ((s n i + t n i) *
+      (8 * FastB0.fastWindow (p n) (alpha n) + 1)) ^ 2 * 2 ^ (65 * p n + 8) < 2 ^ W)
     (hWs : ∀ k, s n k * t n k * t n k < 2 ^ W)
     (hWk : ∀ k, 8 * (p n + Chirp.chirpGuard (d n)) + Nat.size (t n k) + 80 ≤ W)
     {V₀ : RsaV (RsaX t₀) (prime + K)} {σ₀ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))}
@@ -727,7 +727,7 @@ theorem srcOpp_runs (M : SrcMach t₀ T Q) (hA : 96 ≤ prime + K) {n : ℕ} (hb
     (hsb : E.x .sb = cstream (prime + K) w (srcPad (p n) (s n) (t n) y)) :
     SrcRuns body M.rg M.ι Pre (oppP' M fwdP oppP) E.get
       { E with a := (rsaWith (preCfgA V₀ M.hd n w W (srcHd0 hbig) restA (d n - 1)) [] axsA []).get,
-               b := rsbWith (preCfgB σ₀ M.hd n w W (srcHd0 hbig) restB (d n - 1)) [] axsB [],
+               b := rsbWith (bandCfgB σ₀ M.hd n w W (srcHd0 hbig) restB (d n - 1)) [] axsB [],
                c := (Function.update E.c .str
                  (cstream (prime + K) w (srcCoef (p n) (∏ i, s n i) (oppMap n y)))),
                x := Function.update E.x .sb [] }.get
@@ -754,7 +754,7 @@ theorem srcOpp_runs (M : SrcMach t₀ T Q) (hA : 96 ≤ prime + K) {n : ℕ} (hb
     (fun x => cst_isFixed_conj (hyf x)) (by simp [hE₁])
   set E₂ : SrcF t₀ (prime + K) :=
     { E₁ with a := (rsaWith (preCfgA V₀ M.hd n w W (srcHd0 hbig) restA (d n - 1)) [] axsA []).get,
-              b := rsbWith (preCfgB σ₀ M.hd n w W (srcHd0 hbig) restB (d n - 1)) [] axsB [],
+              b := rsbWith (bandCfgB σ₀ M.hd n w W (srcHd0 hbig) restB (d n - 1)) [] axsB [],
               x := (Function.update E₁.x .sb (cstream (prime + K) w
                 (srcPad (p n) (s n) (t n) SA) ++ E₁.x .sb)) } with hE₂
   -- the second conjugation
@@ -882,6 +882,11 @@ lemma src_preRecsB_end {A : ℕ} {n W : ℕ} (hd0 : 0 < d n) :
   rw [preRecsB, List.drop_eq_nil_of_le (by simp; omega)]
   rfl
 
+lemma src_preRecsB_end' {A : ℕ} {n W : ℕ} (hd0 : 0 < d n) :
+    (preRecsB (A := A) n W hd0 (d n)) = [] := by
+  rw [preRecsB, List.drop_eq_nil_of_le (by simp)]
+  rfl
+
 /-- **Runs in sequence.** If the parameter registers hold the records of one run followed by
 `restA`, `restB`, the register file after `srcP` or `oppP'` (configured resampling families,
 any box registers, `c` and `x .sb`) is again a register file between runs, over the configured
@@ -890,15 +895,16 @@ theorem SrcBase.next {M : SrcMach t₀ T Q} {E E' : SrcF t₀ (prime + K)} {n w 
     {hd0 : 0 < d n} {V₀ : RsaV (RsaX t₀) (prime + K)}
     {σ₀ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))}
     {restA restB axsA axsB : List (Fin (prime + K + 4))}
+    (hA3 : 3 ≤ prime + K)
     (h : SrcBase M E n w W hd0 V₀ σ₀ (preRecsA n W hd0 0 ++ restA)
       (preRecsB n W hd0 0 ++ restB) axsA axsB)
     (ha : ∀ r, r ≠ .ln → E'.a r = (rsaWith (preCfgA V₀ M.hd n w W hd0
       (preRecsA n W hd0 0 ++ restA) (d n - 1)) [] axsA []).get r)
-    (hb : E'.b = rsbWith (preCfgB σ₀ M.hd n w W hd0 (preRecsB n W hd0 0 ++ restB) (d n - 1))
+    (hb : E'.b = rsbWith (bandCfgB σ₀ M.hd n w W hd0 (preRecsB n W hd0 0 ++ restB) (d n - 1))
       [] axsB [])
     (hk : E'.k = E.k) (hv : E'.v = E.v) (hm : E'.m = E.m) (hx : ∀ j, j ≠ .sb → E'.x j = E.x j) :
     SrcBase M E' n w W hd0 (preCfgA V₀ M.hd n w W hd0 (preRecsA n W hd0 0 ++ restA) (d n - 1))
-      (preCfgB σ₀ M.hd n w W hd0 (preRecsB n W hd0 0 ++ restB) (d n - 1)) restA restB
+      (bandCfgB σ₀ M.hd n w W hd0 (preRecsB n W hd0 0 ++ restB) (d n - 1)) restA restB
       axsA axsB where
   a := ha
   aBase := src_preBaseA_load h.aBase _ _
@@ -906,10 +912,9 @@ theorem SrcBase.next {M : SrcMach t₀ T Q} {E E' : SrcF t₀ (prime + K)} {n w 
     simp only [preCfgA, preLoadA, Function.update_self, src_preRecsA_end hd0, List.nil_append]
   aAx := h.aAx
   b := hb
-  bBase := src_preBaseB_load h.bBase _ _
+  bBase := bandCfgB_base h.bBase hA3 _
   bOut := by
-    simp only [preCfgB, preLoadB, Function.update_apply, reduceCtorEq, if_false,
-      Sum.inl.injEq, if_true, src_preRecsB_end hd0, List.nil_append, preBankB]
+    rw [bandCfgB_prm, Nat.sub_add_cancel (by omega : 1 ≤ d n), src_preRecsB_end' hd0, List.nil_append]
   bAx := h.bAx
   k := hk ▸ h.k
   v := hv ▸ h.v

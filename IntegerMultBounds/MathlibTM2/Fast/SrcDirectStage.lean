@@ -73,8 +73,8 @@ theorem srcDirectP_runs (M : SrcMach t₀ T Q) (hA : 96 ≤ prime + K) {n : ℕ}
     (hw : p n + Chirp.chirpGuard (d n) + 3 ≤ w) (hwW : w < W)
     (hWA : ∀ i : Fin (d n), alpha n ^ 2 * ((s n i + t n i) * (windowA (p n) (alpha n) + 1)) ^ 2 *
       2 ^ (13 * p n + 8) < 2 ^ W)
-    (hWB : ∀ i : Fin (d n), alpha n ^ 2 * ((s n i + t n i) *
-      (FastB0.fastWindow (p n) (alpha n) + 1)) ^ 2 * 2 ^ (13 * p n + 8) < 2 ^ W)
+    (hWB : 9 * p n + 2 ≤ w ∧ ∀ i : Fin (d n), alpha n ^ 2 * ((s n i + t n i) *
+      (8 * FastB0.fastWindow (p n) (alpha n) + 1)) ^ 2 * 2 ^ (65 * p n + 8) < 2 ^ W)
     (hWs : ∀ k, s n k * t n k * t n k < 2 ^ W)
     (hWk : ∀ k, 8 * (p n + Chirp.chirpGuard (d n)) + Nat.size (t n k) + 80 ≤ W)
     {V₀ : RsaV (RsaX t₀) (prime + K)} {σ₀ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))}
@@ -85,7 +85,7 @@ theorem srcDirectP_runs (M : SrcMach t₀ T Q) (hA : 96 ≤ prime + K) {n : ℕ}
     (hstr : E.c .str = cstream (prime + K) w (srcCoef (p n) (∏ i, s n i) u)) :
     SrcRuns body M.rg M.ι Pre (srcDirectP M fwdP oppP) E.get
       { E with a := (rsaWith (preCfgA V₀ M.hd n w W (srcHd0 hbig) restA (d n - 1)) [] axsA []).get,
-               b := rsbWith (preCfgB σ₀ M.hd n w W (srcHd0 hbig) restB (d n - 1)) [] axsB [],
+               b := rsbWith (bandCfgB σ₀ M.hd n w W (srcHd0 hbig) restB (d n - 1)) [] axsB [],
                c := Function.update E.c .str [],
                x := (Function.update E.x .sb
                  (cstream (prime + K) w (srcPad (p n) (s n) (t n) (srcMap n u)) ++ E.x .sb)) }.get
@@ -138,8 +138,8 @@ theorem srcDirectOpp_runs (M : SrcMach t₀ T Q) (hA : 96 ≤ prime + K) {n : �
     (hw : p n + Chirp.chirpGuard (d n) + 3 ≤ w) (hwW : w < W)
     (hWA : ∀ i : Fin (d n), alpha n ^ 2 * ((s n i + t n i) * (windowA (p n) (alpha n) + 1)) ^ 2 *
       2 ^ (13 * p n + 8) < 2 ^ W)
-    (hWB : ∀ i : Fin (d n), alpha n ^ 2 * ((s n i + t n i) *
-      (FastB0.fastWindow (p n) (alpha n) + 1)) ^ 2 * 2 ^ (13 * p n + 8) < 2 ^ W)
+    (hWB : 9 * p n + 2 ≤ w ∧ ∀ i : Fin (d n), alpha n ^ 2 * ((s n i + t n i) *
+      (8 * FastB0.fastWindow (p n) (alpha n) + 1)) ^ 2 * 2 ^ (65 * p n + 8) < 2 ^ W)
     (hWs : ∀ k, s n k * t n k * t n k < 2 ^ W)
     (hWk : ∀ k, 8 * (p n + Chirp.chirpGuard (d n)) + Nat.size (t n k) + 80 ≤ W)
     {V₀ : RsaV (RsaX t₀) (prime + K)} {σ₀ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))}
@@ -151,7 +151,7 @@ theorem srcDirectOpp_runs (M : SrcMach t₀ T Q) (hA : 96 ≤ prime + K) {n : �
     (hsb : E.x .sb = cstream (prime + K) w (srcPad (p n) (s n) (t n) y)) :
     SrcRuns body M.rg M.ι Pre (oppDirectP M fwdP oppP) E.get
       { E with a := (rsaWith (preCfgA V₀ M.hd n w W (srcHd0 hbig) restA (d n - 1)) [] axsA []).get,
-               b := rsbWith (preCfgB σ₀ M.hd n w W (srcHd0 hbig) restB (d n - 1)) [] axsB [],
+               b := rsbWith (bandCfgB σ₀ M.hd n w W (srcHd0 hbig) restB (d n - 1)) [] axsB [],
                c := (Function.update E.c .str
                  (cstream (prime + K) w (srcCoef (p n) (∏ i, s n i) (oppMap n y)))),
                x := Function.update E.x .sb [] }.get
@@ -178,7 +178,7 @@ theorem srcDirectOpp_runs (M : SrcMach t₀ T Q) (hA : 96 ≤ prime + K) {n : �
     (fun x => cst_isFixed_conj (hyf x)) (by simp [hE₁])
   set E₂ : SrcF t₀ (prime + K) :=
     { E₁ with a := (rsaWith (preCfgA V₀ M.hd n w W (srcHd0 hbig) restA (d n - 1)) [] axsA []).get,
-              b := rsbWith (preCfgB σ₀ M.hd n w W (srcHd0 hbig) restB (d n - 1)) [] axsB [],
+              b := rsbWith (bandCfgB σ₀ M.hd n w W (srcHd0 hbig) restB (d n - 1)) [] axsB [],
               x := (Function.update E₁.x .sb (cstream (prime + K) w
                 (srcPad (p n) (s n) (t n) SA) ++ E₁.x .sb)) } with hE₂
   -- the second conjugation

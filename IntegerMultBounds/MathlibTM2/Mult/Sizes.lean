@@ -224,8 +224,9 @@ theorem exists_alpha (n : ℕ) : ∃ α : ℕ, 12 * d n ^ 2 * b n ≤ α ^ 4 :=
 /-- `α = ⌈(12 d² b)^{1/4}⌉`: the least `α` with `12 d² b ≤ α^4`. -/
 def alpha (n : ℕ) : ℕ := Nat.find (exists_alpha n)
 
-/-- `γ = d (2α² + 2)`, the library's `d (2⌈α²⌉ + 2)` at integer `α`. -/
-def gamma (n : ℕ) : ℕ := d n * (2 * alpha n ^ 2 + 2)
+/-- `γ = d (3α² + 2)`: the library's `d (2⌈α²⌉ + 2)` at integer `α`, plus `α²` per axis for the
+scale `2^-α²` of the banded `B̃₀`. -/
+def gamma (n : ℕ) : ℕ := d n * (3 * alpha n ^ 2 + 2)
 
 /-- `η = 1/(4d)`. -/
 noncomputable def eta (n : ℕ) : ℝ := 1 / (4 * d n)
@@ -565,10 +566,11 @@ theorem four_d_le_alpha_sq_of (hb : 2 ≤ b n) : 4 * d n ≤ alpha n ^ 2 := by
       _ ≤ alpha n ^ (2 * 2) := h
   exact (Nat.pow_le_pow_iff_left (by norm_num)).1 h1
 
-/-- `γ = d (2 ⌈α²⌉ + 2)` with real `α`, the library's normalization. -/
-theorem gamma_eq_ceil (n : ℕ) : gamma n = d n * (2 * ⌈((alpha n : ℝ)) ^ 2⌉₊ + 2) := by
+/-- `γ = d (2 ⌈α²⌉ + 2 + α²)` with real `α`, the library's normalization plus the band scale. -/
+theorem gamma_eq_ceil (n : ℕ) :
+    gamma n = d n * (2 * ⌈((alpha n : ℝ)) ^ 2⌉₊ + 2 + alpha n * alpha n) := by
   rw [← Nat.cast_pow, Nat.ceil_natCast]
-  rfl
+  unfold gamma; ring
 
 /-- `K = ⌊d^c⌋`. -/
 theorem K_eq_floor (n : ℕ) : K n = ⌊(d n : ℝ) ^ cParam⌋₊ := iroot_eq_floor cExp_ne _
@@ -844,8 +846,8 @@ theorem Big.p_mul_s_lt (h : Big n) (i : Fin (d n)) :
     nlinarith
   omega
 
-/-- `γ ≤ b/4`, integer form `4γ ≤ b`. -/
-theorem Big.four_gamma_le_b (h : Big n) : 4 * gamma n ≤ b n := by
+/-- `16 d α² ≤ b`. -/
+theorem Big.sixteen_d_alpha_sq_le_b (h : Big n) : 16 * d n * alpha n ^ 2 ≤ b n := by
   have h1 := alpha_pow_four_le h.1
   have h7 := h.pow_le_b (k := 7) le_rfl
   have hD := h.2
@@ -860,25 +862,54 @@ theorem Big.four_gamma_le_b (h : Big n) : 4 * gamma n ≤ b n := by
     calc 49152 * D ^ 4 ≤ D ^ 3 * D ^ 4 := Nat.mul_le_mul_right _ this
       _ = D ^ 7 := by ring
       _ ≤ B := h7
-  -- `16 D A² ≤ B`
   have h3 : (16 * D * A ^ 2) ^ 2 ≤ B ^ 2 := by
     calc (16 * D * A ^ 2) ^ 2 = 256 * D ^ 2 * A ^ 4 := by ring
       _ ≤ 256 * D ^ 2 * (192 * D ^ 2 * B) := Nat.mul_le_mul_left _ h1
       _ = 49152 * D ^ 4 * B := by ring
       _ ≤ B * B := Nat.mul_le_mul_right _ h2
       _ = B ^ 2 := by ring
-  have h4 : 16 * D * A ^ 2 ≤ B := (Nat.pow_le_pow_iff_left (by norm_num)).1 h3
-  have h5 : 16 * D ≤ B := by
-    have : 16 * D ≤ D ^ 4 := by
-      calc 16 * D ≤ D * D := Nat.mul_le_mul_right D (by omega : 16≤D)
-        _ = D ^ 2 := by ring
-        _ ≤ D ^ 4 := Nat.pow_le_pow_right (by omega) (by norm_num)
-    have := h.pow_le_b (k := 4) (by norm_num)
-    omega
-  show 4 * (D * (2 * A ^ 2 + 2)) ≤ B
-  have e : 4 * (D * (2 * A ^ 2 + 2)) = 8 * (D * A ^ 2) + 8 * D := by ring
-  have e2 : 16 * D * A ^ 2 = 16 * (D * A ^ 2) := by ring
+  exact (Nat.pow_le_pow_iff_left (by norm_num)).1 h3
+
+/-- `γ ≤ b/4`, integer form `4γ ≤ b`. -/
+theorem Big.four_gamma_le_b (h : Big n) : 4 * gamma n ≤ b n := by
+  have h4 := h.sixteen_d_alpha_sq_le_b
+  have hA := two_le_alpha h.1
+  have hA4 : 4 ≤ alpha n ^ 2 := by nlinarith
+  have h6 : 4 * d n ≤ d n * alpha n ^ 2 := by
+    calc 4 * d n = d n * 4 := by ring
+      _ ≤ d n * alpha n ^ 2 := Nat.mul_le_mul_left _ hA4
+  show 4 * (d n * (3 * alpha n ^ 2 + 2)) ≤ b n
+  have e : 4 * (d n * (3 * alpha n ^ 2 + 2)) = 12 * (d n * alpha n ^ 2) + 8 * d n := by ring
+  have e2 : 16 * d n * alpha n ^ 2 = 16 * (d n * alpha n ^ 2) := by ring
   omega
+
+private theorem sq_le_two_pow_of_four (x : ℕ) (hx : 4 ≤ x) : x ^ 2 ≤ 2 ^ x := by
+  induction x, hx using Nat.le_induction with
+  | base => norm_num
+  | succ x hx ih =>
+    rw [pow_succ 2 x]
+    nlinarith
+
+/-- The small-gap width condition of the banded `B̃₀`: `8p ≤ 2^(α²)`. -/
+theorem Big.band_width (h : Big n) : 8 * p n ≤ 2 ^ (alpha n ^ 2) := by
+  have h1 := alpha_spec n
+  have hD := h.2
+  have hA := two_le_alpha h.1
+  have h4096 : 4096 ≤ d n ^ 2 := by nlinarith
+  have hb : 49152 * b n ≤ (alpha n ^ 2) ^ 2 := by
+    rw [← pow_mul]
+    calc 49152 * b n = 12 * 4096 * b n := by norm_num
+      _ ≤ 12 * d n ^ 2 * b n := by
+        apply Nat.mul_le_mul_right; exact Nat.mul_le_mul_left _ h4096
+      _ ≤ alpha n ^ 4 := h1
+  have hsq := sq_le_two_pow_of_four (alpha n ^ 2) (by nlinarith)
+  unfold p; omega
+
+/-- The small-gap budget of the banded `B̃₀`: `α² d ≤ p`. -/
+theorem Big.band_budget (h : Big n) : ((alpha n : ℝ)) ^ 2 * (d n : ℝ) ≤ p n := by
+  have h4 := h.sixteen_d_alpha_sq_le_b
+  have : alpha n ^ 2 * d n ≤ p n := by unfold p; nlinarith
+  exact_mod_cast this
 
 theorem Big.gamma_le_real (h : Big n) : (gamma n : ℝ) ≤ b n / 4 := by
   have : (4 * gamma n : ℝ) ≤ b n := by exact_mod_cast h.four_gamma_le_b

@@ -48,20 +48,20 @@ theorem compactRetuned_round_le {Ka : ℕ} :
     change 0≤4*(32768+compactRetunedTopCoeff 1 brDirs)
     change 0≤compactRetunedTopCoeff 1 brDirs at ht
     linarith
-  refine ⟨3*compactRetunedRoundCoeff brDirs,C₂,C₃+4,by positivity,hC₂,by positivity,?_⟩
+  refine ⟨12*compactRetunedRoundCoeff brDirs,C₂,C₃+4,by positivity,hC₂,by positivity,?_⟩
   filter_upwards [eventually_big,hprefix,hover,mr_small_le 46 1,
-    compactRetuned_layer_chunk_eventually (Ka:=Ka) brDirs 2 mr_F_le compactLayer_br_logb]
+    compactRetuned_layer_chunk_eventually (Ka:=Ka) brDirs 4 mr_F_le compactLayer_br_logb]
     with n hbig hprefix hover hsmall hchunkCost
   intro h hh stash
   obtain ⟨H,-,hlen,hN,hT,-,-,hell,-,-,-,-,hw⟩ := compactRetuned_inst hbig
   have hbP : b n≤p n := Nat.le_mul_of_pos_left _ (by decide : 0<6)
   have hWp : p n≤dsW n := (Nat.le_add_right (p n) 2).trans (ds_w_B n)
-  have hWP : dsW n≤2^2*(p n+1) := by unfold p; omega
-  have hv : 2^(List.ofFn (cvAx (t n))).sum*(2^(ℓ n)*dsW n)≤3*(T n*p n) := by
+  have hWP : dsW n≤2^4*(p n+1) := by unfold p; omega
+  have hv : 2^(List.ofFn (cvAx (t n))).sum*(2^(ℓ n)*dsW n)≤12*(T n*p n) := by
     calc
       _ = (2^(List.ofFn (cvAx (t n))).sum*r n)*dsW n := by unfold r; ring
       _ = T n*dsW n := by rw [hT]
-      _ ≤ T n*(3*p n) := Nat.mul_le_mul_left _ (by unfold p; omega)
+      _ ≤ T n*(12*p n) := Nat.mul_le_mul_left _ (by unfold p; omega)
       _ = _ := by ring
   have hdsp : (compactSynDispatchCost (ℓ n) (Mult.CompactSizes.K n) h:ℝ)≤(T n:ℝ)*p n := by
     apply hsmall
@@ -79,14 +79,14 @@ theorem compactRetuned_round_le {Ka : ℕ} :
   by_cases hc : synChunk (ℓ n) (Mult.CompactSizes.K n) h
   · have hl := hchunkCost (List.ofFn (cvAx (t n))) (ℓ n) (dsW n) (ℓ n) h stash
       H hlen (hN.trans hbP) (hell.trans hbP) (le_refl _) hWp hWP (by omega) hc
-    have hvolR : ((2^(List.ofFn (cvAx (t n))).sum*(2^(ℓ n)*dsW n):ℕ):ℝ)≤3*((T n:ℝ)*p n) := by exact_mod_cast hv
+    have hvolR : ((2^(List.ofFn (cvAx (t n))).sum*(2^(ℓ n)*dsW n):ℕ):ℝ)≤12*((T n:ℝ)*p n) := by exact_mod_cast hv
     have hscaled := mul_le_mul_of_nonneg_right
       (mul_le_mul_of_nonneg_left hvolR hCC) (Real.rpow_nonneg (Nat.cast_nonneg (d n)) CompactInterim.lam')
     simp only [compactSynUniformRoundFCost,Nat.cast_add,Nat.cast_one,hc,ite_true,add_zero]
     nlinarith only [hl,hscaled,hTw,hdsp,hTp1]
   · have hl := hprefix h hc
     have ho := hover h hh stash
-    have hbase : 0≤3*compactRetunedRoundCoeff brDirs*((T n:ℝ)*p n)*(d n:ℝ)^CompactInterim.lam' := by positivity
+    have hbase : 0≤12*compactRetunedRoundCoeff brDirs*((T n:ℝ)*p n)*(d n:ℝ)^CompactInterim.lam' := by positivity
     simp only [compactSynUniformRoundFCost,compactSynUniformLayerCost,hc,ite_false,Nat.cast_add,Nat.cast_one]
     push_cast at ho
     nlinarith only [hl,ho,hdsp,hTp1,hbase]

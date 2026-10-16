@@ -1389,7 +1389,7 @@ axis (`m = fastWindow p α`): from a base register file `σ₀` (`PreBaseB`) who
 `bo` holds the records of the pipeline (`preRecsB`) followed by `rest`, with the box register
 holding the padded stream of the numerators of `u` at scale `p n` (`‖u‖ ≤ 1`),
 `rsbAllP (preB rg rgx ι hd)` ends with the box register holding the numerators of
-`tensorZR (d n) (t n) (s n) (lineB n) u` at scale `p n` (zero off the source box), the register
+`tensorZR (d n) (t n) (s n) (lineBN n) u` at scale `p n` (zero off the source box), the register
 file configured for axis `0` and `rest` on `bo`. -/
 theorem rsbStage_exec (n : ℕ) (hbig : Big n) (hd0 : 0 < d n)
     (hrg₂ : Function.Injective (Sum.elim rg rgx)) (hdisj₂ : ∀ r j, Sum.elim rg rgx r ≠ ι j)
@@ -1409,7 +1409,7 @@ theorem rsbStage_exec (n : ℕ) (hbig : Big n) (hd0 : 0 < d n)
     (axs : List (Fin (prime + K + 4))) (haxs : axs.length = d n - 1) :
     ∃ G : ((i : Fin (d n)) → Fin (t n i)) → GaussianInt,
       (∀ x : (i : Fin (d n)) → Fin (t n i), (∀ i, (x i : ℕ) < s n i) →
-        tensorZR (d n) (t n) (s n) (lineB n) u (fun i => ((x i : ℕ) : ZMod (s n i))) =
+        tensorZR (d n) (t n) (s n) (lineBN n) u (fun i => ((x i : ℕ) : ZMod (s n i))) =
           GaussianInt.toComplex (G x) / 2 ^ p n) ∧
       (∀ x : (i : Fin (d n)) → Fin (t n i), (∃ i, s n i ≤ x i) → G x = 0) ∧
       RsbRuns body (Sum.elim rg rgx) ι (rsbAllP (preB rg rgx ι hd) rg rgx hι hT hQ hd pay hi hQs

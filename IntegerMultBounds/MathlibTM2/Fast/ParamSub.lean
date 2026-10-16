@@ -621,18 +621,20 @@ theorem pmSqC_do (st : TblSt 2 A) {a : ℕ} (ha : st.val 0 = a) (hW : a * a < 2 
   · simp [tblExactList, TblIns.exact, ha, sq]
 
 /-- `g := d (2 a + 2)`: `d` in `0`, `a` in `1`, `g` in `2`, scratch `3`. -/
-def pmGammaC : TblCode 4 := tblBlock 4 [.add 1 1 3, .inc 3, .inc 3] (.mul 0 3 2)
+def pmGammaC : TblCode 4 := tblBlock 4 [.add 1 1 3, .add 3 1 3, .inc 3, .inc 3] (.mul 0 3 2)
 
 theorem pmGammaC_do (st : TblSt 4 A) {d a : ℕ} (hd : st.val 0 = d) (ha : st.val 1 = a)
-    (hW : (d + 1) * (2 * a + 3) ≤ 2 ^ W) :
-    TblDo A W w pmGammaC st (fun s => s.val 0 = d ∧ s.val 1 = a ∧ s.val 2 = d * (2 * a + 2) ∧
-      s.acc = st.acc) 4 := by
-  have h1 : d * (2 * a + 2) < 2 ^ W := by nlinarith
-  have h2 : 2 * a + 2 < 2 ^ W := by nlinarith
-  have e : a + a + 1 + 1 = 2 * a + 2 := by ring
+    (hW : (d + 1) * (3 * a + 3) ≤ 2 ^ W) :
+    TblDo A W w pmGammaC st (fun s => s.val 0 = d ∧ s.val 1 = a ∧ s.val 2 = d * (3 * a + 2) ∧
+      s.acc = st.acc) 5 := by
+  have h1 : d * (3 * a + 2) < 2 ^ W := by nlinarith
+  have h2 : 3 * a + 2 < 2 ^ W := by nlinarith
+  have e : a + a + a + 1 + 1 = 3 * a + 2 := by ring
+  have e' : a + a + a = 3 * a := by ring
+  have e3 : 3 * a + 1 + 1 = 3 * a + 2 := by ring
   refine TblDo.block _ _ ?_ ?_
-  · simp [tblFitsList, TblIns.fits, TblIns.exact, hd, ha, e]; omega
-  · simp [tblExactList, TblIns.exact, hd, ha, e]
+  · simp [tblFitsList, TblIns.fits, TblIns.exact, hd, ha, e, e', e3]; omega
+  · simp [tblExactList, TblIns.exact, hd, ha, e, e', e3]
 
 /-- `x₀ := start d N R = 2 ((2d - 1) R / (4 d N) + 1)`: `d` in `0`, `R` in `1`, `N` in `2`, `x₀`
 in `3`, scratch `4`, `5`. -/

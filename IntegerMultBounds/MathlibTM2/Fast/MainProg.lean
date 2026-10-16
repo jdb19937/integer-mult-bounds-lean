@@ -318,12 +318,12 @@ structure MnDist (K : ℕ) (Lb : LProc → MnPr (prime + K)) (w : ℕ → ℕ)
   str : ∀ᶠ n in atTop, (E n).c .str = []
   sb : ∀ᶠ n in atTop, (E n).x .sb = []
   clrA : ∀ᶠ n in atTop, ∀ x ∈ preClrA crtHd, ((V₀ n).get x).length ≤ T n * w n
-  clrB : ∀ᶠ n in atTop, ∀ r ∈ preClrB crtHd, (σ₀ n r).length ≤ T n * w n
+  clrB : ∀ᶠ n in atTop, ∀ r ∈ bandClrB crtHd, (σ₀ n r).length ≤ T n * w n
   widths : ∀ᶠ n in atTop, p n + Chirp.chirpGuard (d n) + 3 ≤ w n ∧ w n < Wt n ∧
     (∀ i : Fin (d n), alpha n ^ 2 * ((s n i + t n i) * (windowA (p n) (alpha n) + 1)) ^ 2 *
       2 ^ (13 * p n + 8) < 2 ^ Wt n) ∧
-    (∀ i : Fin (d n), alpha n ^ 2 * ((s n i + t n i) *
-      (FastB0.fastWindow (p n) (alpha n) + 1)) ^ 2 * 2 ^ (13 * p n + 8) < 2 ^ Wt n) ∧
+    (9 * p n + 2 ≤ w n ∧ ∀ i : Fin (d n), alpha n ^ 2 * ((s n i + t n i) *
+      (8 * FastB0.fastWindow (p n) (alpha n) + 1)) ^ 2 * 2 ^ (65 * p n + 8) < 2 ^ Wt n) ∧
     (∀ k, s n k * t n k * t n k < 2 ^ Wt n) ∧
     (∀ k, 8 * (p n + Chirp.chirpGuard (d n)) + Nat.size (t n k) + 80 ≤ Wt n)
   ratio : ∃ cw cW : ℕ, ∀ᶠ n in atTop, w n ≤ cw * p n ∧ Wt n ≤ cW * p n
@@ -348,12 +348,12 @@ def mnV₂ (D : MnDist K Lb w σ) (n : ℕ) (hd0 : 0 < d n) : RsaV (RsaX 6) (pri
 
 /-- The base file of `B̃₀` for the second run. -/
 def mnσ₁ (D : MnDist K Lb w σ) (n : ℕ) (hd0 : 0 < d n) : RsbR ⊕ RsbX 6 → List (Fin (prime + K + 4)) :=
-  preCfgB (D.σ₀ n) crtHd n (w n) (D.Wt n) hd0
+  bandCfgB (D.σ₀ n) crtHd n (w n) (D.Wt n) hd0
     (preRecsB n (D.Wt n) hd0 0 ++ (preRecsB n (D.Wt n) hd0 0 ++ D.restB n)) (d n - 1)
 
 /-- The base file of `B̃₀` for the third run. -/
 def mnσ₂ (D : MnDist K Lb w σ) (n : ℕ) (hd0 : 0 < d n) : RsbR ⊕ RsbX 6 → List (Fin (prime + K + 4)) :=
-  preCfgB (mnσ₁ D n hd0) crtHd n (w n) (D.Wt n) hd0 (preRecsB n (D.Wt n) hd0 0 ++ D.restB n)
+  bandCfgB (mnσ₁ D n hd0) crtHd n (w n) (D.Wt n) hd0 (preRecsB n (D.Wt n) hd0 0 ++ D.restB n)
     (d n - 1)
 
 /-- The step bounds of the three source-transform runs. -/

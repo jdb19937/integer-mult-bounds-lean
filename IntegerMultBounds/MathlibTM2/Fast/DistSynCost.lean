@@ -101,7 +101,7 @@ theorem dsySynCostG_le {N ℓ K D WL M : ℕ} (hN : N ≤ M) (hℓ : ℓ ≤ M) 
 
 theorem dsy_sizes {n : ℕ} (hbig : Big n) :
     (dsyEs n).sum ≤ b n + 2 ∧ ℓ n ≤ b n + 2 ∧ K n ≤ b n + 2 ∧ (dsyEs n).length ≤ b n + 2 ∧
-      dsW n ≤ 9 * (b n + 2) ∧ dsWW n ≤ 200 * (b n + 2) := by
+      dsW n ≤ 63 * (b n + 2) ∧ dsWW n ≤ 500 * (b n + 2) := by
   have hn := hbig.1
   have h1 := pm_logT_le hn
   have h2 := ℓ_le_logT hbig

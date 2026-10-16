@@ -402,7 +402,7 @@ theorem pm_s13 (hn : 2 ≤ n) (hW : 4 * b n + 32 ≤ W) :
     fin_cases y <;> simp [pmVal, pmNV] at hy ⊢ <;> assumption
 
 theorem pm_s14 (hn : 2 ≤ n) (hW : 4 * b n + 32 ≤ W) :
-    ∀ s, PmF n 14 acc s → TblDo A W w (pmGammaC.rename ![3, 13, 14, 31]) s (PmF n 15 acc) 4 :=
+    ∀ s, PmF n 14 acc s → TblDo A W w (pmGammaC.rename ![3, 13, 14, 31]) s (PmF n 15 acc) 5 :=
   pm_stage (by decide) 2 rfl fun s hs => by
     have h0 : (s.restrict ![3, 13, 14, 31]).val 0 = d n := by simpa [pmVal, pmNV] using hs.val 3
     have h1 : (s.restrict ![3, 13, 14, 31]).val 1 = alpha n ^ 2 := by
@@ -412,11 +412,11 @@ theorem pm_s14 (hn : 2 ≤ n) (hW : 4 * b n + 32 ≤ W) :
     have hd1 : d n + 1 ≤ 2 ^ b n := by have := d_le_b n; have := pm_b_lt n; omega
     have e : 2 ^ (3 * b n + 10) = 4 * 2 ^ (3 * b n + 8) := by
       rw [show 3 * b n + 10 = 2 + (3 * b n + 8) by ring, pow_add]; norm_num
-    have h2 : 2 * alpha n ^ 2 + 3 ≤ 2 ^ (3 * b n + 10) := by omega
+    have h2 : 3 * alpha n ^ 2 + 3 ≤ 2 ^ (3 * b n + 10) := by omega
     have e2 : 2 ^ b n * 2 ^ (3 * b n + 10) = 2 ^ (4 * b n + 10) := by rw [← pow_add]; ring_nf
     have hb := pm_W_pow hW (k := 4 * b n + 10) (by omega)
     refine (pmGammaC_do _ h0 h1 ?_).mono ?_ le_rfl
-    · calc (d n + 1) * (2 * alpha n ^ 2 + 3) ≤ 2 ^ b n * 2 ^ (3 * b n + 10) :=
+    · calc (d n + 1) * (3 * alpha n ^ 2 + 3) ≤ 2 ^ b n * 2 ^ (3 * b n + 10) :=
             Nat.mul_le_mul hd1 h2
         _ ≤ 2 ^ W := by rw [e2]; exact hb
     rintro s' ⟨e0, e1, e2, ea⟩
@@ -809,7 +809,7 @@ def pmCode2 : TblCode pmNV := pmEmitSC.rename ![16, 17, 11, 3, 31, 32, 33] ;; pm
 
 /-- The atoms of `pmCode1`. -/
 def pmAtoms1 (n : ℕ) : ℕ :=
-  1204 + 4 * b n + 489 * d n + 344 * K n + 8 * logT n + 8 * ℓ n + 5 * alpha n +
+  1205 + 4 * b n + 489 * d n + 344 * K n + 8 * logT n + 8 * ℓ n + 5 * alpha n +
     6 * Nat.sqrt (p n * alpha n ^ 2) + 6 * Nat.sqrt (p n) + 4 * Nat.clog 2 (d n) +
     4 * Nat.clog 2 (taylorTerms (p n) 0) + 4 * Nat.clog 2 (taylorTerms (p n) (chirpGuard (d n)))
 
@@ -824,7 +824,7 @@ theorem pmStages_do (hn : 2 ≤ n) (hW : 4 * b n + 32 ≤ W) :
     ∀ s, PmF n 1 acc s → TblDo A W w pmStages s (PmF n 31 acc)
       ((4 * b n + 5) + (10 + ((7 * 30 + 11 + d n * (6 * 30 + 8)) +
         ((7 * 34 + 11 + K n * (6 * 34 + 8)) + ((4 * logT n + 16) + ((4 * logT n + 5) + (8 +
-        ((4 * ℓ n + 5) + (3 + ((4 * (ℓ n - 1) + 5) + (2 + ((5 * alpha n + 20) + (1 + (4 + (8 +
+        ((4 * ℓ n + 5) + (3 + ((4 * (ℓ n - 1) + 5) + (2 + ((5 * alpha n + 20) + (1 + (5 + (8 +
         ((12 * d n + 6) + (11 + ((13 * d n + 5) + ((6 * Nat.sqrt (p n * alpha n ^ 2) + 9) +
         ((6 * Nat.sqrt (p n) + 10) + ((4 * Nat.clog 2 (d n) + 4 + 7) + ((1 + 14 + 4) +
         ((4 * Nat.clog 2 (taylorTerms (p n) 0) + 4 + 7) + ((1 + 2 + 5) + ((5 + 4 + 4) +

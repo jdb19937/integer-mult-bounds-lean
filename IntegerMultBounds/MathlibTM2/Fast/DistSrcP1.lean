@@ -8,7 +8,7 @@ public import IntegerMultBounds.MathlibTM2.Fast.Dist
 
 `dsP1 rg g`: `Wt` into variable `38`, `d` ticks onto the loop counter `o .uD`, the axis loop
 (`dsAxes`) with the pushes `dsL₁`: the `Ã` record onto `a (.c .out)`, the `B̃₀` record onto
-`b (.inl .bo)`, the reversed chirp blocks onto the spares `o .xT`, `o .xS`, the CRT entries of
+`b (.inl .prm)`, the reversed chirp blocks onto the spares `o .xT`, `o .xS`, the CRT entries of
 `aᵢ = log₂ tᵢ` and `sᵢ` onto `c .wT`, `c .sT`; the loop variables cleared; the chirp blocks moved
 onto `x .tSp`, `x .sSp`; the records copied twice more (`preRecsA` three times, for the runs
 `srcP`, `srcP`, `oppP'`).
@@ -38,7 +38,7 @@ variable {T Q A t₀ : ℕ} {U P : Type} {body : P → Pr P T Q A U} {rg : TblR 
 /-- The record register of `Ã`. -/
 abbrev dsyA : DsY t₀ := .s (.a (.c .out))
 /-- The record register of `B̃₀`. -/
-abbrev dsyB : DsY t₀ := .s (.b (.inl .bo))
+abbrev dsyB : DsY t₀ := .s (.b (.inl .prm))
 /-- The CRT width list. -/
 abbrev dsyWT : DsY t₀ := .s (.c .wT)
 /-- The CRT length list. -/

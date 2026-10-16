@@ -5,6 +5,7 @@ public import IntegerMultBounds.MathlibTM2.Cost.MatchStages
 public import IntegerMultBounds.MathlibTM2.Cost.DirectTotal
 public import IntegerMultBounds.MathlibTM2.Cost.CRTDirectEntry
 public import IntegerMultBounds.MathlibTM2.Fast.SrcDirectStage
+public import IntegerMultBounds.MathlibTM2.Cost.MatchBandB
 
 /-!
 # The three source-transform runs against `totDirectBound`
@@ -21,7 +22,7 @@ times `totDirectCRT + totResamp + totConv + T M(p) + T p`.
   (`cvBoxCost … cF cO = cvBoxCost … 0 0 + 2 cF + cO`, `mn_cvBoxCost_split`), the ring header and
   `header` (`ring_header_length_le`); the scale by `mt_ch_scale_le`; the transfers and clears are
   linear in `T w`.
-* `mn_clrA_cfg`, `mn_clrB_cfg`: in a file configured by a loader (`preCfgA`, `preCfgB`), the
+* `mn_clrA_cfg` (and `Cost.mt_band_clr_cfg` for `B̃₀`): in a file configured by a loader (`preCfgA`, `bandCfgB`), the
   registers the next first loader step clears hold at most `T w` symbols (from
   `mt_rsa_clr_load_le`, `mt_rsb_clear_le`, with `b^k r = o(T)`), so the base files `mnV₁`,
   `mnV₂`, `mnσ₁`, `mnσ₂` of the second and third runs meet the hypothesis of `mn_core_le`.
@@ -152,32 +153,6 @@ lemma mn_clrA_cfg (cw cW : ℕ) :
   simp only [preCfgA]
   omega
 
-/-- In a file configured for step `k` of `B̃₀`, the registers the first step of the next loader
-clears hold at most `T w` symbols, eventually. -/
-lemma mn_clrB_cfg (cw cW : ℕ) :
-    ∀ᶠ n in atTop, ∀ {t₀ A : ℕ} (hd0 : 0 < d n) (w W : ℕ)
-      (σ : RsbR ⊕ RsbX t₀ → List (Fin (A + 4))) (hd : Fin 5 → Fin t₀)
-      (rest : List (Fin (A + 4))) (k : ℕ),
-      101 ≤ w → w ≤ cw * p n → W ≤ cW * p n →
-      ∀ x ∈ preClrB hd, (preCfgB σ hd n w W hd0 rest k x).length ≤ T n * w := by
-  filter_upwards [eventually_big, mt_poly_r_le_T (2000 * (cW + cw + 6) ^ 4 * 6 ^ 4) 4]
-    with n h hT
-  intro t₀ A hd0 w W σ hd rest k hw hwc hWc x hx
-  obtain ⟨s0, P0, G0, U0⟩ := mt_rsb_preDB_facts h hd0 hwc hWc (w := w) k
-  have h2 := mt_rsb_clear_le σ hd w (preDB n W hd0 k) (preRecsB n W hd0 (k + 1) ++ rest) s0
-  have hmem := List.le_sum_of_mem (List.mem_map_of_mem
-    (f := fun x => 2 * (preLoadB σ hd w (preDB n W hd0 k)
-      (preRecsB n W hd0 (k + 1) ++ rest) x).length + 2) hx)
-  have hU : 1000 * mtRsbU n cw cW ≤ T n := by
-    have e : 1000 * mtRsbU n cw cW = 2000 * (cW + cw + 6) ^ 4 * 6 ^ 4 * b n ^ 4 * r n := by
-      unfold mtRsbU p; ring
-    rw [e]; exact hT
-  have hT101 : 101 * T n ≤ T n * w := by rw [mul_comm]; exact Nat.mul_le_mul_left _ hw
-  have h3 : 1000 * (((preDB n W hd0 k).t + 1) * mtRsbQ (preDB n W hd0 k) w ^ 4) ≤ T n :=
-    (Nat.mul_le_mul_left _ U0).trans hU
-  simp only [preCfgB]
-  omega
-
 /-! ### One run of the source transform -/
 
 lemma mn_runSum_ge {n : ℕ} (h : Big n) :
@@ -216,11 +191,11 @@ lemma mn_core_le {K : ℕ} (cw cW : ℕ) :
       (restA restB : List (Fin (prime + K + 4))),
       p n + 2 ≤ w → w ≤ cw * p n → W ≤ cW * p n →
       (∀ x ∈ preClrA crtHd, (V₀.get x).length ≤ T n * w) →
-      (∀ r ∈ preClrB crtHd, (σ₀ r).length ≤ T n * w) →
+      BandBase σ₀ w crtHd → (∀ r ∈ bandClrB crtHd, (σ₀ r).length ≤ T n * w) →
       (srcCoreCost mnM n w W cF cO hd0 V₀ σ₀ restA restB : ℝ) ≤
         C * mnRunSum n + ((2 * cF + cO : ℕ) : ℝ) := by
   obtain ⟨CA, hCA⟩ := mt_rsa_stage_le_linear mnT 6 K cw cW
-  obtain ⟨CB, hCB⟩ := mt_rsb_stage_le_linear mnT 6 K cw cW
+  obtain ⟨CB, hCB⟩ := mt_band_stage_le_linear mnT 6 K cw cW
   obtain ⟨CK, hCK⟩ := mt_ch_kernel_le mnT cw cW
   set c4 : ℝ := mtCM mnT cw + 21 * cw + 28
   set c5 : ℝ := 6 * cw + 19
@@ -230,7 +205,7 @@ lemma mn_core_le {K : ℕ} (cw cW : ℕ) :
     by positivity, ?_⟩
   filter_upwards [eventually_big, hCA, hCB, hCK, mt_ch_chirpMul_le mnT cw, mt_ch_scale_le cw,
     mt_cv_box_le_conv mnT cw, mn_ldcBlocks_le] with n h hA hB hK hC hS hV hL
-  intro hd0 w W cF cO V₀ σ₀ restA restB hpw hwc hWc hclrA hclrB
+  intro hd0 w W cF cO V₀ σ₀ restA restB hpw hwc hWc hclrA hbB hclrB
   obtain ⟨g1, g2, g3, g4, -, -⟩ := mn_runSum_ge h
   obtain ⟨-, -, -, q4, q5⟩ := mn_runSum_parts h
   have q0 : 0 ≤ totResamp n + totDirectCRT n + (T n : ℝ) * p n := by
@@ -238,7 +213,8 @@ lemma mn_core_le {K : ℕ} (cw cW : ℕ) :
   have q3 : 0 ≤ totConv n + (T n : ℝ) * totMp n := by
     obtain ⟨-, -, r3, r4, -⟩ := mn_runSum_parts h; linarith
   have a1 := mn_le_max_mul (hA hd0 w W V₀ crtHd restA (by omega) hwc hWc hclrA) q0 g1
-  have a2 := mn_le_max_mul (hB hd0 w W σ₀ crtHd restB (by omega) hwc hWc hclrB) q0 g1
+  have a2 := mn_le_max_mul (hB hd0 w W σ₀ crtHd restB (by omega) hwc hWc hbB
+    (by have := IntegerMultBounds.Networks.Shared50ModularControl.prime_odd; omega) hclrB) q0 g1
   have a3 := mn_le_max_mul (hK w W (by omega) hwc hWc) q4 g2
   have a4 := mn_le_max_mul (hC w (by omega) hwc) q4 g2
   have a5 := mn_le_max_mul (hS w hwc) q5 g4
@@ -292,7 +268,7 @@ lemma mn_srcP_le {K : ℕ} (cw cW : ℕ) :
       (restA restB : List (Fin (prime + K + 4))),
       p n + 2 ≤ w → w ≤ cw * p n → W ≤ cW * p n →
       (∀ x ∈ preClrA crtHd, (V₀.get x).length ≤ T n * w) →
-      (∀ r ∈ preClrB crtHd, (σ₀ r).length ≤ T n * w) →
+      BandBase σ₀ w crtHd → (∀ r ∈ bandClrB crtHd, (σ₀ r).length ≤ T n * w) →
       (srcDirectPCost mnM n w W cF cO hd0 V₀ σ₀ restA restB : ℝ) ≤
           C * mnRunSum n + ((2 * cF + cO : ℕ) : ℝ) ∧
         (oppDirectPCost mnM n w W cF cO hd0 V₀ σ₀ restA restB : ℝ) ≤
@@ -305,10 +281,10 @@ lemma mn_srcP_le {K : ℕ} (cw cW : ℕ) :
   refine ⟨C0 + max c1 0 + max c2 0 + 2 * max c3 0 + 2 * max c4 0, by positivity, ?_⟩
   filter_upwards [eventually_big, hcore, mn_direct_crt_le mnT cw K, mt_ch_conj_le cw]
     with n h hco hcr hcj
-  intro hd0 w W cF cO V₀ σ₀ restA restB hpw hwc hWc hclrA hclrB
+  intro hd0 w W cF cO V₀ σ₀ restA restB hpw hwc hWc hclrA hbB hclrB
   obtain ⟨-, -, -, g4, g5, -⟩ := mn_runSum_ge h
   obtain ⟨q1, -, -, -, q5⟩ := mn_runSum_parts h
-  have a0 := hco hd0 w W cF cO V₀ σ₀ restA restB hpw hwc hWc hclrA hclrB
+  have a0 := hco hd0 w W cF cO V₀ σ₀ restA restB hpw hwc hWc hclrA hbB hclrB
   have a1f := mn_le_max_mul (hcr w hwc true) q1 g5
   have a1i := mn_le_max_mul (hcr w hwc false) q1 g5
   have hX : (∏ i, t n i) ≤ T n := (mt_prod_t h).le
@@ -350,7 +326,8 @@ theorem mn_runs_le {K : ℕ} {Lb : LProc → MnPr (prime + K)} {w : ℕ → ℕ}
   obtain ⟨C1, hC1, hrun⟩ := mn_srcP_le (K := K) cw cW
   refine ⟨3 * C1 + 6 * max Cs 0, by positivity, ?_⟩
   filter_upwards [eventually_big, hratio, D.widths, D.clrA, D.clrB, hCs, hrun,
-    mn_clrA_cfg cw cW, mn_clrB_cfg cw cW] with n h hrt hwd hcA hcB hcs hr hcfgA hcfgB
+    mn_clrA_cfg cw cW, mt_band_clr_cfg cw cW, D.base] with n h hrt hwd hcA hcB hcs hr hcfgA hcfgB
+    hbase
   obtain ⟨hwc, hWc⟩ := hrt
   obtain ⟨hgw, -, -⟩ := hwd
   change _ ≤ _ * mnRunSum n
@@ -369,18 +346,22 @@ theorem mn_runs_le {K : ℕ} {Lb : LProc → MnPr (prime + K)} {w : ℕ → ℕ}
   rw [dite_eq_left hd0]
   set RA := preRecsA (A := prime + K) n (D.Wt n) hd0 0 with hRA
   set RB := preRecsB (A := prime + K) n (D.Wt n) hd0 0 with hRB
+  have hA3 : 3 ≤ prime + K := by have := IntegerMultBounds.Networks.Shared50ModularControl.prime_odd; omega
+  have hb0 : BandBase (D.σ₀ n) (w n) crtHd := (hbase hd0).bBase
+  have hb1 : BandBase (mnσ₁ D n hd0) (w n) crtHd := bandCfgB_base hb0 hA3 _
+  have hb2 : BandBase (mnσ₂ D n hd0) (w n) crtHd := bandCfgB_base hb1 hA3 _
   have b1 := (hr hd0 (w n) (D.Wt n) (Y.cF n) (Y.cO n) (D.V₀ n) (D.σ₀ n) (RA ++ (RA ++ D.restA n))
-    (RB ++ (RB ++ D.restB n)) hpw hwc hWc hcA hcB).1
+    (RB ++ (RB ++ D.restB n)) hpw hwc hWc hcA hb0 hcB).1
   have b2 := (hr hd0 (w n) (D.Wt n) (Y.cF n) (Y.cO n) (mnV₁ D n hd0) (mnσ₁ D n hd0)
     (RA ++ D.restA n) (RB ++ D.restB n) hpw hwc hWc
     (hcfgA hd0 (w n) (D.Wt n) (D.V₀ n) crtHd (RA ++ (RA ++ D.restA n)) (d n - 1) h11 hwc hWc)
-    (hcfgB hd0 (w n) (D.Wt n) (D.σ₀ n) crtHd (RB ++ (RB ++ D.restB n)) (d n - 1) h101 hwc
-      hWc)).1
+    hb1 (hcfgB hd0 (w n) (D.Wt n) (D.σ₀ n) crtHd (RB ++ (RB ++ D.restB n)) (d n - 1) h101 hwc
+      hWc hb0 hA3)).1
   have b3 := (hr hd0 (w n) (D.Wt n) (Y.cF n) (Y.cO n) (mnV₂ D n hd0) (mnσ₂ D n hd0)
     (D.restA n) (D.restB n) hpw hwc hWc
     (hcfgA hd0 (w n) (D.Wt n) (mnV₁ D n hd0) crtHd (RA ++ D.restA n) (d n - 1) h11 hwc hWc)
-    (hcfgB hd0 (w n) (D.Wt n) (mnσ₁ D n hd0) crtHd (RB ++ D.restB n) (d n - 1) h101 hwc
-      hWc)).2
+    hb2 (hcfgB hd0 (w n) (D.Wt n) (mnσ₁ D n hd0) crtHd (RB ++ D.restB n) (d n - 1) h101 hwc
+      hWc hb1 hA3)).2
   push_cast at b1 b2 b3 hcs' ⊢
   calc _ ≤ 3 * (C1 * mnRunSum n) + 6 * ((Y.cF n : ℝ) + Y.cO n) := by linarith
     _ ≤ 3 * (C1 * mnRunSum n) + 6 * (max Cs 0 * mnRunSum n) := by linarith

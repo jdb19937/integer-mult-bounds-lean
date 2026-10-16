@@ -32,7 +32,7 @@ theorem compactMainChain_exec_eventually : ∀ᶠ n : ℕ in Filter.atTop,
     (_hWA : ∀ i : Fin (d n), alpha n ^ 2 * ((s n i + t n i) * (windowA (p n) (alpha n) + 1)) ^ 2 *
       2 ^ (13 * p n + 8) < 2 ^ W)
     (_hWB : ∀ i : Fin (d n), alpha n ^ 2 * ((s n i + t n i) *
-      (FastB0.fastWindow (p n) (alpha n) + 1)) ^ 2 * 2 ^ (13 * p n + 8) < 2 ^ W)
+      (8 * FastB0.fastWindow (p n) (alpha n) + 1)) ^ 2 * 2 ^ (65 * p n + 8) < 2 ^ W)
     (_hWs : ∀ k, s n k * t n k * t n k < 2 ^ W)
     (_hWk : ∀ k, 8 * (p n + Chirp.chirpGuard (d n)) + Nat.size (t n k) + 80 ≤ W)
     {V₀ : RsaV (RsaX 6) (prime + mnKa)} {σ₀ : RsbR ⊕ RsbX 6 → List (Fin (prime + mnKa + 4))}

@@ -3,6 +3,7 @@ module
 public import IntegerMultBounds.MathlibTM2.Fast.MainTimeRuns
 public import IntegerMultBounds.MathlibTM2.Fast.CompactSrcMachine
 public import IntegerMultBounds.MathlibTM2.Cost.CompactTotal
+public import IntegerMultBounds.MathlibTM2.Cost.MatchBandB
 
 /-! Actual expanded source-stage costs against the retuned envelope. -/
 @[expose] public section
@@ -79,11 +80,11 @@ lemma compactSource_core_le {K : ℕ} (cw cW : ℕ) :
       (restA restB : List (Fin (prime + K + 4))),
       p n + 2 ≤ w → w ≤ cw * p n → W ≤ cW * p n →
       (∀ x ∈ preClrA crtHd, (V₀.get x).length ≤ T n * w) →
-      (∀ r ∈ preClrB crtHd, (σ₀ r).length ≤ T n * w) →
+      BandBase σ₀ w crtHd → (∀ r ∈ bandClrB crtHd, (σ₀ r).length ≤ T n * w) →
       (srcCoreCost compactSrcM n w W cF cO hd0 V₀ σ₀ restA restB : ℝ) ≤
         C * compactSourceSum n + ((2 * cF + cO : ℕ) : ℝ) := by
   obtain ⟨CA, hCA⟩ := mt_rsa_stage_le_linear compactMnT 6 K cw cW
-  obtain ⟨CB, hCB⟩ := mt_rsb_stage_le_linear compactMnT 6 K cw cW
+  obtain ⟨CB, hCB⟩ := mt_band_stage_le_linear compactMnT 6 K cw cW
   obtain ⟨CK, hCK⟩ := mt_ch_kernel_le compactMnT cw cW
   set c4 : ℝ := mtCM compactMnT cw + 21 * cw + 28
   set c5 : ℝ := 6 * cw + 19
@@ -93,7 +94,7 @@ lemma compactSource_core_le {K : ℕ} (cw cW : ℕ) :
     by positivity, ?_⟩
   filter_upwards [eventually_big, hCA, hCB, hCK, mt_ch_chirpMul_le compactMnT cw, mt_ch_scale_le cw,
     compactSource_box_le compactMnT cw, mn_ldcBlocks_le] with n h hA hB hK hC hS hV hL
-  intro hd0 w W cF cO V₀ σ₀ restA restB hpw hwc hWc hclrA hclrB
+  intro hd0 w W cF cO V₀ σ₀ restA restB hpw hwc hWc hclrA hbB hclrB
   obtain ⟨g1, g2, g3, g4, -, -⟩ := compactSource_sum_ge h
   obtain ⟨-, -, -, q4, q5⟩ := compactSource_sum_parts h
   have q0 : 0 ≤ totResamp n + totDirectCRT n + (T n : ℝ) * p n := by
@@ -101,7 +102,8 @@ lemma compactSource_core_le {K : ℕ} (cw cW : ℕ) :
   have q3 : 0 ≤ CompactTotal.conv n + (T n : ℝ) * totMp n := by
     obtain ⟨-, -, r3, r4, -⟩ := compactSource_sum_parts h; linarith
   have a1 := mn_le_max_mul (hA hd0 w W V₀ crtHd restA (by omega) hwc hWc hclrA) q0 g1
-  have a2 := mn_le_max_mul (hB hd0 w W σ₀ crtHd restB (by omega) hwc hWc hclrB) q0 g1
+  have a2 := mn_le_max_mul (hB hd0 w W σ₀ crtHd restB (by omega) hwc hWc hbB
+    (by have := IntegerMultBounds.Networks.Shared50ModularControl.prime_odd; omega) hclrB) q0 g1
   have a3 := mn_le_max_mul (hK w W (by omega) hwc hWc) q4 g2
   have a4 := mn_le_max_mul (hC w (by omega) hwc) q4 g2
   have a5 := mn_le_max_mul (hS w hwc) q5 g4
@@ -134,7 +136,7 @@ lemma compactSource_direct_le {K : ℕ} (cw cW : ℕ) :
       (restA restB : List (Fin (prime + K + 4))),
       p n + 2 ≤ w → w ≤ cw * p n → W ≤ cW * p n →
       (∀ x ∈ preClrA crtHd, (V₀.get x).length ≤ T n * w) →
-      (∀ r ∈ preClrB crtHd, (σ₀ r).length ≤ T n * w) →
+      BandBase σ₀ w crtHd → (∀ r ∈ bandClrB crtHd, (σ₀ r).length ≤ T n * w) →
       (srcDirectPCost compactSrcM n w W cF cO hd0 V₀ σ₀ restA restB : ℝ) ≤
           C * compactSourceSum n + ((2 * cF + cO : ℕ) : ℝ) ∧
         (oppDirectPCost compactSrcM n w W cF cO hd0 V₀ σ₀ restA restB : ℝ) ≤
@@ -147,10 +149,10 @@ lemma compactSource_direct_le {K : ℕ} (cw cW : ℕ) :
   refine ⟨C0 + max c1 0 + max c2 0 + 2 * max c3 0 + 2 * max c4 0, by positivity, ?_⟩
   filter_upwards [eventually_big, hcore, mn_direct_crt_le compactMnT cw K, mt_ch_conj_le cw]
     with n h hco hcr hcj
-  intro hd0 w W cF cO V₀ σ₀ restA restB hpw hwc hWc hclrA hclrB
+  intro hd0 w W cF cO V₀ σ₀ restA restB hpw hwc hWc hclrA hbB hclrB
   obtain ⟨-, -, -, g4, g5, -⟩ := compactSource_sum_ge h
   obtain ⟨q1, -, -, -, q5⟩ := compactSource_sum_parts h
-  have a0 := hco hd0 w W cF cO V₀ σ₀ restA restB hpw hwc hWc hclrA hclrB
+  have a0 := hco hd0 w W cF cO V₀ σ₀ restA restB hpw hwc hWc hclrA hbB hclrB
   have a1f := mn_le_max_mul (hcr w hwc true) q1 g5
   have a1i := mn_le_max_mul (hcr w hwc false) q1 g5
   have hX : (∏ i, t n i) ≤ T n := (mt_prod_t h).le

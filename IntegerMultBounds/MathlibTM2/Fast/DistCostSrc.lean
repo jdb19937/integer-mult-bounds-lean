@@ -18,7 +18,7 @@ streams, `r`), each tick `O(W)` steps, together `O(W T) = O(n)` (`pm_W_T_le`); t
 searches of `r · poly(B)` steps (the CRT offsets `μ_j < s_j ≤ 2 r + 23`, the twist tables of `r`
 entries, `B = r w` and `W_L = r w + …`), eventually below `T` (`ds_poly_r_le_T`, the local form
 of `Cost/MatchBase.mt_poly_r_le_T`); and everything else, polynomial in `B` (`ds_main_bound`:
-`dsMainCost n ≤ 10^4 (W T) + 10^10 (B³ r) + 10^10 B^5` under `Big n`).
+`dsMainCost n ≤ 10^4 (W T) + 2·10^10 (B³ r) + 10^10 B^5` under `Big n`).
 -/
 
 @[expose] public section
@@ -33,9 +33,9 @@ open IntegerMultBounds.MathlibTM2.Mult IntegerMultBounds.MathlibTM2.Mult.Sizes I
 set_option linter.unusedSimpArgs false
 set_option linter.unusedSectionVars false
 
-/-- The step bound of the width program: `w = dsW n` by a code of at most `8` atoms and
-`Wt = dsWW n` by a code of at most `40` atoms, each pushed in unary. -/
-def dsWidCost (n : ℕ) : ℕ := dsStepCost (pmW n) 8 (dsW n) + dsStepCost (pmW n) 40 (dsWW n)
+/-- The step bound of the width program: `w = dsW n` by a code of at most `15` atoms and
+`Wt = dsWW n` by a code of at most `43` atoms, each pushed in unary. -/
+def dsWidCost (n : ℕ) : ℕ := dsStepCost (pmW n) 15 (dsW n) + dsStepCost (pmW n) 43 (dsWW n)
 
 /-- The step bound of the whole distribution machine at the pipeline widths. -/
 noncomputable def dsMainCost (n : ℕ) : ℕ := dsWidCost n + dsSrcCost n (dsW n) (dsWW n)
@@ -89,7 +89,7 @@ theorem ds_pmW_le {n : ℕ} (hn : 2≤n) : pmW n ≤ 20 * (b n + 1) := by
 theorem ds_g_le (n : ℕ) : Chirp.chirpGuard (d n) ≤ 5 * (b n + 1) := by
   have := pm_g_le n; omega
 
-theorem ds_gamma_le (hn : 2 ≤ n) : gamma n ≤ 34 * (b n + 1) ^ 3 := by
+theorem ds_gamma_le (hn : 2 ≤ n) : gamma n ≤ 50 * (b n + 1) ^ 3 := by
   have hα := pm_alpha_le hn
   have hd := d_le_b n
   have h1 : alpha n ^ 2 ≤ 16 * b n ^ 2 := by
@@ -98,9 +98,9 @@ theorem ds_gamma_le (hn : 2 ≤ n) : gamma n ≤ 34 * (b n + 1) ^ 3 := by
   have h2 : b n ≤ b n + 1 := by omega
   have h3 : b n ^ 2 ≤ (b n + 1) ^ 2 := Nat.pow_le_pow_left h2 2
   unfold gamma
-  calc d n * (2 * alpha n ^ 2 + 2) ≤ (b n + 1) * (2 * (16 * (b n + 1) ^ 2) + 2 * (b n + 1) ^ 2) :=
+  calc d n * (3 * alpha n ^ 2 + 2) ≤ (b n + 1) * (3 * (16 * (b n + 1) ^ 2) + 2 * (b n + 1) ^ 2) :=
         Nat.mul_le_mul (by omega) (by nlinarith)
-    _ = 34 * (b n + 1) ^ 3 := by ring
+    _ = 50 * (b n + 1) ^ 3 := by ring
 
 theorem ds_numHalf_le (hn : 2 ≤ n) : numHalf n ≤ 3 * (b n + 1) ^ 2 := by
   have hd := d_le_b n
@@ -132,12 +132,12 @@ theorem ds_r_le_T (hn : 2 ≤ n) : r n ≤ T n := by
   calc r n ≤ d n * r n := Nat.le_mul_of_pos_left _ h2
     _ ≤ T n := h1
 
-theorem ds_tblCw_le (hn : 2 ≤ n) : tblC (dsWW n) (dsW n) ≤ 1400000 * (b n + 1) ^ 2 := by
+theorem ds_tblCw_le (hn : 2 ≤ n) : tblC (dsWW n) (dsW n) ≤ 8200000 * (b n + 1) ^ 2 := by
   have h1 := ds_dsWW_le hn
   have h2 := ds_dsW_le hn
   have hB : 1 ≤ b n + 1 := by omega
   unfold tblC
-  have h3 : (dsWW n + 4) ^ 2 ≤ (204 * (b n + 1)) ^ 2 := Nat.pow_le_pow_left (by omega) 2
+  have h3 : (dsWW n + 4) ^ 2 ≤ (504 * (b n + 1)) ^ 2 := Nat.pow_le_pow_left (by omega) 2
   have h4 : b n + 1 ≤ (b n + 1) ^ 2 := Nat.le_self_pow (by norm_num) _
   nlinarith
 
@@ -201,8 +201,8 @@ theorem ds_stepCost_le₂ {W K x B a : ℕ} (hB : 1 ≤ B) (hW : W ≤ 20 * B)
   nlinarith
 
 /-- The atom count of the twist table over plain variables. -/
-theorem ds_twist_aux {r p w B : ℕ} (hB : 1 ≤ B) (hp : p ≤ 6 * B) (hw : w ≤ 9 * B) :
-    r * (39 * p + 626) + 200 * p + 4 * w + 1503 ≤ 860 * (B * r) + 2739 * B := by
+theorem ds_twist_aux {r p w B : ℕ} (hB : 1 ≤ B) (hp : p ≤ 6 * B) (hw : w ≤ 63 * B) :
+    r * (39 * p + 626) + 200 * p + 4 * w + 1503 ≤ 860 * (B * r) + 2955 * B := by
   have h1 : r * (39 * p + 626) ≤ r * (860 * B) := Nat.mul_le_mul_left _ (by omega)
   have e : r * (860 * B) = 860 * (B * r) := by ring
   rw [e] at h1
@@ -210,9 +210,9 @@ theorem ds_twist_aux {r p w B : ℕ} (hB : 1 ≤ B) (hp : p ≤ 6 * B) (hw : w �
 
 /-- The axis loop of phase 1 over plain variables. -/
 theorem ds_ar_loop₁ {d W C r T Tr Wt B : ℕ} (hB : 1 ≤ B) (hd : d ≤ B) (hdr : d * r ≤ T)
-    (hdTr : d * Tr ≤ T) (hW1 : W ≤ 20 * B) (hC : C ≤ 18600 * B ^ 2) (hWt : Wt ≤ 200 * B) :
+    (hdTr : d * Tr ≤ T) (hW1 : W ≤ 20 * B) (hC : C ≤ 18600 * B ^ 2) (hWt : Wt ≤ 500 * B) :
     d * (28 * C + (4 * W + 2) * (11 * r + 95 + 4 * Tr + 2 * Wt + 63 * B ^ 2) +
-      25 * (11 * W + 8) + 4) ≤ 15 * ((4 * W + 2) * T) + 50000 * B ^ 4 + 530000 * B ^ 3 := by
+      25 * (11 * W + 8) + 4) ≤ 15 * ((4 * W + 2) * T) + 100000 * B ^ 4 + 530000 * B ^ 3 := by
   obtain ⟨h2, h3, h4⟩ := ds_ar_pow B hB
   have e : d * (28 * C + (4 * W + 2) * (11 * r + 95 + 4 * Tr + 2 * Wt + 63 * B ^ 2) +
       25 * (11 * W + 8) + 4) = (4 * W + 2) * (11 * (d * r) + 4 * (d * Tr)) +
@@ -220,13 +220,13 @@ theorem ds_ar_loop₁ {d W C r T Tr Wt B : ℕ} (hB : 1 ≤ B) (hd : d ≤ B) (h
     ring
   have p1 : (4 * W + 2) * (11 * (d * r) + 4 * (d * Tr)) ≤ (4 * W + 2) * (15 * T) :=
     Nat.mul_le_mul_left _ (by omega)
-  have p2 : d * ((4 * W + 2) * (95 + 2 * Wt + 63 * B ^ 2)) ≤ 50000 * B ^ 4 := by
+  have p2 : d * ((4 * W + 2) * (95 + 2 * Wt + 63 * B ^ 2)) ≤ 100000 * B ^ 4 := by
     have h1 : 4 * W + 2 ≤ 82 * B := by omega
-    have h2 : 95 + 2 * Wt + 63 * B ^ 2 ≤ 558 * B ^ 2 := by omega
-    calc d * ((4 * W + 2) * (95 + 2 * Wt + 63 * B ^ 2)) ≤ B * (82 * B * (558 * B ^ 2)) :=
+    have h2 : 95 + 2 * Wt + 63 * B ^ 2 ≤ 1158 * B ^ 2 := by omega
+    calc d * ((4 * W + 2) * (95 + 2 * Wt + 63 * B ^ 2)) ≤ B * (82 * B * (1158 * B ^ 2)) :=
           Nat.mul_le_mul hd (Nat.mul_le_mul h1 h2)
-      _ = 45756 * B ^ 4 := by ring
-      _ ≤ 50000 * B ^ 4 := by omega
+      _ = 94956 * B ^ 4 := by ring
+      _ ≤ 100000 * B ^ 4 := by omega
   have p3 : d * (28 * C + 25 * (11 * W + 8) + 4) ≤ 530000 * B ^ 3 := by
     have h1 : 28 * C + 25 * (11 * W + 8) + 4 ≤ 530000 * B ^ 2 := by omega
     calc d * (28 * C + 25 * (11 * W + 8) + 4) ≤ B * (530000 * B ^ 2) := Nat.mul_le_mul hd h1
@@ -313,9 +313,9 @@ theorem ds_recLenB_le (hn : 2 ≤ n) (Wt : ℕ) :
   exact h
 
 /-- The record lengths: `O(T)` plus a polynomial. -/
-theorem ds_recLen_le (hn : 2 ≤ n) {Wt : ℕ} (hWt : Wt ≤ 200 * (b n + 1)) :
-    dsRecLenA n Wt ≤ 13 * T n + 540 * (b n + 1) ^ 3 ∧
-      dsRecLenB n Wt ≤ 13 * T n + 540 * (b n + 1) ^ 3 := by
+theorem ds_recLen_le (hn : 2 ≤ n) {Wt : ℕ} (hWt : Wt ≤ 500 * (b n + 1)) :
+    dsRecLenA n Wt ≤ 13 * T n + 1200 * (b n + 1) ^ 3 ∧
+      dsRecLenB n Wt ≤ 13 * T n + 1200 * (b n + 1) ^ 3 := by
   have hA := ds_recLenA_le hn Wt
   have hB := ds_recLenB_le hn Wt
   have hdr := ds_d_mul_r_le hn
@@ -335,11 +335,11 @@ theorem ds_recLen_le (hn : 2 ≤ n) {Wt : ℕ} (hWt : Wt ≤ 200 * (b n + 1)) :
   have e : ∀ x, d n * (9 * r n + 80 + 4 * x + 2 * Wt + 60 * (b n + 1) ^ 2) =
       9 * (d n * r n) + 4 * (d n * x) + d n * (80 + 2 * Wt + 60 * (b n + 1) ^ 2) := fun x => by
     ring
-  have hp : d n * (80 + 2 * Wt + 60 * (b n + 1) ^ 2) ≤ 540 * (b n + 1) ^ 3 := by
-    have : 80 + 2 * Wt + 60 * (b n + 1) ^ 2 ≤ 540 * (b n + 1) ^ 2 := by omega
-    calc d n * (80 + 2 * Wt + 60 * (b n + 1) ^ 2) ≤ (b n + 1) * (540 * (b n + 1) ^ 2) :=
+  have hp : d n * (80 + 2 * Wt + 60 * (b n + 1) ^ 2) ≤ 1200 * (b n + 1) ^ 3 := by
+    have : 80 + 2 * Wt + 60 * (b n + 1) ^ 2 ≤ 1200 * (b n + 1) ^ 2 := by omega
+    calc d n * (80 + 2 * Wt + 60 * (b n + 1) ^ 2) ≤ (b n + 1) * (1200 * (b n + 1) ^ 2) :=
           Nat.mul_le_mul (by omega) this
-      _ = 540 * (b n + 1) ^ 3 := by ring
+      _ = 1200 * (b n + 1) ^ 3 := by ring
   rw [e] at hA hB
   omega
 
@@ -374,9 +374,9 @@ variable {n : ℕ}
 set_option maxHeartbeats 4000000 in
 set_option maxRecDepth 8000 in
 /-- **The cost of the converter under `Big n`**, with the `r`-terms kept:
-`dsMainCost n ≤ 10^4 (W T) + 10^10 (B³ r) + 10^10 B^5`, `W = pmW n`, `B = b n + 1`. -/
+`dsMainCost n ≤ 10^4 (W T) + 2·10^10 (B³ r) + 10^10 B^5`, `W = pmW n`, `B = b n + 1`. -/
 theorem ds_main_bound (hbig : Big n) :
-    dsMainCost n ≤ 10 ^ 4 * (pmW n * T n) + 10 ^ 10 * ((b n + 1) ^ 3 * r n) +
+    dsMainCost n ≤ 10 ^ 4 * (pmW n * T n) + 2 * 10 ^ 10 * ((b n + 1) ^ 3 * r n) +
       10 ^ 10 * (b n + 1) ^ 5 := by
   have hn := hbig.1
   have hB1 : 1 ≤ b n + 1 := by omega
@@ -387,15 +387,15 @@ theorem ds_main_bound (hbig : Big n) :
   have hW : pmW n ≤ 20 * (b n + 1) := ds_pmW_le hn
   have hW1 : 1 ≤ pmW n := by have := pmW_ge n; omega
   have hC : tblC (pmW n) (pmW n) ≤ 18600 * (b n + 1) ^ 2 := ds_tblC_le_of_two hn
-  have hw : dsW n ≤ 9 * (b n + 1) := by have := ds_dsW_le hn; omega
-  have hWt : dsWW n ≤ 200 * (b n + 1) := ds_dsWW_le hn
+  have hw : dsW n ≤ 63 * (b n + 1) := by have := ds_dsW_le hn; omega
+  have hWt : dsWW n ≤ 500 * (b n + 1) := ds_dsWW_le hn
   have hp : p n ≤ 6 * (b n + 1) := by unfold p; omega
   have hg : Chirp.chirpGuard (d n) ≤ 5 * (b n + 1) := ds_g_le n
   have hℓ : ℓ n ≤ 3 * (b n + 1) := by have := pm_ℓ_le hn; omega
   have hlogT : logT n ≤ 3 * (b n + 1) := by have := pm_logT_le hn; omega
   have hd : d n ≤ b n + 1 := by have := d_le_b n; omega
   have hK : K n ≤ b n + 1 := by have := K_le_d n; omega
-  have hγ : gamma n ≤ 34 * (b n + 1) ^ 3 := ds_gamma_le hn
+  have hγ : gamma n ≤ 50 * (b n + 1) ^ 3 := ds_gamma_le hn
   have hnh : numHalf n ≤ 3 * (b n + 1) ^ 2 := ds_numHalf_le hn
   have hrT : r n ≤ T n := ds_r_le_T hn
   have hdr : d n * r n ≤ T n := ds_d_mul_r_le hn
@@ -412,12 +412,12 @@ theorem ds_main_bound (hbig : Big n) :
   have hr1 : r n ≤ (b n + 1) ^ 3 * r n := Nat.le_mul_of_pos_left _ (by positivity)
   have hBr : (b n + 1) * r n ≤ (b n + 1) ^ 3 * r n := Nat.mul_le_mul_right _ (by omega)
   have hB2r : (b n + 1) ^ 2 * r n ≤ (b n + 1) ^ 3 * r n := Nat.mul_le_mul_right _ hB3
-  have hTw : tblC (dsWW n) (dsW n) ≤ 1400000 * (b n + 1) ^ 2 := ds_tblCw_le hn
+  have hTw : tblC (dsWW n) (dsW n) ≤ 8200000 * (b n + 1) ^ 2 := ds_tblCw_le hn
   -- the width program
-  have hWid : dsWidCost n ≤ 1300000 * (b n + 1) ^ 2 := by
+  have hWid : dsWidCost n ≤ 1400000 * (b n + 1) ^ 2 := by
     unfold dsWidCost
-    have h1 := ds_stepCost_le (K := 8) hB1 hW hC hw
-    have h2 := ds_stepCost_le (K := 40) hB1 hW hC hWt
+    have h1 := ds_stepCost_le (K := 15) hB1 hW hC hw
+    have h2 := ds_stepCost_le (K := 43) hB1 hW hC hWt
     omega
   -- phase 1
   have hP1 : dsP1Cost n (dsWW n) ≤ 1200 * (pmW n * T n) + 2000000 * (b n + 1) ^ 4 := by
@@ -427,12 +427,12 @@ theorem ds_main_bound (hbig : Big n) :
     have hrec := ds_recLen_le hn hWt
     have hst := ds_sum_t hn
     have hss := ds_sum_s hn
-    have h1 : dsWW n * (4 * pmW n + 10) ≤ 200 * (b n + 1) * (4 * (20 * (b n + 1)) + 10) :=
+    have h1 : dsWW n * (4 * pmW n + 10) ≤ 500 * (b n + 1) * (4 * (20 * (b n + 1)) + 10) :=
       Nat.mul_le_mul hWt (by omega)
     have h2 : pmW n * (4 * d n + 11) ≤ 20 * (b n + 1) * (4 * (b n + 1) + 11) :=
       Nat.mul_le_mul hW (by omega)
-    have e1 : 200 * (b n + 1) * (4 * (20 * (b n + 1)) + 10) =
-        16000 * (b n + 1) ^ 2 + 2000 * (b n + 1) := by ring
+    have e1 : 500 * (b n + 1) * (4 * (20 * (b n + 1)) + 10) =
+        40000 * (b n + 1) ^ 2 + 5000 * (b n + 1) := by ring
     have e2 : 20 * (b n + 1) * (4 * (b n + 1) + 11) = 80 * (b n + 1) ^ 2 + 220 * (b n + 1) := by
       ring
     have e3 : 15 * ((4 * pmW n + 2) * T n) = 60 * (pmW n * T n) + 30 * T n := by ring
@@ -471,7 +471,7 @@ theorem ds_main_bound (hbig : Big n) :
     omega
   -- phase 2a
   have hP2a : dsP2aCost n (dsW n) (dsWW n) ≤ 100 * ((b n + 1) ^ 3 * r n) +
-      20000000 * (b n + 1) ^ 4 := by
+      50000000 * (b n + 1) ^ 4 := by
     unfold dsP2aCost
     have hu : ((dsP2un (t₀ := 0)).map fun e =>
         pmW n * (4 * pmVal n e.1 + 11) + 2 * pmVal n e.1 + 6).sum ≤
@@ -487,100 +487,105 @@ theorem ds_main_bound (hbig : Big n) :
       have a1 := ds_un_le (W := pmW n) (a := 6) hB1 hW hp
       have a2 := ds_un_le (W := pmW n) (a := 5) hB1 hW hg
       have a3 := ds_un_le (W := pmW n) (a := 3) hB1 hW hℓ
-      have a4 := ds_un_le₃ (W := pmW n) (a := 34) hB1 hW hγ
+      have a4 := ds_un_le₃ (W := pmW n) (a := 50) hB1 hW hγ
       have a5 := ds_un_le (W := pmW n) (a := 11) hB1 hW
         (show p n + Chirp.chirpGuard (d n) ≤ 11 * (b n + 1) by omega)
       have a6 := ds_un_le_r (W := pmW n) (a := 1) (B := b n + 1) hB1 hW
         (show r n ≤ 1 * r n by omega)
       have a7 := ds_un_le (W := pmW n) (a := 1) hB1 hW (show K n ≤ 1 * (b n + 1) by omega)
       omega
-    have s1 : dsW n * (4 * pmW n + 10) ≤ 9 * (b n + 1) * (4 * (20 * (b n + 1)) + 10) :=
+    have s1 : dsW n * (4 * pmW n + 10) ≤ 63 * (b n + 1) * (4 * (20 * (b n + 1)) + 10) :=
       Nat.mul_le_mul hw (by omega)
-    have e1 : 9 * (b n + 1) * (4 * (20 * (b n + 1)) + 10) =
-        720 * (b n + 1) ^ 2 + 90 * (b n + 1) := by ring
+    have e1 : 63 * (b n + 1) * (4 * (20 * (b n + 1)) + 10) =
+        5040 * (b n + 1) ^ 2 + 630 * (b n + 1) := by ring
     have s2 := ds_stepCost_le (K := 3) (a := 1) hB1 hW hC (show d n - 1 ≤ 1 * (b n + 1) by omega)
     have s3 := ds_stepCost_le (K := 1) (a := 3) hB1 hW hC
       (show logT n - ℓ n ≤ 3 * (b n + 1) by omega)
-    have s4 := ds_stepCost_le (K := 1) (a := 9) hB1 hW hC
-      (show dsW n - gamma n ≤ 9 * (b n + 1) by omega)
-    have s5 := ds_stepCost_le (K := 2) (a := 9) hB1 hW hC
-      (show dsW n - (logT n - ℓ n) ≤ 9 * (b n + 1) by omega)
+    have s4 := ds_stepCost_le (K := 1) (a := 63) hB1 hW hC
+      (show dsW n - gamma n ≤ 63 * (b n + 1) by omega)
+    have s5 := ds_stepCost_le (K := 2) (a := 63) hB1 hW hC
+      (show dsW n - (logT n - ℓ n) ≤ 63 * (b n + 1) by omega)
     have s6 := ds_stepCost_le (K := 2) (a := 7) hB1 hW hC (show p n + 1 ≤ 7 * (b n + 1) by omega)
     have s7 := ds_stepCost_le (K := 3) (a := 13) hB1 hW hC
       (show p n + Chirp.chirpGuard (d n) + 2 ≤ 13 * (b n + 1) by omega)
     have htn := ds_topN_le (dsW n)
     have htk := ds_topK_le (dsW n)
-    have s8 : dsStepCost (pmW n) (dsTopK (dsW n)) (dsTopN (dsW n)) ≤ 2000000 * (b n + 1) ^ 3 := by
+    have s8 : dsStepCost (pmW n) (dsTopK (dsW n)) (dsTopN (dsW n)) ≤ 8000000 * (b n + 1) ^ 3 := by
       unfold dsStepCost
       have q1 : (dsTopK (dsW n) + 7) * tblC (pmW n) (pmW n) ≤
-          (61 * (b n + 1) + 7) * (18600 * (b n + 1) ^ 2) :=
+          (385 * (b n + 1) + 7) * (18600 * (b n + 1) ^ 2) :=
         Nat.mul_le_mul (by omega) hC
-      have e : (61 * (b n + 1) + 7) * (18600 * (b n + 1) ^ 2) =
-          1134600 * (b n + 1) ^ 3 + 130200 * (b n + 1) ^ 2 := by ring
-      have q2 := ds_un_le (W := pmW n) (a := 37) hB1 hW
-        (show dsTopN (dsW n) ≤ 37 * (b n + 1) by omega)
+      have e : (385 * (b n + 1) + 7) * (18600 * (b n + 1) ^ 2) =
+          7161000 * (b n + 1) ^ 3 + 130200 * (b n + 1) ^ 2 := by ring
+      have q2 := ds_un_le (W := pmW n) (a := 253) hB1 hW
+        (show dsTopN (dsW n) ≤ 253 * (b n + 1) by omega)
       omega
     omega
   -- phase 2b
-  have hP2b : dsP2bCost n (dsW n) ≤ 400 * ((b n + 1) ^ 3 * r n) + 10000000 * (b n + 1) ^ 4 := by
+  have hP2b : dsP2bCost n (dsW n) ≤ 2000 * ((b n + 1) ^ 3 * r n) + 10000000 * (b n + 1) ^ 4 := by
     unfold dsP2bCost
-    have s1 := ds_stepCost_le (K := 4) (a := 9) hB1 hW hC
-      (show dsW n - (p n + 2) ≤ 9 * (b n + 1) by omega)
+    have s1 := ds_stepCost_le (K := 4) (a := 63) hB1 hW hC
+      (show dsW n - (p n + 2) ≤ 63 * (b n + 1) by omega)
     have s2 := ds_stepCost_le (K := 3) (a := 8) hB1 hW hC (show p n + 2 ≤ 8 * (b n + 1) by omega)
-    have s3 : dsW n * (4 * r n + 7) ≤ 9 * (b n + 1) * (4 * r n + 7) := Nat.mul_le_mul_right _ hw
-    have e3 : 9 * (b n + 1) * (4 * r n + 7) = 36 * ((b n + 1) * r n) + 63 * (b n + 1) := by ring
-    have s4 : r n * dsW n ≤ r n * (9 * (b n + 1)) := Nat.mul_le_mul_left _ hw
-    have e4 : r n * (9 * (b n + 1)) = 9 * ((b n + 1) * r n) := by ring
+    have s3 : dsW n * (4 * r n + 7) ≤ 63 * (b n + 1) * (4 * r n + 7) := Nat.mul_le_mul_right _ hw
+    have e3 : 63 * (b n + 1) * (4 * r n + 7) = 252 * ((b n + 1) * r n) + 441 * (b n + 1) := by ring
+    have s4 : r n * dsW n ≤ r n * (63 * (b n + 1)) := Nat.mul_le_mul_left _ hw
+    have e4 : r n * (63 * (b n + 1)) = 63 * ((b n + 1) * r n) := by ring
     have hN : (logT n - ℓ n) ^ 2 + (logT n - ℓ n) + 4 ≤ 16 * (b n + 1) ^ 2 := by
       have : (logT n - ℓ n) ^ 2 ≤ (3 * (b n + 1)) ^ 2 := Nat.pow_le_pow_left (by omega) 2
       have e : (3 * (b n + 1)) ^ 2 = 9 * (b n + 1) ^ 2 := by ring
       omega
     have s5 := ds_stepCost_le₂ (K := 7) (a := 16) hB1 hW hC hN
     have s6 : dsStepBCost (pmW n) (dsEK n) (dsWL n (dsW n)) ≤
-        200 * ((b n + 1) ^ 3 * r n) + 800000 * (b n + 1) ^ 4 := by
+        1000 * ((b n + 1) ^ 3 * r n) + 800000 * (b n + 1) ^ 4 := by
       unfold dsStepBCost dsEK dsWL
       have q1 : (4 * (d n - 1) + 4 * numHalf n + 14 + 7) * tblC (pmW n) (pmW n) ≤
           (37 * (b n + 1) ^ 2) * (18600 * (b n + 1) ^ 2) :=
         Nat.mul_le_mul (by omega) hC
       have e1 : (37 * (b n + 1) ^ 2) * (18600 * (b n + 1) ^ 2) = 688200 * (b n + 1) ^ 4 := by ring
-      have q2 : r n * dsW n ≤ r n * (9 * (b n + 1)) := Nat.mul_le_mul_left _ hw
+      have q2 : r n * dsW n ≤ r n * (63 * (b n + 1)) := Nat.mul_le_mul_left _ hw
       omega
     omega
   -- phase 2c
-  have hP2c : dsP2cCost n (dsW n) (dsWW n) ≤ 3000000000 * ((b n + 1) ^ 3 * r n) +
-      9000000000 * (b n + 1) ^ 3 := by
+  have hP2c : dsP2cCost n (dsW n) (dsWW n) ≤ 15000000000 * ((b n + 1) ^ 3 * r n) +
+      60000000000 * (b n + 1) ^ 3 := by
     unfold dsP2cCost
     have ht : dsTwistCost (dsWW n) (dsW n) (p n) (r n) ≤
-        1300000000 * ((b n + 1) ^ 3 * r n) + 4000000000 * (b n + 1) ^ 3 := by
+        7100000000 * ((b n + 1) ^ 3 * r n) + 25000000000 * (b n + 1) ^ 3 := by
       unfold dsTwistCost
-      have q1 : p n * (4 * dsWW n + 10) ≤ 6 * (b n + 1) * (4 * (200 * (b n + 1)) + 10) :=
+      have q1 : p n * (4 * dsWW n + 10) ≤ 6 * (b n + 1) * (4 * (500 * (b n + 1)) + 10) :=
         Nat.mul_le_mul hp (by omega)
-      have e1 : 6 * (b n + 1) * (4 * (200 * (b n + 1)) + 10) =
-          4800 * (b n + 1) ^ 2 + 60 * (b n + 1) := by ring
-      have q2 : r n * (4 * dsWW n + 10) ≤ r n * (810 * (b n + 1)) :=
+      have e1 : 6 * (b n + 1) * (4 * (500 * (b n + 1)) + 10) =
+          12000 * (b n + 1) ^ 2 + 60 * (b n + 1) := by ring
+      have q2 : r n * (4 * dsWW n + 10) ≤ r n * (2010 * (b n + 1)) :=
         Nat.mul_le_mul_left _ (by omega)
-      have e2 : r n * (810 * (b n + 1)) = 810 * ((b n + 1) * r n) := by ring
-      have q3 : dsW n * (4 * dsWW n + 10) ≤ 9 * (b n + 1) * (4 * (200 * (b n + 1)) + 10) :=
+      have e2 : r n * (2010 * (b n + 1)) = 2010 * ((b n + 1) * r n) := by ring
+      have q3 : dsW n * (4 * dsWW n + 10) ≤ 63 * (b n + 1) * (4 * (500 * (b n + 1)) + 10) :=
         Nat.mul_le_mul hw (by omega)
-      have e3 : 9 * (b n + 1) * (4 * (200 * (b n + 1)) + 10) =
-          7200 * (b n + 1) ^ 2 + 90 * (b n + 1) := by ring
+      have e3 : 63 * (b n + 1) * (4 * (500 * (b n + 1)) + 10) =
+          126000 * (b n + 1) ^ 2 + 630 * (b n + 1) := by ring
       have q4 : (r n * (39 * p n + 626) + 200 * p n + 4 * dsW n + 1503) * tblC (dsWW n) (dsW n) ≤
-          (860 * ((b n + 1) * r n) + 2739 * (b n + 1)) * (1400000 * (b n + 1) ^ 2) := by
+          (860 * ((b n + 1) * r n) + 2955 * (b n + 1)) * (8200000 * (b n + 1) ^ 2) := by
         exact Nat.mul_le_mul (ds_twist_aux hB1 hp hw) hTw
-      have e4 : (860 * ((b n + 1) * r n) + 2739 * (b n + 1)) * (1400000 * (b n + 1) ^ 2) =
-          1204000000 * ((b n + 1) ^ 3 * r n) + 3834600000 * (b n + 1) ^ 3 := by ring
-      have q5 : r n * dsW n ≤ r n * (9 * (b n + 1)) := Nat.mul_le_mul_left _ hw
-      have e5 : r n * (9 * (b n + 1)) = 9 * ((b n + 1) * r n) := by ring
+      have e4 : (860 * ((b n + 1) * r n) + 2955 * (b n + 1)) * (8200000 * (b n + 1) ^ 2) =
+          7052000000 * ((b n + 1) ^ 3 * r n) + 24231000000 * (b n + 1) ^ 3 := by ring
+      have q5 : r n * dsW n ≤ r n * (63 * (b n + 1)) := Nat.mul_le_mul_left _ hw
+      have e5 : r n * (63 * (b n + 1)) = 63 * ((b n + 1) * r n) := by ring
       omega
     omega
   -- the total
+  have hB35 : 256 * (b n + 1) ^ 3 ≤ (b n + 1) ^ 5 := by
+    have h16 : 16 ≤ b n + 1 := by have := hbig.sixteen_le_b; omega
+    have h256 : 256 ≤ (b n + 1) ^ 2 := by nlinarith
+    calc 256 * (b n + 1) ^ 3 ≤ (b n + 1) ^ 2 * (b n + 1) ^ 3 := Nat.mul_le_mul_right _ h256
+      _ = (b n + 1) ^ 5 := by ring
   unfold dsMainCost dsSrcCost
   omega
 
 /-- **The cost of the distribution machine at the pipeline widths**: eventually
 `dsMainCost n ≤ 10^10 n + 10^10 (b n + 1)^5` (`C = 10^10`, `k = 5`). -/
 theorem ds_mainCost_le : ∀ᶠ n in atTop, dsMainCost n ≤ 10 ^ 10 * n + 10 ^ 10 * (b n + 1) ^ 5 := by
-  filter_upwards [eventually_big, ds_poly_r_le_T (10 ^ 11) 3] with n hbig hr
+  filter_upwards [eventually_big, ds_poly_r_le_T (10 ^ 12) 3] with n hbig hr
   have hn := hbig.1
   have h := ds_main_bound hbig
   have hWT := pm_W_T_le hn
@@ -588,12 +593,12 @@ theorem ds_mainCost_le : ∀ᶠ n in atTop, dsMainCost n ≤ 10 ^ 10 * n + 10 ^ 
   have hB : (b n + 1) ^ 3 ≤ 8 * b n ^ 3 := by
     calc (b n + 1) ^ 3 ≤ (2 * b n) ^ 3 := Nat.pow_le_pow_left (by omega) 3
       _ = 8 * b n ^ 3 := by ring
-  have hr' : 10 ^ 10 * ((b n + 1) ^ 3 * r n) ≤ T n := by
-    calc 10 ^ 10 * ((b n + 1) ^ 3 * r n) ≤ 10 ^ 10 * (8 * b n ^ 3 * r n) :=
+  have hr' : 2 * 10 ^ 10 * ((b n + 1) ^ 3 * r n) ≤ T n := by
+    calc 2 * 10 ^ 10 * ((b n + 1) ^ 3 * r n) ≤ 2 * 10 ^ 10 * (8 * b n ^ 3 * r n) :=
           Nat.mul_le_mul_left _ (by nlinarith)
-      _ = 8 * 10 ^ 10 * b n ^ 3 * r n := by ring
-      _ ≤ 10 ^ 11 * b n ^ 3 * r n := by
-          have : 8 * 10 ^ 10 ≤ 10 ^ 11 := by norm_num
+      _ = 16 * 10 ^ 10 * b n ^ 3 * r n := by ring
+      _ ≤ 10 ^ 12 * b n ^ 3 * r n := by
+          have : 16 * 10 ^ 10 ≤ 10 ^ 12 := by norm_num
           exact Nat.mul_le_mul_right _ (Nat.mul_le_mul_right _ this)
       _ ≤ T n := hr
   have hT : T n ≤ pmW n * T n := Nat.le_mul_of_pos_left _ (by have := pmW_ge n; omega)

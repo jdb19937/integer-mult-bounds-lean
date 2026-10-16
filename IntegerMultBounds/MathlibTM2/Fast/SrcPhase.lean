@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.SrcSem
+public import IntegerMultBounds.MathlibTM2.Fast.BandStage
 
 /-!
 # The phases of the source transform
@@ -149,11 +150,11 @@ def srcPC2 : Pr P T Q (prime + K) U :=
     (.x .c1) (.x .c2)) <|
   .seq (uclear (M.rg (.v (.cm .ys)))) (uclear (M.rg (.k .kr)))
 
-/-- Phase `B̃₀`. -/
+/-- Phase `B̃₀`: the banded loader and lines along every axis. -/
 def srcPB : Pr P T Q (prime + K) U :=
   .seq (srcMv M.rg (.v (.cm .out)) (.b (.inl .src)) (.x .tr))
-    (rsbAllP (preB M.rb M.rbx M.ι M.hd) M.rb M.rbx M.hι M.hT M.hQ M.hd M.pay M.hi M.hQs M.hswB
-      M.hTs)
+    (rsbAllG (bandPreB M.rb M.rbx M.ι M.hd M.hι M.hT M.hQ) (bandAxisP M.rb M.hι M.hT M.hQ) M.rb
+      M.rbx M.hd M.pay M.hi M.hQs M.hswB M.hTs)
 
 /-- Phase: the exact scale by `2^γ` onto `x .sb`. -/
 def srcPG : Pr P T Q (prime + K) U :=
@@ -746,21 +747,22 @@ lemma src_rsa_of_rsb {T Q A : ℕ} {U P R : Type} {body : P → Pr P T Q A U} {r
 /-- The cost of `B̃₀` along every axis. -/
 def srcCostB (M : SrcMach t₀ T Q) (n w W : ℕ) (hd0 : 0 < d n)
     (σ₀ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (rest : List (Fin (prime + K + 4))) : ℕ :=
-  rsbAllCost T t₀ w (FastB0.fastWindow (p n) (alpha n)) (alpha n ^ 2) (d n) (t n) hd0
-    (rsbLineBData n (fun i => Nat.log 2 (t n i)) (preHsB n w hd0)) (prime + K) M.hd
-    (preCpB σ₀ M.hd n w W hd0 rest) (∏ i, t n i)
+  rsbAllCostG T t₀ w (d n) (t n) hd0 (fun i => Nat.log 2 (t n i)) (preHsB n w hd0)
+    (fun i nl => bandAxisCost T w (s n i) (t n i)
+      (2 * (8 * FastB0.fastWindow (p n) (alpha n)) + 1) nl)
+    (prime + K) M.hd (bandCpB T σ₀ M.hd n w W hd0 rest) (∏ i, t n i)
 
 /-- **Phase `B̃₀`.** `v (.cm .out)` holds the box of a grid function `c` at scale `2^p` of
 modulus at most `1` on the target box; the `B̃₀` family is the base file `σ₀` with the records
-on `bo`. Afterwards the box register `b (.inl .src)` holds the padded stream of
+on `prm`. Afterwards the box register `b (.inl .src)` holds the padded stream of
 `z = tensorZR t s (lineB n) c` (a grid function at scale `2^p` on the source box), the `B̃₀`
 family is configured for axis `0` and `v (.cm .out)` is empty. -/
 theorem srcB_runs (M : SrcMach t₀ T Q) (hA : 96 ≤ prime + K) {n : ℕ} (hbig : Big n)
-    (hd0 : 0 < d n) {w W : ℕ} (hw : p n + 2 ≤ w) (hwW : w ≤ W)
+    (hd0 : 0 < d n) {w W : ℕ} (hw : 9 * p n + 2 ≤ w) (hwW : w ≤ W)
     (hW : ∀ i : Fin (d n), alpha n ^ 2 * ((s n i + t n i) *
-      (FastB0.fastWindow (p n) (alpha n) + 1)) ^ 2 * 2 ^ (13 * p n + 8) < 2 ^ W)
-    (σ₀ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (hσ₀ : PreBaseB σ₀ w M.hd)
-    (rest : List (Fin (prime + K + 4))) (hout : σ₀ (.inl .bo) = preRecsB n W hd0 0 ++ rest)
+      (8 * FastB0.fastWindow (p n) (alpha n) + 1)) ^ 2 * 2 ^ (65 * p n + 8) < 2 ^ W)
+    (σ₀ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (hσ₀ : BandBase σ₀ w M.hd)
+    (rest : List (Fin (prime + K + 4))) (hout : σ₀ (.inl .prm) = preRecsB n W hd0 0 ++ rest)
     (axs : List (Fin (prime + K + 4))) (haxs : axs.length = d n - 1)
     (c : ((i : Fin (d n)) → ZMod (t n i)) → ℂ) (hc : ∀ y, IsFixed (p n) (c y))
     (hc1 : ∀ y, ‖c y‖ ≤ 1) (E : SrcF t₀ (prime + K)) (hE : E.b = rsbWith σ₀ [] axs [])
@@ -771,16 +773,18 @@ theorem srcB_runs (M : SrcMach t₀ T Q) (hA : 96 ≤ prime + K) {n : ℕ} (hbig
         fun i => ((x i : ℕ) : ZMod (s n i)))) ∧
     RsaRuns body M.rg M.ι (srcPB M) E.get
       { E with v := Function.update E.v (.cm .out) [],
-               b := rsbWith (preCfgB σ₀ M.hd n w W hd0 rest (d n - 1))
+               b := rsbWith (bandCfgB σ₀ M.hd n w W hd0 rest (d n - 1))
                  (cstream (prime + K) w (srcPad (p n) (s n) (t n)
                    (tensorZR (d n) (t n) (s n) (lineB n) c))) axs [] }.get
       (4 * ((∏ i, t n i) * w) + 4 + srcCostB M n w W hd0 σ₀ rest) := by
   have hdisj := M.hdisj
   set Fn : ((i : Fin (d n)) → Fin (t n i)) → GaussianInt :=
     fun x => numer (p n) (c (cstCast (t n) x)) with hFn
-  obtain ⟨G, hG, hG0, hrun⟩ := rsbStage_exec (body := body) (rg := M.rb) (rgx := M.rbx)
+  obtain ⟨G, hG, hG0, hrun⟩ := bandStage_exec (body := body) (rg := M.rb) (rgx := M.rbx)
     (ι := M.ι) n hbig hd0 M.hrb2 (fun r j => by rw [M.elim_b]; exact M.hdisj _ j) M.hι M.hT M.hQ
-    hA M.hd M.pay M.hi M.hQs M.hswB M.hTs M.hdpay hw hwW hW σ₀ hσ₀ rest hout c Fn
+    hA M.hd M.pay M.hi M.hQs M.hswB M.hTs M.hdpay (by omega) (band_prec_w hbig hw)
+    (fun i => Mult.BandSpec.band_axis_math hbig hbig.band_width hbig.band_budget i)
+    (band_preOk hbig hd0 hw hwW hW) (fun i => band_dfit hbig hw i) σ₀ hσ₀ rest hout c Fn
     (fun x => (cst_grid_numer (hc _)).symm) (fun x => hc1 _) axs haxs
   set z := tensorZR (d n) (t n) (s n) (lineB n) c with hz
   have hpad : rsbBox (d n) (t n) G = srcPad (p n) (s n) (t n) z := by

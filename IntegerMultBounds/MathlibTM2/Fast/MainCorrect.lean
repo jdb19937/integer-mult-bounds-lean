@@ -349,13 +349,13 @@ def mnRunsAt (n w W cF cO : ℕ) (hd0 : 0 < d n) (V₀ : RsaV (RsaX 6) (prime + 
       (preRecsB n W hd0 0 ++ (preRecsB n W hd0 0 ++ restB)) +
     srcDirectPCost mnM n w W cF cO hd0
       (preCfgA V₀ crtHd n w W hd0 (preRecsA n W hd0 0 ++ (preRecsA n W hd0 0 ++ restA)) (d n - 1))
-      (preCfgB σ₀ crtHd n w W hd0 (preRecsB n W hd0 0 ++ (preRecsB n W hd0 0 ++ restB)) (d n - 1))
+      (bandCfgB σ₀ crtHd n w W hd0 (preRecsB n W hd0 0 ++ (preRecsB n W hd0 0 ++ restB)) (d n - 1))
       (preRecsA n W hd0 0 ++ restA) (preRecsB n W hd0 0 ++ restB) +
     oppDirectPCost mnM n w W cF cO hd0
       (preCfgA (preCfgA V₀ crtHd n w W hd0
         (preRecsA n W hd0 0 ++ (preRecsA n W hd0 0 ++ restA)) (d n - 1))
         crtHd n w W hd0 (preRecsA n W hd0 0 ++ restA) (d n - 1))
-      (preCfgB (preCfgB σ₀ crtHd n w W hd0
+      (bandCfgB (bandCfgB σ₀ crtHd n w W hd0
         (preRecsB n W hd0 0 ++ (preRecsB n W hd0 0 ++ restB)) (d n - 1))
         crtHd n w W hd0 (preRecsB n W hd0 0 ++ restB) (d n - 1))
       restA restB
@@ -381,8 +381,8 @@ theorem mn_chain_exec (hA : 96 ≤ prime + K) {n : ℕ} (hbig : Big n)
     (hw : p n + Chirp.chirpGuard (d n) + 3 ≤ w) (hwW : w < W)
     (hWA : ∀ i : Fin (d n), alpha n ^ 2 * ((s n i + t n i) * (windowA (p n) (alpha n) + 1)) ^ 2 *
       2 ^ (13 * p n + 8) < 2 ^ W)
-    (hWB : ∀ i : Fin (d n), alpha n ^ 2 * ((s n i + t n i) *
-      (FastB0.fastWindow (p n) (alpha n) + 1)) ^ 2 * 2 ^ (13 * p n + 8) < 2 ^ W)
+    (hWB : 9 * p n + 2 ≤ w ∧ ∀ i : Fin (d n), alpha n ^ 2 * ((s n i + t n i) *
+      (8 * FastB0.fastWindow (p n) (alpha n) + 1)) ^ 2 * 2 ^ (65 * p n + 8) < 2 ^ W)
     (hWs : ∀ k, s n k * t n k * t n k < 2 ^ W)
     (hWk : ∀ k, 8 * (p n + Chirp.chirpGuard (d n)) + Nat.size (t n k) + 80 ≤ W)
     {V₀ : RsaV (RsaX 6) (prime + K)} {σ₀ : RsbR ⊕ RsbX 6 → List (Fin (prime + K + 4))}

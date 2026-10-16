@@ -11,14 +11,14 @@ public import IntegerMultBounds.MathlibTM2.Cost.MatchSynPcs
 The loops `synLoopFCost`, `synLoopOCost` (`Fast/SynFwd.lean`) of the computed synthetic
 transforms at the pipeline parameters — axes `es = List.ofFn (cvAx (t n))` (`|es| = d - 1`,
 `Σ es = log₂ T - ℓ`), `ℓ = l = ℓ n`, `K = K n`, directions `Cost.brDirs`, `A = nRounds ≤ ℓ`
-rounds, coefficients of `w = dsW n ≤ 3p` symbols, parking cost `stk ≤ C_s (r + (b + 1)^k)` — cost at
+rounds, coefficients of `w = dsW n ≤ 12p` symbols, parking cost `stk ≤ C_s (r + (b + 1)^k)` — cost at
 most a constant times `totConv n` (`mr_loop_cost_le`). Per round `h` (`mr_round_le`):
 
 * the layer of a chunk round (`mr_chunk_layer_le`) is `topCost` with the `q₀ ≤ 46 (1 + log_m d)`
   top kernels and the pieces of the base-`m` digits of `D' = D - q₀` on `R₂ < 2^(a'+1)` rows:
   the linear stages and kernels cost `C (q₀ + 1 + |pcs|) 2^N r w'` (`mrT_topCost_le`), the pieces
   `C d^{λ'} R₂ 2^(N - a') r w'` (`mrP_pieces_le`), together `C T p d^{λ'}` since `2^N r = T`,
-  `w' ≤ (G + m + 6) p` (`mrO_synW2_le`, `d^6 ≤ b`) and `1 + log_m d ≤ C d^{λ'}`;
+  `w' ≤ (G + m + 15) p` (`mrO_synW2_le`, `d^6 ≤ b`) and `1 + log_m d ≤ C d^{λ'}`;
 * the layer of a top or low round (`mr_prefix_layer_le`) has `D ≤ d` top kernels and no pieces:
   `C T p d`; there are at most `b + 1 ≤ K` such rounds (`mr_rounds_split`);
 * the records, rest states, parking and twiddles (`mr_over_le`): `C T p + 2 stk + 2`
@@ -52,7 +52,7 @@ theorem mr_inst {n : ℕ} (h : Big n) :
       (List.ofFn (cvAx (t n))).sum ≤ b n ∧
       2 ^ (List.ofFn (cvAx (t n))).sum * r n = T n ∧
       nRounds (cvAx (t n)) ≤ ℓ n ∧ 1 ≤ K n ∧ ℓ n ≤ b n ∧ K n ≤ b n ∧ d n ≤ b n ∧ 16 ≤ b n ∧
-      16 ≤ d n ∧ dsW n ≤ 18 * b n := by
+      16 ≤ d n ∧ dsW n ≤ 72 * b n := by
   have H := mn_layHyp h
   have hs := ds_sum_cvAx h.1
   obtain ⟨hT, -⟩ := mt_T_split h
@@ -63,11 +63,11 @@ theorem mr_inst {n : ℕ} (h : Big n) :
   · rw [hs]; have := mt_logT_le_b h; omega
   · have := h.sixteen_le_b; omega
 
-/-- The working width of every round is at most `(G + m + 6) p`. -/
+/-- The working width of every round is at most `(G + m + 15) p`. -/
 theorem mr_w2_le {n : ℕ} (h : Big n) (hh : ℕ) :
     synW2 (List.ofFn (cvAx (t n))) (ℓ n) (K n) (gateCount (program Cost.brDirs))
       (factorCount (program Cost.brDirs)) (dsW n) hh ≤
-      (gateCount (program Cost.brDirs) + m + 6) * p n := by
+      (gateCount (program Cost.brDirs) + m + 15) * p n := by
   obtain ⟨-, -, hlen, -, -, -, -, -, -, -, hb16, hd16, hw⟩ := mr_inst h
   have h1 := mrO_synW2_le (List.ofFn (cvAx (t n))) (ℓ n) (K n) (gateCount (program Cost.brDirs))
     (factorCount (program Cost.brDirs)) (dsW n) hh mr_F_le
@@ -120,7 +120,7 @@ theorem mr_over_le : ∃ C : ℝ, 0 ≤ C ∧ ∀ᶠ n in atTop, ∀ h < ℓ n, 
         C * ((T n : ℝ) * p n) + 2 * stk + 2 := by
   obtain ⟨CA, hCA⟩ := mrO_step_le Cost.brDirs mr_F_le
   set G := gateCount (program Cost.brDirs)
-  refine ⟨CA * (24 ^ 8 + G + m + 6), by positivity, ?_⟩
+  refine ⟨CA * (80 ^ 8 + G + m + 15), by positivity, ?_⟩
   filter_upwards [eventually_big, mr_b_pow_le_r 8] with n hbig hbr h hh stk
   obtain ⟨H, -, hlen, hN, hT, -, -, hℓ, hK, hd, hb16, -, hw⟩ := mr_inst hbig
   have hw1 : 1 ≤ dsW n := by unfold dsW; omega
@@ -129,33 +129,33 @@ theorem mr_over_le : ∃ C : ℝ, 0 ≤ C ∧ ∀ᶠ n in atTop, ∀ h < ℓ n, 
   generalize hes : List.ofFn (cvAx (t n)) = es at *
   generalize hWe : synW2 es (ℓ n) (K n) G (factorCount (program Cost.brDirs)) (dsW n) h = W at *
   -- `Z ≤ 24 b`
-  have hZ : mrZ es (ℓ n) (K n) (dsW n) (ℓ n) ≤ 24 * b n := by
+  have hZ : mrZ es (ℓ n) (K n) (dsW n) (ℓ n) ≤ 80 * b n := by
     unfold mrZ; rw [hlen]; omega
-  have hZ8 : mrZ es (ℓ n) (K n) (dsW n) (ℓ n) ^ 8 ≤ 24 ^ 8 * r n := by
-    calc mrZ es (ℓ n) (K n) (dsW n) (ℓ n) ^ 8 ≤ (24 * b n) ^ 8 := Nat.pow_le_pow_left hZ 8
-      _ = 24 ^ 8 * b n ^ 8 := by ring
-      _ ≤ 24 ^ 8 * r n := Nat.mul_le_mul_left _ hbr
-  have hA : mrZ es (ℓ n) (K n) (dsW n) (ℓ n) ^ 8 * 2 ^ es.sum ≤ 24 ^ 8 * T n := by
-    calc mrZ es (ℓ n) (K n) (dsW n) (ℓ n) ^ 8 * 2 ^ es.sum ≤ 24 ^ 8 * r n * 2 ^ es.sum :=
+  have hZ8 : mrZ es (ℓ n) (K n) (dsW n) (ℓ n) ^ 8 ≤ 80 ^ 8 * r n := by
+    calc mrZ es (ℓ n) (K n) (dsW n) (ℓ n) ^ 8 ≤ (80 * b n) ^ 8 := Nat.pow_le_pow_left hZ 8
+      _ = 80 ^ 8 * b n ^ 8 := by ring
+      _ ≤ 80 ^ 8 * r n := Nat.mul_le_mul_left _ hbr
+  have hA : mrZ es (ℓ n) (K n) (dsW n) (ℓ n) ^ 8 * 2 ^ es.sum ≤ 80 ^ 8 * T n := by
+    calc mrZ es (ℓ n) (K n) (dsW n) (ℓ n) ^ 8 * 2 ^ es.sum ≤ 80 ^ 8 * r n * 2 ^ es.sum :=
           Nat.mul_le_mul_right _ hZ8
-      _ = 24 ^ 8 * (2 ^ es.sum * r n) := by ring
-      _ = 24 ^ 8 * T n := by rw [hT]
-  have hB : 2 ^ es.sum * (2 ^ ℓ n * W) ≤ T n * ((G + m + 6) * p n) := by
+      _ = 80 ^ 8 * (2 ^ es.sum * r n) := by ring
+      _ = 80 ^ 8 * T n := by rw [hT]
+  have hB : 2 ^ es.sum * (2 ^ ℓ n * W) ≤ T n * ((G + m + 15) * p n) := by
     calc 2 ^ es.sum * (2 ^ ℓ n * W) = (2 ^ es.sum * r n) * W := by unfold r; ring
       _ = T n * W := by rw [hT]
-      _ ≤ T n * ((G + m + 6) * p n) := Nat.mul_le_mul_left _ hw2
+      _ ≤ T n * ((G + m + 15) * p n) := Nat.mul_le_mul_left _ hw2
   have hp1 : 1 ≤ p n := by unfold p; omega
   have hTp : T n ≤ T n * p n := Nat.le_mul_of_pos_right _ hp1
   have h2 : CA * (mrZ es (ℓ n) (K n) (dsW n) (ℓ n) ^ 8 * 2 ^ es.sum +
-      2 ^ es.sum * (2 ^ ℓ n * W)) ≤ CA * (24 ^ 8 + G + m + 6) * (T n * p n) := by
+      2 ^ es.sum * (2 ^ ℓ n * W)) ≤ CA * (80 ^ 8 + G + m + 15) * (T n * p n) := by
     have : mrZ es (ℓ n) (K n) (dsW n) (ℓ n) ^ 8 * 2 ^ es.sum + 2 ^ es.sum * (2 ^ ℓ n * W) ≤
-        (24 ^ 8 + G + m + 6) * (T n * p n) := by nlinarith
-    calc _ ≤ CA * ((24 ^ 8 + G + m + 6) * (T n * p n)) := Nat.mul_le_mul_left _ this
+        (80 ^ 8 + G + m + 15) * (T n * p n) := by nlinarith
+    calc _ ≤ CA * ((80 ^ 8 + G + m + 15) * (T n * p n)) := Nat.mul_le_mul_left _ this
       _ = _ := by ring
   have h3 : synLayerStepCost Cost.brDirs es (ℓ n) (K n) (dsW n) (ℓ n) h stk +
       synTwCost es (ℓ n) (dsW n) h ≤
       synLayerCost Cost.brDirs es (ℓ n) (K n) (ℓ n) (dsW n) h +
-        CA * (24 ^ 8 + G + m + 6) * (T n * p n) + 2 * stk + 2 := by omega
+        CA * (80 ^ 8 + G + m + 15) * (T n * p n) + 2 * stk + 2 := by omega
   exact_mod_cast h3
 
 /-! ### The layer of a round -/
@@ -167,7 +167,7 @@ theorem mr_chunk_layer_le : ∃ C : ℝ, 0 ≤ C ∧ ∀ᶠ n in atTop, ∀ h, s
   obtain ⟨CB, hCB⟩ := mrT_topCost_le Cost.brDirs
   obtain ⟨CP, hCP0, hCP⟩ := mrP_pieces_le (nT SXReg) Cost.brDirs mrP_logb_branching
   obtain ⟨CL, hCL0, hCL⟩ := mrP_one_add_logb_le
-  refine ⟨(48 * CB * CL + 2 * CP) * (gateCount (program Cost.brDirs) + m + 6), by positivity, ?_⟩
+  refine ⟨(48 * CB * CL + 2 * CP) * (gateCount (program Cost.brDirs) + m + 15), by positivity, ?_⟩
   filter_upwards [eventually_big, mr_b_pow_le_r 2, mr_p_pow_le_two_pow_K 3] with n hbig hbr hpK
     h hc
   obtain ⟨H, -, hlen, hN, hT, -, hK1, hℓ, hK, hd, hb16, hd16, hw⟩ := mr_inst hbig
@@ -270,10 +270,10 @@ theorem mr_chunk_layer_le : ∃ C : ℝ, 0 ≤ C ∧ ∀ᶠ n in atTop, ∀ h, s
   -- the volume: `R₂ 2^(N - a') ≤ 2 · 2^N`, `2^N 2^ℓ = T`
   have hvol : ((rowsAt (2 ^ synX es (ℓ n) (K n)) (synJ (synDpp es) (synDpp es) - 1) *
       2 ^ (es.sum - synAc es (ℓ n) (K n)) * (2 ^ ℓ n * W) : ℕ) : ℝ) ≤
-      2 * ((T n : ℝ) * ((gateCount (program Cost.brDirs) + m + 6) * p n)) := by
+      2 * ((T n : ℝ) * ((gateCount (program Cost.brDirs) + m + 15) * p n)) := by
     have h1 : rowsAt (2 ^ synX es (ℓ n) (K n)) (synJ (synDpp es) (synDpp es) - 1) *
         2 ^ (es.sum - synAc es (ℓ n) (K n)) * (2 ^ ℓ n * W) ≤
-        2 * (T n * ((gateCount (program Cost.brDirs) + m + 6) * p n)) := by
+        2 * (T n * ((gateCount (program Cost.brDirs) + m + 15) * p n)) := by
       rw [← synR2_chunk es (ℓ n) (K n) hc, hR2]
       calc synR2c es (ℓ n) (K n) * 2 ^ (es.sum - synAc es (ℓ n) (K n)) * (2 ^ ℓ n * W)
           ≤ (2 * 2 ^ synAc es (ℓ n) (K n)) * 2 ^ (es.sum - synAc es (ℓ n) (K n)) *
@@ -281,10 +281,10 @@ theorem mr_chunk_layer_le : ∃ C : ℝ, 0 ≤ C ∧ ∀ᶠ n in atTop, ∀ h, s
         _ = 2 * ((2 ^ es.sum * r n) * W) := by
             rw [mul_assoc 2, ← pow_add, Nat.add_sub_cancel' hAc]; unfold r; ring
         _ = 2 * (T n * W) := by rw [hT]
-        _ ≤ 2 * (T n * ((gateCount (program Cost.brDirs) + m + 6) * p n)) := by gcongr
+        _ ≤ 2 * (T n * ((gateCount (program Cost.brDirs) + m + 15) * p n)) := by gcongr
     exact_mod_cast h1
-  have hvol2 : ((2 ^ es.sum * (2 ^ ℓ n * W) : ℕ) : ℝ) ≤ (T n : ℝ) * ((gateCount (program Cost.brDirs) + m + 6) * p n) := by
-    have h1 : 2 ^ es.sum * (2 ^ ℓ n * W) ≤ T n * ((gateCount (program Cost.brDirs) + m + 6) * p n) := by
+  have hvol2 : ((2 ^ es.sum * (2 ^ ℓ n * W) : ℕ) : ℝ) ≤ (T n : ℝ) * ((gateCount (program Cost.brDirs) + m + 15) * p n) := by
+    have h1 : 2 ^ es.sum * (2 ^ ℓ n * W) ≤ T n * ((gateCount (program Cost.brDirs) + m + 15) * p n) := by
       calc 2 ^ es.sum * (2 ^ ℓ n * W) = (2 ^ es.sum * r n) * W := by unfold r; ring
         _ = T n * W := by rw [hT]
         _ ≤ _ := by gcongr
@@ -304,13 +304,13 @@ theorem mr_chunk_layer_le : ∃ C : ℝ, 0 ≤ C ∧ ∀ᶠ n in atTop, ∀ h, s
       (synJp es) (synDpp es)).map fun pc =>
         layerCost (nT SXReg) Cost.brDirs pc.u (K n) (synRh (ℓ n) (K n) h) pc.R₀
           (es.sum - synAc es (ℓ n) (K n)) (2 ^ ℓ n) W pc.j pc.a₀).sum : ℕ) : ℝ) ≤
-      CP * (d n : ℝ) ^ totLam' * (2 * ((T n : ℝ) * ((gateCount (program Cost.brDirs) + m + 6) * p n))) := by
+      CP * (d n : ℝ) ^ totLam' * (2 * ((T n : ℝ) * ((gateCount (program Cost.brDirs) + m + 15) * p n))) := by
     unfold synJp
     refine hC.trans ?_
     exact mul_le_mul_of_nonneg_left hvol (mul_nonneg hCP0 hdl)
   have hTp := mt_Tp_nonneg n
   have hcb : (0 : ℝ) ≤ CB := Nat.cast_nonneg _
-  have hGm : (0 : ℝ) ≤ (gateCount (program Cost.brDirs) : ℝ) + m + 6 :=
+  have hGm : (0 : ℝ) ≤ (gateCount (program Cost.brDirs) : ℝ) + m + 15 :=
     add_nonneg (add_nonneg (Nat.cast_nonneg _) (Nat.cast_nonneg _)) (by norm_num)
   have hcount0 : (0 : ℝ) ≤
       ((synQ es (ℓ n) (K n) h + 1 + (synPcsR es (ℓ n) (K n) h).length : ℕ) : ℝ) :=
@@ -318,9 +318,9 @@ theorem mr_chunk_layer_le : ∃ C : ℝ, 0 ≤ C ∧ ∀ᶠ n in atTop, ∀ h, s
   have hv0 : (0 : ℝ) ≤ ((2 ^ es.sum * (2 ^ ℓ n * W) : ℕ) : ℝ) := Nat.cast_nonneg _
   have hmul : ((synQ es (ℓ n) (K n) h + 1 + (synPcsR es (ℓ n) (K n) h).length : ℕ) : ℝ) *
       ((2 ^ es.sum * (2 ^ ℓ n * W) : ℕ) : ℝ) ≤
-      48 * (CL * (d n : ℝ) ^ totLam') * ((T n : ℝ) * ((gateCount (program Cost.brDirs) + m + 6) * p n)) :=
+      48 * (CL * (d n : ℝ) ^ totLam') * ((T n : ℝ) * ((gateCount (program Cost.brDirs) + m + 15) * p n)) :=
     mul_le_mul hcnt hvol2 hv0 (mul_nonneg (by norm_num) (mul_nonneg hCL0 hdl))
-  have hTpG : (T n : ℝ) * ((gateCount (program Cost.brDirs) + m + 6) * p n) = (gateCount (program Cost.brDirs) + m + 6) * ((T n : ℝ) * p n) := by ring
+  have hTpG : (T n : ℝ) * ((gateCount (program Cost.brDirs) + m + 15) * p n) = (gateCount (program Cost.brDirs) + m + 15) * ((T n : ℝ) * p n) := by ring
   rw [hTpG] at hmul hsum
   have hmul' := mul_le_mul_of_nonneg_left hmul hcb
   rw [hpcs] at hmul'
@@ -329,7 +329,7 @@ theorem mr_chunk_layer_le : ∃ C : ℝ, 0 ≤ C ∧ ∀ᶠ n in atTop, ∀ h, s
   generalize ((synQ es (ℓ n) (K n) h + 1 + (synPcs (K n) (synX es (ℓ n) (K n)) (synDpp es)
       (synOS es (ℓ n) (K n) h) (synJp es) (synDpp es)).length : ℕ) : ℝ) *
       ((2 ^ es.sum * (2 ^ ℓ n * W) : ℕ) : ℝ) = cv at hmul' hBr
-  generalize ((gateCount (program Cost.brDirs) : ℝ) + m + 6) = gm at hGm hmul' hsum ⊢
+  generalize ((gateCount (program Cost.brDirs) : ℝ) + m + 15) = gm at hGm hmul' hsum ⊢
   linarith only [hBr, hmul', hsum]
 
 /-- The layer of a top or low round costs `C T p d`. -/
@@ -337,7 +337,7 @@ theorem mr_prefix_layer_le : ∃ C : ℝ, 0 ≤ C ∧ ∀ᶠ n in atTop, ∀ h, 
     (synLayerCost Cost.brDirs (List.ofFn (cvAx (t n))) (ℓ n) (K n) (ℓ n) (dsW n) h : ℝ) ≤
       C * ((T n : ℝ) * p n) * d n := by
   obtain ⟨CB, hCB⟩ := mrT_topCost_le Cost.brDirs
-  refine ⟨CB * (gateCount (program Cost.brDirs) + m + 6), by positivity, ?_⟩
+  refine ⟨CB * (gateCount (program Cost.brDirs) + m + 15), by positivity, ?_⟩
   filter_upwards [eventually_big, mr_b_pow_le_r 2] with n hbig hbr h hc
   obtain ⟨H, -, hlen, hN, hT, -, hK1, hℓ, hK, hd, hb16, hd16, hw⟩ := mr_inst hbig
   obtain ⟨hKh, hRh, hAR, hA, hQ, hDp, hAT, hfit, hR2, hpcs, -⟩ := mr_prefix_facts H hc
@@ -371,17 +371,17 @@ theorem mr_prefix_layer_le : ∃ C : ℝ, 0 ≤ C ∧ ∀ᶠ n in atTop, ∀ h, 
   rw [hAR, hna, hpcs] at hB
   simp only [List.map_nil, List.sum_nil, List.length_nil, add_zero] at hB
   have hcnt : synQ es (ℓ n) (K n) h + 1 ≤ d n := by rw [hQ, hlen] at *; omega
-  have hv : 2 ^ es.sum * (2 ^ ℓ n * W) ≤ T n * ((gateCount (program Cost.brDirs) + m + 6) * p n) := by
+  have hv : 2 ^ es.sum * (2 ^ ℓ n * W) ≤ T n * ((gateCount (program Cost.brDirs) + m + 15) * p n) := by
     calc 2 ^ es.sum * (2 ^ ℓ n * W) = (2 ^ es.sum * r n) * W := by unfold r; ring
       _ = T n * W := by rw [hT]
       _ ≤ _ := by gcongr
   have h1 : synLayerCost Cost.brDirs es (ℓ n) (K n) (ℓ n) (dsW n) h ≤
-      CB * (gateCount (program Cost.brDirs) + m + 6) * (T n * p n) * d n := by
+      CB * (gateCount (program Cost.brDirs) + m + 15) * (T n * p n) * d n := by
     unfold synLayerCost
     rw [hAR, hWe, hpcs]
     calc _ ≤ CB * ((synQ es (ℓ n) (K n) h + 1) * (2 ^ es.sum * (2 ^ ℓ n * W))) := hB
-      _ ≤ CB * (d n * (T n * ((gateCount (program Cost.brDirs) + m + 6) * p n))) := by gcongr
-      _ = CB * (gateCount (program Cost.brDirs) + m + 6) * (T n * p n) * d n := by ring
+      _ ≤ CB * (d n * (T n * ((gateCount (program Cost.brDirs) + m + 15) * p n))) := by gcongr
+      _ = CB * (gateCount (program Cost.brDirs) + m + 15) * (T n * p n) * d n := by ring
   exact_mod_cast h1
 
 /-! ### One round, and the loops -/

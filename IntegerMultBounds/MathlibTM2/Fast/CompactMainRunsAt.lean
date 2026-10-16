@@ -27,13 +27,13 @@ def compactMainRunsAt {K : ℕ} (n w W cF cO : ℕ) (hd0 : 0 < d n) (V₀ : RsaV
       (preRecsB n W hd0 0 ++ (preRecsB n W hd0 0 ++ restB)) +
     srcDirectPCost compactSrcM n w W cF cO hd0
       (preCfgA V₀ crtHd n w W hd0 (preRecsA n W hd0 0 ++ (preRecsA n W hd0 0 ++ restA)) (d n - 1))
-      (preCfgB σ₀ crtHd n w W hd0 (preRecsB n W hd0 0 ++ (preRecsB n W hd0 0 ++ restB)) (d n - 1))
+      (bandCfgB σ₀ crtHd n w W hd0 (preRecsB n W hd0 0 ++ (preRecsB n W hd0 0 ++ restB)) (d n - 1))
       (preRecsA n W hd0 0 ++ restA) (preRecsB n W hd0 0 ++ restB) +
     oppDirectPCost compactSrcM n w W cF cO hd0
       (preCfgA (preCfgA V₀ crtHd n w W hd0
         (preRecsA n W hd0 0 ++ (preRecsA n W hd0 0 ++ restA)) (d n - 1))
         crtHd n w W hd0 (preRecsA n W hd0 0 ++ restA) (d n - 1))
-      (preCfgB (preCfgB σ₀ crtHd n w W hd0
+      (bandCfgB (bandCfgB σ₀ crtHd n w W hd0
         (preRecsB n W hd0 0 ++ (preRecsB n W hd0 0 ++ restB)) (d n - 1))
         crtHd n w W hd0 (preRecsB n W hd0 0 ++ restB) (d n - 1))
       restA restB

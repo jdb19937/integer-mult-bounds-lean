@@ -8,15 +8,15 @@ public import IntegerMultBounds.MathlibTM2.Fast.DistSrcBase
 The converter (`Fast/DistSrc.lean`) reads the coefficient width `w` and the table word size
 `Wt` in unary from `o .uw`, `o .uW`. `dsWid rg g` writes them there from the parameter layout:
 
-* `dsWidC` (`dsWidC_do`): `31 := p + g + 3 + (logT - ℓ) = dsW n`, six atoms;
-* `dsWWC` (`dsWWC_do`): `31 := 16 p + 8 g + 3 ℓ + dsW n + 128 = dsWW n`, thirty atoms;
+* `dsWidC` (`dsWidC_do`): `31 := 10 p + g + 3 + (logT - ℓ) = dsW n`, fifteen atoms;
+* `dsWWC` (`dsWWC_do`): `31 := 70 p + 8 g + 3 ℓ + dsW n + 128 = dsWW n`, forty-three atoms;
 * `dsWid rg g = dsStep rg dsWidC (o .uw); dsStep rg dsWWC (o .uW)` (`ds_wid_runs`): from the
   layout carrying `pmVals n` and the two registers empty, they end with `dsW n` and `dsWW n`
   ticks, the layout as it started, within `dsWidCost₀ n` steps.
 
 `ds_src_widths`: every width hypothesis of `srcP_runs`/`srcOpp_runs` (`Fast/SrcStage.lean`) and
 of `ds_src_runs` holds at `w = dsW n`, `W = dsWW n` for `Big n`; `ds_dsW_le_p`, `ds_dsWW_le_p`:
-`dsW n ≤ 3 p`, `dsWW n ≤ 40 p`.
+`dsW n ≤ 12 p`, `dsWW n ≤ 100 p`.
 -/
 
 @[expose] public section
@@ -40,14 +40,16 @@ variable {A w' : ℕ} {n : ℕ}
 /-- The layout with `a` in `31`, `c` in `32`, the parameters elsewhere. -/
 def dsV2 (n a c : ℕ) (j : Fin pmNV) : ℕ := if j = 31 then a else if j = 32 then c else pmVals n j
 
-/-- `31 := p + g + 3 + (logT - ℓ)`, `32 := logT - ℓ`. -/
+/-- `31 := 10 p + g + 3 + (logT - ℓ)`, `32 := logT - ℓ`. -/
 def dsWidC : TblCode pmNV :=
-  tblBlock pmNV [.sub 5 7 32, .add 2 21 31, .add 31 32 31, .inc 31, .inc 31] (.inc 31)
+  tblBlock pmNV [.sub 5 7 32, .add 2 21 31, .add 31 2 31, .add 31 2 31, .add 31 2 31,
+    .add 31 2 31, .add 31 2 31, .add 31 2 31, .add 31 2 31, .add 31 2 31, .add 31 2 31,
+    .add 31 32 31, .inc 31, .inc 31] (.inc 31)
 
-/-- `31 := 31 + 16 p`, `32 := 16 p`. -/
+/-- `31 := 31 + 70 p`, `32 := 64 p`. -/
 def dsWWC₂ : TblCode pmNV :=
-  tblBlock pmNV [.copy 2 32, .add 32 32 32, .add 32 32 32, .add 32 32 32, .add 32 32 32]
-    (.add 31 32 31)
+  tblBlock pmNV [.copy 2 32, .add 32 32 32, .add 31 32 31, .add 32 32 32, .add 31 32 31,
+    .add 32 32 32, .add 32 32 32, .add 32 32 32, .add 32 32 32] (.add 31 32 31)
 
 /-- `31 := 31 + 8 g + 3 ℓ`, `32 := 8 g`. -/
 def dsWWC₃ : TblCode pmNV :=
@@ -59,7 +61,7 @@ def dsWWC₄ : TblCode pmNV :=
   tblBlock pmNV [.zero 32, .inc 32, .add 32 32 32, .add 32 32 32, .add 32 32 32, .add 32 32 32,
     .add 32 32 32, .add 32 32 32, .add 32 32 32] (.add 31 32 31)
 
-/-- `31 := 16 p + 8 g + 3 ℓ + (p + g + 3 + (logT - ℓ)) + 128`. -/
+/-- `31 := 70 p + 8 g + 3 ℓ + (10 p + g + 3 + (logT - ℓ)) + 128`. -/
 def dsWWC : TblCode pmNV := .seq dsWidC (.seq dsWWC₂ (.seq dsWWC₃ dsWWC₄))
 
 theorem ds_wid_small (hn : 2 ≤ n) : ∀ x, x ≤ dsWW n → x < 2 ^ pmW n := fun x hx =>
@@ -83,13 +85,13 @@ theorem dsV2_post (n a c x : ℕ) (hx : a = x) :
 /-- The bounds the codes use. -/
 theorem ds_wid_bounds (hn : 2 ≤ n) :
     Chirp.chirpGuard (d n) ≤ b n + 4 ∧ ℓ n ≤ b n + 2 ∧ logT n ≤ b n + 2 ∧ ℓ n ≤ logT n ∧
-      dsW n ≤ 9 * b n + 9 ∧ dsW n ≤ dsWW n ∧ dsWW n ≤ 200 * (b n + 1) :=
+      dsW n ≤ 63 * b n + 9 ∧ dsW n ≤ dsWW n ∧ dsWW n ≤ 500 * (b n + 1) :=
   ⟨pm_g_le n, pm_ℓ_le hn, pm_logT_le hn, pm_ℓ_le_logT hn, ds_dsW_le hn, (ds_w_lt_WT n).le,
     ds_dsWW_le hn⟩
 
 theorem dsWidC_do (hn : 2 ≤ n) {a c : ℕ} (ha : a = 0) (hc : c = 0) :
     TblDo A (pmW n) w' dsWidC ⟨dsV2 n a c, []⟩
-      (· = ⟨dsV2 n (dsW n) (logT n - ℓ n), []⟩) 6 := by
+      (· = ⟨dsV2 n (dsW n) (logT n - ℓ n), []⟩) 15 := by
   subst ha hc
   have hs := ds_wid_small hn
   obtain ⟨hg, hℓ, hlT, hℓT, hW, hWW, h200⟩ := ds_wid_bounds hn
@@ -104,7 +106,7 @@ theorem dsWidC_do (hn : 2 ≤ n) {a c : ℕ} (ha : a = 0) (hc : c = 0) :
 
 theorem dsWWC₂_do (hn : 2 ≤ n) {a c : ℕ} (ha : a = dsW n) :
     TblDo A (pmW n) w' dsWWC₂ ⟨dsV2 n a c, []⟩
-      (· = ⟨dsV2 n (dsW n + 16 * p n) (16 * p n), []⟩) 6 := by
+      (· = ⟨dsV2 n (dsW n + 70 * p n) (64 * p n), []⟩) 10 := by
   subst ha
   have hs := ds_wid_small hn
   obtain ⟨hg, hℓ, hlT, hℓT, hW, hWW, h200⟩ := ds_wid_bounds hn
@@ -117,9 +119,9 @@ theorem dsWWC₂_do (hn : 2 ≤ n) {a c : ℕ} (ha : a = dsW n) :
     fin_cases j <;> simp [dsV2, pmVals, pmNV, pmVal]
     all_goals omega
 
-theorem dsWWC₃_do (hn : 2 ≤ n) {a c : ℕ} (ha : a = dsW n + 16 * p n) :
+theorem dsWWC₃_do (hn : 2 ≤ n) {a c : ℕ} (ha : a = dsW n + 70 * p n) :
     TblDo A (pmW n) w' dsWWC₃ ⟨dsV2 n a c, []⟩
-      (· = ⟨dsV2 n (dsW n + 16 * p n + 8 * Chirp.chirpGuard (d n) + 3 * ℓ n)
+      (· = ⟨dsV2 n (dsW n + 70 * p n + 8 * Chirp.chirpGuard (d n) + 3 * ℓ n)
         (8 * Chirp.chirpGuard (d n)), []⟩) 8 := by
   subst ha
   have hs := ds_wid_small hn
@@ -134,7 +136,7 @@ theorem dsWWC₃_do (hn : 2 ≤ n) {a c : ℕ} (ha : a = dsW n + 16 * p n) :
     all_goals omega
 
 theorem dsWWC₄_do (hn : 2 ≤ n) {a c : ℕ}
-    (ha : a = dsW n + 16 * p n + 8 * Chirp.chirpGuard (d n) + 3 * ℓ n) :
+    (ha : a = dsW n + 70 * p n + 8 * Chirp.chirpGuard (d n) + 3 * ℓ n) :
     TblDo A (pmW n) w' dsWWC₄ ⟨dsV2 n a c, []⟩ (· = ⟨dsV2 n (dsWW n) 128, []⟩) 10 := by
   subst ha
   have hs := ds_wid_small hn
@@ -149,13 +151,13 @@ theorem dsWWC₄_do (hn : 2 ≤ n) {a c : ℕ}
     all_goals (unfold dsWW; omega)
 
 theorem dsWidC_post (hn : 2 ≤ n) :
-    TblDo A (pmW n) w' dsWidC ⟨pmVals n, []⟩ (DsPost (pmVals n) (dsW n)) 6 := by
+    TblDo A (pmW n) w' dsWidC ⟨pmVals n, []⟩ (DsPost (pmVals n) (dsW n)) 15 := by
   have h := (dsWidC_do (A := A) (w' := w') hn (a := 0) (c := 0) rfl rfl).mono
     (fun s hs => by subst hs; exact dsV2_post n _ _ _ rfl) le_rfl
   rwa [dsV2_pm] at h
 
 theorem dsWWC_post (hn : 2 ≤ n) :
-    TblDo A (pmW n) w' dsWWC ⟨pmVals n, []⟩ (DsPost (pmVals n) (dsWW n)) 30 := by
+    TblDo A (pmW n) w' dsWWC ⟨pmVals n, []⟩ (DsPost (pmVals n) (dsWW n)) 43 := by
   have h := TblDo.seq (dsWidC_do (A := A) (w' := w') hn (a := 0) (c := 0) rfl rfl) fun s hs => by
     subst hs
     exact TblDo.seq (dsWWC₂_do hn rfl) fun s hs => by
@@ -180,7 +182,7 @@ def dsWid (rg : TblR pmNV → Fin T) (g : DsY t₀ → Fin T) : Pr P T Q A U :=
   .seq (dsStep rg dsWidC (g (.o .uw))) (dsStep rg dsWWC (g (.o .uW)))
 
 /-- The step bound of `dsWid`. -/
-def dsWidCost₀ (n : ℕ) : ℕ := dsStepCost (pmW n) 6 (dsW n) + dsStepCost (pmW n) 30 (dsWW n)
+def dsWidCost₀ (n : ℕ) : ℕ := dsStepCost (pmW n) 15 (dsW n) + dsStepCost (pmW n) 43 (dsWW n)
 
 variable (h : DsLay rg g)
 include h
@@ -211,10 +213,10 @@ section Widths
 
 variable {n : ℕ}
 
-theorem ds_dsW_le_p (hn : 2 ≤ n) : dsW n ≤ 3 * p n := by
+theorem ds_dsW_le_p (hn : 2 ≤ n) : dsW n ≤ 12 * p n := by
   have := ds_dsW_le hn; have := one_le_b hn; unfold p; omega
 
-theorem ds_dsWW_le_p (hbig : Big n) : dsWW n ≤ 40 * p n := by
+theorem ds_dsWW_le_p (hbig : Big n) : dsWW n ≤ 100 * p n := by
   have := ds_dsWW_le hbig.1; have := hbig.sixteen_le_b; unfold p; omega
 
 /-- `8 p + size r + 80 ≤ dsWW n`. -/
@@ -228,15 +230,16 @@ theorem ds_src_widths (hbig : Big n) :
     (p n + Chirp.chirpGuard (d n) + 3 ≤ dsW n) ∧ dsW n < dsWW n ∧
     (∀ i : Fin (d n), alpha n ^ 2 * ((s n i + t n i) * (Pipeline.windowA (p n) (alpha n) + 1)) ^ 2 *
       2 ^ (13 * p n + 8) < 2 ^ dsWW n) ∧
-    (∀ i : Fin (d n), alpha n ^ 2 * ((s n i + t n i) *
-      (FastB0.fastWindow (p n) (alpha n) + 1)) ^ 2 * 2 ^ (13 * p n + 8) < 2 ^ dsWW n) ∧
+    (9 * p n + 2 ≤ dsW n ∧ ∀ i : Fin (d n), alpha n ^ 2 * ((s n i + t n i) *
+      (8 * FastB0.fastWindow (p n) (alpha n) + 1)) ^ 2 * 2 ^ (65 * p n + 8) < 2 ^ dsWW n) ∧
     (∀ k, s n k * t n k * t n k < 2 ^ dsWW n) ∧
     (∀ k, 8 * (p n + Chirp.chirpGuard (d n)) + Nat.size (t n k) + 80 ≤ dsWW n) ∧
     p n + 2 ≤ dsW n ∧ gamma n ≤ dsW n ∧ logT n - ℓ n ≤ dsW n ∧
     4 * dsW n + 2 < 2 ^ pmW n ∧ pmW n ≤ dsWL n (dsW n) ∧ dsWW n < 2 ^ pmW n ∧
     8 * p n + Nat.size (r n) + 80 ≤ dsWW n := by
   obtain ⟨h1, h2, h3⟩ := ds_widths_dist hbig.1
-  refine ⟨ds_w_chirp n, ds_w_lt_WT n, ds_A_W hbig, ds_B_W hbig, ds_chirp_sN hbig, ds_chirp_W n,
+  refine ⟨ds_w_chirp n, ds_w_lt_WT n, ds_A_W hbig, ⟨by unfold dsW; omega, ds_B_W65 hbig⟩,
+    ds_chirp_sN hbig, ds_chirp_W n,
     ds_w_B n, (src_gamma_le hbig).trans (by unfold dsW; omega), by unfold dsW; omega, h2, h3, h1,
     ds_W_twist n⟩
 

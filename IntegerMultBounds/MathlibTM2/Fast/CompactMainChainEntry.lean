@@ -40,7 +40,7 @@ theorem compactRetunedChain_entry_eventually : ∀ᶠ n : ℕ in atTop,
   intro main x y hsx hsy v St hstable hout hmid
   obtain ⟨hEs,-⟩ := hmarg
   obtain ⟨hw,hwW,hWA,hWB,hWs,hWk⟩ := hwid
-  have h := hchain main mnKa_alpha hbig hsmall hEs hw hwW hWA hWB hWs hWk
+  have h := hchain main mnKa_alpha hbig hsmall hEs hw hwW hWA hWB.2 hWs hWk
     (compactRetunedDist.E n) (hbase (srcHd0 hbig)) hcrt hln hstr hsb x y hsx hsy v St hstable
     (fun r => by simpa only [embStk_R, compactMnLegacyReg_rg] using hout.src r) hmid
     (by simpa only [embStk_R, mnIo, compactMnLegacyReg_rg] using hout.dwn)

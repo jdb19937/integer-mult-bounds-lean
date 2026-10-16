@@ -1,6 +1,8 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Mult.FastB0Sizes
+public import IntegerMultBounds.MathlibTM2.Mult.BandSpec
+public import IntegerMultBounds.MathlibTM2.Mult.SourceErrScaled
 public import IntegerMultBounds.MathlibTM2.Mult.Chirp
 public import IntegerMultBounds.MathlibTM2.Mult.SynthErr
 
@@ -212,13 +214,6 @@ open Sizes Moduli
 
 variable {n : ℕ}
 
-instance neZero_s (n : ℕ) (i : Fin (d n)) : NeZero (s n i) :=
-  ⟨(modulus_odd (oddProd_odd (d n)) (start_even (d n) (N n) (2 ^ (ℓ n - 1))) (numHalf n)
-    i).pos.ne'⟩
-
-instance neZero_t (n : ℕ) (i : Fin (d n)) : NeZero (t n i) :=
-  ⟨by unfold t; split_ifs <;> positivity⟩
-
 /-- The source lengths are pairwise coprime for every `n`. -/
 theorem s_pairwise (n : ℕ) : Pairwise (Nat.Coprime on (s n)) :=
   modulus_pairwise (oddProd_odd (d n)) (start_even _ _ _) prime_dvd_oddProd (numHalf n)
@@ -322,12 +317,10 @@ noncomputable def lineA (n : ℕ) (i : Fin (d n)) : (ZMod (s n i) → ℂ) → Z
   resampANum (s n i) (t n i) (windowA (p n) (alpha n))
     (termW (p n) fun k j => (tableA (s n i) (t n i) (alpha n) (p n) k j : ℝ) / 2 ^ p n)
 
-/-- `B̃₀` on axis `i`: `α²` Horner steps of the Neumann series with the off-diagonal window
-`fastWindow p α` and table `tableE`, then the diagonal table `tableD`. -/
-noncomputable def lineB (n : ℕ) (i : Fin (d n)) : (ZMod (t n i) → ℂ) → ZMod (s n i) → ℂ :=
-  FastB0.resampB₀NumK (p n) (alpha n ^ 2) (FastB0.fastWindow (p n) (alpha n))
-    (fun ℓ h => (tableE (s n i) (t n i) (alpha n) (p n) ℓ h : ℝ) / 2 ^ p n)
-    (fun ℓ => (tableD (s n i) (t n i) (alpha n) (p n) ℓ : ℝ) / 2 ^ p n)
+/-- `B̃₀` on axis `i`: the banded solve of the Gaussian window matrix (`BandSpec.bandA`), which
+computes `2^-α² ℬ₀`. -/
+noncomputable abbrev lineB (n : ℕ) (i : Fin (d n)) : (ZMod (t n i) → ℂ) → ZMod (s n i) → ℂ :=
+  BandSpec.bandA n i
 
 /-- The chirp kernel `ā'` with the product guard `⌈log₂ d⌉ + 4`. -/
 noncomputable def chirpKernel (n : ℕ) : ((i : Fin (d n)) → ZMod (t n i)) → ℂ :=
@@ -418,22 +411,26 @@ theorem source_approx (h : Big n) (hsmall : 2 * d n * p n ^ 2 ≤ T n * logT n)
   have hαpR : ((alpha n : ℝ)) ^ 2 ≤ p n := by exact_mod_cast hαp
   have hp13 := h.thirteen_le_p
   obtain ⟨hm, hm1, hmp⟩ := windowA_spec (alpha_sq_lt_p h)
-  have hcond := FastB0.fastB0_conditions h
   have hi0 : 0 < d n := by omega
-  have htab := fun i => tables_ok (s n i) (t n i) (alpha n) (p n) (hg.lt i) hp13 hα2 hαp
+  choose J hJ hfac hAn hBn hA' hA'1 using fun i =>
+    BandSpec.band_factorization (hg.lt i) (hg.coprime i) hαR (h.one_le_alpha_sq_theta i)
+      (alpha n * alpha n) hαpR hm hm1 hmp hp13
+      (IntegerMultBounds.Resampling.WeightTable.tableA (s n i) (t n i) (alpha n) (p n))
+      (tables_ok (s n i) (t n i) (alpha n) (p n) (hg.lt i) hp13 hα2 hαp).1
+  have hexact : ∀ i, PhaseCellOperator.exact (s n i) (t n i) (alpha n : ℝ) =
+      1 + offDiagCLM (s n i) (t n i) (alpha n : ℝ) := fun i => normN_clm _ _ _
+  have hB' := fun i => (BandSpec.band_axis_full h h.band_width h.band_budget i).2 (J i)
+    (by rw [hexact]; exact hJ i)
+  have hB'1 := fun i => (BandSpec.band_axis_math h h.band_width h.band_budget i).ball
   have hsm : 2 * d n * p n ^ 2 ≤ (∏ i, t n i) * logT n := by rw [hpT]; exact hsmall
-  have hEs' : 9 * (2 : ℝ) ^ (d n * (2 * ⌈(alpha n : ℝ) ^ 2⌉₊ + 2)) *
+  have hEs' : 9 * (2 : ℝ) ^ (d n * (2 * ⌈((alpha n : ℝ)) ^ 2⌉₊ + 2 + alpha n * alpha n)) *
       ((∏ i, t n i : ℕ) : ℝ) * logT n ≤ 2 ^ p n / 100 := by
     rw [← gamma_eq_ceil, hpT]; exact hEs
-  have hres := FastB0.sourceErr_of_tables_fast (s := s n) (t := t n) hg.lt hg.coprime
-    h.two_dvd_t hαR h.one_le_alpha_sq_theta hαpR hm hm1 hmp hp13 (fun i => (hcond i).1)
-    (hcond ⟨0, hi0⟩).2.1 (hcond ⟨0, hi0⟩).2.2.1
-    (fun i => IntegerMultBounds.Resampling.WeightTable.tableA (s n i) (t n i) (alpha n) (p n))
-    (fun i => IntegerMultBounds.Resampling.WeightTable.tableE (s n i) (t n i) (alpha n) (p n))
-    (fun i => IntegerMultBounds.Resampling.WeightTable.tableD (s n i) (t n i) (alpha n) (p n))
-    (fun i => (htab i).1) (fun i => (htab i).2.1) (fun i => (htab i).2.2.1)
-    (fun i => (htab i).2.2.2) (chirpProd_ha'_explicit (t n) (s n) (p n))
-    (convBox_spec h hsmall hEs) hi0 hsm hEs'
+  have hres := SourceErr.sourceErr_of_componentsC (s := s n) (t := t n) h.two_dvd_t
+    (fun i => resampA (s n i) (t n i) (alpha n : ℝ))
+    (fun i => ((2 : ℂ) ^ (alpha n * alpha n))⁻¹ • resampB₀ (s n i) (t n i) (alpha n : ℝ) (J i))
+    hfac hAn hBn hA' hA'1 hB' hB'1 (chirpProd_ha'_explicit (t n) (s n) (p n))
+    (convBox_spec h hsmall hEs) hi0 (by omega) hsm hEs'
   rw [← gamma_eq_ceil, hpT] at hres
   exact hres
 

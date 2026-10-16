@@ -44,7 +44,7 @@ theorem compactMainChain_eventually : ∀ᶠ n : ℕ in Filter.atTop,
     (_hWA : ∀ i : Fin (d n), alpha n ^ 2 * ((s n i + t n i) * (windowA (p n) (alpha n) + 1)) ^ 2 *
       2 ^ (13 * p n + 8) < 2 ^ W)
     (_hWB : ∀ i : Fin (d n), alpha n ^ 2 * ((s n i + t n i) *
-      (FastB0.fastWindow (p n) (alpha n) + 1)) ^ 2 * 2 ^ (13 * p n + 8) < 2 ^ W)
+      (8 * FastB0.fastWindow (p n) (alpha n) + 1)) ^ 2 * 2 ^ (65 * p n + 8) < 2 ^ W)
     (_hWs : ∀ k, s n k * t n k * t n k < 2 ^ W)
     (_hWk : ∀ k, 8 * (p n + Chirp.chirpGuard (d n)) + Nat.size (t n k) + 80 ≤ W)
     {V₀ : RsaV (RsaX 6) (prime + mnKa)} {σ₀ : RsbR ⊕ RsbX 6 → List (Fin (prime + mnKa + 4))}
@@ -80,14 +80,14 @@ theorem compactMainChain_eventually : ∀ᶠ n : ℕ in Filter.atTop,
             srcDirectPCost compactSrcM n (dsW n) W (compactSynRetunedFwdCost n (compactBlCL n)) (compactSynRetunedOppCost n (compactBlCL' n)) (srcHd0 hbig)
               (preCfgA V₀ crtHd n (dsW n) W (srcHd0 hbig)
                 (preRecsA n W (srcHd0 hbig) 0 ++ (preRecsA n W (srcHd0 hbig) 0 ++ restA)) (d n - 1))
-              (preCfgB σ₀ crtHd n (dsW n) W (srcHd0 hbig)
+              (bandCfgB σ₀ crtHd n (dsW n) W (srcHd0 hbig)
                 (preRecsB n W (srcHd0 hbig) 0 ++ (preRecsB n W (srcHd0 hbig) 0 ++ restB)) (d n - 1))
               (preRecsA n W (srcHd0 hbig) 0 ++ restA) (preRecsB n W (srcHd0 hbig) 0 ++ restB) +
             oppDirectPCost compactSrcM n (dsW n) W (compactSynRetunedFwdCost n (compactBlCL n)) (compactSynRetunedOppCost n (compactBlCL' n)) (srcHd0 hbig)
               (preCfgA (preCfgA V₀ crtHd n (dsW n) W (srcHd0 hbig)
                 (preRecsA n W (srcHd0 hbig) 0 ++ (preRecsA n W (srcHd0 hbig) 0 ++ restA)) (d n - 1))
                 crtHd n (dsW n) W (srcHd0 hbig) (preRecsA n W (srcHd0 hbig) 0 ++ restA) (d n - 1))
-              (preCfgB (preCfgB σ₀ crtHd n (dsW n) W (srcHd0 hbig)
+              (bandCfgB (bandCfgB σ₀ crtHd n (dsW n) W (srcHd0 hbig)
                 (preRecsB n W (srcHd0 hbig) 0 ++ (preRecsB n W (srcHd0 hbig) 0 ++ restB)) (d n - 1))
                 crtHd n (dsW n) W (srcHd0 hbig) (preRecsB n W (srcHd0 hbig) 0 ++ restB) (d n - 1))
               restA restB) + 12) ∧
@@ -150,7 +150,7 @@ theorem compactMainChain_eventually : ∀ᶠ n : ℕ in Filter.atTop,
       { F₁ with
         a := (rsaWith (preCfgA V₀ crtHd n (dsW n) W hd0
           (preRecsA n W hd0 0 ++ (preRecsA n W hd0 0 ++ restA)) (d n - 1)) [] axsA []).get
-        b := rsbWith (preCfgB σ₀ crtHd n (dsW n) W hd0
+        b := rsbWith (bandCfgB σ₀ crtHd n (dsW n) W hd0
           (preRecsB n W hd0 0 ++ (preRecsB n W hd0 0 ++ restB)) (d n - 1)) [] axsB []
         c := Function.update F₁.c .str []
         x := Function.update F₁.x .sb (BX ++ F₁.x .sb) } := ⟨_, rfl⟩
@@ -189,9 +189,9 @@ theorem compactMainChain_eventually : ∀ᶠ n : ℕ in Filter.atTop,
   -- 5. the source transform of `y`
   have hE₄ : SrcBase mnM F₄ n (dsW n) W hd0
       (preCfgA V₀ crtHd n (dsW n) W hd0 (preRecsA n W hd0 0 ++ (preRecsA n W hd0 0 ++ restA)) (d n - 1))
-      (preCfgB σ₀ crtHd n (dsW n) W hd0 (preRecsB n W hd0 0 ++ (preRecsB n W hd0 0 ++ restB)) (d n - 1))
+      (bandCfgB σ₀ crtHd n (dsW n) W hd0 (preRecsB n W hd0 0 ++ (preRecsB n W hd0 0 ++ restB)) (d n - 1))
       (preRecsA n W hd0 0 ++ restA) (preRecsB n W hd0 0 ++ restB) axsA axsB := by
-    refine SrcBase.next (E := E) hE (fun r _ => by subst hF₄ hF₃ hF₂; rfl)
+    refine SrcBase.next (E := E) (by omega) hE (fun r _ => by subst hF₄ hF₃ hF₂; rfl)
       (by subst hF₄ hF₃ hF₂; rfl) (by subst hF₄ hF₃ hF₂ hF₁; rfl) (by subst hF₄ hF₃ hF₂ hF₁; rfl)
       (by subst hF₄ hF₃ hF₂ hF₁; rfl) (fun j hj => ?_)
     subst hF₄ hF₃ hF₂ hF₁
@@ -205,7 +205,7 @@ theorem compactMainChain_eventually : ∀ᶠ n : ℕ in Filter.atTop,
         a := (rsaWith (preCfgA (preCfgA V₀ crtHd n (dsW n) W hd0
           (preRecsA n W hd0 0 ++ (preRecsA n W hd0 0 ++ restA)) (d n - 1)) crtHd n (dsW n) W hd0
           (preRecsA n W hd0 0 ++ restA) (d n - 1)) [] axsA []).get
-        b := rsbWith (preCfgB (preCfgB σ₀ crtHd n (dsW n) W hd0
+        b := rsbWith (bandCfgB (bandCfgB σ₀ crtHd n (dsW n) W hd0
           (preRecsB n W hd0 0 ++ (preRecsB n W hd0 0 ++ restB)) (d n - 1)) crtHd n (dsW n) W hd0
           (preRecsB n W hd0 0 ++ restB) (d n - 1)) [] axsB []
         c := Function.update F₄.c .str []
@@ -213,7 +213,7 @@ theorem compactMainChain_eventually : ∀ᶠ n : ℕ in Filter.atTop,
   replace s5 : SrcRuns (compactMainEntryTable main) compactMnRg compactSrcM.ι (compactMainStablePre n) (srcDirectP compactSrcM (compactSynFwd (Ka := mnKa) Cost.brDirs (slyFwd mnQ_layer)) (compactSynOpp (Ka := mnKa) Cost.brDirs (slyOpp mnQ_layer))) (mnGlob F₄ g₄)
       (mnGlob F₅ g₄) (srcDirectPCost compactSrcM n (dsW n) W (compactSynRetunedFwdCost n (compactBlCL n)) (compactSynRetunedOppCost n (compactBlCL' n)) hd0
         (preCfgA V₀ crtHd n (dsW n) W hd0 (preRecsA n W hd0 0 ++ (preRecsA n W hd0 0 ++ restA)) (d n - 1))
-        (preCfgB σ₀ crtHd n (dsW n) W hd0 (preRecsB n W hd0 0 ++ (preRecsB n W hd0 0 ++ restB)) (d n - 1))
+        (bandCfgB σ₀ crtHd n (dsW n) W hd0 (preRecsB n W hd0 0 ++ (preRecsB n W hd0 0 ++ restB)) (d n - 1))
         (preRecsA n W hd0 0 ++ restA) (preRecsB n W hd0 0 ++ restB)) := by subst hF₅; exact s5
   have hF₅sb : F₅.x .sb = BY := by subst hF₅ hF₄ hF₃; simp
   have hg₄hx : g₄ (.io .hx) = BX := by subst hg₄ hg₃; simp
@@ -306,10 +306,10 @@ theorem compactMainChain_eventually : ∀ᶠ n : ℕ in Filter.atTop,
   have hE₁₁ : SrcBase mnM F₁₁ n (dsW n) W hd0
       (preCfgA (preCfgA V₀ crtHd n (dsW n) W hd0 (preRecsA n W hd0 0 ++ (preRecsA n W hd0 0 ++ restA))
         (d n - 1)) crtHd n (dsW n) W hd0 (preRecsA n W hd0 0 ++ restA) (d n - 1))
-      (preCfgB (preCfgB σ₀ crtHd n (dsW n) W hd0 (preRecsB n W hd0 0 ++ (preRecsB n W hd0 0 ++ restB))
+      (bandCfgB (bandCfgB σ₀ crtHd n (dsW n) W hd0 (preRecsB n W hd0 0 ++ (preRecsB n W hd0 0 ++ restB))
         (d n - 1)) crtHd n (dsW n) W hd0 (preRecsB n W hd0 0 ++ restB) (d n - 1))
       restA restB axsA axsB := by
-    refine SrcBase.next (E := F₄) hE₄ (fun r _ => by subst hF₁₁ hF₁₀ hF₉ hF₈ hF₇ hF₆ hF₅; rfl)
+    refine SrcBase.next (E := F₄) (by omega) hE₄ (fun r _ => by subst hF₁₁ hF₁₀ hF₉ hF₈ hF₇ hF₆ hF₅; rfl)
       (by subst hF₁₁ hF₁₀ hF₉ hF₈ hF₇ hF₆ hF₅; rfl)
       (by subst hF₁₁ hF₁₀ hF₉ hF₈ hF₇ hF₆ hF₅; rfl)
       (by rw [hF₁₁v]; subst hF₄ hF₃ hF₂ hF₁; rfl)
@@ -327,7 +327,7 @@ theorem compactMainChain_eventually : ∀ᶠ n : ℕ in Filter.atTop,
         a := (rsaWith (preCfgA (preCfgA (preCfgA V₀ crtHd n (dsW n) W hd0
           (preRecsA n W hd0 0 ++ (preRecsA n W hd0 0 ++ restA)) (d n - 1)) crtHd n (dsW n) W hd0
           (preRecsA n W hd0 0 ++ restA) (d n - 1)) crtHd n (dsW n) W hd0 restA (d n - 1)) [] axsA []).get
-        b := rsbWith (preCfgB (preCfgB (preCfgB σ₀ crtHd n (dsW n) W hd0
+        b := rsbWith (bandCfgB (bandCfgB (bandCfgB σ₀ crtHd n (dsW n) W hd0
           (preRecsB n W hd0 0 ++ (preRecsB n W hd0 0 ++ restB)) (d n - 1)) crtHd n (dsW n) W hd0
           (preRecsB n W hd0 0 ++ restB) (d n - 1)) crtHd n (dsW n) W hd0 restB (d n - 1)) [] axsB []
         c := Function.update F₁₁.c .str CO
@@ -336,7 +336,7 @@ theorem compactMainChain_eventually : ∀ᶠ n : ℕ in Filter.atTop,
       (mnGlob F₁₂ g₆) (oppDirectPCost compactSrcM n (dsW n) W (compactSynRetunedFwdCost n (compactBlCL n)) (compactSynRetunedOppCost n (compactBlCL' n)) hd0
         (preCfgA (preCfgA V₀ crtHd n (dsW n) W hd0 (preRecsA n W hd0 0 ++ (preRecsA n W hd0 0 ++ restA))
           (d n - 1)) crtHd n (dsW n) W hd0 (preRecsA n W hd0 0 ++ restA) (d n - 1))
-        (preCfgB (preCfgB σ₀ crtHd n (dsW n) W hd0 (preRecsB n W hd0 0 ++ (preRecsB n W hd0 0 ++ restB))
+        (bandCfgB (bandCfgB σ₀ crtHd n (dsW n) W hd0 (preRecsB n W hd0 0 ++ (preRecsB n W hd0 0 ++ restB))
           (d n - 1)) crtHd n (dsW n) W hd0 (preRecsB n W hd0 0 ++ restB) (d n - 1))
         restA restB) := by subst hF₁₂; exact s12
   -- 13. the coefficient stream onto the rounding stage

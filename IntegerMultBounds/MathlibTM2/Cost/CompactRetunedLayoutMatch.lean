@@ -251,9 +251,9 @@ theorem compactRetuned_ml_lay_cost_le_gen :
         slyOppCost mnKa (List.ofFn (cvAx (t n))) (ℓ n) (Mult.CompactSizes.K n) (ℓ n) (dsW n)
           (slyW (List.ofFn (cvAx (t n))).sum (2 ^ ℓ n * dsW n) (ℓ n) (d n - 1)) E v₀ : ℕ) : ℝ) ≤
         C * CompactTotal.conv n := by
-  obtain ⟨Cs, hCs0, hst⟩ := compactRetuned_ml_stage_le (nT SXReg) 6 mnKa 3
+  obtain ⟨Cs, hCs0, hst⟩ := compactRetuned_ml_stage_le (nT SXReg) 6 mnKa 12
   refine ⟨2 * Cs + 16, ?_⟩
-  filter_upwards [eventually_big, hst, compactRetuned_ml_writer_le 18 26, ml_aux_le, compactRetuned_one_le_K] with n h hst
+  filter_upwards [eventually_big, hst, compactRetuned_ml_writer_le 72 80, ml_aux_le, compactRetuned_one_le_K] with n h hst
     hwr haux hK1
   intro E v₀
   simp only [slyFwdCost, slyOppCost, slyStageCost, slyUnstageCost]
@@ -271,9 +271,9 @@ theorem compactRetuned_ml_lay_cost_le_gen :
   have hℓb : ℓ n ≤ b n := mt_ℓ_le_b h
   have hKb : Mult.CompactSizes.K n ≤ b n := compactRetuned_K_le_b h
   have hr1 : 1 ≤ r n := Nat.one_le_two_pow
-  have hw3 : dsW n ≤ 3 * p n := by
+  have hw3 : dsW n ≤ 12 * p n := by
     have := ds_dsW_le h.1; unfold p; omega
-  have hw18 : dsW n ≤ 18 * b n := by unfold p at hw3; omega
+  have hw18 : dsW n ≤ 72 * b n := by unfold p at hw3; omega
   have hwpos : 1 ≤ dsW n := by have := ds_w_A n; omega
   have hB1 : 1 ≤ B := by
     rw [← hB]
@@ -281,20 +281,20 @@ theorem compactRetuned_ml_lay_cost_le_gen :
   have hT2 : 2 ^ es.sum ≤ T n := by
     show 2 ^ es.sum ≤ 2 ^ logT n
     exact Nat.pow_le_pow_right (by norm_num) hN
-  have hV : 2 ^ es.sum * B ≤ 3 * (T n * p n) := by
+  have hV : 2 ^ es.sum * B ≤ 12 * (T n * p n) := by
     rw [← hB, ← mul_assoc, ← pow_add, hsum, Nat.sub_add_cancel hℓ]
-    show 2 ^ logT n * dsW n ≤ 3 * (2 ^ logT n * p n)
-    calc 2 ^ logT n * dsW n ≤ 2 ^ logT n * (3 * p n) := Nat.mul_le_mul_left _ hw3
-      _ = 3 * (2 ^ logT n * p n) := by ring
-  have hBb : B ≤ 18 * (b n * r n) := by
+    show 2 ^ logT n * dsW n ≤ 12 * (2 ^ logT n * p n)
+    calc 2 ^ logT n * dsW n ≤ 2 ^ logT n * (12 * p n) := Nat.mul_le_mul_left _ hw3
+      _ = 12 * (2 ^ logT n * p n) := by ring
+  have hBb : B ≤ 72 * (b n * r n) := by
     rw [← hB]
     show r n * dsW n ≤ _
-    calc r n * dsW n ≤ r n * (18 * b n) := Nat.mul_le_mul_left _ hw18
-      _ = 18 * (b n * r n) := by ring
+    calc r n * dsW n ≤ r n * (72 * b n) := Nat.mul_le_mul_left _ hw18
+      _ = 72 * (b n * r n) := by ring
   have hbr : b n * r n ≤ b n ^ 2 * r n := by
     rw [sq]; exact Nat.mul_le_mul_right _ (Nat.le_mul_of_pos_left _ hb1)
-  have hBb2 : B ≤ 18 * (b n ^ 2 * r n) := hBb.trans (Nat.mul_le_mul_left _ hbr)
-  have hWb : slyW es.sum B (ℓ n) (d n - 1) ≤ 26 * (b n ^ 2 * r n) := by
+  have hBb2 : B ≤ 72 * (b n ^ 2 * r n) := hBb.trans (Nat.mul_le_mul_left _ hbr)
+  have hWb : slyW es.sum B (ℓ n) (d n - 1) ≤ 80 * (b n ^ 2 * r n) := by
     unfold slyW
     have h1 : es.sum * es.sum ≤ b n * b n := Nat.mul_le_mul hNb hNb
     have h2 : b n * b n ≤ b n ^ 2 * r n := by rw [sq]; exact Nat.le_mul_of_pos_right _ hr1

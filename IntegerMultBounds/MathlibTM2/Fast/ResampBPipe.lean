@@ -6,7 +6,7 @@ public import IntegerMultBounds.MathlibTM2.Mult.Pipeline
 /-!
 # `B̃₀` of the pipeline on the padded box
 
-`Mult.Pipeline.lineB n i` is `resampB₀NumK (p n) (α²) (fastWindow (p n) α)` with the integer weight
+`lineBN n i` is `resampB₀NumK (p n) (α²) (fastWindow (p n) α)` with the integer weight
 tables `tableE`, `tableD` of axis `i`. `rsbLineBData n Lb hs i` is the axis data of the machine
 for these tables, and `rsb_lineB_eq` says that the numeric maps of the machine's axis data are
 `lineB n`.
@@ -33,6 +33,16 @@ open IntegerMultBounds.Networks.Shared50ModularControl (prime)
 
 noncomputable section
 
+/-- The Neumann `B̃₀` line map of axis `i` (superseded in the pipeline by the banded line). -/
+noncomputable def lineBN (n : ℕ) (i : Fin (Mult.Sizes.d n)) :
+    (ZMod (Mult.Sizes.t n i) → ℂ) → ZMod (Mult.Sizes.s n i) → ℂ :=
+  Mult.FastB0.resampB₀NumK (Mult.Sizes.p n) (Mult.Sizes.alpha n ^ 2)
+    (Mult.FastB0.fastWindow (Mult.Sizes.p n) (Mult.Sizes.alpha n))
+    (fun ℓ h => (Resampling.WeightTable.tableE (Mult.Sizes.s n i) (Mult.Sizes.t n i)
+      (Mult.Sizes.alpha n) (Mult.Sizes.p n) ℓ h : ℝ) / 2 ^ Mult.Sizes.p n)
+    (fun ℓ => (Resampling.WeightTable.tableD (Mult.Sizes.s n i) (Mult.Sizes.t n i)
+      (Mult.Sizes.alpha n) (Mult.Sizes.p n) ℓ : ℝ) / 2 ^ Mult.Sizes.p n)
+
 /-- The axis data of `lineB n` on axis `i`: source length `s n i`, target width `Lb i`, the
 weight tables `tableE`, `tableD`, the interchange headers `hs i`. -/
 def rsbLineBData (n : ℕ) (Lb : Fin (Mult.Sizes.d n) → ℕ)
@@ -55,7 +65,7 @@ theorem rsb_lineB_eq (n : ℕ) (Lb : Fin (Mult.Sizes.d n) → ℕ)
       (Mult.Sizes.alpha n ^ 2) (Mult.FastB0.fastWindow (Mult.Sizes.p n) (Mult.Sizes.alpha n))
       (fun ℓ h => ((rsbLineBData n Lb hs i).E ℓ h : ℝ) / 2 ^ Mult.Sizes.p n)
       (fun ℓ => ((rsbLineBData n Lb hs i).D ℓ : ℝ) / 2 ^ Mult.Sizes.p n)) =
-      Mult.Pipeline.lineB n := rfl
+      lineBN n := rfl
 
 section Machine
 
@@ -120,7 +130,7 @@ theorem rsb_all_lineB (n : ℕ) (Lb : Fin (Mult.Sizes.d n) → ℕ)
     ∃ G : ((i : Fin (Mult.Sizes.d n)) → Fin (Mult.Sizes.t n i)) → GaussianInt,
       (∀ x : (i : Fin (Mult.Sizes.d n)) → Fin (Mult.Sizes.t n i),
         (∀ i, (x i : ℕ) < Mult.Sizes.s n i) →
-        tensorZR (Mult.Sizes.d n) (Mult.Sizes.t n) (Mult.Sizes.s n) (Mult.Pipeline.lineB n) u
+        tensorZR (Mult.Sizes.d n) (Mult.Sizes.t n) (Mult.Sizes.s n) (lineBN n) u
           (fun i => ((x i : ℕ) : ZMod (Mult.Sizes.s n i))) =
           GaussianInt.toComplex (G x) / 2 ^ Mult.Sizes.p n) ∧
       (∀ x : (i : Fin (Mult.Sizes.d n)) → Fin (Mult.Sizes.t n i),
@@ -418,7 +428,7 @@ theorem rsb_all_lineB_disk (n : ℕ) (hbig : Mult.Sizes.Big n) (Lb : Fin (Mult.S
     ∃ G : ((i : Fin (Mult.Sizes.d n)) → Fin (Mult.Sizes.t n i)) → GaussianInt,
       (∀ x : (i : Fin (Mult.Sizes.d n)) → Fin (Mult.Sizes.t n i),
         (∀ i, (x i : ℕ) < Mult.Sizes.s n i) →
-        tensorZR (Mult.Sizes.d n) (Mult.Sizes.t n) (Mult.Sizes.s n) (Mult.Pipeline.lineB n) u
+        tensorZR (Mult.Sizes.d n) (Mult.Sizes.t n) (Mult.Sizes.s n) (lineBN n) u
           (fun i => ((x i : ℕ) : ZMod (Mult.Sizes.s n i))) =
           GaussianInt.toComplex (G x) / 2 ^ Mult.Sizes.p n) ∧
       (∀ x : (i : Fin (Mult.Sizes.d n)) → Fin (Mult.Sizes.t n i),

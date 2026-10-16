@@ -3,6 +3,7 @@ module
 public import IntegerMultBounds.MathlibTM2.Fast.BandPrep
 public import IntegerMultBounds.MathlibTM2.Fast.BandFits
 public import IntegerMultBounds.MathlibTM2.Fast.ResampBPipe
+public import IntegerMultBounds.MathlibTM2.Mult.Pipeline
 
 /-!
 # The banded `B̃₀` stage
@@ -21,6 +22,7 @@ open IntegerMultBounds IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2.St
   IntegerMultBounds.MathlibTM2.Host IntegerMultBounds.MathlibTM2.Layer IntegerMultBounds.MathlibTM2.Node
 open IntegerMultBounds.Resampling.WeightTable (tableE tableD)
 open IntegerMultBounds.Networks.Shared50ModularControl (prime)
+open IntegerMultBounds.MathlibTM2.Mult.BandSpec
 
 set_option linter.unusedSimpArgs false
 
@@ -474,10 +476,6 @@ variable (n : ℕ)
 noncomputable def bandDlN (i : Fin (d n)) : List ℤ :=
   rsbArr fun ℓ : ZMod (s n i) => tableD (s n i) (t n i) (alpha n) (p n) ℓ * 2 ^ (4 * p n)
 
-/-- The coefficient numerators of axis `i` at precision `5p`. -/
-noncomputable abbrev bandAZ (i : Fin (d n)) : ZMod (s n i) → ℤ → ℤ :=
-  Mult.BandFactor.coefZ (s n i) (t n i) (alpha n) (5 * p n)
-
 /-- The band line map of axis `i`. -/
 noncomputable def bandG (i : Fin (d n)) : List GaussianInt → List GaussianInt :=
   bandLineT (5 * p n) (s n i) (t n i) (2 * (8 * Mult.FastB0.fastWindow (p n) (alpha n)) + 1)
@@ -488,15 +486,6 @@ noncomputable def bandG (i : Fin (d n)) : List GaussianInt → List GaussianInt 
     (bandRcs (5 * p n) (4 * (alpha n * alpha n)) (8 * Mult.FastB0.fastWindow (p n) (alpha n)) (s n i)
       (bandAZ n i))
     (bandDlN n i) (2 ^ (9 * p n - 1)) (2 ^ (p n - alpha n * alpha n))
-
-/-- The real map of the band line of axis `i`: the normalized machine solve of the Gaussian
-window matrix, then the diagonal table. -/
-noncomputable def bandA (i : Fin (d n)) : (ZMod (t n i) → ℂ) → ZMod (s n i) → ℂ :=
-  Mult.FastB0.resampB₀Of (t := t n i) (p n) (Mult.FastB0.bandJtX (s := s n i) (p n)
-    (alpha n * alpha n) (Mult.FastB0.machSolveT (4 * (alpha n * alpha n)) (rdP (5 * p n))
-      (NLogN.PhaseCellMatrix.windowMatrix (s n i) (8 * Mult.FastB0.fastWindow (p n) (alpha n))
-        fun a k => Mult.BandFactor.gv (5 * p n) (bandAZ n i a k))))
-    fun ℓ => (tableD (s n i) (t n i) (alpha n) (p n) ℓ : ℝ) / 2 ^ p n
 
 variable {n}
 
@@ -545,26 +534,6 @@ section Stage
 
 open IntegerMultBounds.MathlibTM2.Mult.Pipeline IntegerMultBounds.MathlibTM2.Mult.Sizes
 open IntegerMultBounds.NLogN IntegerMultBounds.NLogN.SchurDominance
-
-/-- The numeric facts of the band line on axis `i`. -/
-structure BandAxisMath (n : ℕ) (β : ℝ) (i : Fin (d n)) : Prop where
-  inv : StageInv (NLogN.PhaseCellMatrix.windowMatrix (s n i) (8 * Mult.FastB0.fastWindow (p n) (alpha n))
-    fun a k => Mult.BandFactor.gv (5 * p n) (bandAZ n i a k)) Finset.univ
-      (1 / (8 * (2 * (p n : ℝ)))) (9 / 4)
-  small : 2 ^ 16 * (2 * (p n : ℝ)) ^ 2 * (s n i : ℝ) ^ 2 *
-    ((1 / 2 ^ (5 * p n) : ℝ) * (1 + 60 * 3 / β ^ 2)) ≤ 1
-  err : 62000 * (2 * (p n : ℝ)) ^ 3 * (s n i : ℝ) ^ 2 *
-    ((1 / 2 ^ (5 * p n) : ℝ) * (1 + 60 * 3 / β ^ 2)) ≤ 1
-  ball : ∀ v, ‖v‖ ≤ 1 → ‖bandA n i v‖ ≤ 1
-
-/-- The precision of the Newton reciprocals of the band. -/
-structure BandPrec (n : ℕ) (β : ℝ) (w : ℕ) : Prop where
-  pos : 0 < β
-  le : β ≤ 1 / (8 * (2 * (p n : ℝ))) / 2
-  eta : 5 * (1 / 2 ^ (5 * p n) : ℝ) ≤ 2 * (β / 4) / 9
-  newton : (1 - β / 4 / 2) ^ (2 ^ (4 * (alpha n * alpha n))) ≤
-    3 * (5 * (1 / 2 ^ (5 * p n) : ℝ)) / (β / 4)
-  width : (6 / β + 1) * 2 ^ (5 * p n) < (2 : ℝ) ^ (w - 1)
 
 variable {T Q : ℕ} {U F : Type}
 variable {body : F → Pr F T Q (prime + K) U} {rg : RsbR → Fin T} {rgx : RsbX t₀ → Fin T}
@@ -761,6 +730,131 @@ theorem bandStage_exec (n : ℕ) (h : Big n) (hd0 : 0 < d n)
   · simp only [preHsB, value_sxBits]
 
 end Stage
+
+/-! ### The stage's conditions from widths -/
+
+section Sizes
+
+open IntegerMultBounds.MathlibTM2.Mult.Pipeline IntegerMultBounds.MathlibTM2.Mult.Sizes
+open IntegerMultBounds.Resampling.WeightTable (tableD_spec)
+
+variable {n : ℕ}
+
+theorem fits_real_of_le {w : ℕ} {x : ℤ} (h0 : 0 ≤ x) (h : x < 2 ^ (w - 1)) :
+    Fits w (⟨x, 0⟩ : GaussianInt) :=
+  ⟨by rw [abs_of_nonneg h0]; exact h, by simp⟩
+
+/-- The numeric facts behind the loader conditions of axis `i`. -/
+theorem band_preOk_facts (h : Big n) {w W : ℕ} (hw9 : 9 * p n + 2 ≤ w) (i : Fin (d n))
+    (hW : alpha n ^ 2 * ((s n i + t n i) *
+      (8 * Mult.FastB0.fastWindow (p n) (alpha n) + 1)) ^ 2 * 2 ^ (65 * p n + 8) < 2 ^ W) :
+    2 * (8 * Mult.FastB0.fastWindow (p n) (alpha n)) + 1 < s n i ∧ 65 * p n + 8 < W ∧
+      2 * s n i * (t n i + 1) < 2 ^ W ∧ s n i * s n i < 2 ^ W ∧ alpha n * alpha n < 2 ^ W ∧
+      (2 * (8 * Mult.FastB0.fastWindow (p n) (alpha n)) + 1 + 1 + s n i) +
+        2 * (2 * (8 * Mult.FastB0.fastWindow (p n) (alpha n)) + 1) + 1 < 2 ^ W ∧
+      t n i < 2 ^ W ∧ 8 * Mult.FastB0.fastWindow (p n) (alpha n) < 2 ^ W ∧
+      alpha n ^ 2 * ((s n i + t n i) * (Mult.FastB0.fastWindow (p n) (alpha n) + 1)) ^ 2 *
+        2 ^ (13 * p n + 8) < 2 ^ W := by
+  have hp64 := h.sixty_four_le_p
+  have hα2 := two_le_alpha h.1
+  have hps := pre_p_le_s h i
+  have hst := h.good.lt i
+  set m := Mult.FastB0.fastWindow (p n) (alpha n)
+  have hm : 16 * m + 1 < p n := by
+    have h1 : Nat.sqrt (p n) / (2 * alpha n) ≤ Nat.sqrt (p n) / 4 :=
+      Nat.div_le_div_left (by omega) (by norm_num)
+    have h2 : Nat.sqrt (p n) * Nat.sqrt (p n) ≤ p n := Nat.sqrt_le (p n)
+    have h3 : 8 ≤ Nat.sqrt (p n) := Nat.le_sqrt'.mpr (by omega)
+    have h4 : 4 * (Nat.sqrt (p n) / 4) ≤ Nat.sqrt (p n) := Nat.mul_div_le _ _
+    have : 8 * Nat.sqrt (p n) ≤ p n := le_trans (Nat.mul_le_mul_right _ h3) h2
+    simp only [m, Mult.FastB0.fastWindow]; omega
+  have hm1 : 1 ≤ m := by simp [m, Mult.FastB0.fastWindow]
+  have hW' : alpha n ^ 2 * ((s n i + t n i) * (8 * m + 1)) ^ 2 * 2 ^ (13 * (5 * p n) + 8) < 2 ^ W := by
+    rw [show 13 * (5 * p n) + 8 = 65 * p n + 8 by ring]; exact hW
+  have hN1 : 1 ≤ (s n i + t n i) * (8 * m + 1) := Nat.mul_pos (by omega) (by omega)
+  obtain ⟨hW1, -, hNN, hααNN⟩ := TableVM.tbl_W_facts hα2 hN1 hW'
+  set N := (s n i + t n i) * (8 * m + 1)
+  have hsN : 9 * (s n i + t n i) ≤ N := by
+    calc 9 * (s n i + t n i) ≤ (8 * m + 1) * (s n i + t n i) := Nat.mul_le_mul_right _ (by omega)
+      _ = N := by ring
+  have hNN' : N ≤ N * N := Nat.le_mul_self N
+  have hDW : alpha n ^ 2 * ((s n i + t n i) * (m + 1)) ^ 2 * 2 ^ (13 * p n + 8) < 2 ^ W := by
+    refine lt_of_le_of_lt ?_ hW
+    have hmN : (s n i + t n i) * (m + 1) ≤ N := Nat.mul_le_mul_left _ (by omega)
+    have := Nat.pow_le_pow_left hmN 2
+    have h13 : 2 ^ (13 * p n + 8) ≤ 2 ^ (65 * p n + 8) := Nat.pow_le_pow_right (by norm_num) (by omega)
+    exact Nat.mul_le_mul (Nat.mul_le_mul_left _ this) h13
+  refine ⟨by omega, by omega, ?_, ?_, ?_, ?_, ?_, ?_, hDW⟩
+  · refine lt_of_le_of_lt ?_ hNN; nlinarith
+  · refine lt_of_le_of_lt ?_ hNN; nlinarith
+  · refine lt_of_le_of_lt ?_ hααNN; nlinarith
+  · refine lt_of_le_of_lt ?_ hNN; nlinarith
+  · refine lt_of_le_of_lt ?_ hNN; nlinarith
+  · refine lt_of_le_of_lt ?_ hNN; nlinarith
+
+/-- **The loader conditions of every axis** at a width `w ≥ 9p + 2` and a table word with
+`α² ((s+t)(8m+1))² 2^(65p+8) < 2^W`. -/
+theorem band_preOk (h : Big n) (hd0 : 0 < d n) {w W : ℕ} (hw9 : 9 * p n + 2 ≤ w) (hwW : w ≤ W)
+    (hW65 : ∀ i : Fin (d n), alpha n ^ 2 * ((s n i + t n i) *
+      (8 * Mult.FastB0.fastWindow (p n) (alpha n) + 1)) ^ 2 * 2 ^ (65 * p n + 8) < 2 ^ W)
+    (k : ℕ) (_hk : k < d n) : BandPreOk (preDB n W hd0 k) w := by
+  obtain ⟨f1, f2, f3, f4, f5, f6, f7, f8, f9⟩ := band_preOk_facts h hw9 (rsbAx hd0 k) (hW65 _)
+  have hp13 := h.thirteen_le_p
+  have hW' := hW65 (rsbAx hd0 k)
+  rw [show 65 * p n + 8 = 13 * (5 * p n) + 8 by ring] at hW'
+  have hst := h.good.lt (rsbAx hd0 k)
+  have hw1 : 2 ^ (9 * p n) < 2 ^ (w - 1) := Nat.pow_lt_pow_right (by norm_num) (by omega)
+  have hP : 2 ^ (5 * p n) < 2 ^ W := Nat.pow_lt_pow_right (by norm_num) (by omega)
+  have hfold : BandFoldW (preDB n W hd0 k) :=
+    ⟨f1, by show 13 ≤ 5 * p n; omega,
+      TableVM.tblOffW_of (two_le_alpha h.1) (by show 0 < s n _ + t n _; omega) hW',
+      by show 5 * (5 * p n) + 16 ≤ W; omega, f3, f4, f5, hP, f6, f7, f8⟩
+  refine ⟨hfold, hwW, hp13, two_le_alpha h.1, h.alpha_sq_le_p, by show 0 < s n _; omega, hst, f9,
+    by show 9 * p n + 1 < W; omega, by show 5 * p n ≤ w; omega, fun ℓ => ?_, ?_⟩
+  · obtain ⟨-, h0, h1⟩ := tableD_spec (s n (rsbAx hd0 k)) (t n (rsbAx hd0 k)) (alpha n) (p n)
+      hp13 (by have := two_le_alpha h.1; omega) h.alpha_sq_le_p ℓ
+    refine fits_real_of_le h0 (lt_of_le_of_lt h1 ?_)
+    have : (2 : ℤ) ^ p n < 2 ^ (9 * p n) := pow_lt_pow_right₀ (by norm_num) (by omega)
+    exact this.trans (by exact_mod_cast hw1)
+  · exact fits_real_of_le (by positivity) (by exact_mod_cast hw1)
+
+/-- The diagonal tables fit a width `w ≥ 9p + 2`. -/
+theorem band_dfit (h : Big n) {w : ℕ} (hw9 : 9 * p n + 2 ≤ w) (i : Fin (d n)) :
+    ∀ x ∈ bandDlN n i, Fits w (⟨x, 0⟩ : GaussianInt) := by
+  intro x hx
+  simp only [bandDlN, rsbArr, List.mem_map, List.mem_range] at hx
+  obtain ⟨ℓ, -, rfl⟩ := hx
+  have hp13 := h.thirteen_le_p
+  obtain ⟨-, h0, h1⟩ := tableD_spec (s n i) (t n i) (alpha n) (p n) hp13 (by have := two_le_alpha h.1; omega)
+    h.alpha_sq_le_p (ℓ : ZMod (s n i))
+  have h1' : tableD (s n i) (t n i) (alpha n) (p n) (ℓ : ZMod (s n i)) ≤ 2 ^ p n := h1
+  refine fits_real_of_le (by positivity) ?_
+  calc tableD (s n i) (t n i) (alpha n) (p n) (ℓ : ZMod (s n i)) * 2 ^ (4 * p n)
+      ≤ 2 ^ p n * 2 ^ (4 * p n) := mul_le_mul_of_nonneg_right h1' (by positivity)
+    _ = 2 ^ (5 * p n) := by rw [← pow_add]; ring_nf
+    _ < 2 ^ (w - 1) := pow_lt_pow_right₀ (by norm_num) (by omega)
+
+/-- The record width of the band at `w ≥ 9p + 2`. -/
+theorem band_prec_w (h : Big n) {w : ℕ} (hw9 : 9 * p n + 2 ≤ w) :
+    BandPrec n (1 / (32 * (p n : ℝ))) w := by
+  refine band_prec h h.band_width ?_
+  have hp13 := h.thirteen_le_p
+  have hpR : (0 : ℝ) < p n := by positivity
+  have e : 6 / (1 / (32 * (p n : ℝ))) + 1 = 192 * p n + 1 := by field_simp; ring
+  rw [e]
+  have h1 : (192 * p n + 1 : ℕ) < 2 ^ (4 * p n + 1) := by
+    calc 192 * p n + 1 < 2 ^ 8 * (p n + 1) := by omega
+      _ ≤ 2 ^ 8 * 2 ^ p n := Nat.mul_le_mul_left _ (Nat.lt_two_pow_self)
+      _ = 2 ^ (p n + 8) := by rw [← pow_add]; ring_nf
+      _ ≤ 2 ^ (4 * p n + 1) := Nat.pow_le_pow_right (by norm_num) (by omega)
+  have h2 : ((192 * p n + 1 : ℕ) : ℝ) * 2 ^ (5 * p n) < 2 ^ (4 * p n + 1) * 2 ^ (5 * p n) :=
+    mul_lt_mul_of_pos_right (by exact_mod_cast h1) (by positivity)
+  have h3 : (2 : ℝ) ^ (4 * p n + 1) * 2 ^ (5 * p n) ≤ 2 ^ (w - 1) := by
+    rw [← pow_add]; exact pow_le_pow_right₀ (by norm_num) (by omega)
+  push_cast at h2
+  linarith
+
+end Sizes
 
 end
 

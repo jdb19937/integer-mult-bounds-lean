@@ -18,7 +18,7 @@ theorem compactRetuned_inst {n : ℕ} (h : Big n) :
       (List.ofFn (cvAx (t n))).sum ≤ b n ∧
       2 ^ (List.ofFn (cvAx (t n))).sum * r n = T n ∧
       nRounds (cvAx (t n)) ≤ ℓ n ∧ 1 ≤ Mult.CompactSizes.K n ∧ ℓ n ≤ b n ∧ Mult.CompactSizes.K n ≤ b n ∧ d n ≤ b n ∧ 16 ≤ b n ∧
-      16 ≤ d n ∧ dsW n ≤ 18 * b n := by
+      16 ≤ d n ∧ dsW n ≤ 72 * b n := by
   have H := compactDs_layHyp h
   have hs := ds_sum_cvAx h.1
   obtain ⟨hT, -⟩ := mt_T_split h
@@ -29,11 +29,11 @@ theorem compactRetuned_inst {n : ℕ} (h : Big n) :
   · rw [hs]; have := mt_logT_le_b h; omega
   · have := h.sixteen_le_b; omega
 
-/-- The working width of every round is at most `(G + m + 6) p`. -/
+/-- The working width of every round is at most `(G + m + 15) p`. -/
 theorem compactRetuned_w2_le {n : ℕ} (h : Big n) (hh : ℕ) :
     synW2 (List.ofFn (cvAx (t n))) (ℓ n) (Mult.CompactSizes.K n) (gateCount (program Cost.brDirs))
       (factorCount (program Cost.brDirs)) (dsW n) hh ≤
-      (gateCount (program Cost.brDirs) + m + 6) * p n := by
+      (gateCount (program Cost.brDirs) + m + 15) * p n := by
   obtain ⟨-, -, hlen, -, -, -, -, -, -, -, hb16, hd16, hw⟩ := compactRetuned_inst h
   have h1 := mrO_synW2_le (List.ofFn (cvAx (t n))) (ℓ n) (Mult.CompactSizes.K n) (gateCount (program Cost.brDirs))
     (factorCount (program Cost.brDirs)) (dsW n) hh mr_F_le
@@ -76,7 +76,7 @@ theorem compactRetuned_direct_over_le : ∃ C : ℝ, 0 ≤ C ∧ ∀ᶠ n in atT
         C * ((T n : ℝ) * p n) + 2 * stk + 2 := by
   obtain ⟨CA, hCA⟩ := mrO_step_le Cost.brDirs mr_F_le
   set G := gateCount (program Cost.brDirs)
-  refine ⟨CA * (24 ^ 8 + G + m + 6), by positivity, ?_⟩
+  refine ⟨CA * (80 ^ 8 + G + m + 15), by positivity, ?_⟩
   filter_upwards [eventually_big, mr_b_pow_le_r 8] with n hbig hbr h hh stk
   obtain ⟨H, -, hlen, hN, hT, -, -, hℓ, hK, hd, hb16, -, hw⟩ := compactRetuned_inst hbig
   have hw1 : 1 ≤ dsW n := by unfold dsW; omega
@@ -85,33 +85,33 @@ theorem compactRetuned_direct_over_le : ∃ C : ℝ, 0 ≤ C ∧ ∀ᶠ n in atT
   generalize hes : List.ofFn (cvAx (t n)) = es at *
   generalize hWe : synW2 es (ℓ n) (Mult.CompactSizes.K n) G (factorCount (program Cost.brDirs)) (dsW n) h = W at *
   -- `Z ≤ 24 b`
-  have hZ : mrZ es (ℓ n) (Mult.CompactSizes.K n) (dsW n) (ℓ n) ≤ 24 * b n := by
+  have hZ : mrZ es (ℓ n) (Mult.CompactSizes.K n) (dsW n) (ℓ n) ≤ 80 * b n := by
     unfold mrZ; rw [hlen]; omega
-  have hZ8 : mrZ es (ℓ n) (Mult.CompactSizes.K n) (dsW n) (ℓ n) ^ 8 ≤ 24 ^ 8 * r n := by
-    calc mrZ es (ℓ n) (Mult.CompactSizes.K n) (dsW n) (ℓ n) ^ 8 ≤ (24 * b n) ^ 8 := Nat.pow_le_pow_left hZ 8
-      _ = 24 ^ 8 * b n ^ 8 := by ring
-      _ ≤ 24 ^ 8 * r n := Nat.mul_le_mul_left _ hbr
-  have hA : mrZ es (ℓ n) (Mult.CompactSizes.K n) (dsW n) (ℓ n) ^ 8 * 2 ^ es.sum ≤ 24 ^ 8 * T n := by
-    calc mrZ es (ℓ n) (Mult.CompactSizes.K n) (dsW n) (ℓ n) ^ 8 * 2 ^ es.sum ≤ 24 ^ 8 * r n * 2 ^ es.sum :=
+  have hZ8 : mrZ es (ℓ n) (Mult.CompactSizes.K n) (dsW n) (ℓ n) ^ 8 ≤ 80 ^ 8 * r n := by
+    calc mrZ es (ℓ n) (Mult.CompactSizes.K n) (dsW n) (ℓ n) ^ 8 ≤ (80 * b n) ^ 8 := Nat.pow_le_pow_left hZ 8
+      _ = 80 ^ 8 * b n ^ 8 := by ring
+      _ ≤ 80 ^ 8 * r n := Nat.mul_le_mul_left _ hbr
+  have hA : mrZ es (ℓ n) (Mult.CompactSizes.K n) (dsW n) (ℓ n) ^ 8 * 2 ^ es.sum ≤ 80 ^ 8 * T n := by
+    calc mrZ es (ℓ n) (Mult.CompactSizes.K n) (dsW n) (ℓ n) ^ 8 * 2 ^ es.sum ≤ 80 ^ 8 * r n * 2 ^ es.sum :=
           Nat.mul_le_mul_right _ hZ8
-      _ = 24 ^ 8 * (2 ^ es.sum * r n) := by ring
-      _ = 24 ^ 8 * T n := by rw [hT]
-  have hB : 2 ^ es.sum * (2 ^ ℓ n * W) ≤ T n * ((G + m + 6) * p n) := by
+      _ = 80 ^ 8 * (2 ^ es.sum * r n) := by ring
+      _ = 80 ^ 8 * T n := by rw [hT]
+  have hB : 2 ^ es.sum * (2 ^ ℓ n * W) ≤ T n * ((G + m + 15) * p n) := by
     calc 2 ^ es.sum * (2 ^ ℓ n * W) = (2 ^ es.sum * r n) * W := by unfold r; ring
       _ = T n * W := by rw [hT]
-      _ ≤ T n * ((G + m + 6) * p n) := Nat.mul_le_mul_left _ hw2
+      _ ≤ T n * ((G + m + 15) * p n) := Nat.mul_le_mul_left _ hw2
   have hp1 : 1 ≤ p n := by unfold p; omega
   have hTp : T n ≤ T n * p n := Nat.le_mul_of_pos_right _ hp1
   have h2 : CA * (mrZ es (ℓ n) (Mult.CompactSizes.K n) (dsW n) (ℓ n) ^ 8 * 2 ^ es.sum +
-      2 ^ es.sum * (2 ^ ℓ n * W)) ≤ CA * (24 ^ 8 + G + m + 6) * (T n * p n) := by
+      2 ^ es.sum * (2 ^ ℓ n * W)) ≤ CA * (80 ^ 8 + G + m + 15) * (T n * p n) := by
     have : mrZ es (ℓ n) (Mult.CompactSizes.K n) (dsW n) (ℓ n) ^ 8 * 2 ^ es.sum + 2 ^ es.sum * (2 ^ ℓ n * W) ≤
-        (24 ^ 8 + G + m + 6) * (T n * p n) := by nlinarith
-    calc _ ≤ CA * ((24 ^ 8 + G + m + 6) * (T n * p n)) := Nat.mul_le_mul_left _ this
+        (80 ^ 8 + G + m + 15) * (T n * p n) := by nlinarith
+    calc _ ≤ CA * ((80 ^ 8 + G + m + 15) * (T n * p n)) := Nat.mul_le_mul_left _ this
       _ = _ := by ring
   have h3 : synLayerStepCost Cost.brDirs es (ℓ n) (Mult.CompactSizes.K n) (dsW n) (ℓ n) h stk +
       synTwCost es (ℓ n) (dsW n) h ≤
       synLayerCost Cost.brDirs es (ℓ n) (Mult.CompactSizes.K n) (ℓ n) (dsW n) h +
-        CA * (24 ^ 8 + G + m + 6) * (T n * p n) + 2 * stk + 2 := by omega
+        CA * (80 ^ 8 + G + m + 15) * (T n * p n) + 2 * stk + 2 := by omega
   exact_mod_cast h3
 
 
@@ -119,7 +119,7 @@ theorem compactRetuned_direct_layer_le : ∃ C : ℝ, 0 ≤ C ∧ ∀ᶠ n in at
     (synLayerCost Cost.brDirs (List.ofFn (cvAx (t n))) (ℓ n) (Mult.CompactSizes.K n) (ℓ n) (dsW n) h : ℝ) ≤
       C * ((T n : ℝ) * p n) * d n := by
   obtain ⟨CB, hCB⟩ := mrT_topCost_le Cost.brDirs
-  refine ⟨CB * (gateCount (program Cost.brDirs) + m + 6), by positivity, ?_⟩
+  refine ⟨CB * (gateCount (program Cost.brDirs) + m + 15), by positivity, ?_⟩
   filter_upwards [eventually_big, mr_b_pow_le_r 2] with n hbig hbr h hc
   obtain ⟨H, -, hlen, hN, hT, -, hK1, hℓ, hK, hd, hb16, hd16, hw⟩ := compactRetuned_inst hbig
   obtain ⟨hKh, hRh, hAR, hA, hQ, hDp, hAT, hfit, hR2, hpcs, -⟩ := mr_prefix_facts H hc
@@ -153,17 +153,17 @@ theorem compactRetuned_direct_layer_le : ∃ C : ℝ, 0 ≤ C ∧ ∀ᶠ n in at
   rw [hAR, hna, hpcs] at hB
   simp only [List.map_nil, List.sum_nil, List.length_nil, add_zero] at hB
   have hcnt : synQ es (ℓ n) (Mult.CompactSizes.K n) h + 1 ≤ d n := by rw [hQ, hlen] at *; omega
-  have hv : 2 ^ es.sum * (2 ^ ℓ n * W) ≤ T n * ((gateCount (program Cost.brDirs) + m + 6) * p n) := by
+  have hv : 2 ^ es.sum * (2 ^ ℓ n * W) ≤ T n * ((gateCount (program Cost.brDirs) + m + 15) * p n) := by
     calc 2 ^ es.sum * (2 ^ ℓ n * W) = (2 ^ es.sum * r n) * W := by unfold r; ring
       _ = T n * W := by rw [hT]
       _ ≤ _ := by gcongr
   have h1 : synLayerCost Cost.brDirs es (ℓ n) (Mult.CompactSizes.K n) (ℓ n) (dsW n) h ≤
-      CB * (gateCount (program Cost.brDirs) + m + 6) * (T n * p n) * d n := by
+      CB * (gateCount (program Cost.brDirs) + m + 15) * (T n * p n) * d n := by
     unfold synLayerCost
     rw [hAR, hWe, hpcs]
     calc _ ≤ CB * ((synQ es (ℓ n) (Mult.CompactSizes.K n) h + 1) * (2 ^ es.sum * (2 ^ ℓ n * W))) := hB
-      _ ≤ CB * (d n * (T n * ((gateCount (program Cost.brDirs) + m + 6) * p n))) := by gcongr
-      _ = CB * (gateCount (program Cost.brDirs) + m + 6) * (T n * p n) * d n := by ring
+      _ ≤ CB * (d n * (T n * ((gateCount (program Cost.brDirs) + m + 15) * p n))) := by gcongr
+      _ = CB * (gateCount (program Cost.brDirs) + m + 15) * (T n * p n) * d n := by ring
   exact_mod_cast h1
 
 

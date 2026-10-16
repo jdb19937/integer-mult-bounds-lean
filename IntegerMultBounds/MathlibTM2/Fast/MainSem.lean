@@ -127,7 +127,7 @@ theorem mn_tensorZR_fixed {q : ℕ} : ∀ (d : ℕ) (M N : Fin d → ℕ)
 /-- `B̃₀` on one line ends with the truncation `Q_p`. -/
 theorem mn_lineB_fixed (n : ℕ) (i : Fin (d n)) (f : ZMod (t n i) → ℂ) (j : ZMod (s n i)) :
     IsFixed (p n) (lineB n i f j) := by
-  simp only [lineB, FastB0.resampB₀NumK, Resampling.TabledMaps.diagW]
+  simp only [lineB, Mult.BandSpec.bandA, FastB0.resampB₀Of, Resampling.TabledMaps.diagW]
   exact isFixed_rhoC _ _
 
 theorem mn_sourceApprox_fixed {n : ℕ} (hd : 0 < d n) (v : ((i : Fin (d n)) → ZMod (s n i)) → ℂ)

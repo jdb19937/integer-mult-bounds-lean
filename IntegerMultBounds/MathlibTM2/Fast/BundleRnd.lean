@@ -97,7 +97,7 @@ def bdCTop : TblCode pmNV :=
   bdCMw ;; .ins (.copy 31 39) ;; dsZC ;; dsCTop ;; .ins (.zero 39)
 
 /-- The atoms of `bdCTop`. -/
-def bdTopK (n : ℕ) : ℕ := dsTopK (bdMw n) + 17
+def bdTopK (n : ℕ) : ℕ := dsTopK (bdMw n) + 26
 
 theorem bdCMw₂_do (hn : 2 ≤ n) :
     TblDo bdA (pmW n) w' (tblBlock pmNV [.add 5 5 32] (.add 31 32 31))
@@ -112,7 +112,7 @@ theorem bdCMw₂_do (hn : 2 ≤ n) :
     all_goals first | omega | (unfold bdMw; omega)
 
 theorem bdCMw_do (hn : 2 ≤ n) :
-    TblDo bdA (pmW n) w' bdCMw ⟨pmVals n, []⟩ (DsPost (pmVals n) (bdMw n)) 8 := by
+    TblDo bdA (pmW n) w' bdCMw ⟨pmVals n, []⟩ (DsPost (pmVals n) (bdMw n)) 17 := by
   have h := (dsWidC_do (A := bdA) (w' := w') hn (a := 0) (c := 0) rfl rfl).seq fun s hs => by
     subst hs
     exact bdCMw₂_do hn
@@ -142,7 +142,7 @@ theorem bdCWo_do (hn : 2 ≤ n) :
   rw [dsV2_pm] at h
   exact h.mono (fun s hs => by subst hs; exact dsV2_post n _ _ _ rfl) le_rfl
 
-lemma bdMw_le (hn : 2 ≤ n) : bdMw n ≤ 11 * b n + 13 := by
+lemma bdMw_le (hn : 2 ≤ n) : bdMw n ≤ 66 * b n + 20 := by
   obtain ⟨hg, hℓ, hlT, hℓT, hW, hWW, h200⟩ := ds_wid_bounds hn
   unfold bdMw; omega
 
@@ -165,7 +165,7 @@ theorem bdCTop_do (hbig : Big n) :
     · exfalso; have := j.isLt; simp only [pmNV] at this; omega
   have h : TblDo bdA (pmW n) w' (bdCMw ;; .ins (.copy 31 39) ;; dsZC ;; dsCTop ;; .ins (.zero 39))
       ⟨pmVals n, []⟩ (DsPost (pmVals n) (dsTopN (bdMw n)))
-      (8 + (1 + (7 + (dsTopK (bdMw n) + 1)))) := by
+      (17 + (1 + (7 + (dsTopK (bdMw n) + 1)))) := by
     -- `bdCMw`
     refine (bdCMw_do hn).seq fun s hs => ?_
     obtain ⟨hacc, h31, hs⟩ := hs
@@ -211,7 +211,7 @@ def bdRnd : MnPr bdA :=
 
 /-- The step bound of `bdRnd`. -/
 def bdRndCost (n : ℕ) : ℕ :=
-  dsStepCost (pmW n) 6 (dsW n) + dsStepCost (pmW n) 6 (dsW n) + dsStepCost (pmW n) 8 (bdMw n) +
+  dsStepCost (pmW n) 15 (dsW n) + dsStepCost (pmW n) 15 (dsW n) + dsStepCost (pmW n) 17 (bdMw n) +
     dsStepCost (pmW n) (bdTopK n) (dsTopN (bdMw n)) + dsStepBCost (pmW n) 1 (bdMw n) +
     dsStepCost (pmW n) 9 (bdWo n) + dsStepCost (pmW n) 9 (bdWo n)
 
@@ -263,8 +263,7 @@ lemma bd_stepB_nil (hn : 2 ≤ n) (oE oWL : Fin mnT) (hoE : ∀ r, mnPm r ≠ oE
 lemma bd_pmW_le_Mw (hbig : Big n) : pmW n ≤ bdMw n := by
   have h1 : Nat.size n ≤ b n + 1 := pm_size_le
   have h2 : 64≤b n := hbig.2.trans (d_le_b n)
-  have h3 : dsW n = p n + Chirp.chirpGuard (d n) + 3 + (logT n - ℓ n) := rfl
-  unfold pmW bdMw p at *
+  unfold pmW bdMw dsW p at *
   omega
 
 /-- **The rounding and output parameters**: from the layout `bdρ n` and the seven registers
@@ -436,30 +435,30 @@ lemma bd_topN_le {m : ℕ} (hm : 1 ≤ m) : dsTopN m ≤ 4 * m := by
 
 lemma bd_size_le (x : ℕ) : Nat.size x ≤ x := Nat.size_le.2 Nat.lt_two_pow_self
 
-/-- **The cost of `bdRnd`**: eventually `bdRndCost n ≤ 2 · 10^13 (b n + 1)^4`. -/
-theorem bd_rndCost_le : ∀ᶠ n in atTop, bdRndCost n ≤ 2 * 10 ^ 13 * (b n + 1) ^ 4 := by
+/-- **The cost of `bdRnd`**: eventually `bdRndCost n ≤ 2 · 10^16 (b n + 1)^4`. -/
+theorem bd_rndCost_le : ∀ᶠ n in atTop, bdRndCost n ≤ 2 * 10 ^ 16 * (b n + 1) ^ 4 := by
   filter_upwards [eventually_big] with n hbig
   have hn := hbig.1
   obtain ⟨hg, hℓ, hlT, hℓT, hW, hWW, h200⟩ := ds_wid_bounds hn
   have hsz : Nat.size n ≤ b n + 1 := pm_size_le
   have hb := hbig.sixteen_le_b
   have hlT1 := hbig.one_le_logT
-  set B := 100 * (b n + 1) with hB
+  set B := 500 * (b n + 1) with hB
   have hpm : pmW n ≤ 24 * B := by unfold pmW; omega
   have hMw := bdMw_le hn
   have hMw1 : 1 ≤ bdMw n := by unfold bdMw; omega
   have hTop : dsTopN (bdMw n) ≤ 4 * bdMw n := bd_topN_le hMw1
-  have hTopK : bdTopK n ≤ 6 * bdMw n + 24 := by
+  have hTopK : bdTopK n ≤ 6 * bdMw n + 33 := by
     unfold bdTopK dsTopK
     have := bd_size_le (2 * bdMw n)
     omega
   have hWo : bdWo n ≤ 4 * b n + 10 := by unfold bdWo; omega
-  have c1 := bd_stepCost_le (K := 6) (x := dsW n) hpm (by omega) (by omega)
-  have c3 := bd_stepCost_le (K := 8) (x := bdMw n) hpm (by omega) (by omega)
+  have c1 := bd_stepCost_le (K := 15) (x := dsW n) hpm (by omega) (by omega)
+  have c3 := bd_stepCost_le (K := 17) (x := bdMw n) hpm (by omega) (by omega)
   have c4 := bd_stepCost_le (K := bdTopK n) (x := dsTopN (bdMw n)) hpm (by omega) (by omega)
   have c5 := bd_stepBCost_le (K := 1) (WL := bdMw n) hpm (by omega) (by omega)
   have c6 := bd_stepCost_le (K := 9) (x := bdWo n) hpm (by omega) (by omega)
-  have hB4 : B ^ 4 = 10 ^ 8 * (b n + 1) ^ 4 := by rw [hB]; ring
+  have hB4 : B ^ 4 = 625 * 10 ^ 8 * (b n + 1) ^ 4 := by rw [hB]; ring
   have hB3 : B ^ 3 ≤ B ^ 4 := Nat.pow_le_pow_right (by omega) (by norm_num)
   unfold bdRndCost
   omega

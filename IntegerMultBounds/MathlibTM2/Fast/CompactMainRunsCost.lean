@@ -42,7 +42,8 @@ theorem compactMain_runs_le {K : ℕ} {Lb : LProc → MnPr (prime + K)} {w : ℕ
   obtain ⟨C1, hC1, hrun⟩ := compactSource_direct_le (K := K) cw cW
   refine ⟨3 * C1 + 6 * max Cs 0, by positivity, ?_⟩
   filter_upwards [eventually_big, hratio, D.widths, D.clrA, D.clrB, hCs, hrun,
-    mn_clrA_cfg cw cW, mn_clrB_cfg cw cW] with n h hrt hwd hcA hcB hcs hr hcfgA hcfgB
+    mn_clrA_cfg cw cW, mt_band_clr_cfg cw cW, D.base] with n h hrt hwd hcA hcB hcs hr hcfgA hcfgB
+    hbase
   obtain ⟨hwc, hWc⟩ := hrt
   obtain ⟨hgw, -, -⟩ := hwd
   change _ ≤ _ * compactSourceSum n
@@ -61,18 +62,22 @@ theorem compactMain_runs_le {K : ℕ} {Lb : LProc → MnPr (prime + K)} {w : ℕ
   rw [dite_eq_left hd0]
   set RA := preRecsA (A := prime + K) n (D.Wt n) hd0 0 with hRA
   set RB := preRecsB (A := prime + K) n (D.Wt n) hd0 0 with hRB
+  have hA3 : 3 ≤ prime + K := by have := IntegerMultBounds.Networks.Shared50ModularControl.prime_odd; omega
+  have hb0 : BandBase (D.σ₀ n) (w n) crtHd := (hbase hd0).bBase
+  have hb1 : BandBase (mnσ₁ D n hd0) (w n) crtHd := bandCfgB_base hb0 hA3 _
+  have hb2 : BandBase (mnσ₂ D n hd0) (w n) crtHd := bandCfgB_base hb1 hA3 _
   have b1 := (hr hd0 (w n) (D.Wt n) (cF n) (cO n) (D.V₀ n) (D.σ₀ n) (RA ++ (RA ++ D.restA n))
-    (RB ++ (RB ++ D.restB n)) hpw hwc hWc hcA hcB).1
+    (RB ++ (RB ++ D.restB n)) hpw hwc hWc hcA hb0 hcB).1
   have b2 := (hr hd0 (w n) (D.Wt n) (cF n) (cO n) (mnV₁ D n hd0) (mnσ₁ D n hd0)
     (RA ++ D.restA n) (RB ++ D.restB n) hpw hwc hWc
     (hcfgA hd0 (w n) (D.Wt n) (D.V₀ n) crtHd (RA ++ (RA ++ D.restA n)) (d n - 1) h11 hwc hWc)
-    (hcfgB hd0 (w n) (D.Wt n) (D.σ₀ n) crtHd (RB ++ (RB ++ D.restB n)) (d n - 1) h101 hwc
-      hWc)).1
+    hb1 (hcfgB hd0 (w n) (D.Wt n) (D.σ₀ n) crtHd (RB ++ (RB ++ D.restB n)) (d n - 1) h101 hwc
+      hWc hb0 hA3)).1
   have b3 := (hr hd0 (w n) (D.Wt n) (cF n) (cO n) (mnV₂ D n hd0) (mnσ₂ D n hd0)
     (D.restA n) (D.restB n) hpw hwc hWc
     (hcfgA hd0 (w n) (D.Wt n) (mnV₁ D n hd0) crtHd (RA ++ D.restA n) (d n - 1) h11 hwc hWc)
-    (hcfgB hd0 (w n) (D.Wt n) (mnσ₁ D n hd0) crtHd (RB ++ D.restB n) (d n - 1) h101 hwc
-      hWc)).2
+    hb2 (hcfgB hd0 (w n) (D.Wt n) (mnσ₁ D n hd0) crtHd (RB ++ D.restB n) (d n - 1) h101 hwc
+      hWc hb1 hA3)).2
   push_cast at b1 b2 b3 hcs' ⊢
   calc _ ≤ 3 * (C1 * compactSourceSum n) + 6 * ((cF n : ℝ) + cO n) := by linarith
     _ ≤ 3 * (C1 * compactSourceSum n) + 6 * (max Cs 0 * compactSourceSum n) := by linarith

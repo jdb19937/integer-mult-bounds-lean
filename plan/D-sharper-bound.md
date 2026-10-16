@@ -1957,3 +1957,18 @@ factorization (`band_facLoop_runs`) with its record widths discharged
 4. Generalize `rsbAxisP`/`RsbAxisCfg`/`RsbAxisData` (currently hard-wired to the
    Neumann line) or add the banded variant, the loader for the band counters and
    constants, the cost bounds, the `ε`/`α` retune and the final theorem.
+
+The banded `B̃₀` now replaces the Neumann inverse in the proved multiplier.
+`Fast/BandStage.bandStage_exec` runs the loader and the banded lines along
+every axis and computes `tensorZR (bandA n)`; `Fast/BandFits` proves the
+record widths from the backward-stability bounds (`NLogN/SchurSizes`);
+`Mult/BandSpec` discharges the per-axis numeric facts from `Big n`,
+`8p ≤ 2^(α²)` and `α² d ≤ p`. The band line approximates `2^-α² ℬ₀`, so
+the source exponent becomes `γ = d (3α² + 2)` (`Mult/SourceErrScaled`), and
+`Mult/Pipeline.pipeline_correct` holds with `lineB = bandA`. The tape source
+phase runs the band stage with records on `prm` and widths `dsW ≈ 10p`,
+`dsWW ≈ 70p`; `Cost/MatchBandB.mt_band_stage_le_linear` bounds the stage by
+`O(totResamp + totDirectCRT + T p)`. `MathlibTM2.Theorem` builds and the
+statement uses only standard axioms. The public bound is unchanged at
+`2^-34`: remaining are the small-`α` retune at `ε = 5/16`, the matching
+sizing lemmas and the final theorem.

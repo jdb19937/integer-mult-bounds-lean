@@ -50,7 +50,7 @@ def dsSrcEa (n w Wt : ℕ) (hd0 : 0 < d n) : RsaR (RsaX t₀) → List (Fin (A +
 
 /-- The `B̃₀` family after the converter. -/
 def dsSrcEb (n w Wt : ℕ) (hd0 : 0 < d n) : RsbR ⊕ RsbX t₀ → List (Fin (A + 4))
-  | .inl .bo => preRecsB n Wt hd0 0 ++ (preRecsB n Wt hd0 0 ++ preRecsB n Wt hd0 0)
+  | .inl .prm => preRecsB n Wt hd0 0 ++ (preRecsB n Wt hd0 0 ++ preRecsB n Wt hd0 0)
   | .inl (.cm .wn) => List.replicate w tick
   | .inl (.cm .nn) => List.replicate (dsTopN w) tick
   | .inr .ax => List.replicate (d n - 1) tick
@@ -134,7 +134,7 @@ def dsSrcO (n w : ℕ) : DsX → List (Fin (A + 4))
 
 /-- The registers the converter writes. -/
 def dsKeys : List (DsY t₀) :=
-  [.s (.a (.c .out)), .s (.b (.inl .bo)), .s (.x .tSp), .s (.x .sSp), .s (.c .wT), .s (.c .sT),
+  [.s (.a (.c .out)), .s (.b (.inl .prm)), .s (.x .tSp), .s (.x .sSp), .s (.c .wT), .s (.c .sT),
    .s (.c .mT), .s (.c .sig), .s (.c .msk),
    .s (.k (.x .pU)), .s (.k (.x .gU)), .s (.x .lU), .s (.x .gS), .s (.k (.c .pn)),
    .s (.v (.cm .pn)), .o .rR, .o .lK, .o .lL,
@@ -378,21 +378,25 @@ theorem ds_preBaseA (hd : Fin 5 → Fin t₀) : PreBaseA (dsV₀ (A := A) n w Wt
   case bank => intro j _; rfl
   all_goals rfl
 
-theorem ds_preBaseB (hd : Fin 5 → Fin t₀) : PreBaseB (dsσ₀ (A := A) n w Wt hd0) w hd := by
+theorem ds_bandBase {K : ℕ} (hd : Fin 5 → Fin t₀) :
+    BandBase (dsσ₀ (A := prime + K) n w Wt hd0) w hd := by
   constructor
-  case free => constructor <;> rfl
+  case free =>
+    constructor
+    case vx => intro j; rfl
+    case cm =>
+      intro c h1 h2 h3 h4 h5 h6
+      cases c <;> first
+        | rfl
+        | exact (h1 rfl).elim
+        | exact (h2 rfl).elim
+        | exact (h3 rfl).elim
+        | exact (h4 rfl).elim
+        | exact (h5 rfl).elim
+        | exact (h6 rfl).elim
+    all_goals rfl
   case wn => simp [dsσ₀, dsSrcEb]
   case nn => simp [dsσ₀, dsSrcEb, ← ds_dsTopN]
-  case cm =>
-    intro c h1 h2 h3 h4 h5 h6
-    cases c <;> first
-      | rfl
-      | exact (h1 rfl).elim
-      | exact (h2 rfl).elim
-      | exact (h3 rfl).elim
-      | exact (h4 rfl).elim
-      | exact (h5 rfl).elim
-      | exact (h6 rfl).elim
   case bank => intro j _; rfl
   all_goals rfl
 
@@ -491,7 +495,7 @@ theorem ds_srcE_base {K : ℕ} (M : SrcMach t₀ T Q) (hn : 2 ≤ n) (hd0 : 0 < 
   aOut := rfl
   aAx := dsAxs_length n
   b := ds_srcE_b
-  bBase := ds_preBaseB M.hd
+  bBase := ds_bandBase M.hd
   bOut := rfl
   bAx := dsAxs_length n
   k := ds_kerBase hd0

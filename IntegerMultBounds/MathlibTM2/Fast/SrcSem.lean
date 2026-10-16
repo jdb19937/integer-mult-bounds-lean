@@ -213,7 +213,14 @@ theorem src_margins (h : Big n) (hsmall : 2 * d n * p n ^ 2 ≤ T n * logT n)
   have hsm : 2 * d n * p n ^ 2 ≤ (∏ i, t n i) * logT n := by rw [hpT]; exact hsmall
   have hEs' : 9 * (2 : ℝ) ^ (d n * (2 * ⌈(alpha n : ℝ) ^ 2⌉₊ + 2)) *
       ((∏ i, t n i : ℕ) : ℝ) * logT n ≤ 2 ^ p n / 100 := by
-    rw [← gamma_eq_ceil, hpT]; exact hEs
+    rw [hpT]
+    refine le_trans ?_ hEs
+    have hle : d n * (2 * ⌈(alpha n : ℝ) ^ 2⌉₊ + 2) ≤ gamma n := by
+      rw [gamma_eq_ceil]; exact Nat.mul_le_mul_left _ (by omega)
+    have : (2 : ℝ) ^ (d n * (2 * ⌈(alpha n : ℝ) ^ 2⌉₊ + 2)) ≤ 2 ^ gamma n :=
+      pow_le_pow_right₀ (by norm_num) hle
+    have h0 : (0 : ℝ) ≤ T n * logT n := by positivity
+    nlinarith
   exact SourceErr.sourceApprox_margins (fun i => opNorm_resampA_le hα1) (src_lineA_approx h)
     (fun i u hu => pre_lineA_ball h i u hu)
     (fun j => (Chirp.chirpProd_ha'_explicit (t n) (s n) (p n) j).2)

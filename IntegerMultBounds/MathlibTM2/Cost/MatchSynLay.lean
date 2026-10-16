@@ -394,14 +394,14 @@ theorem ml_stage_le (Tm t₀ Ka cv : ℕ) :
 reversal of the streams (`slyRevStreamsCost`) at `N ≤ b`, `2^N ≤ T`, `B ≤ 18 b r`, `W ≤ 26 b² r`,
 `w ≤ 18 b` and at most `b²` moves of each kind cost at most `6 T + 2821 b⁴ r ≤ 7 T p`. -/
 theorem ml_aux_le :
-    ∀ᶠ n in atTop, ∀ (N B W w xM xX : ℕ), N ≤ b n → 2 ^ N ≤ T n → B ≤ 18 * (b n * r n) →
-      W ≤ 26 * (b n ^ 2 * r n) → w ≤ 18 * b n → xM ≤ b n ^ 2 → xX ≤ b n ^ 2 →
+    ∀ᶠ n in atTop, ∀ (N B W w xM xX : ℕ), N ≤ b n → 2 ^ N ≤ T n → B ≤ 72 * (b n * r n) →
+      W ≤ 80 * (b n ^ 2 * r n) → w ≤ 72 * b n → xM ≤ b n ^ 2 → xX ≤ b n ^ 2 →
       ((slySetupCost W N B (2 ^ ℓ n) w + slyCleanCost xM xX N (N + B + 2) B W +
         slyRevStreamsCost xM N xX (N + B + 2) : ℕ) : ℝ) ≤ 7 * ((T n : ℝ) * p n) := by
-  filter_upwards [eventually_big, ml_small_le 2968 4 1] with n h hsm
+  filter_upwards [eventually_big, ml_small_le 11872 4 1] with n h hsm
   intro N B W w xM xX hN hTN hB hW hw hM hX
   have hb16 := h.sixteen_le_b
-  have hQ : ((2968 * b n ^ 4 * r n ^ 1 : ℕ) : ℝ) ≤ T n * p n := hsm _ le_rfl
+  have hQ : ((11872 * b n ^ 4 * r n ^ 1 : ℕ) : ℝ) ≤ T n * p n := hsm _ le_rfl
   push_cast at hQ
   rw [pow_one] at hQ
   have hr' : (2 : ℝ) ^ ℓ n = r n := by unfold r; push_cast; ring
@@ -433,9 +433,9 @@ theorem ml_aux_le :
   -- the hypotheses in `ℝ`
   have hN' : (N : ℝ) ≤ b n := by exact_mod_cast hN
   have hTN' : (2 : ℝ) ^ N ≤ T n := by exact_mod_cast hTN
-  have hB' : (B : ℝ) ≤ 18 * (b n * r n) := by exact_mod_cast hB
-  have hW' : (W : ℝ) ≤ 26 * ((b n : ℝ) ^ 2 * r n) := by exact_mod_cast hW
-  have hw' : (w : ℝ) ≤ 18 * b n := by exact_mod_cast hw
+  have hB' : (B : ℝ) ≤ 72 * (b n * r n) := by exact_mod_cast hB
+  have hW' : (W : ℝ) ≤ 80 * ((b n : ℝ) ^ 2 * r n) := by exact_mod_cast hW
+  have hw' : (w : ℝ) ≤ 72 * b n := by exact_mod_cast hw
   have hM' : (xM : ℝ) ≤ (b n : ℝ) ^ 2 := by exact_mod_cast hM
   have hX' : (xX : ℝ) ≤ (b n : ℝ) ^ 2 := by exact_mod_cast hX
   have hN0 : (0 : ℝ) ≤ N := Nat.cast_nonneg _
@@ -443,32 +443,32 @@ theorem ml_aux_le :
   have hM0 : (0 : ℝ) ≤ xM := Nat.cast_nonneg _
   have hX0 : (0 : ℝ) ≤ xX := Nat.cast_nonneg _
   -- products
-  have hrw : (r n : ℝ) * w ≤ 18 * (b n * r n) := by
+  have hrw : (r n : ℝ) * w ≤ 72 * (b n * r n) := by
     have := mul_le_mul_of_nonneg_left hw' hr0
     linarith
   have hMN : (xM : ℝ) * N ≤ (b n : ℝ) ^ 3 := by
     calc (xM : ℝ) * N ≤ (b n : ℝ) ^ 2 * b n := mul_le_mul hM' hN' hN0 (by positivity)
       _ = (b n : ℝ) ^ 3 := by ring
-  have hXwX : (xX : ℝ) * (N + B + 2) ≤ (b n : ℝ) ^ 3 + 18 * ((b n : ℝ) ^ 3 * r n) +
+  have hXwX : (xX : ℝ) * (N + B + 2) ≤ (b n : ℝ) ^ 3 + 72 * ((b n : ℝ) ^ 3 * r n) +
       2 * (b n : ℝ) ^ 2 := by
-    have h1 : (N : ℝ) + B + 2 ≤ b n + 18 * (b n * r n) + 2 := by linarith
-    calc (xX : ℝ) * (N + B + 2) ≤ (b n : ℝ) ^ 2 * (b n + 18 * (b n * r n) + 2) :=
+    have h1 : (N : ℝ) + B + 2 ≤ b n + 72 * (b n * r n) + 2 := by linarith
+    calc (xX : ℝ) * (N + B + 2) ≤ (b n : ℝ) ^ 2 * (b n + 72 * (b n * r n) + 2) :=
           mul_le_mul hX' h1 (by positivity) (by positivity)
       _ = _ := by ring
   -- the three passes
   have hS : ((slySetupCost W N B (2 ^ ℓ n) w : ℕ) : ℝ) ≤
-      4 * T n + 270 * ((b n : ℝ) ^ 4 * r n) + 25 := by
+      4 * T n + 1080 * ((b n : ℝ) ^ 4 * r n) + 25 := by
     unfold slySetupCost synMulRCost
     push_cast
     rw [hr']
     linarith
   have hC : ((slyCleanCost xM xX N (N + B + 2) B W : ℕ) : ℝ) ≤
-      2 * T n + 416 * ((b n : ℝ) ^ 4 * r n) + 72 := by
+      2 * T n + 1664 * ((b n : ℝ) ^ 4 * r n) + 72 := by
     unfold slyCleanCost
     push_cast
     linarith
   have hR : ((slyRevStreamsCost xM N xX (N + B + 2) : ℕ) : ℝ) ≤
-      2135 * ((b n : ℝ) ^ 4 * r n) + 50 := by
+      8540 * ((b n : ℝ) ^ 4 * r n) + 50 := by
     unfold slyRevStreamsCost slyRevStreamCost
     push_cast
     linarith
@@ -503,9 +503,9 @@ theorem ml_lay_cost_le_gen :
         slyOppCost mnKa (List.ofFn (cvAx (t n))) (ℓ n) (K n) (ℓ n) (dsW n)
           (slyW (List.ofFn (cvAx (t n))).sum (2 ^ ℓ n * dsW n) (ℓ n) (d n - 1)) E v₀ : ℕ) : ℝ) ≤
         C * totConv n := by
-  obtain ⟨Cs, hCs0, hst⟩ := ml_stage_le (nT SXReg) 6 mnKa 3
+  obtain ⟨Cs, hCs0, hst⟩ := ml_stage_le (nT SXReg) 6 mnKa 12
   refine ⟨2 * Cs + 16, ?_⟩
-  filter_upwards [eventually_big, hst, ml_writer_le 18 26, ml_aux_le, gr_one_le_K] with n h hst
+  filter_upwards [eventually_big, hst, ml_writer_le 72 80, ml_aux_le, gr_one_le_K] with n h hst
     hwr haux hK1
   intro E v₀
   simp only [slyFwdCost, slyOppCost, slyStageCost, slyUnstageCost]
@@ -523,9 +523,9 @@ theorem ml_lay_cost_le_gen :
   have hℓb : ℓ n ≤ b n := mt_ℓ_le_b h
   have hKb : K n ≤ b n := mt_K_le_b n
   have hr1 : 1 ≤ r n := Nat.one_le_two_pow
-  have hw3 : dsW n ≤ 3 * p n := by
+  have hw3 : dsW n ≤ 12 * p n := by
     have := ds_dsW_le h.1; unfold p; omega
-  have hw18 : dsW n ≤ 18 * b n := by unfold p at hw3; omega
+  have hw18 : dsW n ≤ 72 * b n := by unfold p at hw3; omega
   have hwpos : 1 ≤ dsW n := by have := ds_w_A n; omega
   have hB1 : 1 ≤ B := by
     rw [← hB]
@@ -533,20 +533,20 @@ theorem ml_lay_cost_le_gen :
   have hT2 : 2 ^ es.sum ≤ T n := by
     show 2 ^ es.sum ≤ 2 ^ logT n
     exact Nat.pow_le_pow_right (by norm_num) hN
-  have hV : 2 ^ es.sum * B ≤ 3 * (T n * p n) := by
+  have hV : 2 ^ es.sum * B ≤ 12 * (T n * p n) := by
     rw [← hB, ← mul_assoc, ← pow_add, hsum, Nat.sub_add_cancel hℓ]
-    show 2 ^ logT n * dsW n ≤ 3 * (2 ^ logT n * p n)
-    calc 2 ^ logT n * dsW n ≤ 2 ^ logT n * (3 * p n) := Nat.mul_le_mul_left _ hw3
-      _ = 3 * (2 ^ logT n * p n) := by ring
-  have hBb : B ≤ 18 * (b n * r n) := by
+    show 2 ^ logT n * dsW n ≤ 12 * (2 ^ logT n * p n)
+    calc 2 ^ logT n * dsW n ≤ 2 ^ logT n * (12 * p n) := Nat.mul_le_mul_left _ hw3
+      _ = 12 * (2 ^ logT n * p n) := by ring
+  have hBb : B ≤ 72 * (b n * r n) := by
     rw [← hB]
     show r n * dsW n ≤ _
-    calc r n * dsW n ≤ r n * (18 * b n) := Nat.mul_le_mul_left _ hw18
-      _ = 18 * (b n * r n) := by ring
+    calc r n * dsW n ≤ r n * (72 * b n) := Nat.mul_le_mul_left _ hw18
+      _ = 72 * (b n * r n) := by ring
   have hbr : b n * r n ≤ b n ^ 2 * r n := by
     rw [sq]; exact Nat.mul_le_mul_right _ (Nat.le_mul_of_pos_left _ hb1)
-  have hBb2 : B ≤ 18 * (b n ^ 2 * r n) := hBb.trans (Nat.mul_le_mul_left _ hbr)
-  have hWb : slyW es.sum B (ℓ n) (d n - 1) ≤ 26 * (b n ^ 2 * r n) := by
+  have hBb2 : B ≤ 72 * (b n ^ 2 * r n) := hBb.trans (Nat.mul_le_mul_left _ hbr)
+  have hWb : slyW es.sum B (ℓ n) (d n - 1) ≤ 80 * (b n ^ 2 * r n) := by
     unfold slyW
     have h1 : es.sum * es.sum ≤ b n * b n := Nat.mul_le_mul hNb hNb
     have h2 : b n * b n ≤ b n ^ 2 * r n := by rw [sq]; exact Nat.le_mul_of_pos_right _ hr1

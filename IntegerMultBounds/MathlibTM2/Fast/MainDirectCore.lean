@@ -2,6 +2,7 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Fast.MainTimeRuns
 public import IntegerMultBounds.MathlibTM2.Cost.DirectTotal
+public import IntegerMultBounds.MathlibTM2.Cost.MatchBandB
 
 /-! # Linear routing charge for the existing source-transform core
 
@@ -51,11 +52,11 @@ lemma mn_core_le_linear {K : ℕ} (cw cW : ℕ) :
       (restA restB : List (Fin (prime + K + 4))),
       p n + 2 ≤ w → w ≤ cw * p n → W ≤ cW * p n →
       (∀ x ∈ preClrA crtHd, (V₀.get x).length ≤ T n * w) →
-      (∀ r ∈ preClrB crtHd, (σ₀ r).length ≤ T n * w) →
+      BandBase σ₀ w crtHd → (∀ r ∈ bandClrB crtHd, (σ₀ r).length ≤ T n * w) →
       (srcCoreCost mnM n w W cF cO hd0 V₀ σ₀ restA restB : ℝ) ≤
         C * mnDirectRunSum n + ((2 * cF + cO : ℕ) : ℝ) := by
   obtain ⟨CA, hCA⟩ := mt_rsa_stage_le_linear mnT 6 K cw cW
-  obtain ⟨CB, hCB⟩ := mt_rsb_stage_le_linear mnT 6 K cw cW
+  obtain ⟨CB, hCB⟩ := mt_band_stage_le_linear mnT 6 K cw cW
   obtain ⟨CK, hCK⟩ := mt_ch_kernel_le mnT cw cW
   set c4 : ℝ := mtCM mnT cw + 21 * cw + 28
   set c5 : ℝ := 6 * cw + 19
@@ -65,7 +66,7 @@ lemma mn_core_le_linear {K : ℕ} (cw cW : ℕ) :
     by positivity, ?_⟩
   filter_upwards [eventually_big, hCA, hCB, hCK, mt_ch_chirpMul_le mnT cw, mt_ch_scale_le cw,
     mt_cv_box_le_conv mnT cw, mn_ldcBlocks_le] with n h hA hB hK hC hS hV hL
-  intro hd0 w W cF cO V₀ σ₀ restA restB hpw hwc hWc hclrA hclrB
+  intro hd0 w W cF cO V₀ σ₀ restA restB hpw hwc hWc hclrA hbB hclrB
   obtain ⟨g1, g2, g3, g4, -, -⟩ := mn_directRunSum_ge h
   obtain ⟨-, -, -, q4, q5⟩ := mn_directRunSum_parts h
   have q0 : 0 ≤ totResamp n + totDirectCRT n + (T n : ℝ) * p n := by
@@ -73,7 +74,8 @@ lemma mn_core_le_linear {K : ℕ} (cw cW : ℕ) :
   have q3 : 0 ≤ totConv n + (T n : ℝ) * totMp n := by
     obtain ⟨-, -, r3, r4, -⟩ := mn_directRunSum_parts h; linarith
   have a1 := mn_le_max_mul (hA hd0 w W V₀ crtHd restA (by omega) hwc hWc hclrA) q0 g1
-  have a2 := mn_le_max_mul (hB hd0 w W σ₀ crtHd restB (by omega) hwc hWc hclrB) q0 g1
+  have a2 := mn_le_max_mul (hB hd0 w W σ₀ crtHd restB (by omega) hwc hWc hbB
+    (by have := IntegerMultBounds.Networks.Shared50ModularControl.prime_odd; omega) hclrB) q0 g1
   have a3 := mn_le_max_mul (hK w W (by omega) hwc hWc) q4 g2
   have a4 := mn_le_max_mul (hC w (by omega) hwc) q4 g2
   have a5 := mn_le_max_mul (hS w hwc) q5 g4

@@ -15,7 +15,7 @@ from three parts, run in sequence from the state the parameter machine leaves:
 3. a **wires program** `W.prog` (`BdWires σ`), an abstract hypothesis: from the state after 1 and
    2 (`BdPre`), it writes `σ n` on every reserved layer register `mnLay x` and keeps every stage
    register off the parameter layout and the distribution's own glue registers (`bdWKeep`),
-   within `W.cost n = O((b n + 1)^k + r n · dsW n)` steps (`r n · dsW n ≤ 144 n`, `bd_r_dsW_le`). The parking registers `bdIo x = mnLay (bdLayX x)`
+   within `W.cost n = O((b n + 1)^k + r n · dsW n)` steps (`r n · dsW n ≤ 576 n`, `bd_r_dsW_le`). The parking registers `bdIo x = mnLay (bdLayX x)`
    hold the converter's outputs `bdO n x` (the unary widths and the layout-stage parameters) when
    `W.prog` starts, and `σ n` afterwards.
 
@@ -264,25 +264,25 @@ lemma bd_clrA {n : ℕ} (hd0 : 0 < d n) (x : RsaR (RsaX 6)) (hx : x ∈ preClrA 
   rcases hx with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;>
     simp [dsV₀, RsaV.get, dsSrcEa]
 
-/-- The registers the first loaders clear are empty in `bdσ₀`. -/
-lemma bd_clrB {n : ℕ} (hd0 : 0 < d n) (r : RsbR ⊕ RsbX 6) (hr : r ∈ preClrB crtHd) :
+/-- The registers the first band loader clears are empty in `bdσ₀`. -/
+lemma bd_clrB {n : ℕ} (hd0 : 0 < d n) (r : RsbR ⊕ RsbX 6) (hr : r ∈ bandClrB crtHd) :
     bdσ₀ n r = [] := by
   rw [bdσ₀_of hd0]
-  simp only [preClrB, preHB, List.mem_cons, List.not_mem_nil, or_false] at hr
+  simp only [bandClrB, preHB, List.mem_cons, List.not_mem_nil, or_false] at hr
   rcases hr with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl |
-    rfl | rfl | rfl <;> simp [dsσ₀, dsSrcEb]
+    rfl | rfl | rfl | rfl | rfl | rfl | rfl <;> simp [dsσ₀, dsSrcEb]
 
-/-- `r n · dsW n ≤ 144 n`: `r ≤ T` (`ℓ ≤ logT`), `dsW ≤ 3 p` and `T p ≤ 48 n`. -/
-lemma bd_r_dsW_le : ∀ᶠ n in atTop, r n * dsW n ≤ 144 * n := by
+/-- `r n · dsW n ≤ 576 n`: `r ≤ T` (`ℓ ≤ logT`), `dsW ≤ 12 p` and `T p ≤ 48 n`. -/
+lemma bd_r_dsW_le : ∀ᶠ n in atTop, r n * dsW n ≤ 576 * n := by
   filter_upwards [eventually_big] with n hbig
   have hn := hbig.1
   have hrT : r n ≤ T n := Nat.pow_le_pow_right (by norm_num) (pm_ℓ_le_logT hn)
-  have hw : dsW n ≤ 3 * p n := ds_dsW_le_p hn
+  have hw : dsW n ≤ 12 * p n := ds_dsW_le_p hn
   have hTp : T n * p n ≤ 48 * n := by exact_mod_cast IntegerMultBounds.MathlibTM2.Cost.gr_Tp_le hn
-  calc r n * dsW n ≤ T n * (3 * p n) := Nat.mul_le_mul hrT hw
-    _ = 3 * (T n * p n) := by ring
-    _ ≤ 3 * (48 * n) := Nat.mul_le_mul_left 3 hTp
-    _ = 144 * n := by ring
+  calc r n * dsW n ≤ T n * (12 * p n) := Nat.mul_le_mul hrT hw
+    _ = 12 * (T n * p n) := by ring
+    _ ≤ 12 * (48 * n) := Nat.mul_le_mul_left 12 hTp
+    _ = 576 * n := by ring
 
 /-- **The distribution bundle** from a wires program, under the implication
 `MnPostParam → BdPostParam` (see the module docstring). -/
@@ -341,12 +341,12 @@ def bdDist (W : BdWires σ)
     filter_upwards [eventually_big] with n hbig
     obtain ⟨h1, h2, h3, h4, h5, h6, -⟩ := ds_src_widths hbig
     exact ⟨h1, h2, h3, h4, h5, h6⟩
-  ratio := ⟨3, 40, by
+  ratio := ⟨12, 100, by
     filter_upwards [eventually_big] with n hbig
     exact ⟨ds_dsW_le_p hbig.1, ds_dsWW_le_p hbig⟩⟩
   costBound := by
     obtain ⟨C, k, hC⟩ := W.costBound
-    refine ⟨10 ^ 10 + 2 * 10 ^ 13 + 144 * C, 5 + k, ?_⟩
+    refine ⟨10 ^ 10 + 2 * 10 ^ 16 + 576 * C, 5 + k, ?_⟩
     filter_upwards [ds_mainCost_le, bd_rndCost_le, hC, bd_r_dsW_le] with n h1 h2 h3 h4
     have hb : 1 ≤ b n + 1 := by omega
     have e4 : (b n + 1) ^ 4 ≤ (b n + 1) ^ (5 + k) := Nat.pow_le_pow_right hb (by omega)
@@ -354,10 +354,10 @@ def bdDist (W : BdWires σ)
     have ek : (b n + 1) ^ k ≤ (b n + 1) ^ (5 + k) := Nat.pow_le_pow_right hb (by omega)
     have f1 := Nat.mul_le_mul_left C ek
     have f2 := Nat.mul_le_mul_left (10 ^ 10) e5
-    have f3 := Nat.mul_le_mul_left (2 * 10 ^ 13) e4
+    have f3 := Nat.mul_le_mul_left (2 * 10 ^ 16) e4
     have f4 := Nat.mul_le_mul_left C h4
-    have f5 : C * (144 * n) = 144 * C * n := by ring
-    have f6 : C * (b n + 1) ^ (5 + k) ≤ 144 * C * (b n + 1) ^ (5 + k) :=
+    have f5 : C * (576 * n) = 576 * C * n := by ring
+    have f6 : C * (b n + 1) ^ (5 + k) ≤ 576 * C * (b n + 1) ^ (5 + k) :=
       Nat.mul_le_mul_right _ (by omega)
     show dsMainCost n + bdRndCost n + W.cost n ≤ _
     rw [Nat.add_mul, Nat.add_mul, Nat.add_mul, Nat.add_mul]

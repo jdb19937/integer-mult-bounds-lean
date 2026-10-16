@@ -42,11 +42,11 @@ open IntegerMultBounds.MathlibTM2.Mult IntegerMultBounds.MathlibTM2.Mult.Sizes I
 set_option linter.unusedSimpArgs false
 set_option linter.unusedSectionVars false
 
-/-- The coefficient width: `p + chirpGuard d + 3 + Σ aᵢ`, `Σ aᵢ = logT - ℓ`. -/
-def dsW (n : ℕ) : ℕ := p n + Chirp.chirpGuard (d n) + 3 + (logT n - ℓ n)
+/-- The coefficient width: `10 p + chirpGuard d + 3 + Σ aᵢ`, `Σ aᵢ = logT - ℓ`; the banded `B̃₀` needs about `10 p`. -/
+def dsW (n : ℕ) : ℕ := 10 * p n + Chirp.chirpGuard (d n) + 3 + (logT n - ℓ n)
 
 /-- The table word size of the `Ã`, `B̃₀` and chirp loaders. -/
-def dsWW (n : ℕ) : ℕ := 16 * p n + 8 * Chirp.chirpGuard (d n) + 3 * ℓ n + dsW n + 128
+def dsWW (n : ℕ) : ℕ := 70 * p n + 8 * Chirp.chirpGuard (d n) + 3 * ℓ n + dsW n + 128
 
 section Bounds
 
@@ -260,6 +260,40 @@ theorem ds_B_W (hbig : Big n) (i : Fin (d n)) :
   have := FastB0.fastWindow_le_third (two_le_alpha hbig.1) hbig.thirteen_le_p
   exact ds_tab_W hbig (by omega) i
 
+/-- The banded `B̃₀` loader: the folded-row tables at precision `5p` and window `8m` fit `W`
+bits. -/
+theorem ds_B_W65 (hbig : Big n) (i : Fin (d n)) :
+    alpha n ^ 2 * ((s n i + t n i) * (8 * FastB0.fastWindow (p n) (alpha n) + 1)) ^ 2 *
+      2 ^ (65 * p n + 8) < 2 ^ dsWW n := by
+  have hp13 := hbig.thirteen_le_p
+  have hm3 := FastB0.fastWindow_le_third (two_le_alpha hbig.1) hp13
+  have hα : alpha n ^ 2 ≤ 2 ^ p n := hbig.alpha_sq_le_p.trans Nat.lt_two_pow_self.le
+  have hst : s n i + t n i ≤ 2 ^ (ℓ n + 1) := by
+    have := hbig.good.lt i
+    have := ds_t_le_pow n i
+    rw [pow_succ]; omega
+  have hm1 : 8 * FastB0.fastWindow (p n) (alpha n) + 1 ≤ 2 ^ p n := by
+    have : 3 * p n ≤ 2 ^ p n := by
+      have := Nat.lt_two_pow_self (n := p n - 2)
+      have e : 2 ^ p n = 4 * 2 ^ (p n - 2) := by
+        rw [show p n = 2 + (p n - 2) by omega, pow_add]; norm_num
+      omega
+    omega
+  have hsm : (s n i + t n i) * (8 * FastB0.fastWindow (p n) (alpha n) + 1) ≤
+      2 ^ (ℓ n + 1 + p n) := by
+    rw [pow_add]; exact Nat.mul_le_mul hst hm1
+  have hsq : ((s n i + t n i) * (8 * FastB0.fastWindow (p n) (alpha n) + 1)) ^ 2 ≤
+      2 ^ (2 * (ℓ n + 1 + p n)) := by
+    rw [pow_mul']; exact Nat.pow_le_pow_left hsm 2
+  have h1 := Nat.mul_le_mul (Nat.mul_le_mul hα hsq) (le_refl (2 ^ (65 * p n + 8)))
+  have h2 : 2 ^ p n * 2 ^ (2 * (ℓ n + 1 + p n)) * 2 ^ (65 * p n + 8) =
+      2 ^ (68 * p n + 2 * ℓ n + 10) := by
+    rw [← pow_add, ← pow_add]; congr 1; ring
+  have hℓ : ℓ n ≤ p n := by have := pm_ℓ_le hbig.1; have := hbig.sixteen_le_b; unfold p; omega
+  have h3 : 2 ^ (68 * p n + 2 * ℓ n + 10) < 2 ^ dsWW n :=
+    Nat.pow_lt_pow_right (by norm_num) (by unfold dsWW; omega)
+  omega
+
 end Widths
 
 /-! ### The layout stage -/
@@ -359,12 +393,12 @@ section Dist
 
 variable {n : ℕ}
 
-theorem ds_dsW_le (hn : 2 ≤ n) : dsW n ≤ 9 * b n + 9 := by
+theorem ds_dsW_le (hn : 2 ≤ n) : dsW n ≤ 63 * b n + 9 := by
   have := pm_g_le n
   have := pm_logT_le hn
   unfold dsW p; omega
 
-theorem ds_dsWW_le (hn : 2 ≤ n) : dsWW n ≤ 200 * (b n + 1) := by
+theorem ds_dsWW_le (hn : 2 ≤ n) : dsWW n ≤ 500 * (b n + 1) := by
   have := pm_g_le n
   have := pm_ℓ_le hn
   have := ds_dsW_le hn
