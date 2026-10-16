@@ -1739,20 +1739,24 @@ guarded check and2-declaration standard-axiom audit pass.
 
 ### Narrower route to `2^-33` (cost estimate, not yet checked)
 
-The `2^-32` certificate assumes the source's full fast Gaussian pipeline. A
-narrower route may already reach `2^-33`: keep the existing direct-window
-`Ã` machine and replace only the inverse in `B̃₀` by the phase-cell solve,
-choosing a small `α² = u = p^r` (the small-gap regime only needs
-`8p ≤ 2^u`). Rough per-element costs, to be checked: the existing `Ã` window
-costs `p^(1/2) α M(p)`, giving margin `1/2-r/2-δ-ε`; with cells of length
-about `1/θ≈4p` and band `w≈4(p/u)^(1/2)`, banded boundary LU costs about
-`p^(1/2-3r/2) M(p)` per element, giving margin `1/2+3r/2-δ-ε`. At `r` near
-zero both are about `1/2-δ-ε`, so `ε` up to about `0.46` is allowed, and the
-layer margin `ε(1-λ')` covers `2^-33` for `ε≥0.28` (for example `ε=5/16`).
-`2^-32` needs `ε≥0.56` and so the source's fast forward map as well. Before
-relying on this route, check the boundary count and LU cost against actual
-cell lengths, the `Ã` truncation at small `α`, precision
-`γ=d(2⌈α²⌉+2+j)`, and the sizing lemmas that assume `ε≤1/7`.
+Corrected estimate. Keep the existing direct-window `Ã` machine and the
+existing source/axis sizes, and replace only the Neumann inverse in `B̃₀`.
+Choose a small `α² = u = ⌈log₂(8p)⌉`. The current sizes give
+`1/(4d) < θ ≤ 1/(2d)` with `d` the dimension, so the small-gap hypotheses hold
+with cell parameter `d`: `θ ≥ 1/(4p)`, `dθ ≥ 1/4`, `u d ≤ p`, `8p ≤ 2^u`. The
+rounded matrix `H` is circular-banded with half bandwidth
+`w = ⌊√(16p/u)⌋+1` and margin `1/(8p)`. Phase cells are not needed for
+`ε<1/2`: factor `H` once per axis by rounded elimination (backward stable,
+`SchurLUBackward`), store the factors, and solve each line by forward and back
+substitution. Fill stays in the band plus a `w`-wide cyclic border, so a line
+costs `O(s w)` operations, `O(√(p/u))` per element, the same order as the
+`Ã` window `α√p`. Setup is `O(s w²)` per axis, negligible against the `T/t`
+lines per axis. Both maps then cost about `p^(1/2) M(p)` per element, giving
+Gaussian margin about `1/2-δ-ε`; the layer margin `ε(1-λ')` covers `2^-33`
+for `ε≥0.28`, e.g. `ε=5/16` (margin `5/32`). `2^-32` needs `ε≥0.56` and so a
+faster forward map. To check: the cyclic fill pattern and substitution cost,
+working precision about `p+2log₂s`, the `ε=5/16` sizing lemmas that assume
+`ε≤1/7`, and the new `B̃₀` and retuned `Ã` machines and costs.
 
 The boundary solve now also has a backward-error form: computed factors with
 unit-diagonal multipliers whose product equals the Schur matrix up to row
