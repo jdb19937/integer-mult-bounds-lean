@@ -638,7 +638,7 @@ theorem mt_rsb_stepAx_arith {Tm t₀ w s ti m Kn N c₁ c₂ b₁ b₂ e X B E :
     (rsbStepAxCost Tm t₀ w s ti m Kn N c₁ c₂ b₁ b₂ e : ℝ) ≤
       (N * X + 4 : ℕ) + 2 * ((Tm + 12 * swapT t₀ + 5 : ℕ) * C) +
         (12 * B + 68 * (N * w) + 4 * Tm + 12 * swapT t₀ + 8 * E + 62 : ℕ) := by
-  unfold rsbStepAxCost rsbSwapCost
+  unfold rsbStepAxCost rsbStepAxCostG rsbSwapCost
   have hK : (0 : ℝ) ≤ (Tm + 12 * swapT t₀ + 5 : ℕ) := Nat.cast_nonneg _
   have h1 := mul_le_mul_of_nonneg_left hc₁ hK
   have h2 := mul_le_mul_of_nonneg_left hc₂ hK
