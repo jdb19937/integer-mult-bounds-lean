@@ -1670,3 +1670,12 @@ with residuals `εf`, `εb` against the exact factors solve the system within
 entries are ordinary fill in the same factors. The guarded check and
 5-declaration standard-axiom audit pass. Instantiating residuals for rounded
 triangular solves, the boundary ordering and tape costs remain open.
+
+Rounded triangular solves with rounded factors are now bounded: with factor
+row-sum errors `εL`, `εU`, forward rows rounded within `η`, back-substitution
+residual `δ` and smallness `c=(ΛεU+εL(M+εU))/μ≤1/2`, the computed solution is
+within `2((Λδ+η+εLδ)/μ+cX)` of the exact one, with the growth of computed
+values bootstrapped from the maximum error. This is the boundary stage error
+`e₃` in terms of factor and online rounding. The guarded check and
+2-declaration standard-axiom audit pass. Actual rounded Schur factors, the
+boundary ordering and tape costs remain open.
