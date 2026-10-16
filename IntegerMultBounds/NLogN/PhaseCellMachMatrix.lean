@@ -66,16 +66,16 @@ theorem norm_window_le (f : ℤ → ℂ) (w : ℕ) (δ : ℝ) (hf : ∀ k : ℤ,
 
 variable [NeZero t]
 
-/-- The machine window matrix is close to the phase-cell matrix row by row. -/
+/-- The machine window matrix of any width `w` with `16p ≤ u w²` is close to the phase-cell
+matrix row by row. -/
 theorem windowMatrix_close (hst : s<t) {α d : ℝ} (hα : 0<α)
     (p u : ℕ) (hp : 0<p) (hu : 1≤u) (hαu : α^2=(u : ℝ))
     (htheta : 0<(t : ℝ)/s-1) (hgap : (1 : ℝ)/4≤d*((t : ℝ)/s-1)) (hbudget : α^2*d≤p)
-    (a : ZMod s → ℤ → ℝ) (δ : ℝ)
-    (ha : ∀ j k, k.natAbs ≤ PhaseCellBand.width p u → |a j k-Real.exp (normExp s t α j.val k)|≤δ)
+    (w : ℕ) (hband : 16*p≤u*w^2) (a : ZMod s → ℤ → ℝ) (δ : ℝ)
+    (ha : ∀ j k, k.natAbs ≤ w → |a j k-Real.exp (normExp s t α j.val k)|≤δ)
     (j : ZMod s) :
-    ∑ l, |windowMatrix s (PhaseCellBand.width p u) a j l-realMatrix s t p u j l|≤
-      (2*PhaseCellBand.width p u+1)*δ+1/(2 : ℝ)^(46*p)+1/(2 : ℝ)^(45*p) := by
-  set w := PhaseCellBand.width p u
+    ∑ l, |windowMatrix s w a j l-realMatrix s t p u j l|≤
+      (2*w+1)*δ+1/(2 : ℝ)^(46*p)+1/(2 : ℝ)^(45*p) := by
   refine row_abs_sum_le s _ _ fun v hv => ?_
   have hvn : ‖v‖≤1 := (pi_norm_le_iff_of_nonneg (by norm_num)).mpr hv
   have hsplit : ∑ l, ((windowMatrix s w a j l-realMatrix s t p u j l : ℝ) : ℂ)*v l=
@@ -96,7 +96,9 @@ theorem windowMatrix_close (hst : s<t) {α d : ℝ} (hα : 0<α)
     exact (mul_le_of_le_one_right (abs_nonneg _) (hv _)).trans (ha j k hk)
   have hB : ‖exactWindow s t α w v j-normN s t α v j‖≤1/(2 : ℝ)^(46*p) := by
     rw [norm_sub_rev]
-    exact selected_truncation s t hst hα p u hp hu hαu v hv j
+    exact (exactWindow_error s t hst hα v hv j w).trans
+      (PhaseCellTailBounds.selected_tail s t p u w (Nat.pos_of_ne_zero (NeZero.ne s)) hst.le hp hu
+        hband α hα hαu j.val)
   have hC : ‖PhaseCellOperator.exact s t α v j-PhaseCellOperator.rounded s t p u v j‖≤1/(2 : ℝ)^(45*p) := by
     have hn := PhaseCellOperator.norm_error s t hst hα p u hp hu hαu htheta hgap hbudget
     have h := ((PhaseCellOperator.rounded s t p u-PhaseCellOperator.exact s t α).le_of_opNorm_le hn v)
