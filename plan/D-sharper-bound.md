@@ -1691,3 +1691,14 @@ every interior vertex lies in a consecutive in-array interval containing all
 interior vertices of its cell, discharging the interval hypotheses of the
 exact and rounded cell solves for the choice `I` = all interior vertices. The
 guarded check and2-declaration standard-axiom audit pass.
+
+The actual boundary stage error `e₃` is now bounded: the boundary Schur matrix
+of the actual rounded Gaussian matrix keeps margin `1/(8p)` and row mass at
+most two, its multipliers sum to at most `1+16p`, and rounded factors with
+rounded triangular solves are within
+`2(((1+16p)δ+η+εLδ)8p+c·64p²ρ)` of the exact Schur solution, under the
+smallness `c=((1+16p)εU+εL(2+εU))8p≤1/2`. Together with the per-cell interior
+bounds, every stage error of the rounded four-step solve is now proved on the
+actual matrix in terms of local rounding contracts. Guarded check and
+2-declaration standard-axiom audit pass. The concrete computation meeting
+those contracts and its tape cost remain open.
