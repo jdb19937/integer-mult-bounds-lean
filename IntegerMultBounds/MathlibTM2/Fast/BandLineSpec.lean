@@ -2,6 +2,7 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Fast.BandLineDriver
 public import IntegerMultBounds.MathlibTM2.Mult.BandSolveFold
+public import IntegerMultBounds.MathlibTM2.Fast.ResampBBox
 
 /-!
 # What the banded line computes
@@ -70,6 +71,7 @@ def bandRows : List (List ℤ) := windowZ (2 * w + 1) (foldZ s w aZ)
 /-- The factorization inputs of the folded matrix. -/
 def bandInputs : List (List ℤ) := inputsZ (2 * w + 1) (foldZ s w aZ) s
 
+omit [NeZero s] in
 theorem length_bandInputs : (bandInputs w s aZ).length = s := by simp [bandInputs, inputsZ]
 
 theorem bandFac_eq : bandFac P K w s aZ = (List.range s).map fun j =>
@@ -257,5 +259,153 @@ theorem bandLine_spec (P K w p j s t : ℕ) [NeZero s] [NeZero t] (hp : 1 ≤ p)
       two_pow_complex, toComplex_div_im]; ring
   rw [hre, him, hfre, hfim]
   rfl
+
+/-! ### The line map -/
+
+theorem subColC_zero (P : ℕ) : ∀ (c : List ℤ) (rs : List GaussianInt), subColC P c 0 rs = rs
+  | _ :: cs, _ :: rs => by simp [subColC, subColC_zero P cs rs, tdivN_zero]
+  | [], rs => by cases rs <;> rfl
+  | _ :: _, [] => rfl
+
+theorem fwdZC_zero (P : ℕ) : ∀ (cs : List (List ℤ)) (pend : List GaussianInt),
+    (∀ x ∈ pend, x = 0) → ∀ x ∈ fwdZC P cs pend, x = 0
+  | c :: cs, y :: rest, h => by
+    have hy : y = 0 := h y (List.mem_cons_self ..)
+    subst hy
+    simp only [fwdZC, subColC_zero, List.mem_cons]
+    rintro x (rfl | hx)
+    · rfl
+    · exact fwdZC_zero P cs rest (fun z hz => h z (List.mem_cons_of_mem _ hz)) x hx
+  | [], pend, _ => by cases pend <;> simp [fwdZC]
+  | _ :: _, [], _ => by simp [fwdZC]
+
+theorem bwdZC_zero (P : ℕ) : ∀ (cs : List (List ℤ)) (rs : List ℤ) (pend : List GaussianInt),
+    (∀ x ∈ pend, x = 0) → ∀ x ∈ bwdZC P cs rs pend, x = 0
+  | c :: cs, r :: rs, q :: rest, h => by
+    have hq : q = 0 := h q (List.mem_cons_self ..)
+    subst hq
+    simp only [bwdZC, zero_mul, tdivN_zero, subColC_zero, List.mem_cons]
+    rintro x (rfl | hx)
+    · rfl
+    · exact bwdZC_zero P cs rs rest (fun z hz => h z (List.mem_cons_of_mem _ hz)) x hx
+  | [], _, pend, _ => by simp [bwdZC]
+  | _ :: _, [], pend, _ => by cases pend <;> simp [bwdZC]
+  | _ :: _, _ :: _, [], _ => by simp [bwdZC]
+
+theorem getD_zero_of_forall {l : List GaussianInt} (h : ∀ x ∈ l, x = 0) (i : ℕ) : l.getD i 0 = 0 := by
+  by_cases hi : i < l.length
+  · rw [List.getD_eq_getElem _ _ hi]; exact h _ (List.getElem_mem hi)
+  · rw [List.getD_eq_default _ _ (by omega)]
+
+theorem length_bandSolveVec (P K w s : ℕ) [NeZero s] (hP : 2 ≤ P) (aZ : ZMod s → ℤ → ℤ)
+    (b : List GaussianInt) (hb : b.length = s) :
+    (bandSolveVec P (2 * w + 1) (bandLc P K w s aZ) (bandUc P K w s aZ) (bandRcs P K w s aZ) b).length
+      = s := by
+  have H := lineSolveFold_eq P K s hP w aZ (b.map (·.re)) (by simp [hb])
+  rw [← bandSolveVec_re_eq] at H
+  simpa using congrArg List.length H
+
+theorem mem_of_mem_evens {α : Type*} {a : α} : ∀ l : List α, a ∈ evens l → a ∈ l
+  | x :: y :: rest, h => by
+    simp only [evens, List.mem_cons] at h ⊢
+    rcases h with h | h
+    · exact Or.inl h
+    · exact Or.inr (Or.inr (mem_of_mem_evens rest h))
+  | [], h => by simp [evens] at h
+  | [x], h => by simpa [evens] using h
+
+theorem mem_of_mem_odds {α : Type*} {a : α} : ∀ l : List α, a ∈ odds l → a ∈ l
+  | x :: y :: rest, h => by
+    simp only [odds, List.mem_cons] at h ⊢
+    rcases h with h | h
+    · exact Or.inr (Or.inl h)
+    · exact Or.inr (Or.inr (mem_of_mem_odds rest h))
+  | [], h => by simp [odds] at h
+  | [x], h => by simp [odds] at h
+
+/-- The tape line as a map of lines of `t` records. -/
+noncomputable def bandLineG (P K w p j s t : ℕ) [NeZero s] (aZ : ZMod s → ℤ → ℤ) (Dl : List ℤ)
+    (L : List GaussianInt) : List GaussianInt :=
+  bandOutVec P (2 ^ (p - j)) Dl (bandSolveVec P (2 * w + 1) (bandLc P K w s aZ) (bandUc P K w s aZ)
+    (bandRcs P K w s aZ) (bandInVec P s t (2 ^ (2 * P - p - 1)) (rsbVec (t := t) L))) ++
+      List.replicate (t - s) 0
+
+theorem length_bandOutVec (P K w p j s t : ℕ) [NeZero s] (hP : 2 ≤ P) (aZ : ZMod s → ℤ → ℤ)
+    (Dl : List ℤ) (hDl : Dl.length = s) (N : ZMod t → GaussianInt) :
+    (bandOutVec P (2 ^ (p - j)) Dl (bandSolveVec P (2 * w + 1) (bandLc P K w s aZ)
+      (bandUc P K w s aZ) (bandRcs P K w s aZ) (bandInVec P s t (2 ^ (2 * P - p - 1)) N))).length
+        = s := by
+  have hb : (bandInVec P s t (2 ^ (2 * P - p - 1)) N).length = s := by
+    simp [bandInVec, length_foldList, length_rsbArr]
+  simp [bandOutVec, length_unfoldList, length_bandSolveVec P K w s hP aZ _ hb, hDl]
+
+/-- **The banded line map is `B̃₀` of the machine solve on numerators.** -/
+theorem band_lineG_rel (P K w p j s t : ℕ) [NeZero s] [NeZero t] (hp : 1 ≤ p) (hP : p + 1 ≤ P)
+    (hjp : j ≤ p) (aZ : ZMod s → ℤ → ℤ) (Dl : List ℤ) (Dp : ZMod s → ℤ)
+    (hDl : Dl.length = s) (hD : ∀ ℓ : ZMod s, Dl.getD ℓ.val 0 = Dp ℓ * 2 ^ (P - p))
+    (df : ZMod s → ℝ) (hdf : ∀ ℓ, rsbGrid p (rsbReal (Dp ℓ)) = rhoC p (df ℓ)) :
+    RsbLineRel t s (Mult.FastB0.resampB₀Of (t := t) p (Mult.FastB0.bandJtX (s := s) p j
+        (Mult.FastB0.machSolveT K (Mult.Sizes.rdP P) (windowMatrix s w fun j k => gv P (aZ j k))))
+        df) (bandLineG P K w p j s t aZ Dl) p where
+  num := by
+    intro L v hv k hk
+    have hv' : v = fun j => rsbGrid p (rsbVec (t := t) L j) := funext hv
+    have hlen := length_bandOutVec P K w p j s t (by omega) aZ Dl hDl (rsbVec (t := t) L)
+    have hkv : ((k : ZMod s)).val = k := ZMod.val_natCast_of_lt hk
+    rw [hv', ← bandLine_spec P K w p j s t hp hP hjp aZ _ Dl Dp hDl hD df hdf, hkv, bandLineG,
+      List.getD_append _ _ _ _ (by rw [hlen]; exact hk)]
+    rfl
+  pad := by
+    intro L k hk
+    have hlen := length_bandOutVec P K w p j s t (by omega) aZ Dl hDl (rsbVec (t := t) L)
+    rw [bandLineG, List.getD_append_right _ _ _ _ (by rw [hlen]; exact hk)]
+    simp [List.getD_eq_getElem?_getD, List.getElem?_replicate]
+    split_ifs <;> rfl
+  zero := by
+    intro L hL k
+    have h0 : rsbVec (t := t) L = fun _ => 0 := by
+      funext j; exact getD_zero_of_forall hL _
+    have hin : ∀ x ∈ bandInVec P s t (2 ^ (2 * P - p - 1)) (fun _ : ZMod t => (0 : GaussianInt)),
+        x = 0 := by
+      intro x hx
+      simp only [bandInVec, List.mem_map] at hx
+      obtain ⟨a, ha, rfl⟩ := hx
+      have := mem_of_mem_foldList a _ ha
+      simp only [rsbArr, List.mem_map] at this
+      obtain ⟨_, _, rfl⟩ := this
+      simp [tdivN_zero]
+    have hx : ∀ x ∈ bandSolveVec P (2 * w + 1) (bandLc P K w s aZ) (bandUc P K w s aZ)
+        (bandRcs P K w s aZ) (bandInVec P s t (2 ^ (2 * P - p - 1)) fun _ => 0), x = 0 :=
+      fun x hx => bwdZC_zero P _ _ _ (by
+      intro z hz
+      rcases List.mem_append.mp hz with hz | hz
+      · exact fwdZC_zero P _ _ (by
+          intro y hy
+          rcases List.mem_append.mp hy with hy | hy
+          · exact hin y hy
+          · exact (List.mem_replicate.mp hy).2) z (List.mem_reverse.mp hz)
+      · exact (List.mem_replicate.mp hz).2) x (List.mem_reverse.mp hx)
+    rw [bandLineG, h0]
+    by_cases hk : k < s
+    · have hlen := length_bandOutVec P K w p j s t (by omega) aZ Dl hDl (fun _ => 0)
+      rw [List.getD_append _ _ _ _ (by rw [hlen]; exact hk), bandOutVec]
+      rw [List.getD_eq_getElem?_getD]
+      simp only [List.getElem?_zipWith, List.getElem?_map]
+      cases h1 : (unfoldList (bandSolveVec P (2 * w + 1) (bandLc P K w s aZ) (bandUc P K w s aZ)
+        (bandRcs P K w s aZ) (bandInVec P s t (2 ^ (2 * P - p - 1)) fun _ => 0)))[k]? with
+      | none => simp
+      | some a =>
+        have ha : a = 0 := by
+          have hm := List.mem_of_getElem? h1
+          simp only [unfoldList, List.mem_append, List.mem_reverse] at hm
+          rcases hm with hm | hm
+          · exact hx a (mem_of_mem_evens _ hm)
+          · exact hx a (mem_of_mem_odds _ hm)
+        subst ha
+        cases Dl[k]? <;> simp [tdivN_zero]
+    · have hlen := length_bandOutVec P K w p j s t (by omega) aZ Dl hDl (fun _ => 0)
+      rw [List.getD_append_right _ _ _ _ (by rw [hlen]; omega)]
+      simp [List.getD_eq_getElem?_getD, List.getElem?_replicate]
+      split_ifs <;> rfl
 
 end IntegerMultBounds.MathlibTM2.Fast
