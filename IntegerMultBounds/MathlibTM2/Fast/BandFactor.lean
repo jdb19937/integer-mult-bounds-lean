@@ -103,6 +103,18 @@ through `ac2`, one block per symbol of `n`. -/
 def bandRevP (x y c n tn : RsbR) : Pr P T Q A U :=
   rsbRep (rg n) (rg tn) (.seq (rsbMv (rg c) (rg .tC) (rg x) (rg .ac2)) (moveR (rg .ac2) (rg y) id))
 
+/-- Reorganize the factor outputs: `m2n := ms`, the multipliers in order onto `bo`, the
+pivot rows in order onto `src`, the zero window onto `vk`, then the transpose counters. -/
+def bandAxisOrgP : Pr P T Q A U :=
+  .seq (emptyR (rg .m2n)) (.seq (rsbCopyTo rg .ms .m2n)
+  (.seq (emptyR (rg .kn)) (.seq (rsbRep (rg .sn) (rg .sel) (rsbCopyTo rg .ms .kn))
+  (.seq (bandRevP rg .dout .bo (.cm .wn) .kn .tK)
+  (.seq (bandRevP rg .hf .src .smwn .sn .sel)
+  (.seq (rsbRep (rg .ms) (rg .tL) (rsbCopyTo rg .msk .xs))
+  (.seq (rsbRep (rg .ms) (rg .tL) (rsbCopyTo rg .xs .vk)) (.seq (emptyR (rg .xs))
+  (.seq (emptyR (rg .ms)) (.seq (rsbCopyTo rg .dst .ms)
+  (.seq (emptyR (rg .mwn)) (.seq (rsbCopyTo rg .m2wn .mwn) (rsbCopyTo rg (.cm .wn) .mwn)))))))))))))
+
 end Programs
 
 /-- A Newton step on real records. -/
@@ -1240,6 +1252,157 @@ theorem band_rev_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠ �
   · funext z; simp only [rsbUpd2, hΨ, Function.update_apply, hn]
     split_ifs <;> simp_all [List.drop_of_length_le, List.take_of_length_le]
   · rw [hn]
+
+/-- `|n|` copies of register `a` onto `b`, one per symbol of the counter `n`. -/
+theorem band_copyRepG_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠ ι j)
+    {a b n tn : RsbR} (hd : [a, b, n, tn, .b1, .tC].Nodup)
+    (σ : RsbR → List (Fin (A + 4))) (hb1 : σ .b1 = []) (htC : σ .tC = []) (htn : σ tn = []) :
+    RsbRuns body rg ι (rsbRep (rg n) (rg tn) (rsbCopyTo rg a b)) σ
+      (Function.update σ b ((List.replicate (σ n).length (σ a)).flatten ++ σ b))
+      ((σ n).length * (6 * (σ a).length + 6 + 6) + 4) := by
+  simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or] at hd
+  obtain ⟨⟨hab, han, hat, ha1, haC⟩, ⟨hbn, hbt, hb1', hbC⟩, ⟨hnt, hn1, hnC⟩, ⟨ht1, htC'⟩, h1C, -⟩ := hd
+  obtain ⟨Ψ, hΨ⟩ : ∃ Ψ : ℕ → RsbR → List (Fin (A + 4)), Ψ = fun j =>
+      Function.update σ b ((List.replicate j (σ a)).flatten ++ σ b) := ⟨_, rfl⟩
+  have hbody : ∀ j < (σ n).length, ∀ X Y, RsbRuns body rg ι (rsbCopyTo rg a b)
+      (rsbUpd2 (Ψ j) n X tn Y) (rsbUpd2 (Ψ (j + 1)) n X tn Y) (6 * (σ a).length + 6) := by
+    intro j _ X Y
+    have h := rsb_copyTo_runs (body := body) (ι := ι) hrg hdisj ⟨ha1, haC⟩ ⟨hb1', hbC⟩ hab
+      (rsbUpd2 (Ψ j) n X tn Y)
+      (by simp only [rsbUpd2, hΨ, Function.update_apply]; split_ifs <;> simp_all)
+      (by simp only [rsbUpd2, hΨ, Function.update_apply]; split_ifs <;> simp_all)
+    have hA : rsbUpd2 (Ψ j) n X tn Y a=σ a := by
+      simp only [rsbUpd2, hΨ, Function.update_apply]; split_ifs <;> simp_all
+    rw [hA] at h
+    refine h.congr ?_
+    funext x
+    simp only [rsbUpd2, hΨ, Function.update_apply, List.replicate_succ, List.flatten_cons,
+      List.append_assoc]
+    split_ifs <;> simp_all
+  have h := rsb_rep_runs hrg hdisj (ra := n) (rt := tn) hnt (rsbCopyTo rg a b) (σ n) Ψ _ hbody
+  refine (h.congr_pre ?_ |>.congr ?_)
+  · funext x
+    simp only [rsbUpd2, hΨ, Function.update_apply, List.replicate_zero, List.flatten_nil,
+      List.nil_append]
+    split_ifs <;> simp_all
+  · funext x
+    simp only [rsbUpd2, hΨ, Function.update_apply]
+    split_ifs <;> simp_all
+
+/-- The cost of the reorganization. -/
+def bandAxisOrgCost (s k w K : ℕ) : ℕ := 200 * (s + k + 2) * (k + 2) * w + 2 * K + 200
+
+lemma bandAxisOrg_arith (s k w K : ℕ) (hw : 1 ≤ w) :
+    2 * (2 * (k + 1)) + 2 + (6 * (k + 1) + 6 + (2 * K + 2 + (s * (6 * (k + 1) + 6 + 6) + 4 +
+      (s * (k + 1) * (6 * w + 6 + 6) + 4 + (s * (6 * ((2 * (k + 1) + 1) * w) + 6 + 6) + 4 +
+      ((k + 1) * (6 * w + 6 + 6) + 4 + ((k + 1) * (6 * ((k + 1) * w) + 6 + 6) + 4 +
+      (2 * ((k + 1) * w) + 2 + (2 * (k + 1) + 2 + (6 * k + 6 + (2 * (2 * (k + 1) * w) + 2 +
+      (6 * (k * w) + 6 + (6 * w + 6))))))))))))) ≤ bandAxisOrgCost s k w K := by
+  unfold bandAxisOrgCost
+  obtain ⟨v, rfl⟩ : ∃ v, w = v + 1 := ⟨w - 1, by omega⟩
+  ring_nf
+  nlinarith [Nat.zero_le (s * k * v), Nat.zero_le (k * k * v), Nat.zero_le (s * v), Nat.zero_le (k * v),
+    Nat.zero_le (s * k), Nat.zero_le (k * k), Nat.zero_le v]
+
+/-- **The reorganization of the factor outputs.** -/
+theorem band_axisOrg_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠ ι j) {w k s : ℕ}
+    (σ : RsbR → List (Fin (A + 4))) (Lf : List ℤ) (hLf : Lf.length = s * (k + 1))
+    (Ur : List (List ℤ)) (hUr : Ur.length = s) (hrow : ∀ row ∈ Ur, row.length = 2 * (k + 1) + 1)
+    (SRC : List (Fin (A + 4)))
+    (hdout : σ .dout = cstream A w ((Lf.map fun x => (⟨x, 0⟩ : GaussianInt)).reverse))
+    (hhf : σ .hf = cstream A w (Ur.map colC).reverse.flatten) (hsrc : σ .src = SRC)
+    (hbo : σ .bo = []) (hvk : σ .vk = []) (hxs : σ .xs = []) (hmsk : σ .msk = csyms A w 0)
+    (hms : (σ .ms).length = k + 1) (hsn : (σ .sn).length = s)
+    (hsmwn : (σ .smwn).length = (2 * (k + 1) + 1) * w) (hwn : (σ (.cm .wn)).length = w)
+    (htK : σ .tK = []) (htL : σ .tL = []) (hsel : σ .sel = []) (htC : σ .tC = []) (hb1 : σ .b1 = [])
+    (hac2 : σ .ac2 = []) {K : ℕ} (hm2n : (σ .m2n).length = 2 * (k + 1)) (hkn : (σ .kn).length = K)
+    (hmwn : (σ .mwn).length = 2 * (k + 1) * w) (hm2wn : (σ .m2wn).length = k * w)
+    (hdst : (σ .dst).length = k) (hw : 1 ≤ w) :
+    RsbRuns body rg ι (bandAxisOrgP rg) σ
+      (Function.update (Function.update (Function.update (Function.update (Function.update
+        (Function.update (Function.update (Function.update (Function.update σ
+        .m2n (σ .ms)) .kn ((List.replicate s (σ .ms)).flatten)) .dout [])
+        .bo (cstream A w (Lf.map fun x => (⟨x, 0⟩ : GaussianInt)))) .hf [])
+        .src (cstream A w (Ur.map colC).flatten ++ SRC))
+        .vk ((List.replicate (k + 1) ((List.replicate (k + 1) (csyms A w 0)).flatten)).flatten))
+        .ms (σ .dst)) .mwn (σ (.cm .wn) ++ σ .m2wn)) (bandAxisOrgCost s k w K) := by
+  set C : ℤ → GaussianInt := fun x => ⟨x, 0⟩ with hC
+  have hsing : ∀ l : List ℤ, (l.map fun x => [C x]).flatten = l.map C := by
+    intro l; induction l <;> simp_all
+  have hsing' : ∀ l : List ℤ, (l.map (List.reverse ∘ fun x => [C x])).flatten = l.map C := by
+    intro l; induction l <;> simp_all
+  have h₁ := rsb_emptyR_runs (body := body) (ι := ι) hrg .m2n σ
+  set σ₁ := Function.update σ .m2n []
+  have h₂ := rsb_copyTo_runs (body := body) (ι := ι) hrg hdisj (a := .ms) (b := .m2n)
+    ⟨by decide, by decide⟩ ⟨by decide, by decide⟩ (by decide) σ₁ (by simp [σ₁, hb1])
+    (by simp [σ₁, htC])
+  set σ₂ := Function.update σ₁ .m2n (σ₁ .ms ++ σ₁ .m2n)
+  have h₃ := rsb_emptyR_runs (body := body) (ι := ι) hrg .kn σ₂
+  set σ₃ := Function.update σ₂ .kn []
+  have h₄ := band_copyRepG_runs (body := body) (ι := ι) hrg hdisj (a := .ms) (b := .kn) (n := .sn)
+    (tn := .sel) (by decide) σ₃ (by simp [σ₃, σ₂, σ₁, hb1]) (by simp [σ₃, σ₂, σ₁, htC])
+    (by simp [σ₃, σ₂, σ₁, hsel])
+  set σ₄ := Function.update σ₃ .kn ((List.replicate (σ₃ .sn).length (σ₃ .ms)).flatten ++ σ₃ .kn)
+  have hkn4 : (σ₄ .kn).length = (Lf.map fun x => [C x]).reverse.length := by
+    simp [σ₄, σ₃, σ₂, σ₁, hsn, hms, hLf, List.length_flatten, List.sum_replicate]
+  have h₅ := band_rev_runs (body := body) (ι := ι) hrg hdisj (x := .dout) (y := .bo) (c := .cm .wn)
+    (n := .kn) (tn := .tK) (by decide) (w := w) (L := 1) σ₄ (Lf.map fun x => [C x]).reverse
+    (by intro b hb; simp at hb; obtain ⟨x, -, rfl⟩ := hb; rfl) [] []
+    (by simp [σ₄, σ₃, σ₂, σ₁, hdout, List.map_reverse, List.flatten_reverse, hsing'])
+    (by simp [σ₄, σ₃, σ₂, σ₁, hbo]) (by simp [σ₄, σ₃, σ₂, σ₁, hwn]) hkn4
+    (by simp [σ₄, σ₃, σ₂, σ₁, htK]) (by simp [σ₄, σ₃, σ₂, σ₁, htC]) (by simp [σ₄, σ₃, σ₂, σ₁, hac2])
+  set σ₅ := Function.update (Function.update σ₄ .dout []) .bo
+    (cstream A w (Lf.map fun x => [C x]).reverse.reverse.flatten ++ [])
+  have h₆ := band_rev_runs (body := body) (ι := ι) hrg hdisj (x := .hf) (y := .src) (c := .smwn)
+    (n := .sn) (tn := .sel) (by decide) (w := w) (L := 2 * (k + 1) + 1) σ₅ (Ur.map colC).reverse
+    (by intro b hb; simp [colC] at hb; obtain ⟨r, hr, rfl⟩ := hb; simp [hrow r hr]) [] SRC
+    (by simp [σ₅, σ₄, σ₃, σ₂, σ₁, hhf]) (by simp [σ₅, σ₄, σ₃, σ₂, σ₁, hsrc])
+    (by simp [σ₅, σ₄, σ₃, σ₂, σ₁, hsmwn]) (by simp [σ₅, σ₄, σ₃, σ₂, σ₁, hsn, hUr])
+    (by simp [σ₅, σ₄, σ₃, σ₂, σ₁, hsel]) (by simp [σ₅, σ₄, σ₃, σ₂, σ₁, htC])
+    (by simp [σ₅, σ₄, σ₃, σ₂, σ₁, hac2])
+  set σ₆ := Function.update (Function.update σ₅ .hf []) .src
+    (cstream A w (Ur.map colC).reverse.reverse.flatten ++ SRC)
+  have h₇ := band_copyRep_runs (body := body) (ι := ι) hrg hdisj (a := .msk) (b := .xs)
+    ⟨by decide, by decide, by decide, by decide⟩ ⟨by decide, by decide, by decide, by decide⟩
+    (by decide) (B := k + 1) σ₆ (by simp [σ₆, σ₅, σ₄, σ₃, σ₂, σ₁, hb1])
+    (by simp [σ₆, σ₅, σ₄, σ₃, σ₂, σ₁, htC]) (by simp [σ₆, σ₅, σ₄, σ₃, σ₂, σ₁, htL])
+    (by simp [σ₆, σ₅, σ₄, σ₃, σ₂, σ₁, hms])
+  set σ₇ := Function.update σ₆ .xs ((List.replicate (k + 1) (σ₆ .msk)).flatten ++ σ₆ .xs)
+  have h₈ := band_copyRep_runs (body := body) (ι := ι) hrg hdisj (a := .xs) (b := .vk)
+    ⟨by decide, by decide, by decide, by decide⟩ ⟨by decide, by decide, by decide, by decide⟩
+    (by decide) (B := k + 1) σ₇ (by simp [σ₇, σ₆, σ₅, σ₄, σ₃, σ₂, σ₁, hb1])
+    (by simp [σ₇, σ₆, σ₅, σ₄, σ₃, σ₂, σ₁, htC]) (by simp [σ₇, σ₆, σ₅, σ₄, σ₃, σ₂, σ₁, htL])
+    (by simp [σ₇, σ₆, σ₅, σ₄, σ₃, σ₂, σ₁, hms])
+  set σ₈ := Function.update σ₇ .vk ((List.replicate (k + 1) (σ₇ .xs)).flatten ++ σ₇ .vk)
+  have h₉ := rsb_emptyR_runs (body := body) (ι := ι) hrg .xs σ₈
+  have h₁₀ := rsb_emptyR_runs (body := body) (ι := ι) hrg .ms (Function.update σ₈ .xs [])
+  set σ₁₀ := Function.update (Function.update σ₈ .xs []) .ms []
+  have h₁₁ := rsb_copyTo_runs (body := body) (ι := ι) hrg hdisj (a := .dst) (b := .ms)
+    ⟨by decide, by decide⟩ ⟨by decide, by decide⟩ (by decide) σ₁₀
+    (by simp [σ₁₀, σ₈, σ₇, σ₆, σ₅, σ₄, σ₃, σ₂, σ₁, hb1])
+    (by simp [σ₁₀, σ₈, σ₇, σ₆, σ₅, σ₄, σ₃, σ₂, σ₁, htC])
+  set σ₁₁ := Function.update σ₁₀ .ms (σ₁₀ .dst ++ σ₁₀ .ms)
+  have h₁₂ := rsb_emptyR_runs (body := body) (ι := ι) hrg .mwn σ₁₁
+  set σ₁₂ := Function.update σ₁₁ .mwn []
+  have h₁₃ := rsb_copyTo_runs (body := body) (ι := ι) hrg hdisj (a := .m2wn) (b := .mwn)
+    ⟨by decide, by decide⟩ ⟨by decide, by decide⟩ (by decide) σ₁₂
+    (by simp [σ₁₂, σ₁₁, σ₁₀, σ₈, σ₇, σ₆, σ₅, σ₄, σ₃, σ₂, σ₁, hb1])
+    (by simp [σ₁₂, σ₁₁, σ₁₀, σ₈, σ₇, σ₆, σ₅, σ₄, σ₃, σ₂, σ₁, htC])
+  set σ₁₃ := Function.update σ₁₂ .mwn (σ₁₂ .m2wn ++ σ₁₂ .mwn)
+  have h₁₄ := rsb_copyTo_runs (body := body) (ι := ι) hrg hdisj (a := .cm .wn) (b := .mwn)
+    ⟨by decide, by decide⟩ ⟨by decide, by decide⟩ (by decide) σ₁₃
+    (by simp [σ₁₃, σ₁₂, σ₁₁, σ₁₀, σ₈, σ₇, σ₆, σ₅, σ₄, σ₃, σ₂, σ₁, hb1])
+    (by simp [σ₁₃, σ₁₂, σ₁₁, σ₁₀, σ₈, σ₇, σ₆, σ₅, σ₄, σ₃, σ₂, σ₁, htC])
+  refine ((RsbRuns.seq hdisj h₁ (RsbRuns.seq hdisj h₂ (RsbRuns.seq hdisj h₃
+    (RsbRuns.seq hdisj h₄ (RsbRuns.seq hdisj h₅ (RsbRuns.seq hdisj h₆ (RsbRuns.seq hdisj h₇
+    (RsbRuns.seq hdisj h₈ (RsbRuns.seq hdisj h₉ (RsbRuns.seq hdisj h₁₀ (RsbRuns.seq hdisj h₁₁
+    (RsbRuns.seq hdisj h₁₂ (RsbRuns.seq hdisj h₁₃ h₁₄))))))))))))).congr ?_).mono ?_
+  · funext x; cases x <;> simp [σ₁₃, σ₁₂, σ₁₁, σ₁₀, σ₈, σ₇, σ₆, σ₅, σ₄, σ₃, σ₂, σ₁, hvk, hxs,
+      hmsk, hsn, List.flatten_reverse, List.map_reverse, hsing]
+  · simp [σ₁₃, σ₁₂, σ₁₁, σ₁₀, σ₈, σ₇, σ₆, σ₅, σ₄, σ₃, σ₂, σ₁, hvk, hxs, hmsk, hsn, hms, hm2n, hkn,
+      hmwn, hm2wn, hdst, hwn, hLf, hUr, bandAxisOrgCost, csyms, List.length_flatten,
+      List.sum_replicate]
+    exact bandAxisOrg_arith s k w K hw
 
 end Contracts
 
