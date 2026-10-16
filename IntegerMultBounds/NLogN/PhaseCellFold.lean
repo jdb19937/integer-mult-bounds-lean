@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.NLogN.PhaseCellBandFill
+public import IntegerMultBounds.NLogN.SchurSubst
 
 /-! Folded elimination order. Listing a cyclic line as `0, s-1, 1, s-2, …`
 turns its cyclic band of half width `w` into an ordinary band of half width
@@ -109,11 +110,11 @@ theorem matrix_foldRel (p u : ℕ) (i j : ZMod s) (h : realMatrix s t p u i j≠
 /-- Every rounded factor entry of the actual matrix in folded order lies within the
 folded band `2w+1`; the factors are triangular in folded order. -/
 theorem factor_foldRel (p u : ℕ) (rd : ℝ → ℝ) (hrd0 : rd 0=0) :
-    (∀ i k, luLr rd (realMatrix s t p u) univ (foldOrder s) i k≠0 →
+    (∀ i k, luLr rd (divMul rd) (realMatrix s t p u) univ (foldOrder s) i k≠0 →
       i=k ∨ (FoldRel s (2*PhaseCellBand.width p u+1) i k ∧ foldPos s k<foldPos s i)) ∧
-    (∀ k j, luUr rd (realMatrix s t p u) univ (foldOrder s) k j≠0 →
+    (∀ k j, luUr rd (divMul rd) (realMatrix s t p u) univ (foldOrder s) k j≠0 →
       FoldRel s (2*PhaseCellBand.width p u+1) k j ∧ foldPos s k≤foldPos s j) :=
-  fill_support_r rd hrd0 _ _ (foldRel_closed s _) (foldOrder s) _ univ
+  fill_support_r rd (divMul rd) hrd0 (fun b => by simp [divMul, hrd0]) _ _ (foldRel_closed s _) (foldOrder s) _ univ
     (by rw [foldOrder_toFinset]) (foldOrder_sorted s) (fun i _ j _ h => matrix_foldRel s t p u i j h)
 
 end IntegerMultBounds.NLogN.PhaseCellMatrix

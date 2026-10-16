@@ -91,12 +91,13 @@ theorem fill_support (pos : ι → ℕ) (R : ι → ι → Prop) (hR : FillClose
 fill: if the relation contains the original entries and is closed under
 ordered fill, every rounded multiplier and pivot-row entry lies in it, and the
 factors are triangular in the elimination order. -/
-theorem fill_support_r (rd : ℝ → ℝ) (hrd0 : rd 0=0) (pos : ι → ℕ) (R : ι → ι → Prop)
+theorem fill_support_r (rd : ℝ → ℝ) (mul : ℝ → ℝ → ℝ) (hrd0 : rd 0=0)
+    (hmul0 : ∀ b, mul 0 b=0) (pos : ι → ℕ) (R : ι → ι → Prop)
     (hR : FillClosed pos R) (ks : List ι) :
     ∀ (A : Matrix ι ι ℝ) (S : Finset ι), S⊆ks.toFinset → ks.Pairwise (fun a b => pos a<pos b) →
       (∀ i∈S, ∀ j∈S, A i j≠0 → R i j) →
-      (∀ i k, luLr rd A S ks i k≠0 → i=k ∨ (R i k ∧ pos k<pos i)) ∧
-        (∀ k j, luUr rd A S ks k j≠0 → R k j ∧ pos k≤pos j) := by
+      (∀ i k, luLr rd mul A S ks i k≠0 → i=k ∨ (R i k ∧ pos k<pos i)) ∧
+        (∀ k j, luUr rd mul A S ks k j≠0 → R k j ∧ pos k≤pos j) := by
   induction ks with
   | nil =>
     intro A S hsub _ hA
@@ -116,7 +117,7 @@ theorem fill_support_r (rd : ℝ → ℝ) (hrd0 : rd 0=0) (pos : ι → ℕ) (R 
         · exact h
       have hlater : ∀ x∈S.erase k, pos k<pos x := fun x hx =>
         hsort'.1 x (List.mem_toFinset.mp (hsub' hx))
-      have hA' : ∀ i∈S.erase k, ∀ j∈S.erase k, relim rd A k i j≠0 → R i j := by
+      have hA' : ∀ i∈S.erase k, ∀ j∈S.erase k, relim rd mul A k i j≠0 → R i j := by
         intro i hi j hj h
         by_contra hR'
         apply h
@@ -124,13 +125,13 @@ theorem fill_support_r (rd : ℝ → ℝ) (hrd0 : rd 0=0) (pos : ι → ℕ) (R 
           by_contra hne; exact hR' (hA i (mem_of_mem_erase hi) j (mem_of_mem_erase hj) hne)
         unfold relim
         by_cases hik : A i k=0
-        · rw [hij, hik, zero_div, hrd0, zero_mul, sub_zero, hrd0]
+        · rw [hij, hik, hmul0, zero_mul, sub_zero, hrd0]
         · have hkj : A k j=0 := by
             by_contra hne
             exact hR' (hR k i j (hlater i hi) (hlater j hj) (hA i (mem_of_mem_erase hi) k hk hik)
               (hA k hk j (mem_of_mem_erase hj) hne))
           rw [hij, hkj, mul_zero, sub_zero, hrd0]
-      obtain ⟨hL, hU⟩ := ih (relim rd A k) (S.erase k) hsub' hsort'.2 hA'
+      obtain ⟨hL, hU⟩ := ih (relim rd mul A k) (S.erase k) hsub' hsort'.2 hA'
       refine ⟨fun i j h => ?_, fun i j h => ?_⟩
       · simp only [luLr, hk, ite_true] at h
         split at h
@@ -144,7 +145,7 @@ theorem fill_support_r (rd : ℝ → ℝ) (hrd0 : rd 0=0) (pos : ι → ℕ) (R 
               refine ⟨?_, hlater i (mem_erase.mpr ⟨hik, hiS⟩)⟩
               by_contra hR'
               apply h
-              rw [show A i j=0 by by_contra hne; exact hR' (hA i hiS j hk hne), zero_div, hrd0]
+              rw [show A i j=0 by by_contra hne; exact hR' (hA i hiS j hk hne), hmul0]
             · exact absurd rfl h
         · rcases hL i j h with h1 | h1
           · exact Or.inl h1

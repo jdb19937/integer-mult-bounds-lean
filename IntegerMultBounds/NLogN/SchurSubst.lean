@@ -197,11 +197,14 @@ theorem bwd_residual (rd : ℝ → ℝ) (η M : ℝ) (hrd : ∀ x, |rd x-x|≤η
     · simp only [bwd]
       exact ih _ _ hsort'.2 (fun z hz => hks z (List.mem_cons_of_mem _ hz)) hdone' k' hk'
 
+/-- Multipliers by rounded division. -/
+noncomputable def divMul (rd : ℝ → ℝ) (a b : ℝ) : ℝ := rd (a/b)
+
 /-- The concrete rounded solve: rounded elimination, then rounded forward and
 back substitution with the computed factors. -/
 noncomputable def bandSolve (rd : ℝ → ℝ) (A : Matrix ι ι ℝ) (S : Finset ι) (ks : List ι)
     (b : ι → ℝ) : ι → ℝ :=
-  bwd rd (luUr rd A S ks) (fwd rd (luLr rd A S ks) b ∅ (fun _ => 0) ks) ∅ (fun _ => 0) ks.reverse
+  bwd rd (luUr rd (divMul rd) A S ks) (fwd rd (luLr rd (divMul rd) A S ks) b ∅ (fun _ => 0) ks) ∅ (fun _ => 0) ks.reverse
 
 /-- End-to-end error of the concrete rounded solve of a dominant system. -/
 theorem bandSolve_error (rd : ℝ → ℝ) (η : ℝ) (hrd : ∀ x, |rd x-x|≤η) (hrd0 : rd 0=0)
@@ -216,27 +219,27 @@ theorem bandSolve_error (rd : ℝ → ℝ) (η : ℝ) (hrd : ∀ x, |rd x-x|≤�
       2*(((1+ks.length*(2*M/μ+η))*(M*η)+η)/μ+n*(ks.length*(η*(1+M)))/μ*X) := by
   have hη : 0≤η := le_trans (abs_nonneg _) (hrd 0)
   have hn : 0≤n := le_trans (Nat.cast_nonneg _) hcard
-  obtain ⟨-, hU, -⟩ := lur_good rd η hrd μ M n hμ hM hn ks A S μ m hinv hcard hm0 hm hmu
-  obtain ⟨hLt, hUt⟩ := fill_support_r rd hrd0 pos (fun _ _ => True) (fun _ _ _ _ _ _ _ => trivial)
+  obtain ⟨-, hU, -⟩ := lur_good rd (divMul rd) η hrd (fun a b => hrd _) μ M n hμ hM hn ks A S μ m hinv hcard hm0 hm hmu
+  obtain ⟨hLt, hUt⟩ := fill_support_r rd (divMul rd) hrd0 (fun b => by simp [divMul, hrd0]) pos (fun _ _ => True) (fun _ _ _ _ _ _ _ => trivial)
     ks A S (by rw [hks]) hsort (fun _ _ _ _ _ => trivial)
   have hmem : ∀ k∈ks, k∈S := fun k hk => hks ▸ List.mem_toFinset.mpr hk
   have hdone : (∅ : Finset ι)=S\ks.toFinset := by rw [hks, sdiff_self]; rfl
-  have hf := fwd_residual rd η hrd pos (luLr rd A S ks) b S
+  have hf := fwd_residual rd η hrd pos (luLr rd (divMul rd) A S ks) b S
     (fun i k h => (hLt i k h).imp id And.right) ks ∅ (fun _ => 0) hsort hmem hdone
-  have hdiag : ∀ k∈S, luUr rd A S ks k k≠0 ∧ |luUr rd A S ks k k|≤M := by
+  have hdiag : ∀ k∈S, luUr rd (divMul rd) A S ks k k≠0 ∧ |luUr rd (divMul rd) A S ks k k|≤M := by
     intro k hk
     obtain ⟨hd, hmass⟩ := hU k hk
-    have h0 : 0≤∑ j∈S.erase k, |luUr rd A S ks k j| := sum_nonneg fun _ _ => abs_nonneg _
-    have hpos' : 0<luUr rd A S ks k k := by linarith
+    have h0 : 0≤∑ j∈S.erase k, |luUr rd (divMul rd) A S ks k j| := sum_nonneg fun _ _ => abs_nonneg _
+    have hpos' : 0<luUr rd (divMul rd) A S ks k k := by linarith
     refine ⟨hpos'.ne', ?_⟩
-    have := single_le_sum (f := fun j => |luUr rd A S ks k j|) (fun _ _ => abs_nonneg _) hk
+    have := single_le_sum (f := fun j => |luUr rd (divMul rd) A S ks k j|) (fun _ _ => abs_nonneg _) hk
     linarith
-  have hb := bwd_residual rd η M hrd pos hpos (luUr rd A S ks)
-    (fwd rd (luLr rd A S ks) b ∅ (fun _ => 0) ks) S (fun k j h => (hUt k j h).2) hdiag
+  have hb := bwd_residual rd η M hrd pos hpos (luUr rd (divMul rd) A S ks)
+    (fwd rd (luLr rd (divMul rd) A S ks) b ∅ (fun _ => 0) ks) S (fun k j h => (hUt k j h).2) hdiag
     ks.reverse ∅ (fun _ => 0) (List.pairwise_reverse.mpr hsort)
     (fun k hk => hmem k (List.mem_reverse.mp hk)) (by rw [List.toFinset_reverse]; exact hdone)
-  exact rounded_elimination_solve rd η hrd A S μ m M n hμ hM hm0 hinv hcard ks hm hmu x b
-    (bandSolve rd A S ks b) (fwd rd (luLr rd A S ks) b ∅ (fun _ => 0) ks) hx (M*η) X hX hxX
+  exact rounded_elimination_solve rd (divMul rd) η hrd (fun a b => hrd _) A S μ m M n hμ hM hm0 hinv hcard ks hm hmu x b
+    (bandSolve rd A S ks b) (fwd rd (luLr rd (divMul rd) A S ks) b ∅ (fun _ => 0) ks) hx (M*η) X hX hxX
     (fun k hk => hf k (List.mem_toFinset.mp (hks ▸ hk)))
     (fun k hk => hb k (List.mem_reverse.mpr (List.mem_toFinset.mp (hks ▸ hk)))) hsmall j hj
 
@@ -458,8 +461,8 @@ rounded products, back substitution with rounded products and stored rounded
 reciprocals of the pivots. -/
 noncomputable def bandSolveM (rd : ℝ → ℝ) (A : Matrix ι ι ℝ) (S : Finset ι) (ks : List ι)
     (b : ι → ℝ) : ι → ℝ :=
-  bwdM rd (luUr rd A S ks) (fun k => rd (1/luUr rd A S ks k k))
-    (fwdM rd (luLr rd A S ks) b ∅ (fun _ => 0) ks) ∅ (fun _ => 0) ks.reverse
+  bwdM rd (luUr rd (divMul rd) A S ks) (fun k => rd (1/luUr rd (divMul rd) A S ks k k))
+    (fwdM rd (luLr rd (divMul rd) A S ks) b ∅ (fun _ => 0) ks) ∅ (fun _ => 0) ks.reverse
 
 theorem bandSolveM_error (rd : ℝ → ℝ) (η : ℝ) (hrd : ∀ x, |rd x-x|≤η) (hrd0 : rd 0=0)
     (pos : ι → ℕ) (hpos : Function.Injective pos)
@@ -476,48 +479,48 @@ theorem bandSolveM_error (rd : ℝ → ℝ) (η : ℝ) (hrd : ∀ x, |rd x-x|≤
         (n*(ks.length*(η*(1+M)))+(1+ks.length*(2*M/μ+η))*(2*(M*η)*M))/μ*X) := by
   have hη : 0≤η := le_trans (abs_nonneg _) (hrd 0)
   have hn : 0≤n := le_trans (Nat.cast_nonneg _) hcard
-  obtain ⟨hgood, hU, hL⟩ := lur_good rd η hrd μ M n hμ hM hn ks A S μ m hinv hcard hm0 hm hmu
-  have hprod := lur_product rd η hrd M hM ks A S hgood
-  obtain ⟨hLt, hUt⟩ := fill_support_r rd hrd0 pos (fun _ _ => True) (fun _ _ _ _ _ _ _ => trivial)
+  obtain ⟨hgood, hU, hL⟩ := lur_good rd (divMul rd) η hrd (fun a b => hrd _) μ M n hμ hM hn ks A S μ m hinv hcard hm0 hm hmu
+  have hprod := lur_product rd (divMul rd) η hrd (fun a b => hrd _) M hM ks A S hgood
+  obtain ⟨hLt, hUt⟩ := fill_support_r rd (divMul rd) hrd0 (fun b => by simp [divMul, hrd0]) pos (fun _ _ => True) (fun _ _ _ _ _ _ _ => trivial)
     ks A S (by rw [hks]) hsort (fun _ _ _ _ _ => trivial)
   have hmem : ∀ k∈ks, k∈S := fun k hk => hks ▸ List.mem_toFinset.mpr hk
   have hdone : (∅ : Finset ι)=S\ks.toFinset := by rw [hks, sdiff_self]; rfl
-  have hf := fwdM_residual rd η hrd pos (luLr rd A S ks) b S
+  have hf := fwdM_residual rd η hrd pos (luLr rd (divMul rd) A S ks) b S
     (fun i k h => (hLt i k h).imp id And.right) ks ∅ (fun _ => 0) hsort hmem hdone
-  have hdiag : ∀ k∈S, |luUr rd A S ks k k|≤M ∧
-      |luUr rd A S ks k k*rd (1/luUr rd A S ks k k)-1|≤M*η := by
+  have hdiag : ∀ k∈S, |luUr rd (divMul rd) A S ks k k|≤M ∧
+      |luUr rd (divMul rd) A S ks k k*rd (1/luUr rd (divMul rd) A S ks k k)-1|≤M*η := by
     intro k hk
     obtain ⟨hd, hmass⟩ := hU k hk
-    have h0 : 0≤∑ j∈S.erase k, |luUr rd A S ks k j| := sum_nonneg fun _ _ => abs_nonneg _
-    have hpos' : 0<luUr rd A S ks k k := by linarith
-    have hle : |luUr rd A S ks k k|≤M := by
-      have := single_le_sum (f := fun j => |luUr rd A S ks k j|) (fun _ _ => abs_nonneg _) hk
+    have h0 : 0≤∑ j∈S.erase k, |luUr rd (divMul rd) A S ks k j| := sum_nonneg fun _ _ => abs_nonneg _
+    have hpos' : 0<luUr rd (divMul rd) A S ks k k := by linarith
+    have hle : |luUr rd (divMul rd) A S ks k k|≤M := by
+      have := single_le_sum (f := fun j => |luUr rd (divMul rd) A S ks k j|) (fun _ _ => abs_nonneg _) hk
       linarith
     refine ⟨hle, ?_⟩
-    have e : luUr rd A S ks k k*rd (1/luUr rd A S ks k k)-1=
-        luUr rd A S ks k k*(rd (1/luUr rd A S ks k k)-1/luUr rd A S ks k k) := by
+    have e : luUr rd (divMul rd) A S ks k k*rd (1/luUr rd (divMul rd) A S ks k k)-1=
+        luUr rd (divMul rd) A S ks k k*(rd (1/luUr rd (divMul rd) A S ks k k)-1/luUr rd (divMul rd) A S ks k k) := by
       field_simp
     rw [e, abs_mul]
     exact mul_le_mul hle (hrd _) (abs_nonneg _) hM
-  have hb := bwdM_residual rd η M (M*η) hrd pos hpos (luUr rd A S ks) _
-    (fwdM rd (luLr rd A S ks) b ∅ (fun _ => 0) ks) S (fun k j h => (hUt k j h).2) hdiag hMη hM
+  have hb := bwdM_residual rd η M (M*η) hrd pos hpos (luUr rd (divMul rd) A S ks) _
+    (fwdM rd (luLr rd (divMul rd) A S ks) b ∅ (fun _ => 0) ks) S (fun k j h => (hUt k j h).2) hdiag hMη hM
     ks.reverse ∅ (fun _ => 0) (List.pairwise_reverse.mpr hsort)
     (fun k hk => hmem k (List.mem_reverse.mp hk)) (by rw [List.toFinset_reverse]; exact hdone)
   have hΛ0 : 0≤1+ks.length*(2*M/μ+η) := by positivity
-  have hεS : ∀ i∈S, ∑ j∈S, |∑ k∈S, luLr rd A S ks i k*luUr rd A S ks k j-A i j|≤
+  have hεS : ∀ i∈S, ∑ j∈S, |∑ k∈S, luLr rd (divMul rd) A S ks i k*luUr rd (divMul rd) A S ks k j-A i j|≤
       n*(ks.length*(η*(1+M))) := by
     intro i hi
-    calc ∑ j∈S, |∑ k∈S, luLr rd A S ks i k*luUr rd A S ks k j-A i j|
+    calc ∑ j∈S, |∑ k∈S, luLr rd (divMul rd) A S ks i k*luUr rd (divMul rd) A S ks k j-A i j|
         ≤∑ _j∈S, (ks.length : ℝ)*(η*(1+M)) := sum_le_sum fun j hj => hprod i hi j hj
       _=(S.card : ℝ)*(ks.length*(η*(1+M))) := by rw [sum_const, nsmul_eq_mul]
       _≤n*(ks.length*(η*(1+M))) := by gcongr
-  have hfη : ∀ k∈S, |fwdM rd (luLr rd A S ks) b ∅ (fun _ => 0) ks k+
-      ∑ j∈S.erase k, luLr rd A S ks k j*fwdM rd (luLr rd A S ks) b ∅ (fun _ => 0) ks j-b k|≤n*η :=
+  have hfη : ∀ k∈S, |fwdM rd (luLr rd (divMul rd) A S ks) b ∅ (fun _ => 0) ks k+
+      ∑ j∈S.erase k, luLr rd (divMul rd) A S ks k j*fwdM rd (luLr rd (divMul rd) A S ks) b ∅ (fun _ => 0) ks j-b k|≤n*η :=
     fun k hk => (hf k (List.mem_toFinset.mp (hks ▸ hk))).trans
       (mul_le_mul_of_nonneg_right hcard hη)
   have hbB : ∀ B, (∀ j∈S, |bandSolveM rd A S ks b j|≤B) → ∀ k∈S,
-      |∑ j∈S, luUr rd A S ks k j*bandSolveM rd A S ks b j-
-        fwdM rd (luLr rd A S ks) b ∅ (fun _ => 0) ks k|≤
+      |∑ j∈S, luUr rd (divMul rd) A S ks k j*bandSolveM rd A S ks b j-
+        fwdM rd (luLr rd (divMul rd) A S ks) b ∅ (fun _ => 0) ks k|≤
         (n+M+2*(M*η)*M)*η+2*(M*η)*M*B := by
     intro B hB k hk
     have := hb B hB k (List.mem_reverse.mpr (List.mem_toFinset.mp (hks ▸ hk)))
@@ -525,9 +528,9 @@ theorem bandSolveM_error (rd : ℝ → ℝ) (η : ℝ) (hrd : ∀ x, |rd x-x|≤
       mul_le_mul_of_nonneg_right (by linarith) hη
     unfold bandSolveM
     linarith
-  exact backward_lu_k A (luLr rd A S ks) (luUr rd A S ks) S μ hμ hinv.1 x b
+  exact backward_lu_k A (luLr rd (divMul rd) A S ks) (luUr rd (divMul rd) A S ks) S μ hμ hinv.1 x b
     (bandSolveM rd A S ks b) _ hx _ _ (n*η) _ (2*(M*η)*M) X hΛ0 (by positivity) (by positivity) hX
-    (fun i hi => luLr_diag rd A S ks i hi) hL hεS hxX hfη hbB hsmall j hj
+    (fun i hi => luLr_diag rd (divMul rd) A S ks i hi) hL hεS hxX hfη hbB hsmall j hj
 
 /-! ### Column-oriented substitution
 
