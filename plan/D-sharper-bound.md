@@ -1789,3 +1789,9 @@ error `6+2^p((2e+η)+δ₀/2)`. The guarded check and3-declaration standard-axio
 audit pass. Remaining for this route: cyclic fill and substitution cost,
 `ε=5/16` sizing, the new `B̃₀` machine with per-axis stored factors, the
 retuned `Ã` costs and the final assembly.
+
+The cyclic fill pattern of the route is checked: eliminating the actual
+rounded matrix in physical order keeps every factor entry within the band or
+the `w`-wide cyclic border, so every non-border factor row has at most `3w+1`
+entries and a line solve with stored factors touches `O(sw)` entries. Both
+guarded checks and the5-declaration standard-axiom audit pass.
