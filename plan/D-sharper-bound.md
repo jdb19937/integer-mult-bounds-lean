@@ -1760,3 +1760,13 @@ mass `εS` give error `2((Λδ+η)/μ+(εS/μ)X)` when `εS/μ≤1/2`. An on-tap
 rounded elimination therefore only needs a backward bound on its factors,
 avoiding exact rational setup of the Schur complement. The guarded check and
 3-declaration standard-axiom audit pass.
+
+Rounded elimination is now proved backward stable for dominant matrices: with
+every multiplier and update rounded within `η`, each stage keeps dominance up
+to explicit losses, the computed factors reproduce every entry within
+`len·η(1+M)`, and multipliers stay bounded. Followed by rounded triangular
+solves, the computed boundary solution is within
+`2((Λδ+η)/μ+(εS/μ)X)` with `Λ=1+len(2M/μ+η)`, `εS=n·len·η(1+M)`. The boundary
+solve is therefore fully specified by fixed-point operations, with no exact
+rational setup; with `η=2^-P` the polynomial factors in the line length are
+negligible. The guarded check and5-declaration standard-axiom audit pass.
