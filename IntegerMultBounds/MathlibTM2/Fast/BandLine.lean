@@ -59,9 +59,26 @@ noncomputable def bandFwdStepP : Pr P T Q A U :=
     (.seq (emptyR (rg .ya)) (.seq (emptyR (rg .xs)) (.seq (emptyR (rg .hv))
     (.seq (rsbRep (rg .m2n) (rg .tJ) (bandSubP rg)) (moveR (rg .nv) (rg .vk) id)))))))))
 
+/-- Replace the head of `vk` by its truncated product with the next stored
+reciprocal of `tb`. -/
+noncomputable def bandRecipP : Pr P T Q A U :=
+  .seq (bandPopP rg) (.seq (rsbMv (rg (.cm .wn)) (rg .tC) (rg .tb) (rg .ac2))
+    (.seq (moveR (rg .ac2) (rg .xa) id)
+    (.seq (cmulStream (rsbCr rg .hv .xa .hc) (rmulOne ι hι hT hQ (rsbCr rg .hv .xa .hc)))
+    (.seq (emptyR (rg .hv)) (.seq (emptyR (rg .xa))
+    (.seq (moveR (rg .hc) (rg .ac2) id) (moveR (rg .ac2) (rg .vk) id)))))))
+
+/-- One backward column step: reciprocal, then the forward step. -/
+noncomputable def bandBwdStepP : Pr P T Q A U :=
+  .seq (bandRecipP rg hι hT hQ) (bandFwdStepP rg hι hT hQ)
+
 /-- The forward pass: one column step per symbol of `sn`. -/
 noncomputable def bandFwdLoopP : Pr P T Q A U :=
   rsbRep (rg .sn) (rg .tL) (bandFwdStepP rg hι hT hQ)
+
+/-- The backward pass: one backward column step per symbol of `sn`. -/
+noncomputable def bandBwdLoopP : Pr P T Q A U :=
+  rsbRep (rg .sn) (rg .tL) (bandBwdStepP rg hι hT hQ)
 
 /-- The step bound of one forward column step. -/
 def bandFwdStepCost (T w B : ℕ) : ℕ := B * (rmulCost T w + 40 * w + 60) + 30 * w + 60
@@ -76,6 +93,9 @@ lemma sum_zipWith_const {α β : Type*} (c : ℕ) : ∀ (l₁ : List α) (l₂ :
       simp only [List.zipWith_cons_cons, List.sum_cons, sum_zipWith_const c l₁ l₂,
         List.length_cons]
       rw [Nat.min_def, Nat.min_def]; split <;> split <;> first | omega | ring_nf
+
+lemma bandFree_hv : RsbFree .hv .xa .hc := ⟨by decide, by decide, by decide, fun _ => ⟨by simp,
+  by simp, by simp⟩⟩
 
 lemma bandFree_ya : RsbFree .ya .xs .pr := ⟨by decide, by decide, by decide, fun _ => ⟨by simp,
   by simp, by simp⟩⟩
@@ -408,6 +428,95 @@ theorem band_fwdLoop_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r �
     have hd : (cs.map colC).drop s = [] := List.drop_of_length_le (by simp [hcs])
     funext r; cases r <;> simp [hΨ, htL, hd]
   · rw [hsn]
+
+/-- The reciprocal preamble of a backward step. -/
+theorem band_recip_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠ ι j)
+    (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ : SS.states ≤ Q) (hA : 96 ≤ A)
+    {w P : ℕ} (σ : RsbR → List (Fin (A + 4))) (hready : RsbReady σ w P) (hw : 1 ≤ w)
+    (hp : P ≤ w) (q : GaussianInt) (r : ℤ) (VK TB : List (Fin (A + 4))) (hfq : Fits w q)
+    (hfr : Fits w (⟨r, 0⟩ : GaussianInt))
+    (hvk : σ .vk = csyms A w q ++ VK) (htb : σ .tb = csyms A w ⟨r, 0⟩ ++ TB)
+    (hhv : σ .hv = []) (hxa : σ .xa = []) (hhc : σ .hc = []) (hac2 : σ .ac2 = [])
+    (htC : σ .tC = []) :
+    RsbRuns body rg ι (bandRecipP rg hι hT hQ) σ
+      (Function.update (Function.update σ .vk (csyms A w (tdivN P (q * ⟨r, 0⟩)) ++ VK)) .tb TB)
+      (rmulCost T w + 30 * w + 40) := by
+  have hwn := hready.wn
+  have h₁ := band_pop_runs (body := body) (ι := ι) hrg hdisj σ q VK hvk hhv hac2 htC hwn
+  set σ₁ := Function.update (Function.update σ .vk VK) .hv (csyms A w q)
+  have h₂ := rsb_mv_runs (body := body) (ι := ι) hrg (c := .cm .wn) (t := .tC) (x := .tb)
+    (y := .ac2) (by decide) σ₁ (by simp [σ₁, htC]) (by simp [σ₁, hwn, htb])
+  rw [show (σ₁ (.cm .wn)).length = w by simp [σ₁, hwn]] at h₂
+  simp only [σ₁, Function.update_of_ne (by decide : RsbR.tb ≠ RsbR.hv),
+    Function.update_of_ne (by decide : RsbR.tb ≠ RsbR.vk),
+    Function.update_of_ne (by decide : RsbR.ac2 ≠ RsbR.hv),
+    Function.update_of_ne (by decide : RsbR.ac2 ≠ RsbR.vk), htb, take_csyms_append,
+    drop_csyms_append, hac2, List.append_nil] at h₂
+  set σ₂ := Function.update (Function.update σ₁ .tb TB) .ac2 (csyms A w ⟨r, 0⟩).reverse
+  have h₃ := rsb_moveR_runs (body := body) (ι := ι) hrg (a := .ac2) (b := .xa) (by decide) σ₂
+  set σ₃ := Function.update (Function.update σ₂ .ac2 []) .xa ((σ₂ .ac2).reverse ++ σ₂ .xa)
+  have hready₃ : RsbReady σ₃ w P := by
+    simp only [σ₃, σ₂, σ₁]
+    exact (((((hready.update .vk (fun c => by simp) _).update .hv (fun c => by simp) _).update
+      .tb (fun c => by simp) _).update .ac2 (fun c => by simp) _).update .ac2 (fun c => by simp)
+      _).update .xa (fun c => by simp) _
+  have h₄ := rsb_rmulStream_runs (body := body) hrg hdisj hι hT hQ hA bandFree_hv (ρ := σ₃)
+    hready₃ hw hp [q] [⟨r, 0⟩] rfl (by simpa using hfq) (by simpa using hfr)
+    (by simp [σ₃, σ₂, σ₁]) (by simp [σ₃, σ₂, σ₁, hxa])
+  set σ₄ := Function.update σ₃ .hc
+    (cstream A w (List.zipWith (fun a b => tdivN P (a * b)) [q] [⟨r, 0⟩]) ++ σ₃ .hc)
+  have h₅ := rsb_emptyR_runs (body := body) (ι := ι) hrg .hv σ₄
+  have h₆ := rsb_emptyR_runs (body := body) (ι := ι) hrg .xa (Function.update σ₄ .hv [])
+  set σ₆ := Function.update (Function.update σ₄ .hv []) .xa []
+  have h₇ := rsb_moveR_runs (body := body) (ι := ι) hrg (a := .hc) (b := .ac2) (by decide) σ₆
+  set σ₇ := Function.update (Function.update σ₆ .hc []) .ac2 ((σ₆ .hc).reverse ++ σ₆ .ac2)
+  have h₈ := rsb_moveR_runs (body := body) (ι := ι) hrg (a := .ac2) (b := .vk) (by decide) σ₇
+  refine ((RsbRuns.seq hdisj h₁ (RsbRuns.seq hdisj h₂ (RsbRuns.seq hdisj h₃
+    (RsbRuns.seq hdisj h₄ (RsbRuns.seq hdisj h₅ (RsbRuns.seq hdisj h₆
+    (RsbRuns.seq hdisj h₇ h₈))))))).congr ?_).mono ?_
+  · funext x; cases x <;> simp [σ₇, σ₆, σ₄, σ₃, σ₂, σ₁, hhv, hxa, hhc, hac2]
+  · simp [σ₇, σ₆, σ₄, σ₃, σ₂, σ₁, hhv, hxa, hhc, hac2, hwn, cstream]
+    omega
+
+/-- One backward column step. -/
+theorem band_bwdStep_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠ ι j)
+    (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ : SS.states ≤ Q) (hA : 96 ≤ A)
+    {w P B : ℕ} (σ : RsbR → List (Fin (A + 4))) (hready : RsbReady σ w P) (hw : 1 ≤ w)
+    (hp : P ≤ w) (q : GaussianInt) (r : ℤ) (rs more col cols : List GaussianInt)
+    (hrs : rs.length = B) (hcol : col.length = B) (hfq : Fits w q)
+    (hfr : Fits w (⟨r, 0⟩ : GaussianInt)) (hfx : Fits w (tdivN P (q * ⟨r, 0⟩)))
+    (hfc : ∀ a ∈ col, Fits w a ∧ a.im = 0) (D TB : List (Fin (A + 4)))
+    (hvk : σ .vk = cstream A w (q :: (rs ++ more))) (htb : σ .tb = csyms A w ⟨r, 0⟩ ++ TB)
+    (hef : σ .ef = cstream A w (col ++ cols))
+    (hdout : σ .dout = D) (hhv : σ .hv = []) (hya : σ .ya = []) (hxs : σ .xs = [])
+    (hpr : σ .pr = []) (hnv : σ .nv = []) (hac : σ .ac = []) (hac2 : σ .ac2 = [])
+    (htC : σ .tC = []) (htA : σ .tA = []) (htJ : σ .tJ = []) (hb1 : σ .b1 = [])
+    (hxa : σ .xa = []) (hhc : σ .hc = [])
+    (hm2n : (σ .m2n).length = B) (hmwn : (σ .mwn).length = B * w) :
+    RsbRuns body rg ι (bandBwdStepP rg hι hT hQ) σ
+      (Function.update (Function.update (Function.update (Function.update σ .vk
+        (cstream A w (List.zipWith (· - ·) rs
+          (List.zipWith (fun a b => tdivN P (a * b)) (List.replicate B (tdivN P (q * ⟨r, 0⟩)))
+            col) ++ more))) .tb TB) .ef (cstream A w cols)) .dout
+        (csyms A w (tdivN P (q * ⟨r, 0⟩)) ++ D))
+      (rmulCost T w + 30 * w + 40 + bandFwdStepCost T w B) := by
+  obtain ⟨x, hx⟩ : ∃ x, x = tdivN P (q * ⟨r, 0⟩) := ⟨_, rfl⟩
+  rw [← hx] at hfx ⊢
+  have h₁ := band_recip_runs (body := body) (ι := ι) hrg hdisj hι hT hQ hA σ hready hw hp q r
+    (cstream A w (rs ++ more)) TB hfq hfr (by rw [hvk, cstream_cons]) htb hhv hxa hhc hac2 htC
+  rw [← hx] at h₁
+  set σ₁ := Function.update (Function.update σ .vk
+    (csyms A w x ++ cstream A w (rs ++ more))) .tb TB
+  have hready₁ : RsbReady σ₁ w P :=
+    (hready.update .vk (fun c => by simp) _).update .tb (fun c => by simp) _
+  have h₂ := band_fwdStep_runs (body := body) (ι := ι) (w := w) (p := P) (B := B) hrg hdisj hι hT
+    hQ hA σ₁ hready₁ hw hp x rs more col cols hrs hcol hfx hfc D
+    (by simp [σ₁, cstream_cons]) (by simp [σ₁, hef]) (by simp [σ₁, hdout]) (by simp [σ₁, hhv])
+    (by simp [σ₁, hya]) (by simp [σ₁, hxs]) (by simp [σ₁, hpr]) (by simp [σ₁, hnv])
+    (by simp [σ₁, hac]) (by simp [σ₁, hac2]) (by simp [σ₁, htC]) (by simp [σ₁, htA])
+    (by simp [σ₁, htJ]) (by simp [σ₁, hb1]) (by simp [σ₁, hm2n]) (by simp [σ₁, hmwn])
+  refine (RsbRuns.seq hdisj h₁ h₂).congr ?_
+  funext z; cases z <;> simp [σ₁]
 
 end Contracts
 

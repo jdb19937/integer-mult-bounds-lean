@@ -378,4 +378,63 @@ theorem length_bandPend (P : ℕ) (cs : List (List ℤ)) (pend : List GaussianIn
       · rename_i heq
         rw [heq] at ih; simp at ih; omega
 
+/-- Pending list after `j` backward steps (heads scaled by stored reciprocals). -/
+def bandPendB (P : ℕ) (cs : List (List ℤ)) (rs : List ℤ) (pend : List GaussianInt) :
+    ℕ → List GaussianInt
+  | 0 => pend
+  | j+1 => match bandPendB P cs rs pend j with
+    | q::rest => subColC P (cs.getD j []) (Fast.tdivN P (q*⟨rs.getD j 0, 0⟩)) rest
+    | [] => []
+
+/-- Outputs after `j` backward steps, most recent first. -/
+def bandOutB (P : ℕ) (cs : List (List ℤ)) (rs : List ℤ) (pend : List GaussianInt) :
+    ℕ → List GaussianInt
+  | 0 => []
+  | j+1 => Fast.tdivN P ((bandPendB P cs rs pend j).headD 0*⟨rs.getD j 0, 0⟩)::
+      bandOutB P cs rs pend j
+
+theorem bandPendB_cons (P : ℕ) (c : List ℤ) (cs : List (List ℤ)) (r : ℤ) (rs : List ℤ)
+    (q : GaussianInt) (rest : List GaussianInt) : ∀ j,
+    bandPendB P (c::cs) (r::rs) (q::rest) (j+1)=
+      bandPendB P cs rs (subColC P c (Fast.tdivN P (q*⟨r, 0⟩)) rest) j
+  | 0 => rfl
+  | j+1 => by
+      rw [bandPendB, bandPendB_cons P c cs r rs q rest j, bandPendB]
+      rfl
+
+theorem bandOutB_cons (P : ℕ) (c : List ℤ) (cs : List (List ℤ)) (r : ℤ) (rs : List ℤ)
+    (q : GaussianInt) (rest : List GaussianInt) : ∀ j,
+    bandOutB P (c::cs) (r::rs) (q::rest) (j+1)=
+      bandOutB P cs rs (subColC P c (Fast.tdivN P (q*⟨r, 0⟩)) rest) j++[Fast.tdivN P (q*⟨r, 0⟩)]
+  | 0 => rfl
+  | j+1 => by
+      rw [bandOutB, bandOutB_cons P c cs r rs q rest j, bandPendB_cons, bandOutB]
+      rfl
+
+theorem bwdZC_eq_bandOutB (P : ℕ) : ∀ (cs : List (List ℤ)) (rs : List ℤ) (pend : List GaussianInt),
+    cs.length≤pend.length → cs.length≤rs.length →
+      bwdZC P cs rs pend=(bandOutB P cs rs pend cs.length).reverse
+  | [], rs, pend, _, _ => by cases rs <;> cases pend <;> rfl
+  | c::cs, r::rs, q::rest, h1, h2 => by
+      simp only [bwdZC, List.length_cons]
+      rw [bandOutB_cons, List.reverse_append, bwdZC_eq_bandOutB P cs rs _ (by
+        rw [length_subColC]; simp at h1; omega) (by simp at h2; omega)]
+      rfl
+  | _::_, [], _, _, h2 => by simp at h2
+  | _::_, _::_, [], h1, _ => by simp at h1
+
+theorem length_bandPendB (P : ℕ) (cs : List (List ℤ)) (rs : List ℤ) (pend : List GaussianInt) :
+    ∀ j, j≤pend.length → (bandPendB P cs rs pend j).length=pend.length-j
+  | 0, _ => by simp [bandPendB]
+  | j+1, h => by
+      have ih := length_bandPendB P cs rs pend j (by omega)
+      simp only [bandPendB]
+      split
+      · rename_i q rest heq
+        rw [length_subColC]
+        rw [heq] at ih
+        simp at ih; omega
+      · rename_i heq
+        rw [heq] at ih; simp at ih; omega
+
 end IntegerMultBounds.MathlibTM2.Mult.BandList
