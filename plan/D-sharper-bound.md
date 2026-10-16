@@ -1647,3 +1647,13 @@ bounded by `C` and scaled inputs by `V≥1`. With the actual cell solve this
 supplies the interior stage errors `e₁`/`e₅` once actual weight bounds and
 the factor rounding are instantiated. The guarded check and namespace
 standard-axiom audit pass.
+
+### Exact block-Schur identification
+
+After eliminating all interior vertices in any order, the reduced matrix now
+acts on boundary vectors exactly as the Schur operator
+`A_BB-A_BI A_II⁻¹ A_IB`, and it inherits the full dominance margin. This
+closes the block-Schur identification left open above and gives the boundary
+system a concrete dominant matrix for its factorization. The guarded check and
+4-declaration standard-axiom audit pass. The rounded boundary factorization
+error and tape costs remain open.
