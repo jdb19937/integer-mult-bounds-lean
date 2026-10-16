@@ -1832,3 +1832,13 @@ sums and uses stored rounded reciprocals, with residuals `nη` and
 size-dependent backward theorem `backward_lu_k`. Factors and reciprocals are
 computed per axis in the table VM, which has exact division. Both guarded
 checks and the standard-axiom audits pass.
+
+Machine design simplification: eliminating in folded order `0, s-1, 1, s-2, …`
+turns the cyclic band into an ordinary band of half width `2w+1`, so the
+rounded factors have no border fill (`PhaseCellFold`) and the machine-faithful
+solve keeps its error bound in that order (`bandSolveM_fold`). The line
+machine is therefore: fold the line, one uniform banded forward pass and one
+backward pass with stored factors and reciprocals (column-oriented, equal to
+the row-oriented specification by `colFwd_eq`/`colBwd_eq`), unfold. The target
+map is `Mult/ConcreteB0.bandJtF`. Guarded checks and standard-axiom audits
+pass.
