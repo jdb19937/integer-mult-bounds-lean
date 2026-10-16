@@ -95,7 +95,7 @@ theorem errSeq_final (E₀ ε κ : ℝ) (hκ : 0<κ) (hκ1 : κ≤1) (hε : 0≤
 /-- The rounded Newton iterates for `1/b` from `1/4`. -/
 noncomputable def newtonR (rd : ℝ → ℝ) (b : ℝ) : ℕ → ℝ
   | 0 => 1/4
-  | k+1 => rd (newtonR rd b k*(2-rd (b*newtonR rd b k)))
+  | k+1 => 2*newtonR rd b k-rd (newtonR rd b k*rd (b*newtonR rd b k))
 
 /-- Rounded Newton for `b ∈ [β, 3]`: the error stays within the perturbed error
 sequence with `ε = 5η` and `κ = β/4`. -/
@@ -129,16 +129,17 @@ theorem newtonR_err (rd : ℝ → ℝ) (η : ℝ) (hrd : ∀ x, |rd x-x|≤η) (
       have hr0 : 0≤r := by nlinarith
       rw [abs_of_nonneg hr0]; nlinarith
     -- the perturbation of the step
-    set δ := rd (r*(2-rd (b*r)))-r*(2-b*r)
+    set δ := (2*r-rd (r*rd (b*r)))-r*(2-b*r)
     have hδ : |b*δ|≤5*η := by
-      have h1 := hrd (r*(2-rd (b*r)))
+      have h1 := hrd (r*rd (b*r))
       have h2 := hrd (b*r)
-      have e : δ=(rd (r*(2-rd (b*r)))-r*(2-rd (b*r)))-r*(rd (b*r)-b*r) := by simp only [δ]; ring
+      have e : δ=(r*rd (b*r)-rd (r*rd (b*r)))-r*(rd (b*r)-b*r) := by simp only [δ]; ring
       rw [e, abs_mul, abs_of_pos hb]
+      rw [abs_sub_comm] at h1
       have h3 : |r*(rd (b*r)-b*r)|≤2/b*η := by
         rw [abs_mul]; exact mul_le_mul hr h2 (abs_nonneg _) (by positivity)
-      have h4 := abs_sub (rd (r*(2-rd (b*r)))-r*(2-rd (b*r))) (r*(rd (b*r)-b*r))
-      calc b*|(rd (r*(2-rd (b*r)))-r*(2-rd (b*r)))-r*(rd (b*r)-b*r)|≤b*(η+2/b*η) :=
+      have h4 := abs_sub (r*rd (b*r)-rd (r*rd (b*r))) (r*(rd (b*r)-b*r))
+      calc b*|(r*rd (b*r)-rd (r*rd (b*r)))-r*(rd (b*r)-b*r)|≤b*(η+2/b*η) :=
             mul_le_mul_of_nonneg_left (h4.trans (add_le_add h1 h3)) hb.le
         _=b*η+2*η := by field_simp
         _≤5*η := by nlinarith

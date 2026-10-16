@@ -20,10 +20,10 @@ variable (P K : ℕ)
 /-- Grid value of a numerator. -/
 noncomputable def gv (z : ℤ) : ℝ := (z : ℝ)/2^P
 
-/-- Newton reciprocal numerators: start `1/4`, step `r ← r(2 - c r)` with truncation. -/
+/-- Newton reciprocal numerators: start `1/4`, step `r ← 2r - r(c r)` with truncation. -/
 def newtonZ (c : ℤ) : ℕ → ℤ
   | 0 => 2^(P-2)
-  | n+1 => (newtonZ c n*(2^(P+1)-(c*newtonZ c n).tdiv (2^P))).tdiv (2^P)
+  | n+1 => 2*newtonZ c n-(newtonZ c n*(c*newtonZ c n).tdiv (2^P)).tdiv (2^P)
 
 theorem newtonZ_eq (hP : 2 ≤ P) (c : ℤ) : ∀ n,
     NewtonRecip.newtonR (rdP P) (gv P c) n=gv P (newtonZ P c n)
@@ -39,10 +39,10 @@ theorem newtonZ_eq (hP : 2 ≤ P) (c : ℤ) : ∀ n,
     have h1 : rdP P (gv P c*gv P (newtonZ P c n))=gv P ((c*newtonZ P c n).tdiv (2^P)) :=
       rdP_mul_grid P _ _
     rw [h1]
-    have h2 : 2-gv P ((c*newtonZ P c n).tdiv (2^P))=gv P (2^(P+1)-(c*newtonZ P c n).tdiv (2^P)) := by
-      simp only [gv]; push_cast; rw [pow_succ]; field_simp
+    have h2 : rdP P (gv P (newtonZ P c n)*gv P ((c*newtonZ P c n).tdiv (2^P)))=
+        gv P ((newtonZ P c n*(c*newtonZ P c n).tdiv (2^P)).tdiv (2^P)) := rdP_mul_grid P _ _
     rw [h2]
-    exact rdP_mul_grid P _ _
+    simp only [gv]; push_cast; ring
 
 /-- Machine multiplier numerators. -/
 def mulZ (a c : ℤ) : ℤ := (a*newtonZ P c K).tdiv (2^P)
