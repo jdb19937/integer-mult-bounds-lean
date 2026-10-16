@@ -14,9 +14,10 @@ open scoped BigOperators
 open Finset
 variable {ι : Type*} [DecidableEq ι]
 
-/-- One rounded elimination step: rounded multiplier, rounded update. -/
+/-- One rounded elimination step: rounded multiplier, rounded product,
+exact subtraction. -/
 noncomputable def relim (rd : ℝ → ℝ) (mul : ℝ → ℝ → ℝ) (A : Matrix ι ι ℝ) (k : ι) : Matrix ι ι ℝ :=
-  fun i j => rd (A i j-mul (A i k) (A k k)*A k j)
+  fun i j => A i j-rd (mul (A i k) (A k k)*A k j)
 
 /-- Rounded multipliers, recorded in list order. -/
 noncomputable def luLr (rd : ℝ → ℝ) (mul : ℝ → ℝ → ℝ) (A : Matrix ι ι ℝ) (S : Finset ι) : List ι → Matrix ι ι ℝ
@@ -46,12 +47,13 @@ omit [DecidableEq ι] in
 theorem relim_close (A : Matrix ι ι ℝ) (k i j : ι) :
     |relim rd mul A k i j-eliminate A k i j|≤η+η*|A k j| := by
   unfold relim eliminate
-  have h1 := hrd (A i j-mul (A i k) (A k k)*A k j)
+  have h1 := hrd (mul (A i k) (A k k)*A k j)
   have h2 := hmul (A i k) (A k k)
   have h3 : |(mul (A i k) (A k k)-A i k/A k k)*A k j|≤η*|A k j| := by
     rw [abs_mul]; exact mul_le_mul_of_nonneg_right h2 (abs_nonneg _)
-  calc |rd (A i j-mul (A i k) (A k k)*A k j)-(A i j-A i k/A k k*A k j)|
-      =|(rd (A i j-mul (A i k) (A k k)*A k j)-(A i j-mul (A i k) (A k k)*A k j))-
+  rw [abs_sub_comm] at h1
+  calc |A i j-rd (mul (A i k) (A k k)*A k j)-(A i j-A i k/A k k*A k j)|
+      =|(mul (A i k) (A k k)*A k j-rd (mul (A i k) (A k k)*A k j))-
           (mul (A i k) (A k k)-A i k/A k k)*A k j| := by ring_nf
     _≤_ := (abs_sub _ _).trans (add_le_add h1 h3)
 
@@ -197,10 +199,11 @@ theorem lur_product (M : ℝ) (hM : 0≤M) (ks : List ι) :
         · have hjS' : j∈S.erase k := mem_erase.mpr ⟨hjk, hj⟩
           have hih := ih (relim rd mul A k) (S.erase k) hnext i hiS' j hjS'
           simp only [hik, ite_false, hi, ite_true, hj]
-          have hround := hrd (A i j-mul (A i k) (A k k)*A k j)
+          have hround := hrd (mul (A i k) (A k k)*A k j)
+          rw [abs_sub_comm] at hround
           calc _=|(∑ k'∈S.erase k, luLr rd mul (relim rd mul A k) (S.erase k) ks i k'*
                 luUr rd mul (relim rd mul A k) (S.erase k) ks k' j-relim rd mul A k i j)+
-              (rd (A i j-mul (A i k) (A k k)*A k j)-(A i j-mul (A i k) (A k k)*A k j))| := by
+              (mul (A i k) (A k k)*A k j-rd (mul (A i k) (A k k)*A k j))| := by
                 congr 1
                 simp only [relim]
                 ring

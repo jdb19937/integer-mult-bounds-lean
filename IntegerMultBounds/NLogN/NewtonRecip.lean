@@ -198,4 +198,24 @@ theorem recipMul_err (rd : ℝ → ℝ) (η : ℝ) (hrd : ∀ x, |rd x-x|≤η) 
   · have := hrd (a/b)
     nlinarith
 
+/-- Pivot reciprocals through Newton on the working range `β ≤ c ≤ 3`; outside
+it rounded division stands in, so the rule is total. -/
+noncomputable def recipNewton (rd : ℝ → ℝ) (β : ℝ) (K : ℕ) (c : ℝ) : ℝ :=
+  if β≤c ∧ c≤3 then newtonR rd c K else rd (1/c)
+
+/-- On the working range the stored reciprocal has residual at most `180η/β²`. -/
+theorem recipNewton_residual (rd : ℝ → ℝ) (η : ℝ) (hrd : ∀ x, |rd x-x|≤η) (β : ℝ)
+    (hβ : 0<β) (hη : 5*η≤2*(β/4)/9) (K : ℕ) (hK : (1-β/4/2)^(2^K)≤3*(5*η)/(β/4))
+    (c : ℝ) (hβc : β≤c) (hc3 : c≤3) : |c*recipNewton rd β K c-1|≤180*η/β^2 := by
+  have hc : 0<c := lt_of_lt_of_le hβ hβc
+  have hη0 : 0≤η := le_trans (abs_nonneg _) (hrd 0)
+  unfold recipNewton
+  simp only [hβc, hc3, and_self, ite_true]
+  have hr := newtonR_recip rd η hrd β c hβ hβc hc3 hη K hK
+  have e : c*newtonR rd c K-1=c*(newtonR rd c K-1/c) := by field_simp
+  rw [e, abs_mul, abs_of_pos hc]
+  calc c*|newtonR rd c K-1/c|≤3*(60*η/β^2) :=
+        mul_le_mul hc3 hr (abs_nonneg _) (by norm_num)
+    _=180*η/β^2 := by ring
+
 end IntegerMultBounds.NLogN.NewtonRecip

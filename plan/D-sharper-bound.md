@@ -1863,3 +1863,11 @@ O(log(pP)) steps). Rounded elimination is now generic in the multiplier rule
 it with error `η(1+60M/β²)`. Matrix entries can come from the existing `E`
 weight table code at working precision. Guarded checks and standard-axiom
 audits pass.
+
+The numeric spec now matches the factorization machine. Rounded elimination
+rounds the product and subtracts exactly (`relim`), as fixed-point records do.
+`bandSolveG` takes any multiplier rule and any pivot reciprocal rule
+(`bandSolveG_error`), and `bandSolveN_fold` instantiates both with Newton
+reciprocals (`recipMul`, `recipNewton`): on the phase-cell matrix in folded
+order the error is at most `62000 p³ s² η(1+180/β²)` for a Newton floor
+`β ≤ 1/(16p)`. Guarded checks and standard-axiom audits pass.

@@ -2,6 +2,7 @@ module
 
 public import IntegerMultBounds.NLogN.PhaseCellBandSolve
 public import IntegerMultBounds.NLogN.PhaseCellFold
+public import IntegerMultBounds.NLogN.NewtonRecip
 
 /-! The machine-faithful band solve of the actual rounded matrix in folded
 order, where the factors are an ordinary band of half width `2w+1`. -/
@@ -47,5 +48,72 @@ theorem bandSolveM_fold (hst : s<t) {α d : ℝ} (hα : 0<α)
     j (mem_univ j)
   rw [hlen] at key
   exact key.trans hfin
+
+/-- The band solve on the actual matrix in folded order with any multiplier rule
+within `η` of division and any pivot reciprocal rule with residual at most `3η`
+on the pivot range: error at most `62000 p³ s² η`. -/
+theorem bandSolveG_fold (hst : s<t) {α d : ℝ} (hα : 0<α)
+    (p u : ℕ) (hp : 2≤p) (hwidth : 8*p≤2^u) (hαu : α^2=(u : ℝ))
+    (hθ : 1/(4*(p : ℝ))≤(t : ℝ)/s-1)
+    (hgap : (1 : ℝ)/4≤d*((t : ℝ)/s-1)) (hbudget : α^2*d≤p)
+    (rd : ℝ → ℝ) (mul : ℝ → ℝ → ℝ) (rec : ℝ → ℝ) (η : ℝ) (hrd : ∀ x, |rd x-x|≤η)
+    (hrd0 : rd 0=0) (hmul : ∀ a b, |mul a b-a/b|≤η) (hmul0 : ∀ b, mul 0 b=0)
+    (hrec : ∀ c, 1/(8*(p : ℝ))/2≤c → c≤3 → |c*rec c-1|≤3*η)
+    (hsmall : 2^16*(p : ℝ)^2*(s : ℝ)^2*η≤1)
+    (x b : ZMod s → ℝ) (hx : Matrix.mulVec (realMatrix s t p u) x=b) (hb : ∀ i, |b i|≤1/2)
+    (j : ZMod s) :
+    |bandSolveG rd mul rec (realMatrix s t p u) univ (foldOrder s) b j-x j|≤
+      62000*(p : ℝ)^3*(s : ℝ)^2*η := by
+  have hpR : (2 : ℝ)≤p := by exact_mod_cast hp
+  have hs1 : (1 : ℝ)≤s := by exact_mod_cast Nat.one_le_iff_ne_zero.mpr (NeZero.ne s)
+  have hη : 0≤η := le_trans (abs_nonneg _) (hrd 0)
+  have hμ : (0 : ℝ)<1/(8*(p : ℝ)) := by positivity
+  have hA := matrix_gap s t hst hα p u hp hwidth hαu hθ hgap hbudget
+  have hinv : StageInv (realMatrix s t p u) univ (1/(8*(p : ℝ))) 2 :=
+    ⟨hA, fun i _ => row_mass s t hst hα p u hp hwidth hαu hθ hgap hbudget i⟩
+  have hcard : ((univ : Finset (ZMod s)).card : ℝ)≤s := by simp [ZMod.card]
+  have hlen := foldOrder_length s
+  have hsol : Solves (realMatrix s t p u) univ x b := solves_of_mulVec s t p u x b hx
+  have hX : ∀ i∈(univ : Finset (ZMod s)), |x i|≤4*p := by
+    intro i hi
+    have h := solves_bound _ _ _ hμ hA x b hsol (1/2) (fun i _ => hb i) i hi
+    rw [div_div_eq_mul_div, div_one] at h
+    linarith
+  obtain ⟨hm', hmu', hMη, hsm', hfin⟩ := bandM_arith (p : ℝ) (s : ℝ) η hpR hs1 hη hsmall
+  have key := bandSolveG_error rd mul rec η (3*η) hrd hrd0 hmul hmul0 (foldPos s)
+    (foldPos_injective s) (realMatrix s t p u) univ (1/(8*(p : ℝ))) 2 3 s hμ (by norm_num)
+    (by norm_num) hinv hcard (foldOrder s) (foldOrder_toFinset s) (foldOrder_sorted s)
+    (by rw [hlen]; exact hm') (by rw [hlen]; exact hmu') hrec hMη x b hsol (4*p) (by positivity)
+    hX (by rw [hlen]; exact hsm') j (mem_univ j)
+  rw [hlen] at key
+  exact key.trans hfin
+
+/-- The band solve with Newton reciprocals for multipliers and pivots, as the
+tape machine computes it: rounding `η`, Newton floor `β ≤ 1/(16p)` and `K`
+iterations give error at most `62000 p³ s² η (1 + 180/β²)`. -/
+theorem bandSolveN_fold (hst : s<t) {α d : ℝ} (hα : 0<α)
+    (p u : ℕ) (hp : 2≤p) (hwidth : 8*p≤2^u) (hαu : α^2=(u : ℝ))
+    (hθ : 1/(4*(p : ℝ))≤(t : ℝ)/s-1)
+    (hgap : (1 : ℝ)/4≤d*((t : ℝ)/s-1)) (hbudget : α^2*d≤p)
+    (rd : ℝ → ℝ) (η : ℝ) (hrd : ∀ x, |rd x-x|≤η) (hrd0 : rd 0=0)
+    (β : ℝ) (hβ : 0<β) (hβp : β≤1/(8*(p : ℝ))/2) (hηβ : 5*η≤2*(β/4)/9) (K : ℕ)
+    (hK : (1-β/4/2)^(2^K)≤3*(5*η)/(β/4))
+    (hsmall : 2^16*(p : ℝ)^2*(s : ℝ)^2*(η*(1+60*3/β^2))≤1)
+    (x b : ZMod s → ℝ) (hx : Matrix.mulVec (realMatrix s t p u) x=b) (hb : ∀ i, |b i|≤1/2)
+    (j : ZMod s) :
+    |bandSolveG rd (NewtonRecip.recipMul rd 3 β K) (NewtonRecip.recipNewton rd β K)
+        (realMatrix s t p u) univ (foldOrder s) b j-x j|≤
+      62000*(p : ℝ)^3*(s : ℝ)^2*(η*(1+60*3/β^2)) := by
+  have hη : 0≤η := le_trans (abs_nonneg _) (hrd 0)
+  have hext : 0≤η*(60*3/β^2) := by positivity
+  have hle : η≤η*(1+60*3/β^2) := by nlinarith
+  refine bandSolveG_fold s t hst hα p u hp hwidth hαu hθ hgap hbudget rd
+    (NewtonRecip.recipMul rd 3 β K) (NewtonRecip.recipNewton rd β K) _ (fun x => (hrd x).trans hle) hrd0
+    (NewtonRecip.recipMul_err rd η hrd 3 β (by norm_num) hβ hηβ K hK)
+    (NewtonRecip.recipMul_zero rd hrd0 3 β K) (fun c hc hc3 => ?_) hsmall x b hx hb j
+  have h := NewtonRecip.recipNewton_residual rd η hrd β hβ hηβ K hK c (hβp.trans hc) hc3
+  have e : 3*(η*(1+60*3/β^2))=3*η+3*(180*η/β^2) := by ring
+  have h0 : 0≤180*η/β^2 := by positivity
+  rw [e]; linarith
 
 end IntegerMultBounds.NLogN.PhaseCellMatrix

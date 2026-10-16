@@ -125,12 +125,12 @@ theorem fill_support_r (rd : ℝ → ℝ) (mul : ℝ → ℝ → ℝ) (hrd0 : rd
           by_contra hne; exact hR' (hA i (mem_of_mem_erase hi) j (mem_of_mem_erase hj) hne)
         unfold relim
         by_cases hik : A i k=0
-        · rw [hij, hik, hmul0, zero_mul, sub_zero, hrd0]
+        · rw [hij, hik, hmul0, zero_mul, hrd0, sub_zero]
         · have hkj : A k j=0 := by
             by_contra hne
             exact hR' (hR k i j (hlater i hi) (hlater j hj) (hA i (mem_of_mem_erase hi) k hk hik)
               (hA k hk j (mem_of_mem_erase hj) hne))
-          rw [hij, hkj, mul_zero, sub_zero, hrd0]
+          rw [hij, hkj, mul_zero, hrd0, sub_zero]
       obtain ⟨hL, hU⟩ := ih (relim rd mul A k) (S.erase k) hsub' hsort'.2 hA'
       refine ⟨fun i j h => ?_, fun i j h => ?_⟩
       · simp only [luLr, hk, ite_true] at h
