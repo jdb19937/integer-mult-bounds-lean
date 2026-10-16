@@ -1736,3 +1736,20 @@ now gives the pipeline `B̃₀` interface for the normalized factorization targe
 `B₀(J)/2^j` with error `6+2^p(e+δ₀/2)`. With the four-step error bounds this
 reduces the new inverse line map to its concrete rounded computation. The
 guarded check and2-declaration standard-axiom audit pass.
+
+### Narrower route to `2^-33` (cost estimate, not yet checked)
+
+The `2^-32` certificate assumes the source's full fast Gaussian pipeline. A
+narrower route may already reach `2^-33`: keep the existing direct-window
+`Ã` machine and replace only the inverse in `B̃₀` by the phase-cell solve,
+choosing a small `α² = u = p^r` (the small-gap regime only needs
+`8p ≤ 2^u`). Rough per-element costs, to be checked: the existing `Ã` window
+costs `p^(1/2) α M(p)`, giving margin `1/2-r/2-δ-ε`; with cells of length
+about `1/θ≈4p` and band `w≈4(p/u)^(1/2)`, banded boundary LU costs about
+`p^(1/2-3r/2) M(p)` per element, giving margin `1/2+3r/2-δ-ε`. At `r` near
+zero both are about `1/2-δ-ε`, so `ε` up to about `0.46` is allowed, and the
+layer margin `ε(1-λ')` covers `2^-33` for `ε≥0.28` (for example `ε=5/16`).
+`2^-32` needs `ε≥0.56` and so the source's fast forward map as well. Before
+relying on this route, check the boundary count and LU cost against actual
+cell lengths, the `Ã` truncation at small `α`, precision
+`γ=d(2⌈α²⌉+2+j)`, and the sizing lemmas that assume `ε≤1/7`.
