@@ -1,7 +1,7 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.BandLine
-public import IntegerMultBounds.MathlibTM2.Mult.BandFactor
+public import IntegerMultBounds.MathlibTM2.Mult.BandTranspose
 
 /-!
 # The banded factorization: Newton reciprocals of the pivots
@@ -77,6 +77,23 @@ noncomputable def bandFacStepP : Pr P T Q A U :=
 
 /-- The window factorization: one window step per symbol of `sn`. -/
 noncomputable def bandFacLoopP : Pr P T Q A U := rsbRep (rg .sn) (rg .sel) (bandFacStepP rg hι hT hQ)
+
+/-- One block of a transpose step: head to `ya`, rest to `nv` followed by a zero. -/
+def bandTBlkP : Pr P T Q A U :=
+  .seq (rsbMv (rg (.cm .wn)) (rg .tC) (rg .vk) (rg .ya))
+  (.seq (rsbMv (rg .m2wn) (rg .tC) (rg .vk) (rg .nv)) (copyR (rg .msk) (rg .nv) (rg .tC) id))
+
+/-- One transpose step: the next pivot row of `src` gives the new first block;
+the block heads become the column pushed onto `ef`. -/
+def bandTStepP : Pr P T Q A U :=
+  .seq (rsbMv (rg (.cm .wn)) (rg .tC) (rg .src) (rg .pr)) (.seq (emptyR (rg .pr))
+  (.seq (rsbMv (rg .mwn) (rg .tC) (rg .src) (rg .xs))
+  (.seq (rsbMv (rg .mwn) (rg .tC) (rg .src) (rg .pr)) (.seq (emptyR (rg .pr))
+  (.seq (rsbRep (rg .ms) (rg .tL) (bandTBlkP rg))
+  (.seq (rsbMv (rg (.cm .wn)) (rg .tC) (rg .vk) (rg .ya))
+  (.seq (rsbMv (rg .m2wn) (rg .tC) (rg .vk) (rg .pr)) (.seq (emptyR (rg .pr))
+  (.seq (moveR (rg .ya) (rg .ef) id)
+  (.seq (moveR (rg .nv) (rg .vk) id) (moveR (rg .xs) (rg .vk) id)))))))))))
 
 end Programs
 
@@ -813,6 +830,235 @@ theorem band_facLoop_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r �
     have hd : (inputs.map colC).drop s=[] := List.drop_of_length_le (by simp; omega)
     funext x; cases x <;> simp [rsbUpd2, hΨ, hsel, hd]
   · rw [hsn]
+
+/-- One block of a transpose step. -/
+theorem band_tBlk_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠ ι j) {w B : ℕ}
+    (σ : RsbR → List (Fin (A + 4))) (blk : List GaussianInt) (hblk : blk.length = B + 1)
+    (VK YA NV : List (Fin (A + 4))) (hvk : σ .vk = cstream A w blk ++ VK) (hya : σ .ya = YA)
+    (hnv : σ .nv = NV) (hmsk : σ .msk = csyms A w 0) (htC : σ .tC = [])
+    (hwn : (σ (.cm .wn)).length = w) (hm2wn : (σ .m2wn).length = B * w) :
+    RsbRuns body rg ι (bandTBlkP rg) σ
+      (Function.update (Function.update (Function.update σ .vk VK) .ya
+        ((csyms A w (blk.headD 0)).reverse ++ YA)) .nv
+        ((cstream A w (blk.tail ++ [0])).reverse ++ NV))
+      (4 * w + 4 + (4 * (B * w) + 4) + (4 * w + 4)) := by
+  obtain ⟨b, bs, rfl⟩ : ∃ b bs, blk = b :: bs := by
+    cases blk with
+    | nil => simp at hblk
+    | cons b bs => exact ⟨b, bs, rfl⟩
+  have hbs : bs.length = B := by simpa using hblk
+  have h₁ := rsb_mv_runs (body := body) (ι := ι) hrg (c := .cm .wn) (t := .tC) (x := .vk) (y := .ya)
+    (by decide) σ htC (by rw [hwn, hvk]; simp [csyms])
+  rw [hwn, hvk, cstream_cons, List.append_assoc, take_csyms_append, drop_csyms_append, hya] at h₁
+  set σ₁ := Function.update (Function.update σ .vk (cstream A w bs ++ VK)) .ya
+    ((csyms A w b).reverse ++ YA)
+  have h₂ := rsb_mv_runs (body := body) (ι := ι) hrg (c := .m2wn) (t := .tC) (x := .vk) (y := .nv)
+    (by decide) σ₁ (by simp [σ₁, htC]) (by simp [σ₁, hm2wn, hbs])
+  have hl : (σ₁ .m2wn).length = bs.length * w := by simp [σ₁, hm2wn, hbs]
+  rw [hl] at h₂
+  simp only [σ₁, Function.update_of_ne (by decide : RsbR.vk ≠ RsbR.ya), Function.update_self,
+    Function.update_of_ne (by decide : RsbR.nv ≠ RsbR.ya),
+    Function.update_of_ne (by decide : RsbR.nv ≠ RsbR.vk), take_cstream _ _ le_rfl, drop_cstream,
+    List.take_length, List.drop_length, Nat.sub_self, zero_mul, List.drop_zero, hnv] at h₂
+  have h₂' := h₂.congr_pre (ρ₀ := σ₁) rfl
+  set σ₂ := Function.update (Function.update σ₁ .vk VK) .nv ((cstream A w bs).reverse ++ NV)
+  have h₃ := rsb_copyR_runs (body := body) (ι := ι) hrg (a := .msk) (b := .nv) (t := .tC)
+    (by decide) (by decide) (by decide) σ₂ (by simp [σ₂, σ₁, htC])
+  refine ((RsbRuns.seq hdisj h₁ (RsbRuns.seq hdisj h₂' h₃)).congr ?_).mono ?_
+  · funext x; cases x <;> simp [σ₂, σ₁, hmsk, List.reverse_append]
+  · simp [σ₂, σ₁, hmsk, csyms, hm2wn, hbs]; omega
+
+/-- The cost of one transpose step with `k+1` blocks. -/
+def bandTStepCost (w k : ℕ) : ℕ := 40 * (k + 2) * (k + 2) * w + 40 * k + 100
+
+/-- **One transpose step.** With the window `W` of `k+1` blocks of `k+1` entries on
+`vk` and the next pivot row on `src`, `ef` gains the column `(tStep W u).1` and
+`vk` becomes `(tStep W u).2`, for `u` the entries `1, …, k+1` of the row. -/
+theorem band_tStep_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠ ι j) {w k : ℕ}
+    (σ : RsbR → List (Fin (A + 4))) (row : List ℤ) (hrow : row.length = 2 * (k + 1) + 1)
+    (W : List (List ℤ)) (hW : W.length = k + 1) (hWl : ∀ blk ∈ W, blk.length = k + 1)
+    (SRC EF : List (Fin (A + 4)))
+    (hsrc : σ .src = cstream A w (colC row) ++ SRC) (hvk : σ .vk = cstream A w (W.map colC).flatten)
+    (hef : σ .ef = EF) (hmsk : σ .msk = csyms A w 0) (hpr : σ .pr = []) (hxs : σ .xs = [])
+    (hya : σ .ya = []) (hnv : σ .nv = []) (htC : σ .tC = []) (htL : σ .tL = [])
+    (hwn : (σ (.cm .wn)).length = w) (hmwn : (σ .mwn).length = (k + 1) * w)
+    (hm2wn : (σ .m2wn).length = k * w) (hms : (σ .ms).length = k) :
+    RsbRuns body rg ι (bandTStepP rg) σ
+      (Function.update (Function.update (Function.update σ .src SRC) .vk
+        (cstream A w ((Mult.BandFactor.tStep W ((row.drop 1).take (k + 1))).2.map colC).flatten))
+        .ef (cstream A w (colC (Mult.BandFactor.tStep W ((row.drop 1).take (k + 1))).1) ++ EF))
+      (bandTStepCost w k) := by
+  obtain ⟨c, rr, rfl⟩ : ∃ c rr, row = c :: rr := by
+    cases row with
+    | nil => simp at hrow
+    | cons c rr => exact ⟨c, rr, rfl⟩
+  have hrr : rr.length = 2 * (k + 1) := by simpa using hrow
+  set u := rr.take (k + 1) with hu
+  set v := rr.drop (k + 1) with hv
+  have hul : u.length = k + 1 := by simp [hu, hrr]
+  have hvl : v.length = k + 1 := by simp [hv, hrr]; omega
+  have hsplit : colC (c :: rr) = ⟨c, 0⟩ :: (colC u ++ colC v) := by
+    simp only [colC, List.map_cons, ← List.map_append, hu, hv, List.take_append_drop]
+  have hdrop : (c :: rr).drop 1 = rr := rfl
+  rw [hdrop]
+  -- drop the pivot
+  have h₁ := rsb_mv_runs (body := body) (ι := ι) hrg (c := .cm .wn) (t := .tC) (x := .src) (y := .pr)
+    (by decide) σ htC (by rw [hwn, hsrc, hsplit]; simp [csyms])
+  rw [hwn, hsrc, hsplit, cstream_cons, List.append_assoc, take_csyms_append, drop_csyms_append,
+    hpr, List.append_nil] at h₁
+  set σ₁ := Function.update (Function.update σ .src (cstream A w (colC u ++ colC v) ++ SRC)) .pr
+    (csyms A w ⟨c, 0⟩).reverse
+  have h₂ := rsb_emptyR_runs (body := body) (ι := ι) hrg .pr σ₁
+  set σ₂ := Function.update σ₁ .pr []
+  -- the new first block
+  have h₃ := rsb_mv_runs (body := body) (ι := ι) hrg (c := .mwn) (t := .tC) (x := .src) (y := .xs)
+    (by decide) σ₂ (by simp [σ₂, σ₁, htC]) (by
+      simp only [σ₂, σ₁, Function.update_of_ne (by decide : RsbR.mwn ≠ RsbR.pr),
+        Function.update_of_ne (by decide : RsbR.mwn ≠ RsbR.src), Function.update_of_ne
+        (by decide : RsbR.src ≠ RsbR.pr), Function.update_self, hmwn, cstream_append,
+        List.length_append, length_cstream, colC, List.length_map, hul, hvl]
+      omega)
+  have hl₃ : (σ₂ .mwn).length = (colC u).length * w := by simp [σ₂, σ₁, hmwn, colC, hul]
+  have hs₂ : σ₂ .src = cstream A w (colC u) ++ (cstream A w (colC v) ++ SRC) := by
+    simp [σ₂, σ₁]
+  rw [hl₃, hs₂, take_cstream _ _ le_rfl, drop_cstream, List.take_length, List.drop_length,
+    Nat.sub_self, zero_mul, List.drop_zero, cstream_nil, List.nil_append] at h₃
+  set σ₃ := Function.update (Function.update σ₂ .src (cstream A w (colC v) ++ SRC)) .xs
+    ((cstream A w (colC u)).reverse ++ σ₂ .xs)
+  -- drop the far half
+  have hs₃' : σ₃ .src = cstream A w (colC v) ++ SRC := by simp [σ₃]
+  have h₄ := rsb_mv_runs (body := body) (ι := ι) hrg (c := .mwn) (t := .tC) (x := .src) (y := .pr)
+    (by decide) σ₃ (by simp [σ₃, σ₂, σ₁, htC]) (by
+      rw [hs₃']; simp only [σ₃, σ₂, σ₁, Function.update_of_ne (by decide : RsbR.mwn ≠ RsbR.xs),
+        Function.update_of_ne (by decide : RsbR.mwn ≠ RsbR.pr),
+        Function.update_of_ne (by decide : RsbR.mwn ≠ RsbR.src), hmwn, List.length_append,
+        length_cstream, colC, List.length_map, hvl]
+      omega)
+  have hl₄ : (σ₃ .mwn).length = (colC v).length * w := by simp [σ₃, σ₂, σ₁, hmwn, colC, hvl]
+  have hs₃ : σ₃ .src = cstream A w (colC v) ++ SRC := by simp [σ₃]
+  rw [hl₄, hs₃, take_cstream _ _ le_rfl, drop_cstream, List.take_length, List.drop_length,
+    Nat.sub_self, zero_mul, List.drop_zero, cstream_nil, List.nil_append] at h₄
+  set σ₄ := Function.update (Function.update σ₃ .src SRC) .pr
+    ((cstream A w (colC v)).reverse ++ σ₃ .pr)
+  have h₅ := rsb_emptyR_runs (body := body) (ι := ι) hrg .pr σ₄
+  set σ₅ := Function.update σ₄ .pr []
+  -- the first `k` blocks
+  obtain ⟨Ψ, hΨ⟩ : ∃ Ψ : ℕ → RsbR → List (Fin (A + 4)), Ψ = fun j =>
+      Function.update (Function.update (Function.update σ₅ .vk
+        (cstream A w ((W.drop j).map colC).flatten)) .ya
+        (cstream A w ((W.take j).map fun blk => (⟨blk.headD 0, 0⟩ : GaussianInt))).reverse) .nv
+        (cstream A w ((W.take j).map fun blk => colC (blk.tail ++ [0])).flatten).reverse := ⟨_, rfl⟩
+  have hbody : ∀ j < (σ₅ .ms).length, ∀ X Y, RsbRuns body rg ι (bandTBlkP rg)
+      (rsbUpd2 (Ψ j) .ms X .tL Y) (rsbUpd2 (Ψ (j + 1)) .ms X .tL Y)
+      (4 * w + 4 + (4 * (k * w) + 4) + (4 * w + 4)) := by
+    intro j hj X Y
+    have hj' : j < k := by simpa [σ₅, σ₄, σ₃, σ₂, σ₁, hms] using hj
+    have hjW : j < W.length := by omega
+    have hbl := hWl (W[j]'hjW) (List.getElem_mem _)
+    have h := band_tBlk_runs (body := body) (ι := ι) (w := w) (B := k) hrg hdisj
+      (rsbUpd2 (Ψ j) .ms X .tL Y) (colC (W[j]'hjW)) (by simp [colC, hbl])
+      (cstream A w ((W.drop (j+1)).map colC).flatten)
+      (cstream A w ((W.take j).map fun blk => (⟨blk.headD 0, 0⟩ : GaussianInt))).reverse
+      (cstream A w ((W.take j).map fun blk => colC (blk.tail ++ [0])).flatten).reverse
+      (by
+        have hdj : (W.map colC).drop j=colC (W[j]'hjW) :: (W.map colC).drop (j+1) := by
+          rw [List.drop_eq_getElem_cons (by simpa using hjW), List.getElem_map]
+        simp [rsbUpd2, hΨ, hdj])
+      (by simp [rsbUpd2, hΨ]) (by simp [rsbUpd2, hΨ])
+      (by simp [rsbUpd2, hΨ, σ₅, σ₄, σ₃, σ₂, σ₁, hmsk])
+      (by simp [rsbUpd2, hΨ, σ₅, σ₄, σ₃, σ₂, σ₁, htC])
+      (by simp [rsbUpd2, hΨ, σ₅, σ₄, σ₃, σ₂, σ₁, hwn])
+      (by simp [rsbUpd2, hΨ, σ₅, σ₄, σ₃, σ₂, σ₁, hm2wn])
+    refine h.congr ?_
+    have htake : ∀ {β : Type} (F : List ℤ → β), (W.map F).take (j+1) = (W.map F).take j ++ [F (W[j]'hjW)] := by
+      intro β F
+      rw [List.take_succ_eq_append_getElem (by simpa using hjW), List.getElem_map]
+    have hh : (colC (W[j]'hjW)).headD 0 = ⟨(W[j]'hjW).headD 0, 0⟩ := by
+      cases W[j]'hjW <;> rfl
+    have ht : (colC (W[j]'hjW)).tail ++ [0] = colC ((W[j]'hjW).tail ++ [0]) := by
+      cases W[j]'hjW <;> simp [colC] <;> rfl
+    rw [hh, ht]
+    funext x; cases x <;> simp [rsbUpd2, hΨ, htake, List.reverse_append]
+  have h₆ := rsb_rep_runs hrg hdisj (ra := .ms) (rt := .tL) (by decide) (bandTBlkP rg) (σ₅ .ms) Ψ _ hbody
+  have h₆' := h₆.congr_pre (ρ₀ := σ₅) (by
+    funext x; cases x <;> simp [rsbUpd2, hΨ, σ₅, σ₄, σ₃, σ₂, σ₁, hvk, hya, hnv, htL])
+  have hk5 : (σ₅ .ms).length = k := by simp [σ₅, σ₄, σ₃, σ₂, σ₁, hms]
+  rw [hk5] at h₆'
+  set σ₆ := rsbUpd2 (Ψ k) .ms (σ₅ .ms) .tL []
+  -- the last block
+  have hkW : k < W.length := by omega
+  set last := W[k]'hkW with hlast
+  have hll : last.length = k + 1 := hWl last (List.getElem_mem _)
+  obtain ⟨lh, lt, hlht⟩ : ∃ lh lt, last = lh :: lt := by
+    cases hc : last with
+    | nil => rw [hc] at hll; simp at hll
+    | cons a l => exact ⟨a, l, rfl⟩
+  have hltl : lt.length = k := by rw [hlht] at hll; simpa using hll
+  have hWd : (W.map colC).drop k = [colC last] := by
+    rw [List.drop_eq_getElem_cons (by simpa using hkW), List.getElem_map,
+      List.drop_of_length_le (by simp; omega)]
+  have hvk6 : σ₆ .vk = csyms A w ⟨lh, 0⟩ ++ cstream A w (colC lt) := by
+    simp [σ₆, rsbUpd2, hΨ, hWd, hlht, colC]
+  have h₇ := rsb_mv_runs (body := body) (ι := ι) hrg (c := .cm .wn) (t := .tC) (x := .vk) (y := .ya)
+    (by decide) σ₆ (by simp [σ₆, rsbUpd2, hΨ, σ₅, σ₄, σ₃, σ₂, σ₁, htC])
+    (by rw [hvk6]; simp [σ₆, rsbUpd2, hΨ, σ₅, σ₄, σ₃, σ₂, σ₁, hwn, csyms])
+  have hw6 : (σ₆ (.cm .wn)).length = w := by simp [σ₆, rsbUpd2, hΨ, σ₅, σ₄, σ₃, σ₂, σ₁, hwn]
+  rw [hw6, hvk6, take_csyms_append, drop_csyms_append] at h₇
+  set σ₇ := Function.update (Function.update σ₆ .vk (cstream A w (colC lt))) .ya
+    ((csyms A w ⟨lh, 0⟩).reverse ++ σ₆ .ya)
+  have h₈ := rsb_mv_runs (body := body) (ι := ι) hrg (c := .m2wn) (t := .tC) (x := .vk) (y := .pr)
+    (by decide) σ₇ (by simp [σ₇, σ₆, rsbUpd2, hΨ, σ₅, σ₄, σ₃, σ₂, σ₁, htC])
+    (by simp [σ₇, σ₆, rsbUpd2, hΨ, σ₅, σ₄, σ₃, σ₂, σ₁, hm2wn, colC, hltl])
+  have hl8 : (σ₇ .m2wn).length = (colC lt).length * w := by
+    simp [σ₇, σ₆, rsbUpd2, hΨ, σ₅, σ₄, σ₃, σ₂, σ₁, hm2wn, colC, hltl]
+  have hv7 : σ₇ .vk = cstream A w (colC lt) ++ [] := by simp [σ₇]
+  rw [hl8, hv7, take_cstream _ _ le_rfl, drop_cstream, List.take_length, List.drop_length,
+    Nat.sub_self, zero_mul, List.drop_zero, cstream_nil, List.nil_append] at h₈
+  set σ₈ := Function.update (Function.update σ₇ .vk []) .pr ((cstream A w (colC lt)).reverse ++ σ₇ .pr)
+  have h₉ := rsb_emptyR_runs (body := body) (ι := ι) hrg .pr σ₈
+  set σ₉ := Function.update σ₈ .pr []
+  have h₁₀ := rsb_moveR_runs (body := body) (ι := ι) hrg (a := .ya) (b := .ef) (by decide) σ₉
+  set σ₁₀ := Function.update (Function.update σ₉ .ya []) .ef ((σ₉ .ya).reverse ++ σ₉ .ef)
+  have h₁₁ := rsb_moveR_runs (body := body) (ι := ι) hrg (a := .nv) (b := .vk) (by decide) σ₁₀
+  set σ₁₁ := Function.update (Function.update σ₁₀ .nv []) .vk ((σ₁₀ .nv).reverse ++ σ₁₀ .vk)
+  have h₁₂ := rsb_moveR_runs (body := body) (ι := ι) hrg (a := .xs) (b := .vk) (by decide) σ₁₁
+  have hWsplit : W = W.take k ++ [last] := by
+    conv_lhs => rw [← List.take_append_drop k W]
+    congr 1
+    rw [List.drop_eq_getElem_cons hkW, List.drop_of_length_le (by omega)]
+  have hdl : W.dropLast = W.take k := by
+    rw [List.dropLast_eq_take, hW]; rfl
+  refine ((RsbRuns.seq hdisj h₁ (RsbRuns.seq hdisj h₂ (RsbRuns.seq hdisj h₃
+    (RsbRuns.seq hdisj h₄ (RsbRuns.seq hdisj h₅ (RsbRuns.seq hdisj h₆' (RsbRuns.seq hdisj h₇
+    (RsbRuns.seq hdisj h₈ (RsbRuns.seq hdisj h₉ (RsbRuns.seq hdisj h₁₀ (RsbRuns.seq hdisj h₁₁
+    h₁₂))))))))))).congr ?_).mono ?_
+  · have hheads : W.map (fun blk => (⟨blk.headD 0, 0⟩ : GaussianInt)) =
+        (W.take k).map (fun blk => (⟨blk.headD 0, 0⟩ : GaussianInt)) ++ [⟨lh, 0⟩] := by
+      conv_lhs => rw [hWsplit]
+      simp [hlht]
+    have hct : ∀ blk : List ℤ, (blk.map (fun x => (⟨x, 0⟩ : GaussianInt))).tail ++ [⟨0, 0⟩] =
+        (blk.tail ++ [0]).map (fun x => (⟨x, 0⟩ : GaussianInt)) := by
+      intro blk; cases blk <;> simp <;> rfl
+    have hmapk : ∀ {β : Type} (g : List ℤ → β), (W.map g).take k ++ [g last] = W.map g := by
+      intro β g
+      conv_rhs => rw [hWsplit]
+      simp
+    funext x; cases x <;> simp [σ₁₁, σ₁₀, σ₉, σ₈, σ₇, σ₆, rsbUpd2, hΨ, σ₅, σ₄, σ₃, σ₂, σ₁, hef,
+      hxs, hpr, hya, hnv, Mult.BandFactor.tStep, hdl, colC, List.reverse_append, htL, hu,
+      Function.comp_def]
+    all_goals
+      conv_rhs => rw [← hmapk (fun blk : List ℤ => (⟨blk.head?.getD 0, 0⟩ : GaussianInt))]
+      simp [hlht]
+  · simp [σ₁₁, σ₁₀, σ₉, σ₈, σ₇, σ₆, rsbUpd2, hΨ, σ₅, σ₄, σ₃, σ₂, σ₁, hef, hxs, hpr, hya, hnv,
+      hwn, hmwn, hm2wn, colC, hul, hvl, hltl, bandTStepCost, csyms, hW]
+    have hsum : (List.take k (List.map (List.length ∘ fun blk =>
+        (List.map (fun x => (⟨x, 0⟩ : GaussianInt)) blk).tail ++ [(⟨0, 0⟩ : GaussianInt)]) W)).sum =
+        k * (k + 1) := by
+      rw [List.map_congr_left (g := fun _ => k+1) (fun blk hb => by simp [hWl blk hb]),
+        List.map_const', List.take_replicate, List.sum_replicate, hW, smul_eq_mul,
+        Nat.min_eq_left (by omega)]
+    rw [hsum]
+    nlinarith
 
 end Contracts
 
