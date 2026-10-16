@@ -95,6 +95,9 @@ def bandTStepP : Pr P T Q A U :=
   (.seq (moveR (rg .ya) (rg .ef) id)
   (.seq (moveR (rg .nv) (rg .vk) id) (moveR (rg .xs) (rg .vk) id)))))))))))
 
+/-- The transpose: one transpose step per symbol of `sn`. -/
+def bandTLoopP : Pr P T Q A U := rsbRep (rg .sn) (rg .sel) (bandTStepP rg)
+
 end Programs
 
 /-- A Newton step on real records. -/
@@ -1059,6 +1062,74 @@ theorem band_tStep_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠
         Nat.min_eq_left (by omega)]
     rw [hsum]
     nlinarith
+
+/-- **The transpose.** With the pivot rows `Ur` (row `0` on top) on `src` and the
+zero window on `vk`, `ef` gains the backward-pass columns `ucolZ`, the last on top. -/
+theorem band_tLoop_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠ ι j) {w k s : ℕ}
+    (σ : RsbR → List (Fin (A + 4))) (Ur : List (List ℤ)) (hUr : Ur.length = s)
+    (hrow : ∀ row ∈ Ur, row.length = 2 * (k + 1) + 1) (SRC EF : List (Fin (A + 4)))
+    (hsrc : σ .src = cstream A w (Ur.map colC).flatten ++ SRC)
+    (hvk : σ .vk = cstream A w ((Mult.BandFactor.tWin (k + 1) Ur 0).map colC).flatten)
+    (hef : σ .ef = EF) (hmsk : σ .msk = csyms A w 0) (hpr : σ .pr = []) (hxs : σ .xs = [])
+    (hya : σ .ya = []) (hnv : σ .nv = []) (htC : σ .tC = []) (htL : σ .tL = [])
+    (hsel : σ .sel = []) (hsn : (σ .sn).length = s)
+    (hwn : (σ (.cm .wn)).length = w) (hmwn : (σ .mwn).length = (k + 1) * w)
+    (hm2wn : (σ .m2wn).length = k * w) (hms : (σ .ms).length = k) :
+    RsbRuns body rg ι (bandTLoopP rg) σ
+      (Function.update (Function.update (Function.update σ .src SRC) .vk
+        (cstream A w ((Mult.BandFactor.tWin (k + 1) Ur s).map colC).flatten))
+        .ef (cstream A w ((List.range s).reverse.map fun m =>
+          colC (Mult.BandFactor.ucolZ (k + 1) Ur m)).flatten ++ EF))
+      (s * (bandTStepCost w k + 6) + 4) := by
+  obtain ⟨Ψ, hΨ⟩ : ∃ Ψ : ℕ → RsbR → List (Fin (A + 4)), Ψ = fun m =>
+      Function.update (Function.update (Function.update σ .src
+        (cstream A w ((Ur.drop m).map colC).flatten ++ SRC)) .vk
+        (cstream A w ((Mult.BandFactor.tWin (k + 1) Ur m).map colC).flatten))
+        .ef (cstream A w ((List.range m).reverse.map fun m =>
+          colC (Mult.BandFactor.ucolZ (k + 1) Ur m)).flatten ++ EF) := ⟨_, rfl⟩
+  have hbody : ∀ j < (σ .sn).length, ∀ X Y, RsbRuns body rg ι (bandTStepP rg)
+      (rsbUpd2 (Ψ j) .sn X .sel Y) (rsbUpd2 (Ψ (j + 1)) .sn X .sel Y) (bandTStepCost w k) := by
+    intro j hj X Y
+    rw [hsn] at hj
+    have hjU : j < Ur.length := by omega
+    set row := Ur[j]'hjU with hrowdef
+    have hrl : row.length = 2 * (k + 1) + 1 := hrow row (List.getElem_mem _)
+    have hWl : ∀ blk ∈ Mult.BandFactor.tWin (k + 1) Ur j, blk.length = k + 1 := by
+      intro blk hb
+      simp only [Mult.BandFactor.tWin, List.mem_map] at hb
+      obtain ⟨d, -, rfl⟩ := hb
+      simp
+    have h := band_tStep_runs (body := body) (ι := ι) (w := w) (k := k) hrg hdisj
+      (rsbUpd2 (Ψ j) .sn X .sel Y) row hrl (Mult.BandFactor.tWin (k + 1) Ur j)
+      (by simp [Mult.BandFactor.tWin]) hWl (cstream A w ((Ur.drop (j+1)).map colC).flatten ++ SRC)
+      (cstream A w ((List.range j).reverse.map fun m =>
+          colC (Mult.BandFactor.ucolZ (k + 1) Ur m)).flatten ++ EF)
+      (by
+        have hdj : (Ur.map colC).drop j=colC row :: (Ur.map colC).drop (j+1) := by
+          rw [List.drop_eq_getElem_cons (by simpa using hjU), List.getElem_map]
+        simp [rsbUpd2, hΨ, hdj])
+      (by simp [rsbUpd2, hΨ]) (by simp [rsbUpd2, hΨ]) (by simp [rsbUpd2, hΨ, hmsk])
+      (by simp [rsbUpd2, hΨ, hpr]) (by simp [rsbUpd2, hΨ, hxs]) (by simp [rsbUpd2, hΨ, hya])
+      (by simp [rsbUpd2, hΨ, hnv]) (by simp [rsbUpd2, hΨ, htC]) (by simp [rsbUpd2, hΨ, htL])
+      (by simp [rsbUpd2, hΨ, hwn]) (by simp [rsbUpd2, hΨ, hmwn]) (by simp [rsbUpd2, hΨ, hm2wn])
+      (by simp [rsbUpd2, hΨ, hms])
+    refine h.congr ?_
+    have hgd : Ur.getD j [] = row := by rw [List.getD_eq_getElem _ _ hjU]
+    have hstep := Mult.BandFactor.tWin_step (k + 1) Ur (by omega) j (by rw [hgd, hrl]; omega)
+    rw [hgd] at hstep
+    have hcol : (Mult.BandFactor.tStep (Mult.BandFactor.tWin (k + 1) Ur j)
+        ((row.drop 1).take (k + 1))).1 = Mult.BandFactor.ucolZ (k + 1) Ur j := by
+      simp only [Mult.BandFactor.tStep, Mult.BandFactor.tWin_heads]
+    rw [hstep, hcol]
+    funext x; cases x <;> simp [rsbUpd2, hΨ, List.range_succ]
+  have h := rsb_rep_runs hrg hdisj (ra := .sn) (rt := .sel) (by decide) (bandTStepP rg)
+    (σ .sn) Ψ _ hbody
+  refine (h.congr_pre ?_ |>.congr ?_).mono ?_
+  · funext x; cases x <;> simp [rsbUpd2, hΨ, hsrc, hvk, hef, hsel]
+  · rw [hsn]
+    have hd : (Ur.map colC).drop s=[] := List.drop_of_length_le (by simp; omega)
+    funext x; cases x <;> simp [rsbUpd2, hΨ, hsel, hd]
+  · rw [hsn]
 
 end Contracts
 
