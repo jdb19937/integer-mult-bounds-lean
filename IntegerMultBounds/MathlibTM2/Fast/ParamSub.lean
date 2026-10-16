@@ -274,7 +274,7 @@ theorem pmOddPart_succ (j : ℕ) : pmOddPart (j + 1) = pmOddPart j * (2 * j + 1)
   Finset.prod_range_succ _ _
 
 theorem pmOddPart_mono {j m : ℕ} (h : j ≤ m) : pmOddPart j ≤ pmOddPart m :=
-  Finset.prod_le_prod_of_subset_of_one_le' (Finset.range_subset_range.2 h) (fun _ _ _ => by omega)
+  Finset.prod_le_prod_of_subset_of_one_le (Finset.range_subset_range.2 h) (fun _ _ _ => by omega)
 
 /-- `N := oddProd d`: `d` in `0`, `N` in `1`, the counter in `2`, `2d` in `3`, `2i + 1` in `4`. -/
 def pmOddC : TblCode 5 :=
@@ -358,7 +358,7 @@ theorem pmSProd_succ (N x₀ a d : ℕ) :
     pmSProd N x₀ a (d + 1) = pmSProd N x₀ a d * modulus N x₀ a d := Finset.prod_range_succ _ _
 
 theorem pmSProd_mono (N x₀ a : ℕ) {j m : ℕ} (h : j ≤ m) : pmSProd N x₀ a j ≤ pmSProd N x₀ a m :=
-  Finset.prod_le_prod_of_subset_of_one_le' (Finset.range_subset_range.2 h)
+  Finset.prod_le_prod_of_subset_of_one_le (Finset.range_subset_range.2 h)
     (fun _ _ _ => pm_one_le_modulus _ _ _ _)
 
 theorem pmSProd_pos (N x₀ a d : ℕ) : 0 < pmSProd N x₀ a d :=

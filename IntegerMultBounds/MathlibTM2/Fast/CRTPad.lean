@@ -440,10 +440,10 @@ theorem crtPadRecs_top {α : Type*} (hs : ∀ j, s j ≤ 2 ^ a j) (l : List α) 
     simp only [crtVal, decide_eq_true_eq]
     exact ⟨fun H j _ => H j, fun H j => H j j.isLt⟩
   by_cases h : crtVal a s d n = true
-  · rw [if_pos h, if_pos (hv.2 h), (crtCnt_main a s hs d le_rfl).2 n hn' h, crtK]
+  · rw [ite_eq_left h, ite_eq_left (hv.2 h), (crtCnt_main a s hs d le_rfl).2 n hn' h, crtK]
     congr 1
     rw [crtLow_of_le le_rfl]
-  · rw [if_neg h, if_neg (fun h' => h (hv.1 h'))]
+  · rw [ite_eq_right h, ite_eq_right (fun h' => h (hv.1 h'))]
 
 lemma CrtAL.ne_of_not_prot {L : CrtAL T} {k : Fin T} (h : ¬ L.Prot k) :
     k ≠ L.nF ∧ k ≠ L.tN ∧ k ≠ L.fc ∧ k ≠ L.sg ∧ k ≠ L.mq ∧ k ≠ L.c0 ∧ k ≠ L.c1 ∧ k ≠ L.c2 ∧

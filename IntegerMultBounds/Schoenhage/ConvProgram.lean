@@ -40,7 +40,7 @@ theorem fwdSlot_inj {i o : Fin 9} (hi : i.val ≠ 0) (ho : o.val ≠ 0) (hio : i
   apply Fin.ext
   have := Fin.val_ne_of_ne hio
   have := i.isLt; have := o.isLt
-  split_ifs at h' <;> simp only [Fin.val_mk] at h' <;> omega
+  split_ifs at h' <;> simp only at h' <;> omega
 
 /-- The ring product bank's tapes: header, two operands and the output on given data tapes. -/
 def uSlot (t : ℕ) (h f g o : Fin 9) : Fin 𝕌 → Fin (NB t) := fun x =>
@@ -64,7 +64,7 @@ theorem uSlot_inj {h f g o : Fin 9} (hd : [h, f, g, o].Nodup) : Function.Injecti
   have hx := x.isLt; have hy := y.isLt
   change x.val < 91 at hx; change y.val < 91 at hy
   apply Fin.ext
-  split_ifs at e' <;> simp only [Fin.val_mk, Fin.ext_iff, val_zH, val_zF, val_zG, val_zO] at * <;> omega
+  split_ifs at e' <;> simp only [Fin.ext_iff, val_zH, val_zF, val_zG, val_zO] at * <;> omega
 
 /-- Replacing slotted tapes, described tape by tape. -/
 theorem upd_eq_of {n m : ℕ} (σ : Fin n → WTape) {f : Fin m → Fin n} (hf : Function.Injective f)
@@ -232,7 +232,7 @@ theorem runs_fwdCall (M : Program t q₁ a) (ht : 4 ≤ t) {i o : Fin 9} (hi : i
     · by_cases ji : j = i
       · subst ji; rw [Function.update_of_ne hio, hvi]; simp [start2, tp, j0]
       · by_cases jo : j = o
-        · subst jo; simp [start2, tp, j0, ji]
+        · subst jo; simp [tp, j0, ji]
         · simp [j0, ji, jo]
   · intro x a0 a1 a3
     have n3 : x ≠ tp ht 3 (by decide) := fun e => a3 (by rw [e]; rfl)
@@ -360,7 +360,7 @@ theorem runs_convCore (Mf : Program t q₁ a) (Mo : Program t q₂ a) (ht : 4 �
       else if j = 3 then Function.update (Function.update (scaleStart hdr V) zO (reg Out)) zG (reg Desc) zO
       else v4 j) = v5 := by
     funext j
-    fin_cases j <;> simp [v5, v4, v3, v2, v1, v0, scaleStart, zO_ne_zH.symm, zO_ne_zF.symm, zO_ne_zG.symm,
+    fin_cases j <;> simp [v5, v4, v3, v2, v1, v0, scaleStart, zO_ne_zH.symm, zO_ne_zF.symm, 
       zF_ne_zH.symm, zG_ne_zH.symm, zG_ne_zF.symm, zO_ne_zG]
   have s5' := s5.mono (fun σ h => h.trans (congrArg (cb t) hv5)) le_rfl
   have c5 := runs_clearData (t := t) (a := a) 5 v5
@@ -467,9 +467,9 @@ theorem convProg_hoare (Mf : Program t q₁ a) (Mo : Program t q₂ a) (ht : 4 �
     refine ⟨hh, tape_cases (fun j => ?_) (fun x hx => ?_)⟩
     · rw [enc_cb_low]
       simp only [u2, u1, u0]
-      fin_cases j <;> simp [Function.update_apply, dt_ne, bank5_low, n10, n20, n21, n30, n31, n32, n40, n41,
-        n42, n43, Ne.symm n10, Ne.symm n20, Ne.symm n21, Ne.symm n30, Ne.symm n31, Ne.symm n32, Ne.symm n40,
-        Ne.symm n41, Ne.symm n42, Ne.symm n43, emp_tape', wordAt_nil', reg] <;>
+      fin_cases j <;> simp [dt_ne, bank5_low, n30, n31, n32, n40, n41,
+        n42, Ne.symm n10, Ne.symm n20, Ne.symm n21, 
+        emp_tape', wordAt_nil', reg] <;>
         first | rfl | simp [dt, Fin.ext_iff, bank5]
     · rw [enc_cb_high _ hx]
       simp only [u2, u1, u0]
@@ -501,8 +501,8 @@ theorem convProg_hoare (Mf : Program t q₁ a) (Mo : Program t q₂ a) (ht : 4 �
     refine ⟨hw0, tape_cases (fun j => ?_) (fun x hx => ?_)⟩
     · rw [bank5_low]
       simp only [w4, w3, w2, w1, w0]
-      fin_cases j <;> simp [Function.update_apply, n10, n20, n21, n30, n31, n32, n40, n41,
-        n42, n43, Ne.symm n10, Ne.symm n20, Ne.symm n21, Ne.symm n30, Ne.symm n31, Ne.symm n32, Ne.symm n40,
+      fin_cases j <;> simp [Function.update_apply, 
+        Ne.symm n10, Ne.symm n20, Ne.symm n21, Ne.symm n30, Ne.symm n31, Ne.symm n32, Ne.symm n40,
         Ne.symm n41, Ne.symm n42, Ne.symm n43, enc_cb_low, emp_tape'] <;>
         first | rfl | simp [dt, Fin.ext_iff, enc, cb, emp_tape']
     · rw [bank5_high _ _ _ _ _ hx]

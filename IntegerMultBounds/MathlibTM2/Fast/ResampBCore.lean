@@ -349,7 +349,7 @@ theorem rsb_scanIf_loop (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠
     have hjl : j < l.length := by omega
     have hdrop : l.drop j = l[j] :: l.drop (j + 1) := List.drop_eq_getElem_cons hjl
     have htake : (l.take (j + 1)).reverse = l[j] :: (l.take j).reverse := by
-      rw [List.take_succ, List.getElem?_eq_getElem hjl]; simp
+      rw [List.take_add_one, List.getElem?_eq_getElem hjl]; simp
     have hSa : S.R (rg ra) = l[j] :: l.drop (j + 1) := by
       rw [hS ra, ← hdrop]; simp [Function.update_of_ne hat]
     have hSt : S.R (rg rt) = (l.take j).reverse := by rw [hS rt]; simp
@@ -378,8 +378,8 @@ theorem rsb_scanIf_loop (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠
     have hcond : Exec body (.cond (fun v => c (v.sym.getD blank)) p q)
         (mk { v with sym := some l[j] } S₁) (m₂ + 1) (mk v₂ S₂) := by
       by_cases hcj : c l[j] = true
-      · rw [if_pos hcj] at he₂; exact Exec.cond_true (by simpa using hcj) he₂
-      · rw [if_neg hcj] at he₂; exact Exec.cond_false (by simpa using hcj) he₂
+      · rw [ite_eq_left hcj] at he₂; exact Exec.cond_true (by simpa using hcj) he₂
+      · rw [ite_eq_right hcj] at he₂; exact Exec.cond_false (by simpa using hcj) he₂
     have hS₂a : S₂.R (rg ra) = l.drop (j + 1) := by
       rw [hS₂ ra]; simp only [rsbUpd2, Function.update_of_ne hat, Function.update_self]
     obtain ⟨v₃, S₃, m₃, hu₃, hm₃, he₃, hS₃, hfr₃⟩ := ih (j + 1) (by omega)

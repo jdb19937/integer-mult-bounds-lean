@@ -666,7 +666,7 @@ theorem dsyChunk_do {K D q N : ℕ} (s : TblSt 40 A) (hK : s.val vK = K) (hD : s
       · simp only [List.mem_cons, List.not_mem_nil, or_false, not_or] at hx
         dsimp only
         simp only [Function.update_apply, hx.1, hx.2.1, hx.2.2.1, hx.2.2.2.1, hx.2.2.2.2.1,
-          hx.2.2.2.2.2, if_false]
+          hx.2.2.2.2.2, ite_false]
   · refine TblDo.mono (K := 1 + 1) ?_ (fun _ h => h) (by norm_num)
     refine TblDo.iteF (by rw [hKm, hydef]; exact h) (TblDo.ins _ ⟨?_, fun x hx => ?_, rfl⟩)
     · show Function.update s.val vtmp 0 vp = _

@@ -53,7 +53,7 @@ theorem pslot_injective : Function.Injective (pslot tL nL) := by
   have hx := x.isLt; have hy := y.isLt
   change x.val < 91 at hx; change y.val < 91 at hy
   apply Fin.ext
-  split_ifs at e' <;> (try subst_vars) <;> simp only [Fin.val_mk, Fin.ext_iff] at * <;> first | rfl | omega |
+  split_ifs at e' <;> (try subst_vars) <;> simp only [Fin.ext_iff] at * <;> first | rfl | omega |
     (simp at *; omega)
 
 /-- What the prefix-round machine sees: its five data tapes from named tapes 0–4, all else empty. -/
@@ -140,9 +140,9 @@ theorem lslot_injective : Function.Injective (lslot tL nL) := by
   have e' := congrArg Fin.val e
   unfold lslot nm at e'
   apply Fin.ext
-  split_ifs at e' <;> simp only [Fin.val_mk] at * <;> omega
+  split_ifs at e' <;> simp only at * <;> omega
 
-theorem dstate_comp_lslot (ht : 2 ≤ tL) (v : Fin 13 → WTape) (tw : Fin 29 → WTape) {hdr A : List Bool}
+theorem dstate_comp_lslot (_ht : 2 ≤ tL) (v : Fin 13 → WTape) (tw : Fin 29 → WTape) {hdr A : List Bool}
     (h5 : v 5 = reg hdr) (h0 : v 0 = reg A) : dstate tL nL v tw ∘ lslot tL nL = start1 tL hdr A := by
   funext x
   simp only [Function.comp_apply, lslot, start1]
@@ -195,7 +195,7 @@ theorem aslot_injective : Function.Injective (aslot tL) := by
   change x.val < SN + 3 at hx; change y.val < SN + 3 at hy
   have h6 := six_le
   apply Fin.ext
-  split_ifs at e' with a1 a2 a3 a4 <;> (try subst_vars) <;> simp only [Fin.val_mk, Fin.ext_iff, hax, hsc] at * <;>
+  split_ifs at e' with a1 a2 a3 a4 <;> (try subst_vars) <;> simp only [Fin.ext_iff, hax, hsc] at * <;>
     omega
 
 open Resampling.AxisDriver in

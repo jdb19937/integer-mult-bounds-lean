@@ -303,14 +303,14 @@ theorem dsyZeroAll_runs {rg : TblR 40 → Fin T} (hrg : Function.Injective rg) (
   · obtain ⟨r, rfl⟩ := hk
     rw [dsOv_rg hrg]
     rcases r with i | _ | _ | _ | j
-    · rw [if_pos ⟨i, List.mem_finRange i, rfl⟩]; rfl
-    · rw [if_neg (by rintro ⟨i, -, h⟩; cases hrg h), hwr]; rfl
-    · rw [if_neg (by rintro ⟨i, -, h⟩; cases hrg h), hR₀, Function.update_self]; rfl
-    · rw [if_neg (by rintro ⟨i, -, h⟩; cases hrg h), l0 _ (by decide) (by decide)]; rfl
-    · rw [if_neg (by rintro ⟨i, -, h⟩; cases hrg h), l0 _ (fun h => by cases h)
+    · rw [ite_eq_left ⟨i, List.mem_finRange i, rfl⟩]; rfl
+    · rw [ite_eq_right (by rintro ⟨i, -, h⟩; cases hrg h), hwr]; rfl
+    · rw [ite_eq_right (by rintro ⟨i, -, h⟩; cases hrg h), hR₀, Function.update_self]; rfl
+    · rw [ite_eq_right (by rintro ⟨i, -, h⟩; cases hrg h), l0 _ (by decide) (by decide)]; rfl
+    · rw [ite_eq_right (by rintro ⟨i, -, h⟩; cases hrg h), l0 _ (fun h => by cases h)
         (fun h => by cases h)]; rfl
   · push Not at hk
-    rw [dsOv_off _ _ hk, if_neg (by rintro ⟨i, -, h⟩; exact hk _ h), hR₀,
+    rw [dsOv_off _ _ hk, ite_eq_right (by rintro ⟨i, -, h⟩; exact hk _ h), hR₀,
       Function.update_of_ne (hk _).symm, Function.update_of_ne (hk _).symm]
 
 /-- The loads of `N, ℓ, K, D` into the variables `0 … 3`. -/
@@ -511,13 +511,13 @@ theorem dsyClearAll_runs {rg : TblR 40 → Fin T} (hrg : Function.Injective rg) 
   · obtain ⟨r, rfl⟩ := hk
     simp only [dsOv_rg hrg]
     rcases r with i | _ | _ | _ | j
-    · rw [if_pos ⟨.v i, by simp [dsyAllRegs], rfl⟩]
-    · rw [if_pos ⟨.wr, by simp [dsyAllRegs], rfl⟩]
-    · rw [if_pos ⟨.wn, by simp [dsyAllRegs], rfl⟩]
-    · rw [if_neg (by rintro ⟨r, hr, h⟩; have := hrg h; subst this; simp [dsyAllRegs] at hr)]; rfl
-    · rw [if_neg (by rintro ⟨r, hr, h⟩; have := hrg h; subst this; simp [dsyAllRegs] at hr)]; rfl
+    · rw [ite_eq_left ⟨.v i, by simp [dsyAllRegs], rfl⟩]
+    · rw [ite_eq_left ⟨.wr, by simp [dsyAllRegs], rfl⟩]
+    · rw [ite_eq_left ⟨.wn, by simp [dsyAllRegs], rfl⟩]
+    · rw [ite_eq_right (by rintro ⟨r, hr, h⟩; have := hrg h; subst this; simp [dsyAllRegs] at hr)]; rfl
+    · rw [ite_eq_right (by rintro ⟨r, hr, h⟩; have := hrg h; subst this; simp [dsyAllRegs] at hr)]; rfl
   · push Not at hk
-    rw [dsOv_off _ _ hk, if_neg (by rintro ⟨r, -, h⟩; exact hk _ h), dsOv_off _ _ hk]
+    rw [dsOv_off _ _ hk, ite_eq_right (by rintro ⟨r, -, h⟩; exact hk _ h), dsOv_off _ _ hk]
 
 /-- **The wire machine.** -/
 def dsySyn (rg : TblR 40 → Fin T) (io : DsX → Fin T) (oPark oB oLg oL oNr oRec oPos : Fin T) :
@@ -571,7 +571,7 @@ theorem dsy_length_topRec_le {es : List ℕ} {ℓ K : ℕ} (H : LayHyp es ℓ K)
     intro x hx
     obtain ⟨e, he, rfl⟩ := List.mem_map.1 hx
     rcases H.widths e he with h | h <;> omega
-  calc (es.map (· + 1)).sum ≤ (es.map (· + 1)).length * (ℓ + 1) := List.sum_le_card_nsmul _ _ this
+  calc (es.map (· + 1)).sum ≤ (es.map (· + 1)).length * (ℓ + 1) := List.sum_le_length_nsmul _ _ this
     _ = es.length * (ℓ + 1) := by rw [List.length_map]
 
 theorem dsy_length_twPosReg (N : ℕ) (P : ℕ → ℕ) (hP : ∀ k < N, P k ≤ N) :

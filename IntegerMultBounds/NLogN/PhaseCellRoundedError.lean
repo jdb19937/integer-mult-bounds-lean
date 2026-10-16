@@ -90,7 +90,7 @@ theorem entry_error {P s t w : ℕ} {α : ℝ} {j k : ℤ} {r : ℝ}
       PhaseCell.weight s t α j * gaussian s t α (k-j) / PhaseCell.weight s t α k := by
     simpa only [gaussian, Int.cast_sub] using PhaseCell.coefficient_eq s t hst α j k hphase
   rw [hexact]
-  simpa only [entry, if_neg hjk, Rat.cast_div, Rat.cast_mul, similarity] using h
+  simpa only [entry, ite_eq_right hjk, Rat.cast_div, Rat.cast_mul, similarity] using h
 
 /-- The literal diagonal has zero entry error against the exact unaliased
 normalized lattice diagonal, without any rounding premise. -/

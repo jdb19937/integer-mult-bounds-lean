@@ -46,7 +46,7 @@ theorem addW_offWord {W : ℕ} {a b : ℤ} (hW : 1 ≤ W) (ha1 : -2 ^ (W - 1) �
   rw [bval_addW, length_offWord, fit_len (by simp)]
   push_cast
   rw [bval_offWord hW ha1 ha2, bval_offWord hW hb1 hb2]
-  simp only [Bool.false_eq_true, ite_false, Nat.cast_zero, add_zero, Nat.add_sub_cancel]
+  simp only [add_zero]
   have : (2 : ℤ) ^ W = 2 * 2 ^ (W - 1) := by rw [← pow_succ']; congr 1; omega
   linarith
 
@@ -74,7 +74,7 @@ theorem addNotW_offWord {W : ℕ} {a b : ℤ} (hW : 1 ≤ W) (ha1 : -2 ^ (W - 1)
     zify [this] at hc ⊢; linarith
   push_cast
   rw [hc', bval_offWord hW ha1 ha2, bval_offWord hW hb1 hb2]
-  simp only [ite_true, Nat.cast_one, Nat.add_sub_cancel]
+  simp only [ite_true]
   have : (2 : ℤ) ^ W = 2 * 2 ^ (W - 1) := by rw [← pow_succ']; congr 1; omega
   linarith
 

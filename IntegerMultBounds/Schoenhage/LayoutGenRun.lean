@@ -178,7 +178,7 @@ theorem runs_nPhase (ℓ K w D : ℕ) (f : List Bool) :
     (by
       intro x hx
       have h19 : x ≠ 19 := fun e => hx 0 (by rw [e]; rfl)
-      simp [Function.update_apply, h19])
+      simp [h19])
   set σ := Function.update (stB ℓ K w D f) 19 (reg (ones (nOf ℓ D f))) with hσ
   have s2 : Runs (a := 0) (.seq (cpy 19 3 (by decide)) (rewind 19)) σ (· = stC ℓ K w D f) (2 * nOf ℓ D f + 12) := by
     apply Runs.of_wp
@@ -186,7 +186,7 @@ theorem runs_nPhase (ℓ K w D : ℕ) (f : List Bool) :
     tsimp [hσ, stB, stA, lstart, emp, reg, Rules.output_copy]
     refine ⟨?_, ?_⟩
     · funext i; fin_cases i <;> first | rfl | tsimp [hσ, stC, stB, stA, lstart, reg, endv]
-    · simp [time_copy, length_ones, clen]; omega
+    · simp [time_copy, length_ones]; omega
   refine (Runs.seq (s1'.mono (fun τ h => by rw [h]; exact s2) le_rfl)).mono (fun τ h => h) ?_
   omega
 
@@ -544,9 +544,9 @@ theorem runs_movesPhase {ℓ K w : ℕ} {ts : List ℕ} (hL : LayoutOK (2 ^ ℓ)
   · have := congrFun he ⟨i.val, hi⟩
     simp only [Function.comp_apply] at this
     rw [show fm ⟨i.val, hi⟩ = i from Fin.ext rfl] at this
-    rw [this, stG, dif_pos hi]
+    rw [this, stG, dite_eq_left hi]
     rfl
-  · rw [ho i (fun y hy => hi (by rw [← hy]; exact y.isLt)), stG, dif_neg hi]
+  · rw [ho i (fun y hy => hi (by rw [← hy]; exact y.isLt)), stG, dite_eq_right hi]
 
 /-! ### The chunk exchanges -/
 

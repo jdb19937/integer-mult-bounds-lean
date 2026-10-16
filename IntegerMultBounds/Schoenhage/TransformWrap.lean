@@ -62,13 +62,13 @@ theorem runs_cleanD (w : ℕ) (X : List Bool) (S6 S7 : WTape) (r n M : ℕ) :
   · rw [h]
     congr 1
     · funext i
-      fin_cases i <;> simp (config := {decide := true}) [v3, v2, v, rnamed, only0, Function.update_apply, emp]
+      fin_cases i <;> simp (config := {decide := true}) [v3, v2, v, rnamed, only0, emp]
     · funext j
-      fin_cases j <;> simp (config := {decide := true}) [t9, t8, t7, t6, t5, t4', tw, twRest, Function.update_apply,
+      fin_cases j <;> simp (config := {decide := true}) [t9, t8, t7, t6, t5, t4', tw, twRest, 
         emp]
   · simp (config := {decide := true}) only [dstate_nm, dstate_twT, v3, v2, v, rnamed, t9, t8, t7, t6, t5, t4', tw,
-      twRest, Function.update_apply, if_true, if_false, reg, WTape.words, List.reverse_nil, List.nil_append,
-      List.append_nil, clen_cons, clen_nil, length_ones, List.length_replicate, TwistDescriptors.clen_replicate_nil', length_bits]
+      twRest, Function.update_apply, ite_true, ite_false, reg, WTape.words, List.reverse_nil, List.nil_append,
+      clen_cons, clen_nil, length_ones, TwistDescriptors.clen_replicate_nil', length_bits]
     omega
 
 /-! ### The word bank: the paper's four tapes, then the drivers' bank -/
@@ -126,7 +126,7 @@ theorem w4_eq (hdr F : List Bool) (o : WTape) :
   · have h0 : (Fin.natAdd 4 j : Fin (4 + DB tL nL)).val ≠ 0 := by simp
     have h1 : (Fin.natAdd 4 j : Fin (4 + DB tL nL)).val ≠ 1 := by simp; omega
     have h3 : (Fin.natAdd 4 j : Fin (4 + DB tL nL)).val ≠ 3 := by simp; omega
-    simp only [w4, h0, h1, h3, if_false]
+    simp only [w4, h0, h1, h3, ite_false]
     simp [wst]
 
 theorem pt_ne_drv (i : Fin 4) (x : Fin (DB tL nL)) : pt tL nL i ≠ drv tL nL x := fun e => by
@@ -134,10 +134,10 @@ theorem pt_ne_drv (i : Fin 4) (x : Fin (DB tL nL)) : pt tL nL i ≠ drv tL nL x 
 
 theorem rnamed_update0 (w : ℕ) (X : List Bool) (S6 S7 : WTape) :
     Function.update (Function.update (rnamed w [] S6 S7) 0 emp) 0 (reg X) = rnamed w X S6 S7 := by
-  funext i; fin_cases i <;> simp (config := {decide := true}) [rnamed, Function.update_apply]
+  funext i; fin_cases i <;> simp (config := {decide := true}) [rnamed]
 
 theorem only0_update0 (X : List Bool) : Function.update (only0 X) 0 emp = fun _ => emp := by
-  funext i; fin_cases i <;> simp (config := {decide := true}) [only0, Function.update_apply]
+  funext i; fin_cases i <;> simp (config := {decide := true}) [only0]
 
 variable {r : ℕ} [NeZero r]
 
@@ -198,7 +198,7 @@ theorem runs_coreOf (gen : Cmd A (4 + DB tL NL)) (D : Cmd A (DB tL NL)) {hdr F G
   have hS : Function.update (Function.update S0 1 ⟨[F], []⟩) 1
       ⟨[], (Function.update S0 1 (⟨[F], []⟩ : WTape) 1).left.reverse ++
         (Function.update S0 1 (⟨[F], []⟩ : WTape) 1).right⟩ = S0 := by
-    funext i; fin_cases i <;> simp [S0, Function.update_apply, reg]
+    funext i; fin_cases i <;> simp [S0, reg]
   rw [hS] at s3
   have sD := Runs.then hD (runs_cleanD (A := A) w G S6' S7' r n M)
   have s4 := TwistDescriptors.Runs.map_eq (drv tL NL) drv_injective (τ := wst S0 (dstate tL NL (rnamed w F S6 S7) (twRest r n M)))
@@ -214,10 +214,10 @@ theorem runs_coreOf (gen : Cmd A (4 + DB tL NL)) (D : Cmd A (DB tL NL)) {hdr F G
   refine (Runs.then hgen (Runs.then s2 (Runs.then s3 (Runs.then s4 s5)))).mono (fun τ h => ?_) ?_
   · rw [h]
     congr 1
-    funext i; fin_cases i <;> simp [S0, Function.update_apply]
-  · simp only [wst_pt, S0, Function.update_apply, reg, WTape.words, clen_cons, clen_nil, List.reverse_nil,
-      List.nil_append, List.reverse_cons, List.append_nil, Matrix.cons_val_one, Matrix.head_cons,
-      if_true] at *
+    funext i; fin_cases i <;> simp [S0]
+  · simp only [S0, Function.update_apply, reg, WTape.words, clen_cons, clen_nil, List.reverse_nil,
+      List.nil_append, List.reverse_cons, List.append_nil, Matrix.cons_val_one, 
+      ite_true] at *
     simp
     omega
 
@@ -256,7 +256,7 @@ theorem fwd_bank (gen : Cmd A (4 + DB tL NL)) {q a : ℕ} (M : Program tL q a) (
   refine ⟨gs, _, hgl, hgd, hcl, ?_, wrapProg_hoare _ four_le_wb hc⟩
   have h1 : (array w fs).length = 2 * r * w * ts.prod := by rw [length_array, hfl]
   have h2 : (array w gs).length = 2 * r * w * ts.prod := by rw [length_array, hgl]
-  simp only [wrapCost, WTape.words, List.reverse_reverse, List.append_nil, List.reverse_nil, List.nil_append,
+  simp only [wrapCost, WTape.words, List.reverse_reverse, List.append_nil, 
     h1, h2] at hkd ⊢
   omega
 
@@ -278,7 +278,7 @@ theorem opp_bank (gen : Cmd A (4 + DB tL NL)) {q a : ℕ} (M : Program tL q a) (
   refine ⟨gs, _, hgl, hgd, hcl, ?_, wrapProg_hoare _ four_le_wb hc⟩
   have h1 : (array w us).length = 2 * r * w * ts.prod := by rw [length_array, hul]
   have h2 : (array w gs).length = 2 * r * w * ts.prod := by rw [length_array, hgl]
-  simp only [wrapCost, WTape.words, List.reverse_reverse, List.append_nil, List.reverse_nil, List.nil_append,
+  simp only [wrapCost, WTape.words, List.reverse_reverse, List.append_nil, 
     h1, h2] at hkd ⊢
   omega
 

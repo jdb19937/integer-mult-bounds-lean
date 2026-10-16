@@ -187,7 +187,7 @@ theorem mt_rsa_hdr_len_le (xr : RsaX t₀ → List (Fin (A + 4))) (hd : Fin 5 �
     (D : PreAxA) (k : Fin 5) :
     (preBankA xr hd (D.hs w) (.sw (reg (hd k)))).length ≤ 1 + (D.P + D.G + 3 * w + D.L + D.Ld) := by
   simp only [preBankA]
-  rw [if_pos ⟨k, rfl⟩]
+  rw [ite_eq_left ⟨k, rfl⟩]
   exact (mt_rsa_bank_le hd (D.hs w) _).trans (by
     have := mt_rsa_hsSum_le D.P D.G (3 * w) D.L D.Ld
     simp only [PreAxA.hs]
@@ -207,7 +207,7 @@ theorem mt_rsa_clr_load_le (V : RsaV (RsaX t₀) A) (hd : Fin 5 → Fin t₀) (w
   have h3 := mt_rsa_hdr_len_le V.xr hd w D 3
   have h4 := mt_rsa_hdr_len_le V.xr hd w D 4
   simp only [preClrA, preHA, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, preLoadA,
-    RsaV.get, Function.update_apply, reduceCtorEq, if_false, if_true, tblStreamA_cstream,
+    RsaV.get, Function.update_apply, reduceCtorEq, ite_false, ite_true, tblStreamA_cstream,
     length_cstream, length_rsaTabL, List.length_replicate, length_binSyms]
   have hYY : Y ≤ Y ^ 2 := by nlinarith
   have hr0 : r ≤ r * Y ^ 2 := Nat.le_mul_of_pos_right _ (by positivity)

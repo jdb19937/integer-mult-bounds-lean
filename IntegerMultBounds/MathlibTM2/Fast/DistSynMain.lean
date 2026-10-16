@@ -326,7 +326,7 @@ theorem dsyWires_spec : ∀ᶠ n in atTop, ∀ mainP : MnPr bdA,
     simp only [List.mem_cons, List.not_mem_nil, or_false, not_or] at hy
     rw [hF₀, dsyWr, dsyOv_lay, ← dsyWr, hR₇]
     simp only [Function.update_apply, dsyWr, mnLay_inj.eq_iff, LReg.wire.injEq, synWire_eq_iff,
-      hy, if_false, reduceCtorEq]
+      hy, ite_false, reduceCtorEq]
     exact hlayW y
   -- the tail
   have hK : (bdO n .lK).length = K n := by simp [bdO, dsSrcO]
@@ -527,7 +527,7 @@ theorem dsyWires_spec : ∀ᶠ n in atTop, ∀ mainP : MnPr bdA,
             simp only [hF₁₀, hF₉, hF₈, hF₇, hF₆, hF₅, hF₄, hF₃, hF₂, hF₁, hF₀, dsyOv_lay, hR₇,
               Function.update_apply, dsyWr, bdIo, mnLay_inj.eq_iff, LReg.wire.injEq,
               synWire_eq_iff, SynW.p.injEq, SynW.tw.injEq, dsy_wire_ne_bdLayX, reduceCtorEq,
-              if_true, if_false, hlayW', List.append_nil]
+              ite_true, ite_false, hlayW', List.append_nil]
             rfl
           · rw [hevw _ (by simp [hw])]
             cases w <;> first | rfl | exact absurd rfl hw
@@ -538,7 +538,7 @@ theorem dsyWires_spec : ∀ᶠ n in atTop, ∀ mainP : MnPr bdA,
             | (simp only [hF₁₀, hF₉, hF₈, hF₇, hF₆, hF₅, hF₄, hF₃, hF₂, hF₁, hF₀, dsyOv_lay,
                 hR₇, Function.update_apply, dsyWr, bdIo, mnLay_inj.eq_iff, LReg.wire.injEq,
                 synWire_eq_iff, SynW.p.injEq, SynW.tw.injEq, dsy_wire_ne_bdLayX, reduceCtorEq,
-                if_true, if_false, hlayW', List.append_nil]
+                ite_true, ite_false, hlayW', List.append_nil]
                rfl)
         · rw [hevw _ (by simp)]; rfl
       · rw [dsy_mnσ_wire_off _ _ (fun y h => hv ⟨y, h⟩),
@@ -554,7 +554,7 @@ theorem dsyWires_spec : ∀ᶠ n in atTop, ∀ mainP : MnPr bdA,
         cases z
         all_goals
           simp only [hF₁₀, hF₉, hF₈, hF₇, hF₆, hF₅, hF₄, hF₃, hF₂, hF₁, Function.update_apply,
-            bdIo_inj.eq_iff, hwne, reduceCtorEq, if_true, if_false, l7io]
+            bdIo_inj.eq_iff, hwne, reduceCtorEq, ite_true, ite_false, l7io]
         all_goals rfl
       · rw [hev _ (by simp) (fun y => by simp) (fun z h => hz ⟨z, h.symm⟩),
           hP.lay _ (fun z h => hz ⟨z, h⟩)]

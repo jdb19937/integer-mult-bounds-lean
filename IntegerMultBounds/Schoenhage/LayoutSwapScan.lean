@@ -42,10 +42,10 @@ theorem selectL_range : ∀ (e k : ℕ) (rest : List ℕ), rest.length = e →
     rw [selectL, hget]
     by_cases hak : a = k
     · subst hak
-      rw [if_pos rfl, selS_cons_eq, show List.range a ++ a :: rest = List.range (a + 1) ++ rest by
+      rw [ite_eq_left rfl, selS_cons_eq, show List.range a ++ a :: rest = List.range (a + 1) ++ rest by
         simp [List.range_succ]]
       exact selectL_range e (a + 1) rest hl
-    · rw [if_neg hak, selS_cons_ne rest hak]
+    · rw [ite_eq_right hak, selS_cons_ne rest hak]
       have hidx : (List.range k ++ a :: rest).idxOf k = k + 1 + rest.idxOf k := by
         rw [List.idxOf_append_of_notMem (by simp), List.idxOf_cons_ne _ hak]
         simp; omega

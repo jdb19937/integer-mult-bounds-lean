@@ -67,12 +67,12 @@ lemma merge_flip (e : Fin k → Fin n) (he : Function.Injective e) (r : Fin n �
   simp only [merge, flip, Pi.add_apply]
   by_cases h : ∃ j, e j = t
   · have hj := h.choose_spec
-    rw [dif_pos h, dif_pos h]
+    rw [dite_eq_left h, dite_eq_left h]
     by_cases hi : h.choose = i
     · rw [hi] at hj ⊢; subst hj; simp
     · have : t ≠ e i := fun ht => hi (he (hj.trans ht))
       simp [Pi.single_apply, hi, this]
-  · rw [dif_neg h, dif_neg h]
+  · rw [dite_eq_right h, dite_eq_right h]
     have : t ≠ e i := fun ht => h ⟨i, ht.symm⟩
     simp [Pi.single_apply, this]
 

@@ -180,7 +180,7 @@ theorem tblFoldEntry_do {A W w : ℕ} (st : TblSt 60 A) {s t α P wd i c N : ℕ
         have hd : d = 0 := by omega
         simp only [TblIns.exact, k₃ 55 (by decide) (by decide) (by decide), h55,
           k₃ 38 (by decide) (by decide) (by decide), h38, acc₃, tblFoldSyms,
-          Mult.BandFactor.foldEntryZ, if_pos (And.intro hi hc), ← hddef, hd, ite_true]
+          Mult.BandFactor.foldEntryZ, ite_eq_left (And.intro hi hc), ← hddef, hd, ite_true]
         rw [tbl_pairs_red]; push_cast; rfl
       · refine TblDo.iteF (by rw [v54', k₃ 22 (by decide) (by decide) (by decide), h22]; exact hd0)
           ?_ |>.mono (fun _ h => h) (show 310 * P + 189 + 1 ≤ 310 * P + 190 by omega)
@@ -207,8 +207,8 @@ theorem tblFoldEntry_do {A W w : ℕ} (st : TblSt 60 A) {s t α P wd i c N : ℕ
           · refine TblDo.iteT (by rw [v54'', v58]; exact hfar)
               (tblFoldZero_do s₄ (by rw [k₄ 38 (by decide) (by decide) (by decide), h38]))
               |>.mono (fun s' hs' => ?_) (by omega)
-            rw [hs', acc₄, tblFoldSyms, Mult.BandFactor.foldEntryZ, if_pos (And.intro hi hc), ← hddef,
-              if_neg (by omega), if_neg (by omega), if_neg (by omega)]
+            rw [hs', acc₄, tblFoldSyms, Mult.BandFactor.foldEntryZ, ite_eq_left (And.intro hi hc), ← hddef,
+              ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_right (by omega)]
           · refine TblDo.iteF (by rw [v54'', v58]; exact hfar) ?_ |>.mono (fun _ h => h)
               (show 310 * P + 124 + 2 + 1 ≤ 310 * P + 187 by omega)
             refine (TblDo.block [.sub 34 54 58] (.sub 39 58 40) ?_ rfl).seq (K₂ := 310 * P + 124)
@@ -246,8 +246,8 @@ theorem tblFoldEntry_do {A W w : ℕ} (st : TblSt 60 A) {s t α P wd i c N : ℕ
             rw [show s'.acc = (s'.restrict tblFoldMap).acc from rfl, hs',
               show (s₅.restrict tblFoldMap).acc = s₅.acc from rfl, acc₅]
             congr 2
-            rw [tblFoldSyms, tblEntE, Mult.BandFactor.foldEntryZ, if_pos (And.intro hi hc), ← hddef,
-              if_neg (by omega), if_neg (by omega), if_pos (by omega), hcast]
+            rw [tblFoldSyms, tblEntE, Mult.BandFactor.foldEntryZ, ite_eq_left (And.intro hi hc), ← hddef,
+              ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_left (by omega), hcast]
             congr 2
             push_cast [show wd - (wd - (s - d)) = s - d by omega, Nat.cast_sub hds.le]
             ring_nf
@@ -286,14 +286,14 @@ theorem tblFoldEntry_do {A W w : ℕ} (st : TblSt 60 A) {s t α P wd i c N : ℕ
           rw [show s'.acc = (s'.restrict tblFoldMap).acc from rfl, hs',
             show (s₄.restrict tblFoldMap).acc = s₄.acc from rfl, acc₄]
           congr 2
-          rw [tblFoldSyms, tblEntE, Mult.BandFactor.foldEntryZ, if_pos (And.intro hi hc), ← hddef,
-            if_neg (by omega), if_pos hdw, hcast, show ((d - 1 + 1 : ℕ) : ℤ) = (d : ℤ) by
+          rw [tblFoldSyms, tblEntE, Mult.BandFactor.foldEntryZ, ite_eq_left (And.intro hi hc), ← hddef,
+            ite_eq_right (by omega), ite_eq_left hdw, hcast, show ((d - 1 + 1 : ℕ) : ℤ) = (d : ℤ) by
               rw [Nat.sub_add_cancel (by omega)]]
     · refine TblDo.iteT (by rw [h48, h34]; exact hi) (TblDo.iteF (by rw [h53, h34]; exact hc) hz)
         |>.mono (fun _ h => ?_) (by omega)
-      rw [h, tblFoldSyms, Mult.BandFactor.foldEntryZ, if_neg (fun h' => hc h'.2)]
+      rw [h, tblFoldSyms, Mult.BandFactor.foldEntryZ, ite_eq_right (fun h' => hc h'.2)]
   · refine TblDo.iteF (by rw [h48, h34]; exact hi) hz |>.mono (fun _ h => ?_) (by omega)
-    rw [h, tblFoldSyms, Mult.BandFactor.foldEntryZ, if_neg (fun h' => hi h'.1)]
+    rw [h, tblFoldSyms, Mult.BandFactor.foldEntryZ, ite_eq_right (fun h' => hi h'.1)]
 
 /-- The row prelude: `ℓ = foldAt i` into `37`, `t ℓ mod s` into `41`, the centring `42`. -/
 def tblFoldRowPre : TblCode 60 :=

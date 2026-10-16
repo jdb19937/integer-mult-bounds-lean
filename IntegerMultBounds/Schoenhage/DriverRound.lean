@@ -82,7 +82,7 @@ theorem runs_twistPart {ts : List ℕ} (hts : PowAxes r ts) (π : BitPerm (Nat.l
   · rw [e]
     congr 1
     funext i
-    fin_cases i <;> simp (config := {decide := true}) [v, rnamed, Function.update_apply, twistWords, tab]
+    fin_cases i <;> simp (config := {decide := true}) [v, rnamed, twistWords, tab]
   · have h1 : (array w (g zs)).length = 2 * r * w * ts.prod := by rw [length_array, hg, hzl]
     have h2 : (array w zs).length = 2 * r * w * ts.prod := by rw [length_array, hzl]
     simp only [twCost, h1, h2, hzl, tab]

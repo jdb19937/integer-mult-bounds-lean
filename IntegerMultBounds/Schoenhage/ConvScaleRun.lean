@@ -123,7 +123,7 @@ theorem runs_scaleLoop {k : ℕ} : ∀ (ps L : List (List Bool)) (acc : List Boo
       · funext y
         simp only [Function.update_apply]
         split_ifs <;> (try subst_vars) <;> (try tsimp [hA, hO, hK, reg]) <;> tsimp at *
-      · simp [time_copy, clen, WTape.words] at t1 ⊢; omega
+      · simp [time_copy] at t1 ⊢; omega
     set τ₁ := Function.update (Function.update τ xA ⟨q :: L, ps⟩) zO ⟨[acc ++ (q ++ List.replicate k false)], []⟩
     have ih := runs_scaleLoop (k := k) ps (q :: L) (acc ++ (q ++ List.replicate k false)) τ₁ (by tsimp [τ₁])
       (by tsimp [τ₁]) (by tsimp [τ₁, hK])
@@ -211,7 +211,7 @@ theorem runs_gammaOut {w k : ℕ} (τ : Fin 𝕌 → WTape) (hc : Clean τ) (hW 
       simp only [Function.update_apply]
       split_ifs <;> (try subst_vars) <;> (try tsimp [hz, hW, hK, reg, emp, ones, n]) <;>
         (try tsimp at *)
-    · simp [time_copy, clen, WTape.words, n]; omega
+    · simp [time_copy, n]; omega
   set τA := Function.update τ (ι qR) (reg (ones n))
   have sB := runs_ticksFrom (show ι qR ≠ ι qT by decide) τA (b := n) (by tsimp [τA]) (by tsimp [τA, hz])
   set τB := Function.update τA (ι qT) ⟨[], List.replicate n []⟩
@@ -237,7 +237,7 @@ theorem runs_gammaOut {w k : ℕ} (τ : Fin 𝕌 → WTape) (hc : Clean τ) (hW 
     · funext y
       simp only [Function.update_apply]
       split_ifs <;> (try subst_vars) <;> (try tsimp [hz, reg, emp]) <;> tsimp at *
-    · simp [clen, WTape.words, length_lsb, ones, clen_replicate_nil]; omega
+    · simp [clen, WTape.words, length_lsb, ones]; omega
   set τE := Function.update (Function.update τ (ι qB) (reg (lsb n))) (ι qT) emp
   have sF := runs_revw (a := 0) (show ι qB ≠ ι tD by decide) τE (L := []) (R := []) (w := lsb n)
     (by tsimp [τE, reg]) (by tsimp [τE, hz, emp])

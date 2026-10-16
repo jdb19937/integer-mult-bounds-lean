@@ -51,7 +51,7 @@ theorem runs_drop1 {d e o : Fin t} (h1 : d ≠ e) (h2 : d ≠ o) (h3 : e ≠ o) 
   apply Runs.of_wp
   rw [wp_op1]
   simp only [Rules.output_drop, parse_syms]
-  refine ⟨⟨by simp [hd], by simp [he], by simp [ho], by simp [hd, he], by simp⟩, ?_, ?_⟩
+  refine ⟨⟨by simp [hd], by simp [he], by simp [ho], by simp, by simp⟩, ?_, ?_⟩
   · simp [hd, he, ho, emp]
   · simpa [hd, he] using t1
 
@@ -175,7 +175,7 @@ theorem runs_cpyReg {r d : Fin t} (h : r ≠ d) (σ : Fin t → WTape) {u : List
     · by_cases hxd : x = d
       · subst hxd; simp [hσ₁, hxr]
       · simp [hσ₁, hxr, hxd]
-  · simp [hr, time_copy, clen]; omega
+  · simp [hr, clen]; omega
 
 /-! ### Read the word before the head -/
 
@@ -205,7 +205,7 @@ theorem runs_readBack {s d : Fin t} (h : s ≠ d) (σ : Fin t → WTape) {w : Li
     · by_cases hxs : x = s
       · subst hxs; simp [hσ₂, hσ₁, h]
       · simp [hσ₂, hσ₁, hxd, hxs]
-  · simp [hσ₂, hσ₁, h, hs, time_copy]; omega
+  · simp [hσ₂, hσ₁, h, hs]; omega
 
 /-! ### Doubling -/
 
@@ -241,7 +241,7 @@ theorem runs_dbl {w s : Fin t} (h : w ≠ s) (σ : Fin t → WTape) {n : ℕ} (h
     · by_cases hxs : x = s
       · subst hxs; simp [hs, h.symm]
       · simp [hσ₄, hσ₃, hσ₂, hσ₁, hxw, hxs]
-  · simp [hσ₁, time_copy, clen, WTape.words]; omega
+  · simp [hσ₁, clen, WTape.words]; omega
 
 /-! ### Powers of two -/
 
@@ -307,7 +307,7 @@ noncomputable def pow2 (s k w c j : Fin t) (h1 : s ≠ k) (h2 : w ≠ c) (h3 : k
   .seq (ticksReg s k h1) <| .seq (emit [[true]] w) <| .seq (dblLoop k w c j h2 h3) (clear k)
 
 theorem runs_pow2 {s k w c j : Fin t} (h1 : s ≠ k) (h2 : w ≠ c) (h3 : k ≠ j) (hkw : k ≠ w) (hkc : k ≠ c)
-    (hwj : w ≠ j) (hcj : c ≠ j) (hsw : s ≠ w) (hsc : s ≠ c) (σ : Fin t → WTape) {e : ℕ}
+    (hwj : w ≠ j) (hcj : c ≠ j) (hsw : s ≠ w) (_hsc : s ≠ c) (σ : Fin t → WTape) {e : ℕ}
     (hs : σ s = reg (ones e)) (hk : σ k = emp) (hw : σ w = emp) (hc : σ c = emp) (hj : (σ j).right = []) :
     Runs (a := a) (pow2 s k w c j h1 h2 h3) σ (· = Function.update σ w ⟨[ones (2 ^ e)], []⟩)
       (e * (8 * 2 ^ e + 50) + 6 * e + 30) := by
@@ -382,7 +382,7 @@ theorem runs_countLoop {s c one j : Fin t} (h1 : s ≠ j) (h2 : one ≠ c) (hsc 
         · subst hxs; simp [hxc]
         · simp [hσ₂, hσ₁, hxc, hxs]
     · have hw : w.length ≤ W := hW w (by simp)
-      simp only [List.length_cons, List.length_singleton, hs, WTape.cur_mk, List.headD_cons, List.length_nil]
+      simp only [List.length_cons, hs, WTape.cur_mk, List.headD_cons, List.length_nil]
       nlinarith
 
 /-- Append the words of `s` (head after them) to `d`, preceded by their number in unary; `s` is
@@ -449,7 +449,7 @@ theorem runs_emitTab {s d c one j : Fin t} (h1 : s ≠ j) (h2 : one ≠ c) (h3 :
         · simp [hσ₈, hσ₇, hσ₆, hσ₅, hσ₄, hσ₃, hσ₂, hσ₁, hxs, hxd, hxc]
   · have hcl2 : clen ws = (ws.map List.length).sum + ws.length := by
       simp [clen, List.sum_map_add]
-    simp [hσ₄, reg, WTape.words, time_copy, hcl, hcl2, clen_cons, clen_nil, clen_append]
+    simp [hσ₄, reg, WTape.words, hcl, hcl2, clen_cons, clen_nil]
     nlinarith
 
 end ScriptOps

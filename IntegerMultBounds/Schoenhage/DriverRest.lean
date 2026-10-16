@@ -41,12 +41,12 @@ theorem genPre_twLoad {n : ℕ} (π : BitPerm n) (ts Is : List ℕ) (h w : ℕ) 
     GenPre π r ts Is h fs.length (twLoad n w fs (tableWords (slotTable π r ts Is h)) ∘ φ) := by
   rw [hM]
   refine ⟨⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;>
-    simp (config := {decide := true}) [twLoad, twRest, φ, Function.update_apply]
+    simp (config := {decide := true}) [twLoad, twRest, φ]
 
 theorem idle_twLoad (n w : ℕ) (fs : List (Rec r)) (tab : List (List Bool)) :
     TwistArray.Idle r (twLoad n w fs tab ∘ ψ) := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;>
-    simp (config := {decide := true}) [twLoad, twRest, ψ, Function.update_apply]
+    simp (config := {decide := true}) [twLoad, twRest, ψ]
 
 /-- The forward round's clean twist from rest. -/
 theorem runs_twistRest {n : ℕ} (π : BitPerm n) (ts : List ℕ) (h : ℕ)

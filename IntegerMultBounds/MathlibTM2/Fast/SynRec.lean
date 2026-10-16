@@ -199,8 +199,8 @@ theorem synJk_succ (k X t : ℕ) :
   rw [List.range_succ, List.filter_append, List.length_append]
   congr 1
   by_cases h : 0 < X / k ^ t
-  · rw [if_pos h, List.filter_cons_of_pos (by simpa using h)]; rfl
-  · rw [if_neg h, List.filter_cons_of_neg (by simpa using h)]; rfl
+  · rw [ite_eq_left h, List.filter_cons_of_pos (by simpa using h)]; rfl
+  · rw [ite_eq_right h, List.filter_cons_of_neg (by simpa using h)]; rfl
 
 theorem synJk_le (k X t : ℕ) : synJk k X t ≤ t := by
   unfold synJk
@@ -244,8 +244,8 @@ theorem synJk_eq_min {k X : ℕ} (hk : 1 < k) (hX : X ≠ 0) :
       have e : 0 < X / k ^ t ↔ t ≤ Nat.log k X := by
         rw [div_pow_pos_iff (by omega), Nat.le_log_iff_pow_le hk hX]
       by_cases h : t ≤ Nat.log k X
-      · rw [if_pos (e.2 h)]; omega
-      · rw [if_neg (fun h' => h (e.1 h'))]; omega
+      · rw [ite_eq_left (e.2 h)]; omega
+      · rw [ite_eq_right (fun h' => h (e.1 h'))]; omega
 
 theorem synJ_succ (D t : ℕ) :
     synJ D (t + 1) = synJ D t + if 0 < D / m ^ t then 1 else 0 := synJk_succ m D t
@@ -838,7 +838,7 @@ theorem sg_synCntLoop (k : ℕ) (hk : 1 ≤ k) {x cnt ctr : SynW} (v : SynW → 
         (by simp [synCntPassCost, hz])
     · have hne : w x ≠ [] := by rw [wx]; simpa using hz
       have hJ : synJk k X (t + 1) = synJk k X t + 1 := by
-        rw [synJk_succ, if_pos (Nat.pos_of_ne_zero hz)]
+        rw [synJk_succ, ite_eq_left (Nat.pos_of_ne_zero hz)]
       refine lr_weaken body (sg_ifNE_pos body (q := synSkip) hne
         ((sgU_div body (k := k) (a := x) (b := .s 17) (t := .s 2) (x := X / k ^ t) (y := 0) hk
           hx17 hx2 (by decide) w2 (by rw [wx]; simp) (by simp [w17])).seq <|
@@ -851,7 +851,7 @@ theorem sg_synCntLoop (k : ℕ) (hk : 1 ≤ k) {x cnt ctr : SynW} (v : SynW → 
         funext y
         simp only [hw, Φ, Function.update_apply, hJ, div_pow_succ_gen]
         split_ifs <;> simp_all
-      · simp only [synCntPassCost, hz, if_false]
+      · simp only [synCntPassCost, hz, ite_false]
         omega
   have h := sg_scan body (R := R) (a := ctr) (t := .s 23) hr23 Φ cs
     (fun t => synCntPassCost k X t) hstep
@@ -1006,12 +1006,12 @@ theorem sg_synDigBody (G F : ℕ) (v : SynW → List (Fin (A + 4))) (Kv x t A0 E
     have s7 := tail A0 E Prl v₅ e18 (by simp [hv₅, hx]) (by simp [hv₅]) (by simp [hv₅, hP])
       (by simp [hv₅, hJ]) (by simp [hv₅, h2]) (by simp [hv₅, h3])
     refine lr_weaken body (s1.seq (s2.seq (s3.seq (s4.seq (s5.seq (s6.seq s7)))))) ?_ ?_
-    · simp only [hd0, if_true]
+    · simp only [hd0, ite_true]
       refine congrArg (synG R) ?_
       funext y
       simp only [hv₅, Function.update_apply]
       split_ifs <;> (try simp_all) <;> omega
-    · simp only [synDigBodyCost, ← hd, hd0, if_true]
+    · simp only [synDigBodyCost, ← hd, hd0, ite_true]
       omega
   · have s6 := sg_ifNE_pos body (p := synPieceP G F) (q := synSkip) (x := .s 18) (R := R)
       (v := v₅) (by rw [e18]; simpa using hd0)
@@ -1029,12 +1029,12 @@ theorem sg_synDigBody (G F : ℕ) (v : SynW → List (Fin (A + 4))) (Kv x t A0 E
       (by simp [hv₅]) (by simp [hv₅, hP]) (by simp [hv₅, hJ]) (by simp [hv₅, h2])
       (by simp [hv₅, h3])
     refine lr_weaken body (s1.seq (s2.seq (s3.seq (s4.seq (s5.seq (s6.seq s7)))))) ?_ ?_
-    · simp only [hd0, if_false]
+    · simp only [hd0, ite_false]
       refine congrArg (synG R) ?_
       funext y
       simp only [hv₅, Function.update_apply]
       split_ifs <;> (try simp_all) <;> omega
-    · simp only [synDigBodyCost, ← hd, hd0, if_false]
+    · simp only [synDigBodyCost, ← hd, hd0, ite_false]
       omega
 
 /-- The wire file after `t` passes of the digit loop. -/
@@ -1062,7 +1062,7 @@ theorem synDigSt_zero_pass {G F Kv a oS J D : ℕ} (v : SynW → List (Fin (A + 
     (h : D / m ^ t = 0) : synDigSt G F Kv a oS J D v (t + 1) = synDigSt G F Kv a oS J D v t := by
   have h1 : D / m ^ (t + 1) = 0 := by rw [div_pow_succ', h]; simp
   simp only [synDigSt, h1, h, synJ_eq_of_zero h, mod_pow_of_zero h, synE_succ, synPcs_succ,
-    synDg_of_zero h, if_true, add_zero, List.nil_append]
+    synDg_of_zero h, ite_true, add_zero, List.nil_append]
 
 theorem sg_synDigits (G F : ℕ) (v : SynW → List (Fin (A + 4))) (Kv a oS J D : ℕ)
     (hoS : v (.s 6) = List.replicate oS tick) (hK : (v (.p .K)).length = Kv)

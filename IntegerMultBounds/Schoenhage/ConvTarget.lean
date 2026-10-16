@@ -118,7 +118,7 @@ theorem conv_instance {t q₁ q₂ a : ℕ} (Mf : Program t q₁ a) (Mo : Progra
   have hw1 : 1 ≤ w := by omega
   obtain ⟨σ', kS, hx, hq, hkS⟩ := runs_convScale (p := p) (d := d) (l := ℓ) (K := K) (w := w) (ts := ts)
     (x := array w Vs) (by omega) (by omega) hK1 hw1 (axisLengths_pow hax) (scaleStart hdr (array w Vs))
-    (by funext i; simp [scaleStart, Function.update_apply, ι_ne_high (show 64 ≤ (zH : Fin 𝕌).val by decide),
+    (by funext i; simp [scaleStart, ι_ne_high (show 64 ≤ (zH : Fin 𝕌).val by decide),
       ι_ne_high (show 64 ≤ (zF : Fin 𝕌).val by decide)])
     (by tsimp [scaleStart, hdr]) (by tsimp [scaleStart]) (by tsimp [scaleStart]) (by tsimp [scaleStart])
     (by tsimp [scaleStart]) (by tsimp [scaleStart]) (by tsimp [scaleStart]) (by tsimp [scaleStart])

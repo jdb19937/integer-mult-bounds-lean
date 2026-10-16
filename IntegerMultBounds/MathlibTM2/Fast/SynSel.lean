@@ -79,7 +79,7 @@ theorem synPcs_vals (K a D oS J ρ : ℕ) : ∀ t,
       refine List.Perm.trans (List.perm_append_comm) (List.Perm.append (synPcs_vals K a D oS J ρ t) ?_)
       by_cases h0 : synDg D t = 0
       · simp [h0]
-      · rw [if_neg h0, List.flatMap_singleton, synPc_vals]
+      · rw [ite_eq_right h0, List.flatMap_singleton, synPc_vals]
         refine List.Perm.of_eq (List.map_congr_left fun i _ => ?_)
         ring
 
@@ -142,7 +142,7 @@ theorem mem_synPcs {K a D oS J t : ℕ} {pc : TopPc} (h : pc ∈ synPcs K a D oS
   rw [List.mem_reverse, List.mem_range] at hj
   by_cases h0 : synDg D j = 0
   · simp [h0] at hpc
-  · rw [if_neg h0, Option.some.injEq] at hpc
+  · rw [ite_eq_right h0, Option.some.injEq] at hpc
     exact ⟨j, hj, h0, hpc.symm⟩
 
 /-- **The pieces of a chunk round meet `TopPc.Ok`.** -/
@@ -192,10 +192,10 @@ theorem filter_range_map_rank (p : ℕ → Bool) : ∀ n : ℕ,
   | n + 1 => by
       rw [List.range_succ, List.filter_append]
       by_cases hp : p n
-      · simp only [List.filter_singleton, hp, cond_true, List.map_append,
+      · simp only [List.filter_singleton, hp, Bool.cond_true, List.map_append,
           filter_range_map_rank p n, List.length_append, List.range_succ, List.length_singleton,
           List.map_singleton]
-      · simp only [List.filter_singleton, hp, cond_false, List.append_nil,
+      · simp only [List.filter_singleton, hp, Bool.cond_false, List.append_nil,
           filter_range_map_rank p n]
 
 theorem layLongs_map_rank (es : List ℕ) (ℓ : ℕ) :
@@ -227,8 +227,8 @@ theorem synSel_chunk (H : LayHyp es ℓ K) {h : ℕ} (hc : synChunk ℓ K h) :
   rw [lay_parts_all H hh, List.length_range] at this
   refine this.trans (List.Perm.of_eq (List.map_congr_left fun i _ => ?_))
   have hc' : synChunk ℓ K h := ⟨h1, h2⟩
-  simp only [synRh, synOS, hc', if_true, h1, layRho, layC0, show ¬ h < layB ℓ K by omega,
-    if_false]
+  simp only [synRh, synOS, hc', ite_true, h1, layRho, layC0, show ¬ h < layB ℓ K by omega,
+    ite_false]
   ring
 
 /-- The top round `h = ℓ - 1`: the selected bits are `N - Lg + i`, `i < Lg`. -/
@@ -337,7 +337,7 @@ theorem synChunk_fit {es : List ℕ} {ℓ K : ℕ} (H : LayHyp es ℓ K) {h : �
   have hcs := lay_chunk_size H
   have hAN := synA_le H
   rw [layPre_length] at hcs
-  simp only [synOS, h1, if_true, show ¬ h < layB ℓ K by omega, if_false]
+  simp only [synOS, h1, ite_true, show ¬ h < layB ℓ K by omega, ite_false]
   have : K * ((h - layB ℓ K) / K * es.length) + K * es.length =
       K * (layC0 es ℓ K h + es.length) := by unfold layC0; ring
   have h3 : K * (layC0 es ℓ K h + es.length) ≤ K * (es.length * layQ ℓ K) :=
@@ -393,7 +393,7 @@ theorem synSel_vals {es : List ℕ} {ℓ K : ℕ} (_H : LayHyp es ℓ K) (ds : C
       conv_lhs => rw [← synDpp_add_synQK es]
       exact range_add_map _ _ _
     rw [hq, hD, hat, hKh, hr]
-    simp only [synPcsR, hc, if_true]
+    simp only [synPcsR, hc, ite_true]
     refine List.Perm.append (synPcs_vals_full _ _ _ _ _ _) (List.Perm.of_eq ?_)
     refine List.map_congr_left fun i _ => ?_
     ring
@@ -441,15 +441,15 @@ theorem synLayer_runs (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
         (synW2 es ℓ K (gateCount (program ds)) (factorCount (program ds)) w h)
         (synR2 es ℓ K h) := by
     by_cases hc : synChunk ℓ K h
-    · simp only [synPcsR, hc, if_true, synKh]
+    · simp only [synPcsR, hc, ite_true, synKh]
       rw [synR2_chunk es ℓ K hc]
       apply synPcs_ok
       · have hf := synChunk_fit H hc
         have hmul := synK_mul_split es K
         rw [hn, ha]
-        simp only [synAR, hc, if_true, synAc]
+        simp only [synAR, hc, ite_true, synAc]
         omega
-      · simp only [synW2, synS, synER, synDp, synQ, hc, hc.1, if_true]
+      · simp only [synW2, synS, synER, synDp, synQ, hc, hc.1, ite_true]
         have := synQK_le es
         unfold synDpp
         omega
@@ -459,41 +459,41 @@ theorem synLayer_runs (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
     intro i hi
     rw [hna]
     by_cases hc : synChunk ℓ K h
-    · simp only [synQ, synAT, synRh, synKh, hc, if_true] at hi ⊢
+    · simp only [synQ, synAT, synRh, synKh, hc, ite_true] at hi ⊢
       have hf := synChunk_fit H hc
       have hmul := synK_mul_split es K
       have hρ' : (h - layB ℓ K) % K < K := Nat.mod_lt _ H.K_pos
       have h1 : K * (i + 1) ≤ K * synQK es := Nat.mul_le_mul_left _ hi
       rw [Nat.mul_succ] at h1
       omega
-    · simp only [synQ, synAT, synRh, synKh, hc, if_false] at hi ⊢
+    · simp only [synQ, synAT, synRh, synKh, hc, ite_false] at hi ⊢
       unfold synA at hAN
       by_cases ht : h + 1 < ℓ
       · have hl : h < layB ℓ K := by unfold synChunk at hc; omega
-        simp only [synDp, synOS, ht, hl, if_true] at hi ⊢
+        simp only [synDp, synOS, ht, hl, ite_true] at hi ⊢
         have h1 : es.length ≤ (layB ℓ K - h) * es.length := Nat.le_mul_of_pos_left _ (by omega)
         have h2 : (layB ℓ K - h) * es.length ≤ layB ℓ K * es.length :=
           Nat.mul_le_mul_right _ (by omega)
         omega
-      · simp only [synDp, synOS, ht, if_false] at hi ⊢
+      · simp only [synDp, synOS, ht, ite_false] at hi ⊢
         omega
   have hTL : synAT es ℓ K h + synKh ℓ K h * synQ es ℓ K h ≤ n + a := by
     rw [hna]
     by_cases hc : synChunk ℓ K h
-    · simp only [synQ, synAT, synKh, hc, if_true]
+    · simp only [synQ, synAT, synKh, hc, ite_true]
       have hf := synChunk_fit H hc
       have hmul := synK_mul_split es K
       omega
-    · simp only [synQ, synAT, synKh, hc, if_false, one_mul]
+    · simp only [synQ, synAT, synKh, hc, ite_false, one_mul]
       unfold synA at hAN
       by_cases ht : h + 1 < ℓ
       · have hl : h < layB ℓ K := by unfold synChunk at hc; omega
-        simp only [synDp, synOS, ht, hl, if_true]
+        simp only [synDp, synOS, ht, hl, ite_true]
         have h1 : es.length ≤ (layB ℓ K - h) * es.length := Nat.le_mul_of_pos_left _ (by omega)
         have h2 : (layB ℓ K - h) * es.length ≤ layB ℓ K * es.length :=
           Nat.mul_le_mul_right _ (by omega)
         omega
-      · simp only [synDp, synOS, ht, if_false]
+      · simp only [synDp, synOS, ht, ite_false]
         omega
   have hR₂ : 1 * 2 ^ a ≤ synR2 es ℓ K h := by
     rw [one_mul, ha]
@@ -554,11 +554,11 @@ theorem synLayer_runs (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
     · by_cases ht : h + 1 < ℓ
       · have hl : h < layB ℓ K := by unfold synChunk at hc; omega
         refine List.Perm.trans (List.Perm.of_eq ?_) (synSel_low H hl).symm
-        simp only [synDp, synRh, synOS, synKh, ht, hl, hc, if_true, if_false]
+        simp only [synDp, synRh, synOS, synKh, ht, hl, hc, ite_true, ite_false]
         refine List.map_congr_left fun i _ => ?_
         ring
       · refine List.Perm.trans (List.Perm.of_eq ?_) (synSel_top H ht hh).symm
-        simp only [synDp, synRh, synOS, synKh, ht, hc, if_false]
+        simp only [synDp, synRh, synOS, synKh, ht, hc, ite_false]
         refine List.map_congr_left fun i _ => ?_
         ring
   have hs : synS es ℓ K (gateCount (program ds)) (factorCount (program ds)) h =
@@ -572,7 +572,7 @@ theorem synLayer_runs (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
     rw [hl, topPieces_exp]
     unfold synS synER
     by_cases hc : synChunk ℓ K h
-    · simp only [hc, if_true, synPcsR, synKh, synQ]
+    · simp only [hc, ite_true, synPcsR, synKh, synQ]
       rw [synPcs_exp_sum]
     · simp [hc, synPcsR]
   have hZ : ∀ q, TopFitsZ w (synZ (n + a) Y q) := fun q => topFitsZ_of_norm (hY _ _) hpw

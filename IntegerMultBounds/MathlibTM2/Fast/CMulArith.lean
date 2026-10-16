@@ -202,14 +202,14 @@ lemma select_natAbs {K : ℕ} {x : ℤ} (hx : |x| < 2 ^ (K - 1)) :
   have hle : (2 : ℤ) ^ (K - 1) ≤ 2 ^ K := pow_le_pow_right₀ (by norm_num) (by omega)
   rw [abs_lt] at hx
   by_cases h : x < 0
-  · simp only [h, decide_true, if_true]
+  · simp only [h, decide_true, ite_true]
     have hv := val_intCast_eq K (-x)
     rw [Int.emod_eq_of_lt (by omega) (by omega)] at hv
     omega
   · simp only [h, decide_false]
     have hv := val_intCast_eq K x
     rw [Int.emod_eq_of_lt (by omega) (by omega)] at hv
-    simp only [Bool.false_eq_true, if_false]
+    simp only [Bool.false_eq_true, ite_false]
     omega
 
 /-! ### Binary numerals -/

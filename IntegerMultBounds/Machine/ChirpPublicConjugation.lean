@@ -30,7 +30,7 @@ private theorem public_bank (headerBits sourceBits outputBits : List Bool) :
   unfold internalBank Tapes.reindex slots setTape SharedBank.empty Spec.SignedRingProduct.bank
   apply Placement.Tapes.ext'
   all_goals intro slot; fin_cases slot
-  all_goals simp [word,Spec.SignedRingProduct.wordAt,putWord_blank_origin,Function.update_apply,Equiv.swap_apply_def,emptyWord]
+  all_goals simp [word,Spec.SignedRingProduct.wordAt,putWord_blank_origin,Equiv.swap_apply_def,emptyWord]
 
 /-- The original disk-grid and width/size allowances prove an actual fixed
 public-format program, with exact canonical output and completely blank private
@@ -80,7 +80,7 @@ theorem workspace_blank (headerBits sourceBits outputBits : List Bool) (slot : F
     have notSourceValue : slot.val≠1 := by intro equal; exact notSource (Fin.ext equal)
     have notOperandValue : slot.val≠2 := by intro equal; exact unusedOperand (Fin.ext equal)
     have notOutputValue : slot.val≠3 := by intro equal; exact notOutput (Fin.ext equal)
-    simp [Spec.SignedRingProduct.bank,notHeader,notSource,notOutput,unusedOperand,notHeaderValue,notSourceValue,notOperandValue,notOutputValue]
+    simp [Spec.SignedRingProduct.bank,notHeader,notSourceValue,notOperandValue,notOutputValue]
 
 /-- Actual halted public conjugation and every non-interface tape entirely
 blank at origin, all from the original encoded header and source record. -/

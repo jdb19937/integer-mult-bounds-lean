@@ -96,7 +96,7 @@ theorem ds_moveN {u tm a b : Fin T} (hreg : [u, tm, a, b].Nodup) (R : Regs T A) 
     · simp [hR₂, Function.update_of_ne hua, Function.update_of_ne hub]
     · simp [hR₂, Function.update_of_ne hta, Function.update_of_ne htb]
     · have htake : (R a).take (j + 1) = (R a).take j ++ [x] := by
-        rw [List.take_succ, List.getElem?_eq_getElem hj']
+        rw [List.take_add_one, List.getElem?_eq_getElem hj']
         have : (R a)[j] = x := by
           have := congrArg List.head? hx
           rw [List.head?_drop] at this
@@ -147,11 +147,11 @@ theorem dsSetVars_apply (hrg : Function.Injective rg) (x : List (Fin (A + 4))) :
   | i :: l, R, k => by
     rw [dsSetVars, List.foldl_cons, ← dsSetVars, dsSetVars_apply hrg x l]
     by_cases h1 : ∃ j ∈ l, rg (.v j) = k
-    · rw [if_pos h1, if_pos (by obtain ⟨j, hj, e⟩ := h1; exact ⟨j, List.mem_cons_of_mem _ hj, e⟩)]
-    · rw [if_neg h1]
+    · rw [ite_eq_left h1, ite_eq_left (by obtain ⟨j, hj, e⟩ := h1; exact ⟨j, List.mem_cons_of_mem _ hj, e⟩)]
+    · rw [ite_eq_right h1]
       by_cases h2 : rg (.v i) = k
       · subst h2; simp
-      · rw [Function.update_of_ne (Ne.symm h2), if_neg]
+      · rw [Function.update_of_ne (Ne.symm h2), ite_eq_right]
         rintro ⟨j, hj, e⟩
         rcases List.mem_cons.1 hj with rfl | hj
         · exact h2 e
@@ -374,12 +374,12 @@ theorem ds_twist (hrg : Function.Injective rg) {uP uR uW out : Fin T}
     refine dsOv_eq_of hrg (fun x => ?_) (fun k hk => ?_)
     · rw [dsSetVars_apply hrg]
       cases x with
-      | v i => rw [if_pos ⟨i, List.mem_finRange i, rfl⟩]; rfl
-      | wr => rw [if_neg (fun ⟨i, _, e⟩ => by simpa using hrg e)]; rfl
-      | wn => rw [if_neg (fun ⟨i, _, e⟩ => by simpa using hrg e)]; rfl
-      | acc => rw [if_neg (fun ⟨i, _, e⟩ => by simpa using hrg e)]; exact hacc
-      | z j => rw [if_neg (fun ⟨i, _, e⟩ => by simpa using hrg e)]; exact hz j
-    · rw [dsSetVars_apply hrg, if_neg (fun ⟨i, _, e⟩ => hk _ e)]
+      | v i => rw [ite_eq_left ⟨i, List.mem_finRange i, rfl⟩]; rfl
+      | wr => rw [ite_eq_right (fun ⟨i, _, e⟩ => by simpa using hrg e)]; rfl
+      | wn => rw [ite_eq_right (fun ⟨i, _, e⟩ => by simpa using hrg e)]; rfl
+      | acc => rw [ite_eq_right (fun ⟨i, _, e⟩ => by simpa using hrg e)]; exact hacc
+      | z j => rw [ite_eq_right (fun ⟨i, _, e⟩ => by simpa using hrg e)]; exact hz j
+    · rw [dsSetVars_apply hrg, ite_eq_right (fun ⟨i, _, e⟩ => hk _ e)]
   rw [e1] at s1
   -- loads
   have s2 := ds_loadG (body := body) hrg hoP wl nl hwr (fun _ => 0) 54 R
@@ -423,8 +423,8 @@ theorem ds_twist (hrg : Function.Injective rg) {uP uR uW out : Fin T}
       rw [dsSetVars_apply hrg]
       by_cases hk1 : ∃ i ∈ List.finRange 84, rg (.v i) = k
       · obtain ⟨i, -, rfl⟩ := hk1
-        rw [if_pos ⟨i, List.mem_finRange i, rfl⟩, Function.update_of_ne (hoo _), hv i]
-      rw [if_neg hk1]
+        rw [ite_eq_left ⟨i, List.mem_finRange i, rfl⟩, Function.update_of_ne (hoo _), hv i]
+      rw [ite_eq_right hk1]
       by_cases hk2 : ∃ x, rg x = k
       · obtain ⟨x, rfl⟩ := hk2
         rw [hS₁ x, Function.update_of_ne (hoo x)]

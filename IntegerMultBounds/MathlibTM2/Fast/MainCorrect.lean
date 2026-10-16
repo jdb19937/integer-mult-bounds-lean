@@ -366,7 +366,7 @@ lemma mn_runs_eq {Lb : LProc → MnPr (prime + K)} {w : ℕ → ℕ}
     mnRuns D Y n = mnRunsAt n (w n) (D.Wt n) (Y.cF n) (Y.cO n) hd0 (D.V₀ n) (D.σ₀ n) (D.restA n)
       (D.restB n) := by
   unfold mnRuns
-  rw [dif_pos hd0]
+  rw [dite_eq_left hd0]
   rfl
 
 /-- **F3 to F10** on the store the distribution leaves. -/

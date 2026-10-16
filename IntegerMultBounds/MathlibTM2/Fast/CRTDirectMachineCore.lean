@@ -71,7 +71,7 @@ theorem crtDirectMachineForwardCore_runs
 def crtDirectMachineInverseCore
     (hQ : swapStates crtHd crtPay crtHd_inj ≤ Q)
     (ι : Fin (swapT 6) → Fin T) (hι : Function.Injective ι) (hT : swapT 6 ≤ T)
-    (rg : TblR 10 → Fin T) (e : Fin 38 → Fin T) (axes width : Fin T) : Pr F T Q (prime + K) U :=
+    (rg : TblR 10 → Fin T) (e : Fin 38 → Fin T) (_axes width : Fin T) : Pr F T Q (prime + K) U :=
   let r := e ∘ crtDirectMachineDriver
   let p := crtControlTarget hQ ι hι hT rg (e ∘ crtDirectMachineTarget) false
   .seq (crtDirectMachineInverseInit r width) (.seq (crtWhile (r .wD) (crtDirectStep false r p)) (crtDirectInverseCleanup r))
@@ -91,9 +91,9 @@ theorem crtDirectMachineInverseCore_runs
     (hι0 : ∀ j, R (ι j) = []) (C : (Fin (d + 1) → ℕ) → List (Fin (prime + K + 4)))
     (hC : ∀ x, (C x).length = c) (h8 : ∀ x, ∀ z ∈ C x, z.val < 8)
     (axes width : Fin T)
-    (ha : ∀ q, axes ≠ (e ∘ crtDirectMachineDriver) q)
+    (_ha : ∀ q, axes ≠ (e ∘ crtDirectMachineDriver) q)
     (hwidth : ∀ q, width ≠ (e ∘ crtDirectMachineDriver) q)
-    (haxes : (R axes).length = d + 1) (htotal : (R width).length = crtPre a (d + 1))
+    (_haxes : (R axes).length = d + 1) (htotal : (R width).length = crtPre a (d + 1))
     (hwt : R ((e ∘ crtDirectMachineDriver) .wT) = crtEnts ((crtRevAx (d + 1)).map a))
     (hst : R ((e ∘ crtDirectMachineDriver) .sT) = crtEnts ((crtRevAx (d + 1)).map s))
     (hmt : R ((e ∘ crtDirectMachineDriver) .mT) = crtEnts ((crtRevAx (d + 1)).map m))

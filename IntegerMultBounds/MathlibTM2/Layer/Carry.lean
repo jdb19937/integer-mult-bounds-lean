@@ -50,12 +50,12 @@ theorem carryRun_val (c : ℤ) (ss : List ℤ) :
       have hmod : (c + s) % 2 = 0 ∨ (c + s) % 2 = 1 := Int.emod_two_eq_zero_or_one _
       rcases hmod with h0 | h1
       · have hdiv : (c + s - 0) / 2 * 2 = c + s := by omega
-        simp only [h0, zero_ne_one, if_false, decide_false, Bool.toNat_false] at h ⊢
+        simp only [h0, zero_ne_one, ite_false, decide_false, Bool.toNat_false] at h ⊢
         push_cast
         rw [pow_succ]
         nlinarith [h, hdiv]
       · have hdiv : (c + s - 1) / 2 * 2 = c + s - 1 := by omega
-        simp only [h1, if_true, decide_true, Bool.toNat_true] at h ⊢
+        simp only [h1, ite_true, decide_true, Bool.toNat_true] at h ⊢
         push_cast
         rw [pow_succ]
         nlinarith [h, hdiv]

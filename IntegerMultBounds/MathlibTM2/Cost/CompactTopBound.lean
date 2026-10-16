@@ -102,7 +102,7 @@ theorem compactSynPcs_sum (K X D oS J t : ℕ) (f : TopPc→ℝ) :
         List.filterMap_cons,List.filterMap_nil,hz,↓reduceIte,List.map_append,List.map_cons,
         List.map_nil,List.sum_append,List.sum_cons,List.sum_nil]
       rw [ih]
-      rw [if_pos hz]
+      rw [ite_eq_left hz]
       ring
 
 /-- The actual nonzero digit support lies below the base-m logarithm. -/

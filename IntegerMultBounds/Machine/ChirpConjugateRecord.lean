@@ -48,7 +48,7 @@ private theorem read_active (current : Tapes 60 2) (context : Context 2)
   rw [placement,InjectivePlacement.active_bank]
   apply congrArg₂ Tapes.mk <;> funext index <;> fin_cases index
   all_goals simp [read,UnitPhaseRecordIO.readOutput,UnitPhaseRecordIO.readFirst,TwoTapeAt.result,setTape,
-    slots,ChirpConjugateNumerator.input,UnitPhaseNumerator.coreInput,RadixLinearCombinationRefresh.controls,Tapes.append,Fin.addCases,sources]
+    slots,RadixLinearCombinationRefresh.controls,Fin.addCases,sources]
   all_goals first
     | rfl
     | exact (coreBlank 2).1 | exact (coreBlank 3).1 | exact (coreBlank 4).1 | exact (coreBlank 5).1

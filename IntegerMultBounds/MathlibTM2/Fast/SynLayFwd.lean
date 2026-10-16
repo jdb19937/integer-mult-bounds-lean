@@ -88,7 +88,7 @@ theorem sly_post_fwd_v {es : List ℕ} {ℓ K w l : ℕ} {L : Equiv.Perm (Fin es
   funext x
   rcases x with x | i | x | i
   · simp [slyV₃, slyV₂, slyPV]
-  · simp only [slyV₃, Function.update_apply, SynW.ly.injEq, reduceCtorEq, if_false]
+  · simp only [slyV₃, Function.update_apply, SynW.ly.injEq, reduceCtorEq, ite_false]
     split_ifs <;> simp_all [slyV₂, slyPV]
   · simp [slyV₃, slyV₂, slyPV]
   · simp [slyV₃, slyV₂, slyPV]

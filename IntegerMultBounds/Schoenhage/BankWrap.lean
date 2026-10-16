@@ -55,7 +55,7 @@ theorem wrapProg_hoare (c : Cmd a T) (hT : 4 ≤ T) {hdr F O : List Bool} {k : �
     · funext x; simp only [w4]; split_ifs <;> rfl
     · funext i
       simp only [Function.update_apply, w4, Fin.ext_iff, v0, v1]
-      split_ifs <;> first | rfl | omega | simp [emp_tape', wordAt_nil', reg]
+      split_ifs <;> first | rfl | omega | simp [emp_tape']
   set w0 := enc (a := a) (w4 T hdr F (reg O))
   have hw0 : w0.head = fun _ => 0 := by
     funext x; simp only [w0, enc, w4]; split_ifs <;> rfl
@@ -73,7 +73,7 @@ theorem wrapProg_hoare (c : Cmd a T) (hT : 4 ≤ T) {hdr F O : List Bool} {k : �
     refine ⟨hw0, ?_⟩
     funext i
     simp only [Function.update_apply, w0, enc, w4, Fin.ext_iff, v0, v1, v3]
-    split_ifs <;> first | rfl | omega | simp [emp_tape', wordAt_nil', reg]
+    split_ifs <;> first | rfl | omega | simp [emp_tape']
   refine (h1.seq ((h2.consequence (fun v h => h) (fun v h => h.trans e2) le_rfl).seq
     ((hcore.consequence (fun v h => h) (fun v h => h) hk).seq (g1.seq (g2.seq g3))))).consequence
     (fun v h => h) (fun v h => h.trans e3) ?_

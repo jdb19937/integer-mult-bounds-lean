@@ -349,7 +349,7 @@ theorem ds_P1 (R : Regs T A) {n Wt : ℕ} (hn : 2 ≤ n) (hd0 : 0 < d n) (hWt : 
     by_cases hS : y = .o .xS
     · subst hS; simp [hX₁₂, hX₁₁, hX₁₀, hX₉, hX₈, hX₇, hX₆, hX₅, hX₄, hX₃, eXS]
     simp only [hX₁₂, hX₁₁, hX₁₀, hX₉, hX₈, hX₇, hX₆, hX₅, hX₄, hX₃, Function.update_apply, hR,
-      hT, hS, h1, h2, h3, h4, h5, h6, h7, if_false]
+      hT, hS, h1, h2, h3, h4, h5, h6, h7, ite_false]
     exact hX₂X y h2 h3 hT hS h4 h5 h1
   · simp [hX₁₂, hX₁₁, hX₁₀, hX₉, hX₈, hX₇, hX₆, hX₅, hX₄, hX₃]
     rw [hoff _ (fun e => by cases e) (fun e => by cases e) (fun e => by cases e)

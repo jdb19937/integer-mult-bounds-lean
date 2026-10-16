@@ -139,7 +139,7 @@ theorem oppSchedule_oppSlotRounds {ts : List ℕ} (hts : PowAxes r ts) {n : ℕ}
   intro h _
   rw [← axisOppRounds_eq hts hn π h]
   unfold axisOppRounds
-  simp [List.map_reverse, List.map_map, Function.comp_def]
+  simp [List.map_map, Function.comp_def]
   rfl
 
 /-! ### Contraction and the computed opposite schedule -/

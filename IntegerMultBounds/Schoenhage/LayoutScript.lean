@@ -235,7 +235,7 @@ theorem paramsOf_level {ℓ b h D : ℕ} (hb : h < b) (hbl : b ≤ ℓ - 1) : �
   | 0, i, hie => by
     refine ⟨rfl, ?_⟩
     simp only [List.range_zero, List.map_nil, List.foldl_nil]
-    exact blocks_congr fun i' hi' => by simp only [levelRest]; rw [if_pos (by omega)]
+    exact blocks_congr fun i' hi' => by simp only [levelRest]; rw [ite_eq_left (by omega)]
   | e + 1, i, hie => by
     have hi : i < D := by omega
     have hcur : levelRest ℓ b h i i = slotsDesc i b (ℓ - 1 - b) ++ (i, h) :: slotsDesc i 0 h := by
@@ -249,7 +249,7 @@ theorem paramsOf_level {ℓ b h D : ℕ} (hb : h < b) (hbl : b ≤ ℓ - 1) : �
         List.idxOf_append_of_notMem hnot, List.idxOf_cons_self, length_slotsDesc, add_zero]
       congr 1
       apply sum_range_const; intro j hj
-      simp only [levelRest, length_axisRest, if_pos hj]
+      simp only [levelRest, length_axisRest, ite_eq_left hj]
     have herase : (blocks (levelRest ℓ b h i) D).erase (i, h) = blocks (levelRest ℓ b h (i + 1)) D := by
       rw [erase_blocks (tagged_levelRest ℓ b h i) hi hmem]
       apply blocks_congr
@@ -261,8 +261,8 @@ theorem paramsOf_level {ℓ b h D : ℕ} (hb : h < b) (hbl : b ≤ ℓ - 1) : �
       · rw [Function.update_of_ne he]
         simp only [levelRest]
         by_cases h1 : i' < i
-        · rw [if_pos h1, if_pos (by omega)]
-        · rw [if_neg h1, if_neg (by omega)]
+        · rw [ite_eq_left h1, ite_eq_left (by omega)]
+        · rw [ite_eq_right h1, ite_eq_right (by omega)]
     have hlen : (blocks (levelRest ℓ b h (i + 1)) D).length = (blocks (levelRest ℓ b h i) D).length - 1 := by
       rw [← herase, List.length_erase_of_mem hmemB]
     obtain ⟨ih1, ih2⟩ := paramsOf_level (D := D) hb hbl e (i + 1) (by omega)
@@ -398,26 +398,26 @@ theorem arr_mul_swap {m : ℕ} (σ : Equiv.Perm (Fin m)) {k : ℕ} (hk : k < m) 
   simp only [arr, List.getElem_ofFn, Equiv.Perm.coe_mul, Function.comp_apply, List.getElem_set]
   by_cases hxv : x = v.val
   · have : (⟨x, h1⟩ : Fin m) = v := Fin.ext hxv
-    rw [this, Equiv.swap_apply_right, if_pos hxv.symm]
-  · rw [if_neg (Ne.symm hxv)]
+    rw [this, Equiv.swap_apply_right, ite_eq_left hxv.symm]
+  · rw [ite_eq_right (Ne.symm hxv)]
     by_cases hxk : x = k
     · have : (⟨x, h1⟩ : Fin m) = ⟨k, hk⟩ := Fin.ext hxk
-      rw [this, Equiv.swap_apply_left, hv, if_pos hxk.symm]
-    · rw [if_neg (Ne.symm hxk), Equiv.swap_apply_of_ne_of_ne (fun e => hxk (congrArg Fin.val e))
+      rw [this, Equiv.swap_apply_left, hv, ite_eq_left hxk.symm]
+    · rw [ite_eq_right (Ne.symm hxk), Equiv.swap_apply_of_ne_of_ne (fun e => hxk (congrArg Fin.val e))
         (fun e => hxv (congrArg Fin.val e))]
 
 /-- `selectSwaps_list`: the scan of an arrangement is the list scan of its block indices. -/
 theorem selectSwaps_list {m : ℕ} : ∀ (e k : ℕ) (σ : Equiv.Perm (Fin m)), m - k = e →
     (selectSwaps σ k).map (fun x => (x.1.val, x.2.val)) = selectL (arr σ) k e
   | 0, k, σ, h => by
-    rw [selectSwaps, dite_cond_eq_false (by simp; omega)]; rfl
+    rw [selectSwaps, dite_eq_right_of_eq_false (by simp; omega)]; rfl
   | e + 1, k, σ, h => by
     have hk : k < m := by omega
-    rw [selectSwaps, dite_cond_eq_true (by simp [hk]), selectL, getD_arr σ hk]
+    rw [selectSwaps, dite_eq_left_of_eq_true (by simp [hk]), selectL, getD_arr σ hk]
     by_cases hσ : σ ⟨k, hk⟩ = ⟨k, hk⟩
-    · rw [if_pos hσ, if_pos (by rw [hσ])]
+    · rw [ite_eq_left hσ, ite_eq_left (by rw [hσ])]
       exact selectSwaps_list e (k + 1) σ (by omega)
-    · rw [if_neg hσ, if_neg (fun e => hσ (Fin.ext e)), List.map_cons, idxOf_arr σ hk]
+    · rw [ite_eq_right hσ, ite_eq_right (fun e => hσ (Fin.ext e)), List.map_cons, idxOf_arr σ hk]
       have hv : σ (σ.symm ⟨k, hk⟩) = ⟨k, hk⟩ := by simp
       rw [selectSwaps_list e (k + 1) _ (by omega), arr_mul_swap σ hk _ hv, getD_arr σ hk]
 

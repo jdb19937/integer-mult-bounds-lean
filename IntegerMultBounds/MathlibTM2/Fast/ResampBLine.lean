@@ -98,7 +98,7 @@ lemma rsbSel_succ (ln : List GaussianInt) (mask : List Bool) (j : ℕ) (h1 : j <
     rsbSel ln mask (j + 1) =
       rsbSel ln mask j ++ (if mask[j] then [ln[j]] else []) := by
   have hz : j < (ln.zip mask).length := by simp [h1, h2]
-  rw [rsbSel, rsbSel, List.take_succ, List.getElem?_eq_getElem hz, Option.toList_some,
+  rw [rsbSel, rsbSel, List.take_add_one, List.getElem?_eq_getElem hz, Option.toList_some,
     List.filter_append, List.map_append]
   congr 1
   simp only [List.getElem_zip]
@@ -151,7 +151,7 @@ theorem rsb_sel_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠ ι
       simp [hΨ, cstream_drop_eq_cons ln j hjl]
     simp only [List.getElem_map, rsb_isOne_bitSymbol]
     by_cases hm : mask[j]
-    · rw [if_pos hm]
+    · rw [ite_eq_left hm]
       refine ((rsb_mv_runs hrg (c := .cm .wn) (t := .tC) (x := .src) (y := .sr) (by decide) _
         (by simp [hΨ, htC]) (by rw [hsrcj]; simp [hΨ, hwn])).congr ?_).mono (by simp [hΨ, hwn])
       rw [hsrcj]
@@ -159,7 +159,7 @@ theorem rsb_sel_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠ ι
       cases r <;> simp [hΨ, hwn, drop_csyms_append, take_csyms_append,
         rsbSel_succ ln mask j hjl hjm,
         hm, reverse_cstream_snoc]
-    · rw [if_neg hm]
+    · rw [ite_eq_right hm]
       refine ((rsb_usub_runs hrg (c := .cm .wn) (a := .src) (t := .tC) (by decide) (by decide)
         (by decide) _ (by simp [hΨ, htC])).congr ?_).mono (by simp [hΨ, hwn])
       rw [hsrcj]

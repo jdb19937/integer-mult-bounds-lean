@@ -587,7 +587,7 @@ theorem twRuns_scanP_loop {a t : R} (hat : a ≠ t) {p : Pr P T Q A U} (l : List
         rw [hSa] at this
         exact this
       have htk : (l.take (k + 1)).reverse = l[k] :: (l.take k).reverse := by
-        rw [List.take_succ, List.getElem?_eq_getElem hkl]; simp
+        rw [List.take_add_one, List.getElem?_eq_getElem hkl]; simp
       have hS₁ : TwHolds tg { S with R := twMvFx (tg a) (tg t) S.R } (twATin a t l Ψ k) := by
         intro r
         show twMvFx (tg a) (tg t) S.R (tg r) = _

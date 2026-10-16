@@ -158,7 +158,7 @@ theorem runs_tableGenX {r : ℕ} {ts : List ℕ} {ℓ K : ℕ} (hL : LayoutOK r 
   have htab : (rows.flatMap fun row => tableWords (axisEntries (row.getD h 0) (2 * (2 * r' / 2 ^ (h + 1)))
       (row.take h))) = tableWords (slotTable (paperPerm hL) r' ts (slotAxes ts h) h) := by
     rw [slotTable_paper hL r' hIs, slotAxes_below_top hL hh, slotTableP_rows ts ℓ K r' hh.le]
-    simp [hrows, tableWords, List.flatMap_map, List.flatMap_assoc, List.getD_eq_getElem, hh]
+    simp [hrows, tableWords, List.flatMap_map, List.flatMap_assoc, hh]
   rw [hwords, htab]
   simp
 

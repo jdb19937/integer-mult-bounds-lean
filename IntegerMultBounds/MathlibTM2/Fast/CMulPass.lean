@@ -145,12 +145,12 @@ theorem split_runs (hcr : Function.Injective cr) (hA : 96 ≤ A) {I Sv O₀ O₁
     · simp [Function.update_apply, h23, h24, h25, splitD, splitCol, pairRe_pairSym hA4]
       rfl
     · simp only [Fin.reduceFinMk, Fin.isValue, Matrix.cons_val, Function.update_apply, h34, h35,
-        if_false, if_true, splitD_out, splitD_bitsA hA4, getD_ofFn_bool]
+        ite_false, ite_true, splitD_out, splitD_bitsA hA4, getD_ofFn_bool]
       rfl
     · simp [Function.update_apply, h45, splitD, splitCol, pairIm_pairSym hA4]
       rfl
     · simp only [Fin.reduceFinMk, Fin.isValue, Matrix.cons_val, Function.update_apply,
-        if_true, splitD_out, splitD_bitsB hA4, getD_ofFn_bool]
+        ite_true, splitD_out, splitD_bitsB hA4, getD_ofFn_bool]
       rfl
   · have a0 := h1 0
     have b0 := h2 0; have b1 := h2 1; have b2 := h2 2; have b3 := h2 3; have b4 := h2 4
@@ -194,10 +194,10 @@ theorem comb_runs (hcr : Function.Injective cr) (hA : 96 ≤ A)
     · simp [Function.update_apply, h12, h13, h₂]
   · fin_cases j
     · simp only [Fin.zero_eta, Fin.isValue, Matrix.cons_val_zero, Function.update_apply, h23,
-        if_false, if_true, combD_out, combD_bitsA, getD_ofFn_bool]
+        ite_false, ite_true, combD_out, combD_bitsA, getD_ofFn_bool]
       rfl
     · simp only [Fin.mk_one, Fin.isValue, Matrix.cons_val_one, Matrix.cons_val_fin_one,
-        Function.update_apply, if_true, combD_out, combD_bitsB, getD_ofFn_bool]
+        Function.update_apply, ite_true, combD_out, combD_bitsB, getD_ofFn_bool]
       rfl
   · have a0 := h1 0; have a1 := h1 1
     have b0 := h2 0; have b1 := h2 1
@@ -238,7 +238,7 @@ theorem fin_runs (hcr : Function.Injective cr) (hA : 96 ≤ A) (ra rb : CR) {I�
     · simp [Function.update_apply, h12, h₂]
   · fin_cases j
     simp only [Fin.zero_eta, Fin.isValue, Matrix.cons_val_fin_one, Function.update_apply,
-      if_true, finD_out, finD_bitsA, finD_bitsB, getD_ofFn_bool]
+      ite_true, finD_out, finD_bitsA, finD_bitsB, getD_ofFn_bool]
     rfl
   · have a0 := h1 0; have a1 := h1 1
     have b0 := h2 0

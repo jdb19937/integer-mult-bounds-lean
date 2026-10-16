@@ -272,7 +272,7 @@ theorem ldl_strip_loop (a : Fin T) : ∀ (l : List (Fin (A + 4))) (v : HS T Q A 
         simp [ldlDropF, hx]
       · refine ⟨v, rfl, ?_⟩
         have e : ({ S with R := Function.update S.R a (ldlDropF (x :: l)) } : Stacks T A) = S := by
-          rw [ldlDropF, if_neg hx, ← hS, Function.update_eq_self]
+          rw [ldlDropF, ite_eq_right hx, ← hS, Function.update_eq_self]
         have e2 : 2 * ldlNF (x :: l) + 1 = 1 := by simp [ldlNF, hx]
         rw [e, e2]
         exact .loop_false (by simpa [hx] using hf)
@@ -295,13 +295,13 @@ theorem ldlDropF_replicate (k : ℕ) (l : List (Fin (A + 4))) :
     ldlDropF (List.replicate k (bitSymbol false) ++ l) = ldlDropF l := by
   induction k with
   | zero => rfl
-  | succ k ih => rw [List.replicate_succ, List.cons_append, ldlDropF, if_pos rfl, ih]
+  | succ k ih => rw [List.replicate_succ, List.cons_append, ldlDropF, ite_eq_left rfl, ih]
 
 theorem ldlNF_replicate (k : ℕ) (l : List (Fin (A + 4))) :
     ldlNF (List.replicate k (bitSymbol false) ++ l) = k + ldlNF l := by
   induction k with
   | zero => simp
-  | succ k ih => rw [List.replicate_succ, List.cons_append, ldlNF, if_pos rfl, ih]; ring
+  | succ k ih => rw [List.replicate_succ, List.cons_append, ldlNF, ite_eq_left rfl, ih]; ring
 
 end Strip
 
@@ -581,13 +581,13 @@ theorem ldlSetH_H (hrg : Function.Injective rg) {hd : Fin 5 → Fin t₀}
     (k : Fin 5) : ldlSetH rg hd R h (ldlH rg hd k) = h k := by
   rw [ldlSetH_apply hrg hi]
   have hy : ∃ k', ldlH rg hd k' = ldlH rg hd k := ⟨k, rfl⟩
-  rw [dif_pos hy]
+  rw [dite_eq_left hy]
   exact congrArg h (ldlH_injective hrg hi hy.choose_spec)
 
 theorem ldlSetH_of_ne (hrg : Function.Injective rg) {hd : Fin 5 → Fin t₀}
     (hi : Function.Injective hd) (R : Fin T → List (Fin (A + 4))) (h : Fin 5 → List (Fin (A + 4)))
     {y : Fin T} (hy : ∀ k, ldlH rg hd k ≠ y) : ldlSetH rg hd R h y = R y := by
-  rw [ldlSetH_apply hrg hi, dif_neg (fun ⟨k, hk⟩ => hy k hk)]
+  rw [ldlSetH_apply hrg hi, dite_eq_right (fun ⟨k, hk⟩ => hy k hk)]
 
 theorem ldl_prepX_runs (hA : 4 ≤ A) (h : LdlRegs rg lr) {hd : Fin 5 → Fin t₀}
     (hi : Function.Injective hd) (R : Fin T → List (Fin (A + 4))) {w : ℕ} (hs : Fin 5 → List Bool)
@@ -716,12 +716,12 @@ theorem ldlW_X (rg : LayReg t₀ → Fin T) (lr : LdlReg → Fin T) (hd : Fin 5 
       ldlWX rg lr hd A w (ldlWM rg lr A n R₀ bs bs.length) xs j := by
   rcases Nat.eq_zero_or_pos j with rfl | hj
   · simp [ldlW, ldlWX]
-  · rw [ldlW, if_neg (by omega), Nat.add_sub_cancel_left]
+  · rw [ldlW, ite_eq_right (by omega), Nat.add_sub_cancel_left]
 
 theorem ldlW_M (rg : LayReg t₀ → Fin T) (lr : LdlReg → Fin T) (hd : Fin 5 → Fin t₀)
     (A n w : ℕ) (R₀ : Fin T → List (Fin (A + 4))) (bs : List (ℕ × ℕ)) (xs : List LayXcD) {j : ℕ}
     (hj : j ≤ bs.length) : ldlW rg lr hd A n w R₀ bs xs j = ldlWM rg lr A n R₀ bs j := by
-  rw [ldlW, if_pos hj]
+  rw [ldlW, ite_eq_left hj]
 
 variable {rg : LayReg t₀ → Fin T} {lr : LdlReg → Fin T}
 
@@ -835,7 +835,7 @@ theorem ldl_layDyn_upd (R : Fin T → List (Fin (A + 4))) (s dm tm dx tx : List 
   simp only [layDyn, Function.update_apply]
   by_cases hz : z = y
   · subst hz; simp [h1, h2, h3, h4, h5]
-  · simp only [hz, if_false]
+  · simp only [hz, ite_false]
 
 theorem ldl_layDyn_setH (h : LdlRegs rg lr) (hd : Fin 5 → Fin t₀)
     (R : Fin T → List (Fin (A + 4))) (s dm tm dx tx : List (Fin (A + 4)))

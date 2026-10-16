@@ -784,10 +784,10 @@ theorem ldxBody_do (B : ℕ) (s : TblSt 40 A) {N ℓ Kv D q : ℕ} (hc : ldxCore
   have hlay : laySwaps (k + 1) σ = if (σ.symm ⟨k, hkm⟩ : ℕ) = k then laySwaps k σ
       else ((σ.symm ⟨k, hkm⟩ : ℕ), k) ::
         laySwaps k (σ * Equiv.swap (σ.symm ⟨k, hkm⟩) ⟨k, hkm⟩) := by
-    rw [laySwaps, dif_pos hkm]
+    rw [laySwaps, dite_eq_left hkm]
   by_cases hpk : (σ.symm ⟨k, hkm⟩ : ℕ) = k
   · -- no exchange
-    rw [if_pos hpk] at hlay
+    rw [ite_eq_left hpk] at hlay
     have hpk4 : s4.val xp = k := by rw [hp4', htau, hpk]
     refine TblDo.mono (K := 1 + (1 + 1)) ?_ (fun _ h => h) (by omega)
     refine TblDo.iteF (by rw [hpk4, hk4]; omega) (TblDo.iteF (by rw [hpk4, hk4]; omega) ?_)
@@ -799,7 +799,7 @@ theorem ldxBody_do (B : ℕ) (s : TblSt 40 A) {N ℓ Kv D q : ℕ} (hc : ldxCore
     · simp only [TblIns.run]; rw [hacc4, hacc]
   · -- the exchange of `(p, k)`
     set p := (σ.symm ⟨k, hkm⟩ : ℕ) with hp
-    rw [if_neg hpk] at hlay
+    rw [ite_eq_right hpk] at hlay
     have hmem : (p, k) ∈ laySwaps (D * q) (layTr D q) := by
       rw [hsw, hmk, hlay]; simp
     obtain ⟨hpk', -⟩ := hspec _ hmem

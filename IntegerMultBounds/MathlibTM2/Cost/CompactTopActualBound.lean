@@ -93,7 +93,7 @@ theorem compactPieceCostWith_closed (T : ℕ) (ds : ComplexFramedExecution.Direc
 All pieces use the same padded stock; no execution or cost bound is assumed. -/
 theorem compactActiveCost_sum_with (T : ℕ) (ds : ComplexFramedExecution.Directions)
     (D K X active oS J R n o r w ρ : ℕ) (s : CompactGadgetReservationShape.Shape)
-    {lam : ℝ} (hactive : active≠0) (hK : K=s.chunk)
+    {lam : ℝ} (hactive : active≠0) (_hK : K=s.chunk)
     (hr : 1≤r) (hw : 1≤w) (hρ : ρ<s.chunk) (hG : 1≤s.guard)
     (hbits : s.bits≤n) (hpayload : s.payload=2^o*(3*(r*w))) (hN : o+n≤r*w)
     (hl : 0<lam) (htl : Parameters.tau≤lam)

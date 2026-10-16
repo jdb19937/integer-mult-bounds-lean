@@ -117,7 +117,7 @@ theorem padCol_map (f : ℕ → ℤ) : ∀ (B a L : ℕ),
     have ih := padCol_map f B (a+1) L
     simp only [padCol] at ih ⊢
     rw [List.range'_succ, List.map_cons, List.take_succ_cons, List.length_cons, List.cons_append,
-      List.range'_succ, List.map_cons, if_pos (by omega), Nat.add_sub_add_right, ih]
+      List.range'_succ, List.map_cons, ite_eq_left (by omega), Nat.add_sub_add_right, ih]
     congr 1
     refine List.map_congr_left fun i hi => ?_
     have := List.mem_range'_1.mp hi
@@ -173,12 +173,12 @@ theorem luLr_natural (hP : 2 ≤ P) (AZ : ℕ → ℕ → ℤ) (i k : ℕ) :
   rw [zero_add] at h
   rw [h, LzN]
   by_cases hc : k ≤ i ∧ i<s
-  · rw [if_pos ⟨Nat.zero_le _, hc⟩, if_pos hc]
+  · rw [ite_eq_left ⟨Nat.zero_le _, hc⟩, ite_eq_left hc]
     by_cases hik : i=k
     · simp only [hik, ite_true, gv]; push_cast; field_simp
     · simp only [hik, ite_false, Nat.sub_zero, mRule]
       rw [← stgZ_map P K hP]; exact mulZ_eq P K hP _ _
-  · rw [if_neg (fun h' => hc h'.2), if_neg hc, gv_zero]
+  · rw [ite_eq_right (fun h' => hc h'.2), ite_eq_right hc, gv_zero]
 
 theorem luUr_natural (hP : 2 ≤ P) (AZ : ℕ → ℕ → ℤ) (k j : ℕ) :
     luUr (rdP P) (mRule P K) (gvM P AZ) (Finset.Ico 0 s) (List.range' 0 s) k j=gv P (UzN P K s AZ k j) := by
@@ -186,8 +186,8 @@ theorem luUr_natural (hP : 2 ≤ P) (AZ : ℕ → ℕ → ℤ) (k j : ℕ) :
   rw [zero_add] at h
   rw [h, UzN]
   by_cases hc : k ≤ j ∧ j<s
-  · rw [if_pos ⟨Nat.zero_le _, hc⟩, if_pos hc, Nat.sub_zero, ← stgZ_map P K hP]; rfl
-  · rw [if_neg (fun h' => hc h'.2), if_neg hc, gv_zero]
+  · rw [ite_eq_left ⟨Nat.zero_le _, hc⟩, ite_eq_left hc, Nat.sub_zero, ← stgZ_map P K hP]; rfl
+  · rw [ite_eq_right (fun h' => hc h'.2), ite_eq_right hc, gv_zero]
 
 variable (hP : 2 ≤ P) (AZ : ℕ → ℕ → ℤ) (hA : BandFrom B (gvM P AZ) 0)
   (hout : ∀ i j, (s ≤ i ∨ s ≤ j) → AZ i j=0)
@@ -204,8 +204,8 @@ theorem lcols_eq : (cols (LzN P K s AZ) (List.range' 0 s)).map (padCol B)=
   refine List.map_congr_left fun i hi => ?_
   have hi' := List.mem_range'_1.mp hi
   by_cases his : i<s
-  · rw [if_pos (by omega), LzN, if_pos ⟨by omega, his⟩, if_neg (by omega)]
-  · rw [if_neg (by omega), stgZ_out P K s AZ hout m i m (Or.inl (by omega))]
+  · rw [ite_eq_left (by omega), LzN, ite_eq_left ⟨by omega, his⟩, ite_eq_right (by omega)]
+  · rw [ite_eq_right (by omega), stgZ_out P K s AZ hout m i m (Or.inl (by omega))]
     simp [mulZ]
 
 include hP hA in
@@ -222,7 +222,7 @@ theorem banded_LzN : Banded B (LzN P K s AZ) (List.range' 0 s) := by
     have hx' := List.mem_range'_1.mp hx
     unfold LzN
     split
-    · rw [if_neg (by omega)]
+    · rw [ite_eq_right (by omega)]
       by_contra hne
       have h0 : stgZ P K AZ a x a≠0 := by
         intro h0; apply hne; simp [h0, mulZ]
@@ -272,10 +272,10 @@ theorem ucols_eq : (cols (UzN P K s AZ) (List.range' 0 s).reverse).map (padCol B
   refine List.map_congr_left fun d hd => ?_
   have hd' := List.mem_range'_1.mp hd
   by_cases hdm : d ≤ m
-  · rw [if_pos hdm, if_pos hdm, getD_range'_map _ _ _ _ _ (by omega), winRowZ,
-      getD_range'_map _ _ _ _ _ (by omega), UzN, if_pos ⟨by omega, by omega⟩]
+  · rw [ite_eq_left hdm, ite_eq_left hdm, getD_range'_map _ _ _ _ _ (by omega), winRowZ,
+      getD_range'_map _ _ _ _ _ (by omega), UzN, ite_eq_left ⟨by omega, by omega⟩]
     congr 1 <;> omega
-  · rw [if_neg hdm, if_neg hdm]
+  · rw [ite_eq_right hdm, ite_eq_right hdm]
 
 include hP hA in
 omit hout in
@@ -350,7 +350,7 @@ theorem lineSolveZ_eq (bZ : List ℤ) (hlen : bZ.length=s) :
     refine List.map_congr_left fun m hm => ?_
     have hm' := List.mem_range'_1.mp hm
     simp only [Function.comp, winRowZ, List.range'_succ, List.map_cons, List.headD_cons, rzF, UzN,
-      if_pos (show m ≤ m ∧ m<s from ⟨le_refl m, by omega⟩)]
+      ite_eq_left (show m ≤ m ∧ m<s from ⟨le_refl m, by omega⟩)]
   have hbZ : bZ=ks.map fun i => bZ.getD i 0 := by rw [hks, ← hlen, range'_getD]
   have hlenk : bZ.length=ks.length := by rw [hlen, hks, List.length_range']
   -- forward pass

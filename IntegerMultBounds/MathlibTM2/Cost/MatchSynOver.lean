@@ -302,7 +302,7 @@ theorem mrO_synOS_le {es : List ℕ} {ℓ K : ℕ} (H : LayHyp es ℓ K) (h : �
 theorem mrO_synOS_chunk {es : List ℕ} {ℓ K h : ℕ} (hc : synChunk ℓ K h) :
     synOS es ℓ K h = K * ((h - layB ℓ K) / K * es.length) := by
   unfold synOS
-  rw [if_pos hc.1, if_neg (not_lt.2 hc.2)]
+  rw [ite_eq_left hc.1, ite_eq_right (not_lt.2 hc.2)]
 
 theorem mrO_synAT_le {es : List ℕ} {ℓ K : ℕ} (H : LayHyp es ℓ K) (h : ℕ) :
     synAT es ℓ K h ≤ es.sum := by
@@ -336,7 +336,7 @@ theorem mrO_synAc_le {es : List ℕ} {ℓ K h : ℕ} (H : LayHyp es ℓ K) (hc :
     synAc es ℓ K ≤ es.sum := by
   have := synAR_le H h
   unfold synAR at this
-  rwa [if_pos hc] at this
+  rwa [ite_eq_left hc] at this
 
 theorem mrO_synR2_le {es : List ℕ} {ℓ K : ℕ} (H : LayHyp es ℓ K) (h : ℕ) :
     synR2 es ℓ K h ≤ 2 * 2 ^ es.sum := by
@@ -407,7 +407,7 @@ theorem mrO_prl_le {es : List ℕ} {ℓ K h Z : ℕ} (H : LayHyp es ℓ K) (hZ :
       have h4 := mrO_synDpp_le es
       have h5 : m ≤ m * Z := Nat.le_mul_of_pos_right _ hZ
       nlinarith
-    have := List.sum_le_card_nsmul _ _ hb
+    have := List.sum_le_length_nsmul _ _ hb
     rw [List.length_map, smul_eq_mul] at this
     have hl := mrO_length_synPcs K (synX es ℓ K) (synDpp es) (synOS es ℓ K h) (synJp es)
       (synDpp es)

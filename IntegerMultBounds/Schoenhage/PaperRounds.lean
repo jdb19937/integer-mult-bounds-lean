@@ -82,7 +82,7 @@ theorem paperPerm_σ_chunk {ts : List ℕ} {ℓ K : ℕ} (hL : LayoutOK r ts ℓ
     nlinarith
   have hslot : paperSlot ts ℓ K Q = (i, (ℓ - 1) % K + c * K + ρ) := by
     unfold paperSlot
-    rw [if_pos hQlt, hQK, hQmod, hmodD, hdivD]
+    rw [ite_eq_left hQlt, hQK, hQmod, hmodD, hdivD]
     simp only [Prod.mk.injEq]
     exact ⟨by omega, by simp⟩
   have htau : paperTau ts ℓ K Q = axOff ts i + ((ℓ - 1) % K + c * K + ρ) := by

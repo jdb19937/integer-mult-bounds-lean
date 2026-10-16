@@ -231,10 +231,10 @@ reserved copy `mnLay` through the numbering `regEquiv`. -/
 def mnLayE (i : Fin (nT SXReg)) : Fin mnT :=
   if i = mnLio then mnRg (.src (.v .io)) else mnLay ((regEquiv SXReg).symm i)
 
-@[simp] lemma mnLayE_io : mnLayE mnLio = mnRg (.src (.v .io)) := if_pos rfl
+@[simp] lemma mnLayE_io : mnLayE mnLio = mnRg (.src (.v .io)) := ite_eq_left rfl
 
 lemma mnLayE_of_ne {i : Fin (nT SXReg)} (h : i ≠ mnLio) :
-    mnLayE i = mnLay ((regEquiv SXReg).symm i) := if_neg h
+    mnLayE i = mnLay ((regEquiv SXReg).symm i) := ite_eq_right h
 
 lemma mnLayE_inj : Function.Injective mnLayE := by
   intro i j h

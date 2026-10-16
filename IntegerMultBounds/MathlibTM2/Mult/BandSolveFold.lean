@@ -48,7 +48,7 @@ theorem foldZ_band (w : ℕ) (aZ : ZMod s → ℤ → ℤ) :
     obtain ⟨k, hk, hkz⟩ : ∃ k : ℤ, k.natAbs ≤ w ∧
         (if foldAt s i+(k : ZMod s)=foldAt s j then aZ (foldAt s i) k else 0)≠0 := by
       by_contra hall
-      push_neg at hall
+      push Not at hall
       exact hz (window_eq_zero _ w hall)
     have heq : foldAt s i+(k : ZMod s)=foldAt s j := by
       by_contra hne; simp [hne] at hkz
@@ -80,7 +80,7 @@ theorem lineSolveFold_eq (hP : 2 ≤ P) (w : ℕ) (aZ : ZMod s → ℤ → ℤ) 
       FastB0.machSolveT K (rdP P) (windowMatrix s w fun j k => gv P (aZ j k))
         (fun a => gv P (bZ.getD (foldPos s a) 0)) (foldAt s i) := by
   rw [lineSolveZ_eq P K (2*w+1) s hP (foldZ s w aZ) (foldZ_band P s w aZ)
-    (fun i j h => by unfold foldZ; rw [if_neg (by omega)]) bZ hlen]
+    (fun i j h => by unfold foldZ; rw [ite_eq_right (by omega)]) bZ hlen]
   refine List.map_congr_left fun i hi => ?_
   have hi' : i<s := by have := List.mem_range'_1.mp hi; omega
   have hmap := bandSolveG_map (rdP P) (mRule P K) (foldPos s) (foldPos_injective s)
@@ -155,15 +155,15 @@ theorem wmZ_single (w : ℕ) (hsw : 2*w+1 < s) (aZ : ZMod s → ℤ → ℤ) (j 
     have hk' := Finset.mem_Icc.mp hk
     have hka : k.natAbs ≤ w := by omega
     by_cases hc : j+(k : ZMod s)=l
-    · rw [if_pos hc, if_pos ((hind k hka).mp hc)]
-    · rw [if_neg hc, if_neg (fun h => hc ((hind k hka).mpr h))]), Finset.sum_ite_eq']
+    · rw [ite_eq_left hc, ite_eq_left ((hind k hka).mp hc)]
+    · rw [ite_eq_right hc, ite_eq_right (fun h => hc ((hind k hka).mpr h))]), Finset.sum_ite_eq']
   by_cases hdw : d ≤ w
-  · rw [if_pos (Finset.mem_Icc.mpr ⟨by simp [hk0, hdw], by simp [hk0, hdw]⟩), if_pos hdw]
+  · rw [ite_eq_left (Finset.mem_Icc.mpr ⟨by simp [hk0, hdw], by simp [hk0, hdw]⟩), ite_eq_left hdw]
     simp [hk0, hdw]
-  · rw [if_neg hdw]
+  · rw [ite_eq_right hdw]
     by_cases hsd : s-w ≤ d
-    · rw [if_pos (Finset.mem_Icc.mpr ⟨by simp [hk0, hdw]; omega, by simp [hk0, hdw]; omega⟩), if_pos hsd]
+    · rw [ite_eq_left (Finset.mem_Icc.mpr ⟨by simp [hk0, hdw]; omega, by simp [hk0, hdw]; omega⟩), ite_eq_left hsd]
       simp [hk0, hdw]
-    · rw [if_neg hsd, if_neg (fun h => by have := Finset.mem_Icc.mp h; simp [hk0, hdw] at this; omega)]
+    · rw [ite_eq_right hsd, ite_eq_right (fun h => by have := Finset.mem_Icc.mp h; simp [hk0, hdw] at this; omega)]
 
 end IntegerMultBounds.MathlibTM2.Mult.BandFactor

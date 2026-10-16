@@ -202,12 +202,12 @@ theorem srcA_runs (M : SrcMach t₀ T Q) (hA : 96 ≤ prime + K) {n : ℕ} (hbig
     (fun r j => M.hdisj _ j) M.hι M.hT M.hQ hA M.hd M.pay M.hi M.hQs M.hswA M.hTs M.hdpay hw hwW
     hW V₀ hV₀ rest hout v hv F₀
     (fun x hx => by
-      simp only [hF₀, if_pos hx]
+      simp only [hF₀, ite_eq_left hx]
       exact (cst_grid_numer (hvf _)).symm)
     (fun x hx => by
       obtain ⟨i, hi⟩ := hx
       simp only [hF₀]
-      rw [if_neg (fun h => absurd (h i) (not_lt.2 hi))])
+      rw [ite_eq_right (fun h => absurd (h i) (not_lt.2 hi))])
     axs haxs
   have hbox : rsaBox (d n) (t n) G =
       cstNumBox (p n + 1) (t n) (tensorZR (d n) (s n) (t n) (lineA n) v) := by
@@ -856,7 +856,7 @@ theorem srcG_runs (M : SrcMach t₀ T Q) {d q γ w : ℕ} (s t : Fin d → ℕ) 
   have h := cst_scale_runs (body := body) (ι := M.ι) M.hrg M.hdisj (src := .b (.inl .src))
     (dst := .x .gD) (out := .x .sb) (cS := .x .gS) (cR := .x .gR) (tS := .x .gT) (tR := .x .gU)
     (by simp) (by simp) hw hγ E.get (srcPad q s t z) hsrc hgS hgR hgT hgU hgD
-  rw [src_pad_scale s t γ z hz, if_neg (by simp), src_length_pad, SrcF.upd_b, SrcF.upd_x] at h
+  rw [src_pad_scale s t γ z hz, ite_eq_right (by simp), src_length_pad, SrcF.upd_b, SrcF.upd_x] at h
   exact h
 
 end PhaseG

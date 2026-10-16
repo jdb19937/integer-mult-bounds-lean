@@ -219,7 +219,7 @@ theorem crtDirectForwardStep_runs {d : ℕ} (a s m : Fin d → ℕ)
     · obtain ⟨q, rfl⟩ := he
       cases q <;> simp [R₃, R₂, crtDirectCallState, crtDirectLoadRegs, crtDirectSaveRegs,
         crtDirectState, hr.eq_iff, crt_drop_finRange hi, crtPre_succ a hi, crtW,
-        crtEnts_cons, ← List.replicate_add, hz .aI (by simp), hz .sI (by simp), hz .muI (by simp), hz .tmp (by simp)]
+        crtEnts_cons, hz .aI (by simp), hz .sI (by simp), hz .muI (by simp), hz .tmp (by simp)]
     · have hn : ∀ q, z ≠ r q := by simpa using he
       simp [R₃, R₂, crtDirectCallState, crtDirectLoadRegs, crtDirectSaveRegs, crtDirectState, hn]
   have h := crtRuns_seq hpop (crtRuns_seq hload (crtRuns_seq htarget hsave))
@@ -305,7 +305,7 @@ theorem crtDirectRestore_runs {d : ℕ} (a s m : Fin d → ℕ)
     by_cases he : ∃ q, z = r q
     · obtain ⟨q, rfl⟩ := he
       cases q <;> simp [R₄, R₃, R₂, R₁, R₀, crtDirectState, hr.eq_iff, hrev,
-        hfull, hnil, crtEnts_reverse, List.map_reverse, crtPre, crtLow, hw, hs, hm,
+        hfull, hnil, List.map_reverse, crtPre, crtLow, hw, hs, hm,
         hz .wD (by simp), hz .sD (by simp), hz .mD (by simp),
         hz .lower (by simp), hz .upper (by simp), hz .index (by simp)]
     · have hn : ∀ q, z ≠ r q := by simpa using he

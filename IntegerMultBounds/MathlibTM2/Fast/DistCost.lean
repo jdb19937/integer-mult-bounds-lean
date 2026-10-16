@@ -84,7 +84,7 @@ theorem ds_ax_vals (hn : 2 ≤ n) {i : ℕ} (hi : i < d n) (Wt : ℕ) :
 /-- `Σ_{i < d} t_i ≤ T`. -/
 theorem ds_sum_t (hn : 2 ≤ n) : (List.ofFn (t n)).sum ≤ T n := by
   rw [ds_ofFn_t]
-  have h := List.sum_le_card_nsmul ((List.range (d n)).map (dsT n)) (r n) (by
+  have h := List.sum_le_length_nsmul ((List.range (d n)).map (dsT n)) (r n) (by
     intro x hx
     obtain ⟨i, -, rfl⟩ := List.mem_map.1 hx
     exact dsT_le hn i)
@@ -94,7 +94,7 @@ theorem ds_sum_t (hn : 2 ≤ n) : (List.ofFn (t n)).sum ≤ T n := by
 /-- `Σ_{i < d} s_i ≤ 2 T + 23 d`. -/
 theorem ds_sum_s (hn : 2 ≤ n) : (List.ofFn (s n)).sum ≤ 2 * T n + 23 * d n := by
   rw [ds_ofFn_s]
-  have h := List.sum_le_card_nsmul ((List.range (d n)).map (dsS n)) (2 * r n + 23) (by
+  have h := List.sum_le_length_nsmul ((List.range (d n)).map (dsS n)) (2 * r n + 23) (by
     intro x hx
     obtain ⟨i, hi, rfl⟩ := List.mem_map.1 hx
     exact dsS_le hn (List.mem_range.1 hi))

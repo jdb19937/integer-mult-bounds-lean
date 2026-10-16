@@ -67,9 +67,9 @@ theorem twShiftZ_toComplex_fun (p e : ℕ) (Z : Fin r → GaussianInt) :
 
 lemma tw_neg_one_pow (k : ℕ) : ((-1 : GaussianInt) ^ k) = if k % 2 = 1 then -1 else 1 := by
   rcases Nat.mod_two_eq_zero_or_one k with h | h
-  · rw [if_neg (by omega)]
+  · rw [ite_eq_right (by omega)]
     exact Even.neg_one_pow (Nat.even_iff.mpr h)
-  · rw [if_pos h]
+  · rw [ite_eq_left h]
     exact Odd.neg_one_pow (Nat.odd_iff.mpr h)
 
 /-- Outputs below `s = e mod r` come from the wrapped tail, with sign `-(-1)^(e / r)`. -/
@@ -318,7 +318,7 @@ def twSt (h : ℕ) (L : List (Fin (A + 4) × Bool)) (s : List Bool × ℕ) (j : 
 lemma twSt_succ (h : ℕ) (L : List (Fin (A + 4) × Bool)) (s : List Bool × ℕ) {j : ℕ}
     (hj : j < L.length) : twSt h L s (j + 1) = twStep h (twSt h L s j) L[j] := by
   unfold twSt
-  rw [List.take_succ, List.getElem?_eq_getElem hj, List.foldl_append]
+  rw [List.take_add_one, List.getElem?_eq_getElem hj, List.foldl_append]
   rfl
 
 /-- The scan needs `h` low bits and a reduced sum at every `sel`. -/
@@ -393,20 +393,20 @@ lemma tw_seg_split {a h : ℕ} (hh : h < a) (x : ℕ) :
     obtain ⟨k, hk⟩ : ∃ k, a - h = k + 1 := ⟨a - h - 1, by omega⟩
     rw [hk, binBits_succ, Nat.testBit_div_two_pow, Nat.zero_add]
     rfl
-  rw [twSeg, if_pos hh, e1, e2, List.zip_append (by simp), length_binBits, List.zip_cons_cons]
+  rw [twSeg, ite_eq_left hh, e1, e2, List.zip_append (by simp), length_binBits, List.zip_cons_cons]
 
 lemma twFold_seg {h : ℕ} (a x F : ℕ) (hF : F < 2 ^ (h + 1)) :
     ((twSeg A a h).zip (binBits a x)).foldl (twStep h) ([], F) =
       ([], (F + twTerm a h x) % 2 ^ (h + 1)) := by
   unfold twTerm
   by_cases hh : h < a
-  · rw [tw_seg_split hh, List.foldl_append, twFold_low, List.foldl_cons, twFold_skip, if_pos hh]
-    simp only [twStep, if_pos rfl, List.append_nil, List.reverse_reverse, twVal_binBits]
+  · rw [tw_seg_split hh, List.foldl_append, twFold_low, List.foldl_cons, twFold_skip, ite_eq_left hh]
+    simp only [twStep, ite_eq_left rfl, List.append_nil, List.reverse_reverse, twVal_binBits]
     rw [tw_testBit_eq]
     rcases Nat.mod_two_eq_zero_or_one (x / 2 ^ h) with hb | hb
     · simp [hb, Nat.mod_eq_of_lt hF]
     · simp [hb]
-  · rw [twSeg, if_neg hh, twFold_skip, if_neg hh, Nat.add_zero, Nat.mod_eq_of_lt hF]
+  · rw [twSeg, ite_eq_right hh, twFold_skip, ite_eq_right hh, Nat.add_zero, Nat.mod_eq_of_lt hF]
 
 lemma twGood_seg {h : ℕ} (a x F : ℕ) (hF : F < 2 ^ (h + 1)) :
     twGood h ((twSeg A a h).zip (binBits a x)) ([], F) := by
@@ -418,7 +418,7 @@ lemma twGood_seg {h : ℕ} (a x F : ℕ) (hF : F < 2 ^ (h + 1)) :
     simp only [List.length_singleton] at hj
     obtain rfl : j = 0 := by omega
     simp [twSt, hF]
-  · rw [twSeg, if_neg hh]
+  · rw [twSeg, ite_eq_right hh]
     exact twGood_skip _ _ _
 
 /-- The unreduced sum of the scan: `Σ_{i : h < aᵢ} bitₕ(xᵢ) (xᵢ mod 2^h)`, axis `0` last. -/

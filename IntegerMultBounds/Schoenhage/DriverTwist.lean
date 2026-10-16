@@ -42,7 +42,7 @@ theorem runs_tickN {s d : Fin t} (h : s ≠ d) (σ : Fin t → WTape) {n : ℕ} 
     have hb : Rules.ticks.B = 0 := rfl
     rw [length_ones, hb] at t1
     generalize time Rules.ticks (ones n) (fun j => j.elim0) = T at t1 ⊢
-    simp [hs, hd, emp, reg, clen_replicate_nil, WTape.put, WTape.next, e4]
+    simp [hs, hd, emp, reg, clen_replicate_nil, WTape.put, WTape.next]
     omega
 
 /-! ### The twist step -/
@@ -211,7 +211,7 @@ theorem runs_twistStep {r : ℕ} (c : Cmd 0 29) (v : Fin 13 → WTape) (tw : Fin
     simp (config := {decide := true}) only [dstate_nm, dstate_twT, v13, v12, v10, v7, v5, v3, v2, v1, tw12, tw11,
       tw9, tw8, tw3, Function.update_apply, WTape.words, clen_reverse, List.reverse_nil, List.nil_append,
       List.append_nil, List.reverse_reverse, clen_cons, clen_nil, length_ones, List.length_replicate,
-      clen_replicate_nil, h0, h8, h9, reg, emp, if_true, if_false, cut_flatten] at *
+      clen_replicate_nil, h0, h8, h9, reg, emp, ite_true, ite_false, cut_flatten] at *
     rw [htl] at ct
     simp only [x, y] at *
     nlinarith

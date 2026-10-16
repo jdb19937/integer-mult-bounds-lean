@@ -90,7 +90,7 @@ theorem ds_rsaMid (hn : 2 ≤ n) {i : ℕ} (hi : i < d n) : rsaMid (t n) i = dsG
     exact Nat.eq_of_mul_eq_mul_left hpos e
   · have hd : i + 1 = d n := by omega
     unfold rsaMid dsG
-    rw [if_neg h, hd, List.drop_eq_nil_of_le (by simp)]
+    rw [ite_eq_right h, hd, List.drop_eq_nil_of_le (by simp)]
     rfl
 
 theorem ds_rsbPre (n i : ℕ) : rsbPre (t n) i = rsaPre (t n) i := rfl

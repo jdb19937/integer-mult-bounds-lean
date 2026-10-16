@@ -183,7 +183,7 @@ theorem ds_P2b (R : Regs T A) {n w : ℕ} (hn : 2 ≤ n) (hpw : p n + 2 ≤ w)
       hX₃, hX₂, hX₁, Function.update_apply]
     by_cases hy : y = .o .uq
     · subst hy; simp [huq]
-    · simp only [hy, if_false]
+    · simp only [hy, ite_false]
       split_ifs <;> simp_all
   rw [eX] at s11
   refine (s1.seq (s2.seq (s3.seq (s4.seq (s5.seq (s6.seq (s7.seq (s8.seq (s9.seq (s10.seq

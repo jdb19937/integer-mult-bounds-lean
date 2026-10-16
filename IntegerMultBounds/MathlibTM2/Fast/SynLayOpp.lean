@@ -89,7 +89,7 @@ theorem sg_slyRevStreams (hA : 4 ≤ prime + Ka) {es : List ℕ} {ℓ K w l : �
     intro i hi
     rw [hRw]
     simp only [ldgPost, Function.update_apply, slyLr, slyRg, slyT_eq_sreg_iff, sreg_eq_slyT_iff,
-      sreg_injective.eq_iff, if_false, synG_sreg, slyV₂, slyPV, SynW.s.injEq, reduceCtorEq]
+      sreg_injective.eq_iff, ite_false, synG_sreg, slyV₂, slyPV, SynW.s.injEq, reduceCtorEq]
     split_ifs <;> first | exact hs i |
       (exfalso; rename_i h; have := congrArg Fin.val h; simp at this; omega)
   have hM := lr_slyRevStream (body := body) (cnt := slyRg .cM) (sp1 := slyRg .tM) (cn := slyLr .cN)

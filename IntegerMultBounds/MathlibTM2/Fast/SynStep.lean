@@ -69,7 +69,7 @@ theorem rpStream_synMask (M : ℕ) (Y : ℕ → Fin r → GaussianInt) :
 theorem synNum_mask {N p : ℕ} {L : Equiv.Perm (Fin N)} {u : Recs r} {Y : ℕ → Fin r → GaussianInt}
     (h : SynNum p L u Y) : SynNum p L u (synMask (2 ^ N) Y) := by
   intro x hx c
-  simp only [synMask, hx, if_true]
+  simp only [synMask, hx, ite_true]
   exact h x hx c
 
 theorem synMask_norm {N p : ℕ} {L : Equiv.Perm (Fin N)} {u : Recs r}
@@ -77,7 +77,7 @@ theorem synMask_norm {N p : ℕ} {L : Equiv.Perm (Fin N)} {u : Recs r}
     ∀ x c, ‖GaussianInt.toComplex (synMask (2 ^ N) Y x c)‖ ≤ 2 ^ p := by
   intro x c
   by_cases hx : x < 2 ^ N
-  · simp only [synMask, hx, if_true]
+  · simp only [synMask, hx, ite_true]
     have e := h x hx c
     have hb := hu (synPi L x) (synPi_lt L x) c
     rw [← e] at hb
@@ -86,7 +86,7 @@ theorem synMask_norm {N p : ℕ} {L : Equiv.Perm (Fin N)} {u : Recs r}
     have : ‖(2 : ℂ) ^ p‖ = 2 ^ p := by simp
     rw [this, div_le_one hp] at hb
     exact hb
-  · simp only [synMask, hx, if_false]
+  · simp only [synMask, hx, ite_false]
     simp
 
 end Num

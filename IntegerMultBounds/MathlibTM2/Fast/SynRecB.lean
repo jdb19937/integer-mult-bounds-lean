@@ -633,10 +633,10 @@ theorem sg_synRec (G F : ℕ) (es : List ℕ) (ℓ K w h : ℕ) (hK1 : 1 ≤ K)
         refine congrArg (synG R) ?_
         funext y
         simp only [synRecOut, synKh, synRh, synPcsR, synCfg, topCfg, synS, synDp, synQ, synOS,
-          synAT, synER, synR2, synW2, synAR, hc, if_false, htop, hlow, if_true, hv₃, hv₁, hv₀,
+          synAT, synER, synR2, synW2, synAR, hc, ite_false, htop, hlow, ite_true, hv₃, hv₁, hv₀,
           Function.update_apply, topPcRec, List.flatMap_nil, topRec_nil]
         split_ifs <;> simp_all [synA]
-      · simp only [synRecCost, htop, hlow, if_true, ← ha]
+      · simp only [synRecCost, htop, hlow, ite_true, ← ha]
         omega
     · have hc : synChunk ℓ K h := ⟨htop, by omega⟩
       have he3 : v₃ (.s 1) = [] := by rw [e3]; simp; omega
@@ -660,9 +660,9 @@ theorem sg_synRec (G F : ℕ) (es : List ℕ) (ℓ K w h : ℕ) (hK1 : 1 ≤ K)
         funext y
         simp only [synRecOut, synKh, synRh, synPcsR, synCfg, topCfg, synS, synDp, synQ, synOS,
           synAT, synER, synR2, synW2, synAR, synR2c, synX, synLb, synAc, synJp, synDpp, synQK,
-          synJt, hc, htop, hlow, if_false, if_true, hv₄, hv₃, hv₁, hv₀, Function.update_apply]
+          synJt, hc, htop, hlow, ite_false, ite_true, hv₄, hv₃, hv₁, hv₀, Function.update_apply]
         split_ifs <;> simp_all [synA]
-      · simp only [synRecCost, htop, hlow, if_true, if_false, ← ha]
+      · simp only [synRecCost, htop, hlow, ite_true, ite_false, ← ha]
         have : layB ℓ K - h = 0 := by omega
         simp only [this]
         omega
@@ -685,10 +685,10 @@ theorem sg_synRec (G F : ℕ) (es : List ℕ) (ℓ K w h : ℕ) (hK1 : 1 ≤ K)
     · refine congrArg (synG R) ?_
       funext y
       simp only [synRecOut, synKh, synRh, synPcsR, synCfg, topCfg, synS, synDp, synQ, synOS,
-        synAT, synER, synR2, synW2, synAR, hc, htop, if_false, hv₁, hv₀, Function.update_apply,
+        synAT, synER, synR2, synW2, synAR, hc, htop, ite_false, hv₁, hv₀, Function.update_apply,
         topPcRec, List.flatMap_nil, topRec_nil]
       split_ifs <;> simp_all [synA]
-    · simp only [synRecCost, htop, if_false, ← ha]
+    · simp only [synRecCost, htop, ite_false, ← ha]
       omega
 
 end Rec

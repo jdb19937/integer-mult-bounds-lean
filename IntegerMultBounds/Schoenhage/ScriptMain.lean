@@ -275,10 +275,10 @@ theorem runs_twSlot {ℓ K : ℕ} {ts : List ℕ} (hL : LayoutOK (2 ^ ℓ) ts �
     fin_cases i <;> first | rfl | tsimp [hσ₁₄, hσ₁₃, hσ₁₂, hσ₁₁, hσ₁₀, hσ₉, hσ₈, hσ₇, hσ₆, hσ₅, hσ₄, hσ₃, hσ₂, hσ₁,
       hσ, mst, mconst, emp]
   · rw [hlenT]
-    simp only [twCost, length_ones, clen, WTape.words, reg, List.reverse_nil, List.nil_append, List.map_cons,
+    simp only [twCost, clen, WTape.words, reg, List.reverse_nil, List.nil_append, List.map_cons,
       List.map_nil, List.sum_cons, List.sum_nil, List.length_replicate, List.map_replicate, List.sum_replicate,
-      List.length_nil, smul_eq_mul, List.drop_replicate, ones, List.reverse_reverse, List.append_nil,
-      List.length_reverse, List.map_reverse, List.sum_reverse, List.length_append]
+      List.length_nil, smul_eq_mul, ones, List.append_nil,
+      List.map_reverse, List.sum_reverse]
     omega
 
 /-! ### Comparing two unary registers -/
@@ -422,20 +422,20 @@ theorem runs_twTop {ℓ K : ℕ} {ts : List ℕ} (hL : LayoutOK (2 ^ ℓ) ts ℓ
     funext i
     fin_cases i <;> first | rfl | tsimp [hσ₈, hσ₇, hσ₆, hσ₅, hσ₄, hσ₃, hσ₂, hσ₁, hσ, mst, mconst, emp]
   · rw [hlenT]
-    simp only [twTopCost, length_ones, clen, WTape.words, reg, List.reverse_nil, List.nil_append, List.map_cons,
+    simp only [twTopCost, clen, WTape.words, List.reverse_nil, List.nil_append, List.map_cons,
       List.map_nil, List.sum_cons, List.sum_nil, List.length_replicate, List.map_replicate, List.sum_replicate,
-      List.length_nil, smul_eq_mul, ones, List.reverse_reverse, List.append_nil, List.length_reverse,
-      List.map_reverse, List.sum_reverse, List.length_append, List.length_cons]
+      List.length_nil, smul_eq_mul, ones, List.append_nil, 
+      List.map_reverse, List.sum_reverse, List.length_cons]
     omega
 
 /-! ### The Hadamard words -/
 
 /-- Append `ones (2^e)` for the register `s = ones e` to the script. -/
-noncomputable def powOut (s : Fin 37) (h : s ≠ mPK) (h' : s ≠ mPW) : Cmd 0 37 :=
+noncomputable def powOut (s : Fin 37) (h : s ≠ mPK) (_h' : s ≠ mPW) : Cmd 0 37 :=
   .seq (pow2 s mPK mPW mPC mJ h (by decide) (by decide)) <| .seq (rewind mPW) <| .seq (cpy mPW mO (by decide))
     (clear mPW)
 
-theorem runs_powOut {s : Fin 37} (h : s ≠ mPK) (h' : s ≠ mPW) (hsc : s ≠ mPC) (hsj : s ≠ mJ) (hso : s ≠ mO)
+theorem runs_powOut {s : Fin 37} (h : s ≠ mPK) (h' : s ≠ mPW) (hsc : s ≠ mPC) (_hsj : s ≠ mJ) (_hso : s ≠ mO)
     (σ : Fin 37 → WTape) {e : ℕ} {acc : List (List Bool)} (hs : σ s = reg (ones e)) (hk : σ mPK = emp)
     (hw : σ mPW = emp) (hc : σ mPC = emp) (hj : σ mJ = emp) (ho : σ mO = ⟨acc, []⟩) :
     Runs (powOut s h h') σ (· = Function.update σ mO ⟨ones (2 ^ e) :: acc, []⟩)
@@ -462,7 +462,7 @@ theorem runs_powOut {s : Fin 37} (h : s ≠ mPK) (h' : s ≠ mPW) (hsc : s ≠ m
     · by_cases hzo : z = mO
       · subst hzo; simp [hσ₃, hzw]
       · simp [hσ₃, hσ₂, hσ₁, hzw, hzo]
-  · simp [hσ₂, reg, clen, WTape.words, time_copy]
+  · simp [hσ₂, reg, clen, WTape.words]
 
 /-- The top slot's Hadamard words: `[false]`, `ones (2r·2^topBase)`, `ones L`. -/
 noncomputable def hadTop : Cmd 0 37 :=
@@ -592,8 +592,8 @@ theorem runs_hadPre (ℓ K : ℕ) (ts : List ℕ) (hd tt : WTape) (h : ℕ) (acc
   have hpe : preExp ℓ K ts h = E0 + h * ts.length := by rw [hE0]; rfl
   have hc : (σ₂ mEX).cur.length = E0 := by tsimp [hσ₂, reg]
   simp only [hadPreCost, clen, WTape.words, reg, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil,
-    length_ones, List.length_cons, List.length_nil, List.reverse_nil, List.nil_append, List.reverse_cons,
-    List.append_nil]
+    length_ones, List.length_cons, List.length_nil, List.reverse_nil, List.nil_append, 
+    ]
   unfold powOutCost
   omega
 
@@ -708,8 +708,8 @@ theorem runs_incO (ℓ K : ℕ) (ts : List ℕ) (hd o tt : WTape) (h : ℕ) :
   · have hc1 : (σ mH).cur.length = h := by tsimp [hσ, mst, reg]
     have hc2 : (σ₃ mHDD).cur.length = h * ts.length := by tsimp [hσ₃, hσ₂, hσ₁, hσ, mst, reg]
     rw [hc1, hc2]
-    simp only [decCost, clen, WTape.words, reg, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil,
-      length_ones, List.length_cons, List.length_nil, List.reverse_nil, List.nil_append, Nat.succ_mul]
+    simp only [decCost, clen, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil,
+      length_ones, List.length_cons, List.length_nil, Nat.succ_mul]
     omega
 
 /-! ### Slot bodies -/
@@ -735,11 +735,11 @@ theorem update_back {t : ℕ} (σ : Fin t → WTape) (i : Fin t) (v : WTape) (hi
   rw [Function.update_idem, ← hi, Function.update_eq_self]
 
 /-- The paper's Hadamard words of the top slot. -/
-theorem hadWords_top (p d w : ℕ) {ℓ K : ℕ} (ts : List ℕ) (hℓ : 1 ≤ ℓ) :
+theorem hadWords_top (p d w : ℕ) {ℓ K : ℕ} (ts : List ℕ) (_hℓ : 1 ≤ ℓ) :
     hadWords p d (2 ^ ℓ) w (Nat.log 2 ts.prod) ts ℓ K (ℓ - 1) =
       [[false], ones (2 ^ topExp ℓ K ts), ones (longs ts ℓ).length] := by
   have h1 : ¬ ℓ - 1 < (ℓ - 1) % K := Nat.not_lt.mpr (Nat.mod_le _ _)
-  simp only [hadWords, h1, lt_irrefl, ↓reduceIte, if_false]
+  simp only [hadWords, h1, lt_irrefl, ↓reduceIte]
   congr 2
   unfold topExp topBase
   rw [show 2 * 2 ^ ℓ * 2 ^ (ts.length * ((ℓ - 1) / K) * K + ts.length * ((ℓ - 1) % K)) =
@@ -803,7 +803,7 @@ theorem runs_bodyF (p d w : ℕ) {ℓ K : ℕ} {ts : List ℕ} (hL : LayoutOK (2
         (fun σ' e => by rw [e, hσ₂, update_back σ mF2 _ hF2]) le_rfl
     by_cases hpre : h < (ℓ - 1) % K
     · have hn : ¬ ((ℓ - 1) % K ≤ h ∧ h < ℓ - 1) := fun ⟨a, _⟩ => by omega
-      simp only [hn, if_false] at hHD
+      simp only [hn, ite_false] at hHD
       rw [hHD]
       have s3 := runs_hadPre ℓ K ts hd tt h acc
       have s4 := runs_twSlot hL htop hd tt (ones ts.length :: ones (2 ^ preExp ℓ K ts h) :: [false] :: acc)
@@ -826,7 +826,7 @@ theorem runs_bodyF (p d w : ℕ) {ℓ K : ℕ} {ts : List ℕ} (hL : LayoutOK (2
           List.length_nil]
         omega
     · have hc : (ℓ - 1) % K ≤ h ∧ h < ℓ - 1 := ⟨by omega, htop⟩
-      simp only [hc, and_self, if_true] at hHD
+      simp only [hc, and_self, ite_true] at hHD
       obtain ⟨L, R, rfl, rfl, hlen⟩ := hHD
       have s3 := runs_hadChF ℓ K ts tt h acc L R (chunkHdr p d (2 ^ ℓ) w (Nat.log 2 ts.prod) ts ℓ K h)
       have s4 := runs_twSlot hL htop ⟨L, chunkHdr p d (2 ^ ℓ) w (Nat.log 2 ts.prod) ts ℓ K h :: R⟩ tt
@@ -851,7 +851,7 @@ theorem runs_bodyF (p d w : ℕ) {ℓ K : ℕ} {ts : List ℕ} (hL : LayoutOK (2
   · -- the top slot
     have hht : h = ℓ - 1 := by omega
     have hn : ¬ ((ℓ - 1) % K ≤ h ∧ h < ℓ - 1) := fun ⟨_, b⟩ => htop b
-    simp only [hn, if_false] at hHD
+    simp only [hn, ite_false] at hHD
     rw [hHD]
     have s3 := runs_hadTop ℓ K ts hd tt h acc
     have s4 := runs_twTop hL hd tt h (ones (longs ts ℓ).length :: ones (2 ^ topExp ℓ K ts) :: [false] :: acc)
@@ -901,7 +901,7 @@ theorem runs_bodyO (p d w : ℕ) {ℓ K : ℕ} {ts : List ℕ} (hL : LayoutOK (2
         (fun σ' e => by rw [e, hσ₂, update_back σ mF2 _ hF2]) le_rfl
     by_cases hpre : h < (ℓ - 1) % K
     · have hn : ¬ ((ℓ - 1) % K ≤ h ∧ h < ℓ - 1) := fun ⟨a, _⟩ => by omega
-      simp only [hn, if_false] at hHD
+      simp only [hn, ite_false] at hHD
       rw [hHD]
       have s3 := runs_twSlot hL htop hd tt acc
       have s4 := runs_hadPre ℓ K ts hd tt h ((twistWords (paperPerm hL) (2 ^ ℓ) ts h).reverse ++ acc)
@@ -924,7 +924,7 @@ theorem runs_bodyO (p d w : ℕ) {ℓ K : ℕ} {ts : List ℕ} (hL : LayoutOK (2
           List.length_nil]
         omega
     · have hc : (ℓ - 1) % K ≤ h ∧ h < ℓ - 1 := ⟨by omega, htop⟩
-      simp only [hc, and_self, if_true] at hHD
+      simp only [hc, and_self, ite_true] at hHD
       obtain ⟨L, R, rfl, rfl, hlen⟩ := hHD
       have s3 := runs_twSlot hL htop ⟨L, chunkHdr p d (2 ^ ℓ) w (Nat.log 2 ts.prod) ts ℓ K h :: R⟩ tt acc
       have s4 := runs_hadChO ℓ K ts tt h ((twistWords (paperPerm hL) (2 ^ ℓ) ts h).reverse ++ acc) L R
@@ -949,7 +949,7 @@ theorem runs_bodyO (p d w : ℕ) {ℓ K : ℕ} {ts : List ℕ} (hL : LayoutOK (2
   · -- the top slot
     have hht : h = ℓ - 1 := by omega
     have hn : ¬ ((ℓ - 1) % K ≤ h ∧ h < ℓ - 1) := fun ⟨_, b⟩ => htop b
-    simp only [hn, if_false] at hHD
+    simp only [hn, ite_false] at hHD
     rw [hHD]
     have s3 := runs_twTop hL hd tt h acc
     have s4 := runs_hadTop ℓ K ts hd tt h ((twistWords (paperPerm hL) (2 ^ ℓ) ts (ℓ - 1)).reverse ++ acc)
@@ -1000,7 +1000,7 @@ theorem hdAt_step (p d w ℓ K : ℕ) (ts : List ℕ) {m : ℕ} (hm : m < ℓ) :
     have hlt : m - (ℓ - 1) % K < l.length := by rw [length_chunkHdrs]; omega
     refine ⟨(l.take (m - (ℓ - 1) % K)).reverse, l.drop (m + 1 - (ℓ - 1) % K), ?_, ?_⟩
     · simp only [hdAt]
-      rw [show m + 1 - (ℓ - 1) % K = m - (ℓ - 1) % K + 1 by omega, List.take_succ,
+      rw [show m + 1 - (ℓ - 1) % K = m - (ℓ - 1) % K + 1 by omega, List.take_add_one,
         List.getElem?_eq_getElem hlt, chunkHdrs_get p d w ℓ K ts hb ht]
       simp [l]
     · simp only [hdAt]
@@ -1065,7 +1065,7 @@ def stepCost (p d w ℓ K : ℕ) (ts : List ℕ) (h : ℕ) : ℕ :=
 theorem take_range_reverse {ℓ m : ℕ} (hm : m < ℓ) :
     (List.range ℓ).reverse.take (ℓ - m) = (List.range ℓ).reverse.take (ℓ - (m + 1)) ++ [m] := by
   have hlt : ℓ - (m + 1) < (List.range ℓ).reverse.length := by simp; omega
-  rw [show ℓ - m = ℓ - (m + 1) + 1 by omega, List.take_succ, List.getElem?_eq_getElem hlt]
+  rw [show ℓ - m = ℓ - (m + 1) + 1 by omega, List.take_add_one, List.getElem?_eq_getElem hlt]
   simp only [List.getElem_reverse, List.getElem_range, List.length_range, Option.toList_some]
   congr 2; omega
 
@@ -1323,10 +1323,10 @@ theorem runs_mainF (p d w : ℕ) {ℓ K : ℕ} {ts : List ℕ} (hL : LayoutOK (2
     rw [hs]
     funext i; fin_cases i <;> tsimp [hσ₁₃, hσ₁₂, hσ₁₁, hσ₁₀, stF, mst, mconst, emp]
   · have hm : (ℓ - 1) * ts.length ≤ ℓ * ts.length := Nat.mul_le_mul_right _ (by omega)
-    simp only [mainExtra, clen, WTape.words, reg, emp, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil,
+    simp only [mainExtra, clen, WTape.words, reg, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil,
       length_ones, List.length_cons, List.length_nil, List.reverse_nil, List.nil_append, List.append_nil,
-      List.map_replicate, List.sum_replicate, List.length_replicate, smul_eq_mul, List.reverse_reverse,
-      List.length_singleton, Nat.zero_add, Nat.zero_sub, Nat.zero_mul]
+      
+      Nat.zero_add, Nat.zero_sub, Nat.zero_mul]
     simp only [List.reverse_replicate, List.map_replicate, List.sum_replicate, List.length_nil, smul_eq_mul]
     have h2 : (ℓ - 1) * (2 * ts.length + 20) ≤ ℓ * (2 * ts.length + 20) := Nat.mul_le_mul_right _ (by omega)
     have h3 : 20 * ℓ * (2 * ts.length + 20) = 20 * (ℓ * (2 * ts.length + 20)) := by ring
@@ -1394,10 +1394,10 @@ theorem runs_mainO (p d w : ℕ) {ℓ K : ℕ} {ts : List ℕ} (hL : LayoutOK (2
     have hs : oppScript p d (2 ^ ℓ) w (paperPerm hL) ts ℓ K = (List.range ℓ).flatMap (slotO p d w ℓ K ts hL) := rfl
     rw [hs]
     funext i; fin_cases i <;> tsimp [hσ₁₂, hσ₁₁, hσ₁₀, hσ₉, stO, mst, mconst, emp]
-  · simp only [mainExtra, clen, WTape.words, reg, emp, hdFull, List.map_cons, List.map_nil, List.sum_cons,
+  · simp only [mainExtra, clen, WTape.words, reg, hdFull, List.map_cons, List.map_nil, List.sum_cons,
       List.sum_nil, length_ones, List.length_cons, List.length_nil, List.reverse_nil, List.nil_append,
-      List.append_nil, List.map_replicate, List.sum_replicate, List.length_replicate, smul_eq_mul,
-      List.reverse_reverse, List.length_singleton, Nat.sub_self, List.replicate_zero, List.map_reverse,
+      List.append_nil, List.map_replicate, List.sum_replicate, smul_eq_mul,
+      List.reverse_reverse, Nat.sub_self, List.replicate_zero, List.map_reverse,
       List.sum_reverse]
     omega
 

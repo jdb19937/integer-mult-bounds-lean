@@ -860,7 +860,7 @@ theorem crtFwdWalk_runs (hQ : swapStates crtHd crtPay crtHd_inj ≤ Q) (ι : Fin
     have hxI : I ≠ x := fun h => by rw [← h] at hxv; simp [hI] at hxv
     have hdrop : RA.drop k = x :: RA.drop (k + 1) := List.drop_eq_getElem_cons hkl
     have htake : RA.take (k + 1) = RA.take k ++ [x] := by
-      rw [List.take_succ, List.getElem?_eq_getElem hkl]; rfl
+      rw [List.take_add_one, List.getElem?_eq_getElem hkl]; rfl
     have hwalk : crtWalkF i k hi = RA.take k ++ I :: x :: (RA.drop (k + 1) ++ P) := by
       rw [crtWalkF, ← hRA, hdrop]; rfl
     have hwalk' : crtWalkF i (k + 1) hi = RA.take k ++ x :: I :: (RA.drop (k + 1) ++ P) := by
@@ -1005,7 +1005,7 @@ theorem crtInvWalk_runs (hQ : swapStates crtHd crtPay crtHd_inj ≤ Q) (ι : Fin
       rw [List.drop_eq_getElem_cons (by simp; omega), List.getElem_reverse]
       congr 2; omega
     have htake : RA.take (i - k) = RA.take (i - 1 - k) ++ [x] := by
-      rw [show i - k = (i - 1 - k) + 1 by omega, List.take_succ,
+      rw [show i - k = (i - 1 - k) + 1 by omega, List.take_add_one,
         List.getElem?_eq_getElem hkl]; rfl
     have hdrop : RA.drop (i - 1 - k) = x :: RA.drop (i - k) := by
       rw [List.drop_eq_getElem_cons hkl, show i - 1 - k + 1 = i - k by omega]

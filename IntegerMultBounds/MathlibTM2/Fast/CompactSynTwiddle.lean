@@ -32,7 +32,7 @@ theorem compactSynTwiddle_runs (legacy : MnProc → MnPr (prime+Ka))
       (1+synTwCost es l W h) := by
   have he := sg_synTwStep (layerTable (Ka := Ka) (U := Unit) mnQ_layer ds) fwd hA hW hhl L
     (synIdle (cstream (prime+Ka) W (rpStream (2^es.sum) Y)) P₀) v Y
-    (by simp [synIdle,lreg,Function.update_apply]) hv.hpz hv.htw hv.hN hv.hw hv.hr hv.hlr hv.hh hv.hes hv.hD
+    (by simp [synIdle,lreg]) hv.hpz hv.htw hv.hN hv.hw hv.hr hv.hlr hv.hh hv.hes hv.hD
     (hv.hs 2) (hv.hs 3) (hv.hs 23) (hv.hs 25) (hv.hs 26) (hv.hs 27) (hv.hs 28)
   rw [←synG_update_out (lreg_out (by simp))] at he
   have ei := compactLegacyLayer_runs legacy (compactMainNativeTable ds)

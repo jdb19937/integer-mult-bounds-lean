@@ -83,7 +83,7 @@ theorem dsT_pos (n i : ℕ) : 0 < dsT n i := by
 theorem dsT_last {n : ℕ} (hn : 2 ≤ n) : dsT n (d n - 1) = r n := by
   have h := numHalf_lt (one_le_d hn)
   unfold dsT pmTv
-  rw [if_neg (by omega)]
+  rw [ite_eq_right (by omega)]
 
 theorem dsP_zero (n : ℕ) : dsP n 0 = 1 := rfl
 
@@ -126,7 +126,7 @@ theorem dsG_mul {n : ℕ} (hn : 2 ≤ n) {i : ℕ} (hi : i + 1 < d n) :
   have e1 : T n / r n = dsP n i * dsT n i * c := by
     rw [← hr, hc, Nat.mul_div_cancel _ hrpos]
   unfold dsG
-  rw [if_pos hi, e1, Nat.mul_div_cancel_left _ hpos, ← e1, Nat.div_mul_cancel (dsT_dvd_T hn)]
+  rw [ite_eq_left hi, e1, Nat.mul_div_cancel_left _ hpos, ← e1, Nat.div_mul_cancel (dsT_dvd_T hn)]
 
 theorem dsG_le {n : ℕ} (hn : 2 ≤ n) (i : ℕ) : dsG n i ≤ T n := by
   by_cases hi : i + 1 < d n
@@ -139,7 +139,7 @@ theorem dsG_le {n : ℕ} (hn : 2 ≤ n) (i : ℕ) : dsG n i ≤ T n := by
               Nat.mul_le_mul (Nat.mul_le_mul_right _ h1) h2
       _ = T n := h
   · unfold dsG
-    rw [if_neg hi]
+    rw [ite_eq_right hi]
     unfold T; exact Nat.one_le_two_pow
 
 end Values

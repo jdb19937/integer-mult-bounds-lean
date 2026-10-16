@@ -31,7 +31,7 @@ def movePrefix : ℕ → List α → List α → List α
 
 theorem moveAfter_append (pre rest : List α) (s : α) :
     moveAfter pre.length s (pre ++ rest) = pre ++ s :: rest.erase s := by
-  simp [moveAfter, List.take_append_of_le_length le_rfl, List.drop_left]
+  simp [moveAfter, List.take_append_of_le_length le_rfl]
 
 /-- `movePrefix_eq`: moving distinct slots of the rest leaves them after the prefix, followed by
 the other slots in their relative order. -/
@@ -47,7 +47,7 @@ theorem movePrefix_eq : ∀ (ss pre rest : List α), rest.Nodup → ss.Nodup →
     rw [movePrefix_eq ss (pre ++ [s]) (rest.erase s) (hr.erase s) (List.nodup_cons.mp hss).2
       (fun x hx => (List.mem_erase_of_ne (fun e => hs (by rw [← e]; exact hx))).mpr (hsub x (by simp [hx])))]
     rw [hr.erase_eq_filter, List.filter_filter]
-    simp only [List.append_assoc, List.cons_append, List.nil_append, List.singleton_append]
+    simp only [List.append_assoc, List.cons_append, List.nil_append]
     congr 3
     apply List.filter_congr
     intro x _
@@ -77,12 +77,12 @@ theorem applySwaps_selectSwaps {m : ℕ} : ∀ (σ : Equiv.Perm (Fin m)) (k : �
   intro σ k hfix
   induction h : m - k generalizing σ k with
   | zero =>
-    rw [selectSwaps, dite_cond_eq_false (by simp; omega), applySwaps]
+    rw [selectSwaps, dite_eq_right_of_eq_false (by simp; omega), applySwaps]
     ext x; simp only [Equiv.Perm.coe_one, id_eq]
     exact congrArg Fin.val (hfix x (by omega))
   | succ n ih =>
     have hk : k < m := by omega
-    rw [selectSwaps, dite_cond_eq_true (by simp [hk])]
+    rw [selectSwaps, dite_eq_left_of_eq_true (by simp [hk])]
     split_ifs with hσ
     · exact ih σ (k + 1) (fun x hx => by
         rcases Nat.lt_succ_iff_lt_or_eq.mp hx with hx | hx
@@ -113,10 +113,10 @@ theorem selectSwaps_length_le {m : ℕ} : ∀ (σ : Equiv.Perm (Fin m)) (k : ℕ
     (∀ x : Fin m, x.val < k → σ x = x) → (selectSwaps σ k).length ≤ m - 1 - k := by
   intro σ k hfix
   induction h : m - k generalizing σ k with
-  | zero => rw [selectSwaps, dite_cond_eq_false (by simp; omega)]; simp
+  | zero => rw [selectSwaps, dite_eq_right_of_eq_false (by simp; omega)]; simp
   | succ n ih =>
     have hk : k < m := by omega
-    rw [selectSwaps, dite_cond_eq_true (by simp [hk])]
+    rw [selectSwaps, dite_eq_left_of_eq_true (by simp [hk])]
     split_ifs with hσ
     · have := ih σ (k + 1) (fun x hx => by
         rcases Nat.lt_succ_iff_lt_or_eq.mp hx with hx | hx
@@ -259,7 +259,7 @@ theorem mem_longs {i : ℕ} : i ∈ longs ts ℓ ↔ i < ts.length ∧ axLen ts 
 
 /-- Removing the prefix slots from an axis leaves its chunk slots. -/
 theorem axis_filter {i : ℕ} (hi : i < ts.length) (hax : axLen ts i = ℓ - 1 ∨ axLen ts i = ℓ)
-    (hℓ : 1 ≤ ℓ) (hK : 1 ≤ K) :
+    (hℓ : 1 ≤ ℓ) (_hK : 1 ≤ K) :
     (slotsDesc i 0 (axLen ts i)).filter (fun x => x ∉ prefixSlots ts ℓ K) =
       slotsDesc i ((ℓ - 1) % K) ((ℓ - 1) / K * K) := by
   set b := (ℓ - 1) % K
@@ -484,7 +484,7 @@ theorem chunkMajor_flatMap :
   rw [chunkMajor, flatMap_range_mul (fun i j => chunk ℓ K i j) ts.length]
   rfl
 
-theorem length_chunkMajor (hK : 1 ≤ K) :
+theorem length_chunkMajor (_hK : 1 ≤ K) :
     (chunkMajor ts ℓ K).length = (ℓ - 1) / K * ts.length * K := by
   rw [chunkMajor_flatMap, List.length_flatMap]
   simp [blk, chunk, length_slotsDesc]
@@ -549,18 +549,18 @@ theorem rev_split {A K y t : ℕ} (hy : y < A) (ht : t < K) :
 theorem paperSlot_chunk {Q : ℕ} (hQ : Q < ts.length * ((ℓ - 1) / K) * K) :
     paperSlot ts ℓ K Q = (ts.length - 1 - Q / K % ts.length,
       (ℓ - 1) % K + Q / K / ts.length * K + Q % K) := by
-  rw [paperSlot, if_pos hQ]
+  rw [paperSlot, ite_eq_left hQ]
 
 theorem paperSlot_bottom {Q : ℕ} (h1 : ts.length * ((ℓ - 1) / K) * K ≤ Q)
     (h2 : Q < ts.length * ((ℓ - 1) / K) * K + ts.length * ((ℓ - 1) % K)) :
     paperSlot ts ℓ K Q = (ts.length - 1 - (Q - ts.length * ((ℓ - 1) / K) * K) % ts.length,
       (Q - ts.length * ((ℓ - 1) / K) * K) / ts.length) := by
-  rw [paperSlot, if_neg (by omega), if_pos h2]
+  rw [paperSlot, ite_eq_right (by omega), ite_eq_left h2]
 
 theorem paperSlot_top {Q : ℕ} (h1 : ts.length * ((ℓ - 1) / K) * K + ts.length * ((ℓ - 1) % K) ≤ Q) :
     paperSlot ts ℓ K Q = ((longs ts ℓ).getD ((longs ts ℓ).length - 1 -
       (Q - ts.length * ((ℓ - 1) / K) * K - ts.length * ((ℓ - 1) % K))) 0, ℓ - 1) := by
-  rw [paperSlot, if_neg (by omega), if_neg (by omega)]
+  rw [paperSlot, ite_eq_right (by omega), ite_eq_right (by omega)]
 
 /-- `paper_order`: the prefix slots followed by the chunks chunk by chunk are the paper's layout,
 most significant bit first: entry `k` is the slot of physical bit `n - 1 - k`. -/
@@ -585,20 +585,20 @@ theorem paper_order (hL : LayoutOK r ts ℓ K) :
   intro k hk1 hk2
   simp only [List.length_append, prefixSlots, hlenT, hlenB, hlenC] at hk1
   rw [List.getElem_map, List.getElem_reverse, List.getElem_range]
-  simp only [List.length_map, List.length_reverse, List.length_range, hn]
+  simp only [List.length_range, hn]
   simp only [prefixSlots, List.append_assoc, List.getElem_append, hlenT, hlenB]
   by_cases htop : k < Lg
   · -- a top slot
-    rw [dite_cond_eq_true (eq_true htop)]
+    rw [dite_eq_left_of_eq_true (eq_true htop)]
     simp only [topSlots, List.getElem_map]
     rw [paperSlot_top (by rw [hD, hq, hb, hN, hB]; omega), hD, hq, hb, hN, hB]
     congr 1
     rw [List.getD_eq_getElem _ _ (by omega)]
     exact getElem_idx _ _ _ (by omega)
-  rw [dite_cond_eq_false (eq_false htop)]
+  rw [dite_eq_right_of_eq_false (eq_false htop)]
   by_cases hbot : k - Lg < Bt
   · -- a bottom slot
-    rw [dite_cond_eq_true (eq_true hbot), getElem_bottomSlots, hD, hb]
+    rw [dite_eq_left_of_eq_true (eq_true hbot), getElem_bottomSlots, hD, hb]
     have hDpos : 0 < D := Nat.pos_of_ne_zero fun h0 => by rw [h0, zero_mul] at hB; omega
     set m := k - Lg with hm
     have hu : m / D < b := by rw [Nat.div_lt_iff_lt_mul hDpos, Nat.mul_comm, hB]; exact hbot
@@ -611,7 +611,7 @@ theorem paper_order (hL : LayoutOK r ts ℓ K) :
     rw [hQ, (divmod_add (by omega)).1, (divmod_add (by omega)).2]
     congr 1; omega
   · -- a chunk slot
-    rw [dite_cond_eq_false (eq_false hbot), getElem_chunkMajor hK, hD, hq, hb]
+    rw [dite_eq_right_of_eq_false (eq_false hbot), getElem_chunkMajor hK, hD, hq, hb]
     have hDpos : 0 < D := Nat.pos_of_ne_zero fun h0 => by rw [h0, zero_mul, zero_mul] at hN; omega
     set m := k - Lg - Bt with hm
     have hmN : m < N := by omega

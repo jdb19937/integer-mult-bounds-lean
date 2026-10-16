@@ -34,12 +34,12 @@ theorem compactSynLayerStep_eventually_exec_stream (hQ : compactRuntimeStates≤
     let r := 2^l
     let n := o+K*(D-CompactGlobalRowPadding.rowAxes NW m d)
     let a := es.sum-n
-    ∀ (hdpos : 0<d) (hKpos : 1≤K) (hchunk : synChunk ℓ K h) (H : LayHyp es ℓ K)
+    ∀ (_hdpos : 0<d) (hKpos : 1≤K) (_hchunk : synChunk ℓ K h) (_H : LayHyp es ℓ K)
       (hcap : CompactReservationFits d g K D) (hD : D≤d)
-      (haddr : o+K*D≤es.sum)
+      (_haddr : o+K*D≤es.sum)
       (ha : CompactGlobalRowPadding.rowAxes NW m d*K≤a)
-      (hprecision : es.sum+1≤Mult.Sizes.p M)
-      (hrun : Mult.Sizes.r M≤r) (hwrun : Mult.Sizes.p M≤W) (hW : p+2≤W),
+      (_hprecision : es.sum+1≤Mult.Sizes.p M)
+      (_hrun : Mult.Sizes.r M≤r) (_hwrun : Mult.Sizes.p M≤W) (_hW : p+2≤W),
     let q := compactTopKernelCount d g K
     let aT := compactTopKernelOffset d g K D o
     let R₂ := compactTopRows d 1 a
@@ -52,19 +52,19 @@ theorem compactSynLayerStep_eventually_exec_stream (hQ : compactRuntimeStates≤
     let cfg := topCfg W s a 1 R₂ q aT K o D
     let pfs := topPcRec K pcs
     let hρ : ρ<K := Nat.mod_lt _ (by omega)
-    let hfitT := (compactTopKernel_geometry (o := o) hcap hρ ha).1
+    let _hfitT := (compactTopKernel_geometry (o := o) hcap hρ ha).1
     let hpcs := compactTop_working_pcs_ok ds (oS := o) (R := 1) hKpos (by omega : 1≤1) hcap hD ha (w := W)
-    let low := (topPieces hρ pcs hpcs).flatMap Piece.bitsList
+    let _low := (topPieces hρ pcs hpcs).flatMap Piece.bitsList
     ∀ (v : SynW → List (Fin (prime+Ka+4))) (L : Equiv.Perm (Fin es.sum))
-      (hv : SynV v es ℓ K W l h L) (P₀ : List (Fin (prime+Ka+4)))
+      (_hv : SynV v es ℓ K W l h L) (P₀ : List (Fin (prime+Ka+4)))
       (Y : ℕ → Fin r → GaussianInt)
-      (hY : ∀ x c,‖GaussianInt.toComplex (Y x c)‖≤2^p)
+      (_hY : ∀ x c,‖GaussianInt.toComplex (Y x c)‖≤2^p)
       (R : Fin (nT CompactHostBReg) → List (Fin (prime+Ka+4)))
-      (hlegacy : R ∘ compactLegacyReg=synG (synIdle (cstream (prime+Ka) W (rpStream (2^es.sum) Y)) P₀) v)
-      (hblank : ∀ z : CompactBReg,z≠.work 13 → z≠.work 14 →
+      (_hlegacy : R ∘ compactLegacyReg=synG (synIdle (cstream (prime+Ka) W (rpStream (2^es.sum) Y)) P₀) v)
+      (_hblank : ∀ z : CompactBReg,z≠.work 13 → z≠.work 14 →
         R (reg (BReg := CompactHostBReg) (.bc (.inl z)))=[])
-      (hdepth : (R (reg (BReg := CompactHostBReg) (.bc (.inl (.work 13))))).length=d)
-      (hguard : (R (reg (BReg := CompactHostBReg) (.bc (.inl (.work 14))))).length=g),
+      (_hdepth : (R (reg (BReg := CompactHostBReg) (.bc (.inl (.work 13))))).length=d)
+      (_hguard : (R (reg (BReg := CompactHostBReg) (.bc (.inl (.work 14))))).length=g),
     LayRuns (compactPlacedLayerTable (Ka := Ka) (U := U) hQ ds) (compactSynLayerStep ds) R
       (Function.update R (reg (BReg := CompactHostBReg) .io) (cstream (prime+Ka) W (rpStream (2^es.sum) (synTrunc
         (bflyL ((selBits es h).map (twPosL (layPerm es ℓ K)))

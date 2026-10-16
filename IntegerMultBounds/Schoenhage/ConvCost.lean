@@ -151,7 +151,7 @@ theorem log_two_pow_mul_le (ℓ p : ℕ) (hp : 1 ≤ p) : Nat.log 2 (2 ^ ℓ * p
 theorem log_two_mul (p : ℕ) (hp : 1 ≤ p) : Nat.log 2 (2 * p) = Nat.log 2 p + 1 := by
   rw [Nat.mul_comm, Nat.log_mul_base (by norm_num) (by omega)]
 
-theorem rest_bound {T p w k H l r2 CwR Cl CH : ℝ} (hp : 2 ≤ p) (hpT : p ≤ T) (hw0 : 0 ≤ w) (hk0 : 0 ≤ k)
+theorem rest_bound {T p w k H l r2 CwR Cl CH : ℝ} (hp : 2 ≤ p) (hpT : p ≤ T) (hw0 : 0 ≤ w) (_hk0 : 0 ≤ k)
     (hl0 : 0 ≤ l) (hwp : w ≤ CwR * p) (hkp : k ≤ Cl * p) (hlp : l + 1 ≤ p) (hH : H ≤ CH * p) (hr : r2 ≤ T)
     (hr0 : 0 ≤ r2) (hCw : 0 ≤ CwR) (hCl : 0 ≤ Cl) (hCH : 0 ≤ CH) :
     600 * H + 70 * (2 * T * w) + 2 * T * (4 * k + 60) + 8 * (T * (w + k)) +

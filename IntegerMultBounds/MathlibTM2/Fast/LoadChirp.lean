@@ -383,7 +383,7 @@ theorem ldc_cstream_axTab (A w p g : ℕ) {d : ℕ} (t s : Fin d → ℕ) {k : �
     rw [cst_getD (by simpa using hk), List.getElem_ofFn]
   rw [cstTab, hg, tblChirpStream, cstream, List.flatMap_map]
   refine List.flatMap_congr fun j _ => ?_
-  rw [cstAxTab, dif_pos hk, tbl_axisPhase, ldc_numer_mk]
+  rw [cstAxTab, dite_eq_left hk, tbl_axisPhase, ldc_numer_mk]
   rfl
 
 section Runs

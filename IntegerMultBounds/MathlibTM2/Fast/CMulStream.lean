@@ -285,7 +285,7 @@ theorem table_runs (hcr : Function.Injective cr) (hdisj : ∀ r j, cr r ≠ ι j
     (fun b rest done hb => by
       obtain ⟨x, b', rfl⟩ := List.exists_cons_of_ne_nil (List.ne_nil_of_length_pos (by omega :
         0 < b.length))
-      simp only [st, tableLoopSt, Function.update_apply, if_true, List.flatten_cons, List.cons_append]
+      simp only [st, tableLoopSt, Function.update_apply, ite_true, List.flatten_cons, List.cons_append]
       exact cstream_ne_nil hw)
     (fun done => by simp [st, tableLoopSt]) blocks [] (fun b hb => ⟨hlen b hb, hok b hb⟩)
   have hflat := length_flatten_const blocks hlen

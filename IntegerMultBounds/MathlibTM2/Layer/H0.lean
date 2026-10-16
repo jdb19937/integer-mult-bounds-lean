@@ -46,7 +46,7 @@ lemma flip_self (i : Fin n) (b : Fin n → ZMod 2) : flip i b i = b i + 1 := by
   simp [flip]
 
 lemma flip_other {i j : Fin n} (h : j ≠ i) (b : Fin n → ZMod 2) : flip i b j = b j := by
-  simp [flip, Pi.single_apply, h]
+  simp [flip, h]
 
 /-- One bit: `H₀ = b · S C S`. -/
 lemma hBit_eq (i : Fin n) (f : Arr X n) :
@@ -58,8 +58,8 @@ lemma hBit_eq (i : Fin n) (f : Arr X n) :
       (((1 + phase 1) / 2) * ((if p.2 i = 0 then 1 else Complex.I) * f p) +
         ((1 - phase 1) / 2) * ((if flip i p.2 i = 0 then 1 else Complex.I) * f (p.1, flip i p.2))))
   rw [phase_one, flip_self]
-  rcases zmod2_cases (p.2 i) with h | h <;> simp only [h, zero_add, h2, if_true, one_ne_zero,
-    if_false]
+  rcases zmod2_cases (p.2 i) with h | h <;> simp only [h, zero_add, h2, ite_true, one_ne_zero,
+    ite_false]
   · linear_combination (f p / 4 + f (p.1, flip i p.2) * (2 - Complex.I) / 4) * Complex.I_sq
   · linear_combination (f p * (Complex.I ^ 2 - 2) / 4 + f (p.1, flip i p.2) * (2 - Complex.I) / 4) *
       Complex.I_sq

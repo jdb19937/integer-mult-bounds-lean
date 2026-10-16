@@ -300,7 +300,7 @@ theorem selectP_exec {X Y M Sg : Fin T} (hd : [X, Y, M, Sg].Nodup) (v : HS T Q A
     · simp [movedR, hY₁, Function.update_of_ne hXY, Function.update_of_ne hXM, hX₁]; ring
     · congr 2
       funext k
-      simp only [movedR, S₁, Function.update_apply, hs, if_true, List.map_id]
+      simp only [movedR, S₁, Function.update_apply, hs, ite_true, List.map_id]
       by_cases k1 : k = Sg
       · rw [k1]; simp [Ne.symm hXS, Ne.symm hYS, Ne.symm hMS]
       by_cases k2 : k = M

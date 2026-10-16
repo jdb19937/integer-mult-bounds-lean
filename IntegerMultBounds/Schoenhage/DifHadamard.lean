@@ -198,8 +198,8 @@ theorem bfly_eq_sum (P : ℕ) (w : ℕ → Fin r → ℂ) (x : ℕ) (k : Fin r) 
     simp; ring
   · have h1 : bitAt x P = 1 := by have := bitAt_lt_two x P; omega
     have hne : bitAt x P ≠ 0 := by omega
-    simp only [hne, ↓reduceIte, h1, setBit_true_of_one h1, setBit_false_of_one h1, Pi.smul_apply,
-      Pi.sub_apply, smul_eq_mul]
+    simp only [h1, setBit_true_of_one h1, setBit_false_of_one h1, 
+      ]
     simp; ring
 
 theorem sum_fin_succ_bool {D : ℕ} (F : (Fin (D + 1) → Bool) → ℂ) :
@@ -246,9 +246,9 @@ theorem hadamard_eq_bflys {K ρ : ℕ} (hρ : ρ < K) : ∀ (D s : ℕ) (z : ℕ
 theorem rho0_neg (x : ℝ) : rho0 (-x) = -rho0 x := by
   unfold rho0
   rcases lt_trichotomy x 0 with h | h | h
-  · rw [if_pos (by linarith), if_neg (by linarith), Int.floor_neg]
+  · rw [ite_eq_left (by linarith), ite_eq_right (by linarith), Int.floor_neg]
   · subst h; simp
-  · rw [if_neg (by linarith), if_pos (by linarith), Int.ceil_neg]
+  · rw [ite_eq_right (by linarith), ite_eq_left (by linarith), Int.ceil_neg]
 
 theorem rhoC_neg (p : ℕ) (u : ℂ) : rhoC p (-u) = -rhoC p u := by
   apply Complex.ext <;> simp [rhoC_re, rhoC_im, rho0_neg, neg_div]
@@ -309,7 +309,7 @@ theorem bfly_additive (P : ℕ) : Additive (r := r) (bfly P) := by
   funext y k
   by_cases hb : bitAt y P = 0
   · simp only [bfly, hb, ↓reduceIte, Pi.smul_apply, Pi.add_apply, Pi.sub_apply, smul_eq_mul]; ring
-  · simp only [bfly, hb, ↓reduceIte, Pi.smul_apply, Pi.add_apply, Pi.sub_apply, smul_eq_mul]; ring
+  · simp only [bfly, hb, ↓reduceIte, Pi.smul_apply, Pi.sub_apply, smul_eq_mul]; ring
 
 theorem twist_contracts (n : ℕ) (f : ℕ → ℕ) : Contracts (r := r) n (twist f) := by
   intro v ε hv y hy k

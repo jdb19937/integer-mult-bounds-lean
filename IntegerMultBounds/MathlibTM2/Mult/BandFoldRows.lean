@@ -61,7 +61,7 @@ theorem foldRows_eq (t α P w B : ℕ) (hsw : 2*w+1 < s) :
     simp only [foldRowZ, winRowZ]
     rw [show i-min i B=0 by omega]
     exact List.map_congr_left fun c _ => foldEntryZ_eq s t α P w hsw i c
-  · simp only [inputsZ, winRowZ, foldRowZ, zero_add, one_mul]
+  · simp only [inputsZ, winRowZ, zero_add, one_mul]
     rw [show List.range' (B+1) s=(List.range' 0 s).map (·+(B+1)) from
       List.ext_getElem (by simp) (fun n h1 h2 => by simp; omega), List.map_map]
     refine List.map_congr_left fun m hm => ?_

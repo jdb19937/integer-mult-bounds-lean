@@ -24,10 +24,10 @@ open Filter
 theorem compactSynDispatch_eventually_exec_stream
     (hA : 21≤prime+Ka) (hA9 : 9^4≤prime+Ka+4) (hNW : NW≤prime+Ka+4) :
     ∀ᶠ M : ℕ in atTop,
-    ∀ (ds : ComplexFramedExecution.Directions) (hd : ComplexPhaseBudget.Realizes ds)
-      (hgate : ∀ g,Instr.gate g∈program ds → (2*gateBound g+1)^(2*(gateWires g).length)≤prime+Ka+4)
+    ∀ (ds : ComplexFramedExecution.Directions) (_hd : ComplexPhaseBudget.Realizes ds)
+      (_hgate : ∀ g,Instr.gate g∈program ds → (2*gateBound g+1)^(2*(gateWires g).length)≤prime+Ka+4)
       (legacy : MnProc → MnPr (prime+Ka))
-      (hbody : ∀ f,legacy (.lay f)=embProg mnLayE MnProc.lay
+      (_hbody : ∀ f,legacy (.lay f)=embProg mnLayE MnProc.lay
         (layerTable (Ka := Ka) (U := Unit) mnQ_layer ds f))
       (es : List ℕ) (ℓ W l h p : ℕ),
     let d := Mult.Sizes.d M
@@ -39,10 +39,10 @@ theorem compactSynDispatch_eventually_exec_stream
     let r := 2^l
     let n := o+K*(D-CompactGlobalRowPadding.rowAxes NW m d)
     let a := es.sum-n
-    ∀ (hdpos : 0<d) (hKpos : 1≤K) (H : LayHyp es ℓ K) (hh : h+1≤ℓ)
-      (hcap : synChunk ℓ K h → CompactReservationFits d g K D) (hD : D≤d)
-      (hprecision : es.sum+1≤Mult.Sizes.p M)
-      (hrun : Mult.Sizes.r M≤r) (hwrun : Mult.Sizes.p M≤W) (hW : p+2≤W),
+    ∀ (_hdpos : 0<d) (_hKpos : 1≤K) (_H : LayHyp es ℓ K) (_hh : h+1≤ℓ)
+      (_hcap : synChunk ℓ K h → CompactReservationFits d g K D) (_hD : D≤d)
+      (_hprecision : es.sum+1≤Mult.Sizes.p M)
+      (_hrun : Mult.Sizes.r M≤r) (_hwrun : Mult.Sizes.p M≤W) (_hW : p+2≤W),
     let q := compactTopKernelCount d g K
     let aT := compactTopKernelOffset d g K D o
     let R₂ := compactTopRows d 1 a
@@ -55,15 +55,15 @@ theorem compactSynDispatch_eventually_exec_stream
     let cfg := topCfg W s a 1 R₂ q aT K o D
     let pfs := topPcRec K pcs
     ∀ (v : SynW → List (Fin (prime+Ka+4)))
-      (hv : SynV v es ℓ K W l h (layPerm es ℓ K)) (P₀ : List (Fin (prime+Ka+4)))
+      (_hv : SynV v es ℓ K W l h (layPerm es ℓ K)) (P₀ : List (Fin (prime+Ka+4)))
       (Y : ℕ → Fin r → GaussianInt)
-      (hY : ∀ x c,‖GaussianInt.toComplex (Y x c)‖≤2^p)
+      (_hY : ∀ x c,‖GaussianInt.toComplex (Y x c)‖≤2^p)
       (R : Fin compactMnT → List (Fin (prime+Ka+4)))
-      (hlegacy : (R ∘ compactMnLegacyReg) ∘ mnLayE=synG (synIdle (cstream (prime+Ka) W (rpStream (2^es.sum) Y)) P₀) v)
-      (hblank : ∀ z : CompactBReg,z≠.work 13 → z≠.work 14 →
+      (_hlegacy : (R ∘ compactMnLegacyReg) ∘ mnLayE=synG (synIdle (cstream (prime+Ka) W (rpStream (2^es.sum) Y)) P₀) v)
+      (_hblank : ∀ z : CompactBReg,z≠.work 13 → z≠.work 14 →
         R (compactMnLayerReg (reg (BReg := CompactHostBReg) (.bc (.inl z))))=[])
-      (hdepth : (R (compactMnLayerReg (reg (BReg := CompactHostBReg) (.bc (.inl (.work 13)))))).length=d)
-      (hguard : (R (compactMnLayerReg (reg (BReg := CompactHostBReg) (.bc (.inl (.work 14)))))).length=g),
+      (_hdepth : (R (compactMnLayerReg (reg (BReg := CompactHostBReg) (.bc (.inl (.work 13)))))).length=d)
+      (_hguard : (R (compactMnLayerReg (reg (BReg := CompactHostBReg) (.bc (.inl (.work 14)))))).length=g),
     LayRuns (compactMainBody legacy ds) (compactSynDispatch ds) R
       (Function.update R (compactMnRg (.src (.v .io))) (cstream (prime+Ka) W (rpStream (2^es.sum) (synTrunc
         (bflyL ((selBits es h).map (twPosL (layPerm es ℓ K)))

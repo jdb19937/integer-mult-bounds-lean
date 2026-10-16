@@ -106,7 +106,7 @@ theorem preMaskCode_do {A W : ℕ} (st : TblSt 48 A) {s t : ℕ} (hs' : st.val 3
     · -- row `j` is not selected
       have hbit : preBit s t j = 0 := by
         unfold preBit
-        rw [if_neg]
+        rw [ite_eq_right]
         rintro ⟨a', ha', e⟩
         rcases Nat.lt_or_ge a' a with h | h
         · have := hlt a' h; omega
@@ -129,7 +129,7 @@ theorem preMaskCode_do {A W : ℕ} (st : TblSt 48 A) {s t : ℕ} (hs' : st.val 3
         · have : a = s := by omega
           subst this; rw [pre_q_last hs] at hqj; omega
       have hbit : preBit s t j = 1 := by
-        unfold preBit; rw [if_pos ⟨a, has', hqj⟩]
+        unfold preBit; rw [ite_eq_left ⟨a, has', hqj⟩]
       have hsucc := pre_q_succ hs hst.le a
       have hqa1 := hq (a + 1) has'
       have hm1 : 2 * t * (a + 1) + s < 2 ^ W := by
@@ -149,7 +149,7 @@ theorem preMaskCode_do {A W : ℕ} (st : TblSt 48 A) {s t : ℕ} (hs' : st.val 3
           by simp (config := { decide := true }) [tblExactList, TblIns.exact,
             Function.update_apply, h35'], a + 1, ?_⟩
         simp (config := { decide := true }) only [tblExactList, TblIns.exact,
-          Function.update_apply, List.cons_append, List.nil_append, if_true, if_false]
+          Function.update_apply, List.cons_append, List.nil_append, ite_true, ite_false]
         refine ⟨by simp [h1], ?_, by simp [h3], by simp [h4], by simp [h6], by simp [h7],
           by simp [h34], by simp [h35], by omega, by omega, ?_, ?_⟩
         · simp [h1, h3, h4, h34, ← hq1]
@@ -366,11 +366,11 @@ theorem preB_hdr {hd : Fin 5 → Fin t₀} (hdi : Function.Injective hd)
       (t₁ := .inl (.inl .ac2)) (t₂ := .inl (.inl .nv)) (by simp [preHB]) _ ?_ ?_ ?_)
       (twRuns_uclear (body := body) htg (.inl (.inl .tL)) _))))))) ?_) ?_
   all_goals try (simp (config := { decide := true }) only [preStB, preHB, Function.update_apply,
-    Sum.elim_inl, Sum.inl.injEq, Sum.inr.injEq, reduceCtorEq, if_false, if_true, RsbR.cm.injEq,
+    Sum.elim_inl, Sum.inl.injEq, Sum.inr.injEq, reduceCtorEq, ite_false, ite_true, RsbR.cm.injEq,
     RsbX.sw.injEq, hinj, hxs, hpr, htb, hxa, hwn, htL, hac2, hnv, hH, List.append_nil,
     List.length_replicate]; done)
   · simp (config := { decide := true }) only [preStB, preHB, Function.update_apply,
-      Sum.elim_inl, Sum.inl.injEq, Sum.inr.injEq, reduceCtorEq, if_false, if_true, RsbR.cm.injEq,
+      Sum.elim_inl, Sum.inl.injEq, Sum.inr.injEq, reduceCtorEq, ite_false, ite_true, RsbR.cm.injEq,
       RsbX.sw.injEq, hinj, hxs, hpr, htb, hxa, hwn, htL, hac2, hnv, hH, List.append_nil,
       List.length_replicate]
     unfold preHdrCostB
@@ -378,10 +378,10 @@ theorem preB_hdr {hd : Fin 5 → Fin t₀} (hdi : Function.Injective hd)
   · funext r
     rcases r with (r | x) | y
     · cases r <;> simp only [Function.update_apply, preStB, preHB, preBankB, Sum.elim_inl,
-        Sum.inl.injEq, reduceCtorEq, if_false, if_true, RsbR.cm.injEq]
+        Sum.inl.injEq, reduceCtorEq, ite_false, ite_true, RsbR.cm.injEq]
       all_goals simp [htL]
     · simp only [Function.update_apply, preStB, preHB, Sum.elim_inl, Sum.inl.injEq,
-        reduceCtorEq, if_false, if_true]
+        reduceCtorEq, ite_false, ite_true]
       rcases x with j | _ | _ | _ | _ | _
       · by_cases hj : ∃ k, reg (hd k) = j
         · obtain ⟨k, rfl⟩ := hj
@@ -390,7 +390,7 @@ theorem preB_hdr {hd : Fin 5 → Fin t₀} (hdi : Function.Injective hd)
         · have hne : ∀ k, j ≠ reg (hd k) := fun k h => hj ⟨k, h.symm⟩
           simp [preBankB, hj, hne]
       all_goals simp [preBankB]
-    · simp only [Function.update_apply, reduceCtorEq, if_false, preStB, Sum.elim_inr]
+    · simp only [Function.update_apply, reduceCtorEq, ite_false, preStB, Sum.elim_inr]
 
 omit hg hι hdisj in
 theorem twRuns_moveRf {R : Type} [DecidableEq R] {tg : R → Fin T} (htg : Function.Injective tg)
@@ -487,7 +487,7 @@ lemma preLoadB_inl (σ : RsbR ⊕ RsbX t₀ → List (Fin (A + 4))) (hd : Fin 5 
     (h8 : r ≠ .tswn) (h9 : r ≠ .kn) (h10 : r ≠ .ef) (h11 : r ≠ .df) (h12 : r ≠ .hf)
     (h13 : r ≠ .msk) : preLoadB σ hd w D rest (.inl r) = σ (.inl r) := by
   simp only [preLoadB, Function.update_apply, Sum.inl.injEq, h1, h2, h3, h4, h5, h6, h7, h8, h9,
-    h10, h11, h12, h13, if_false, preBankB]
+    h10, h11, h12, h13, ite_false, preBankB]
 
 lemma PreFreeB.rsbWith {σ : RsbR ⊕ RsbX t₀ → List (Fin (A + 4))} (h : PreFreeB σ)
     (l a a' : List (Fin (A + 4))) : PreFreeB (rsbWith σ l a a') := by

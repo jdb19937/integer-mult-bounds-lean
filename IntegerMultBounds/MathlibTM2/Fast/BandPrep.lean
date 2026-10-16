@@ -237,7 +237,7 @@ theorem band_preA (hg : Function.Injective g) (hι : Function.Injective ι)
           (.inl .ac) (List.replicate D.p tick)) (.inl .hv) (List.replicate D.W tick)) (.inr x) := by
         simp [hσ2, hσ1, preTV, bandDstB, PreAxB.fields, Function.update_apply]
       simp only [preStB, Sum.elim_inl]
-      rw [if_neg (by simp)]
+      rw [ite_eq_right (by simp)]
       simp only [hσ3, bandFA]
       cases x with
       | sw j =>

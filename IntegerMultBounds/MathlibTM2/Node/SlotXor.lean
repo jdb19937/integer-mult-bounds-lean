@@ -606,7 +606,7 @@ lemma sx_testBit_replace (j P L c' t : ℕ) (hc' : c' < 2 ^ L) :
   · by_cases h2 : t - P < L
     · simp [h1, h2, show P ≤ t ∧ t < P + L by omega]
     · simp only [h1, h2, ↓reduceIte, Nat.testBit_div_two_pow]
-      rw [if_neg (by omega)]
+      rw [ite_eq_right (by omega)]
       congr 1; omega
 
 /-- A number as its low part, an `L`-bit field at `P`, and its high part. -/
@@ -891,7 +891,7 @@ theorem sx_addrPerm_xorSel (hxy : x ≠ y) (hxz : x ≠ z) (hyz : y ≠ z) (hρ 
   rw [sx_testBit_replace _ _ _ _ _ hwlt,
     Nat.testBit_two_pow_mul_add _ (IntegerMultBounds.MathlibTM2.Layer.addrNum_lt _ _)]
   by_cases htn : t < n
-  · rw [if_pos htn, sx_testBit_addrNum _ _ _ htn]
+  · rw [ite_eq_left htn, sx_testBit_addrNum _ _ _ htn]
     have hbit : ∀ t' (h : t' < n), addrBits n ((j : ℕ) % 2 ^ n) ⟨t', h⟩ =
         if (j : ℕ).testBit t' then 1 else 0 := fun t' h => by
       simp [addrBits, Nat.testBit_mod_two_pow, h]
@@ -900,7 +900,7 @@ theorem sx_addrPerm_xorSel (hxy : x ≠ y) (hxz : x ≠ z) (hyz : y ≠ z) (hρ 
     have hex : ∀ c : Fin k, ((e (bitIdx x c) : Fin n) : ℕ) = Px + (ρ + c * K) := fun c => by
       rw [he, bitIdx, finProdFinEquiv_apply_val, hPx, hLK]; ring
     by_cases hin : P ≤ t ∧ t < P + L
-    · rw [if_pos hin]
+    · rw [ite_eq_left hin]
       set i := t - P with hi
       have hiL : i < L := by omega
       have htP : t = P + i := by omega
@@ -929,7 +929,7 @@ theorem sx_addrPerm_xorSel (hxy : x ≠ y) (hxz : x ≠ z) (hyz : y ≠ z) (hρ 
           rw [hey] at this
           simp at this
           omega), hbit, sx_decide_ite_one, htP]
-    · rw [if_neg hin]
+    · rw [ite_eq_right hin]
       rw [sxMap_apply_ne (fun i i' h => by
           have := congrArg Fin.val h; rw [he, he] at this
           exact Fin.ext (Nat.eq_of_mul_eq_mul_left hK (by omega))) x y _ _ (fun c hc => by
@@ -941,7 +941,7 @@ theorem sx_addrPerm_xorSel (hxy : x ≠ y) (hxz : x ≠ z) (hyz : y ≠ z) (hρ 
           rw [hLK, ← Nat.succ_mul, Nat.mul_comm]
           exact Nat.mul_le_mul_left _ c.isLt
         omega), hbit, sx_decide_ite_one]
-  · rw [if_neg htn, if_neg (by omega), Nat.testBit_div_two_pow, Nat.sub_add_cancel (by omega)]
+  · rw [ite_eq_right htn, ite_eq_right (by omega), Nat.testBit_div_two_pow, Nat.sub_add_cancel (by omega)]
 
 lemma sx_flatMap_flatten {α β : Type} (f : α → List β) (l : List (List α)) :
     l.flatten.flatMap f = (l.map (fun x => x.flatMap f)).flatten := by
@@ -1151,7 +1151,7 @@ lemma sxOfStage_stage (x : SXReg) (hx : sxStage x ≠ 0) : sxOfStage (sxStage x)
         rw [sxOfStage.eq_def]
         split
         all_goals first | omega | skip
-        rw [dif_pos (by omega)]
+        rw [dite_eq_left (by omega)]
         congr 1
         · exact Fin.ext e1
         · exact Fin.ext e2
@@ -1228,12 +1228,12 @@ lemma sxFill_step (hι : Function.Injective ι) (bc : SXReg → List (Fin (A + 4
   · obtain ⟨y, rfl⟩ := ht
     rw [sxFill_ι hι]
     by_cases hy : y = x
-    · subst hy; rw [Function.update_self, if_pos (by omega)]
+    · subst hy; rw [Function.update_self, ite_eq_left (by omega)]
     · rw [Function.update_of_ne (hι.ne hy), sxFill_ι hι]
       have : sxStage y ≠ s + 1 := fun h => hy (sxStage_inj (h.trans hx.symm) (by omega))
       by_cases h1 : sxStage y ≤ s
-      · rw [if_pos h1, if_pos (by omega)]
-      · rw [if_neg h1, if_neg (by omega)]
+      · rw [ite_eq_left h1, ite_eq_left (by omega)]
+      · rw [ite_eq_right h1, ite_eq_right (by omega)]
   · simp only [not_exists] at ht
     rw [Function.update_of_ne (fun h => ht x h.symm), sxFill_out _ _ _ ht, sxFill_out _ _ _ ht]
 
@@ -1245,12 +1245,12 @@ lemma sxFill_unstep (hι : Function.Injective ι) (bc : SXReg → List (Fin (A +
   · obtain ⟨y, rfl⟩ := ht
     rw [sxFill_ι hι]
     by_cases hy : y = x
-    · subst hy; rw [Function.update_self, if_neg (by omega)]
+    · subst hy; rw [Function.update_self, ite_eq_right (by omega)]
     · rw [Function.update_of_ne (hι.ne hy), sxFill_ι hι]
       have : sxStage y ≠ s + 1 := fun h => hy (sxStage_inj (h.trans hx.symm) (by omega))
       by_cases h1 : sxStage y ≤ s
-      · rw [if_pos h1, if_pos (by omega)]
-      · rw [if_neg h1, if_neg (by omega)]
+      · rw [ite_eq_left h1, ite_eq_left (by omega)]
+      · rw [ite_eq_right h1, ite_eq_right (by omega)]
   · simp only [not_exists] at ht
     rw [Function.update_of_ne (fun h => ht x h.symm), sxFill_out _ _ _ ht, sxFill_out _ _ _ ht]
 
@@ -1673,13 +1673,13 @@ set_option hygiene false in
 /-- Evaluate a register file given by updates of named registers over a setup file. -/
 macro "sxsimp" : tactic => `(tactic|
   simp [Function.update_of_ne, henv.hι.eq_iff, henv.hpar.eq_iff, henv.hpι, henv.hpι', hF, hP, hR₀,
-    sxStage, sxBc, SxD.par, reg_val, Fin.coe_castSucc])
+    sxStage, sxBc, SxD.par, reg_val, Fin.val_castSucc])
 
 set_option hygiene false in
 /-- `sxsimp` at a hypothesis and the goal. -/
 macro "sxsimp" "at" h:ident : tactic => `(tactic|
   simp [Function.update_of_ne, henv.hι.eq_iff, henv.hpar.eq_iff, henv.hpι, henv.hpι', hF, hP, hR₀,
-    sxStage, sxBc, SxD.par, reg_val, Fin.coe_castSucc] at $h:ident ⊢)
+    sxStage, sxBc, SxD.par, reg_val, Fin.val_castSucc] at $h:ident ⊢)
 
 variable {d : SxD} {R₀ : Fin T → List (Fin (A + 4))}
 
@@ -2620,7 +2620,7 @@ theorem sxCleanup_exec (henv : SxEnv ι par) {R₁ : Fin T → List (Fin (A + 4)
         rw [sxStage_ofStage _ (by omega) (by omega)]; omega
       obtain ⟨v', hu, he⟩ := uclear_exec body (ι (sxOfStage (38 - i))) v S
       refine ⟨v', _, hu, ?_, Exec.cast he rfl ?_⟩
-      · rw [hS, sxFill_ι henv.hι, if_pos (by omega)]
+      · rw [hS, sxFill_ι henv.hι, ite_eq_left (by omega)]
       · congr 2
         have h := sxFill_unstep henv.hι (sxBc A d) R₁ hx
         rw [hS, show 38 - (i + 1) = 37 - i by omega, ← h, show 37 - i + 1 = 38 - i by omega])
@@ -2782,7 +2782,7 @@ lemma sx_sum_fin_ite (N C : ℕ) (hN : 5 ≤ N) :
   rw [Fin.sum_univ_eq_sum_range (fun i => if i < 5 then C else 0) N]
   induction N, hN using Nat.le_induction with
   | base => simp [Finset.sum_range_succ]; ring
-  | succ N hN ih => rw [Finset.sum_range_succ, ih, if_neg (by omega), Nat.add_zero]
+  | succ N hN ih => rw [Finset.sum_range_succ, ih, ite_eq_right (by omega), Nat.add_zero]
 
 /-! ### The instructions on the built registers -/
 
@@ -2820,7 +2820,7 @@ lemma sxBank_sum (henv : SxEnv ι par) {R₁ : Fin T → List (Fin (prime + Ka +
       ≤ ∑ j : Fin (swapT 6), (if j.val < 5 then sxHL d + 1 else 0) := by
         apply Finset.sum_le_sum
         intro j _
-        rw [sxBank, hS, sxFill_ι henv.hι, if_pos (sxStage_le _)]
+        rw [sxBank, hS, sxFill_ι henv.hι, ite_eq_left (sxStage_le _)]
         simp only [sxBc]
         split_ifs with h
         · simp only [List.length_cons, List.length_map]
@@ -2845,7 +2845,7 @@ lemma sxSwap_exec (henv : SxEnv ι par) (hsrc : ∀ x, ι x ≠ src) (hv : d.Val
           (moveRecs (rankPerm d.N₀ d.N₁ d.N₂ d.N₃ d.L d.K d.ρ (d.k - 1) [.swap a b]) X).flatten) }) := by
   have hrect := SxD.rect_eq hv
   have hF : ∀ x, S.R (ι x) = sxBc (prime + Ka) d x := fun x => by
-    rw [hS, sxFill_ι henv.hι, if_pos (sxStage_le x)]
+    rw [hS, sxFill_ι henv.hι, ite_eq_left (sxStage_le x)]
   have hsrcR : S.R src = X.flatten := by rw [hS, sxFill_out _ _ _ hsrc, hR₁]
   have hB : 0 < d.Bk := by unfold SxD.Bk; have := hv.hrw; omega
   obtain ⟨v', m, hu, hm, he⟩ := swapPass_exec_le body sxHd sxPay sxHd_inj hQ
@@ -2892,7 +2892,7 @@ lemma sxRotI_exec (henv : SxEnv ι par) (hsrc : ∀ x, ι x ≠ src) (hst : ∀ 
           (moveRecs (rankPerm d.N₀ d.N₁ d.N₂ d.N₃ d.L d.K d.ρ (d.k - 1) [.rot neg b]) X).flatten) }) := by
   have hrect := SxD.rect_eq hv
   have hF : ∀ x, S.R (ι x) = sxBc (prime + Ka) d x := fun x => by
-    rw [hS, sxFill_ι henv.hι, if_pos (sxStage_le x)]
+    rw [hS, sxFill_ι henv.hι, ite_eq_left (sxStage_le x)]
   have hsrcR : S.R src = X.flatten := by rw [hS, sxFill_out _ _ _ hsrc, hR₁]
   have hB : 1 ≤ d.Bk := by unfold SxD.Bk; have := hv.hrw; omega
   obtain ⟨v', m, hu, hm, he⟩ := rotPass_exec body neg b (ι := sxRot ι src)
@@ -3015,7 +3015,7 @@ lemma SxD.R_le (d : SxD) : d.R ≤ 2 ^ d.rb := (lt_two_pow_length_sxBits d.R).le
 
 lemma sx_fill38 (henv : SxEnv ι par) {R₁ : Fin T → List (Fin (A + 4))} {S : Stacks T A}
     (hS : S.R = sxFill ι (sxBc A d) 38 R₁) (x : SXReg) : S.R (ι x) = sxBc A d x := by
-  rw [hS, sxFill_ι henv.hι, if_pos (sxStage_le x)]
+  rw [hS, sxFill_ι henv.hι, ite_eq_left (sxStage_le x)]
 
 /-- **The key pass** on the built registers. -/
 lemma sxKey_exec (henv : SxEnv ι par) (hsrc : ∀ x, ι x ≠ src) (hst : ∀ x, ι x ≠ st)

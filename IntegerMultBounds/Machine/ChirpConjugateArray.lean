@@ -34,12 +34,12 @@ private theorem finish_append (current : Tapes 60 2) (front back : List Pair) :
     finish (finish current front) back=finish current (front++back) := by
   unfold finish
   simp only [native,conjugated,List.flatMap_append,List.length_append,Nat.cast_add,setTape,
-    Function.update_self,show (56 : Fin 60) ≠ 58 by decide,show (58 : Fin 60) ≠ 56 by decide,
-    Function.update_of_ne,add_assoc]
+    Function.update_self,
+    add_assoc]
   rw [putWord_append_forward]
   apply Placement.Tapes.ext'
   all_goals intro slot; by_cases sourceSlot : slot=56 <;> by_cases destinationSlot : slot=58 <;>
-    simp [Function.update_apply,sourceSlot,destinationSlot,add_assoc]
+    simp [sourceSlot,destinationSlot,add_assoc]
 
 private theorem finish_nil (current : Tapes 60 2) : finish current []=current := by
   simp [finish,native,conjugated,putWord,setTape]
@@ -56,7 +56,7 @@ private theorem record_test (current : Tapes 60 2) (front : List (Fin 6)) (pair 
       current.head 56=front.length) : test current.reads=true := by
   simp only [test,Tapes.reads,sourceReady.1,sourceReady.2]
   have sourceView := WordSegments.middle (fun _ => (blank : Fin 6)) 0 front (complex pair.1 pair.2) (native rest)
-  simp only [native,List.flatMap_cons,zero_add] at sourceView
+  simp only [native,zero_add] at sourceView
   have firstCell := congrFun sourceView (front.length : ℤ)
   cases realWord : pair.1 with
   | nil =>
@@ -102,7 +102,7 @@ theorem runs_array (pairs : List Pair) (front : List (Fin 6)) (current : Tapes 6
       have sourcesEquation : ChirpConjugateRecord.sources context=pairSources pair := rfl
       unfold ChirpConjugateRecord.streamOutput finish
       rw [contextTape,sourcesEquation]
-      simp [native,conjugated,context,Context.start,ChirpConjugateRecord.sources,pairSources,
+      simp [native,conjugated,context,Context.start,
         DelimitedRadixRecord.complex,DelimitedRadixRecord.field,sourceReady.2,Nat.cast_add,add_assoc]
     rw [fieldEndpoint] at fieldRun
     have nextCore := ChirpConjugateRecord.core_blank current context
@@ -110,8 +110,8 @@ theorem runs_array (pairs : List Pair) (front : List (Fin 6)) (current : Tapes 6
     have nextSource : (finish current [pair]).tape 56=
         putWord (fun _ => blank) 0 ((front++complex pair.1 pair.2)++native rest) ∧
         (finish current [pair]).head 56=(front++complex pair.1 pair.2).length := by
-      simp only [finish,setTape,Function.update_self,show (56 : Fin 60) ≠ 58 by decide,
-        Function.update_of_ne,sourceReady.1,sourceReady.2,native,List.flatMap_cons,List.flatMap_nil,List.append_nil,
+      simp only [finish,setTape,
+        sourceReady.1,sourceReady.2,native,List.flatMap_cons,List.flatMap_nil,List.append_nil,
         List.length_append,Nat.cast_add,List.append_assoc]
       exact ⟨rfl,rfl⟩
     have tailRun := inductionHypothesis (front++complex pair.1 pair.2) (finish current [pair])

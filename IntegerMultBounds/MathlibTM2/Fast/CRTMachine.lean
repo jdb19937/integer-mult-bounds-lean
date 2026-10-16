@@ -881,11 +881,11 @@ lemma crtInvC_mem {d : ℕ} (s μ : Fin d → ℕ) {α : Type*} (p : α → Prop
 lemma crtFwdC_succ {d : ℕ} (s μ : Fin d → ℕ) {α : Type*} (C : (Fin d → ℕ) → α) {j : ℕ}
     (hj : j < d) : crtFwdC s μ C (j + 1) =
       crtRotC s (d - 1 - j) (by omega) (μ ⟨d - 1 - j, by omega⟩) true (crtFwdC s μ C j) := by
-  rw [crtFwdC, dif_pos hj]
+  rw [crtFwdC, dite_eq_left hj]
 
 lemma crtInvC_succ {d : ℕ} (s μ : Fin d → ℕ) {α : Type*} (X : (Fin d → ℕ) → α) {j : ℕ}
     (hj : j < d) : crtInvC s μ X (j + 1) = crtRotC s j hj (μ ⟨j, hj⟩) false (crtInvC s μ X j) := by
-  rw [crtInvC, dif_pos hj]
+  rw [crtInvC, dite_eq_left hj]
 
 /-- The bound of one iteration, uniform over the targets. -/
 def crtIterU (T L B d am amin : ℕ) : ℕ :=
@@ -1069,7 +1069,7 @@ lemma crtEnts_map_length_le {d : ℕ} (g : Fin d → ℕ) (c : ℕ) (hg : ∀ j,
     (o : List (Fin d)) : (crtEnts (A := prime + K) (o.map g)).length ≤ o.length * c + 2 * o.length := by
   rw [crtEnts_length, List.length_map]
   have : (o.map g).sum ≤ (o.map g).length • c :=
-    List.sum_le_card_nsmul _ _ fun x hx => by
+    List.sum_le_length_nsmul _ _ fun x hx => by
       obtain ⟨j, _, rfl⟩ := List.mem_map.1 hx; exact hg j
   rw [List.length_map, smul_eq_mul] at this
   omega
@@ -1714,7 +1714,7 @@ lemma crtSpecC_phi {d : ℕ} (s : Fin d → ℕ) (hs : ∀ j, 0 < s j)
   have : ∀ i, NeZero (s i) := fun i => ⟨(hs i).ne'⟩
   have : NeZero (∏ i, s i) := ⟨(Finset.prod_pos fun i _ => hs i).ne'⟩
   unfold crtSpecC
-  rw [if_pos (fun j => ZMod.val_lt _)]
+  rw [ite_eq_left (fun j => ZMod.val_lt _)]
   simp only [ZMod.natCast_zmod_val, AddEquiv.symm_apply_apply]
   rw [ZMod.val_natCast_of_lt hk]
 

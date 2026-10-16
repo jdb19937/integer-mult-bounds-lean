@@ -82,7 +82,7 @@ theorem disk_of_step {n p : ℕ} {G : (ℕ → Fin r → ℂ) → ℕ → Fin r 
 set_option maxHeartbeats 8000000 in
 theorem runs_hadStep {q a : ℕ} (M : Program tL q a) (ht : 2 ≤ tL) (haA : a ≤ A)
     {ts : List ℕ} {ℓ K : ℕ} (hL : LayoutOK r ts ℓ K) {p d w CL : ℕ} (hpw : p + 2 ≤ w)
-    (hLayer : LayerCalls M ht r p d w ts ℓ K CL) {h : ℕ} (hh : h < ℓ) (R : List (Rec r))
+    (hLayer : LayerCalls M ht r p d w ts ℓ K CL) {h : ℕ} (_hh : h < ℓ) (R : List (Rec r))
     (hRl : R.length = ts.prod) (hRd : ∀ f ∈ R, DiskGrid p f.1 f.2) (Lr Rs : List (List Bool)) (T7 : WTape)
     (tw : Fin 29 → WTape) :
     Runs (hadStep (nL := nL) M ht haA)
@@ -114,9 +114,9 @@ theorem runs_hadStep {q a : ℕ} (M : Program tL q a) (ht : 2 ≤ tL) (haA : a �
     · rw [e, hW]
       congr 1
       funext i
-      simp only [hadOut, h1, if_true]
-      fin_cases i <;> simp (config := {decide := true}) [v, rnamed, Function.update_apply, emp]
-    · simp only [hadCost, h1, if_true, hW, clen_cons, clen_nil, length_ones, List.length_cons,
+      simp only [hadOut, h1, ite_true]
+      fin_cases i <;> simp (config := {decide := true}) [v, rnamed, emp]
+    · simp only [hadCost, h1, ite_true, hW, clen_cons, clen_nil, length_ones, List.length_cons,
         List.length_nil, hX, hRl]
       omega
   · by_cases h2 : h < ℓ - 1
@@ -130,9 +130,9 @@ theorem runs_hadStep {q a : ℕ} (M : Program tL q a) (ht : 2 ≤ tL) (haA : a �
       · rw [e, hW]
         congr 1
         funext i
-        simp only [hadOut, h1, h2, if_true, if_false]
-        fin_cases i <;> simp (config := {decide := true}) [v, rnamed, Function.update_apply, emp]
-      · simp only [hadCost, h1, h2, if_true, if_false, hW, clen_cons, clen_nil, List.length_cons,
+        simp only [hadOut, h1, h2, ite_true, ite_false]
+        fin_cases i <;> simp (config := {decide := true}) [v, rnamed, emp]
+      · simp only [hadCost, h1, h2, ite_true, ite_false, hW, clen_cons, clen_nil, List.length_cons,
           List.length_nil]
         omega
     · -- the top slot
@@ -149,9 +149,9 @@ theorem runs_hadStep {q a : ℕ} (M : Program tL q a) (ht : 2 ≤ tL) (haA : a �
       · rw [e, hW]
         congr 1
         funext i
-        simp only [hadOut, h1, h2, if_false]
-        fin_cases i <;> simp (config := {decide := true}) [v, rnamed, Function.update_apply, emp]
-      · simp only [hadCost, h1, h2, if_false, hW, clen_cons, clen_nil, length_ones, List.length_cons,
+        simp only [hadOut, h1, h2, ite_false]
+        fin_cases i <;> simp (config := {decide := true}) [v, rnamed, emp]
+      · simp only [hadCost, h1, h2, ite_false, hW, clen_cons, clen_nil, length_ones, List.length_cons,
           List.length_nil, hX, hRl]
         omega
 

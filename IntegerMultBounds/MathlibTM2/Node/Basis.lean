@@ -82,7 +82,7 @@ lemma basisFold_apply (j : Fin m) :
       have hjj : j' ≠ j := fun h => hj (h ▸ List.mem_cons_self)
       have ih := basisFold_apply j l hnd.2 hj' a
       have hfold : basisFold j (j' :: l) a = sxXorCol j j' (basisFold j l a) := rfl
-      rw [hfold, sxXorCol, Pi.add_apply, ih i, ih j, if_neg hj', add_zero]
+      rw [hfold, sxXorCol, Pi.add_apply, ih i, ih j, ite_eq_right hj', add_zero]
       by_cases hi : i = j'
       · subst hi
         simp [hnd.1]

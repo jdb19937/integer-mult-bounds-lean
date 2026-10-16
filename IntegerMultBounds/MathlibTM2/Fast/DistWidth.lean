@@ -149,7 +149,7 @@ theorem dsG_le_Tr (hn : 2 ≤ n) (i : ℕ) : dsG n i ≤ T n / r n := by
       _ ≤ dsP n i * dsT n i * dsG n i * r n :=
         Nat.mul_le_mul_right _ (Nat.mul_le_mul_right _ h1)
   · unfold dsG
-    rw [if_neg hi, ds_T_div_r hn]
+    rw [ite_eq_right hi, ds_T_div_r hn]
     exact dsP_pos n _
 
 end Bounds

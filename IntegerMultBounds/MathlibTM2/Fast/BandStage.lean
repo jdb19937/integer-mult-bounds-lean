@@ -745,7 +745,7 @@ theorem fits_real_of_le {w : ℕ} {x : ℤ} (h0 : 0 ≤ x) (h : x < 2 ^ (w - 1))
   ⟨by rw [abs_of_nonneg h0]; exact h, by simp⟩
 
 /-- The numeric facts behind the loader conditions of axis `i`. -/
-theorem band_preOk_facts (h : Big n) {w W : ℕ} (hw9 : 9 * p n + 2 ≤ w) (i : Fin (d n))
+theorem band_preOk_facts (h : Big n) {w W : ℕ} (_hw9 : 9 * p n + 2 ≤ w) (i : Fin (d n))
     (hW : alpha n ^ 2 * ((s n i + t n i) *
       (8 * Mult.FastB0.fastWindow (p n) (alpha n) + 1)) ^ 2 * 2 ^ (65 * p n + 8) < 2 ^ W) :
     2 * (8 * Mult.FastB0.fastWindow (p n) (alpha n)) + 1 < s n i ∧ 65 * p n + 8 < W ∧

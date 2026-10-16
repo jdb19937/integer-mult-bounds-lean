@@ -276,19 +276,19 @@ theorem pm_zeroed_apply (W : ℕ) :
         rintro ⟨j, hj, he⟩
         cases he
         exact hi hj
-      rw [if_neg this, if_pos ⟨i, List.mem_cons_self, rfl⟩]
+      rw [ite_eq_right this, ite_eq_left ⟨i, List.mem_cons_self, rfl⟩]
       simp
     · rw [Function.update_of_ne hr]
       by_cases hex : ∃ j ∈ l, r = .v j
       · have : ∃ j ∈ i :: l, r = .v j := by
           obtain ⟨j, hj, he⟩ := hex; exact ⟨j, List.mem_cons_of_mem _ hj, he⟩
-        rw [if_pos hex, if_pos this]
+        rw [ite_eq_left hex, ite_eq_left this]
       · have : ¬ ∃ j ∈ i :: l, r = .v j := by
           rintro ⟨j, hj, he⟩
           rcases List.mem_cons.1 hj with h | h
           · subst h; exact hr he
           · exact hex ⟨j, h, he⟩
-        rw [if_neg hex, if_neg this]
+        rw [ite_eq_right hex, ite_eq_right this]
 
 /-- The variables `1, …, 39`. -/
 def pmZeroIdx : List (Fin pmNV) := (List.finRange 39).map Fin.succ
@@ -385,17 +385,17 @@ theorem pm_prelude2_runs (hrg : Function.Injective rg) (n : ℕ) :
           rintro ⟨j, hj, he⟩
           cases he
           exact (pm_mem_zeroIdx 0).1 hj rfl
-        rw [if_neg this]
+        rw [ite_eq_right this]
         simp [ρ₅, tblRho, pmSt0]
       · have : ∃ j ∈ pmZeroIdx, (TblR.v i : TblR pmNV) = .v j :=
           ⟨i, (pm_mem_zeroIdx i).2 hi, rfl⟩
-        rw [if_pos this]
+        rw [ite_eq_left this]
         simp [ρ₅, ρ₄, ρ₃, ρ₂, ρ₁, tblRho, pmSt0, Function.update_of_ne hi, hi]
-    · rw [if_neg (show ¬ ∃ j ∈ pmZeroIdx, (TblR.wr : TblR pmNV) = .v j by simp)]
+    · rw [ite_eq_right (show ¬ ∃ j ∈ pmZeroIdx, (TblR.wr : TblR pmNV) = .v j by simp)]
       simp only [ρ₅]
       rw [Function.update_of_ne (by decide), h4w]
       rfl
-    · rw [if_neg (show ¬ ∃ j ∈ pmZeroIdx, (TblR.wn : TblR pmNV) = .v j by simp)]
+    · rw [ite_eq_right (show ¬ ∃ j ∈ pmZeroIdx, (TblR.wn : TblR pmNV) = .v j by simp)]
       simp only [ρ₅]
       rw [Function.update_of_ne (by decide), h4n]
       rfl

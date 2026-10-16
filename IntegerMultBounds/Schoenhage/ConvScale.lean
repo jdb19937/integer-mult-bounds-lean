@@ -166,7 +166,7 @@ theorem msbBits_two_pow (e : ℕ) : msbBits (e + 1) (2 ^ e) = true :: List.repli
 
 theorem count_false_gamma_pow (e : ℕ) : (gamma (2 ^ e)).count false = 2 * e := by
   simp only [gamma, Nat.size_pow, Nat.add_sub_cancel, msbBits_two_pow, List.count_append,
-    List.count_replicate_self, List.count_cons, List.count_replicate]
+    List.count_replicate_self, List.count_cons]
   simp; omega
 
 theorem count_false_axes : ∀ {es : List ℕ},

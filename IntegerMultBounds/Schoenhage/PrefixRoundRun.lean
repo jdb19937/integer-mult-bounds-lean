@@ -144,7 +144,7 @@ theorem runs_prefixHad {r w D s c : ℕ} (hr : 1 ≤ r) (hw : 2 ≤ w) (hc : 1 �
     refine ⟨?_, ?_⟩
     · funext y; simp only [Function.update_apply]
       split_ifs <;> (try subst_vars) <;> tsimp [hz, emp] <;> first | rfl | simp_all (config := {decide := true})
-    · simp [WTape.words, clen_replicate_nil, reg, clen]; omega
+    · simp [WTape.words, reg, clen]; omega
   set σ₅ := Function.update (Function.update τ xB ⟨[], L⟩) xP emp
   -- 6. zero-extend into digits
   have s6 := runs_zextLoop L σ₅ [] [] (by tsimp [σ₅]) (by tsimp [σ₅, hz]; rfl)

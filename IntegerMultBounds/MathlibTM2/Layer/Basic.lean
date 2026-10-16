@@ -32,7 +32,7 @@ def flip (i : Fin n) (b : Fin n → ZMod 2) : Fin n → ZMod 2 := b + Pi.single 
   have h2 : (1 : ZMod 2) + 1 = 0 := by decide
   by_cases h : j = i
   · subst h; simp [add_assoc, h2]
-  · simp [Pi.single_apply, h]
+  · simp [h]
 
 lemma flip_comm (i j : Fin n) (b : Fin n → ZMod 2) : flip i (flip j b) = flip j (flip i b) := by
   simp only [flip]; abel

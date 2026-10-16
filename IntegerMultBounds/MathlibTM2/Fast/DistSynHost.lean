@@ -282,8 +282,8 @@ theorem dsOv_dsOv {ι : Type} {rg : ι → Fin T} (R : Regs T A)
     (ρ ρ' : ι → List (Fin (A + 4))) : dsOv rg (dsOv rg R ρ) ρ' = dsOv rg R ρ' := by
   funext k
   by_cases hk : ∃ r, rg r = k
-  · simp only [dsOv, dif_pos hk]
-  · simp only [dsOv, dif_neg hk]
+  · simp only [dsOv, dite_eq_left hk]
+  · simp only [dsOv, dite_eq_right hk]
 
 /-- The load of a unary register into a variable. -/
 theorem dsyRuns_load1 {rg : TblR 40 → Fin T} (hrg : Function.Injective rg) {W : ℕ}
@@ -362,17 +362,17 @@ theorem dsyZeroVars_runs {rg : TblR 40 → Fin T} (hrg : Function.Injective rg) 
       by_cases hk : ∃ j ∈ l, rg (.v j) = k
       · obtain ⟨j, hj, rfl⟩ := hk
         simp only [List.mem_cons, exists_eq_or_imp]
-        rw [if_pos (Or.inr ⟨j, hj, rfl⟩), if_pos ⟨j, hj, rfl⟩]
-      · rw [if_neg hk]
+        rw [ite_eq_left (Or.inr ⟨j, hj, rfl⟩), ite_eq_left ⟨j, hj, rfl⟩]
+      · rw [ite_eq_right hk]
         by_cases hki : rg (.v i) = k
         · subst hki
-          rw [if_pos ⟨i, List.mem_cons_self, rfl⟩, hR₁, Function.update_self]
+          rw [ite_eq_left ⟨i, List.mem_cons_self, rfl⟩, hR₁, Function.update_self]
         · have hne : ¬ ∃ j ∈ i :: l, rg (.v j) = k := by
             rintro ⟨j, hj, rfl⟩
             rcases List.mem_cons.1 hj with rfl | hj
             · exact hki rfl
             · exact hk ⟨j, hj, rfl⟩
-          rw [if_neg hne, hR₁, Function.update_of_ne (Ne.symm hki)]
+          rw [ite_eq_right hne, hR₁, Function.update_of_ne (Ne.symm hki)]
 
 /-- Clear the layout registers `l`. -/
 def dsyClearL (rg : TblR 40 → Fin T) (l : List (TblR 40)) : Pr P T Q A U :=
@@ -400,17 +400,17 @@ theorem dsyClearL_runs {rg : TblR 40 → Fin T} (hrg : Function.Injective rg) (M
         by_cases hk : ∃ r' ∈ l, rg r' = k
         · obtain ⟨r', hr', rfl⟩ := hk
           simp only [List.mem_cons, exists_eq_or_imp]
-          rw [if_pos (Or.inr ⟨r', hr', rfl⟩), if_pos ⟨r', hr', rfl⟩]
-        · rw [if_neg hk]
+          rw [ite_eq_left (Or.inr ⟨r', hr', rfl⟩), ite_eq_left ⟨r', hr', rfl⟩]
+        · rw [ite_eq_right hk]
           by_cases hkr : rg r = k
           · subst hkr
-            rw [if_pos ⟨r, List.mem_cons_self, rfl⟩, hR₁, Function.update_self]
+            rw [ite_eq_left ⟨r, List.mem_cons_self, rfl⟩, hR₁, Function.update_self]
           · have hne : ¬ ∃ r' ∈ r :: l, rg r' = k := by
               rintro ⟨r', hr', rfl⟩
               rcases List.mem_cons.1 hr' with rfl | hr'
               · exact hkr rfl
               · exact hk ⟨r', hr', rfl⟩
-            rw [if_neg hne, hR₁, Function.update_of_ne (Ne.symm hkr)]
+            rw [ite_eq_right hne, hR₁, Function.update_of_ne (Ne.symm hkr)]
       · have := hM r List.mem_cons_self
         simp only [List.length_cons]
         nlinarith

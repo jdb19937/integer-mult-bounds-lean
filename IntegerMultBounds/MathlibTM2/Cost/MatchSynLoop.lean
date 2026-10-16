@@ -408,10 +408,10 @@ theorem mr_round_le : ∃ C₁ C₂ C₃ : ℝ, 0 ≤ C₁ ∧ 0 ≤ C₂ ∧ 0 
   have hdl : 0 ≤ (d n : ℝ) ^ totLam' := by positivity
   have hd0 : (0 : ℝ) ≤ d n := Nat.cast_nonneg _
   by_cases hc : synChunk (ℓ n) (K n) h
-  · rw [if_pos hc]
+  · rw [ite_eq_left hc]
     have := h1 h hc
     linarith
-  · rw [if_neg hc]
+  · rw [ite_eq_right hc]
     have := h2 h hc
     have : 0 ≤ C₁ * ((T n : ℝ) * p n) * (d n : ℝ) ^ totLam' := by positivity
     linarith

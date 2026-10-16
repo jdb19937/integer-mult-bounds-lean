@@ -68,8 +68,8 @@ theorem runs_bflyStep {r w D s c : ℕ} (hr : 1 ≤ r) (hw : 2 ≤ w) (hc : 1 �
     have ne : ∀ x : Fin 𝕌, 64 ≤ x.val → ι i ≠ x := fun x hx e => by
       have := congrArg Fin.val e; simp at this; omega
     simp only [Function.comp_apply, pview]
-    rw [if_neg (ne zF (by decide)), if_neg (ne zO (by decide)), if_neg (ne kw (by decide)),
-      if_neg (ne kS (by decide)), if_neg (ne xP (by decide))]
+    rw [ite_eq_right (ne zF (by decide)), ite_eq_right (ne zO (by decide)), ite_eq_right (ne kw (by decide)),
+      ite_eq_right (ne kS (by decide)), ite_eq_right (ne xP (by decide))]
   obtain ⟨τp, kp, hxp, hqp, hkp⟩ := runs_prefixHad hr hw hc fs hlen hb (pview v3) hcl
     (by simp (config := {decide := true}) [pview, v3, v2, v1, h0])
     (by simp (config := {decide := true}) [pview, v3, v2, v1, h2])
@@ -89,7 +89,7 @@ theorem runs_bflyStep {r w D s c : ℕ} (hr : 1 ≤ r) (hw : 2 ≤ w) (hc : 1 �
     exact (compile_correct (by decide) hxp).consequence (fun _ h => h) (fun _ h => h) le_rfl
   have s4 := runs_ofHoare_liftE (Nat.zero_le A) _ (by decide) pslot_injective hT
   rw [upd_dstate_pslot _ _ _ (fun x h1 h2 h3 h4 h5 => by
-    simp [Function.update_apply, h2, h5, pview, h1, h3, h4])] at s4
+    simp [h2, h5, pview, h1, h3, h4])] at s4
   set v4 := pnew v3 (Function.update (Function.update (pview v3) zO (reg (array w out))) xP emp)
   -- 5–7. the output into the array tape, the pass count cleared
   have s5 := runs_clear (a := A) (nm tL nL 0) (dstate tL nL v4 tw)
@@ -108,11 +108,11 @@ theorem runs_bflyStep {r w D s c : ℕ} (hr : 1 ≤ r) (hw : 2 ≤ w) (hc : 1 �
     congr 1
     funext i
     fin_cases i <;> simp (config := {decide := true}) [v6, v5, v4, v3, v2, v1, pnew, pview,
-      Function.update_apply, h1, h2, h3, h4, emp]
+      h1, h2, h3, h4, emp]
   · have hlo : (array w out).length = (array w fs).length := by simp [length_array, out]
     simp (config := {decide := true}) only [dstate_nm, v6, v5, v4, v3, v2, v1, pnew, pview, Function.update_apply,
-      WTape.words, WTape.cur, h0, reg, emp, if_true, if_false, List.reverse_nil, List.nil_append, clen_cons,
-      clen_nil, length_ones, List.length_replicate, List.head?, List.headD] at *
+      WTape.words, WTape.cur, h0, reg, emp, ite_true, ite_false, List.reverse_nil, List.nil_append, clen_cons,
+      clen_nil, length_ones, List.headD] at *
     omega
 
 /-- The layer program as a primitive of the drivers. -/
@@ -154,9 +154,9 @@ theorem runs_chunkStep {q a : ℕ} (M : Program tL q a) (ht : 2 ≤ tL) (haA : a
   · rw [h]
     congr 1
     funext i
-    fin_cases i <;> simp (config := {decide := true}) [v3, v2, v1, Function.update_apply, h5, emp]
+    fin_cases i <;> simp (config := {decide := true}) [v3, v2, v1, h5, emp]
   · simp (config := {decide := true}) only [dstate_nm, v3, v2, v1, Function.update_apply, WTape.words,
-      WTape.cur, reg, if_true, if_false, List.reverse_nil, List.nil_append, clen_cons, clen_nil, List.headD] at *
+      WTape.cur, reg, ite_true, ite_false, List.reverse_nil, List.nil_append, clen_cons, clen_nil, List.headD] at *
     omega
 
 end IntegerMultBounds.Schoenhage

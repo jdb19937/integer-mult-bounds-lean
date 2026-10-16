@@ -188,7 +188,7 @@ theorem slyPV_blank (v₀ : SynW → List (Fin (A + 4))) (W E : ℕ) :
   intro x hx
   simp only [List.mem_cons, List.not_mem_nil, or_false] at hx
   rcases hx with rfl | rfl
-  · simp only [slyPV, Function.update_apply, if_false, Fin.reduceEq, reduceCtorEq,
+  · simp only [slyPV, Function.update_apply, ite_false, Fin.reduceEq, reduceCtorEq,
       SynW.s.injEq, ↓reduceIte, Function.update_self, List.mem_replicate, not_and]
     intro _ h
     exact tick_ne_blank h.symm
@@ -267,7 +267,7 @@ theorem sg_slySetup {es : List ℕ} {ℓ K w l : ℕ} {L : Equiv.Perm (Fin es.su
     funext y
     simp only [slyV₂, Function.update_apply, Nat.add_zero, Nat.mul_one, List.append_nil]
     split_ifs <;> simp_all
-  · simp only [slySetupCost, synStashCostW, slyPV, Function.update_apply, if_true,
+  · simp only [slySetupCost, synStashCostW, slyPV, Function.update_apply, ite_true,
       Function.update_self]
     simp
     omega
@@ -310,7 +310,7 @@ theorem sly_ldgPre {es : List ℕ} {ℓ K w l : ℕ} {L : Equiv.Perm (Fin es.sum
   · exact (hw (.ly 13)).trans (by simp [slyV₂])
   · intro r
     rw [show slyRg (.us r) = sreg (.ly ⟨16 + r.val, by omega⟩) from rfl, hw]
-    simp only [slyV₂, slyPV, Function.update_apply, SynW.ly.injEq, reduceCtorEq, if_false]
+    simp only [slyV₂, slyPV, Function.update_apply, SynW.ly.injEq, reduceCtorEq, ite_false]
     split_ifs <;> first | exact hly _ | (exfalso; simp [Fin.ext_iff] at *; omega)
   · exact le_of_eq_of_le ((congrArg List.length (hw (.ly 14))).trans
       (by simp [slyV₂, slyPV, hly])) (Nat.zero_le _)
@@ -419,7 +419,7 @@ theorem slyRo_clean (io P' : List (Fin (A + 4))) (N wX : ℕ) (hs : Fin 5 → Li
     simp [slyRo, ldlSetH, synIdle, lreg, Function.update_apply, (slyH_ne_io 0).symm,
       (slyH_ne_io 1).symm, (slyH_ne_io 2).symm, (slyH_ne_io 3).symm, (slyH_ne_io 4).symm,
       (slyT_ne_io 2).symm, (slyT_ne_io 3).symm, hp]
-  simp only [Function.update_apply, if_neg hp]
+  simp only [Function.update_apply, ite_eq_right hp]
   split_ifs <;> simp_all [slyRo, ldlSetH, synIdle, lreg, Function.update_apply]
 
 theorem slyRo_chain_park (io P' : List (Fin (A + 4))) (N wX : ℕ)
@@ -452,11 +452,11 @@ theorem slyV₃_clean {es : List ℕ} {ℓ K w l : ℕ} {L : Equiv.Perm (Fin es.
   rcases x with x | i | x | i
   · simp [synClrW, slyV₃, slyV₂, slyPV]
   · simp only [synClrW, slyV₃, slyV₂, slyPV, Function.update_apply, List.mem_cons,
-      List.not_mem_nil, or_false, SynW.ly.injEq, reduceCtorEq, if_false]
+      List.not_mem_nil, or_false, SynW.ly.injEq, reduceCtorEq, ite_false]
     split_ifs <;> simp_all
   · simp [synClrW, slyV₃, slyV₂, slyPV]
   · simp only [synClrW, slyV₃, slyV₂, slyPV, Function.update_apply, List.mem_cons,
-      List.not_mem_nil, or_false, SynW.s.injEq, reduceCtorEq, if_false]
+      List.not_mem_nil, or_false, SynW.s.injEq, reduceCtorEq, ite_false]
     split_ifs <;> simp_all
 
 theorem slyV₃_park (v₀ : SynW → List (Fin (A + 4))) (W E N B : ℕ)

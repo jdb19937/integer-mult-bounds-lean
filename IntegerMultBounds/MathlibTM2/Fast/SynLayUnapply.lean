@@ -45,7 +45,7 @@ noncomputable def ldlWU (rg : LayReg t₀ → Fin T) (lr : LdlReg → Fin T) (hd
 theorem ldlWU_X (hd : Fin 5 → Fin t₀) (A n w : ℕ) (R₀ : Fin T → List (Fin (A + 4)))
     (xs : List LayXcD) (bs : List (ℕ × ℕ)) {j : ℕ} (hj : j ≤ xs.length) :
     ldlWU rg lr hd A n w R₀ xs bs j = ldlWX rg lr hd A w R₀ xs j := by
-  rw [ldlWU, if_pos hj]
+  rw [ldlWU, ite_eq_left hj]
 
 theorem ldlWU_M (hd : Fin 5 → Fin t₀) (A n w : ℕ) (R₀ : Fin T → List (Fin (A + 4)))
     (xs : List LayXcD) (bs : List (ℕ × ℕ)) (j : ℕ) :
@@ -53,7 +53,7 @@ theorem ldlWU_M (hd : Fin 5 → Fin t₀) (A n w : ℕ) (R₀ : Fin T → List (
       ldlWM rg lr A n (ldlWX rg lr hd A w R₀ xs xs.length) bs j := by
   rcases Nat.eq_zero_or_pos j with rfl | hj
   · simp [ldlWU, ldlWM]
-  · rw [ldlWU, if_neg (by omega), Nat.add_sub_cancel_left]
+  · rw [ldlWU, ite_eq_right (by omega), Nat.add_sub_cancel_left]
 
 end Files
 

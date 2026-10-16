@@ -104,7 +104,7 @@ theorem windowMatrix_close (hst : s<t) {α d : ℝ} (hα : 0<α)
     have h := ((PhaseCellOperator.rounded s t p u-PhaseCellOperator.exact s t α).le_of_opNorm_le hn v)
     have hj := (norm_le_pi_norm ((PhaseCellOperator.rounded s t p u-PhaseCellOperator.exact s t α) v) j).trans h
     rw [norm_sub_rev]
-    simp only [ContinuousLinearMap.sub_apply, Pi.sub_apply] at hj
+    simp only [sub_apply, Pi.sub_apply] at hj
     exact hj.trans (by
       have : 0≤1/(2 : ℝ)^(45*p) := by positivity
       nlinarith [norm_nonneg v])

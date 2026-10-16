@@ -359,7 +359,7 @@ def costD (ℓ K d : ℕ) (ts : List ℕ) : ℕ :=
     4 * (ts.length * K) + 3 * d + 600
 
 set_option maxHeartbeats 64000000 in
-theorem runs_prepD {p d ℓ K w : ℕ} {ts : List ℕ} (hd : 1 ≤ d) (hD : ts.length = d - 1) :
+theorem runs_prepD {p d ℓ K w : ℕ} {ts : List ℕ} (hd : 1 ≤ d) (_hD : ts.length = d - 1) :
     Runs prepD (stC p d ℓ K w ts) (· = stD p d ℓ K w ts) (costD ℓ K d ts) := by
   set σ := stC p d ℓ K w ts with hσ
   have s1 := runs_rewind' (a := 0) 3 σ (L := [ones ((ℓ - 1) / K * (ts.length * K))]) (R := []) (by tsimp [hσ, stC, SigmaRowsTape.endv])

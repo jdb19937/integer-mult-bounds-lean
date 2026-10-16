@@ -534,7 +534,7 @@ theorem runs_flLoop {lm1 : ℕ} {Ax : WTape} : ∀ (f : List Bool) (v : ℕ) (L 
     rw [e1] at s2
     refine (Runs.loop_step (by tsimp [hσ, nbank])
       ((Runs.then s1 s2).mono (fun τ h => by rw [h]; exact ih) le_rfl)).mono (fun τ h => ?_) ?_
-    · rw [h]; cases b <;> simp [List.filter_cons] <;> ring_nf
+    · rw [h]; cases b <;> simp <;> ring_nf
     · have hc : (σ₁ nFl).cur.length = 1 := by tsimp [hσ₁, nbank, WTape.cur]
       rw [hc]; simp only [List.length_cons]; rw [add_mul, one_mul]; omega
 

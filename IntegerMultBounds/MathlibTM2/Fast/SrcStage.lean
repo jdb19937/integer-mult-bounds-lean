@@ -809,7 +809,7 @@ lemma src_preBaseA_load {A w : ℕ} {V : RsaV (RsaX t₀) A} {hd : Fin 5 → Fin
     bza := h.bza
     bank := fun j hj => by
       simp only [preLoadA, preBankA]
-      rw [if_neg (fun ⟨k, e⟩ => hj k e)]
+      rw [ite_eq_right (fun ⟨k, e⟩ => hj k e)]
       exact h.bank j hj
     xt := h.xt
     e1 := h.e1

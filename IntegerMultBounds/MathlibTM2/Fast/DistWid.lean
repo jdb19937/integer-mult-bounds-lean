@@ -79,8 +79,8 @@ theorem dsV2_post (n a c x : ℕ) (hx : a = x) :
     DsPost (A := A) (pmVals n) x ⟨dsV2 n a c, []⟩ :=
   ⟨rfl, by simp [dsV2, hx], fun j hj => by
     show (if j = 31 then a else if j = 32 then c else pmVals n j) = pmVals n j
-    rw [if_neg (ds_off_scr hj (k := 31) (by decide) (by decide)),
-      if_neg (ds_off_scr hj (k := 32) (by decide) (by decide))]⟩
+    rw [ite_eq_right (ds_off_scr hj (k := 31) (by decide) (by decide)),
+      ite_eq_right (ds_off_scr hj (k := 32) (by decide) (by decide))]⟩
 
 /-- The bounds the codes use. -/
 theorem ds_wid_bounds (hn : 2 ≤ n) :

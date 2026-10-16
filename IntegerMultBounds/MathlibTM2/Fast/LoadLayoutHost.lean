@@ -84,11 +84,11 @@ variable {T Q A : ℕ} {U P : Type} {body : P → Pr P T Q A U} {rv : TblR 40 �
 theorem ldgSetV_rv (hrv : Function.Injective rv) (R : Fin T → List (Fin (A + 4)))
     (ρ : TblR 40 → List (Fin (A + 4))) (r : TblR 40) : ldgSetV rv R ρ (rv r) = ρ r := by
   have h : ∃ r', rv r' = rv r := ⟨r, rfl⟩
-  rw [ldgSetV, dif_pos h, hrv h.choose_spec]
+  rw [ldgSetV, dite_eq_left h, hrv h.choose_spec]
 
 theorem ldgSetV_of (R : Fin T → List (Fin (A + 4))) (ρ : TblR 40 → List (Fin (A + 4)))
     {k : Fin T} (hk : ∀ r, rv r ≠ k) : ldgSetV rv R ρ k = R k := by
-  rw [ldgSetV, dif_neg (fun ⟨r, hr⟩ => hk r hr)]
+  rw [ldgSetV, dite_eq_right (fun ⟨r, hr⟩ => hk r hr)]
 
 theorem ldgSetV_self (hrv : Function.Injective rv) (R : Fin T → List (Fin (A + 4))) :
     ldgSetV rv R (fun r => R (rv r)) = R := by
@@ -134,7 +134,7 @@ theorem ldgSetV_update_off (R : Fin T → List (Fin (A + 4))) (ρ : TblR 40 → 
 where
   ldgSetV_rv' (R : Fin T → List (Fin (A + 4))) (ρ : TblR 40 → List (Fin (A + 4))) (r : TblR 40) :
       ldgSetV rv R ρ (rv r) = ρ (Classical.choose (⟨r, rfl⟩ : ∃ r', rv r' = rv r)) := by
-    rw [ldgSetV, dif_pos ⟨r, rfl⟩]
+    rw [ldgSetV, dite_eq_left ⟨r, rfl⟩]
 
 /-- A contract of the table layout lifts to whole register files. -/
 theorem ldg_lift (hrv : Function.Injective rv) {p : Pr P T Q A U}

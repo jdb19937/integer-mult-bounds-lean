@@ -592,7 +592,7 @@ def levelCost (N R D : ℕ) : ℕ := D * (levCost N R + 2) + 20 * N + 2 * D + 30
 set_option maxHeartbeats 8000000 in
 theorem runs_levelStep {R lm1 c0 n N D : ℕ} (hR0 : 0 < R) {fl : WTape} {done : List (List Bool)} {lev : List (List Bool)}
     {O U : List (List Bool)} {k L m s : ℕ} (hk : k + D ≤ N) (hL : L ≤ N) (hc : c0 + D * s ≤ N) (hm : m ≤ N)
-    (hDN : D ≤ N) (hsN : s ≤ N) (hnN : n ≤ N) :
+    (_hDN : D ≤ N) (hsN : s ≤ N) (hnN : n ≤ N) :
     Runs levelStep (bank R lm1 c0 n O U k L m s fl ⟨[], List.replicate D []⟩ ⟨done, [] :: lev⟩)
       (· = bank R lm1 c0 n (levRun R s n D O U k L c0).1 (levRun R s n D O U k L c0).2.1
           (levRun R s n D O U k L c0).2.2.1 (levRun R s n D O U k L c0).2.2.2.1
@@ -679,7 +679,7 @@ theorem words_move (n R m ρ : ℕ) :
 theorem words_back (n R m ρ : ℕ) :
     AxisDriver.Rec.words (LayoutMachines.opRec n R (1, m, 0, ρ)) = swapWords R (n - m - 1 - ρ) m ρ 1 0 := by
   simp only [LayoutMachines.opRec, LayoutMachines.opHdrs, LayoutMachines.opP, swapHdrsG, AxisDriver.Rec.words,
-    swapWords, Nat.sub_zero, add_zero]
+    swapWords, Nat.sub_zero]
   rw [show n - 1 - m = n - m - 1 by omega]
 
 /-- The move tuples of the top loop. -/
@@ -825,7 +825,7 @@ theorem botRun_m_le (R c0 D n : ℕ) : ∀ (c : ℕ) (O U : List (List Bool)) (k
 /-- Every prefix move: the top loop, then the level loop. -/
 noncomputable def movesGen : Cmd 0 20 := .seq (.loop gFl topBody) (.loop gLev levelStep)
 
-theorem topTup_paper {r : ℕ} {ts : List ℕ} {ℓ K : ℕ} :
+theorem topTup_paper {ts : List ℕ} {ℓ : ℕ} :
     topTup (ℓ - 1) (LayoutMachines.addrBits ts) 0 ((List.range ts.length).map fun i => decide (axLen ts i = ℓ)) =
       LayoutScript.topMovesF ℓ (LayoutMachines.addrBits ts) (longs ts ℓ) := by
   have := topTup_range ℓ (fun i => decide (axLen ts i = ℓ)) ts.length 0 (LayoutMachines.addrBits ts)
@@ -857,7 +857,7 @@ theorem topRun_m (R lm1 n : ℕ) : ∀ (f : List Bool) (O U : List (List Bool)) 
 
 theorem flags_count {ts : List ℕ} {ℓ : ℕ} :
     (((List.range ts.length).map fun i => decide (axLen ts i = ℓ)).filter id).length = (longs ts ℓ).length := by
-  simp [longs, List.filter_map, Function.comp_def]
+  simp [longs, List.filter_map]
 
 theorem wordsOf_append (n R : ℕ) (a b : List LayoutMachines.Op) :
     wordsOf n R (a ++ b) = wordsOf n R a ++ wordsOf n R b := by
@@ -913,7 +913,7 @@ theorem runs_movesGen {r : ℕ} {ts : List ℕ} {ℓ K : ℕ} (hL : LayoutOK r t
   rw [← htr] at t1 t2
   have hbot : botTup c0 D b tr.2.2.2.1 s0 = LayoutScript.botF ℓ b D b (D * (ℓ - 1)) := by
     rw [hLt]; exact botTup_botF ℓ b D b (D * (ℓ - 1))
-  have htop : topTup (ℓ - 1) n 0 f = LayoutScript.topMovesF ℓ n (longs ts ℓ) := topTup_paper (r := r) (K := K)
+  have htop : topTup (ℓ - 1) n 0 f = LayoutScript.topMovesF ℓ n (longs ts ℓ) := topTup_paper
   have hmoves : LayoutMachines.layoutMoves ts ℓ K = LayoutScript.topMovesF ℓ n (longs ts ℓ) ++
       LayoutScript.botF ℓ b D b (D * (ℓ - 1)) := by
     rw [LayoutScript.layoutMoves_eq hL]

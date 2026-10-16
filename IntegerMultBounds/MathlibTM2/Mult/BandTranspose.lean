@@ -42,8 +42,8 @@ theorem tWin_heads (m : ℕ) : (tWin B Ur m).map (·.headD 0)=ucolZ B Ur m := by
   obtain ⟨k, hk⟩ : ∃ k, B=k+1 := ⟨B-1, by omega⟩
   simp only [Function.comp, hk, List.range'_succ, List.map_cons, List.headD_cons]
   by_cases h : d ≤ m
-  · rw [if_pos ⟨h, by omega⟩, if_pos h]
-  · rw [if_neg (fun h' => h h'.1), if_neg h]
+  · rw [ite_eq_left ⟨h, by omega⟩, ite_eq_left h]
+  · rw [ite_eq_right (fun h' => h h'.1), ite_eq_right h]
 
 theorem drop_take_eq (l : List ℤ) (hl : B+1 ≤ l.length) :
     (l.drop 1).take B=(List.range' 1 B).map fun e => l.getD e 0 := by
@@ -62,7 +62,7 @@ theorem tWin_step (hB : 1 ≤ B) (m : ℕ) (hrow : B+1 ≤ (Ur.getD m []).length
   congr 1
   · refine List.map_congr_left fun e he => ?_
     have := List.mem_range'_1.mp he
-    rw [if_pos ⟨by omega, by omega⟩, Nat.add_sub_cancel]
+    rw [ite_eq_left ⟨by omega, by omega⟩, Nat.add_sub_cancel]
   · rw [← List.map_dropLast, show List.range' 1 (k+1)=List.range' 1 k++[1+k] from
       by rw [List.range'_concat, Nat.one_mul], List.dropLast_concat, List.map_map,
       show List.range' 2 k=(List.range' 1 k).map (·+1) from
@@ -79,7 +79,7 @@ theorem tWin_step (hB : 1 ≤ B) (m : ℕ) (hrow : B+1 ≤ (Ur.getD m []).length
       rw [e1]
       congr 1
       simp only [eq_iff_iff]; omega
-    · rw [if_neg (by omega)]
+    · rw [ite_eq_right (by omega)]
 
 /-- The transpose run emits the backward-pass columns `ucolZ` in increasing order. -/
 theorem tRun_eq (hB : 1 ≤ B) : ∀ n m, (∀ j, m ≤ j → j<m+n → B+1 ≤ (Ur.getD j []).length) →

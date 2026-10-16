@@ -42,7 +42,7 @@ theorem dstate_twT (v : Fin 13 → WTape) (tw : Fin 29 → WTape) (j : Fin 29) :
 theorem dstate_other (v : Fin 13 → WTape) (tw : Fin 29 → WTape) {x : Fin (DB tL nL)}
     (h1 : 13 ≤ x.val) (h2 : x.val < 20 ∨ 49 ≤ x.val) : dstate tL nL v tw x = emp := by
   simp only [dstate, show ¬ x.val < 13 by omega, ↓reduceDIte]
-  rw [dif_neg (by omega)]
+  rw [dite_eq_right (by omega)]
 
 theorem eq_nm {x : Fin (DB tL nL)} (h : x.val < 13) : x = nm tL nL ⟨x.val, h⟩ := Fin.ext rfl
 
@@ -80,7 +80,7 @@ theorem update_tw (v : Fin 13 → WTape) (tw : Fin 29 → WTape) (j : Fin 29) (u
   · by_cases h2 : 20 ≤ x.val ∧ x.val < 49
     · rw [eq_twT h2.1 h2.2, dstate_twT]
       by_cases hj : (⟨x.val - 20, by omega⟩ : Fin 29) = j
-      · rw [hj]; simp [dstate_twT]
+      · rw [hj]; simp
       · rw [Function.update_of_ne (fun e => hj (twT_inj e)), Function.update_of_ne hj, dstate_twT]
     · have hx : x ≠ twT tL nL j := fun e => h2 (by rw [e]; simp [twT]; omega)
       rw [Function.update_of_ne hx, dstate_other _ _ (by omega) (by omega), dstate_other _ _ (by omega) (by omega)]

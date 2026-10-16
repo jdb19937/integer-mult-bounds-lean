@@ -92,7 +92,7 @@ theorem facImpl_eq (g : ZMod 4 × BinaryWalsh.Address m) (hq : g.1 = 1 ∨ g.1 =
   obtain ⟨q, v⟩ := g
   unfold facImpl
   by_cases hp : ∃ j, v j = 1
-  · rw [dif_pos hp]
+  · rw [dite_eq_left hp]
     set j := Fin.find _ hp
     have hvj : v j = 1 := Fin.find_spec hp
     have hb : vf k (q, v) = fun f => pullCols (basisMap v j)
@@ -107,8 +107,8 @@ theorem facImpl_eq (g : ZMod 4 × BinaryWalsh.Address m) (hq : g.1 = 1 ∨ g.1 =
       simp only [↓reduceIte, lift_vf_single']
     · simp only at hq
       subst hq
-      rw [if_neg (by decide), lift_vf_neg_single]
-  · rw [dif_neg hp]
+      rw [ite_eq_right (by decide), lift_vf_neg_single]
+  · rw [dite_eq_right hp]
     have hv : v = 0 := by
       funext i
       have hi : v i ≠ 1 := fun h => hp ⟨i, h⟩

@@ -63,7 +63,7 @@ theorem prog2_hoare (M : Program t q a) (ht : 4 ≤ t) {hdr F O : List Bool} {k 
     simp only [u1, bank, hh0, Tapes.mk.injEq, true_and]
     funext i
     simp only [Function.update_apply, u0, enc, start2, Fin.ext_iff, v0, v1]
-    split_ifs <;> first | rfl | omega | simp [emp_tape', wordAt_nil']
+    split_ifs <;> first | rfl | omega | simp [emp_tape']
   set u3 := bank (t := t) (a := a) hdr F [] O
   have h4 := sealAt_hoare (a := a) (tp ht 0 (by decide)) hdr u3 rfl (by simp [u3, bank, v0])
   set u4 : Tapes t a := ⟨u3.head, Function.update u3.tape (tp ht 0 (by decide)) (⟨[], [hdr]⟩ : WTape).tape⟩
@@ -81,7 +81,7 @@ theorem prog2_hoare (M : Program t q a) (ht : 4 ≤ t) {hdr F O : List Bool} {k 
       split_ifs <;> rfl
     · funext i
       simp only [Function.update_apply, start2, Fin.ext_iff, v0, v1, v3]
-      split_ifs <;> first | rfl | omega | simp [emp_tape', wordAt_nil', reg]
+      split_ifs <;> first | rfl | omega | simp [emp_tape']
   refine (h1.seq (h2.seq ((hM.consequence (fun v h => h.trans e2) (fun v h => h) le_rfl).seq
     (h4.seq (h5.seq h6))))).consequence (fun v h => h) (fun v h => h.trans e6) ?_
   omega

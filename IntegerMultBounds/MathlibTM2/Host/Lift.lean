@@ -31,7 +31,7 @@ def liftQ (M : Program t q a) (h : q ≤ Q) : Program t Q a where
 lemma liftQ_step (M : Program t q a) (h : q ≤ Q) (c : Config t q a) :
     step (liftQ M h) (c.mapState (Fin.castLE h)) = (step M c).map (Config.mapState (Fin.castLE h)) := by
   unfold step
-  simp only [liftQ, Config.mapState, Fin.coe_castLE, c.state.isLt, dif_pos]
+  simp only [liftQ, Config.mapState, Fin.val_castLE, c.state.isLt, dite_eq_left]
   cases M.transition c.state (fun i => c.tape i (c.head i)) <;> rfl
 
 lemma liftQ_run (M : Program t q a) (h : q ≤ Q) :

@@ -48,10 +48,10 @@ end GR
 def red (W : ℕ) (z : GaussianInt) : GR W := ((z.re : ZMod (2 ^ W)), (z.im : ZMod (2 ^ W)))
 
 lemma red_add (W : ℕ) (z w : GaussianInt) : red W (z + w) = red W z + red W w := by
-  simp [red, Prod.ext_iff]
+  simp [red]
 
 lemma red_neg (W : ℕ) (z : GaussianInt) : red W (-z) = -red W z := by
-  simp [red, Prod.ext_iff]
+  simp [red]
 
 lemma red_mulG (W : ℕ) (a b : ℤ) (z : GaussianInt) :
     red W (⟨a, b⟩ * z) = GR.mulG a b (red W z) := by
@@ -59,7 +59,7 @@ lemma red_mulG (W : ℕ) (a b : ℤ) (z : GaussianInt) :
   ring
 
 lemma red_star (W : ℕ) (z : GaussianInt) : red W (star z) = GR.conj (red W z) := by
-  simp [red, GR.conj, Prod.ext_iff]
+  simp [red, GR.conj]
 
 /-! ### Bits -/
 

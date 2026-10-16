@@ -296,31 +296,31 @@ theorem hadCost_le {P : TransformParams} {p d ℓ K w : ℕ} {ts : List ℕ} (ha
   unfold hadCost
   by_cases h1 : h < (ℓ - 1) % K
   · have hcl : clen (hadWords p d (2 ^ ℓ) w (Nat.log 2 ts.prod) ts ℓ K h) ≤ (32 * (C + P.Cw + 1) + C + 8) * V := by
-      simp only [hadWords, h1, if_true, clen_cons, clen_nil, length_ones, List.length_cons, List.length_nil]
+      simp only [hadWords, h1, ite_true, clen_cons, clen_nil, length_ones, List.length_cons, List.length_nil]
       have := hones _ (prefixBase_le hlay h1)
       have hDV : ts.length ≤ C * V := by omega
       have e : (32 * (C + P.Cw + 1) + C + 8) * V = 32 * (C + P.Cw + 1) * V + C * V + 8 * V := by ring
       omega
     have hp := prefix_arith (C := C) (D' := ts.length) (N := 2 * 2 ^ ℓ * ts.prod) (by omega) hdCw hw hd1 hN1 hNw
-    simp only [h1, if_true, true_or]
+    simp only [h1, ite_true, true_or]
     unfold hdC
     have e : (8 + 8 * (32 * (C + P.Cw + 1) + C + 8) + 201) * V = 8 * V + 8 * ((32 * (C + P.Cw + 1) + C + 8) * V) + 201 * V := by ring
     rw [e]
     omega
   · by_cases h2 : h < ℓ - 1
     · have hcl : clen (hadWords p d (2 ^ ℓ) w (Nat.log 2 ts.prod) ts ℓ K h) ≤ (32 * (C + P.Cw + 1) + C + 8) * V := by
-        simp only [hadWords, h1, h2, if_true, if_false, clen_cons, clen_nil, List.length_cons, List.length_nil]
+        simp only [hadWords, h1, h2, ite_true, ite_false, clen_cons, clen_nil, List.length_cons, List.length_nil]
         have := hhdr (by omega) h2
         have e : (32 * (C + P.Cw + 1) + C + 8) * V = 32 * (C + P.Cw + 1) * V + C * V + 8 * V := by ring
         omega
       have hn : ¬ (h < (ℓ - 1) % K ∨ ℓ - 1 ≤ h) := by omega
-      rw [if_neg h1, if_pos h2, if_neg hn]
+      rw [ite_eq_right h1, ite_eq_left h2, ite_eq_right hn]
       unfold hdC
       have e : (8 + 8 * (32 * (C + P.Cw + 1) + C + 8) + 201) * V = 8 * V + 8 * ((32 * (C + P.Cw + 1) + C + 8) * V) + 201 * V := by ring
       rw [e]
       omega
     · have hcl : clen (hadWords p d (2 ^ ℓ) w (Nat.log 2 ts.prod) ts ℓ K h) ≤ (32 * (C + P.Cw + 1) + C + 8) * V := by
-        simp only [hadWords, h1, h2, if_false, clen_cons, clen_nil, length_ones, List.length_cons, List.length_nil]
+        simp only [hadWords, h1, h2, ite_false, clen_cons, clen_nil, length_ones, List.length_cons, List.length_nil]
         have := hones (topBase ts.length ℓ K) (by unfold topBase; omega)
         have hLD := longs_length_le ts ℓ
         have hDV : ts.length ≤ C * V := by omega
@@ -329,7 +329,7 @@ theorem hadCost_le {P : TransformParams} {p d ℓ K w : ℕ} {ts : List ℕ} (ha
       have hp := prefix_arith (C := C) (D' := (longs ts ℓ).length) (N := 2 * 2 ^ ℓ * ts.prod)
         (by have := longs_length_le ts ℓ; omega) hdCw hw hd1 hN1 hNw
       have hc : h < (ℓ - 1) % K ∨ ℓ - 1 ≤ h := Or.inr (by omega)
-      rw [if_neg h1, if_neg h2, if_pos hc]
+      rw [ite_eq_right h1, ite_eq_right h2, ite_eq_left hc]
       unfold hdC
       have e : (8 + 8 * (32 * (C + P.Cw + 1) + C + 8) + 201) * V = 8 * V + 8 * ((32 * (C + P.Cw + 1) + C + 8) * V) + 201 * V := by ring
       rw [e]
@@ -347,12 +347,12 @@ theorem sum_range_sel {A B : ℕ} (g : ℕ → ℕ) (c : ℕ → Bool) :
     have hl := hg ℓ (by omega)
     simp only [List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, add_zero, List.length_append]
     by_cases hc : c ℓ = true
-    · simp only [hc, if_true] at hl
-      simp only [List.filter_cons, hc, if_true, List.filter_nil, List.length_cons, List.length_nil]
+    · simp only [hc, ite_true] at hl
+      simp only [List.filter_cons, hc, ite_true, List.filter_nil, List.length_cons, List.length_nil]
       nlinarith
-    · simp only [hc, Bool.false_eq_true, if_false] at hl
+    · simp only [hc, Bool.false_eq_true, ite_false] at hl
       have hc' : c ℓ = false := by simpa using hc
-      simp only [List.filter_cons, hc', Bool.false_eq_true, if_false, List.filter_nil, List.length_nil]
+      simp only [List.filter_cons, hc', Bool.false_eq_true, ite_false, List.filter_nil, List.length_nil]
       nlinarith
 
 theorem filter_range_length_le (c : ℕ → Bool) (ℓ : ℕ) (S : Finset ℕ) (h : ∀ x < ℓ, c x = true → x ∈ S) :
@@ -413,8 +413,8 @@ theorem fwdRoundsCost_le {P : TransformParams} {p d ℓ K w : ℕ} {ts : List �
           (if decide (h < (ℓ - 1) % K ∨ ℓ - 1 ≤ h) = true then prC ⌈P.Cl⌉₊ * d * V else 0) + CL +
             hdC ⌈P.Cl⌉₊ P.Cw * V := by
         by_cases hc : h < (ℓ - 1) % K ∨ ℓ - 1 ≤ h
-        · rw [if_pos hc] at h1; rw [if_pos (by simpa using hc)]; omega
-        · rw [if_neg hc] at h1; rw [if_neg (by simpa using hc)]; omega
+        · rw [ite_eq_left hc] at h1; rw [ite_eq_left (by simpa using hc)]; omega
+        · rw [ite_eq_right hc] at h1; rw [ite_eq_right (by simpa using hc)]; omega
       show _ ≤ (if decide (h < (ℓ - 1) % K ∨ ℓ - 1 ≤ h) = true then prC ⌈P.Cl⌉₊ * d * V else 0) +
         (CL + (hdC ⌈P.Cl⌉₊ P.Cw + twC ⌈P.Cl⌉₊ + 3) * V)
       omega)
@@ -451,8 +451,8 @@ theorem oppRoundsCost_le {P : TransformParams} {p d ℓ K w : ℕ} {ts : List �
           (if decide (ℓ - 1 - k < (ℓ - 1) % K ∨ ℓ - 1 ≤ ℓ - 1 - k) = true then prC ⌈P.Cl⌉₊ * d * V else 0) +
             CL + hdC ⌈P.Cl⌉₊ P.Cw * V := by
         by_cases hc : ℓ - 1 - k < (ℓ - 1) % K ∨ ℓ - 1 ≤ ℓ - 1 - k
-        · rw [if_pos hc] at h1; rw [if_pos (by simpa using hc)]; omega
-        · rw [if_neg hc] at h1; rw [if_neg (by simpa using hc)]; omega
+        · rw [ite_eq_left hc] at h1; rw [ite_eq_left (by simpa using hc)]; omega
+        · rw [ite_eq_right hc] at h1; rw [ite_eq_right (by simpa using hc)]; omega
       show _ ≤ (if decide (ℓ - 1 - k < (ℓ - 1) % K ∨ ℓ - 1 ≤ ℓ - 1 - k) = true then prC ⌈P.Cl⌉₊ * d * V else 0) +
         (CL + (hdC ⌈P.Cl⌉₊ P.Cw + twC ⌈P.Cl⌉₊ + 3) * V)
       omega)
@@ -500,14 +500,14 @@ theorem clen_hadWords_le {P : TransformParams} {p d ℓ K w : ℕ} {ts : List �
   rw [e]
   have hV1 : 1 ≤ V := le_trans hw hwV
   by_cases h1 : h < (ℓ - 1) % K
-  · simp only [hadWords, h1, if_true, clen_cons, clen_nil, length_ones, List.length_cons, List.length_nil]
+  · simp only [hadWords, h1, ite_true, clen_cons, clen_nil, length_ones, List.length_cons, List.length_nil]
     have := hones _ (prefixBase_le hlay h1)
     omega
   · by_cases h2 : h < ℓ - 1
-    · simp only [hadWords, h1, h2, if_true, if_false, clen_cons, clen_nil, List.length_cons, List.length_nil]
+    · simp only [hadWords, h1, h2, ite_true, ite_false, clen_cons, clen_nil, List.length_cons, List.length_nil]
       have := hhdr (by omega) h2
       omega
-    · simp only [hadWords, h1, h2, if_false, clen_cons, clen_nil, length_ones, List.length_cons, List.length_nil]
+    · simp only [hadWords, h1, h2, ite_false, clen_cons, clen_nil, length_ones, List.length_cons, List.length_nil]
       have := hones (topBase ts.length ℓ K) (by unfold topBase; omega)
       have hLD := longs_length_le ts ℓ
       omega
@@ -842,8 +842,8 @@ theorem total_arith {V Y d K ℓ p dl dL KT Km mv sw lc Cabs Dabs prc hdtw scc h
     (hW : W ≤ L + 2 * (ℓ * (scc * V)) + 30 * ((mv + sw) * V) + hdrc * V)
     (hL : L ≤ mv * (lc * V + 3) + sw * (lc * V * KT + 3) + 1)
     (hCL : CLr ≤ Cabs * (V * dL) + 4 * Dabs * p + 8 * V + 41)
-    (hV1 : 1 ≤ V) (hpV : p ≤ V) (hdL : dL ≤ dl) (hdl1 : 1 ≤ dl) (hdL0 : 0 ≤ dL) (hKT1 : 1 ≤ KT)
-    (hKm0 : 0 ≤ Km) (hVY : V ≤ 2 * Cw * Y) (hY0 : 0 ≤ Y) (hmv : mv ≤ d * K) (hmv0 : 0 ≤ mv)
+    (hV1 : 1 ≤ V) (hpV : p ≤ V) (hdL : dL ≤ dl) (hdl1 : 1 ≤ dl) (_hdL0 : 0 ≤ dL) (hKT1 : 1 ≤ KT)
+    (hKm0 : 0 ≤ Km) (hVY : V ≤ 2 * Cw * Y) (hY0 : 0 ≤ Y) (hmv : mv ≤ d * K) (_hmv0 : 0 ≤ mv)
     (hsw0 : 0 ≤ sw) (hsw : sw * KT ≤ Cl * p * Km) (hd1 : 1 ≤ d) (hK1 : 1 ≤ K) (hℓ1 : 1 ≤ ℓ)
     (hp0 : 0 ≤ p) (hlc : 0 < lc) (hC0 : 0 ≤ Cabs) (hD0 : 0 ≤ Dabs) (hprc : 0 ≤ prc) (hhd : 0 ≤ hdtw)
     (hsc : 0 ≤ scc) (hhr : 0 ≤ hdrc) (hCw : 0 ≤ Cw) :

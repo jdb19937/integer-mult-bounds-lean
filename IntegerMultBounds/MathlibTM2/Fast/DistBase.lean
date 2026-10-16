@@ -122,13 +122,13 @@ variable {rg : ι → Fin T}
 theorem dsOv_rg (hrg : Function.Injective rg) (R : Regs T A) (ρ : ι → List (Fin (A + 4)))
     (r : ι) : dsOv rg R ρ (rg r) = ρ r := by
   have h : ∃ r', rg r' = rg r := ⟨r, rfl⟩
-  simp only [dsOv, dif_pos h]
+  simp only [dsOv, dite_eq_left h]
   rw [hrg h.choose_spec]
 
 theorem dsOv_off (R : Regs T A) (ρ : ι → List (Fin (A + 4))) {k : Fin T}
     (hk : ∀ r, rg r ≠ k) : dsOv rg R ρ k = R k := by
   have h : ¬ ∃ r, rg r = k := fun ⟨r, hr⟩ => hk r hr
-  simp only [dsOv, dif_neg h]
+  simp only [dsOv, dite_eq_right h]
 
 theorem dsOv_update (R : Regs T A) (ρ : ι → List (Fin (A + 4))) {k : Fin T}
     (hk : ∀ r, rg r ≠ k) (x : List (Fin (A + 4))) :
@@ -137,12 +137,12 @@ theorem dsOv_update (R : Regs T A) (ρ : ι → List (Fin (A + 4))) {k : Fin T}
   by_cases h : ∃ r, rg r = j
   · obtain ⟨r, rfl⟩ := h
     rw [Function.update_of_ne (hk r)]
-    simp only [dsOv, dif_pos (show ∃ r', rg r' = rg r from ⟨r, rfl⟩)]
+    simp only [dsOv, dite_eq_left (show ∃ r', rg r' = rg r from ⟨r, rfl⟩)]
   · by_cases hj : j = k
     · subst hj
-      simp only [Function.update_self, dsOv, dif_neg h]
+      simp only [Function.update_self, dsOv, dite_eq_right h]
     · rw [Function.update_of_ne hj]
-      simp only [dsOv, dif_neg h, Function.update_of_ne hj]
+      simp only [dsOv, dite_eq_right h, Function.update_of_ne hj]
 
 theorem dsOv_update_on [DecidableEq ι] (hrg : Function.Injective rg) (R : Regs T A)
     (ρ : ι → List (Fin (A + 4)))

@@ -160,7 +160,7 @@ macro "synupd" : tactic => `(tactic| (simp only [Function.update_apply, reg_inj,
   reduceCtorEq, ↓reduceIte, eq_self_iff_true, LReg.sc.injEq, LReg.ph.injEq, LReg.lf.injEq,
   LReg.wire.injEq, LReg.bc.injEq, synWire_eq_iff, sreg_eq, SynW.tw.injEq, SynW.ly.injEq, SynW.p.injEq,
   SynW.s.injEq, IntegerMultBounds.MathlibTM2.Node.LReg.k.injEq, Fin.reduceEq, Fin.isValue, synTg, ite_false,
-  ite_true, if_false, if_true]))
+  ite_true]))
 
 /-! ### Run contracts of the host utilities -/
 
@@ -617,7 +617,7 @@ theorem synMoveUntil_loop {src dst : Fin T} (hsd : src ≠ dst) (mkr : Fin (A + 
         simp only [synMvStep, synPeekNe, Action.run, mk_var, mk_stk, get_rt, hS,
           List.cons_append, List.head?_cons, List.tail_cons, update_rt, store_mk,
           Function.update_of_ne hsd.symm, Option.getD_some]
-        simp only [Function.update_apply, if_neg hsd, if_pos rfl, ite_true, ↓reduceIte] at this ⊢
+        simp only [Function.update_apply, ite_eq_right hsd, ite_eq_left rfl, ite_true, ↓reduceIte] at this ⊢
         rw [this]
       obtain ⟨v', hu, he⟩ := ih { v with sym := some x, flag := decide (l ≠ []) }
         { S with
@@ -821,13 +821,13 @@ variable {R : Fin (nT SXReg) → List (Fin (A + 4))} {v : SynW → List (Fin (A 
 
 @[simp] theorem synG_sreg (x : SynW) : synG R v (sreg x) = v x := by
   have h : ∃ y, sreg y = sreg x := ⟨x, rfl⟩
-  simp only [synG, dif_pos h]
+  simp only [synG, dite_eq_left h]
   congr
   exact sreg_injective h.choose_spec
 
 theorem synG_of_ne {z : Fin (nT SXReg)} (hz : ∀ x, sreg x ≠ z) : synG R v z = R z := by
   have : ¬ ∃ x, sreg x = z := fun ⟨x, hx⟩ => hz x hx
-  simp only [synG, dif_neg this]
+  simp only [synG, dite_eq_right this]
 
 theorem synG_update (x : SynW) (l : List (Fin (A + 4))) :
     Function.update (synG R v) (sreg x) l = synG R (Function.update v x l) := by
@@ -1328,7 +1328,7 @@ theorem synClr_synG (xs : List SynW) : synClr (synG R v) (xs.map sreg) = synG R 
   · have hz' : ∀ y, sreg y ≠ z := fun y hy => hz ⟨y, hy⟩
     have : z ∉ xs.map sreg := by
       simp only [List.mem_map, not_exists, not_and]; exact fun y _ => hz' y
-    simp only [synClr, this, if_false]
+    simp only [synClr, this, ite_false]
     rw [synG_of_ne hz', synG_of_ne hz']
 
 theorem sg_synStash {pk : Fin (nT SXReg)} (hpk : ∀ z, sreg z ≠ pk) (mkr : Fin (A + 4))

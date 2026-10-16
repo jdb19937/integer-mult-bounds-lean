@@ -121,7 +121,7 @@ theorem src_crt_inv {A w q : ℕ} (g : ((i : Fin d) → ZMod (s i)) → ℂ) :
   congr 1
   refine List.map_congr_left fun k _ => ?_
   simp only [Function.comp_apply, srcRec]
-  rw [if_pos (fun i => ZMod.val_lt _)]
+  rw [ite_eq_left (fun i => ZMod.val_lt _)]
   simp only [ZMod.natCast_zmod_val]
 
 end Formats

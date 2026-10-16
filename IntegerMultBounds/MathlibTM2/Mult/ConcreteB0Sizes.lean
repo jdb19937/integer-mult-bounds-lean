@@ -403,7 +403,7 @@ private theorem pcore_4 : 6+Y*((2*(62000*(2*q)^3*S^2*η'+64*q^2*ε)+2*X)+32*q^2*
   have hT := pcore_T q S X η' ε hq hX0 hXs hq3X hs hη0 hη hε0 hε
   have hq2X := pcore_q2X q X hq hX0 hXs hq3X
   have hY0 : 0≤Y := by
-    by_contra hneg; push_neg at hneg; nlinarith
+    by_contra hneg; push Not at hneg; nlinarith
   have e : Y*((2*(62000*(2*q)^3*S^2*η'+64*q^2*ε)+2*X)+32*q^2*Z/2)=
       2*(Y*(62000*(2*q)^3*S^2*η'+64*q^2*ε))+2*(Y*X)+16*q^2*(Y*Z) := by ring
   rw [e, hYX]

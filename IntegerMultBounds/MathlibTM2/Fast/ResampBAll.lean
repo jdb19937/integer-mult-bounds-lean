@@ -142,13 +142,13 @@ lemma rsbBank_hd {hd : Fin 5 → Fin t₀} (hi : Function.Injective hd) (hs : Fi
     (k : Fin 5) : (rsbBank hd hs (reg (hd k)) : List (Fin (A + 4))) =
       separator :: (hs k).map bitSymbol := by
   have h : ∃ k', reg (hd k') = reg (hd k) := ⟨k, rfl⟩
-  rw [rsbBank, dif_pos h]
+  rw [rsbBank, dite_eq_left h]
   have := Classical.choose_spec h
   rw [hi (BinaryInterchangeRun.slot_injective this)]
 
 lemma rsbBank_other {hd : Fin 5 → Fin t₀} (hs : Fin 5 → List Bool) {j : Fin (swapT t₀)}
     (hj : ∀ k, reg (hd k) ≠ j) : (rsbBank hd hs j : List (Fin (A + 4))) = [] := by
-  rw [rsbBank, dif_neg (fun ⟨k, hk⟩ => hj k hk)]
+  rw [rsbBank, dite_eq_right (fun ⟨k, hk⟩ => hj k hk)]
 
 /-- Exchanging the last two headers. -/
 lemma rsbBank_xchg {hd : Fin 5 → Fin t₀} (hi : Function.Injective hd) (hs : Fin 5 → List Bool) :

@@ -98,8 +98,8 @@ theorem crtFwdC_main (hs : ∀ j, 0 < s j) (μ : Fin d → ℕ) (hμ : ∀ j, μ
   | 0, _ => by
       refine ⟨fun a ha => ?_, fun x hx => ?_⟩
       · have hb : crtBeta s μ d a = a := by funext j; simp [crtBeta, j.isLt]
-        simp only [crtFwdC, Nat.sub_zero, hb, crtPadC, if_pos ha, crtKX]
-      · simp only [crtFwdC, crtPadC, if_neg hx]
+        simp only [crtFwdC, Nat.sub_zero, hb, crtPadC, ite_eq_left ha, crtKX]
+      · simp only [crtFwdC, crtPadC, ite_eq_right hx]
   | n + 1, hn => by
       have hnd : n < d := by omega
       obtain ⟨ih₁, ih₂⟩ := crtFwdC_main hs μ hμ l z n (by omega)
@@ -108,7 +108,7 @@ theorem crtFwdC_main (hs : ∀ j, 0 < s j) (μ : Fin d → ℕ) (hμ : ∀ j, μ
       set I : Fin d := ⟨i, hid⟩ with hI
       have hrw : ∀ x, crtFwdC s μ (crtPadC s l z) (n + 1) x =
           crtRotC s i hid (μ I) true (crtFwdC s μ (crtPadC s l z) n) x := fun x => by
-        rw [crtFwdC, dif_pos hnd]
+        rw [crtFwdC, dite_eq_left hnd]
       refine ⟨fun a ha => ?_, fun x hx => ?_⟩
       · rw [hrw, crtRotC]
         have hbI : crtBeta s μ (d - (n + 1)) a I = crtB s μ a I := by
@@ -117,9 +117,9 @@ theorem crtFwdC_main (hs : ∀ j, 0 < s j) (μ : Fin d → ℕ) (hμ : ∀ j, μ
           intro j hj; simp [crtBeta, show j.val < d - (n + 1) by omega]
         have hK : crtKI s i (crtBeta s μ (d - (n + 1)) a) = crtKI s i a := crtKI_congr s hctrl
         have hBlt : crtB s μ a I < s I := Nat.mod_lt _ (hs I)
-        rw [if_pos ⟨fun j hj => by rw [hctrl j hj]; exact ha j, by rw [hbI]; exact hBlt⟩, hbI, hK]
+        rw [ite_eq_left ⟨fun j hj => by rw [hctrl j hj]; exact ha j, by rw [hbI]; exact hBlt⟩, hbI, hK]
         have hval : (crtB s μ a I + crtShift true (s I) (μ I) (crtKI s i a)) % s I = a I := by
-          simp only [crtShift, if_true]
+          simp only [crtShift, ite_true]
           exact crt_mod_sub_lo (ha I) (crtLo_le (hμ I) _) (crtLo_cast _ _ _)
         rw [hval]
         have hb' : Function.update (crtBeta s μ (d - (n + 1)) a) I (a I) =
@@ -131,8 +131,8 @@ theorem crtFwdC_main (hs : ∀ j, 0 < s j) (μ : Fin d → ℕ) (hμ : ∀ j, μ
             have hj' : j.val ≠ i := fun h => hj (Fin.ext h)
             simp only [crtBeta]
             by_cases h1 : j.val < d - (n + 1)
-            · rw [if_pos h1, if_pos (by omega)]
-            · rw [if_neg h1, if_neg (by omega)]
+            · rw [ite_eq_left h1, ite_eq_left (by omega)]
+            · rw [ite_eq_right h1, ite_eq_right (by omega)]
         rw [hb']
         exact ih₁ a ha
       · rw [hrw, crtRotC]
@@ -162,14 +162,14 @@ theorem crtInvC_beta (hs : ∀ j, 0 < s j) (μ : Fin d → ℕ) (X : (Fin d → 
   | n + 1, hn, a, ha => by
       have hnd : n < d := by omega
       set N : Fin d := ⟨n, hnd⟩ with hN
-      rw [crtInvC, dif_pos hnd, crtRotC]
+      rw [crtInvC, dite_eq_left hnd, crtRotC]
       have hctrl : ∀ j : Fin d, j.val < n → crtBeta s μ (n + 1) a j = a j := by
         intro j hj; simp [crtBeta, show j.val < n + 1 by omega]
       have hbN : crtBeta s μ (n + 1) a N = a N := by simp [crtBeta, hN]
       have hK : crtKI s n (crtBeta s μ (n + 1) a) = crtKI s n a := crtKI_congr s hctrl
-      rw [if_pos ⟨fun j hj => by rw [hctrl j hj]; exact ha j, by rw [hbN]; exact ha N⟩, hbN, hK]
+      rw [ite_eq_left ⟨fun j hj => by rw [hctrl j hj]; exact ha j, by rw [hbN]; exact ha N⟩, hbN, hK]
       have hval : (a N + crtShift false (s N) (μ N) (crtKI s n a)) % s N = crtB s μ a N := by
-        simp only [crtShift, Bool.false_eq_true, if_false, crtB]
+        simp only [crtShift, Bool.false_eq_true, ite_false, crtB]
         exact crt_mod_add_lo (crtLo_cast _ _ _)
       rw [hval]
       have hb' : Function.update (crtBeta s μ (n + 1) a) N (crtB s μ a N) = crtBeta s μ n a := by
@@ -180,8 +180,8 @@ theorem crtInvC_beta (hs : ∀ j, 0 < s j) (μ : Fin d → ℕ) (X : (Fin d → 
           have hj' : j.val ≠ n := fun h => hj (Fin.ext h)
           simp only [crtBeta]
           by_cases h1 : j.val < n
-          · rw [if_pos (by omega), if_pos h1]
-          · rw [if_neg (by omega), if_neg h1]
+          · rw [ite_eq_left (by omega), ite_eq_left h1]
+          · rw [ite_eq_right (by omega), ite_eq_right h1]
       rw [hb']
       exact crtInvC_beta hs μ X n (by omega) a ha
 
@@ -203,7 +203,7 @@ theorem crtBeta_zero_eq_phi (hs : ∀ j, 0 < s j) (hcop : Pairwise (Nat.Coprime 
     crtBeta s (fun i => (crtMu s hcop i : ZMod (s i)).val) 0 a j =
       (crtPhi s hcop ((crtKX s a : ℕ) : ZMod (∏ i, s i)) j).val := by
   have : ∀ i, NeZero (s i) := fun i => ⟨(hs i).ne'⟩
-  simp only [crtBeta, Nat.not_lt_zero, if_false, crtB, crtKX]
+  simp only [crtBeta, Nat.not_lt_zero, ite_false, crtB, crtKX]
   rw [crtPhi_mixedRadix, ← ZMod.val_natCast]
   congr 1
   push_cast

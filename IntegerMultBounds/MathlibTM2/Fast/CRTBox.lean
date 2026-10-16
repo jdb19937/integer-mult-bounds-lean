@@ -485,10 +485,10 @@ lemma crtCnt_split {m : ℕ} (h : m < d) (x r : ℕ) (hx : x ≤ 2 ^ a ⟨m, h�
         if y < s ⟨m, h⟩ then crtCnt a s m r' else 0 := by
     intro y hy r' hr'
     by_cases hys : y < s ⟨m, h⟩
-    · rw [if_pos hys, crtCnt]
+    · rw [ite_eq_left hys, crtCnt]
       exact crt_count_map r' _ _ _ fun i hi => by
         rw [crtVal_succ a s h hy (by omega)]; simp [hys]
-    · rw [if_neg hys]
+    · rw [ite_eq_right hys]
       rw [crt_count_map r' _ _ (fun _ => false) fun i hi => by
         rw [crtVal_succ a s h hy (by omega)]; simp [hys]]
       simp
@@ -531,7 +531,7 @@ theorem crtCnt_main (hs : ∀ j, s j ≤ 2 ^ a j) :
         have hr : F % M < M := Nat.mod_lt _ hM
         rw [hdec, crtVal_succ a s h hF' hr] at hv
         simp only [Bool.and_eq_true, decide_eq_true_eq] at hv
-        rw [hdec, crtCnt_split a s h _ _ hF'.le hr (Or.inl hF'), ih₁, if_pos hv.2,
+        rw [hdec, crtCnt_split a s h _ _ hF'.le hr (Or.inl hF'), ih₁, ite_eq_left hv.2,
           ih₂ _ hr hv.1, crtK_succ a s h hF' hr, Nat.min_eq_left hv.2.le]
         ring
 
@@ -550,7 +550,7 @@ def crtRevAx (m : ℕ) : List (Fin d) := ((List.finRange d).take m).reverse
 @[simp] lemma crtRevAx_zero : crtRevAx (d := d) 0 = [] := by simp [crtRevAx]
 
 lemma crtRevAx_succ {m : ℕ} (h : m < d) : crtRevAx (d := d) (m + 1) = ⟨m, h⟩ :: crtRevAx m := by
-  rw [crtRevAx, List.take_succ, List.reverse_append, crtRevAx,
+  rw [crtRevAx, List.take_add_one, List.reverse_append, crtRevAx,
     List.getElem?_eq_getElem (by simpa using h)]
   simp
 
@@ -700,7 +700,7 @@ lemma crtVA_run_low (ok : Bool) :
           have := Nat.mod_mod_of_dvd (vals 2) (pow_dvd_pow 2 (Nat.le_add_left 1 k))
           rw [h2, pow_one] at this; omega
         simp [Nat.testBit_zero, this]
-      rw [CAuto.run, crtVA_step, if_neg (by simp [hb])]
+      rw [CAuto.run, crtVA_step, ite_eq_right (by simp [hb])]
       rw [crtVA_run_low ok k _ _ (by
         rw [← Nat.mod_mul_right_div_self, ← pow_succ', h2, Nat.zero_div])]
       rw [crt_cmp_step]
@@ -721,7 +721,7 @@ lemma crtVA_run_field (ok : Bool) (w : ℕ) (hw : 1 ≤ w) (vals : Fin 3 → ℕ
       rw [← Nat.mod_mul_right_div_self, ← pow_succ, h2, Nat.div_self (by positivity)]
     simp [Nat.testBit_zero, this]
   simp only [Bool.and_false, Bool.or_false]
-  rw [CAuto.run, crtVA_step, if_pos hb, CAuto.run, crt_cmp_top]
+  rw [CAuto.run, crtVA_step, ite_eq_left hb, CAuto.run, crt_cmp_top]
 
 variable {d : ℕ} (a s : Fin d → ℕ)
 

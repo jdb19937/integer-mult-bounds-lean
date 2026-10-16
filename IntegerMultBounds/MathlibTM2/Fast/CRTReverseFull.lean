@@ -34,8 +34,8 @@ def crtReverseSetupCost (r : CrtReverseReg → Fin T) (axes width : Fin T)
   8 * (R (r .left)).length + 4 * (R width).length + 4 * (R axes).length + 16
 
 theorem crtReverseSetup_runs {r : CrtReverseReg → Fin T} (hr : Function.Injective r)
-    (axes width pairs : Fin T) (haw : axes ≠ width) (hap : axes ≠ pairs)
-    (hwp : width ≠ pairs) (ha : ∀ q, r q ≠ axes) (hw : ∀ q, r q ≠ width)
+    (axes width pairs : Fin T) (_haw : axes ≠ width) (hap : axes ≠ pairs)
+    (_hwp : width ≠ pairs) (ha : ∀ q, r q ≠ axes) (hw : ∀ q, r q ≠ width)
     (hp : ∀ q, r q ≠ pairs) (R : Regs T A)
     (hz : ∀ q ∈ [CrtReverseReg.stmp, .right, .t₁, .t₂, .gap, .tmp], R (r q) = [])
     (hpc : R pairs = []) :
@@ -125,7 +125,7 @@ theorem crtReverseFull_runs {d : ℕ} (a : Fin d → ℕ)
     (by simpa [R₀, crtReverseSetupRegs, hp, hr.eq_iff] using hl)
     (by simp [R₀, crtReverseSetupRegs, hp, hr.eq_iff, hl, crtEnts_reverse, List.map_reverse])
     (by simp [R₀, crtReverseSetupRegs, hp, hr.eq_iff, hz .pre (by decide) (by decide) (by decide), crtW])
-    (by simp [R₀, crtReverseSetupRegs, hp, hr.eq_iff, hwidth])
+    (by simp [R₀, crtReverseSetupRegs, hp, hwidth])
     (by simp [R₀, crtReverseSetupRegs, hp, hr.eq_iff, hz .post (by decide) (by decide) (by decide), crtW])
     (by simp [R₀, crtReverseSetupRegs, haxes])
     (by simpa [R₀, crtReverseSetupRegs, hp, hr.eq_iff] using he3) hzero

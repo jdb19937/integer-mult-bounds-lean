@@ -36,8 +36,8 @@ theorem runs_zipBody {X Y S1 S2 : Fin t} (h1 : X ≠ Y) (h2 : X ≠ S1) (h3 : Y 
   simp only [zipBody, WP, wp_op1, wp_back]
   have t1 := time_le Rules.add x (fun _ => y) y.length (fun _ => le_rfl)
   have t2 := time_le Rules.addNot x (fun _ => y) y.length (fun _ => le_rfl)
-  simp [hX, hY, hS1, hS2, h1, h2, h3, h4, h5, h6, h1.symm, h2.symm, h3.symm, h4.symm, h5.symm, h6.symm,
-    Function.update_apply, WTape.next, WTape.cur, WTape.put, Rules.output_add,
+  simp [hX, hY, hS1, hS2, h1, h2, h3, h1.symm, h4.symm, h5.symm, h6.symm,
+    WTape.next, WTape.cur, WTape.put, Rules.output_add,
     Rules.output_addNot x (fun _ => y) (by simp [hxy])]
   refine ⟨?_, ?_⟩
   · funext z

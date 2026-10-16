@@ -535,11 +535,11 @@ theorem ldwP1body_do {es : List ℕ} {ℓ K E : ℕ} (H : LayHyp es ℓ K)
         (by simp only; rw [Function.update_of_ne (by decide), hj1, hjv])
         (by simp only; rw [Function.update_self]) hW hNW
       refine hm.mono (fun s' ⟨c', hV', hj', hfr', hacc'⟩ => ⟨c', ?_, ?_, ?_, ?_, ?_⟩) le_rfl
-      · rw [hV', ldw_lrank_succ, if_pos hl]
-      · rw [hj', ldw_lrank_succ, if_pos hl]
+      · rw [hV', ldw_lrank_succ, ite_eq_left hl]
+      · rw [hj', ldw_lrank_succ, ite_eq_left hl]
       · rw [hfr' _ (by decide)]; simp only; rw [Function.update_of_ne (by decide), hoff1, hoff]
       · rw [hfr' _ (by decide)]; simp only; rw [Function.update_of_ne (by decide), hvi1]
-      · rw [hacc', ldw_lrank_succ, if_pos hl, ldwRecs_succ, List.reverse_append, List.append_assoc]
+      · rw [hacc', ldw_lrank_succ, ite_eq_left hl, ldwRecs_succ, List.reverse_append, List.append_assoc]
         simp only
         rw [hacc1, hacc]
         rfl
@@ -551,7 +551,7 @@ theorem ldwP1body_do {es : List ℕ} {ℓ K E : ℕ} (H : LayHyp es ℓ K)
         intro x hx
         simp only [List.mem_cons, List.not_mem_nil, or_false] at hx
         simp [TblIns.run, Function.update_of_ne hx]
-      have hr : layLrank es ℓ (i + 1) = layLrank es ℓ i := by rw [ldw_lrank_succ, if_neg hl]; rfl
+      have hr : layLrank es ℓ (i + 1) = layLrank es ℓ i := by rw [ldw_lrank_succ, ite_eq_right hl]; rfl
       refine ⟨c1.fr fr (by decide), ?_, ?_, ?_, ?_, ?_⟩
       · rw [fr _ (by decide), hV1, hV, hr]
       · rw [fr _ (by decide), hj1, hjv, hr]

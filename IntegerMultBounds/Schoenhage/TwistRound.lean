@@ -90,7 +90,7 @@ theorem runs_twistRound (w : ℕ) (f : ℕ → ℕ) (fs : List (Rec r)) (τ : Fi
   refine hrun.mono (fun τ' e => ?_) le_rfl
   rw [e, htw]
   simp only [Function.update_apply]
-  rw [if_neg (by decide), if_neg (by decide), if_neg (by decide), if_neg (by decide)]
+  rw [ite_eq_right (by decide), ite_eq_right (by decide), ite_eq_right (by decide), ite_eq_right (by decide)]
   simp
 
 end TwistRound

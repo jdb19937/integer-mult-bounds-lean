@@ -57,8 +57,8 @@ theorem wbank_gslot (S0 : Fin 4 → WTape) (dec : Fin 𝕌 → WTape) (v : Fin 1
     {x : Fin 𝕌} (hx : x ≠ zH) : wbank (tL := tL) (nL := nL) S0 dec v tw (gslot tL nL x) = dec x := by
   have h := x.isLt; change x.val < 91 at h
   have hx' : x.val ≠ 87 := fun e => hx (Fin.ext e)
-  simp only [gslot, hx, if_false, wbank, wst_drv]
-  rw [dif_neg (by simp; omega), dif_neg (by simp; omega), dif_pos (by simp; omega)]
+  simp only [gslot, hx, ite_false, wbank, wst_drv]
+  rw [dite_eq_right (by simp; omega), dite_eq_right (by simp; omega), dite_eq_left (by simp; omega)]
   congr 1; ext; simp
 
 theorem wbank_nm (S0 : Fin 4 → WTape) (dec : Fin 𝕌 → WTape) (v : Fin 13 → WTape) (tw : Fin 29 → WTape)
@@ -69,7 +69,7 @@ theorem wbank_twT (S0 : Fin 4 → WTape) (dec : Fin 𝕌 → WTape) (v : Fin 13 
     (j : Fin 29) : wbank (tL := tL) (nL := nL) S0 dec v tw (drv tL nL (twT tL nL j)) = tw j := by
   have := j.isLt
   simp only [wbank, wst_drv, twT]
-  rw [dif_neg (by simp; omega), dif_pos (by simp; omega)]
+  rw [dite_eq_right (by simp; omega), dite_eq_left (by simp; omega)]
   congr 1; ext; simp
 
 theorem wbank_pt (S0 : Fin 4 → WTape) (dec : Fin 𝕌 → WTape) (v : Fin 13 → WTape) (tw : Fin 29 → WTape)
@@ -143,7 +143,7 @@ theorem update_wbank_gslot (S0 : Fin 4 → WTape) (dec : Fin 𝕌 → WTape) (v 
   · by_cases hz : z = ⟨50 + x.val, by unfold DB; omega⟩
     · subst hz
       simp only [Function.update_self, wbank, wst, drv, Fin.addCases_right]
-      rw [dif_neg (by simp; omega), dif_neg (by simp; omega), dif_pos (by simp; omega)]
+      rw [dite_eq_right (by simp; omega), dite_eq_right (by simp; omega), dite_eq_left (by simp; omega)]
       rw [show (⟨50 + x.val - 50, _⟩ : Fin 𝕌) = x from Fin.ext (by simp)]; simp
     · rw [Function.update_of_ne (show (Fin.natAdd 4 z : Fin (4 + DB tL nL)) ≠ drv tL nL _ from
         fun e => hz (drv_injective e))]
@@ -160,7 +160,7 @@ theorem wb_cases {n : ℕ} (y : Fin (4 + n)) : (∃ k, y = Fin.castAdd n k) ∨ 
 
 theorem decoded_zH (p d l K w : ℕ) (ts : List ℕ) :
     decoded p d l K w ts zH = reg (transformHeader p d (2 ^ l) K w ts) := by
-  simp (config := {decide := true}) [decoded, decStart, Function.update_apply]
+  simp (config := {decide := true}) [decoded, decStart]
 
 /-- After decoding, the word bank by parts. -/
 theorem decState_eq (p d l K w : ℕ) (ts : List ℕ) (F : List Bool) :
@@ -185,7 +185,7 @@ theorem decState_eq (p d l K w : ℕ) (ts : List ℕ) (F : List Bool) :
       have hne : (⟨z.val - 50, hz'⟩ : Fin 𝕌) ≠ zH := fun e => by
         have := congrArg Fin.val e; simp at this; omega
       apply hz ⟨z.val - 50, hz'⟩
-      simp only [gslot, hne, if_false, drv]
+      simp only [gslot, hne, ite_false, drv]
       apply Fin.ext; simp; omega
 
 /-- The header decoder on the ring product's bank inside the word bank. -/
@@ -236,7 +236,7 @@ def cslot (tL nL : ℕ) (i : Fin 16) : Fin (4 + DB tL nL) := ⟨cvals i, by have
 
 theorem cvals_injective : Function.Injective cvals := by decide
 
-theorem cslot_injective : Function.Injective (cslot tL nL) := fun i j h =>
+theorem cslot_injective : Function.Injective (cslot tL nL) := fun _i _j h =>
   cvals_injective (congrArg Fin.val h)
 
 theorem cslot_cL : cslot tL nL TwistConsts.cL = gslot tL nL iL := Fin.ext (by rw [gslot_val]; rfl)
@@ -262,7 +262,7 @@ theorem wbank_scratch (S0 : Fin 4 → WTape) (dec : Fin 𝕌 → WTape) (v : Fin
   rw [cslot_scratch i h]
   have h1 : 17 ≤ cvals i ∧ cvals i ≤ 21 := by fin_cases i <;> simp at h <;> decide
   simp only [wbank, wst_drv]
-  rw [dif_neg (by simp; omega), dif_neg (by simp; omega), dif_neg (by simp; omega)]
+  rw [dite_eq_right (by simp; omega), dite_eq_right (by simp; omega), dite_eq_right (by simp; omega)]
 
 /-- The constants program on the word bank. -/
 noncomputable def constStep (A tL nL : ℕ) : Cmd A (4 + DB tL nL) :=
@@ -328,7 +328,7 @@ theorem runs_constStep {A : ℕ} (S0 : Fin 4 → WTape) (dec : Fin 𝕌 → WTap
     fin_cases i <;> simp (config := {decide := true}) [TwistConsts.cOut, TwistConsts.cIn] at hi ⊢ <;> exact hi
   · intro y hy
     have hy' : ∀ i, (y = cslot tL nL i) ↔ False := fun i => ⟨fun e => hy i e.symm, False.elim⟩
-    simp only [Function.update_apply, hy', if_false]
+    simp only [Function.update_apply, hy', ite_false]
 
 /-! ### The generators -/
 
@@ -373,9 +373,9 @@ theorem runs_genCmd {A : ℕ} (sg lg : Cmd A (4 + DB tL nL)) {ℓ K : ℕ} {ts :
   set dec := decoded p d ℓ K w ts
   set v3 := Function.update (Function.update (fun _ : Fin 13 => emp) 6 S6) 7 S7
   have s4 := runs_constStep (A := A) (tL := tL) (nL := nL) S0 dec v3 (fun _ => emp) ℓ w fl
-    (by simp (config := {decide := true}) [dec, decoded, Function.update_apply])
-    (by simp (config := {decide := true}) [dec, decoded, Function.update_apply])
-    (by simp (config := {decide := true}) [dec, decoded, Function.update_apply, fl])
+    (by simp (config := {decide := true}) [dec, decoded])
+    (by simp (config := {decide := true}) [dec, decoded])
+    (by simp (config := {decide := true}) [dec, decoded, fl])
     (by simp (config := {decide := true}) [v3]) rfl rfl rfl rfl rfl rfl rfl
   set v4 := Function.update v3 2 (reg (ones w))
   set tw4 := Function.update (Function.update (Function.update (Function.update (Function.update (Function.update
@@ -410,15 +410,15 @@ theorem runs_genCmd {A : ℕ} (sg lg : Cmd A (4 + DB tL nL)) {ℓ K : ℕ} {ts :
   · rw [e]
     congr 1
     congr 1
-    · funext i; fin_cases i <;> simp (config := {decide := true}) [v4, v3, rnamed, Function.update_apply, S6, S7]
+    · funext i; fin_cases i <;> simp (config := {decide := true}) [v4, v3, rnamed, S6, S7]
     · have hn := flagSum_lengthFlags hL
-      funext j; fin_cases j <;> simp (config := {decide := true}) [tw4, twRest, Function.update_apply, fl, hn,
+      funext j; fin_cases j <;> simp (config := {decide := true}) [tw4, twRest, fl, hn,
         bits_zero_eq]
   · simp only [wbank_gslot _ _ _ _ (show iP ≠ zH by decide), wbank_gslot _ _ _ _ (show kN ≠ zH by decide),
       wbank_gslot _ _ _ _ (show iL ≠ zH by decide), wbank_gslot _ _ _ _ (show kI ≠ zH by decide),
       wbank_gslot _ _ _ _ (show iW ≠ zH by decide), wbank_gslot _ _ _ _ (show xB ≠ zH by decide),
       wbank_gslot _ _ _ _ (show xA ≠ zH by decide)]
-    simp (config := {decide := true}) only [d6, d4, d2, dec, decoded, Function.update_apply, if_true, if_false,
+    simp (config := {decide := true}) only [d6, d4, d2, dec, decoded, Function.update_apply, ite_true, ite_false,
       WTape.words, reg, List.reverse_nil, List.nil_append, List.append_nil, clen_cons, clen_nil, length_ones,
       List.reverse_replicate, TwistConsts.clen_ticks, genCost]
     have hf : clen ((fl.map fun b => [b]).reverse.reverse) = 2 * ts.length := by
@@ -433,7 +433,7 @@ theorem fwdGen_of {A : ℕ} {sg lg : Cmd A (4 + DB tL NL)} {ℓ K : ℕ} {ts : L
     (hsg : ScriptGen true sg hL p d w Bs) (hlg : LayoutGen true lg ℓ K ts p d w Bl) :
     FwdGen (genCmd sg lg) hL p d w (genCost p d ℓ K w ts + Bs + Bl) := fun F => by
   have := runs_genCmd sg lg hL hp hd hK hw hD true hsg hlg F
-  simpa only [if_true, fwdGenOut] using this
+  simpa only [ite_true, fwdGenOut] using this
 
 /-- `oppGen_of`: the generator meets the opposite driver's interface, given the two script writers. -/
 theorem oppGen_of {A : ℕ} {sg lg : Cmd A (4 + DB tL NL)} {ℓ K : ℕ} {ts : List ℕ} (hL : LayoutOK (2 ^ ℓ) ts ℓ K)
@@ -441,6 +441,6 @@ theorem oppGen_of {A : ℕ} {sg lg : Cmd A (4 + DB tL NL)} {ℓ K : ℕ} {ts : L
     (hsg : ScriptGen false sg hL p d w Bs) (hlg : LayoutGen false lg ℓ K ts p d w Bl) :
     OppGen (genCmd sg lg) hL p d w (genCost p d ℓ K w ts + Bs + Bl) := fun F => by
   have := runs_genCmd sg lg hL hp hd hK hw hD false hsg hlg F
-  simpa only [Bool.false_eq_true, if_false, oppGenOut] using this
+  simpa only [Bool.false_eq_true, ite_false, oppGenOut] using this
 
 end IntegerMultBounds.Schoenhage

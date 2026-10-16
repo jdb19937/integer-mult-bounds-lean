@@ -323,7 +323,7 @@ theorem lr_synRestDown (Ro : Fin (nT SXReg) → List (Fin (A + 4))) (v : SynW �
       have n16 := nz _ (by simp : LReg.ph .arr ∈ _)
       simp only [synRestFile, Function.update_apply, Ne.symm n1, Ne.symm n2, Ne.symm n3,
         Ne.symm n4, Ne.symm n5, Ne.symm n6, Ne.symm n7, Ne.symm n8, Ne.symm n9, Ne.symm n10,
-        Ne.symm n11, Ne.symm n12, Ne.symm n13, Ne.symm n14, Ne.symm n15, Ne.symm n16, if_false]
+        Ne.symm n11, Ne.symm n12, Ne.symm n13, Ne.symm n14, Ne.symm n15, Ne.symm n16, ite_false]
   · simp only [synRestDownCost]
     omega
 
@@ -401,7 +401,7 @@ theorem sg_synSegP (v : SynW → List (Fin (A + 4))) (e h : ℕ) (rl : List (Fin
       funext y
       simp only [hv₁, Function.update_apply]
       split_ifs <;> simp_all [twSeg, he]
-    · simp only [synSegCost, he, if_true]
+    · simp only [synSegCost, he, ite_true]
       omega
   · have he0 : v₁ (.s 28) = [] := by simp [hv₁]; omega
     have s2 := sg_ifNE_neg body (R := R) (p := .seq (synPop (sreg (.s 28))) <|
@@ -417,7 +417,7 @@ theorem sg_synSegP (v : SynW → List (Fin (A + 4))) (e h : ℕ) (rl : List (Fin
       funext y
       simp only [hv₁, Function.update_apply]
       split_ifs <;> simp_all [twSeg, he]
-    · simp only [synSegCost, he, if_false]
+    · simp only [synSegCost, he, ite_false]
       omega
 
 /-- The step bound of `synRoles`. -/
@@ -753,7 +753,7 @@ theorem synRestFile_update {x : LReg SXReg}
   · subst hz
     simp [synRestFile, lreg, Function.update_apply, n1, n2, n3, n4, n5, n6, n7, n8, n9, n10, n11,
       n12, n13, n14, n15, n16]
-  · simp only [synRestFile, Function.update_apply, hz, if_false]
+  · simp only [synRestFile, Function.update_apply, hz, ite_false]
 
 theorem synIdle_rest (io P₀ : List (Fin (A + 4))) :
     ∀ x ∈ [LReg.ctr, .cS, .cR, .ph .rc, .ph .wc, .ph .af, .lf (.k .rctr), .lf (.k .wctr),
@@ -876,7 +876,7 @@ theorem sg_synLayerStep (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
     intro x
     by_cases hx : x ∈ synXS
     · simp [hv₄, synClrW, hx, Function.update_apply]
-    · simp only [hv₄, synClrW, hx, if_false, Function.update_apply]
+    · simp only [hv₄, synClrW, hx, ite_false, Function.update_apply]
       split_ifs with hcf
       · rfl
       · rcases x with x | i | x | i

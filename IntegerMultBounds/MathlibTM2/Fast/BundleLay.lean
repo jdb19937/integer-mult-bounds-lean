@@ -118,21 +118,21 @@ def bdE (n : ℕ) : SrcF 6 bdA :=
   if h : 0 < d n then dsSrcE n (dsW n) (dsWW n) h
   else dsSrcE 2 (dsW 2) (dsWW 2) (one_le_d le_rfl)
 
-lemma bdE_of {n : ℕ} (h : 0 < d n) : bdE n = dsSrcE n (dsW n) (dsWW n) h := dif_pos h
+lemma bdE_of {n : ℕ} (h : 0 < d n) : bdE n = dsSrcE n (dsW n) (dsWW n) h := dite_eq_left h
 
 /-- The base file of `Ã`. -/
 def bdV₀ (n : ℕ) : RsaV (RsaX 6) bdA :=
   if h : 0 < d n then dsV₀ n (dsW n) (dsWW n) h
   else dsV₀ 2 (dsW 2) (dsWW 2) (one_le_d le_rfl)
 
-lemma bdV₀_of {n : ℕ} (h : 0 < d n) : bdV₀ n = dsV₀ n (dsW n) (dsWW n) h := dif_pos h
+lemma bdV₀_of {n : ℕ} (h : 0 < d n) : bdV₀ n = dsV₀ n (dsW n) (dsWW n) h := dite_eq_left h
 
 /-- The base file of `B̃₀`. -/
 def bdσ₀ (n : ℕ) : RsbR ⊕ RsbX 6 → List (Fin (bdA + 4)) :=
   if h : 0 < d n then dsσ₀ n (dsW n) (dsWW n) h
   else dsσ₀ 2 (dsW 2) (dsWW 2) (one_le_d le_rfl)
 
-lemma bdσ₀_of {n : ℕ} (h : 0 < d n) : bdσ₀ n = dsσ₀ n (dsW n) (dsWW n) h := dif_pos h
+lemma bdσ₀_of {n : ℕ} (h : 0 < d n) : bdσ₀ n = dsσ₀ n (dsW n) (dsWW n) h := dite_eq_left h
 
 /-- The converter's own outputs: `dsWW n` and `dsW n` ticks on `uW`, `uw`, the layout-stage
 parameters `dsSrcO` elsewhere. -/

@@ -68,7 +68,7 @@ theorem mrP_filterMap_le {α β : Type} (f : α → Option β) (p : α → Bool)
           split <;> simp <;> omega
       | some b =>
           have := hp a (by simp [hfa])
-          rw [List.filterMap_cons_some hfa, if_pos this]
+          rw [List.filterMap_cons_some hfa, ite_eq_left this]
           simp
           omega
 

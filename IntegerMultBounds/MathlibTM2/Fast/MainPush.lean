@@ -191,7 +191,7 @@ theorem mn_clearAll_exec (body : P → Pr P T Q A U) (v : HS T Q A U) (S : Stack
   have e2 : (fun k => if k ∈ List.finRange T then [] else S.R k) =
       fun _ => ([] : List (Fin (A + 4))) := by
     funext k
-    exact if_pos (List.mem_finRange k)
+    exact ite_eq_left (List.mem_finRange k)
   rw [e1, e2] at he
   exact ⟨v', he⟩
 

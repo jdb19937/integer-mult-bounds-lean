@@ -323,8 +323,8 @@ theorem preA_parse (V : RsaV (RsaX t₀) (prime + K)) (D : PreAxA) (rest : List 
   funext r
   rcases r with r | x
   · cases r <;> simp only [Function.update_apply, preSt, preV2, RsaV.get, Sum.elim_inl,
-      Sum.inl.injEq, reduceCtorEq, if_false, if_true, RsaR.c.injEq]
-  · simp only [Function.update_apply, reduceCtorEq, if_false, preSt, Sum.elim_inr]
+      Sum.inl.injEq, reduceCtorEq, ite_false, ite_true, RsaR.c.injEq]
+  · simp only [Function.update_apply, reduceCtorEq, ite_false, preSt, Sum.elim_inr]
 
 set_option maxRecDepth 4000 in
 theorem preA_num (V : RsaV (RsaX t₀) (prime + K)) (D : PreAxA) (w : ℕ)
@@ -355,12 +355,12 @@ theorem preA_num (V : RsaV (RsaX t₀) (prime + K)) (D : PreAxA) (w : ℕ)
     (twRuns_toBinary (body := body) htg (u := .inl .eb) (wR := .inl .er) (c := .inl .bS)
       (t := .inl .sm) (tmp := .inl .pz) (by simp) (rg .bza) _ ?_ ?_ ?_)))))))))) ?_) ?_
   all_goals try (simp only [preSt, Function.update_apply, Sum.elim_inl, Sum.inl.injEq, reduceCtorEq,
-    if_false, if_true, RsaV.get_sm, RsaV.get_pz, RsaV.get_sm2, RsaV.get_ea, RsaV.get_eb,
+    ite_false, ite_true, RsaV.get_sm, RsaV.get_pz, RsaV.get_sm2, RsaV.get_ea, RsaV.get_eb,
     RsaV.get_er, RsaV.get_cT, RsaV.get_cW, RsaV.get_cS, RsaV.get_cM, RsaV.get_cP, RsaV.get_rr,
     RsaV.get_bS, RsaV.get_c, RsaR.c.injEq, hea, heb, her, hT, hwn, hW, hS, hM, hP, hrr, hbS, hsm,
     hpz, hsm2, List.append_nil, List.length_replicate]; done)
   · simp only [preSt, Function.update_apply, Sum.elim_inl, Sum.inl.injEq, reduceCtorEq,
-      if_false, if_true, RsaV.get_sm, RsaV.get_pz, RsaV.get_sm2, RsaV.get_ea, RsaV.get_eb,
+      ite_false, ite_true, RsaV.get_sm, RsaV.get_pz, RsaV.get_sm2, RsaV.get_ea, RsaV.get_eb,
       RsaV.get_er, RsaV.get_cT, RsaV.get_cW, RsaV.get_cS, RsaV.get_cM, RsaV.get_cP, RsaV.get_rr,
       RsaV.get_bS, RsaV.get_c, RsaR.c.injEq, hea, heb, her, hT, hwn, hW, hS, hM, hP, hrr, hbS, hsm,
       hpz, hsm2, List.append_nil, List.length_replicate, List.length_drop, List.length_cons]
@@ -369,10 +369,10 @@ theorem preA_num (V : RsaV (RsaX t₀) (prime + K)) (D : PreAxA) (w : ℕ)
   · funext r
     rcases r with r | x
     · cases r <;> simp only [Function.update_apply, preSt, preV3, RsaV.get, Sum.elim_inl,
-        Sum.inl.injEq, reduceCtorEq, if_false, if_true, RsaR.c.injEq]
+        Sum.inl.injEq, reduceCtorEq, ite_false, ite_true, RsaR.c.injEq]
       all_goals simp [hea, heb, her, hT, hwn, hW, hS, hM, hP, hrr, hbS, hsm, hpz, hsm2,
         List.replicate_succ]
-    · simp only [Function.update_apply, reduceCtorEq, if_false, preSt, Sum.elim_inr]
+    · simp only [Function.update_apply, reduceCtorEq, ite_false, preSt, Sum.elim_inr]
 
 theorem preA_hdr {hd : Fin 5 → Fin t₀} (hdi : Function.Injective hd)
     (V : RsaV (RsaX t₀) (prime + K)) (D : PreAxA) (w : ℕ)
@@ -401,12 +401,12 @@ theorem preA_hdr {hd : Fin 5 → Fin t₀} (hdi : Function.Injective hd)
       (t₁ := .inl .sm) (t₂ := .inl .pz) (by simp [preHA]) _ ?_ ?_ ?_)
       (twRuns_uclear (body := body) htg (.inl .sm2) _))))))) ?_) ?_
   all_goals try (simp (config := { decide := true }) only [preSt, preHA, Function.update_apply,
-    Sum.elim_inl, Sum.inl.injEq, reduceCtorEq, if_false, if_true, RsaV.get_sm, RsaV.get_pz,
+    Sum.elim_inl, Sum.inl.injEq, reduceCtorEq, ite_false, ite_true, RsaV.get_sm, RsaV.get_pz,
     RsaV.get_sm2, RsaV.get_ea, RsaV.get_eb, RsaV.get_er, RsaV.get_ka, RsaV.get_kb, RsaV.get_kx,
     RsaV.get_x, RsaV.get_c, RsaR.c.injEq, RsaR.x.injEq, RsaX.sw.injEq, hinj, hkb, hkx, her, hka,
     hwn, hsm, hpz, hsm2, hH, List.append_nil, List.length_replicate]; done)
   · simp (config := { decide := true }) only [preSt, preHA, Function.update_apply,
-      Sum.elim_inl, Sum.inl.injEq, reduceCtorEq, if_false, if_true, RsaV.get_sm, RsaV.get_pz,
+      Sum.elim_inl, Sum.inl.injEq, reduceCtorEq, ite_false, ite_true, RsaV.get_sm, RsaV.get_pz,
       RsaV.get_sm2, RsaV.get_ea, RsaV.get_eb, RsaV.get_er, RsaV.get_ka, RsaV.get_kb, RsaV.get_kx,
       RsaV.get_x, RsaV.get_c, RsaR.c.injEq, RsaR.x.injEq, RsaX.sw.injEq, hinj, hkb, hkx, her, hka,
       hwn, hsm, hpz, hsm2, hH, List.append_nil, List.length_replicate]
@@ -417,7 +417,7 @@ theorem preA_hdr {hd : Fin 5 → Fin t₀} (hdi : Function.Injective hd)
     · cases r
       case x j =>
         simp only [Function.update_apply, preSt, preHA, RsaV.get, Sum.elim_inl,
-          Sum.inl.injEq, reduceCtorEq, if_false, if_true, RsaR.x.injEq]
+          Sum.inl.injEq, reduceCtorEq, ite_false, ite_true, RsaR.x.injEq]
         rcases j with j | _ | _ | _ | _ | _
         · by_cases hj : ∃ k, reg (hd k) = j
           · obtain ⟨k, rfl⟩ := hj
@@ -427,9 +427,9 @@ theorem preA_hdr {hd : Fin 5 → Fin t₀} (hdi : Function.Injective hd)
             simp [preBankA, hj, hne]
         all_goals simp [preBankA]
       all_goals simp only [Function.update_apply, preSt, preHA, RsaV.get, Sum.elim_inl,
-        Sum.inl.injEq, reduceCtorEq, if_false, if_true, RsaR.c.injEq]
+        Sum.inl.injEq, reduceCtorEq, ite_false, ite_true, RsaR.c.injEq]
       all_goals simp [hsm2]
-    · simp only [Function.update_apply, reduceCtorEq, if_false, preSt, Sum.elim_inr]
+    · simp only [Function.update_apply, reduceCtorEq, ite_false, preSt, Sum.elim_inr]
 
 omit hrg hι hdisj in
 lemma preA_lt {D : PreAxA} (hα : 2 ≤ D.α) (ht : 0 < D.t)
@@ -902,7 +902,7 @@ theorem pre_flat_ball (h : Big n) (hs : Fin (d n) → Fin 5 → List Bool)
       rcases rsb_mem_rsbAxisL (show x ∈ rsbAxisL _ _ _ _ l from hx) with e | ⟨L', hL', hy, hx'⟩
       · rw [e]; simp [rsbGrid]
       · refine pre_lineA_out h hs _ L' hL' (fun y hyL => ?_) x hx'
-        rw [if_pos (by simp; omega)]
+        rw [ite_eq_left (by simp; omega)]
         rcases hy y hyL with e | e
         · rw [e]; simp [rsbGrid]
         · exact hl y e
@@ -912,7 +912,7 @@ theorem pre_flat_ball (h : Big n) (hs : Fin (d n) → Fin 5 → List Bool)
       rcases rsb_mem_rsbAxisL (show x ∈ rsbAxisL _ _ _ _ _ from hx) with e | ⟨L', hL', hy, hx'⟩
       · rw [e]; simp [rsbGrid]
       · refine pre_lineA_out h hs _ L' hL' (fun y hyL => ?_) x hx'
-        rw [if_neg (by simp; omega)]
+        rw [ite_eq_right (by simp; omega)]
         rcases hy y hyL with e | e
         · rw [e]; simp [rsbGrid]
         · exact ih (k + 1) (by omega) y e

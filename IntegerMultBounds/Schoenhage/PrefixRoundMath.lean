@@ -154,7 +154,7 @@ theorem paperPerm_σ_prefix {ts : List ℕ} {ℓ K : ℕ} (hL : LayoutOK r ts �
     omega
   have hslot : paperSlot ts ℓ K Q = (i, h) := by
     unfold paperSlot
-    rw [if_neg hlt1, if_pos hlt2, hmod, hdiv]
+    rw [ite_eq_right hlt1, ite_eq_left hlt2, hmod, hdiv]
     simp only [Prod.mk.injEq, and_true]
     omega
   have htau : paperTau ts ℓ K Q = axOff ts i + h := by unfold paperTau; rw [hslot]
@@ -266,7 +266,7 @@ theorem paperPerm_σ_top {ts : List ℕ} {ℓ K : ℕ} (hL : LayoutOK r ts ℓ K
   have h2 : ¬ Q < B + D * ((ℓ - 1) % K) := by omega
   have hslot : paperSlot ts ℓ K Q = ((longs ts ℓ)[k], ℓ - 1) := by
     unfold paperSlot
-    rw [show ts.length = D from rfl, if_neg h1, if_neg h2]
+    rw [show ts.length = D from rfl, ite_eq_right h1, ite_eq_right h2]
     simp only [Prod.mk.injEq, and_true]
     rw [List.getD_eq_getElem _ _ (by omega)]
     congr 1

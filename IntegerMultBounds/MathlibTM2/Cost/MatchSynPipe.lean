@@ -213,7 +213,7 @@ theorem mr_prefix_facts {h : ℕ} (hc : ¬ synChunk ℓ K h) :
     unfold synA at hA
     by_cases h1 : h + 1 < ℓ
     · have hb : h < layB ℓ K := by omega
-      simp only [h1, hb, if_true]
+      simp only [h1, hb, ite_true]
       have h2 : (layB ℓ K - h) * es.length ≤ layB ℓ K * es.length :=
         Nat.mul_le_mul_right _ (Nat.sub_le _ _)
       have h3 : 1 * es.length ≤ (layB ℓ K - h) * es.length :=
@@ -221,7 +221,7 @@ theorem mr_prefix_facts {h : ℕ} (hc : ¬ synChunk ℓ K h) :
       generalize (layB ℓ K - h) * es.length = j at h2 h3 ⊢
       generalize layB ℓ K * es.length = f at h2 hA ⊢
       omega
-    · simp only [h1, if_false]
+    · simp only [h1, ite_false]
       omega
 
 end Params

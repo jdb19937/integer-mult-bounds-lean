@@ -410,7 +410,7 @@ theorem crtDirectMachineForwardInit_runs {d : ℕ} (a s m : Fin d → ℕ)
     by_cases hz' : ∃ q, r q = z
     · obtain ⟨q, rfl⟩ := hz'
       cases q <;> simp [R₁, crtDirectState, hr.eq_iff, hwt, hst, hmt,
-        hz .wD (by simp), hz .sD (by simp), hz .mD (by simp), hz .upper (by simp), crtW, ← List.map_drop, List.drop_eq_nil_of_le, List.length_finRange]
+        hz .wD (by simp), hz .sD (by simp), hz .mD (by simp), hz .upper (by simp), crtW, List.drop_eq_nil_of_le, List.length_finRange]
     · have hn : ∀ q, z ≠ r q := by intro q h; exact hz' ⟨q, h.symm⟩
       simp [R₁, crtDirectState, hn]
   exact crtRuns_mono (crtRuns_congr (crtRuns_seq h₁ h₂) hout) (by omega)
@@ -461,8 +461,8 @@ theorem crtDirectMachineInverseInit_runs {d : ℕ} (a s m : Fin d → ℕ)
     funext z
     by_cases hz' : ∃ q, r q = z
     · obtain ⟨q, rfl⟩ := hz'
-      cases q <;> simp [R₄, R₃, R₂, R₁, crtDirectState, hr.eq_iff, hwt, hst, hmt, hrev,
-        hz .lower (by simp), hz .index (by simp), crtPre, crtLow, crtRevAx, hwfull, ← List.map_take, List.take_of_length_le (by simp : (List.finRange d).length ≤ d)]
+      cases q <;> simp [R₄, R₃, R₂, R₁, crtDirectState, hr.eq_iff, hwt, hst, hmt, 
+        hz .lower (by simp), hz .index (by simp), crtPre, crtLow, crtRevAx, hwfull, List.take_of_length_le (by simp : (List.finRange d).length ≤ d)]
       all_goals rw [crtEnts_reverse, List.reverse_reverse]
     · have hn : ∀ q, z ≠ r q := by intro q h; exact hz' ⟨q, h.symm⟩
       simp [R₄, R₃, R₂, R₁, crtDirectState, hn]

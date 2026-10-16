@@ -32,22 +32,22 @@ theorem blockPass_cons {B : ℕ} (xs ys R : List (List Bool)) (hx : xs.length = 
   simp only [blockPass, List.getElem_ofFn]
   by_cases k1 : k < B
   · have hkB : k / B % 2 = 0 := by rw [Nat.div_eq_of_lt k1]
-    rw [if_pos hkB]
+    rw [ite_eq_left hkB]
     rw [List.getElem_append_left (by simp [hx, hy] <;> omega), List.getElem_append_left (by simp [hx, hy] <;> omega)]
     simp only [List.getElem_zipWith]
     rw [List.getD_eq_getElem _ _ (by rw [hl]; omega), List.getD_eq_getElem _ _ (by rw [hl]; omega)]
-    rw [List.getElem_append_left (by simp [hx, hy] <;> omega), List.getElem_append_left (by simp [hx, hy] <;> omega),
-      List.getElem_append_left (by simp [hx, hy] <;> omega), List.getElem_append_right (by simp [hx, hy] <;> omega)]
+    rw [List.getElem_append_left (by simp [hx, hy] <;> omega), List.getElem_append_left (by simp [hx] <;> omega),
+      List.getElem_append_left (by simp [hx, hy] <;> omega), List.getElem_append_right (by simp [hx] <;> omega)]
     congr 2 <;> (try simp [hx])
   · by_cases k2 : k < 2 * B
     · have hkB : k / B % 2 = 1 := by
         rw [show k / B = 1 by rw [Nat.div_eq_iff (by omega)]; omega]
-      rw [if_neg (by omega)]
+      rw [ite_eq_right (by omega)]
       rw [List.getElem_append_left (by simp [hx, hy] <;> omega), List.getElem_append_right (by simp [hx, hy] <;> omega)]
       simp only [List.getElem_zipWith, List.length_zipWith, hx, hy, min_self]
       rw [List.getD_eq_getElem _ _ (by rw [hl]; omega), List.getD_eq_getElem _ _ (by rw [hl]; omega)]
-      rw [List.getElem_append_left (by simp [hx, hy] <;> omega), List.getElem_append_left (by simp [hx, hy] <;> omega),
-        List.getElem_append_left (by simp [hx, hy] <;> omega), List.getElem_append_right (by simp [hx, hy] <;> omega)]
+      rw [List.getElem_append_left (by simp [hx, hy] <;> omega), List.getElem_append_left (by simp [hx] <;> omega),
+        List.getElem_append_left (by simp [hx, hy] <;> omega), List.getElem_append_right (by simp [hx] <;> omega)]
       congr 2 <;> (try simp [hx]) <;> (try omega)
     · rw [List.getElem_append_right (by simp [hx, hy] <;> omega)]
       simp only [List.length_append, List.length_zipWith, hx, hy, min_self, List.getElem_ofFn]
@@ -109,7 +109,7 @@ theorem runs_tickB {B : ℕ} (σ : Fin 𝕌 → WTape) (hP : σ xP = reg (ones B
     split_ifs <;> (try subst_vars) <;> tsimp [hP, hT, reg, emp] at *
   · have hb : Rules.ticks.B = 0 := rfl
     rw [hb] at t1
-    simp [WTape.words, clen, clen_replicate_nil] at t1 ⊢; omega
+    simp [clen] at t1 ⊢; omega
 
 theorem clen_uniform (L : List (List Bool)) (W : ℕ) (h : ∀ x ∈ L, x.length = W) : clen L = L.length * (W + 1) := by
   induction L with
@@ -194,7 +194,7 @@ theorem runs_blockStep {B W : ℕ} (σ : Fin 𝕌 → WTape) {Ls M xs ys R : Lis
       have h2 := clen_uniform ys W hyw
       have h3 := clen_uniform Za (W + 1) hZa
       have h4 := clen_uniform Zn (W + 1) hZn
-      simp only [WTape.words, clen_reverse, List.reverse_nil, List.append_nil, List.nil_append,
+      simp only [WTape.words, clen_reverse, List.append_nil, 
         List.reverse_reverse, h1, h2, h3, h4, hxl, hyl, hZal, hZnl]
       nlinarith
   set σ₈ := Function.update (Function.update (Function.update (Function.update σ₇ rF emp)
@@ -221,8 +221,8 @@ theorem runs_blockStep {B W : ℕ} (σ : Fin 𝕌 → WTape) {Ls M xs ys R : Lis
           simp_all (config := {decide := true})
     · have h3 := clen_uniform Za (W + 1) hZa
       have h4 := clen_uniform Zn (W + 1) hZn
-      simp only [WTape.words, clen_reverse, List.reverse_nil, List.append_nil, List.nil_append,
-        List.reverse_reverse, clen_append, h3, h4, hZal, hZnl]
+      simp only [WTape.words, List.append_nil, 
+        List.reverse_reverse, h3, h4, hZal, hZnl]
       nlinarith
   refine (Runs.then s1 (Runs.then s2 (Runs.then s3 (Runs.then s4 (Runs.then s5 (Runs.then s6
     (Runs.then s7 (Runs.then s8 (Runs.then s9 (Runs.then s10 s11)))))))))).mono (fun τ h => h) ?_
@@ -333,7 +333,7 @@ theorem runs_passTail {B W : ℕ} (σ : Fin 𝕌 → WTape) {Lb P Tl Tr : List (
     refine ⟨?_, ?_⟩
     · funext y; simp only [Function.update_apply]
       split_ifs <;> (try subst_vars) <;> tsimp [hX, hC, hP, hQ, hT, hJ, emp, reg, hones] at *
-    · simp [WTape.words, clen_reverse, clen, time_copy] at t3 ⊢; omega
+    · simp [WTape.words, clen, time_copy] at t3 ⊢; omega
   refine (Runs.then s1 (Runs.then s2 s3)).mono (fun τ h => h) ?_
   omega
 

@@ -114,7 +114,7 @@ theorem dsMsk_le (hbig : Big n) : ∀ j, dsMsk n j ≤ dsP n j
 
 theorem dsMu_lt (n j : ℕ) (hj : j < d n) : dsMu n j < dsS n j := by
   unfold dsMu
-  rw [dif_pos hj]
+  rw [dite_eq_left hj]
   have : NeZero (s n ⟨j, hj⟩) := ⟨by have := dsS_ge n j; rw [dsS_eq n ⟨j, hj⟩] at this; omega⟩
   exact ZMod.val_lt _
 
@@ -142,7 +142,7 @@ theorem ds_mu_spec (n j : ℕ) (hj : j < d n) :
     have h := crtMu_mul_prefixProd (Pipeline.s_pairwise n) i
     rw [← dsSP_prefix n j hj] at h
     unfold dsMu
-    rw [dif_pos hj]
+    rw [dite_eq_left hj]
     revert h
     rw [hsi]
     intro h

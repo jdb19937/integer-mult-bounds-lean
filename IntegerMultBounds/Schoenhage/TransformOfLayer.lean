@@ -133,7 +133,7 @@ theorem admissible_bits {P : TransformParams} {p d ℓ K w : ℕ} {ts : List ℕ
 
 /-- The layer header of a chunk-group call is at most `32 (⌈C_l⌉ + C_w + 1) p` bits long. -/
 theorem chunkHdr_length {P : TransformParams} {p d ℓ K w : ℕ} {ts : List ℕ}
-    (hadm : Admissible P p d ℓ K w ts) (hp : 1 ≤ p) {h : ℕ} (hb : (ℓ - 1) % K ≤ h) (hh : h < ℓ - 1) :
+    (hadm : Admissible P p d ℓ K w ts) (_hp : 1 ≤ p) {h : ℕ} (hb : (ℓ - 1) % K ≤ h) (hh : h < ℓ - 1) :
     (chunkHdr p d (2 ^ ℓ) w (Nat.log 2 ts.prod) ts ℓ K h).length ≤
       32 * (⌈P.Cl⌉₊ + P.Cw + 1) * p := by
   have hL := layoutOK_of_admissible hadm

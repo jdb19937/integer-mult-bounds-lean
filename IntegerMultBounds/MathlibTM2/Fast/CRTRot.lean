@@ -528,10 +528,10 @@ theorem crtOffP_runs {mu tc lo hi ov t : Fin T} (hreg : [mu, tc, lo, hi, ov, t].
     refine crtRuns_mono (crtRuns_congr (crtRuns_seq h₁ h₂) ?_) (by omega)
     funext k
     by_cases k1 : k = hi
-    · rw [k1, Function.update_self, hR₁hi, crtLoStep, if_pos hover, Nat.min_eq_left hover]
+    · rw [k1, Function.update_self, hR₁hi, crtLoStep, ite_eq_left hover, Nat.min_eq_left hover]
     · rw [Function.update_of_ne k1]
       by_cases k2 : k = lo
-      · rw [k2, Function.update_self, hR₁lo, crtLoStep, if_pos hover, Nat.min_eq_left hover]
+      · rw [k2, Function.update_self, hR₁lo, crtLoStep, ite_eq_left hover, Nat.min_eq_left hover]
       · rw [Function.update_of_ne k2]
         by_cases k3 : k = ov
         · rw [k3, hov0, hov]
@@ -564,7 +564,7 @@ theorem crtOffP_runs {mu tc lo hi ov t : Fin T} (hreg : [mu, tc, lo, hi, ov, t].
       rw [l1, l2, l3]
       omega
     refine crtRuns_mono (crtRuns_congr (crtRuns_seq h₁ h₂) ?_) (by omega)
-    have hstep : crtLoStep s μ x = x + μ - s := by rw [crtLoStep, if_neg (by omega)]
+    have hstep : crtLoStep s μ x = x + μ - s := by rw [crtLoStep, ite_eq_right (by omega)]
     rw [hstep]
     funext k
     by_cases k1 : k = ov
@@ -621,10 +621,10 @@ lemma crt_rot_getElem (sl : List (List α)) (t S r : ℕ) (ht : sl.length = t) (
     simp only [List.getElem_map, List.getElem_range]
     by_cases hz : z < S
     · have hS0 : 0 < S := by omega
-      rw [List.getElem_append_left (by simp; omega), List.getElem_rotate, if_pos hz]
+      rw [List.getElem_append_left (by simp; omega), List.getElem_rotate, ite_eq_left hz]
       simp only [List.length_take, Nat.min_eq_left (by omega : S ≤ sl.length), List.getElem_take]
       rw [List.getD_eq_getElem _ _ (by have := Nat.mod_lt (z + r) hS0; omega)]
-    · rw [List.getElem_append_right (by simp; omega), List.getElem_drop, if_neg hz]
+    · rw [List.getElem_append_right (by simp; omega), List.getElem_drop, ite_eq_right hz]
       rw [List.getD_eq_getElem _ _ (by simp at h₁; omega)]
       congr 1; simp; omega
 
@@ -678,7 +678,7 @@ theorem crtRot_fiber {i : ℕ} (hi : i < d) {post : List (Fin d)}
     rw [← crtDec_update_of_not_mem a post e _ I v hIp, Function.update_idem]
   rw [crtBox_cons, crt_flatten_flatMap]
   by_cases hv : crtVal a s i F = true
-  · rw [if_pos hv, crt_rot_getElem _ (2 ^ a I) _ _ (by simp [crtSlotsOf, hI]) hs, List.flatMap_def]
+  · rw [ite_eq_left hv, crt_rot_getElem _ (2 ^ a I) _ _ (by simp [crtSlotsOf, hI]) hs, List.flatMap_def]
     congr 1
     refine List.map_congr_left fun z hz => ?_
     have hz' := List.mem_range.1 hz
@@ -695,15 +695,15 @@ theorem crtRot_fiber {i : ℕ} (hi : i < d) {post : List (Fin d)}
     have hvalw : (∀ j : Fin d, j.val < i → crtDec a post e (Function.update y₀ I z) j < s j) := by
       intro j hj; rw [hw e z j hj]; exact (hval.1 hv) j hj
     by_cases hzs : z < s I
-    · rw [if_pos ⟨hvalw, by rw [hwI]; exact hzs⟩, if_pos hzs, hwI, hK, hupd]
-    · rw [if_neg (fun h => hzs (by have := h.2; rwa [hwI] at this)), if_neg hzs]
-  · rw [if_neg hv, crtSlotsOf, List.flatMap_def]
+    · rw [ite_eq_left ⟨hvalw, by rw [hwI]; exact hzs⟩, ite_eq_left hzs, hwI, hK, hupd]
+    · rw [ite_eq_right (fun h => hzs (by have := h.2; rwa [hwI] at this)), ite_eq_right hzs]
+  · rw [ite_eq_right hv, crtSlotsOf, List.flatMap_def]
     congr 1
     refine List.map_congr_left fun z _ => ?_
     congr 1
     rw [crtBox, crtBox]
     refine List.map_congr_left fun e _ => ?_
-    rw [crtRotC, if_neg]
+    rw [crtRotC, ite_eq_right]
     rintro ⟨h, _⟩
     exact hv ((hval.2) fun j hj => by rw [← hw e z j hj]; exact h j hj)
 
@@ -935,8 +935,8 @@ theorem crtRotOut_top {α : Type*} (fwd : Bool) {i : ℕ} (hi : i < d) {post : L
   have hF' := List.mem_range.1 hF
   rw [crtRot_fiber a s hi hnd (hs _) μ fwd C hF', crtRotOut]
   by_cases hv : crtVal a s i F = true
-  · rw [if_pos hv, if_pos hv, (crtCnt_main a s hs i hi.le).2 F hF' hv]
-  · rw [if_neg hv, if_neg hv]
+  · rw [ite_eq_left hv, ite_eq_left hv, (crtCnt_main a s hs i hi.le).2 F hF' hv]
+  · rw [ite_eq_right hv, ite_eq_right hv]
 
 lemma crt_drop_range_cons {N F : ℕ} (h : F < N) :
     (List.range N).drop F = F :: (List.range N).drop (F + 1) := by
@@ -1141,25 +1141,25 @@ theorem crtRotP_runs (fwd : Bool) (L : CrtAL T) (hL : L.Ok)
       simp only [loF, hcs, crtLo_succ]
     have hout : outF F = (((slots F).take S).rotate (crtShift fwd S μ (crtCnt a s i F)) ++
         (slots F).drop S).flatten := by
-      rw [houtF, crtRotOut, if_pos hv]
+      rw [houtF, crtRotOut, ite_eq_left hv]
     funext k
     by_cases k1 : k = hi
-    · rw [k1, Function.update_self, if_neg (hp hi (by simp)), hΨhi, hlo1]
+    · rw [k1, Function.update_self, ite_eq_right (hp hi (by simp)), hΨhi, hlo1]
     rw [Function.update_of_ne k1]
     by_cases k2 : k = lo
-    · rw [k2, Function.update_self, if_neg (hp lo (by simp)), hΨlo, hlo1]
+    · rw [k2, Function.update_self, ite_eq_right (hp lo (by simp)), hΨlo, hlo1]
     rw [Function.update_of_ne k2]
     by_cases k3 : k = acc
-    · rw [k3, Function.update_self, if_neg (hp acc (by simp)), hΨacc, racc, ← hout]
+    · rw [k3, Function.update_self, ite_eq_right (hp acc (by simp)), hΨacc, racc, ← hout]
       simp only [accF, List.range_succ, List.flatMap_append, List.flatMap_singleton,
         List.reverse_append]
     rw [Function.update_of_ne k3]
     by_cases k4 : k = str
-    · rw [k4, Function.update_self, if_neg (hp str (by simp)), hΨstr]
+    · rw [k4, Function.update_self, ite_eq_right (hp str (by simp)), hΨstr]
     rw [Function.update_of_ne k4]
     by_cases hk : L.Prot k
-    · rw [if_pos hk]
-    · rw [if_neg hk, hR' k hk, hΨoth F k k4 k3 k2 k1, hΨoth (F + 1) k k4 k3 k2 k1]
+    · rw [ite_eq_left hk]
+    · rw [ite_eq_right hk, hR' k hk, hΨoth F k k4 k3 k2 k1, hΨoth (F + 1) k k4 k3 k2 k1]
   have hI : ∀ F < N, crtVal a s i F = false → ∀ R' : Regs T A,
       (∀ k, ¬ L.Prot k → R' k = Ψ F k) →
       crtRuns body (crtCopyFib lo hi tsU rbU tc tr str acc) R'
@@ -1194,19 +1194,19 @@ theorem crtRotP_runs (fwd : Bool) (L : CrtAL T) (hL : L.Ok)
       (by have := Nat.mul_le_mul_left (2 ^ a I) (show 4 * RB + 9 ≤ 8 * RB + 9 by omega); omega)
     have hcs : crtCnt a s i (F + 1) = crtCnt a s i F := by rw [crtCnt_succ_arg, hv]; rfl
     have hout : outF F = (slots F).flatten := by
-      rw [houtF, crtRotOut, if_neg (by simp [hv])]
+      rw [houtF, crtRotOut, ite_eq_right (by simp [hv])]
     funext k
     by_cases k3 : k = acc
-    · rw [k3, Function.update_self, if_neg (hp acc (by simp)), hΨacc, racc, ← hout]
+    · rw [k3, Function.update_self, ite_eq_right (hp acc (by simp)), hΨacc, racc, ← hout]
       simp only [accF, List.range_succ, List.flatMap_append, List.flatMap_singleton,
         List.reverse_append]
     rw [Function.update_of_ne k3]
     by_cases k4 : k = str
-    · rw [k4, Function.update_self, if_neg (hp str (by simp)), hΨstr]
+    · rw [k4, Function.update_self, ite_eq_right (hp str (by simp)), hΨstr]
     rw [Function.update_of_ne k4]
     by_cases hk : L.Prot k
-    · rw [if_pos hk]
-    rw [if_neg hk, hR' k hk]
+    · rw [ite_eq_left hk]
+    rw [ite_eq_right hk, hR' k hk]
     by_cases k1 : k = hi
     · rw [k1, hΨhi, hΨhi]; simp only [loF, hcs]
     by_cases k2 : k = lo
@@ -1251,10 +1251,10 @@ theorem crtRotP_runs (fwd : Bool) (L : CrtAL T) (hL : L.Ok)
           (by assumption)]; exact hz _ (by simp))
   -- cleanup
   set R₂ : Regs T A := fun k => if L.Prot k then R₁ k else Ψ N k with hR₂
-  have hR₂acc : R₂ acc = accF N := by rw [hR₂]; simp only [if_neg (hp acc (by simp)), hΨacc]
+  have hR₂acc : R₂ acc = accF N := by rw [hR₂]; simp only [ite_eq_right (hp acc (by simp)), hΨacc]
   have hR₂str : R₂ str = [] := by
     rw [hR₂]
-    simp only [if_neg (hp str (by simp)), hΨstr, strF]
+    simp only [ite_eq_right (hp str (by simp)), hΨstr, strF]
     rw [List.drop_eq_nil_of_le (by simp)]; rfl
   have hbox : (accF N).reverse = (crtBox a (crtRevAx i ++ I :: post) (crtRotC s i hid μ fwd C)
       0).flatten := by
@@ -1322,8 +1322,8 @@ theorem crtRotP_runs (fwd : Bool) (L : CrtAL T) (hL : L.Ok)
       Function.update_of_ne k1, Function.update_of_ne k2, hR₂]
     beta_reduce
     by_cases hk : L.Prot k
-    · rw [if_pos hk, hR₁oth k k3 k4 k5 k6 k8]
-    · rw [if_neg hk, hΨoth _ k k1 k2 k7 k8, hR₁oth k k3 k4 k5 k6 k8]
+    · rw [ite_eq_left hk, hR₁oth k k3 k4 k5 k6 k8]
+    · rw [ite_eq_right hk, hΨoth _ k k1 k2 k7 k8, hR₁oth k k3 k4 k5 k6 k8]
   · have hC' : ∀ y, (crtRotC s i hid μ fwd C y).length = B := fun y => by
       unfold crtRotC; split_ifs <;> exact hC _
     have l₁ : (R₂ acc).length = N * 2 ^ a I * RB := by
@@ -1332,26 +1332,26 @@ theorem crtRotP_runs (fwd : Bool) (L : CrtAL T) (hL : L.Ok)
       ring
     have l₂ : (R₂ L.sg).length = crtPre a i := by
       rw [hR₂]; beta_reduce
-      rw [if_pos (show L.Prot L.sg from Or.inr (Or.inr (Or.inr (Or.inl rfl)))), hR₁sg,
+      rw [ite_eq_left (show L.Prot L.sg from Or.inr (Or.inr (Or.inr (Or.inl rfl)))), hR₁sg,
         length_binSyms]
     have l₃ : (R₂ L.mq).length = crtPre a i := by
       rw [hR₂]; beta_reduce
-      rw [if_pos (show L.Prot L.mq from Or.inr (Or.inr (Or.inr (Or.inr (Or.inl rfl))))), hR₁mq,
+      rw [ite_eq_left (show L.Prot L.mq from Or.inr (Or.inr (Or.inr (Or.inr (Or.inl rfl))))), hR₁mq,
         length_binSyms]
     have l₄ : (R₂ rbU).length = RB := by
       rw [hR₂]; beta_reduce
-      rw [if_neg (hp rbU (by simp)), hΨoth _ _ ‹rbU ≠ str› ‹rbU ≠ acc› ‹rbU ≠ lo› ‹rbU ≠ hi›,
+      rw [ite_eq_right (hp rbU (by simp)), hΨoth _ _ ‹rbU ≠ str› ‹rbU ≠ acc› ‹rbU ≠ lo› ‹rbU ≠ hi›,
         hR₁rb, List.length_replicate]
     have l₅ : (R₂ tsU).length = 2 ^ a I - S := by
       rw [hR₂]; beta_reduce
-      rw [if_neg (hp tsU (by simp)), hΨoth _ _ ‹tsU ≠ str› ‹tsU ≠ acc› ‹tsU ≠ lo› ‹tsU ≠ hi›,
+      rw [ite_eq_right (hp tsU (by simp)), hΨoth _ _ ‹tsU ≠ str› ‹tsU ≠ acc› ‹tsU ≠ lo› ‹tsU ≠ hi›,
         hR₁ts, List.length_replicate]
     have l₆ : (R₂ lo).length = loF N := by
       rw [hR₂]; beta_reduce
-      rw [if_neg (hp lo (by simp)), hΨlo, List.length_replicate]
+      rw [ite_eq_right (hp lo (by simp)), hΨlo, List.length_replicate]
     have l₇ : (R₂ hi).length = S - loF N := by
       rw [hR₂]; beta_reduce
-      rw [if_neg (hp hi (by simp)), hΨhi, List.length_replicate]
+      rw [ite_eq_right (hp hi (by simp)), hΨhi, List.length_replicate]
     simp only [Function.update_of_ne ‹L.sg ≠ str›, Function.update_of_ne ‹L.sg ≠ acc›,
       Function.update_of_ne ‹L.mq ≠ str›, Function.update_of_ne ‹L.mq ≠ acc›,
       Function.update_of_ne ‹L.mq ≠ L.sg›,

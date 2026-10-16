@@ -111,8 +111,8 @@ theorem stD_low {p d ℓ K w : ℕ} {ts : List ℕ} (x : Fin 𝕋) : stD p d ℓ
     h _ (by decide : 64 ≤ (wE0 : Fin 102).val), h _ (by decide : 64 ≤ (wET : Fin 102).val),
     h _ (by decide : 64 ≤ (wM1 : Fin 102).val), h _ (by decide : 64 ≤ (wM2 : Fin 102).val),
     h _ (by decide : 64 ≤ (wxP : Fin 102).val), h _ (by decide : 64 ≤ (wlR : Fin 102).val),
-    h _ (by decide : 64 ≤ (wlI : Fin 102).val), if_false, wIn]
-  rw [dite_cond_eq_true (by simp [ui]; omega)]
+    h _ (by decide : 64 ≤ (wlI : Fin 102).val), ite_false, wIn]
+  rw [dite_eq_left_of_eq_true (by simp [ui]; omega)]
   exact decoded_low (by simp [ui])
 
 /-- The cost of the header pass and its clearing. -/

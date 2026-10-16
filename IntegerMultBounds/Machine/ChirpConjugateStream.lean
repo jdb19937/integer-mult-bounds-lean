@@ -71,7 +71,7 @@ theorem runs (pairs : List Pair) (width : ℕ)
     unfold sourceReturned restored finished ChirpConjugateArray.finish output input SharedBank.empty setTape
     apply Placement.Tapes.ext'
     all_goals intro slot; by_cases sourceSlot : slot=56 <;> by_cases destinationSlot : slot=58 <;>
-      simp [Function.update_apply,sourceSlot,destinationSlot]
+      simp [sourceSlot,destinationSlot]
   unfold program
   apply ((arrayRun.seq returnSource).seq returnDestination).consequence
     (fun _ ready => ready) (fun _ finished => finished.trans endpoint)

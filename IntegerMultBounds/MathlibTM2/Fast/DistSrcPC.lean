@@ -151,7 +151,7 @@ theorem ds_PC (R : Regs T A) {n : ℕ} (hbig : Big n) (wl : List (Fin (A + 4)))
     obtain ⟨h1, h2, h3, h4⟩ := hy
     by_cases hU : y = .o .ut
     · subst hU; simp [hX₆, hX₅, eUt]
-    simp only [hX₆, hX₅, hX₄, hX₃, hX₂, Function.update_apply, hU, h1, h3, h4, if_false]
+    simp only [hX₆, hX₅, hX₄, hX₃, hX₂, Function.update_apply, hU, h1, h3, h4, ite_false]
     exact hoff y h2
   · simp [hX₆, hX₅, hX₄, hX₃, hX₂, x1MT]
   · simp [hX₆, hX₅, hX₄, hX₃, h34, hpre]

@@ -490,7 +490,7 @@ theorem preZeroVars_runs (l : List (Fin n)) (hl : l.Nodup) (ρ : R ⊕ TblR n �
       refine twRuns_congr (twRuns_mono (twRuns_seq h1 h2) (by simp; nlinarith)) ?_
       funext r
       rcases r with r | (j | _ | _ | _ | j) <;> simp only [preZV, Function.update_apply,
-        reduceCtorEq, if_false, Sum.inr.injEq, TblR.v.injEq, List.mem_cons]
+        reduceCtorEq, ite_false, Sum.inr.injEq, TblR.v.injEq, List.mem_cons]
       by_cases hj : j = i
       · subst hj; simp [hl.1]
       · simp [hj]
@@ -616,10 +616,10 @@ theorem preVM_runs (uW uw : R) (ls : List (R × Fin n)) (code : TblCode n) (o : 
       · funext r
         rcases r with r | x
         · have : Sum.inl r ∉ (preVMRegs n).map (Sum.inr : TblR n → R ⊕ TblR n) := by simp
-          simp only [this, if_false, hρm, Sum.elim_inl, Function.update_apply, Sum.inl.injEq]
+          simp only [this, ite_false, hρm, Sum.elim_inl, Function.update_apply, Sum.inl.injEq]
         · have : Sum.inr x ∈ (preVMRegs n).map (Sum.inr : TblR n → R ⊕ TblR n) :=
             List.mem_map_of_mem (mem_preVMRegs x)
-          simp only [this, if_true]
+          simp only [this, ite_true]
           rw [Function.update_of_ne (by simp), hρ]
   refine twRuns_mono (twRuns_seq h1 (twRuns_seq h2 (twRuns_seq h3 (twRuns_seq h4 h5)))) ?_
   simp only [preVMCost, hW, List.length_finRange, hρ₁, List.map_map, Function.comp_def]

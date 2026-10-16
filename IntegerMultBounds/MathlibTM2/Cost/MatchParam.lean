@@ -52,7 +52,7 @@ theorem mt_pm_unary_le {n : ℕ} (hn : 2 ≤ n) {α : Type} (us : List (Fin pmNV
   unfold pmUnaryCost
   have : (us.map fun x => pmW n * (4 * pmVals n x.1 + 11) + 2 * pmVals n x.1 + 6).sum ≤
       us.length * ((2^12) * n) := by
-    have := List.sum_le_card_nsmul (us.map fun x => pmW n * (4 * pmVals n x.1 + 11) +
+    have := List.sum_le_length_nsmul (us.map fun x => pmW n * (4 * pmVals n x.1 + 11) +
       2 * pmVals n x.1 + 6) ((2^12) * n) (by
         intro y hy
         obtain ⟨x, hx, rfl⟩ := List.mem_map.1 hy

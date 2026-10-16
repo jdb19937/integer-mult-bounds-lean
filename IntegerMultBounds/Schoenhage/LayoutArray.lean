@@ -287,7 +287,7 @@ theorem split_two {γ : Type*} (L : List γ) {u v : ℕ} (huv : u < v) (hv : v <
 /-- The index map exchanging `u` and `v`. -/
 def swapIdx (u v n : ℕ) : ℕ := if n = u then v else if n = v then u else n
 
-theorem swapIdx_comm {u v : ℕ} (h : u ≠ v) (n : ℕ) : swapIdx u v n = swapIdx v u n := by
+theorem swapIdx_comm {u v : ℕ} (_h : u ≠ v) (n : ℕ) : swapIdx u v n = swapIdx v u n := by
   unfold swapIdx; split_ifs <;> omega
 
 theorem swapIdx_lt {u v n m : ℕ} (hu : u < m) (hv : v < m) (hn : n < m) : swapIdx u v n < m := by
@@ -356,14 +356,14 @@ theorem swap_val {m : ℕ} (a b : Fin m) (n : ℕ) (hn : n < m) :
   unfold swapIdx
   by_cases h1 : n = a.val
   · have : (⟨n, hn⟩ : Fin m) = a := Fin.ext h1
-    rw [if_pos this, if_pos h1]
+    rw [ite_eq_left this, ite_eq_left h1]
   · have h1' : (⟨n, hn⟩ : Fin m) ≠ a := fun e => h1 (congrArg Fin.val e)
-    rw [if_neg h1', if_neg h1]
+    rw [ite_eq_right h1', ite_eq_right h1]
     by_cases h2 : n = b.val
     · have : (⟨n, hn⟩ : Fin m) = b := Fin.ext h2
-      rw [if_pos this, if_pos h2]
+      rw [ite_eq_left this, ite_eq_left h2]
     · have h2' : (⟨n, hn⟩ : Fin m) ≠ b := fun e => h2 (congrArg Fin.val e)
-      rw [if_neg h2', if_neg h2]
+      rw [ite_eq_right h2', ite_eq_right h2]
 
 theorem arrBlocks_swap_get {m : ℕ} (blkF : ℕ → List α) (σ : Equiv.Perm (Fin m)) (a b : Fin m) (n : ℕ)
     (hn : n < (arrBlocks blkF (σ * Equiv.swap a b)).length) :

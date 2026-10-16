@@ -81,7 +81,7 @@ theorem arrayVec_ofFn (p : ℕ) {N : ℕ} (g : ℕ → Rec r) {y : ℕ} (hy : y 
 
 theorem arrayVec_getD_zero (p : ℕ) {fs : List (Rec r)} {y : ℕ} (hy : y < fs.length) :
     gridPoly p (fs.getD y (zeroRec r)).1 (fs.getD y (zeroRec r)).2 = arrayVec p fs y := by
-  simp [arrayVec, List.getD_eq_getElem _ _ hy, List.getElem?_eq_getElem hy]
+  simp [arrayVec, List.getElem?_eq_getElem hy]
 
 theorem driveCost_le_layout {ts : List ℕ} {ℓ K : ℕ} (hL : LayoutOK r ts ℓ K) {w : ℕ} (hw : 0 < 2 * r * w)
     (z : ℕ → Rec r) :
@@ -127,7 +127,7 @@ theorem runs_fwdDriver {q a : ℕ} (M : Program tL q a) (ht : 2 ≤ tL) (haA : a
       0 (reg (array w R₀))) 7 ⟨(layoutWords r w ts ℓ K).reverse ++ [], []⟩ =
       rnamed w (array w R₀) ⟨[], fwdScript p d r w (paperPerm hL) ts ℓ K⟩ ⟨(layoutWords r w ts ℓ K).reverse, []⟩ := by
     funext i
-    fin_cases i <;> simp (config := {decide := true}) [rnamed, Function.update_apply]
+    fin_cases i <;> simp (config := {decide := true}) [rnamed]
   rw [hv] at s1
   have s2 := runs_fwdRounds (nL := NL) M ht haA hL hpw hLayer R₀ hR₀l hR₀d ⟨(layoutWords r w ts ℓ K).reverse, []⟩
   refine (Runs.then s1 s2).mono (fun σ ⟨R, hc, hl, hd, e⟩ => ⟨R, hl, hd, ?_, e⟩) ?_
@@ -187,6 +187,6 @@ theorem runs_oppDriver {q a : ℕ} (M : Program tL q a) (ht : 2 ≤ tL) (haA : a
     unfold oppEnd
     congr 1
     funext i
-    fin_cases i <;> simp (config := {decide := true}) [rnamed, Function.update_apply, G]
+    fin_cases i <;> simp (config := {decide := true}) [rnamed, G]
 
 end IntegerMultBounds.Schoenhage

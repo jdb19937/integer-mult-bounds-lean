@@ -123,7 +123,7 @@ theorem runs_addFlag (σ : Fin 16 → WTape) (a m : ℕ) (b : Bool) (Lf R : List
   have t2 := time_le Rules.copy [true] (fun j => j.elim0) 0 (fun j => j.elim0)
   have t3 := time_le Rules.skip [b] (fun j => j.elim0) 0 (fun j => j.elim0)
   apply Runs.of_wp
-  simp only [addFlag, cpy, skp, WP, wp_op0, wp_rewind]
+  simp only [addFlag, skp, WP, wp_op0, wp_rewind]
   cases b <;> tsimp [hR, hJ, hT, hN, hF, emp, reg, Rules.output_copy, Rules.output_skip, StartsOne, WTape.put,
     WTape.next, WTape.cur, ones_append]
   all_goals
@@ -197,7 +197,7 @@ theorem runs_dropOne {t : ℕ} {s j o : Fin t} (h1 : s ≠ j) (h2 : s ≠ o) (h3
   have d1 := time_le Rules.drop (ones k) (fun _ => [true]) 1 (fun _ => le_rfl)
   apply Runs.of_wp
   simp only [dropOne, WP, wp_op1, wp_rewind]
-  simp [Function.update_apply, h1, h2, h3, h1.symm, h2.symm, h3.symm, hs, hj, ho, reg, emp, Rules.output_drop,
+  simp [h1, h2, h3, h1.symm, hs, hj, ho, reg, emp, Rules.output_drop,
     WTape.put, WTape.next, WTape.cur, ↓parse_syms]
   refine ⟨?_, ?_⟩
   · funext x
@@ -207,7 +207,7 @@ theorem runs_dropOne {t : ℕ} {s j o : Fin t} (h1 : s ≠ j) (h2 : s ≠ o) (h3
     · by_cases hxs : x = s
       · subst hxs; simp [hxo, h1, hs, reg]
       · by_cases hxj : x = j
-        · subst hxj; simp [hxo, hxs, hj, reg]
+        · subst hxj; simp [hxo, hj, reg]
         · simp [hxo, hxs, hxj]
   · simp at d1; omega
 
@@ -230,8 +230,8 @@ theorem runs_blockC (σ : Fin 16 → WTape) (a n : ℕ) (hR : σ sR = reg (ones 
   tsimp [hR, hN, h15, hK, hJ, emp, reg, Rules.output_fill, Rules.output_ticks, WTape.put, WTape.next, WTape.cur]
   refine ⟨?_, ?_⟩
   · funext i; fin_cases i <;> tsimp [hR, hN, h15, hK, hJ, emp, reg]
-  · simp only [WTape.words, List.reverse_nil, List.nil_append, List.append_nil, clen_cons, clen_nil,
-      length_ones, List.reverse_replicate, clen_ticks, List.length_singleton, List.reverse_singleton] at t1 t2 ⊢
+  · simp only [WTape.words, List.reverse_nil, List.nil_append, clen_cons, clen_nil,
+      length_ones, clen_ticks, List.length_singleton] at t1 t2 ⊢
     generalize time (Rules.fill false) (ones n) (fun j => j.elim0) = a1 at t1 ⊢
     generalize time Rules.ticks (ones n) (fun j => j.elim0) = a2 at t2 ⊢
     omega
@@ -252,7 +252,7 @@ theorem runs_blockD (σ : Fin 16 → WTape) (n M : ℕ) (hR : σ sR = reg (ones 
   refine ⟨?_, ?_⟩
   · funext i; fin_cases i <;> tsimp [hR, hN, hK, h17, emp, reg]
   · simp only [WTape.words, List.reverse_nil, List.nil_append, List.append_nil, clen_cons, clen_nil,
-      length_ones, List.reverse_replicate, clen_ticks, List.length_singleton, List.reverse_singleton] at t2 ⊢
+      length_ones, List.reverse_replicate, clen_ticks, List.reverse_singleton] at t2 ⊢
     generalize time Rules.ticks (ones M) (fun j => j.elim0) = a2 at t2 ⊢
     omega
 
