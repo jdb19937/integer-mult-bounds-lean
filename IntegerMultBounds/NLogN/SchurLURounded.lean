@@ -100,4 +100,59 @@ theorem rounded_lu (A Lh Uh : Matrix ι ι ℝ) (S : Finset ι) (μ : ℝ) (hμ 
   have hE' : E≤2*((Λ*δ+η+εL*δ)/μ+c*X) := by nlinarith
   exact (hmax j hj).trans hE'
 
+/-- Backward-error form: computed factors whose product is the matrix up to a
+perturbation of row mass `εS`. With computed multiplier rows at most `Λ`,
+forward rows rounded within `η`, back residual `δ` and `εS/μ ≤ 1/2`, the
+computed solution is within `2((Λδ+η)/μ + (εS/μ) X)` of the exact one. -/
+theorem backward_lu (A Lh Uh : Matrix ι ι ℝ) (S : Finset ι) (μ : ℝ) (hμ : 0<μ)
+    (hA : DominatesOn A S μ) (x b xh y : ι → ℝ) (hx : Solves A S x b)
+    (Λ εS η δ X : ℝ) (hεS : 0≤εS) (hX : 0≤X)
+    (hLd : ∀ i∈S, Lh i i=1)
+    (hΛ : ∀ i∈S, ∑ k∈S, |Lh i k|≤Λ)
+    (hΔ : ∀ i∈S, ∑ j∈S, |∑ k∈S, Lh i k*Uh k j-A i j|≤εS)
+    (hxX : ∀ j∈S, |x j|≤X)
+    (hf : ∀ k∈S, |y k+∑ j∈S.erase k, Lh k j*y j-b k|≤η)
+    (hb : ∀ k∈S, |∑ j∈S, Uh k j*xh j-y k|≤δ)
+    (hsmall : εS/μ≤1/2) (j : ι) (hj : j∈S) :
+    |xh j-x j|≤2*((Λ*δ+η)/μ+εS/μ*X) := by
+  obtain ⟨m, hm, hmax⟩ := exists_max_image S (fun j => |xh j-x j|) ⟨j, hj⟩
+  set E := |xh m-x m|
+  have hE0 : 0≤E := abs_nonneg _
+  have hxh : ∀ i∈S, |xh i|≤X+E := fun i hi => by
+    have := abs_add_le (xh i-x i) (x i)
+    rw [sub_add_cancel] at this
+    linarith [hmax i hi, hxX i hi]
+  set res : ι → ℝ := fun i => ∑ j∈S, A i j*xh j-b i
+  have hres : ∀ i∈S, |res i|≤Λ*δ+η+εS*(X+E) := by
+    intro i hi
+    set Δ : Matrix ι ι ℝ := fun i j => ∑ k∈S, Lh i k*Uh k j-A i j
+    have hexp : res i=∑ k∈S, Lh i k*(∑ j∈S, Uh k j*xh j-y k)+
+        (y i+∑ k∈S.erase i, Lh i k*y k-b i)-∑ j∈S, Δ i j*xh j := by
+      have hsplit := sum_erase_add S (fun k => Lh i k*y k) hi
+      simp only [hLd i hi, one_mul] at hsplit
+      simp only [res, Δ, sub_mul, sum_sub_distrib, sum_mul, mul_sub, mul_sum]
+      rw [sum_comm (s := S) (t := S) (f := fun j k => Lh i k*Uh k j*xh j)]
+      simp_rw [mul_assoc]
+      linarith
+    rw [hexp]
+    have h1 := row_bound Lh S (fun k => ∑ j∈S, Uh k j*xh j-y k) i Λ δ (hΛ i hi)
+      (le_trans (abs_nonneg _) (hb i hi)) hb
+    have h3 := row_bound Δ S xh i εS (X+E) (hΔ i hi) (by linarith) hxh
+    calc |∑ k∈S, Lh i k*(∑ j∈S, Uh k j*xh j-y k)+(y i+∑ k∈S.erase i, Lh i k*y k-b i)-
+          ∑ j∈S, Δ i j*xh j|
+        ≤|∑ k∈S, Lh i k*(∑ j∈S, Uh k j*xh j-y k)|+|y i+∑ k∈S.erase i, Lh i k*y k-b i|+
+          |∑ j∈S, Δ i j*xh j| :=
+          (abs_sub _ _).trans (add_le_add_left (abs_add_le _ _) _)
+      _≤Λ*δ+η+εS*(X+E) := add_le_add (add_le_add h1 (hf i hi)) h3
+  have hsol : Solves A S (xh-x) res := by
+    intro i hi
+    simp only [res, Pi.sub_apply, mul_sub, sum_sub_distrib, hx i hi]
+  have hEb := solves_bound A S μ hμ hA _ res hsol _ hres m hm
+  have hE : E≤(Λ*δ+η)/μ+εS/μ*(X+E) := by
+    refine hEb.trans (le_of_eq ?_)
+    field_simp
+  have hc0 : 0≤εS/μ := div_nonneg hεS hμ.le
+  have hE' : E≤2*((Λ*δ+η)/μ+εS/μ*X) := by nlinarith
+  exact (hmax j hj).trans hE'
+
 end IntegerMultBounds.NLogN.SchurDominance

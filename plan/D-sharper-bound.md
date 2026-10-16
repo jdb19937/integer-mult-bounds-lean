@@ -1753,3 +1753,10 @@ layer margin `ε(1-λ')` covers `2^-33` for `ε≥0.28` (for example `ε=5/16`).
 relying on this route, check the boundary count and LU cost against actual
 cell lengths, the `Ã` truncation at small `α`, precision
 `γ=d(2⌈α²⌉+2+j)`, and the sizing lemmas that assume `ε≤1/7`.
+
+The boundary solve now also has a backward-error form: computed factors with
+unit-diagonal multipliers whose product equals the Schur matrix up to row
+mass `εS` give error `2((Λδ+η)/μ+(εS/μ)X)` when `εS/μ≤1/2`. An on-tape
+rounded elimination therefore only needs a backward bound on its factors,
+avoiding exact rational setup of the Schur complement. The guarded check and
+3-declaration standard-axiom audit pass.
