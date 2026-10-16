@@ -391,6 +391,47 @@ lemma facState_shape (P K B : ℕ) (rows inputs : List (List ℤ)) (hrows : rows
       simp [facRow, Mult.BandFactor.subRowZ, htl, this]
     · exact hnx
 
+/-- The window states of the factorization of a banded numerator matrix are the
+windows of its integer stage matrices. -/
+theorem facState_window (P K B : ℕ) (hP : 2 ≤ P) (AZ : ℕ → ℕ → ℤ)
+    (hA : NLogN.SchurDominance.BandFrom B (Mult.BandFactor.gvM P AZ) 0) (n : ℕ) :
+    ∀ m ≤ n, facState P K (Mult.BandFactor.windowZ B AZ) (Mult.BandFactor.inputsZ B AZ n) m=
+      (List.range' m (B+1)).map (Mult.BandFactor.winRowZ B (Mult.BandFactor.stgZ P K AZ m) m) := by
+  have hinj : Function.Injective (List.map (List.map (Mult.BandFactor.gv P))) :=
+    List.map_injective_iff.mpr (List.map_injective_iff.mpr (Mult.BandFactor.gv_injective P))
+  have hRHS : ∀ m, ((List.range' m (B+1)).map
+      (Mult.BandFactor.winRowZ B (Mult.BandFactor.stgZ P K AZ m) m)).map (List.map (Mult.BandFactor.gv P))=
+      NLogN.SchurDominance.window B (NLogN.SchurDominance.stg (Mult.Sizes.rdP P) (Mult.BandFactor.mRule P K)
+        (Mult.BandFactor.gvM P AZ) 0 m) m := by
+    intro m
+    simp only [NLogN.SchurDominance.window, List.map_map]
+    refine List.map_congr_left fun i _ => ?_
+    simp only [Function.comp, Mult.BandFactor.winRowZ_map, Mult.BandFactor.stgZ_map P K hP]
+  intro m
+  induction m with
+  | zero =>
+    intro _
+    rfl
+  | succ m ih =>
+    intro hm
+    apply hinj
+    rw [hRHS]
+    simp only [facState]
+    rw [Mult.BandFactor.stepRowsZ_map P K hP, ih (by omega), hRHS]
+    have hin : (Mult.BandFactor.inputsZ B AZ n).getD m []=
+        Mult.BandFactor.winRowZ B AZ (m+1) (m+B+1) := by
+      rw [List.getD_eq_getElem _ _ (by simp [Mult.BandFactor.inputsZ]; omega)]
+      simp [Mult.BandFactor.inputsZ]
+    rw [hin, Mult.BandFactor.winRowZ_map]
+    have hfar : NLogN.SchurDominance.winRow B (Mult.BandFactor.gvM P AZ) (m+1) (m+B+1)=
+        NLogN.SchurDominance.winRow B (NLogN.SchurDominance.stg (Mult.Sizes.rdP P) (Mult.BandFactor.mRule P K)
+          (Mult.BandFactor.gvM P AZ) 0 m) (m+1) (m+B+1) :=
+      List.map_congr_left fun j _ => (NLogN.SchurDominance.stg_far (Mult.Sizes.rdP P) _ B (Mult.Sizes.rdP_zero P)
+        (Mult.BandFactor.machMul_zero P K) _ hA m _ j (by omega)).symm
+    rw [hfar, NLogN.SchurDominance.stepRows_window (Mult.Sizes.rdP P) _ B (Mult.Sizes.rdP_zero P) (Mult.BandFactor.machMul_zero P K)
+      _ m (NLogN.SchurDominance.bandFrom_stg (Mult.Sizes.rdP P) _ B (Mult.Sizes.rdP_zero P) (Mult.BandFactor.machMul_zero P K) _ hA m)]
+    simp [NLogN.SchurDominance.stg]
+
 /-- The `B` non-pivot rows of a window step. -/
 theorem band_facRows_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠ ι j)
     (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ : SS.states ≤ Q) (hA : 96 ≤ A)

@@ -159,6 +159,41 @@ theorem lur_range (n : ℕ) : ∀ (A : Matrix ℕ ℕ ℝ) (k₀ i j : ℕ),
         · have hc' : ¬(k₀ ≤ i ∧ i ≤ j ∧ j < k₀+(n+1)) := by omega
           simp only [hc, hc', ite_false]
 
+variable (η : ℝ) (hrd : ∀ x, |rd x-x|≤η) (hmul : ∀ a b, |mul a b-a/b|≤η)
+include hrd hmul in
+/-- Every stage of the natural-order elimination keeps the invariant with the
+accumulated losses: margin `μ - 2mη(n+M)` and mass `m₀ + mη(n+M)` after `m` pivots. -/
+theorem stg_inv (μ M n : ℝ) (hM : 0≤M) (s : ℕ) (hn : (s : ℝ)≤n) (A : Matrix ℕ ℕ ℝ) (μ₀ m₀ : ℝ)
+    (hinv : StageInv A (Ico 0 s) μ₀ m₀) (hm : m₀+s*(η*(n+M))≤M) (hmu : μ/2+2*s*(η*(n+M))≤μ₀)
+    (hμ : 0<μ) :
+    ∀ m ≤ s, StageInv (stg rd mul A 0 m) (Ico m s) (μ₀-2*m*(η*(n+M))) (m₀+m*(η*(n+M))) := by
+  have hη : 0≤η := le_trans (abs_nonneg _) (hrd 0)
+  have hQ : 0≤η*(n+M) := by
+    have : 0≤n := le_trans (Nat.cast_nonneg _) hn
+    positivity
+  intro m
+  induction m with
+  | zero => intro _; simpa [stg] using hinv
+  | succ m ih =>
+    intro hms
+    have hprev := ih (by omega)
+    have hmR : (m : ℝ)+1≤s := by exact_mod_cast hms
+    have hcard : ((Ico m s).card : ℝ)≤n := by
+      rw [Nat.card_Ico]; exact le_trans (by exact_mod_cast Nat.sub_le s m) hn
+    have hμ' : 0<μ₀-2*m*(η*(n+M)) := by nlinarith
+    have hmass : m₀+m*(η*(n+M))≤M := by nlinarith
+    have hstep := relim_inv rd mul η hrd hmul _ _ _ _ n hμ' hcard hprev m
+      (mem_Ico.mpr ⟨le_rfl, by omega⟩)
+    have herase : (Ico m s).erase m=Ico (m+1) s := by
+      ext x; simp only [mem_erase, mem_Ico]; omega
+    rw [herase] at hstep
+    have hQ' : η*(n+(m₀+m*(η*(n+M))))≤η*(n+M) := mul_le_mul_of_nonneg_left (by linarith) hη
+    have e : stg rd mul A 0 (m+1)=relim rd mul (stg rd mul A 0 m) m := by simp [stg]
+    rw [e]
+    refine stageInv_mono _ _ hstep ?_ ?_
+    · push_cast; nlinarith
+    · push_cast; nlinarith
+
 end Stages
 
 end IntegerMultBounds.NLogN.SchurDominance
