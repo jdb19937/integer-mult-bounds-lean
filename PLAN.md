@@ -61,9 +61,13 @@ construction. **Today's binding margin is §5 compact-layer cost: `epsilon (1-la
 The actual compact runtime removes the old full-slot control restriction. A
 checked ceiling excludes `2^-33` with the existing supplier and coarse Gaussian
 restriction, so further parameter retuning alone cannot reach the next dyadic
-saving. The next work is M6 selected supplier semantics/rank moments and M7
-phase-cell inverse/bulk execution, alongside stopped recursion and improved
-precision/workspace accounting in M3–M5.
+saving. A second checked route certificate shows the coarse Gaussian estimate
+is what binds: with the **existing** supplier, the phase-cell Gaussian margin
+lets every stage margin cover `2^-32` at `epsilon=5/8`, while no Gaussian
+improvement alone reaches `2^-31`. M7 (phase-cell inverse, its tape costs and
+bulk execution at larger dimensions) is therefore the next bound-moving
+milestone, worth up to two dyadic steps without M6; M6 is needed beyond
+`2^-32`. Stopped recursion and precision/workspace accounting in M3–M5 continue.
 
 Section numbers below are the manuscript's **printed numbers**, verified
 against its PDF contents. §7 is polynomial products, §8 is resampling,

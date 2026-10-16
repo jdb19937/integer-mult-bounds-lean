@@ -6343,6 +6343,8 @@ Parameters and asymptotics.
 
 - `MathlibTM2/Cost/CompactSupplierCeiling.lean`: Checked route-specific ceiling below `2^-33` for the current complex supplier and coarse Gaussian estimate; a dyadic `9/64` dimension candidate satisfies all five stage margins and recurrence slacks for `2^-34`. Arithmetic only: wider executable parameter words and generalized sizing remain unproved. Standalone axiom audit passes for 25 declarations.
 
+- `MathlibTM2/Cost/CompactGaussianRoute.lean`: Route certificate for the faster Gaussian inverse with the existing supplier. Replacing the coarse Gaussian margin by the selected phase-cell margin min(1−ε−δ, r−δ) (ε+r<1, ε>(1−r)/2), the candidate ε=5/8, c=1/4, λ'=1−417/10^12, δ=2^-5, r=1/4 satisfies the band, the layer/recurrence slacks and all five stage margins for 2^-32; conversely the layer margin stays below 2^-31 for every ε≤1 with this supplier. Arithmetic only: executable sizing, precision, prime supply and bulk execution at ε=5/8 remain to be proved. Standalone axiom audit passes for 24 declarations.
+
 - `MathlibTM2/Mult/CompactDyadicRootRoom.lean`: Checked universal squared-cap fit in `4*b+32` bits for the sixty-fourth root of `b^9`, plus seventh-power dimension room. Arithmetic groundwork only.
 - `MathlibTM2/Fast/CompactDimensionPower.lean`: Five-atom table program computes `b^9`, preserves input and accumulator, and proves exact word-fit and execution contracts.
 - `MathlibTM2/Fast/CompactDyadicDimension.lean`: Checked composition computes `iroot 64 (b^9)` with charged cost `58+44*iroot 64 (b^9)`, preserving input and accumulator. Actual parameter allocation and changed sizing definitions remain separate. Both executable helpers pass a focused standard-axiom audit.

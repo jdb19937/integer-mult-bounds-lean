@@ -55,6 +55,16 @@ chunk generation, analytic envelopes, wider-machine costs and final theorem
 closure have passed all 298 affected dependency checks and both final audits. Internal parameters remain exact
 dyadic rationals; public savings remain powers of two.
 
+`CompactGaussianRoute` refines this: the ceiling comes from the coarse
+Gaussian estimate forcing `epsilon<1/6`. With the existing supplier and the
+selected phase-cell Gaussian margin `min(1-ε-δ, r-δ)`, the candidate
+`epsilon=5/8`, `c=1/4`, `lambda'=1-417/10^12`, `r=1/4` covers `2^-32` in all
+five stage margins and the recurrence slacks, while no Gaussian improvement
+alone reaches `2^-31`. M7 is therefore the next bound-moving milestone, worth
+up to two dyadic steps without M6. At `epsilon=5/8` the executable dimension
+stage, precision and guard growth, prime supply and bulk core/halo execution
+must all be revalidated; the certificate is arithmetic only.
+
 The checked `CompactSupplierCeiling.saving_lt_ceiling` proves that the existing
 complex supplier together with the current coarse Gaussian restriction cannot
 reach `2^-33`, even with nonnegative logarithmic loss and arbitrary admissible
