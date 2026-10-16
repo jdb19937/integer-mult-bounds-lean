@@ -125,6 +125,10 @@ def bandAxisTrP : Pr P T Q A U :=
   .seq (bandTLoopP rg) (.seq (emptyR (rg .vk)) (.seq (moveR (rg .ef) (rg .ac2) id)
     (moveR (rg .ac2) (rg .hf) id)))
 
+/-- The per-axis preparation of the banded line solve. -/
+noncomputable def bandAxisPrepP : Pr P T Q A U :=
+  .seq (bandAxisFacP rg hι hT hQ) (.seq (bandAxisOrgP rg) (bandAxisTrP rg))
+
 end Programs
 
 /-- A Newton step on real records. -/
@@ -453,6 +457,25 @@ theorem facState_window (P K B : ℕ) (hP : 2 ≤ P) (AZ : ℕ → ℕ → ℤ)
     rw [hfar, NLogN.SchurDominance.stepRows_window (Mult.Sizes.rdP P) _ B (Mult.Sizes.rdP_zero P) (Mult.BandFactor.machMul_zero P K)
       _ m (NLogN.SchurDominance.bandFrom_stg (Mult.Sizes.rdP P) _ B (Mult.Sizes.rdP_zero P) (Mult.BandFactor.machMul_zero P K) _ hA m)]
     simp [NLogN.SchurDominance.stg]
+
+/-- The numerator factorization run is read off the window states. -/
+theorem factorRowsZ_facState (P K : ℕ) : ∀ (inputs rows : List (List ℤ)),
+    Mult.BandFactor.factorRowsZ P K rows inputs =
+      (List.range inputs.length).map fun j =>
+        (Mult.BandFactor.lcolZ P K (facState P K rows inputs j), (facState P K rows inputs j).headD [])
+  | [], _ => rfl
+  | next :: inputs, rows => by
+    rw [Mult.BandFactor.factorRowsZ, factorRowsZ_facState P K inputs, List.length_cons,
+      List.range_succ_eq_map, List.map_cons, List.map_map]
+    congr 1
+    refine List.map_congr_left fun j _ => ?_
+    have h : ∀ m, facState P K (Mult.BandFactor.stepRowsZ P K rows next) inputs m =
+        facState P K rows (next :: inputs) (m + 1) := by
+      intro m
+      induction m with
+      | zero => rfl
+      | succ m ih => simp only [facState, ih, List.getD_cons_succ]
+    simp [Function.comp, h]
 
 /-- The `B` non-pivot rows of a window step. -/
 theorem band_facRows_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠ ι j)
@@ -1551,6 +1574,135 @@ theorem band_axisTr_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r �
       List.append_nil, hwin, hcols, List.length_append, List.length_reverse, hac2, List.length_nil]
     rw [Function.update_of_ne (by decide : RsbR.vk ≠ RsbR.ef), Function.update_self, hwin]
     omega
+
+/-- The forward table: all multipliers in pivot order. -/
+def facLf (P K : ℕ) (rows inputs : List (List ℤ)) (s : ℕ) : List ℤ :=
+  ((List.range s).map fun j => Mult.BandFactor.lcolZ P K (facState P K rows inputs j)).flatten
+
+/-- The pivot rows in pivot order. -/
+def facUr (P K : ℕ) (rows inputs : List (List ℤ)) (s : ℕ) : List (List ℤ) :=
+  (List.range s).map fun j => (facState P K rows inputs j).headD []
+
+/-- The cost of the per-axis preparation. -/
+def bandAxisPrepCost (T w k K s : ℕ) : ℕ :=
+  (4 * ((k + 1 + 1) * (2 * (k + 1) + 1) * w) + 4 + (2 * ((k + 1 + 1) * (2 * (k + 1) + 1) * w) + 2) +
+    (s * (bandFacStepCost T w (k + 1) K + 6) + 4) + (2 * ((k + 1 + 1) * (2 * (k + 1) + 1) * w) + 2)) +
+  (bandAxisOrgCost s k w K + (s * (bandTStepCost w k + 6) + 4 + (2 * ((k + 1) * (k + 1) * w) + 2) +
+    (2 * (s * (k + 1) * w) + 2) + (2 * (s * (k + 1) * w) + 2)))
+
+/-- **The per-axis preparation.** `bo` holds the forward table, `hf` the backward columns
+(last pivot on top), `df` the pivot reciprocals (last on top); `m2n`, `mwn` hold `B` and
+`B w` symbols for the line passes. -/
+theorem band_axisPrep_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠ ι j)
+    (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ : SS.states ≤ Q) (hA : 96 ≤ A)
+    {w P k K s : ℕ} (σ : RsbR → List (Fin (A + 4))) (hready : RsbReady σ w P) (hw : 1 ≤ w)
+    (hp : P ≤ w) (rows inputs : List (List ℤ)) (hrows : rows.length = k + 1 + 1)
+    (hrl : ∀ row ∈ rows, row.length = 2 * (k + 1) + 1)
+    (hin : ∀ row ∈ inputs, row.length = 2 * (k + 1) + 1)
+    (hs : inputs.length = s) (hfit : ∀ m < s, FacFits w P K (facState P K rows inputs m))
+    (hr0 : ∀ m < s, σ .bx = csyms A w ⟨Mult.BandFactor.newtonZ P (facPiv (facState P K rows inputs m)) 0, 0⟩)
+    (SRC : List (Fin (A + 4)))
+    (hsrc : σ .src = cstream A w ((rows.map colC).flatten ++ (inputs.map colC).flatten) ++ SRC)
+    (htswn : (σ .tswn).length = (k + 1 + 1) * (2 * (k + 1) + 1) * w)
+    (hhf : σ .hf = []) (hdf : σ .df = []) (hdout : σ .dout = []) (hmsk : σ .msk = csyms A w 0)
+    (hvk : σ .vk = []) (hef : σ .ef = []) (htb : σ .tb = []) (hsr : σ .sr = []) (hbo : σ .bo = [])
+    (hhv : σ .hv = []) (hxa : σ .xa = []) (hhc : σ .hc = []) (hya : σ .ya = []) (hxs : σ .xs = [])
+    (hpr : σ .pr = []) (hac : σ .ac = []) (hac2 : σ .ac2 = []) (hnv : σ .nv = [])
+    (hb1 : σ .b1 = []) (htC : σ .tC = []) (htA : σ .tA = []) (htJ : σ .tJ = [])
+    (htK : σ .tK = []) (htL : σ .tL = []) (hsel : σ .sel = []) (hsn : (σ .sn).length = s)
+    (hkn : (σ .kn).length = K) (hms : (σ .ms).length = k + 1) (hm2n : (σ .m2n).length = 2 * (k + 1))
+    (hmwn : (σ .mwn).length = 2 * (k + 1) * w)
+    (hsmwn : (σ .smwn).length = (2 * (k + 1) + 1) * w) (hm2wn : (σ .m2wn).length = k * w)
+    (hdst : (σ .dst).length = k) :
+    ∃ σ', RsbRuns body rg ι (bandAxisPrepP rg hι hT hQ) σ σ' (bandAxisPrepCost T w k K s) ∧
+      σ' .bo = cstream A w ((facLf P K rows inputs s).map fun x => (⟨x, 0⟩ : GaussianInt)) ∧
+      σ' .hf = cstream A w ((List.range s).reverse.map fun m =>
+        colC (Mult.BandFactor.ucolZ (k + 1) (facUr P K rows inputs s) m)).flatten ∧
+      σ' .df = cstream A w ((List.range s).reverse.map fun j =>
+        (⟨Mult.BandFactor.newtonZ P (facPiv (facState P K rows inputs j)) K, 0⟩ : GaussianInt)) ∧
+      σ' .src = SRC ∧ (σ' .m2n).length = k + 1 ∧ (σ' .mwn).length = (k + 1) * w ∧
+      (σ' .sn).length = s ∧ RsbReady σ' w P ∧
+      ∀ r, r ∉ ([.src, .hf, .df, .dout, .bo, .vk, .m2n, .kn, .ms, .mwn, .ef, .xs] : List RsbR) →
+        σ' r = σ r := by
+  have hwn := hready.wn
+  set Lf := facLf P K rows inputs s with hLfdef
+  set Ur := facUr P K rows inputs s with hUrdef
+  have hshape := fun j (hj : j ≤ s) => facState_shape P K (k + 1) rows inputs hrows hrl hin j (by omega)
+  have hLf : Lf.length = s * (k + 1) := by
+    rw [hLfdef, facLf, List.length_flatten, List.map_map,
+      List.map_congr_left (g := fun _ => k + 1) (fun j hj => by
+        have hj' := List.mem_range.mp hj
+        obtain ⟨hl, -⟩ := hshape j hj'.le
+        obtain ⟨r0, rest, hr⟩ : ∃ r0 rest, facState P K rows inputs j = r0 :: rest := by
+          cases h : facState P K rows inputs j with
+          | nil => rw [h] at hl; simp at hl
+          | cons a l => exact ⟨a, l, rfl⟩
+        simp only [Function.comp, hr, Mult.BandFactor.lcolZ, List.length_map]
+        rw [hr] at hl; simpa using hl), List.map_const', List.sum_replicate, List.length_range,
+      smul_eq_mul]
+  have hUr : Ur.length = s := by simp [hUrdef, facUr]
+  have hUrow : ∀ row ∈ Ur, row.length = 2 * (k + 1) + 1 := by
+    intro row hrow
+    simp only [hUrdef, facUr, List.mem_map, List.mem_range] at hrow
+    obtain ⟨j, hj, rfl⟩ := hrow
+    obtain ⟨hl, hrl'⟩ := hshape j hj.le
+    cases h : facState P K rows inputs j with
+    | nil => rw [h] at hl; simp at hl
+    | cons a l => exact hrl' a (by rw [h]; simp)
+  have h₁ := band_axisFac_runs (body := body) (ι := ι) (w := w) (B := k + 1) (K := K) (s := s) hrg hdisj
+    hι hT hQ hA σ hready hw hp rows inputs hrows hrl hin hs hfit hr0 SRC hsrc htswn hhf hdf hdout hmsk
+    hvk hef htb hsr hbo hhv hxa hhc hya hxs hpr hac hac2 hnv hb1 htC htA htJ htK htL hsel hsn hkn hms
+    hm2n hmwn hsmwn
+  set σ₁ := Function.update (Function.update (Function.update (Function.update σ
+        .src SRC)
+        .hf (cstream A w ((List.range s).reverse.map fun j =>
+          colC ((facState P K rows inputs j).headD [])).flatten))
+        .df (cstream A w ((List.range s).reverse.map fun j =>
+          (⟨Mult.BandFactor.newtonZ P (facPiv (facState P K rows inputs j)) K, 0⟩ : GaussianInt))))
+        .dout (cstream A w (((List.range s).map fun j =>
+          colC (Mult.BandFactor.lcolZ P K (facState P K rows inputs j))).flatten.reverse))
+  have hd₁ : σ₁ .dout = cstream A w ((Lf.map fun x => (⟨x, 0⟩ : GaussianInt)).reverse) := by
+    simp [σ₁, hLfdef, facLf, colC, List.map_flatten, Function.comp_def]
+  have hh₁ : σ₁ .hf = cstream A w (Ur.map colC).reverse.flatten := by
+    simp [σ₁, hUrdef, facUr, List.map_reverse, Function.comp_def]
+  have h₂ := band_axisOrg_runs (body := body) (ι := ι) hrg hdisj (w := w) (k := k) (s := s) (K := K) σ₁ Lf hLf Ur
+    hUr hUrow SRC hd₁ hh₁ (by simp [σ₁]) (by simp [σ₁, hbo]) (by simp [σ₁, hvk]) (by simp [σ₁, hxs])
+    (by simp [σ₁, hmsk]) (by simp [σ₁, hms]) (by simp [σ₁, hsn]) (by simp [σ₁, hsmwn])
+    (by simp [σ₁, hwn]) (by simp [σ₁, htK]) (by simp [σ₁, htL]) (by simp [σ₁, hsel])
+    (by simp [σ₁, htC]) (by simp [σ₁, hb1]) (by simp [σ₁, hac2]) (by simp [σ₁, hm2n])
+    (by simp [σ₁, hkn]) (by simp [σ₁, hmwn]) (by simp [σ₁, hm2wn]) (by simp [σ₁, hdst]) hw
+  set σ₂ := Function.update (Function.update (Function.update (Function.update (Function.update
+        (Function.update (Function.update (Function.update (Function.update σ₁
+        .m2n (σ₁ .ms)) .kn ((List.replicate s (σ₁ .ms)).flatten)) .dout [])
+        .bo (cstream A w (Lf.map fun x => (⟨x, 0⟩ : GaussianInt)))) .hf [])
+        .src (cstream A w (Ur.map colC).flatten ++ SRC))
+        .vk ((List.replicate (k + 1) ((List.replicate (k + 1) (csyms A w 0)).flatten)).flatten))
+        .ms (σ₁ .dst)) .mwn (σ₁ (.cm .wn) ++ σ₁ .m2wn)
+  have hz : (List.replicate (k + 1) ((List.replicate (k + 1) (csyms A w 0)).flatten)).flatten =
+      cstream A w ((Mult.BandFactor.tWin (k + 1) Ur 0).map colC).flatten := by
+    rw [Mult.BandFactor.tWin_zero]
+    simp [cstream, colC, List.flatMap, List.map_replicate, List.flatten_replicate_replicate]
+    have hrep : ∀ (a b : ℕ) (x : List (Fin (A + 4))),
+        (List.replicate a (List.replicate b x).flatten).flatten = (List.replicate (a * b) x).flatten := by
+      intro a b x
+      induction a with
+      | zero => simp
+      | succ a ih =>
+        rw [List.replicate_succ, List.flatten_cons, ih, show (a + 1) * b = b + a * b by ring,
+          List.replicate_add, List.flatten_append]
+    rw [hrep]; rfl
+  have h₃ := band_axisTr_runs (body := body) (ι := ι) hrg hdisj (w := w) (k := k) (s := s) σ₂ Ur hUr
+    hUrow SRC (by simp [σ₂]) (by simp [σ₂, hz]) (by simp [σ₂, σ₁, hef]) (by simp [σ₂])
+    (by simp [σ₂, σ₁, hmsk]) (by simp [σ₂, σ₁, hpr]) (by simp [σ₂, σ₁, hxs]) (by simp [σ₂, σ₁, hya])
+    (by simp [σ₂, σ₁, hnv]) (by simp [σ₂, σ₁, htC]) (by simp [σ₂, σ₁, htL]) (by simp [σ₂, σ₁, hsel])
+    (by simp [σ₂, σ₁, hac2]) (by simp [σ₂, σ₁, hsn]) (by simp [σ₂, σ₁, hwn])
+    (by simp [σ₂, σ₁, hwn, hm2wn]; ring) (by simp [σ₂, σ₁, hm2wn]) (by simp [σ₂, σ₁, hdst])
+  refine ⟨_, (RsbRuns.seq hdisj h₁ (RsbRuns.seq hdisj h₂ h₃)).mono (le_of_eq rfl), by simp [σ₂], by simp,
+    by simp [σ₂, σ₁], by simp [σ₂, σ₁], by simp [σ₂, σ₁, hms], by simp [σ₂, σ₁, hwn, hm2wn]; ring,
+    by simp [σ₂, σ₁, hsn], ⟨by simp [σ₂, σ₁, hwn], by simp [σ₂, σ₁, hready.pn],
+      by simp [σ₂, σ₁, hready.nn], fun c h1 h2 h3 h4 h5 h6 => by
+        simp [σ₂, σ₁, hready.empty c h1 h2 h3 h4 h5 h6]⟩, fun r hr => ?_⟩
+  cases r <;> simp [σ₂, σ₁] at hr ⊢
 
 end Contracts
 
