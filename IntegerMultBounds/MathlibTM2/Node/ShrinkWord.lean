@@ -156,14 +156,14 @@ lemma shrSum_val (k : Bool) : ∀ (c : Bool) (bs : List Bool),
 /-- One step toward zero, without the stop at zero. -/
 def shrT (x : ℤ) : ℤ := if x < 0 then x + 1 else x - 1
 
-lemma shrT_fits {w' : ℕ} (hw' : 1 ≤ w') {x : ℤ} (hx : TopFits w' x) : TopFits w' (shrT x) := by
+lemma shrT_fits {w' : ℕ} {x : ℤ} (hx : TopFits w' x) : TopFits w' (shrT x) := by
   have hpos : (1 : ℤ) ≤ 2 ^ (w' - 1) := one_le_pow₀ (by norm_num)
   obtain ⟨h1, h2⟩ := hx
   unfold shrT TopFits
   split_ifs <;> constructor <;> linarith
 
 /-- The sum of the bits of `x`, the constant bits `¬σ` and the carry `σ` is `shrT x`. -/
-lemma shrSum_bits {w' : ℕ} (hw' : 1 ≤ w') {x : ℤ} (hx : TopFits w' x) :
+lemma shrSum_bits {w' : ℕ} {x : ℤ} :
     shrSum (!decide (x < 0)) (decide (x < 0))
         (List.ofFn fun t : Fin w' => (x : ZMod (2 ^ w')).val.testBit t) =
       List.ofFn fun t : Fin w' => ((shrT x : ℤ) : ZMod (2 ^ w')).val.testBit t := by
@@ -199,11 +199,11 @@ lemma shrinkI_one_eq (x : ℤ) :
   unfold shrinkI shrT
   by_cases hx : x < 0
   · by_cases ht : x + 1 < 0
-    · simp [hx, ht, show ¬ (0 ≤ x) by omega] <;> omega
-    · simp [hx, ht, show ¬ (0 ≤ x) by omega] <;> omega
+    · simp [hx, ht, show ¬ (0 ≤ x) by omega]
+    · simp [hx, ht, show ¬ (0 ≤ x) by omega]; omega
   · by_cases ht : x - 1 < 0
-    · simp [hx, ht, show 0 ≤ x by omega] <;> omega
-    · simp [hx, ht, show 0 ≤ x by omega] <;> omega
+    · simp [hx, ht, show 0 ≤ x by omega]; omega
+    · simp [hx, ht, show 0 ≤ x by omega]; omega
 
 end Bits
 
@@ -247,7 +247,7 @@ theorem shrF_coeffSyms (hA : 4 ≤ A) {w' : ℕ} (hw' : 1 ≤ w') (z : GaussianI
       pairSym A (((shrT z.re : ℤ) : ZMod (2 ^ w')).val.testBit t)
         (((shrT z.im : ℤ) : ZMod (2 ^ w')).val.testBit t) := by
     simp only [shrY, topLast_coeffSyms hw' z hz, pairRe_pairSym hA, pairIm_pairSym hA, hre, him,
-      shrSum_bits hw' hz.1, shrSum_bits hw' hz.2]
+      shrSum_bits (x := z.re), shrSum_bits (x := z.im)]
     apply List.ext_getElem
     · simp
     · intro t h1 h2
@@ -256,7 +256,7 @@ theorem shrF_coeffSyms (hA : 4 ≤ A) {w' : ℕ} (hw' : 1 ≤ w') (z : GaussianI
       pairSym A (decide (shrT z.re < 0)) (decide (shrT z.im < 0)) := by
     rw [hY, List.getLast?_eq_getElem?, List.getElem?_ofFn]
     simp only [List.length_ofFn, show w' - 1 < w' by omega, dite_true, Option.getD_some]
-    rw [topVal_sign hw' (shrT_fits hw' hz.1), topVal_sign hw' (shrT_fits hw' hz.2)]
+    rw [topVal_sign hw' (shrT_fits hz.1), topVal_sign hw' (shrT_fits hz.2)]
   rw [shrF, hL, topLast_coeffSyms hw' z hz, hY]
   apply List.ext_getElem
   · simp [coeffSyms]
@@ -329,7 +329,7 @@ def shrOutFx (src dst sg : Fin T) : Fin (A + 4) → Regs T A → Regs T A :=
 def shrEndAct (sg src : Fin T) : Act T Q A U := .pop (.rt sg) (fun v _ => v) (peekR src)
 
 lemma regFx_shrAdd {src tmp sg cy : Fin T} (hst : src ≠ tmp) (hsc : src ≠ cy) (hsg : src ≠ sg)
-    (htc : tmp ≠ cy) (htg : tmp ≠ sg) (hgc : sg ≠ cy) :
+    (htc : tmp ≠ cy) (hgc : sg ≠ cy) :
     RegFx (shrAddF (T := T) (Q := Q) (A := A) (U := U) src tmp sg cy) (shrAddFx src tmp sg cy) := by
   intro x k v S _
   refine ⟨{ v with
@@ -339,7 +339,7 @@ lemma regFx_shrAdd {src tmp sg cy : Fin T} (hst : src ≠ tmp) (hsc : src ≠ cy
   simp only [shrAddF, shrAddFx, Action.run, mk_var, mk_stk, get_rt, update_rt, store_mk,
     Function.update_of_ne hsc.symm, Function.update_of_ne hsg.symm, Function.update_of_ne hgc,
     Function.update_of_ne hgc.symm, Function.update_of_ne hst.symm, Function.update_of_ne htc,
-    Function.update_of_ne htc.symm, Function.update_of_ne htg.symm, Function.update_self]
+    Function.update_of_ne htc.symm, Function.update_self]
   rw [Function.update_comm htc, Function.update_idem]
 
 lemma frame_shrAdd {a src tmp sg cy : Fin T} (has : a ≠ src) (hat : a ≠ tmp) (hag : a ≠ sg)
@@ -349,15 +349,14 @@ lemma frame_shrAdd {a src tmp sg cy : Fin T} (has : a ≠ src) (hat : a ≠ tmp)
   simp only [shrAddFx, Function.update_apply]
   split_ifs <;> simp_all
 
-lemma regFx_shrOut {src dst sg : Fin T} (hsd : src ≠ dst) (hsg : src ≠ sg) (hdg : dst ≠ sg) :
+lemma regFx_shrOut {src dst sg : Fin T} (hsd : src ≠ dst) (hsg : src ≠ sg) :
     RegFx (shrOutF (T := T) (Q := Q) (A := A) (U := U) src dst sg) (shrOutFx src dst sg) := by
   intro x k v S _
   refine ⟨{ v with
     sym := (S.R src).head?
     scan := Function.update v.scan sg ((S.R sg).head?.getD blank) }, rfl, ?_⟩
   simp only [shrOutF, shrOutFx, Action.run, mk_var, mk_stk, get_rt, update_rt, store_mk,
-    Function.update_of_ne hsg.symm, Function.update_of_ne hsd.symm, Function.update_of_ne hdg,
-    Function.update_of_ne hdg.symm, Function.update_self]
+    Function.update_of_ne hsg.symm, Function.update_of_ne hsd.symm, Function.update_self]
 
 lemma frame_shrOut {a src dst sg : Fin T} (has : a ≠ src) (had : a ≠ dst) (hag : a ≠ sg) :
     Frame a (shrOutFx (A := A) src dst sg) := by
@@ -502,7 +501,7 @@ theorem shrWord_spec (hA : 4 ≤ A) {src dst tmp cW sp sg cy : Fin T}
     simp [hR₃, hR₂, hR₁, h1, h2, h3, h4]
   have hR₃W : R₃ cW = S.R cW := hR₃o _ (Ne.symm hsW) (Ne.symm htW) hWg hWc
   -- add
-  obtain ⟨v₄, hu₄, e₄⟩ := scanR_exec' body hWp (regFx_shrAdd hst hsc hsg htc htg hgc)
+  obtain ⟨v₄, hu₄, e₄⟩ := scanR_exec' body hWp (regFx_shrAdd hst hsc hsg htc hgc)
     (frame_shrAdd (Ne.symm hsW) (Ne.symm htW) hWg hWc)
     (frame_shrAdd (Ne.symm hsp) (Ne.symm htp) hpg hpc) v₃ { S with R := R₃ }
     (by show R₃ sp = []; rw [hR₃o _ (Ne.symm hsp) (Ne.symm htp) hpg hpc]; exact hsp0)
@@ -562,7 +561,7 @@ theorem shrWord_spec (hA : 4 ≤ A) {src dst tmp cW sp sg cy : Fin T}
     simp [hR₆, hR₅, hR₄, h1, h2, h3, h4, hR₃o k h1 h2 h3 h4]
   have hR₆W : R₆ cW = S.R cW := hR₆o _ (Ne.symm hsW) (Ne.symm htW) hWg hWc
   -- emit
-  obtain ⟨v₇, hu₇, e₇⟩ := scanR_exec' body hWp (regFx_shrOut hsd hsg hdg)
+  obtain ⟨v₇, hu₇, e₇⟩ := scanR_exec' body hWp (regFx_shrOut hsd hsg)
     (frame_shrOut (Ne.symm hsW) (Ne.symm hdW) hWg) (frame_shrOut (Ne.symm hsp) (Ne.symm hdp) hpg)
     v₆ { S with R := R₆ }
     (by show R₆ sp = []; rw [hR₆o _ (Ne.symm hsp) (Ne.symm htp) hpg hpc]; exact hsp0)
