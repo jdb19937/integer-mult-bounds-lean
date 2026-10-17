@@ -2,6 +2,7 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CompactMainChainEntryR
 public import IntegerMultBounds.MathlibTM2.Fast.CompactFinal
+public import IntegerMultBounds.MathlibTM2.Cost.CompactRetunedTransformMatchR
 
 /-! The complete compact multiplier with the rounded synthetic transforms: input and
 distribution under the rounded procedure table, the rounded chain and the carry output. The
@@ -200,6 +201,12 @@ theorem compactR_mulInTime
       ((compactRetunedCFR n + compactRetunedCOR n : ℕ) : ℝ) ≤ C * CompactTotal.conv n) :
     MulInTime ((2^34:ℝ)⁻¹) :=
   compactCompletedR_mulInTime hcost compactRetunedPrefixR 16 compactRetunedPrefixR_exec
+
+/-- **The rounded compact multiplier**, with no remaining hypothesis: one fixed finite Mathlib
+machine with the rounded synthetic transforms multiplies every pair in worst-case time
+`O(n (log n)^(1-2^-34))`. -/
+theorem compactR_mulInTime_final : MulInTime ((2^34:ℝ)⁻¹) :=
+  compactR_mulInTime compactRetunedR_transform_cost_le
 
 end
 end IntegerMultBounds.MathlibTM2.Fast.Main
