@@ -67,11 +67,22 @@ frame's Lagrangian. The scalar operators and phase-bearing label maps of these
 words are genuine and exact, but no particular phase on the image of a given
 Pauli is asserted beyond what the realization fields state.
 
+## Soundness of the source equality test
+
+`PauliSchur.lean` proves Pauli irreducibility on the 512-dimensional state
+space: a linear map commuting with every X label and every Z generator is the
+scalar `M |0⟩ (0)`. Consequently `Realization.scalar_eq_smul` shows that two
+realizations whose label maps agree on the eighteen generators have scalar
+operators differing by one global constant, and `Realization.scalar_eq` shows
+that agreement on the zero basis state as well makes them equal. This is
+exactly the source's `compiled.tab == op.tab and compiled.zero_state() ==
+op.zero_state()` test, with the tableau comparison read phase-exactly on
+generators.
+
 ## Remaining obligations
 
 Serialized monomial-factor decoding and equality of whole
-complex residual recipes remain open. Equality of tableaux plus a zero-state
-vector has not been proved complete. Adapter semantics, dirty scalar routing,
+complex residual recipes remain open. Adapter semantics, dirty scalar routing,
 private-scratch restoration, hosting and tape costs remain separate.
 
 No frozen finite geometry, binary tableau theorem, or literal extension import
