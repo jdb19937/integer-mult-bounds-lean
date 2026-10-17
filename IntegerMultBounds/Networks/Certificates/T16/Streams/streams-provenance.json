@@ -1,0 +1,11 @@
+{
+  "inputs": {
+    "research/community-frontier1094-audit/selected-replay.tar.gz": "f1da80610bf33c58527f18ad63b4350d0b864e1d4486141ee17ac9bed4d529d6",
+    "research/complex-t16-rare-pattern-exchanges/data/OWNERS.json.gz": "87902c528dfab7d503dcf8a784260e3ab6fb7424c418a1820f7261f25be7b6bc"
+  },
+  "members": {
+    "frames": "candidate/strict/global/hosted/IDLE-REMAINDER-FRAMES.json.gz",
+    "phases": "candidate/strict/global/base/work/complex-nine-native/DATA-PHASES.json",
+    "template": "candidate/strict/global/hosted/GLOBAL-TEMPLATE.json.gz"
+  }
+}
