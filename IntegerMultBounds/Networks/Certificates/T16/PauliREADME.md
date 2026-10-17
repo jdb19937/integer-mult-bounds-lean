@@ -52,11 +52,24 @@ global-phase operator. Its conjugation is explicitly proved invisible to Pauli
 labels, while its scalar operator is still retained. This is why the record
 must not be interpreted as a tableau-completeness theorem.
 
+## Canonical words
+
+`PauliCanonical.lean` assembles the source recipe `K C_r K⁻¹` as an explicit
+word of these realizations: `D_Q⁻¹`, `P_G⁻¹`, the C gates on axes `0..r-1` in
+increasing order, `P_G`, `D_Q`. The quadratic matrix is the exact matrix of
+`Q = I + G⁻ᵀ G⁻¹`, proved symmetric for the binary dot product, with the
+source's default alpha. `canonicalRealization_binary` proves that the word's
+binary projection is exactly `Tableau.canonical G r`;
+`sourceCanonicalRealization` follows all three `canonical_frame` branches and
+projects to `sourceCanonical`. `nativeRealization i` is the word at selected
+frame `i`; it projects to `nativeTableau i`, so its inverse-Z image is that
+frame's Lagrangian. The scalar operators and phase-bearing label maps of these
+words are genuine and exact, but no particular phase on the image of a given
+Pauli is asserted beyond what the realization fields state.
+
 ## Remaining obligations
 
-The complete canonical word has not yet been assembled from these primitives,
-nor linked to every selected native tableau through its exact quadratic matrix
-and partial-C word. Serialized monomial-factor decoding and equality of whole
+Serialized monomial-factor decoding and equality of whole
 complex residual recipes remain open. Equality of tableaux plus a zero-state
 vector has not been proved complete. Adapter semantics, dirty scalar routing,
 private-scratch restoration, hosting and tape costs remain separate.
