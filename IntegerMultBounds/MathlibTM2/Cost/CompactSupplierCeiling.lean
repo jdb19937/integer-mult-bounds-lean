@@ -72,5 +72,33 @@ theorem layer_margin : margin 1 = 513 / (2^43 : ℝ) := by
   norm_num [margin, epsilon, layer]
 
 end NineSixtyFourths
+
+namespace NineThirtySeconds
+
+def epsilon : ℝ := 9 / 2^5
+def spacing : ℝ := (2^2 : ℝ)⁻¹
+def layer : ℝ := 1 - 57 / 2^37
+def delta : ℝ := (2^5 : ℝ)⁻¹
+def kappa : ℝ := (2^33 : ℝ)⁻¹
+
+/-- The stage margins with the retuned band width `α ≤ 2√d`: the resampling margin is
+`1/2 - δ - 3ε/2`, with no coarse `b^{1/4}` Gaussian factor. -/
+def margin : Fin 5 → ℝ := ![
+  epsilon*spacing*(1-Parameters.tau),
+  epsilon*(1-layer),
+  epsilon*(1-spacing),
+  (1-epsilon)*(1-Parameters.tau),
+  1/2-delta-3*epsilon/2]
+
+theorem margin_covers (i : Fin 5) : kappa ≤ margin i := by
+  fin_cases i <;> norm_num [margin, kappa, epsilon, spacing, layer, delta, Parameters.tau]
+
+theorem resampling_margin : margin 4 = 3 / (2^6 : ℝ) := by
+  norm_num [margin, epsilon, delta]
+
+theorem layer_margin : margin 1 = 513 / (2^42 : ℝ) := by
+  norm_num [margin, epsilon, layer]
+
+end NineThirtySeconds
 end
 end IntegerMultBounds.MathlibTM2.Cost.CompactSupplierCeiling
