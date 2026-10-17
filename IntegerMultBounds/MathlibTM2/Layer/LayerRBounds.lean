@@ -83,6 +83,41 @@ theorem errL_le_two_pow (u : ℕ) (ds : Directions) (R₀ r n j a b : ℕ)
   rw [pow_add, pow_add, pow_mul]
   gcongr
 
+/-- The number of bits of the gain of one level. -/
+noncomputable def cGain (ds : Directions) : ℕ := Nat.clog 2 ⌈gainL ds⌉₊
+
+lemma gainL_le_two_pow (ds : Directions) : gainL ds ≤ 2 ^ cGain ds := by
+  have h1 := Nat.le_ceil (gainL ds)
+  have h2 : ⌈gainL ds⌉₊ ≤ 2 ^ cGain ds := Nat.le_pow_clog (by norm_num) _
+  have h3 : ((⌈gainL ds⌉₊ : ℕ) : ℝ) ≤ ((2 ^ cGain ds : ℕ) : ℝ) := by exact_mod_cast h2
+  push_cast at h3
+  linarith
+
+lemma lipProd_le_two_pow (ds : Directions) : lipProd (program ds) ≤ 2 ^ cGain ds := by
+  refine le_trans ?_ (gainL_le_two_pow ds)
+  unfold gainL
+  have h1 := one_le_lipProd (program ds)
+  have h2 : (0 : ℝ) ≤ facCount (program ds) := Nat.cast_nonneg _
+  nlinarith
+
+/-- **The level errors in the agreed form.** With `2 rows r 2^n ≤ 2^Lb` and `j ≤ D`,
+`errL j ≤ 2^(Lb + D (cGain + 1))`. -/
+theorem errL_le_K (u : ℕ) (ds : Directions) (R₀ r n j Lb D : ℕ) (hj : j ≤ D)
+    (hrows : 2 * (rowsAt R₀ j * r * 2 ^ n) ≤ 2 ^ Lb) :
+    errL u ds R₀ r n j ≤ 2 ^ (Lb + D * (cGain ds + 1)) := by
+  have hB : √2 * √(rowsAt R₀ j * r * 2 ^ n) ≤ 2 ^ Lb := by
+    rw [← Real.sqrt_mul (by norm_num)]
+    have h1 : (2 : ℝ) * (rowsAt R₀ j * r * 2 ^ n) ≤ 2 ^ Lb := by exact_mod_cast hrows
+    have h2 : (2 : ℝ) ^ Lb ≤ (2 ^ Lb) ^ 2 := by
+      have : (1 : ℝ) ≤ 2 ^ Lb := one_le_pow₀ (by norm_num)
+      nlinarith
+    rw [Real.sqrt_le_left (by positivity)]
+    linarith
+  refine (errL_le_two_pow u ds R₀ r n j (cGain ds) Lb (gainL_le_two_pow ds) hB).trans ?_
+  apply pow_le_pow_right₀ (by norm_num)
+  have : j * (cGain ds + 1) ≤ D * (cGain ds + 1) := Nat.mul_le_mul_right _ hj
+  nlinarith
+
 lemma piecesErr_nonneg (ds : Directions) (r : ℕ) {R₂ : ℕ} :
     ∀ Ps : List (Piece n R₂), 0 ≤ piecesErr ds r Ps
   | [] => le_rfl
