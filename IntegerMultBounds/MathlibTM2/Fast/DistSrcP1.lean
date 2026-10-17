@@ -185,13 +185,14 @@ theorem ds_acc₁ (n Wt : ℕ) (hn : 2 ≤ n) (hd0 : 0 < d n) :
     · simp [dsAV, dsS_eq, pmNV]
 
 /-- The axis loop in the family form. -/
-theorem dsF_axes (R : Regs T A) {n Wt : ℕ} (hn : 2 ≤ n) (hWt : Wt < 2 ^ pmW n)
+theorem dsF_axes (R : Regs T A) {n Wt : ℕ} (hB : Big n) (hWt : Wt < 2 ^ pmW n)
     (wl : List (Fin (A + 4))) (hwl : wl.length = pmW n) (X : DsY t₀ → List (Fin (A + 4)))
     (hu : (X (.o .uD)).length = d n) (ht : X (.o .tm) = []) :
     dsRuns body (dsAxes rg (g (.o .uD)) (g (.o .tm)) (dsL₁ g))
       (dsF rg g R X (pmW n) wl (dsLV n Wt 0))
       (dsF rg g R (fun y => dsAcc n Wt (dsL₁ g) (d n) (g y) ++ X y) (pmW n) wl
         (dsLV n Wt (d n))) (dsLoopCost₁ n Wt) := by
+  have hn : 2 ≤ n := hB.1
   have ne : ∀ {x y : DsY t₀}, x ≠ y → g x ≠ g y := fun hxy => h.ig.ne hxy
   have hT := dsL₁_targets g
   have hL1 : ∀ e ∈ dsL₁ g, ∀ r, rg r ≠ e.1 := by
@@ -204,7 +205,7 @@ theorem dsF_axes (R : Regs T A) {n Wt : ℕ} (hn : 2 ≤ n) (hWt : Wt < 2 ^ pmW 
     intro e he
     rcases hT e he with h1 | h1 | h1 | h1 | h1 | h1 <;> rw [h1] <;> exact ne (fun e => by cases e)
   have s := ds_axes (body := body) h.irg (fun r => h.disj r (.o .uD)) (fun r => h.disj r (.o .tm))
-    (ne (fun e => by cases e)) hn hWt wl hwl (dsL₁ g) hL1 hL2 hL3
+    (ne (fun e => by cases e)) hB hWt wl hwl (dsL₁ g) hL1 hL2 hL3
     (dsOv g R X) (by rw [dsOv_rg h.ig, hu]) (by rw [dsOv_rg h.ig, ht])
   rw [dsAxesCost_eq₁] at s
   refine s.congr ?_
@@ -218,7 +219,7 @@ theorem dsF_axes (R : Regs T A) {n Wt : ℕ} (hn : 2 ≤ n) (hWt : Wt < 2 ^ pmW 
 
 set_option maxHeartbeats 1000000 in
 /-- **Phase 1.** -/
-theorem ds_P1 (R : Regs T A) {n Wt : ℕ} (hn : 2 ≤ n) (hd0 : 0 < d n) (hWt : Wt < 2 ^ pmW n)
+theorem ds_P1 (R : Regs T A) {n Wt : ℕ} (hB : Big n) (hd0 : 0 < d n) (hWt : Wt < 2 ^ pmW n)
     (wl : List (Fin (A + 4))) (hwl : wl.length = pmW n) (X : DsY t₀ → List (Fin (A + 4)))
     (hW : (X (.o .uW)).length = Wt) (h0 : ∀ y ∈ (dsP1Pre : List (DsY t₀)), X y = []) :
     ∃ X' : DsY t₀ → List (Fin (A + 4)),
@@ -232,6 +233,7 @@ theorem ds_P1 (R : Regs T A) {n Wt : ℕ} (hn : 2 ≤ n) (hd0 : 0 < d n) (hWt : 
       X' dsySTc = crtEnts ((crtRevAx (d n)).map (s n)) ∧
       dsRuns body (dsP1 rg g) (dsF rg g R X (pmW n) wl (pmVals n))
         (dsF rg g R X' (pmW n) wl (pmVals n)) (dsP1Cost n Wt) := by
+  have hn : 2 ≤ n := hB.1
   have hpre : ∀ y ∈ (dsP1Pre : List (DsY t₀)), X y = [] := h0
   simp only [dsP1Pre, List.mem_cons, List.not_mem_nil, or_false, forall_eq_or_imp,
     forall_eq] at h0
@@ -241,7 +243,7 @@ theorem ds_P1 (R : Regs T A) {n Wt : ℕ} (hn : 2 ≤ n) (hd0 : 0 < d n) (hWt : 
   have s1 := dsF_load (body := body) h R wl X (pmVals n) (.o .uW) 38 hwl
   rw [hW, ← dsV1_pm, dsV1_upd38] at s1
   -- `d` ticks
-  have hσ0 := dsV1_lt hn hWt (Nat.two_pow_pos _)
+  have hσ0 := dsV1_lt hB hWt (Nat.two_pow_pos _)
   have s2 := dsF_un (body := body) h R wl X (dsV1 n Wt 0) 3 (.o .uD) (hσ0 3) eD
   have hd3 : dsV1 n Wt 0 3 = d n := by simp [dsV1, pmNV, pmVal]
   rw [hd3, List.append_nil] at s2
@@ -249,10 +251,10 @@ theorem ds_P1 (R : Regs T A) {n Wt : ℕ} (hn : 2 ≤ n) (hd0 : 0 < d n) (hWt : 
   -- the loop
   have s3 := dsF_code (body := body) h R wl X₁ (dsV1 n Wt 0) (dsInitC_do (n := n) (Wt := Wt))
     hσ0 hwl
-  have s4 := dsF_axes (body := body) h R hn hWt wl hwl X₁ (by simp [hX₁]) (by simp [hX₁, eTm])
+  have s4 := dsF_axes (body := body) h R hB hWt wl hwl X₁ (by simp [hX₁]) (by simp [hX₁, eTm])
   set X₂ := fun y => dsAcc n Wt (dsL₁ g) (d n) (g y) ++ X₁ y with hX₂
   have s5 := dsF_code (body := body) h R wl X₂ (dsLV n Wt (d n)) (dsEndC_do (n := n) (Wt := Wt))
-    (dsLV_lt hn hWt le_rfl) hwl
+    (dsLV_lt hB hWt le_rfl) hwl
   have s6 := dsF_code (body := body) h R wl X₂ (dsV1 n Wt 0) (dsZ38_do (n := n) Wt) hσ0 hwl
   -- the chirp blocks
   have x2T : X₂ (.o .xT) = (ldcBlocks (List.ofFn (t n))).reverse := by
@@ -284,7 +286,7 @@ theorem ds_P1 (R : Regs T A) {n Wt : ℕ} (hn : 2 ≤ n) (hd0 : 0 < d n) (hWt : 
   have x2B : X₂ dsyB = preRecsB n Wt hd0 0 := by simp [hX₂, aB, hX₁, eB]
   have x2W : X₂ dsyWT = crtEnts ((crtRevAx (d n)).map (srcAx n)) := by simp [hX₂, aW, hX₁, eWT]
   have x2St : X₂ dsySTc = crtEnts ((crtRevAx (d n)).map (s n)) := by simp [hX₂, aSt, hX₁, eST]
-  have hpm := ds_pmVals_lt (n := n) hn
+  have hpm := ds_pmVals_lt (n := n) hB
   have s7 := dsF_moveR (body := body) (W := pmW n) h R wl X₂ (pmVals n) (.o .xT) (.s (.x .tSp))
     (fun e => by cases e) x2T x2TS
   rw [List.reverse_reverse, List.append_nil] at s7

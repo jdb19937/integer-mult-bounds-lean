@@ -54,14 +54,15 @@ theorem ds_vars_cost (W : ℕ) (v : Fin pmNV → ℕ) :
     List.cons_append, List.length_cons, List.length_nil]
 
 /-- The values pushed in one iteration. -/
-theorem ds_ax_vals (hn : 2 ≤ n) {i : ℕ} (hi : i < d n) (Wt : ℕ) :
+theorem ds_ax_vals (hB : Big n) {i : ℕ} (hi : i < d n) (Wt : ℕ) :
     (dsVarsL.map (dsAV n Wt i)).sum ≤
       9 * r n + 69 + 4 * (T n / r n) + 2 * Wt + 60 * (b n + 1) ^ 2 := by
+  have hn : 2 ≤ n := hB.1
   rw [ds_vars_sum]
   simp only [dsAV, dsLV, pmNV, Fin.isValue]
   norm_num [pmVal]
   have ht := dsT_le hn i
-  have hs := dsS_le hn hi
+  have hs := dsS_le hB hi
   have hP := dsP_le_Tr hn hi
   have hG := dsG_le_Tr hn i
   have hq : dsQ n i ≤ p n + 1 := by unfold dsQ; split_ifs <;> omega
@@ -90,12 +91,13 @@ theorem ds_sum_t (hn : 2 ≤ n) : (List.ofFn (t n)).sum ≤ T n := by
   exact h.trans (ds_d_mul_r_le hn)
 
 /-- `Σ_{i < d} s_i ≤ 2 T + 23 d`. -/
-theorem ds_sum_s (hn : 2 ≤ n) : (List.ofFn (s n)).sum ≤ 2 * T n + 23 * d n := by
+theorem ds_sum_s (hB : Big n) : (List.ofFn (s n)).sum ≤ 2 * T n + 23 * d n := by
+  have hn : 2 ≤ n := hB.1
   rw [ds_ofFn_s]
   have h := List.sum_le_length_nsmul ((List.range (d n)).map (dsS n)) (2 * r n + 23) (by
     intro x hx
     obtain ⟨i, hi, rfl⟩ := List.mem_map.1 hx
-    exact dsS_le hn (List.mem_range.1 hi))
+    exact dsS_le hB (List.mem_range.1 hi))
   simp only [List.length_map, List.length_range, smul_eq_mul] at h
   have := ds_d_mul_r_le hn
   nlinarith
@@ -115,10 +117,11 @@ theorem ds_tblC_le_of_two {n : ℕ} (hn : 2≤n) :
   nlinarith
 
 /-- The axis loop: the records cost `O(pmW · T)`, the rest is polynomial in `b`. -/
-theorem ds_loopCost_le (hn : 2 ≤ n) (Wt : ℕ) :
+theorem ds_loopCost_le (hB : Big n) (Wt : ℕ) :
     dsLoopCost n Wt ≤ d n * (28 * tblC (pmW n) (pmW n) + (4 * pmW n + 2) *
       (9 * r n + 69 + 4 * (T n / r n) + 2 * Wt + 60 * (b n + 1) ^ 2) +
         23 * (11 * pmW n + 8) + 4) + 2 * d n + 4 := by
+  have hn : 2 ≤ n := hB.1
   unfold dsLoopCost
   have h : ∑ i ∈ Finset.range (d n), (28 * tblC (pmW n) (pmW n) +
       ((dsVarsL.map fun x => pmW n * (4 * dsAV n Wt i x + 11) + 2 * dsAV n Wt i x + 8).sum + 1)
@@ -127,7 +130,7 @@ theorem ds_loopCost_le (hn : 2 ≤ n) (Wt : ℕ) :
         23 * (11 * pmW n + 8) + 4) := by
     refine Finset.sum_le_sum fun i hi => ?_
     rw [ds_vars_cost]
-    have := Nat.mul_le_mul_left (4 * pmW n + 2) (ds_ax_vals hn (Finset.mem_range.1 hi) Wt)
+    have := Nat.mul_le_mul_left (4 * pmW n + 2) (ds_ax_vals hB (Finset.mem_range.1 hi) Wt)
     omega
   rw [Finset.sum_const, Finset.card_range, smul_eq_mul] at h
   omega

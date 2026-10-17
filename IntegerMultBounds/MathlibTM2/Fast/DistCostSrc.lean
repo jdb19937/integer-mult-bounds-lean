@@ -256,13 +256,14 @@ theorem ds_vars_cost₁ (W : ℕ) (v : Fin pmNV → ℕ) :
   simp only [List.map_cons, List.map_nil, List.sum_cons, List.sum_nil]
   ring
 
-theorem ds_loopCost₁_le (hn : 2 ≤ n) (Wt : ℕ) :
+theorem ds_loopCost₁_le (hB : Big n) (Wt : ℕ) :
     dsLoopCost₁ n Wt ≤ d n * (28 * tblC (pmW n) (pmW n) + (4 * pmW n + 2) *
       (11 * r n + 95 + 4 * (T n / r n) + 2 * Wt + 63 * (b n + 1) ^ 2) +
         25 * (11 * pmW n + 8) + 4) + 2 * d n + 4 := by
+  have hn : 2 ≤ n := hB.1
   unfold dsLoopCost₁
   have hℓ := pm_ℓ_le hn
-  have hB : ℓ n ≤ 3 * (b n + 1) ^ 2 := by
+  have hBloc : ℓ n ≤ 3 * (b n + 1) ^ 2 := by
     have : b n + 1 ≤ (b n + 1) ^ 2 := Nat.le_self_pow (by norm_num) _
     omega
   have h : ∑ i ∈ Finset.range (d n), (28 * tblC (pmW n) (pmW n) +
@@ -275,9 +276,9 @@ theorem ds_loopCost₁_le (hn : 2 ≤ n) (Wt : ℕ) :
     have h34 : dsAV n Wt i 34 = dsL n i := by simp [dsAV, pmNV]
     have h35 : dsAV n Wt i 35 = dsS n i := by simp [dsAV, pmNV]
     rw [h34, h35]
-    have h1 := ds_ax_vals hn (Finset.mem_range.1 hi) Wt
+    have h1 := ds_ax_vals hB (Finset.mem_range.1 hi) Wt
     have h2 := ds_dsL_le (n := n) i
-    have h3 := dsS_le hn (Finset.mem_range.1 hi)
+    have h3 := dsS_le hB (Finset.mem_range.1 hi)
     have := Nat.mul_le_mul_left (4 * pmW n + 2)
       (show (dsVarsL.map (dsAV n Wt i)).sum + dsL n i + dsS n i ≤
         11 * r n + 95 + 4 * (T n / r n) + 2 * Wt + 63 * (b n + 1) ^ 2 by omega)
@@ -285,36 +286,39 @@ theorem ds_loopCost₁_le (hn : 2 ≤ n) (Wt : ℕ) :
   rw [Finset.sum_const, Finset.card_range, smul_eq_mul] at h
   omega
 
-theorem ds_recLenA_le (hn : 2 ≤ n) (Wt : ℕ) :
+theorem ds_recLenA_le (hB : Big n) (Wt : ℕ) :
     dsRecLenA n Wt ≤ d n * (9 * r n + 80 + 4 * (T n / r n) + 2 * Wt + 60 * (b n + 1) ^ 2) := by
+  have hn : 2 ≤ n := hB.1
   unfold dsRecLenA
   have h : ∑ i ∈ Finset.range (d n), ((dsFA.map (dsAV n Wt i)).sum + 11) ≤
       ∑ _i ∈ Finset.range (d n), (9 * r n + 80 + 4 * (T n / r n) + 2 * Wt + 60 * (b n + 1) ^ 2) := by
     refine Finset.sum_le_sum fun i hi => ?_
-    have h1 := ds_ax_vals hn (Finset.mem_range.1 hi) Wt
+    have h1 := ds_ax_vals hB (Finset.mem_range.1 hi) Wt
     have h2 := ds_fa_le (dsAV n Wt i)
     omega
   rw [Finset.sum_const, Finset.card_range, smul_eq_mul] at h
   exact h
 
-theorem ds_recLenB_le (hn : 2 ≤ n) (Wt : ℕ) :
+theorem ds_recLenB_le (hB : Big n) (Wt : ℕ) :
     dsRecLenB n Wt ≤ d n * (9 * r n + 80 + 4 * (T n / r n) + 2 * Wt + 60 * (b n + 1) ^ 2) := by
+  have hn : 2 ≤ n := hB.1
   unfold dsRecLenB
   have h : ∑ i ∈ Finset.range (d n), ((dsFB.map (dsAV n Wt i)).sum + 10) ≤
       ∑ _i ∈ Finset.range (d n), (9 * r n + 80 + 4 * (T n / r n) + 2 * Wt + 60 * (b n + 1) ^ 2) := by
     refine Finset.sum_le_sum fun i hi => ?_
-    have h1 := ds_ax_vals hn (Finset.mem_range.1 hi) Wt
+    have h1 := ds_ax_vals hB (Finset.mem_range.1 hi) Wt
     have h2 := ds_fb_le (dsAV n Wt i)
     omega
   rw [Finset.sum_const, Finset.card_range, smul_eq_mul] at h
   exact h
 
 /-- The record lengths: `O(T)` plus a polynomial. -/
-theorem ds_recLen_le (hn : 2 ≤ n) {Wt : ℕ} (hWt : Wt ≤ 500 * (b n + 1)) :
+theorem ds_recLen_le (hB : Big n) {Wt : ℕ} (hWt : Wt ≤ 500 * (b n + 1)) :
     dsRecLenA n Wt ≤ 13 * T n + 1200 * (b n + 1) ^ 3 ∧
       dsRecLenB n Wt ≤ 13 * T n + 1200 * (b n + 1) ^ 3 := by
-  have hA := ds_recLenA_le hn Wt
-  have hB := ds_recLenB_le hn Wt
+  have hn : 2 ≤ n := hB.1
+  have hA := ds_recLenA_le hB Wt
+  have hBloc := ds_recLenB_le hB Wt
   have hdr := ds_d_mul_r_le hn
   have hTr : d n * (T n / r n) ≤ T n := by
     have := ds_d_mul_r_le hn
@@ -337,13 +341,14 @@ theorem ds_recLen_le (hn : 2 ≤ n) {Wt : ℕ} (hWt : Wt ≤ 500 * (b n + 1)) :
     calc d n * (80 + 2 * Wt + 60 * (b n + 1) ^ 2) ≤ (b n + 1) * (1200 * (b n + 1) ^ 2) :=
           Nat.mul_le_mul (by omega) this
       _ = 1200 * (b n + 1) ^ 3 := by ring
-  rw [e] at hA hB
+  rw [e] at hA hBloc
   omega
 
 /-- The CRT loop: `d` iterations with the offset search of `O(r)` atoms. -/
-theorem ds_crtCost_le (hn : 2 ≤ n) :
+theorem ds_crtCost_le (hB : Big n) :
     dsCrtCost n ≤ d n * ((10 * r n + 152) * tblC (pmW n) (pmW n) + pmW n * (8 * r n + 103) +
       4 * r n + 58) + 2 * d n + 4 := by
+  have hn : 2 ≤ n := hB.1
   unfold dsCrtCost
   have h : ∑ i ∈ Finset.range (d n), ((dsCK₁ n + 17) * tblC (pmW n) (pmW n) +
       ((pmW n * (4 * dsMu n i + 11) + 2 * dsMu n i + 8) + 1) + 3) ≤
@@ -351,7 +356,7 @@ theorem ds_crtCost_le (hn : 2 ≤ n) :
         pmW n * (8 * r n + 103) + 4 * r n + 58) := by
     refine Finset.sum_le_sum fun i hi => ?_
     have h1 := dsMu_lt n i (Finset.mem_range.1 hi)
-    have h2 := dsS_le hn (Finset.mem_range.1 hi)
+    have h2 := dsS_le hB (Finset.mem_range.1 hi)
     have h3 : pmW n * (4 * dsMu n i + 11) ≤ pmW n * (8 * r n + 103) :=
       Nat.mul_le_mul_left _ (by omega)
     have e : dsCK₁ n + 17 = 10 * r n + 152 := by unfold dsCK₁; ring
@@ -419,11 +424,11 @@ theorem ds_main_bound (hbig : Big n) :
   -- phase 1
   have hP1 : dsP1Cost n (dsWW n) ≤ 1200 * (pmW n * T n) + 2000000 * (b n + 1) ^ 4 := by
     unfold dsP1Cost
-    have hl := ds_loopCost₁_le hn (dsWW n)
+    have hl := ds_loopCost₁_le hbig (dsWW n)
     have hl2 := ds_ar_loop₁ (T := T n) (Tr := T n / r n) hB1 hd hdr hdTr hW hC hWt
-    have hrec := ds_recLen_le hn hWt
+    have hrec := ds_recLen_le hbig hWt
     have hst := ds_sum_t hn
-    have hss := ds_sum_s hn
+    have hss := ds_sum_s hbig
     have h1 : dsWW n * (4 * pmW n + 10) ≤ 500 * (b n + 1) * (4 * (20 * (b n + 1)) + 10) :=
       Nat.mul_le_mul hWt (by omega)
     have h2 : pmW n * (4 * d n + 11) ≤ 20 * (b n + 1) * (4 * (b n + 1) + 11) :=
@@ -438,7 +443,7 @@ theorem ds_main_bound (hbig : Big n) :
   have hPC : dsPCCost n ≤ 200 * (pmW n * T n) + 3000000 * ((b n + 1) ^ 3 * r n) +
       4000000 * (b n + 1) ^ 3 := by
     unfold dsPCCost
-    have hc := ds_crtCost_le hn
+    have hc := ds_crtCost_le hbig
     have hcd : d n * ((10 * r n + 152) * tblC (pmW n) (pmW n) + pmW n * (8 * r n + 103) +
         4 * r n + 58) ≤
         10 * ((b n + 1) ^ 3 * r n) * 18600 + 152 * 18600 * (b n + 1) ^ 3 +

@@ -52,11 +52,12 @@ theorem dsV1_scr (n Wt w : ℕ) (j : Fin pmNV) (h1 : 31 ≤ j.val) (h2 : j.val <
     dsV1 n Wt w j = 0 := by
   unfold dsV1; split_ifs <;> omega
 
-theorem dsV1_lt {n Wt w : ℕ} (hn : 2 ≤ n) (hWt : Wt < 2 ^ pmW n) (hw : w < 2 ^ pmW n)
+theorem dsV1_lt {n Wt w : ℕ} (hB : Big n) (hWt : Wt < 2 ^ pmW n) (hw : w < 2 ^ pmW n)
     (j : Fin pmNV) : dsV1 n Wt w j < 2 ^ pmW n := by
+  have hn : 2 ≤ n := hB.1
   unfold dsV1
   split_ifs
-  · exact ds_pmVal_lt hn j
+  · exact ds_pmVal_lt hB j
   · exact hWt
   · exact hw
   · exact Nat.two_pow_pos _
@@ -261,19 +262,21 @@ def dsCE : TblCode pmNV :=
   tblBlock pmNV [.zero 32, .inc 32] (.sub 3 32 33) ;; tblPow2 34 33 35 ;; tblPow2 36 11 35 ;;
     .ins (.sub 34 36 31)
 
-theorem dsCN_do (hn : 2 ≤ n) :
+theorem dsCN_do (hB : Big n) :
     TblDo A (pmW n) w' dsCN ⟨dsV1 n Wt w, []⟩ (DsPost (dsV1 n Wt w) (logT n - ℓ n)) 1 := by
+  have hn : 2 ≤ n := hB.1
   have h1 := pm_ℓ_le_logT hn
-  have h2 := ds_pmVal_lt hn 5
+  have h2 := ds_pmVal_lt hB 5
   refine TblDo.insX _ ?_ ⟨rfl, ?_, fun j hj => ?_⟩
   · simp [TblIns.fits, dsV1, pmNV]; exact ⟨h1, h2⟩
   · simp [TblIns.exact, dsV1, pmNV, pmVal]
   · simp [TblIns.exact, ds_upd_off hj (k := 31) (by decide) (by decide)]
 
-theorem dsCD_do (hn : 2 ≤ n) :
+theorem dsCD_do (hB : Big n) :
     TblDo A (pmW n) w' dsCD ⟨dsV1 n Wt w, []⟩ (DsPost (dsV1 n Wt w) (d n - 1)) 3 := by
+  have hn : 2 ≤ n := hB.1
   have h1 := one_le_d hn
-  have h2 := ds_pmVal_lt hn 3
+  have h2 := ds_pmVal_lt hB 3
   have h3 : 1 < 2 ^ pmW n := Nat.one_lt_two_pow (by have := pmW_ge n; omega)
   refine TblDo.block _ _ ?_ ⟨rfl, ?_, fun j hj => ?_⟩
   · simp [tblFitsList, TblIns.fits, TblIns.exact, dsV1, pmNV, pmVal]
@@ -292,11 +295,12 @@ theorem ds_small2 (n : ℕ) {x : ℕ} (hx : x ≤ 100 * (b n + 1) ^ 2) : x < 2 ^
   have h4 : 1 ≤ (b n + 1) ^ 2 := Nat.one_le_pow _ _ (by omega)
   omega
 
-theorem dsCWL_do (hn : 2 ≤ n) :
+theorem dsCWL_do (hB : Big n) :
     TblDo A (pmW n) w' dsCWL ⟨dsV1 n Wt w, []⟩
       (DsPost (dsV1 n Wt w) ((logT n - ℓ n) ^ 2 + (logT n - ℓ n) + 4)) 7 := by
+  have hn : 2 ≤ n := hB.1
   have h1 := pm_ℓ_le_logT hn
-  have h2 := ds_pmVal_lt hn 5
+  have h2 := ds_pmVal_lt hB 5
   have hL := pm_logT_le hn
   obtain ⟨N, hN⟩ : ∃ N, logT n - ℓ n = N := ⟨_, rfl⟩
   have hNb : N ≤ b n + 2 := by omega
@@ -350,25 +354,26 @@ theorem dsCTop_do (hw : 4 * w + 2 < 2 ^ pmW n) :
 /-- The atoms of `dsCE`. -/
 def dsEK (n : ℕ) : ℕ := 4 * (d n - 1) + 4 * numHalf n + 14
 
-theorem dsCE_do (hn : 2 ≤ n) :
+theorem dsCE_do (hB : Big n) :
     TblDo A (pmW n) w' dsCE ⟨dsV1 n Wt w, []⟩ (DsPost (dsV1 n Wt w) (dsE n)) (dsEK n) := by
+  have hn : 2 ≤ n := hB.1
   set σ := dsV1 n Wt w with hσ
   have hd1 := one_le_d hn
   have hh := numHalf_lt hd1
   have hdb := d_le_b n
   have hdW : d n - 1 < pmW n := by have := pmW_ge n; omega
   have h2d : 2 ^ (d n - 1) < 2 ^ pmW n := Nat.pow_lt_pow_right (by norm_num) hdW
-  have hB : TblDo A (pmW n) w' (tblBlock pmNV [.zero 32, .inc 32] (.sub 3 32 33)) ⟨σ, []⟩
+  have hBloc : TblDo A (pmW n) w' (tblBlock pmNV [.zero 32, .inc 32] (.sub 3 32 33)) ⟨σ, []⟩
       (fun s => s.acc = [] ∧ s.val 33 = d n - 1 ∧ s.val 11 = numHalf n ∧
         ∀ k : Fin pmNV, (k.val < 31 ∨ 38 ≤ k.val) → s.val k = σ k) 3 := by
     refine TblDo.block _ _ ?_ ⟨rfl, ?_, ?_, fun k hk => ?_⟩
     · simp [tblFitsList, TblIns.fits, TblIns.exact, σ, dsV1, pmNV, pmVal]
-      exact ⟨by have := pmW_ge n; omega, hd1, ds_d_lt hn⟩
+      exact ⟨by have := pmW_ge n; omega, hd1, ds_d_lt hB⟩
     · simp [tblExactList, TblIns.exact, σ, dsV1, pmNV, pmVal]
     · simp [tblExactList, TblIns.exact, σ, dsV1, pmNV, pmVal]
     · simp [tblExactList, TblIns.exact, ds_upd_off hk (k := 32) (by decide) (by decide),
         ds_upd_off hk (k := 33) (by decide) (by decide)]
-  refine (hB.seq (K₂ := 4 * (d n - 1) + 5 + (4 * numHalf n + 5 + 1)) fun s ⟨h1, h2, h3, h4⟩ =>
+  refine (hBloc.seq (K₂ := 4 * (d n - 1) + 5 + (4 * numHalf n + 5 + 1)) fun s ⟨h1, h2, h3, h4⟩ =>
     ((tblPow2_do (A := A) (W := pmW n) (w := w') (c := 34) (e := 33) (i := 35) (by decide)
       (by decide) (by decide) s (by rw [h2]; exact hdW)).seq
       (K₂ := 4 * numHalf n + 5 + 1) fun s' ⟨g1, g2, g3, g4⟩ =>

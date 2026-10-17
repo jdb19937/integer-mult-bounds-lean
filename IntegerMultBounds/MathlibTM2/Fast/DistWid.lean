@@ -186,15 +186,16 @@ variable (h : DsLay rg g)
 include h
 
 /-- **The widths.** -/
-theorem ds_wid_runs (R : Regs T A) {n : ℕ} (hn : 2 ≤ n) (wl : List (Fin (A + 4)))
+theorem ds_wid_runs (R : Regs T A) {n : ℕ} (hB : Big n) (wl : List (Fin (A + 4)))
     (hwl : wl.length = pmW n) (X : DsY t₀ → List (Fin (A + 4))) (huw : X (.o .uw) = [])
     (huW : X (.o .uW) = []) :
     dsRuns body (dsWid rg g) (dsF rg g R X (pmW n) wl (pmVals n))
       (dsF rg g R (Function.update (Function.update X (.o .uw) (List.replicate (dsW n) tick))
         (.o .uW) (List.replicate (dsWW n) tick)) (pmW n) wl (pmVals n)) (dsWidCost₀ n) := by
+  have hn : 2 ≤ n := hB.1
   have hσ0 : ∀ j : Fin pmNV, 31 ≤ j.val → j.val < 38 → pmVals n j = 0 :=
     fun j h1 _ => pmVal_ge n j (by omega)
-  have hσ : ∀ j, pmVals n j < 2 ^ pmW n := fun j => ds_pmVals_lt hn j
+  have hσ : ∀ j, pmVals n j < 2 ^ pmW n := fun j => ds_pmVals_lt hB j
   have s1 := dsF_step (body := body) h R wl X (pmVals n) (.o .uw) (dsWidC_post hn) hσ0 hσ hwl huw
   simp only [List.append_nil] at s1
   have s2 := dsF_step (body := body) h R wl

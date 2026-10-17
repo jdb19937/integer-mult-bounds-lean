@@ -77,7 +77,7 @@ theorem ds_main_runs (R : Regs T A) {n : ℕ} (hbig : Big n) (wl : List (Fin (A 
     dsRuns body (dsMain rg g) (dsF rg g R (fun _ => []) (pmW n) wl (pmVals n))
       (dsF rg g R (dsFinal n (srcHd0 hbig)) (pmW n) wl (pmVals n)) (dsMainCost n) := by
   obtain ⟨-, c2, -, -, -, -, c7, c8, c9, c10, c11, c12, c13⟩ := ds_src_widths hbig
-  have s1 := ds_wid_runs (body := body) h R hbig.1 wl hwl (fun _ => []) rfl rfl
+  have s1 := ds_wid_runs (body := body) h R hbig wl hwl (fun _ => []) rfl rfl
   set X₁ : DsY t₀ → List (Fin (A + 4)) := Function.update (Function.update (fun _ => [])
     (.o .uw) (List.replicate (dsW n) tick)) (.o .uW) (List.replicate (dsWW n) tick) with hX₁
   have hX₁W : X₁ (.o .uW) = List.replicate (dsWW n) tick := by simp [hX₁]
@@ -180,7 +180,7 @@ theorem dsAll_exec (M : SrcMach t₀ T Q) (hA : 4 ≤ prime + K) {rg : TblR pmNV
   have hlay := ds_lay M hrg hio hMio hdisj
   set g := dsGY M.rg io with hgdef
   obtain ⟨v₁, S₁, m₁, hu₁, hm₁, he₁, hi₁, ho₁, hL₁, hv₁, hwr₁, hwn₁, hacc₁, hz₁, hT₁, hS₁, hus₁,
-    hk₁⟩ := pmParams_exec (body := body) hA hrg huN hoT hoS hTS us hus husT husS hnd hbig.1 v S
+    hk₁⟩ := pmParams_exec (body := body) hA hrg huN hoT hoS hTS us hus husT husS hnd hbig v S
     hlen hS
   have hg₁ : ∀ y, S₁.R (g y) = [] := fun y => by
     rw [hk₁ _ (fun r => hdisj r y) (hgT y) (hgS y) (fun x hx => hgus x hx y)]

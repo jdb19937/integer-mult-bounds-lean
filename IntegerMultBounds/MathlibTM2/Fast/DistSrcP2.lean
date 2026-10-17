@@ -203,7 +203,7 @@ include h
 
 set_option maxHeartbeats 2000000 in
 /-- **Phase 2a.** -/
-theorem ds_P2a (R : Regs T A) {n w Wt : ℕ} (hn : 2 ≤ n) (hgw : gamma n ≤ w)
+theorem ds_P2a (R : Regs T A) {n w Wt : ℕ} (hB : Big n) (hgw : gamma n ≤ w)
     (hNw : logT n - ℓ n ≤ w) (hw4 : 4 * w + 2 < 2 ^ pmW n) (wl : List (Fin (A + 4)))
     (hwl : wl.length = pmW n) (X : DsY t₀ → List (Fin (A + 4))) (huw : (X (.o .uw)).length = w)
     (huW : (X (.o .uW)).length = Wt) (htm : X (.o .tm) = [])
@@ -212,7 +212,7 @@ theorem ds_P2a (R : Regs T A) {n w Wt : ℕ} (hn : 2 ≤ n) (hgw : gamma n ≤ w
       (dsF rg g R (dsUpdL X (dsP2aW n w Wt)) (pmW n) wl (dsV1 n 0 w)) (dsP2aCost n w Wt) := by
   have hw2 : w < 2 ^ pmW n := by omega
   set V := dsV1 n 0 w with hV
-  have hVlt : ∀ j, V j < 2 ^ pmW n := dsV1_lt hn (Nat.two_pow_pos _) hw2
+  have hVlt : ∀ j, V j < 2 ^ pmW n := dsV1_lt hB (Nat.two_pow_pos _) hw2
   have hV0 := dsV1_scr n 0 w
   have hz : ∀ y ∈ (dsP2aW (A := A) (t₀ := t₀) n w Wt).map Prod.fst, X y = [] := h0
   simp only [dsP2aW, dsP2aW₁, dsP2wcp, dsP2dcp, dsP2ncp, List.map_append, List.map_cons, List.map_nil,
@@ -257,7 +257,7 @@ theorem ds_P2a (R : Regs T A) {n w Wt : ℕ} (hn : 2 ≤ n) (hgw : gamma n ≤ w
       dsUpdL X ws y = [] := fun ws y hy hn' => by rw [dsUpdL_off _ _ _ hn']; exact hz y hy
   -- `d - 1` and its copies
   have s5 := dsF_step (body := body) h R wl (dsUpdL X W₃) V (.s (.k .ax))
-    (dsCD_do (A := A) (w' := pmW n) (Wt := 0) (w := w) hn) hV0 hVlt hwl (l := [])
+    (dsCD_do (A := A) (w' := pmW n) (Wt := 0) (w := w) hB) hV0 hVlt hwl (l := [])
     (off _ _ (by simp [dsP2aW]) (by simp [hW₃, hW₂, hW₁, dsP2aW₁, dsP2wcp]))
   rw [List.append_nil, dsUpdL_snoc] at s5
   set W₄ := W₃ ++ [((.s (.k .ax) : DsY t₀), List.replicate (d n - 1) (tick : Fin (A + 4)))]
@@ -276,7 +276,7 @@ theorem ds_P2a (R : Regs T A) {n w Wt : ℕ} (hn : 2 ≤ n) (hgw : gamma n ≤ w
     with hW₅
   -- `N` and its copy
   have s7 := dsF_step (body := body) h R wl (dsUpdL X W₅) V (.s (.v .shS))
-    (dsCN_do (A := A) (w' := pmW n) (Wt := 0) (w := w) hn) hV0 hVlt hwl (l := [])
+    (dsCN_do (A := A) (w' := pmW n) (Wt := 0) (w := w) hB) hV0 hVlt hwl (l := [])
     (off _ _ (by simp [dsP2aW]) (by simp [hW₅, hW₄, hW₃, hW₂, hW₁, dsP2aW₁, dsP2wcp, dsP2dcp]))
   rw [List.append_nil, dsUpdL_snoc] at s7
   set W₆ := W₅ ++ [((.s (.v .shS) : DsY t₀), List.replicate (logT n - ℓ n) (tick : Fin (A + 4)))]
@@ -299,7 +299,7 @@ theorem ds_P2a (R : Regs T A) {n w Wt : ℕ} (hn : 2 ≤ n) (hgw : gamma n ≤ w
   set W₈ := W₇ ++ [((.s (.x .gR) : DsY t₀), List.replicate (w - gamma n) (tick : Fin (A + 4)))]
     with hW₈
   have s10 := dsF_step (body := body) h R wl (dsUpdL X W₈) V (.s (.v .shR))
-    (dsCwN_do (A := A) (w' := pmW n) (n := n) hn hNw hw2) hV0 hVlt hwl (l := [])
+    (dsCwN_do (A := A) (w' := pmW n) (n := n) hB hNw hw2) hV0 hVlt hwl (l := [])
     (off _ _ (by simp [dsP2aW]) (by simp [hW₈, hW₇, hW₆, hW₅, hW₄, hW₃, hW₂, hW₁, dsP2aW₁, dsP2wcp,
       dsP2dcp]))
   rw [List.append_nil, dsUpdL_snoc] at s10

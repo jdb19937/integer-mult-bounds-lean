@@ -36,12 +36,13 @@ lemma compactBdRetuneFile_pre (n : ℕ) (R : Regs mnT bdA) (h : BdPre R n) :
       (fun he => hx .lK (mnLay_inj he).symm)]
     exact h.lay x hx
 
-lemma compactBdRetune_runs (n : ℕ) (hn : 2≤n) (mainP : MnPr bdA)
+lemma compactBdRetune_runs (n : ℕ) (hB : Big n) (mainP : MnPr bdA)
     (R : Regs mnT bdA) (h : BdPre R n) :
     dsRuns (mnBody mnLb mainP) (compactDsRetune mnPm (bdIo .lK)) R
       (compactBdRetuneFile n R) (compactDsRetuneCost n (pmW n) (K n)) := by
+  have hn : 2 ≤ n := hB.1
   have hr := compactDsRetune_runs (mnBody mnLb mainP) mnPm bdPm_inj (bdIo .lK)
-    (fun q => mnRg_ne_lay _ _) n (pmW n) (pmW_ge n) (bdWl n) (bdWl_length n) R (ds_pmVals_lt hn)
+    (fun q => mnRg_ne_lay _ _) n (pmW n) (pmW_ge n) (bdWl n) (bdWl_length n) R (ds_pmVals_lt hB)
   have hin : R=dsOv mnPm R (bdρ n) := dsOv_eq_of bdPm_inj h.pm (fun _ _ => rfl)
   rw [←hin,h.io] at hr
   simpa only [compactBdRetuneFile,bdO,dsSrcO,List.length_replicate] using hr
@@ -59,9 +60,10 @@ theorem compactBdWires_spec : ∀ᶠ n in atTop, ∀ mainP : MnPr bdA,
       S'.inp=S.inp ∧ S'.out=S.out ∧ S'.L=S.L ∧ (∀ j,S'.R (mnι j)=[]) ∧
       (∀ x,S'.R (mnLay x)=mnσ (blP₀ dsW n) (compactDsyV₀ n) x) ∧
       ∀ r,bdWKeep r → S'.R (mnRg r)=S.R (mnRg r) := by
-  filter_upwards [eventually_ge_atTop 2,compactDsyWires_spec] with n hn hwire
+  filter_upwards [eventually_big,compactDsyWires_spec] with n hbig hwire
+  have hn : 2 ≤ n := hbig.1
   intro mainP v S hL hι hpre
-  obtain ⟨v₁,m₁,hu₁,hc₁,he₁⟩ := compactBdRetune_runs n hn mainP S.R hpre v S rfl
+  obtain ⟨v₁,m₁,hu₁,hc₁,he₁⟩ := compactBdRetune_runs n hbig mainP S.R hpre v S rfl
   have hi : ∀ j,compactBdRetuneFile n S.R (mnι j)=[] := by
     intro j
     rw [compactBdRetuneFile_off n S.R _ (fun q => mnRg_ne_ι _ _)

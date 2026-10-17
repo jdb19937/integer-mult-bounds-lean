@@ -16,7 +16,7 @@ every size of `Mult/Sizes.lean` from the operand length `n ≥ 2`.
   (`Sizes.le_iroot_iff`), `⌊√x⌋` (`Nat.le_sqrt`), the least `a` with `t ≤ a^4`.
 * **Sizes** for every `n ≥ 2`, with `B = b n`: `1 ≤ log₂ T ≤ B + 2`, `1 ≤ ℓ ≤ log₂ T`,
   `N ≤ 2^(B + 4)`, every source length `s_i ≤ 2 R + N (2d + 5) + 2` with `R = 2^(ℓ - 1)`,
-  `S < 2^(3B + 6)` (`pm_S_lt`; for `d ≥ 2` through the room `8 d² N + 4d ≤ R`), `α^4 < 2^(3B + 8)`,
+  `S < 2^(3B + 6)` (`pm_S_lt`, for `Big n`, through the room `8 d² N + 4d ≤ R`), `α^4 < 2^(3B + 8)`,
   `p α² < 2^(4B + 11)`. Every value a parameter program forms is below `2^(4B + 16)`.
 -/
 
@@ -123,15 +123,26 @@ theorem pm_ℓ_le_logT (hn : 2 ≤ n) : ℓ n ≤ logT n := by
 theorem pm_ℓ_le (hn : 2 ≤ n) : ℓ n ≤ b n + 2 := (pm_ℓ_le_logT hn).trans (pm_logT_le hn)
 
 theorem pm_four_d_sq_le (hn : 2 ≤ n) : 4 * d n ^ 2 ≤ b n + 4 := by
-  rcases Nat.lt_or_ge (d n) 2 with h | h
-  · have := one_le_d hn
-    have e : d n = 1 := by omega
-    rw [e]; omega
-  · have h4 : d n ^ 4 ≤ b n := pow_le_b_of (k := 4) (by unfold powerCap; norm_num) (one_le_d hn)
-    have h2 : 4 ≤ d n ^ 2 := by nlinarith
-    have : 4 * d n ^ 2 ≤ d n ^ 4 := by
-      calc 4 * d n ^ 2 ≤ d n ^ 2 * d n ^ 2 := Nat.mul_le_mul_right _ h2
-        _ = d n ^ 4 := by ring
+  have hroot : d n ^ 32 ≤ b n ^ 9 := d_pow_le n
+  rcases Nat.lt_or_ge (d n) 4 with h | h
+  · -- `d ≤ 3`: `d = 2` forces `b ≥ 12` and `d = 3` forces `b ≥ 50`
+    have hd := one_le_d hn
+    interval_cases hd' : d n
+    · omega
+    · by_contra hc
+      have hb : b n ≤ 11 := by omega
+      have := Nat.pow_le_pow_left hb 9
+      norm_num at hroot this
+      omega
+    · by_contra hc
+      have hb : b n ≤ 49 := by omega
+      have := Nat.pow_le_pow_left hb 9
+      norm_num at hroot this
+      omega
+  · have h3 : d n ^ 3 ≤ b n := pow_le_b_of (k := 3) (by unfold powerCap; norm_num) (one_le_d hn)
+    have : 4 * d n ^ 2 ≤ d n ^ 3 := by
+      calc 4 * d n ^ 2 ≤ d n * d n ^ 2 := Nat.mul_le_mul_right _ h
+        _ = d n ^ 3 := by ring
     omega
 
 theorem pm_N_le (hn : 2 ≤ n) : N n ≤ 2 ^ (b n + 4) := by
@@ -171,18 +182,9 @@ theorem pm_one_le_modulus (N x₀ a i : ℕ) : 1 ≤ modulus N x₀ a i := by
   unfold modulus modA modB
   split_ifs <;> omega
 
-/-- The room `8 d² N + 4 d ≤ 2^(ℓ - 1)` for `d ≥ 2`, as in `Sizes.Big.moduli_room`. -/
-theorem pm_room (hn : 2 ≤ n) (hd : 2 ≤ d n) : 8 * d n ^ 2 * N n + 4 * d n ≤ 2 ^ (ℓ n - 1) := by
-  apply CompactDyadicPrecision.modulus_room hd
-    (pow_le_b_of (k := 7) (by decide : 7 ≤ powerCap) (by omega))
-  · have hb := b_le_two_mul_logT hn
-    have hlog := logT_le_dℓ (by omega : 1 ≤ d n)
-    calc
-      b n ≤ 2 * logT n := hb
-      _ ≤ 2 * (d n * ℓ n) := Nat.mul_le_mul_left 2 hlog
-      _ = 2 * d n * ℓ n := by ring
-  · exact oddProd_pos (d n)
-  · exact oddProd_le (d n)
+/-- The room `8 d² N + 4 d ≤ 2^(ℓ - 1)`: `Sizes.Big.moduli_room`. -/
+theorem pm_room (hn : Big n) : 8 * d n ^ 2 * N n + 4 * d n ≤ 2 ^ (ℓ n - 1) :=
+  hn.moduli_room
 
 /-- The start of the moduli at `n`. -/
 def pmX0 (n : ℕ) : ℕ := start (d n) (N n) (2 ^ (ℓ n - 1))
@@ -209,7 +211,8 @@ theorem pm_modBound_lt (hn : 2 ≤ n) {i : ℕ} (hi : i < d n) :
   unfold pmX0
   omega
 
-theorem pm_S_lt (hn : 2 ≤ n) : S n < 2 ^ (3 * b n + 6) := by
+theorem pm_S_lt (hB : Big n) : S n < 2 ^ (3 * b n + 6) := by
+  have hn : 2 ≤ n := hB.1
   have hd1 := one_le_d hn
   have hb1 := one_le_b hn
   set D := d n with hD
@@ -236,7 +239,7 @@ theorem pm_S_lt (hn : 2 ≤ n) : S n < 2 ^ (3 * b n + 6) := by
       calc 2 = 2 ^ 1 := by norm_num
         _ ≤ 2 ^ b n := pm_two_pow_le hb1
     omega
-  · have hroom := pm_room hn h
+  · have hroom := pm_room hB
     have hM3 : M ≤ 2 ^ (ℓ n + 1) := by
       have hl := pm_one_le_ℓ hn
       have e : 2 ^ (ℓ n + 1) = 4 * R := by

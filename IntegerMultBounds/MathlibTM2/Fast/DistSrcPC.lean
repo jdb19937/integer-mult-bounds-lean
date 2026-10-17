@@ -83,7 +83,7 @@ theorem ds_PC (R : Regs T A) {n : ℕ} (hbig : Big n) (wl : List (Fin (A + 4)))
   have ne : ∀ {x y : DsY t₀}, x ≠ y → g x ≠ g y := fun hxy => h.ig.ne hxy
   -- init
   have s1 := dsF_code (body := body) h R wl X (pmVals n) (dsCInit_do (n := n))
-    (ds_pmVals_lt hn) hwl
+    (ds_pmVals_lt hbig) hwl
   -- the loop
   have hLC1 : ∀ e ∈ dsLC (g dsyMT), ∀ r, rg r ≠ e.1 := by simp [dsLC, h.disj]
   have hLC2 : ∀ e ∈ dsLC (g dsyMT), e.1 ≠ g (.o .uD) := by

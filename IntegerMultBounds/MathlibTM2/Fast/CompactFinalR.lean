@@ -34,7 +34,7 @@ theorem compactMainInputDistR_exec_eventually
         MnDistOut (embStk compactMnLegacyReg S).R N (dsW N) (bdE N)
           (mnσ (blP₀ dsW N) (compactDsyV₀ N)) ∧
         MnMid (embStk compactMnLegacyReg S) x y N := by
-  filter_upwards [compactBdDist_entry_eventually hP,eventually_ge_atTop 2] with N hdist hN
+  filter_upwards [compactBdDist_entry_eventually hP,Mult.Sizes.eventually_big] with N hdist hN
   intro main x y hlen
   let old : MnPr bdA := .act .done
   obtain ⟨v₁,S₁,m₁,hm₁,he₁,hfront⟩ := mn_front_exec (body := mnBody mnLb old) (A := bdA) x y
@@ -129,7 +129,7 @@ theorem compactCompletedR_mulInTime
       ∃ m v S, m ≤ compactRetunedPreTimeR extra n ∧
         Exec (compactCompletedTableR p) p (Store.only compactMainV₀ .inp (pairEnc (x,y))) m (mk v S) ∧
         S.inp=[] ∧ S.out=encodingNatBool.encode (x*y) ∧ ∀ k,S.L k=[]) :
-    MulInTime ((2^34:ℝ)⁻¹) := by
+    MulInTime ((2^33:ℝ)⁻¹) := by
   obtain ⟨Cs, hCs⟩ := hcost
   apply compactMulInTime_of_main_exec (compactCompletedTableR p) (compactMainOldProc .main)
     compactMainV₀ compactRetunedDist compactRetunedCFR compactRetunedCOR (compactCompletedPushR p)
@@ -194,18 +194,18 @@ theorem compactRetunedPrefixR_exec : ∀ᶠ n in atTop, ∀ x y, (pairEnc (x,y))
     exact hs₁.1 k
 
 /-- **The rounded compact multiplier.** One fixed finite Mathlib machine with the rounded
-synthetic transforms multiplies every pair in worst-case time `O(n (log n)^(1-2^-34))`, given the
+synthetic transforms multiplies every pair in worst-case time `O(n (log n)^(1-2^-33))`, given the
 cost bound of the rounded transforms. -/
 theorem compactR_mulInTime
     (hcost : ∃ C : ℝ, ∀ᶠ n in atTop,
       ((compactRetunedCFR n + compactRetunedCOR n : ℕ) : ℝ) ≤ C * CompactTotal.conv n) :
-    MulInTime ((2^34:ℝ)⁻¹) :=
+    MulInTime ((2^33:ℝ)⁻¹) :=
   compactCompletedR_mulInTime hcost compactRetunedPrefixR 16 compactRetunedPrefixR_exec
 
 /-- **The rounded compact multiplier**, with no remaining hypothesis: one fixed finite Mathlib
 machine with the rounded synthetic transforms multiplies every pair in worst-case time
-`O(n (log n)^(1-2^-34))`. -/
-theorem compactR_mulInTime_final : MulInTime ((2^34:ℝ)⁻¹) :=
+`O(n (log n)^(1-2^-33))`. -/
+theorem compactR_mulInTime_final : MulInTime ((2^33:ℝ)⁻¹) :=
   compactR_mulInTime compactRetunedR_transform_cost_le
 
 end

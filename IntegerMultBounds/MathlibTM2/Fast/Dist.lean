@@ -214,16 +214,17 @@ def dsPhase1Cost (n Wt : ℕ) : ℕ :=
 /-- **Phase 1.** From the parameter layout and `Wt` symbols on `uW`, with the records, streams
 and work registers empty: the records and the chirp streams in place, `Wt` in variable `38`. -/
 theorem ds_phase1 (hrg : Function.Injective rg) (hio : Function.Injective io)
-    (hdisj : ∀ r x, rg r ≠ io x) {n Wt : ℕ} (hn : 2 ≤ n) (hd0 : 0 < d n)
+    (hdisj : ∀ r x, rg r ≠ io x) {n Wt : ℕ} (hB : Big n) (hd0 : 0 < d n)
     (hWt : Wt < 2 ^ pmW n) (wl : List (Fin (A + 4))) (hwl : wl.length = pmW n) (R : Regs T A)
     (huW : (R (io .uW)).length = Wt)
     (hR0 : ∀ x ∈ [DsR.recA, .recB, .tS, .sS, .uD, .tm, .xT, .xS], R (io x) = []) :
     dsRuns body (dsPhase1 rg io) (dsOv rg R (tblRho (pmW n) wl wl ⟨pmVals n, []⟩))
       (dsOv rg (dsR1 io n Wt hd0 R) (tblRho (pmW n) wl wl ⟨dsV1 n Wt 0, []⟩))
       (dsPhase1Cost n Wt) := by
+  have hn : 2 ≤ n := hB.1
   have ho : ∀ x r, rg r ≠ io x := fun x r => hdisj r x
   have hne : ∀ {x y : DsR}, x ≠ y → io x ≠ io y := fun h => hio.ne h
-  have h0 : ∀ j, dsV1 n Wt 0 j < 2 ^ pmW n := dsV1_lt hn hWt (Nat.two_pow_pos _)
+  have h0 : ∀ j, dsV1 n Wt 0 j < 2 ^ pmW n := dsV1_lt hB hWt (Nat.two_pow_pos _)
   set L := dsL₀ (io .recA) (io .recB) (io .xT) (io .xS) with hL
   -- 1. `Wt` into `38`
   have s1 := ds_load (body := body) hrg (ho .uW) wl hwl (pmVals n) 38 R
@@ -246,7 +247,7 @@ theorem ds_phase1 (hrg : Function.Injective rg) (hio : Function.Injective io)
   have hLm : ∀ e ∈ L, e.1 ≠ io .tm := by
     intro e he; simp [hL, dsL₀, dsRecPush] at he
     rcases he with ⟨x, -, rfl⟩ | ⟨x, -, rfl⟩ | rfl | rfl <;> exact hne (by decide)
-  have s4 := ds_axes (body := body) hrg (ho .uD) (ho .tm) (hne (by decide)) hn hWt wl hwl L hLt hLu
+  have s4 := ds_axes (body := body) hrg (ho .uD) (ho .tm) (hne (by decide)) hB hWt wl hwl L hLt hLu
     hLm R₁ (by simp [hR₁]) (by rw [hR₁, Function.update_of_ne (hne (by decide))]; exact hR0 .tm (by simp))
   rw [dsAxesCost_eq] at s4
   unfold dsPsi at s4
@@ -261,7 +262,7 @@ theorem ds_phase1 (hrg : Function.Injective rg) (hio : Function.Injective io)
   set X₂ := Function.update X (io .uD) [] with hX₂
   -- 6. `i, P := 0`
   have s6 := ds_code (body := body) hrg wl wl hwl hwl le_rfl (dsEndC_do (A := A) (w' := pmW n)
-    (n := n) (Wt := Wt)) (dsLV_lt hn hWt le_rfl) X₂
+    (n := n) (Wt := Wt)) (dsLV_lt hB hWt le_rfl) X₂
   -- 7, 8. the chirp streams
   have s7 := ds_moveR (body := body) (hne (by decide) : io .xT ≠ io .tS)
     (dsOv rg X₂ (tblRho (pmW n) wl wl ⟨dsV1 n Wt 0, []⟩))
@@ -294,7 +295,7 @@ theorem ds_phase1 (hrg : Function.Injective rg) (hio : Function.Injective io)
   have hA := ds_acc_A (A := A) (oA := io .recA) (oB := io .recB) (xT := io .xT) (xS := io .xS)
     (hne (by decide) : io .recB ≠ io .recA) (hne (by decide))
     (hne (by decide)) hn hd0 Wt
-  have hB := ds_acc_B (A := A) (oA := io .recA) (oB := io .recB) (xT := io .xT) (xS := io .xS)
+  have hBloc := ds_acc_B (A := A) (oA := io .recA) (oB := io .recB) (xT := io .xT) (xS := io .xS)
     (hne (by decide) : io .recA ≠ io .recB) (hne (by decide))
     (hne (by decide)) hn hd0 Wt
   have hT := ds_acc_T (A := A) (oA := io .recA) (oB := io .recB) (xT := io .xT) (xS := io .xS)
@@ -303,13 +304,13 @@ theorem ds_phase1 (hrg : Function.Injective rg) (hio : Function.Injective io)
   have hS := ds_acc_S (A := A) (oA := io .recA) (oB := io .recB) (xT := io .xT) (xS := io .xS)
     (n := n) (hne (by decide) : io .recA ≠ io .xS) (hne (by decide))
     (hne (by decide)) Wt
-  rw [← hL] at hA hB hT hS
+  rw [← hL] at hA hBloc hT hS
   have e : Function.update (Function.update X₃ (io .xS) []) (io .sS)
       ((X₃ (io .xS)).reverse ++ X₃ (io .sS)) = dsR1 io n Wt hd0 R := by
     funext k
     by_cases hk : ∃ x, io x = k
     · obtain ⟨x, rfl⟩ := hk
-      cases x <;> simp [Function.update_apply, hio.eq_iff, hX₃, hX₂, hX, hR₁, hA, hB, hT, hS,
+      cases x <;> simp [Function.update_apply, hio.eq_iff, hX₃, hX₂, hX, hR₁, hA, hBloc, hT, hS,
         hacc0, hR0, dsR1]
     · push Not at hk
       have hk' : ∀ x, k ≠ io x := fun x h => hk x h.symm
@@ -373,17 +374,18 @@ def dsPhase2Cost (n w : ℕ) : ℕ :=
 phase and the work registers `tm`, `xT` empty: the single values in place, the layout back to
 the parameters. -/
 theorem ds_phase2 (hrg : Function.Injective rg) (hio : Function.Injective io)
-    (hdisj : ∀ r x, rg r ≠ io x) {n Wt w : ℕ} (hn : 2 ≤ n) (hWt : Wt < 2 ^ pmW n)
+    (hdisj : ∀ r x, rg r ≠ io x) {n Wt w : ℕ} (hB : Big n) (hWt : Wt < 2 ^ pmW n)
     (hw : 4 * w + 2 < 2 ^ pmW n) (hWL : pmW n ≤ dsWL n w) (wl : List (Fin (A + 4)))
     (hwl : wl.length = pmW n) (R : Regs T A) (huw : (R (io .uw)).length = w)
     (hR0 : ∀ x ∈ [DsR.pU, .gU, .lL, .lK, .rR, .lN, .lD, .lB, .lW, .lE, .nn, .tm, .xT],
       R (io x) = []) :
     dsRuns body (dsPhase2 rg io) (dsOv rg R (tblRho (pmW n) wl wl ⟨dsV1 n Wt 0, []⟩))
       (dsOv rg (dsR2 io n w R) (tblRho (pmW n) wl wl ⟨pmVals n, []⟩)) (dsPhase2Cost n w) := by
+  have hn : 2 ≤ n := hB.1
   have ho : ∀ x r, rg r ≠ io x := fun x r => hdisj r x
   have hne : ∀ {x y : DsR}, x ≠ y → io x ≠ io y := fun h => hio.ne h
   have hw' : w < 2 ^ pmW n := by omega
-  have h1 : ∀ j, dsV1 n Wt w j < 2 ^ pmW n := dsV1_lt hn hWt hw'
+  have h1 : ∀ j, dsV1 n Wt w j < 2 ^ pmW n := dsV1_lt hB hWt hw'
   have hσ0 : ∀ j : Fin pmNV, 31 ≤ j.val → j.val < 38 → dsV1 n Wt w j = 0 := dsV1_scr n Wt w
   set ρ := tblRho (pmW n) wl wl (⟨dsV1 n Wt w, []⟩ : TblSt pmNV A) with hρ
   -- `w` into `39`
@@ -402,10 +404,10 @@ theorem ds_phase2 (hrg : Function.Injective rg) (hio : Function.Injective io)
   set R₅ := Function.update R₄ (io .rR) (List.replicate (dsV1 n Wt w 8) tick ++ R₄ (io .rR))
   -- `N`, `D`
   have t1 := ds_step (body := body) hrg (ho .lN) wl hwl (dsCN_do (A := A) (w' := pmW n)
-    (n := n) (Wt := Wt) (w := w) hn) hσ0 h1 R₅
+    (n := n) (Wt := Wt) (w := w) hB) hσ0 h1 R₅
   set R₆ := Function.update R₅ (io .lN) (List.replicate (logT n - ℓ n) tick ++ R₅ (io .lN))
   have t2 := ds_step (body := body) hrg (ho .lD) wl hwl (dsCD_do (A := A) (w' := pmW n)
-    (n := n) (Wt := Wt) (w := w) hn) hσ0 h1 R₆
+    (n := n) (Wt := Wt) (w := w) hB) hσ0 h1 R₆
   set R₇ := Function.update R₆ (io .lD) (List.replicate (d n - 1) tick ++ R₆ (io .lD))
   -- `B = w r`, `W_L`
   have v1 := ds_umul (body := body) (a := io .uw) (b := io .rR) (c := io .lB) (t₁ := io .tm)
@@ -432,7 +434,7 @@ theorem ds_phase2 (hrg : Function.Injective rg) (hio : Function.Injective io)
   rw [elB, dsOv_off _ _ (ho .lW), dsOv_update _ _ (ho .lW)] at v2
   set R₉ := Function.update R₈ (io .lW) (List.replicate (w * r n) tick ++ R₈ (io .lW))
   have t3 := ds_step (body := body) hrg (ho .lW) wl hwl (dsCWL_do (A := A) (w' := pmW n)
-    (n := n) (Wt := Wt) (w := w) hn) hσ0 h1 R₉
+    (n := n) (Wt := Wt) (w := w) hB) hσ0 h1 R₉
   set R₁₀ := Function.update R₉ (io .lW) (List.replicate ((logT n - ℓ n) ^ 2 + (logT n - ℓ n) + 4)
     tick ++ R₉ (io .lW))
   -- `E`
@@ -440,7 +442,7 @@ theorem ds_phase2 (hrg : Function.Injective rg) (hio : Function.Injective io)
     simp [R₁₀, R₉, R₈, R₇, R₆, R₅, R₄, R₃, R₂, R₁, hio.eq_iff, hR0, dsWL]
     ring
   have t4 := ds_stepB (body := body) hrg (ho .lE) (ho .lW) (hne (by decide)) wl hwl
-    (dsCE_do (A := A) (w' := pmW n) (n := n) (Wt := Wt) (w := w) hn) hσ0 h1 hWL R₁₀
+    (dsCE_do (A := A) (w' := pmW n) (n := n) (Wt := Wt) (w := w) hB) hσ0 h1 hWL R₁₀
     (by simp [R₁₀, R₉, R₈, R₇, R₆, R₅, R₄, R₃, R₂, R₁, hio.eq_iff, hR0])
     elW
   set R₁₁ := Function.update R₁₀ (io .lE) (binSyms (dsWL n w) (dsE n))
@@ -514,7 +516,7 @@ carrying `pmVals n`, `Wt` symbols on `uW`, `w` symbols on `uw` and every other r
 empty, `dsIoAll` ends with the registers `io` holding `dsVal` and the layout and every other
 register as they started, within `dsIoAllCost n Wt w` steps. -/
 theorem dsIoAll_runs (hrg : Function.Injective rg) (hio : Function.Injective io)
-    (hdisj : ∀ r x, rg r ≠ io x) {n Wt w : ℕ} (hn : 2 ≤ n) (hd0 : 0 < d n)
+    (hdisj : ∀ r x, rg r ≠ io x) {n Wt w : ℕ} (hB : Big n) (hd0 : 0 < d n)
     (hWt : Wt < 2 ^ pmW n) (hw : 4 * w + 2 < 2 ^ pmW n) (hWL : pmW n ≤ dsWL n w)
     (wl : List (Fin (A + 4))) (hwl : wl.length = pmW n) (R : Regs T A)
     (huW : (R (io .uW)).length = Wt) (huw : (R (io .uw)).length = w)
@@ -522,12 +524,13 @@ theorem dsIoAll_runs (hrg : Function.Injective rg) (hio : Function.Injective io)
     dsRuns body (dsIoAll rg io) (dsOv rg R (tblRho (pmW n) wl wl ⟨pmVals n, []⟩))
       (dsOv rg (dsOv io R (dsVal n Wt w hd0 (R (io .uW)) (R (io .uw))))
         (tblRho (pmW n) wl wl ⟨pmVals n, []⟩)) (dsIoAllCost n Wt w) := by
-  have h1 := ds_phase1 (body := body) hrg hio hdisj hn hd0 hWt wl hwl R huW
+  have hn : 2 ≤ n := hB.1
+  have h1 := ds_phase1 (body := body) hrg hio hdisj hB hd0 hWt wl hwl R huW
     (fun x hx => by
       simp only [List.mem_cons, List.not_mem_nil, or_false] at hx
       rcases hx with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;>
         exact hR0 _ (by decide) (by decide))
-  have h2 := ds_phase2 (body := body) (Wt := Wt) hrg hio hdisj hn hWt hw hWL wl hwl
+  have h2 := ds_phase2 (body := body) (Wt := Wt) hrg hio hdisj hB hWt hw hWL wl hwl
     (dsR1 io n Wt hd0 R)
     (by simp [dsR1, hio.eq_iff, huw])
     (fun x hx => by

@@ -27,25 +27,5 @@ def compactRetunedTime (c extra n : ℕ) : ℕ :=
     (fun n => compactMainRuns compactRetunedDist compactRetunedCF compactRetunedCO n + extra)
     compactMnT c n
 
-/-- No stage-cost hypotheses remain in the concrete main-time estimate. -/
-theorem compactRetunedTime_isBigO (c extra : ℕ) :
-    (fun n => (compactRetunedTime c extra n : ℝ)) =O[atTop]
-      fun n : ℕ => (n : ℝ) * Real.log n ^ (1 - (2 ^ 34 : ℝ)⁻¹) := by
-  obtain ⟨Cs, hCs⟩ := compactRetuned_transform_cost_le
-  exact compactMain_runs_time_isBigO compactRetunedDist compactRetunedCF compactRetunedCO
-    compactMnT c extra hCs
-
-/-- Closing the actual main execution contract suffices for the stronger finite-machine result. -/
-theorem compactRetuned_mulInTime_of_exec
-    {P U : Type} [Fintype P] [Fintype U] {Q A : ℕ}
-    (body : P → Pr P compactMnT Q A U) (pm : P) (v₀ : HS compactMnT Q A U)
-    (c extra : ℕ)
-    (hexec : ∀ᶠ n in atTop, ∀ x y, (pairEnc (x, y)).length = n →
-      HostMulWithin body pm v₀ (compactRetunedTime c extra) x y) :
-    MulInTime ((2 ^ 34 : ℝ)⁻¹) := by
-  obtain ⟨Cs, hCs⟩ := compactRetuned_transform_cost_le
-  exact compactMulInTime_of_main_exec body pm v₀ compactRetunedDist compactRetunedCF
-    compactRetunedCO c extra hCs hexec
-
 end
 end IntegerMultBounds.MathlibTM2.Fast.Main

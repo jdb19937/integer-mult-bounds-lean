@@ -491,7 +491,7 @@ theorem pm_s17 (hn : 2 ≤ n) (hW : 4 * b n + 32 ≤ W) :
     refine ⟨by rw [ea]; exact hs.1, by rw [e3]; simp [pmVal, pmX0], fun y hy => ?_⟩
     fin_cases y <;> simp [pmVal, pmNV] at hy ⊢ <;> assumption
 
-theorem pm_s18 (hn : 2 ≤ n) (hW : 4 * b n + 32 ≤ W) :
+theorem pm_s18 (hB : Big n) (hW : 4 * b n + 32 ≤ W) :
     ∀ s, PmF n 18 acc s → TblDo A W w (pmProdSC.rename ![16, 17, 11, 3, 18, 31, 32, 33]) s
       (PmF n 19 acc) (13 * d n + 5) :=
   pm_stage (by decide) 4 rfl fun s hs => by
@@ -505,8 +505,8 @@ theorem pm_s18 (hn : 2 ≤ n) (hW : 4 * b n + 32 ≤ W) :
       simpa [pmVal, pmNV] using hs.val 3
     have hS : pmSProd (N n) (pmX0 n) (numHalf n) (d n) = S n := (pm_S_prod n).symm
     refine (pmProdSC_do _ h0 h1 h2 h3 (pm_one_le_N n)
-      (fun i hi => lt_of_lt_of_le (pm_modBound_lt hn hi) (pm_W_pow hW (by omega)))
-      (by rw [hS]; exact lt_of_lt_of_le (pm_S_lt hn) (pm_W_pow hW (by omega)))
+      (fun i hi => lt_of_lt_of_le (pm_modBound_lt hB.1 hi) (pm_W_pow hW (by omega)))
+      (by rw [hS]; exact lt_of_lt_of_le (pm_S_lt hB) (pm_W_pow hW (by omega)))
       (lt_of_lt_of_le ((d_le_b n).trans_lt (pm_b_lt n)) (pm_W_pow hW (by omega)))).mono ?_ le_rfl
     rintro s' ⟨e0, e1, e2, e3, e4, ea⟩
     refine ⟨by rw [ea]; exact hs.1, by rw [e4, hS]; simp [pmVal], fun y hy => ?_⟩
@@ -828,7 +828,7 @@ section Main
 
 variable {n : ℕ} {acc : List (Fin (A + 4))}
 
-theorem pmStages_do (hn : 2 ≤ n) (hW : 4 * b n + 32 ≤ W) :
+theorem pmStages_do (hB : Big n) (hW : 4 * b n + 32 ≤ W) :
     ∀ s, PmF n 1 acc s → TblDo A W w pmStages s (PmF n 31 acc)
       ((4 * b n + 5) + (10 + ((7 * 30 + 11 + d n * (6 * 30 + 8)) +
         ((7 * 34 + 11 + K n * (6 * 34 + 8)) + ((4 * logT n + 16) + ((4 * logT n + 5) + (8 +
@@ -838,24 +838,25 @@ theorem pmStages_do (hn : 2 ≤ n) (hW : 4 * b n + 32 ≤ W) :
         ((4 * Nat.clog 2 (taylorTerms (p n) 0) + 4 + 7) + ((1 + 2 + 5) + ((5 + 4 + 4) +
         ((1 + 14 + 5) + ((4 * Nat.clog 2 (taylorTerms (p n) (chirpGuard (d n))) + 4 + 7) +
         ((1 + 0 + 5) + ((1 + 2 + 5) + (5 + 4 + 4)))))))))))))))))))))))))))))) :=
-  pm_seq (pm_s1 hn hW) <| pm_seq (pm_s2 hW) <| pm_seq (pm_s3 hW) <| pm_seq (pm_s4 hW) <|
-  pm_seq (pm_s5 hn hW) <| pm_seq (pm_s6 hn hW) <| pm_seq (pm_s7 hn hW) <|
-  pm_seq (pm_s8 hn hW) <| pm_seq (pm_s9 hn hW) <| pm_seq (pm_s10 hn hW) <|
-  pm_seq (pm_s11 hn hW) <| pm_seq (pm_s12 hn hW) <| pm_seq (pm_s13 hn hW) <|
-  pm_seq (pm_s14 hn hW) <| pm_seq (pm_s15 hn hW) <| pm_seq (pm_s16 hn hW) <|
-  pm_seq (pm_s17 hn hW) <| pm_seq (pm_s18 hn hW) <| pm_seq (pm_s19 hn hW) <|
-  pm_seq (pm_s20 hn hW) <| pm_seq (pm_s21 hW) <| pm_seq (pm_s22 hW) <| pm_seq (pm_s23 hW) <|
+  pm_seq (pm_s1 hB.1 hW) <| pm_seq (pm_s2 hW) <| pm_seq (pm_s3 hW) <| pm_seq (pm_s4 hW) <|
+  pm_seq (pm_s5 hB.1 hW) <| pm_seq (pm_s6 hB.1 hW) <| pm_seq (pm_s7 hB.1 hW) <|
+  pm_seq (pm_s8 hB.1 hW) <| pm_seq (pm_s9 hB.1 hW) <| pm_seq (pm_s10 hB.1 hW) <|
+  pm_seq (pm_s11 hB.1 hW) <| pm_seq (pm_s12 hB.1 hW) <| pm_seq (pm_s13 hB.1 hW) <|
+  pm_seq (pm_s14 hB.1 hW) <| pm_seq (pm_s15 hB.1 hW) <| pm_seq (pm_s16 hB.1 hW) <|
+  pm_seq (pm_s17 hB.1 hW) <| pm_seq (pm_s18 hB hW) <| pm_seq (pm_s19 hB.1 hW) <|
+  pm_seq (pm_s20 hB.1 hW) <| pm_seq (pm_s21 hW) <| pm_seq (pm_s22 hW) <| pm_seq (pm_s23 hW) <|
   pm_seq (pm_s24 hW) <| pm_seq (pm_s25 hW) <| pm_seq (pm_s26 hW) <| pm_seq (pm_s27 hW) <|
   pm_seq (pm_s28 hW) <| pm_seq (pm_s29 hW) (pm_s30 hW)
 
 /-- **The first parameter program.** From `n ≥ 2` in variable `0` (`PmF n 1 acc`) and words of
 `W ≥ 4 b + 32` bits, `pmCode1` ends with every variable `i` holding `pmVals n i` and the axis
 lengths emitted in front of `acc`, within `pmAtoms1 n` atoms. -/
-theorem pmCode1_do (hn : 2 ≤ n) (hW : 4 * b n + 32 ≤ W) (st : TblSt pmNV A)
+theorem pmCode1_do (hB : Big n) (hW : 4 * b n + 32 ≤ W) (st : TblSt pmNV A)
     (hst : PmF n 1 acc st) :
     TblDo A W w pmCode1 st (fun s => s.val = pmVals n ∧ s.acc = (pmTList A w n).reverse ++ acc)
       (pmAtoms1 n) := by
-  refine ((pmStages_do hn hW st hst).seq (fun s hs => (pm_s31 hW s hs).seq
+  have hn : 2 ≤ n := hB.1
+  refine ((pmStages_do hB hW st hst).seq (fun s hs => (pm_s31 hW s hs).seq
     (fun s' hs' => pm_clear_do s' hs'))).mono (fun _ h => h) ?_
   have hl : 4 * (ℓ n - 1) ≤ 4 * ℓ n := by omega
   unfold pmAtoms1

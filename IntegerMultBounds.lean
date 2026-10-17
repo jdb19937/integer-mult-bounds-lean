@@ -3,7 +3,6 @@ module
 public import IntegerMultBounds.MathlibTM2.Cost.CompactSynLayerOverheadRuntime
 public import IntegerMultBounds.MathlibTM2.Cost.CompactRuntimePolynomial
 public import IntegerMultBounds.MathlibTM2.Cost.CompactRoundVolume
-public import IntegerMultBounds.MathlibTM2.Cost.CompactCallerWorkingWidth
 public import IntegerMultBounds.MathlibTM2.Cost.CompactCallerFullDimension
 public import IntegerMultBounds.MathlibTM2.Cost.CompactSynLayerOverheadBound
 public import IntegerMultBounds.MathlibTM2.Fast.CompactMainBootstrapPipelineCompose

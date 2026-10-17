@@ -43,14 +43,15 @@ theorem compactRetunedR_round_le {Ka : ℕ} :
           if synChunk (ℓ n) (Mult.CompactSizes.K n) h then 0 else C₂*((T n:ℝ)*p n)*d n := by
   obtain ⟨C₂,hC₂,hprefix⟩ := compactRetuned_direct_layer_le
   obtain ⟨C₃,hC₃,hover⟩ := compactRetuned_direct_over_le
+  obtain ⟨C₄,hC₄,htwist⟩ := compactRetuned_tw_le
   have hCC : 0≤compactRetunedRoundCoeffR brDirs := by
     have ht : 0≤compactRetunedTopCoeff 1 brDirs := (compactLayerDyadic_pos _).le
     change 0≤16*(32768+2*compactRetunedTopCoeff 1 brDirs)
     linarith
-  refine ⟨12*compactRetunedRoundCoeffR brDirs,C₂,C₃+4,by positivity,hC₂,by positivity,?_⟩
-  filter_upwards [eventually_big,hprefix,hover,mr_small_le 46 1,
+  refine ⟨12*compactRetunedRoundCoeffR brDirs,C₂,C₃+C₄+4,by positivity,hC₂,by positivity,?_⟩
+  filter_upwards [eventually_big,hprefix,hover,htwist,mr_small_le 46 1,
     compactRetunedR_layer_chunk_eventually (Ka:=Ka) brDirs 4 compactLayer_br_logb]
-    with n hbig hprefix hover hsmall hchunkCost
+    with n hbig hprefix hover htwist hsmall hchunkCost
   intro h hh stash
   obtain ⟨H,-,hlen,hN,hT,-,-,hell,-,-,-,-,hw⟩ := compactRetuned_inst hbig
   have hbP : b n≤p n := Nat.le_mul_of_pos_left _ (by decide : 0<6)
@@ -68,13 +69,11 @@ theorem compactRetunedR_round_le {Ka : ℕ} :
     simp only [pow_one]
     omega
   have hTp1 : (1:ℝ)≤(T n:ℝ)*p n := one_le_mul_of_one_le_of_one_le (mt_one_le_T n) (mt_one_le_p hbig)
-  have hTw : (synTwCost (List.ofFn (cvAx (t n))) (ℓ n) (dsW n) h:ℝ)≤C₃*((T n:ℝ)*p n)+2 := by
-    have ho := hover h hh 0
-    have hl : (synLayerCost brDirs (List.ofFn (cvAx (t n))) (ℓ n) (Mult.CompactSizes.K n) (ℓ n) (dsW n) h:ℝ)≤
-        synLayerStepCost brDirs (List.ofFn (cvAx (t n))) (ℓ n) (Mult.CompactSizes.K n) (dsW n) (ℓ n) h 0 := by
-      exact_mod_cast layer_le_stepR brDirs (List.ofFn (cvAx (t n))) (ℓ n) (Mult.CompactSizes.K n) (dsW n) (ℓ n) h 0
-    push_cast at ho
-    linarith
+  have hC₃Tp : 0≤C₃*((T n:ℝ)*p n) := mul_nonneg hC₃ (by linarith)
+  have hC₄Tp : 0≤C₄*((T n:ℝ)*p n) := mul_nonneg hC₄ (by linarith)
+  have hTw : (synTwCost (List.ofFn (cvAx (t n))) (ℓ n) (dsW n) h:ℝ)≤(C₃+C₄)*((T n:ℝ)*p n)+2 := by
+    have := htwist h hh
+    nlinarith
   by_cases hc : synChunk (ℓ n) (Mult.CompactSizes.K n) h
   · have hl := hchunkCost (List.ofFn (cvAx (t n))) (ℓ n) (dsW n) (ℓ n) h stash
       H hlen (hN.trans hbP) (hell.trans hbP) (le_refl _) (hell.trans hbP) hWp hWP (by omega) hc
@@ -84,11 +83,11 @@ theorem compactRetunedR_round_le {Ka : ℕ} :
     simp only [compactSynRoundFCostR,Nat.cast_add,Nat.cast_one,hc,ite_true,add_zero]
     nlinarith only [hl,hscaled,hTw,hdsp,hTp1]
   · have hl := hprefix h hc
-    have ho := hover h hh stash
+    have ho := hover h hh hc stash
     have hbase : 0≤12*compactRetunedRoundCoeffR brDirs*((T n:ℝ)*p n)*(d n:ℝ)^CompactInterim.lam' := by positivity
     simp only [compactSynRoundFCostR,compactSynLayerCostR,hc,ite_false,Nat.cast_add,Nat.cast_one]
     push_cast at ho
-    nlinarith only [hl,ho,hdsp,hTp1,hbase]
+    nlinarith only [hl,ho,hdsp,hTp1,hbase,hC₄Tp]
 
 
 theorem compactRetunedR_loops_le {Ka : ℕ} (ds : ComplexFramedExecution.Directions) (M : ℕ) (es : List ℕ)

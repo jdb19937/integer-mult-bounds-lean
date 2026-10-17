@@ -1,5 +1,7 @@
 module
-public import IntegerMultBounds.MathlibTM2.Cost.CompactCallerWorkingWidth
+public import IntegerMultBounds.MathlibTM2.Cost.CompactCallerRuntimeParameters
+public import IntegerMultBounds.MathlibTM2.Cost.MatchSynOver
+public import IntegerMultBounds.MathlibTM2.Fast.CompactTopSelection
 
 /-! One explicit polynomial scalar budget for the actual compact caller. -/
 @[expose] public section
@@ -83,48 +85,6 @@ private theorem scalarFields (N d g K D o W h b qrow f back active E working c p
     hoff.trans hp,hE.trans hWB,hqD.trans (hDp.trans hp),haT.trans hp,hKq.trans hp,hwork.trans h2W⟩
   have hprod : d*g≤p^2 := by simpa only [pow_two] using Nat.mul_le_mul hd hg
   exact hprod.trans hp2
-
-/-- The actual caller's fields share a dyadic quadratic budget in precision. -/
-theorem compactCaller_runtime_eventually_scalarBudget (G F c : ℕ) (hF : F+1≤m^5) :
-    ∀ᶠ M : ℕ in atTop, ∀ N D o W h b : ℕ,
-    N≤Mult.Sizes.p M → D≤Mult.Sizes.d M →
-    CompactReservationFits (Mult.Sizes.d M) (CompactReservationGrowth.guard M) (Mult.Sizes.K M) D →
-    o+Mult.Sizes.K M*D≤N → Mult.Sizes.p M≤W → W≤2^c*(Mult.Sizes.p M+1) →
-    h≤Mult.Sizes.p M → b≤Mult.Sizes.p M →
-    let d := Mult.Sizes.d M
-    let g := CompactReservationGrowth.guard M
-    let K := Mult.Sizes.K M
-    let qrow := CompactGlobalRowPadding.rowAxes NW m d
-    let f := frontChunks d g K
-    let back := backChunks d g K
-    let active := compactReservationActive d g K D
-    let E := back+synE G F active active
-    let working := W+((D+1)/2+(qrow+f)+E)+D
-    CompactCallerScalarBounds N d g K D o W h b qrow f back active E working
-      (compactCallerScalarBudget c (Mult.Sizes.p M)) := by
-  filter_upwards [eventually_ge_atTop 2,compactCaller_runtime_eventually_guard,
-    compactCaller_runtime_eventually_workingWidth G F hF] with M hM hguard hwidth
-  intro N D o W h b hN hD hfit haddress hWp hW hh hb
-  have hdp : Mult.Sizes.d M≤Mult.Sizes.p M := by
-    have := Mult.Sizes.d_le_b M
-    unfold Mult.Sizes.p
-    omega
-  have hKp := (Mult.Sizes.K_le_d M).trans hdp
-  have hgp : CompactReservationGrowth.guard M≤Mult.Sizes.p M := by
-    have hgK : CompactReservationGrowth.guard M≤Mult.Sizes.K M := by
-      unfold CompactReservationGrowth.guard
-      omega
-    exact hgK.trans hKp
-  have hwidth' := hwidth D W hD hfit hWp
-  have hE : backChunks (Mult.Sizes.d M) (CompactReservationGrowth.guard M) (Mult.Sizes.K M)+
-      synE G F (compactReservationActive (Mult.Sizes.d M) (CompactReservationGrowth.guard M) (Mult.Sizes.K M) D)
-        (compactReservationActive (Mult.Sizes.d M) (CompactReservationGrowth.guard M) (Mult.Sizes.K M) D)≤W := by
-    have h := hwidth'.1
-    omega
-  dsimp only
-  apply scalarFields <;> try assumption
-  · rfl
-  · simpa only [compactTopKernelCount] using hwidth'.2
 
 end
 end IntegerMultBounds.MathlibTM2.Cost

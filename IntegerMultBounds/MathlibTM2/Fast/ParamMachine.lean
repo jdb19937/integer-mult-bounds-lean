@@ -591,7 +591,7 @@ theorem pmParams_exec (hA : 4 ≤ A) (hrg : Function.Injective rg) {uN oT oS : F
     (huN : ∀ r, rg r ≠ uN) (hoT : ∀ r, rg r ≠ oT) (hoS : ∀ r, rg r ≠ oS) (hTS : oT ≠ oS)
     (us : List (Fin pmNV × Fin T)) (hus : ∀ x ∈ us, ∀ r, rg r ≠ x.2)
     (husT : ∀ x ∈ us, x.2 ≠ oT) (husS : ∀ x ∈ us, x.2 ≠ oS) (hnd : (us.map Prod.snd).Nodup)
-    {n : ℕ} (hn : 2 ≤ n) (v : HS T Q A U) (S : Stacks T A) (hlen : (S.R uN).length = n)
+    {n : ℕ} (hB : Big n) (v : HS T Q A U) (S : Stacks T A) (hlen : (S.R uN).length = n)
     (hS : ∀ r, S.R (rg r) = []) :
     ∃ v' S' m, v'.user = v.user ∧ m ≤ pmCost n us ∧
       Exec body (pmParams rg uN oT oS us) (mk v S) m (mk v' S') ∧
@@ -602,6 +602,7 @@ theorem pmParams_exec (hA : 4 ≤ A) (hrg : Function.Injective rg) {uN oT oS : F
       S'.R oT = pmTStream A (pmW n) n ++ S.R oT ∧ S'.R oS = pmSStream A (pmW n) n ++ S.R oS ∧
       (∀ x ∈ us, S'.R x.2 = List.replicate (pmVals n x.1) tick ++ S.R x.2) ∧
       (∀ k, (∀ r, rg r ≠ k) → k ≠ oT → k ≠ oS → (∀ x ∈ us, x.2 ≠ k) → S'.R k = S.R k) := by
+  have hn : 2 ≤ n := hB.1
   set W := pmW n with hW
   have hW' : 4 * b n + 32 ≤ W := pmW_ge n
   have hwl : (pmTicks A W).length = W := by simp [pmTicks]
@@ -610,7 +611,7 @@ theorem pmParams_exec (hA : 4 ≤ A) (hrg : Function.Injective rg) {uN oT oS : F
   -- the first program
   obtain ⟨v₂, S₂, m₂, st₁, ⟨hv₁, ha₁⟩, hlt₁, hu₂, hm₂, he₂, hT₂, hS₂, hi₂, ho₂, hL₂, hk₂⟩ :=
     pm_host_runs (body := body) hrg hoT pmBitOfPair (pmTicks A W) (pmTicks A W) hwl hwl le_rfl
-      (pmCode1_do (w := W) hn hW' (pmSt0 A n) (pm_st0_F n)) (pm_st0_lt n) v₁ S₁ hS₁
+      (pmCode1_do (w := W) hB hW' (pmSt0 A n) (pm_st0_F n)) (pm_st0_lt n) v₁ S₁ hS₁
   rw [hv₁] at hS₂ hlt₁
   -- the second program
   obtain ⟨v₃, S₃, m₃, st₂, ⟨hv₂, ha₂⟩, hlt₂, hu₃, hm₃, he₃, hT₃, hS₃, hi₃, ho₃, hL₃, hk₃⟩ :=

@@ -37,7 +37,7 @@ theorem compactMainInputDist_exec_eventually
         MnDistOut (embStk compactMnLegacyReg S).R N (dsW N) (bdE N)
           (mnσ (blP₀ dsW N) (compactDsyV₀ N)) ∧
         MnMid (embStk compactMnLegacyReg S) x y N := by
-  filter_upwards [compactBdDist_entry_eventually hP,eventually_ge_atTop 2] with N hdist hN
+  filter_upwards [compactBdDist_entry_eventually hP,Mult.Sizes.eventually_big] with N hdist hN
   intro main x y hlen
   let old : MnPr bdA := .act .done
   obtain ⟨v₁,S₁,m₁,hm₁,he₁,hfront⟩ := mn_front_exec (body := mnBody mnLb old) (A := bdA) x y

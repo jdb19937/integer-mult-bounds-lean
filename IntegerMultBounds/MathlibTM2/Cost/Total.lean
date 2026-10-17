@@ -26,7 +26,7 @@ count `m (log m + 1)(log log m + 1)` of `Host/SSMul` by `16384 m^{1+δ}`.
 
 Exponents: `τ = 1 - 296/10¹¹`, `σ = 1 - 418/10¹²` (`IntegerMultBounds.Parameters`), `β = 1/2`,
 `λ = 1 - 3/10¹⁰` (`totLam`), `λ' = 1 - 1/10¹¹` (`totLam'`), and
-`κ = ε c (1 - τ) = 333 / (10¹¹ · 2³⁵)` (`totKappa`, `tot_kappa_eq`). The ring-product factor is
+`κ = ε c (1 - τ) = 333 / (10¹¹ · 2³⁴)` (`totKappa`, `tot_kappa_eq`). The ring-product factor is
 `grLogLog X = (log₂ X + 1)(log₂ (log₂ X + 1) + 1)` (`Cost/Growth`); `gr_ringBound_le` bounds the
 packed ring product `rpRingBound N` of `Fast/RingProd` on `N ≤ A r p` bits by a constant times
 `r p · grLogLog (r p)`.
@@ -79,7 +79,7 @@ noncomputable def totLam' : ℝ := 1 - 1 / 10 ^ 11
 /-- `κ = ε c (1 - τ)`. -/
 noncomputable def totKappa : ℝ := epsilon * cParam * (1 - Parameters.tau)
 
-theorem tot_kappa_eq : totKappa = 333 / (10 ^ 11 * 2 ^ 35) := by
+theorem tot_kappa_eq : totKappa = 333 / (10 ^ 11 * 2 ^ 34) := by
   rw [totKappa, epsilon_eq, cParam_eq, Parameters.tau]; norm_num
 
 theorem tot_kappa_pos : 0 < totKappa := by rw [tot_kappa_eq]; norm_num
@@ -143,7 +143,7 @@ theorem tot_layer_cost_bound {m : ℕ} {a C₀ C₁ C₂ Q : ℝ} (hm : 2 ≤ m)
 theorem tot_exp_facts :
     0 ≤ 1 - totKappa ∧ 2 * epsilon ≤ 1 - totKappa ∧
       epsilon * (1 - Parameters.tau) + Parameters.tau ≤ 1 - totKappa ∧
-      epsilon + (epsilon * (1 / 2) + 1 / 4) + (1 / 2 + totDelta) ≤ 1 - totKappa ∧
+      epsilon + epsilon * (1 / 2) + (1 / 2 + totDelta) ≤ 1 - totKappa ∧
       1 - epsilon * (1 - totLam') ≤ 1 - totKappa ∧
       1 - epsilon + epsilon * cParam ≤ 1 - totKappa ∧ totDelta ≤ 1 - totKappa := by
   rw [tot_kappa_eq, epsilon_eq, cParam_eq]
@@ -259,17 +259,30 @@ theorem tot_crt_le
         mul_le_mul hTp hsum (by positivity) (by positivity)
     _ = 144 * ((n : ℝ) * (b n : ℝ) ^ (1 - totKappa)) := by ring
 
+/-- `α ≤ 2√d`: from `α⁴ < 16 u²` and `u ≤ d`. -/
+theorem tot_alpha_le_sqrt_d (h : Big n) : (alpha n : ℝ) ≤ 2 * (d n : ℝ) ^ (1 / 2 : ℝ) := by
+  have hD : (0 : ℝ) ≤ d n := Nat.cast_nonneg _
+  have h1 : (alpha n : ℝ) ^ 4 ≤ 16 * (d n : ℝ) ^ 2 := by
+    have h4 := alpha_pow_four_lt n
+    have hu2 : alphaU n ^ 2 ≤ d n ^ 2 := Nat.pow_le_pow_left h.alphaU_le_d 2
+    have : alpha n ^ 4 ≤ 16 * d n ^ 2 := by omega
+    exact_mod_cast this
+  have e1 : ((d n : ℝ) ^ (1 / 2 : ℝ)) ^ 4 = (d n : ℝ) ^ 2 := by
+    rw [← Real.rpow_natCast, ← Real.rpow_mul hD]; norm_num
+  have h2 : (alpha n : ℝ) ^ 4 ≤ (2 * (d n : ℝ) ^ (1 / 2 : ℝ)) ^ 4 := by
+    rw [mul_pow, e1]; norm_num; linarith
+  exact (pow_le_pow_iff_left₀ (Nat.cast_nonneg _) (by positivity) (by norm_num)).1 h2
+
 /-- `d T p^{1/2} α M(p) ≤ 6912 n B^{1-κ}`. -/
 theorem tot_resamp_le (h : Big n) :
     totResamp n ≤ 6912 * ((n : ℝ) * (b n : ℝ) ^ (1 - totKappa)) := by
   obtain ⟨-, -, -, hres, -, -, -⟩ := tot_exp_facts
   have hB1 := tot_one_le_b h
   have hB : (0 : ℝ) < b n := by linarith
-  have hα : (alpha n : ℝ) ≤ 4 * (b n : ℝ) ^ (epsilon * (1 / 2) + 1 / 4) :=
-    calc (alpha n : ℝ) ≤ 4 * (d n : ℝ) ^ (1 / 2 : ℝ) * (b n : ℝ) ^ (1 / 4 : ℝ) := gr_alpha_le h
-      _ ≤ 4 * (b n : ℝ) ^ (epsilon * (1 / 2)) * (b n : ℝ) ^ (1 / 4 : ℝ) := by
+  have hα : (alpha n : ℝ) ≤ 2 * (b n : ℝ) ^ (epsilon * (1 / 2)) :=
+    calc (alpha n : ℝ) ≤ 2 * (d n : ℝ) ^ (1 / 2 : ℝ) := tot_alpha_le_sqrt_d h
+      _ ≤ 2 * (b n : ℝ) ^ (epsilon * (1 / 2)) := by
           gcongr; exact gr_d_rpow_le n (by norm_num)
-      _ = 4 * (b n : ℝ) ^ (epsilon * (1 / 2) + 1 / 4) := by rw [Real.rpow_add hB]; ring
   have hd : (d n : ℝ) ≤ 1 * (b n : ℝ) ^ epsilon := by rw [one_mul]; exact gr_d_le_rpow n
   have hdα := gr_mul_le hB (Nat.cast_nonneg _) (by norm_num) hd hα
   have hp := gr_mul_le hB (by positivity) (by norm_num)
@@ -282,9 +295,12 @@ theorem tot_resamp_le (h : Big n) :
   calc (d n : ℝ) * T n * (p n : ℝ) ^ (1 / 2 : ℝ) * alpha n * ((p n : ℝ) * (p n : ℝ) ^ totDelta) =
       ((T n : ℝ) * p n) * (((d n : ℝ) * alpha n) *
         ((p n : ℝ) ^ (1 / 2 : ℝ) * (p n : ℝ) ^ totDelta)) := by ring
-    _ ≤ (48 * n) * (1 * 4 * (6 * 6) * (b n : ℝ) ^ (1 - totKappa)) :=
+    _ ≤ (48 * n) * (1 * 2 * (6 * 6) * (b n : ℝ) ^ (1 - totKappa)) :=
         mul_le_mul hTp h4 (by positivity) (by positivity)
-    _ = 6912 * ((n : ℝ) * (b n : ℝ) ^ (1 - totKappa)) := by ring
+    _ = 3456 * ((n : ℝ) * (b n : ℝ) ^ (1 - totKappa)) := by ring
+    _ ≤ 6912 * ((n : ℝ) * (b n : ℝ) ^ (1 - totKappa)) := by
+      have : 0 ≤ (n : ℝ) * (b n : ℝ) ^ (1 - totKappa) := by positivity
+      linarith
 
 theorem tot_conv_inner_nonneg (h : Big n) :
     0 ≤ (d n : ℝ) * K n + (p n : ℝ) * (K n : ℝ) ^ (Parameters.tau - 1) +

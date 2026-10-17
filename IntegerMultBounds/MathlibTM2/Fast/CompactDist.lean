@@ -28,7 +28,7 @@ and unary output, with all remaining distribution outputs unchanged. -/
 theorem compactDsIoAll_runs (body : P → Pr P T Q A U)
     (rg : TblR pmNV → Fin T) (io : DsR → Fin T)
     (hrg : Function.Injective rg) (hio : Function.Injective io)
-    (hdisj : ∀ r x,rg r≠io x) {n Wt w : ℕ} (hn : 2≤n) (hd : 0<d n)
+    (hdisj : ∀ r x,rg r≠io x) {n Wt w : ℕ} (hB : Big n) (hd : 0<d n)
     (hWt : Wt<2^pmW n) (hw : 4*w+2<2^pmW n) (hWL : pmW n≤dsWL n w)
     (wl : List (Fin (A+4))) (hwl : wl.length=pmW n) (R : Regs T A)
     (huW : (R (io .uW)).length=Wt) (huw : (R (io .uw)).length=w)
@@ -38,10 +38,11 @@ theorem compactDsIoAll_runs (body : P → Pr P T Q A U)
       (dsOv rg (dsOv io R (compactDsVal n Wt w hd (R (io .uW)) (R (io .uw))))
         (tblRho (pmW n) wl wl ⟨compactPmVals n,[]⟩))
       (compactDsIoAllCost n Wt w) := by
-  have hlegacy := dsIoAll_runs (body:=body) hrg hio hdisj hn hd hWt hw hWL wl hwl R huW huw hR0
+  have hn : 2 ≤ n := hB.1
+  have hlegacy := dsIoAll_runs (body:=body) hrg hio hdisj hB hd hWt hw hWL wl hwl R huW huw hR0
   have hpatch := compactDsRetune_runs body rg hrg (io .lK) (fun r => hdisj r .lK)
     n (pmW n) (pmW_ge n) wl hwl
-    (dsOv io R (dsVal n Wt w hd (R (io .uW)) (R (io .uw)))) (ds_pmVals_lt hn)
+    (dsOv io R (dsVal n Wt w hd (R (io .uW)) (R (io .uw)))) (ds_pmVals_lt hB)
   rw [dsOv_rg hio] at hpatch
   simp only [dsVal,List.length_replicate] at hpatch
   rw [dsOv_update_on hio] at hpatch

@@ -81,11 +81,10 @@ theorem ds_two_le_r (hn : 2 ≤ n) : 2 ≤ r n := by
 
 /-- `d ≤ r`. -/
 theorem ds_d_le_r (hn : 2 ≤ n) : d n ≤ r n := by
-  rcases Nat.lt_or_ge (d n) 2 with h | h
-  · have := ds_two_le_r hn; omega
-  · have h1 := pm_room hn h
-    have h2 : 2 ^ (ℓ n - 1) ≤ r n := Nat.pow_le_pow_right (by norm_num) (Nat.sub_le _ _)
-    nlinarith
+  have h1 := d_sq_le_two_ℓ hn
+  have hdl : d n ≤ ℓ n + 1 := by nlinarith
+  have := Nat.lt_two_pow_self (n := ℓ n)
+  unfold r; omega
 
 /-- `T / r = P_{d-1}`. -/
 theorem ds_T_div_r (hn : 2 ≤ n) : T n / r n = dsP n (d n - 1) := by
@@ -99,7 +98,14 @@ theorem ds_d_mul_r_le (hn : 2 ≤ n) : d n * r n ≤ T n := by
   · have := one_le_d hn
     have e : d n = 1 := by omega
     rw [e]; exact le_rfl
-  · have h1 := pm_room hn h
+  · have h1 : d n ≤ 2 ^ (ℓ n - 1) := by
+      have hsq := d_sq_le_two_ℓ hn
+      have hdl : d n ≤ ℓ n := by nlinarith
+      have hl1 := ds_one_le_ℓ hn
+      have : ℓ n ≤ 2 ^ (ℓ n - 1) := by
+        have := Nat.lt_two_pow_self (n := ℓ n - 1)
+        omega
+      omega
     have h2 : dsP n 1 ≤ dsP n (d n - 1) :=
       Nat.le_of_dvd (dsP_pos n _) (dsP_dvd n (by omega))
     have h3 : 2 ^ (ℓ n - 1) ≤ dsT n 0 := by
@@ -110,7 +116,8 @@ theorem ds_d_mul_r_le (hn : 2 ≤ n) : d n * r n ≤ T n := by
     nlinarith
 
 /-- `s_i ≤ 2 r + 23`. -/
-theorem dsS_le (hn : 2 ≤ n) {i : ℕ} (hi : i < d n) : dsS n i ≤ 2 * r n + 23 := by
+theorem dsS_le (hB : Big n) {i : ℕ} (hi : i < d n) : dsS n i ≤ 2 * r n + 23 := by
+  have hn : 2 ≤ n := hB.1
   have h1 := pm_modulus_le_bound (N n) (pmX0 n) (numHalf n) i
   have h2 : pmModBound (N n) (pmX0 n) i ≤ 2 * 2 ^ (ℓ n - 1) + N n * (2 * d n + 5) + 2 :=
     pm_modBound_le (R := 2 ^ (ℓ n - 1)) (one_le_d hn) (pm_one_le_N n) hi
@@ -124,7 +131,7 @@ theorem dsS_le (hn : 2 ≤ n) {i : ℕ} (hi : i < d n) : dsS n i ≤ 2 * r n + 2
     have hN : N n = 3 := by simp [N, e, oddProd, Finset.prod_range_succ]
     have h3 : N n * (2 * d n + 5) = 21 := by rw [e, hN]
     omega
-  · have h3 := pm_room hn h
+  · have h3 := pm_room hB
     have h4 : N n * (2 * d n + 5) ≤ 8 * d n ^ 2 * N n := by
       have : 2 * d n + 5 ≤ 8 * d n ^ 2 := by nlinarith
       calc N n * (2 * d n + 5) ≤ N n * (8 * d n ^ 2) := Nat.mul_le_mul_left _ this
@@ -418,12 +425,12 @@ theorem parameter_width_le_core {b L r w a : ℕ}
 /-- The candidate dimension is one at the smallest precisions. -/
 theorem parameter_width_small_r {n : ℕ} (hn : 2≤n) (hb : b n≤2) : 4≤r n := by
   have hd : d n=1 := by
-    have hcap := d_seventh_le n
-    change d n^7≤b n at hcap
+    have hcap := d_cube_le n
+    change d n^3≤b n at hcap
     have hd1 := one_le_d hn
     by_contra h
     have h2 : 2≤d n := by omega
-    have hp := Nat.pow_le_pow_left h2 7
+    have hp := Nat.pow_le_pow_left h2 3
     norm_num at hp
     omega
   have hn4 : n≤4 := (le_two_pow_b n).trans (Nat.pow_le_pow_right (by decide) hb)

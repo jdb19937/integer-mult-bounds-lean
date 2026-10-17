@@ -52,19 +52,5 @@ theorem compactCompleted_hostMul
   have hc := Nat.mul_le_mul_left (compactCompletedPush p) hm
   omega
 
-/-- The only remaining obligation is the actual arithmetic prefix execution. -/
-theorem compactCompleted_mulInTime
-    (p : CompactMnPr CompactMainProc (prime+mnKa)) (extra : ℕ)
-    (hexec : ∀ᶠ n in atTop, ∀ x y, (pairEnc (x,y)).length=n →
-      ∃ m v S, m ≤ compactRetunedPreTime extra n ∧
-        Exec (compactCompletedTable p) p (Store.only compactMainV₀ .inp (pairEnc (x,y))) m (mk v S) ∧
-        S.inp=[] ∧ S.out=encodingNatBool.encode (x*y) ∧ ∀ k,S.L k=[]) :
-    MulInTime ((2^34:ℝ)⁻¹) := by
-  apply compactRetuned_mulInTime_of_exec (compactCompletedTable p) (compactMainOldProc .main)
-    compactMainV₀ (compactCompletedPush p) extra
-  filter_upwards [hexec] with n hn x y hxy
-  obtain ⟨m,v,S,hm,he,hi,ho,hL⟩ := hn x y hxy
-  exact compactCompleted_hostMul p extra x y he (hxy ▸ hm) hi ho hL
-
 end
 end IntegerMultBounds.MathlibTM2.Fast.Main

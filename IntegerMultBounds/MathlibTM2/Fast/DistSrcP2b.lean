@@ -93,7 +93,7 @@ include h
 
 set_option maxHeartbeats 2000000 in
 /-- **Phase 2b.** -/
-theorem ds_P2b (R : Regs T A) {n w : ℕ} (hn : 2 ≤ n) (hpw : p n + 2 ≤ w)
+theorem ds_P2b (R : Regs T A) {n w : ℕ} (hB : Big n) (hpw : p n + 2 ≤ w)
     (hw4 : 4 * w + 2 < 2 ^ pmW n) (hWL : pmW n ≤ dsWL n w) (wl : List (Fin (A + 4)))
     (hwl : wl.length = pmW n) (X : DsY t₀ → List (Fin (A + 4))) (huw : (X (.o .uw)).length = w)
     (hrR : (X (.o .rR)).length = r n) (htm : X (.o .tm) = []) (hxT : X (.o .xT) = [])
@@ -103,7 +103,7 @@ theorem ds_P2b (R : Regs T A) {n w : ℕ} (hn : 2 ≤ n) (hpw : p n + 2 ≤ w)
       (dsF rg g R (dsUpdL X (dsP2bW n w)) (pmW n) wl (dsV1 n 0 w)) (dsP2bCost n w) := by
   have hw2 : w < 2 ^ pmW n := by omega
   set V := dsV1 n 0 w with hV
-  have hVlt : ∀ j, V j < 2 ^ pmW n := dsV1_lt hn (Nat.two_pow_pos _) hw2
+  have hVlt : ∀ j, V j < 2 ^ pmW n := dsV1_lt hB (Nat.two_pow_pos _) hw2
   have hV0 := dsV1_scr n 0 w
   simp only [dsP2bW, List.map_cons, List.map_nil, List.mem_cons, List.not_mem_nil, or_false,
     forall_eq_or_imp, forall_eq] at h0
@@ -163,7 +163,7 @@ theorem ds_P2b (R : Regs T A) {n w : ℕ} (hn : 2 ≤ n) (hpw : p n + 2 ≤ w)
   rw [List.append_nil] at s9
   set X₉ := Function.update X₈ (.o .lW) (List.replicate (r n * w) (tick : Fin (A + 4))) with hX₉
   have s10 := dsF_step (body := body) h R wl X₉ V (.o .lW)
-    (dsCWL_do (A := A) (w' := pmW n) (n := n) (Wt := 0) (w := w) hn) hV0 hVlt hwl
+    (dsCWL_do (A := A) (w' := pmW n) (n := n) (Wt := 0) (w := w) hB) hV0 hVlt hwl
     (l := List.replicate (r n * w) tick) (by simp [hX₉])
   rw [List.replicate_append_replicate] at s10
   have eL : (logT n - ℓ n) ^ 2 + (logT n - ℓ n) + 4 + r n * w = dsWL n w := by
@@ -172,7 +172,7 @@ theorem ds_P2b (R : Regs T A) {n w : ℕ} (hn : 2 ≤ n) (hpw : p n + 2 ≤ w)
   set X₁₀ := Function.update X₉ (.o .lW) (List.replicate (dsWL n w) (tick : Fin (A + 4)))
     with hX₁₀
   have s11 := dsF_stepB (body := body) h R wl X₁₀ V (.o .lE) (.o .lW) (fun e => by cases e)
-    (dsCE_do (A := A) (w' := pmW n) (n := n) (Wt := 0) (w := w) hn) hV0 hVlt hwl hWL
+    (dsCE_do (A := A) (w' := pmW n) (n := n) (Wt := 0) (w := w) hB) hV0 hVlt hwl hWL
     (by simp [hX₁₀, hX₉, hX₈, hX₇, hX₆, hX₅, hX₄, hX₃, hX₂, hX₁, eE]) (by simp [hX₁₀])
   have eX : Function.update X₁₀ (.o .lE) (binSyms (dsWL n w) (dsE n)) =
       dsUpdL X (dsP2bW n w) := by

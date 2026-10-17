@@ -115,10 +115,11 @@ theorem dsCwg_do (hw : gamma n ≤ w) (hw2 : w < 2 ^ pmW n) :
   · simp [TblIns.exact, dsV1, pmNV, pmVal]
   · simp [TblIns.exact, ds_upd_off hj (k := 31) (by decide) (by decide)]
 
-theorem dsCwN_do (hn : 2 ≤ n) (hw : logT n - ℓ n ≤ w) (hw2 : w < 2 ^ pmW n) :
+theorem dsCwN_do (hB : Big n) (hw : logT n - ℓ n ≤ w) (hw2 : w < 2 ^ pmW n) :
     TblDo A (pmW n) w' dsCwN ⟨dsV1 n 0 w, []⟩ (DsPost (dsV1 n 0 w) (w - (logT n - ℓ n))) 2 := by
+  have hn : 2 ≤ n := hB.1
   have h1 := pm_ℓ_le_logT hn
-  have h2 := ds_pmVal_lt hn 5
+  have h2 := ds_pmVal_lt hB 5
   refine TblDo.block _ _ ?_ ⟨rfl, ?_, fun j hj => ?_⟩
   · simp [tblFitsList, TblIns.fits, TblIns.exact, dsV1, pmNV, pmVal]
     exact ⟨⟨h1, h2⟩, by omega, hw2⟩

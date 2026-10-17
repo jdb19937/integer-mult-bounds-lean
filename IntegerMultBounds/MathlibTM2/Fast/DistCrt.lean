@@ -223,20 +223,22 @@ def DsC1 (n j k : ℕ) (s : TblSt pmNV A) : Prop :=
 
 variable {n : ℕ}
 
-theorem ds_crt_bound (hn : 2 ≤ n) {j : ℕ} (hj : j < d n) : dsSP n (j + 1) < 2 ^ pmW n := by
+theorem ds_crt_bound (hB : Big n) {j : ℕ} (hj : j < d n) : dsSP n (j + 1) < 2 ^ pmW n := by
+  have hn : 2 ≤ n := hB.1
   have h1 := dsSP_le (n := n) (j := j + 1) (by omega)
-  have h2 := pm_S_lt hn
+  have h2 := pm_S_lt hB
   have h3 : 2 ^ (3 * b n + 6) ≤ 2 ^ pmW n := pm_two_pow_le (by have := pmW_ge n; omega)
   omega
 
-theorem dsCC₁_do (hn : 2 ≤ n) {j : ℕ} (hj : j < d n) :
+theorem dsCC₁_do (hB : Big n) {j : ℕ} (hj : j < d n) :
     TblDo A (pmW n) w dsCC₁ ⟨dsCV n j, []⟩ (· = ⟨dsCW n j, []⟩) (dsCK₁ n) := by
+  have hn : 2 ≤ n := hB.1
   have hf : Function.Injective (![16, 17, 11, 31, 36, 39] : Fin 6 → Fin pmNV) := by decide
-  have hB : pmModBound (N n) (pmX0 n) j < 2 ^ pmW n :=
+  have hMB : pmModBound (N n) (pmX0 n) j < 2 ^ pmW n :=
     (pm_modBound_lt hn hj).trans_le (pm_two_pow_le (by have := pmW_ge n; omega))
   obtain ⟨hmu1, hmu2, hmu3⟩ := ds_mu_spec n j hj
   have hmus := dsMu_lt n j hj
-  have hSj := ds_crt_bound hn hj
+  have hSj := ds_crt_bound hB hj
   rw [dsSP_succ] at hSj
   have hs3 := dsS_ge n j
   have hW1 : 1 < 2 ^ pmW n := Nat.one_lt_two_pow (by have := pmW_ge n; omega)
@@ -244,7 +246,7 @@ theorem dsCC₁_do (hn : 2 ≤ n) {j : ℕ} (hj : j < d n) :
   have hM := pmModC_do (A := A) (W := pmW n) (w := w) (N := N n) (x₀ := pmX0 n)
     (a := numHalf n) (i := j) ((⟨dsCV n j, []⟩ : TblSt pmNV A).restrict ![16, 17, 11, 31, 36, 39])
     (by simp [dsCV, pmVal, pmNV]) (by simp [dsCV, pmVal, pmNV]) (by simp [dsCV, pmVal, pmNV])
-    (by simp [dsCV, pmNV]) (pm_one_le_N n) hB
+    (by simp [dsCV, pmNV]) (pm_one_le_N n) hMB
   have hA : TblDo A (pmW n) w (pmModC.rename ![16, 17, 11, 31, 36, 39]) ⟨dsCV n j, []⟩
       (fun s => s.acc = [] ∧ s.val 36 = dsS n j ∧
         ∀ x : Fin pmNV, x.val < 36 → s.val x = dsCV n j x) 9 := by
@@ -333,14 +335,14 @@ theorem dsCC₁_do (hn : 2 ≤ n) {j : ℕ} (hj : j < d n) :
             omega
   refine ((hA.seq fun s hs => (hBk s hs).seq fun s hs => hL s hs)).mono (fun _ h => h) ?_
   unfold dsCK₁
-  have := dsS_le hn hj
+  have := dsS_le hB hj
   omega
 
 theorem dsCC₂_do (hbig : Big n) {j : ℕ} (hj : j < d n) :
     TblDo A (pmW n) w dsCC₂ ⟨dsCW n j, []⟩ (· = ⟨dsCV n (j + 1), []⟩) 17 := by
   have hn := hbig.1
-  have hT := ds_T_lt hn
-  have hd := ds_d_lt hn
+  have hT := ds_T_lt hbig
+  have hd := ds_d_lt hbig
   have hP1 : dsP n (j + 1) ≤ T n := dsP_le hn (by omega)
   have hst := ds_s_lt_t hbig hj
   have hsP : dsS n j * dsP n j ≤ dsP n (j + 1) := by
@@ -349,7 +351,7 @@ theorem dsCC₂_do (hbig : Big n) {j : ℕ} (hj : j < d n) :
   have hmsk := dsMsk_le hbig (j + 1)
   rw [dsSig_succ] at hsig
   rw [dsMsk_succ] at hmsk
-  have hSj := ds_crt_bound hn hj
+  have hSj := ds_crt_bound hbig hj
   rw [dsSP_succ] at hSj
   have hW1 : 2 < 2 ^ pmW n := by
     have : 2 ^ 2 ≤ 2 ^ pmW n := pm_two_pow_le (by have := pmW_ge n; omega)
@@ -388,17 +390,17 @@ theorem dsCC₂_do (hbig : Big n) {j : ℕ} (hj : j < d n) :
 theorem dsCV_lt (hbig : Big n) {j : ℕ} (hj : j ≤ d n) (x : Fin pmNV) :
     dsCV n j x < 2 ^ pmW n := by
   have hn := hbig.1
-  have hT := ds_T_lt hn
-  have hd := ds_d_lt hn
+  have hT := ds_T_lt hbig
+  have hd := ds_d_lt hbig
   have hP := dsP_le hn hj
   have hS := dsSP_le (n := n) hj
-  have hS2 := pm_S_lt hn
+  have hS2 := pm_S_lt hbig
   have hS3 : 2 ^ (3 * b n + 6) ≤ 2 ^ pmW n := pm_two_pow_le (by have := pmW_ge n; omega)
   have hsig := dsSig_le hbig j hj
   have hmsk := dsMsk_le hbig j
   unfold dsCV
   split_ifs
-  · exact ds_pmVal_lt hn x
+  · exact ds_pmVal_lt hbig x
   all_goals omega
 
 theorem dsCW_lt (hbig : Big n) {j : ℕ} (hj : j < d n) (x : Fin pmNV) :
@@ -435,7 +437,7 @@ theorem ds_crtLoop (hrg : Function.Injective rg) {uD tm o : Fin T} (huD : ∀ r,
       (dsOv rg R (tblRho (pmW n) wl wl ⟨dsCV n 0, []⟩))
       (dsGPsi rg R (dsCV n) (dsCW n) (dsLC o) (pmW n) wl wl (d n))
       (dsGCost (pmW n) (pmW n) (dsCK₁ n + 17) (dsCW n) (dsLC o) (d n)) :=
-  ds_gloop hrg huD htm hut wl wl hwl hwl le_rfl (fun j hj => dsCC₁_do hbig.1 hj)
+  ds_gloop hrg huD htm hut wl wl hwl hwl le_rfl (fun j hj => dsCC₁_do hbig hj)
     (fun j hj => dsCC₂_do hbig hj) (fun j hj => dsCV_lt hbig hj.le) (fun j hj => dsCW_lt hbig hj)
     (dsLC o) (by simp [dsLC, ho]) (by simp [dsLC, hou]) (by simp [dsLC, hot]) R hRu hRt
 

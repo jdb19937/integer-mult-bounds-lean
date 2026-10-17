@@ -248,11 +248,12 @@ lemma mn_pmOff_of_keep {r : MnR} (hk : mnDistKeep r) (hr : r ∉ mnUsRegs) : MnP
   | out _ => exact ⟨fun q => by simp, by simp, by simp, by simp, by simp, by simp, by simp, by simp, h8⟩
 
 /-- **F2.** -/
-theorem mn_params_exec {x y N : ℕ} (hN : 2 ≤ N) (hA : 4 ≤ A) (v : HS mnT mnQ A Unit)
+theorem mn_params_exec {x y N : ℕ} (hNB : Big N) (hA : 4 ≤ A) (v : HS mnT mnQ A Unit)
     (St : Stacks mnT A) (hS : MnFront St x y N) :
     ∃ (v' : HS mnT mnQ A Unit) (St' : Stacks mnT A) (m : ℕ), m ≤ pmCost N mnUs ∧
       Exec body mnParams (mk v St) m (mk v' St') ∧ St'.inp = [] ∧ St'.out = [] ∧
       (∀ k, St'.L k = []) ∧ (∀ j, St'.R (mnι j) = []) ∧ MnPostParam St'.R N ∧ MnMid St' x y N := by
+  have hN : 2 ≤ N := hNB.1
   have hus : ∀ z ∈ (mnUs : List (Fin pmNV × Fin mnT)), ∀ r, mnPm r ≠ z.2 := by simp [mnUs]
   have husT : ∀ z ∈ (mnUs : List (Fin pmNV × Fin mnT)), z.2 ≠ mnIo .oT := by simp [mnUs]
   have husS : ∀ z ∈ (mnUs : List (Fin pmNV × Fin mnT)), z.2 ≠ mnIo .oS := by simp [mnUs]
@@ -261,7 +262,7 @@ theorem mn_params_exec {x y N : ℕ} (hN : 2 ≤ N) (hA : 4 ≤ A) (v : HS mnT m
   obtain ⟨v', St', m, -, hm, e, hinp, hout, hL, hvar, hwr, hwn, hacc, hz, hoT, hoS, hus', hfr⟩ :=
     pmParams_exec (body := body) (rg := mnPm) hA (fun _ _ h => MnR.pm.inj (mnRg_inj h))
       (fun r => mn_rg_ne' _ _) (fun r => mn_rg_ne' _ _) (fun r => mn_rg_ne' _ _) (mn_rg_ne' _ _)
-      mnUs hus husT husS hnd hN v St hS.uN
+      mnUs hus husT husS hnd hNB v St hS.uN
       (fun r => hS.rest _ (mn_rg_ne' _ _) (mn_rg_ne' _ _) (mn_rg_ne' _ _))
   -- the frame
   have fr : ∀ r : MnR, MnPmOff r → St'.R (mnRg r) = St.R (mnRg r) := by
@@ -497,7 +498,7 @@ theorem mnFast_hostMul (hA : 96 ≤ prime + K) (D : MnDist K Lb w σ) (Y : MnSyn
   rw [hxy] at hm₂ hF₂
   -- F2
   obtain ⟨v₃, S₃, m₃, hm₃, e₃, hinp₃, hout₃, hL₃, hι₃, hpost, hmid₃⟩ :=
-    mn_params_exec (body := mnTable D Y) hN2 hA4 v₂ S₂ hF₂
+    mn_params_exec (body := mnTable D Y) hbig hA4 v₂ S₂ hF₂
   -- the distribution
   obtain ⟨v₄, S₄, m₄, hm₄, e₄, hinp₄, hout₄, hL₄, hι₄, hdo, hkeep⟩ :=
     hdist (mnFast D.distP Y.fwdP Y.oppP) v₃ S₃ hL₃ hι₃ hpost

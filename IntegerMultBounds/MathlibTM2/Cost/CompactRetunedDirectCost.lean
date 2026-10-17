@@ -29,26 +29,26 @@ theorem compactRetuned_inst {n : ℕ} (h : Big n) :
   · rw [hs]; have := mt_logT_le_b h; omega
   · have := h.sixteen_le_b; omega
 
-/-- The working width of every round is at most `(G + m + 15) p`. -/
-theorem compactRetuned_w2_le {n : ℕ} (h : Big n) (hh : ℕ) :
+/-- The working width of a direct round is at most `(G + m + 15) p`: direct rounds carry no
+piece exponents, so the shift is at most `3 D/2 + 1`. -/
+theorem compactRetuned_direct_w2_le {n : ℕ} (h : Big n) {hh : ℕ}
+    (hc : ¬ synChunk (ℓ n) (Mult.CompactSizes.K n) hh) :
     synW2 (List.ofFn (cvAx (t n))) (ℓ n) (Mult.CompactSizes.K n) (gateCount (program Cost.brDirs))
       (factorCount (program Cost.brDirs)) (dsW n) hh ≤
       (gateCount (program Cost.brDirs) + m + 15) * p n := by
-  obtain ⟨-, -, hlen, -, -, -, -, -, -, -, hb16, hd16, hw⟩ := compactRetuned_inst h
-  have h1 := mrO_synW2_le (List.ofFn (cvAx (t n))) (ℓ n) (Mult.CompactSizes.K n) (gateCount (program Cost.brDirs))
-    (factorCount (program Cost.brDirs)) (dsW n) hh mr_F_le
-  rw [hlen, show d n - 1 + 1 = d n by omega] at h1
-  have h2 : d n ^ 6 ≤ b n := h.pow_le_b (by norm_num)
-  have h3 : (gateCount (program Cost.brDirs) + m + 3) * d n ^ 6 ≤
-      (gateCount (program Cost.brDirs) + m + 3) * b n := Nat.mul_le_mul_left _ h2
-  unfold p
+  obtain ⟨-, -, hlen, -, -, -, -, -, -, hdb, hb16, -, hw⟩ := compactRetuned_inst h
+  have hLg := mrO_synLg_le (List.ofFn (cvAx (t n))) (ℓ n)
+  have hS : synS (List.ofFn (cvAx (t n))) (ℓ n) (Mult.CompactSizes.K n) (gateCount (program Cost.brDirs))
+      (factorCount (program Cost.brDirs)) hh ≤ 3 * (List.ofFn (cvAx (t n))).length + 1 := by
+    have hDp : synDp (List.ofFn (cvAx (t n))) (ℓ n) hh ≤ (List.ofFn (cvAx (t n))).length := by
+      unfold synDp; split_ifs <;> omega
+    simp only [synS, synQ, synER, hc, ite_false]
+    omega
+  unfold synW2 p
   generalize gateCount (program Cost.brDirs) = G at *
-  generalize b n = B at *
-  generalize d n ^ 6 = D6 at *
-  generalize dsW n = w at *
-  generalize synW2 _ _ _ _ _ _ _ = W at *
-  nlinarith
-
+  rw [hlen] at hS ⊢
+  have h15 : 15 * (6 * b n) ≤ (G + m + 15) * (6 * b n) := Nat.mul_le_mul_right _ (by omega)
+  omega
 
 theorem compactRetuned_conv_ge {n : ℕ} (h : Big n) :
     (T n : ℝ) * p n ≤ CompactTotal.conv n ∧ (T n : ℝ) * p n * ((d n : ℝ) * Mult.CompactSizes.K n) ≤ CompactTotal.conv n ∧
@@ -69,7 +69,8 @@ theorem compactRetuned_conv_ge {n : ℕ} (h : Big n) :
   refine ⟨?_, ?_, ?_⟩ <;> nlinarith
 
 
-theorem compactRetuned_direct_over_le : ∃ C : ℝ, 0 ≤ C ∧ ∀ᶠ n in atTop, ∀ h < ℓ n, ∀ stk : ℕ,
+theorem compactRetuned_direct_over_le : ∃ C : ℝ, 0 ≤ C ∧ ∀ᶠ n in atTop, ∀ h < ℓ n,
+    ¬ synChunk (ℓ n) (Mult.CompactSizes.K n) h → ∀ stk : ℕ,
     ((synLayerStepCost Cost.brDirs (List.ofFn (cvAx (t n))) (ℓ n) (Mult.CompactSizes.K n) (dsW n) (ℓ n) h stk +
         synTwCost (List.ofFn (cvAx (t n))) (ℓ n) (dsW n) h : ℕ) : ℝ) ≤
       (synLayerCost Cost.brDirs (List.ofFn (cvAx (t n))) (ℓ n) (Mult.CompactSizes.K n) (ℓ n) (dsW n) h : ℝ) +
@@ -77,11 +78,11 @@ theorem compactRetuned_direct_over_le : ∃ C : ℝ, 0 ≤ C ∧ ∀ᶠ n in atT
   obtain ⟨CA, hCA⟩ := mrO_step_le Cost.brDirs mr_F_le
   set G := gateCount (program Cost.brDirs)
   refine ⟨CA * (80 ^ 8 + G + m + 15), by positivity, ?_⟩
-  filter_upwards [eventually_big, mr_b_pow_le_r 8] with n hbig hbr h hh stk
+  filter_upwards [eventually_big, mr_b_pow_le_r 8] with n hbig hbr h hh hc stk
   obtain ⟨H, -, hlen, hN, hT, -, -, hℓ, hK, hd, hb16, -, hw⟩ := compactRetuned_inst hbig
   have hw1 : 1 ≤ dsW n := by unfold dsW; omega
   have h1 := hCA (List.ofFn (cvAx (t n))) (ℓ n) (Mult.CompactSizes.K n) (dsW n) (ℓ n) h stk H hh hw1
-  have hw2 := compactRetuned_w2_le hbig h
+  have hw2 := compactRetuned_direct_w2_le hbig hc
   generalize hes : List.ofFn (cvAx (t n)) = es at *
   generalize hWe : synW2 es (ℓ n) (Mult.CompactSizes.K n) G (factorCount (program Cost.brDirs)) (dsW n) h = W at *
   -- `Z ≤ 24 b`
@@ -123,7 +124,7 @@ theorem compactRetuned_direct_layer_le : ∃ C : ℝ, 0 ≤ C ∧ ∀ᶠ n in at
   filter_upwards [eventually_big, mr_b_pow_le_r 2] with n hbig hbr h hc
   obtain ⟨H, -, hlen, hN, hT, -, hK1, hℓ, hK, hd, hb16, hd16, hw⟩ := compactRetuned_inst hbig
   obtain ⟨hKh, hRh, hAR, hA, hQ, hDp, hAT, hfit, hR2, hpcs, -⟩ := mr_prefix_facts H hc
-  have hw2 := compactRetuned_w2_le hbig h
+  have hw2 := compactRetuned_direct_w2_le hbig hc
   generalize hes : List.ofFn (cvAx (t n)) = es at *
   have hwW : dsW n ≤ synW2 es (ℓ n) (Mult.CompactSizes.K n) (gateCount (program Cost.brDirs)) (factorCount (program Cost.brDirs)) (dsW n) h := mrO_le_synW2 _ _ _ _ _ _ _
   have hsW : synS es (ℓ n) (Mult.CompactSizes.K n) (gateCount (program Cost.brDirs)) (factorCount (program Cost.brDirs)) h ≤ synW2 es (ℓ n) (Mult.CompactSizes.K n) (gateCount (program Cost.brDirs)) (factorCount (program Cost.brDirs)) (dsW n) h :=
@@ -166,6 +167,35 @@ theorem compactRetuned_direct_layer_le : ∃ C : ℝ, 0 ≤ C ∧ ∀ᶠ n in at
       _ = CB * (gateCount (program Cost.brDirs) + m + 15) * (T n * p n) * d n := by ring
   exact_mod_cast h1
 
+
+/-- The twiddle pass of every round costs `O(T p)`. -/
+theorem compactRetuned_tw_le : ∃ C : ℝ, 0 ≤ C ∧ ∀ᶠ n in atTop, ∀ h < ℓ n,
+    (synTwCost (List.ofFn (cvAx (t n))) (ℓ n) (dsW n) h : ℝ) ≤ C * ((T n : ℝ) * p n) := by
+  refine ⟨500 * 80 ^ 8 + 720, by positivity, ?_⟩
+  filter_upwards [eventually_big, mr_b_pow_le_r 8] with n hbig hbr h hh
+  obtain ⟨H, -, hlen, hN, hT, -, -, hℓ, hK, hd, hb16, -, hw⟩ := compactRetuned_inst hbig
+  have hw1 : 1 ≤ dsW n := by unfold dsW; omega
+  generalize hes : List.ofFn (cvAx (t n)) = es at *
+  have hZ : mrZ es (ℓ n) (Mult.CompactSizes.K n) (dsW n) (ℓ n) ≤ 80 * b n := by
+    unfold mrZ; rw [hlen]; omega
+  have htw := mrO_twCost_le es (Z := mrZ es (ℓ n) (Mult.CompactSizes.K n) (dsW n) (ℓ n))
+    (l := ℓ n) (w := dsW n) (h := h) (by unfold mrZ; omega) hw1 (by unfold mrZ; omega) (by unfold mrZ; omega)
+    (by unfold mrZ; omega) (by unfold mrZ; omega) (by unfold mrZ; omega)
+  have hA : mrZ es (ℓ n) (Mult.CompactSizes.K n) (dsW n) (ℓ n) ^ 8 * 2 ^ es.sum ≤ 80 ^ 8 * T n := by
+    calc mrZ es (ℓ n) (Mult.CompactSizes.K n) (dsW n) (ℓ n) ^ 8 * 2 ^ es.sum
+        ≤ (80 * b n) ^ 8 * 2 ^ es.sum := Nat.mul_le_mul_right _ (Nat.pow_le_pow_left hZ 8)
+      _ = 80 ^ 8 * (b n ^ 8 * 2 ^ es.sum) := by ring
+      _ ≤ 80 ^ 8 * (r n * 2 ^ es.sum) := Nat.mul_le_mul_left _ (Nat.mul_le_mul_right _ hbr)
+      _ = 80 ^ 8 * T n := by rw [← hT]; ring
+  have hB : 2 ^ es.sum * (2 ^ ℓ n * dsW n) ≤ 12 * (T n * p n) := by
+    calc 2 ^ es.sum * (2 ^ ℓ n * dsW n) = (2 ^ es.sum * r n) * dsW n := by unfold r; ring
+      _ = T n * dsW n := by rw [hT]
+      _ ≤ T n * (12 * p n) := Nat.mul_le_mul_left _ (by unfold p; omega)
+      _ = 12 * (T n * p n) := by ring
+  have hp1 : 1 ≤ p n := by unfold p; omega
+  have hTp : T n ≤ T n * p n := Nat.le_mul_of_pos_right _ hp1
+  have h3 : synTwCost es (ℓ n) (dsW n) h ≤ (500 * 80 ^ 8 + 720) * (T n * p n) := by nlinarith
+  exact_mod_cast h3
 
 end
 end IntegerMultBounds.MathlibTM2.Cost

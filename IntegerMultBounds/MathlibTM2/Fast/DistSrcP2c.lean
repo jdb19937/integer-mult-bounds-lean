@@ -82,7 +82,7 @@ theorem dsF_twist (R : Regs T A) {W : ℕ} (wl : List (Fin (A + 4))) (X : DsY t�
 
 set_option maxHeartbeats 1000000 in
 /-- **Phase 2c.** -/
-theorem ds_P2c (R : Regs T A) {n w Wt : ℕ} (hn : 2 ≤ n) (hw2 : w < 2 ^ pmW n) (hwW : w < Wt)
+theorem ds_P2c (R : Regs T A) {n w Wt : ℕ} (hB : Big n) (hw2 : w < 2 ^ pmW n) (hwW : w < Wt)
     (hW8 : 8 * p n + Nat.size (r n) + 80 ≤ Wt) (wl : List (Fin (A + 4)))
     (hwl : wl.length = pmW n) (X : DsY t₀ → List (Fin (A + 4)))
     (hv : ∀ i, X (.s (.k (.x (.tbl (.v i))))) = []) (hacc : X (.s (.k (.x (.tbl .acc)))) = [])
@@ -93,6 +93,7 @@ theorem ds_P2c (R : Regs T A) {n w Wt : ℕ} (hn : 2 ≤ n) (hw2 : w < 2 ^ pmW n
     (hW : (X (.o .uw)).length = w) (htp : X (.s (.v .tp)) = []) (htm : X (.s (.v .tm)) = []) :
     dsRuns body (dsP2c rg g) (dsF rg g R X (pmW n) wl (dsV1 n 0 w))
       (dsF rg g R (dsUpdL X (dsP2cW n w)) (pmW n) wl (pmVals n)) (dsP2cCost n w Wt) := by
+  have hn : 2 ≤ n := hB.1
   have hr0 : 0 < r n := by unfold r; positivity
   have hp2 : p n < 2 ^ Wt := by
     have := Nat.lt_two_pow_self (n := p n)
@@ -119,7 +120,7 @@ theorem ds_P2c (R : Regs T A) {n w Wt : ℕ} (hn : 2 ≤ n) (hw2 : w < 2 ^ pmW n
   rw [List.append_nil] at s2
   have s3 := dsF_code (body := body) h R wl
     (Function.update X₁ (.s (.v .tm)) (tblTwistStream A w (p n) (r n) true)) (dsV1 n 0 w)
-    (dsZ39_do (A := A) (n := n) (w := w)) (dsV1_lt hn (Nat.two_pow_pos _) hw2) hwl
+    (dsZ39_do (A := A) (n := n) (w := w)) (dsV1_lt hB (Nat.two_pow_pos _) hw2) hwl
   refine (s1.seq (s2.seq s3)).mono ?_
   unfold dsP2cCost
   omega

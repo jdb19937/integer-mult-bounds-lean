@@ -186,37 +186,41 @@ theorem dsS_lt {n : ℕ} (hn : 2 ≤ n) {i : ℕ} (hi : i < d n) : dsS n i < 2 ^
   unfold dsS; omega
 
 /-- The parameters fit the words of the parameter machine. -/
-theorem ds_pmVals_lt {n : ℕ} (hn : 2 ≤ n) (j : Fin pmNV) : pmVals n j < 2 ^ pmW n := by
-  obtain ⟨st', k, hb, ⟨hv, -⟩, -⟩ := pmCode1_do (A := 0) (w := pmW n) hn (pmW_ge n)
+theorem ds_pmVals_lt {n : ℕ} (hB : Big n) (j : Fin pmNV) : pmVals n j < 2 ^ pmW n := by
+  have hn : 2 ≤ n := hB.1
+  obtain ⟨st', k, hb, ⟨hv, -⟩, -⟩ := pmCode1_do (A := 0) (w := pmW n) hB (pmW_ge n)
     (pmSt0 0 n) (pm_st0_F n)
   have := hb.lt (pm_st0_lt n) j
   rwa [hv] at this
 
-theorem ds_pmVal_lt {n : ℕ} (hn : 2 ≤ n) (j : ℕ) : pmVal n j < 2 ^ pmW n := by
+theorem ds_pmVal_lt {n : ℕ} (hB : Big n) (j : ℕ) : pmVal n j < 2 ^ pmW n := by
+  have hn : 2 ≤ n := hB.1
   by_cases hj : j < 40
-  · exact ds_pmVals_lt hn ⟨j, hj⟩
+  · exact ds_pmVals_lt hB ⟨j, hj⟩
   · rw [pmVal_ge n j (by omega)]; exact Nat.two_pow_pos _
 
-theorem ds_T_lt {n : ℕ} (hn : 2 ≤ n) : T n < 2 ^ pmW n := ds_pmVal_lt hn 6
+theorem ds_T_lt {n : ℕ} (hB : Big n) : T n < 2 ^ pmW n := ds_pmVal_lt hB 6
 
-theorem ds_d_lt {n : ℕ} (hn : 2 ≤ n) : d n < 2 ^ pmW n := ds_pmVal_lt hn 3
+theorem ds_d_lt {n : ℕ} (hB : Big n) : d n < 2 ^ pmW n := ds_pmVal_lt hB 3
 
-theorem dsLV_lt {n W : ℕ} (hn : 2 ≤ n) (hW : W < 2 ^ pmW n) {i : ℕ} (hi : i ≤ d n)
+theorem dsLV_lt {n W : ℕ} (hB : Big n) (hW : W < 2 ^ pmW n) {i : ℕ} (hi : i ≤ d n)
     (j : Fin pmNV) : dsLV n W i j < 2 ^ pmW n := by
-  have hT := ds_T_lt hn
-  have hd := ds_d_lt hn
+  have hn : 2 ≤ n := hB.1
+  have hT := ds_T_lt hB
+  have hd := ds_d_lt hB
   have hP := dsP_le hn hi
   unfold dsLV
   split_ifs
-  · exact ds_pmVal_lt hn j
+  · exact ds_pmVal_lt hB j
   · omega
   · omega
   · exact hW
   · exact Nat.two_pow_pos _
 
-theorem dsAV_lt {n W : ℕ} (hn : 2 ≤ n) (hW : W < 2 ^ pmW n) {i : ℕ} (hi : i < d n)
+theorem dsAV_lt {n W : ℕ} (hB : Big n) (hW : W < 2 ^ pmW n) {i : ℕ} (hi : i < d n)
     (j : Fin pmNV) : dsAV n W i j < 2 ^ pmW n := by
-  have hT := ds_T_lt hn
+  have hn : 2 ≤ n := hB.1
+  have hT := ds_T_lt hB
   have ht := dsT_le hn i
   have hr : r n ≤ T n := pm_r_le_T hn
   have hG := dsG_le hn i
@@ -229,7 +233,7 @@ theorem dsAV_lt {n W : ℕ} (hn : 2 ≤ n) (hW : W < 2 ^ pmW n) {i : ℕ} (hi : 
   · exact dsS_lt hn hi
   · unfold dsQ; split_ifs <;> omega
   · omega
-  · exact dsLV_lt hn hW hi.le j
+  · exact dsLV_lt hB hW hi.le j
 
 /-- The variables after the lengths. -/
 def dsSA (n Wt i : ℕ) : Fin pmNV → ℕ :=
@@ -263,10 +267,11 @@ theorem dsAxC_A :
       (by simp [tblFitsList, TblIns.fits]) ?_)).mono (fun _ h => h) (by norm_num)
     simp [tblExactList, TblIns.exact, dsSA, dsT, pmTv, h, dsL, dsLV, pmVal, pmNV]
 
-theorem dsAxC_B (hn : 2 ≤ n) (hi : i < d n) :
+theorem dsAxC_B (hB : Big n) (hi : i < d n) :
     TblDo A (pmW n) w (tblBlock pmNV [.copy 2 36, .copy 31 39] (.inc 39)) ⟨dsSA n Wt i, []⟩
       (· = ⟨dsSB n Wt i, []⟩) 3 := by
-  have hd := ds_d_lt hn
+  have hn : 2 ≤ n := hB.1
+  have hd := ds_d_lt hB
   refine TblDo.block _ _ ?_ ?_
   · simp [tblFitsList, TblIns.fits, TblIns.exact, dsSA, dsLV, pmNV]; omega
   · simp [tblExactList, TblIns.exact, dsSB, dsSA, dsLV, pmVal, pmNV]
@@ -279,11 +284,12 @@ theorem dsAxC_B (hn : 2 ≤ n) (hi : i < d n) :
 @[simp] theorem dsSB_36 : dsSB n Wt i 36 = p n := by simp [dsSB, dsSA, pmNV]
 @[simp] theorem dsSB_39 : dsSB n Wt i 39 = i + 1 := by simp [dsSB, dsSA, pmNV]
 
-theorem dsAxC_C (hn : 2 ≤ n) (hi : i < d n) :
+theorem dsAxC_C (hB : Big n) (hi : i < d n) :
     TblDo A (pmW n) w (.ite 39 3 (tblBlock pmNV [.inc 36, .div 6 8 37, .mul 32 33 39]
       (.div 37 39 37)) (tblBlock pmNV [.zero 37] (.inc 37))) ⟨dsSB n Wt i, []⟩
       (fun s => s.acc = [] ∧ ∀ j, j ≠ 39 → s.val j = dsSC n Wt i j) 5 := by
-  have hT := ds_T_lt hn
+  have hn : 2 ≤ n := hB.1
+  have hT := ds_T_lt hB
   have hPt : dsP n i * dsT n i ≤ T n := by
     rw [← dsP_succ]; exact dsP_le hn (by omega)
   by_cases h : i + 1 < d n
@@ -356,17 +362,18 @@ theorem dsAxC_D (hn : 2 ≤ n) (hi : i < d n) (s : TblSt pmNV A) (hacc : s.acc =
 end Steps
 
 /-- **The axis code**: from `dsLV n Wt i` to `dsAV n Wt i`, `21` atoms. -/
-theorem dsAxC_do {n Wt i : ℕ} (hn : 2 ≤ n) (hi : i < d n) :
+theorem dsAxC_do {n Wt i : ℕ} (hB : Big n) (hi : i < d n) :
     TblDo A (pmW n) w dsAxC ⟨dsLV n Wt i, []⟩ (· = ⟨dsAV n Wt i, []⟩) 21 :=
-  (dsAxC_A.seq fun _ hs => hs ▸ (dsAxC_B hn hi).seq fun _ hs => hs ▸ (dsAxC_C hn hi).seq
+  (dsAxC_A.seq fun _ hs => hs ▸ (dsAxC_B hB hi).seq fun _ hs => hs ▸ (dsAxC_C hB hi).seq
     fun s (h : s.acc = [] ∧ ∀ j, j ≠ 39 → s.val j = dsSC n Wt i j) =>
-      dsAxC_D hn hi s h.1 h.2).mono (fun _ h => h) (by norm_num)
+      dsAxC_D hB.1 hi s h.1 h.2).mono (fun _ h => h) (by norm_num)
 
 /-- **The update code**: from `dsAV n Wt i` to `dsLV n Wt (i + 1)`, `7` atoms. -/
-theorem dsUpC_do {n Wt i : ℕ} (hn : 2 ≤ n) (hi : i < d n) :
+theorem dsUpC_do {n Wt i : ℕ} (hB : Big n) (hi : i < d n) :
     TblDo A (pmW n) w dsUpC ⟨dsAV n Wt i, []⟩ (· = ⟨dsLV n Wt (i + 1), []⟩) 7 := by
-  have hT := ds_T_lt hn
-  have hd := ds_d_lt hn
+  have hn : 2 ≤ n := hB.1
+  have hT := ds_T_lt hB
+  have hd := ds_d_lt hB
   have hPt : dsP n i * dsT n i ≤ T n := by
     rw [← dsP_succ]; exact dsP_le hn (by omega)
   refine TblDo.block _ _ ?_ ?_
@@ -433,18 +440,19 @@ variable (hrg : Function.Injective rg)
 include hrg
 
 /-- **One iteration** over any register file off the layout. -/
-theorem ds_axBody {n Wt i : ℕ} (hn : 2 ≤ n) (hWt : Wt < 2 ^ pmW n) (hi : i < d n)
+theorem ds_axBody {n Wt i : ℕ} (hB : Big n) (hWt : Wt < 2 ^ pmW n) (hi : i < d n)
     (wl : List (Fin (A + 4))) (hwl : wl.length = pmW n) (L : List (Fin T × Fin pmNV × DsMode))
     (hL : ∀ e ∈ L, ∀ r, rg r ≠ e.1) (X : Regs T A) :
     dsRuns body (dsAxBody rg L) (dsOv rg X (tblRho (pmW n) wl wl ⟨dsLV n Wt i, []⟩))
       (dsOv rg (dsGain (dsAV n Wt i) L X) (tblRho (pmW n) wl wl ⟨dsLV n Wt (i + 1), []⟩))
       (dsAxCost n Wt L i) := by
+  have hn : 2 ≤ n := hB.1
   have h1 := ds_code (body := body) hrg wl wl hwl hwl le_rfl (dsAxC_do (A := A) (w := pmW n)
-    (Wt := Wt) hn hi) (dsLV_lt hn hWt hi.le) X
+    (Wt := Wt) hB hi) (dsLV_lt hB hWt hi.le) X
   have h2 := ds_push (body := body) hrg (W := pmW n) wl wl ⟨dsAV n Wt i, []⟩ L hL
-    (fun e _ => dsAV_lt hn hWt hi _) X
+    (fun e _ => dsAV_lt hB hWt hi _) X
   have h3 := ds_code (body := body) hrg wl wl hwl hwl le_rfl (dsUpC_do (A := A) (w := pmW n)
-    (Wt := Wt) hn hi) (dsAV_lt hn hWt hi) (dsGain (dsAV n Wt i) L X)
+    (Wt := Wt) hB hi) (dsAV_lt hB hWt hi) (dsGain (dsAV n Wt i) L X)
   refine (h1.seq (h2.seq h3)).mono ?_
   unfold dsAxCost
   dsimp only
@@ -454,19 +462,20 @@ theorem ds_axBody {n Wt i : ℕ} (hn : 2 ≤ n) (hWt : Wt < 2 ^ pmW n) (hi : i <
 `dsLV n Wt 0`, the loop ends with the layout carrying `dsLV n Wt d` and every register `k` off
 the layout with `dsAcc n Wt L d k` on top; `uD` and `tm` end as they started. -/
 theorem ds_axes {uD tm : Fin T} (huD : ∀ r, rg r ≠ uD) (htm : ∀ r, rg r ≠ tm) (hut : uD ≠ tm)
-    {n Wt : ℕ} (hn : 2 ≤ n) (hWt : Wt < 2 ^ pmW n) (wl : List (Fin (A + 4)))
+    {n Wt : ℕ} (hB : Big n) (hWt : Wt < 2 ^ pmW n) (wl : List (Fin (A + 4)))
     (hwl : wl.length = pmW n) (L : List (Fin T × Fin pmNV × DsMode))
     (hL : ∀ e ∈ L, ∀ r, rg r ≠ e.1) (hLu : ∀ e ∈ L, e.1 ≠ uD) (hLt : ∀ e ∈ L, e.1 ≠ tm)
     (R : Regs T A) (hRu : (R uD).length = d n) (hRt : R tm = []) :
     dsRuns body (dsAxes rg uD tm L) (dsOv rg R (tblRho (pmW n) wl wl ⟨dsLV n Wt 0, []⟩))
       (dsPsi rg R n Wt L wl (d n)) (dsAxesCost n Wt L) := by
+  have hn : 2 ≤ n := hB.1
   have hspec : IterSpec body (dsAxBody rg L) uD tm (dsPsi rg R n Wt L wl)
       (fun j => dsAxCost n Wt L j) (d n) := by
     intro j hj v S hS
     have hX : S.R = dsOv rg S.R (tblRho (pmW n) wl wl ⟨dsLV n Wt j, []⟩) :=
       dsOv_eq_of hrg (fun r => by rw [hS (rg r) (huD r) (htm r), dsPsi, dsOv_rg hrg])
         (fun _ _ => rfl)
-    obtain ⟨v', m, hu, hm, he⟩ := ds_axBody (body := body) hrg hn hWt hj wl hwl L hL S.R v S hX
+    obtain ⟨v', m, hu, hm, he⟩ := ds_axBody (body := body) hrg hB hWt hj wl hwl L hL S.R v S hX
     refine ⟨v', _, m, hu, hm, he, ?_, ?_, fun k hku hkt => ?_⟩
     · rw [dsOv_off _ _ huD, dsGain_eq, dsOut_none _ L hLu, List.nil_append]
     · rw [dsOv_off _ _ htm, dsGain_eq, dsOut_none _ L hLt, List.nil_append]

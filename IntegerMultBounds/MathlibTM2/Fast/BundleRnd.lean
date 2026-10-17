@@ -238,30 +238,31 @@ lemma bd_pm_ne {q : MnR} (r : TblR pmNV) (h : q ≠ .pm r) : mnPm r ≠ mnRg q :
   mn_rg_ne (Ne.symm h)
 
 /-- A step onto an empty register. -/
-lemma bd_step_nil (hn : 2 ≤ n) (o : Fin mnT) (ho : ∀ r, mnPm r ≠ o) {c : TblCode pmNV} {x K : ℕ}
+lemma bd_step_nil (hB : Big n) (o : Fin mnT) (ho : ∀ r, mnPm r ≠ o) {c : TblCode pmNV} {x K : ℕ}
     (hc : TblDo bdA (pmW n) (pmW n) c ⟨pmVals n, []⟩ (DsPost (pmVals n) x) K)
     (R : Regs mnT bdA) (hR : R o = []) :
     dsRuns body (dsStep mnPm c o) (dsOv mnPm R (bdρ n))
       (dsOv mnPm (Function.update R o (List.replicate x tick)) (bdρ n))
       (dsStepCost (pmW n) K x) := by
+  have hn : 2 ≤ n := hB.1
   have h := ds_step (body := body) bdPm_inj ho (bdWl n) (bdWl_length n) hc
-    (fun j h1 _ => pmVal_ge n j h1) (ds_pmVals_lt hn) R
+    (fun j h1 _ => pmVal_ge n j h1) (ds_pmVals_lt hB) R
   rwa [hR, List.append_nil] at h
 
 /-- A binary step onto an empty register. -/
-lemma bd_stepB_nil (hn : 2 ≤ n) (oE oWL : Fin mnT) (hoE : ∀ r, mnPm r ≠ oE)
+lemma bd_stepB_nil (hB : Big n) (oE oWL : Fin mnT) (hoE : ∀ r, mnPm r ≠ oE)
     (hoW : ∀ r, mnPm r ≠ oWL) (hEW : oE ≠ oWL) {c : TblCode pmNV} {x K : ℕ}
     (hc : TblDo bdA (pmW n) (pmW n) c ⟨pmVals n, []⟩ (DsPost (pmVals n) x) K)
     {WL : ℕ} (hWWL : pmW n ≤ WL) (R : Regs mnT bdA) (hRE : R oE = []) (hRW : (R oWL).length = WL) :
     dsRuns body (dsStepB mnPm c oE oWL) (dsOv mnPm R (bdρ n))
       (dsOv mnPm (Function.update R oE (binSyms WL x)) (bdρ n)) (dsStepBCost (pmW n) K WL) :=
   ds_stepB (body := body) bdPm_inj hoE hoW hEW (bdWl n) (bdWl_length n) hc
-    (fun j h1 _ => pmVal_ge n j h1) (ds_pmVals_lt hn) hWWL R hRE hRW
+    (fun j h1 _ => pmVal_ge n j h1) (ds_pmVals_lt hB) hWWL R hRE hRW
 
 /-- `pmW n ≤ bdMw n` under `Big n`. -/
 lemma bd_pmW_le_Mw (hbig : Big n) : pmW n ≤ bdMw n := by
   have h1 : Nat.size n ≤ b n + 1 := pm_size_le
-  have h2 : 64≤b n := hbig.2.trans (d_le_b n)
+  have h2 : 64≤b n := (show 64≤d n by have := hbig.2; omega).trans (d_le_b n)
   unfold pmW bdMw dsW p at *
   omega
 
@@ -280,19 +281,19 @@ theorem bd_rnd_runs (hbig : Big n) (R : Regs mnT bdA) (hR : ∀ r ∈ bdRndRegs,
   set R₄ := Function.update R₃ (mnRnd .nn) (List.replicate (dsTopN (bdMw n)) tick) with hR₄
   set R₅ := Function.update R₄ (mnRnd .sq) (binSyms (bdMw n) (S n * S n)) with hR₅
   set R₆ := Function.update R₅ (mnRnd .wo) (List.replicate (bdWo n) tick) with hR₆
-  have s1 := bd_step_nil (body := body) hn (mnIo .dwn) (fun r => bd_pm_ne r (by simp)) hc1 R h1
-  have s2 := bd_step_nil (body := body) hn (mnRnd .wn) (fun r => bd_pm_ne r (by simp)) hc1 R₁
+  have s1 := bd_step_nil (body := body) hbig (mnIo .dwn) (fun r => bd_pm_ne r (by simp)) hc1 R h1
+  have s2 := bd_step_nil (body := body) hbig (mnRnd .wn) (fun r => bd_pm_ne r (by simp)) hc1 R₁
     (by rw [hR₁, Function.update_of_ne (mn_rg_ne' (.rnd .wn) (.io .dwn))]; exact h2)
-  have s3 := bd_step_nil (body := body) hn (mnRnd .mn) (fun r => bd_pm_ne r (by simp))
+  have s3 := bd_step_nil (body := body) hbig (mnRnd .mn) (fun r => bd_pm_ne r (by simp))
     (bdCMw_do hn) R₂
     (by rw [hR₂, Function.update_of_ne (mn_rg_ne' (.rnd .mn) (.rnd .wn)), hR₁,
       Function.update_of_ne (mn_rg_ne' (.rnd .mn) (.io .dwn))]; exact h3)
-  have s4 := bd_step_nil (body := body) hn (mnRnd .nn) (fun r => bd_pm_ne r (by simp))
+  have s4 := bd_step_nil (body := body) hbig (mnRnd .nn) (fun r => bd_pm_ne r (by simp))
     (bdCTop_do hbig) R₃
     (by rw [hR₃, Function.update_of_ne (mn_rg_ne' (.rnd .nn) (.rnd .mn)), hR₂,
       Function.update_of_ne (mn_rg_ne' (.rnd .nn) (.rnd .wn)), hR₁,
       Function.update_of_ne (mn_rg_ne' (.rnd .nn) (.io .dwn))]; exact h4)
-  have s5 := bd_stepB_nil (body := body) hn (mnRnd .sq) (mnRnd .mn)
+  have s5 := bd_stepB_nil (body := body) hbig (mnRnd .sq) (mnRnd .mn)
     (fun r => bd_pm_ne r (by simp)) (fun r => bd_pm_ne r (by simp))
     (mn_rg_ne' (.rnd .sq) (.rnd .mn)) (bdCSq_do hbig) (bd_pmW_le_Mw hbig) R₄
     (by rw [hR₄, Function.update_of_ne (mn_rg_ne' (.rnd .sq) (.rnd .nn)), hR₃,
@@ -301,14 +302,14 @@ theorem bd_rnd_runs (hbig : Big n) (R : Regs mnT bdA) (hR : ∀ r ∈ bdRndRegs,
       Function.update_of_ne (mn_rg_ne' (.rnd .sq) (.io .dwn))]; exact h5)
     (by rw [hR₄, Function.update_of_ne (mn_rg_ne' (.rnd .mn) (.rnd .nn)), hR₃,
       Function.update_self]; simp)
-  have s6 := bd_step_nil (body := body) hn (mnRnd .wo) (fun r => bd_pm_ne r (by simp))
+  have s6 := bd_step_nil (body := body) hbig (mnRnd .wo) (fun r => bd_pm_ne r (by simp))
     (bdCWo_do hn) R₅
     (by rw [hR₅, Function.update_of_ne (mn_rg_ne' (.rnd .wo) (.rnd .sq)), hR₄,
       Function.update_of_ne (mn_rg_ne' (.rnd .wo) (.rnd .nn)), hR₃,
       Function.update_of_ne (mn_rg_ne' (.rnd .wo) (.rnd .mn)), hR₂,
       Function.update_of_ne (mn_rg_ne' (.rnd .wo) (.rnd .wn)), hR₁,
       Function.update_of_ne (mn_rg_ne' (.rnd .wo) (.io .dwn))]; exact h6)
-  have s7 := bd_step_nil (body := body) hn (mnOutR .wr) (fun r => bd_pm_ne r (by simp))
+  have s7 := bd_step_nil (body := body) hbig (mnOutR .wr) (fun r => bd_pm_ne r (by simp))
     (bdCWo_do hn) R₆
     (by rw [hR₆, Function.update_of_ne (mn_rg_ne' (.out .wr) (.rnd .wo)), hR₅,
       Function.update_of_ne (mn_rg_ne' (.out .wr) (.rnd .sq)), hR₄,

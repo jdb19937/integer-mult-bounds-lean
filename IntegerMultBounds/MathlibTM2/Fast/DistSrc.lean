@@ -88,7 +88,7 @@ theorem ds_src_runs (R : Regs T A) {n w Wt : ℕ} (hbig : Big n) (hd0 : 0 < d n)
   have hw2 : w < 2 ^ pmW n := by omega
   have e0 : ∀ y : DsY t₀, (∀ x, y ≠ .o x) → X y = [] := fun y hy => hX y (hy _) (hy _)
   -- phase 1
-  obtain ⟨X₁, o1, v1D, v1A, v1B, v1TS, v1SS, v1WT, v1ST, s1⟩ := ds_P1 (body := body) h R hn hd0
+  obtain ⟨X₁, o1, v1D, v1A, v1B, v1TS, v1SS, v1WT, v1ST, s1⟩ := ds_P1 (body := body) h R hbig hd0
     hWt wl hwl X huW (fun y hy => by
       simp only [dsP1Pre, List.mem_cons, List.not_mem_nil, or_false] at hy
       rcases hy with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;>
@@ -111,7 +111,7 @@ theorem ds_src_runs (R : Regs T A) {n w Wt : ℕ} (hbig : Big n) (hd0 : 0 < d n)
     rw [x2 _ (by simp [dsP1Out]; exact h1) (by simp [dsPCOut]; exact h1)]
     exact hX _ (by simpa using h2) (by simpa using h3)
   -- phase 2a
-  have s3 := ds_P2a (body := body) h R hn hgw hNw hw4 wl hwl X₂
+  have s3 := ds_P2a (body := body) h R hbig hgw hNw hw4 wl hwl X₂
     (by rw [x2 _ (by simp [dsP1Out]) (by simp [dsPCOut]), huw])
     (by rw [x2 _ (by simp [dsP1Out]) (by simp [dsPCOut]), huW])
     (hO .tm (by decide) (by decide) (by decide))
@@ -122,7 +122,7 @@ theorem ds_src_runs (R : Regs T A) {n w Wt : ℕ} (hbig : Big n) (hd0 : 0 < d n)
   have v3 : ∀ e ∈ dsP2aW (A := A) (t₀ := t₀) n w Wt, X₃ e.1 = e.2 :=
     dsUpdL_on _ _ (dsP2aW_nodup n w Wt)
   -- phase 2b
-  have s4 := ds_P2b (body := body) h R hn hpw hw4 hWL wl hwl X₃
+  have s4 := ds_P2b (body := body) h R hbig hpw hw4 hWL wl hwl X₃
     (by rw [o3 _ (by simp [dsP2aW, dsP2aW₁, dsP2wcp, dsP2dcp, dsP2ncp]),
       x2 _ (by simp [dsP1Out]) (by simp [dsPCOut]), huw])
     (by rw [v3 (.o .rR, List.replicate (r n) tick) (by simp [dsP2aW, dsP2aW₁])]; simp)
@@ -175,7 +175,7 @@ theorem ds_src_runs (R : Regs T A) {n w Wt : ℕ} (hbig : Big n) (hd0 : 0 < d n)
     rw [o4 _ (dab e he)]
     exact v3 e he
   -- phase 2c
-  have s5 := ds_P2c (body := body) h R hn hw2 hwW hW8 wl hwl X₄
+  have s5 := ds_P2c (body := body) h R hbig hw2 hwW hW8 wl hwl X₄
     (fun i => hTbl _ (by simp) (by simp)) (hTbl _ (by simp) (by simp))
     (fun j => hTbl _ (by simp) (by simp))
     (by rw [k4 (.s (.k (.x (.tbl .wr))), List.replicate Wt tick) (by simp [dsP2aW])]; simp)
