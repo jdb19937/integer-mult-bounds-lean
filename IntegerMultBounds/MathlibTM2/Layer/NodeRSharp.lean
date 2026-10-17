@@ -268,7 +268,7 @@ theorem nodeM_err_sharp (he : Function.Injective e) (ds : Directions)
     have h2 := congrFun (congrFun (view_corrOutM he
       (runM e child 0 (program ds) (corrInM e (bankZ f)))) w) ((y, r), fun i => r (e i))
     have h3 : correctOutputA k S w ((y, r), fun i => r (e i)) =
-        nodeA k ds F (((y, r), w), fun i => r (e i)) := rfl
+        nodeA k ds F (((y, r), w), fun i => r (e i)) := by simp only [nodeA, unbank, S]
     simp only [Pi.sub_apply, Pi.smul_apply]
     rw [h1, h2, h3, hA, ← view_Cfull e he (toC f) (y, w) r]
     congr 2
