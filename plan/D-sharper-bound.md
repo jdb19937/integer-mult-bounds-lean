@@ -19,7 +19,7 @@ The sharper target is the **selected** community construction at revision
 in individual notes. The [source pin](../docs/sharper-bound-source.json)
 records the selected certificate, supporting sources and manuscript digests.
 The original manuscript proves saving `2^-182`; our published, audited Lean
-theorem proves `2^-34`. Its active compact parameters are `epsilon=9/64`,
+theorem proves `2^-33`. Its active compact parameters are `epsilon=9/32`,
 `c=2^-2`, and `lambda'=1-57/2^37`. The selected upstream conditional saving is
 `0.001672660197076918`; matching it unconditionally remains the goal.
 
@@ -1995,7 +1995,7 @@ Gaussian stage no longer limits `ε` below `1/2`. `MathlibTM2.Theorem` builds;
 the public bound is unchanged until `ε` rises, which waits on the
 synthetic-layer precision above.
 
-Rounded synthetic layers (next). The layer machine keeps one common scale by
+Rounded synthetic layers (complete, `2^-33`). The layer machine keeps one common scale by
 multiplying the wires a factor does not touch by `2^Tc` (`Layer/NodeZ.execM`),
 so the exponent compounds, `E_{j+1} = G + F E_j`. Instead the factor shifts
 its child's output right by `Tc` (truncating) and leaves the other wires
@@ -2008,3 +2008,17 @@ programs with a truncating shift in place of `shiftTc` (`Node/Factor`,
 `Node/CompactFactor`) and their costs; the round error absorbed by
 `SynthErrRounds` and the widths `synW2`; then `ε = 9/32` with its sizing and
 the final theorem.
+
+This is done. Each level truncates by its own scale (`Layer/LayerR`), the
+error bound is sharp through spectator invariance (`Layer/NodeRSharp`), and the
+top shrinks before its final division so outputs stay in the unit disk
+(`Layer/TopRS`). The computed rounds are within `√2(1+1/16)/2^p` of the exact
+rounds (`Mult/SynthErrRoundsQ`), the pipeline is generic in the box
+convolution (`Pipeline.pipeline_correctG`, `Mult/PipelineQ`), and the main
+chain runs on the rounded box stage up to `Fast/CompactFinalR`. Only `d² ≤ b`
+is needed by the rounded costs; direct rounds stay exact with width `O(p)`.
+The resampling margin uses `α ≤ 2√d`, so the stage margins hold at
+`epsilon=9/32`, `kappa=2^-33`, binding on the layer margin `513/2^42`.
+`MathlibTM2.Theorem` now proves `MulInTime (2^33)⁻¹` with the standard axioms.
+The exact chain that needed `d^6 ≤ b` was removed (restore from the parent of
+`8fb31454`).
