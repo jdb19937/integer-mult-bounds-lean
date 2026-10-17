@@ -79,6 +79,28 @@ theorem buildStrip_extends (nodes : List (Node ι)) (groups : List (List ℕ))
   extends_trans (total_extends _ _) (extends_trans
     (mapBuild_extends _ (fun ns _ => total_extends ns _) _ _) (vectorTail_extends _ _))
 
+theorem buildSingles_extends (nodes : List (Node ι)) (groups : List (List ℕ))
+    (outside : WeightTable) (strips : List Strip) :
+    Extends nodes (buildSingles nodes groups outside strips).1 := by
+  unfold buildSingles
+  exact mapBuild_extends _ (fun ns x => by exact smartAdd_extends _ _ _) _ _
+
+theorem buildCrossLeft_extends (nodes : List (Node ι)) (groups : List (List ℕ))
+    (edges far : EdgeTable) (strips : List Strip) (ij : ℕ × ℕ) (a : ℕ) :
+    Extends nodes (buildCrossLeft nodes groups edges far strips ij a).1 := by
+  unfold buildCrossLeft
+  exact extends_trans (smartAdd_extends _ _ _) (mapBuild_extends _ (fun ns b => by
+    exact extends_trans (total_extends _ _) (extends_trans (smartAdd_extends _ _ _)
+      (smartAdd_extends _ _ _))) _ _)
+
+theorem buildCrossPairs_extends (nodes : List (Node ι)) (groups : List (List ℕ))
+    (edges far : EdgeTable) (strips : List Strip) :
+    Extends nodes (buildCrossPairs nodes groups edges far strips).1 := by
+  unfold buildCrossPairs
+  exact mapBuild_extends _ (fun ns ij => by
+    unfold buildCrossGroup
+    exact mapBuild_extends _ (fun ns' a => buildCrossLeft_extends _ _ _ _ _ _ _) _ _) _ _
+
 omit [DecidableEq ι] in
 /-- Charge a loop body under an invariant preserved by every iteration. -/
 theorem mapBuild_additions_le_inv (f : List (Node ι) → X → List (Node ι) × Y)
