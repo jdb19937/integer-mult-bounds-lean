@@ -2642,4 +2642,6 @@ import IntegerMultBounds.MathlibTM2.Cost.CompactDimensionParameters
 import IntegerMultBounds.MathlibTM2.Layer.TopR
 import IntegerMultBounds.MathlibTM2.Layer.LayerRBounds
 import IntegerMultBounds.MathlibTM2.Layer.TopRS
+import IntegerMultBounds.MathlibTM2.Mult.SynthErrRoundsQ
+import IntegerMultBounds.MathlibTM2.Mult.SynthErrQ
 import IntegerMultBounds.MathlibTM2.Node.CompactLayerProcR

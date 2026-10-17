@@ -154,6 +154,38 @@ theorem topRS_err :
   rw [e] at h2 h4
   exact ⟨h1, h3, h2, h4⟩
 
+/-- The shrunk top in the complex norm: no larger than `Hl`, and within `√2 (1 + 2c/2^s)`. -/
+theorem topRS_norm :
+    ‖GaussianInt.toComplex (topRS ds a low top hR₂ Ps g s c Z p)‖ ≤
+        ‖Hl _ (low.map (Fin.castAdd a) ++ top) (toC Z) p‖ ∧
+      ‖GaussianInt.toComplex (topRS ds a low top hR₂ Ps g s c Z p) -
+        Hl _ (low.map (Fin.castAdd a) ++ top) (toC Z) p‖ ≤ √2 * (1 + 2 * c / 2 ^ s) := by
+  obtain ⟨h1, h2, h3, h4⟩ := topRS_err ds hd a low top hR₂ Ps hinj hcover hsel g s c hs hc Z p
+  set H := Hl _ (low.map (Fin.castAdd a) ++ top) (toC Z) p
+  set y := topRS ds a low top hR₂ Ps g s c Z p
+  have hre : (GaussianInt.toComplex y).re = y.re := by simp
+  have him : (GaussianInt.toComplex y).im = y.im := by simp
+  constructor
+  · rw [← Real.sqrt_sq (norm_nonneg _), ← Real.sqrt_sq (norm_nonneg H), Complex.sq_norm,
+      Complex.sq_norm, Complex.normSq_apply, Complex.normSq_apply, hre, him]
+    apply Real.sqrt_le_sqrt
+    have a1 := sq_le_sq' (abs_le.1 h1).1 (abs_le.1 h1).2
+    have a2 := sq_le_sq' (abs_le.1 h2).1 (abs_le.1 h2).2
+    have b1 : (y.re : ℝ) * y.re ≤ H.re * H.re := by nlinarith [sq_abs H.re]
+    have b2 : (y.im : ℝ) * y.im ≤ H.im * H.im := by nlinarith [sq_abs H.im]
+    linarith
+  · set w := GaussianInt.toComplex y - H
+    set b := 1 + 2 * (c : ℝ) / 2 ^ s
+    have hb : 0 ≤ b := by positivity
+    have hwre : |w.re| ≤ b := by simp only [w, Complex.sub_re, hre]; exact h3
+    have hwim : |w.im| ≤ b := by simp only [w, Complex.sub_im, him]; exact h4
+    rw [← Real.sqrt_sq (norm_nonneg w), Complex.sq_norm, Complex.normSq_apply,
+      show √2 * b = √(2 * b ^ 2) by rw [Real.sqrt_mul (by norm_num), Real.sqrt_sq hb]]
+    apply Real.sqrt_le_sqrt
+    have a1 : w.re * w.re ≤ b ^ 2 := by nlinarith [sq_abs w.re, abs_nonneg w.re]
+    have a2 : w.im * w.im ≤ b ^ 2 := by nlinarith [sq_abs w.im, abs_nonneg w.im]
+    linarith
+
 end Top
 
 end IntegerMultBounds.MathlibTM2.Layer
