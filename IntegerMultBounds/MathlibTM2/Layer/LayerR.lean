@@ -61,6 +61,19 @@ lemma errL_nonneg (u : ℕ) (ds : Directions) (R₀ r n : ℕ) : ∀ j, 0 ≤ er
   | j + 1 => errRun_nonneg (mul_nonneg (Real.sqrt_nonneg _) (add_nonneg (by positivity)
       (div_nonneg (errL_nonneg u ds R₀ r n j) (by positivity)))) _ le_rfl
 
+/-- The step of the error bound in closed form. -/
+lemma errL_succ_le (u : ℕ) (ds : Directions) (R₀ r n j : ℕ) :
+    errL u ds R₀ r n (j + 1) ≤ lipProd (program ds) * facCount (program ds) *
+      (√(2 ^ (m * bits u j)) *
+        (√2 * √(rowsAt R₀ j * r * 2 ^ n) + errL u ds R₀ r n j / 2 ^ scaleR u ds j)) := by
+  have hδ : 0 ≤ √(2 ^ (m * bits u j)) *
+      (√2 * √(rowsAt R₀ j * r * 2 ^ n) + errL u ds R₀ r n j / 2 ^ scaleR u ds j) :=
+    mul_nonneg (Real.sqrt_nonneg _) (add_nonneg (by positivity)
+      (div_nonneg (errL_nonneg u ds R₀ r n j) (by positivity)))
+  have h := errRun_le hδ (program ds) (le_refl (0 : ℝ))
+  simp only [errL]
+  linarith
+
 /-! ### Truncation -/
 
 lemma abs_truncR_sub_le_one (x : ℝ) : |(truncR x : ℝ) - x| ≤ 1 := by

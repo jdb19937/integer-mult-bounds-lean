@@ -277,6 +277,50 @@ lemma errRun_mono (δ : ℝ) (l : List Instr) {E E' : ℝ} (h : E ≤ E') : errR
     | factor w g => exact ih (by linarith)
     | gate g => exact ih (mul_le_mul_of_nonneg_left h (by have := one_le_gateLip g; linarith))
 
+/-- The product of twice the gate constants of a program. -/
+noncomputable def lipProd : List Instr → ℝ
+  | [] => 1
+  | .gate g :: rest => 2 * gateLip g * lipProd rest
+  | .factor _ _ :: rest => lipProd rest
+
+/-- The number of factors of a program. -/
+def facCount : List Instr → ℕ
+  | [] => 0
+  | .gate _ :: rest => facCount rest
+  | .factor _ _ :: rest => 1 + facCount rest
+
+lemma one_le_lipProd : ∀ l : List Instr, 1 ≤ lipProd l
+  | [] => le_rfl
+  | .gate g :: rest => by
+    have h1 := one_le_gateLip g
+    have h2 := one_le_lipProd rest
+    simp only [lipProd]; nlinarith
+  | .factor _ _ :: rest => one_le_lipProd rest
+
+/-- **The closed form of the run error**: `errRun δ l E ≤ lipProd l (E + facCount l δ)`. -/
+lemma errRun_le {δ : ℝ} (hδ : 0 ≤ δ) (l : List Instr) {E : ℝ} (hE : 0 ≤ E) :
+    errRun δ l E ≤ lipProd l * (E + facCount l * δ) := by
+  induction l generalizing E with
+  | nil => simp [errRun, lipProd, facCount]
+  | cons i rest ih =>
+    cases i with
+    | factor w g =>
+      simp only [errRun, lipProd, facCount]
+      refine (ih (by linarith)).trans (le_of_eq ?_)
+      push_cast; ring
+    | gate g =>
+      simp only [errRun, lipProd, facCount]
+      have hL := one_le_gateLip g
+      have hP := one_le_lipProd rest
+      refine (ih (mul_nonneg (by linarith) hE)).trans ?_
+      have h1 : 2 * gateLip g * E + facCount rest * δ ≤ 2 * gateLip g * (E + facCount rest * δ) := by
+        have : (0 : ℝ) ≤ facCount rest * δ := by positivity
+        nlinarith
+      calc lipProd rest * (2 * gateLip g * E + facCount rest * δ) ≤
+          lipProd rest * (2 * gateLip g * (E + facCount rest * δ)) :=
+            mul_le_mul_of_nonneg_left h1 (by linarith)
+        _ = 2 * gateLip g * lipProd rest * (E + facCount rest * δ) := by ring
+
 /-- A factor with a rounded child, against the complex factor: the child's error `δ` in the view. -/
 lemma view_facM_err (he : Function.Injective e) (child : Fin m → ZArr Y n → ZArr Y n) {δ : ℝ}
     (hδ : 0 ≤ δ)
