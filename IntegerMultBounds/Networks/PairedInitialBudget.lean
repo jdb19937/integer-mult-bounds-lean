@@ -3,6 +3,7 @@ module
 public import IntegerMultBounds.Networks.PairedCircuitBudget
 public import IntegerMultBounds.Networks.PairedInitialGraph
 public import IntegerMultBounds.Networks.DAGInstructionCount
+public import IntegerMultBounds.Networks.DisjointPruningBudget
 
 /-! Certificate-free resource bounds for the literal paired construction.
 Absent references denote zero and are omitted from the physical output list.
@@ -60,6 +61,23 @@ theorem compile_bounds_of_active (points : List ℕ) (hs : points.Pairwise (· <
     (outputRefs_valid points hs)
   have ho := outputRefs_length_le points
   constructor <;> omega
+
+/-- Structural dead-support families improve the actual paired compiler's
+budget without unfolding the recursive circuit or its backwards traversal. -/
+theorem compile_bounds_of_dead (points : List ℕ) (hs : points.Pairwise (· < ·))
+    (dead : Finset ℕ) (capacity saved : ℕ)
+    (hc : additionCount (circuit points).nodes ≤ capacity)
+    (hd : ∀ i ∈ dead, ∀ r ∈ outputRefs points,
+      ¬ DAGSupportTrace.nodeSupport (circuit points).nodes i ⊆
+        DAGSupportTrace.nodeSupport (circuit points).nodes r)
+    (hsaved : saved ≤ DisjointPruning.additionCountFrom 0 dead (circuit points).nodes) :
+    (compile (circuit points).nodes (outputRefs points)).state.next ≤
+        (capacity - saved) + (pairs points).length ∧
+      (compile (circuit points).nodes (outputRefs points)).program.length ≤
+        2 * (capacity - saved) + (pairs points).length := by
+  apply compile_bounds_of_active points hs (capacity - saved)
+  exact DisjointPruning.marked_additions_le_sub _ (circuit_correct points hs).valid _ dead
+    (fun i hi r hr => hd i hi r (List.mem_toFinset.mp hr)) capacity saved hc hsaved
 
 /-- Any improved addition bound transfers directly to allocated registers. -/
 theorem compile_roles_le_of (points : List ℕ) (hs : points.Pairwise (· < ·))

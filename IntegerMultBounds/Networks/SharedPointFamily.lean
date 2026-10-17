@@ -4,6 +4,7 @@ public import IntegerMultBounds.Networks.Paired49Certificate
 public import IntegerMultBounds.Networks.SharedPointLift
 public import IntegerMultBounds.Networks.SharedPointMatching
 public import IntegerMultBounds.Networks.DisjointUnique
+public import IntegerMultBounds.Networks.DAGAdditionIds
 
 /-! The actual fifty-copy family of certified local addition supports.
 Its size is derived from the checked arithmetic count, without reducing a
@@ -15,45 +16,8 @@ namespace IntegerMultBounds.Networks.SharedPointFamily
 
 open DisjointCircuit SharedPointMatching
 
-/-- Input nodes are excluded from the sharing-allocation count. -/
-def isAddition {ι : Type*} (node : Node ι) : Bool :=
-  match node.kind with | .input _ => false | .add _ _ => true
-
-theorem isAddition_iff {ι : Type*} (node : Node ι) :
-    isAddition node = true ↔ ∃ l r, node.kind = .add l r := by
-  cases hk : node.kind <;> simp [isAddition, hk]
-
-/-- The identifiers of actual addition nodes in their literal topological list. -/
-def additionIds {ι : Type*} (nodes : List (Node ι)) : Finset ℕ :=
-  ((nodes.zipIdx.filter (fun row => isAddition row.1)).map Prod.snd).toFinset
-
-theorem mem_additionIds {ι : Type*} (nodes : List (Node ι)) (i : ℕ) :
-    i ∈ additionIds nodes ↔ ∃ node, nodes[i]? = some node ∧ ∃ l r, node.kind = .add l r := by
-  simp only [additionIds, List.mem_toFinset, List.mem_map, List.mem_filter]
-  constructor
-  · rintro ⟨⟨node,j⟩, ⟨hm, ha⟩, he⟩
-    change j = i at he
-    subst j
-    exact ⟨node, List.mk_mem_zipIdx_iff_getElem?.mp hm, (isAddition_iff node).mp ha⟩
-  · rintro ⟨node, hm, ha⟩
-    exact ⟨(node,i), ⟨List.mk_mem_zipIdx_iff_getElem?.mpr hm, (isAddition_iff node).mpr ha⟩, rfl⟩
-
-theorem additionIds_bound {ι : Type*} (nodes : List (Node ι)) (i : ℕ) (hi : i ∈ additionIds nodes) :
-    i < nodes.length := by
-  obtain ⟨node, hn, _⟩ := (mem_additionIds nodes i).mp hi
-  exact (List.getElem?_eq_some_iff.mp hn).1
-
-/-- Counting filtered unique indices is exactly counting addition records. -/
-theorem additionIds_card {ι : Type*} (nodes : List (Node ι)) :
-    (additionIds nodes).card = DAGAllocator.additionCount nodes := by
-  have hn : ((nodes.zipIdx).map Prod.snd).Nodup := by
-    rw [List.zipIdx_map_snd]
-    exact List.nodup_range'
-  have hf := hn.sublist (List.filter_sublist.map Prod.snd :
-    ((nodes.zipIdx.filter (fun row => isAddition row.1)).map Prod.snd).Sublist _)
-  rw [additionIds, List.toFinset_card_of_nodup hf, List.length_map, ← List.countP_eq_length_filter]
-  change (nodes.zipIdx.countP (isAddition ∘ Prod.fst)) = nodes.countP isAddition
-  rw [← List.countP_map, List.zipIdx_map_fst]
+export DAGAdditionIds (isAddition isAddition_iff additionIds mem_additionIds
+  additionIds_bound additionIds_card)
 
 attribute [local irreducible] Paired49Certificate.nodes Certificates.Paired49.entries Certificates.Paired49.bank
 

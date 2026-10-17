@@ -284,6 +284,13 @@ import IntegerMultBounds.Networks.PairedBlockCorrect
 import IntegerMultBounds.Networks.PairedInitialGraph
 import IntegerMultBounds.Networks.PairedInitialBudget
 import IntegerMultBounds.Networks.DisjointSharingBudget
+import IntegerMultBounds.Networks.PairedVectorBudget
+import IntegerMultBounds.Networks.PairedVectorPruning
+import IntegerMultBounds.Networks.PairedStripBudget
+import IntegerMultBounds.Networks.PairedBalancedSharing
+import IntegerMultBounds.Networks.PairedCircuitUnique
+import IntegerMultBounds.Networks.PairedSingleBudget
+import IntegerMultBounds.Networks.DAGAdditionIds
 import IntegerMultBounds.Networks.PairedPruning
 import IntegerMultBounds.Networks.DisjointUnique
 import IntegerMultBounds.Networks.DuplicateBudget
