@@ -84,9 +84,11 @@ def main() -> None:
              '/-- The actual local addition interval; its classification is checked separately. -/',
              'def isAddition (i : ℕ) : Bool := decide (1176 ≤ i ∧ i < 10989)', '']
     lines += [f'def point{i:02d} : Fin 50 := ⟨{i}, by decide⟩' for i in range(50)] + ['']
+    lines += ['/-- Shared typed constructor keeps generated rows cheap to elaborate. -/',
+              'def witnessRow (c d : Fin 50) (a b : ℕ) : Witness 49 := ((c, a), (d, b))', '']
     for n,(lo,hi) in enumerate(chunks):
         lines += [f'def chunk{n:03d} : List (Witness 49) := [',
-                  ',\n'.join(f'  ((point{c:02d}, {a}), (point{d:02d}, {b}))' for c,a,d,b in rows[lo:hi]),']\n']
+                  ',\n'.join(f'  witnessRow point{c:02d} point{d:02d} {a} {b}' for c,a,d,b in rows[lo:hi]),']\n']
     lines += ['def rows : List (Witness 49) :=\n  '+appended([f'chunk{n:03d}' for n in range(len(chunks))]), '',
               f'end {ns}', '']
     (out/'Data.lean').write_text('\n'.join(lines))

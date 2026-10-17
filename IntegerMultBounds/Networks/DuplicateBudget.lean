@@ -58,6 +58,21 @@ theorem image_card_add_witnesses_le (domain : Finset α) (witnesses : Finset μ)
 
 open SharedPointKey NeighborCounts
 
+omit [DecidableEq μ] in
+/-- Any certified lower bound on distinct duplicate witnesses reduces any upper
+bound on the domain. Neither constant is tied to a particular circuit size. -/
+theorem image_card_le_sub (domain : Finset α) (witnesses : Finset μ)
+    (left right : μ → α) (value : α → β)
+    (hl : ∀ m ∈ witnesses, left m ∈ domain)
+    (hr : ∀ m ∈ witnesses, right m ∈ domain)
+    (hinj : Set.InjOn right witnesses)
+    (hsep : ∀ m ∈ witnesses, ∀ n ∈ witnesses, left m ≠ right n)
+    (heq : ∀ m ∈ witnesses, value (left m) = value (right m))
+    (capacity saved : ℕ) (hd : domain.card ≤ capacity) (hm : saved ≤ witnesses.card) :
+    (domain.image value).card ≤ capacity - saved := by
+  have h := image_card_add_witnesses_le domain witnesses left right value hl hr hinj hsep heq
+  omega
+
 /-- A nontrivial addition of triples has at most two common points. This
 excludes a duplicate sum appearing in three distinct common-point copies. -/
 theorem core_card_le_two {h : ℕ} (support : Finset (Triple h)) (hs : 2 ≤ support.card) :
@@ -85,7 +100,9 @@ theorem h50_bound (domain : Finset α) (witnesses : Finset μ)
     (heq : ∀ m ∈ witnesses, value (left m) = value (right m))
     (hd : domain.card ≤ 50 * 9813) (hm : 40256 ≤ witnesses.card) :
     (domain.image value).card ≤ 450394 := by
-  have hh := image_card_add_witnesses_le domain witnesses left right value hl hr hinj hsep heq
-  omega
+  have h := image_card_le_sub domain witnesses left right value hl hr hinj hsep heq
+    (50 * 9813) 40256 hd hm
+  norm_num at h
+  exact h
 
 end IntegerMultBounds.Networks.DuplicateBudget

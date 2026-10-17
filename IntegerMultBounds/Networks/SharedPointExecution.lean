@@ -112,12 +112,20 @@ theorem reverse_run (state : ℕ → ZMod 2) :
     Circuit.run code.program.reverse (Circuit.run code.program state) = state :=
   DAGAllocator.compile_run_reverse circuit.nodes outputRefs valid outputRefs_bounds state
 
+theorem role_bound_of (budget : ℕ)
+    (hcard : (SharedPointFamily.domain.image SharedPointFamily.support).card ≤ budget) :
+    code.state.next ≤ budget + 58800 := allocated_roles_le_of budget hcard
+
+theorem instruction_bound_of (budget : ℕ)
+    (hcard : (SharedPointFamily.domain.image SharedPointFamily.support).card ≤ budget) :
+    code.program.length ≤ 2 * budget + 58800 := compiled_instructions_le_of budget hcard
+
 theorem role_bound
     (hcard : (SharedPointFamily.domain.image SharedPointFamily.support).card ≤ 450394) :
-    code.state.next ≤ 509194 := allocated_roles_le hcard
+    code.state.next ≤ 509194 := role_bound_of 450394 hcard
 
 theorem instruction_bound
     (hcard : (SharedPointFamily.domain.image SharedPointFamily.support).card ≤ 450394) :
-    code.program.length ≤ 959588 := compiled_instructions_le hcard
+    code.program.length ≤ 959588 := instruction_bound_of 450394 hcard
 
 end IntegerMultBounds.Networks.SharedPointExecution

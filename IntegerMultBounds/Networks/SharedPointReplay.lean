@@ -230,22 +230,33 @@ theorem additions_le_supports : DAGAllocator.additionCount circuit.nodes ≤
     (SharedPointFamily.domain.image SharedPointFamily.support).card :=
   DAGReplayBudget.additions_le_card _ _ supports_nodup additionSupports_subset
 
-/-- The finite support certificate transfers to actual compiled storage. -/
-theorem allocated_roles_le
-    (hcard : (SharedPointFamily.domain.image SharedPointFamily.support).card ≤ 450394) :
-    (DAGAllocator.compile circuit.nodes outputRefs).state.next ≤ 509194 := by
+/-- Any support budget transfers to actual compiled storage without evaluating
+the circuit or fixing the numerical support bound. -/
+theorem allocated_roles_le_of (budget : ℕ)
+    (hcard : (SharedPointFamily.domain.image SharedPointFamily.support).card ≤ budget) :
+    (DAGAllocator.compile circuit.nodes outputRefs).state.next ≤ budget + 58800 := by
   have ha := additions_le_supports.trans hcard
   have hr := DAGAllocator.compile_roles_le circuit.nodes outputRefs valid outputRefs_bounds
   rw [outputRefs_count] at hr
   omega
 
-/-- The same certificate bounds every instruction emitted by the allocator. -/
-theorem compiled_instructions_le
-    (hcard : (SharedPointFamily.domain.image SharedPointFamily.support).card ≤ 450394) :
-    (DAGAllocator.compile circuit.nodes outputRefs).program.length ≤ 959588 := by
+/-- The same parameterized support budget bounds actual emitted instructions. -/
+theorem compiled_instructions_le_of (budget : ℕ)
+    (hcard : (SharedPointFamily.domain.image SharedPointFamily.support).card ≤ budget) :
+    (DAGAllocator.compile circuit.nodes outputRefs).program.length ≤ 2 * budget + 58800 := by
   have ha := additions_le_supports.trans hcard
   have hr := DAGAllocator.compile_program_le_additions circuit.nodes outputRefs valid outputRefs_bounds
   rw [outputRefs_count] at hr
   omega
+
+theorem allocated_roles_le
+    (hcard : (SharedPointFamily.domain.image SharedPointFamily.support).card ≤ 450394) :
+    (DAGAllocator.compile circuit.nodes outputRefs).state.next ≤ 509194 :=
+  allocated_roles_le_of 450394 hcard
+
+theorem compiled_instructions_le
+    (hcard : (SharedPointFamily.domain.image SharedPointFamily.support).card ≤ 450394) :
+    (DAGAllocator.compile circuit.nodes outputRefs).program.length ≤ 959588 :=
+  compiled_instructions_le_of 450394 hcard
 
 end IntegerMultBounds.Networks.SharedPointReplay

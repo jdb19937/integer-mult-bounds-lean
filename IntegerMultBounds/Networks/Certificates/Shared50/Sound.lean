@@ -28,8 +28,9 @@ theorem witnesses_genuine (row : SharedPointWitnessCheck.Witness 49) (hr : row �
 /-- Certified cross-copy sharing saves at least 40,256 actual additions. -/
 theorem support_image_bound :
     (SharedPointFamily.domain.image SharedPointFamily.support).card ≤ 450394 := by
-  apply SharedPointMatching.h50_bound SharedPointFamily.family witnesses witnesses_genuine
-  · exact SharedPointFamily.domain_card.le
-  · exact witnesses_card.ge
+  have h := SharedPointMatching.image_card_le_budget SharedPointFamily.family witnesses
+    witnesses_genuine 9813 40256 SharedPointFamily.domain_card.le witnesses_card.ge
+  norm_num at h
+  exact h
 
 end IntegerMultBounds.Networks.Certificates.Shared50

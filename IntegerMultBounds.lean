@@ -282,6 +282,7 @@ import IntegerMultBounds.Networks.PairedReconstructionSupport
 import IntegerMultBounds.Networks.PairedReconstructionKeys
 import IntegerMultBounds.Networks.PairedBlockCorrect
 import IntegerMultBounds.Networks.PairedInitialGraph
+import IntegerMultBounds.Networks.PairedInitialBudget
 import IntegerMultBounds.Networks.DisjointUnique
 import IntegerMultBounds.Networks.DuplicateBudget
 import IntegerMultBounds.Networks.SharedPointMatching

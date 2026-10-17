@@ -116,4 +116,17 @@ theorem h50_bound (family : Family 50) (witnesses : Finset (CopyNode 50 × CopyN
     (right_injective family witnesses hw) (endpoints_separate family witnesses hw)
     (fun m hm => (hw m hm).equal) hd hm
 
+/-- Parameterized sharing budget for any number of copies and any certified
+local-addition and duplicate bounds. Improving either bound improves the result. -/
+theorem image_card_le_budget (family : Family h)
+    (witnesses : Finset (CopyNode h × CopyNode h))
+    (hw : ∀ pair ∈ witnesses, IsWitness family pair)
+    (localAdditions saved : ℕ) (hd : family.domain.card ≤ h * localAdditions)
+    (hm : saved ≤ witnesses.card) :
+    (family.domain.image family.support).card ≤ h * localAdditions - saved :=
+  DuplicateBudget.image_card_le_sub family.domain witnesses Prod.fst Prod.snd family.support
+    (fun m hm => (hw m hm).left_mem) (fun m hm => (hw m hm).right_mem)
+    (right_injective family witnesses hw) (endpoints_separate family witnesses hw)
+    (fun m hm => (hw m hm).equal) (h * localAdditions) saved hd hm
+
 end IntegerMultBounds.Networks.SharedPointMatching
