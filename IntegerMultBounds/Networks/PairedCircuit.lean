@@ -7,7 +7,10 @@ public import IntegerMultBounds.Networks.PairGrouping
 `paired_exclusion_circuit.py`: balanced totals, coarse edges then weights,
 recursive coarse outputs, strips, singles, within-group pairs, and cross-group
 pairs with a shared left partial sum. Optional references represent zero.
-Correctness and size properties are proved separately from these definitions. -/
+Two sums the script builds but never uses are not built here: a strip's carry
+omission, and the small-case total from scratch (it is assembled last from a
+single exclusion instead). Every used sum is unchanged. Correctness and size
+properties are proved separately from these definitions. -/
 
 @[expose] public section
 
@@ -114,6 +117,27 @@ theorem vectorFalse_length (nodes : List (Node ι)) (values : List Ref) :
     (vectorFalse nodes values).one.length = values.length := by
   simp [vectorFalse, mapBuild_length, prefixBuild_length, suffixBuild_length]
 
+/-- Strip vector: as `vectorFalse`, except that the leading carry's own
+omission is never requested, so its strict suffix total is not built. The
+full total and every later omission are the same sums. -/
+def vectorTail (nodes : List (Node ι)) : List Ref → VectorResult ι
+  | [] => ⟨nodes, none, []⟩
+  | carry :: values =>
+    let pre := prefixBuild nodes none (carry :: values)
+    let suf := suffixBuild pre.1 values.tail
+    let outs := mapBuild (fun ns p => smartAdd ns p.1 p.2) suf.1
+      ((pre.2.drop 1).zip (suf.2.take values.length))
+    ⟨outs.1, pre.2.getLast?.getD none, none :: outs.2⟩
+
+theorem vectorTail_length (nodes : List (Node ι)) (values : List Ref) :
+    (vectorTail nodes values).one.length = values.length := by
+  cases values with
+  | nil => rfl
+  | cons carry values =>
+    simp only [vectorTail, List.length_cons, mapBuild_length, List.length_zip, List.length_drop,
+      prefixBuild_length, List.length_take, suffixBuild_length, List.length_tail]
+    omega
+
 structure BlockResult (ι : Type*) where
   nodes : List (Node ι)
   total : Ref
@@ -125,17 +149,29 @@ def query (edges : EdgeTable) (weights : WeightTable) (excluded : List ℕ) : Li
   ((edges.filter (fun e => e.1.1 ∉ excluded ∧ e.1.2 ∉ excluded)).map Prod.snd) ++
     ((weights.filter (fun w => w.1 ∉ excluded)).map Prod.snd)
 
-/-- The upstream branch used when there are at most four vertices. -/
+/-- The terms a query drops: edges touching an excluded vertex, then the
+excluded vertex weights. With the query they list every graph term. -/
+def removed (edges : EdgeTable) (weights : WeightTable) (excluded : List ℕ) : List Ref :=
+  ((edges.filter (fun e => !decide (e.1.1 ∉ excluded ∧ e.1.2 ∉ excluded))).map Prod.snd) ++
+    ((weights.filter (fun w => !decide (w.1 ∉ excluded))).map Prod.snd)
+
+/-- The upstream branch used when there are at most four vertices. Single and
+pair exclusions are built as upstream; the total comes last, as the last
+vertex's single exclusion plus the terms that exclusion dropped. -/
 def baseBlock (nodes : List (Node ι)) (points : List ℕ)
     (edges : EdgeTable) (weights : WeightTable) : BlockResult ι :=
-  let total := DisjointBalanced.total nodes (query edges weights [])
   let one := mapBuild (fun ns a =>
     let result := DisjointBalanced.total ns (query edges weights [a])
-    (result.1, (a, result.2))) total.1 points
+    (result.1, (a, result.2))) nodes points
   let two := mapBuild (fun ns p =>
     let result := DisjointBalanced.total ns (query edges weights [p.1, p.2])
     (result.1, (p, result.2))) one.1 (pairs points)
-  ⟨two.1, total.2, one.2, two.2⟩
+  let total := match points.getLast? with
+    | none => DisjointBalanced.total two.1 (query edges weights [])
+    | some a =>
+      let rest := DisjointBalanced.total two.1 (removed edges weights [a])
+      smartAdd rest.1 (lookup one.2 a) rest.2
+  ⟨total.1, total.2, one.2, two.2⟩
 
 /-- Fine vertices in coarse group `i`, with total lookup for malformed inputs. -/
 def groupAt (groups : List (List ℕ)) (i : ℕ) : List ℕ := groups[i]?.getD []
@@ -180,7 +216,7 @@ def buildStrip (nodes : List (Node ι)) (groups : List (List ℕ))
   let carry := DisjointBalanced.total nodes (remaining.map (lookup weights))
   let vals := mapBuild (fun ns j =>
     DisjointBalanced.total ns (crossRefs edges remaining (groupAt groups j))) carry.1 other
-  let vec := vectorFalse vals.1 (carry.2 :: vals.2)
+  let vec := vectorTail vals.1 (carry.2 :: vals.2)
   (vec.nodes, ⟨ia.2, vec.total, other.zip vec.one.tail⟩)
 
 def buildStrips (nodes : List (Node ι)) (groups : List (List ℕ))

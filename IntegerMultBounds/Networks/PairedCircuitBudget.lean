@@ -110,30 +110,77 @@ theorem vectorFalse_additions_le (nodes : List (Node ι)) (refs : List Ref) :
   omega
 
 
-/-- A state-independent budget for each level's actual balanced totals. -/
+theorem vectorTail_additions_le (nodes : List (Node ι)) (refs : List Ref) :
+    additionCount (vectorTail nodes refs).nodes ≤ additionCount nodes + 3 * refs.length := by
+  cases refs with
+  | nil => simp [vectorTail]
+  | cons carry values =>
+    have hp := prefixBuild_additions_le nodes none (carry :: values)
+    have hs := suffixBuild_additions_le (prefixBuild nodes none (carry :: values)).1 values.tail
+    have ho := mapBuild_additions_le (fun ns (p : Ref × Ref) => smartAdd ns p.1 p.2)
+      (fun _ => 1) (suffixBuild (prefixBuild nodes none (carry :: values)).1 values.tail).1
+      (((prefixBuild nodes none (carry :: values)).2.drop 1).zip
+        ((suffixBuild (prefixBuild nodes none (carry :: values)).1 values.tail).2.take values.length))
+      (fun ns p => smartAdd_additions_le ns p.1 p.2)
+    simp only [List.map_const', List.sum_replicate, smul_eq_mul, Nat.mul_one, List.length_zip,
+      List.length_drop, prefixBuild_length, List.length_take, suffixBuild_length] at ho
+    have ht : values.tail.length ≤ values.length := by simp
+    change additionCount (mapBuild _ _ _).1 ≤ _
+    simp only [List.length_cons] at hp ⊢
+    omega
+
+/-- A state-independent budget for each level's actual balanced totals. The
+total is charged as one addition per removed term of the last single. -/
 def baseBudget (points : List ℕ) (edges : EdgeTable) (weights : WeightTable) : ℕ :=
-  ((query edges weights []).length - 1) +
-    (points.map (fun a => (query edges weights [a]).length - 1)).sum +
-    ((pairs points).map (fun p => (query edges weights [p.1, p.2]).length - 1)).sum
+  (points.map (fun a => (query edges weights [a]).length - 1)).sum +
+    ((pairs points).map (fun p => (query edges weights [p.1, p.2]).length - 1)).sum +
+    (match points.getLast? with
+      | none => (query edges weights []).length - 1
+      | some a => (removed edges weights [a]).length)
 
 theorem baseBlock_additions_le (nodes : List (Node ι)) (points : List ℕ)
     (edges : EdgeTable) (weights : WeightTable) :
     additionCount (baseBlock nodes points edges weights).nodes ≤
       additionCount nodes + baseBudget points edges weights := by
-  have ht := total_additions_le nodes (query edges weights [])
+  let one := mapBuild (fun ns a =>
+    let r := DisjointBalanced.total ns (query edges weights [a]); (r.1, (a, r.2))) nodes points
   have ho := mapBuild_additions_le (fun ns a =>
     let r := DisjointBalanced.total ns (query edges weights [a]); (r.1, (a, r.2)))
-    (fun a => (query edges weights [a]).length - 1)
-    (DisjointBalanced.total nodes (query edges weights [])).1 points
+    (fun a => (query edges weights [a]).length - 1) nodes points
     (fun ns a => total_additions_le ns (query edges weights [a]))
+  let two := mapBuild (fun ns (p : ℕ × ℕ) =>
+    let r := DisjointBalanced.total ns (query edges weights [p.1, p.2]); (r.1, (p, r.2))) one.1 (pairs points)
   have hp := mapBuild_additions_le (fun ns (p : ℕ × ℕ) =>
     let r := DisjointBalanced.total ns (query edges weights [p.1, p.2]); (r.1, (p, r.2)))
-    (fun p => (query edges weights [p.1, p.2]).length - 1)
-    (mapBuild (fun ns a => let r := DisjointBalanced.total ns (query edges weights [a]);
-      (r.1, (a, r.2))) (DisjointBalanced.total nodes (query edges weights [])).1 points).1
+    (fun p => (query edges weights [p.1, p.2]).length - 1) one.1
     (pairs points) (fun ns p => total_additions_le ns (query edges weights [p.1, p.2]))
-  simp only [baseBlock, baseBudget]
-  try dsimp only at *
+  change additionCount one.1 ≤ _ at ho
+  change additionCount two.1 ≤ _ at hp
+  have ht : additionCount (baseBlock nodes points edges weights).nodes ≤ additionCount two.1 +
+      (match points.getLast? with
+        | none => (query edges weights []).length - 1
+        | some a => (removed edges weights [a]).length) := by
+    cases hl : points.getLast? with
+    | none =>
+      have h := total_additions_le two.1 (query edges weights [])
+      simpa only [baseBlock, hl] using h
+    | some a =>
+      have h1 := total_additions_le two.1 (removed edges weights [a])
+      have h2 := smartAdd_additions_le (DisjointBalanced.total two.1 (removed edges weights [a])).1
+        (lookup one.2 a) (DisjointBalanced.total two.1 (removed edges weights [a])).2
+      have h : additionCount (smartAdd (DisjointBalanced.total two.1 (removed edges weights [a])).1
+          (lookup one.2 a) (DisjointBalanced.total two.1 (removed edges weights [a])).2).1 ≤
+          additionCount two.1 + (removed edges weights [a]).length := by
+        cases hre : removed edges weights [a] with
+        | nil =>
+          simp only [hre, DisjointBalanced.total]
+          cases lookup one.2 a <;> simp [smartAdd]
+        | cons r rs =>
+          rw [hre] at h1 h2
+          simp only [List.length_cons] at h1 ⊢
+          omega
+      simpa only [baseBlock, hl] using h
+  unfold baseBudget
   omega
 
 theorem crossRefs_length (edges : EdgeTable) (left right : List ℕ) :
@@ -190,11 +237,11 @@ theorem buildStrip_additions_le (nodes : List (Node ι)) (groups : List (List �
     (fun j => remaining.length * (groupAt groups j).length - 1) carry.1 other
     (fun ns j => by simpa only [crossRefs_length] using
       total_additions_le ns (crossRefs edges remaining (groupAt groups j)))
-  have hs := vectorFalse_additions_le vals.1 (carry.2 :: vals.2)
+  have hs := vectorTail_additions_le vals.1 (carry.2 :: vals.2)
   have hlen : vals.2.length = other.length := mapBuild_length _ _ _
   simp only [List.length_map] at hc
   simp only [List.length_cons, hlen] at hs
-  change additionCount (vectorFalse vals.1 (carry.2 :: vals.2)).nodes ≤ _
+  change additionCount (vectorTail vals.1 (carry.2 :: vals.2)).nodes ≤ _
   change _ ≤ additionCount nodes + ((remaining.length - 1) +
     (other.map (fun j => remaining.length * (groupAt groups j).length - 1)).sum +
       3 * (1 + other.length))
@@ -320,16 +367,28 @@ theorem query_length_le (edges : EdgeTable) (weights : WeightTable) (excluded : 
 
 /-- A conservative base-case bound, uniform in edge values and input node state. -/
 def baseBound (points : List ℕ) (edgeCount weightCount : ℕ) : ℕ :=
-  (1 + points.length + (pairs points).length) * (edgeCount + weightCount - 1)
+  (1 + points.length + (pairs points).length) * (edgeCount + weightCount)
+
+theorem removed_length_le (edges : EdgeTable) (weights : WeightTable) (excluded : List ℕ) :
+    (removed edges weights excluded).length ≤ edges.length + weights.length := by
+  have he := List.length_filter_le (fun e : (ℕ × ℕ) × Ref =>
+    !decide (e.1.1 ∉ excluded ∧ e.1.2 ∉ excluded)) edges
+  have hw := List.length_filter_le (fun w : ℕ × Ref => !decide (w.1 ∉ excluded)) weights
+  simpa only [removed, List.length_append, List.length_map] using Nat.add_le_add he hw
 
 theorem baseBudget_le (points : List ℕ) (edges : EdgeTable) (weights : WeightTable) :
     baseBudget points edges weights ≤ baseBound points edges.length weights.length := by
   have h (excluded : List ℕ) := Nat.sub_le_sub_right (query_length_le edges weights excluded) 1
   have ho := sum_map_le points (fun a => (query edges weights [a]).length - 1)
-    (edges.length + weights.length - 1) (fun a => h [a])
+    (edges.length + weights.length) (fun a => (h [a]).trans (Nat.sub_le _ _))
   have hp := sum_map_le (pairs points) (fun p => (query edges weights [p.1, p.2]).length - 1)
-    (edges.length + weights.length - 1) (fun p => h [p.1, p.2])
-  have ht := h []
+    (edges.length + weights.length) (fun p => (h [p.1, p.2]).trans (Nat.sub_le _ _))
+  have ht : (match points.getLast? with
+      | none => (query edges weights []).length - 1
+      | some a => (removed edges weights [a]).length) ≤ edges.length + weights.length := by
+    cases points.getLast? with
+    | none => exact (h []).trans (Nat.sub_le _ _)
+    | some a => exact removed_length_le edges weights [a]
   simp only [baseBudget, baseBound, Nat.add_mul, Nat.one_mul]
   omega
 

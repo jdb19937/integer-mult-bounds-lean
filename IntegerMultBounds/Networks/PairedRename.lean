@@ -119,6 +119,13 @@ theorem vectorFalse_map (ns : List (Node α)) (refs : List Ref) :
 
 def block (b : BlockResult α) : BlockResult β := ⟨b.nodes.map (node e), b.total, b.one, b.two⟩
 
+theorem vectorTail_map (ns : List (Node α)) (refs : List Ref) :
+    vectorTail (ns.map (node e)) refs = vector e (vectorTail ns refs) := by
+  cases refs with
+  | nil => rfl
+  | cons carry values =>
+    simp only [vectorTail, prefixBuild_map, suffixBuild_map, addPairs_map, vector]
+
 theorem baseBlock_map (ns : List (Node α)) (points : List ℕ)
     (edges : EdgeTable) (weights : WeightTable) :
     baseBlock (ns.map (node e)) points edges weights = block e (baseBlock ns points edges weights) := by
@@ -136,7 +143,9 @@ theorem baseBlock_map (ns : List (Node α)) (points : List ℕ)
       ((DisjointBalanced.total ns (query edges weights [p.1, p.2])).1,
         (p, (DisjointBalanced.total ns (query edges weights [p.1, p.2])).2)))
     (fun ns p => by simp only [total_map])
-  simp only [baseBlock, total_map, block, hone, htwo]
+  cases hl : points.getLast? with
+  | none => simp only [baseBlock, hl, total_map, block, hone, htwo]
+  | some a => simp only [baseBlock, hl, total_map, smartAdd_map, block, hone, htwo]
 
 theorem coarseEdges_map (ns : List (Node α)) (groups : List (List ℕ)) (edges : EdgeTable) :
     coarseEdges (ns.map (node e)) groups edges =
@@ -161,7 +170,7 @@ theorem buildStrip_map (ns : List (Node α)) (groups : List (List ℕ))
     (fun (ns : List (Node β)) j => DisjointBalanced.total ns
       (crossRefs edges ((groupAt groups ia.1).filter (· != ia.2)) (groupAt groups j)))
     (fun ns j => total_map e ns _)
-  simp only [buildStrip, total_map, hvals, vectorFalse_map]
+  simp only [buildStrip, total_map, hvals, vectorTail_map]
   rfl
 
 theorem buildStrips_map (ns : List (Node α)) (groups : List (List ℕ))

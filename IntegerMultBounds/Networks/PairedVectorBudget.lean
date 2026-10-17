@@ -254,7 +254,7 @@ theorem prefixBuild_additions_le_stored (nodes : List (Node ι)) (acc : Ref) (re
           unfold presentCount at ht hz
           omega
 
-private theorem addPairs_additions_le_last (nodes : List (Node ι)) (ps : List (Ref × Ref))
+theorem addPairs_additions_le_last (nodes : List (Node ι)) (ps : List (Ref × Ref))
     (hlast : (ps.getLast?.getD (none, none)).2 = none) :
     additionCount (mapBuild (fun ns p => smartAdd ns p.1 p.2) nodes ps).1 ≤
       additionCount nodes + (ps.length - 1) := by
@@ -287,7 +287,7 @@ theorem addPairs_additions_le_endpoints (nodes : List (Node ι)) (ps : List (Ref
       have ht := addPairs_additions_le_last nodes (q :: qs) (by simpa using hlast)
       simpa [mapBuild, hp, smartAdd] using ht
 
-private theorem suffixBuild_last (nodes : List (Node ι)) (refs : List Ref) :
+theorem suffixBuild_last (nodes : List (Node ι)) (refs : List Ref) :
     (suffixBuild nodes refs).2.getLast? = some none := by
   induction refs with
   | nil => rfl
@@ -298,7 +298,7 @@ private theorem suffixBuild_last (nodes : List (Node ι)) (refs : List Ref) :
       simp [he] at this
     simpa only [suffixBuild, List.getLast?_cons_of_ne_nil hn] using ih
 
-private theorem prefixBuild_head (nodes : List (Node ι)) (acc : Ref) (refs : List Ref) :
+theorem prefixBuild_head (nodes : List (Node ι)) (acc : Ref) (refs : List Ref) :
     (prefixBuild nodes acc refs).2.headD none = acc := by
   cases refs <;> rfl
 
@@ -462,5 +462,100 @@ theorem vectorFalse_replicate_none_nodes (nodes : List (Node ι)) (n : ℕ) :
     | zero => rfl
     | succ n ih => simpa [List.replicate_succ, mapBuild, smartAdd] using ih
   simpa using hm n
+
+omit [DecidableEq ι] in
+private theorem zip_last_snd {α β : Type*} (xs : List α) (ys : List β) (h : ys.length ≤ xs.length) :
+    (xs.zip ys).getLast?.map Prod.snd = ys.getLast? := by
+  rw [← List.getLast?_map, List.map_snd_zip h]
+
+/-- The strip vector's omission pass: its final pair always has a zero suffix. -/
+private theorem tail_pairs_last (nodes : List (Node ι)) (carry : Ref) (values : List Ref)
+    (hk : 0 < values.length) :
+    let pre := prefixBuild nodes none (carry :: values)
+    let suf := suffixBuild pre.1 values.tail
+    (((pre.2.drop 1).zip (suf.2.take values.length)).getLast?.getD (none, none)).2 = none := by
+  intro pre suf
+  have hlen : suf.2.length = values.length := by
+    simp only [suf, suffixBuild_length, List.length_tail]; omega
+  have htake : suf.2.take values.length = suf.2 := List.take_of_length_le (by omega)
+  have hz := zip_last_snd (pre.2.drop 1) (suf.2.take values.length) (by
+    simp only [pre, List.length_take, List.length_drop, prefixBuild_length, List.length_cons]; omega)
+  rw [htake, suffixBuild_last] at hz
+  rw [htake]
+  cases he : ((pre.2.drop 1).zip suf.2).getLast? with
+  | none => rfl
+  | some p =>
+    rw [he] at hz
+    simp only [Option.map_some, Option.some.injEq] at hz
+    simp [hz]
+
+theorem tail_pairs_length (nodes : List (Node ι)) (carry : Ref) (values : List Ref) :
+    let pre := prefixBuild nodes none (carry :: values)
+    let suf := suffixBuild pre.1 values.tail
+    ((pre.2.drop 1).zip (suf.2.take values.length)).length = values.length := by
+  intro pre suf
+  simp only [pre, suf, List.length_zip, List.length_drop, prefixBuild_length, List.length_take,
+    suffixBuild_length, List.length_tail, List.length_cons]
+  omega
+
+/-- With every operand present, the strip vector allocates at most 3k minus 6
+nodes for k operands: no support sharing is needed, since the carry's omission
+and its strict suffix total are never built. -/
+theorem vectorTail_additions_le_sharp (nodes : List (Node ι)) (refs : List Ref)
+    (hall : ∀ r ∈ refs, r.isSome = true) (hk : 3 ≤ refs.length) :
+    additionCount (vectorTail nodes refs).nodes ≤ additionCount nodes + (3 * refs.length - 6) := by
+  cases refs with
+  | nil => simp at hk
+  | cons carry values =>
+    have hcount : presentCount (carry :: values) = values.length + 1 := by
+      unfold presentCount
+      rw [List.countP_eq_length.mpr hall, List.length_cons]
+    have htail : presentCount values.tail ≤ values.tail.length := List.countP_le_length
+    have hp := prefixBuild_additions_le_present nodes (carry :: values)
+    have hs := suffixBuild_additions_le_present (prefixBuild nodes none (carry :: values)).1 values.tail
+    have ho := addPairs_additions_le_last
+      (suffixBuild (prefixBuild nodes none (carry :: values)).1 values.tail).1 _
+      (tail_pairs_last nodes carry values (by simp at hk; omega))
+    rw [tail_pairs_length] at ho
+    have hlen : values.tail.length = values.length - 1 := List.length_tail
+    simp only [List.length_cons] at hk ⊢
+    change additionCount (mapBuild _ _ _).1 ≤ _
+    rw [hcount] at hp
+    omega
+
+/-- An absent carry is free: the strip vector then costs at most 3m minus 5
+for m present cross-group values. -/
+theorem vectorTail_cons_none_additions_le_sharp (nodes : List (Node ι)) (values : List Ref)
+    (hall : ∀ r ∈ values, r.isSome = true) (hk : 2 ≤ values.length) :
+    additionCount (vectorTail nodes (none :: values)).nodes ≤
+      additionCount nodes + (3 * values.length - 5) := by
+  have hcount : presentCount (none :: values) = values.length := by
+    unfold presentCount
+    rw [List.countP_cons, List.countP_eq_length.mpr hall]
+    simp
+  have htail : presentCount values.tail ≤ values.tail.length := List.countP_le_length
+  have hp := prefixBuild_additions_le_present nodes (none :: values)
+  have hs := suffixBuild_additions_le_present (prefixBuild nodes none (none :: values)).1 values.tail
+  have hfirst : ((((prefixBuild nodes none (none :: values)).2.drop 1).zip
+      ((suffixBuild (prefixBuild nodes none (none :: values)).1 values.tail).2.take
+        values.length)).headD (none, none)).1 = none := by
+    have hpre : (prefixBuild nodes none (none :: values)).2.drop 1 =
+        (prefixBuild nodes none values).2 := rfl
+    rw [hpre]
+    have hh := prefixBuild_head nodes none values
+    cases hx : (prefixBuild nodes none values).2 with
+    | nil => simp
+    | cons x xs =>
+      rw [hx] at hh
+      cases (suffixBuild (prefixBuild nodes none (none :: values)).1 values.tail).2.take
+        values.length <;> simp_all
+  have ho := addPairs_additions_le_endpoints
+    (suffixBuild (prefixBuild nodes none (none :: values)).1 values.tail).1 _ hfirst
+    (tail_pairs_last nodes none values (by omega))
+  rw [tail_pairs_length] at ho
+  have hlen : values.tail.length = values.length - 1 := List.length_tail
+  change additionCount (mapBuild _ _ _).1 ≤ _
+  rw [hcount] at hp
+  omega
 
 end IntegerMultBounds.Networks.PairedVectorBudget

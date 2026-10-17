@@ -25,9 +25,9 @@ def coarse : BlockResult PairedInitialGraph.Input :=
 
 def cut := coarse.nodes.length
 
-theorem allocated : additionCount graph.nodes = 113 := by decide +kernel
+theorem allocated : additionCount graph.nodes = 108 := by decide +kernel
 
-theorem recursive_boundary : cut = 62 := by decide +kernel
+theorem recursive_boundary : cut = 57 := by decide +kernel
 
 theorem cut_le : cut ≤ graph.nodes.length := by decide +kernel
 
@@ -44,7 +44,7 @@ theorem live_additions : additionCountFrom 0 (mark graph.nodes roots) graph.node
     recursive_live, reconstruction_live]
 
 theorem pruned_additions : additionCount graph.nodes -
-    additionCountFrom 0 (mark graph.nodes roots) graph.nodes = 23 := by
+    additionCountFrom 0 (mark graph.nodes roots) graph.nodes = 18 := by
   rw [allocated, live_additions]
 
 /-- The small exact boundary counts suffice for the actual pruned compiler. -/

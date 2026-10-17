@@ -91,12 +91,12 @@ def stripQueries (groups : List (List ℕ)) (edges : EdgeTable) (weights : Weigh
   remaining.map (lookup weights) :: other.map (fun j => crossRefs edges remaining (groupAt groups j))
 
 /-- The executable strip really performs one batch followed by one vector;
-this equality preserves the exact constructor order of the upstream script. -/
+this equality preserves the constructor order of the upstream script. -/
 theorem buildStrip_eq (nodes : List (Node ι)) (groups : List (List ℕ))
     (edges : EdgeTable) (weights : WeightTable) (ia : ℕ × ℕ) :
     buildStrip nodes groups edges weights ia =
       let batch := DisjointPaired.batch nodes (stripQueries groups edges weights ia)
-      let vec := vectorFalse batch.1 batch.2
+      let vec := vectorTail batch.1 batch.2
       (vec.nodes, ⟨ia.2, vec.total, ((List.range groups.length).filter (· != ia.1)).zip vec.one.tail⟩) := by
   simp only [buildStrip, stripQueries, DisjointPaired.batch,
     mapBuild_total_eq_batch]
@@ -140,14 +140,14 @@ theorem buildStrip_built (nodes : List (Node ι)) (groups : List (List ℕ))
     (fun q hq r hr' => hr r (List.mem_flatten.mpr ⟨q, hq, hr'⟩))
     (List.pairwise_flatten.mp hd).1
   have hdis := batch_disjoint nodes queries hv hr hd
-  let vec := vectorFalse batch.1 batch.2
-  have hvec := PairedVectorCorrect.vectorFalse_built batch.1 batch.2 hb.valid hb.refsValid hdis
+  let vec := vectorTail batch.1 batch.2
+  have hvec := PairedVectorCorrect.vectorTail_built batch.1 batch.2 hb.valid hb.refsValid hdis
   have hblen : batch.2.length = queries.length := by
     have hh := congrArg List.length hb.supports_eq
     simpa only [List.length_map] using hh
   have hqlen : queries.length = other.length + 1 := by simp [queries, stripQueries, other]
   have hvlen : vec.one.length = other.length + 1 := by
-    rw [vectorFalse_length, hblen, hqlen]
+    rw [vectorTail_length, hblen, hqlen]
   have htlen : other.length = vec.one.tail.length := by simp only [List.length_tail]; omega
   rw [buildStrip_eq]
   change StripBuilt nodes groups edges weights ia (vec.nodes, ⟨ia.2, vec.total, other.zip vec.one.tail⟩)
@@ -166,7 +166,8 @@ theorem buildStrip_built (nodes : List (Node ι)) (groups : List (List ℕ))
     change RefSpec _ vec.nodes (lookup (other.zip vec.one.tail) other[i])
     rw [he]
     refine ⟨hvec.one_valid _ (List.getElem_mem hvi), ?_⟩
-    have hs := PairedVectorCorrect.vectorFalse_support batch.1 batch.2 hb.valid hb.refsValid hdis (i+1) hvb
+    have hs := PairedVectorCorrect.vectorTail_support batch.1 batch.2 hb.valid hb.refsValid hdis
+      (i+1) (Nat.succ_pos i) hvb
     change refSupport vec.nodes (vec.one[i+1]?.getD none) = _ at hs
     simp only [List.getElem?_eq_getElem hvi, Option.getD_some] at hs
     exact hs.trans (batch_erase_support nodes queries hv hr hd (i+1))

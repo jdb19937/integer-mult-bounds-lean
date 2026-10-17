@@ -143,8 +143,66 @@ structure BlockCorrect (nodes : List (Node ι)) (points : List ℕ)
   one : ∀ a ∈ points, RefSpec (supports nodes (query edges weights [a])) result.nodes (lookup result.one a)
   two : ∀ p ∈ pairs points, RefSpec (supports nodes (query edges weights [p.1, p.2])) result.nodes (lookup result.two p)
 
-/-- Full correctness of the actual literal small-block branch, including all
-returned table lookups and all prior DAG nodes. -/
+/-- Literal support accumulation agrees with finite union interpretation. -/
+theorem supports_toFinset (nodes : List (Node ι)) (refs : List Ref) :
+    supports nodes refs = refs.toFinset.biUnion (refSupport nodes) := by
+  induction refs with
+  | nil => simp [supports]
+  | cons r rs ih => simp [supports, ih]
+
+theorem supports_perm (nodes : List (Node ι)) {refs others : List Ref} (h : refs.Perm others) :
+    supports nodes refs = supports nodes others := by
+  rw [supports_toFinset, supports_toFinset, List.toFinset_eq_of_perm _ _ h]
+
+theorem supports_append' (nodes : List (Node ι)) (left right : List Ref) :
+    supports nodes (left ++ right) = supports nodes left ∪ supports nodes right := by
+  rw [supports_toFinset, supports_toFinset, supports_toFinset, List.toFinset_append,
+    Finset.union_biUnion]
+
+@[simp] theorem query_empty (edges : EdgeTable) (weights : WeightTable) :
+    query edges weights [] = graphRefs edges weights := by simp [query, graphRefs]
+
+omit [DecidableEq ι] in
+/-- A query and the terms it drops together list every graph term. -/
+theorem query_removed_perm (edges : EdgeTable) (weights : WeightTable) (excluded : List ℕ) :
+    (query edges weights excluded ++ removed edges weights excluded).Perm (graphRefs edges weights) := by
+  have he := (List.filter_append_perm
+    (fun e : (ℕ × ℕ) × Ref => decide (e.1.1 ∉ excluded ∧ e.1.2 ∉ excluded)) edges).map Prod.snd
+  have hw := (List.filter_append_perm (fun w : ℕ × Ref => decide (w.1 ∉ excluded)) weights).map Prod.snd
+  rw [List.map_append] at he hw
+  have key : ∀ {α : Type} (a b c d : List α), (a ++ b ++ (c ++ d)).Perm ((a ++ c) ++ (b ++ d)) := by
+    intro α a b c d
+    simp only [List.append_assoc]
+    apply List.Perm.append_left
+    simp only [← List.append_assoc]
+    exact List.Perm.append_right _ List.perm_append_comm
+  exact (key _ _ _ _).trans (List.Perm.append he hw)
+
+/-- A query and its dropped terms have disjoint supports exactly covering the
+whole graph. -/
+theorem query_removed_supports (nodes : List (Node ι)) (edges : EdgeTable) (weights : WeightTable)
+    (excluded : List ℕ) (hd : DisjointRefs nodes (graphRefs edges weights)) :
+    Disjoint (supports nodes (query edges weights excluded))
+        (supports nodes (removed edges weights excluded)) ∧
+      supports nodes (query edges weights excluded) ∪ supports nodes (removed edges weights excluded) =
+        supports nodes (graphRefs edges weights) := by
+  have hp := query_removed_perm edges weights excluded
+  have hd' := (List.Perm.pairwise_iff (fun h => Disjoint.symm h) hp).mpr hd
+  have hx := (List.pairwise_append.mp hd').2.2
+  refine ⟨?_, by rw [← supports_append', supports_perm nodes hp]⟩
+  apply DisjointExclusion.disjoint_supports
+  intro r hr
+  apply Disjoint.symm
+  exact DisjointExclusion.disjoint_supports nodes _ _ (fun x hx' => (hx x hx' r hr).symm)
+
+omit [DecidableEq ι] in
+theorem removed_sublist (edges : EdgeTable) (weights : WeightTable) (excluded : List ℕ) :
+    List.Sublist (removed edges weights excluded) (graphRefs edges weights) :=
+  List.Sublist.append (List.Sublist.map _ (List.filter_sublist))
+    (List.Sublist.map _ (List.filter_sublist))
+
+/-- Full correctness of the actual small-block branch, including all returned
+table lookups and all prior DAG nodes. -/
 theorem baseBlock_correct (nodes : List (Node ι)) (points : List ℕ)
     (edges : EdgeTable) (weights : WeightTable) (hv : Valid nodes)
     (hr : RefsValid nodes (graphRefs edges weights)) (hd : DisjointRefs nodes (graphRefs edges weights)) :
@@ -153,36 +211,65 @@ theorem baseBlock_correct (nodes : List (Node ι)) (points : List ℕ)
     fun r hh => hr r ((query_sublist edges weights excluded).subset hh)
   have hdv (excluded : List ℕ) : DisjointRefs nodes (query edges weights excluded) :=
     hd.sublist (query_sublist edges weights excluded)
-  let total := DisjointBalanced.total nodes (query edges weights [])
-  have ht := DisjointBalanced.total_built nodes (query edges weights []) hv (hrv []) (hdv [])
+  have hrr (excluded : List ℕ) : RefsValid nodes (removed edges weights excluded) :=
+    fun r hh => hr r ((removed_sublist edges weights excluded).subset hh)
+  have hdr (excluded : List ℕ) : DisjointRefs nodes (removed edges weights excluded) :=
+    hd.sublist (removed_sublist edges weights excluded)
   let one := mapBuild (fun ns a =>
-    let r := DisjointBalanced.total ns (query edges weights [a]); (r.1, (a, r.2))) total.1 points
-  have hone := mapTotals_correct total.1 points (fun a => query edges weights [a]) ht.valid
-    (fun a _ => DisjointExclusion.refsValid_extends ht.extension (hrv [a]))
-    (fun a _ => DisjointExclusion.disjointRefs_extends ht.extension _ (hrv [a]) (hdv [a]))
-  change Valid one.1 ∧ Extends total.1 one.1 ∧ _ at hone
-  have heone : Extends nodes one.1 := extends_trans ht.extension hone.2.1
+    let r := DisjointBalanced.total ns (query edges weights [a]); (r.1, (a, r.2))) nodes points
+  have hone := mapTotals_correct nodes points (fun a => query edges weights [a]) hv
+    (fun a _ => hrv [a]) (fun a _ => hdv [a])
+  change Valid one.1 ∧ Extends nodes one.1 ∧ _ at hone
   let two := mapBuild (fun ns p =>
     let r := DisjointBalanced.total ns (query edges weights [p.1, p.2]); (r.1, (p, r.2))) one.1 (pairs points)
   have htwo := mapTotals_correct one.1 (pairs points) (fun p => query edges weights [p.1, p.2]) hone.1
-    (fun p _ => DisjointExclusion.refsValid_extends heone (hrv [p.1, p.2]))
-    (fun p _ => DisjointExclusion.disjointRefs_extends heone _ (hrv [p.1, p.2]) (hdv [p.1, p.2]))
+    (fun p _ => DisjointExclusion.refsValid_extends hone.2.1 (hrv [p.1, p.2]))
+    (fun p _ => DisjointExclusion.disjointRefs_extends hone.2.1 _ (hrv [p.1, p.2]) (hdv [p.1, p.2]))
   change Valid two.1 ∧ Extends one.1 two.1 ∧ _ at htwo
-  have he : Extends nodes two.1 := extends_trans heone htwo.2.1
-  refine ⟨htwo.1, he, ?_, ?_, ?_, ?_, ?_⟩
-  · exact refSpec_extends (extends_trans hone.2.1 htwo.2.1) ⟨ht.refValid, ht.support_eq⟩
+  have he : Extends nodes two.1 := extends_trans hone.2.1 htwo.2.1
+  let total : Result ι := match points.getLast? with
+    | none => DisjointBalanced.total two.1 (query edges weights [])
+    | some a =>
+      let rest := DisjointBalanced.total two.1 (removed edges weights [a])
+      smartAdd rest.1 (lookup one.2 a) rest.2
+  have htot : Valid total.1 ∧ Extends two.1 total.1 ∧
+      RefSpec (supports nodes (query edges weights [])) total.1 total.2 := by
+    cases hl : points.getLast? with
+    | none =>
+      have ht := total_refSpec two.1 (query edges weights []) htwo.1
+        (DisjointExclusion.refsValid_extends he (hrv []))
+        (DisjointExclusion.disjointRefs_extends he _ (hrv []) (hdv []))
+      rw [DisjointExclusion.supports_extends he _ (hrv [])] at ht
+      simpa only [total, hl] using ht
+    | some a =>
+      have ha : a ∈ points := List.mem_of_getLast? hl
+      let rest := DisjointBalanced.total two.1 (removed edges weights [a])
+      have hrest := total_refSpec two.1 (removed edges weights [a]) htwo.1
+        (DisjointExclusion.refsValid_extends he (hrr [a]))
+        (DisjointExclusion.disjointRefs_extends he _ (hrr [a]) (hdr [a]))
+      rw [DisjointExclusion.supports_extends he _ (hrr [a])] at hrest
+      have hsingle := refSpec_extends (extends_trans htwo.2.1 hrest.2.1)
+        (tableSpec_lookup _ _ _ _ hone.2.2 a ha)
+      have hcover := query_removed_supports nodes edges weights [a] hd
+      have hadd := smartAdd_built rest.1 (lookup one.2 a) rest.2 hrest.1 hsingle.1 hrest.2.2.1 (by
+        rw [hsingle.2, hrest.2.2.2]
+        exact hcover.1)
+      have hs : total = smartAdd rest.1 (lookup one.2 a) rest.2 := by simp only [total, hl, rest]
+      rw [hs]
+      refine ⟨hadd.valid, extends_trans hrest.2.1 hadd.extension, hadd.refValid, ?_⟩
+      rw [hadd.support_eq, hsingle.2, hrest.2.2.2, hcover.2, query_empty]
+  have hb : baseBlock nodes points edges weights = ⟨total.1, total.2, one.2, two.2⟩ := rfl
+  rw [hb]
+  have hlate : Extends one.1 total.1 := extends_trans htwo.2.1 htot.2.1
+  refine ⟨htot.1, extends_trans he htot.2.1, htot.2.2, ?_, ?_, ?_, ?_⟩
   · exact (tableSpec_keys _ _ _ _ hone.2.2).symm ▸ List.Perm.refl _
   · exact (tableSpec_keys _ _ _ _ htwo.2.2).symm ▸ List.Perm.refl _
   · intro a ha
-    have hh := tableSpec_lookup _ _ _ _ hone.2.2 a ha
-    have hs := DisjointExclusion.supports_extends ht.extension _ (hrv [a])
-    rw [hs] at hh
-    exact refSpec_extends htwo.2.1 hh
+    exact refSpec_extends hlate (tableSpec_lookup _ _ _ _ hone.2.2 a ha)
   · intro p hp
     have hh := tableSpec_lookup _ _ _ _ htwo.2.2 p hp
-    have hs := DisjointExclusion.supports_extends heone _ (hrv [p.1, p.2])
-    rw [hs] at hh
-    exact hh
+    rw [DisjointExclusion.supports_extends hone.2.1 _ (hrv [p.1, p.2])] at hh
+    exact refSpec_extends htot.2.1 hh
 
 /-- The recursive input graph has exactly the canonical keys (in arbitrary
 insertion order), with actual in-bounds, disjoint DAG references. -/
@@ -252,13 +339,6 @@ theorem lookup_entry {K : Type*} [DecidableEq K] (table : List (K × Ref))
         exact List.mem_map.mpr ⟨(key, ref), hm, rfl⟩
       simpa [lookup, hk] using ih htail hm
 
-/-- Literal support accumulation agrees with finite union interpretation. -/
-theorem supports_toFinset (nodes : List (Node ι)) (refs : List Ref) :
-    supports nodes refs = refs.toFinset.biUnion (refSupport nodes) := by
-  induction refs with
-  | nil => simp [supports]
-  | cons r rs ih => simp [supports, ih]
-
 /-- Read-only input graph references remain a valid disjoint family throughout
 any valid extension produced by a nested constructor. -/
 theorem graphReady_extends {nodes larger : List (Node ι)} {points : List ℕ}
@@ -287,9 +367,6 @@ theorem table_query_support {K : Type*} [DecidableEq K] (nodes : List (Node ι))
   · rintro ⟨k, ⟨⟨entry, hentry, rfl⟩, hselect⟩, hx⟩
     refine ⟨entry.2, ⟨entry, ⟨hentry, hselect⟩, rfl⟩, ?_⟩
     rwa [lookup_entry table hn entry.1 entry.2 (by simpa using hentry)] at hx
-
-@[simp] theorem query_empty (edges : EdgeTable) (weights : WeightTable) :
-    query edges weights [] = graphRefs edges weights := by simp [query, graphRefs]
 
 /-- A complete result gives the desired actual weighted sums and preserves
 all prior node values; this is derived from support correctness, not a second

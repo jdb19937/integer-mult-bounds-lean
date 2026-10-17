@@ -261,6 +261,30 @@ theorem vectorFalse_additions_le_present_length (nodes : List (Node ι)) (refs :
   change additionCount (mapBuild _ _ _).1 ≤ _
   omega
 
+/-- The strip vector obeys the same zero-aware bound. -/
+theorem vectorTail_additions_le_present_length (nodes : List (Node ι)) (refs : List Ref) :
+    additionCount (vectorTail nodes refs).nodes ≤
+      additionCount nodes + 2 * (presentCount refs - 1) + refs.length := by
+  cases refs with
+  | nil => simp [vectorTail]
+  | cons carry values =>
+    have hp := prefixBuild_additions_le_present nodes (carry :: values)
+    have hs := suffixBuild_additions_le_present (prefixBuild nodes none (carry :: values)).1 values.tail
+    have hmono : presentCount values.tail ≤ presentCount (carry :: values) := by
+      unfold presentCount
+      exact ((List.tail_sublist values).trans (List.sublist_cons_self carry values)).countP_le
+    have ho := PairedCircuitBudget.mapBuild_additions_le
+      (fun ns (p : Ref × Ref) => smartAdd ns p.1 p.2) (fun _ => 1)
+      (suffixBuild (prefixBuild nodes none (carry :: values)).1 values.tail).1
+      (((prefixBuild nodes none (carry :: values)).2.drop 1).zip
+        ((suffixBuild (prefixBuild nodes none (carry :: values)).1 values.tail).2.take values.length))
+      (fun ns p => PairedCircuitBudget.smartAdd_additions_le ns p.1 p.2)
+    simp only [List.map_const', List.sum_replicate, smul_eq_mul, Nat.mul_one, List.length_zip,
+      List.length_drop, prefixBuild_length, List.length_take, suffixBuild_length] at ho
+    change additionCount (mapBuild _ _ _).1 ≤ _
+    simp only [List.length_cons] at hp ho ⊢
+    omega
+
 /-- Zero-aware budget for an actual strip. Only the vector's present-input
 count depends on the produced references; the balanced totals use shape bounds. -/
 def stripPresentBudget (nodes : List (Node ι)) (groups : List (List ℕ))
@@ -291,13 +315,13 @@ theorem buildStrip_additions_le_present (nodes : List (Node ι)) (groups : List 
     (fun j => remaining.length * (groupAt groups j).length - 1) carry.1 other
     (fun ns j => by simpa only [PairedCircuitBudget.crossRefs_length] using
       PairedCircuitBudget.total_additions_le ns (crossRefs edges remaining (groupAt groups j)))
-  have hs := vectorFalse_additions_le_present_length vals.1 (carry.2 :: vals.2)
+  have hs := vectorTail_additions_le_present_length vals.1 (carry.2 :: vals.2)
   have hlen : vals.2.length = other.length := mapBuild_length _ _ _
   simp only [List.length_map] at hc
   simp only [List.length_cons, hlen] at hs
   change additionCount carry.1 ≤ _ at hc
   change additionCount vals.1 ≤ _ at hv
-  change additionCount (vectorFalse vals.1 (carry.2 :: vals.2)).nodes ≤ _
+  change additionCount (vectorTail vals.1 (carry.2 :: vals.2)).nodes ≤ _
   change _ ≤ additionCount nodes + ((remaining.length - 1) +
     (other.map (fun j => remaining.length * (groupAt groups j).length - 1)).sum +
       2 * (presentCount (carry.2 :: vals.2) - 1) + (1 + other.length))

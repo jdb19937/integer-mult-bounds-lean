@@ -4332,14 +4332,19 @@ Bit and complex networks.
 
 - `Networks/PairedCircuit.lean`: full executable upstream paired-exclusion
   recursion, with the literal balanced-total, prefix/suffix, coarse graph,
-  strip, and reconstruction order. Termination follows from actual pair
-  grouping. `PairedBlockCorrect` proves its complete recursive semantics;
-  optimized counts remain separate.
+  strip, and reconstruction order. Two sums the script builds but never uses
+  are skipped: a strip's carry omission (and its suffix total), and the
+  small-case total from scratch, which is now assembled last from the last
+  vertex's single exclusion. Every used sum is unchanged. Termination follows
+  from actual pair grouping. `PairedBlockCorrect` proves its complete
+  recursive semantics; optimized counts remain separate.
 
 - `Networks/PairedVectorCorrect.lean`: the literal prefix-first, suffix-second
   vector builder preserves the DAG and produces the exact total and each
   omission over arbitrary commutative additive monoids. It adds at most
-  three nodes per operand and preserves prior values.
+  three nodes per operand and preserves prior values. The strip variant
+  `vectorTail` omits the carry's own omission and has the same guarantees
+  for every later omission.
 
 - `Networks/PairedGraphSpec.lean`: ordered graph/table invariants and a
   semantic contract for recursive results, including exact query supports

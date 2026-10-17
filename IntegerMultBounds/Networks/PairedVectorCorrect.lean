@@ -253,6 +253,150 @@ theorem vectorFalse_support (nodes : List (Node ι)) (refs : List Ref)
   simp only [List.getElem?_eq_getElem hout, Option.getD_some]
   exact Option.some.inj he
 
+/-- Correctness of the strip vector: exact total and every omission after the
+leading carry. The carry's own omission slot holds no reference. -/
+structure TailBuilt (nodes : List (Node ι)) (refs : List Ref) (result : VectorResult ι) : Prop where
+  valid : Valid result.nodes
+  extension : Extends nodes result.nodes
+  total_valid : RefValid result.nodes result.total
+  total_support : refSupport result.nodes result.total = supports nodes refs
+  one_valid : RefsValid result.nodes result.one
+  one_supports : result.one.tail.map (refSupport result.nodes) = (omitSupports nodes ∅ refs).tail
+  length_le : result.nodes.length ≤ nodes.length + 3 * refs.length
+
+theorem suffixes_after_length (nodes : List (Node ι)) (refs : List Ref) :
+    (suffixes nodes refs).after.length = refs.length := by
+  induction refs with
+  | nil => rfl
+  | cons r rs ih => simp [suffixes, ih]
+
+private theorem suffix_take_supports (nodes : List (Node ι)) (larger : List (Node ι))
+    (he : Extends nodes larger) (values : List Ref) (hr : RefsValid nodes values)
+    (hs : SuffixBuilt larger values.tail (suffixes larger values.tail))
+    (hrl : RefsValid larger values.tail) :
+    (((suffixes larger values.tail).total :: (suffixes larger values.tail).after).take
+      values.length).map (refSupport (suffixes larger values.tail).nodes) =
+      afterSupports nodes values := by
+  cases values with
+  | nil => rfl
+  | cons v rest =>
+    have hlen : (suffixes larger rest).after.length = rest.length := suffixes_after_length _ _
+    have hrest : RefsValid nodes rest := fun x hx => hr x (by simp [hx])
+    simp only [List.length_cons, List.tail_cons] at hs hrl ⊢
+    rw [List.take_of_length_le (by simp [hlen]), List.map_cons, hs.after_supports,
+      hs.built.support_eq, DisjointExclusion.supports_extends he rest hrest,
+      afterSupports_extends he rest hrest]
+    rfl
+
+/-- The strip vector produces the exact total and every later omission, with
+a persistent valid DAG and at most three new nodes per input. -/
+theorem vectorTail_built (nodes : List (Node ι)) (refs : List Ref)
+    (hv : Valid nodes) (hr : RefsValid nodes refs) (hd : DisjointRefs nodes refs) :
+    TailBuilt nodes refs (vectorTail nodes refs) := by
+  cases refs with
+  | nil =>
+    exact ⟨hv, extends_refl _, trivial, rfl, by simp [vectorTail, RefsValid], rfl, by simp [vectorTail]⟩
+  | cons carry values =>
+    let pre := prefixBuild nodes none (carry :: values)
+    have hp := prefixBuild_built nodes none (carry :: values) hv trivial hr
+      (List.pairwise_cons.mpr ⟨by simp [refSupport], hd⟩)
+    have hvr : RefsValid nodes values := fun x hx => hr x (by simp [hx])
+    have hdv := (List.pairwise_cons.mp hd).2
+    have hvt : RefsValid nodes values.tail := fun x hx => hvr x (List.mem_of_mem_tail hx)
+    have hdt : DisjointRefs nodes values.tail := hdv.sublist (List.tail_sublist _)
+    let suf := suffixes pre.1 values.tail
+    have hs := suffixes_built pre.1 values.tail hp.valid (refsValid_extends hp.extension hvt)
+      (disjointRefs_extends hp.extension _ hvt hdt)
+    let preRefs := pre.2.drop 1
+    let sufRefs := (suf.total :: suf.after).take values.length
+    have hpre : preRefs.map (refSupport suf.nodes) =
+        beforeSupports nodes (∅ ∪ refSupport nodes carry) values := by
+      have hm := map_refSupport_extends hs.built.extension pre.2 hp.refs_valid
+      have hq : pre.2.map (refSupport suf.nodes) = beforeSupports nodes ∅ (carry :: values) := by
+        rw [hm, hp.supports_eq]
+        rfl
+      simp only [preRefs, List.map_drop, hq, beforeSupports, refSupport]
+      rfl
+    have hsuf : sufRefs.map (refSupport suf.nodes) = afterSupports nodes values :=
+      suffix_take_supports nodes pre.1 hp.extension values hvr hs
+        (refsValid_extends hp.extension hvt)
+    let ps := preRefs.zip sufRefs
+    have hps : ps.map (Prod.map (refSupport suf.nodes) (refSupport suf.nodes)) =
+        (beforeSupports nodes (∅ ∪ refSupport nodes carry) values).zip (afterSupports nodes values) := by
+      rw [← List.zip_map, hpre, hsuf]
+    have hvalid : ∀ p ∈ ps, RefValid suf.nodes p.1 ∧ RefValid suf.nodes p.2 := by
+      intro p h
+      have hh := List.of_mem_zip h
+      refine ⟨refValid_extends hs.built.extension
+        (hp.refs_valid p.1 (List.mem_of_mem_drop hh.1)), ?_⟩
+      have hm := List.mem_of_mem_take hh.2
+      rcases List.mem_cons.mp hm with he | hm
+      · rw [he]
+        exact hs.built.refValid
+      · exact hs.after_valid p.2 hm
+    have hdis : ∀ p ∈ ps, Disjoint (refSupport suf.nodes p.1) (refSupport suf.nodes p.2) := by
+      intro p h
+      have hm : Prod.map (refSupport suf.nodes) (refSupport suf.nodes) p ∈
+          (beforeSupports nodes (∅ ∪ refSupport nodes carry) values).zip (afterSupports nodes values) := by
+        rw [← hps]
+        exact List.mem_map.mpr ⟨p, h, rfl⟩
+      exact zip_disjoint nodes _ values
+        (fun r hr' => by simpa using (List.pairwise_cons.mp hd).1 r hr') hdv _ hm
+    have ho := addPairs_built suf.nodes ps hs.built.valid hvalid hdis
+    let outs := mapBuild (fun ns p => smartAdd ns p.1 p.2) suf.nodes ps
+    have he : vectorTail nodes (carry :: values) =
+        ⟨outs.1, pre.2.getLast?.getD none, none :: outs.2⟩ := by
+      simp only [vectorTail, suffixBuild_eq]
+      rfl
+    rw [he]
+    have hlvalid := refValid_last pre.1 pre.2 hp.refs_valid
+    have hext := extends_trans hs.built.extension ho.extension
+    refine ⟨ho.valid, extends_trans hp.extension hext, refValid_extends hext hlvalid, ?_, ?_, ?_, ?_⟩
+    · change refSupport outs.1 (pre.2.getLast?.getD none) = _
+      rw [refSupport_extends hext hlvalid, refSupport_last, hp.supports_eq, beforeSupports_last]
+      exact Finset.empty_union _
+    · intro r hm
+      rcases List.mem_cons.mp hm with rfl | hm
+      · trivial
+      · exact ho.refs_valid r hm
+    · change outs.2.map (refSupport outs.1) = _
+      rw [ho.supports_eq]
+      have heq := congrArg (List.map (fun p : Finset ι × Finset ι => p.1 ∪ p.2)) hps
+      simp only [List.map_map, Function.comp_def, Prod.map] at heq
+      rw [heq, zip_supports]
+      rfl
+    · have h1 := hp.length_le
+      have h2 := hs.built.length_le
+      have h3 := ho.length_le
+      have hplen : ps.length ≤ values.length := by
+        have hlen := congrArg List.length hps
+        simp only [List.length_map, List.length_zip, afterSupports_length] at hlen
+        rw [hlen]
+        exact Nat.min_le_right _ _
+      have htl : values.tail.length ≤ values.length := by simp
+      change outs.1.length ≤ _
+      simp only [List.length_cons] at h1 ⊢
+      dsimp only [pre, suf, outs] at h1 h2 h3 ⊢
+      omega
+
+/-- Every omission after the carry has the exact support excluding its input. -/
+theorem vectorTail_support (nodes : List (Node ι)) (refs : List Ref)
+    (hv : Valid nodes) (hr : RefsValid nodes refs) (hd : DisjointRefs nodes refs)
+    (i : ℕ) (hpos : 0 < i) (hi : i < refs.length) :
+    refSupport (vectorTail nodes refs).nodes ((vectorTail nodes refs).one[i]?.getD none) =
+      supports nodes (refs.eraseIdx i) := by
+  have hb := vectorTail_built nodes refs hv hr hd
+  have hout : i < (vectorTail nodes refs).one.length := by rw [vectorTail_length]; exact hi
+  have htail : i - 1 < (vectorTail nodes refs).one.tail.length := by
+    simp only [List.length_tail]; omega
+  have he := congrArg (fun xs : List (Finset ι) => xs[i - 1]?) hb.one_supports
+  simp only [List.getElem?_map, List.getElem?_eq_getElem htail, Option.map_some,
+    List.getElem?_tail, Nat.sub_add_cancel hpos] at he
+  rw [omitSupports_getElem? nodes ∅ refs i hi, Finset.empty_union, List.getElem_tail] at he
+  simp only [Nat.sub_add_cancel hpos] at he
+  simp only [List.getElem?_eq_getElem hout, Option.getD_some]
+  exact Option.some.inj he
+
 section Values
 variable {A : Type*} [AddCommMonoid A]
 

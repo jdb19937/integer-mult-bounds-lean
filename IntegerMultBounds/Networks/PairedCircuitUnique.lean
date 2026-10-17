@@ -45,16 +45,30 @@ theorem vectorFalse_nodup (nodes : List (Node ι)) (refs : List Ref)
   apply mapBuild_nodup _ (fun ns p h => smartAdd_nodup ns p.1 p.2 h)
   exact suffixBuild_nodup _ refs (prefixBuild_nodup nodes none refs hn)
 
+theorem vectorTail_nodup (nodes : List (Node ι)) (refs : List Ref)
+    (hn : (nodes.map Node.support).Nodup) :
+    ((vectorTail nodes refs).nodes.map Node.support).Nodup := by
+  cases refs with
+  | nil => exact hn
+  | cons carry values =>
+    apply mapBuild_nodup _ (fun ns p h => smartAdd_nodup ns p.1 p.2 h)
+    exact suffixBuild_nodup _ _ (prefixBuild_nodup nodes none _ hn)
+
 theorem baseBlock_nodup (nodes : List (Node ι)) (points : List ℕ)
     (edges : EdgeTable) (weights : WeightTable) (hn : (nodes.map Node.support).Nodup) :
     ((baseBlock nodes points edges weights).nodes.map Node.support).Nodup := by
-  refine mapBuild_nodup _ ?_ _ _ ?_
-  · intro ns p h
-    exact balanced_total_nodup ns _ h
-  · refine mapBuild_nodup _ ?_ _ _ ?_
-    · intro ns a h
-      exact balanced_total_nodup ns _ h
-    · exact balanced_total_nodup nodes _ hn
+  have hone := mapBuild_nodup (fun ns a =>
+    let r := DisjointBalanced.total ns (query edges weights [a]); (r.1, (a, r.2)))
+    (fun ns a h => balanced_total_nodup ns _ h) nodes points hn
+  have htwo := mapBuild_nodup (fun ns (p : ℕ × ℕ) =>
+    let r := DisjointBalanced.total ns (query edges weights [p.1, p.2]); (r.1, (p, r.2)))
+    (fun ns p h => balanced_total_nodup ns _ h) _ (pairs points) hone
+  cases hl : points.getLast? with
+  | none =>
+    simpa only [baseBlock, hl] using balanced_total_nodup _ (query edges weights []) htwo
+  | some a =>
+    simpa only [baseBlock, hl] using smartAdd_nodup _ _ _
+      (balanced_total_nodup _ (removed edges weights [a]) htwo)
 
 theorem coarseEdges_nodup (nodes : List (Node ι)) (groups : List (List ℕ))
     (edges : EdgeTable) (hn : (nodes.map Node.support).Nodup) :
@@ -73,7 +87,7 @@ theorem coarseWeights_nodup (nodes : List (Node ι)) (groups : List (List ℕ))
 theorem buildStrip_nodup (nodes : List (Node ι)) (groups : List (List ℕ))
     (edges : EdgeTable) (weights : WeightTable) (ia : ℕ × ℕ) (hn : (nodes.map Node.support).Nodup) :
     ((buildStrip nodes groups edges weights ia).1.map Node.support).Nodup := by
-  apply vectorFalse_nodup
+  apply vectorTail_nodup
   apply mapBuild_nodup _ (fun ns j h => balanced_total_nodup ns _ h)
   exact balanced_total_nodup nodes _ hn
 

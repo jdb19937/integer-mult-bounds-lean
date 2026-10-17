@@ -49,22 +49,23 @@ theorem batch_all_present (nodes : List (Node ι)) (queries : List (List Ref))
   | some i => rfl
 
 /-- A whole weighted strip costs its balanced-query budget plus three k minus
-five additions for k nonempty query groups. -/
+six additions for k nonempty query groups. -/
 theorem batch_vector_additions_le_sharp (nodes : List (Node ι)) (queries : List (List Ref))
     (hv : Valid nodes) (hr : RefsValid nodes queries.flatten)
     (hd : DisjointRefs nodes queries.flatten)
-    (hn : ∀ q ∈ queries, (supports nodes q).Nonempty) (hk : 2 ≤ queries.length) :
-    additionCount (vectorFalse (DisjointPaired.batch nodes queries).1
+    (hn : ∀ q ∈ queries, (supports nodes q).Nonempty) (hk : 3 ≤ queries.length) :
+    additionCount (vectorTail (DisjointPaired.batch nodes queries).1
       (DisjointPaired.batch nodes queries).2).nodes ≤
-      additionCount nodes + DisjointPaired.budget queries + (3 * queries.length - 5) := by
+      additionCount nodes + DisjointPaired.budget queries + (3 * queries.length - 6) := by
   have hb := DisjointPaired.batch_built nodes queries hv
     (fun q hq r hr' => hr r (List.mem_flatten.mpr ⟨q, hq, hr'⟩))
     (List.pairwise_flatten.mp hd).1
   have hlen : (DisjointPaired.batch nodes queries).2.length = queries.length := by
     have hh := congrArg List.length hb.supports_eq
     simpa only [List.length_map] using hh
-  have hvb := vectorFalse_additions_le_sharp _ _ hb.valid hb.refsValid
-    (batch_disjoint nodes queries hv hr hd) (batch_all_present nodes queries hv hr hd hn) (by omega)
+  have hvb := vectorTail_additions_le_sharp (DisjointPaired.batch nodes queries).1
+    (DisjointPaired.batch nodes queries).2 (batch_all_present nodes queries hv hr hd hn)
+    (by omega)
   rw [hlen] at hvb
   have hbudget := batch_additions_le nodes queries
   omega
@@ -77,7 +78,7 @@ theorem batch_vector_empty_carry_additions_le_sharp (nodes : List (Node ι))
     (hd : DisjointRefs nodes (carry :: queries).flatten)
     (hc : supports nodes carry = ∅)
     (hn : ∀ q ∈ queries, (supports nodes q).Nonempty) (hk : 2 ≤ queries.length) :
-    additionCount (vectorFalse (DisjointPaired.batch nodes (carry :: queries)).1
+    additionCount (vectorTail (DisjointPaired.batch nodes (carry :: queries)).1
       (DisjointPaired.batch nodes (carry :: queries)).2).nodes ≤
       additionCount nodes + DisjointPaired.budget (carry :: queries) + (3 * queries.length - 5) := by
   let batch := DisjointPaired.batch nodes (carry :: queries)
@@ -87,7 +88,6 @@ theorem batch_vector_empty_carry_additions_le_sharp (nodes : List (Node ι))
   have hlen : batch.2.length = queries.length + 1 := by
     have hh := congrArg List.length hb.supports_eq
     simpa only [List.length_map, List.length_cons] using hh
-  have hdis := batch_disjoint nodes (carry :: queries) hv hr hd
   have hbudget := batch_additions_le nodes (carry :: queries)
   have hs := hb.supports_eq
   change batch.2.map (refSupport batch.1) = _ at hs
@@ -110,14 +110,10 @@ theorem batch_vector_empty_carry_additions_le_sharp (nodes : List (Node ι))
       cases r with
       | none => simpa [he, refSupport] using hn q hq
       | some i => rfl
-    have hdis' : DisjointRefs batch.1 rs := by
-      rw [show (DisjointPaired.batch nodes (carry :: queries)).2 = r :: rs from hout] at hdis
-      exact (List.pairwise_cons.mp hdis).2
     have hlen' : rs.length = queries.length := by simpa [hout] using hlen
-    have hvb := vectorFalse_additions_le_sharp batch.1 rs hb.valid
-      (fun x hx => hvalid x (by simp [hx])) hdis' hall (by omega)
-    change additionCount (vectorFalse batch.1 (r :: rs)).nodes ≤ _
-    rw [hrnone, vectorFalse_cons_none_nodes]
+    have hvb := vectorTail_cons_none_additions_le_sharp batch.1 rs hall (by omega)
+    change additionCount (vectorTail batch.1 (r :: rs)).nodes ≤ _
+    rw [hrnone]
     rw [hlen'] at hvb
     change additionCount batch.1 ≤ _ at hbudget
     omega
@@ -128,10 +124,10 @@ theorem buildStrip_additions_le_sharp (nodes : List (Node ι)) (groups : List (L
     (hv : Valid nodes) (hr : RefsValid nodes (stripQueries groups edges weights ia).flatten)
     (hd : DisjointRefs nodes (stripQueries groups edges weights ia).flatten)
     (hn : ∀ q ∈ stripQueries groups edges weights ia, (supports nodes q).Nonempty)
-    (hk : 2 ≤ (stripQueries groups edges weights ia).length) :
+    (hk : 3 ≤ (stripQueries groups edges weights ia).length) :
     additionCount (buildStrip nodes groups edges weights ia).1 ≤
       additionCount nodes + DisjointPaired.budget (stripQueries groups edges weights ia) +
-        (3 * (stripQueries groups edges weights ia).length - 5) := by
+        (3 * (stripQueries groups edges weights ia).length - 6) := by
   rw [buildStrip_eq]
   exact batch_vector_additions_le_sharp nodes _ hv hr hd hn hk
 
