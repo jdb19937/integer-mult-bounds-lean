@@ -1315,6 +1315,8 @@ complete local/leaf costs and numerical moment certificate remain explicit
 instantiation obligations. This work is separate from the small parameter
 improvements above.
 
+`Layer/SelectedMoments.lean` proves the exact selected bills with integer certificates for the rational powers: T16 at `a = 7/4178` (native, and with the conservative surcharge) and PR589 at `a = 10/5769` with its surcharge. The T16 occurrence list (144 scheduled calls plus residual inventory) is proved a permutation of the histogram from `selected_profile_cost`, giving the moment in `rank_moment_le` form; the PR589 occurrence list remains an open link (`Realizes L bitHistogram`). `Cost/BranchingMoment.lean` restates the layer branching hypothesis as the uniform occurrence moment, with h25 as its instance; the variable-rank moments enter only once the layer machine has per-occurrence child sizes.
+
 ## Completed integration gates for `2^-34`
 
 | Gate | Progress | Evidence |

@@ -2,7 +2,7 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Cost.CompactLayerNormalized
 public import IntegerMultBounds.MathlibTM2.Layer.Recurrence
-public import IntegerMultBounds.MathlibTM2.Cost.Branching
+public import IntegerMultBounds.MathlibTM2.Cost.BranchingMoment
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-! Closed bounds for the actual compact layer with its current level-zero
@@ -154,16 +154,30 @@ theorem compactLayerCost_closed (ds : ComplexFramedExecution.Directions)
   have hh := (div_le_iff₀ hV).mp hclosed
   exact (Nat.cast_le.mpr hM).trans (by simpa only [mul_comm] using hh)
 
-/-- The checked branching network permits the manuscript's sigma/tau gap. -/
+/-- Closed bound from an occurrence-moment hypothesis on the layer node in place of
+`log_m (F/NW) < λ`. -/
+theorem compactLayerCost_closed_moment (ds : ComplexFramedExecution.Directions)
+    (D : ℕ) (s : Shape) (u R₀ n o r w : ℕ) {ρ : ℕ} {lam : ℝ}
+    (hu : 1≤u) (hR₀ : 1≤R₀) (hr : 1≤r) (hw : 1≤w) (hρ : ρ<s.chunk)
+    (hG : 1≤s.guard) (hbits : s.bits≤n)
+    (hpayload : s.payload=2^o*(3*(r*w))) (hN : o+n≤r*w)
+    (hτl : Parameters.tau≤lam) (hmom : layerMoment ds lam<1)
+    (j : ℕ) (hTw : ∀ i<j,expZ u ds i≤w) (a : ℕ)
+    (hfit : (o+a)+s.chunk*bits u j≤o+n) :
+    (compactLayerCost ds u s.chunk ρ R₀ n o r w
+      (compactLayerBasisBudget (nT CompactBReg) D s u R₀ n) j a:ℝ) ≤
+      ((rowsAt R₀ j*2^(o+n)*(r*w):ℕ):ℝ)*
+      (compactLayerClosedConst (nT CompactBReg) D ds lam*((m:ℝ)^j*u)^lam*(s.guard:ℝ)^Parameters.tau+
+       compactLayerClosedConst (nT CompactBReg) D ds lam*((factorCount (program ds):ℝ)/NW)^j*u) :=
+  compactLayerCost_closed ds D s u R₀ n o r w hu hR₀ hr hw hρ hG hbits hpayload hN hτl
+    (logb_lt_of_layerMoment ds
+      (lt_of_lt_of_le (by norm_num [Parameters.tau]) hτl) hmom) j hTw a hfit
+
+/-- The checked branching network permits the manuscript's sigma/tau gap, through the h=25
+instance of the layer occurrence moment. -/
 theorem compactLayer_br_logb :
-    Real.logb (m:ℝ) ((factorCount (program brDirs):ℝ)/NW)<Parameters.lam := by
-  have ha : (0:ℝ)≤(factorCount (program brDirs):ℝ)/NW :=
-    div_nonneg (Nat.cast_nonneg _) (Nat.cast_nonneg _)
-  have hσ : Parameters.sigma<Parameters.lam := by norm_num [Parameters.sigma,Parameters.lam]
-  rcases ha.eq_or_lt with h | h
-  · rw [←h,Real.logb_zero]
-    norm_num [Parameters.lam]
-  · exact ((Real.logb_lt_iff_lt_rpow (by norm_num [m] : (1:ℝ)<m) h).mpr br_branching).trans hσ
+    Real.logb (m:ℝ) ((factorCount (program brDirs):ℝ)/NW)<Parameters.lam :=
+  logb_lt_of_layerMoment brDirs (by norm_num [Parameters.lam]) br_layerMoment_lt
 
 end
 end IntegerMultBounds.MathlibTM2.Cost
