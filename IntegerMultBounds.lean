@@ -2662,3 +2662,9 @@ import IntegerMultBounds.MathlibTM2.Mult.SynthErrQ
 import IntegerMultBounds.MathlibTM2.Node.CompactLayerProcR
 import IntegerMultBounds.MathlibTM2.Node.CompactTopProcR
 import IntegerMultBounds.MathlibTM2.Fast.CompactTopExecutionR
+import IntegerMultBounds.MathlibTM2.Fast.CompactTopRuntimeExecutionR
+import IntegerMultBounds.MathlibTM2.Fast.CompactTopUniformRuntimeExecutionR
+import IntegerMultBounds.MathlibTM2.Fast.CompactTopOriginalR
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepPrepR
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepR
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepUniformR

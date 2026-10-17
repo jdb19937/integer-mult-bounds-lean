@@ -10,12 +10,12 @@ public import IntegerMultBounds.MathlibTM2.Node.ShrinkWord
 `compactTopProgR` runs the simultaneous layer with rounded pieces: widening, the phase, the guard
 (multiplication by `2^g`, `compactTopGuardS`), the top kernels, the pieces with the top bits as
 rows, the phase, the unit, then the truncation by `2^s'` (`compactTopCutS`), `k` shrinks by one
-(`compactTopShrinkS`) and the final truncating shift by `2^s₂`. The configuration record is
-`topCfgR`: `topCfg` with `s₂` as its shift, followed by `g`, `s'`, `k`.
+(`compactTopShrinkS`) and the final truncating shift by `2^(s - s')` (`compactTopShiftSR`). The
+configuration record is `topCfgR`: `topCfg` with the total shift `s`, followed by `g`, `s'`, `k`.
 
 The pieces call a layer program with result `layerRW` (`CallSpecF`); the pieces as the tape
 computes them are `piecesRW`, the array before the shifts `topPreRW`, and the output
-`topRSW … (s' + s₂) (k 2^s')` (`compactTopProgR_exec_RS`, by `tdiv_shrink_mul`). It is `topRS`
+`topRSW … s (k 2^s')` (`compactTopProgR_exec_RS`, by `tdiv_shrink_mul`). It is `topRS`
 when the pieces run as `piecesR` (`topRSW_eq_topRS`).
 -/
 
@@ -807,6 +807,163 @@ theorem compactTopShrinkS_exec (hA : 4 ≤ A) {cfg pfs : List ℕ} {R N r w' K �
       congr 1; funext p; rw [shrinkZ_iterate, List.length_replicate]
     · rw [Function.update_of_ne hq, Function.update_of_ne hq, Function.update_of_ne h0]
 
+/-- The final shift with its amount already on `sc 0`. -/
+noncomputable def compactTopShiftTail : Pr P (nT BReg) Q A U :=
+  .seq (compactTopRd (reg (.sc 1)) 0)
+  (.seq (ucopy (reg .w) (reg (.sc 2)) (reg .tS))
+  (.seq (usub (reg (.sc 0)) (reg (.sc 2)) (reg .tS))
+  (.seq (usub (reg (.sc 1)) (reg (.sc 2)) (reg .tS))
+  (.seq (topPass (reg .io) (reg .rctmp) (topShiftWord (reg .io) (reg .rctmp) (reg .racc) (reg .w)
+      (reg (.sc 0)) (reg (.sc 1)) (reg (.sc 2)) (reg (.sc 3)) (reg (.sc 4)) (reg (.sc 5))))
+  (.seq (uclear (reg (.sc 0))) (.seq (uclear (reg (.sc 1))) (uclear (reg (.sc 2)))))))))
+
+/-- The step bound of `compactTopShiftTail`. -/
+def compactTopShiftTailCost (cfg : List ℕ) (R N r w' s w : ℕ) : ℕ :=
+  topGetCost cfg + (4 * w' + 4) + (4 * s + 4) + (4 * w + 4) + topShiftCost R N r w' s w +
+    (2 * s + 2) + (2 * w + 2) + (2 * (w' - s - w) + 2)
+
+theorem compactTopShiftTail_exec (hA : 4 ≤ A) {cfg pfs : List ℕ} {R N r w' K ρ s w : ℕ}
+    (h0 : cfg[0]? = some w) (hw' : 1 ≤ w') (hsw : s + w ≤ w')
+    (Z : ZArr (Fin R × Fin r) N) (hZ : ∀ p, TopFitsZ w' (Z p))
+    (v₁ : HS (nT BReg) Q A U) (S : Stacks (nT BReg) A) (hT : CompactTopRegs bc S.R N r w' K ρ)
+    (hI : CompactTopIn (BReg := BReg) S.R cfg pfs) (hio : S.R (reg .io) = encZ A w' Z) :
+    ∃ (v' : HS (nT BReg) Q A U) (c : ℕ), v'.user = v₁.user ∧
+      c ≤ compactTopShiftTailCost cfg R N r w' s w ∧
+      Exec body compactTopShiftTail
+        (mk v₁ { S with R := Function.update S.R (reg (.sc 0)) (List.replicate s tick) }) c
+        (mk v' { S with
+          R := Function.update S.R (reg .io) (encZ A w (fun p => tdivZ s (Z p))) }) := by
+  have hl0 : 0 < cfg.length := (List.getElem?_eq_some_iff.1 h0).1
+  have hc0 : cfg[0] = w := (List.getElem?_eq_some_iff.1 h0).2
+  have hsc : ∀ i, S.R (reg (.sc i)) = [] := fun i => hT.rest (.sc i)
+  have htS : S.R (reg .tS) = [] := hT.rest .tS
+  have hlc : S.R (reg .lenctr) = [] := hT.rest .lenctr
+  set R₁ := Function.update S.R (reg (.sc 0)) (List.replicate s tick) with hR₁
+  obtain ⟨v₂, c₂, hu₂, hc₂, e₂⟩ := compactTopRd_exec body (x := .sc 1) (by simp) (by simp) 0 hl0 v₁
+    { S with R := R₁ } (by simp [hR₁, hlc]) (by simpa [hR₁] using hI.cf)
+  dsimp only at e₂
+  rw [hc0, show R₁ (reg (.sc 1)) = [] by simp [hR₁, hsc], List.append_nil] at e₂
+  set R₂ := Function.update R₁ (reg (.sc 1)) (List.replicate w tick) with hR₂
+  obtain ⟨v₃, hu₃, e₃⟩ := ucopy_exec body (a := reg .w) (b := reg (.sc 2)) (t := reg .tS)
+    (reg_ne (by simp)) (reg_ne (by simp)) (reg_ne (by simp)) v₂ { S with R := R₂ }
+    (by simp [hR₂, hR₁, htS])
+  dsimp only at e₃
+  rw [show (R₂ (reg .w)).length = w' by simp [hR₂, hR₁]; exact hT.hw,
+    show R₂ (reg (.sc 2)) = [] by simp [hR₂, hR₁, hsc], List.append_nil] at e₃
+  set R₃ := Function.update R₂ (reg (.sc 2)) (List.replicate w' tick) with hR₃
+  obtain ⟨v₄, hu₄, e₄⟩ := usub_exec body (a := reg (.sc 0)) (b := reg (.sc 2)) (t := reg .tS)
+    (reg_ne (by simp)) (reg_ne (by simp)) (reg_ne (by simp)) v₃ { S with R := R₃ }
+    (by simp [hR₃, hR₂, hR₁, htS])
+  dsimp only at e₄
+  rw [show R₃ (reg (.sc 0)) = List.replicate s tick by simp [hR₃, hR₂, hR₁],
+    show R₃ (reg (.sc 2)) = List.replicate w' tick by simp [hR₃], List.length_replicate,
+    List.drop_replicate] at e₄
+  set R₄ := Function.update R₃ (reg (.sc 2)) (List.replicate (w' - s) tick) with hR₄
+  obtain ⟨v₅, hu₅, e₅⟩ := usub_exec body (a := reg (.sc 1)) (b := reg (.sc 2)) (t := reg .tS)
+    (reg_ne (by simp)) (reg_ne (by simp)) (reg_ne (by simp)) v₄ { S with R := R₄ }
+    (by simp [hR₄, hR₃, hR₂, hR₁, htS])
+  dsimp only at e₅
+  rw [show R₄ (reg (.sc 1)) = List.replicate w tick by simp [hR₄, hR₃, hR₂],
+    show R₄ (reg (.sc 2)) = List.replicate (w' - s) tick by simp [hR₄], List.length_replicate,
+    List.drop_replicate] at e₅
+  set R₅ := Function.update R₄ (reg (.sc 2)) (List.replicate (w' - s - w) tick) with hR₅
+  obtain ⟨v₆, hu₆, e₆⟩ := topShiftP_exec body hA (src := reg .io) (dst := reg .rctmp)
+    (tmp := reg .racc) (cW := reg .w) (cS := reg (.sc 0)) (cE := reg (.sc 1)) (cD := reg (.sc 2))
+    (sp := reg (.sc 3)) (sg := reg (.sc 4)) (cy := reg (.sc 5))
+    (nodup_map_reg (l := [.io, .rctmp, .racc, .w, .sc 0, .sc 1, .sc 2, .sc 3, .sc 4, .sc 5])
+      (by simp)) hw' hsw Z hZ v₅ { S with R := R₅ }
+    (by simp [hR₅, hR₄, hR₃, hR₂, hR₁, hio])
+    (by have h : S.R (reg .rctmp) = [] := hT.rest .rctmp; simp [hR₅, hR₄, hR₃, hR₂, hR₁, h])
+    ⟨by simp [hR₅, hR₄, hR₃, hR₂, hR₁]; exact hT.hw, by simp [hR₅, hR₄, hR₃, hR₂, hR₁],
+      by simp [hR₅, hR₄, hR₃, hR₂], by simp [hR₅], by simp [hR₅, hR₄, hR₃, hR₂, hR₁, hsc],
+      by simp [hR₅, hR₄, hR₃, hR₂, hR₁, hsc], by simp [hR₅, hR₄, hR₃, hR₂, hR₁, hsc],
+      by have h : S.R (reg .racc) = [] := hT.rest .racc; simp [hR₅, hR₄, hR₃, hR₂, hR₁, h]⟩
+  set R₆ := Function.update R₅ (reg .io) (encZ A w (fun p => tdivZ s (Z p))) with hR₆
+  obtain ⟨v₇, hu₇, e₇⟩ := uclear_exec body (reg (.sc 0)) v₆ { S with R := R₆ }
+  obtain ⟨v₈, hu₈, e₈⟩ := uclear_exec body (reg (.sc 1)) v₇
+    { S with R := Function.update R₆ (reg (.sc 0)) [] }
+  obtain ⟨v₉, hu₉, e₉⟩ := uclear_exec body (reg (.sc 2)) v₈
+    { S with R := Function.update (Function.update R₆ (reg (.sc 0)) []) (reg (.sc 1)) [] }
+  refine ⟨v₉, _, by rw [hu₉, hu₈, hu₇, hu₆, hu₅, hu₄, hu₃, hu₂], ?_,
+    Exec.cast ((Exec.seq e₂ (Exec.seq e₃ (Exec.seq e₄ (Exec.seq e₅ (Exec.seq e₆
+      (Exec.seq e₇ (Exec.seq e₈ e₉)))))))) rfl ?_⟩
+  · simp only [hR₆, hR₅, hR₄, hR₃, hR₂, hR₁]
+    compactTopFupd
+    simp only [List.length_replicate]
+    unfold compactTopShiftTailCost
+    omega
+  · congr 2
+    funext k
+    by_cases h2 : k = reg (.sc 2)
+    · subst h2; simp [hsc]
+    by_cases h1 : k = reg (.sc 1)
+    · subst h1; simp [hsc]
+    by_cases h0 : k = reg (.sc 0)
+    · subst h0; simp [hsc]
+    simp [hR₆, hR₅, hR₄, hR₃, hR₂, hR₁, Function.update_apply, h0, h1, h2]
+
+
+/-- The final shift of the rounded top: the remaining shift `s - s'` (fields `1` and `11`) on
+`sc 0`, then `compactTopShiftTail`. -/
+noncomputable def compactTopShiftSR : Pr P (nT BReg) Q A U :=
+  .seq (compactTopRd (reg (.sc 0)) 1)
+  (.seq (compactTopRd (reg (.sc 1)) 11)
+  (.seq (usub (reg (.sc 1)) (reg (.sc 0)) (reg .tS))
+  (.seq (uclear (reg (.sc 1))) compactTopShiftTail)))
+
+/-- The step bound of `compactTopShiftSR`. -/
+def compactTopShiftSRCost (cfg : List ℕ) (R N r w' s s' w : ℕ) : ℕ :=
+  2 * topGetCost cfg + (4 * s' + 4) + (2 * s' + 2) + compactTopShiftTailCost cfg R N r w' (s - s') w
+
+theorem compactTopShiftSR_exec (hA : 4 ≤ A) {cfg pfs : List ℕ} {R N r w' K ρ s s' w : ℕ}
+    (h0 : cfg[0]? = some w) (h1 : cfg[1]? = some s) (h11 : cfg[11]? = some s')
+    (hw' : 1 ≤ w') (hsw : (s - s') + w ≤ w')
+    (Z : ZArr (Fin R × Fin r) N) (hZ : ∀ p, TopFitsZ w' (Z p))
+    (v : HS (nT BReg) Q A U) (S : Stacks (nT BReg) A) (hT : CompactTopRegs bc S.R N r w' K ρ)
+    (hI : CompactTopIn (BReg := BReg) S.R cfg pfs) (hio : S.R (reg .io) = encZ A w' Z) :
+    ∃ (v' : HS (nT BReg) Q A U) (c : ℕ), v'.user = v.user ∧
+      c ≤ compactTopShiftSRCost cfg R N r w' s s' w ∧
+      Exec body compactTopShiftSR (mk v S) c
+        (mk v' { S with
+          R := Function.update S.R (reg .io) (encZ A w (fun p => tdivZ (s - s') (Z p))) }) := by
+  have hl1 : 1 < cfg.length := (List.getElem?_eq_some_iff.1 h1).1
+  have hl11 : 11 < cfg.length := (List.getElem?_eq_some_iff.1 h11).1
+  have hc1 : cfg[1] = s := (List.getElem?_eq_some_iff.1 h1).2
+  have hc11 : cfg[11] = s' := (List.getElem?_eq_some_iff.1 h11).2
+  have hsc : ∀ i, S.R (reg (.sc i)) = [] := fun i => hT.rest (.sc i)
+  have htS : S.R (reg .tS) = [] := hT.rest .tS
+  have hlc : S.R (reg .lenctr) = [] := hT.rest .lenctr
+  obtain ⟨v₁, c₁, hu₁, hc₁, e₁⟩ := compactTopRd_exec body (x := .sc 0) (by simp) (by simp) 1 hl1 v S
+    hlc hI.cf
+  rw [hc1, hsc 0, List.append_nil] at e₁
+  set R₁ := Function.update S.R (reg (.sc 0)) (List.replicate s tick) with hR₁
+  obtain ⟨v₂, c₂, hu₂, hc₂, e₂⟩ := compactTopRd_exec body (x := .sc 1) (by simp) (by simp) 11 hl11
+    v₁ { S with R := R₁ } (by simp [hR₁, hlc]) (by simpa [hR₁] using hI.cf)
+  dsimp only at e₂
+  rw [hc11, show R₁ (reg (.sc 1)) = [] by simp [hR₁, hsc], List.append_nil] at e₂
+  set R₂ := Function.update R₁ (reg (.sc 1)) (List.replicate s' tick) with hR₂
+  obtain ⟨v₃, hu₃, e₃⟩ := usub_exec body (a := reg (.sc 1)) (b := reg (.sc 0)) (t := reg .tS)
+    (reg_ne (by simp)) (reg_ne (by simp)) (reg_ne (by simp)) v₂ { S with R := R₂ }
+    (by simp [hR₂, hR₁, htS])
+  dsimp only at e₃
+  rw [show R₂ (reg (.sc 1)) = List.replicate s' tick by simp [hR₂],
+    show R₂ (reg (.sc 0)) = List.replicate s tick by simp [hR₂, hR₁], List.length_replicate,
+    List.drop_replicate] at e₃
+  set R₃ := Function.update R₂ (reg (.sc 0)) (List.replicate (s - s') tick) with hR₃
+  obtain ⟨v₄, hu₄, e₄⟩ := uclear_exec body (reg (.sc 1)) v₃ { S with R := R₃ }
+  have hR₄ : Function.update R₃ (reg (.sc 1)) [] =
+      Function.update S.R (reg (.sc 0)) (List.replicate (s - s') tick) := by
+    funext k
+    simp only [hR₃, hR₂, hR₁, Function.update_apply]
+    split_ifs with h1 h2 <;> simp_all
+  obtain ⟨v₅, c₅, hu₅, hc₅, e₅⟩ := compactTopShiftTail_exec body hA (cfg := cfg) h0 hw' hsw Z hZ v₄
+    S hT hI hio
+  refine ⟨v₅, _, by rw [hu₅, hu₄, hu₃, hu₂, hu₁], ?_,
+    Exec.seq e₁ (Exec.seq e₂ (Exec.seq e₃ (Exec.seq e₄ (by rw [hR₄]; exact e₅))))⟩
+  rw [show (R₃ (reg (.sc 1))).length = s' by simp [hR₃, hR₂]]
+  unfold compactTopShiftSRCost
+  omega
+
 end Stages
 
 /-- At level `0` the layer of the tape is the exact layer: a `CallSpecF` with result `layerRW` is a
@@ -820,47 +977,47 @@ lemma CallSpecF.callSpec_zero {body : P → Pr P (nT BReg) Q A U} {cp : Pr P (nT
 
 /-! ### The rounded top program -/
 
-/-- The configuration record of the rounded top: `topCfg` with the final shift `s₂`, then the
-guard `g`, the cut `s'` and the shrink count `k`. -/
-def topCfgR (w s₂ a R R₂ q aT K oS D g s' k : ℕ) : List ℕ :=
-  topCfg w s₂ a R R₂ q aT K oS D ++ [g, s', k]
+/-- The configuration record of the rounded top: `topCfg` with the total shift `s`, then the
+guard `g`, the cut `s'` and the shrink count `k`; the final shift is `s - s'`. -/
+def topCfgR (w s a R R₂ q aT K oS D g s' k : ℕ) : List ℕ :=
+  topCfg w s a R R₂ q aT K oS D ++ [g, s', k]
 
 /-- **The rounded host machine of the simultaneous layer**: widening, the phase, the guard, the
 top kernels, the pieces, the phase, the unit, the cut, the shrinks and the final shift. -/
 noncomputable def compactTopProgR (cp : Pr P (nT BReg) Q A U) : Pr P (nT BReg) Q A U :=
   .seq compactTopWidenS (.seq compactTopPhaseS (.seq compactTopGuardS (.seq (compactTopKerS cp)
     (.seq (compactTopBlockS cp) (.seq compactTopPhaseS (.seq compactTopUnitS (.seq compactTopCutS
-      (.seq compactTopShrinkS compactTopShiftS))))))))
+      (.seq compactTopShrinkS compactTopShiftSR))))))))
 
 /-- The step bound of `compactTopProgR`: the sum of the stage bounds. -/
-def compactTopCostR (w w' s₂ n a R r K ρ q aT oS D R₂ g s' k : ℕ) (pcs : List TopPc) (kc : ℕ)
+def compactTopCostR (w w' s n a R r K ρ q aT oS D R₂ g s' k : ℕ) (pcs : List TopPc) (kc : ℕ)
     (cc : TopPc → ℕ) : ℕ :=
-  compactTopWidenSCost (topCfgR w s₂ a R R₂ q aT K oS D g s' k) R (n + a) r w w' +
-    compactTopPhaseSCost (topCfgR w s₂ a R R₂ q aT K oS D g s' k) (n + a) R r w' K ρ oS D +
-    compactTopGuardSCost (topCfgR w s₂ a R R₂ q aT K oS D g s' k) R (n + a) r w' g +
-    compactTopKerSCost (topCfgR w s₂ a R R₂ q aT K oS D g s' k) K R q aT kc +
-    compactTopBlockCost (topCfgR w s₂ a R R₂ q aT K oS D g s' k) K n a r w' R R₂ cc pcs +
-    compactTopPhaseSCost (topCfgR w s₂ a R R₂ q aT K oS D g s' k) (n + a) R r w' K ρ oS D +
-    compactTopUnitSCost (topCfgR w s₂ a R R₂ q aT K oS D g s' k) R (n + a) r w' D +
-    compactTopCutSCost (topCfgR w s₂ a R R₂ q aT K oS D g s' k) R (n + a) r w' s' +
-    compactTopShrinkSCost (topCfgR w s₂ a R R₂ q aT K oS D g s' k) R (n + a) r w' k +
-    compactTopShiftSCost (topCfgR w s₂ a R R₂ q aT K oS D g s' k) R (n + a) r w' s₂ w
+  compactTopWidenSCost (topCfgR w s a R R₂ q aT K oS D g s' k) R (n + a) r w w' +
+    compactTopPhaseSCost (topCfgR w s a R R₂ q aT K oS D g s' k) (n + a) R r w' K ρ oS D +
+    compactTopGuardSCost (topCfgR w s a R R₂ q aT K oS D g s' k) R (n + a) r w' g +
+    compactTopKerSCost (topCfgR w s a R R₂ q aT K oS D g s' k) K R q aT kc +
+    compactTopBlockCost (topCfgR w s a R R₂ q aT K oS D g s' k) K n a r w' R R₂ cc pcs +
+    compactTopPhaseSCost (topCfgR w s a R R₂ q aT K oS D g s' k) (n + a) R r w' K ρ oS D +
+    compactTopUnitSCost (topCfgR w s a R R₂ q aT K oS D g s' k) R (n + a) r w' D +
+    compactTopCutSCost (topCfgR w s a R R₂ q aT K oS D g s' k) R (n + a) r w' s' +
+    compactTopShrinkSCost (topCfgR w s a R R₂ q aT K oS D g s' k) R (n + a) r w' k +
+    compactTopShiftSRCost (topCfgR w s a R R₂ q aT K oS D g s' k) R (n + a) r w' s s' w
 
 lemma topFitsZ_mono' {k k' : ℕ} (hk : 1 ≤ k) (hkk : k ≤ k') {z : GaussianInt}
     (hz : TopFitsZ k z) : TopFitsZ k' z :=
   ⟨topFits_mono hk hkk hz.1, topFits_mono hk hkk hz.2⟩
 
 /-- **The rounded host machine** (`compactTopProgR`). As `compactTopProg_exec`, with the
-configuration `topCfgR w s₂ a R R₂ q aT K oS D g s' k`, the pieces calling a layer program with
-result `layerRW w'` (`CallSpecF`), `g ≤ w'`, `s' < w'`, `s₂ + w ≤ w'` and the array before the
-shifts fitting `w'` signed bits: the machine leaves on `io` the `w`-bit stream of
-`tdivZ s₂ (shrinkZ k (tdivZ s' (topPreRW …)))`. -/
+configuration `topCfgR w s a R R₂ q aT K oS D g s' k`, the pieces calling a layer program with
+result `layerRW w'` (`CallSpecF`), `g ≤ w'`, `s' < w'`, `(s - s') + w ≤ w'` and the array
+before the shifts fitting `w'` signed bits: the machine leaves on `io` the `w`-bit stream of
+`tdivZ (s - s') (shrinkZ k (tdivZ s' (topPreRW …)))`. -/
 theorem compactTopProgR_exec (body : P → Pr P (nT BReg) Q A U)
     (cp : Pr P (nT BReg) Q A U) (bc : BReg → List (Fin (A+4)) → Prop)
     (ds : ComplexFramedExecution.Directions) (kc : ℕ) (cc : TopPc → ℕ)
     (hA : 21 ≤ A)
-    {w w' s₂ n a R r K ρ q aT oS D R₂ g s' k : ℕ} (low : List (Fin n)) (pcs : List TopPc)
-    (hr : 1 ≤ r) (hw : 1 ≤ w) (hsw : s₂ + w ≤ w') (hg : g ≤ w') (hs' : s' < w') (hρ : ρ < K)
+    {w w' s n a R r K ρ q aT oS D R₂ g s' k : ℕ} (low : List (Fin n)) (pcs : List TopPc)
+    (hr : 1 ≤ r) (hw : 1 ≤ w) (hsw : (s - s') + w ≤ w') (hg : g ≤ w') (hs' : s' < w') (hρ : ρ < K)
     (hfitT : ∀ i < q, aT + ρ + K * i < n + a)
     (hR₂ : R * 2 ^ a ≤ R₂) (hpcs : ∀ pc ∈ pcs, pc.OkR K n R₂)
     (hkernel : 1≤q → CallSpec body cp bc ds R 0 q K ρ aT (K*q) (n+a) r w'
@@ -877,17 +1034,17 @@ theorem compactTopProgR_exec (body : P → Pr P (nT BReg) Q A U)
       (topPiecesR hρ pcs hpcs) g Z p))
     (v : HS (nT BReg) Q A U) (S : Stacks (nT BReg) A)
     (hL : ∀ y, S.L y = []) (hT : CompactTopRegs bc S.R (n + a) r w' K ρ)
-    (hI : CompactTopIn (BReg := BReg) S.R (topCfgR w s₂ a R R₂ q aT K oS D g s' k)
+    (hI : CompactTopIn (BReg := BReg) S.R (topCfgR w s a R R₂ q aT K oS D g s' k)
       (topPcRec K pcs))
     (hio : S.R (reg .io) = encZ A w Z) :
     ∃ (v' : HS (nT BReg) Q A U) (c : ℕ), v'.user = v.user ∧
-      c ≤ compactTopCostR w w' s₂ n a R r K ρ q aT oS D R₂ g s' k pcs kc cc ∧
+      c ≤ compactTopCostR w w' s n a R r K ρ q aT oS D R₂ g s' k pcs kc cc ∧
       Exec body (compactTopProgR cp) (mk v S) c
         (mk v' { S with
-          R := Function.update S.R (reg .io) (encZ A w (fun p => tdivZ s₂ (shrinkZ k (tdivZ s'
+          R := Function.update S.R (reg .io) (encZ A w (fun p => tdivZ (s - s') (shrinkZ k (tdivZ s'
             (topPreRW ds w' a low (topTop aT ρ K q (n + a) hfitT) hR₂
               (topPiecesR hρ pcs hpcs) g Z p))))) }) := by
-  set cfg := topCfgR w s₂ a R R₂ q aT K oS D g s' k with hcfg
+  set cfg := topCfgR w s a R R₂ q aT K oS D g s' k with hcfg
   set top := topTop aT ρ K q (n + a) hfitT with htop
   set sel := topSel a low top with hseldef
   set Ps := topPiecesR hρ pcs hpcs with hPs
@@ -970,8 +1127,9 @@ theorem compactTopProgR_exec (body : P → Pr P (nT BReg) Q A U)
     { S with R := Function.update S.R (reg .io) (encZ A w' Z₆) } (hT' _) (hI' _) (by simp)
   rw [topIo] at e₉
   -- 10. the final shift
-  obtain ⟨v₁₀, c₁₀, hu₁₀, hc₁₀, e₁₀⟩ := compactTopShiftS_exec body hA4 (cfg := cfg)
-    (by simp [hcfg, topCfgR, topCfg]) (by simp [hcfg, topCfgR, topCfg]) hw' hsw Z₇ hZ₇f v₉
+  obtain ⟨v₁₀, c₁₀, hu₁₀, hc₁₀, e₁₀⟩ := compactTopShiftSR_exec body hA4 (cfg := cfg)
+    (by simp [hcfg, topCfgR, topCfg]) (by simp [hcfg, topCfgR, topCfg])
+    (by simp [hcfg, topCfgR, topCfg]) hw' hsw Z₇ hZ₇f v₉
     { S with R := Function.update S.R (reg .io) (encZ A w' Z₇) } (hT' _) (hI' _) (by simp)
   rw [topIo] at e₁₀
   refine ⟨v₁₀, _, by rw [hu₁₀, hu₉, hu₈, hu₇, hu₆, hu₅, hu₄, hu₃, hu₂, hu₁], ?_,
@@ -982,14 +1140,15 @@ theorem compactTopProgR_exec (body : P → Pr P (nT BReg) Q A U)
   omega
 
 /-- **The rounded layer.** `compactTopProgR_exec` with the shrink identity: the machine leaves on
-`io` the stream of `topRSW … (s' + s₂) (k 2^s') Z`, the shrink by `k 2^s'` before the shift by
-`2^(s' + s₂)`. -/
+`io` the stream of `topRSW … s (k 2^s') Z`, the shrink by `k 2^s'` before the shift by `2^s`,
+for `s' ≤ s`. -/
 theorem compactTopProgR_exec_RS (body : P → Pr P (nT BReg) Q A U)
     (cp : Pr P (nT BReg) Q A U) (bc : BReg → List (Fin (A+4)) → Prop)
     (ds : ComplexFramedExecution.Directions) (kc : ℕ) (cc : TopPc → ℕ)
     (hA : 21 ≤ A)
-    {w w' s₂ n a R r K ρ q aT oS D R₂ g s' k : ℕ} (low : List (Fin n)) (pcs : List TopPc)
-    (hr : 1 ≤ r) (hw : 1 ≤ w) (hsw : s₂ + w ≤ w') (hg : g ≤ w') (hs' : s' < w') (hρ : ρ < K)
+    {w w' s n a R r K ρ q aT oS D R₂ g s' k : ℕ} (low : List (Fin n)) (pcs : List TopPc)
+    (hr : 1 ≤ r) (hw : 1 ≤ w) (hsw : (s - s') + w ≤ w') (hg : g ≤ w') (hs' : s' < w')
+    (hss : s' ≤ s) (hρ : ρ < K)
     (hfitT : ∀ i < q, aT + ρ + K * i < n + a)
     (hR₂ : R * 2 ^ a ≤ R₂) (hpcs : ∀ pc ∈ pcs, pc.OkR K n R₂)
     (hkernel : 1≤q → CallSpec body cp bc ds R 0 q K ρ aT (K*q) (n+a) r w'
@@ -1006,22 +1165,23 @@ theorem compactTopProgR_exec_RS (body : P → Pr P (nT BReg) Q A U)
       (topPiecesR hρ pcs hpcs) g Z p))
     (v : HS (nT BReg) Q A U) (S : Stacks (nT BReg) A)
     (hL : ∀ y, S.L y = []) (hT : CompactTopRegs bc S.R (n + a) r w' K ρ)
-    (hI : CompactTopIn (BReg := BReg) S.R (topCfgR w s₂ a R R₂ q aT K oS D g s' k)
+    (hI : CompactTopIn (BReg := BReg) S.R (topCfgR w s a R R₂ q aT K oS D g s' k)
       (topPcRec K pcs))
     (hio : S.R (reg .io) = encZ A w Z) :
     ∃ (v' : HS (nT BReg) Q A U) (c : ℕ), v'.user = v.user ∧
-      c ≤ compactTopCostR w w' s₂ n a R r K ρ q aT oS D R₂ g s' k pcs kc cc ∧
+      c ≤ compactTopCostR w w' s n a R r K ρ q aT oS D R₂ g s' k pcs kc cc ∧
       Exec body (compactTopProgR cp) (mk v S) c
         (mk v' { S with
           R := Function.update S.R (reg .io) (encZ A w (topRSW ds w' a low
-            (topTop aT ρ K q (n + a) hfitT) hR₂ (topPiecesR hρ pcs hpcs) g (s' + s₂) (k * 2 ^ s')
+            (topTop aT ρ K q (n + a) hfitT) hR₂ (topPiecesR hρ pcs hpcs) g s (k * 2 ^ s')
               Z)) }) := by
   obtain ⟨v', c, hu, hc, he⟩ := compactTopProgR_exec body cp bc ds kc cc hA low pcs hr hw hsw hg
     hs' hρ hfitT hR₂ hpcs hkernel hcalls hselm hsel hD Z hZ hX v S hL hT hI hio
   refine ⟨v', c, hu, hc, Exec.cast he rfl ?_⟩
   congr 4
   funext p
-  exact (tdiv_shrink_mul k s' s₂ _).symm
+  rw [← tdiv_shrink_mul k s' (s - s') _, Nat.add_sub_cancel' hss]
+  rfl
 
 end
 end IntegerMultBounds.MathlibTM2.LayerMachine

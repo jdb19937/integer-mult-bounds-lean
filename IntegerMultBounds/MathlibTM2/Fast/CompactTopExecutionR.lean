@@ -58,18 +58,18 @@ theorem compactTopActualR_callSpec (hQ : compactRuntimeStates ≤ Q)
     j hsw a' hready hfit hfitL
 
 /-- **The rounded reserved transform** on the union host, using the placed rounded layer
-table and actual padded rows. The working width `w'`, the guard `gb`, the cut `s'`, the final
-shift `s₂` and the shrink count `k` are free; the machine leaves on `io` the stream of
-`topRSW … gb (s' + s₂) (k 2^s') Z`. -/
+table and actual padded rows. The working width `w'`, the guard `gb`, the total shift `s`, the
+cut `s' ≤ s` and the shrink count `k` are free; the machine leaves on `io` the stream of
+`topRSW … gb s (k 2^s') Z`. -/
 theorem compactTopActualR_exec (hQ : compactRuntimeStates ≤ Q)
     (ds : ComplexFramedExecution.Directions)
     (hA : 21≤prime+Ka) (hA9 : 9^4≤prime+Ka+4) (hNW : NW≤prime+Ka+4)
     (hgate : ∀ g, Instr.gate g∈program ds →
       (2*gateBound g+1)^(2*(gateWires g).length)≤prime+Ka+4)
-    {shape : Shape} {d g D oS o a R r W ρ packD w' gb s' s₂ k : ℕ}
+    {shape : Shape} {d g D oS o a R r W ρ packD w' gb s s' k : ℕ}
     (h : CompactReservationFits d g shape.chunk D) (hD : D≤d)
     (hρ : ρ<shape.chunk) (hR : 1≤R) (hr : 1≤r) (hW : 1≤W)
-    (hsw : s₂+W≤w') (hgb : gb≤w') (hs' : s'<w')
+    (hsw : (s-s')+W≤w') (hgb : gb≤w') (hs' : s'<w') (hss : s'≤s)
     (ho : o≤oS) (ha : CompactGlobalRowPadding.rowAxes NW m d*shape.chunk≤a)
     (hG : 1≤shape.guard) (hGK : shape.guard+1≤shape.chunk)
     (hrecord : shape.bits+1≤shape.payload) :
@@ -99,17 +99,17 @@ theorem compactTopActualR_exec (hQ : compactRuntimeStates ≤ Q)
       (S : Stacks (nT CompactHostBReg) (prime+Ka))
       (_hL : ∀ y,S.L y=[])
       (_hT : CompactTopRegs (compactHostBasisRest shape o r) S.R (n+a) r w' K ρ)
-      (_hI : CompactTopIn (BReg := CompactHostBReg) S.R (topCfgR W s₂ a R R₂ q aT K oS D gb s' k)
+      (_hI : CompactTopIn (BReg := CompactHostBReg) S.R (topCfgR W s a R R₂ q aT K oS D gb s' k)
         (topPcRec K pcs))
       (_hio : S.R (reg (BReg := CompactHostBReg) .io)=encZ (prime+Ka) W Z),
     ∃ (v' : HS (nT CompactHostBReg) Q (prime+Ka) U) (c : ℕ), v'.user=v.user ∧
-      c≤compactTopCostR W w' s₂ n a R r K ρ q aT oS D R₂ gb s' k pcs
+      c≤compactTopCostR W w' s n a R r K ρ q aT oS D R₂ gb s' k pcs
         (compactTopCallCostR ds shape packD (n+a) o r w' ρ ⟨0,q,R,aT⟩)
         (compactTopCallCostR ds shape packD n o r w' ρ) ∧
       Exec (compactPlacedLayerTableR hQ ds) (compactTopProgR (.call .layer)) (mk v S) c
         (mk v' {S with R := Function.update S.R (reg (BReg := CompactHostBReg) .io) (encZ
                 (prime+Ka) W (topRSW ds w' a low (topTop aT ρ K q (n+a) hfitT)
-                  (compactTopRows_bounds (by omega) hR ha).1 Ps gb (s'+s₂) (k*2^s') Z))}) := by
+                  (compactTopRows_bounds (by omega) hR ha).1 Ps gb s (k*2^s') Z))}) := by
   dsimp only
   intro hfitT hTL hpayload hbase hscale hready Z hZ hX v S hL hT hI hio
   let K := shape.chunk
@@ -123,7 +123,7 @@ theorem compactTopActualR_exec (hQ : compactRuntimeStates ≤ Q)
   have hw' : 1≤w' := by omega
   have hcoverage := compactTopSelection_vals ds h hρ hpcs hfitT
   apply compactTopProgR_exec_RS (compactPlacedLayerTableR hQ ds) (.call .layer)
-    (compactHostBasisRest shape o r) ds _ _ hA _ pcs hr hW hsw hgb hs' hρ hfitT
+    (compactHostBasisRest shape o r) ds _ _ hA _ pcs hr hW hsw hgb hs' hss hρ hfitT
     (compactTopRows_bounds (by omega) hR ha).1 (fun pc hpc => (hpcs pc hpc).okR)
   · intro hq
     exact (compactTopActualR_callSpec hQ ds (by omega) hA9 hNW hgate ⟨0,q,R,aT⟩ hr hw' hq hR

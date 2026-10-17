@@ -47,7 +47,7 @@ def compactTopOriginalAdapterCost (d g W a D q E Rv aT K o : ℕ) : ℕ :=
       ((2*o+2)+((2*Rv+2)+((2*q+2)+((2*(K*q)+2)+((2*aT+2)+((2*a+2)+
         ((2*E+2)+((2*g+2)+(2*o+2)))))))))))))
 
-private theorem sg_compactTopOriginalAdapter (body : P → Pr P (nT SXReg) Q A U)
+theorem sg_compactTopOriginalAdapter (body : P → Pr P (nT SXReg) Q A U)
     (R : Fin (nT SXReg) → List (Fin (A+4))) (v : SynW → List (Fin (A+4)))
     (rowsSrc : SynW) (hsrc : ∀ i, rowsSrc≠.s i)
     (d g W a D q E Rv aT K o : ℕ) (hdpos : 0<d)
