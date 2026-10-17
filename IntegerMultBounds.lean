@@ -2114,6 +2114,7 @@ public import IntegerMultBounds.MathlibTM2.Fast.CompactStoppedTopSelection
 public import IntegerMultBounds.MathlibTM2.Fast.CompactStoppedTopSetup
 public import IntegerMultBounds.MathlibTM2.Fast.CompactTopAdapterContract
 public import IntegerMultBounds.MathlibTM2.Layer.OccurrenceRecurrence
+public import IntegerMultBounds.MathlibTM2.Layer.SelectedMoments
 public import IntegerMultBounds.NLogN.PhaseCellInteriorCover
 public import IntegerMultBounds.NLogN.PhaseCellInteriorSolve
 public import IntegerMultBounds.NLogN.PhaseCellRoundedCell
