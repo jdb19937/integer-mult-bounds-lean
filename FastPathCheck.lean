@@ -1,3 +1,5 @@
+module
+
 import IntegerMultBounds.MathlibTM2
 
 /-! The theorem and the main intermediate results depend only on Lean's three standard axioms. -/

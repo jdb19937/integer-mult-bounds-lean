@@ -1,3 +1,5 @@
+module
+
 import IntegerMultBounds.MathlibTM2
 
 /-! The audited declarations depend only on Lean's three standard axioms. -/

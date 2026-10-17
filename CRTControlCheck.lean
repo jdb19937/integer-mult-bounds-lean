@@ -1,3 +1,5 @@
+module
+
 import IntegerMultBounds.MathlibTM2.Fast.CRTDirectSource
 import IntegerMultBounds.MathlibTM2.Fast.SrcDirectStage
 import IntegerMultBounds.MathlibTM2.Cost.CRTDirectEntry

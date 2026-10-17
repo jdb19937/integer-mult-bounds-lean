@@ -1,3 +1,5 @@
+module
+
 import IntegerMultBounds.MathlibTM2.Fast.CRTGap
 import Lean.Util.CollectAxioms
 

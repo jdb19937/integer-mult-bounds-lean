@@ -1,3 +1,5 @@
+module
+
 import IntegerMultBounds.Machine.ChirpPublicConjugation
 import IntegerMultBounds.Machine.ChirpFastProduct
 import IntegerMultBounds.Machine.ChirpSignExtend

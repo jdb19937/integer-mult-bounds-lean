@@ -1,3 +1,5 @@
+module
+
 import IntegerMultBounds.MathlibTM2.Cost.CompactRetunedReservationGrowth
 import IntegerMultBounds.MathlibTM2.Cost.CompactRetunedTopGrowth
 import IntegerMultBounds.MathlibTM2.Cost.CompactRetunedTopCost

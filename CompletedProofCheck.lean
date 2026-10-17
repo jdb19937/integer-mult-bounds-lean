@@ -1,3 +1,5 @@
+module
+
 import IntegerMultBounds.MathlibTM2.Theorem
 import Lean.Util.CollectAxioms
 
