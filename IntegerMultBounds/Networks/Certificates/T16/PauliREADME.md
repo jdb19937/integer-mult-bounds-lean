@@ -79,6 +79,31 @@ exactly the source's `compiled.tab == op.tab and compiled.zero_state() ==
 op.zero_state()` test, with the tableau comparison read phase-exactly on
 generators.
 
+## Generic Clifford elimination
+
+The 2,896 serialized child recipes are replaced by a generic theorem.
+
+- `PauliCorrection.lean`: realization label maps are multiplicative, a Pauli
+  operator determines its label, and two realizations with the same binary
+  tableau differ by a Pauli operator and a global scalar
+  (`Realization.eq_pauli_smul`).
+- `BinaryElimination.lean`: every symplectic map is a monomial (address
+  permutation, then symmetric quadratic shear), the coordinate Hadamard
+  `S C_r S` on `r = dim xRange` axes, and another monomial
+  (`Tableau.elimination`). Z-preserving symplectic maps are monomial, and every
+  subspace is a frame space.
+- `PauliLowering.lean`: realization tableaus are symplectic, realizations
+  have exact inverses, and `Realization.lowering` combines the two results.
+  `edgeRealization a b` is the exact transition `T_b T_a⁻¹`; `edge_lowering`
+  writes it, up to a global scalar, as monomial, `S C_r S`, monomial and Pauli
+  operator, with `r` the relative X-block rank that the native trace theorems
+  identify with each certified climb and centre rank.
+
+The global scalar is not yet pinned to `±1, ±i`; the source's per-recipe
+`phase` field is therefore not reproduced. Monomial and Pauli factors are
+address permutations with fourth-root phases (plus that scalar), so they make
+no child call.
+
 ## Remaining obligations
 
 Serialized monomial-factor decoding and equality of whole
