@@ -2082,6 +2082,46 @@ public import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerFitR
 public import IntegerMultBounds.MathlibTM2.Fast.CompactSynRoundOpR
 public import IntegerMultBounds.MathlibTM2.Mult.PipelineQ
 public import IntegerMultBounds.MathlibTM2.Fast.MainSemG
+public import IntegerMultBounds.MathlibTM2.Cost.CompactGaussianRoute
+public import IntegerMultBounds.MathlibTM2.Cost.CompactStoppedReservation
+public import IntegerMultBounds.MathlibTM2.Cost.CompactStoppedReservationReady
+public import IntegerMultBounds.MathlibTM2.Cost.CompactSupplierCeiling
+public import IntegerMultBounds.MathlibTM2.Fast.CompactStoppedAmbientDepth
+public import IntegerMultBounds.MathlibTM2.Fast.CompactStoppedBackBudget
+public import IntegerMultBounds.MathlibTM2.Fast.CompactStoppedCutoff
+public import IntegerMultBounds.MathlibTM2.Fast.CompactStoppedDigBody
+public import IntegerMultBounds.MathlibTM2.Fast.CompactStoppedDigits
+public import IntegerMultBounds.MathlibTM2.Fast.CompactStoppedDigitsSpec
+public import IntegerMultBounds.MathlibTM2.Fast.CompactStoppedEmptyFallback
+public import IntegerMultBounds.MathlibTM2.Fast.CompactStoppedGeometry
+public import IntegerMultBounds.MathlibTM2.Fast.CompactStoppedGlobalCutoff
+public import IntegerMultBounds.MathlibTM2.Fast.CompactStoppedGlobalPipeline
+public import IntegerMultBounds.MathlibTM2.Fast.CompactStoppedPiece
+public import IntegerMultBounds.MathlibTM2.Fast.CompactStoppedPipeline
+public import IntegerMultBounds.MathlibTM2.Fast.CompactStoppedPower
+public import IntegerMultBounds.MathlibTM2.Fast.CompactStoppedPrecision
+public import IntegerMultBounds.MathlibTM2.Fast.CompactStoppedRebase
+public import IntegerMultBounds.MathlibTM2.Fast.CompactStoppedRecord
+public import IntegerMultBounds.MathlibTM2.Fast.CompactStoppedReservedPieces
+public import IntegerMultBounds.MathlibTM2.Fast.CompactStoppedScannerRecord
+public import IntegerMultBounds.MathlibTM2.Fast.CompactStoppedSynLayerPrepare
+public import IntegerMultBounds.MathlibTM2.Fast.CompactStoppedSynLayerRecords
+public import IntegerMultBounds.MathlibTM2.Fast.CompactStoppedSynRec
+public import IntegerMultBounds.MathlibTM2.Fast.CompactStoppedSynRoot
+public import IntegerMultBounds.MathlibTM2.Fast.CompactStoppedTopOriginal
+public import IntegerMultBounds.MathlibTM2.Fast.CompactStoppedTopPlaced
+public import IntegerMultBounds.MathlibTM2.Fast.CompactStoppedTopSelection
+public import IntegerMultBounds.MathlibTM2.Fast.CompactStoppedTopSetup
+public import IntegerMultBounds.MathlibTM2.Fast.CompactTopAdapterContract
+public import IntegerMultBounds.MathlibTM2.Layer.OccurrenceRecurrence
+public import IntegerMultBounds.NLogN.PhaseCellInteriorCover
+public import IntegerMultBounds.NLogN.PhaseCellInteriorSolve
+public import IntegerMultBounds.NLogN.PhaseCellRoundedCell
+public import IntegerMultBounds.NLogN.PhaseCellWeightRange
+public import IntegerMultBounds.NLogN.Primes
+public import IntegerMultBounds.NLogN.ToeplitzApply
+public import IntegerMultBounds.NLogN.ToeplitzRounded
+public import IntegerMultBounds.NLogN.ToeplitzScaled
 import IntegerMultBounds.MathlibTM2.Fast.CompactSynRetunedTransformsR
 import IntegerMultBounds.MathlibTM2.Fast.ConvBoxQPipeline
 import IntegerMultBounds.MathlibTM2.Fast.SrcStageG
