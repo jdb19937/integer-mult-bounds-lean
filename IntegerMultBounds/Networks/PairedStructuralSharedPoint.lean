@@ -58,9 +58,9 @@ theorem run_partial (input : Triple 50 → ZMod 2) (c : Fin 50) (j : Fin 1176) :
   run_partial_for PairedIndexedPruning.implementation input c j
 
 /-- Certificate-free budget for all fifty replayed copies: the sharp local
-allocation count less the proved dead additions. Duplicate sharing across
+allocation count of 9,813 live additions per copy. Duplicate sharing across
 copies is not yet credited. -/
-def additionBudget : ℕ := 50 * 9818
+def additionBudget : ℕ := 50 * 9813
 
 theorem support_bound :
     ((SharedPointLocalFamily.domain PairedIndexedPruning.implementation).image

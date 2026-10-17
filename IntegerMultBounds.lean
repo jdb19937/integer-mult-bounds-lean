@@ -307,6 +307,7 @@ import IntegerMultBounds.Networks.PairedBaseBound
 import IntegerMultBounds.Networks.PairedLevelTools
 import IntegerMultBounds.Networks.PairedLevelBound
 import IntegerMultBounds.Networks.PairedTopPruning
+import IntegerMultBounds.Networks.PairedBasePruning
 public import IntegerMultBounds.Networks.DAGAdditionIds
 public import IntegerMultBounds.Networks.PairedPruning
 public import IntegerMultBounds.Networks.DisjointUnique

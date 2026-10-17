@@ -4,7 +4,7 @@ public import IntegerMultBounds.Networks.PairedIndexedGraph
 public import IntegerMultBounds.Networks.PairedRename
 public import IntegerMultBounds.Networks.PairedLocalPruning
 public import IntegerMultBounds.Networks.PairedSingleBudget
-public import IntegerMultBounds.Networks.PairedTopPruning
+public import IntegerMultBounds.Networks.PairedBasePruning
 
 /-! The finite-coordinate constructor is the pair-keyed constructor with its
 input atoms relabeled. Live counts and pruning credits proved for the
@@ -133,9 +133,10 @@ theorem additions_le_live : DAGAllocator.additionCount implementation.nodes ≤
       (PairedInitialGraph.circuit (List.range 49)).nodes :=
   (PairedLocalCircuit.pruned_additions_le _).trans live_eq.le
 
-/-- The sharp structural allocation count, less the unused single-exclusion
-sums and the unused top-level strip totals removed before replay. -/
-theorem additions_le : DAGAllocator.additionCount implementation.nodes ≤ 9818 :=
-  additions_le_live.trans PairedTopPruning.live_le_49
+/-- The sharp local count of 9,813 live additions: the structural allocation
+count less the unused single-exclusion sums, the unused top-level strip totals
+and the five unused base sums, all removed before replay. -/
+theorem additions_le : DAGAllocator.additionCount implementation.nodes ≤ 9813 :=
+  additions_le_live.trans PairedBasePruning.live_le_49
 
 end IntegerMultBounds.Networks.PairedIndexedPruning

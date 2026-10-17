@@ -181,15 +181,16 @@ private theorem image_atom (real : List (Node ι)) (er : EdgeTable) (wr : Weight
   rw [refSupport_atoms k hk]
   simp [image, atomSupport]
 
-/-- Every real four-vertex base call with three present weights and a zero
-last weight allocates at most twenty-four additions. -/
-theorem base_additions_le (real : List (Node ι)) (er : EdgeTable) (wr : WeightTable)
+/-- A real four-vertex base call with three present weights and a zero last
+weight is simulated by the abstract run. -/
+theorem base_step (real : List (Node ι)) (er : EdgeTable) (wr : WeightTable)
     (hE : er.map Prod.fst = pairs (List.range 4))
     (hEs : ∀ e ∈ er, ∃ i, e.2 = some i ∧ i < real.length)
     (hW : wr.map Prod.fst = List.range 4)
     (hWs : ∀ w ∈ wr, w.1 < 3 → ∃ i, w.2 = some i ∧ i < real.length)
     (hW3 : ∀ w ∈ wr, 3 ≤ w.1 → w.2 = none) :
-    additionCount (baseBlock real (List.range 4) er wr).nodes ≤ additionCount real + 24 := by
+    Step (atomSupport real er wr) atoms real (baseBlock atoms (List.range 4) edges weights).nodes
+      (baseBlock real (List.range 4) er wr).nodes := by
   let g := atomSupport real er wr
   have hel : er.length = 6 := by
     have h := congrArg List.length hE
@@ -263,8 +264,18 @@ theorem base_additions_le (real : List (Node ι)) (er : EdgeTable) (wr : WeightT
     obtain ⟨j, hj, hjl⟩ := hsome
     rw [hj, refSupport_some real j hjl]
     exact List.mem_map_of_mem (List.getElem_mem hjl)
-  have hs := baseBlock_sim g atoms real (List.range 4) edges er weights wr hc hE' hW'
-  have hcount := hs.count
+  exact baseBlock_sim g atoms real (List.range 4) edges er weights wr hc hE' hW'
+
+/-- Every real four-vertex base call with three present weights and a zero
+last weight allocates at most twenty-four additions. -/
+theorem base_additions_le (real : List (Node ι)) (er : EdgeTable) (wr : WeightTable)
+    (hE : er.map Prod.fst = pairs (List.range 4))
+    (hEs : ∀ e ∈ er, ∃ i, e.2 = some i ∧ i < real.length)
+    (hW : wr.map Prod.fst = List.range 4)
+    (hWs : ∀ w ∈ wr, w.1 < 3 → ∃ i, w.2 = some i ∧ i < real.length)
+    (hW3 : ∀ w ∈ wr, 3 ≤ w.1 → w.2 = none) :
+    additionCount (baseBlock real (List.range 4) er wr).nodes ≤ additionCount real + 24 := by
+  have hcount := (base_step real er wr hE hEs hW hWs hW3).count
   rw [abstract_count, atoms_additions] at hcount
   omega
 
