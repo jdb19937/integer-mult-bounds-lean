@@ -3,7 +3,7 @@
 ✅ Complete · 🟡 In progress / partially complete · ⬜ Not started.
 
 **Bound improvement progress:** M1 ✅ · M2 ✅ · M3 🟡 · M4 ⬜ · M5 ⬜ · M6 🟡 · M7 🟡 · M8 ⬜.
-The completed compact multiplier proves saving `36261/2^48 ≈ 1.28825 · 10^-10` (`≈ 1.1066 · 2^-33`), up from the previous `2^-33 ≈ 1.16415 · 10^-10`; further structural improvements remain in progress.
+The completed compact multiplier proves saving `36261/2^48 ≈ 2^-32.8539`, up from the previous `2^-33.0000`; further structural improvements remain in progress.
 
 ## Bound scoreboard
 
@@ -12,9 +12,9 @@ time `O(n (log n)^(1-kappa))`. Larger saving means a smaller time exponent.
 
 | Bound | Exponent saving `kappa` | Status |
 | --- | --- | --- |
-| **Current unconditional result** | **`36261/2^48 ≈ 1.28825 · 10^-10`** (`= 1.1066 · 2^-33 = 2^-32.854`) | ✅ Retune to `epsilon=79/256`, `lambda'=1-459/2^40`: the moduli room now follows from `d² ≤ 2ℓ`, removing the `d^7 ≤ b²` cap at `epsilon ≤ 2/7`. All-input correctness and cost bound on one fixed finite Mathlib machine. |
-| **Previous rounded result** | `2^-33 ≈ 1.16415 · 10^-10` (the current result is `10.66%` larger) | ✅ Rounded synthetic layers and transforms at `epsilon=9/32`. |
-| **Previous dyadic result** | `2^-34 ≈ 5.8208 · 10^-11` | ✅ Superseded by rounded synthetic layers, which allow the `9/32` dimension. |
+| **Current unconditional result** | **`36261/2^48 ≈ 2^-32.8539`** | ✅ Retune to `epsilon=79/256`, `lambda'=1-459/2^40`: the moduli room now follows from `d² ≤ 2ℓ`, removing the `d^7 ≤ b²` cap at `epsilon ≤ 2/7`. All-input correctness and cost bound on one fixed finite Mathlib machine. |
+| **Previous rounded result** | `2^-33.0000` | ✅ Rounded synthetic layers and transforms at `epsilon=9/32`. |
+| **Previous dyadic result** | `2^-34` | ✅ Superseded by rounded synthetic layers, which allow the `9/32` dimension. |
 | **Previous eighth-root result** | `2^-35` | ✅ Superseded by the audited dyadic dimension retune and fourth-root chunks. |
 | **Previous dimension result** | `2^-36` | ✅ Superseded by the audited eighth-root retune and sharper logarithmic cost estimates. |
 | **Previous compact result** | `2^-37` | ✅ Superseded by the checked sixteenth-root dimension retune. |
@@ -59,7 +59,7 @@ only `propext`, `Classical.choice` and `Quot.sound`.
 
 The [section-by-section implementation plan](plan/D-sharper-bound.md) is based
 on the original OpenAI manuscript and the pinned selected community
-construction. **Today's binding margin is §5 compact-layer cost: `epsilon (1-lambda') = 36261/2^48`, which is the public saving.** Within the current route `1-lambda'` is capped by the supplier (`1-lambda' < 1-Parameters.lam`) and `epsilon` by the resampling margin (`epsilon < 5/16`), so retuning can reach at most `5/16 · 1671/(4 · 10^12) ≈ 1.3055 · 10^-10 ≈ 1.121 · 2^-33`, about `1.3%` above the current `1.28825 · 10^-10`.
+construction. **Today's binding margin is §5 compact-layer cost: `epsilon (1-lambda') = 36261/2^48`, which is the public saving.** Within the current route `1-lambda'` is capped by the supplier (`1-lambda' < 1-Parameters.lam`) and `epsilon` by the resampling margin (`epsilon < 5/16`), so retuning can reach at most `5/16 · 1671/(4 · 10^12) ≈ 2^-32.8347`, against the current `2^-32.8539`.
 The actual compact runtime removes the old full-slot control restriction. A
 checked ceiling excludes `2^-33` with the existing supplier and coarse Gaussian
 restriction, so further parameter retuning alone cannot reach the next dyadic
