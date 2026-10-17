@@ -79,7 +79,8 @@ def main() -> None:
     lines.append(f'end {namespace}\n')
     (out/'Data.lean').write_text('\n'.join(lines))
     for number, (chunk,start,stop) in enumerate(chunks):
-        imports = f'import {namespace}.Data\n'
+        imports = (f'import {namespace}.Data\n'
+                   'import IntegerMultBounds.Networks.MaskDAGChunks\n')
         if number >= 4:
             # Keep a fresh Lake build to four concurrent certificate chains.
             imports += f'import {namespace}.Chunk{number-4:03d}\n'
@@ -89,26 +90,36 @@ def main() -> None:
                  f'theorem {chunk}_checked : checkChunk bank.lookup {start} {chunk} = true := by\n'
                  '  decide +kernel\n\n'
                  f'theorem {chunk}_length : {chunk}.length = {stop-start} := by rfl\n\n'
-                 f'theorem {chunk}_additions : {chunk}.countP (fun e => match e.kind with | .input _ => false | .add _ _ => true) = {sum(1 for k,_ in rows[start:stop] if k.startswith(".add"))} := by decide +kernel\n\n'
+                 f'theorem {chunk}_additions : {chunk}.countP Entry.isAddition = {sum(1 for k,_ in rows[start:stop] if k.startswith(".add"))} := by decide +kernel\n\n'
                  f'end {namespace}\n')
         (out/f'Chunk{number:03d}.lean').write_text(proof)
     checked = [f'import {namespace}.Chunk{n:03d}' for n in range(len(chunks))]
+    checked.append('import IntegerMultBounds.Networks.MaskDAGChunks')
     checked.extend(['', header, f'namespace {namespace}', 'open MaskDAG',
                     'set_option maxRecDepth 32768', 'set_option exponentiation.threshold 2000',
                     'attribute [local irreducible] MaskDAG.checkChunk', '',
+                    '/-- Independently certified chunks, kept abstract when composing proofs. -/',
+                    'def checkedChunks : List (List (Entry 1176)) :=',
+                    '  [' + ', '.join(c[0] for c in chunks) + ']', '',
+                    'theorem entries_eq_flatten : entries = checkedChunks.flatten := by',
+                    '  simp only [entries, checkedChunks, List.flatten_cons, List.flatten_nil,',
+                    '    List.append_nil, List.append_assoc]', '',
                     'theorem entries_checked : checkChunk bank.lookup 0 entries = true := by',
-                    '  unfold entries', '  simp only [List.append_assoc]'])
-    for number, (chunk,start,_) in enumerate(chunks[:-1]):
-        names = [c[0] for c in chunks[number+1:]]
-        rest = ' ++ ('.join(names) + ')' * (len(names)-1)
-        checked.extend([f'  refine checkChunk_append_of bank.lookup {start} {chunk} ({rest}) {chunk}_checked ?_',
-                        f'  change checkChunk bank.lookup {chunks[number+1][1]} ({rest}) = true'])
-    checked.extend([f'  exact {chunks[-1][0]}_checked', '',
+                    '  rw [entries_eq_flatten]',
+                    '  exact checkChunk_flatten bank.lookup 0 checkedChunks',
+                    '    ⟨' + ', '.join(f'{c[0]}_checked' for c in chunks) + ', trivial⟩', '',
+                    'attribute [local irreducible] ' + ' '.join(c[0] for c in chunks), '',
                     f'theorem entries_length : entries.length = {len(rows)} := by',
-                    '  decide +kernel',
+                    '  simp only [entries, List.length_append,',
+                    '    ' + ', '.join(f'{c[0]}_length' for c in chunks) + ']',
                     '',
                     'theorem addition_count : entries.countP (fun e => match e.kind with | .input _ => false | .add _ _ => true) = 9813 := by',
-                    '  decide +kernel',
+                    '  trans entries.countP Entry.isAddition',
+                    '  · apply List.countP_congr',
+                    '    intro e _',
+                    '    cases h : e.kind <;> simp [Entry.isAddition, h]',
+                    '  · simp only [entries, List.countP_append,',
+                    '      ' + ', '.join(f'{c[0]}_additions' for c in chunks) + ']',
                     '',
                     'theorem dag_valid : DisjointCircuit.Valid (entries.map Entry.toNode) :=',
                     '  checkChunk_valid bank.lookup entries entries_checked', '',

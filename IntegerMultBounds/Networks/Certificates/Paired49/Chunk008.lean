@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.Networks.Certificates.Paired49.Data
+public import IntegerMultBounds.Networks.MaskDAGChunks
 public import IntegerMultBounds.Networks.Certificates.Paired49.Chunk004
 
 /-! Generated untrusted mask data. Checked by the accompanying Lean proofs.
@@ -18,6 +19,6 @@ theorem chunk008_checked : checkChunk bank.lookup 1024 chunk008 = true := by
 
 theorem chunk008_length : chunk008.length = 128 := by rfl
 
-theorem chunk008_additions : chunk008.countP (fun e => match e.kind with | .input _ => false | .add _ _ => true) = 0 := by decide +kernel
+theorem chunk008_additions : chunk008.countP Entry.isAddition = 0 := by decide +kernel
 
 end IntegerMultBounds.Networks.Certificates.Paired49

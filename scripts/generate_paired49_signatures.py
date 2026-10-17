@@ -51,21 +51,24 @@ def main() -> None:
              'theorem signatureSource_decode (i : Fin 1176) : decode (signatureSource i) = signaturePayload i := by',
              '  rw [signatureSource, decode_or]', '  ext v',
              '  simp only [Finset.mem_union, PairMask.mem_bit, signaturePayload, Finset.mem_filter, Finset.mem_univ, true_and]', '']
-    for i, (core, union) in enumerate(summaries):
-        lines += [f'def signatureCore{i:05d} : BitVec 49 := BitVec.ofNat 49 {core}',
-                  f'def signatureUnion{i:05d} : BitVec 49 := BitVec.ofNat 49 {union}']
+    # Equal masks share a declaration across both banks and all certificate rows.
+    # This changes only the representation: the kernel still checks every row.
+    masks = dict.fromkeys(mask for summary in summaries for mask in summary)
+    mask_names = {mask: f'signatureMask{i:05d}' for i, mask in enumerate(masks)}
+    for mask, name in mask_names.items():
+        lines.append(f'def {name} : BitVec 49 := BitVec.ofNat 49 {mask}')
     chunks = [(start, min(start + args.chunk_size, len(active)))
               for start in range(0, len(active), args.chunk_size)]
-    def tree(prefix: str, lo: int, hi: int) -> str:
+    def tree(field: int, lo: int, hi: int) -> str:
         if lo == hi:
             return '.empty'
         if hi == lo + 1:
-            return f'(.leaf {prefix}{lo:05d})'
+            return f'(.leaf {mask_names[summaries[lo][field]]})'
         mid = (lo + hi) // 2
-        return f'(.branch {mid-lo}\n{tree(prefix,lo,mid)}\n{tree(prefix,mid,hi)})'
-    for field in ['Core', 'Union']:
+        return f'(.branch {mid-lo}\n{tree(field,lo,mid)}\n{tree(field,mid,hi)})'
+    for field_index, field in enumerate(['Core', 'Union']):
         for n, (lo, hi) in enumerate(chunks):
-            lines.append(f'def signature{field}Block{n:03d} : Bank 49 :=\n{tree("signature"+field,lo,hi)}\n')
+            lines.append(f'def signature{field}Block{n:03d} : Bank 49 :=\n{tree(field_index,lo,hi)}\n')
         def upper(lo: int, hi: int) -> str:
             if hi == lo + 1:
                 return f'signature{field}Block{lo:03d}'
@@ -75,7 +78,8 @@ def main() -> None:
         lines.append(f'def signature{field}Bank : Bank 49 :=\n{upper(0,len(chunks))}\n')
     for n, (lo, hi) in enumerate(chunks):
         lines += [f'def signatures{n:03d} : List (Signature 49) := [',
-                  ',\n'.join(f'  ⟨signatureCore{i:05d}, signatureUnion{i:05d}⟩' for i in range(lo,hi)), ']\n']
+                  ',\n'.join(f'  ⟨{mask_names[summaries[i][0]]}, {mask_names[summaries[i][1]]}⟩'
+                            for i in range(lo,hi)), ']\n']
     lines += ['def signatures : List (Signature 49) :=\n  ' + ' ++\n  '.join(f'signatures{n:03d}' for n in range(len(chunks))),
               '', f'end {namespace}', '']
     args.output.mkdir(parents=True, exist_ok=True)
