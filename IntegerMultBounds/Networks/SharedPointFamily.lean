@@ -5,6 +5,7 @@ public import IntegerMultBounds.Networks.SharedPointLift
 public import IntegerMultBounds.Networks.SharedPointMatching
 public import IntegerMultBounds.Networks.DisjointUnique
 public import IntegerMultBounds.Networks.DAGAdditionIds
+public import IntegerMultBounds.Networks.SharedPointLocalFamily
 
 /-! The actual fifty-copy family of certified local addition supports.
 Its size is derived from the checked arithmetic count, without reducing a
@@ -85,31 +86,19 @@ theorem support_bank (node : CopyNode 50) (hi : node.2 < 10989) :
       (MaskDAG.decode ((Certificates.Paired49.bank.lookup node.2).getD 0)) := by
   rw [support, localSupport_bank node.2 hi]
 
-theorem support_nontrivial (node : CopyNode 50) (hn : node ∈ domain) : 2 ≤ (support node).card := by
-  obtain ⟨localNode, hget, l, r, hkind⟩ := (mem_domain_iff node).mp hn
-  rw [support, SharedPointLift.lift49_card, localSupport, hget]
-  exact DisjointUnique.valid_add_card_two _ Paired49Certificate.valid localNode
-    (List.mem_of_getElem? hget) l r hkind
+theorem support_nontrivial (node : CopyNode 50) (hn : node ∈ domain) : 2 ≤ (support node).card :=
+  SharedPointLocalFamily.support_nontrivial Paired49Certificate.implementation node hn
 
-theorem support_common (node : CopyNode 50) (_hn : node ∈ domain)
+theorem support_common (node : CopyNode 50) (hn : node ∈ domain)
     (T : NeighborCounts.Triple 50) (hT : T ∈ support node) : node.1 ∈ T.val :=
-  SharedPointLift.common_mem _ _ node.1 (localSupport node.2) T hT
+  SharedPointLocalFamily.support_common Paired49Certificate.implementation node hn T hT
 
 theorem support_unique (a : CopyNode 50) (ha : a ∈ domain) (b : CopyNode 50) (hb : b ∈ domain)
-    (hc : a.1 = b.1) (he : support a = support b) : a = b := by
-  have hi : a.2 < Paired49Certificate.nodes.length := by rw [Paired49Certificate.node_count]; exact domain_bounds a ha
-  have hj : b.2 < Paired49Certificate.nodes.length := by rw [Paired49Certificate.node_count]; exact domain_bounds b hb
-  have hs : localSupport a.2 = localSupport b.2 := by
-    apply SharedPointLift.lift49_injective b.1
-    simpa only [support, hc] using he
-  rw [localSupport_get a.2 hi, localSupport_get b.2 hj] at hs
-  have hs' : (Paired49Certificate.nodes.map Node.support)[a.2]'(by simpa using hi) =
-      (Paired49Certificate.nodes.map Node.support)[b.2]'(by simpa using hj) := by simpa using hs
-  exact Prod.ext hc (Paired49Certificate.supports_unique.getElem_inj.mp hs')
+    (hc : a.1 = b.1) (he : support a = support b) : a = b :=
+  SharedPointLocalFamily.support_unique Paired49Certificate.implementation a ha b hb hc he
 
-/-- All structural hypotheses of the duplicate-matching theorem are discharged. -/
-def family : Family 50 :=
-  ⟨domain, support, support_nontrivial, support_common, support_unique⟩
+/-- The main sharing argument consumes the implementation-independent family. -/
+def family : Family 50 := SharedPointLocalFamily.family Paired49Certificate.implementation
 
 /-- The unmerged fifty-copy family has exactly fifty times9813 additions. -/
 theorem domain_card : domain.card = 50 * 9813 := by

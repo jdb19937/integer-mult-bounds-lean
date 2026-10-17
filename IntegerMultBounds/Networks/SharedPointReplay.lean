@@ -1,8 +1,7 @@
 module
 
 public import IntegerMultBounds.Networks.SharedPointFamily
-public import IntegerMultBounds.Networks.DAGReplayBudget
-public import IntegerMultBounds.Networks.DAGInstructionCount
+public import IntegerMultBounds.Networks.SharedPointLocalReplay
 
 /-! The actual globally shared fifty-copy circuit: replay each certified local
 DAG into one persistent interned DAG and retain every remapped output reference.
@@ -17,54 +16,12 @@ open DisjointCircuit DisjointBuilder NeighborCounts DAGReplay
 attribute [local irreducible] Paired49Certificate.nodes Certificates.Paired49.outputs
   Certificates.Paired49.entries Certificates.Paired49.bank DAGReplay.replay
 
-/-- The actual input renaming for one common-point copy. -/
-def embedding (c : Fin 50) : Fin 1176 ↪ Triple 50 :=
-  ⟨SharedPointLift.source (SharedPointLift.pairPayload 49) (SharedPointLift.pairPayload_card 49) c,
-    SharedPointLift.source_injective _ _ (SharedPointLift.pairPayload_injective 49) c⟩
-
-@[simp] theorem map_embedding (c : Fin 50) (s : Finset (Fin 1176)) :
-    s.map (embedding c) = SharedPointLift.lift49 c s := by
-  rw [Finset.map_eq_image]
-  rfl
-
-structure Output where
-  common : Fin 50
-  pair : ℕ × ℕ
-  ref : ℕ
-
-structure State where
-  nodes : List (Node (Triple 50))
-  outputs : List Output
-
-def expected (out : Output) : Finset (Triple 50) :=
-  SharedPointLift.lift49 out.common (MaskDAG.decode (PairMask.exclusion49 out.pair.1 out.pair.2))
-
-def CorrectOutput (nodes : List (Node (Triple 50))) (out : Output) : Prop :=
-  (nodes.map Node.support)[out.ref]? = some (expected out)
-
-def Ready (state : State) : Prop :=
-  Valid state.nodes ∧ (state.nodes.map Node.support).Nodup ∧
-    ∀ out ∈ state.outputs, CorrectOutput state.nodes out
-
-/-- Import a source DAG with its designated output keys. -/
-def importStep (source : List (Node (Fin 1176))) (localOutputs : List ((ℕ × ℕ) × ℕ))
-    (state : State) (c : Fin 50) : State :=
-  ⟨(replay (embedding c) state.nodes source).1,
-    state.outputs ++ localOutputs.map (fun out =>
-      ⟨c, out.1, (replay (embedding c) state.nodes source).2[out.2]?.getD 0⟩)⟩
-
-private theorem importStep_nodes (source : List (Node (Fin 1176)))
-    (localOutputs : List ((ℕ × ℕ) × ℕ)) (state : State) (c : Fin 50) :
-    (importStep source localOutputs state c).nodes = (replay (embedding c) state.nodes source).1 := rfl
-
-private theorem importStep_outputs (source : List (Node (Fin 1176)))
-    (localOutputs : List ((ℕ × ℕ) × ℕ)) (state : State) (c : Fin 50) :
-    (importStep source localOutputs state c).outputs = state.outputs ++ localOutputs.map (fun out =>
-      (⟨c, out.1, (replay (embedding c) state.nodes source).2[out.2]?.getD 0⟩ : Output)) := rfl
+/-- Selected implementation of the local-circuit contract. -/
+def implementation : PairedLocalCircuit := Paired49Certificate.implementation
 
 /-- Import one local circuit and append its remapped designated outputs. -/
 def step (state : State) (c : Fin 50) : State :=
-  importStep Paired49Certificate.nodes Certificates.Paired49.outputs state c
+  importStep implementation.nodes implementation.outputs state c
 
 @[simp] theorem step_nodes (state : State) (c : Fin 50) :
     (step state c).nodes = (replay (embedding c) state.nodes Paired49Certificate.nodes).1 :=
@@ -80,39 +37,24 @@ def runFrom (state : State) : List (Fin 50) → State
   | [] => state
   | c :: common => runFrom (step state c) common
 
-def initial : State := ⟨[], []⟩
-
 def circuit : State := runFrom initial (List.finRange 50)
 
-private theorem local_output_support (out : (ℕ × ℕ) × ℕ) (ho : out ∈ Certificates.Paired49.outputs) :
-    ∃ hi : out.2 < Paired49Certificate.nodes.length,
-      Paired49Certificate.nodes[out.2].support = MaskDAG.decode (PairMask.exclusion49 out.1.1 out.1.2) := by
-  obtain ⟨hi, hm⟩ := Certificates.Paired49.output_spec out ho
-  have hi' : out.2 < Paired49Certificate.nodes.length := by rw [Paired49Certificate.node_count]; exact hi
-  refine ⟨hi', ?_⟩
-  have hs := SharedPointFamily.localSupport_bank out.2 hi
-  rw [SharedPointFamily.localSupport_get out.2 hi', hm, Option.getD_some] at hs
-  exact hs
+theorem step_ready (state : State) (c : Fin 50) (hs : Ready state) : Ready (step state c) :=
+  importStep_ready implementation state c hs
 
-theorem step_ready (state : State) (c : Fin 50) (hs : Ready state) : Ready (step state c) := by
-  obtain ⟨hv, hn, ho⟩ := hs
-  rw [Ready, step_nodes, step_outputs]
-  have hr := replay_correct (embedding c) state.nodes Paired49Certificate.nodes hv Paired49Certificate.valid
-  refine ⟨hr.1, replay_nodup (embedding c) _ _ hn, ?_⟩
-  intro out hout
-  rcases List.mem_append.mp hout with hold | hnew
-  · exact lookup_extends hr.2.1 (ho out hold)
-  · obtain ⟨localOut, hlocal, rfl⟩ := List.mem_map.mp hnew
-    obtain ⟨hi, hsupport⟩ := local_output_support localOut hlocal
-    have hh := replay_support (embedding c) state.nodes Paired49Certificate.nodes hv
-      Paired49Certificate.valid localOut.2 hi
-    simpa only [CorrectOutput, expected, hsupport, map_embedding] using hh
+theorem runFrom_eq_using (state : State) (common : List (Fin 50)) :
+    runFrom state common = runUsing implementation state common := by
+  induction common generalizing state with
+  | nil => rfl
+  | cons c common ih => exact ih _
+
+theorem circuit_eq_using : circuit = circuitUsing implementation :=
+  runFrom_eq_using initial (List.finRange 50)
 
 theorem runFrom_ready (state : State) (common : List (Fin 50)) (hs : Ready state) :
     Ready (runFrom state common) := by
-  induction common generalizing state with
-  | nil => exact hs
-  | cons c common ih => exact ih (step state c) (step_ready state c hs)
+  rw [runFrom_eq_using]
+  exact runUsing_ready implementation state common hs
 
 theorem ready : Ready circuit := runFrom_ready initial _ ⟨trivial, by simp [initial], by simp [initial]⟩
 
@@ -134,14 +76,10 @@ theorem output_value {A : Type*} [AddCommMonoid A] (input : Triple 50 → A)
   have hh := congrArg (Option.map (supportSum input)) (output_support out ho)
   simpa only [CorrectOutput, ← List.getElem?_map, List.map_map, Function.comp_def, Option.map_some] using hh
 
-def key (out : Output) : Fin 50 × (ℕ × ℕ) := (out.common, out.pair)
-
 theorem step_keys (state : State) (c : Fin 50) :
     (step state c).outputs.map key = state.outputs.map key ++
-      (PairedCircuit.pairs (List.range 49)).map (fun pair => (c,pair)) := by
-  simp only [step_outputs, List.map_append, List.map_map]
-  rw [← Certificates.Paired49.output_keys]
-  simp only [List.map_map, Function.comp_def, key]
+      (PairedCircuit.pairs (List.range 49)).map (fun pair => (c,pair)) :=
+  importStep_keys implementation state c
 
 theorem runFrom_keys (state : State) (common : List (Fin 50)) :
     (runFrom state common).outputs.map key = state.outputs.map key ++
@@ -158,7 +96,10 @@ theorem output_keys : circuit.outputs.map key =
 
 theorem step_output_count (state : State) (c : Fin 50) :
     (step state c).outputs.length = state.outputs.length + 1176 := by
-  simp only [step_outputs, List.length_append, List.length_map, Certificates.Paired49.output_count]
+  have h := implementation.output_count
+  simp only [implementation, Paired49Certificate.implementation] at h
+  simpa only [step_outputs, List.length_append, List.length_map] using
+    congrArg (state.outputs.length + ·) h
 
 theorem runFrom_output_count (state : State) (common : List (Fin 50)) :
     (runFrom state common).outputs.length = state.outputs.length + common.length * 1176 := by
@@ -227,27 +168,26 @@ theorem additionSupports_subset : DAGReplayBudget.additionSupports circuit.nodes
 
 /-- Support sharing bounds the actual addition nodes of the constructed DAG. -/
 theorem additions_le_supports : DAGAllocator.additionCount circuit.nodes ≤
-    (SharedPointFamily.domain.image SharedPointFamily.support).card :=
-  DAGReplayBudget.additions_le_card _ _ supports_nodup additionSupports_subset
+    (SharedPointFamily.domain.image SharedPointFamily.support).card := by
+  rw [circuit_eq_using]
+  exact additions_le_for implementation
 
 /-- Any support budget transfers to actual compiled storage without evaluating
 the circuit or fixing the numerical support bound. -/
 theorem allocated_roles_le_of (budget : ℕ)
     (hcard : (SharedPointFamily.domain.image SharedPointFamily.support).card ≤ budget) :
     (DAGAllocator.compile circuit.nodes outputRefs).state.next ≤ budget + 58800 := by
-  have ha := additions_le_supports.trans hcard
-  have hr := DAGAllocator.compile_roles_le circuit.nodes outputRefs valid outputRefs_bounds
-  rw [outputRefs_count] at hr
-  omega
+  change (DAGAllocator.compile circuit.nodes (circuit.outputs.map Output.ref)).state.next ≤ _
+  rw [circuit_eq_using]
+  exact (compile_bounds_for implementation budget hcard).1
 
 /-- The same parameterized support budget bounds actual emitted instructions. -/
 theorem compiled_instructions_le_of (budget : ℕ)
     (hcard : (SharedPointFamily.domain.image SharedPointFamily.support).card ≤ budget) :
     (DAGAllocator.compile circuit.nodes outputRefs).program.length ≤ 2 * budget + 58800 := by
-  have ha := additions_le_supports.trans hcard
-  have hr := DAGAllocator.compile_program_le_additions circuit.nodes outputRefs valid outputRefs_bounds
-  rw [outputRefs_count] at hr
-  omega
+  change (DAGAllocator.compile circuit.nodes (circuit.outputs.map Output.ref)).program.length ≤ _
+  rw [circuit_eq_using]
+  exact (compile_bounds_for implementation budget hcard).2
 
 theorem allocated_roles_le
     (hcard : (SharedPointFamily.domain.image SharedPointFamily.support).card ≤ 450394) :

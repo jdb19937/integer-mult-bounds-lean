@@ -290,6 +290,11 @@ import IntegerMultBounds.Networks.PairedStripBudget
 import IntegerMultBounds.Networks.PairedBalancedSharing
 import IntegerMultBounds.Networks.PairedCircuitUnique
 import IntegerMultBounds.Networks.PairedSingleBudget
+import IntegerMultBounds.Networks.PairedLocalCircuit
+import IntegerMultBounds.Networks.PairedIndexedGraph
+import IntegerMultBounds.Networks.SharedPointLocalFamily
+import IntegerMultBounds.Networks.SharedPointLocalReplay
+import IntegerMultBounds.Networks.PairedStructuralSharedPoint
 import IntegerMultBounds.Networks.DAGAdditionIds
 import IntegerMultBounds.Networks.PairedPruning
 import IntegerMultBounds.Networks.DisjointUnique

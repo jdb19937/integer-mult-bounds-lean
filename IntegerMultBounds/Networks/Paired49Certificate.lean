@@ -6,6 +6,7 @@ public import IntegerMultBounds.Networks.Certificates.Paired49.Unique
 public import IntegerMultBounds.Networks.Certificates.Paired49.Signatures
 public import IntegerMultBounds.Networks.DAGAllocatorBudget
 public import IntegerMultBounds.Networks.DAGCompileCorrect
+public import IntegerMultBounds.Networks.PairedLocalCircuit
 
 /-! An unconditional finite witness for the 49-vertex pair-exclusion map.
 The generator is untrusted: Lean checks all nodes, outputs and unique supports.
@@ -59,6 +60,32 @@ theorem output_value {A : Type*} [AddCommMonoid A] (input : ℕ × ℕ → A)
   accepted_output_semantics input entries_checked entry he
 
 theorem supports_unique : (nodes.map Node.support).Nodup := supports_nodup_certified
+
+/-- The circuit interface uses actual node supports, independently of how
+those supports were certified or stored in the mask bank. -/
+theorem output_support (out : (ℕ × ℕ) × ℕ) (ho : out ∈ outputs) :
+    ∃ hi : out.2 < nodes.length,
+      nodes[out.2].support = decode (PairMask.exclusion49 out.1.1 out.1.2) := by
+  obtain ⟨hi, hm⟩ := output_spec out ho
+  have hiEntries : out.2 < entries.length := by rwa [entries_length]
+  have hb := (MaskDAG.checkChunk_sound bank.lookup [] entries
+    (by intro j hj; simp at hj) entries_checked).2 out.2 (by simpa using hiEntries)
+  have hb' : bank.lookup out.2 = some entries[out.2].mask := by
+    simpa only [List.nil_append, List.getElem?_map, List.getElem?_eq_getElem hiEntries,
+      Option.map_some] using hb
+  have heq := Option.some.inj (hb'.symm.trans hm)
+  refine ⟨by rwa [node_count], ?_⟩
+  simpa only [nodes, List.getElem_map, Entry.toNode] using congrArg decode heq
+
+/-- The existing certified witness implements the same contract as a
+structurally proved local constructor. Replay consumes this contract. -/
+def implementation : PairedLocalCircuit where
+  nodes := nodes
+  outputs := outputs
+  valid := valid
+  supports_nodup := supports_unique
+  output_keys := Certificates.Paired49.output_keys
+  output_support := output_support
 
 /-- Both endpoint summaries are exact for every node of the verified witness. -/
 theorem endpoint_signatures :
