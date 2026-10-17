@@ -2688,3 +2688,5 @@ public import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerFitR
 public import IntegerMultBounds.MathlibTM2.Fast.CompactSynRoundOpR
 public import IntegerMultBounds.MathlibTM2.Mult.PipelineQ
 public import IntegerMultBounds.MathlibTM2.Fast.MainSemG
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynRetunedTransformsR
+import IntegerMultBounds.MathlibTM2.Fast.ConvBoxQPipeline

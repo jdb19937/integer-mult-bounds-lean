@@ -25,6 +25,32 @@ open IntegerMultBounds.Spec.SignedRingProduct
 
 noncomputable section
 
+/-! ### Moving computed rounds between equal record lengths -/
+
+section Cast
+
+variable {N p : ℕ} {es : List ℕ} {η : ℝ}
+
+/-- A computed forward round on records of length `r`, as one on records of length `r'`. -/
+def castFwdOp {r r' : ℕ} [NeZero r] [NeZero r'] (h : r = r')
+    (F : RoundOp N p (fwdRound (r := r) es) η) : RoundOp N p (fwdRound (r := r') es) η := by
+  subst h; exact F
+
+/-- A computed opposite round on records of length `r`, as one on records of length `r'`. -/
+def castOppOp {r r' : ℕ} [NeZero r] [NeZero r'] (h : r = r')
+    (O : RoundOp N p (oppRound (r := r) es) η) : RoundOp N p (oppRound (r := r') es) η := by
+  subst h; exact O
+
+theorem castFwdOp_symm {r r' : ℕ} [NeZero r] [NeZero r'] (h : r = r')
+    (F : RoundOp N p (fwdRound (r := r') es) η) : castFwdOp h (castFwdOp h.symm F) = F := by
+  subst h; rfl
+
+theorem castOppOp_symm {r r' : ℕ} [NeZero r] [NeZero r'] (h : r = r')
+    (O : RoundOp N p (oppRound (r := r') es) η) : castOppOp h (castOppOp h.symm O) = O := by
+  subst h; rfl
+
+end Cast
+
 /-! ### Semantics -/
 
 section StageSemQ
@@ -113,18 +139,18 @@ variable {T Q A : ℕ} {U P : Type} {body : P → Pr P T Q A U} {rg : CvR → Fi
 theorem cvBoxQ_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠ ι j)
     (hι : Function.Injective ι) (hP : CvFramed rg Pre) (hT64 : 64 ≤ T) (hQs : SS.states ≤ Q)
     (hT : 91 ≤ T) (hQ : rpStates ≤ Q) (hA : 96 ≤ A)
-    {D l : ℕ} (t : Fin (D + 1) → ℕ) [∀ i, NeZero (t i)] (h : t (Fin.last D) = 2 ^ l)
-    (a : Fin D → ℕ) (ha : ∀ i, t i.castSucc = 2 ^ a i)
-    (hdvd : ∀ i, 2 ^ a i ∣ 2 * 2 ^ l)
+    {D r l : ℕ} [NeZero r] (t : Fin (D + 1) → ℕ) [∀ i, NeZero (t i)] (h : t (Fin.last D) = r)
+    (hrl : r = 2 ^ l) (a : Fin D → ℕ) (ha : ∀ i, t i.castSucc = 2 ^ a i)
+    (hdvd : ∀ i, 2 ^ a i ∣ 2 * r)
     {fwdP oppP : Pr P T Q A U} {PreF PreO : Stacks T A → Prop} {w p cF cO : ℕ} {π : ℕ → ℕ} {τ : ℝ}
-    (F : RoundOp (List.ofFn a).sum p (fwdRound (r := 2 ^ l) (List.ofFn a)) (etaQ p τ))
-    (O : RoundOp (List.ofFn a).sum p (oppRound (r := 2 ^ l) (List.ofFn a)) (etaQ p τ))
-    (hF : SynFwdSpecQ body fwdP (rg .io) PreF w p l a π F cF)
-    (hO : SynOppSpecQ body oppP (rg .io) PreO w p l a π O cO)
+    (F : RoundOp (List.ofFn a).sum p (fwdRound (r := r) (List.ofFn a)) (etaQ p τ))
+    (O : RoundOp (List.ofFn a).sum p (oppRound (r := r) (List.ofFn a)) (etaQ p τ))
+    (hF : SynFwdSpecQ body fwdP (rg .io) PreF w p l a π (castFwdOp hrl F) cF)
+    (hO : SynOppSpecQ body oppP (rg .io) PreO w p l a π (castOppOp hrl O) cO)
     (hPF : ∀ S, Pre S → PreF S) (hPO : ∀ S, Pre S → PreO S)
     (hπ : ∀ n < cvM a, π n < cvM a) (hp : 1 ≤ p) (hw : p + 2 ≤ w)
     (hSw : (List.ofFn a).sum ≤ w) (hE : eSynthQ a (cvN t) τ < 2 ^ p)
-    (θp θm : Fin (2 ^ l) → ℂ) (hθp : ∀ k, IsFixed p (θp k) ∧ ‖θp k‖ ≤ 1)
+    (θp θm : Fin r → ℂ) (hθp : ∀ k, IsFixed p (θp k) ∧ ‖θp k‖ ≤ 1)
     (hθm : ∀ k, IsFixed p (θm k) ∧ ‖θm k‖ ≤ 1)
     (f g : ((i : Fin (D + 1)) → ZMod (t i)) → ℂ) (hf : ∀ x, IsFixed p (f x))
     (hg : ∀ x, IsFixed p (g x)) (hf1 : ‖f‖ ≤ 1) (hg1 : ‖g‖ ≤ 1)
@@ -147,6 +173,7 @@ theorem cvBoxQ_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠ ι 
         (cstNumBox p t (cconvApproxVia (boxSplit t h) p θp θm (synthMrQ a (cvN t) F O) f g)) ++
           ρ .fo))
       (cvBoxCost T p l w (List.ofFn a).sum (cvM a) cF cO) := by
+  subst hrl
   have hMN : (List.ofFn (cvN t)).prod = cvM a := by
     rw [ofFn_eq_tsA a (cvN t) ha, tsA_prod]
   set Tu := cvTw t h p θp f with hTu
