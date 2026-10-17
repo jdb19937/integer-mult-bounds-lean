@@ -284,6 +284,10 @@ import IntegerMultBounds.Networks.PairedBlockCorrect
 import IntegerMultBounds.Networks.PairedInitialGraph
 import IntegerMultBounds.Networks.PairedInitialBudget
 import IntegerMultBounds.Networks.DisjointSharingBudget
+import IntegerMultBounds.Networks.PairedVectorBudget
+import IntegerMultBounds.Networks.PairedVectorPruning
+import IntegerMultBounds.Networks.PairedStripBudget
+import IntegerMultBounds.Networks.PairedBalancedSharing
 import IntegerMultBounds.Networks.PairedPruning
 import IntegerMultBounds.Networks.DisjointUnique
 import IntegerMultBounds.Networks.DuplicateBudget
@@ -2640,4 +2644,6 @@ import IntegerMultBounds.MathlibTM2.Fast.CompactMainOutput
 import IntegerMultBounds.MathlibTM2.Fast.CompactFinal
 import IntegerMultBounds.MathlibTM2.Cost.CompactDimensionParameters
 import IntegerMultBounds.MathlibTM2.Layer.TopR
+import IntegerMultBounds.MathlibTM2.Layer.LayerRBounds
+import IntegerMultBounds.MathlibTM2.Layer.TopRS
 import IntegerMultBounds.MathlibTM2.Node.CompactLayerProcR

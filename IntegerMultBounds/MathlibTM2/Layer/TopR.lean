@@ -53,6 +53,22 @@ noncomputable def topR (ds : Directions) (a : ℕ) (low : List (Fin n)) (top : L
   let Z₄ := sZ sel Z₃
   fun p => tdivZ s (unitD sel.length * Z₄ p)
 
+/-- The rounded top before the final shift. -/
+noncomputable def topPre (ds : Directions) (a : ℕ) (low : List (Fin n)) (top : List (Fin (n + a)))
+    {R₂ : ℕ} (hR₂ : R * 2 ^ a ≤ R₂) (Ps : List (Piece n R₂)) (g : ℕ)
+    (Z : ZArr (Fin R × Fin r) (n + a)) : ZArr (Fin R × Fin r) (n + a) :=
+  let sel : List (Fin (n + a)) := low.map (Fin.castAdd a) ++ top
+  let Z₁ : ZArr (Fin R × Fin r) (n + a) := fun p => (2 ^ g : GaussianInt) * sZ sel Z p
+  let Z₂ := k2s top Z₁
+  let Z₃ := ofRows a (unpadRows hR₂ (piecesR ds Ps (padRows R₂ (toRows a Z₂))))
+  let Z₄ := sZ sel Z₃
+  fun p => unitD sel.length * Z₄ p
+
+lemma topR_eq (ds : Directions) (a : ℕ) (low : List (Fin n)) (top : List (Fin (n + a)))
+    {R₂ : ℕ} (hR₂ : R * 2 ^ a ≤ R₂) (Ps : List (Piece n R₂)) (g s : ℕ)
+    (Z : ZArr (Fin R × Fin r) (n + a)) (p : (Fin R × Fin r) × (Fin (n + a) → ZMod 2)) :
+    topR ds a low top hR₂ Ps g s Z p = tdivZ s (topPre ds a low top hR₂ Ps g Z p) := rfl
+
 /-! ### The pieces -/
 
 lemma l2_Cl {X : Type} [Fintype X] (l : List (Fin n)) (f : Arr X n) : l2 (Cl X l f) = l2 f :=
@@ -174,18 +190,17 @@ lemma norm_unitD_le (D : ℕ) : ‖GaussianInt.toComplex (unitD D)‖ ≤ √2 :
 
 /-! ### The error of the top -/
 
-/-- **The rounded top.** Every entry is within `√2 + √2 piecesErr / 2^s` of `Hl` on the selected
-bits, for the shift `s = ⌈D/2⌉ + |top| + Σ scaleR + g`. -/
-theorem topR_err (ds : Directions) (hd : ComplexPhaseBudget.Realizes ds) (a : ℕ)
+/-- **The rounded top before the shift** is within `√2 piecesErr` of `2^s` times `Hl` on the
+selected bits, for the shift `s = ⌈D/2⌉ + |top| + Σ scaleR + g`. -/
+theorem topPre_err (ds : Directions) (hd : ComplexPhaseBudget.Realizes ds) (a : ℕ)
     (low : List (Fin n)) (top : List (Fin (n + a))) {R₂ : ℕ} (hR₂ : R * 2 ^ a ≤ R₂)
     (Ps : List (Piece n R₂)) (hinj : ∀ P ∈ Ps, Function.Injective P.e)
     (hcover : (Ps.flatMap Piece.bitsList).Perm low)
     (hsel : (low.map (Fin.castAdd a) ++ top).Nodup) (g s : ℕ)
     (hs : s = (low.length + top.length + 1) / 2 + top.length + (Ps.map (Piece.expR ds)).sum + g)
     (Z : ZArr (Fin R × Fin r) (n + a)) (p : (Fin R × Fin r) × (Fin (n + a) → ZMod 2)) :
-    ‖GaussianInt.toComplex (topR ds a low top hR₂ Ps g s Z p) -
-      Hl _ (low.map (Fin.castAdd a) ++ top) (toC Z) p‖ ≤
-      √2 + √2 * piecesErr ds r Ps / 2 ^ s := by
+    ‖GaussianInt.toComplex (topPre ds a low top hR₂ Ps g Z p) -
+      2 ^ s * Hl _ (low.map (Fin.castAdd a) ++ top) (toC Z) p‖ ≤ √2 * piecesErr ds r Ps := by
   set sel : List (Fin (n + a)) := low.map (Fin.castAdd a) ++ top with hsel_def
   set L := Ps.flatMap Piece.bitsList
   set E := (Ps.map (Piece.expR ds)).sum
@@ -234,25 +249,41 @@ theorem topR_err (ds : Directions) (hd : ComplexPhaseBudget.Realizes ds) (a : �
     field_simp
     linear_combination (-(GaussianInt.toComplex (unitD D) * F p * 2 ^ E * 2 ^ top.length)) * h2D
   -- assemble
-  set x := GaussianInt.toComplex (unitD D * sZ sel Z₃ p)
-  have hx : x = GaussianInt.toComplex (unitD D) * Sl _ sel (toC Z₃) p := by
-    simp only [x, map_mul]; rw [← toC_sZ]; rfl
-  have hT := norm_tdivZ_sub_le s (unitD D * sZ sel Z₃ p)
+  have hx : GaussianInt.toComplex (topPre ds a low top hR₂ Ps g Z p) =
+      GaussianInt.toComplex (unitD D) * Sl _ sel (toC Z₃) p := by
+    simp only [topPre, map_mul]; rw [← toC_sZ]; rfl
+  have e1 : GaussianInt.toComplex (topPre ds a low top hR₂ Ps g Z p) - 2 ^ s * Hl _ sel (toC Z) p =
+      GaussianInt.toComplex (unitD D) * Sl _ sel (toC Z₃ - G) p := by
+    rw [← hexact, hx, ← mul_sub, map_sub, Pi.sub_apply]
+  rw [e1, norm_mul, norm_Sl_apply, Pi.sub_apply]
+  exact mul_le_mul (norm_unitD_le D) hZ₃ (norm_nonneg _) (Real.sqrt_nonneg _)
+
+/-- **The rounded top.** Every entry is within `√2 + √2 piecesErr / 2^s` of `Hl` on the selected
+bits, for the shift `s = ⌈D/2⌉ + |top| + Σ scaleR + g`. -/
+theorem topR_err (ds : Directions) (hd : ComplexPhaseBudget.Realizes ds) (a : ℕ)
+    (low : List (Fin n)) (top : List (Fin (n + a))) {R₂ : ℕ} (hR₂ : R * 2 ^ a ≤ R₂)
+    (Ps : List (Piece n R₂)) (hinj : ∀ P ∈ Ps, Function.Injective P.e)
+    (hcover : (Ps.flatMap Piece.bitsList).Perm low)
+    (hsel : (low.map (Fin.castAdd a) ++ top).Nodup) (g s : ℕ)
+    (hs : s = (low.length + top.length + 1) / 2 + top.length + (Ps.map (Piece.expR ds)).sum + g)
+    (Z : ZArr (Fin R × Fin r) (n + a)) (p : (Fin R × Fin r) × (Fin (n + a) → ZMod 2)) :
+    ‖GaussianInt.toComplex (topR ds a low top hR₂ Ps g s Z p) -
+      Hl _ (low.map (Fin.castAdd a) ++ top) (toC Z) p‖ ≤
+      √2 + √2 * piecesErr ds r Ps / 2 ^ s := by
+  set H := Hl _ (low.map (Fin.castAdd a) ++ top) (toC Z) p
+  set x := GaussianInt.toComplex (topPre ds a low top hR₂ Ps g Z p)
+  have hP := topPre_err ds hd a low top hR₂ Ps hinj hcover hsel g s hs Z p
+  have hT := norm_tdivZ_sub_le s (topPre ds a low top hR₂ Ps g Z p)
   have hpos : (0 : ℝ) < 2 ^ s := by positivity
-  have hdiff : ‖x / 2 ^ s - Hl _ sel (toC Z) p‖ ≤ √2 * piecesErr ds r Ps / 2 ^ s := by
-    have e1 : x / 2 ^ s - Hl _ sel (toC Z) p =
-        GaussianInt.toComplex (unitD D) * Sl _ sel (toC Z₃ - G) p / 2 ^ s := by
-      have hH' : Hl _ sel (toC Z) p = GaussianInt.toComplex (unitD D) * Sl _ sel G p / 2 ^ s := by
-        rw [eq_div_iff (pow_ne_zero _ two_ne_zero), hexact]; ring
-      rw [hH', hx, ← sub_div, ← mul_sub, map_sub, Pi.sub_apply]
-    rw [e1, norm_div, norm_mul, norm_Sl_apply, norm_pow, RCLike.norm_two, Pi.sub_apply]
-    have hu := norm_unitD_le D
-    apply div_le_div_of_nonneg_right _ hpos.le
-    exact mul_le_mul hu hZ₃ (norm_nonneg _) (Real.sqrt_nonneg _)
-  have e2 : GaussianInt.toComplex (topR ds a low top hR₂ Ps g s Z p) - Hl _ sel (toC Z) p =
-      (GaussianInt.toComplex (tdivZ s (unitD D * sZ sel Z₃ p)) - x / 2 ^ s) +
-        (x / 2 ^ s - Hl _ sel (toC Z) p) := by
-    simp only [topR]; abel
+  have hdiff : ‖x / 2 ^ s - H‖ ≤ √2 * piecesErr ds r Ps / 2 ^ s := by
+    have e1 : x / 2 ^ s - H = (x - 2 ^ s * H) / 2 ^ s := by
+      field_simp
+    rw [e1, norm_div, norm_pow, RCLike.norm_two]
+    exact div_le_div_of_nonneg_right hP hpos.le
+  have e2 : GaussianInt.toComplex (topR ds a low top hR₂ Ps g s Z p) - H =
+      (GaussianInt.toComplex (tdivZ s (topPre ds a low top hR₂ Ps g Z p)) - x / 2 ^ s) +
+        (x / 2 ^ s - H) := by
+    rw [topR_eq]; abel
   rw [e2]
   refine (norm_add_le _ _).trans ?_
   linarith
