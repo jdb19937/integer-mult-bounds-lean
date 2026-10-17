@@ -3,7 +3,7 @@
 ✅ Complete · 🟡 In progress / partially complete · ⬜ Not started.
 
 **Bound improvement progress:** M1 ✅ · M2 ✅ · M3 🟡 · M4 ⬜ · M5 ⬜ · M6 🟡 · M7 🟡 · M8 ⬜.
-The completed compact multiplier proves saving `2^-33`; further structural improvements remain in progress.
+The completed compact multiplier proves saving `36261/2^48 ≈ 1.107 · 2^-33`; further structural improvements remain in progress.
 
 ## Bound scoreboard
 
@@ -12,7 +12,8 @@ time `O(n (log n)^(1-kappa))`. Larger saving means a smaller time exponent.
 
 | Bound | Exponent saving `kappa` | Status |
 | --- | --- | --- |
-| **Current unconditional result** | **`2^-33`** | ✅ Rounded synthetic layers and transforms at `epsilon=9/32`: all-input correctness and cost bound on one fixed finite Mathlib machine. |
+| **Current unconditional result** | **`36261/2^48`** (`≈ 1.107 · 2^-33`, `2^-32.85`) | ✅ Retune to `epsilon=79/256`, `lambda'=1-459/2^40`: the moduli room now follows from `d² ≤ 2ℓ`, removing the `d^7 ≤ b²` cap at `epsilon ≤ 2/7`. All-input correctness and cost bound on one fixed finite Mathlib machine. |
+| **Previous rounded result** | `2^-33` | ✅ Rounded synthetic layers and transforms at `epsilon=9/32`. |
 | **Previous dyadic result** | `2^-34` | ✅ Superseded by rounded synthetic layers, which allow the `9/32` dimension. |
 | **Previous eighth-root result** | `2^-35` | ✅ Superseded by the audited dyadic dimension retune and fourth-root chunks. |
 | **Previous dimension result** | `2^-36` | ✅ Superseded by the audited eighth-root retune and sharper logarithmic cost estimates. |
@@ -32,7 +33,7 @@ certificate alone does not improve the proved multiplication bound.
 `IntegerMultBounds.MathlibTM2.statement` constructs a fixed finite Mathlib
 machine that multiplies every input pair correctly in worst-case time
 `O(n (log n)^(1-kappa))`, with positive saving
-`kappa = 2^-34`. No algorithmic or runtime assumption remains.
+`kappa = 36261/2^48`. No algorithmic or runtime assumption remains.
 
 ## Completed proof
 
@@ -58,7 +59,7 @@ only `propext`, `Classical.choice` and `Quot.sound`.
 
 The [section-by-section implementation plan](plan/D-sharper-bound.md) is based
 on the original OpenAI manuscript and the pinned selected community
-construction. **Today's binding margin is §5 compact-layer cost: `epsilon (1-lambda') = 513/2^43`, covering public saving `2^-34`.**
+construction. **Today's binding margin is §5 compact-layer cost: `epsilon (1-lambda') = 36261/2^48`, which is the public saving.** Within the current route `1-lambda'` is capped by the supplier (`1-lambda' < 1-Parameters.lam`) and `epsilon` by the resampling margin (`epsilon < 5/16`), so at most about `1.12 · 2^-33` remains reachable by retuning.
 The actual compact runtime removes the old full-slot control restriction. A
 checked ceiling excludes `2^-33` with the existing supplier and coarse Gaussian
 restriction, so further parameter retuning alone cannot reach the next dyadic
@@ -86,8 +87,8 @@ in the completed multiplier.
 | §2 Machine model and streams | 🟡 | Every new algorithm needs actual finite-machine costs and clean returned state. | Reuse Mathlib FinTM2 and existing host primitives; price new schedules. |
 | §3 Finite networks | 🟡 | Current bit/complex primitive savings are `2.96e-9` and `4.18e-10`. | Selected PR589 bit supplier and T16 complex supplier, with checked words, restoration, owner schedules and variable-rank moments. |
 | §4 Address interchange | 🟡 | All field moves inherit the bit exponent; the running CRT now uses linear direct routing. | Prove selected arbitrary-source routing contracts. |
-| §5 Butterfly layers; Appendix A | 🟡 | **Current binding margin `epsilon (1-lambda') = 513/2^43`, covering public saving `2^-34`.** Complete compact runtime is proved. | Tighten recursive layer costs using stopped recursion, precision and proved recursive stock. |
-| **§6 Synthetic transforms/layout** | 🟡 | **Layout saving `epsilon c (1-tau)` exceeds `2^-34` but remains a nearby restriction.** | M2 retuned epsilon/c; next replace this charge by selected coordinate routing and a balanced prefix. |
+| §5 Butterfly layers; Appendix A | 🟡 | **Current binding margin `epsilon (1-lambda') = 36261/2^48`, equal to the public saving.** Complete compact runtime is proved. | Tighten recursive layer costs using stopped recursion, precision and proved recursive stock. |
+| **§6 Synthetic transforms/layout** | 🟡 | **Layout saving `epsilon c (1-tau)` exceeds the public saving by a factor of about `1.77` but remains a nearby restriction.** | M2 retuned epsilon/c; next replace this charge by selected coordinate routing and a balanced prefix. |
 | §7 Exact polynomial products | ✅ | Packing widths and extra logarithms must remain within budget. | Reuse the proved fast subroutine and exact algebra; revalidate under new widths. Not currently binding. |
 | §8 Resampling | 🟡 | Current Gaussian exponent is `25/32 + 3 epsilon/2`, with logarithmic loss `2^-5`; larger dimensions consume this margin. | Faster rounded inverse, bulk core/halo execution and proved error/normalization bounds. |
 | §9 Exact multiplication/cost | 🟡 | Direct CRT charge is `d(1+ell^tau)`; the final bound is the smallest stage margin. | Seven-stage bootstrap, all 47 linked target inequalities and unchanged exact output semantics. |

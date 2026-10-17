@@ -233,13 +233,18 @@ theorem pm_const_lt (hW : 4 * b n + 32 ≤ W) {k : ℕ} (hk : k < 2 ^ 16) : k < 
   lt_of_lt_of_le hk (pm_W_pow hW (by omega))
 
 /-- The new root computation fits the existing parameter-stage budget. -/
-theorem pm_s3 (hW : 4 * b n + 32 ≤ W) :
+theorem pm_s3 (hB : Big n) (hW : 4 * b n + 32 ≤ W) :
     ∀ s, PmF n 3 acc s → TblDo A W w compactDyadicParamStage s
       (PmF n 4 acc) (7 * 30 + 11 + d n * (6 * 30 + 8)) := by
   intro s hs
   have hb : s.val 1 = b n := by simpa [pmVal, pmNV] using hs.2 1 (by decide)
-  have hfit : (b n ^ 9 + 1)^2 < 2^W :=
-    (CompactDyadicRootRoom.squared_ninth_cap_lt (b n)).trans_le
+  have hb512 : 512 ≤ b n := by
+    have h3 := hB.pow_le_b (k := 3) le_rfl
+    have h128 := Nat.pow_le_pow_left hB.2 3
+    norm_num at h128
+    omega
+  have hfit : (b n ^ 79 + 1)^2 < 2^W :=
+    (CompactDyadicRootRoom.squared_seventy_ninth_cap_lt hb512).trans_le
       (Nat.pow_le_pow_right (by decide) hW)
   refine (compactDyadicParamStage_do s hb hfit (pm_const_lt hW (by norm_num))).mono ?_ ?_
   · intro z hz
@@ -842,7 +847,7 @@ theorem pmStages_do (hB : Big n) (hW : 4 * b n + 32 ≤ W) :
         ((4 * Nat.clog 2 (taylorTerms (p n) 0) + 4 + 7) + ((1 + 2 + 5) + ((5 + 4 + 4) +
         ((1 + 14 + 5) + ((4 * Nat.clog 2 (taylorTerms (p n) (chirpGuard (d n))) + 4 + 7) +
         ((1 + 0 + 5) + ((1 + 2 + 5) + (5 + 4 + 4)))))))))))))))))))))))))))))) :=
-  pm_seq (pm_s1 hB.1 hW) <| pm_seq (pm_s2 hW) <| pm_seq (pm_s3 hW) <| pm_seq (pm_s4 hW) <|
+  pm_seq (pm_s1 hB.1 hW) <| pm_seq (pm_s2 hW) <| pm_seq (pm_s3 hB hW) <| pm_seq (pm_s4 hW) <|
   pm_seq (pm_s5 hB.1 hW) <| pm_seq (pm_s6 hB.1 hW) <| pm_seq (pm_s7 hB.1 hW) <|
   pm_seq (pm_s8 hB.1 hW) <| pm_seq (pm_s9 hB.1 hW) <| pm_seq (pm_s10 hB.1 hW) <|
   pm_seq (pm_s11 hB.1 hW) <| pm_seq (pm_s12 hB.1 hW) <| pm_seq (pm_s13 hB.1 hW) <|

@@ -8,7 +8,7 @@ the optional native-model bridge and integration examples. -/
 
 example : IntegerMultBounds.MathlibTM2.Statement := IntegerMultBounds.MathlibTM2.statement
 
-example : IntegerMultBounds.MathlibTM2.MulInTime (2 ^ 33 : ℝ)⁻¹ :=
+example : IntegerMultBounds.MathlibTM2.MulInTime (36261 / 2 ^ 48 : ℝ) :=
   IntegerMultBounds.MathlibTM2.mulInTime
 
 /-- info: 'IntegerMultBounds.MathlibTM2.mulInTime' depends on axioms: [propext, Classical.choice, Quot.sound] -/

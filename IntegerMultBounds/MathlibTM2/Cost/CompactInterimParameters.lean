@@ -10,15 +10,15 @@ namespace IntegerMultBounds.MathlibTM2.Cost.CompactInterim
 noncomputable section
 
 /-- Preserve the actual dimension exponent. -/
-def epsilon : ℝ := 9 / (2^5:ℝ)
+def epsilon : ℝ := 79 / (2^8:ℝ)
 /-- Larger chunks become possible after removing the old chunk-width power. -/
 def spacing : ℝ := (2^2:ℝ)⁻¹
 /-- Absorb the full-depth compact recurrence and all polylogarithmic factors. -/
-def lam' : ℝ := 1-57/(2^37:ℝ)
+def lam' : ℝ := 1-459/(2^40:ℝ)
 /-- Dyadic allowance for the unchanged quasi-linear multiplier. -/
 def delta : ℝ := (2^5:ℝ)⁻¹
-/-- Candidate public saving, contingent on complete executable integration. -/
-def kappa : ℝ := (2^33:ℝ)⁻¹
+/-- The public saving: exactly the compact layer margin `ε (1-λ')`, about `1.1 · 2^-33`. -/
+def kappa : ℝ := 36261/(2^48:ℝ)
 
 /-- The compact recurrence and reserved axes fit strictly below the target
 layer exponent; this does not assert the old full-width recurrence condition. -/
@@ -40,8 +40,12 @@ def margin : Fin 5 → ℝ := ![
 theorem margin_covers (i : Fin 5) : kappa ≤ margin i := by
   fin_cases i <;> norm_num [margin,kappa,epsilon,spacing,lam',delta,Parameters.tau]
 
-theorem layer_margin : margin 1 = 513 / (2^42:ℝ) := by
+theorem layer_margin : margin 1 = kappa := by
   norm_num [margin,kappa,epsilon,lam']
+
+/-- The saving strictly exceeds `2^-33`. -/
+theorem kappa_gt : (2^33:ℝ)⁻¹ < kappa := by
+  norm_num [kappa]
 
 /-- The obsolete full-width internal inequality fails for these chunks. All
 uses of that estimate on the compact branch must be replaced. -/

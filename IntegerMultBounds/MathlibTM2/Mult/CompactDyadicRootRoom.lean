@@ -61,4 +61,39 @@ theorem seventh_power_le {d b : ℕ} (hb : 1≤b) (hroot : d^64≤b^9) : d^7≤b
     _ = b^63 := by rw [←pow_mul]
     _ ≤ b^64 := Nat.pow_le_pow_right (by omega) (by decide)
 
+private theorem successor_fortieth_le {n : ℕ} (hn : 64≤n) : (n+1)^40≤2*n^40 := by
+  have hpow := Nat.pow_le_pow_left (show 64*(n+1)≤65*n by omega) 40
+  rw [mul_pow,mul_pow] at hpow
+  have hratio : 65^40*n^40≤64^40*(2*n^40) := by
+    calc 65^40*n^40≤(64^40*2)*n^40 := Nat.mul_le_mul_right _ (by norm_num)
+      _ = 64^40*(2*n^40) := by ring
+  exact Nat.le_of_mul_le_mul_left (hpow.trans hratio) (by norm_num)
+
+/-- The fortieth power is below the exponential from `512` on. -/
+theorem fortieth_power_lt {n : ℕ} (hn : 512≤n) : n^40<2^n := by
+  induction n, hn using Nat.le_induction with
+  | base =>
+    calc (512:ℕ)^40 = 2^360 := by rw [show (512:ℕ) = 2^9 by norm_num, ←pow_mul]
+      _ < 2^512 := Nat.pow_lt_pow_right (by norm_num) (by norm_num)
+  | succ n hn ih =>
+    calc (n+1)^40≤2*n^40 := successor_fortieth_le (by omega)
+      _ < 2*2^n := by omega
+      _ = 2^(n+1) := by rw [pow_succ]; ring
+
+/-- The cap-square premise of the capped-squaring root routine at the seventy-ninth power,
+from `512 ≤ b`. -/
+theorem squared_seventy_ninth_cap_lt {b : ℕ} (hb : 512≤b) : (b^79+1)^2<2^(4*b+32) := by
+  have h1 : b^79+1≤2*b^79 := by
+    have : 1≤b^79 := Nat.one_le_pow _ _ (by omega)
+    omega
+  have h2 : (b^40)^4<(2^b)^4 := Nat.pow_lt_pow_left (fortieth_power_lt hb) (by norm_num)
+  have h3 : b^158≤(b^40)^4 := by
+    rw [←pow_mul]
+    exact Nat.pow_le_pow_right (by omega) (by norm_num)
+  calc (b^79+1)^2≤(2*b^79)^2 := Nat.pow_le_pow_left h1 2
+    _ = 4*b^158 := by ring
+    _ < 4*(2^b)^4 := by omega
+    _ = 2^(4*b+2) := by ring
+    _ ≤ 2^(4*b+32) := Nat.pow_le_pow_right (by norm_num) (by omega)
+
 end IntegerMultBounds.MathlibTM2.Mult.CompactDyadicRootRoom

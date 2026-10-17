@@ -19,8 +19,8 @@ The sharper target is the **selected** community construction at revision
 in individual notes. The [source pin](../docs/sharper-bound-source.json)
 records the selected certificate, supporting sources and manuscript digests.
 The original manuscript proves saving `2^-182`; our published, audited Lean
-theorem proves `2^-33`. Its active compact parameters are `epsilon=9/32`,
-`c=2^-2`, and `lambda'=1-57/2^37`. The selected upstream conditional saving is
+theorem proves `36261/2^48 ≈ 1.107 · 2^-33`. Its active compact parameters are
+`epsilon=79/256`, `c=2^-2`, and `lambda'=1-459/2^40`. The selected upstream conditional saving is
 `0.001672660197076918`; matching it unconditionally remains the goal.
 
 ## Diagnosis: where our current bound is lost
@@ -2024,3 +2024,18 @@ The resampling margin uses `α ≤ 2√d`, so the stage margins hold at
 `MathlibTM2.Theorem` now proves `MulInTime (2^33)⁻¹` with the standard axioms.
 The exact chain that needed `d^6 ≤ b` was removed (restore from the parent of
 `8fb31454`).
+
+**Retune to `epsilon=79/256`: `kappa = 36261/2^48`.** The only size relation
+that capped `epsilon` below the resampling limit `5/16` was `d^7 ≤ b²`
+(`epsilon ≤ 2/7`), used for the moduli room through `d^5 ≤ 4ℓ²`.
+`Sizes.Big.moduli_room` now follows from `d² ≤ 2ℓ` alone, via
+`16 d² N ≤ (4d)^(2d+2)` and `(4d)^8 ≤ 2^d` for `d ≥ 128`. The dimension is
+`d = iroot 256 (b^79)`. The parameter machine forms `b^79 = ((((b^9)²b)²b)²b)` in
+eleven atoms and takes the root with the existing capped-squaring search at
+`k = 8`. Its word fit `(b^79+1)² < 2^(4b+32)` holds for `b ≥ 512`, so `pm_s3`
+takes `Big n`. `pm_N_le` handles `d ≤ 3` directly. The layer gap is
+`1-lambda' = 459/2^40`, just inside `1-Parameters.lam`. Stage margins: layout
+`79/1024 · a_b`, layer `36261/2^48` (binding and public), direct rounds
+`237/1024`, CRT `(177/256) a_b`, resampling `3/512`. Further retuning is
+capped at about `1.12 · 2^-33` (`epsilon < 5/16`, `1-lambda' < 1-sigma`).
+The next dyadic step still needs the M7 Gaussian route.

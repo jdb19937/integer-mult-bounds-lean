@@ -13,10 +13,10 @@ public import IntegerMultBounds.NLogN.Multiplier
 # Size parameters of the multiplication algorithm
 
 Integer definitions of the parameters of the paper's `§8` "Input and transform sizes" as
-functions of the operand length `n`, with the retuned constants `ε = 9/32`, `c = 2^{-32}`:
+functions of the operand length `n`, with the retuned constants `ε = 79/256`, `c = 2^{-32}`:
 
 * `b = ⌈log₂ n⌉`, `p = 6b`;
-* `d = ⌊b^ε⌋`, the largest `d` with `d^32 ≤ b^9`; `K = ⌊d^c⌋`, the largest `K` with
+* `d = ⌊b^ε⌋`, the largest `d` with `d^256 ≤ b^79`; `K = ⌊d^c⌋`, the largest `K` with
   `K^(2^32) ≤ d`;
 * `T = 2^logT`, the power of two in `[4n/b, 8n/b)`; `ℓ = ⌈logT / d⌉`, `r = 2^ℓ`;
 * axis lengths `t_i ∈ {r/2, r}`: the first `numHalf = dℓ - logT` are `r/2`, the rest (in
@@ -133,10 +133,10 @@ theorem mul_pow_le_mul_pow {k : ℕ} (hk : k ≠ 0) (c x : ℕ) : c * x ^ k ≤ 
 /-! ### Fixed exponents -/
 
 /-- Exact integer-root degree for the dyadic dimension. -/
-def rootExp : ℕ := 32
+def rootExp : ℕ := 256
 
 /-- The power applied before taking the integer root. -/
-def rootNumerator : ℕ := 9
+def rootNumerator : ℕ := 79
 
 /-- The available integer lower size cap, distinct from the root degree. -/
 def powerCap : ℕ := 3
@@ -152,10 +152,10 @@ theorem upperPower_ne : upperPower ≠ 0 := by decide
 theorem cExp_ne : cExp ≠ 0 := by unfold cExp; positivity
 theorem one_le_cExp : 1 ≤ cExp := by unfold cExp; norm_num
 
-/-- The dyadic dimension exponent `9/32`. -/
+/-- The dyadic dimension exponent `79/256`. -/
 noncomputable def epsilon : ℝ := (rootNumerator : ℝ) / rootExp
 
-theorem epsilon_eq : epsilon = (9 : ℝ) / 32 := by norm_num [epsilon, rootNumerator, rootExp]
+theorem epsilon_eq : epsilon = (79 : ℝ) / 256 := by norm_num [epsilon, rootNumerator, rootExp]
 
 /-- `c = 2^{-32}` as a real number. -/
 noncomputable def cParam : ℝ := ((cExp : ℕ) : ℝ)⁻¹
@@ -198,7 +198,7 @@ def b (n : ℕ) : ℕ := Nat.clog 2 n
 /-- The working precision `p = 6b`. -/
 def p (n : ℕ) : ℕ := 6 * b n
 
-/-- The dimension `d = ⌊b^ε⌋`: the largest `d` with `d^32 ≤ b^9`. -/
+/-- The dimension `d = ⌊b^ε⌋`: the largest `d` with `d^256 ≤ b^79`. -/
 def d (n : ℕ) : ℕ := iroot rootExp (b n ^ rootNumerator)
 
 /-- `K = ⌊d^c⌋`: the largest `K` with `K^(2^32) ≤ d`. -/
@@ -291,12 +291,12 @@ theorem b_pow_lt_d_succ_pow (n : ℕ) : b n ^ rootNumerator < (d n + 1) ^ rootEx
 theorem b_lt_d_succ_pow (n : ℕ) : b n < (d n + 1) ^ upperPower := by
   by_contra h
   have hb : (d n+1)^8≤b n := Nat.le_of_not_gt h
-  have hp := Nat.pow_le_pow_left hb 9
+  have hp := Nat.pow_le_pow_left hb 79
   have hroot := b_pow_lt_d_succ_pow n
-  have hmono : (d n+1)^32≤(d n+1)^72 := Nat.pow_le_pow_right (by omega) (by decide)
+  have hmono : (d n+1)^256≤(d n+1)^632 := Nat.pow_le_pow_right (by omega) (by decide)
   rw [←pow_mul] at hp
   norm_num only [Nat.mul] at hp
-  change b n ^ 9 < (d n+1)^32 at hroot
+  change b n ^ 79 < (d n+1)^256 at hroot
   omega
 
 theorem le_d_iff {D : ℕ} : D ≤ d n ↔ D ^ rootExp ≤ b n ^ rootNumerator :=
@@ -310,29 +310,14 @@ theorem d_cube_le (n : ℕ) : d n ^ powerCap ≤ b n := by
   rcases Nat.eq_zero_or_pos (b n) with hb | hb
   · have hd : d n = 0 := by simpa [hb, rootNumerator, rootExp] using hroot
     simp [hd, powerCap]
-  · apply (Nat.pow_le_pow_iff_left (by decide : 32≠0)).mp
-    change d n ^ 32 ≤ b n ^ 9 at hroot
-    change (d n ^ 3)^32 ≤ b n ^ 32
+  · apply (Nat.pow_le_pow_iff_left (by decide : 256≠0)).mp
+    change d n ^ 256 ≤ b n ^ 79 at hroot
+    change (d n ^ 3)^256 ≤ b n ^ 256
     calc
-      (d n^3)^32=(d n^32)^3 := by rw [←pow_mul,←pow_mul]
-      _ ≤ (b n^9)^3 := Nat.pow_le_pow_left hroot 3
-      _ = b n^27 := by rw [←pow_mul]
-      _ ≤ b n^32 := Nat.pow_le_pow_right hb (by decide)
-
-/-- `d^7 ≤ b²`, from `d^32 ≤ b^9`. -/
-theorem d_seventh_le_sq (n : ℕ) : d n ^ 7 ≤ b n ^ 2 := by
-  have hroot := d_pow_le n
-  rcases Nat.eq_zero_or_pos (b n) with hb | hb
-  · have hd : d n = 0 := by simpa [hb, rootNumerator, rootExp] using hroot
-    simp [hd]
-  · apply (Nat.pow_le_pow_iff_left (by decide : 32≠0)).mp
-    change d n ^ 32 ≤ b n ^ 9 at hroot
-    calc
-      (d n^7)^32=(d n^32)^7 := by rw [←pow_mul,←pow_mul]
-      _ ≤ (b n^9)^7 := Nat.pow_le_pow_left hroot 7
-      _ = b n^63 := by rw [←pow_mul]
-      _ ≤ b n^64 := Nat.pow_le_pow_right hb (by decide)
-      _ = (b n^2)^32 := by rw [←pow_mul]
+      (d n^3)^256=(d n^256)^3 := by rw [←pow_mul,←pow_mul]
+      _ ≤ (b n^79)^3 := Nat.pow_le_pow_left hroot 3
+      _ = b n^237 := by rw [←pow_mul]
+      _ ≤ b n^256 := Nat.pow_le_pow_right hb (by decide)
 
 theorem d_le_b (n : ℕ) : d n ≤ b n :=
   (Nat.le_self_pow (by decide : powerCap≠0) _).trans (d_cube_le n)
@@ -693,18 +678,6 @@ theorem Big.b_le_two_dℓ (h : Big n) : b n ≤ 2 * (d n * ℓ n) := by
 /-- `d^2 ≤ 2ℓ`. -/
 theorem Big.pow_le_two_ℓ (h : Big n) : d n ^ 2 ≤ 2 * ℓ n := d_sq_le_two_ℓ h.1
 
-/-- `d^5 ≤ 4ℓ²`, from `d^7 ≤ b²` and `b ≤ 2dℓ`. -/
-theorem Big.pow_five_le_ℓ_sq (h : Big n) : d n ^ 5 ≤ 4 * ℓ n ^ 2 := by
-  have h1 := h.b_le_two_dℓ
-  have h2 := d_seventh_le_sq n
-  have hd : 0 < d n ^ 2 := by have := h.one_le_d; positivity
-  have : d n ^ 2 * d n ^ 5 ≤ d n ^ 2 * (4 * ℓ n ^ 2) := by
-    calc d n ^ 2 * d n ^ 5 = d n ^ 7 := by ring
-      _ ≤ b n ^ 2 := h2
-      _ ≤ (2 * (d n * ℓ n)) ^ 2 := Nat.pow_le_pow_left h1 2
-      _ = d n ^ 2 * (4 * ℓ n ^ 2) := by ring
-  exact Nat.le_of_mul_le_mul_left this hd
-
 theorem Big.d_le_ℓ (h : Big n) : d n + 1 ≤ ℓ n := by
   have h1 := h.pow_le_two_ℓ
   have h3 := h.2
@@ -740,43 +713,58 @@ theorem Big.K_succ_le_ℓ (h : Big n) : K n + 1 ≤ ℓ n := by
   have := h.d_le_ℓ
   omega
 
-/-- The modulus condition `8 d² N + 4d ≤ r/2` of `Moduli.src_good`. -/
+private theorem succ_pow_eight_le {D : ℕ} (hD : 16 ≤ D) : (D + 1) ^ 8 ≤ 2 * D ^ 8 := by
+  have h1 := Nat.pow_le_pow_left (show 16 * (D + 1) ≤ 17 * D by omega) 8
+  rw [mul_pow, mul_pow] at h1
+  have h2 : 17 ^ 8 * D ^ 8 ≤ 16 ^ 8 * (2 * D ^ 8) := by
+    calc 17 ^ 8 * D ^ 8 ≤ (16 ^ 8 * 2) * D ^ 8 := Nat.mul_le_mul_right _ (by norm_num)
+      _ = 16 ^ 8 * (2 * D ^ 8) := by ring
+  exact Nat.le_of_mul_le_mul_left (h1.trans h2) (by norm_num)
+
+/-- `(4D)^8 ≤ 2^D` from `D = 128` on. -/
+private theorem four_mul_pow_eight_le {D : ℕ} (hD : 128 ≤ D) : (4 * D) ^ 8 ≤ 2 ^ D := by
+  induction D, hD using Nat.le_induction with
+  | base => norm_num
+  | succ D hD ih =>
+    have h := succ_pow_eight_le (D := D) (by omega)
+    calc (4 * (D + 1)) ^ 8 = 4 ^ 8 * (D + 1) ^ 8 := by rw [mul_pow]
+      _ ≤ 4 ^ 8 * (2 * D ^ 8) := Nat.mul_le_mul_left _ h
+      _ = 2 * (4 * D) ^ 8 := by rw [mul_pow]; ring
+      _ ≤ 2 * 2 ^ D := Nat.mul_le_mul_left _ ih
+      _ = 2 ^ (D + 1) := by rw [pow_succ]; ring
+
+/-- The modulus condition `8 d² N + 4d ≤ r/2` of `Moduli.src_good`, from `d² ≤ 2ℓ`:
+`16 d² N ≤ (4d)^(2d+2)` and `(4d)^8 ≤ 2^d`. -/
 theorem Big.moduli_room (h : Big n) : 8 * d n ^ 2 * N n + 4 * d n ≤ 2 ^ (ℓ n - 1) := by
   set D := d n
-  have hD := h.2
+  have hD : 128 ≤ D := h.2
   have hN1 : 1 ≤ N n := oddProd_pos D
-  -- `N ≤ (4D)^(2D) ≤ 2^(2D · 2D)`
-  have hN : N n ≤ 2 ^ (2 * D * (2 * D)) := by
-    calc N n ≤ (4 * D) ^ (2 * D) := oddProd_le D
-      _ ≤ (2 ^ (2 * D)) ^ (2 * D) := Nat.pow_le_pow_left (le_two_pow_two_mul (by omega)) _
-      _ = 2 ^ (2 * D * (2 * D)) := by rw [← pow_mul]
-  have hD2 : D ^ 2 ≤ 2 ^ (2 * D) := by
-    calc D ^ 2 ≤ (2 ^ D) ^ 2 := Nat.pow_le_pow_left Nat.lt_two_pow_self.le 2
-      _ = 2 ^ (2 * D) := by rw [← pow_mul, mul_comm]
+  have hN : N n ≤ (4 * D) ^ (2 * D) := oddProd_le D
   have hDN : D ≤ D ^ 2 * N n := by
     calc D ≤ D ^ 2 := Nat.le_self_pow (by norm_num) D
       _ ≤ D ^ 2 * N n := Nat.le_mul_of_pos_right _ hN1
   have h1 : 8 * D ^ 2 * N n + 4 * D ≤ 16 * (D ^ 2 * N n) := by
     have e : 8 * D ^ 2 * N n = 8 * (D ^ 2 * N n) := by ring
     omega
-  have h1' : D ^ 2 * N n ≤ 2 ^ (2 * D) * 2 ^ (2 * D * (2 * D)) := Nat.mul_le_mul hD2 hN
-  have h2 : 4 + 2 * D + 2 * D * (2 * D) ≤ ℓ n - 1 := by
-    have h3 : D ^ 5 ≤ 4 * ℓ n ^ 2 := h.pow_five_le_ℓ_sq
-    -- `(5 D²)² = 25 D⁴ < D⁵/4 ≤ ℓ²`, so `5 D² ≤ ℓ`
-    have h4 : 100 * D ^ 4 ≤ D ^ 5 := by
-      calc 100 * D ^ 4 ≤ D * D ^ 4 := Nat.mul_le_mul_right _ (by omega : 100≤D)
-        _ = D ^ 5 := by ring
-    have h5 : (5 * D ^ 2) ^ 2 ≤ ℓ n ^ 2 := by
-      have e : (5 * D ^ 2) ^ 2 = 25 * D ^ 4 := by ring
-      omega
-    have h6 : 5 * D ^ 2 ≤ ℓ n := (Nat.pow_le_pow_iff_left (by norm_num)).mp h5
-    have h7 : 5 + 2 * D ≤ D ^ 2 := by nlinarith
-    have e : 2 * D * (2 * D) = 4 * D ^ 2 := by ring
+  have h2 : 16 * (D ^ 2 * N n) ≤ (4 * D) ^ (2 * D + 2) := by
+    calc 16 * (D ^ 2 * N n) = (4 * D) ^ 2 * N n := by ring
+      _ ≤ (4 * D) ^ 2 * (4 * D) ^ (2 * D) := Nat.mul_le_mul_left _ hN
+      _ = (4 * D) ^ (2 * D + 2) := by rw [← pow_add, add_comm]
+  have hℓ : D ^ 2 ≤ 2 * ℓ n := h.pow_le_two_ℓ
+  have hQ : 2 * D + 8 ≤ D ^ 2 := by nlinarith
+  have hexp : D * (2 * D + 2) ≤ (ℓ n - 1) * 8 := by
+    have e : D * (2 * D + 2) = 2 * D ^ 2 + 2 * D := by ring
+    rw [e]
     omega
-  calc 8 * D ^ 2 * N n + 4 * D ≤ 16 * (D ^ 2 * N n) := h1
-    _ ≤ 16 * (2 ^ (2 * D) * 2 ^ (2 * D * (2 * D))) := Nat.mul_le_mul_left _ h1'
-    _ = 2 ^ (4 + 2 * D + 2 * D * (2 * D)) := by rw [pow_add, pow_add]; norm_num; ring
-    _ ≤ 2 ^ (ℓ n - 1) := Nat.pow_le_pow_right (by norm_num) h2
+  have h3 : ((4 * D) ^ (2 * D + 2)) ^ 8 ≤ (2 ^ (ℓ n - 1)) ^ 8 := by
+    calc ((4 * D) ^ (2 * D + 2)) ^ 8 = ((4 * D) ^ 8) ^ (2 * D + 2) := by
+          rw [← pow_mul, ← pow_mul, Nat.mul_comm (2 * D + 2) 8]
+      _ ≤ (2 ^ D) ^ (2 * D + 2) := Nat.pow_le_pow_left (four_mul_pow_eight_le hD) _
+      _ = 2 ^ (D * (2 * D + 2)) := by rw [← pow_mul]
+      _ ≤ 2 ^ ((ℓ n - 1) * 8) := Nat.pow_le_pow_right (by norm_num) hexp
+      _ = (2 ^ (ℓ n - 1)) ^ 8 := by rw [pow_mul]
+  have h4 := (Nat.pow_le_pow_iff_left (by norm_num : 8 ≠ 0)).mp h3
+  omega
 
 theorem t_eq_box (hl : 1 ≤ ℓ n) : t n = Moduli.box (d n) (numHalf n) (ℓ n - 1) := by
   funext i
