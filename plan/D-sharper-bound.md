@@ -19,8 +19,8 @@ The sharper target is the **selected** community construction at revision
 in individual notes. The [source pin](../docs/sharper-bound-source.json)
 records the selected certificate, supporting sources and manuscript digests.
 The original manuscript proves saving `2^-182`; our published, audited Lean
-theorem proves `3213/2^44 ≈ 2^-32.35`. Its active compact parameters are
-`epsilon=7/16`, `c=2^-2`, and `lambda'=1-459/2^40`. The selected upstream conditional saving is
+theorem proves `14229/2^46 ≈ 2^-32.20`. Its active compact parameters are
+`epsilon=31/64`, `delta=2^-7`, `c=2^-2`, and `lambda'=1-459/2^40`. The selected upstream conditional saving is
 `0.001672660197076918`; matching it unconditionally remains the goal.
 
 ## Diagnosis: where our current bound is lost
@@ -36,7 +36,7 @@ less asymptotic time; these are not measured timing speedups.
 | §5.2–5.3 and Appendix A, layer control | **Binding margin `epsilon (1-lambda') = 513/2^43`, covering `2^-34`.** | Compact controls and full-depth execution are complete. Dimension/layer retuning is complete; selected suppliers, stopped recursion and local repair costs are structural follow-ups. |
 | §6.2, transform layout | Saving `epsilon c a_b`, above the published bound. | Fourth-root chunks are integrated; selected coordinate routing and balanced prefixes are needed beyond this route. |
 | §§8.2, 9.3, CRT and axis exposure | Saving `(1-epsilon) a_b`. | Direct routing is integrated; preserve it under new sizing and selected routing. |
-| §8.1–8.2, Gaussian arithmetic | Saving `1/2 - 2^-5 - epsilon(1+2^-33)`, about `2^-5` at `epsilon=7/16`. | The sharpened logarithmic charge supports the dyadic dimension; selected near-one dimensions require faster inverse and bulk core/halo execution. |
+| §8.1–8.2, Gaussian arithmetic | Saving `1/2 - 2^-7 - epsilon(1+2^-33)`, about `2^-7` at `epsilon=31/64`. | The sharpened logarithmic charge supports the dyadic dimension; selected near-one dimensions require faster inverse and bulk core/halo execution. |
 | §7, packed ring products | Saving `epsilon (1-c)`, above the published bound. | Preserve the conventional subroutine, widths and logarithmic allowance under each retune. |
 | §9.7–9.8, precision and assembly | The smallest surviving stage margin wins. | Link every improved estimate to actual fixed-machine execution, exact recovery and a standard-axiom audit. |
 
@@ -2053,7 +2053,18 @@ eventual `C K ≤ ℓ`; `d ≤ 2ℓ` and `d⁹ ≤ 128 ℓ⁷` hold for all `n �
 margins: layout `7/64 · a_b`, layer `3213/2^44` (binding and public), direct
 rounds `21/64`, CRT `9/16 · a_b`, resampling `1/32 - 7/2^37`.
 
-Further retuning is capped near `2^-32.16`: the resampling margin needs
+**Retune to `epsilon=31/64`, `delta=2^-7`: `kappa = 14229/2^46 ≈ 2^-32.20`.**
+`Cost/CompactLogGrowth` now bounds `⌊log₂ m⌋+1 ≤ 512 m^{1/256}`, so one
+Schönhage–Strassen product costs `262144 m^{1+2^-7}` and `M(p) = p^{1+2^-7}`.
+The dimension is `d = iroot 64 (b^31)`: nine power atoms and the root at `k = 6`,
+with word fit `(b^31+1)² < 2^(4b+32)` from `b ≥ 512`. `Big n` asks `d ≥ 2^192`;
+`mul_sq_le_b` takes `F^16 ≤ d`, the moduli room uses `(6(x+3))^16 ≤ 2^x` for
+`x ≥ 192`, and `d^33 ≤ (2ℓ)^31`, `d ≤ 2ℓ`, `d ≤ 2^(ℓ-1)` hold for all `n ≥ 2`
+(the last excludes `d = 3, ℓ = 2` and `d = 5, ℓ = 3` by `2^(b+1) < bT`).
+Stage margins: layout `31/256 · a_b`, layer `14229/2^46` (binding), direct
+rounds `93/256`, CRT `33/64 · a_b`, resampling `1/128 - 31/2^39`.
+
+Further retuning is capped at `459/2^41 ≈ 2^-32.16`: the resampling margin needs
 `epsilon < 1/2 - delta`, and independently the moduli `N = oddProd d` need
 `d² log d ≲ b`, i.e. `epsilon < 1/2`. `2^-32` needs `epsilon > 0.557`. Above
 `1/2` the construction needs `d ≫ log t` pairwise coprime moduli in windows of

@@ -91,7 +91,7 @@ theorem eventually_K_le_predecessor : ∀ᶠ n in atTop, K n≤d n-1 := by
 
 /-- Layout block width eventually dominates any fixed multiple of the chunk. -/
 theorem eventually_mul_K_le_ℓ (C : ℕ) : ∀ᶠ n in atTop, C*K n≤ℓ n := by
-  filter_upwards [Sizes.eventually_big, tendsto_atTop.1 Sizes.tendsto_d ((2*C)^4)] with n h hC
+  filter_upwards [Sizes.eventually_big, tendsto_atTop.1 Sizes.tendsto_d ((2*C)^16)] with n h hC
   have h1 := h.mul_sq_le hC
   have h2 := h.b_le_two_dℓ
   have h3 : C*K n≤C*d n := Nat.mul_le_mul_left _ (K_le_d n)

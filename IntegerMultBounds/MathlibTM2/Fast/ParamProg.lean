@@ -233,13 +233,17 @@ theorem pm_const_lt (hW : 4 * b n + 32 ≤ W) {k : ℕ} (hk : k < 2 ^ 16) : k < 
   lt_of_lt_of_le hk (pm_W_pow hW (by omega))
 
 /-- The new root computation fits the existing parameter-stage budget. -/
-theorem pm_s3 (_hB : Big n) (hW : 4 * b n + 32 ≤ W) :
+theorem pm_s3 (hB : Big n) (hW : 4 * b n + 32 ≤ W) :
     ∀ s, PmF n 3 acc s → TblDo A W w compactDyadicParamStage s
       (PmF n 4 acc) (7 * 30 + 11 + d n * (6 * 30 + 8)) := by
   intro s hs
   have hb : s.val 1 = b n := by simpa [pmVal, pmNV] using hs.2 1 (by decide)
-  have hfit : (b n ^ 7 + 1)^2 < 2^W :=
-    (CompactDyadicRootRoom.squared_seventh_cap_lt (b n)).trans_le
+  have hb512 : 512 ≤ b n := by
+    have h2 := hB.pow_le_b (k := 2) le_rfl
+    have h1 := hB.2
+    nlinarith
+  have hfit : (b n ^ 31 + 1)^2 < 2^W :=
+    (CompactDyadicRootRoom.squared_thirty_first_cap_lt hb512).trans_le
       (Nat.pow_le_pow_right (by decide) hW)
   refine (compactDyadicParamStage_do s hb hfit (pm_const_lt hW (by norm_num))).mono ?_ ?_
   · intro z hz

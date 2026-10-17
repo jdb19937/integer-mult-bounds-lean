@@ -28,7 +28,7 @@ open IntegerMultBounds.MathlibTM2.Mult.Sizes Filter IntegerMultBounds.MathlibTM2
 
 /-- The constant of the rounding stage. -/
 noncomputable def mtRndC (Tm cm cw cW : ℕ) : ℝ :=
-  16384 * ssMulConst * (Tm + 1) * (cm : ℝ) ^ 2 + 16 * cw + 16 * cm + 8 * cW + 128
+  262144 * ssMulConst * (Tm + 1) * (cm : ℝ) ^ 2 + 16 * cw + 16 * cm + 8 * cW + 128
 
 theorem mt_rnd_C_nonneg (Tm cm cw cW : ℕ) : 0 ≤ mtRndC Tm cm cw cW := by
   unfold mtRndC; positivity
@@ -72,10 +72,10 @@ theorem mt_rnd_stage_le (Tm cm cw cW : ℕ) :
   generalize (mLogLog m : ℝ) = L at h1' h2
   have hT0 : (0 : ℝ) ≤ (Tm : ℝ) + 1 := by positivity
   have hκT : 0 ≤ κ * ((Tm : ℝ) + 1) := mul_nonneg hκ0 hT0
-  have h3 : κ * ((Tm : ℝ) + 1) * L ≤ κ * ((Tm : ℝ) + 1) * (16384 * (cm : ℝ) ^ 2 * totMp n) :=
+  have h3 : κ * ((Tm : ℝ) + 1) * L ≤ κ * ((Tm : ℝ) + 1) * (262144 * (cm : ℝ) ^ 2 * totMp n) :=
     mul_le_mul_of_nonneg_left h2 hκT
   have h4 : κ * ((Tm : ℝ) + 1) * L + 12 * w + 14 * m + 12 * b n + 4 * p n + 6 * W + 58 ≤
-      (16384 * κ * ((Tm : ℝ) + 1) * (cm : ℝ) ^ 2 + 12 * cw + 14 * cm + 6 * cW + 64) * totMp n := by
+      (262144 * κ * ((Tm : ℝ) + 1) * (cm : ℝ) ^ 2 + 12 * cw + 14 * cm + 6 * cW + 64) * totMp n := by
     have : (12 : ℝ) * b n + 4 * p n ≤ 6 * totMp n := by rw [hp] at hpm ⊢; linarith
     nlinarith
   have hS0 : (0 : ℝ) ≤ S n := by linarith
@@ -112,7 +112,7 @@ theorem mt_rnd_square_le (Tm cm : ℕ) :
   generalize (mLogLog ℓ' : ℝ) = L at h1' h2
   have hT0 : (0 : ℝ) ≤ (Tm : ℝ) + 1 := by positivity
   have hκT : 0 ≤ κ * ((Tm : ℝ) + 1) := mul_nonneg hκ0 hT0
-  have h3 : κ * ((Tm : ℝ) + 1) * L ≤ κ * ((Tm : ℝ) + 1) * (16384 * (cm : ℝ) ^ 2 * totMp n) :=
+  have h3 : κ * ((Tm : ℝ) + 1) * L ≤ κ * ((Tm : ℝ) + 1) * (262144 * (cm : ℝ) ^ 2 * totMp n) :=
     mul_le_mul_of_nonneg_left h2 hκT
   push_cast
   nlinarith

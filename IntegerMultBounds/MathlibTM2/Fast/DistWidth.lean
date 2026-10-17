@@ -103,30 +103,7 @@ theorem ds_d_mul_r_le (hn : 2 ≤ n) : d n * r n ≤ T n := by
   · have := one_le_d hn
     have e : d n = 1 := by omega
     rw [e]; exact le_rfl
-  · have h1 : d n ≤ 2 ^ (ℓ n - 1) := by
-      have h9 := d_pow_nine_le hn
-      have h2l := d_le_two_ℓ hn
-      rcases Nat.lt_or_ge (ℓ n) 4 with hl | hl
-      · -- small `ℓ`: `d⁹ ≤ 128 ℓ⁷` pins `d`
-        have hl1 := ds_one_le_ℓ hn
-        interval_cases hl' : ℓ n
-        · have := Nat.pow_le_pow_left h 9
-          norm_num at h9 this; omega
-        · by_contra hc
-          have := Nat.pow_le_pow_left (show 3 ≤ d n by norm_num at hc ⊢; omega) 9
-          norm_num at h9 this; omega
-        · by_contra hc
-          have := Nat.pow_le_pow_left (show 5 ≤ d n by norm_num at hc ⊢; omega) 9
-          norm_num at h9 this; omega
-      · have : 2 * ℓ n ≤ 2 ^ (ℓ n - 1) := by
-          have key : ∀ m : ℕ, 4 ≤ m → 2 * m ≤ 2 ^ (m - 1) := by
-            intro m hm
-            induction m, hm using Nat.le_induction with
-            | base => norm_num
-            | succ m hm ih =>
-              rw [show m + 1 - 1 = (m - 1) + 1 by omega, pow_succ]; omega
-          exact key _ hl
-        omega
+  · have h1 : d n ≤ 2 ^ (ℓ n - 1) := d_le_two_pow_pred_ℓ hn
     have h2 : dsP n 1 ≤ dsP n (d n - 1) :=
       Nat.le_of_dvd (dsP_pos n _) (dsP_dvd n (by omega))
     have h3 : 2 ^ (ℓ n - 1) ≤ dsT n 0 := by
@@ -446,12 +423,12 @@ theorem parameter_width_le_core {b L r w a : ℕ}
 /-- The candidate dimension is one at the smallest precisions. -/
 theorem parameter_width_small_r {n : ℕ} (hn : 2≤n) (hb : b n≤2) : 4≤r n := by
   have hd : d n=1 := by
-    have hroot : d n^16≤b n^7 := d_pow_le n
+    have hroot : d n^64≤b n^31 := d_pow_le n
     have hd1 := one_le_d hn
     by_contra h
     have h2 : 2≤d n := by omega
-    have hp := Nat.pow_le_pow_left h2 16
-    have hb7 := Nat.pow_le_pow_left hb 7
+    have hp := Nat.pow_le_pow_left h2 64
+    have hb7 := Nat.pow_le_pow_left hb 31
     norm_num at hp hb7
     omega
   have hn4 : n≤4 := (le_two_pow_b n).trans (Nat.pow_le_pow_right (by decide) hb)

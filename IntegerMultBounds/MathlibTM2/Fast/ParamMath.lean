@@ -145,7 +145,7 @@ theorem pm_ℓ_le_logT (hn : 2 ≤ n) : ℓ n ≤ logT n := by
 theorem pm_ℓ_le (hn : 2 ≤ n) : ℓ n ≤ b n + 2 := (pm_ℓ_le_logT hn).trans (pm_logT_le hn)
 
 theorem pm_N_le (hn : 2 ≤ n) : N n ≤ 2 ^ (b n + 4) := by
-  have hroot : d n ^ 16 ≤ b n ^ 7 := d_pow_le n
+  have hroot : d n ^ 64 ≤ b n ^ 31 := d_pow_le n
   have hN : N n ≤ (4 * d n) ^ (2 * d n) := oddProd_le (d n)
   rcases Nat.lt_or_ge (d n) 11 with h | h
   · -- `d ≤ 10`: each value of `d` forces a lower bound on `b`
@@ -156,75 +156,75 @@ theorem pm_N_le (hn : 2 ≤ n) : N n ≤ 2 ^ (b n + 4) := by
         _ ≤ 2 ^ (b n + 4) := pm_two_pow_le (by omega)
     · have hb : 5 ≤ b n := by
         by_contra hc
-        have := Nat.pow_le_pow_left (show b n ≤ 4 by omega) 7
+        have := Nat.pow_le_pow_left (show b n ≤ 4 by omega) 31
         norm_num at hroot this
         omega
       calc N n = 105 := by simp [N, hd', oddProd, Finset.prod_range_succ]
         _ ≤ 2 ^ 7 := by norm_num
         _ ≤ 2 ^ (b n + 4) := pm_two_pow_le (by omega)
-    · have hb : 13 ≤ b n := by
+    · have hb : 10 ≤ b n := by
         by_contra hc
-        have := Nat.pow_le_pow_left (show b n ≤ 12 by omega) 7
+        have := Nat.pow_le_pow_left (show b n ≤ 9 by omega) 31
         norm_num at hroot this
         omega
       calc N n = 10395 := by simp [N, hd', oddProd, Finset.prod_range_succ]
         _ ≤ 2 ^ 14 := by norm_num
         _ ≤ 2 ^ (b n + 4) := pm_two_pow_le (by omega)
-    · have hb : 24 ≤ b n := by
+    · have hb : 18 ≤ b n := by
         by_contra hc
-        have := Nat.pow_le_pow_left (show b n ≤ 23 by omega) 7
+        have := Nat.pow_le_pow_left (show b n ≤ 17 by omega) 31
         norm_num at hroot this
         omega
       calc N n = 2027025 := by simp [N, hd', oddProd, Finset.prod_range_succ]
         _ ≤ 2 ^ 21 := by norm_num
         _ ≤ 2 ^ (b n + 4) := pm_two_pow_le (by omega)
-    · have hb : 40 ≤ b n := by
+    · have hb : 28 ≤ b n := by
         by_contra hc
-        have := Nat.pow_le_pow_left (show b n ≤ 39 by omega) 7
+        have := Nat.pow_le_pow_left (show b n ≤ 27 by omega) 31
         norm_num at hroot this
         omega
-      calc N n ≤ (4 * 5) ^ (2 * 5) := hN
-        _ ≤ 2 ^ 44 := by norm_num
+      calc N n = 654729075 := by simp [N, hd', oddProd, Finset.prod_range_succ]
+        _ ≤ 2 ^ 30 := by norm_num
         _ ≤ 2 ^ (b n + 4) := pm_two_pow_le (by omega)
-    · have hb : 61 ≤ b n := by
+    · have hb : 41 ≤ b n := by
         by_contra hc
-        have := Nat.pow_le_pow_left (show b n ≤ 60 by omega) 7
+        have := Nat.pow_le_pow_left (show b n ≤ 40 by omega) 31
         norm_num at hroot this
         omega
-      calc N n ≤ (4 * 6) ^ (2 * 6) := hN
-        _ ≤ 2 ^ 56 := by norm_num
+      calc N n = 316234143225 := by simp [N, hd', oddProd, Finset.prod_range_succ]
+        _ ≤ 2 ^ 39 := by norm_num
         _ ≤ 2 ^ (b n + 4) := pm_two_pow_le (by omega)
-    · have hb : 86 ≤ b n := by
+    · have hb : 56 ≤ b n := by
         by_contra hc
-        have := Nat.pow_le_pow_left (show b n ≤ 85 by omega) 7
+        have := Nat.pow_le_pow_left (show b n ≤ 55 by omega) 31
         norm_num at hroot this
         omega
-      calc N n ≤ (4 * 7) ^ (2 * 7) := hN
+      calc N n = 213458046676875 := by simp [N, hd', oddProd, Finset.prod_range_succ]
+        _ ≤ 2 ^ 48 := by norm_num
+        _ ≤ 2 ^ (b n + 4) := pm_two_pow_le (by omega)
+    · have hb : 74 ≤ b n := by
+        by_contra hc
+        have := Nat.pow_le_pow_left (show b n ≤ 73 by omega) 31
+        norm_num at hroot this
+        omega
+      calc N n = 191898783962510625 := by simp [N, hd', oddProd, Finset.prod_range_succ]
+        _ ≤ 2 ^ 58 := by norm_num
+        _ ≤ 2 ^ (b n + 4) := pm_two_pow_le (by omega)
+    · have hb : 94 ≤ b n := by
+        by_contra hc
+        have := Nat.pow_le_pow_left (show b n ≤ 93 by omega) 31
+        norm_num at hroot this
+        omega
+      calc N n = 221643095476699771875 := by simp [N, hd', oddProd, Finset.prod_range_succ]
         _ ≤ 2 ^ 68 := by norm_num
         _ ≤ 2 ^ (b n + 4) := pm_two_pow_le (by omega)
-    · have hb : 116 ≤ b n := by
+    · have hb : 117 ≤ b n := by
         by_contra hc
-        have := Nat.pow_le_pow_left (show b n ≤ 115 by omega) 7
+        have := Nat.pow_le_pow_left (show b n ≤ 116 by omega) 31
         norm_num at hroot this
         omega
-      calc N n ≤ (4 * 8) ^ (2 * 8) := hN
-        _ ≤ 2 ^ 80 := by norm_num
-        _ ≤ 2 ^ (b n + 4) := pm_two_pow_le (by omega)
-    · have hb : 152 ≤ b n := by
-        by_contra hc
-        have := Nat.pow_le_pow_left (show b n ≤ 151 by omega) 7
-        norm_num at hroot this
-        omega
-      calc N n ≤ (4 * 9) ^ (2 * 9) := hN
-        _ ≤ 2 ^ 94 := by norm_num
-        _ ≤ 2 ^ (b n + 4) := pm_two_pow_le (by omega)
-    · have hb : 194 ≤ b n := by
-        by_contra hc
-        have := Nat.pow_le_pow_left (show b n ≤ 193 by omega) 7
-        norm_num at hroot this
-        omega
-      calc N n ≤ (4 * 10) ^ (2 * 10) := hN
-        _ ≤ 2 ^ 107 := by norm_num
+      calc N n = 319830986772877770815625 := by simp [N, hd', oddProd, Finset.prod_range_succ]
+        _ ≤ 2 ^ 79 := by norm_num
         _ ≤ 2 ^ (b n + 4) := pm_two_pow_le (by omega)
   · -- `(4d)² ≤ 2^d` from `d = 11` on, so `N ≤ 2^(d²) ≤ 2^b`
     have h2 : (4 * d n) ^ 2 ≤ 2 ^ d n := by

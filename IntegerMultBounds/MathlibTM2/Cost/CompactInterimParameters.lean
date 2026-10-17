@@ -10,15 +10,15 @@ namespace IntegerMultBounds.MathlibTM2.Cost.CompactInterim
 noncomputable section
 
 /-- Preserve the actual dimension exponent. -/
-def epsilon : ℝ := 7 / (2^4:ℝ)
+def epsilon : ℝ := 31 / (2^6:ℝ)
 /-- Larger chunks become possible after removing the old chunk-width power. -/
 def spacing : ℝ := (2^2:ℝ)⁻¹
 /-- Absorb the full-depth compact recurrence and all polylogarithmic factors. -/
 def lam' : ℝ := 1-459/(2^40:ℝ)
 /-- Dyadic allowance for the unchanged quasi-linear multiplier. -/
-def delta : ℝ := (2^5:ℝ)⁻¹
-/-- The public saving: exactly the compact layer margin `ε (1-λ')`, about `2^-32.35`. -/
-def kappa : ℝ := 3213/(2^44:ℝ)
+def delta : ℝ := (2^7:ℝ)⁻¹
+/-- The public saving: exactly the compact layer margin `ε (1-λ')`, about `2^-32.20`. -/
+def kappa : ℝ := 14229/(2^46:ℝ)
 
 /-- The compact recurrence and reserved axes fit strictly below the target
 layer exponent; this does not assert the old full-width recurrence condition. -/

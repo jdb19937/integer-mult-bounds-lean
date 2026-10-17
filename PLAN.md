@@ -3,7 +3,7 @@
 ✅ Complete · 🟡 In progress / partially complete · ⬜ Not started.
 
 **Bound improvement progress:** M1 ✅ · M2 ✅ · M3 🟡 · M4 ⬜ · M5 ⬜ · M6 🟡 · M7 🟡 · M8 ⬜.
-The completed compact multiplier proves saving `3213/2^44 ≈ 2^-32.3512`, up from the previous `36261/2^48 ≈ 2^-32.8539`; further structural improvements remain in progress.
+The completed compact multiplier proves saving `14229/2^46 ≈ 2^-32.2035`, up from the previous `3213/2^44 ≈ 2^-32.3512` (and `36261/2^48 ≈ 2^-32.8539` before that); further structural improvements remain in progress.
 
 ## Bound scoreboard
 
@@ -12,7 +12,7 @@ time `O(n (log n)^(1-kappa))`. Larger saving means a smaller time exponent.
 
 | Bound | Exponent saving `kappa` | Status |
 | --- | --- | --- |
-| **Current unconditional result** | **`3213/2^44 ≈ 2^-32.3512`** | ✅ Retune to `epsilon=7/16`, `lambda'=1-459/2^40`: the resampling envelope uses the actual logarithmic band width `α ≤ 4 b^{ε/2^33}` instead of `α ≤ 2√d`, and every size relation (moduli room, `d+1 ≤ ℓ`, `16 d α² ≤ b`) is re-proved from `d^16 ≤ b^7` with `d ≥ 2^40`. All-input correctness and cost bound on one fixed finite Mathlib machine. |
+| **Current unconditional result** | **`14229/2^46 ≈ 2^-32.2035`** | ✅ Retune to `epsilon=31/64`, `delta=2^-7`, `lambda'=1-459/2^40` (previously `3213/2^44 ≈ 2^-32.3512` at `epsilon=7/16`, `delta=2^-5`): the Schönhage–Strassen allowance is `M(p) = p^{1+2^-7}`, the resampling envelope uses the logarithmic band width `α ≤ 4 b^{ε/2^33}`, and every size relation (moduli room, `d ≤ 2^(ℓ-1)`, `d+1 ≤ ℓ`, `16 d α² ≤ b`) is re-proved from `d^64 ≤ b^31` with `d ≥ 2^192`. All-input correctness and cost bound on one fixed finite Mathlib machine. |
 | **Previous dyadic-dimension result** | `36261/2^48 ≈ 2^-32.8539` | ✅ Superseded; `epsilon=79/256`, capped by the coarse `α ≤ 2√d` resampling bound. |
 | **Previous rounded result** | `2^-33.0000` | ✅ Rounded synthetic layers and transforms at `epsilon=9/32`. |
 | **Previous dyadic result** | `2^-34` | ✅ Superseded by rounded synthetic layers, which allow the `9/32` dimension. |
@@ -34,7 +34,7 @@ certificate alone does not improve the proved multiplication bound.
 `IntegerMultBounds.MathlibTM2.statement` constructs a fixed finite Mathlib
 machine that multiplies every input pair correctly in worst-case time
 `O(n (log n)^(1-kappa))`, with positive saving
-`kappa = 3213/2^44`. No algorithmic or runtime assumption remains.
+`kappa = 14229/2^46`. No algorithmic or runtime assumption remains.
 
 ## Completed proof
 
@@ -60,7 +60,7 @@ only `propext`, `Classical.choice` and `Quot.sound`.
 
 The [section-by-section implementation plan](plan/D-sharper-bound.md) is based
 on the original OpenAI manuscript and the pinned selected community
-construction. **Today's binding margin is §5 compact-layer cost: `epsilon (1-lambda') = 3213/2^44`, which is the public saving.** Within the current route `1-lambda'` is capped by the supplier (`1-lambda' < 1-Parameters.lam`), `epsilon` by the resampling margin `1/2-delta-epsilon` (`epsilon < 15/32` at `delta=2^-5`) and by the moduli construction (`N = oddProd d` needs `d² log d ≲ b`, so `epsilon < 1/2` for any `delta`). Retuning can therefore reach at most about `1/2 · 1671/(4·10^12) ≈ 2^-32.16`.
+construction. **Today's binding margin is §5 compact-layer cost: `epsilon (1-lambda') = 14229/2^46`, which is the public saving.** Within the current route `1-lambda'` is capped by the supplier (`1-lambda' < 1-Parameters.lam`), `epsilon` by the resampling margin `1/2-delta-epsilon` (`epsilon < 63/128` at `delta=2^-7`) and by the moduli construction (`N = oddProd d` needs `d² log d ≲ b`, so `epsilon < 1/2` for any `delta`). Retuning can therefore reach at most `459/2^41 ≈ 2^-32.1576`; the remaining `2^-32.20 → 2^-32.16` gap needs only smaller `delta` and a larger `Big` threshold.
 
 **The `epsilon < 1/2` barrier.** `2^-32` needs `epsilon > 0.557` with the existing supplier. Beyond `1/2` the `d` pairwise coprime moduli must sit in windows `[(1-2η)t, (1-η)t]` of relative width `η = 1/(4d)`, with `d ≫ log t`. Every elementary construction (`oddProd`, `1 + iM`, primorial shifts) needs `d² log d ≲ b`; the selected construction instead cites Baker–Harman–Pintz primes in short intervals. Mathlib has only Chebyshev bounds and Bertrand. So the next dyadic step needs **both** a short-interval prime supply (at least PNT with a `(log x)^-A` error term, `A > 2`) **and** a faster forward Gaussian map. The forward map is the selected chirped correlation (`notes/fast-gaussian-resampling.tex`), `O(M(p))` per element. The existing banded `B̃₀` with a larger `α² ≈ p^r`, `r < 1-ε`, suffices for the inverse up to `epsilon < 2/3`, so the phase-cell inverse is not on the critical path for `2^-32`.
 The actual compact runtime removes the old full-slot control restriction. A
@@ -84,10 +84,10 @@ in the completed multiplier.
 | §2 Machine model and streams | 🟡 | Every new algorithm needs actual finite-machine costs and clean returned state. | Reuse Mathlib FinTM2 and existing host primitives; price new schedules. |
 | §3 Finite networks | 🟡 | Current bit/complex primitive savings are `2.96e-9` and `4.18e-10`. | Selected PR589 bit supplier and T16 complex supplier, with checked words, restoration, owner schedules and variable-rank moments. |
 | §4 Address interchange | 🟡 | All field moves inherit the bit exponent; the running CRT now uses linear direct routing. | Prove selected arbitrary-source routing contracts. |
-| §5 Butterfly layers; Appendix A | 🟡 | **Current binding margin `epsilon (1-lambda') = 3213/2^44`, equal to the public saving.** Complete compact runtime is proved. | Tighten recursive layer costs using stopped recursion, precision and proved recursive stock. |
+| §5 Butterfly layers; Appendix A | 🟡 | **Current binding margin `epsilon (1-lambda') = 14229/2^46`, equal to the public saving.** Complete compact runtime is proved. | Tighten recursive layer costs using stopped recursion, precision and proved recursive stock. |
 | **§6 Synthetic transforms/layout** | 🟡 | **Layout saving `epsilon c (1-tau)` exceeds the public saving by a factor of about `1.77` but remains a nearby restriction.** | M2 retuned epsilon/c; next replace this charge by selected coordinate routing and a balanced prefix. |
 | §7 Exact polynomial products | ✅ | Packing widths and extra logarithms must remain within budget. | Reuse the proved fast subroutine and exact algebra; revalidate under new widths. Not currently binding. |
-| §8 Resampling | 🟡 | Current Gaussian exponent is `1/2 + 2^-5 + epsilon(1+2^-33)` (band width `α` logarithmic); margin `2^-5` at `epsilon=7/16`. | Chirped-correlation forward map (`O(M(p))` per element) and a wider banded inverse for `epsilon > 1/2`. |
+| §8 Resampling | 🟡 | Current Gaussian exponent is `1/2 + 2^-7 + epsilon(1+2^-33)` (band width `α` logarithmic); margin `2^-7 - 31/2^39` at `epsilon=31/64`. | Chirped-correlation forward map (`O(M(p))` per element) and a wider banded inverse for `epsilon > 1/2`. |
 | §9 Exact multiplication/cost | 🟡 | Direct CRT charge is `d(1+ell^tau)`; the final bound is the smallest stage margin. | Seven-stage bootstrap, all 47 linked target inequalities and unchanged exact output semantics. |
 | §§10–11 Arithmetic/transposition corollaries | ⬜ | Downstream consequences, not multiplication bottlenecks. | Defer until the multiplication bound advances. |
 

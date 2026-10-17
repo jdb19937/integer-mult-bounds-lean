@@ -13,8 +13,8 @@ import Mathlib.Algebra.Order.Ring.Star
 
 `totBound C n` is `C` times the sum of the stage costs of `docs/fast-pipeline.md` at operand
 length `n`, each written in the parameters of `Mult/Sizes.lean`. One `p`-bit product costs
-`M(p) = p^{1+δ}` with `δ = 1/32` (`totMp`); `gr_mLogLog_le` bounds the Schönhage–Strassen step
-count `m (log m + 1)(log log m + 1)` of `Host/SSMul` by `16384 m^{1+δ}`.
+`M(p) = p^{1+δ}` with `δ = 1/128` (`totMp`); `gr_mLogLog_le` bounds the Schönhage–Strassen step
+count `m (log m + 1)(log log m + 1)` of `Host/SSMul` by `262144 m^{1+δ}`.
 
 | term | stages | form |
 |---|---|---|
@@ -71,8 +71,8 @@ open IntegerMultBounds.MathlibTM2.Mult.Sizes Filter Asymptotics IntegerMultBound
 
 /-! ### Exponents -/
 
-/-- `δ = 1/32`: one `p`-bit product costs `O(p^{1+δ})`. -/
-noncomputable def totDelta : ℝ := (2^5:ℝ)⁻¹
+/-- `δ = 1/128`: one `p`-bit product costs `O(p^{1+δ})`. -/
+noncomputable def totDelta : ℝ := (2^7:ℝ)⁻¹
 
 /-- `λ = 1 - 3/10¹⁰`, the exponent of the layer recursion. -/
 noncomputable def totLam : ℝ := 1 - 3 / 10 ^ 10
@@ -83,7 +83,7 @@ noncomputable def totLam' : ℝ := 1 - 1 / 10 ^ 11
 /-- `κ = ε c (1 - τ)`. -/
 noncomputable def totKappa : ℝ := epsilon * cParam * (1 - Parameters.tau)
 
-theorem tot_kappa_eq : totKappa = 259 / (10 ^ 11 * 2 ^ 33) := by
+theorem tot_kappa_eq : totKappa = 1147 / (10 ^ 11 * 2 ^ 35) := by
   rw [totKappa, epsilon_eq, cParam_eq, Parameters.tau]; norm_num
 
 theorem tot_kappa_pos : 0 < totKappa := by rw [tot_kappa_eq]; norm_num

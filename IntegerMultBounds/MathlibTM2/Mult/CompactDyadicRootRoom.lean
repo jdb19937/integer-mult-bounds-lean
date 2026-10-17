@@ -107,4 +107,20 @@ theorem squared_seventh_cap_lt (b : ℕ) : (b^7+1)^2<2^(4*b+32) := by
     _ ≤ (b+1)^18 := Nat.pow_le_pow_right (by omega) (by decide)
     _ < 2^(4*b+32) := eighteenth_power_lt b
 
+/-- The cap-square premise of the capped-squaring root routine at the thirty-first power,
+from `512 ≤ b`. -/
+theorem squared_thirty_first_cap_lt {b : ℕ} (hb : 512≤b) : (b^31+1)^2<2^(4*b+32) := by
+  have h1 : b^31+1≤2*b^31 := by
+    have : 1≤b^31 := Nat.one_le_pow _ _ (by omega)
+    omega
+  have h2 : (b^40)^4<(2^b)^4 := Nat.pow_lt_pow_left (fortieth_power_lt hb) (by norm_num)
+  have h3 : b^62≤(b^40)^4 := by
+    rw [←pow_mul]
+    exact Nat.pow_le_pow_right (by omega) (by norm_num)
+  calc (b^31+1)^2≤(2*b^31)^2 := Nat.pow_le_pow_left h1 2
+    _ = 4*b^62 := by ring
+    _ < 4*(2^b)^4 := by omega
+    _ = 2^(4*b+2) := by ring
+    _ ≤ 2^(4*b+32) := Nat.pow_le_pow_right (by norm_num) (by omega)
+
 end IntegerMultBounds.MathlibTM2.Mult.CompactDyadicRootRoom
