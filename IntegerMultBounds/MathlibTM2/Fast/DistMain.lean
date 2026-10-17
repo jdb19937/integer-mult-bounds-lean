@@ -93,7 +93,7 @@ theorem ds_main_runs (R : Regs T A) {n : ℕ} (hbig : Big n) (wl : List (Fin (A 
     cases y with
     | s r => exact ds_srcE_get hv ho hX₁0 r
     | o x =>
-      obtain ⟨hW, hw⟩ := ds_srcE_in hv ho hX₁0
+      obtain ⟨hW, hw⟩ := ds_srcE_in ho
       cases x
       all_goals first
         | (rw [hW, hX₁W]; rfl)

@@ -580,8 +580,7 @@ theorem bwiden_exec {a wR cnt t₁ t₂ : Fin T} (hreg : [a, wR, cnt, t₁, t₂
     { S with R := Function.update R₂ a (binSyms (L + (R₂ cnt).length) x) }
   refine ⟨v₄, by rw [hu₄, hu₃, hu₂, hu₁], Exec.cast (Exec.seq he₁ (Exec.seq he₂
     (Exec.seq he₃ he₄))) ?_ ?_⟩
-  · simp only [h2c, List.length_replicate, Function.update_of_ne ‹a ≠ cnt›.symm,
-      ]
+  · simp only [h2c, List.length_replicate, Function.update_of_ne ‹a ≠ cnt›.symm]
     simp [Function.update_of_ne, *]
     omega
   · congr 2
@@ -613,8 +612,7 @@ theorem bmoveLow_exec {s t d : Fin T} (hst : s ≠ t) (hdt : d ≠ t) (v : HS T 
   · simp [movedR, ht, List.tail_reverse]; ring
   · congr 2
     funext k
-    simp only [Function.update_apply, movedR, List.map_id, ht, List.append_nil, 
-      ]
+    simp only [Function.update_apply, movedR, List.map_id, ht, List.append_nil]
     split_ifs <;> simp_all
 
 /-- Shift: push `g v` onto `s`, then drop the last symbol of `s` through `t`. On a numeral of

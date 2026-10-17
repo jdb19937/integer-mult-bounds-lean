@@ -57,7 +57,7 @@ set_option maxHeartbeats 1000000
 instance : Fintype TwReg :=
   Fintype.ofList [.src, .dst, .acc, .wn, .rwn, .ad, .rl, .hn, .lh, .x, .tl, .hd, .c, .v, .vp, .f,
     .g, .z, .sg, .as, .t1, .t2, .t3, .t4, .t5, .cy, .st, .pa, .pz, .ps, .pv, .nn, .nm]
-    (by intro x; cases x <;> simp)
+    (by intro a; cases a <;> simp)
 
 /-- The persistent registers: the round counter `c` and its spare `t`, the named position `h`,
 the parameters `K`, `ℓ`, `b`, `D`, `Lg` (long axes), `N`, `w`, `r`, `lr` (`log₂ r`), the axis
@@ -74,7 +74,7 @@ instance : Fintype SynP :=
 
 /-- The registers of the transform machines. -/
 inductive SynW
-  | tw (x : TwReg)
+  | tw (a : TwReg)
   | ly (i : Fin 24)
   | p (x : SynP)
   | s (i : Fin 32)
@@ -107,10 +107,10 @@ theorem sreg_injective : Function.Injective sreg := by
   simpa [sreg_eq] using h
 
 /-- The twiddle registers. -/
-noncomputable def synTg (x : TwReg) : Fin (nT SXReg) := sreg (.tw x)
+noncomputable def synTg (a : TwReg) : Fin (nT SXReg) := sreg (.tw a)
 
 theorem synTg_injective : Function.Injective synTg := by
-  intro x y h
+  intro a b h
   simpa [synTg, sreg_eq] using h
 
 /-- The layout registers: the interchange bank on the bank `swp 0` of the layer machine, the
@@ -492,8 +492,7 @@ theorem lr_synDivModR {x k q r t₁ t₂ t₃ : Fin T} (hreg : [x, k, q, r, t₁
         simp only [hR₃, hR₂, hR₁, hR₀, Φ, Function.update_apply, hm, hd]
         clear hm hd hlt hne hjK
         split_ifs <;> simp_all [List.replicate_succ]
-      · simp only [hR₃, Function.update_self, List.length_replicate, 
-          ]
+      · simp only [hR₃, Function.update_self, List.length_replicate]
         omega
     · have hKe : j % K + 1 = K := by omega
       have he : R₃ t₂ = [] := by simp [hR₃]; omega

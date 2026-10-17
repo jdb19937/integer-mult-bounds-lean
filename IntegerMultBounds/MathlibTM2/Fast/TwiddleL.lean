@@ -193,7 +193,7 @@ theorem twRuns_gatherOne {N p : ℕ} (hp : p < N) (R : TwReg → List (Fin (A + 
     have h2 : TwRuns body tg (.act (.peek (.rt (tg .pa)) (fun v o => { v with sym := o })
         (.push (.rt (tg .ad)) (fun v => v.sym.getD blank) .done))) R₁
         (Function.update R₁ .ad (bitSymbol (abits.getD p false) :: R₁ .ad)) 1 := by
-      refine twRuns_act htg _ (fun v S hS => ?_)
+      refine twRuns_act _ (fun v S hS => ?_)
       refine ⟨{ v with sym := some (bitSymbol (abits.getD p false)) }, { S with
         R := Function.update S.R (tg .ad) (bitSymbol (abits.getD p false) :: S.R (tg .ad)) },
         rfl, ?_, ?_, twFr_upd S TwReg.ad _⟩
@@ -252,7 +252,7 @@ theorem twRuns_gatherOne {N p : ℕ} (hp : p < N) (R : TwReg → List (Fin (A + 
         simp only [hip, ↓reduceIte]
         refine twRunsS_cond_false (fun v hv => by simp [hv, tw_tick_ne_false.symm])
           (twRunsS_of ?_)
-        refine twRuns_congr (twRuns_act htg .done (fun v S hS => ⟨v, S, rfl, rfl, hS,
+        refine twRuns_congr (twRuns_act .done (fun v S hS => ⟨v, S, rfl, rfl, hS,
           twFr_refl S⟩)) ?_
         have hmin : min (i + 1) p = p := min_eq_right (by omega)
         have hmin' : min i p = p := min_eq_right (by omega)
@@ -422,8 +422,7 @@ theorem twPassL_runs (fwd : Bool) (hA : 5 ≤ A) {es : List ℕ} {ℓ h w m₀ M
   have hne : ∀ j < M, st j .src ≠ [] := by
     intro j hj hnil
     have hl := congrArg List.length hnil
-    simp only [hst, twPassLSt, Function.update_apply, reduceCtorEq, ↓reduceIte,
-      ] at hl
+    simp only [hst, twPassLSt, Function.update_apply, reduceCtorEq, ↓reduceIte] at hl
     rw [twStream_length, List.length_range'] at hl
     have : 0 < (M - j) * (2 ^ ℓ * w) :=
       Nat.mul_pos (by omega) (Nat.mul_pos (by positivity) hw)
@@ -473,6 +472,7 @@ theorem relabel_fwdRoundFlat (es : List ℕ) (L : Equiv.Perm (Fin es.sum)) (h : 
       twFwdFlatL es L h (relabel L (Hl (Fin r) (selFin es h) (relabel L.symm f))) := by
   rw [twFwdFlatL, relabel_symm_relabel]; rfl
 
+omit [NeZero r] in
 /-- The opposite round in the layout `L` is `twOppFlatL` followed by its butterflies. -/
 theorem relabel_oppRoundFlat (es : List ℕ) (L : Equiv.Perm (Fin es.sum)) (h : ℕ)
     (f : Arr (Fin r) es.sum) :

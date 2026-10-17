@@ -66,7 +66,7 @@ theorem pm_map_bitSymbol {A : ℕ} :
       congr 1
       rw [hv, Fin.val_succ, Nat.testBit_succ]
       congr 1
-      cases b <;> simp <;> omega
+      cases b <;> simp; omega
 
 theorem pm_value_ge : ∀ bs : List Bool, bs.getLast? = some true →
     2 ^ (bs.length - 1) ≤ Counter.value bs

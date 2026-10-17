@@ -203,7 +203,7 @@ theorem pm_s1 (hn : 2 ≤ n) (hW : 4 * b n + 32 ≤ W) :
     refine (pmClogC_do _ h0 (by omega)).mono ?_ le_rfl
     rintro s' ⟨e0, e1, ea⟩
     refine ⟨by rw [ea]; exact hs.1, e1, fun y hy => ?_⟩
-    fin_cases y <;> simp [pmVal, pmNV] at hy ⊢ <;> assumption
+    fin_cases y <;> simp [pmVal, pmNV] at hy ⊢; assumption
 
 theorem pm_s2 (hW : 4 * b n + 32 ≤ W) :
     ∀ s, PmF n 2 acc s → TblDo A W w ((pmLinC 6 0).rename ![1, 2, 31, 32]) s (PmF n 3 acc) 10 :=
@@ -215,7 +215,7 @@ theorem pm_s2 (hW : 4 * b n + 32 ≤ W) :
     refine (pmLinC_do 6 0 _ h0 (by omega)).mono ?_ le_rfl
     rintro s' ⟨e0, e1, ea⟩
     refine ⟨by rw [ea]; exact hs.1, by rw [e1]; simp [pmVal, p], fun y hy => ?_⟩
-    fin_cases y <;> simp [pmVal, pmNV] at hy ⊢ <;> assumption
+    fin_cases y <;> simp [pmVal, pmNV] at hy ⊢; assumption
 
 theorem pm_sq_lt (hW : 4 * b n + 32 ≤ W) {x : ℕ} (hx : x ≤ b n) : (x + 1) * (x + 1) < 2 ^ W := by
   have h1 : x + 1 ≤ 2 ^ b n := by have := pm_b_lt n; omega
@@ -260,7 +260,7 @@ theorem pm_s4 (hW : 4 * b n + 32 ≤ W) :
       (by change 7 * 32 + 11 + K n * (6 * 32 + 8) ≤ 7 * 34 + 11 + K n * (6 * 34 + 8); omega)
     rintro s' ⟨e0, e1, ea⟩
     refine ⟨by rw [ea]; exact hs.1, by rw [e1]; rfl, fun y hy => ?_⟩
-    fin_cases y <;> simp [pmVal, pmNV] at hy ⊢ <;> assumption
+    fin_cases y <;> simp [pmVal, pmNV] at hy ⊢; assumption
 
 theorem pm_s5 (hn : 2 ≤ n) (hW : 4 * b n + 32 ≤ W) :
     ∀ s, PmF n 5 acc s → TblDo A W w (pmLogTC.rename ![0, 1, 5, 31, 32]) s (PmF n 6 acc)
@@ -334,7 +334,7 @@ theorem pm_s9 (hn : 2 ≤ n) (hW : 4 * b n + 32 ≤ W) :
     refine (pmSubKC_do 1 _ h0 (pm_one_le_ℓ hn) (by omega)).mono ?_ le_rfl
     rintro s' ⟨e0, e1, ea⟩
     refine ⟨by rw [ea]; exact hs.1, by rw [e1]; simp [pmVal], fun y hy => ?_⟩
-    fin_cases y <;> simp [pmVal, pmNV] at hy ⊢ <;> assumption
+    fin_cases y <;> simp [pmVal, pmNV] at hy ⊢; assumption
 
 theorem pm_s10 (hn : 2 ≤ n) (hW : 4 * b n + 32 ≤ W) :
     ∀ s, PmF n 10 acc s → TblDo A W w ((tblPow2 1 0 2).rename ![9, 10, 31]) s (PmF n 11 acc)
@@ -397,7 +397,7 @@ theorem pm_s13 (hn : 2 ≤ n) (hW : 4 * b n + 32 ≤ W) :
     refine (pmSqC_do _ h0 (by rw [← sq]; omega)).mono ?_ le_rfl
     rintro s' ⟨e0, e1, ea⟩
     refine ⟨by rw [ea]; exact hs.1, by rw [e1]; simp [pmVal], fun y hy => ?_⟩
-    fin_cases y <;> simp [pmVal, pmNV] at hy ⊢ <;> assumption
+    fin_cases y <;> simp [pmVal, pmNV] at hy ⊢; assumption
 
 theorem pm_s14 (hn : 2 ≤ n) (hW : 4 * b n + 32 ≤ W) :
     ∀ s, PmF n 14 acc s → TblDo A W w (pmGammaC.rename ![3, 13, 14, 31]) s (PmF n 15 acc) 5 :=
@@ -451,7 +451,7 @@ theorem pm_s16 (hn : 2 ≤ n) (hW : 4 * b n + 32 ≤ W) :
     refine (pmOddC_do _ h0 (by omega)).mono ?_ le_rfl
     rintro s' ⟨e0, e1, ea⟩
     refine ⟨by rw [ea]; exact hs.1, by rw [e1]; simp [pmVal, N], fun y hy => ?_⟩
-    fin_cases y <;> simp [pmVal, pmNV] at hy ⊢ <;> assumption
+    fin_cases y <;> simp [pmVal, pmNV] at hy ⊢; assumption
 
 theorem pm_s17 (hn : 2 ≤ n) (hW : 4 * b n + 32 ≤ W) :
     ∀ s, PmF n 17 acc s → TblDo A W w (pmStartC.rename ![3, 10, 16, 17, 31, 32]) s
@@ -568,7 +568,7 @@ theorem pm_s21 (hW : 4 * b n + 32 ≤ W) :
     refine (pmClogAddC_do 4 _ h0 (pm_small_lt hW (by omega)).le).mono ?_ le_rfl
     rintro s' ⟨e0, e1, ea⟩
     refine ⟨by rw [ea]; exact hs.1, by rw [e1]; simp [pmVal, chirpGuard], fun y hy => ?_⟩
-    fin_cases y <;> simp [pmVal, pmNV] at hy ⊢ <;> assumption
+    fin_cases y <;> simp [pmVal, pmNV] at hy ⊢; assumption
 
 theorem pm_s22 (hW : 4 * b n + 32 ≤ W) :
     ∀ s, PmF n 22 acc s → TblDo A W w ((pmLinC 1 14).rename ![2, 22, 31, 32]) s (PmF n 23 acc)
@@ -579,7 +579,7 @@ theorem pm_s22 (hW : 4 * b n + 32 ≤ W) :
     refine (pmLinC_do 1 14 _ h0 (pm_small_lt hW (by omega)).le).mono ?_ le_rfl
     rintro s' ⟨e0, e1, ea⟩
     refine ⟨by rw [ea]; exact hs.1, by rw [e1]; simp [pmVal, taylorTerms], fun y hy => ?_⟩
-    fin_cases y <;> simp [pmVal, pmNV] at hy ⊢ <;> assumption
+    fin_cases y <;> simp [pmVal, pmNV] at hy ⊢; assumption
 
 theorem pm_s23 (hW : 4 * b n + 32 ≤ W) :
     ∀ s, PmF n 23 acc s → TblDo A W w ((pmClogAddC 4).rename ![22, 23, 31, 32]) s
@@ -591,7 +591,7 @@ theorem pm_s23 (hW : 4 * b n + 32 ≤ W) :
     refine (pmClogAddC_do 4 _ h0 (pm_small_lt hW (by omega)).le).mono ?_ le_rfl
     rintro s' ⟨e0, e1, ea⟩
     refine ⟨by rw [ea]; exact hs.1, by rw [e1]; simp [pmVal, taylorGuard], fun y hy => ?_⟩
-    fin_cases y <;> simp [pmVal, pmNV] at hy ⊢ <;> assumption
+    fin_cases y <;> simp [pmVal, pmNV] at hy ⊢; assumption
 
 theorem pm_s24 (hW : 4 * b n + 32 ≤ W) :
     ∀ s, PmF n 24 acc s → TblDo A W w ((pmLin2C 1 2).rename ![2, 23, 24, 31, 32]) s
@@ -616,7 +616,7 @@ theorem pm_s25 (hW : 4 * b n + 32 ≤ W) :
     refine (pmLinC_do 5 4 _ h0 (pm_small_lt hW (by omega)).le).mono ?_ le_rfl
     rintro s' ⟨e0, e1, ea⟩
     refine ⟨by rw [ea]; exact hs.1, by rw [e1]; simp [pmVal], fun y hy => ?_⟩
-    fin_cases y <;> simp [pmVal, pmNV] at hy ⊢ <;> assumption
+    fin_cases y <;> simp [pmVal, pmNV] at hy ⊢; assumption
 
 theorem pm_s26 (hW : 4 * b n + 32 ≤ W) :
     ∀ s, PmF n 26 acc s → TblDo A W w ((pmLin2C 1 14).rename ![2, 21, 26, 31, 32]) s
@@ -643,7 +643,7 @@ theorem pm_s27 (hW : 4 * b n + 32 ≤ W) :
     refine (pmClogAddC_do 4 _ h0 (pm_small_lt hW (by omega)).le).mono ?_ le_rfl
     rintro s' ⟨e0, e1, ea⟩
     refine ⟨by rw [ea]; exact hs.1, by rw [e1]; simp [pmVal, taylorGuard], fun y hy => ?_⟩
-    fin_cases y <;> simp [pmVal, pmNV] at hy ⊢ <;> assumption
+    fin_cases y <;> simp [pmVal, pmNV] at hy ⊢; assumption
 
 theorem pm_s28 (hW : 4 * b n + 32 ≤ W) :
     ∀ s, PmF n 28 acc s → TblDo A W w ((pmLin2C 1 0).rename ![2, 21, 28, 31, 32]) s
@@ -686,7 +686,7 @@ theorem pm_s30 (hW : 4 * b n + 32 ≤ W) :
     refine (pmLinC_do 5 4 _ h0 (pm_small_lt hW (by omega)).le).mono ?_ le_rfl
     rintro s' ⟨e0, e1, ea⟩
     refine ⟨by rw [ea]; exact hs.1, by rw [e1]; simp [pmVal, anglePrec], fun y hy => ?_⟩
-    fin_cases y <;> simp [pmVal, pmNV] at hy ⊢ <;> assumption
+    fin_cases y <;> simp [pmVal, pmNV] at hy ⊢; assumption
 
 /-- The emitted axis lengths `t_0, …, t_{d-1}`, as pair symbols. -/
 def pmTList (A w n : ℕ) : List (Fin (A + 4)) :=

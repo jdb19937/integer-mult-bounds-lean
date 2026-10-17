@@ -418,8 +418,7 @@ theorem fixAt_exec {src r0 r1 r2 r3 q0 q1 q2 q3 ctrB cnt tmp st : Fin T} {cf : F
     intro x hx
     rcases hx with rfl | rfl | rfl | rfl
     · rw [hoth₁ _ (Ne.symm n_src_q0) (fun d => by fin_cases d <;> simp [n_r0_q0, 
-        n_r1_q0, n_r2_q0, n_r3_q0,
-        ]) (fun f => hcf f _ (by simp)), hq0]
+        n_r1_q0, n_r2_q0, n_r3_q0]) (fun f => hcf f _ (by simp)), hq0]
     · rw [hoth₁ _ (Ne.symm n_src_q1) (fun d => by fin_cases d <;> simp [n_r0_q1, 
         n_r1_q1, n_r2_q1, 
         n_r3_q1]) (fun f => hcf f _ (by simp)), hq1]

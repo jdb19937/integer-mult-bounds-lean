@@ -475,7 +475,7 @@ theorem src_conj_runs (M : SrcMach t₀ T Q) (hA : 96 ≤ prime + K) {w : ℕ} (
       (l.length * (5 * w + 6) + 2 + (2 * (l.length * w) + 2)) := by
   have hd' := hd
   regs_ne hd'
-  have h1 := cst_conj_runs (body := body) (ι := M.ι) M.hrg M.hdisj (src := src) (out := .x .cB)
+  have h1 := cst_conj_runs (body := body) (ι := M.ι) M.hrg (src := src) (out := .x .cB)
     (st := .m .tmp) (ctr := .m .wn) (tmp := .m .tmp) hd ‹src ≠ .m .tmp› (by omega) hw ρ l hsrc
     hctr htmp
   have h2 := rsa_moveR (body := body) (ι := M.ι) M.hrg (a := .x .cB) (b := dst) (Ne.symm hdB)

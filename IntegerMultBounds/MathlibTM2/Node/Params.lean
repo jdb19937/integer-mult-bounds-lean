@@ -577,8 +577,7 @@ theorem udiv_exec {c : ℕ} (hc : 1 ≤ c) {a b t : Fin T} (hab : a ≠ b) (hat 
   · simp [Function.update_of_ne hbt.symm, ht]; omega
   · congr 2
     funext k
-    simp only [movedR, Function.update_apply, List.map_id, ht, List.append_nil,
-      ]
+    simp only [movedR, Function.update_apply, List.map_id, ht, List.append_nil]
     split_ifs <;> simp_all
 
 /-! ### Scanning with a program body -/
@@ -717,8 +716,7 @@ theorem udbl_exec {b t₂ : Fin T} (hbt : b ≠ t₂) (v : HS T Q A U) (S : Stac
   · congr 2
     rw [foldl_pushFx]
     funext k
-    simp only [movedR, Function.update_apply, List.map_id, ht, List.append_nil, id,
-      ]
+    simp only [movedR, Function.update_apply, List.map_id, ht, List.append_nil, id]
     split_ifs <;> simp_all [List.replicate]
 
 /-- Make `b` hold `2 ^ |a|` copies of each of its symbols: double `b` once per symbol of `a`
@@ -827,8 +825,7 @@ theorem expStep_exec (G F : ℕ) {e t₂ t₃ : Fin T} (hreg : [e, t₂, t₃].N
   · simp [hS₂, hS₁, movedR, Function.update_of_ne he2.symm, ht₂]; ring
   · congr 2
     funext k
-    simp only [hS₂, hS₁, movedR, Function.update_apply, List.map_id, ht₂, List.append_nil,
-      ]
+    simp only [hS₂, hS₁, movedR, Function.update_apply, List.map_id, ht₂, List.append_nil]
     split_ifs <;> simp_all [List.replicate_append_replicate, Nat.add_comm]
 
 /-- The exponent program: copy `|uR|` ticks onto the empty `eR` (through `t₁`), then run

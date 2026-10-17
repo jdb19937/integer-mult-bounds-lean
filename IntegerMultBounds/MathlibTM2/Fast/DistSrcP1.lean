@@ -362,8 +362,7 @@ theorem ds_P1 (R : Regs T A) {n Wt : ℕ} (hn : 2 ≤ n) (hd0 : 0 < d n) (hWt : 
   · refine (s1.seq (s2.seq (s3.seq (s4.seq (s5.seq (s6.seq (s7.seq (s8.seq (s9.seq (s10.seq
       (s11.seq (s12.seq (s13.seq (s14.seq (s15.seq s16))))))))))))))).congr_left
       (by rw [dsV1_pm]) |>.mono ?_
-    simp only [List.length_reverse, ds_ldcBlocks_length, List.length_ofFn, lA, lB,
-      ]
+    simp only [List.length_reverse, ds_ldcBlocks_length, List.length_ofFn, lA, lB]
     unfold dsP1Cost
     omega
 

@@ -141,7 +141,7 @@ theorem rsa_axis (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ : SS.states �
       ln := cstream A w l.flatten
       ob := (cstream A w (done.flatMap f)).reverse }.get with hst'
   have ht0 : 0 < t := by omega
-  have hloop := rsa_cwhileP_runs (body := body) hrg hdisj (α := List GaussianInt) .ln
+  have hloop := rsa_cwhileP_runs (body := body) hdisj (α := List GaussianInt) .ln
     (rsaLineP rg ι hι hT hQ) (fun a => a.length = t ∧ ∀ x ∈ a.take s, Fits w x) st
     (rsaLineCost T w s t m L)
     (fun a rest done ⟨ha, haF⟩ => by

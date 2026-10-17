@@ -775,8 +775,7 @@ theorem recBody_exec (sn stmp tpl tmp rx acc : Fin T)
             acc ((emitT A t l).reverse ++ S.R acc) }) := by
   have hn := hreg
   have hr := List.nodup_reverse.2 hreg
-  simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append,
-    ] at hr
+  simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append] at hr
   simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
     List.nodup_nil, and_true, not_false_eq_true] at hn hr
   set S₀ : Stacks T A := { S with
@@ -851,8 +850,7 @@ theorem records_loop (sn stmp tpl tmp rx acc : Fin T)
               bitSymbol)) acc ((emitN A t sl.length l).reverse ++ S.R acc) }) := by
   have hn := hreg
   have hr := List.nodup_reverse.2 hreg
-  simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append,
-    ] at hr
+  simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append] at hr
   simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
     List.nodup_nil, and_true, not_false_eq_true] at hn hr
   intro sl
@@ -1050,8 +1048,7 @@ theorem digitRecords_exec_bits (rx bn pn wn sn tpl tmp stmp acc dst : Fin T)
             (emitN A (tplOf A (p - b - 2) b (w - p + 2)) S l ++ St.R dst) }) := by
   have hn := hreg
   have hr := List.nodup_reverse.2 hreg
-  simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append,
-    ] at hr
+  simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append] at hr
   simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
     List.nodup_nil, and_true, not_false_eq_true] at hn hr
   obtain ⟨t, ht⟩ : ∃ t, t = tplOf A (p - b - 2) b (w - p + 2) := ⟨_, rfl⟩

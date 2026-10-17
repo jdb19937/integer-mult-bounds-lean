@@ -157,15 +157,18 @@ variable {A t₀ : ℕ} {n w Wt : ℕ} {hd0 : 0 < d n} {X X' : DsY t₀ → List
   (hX : ∀ y, y ≠ .o .uW → y ≠ .o .uw → X y = [])
 include hv ho hX
 
+omit ho hX in
 /-- The writes of the converter on a written register. -/
 theorem ds_srcE_key (y : DsY t₀) (l : List (Fin (A + 4)))
     (h : (y, l) ∈ dsSrcW (A := A) (t₀ := t₀) n w Wt hd0) : X' y = l := hv (y, l) h
 
+omit hv in
 /-- The writes of the converter off the written registers. -/
 theorem ds_srcE_off (y : DsY t₀) (h : y ∉ (dsKeys : List (DsY t₀))) (h1 : y ≠ .o .uW)
     (h2 : y ≠ .o .uw) : X' y = [] := by
   rw [ho y (by rwa [dsSrcW_keys]), hX y h1 h2]
 
+omit hv hX in
 /-- The converter's own inputs are untouched. -/
 theorem ds_srcE_in : X' (.o .uW) = X (.o .uW) ∧ X' (.o .uw) = X (.o .uw) :=
   ⟨ho _ (by rw [dsSrcW_keys]; simp [dsKeys]), ho _ (by rw [dsSrcW_keys]; simp [dsKeys])⟩
@@ -173,8 +176,8 @@ theorem ds_srcE_in : X' (.o .uW) = X (.o .uW) ∧ X' (.o .uw) = X (.o .uw) :=
 set_option maxHeartbeats 2000000 in
 theorem ds_srcE_get_a (r : RsaR (RsaX t₀)) :
     X' (.s (.a r)) = (dsSrcE (t₀ := t₀) n w Wt hd0).get (.a r) := by
-  have key := ds_srcE_key hv ho hX
-  have off := ds_srcE_off hv ho hX
+  have key := ds_srcE_key hv
+  have off := ds_srcE_off ho hX
   cases r <;> try (rename_i x; cases x)
   all_goals
     simp only [SrcF.get_a, dsSrcE, dsSrcEa]
@@ -186,8 +189,8 @@ theorem ds_srcE_get_a (r : RsaR (RsaX t₀)) :
 set_option maxHeartbeats 2000000 in
 theorem ds_srcE_get_b (r : RsbR ⊕ RsbX t₀) :
     X' (.s (.b r)) = (dsSrcE (t₀ := t₀) n w Wt hd0).get (.b r) := by
-  have key := ds_srcE_key hv ho hX
-  have off := ds_srcE_off hv ho hX
+  have key := ds_srcE_key hv
+  have off := ds_srcE_off ho hX
   rcases r with r | r <;> cases r <;> try (rename_i x; cases x)
   all_goals
     simp only [SrcF.get_b, dsSrcE, dsSrcEb]
@@ -199,8 +202,8 @@ theorem ds_srcE_get_b (r : RsbR ⊕ RsbX t₀) :
 set_option maxHeartbeats 2000000 in
 theorem ds_srcE_get_k (r : CsR ldcX) :
     X' (.s (.k r)) = (dsSrcE (t₀ := t₀) n w Wt hd0).get (.k r) := by
-  have key := ds_srcE_key hv ho hX
-  have off := ds_srcE_off hv ho hX
+  have key := ds_srcE_key hv
+  have off := ds_srcE_off ho hX
   cases r <;> try (rename_i x; cases x) <;> try (rename_i y; cases y)
   all_goals
     simp only [SrcF.get_k, dsSrcE, dsSrcEk]
@@ -212,8 +215,8 @@ theorem ds_srcE_get_k (r : CsR ldcX) :
 set_option maxHeartbeats 2000000 in
 theorem ds_srcE_get_v (r : CvR) :
     X' (.s (.v r)) = (dsSrcE (t₀ := t₀) n w Wt hd0).get (.v r) := by
-  have key := ds_srcE_key hv ho hX
-  have off := ds_srcE_off hv ho hX
+  have key := ds_srcE_key hv
+  have off := ds_srcE_off ho hX
   cases r <;> try (rename_i x; cases x)
   all_goals
     simp only [SrcF.get_v, dsSrcE, dsSrcEv]
@@ -225,8 +228,8 @@ theorem ds_srcE_get_v (r : CvR) :
 set_option maxHeartbeats 2000000 in
 theorem ds_srcE_get_c (r : CrtReg) :
     X' (.s (.c r)) = (dsSrcE (t₀ := t₀) n w Wt hd0).get (.c r) := by
-  have key := ds_srcE_key hv ho hX
-  have off := ds_srcE_off hv ho hX
+  have key := ds_srcE_key hv
+  have off := ds_srcE_off ho hX
   cases r
   all_goals
     simp only [SrcF.get_c, dsSrcE, dsSrcEc]
@@ -238,8 +241,8 @@ theorem ds_srcE_get_c (r : CrtReg) :
 set_option maxHeartbeats 2000000 in
 theorem ds_srcE_get_m (r : CR) :
     X' (.s (.m r)) = (dsSrcE (t₀ := t₀) n w Wt hd0).get (.m r) := by
-  have key := ds_srcE_key hv ho hX
-  have off := ds_srcE_off hv ho hX
+  have key := ds_srcE_key hv
+  have off := ds_srcE_off ho hX
   cases r
   all_goals
     simp only [SrcF.get_m, dsSrcE, dsSrcEm]
@@ -251,8 +254,8 @@ theorem ds_srcE_get_m (r : CR) :
 set_option maxHeartbeats 2000000 in
 theorem ds_srcE_get_x (r : SrcX) :
     X' (.s (.x r)) = (dsSrcE (t₀ := t₀) n w Wt hd0).get (.x r) := by
-  have key := ds_srcE_key hv ho hX
-  have off := ds_srcE_off hv ho hX
+  have key := ds_srcE_key hv
+  have off := ds_srcE_off ho hX
   cases r
   all_goals
     simp only [SrcF.get_x, dsSrcE, dsSrcEx]
@@ -269,14 +272,14 @@ theorem ds_srcE_get (r : SrcR t₀) : X' (.s r) = (dsSrcE n w Wt hd0).get r := b
   | k r => exact ds_srcE_get_k hv ho hX r
   | v r => exact ds_srcE_get_v hv ho hX r
   | c r => exact ds_srcE_get_c hv ho hX r
-  | cb j => exact ds_srcE_off hv ho hX _ (by simp [dsKeys]) (by simp) (by simp)
+  | cb j => exact ds_srcE_off ho hX _ (by simp [dsKeys]) (by simp) (by simp)
   | m r => exact ds_srcE_get_m hv ho hX r
   | x r => exact ds_srcE_get_x hv ho hX r
 
 /-- **The final family file on the converter's own outputs.** -/
 theorem ds_srcO_get (x : DsX) (h1 : x ≠ .uW) (h2 : x ≠ .uw) : X' (.o x) = dsSrcO n w x := by
-  have key := ds_srcE_key hv ho hX
-  have off := ds_srcE_off hv ho hX
+  have key := ds_srcE_key hv
+  have off := ds_srcE_off ho hX
   cases x
   all_goals
     first

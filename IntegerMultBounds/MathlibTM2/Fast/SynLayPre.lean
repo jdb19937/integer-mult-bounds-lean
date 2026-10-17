@@ -264,8 +264,7 @@ theorem sg_slySetup {es : List ℕ} {ℓ K w l : ℕ} {L : Equiv.Perm (Fin es.su
     funext y
     simp only [slyV₂, Function.update_apply, Nat.add_zero, Nat.mul_one, List.append_nil]
     split_ifs <;> simp_all
-  · simp only [slySetupCost, synStashCostW, slyPV, Function.update_apply, ite_true,
-      ]
+  · simp only [slySetupCost, synStashCostW, slyPV, Function.update_apply, ite_true]
     simp
     omega
 
@@ -446,7 +445,7 @@ theorem slyV₃_clean {es : List ℕ} {ℓ K w l : ℕ} {L : Equiv.Perm (Fin es.
   have hs := hv₀.hs
   have hly := hv₀.hly
   funext x
-  rcases x with x | i | x | i
+  rcases x with a | i | a | i
   · simp [synClrW, slyV₃, slyV₂, slyPV]
   · simp only [synClrW, slyV₃, slyV₂, slyPV, Function.update_apply, List.mem_cons,
       List.not_mem_nil, or_false, SynW.ly.injEq, reduceCtorEq, ite_false]

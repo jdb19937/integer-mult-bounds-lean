@@ -68,13 +68,16 @@ def TwRunsS (body : P → Pr P T Q A U) (tg : R → Fin T) (p : Pr P T Q A U) (x
 
 variable {body : P → Pr P T Q A U} {tg : R → Fin T}
 
+omit [DecidableEq R] in
 lemma twFr_refl (S : Stacks T A) : TwFr tg S S := ⟨rfl, rfl, rfl, fun _ _ => rfl⟩
 
+omit [DecidableEq R] in
 lemma twFr_trans {S₁ S₂ S₃ : Stacks T A} (h₁ : TwFr tg S₁ S₂) (h₂ : TwFr tg S₂ S₃) :
     TwFr tg S₁ S₃ :=
   ⟨h₂.1.trans h₁.1, h₂.2.1.trans h₁.2.1, h₂.2.2.1.trans h₁.2.2.1,
     fun k hk => (h₂.2.2.2 k hk).trans (h₁.2.2.2 k hk)⟩
 
+omit [DecidableEq R] in
 theorem twRuns_seq {p q : Pr P T Q A U} {ρ₁ ρ₂ ρ₃ : R → List (Fin (A + 4))} {b₁ b₂ : ℕ}
     (h₁ : TwRuns body tg p ρ₁ ρ₂ b₁) (h₂ : TwRuns body tg q ρ₂ ρ₃ b₂) :
     TwRuns body tg (.seq p q) ρ₁ ρ₃ (b₁ + b₂) := by
@@ -83,22 +86,27 @@ theorem twRuns_seq {p q : Pr P T Q A U} {ρ₁ ρ₂ ρ₃ : R → List (Fin (A 
   obtain ⟨v₂, S₂, n₂, hu₂, hn₂, he₂, hS₂, hf₂⟩ := h₂ v₁ S₁ hS₁
   exact ⟨v₂, S₂, n₁ + n₂, hu₂.trans hu₁, by omega, Exec.seq he₁ he₂, hS₂, twFr_trans hf₁ hf₂⟩
 
+omit [DecidableEq R] in
 theorem twRuns_mono {p : Pr P T Q A U} {ρ ρ' : R → List (Fin (A + 4))} {b b' : ℕ}
     (h : TwRuns body tg p ρ ρ' b) (hb : b ≤ b') : TwRuns body tg p ρ ρ' b' := by
   intro v S hS
   obtain ⟨v', S', n, hu, hn, he, hS', hf⟩ := h v S hS
   exact ⟨v', S', n, hu, hn.trans hb, he, hS', hf⟩
 
+omit [DecidableEq R] in
 theorem twRuns_congr {p : Pr P T Q A U} {ρ ρ' ρ'' : R → List (Fin (A + 4))} {b : ℕ}
     (h : TwRuns body tg p ρ ρ' b) (he : ρ' = ρ'') : TwRuns body tg p ρ ρ'' b := he ▸ h
 
+omit [DecidableEq R] in
 theorem twRuns_congr_left {p : Pr P T Q A U} {ρ ρ₀ ρ' : R → List (Fin (A + 4))} {b : ℕ}
     (h : TwRuns body tg p ρ₀ ρ' b) (he : ρ = ρ₀) : TwRuns body tg p ρ ρ' b := he ▸ h
 
+omit [DecidableEq R] in
 theorem twRunsS_of {p : Pr P T Q A U} {x : Fin (A + 4)} {ρ ρ' : R → List (Fin (A + 4))} {b : ℕ}
     (h : TwRuns body tg p ρ ρ' b) : TwRunsS body tg p x ρ ρ' b :=
   fun v S _ hS => h v S hS
 
+omit [DecidableEq R] in
 theorem twRunsS_seq {p q : Pr P T Q A U} {x : Fin (A + 4)} {ρ₁ ρ₂ ρ₃ : R → List (Fin (A + 4))}
     {b₁ b₂ : ℕ} (h₁ : TwRunsS body tg p x ρ₁ ρ₂ b₁) (h₂ : TwRuns body tg q ρ₂ ρ₃ b₂) :
     TwRunsS body tg (.seq p q) x ρ₁ ρ₃ (b₁ + b₂) := by
@@ -107,16 +115,19 @@ theorem twRunsS_seq {p q : Pr P T Q A U} {x : Fin (A + 4)} {ρ₁ ρ₂ ρ₃ : 
   obtain ⟨v₂, S₂, n₂, hu₂, hn₂, he₂, hS₂, hf₂⟩ := h₂ v₁ S₁ hS₁
   exact ⟨v₂, S₂, n₁ + n₂, hu₂.trans hu₁, by omega, Exec.seq he₁ he₂, hS₂, twFr_trans hf₁ hf₂⟩
 
+omit [DecidableEq R] in
 theorem twRunsS_mono {p : Pr P T Q A U} {x : Fin (A + 4)} {ρ ρ' : R → List (Fin (A + 4))}
     {b b' : ℕ} (h : TwRunsS body tg p x ρ ρ' b) (hb : b ≤ b') : TwRunsS body tg p x ρ ρ' b' := by
   intro v S hx hS
   obtain ⟨v', S', n, hu, hn, he, hS', hf⟩ := h v S hx hS
   exact ⟨v', S', n, hu, hn.trans hb, he, hS', hf⟩
 
+omit [DecidableEq R] in
 theorem twRunsS_congr {p : Pr P T Q A U} {x : Fin (A + 4)} {ρ ρ' ρ'' : R → List (Fin (A + 4))}
     {b : ℕ} (h : TwRunsS body tg p x ρ ρ' b) (he : ρ' = ρ'') : TwRunsS body tg p x ρ ρ'' b :=
   he ▸ h
 
+omit [DecidableEq R] in
 /-- A branch on a test of the symbol in `sym`, taken. -/
 theorem twRunsS_cond_true {f : HS T Q A U → Bool} {p q : Pr P T Q A U} {x : Fin (A + 4)}
     {ρ ρ' : R → List (Fin (A + 4))} {b : ℕ}
@@ -126,6 +137,7 @@ theorem twRunsS_cond_true {f : HS T Q A U → Bool} {p q : Pr P T Q A U} {x : Fi
   obtain ⟨v', S', n, hu, hn, he, hS', hfr⟩ := h v S hx hS
   exact ⟨v', S', n + 1, hu, by omega, Exec.cond_true (hf v hx) he, hS', hfr⟩
 
+omit [DecidableEq R] in
 /-- A branch on a test of the symbol in `sym`, not taken. -/
 theorem twRunsS_cond_false {f : HS T Q A U → Bool} {p q : Pr P T Q A U} {x : Fin (A + 4)}
     {ρ ρ' : R → List (Fin (A + 4))} {b : ℕ}
@@ -152,10 +164,12 @@ lemma twHolds_upd (htg : Function.Injective tg) {S : Stacks T A} {ρ : R → Lis
   have : (fun r => S.R (tg r)) = ρ := funext h
   rw [this]
 
+omit [DecidableEq R] in
 lemma twFr_upd (S : Stacks T A) (a : R) (x : List (Fin (A + 4))) :
     TwFr tg S { S with R := Function.update S.R (tg a) x } :=
   ⟨rfl, rfl, rfl, fun _ hk => Function.update_of_ne (hk a).symm _ _⟩
 
+omit [DecidableEq R] in
 /-- Stacks with an updated register file. -/
 lemma twRuns_of_exec {p : Pr P T Q A U} {ρ : R → List (Fin (A + 4))} (Φ : Regs T A → Regs T A)
     (ρ' : R → List (Fin (A + 4))) (b : ℕ)
@@ -170,6 +184,7 @@ lemma twRuns_of_exec {p : Pr P T Q A U} {ρ : R → List (Fin (A + 4))} (Φ : Re
   obtain ⟨h1, h2⟩ := hΦ S hS
   exact ⟨v', _, n, hu, hn, he, h1, ⟨rfl, rfl, rfl, h2⟩⟩
 
+omit [DecidableEq R] in
 lemma tw_upd_off {β : Type} (g : Fin T → β) (a : R) (x : β) {k : Fin T} (hk : ∀ r, tg r ≠ k) :
     Function.update g (tg a) x k = g k :=
   Function.update_of_ne (hk a).symm _ _
@@ -266,6 +281,7 @@ theorem twRuns_countIter {c tmp : R} (hct : c ≠ tmp) (cy : Fin T) {W j : ℕ}
     (by rw [hS, ht])
   exact ⟨v', _, _, hu, le_rfl, he, twHolds_upd htg hS c _, twFr_upd S c _⟩
 
+omit [DecidableEq R] htg in
 /-- A single action with a known effect on the register file. -/
 theorem twRuns_act (a : Act T Q A U) {ρ ρ' : R → List (Fin (A + 4))}
     (h : ∀ (v : HS T Q A U) (S : Stacks T A), TwHolds tg S ρ →
@@ -276,6 +292,7 @@ theorem twRuns_act (a : Act T Q A U) {ρ ρ' : R → List (Fin (A + 4))}
   obtain ⟨v', S', hu, hrun, hS', hf⟩ := h v S hS
   exact ⟨v', S', 1, hu, le_rfl, hrun ▸ Exec.act (body := body) a (mk v S), hS', hf⟩
 
+omit htg [DecidableEq R] in
 /-- An action followed by a program that reads the symbol the action leaves in `sym`. -/
 theorem twRuns_act_seqS (a : Act T Q A U) {q : Pr P T Q A U} {y : Fin (A + 4)}
     {ρ ρ₁ ρ' : R → List (Fin (A + 4))} {b : ℕ}
@@ -400,7 +417,7 @@ theorem twRuns_mvTop_seqS {src dst : R} (hsd : src ≠ dst) {q : Pr P T Q A U} {
     (hq : TwRunsS body tg q y
       (Function.update (Function.update ρ src rest) dst (y :: ρ dst)) ρ' b) :
     TwRuns body tg (.seq (.act (twMvTop (tg src) (tg dst) .done)) q) ρ ρ' (1 + b) := by
-  refine twRuns_act_seqS htg _ (fun v S hS => ?_) hq
+  refine twRuns_act_seqS _ (fun v S hS => ?_) hq
   refine ⟨{ v with sym := (S.R (tg src)).head? }, { S with R := twMvFx (tg src) (tg dst) S.R },
     rfl, by simp [hS src, hsrc], by rw [twMvTop_run (htg.ne hsd)]; rfl, ?_,
     ⟨rfl, rfl, rfl, fun k hk => ?_⟩⟩
@@ -412,7 +429,7 @@ theorem twRuns_mvTop {src dst : R} (hsd : src ≠ dst) {ρ : R → List (Fin (A 
     {y : Fin (A + 4)} {rest : List (Fin (A + 4))} (hsrc : ρ src = y :: rest) :
     TwRuns body tg (.act (twMvTop (tg src) (tg dst) .done)) ρ
       (Function.update (Function.update ρ src rest) dst (y :: ρ dst)) 1 := by
-  refine twRuns_act htg _ (fun v S hS => ?_)
+  refine twRuns_act _ (fun v S hS => ?_)
   refine ⟨{ v with sym := (S.R (tg src)).head? }, { S with R := twMvFx (tg src) (tg dst) S.R },
     rfl, by rw [twMvTop_run (htg.ne hsd)]; rfl, ?_, ⟨rfl, rfl, rfl, fun k hk => ?_⟩⟩
   · have h1 := twHolds_upd htg (twHolds_upd htg hS src rest) dst (y :: ρ dst)
@@ -425,7 +442,7 @@ theorem twRuns_mvTop2 {src d₁ d₂ : R} (h1 : src ≠ d₁) (h2 : src ≠ d₂
     TwRuns body tg (.act (twMvTop2 (tg src) (tg d₁) (tg d₂))) ρ
       (Function.update (Function.update (Function.update ρ src rest) d₁ (y :: ρ d₁)) d₂
         (y :: ρ d₂)) 1 := by
-  refine twRuns_act htg _ (fun v S hS => ?_)
+  refine twRuns_act _ (fun v S hS => ?_)
   refine ⟨{ v with sym := (S.R (tg src)).head? }, _, rfl,
     twMvTop2_run (htg.ne h1) (htg.ne h2) (htg.ne h12) v S, ?_, ⟨rfl, rfl, rfl, fun k hk => ?_⟩⟩
   · have e := twHolds_upd htg (twHolds_upd htg (twHolds_upd htg hS src rest) d₁ (y :: ρ d₁)) d₂
@@ -440,7 +457,7 @@ theorem twRuns_mvTop2 {src d₁ d₂ : R} (h1 : src ≠ d₁) (h2 : src ≠ d₂
 theorem twRuns_push (a : R) (y : Fin (A + 4)) (ρ : R → List (Fin (A + 4))) :
     TwRuns body tg (.act (.push (.rt (tg a)) (fun _ => y) .done)) ρ
       (Function.update ρ a (y :: ρ a)) 1 := by
-  refine twRuns_act htg _ (fun v S hS => ?_)
+  refine twRuns_act _ (fun v S hS => ?_)
   refine ⟨v, { S with R := Function.update S.R (tg a) (y :: S.R (tg a)) }, rfl, ?_, ?_,
     twFr_upd S a _⟩
   · simp [Action.run, update_rt]
@@ -511,6 +528,7 @@ def twIfTop (g : Fin T) (p q : Pr P T Q A U) : Pr P T Q A U :=
   .seq (.act (.peek (.rt g) (fun v o => { v with sym := o }) .done))
     (.cond (fun v => symBit (v.sym.getD blank)) p q)
 
+omit [DecidableEq R] in
 theorem twRuns_ifTop {g : R} {p q : Pr P T Q A U} {ρ ρ' : R → List (Fin (A + 4))} {bt : Bool}
     {rest : List (Fin (A + 4))} (hg : ρ g = bitSymbol bt :: rest) {b : ℕ}
     (hp : bt = true → TwRuns body tg p ρ ρ' b) (hq : bt = false → TwRuns body tg q ρ ρ' b) :
@@ -662,7 +680,7 @@ theorem twRuns_scanP {a t : R} (hat : a ≠ t) {p : Pr P T Q A U} (l : List (Fin
 def twWhile (g : Fin T) (p : Pr P T Q A U) : Pr P T Q A U :=
   .seq (.act (peekR g)) (.loop (·.flag) (.seq p (.act (peekR g))))
 
-omit htg in
+omit htg [DecidableEq R] in
 /-- **While loop.** Iteration `j < M` takes `st j` to `st (j + 1)`; `g` is nonempty before every
 iteration and empty after the last. -/
 theorem twRuns_while (g : R) (p : Pr P T Q A U) (st : ℕ → R → List (Fin (A + 4))) (M b : ℕ)

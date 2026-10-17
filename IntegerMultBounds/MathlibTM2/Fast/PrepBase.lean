@@ -95,6 +95,7 @@ lemma prePeek_run (g : Fin T) (v : HS T Q A U) (S : Stacks T A) :
 def preWhileTop (g : Fin T) (p : Pr P T Q A U) : Pr P T Q A U :=
   .seq (.act (prePeek g)) (.loop (fun v => symBit (v.sym.getD blank)) (.seq p (.act (prePeek g))))
 
+omit [DecidableEq R] in
 /-- **Loop on the top symbol.** Iteration `j < M` takes `st j` to `st (j + 1)`; the top of `g` is
 a tick before every iteration and not a tick after the last. -/
 theorem twRuns_preWhileTop (g : R) (p : Pr P T Q A U) (st : ℕ → R → List (Fin (A + 4)))
@@ -175,7 +176,7 @@ theorem preTake_runs {src dst : R} (hsd : src ≠ dst) (ρ : R → List (Fin (A 
   rw [h0] at hloop
   have hdrop : TwRuns body tg (.act (dropTop (tg src) .done)) (st v)
       (Function.update (Function.update ρ src rest) dst (List.replicate v tick ++ ρ dst)) 1 := by
-    refine twRuns_act htg _ (fun w S hS => ?_)
+    refine twRuns_act _ (fun w S hS => ?_)
     refine ⟨w, { S with R := Function.update S.R (tg src) (st v src).tail }, rfl, ?_, ?_,
       twFr_upd S src _⟩
     · simp [dropTop, Action.run, update_rt, hS src]
@@ -281,9 +282,10 @@ def preClears : List (Fin T) → Pr P T Q A U
   | [] => .act .done
   | a :: l => .seq (uclear a) (preClears l)
 
+omit [DecidableEq R] htg in
 theorem twRuns_done (ρ : R → List (Fin (A + 4))) :
     TwRuns body tg (.act .done) ρ ρ 1 :=
-  twRuns_act htg _ (fun v S hS => ⟨v, S, rfl, rfl, hS, twFr_refl S⟩)
+  twRuns_act _ (fun v S hS => ⟨v, S, rfl, rfl, hS, twFr_refl S⟩)
 
 /-- **Clearing a list of registers.** -/
 theorem preClears_runs (l : List R) (hl : l.Nodup) (ρ : R → List (Fin (A + 4))) :
@@ -291,7 +293,7 @@ theorem preClears_runs (l : List R) (hl : l.Nodup) (ρ : R → List (Fin (A + 4)
       ((l.map fun r => 2 * (ρ r).length + 2).sum + 1) := by
   induction l generalizing ρ with
   | nil =>
-      refine twRuns_congr (twRuns_mono (twRuns_done htg ρ) (by simp)) ?_
+      refine twRuns_congr (twRuns_mono (twRuns_done ρ) (by simp)) ?_
       funext r; simp
   | cons a l ih =>
       rw [List.nodup_cons] at hl
@@ -330,7 +332,7 @@ theorem preTakes_runs (src : R) (ds : List R) (vs : List ℕ) (hlen : ds.length 
   | nil =>
       have hv : vs = [] := List.eq_nil_of_length_eq_zero hlen.symm
       subst hv
-      refine twRuns_congr (twRuns_mono (twRuns_done htg ρ) (by simp)) ?_
+      refine twRuns_congr (twRuns_mono (twRuns_done ρ) (by simp)) ?_
       simp only [preTV, List.zip_nil_left, List.foldl_nil]
       rw [preRec_nil, List.nil_append] at hsrc
       rw [← hsrc, Function.update_eq_self]
@@ -358,6 +360,7 @@ theorem preTakes_runs (src : R) (ds : List R) (vs : List ℕ) (hlen : ds.length 
       congr 1
       rw [Function.update_comm hsd.symm, Function.update_idem, Function.update_comm hsd]
 
+omit htg [DecidableEq R] in
 theorem twRuns_seq_ex {p q : Pr P T Q A U} {ρ ρ' : R → List (Fin (A + 4))} {X : Type}
     (ρm : X → R → List (Fin (A + 4))) {b₁ b₂ : ℕ}
     (h₁ : ∀ (v : HS T Q A U) (S : Stacks T A), TwHolds tg S ρ →
@@ -446,11 +449,14 @@ def preVMCost (n W w : ℕ) (lens : List ℕ) (K E : ℕ) : ℕ :=
 variable (htg : Function.Injective tg)
 include htg
 
+omit [DecidableEq R] in
 lemma preT_inj : Function.Injective (preT tg) := fun _ _ h => Sum.inr_injective (htg h)
 
+omit [DecidableEq R] in
 lemma preT_ne (r : R) (x : TblR n) : preT tg x ≠ tg (.inl r) := fun h => by
   cases htg h
 
+omit [DecidableEq R] in
 /-- Lift a contract of the table-machine layout. -/
 theorem preTbl_lift {p : Pr P T Q A U} {ρ : R ⊕ TblR n → List (Fin (A + 4))}
     {τ' : TblR n → List (Fin (A + 4))} {b : ℕ}
@@ -476,7 +482,7 @@ theorem preZeroVars_runs (l : List (Fin n)) (hl : l.Nodup) (ρ : R ⊕ TblR n �
       (l.length * (4 * (ρ (.inr .wr)).length + 4) + 1) := by
   induction l generalizing ρ with
   | nil =>
-      refine twRuns_congr (twRuns_mono (twRuns_done htg ρ) (by simp)) ?_
+      refine twRuns_congr (twRuns_mono (twRuns_done ρ) (by simp)) ?_
       funext r; rcases r with r | (i | _ | _ | _ | j) <;> simp [preZV]
   | cons i l ih =>
       rw [List.nodup_cons] at hl
@@ -493,6 +499,7 @@ theorem preZeroVars_runs (l : List (Fin n)) (hl : l.Nodup) (ρ : R ⊕ TblR n �
       · subst hj; simp [hl.1]
       · simp [hj]
 
+omit [DecidableEq R] in
 /-- Load one variable. -/
 theorem preLoad1_runs (u : R) (i : Fin n) {W : ℕ} (wl nl : List (Fin (A + 4)))
     (hwl : wl.length = W) (st : TblSt n A) (ρ : R ⊕ TblR n → List (Fin (A + 4)))
@@ -505,6 +512,7 @@ theorem preLoad1_runs (u : R) (i : Fin n) {W : ℕ} (wl nl : List (Fin (A + 4)))
   exact tbl_load1_runs (preT_inj htg) wl nl hwl (fun x => preT_ne htg u x) i st _ v S
     (by rw [hS (.inl u)]) (fun x => by rw [← hρ x]; exact hS (.inr x))
 
+omit [DecidableEq R] in
 /-- Load a list of variables. -/
 theorem preLoads_runs (ls : List (R × Fin n)) {W : ℕ} (wl nl : List (Fin (A + 4)))
     (hwl : wl.length = W) (st : TblSt n A) (ρ : R ⊕ TblR n → List (Fin (A + 4)))
@@ -514,7 +522,7 @@ theorem preLoads_runs (ls : List (R × Fin n)) {W : ℕ} (wl nl : List (Fin (A +
       ((ls.map fun ui => (ρ (.inl ui.1)).length * (4 * W + 10) + 6 * W + 10).sum + 1) := by
   induction ls generalizing st ρ with
   | nil =>
-      refine twRuns_congr (twRuns_mono (twRuns_done htg ρ) (by simp)) ?_
+      refine twRuns_congr (twRuns_mono (twRuns_done ρ) (by simp)) ?_
       funext r
       cases r with
       | inl r => rfl
@@ -528,6 +536,7 @@ theorem preLoads_runs (ls : List (R × Fin n)) {W : ℕ} (wl nl : List (Fin (A +
       refine twRuns_mono (twRuns_seq h1 h2) (by simp; omega)
 
 omit htg in
+omit [DecidableEq R] in
 lemma preLoadVal_congr {ρ ρ' : R ⊕ TblR n → List (Fin (A + 4))}
     (h : ∀ r, ρ (.inl r) = ρ' (.inl r)) (ls : List (R × Fin n)) (f : Fin n → ℕ) :
     preLoadVal ρ ls f = preLoadVal ρ' ls f := by
@@ -585,7 +594,7 @@ theorem preVM_runs (uW uw : R) (ls : List (R × Fin n)) (code : TblCode n) (o : 
       (Sum.elim (fun r => ρ (.inl r)) (tblRho W wl nl st₀))
       (Function.update ρ (.inl o) (E ++ ρ (.inl o)))
       ((K * tblC W w + 2 * E.length + 2) + (n * (2 * W + 2) + 2 * W + 2 * w + 31)) := by
-    refine twRuns_seq_ex htg ρm (fun v S hS => ?_) (fun x => ?_)
+    refine twRuns_seq_ex ρm (fun v S hS => ?_) (fun x => ?_)
     · obtain ⟨v', S', m, st', hP, hu, hm, he, hout, hS', hi, ho, hL, hk⟩ :=
         tblHost_runs (body := body) (preT_inj htg) (out := tg (.inl o)) (fun x => preT_ne htg o x)
           wl nl (by simp [hwl]) (by simp [hnl]) hwW hdo hst v S (fun x => hS (.inr x))
@@ -650,6 +659,7 @@ variable {T Q A : ℕ} {U P : Type} {R : Type} [DecidableEq R] {body : P → Pr 
 def preLay (rg : R → Fin T) (ι : Fin 64 → Fin T) : R ⊕ TblR 48 → Fin T :=
   Sum.elim rg fun x => ι (preIdx x)
 
+omit [DecidableEq R] in
 lemma preLay_inj {rg : R → Fin T} {ι : Fin 64 → Fin T} (hrg : Function.Injective rg)
     (hι : Function.Injective ι) (hdisj : ∀ r j, rg r ≠ ι j) : Function.Injective (preLay rg ι) := by
   rintro (a | a) (b | b) h <;> simp only [preLay, Sum.elim_inl, Sum.elim_inr] at h
@@ -658,6 +668,7 @@ lemma preLay_inj {rg : R → Fin T} {ι : Fin 64 → Fin T} (hrg : Function.Inje
   · exact absurd h.symm (hdisj _ _)
   · rw [preIdx_inj (hι h)]
 
+omit [DecidableEq R] in
 /-- A contract on the extended layout, with every table-machine register empty before and after,
 is a contract of the stage layout (the multiplier registers start and end empty). -/
 theorem pre_toRuns {rg : R → Fin T} {ι : Fin 64 → Fin T} {p : Pr P T Q A U} {ρ ρ' : R → List (Fin (A + 4))} {b : ℕ}
@@ -678,6 +689,7 @@ theorem pre_toRuns {rg : R → Fin T} {ι : Fin 64 → Fin T} {p : Pr P T Q A U}
   · simp only [not_exists] at hx
     exact hf.2.2.2 k (fun r => by rcases r with r | x; exacts [hk r, hx x])
 
+omit [DecidableEq R] in
 theorem pre_rsaRuns {rg : R → Fin T} {ι : Fin 64 → Fin T} {p : Pr P T Q A U} {ρ ρ' : R → List (Fin (A + 4))} {b : ℕ}
     (h : TwRuns body (preLay rg ι) p (Sum.elim ρ fun _ => []) (Sum.elim ρ' fun _ => []) b) :
     ResampA.RsaRuns body rg ι p ρ ρ' b := by
@@ -685,6 +697,7 @@ theorem pre_rsaRuns {rg : R → Fin T} {ι : Fin 64 → Fin T} {p : Pr P T Q A U
   obtain ⟨v', S', n, hu, hn, he, hS', hf⟩ := pre_toRuns h v S hc.2 hS
   exact ⟨v', S', n, hu, hn, he, hS', hf⟩
 
+omit [DecidableEq R] in
 theorem pre_rsbRuns {rg : R → Fin T} {ι : Fin 64 → Fin T} {p : Pr P T Q A U} {ρ ρ' : R → List (Fin (A + 4))} {b : ℕ}
     (h : TwRuns body (preLay rg ι) p (Sum.elim ρ fun _ => []) (Sum.elim ρ' fun _ => []) b) :
     RsbRuns body rg ι p ρ ρ' b := by

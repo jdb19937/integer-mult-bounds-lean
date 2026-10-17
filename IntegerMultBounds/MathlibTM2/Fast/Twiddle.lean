@@ -159,8 +159,7 @@ theorem twPass_runs (fwd : Bool) (hA : 5 ≤ A) {es : List ℕ} {ℓ h w n₀ M 
   have hne : ∀ j < M, st j .src ≠ [] := by
     intro j hj hnil
     have hl := congrArg List.length hnil
-    simp only [hst, twPassSt, Function.update_apply, reduceCtorEq, ↓reduceIte,
-      ] at hl
+    simp only [hst, twPassSt, Function.update_apply, reduceCtorEq, ↓reduceIte] at hl
     rw [twStream_length, List.length_range'] at hl
     have : 0 < (M - j) * (2 ^ ℓ * w) :=
       Nat.mul_pos (by omega) (Nat.mul_pos (by positivity) hw)

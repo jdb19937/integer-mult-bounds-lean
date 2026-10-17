@@ -494,6 +494,7 @@ theorem rsa_terms (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ : SS.states 
     congr 1
     ext1 <;> simp [rsaTV, hkW]
 
+omit [DecidableEq X] hrg hdisj in
 lemma rsaCr_rsaCr (ρ : CR → List (Fin (A + 4))) (w : ℕ) (a b c d a' b' c' d' : List GaussianInt) :
     rsaCr (rsaCr ρ w a b c d) w a' b' c' d' = rsaCr ρ w a' b' c' d' := by
   funext x
@@ -571,7 +572,7 @@ theorem rsa_row (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ : SS.states �
   have hp := (rsa_usub (body := body) (ι := ι) hrg (a := .c .wn) (b := .c .xs) (t := .kx)
     (by simp) (by simp) (by simp) (Function.update V₄.get .rr (binSyms L ((r + s) % 2 ^ L)))
     (by simp [hV₄, hV₃, hV₁, hkx]))
-  have hq' := rsa_done (body := body) (ι := ι) hrg
+  have hq' := rsa_done (body := body) (rg := rg) (ι := ι)
     (Function.update V₄.get .rr (binSyms L ((r + s) % 2 ^ L)))
   have h5 := rsa_baddTo_cond (body := body) hrg hdisj (a := .rr) (b := .bS) (tx := .bxa)
     (ty := .bya) (tz := .bza) (cy := .bza) (by simp) (by simp) (by simp) hrL hs V₄.get

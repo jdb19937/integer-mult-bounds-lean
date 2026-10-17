@@ -257,7 +257,7 @@ theorem band_costF1_le (D : PreAxB) {T w q u S T1 : ℕ} (hm : D.m ≤ q) (_hα 
     PreAxB.bWd, PreAxB.bB]
   calc _ ≤ 4 * q + 4 + (4 * q + 4) + (4 * (8 * q) + 4) + 1 + (4 * (2 * (8 * q) + 1) + 4) + 1 + (4 * (2
           * (8 * q) + 1) + 4) + 1 + (4 * u + 4) := by
-        gcongr <;> omega
+        gcongr
     _ ≤ _ := by
       have f0000 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 0) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
       have f0001 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 0) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -329,7 +329,7 @@ theorem band_costVM_le (D : PreAxB) {T w q u S T1 : ℕ} (hm : D.m ≤ q) (hα :
           (310 * (5 * q) + 201 + 1 + 2) + 2)) + 1 + 2) + 2))) * (32 * (q + 4) ^ 2 + 8 * q) + 2 * ((2 *
           (8 * q) + 1 + 1 + u) * (2 * (2 * (8 * q) + 1) + 1) * q) + 2) + (60 * (2 * q + 2) + 2 * q + 2
           * q + 31) := by
-        gcongr <;> omega
+        gcongr
     _ ≤ _ := by
       have f0000 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 0) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
       have f0001 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 0) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -400,7 +400,7 @@ theorem band_costF2_le (D : PreAxB) {T w q u S T1 : ℕ} (hm : D.m ≤ q) (hα :
           1) * (2 * (2 * (8 * q) + 1) + 1)) + 4 + (2 * (2 * (8 * q) + 1 + 1) + 2 + (2 * ((2 * (8 * q)
           + 1 + 1) * (2 * (2 * (8 * q) + 1) + 1)) + 2))))) + (4 * q + 4 + (q * (4 * q + 7) + 2 * q + 4
           + (2 * q + 2 + (4 * (q * q) + 4 + (4 * q + 4))))))) := by
-        gcongr <;> omega
+        gcongr
     _ ≤ _ := by
       have f0000 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 0) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
       have f0001 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 0) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -610,7 +610,7 @@ theorem band_costB2b_le (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4)))
           (9 * q + 1) + 5 + 2)) * (32 * (q + 4) ^ 2 + 8 * q) + 2 * q + 2) + (48 * (2 * q + 2) + 2 * q
           + 2 * q + 31) + (2 * (9 * q + 1) + 2))) + (u * ((288 * S * T1 * q ^ 3) + 6 * q + 8) + 6 + (2
           * (u * q) + 2) + ((List.map (fun r => 2 * (σ r).length + 2) bandScrL).sum + 1 + 2 * q + 2))) := by
-        gcongr <;> omega
+        gcongr; omega
     _ ≤ _ := by
       have f0000 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 0) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
       have f0001 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 0) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -682,7 +682,7 @@ theorem band_costPrep_le (D : PreAxB) {T w q u S T1 : ℕ} (hm : D.m ≤ q) (hα
           (40 * (2 * (8 * q) + 2) * (2 * (8 * q) + 2) * q + 40 * (2 * (8 * q)) + 100 + 6) + 4 + (2 *
           ((2 * (8 * q) + 1) * (2 * (8 * q) + 1) * q) + 2) + (2 * (u * (2 * (8 * q) + 1) * q) + 2) +
           (2 * (u * (2 * (8 * q) + 1) * q) + 2))) := by
-        gcongr <;> omega
+        gcongr
     _ ≤ _ := by
       have f0000 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 0) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
       have f0001 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 0) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -809,7 +809,7 @@ theorem band_polyScr_le (D : PreAxB) {w q u S T1 : ℕ} (hm : D.m ≤ q) (hα : 
   simp only [PreAxB.bB, PreAxB.bWd]
   calc _ ≤ 2 * (u + q + q + q + q + q * q + (8 * q) + (2 * (8 * q) + 1) + (2 * (2 * (8 * q) + 1) + 1))
           + 20 := by
-        gcongr <;> omega
+        gcongr
     _ ≤ _ := by
       have f0000 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 0) (k := 0) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
       have f0001 := band_mono hS hT hu hq (a := 0) (b := 0) (c := 0) (k := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)

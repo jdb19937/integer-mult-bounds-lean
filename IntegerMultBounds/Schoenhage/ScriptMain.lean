@@ -592,8 +592,7 @@ theorem runs_hadPre (ℓ K : ℕ) (ts : List ℕ) (hd tt : WTape) (h : ℕ) (acc
   have hpe : preExp ℓ K ts h = E0 + h * ts.length := by rw [hE0]; rfl
   have hc : (σ₂ mEX).cur.length = E0 := by tsimp [hσ₂, reg]
   simp only [hadPreCost, clen, WTape.words, reg, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil,
-    length_ones, List.length_cons, List.length_nil, List.reverse_nil, List.nil_append, 
-    ]
+    length_ones, List.length_cons, List.length_nil, List.reverse_nil, List.nil_append]
   unfold powOutCost
   omega
 

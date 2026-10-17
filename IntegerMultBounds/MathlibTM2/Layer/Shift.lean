@@ -264,8 +264,7 @@ theorem copyStep_loop (c t src dst : Fin T) (h1 : c ≠ t) (h2 : src ≠ c) (h3 
             Function.update_of_ne h1, Function.update_of_ne h2, Function.update_of_ne h3,
             Function.update_of_ne h4, Function.update_of_ne h5, Function.update_of_ne h6,
             Function.update_of_ne h1.symm, Function.update_of_ne h2.symm,
-            Function.update_of_ne h4.symm,
-            ]
+            Function.update_of_ne h4.symm]
         obtain ⟨v', R', hv, he, hc', ht', hs', hd', hoth⟩ := ih ys rest
           { v with sym := some x, flag := cl.head?.isSome } { S with
             R := Function.update (Function.update (Function.update (Function.update S.R c cl) t
@@ -310,8 +309,7 @@ theorem dropStep_loop (c t src : Fin T) (h1 : c ≠ t) (h2 : src ≠ c) (h3 : sr
                 (e :: S.R t)) src (ys ++ rest) } := by
           simp [dropStep, peekR, Action.run, hc, hs, update_rt,
             Function.update_of_ne h1, Function.update_of_ne h2, Function.update_of_ne h3,
-            Function.update_of_ne h1.symm, Function.update_of_ne h2.symm,
-            ]
+            Function.update_of_ne h1.symm, Function.update_of_ne h2.symm]
         obtain ⟨v', R', hv, he, hc', ht', hs', hoth⟩ := ih ys rest
           { v with sym := some x, flag := cl.head?.isSome } { S with
             R := Function.update (Function.update (Function.update S.R c cl) t

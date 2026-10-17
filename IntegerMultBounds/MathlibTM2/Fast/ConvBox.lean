@@ -138,6 +138,7 @@ variable {D r : ℕ} [NeZero r] (t : Fin (D + 1) → ℕ) [∀ i, NeZero (t i)]
 /-- The lengths of the first `D` axes. -/
 abbrev cvN : Fin D → ℕ := fun i => t i.castSucc
 
+omit [∀ (i : Fin (D + 1)), NeZero (t i)] in
 theorem cv_boxSplit_apply (x : (i : Fin (D + 1)) → ZMod (t i)) :
     boxSplit t h x =
       (fun i : Fin D => x i.castSucc,
@@ -148,6 +149,7 @@ theorem cv_boxSplit_apply (x : (i : Fin (D + 1)) → ZMod (t i)) :
 def cvRecs (q : ℕ) (F : ((i : Fin (D + 1)) → ZMod (t i)) → ℂ) : ℕ → Fin r → GaussianInt :=
   fun n k => numer q (F ((boxSplit t h).symm (dec (cvN t) n, k)))
 
+omit [∀ (i : Fin (D + 1)), NeZero (t i)] in
 /-- The point of record `n`, coefficient `k`, from its address list. -/
 theorem cv_point_eq (n : ℕ) (k : Fin r) :
     (fun i : Fin (D + 1) => (((cvDigs (List.ofFn (cvN t)) n ++ [(k : ℕ)]).getD i 0 : ℕ) :
@@ -167,6 +169,7 @@ theorem cv_point_eq (n : ℕ) (k : Fin r) :
     apply Fin.ext
     rw [cv_finEquiv_symm_val, ZMod.val_natCast, Nat.mod_eq_of_lt k.isLt]
 
+omit [∀ (i : Fin (D + 1)), NeZero (t i)] in
 /-- **Box streams are record streams.** The box stream of `F` (axis `0` most significant) is
 the stream of its `M = ∏_{i<D} t_i` records along the last axis. -/
 theorem cv_numBox_eq (q : ℕ) (F : ((i : Fin (D + 1)) → ZMod (t i)) → ℂ) :
@@ -196,10 +199,12 @@ theorem cv_numBox_eq (q : ℕ) (F : ((i : Fin (D + 1)) → ZMod (t i)) → ℂ) 
 def cvTw (p : ℕ) (θ : Fin r → ℂ) (F : ((i : Fin (D + 1)) → ZMod (t i)) → ℂ) : Recs r :=
   ιR (cvN t) (iota (phaseQ p θ (F ∘ (boxSplit t h).symm)))
 
+omit [∀ (i : Fin (D + 1)), NeZero (t i)] in
 theorem cvTw_apply (p : ℕ) (θ : Fin r → ℂ) (F : ((i : Fin (D + 1)) → ZMod (t i)) → ℂ) (n : ℕ)
     (k : Fin r) :
     cvTw t h p θ F n k = rhoC p (θ k * F ((boxSplit t h).symm (dec (cvN t) n, k))) := rfl
 
+omit [∀ (i : Fin (D + 1)), NeZero (t i)] in
 theorem cv_gridR_tw (p : ℕ) (θ : Fin r → ℂ) (F : ((i : Fin (D + 1)) → ZMod (t i)) → ℂ) :
     GridR p (cvTw t h p θ F) := fun _ _ => isFixed_rhoC _ _
 
@@ -252,6 +257,7 @@ theorem cv_rpStream_congr {r' : ℕ} {M : ℕ} {X Y : ℕ → Fin r' → Gaussia
     (hXY : ∀ n < M, X n = Y n) : rpStream M X = rpStream M Y :=
   List.flatMap_congr fun n hn => by rw [hXY n (List.mem_range.1 hn)]
 
+omit [∀ (i : Fin (D + 1)), NeZero (t i)] in
 /-- **The twist.** The table product of the box stream of `F` (grid values) with the twist
 table `θ` gives the numerators of the twisted records `cvTw t h p θ F`. -/
 theorem cv_twist_eq {p : ℕ} (θ : Fin r → ℂ) (hθ : ∀ k, IsFixed p (θ k))

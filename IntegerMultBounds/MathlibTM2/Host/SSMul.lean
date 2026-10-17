@@ -450,16 +450,14 @@ theorem padLoop {c c' s s' u : Fin T} (h : Dist5 c c' s s' u) (d : Fin (A + 4)) 
         · rw [k1]; simp
         by_cases k2 : k = c'
         · rw [k2]; simp [h5, h7, g1, 
-            Function.update_of_ne, 
-            ]
+            Function.update_of_ne]
         by_cases k3 : k = s
         · rw [k3]; simp [g2, g5,
             
             ]
         by_cases k4 : k = s'
         · rw [k4]; simp [h10, g3, 
-            g6, g8, Function.update_of_ne, 
-            ]
+            g6, g8, Function.update_of_ne]
         by_cases k5 : k = u
         · rw [k5]; simp [g4, 
             g7, g9, g10, replicate_append_cons,
@@ -484,20 +482,17 @@ theorem padLoop {c c' s s' u : Fin T} (h : Dist5 c c' s s' u) (d : Fin (A + 4)) 
         · rw [k1]; simp
         by_cases k2 : k = c'
         · rw [k2]; simp [h5, h6, h7, g1, 
-            Function.update_of_ne, 
-            ]
+            Function.update_of_ne]
         by_cases k3 : k = s
         · rw [k3]; simp [g2, g5,
             
             ]
         by_cases k4 : k = s'
         · rw [k4]; simp [h10, g3, 
-            g6, g8, Function.update_of_ne, 
-            ]
+            g6, g8, Function.update_of_ne]
         by_cases k5 : k = u
         · rw [k5]; simp [g4, 
-            g7, g9, g10, 
-            ]
+            g7, g9, g10]
         · simp [k1, k2, k3, k4, k5, Function.update_of_ne]
 
 /-- Push onto register `t` a copy of register `s` padded with `d` to the length of register `c`,

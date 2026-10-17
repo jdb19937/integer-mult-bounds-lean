@@ -63,11 +63,9 @@ theorem tblFoldAt_do {A W w : ℕ} (st : TblSt 60 A) (src dst : Fin 60) {s m : �
   have vd : s₁.val dst = m % 2 := by
     simp [s₁, tblExactList, TblIns.exact, hsrc, h59, hs58]
   have v22 : s₁.val 22 = 1 := by
-    simp [s₁, tblExactList, TblIns.exact, h22, Function.update_of_ne h2.symm,
-      ]
+    simp [s₁, tblExactList, TblIns.exact, h22, Function.update_of_ne h2.symm]
   have v34 : s₁.val 34 = s := by
-    simp [s₁, tblExactList, TblIns.exact, hS, Function.update_of_ne h3.symm,
-      ]
+    simp [s₁, tblExactList, TblIns.exact, hS, Function.update_of_ne h3.symm]
   have vacc : s₁.acc = st.acc := by simp [s₁, tblExactList, TblIns.exact]
   have vkeep : ∀ x, x ≠ dst → x ≠ 58 → s₁.val x = st.val x := by
     intro x hx1 hx2

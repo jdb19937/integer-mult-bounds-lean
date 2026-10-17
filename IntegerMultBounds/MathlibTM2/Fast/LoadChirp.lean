@@ -415,7 +415,7 @@ theorem ldc_zero_runs (l : List (Fin 84)) :
   induction l with
   | nil =>
       intro ρ _ _ _
-      simpa [ldcVars] using rsa_done (body := body) (ι := ι) hrg ρ
+      simpa [ldcVars] using rsa_done (body := body) (ι := ι) ρ
   | cons i l ih =>
       intro ρ hnd hz hv
       have h1 := rsa_umulSym (body := body) (ι := ι) hrg 1 (bitSymbol false)
@@ -445,7 +445,7 @@ theorem ldc_clear_runs (L : ℕ) (l : List (Fin 84)) :
   induction l with
   | nil =>
       intro ρ _ _
-      simpa [ldcVars] using rsa_done (body := body) (ι := ι) hrg ρ
+      simpa [ldcVars] using rsa_done (body := body) (ι := ι) ρ
   | cons i l ih =>
       intro ρ hnd hv
       have h1 := rsa_uclear (body := body) (ι := ι) hrg (.x (.tbl (.v i))) ρ

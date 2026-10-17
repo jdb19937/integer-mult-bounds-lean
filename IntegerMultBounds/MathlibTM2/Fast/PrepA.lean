@@ -279,6 +279,7 @@ variable {body : F → Pr F T Q (prime + K) U} {rg : RsaR (RsaX t₀) → Fin T}
 variable (hrg : Function.Injective rg) (hι : Function.Injective ι) (hdisj : ∀ r j, rg r ≠ ι j)
 include hrg hι hdisj
 
+omit hrg hι hdisj in
 lemma preLay_map (l : List (RsaR (RsaX t₀))) :
     (l.map Sum.inl).map (preLay rg ι) = l.map rg := by
   simp [List.map_map, Function.comp_def, preLay]
@@ -294,7 +295,7 @@ theorem preA_clr {hd : Fin 5 → Fin t₀} (hdi : Function.Injective hd) (V : Rs
     TwRuns body (preLay rg ι) (preClears ((preClrA hd).map rg)) (preSt V) (preSt (preV1 V hd))
       (((preClrA hd).map fun r => 2 * (V.get r).length + 2).sum + 1) := by
   have h := preClears_runs (body := body) (preLay_inj hrg hι hdisj) _ (preHA_nodup hdi) (preSt V)
-  rw [preLay_map hrg hι hdisj] at h
+  rw [preLay_map] at h
   refine twRuns_congr (twRuns_mono h (by simp [List.map_map, Function.comp_def, preSt])) ?_
   funext r
   rcases r with r | x
@@ -313,7 +314,7 @@ theorem preA_parse (V : RsaV (RsaX t₀) (prime + K)) (D : PreAxA) (rest : List 
     (preDstA.map Sum.inl) D.fields (by simp [preDstA, PreAxA.fields]) (by simp [preDstA])
     (preSt V) rest (by simp [preSt, hout]) (by
       simp [preDstA, preSt, hT, hpn, hea, heb, her, hka, hkb, hkx, hkW, hkT, hatm])
-  rw [preLay_map hrg hι hdisj] at h
+  rw [preLay_map] at h
   simp only [PreAxA.fields, List.length_cons, List.length_nil] at h ⊢
   refine twRuns_congr h ?_
   simp only [preTV, preDstA, List.map_cons, List.map_nil, List.zip_cons_cons, List.zip_nil_left,
@@ -487,7 +488,7 @@ theorem preA_end (V : RsaV (RsaX t₀) (prime + K)) :
       ((preScrA.map fun r => 2 * (V.get r).length + 2).sum + 1) := by
   have h := preClears_runs (body := body) (preLay_inj hrg hι hdisj) (preScrA.map Sum.inl)
     (by simp [preScrA]) (preSt V)
-  rw [preLay_map hrg hι hdisj] at h
+  rw [preLay_map] at h
   refine twRuns_congr (twRuns_mono h (by simp [List.map_map, Function.comp_def, preSt])) ?_
   funext r
   rcases r with r | x

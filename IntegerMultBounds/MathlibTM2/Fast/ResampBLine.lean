@@ -178,8 +178,7 @@ theorem rsb_sel_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠ ι
     cases r <;> simp [hΨ, hmsk, hms, hsel, hsr, List.drop_of_length_le (le_of_eq hlen)]
   · have hsl := length_rsbSel_le ln mask mask.length
     have hsl' := Nat.mul_le_mul_right w hsl
-    simp only [Finset.sum_const, Finset.card_range, smul_eq_mul, rsbUpd2, hΨ,
-      ]
+    simp only [Finset.sum_const, Finset.card_range, smul_eq_mul, rsbUpd2, hΨ]
     rw [Function.update_of_ne (by decide), Function.update_of_ne (by decide),
       Function.update_self, List.length_reverse, length_cstream]
     nlinarith

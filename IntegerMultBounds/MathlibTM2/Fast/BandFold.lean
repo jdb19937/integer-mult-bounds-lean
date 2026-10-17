@@ -182,8 +182,7 @@ theorem band_ileave_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r �
     funext r
     by_cases hrz : r = z
     · subst hrz
-      simp [rsbUpd2, hΨ, Function.update_of_ne hzn, Function.update_of_ne hzt, hti,
-        ]
+      simp [rsbUpd2, hΨ, Function.update_of_ne hzn, Function.update_of_ne hzt, hti]
     by_cases hrb : r = b
     · subst hrb; simp [rsbUpd2, hΨ, Function.update_of_ne hrz, Function.update_of_ne hbn,
         Function.update_of_ne hbt]
@@ -204,11 +203,9 @@ theorem band_ileave_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r �
     · subst hra; simp [rsbUpd2, hΨ, Function.update_of_ne hrz, Function.update_of_ne hrb,
         Function.update_of_ne han, Function.update_of_ne hat, ha]
     by_cases hrt : r = tn
-    · subst hrt; simp [rsbUpd2, htn, 
-        ]
+    · subst hrt; simp [rsbUpd2, htn]
     by_cases hrn : r = n
-    · subst hrn; simp [rsbUpd2, Function.update_of_ne hrt, 
-        ]
+    · subst hrn; simp [rsbUpd2, Function.update_of_ne hrt]
     simp [rsbUpd2, hΨ, hrz, hrb, hra, hrt, hrn]
   · funext r
     by_cases hrz : r = z
@@ -310,8 +307,7 @@ theorem band_deileave_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r 
       rw [List.take_succ_eq_append_getElem hjb]; simp
     funext r
     by_cases hro : r = o
-    · subst hro; simp [rsbUpd2, hΨ, Function.update_of_ne hon, Function.update_of_ne hot, htb,
-        ]
+    · subst hro; simp [rsbUpd2, hΨ, Function.update_of_ne hon, Function.update_of_ne hot, htb]
     by_cases hre : r = e
     · subst hre; simp [rsbUpd2, hΨ, Function.update_of_ne hro, Function.update_of_ne hen,
         Function.update_of_ne het, hta]
@@ -331,11 +327,9 @@ theorem band_deileave_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r 
     · subst hrx; simp [rsbUpd2, hΨ, Function.update_of_ne hro, Function.update_of_ne hre,
         Function.update_of_ne hxn, Function.update_of_ne hxt, hx]
     by_cases hrt : r = tn
-    · subst hrt; simp [rsbUpd2, htn, 
-        ]
+    · subst hrt; simp [rsbUpd2, htn]
     by_cases hrn : r = n
-    · subst hrn; simp [rsbUpd2, Function.update_of_ne hrt, 
-        ]
+    · subst hrn; simp [rsbUpd2, Function.update_of_ne hrt]
     simp [rsbUpd2, hΨ, hro, hre, hrx, hrt, hrn]
   · funext r
     have hda : as.drop as.length = [] := List.drop_length
@@ -405,8 +399,7 @@ theorem band_rec1Rep_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r �
       rw [List.take_succ_eq_append_getElem hj]; simp
     funext r
     by_cases hry : r = y
-    · subst hry; simp [rsbUpd2, hΨ, Function.update_of_ne hyn, Function.update_of_ne hyt, htk,
-        ]
+    · subst hry; simp [rsbUpd2, hΨ, Function.update_of_ne hyn, Function.update_of_ne hyt, htk]
     by_cases hrx : r = x
     · subst hrx; simp [rsbUpd2, hΨ, Function.update_of_ne hry, Function.update_of_ne hxn,
         Function.update_of_ne hxt]
@@ -422,8 +415,7 @@ theorem band_rec1Rep_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r �
     by_cases hrt : r = tn
     · subst hrt; simp [rsbUpd2, htn]
     by_cases hrn : r = n
-    · subst hrn; simp [rsbUpd2, Function.update_of_ne hrt, 
-        ]
+    · subst hrn; simp [rsbUpd2, Function.update_of_ne hrt]
     simp [rsbUpd2, hΨ, hry, hrx, hrt, hrn]
   · funext r
     by_cases hry : r = y

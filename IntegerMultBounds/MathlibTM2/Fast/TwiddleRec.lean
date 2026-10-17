@@ -395,8 +395,7 @@ theorem twRuns_negE {u : TwReg} (hu : [u, TwReg.z, TwReg.f, TwReg.g, TwReg.t1, T
   refine twRuns_mono (twRuns_congr (twRuns_seq h1 (twRuns_seq h2 (twRuns_seq h3 (twRuns_seq h4
     (twRuns_seq h5 h6))))) ?_) ?_
   · funext r
-    cases r <;> simp [hz, hg, ht1, Function.update_of_ne, 
-      ]
+    cases r <;> simp [hz, hg, ht1, Function.update_of_ne]
   · simp [hf, hg, ht1]
     unfold twNegECost
     omega

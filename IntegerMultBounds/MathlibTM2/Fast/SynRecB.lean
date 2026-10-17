@@ -169,7 +169,7 @@ theorem sg_synChunkA (v : SynW → List (Fin (A + 4))) (hv bv Kv Dv : ℕ) (hk :
   · refine congrArg (synG R) ?_
     funext y
     simp only [Function.update_apply]
-    split_ifs <;> (try simp_all) <;> omega
+    split_ifs <;> (try simp_all)
   · simp only [synChunkACost]
     omega
 
@@ -244,7 +244,7 @@ theorem sg_synChunkQ (v : SynW → List (Fin (A + 4))) (a oS Kv Dv : ℕ)
   · refine congrArg (synG R) ?_
     funext y
     simp only [Function.update_apply]
-    split_ifs <;> (try simp_all [div_pow_self]) <;> omega
+    split_ifs <;> (try simp_all [div_pow_self])
   · simp only [synChunkQCost, ← hJn, ← hq']
     omega
 
@@ -302,7 +302,7 @@ theorem sg_synChunkR2 (v : SynW → List (Fin (A + 4))) (a' Jn : ℕ)
   · refine congrArg (synG R) ?_
     funext y
     simp only [Function.update_apply]
-    split_ifs <;> (try simp_all) <;> omega
+    split_ifs <;> (try simp_all)
   · simp only [synChunkR2Cost, ← hB, ← hL]
     omega
 
@@ -356,7 +356,7 @@ theorem sg_synChunkCfg (v : SynW → List (Fin (A + 4))) (W a' Dv q E R2 aT Kq o
   · refine congrArg (synG R) ?_
     funext y
     simp only [Function.update_apply]
-    split_ifs <;> (try simp_all) <;> omega
+    split_ifs <;> (try simp_all)
   · simp only [synChunkCfgCost]
     omega
 
@@ -516,10 +516,10 @@ theorem sg_synChunkB (G F : ℕ) (v : SynW → List (Fin (A + 4))) (a hv bv Kv D
   clear hvC hvR hvD hvQ hvA
   clear_value vC vR vD vQ vA
   clear vC vR vD vQ vA
-  rcases y with x | i | x | i
-  · cases x <;> simp
+  rcases y with a | i | a | i
+  · cases a <;> simp
   · fin_cases i <;> simp
-  · cases x <;> simp
+  · cases a <;> simp
   · fin_cases i <;> simp [hz]
 
 end ChunkBr

@@ -464,7 +464,7 @@ theorem cvSynth_runs (hrg : Function.Injective rg) (hdisj : ∀ r j, rg r ≠ ι
     (by simp [ρ8, ρ7, ρ6, ρ5, ρ4, ρ3, ρ2, ρ1, hout, hW])
   set ρ9 := Function.update ρ8 .io (cstream A w (rpStream (cvM a) O)) with hρ9
   -- 10. the shift by `Σ aᵢ` bits onto `so`
-  have s10 := CvRuns.of_rsa (Pre := Pre) (cst_scale_runs (body := body) (ι := ι) hrg hdisj
+  have s10 := CvRuns.of_rsa (Pre := Pre) (cst_scale_runs (body := body) (ι := ι) hrg
     (src := CvR.io) (dst := .shD) (out := .so) (cS := .shS) (cR := .shR) (tS := .shT)
     (tR := .shU) (by decide) (by decide) (by omega) hSw ρ9 (rpStream (cvM a) O) (by simp [ρ9])
     (by simp [ρ9, ρ8, ρ7, ρ6, ρ5, ρ4, ρ3, ρ2, ρ1, hshS])

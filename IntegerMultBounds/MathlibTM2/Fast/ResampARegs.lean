@@ -64,18 +64,22 @@ def RsaRuns (p : Pr P T Q A U) (ρ ρ' : R → List (Fin (A + 4))) (b : ℕ) : P
 
 variable {body rg ι}
 
+omit [DecidableEq R] in
 lemma rsaFr.refl (S : Stacks T A) : rsaFr rg S S := ⟨rfl, rfl, rfl, fun _ _ => rfl⟩
 
+omit [DecidableEq R] in
 lemma rsaFr.trans {S₁ S₂ S₃ : Stacks T A} (h₁ : rsaFr rg S₁ S₂) (h₂ : rsaFr rg S₂ S₃) :
     rsaFr rg S₁ S₃ :=
   ⟨h₂.1.trans h₁.1, h₂.2.1.trans h₁.2.1, h₂.2.2.1.trans h₁.2.2.1,
     fun k hk => (h₂.2.2.2 k hk).trans (h₁.2.2.2 k hk)⟩
 
+omit [DecidableEq R] in
 lemma rsaClean.of_fr (hdisj : ∀ r j, rg r ≠ ι j) {S S' : Stacks T A} (hc : rsaClean ι S)
     (h : rsaFr rg S S') : rsaClean ι S' :=
   ⟨fun y => by rw [h.2.2.1]; exact hc.1 y,
     fun j => by rw [h.2.2.2 _ (fun r => hdisj r j)]; exact hc.2 j⟩
 
+omit [DecidableEq R] in
 theorem RsaRuns.seq (hdisj : ∀ r j, rg r ≠ ι j) {p q : Pr P T Q A U}
     {ρ₁ ρ₂ ρ₃ : R → List (Fin (A + 4))} {b₁ b₂ : ℕ} (h₁ : RsaRuns body rg ι p ρ₁ ρ₂ b₁)
     (h₂ : RsaRuns body rg ι q ρ₂ ρ₃ b₂) : RsaRuns body rg ι (.seq p q) ρ₁ ρ₃ (b₁ + b₂) := by
@@ -84,18 +88,22 @@ theorem RsaRuns.seq (hdisj : ∀ r j, rg r ≠ ι j) {p q : Pr P T Q A U}
   obtain ⟨v₂, S₂, n₂, hu₂, hn₂, he₂, hS₂, hf₂⟩ := h₂ v₁ S₁ (hc.of_fr hdisj hf₁) hS₁
   exact ⟨v₂, S₂, n₁ + n₂, hu₂.trans hu₁, by omega, Exec.seq he₁ he₂, hS₂, hf₁.trans hf₂⟩
 
+omit [DecidableEq R] in
 theorem RsaRuns.mono {p : Pr P T Q A U} {ρ ρ' : R → List (Fin (A + 4))} {b b' : ℕ}
     (h : RsaRuns body rg ι p ρ ρ' b) (hb : b ≤ b') : RsaRuns body rg ι p ρ ρ' b' := by
   intro v S hc hS
   obtain ⟨v', S', n, hu, hn, he, hS', hf⟩ := h v S hc hS
   exact ⟨v', S', n, hu, hn.trans hb, he, hS', hf⟩
 
+omit [DecidableEq R] in
 theorem RsaRuns.congr {p : Pr P T Q A U} {ρ ρ' ρ'' : R → List (Fin (A + 4))} {b : ℕ}
     (h : RsaRuns body rg ι p ρ ρ' b) (he : ρ' = ρ'') : RsaRuns body rg ι p ρ ρ'' b := he ▸ h
 
+omit [DecidableEq R] in
 theorem RsaRuns.congr_pre {p : Pr P T Q A U} {ρ₀ ρ ρ' : R → List (Fin (A + 4))} {b : ℕ}
     (h : RsaRuns body rg ι p ρ ρ' b) (he : ρ₀ = ρ) : RsaRuns body rg ι p ρ₀ ρ' b := he ▸ h
 
+omit [DecidableEq R] in
 /-- A contract from a raw execution whose final right stacks `R'` carry `ρ'` on the layout and
 agree with `S` off it. -/
 theorem RsaRuns.of_raw {p : Pr P T Q A U} {ρ ρ' : R → List (Fin (A + 4))} {b : ℕ}
@@ -124,6 +132,7 @@ lemma rsa_holds_upd (hrg : Function.Injective rg) {S : Fin T → List (Fin (A + 
   have : (fun r => S (rg r)) = ρ := funext h
   rw [this]
 
+omit [DecidableEq R] in
 lemma rsa_upd_off {β : Type} (g : Fin T → β) (a : R) (x : β) {k : Fin T} (hk : ∀ r, rg r ≠ k) :
     Function.update g (rg a) x k = g k := Function.update_of_ne (hk a).symm _ _
 
@@ -199,6 +208,7 @@ theorem rsa_popPush {a b : R} (hab : a ≠ b) (ρ : R → List (Fin (A + 4))) (x
     rw [rsa_holds_upd hrg (rsa_holds_upd hrg hS a l) b, hS]
   · rw [rsa_upd_off _ _ _ hk, rsa_upd_off _ _ _ hk]
 
+omit [DecidableEq R] in
 /-- Lift a contract of the complex-product library for the register family `rg ∘ c`. -/
 theorem RsaRuns.of_c {c : CR → R} (hc : Function.Injective c) {p : Pr P T Q A U}
     {ρC ρC' : CR → List (Fin (A + 4))} {b : ℕ} (h : CRuns body (fun x => rg (c x)) ι p ρC ρC' b)
@@ -351,6 +361,7 @@ theorem rsa_baddTo_cond (hdisj : ∀ r j, rg r ≠ ι j) {a b tx ty tz cy : R}
     · have := le_max_right bp bq; omega
     · simp [hcy₁, hcar]
 
+omit hrg [DecidableEq R] in
 /-- The no-op. -/
 theorem rsa_done (ρ : R → List (Fin (A + 4))) :
     RsaRuns body rg ι (.act .done) ρ ρ 1 := by
@@ -622,6 +633,7 @@ theorem rsa_xfer {a sp src dst : R} (hd : [a, sp, src, dst].Nodup)
   rw [e₀, e₁] at H
   exact H.mono (by omega)
 
+omit hrg [DecidableEq R] in
 /-- `cwhileP g p` over a list: the register file `st l done` holds the remaining elements `l`
 and the processed ones `done`; register `g` is nonempty exactly while elements remain. -/
 theorem rsa_cwhileP_runs {α : Type} (g : R) (p : Pr P T Q A U) (ok : α → Prop)

@@ -442,8 +442,7 @@ theorem runs_prepD {p d ℓ K w : ℕ} {ts : List ℕ} (hd : 1 ≤ d) (_hD : ts.
   · rw [e]
     funext i; fin_cases i <;> rfl
   · simp only [costD, clen, WTape.words, reg, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil,
-      List.length_cons, List.length_nil, List.reverse_nil, List.nil_append, length_ones,
-      ]
+      List.length_cons, List.length_nil, List.reverse_nil, List.nil_append, length_ones]
     omega
 
 /-! ### The preparation -/

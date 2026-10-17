@@ -127,7 +127,7 @@ theorem SynV.setH {v : SynW → List (Fin (A + 4))} {es : List ℕ} {ℓ K w l h
   hlr := by simp [synSetH]; exact hv.hlr
   hes := by simp [synSetH]; exact hv.hes
   hpz := by simp [synSetH]; exact hv.hpz
-  htw := fun x hx => by simp [synSetH]; exact hv.htw x hx
+  htw := fun a hx => by simp [synSetH]; exact hv.htw a hx
   hs := fun i => by simp [synSetH]; exact hv.hs i
   hly := fun i => by simp [synSetH]; exact hv.hly i
   hw2 := by simp [synSetH]; exact hv.hw2

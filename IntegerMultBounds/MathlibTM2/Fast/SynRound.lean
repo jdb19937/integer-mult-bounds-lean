@@ -488,7 +488,7 @@ variable {Q A : ℕ} {U P : Type}
 /-- The wire file `v` with the twiddle registers replaced by `ρ`. -/
 def synTwSet (v : SynW → List (Fin (A + 4))) (ρ : TwReg → List (Fin (A + 4))) :
     SynW → List (Fin (A + 4))
-  | .tw x => ρ x
+  | .tw a => ρ a
   | y => v y
 
 theorem twStream_eq_cstream (A w : ℕ) {r : ℕ} (M : ℕ) (Z : ℕ → Fin r → GaussianInt) :
@@ -498,10 +498,10 @@ theorem twStream_eq_cstream (A w : ℕ) {r : ℕ} (M : ℕ) (Z : ℕ → Fin r �
 theorem sg_of_twRuns (body : P → Pr P (nT SXReg) Q A U) {p : Pr P (nT SXReg) Q A U}
     {ρ ρ' : TwReg → List (Fin (A + 4))} {b : ℕ} (h : TwRuns body synTg p ρ ρ' b)
     (Ro : Fin (nT SXReg) → List (Fin (A + 4))) (v : SynW → List (Fin (A + 4)))
-    (hv : ∀ x, v (.tw x) = ρ x) :
+    (hv : ∀ a, v (.tw a) = ρ a) :
     LayRuns body p (synG Ro v) (synG Ro (synTwSet v ρ')) b := by
   intro vv S _ hS
-  have hold : TwHolds synTg S ρ := fun x => by rw [hS]; simp [synTg, hv]
+  have hold : TwHolds synTg S ρ := fun a => by rw [hS]; simp [synTg, hv]
   obtain ⟨v', S', n, hu, hn, he, hS', hfr⟩ := h vv S hold
   refine ⟨v', n, hu, hn, ?_⟩
   have e : S' = { S with R := synG Ro (synTwSet v ρ') } := by
@@ -514,9 +514,9 @@ theorem sg_of_twRuns (body : P → Pr P (nT SXReg) Q A U) {p : Pr P (nT SXReg) Q
         subst h1 h2 h3
         congr 1
         funext k
-        by_cases hk : ∃ x, synTg x = k
-        · obtain ⟨x, rfl⟩ := hk
-          have := hS' x
+        by_cases hk : ∃ a, synTg a = k
+        · obtain ⟨a, rfl⟩ := hk
+          have := hS' a
           simp only at this
           rw [this]
           simp [synTg, synTwSet]
@@ -524,7 +524,7 @@ theorem sg_of_twRuns (body : P → Pr P (nT SXReg) Q A U) {p : Pr P (nT SXReg) Q
           by_cases hw : ∃ y, sreg y = k
           · obtain ⟨y, rfl⟩ := hw
             cases y with
-            | tw x => exact absurd ⟨x, rfl⟩ hk
+            | tw a => exact absurd ⟨a, rfl⟩ hk
             | _ => simp [synTwSet]
           · rw [synG_of_ne (fun y hy => hw ⟨y, hy⟩), synG_of_ne (fun y hy => hw ⟨y, hy⟩)]
   rw [e] at he
@@ -597,7 +597,7 @@ theorem sg_synTwStep (body : P → Pr P (nT SXReg) Q A U) (fwd : Bool) (hA : 5 �
     (Ro : Fin (nT SXReg) → List (Fin (A + 4))) (v : SynW → List (Fin (A + 4)))
     (Y : ℕ → Fin (2 ^ l) → GaussianInt)
     (hio : Ro (lreg .io) = cstream A w (IntegerMultBounds.MathlibTM2.Fast.rpStream (2 ^ es.sum) Y))
-    (hpz : v (.tw .pz) = twPosReg A es.sum (twPosL L)) (htw : ∀ x, x ≠ .pz → v (.tw x) = [])
+    (hpz : v (.tw .pz) = twPosReg A es.sum (twPosL L)) (htw : ∀ a, a ≠ .pz → v (.tw a) = [])
     (hN : (v (.p .N)).length = es.sum) (hw : (v (.p .w)).length = w)
     (hr : (v (.p .r)).length = 2 ^ l) (hlr : (v (.p .lr)).length = l)
     (hh : (v (.p .h)).length = h) (hes : v (.p .es) = topRec es)
@@ -646,7 +646,7 @@ theorem sg_synTwStep (body : P → Pr P (nT SXReg) Q A U) (fwd : Bool) (hA : 5 �
       (by simp [htw]) (by simp [htw]) (by simp [htw]) (by simp [htw]) (by simp [htw])
       (by simp [htw]) (by simp [htw]) (by simp [htw]) (by simp [htw]) (by simp [htw])
       (by simp [htw]) (by simp [htw]) (by simp [htw]) (by simp [htw]) (by simp [htw]))
-      _ _ (fun x => rfl)).seq <|
+      _ _ (fun a => rfl)).seq <|
     (sgR_move body (a := .tw .dst) (b := .s 25)
       (l := twStream A w (List.range' 0 (2 ^ es.sum))
         (fun m => twShiftZ (twEx fwd es l h (twGat (twPosL L) es.sum m)) (Y m)) ++ [])
@@ -668,8 +668,8 @@ theorem sg_synTwStep (body : P → Pr P (nT SXReg) Q A U) (fwd : Bool) (hA : 5 �
         Function.update_idem]
     · funext y
       cases y with
-      | tw x =>
-          cases x <;> simp (config := {maxSteps := 4000000}) [synTwSet, Function.update_apply,
+      | tw a =>
+          cases a <;> simp (config := {maxSteps := 4000000}) [synTwSet, Function.update_apply,
             htw, hpz]
       | s i =>
           by_cases hi : i = 25
@@ -711,7 +711,7 @@ structure SynV {A : ℕ} (v : SynW → List (Fin (A + 4))) (es : List ℕ) (ℓ 
   hlr : (v (.p .lr)).length = l
   hes : v (.p .es) = topRec es
   hpz : v (.tw .pz) = twPosReg A es.sum (twPosL L)
-  htw : ∀ x, x ≠ .pz → v (.tw x) = []
+  htw : ∀ a, a ≠ .pz → v (.tw a) = []
   hs : ∀ i, v (.s i) = []
   hly : ∀ i, v (.ly i) = []
   hw2 : v (.p .w2) = []
@@ -874,11 +874,11 @@ theorem sg_synLayerStep (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
     · simp only [hv₄, synClrW, hx, ite_false, Function.update_apply]
       split_ifs with hcf
       · rfl
-      · rcases x with x | i | x | i
-        · have : x ≠ .pz := by intro h; subst h; simp [synXS] at hx
-          simp [hv₂, hv₁, synRecOut, hv.htw x this]
+      · rcases x with a | i | a | i
+        · have : a ≠ .pz := by intro h; subst h; simp [synXS] at hx
+          simp [hv₂, hv₁, synRecOut, hv.htw a this]
         · simp [hv₂, hv₁, synRecOut, hv.hly i]
-        · cases x <;> simp_all [synRecOut, synXS]
+        · cases a <;> simp_all [synRecOut, synXS]
         · simp [hv₂, hv₁, synRecOut, hv.hs i]
   -- 5. the layer
   have hpark : ∀ X, Function.update RF (lreg .park) X =

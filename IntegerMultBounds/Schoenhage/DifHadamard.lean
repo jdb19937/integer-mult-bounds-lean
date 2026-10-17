@@ -198,8 +198,7 @@ theorem bfly_eq_sum (P : ℕ) (w : ℕ → Fin r → ℂ) (x : ℕ) (k : Fin r) 
     simp; ring
   · have h1 : bitAt x P = 1 := by have := bitAt_lt_two x P; omega
     have hne : bitAt x P ≠ 0 := by omega
-    simp only [h1, setBit_true_of_one h1, setBit_false_of_one h1, 
-      ]
+    simp only [h1, setBit_true_of_one h1, setBit_false_of_one h1]
     simp; ring
 
 theorem sum_fin_succ_bool {D : ℕ} (F : (Fin (D + 1) → Bool) → ℂ) :

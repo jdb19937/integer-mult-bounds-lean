@@ -571,7 +571,7 @@ theorem sg_synHalfAdd {x y : SynW} (hx1 : x ≠ .s 1) (hx2 : x ≠ .s 2) (hy1 : 
   refine congrArg (synG R) ?_
   funext y
   simp only [Function.update_apply]
-  split_ifs <;> (try simp_all) <;> omega
+  split_ifs <;> (try simp_all); omega
 
 /-- A reversed record field on `p .cf`. -/
 theorem sg_synCF {x : SynW} (hx : x ≠ .p .cf) (hx2 : x ≠ .s 2) (v : SynW → List (Fin (A + 4)))
@@ -615,7 +615,7 @@ theorem sg_synW2P {x : SynW} (hx : x ≠ .p .w2) (hx2 : x ≠ .s 2) (v : SynW �
   refine congrArg (synG R) ?_
   funext y
   simp only [Function.update_apply]
-  split_ifs <;> (try simp_all) <;> omega
+  split_ifs <;> (try simp_all); omega
 
 /-- The step bound of `synPreBr`. -/
 def synPreBrCost (w a dp oS D : ℕ) : ℕ :=
@@ -688,7 +688,7 @@ theorem sg_synPreBr {dp : SynW} (hdp : ∀ i, dp ≠ .s i) (hdp1 : dp ≠ .p .cf
   · refine congrArg (synG R) ?_
     funext y
     simp only [Function.update_apply]
-    split_ifs <;> (try simp_all) <;> omega
+    split_ifs <;> (try simp_all)
   · simp only [synPreBrCost]
     omega
 
@@ -717,7 +717,7 @@ theorem sg_synTopB (v : SynW → List (Fin (A + 4))) (a Nv Lg W Dv : ℕ)
   refine congrArg (synG R) ?_
   funext y
   simp only [Function.update_apply]
-  split_ifs <;> (try simp_all) <;> omega
+  split_ifs <;> (try simp_all)
 
 theorem sg_synLowB (v : SynW → List (Fin (A + 4))) (a Nv Lg W Dv bh : ℕ)
     (hs : ∀ i, i ≠ 0 → i ≠ 1 → v (.s i) = []) (ha : v (.s 0) = List.replicate a tick)
@@ -761,7 +761,7 @@ theorem sg_synLowB (v : SynW → List (Fin (A + 4))) (a Nv Lg W Dv bh : ℕ)
   refine congrArg (synG R) ?_
   funext y
   simp only [Function.update_apply]
-  split_ifs <;> (try simp_all) <;> omega
+  split_ifs <;> (try simp_all)
 
 end PreBr
 
@@ -917,7 +917,7 @@ theorem sg_synPiece (G F : ℕ) (v : SynW → List (Fin (A + 4))) (Kv d t A0 E :
   · refine congrArg (synG R) ?_
     funext y
     simp only [Function.update_apply]
-    split_ifs <;> (try simp_all [topRec_cons]) <;> omega
+    split_ifs <;> (try simp_all [topRec_cons])
   · simp only [synPieceCost]
     omega
 
@@ -1006,7 +1006,7 @@ theorem sg_synDigBody (G F : ℕ) (v : SynW → List (Fin (A + 4))) (Kv x t A0 E
       refine congrArg (synG R) ?_
       funext y
       simp only [hv₅, Function.update_apply]
-      split_ifs <;> (try simp_all) <;> omega
+      split_ifs <;> (try simp_all)
     · simp only [synDigBodyCost, ← hd, hd0, ite_true]
       omega
   · have s6 := sg_ifNE_pos body (p := synPieceP G F) (q := synSkip) (x := .s 18) (R := R)
@@ -1029,7 +1029,7 @@ theorem sg_synDigBody (G F : ℕ) (v : SynW → List (Fin (A + 4))) (Kv x t A0 E
       refine congrArg (synG R) ?_
       funext y
       simp only [hv₅, Function.update_apply]
-      split_ifs <;> (try simp_all) <;> omega
+      split_ifs <;> (try simp_all)
     · simp only [synDigBodyCost, ← hd, hd0, ite_false]
       omega
 

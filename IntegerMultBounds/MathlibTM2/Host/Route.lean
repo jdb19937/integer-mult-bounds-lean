@@ -262,8 +262,7 @@ theorem xferStep_loop (src dst : Fin nd → Fin T) (ctr tmp cs : Fin T) (sel : �
         · exact Exec.cast (Exec.loop_true (body := body) (f := (·.flag)) (by simpa using hf)
             (hrun ▸ Exec.act (body := body) _ (mk v S)) he) (by simp; ring) rfl
         · rw [htmp]
-          simp [Function.update_of_ne h2.symm, Function.update_of_ne h6.symm,
-            ]
+          simp [Function.update_of_ne h2.symm, Function.update_of_ne h6.symm]
         · rw [hdst]
           simp
         · intro k hk1 hk2 hk3 hk4

@@ -619,8 +619,7 @@ theorem xorF_exec (cy cx cm t0 t1 t2 acc st : Fin T)
   · simp [hR₃, hR₂, movedR, hR₁0, hR₁1, hR₁2, b2, 
       Ne.symm a1, Ne.symm a4, Ne.symm a5,
       Ne.symm b4, 
-      Ne.symm d1, Ne.symm d2, Ne.symm e1,
-      ]
+      Ne.symm d1, Ne.symm d2, Ne.symm e1]
     ring
   · congr 2
     funext k
@@ -671,8 +670,7 @@ theorem xorF_exec (cy cx cm t0 t1 t2 acc st : Fin T)
       simp [hR₃, hR₂, movedR, hka, hky, hkx, hkm, hk0, hk1, ht2, b2,
           c1, c2, Ne.symm a1, Ne.symm a2, 
           Ne.symm a4, Ne.symm b1, 
-          Ne.symm d1, 
-          ]
+          Ne.symm d1]
     simp only [hR₃, hR₂, movedR, Function.update_of_ne hka, Function.update_of_ne hky,
       Function.update_of_ne hkx, Function.update_of_ne hkm, Function.update_of_ne hk0,
       Function.update_of_ne hk1, Function.update_of_ne hk2]

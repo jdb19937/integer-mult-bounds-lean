@@ -170,7 +170,7 @@ theorem band_preA (hg : Function.Injective g) (hι : Function.Injective ι)
   have htg := preLay_inj hg hι hdisj
   -- 1. clear
   have h1 := preClears_runs (body := body) htg _ (bandClrB_nodup hdi) (preStB σ)
-  rw [preLayB_map hg hι hdisj] at h1
+  rw [preLayB_map] at h1
   have h1' := twRuns_congr h1
     (show _ = preStB (bandF0 σ hd) by
       funext r; rcases r with r | y
@@ -191,7 +191,7 @@ theorem band_preA (hg : Function.Injective g) (hι : Function.Injective ι)
       simp only [bandDstB, List.mem_cons, List.not_mem_nil, or_false] at hr'
       rcases hr' with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;>
         simp [preStB, hσ1, bandF0, bandClrB, preHB, hya, hb1, htb, hxa, hxs, hpr, hhc, hac, hhv])
-  rw [preLayB_map hg hι hdisj] at h2
+  rw [preLayB_map] at h2
   set σ2 := preTV (.inl .prm) bandDstB D.fields rest σ1 with hσ2
   have h2' := twRuns_congr h2 (show _ = preStB σ2 by
     simp only [hσ2, preTV, bandDstB, PreAxB.fields, List.map_cons, List.map_nil, List.zip_cons_cons,
@@ -218,7 +218,7 @@ theorem band_preA (hg : Function.Injective g) (hι : Function.Injective ι)
   have h4 := preClears_runs (body := body) htg
     (([.inl .tb, .inl .xa, .inl .xs, .inl .pr] : List (RsbR ⊕ RsbX t₀)).map Sum.inl)
     (by simp) (preStB σ3)
-  rw [preLayB_map hg hι hdisj] at h4
+  rw [preLayB_map] at h4
   refine twRuns_congr (twRuns_mono (twRuns_seq h1' (twRuns_seq h2' (twRuns_seq h3 h4))) ?_) ?_
   · simp only [List.map_map, Function.comp_def, List.map_cons, List.map_nil, List.sum_cons,
       List.sum_nil, preStB, Sum.elim_inl, hσ3]
@@ -1158,8 +1158,7 @@ theorem band_preL5 (hg : Function.Injective g) (hι : Function.Injective ι)
   · simp (config := { decide := true }) only [preStB, Function.update_apply, Sum.elim_inl,
       Sum.inl.injEq, Sum.inr.injEq, RsbX.vx.injEq, bvx, reduceCtorEq, ite_false, ite_true,
       hwn, hsn, htC, htK, h3, h4, h5, List.length_replicate, List.length_cons,
-      List.append_nil, List.drop_replicate, 
-      ]
+      List.append_nil, List.drop_replicate]
     omega
   · funext r
     rcases r with (r | x) | y

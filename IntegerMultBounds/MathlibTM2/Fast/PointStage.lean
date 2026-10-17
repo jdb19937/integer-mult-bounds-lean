@@ -215,6 +215,7 @@ theorem cst_chirpMul_runs (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ : SS
   exact cst_point_runs hrg hdisj hι hT hQ hA hc hw hq t _ x (fun k => cst_isFixed_conj (ha k)) hx
     (fun k => by rw [cst_numer_conj]; exact cst_fits_star (haw k)) hxw ρ hr hX hY hxsv hysv hacc
 
+omit hdisj in
 /-- **Conjugation of a stream.** The conjugation automaton of `conj_exec` consumes the stream of
 `l` on `src` and pushes the stream of `l.map star` reversed onto `out`; the counter `ctr` holds
 `w` symbols and `tmp` is empty (both kept); the automaton state lives in the scan slot of `st`. -/
@@ -279,7 +280,7 @@ theorem cst_conjKeep_runs {src dst tA tB t1 t2 st ctr tmp : R}
     (by regs_nodup) ρ ht1 ht2
   rw [hsrc, htA, List.append_nil] at h1
   set ρ₁ := Function.update ρ tA (cstream A w l) with hρ₁
-  have h2 := cst_conj_runs (body := body) (ι := ι) hrg hdisj (src := tA) (out := tB) (st := st)
+  have h2 := cst_conj_runs (body := body) (ι := ι) hrg (src := tA) (out := tB) (st := st)
     (ctr := ctr) (tmp := tmp) (by regs_nodup) hst hA hw ρ₁ l (by simp [hρ₁])
     (by rw [hρ₁, Function.update_of_ne (Ne.symm ‹tA ≠ ctr›)]; exact hctr)
     (by rw [hρ₁, Function.update_of_ne (Ne.symm ‹tA ≠ tmp›)]; exact htmp)
@@ -297,6 +298,7 @@ theorem cst_conjKeep_runs {src dst tA tB t1 t2 st ctr tmp : R}
     rw [e1, length_cstream]
     nlinarith
 
+omit hdisj in
 /-- **The exact scale by `2^γ`.** `shiftInto` turns the stream of `l` on `src` into the stream
 of `l.map (2^γ * ·)` on `out` (on top of its contents unless `out = src`); `src` ends empty
 unless it is `out`, `dst` is an empty spare, `cS` and `cR` hold `γ` and `w - γ` symbols, `tS`,
@@ -339,6 +341,7 @@ theorem cst_scale_runs {src dst out cS cR tS tR : R} (hreg : [src, dst, cS, cR, 
 
 /-! ### Box forms -/
 
+omit hdisj in
 /-- `cst_conj_runs` on a numerator box: `out` gains the numerator box of `k ↦ conj (z k)`
 reversed. -/
 theorem cst_conj_box {src out st ctr tmp : R} (hd : [src, out, ctr, tmp].Nodup) (hst : src ≠ st)
@@ -351,7 +354,7 @@ theorem cst_conj_box {src out st ctr tmp : R} (hd : [src, out, ctr, tmp].Nodup) 
       ρ (Function.update (Function.update ρ src []) out
         ((cstream A w (cstNumBox q t fun k => starRingEnd ℂ (z k))).reverse ++ ρ out))
       ((∏ i, t i) * (5 * w + 6) + 2) := by
-  have h := cst_conj_runs (body := body) (ι := ι) hrg hdisj hd hst hA hw ρ _ hsrc hctr htmp
+  have h := cst_conj_runs (body := body) (ι := ι) hrg hd hst hA hw ρ _ hsrc hctr htmp
   rwa [cstNumBox_conj, cst_length_numBox] at h
 
 /-- `cst_conjKeep_runs` on a numerator box: `dst` gains the numerator box of `k ↦ conj (a' k)`;
@@ -370,6 +373,7 @@ theorem cst_conjKeep_box {src dst tA tB t1 t2 st ctr tmp : R}
     ht1 ht2 hctr htmp
   rwa [cstNumBox_conj, cst_length_numBox] at h
 
+omit hdisj in
 /-- `cst_scale_runs` on a numerator box of grid values: `out` gains the numerator box of
 `(2 : ℂ)^γ • v`. -/
 theorem cst_scale_box {src dst out cS cR tS tR : R} (hreg : [src, dst, cS, cR, tS, tR].Nodup)
@@ -383,7 +387,7 @@ theorem cst_scale_box {src dst out cS cR tS tR : R} (hreg : [src, dst, cS, cR, t
       ρ (Function.update (Function.update ρ src []) out
         (cstream A w (cstNumBox q t ((2 : ℂ) ^ γ • v)) ++ if out = src then [] else ρ out))
       ((∏ i, t i) * (6 * w + 4 * γ + 14) + 4) := by
-  have h := cst_scale_runs (body := body) (ι := ι) hrg hdisj hreg hout hw hγ ρ _ hsrc hcS hcR
+  have h := cst_scale_runs (body := body) (ι := ι) hrg hreg hout hw hγ ρ _ hsrc hcS hcR
     htS htR hdst
   rwa [cstNumBox_scale t γ v hv, cst_length_numBox] at h
 

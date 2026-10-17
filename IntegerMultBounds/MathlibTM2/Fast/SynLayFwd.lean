@@ -83,7 +83,7 @@ theorem sly_post_fwd_v {es : List ℕ} {ℓ K w l : ℕ} {L : Equiv.Perm (Fin es
       slyV₃ W E N B v₀ csM csX mA mB := by
   have hly := hv₀.hly
   funext x
-  rcases x with x | i | x | i
+  rcases x with a | i | a | i
   · simp [slyV₃, slyV₂, slyPV]
   · simp only [slyV₃, Function.update_apply, SynW.ly.injEq]
     split_ifs <;> simp_all [slyV₂, slyPV]

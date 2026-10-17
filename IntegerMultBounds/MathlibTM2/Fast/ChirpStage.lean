@@ -207,7 +207,7 @@ theorem cst_rep_runs {src dst wn cb ra cL cL' s1 s2 : R}
   set st : List GaussianInt → List GaussianInt → R → List (Fin (A + 4)) := fun l done =>
     Function.update (Function.update ρ src (cstream A w l)) ra
       (cstream A w (done.flatMap (List.replicate L))).reverse with hst
-  have hloop := rsa_cwhileP_runs (body := body) (ι := ι) hrg hdisj src
+  have hloop := rsa_cwhileP_runs (body := body) (ι := ι) hdisj src
     (cstRepOne rg src wn cb ra cL cL' s1 s2) (fun _ => True) st
     (8 * w + 10 + L * (6 * w + 11))
     (fun a rest done _ => by

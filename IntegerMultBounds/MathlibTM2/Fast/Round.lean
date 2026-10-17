@@ -355,8 +355,7 @@ private lemma regFx_drop {xc cy : Fin T} (hxc : xc ≠ cy) :
     RegFx (Q := Q) (A := A) (U := U) (rndDropAct xc cy) (fun _ => dropFx xc cy) := by
   intro x k v S _
   refine ⟨{ v with sym := (S.R xc).head? }, rfl, ?_⟩
-  simp [rndDropAct, Action.run, update_rt, dropFx, Function.update_of_ne hxc.symm,
-    ]
+  simp [rndDropAct, Action.run, update_rt, dropFx, Function.update_of_ne hxc.symm]
 
 private lemma frame_drop {a xc cy : Fin T} (h1 : a ≠ xc) (h2 : a ≠ cy) :
     Frame a (fun _ => dropFx (T := T) (A := A) xc cy) := by

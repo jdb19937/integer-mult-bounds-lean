@@ -392,6 +392,7 @@ theorem src_chirpMul1_runs (hι : Function.Injective ι) (hT : 64 ≤ T) (hQ : S
     rw [e1]
     nlinarith
 
+omit hdisj in
 /-- **The ring header** `Γ(|pR|) Γ(2^|lR|) Γ(|wR|)` onto `d0`, the work registers empty and
 kept empty. -/
 theorem src_header_runs {pR lR wR d0 a h par cnt t : R}
@@ -573,7 +574,7 @@ theorem srcV_runs (M : SrcMach t₀ T Q) (hA : 96 ≤ prime + K) {n : ℕ} (hn :
       List.append_nil]
   rw [e₂] at s2
   -- the ring header
-  have s3 := src_header_runs (body := body) M.hrg hdisj (pR := .k (.x .pU)) (lR := .x .lU)
+  have s3 := src_header_runs (body := body) (ι := M.ι) M.hrg (pR := .k (.x .pU)) (lR := .x .lU)
     (wR := .k (.x .wU)) (d0 := .v (.rpi 0)) (a := .v (.rr .ta)) (h := .v (.rr .tb))
     (par := .v (.rr .acc)) (cnt := .v (.rr .sv)) (t := .v (.rr .tmp)) (by simp) E₂.get
     (by rw [SrcF.get_v, hv₂ _ (by decide) (by decide), hv.rta])
@@ -851,7 +852,7 @@ theorem srcG_runs (M : SrcMach t₀ T Q) {d q γ w : ℕ} (s t : Fin d → ℕ) 
                x := (Function.update E.x .sb
                  (cstream (prime + K) w (srcPad q s t ((2 : ℂ) ^ γ • z)) ++ E.x .sb)) }.get
       ((∏ i, t i) * (6 * w + 4 * γ + 14) + 4) := by
-  have h := cst_scale_runs (body := body) (ι := M.ι) M.hrg M.hdisj (src := .b (.inl .src))
+  have h := cst_scale_runs (body := body) (ι := M.ι) M.hrg (src := .b (.inl .src))
     (dst := .x .gD) (out := .x .sb) (cS := .x .gS) (cR := .x .gR) (tS := .x .gT) (tR := .x .gU)
     (by simp) (by simp) hw hγ E.get (srcPad q s t z) hsrc hgS hgR hgT hgU hgD
   rw [src_pad_scale s t γ z hz, ite_eq_right (by simp), src_length_pad, SrcF.upd_b, SrcF.upd_x] at h

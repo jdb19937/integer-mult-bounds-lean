@@ -217,10 +217,12 @@ def SrcRuns (p : Pr P T Q A U) (ρ ρ' : R → List (Fin (A + 4))) (b : ℕ) : P
 
 variable {body rg ι Pre}
 
+omit [DecidableEq R] in
 theorem SrcRuns.of_rsa {p : Pr P T Q A U} {ρ ρ' : R → List (Fin (A + 4))} {b : ℕ}
     (h : RsaRuns body rg ι p ρ ρ' b) : SrcRuns body rg ι Pre p ρ ρ' b :=
   fun v S hc _ hS => h v S hc hS
 
+omit [DecidableEq R] in
 theorem SrcRuns.seq (hdisj : ∀ r j, rg r ≠ ι j) (hP : SrcFramed rg Pre) {p q : Pr P T Q A U}
     {ρ₁ ρ₂ ρ₃ : R → List (Fin (A + 4))} {b₁ b₂ : ℕ} (h₁ : SrcRuns body rg ι Pre p ρ₁ ρ₂ b₁)
     (h₂ : SrcRuns body rg ι Pre q ρ₂ ρ₃ b₂) : SrcRuns body rg ι Pre (.seq p q) ρ₁ ρ₃ (b₁ + b₂) := by
@@ -230,20 +232,24 @@ theorem SrcRuns.seq (hdisj : ∀ r j, rg r ≠ ι j) (hP : SrcFramed rg Pre) {p 
     h₂ v₁ S₁ (hc.of_fr hdisj hf₁) (hP S S₁ hpre hf₁) hS₁
   exact ⟨v₂, S₂, n₁ + n₂, hu₂.trans hu₁, by omega, Exec.seq he₁ he₂, hS₂, hf₁.trans hf₂⟩
 
+omit [DecidableEq R] in
 theorem SrcRuns.mono {p : Pr P T Q A U} {ρ ρ' : R → List (Fin (A + 4))} {b b' : ℕ}
     (h : SrcRuns body rg ι Pre p ρ ρ' b) (hb : b ≤ b') : SrcRuns body rg ι Pre p ρ ρ' b' := by
   intro v S hc hpre hS
   obtain ⟨v', S', n, hu, hn, he, hS', hf⟩ := h v S hc hpre hS
   exact ⟨v', S', n, hu, hn.trans hb, he, hS', hf⟩
 
+omit [DecidableEq R] in
 theorem SrcRuns.congr {p : Pr P T Q A U} {ρ ρ' ρ'' : R → List (Fin (A + 4))} {b : ℕ}
     (h : SrcRuns body rg ι Pre p ρ ρ' b) (he : ρ' = ρ'') : SrcRuns body rg ι Pre p ρ ρ'' b :=
   he ▸ h
 
+omit [DecidableEq R] in
 theorem SrcRuns.congr_pre {p : Pr P T Q A U} {ρ₀ ρ ρ' : R → List (Fin (A + 4))} {b : ℕ}
     (h : SrcRuns body rg ι Pre p ρ ρ' b) (he : ρ₀ = ρ) : SrcRuns body rg ι Pre p ρ₀ ρ' b :=
   he ▸ h
 
+omit [DecidableEq R] in
 /-- A framed `Pre` is framed for every sub-layout. -/
 theorem SrcFramed.comp {R' : Type} {f : R' → R} (hP : SrcFramed rg Pre) :
     SrcFramed (fun x => rg (f x)) Pre := fun S S' hS h =>
@@ -252,6 +258,7 @@ theorem SrcFramed.comp {R' : Type} {f : R' → R} (hP : SrcFramed rg Pre) :
 variable (hrg : Function.Injective rg)
 include hrg
 
+omit [DecidableEq R] in
 /-- **Framing.** A contract of the family layout `rg ∘ f` lifts to the composite: the family's
 registers change as in the contract, every other register is kept. -/
 theorem src_lift {R' : Type} {f : R' → R} (hf : Function.Injective f) {p : Pr P T Q A U}
@@ -268,6 +275,7 @@ theorem src_lift {R' : Type} {f : R' → R} (hf : Function.Injective f) {p : Pr 
   · rw [Function.extend_apply' _ _ _ hr]
     rw [hf'.2.2.2 (rg r) (fun x hx => hr ⟨x, hrg hx⟩), hS]
 
+omit [DecidableEq R] in
 /-- **Framing with `Pre`.** -/
 theorem SrcRuns.lift {R' : Type} {f : R' → R} (hf : Function.Injective f) {p : Pr P T Q A U}
     {ρs ρs' : R' → List (Fin (A + 4))} {b : ℕ}

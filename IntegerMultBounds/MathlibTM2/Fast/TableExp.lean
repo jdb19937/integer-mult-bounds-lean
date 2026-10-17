@@ -181,8 +181,7 @@ theorem tblMag_do {A W w : ℕ} (st : TblSt 18 A) {Y q Q N : ℕ} (hY : st.val t
         · rw [show 1 - ((j + 1) % 4 + 3) / 4 = 0 by omega]; simp
       refine (TblDo.block _ _ ?_ ?_).mono (fun _ h => h) (by simp [tblMagBody, tblMagAcc])
       · simp [tblMagBody, tblMagAcc, tblFitsList, TblIns.fits, TblIns.exact, 
-          h0, h1, h2, h3, hm, hk1, hk2, hk3, hk4, hy, hpQ', hj', tblMagY, tblMagPQ, 
-          ]
+          h0, h1, h2, h3, hm, hk1, hk2, hk3, hk4, hy, hpQ', hj', tblMagY, tblMagPQ]
         rw [e0, e1, e2, e3]
         and_intros <;> omega
       · simp [Inv, tblMagBody, tblMagAcc, tblExactList, TblIns.exact, 

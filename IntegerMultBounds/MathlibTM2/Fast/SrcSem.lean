@@ -100,6 +100,7 @@ theorem src_crt_fwd {A w q : ℕ} (a t : Fin d → ℕ) (ht : ∀ j, t j = 2 ^ a
     simp only [Option.map_some, Option.getD_some, ZMod.natCast_zmod_val]
   · rfl
 
+omit [∀ (i : Fin d), NeZero (s i)] in
 /-- The padded box of `g` is the CRT box of its content. -/
 theorem src_crt_inv_box {A w q : ℕ} (a t : Fin d → ℕ) (ht : ∀ j, t j = 2 ^ a j)
     (g : ((i : Fin d) → ZMod (s i)) → ℂ) :

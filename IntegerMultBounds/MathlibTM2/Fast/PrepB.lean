@@ -334,6 +334,7 @@ variable {body : F → Pr F T Q (prime + K) U} {g : RsbR ⊕ RsbX t₀ → Fin T
 variable (hg : Function.Injective g) (hι : Function.Injective ι) (hdisj : ∀ r j, g r ≠ ι j)
 include hg hι hdisj
 
+omit hg hι hdisj in
 lemma preLayB_map (l : List (RsbR ⊕ RsbX t₀)) :
     (l.map Sum.inl).map (preLay g ι) = l.map g := by
   simp [List.map_map, Function.comp_def, preLay]
