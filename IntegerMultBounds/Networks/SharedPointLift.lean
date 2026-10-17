@@ -114,21 +114,6 @@ theorem lifted_core_card (c : Fin (n+1)) (core : Finset (Fin n)) (hc : core.None
   have hh := Finset.card_pos.mpr hc
   omega
 
-/-- Direct interface for two rows carrying checked local vertex signatures. -/
-theorem equal_of_correct (payload : Fin width → Finset (Fin n)) (hpair : ∀ i, (payload i).card = 2)
-    (c d : Fin (n+1)) (left right : MaskDAG.Entry width)
-    (ls rs : MaskSignature.Signature n)
-    (hl : MaskSignature.Correct payload left ls) (hr : MaskSignature.Correct payload right rs)
-    (hneL : (MaskDAG.decode left.mask).Nonempty) (hneR : (MaskDAG.decode right.mask).Nonempty)
-    (hcore : (MaskDAG.decode ls.core).Nonempty)
-    (hc : insert c ((MaskDAG.decode ls.core).image c.succAbove) =
-      insert d ((MaskDAG.decode rs.core).image d.succAbove))
-    (hu : insert c ((MaskDAG.decode ls.union).image c.succAbove) =
-      insert d ((MaskDAG.decode rs.union).image d.succAbove)) :
-    lift payload hpair c (MaskDAG.decode left.mask) = lift payload hpair d (MaskDAG.decode right.mask) :=
-  equal_of_signatures payload hpair c d _ _ hneL hneR _ _ _ _
-    hl.1.symm hl.2.symm hr.1.symm hr.2.symm hc hu (lifted_core_card c _ hcore)
-
 /-- Bounds and canonical orientation of the source pair at a bit position. -/
 theorem pairAt_bounds (n : ℕ) (i : Fin (n.choose 2)) :
     (PairMask.pairAt n i).1 < n ∧ (PairMask.pairAt n i).2 < n ∧

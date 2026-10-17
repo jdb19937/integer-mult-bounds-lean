@@ -3582,19 +3582,11 @@ Bit and complex networks.
   vertices. Per-copy uniqueness forces distinct discarded endpoints and
   excludes left/right overlap, discharging those counting prerequisites.
 
-- `Networks/MaskDAG.lean`: executable bitmask DAG certificate checkers prove
-  actual disjoint-support validity and evaluation semantics. A static balanced
-  bank permits independent indexed chunks, checking its own annotations and
-  all backward references; acceptance uses ordinary kernel reduction.
+- `Networks/MaskDAG.lean`: fixed-width bitmask decoding of source supports,
+  with bitwise union, intersection and singleton masks.
 
-- `Networks/MaskSignature.lean`: checked small-mask core/union annotations
-  equal the intersection and union of actual source endpoint sets. Inputs
-  use their source endpoints; additions intersect cores and union vertices.
-  Chunk composition and bank semantics avoid rescanning dense source masks.
-
-- `Networks/MaskUnique.lean`: a checked strictly increasing list of masks
-  with bounded, bank-verified node identifiers proves identifier uniqueness
-  and coverage, then bank injectivity and unique actual DAG supports.
+- `Networks/MaskSignature.lean`: common and covered vertex summaries of a
+  source support; additions intersect cores and union covered vertices.
 
 - `Networks/PairMask.lean`: canonical pair indexing and incident/exclusion
   bitmasks encode exactly the original pairs avoiding specified vertices.

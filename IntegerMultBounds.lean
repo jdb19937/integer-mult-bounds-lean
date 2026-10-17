@@ -293,7 +293,6 @@ public import IntegerMultBounds.Networks.PairedLocalCircuit
 public import IntegerMultBounds.Networks.PairedIndexedGraph
 public import IntegerMultBounds.Networks.SharedPointLocalFamily
 public import IntegerMultBounds.Networks.SharedPointLocalReplay
-public import IntegerMultBounds.Networks.PairedStructuralSharedPoint
 public import IntegerMultBounds.Networks.DAGCompact
 public import IntegerMultBounds.Networks.PairedRename
 public import IntegerMultBounds.Networks.PairedLocalPruning
@@ -324,7 +323,6 @@ public import IntegerMultBounds.Networks.SharedPointLift
 public import IntegerMultBounds.Networks.SharedPointFamily
 public import IntegerMultBounds.Networks.MaskDAG
 public import IntegerMultBounds.Networks.MaskSignature
-public import IntegerMultBounds.Networks.MaskUnique
 public import IntegerMultBounds.Networks.PairMask
 public import IntegerMultBounds.Networks.ReversibleFanout
 public import IntegerMultBounds.Networks.DAGAllocator
