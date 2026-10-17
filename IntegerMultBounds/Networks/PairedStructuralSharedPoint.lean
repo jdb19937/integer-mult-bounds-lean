@@ -6,7 +6,7 @@ public import IntegerMultBounds.Networks.SharedPointLocalReplay
 /-! End-to-end shared-point execution from the literal recursive local
 constructor, pruned to the ancestors of its outputs before replay. No
 generated local DAG, mask bank, endpoint signature, or cross-copy witness is
-imported. The budget is conservative; the sharp published bound remains on
+imported. The budget does not yet credit shared duplicates; the sharp published bound remains on
 the certified implementation until its live-node and duplicate counts are
 established. -/
 
@@ -57,9 +57,10 @@ theorem run_partial (input : Triple 50 → ZMod 2) (c : Fin 50) (j : Fin 1176) :
           (fun T : Triple 50 => T.val ∩ (embedding c j).val = {c})) :=
   run_partial_for PairedIndexedPruning.implementation input c j
 
-/-- Certificate-free budget for all fifty replayed copies, after removing the
-unused single-exclusion sums from the local circuit. -/
-def additionBudget : ℕ := 50 * (PairedInitialGraph.additionBudget (List.range 49) - 49)
+/-- Certificate-free budget for all fifty replayed copies: the sharp local
+allocation count less the unused single-exclusion sums. Duplicate sharing
+across copies is not yet credited. -/
+def additionBudget : ℕ := 50 * 9866
 
 theorem support_bound :
     ((SharedPointLocalFamily.domain PairedIndexedPruning.implementation).image

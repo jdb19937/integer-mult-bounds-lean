@@ -4,6 +4,7 @@ public import IntegerMultBounds.Networks.PairedIndexedGraph
 public import IntegerMultBounds.Networks.PairedRename
 public import IntegerMultBounds.Networks.PairedLocalPruning
 public import IntegerMultBounds.Networks.PairedSingleBudget
+public import IntegerMultBounds.Networks.PairedLevelBound
 
 /-! The finite-coordinate constructor is the pair-keyed constructor with its
 input atoms relabeled. Live counts and pruning credits proved for the
@@ -132,14 +133,14 @@ theorem additions_le_live : DAGAllocator.additionCount implementation.nodes ≤
       (PairedInitialGraph.circuit (List.range 49)).nodes :=
   (PairedLocalCircuit.pruned_additions_le _).trans live_eq.le
 
-/-- The unused single-exclusion sums are removed before replay. -/
-theorem additions_le : DAGAllocator.additionCount implementation.nodes ≤
-    PairedInitialGraph.additionBudget (List.range 49) - 49 := by
+/-- The sharp structural allocation count, less the unused single-exclusion
+sums removed before replay. -/
+theorem additions_le : DAGAllocator.additionCount implementation.nodes ≤ 9866 := by
   have hs := PairedInitialGraph.single_additions_saved (List.range 49) List.pairwise_lt_range (by
     rw [List.toFinset_card_of_nodup List.nodup_range, List.length_range]
     decide)
   rw [PairedInitialGraph.singleSavings_49] at hs
-  have hc := PairedInitialGraph.circuit_additions_le (List.range 49)
+  have hc := PairedLevelBound.circuit_additions_le
   have hl := additions_le_live
   omega
 

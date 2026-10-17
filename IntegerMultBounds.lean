@@ -303,6 +303,9 @@ public import IntegerMultBounds.Networks.PairedLocalPruning
 public import IntegerMultBounds.Networks.PairedIndexedPruning
 public import IntegerMultBounds.Networks.PairedPresence
 public import IntegerMultBounds.Networks.DAGSimulation
+import IntegerMultBounds.Networks.PairedBaseBound
+import IntegerMultBounds.Networks.PairedLevelTools
+import IntegerMultBounds.Networks.PairedLevelBound
 public import IntegerMultBounds.Networks.DAGAdditionIds
 public import IntegerMultBounds.Networks.PairedPruning
 public import IntegerMultBounds.Networks.DisjointUnique
