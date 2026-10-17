@@ -1994,3 +1994,17 @@ Both resampling maps now cost about `√(p log p) M(p)` per element, and the
 Gaussian stage no longer limits `ε` below `1/2`. `MathlibTM2.Theorem` builds;
 the public bound is unchanged until `ε` rises, which waits on the
 synthetic-layer precision above.
+
+Rounded synthetic layers (next). The layer machine keeps one common scale by
+multiplying the wires a factor does not touch by `2^Tc` (`Layer/NodeZ.execM`),
+so the exponent compounds, `E_{j+1} = G + F E_j`. Instead the factor shifts
+its child's output right by `Tc` (truncating) and leaves the other wires
+alone; gates still double. The node exponent is then `G` at every level, and
+the truncation errors grow by a fixed factor per level, about
+`√N (FΛ)^j` units for an array of `N` entries, which is `logT/2 + O(log d)`
+guard bits, so the working width stays `O(p)` for any `ε < 1/2`. Steps:
+rounded node and layer semantics with that error bound (`Layer/`); the factor
+programs with a truncating shift in place of `shiftTc` (`Node/Factor`,
+`Node/CompactFactor`) and their costs; the round error absorbed by
+`SynthErrRounds` and the widths `synW2`; then `ε = 9/32` with its sizing and
+the final theorem.
