@@ -161,4 +161,28 @@ theorem topR_err_guard (ds : Directions) (hd : ComplexPhaseBudget.Realizes ds) (
     _ = 2 ^ (E + g) := (pow_add _ _ _).symm
     _ ≤ 2 ^ s := hs'
 
+/-! ### The size of the entries -/
+
+/-- Every entry of the rounded layer is at most `2^scaleR j ‖f‖₂ + errL j`. -/
+theorem layerR_entry_le (u : ℕ) (ds : Directions) (hd : ComplexPhaseBudget.Realizes ds)
+    (R₀ j : ℕ) (e : Fin (bits u j) → Fin n) (he : Function.Injective e)
+    (f : ZArr (Fin (rowsAt R₀ j) × Fin r) n) (q : (Fin (rowsAt R₀ j) × Fin r) × (Fin n → ZMod 2)) :
+    ‖GaussianInt.toComplex (layerR u ds R₀ j e f q)‖ ≤
+      2 ^ scaleR u ds j * l2 (toC f) + errL u ds R₀ r n j := by
+  have h := layerR_err u ds hd R₀ j e he f
+  have hP : l2 (((List.finRange (bits u j)).map fun i => kBit 1 (e i)).prod (toC f)) =
+      l2 (toC f) := by
+    have := l2_prod_kBit ((List.finRange (bits u j)).map e) (toC f)
+    rw [List.map_map] at this
+    exact this
+  generalize layerR u ds R₀ j e f = Y at h ⊢
+  generalize ((List.finRange (bits u j)).map fun i => kBit 1 (e i)).prod (toC f) = P at h hP
+  have h2 := norm_le_l2 (toC Y) q
+  have h3 : l2 (toC Y) ≤ l2 (toC Y - (2 : ℂ) ^ scaleR u ds j • P) + 2 ^ scaleR u ds j * l2 (toC f) := by
+    have := l2_add_le (toC Y - (2 : ℂ) ^ scaleR u ds j • P) ((2 : ℂ) ^ scaleR u ds j • P)
+    rw [sub_add_cancel, l2_smul, hP, norm_pow, RCLike.norm_two] at this
+    exact this
+  change ‖toC Y q‖ ≤ _
+  linarith
+
 end IntegerMultBounds.MathlibTM2.Layer
