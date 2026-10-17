@@ -305,6 +305,16 @@ import IntegerMultBounds.Networks.PairedLevelTools
 import IntegerMultBounds.Networks.PairedLevelBound
 import IntegerMultBounds.Networks.PairedTopPruning
 import IntegerMultBounds.Networks.PairedBasePruning
+import IntegerMultBounds.Networks.PairedStarCount
+import IntegerMultBounds.Networks.PairedStarMatch
+import IntegerMultBounds.Networks.PairedStarPresence
+import IntegerMultBounds.Networks.PairedTopStars
+import IntegerMultBounds.Networks.PairedHubStars
+import IntegerMultBounds.Networks.PairedStarFamily
+import IntegerMultBounds.Networks.PairedStarNodes
+import IntegerMultBounds.Networks.DAGCompactSource
+import IntegerMultBounds.Networks.PairedStarShared
+import IntegerMultBounds.Networks.PairedSharedBound
 public import IntegerMultBounds.Networks.DAGAdditionIds
 public import IntegerMultBounds.Networks.PairedPruning
 public import IntegerMultBounds.Networks.DisjointUnique
@@ -316,7 +326,6 @@ public import IntegerMultBounds.Networks.MaskDAG
 public import IntegerMultBounds.Networks.MaskSignature
 public import IntegerMultBounds.Networks.MaskUnique
 public import IntegerMultBounds.Networks.PairMask
-public import IntegerMultBounds.Networks.Paired49Certificate
 public import IntegerMultBounds.Networks.ReversibleFanout
 public import IntegerMultBounds.Networks.DAGAllocator
 public import IntegerMultBounds.Networks.DAGAllocatorCount
@@ -335,7 +344,6 @@ public import IntegerMultBounds.Networks.SharedPointExecution
 public import IntegerMultBounds.Networks.SharedPointOutputIndex
 public import IntegerMultBounds.Networks.BoundedCircuit
 public import IntegerMultBounds.Networks.DAGFiniteCompile
-public import IntegerMultBounds.Networks.SharedPointWitnessCheck
 public import IntegerMultBounds.Networks.Shared50Certificate
 public import IntegerMultBounds.Networks.Shared50Finite
 public import IntegerMultBounds.Networks.FanoutFrames

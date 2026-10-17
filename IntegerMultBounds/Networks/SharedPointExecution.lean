@@ -14,8 +14,7 @@ namespace IntegerMultBounds.Networks.SharedPointExecution
 
 open DisjointCircuit NeighborCounts SharedPointReplay
 
-attribute [local irreducible] SharedPointReplay.circuit Paired49Certificate.nodes
-  Certificates.Paired49.entries Certificates.Paired49.outputs Certificates.Paired49.bank
+attribute [local irreducible] SharedPointReplay.circuit PairedIndexedPruning.implementation
 
 /-- The program emitted by the allocator for the actual fifty-copy replay. -/
 def code : DAGAllocator.Code := DAGAllocator.compile circuit.nodes outputRefs

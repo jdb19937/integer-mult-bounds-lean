@@ -2,6 +2,7 @@ module
 
 public import IntegerMultBounds.Networks.PairedIndexedPruning
 public import IntegerMultBounds.Networks.SharedPointLocalReplay
+public import IntegerMultBounds.Networks.PairedSharedBound
 import Mathlib.Tactic.NormNum.GCD
 import Mathlib.Data.Sym.Sym2.Init
 import Mathlib.Data.Nat.Totient
@@ -9,9 +10,7 @@ import Mathlib.Data.Nat.Totient
 /-! End-to-end shared-point execution from the literal recursive local
 constructor, pruned to the ancestors of its outputs before replay. No
 generated local DAG, mask bank, endpoint signature, or cross-copy witness is
-imported. The budget does not yet credit shared duplicates; the sharp published bound remains on
-the certified implementation until its live-node and duplicate counts are
-established. -/
+imported. The budget credits the 40,256 proved duplicate stars. -/
 
 @[expose] public section
 
@@ -60,19 +59,14 @@ theorem run_partial (input : Triple 50 → ZMod 2) (c : Fin 50) (j : Fin 1176) :
           (fun T : Triple 50 => T.val ∩ (embedding c j).val = {c})) :=
   run_partial_for PairedIndexedPruning.implementation input c j
 
-/-- Certificate-free budget for all fifty replayed copies: the sharp local
-allocation count of 9,813 live additions per copy. Duplicate sharing across
-copies is not yet credited. -/
-def additionBudget : ℕ := 50 * 9813
+/-- Certificate-free budget for all fifty replayed copies: 9,813 live local
+additions per copy less the 40,256 proved cross-copy duplicates. -/
+def additionBudget : ℕ := 450394
 
 theorem support_bound :
     ((SharedPointLocalFamily.domain PairedIndexedPruning.implementation).image
-      (SharedPointLocalFamily.support PairedIndexedPruning.implementation)).card ≤ additionBudget := by
-  calc
-    _ ≤ (SharedPointLocalFamily.domain PairedIndexedPruning.implementation).card := Finset.card_image_le
-    _ ≤ additionBudget := by
-      rw [SharedPointLocalFamily.domain_card]
-      exact Nat.mul_le_mul_left 50 PairedIndexedPruning.additions_le
+      (SharedPointLocalFamily.support PairedIndexedPruning.implementation)).card ≤ additionBudget :=
+  PairedStarShared.support_bound
 
 /-- Both compiler bounds concern the actual structural shared-point circuit.
 No finite-count premise or unchecked agreement with a generated DAG is assumed. -/

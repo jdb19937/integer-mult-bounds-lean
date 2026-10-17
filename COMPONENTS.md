@@ -3641,12 +3641,25 @@ Bit and complex networks.
   for the actual compiler: instructions plus source slots equal twice active
   additions plus requested outputs. This gives bounds from total additions
   or actual allocated roles, including repeated output requests.
-- `Networks/Paired49Certificate.lean`: unconditional finite witness for all
-  1,176 canonical pair-exclusion sums on 49 vertices, over every commutative
-  additive monoid; exactly 9,813 additions, unique supports, and exact endpoint
-  signatures. Its actual pruned allocator uses at most 10,989 scalar roles,
-  with distinct bounded output slots. Equality with the literal recursive
-  builder and tape costs are not claimed.
+- `Networks/PairedBasePruning.lean`, `Networks/PairedIndexedPruning.lean`: the
+  literal recursive 49-vertex constructor, pruned to the ancestors of its
+  outputs, has at most 9,813 live additions: the allocation count less the
+  unused single exclusions, top strip totals and five dead base sums.
+- `Networks/PairedStarCount.lean`, `Networks/PairedStarMatch.lean`: star leaf
+  families per local center; a kernel merge of sorted lifted leaf masks counts
+  40,256 common stars between copies `c < c'`, with bit-level proofs that equal
+  lifted masks are equal lifted leaf sets.
+- `Networks/PairedStarPresence.lean`, `Networks/PairedTopStars.lean`,
+  `Networks/PairedHubStars.lean`, `Networks/PairedStarFamily.lean`: every
+  counted star is stored by the constructor: top strip values, prefixes,
+  suffixes, omissions and right cross sums, and at vertex 48 the coarse edges
+  of every level and three base single exclusions.
+- `Networks/PairedStarNodes.lean`, `Networks/PairedStarShared.lean`,
+  `Networks/PairedSharedBound.lean`, `Networks/DAGCompactSource.lean`: the 102
+  credited dead additions, star nodes and their endpoint summaries, the 40,256
+  genuine duplicate witnesses, and the bound of 450,394 distinct supports for
+  the pruned circuit used by replay. Stated for arbitrary circuits and
+  specialized at the end, so no concrete circuit is evaluated.
 
 - `Networks/ReversibleFanout.lean`: literal binary gate lists gather a sum
   into a pivot and fan it out. Full dirty-state semantics, reverse-list
@@ -3658,10 +3671,10 @@ Bit and complex networks.
   preservation of support cardinality and cross-copy equality from verified
   endpoint signatures. Includes the canonical 49-vertex pair payload.
 - `Networks/SharedPointFamily.lean`: the actual fifty-copy family formed from
-  certified local addition nodes has exactly 490,650 members before sharing.
-  Nontrivial supports, common points and per-copy uniqueness discharge the
-  matching theorem's structural hypotheses; the concrete duplicate count
-  is checked in Certificates/Shared50, with global construction in SharedPointReplay.
+  the structural local addition nodes has at most 490,650 members before
+  sharing. Nontrivial supports, common points and per-copy uniqueness discharge
+  the matching theorem's structural hypotheses; the duplicate count is proved
+  in PairedSharedBound, with global construction in SharedPointReplay.
 
 - `Networks/DAGReplay.lean`: executable topological import into an existing
   DAG under injective source renaming, interning by exact support. Validity,
@@ -3675,7 +3688,7 @@ Bit and complex networks.
   support is exactly the triples intersecting its target in that common point.
 - `Networks/SharedPointReplay.lean`: actual fifty-copy global DAG with exact
   58,800 output keys and values, valid references, unique supports and every
-  addition support in the checked local family. The support-image bound of
+  addition support in the structural local family. The support-image bound of
   450,394 implies at most 509,194 compiled roles and 959,588 XOR updates;
   the premise is discharged in Shared50Certificate.
 
@@ -3694,11 +3707,8 @@ Bit and complex networks.
 - `Networks/DAGFiniteCompile.lean`: the actual allocator bounds every scalar
   target/source; its finite-register program has exactly the same execution,
   output values and length, with a proved inverse on arbitrary finite states.
-- `Networks/SharedPointWitnessCheck.lean`: compact duplicate checker with
-  proved omitted-point bit insertion, exact core/union signature semantics,
-  genuine cross-copy equality and sorted-row uniqueness/cardinality.
-- `Networks/Shared50Certificate.lean`: the global certificate discharges every
-  finite-count premise: actual additions at most 450,394, compiled roles at
+- `Networks/Shared50Certificate.lean`: the structural duplicate count discharges
+  every finite-count premise: actual additions at most 450,394, compiled roles at
   most 509,194, and at most 959,588 scalar XOR instructions in the same program
   that computes all common-point partial sums.
 - `Networks/Shared50Finite.lean`: concrete program on `Fin 509194` with the
@@ -3921,37 +3931,6 @@ Bit and complex networks.
 - `Networks/ComplexInverseExecution.lean`: The original corrected compiler network and its original conjugated version compute the genuine forward or inverse full tensor on every data and dirty scratch wire. The joint oriented_corrected_network theorem covers both orientations, including their source/sink corrections; actual conjugated frameOf values are identified with their true inverses. This closes the mathematical orientation milestone. Physical table joins and full recursive tape execution remain separate.
 
 - `Networks/ComplexEndpointGrid.lean`: Original source sign characters and sink signs, runtime I phase, negation and named bank exchange preserve the exact Gaussian dyadic denominator and both numerator bounds, including arbitrary scratch. Pre-correction and post-correction require no extra numerical reserve; actual tape boundary assembly remains separate.
-
-### Networks/Certificates/Paired49
-
-Generated data are untrusted; all acceptance proofs use Lean kernel reduction.
-The four generators in `scripts/generate_paired49_*.py` reproduce the witness
-from the reference paired-exclusion implementation.
-
-- `Data.lean`, `Chunk000.lean` through `Chunk085.lean`, `Checked.lean`:
-  10,989 support masks with checked input masks, backward references, disjoint
-  addition operands and exact support unions; DAG validity and 9,813 additions.
-- `Incidents.lean`, `Outputs.lean`: checked endpoint-incidence masks, the full
-  canonical output list, output bounds, and exact pair-exclusion semantics.
-- `Unique.lean`: a sorted mask certificate checks coverage and injectivity of
-  the actual bank, proving all node supports are distinct.
-- `SignaturesData.lean`, `SignaturesChunk000.lean` through
-  `SignaturesChunk085.lean`, `Signatures.lean`: exact common/covered endpoint
-  sets for every support; 4,389 additions have empty common-endpoint masks and
-  5,424 have nonempty ones. These are local counts, not the global sharing count.
-
-### Networks/Certificates/Shared50
-
-- `Data.lean`, `Chunk000.lean` through `Chunk314.lean`, `Checked.lean`:
-  40,256 duplicate rows, each kernel-checked for increasing common points,
-  actual addition indices, matching lifted endpoint signatures, and strict
-  numeric ordering. Finset conversion preserves the full distinct-row count.
-- `Kinds.lean`: the addition-index range is checked against every actual local
-  certificate row, rather than assumed from the generator's numbering.
-- `Semantics.lean`, `Sound.lean`: the numeric checker describes the actual
-  common-point support family; all listed pairs are genuine duplicate
-  witnesses, yielding at most 450,394 distinct addition supports. The generator
-  `scripts/generate_shared50_witnesses.py` supplies only untrusted finite data.
 
 - `Networks/FramedControlSchedule.lean`: Role-preserving zipper attaches field programs to framed edges while retaining every scalar gate and original instruction order, with exact execution under edge realization.
 

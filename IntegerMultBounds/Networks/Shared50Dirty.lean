@@ -14,8 +14,7 @@ namespace IntegerMultBounds.Networks.Shared50Dirty
 open DisjointCircuit NeighborCounts SharedPointReplay Circuit
 
 attribute [local irreducible] SharedPointReplay.circuit Shared50Finite.program
-  SharedPointExecution.code Paired49Certificate.nodes Certificates.Paired49.outputs
-  Certificates.Paired49.entries Certificates.Paired49.bank
+  SharedPointExecution.code PairedIndexedPruning.implementation
 
 section SourceLoading
 variable {ι : Type*} [DecidableEq ι] {n : ℕ}

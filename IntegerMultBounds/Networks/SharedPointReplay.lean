@@ -3,7 +3,7 @@ module
 public import IntegerMultBounds.Networks.SharedPointFamily
 public import IntegerMultBounds.Networks.SharedPointLocalReplay
 
-/-! The actual globally shared fifty-copy circuit: replay each certified local
+/-! The actual globally shared fifty-copy circuit: replay the structural local
 DAG into one persistent interned DAG and retain every remapped output reference.
 The proof does not assume any global circuit list or allocation count. -/
 
@@ -13,23 +13,22 @@ namespace IntegerMultBounds.Networks.SharedPointReplay
 
 open DisjointCircuit DisjointBuilder NeighborCounts DAGReplay
 
-attribute [local irreducible] Paired49Certificate.nodes Certificates.Paired49.outputs
-  Certificates.Paired49.entries Certificates.Paired49.bank DAGReplay.replay
+attribute [local irreducible] PairedIndexedPruning.implementation DAGReplay.replay
 
 /-- Selected implementation of the local-circuit contract. -/
-def implementation : PairedLocalCircuit := Paired49Certificate.implementation
+abbrev implementation : PairedLocalCircuit := SharedPointFamily.localCircuit
 
 /-- Import one local circuit and append its remapped designated outputs. -/
 def step (state : State) (c : Fin 50) : State :=
   importStep implementation.nodes implementation.outputs state c
 
 @[simp] theorem step_nodes (state : State) (c : Fin 50) :
-    (step state c).nodes = (replay (embedding c) state.nodes Paired49Certificate.nodes).1 :=
+    (step state c).nodes = (replay (embedding c) state.nodes implementation.nodes).1 :=
   importStep_nodes _ _ _ _
 
 @[simp] theorem step_outputs (state : State) (c : Fin 50) :
-    (step state c).outputs = state.outputs ++ Certificates.Paired49.outputs.map (fun out =>
-      (⟨c, out.1, (replay (embedding c) state.nodes Paired49Certificate.nodes).2[out.2]?.getD 0⟩ : Output)) :=
+    (step state c).outputs = state.outputs ++ implementation.outputs.map (fun out =>
+      (⟨c, out.1, (replay (embedding c) state.nodes implementation.nodes).2[out.2]?.getD 0⟩ : Output)) :=
   importStep_outputs _ _ _ _
 
 /-- Process common points in their literal enumeration order. -/
@@ -97,7 +96,6 @@ theorem output_keys : circuit.outputs.map key =
 theorem step_output_count (state : State) (c : Fin 50) :
     (step state c).outputs.length = state.outputs.length + 1176 := by
   have h := implementation.output_count
-  simp only [implementation, Paired49Certificate.implementation] at h
   simpa only [step_outputs, List.length_append, List.length_map] using
     congrArg (state.outputs.length + ·) h
 
@@ -113,9 +111,9 @@ theorem output_count : circuit.outputs.length = 58800 := by
   rw [circuit, runFrom_output_count]
   simp [initial]
 
-/-- The certified support family bounds every newly imported addition. -/
+/-- The local support family bounds every newly imported addition. -/
 theorem local_addition_mem (c : Fin 50) (s : Finset (Fin 1176))
-    (hs : AdditionSupport Paired49Certificate.nodes s) :
+    (hs : AdditionSupport implementation.nodes s) :
     s.map (embedding c) ∈ SharedPointFamily.domain.image SharedPointFamily.support := by
   obtain ⟨node, hn, hk, he⟩ := hs
   obtain ⟨i, hi, hnode⟩ := List.mem_iff_getElem.mp hn
@@ -123,7 +121,7 @@ theorem local_addition_mem (c : Fin 50) (s : Finset (Fin 1176))
     apply (SharedPointFamily.mem_domain_iff (c,i)).mpr
     exact ⟨node, (List.getElem?_eq_getElem hi).trans (congrArg some hnode), hk⟩
   refine Finset.mem_image.mpr ⟨(c,i), hd, ?_⟩
-  rw [SharedPointFamily.support, SharedPointFamily.localSupport_get i hi, hnode, he, map_embedding]
+  rw [SharedPointFamily.support_eq, SharedPointFamily.localSupport_get i hi, hnode, he, map_embedding]
 
 /-- All actual additions, including those from earlier copies, stay in the
 finite source-support budget. -/
@@ -133,7 +131,7 @@ def Contained (state : State) : Prop :=
 theorem step_contained (state : State) (c : Fin 50) (hs : Contained state) : Contained (step state c) := by
   rw [Contained, step_nodes]
   intro s hnew
-  rcases replay_additionSupport (embedding c) state.nodes Paired49Certificate.nodes s hnew with
+  rcases replay_additionSupport (embedding c) state.nodes implementation.nodes s hnew with
     hold | ⟨localSupport, hlocal, he⟩
   · exact hs s hold
   · exact he ▸ local_addition_mem c localSupport hlocal

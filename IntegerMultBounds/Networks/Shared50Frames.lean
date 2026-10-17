@@ -15,8 +15,7 @@ namespace IntegerMultBounds.Networks.Shared50Frames
 
 open DisjointCircuit NeighborCounts SharedPointReplay
 
-attribute [local irreducible] SharedPointReplay.circuit Paired49Certificate.nodes
-  Certificates.Paired49.entries Certificates.Paired49.outputs Certificates.Paired49.bank
+attribute [local irreducible] SharedPointReplay.circuit PairedIndexedPruning.implementation
 
 /-- Every actual global node has triple sources with a common point. Input
 nodes follow from structural validity; additions follow from replay provenance. -/
