@@ -2694,3 +2694,9 @@ public import IntegerMultBounds.MathlibTM2.Mult.PipelineQ
 public import IntegerMultBounds.MathlibTM2.Fast.MainSemG
 import IntegerMultBounds.MathlibTM2.Fast.CompactSynRetunedTransformsR
 import IntegerMultBounds.MathlibTM2.Fast.ConvBoxQPipeline
+import IntegerMultBounds.MathlibTM2.Fast.SrcStageG
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainEntryR
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainSourceR
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainChainR
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainChainEntryR
+import IntegerMultBounds.MathlibTM2.Fast.CompactFinalR
