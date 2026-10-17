@@ -692,42 +692,6 @@ theorem pmLogTC_do (st : TblSt 5 A) {n b : ℕ} (hn : st.val 0 = n) (hb : st.val
   simp at f0 f1 fa
   exact ⟨by rw [hout2 0 (by decide), e0], by rw [hout2 1 (by decide), e1], f1, by rw [fa, ea]⟩
 
-/-- `α :=` the least `a` with `12 d² b ≤ a^4`: `d` in `0`, `b` in `1`, `α` in `2`, the target in
-`3`, scratch `4`. -/
-def pmAlphaC : TblCode 5 :=
-  tblBlock 5 (tblConstL 3 12 ++ [.mul 3 0 3, .mul 3 0 3]) (.mul 3 1 3) ;; pmQuartC.rename ![3, 2, 4]
-
-theorem pmAlphaC_do (st : TblSt 5 A) {d b α : ℕ} (hd : st.val 0 = d) (hb : st.val 1 = b)
-    (hb1 : 1 ≤ b) (hα : PmQuart (12 * d ^ 2 * b) α) (hW1 : 12 * d ^ 2 * b + 13 ≤ 2 ^ W)
-    (hW2 : α ^ 4 < 2 ^ W) :
-    TblDo A W w pmAlphaC st (fun s => s.val 0 = d ∧ s.val 1 = b ∧ s.val 2 = α ∧
-      s.acc = st.acc) (5 * α + 20) := by
-  have hf : Function.Injective (![3, 2, 4] : Fin 3 → Fin 5) := by decide
-  have e2 : 12 * d * d ≤ 12 * d ^ 2 * b := by
-    calc 12 * d * d = 12 * d ^ 2 * 1 := by ring
-      _ ≤ 12 * d ^ 2 * b := Nat.mul_le_mul_left _ hb1
-  have e1 : 12 * d ≤ 12 * d * d + 12 := by
-    rcases Nat.eq_zero_or_pos d with h | h
-    · subst h; simp
-    · nlinarith
-  have e3 : 12 * d * d * b = 12 * d ^ 2 * b := by ring
-  have hblock : TblDo A W w (tblBlock 5 (tblConstL 3 12 ++ [.mul 3 0 3, .mul 3 0 3]) (.mul 3 1 3))
-      st (fun s => s.val 0 = d ∧ s.val 1 = b ∧ s.val 3 = 12 * d ^ 2 * b ∧ s.acc = st.acc) 16 := by
-    refine (TblDo.block _ _ ?_ ?_).mono (fun _ h => h)
-      (by pm_len)
-    · rw [List.append_assoc]
-      refine pm_fits_const _ _ _ _ (by omega) ?_
-      simp [tblFitsList, TblIns.fits, TblIns.exact, hd, hb, e3]; omega
-    · rw [List.append_assoc, pm_exact_const]
-      simp [tblExactList, TblIns.exact, hd, hb, e3]
-  refine (hblock.seq (K₂ := 5 * α + 4) (fun s₁ ⟨e0, e1', e3', ea⟩ => ?_)).mono (fun _ h => h)
-    (le_of_eq (by ring))
-  have h2 := pmQuartC_do (A := A) (W := W) (w := w) (s₁.restrict ![3, 2, 4]) (t := 12 * d ^ 2 * b)
-    (by simp [e3']) hα hW2
-  refine (TblDo.rename hf h2).mono (fun s₂ ⟨⟨f0, f1, fa⟩, hout⟩ => ?_) le_rfl
-  simp at f0 f1 fa
-  exact ⟨by rw [hout 0 (by decide), e0], by rw [hout 1 (by decide), e1'], f1, by rw [fa, ea]⟩
-
 /-- `c := ⌈log₂ x⌉ + k`: `x` in `0`, `c` in `1`, scratch `2`, `3`. -/
 def pmClogAddC (k : ℕ) : TblCode 4 :=
   pmClogC.rename ![0, 1, 2] ;; tblBlock 4 (tblConstL 3 k) (.add 1 3 1)
@@ -749,6 +713,36 @@ theorem pmClogAddC_do (k : ℕ) (st : TblSt 4 A) {x : ℕ} (hx : st.val 0 = x)
     simp [tblFitsList, TblIns.fits, e1]; omega
   · rw [pm_exact_const]
     simp [tblExactList, TblIns.exact, e0, e1, ea]
+
+/-- `α :=` the least `a` with `u² ≤ a^4`, `u = ⌈log₂ p⌉ + 3`: `p` in `0`, `α` in `2`, `u²` in
+`3`, scratch `1`, `4`. -/
+def pmAlphaC : TblCode 5 :=
+  (pmClogAddC 3).rename ![0, 3, 1, 4] ;; tblBlock 5 [] (.mul 3 3 3) ;; pmQuartC.rename ![3, 2, 4]
+
+theorem pmAlphaC_do (st : TblSt 5 A) {p α : ℕ} (hp : st.val 0 = p)
+    (hα : PmQuart ((Nat.clog 2 p + 3) ^ 2) α) (hW1 : 2 * p + 5 ≤ 2 ^ W)
+    (hW2 : α ^ 4 < 2 ^ W) (hW3 : (Nat.clog 2 p + 3) ^ 2 < 2 ^ W) :
+    TblDo A W w pmAlphaC st (fun s => s.val 0 = p ∧ s.val 2 = α ∧ s.acc = st.acc)
+      (4 * Nat.clog 2 p + 5 * α + 15) := by
+  have hf : Function.Injective (![0, 3, 1, 4] : Fin 4 → Fin 5) := by decide
+  have hg : Function.Injective (![3, 2, 4] : Fin 3 → Fin 5) := by decide
+  set u := Nat.clog 2 p + 3 with hu
+  have h1 := pmClogAddC_do (A := A) (W := W) (w := w) 3 (st.restrict ![0, 3, 1, 4]) (x := p)
+    (by simp [hp]) (by omega)
+  refine ((TblDo.rename hf h1).seq (K₂ := 1 + (5 * α + 4))
+    (fun s₁ ⟨⟨e0, e1, ea⟩, hout⟩ => ?_)).mono (fun _ h => h) (le_of_eq (by ring))
+  simp at e0 e1 ea
+  have hsq : TblDo A W w (tblBlock 5 [] (.mul 3 3 3)) s₁
+      (fun s => s.val 0 = p ∧ s.val 3 = u ^ 2 ∧ s.acc = st.acc) 1 := by
+    refine (TblDo.block _ _ ?_ ?_).mono (fun _ h => h) (by simp)
+    · simp [tblFitsList, TblIns.fits, e1, ← hu]; rw [← sq]; exact hW3
+    · simp [tblExactList, TblIns.exact, e1, ea, ← hu, sq, e0]
+  refine (hsq.seq (K₂ := 5 * α + 4) (fun s₂ ⟨f0, f3, fa⟩ => ?_)).mono (fun _ h => h) le_rfl
+  have h2 := pmQuartC_do (A := A) (W := W) (w := w) (s₂.restrict ![3, 2, 4]) (t := u ^ 2)
+    (by simp [f3]) hα hW2
+  refine (TblDo.rename hg h2).mono (fun s₃ ⟨⟨g0, g1, ga⟩, hout'⟩ => ?_) le_rfl
+  simp at g0 g1 ga
+  exact ⟨by rw [hout' 0 (by decide), f0], g1, by rw [ga, fa]⟩
 
 /-- `out := ⌊√(p a)⌋ + 1`: `p` in `0`, `a` in `1`, `out` in `2`, scratch `3`, `4`, `5`. -/
 def pmWinAC : TblCode 6 := .ins (.mul 0 1 3) ;; (pmSqrtC.rename ![3, 2, 4, 5] ;; .ins (.inc 2))

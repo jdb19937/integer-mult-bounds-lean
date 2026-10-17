@@ -19,7 +19,7 @@ variable {s t : ℕ} [NeZero s] [NeZero t] {α : ℝ}
 theorem smallgap_factorization (hst : s<t) (hcop : Nat.Coprime s t) (hα : 1≤α)
     (p u : ℕ) (hp : 2≤p) (hwidth : 8*p≤2^u) (hαu : α^2=(u : ℝ))
     (hθ : 1/(4*(p : ℝ))≤(t : ℝ)/s-1) (j : ℕ) (hj : 2*(p : ℝ)≤2^j) :
-    ∃ J : (ZMod s → ℂ) →L[ℂ] (ZMod s → ℂ),
+    ∃ J : (ZMod s → ℂ) →L[ℂ] (ZMod s → ℂ), J ∘L (1+offDiagCLM s t α)=1 ∧
       permSCLM t ∘L dftCLM s = ((2 : ℂ)^(2*⌈α^2⌉₊+2+j)) •
         ((((2 : ℂ)^j)⁻¹ • resampB₀ s t α J) ∘L permTCLM s ∘L dftCLM t ∘L resampA s t α) ∧
       ‖resampA s t α‖≤1 ∧ ‖((2 : ℂ)^j)⁻¹ • resampB₀ s t α J‖≤1 := by
@@ -43,7 +43,7 @@ theorem smallgap_factorization (hst : s<t) (hcop : Nat.Coprime s t) (hα : 1≤�
     rw [hFs]
     ext x i
     simp only [resampB, resampA, smul_apply, comp_apply, map_smul, smul_smul, hc, one_smul]
-  refine ⟨J, ?_, ?_, ?_⟩
+  refine ⟨J, hJ, ?_, ?_, ?_⟩
   · rw [resampB_eq hcop J] at heq
     rw [←permSEquiv_coe hcop, heq]
     ext x i

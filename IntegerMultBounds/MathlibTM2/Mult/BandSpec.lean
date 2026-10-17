@@ -4,6 +4,7 @@ public import IntegerMultBounds.MathlibTM2.Mult.ConcreteB0Sizes
 public import IntegerMultBounds.MathlibTM2.Mult.FastB0Sizes
 public import IntegerMultBounds.MathlibTM2.Mult.BandFoldRows
 public import IntegerMultBounds.NLogN.PhaseCellPerturb
+public import IntegerMultBounds.NLogN.PhaseCellFactorization
 
 /-!
 # The banded `B̃₀` line map and its numeric facts
@@ -245,11 +246,13 @@ section Generic
 
 variable {s t : ℕ} [NeZero s] [NeZero t] {α : ℝ}
 
-/-- **The factorization with a scaled `ℬ₀`.** With a left inverse `J` of `1 + E`, the line
-operators `resampA` and `2^-j ℬ₀ J` factor `P_s F_s` with exponent `2⌈α²⌉ + 2 + j`; the tabled
-`Ã` approximates `resampA` within `p²` and keeps the unit ball. -/
-theorem band_factorization (hst : s < t) (hcop : Nat.Coprime s t) (hα : 2 ≤ α)
-    (hθ : 1 ≤ α ^ 2 * ((t : ℝ) / s - 1)) (j : ℕ) {p m : ℕ} (hαp : α ^ 2 ≤ p)
+/-- **The small-gap factorization with a scaled `ℬ₀`.** For `α² = u` with `8p ≤ 2^u`,
+`θ ≥ 1/(4p)` and `2p ≤ 2^j`, a left inverse `J` of `1 + E` exists and the line operators
+`resampA` and `2^-j ℬ₀ J` factor `P_s F_s` with exponent `2⌈α²⌉ + 2 + j` as contractions; the
+tabled `Ã` approximates `resampA` within `p²` and keeps the unit ball. -/
+theorem band_factorization_sg (hst : s < t) (hcop : Nat.Coprime s t) (hα : 2 ≤ α) {u : ℕ}
+    (hαu : α ^ 2 = (u : ℝ)) (j : ℕ) {p m : ℕ} (hwidth : 8 * p ≤ 2 ^ u)
+    (hθ : 1 / (4 * (p : ℝ)) ≤ (t : ℝ) / s - 1) (hj : 2 * (p : ℝ) ≤ 2 ^ j) (hαp : α ^ 2 ≤ p)
     (hm : (p : ℝ) * α ^ 2 ≤ (m : ℝ) ^ 2) (hm1 : 1 ≤ m) (hmp : m ≤ p) (hp : 13 ≤ p)
     (WA : ZMod t → ℤ → ℤ) (hWA : ∀ k j, |(WA k j : ℝ) - 2 ^ p * resampWeight s t α k j| ≤ 2) :
     ∃ J : (ZMod s → ℂ) →L[ℂ] (ZMod s → ℂ), J ∘L (1 + offDiagCLM s t α) = 1 ∧
@@ -260,31 +263,16 @@ theorem band_factorization (hst : s < t) (hcop : Nat.Coprime s t) (hα : 2 ≤ �
         ((p : ℝ) ^ 2) ∧
       ∀ u : ZMod s → ℂ, ‖u‖ ≤ 1 →
         ‖resampANum s t m (termW p fun k j => (WA k j : ℝ) / 2 ^ p) u‖ ≤ 1 := by
-  have hα0 : (0 : ℝ) < α := by linarith
-  obtain ⟨J, hJ, -, hJn⟩ := exists_left_inverse hst hα0 hθ
-  obtain ⟨heq, hA, -⟩ := resampling_factorization_explicit hst hcop (by linarith) hθ J hJ
+  obtain ⟨J, hJ, hfac, hA, hB⟩ := NLogN.smallgap_factorization hst hcop (by linarith) p u
+    (by omega) hwidth hαu hθ j hj
   have hAx := approxMap_resampANumW (s := s) (t := t) (by linarith) hαp hm hm1 _
     (fun k j => tol_of_int p _ _ (hWA k j))
   have hεA : errA m < (p : ℝ) ^ 2 := errA_lt_sq' hmp (by omega)
   have hpow : (4 : ℝ) * (p : ℝ) ^ 2 ≤ 2 ^ p := by exact_mod_cast four_sq_le_pow p hp
   have h4 : 4 * errA m ≤ 2 ^ p := by linarith
   have hA34 := opNorm_resampA_le_three_quarters (s := s) (t := t) hα
-  have hBn := opNorm_resampB₀_le (s := s) (t := t) (α := α) J hJn
-  have h2j : (1 : ℝ) ≤ 2 ^ j := one_le_pow₀ (by norm_num)
-  refine ⟨J, hJ, ?_, hA, ?_, fun v hv => (hAx v hv).trans hεA.le,
+  exact ⟨J, hJ, hfac, hA, hB, fun v hv => (hAx v hv).trans hεA.le,
     fun u hu => ball_of_approx hA34 hAx h4 u hu⟩
-  · rw [resampB_eq hcop J] at heq
-    rw [← permSEquiv_coe hcop, heq]
-    have e : ((2 : ℂ) ^ (2 * ⌈α ^ 2⌉₊ + 2 + j)) * ((2 : ℂ) ^ j)⁻¹ = (2 : ℂ) ^ (2 * ⌈α ^ 2⌉₊ + 2) := by
-      rw [pow_add, mul_assoc, mul_inv_cancel₀ (pow_ne_zero _ two_ne_zero), mul_one]
-    rw [smul_comp, smul_smul, e]
-    ext u i
-    simp only [comp_apply, smul_apply, map_smul, ContinuousLinearEquiv.coe_coe,
-      ContinuousLinearEquiv.apply_symm_apply]
-  · rw [norm_smul, norm_inv, norm_pow, RCLike.norm_two]
-    calc ((2 : ℝ) ^ j)⁻¹ * ‖resampB₀ s t α J‖ ≤ 1 * 1 :=
-          mul_le_mul (inv_le_one_of_one_le₀ h2j) hBn (norm_nonneg _) (by norm_num)
-      _ = 1 := by norm_num
 
 end Generic
 

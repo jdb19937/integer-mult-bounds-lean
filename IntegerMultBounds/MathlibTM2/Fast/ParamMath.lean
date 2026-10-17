@@ -73,7 +73,7 @@ theorem pm_capped_iroot {e x j : ℕ} (hj : j ≤ iroot (2 ^ e) x) :
 /-- `a` is the least natural number with `t ≤ a^4`. -/
 def PmQuart (t a : ℕ) : Prop := t ≤ a ^ 4 ∧ ∀ j < a, j ^ 4 < t
 
-theorem pmQuart_alpha (n : ℕ) : PmQuart (12 * d n ^ 2 * b n) (alpha n) :=
+theorem pmQuart_alpha (n : ℕ) : PmQuart (alphaU n ^ 2) (alpha n) :=
   ⟨alpha_spec n, fun _ hj => alpha_min n hj⟩
 
 theorem pmQuart_unique {t a a' : ℕ} (h : PmQuart t a) (h' : PmQuart t a') : a = a' := by
@@ -260,16 +260,25 @@ theorem pm_S_lt (hn : 2 ≤ n) : S n < 2 ^ (3 * b n + 6) := by
       _ < 2 ^ (3 * b n + 6) := Nat.pow_lt_pow_right (by norm_num) this
 
 theorem pm_alpha_four_lt (hn : 2 ≤ n) : alpha n ^ 4 < 2 ^ (3 * b n + 8) := by
-  have h1 := alpha_pow_four_le hn
-  have hd := d_le_b n
-  have hb := Nat.lt_two_pow_self (n := b n)
-  have h2 : d n ^ 2 * b n ≤ b n ^ 3 := by
-    calc d n ^ 2 * b n ≤ b n ^ 2 * b n := Nat.mul_le_mul_right _ (Nat.pow_le_pow_left hd 2)
-      _ = b n ^ 3 := by ring
-  have h3 : b n ^ 3 < (2 ^ b n) ^ 3 := Nat.pow_lt_pow_left hb (by norm_num)
-  have e : 2 ^ (3 * b n + 8) = 256 * (2 ^ b n) ^ 3 := by rw [← pow_mul, pow_add]; ring
-  have e2 : 192 * d n ^ 2 * b n = 192 * (d n ^ 2 * b n) := by ring
-  omega
+  have h1 := alpha_pow_four_lt n
+  have hu := alphaU_le_b n
+  have hb : b n + 6 ≤ 2 ^ (b n + 3) := by
+    have := Nat.lt_two_pow_self (n := b n)
+    rw [pow_add]; omega
+  have h2 : alphaU n ^ 2 ≤ (2 ^ (b n + 3)) ^ 2 := Nat.pow_le_pow_left (hu.trans hb) 2
+  have e : 16 * (2 ^ (b n + 3)) ^ 2 = 2 ^ (2 * b n + 10) := by
+    rw [← pow_mul, show 2 * b n + 10 = 4 + (b n + 3) * 2 by ring, pow_add]; norm_num
+  have h3 : 2 ^ (2 * b n + 10) ≤ 2 ^ (3 * b n + 8) ∨ b n ≤ 1 := by
+    rcases Nat.lt_or_ge (b n) 2 with hb2 | hb2
+    · exact Or.inr (by omega)
+    · exact Or.inl (Nat.pow_le_pow_right (by norm_num) (by omega))
+  rcases h3 with h3 | h3
+  · omega
+  · -- `b ≤ 1`: `u ≤ 7`, `α⁴ < 16 · 49`
+    have : alphaU n ^ 2 ≤ 7 ^ 2 := Nat.pow_le_pow_left (by omega) 2
+    have := one_le_b hn
+    have : 2 ^ 11 ≤ 2 ^ (3 * b n + 8) := Nat.pow_le_pow_right (by norm_num) (by omega)
+    omega
 
 theorem pm_alpha_sq_le (n : ℕ) : alpha n ^ 2 ≤ alpha n ^ 4 := by
   rcases Nat.eq_zero_or_pos (alpha n) with h | h

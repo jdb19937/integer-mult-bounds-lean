@@ -29,8 +29,8 @@ Every relation used downstream is proved for all large `n`, as a `Filter.Eventua
 * `volume_bounds`: `24 n ≤ T p < 48 n`; `Big.logT_bounds`: `b ≤ 2 log₂ T`, `log₂ T < b`;
 * `d_pow_le_p`, `p_lt_pow`, `d_rpow_bounds`: `p^ε/12 ≤ d ≤ p^ε`;
 * `Big.ℓ_bounds`, `Big.ℓ_bounds_real`: `p/(12d) ≤ ℓ ≤ p/(3d)`; `Big.K_succ_le_ℓ`;
-* `two_le_alpha`, `Big.alpha_sq_le_p`, `Big.one_le_alpha_sq_theta`, `Big.eta_lt_theta`,
-  `Big.p_mul_s_lt`;
+* `two_le_alpha`, `alpha_sq_lt`, `Big.alpha_sq_le_p`, `Big.eta_lt_theta`,
+  `Big.quarter_p_le_theta`, `Big.band_width`, `Big.band_budget`;
 * `Big.four_gamma_le_b`, `Big.gamma_le_real`: `γ ≤ b/4`;
 * `Big.good`: the moduli (`Moduli.Good`), with `Big.S_lt_T`, `Big.T_lt_two_S`;
 * `Big.two_q_le`, `Big.digits_length_le`: no wraparound, `2q - 2 < S`;
@@ -218,10 +218,14 @@ def numHalf (n : ℕ) : ℕ := d n * ℓ n - logT n
 /-- The axis lengths: `r/2` on the first `numHalf` axes, `r` on the others. -/
 def t (n : ℕ) (i : Fin (d n)) : ℕ := if (i : ℕ) < numHalf n then 2 ^ (ℓ n - 1) else 2 ^ ℓ n
 
-theorem exists_alpha (n : ℕ) : ∃ α : ℕ, 12 * d n ^ 2 * b n ≤ α ^ 4 :=
-  ⟨12 * d n ^ 2 * b n, Nat.le_self_pow (by norm_num) _⟩
+/-- `u = ⌈log₂ p⌉ + 3`, the least power with `8p ≤ 2^u`. -/
+def alphaU (n : ℕ) : ℕ := Nat.clog 2 (p n) + 3
 
-/-- `α = ⌈(12 d² b)^{1/4}⌉`: the least `α` with `12 d² b ≤ α^4`. -/
+theorem exists_alpha (n : ℕ) : ∃ α : ℕ, alphaU n ^ 2 ≤ α ^ 4 :=
+  ⟨alphaU n, Nat.pow_le_pow_right (by unfold alphaU; omega) (by norm_num)⟩
+
+/-- `α = ⌈√u⌉`: the least `α` with `u² ≤ α^4`, so `u ≤ α² < 4u`. The banded `B̃₀` needs only
+the small-gap width `8p ≤ 2^(α²)`. -/
 def alpha (n : ℕ) : ℕ := Nat.find (exists_alpha n)
 
 /-- `γ = d (3α² + 2)`: the library's `d (2⌈α²⌉ + 2)` at integer `α`, plus `α²` per axis for the
@@ -531,40 +535,54 @@ theorem d_rpow_bounds (hn : 2 ≤ n) :
     linarith
   · exact hfloor.1.trans (Real.rpow_le_rpow (Nat.cast_nonneg _) (by nlinarith) he)
 
-theorem alpha_spec (n : ℕ) : 12 * d n ^ 2 * b n ≤ alpha n ^ 4 := Nat.find_spec (exists_alpha n)
+theorem alpha_spec (n : ℕ) : alphaU n ^ 2 ≤ alpha n ^ 4 := Nat.find_spec (exists_alpha n)
 
-theorem alpha_min (n : ℕ) {m : ℕ} (hm : m < alpha n) : m ^ 4 < 12 * d n ^ 2 * b n :=
+theorem alpha_min (n : ℕ) {m : ℕ} (hm : m < alpha n) : m ^ 4 < alphaU n ^ 2 :=
   not_le.1 (Nat.find_min (exists_alpha n) hm)
 
-theorem two_le_alpha (hn : 2 ≤ n) : 2 ≤ alpha n := by
-  have hd := one_le_d hn
-  have hb := one_le_b hn
+/-- `u ≤ α²`. -/
+theorem alphaU_le_alpha_sq (n : ℕ) : alphaU n ≤ alpha n ^ 2 := by
   have h := alpha_spec n
   by_contra hc
-  have h1 : alpha n ^ 4 ≤ 1 := by
-    calc alpha n ^ 4 ≤ 1 ^ 4 := Nat.pow_le_pow_left (by omega) 4
-      _ = 1 := by norm_num
-  have h2 : 1 ≤ d n ^ 2 := Nat.one_le_pow _ _ hd
-  have h3 : 12 ≤ 12 * d n ^ 2 * b n := by nlinarith
+  have h1 : (alpha n ^ 2) ^ 2 < alphaU n ^ 2 := Nat.pow_lt_pow_left (by omega) (by norm_num)
+  rw [← pow_mul] at h1
+  norm_num at h1
   omega
 
-theorem alpha_pow_four_le (hn : 2 ≤ n) : alpha n ^ 4 ≤ 192 * d n ^ 2 * b n := by
-  have h2 := two_le_alpha hn
+theorem two_le_alpha' (n : ℕ) : 2 ≤ alpha n := by
+  have h := alphaU_le_alpha_sq n
+  have hu : 3 ≤ alphaU n := by unfold alphaU; omega
+  by_contra hc
+  have : alpha n ^ 2 ≤ 1 ^ 2 := Nat.pow_le_pow_left (by omega) 2
+  omega
+
+theorem two_le_alpha (_hn : 2 ≤ n) : 2 ≤ alpha n := two_le_alpha' n
+
+/-- `α² < 4u`. -/
+theorem alpha_sq_lt (n : ℕ) : alpha n ^ 2 < 4 * alphaU n := by
+  have h2 := two_le_alpha' n
   have h1 := alpha_min n (m := alpha n - 1) (by omega)
-  have h3 : alpha n ^ 4 ≤ (2 * (alpha n - 1)) ^ 4 := Nat.pow_le_pow_left (by omega) 4
-  rw [mul_pow] at h3
-  have e : 192 * d n ^ 2 * b n = 16 * (12 * d n ^ 2 * b n) := by ring
+  have h3 : (alpha n - 1) ^ 2 < alphaU n := by
+    have : ((alpha n - 1) ^ 2) ^ 2 < alphaU n ^ 2 := by rw [← pow_mul]; exact h1
+    exact (Nat.pow_lt_pow_iff_left (by norm_num)).1 this
+  have h4 : alpha n ^ 2 ≤ (2 * (alpha n - 1)) ^ 2 := Nat.pow_le_pow_left (by omega) 2
+  rw [mul_pow] at h4
   omega
 
-/-- `4d ≤ α²`. -/
-theorem four_d_le_alpha_sq_of (hb : 2 ≤ b n) : 4 * d n ≤ alpha n ^ 2 := by
-  have h := alpha_spec n
-  have h1 : (4 * d n) ^ 2 ≤ (alpha n ^ 2) ^ 2 := by
-    rw [← pow_mul]
-    calc (4 * d n) ^ 2 = 16 * d n ^ 2 := by ring
-      _ ≤ 12 * d n ^ 2 * b n := by nlinarith
-      _ ≤ alpha n ^ (2 * 2) := h
-  exact (Nat.pow_le_pow_iff_left (by norm_num)).1 h1
+/-- `α⁴ < 16 u²`. -/
+theorem alpha_pow_four_lt (n : ℕ) : alpha n ^ 4 < 16 * alphaU n ^ 2 := by
+  have h := alpha_sq_lt n
+  have : (alpha n ^ 2) ^ 2 < (4 * alphaU n) ^ 2 := Nat.pow_lt_pow_left h (by norm_num)
+  rw [← pow_mul, mul_pow] at this
+  simpa using this
+
+/-- `u ≤ b + 6`. -/
+theorem alphaU_le_b (n : ℕ) : alphaU n ≤ b n + 6 := by
+  have h1 : p n ≤ 2 ^ (b n + 3) := by
+    have := Nat.lt_two_pow_self (n := b n)
+    unfold p; rw [pow_add]; omega
+  have := Nat.clog_le_of_le_pow h1
+  unfold alphaU; omega
 
 /-- `γ = d (2 ⌈α²⌉ + 2 + α²)` with real `α`, the library's normalization plus the band scale. -/
 theorem gamma_eq_ceil (n : ℕ) :
@@ -574,13 +592,6 @@ theorem gamma_eq_ceil (n : ℕ) :
 
 /-- `K = ⌊d^c⌋`. -/
 theorem K_eq_floor (n : ℕ) : K n = ⌊(d n : ℝ) ^ cParam⌋₊ := iroot_eq_floor cExp_ne _
-
-/-- `α = ⌈(12 d² b)^{1/4}⌉`. -/
-theorem alpha_eq_ceil (hn : 2 ≤ n) :
-    alpha n = ⌈((12 * d n ^ 2 * b n : ℕ) : ℝ) ^ ((4 : ℝ)⁻¹)⌉₊ := by
-  have h2 := two_le_alpha hn
-  have e : ((4 : ℝ))⁻¹ = ((4 : ℕ) : ℝ)⁻¹ := by norm_num
-  rw [e, ceil_root_eq (by norm_num) (by omega) (alpha_min n (by omega)) (alpha_spec n)]
 
 /-- `T` is the power of two in `[4n/b, 8n/b)`. -/
 theorem T_bounds_real (hn : 2 ≤ n) :
@@ -769,40 +780,44 @@ theorem Big.two_dvd_t (h : Big n) (i : Fin (d n)) : 2 ∣ t n i := by
 theorem Big.thirteen_le_p (h : Big n) : 13 ≤ p n := by
   have := h.sixteen_le_b; unfold p; omega
 
+private theorem eight_mul_add_le_two_pow (x : ℕ) (hx : 7 ≤ x) : 8 * x + 6 ≤ 2 ^ (x - 1) := by
+  induction x, hx using Nat.le_induction with
+  | base => norm_num
+  | succ x hx ih =>
+    have e : x + 1 - 1 = (x - 1) + 1 := by omega
+    rw [e, pow_succ]
+    have : 8 ≤ 2 ^ (x - 1) := by
+      calc 8 = 2 ^ 3 := by norm_num
+        _ ≤ 2 ^ (x - 1) := Nat.pow_le_pow_right (by norm_num) (by omega)
+    omega
+
+/-- `u ≤ d`: the width exponent is at most the dimension. -/
+theorem Big.alphaU_le_d (h : Big n) : alphaU n ≤ d n := by
+  have hD := h.2
+  set x := Nat.clog 2 (d n + 1) with hx
+  have hx1 : d n + 1 ≤ 2 ^ x := Nat.le_pow_clog one_lt_two _
+  have hx7 : 7 ≤ x := by
+    by_contra hc
+    have : 2 ^ x ≤ 2 ^ 6 := Nat.pow_le_pow_right (by norm_num) (by omega)
+    omega
+  have hx2 : 2 ^ (x - 1) < d n + 1 := by
+    exact Nat.pow_pred_clog_lt_self one_lt_two (by omega)
+  have hb := b_lt_d_succ_pow n
+  have hb8 : 6 * b n ≤ 2 ^ (8 * x + 3) := by
+    have h8 : (d n + 1) ^ upperPower ≤ (2 ^ x) ^ 8 := Nat.pow_le_pow_left hx1 8
+    rw [← pow_mul] at h8
+    have e : 2 ^ (8 * x + 3) = 8 * 2 ^ (x * 8) := by rw [pow_add, mul_comm x 8]; ring
+    omega
+  have hc := Nat.clog_le_of_le_pow hb8
+  have := eight_mul_add_le_two_pow x hx7
+  unfold alphaU p; omega
+
 /-- `α² ≤ p`. -/
 theorem Big.alpha_sq_le_p (h : Big n) : alpha n ^ 2 ≤ p n := by
-  have h1 := alpha_pow_four_le h.1
-  have h2 := h.pow_le_b (k := 4) (by norm_num)
-  have hD := h.2
-  have h3 : 16 * d n ^ 2 ≤ 3 * b n := by
-    have : 16 * d n ^ 2 ≤ d n ^ 4 := by
-      rw [show d n ^ 4 = d n ^ 2 * d n ^ 2 by ring]
-      have : 16 ≤ d n ^ 2 := by nlinarith
-      nlinarith
-    omega
-  have h4 : (alpha n ^ 2) ^ 2 ≤ (p n) ^ 2 := by
-    rw [← pow_mul]
-    unfold p
-    calc alpha n ^ (2 * 2) = alpha n ^ 4 := by norm_num
-      _ ≤ 192 * d n ^ 2 * b n := h1
-      _ ≤ (6 * b n) ^ 2 := by nlinarith
-  exact (Nat.pow_le_pow_iff_left (by norm_num)).1 h4
-
-theorem Big.four_d_le_alpha_sq (h : Big n) : 4 * d n ≤ alpha n ^ 2 :=
-  four_d_le_alpha_sq_of (by have := h.sixteen_le_b; omega)
-
-/-- `1 ≤ α² θ_i`, `θ_i = t_i / s_i - 1`. -/
-theorem Big.one_le_alpha_sq_theta (h : Big n) (i : Fin (d n)) :
-    1 ≤ (alpha n : ℝ) ^ 2 * ((t n i : ℝ) / s n i - 1) := by
-  have hg := h.good
-  have hs : (0 : ℝ) < s n i := by exact_mod_cast (hg.odd i).pos
-  have hu : (4 * d n * s n i + t n i : ℝ) ≤ 4 * d n * t n i := by
-    exact_mod_cast (hg.bounds i).upper
-  have hlt : (s n i : ℝ) < t n i := by exact_mod_cast hg.lt i
-  have hα : (4 * d n : ℝ) ≤ (alpha n : ℝ) ^ 2 := by exact_mod_cast h.four_d_le_alpha_sq
-  have e : (t n i : ℝ) / s n i - 1 = (t n i - s n i) / s n i := by field_simp
-  rw [e, ← mul_div_assoc, le_div_iff₀ hs]
-  nlinarith
+  have h1 := alpha_sq_lt n
+  have h2 := h.alphaU_le_d
+  have h3 := d_le_b n
+  unfold p; omega
 
 /-- `η < θ_i`. -/
 theorem Big.eta_lt_theta (h : Big n) (i : Fin (d n)) : eta n < (t n i : ℝ) / s n i - 1 := by
@@ -816,59 +831,33 @@ theorem Big.eta_lt_theta (h : Big n) (i : Fin (d n)) : eta n < (t n i : ℝ) / s
   rw [e, eta, div_lt_div_iff₀ (by positivity) hs]
   nlinarith
 
-/-- The manuscript's `α⁴ θ_i > p`, as `p s_i < α⁴ (t_i - s_i)`. -/
-theorem Big.p_mul_s_lt (h : Big n) (i : Fin (d n)) :
-    p n * s n i < alpha n ^ 4 * (t n i - s n i) := by
-  have hg := h.good
-  have hu := (hg.bounds i).upper
-  have hlt := hg.lt i
-  have hα := alpha_spec n
-  have hD := h.2
-  obtain ⟨w, hw⟩ : ∃ w, t n i = s n i + w := ⟨t n i - s n i, by omega⟩
-  rw [hw, Nat.add_sub_cancel_left]
-  rw [hw] at hu hlt
-  -- `4 d w ≥ t > s`
-  have h1 : s n i + w ≤ 4 * d n * w := by nlinarith
-  have h2 : alpha n ^ 4 * w ≥ 12 * d n ^ 2 * b n * w := Nat.mul_le_mul_right _ hα
-  have h3 : 12 * d n ^ 2 * b n * w = 3 * d n * b n * (4 * d n * w) := by ring
-  have h4 : 3 * d n * b n * (4 * d n * w) ≥ 3 * d n * b n * (s n i + w) :=
-    Nat.mul_le_mul_left _ h1
-  have h5 : 0 < w := by omega
-  have hb := h.sixteen_le_b
-  unfold p
-  have h6 : 6 * b n * s n i < 3 * d n * b n * (s n i + w) := by
-    have : 6 * b n * s n i ≤ 3 * d n * b n * s n i := by
-      have : 6 ≤ 3 * d n := by omega
-      calc 6 * b n * s n i = 6 * (b n * s n i) := by ring
-        _ ≤ 3 * d n * (b n * s n i) := Nat.mul_le_mul_right _ this
-        _ = 3 * d n * b n * s n i := by ring
-    have : 0 < 3 * d n * b n * w := by positivity
-    nlinarith
-  omega
+/-- `1/(4p) ≤ θ_i`: the small-gap condition of the banded `B̃₀`. -/
+theorem Big.quarter_p_le_theta (h : Big n) (i : Fin (d n)) :
+    1 / (4 * (p n : ℝ)) ≤ (t n i : ℝ) / s n i - 1 := by
+  have h1 := h.eta_lt_theta i
+  have hd : (1 : ℝ) ≤ d n := by exact_mod_cast h.one_le_d
+  have hdp : (d n : ℝ) ≤ p n := by
+    have := d_le_b n
+    exact_mod_cast (show d n ≤ p n by unfold p; omega)
+  have h2 : 1 / (4 * (p n : ℝ)) ≤ eta n := by
+    unfold eta
+    exact one_div_le_one_div_of_le (by positivity) (by linarith)
+  linarith
 
 /-- `16 d α² ≤ b`. -/
 theorem Big.sixteen_d_alpha_sq_le_b (h : Big n) : 16 * d n * alpha n ^ 2 ≤ b n := by
-  have h1 := alpha_pow_four_le h.1
-  have h7 := h.pow_le_b (k := 7) le_rfl
+  have h1 := alpha_sq_lt n
+  have h2 := h.alphaU_le_d
+  have h7 := h.pow_le_b (k := 3) (by norm_num)
   have hD := h.2
-  set D := d n
-  set B := b n
-  set A := alpha n
-  -- `49152 D^4 ≤ B`
-  have h2 : 49152 * D ^ 4 ≤ B := by
-    have : 49152 ≤ D ^ 3 := by
-      calc 49152 ≤ 64 ^ 3 := by norm_num
-        _ ≤ D ^ 3 := Nat.pow_le_pow_left hD 3
-    calc 49152 * D ^ 4 ≤ D ^ 3 * D ^ 4 := Nat.mul_le_mul_right _ this
-      _ = D ^ 7 := by ring
-      _ ≤ B := h7
-  have h3 : (16 * D * A ^ 2) ^ 2 ≤ B ^ 2 := by
-    calc (16 * D * A ^ 2) ^ 2 = 256 * D ^ 2 * A ^ 4 := by ring
-      _ ≤ 256 * D ^ 2 * (192 * D ^ 2 * B) := Nat.mul_le_mul_left _ h1
-      _ = 49152 * D ^ 4 * B := by ring
-      _ ≤ B * B := Nat.mul_le_mul_right _ h2
-      _ = B ^ 2 := by ring
-  exact (Nat.pow_le_pow_iff_left (by norm_num)).1 h3
+  have h3 : 64 * d n ^ 2 ≤ d n ^ 3 := by
+    have : 64 * d n ^ 2 ≤ d n * d n ^ 2 := Nat.mul_le_mul_right _ hD
+    calc 64 * d n ^ 2 ≤ d n * d n ^ 2 := this
+      _ = d n ^ 3 := by ring
+  have h4 : 16 * d n * alpha n ^ 2 ≤ 16 * d n * (4 * d n) :=
+    Nat.mul_le_mul_left _ (by omega)
+  have e : 16 * d n * (4 * d n) = 64 * d n ^ 2 := by ring
+  omega
 
 /-- `γ ≤ b/4`, integer form `4γ ≤ b`. -/
 theorem Big.four_gamma_le_b (h : Big n) : 4 * gamma n ≤ b n := by
@@ -883,27 +872,13 @@ theorem Big.four_gamma_le_b (h : Big n) : 4 * gamma n ≤ b n := by
   have e2 : 16 * d n * alpha n ^ 2 = 16 * (d n * alpha n ^ 2) := by ring
   omega
 
-private theorem sq_le_two_pow_of_four (x : ℕ) (hx : 4 ≤ x) : x ^ 2 ≤ 2 ^ x := by
-  induction x, hx using Nat.le_induction with
-  | base => norm_num
-  | succ x hx ih =>
-    rw [pow_succ 2 x]
-    nlinarith
-
 /-- The small-gap width condition of the banded `B̃₀`: `8p ≤ 2^(α²)`. -/
-theorem Big.band_width (h : Big n) : 8 * p n ≤ 2 ^ (alpha n ^ 2) := by
-  have h1 := alpha_spec n
-  have hD := h.2
-  have hA := two_le_alpha h.1
-  have h4096 : 4096 ≤ d n ^ 2 := by nlinarith
-  have hb : 49152 * b n ≤ (alpha n ^ 2) ^ 2 := by
-    rw [← pow_mul]
-    calc 49152 * b n = 12 * 4096 * b n := by norm_num
-      _ ≤ 12 * d n ^ 2 * b n := by
-        apply Nat.mul_le_mul_right; exact Nat.mul_le_mul_left _ h4096
-      _ ≤ alpha n ^ 4 := h1
-  have hsq := sq_le_two_pow_of_four (alpha n ^ 2) (by nlinarith)
-  unfold p; omega
+theorem Big.band_width (_h : Big n) : 8 * p n ≤ 2 ^ (alpha n ^ 2) := by
+  have h1 : p n ≤ 2 ^ Nat.clog 2 (p n) := Nat.le_pow_clog one_lt_two _
+  have h2 : 2 ^ alphaU n ≤ 2 ^ (alpha n ^ 2) :=
+    Nat.pow_le_pow_right (by norm_num) (alphaU_le_alpha_sq n)
+  have e : 2 ^ alphaU n = 8 * 2 ^ Nat.clog 2 (p n) := by unfold alphaU; rw [pow_add]; ring
+  omega
 
 /-- The small-gap budget of the banded `B̃₀`: `α² d ≤ p`. -/
 theorem Big.band_budget (h : Big n) : ((alpha n : ℝ)) ^ 2 * (d n : ℝ) ≤ p n := by

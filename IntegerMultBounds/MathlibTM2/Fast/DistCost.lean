@@ -68,7 +68,7 @@ theorem ds_ax_vals (hn : 2 ≤ n) {i : ℕ} (hi : i < d n) (Wt : ℕ) :
   have hL : dsL n i ≤ ℓ n := by unfold dsL; split_ifs <;> omega
   have hℓ := pm_ℓ_le hn
   have hα := pm_alpha_le hn
-  have hwA : Pipeline.windowA (p n) (alpha n) ≤ 24 * b n ^ 2 + 1 := by
+  have hwA : Pipeline.windowA (p n) (alpha n) ≤ 48 * b n ^ 2 + 1 := by
     unfold Pipeline.windowA; have := pm_sqrt_le hn; omega
   have hwB : FastB0.fastWindow (p n) (alpha n) ≤ p n + 1 := by
     unfold FastB0.fastWindow

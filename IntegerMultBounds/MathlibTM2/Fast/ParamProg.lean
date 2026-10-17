@@ -27,7 +27,7 @@ exactly, in words of `W ≥ 4 b + 32` bits (`b = ⌈log₂ n⌉`). Variable `i <
 | 10 | `R = 2^(ℓ-1)` | `Moduli.src` |
 | 11 | `numHalf` | `Sizes.numHalf` |
 | 12 | `α` | `Sizes.alpha` |
-| 13 | `α²` | Neumann steps of `Pipeline.lineB` |
+| 13 | `α²` | band scale `2^-α²` of `Pipeline.lineB` |
 | 14 | `γ` | `Sizes.gamma` |
 | 15 | `q` | `Sizes.q` |
 | 16 | `N = oddProd d` | `Sizes.N` |
@@ -368,25 +368,34 @@ theorem pm_s11 (hn : 2 ≤ n) (hW : 4 * b n + 32 ≤ W) :
     · simp [pmNV] at hy
 
 theorem pm_s12 (hn : 2 ≤ n) (hW : 4 * b n + 32 ≤ W) :
-    ∀ s, PmF n 12 acc s → TblDo A W w (pmAlphaC.rename ![3, 1, 12, 31, 32]) s (PmF n 13 acc)
-      (5 * alpha n + 20) :=
+    ∀ s, PmF n 12 acc s → TblDo A W w (pmAlphaC.rename ![2, 31, 12, 32, 33]) s (PmF n 13 acc)
+      (4 * Nat.clog 2 (p n) + 5 * alpha n + 15) :=
   pm_stage (by decide) 2 rfl fun s hs => by
-    have h0 : (s.restrict ![3, 1, 12, 31, 32]).val 0 = d n := by simpa [pmVal, pmNV] using hs.val 3
-    have h1 : (s.restrict ![3, 1, 12, 31, 32]).val 1 = b n := by simpa [pmVal, pmNV] using hs.val 1
-    have hd := d_le_b n
+    have h0 : (s.restrict ![2, 31, 12, 32, 33]).val 0 = p n := by
+      simpa [pmVal, pmNV] using hs.val 2
+    have hu := alphaU_le_b n
     have hbt := pm_b_lt n
-    have h3 : d n ^ 2 * b n ≤ 2 ^ b n * 2 ^ b n * 2 ^ b n := by
-      rw [sq]; exact Nat.mul_le_mul (Nat.mul_le_mul (by omega) (by omega)) hbt.le
-    have e : 2 ^ (3 * b n + 5) = 32 * (2 ^ b n * 2 ^ b n * 2 ^ b n) := by
-      rw [show 3 * b n + 5 = 5 + (b n + b n + b n) by ring, pow_add, pow_add, pow_add]; ring
-    have hb := pm_W_pow hW (k := 3 * b n + 5) (by omega)
-    have h4 : 1 ≤ 2 ^ b n * 2 ^ b n * 2 ^ b n := Nat.one_le_iff_ne_zero.2 (by positivity)
-    have e2 : 12 * d n ^ 2 * b n = 12 * (d n ^ 2 * b n) := by ring
-    refine (pmAlphaC_do _ h0 h1 (one_le_b hn) (pmQuart_alpha n) (by omega)
-      (lt_of_lt_of_le (pm_alpha_four_lt hn) (pm_W_pow hW (by omega)))).mono ?_ le_rfl
-    rintro s' ⟨e0, e1, e2, ea⟩
+    have hp2 : 2 * p n + 5 ≤ 2 ^ W := by
+      have h1 : 2 * p n + 5 ≤ 2 ^ (3 * b n + 8) := by
+        have e : 2 ^ (3 * b n + 8) = 256 * (2 ^ b n * 2 ^ b n * 2 ^ b n) := by
+          rw [show 3 * b n + 8 = 8 + (b n + b n + b n) by ring, pow_add, pow_add, pow_add]; ring
+        have : 1 ≤ 2 ^ b n := Nat.one_le_two_pow
+        unfold p; nlinarith
+      exact h1.trans (pm_W_pow hW (by omega))
+    have hu2 : (Nat.clog 2 (p n) + 3) ^ 2 < 2 ^ W := by
+      have h1 : (Nat.clog 2 (p n) + 3) ^ 2 ≤ (2 ^ b n + 6) ^ 2 :=
+        Nat.pow_le_pow_left (by unfold alphaU at hu; omega) 2
+      have h2 : (2 ^ b n + 6) ^ 2 < 2 ^ (3 * b n + 8) := by
+        have e : 2 ^ (3 * b n + 8) = 256 * (2 ^ b n * 2 ^ b n * 2 ^ b n) := by
+          rw [show 3 * b n + 8 = 8 + (b n + b n + b n) by ring, pow_add, pow_add, pow_add]; ring
+        have : 1 ≤ 2 ^ b n := Nat.one_le_two_pow
+        nlinarith
+      exact lt_of_lt_of_le (h1.trans_lt h2) (pm_W_pow hW (by omega))
+    refine (pmAlphaC_do _ h0 (pmQuart_alpha n) hp2
+      (lt_of_lt_of_le (pm_alpha_four_lt hn) (pm_W_pow hW (by omega))) hu2).mono ?_ le_rfl
+    rintro s' ⟨e0, e2, ea⟩
     refine ⟨by rw [ea]; exact hs.1, by rw [e2]; simp [pmVal], fun y hy => ?_⟩
-    fin_cases y <;> simp [pmVal, pmNV] at hy ⊢ <;> assumption
+    (fin_cases y <;> simp [pmVal, pmNV] at hy ⊢); assumption
 
 theorem pm_s13 (hn : 2 ≤ n) (hW : 4 * b n + 32 ≤ W) :
     ∀ s, PmF n 13 acc s → TblDo A W w (pmSqC.rename ![12, 13]) s (PmF n 14 acc) 1 :=
@@ -779,7 +788,7 @@ def pmStages : TblCode pmNV :=
   (pmSubKC 1).rename ![7, 9, 31] ;;
   (tblPow2 1 0 2).rename ![9, 10, 31] ;;
   pmMulSubC.rename ![3, 7, 5, 11] ;;
-  pmAlphaC.rename ![3, 1, 12, 31, 32] ;;
+  pmAlphaC.rename ![2, 31, 12, 32, 33] ;;
   pmSqC.rename ![12, 13] ;;
   pmGammaC.rename ![3, 13, 14, 31] ;;
   (pmCeilDivC 1).rename ![0, 1, 15, 31] ;;
@@ -808,6 +817,7 @@ def pmCode2 : TblCode pmNV := pmEmitSC.rename ![16, 17, 11, 3, 31, 32, 33] ;; pm
 /-- The atoms of `pmCode1`. -/
 def pmAtoms1 (n : ℕ) : ℕ :=
   1205 + 4 * b n + 489 * d n + 344 * K n + 8 * logT n + 8 * ℓ n + 5 * alpha n +
+    4 * Nat.clog 2 (p n) +
     6 * Nat.sqrt (p n * alpha n ^ 2) + 6 * Nat.sqrt (p n) + 4 * Nat.clog 2 (d n) +
     4 * Nat.clog 2 (taylorTerms (p n) 0) + 4 * Nat.clog 2 (taylorTerms (p n) (chirpGuard (d n)))
 
@@ -822,7 +832,7 @@ theorem pmStages_do (hn : 2 ≤ n) (hW : 4 * b n + 32 ≤ W) :
     ∀ s, PmF n 1 acc s → TblDo A W w pmStages s (PmF n 31 acc)
       ((4 * b n + 5) + (10 + ((7 * 30 + 11 + d n * (6 * 30 + 8)) +
         ((7 * 34 + 11 + K n * (6 * 34 + 8)) + ((4 * logT n + 16) + ((4 * logT n + 5) + (8 +
-        ((4 * ℓ n + 5) + (3 + ((4 * (ℓ n - 1) + 5) + (2 + ((5 * alpha n + 20) + (1 + (5 + (8 +
+        ((4 * ℓ n + 5) + (3 + ((4 * (ℓ n - 1) + 5) + (2 + ((4 * Nat.clog 2 (p n) + 5 * alpha n + 15) + (1 + (5 + (8 +
         ((12 * d n + 6) + (11 + ((13 * d n + 5) + ((6 * Nat.sqrt (p n * alpha n ^ 2) + 9) +
         ((6 * Nat.sqrt (p n) + 10) + ((4 * Nat.clog 2 (d n) + 4 + 7) + ((1 + 14 + 4) +
         ((4 * Nat.clog 2 (taylorTerms (p n) 0) + 4 + 7) + ((1 + 2 + 5) + ((5 + 4 + 4) +
@@ -864,28 +874,24 @@ end Main
 
 /-! ### Atom counts -/
 
-theorem pm_alpha_le (hn : 2 ≤ n) : alpha n ≤ 4 * b n := by
+theorem pm_alpha_le (_hn : 2 ≤ n) : alpha n ≤ 4 * b n + 4 := by
+  have h1 := alpha_sq_lt n
+  have h2 := alphaU_le_b n
   by_contra h
-  have h1 : (4 * b n + 1) ^ 4 ≤ alpha n ^ 4 := Nat.pow_le_pow_left (by omega) 4
-  have h2 := alpha_pow_four_le hn
-  have h3 : d n ^ 2 * b n ≤ b n ^ 3 := by
-    calc d n ^ 2 * b n ≤ b n ^ 2 * b n := Nat.mul_le_mul_right _ (Nat.pow_le_pow_left (d_le_b n) 2)
-      _ = b n ^ 3 := by ring
-  have h4 : 192 * b n ^ 3 < (4 * b n + 1) ^ 4 := by
-    have := one_le_b hn
-    nlinarith [pow_pos (show 0 < b n by omega) 3, pow_pos (show 0 < b n by omega) 4]
-  have e : 192 * d n ^ 2 * b n = 192 * (d n ^ 2 * b n) := by ring
-  omega
+  have : (4 * b n + 5) ^ 2 ≤ alpha n ^ 2 := Nat.pow_le_pow_left (by omega) 2
+  nlinarith
 
-theorem pm_sqrt_le (hn : 2 ≤ n) : Nat.sqrt (p n * alpha n ^ 2) ≤ 24 * b n ^ 2 := by
+theorem pm_sqrt_le (hn : 2 ≤ n) : Nat.sqrt (p n * alpha n ^ 2) ≤ 48 * b n ^ 2 := by
   have h1 : p n * alpha n ^ 2 ≤ (p n * alpha n) ^ 2 := by
     rw [mul_pow]
     exact Nat.mul_le_mul_right _ (Nat.le_self_pow (by norm_num) _)
   have h2 : Nat.sqrt (p n * alpha n ^ 2) ≤ p n * alpha n := by
     calc Nat.sqrt (p n * alpha n ^ 2) ≤ Nat.sqrt ((p n * alpha n) ^ 2) := Nat.sqrt_le_sqrt h1
       _ = p n * alpha n := Nat.sqrt_eq' _
-  have h3 : p n * alpha n ≤ 6 * b n * (4 * b n) := Nat.mul_le_mul_left _ (pm_alpha_le hn)
-  have e : 6 * b n * (4 * b n) = 24 * b n ^ 2 := by ring
+  have h3 : p n * alpha n ≤ 6 * b n * (4 * b n + 4) := Nat.mul_le_mul_left _ (pm_alpha_le hn)
+  have hb := one_le_b hn
+  have e : 6 * b n * (4 * b n + 4) = 24 * b n ^ 2 + 24 * b n := by ring
+  have e2 : b n ≤ b n ^ 2 := Nat.le_self_pow (by norm_num) _
   omega
 
 /-- `pmAtoms1 n ≤ 2500 (b + 1)²`. -/
@@ -898,6 +904,7 @@ theorem pmAtoms1_le (hn : 2 ≤ n) : pmAtoms1 n ≤ 2500 * (b n + 1) ^ 2 := by
   have hs := pm_sqrt_le hn
   have hp : Nat.sqrt (p n) ≤ 6 * b n := (Nat.sqrt_le_self _).trans le_rfl
   have hc1 : Nat.clog 2 (d n) ≤ b n := (pm_clog_le_self _).trans hd
+  have hc0 : Nat.clog 2 (p n) ≤ 6 * b n := pm_clog_le_self _
   have hc2 : Nat.clog 2 (taylorTerms (p n) 0) ≤ 6 * b n + 14 :=
     (pm_clog_le_self _).trans (by unfold taylorTerms p; omega)
   have hc3 : Nat.clog 2 (taylorTerms (p n) (chirpGuard (d n))) ≤ 7 * b n + 18 :=

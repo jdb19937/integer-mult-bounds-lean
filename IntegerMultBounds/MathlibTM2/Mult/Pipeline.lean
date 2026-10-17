@@ -239,21 +239,11 @@ theorem windowA_spec {p a : ℕ} (hap : a ^ 2 < p) :
     omega
 
 theorem alpha_sq_lt_p (h : Big n) : alpha n ^ 2 < p n := by
-  have h1 := alpha_pow_four_le h.1
-  have h2 := h.pow_le_b (k := 4) (by norm_num)
+  have h1 := alpha_sq_lt n
+  have h2 := h.alphaU_le_d
+  have h3 := d_le_b n
   have hD := h.2
-  have hb := h.sixteen_le_b
-  have h3 : 256 * d n ^ 2 ≤ d n ^ 4 := by
-    have : 256 ≤ d n ^ 2 := by nlinarith
-    calc 256 * d n ^ 2 ≤ d n ^ 2 * d n ^ 2 := Nat.mul_le_mul_right _ this
-      _ = d n ^ 4 := by ring
-  have h4 : (alpha n ^ 2) ^ 2 < p n ^ 2 := by
-    rw [← pow_mul]
-    unfold p
-    calc alpha n ^ (2 * 2) = alpha n ^ 4 := by norm_num
-      _ ≤ 192 * d n ^ 2 * b n := h1
-      _ < (6 * b n) ^ 2 := by nlinarith
-  exact (Nat.pow_lt_pow_iff_left (by norm_num)).1 h4
+  unfold p; omega
 
 theorem t_pow_log (n : ℕ) (i : Fin (d n)) : t n i = 2 ^ Nat.log 2 (t n i) := by
   unfold t
@@ -411,10 +401,15 @@ theorem source_approx (h : Big n) (hsmall : 2 * d n * p n ^ 2 ≤ T n * logT n)
   have hαpR : ((alpha n : ℝ)) ^ 2 ≤ p n := by exact_mod_cast hαp
   have hp13 := h.thirteen_le_p
   obtain ⟨hm, hm1, hmp⟩ := windowA_spec (alpha_sq_lt_p h)
+  have hj : 2 * (p n : ℝ) ≤ 2 ^ (alpha n * alpha n) := by
+    have := h.band_width
+    rw [← sq]
+    exact_mod_cast (show 2 * p n ≤ 2 ^ (alpha n ^ 2) by omega)
   have hi0 : 0 < d n := by omega
   choose J hJ hfac hAn hBn hA' hA'1 using fun i =>
-    BandSpec.band_factorization (hg.lt i) (hg.coprime i) hαR (h.one_le_alpha_sq_theta i)
-      (alpha n * alpha n) hαpR hm hm1 hmp hp13
+    BandSpec.band_factorization_sg (hg.lt i) (hg.coprime i) hαR (u := alpha n ^ 2)
+      (by push_cast; ring) (alpha n * alpha n) h.band_width (h.quarter_p_le_theta i) hj hαpR hm
+      hm1 hmp hp13
       (IntegerMultBounds.Resampling.WeightTable.tableA (s n i) (t n i) (alpha n) (p n))
       (tables_ok (s n i) (t n i) (alpha n) (p n) (hg.lt i) hp13 hα2 hαp).1
   have hexact : ∀ i, PhaseCellOperator.exact (s n i) (t n i) (alpha n : ℝ) =

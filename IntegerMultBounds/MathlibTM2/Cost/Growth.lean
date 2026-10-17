@@ -249,13 +249,22 @@ theorem gr_logb_rp_le : ∀ᶠ n in atTop, Real.logb 2 ((r n : ℝ) * p n) ≤ 2
 
 /-! ### `α`, `γ`, `S` -/
 
-/-- `α ≤ 4 d^{1/2} B^{1/4}`, from `α⁴ ≤ 192 d² B`. -/
-theorem gr_alpha_le {n : ℕ} (hn : 2 ≤ n) :
+/-- `α ≤ 4 d^{1/2} B^{1/4}`, from `α⁴ < 16 u² ≤ 16 d²`. -/
+theorem gr_alpha_le {n : ℕ} (h : Big n) :
     (alpha n : ℝ) ≤ 4 * (d n : ℝ) ^ (1 / 2 : ℝ) * (b n : ℝ) ^ (1 / 4 : ℝ) := by
   have hD : (0 : ℝ) ≤ d n := Nat.cast_nonneg _
   have hB : (0 : ℝ) ≤ b n := Nat.cast_nonneg _
   have h1 : (alpha n : ℝ) ^ 4 ≤ 192 * (d n : ℝ) ^ 2 * b n := by
-    exact_mod_cast alpha_pow_four_le hn
+    have h4 := alpha_pow_four_lt n
+    have hu := h.alphaU_le_d
+    have hb := h.sixteen_le_b
+    have hu2 : alphaU n ^ 2 ≤ d n ^ 2 := Nat.pow_le_pow_left hu 2
+    have : alpha n ^ 4 ≤ 192 * d n ^ 2 * b n := by
+      have : 16 * d n ^ 2 ≤ 192 * d n ^ 2 * b n := by
+        calc 16 * d n ^ 2 ≤ 192 * d n ^ 2 * 1 := by omega
+          _ ≤ 192 * d n ^ 2 * b n := Nat.mul_le_mul_left _ (by omega)
+      omega
+    exact_mod_cast this
   have e1 : ((d n : ℝ) ^ (1 / 2 : ℝ)) ^ 4 = (d n : ℝ) ^ 2 := by
     rw [← Real.rpow_natCast, ← Real.rpow_mul hD]; norm_num
   have e2 : ((b n : ℝ) ^ (1 / 4 : ℝ)) ^ 4 = b n := by

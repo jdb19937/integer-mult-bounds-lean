@@ -90,11 +90,10 @@ theorem ds_g_le (n : ℕ) : Chirp.chirpGuard (d n) ≤ 5 * (b n + 1) := by
 theorem ds_gamma_le (hn : 2 ≤ n) : gamma n ≤ 50 * (b n + 1) ^ 3 := by
   have hα := pm_alpha_le hn
   have hd := d_le_b n
-  have h1 : alpha n ^ 2 ≤ 16 * b n ^ 2 := by
-    calc alpha n ^ 2 ≤ (4 * b n) ^ 2 := Nat.pow_le_pow_left hα 2
-      _ = 16 * b n ^ 2 := by ring
-  have h2 : b n ≤ b n + 1 := by omega
-  have h3 : b n ^ 2 ≤ (b n + 1) ^ 2 := Nat.pow_le_pow_left h2 2
+  have h1 : alpha n ^ 2 ≤ 16 * (b n + 1) ^ 2 := by
+    calc alpha n ^ 2 ≤ (4 * b n + 4) ^ 2 := Nat.pow_le_pow_left hα 2
+      _ = 16 * (b n + 1) ^ 2 := by ring
+  have h3 : 1 ≤ (b n + 1) ^ 2 := Nat.one_le_pow _ _ (by omega)
   unfold gamma
   calc d n * (3 * alpha n ^ 2 + 2) ≤ (b n + 1) * (3 * (16 * (b n + 1) ^ 2) + 2 * (b n + 1) ^ 2) :=
         Nat.mul_le_mul (by omega) (by nlinarith)

@@ -266,7 +266,7 @@ theorem tot_resamp_le (h : Big n) :
   have hB1 := tot_one_le_b h
   have hB : (0 : ℝ) < b n := by linarith
   have hα : (alpha n : ℝ) ≤ 4 * (b n : ℝ) ^ (epsilon * (1 / 2) + 1 / 4) :=
-    calc (alpha n : ℝ) ≤ 4 * (d n : ℝ) ^ (1 / 2 : ℝ) * (b n : ℝ) ^ (1 / 4 : ℝ) := gr_alpha_le h.1
+    calc (alpha n : ℝ) ≤ 4 * (d n : ℝ) ^ (1 / 2 : ℝ) * (b n : ℝ) ^ (1 / 4 : ℝ) := gr_alpha_le h
       _ ≤ 4 * (b n : ℝ) ^ (epsilon * (1 / 2)) * (b n : ℝ) ^ (1 / 4 : ℝ) := by
           gcongr; exact gr_d_rpow_le n (by norm_num)
       _ = 4 * (b n : ℝ) ^ (epsilon * (1 / 2) + 1 / 4) := by rw [Real.rpow_add hB]; ring
