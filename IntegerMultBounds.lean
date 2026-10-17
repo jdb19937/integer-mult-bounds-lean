@@ -283,6 +283,8 @@ import IntegerMultBounds.Networks.PairedReconstructionKeys
 import IntegerMultBounds.Networks.PairedBlockCorrect
 import IntegerMultBounds.Networks.PairedInitialGraph
 import IntegerMultBounds.Networks.PairedInitialBudget
+import IntegerMultBounds.Networks.DisjointSharingBudget
+import IntegerMultBounds.Networks.PairedPruning
 import IntegerMultBounds.Networks.DisjointUnique
 import IntegerMultBounds.Networks.DuplicateBudget
 import IntegerMultBounds.Networks.SharedPointMatching
@@ -2637,4 +2639,4 @@ import IntegerMultBounds.MathlibTM2.Fast.CompactMainInputDistribution
 import IntegerMultBounds.MathlibTM2.Fast.CompactMainOutput
 import IntegerMultBounds.MathlibTM2.Fast.CompactFinal
 import IntegerMultBounds.MathlibTM2.Cost.CompactDimensionParameters
-import IntegerMultBounds.MathlibTM2.Layer.LayerR
+import IntegerMultBounds.MathlibTM2.Layer.TopR
