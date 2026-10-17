@@ -19,8 +19,8 @@ The sharper target is the **selected** community construction at revision
 in individual notes. The [source pin](../docs/sharper-bound-source.json)
 records the selected certificate, supporting sources and manuscript digests.
 The original manuscript proves saving `2^-182`; our published, audited Lean
-theorem proves `36261/2^48 ≈ 1.107 · 2^-33`. Its active compact parameters are
-`epsilon=79/256`, `c=2^-2`, and `lambda'=1-459/2^40`. The selected upstream conditional saving is
+theorem proves `3213/2^44 ≈ 2^-32.35`. Its active compact parameters are
+`epsilon=7/16`, `c=2^-2`, and `lambda'=1-459/2^40`. The selected upstream conditional saving is
 `0.001672660197076918`; matching it unconditionally remains the goal.
 
 ## Diagnosis: where our current bound is lost
@@ -36,7 +36,7 @@ less asymptotic time; these are not measured timing speedups.
 | §5.2–5.3 and Appendix A, layer control | **Binding margin `epsilon (1-lambda') = 513/2^43`, covering `2^-34`.** | Compact controls and full-depth execution are complete. Dimension/layer retuning is complete; selected suppliers, stopped recursion and local repair costs are structural follow-ups. |
 | §6.2, transform layout | Saving `epsilon c a_b`, above the published bound. | Fourth-root chunks are integrated; selected coordinate routing and balanced prefixes are needed beyond this route. |
 | §§8.2, 9.3, CRT and axis exposure | Saving `(1-epsilon) a_b`. | Direct routing is integrated; preserve it under new sizing and selected routing. |
-| §8.1–8.2, Gaussian arithmetic | Saving `1/4 - 2^-5 - 3 epsilon/2 = 1/128`. | The sharpened logarithmic charge supports the dyadic dimension; selected near-one dimensions require faster inverse and bulk core/halo execution. |
+| §8.1–8.2, Gaussian arithmetic | Saving `1/2 - 2^-5 - epsilon(1+2^-33)`, about `2^-5` at `epsilon=7/16`. | The sharpened logarithmic charge supports the dyadic dimension; selected near-one dimensions require faster inverse and bulk core/halo execution. |
 | §7, packed ring products | Saving `epsilon (1-c)`, above the published bound. | Preserve the conventional subroutine, widths and logarithmic allowance under each retune. |
 | §9.7–9.8, precision and assembly | The smallest surviving stage margin wins. | Link every improved estimate to actual fixed-machine execution, exact recovery and a standard-axiom audit. |
 
@@ -2039,3 +2039,31 @@ takes `Big n`. `pm_N_le` handles `d ≤ 3` directly. The layer gap is
 `237/1024`, CRT `(177/256) a_b`, resampling `3/512`. Further retuning is
 capped at about `1.12 · 2^-33` (`epsilon < 5/16`, `1-lambda' < 1-sigma`).
 The next dyadic step still needs the M7 Gaussian route.
+
+**Retune to `epsilon=7/16`: `kappa = 3213/2^44 ≈ 2^-32.35`.** The resampling
+margin `1/2-delta-3epsilon/2` came from the coarse bound `α ≤ 2√d`; the actual
+band width is logarithmic, `α² < 4(⌈log₂ p⌉+3)`, so `Cost/Growth.gr_alpha_le_K`
+gives `α ≤ 4 b^{ε c/2}` (`c = 2^-32`) from `⌈log₂ p⌉ ≤ K`, and the margin is
+`1/2-delta-epsilon(1+2^-33)`. The dimension is `d = iroot 16 (b^7)`; the
+parameter machine forms `b^7` in five atoms and takes the root at `k = 4`, with
+word fit `(b^7+1)² < 2^(4b+32)` for every `b`. `Big n` now asks `d ≥ 2^40`, and
+`Sizes.mul_sq_le_b` (`F d² ≤ b` for `F⁴ ≤ d`) replaces the cube cap in the
+moduli room (`6 E d² ≤ b` with `4d ≤ 2^E`), `2d ≤ ℓ`, `16 d α² ≤ b` and the
+eventual `C K ≤ ℓ`; `d ≤ 2ℓ` and `d⁹ ≤ 128 ℓ⁷` hold for all `n ≥ 2`. Stage
+margins: layout `7/64 · a_b`, layer `3213/2^44` (binding and public), direct
+rounds `21/64`, CRT `9/16 · a_b`, resampling `1/32 - 7/2^37`.
+
+Further retuning is capped near `2^-32.16`: the resampling margin needs
+`epsilon < 1/2 - delta`, and independently the moduli `N = oddProd d` need
+`d² log d ≲ b`, i.e. `epsilon < 1/2`. `2^-32` needs `epsilon > 0.557`. Above
+`1/2` the construction needs `d ≫ log t` pairwise coprime moduli in windows of
+relative width `1/(4d)` below `t = 2^ℓ`; all elementary constructions
+(`oddProd`, `1 + iM` with `M = d!`, primorial shifts) need span `e^{Θ(d log d)}`
+and fail, so this needs primes in short intervals (the selected construction
+cites Baker–Harman–Pintz; PNT with a `(log x)^{-A}` error, `A > 2`, suffices
+for `d = (log t)^{5/3}`). Mathlib currently provides Chebyshev bounds and
+Bertrand only. With that prime supply, `2^-32` also needs the chirped-correlation
+forward map (`notes/fast-gaussian-resampling.tex` at the selected revision,
+`O(M(p))` per element, replacing the `α√p` window) and the banded `B̃₀` at
+`α² ≈ p^r` with `r < 1-ε`; its margin `(1+r)/2-epsilon-delta` stays positive for
+`epsilon < 2/3`, so the phase-cell inverse is not needed for this step.

@@ -35,7 +35,9 @@ noncomputable def bound (C n : ℕ) : ℝ :=
 theorem bound_le (C : ℕ) :
     ∀ᶠ n in atTop, 0 ≤ bound C n ∧
       bound C n ≤ 65536 * C * ((n : ℝ) * (b n : ℝ) ^ (1 - kappa)) := by
-  filter_upwards [regime C] with n ⟨h, hK, hlog, hbC, _⟩
+  filter_upwards [regime C, gr_one_le_K, Mult.Sizes.eventually_clog_p_le_K 1] with n
+    ⟨h, hK, hlog, hbC, _⟩ hK0 hclog
+  rw [one_mul] at hclog
   obtain ⟨he0, -⟩ := exp_facts
   have hB1 := tot_one_le_b h
   have hN : (0 : ℝ) ≤ n := Nat.cast_nonneg _
@@ -45,7 +47,7 @@ theorem bound_le (C : ℕ) :
     have hdirect := exp_facts.2.2.1
     nlinarith
   have hcrt := tot_directCRT_le h kappa hmargin
-  have hres := resamp_le h
+  have hres := resamp_le h hK0 hclog
   have hconv := conv_le h hK hlog
   have hmp := mp_le h
   have hS : (S n : ℝ) * totMp n ≤ (T n : ℝ) * totMp n := by

@@ -26,13 +26,13 @@ def compactDyadicParamStage : TblCode 40 :=
 
 /-- The dimension changes, borrowed scratch becomes zero, and every other value is retained. -/
 def compactDyadicParamVals (v : Fin 40 → ℕ) (b : ℕ) (i : Fin 40) : ℕ :=
-  if i = 3 then iroot 256 (b ^ 79) else if 31 ≤ i.val ∧ i.val ≤ 35 then 0 else v i
+  if i = 3 then iroot 16 (b ^ 7) else if 31 ≤ i.val ∧ i.val ≤ 35 then 0 else v i
 
-def compactDyadicParamAtoms (b : ℕ) : ℕ := 83 + 56 * iroot 256 (b ^ 79)
+def compactDyadicParamAtoms (b : ℕ) : ℕ := 49 + 32 * iroot 16 (b ^ 7)
 
 /-- Generic-word contract, including the entire forty-variable state and accumulator. -/
 theorem compactDyadicParamStage_do (s : TblSt 40 A) {b : ℕ}
-    (hb : s.val 1 = b) (hW : (b ^ 79 + 1) ^ 2 < 2 ^ W) (hkW : 8 < 2 ^ W) :
+    (hb : s.val 1 = b) (hW : (b ^ 7 + 1) ^ 2 < 2 ^ W) (hkW : 8 < 2 ^ W) :
     TblDo A W w compactDyadicParamStage s
       (fun z => z.val = compactDyadicParamVals s.val b ∧ z.acc = s.acc)
       (compactDyadicParamAtoms b) := by
@@ -42,7 +42,7 @@ theorem compactDyadicParamStage_do (s : TblSt 40 A) {b : ℕ}
       (f := compactDyadicParamReg) (by decide)
   refine (hdim.seq (K₂ := 5) (fun z hz => ?_)).mono (fun _ h => h) ?_
   · have h1 : z.val 1 = b := by simpa [TblSt.restrict, compactDyadicParamReg] using hz.1.1
-    have h3 : z.val 3 = iroot 256 (b ^ 79) := by
+    have h3 : z.val 3 = iroot 16 (b ^ 7) := by
       simpa [TblSt.restrict, compactDyadicParamReg] using hz.1.2.2.1
     have hoff : ∀ i : Fin 40, i ≠ 1 → i ≠ 3 → i ≠ 31 → i ≠ 32 →
         i ≠ 33 → i ≠ 34 → i ≠ 35 → z.val i = s.val i := by
@@ -59,7 +59,7 @@ theorem compactDyadicParamStage_do (s : TblSt 40 A) {b : ℕ}
 
 /-- The cleaned stage fits the previous conservative dimension-stage atom allowance. -/
 theorem compactDyadicParamAtoms_le (b : ℕ) :
-    compactDyadicParamAtoms b ≤ 7 * 30 + 11 + iroot 256 (b ^ 79) * (6 * 30 + 8) := by
+    compactDyadicParamAtoms b ≤ 7 * 30 + 11 + iroot 16 (b ^ 7) * (6 * 30 + 8) := by
   unfold compactDyadicParamAtoms
   omega
 

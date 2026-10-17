@@ -96,4 +96,15 @@ theorem squared_seventy_ninth_cap_lt {b : ℕ} (hb : 512≤b) : (b^79+1)^2<2^(4*
     _ = 2^(4*b+2) := by ring
     _ ≤ 2^(4*b+32) := Nat.pow_le_pow_right (by norm_num) (by omega)
 
+/-- The cap-square premise of the capped-squaring root routine at the seventh power. -/
+theorem squared_seventh_cap_lt (b : ℕ) : (b^7+1)^2<2^(4*b+32) := by
+  have h : b^7+1≤(b+1)^7 := by
+    simpa only [one_pow] using
+      (pow_add_pow_le (Nat.zero_le b) (by decide : (0:ℕ)≤1) (by decide : 7≠0))
+  calc
+    (b^7+1)^2≤((b+1)^7)^2 := Nat.pow_le_pow_left h 2
+    _ = (b+1)^14 := by rw [←pow_mul]
+    _ ≤ (b+1)^18 := Nat.pow_le_pow_right (by omega) (by decide)
+    _ < 2^(4*b+32) := eighteenth_power_lt b
+
 end IntegerMultBounds.MathlibTM2.Mult.CompactDyadicRootRoom

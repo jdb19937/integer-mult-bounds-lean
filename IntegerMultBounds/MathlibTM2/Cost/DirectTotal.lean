@@ -30,7 +30,8 @@ noncomputable def totDirectBound (C n : ℕ) : ℝ :=
 theorem tot_direct_le (C : ℕ) :
     ∀ᶠ n in atTop, 0 ≤ totDirectBound C n ∧
       totDirectBound C n ≤ 40000 * C * ((n : ℝ) * (b n : ℝ) ^ (1 - totKappa)) := by
-  filter_upwards [tot_eventually C] with n ⟨h, hK, hlog, hbC, _⟩
+  filter_upwards [tot_eventually C, eventually_clog_p_le_K 1] with n ⟨h, hK, hlog, hbC, _⟩ hclog
+  rw [one_mul] at hclog
   obtain ⟨he0, -⟩ := tot_exp_facts
   have hB1 := tot_one_le_b h
   have hN : (0 : ℝ) ≤ n := Nat.cast_nonneg _
@@ -40,7 +41,7 @@ theorem tot_direct_le (C : ℕ) :
     have hdirect := tot_exp_facts.2.2.1
     nlinarith
   have hcrt := tot_directCRT_le h totKappa hmargin
-  have hres := tot_resamp_le h
+  have hres := tot_resamp_le h hK hclog
   have hconv := tot_conv_le h hK hlog
   have hmp := tot_mp_le h
   have hS : (S n : ℝ) * totMp n ≤ (T n : ℝ) * totMp n := by

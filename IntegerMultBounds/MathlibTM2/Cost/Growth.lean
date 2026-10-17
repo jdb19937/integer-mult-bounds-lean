@@ -154,6 +154,24 @@ theorem gr_d_rpow_le_two_K {n : ℕ} (hK : 1 ≤ K n) : (d n : ℝ) ^ cParam ≤
 theorem gr_K_le_rpow (n : ℕ) : (K n : ℝ) ≤ (b n : ℝ) ^ (epsilon * cParam) :=
   (gr_K_le_d_rpow n).trans (gr_d_rpow_le n gr_cParam_pos.le)
 
+/-- `α ≤ 4 B^{εc/2}`: `α² < 4u = 4(⌈log₂ p⌉ + 3) ≤ 16 K`, given `⌈log₂ p⌉ ≤ K` and `K ≥ 1`. -/
+theorem gr_alpha_le_K {n : ℕ} (hK : 1 ≤ K n) (hclog : Nat.clog 2 (p n) ≤ K n) :
+    (alpha n : ℝ) ≤ 4 * (b n : ℝ) ^ (epsilon * cParam * (1 / 2)) := by
+  have hB : (0 : ℝ) ≤ b n := Nat.cast_nonneg _
+  have h1 : alpha n ^ 2 ≤ 16 * K n := by
+    have := alpha_sq_lt n
+    unfold alphaU at this
+    omega
+  have h2 : (alpha n : ℝ) ^ 2 ≤ 16 * (b n : ℝ) ^ (epsilon * cParam) := by
+    have : (alpha n : ℝ) ^ 2 ≤ 16 * (K n : ℝ) := by exact_mod_cast h1
+    linarith [gr_K_le_rpow n]
+  have e : ((b n : ℝ) ^ (epsilon * cParam * (1 / 2))) ^ 2 = (b n : ℝ) ^ (epsilon * cParam) := by
+    rw [← Real.rpow_natCast, ← Real.rpow_mul hB]
+    congr 1; push_cast; ring
+  have h3 : (alpha n : ℝ) ^ 2 ≤ (4 * (b n : ℝ) ^ (epsilon * cParam * (1 / 2))) ^ 2 := by
+    rw [mul_pow, e]; linarith
+  exact (pow_le_pow_iff_left₀ (Nat.cast_nonneg _) (by positivity) (by norm_num)).1 h3
+
 /-- `B^{εca} ≤ 4 K^a` for `K ≥ 1`, `0 ≤ a ≤ 1`. -/
 theorem gr_rpow_le_four_K_rpow {n : ℕ} (hK : 1 ≤ K n) {a : ℝ} (ha : 0 ≤ a) (ha1 : a ≤ 1) :
     (b n : ℝ) ^ (epsilon * cParam * a) ≤ 4 * (K n : ℝ) ^ a := by

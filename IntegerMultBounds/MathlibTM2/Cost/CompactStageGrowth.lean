@@ -18,10 +18,10 @@ noncomputable section
 theorem exp_facts :
     0≤1-kappa ∧ 2*epsilon≤1-kappa ∧
       epsilon*(1-Parameters.tau)+Parameters.tau≤1-kappa ∧
-      epsilon+epsilon*(1/2)+(1/2+totDelta)≤1-kappa ∧
+      epsilon+epsilon*Mult.Sizes.cParam*(1/2)+(1/2+totDelta)≤1-kappa ∧
       1-epsilon*(1-lam')≤1-kappa ∧
       1-epsilon+epsilon*cParam≤1-kappa ∧ totDelta≤1-kappa := by
-  rw [epsilon_eq]
+  rw [epsilon_eq, Mult.Sizes.cParam_eq]
   norm_num [kappa,lam',cParam,Mult.CompactSizes.cParam,Mult.CompactSizes.cExp,
     CompactInterim.kappa,CompactInterim.lam',Parameters.tau,totDelta]
 
@@ -49,30 +49,16 @@ theorem mp_le (h : Big n) :
       exact mul_le_mul_of_nonneg_right (by norm_num) (by positivity)
 
 
-/-- `α ≤ 2√d`: from `α⁴ < 16 u²` and `u ≤ d`. With `d ≤ b^ε` this is the retuned band width
-`α² ≈ log 8p`, with no separate `b^{1/4}` factor. -/
-theorem alpha_le_sqrt_d (h : Big n) : (alpha n : ℝ) ≤ 2 * (d n : ℝ) ^ (1 / 2 : ℝ) := by
-  have hD : (0 : ℝ) ≤ d n := Nat.cast_nonneg _
-  have h1 : (alpha n : ℝ) ^ 4 ≤ 16 * (d n : ℝ) ^ 2 := by
-    have h4 := alpha_pow_four_lt n
-    have hu2 : alphaU n ^ 2 ≤ d n ^ 2 := Nat.pow_le_pow_left h.alphaU_le_d 2
-    have : alpha n ^ 4 ≤ 16 * d n ^ 2 := by omega
-    exact_mod_cast this
-  have e1 : ((d n : ℝ) ^ (1 / 2 : ℝ)) ^ 4 = (d n : ℝ) ^ 2 := by
-    rw [← Real.rpow_natCast, ← Real.rpow_mul hD]; norm_num
-  have h2 : (alpha n : ℝ) ^ 4 ≤ (2 * (d n : ℝ) ^ (1 / 2 : ℝ)) ^ 4 := by
-    rw [mul_pow, e1]; norm_num; linarith
-  exact (pow_le_pow_iff_left₀ (Nat.cast_nonneg _) (by positivity) (by norm_num)).1 h2
-
-theorem resamp_le (h : Big n) :
+/-- The resampling envelope with the logarithmic band width `α ≤ 4 B^{εc/2}` (`c = 2^-32`),
+given `⌈log₂ p⌉ ≤ K` for the legacy chunk `K = ⌊d^c⌋`. -/
+theorem resamp_le (h : Big n) (hK : 1 ≤ Mult.Sizes.K n)
+    (hclog : Nat.clog 2 (p n) ≤ Mult.Sizes.K n) :
     totResamp n ≤ 8192 * ((n : ℝ) * (b n : ℝ) ^ (1 - kappa)) := by
   obtain ⟨-, -, -, hres, -, -, -⟩ := exp_facts
   have hB1 := tot_one_le_b h
   have hB : (0 : ℝ) < b n := by linarith
-  have hα : (alpha n : ℝ) ≤ 2 * (b n : ℝ) ^ (epsilon * (1 / 2)) :=
-    calc (alpha n : ℝ) ≤ 2 * (d n : ℝ) ^ (1 / 2 : ℝ) := alpha_le_sqrt_d h
-      _ ≤ 2 * (b n : ℝ) ^ (epsilon * (1 / 2)) := by
-          gcongr; exact gr_d_rpow_le n (by norm_num)
+  have hα : (alpha n : ℝ) ≤ 4 * (b n : ℝ) ^ (epsilon * Mult.Sizes.cParam * (1 / 2)) :=
+    gr_alpha_le_K hK hclog
   have hd : (d n : ℝ) ≤ 1 * (b n : ℝ) ^ epsilon := by rw [one_mul]; exact gr_d_le_rpow n
   have hdα := gr_mul_le hB (Nat.cast_nonneg _) (by norm_num) hd hα
   have hp := gr_mul_le hB (by positivity) (by norm_num)
@@ -85,9 +71,9 @@ theorem resamp_le (h : Big n) :
   calc (d n : ℝ) * T n * (p n : ℝ) ^ (1 / 2 : ℝ) * alpha n * ((p n : ℝ) * (p n : ℝ) ^ totDelta) =
       ((T n : ℝ) * p n) * (((d n : ℝ) * alpha n) *
         ((p n : ℝ) ^ (1 / 2 : ℝ) * (p n : ℝ) ^ totDelta)) := by ring
-    _ ≤ (48 * n) * (1 * 2 * (6 * 6) * (b n : ℝ) ^ (1 - kappa)) :=
+    _ ≤ (48 * n) * (1 * 4 * (6 * 6) * (b n : ℝ) ^ (1 - kappa)) :=
         mul_le_mul hTp h4 (by positivity) (by positivity)
-    _ = 3456 * ((n : ℝ) * (b n : ℝ) ^ (1 - kappa)) := by ring
+    _ = 6912 * ((n : ℝ) * (b n : ℝ) ^ (1 - kappa)) := by ring
     _ ≤ 8192 * ((n : ℝ) * (b n : ℝ) ^ (1 - kappa)) := by
       exact mul_le_mul_of_nonneg_right (by norm_num) (by positivity)
 

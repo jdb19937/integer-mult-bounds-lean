@@ -91,12 +91,19 @@ theorem eventually_K_le_predecessor : ∀ᶠ n in atTop, K n≤d n-1 := by
 
 /-- Layout block width eventually dominates any fixed multiple of the chunk. -/
 theorem eventually_mul_K_le_ℓ (C : ℕ) : ∀ᶠ n in atTop, C*K n≤ℓ n := by
-  filter_upwards [Sizes.eventually_big, tendsto_atTop.1 Sizes.tendsto_d (2*C)] with n h hC
-  have h1 := h.pow_le_two_ℓ
-  have h2 : d n^2≤d n^6 := Nat.pow_le_pow_right h.one_le_d (by norm_num)
+  filter_upwards [Sizes.eventually_big, tendsto_atTop.1 Sizes.tendsto_d ((2*C)^4)] with n h hC
+  have h1 := h.mul_sq_le hC
+  have h2 := h.b_le_two_dℓ
   have h3 : C*K n≤C*d n := Nat.mul_le_mul_left _ (K_le_d n)
-  have h4 : 2*C*d n≤d n*d n := Nat.mul_le_mul_right _ hC
-  nlinarith
+  have hd := h.one_le_d
+  have h4 : d n*(2*(C*d n))≤d n*(2*ℓ n) := by
+    calc d n*(2*(C*d n)) = 2*C*d n^2 := by ring
+      _ ≤ 2*(d n*ℓ n) := h1.trans h2
+      _ = d n*(2*ℓ n) := by ring
+  have h5 : C*d n≤ℓ n := by
+    have := Nat.le_of_mul_le_mul_left h4 hd
+    omega
+  exact h3.trans h5
 
 end
 end IntegerMultBounds.MathlibTM2.Mult.CompactSizes
