@@ -2645,3 +2645,4 @@ import IntegerMultBounds.MathlibTM2.Layer.TopRS
 import IntegerMultBounds.MathlibTM2.Mult.SynthErrRoundsQ
 import IntegerMultBounds.MathlibTM2.Mult.SynthErrQ
 import IntegerMultBounds.MathlibTM2.Node.CompactLayerProcR
+import IntegerMultBounds.MathlibTM2.Node.CompactTopProcR
