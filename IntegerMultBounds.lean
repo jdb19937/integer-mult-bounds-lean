@@ -2646,6 +2646,7 @@ import IntegerMultBounds.MathlibTM2.Fast.CompactMainInputDistribution
 import IntegerMultBounds.MathlibTM2.Fast.CompactMainOutput
 import IntegerMultBounds.MathlibTM2.Fast.CompactFinal
 import IntegerMultBounds.MathlibTM2.Cost.CompactDimensionParameters
+import IntegerMultBounds.MathlibTM2.Layer.NodeRSharp
 import IntegerMultBounds.MathlibTM2.Layer.TopR
 import IntegerMultBounds.MathlibTM2.Layer.LayerRBounds
 import IntegerMultBounds.MathlibTM2.Layer.TopRS

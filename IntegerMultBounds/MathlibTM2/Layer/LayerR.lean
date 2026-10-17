@@ -1,6 +1,6 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Layer.NodeR
+public import IntegerMultBounds.MathlibTM2.Layer.NodeRSharp
 public import IntegerMultBounds.MathlibTM2.Layer.TopZ
 
 /-!
@@ -44,8 +44,8 @@ noncomputable def layerR (u : ℕ) (ds : Directions) (R₀ : ℕ) :
 /-- The error bound of the rounded layer. -/
 noncomputable def errL (u : ℕ) (ds : Directions) (R₀ r n : ℕ) : ℕ → ℝ
   | 0 => 0
-  | j + 1 => errRun (√(2 ^ (m * bits u j)) *
-      (√2 * √(rowsAt R₀ j * r * 2 ^ n) + errL u ds R₀ r n j / 2 ^ scaleR u ds j)) (program ds) 0
+  | j + 1 => errRun (√2 * √(rowsAt R₀ j * r * 2 ^ n) + errL u ds R₀ r n j / 2 ^ scaleR u ds j)
+      (program ds) 0
 
 lemma errRun_nonneg {δ : ℝ} (hδ : 0 ≤ δ) (l : List Instr) {E : ℝ} (hE : 0 ≤ E) :
     0 ≤ errRun δ l E := by
@@ -58,18 +58,15 @@ lemma errRun_nonneg {δ : ℝ} (hδ : 0 ≤ δ) (l : List Instr) {E : ℝ} (hE :
 
 lemma errL_nonneg (u : ℕ) (ds : Directions) (R₀ r n : ℕ) : ∀ j, 0 ≤ errL u ds R₀ r n j
   | 0 => le_rfl
-  | j + 1 => errRun_nonneg (mul_nonneg (Real.sqrt_nonneg _) (add_nonneg (by positivity)
-      (div_nonneg (errL_nonneg u ds R₀ r n j) (by positivity)))) _ le_rfl
+  | j + 1 => errRun_nonneg (add_nonneg (by positivity)
+      (div_nonneg (errL_nonneg u ds R₀ r n j) (by positivity))) _ le_rfl
 
 /-- The step of the error bound in closed form. -/
 lemma errL_succ_le (u : ℕ) (ds : Directions) (R₀ r n j : ℕ) :
     errL u ds R₀ r n (j + 1) ≤ lipProd (program ds) * facCount (program ds) *
-      (√(2 ^ (m * bits u j)) *
-        (√2 * √(rowsAt R₀ j * r * 2 ^ n) + errL u ds R₀ r n j / 2 ^ scaleR u ds j)) := by
-  have hδ : 0 ≤ √(2 ^ (m * bits u j)) *
-      (√2 * √(rowsAt R₀ j * r * 2 ^ n) + errL u ds R₀ r n j / 2 ^ scaleR u ds j) :=
-    mul_nonneg (Real.sqrt_nonneg _) (add_nonneg (by positivity)
-      (div_nonneg (errL_nonneg u ds R₀ r n j) (by positivity)))
+      (√2 * √(rowsAt R₀ j * r * 2 ^ n) + errL u ds R₀ r n j / 2 ^ scaleR u ds j) := by
+  have hδ : 0 ≤ √2 * √(rowsAt R₀ j * r * 2 ^ n) + errL u ds R₀ r n j / 2 ^ scaleR u ds j :=
+    add_nonneg (by positivity) (div_nonneg (errL_nonneg u ds R₀ r n j) (by positivity))
   have h := errRun_le hδ (program ds) (le_refl (0 : ℝ))
   simp only [errL]
   linarith
@@ -191,7 +188,7 @@ theorem layerR_err (u : ℕ) (ds : Directions) (hd : ComplexPhaseBudget.Realizes
     refine (l2_ofBank_sub_le (rowsAt R₀ j) (m * bits u j) e _ f _).trans ?_
     have hN : Fintype.card ((Fin (rowsAt R₀ j) × Fin r) × (Fin n → ZMod 2)) =
         rowsAt R₀ j * r * 2 ^ n := by simp
-    refine nodeM_err (k := bits u j) e he ds hd _
+    refine nodeM_err_sharp (k := bits u j) (e := e) he ds hd _
       (add_nonneg (by positivity) (div_nonneg (errL_nonneg u ds R₀ r n j) (by positivity)))
       (fun s g => ?_) _
     -- the rounded child against the kernels on its slot
