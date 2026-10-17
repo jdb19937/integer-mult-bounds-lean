@@ -1984,3 +1984,13 @@ needs bounded precision in the synthetic layers, for example rounding the
 pieces between levels, so that the working width stays `O(p)` at
 `ε ≈ 9/32`. The other `d^k ≤ b` uses (`Fast/ParamMath`, `Mult/Sizes`) are
 sizing conveniences.
+
+The Gaussian width is retuned: `α` is now the least integer with
+`u² ≤ α⁴`, `u = ⌈log₂ p⌉ + 3`, so `u ≤ α² < 4u ≤ 4d` (`Mult/Sizes`,
+computed on tape by `ParamSub.pmAlphaC`). The source factorization uses
+`NLogN.smallgap_factorization` (`θ ≥ 1/(4p)`, `8p ≤ 2^(α²)`) through
+`BandSpec.band_factorization_sg`, so the old `α²θ ≥ 1` condition is gone.
+Both resampling maps now cost about `√(p log p) M(p)` per element, and the
+Gaussian stage no longer limits `ε` below `1/2`. `MathlibTM2.Theorem` builds;
+the public bound is unchanged until `ε` rises, which waits on the
+synthetic-layer precision above.
