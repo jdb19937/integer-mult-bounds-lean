@@ -295,6 +295,10 @@ import IntegerMultBounds.Networks.PairedIndexedGraph
 import IntegerMultBounds.Networks.SharedPointLocalFamily
 import IntegerMultBounds.Networks.SharedPointLocalReplay
 import IntegerMultBounds.Networks.PairedStructuralSharedPoint
+import IntegerMultBounds.Networks.DAGCompact
+import IntegerMultBounds.Networks.PairedRename
+import IntegerMultBounds.Networks.PairedLocalPruning
+import IntegerMultBounds.Networks.PairedIndexedPruning
 import IntegerMultBounds.Networks.DAGAdditionIds
 import IntegerMultBounds.Networks.PairedPruning
 import IntegerMultBounds.Networks.DisjointUnique
