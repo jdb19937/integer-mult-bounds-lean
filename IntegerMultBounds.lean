@@ -2682,3 +2682,7 @@ import IntegerMultBounds.MathlibTM2.Fast.ConvSpecQ
 import IntegerMultBounds.MathlibTM2.Fast.CompactSynTransformR
 import IntegerMultBounds.MathlibTM2.Fast.ConvSynthQ
 import IntegerMultBounds.MathlibTM2.Fast.ConvBoxQ
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerFitR
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynRoundOpR
+import IntegerMultBounds.MathlibTM2.Mult.PipelineQ
+import IntegerMultBounds.MathlibTM2.Fast.MainSemG

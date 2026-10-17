@@ -344,6 +344,38 @@ noncomputable def pipelineCoeffs (n x y : ℕ) : List ℕ :=
       ExactRecovery.computedConv (p := p n) (k := b n) (srcMap n) (oppMap n) (bitsMSB n x)
         (bitsMSB n y) (i.val : ZMod (∏ i, s n i))).re).toNat
 
+/-- The box convolution of a pipeline: `M̃_ℂ` on `∏ ℤ/t_i`. -/
+abbrev BoxConvOf (n : ℕ) : Type :=
+  (((i : Fin (d n)) → ZMod (t n i)) → ℂ) → (((i : Fin (d n)) → ZMod (t n i)) → ℂ) →
+    (((i : Fin (d n)) → ZMod (t n i)) → ℂ)
+
+/-- The computed source transform for any box convolution `cb`. -/
+noncomputable def srcMapG (n : ℕ) (cb : BoxConvOf n) :
+    (ZMod (∏ i, s n i) → ℂ) → (((i : Fin (d n)) → ZMod (s n i)) → ℂ) :=
+  SourceErr.crtSourceApprox (s_pairwise n) (p n) (gamma n) (lineA n) (lineB n) (chirpKernel n) cb
+
+/-- The computed opposite transform for any box convolution `cb`. -/
+noncomputable def oppMapG (n : ℕ) (cb : BoxConvOf n) :
+    (((i : Fin (d n)) → ZMod (s n i)) → ℂ) → (ZMod (∏ i, s n i) → ℂ) :=
+  SourceErr.crtOppApprox (s_pairwise n) (p n) (gamma n) (lineA n) (lineB n) (chirpKernel n) cb
+
+/-- The coefficients of the pipeline for any box convolution `cb`. -/
+noncomputable def pipelineCoeffsG (n : ℕ) (cb : BoxConvOf n) (x y : ℕ) : List ℕ :=
+  List.ofFn fun i : Fin (∏ i, s n i) =>
+    (round (((2 : ℂ) ^ (2 * b n) * ((∏ i, s n i : ℕ) : ℂ)) *
+      ExactRecovery.computedConv (p := p n) (k := b n) (srcMapG n cb) (oppMapG n cb) (bitsMSB n x)
+        (bitsMSB n y) (i.val : ZMod (∏ i, s n i))).re).toNat
+
+theorem pipelineCoeffs_eq_G (n x y : ℕ) : pipelineCoeffs n x y = pipelineCoeffsG n (convBox n) x y :=
+  rfl
+
+/-- The guarantee of a box convolution used by the source transforms: within `6 T log₂ T` of
+the normalized convolution at scale `2^p`, and in the `0.701`-ball. -/
+def BoxConvSpec (n : ℕ) (cb : BoxConvOf n) : Prop :=
+  ∀ f g : ((i : Fin (d n)) → ZMod (t n i)) → ℂ, ‖f‖ ≤ 1 → ‖g‖ ≤ 7 / 10 →
+    2 ^ p n * ‖cb f g - convNormD (t n) f g‖ ≤ 6 * ((∏ i, t n i : ℕ) : ℝ) * logT n ∧
+      ‖cb f g‖ ≤ 701 / 1000
+
 end Defs
 
 /-! ### Correctness -/
@@ -382,15 +414,17 @@ theorem convBox_spec (h : Big n) (hsmall : 2 * d n * p n ^ 2 ≤ T n * logT n)
   exact boxConv_spec (t n) (by omega) (t_of_last h) (two_le_r h) (t_pow_log n) (t_dvd_two_r n)
     (log_t_le n) (by have := h.two_le_ℓ; omega) (ℓ_le_logT h) h9 hE f g hf hg
 
-/-- The computed source transform and its opposite approximate `R F_s` and `R F_s⁺` on the
+/-- `source_approx` for any box convolution with the guarantee `BoxConvSpec`: the computed source
+transform and its opposite approximate `R F_s` and `R F_s⁺` on the
 `1/2`-ball within `E_s = 9 · 2^γ T log₂ T`. -/
-theorem source_approx (h : Big n) (hsmall : 2 * d n * p n ^ 2 ≤ T n * logT n)
-    (hEs : 9 * (2 : ℝ) ^ gamma n * T n * logT n ≤ 2 ^ p n / 100) :
+theorem source_approxG (h : Big n) (hsmall : 2 * d n * p n ^ 2 ≤ T n * logT n)
+    (hEs : 9 * (2 : ℝ) ^ gamma n * T n * logT n ≤ 2 ^ p n / 100) (cb : BoxConvOf n)
+    (hcb : BoxConvSpec n cb) :
     SourceErr.ApproxOn (p n) (SourceErr.sourceApprox (s n) (t n) (p n) (gamma n) (lineA n)
-        (lineB n) (chirpKernel n) (convBox n)) (permRCLM (s n) (t n) ∘L dftDCLM (s n)) (1 / 2)
+        (lineB n) (chirpKernel n) cb) (permRCLM (s n) (t n) ∘L dftDCLM (s n)) (1 / 2)
         (9 * (2 : ℝ) ^ gamma n * T n * logT n) ∧
       SourceErr.ApproxOn (p n) (SourceErr.oppApprox (s n) (t n) (p n) (gamma n) (lineA n)
-        (lineB n) (chirpKernel n) (convBox n)) (permRCLM (s n) (t n) ∘L dftDPlusCLM (s n))
+        (lineB n) (chirpKernel n) cb) (permRCLM (s n) (t n) ∘L dftDPlusCLM (s n))
         (1 / 2) (9 * (2 : ℝ) ^ gamma n * T n * logT n) := by
   have hg := h.good
   have hd1 := h.one_le_d
@@ -425,27 +459,48 @@ theorem source_approx (h : Big n) (hsmall : 2 * d n * p n ^ 2 ≤ T n * logT n)
     (fun i => resampA (s n i) (t n i) (alpha n : ℝ))
     (fun i => ((2 : ℂ) ^ (alpha n * alpha n))⁻¹ • resampB₀ (s n i) (t n i) (alpha n : ℝ) (J i))
     hfac hAn hBn hA' hA'1 hB' hB'1 (chirpProd_ha'_explicit (t n) (s n) (p n))
-    (convBox_spec h hsmall hEs) hi0 (by omega) hsm hEs'
+    hcb hi0 (by omega) hsm hEs'
   rw [← gamma_eq_ceil, hpT] at hres
   exact hres
+
+/-- The computed source transform and its opposite approximate `R F_s` and `R F_s⁺` on the
+`1/2`-ball within `E_s = 9 · 2^γ T log₂ T`. -/
+theorem source_approx (h : Big n) (hsmall : 2 * d n * p n ^ 2 ≤ T n * logT n)
+    (hEs : 9 * (2 : ℝ) ^ gamma n * T n * logT n ≤ 2 ^ p n / 100) :
+    SourceErr.ApproxOn (p n) (SourceErr.sourceApprox (s n) (t n) (p n) (gamma n) (lineA n)
+        (lineB n) (chirpKernel n) (convBox n)) (permRCLM (s n) (t n) ∘L dftDCLM (s n)) (1 / 2)
+        (9 * (2 : ℝ) ^ gamma n * T n * logT n) ∧
+      SourceErr.ApproxOn (p n) (SourceErr.oppApprox (s n) (t n) (p n) (gamma n) (lineA n)
+        (lineB n) (chirpKernel n) (convBox n)) (permRCLM (s n) (t n) ∘L dftDPlusCLM (s n))
+        (1 / 2) (9 * (2 : ℝ) ^ gamma n * T n * logT n) :=
+  source_approxG h hsmall hEs (convBox n) (convBox_spec h hsmall hEs)
+
+/-- **Correctness of the numeric pipeline for any box convolution** with the guarantee
+`BoxConvSpec`. -/
+theorem pipeline_correctG :
+    ∀ᶠ n in Filter.atTop, ∀ cb : BoxConvOf n, BoxConvSpec n cb → ∀ x y : ℕ, Nat.size x ≤ n →
+      Nat.size y ≤ n → evalBase (2 ^ b n) (pipelineCoeffsG n cb x y) = x * y := by
+  filter_upwards [eventually_big, eventually_small, eventually_margins] with n h hsmall hmarg
+  intro cb hcb x y hx hy
+  obtain ⟨hEs, hfinal⟩ := hmarg
+  obtain ⟨hF, hG⟩ := source_approxG h hsmall hEs cb hcb
+  have hg := h.good
+  have hk : 0 < b n := one_le_b h.1
+  have hS := h.digits_length_le (length_bitsMSB n x) (length_bitsMSB n y)
+  have key := exact_product_crt (s n) (t n) (s_pairwise n) hg.coprime (srcMapG n cb) (oppMapG n cb)
+    hk hS (SourceErr.crtSource_err (s_pairwise n) hF) (SourceErr.crtOpp_err (s_pairwise n) hG) hEs
+    hfinal
+  rw [binaryValue_bitsMSB_of_size hx, binaryValue_bitsMSB_of_size hy] at key
+  exact key
 
 /-- **Correctness of the numeric pipeline.** For all large `n` and all `x y < 2^n`, the
 coefficients computed by the pipeline evaluate in radix `2^b` to `x y`. -/
 theorem pipeline_correct :
     ∀ᶠ n in Filter.atTop, ∀ x y : ℕ, Nat.size x ≤ n → Nat.size y ≤ n →
       evalBase (2 ^ b n) (pipelineCoeffs n x y) = x * y := by
-  filter_upwards [eventually_big, eventually_small, eventually_margins] with n h hsmall hmarg
-  intro x y hx hy
-  obtain ⟨hEs, hfinal⟩ := hmarg
-  obtain ⟨hF, hG⟩ := source_approx h hsmall hEs
-  have hg := h.good
-  have hk : 0 < b n := one_le_b h.1
-  have hS := h.digits_length_le (length_bitsMSB n x) (length_bitsMSB n y)
-  have key := exact_product_crt (s n) (t n) (s_pairwise n) hg.coprime (srcMap n) (oppMap n) hk
-    hS (SourceErr.crtSource_err (s_pairwise n) hF) (SourceErr.crtOpp_err (s_pairwise n) hG) hEs
-    hfinal
-  rw [binaryValue_bitsMSB_of_size hx, binaryValue_bitsMSB_of_size hy] at key
-  exact key
+  filter_upwards [pipeline_correctG, eventually_big, eventually_small, eventually_margins]
+    with n hG h hsmall hmarg
+  exact hG (convBox n) (convBox_spec h hsmall hmarg.1)
 
 end Correct
 

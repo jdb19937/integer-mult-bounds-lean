@@ -438,6 +438,21 @@ theorem topR_fits (ds : Directions) (hd : ComplexPhaseBudget.Realizes ds) (a l :
   have h4 : (0 : ℝ) ≤ 2 ^ (s + p + Lb) := by positivity
   linarith
 
+/-- `topR_fits` for the array before the shifts, in the form used by `refine`. -/
+theorem topR_fits_pre (ds : Directions) (hd : ComplexPhaseBudget.Realizes ds) (a l : ℕ)
+    (low : List (Fin n)) (top : List (Fin (n + a))) {R₂ : ℕ} (hR₂ : 1 * 2 ^ a ≤ R₂)
+    (hR₂' : R₂ ≤ 2 * (1 * 2 ^ a)) (Ps : List (Piece n R₂)) (hinj : ∀ P ∈ Ps, Function.Injective P.e)
+    (hcover : (Ps.flatMap Piece.bitsList).Perm low)
+    (hsel : (low.map (Fin.castAdd a) ++ top).Nodup) (g s w' p D S : ℕ)
+    (hs : s = (low.length + top.length + 1) / 2 + top.length + (Ps.map (Piece.expR ds)).sum + g)
+    (Z : ZArr (Fin 1 × Fin (2 ^ l)) (n + a)) (hZ : ∀ z, ‖GaussianInt.toComplex (Z z)‖ ≤ 2 ^ p)
+    (hj : ∀ P ∈ Ps, P.j ≤ D) (hlen : Ps.length ≤ D + 1)
+    (hS : ∀ P ∈ Ps, ∀ i < P.j, scaleR P.u ds i ≤ S)
+    (hg : (n + a + l + 2) + D * (cGain ds + 1) + D + 6 ≤ g)
+    (hw : S + cGain ds * D + s + p + (n + a + l + 2) + 5 ≤ w') (z) :
+    Node.TopFitsZ w' (LayerMachine.topPreRW ds w' a low top hR₂ Ps g Z z) :=
+  (topR_fits ds hd a l low top hR₂ hR₂' Ps hinj hcover hsel g s w' p D S hs Z hZ hj hlen hS hg hw).2 z
+
 end Round
 
 end IntegerMultBounds.MathlibTM2.Layer
