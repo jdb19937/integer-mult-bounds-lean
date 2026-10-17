@@ -3,8 +3,11 @@ module
 public import IntegerMultBounds.MathlibTM2.Host.Stream
 public import IntegerMultBounds.MathlibTM2.Layer.Format
 public import IntegerMultBounds.MathlibTM2.Statement
-public import IntegerMultBounds.MathlibTM2.Binary
 public import IntegerMultBounds.ExactRecovery
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
 
 /-!
 # The input stage of the fast multiplier

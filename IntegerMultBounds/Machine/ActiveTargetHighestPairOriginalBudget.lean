@@ -1,8 +1,9 @@
 module
 
 public import IntegerMultBounds.Machine.ActiveTargetHighestPairOriginalRun
-public import IntegerMultBounds.Machine.ActiveTargetHighestPairHeadersBudget
-public import IntegerMultBounds.Machine.ActiveTargetHighestPairBudget
+import IntegerMultBounds.Machine.ActiveTargetHighestPairHeadersBudget
+import IntegerMultBounds.Machine.ActiveTargetHighestPairBudget
+import Mathlib.Tactic.Positivity.Finset
 
 /-! The full original-input highest-bit machines retain a linear volume
 bound including physical metadata preparation, execution and erasure. -/

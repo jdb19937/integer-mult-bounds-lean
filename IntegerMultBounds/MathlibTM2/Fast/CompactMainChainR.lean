@@ -2,8 +2,12 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CompactMainSourceR
 public import IntegerMultBounds.MathlibTM2.Fast.MainSemG
-public import IntegerMultBounds.MathlibTM2.Fast.CompactMainChain
-public import IntegerMultBounds.MathlibTM2.Fast.CompactMainPrimitiveEntry
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainPrimitiveEntry
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainPrimitiveRuns
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
 
 /-! The main chain with the rounded transforms: the coefficients are the rounded numerators of
 the computed opposite transform for the box convolution `compactRetunedCb n`. -/

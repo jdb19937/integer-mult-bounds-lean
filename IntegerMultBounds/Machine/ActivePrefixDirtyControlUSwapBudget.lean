@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixDirtyControlUSwapRun
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Certified full-volume sublinear-width bound including physical descriptor
 construction and cleanup around the complete binary interchange machine. -/

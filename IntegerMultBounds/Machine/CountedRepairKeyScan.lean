@@ -1,6 +1,9 @@
 module
 
-public import IntegerMultBounds.Machine.CountedRepairKeyValue
+import IntegerMultBounds.Machine.CountedRepairKeyValue
+public import IntegerMultBounds.Machine.CountedRepairKeyRun
+public import IntegerMultBounds.Compact.KeyValue
+import Mathlib.Tactic.Positivity.Finset
 
 /-! The actual scan contract for the fixed repair-key machine on a forty-two
  tape bank: fourteen scan tapes and twenty-eight retained scratch tapes. -/

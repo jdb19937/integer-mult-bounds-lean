@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixStageHeadersData
+import Mathlib.Tactic.Positivity.Finset
 
 @[expose] public section
 

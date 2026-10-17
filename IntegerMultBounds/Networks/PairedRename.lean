@@ -1,7 +1,11 @@
 module
 
 public import IntegerMultBounds.Networks.PairedCircuit
-public import IntegerMultBounds.Networks.DisjointPruningBudget
+public import IntegerMultBounds.Networks.DAGAllocatorBudget
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
+import Mathlib.Data.Nat.Totient
+import Mathlib.Tactic.ContinuousFunctionalCalculus
 
 /-! The paired constructor commutes with injective relabeling of input atoms.
 Interning compares supports only, so relabeled supports hit and miss exactly

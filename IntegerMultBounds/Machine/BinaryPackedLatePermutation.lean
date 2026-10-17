@@ -2,6 +2,8 @@ module
 
 public import IntegerMultBounds.Machine.BinaryPackedLateData
 public import IntegerMultBounds.Machine.ActiveRepairLayoutPermutationFields
+public import IntegerMultBounds.Compact.LatePowerTwoRank
+import Mathlib.Tactic.Positivity.Finset
 
 /-! The actual fixed-width late word arithmetic realizes the exact permutation
 used by the global repair theorem, including exceptional packed addresses. -/

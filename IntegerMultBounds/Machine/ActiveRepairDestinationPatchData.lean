@@ -1,6 +1,10 @@
 module
+import Mathlib.Tactic.Positivity.Finset
+import IntegerMultBounds.Compact.PowerTwoDigits
+public import IntegerMultBounds.Machine.Gather
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
-public import IntegerMultBounds.Machine.ActiveRepairDestinationPatchOverwrite
 
 /-! Fixed-width address patches retain all bits outside their runtime interval.
 The word definition is identified with the actual physical tape overwrite. -/

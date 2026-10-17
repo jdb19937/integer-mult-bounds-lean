@@ -1,6 +1,7 @@
 module
 public import IntegerMultBounds.MathlibTM2.Cost.CompactTopActualBound
-public import IntegerMultBounds.MathlibTM2.Cost.CompactTopCoordinates
+import IntegerMultBounds.MathlibTM2.Cost.CompactTopCoordinates
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-! Canonical compact call costs in the absolute coordinates serialized by the top runner. -/
 @[expose] public section

@@ -1,6 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixEarlySequenceOriginalInputs
+import IntegerMultBounds.Machine.ActivePrefixLayoutHeadersLayout
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Both numeric header banks are actual producer outputs and are erased
 physically after the four-load action, with all original words retained. -/

@@ -1,8 +1,12 @@
 module
 
 public import IntegerMultBounds.Machine.ActiveRepairEarlyKeyRun
-public import IntegerMultBounds.Machine.ActiveRepairEarlyFieldsValue
-public import IntegerMultBounds.Machine.ActiveRepairDestinationPatchEndpoint
+import IntegerMultBounds.Machine.ActiveRepairEarlyFieldsValue
+import IntegerMultBounds.Machine.ActiveRepairDestinationPatchEndpoint
+public import IntegerMultBounds.Machine.ActiveRepairDestinationPatchGeometry
+import IntegerMultBounds.Machine.CountedPackedGuarded
+public import IntegerMultBounds.Compact.KeyValue
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Exact guard classification and complete original-layout destination of
 the physical early-key writer. Local concatenation appears only in the proof. -/

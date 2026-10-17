@@ -2,6 +2,8 @@ module
 
 public import IntegerMultBounds.Compact.Layout
 public import Mathlib.Data.Nat.Log
+import Mathlib.Tactic.Ring.RingNF
+import Mathlib.Algebra.Order.Ring.Nat
 
 /-! The single global row padding of compact-control-layout.tex. The reserved
 original row axes dominate the full recursive divisor. Every later fixed-role

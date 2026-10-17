@@ -2,6 +2,7 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Host.BinArith
 public import IntegerMultBounds.MathlibTM2.Layer.Format
+public import IntegerMultBounds.MathlibTM2.Host.BinArithDiv
 
 /-!
 # A binary register machine for the integer tables

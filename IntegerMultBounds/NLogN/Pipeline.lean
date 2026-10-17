@@ -1,7 +1,6 @@
 module
 
 public import IntegerMultBounds.NLogN.FFT
-public import IntegerMultBounds.NLogN.FixedPoint
 public import IntegerMultBounds.NLogN.Kronecker
 
 /-! The exact-arithmetic complex-FFT integer multiplier on `Fin (2 ^ n)`.

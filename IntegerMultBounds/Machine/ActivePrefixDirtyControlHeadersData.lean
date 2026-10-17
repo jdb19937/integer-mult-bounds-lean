@@ -1,6 +1,8 @@
 module
+public import IntegerMultBounds.Machine.ActivePrefixLayoutHeadersData
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
-public import IntegerMultBounds.Machine.ActivePrefixLayoutHeadersEndpoint
 
 /-! Dirty-control layout headers are physically derived from the original
 fourteen numeric words. U and the later-source T starts are retained-word

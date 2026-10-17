@@ -3,6 +3,9 @@ module
 public import IntegerMultBounds.MathlibTM2.Layer.Enc
 public import IntegerMultBounds.MathlibTM2.Layer.GaussStream
 public import IntegerMultBounds.MathlibTM2.Host.IndexRoute
+import Mathlib.Tactic.Positivity.Finset
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
 /-!
 # The leaf: doubled kernels on address bits

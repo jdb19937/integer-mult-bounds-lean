@@ -1,7 +1,9 @@
 module
 
-public import IntegerMultBounds.Machine.ActivePrefixStageDispatchBudget
-public import IntegerMultBounds.Machine.ActivePrefixStageFullEndpoint
+import IntegerMultBounds.Machine.ActivePrefixStageFullEndpoint
+public import IntegerMultBounds.Machine.ActivePrefixStageDispatchRun
+import IntegerMultBounds.Machine.SharedBankRawCompose
+import Mathlib.Tactic.Positivity.Finset
 
 /-! The dispatched caller retains original thirteen numeric words and raw65;
 every generated descriptor, runtime flag and private tape is physically blank. -/

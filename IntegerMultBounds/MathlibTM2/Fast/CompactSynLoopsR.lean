@@ -1,7 +1,11 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CompactSynRoundR
-public import IntegerMultBounds.MathlibTM2.Fast.CompactSynLoopsContract
+public import IntegerMultBounds.MathlibTM2.Fast.CompactSynLoopFStep
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynScanFrame
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! The rounded forward and opposite loops: the counter scans of the rounded rounds. On
 records the forward loop computes `synIterF` of `compactSynFQ` (rounds `h = A - 1, …, 0`) and

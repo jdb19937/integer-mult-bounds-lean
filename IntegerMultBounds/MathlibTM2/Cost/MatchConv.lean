@@ -2,7 +2,10 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Cost.MatchBase
 public import IntegerMultBounds.MathlibTM2.Fast.ConvBox
-public import IntegerMultBounds.Schoenhage.RingLemma
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
 
 /-!
 # Cost matching: the complex convolution box without its transforms (F5, F6, F8)

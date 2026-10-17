@@ -1,6 +1,12 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CompactSynTransformPre
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainTransformPipeline
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainBootstrapTransformFrame
+public import IntegerMultBounds.MathlibTM2.Fast.CompactSynFwd
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! Forward layout followed by the concrete hybrid scan, with original transform semantics. -/
 @[expose] public section

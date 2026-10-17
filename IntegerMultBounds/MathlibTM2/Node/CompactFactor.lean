@@ -1,6 +1,8 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Node.CompactFactorBasis
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
+public import IntegerMultBounds.MathlibTM2.Node.Factor
 
 /-! Actual compact factor sequence with generic child-call semantics. -/
 @[expose] public section

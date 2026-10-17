@@ -2,6 +2,11 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Cost.DirectScale
 public import IntegerMultBounds.MathlibTM2.Fast.PrepA
+import IntegerMultBounds.MathlibTM2.Cost.MatchBase
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
 
 /-!
 # Cost matching: the resampling `Ã` with its loader

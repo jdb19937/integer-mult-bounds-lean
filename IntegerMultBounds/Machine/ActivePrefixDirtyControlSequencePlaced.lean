@@ -1,6 +1,9 @@
 module
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlSequenceRun
+import IntegerMultBounds.Machine.CompactGadgetReservationPlacement
+import IntegerMultBounds.Machine.SharedBankRawCompose
+import Mathlib.Tactic.Positivity.Finset
 
-public import IntegerMultBounds.Machine.ActivePrefixDirtyControlSequenceBudget
 
 /-! The complete prepared later-source schedule on arbitrary caller tapes.
 All supplied numeric words and caller spectators survive; only the original

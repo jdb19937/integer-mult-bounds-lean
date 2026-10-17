@@ -1,6 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixCompactSwapData
+public import IntegerMultBounds.Machine.CompactGadgetReservationHeadersCarvedPlacedCleanup
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Physical construction, binary interchange and erasure of compact-T swap
 geometry. The fixed forty-tape header workspace and the complete interchange

@@ -1,6 +1,11 @@
 module
 
-public import IntegerMultBounds.Networks.GaussianFrameGrid
+import IntegerMultBounds.Networks.GaussianFrameGrid
+public import IntegerMultBounds.Networks.GaussianPrecision
+public import IntegerMultBounds.Networks.BinaryColumnFrame
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
+import Mathlib.Data.Nat.Totient
 
 /-! Exact inverse-frame grids for decoding actually stored network roles.
 The budget follows from the literal inverse Walsh/phase operator. -/

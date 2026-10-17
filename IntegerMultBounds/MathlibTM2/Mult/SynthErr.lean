@@ -2,8 +2,10 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Mult.SynthErrRounds
 public import IntegerMultBounds.MathlibTM2.Mult.ComplexConv
-public import IntegerMultBounds.NLogN.SynthConvApproxD
+import IntegerMultBounds.NLogN.SynthConvApproxD
 public import IntegerMultBounds.Spec.SyntheticConvolution
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
+import Mathlib.Data.List.GetD
 
 /-!
 # Computed synthetic convolution

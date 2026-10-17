@@ -1,6 +1,10 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CompactMainBootstrapRead
+public import IntegerMultBounds.MathlibTM2.Node.CompactGlobalBootstrap
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! Execute the original-input bootstrap on the expanded main host. -/
 @[expose] public section

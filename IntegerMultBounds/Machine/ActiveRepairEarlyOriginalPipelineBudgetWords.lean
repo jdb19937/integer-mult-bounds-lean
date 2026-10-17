@@ -1,7 +1,8 @@
 module
 
-public import IntegerMultBounds.Machine.ActiveRepairEarlyOriginalPipelineEndpoint
-public import IntegerMultBounds.Machine.CountedTapeRepairBudget
+import IntegerMultBounds.Machine.CountedTapeRepairBudget
+public import IntegerMultBounds.Machine.RepairScan
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Word-volume bounds for physical flag/extract/sort/reinsert cleanup.
 These list lemmas will be instantiated with the actual early/later key programs. -/

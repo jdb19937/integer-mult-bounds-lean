@@ -2,7 +2,10 @@ module
 
 public import IntegerMultBounds.NLogN.MainReduction
 public import IntegerMultBounds.NLogN.ResamplingNumeric
-public import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
 
 /-! Precision and exact recovery (§8, "The final integer coefficients"). The
 computed source transforms `F'` approximate the exact contraction `F` with

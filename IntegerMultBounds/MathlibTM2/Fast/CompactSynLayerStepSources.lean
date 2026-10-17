@@ -1,6 +1,9 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStep
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! The actual first stage starts from SynV and initialized persistent globals. -/
 @[expose] public section

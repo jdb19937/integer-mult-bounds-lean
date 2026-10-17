@@ -1,7 +1,10 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Cost.CompactFactorActual
 public import IntegerMultBounds.MathlibTM2.Node.CompactLayerProc
+import IntegerMultBounds.MathlibTM2.Cost.CompactFactor
+public import IntegerMultBounds.MathlibTM2.Cost.LayerCostNat
+public import IntegerMultBounds.MathlibTM2.Cost.CompactBasis
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-! Actual compact recursive layer budgets. The numerical basis budget uses the
 compact selected width at each level; leaf and full-address control costs are

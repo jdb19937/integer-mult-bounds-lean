@@ -1,7 +1,11 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CompactMainRunsCost
-public import IntegerMultBounds.MathlibTM2.Fast.CompactMainTimeBound
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainTimeBound
+public import IntegerMultBounds.MathlibTM2.Fast.CompactMainTimeGlue
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! The compact main bound reduced to its two complete transform costs. -/
 @[expose] public section

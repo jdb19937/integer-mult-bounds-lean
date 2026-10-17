@@ -2,7 +2,8 @@ module
 
 public import IntegerMultBounds.Machine.ActiveRepairLayoutPermutation
 public import IntegerMultBounds.Machine.ActiveRepairLayoutPermutationWords
-public import IntegerMultBounds.Machine.ActiveRepairEarlyKeyValue
+import IntegerMultBounds.Machine.ActiveRepairEarlyKeyValue
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Global repaired low-bit ideals change precisely the target row by the
 literal selected XOR mask; every other original address coordinate survives. -/

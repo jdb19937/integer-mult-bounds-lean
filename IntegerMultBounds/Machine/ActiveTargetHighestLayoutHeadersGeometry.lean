@@ -1,7 +1,10 @@
 module
 
-public import IntegerMultBounds.Machine.ActiveTargetHighestLayoutHeadersRun
 public import IntegerMultBounds.Machine.ActivePrefixLayoutHeadersGeometry
+public import IntegerMultBounds.Machine.ActiveTargetHighestPairHeadersData
+public import IntegerMultBounds.Machine.ActiveTargetHighestLayoutHeadersData
+public import IntegerMultBounds.Machine.ActiveTargetHighestPairLayoutGeometry
+import Mathlib.Tactic.Positivity.Finset
 
 /-! The physically synthesized five words are the exact unchanged-layout
 highest-pair geometry for either source order. -/

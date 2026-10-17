@@ -1,7 +1,10 @@
 module
 
-public import IntegerMultBounds.Machine.ActivePrefixStageRuntimeRun
-public import IntegerMultBounds.Machine.ActivePrefixStageSingletonDispatchBudget
+import IntegerMultBounds.Machine.ActivePrefixStageSingletonDispatchBudget
+public import IntegerMultBounds.Machine.ActivePrefixStageRuntimeData
+import IntegerMultBounds.Machine.ActivePrefixStageDispatchBudget
+import IntegerMultBounds.Machine.ActivePrefixStageWidthOriginal
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Both physical runtime selectors and all singleton work are absorbed by
 the certified packed exponent, uniformly in the original stage width. -/

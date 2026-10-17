@@ -1,6 +1,9 @@
 module
 
 public import IntegerMultBounds.Networks.BinaryWalsh
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
+import Mathlib.Data.Nat.Totient
 
 /-! Complex conjugation converts the literal forward translation-kernel list
 to its inverse-phase list in the same order. This is a mathematical bridge;

@@ -1,6 +1,8 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.SynRound
+public import IntegerMultBounds.MathlibTM2.Fast.SynMath
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-!
 # The rounds of the computed synthetic transforms on record streams

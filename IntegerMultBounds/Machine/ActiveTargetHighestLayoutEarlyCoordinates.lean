@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.Machine.ActiveTargetHighestLayoutLateCoordinates
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Earlier-source highest action in the unchanged activeBefore field.
 Only its lowest bit changes; the source and all bits between them remain

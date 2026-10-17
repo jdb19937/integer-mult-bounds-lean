@@ -1,6 +1,5 @@
 module
 
-public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Tactic
 
 /-! Rounded Newton iteration for reciprocals, using multiplications only.

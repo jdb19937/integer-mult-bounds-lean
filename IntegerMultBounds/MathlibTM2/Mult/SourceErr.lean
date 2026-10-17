@@ -2,9 +2,10 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Mult.SourceErrChirp
 public import IntegerMultBounds.MathlibTM2.Mult.CRT
-public import IntegerMultBounds.NLogN.ResamplingMultiNumeric
 public import IntegerMultBounds.Resampling.TabledMaps
-public import IntegerMultBounds.NLogN.FixedOps
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-!
 # Error of the computed source transform

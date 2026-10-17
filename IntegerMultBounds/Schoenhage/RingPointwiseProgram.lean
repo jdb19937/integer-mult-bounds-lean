@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.Schoenhage.RingPointwise
+public import IntegerMultBounds.Schoenhage.Seal
 
 /-! The pointwise-product step as a literal program in the paper's formats:
 seal the raw header and operand strings into word tapes, run the compiled

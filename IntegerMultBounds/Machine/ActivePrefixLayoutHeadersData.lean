@@ -1,7 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.ActiveRepairRankHeadersCommands
-public import IntegerMultBounds.Machine.CompactGadgetReservationHeadersPowerRound
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
 /-! Physical layout-header preparation starts with fourteen original widths
 and stage controls. Reservation widths H/B/F themselves are supplied here;

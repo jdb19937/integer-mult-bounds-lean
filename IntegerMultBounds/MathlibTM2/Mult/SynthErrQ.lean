@@ -2,6 +2,7 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Mult.SynthErrRoundsQ
 public import IntegerMultBounds.MathlibTM2.Mult.SynthErr
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-!
 # Computed synthetic convolution with approximate rounds

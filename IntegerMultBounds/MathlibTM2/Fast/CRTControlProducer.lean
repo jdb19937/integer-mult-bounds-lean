@@ -1,6 +1,11 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Fast.CRTControlGenerateTraversalLayout
+import IntegerMultBounds.MathlibTM2.Fast.CRTControlGenerateTraversalLayout
+public import IntegerMultBounds.MathlibTM2.Fast.CRTControlGenerateSetup
+public import IntegerMultBounds.MathlibTM2.Fast.CRTSchedule
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! # Complete runtime descriptor producer -/
 

@@ -1,7 +1,11 @@
 module
 
 public import IntegerMultBounds.Networks.DAGSimulation
-public import IntegerMultBounds.Networks.PairedGraphSpec
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
+import Mathlib.Tactic.IntervalCases
+import Mathlib.Data.Nat.Totient
+import Mathlib.Tactic.ContinuousFunctionalCalculus
 
 /-! The four-vertex base block with one zero vertex weight, counted once on
 abstract atoms. Simulation transfers the count to every real base call with

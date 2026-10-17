@@ -1,6 +1,10 @@
 module
 
 public import IntegerMultBounds.Machine.CountedGuardConstantsPlacement
+public import IntegerMultBounds.Machine.CountedGuardConstantsData
+import IntegerMultBounds.Machine.BinaryDescriptorStackRoundtrip
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
 /-! Physically produce all three certified padded guard constants from sole
 original canonical q/b headers. Every runtime fill, descriptor subtraction,

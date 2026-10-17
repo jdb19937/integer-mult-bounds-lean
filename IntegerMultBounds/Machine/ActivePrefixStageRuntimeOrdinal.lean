@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixStageRuntimeCoordinates
+import Mathlib.Tactic.Positivity.Finset
 
 /-! The complete active word is recoverable from the original serialized
 ordinal, independently of the source/target dependent address decomposition. -/

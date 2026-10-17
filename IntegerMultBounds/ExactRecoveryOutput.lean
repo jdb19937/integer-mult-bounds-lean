@@ -1,7 +1,9 @@
 module
 
 public import IntegerMultBounds.ExactRecovery
-public import IntegerMultBounds.NLogN.Carry
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! Exact-width output from recovered coefficients. Carry normalization may
 produce more than twice the input length; the proven product bound justifies

@@ -4,6 +4,7 @@ public import IntegerMultBounds.MathlibTM2.Node.TopWord
 public import IntegerMultBounds.MathlibTM2.Node.TopRec
 public import IntegerMultBounds.MathlibTM2.Node.TopEnc
 public import IntegerMultBounds.MathlibTM2.Node.LayerProc
+import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # The host machine of the simultaneous layer

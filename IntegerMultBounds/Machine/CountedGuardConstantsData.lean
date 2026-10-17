@@ -1,7 +1,11 @@
 module
 
 public import IntegerMultBounds.Machine.CountedGuardGadgetRecord
-public import IntegerMultBounds.Compact.GuardValue
+import IntegerMultBounds.Compact.PowerTwoDigits
+import IntegerMultBounds.Machine.ColumnTransducer
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
+public import IntegerMultBounds.Compact.DirtyControl
 
 /-! Exact padded guard-constant bit patterns and the correctness of the one-cell
 overwrite construction. The widths are retained even when high bits are zero. -/

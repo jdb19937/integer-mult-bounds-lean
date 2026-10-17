@@ -1,6 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.ActiveRepairEarlyFieldsBank
+import Mathlib.Tactic.Positivity.Finset
+public import IntegerMultBounds.Machine.CountedRankSplitBank
 
 /-! Actual extracted-field inverse, guard and ideal toggle on one thirty-tape
 bank. Source controls may be extracted afresh for every original array rank. -/

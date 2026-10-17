@@ -2,6 +2,9 @@ module
 
 public import IntegerMultBounds.Networks.BinaryColumnFrame
 public import IntegerMultBounds.Networks.BinaryWalshComplexConjugation
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
+import Mathlib.Data.Nat.Totient
 
 /-! Complex conjugation of the actual columnwise phase frames, including
 zero columns. It changes a whole-array label frame into its genuine inverse. -/

@@ -1,6 +1,9 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixEarlySequenceData
+public import IntegerMultBounds.Machine.ActivePrefixCompactConjugationPlaced
+import IntegerMultBounds.Machine.ActivePrefixLayoutAbsorption
+import Mathlib.Tactic.Positivity.Finset
 
 /-! A fixed physical four-load early schedule on one unchanged original array.
 All offset generation, swaps and erasure are real calls. Prepared numeric

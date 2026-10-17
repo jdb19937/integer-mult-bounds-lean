@@ -1,6 +1,10 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CompactMainStableFrame
+public import IntegerMultBounds.MathlibTM2.Fast.CompactSrcMachine
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! Source-stage execution on the full main register file, with precision read from that file. -/
 @[expose] public section

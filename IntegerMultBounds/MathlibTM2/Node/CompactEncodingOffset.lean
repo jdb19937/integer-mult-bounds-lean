@@ -1,6 +1,7 @@
 module
+public import IntegerMultBounds.MathlibTM2.Node.CompactGeometryRecursive
+import Mathlib.Tactic.Positivity.Finset
 
-public import IntegerMultBounds.MathlibTM2.Node.CompactEncoding
 
 /-! Absorb an arbitrary low address offset into the native payload without moving
 the symbol stream. Low address bits become the outer coefficient coordinate. -/

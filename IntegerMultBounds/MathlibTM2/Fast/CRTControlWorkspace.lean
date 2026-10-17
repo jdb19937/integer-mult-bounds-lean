@@ -1,6 +1,10 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CRTControlReset
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
 
 /-! # Initializing and returning the CRT arithmetic workspace
 

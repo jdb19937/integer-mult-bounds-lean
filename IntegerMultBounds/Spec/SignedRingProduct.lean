@@ -1,9 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.Hoare
-public import IntegerMultBounds.NLogN.Approx
 public import IntegerMultBounds.NLogN.FixedOps
-public import Mathlib.Data.Nat.Size
+import Mathlib.Data.Nat.Size
 
 /-! The statement of the paper's signed ring product
 (`lem:signed-ring-product`, §6), on the literal machine model and in the

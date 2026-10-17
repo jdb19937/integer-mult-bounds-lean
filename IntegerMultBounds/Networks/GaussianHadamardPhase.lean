@@ -1,6 +1,8 @@
 module
 
 public import IntegerMultBounds.Networks.GaussianHadamardBridge
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
 /-! Literal diagonal readout of the two phase corrections in the exact
 Gaussian-to-Hadamard bridge. These identities are shared with physical scanners. -/

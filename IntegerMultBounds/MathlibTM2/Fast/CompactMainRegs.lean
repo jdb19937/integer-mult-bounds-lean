@@ -2,6 +2,9 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Fast.MainRegs
 public import IntegerMultBounds.MathlibTM2.Node.CompactRegisterEmbedding
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! A fixed expanded main host for the compact transform. Existing main-stage
 registers embed injectively; the transform shares the actual source-array tape.

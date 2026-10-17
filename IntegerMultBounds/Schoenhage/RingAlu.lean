@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.Schoenhage.RingMul
+import IntegerMultBounds.Schoenhage.Wp
 
 /-! The residue unit inside the ring product's bank. Switching it on builds the
 constants for `2^N + 1` on the multiplier's tapes from `kN = ones N`

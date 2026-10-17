@@ -1,8 +1,11 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Fast.MainCorrect
-public import IntegerMultBounds.MathlibTM2.Fast.MainTime
+import IntegerMultBounds.MathlibTM2.Fast.MainCorrect
+import IntegerMultBounds.MathlibTM2.Fast.MainTime
 public import IntegerMultBounds.MathlibTM2.Fast.MainEmbed
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-!
 # The statement from the layout programs and the distribution

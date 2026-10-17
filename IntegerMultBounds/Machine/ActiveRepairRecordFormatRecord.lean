@@ -1,9 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.CountedCopyReuse
-public import IntegerMultBounds.Machine.CountedLoopReuseAlphabet
 public import IntegerMultBounds.Machine.Partition
-public import IntegerMultBounds.Machine.Gather
+import IntegerMultBounds.Machine.Gather
 
 /-! Runtime-width formatting of one raw binary payload. Two fixed output
 symbols enclose an amortized binary-counted copy, preserving the raw source

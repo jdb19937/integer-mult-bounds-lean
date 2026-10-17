@@ -1,9 +1,13 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Fast.CompactMainDispatch
 public import IntegerMultBounds.MathlibTM2.Fast.CompactBundleWires
 public import IntegerMultBounds.MathlibTM2.Fast.MainFinal
-public import IntegerMultBounds.MathlibTM2.Cost.CompactRetunedTransformMatch
+public import IntegerMultBounds.MathlibTM2.Fast.CompactMainTimeGlue
+public import IntegerMultBounds.MathlibTM2.Fast.CompactMainRunsCost
+public import IntegerMultBounds.MathlibTM2.Fast.CompactSynRetunedTransforms
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! Complete cost envelope for the concrete compact branch. The machine-execution
 contract is still explicit; the unconditional public multiplier is not changed here. -/

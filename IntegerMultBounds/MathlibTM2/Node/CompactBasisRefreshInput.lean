@@ -1,7 +1,7 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Node.CompactBasisRefreshPlacement
-public import IntegerMultBounds.MathlibTM2.Fast.SynBase
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-! A blank refresh bank gives the same source view as the legacy placement. -/
 @[expose] public section

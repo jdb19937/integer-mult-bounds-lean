@@ -2,7 +2,14 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Fast.PrepBase
 public import IntegerMultBounds.MathlibTM2.Fast.ResampAAll
-public import IntegerMultBounds.MathlibTM2.Fast.ResampBPipe
+import IntegerMultBounds.MathlibTM2.Fast.ResampBPipe
+public import IntegerMultBounds.MathlibTM2.Fast.ResampBMath
+public import IntegerMultBounds.MathlibTM2.Fast.TableWeight
+import IntegerMultBounds.NLogN.ResamplingManuscript
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
 
 /-!
 # The parameter loader of `Ã`

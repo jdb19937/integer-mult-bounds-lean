@@ -2,6 +2,10 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerContract
 public import IntegerMultBounds.MathlibTM2.Fast.CompactSynTwiddle
+public import IntegerMultBounds.MathlibTM2.Fast.SynStep
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! Actual hybrid forward and opposite rounds, with original numerator semantics. -/
 @[expose] public section

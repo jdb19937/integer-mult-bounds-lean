@@ -1,6 +1,9 @@
 module
 
 public import IntegerMultBounds.Machine.CountedRepairScanMetadata
+import Mathlib.Tactic.Positivity.Finset
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
 /-! Exact execution and uniform bounds for repair width/counter construction. -/
 

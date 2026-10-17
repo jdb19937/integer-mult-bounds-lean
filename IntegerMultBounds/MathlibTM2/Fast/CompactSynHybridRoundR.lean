@@ -1,8 +1,15 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepR
-public import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepUniformR
-public import IntegerMultBounds.MathlibTM2.Fast.CompactSynHybridRound
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepUniformR
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynMainProjection
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynDirect
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainLegacyRuns
+public import IntegerMultBounds.MathlibTM2.Fast.CompactSynDispatch
+import IntegerMultBounds.MathlibTM2.Cost.CompactCallerSelectedRows
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! The rounded dispatch: the main procedure table with the placed rounded layer table, the
 rounded chunk round `compactSynLayerStepR` placed on the main machine, and the whole dispatch

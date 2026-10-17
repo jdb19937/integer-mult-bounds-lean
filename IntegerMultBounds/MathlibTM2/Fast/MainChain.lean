@@ -1,6 +1,11 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.MainSem
+public import IntegerMultBounds.MathlibTM2.Fast.MainProg
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
 
 /-!
 # The stages F3 to F10 of the fast multiplier on one register file

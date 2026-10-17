@@ -1,7 +1,9 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixOffsetHeadersBudget
-public import IntegerMultBounds.Machine.BinaryDescriptorCleanupList
+import IntegerMultBounds.Machine.BinaryDescriptorStackRoundtrip
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
 /-! Paid post-use erasure of all five derived active-prefix descriptors.
 Every original/spectator tape is preserved and each output returns blank at zero. -/

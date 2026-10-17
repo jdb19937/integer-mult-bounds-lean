@@ -1,7 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixStageDispatchRun
-public import IntegerMultBounds.Machine.ActivePrefixStageFullBudget
+import IntegerMultBounds.Machine.ActivePrefixStageFullBudget
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Reading source order and clearing its flag preserve the certified compact
 exponent. Only the actually selected original-input stage is charged. -/

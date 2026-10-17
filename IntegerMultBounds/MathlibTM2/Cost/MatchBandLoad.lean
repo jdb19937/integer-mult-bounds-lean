@@ -2,6 +2,12 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Cost.MatchResampB
 public import IntegerMultBounds.MathlibTM2.Fast.BandStage
+import IntegerMultBounds.MathlibTM2.Fast.BandFits
+import IntegerMultBounds.MathlibTM2.Cost.MatchBase
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
 
 /-!
 # Cost matching: the loader of the banded `B̃₀`

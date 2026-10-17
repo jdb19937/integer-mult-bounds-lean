@@ -1,6 +1,8 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Node.CompactTopProcRegs
+public import IntegerMultBounds.MathlibTM2.Node.TopProc
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Actual widening, phases, Gaussian unit multiplication and final shift for
 arbitrary basis banks, preserving persistent basis-rest state. -/

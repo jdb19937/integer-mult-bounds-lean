@@ -1,6 +1,10 @@
 module
 
-public import IntegerMultBounds.Machine.ActivePrefixStageFullBudget
+import IntegerMultBounds.Machine.ActivePrefixStageFullBudget
+public import IntegerMultBounds.Machine.ActivePrefixStageFullLateRun
+public import IntegerMultBounds.Machine.ActivePrefixStageFullEarlyRun
+import IntegerMultBounds.Machine.ActivePrefixStageHeadersBudget
+import Mathlib.Tactic.Positivity.Finset
 
 /-! # Compact stage bank and host simulation costs
 

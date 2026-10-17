@@ -2,6 +2,9 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Fast.ConvBoxQ
 public import IntegerMultBounds.MathlibTM2.Mult.PipelineQ
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-!
 # The complex convolution stage with computed rounds at the pipeline sizes

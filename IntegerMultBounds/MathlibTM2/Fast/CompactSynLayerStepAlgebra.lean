@@ -1,7 +1,10 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepCleanup
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepCleanup
 public import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepPrepare
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! Erase obsolete legacy backgrounds before the final compact cleanup. -/
 @[expose] public section

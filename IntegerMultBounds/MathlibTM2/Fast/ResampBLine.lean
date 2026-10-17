@@ -1,6 +1,10 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.ResampBCore
+public import IntegerMultBounds.MathlibTM2.Fast.ResampBMath
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-!
 # Line-machine pieces shared by the `B̃₀` machines

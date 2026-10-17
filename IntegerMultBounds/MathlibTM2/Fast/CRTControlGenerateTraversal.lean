@@ -1,6 +1,9 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CRTControlGenerateSetup
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! # Concrete iteration of the runtime descriptor generator -/
 

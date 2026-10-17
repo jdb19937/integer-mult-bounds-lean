@@ -1,6 +1,10 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Fast.CRTSpec
+import IntegerMultBounds.MathlibTM2.Fast.CRTSpec
+public import IntegerMultBounds.MathlibTM2.Fast.CRTRot
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-!
 # CRT controls independent of the physical axis order

@@ -1,7 +1,10 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.SynLayPre
-public import IntegerMultBounds.MathlibTM2.Fast.SynFwd
+import IntegerMultBounds.MathlibTM2.Fast.SynLayKit
+public import IntegerMultBounds.MathlibTM2.Fast.ConvSpec
+public import IntegerMultBounds.MathlibTM2.Fast.SynMath
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-!
 # The forward layout program of the synthetic transforms

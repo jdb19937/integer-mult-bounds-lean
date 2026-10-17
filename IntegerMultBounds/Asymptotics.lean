@@ -1,7 +1,7 @@
 module
 
 public import IntegerMultBounds.Parameters
-public import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
+import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 
 /-! Strict exponent gaps absorb every fixed logarithmic power. These are
 analytic bounds on functions, not assumptions about a machine's execution. -/

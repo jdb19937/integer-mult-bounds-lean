@@ -3,7 +3,8 @@ module
 public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsPayloadEarlyRun
 public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsCleanAlphabet
 public import IntegerMultBounds.Machine.ActiveRepairArrayRecycle
-public import IntegerMultBounds.Machine.ActivePrefixEarlySequenceOriginalBudget
+import IntegerMultBounds.Machine.ActivePrefixEarlySequenceOriginalBudget
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Actual early payload followed by clean original-input repair on one raw
 tape. Every repair descriptor/work tape is erased; the sole extra output is

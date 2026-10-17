@@ -1,6 +1,11 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Fast.CompactSrcStages
+import IntegerMultBounds.MathlibTM2.Fast.CompactSrcStages
+public import IntegerMultBounds.MathlibTM2.Fast.CompactSrcMachine
+public import IntegerMultBounds.MathlibTM2.Fast.CompactSynMainFrame
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! Concrete forward and opposite transforms with original layout programs and complete frame restoration. -/
 @[expose] public section

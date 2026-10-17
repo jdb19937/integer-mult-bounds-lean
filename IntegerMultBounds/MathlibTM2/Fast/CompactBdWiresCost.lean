@@ -1,9 +1,13 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CompactBdRetune
-public import IntegerMultBounds.MathlibTM2.Fast.CompactParamPipeline
-public import IntegerMultBounds.MathlibTM2.Fast.DistSynCost
-public import IntegerMultBounds.MathlibTM2.Fast.DistCost
+import IntegerMultBounds.MathlibTM2.Fast.CompactParamPipeline
+import IntegerMultBounds.MathlibTM2.Fast.DistSynCost
+import IntegerMultBounds.MathlibTM2.Fast.DistCost
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
 
 /-! Explicit cost of the retuned wire bundle, including every extra operation. -/
 @[expose] public section

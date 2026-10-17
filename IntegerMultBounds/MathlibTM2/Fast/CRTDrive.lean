@@ -1,7 +1,11 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CRTSwap
-public import IntegerMultBounds.MathlibTM2.Fast.CRTSpec
+public import IntegerMultBounds.MathlibTM2.Fast.CRTPad
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
 
 /-!
 # Drivers of the CRT layout machines: axis lists and swap walks

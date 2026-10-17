@@ -1,8 +1,11 @@
 module
 
-public import IntegerMultBounds.Machine.ActiveRepairEarlyKeyPlacement
 public import IntegerMultBounds.Machine.WordBankCleanup
-public import IntegerMultBounds.Machine.ExactFrame
+public import IntegerMultBounds.Machine.CountedGuardGadgetRecord
+public import IntegerMultBounds.Machine.CleanSubbank
+import Mathlib.Tactic.Positivity.Finset
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
 /-! Actual word erasure for the generated early-key fields, including the
 full destination and guard. The original counter and descriptors are framed. -/

@@ -2,7 +2,12 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CRTDirectMachineFull
 public import IntegerMultBounds.MathlibTM2.Cost.CRTDirectMachine
-public import IntegerMultBounds.MathlibTM2.Cost.CRTDirectSetup
+import IntegerMultBounds.MathlibTM2.Cost.CRTDirectSetup
+public import IntegerMultBounds.MathlibTM2.Fast.CRTDirectSetup
+import IntegerMultBounds.MathlibTM2.Cost.MatchBase
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! # Matching the full concrete direct CRT costs -/
 @[expose] public section

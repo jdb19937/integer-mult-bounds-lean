@@ -3,6 +3,8 @@ module
 public import IntegerMultBounds.Machine.CountedGuardGadgetRecord
 public import IntegerMultBounds.Machine.AnyFlag
 public import IntegerMultBounds.Machine.WordMoves
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
 /-! Physical guard-word finalization: source and flag rewinds, AnyFlag scan,
 and complete flag erasure. A fixed fifteen-tape machine retains every spectator. -/

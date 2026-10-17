@@ -1,6 +1,9 @@
 module
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlNegativePureLoadData
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlLoadHeaders
+import Mathlib.Tactic.Positivity.Finset
+import IntegerMultBounds.Machine.BinaryDescriptorStackRoundtrip
 
-public import IntegerMultBounds.Machine.ActivePrefixDirtyControlNegativePureLoadRun
 
 /-! Erase both offset streams and all three rotation dimensions after the
 full-array rotation, retaining precisely the original descriptors and array. -/

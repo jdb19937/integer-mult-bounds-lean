@@ -1,7 +1,10 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixCorrectionLoadCleanup
-public import IntegerMultBounds.Machine.ActivePrefixCorrectionLoadValue
+import IntegerMultBounds.Machine.ActivePrefixCorrectionLoadValue
+public import IntegerMultBounds.Machine.ActivePrefixCorrectionLoadRun
+import Mathlib.Tactic.Positivity.Finset
+public import IntegerMultBounds.Machine.CompactGadgetReservationShape
 
 /-! Complete correction load from original prefix/gadget descriptors, original
 rows and suffix width, and the original full array. Offset production, repeat,

@@ -1,9 +1,6 @@
 module
 
 public import IntegerMultBounds.Machine.ArbitraryWidthHighBranchPlacement
-public import IntegerMultBounds.Machine.BinaryCanonicalData
-public import IntegerMultBounds.Machine.FiniteFlow
-public import IntegerMultBounds.Machine.Placement
 
 /-! Paid strict comparison of the two original binary widths, read from the retained canonical
 binary descriptors. The comparison flag is physically erased in the selecting

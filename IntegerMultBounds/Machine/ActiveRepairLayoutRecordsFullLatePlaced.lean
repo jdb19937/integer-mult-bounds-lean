@@ -1,7 +1,8 @@
 module
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsFullLateRun
+import IntegerMultBounds.Machine.CompactGadgetReservationPlacement
+import Mathlib.Tactic.Positivity.Finset
 
-public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsFullLateSelected
-public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsFullPlacedCommon
 
 /-! Complete later low/high action placed on arbitrary original twenty-three
 ports. Original numeric words and all unselected caller tapes are retained;

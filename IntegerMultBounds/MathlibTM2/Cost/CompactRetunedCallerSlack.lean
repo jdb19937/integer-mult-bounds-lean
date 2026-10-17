@@ -1,7 +1,13 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Cost.CompactCallerRetunedCapacity
+import IntegerMultBounds.MathlibTM2.Cost.CompactCallerRetunedCapacity
 public import IntegerMultBounds.MathlibTM2.Fast.CompactTopSelection
+public import IntegerMultBounds.MathlibTM2.Mult.CompactSizes
+import IntegerMultBounds.MathlibTM2.Cost.CompactCallerCapacity
+public import IntegerMultBounds.Machine.CompactReservationGrowth
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! Eventual strict capacity and division geometry for the actual full axis list. -/
 @[expose] public section

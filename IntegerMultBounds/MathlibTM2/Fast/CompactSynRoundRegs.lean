@@ -1,9 +1,9 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Fast.CompactTopPlaced
-public import IntegerMultBounds.MathlibTM2.Fast.SynRound
 public import IntegerMultBounds.MathlibTM2.Node.CompactLayerPlaced
 public import IntegerMultBounds.MathlibTM2.Node.CompactTopProcRegs
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
+public import IntegerMultBounds.MathlibTM2.Node.TopProc
 
 /-! Combine legacy round workspace and persistent compact bank contracts. -/
 @[expose] public section

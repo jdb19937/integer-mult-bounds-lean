@@ -1,8 +1,5 @@
 module
 
-public import Mathlib.Algebra.BigOperators.Intervals
-public import Mathlib.Algebra.Field.Basic
-public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 public import Mathlib.Tactic
 
 /-! The Gohberg–Semencul formula for the two-sided inverse of a symmetric

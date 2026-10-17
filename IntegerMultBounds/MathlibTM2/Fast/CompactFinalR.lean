@@ -1,8 +1,16 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CompactMainChainEntryR
-public import IntegerMultBounds.MathlibTM2.Fast.CompactFinal
-public import IntegerMultBounds.MathlibTM2.Cost.CompactRetunedTransformMatchR
+import IntegerMultBounds.MathlibTM2.Cost.CompactRetunedTransformMatchR
+public import IntegerMultBounds.MathlibTM2.Fast.CompactMainHost
+public import IntegerMultBounds.MathlibTM2.Fast.CompactMainInputDistribution
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainDistributionCalls
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynRetunedDistributionEntry
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainParamCalls
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainDispatch
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! The complete compact multiplier with the rounded synthetic transforms: input and
 distribution under the rounded procedure table, the rounded chain and the carry output. The

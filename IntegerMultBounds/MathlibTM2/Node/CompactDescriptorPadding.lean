@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Node.CompactDescriptorArithmetic
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-! Runtime left and right stage padding from reservation and node counters. -/
 @[expose] public section

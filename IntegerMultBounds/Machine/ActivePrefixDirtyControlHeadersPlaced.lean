@@ -1,6 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixDirtyControlHeadersEndpoint
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
 /-! Physical repair-header generation and erasure on arbitrary caller ports.
 Fourteen originals and ten generated outputs are selected; all private native

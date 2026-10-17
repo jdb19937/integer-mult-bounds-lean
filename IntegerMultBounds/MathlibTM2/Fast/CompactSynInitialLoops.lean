@@ -1,7 +1,12 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CompactSynLoopsContract
-public import IntegerMultBounds.MathlibTM2.Fast.CompactSynInitialContract
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynInitialContract
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynInitialGeometry
+public import IntegerMultBounds.MathlibTM2.Fast.DistSynMain
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! The actual distributed transform parameters execute both hybrid scans. -/
 @[expose] public section

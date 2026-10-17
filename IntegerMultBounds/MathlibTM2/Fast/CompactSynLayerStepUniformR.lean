@@ -1,7 +1,14 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepR
-public import IntegerMultBounds.MathlibTM2.Fast.CompactTopUniformRuntimeExecutionR
+import IntegerMultBounds.MathlibTM2.Fast.CompactTopUniformRuntimeExecutionR
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepCompose
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepCleanup
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepBasis
+import IntegerMultBounds.MathlibTM2.Node.CompactBasisRefreshRest
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! The rounded chunk round for every chunk width `K` between `Mult.Sizes.K M` and `d`: the
 uniform twins of the parked runtime, the round execution and its stream form. -/

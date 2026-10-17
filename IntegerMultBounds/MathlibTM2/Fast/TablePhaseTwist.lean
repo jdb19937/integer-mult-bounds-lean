@@ -1,6 +1,10 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.TablePhaseChirp
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
 
 /-!
 # The twist streams on the table machine

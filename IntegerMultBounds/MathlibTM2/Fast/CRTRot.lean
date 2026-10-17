@@ -1,6 +1,9 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CRTPad
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-!
 # Prefix-controlled cyclic shifts of one axis

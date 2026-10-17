@@ -1,7 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixDirtyControlPackedEarly
-public import IntegerMultBounds.Machine.ActivePrefixDirtyControlSourcePacked
+import IntegerMultBounds.Machine.ActivePrefixDirtyControlSourcePacked
+import Mathlib.Tactic.Positivity.Finset
 
 /-! The actual prepared later coordinate action is the packed late word
 algorithm on every address, preserving the original source and spectators. -/

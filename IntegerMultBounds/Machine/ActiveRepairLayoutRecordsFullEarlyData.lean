@@ -1,7 +1,9 @@
 module
 
 public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsPayloadEarlyClean
-public import IntegerMultBounds.Machine.ActiveTargetHighestLayoutOriginalGlobal
+public import IntegerMultBounds.Machine.ActiveTargetHighestLayoutOriginalPlaced
+public import IntegerMultBounds.Machine.ActiveTargetHighestLayoutGlobal
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Original-input common caller for the complete early low/high action.
 The highest stage shares the genuine raw array and all fourteen original

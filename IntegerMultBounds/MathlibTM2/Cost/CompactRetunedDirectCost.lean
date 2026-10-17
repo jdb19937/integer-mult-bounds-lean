@@ -1,8 +1,19 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Cost.MatchSynLoop
-public import IntegerMultBounds.MathlibTM2.Cost.CompactTotal
-public import IntegerMultBounds.MathlibTM2.Fast.CompactDistWires
+import IntegerMultBounds.MathlibTM2.Cost.MatchSynLoop
+import IntegerMultBounds.MathlibTM2.Fast.CompactDistWires
+public import IntegerMultBounds.MathlibTM2.Cost.CompactStageGrowth
+import IntegerMultBounds.MathlibTM2.Cost.MatchSynTop
+import IntegerMultBounds.MathlibTM2.Cost.MatchSynPipe
+import IntegerMultBounds.MathlibTM2.Cost.MatchSynOver
+public import IntegerMultBounds.MathlibTM2.Fast.DistWidth
+public import IntegerMultBounds.MathlibTM2.Fast.SynRound
+import IntegerMultBounds.MathlibTM2.Cost.MatchBase
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
+public import IntegerMultBounds.MathlibTM2.Cost.Branching
 
 /-! Direct rounds and unchanged synthetic overhead at the actual larger chunk. -/
 @[expose] public section

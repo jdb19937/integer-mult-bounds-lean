@@ -1,8 +1,9 @@
 module
+public import IntegerMultBounds.Machine.CleanSubbank
+import Mathlib.Tactic.Positivity.Finset
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
-public import IntegerMultBounds.Machine.ActiveRepairEarlySourceRun
-public import IntegerMultBounds.Machine.ActiveRepairDestinationPatchRun
-public import IntegerMultBounds.Machine.CountedRepairKeyAppend
 
 /-! Exact placement of clean early-key stages into a shared caller bank. -/
 

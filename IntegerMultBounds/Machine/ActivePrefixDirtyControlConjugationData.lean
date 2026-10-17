@@ -1,9 +1,10 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixDirtyControlLoadPlaced
-public import IntegerMultBounds.Machine.ActivePrefixDirtyControlNegativePureLoadPlaced
-public import IntegerMultBounds.Machine.ActivePrefixDirtyControlUSwapPlaced
 public import IntegerMultBounds.Machine.ActivePrefixCompactSwapPlaced
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlNegativePureLoad
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlUSwapRun
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Four concrete compact conjugations: pure/negative-XOR on T and
 pure/negative-pure on U. Every operation acts on the unchanged full-array type. -/

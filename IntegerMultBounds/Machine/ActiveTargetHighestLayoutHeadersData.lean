@@ -1,7 +1,9 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixLayoutHeadersData
-public import IntegerMultBounds.Machine.ActiveTargetHighestPairLayoutGeometry
+import Mathlib.Tactic.Positivity.Finset
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
 /-! The highest-bit geometry is computed from the same fourteen original
 layout descriptors as the low selected-bit sequences. -/

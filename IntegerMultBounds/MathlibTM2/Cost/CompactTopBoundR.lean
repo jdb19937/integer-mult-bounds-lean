@@ -2,6 +2,11 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Cost.CompactTopActualBoundR
 public import IntegerMultBounds.MathlibTM2.Cost.CompactTopControlPower
+import IntegerMultBounds.MathlibTM2.Cost.CompactTopControlBound
+import IntegerMultBounds.MathlibTM2.Cost.CompactTopRowControlBound
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! The control work of the rounded top: the exact top's stages plus the guard, the cut, `k`
 shrinks by one and the final shift by `2^(s - s')`. Each new stage is linear in the padded

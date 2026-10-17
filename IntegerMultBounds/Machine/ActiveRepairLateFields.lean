@@ -1,6 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.ActiveRepairLateFieldsCleanup
+public import IntegerMultBounds.Machine.ActiveRepairLateFieldsRun
+import Mathlib.Tactic.Positivity.Finset
 
 /-! One fixed extracted-field later repair machine. No local rank or prepared
 key sentinel is supplied; copies, inverse, guard, toggle and erasure are paid. -/

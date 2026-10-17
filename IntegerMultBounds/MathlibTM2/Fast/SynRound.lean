@@ -1,6 +1,8 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.SynSel
+public import IntegerMultBounds.MathlibTM2.Fast.SynRecB
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-!
 # One round of the synthetic transforms

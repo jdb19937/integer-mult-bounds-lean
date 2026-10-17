@@ -1,6 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixStageFullData
+import IntegerMultBounds.Machine.ActivePrefixStageHeadersBudget
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Paid physical erasure of every copied consumer descriptor after the full
 stage. The original thirteen words and transformed raw array survive. -/

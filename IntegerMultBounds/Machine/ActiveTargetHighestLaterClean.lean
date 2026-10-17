@@ -1,6 +1,7 @@
 module
+public import IntegerMultBounds.Machine.ActiveTargetHighestRun
+import IntegerMultBounds.Machine.FlatControlledShiftLayout
 
-public import IntegerMultBounds.Machine.ActiveTargetHighestLaterValue
 
 /-! Exact reusable bank interface for the earlier highest-bit machine, needed
 between the two physical interchanges in the later-source construction. -/

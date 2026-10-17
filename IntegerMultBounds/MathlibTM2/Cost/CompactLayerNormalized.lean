@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Cost.CompactLayer
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-! Volume-normalized compact layer recurrence. The original leaf and the
 full-address-to-payload ratio remain explicit. -/

@@ -1,7 +1,12 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CompactMainTransport
-public import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepExecution
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepCleanup
+public import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStep
+public import IntegerMultBounds.MathlibTM2.Node.CompactLayerPlaced
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! Canonical compact layer procedures and whole-round placement on the expanded
 main machine. The source-array tape is the same tape used by the old stages. -/

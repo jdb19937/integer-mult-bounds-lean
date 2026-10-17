@@ -1,7 +1,24 @@
 module
+public import IntegerMultBounds.Schoenhage.Rules
+import Mathlib.Tactic.ReduceModChar
+import Mathlib.Tactic.Polynomial.Basic
+import Mathlib.Tactic.NormNum.RealSqrt
+import Mathlib.Tactic.NormNum.Prime
+import Mathlib.Tactic.NormNum.Parity
+import Mathlib.Tactic.NormNum.Ordinal
+import Mathlib.Tactic.NormNum.NatSqrt
+import Mathlib.Tactic.NormNum.NatLog
+import Mathlib.Tactic.NormNum.NatFib
+import Mathlib.Tactic.NormNum.ModEq
+import Mathlib.Tactic.NormNum.LegendreSymbol
+import Mathlib.Tactic.NormNum.IsSquare
+import Mathlib.Tactic.NormNum.IsCoprime
+import Mathlib.Tactic.NormNum.Irrational
+import Mathlib.Tactic.Measurability.Init
+import Mathlib.Tactic.Echelon.Zsqrtd
+import Mathlib.Analysis.SpecialFunctions.Pow.NNReal
+import Mathlib.Tactic.ENatToNat
 
-public import IntegerMultBounds.Schoenhage.RingMath
-public import IntegerMultBounds.Schoenhage.Lists
 
 /-! Signed coefficient words. A coefficient is a two's complement word, least
 significant bit first (`sv`). Flipping its top bit gives the offset digit

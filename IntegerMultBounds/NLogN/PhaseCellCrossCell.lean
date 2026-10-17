@@ -1,6 +1,10 @@
 module
 
 public import IntegerMultBounds.NLogN.PhaseCellConcreteCoefficients
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+public import IntegerMultBounds.Machine
 
 /-! Executable cross-cell entries of the structured rounded matrix. These
 sample the original normalized lattice coefficient directly, whereas entries

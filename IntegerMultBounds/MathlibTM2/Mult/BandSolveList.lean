@@ -1,6 +1,10 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Mult.BandFactor
+public import IntegerMultBounds.MathlibTM2.Mult.BandList
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! The banded line solve on integer numerators from the window factorization.
 A banded grid matrix `AZ` (half width `B`, zero outside `s × s`) is factored by

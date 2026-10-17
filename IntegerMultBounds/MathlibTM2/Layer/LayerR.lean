@@ -1,7 +1,9 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Layer.NodeRSharp
+import IntegerMultBounds.MathlibTM2.Layer.NodeRSharp
 public import IntegerMultBounds.MathlibTM2.Layer.TopZ
+public import IntegerMultBounds.MathlibTM2.Layer.NodeR
+import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # The recursive layer with rounded children

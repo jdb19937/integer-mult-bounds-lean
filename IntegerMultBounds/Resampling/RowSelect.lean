@@ -3,6 +3,9 @@ module
 public import IntegerMultBounds.Machine.OrderedSelect
 public import IntegerMultBounds.Machine.GrowingCounterData
 public import IntegerMultBounds.NLogN.ResamplingInverse
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! The row-selecting map `C` of the resampling interface on tapes. With the
 addend `2s`, the modulus `2t` and the initial counter `2t - s - 1`, the

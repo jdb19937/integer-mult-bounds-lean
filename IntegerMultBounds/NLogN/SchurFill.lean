@@ -1,7 +1,7 @@
 module
 
 public import IntegerMultBounds.NLogN.SchurLU
-public import IntegerMultBounds.NLogN.SchurSupport
+import IntegerMultBounds.NLogN.SchurSupport
 public import IntegerMultBounds.NLogN.SchurLUBackward
 
 /-! Fill of ordered elimination. Eliminate in increasing order of a position

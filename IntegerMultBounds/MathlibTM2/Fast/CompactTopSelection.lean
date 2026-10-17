@@ -1,7 +1,11 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CompactTopRows
-public import IntegerMultBounds.MathlibTM2.Fast.CompactSynCoverage
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynCoverage
+public import IntegerMultBounds.MathlibTM2.Fast.CompactReservationGeometry
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynSel
+public import IntegerMultBounds.MathlibTM2.Fast.SynSel
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-! Exact selected coordinates for the reserved top-level configuration.
 The actual padded-row metadata leaves both records and selected coordinates

@@ -4,9 +4,11 @@ public import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepFrame
 public import IntegerMultBounds.MathlibTM2.Fast.CompactSynRoundSources
 public import IntegerMultBounds.MathlibTM2.Fast.CompactSynRoundRest
 public import IntegerMultBounds.MathlibTM2.Fast.CompactSynRoundPark
-public import IntegerMultBounds.MathlibTM2.Fast.CompactSynRoundRegs
-public import IntegerMultBounds.MathlibTM2.Fast.CompactTopRuntimeExecution
-public import IntegerMultBounds.MathlibTM2.Node.CompactBasisRefreshRest
+public import IntegerMultBounds.MathlibTM2.Node.CompactBasisRefresh
+public import IntegerMultBounds.MathlibTM2.Node.CompactTopProc
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! Concrete compact chunk-round code, with original global inputs retained
 across rounds and all temporary sources and compact fields restored. -/

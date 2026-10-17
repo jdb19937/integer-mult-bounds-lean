@@ -1,7 +1,13 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Cost.MatchBase
+import IntegerMultBounds.MathlibTM2.Cost.MatchBase
 public import IntegerMultBounds.MathlibTM2.Fast.CRTMachine
+import IntegerMultBounds.MathlibTM2.Mult.Pipeline
+public import IntegerMultBounds.MathlibTM2.Cost.Total
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
 
 /-!
 # Cost matching: the CRT layout machines (F4, F9)

@@ -2,6 +2,7 @@ module
 
 public import IntegerMultBounds.Machine.ActiveRepairLateFieldsCopy
 public import IntegerMultBounds.Machine.CountedLateRepairToggle
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Later extracted-field repair retains original V/T/Z/current controls,
 q/b/n and the full scan counter. All working copies are produced physically. -/

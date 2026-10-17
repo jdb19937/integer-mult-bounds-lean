@@ -2,6 +2,9 @@ module
 
 public import IntegerMultBounds.NLogN.ResamplingPermuted
 public import IntegerMultBounds.NLogN.ExplicitNumeric
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! The permutation-left resampling identity in `d` dimensions and its numerical
 maps (§7, Lemmas 7.1 and 7.2). Tensoring the one-dimensional identity

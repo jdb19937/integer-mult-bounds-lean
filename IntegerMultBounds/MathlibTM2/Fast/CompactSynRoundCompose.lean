@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CompactTopPlaced
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-! Sequential composition for actual placed call-free round stages. -/
 @[expose] public section

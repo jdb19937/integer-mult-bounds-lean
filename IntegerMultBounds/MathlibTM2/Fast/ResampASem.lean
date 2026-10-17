@@ -2,6 +2,9 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CMulStream
 public import IntegerMultBounds.Resampling.WindowSum
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-!
 # The numerators of the numeric `Ã` on one line

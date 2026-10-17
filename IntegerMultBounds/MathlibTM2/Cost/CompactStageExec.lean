@@ -2,6 +2,7 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Cost.CompactStage
 public import IntegerMultBounds.MathlibTM2.Node.CompactRotStage
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Connect the actual normalized compact-stage bank to its linear size budget. -/
 

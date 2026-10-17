@@ -2,6 +2,10 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CRTDirectSource
 public import IntegerMultBounds.MathlibTM2.Cost.CRTDirectFull
+import IntegerMultBounds.MathlibTM2.Cost.CRTDirectSetup
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! # Cost matching for the executable direct CRT entry -/
 @[expose] public section

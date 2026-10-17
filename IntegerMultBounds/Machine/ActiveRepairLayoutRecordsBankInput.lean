@@ -2,6 +2,7 @@ module
 
 public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsBankHeaders
 public import IntegerMultBounds.Machine.ActiveRepairEarlyOriginalPipelineEndpoint
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Exact consumer wiring: the generated fifteen-word bank fills every
 nonblank repair descriptor port, and the remaining initial bank contains only

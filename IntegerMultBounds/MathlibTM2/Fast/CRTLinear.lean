@@ -2,6 +2,9 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CRTGap
 public import IntegerMultBounds.MathlibTM2.Fast.CRTSchedule
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! # Executable distant CRT routing
 Header preparation, one distant exchange, and header cleanup form a finite-host

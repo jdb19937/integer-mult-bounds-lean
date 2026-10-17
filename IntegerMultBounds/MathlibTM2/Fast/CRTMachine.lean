@@ -1,6 +1,11 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CRTDrive
+public import IntegerMultBounds.MathlibTM2.Fast.CRTSpec
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
 
 /-!
 # The CRT layout machines

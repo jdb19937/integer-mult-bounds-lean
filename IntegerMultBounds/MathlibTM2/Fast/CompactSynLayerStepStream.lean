@@ -1,7 +1,16 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepExecution
-public import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepSemantics
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepExecution
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepSemantics
+public import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepCost
+public import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStep
+public import IntegerMultBounds.MathlibTM2.Fast.CompactPieceGeometry
+public import IntegerMultBounds.Machine.CompactReservationGrowth
+public import IntegerMultBounds.MathlibTM2.Fast.CompactTopExecution
+public import IntegerMultBounds.MathlibTM2.Mult.Sizes
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! A whole actual chunk round, from existing synthetic state and initialized
 original globals, through the real compact top, back to the original register file. -/

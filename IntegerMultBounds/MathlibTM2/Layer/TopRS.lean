@@ -1,6 +1,7 @@
 module
+public import IntegerMultBounds.MathlibTM2.Layer.TopR
+import Mathlib.Tactic.Positivity.Finset
 
-public import IntegerMultBounds.MathlibTM2.Layer.LayerRBounds
 
 /-!
 # The rounded top with a shrink before the shift

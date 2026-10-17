@@ -1,6 +1,9 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CompactMainRunsCost
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! Three actual expanded source runs with explicit retuned transform costs. -/
 @[expose] public section

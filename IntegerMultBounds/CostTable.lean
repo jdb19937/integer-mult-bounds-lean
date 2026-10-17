@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.Sizes
+import Mathlib.Analysis.SpecialFunctions.Pow.NNReal
 
 /-! The cost table of §8. Each operation's cost divided by the padded volume
 `V = T p` is a product of the size parameters `d`, `K`, `ℓ`, `α` and powers of

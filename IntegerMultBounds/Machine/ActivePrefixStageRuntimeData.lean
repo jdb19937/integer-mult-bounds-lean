@@ -1,6 +1,9 @@
 module
+public import IntegerMultBounds.Machine.ActivePrefixStageDispatchRun
+public import IntegerMultBounds.Machine.ActivePrefixStageSingletonDispatch
+public import IntegerMultBounds.Machine.ActivePrefixStageWidthSelector
+import Mathlib.Tactic.Positivity.Finset
 
-public import IntegerMultBounds.Machine.ActivePrefixStageRuntimePlaced
 
 /-! Runtime width and source order select among three finite implementations.
 Only the non-singleton execution needs the packed-repair hypotheses. -/

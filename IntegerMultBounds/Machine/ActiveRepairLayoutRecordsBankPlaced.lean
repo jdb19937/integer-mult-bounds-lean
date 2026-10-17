@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsBankInput
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Genuine fixed-many descriptor copies into the literal original repair
 caller, retaining the whole producer and all unselected consumer tapes. -/

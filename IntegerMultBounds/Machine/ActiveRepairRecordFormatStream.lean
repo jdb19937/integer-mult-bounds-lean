@@ -1,6 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.ActiveRepairRecordFormatWords
+public import IntegerMultBounds.Machine.ActiveRepairRecordFormatRecord
+public import IntegerMultBounds.Machine.CountedLoopReuseAlphabet
 
 /-! Entire raw-array formatter: an outer runtime record count drives the
 fixed record producer, whose independent runtime width count copies payloads.

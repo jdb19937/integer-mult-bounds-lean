@@ -1,6 +1,9 @@
 module
+public import IntegerMultBounds.Machine.ActivePrefixCompactNegativeLoadHeaders
+import Mathlib.Tactic.Positivity.Finset
+import IntegerMultBounds.Machine.BinaryDescriptorStackRoundtrip
+public import IntegerMultBounds.Machine.CompactGadgetReservationShape
 
-public import IntegerMultBounds.Machine.ActivePrefixCompactNegativeLoadRun
 
 /-! Physical erasure of both emitted offset words and every derived rotation
 header. The original ten descriptors and the newly rotated full array remain. -/

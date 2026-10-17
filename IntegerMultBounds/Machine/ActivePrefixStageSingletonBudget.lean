@@ -1,7 +1,9 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixStageSingletonRun
-public import IntegerMultBounds.Machine.ActiveTargetHighestLayoutOriginalBudget
+import IntegerMultBounds.Machine.ActiveTargetHighestLayoutOriginalBudget
+import IntegerMultBounds.Machine.ActivePrefixStageHeadersBudget
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Both singleton source orders have uniform linear cost in the complete
 current array volume. Producer synthesis, highest-bit action and all consumer

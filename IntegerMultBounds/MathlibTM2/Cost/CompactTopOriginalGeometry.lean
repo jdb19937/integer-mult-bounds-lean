@@ -1,6 +1,23 @@
 module
+public import IntegerMultBounds.MathlibTM2.Fast.CompactTopRows
+import IntegerMultBounds.MathlibTM2.Fast.SynRecB
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
+import Mathlib.Tactic.NormNum.RealSqrt
+import Mathlib.Tactic.NormNum.Prime
+import Mathlib.Tactic.NormNum.Parity
+import Mathlib.Tactic.NormNum.Ordinal
+import Mathlib.Tactic.NormNum.NatSqrt
+import Mathlib.Tactic.NormNum.NatLog
+import Mathlib.Tactic.NormNum.NatFib
+import Mathlib.Tactic.NormNum.ModEq
+import Mathlib.Tactic.NormNum.LegendreSymbol
+import Mathlib.Tactic.NormNum.IsSquare
+import Mathlib.Tactic.NormNum.IsCoprime
+import Mathlib.Tactic.NormNum.Irrational
+import Mathlib.Tactic.Measurability.Init
+import Mathlib.Tactic.Echelon.Zsqrtd
+import Mathlib.Analysis.SpecialFunctions.Pow.NNReal
 
-public import IntegerMultBounds.MathlibTM2.Cost.CompactTopOriginalVolume
 
 /-! Pay unary row padding from actual selected address bits. The reserved row
 axes bound the divisor, and three further address bits pay the division budget. -/

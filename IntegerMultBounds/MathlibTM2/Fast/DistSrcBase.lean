@@ -1,7 +1,11 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.DistPrim
-public import IntegerMultBounds.MathlibTM2.Fast.SrcStage
+public import IntegerMultBounds.MathlibTM2.Fast.DistGlob
+public import IntegerMultBounds.MathlibTM2.Fast.SrcRegs
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-!
 # Register files of the converter into the source transform

@@ -2,6 +2,10 @@ module
 
 public import IntegerMultBounds.Machine.ActiveRepairDestinationPatchRun
 public import IntegerMultBounds.Machine.ActiveRepairRankFieldsGeometry
+import IntegerMultBounds.Machine.CountedPackedGuarded
+import IntegerMultBounds.Machine.CountedRankSplitData
+import Mathlib.Tactic.Positivity.Finset
+import Mathlib.Data.List.GetD
 
 /-! Destination ranks in the unchanged active-target layout. The full word
 includes row, unused front bits, all source/spectator bits and dirty back bits. -/

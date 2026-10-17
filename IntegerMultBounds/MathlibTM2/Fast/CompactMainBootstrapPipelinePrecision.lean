@@ -1,7 +1,10 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Fast.CompactMainBootstrapPipelineSource
 public import IntegerMultBounds.MathlibTM2.Fast.MainCorrect
+public import IntegerMultBounds.MathlibTM2.Fast.CompactMainTransport
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! The existing parameter stage supplies the actual original-precision source. -/
 @[expose] public section

@@ -2,8 +2,13 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Fast.BandLineSpec
 public import IntegerMultBounds.MathlibTM2.Fast.BandAxis
-public import IntegerMultBounds.NLogN.SchurSizes
-public import IntegerMultBounds.NLogN.PhaseCellPerturb
+import IntegerMultBounds.NLogN.SchurSizes
+import IntegerMultBounds.NLogN.ToeplitzLocal
+import IntegerMultBounds.NLogN.SchurCongr
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
 
 /-!
 # Record widths of the banded `B̃₀`

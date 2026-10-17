@@ -2,6 +2,9 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Layer.LayerZ
 public import IntegerMultBounds.MathlibTM2.Layer.H0
+import Mathlib.Tactic.Positivity.Finset
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
 /-!
 # The normalized layer on Gaussian-integer arrays

@@ -3,6 +3,12 @@ module
 public import IntegerMultBounds.MathlibTM2.Fast.CRTControlProducer
 public import IntegerMultBounds.MathlibTM2.Fast.CRTControlRouting
 public import IntegerMultBounds.MathlibTM2.Fast.CRTControlExposeRotation
+import IntegerMultBounds.MathlibTM2.Fast.CRTControlGenerateLayout
+import IntegerMultBounds.MathlibTM2.Fast.CRTControlGenerateTraversal
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
 
 /-! # A complete nonzero target from unary parameters -/
 

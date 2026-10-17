@@ -1,6 +1,5 @@
 module
 
-public import Mathlib.Algebra.Polynomial.Div
 public import Mathlib.Tactic
 
 /-! The twisted transform behind Schönhage–Strassen, over any commutative

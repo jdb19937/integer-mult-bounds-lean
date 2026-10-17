@@ -1,7 +1,10 @@
 module
 
 public import IntegerMultBounds.Machine.CountedGuardGadget
-public import IntegerMultBounds.Compact.GuardValue
+import IntegerMultBounds.Compact.GuardValue
+public import IntegerMultBounds.Compact.ExactRepair
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
 /-! The actual fixed-control runtime guard result decides exceptional address
 membership. Literal constant words have certified widths and values; their

@@ -2,7 +2,11 @@ module
 
 public import IntegerMultBounds.NLogN.PhaseCellExecutableCoefficients
 public import IntegerMultBounds.NLogN.PhaseCellRationalArgs
-public import IntegerMultBounds.NLogN.PhaseCellWeightBounds
+import IntegerMultBounds.NLogN.PhaseCellWeightBounds
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+public import IntegerMultBounds.Machine
 
 /-!
 # Concrete executable phase-cell coefficients

@@ -1,6 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsAssemblyCommon
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsDecodeEarly
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Real raw-array formatting, original repair, raw decoding and record-buffer
 cleanup in one finite program. The producer headers and original raw array

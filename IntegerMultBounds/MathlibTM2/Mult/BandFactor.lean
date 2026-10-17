@@ -1,8 +1,12 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Mult.BandList
+import IntegerMultBounds.MathlibTM2.Mult.BandList
 public import IntegerMultBounds.NLogN.SchurWindow
 public import IntegerMultBounds.NLogN.PhaseCellFoldSolve
+public import IntegerMultBounds.MathlibTM2.Mult.ConcreteB0Sizes
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! The sliding-window factorization on integer numerators, as the tape machine
 computes it on the `2^-P` grid: Newton reciprocals by truncated products,

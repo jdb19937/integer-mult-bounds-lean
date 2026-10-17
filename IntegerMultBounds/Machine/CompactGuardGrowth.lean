@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.Machine.CompactScalarAllowances
+import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 
 /-! The actual ceiling logarithmic guard is negligible relative to the
 actual floor chunk width. This quantifies the eventual guard allowance with

@@ -1,7 +1,8 @@
 module
 
-public import IntegerMultBounds.Machine.WordSegments
+import IntegerMultBounds.Machine.WordSegments
 public import IntegerMultBounds.Machine.Hoare
+public import IntegerMultBounds.Machine.WordTape
 
 /-! Fixed two-phase machines use a preserved bit word as a unary length clock.
 Each clock bit pays exactly two transitions. Seeking retains every cell;

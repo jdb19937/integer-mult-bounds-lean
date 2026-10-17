@@ -1,7 +1,12 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Fast.MainTimeRuns
-public import IntegerMultBounds.MathlibTM2.Fast.MainTimeGlue
+import IntegerMultBounds.MathlibTM2.Fast.MainTimeRuns
+import IntegerMultBounds.MathlibTM2.Fast.MainTimeGlue
+public import IntegerMultBounds.MathlibTM2.Cost.DirectTotal
+public import IntegerMultBounds.MathlibTM2.Fast.MainProg
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-!
 # The time bound of the fast multiplier

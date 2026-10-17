@@ -3,6 +3,9 @@ module
 public import IntegerMultBounds.MathlibTM2.Fast.DistSynTbl
 public import IntegerMultBounds.MathlibTM2.Fast.TableLoad
 public import IntegerMultBounds.MathlibTM2.Fast.DistBase
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-!
 # The parameter wires of the synthetic transforms: host primitives

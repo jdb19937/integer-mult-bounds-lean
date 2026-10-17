@@ -1,6 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixParityNegativeRun
+import Mathlib.Tactic.Positivity.Finset
+public import IntegerMultBounds.Machine.CompactGadgetReservationShape
 
 /-! Complete clean negative parity-XOR stream, synthesized only from the
 original eight descriptors. Every original prefix uses its own current row. -/

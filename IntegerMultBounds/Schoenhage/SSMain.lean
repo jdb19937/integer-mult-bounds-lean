@@ -1,6 +1,10 @@
 module
 
-public import IntegerMultBounds.Schoenhage.SSMath
+import IntegerMultBounds.Schoenhage.SSMath
+public import IntegerMultBounds.Schoenhage.DriverUp
+public import IntegerMultBounds.Schoenhage.BaseCase
+import IntegerMultBounds.Schoenhage.IterCorrect
+import IntegerMultBounds.Schoenhage.Wp
 
 /-! The whole Schönhage–Strassen multiplier on the 64-tape bank: from the two
 operands modulo `2^N + 1` on `tIn` and `pN = ones N`, the product on `tIn`. -/

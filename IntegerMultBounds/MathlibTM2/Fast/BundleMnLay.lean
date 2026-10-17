@@ -3,6 +3,10 @@ module
 public import IntegerMultBounds.MathlibTM2.Fast.MainEmbed
 public import IntegerMultBounds.MathlibTM2.Fast.SynLaySpec
 public import IntegerMultBounds.MathlibTM2.Fast.DistWidth
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
 
 /-!
 # The layout bundle of the fast multiplier from the layout programs

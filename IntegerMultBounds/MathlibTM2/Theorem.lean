@@ -1,6 +1,10 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Fast.CompactFinalR
+import IntegerMultBounds.MathlibTM2.Fast.CompactFinalR
+public import IntegerMultBounds.MathlibTM2.Statement
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-!
 # Integer multiplication below `n log n` on Mathlib's Turing machines

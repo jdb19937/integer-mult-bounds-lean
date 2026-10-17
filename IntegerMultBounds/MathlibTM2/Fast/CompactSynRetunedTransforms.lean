@@ -1,8 +1,15 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Fast.CompactSynUniformTransforms
-public import IntegerMultBounds.MathlibTM2.Fast.CompactSynRetunedGeometry
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynUniformTransforms
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynRetunedGeometry
 public import IntegerMultBounds.MathlibTM2.Fast.CompactBundleMnLay
+public import IntegerMultBounds.MathlibTM2.Fast.CompactSynUniformLoopCost
+public import IntegerMultBounds.MathlibTM2.Fast.CompactSynTransformPre
+public import IntegerMultBounds.MathlibTM2.Fast.CompactSynOpp
+public import IntegerMultBounds.MathlibTM2.Fast.CompactSynFwd
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! Concrete forward and opposite transforms with original layout programs and complete frame restoration. -/
 @[expose] public section

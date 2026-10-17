@@ -2,8 +2,10 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Node.CompactTopProc
 public import IntegerMultBounds.MathlibTM2.Node.CompactLayerPlaced
-public import IntegerMultBounds.MathlibTM2.Cost.CompactLayerReady
-public import IntegerMultBounds.MathlibTM2.Fast.CompactTopPrecision
+import IntegerMultBounds.MathlibTM2.Fast.CompactTopPrecision
+public import IntegerMultBounds.MathlibTM2.Fast.CompactTopReady
+public import IntegerMultBounds.MathlibTM2.Cost.CompactLayer
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-! The reserved top transform running the actual placed recursive layer table.
 The remaining recursive readiness predicate describes geometry and packing only. -/

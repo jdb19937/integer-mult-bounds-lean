@@ -1,7 +1,7 @@
 module
 
 public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsHeadersData
-public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsHeadersLength
+import Mathlib.Tactic.Positivity.Finset
 
 /-! A fixed retained-descriptor arithmetic schedule constructs n+1, full
 source width and complete record address width from original early headers. -/

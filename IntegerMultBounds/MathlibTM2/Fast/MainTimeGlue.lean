@@ -1,8 +1,14 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.MainProg
-public import IntegerMultBounds.MathlibTM2.Cost.MatchStages
 public import IntegerMultBounds.MathlibTM2.Cost.DirectTotal
+import IntegerMultBounds.MathlibTM2.Cost.MatchRound
+import IntegerMultBounds.MathlibTM2.Cost.MatchChirp
+public import IntegerMultBounds.MathlibTM2.Cost.MatchParam
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
 
 /-!
 # The time bound of the fast multiplier, given the bound of the source-transform runs

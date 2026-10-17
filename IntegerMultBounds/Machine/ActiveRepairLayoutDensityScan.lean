@@ -1,7 +1,8 @@
 module
 
-public import IntegerMultBounds.Machine.ActiveRepairLayoutDensity
+import IntegerMultBounds.Machine.ActiveRepairLayoutDensity
 public import IntegerMultBounds.Compact.TapeRepair
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Bridge complete layout density to the literal position-indexed scan.
 Flag agreement is required only at the ranks actually visited. -/

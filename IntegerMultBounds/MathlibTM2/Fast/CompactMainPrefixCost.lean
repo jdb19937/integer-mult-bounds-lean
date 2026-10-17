@@ -2,6 +2,9 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CompactMainHost
 public import IntegerMultBounds.MathlibTM2.Fast.MainChain
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! Exact accounting for input/distribution, the complete arithmetic chain and output. -/
 @[expose] public section

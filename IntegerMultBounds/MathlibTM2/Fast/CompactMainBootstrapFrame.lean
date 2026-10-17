@@ -1,6 +1,10 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CompactMainBootstrap
+import IntegerMultBounds.MathlibTM2.Node.CompactBasisSetupRest
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! Original-source preservation and consumed-copy guarantees for the main bootstrap. -/
 @[expose] public section

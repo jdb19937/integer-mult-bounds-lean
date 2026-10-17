@@ -1,7 +1,14 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Cost.CompactCallerRows
-public import IntegerMultBounds.MathlibTM2.Cost.CompactCallerRuntimeParameters
+import IntegerMultBounds.MathlibTM2.Cost.CompactCallerRows
+import IntegerMultBounds.MathlibTM2.Cost.CompactCallerRuntimeParameters
+public import IntegerMultBounds.Machine.CompactReservationGrowth
+public import IntegerMultBounds.MathlibTM2.Fast.CompactReservationGeometry
+public import IntegerMultBounds.MathlibTM2.Fast.CompactTopRows
+public import IntegerMultBounds.MathlibTM2.Mult.Sizes
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! Row bounds from the original selected interval and actual top-level split. -/
 @[expose] public section

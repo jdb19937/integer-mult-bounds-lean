@@ -1,6 +1,9 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixEarlySequenceOriginalRun
+import IntegerMultBounds.Machine.CompactGadgetReservationPlacement
+import IntegerMultBounds.Machine.SharedBankRawCompose
+import Mathlib.Tactic.Positivity.Finset
 
 /-! The complete original-input four-load block on arbitrary caller tapes.
 Only twenty-two original numeric words and the array are ports. Generated

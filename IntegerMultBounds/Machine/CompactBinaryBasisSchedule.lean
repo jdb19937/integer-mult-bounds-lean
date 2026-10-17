@@ -2,6 +2,7 @@ module
 
 public import IntegerMultBounds.Networks.BinaryRowProgram
 public import IntegerMultBounds.Machine.ActivePrefixStageParameters
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Original consecutive node geometry and actual binary bases determine every
 literal compact stage. A basis decomposition is proved, not a caller premise.

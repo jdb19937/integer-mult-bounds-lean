@@ -1,6 +1,8 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.SynRec
+import IntegerMultBounds.MathlibTM2.Cost.Branching
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-!
 # The chunk branch of the record builder, and `synRec`

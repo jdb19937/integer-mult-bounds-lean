@@ -3,7 +3,7 @@ module
 public import IntegerMultBounds.MathlibTM2.Host.SSMul
 public import IntegerMultBounds.MathlibTM2.Node.Params
 public import IntegerMultBounds.MathlibTM2.Layer.Format
-public import IntegerMultBounds.MathlibTM2.Fast.Output
+import IntegerMultBounds.MathlibTM2.Fast.Output
 
 /-!
 # The rounding stage of the fast multiplier

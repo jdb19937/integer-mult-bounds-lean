@@ -1,6 +1,8 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Mult.RoundsBasic
+import IntegerMultBounds.NLogN.SynthConv
+import Mathlib.Data.List.GetD
 
 /-!
 # The opposite rounds compute `F⁺ B⁻¹`

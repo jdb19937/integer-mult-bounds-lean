@@ -1,6 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixCompactNegativeLoadHeaders
+import Mathlib.Tactic.Positivity.Finset
+public import IntegerMultBounds.Machine.CompactGadgetReservationShape
 
 /-! Actual original-input negative parity-XOR offset production, original-row repetition
 and compact-back rotation, without supplied derived descriptors or tables.

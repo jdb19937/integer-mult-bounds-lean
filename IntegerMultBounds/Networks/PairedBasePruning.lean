@@ -1,7 +1,14 @@
 module
 
 public import IntegerMultBounds.Networks.PairedTopPruning
-public import IntegerMultBounds.Networks.PairedCircuitUnique
+public import IntegerMultBounds.Networks.PairedBaseBound
+import IntegerMultBounds.Networks.PairedLevelTools
+import IntegerMultBounds.Networks.PairedSingleBudget
+import IntegerMultBounds.Networks.DisjointPruningBudget
+import IntegerMultBounds.Networks.DAGValueTransfer
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
+import Mathlib.Data.Nat.Totient
 
 /-! Fine-vertex types of the recursive graph atoms. An edge atom between two
 coarse vertices only joins their fine vertex sets and touches all of them; a

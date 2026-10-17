@@ -2,6 +2,7 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CompactTopPlaced
 public import IntegerMultBounds.MathlibTM2.Fast.SynRecB
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-! Actual chunk-round sourcing of the stride, remainder and current selected
 offset. Global original depth/guard must be initialized separately and retained;

@@ -1,7 +1,10 @@
 module
 
 public import IntegerMultBounds.Schoenhage.LevelMk
-public import IntegerMultBounds.Schoenhage.BatchMath
+import IntegerMultBounds.Schoenhage.BatchMath
+import IntegerMultBounds.Schoenhage.IterCorrect
+import IntegerMultBounds.Schoenhage.Wp
+import Mathlib.Data.Nat.Size
 
 /-! The level driver on word tapes: bookkeeping fragments between levels. -/
 

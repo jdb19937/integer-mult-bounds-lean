@@ -2,6 +2,7 @@ module
 
 public import IntegerMultBounds.Machine.ActivePrefixLayoutHeadersPlaced
 public import IntegerMultBounds.Machine.ActivePrefixLayoutHeadersGeometry
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Physical caller-placed layout-header preparation with its cost absorbed
 by the original full array volume. Computed starts, n+1 and suffix begin blank.

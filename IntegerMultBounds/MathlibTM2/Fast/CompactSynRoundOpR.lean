@@ -1,8 +1,14 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerFitR
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerFitR
 public import IntegerMultBounds.MathlibTM2.Fast.CompactSynLoopsR
 public import IntegerMultBounds.MathlibTM2.Mult.SynthErrQ
+import IntegerMultBounds.MathlibTM2.Layer.TopRFit
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepSemantics
+import IntegerMultBounds.MathlibTM2.Cost.CompactCallerSelectedRows
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-!
 # The rounded rounds as computed rounds

@@ -1,8 +1,9 @@
 module
 
-public import IntegerMultBounds.Asymptotics
+import IntegerMultBounds.Asymptotics
 public import IntegerMultBounds.Machine
-public import Mathlib.Analysis.SpecialFunctions.Log.Basic
+import Mathlib.Analysis.SpecialFunctions.Pow.NNReal
+public import IntegerMultBounds.Parameters
 
 /-! The complete time bound (§8). With precision `p = 6 lg n` and padded volume
 `V = Θ(n)`, every operation of the multiplication algorithm costs a fixed

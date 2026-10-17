@@ -1,6 +1,6 @@
 module
+public import IntegerMultBounds.Machine.WordMoves
 
-public import IntegerMultBounds.Machine.RulerAdvance
 
 /-! Copy as many cells as a ruler word is long, zero-filled, from a source
 head to a destination head: three tapes and one state, all heads stepping

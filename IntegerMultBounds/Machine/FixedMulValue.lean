@@ -1,7 +1,7 @@
 module
 
 public import IntegerMultBounds.Machine.FixedMul
-public import IntegerMultBounds.Compact.PowerTwoDigits
+import IntegerMultBounds.Compact.PowerTwoDigits
 
 /-! The signed fixed-point multiply computes the product truncated toward
 zero by `p` bits: for two's complement words of width `w ≥ p + 2` whose

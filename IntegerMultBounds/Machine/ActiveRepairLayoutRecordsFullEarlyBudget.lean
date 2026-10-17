@@ -1,7 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsFullEarlyRun
-public import IntegerMultBounds.Machine.ActiveTargetHighestLayoutOriginalBudget
+import IntegerMultBounds.Machine.ActiveTargetHighestLayoutOriginalBudget
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Complete physical early low/high action retains the certified compact
 width exponent while paying original highest geometry synthesis and cleanup. -/

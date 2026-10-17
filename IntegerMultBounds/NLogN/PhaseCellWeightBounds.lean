@@ -1,6 +1,12 @@
 module
 
-public import IntegerMultBounds.NLogN.PhaseCellRoundedError
+import IntegerMultBounds.NLogN.PhaseCellRoundedError
+public import IntegerMultBounds.NLogN.PhaseCellRounded
+import Mathlib.Analysis.Complex.ExponentialBounds
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Analysis.Real.Pi.Bounds
 
 /-! Selected coarse lower weights and precision for the actual rounded
 within-cell constructor. This discharges its denominator premise from the

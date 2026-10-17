@@ -1,8 +1,10 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Cost.CompactStageExec
+import IntegerMultBounds.MathlibTM2.Cost.CompactStageExec
 public import IntegerMultBounds.MathlibTM2.Node.CompactRotRuntime
-public import IntegerMultBounds.Machine.ActivePrefixStageRuntimeBudget
+import IntegerMultBounds.Machine.ActivePrefixStageRuntimeBudget
+public import IntegerMultBounds.MathlibTM2.Cost.CompactStage
+import Mathlib.Tactic.Positivity.Finset
 
 /-! # Uniform host cost of the runtime-selected compact stage
 

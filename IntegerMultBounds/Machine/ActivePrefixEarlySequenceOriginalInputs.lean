@@ -2,6 +2,8 @@ module
 
 public import IntegerMultBounds.Machine.ActivePrefixEarlySequenceOriginalData
 public import IntegerMultBounds.Machine.ActivePrefixEarlySequenceRun
+public import IntegerMultBounds.Machine.ActivePrefixLayoutHeadersGeometry
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Only original swap geometry and original layout/gadget controls are
 supplied. The consumer Inputs record is filled by the physical header outputs. -/

@@ -1,8 +1,11 @@
 module
 
 public import IntegerMultBounds.Machine.DoubleClockReverseCopy
-public import IntegerMultBounds.Machine.ElementaryMultiplyCore
-public import IntegerMultBounds.Machine.Registers
+import IntegerMultBounds.Machine.ElementaryMultiplyCore
+import IntegerMultBounds.Machine.Registers
+public import IntegerMultBounds.Machine.BinaryMultiply
+import IntegerMultBounds.Machine.WordSegments
+import Mathlib.Data.List.GetD
 
 /-! Exact output serialization for the elementary multiplier. Reverse copying
 the full two-input-width window appends high zeros to the little-endian

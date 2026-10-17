@@ -2,6 +2,9 @@ module
 
 public import IntegerMultBounds.Machine.GaussianLineValue
 public import IntegerMultBounds.NLogN.ExplicitNumeric
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! The window sums computed by the Gaussian line machine are the numerical
 map `Ã` of the resampling interface: with the weight words holding the

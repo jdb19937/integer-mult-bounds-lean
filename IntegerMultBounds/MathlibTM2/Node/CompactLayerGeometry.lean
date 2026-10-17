@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Node.CompactLayerProc
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-! Derive recursive admissibility from local packing and basis bounds, using shared child geometry. -/
 @[expose] public section

@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixLayoutShapes
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Prefix construction is paid by the original record payload whenever that
 payload exceeds the complete address width. All spectator/back factors only

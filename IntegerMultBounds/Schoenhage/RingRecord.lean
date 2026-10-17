@@ -2,7 +2,8 @@ module
 
 public import IntegerMultBounds.Schoenhage.RingConst
 public import IntegerMultBounds.Schoenhage.Reverse
-public import IntegerMultBounds.Schoenhage.RingProgram
+public import IntegerMultBounds.Schoenhage.RingProduct
+import IntegerMultBounds.Schoenhage.Wp
 
 /-! Moving words between tapes, reversed, once per tick: the operand words of
 one record go from the chunk lists to the multiplier's input tapes, and its

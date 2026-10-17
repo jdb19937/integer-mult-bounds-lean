@@ -1,6 +1,13 @@
 module
+import Mathlib.Tactic.Positivity.Finset
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
+import Mathlib.Analysis.SpecialFunctions.Pow.Real
+public import Mathlib.Tactic.ToDual
+public import Mathlib.Data.Nat.Notation
+public import Mathlib.Tactic.ToAdditive
+public import IntegerMultBounds.Machine
 
-public import IntegerMultBounds.Machine.ActiveRepairEarlyOriginalPipelineBudgetWords
 
 /-! Shared arithmetic absorption of every actual scan/preparation/cleanup
 charge. Fixed program constants remain symbolic throughout these proofs. -/

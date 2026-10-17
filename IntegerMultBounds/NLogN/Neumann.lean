@@ -1,9 +1,6 @@
 module
 
-public import Mathlib.Analysis.Normed.Operator.NormedSpace
-public import Mathlib.Analysis.Normed.Operator.Completeness
-public import Mathlib.Analysis.SpecificLimits.Normed
-public import Mathlib.Analysis.Complex.Basic
+import Mathlib.Analysis.Normed.Operator.NormedSpace
 public import Mathlib.Tactic
 
 /-! The linear-algebra skeleton of Harvey–van der Hoeven, Proposition 4.7(i),

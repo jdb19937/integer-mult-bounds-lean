@@ -1,7 +1,8 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Node.CompactBasisSlot
-public import IntegerMultBounds.MathlibTM2.Node.Regs
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
+public import IntegerMultBounds.MathlibTM2.Node.Basis
 
 /-! Concrete compact basis changes, with parent-length setup after factor saveDiv. -/
 @[expose] public section

@@ -4,6 +4,9 @@ public import IntegerMultBounds.NLogN.Clamp
 public import IntegerMultBounds.NLogN.ResamplingNumeric
 public import IntegerMultBounds.NLogN.ResamplingMultiNumeric
 public import IntegerMultBounds.NLogN.SynthConvApproxD
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! Explicit numerical maps with hypothesis-free error bounds. The per-term
 fixed-point evaluations assumed by `ResamplingNumeric` are defined here as

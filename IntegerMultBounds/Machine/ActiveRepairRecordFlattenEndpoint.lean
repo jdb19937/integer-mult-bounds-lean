@@ -3,6 +3,9 @@ module
 public import IntegerMultBounds.Machine.ActiveRepairRecordFlatten
 public import IntegerMultBounds.Machine.CountedTapeRepairCleanupWord
 public import IntegerMultBounds.Machine.FiniteReturnStackAt
+import Mathlib.Tactic.Positivity.Finset
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
 /-! Complete two-tape flattening: arbitrary record flags and separators are
 removed, the source including its sentinel is erased, and raw output returns

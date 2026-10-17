@@ -1,6 +1,9 @@
 module
 
 public import IntegerMultBounds.Machine.ActiveRepairEarlyOriginalPipelineBudgetArithmetic
+import IntegerMultBounds.Machine.ActiveRepairEarlyOriginalPipelineBudgetWords
+public import IntegerMultBounds.Machine.ActiveRepairEarlyOriginalPipelineEndpoint
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Full paid budgets for the actual original-input early repair endpoint.
 Sparse-count absorption includes preparation, sorting, reinsertion and every

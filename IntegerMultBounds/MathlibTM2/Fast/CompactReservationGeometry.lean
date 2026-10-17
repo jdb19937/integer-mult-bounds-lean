@@ -1,8 +1,10 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Fast.CompactSynSel
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynSel
 public import IntegerMultBounds.MathlibTM2.Node.CompactEncodingOffset
 public import IntegerMultBounds.Machine.CompactGlobalRowPadding
+public import IntegerMultBounds.MathlibTM2.Fast.CompactSynRecPieces
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-! The runtime reservation counts determine one native shape shared by every
 active digit piece and child. Capacity is explicit; subtraction is never used

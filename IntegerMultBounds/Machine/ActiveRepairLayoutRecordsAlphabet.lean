@@ -1,8 +1,8 @@
 module
 
-public import IntegerMultBounds.Machine.ActiveTargetHighestLaterBank
-public import IntegerMultBounds.Machine.FixedHeaderBankCopy
+import IntegerMultBounds.Machine.ActiveTargetHighestLaterBank
 public import IntegerMultBounds.Machine.ActiveTargetRotation
+public import IntegerMultBounds.Networks.Shared50ModularControl
 
 /-! Exact Fin-five repair simulation in the fixed prime alphabet. The fifth
 repair marker is retained, and literal binary payloads/descriptors have the

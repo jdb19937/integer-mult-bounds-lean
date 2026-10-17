@@ -1,8 +1,11 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepPrepare
-public import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepClear
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepClear
 public import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepWires
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! The actual preparation output is precisely the five-output view consumed by parking. -/
 @[expose] public section

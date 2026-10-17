@@ -1,6 +1,12 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.DistSrcP2c
+public import IntegerMultBounds.MathlibTM2.Fast.DistSrcP2b
+public import IntegerMultBounds.MathlibTM2.Fast.DistSrcPC
+public import IntegerMultBounds.MathlibTM2.Fast.DistSrcP1
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-!
 # The converter into the source transform

@@ -1,7 +1,8 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Fast.CompactSynRoundCompose
 public import IntegerMultBounds.MathlibTM2.Fast.CompactSynRoundGlobal
+public import IntegerMultBounds.MathlibTM2.Fast.CompactTopPlaced
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-! Full-host execution and temporary source restoration for compact rounds. -/
 @[expose] public section

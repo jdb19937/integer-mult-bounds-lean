@@ -1,6 +1,9 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Layer.Basic
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
+import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 /-!
 # Normalized butterflies from the C layer

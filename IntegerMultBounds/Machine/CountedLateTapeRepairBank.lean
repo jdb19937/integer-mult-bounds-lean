@@ -1,7 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.CountedLateRepairPrepare
-public import IntegerMultBounds.Compact.LatePowerTwoWords
+public import IntegerMultBounds.Compact.LatePowerTwoRank
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Literal input, output and charged costs for the uniform repair pipeline. -/
 

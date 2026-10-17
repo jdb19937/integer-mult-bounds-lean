@@ -1,6 +1,8 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Fast.RingProdBase
+import IntegerMultBounds.MathlibTM2.Fast.RingProdBase
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
+public import IntegerMultBounds.MathlibTM2.Node.Params
 
 /-!
 # Registers of the ring-product stage and register-level contracts

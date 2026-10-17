@@ -1,8 +1,6 @@
 module
 
-public import IntegerMultBounds.Machine
 public import IntegerMultBounds.MathlibTM2.Binary
-public import Mathlib.Data.Fintype.Basic
 
 /-!
 # Tapes as pairs of stacks

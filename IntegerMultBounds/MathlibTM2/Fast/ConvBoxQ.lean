@@ -1,7 +1,12 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.ConvBox
-public import IntegerMultBounds.MathlibTM2.Fast.ConvSynthQ
+import IntegerMultBounds.MathlibTM2.Fast.ConvSynthQ
+public import IntegerMultBounds.MathlibTM2.Fast.ConvSpecQ
+public import IntegerMultBounds.MathlibTM2.Mult.SynthErrQ
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-!
 # The complex convolution stage with computed rounds

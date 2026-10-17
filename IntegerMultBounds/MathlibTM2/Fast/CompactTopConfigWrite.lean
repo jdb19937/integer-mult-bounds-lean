@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CompactTopConfigFields
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-! Complete ten-field serialization and guarded working width. All sources and
 scratch are restored literally; only the configuration and working-width outputs change. -/

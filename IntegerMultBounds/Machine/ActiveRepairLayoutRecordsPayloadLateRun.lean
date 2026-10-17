@@ -1,6 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsPayloadLateData
+import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsLate
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Actual original later payload execution, clean full-width repair and
 physical copy-back share the original array tape. Every private tape is blank

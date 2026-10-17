@@ -1,8 +1,11 @@
 module
 
 public import IntegerMultBounds.NLogN.ResamplingMulti
-public import IntegerMultBounds.NLogN.ResamplingNumeric
 public import IntegerMultBounds.NLogN.TensorApproxV
+public import IntegerMultBounds.NLogN.ResamplingAssembly
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! The numerical half of Theorem 4.1 of Harvey and van der Hoeven. Proved: the
 coordinate-by-coordinate rectangular tensor of numerical maps on

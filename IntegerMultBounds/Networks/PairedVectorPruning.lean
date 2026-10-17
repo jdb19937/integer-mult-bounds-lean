@@ -2,6 +2,9 @@ module
 
 public import IntegerMultBounds.Networks.PairedVectorBudget
 public import IntegerMultBounds.Networks.DisjointPruningBudget
+public import IntegerMultBounds.Networks.DisjointExclusion
+public import IntegerMultBounds.Networks.PairedVectorCorrect
+public import IntegerMultBounds.Networks.DisjointUnique
 
 /-! The full total of a leave-one-out vector is unnecessary when every
 requested output omits a present operand. Support containment proves deadness

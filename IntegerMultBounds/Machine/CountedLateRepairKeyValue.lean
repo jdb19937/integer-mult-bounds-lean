@@ -1,7 +1,9 @@
 module
 
 public import IntegerMultBounds.Machine.CountedLateRepairKeyRun
-public import IntegerMultBounds.Compact.LatePowerTwoBridges
+import IntegerMultBounds.Compact.LatePowerTwoBridges
+public import IntegerMultBounds.Compact.LatePowerTwoRank
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Semantic rank membership for the physically generated later key. -/
 

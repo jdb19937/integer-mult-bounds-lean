@@ -1,6 +1,6 @@
 module
+public import IntegerMultBounds.Machine.Partition
 
-public import IntegerMultBounds.Machine.ActiveRepairRecordFormatRecord
 
 @[expose] public section
 

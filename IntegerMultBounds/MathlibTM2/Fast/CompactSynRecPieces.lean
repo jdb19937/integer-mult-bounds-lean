@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.SynRec
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-! # Runtime reserved active-piece records
 

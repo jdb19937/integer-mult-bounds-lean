@@ -2,6 +2,8 @@ module
 
 public import IntegerMultBounds.Machine.ActiveTargetHighestBits
 public import IntegerMultBounds.Compact.ActiveTargetSubsegmentWords
+import IntegerMultBounds.Machine.CountedPackedGuarded
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Literal bit-word semantics of the one-bit coordinate split. -/
 

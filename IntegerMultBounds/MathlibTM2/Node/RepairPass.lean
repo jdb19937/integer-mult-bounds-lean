@@ -1,6 +1,11 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Node.KeyPass
+public import IntegerMultBounds.MathlibTM2.Host.Radix
+public import IntegerMultBounds.MathlibTM2.Node.Rect
+public import IntegerMultBounds.MathlibTM2.Host.IndexRoute
+import Mathlib.Tactic.Positivity.Finset
+import IntegerMultBounds.Compact.Repair
 
 /-!
 # The exact repair after the packed program

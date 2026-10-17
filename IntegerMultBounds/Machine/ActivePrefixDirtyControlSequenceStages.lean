@@ -1,6 +1,9 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixDirtyControlSequenceData
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlConjugationPlaced
+import IntegerMultBounds.Machine.SharedBankRawCompose
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Six concrete original-input primitives on a single thirty-port bank.
 Every target load and compact conjugation is a real paid machine call. -/

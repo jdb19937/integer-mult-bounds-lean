@@ -1,7 +1,13 @@
 module
 
 public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsDecodeLate
-public import IntegerMultBounds.Machine.ActiveRepairLayoutKeysPipelineBudgetLate
+import IntegerMultBounds.Machine.ActiveRepairLayoutKeysPipelineBudgetLate
+public import IntegerMultBounds.Machine.ActiveRepairLateOriginalPipelineBudget
+import IntegerMultBounds.Machine.ActiveRepairLayoutKeysPipelineBudgetCommon
+import IntegerMultBounds.Machine.ActiveRepairLayoutDensityArithmetic
+public import IntegerMultBounds.Machine.VaryingControlRepairDensity
+import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsPipelineLate
+import Mathlib.Tactic.Positivity.Finset
 
 /-! The actual wide-array repair and decoder together have linear physical
 payload-volume cost under the manuscript sparse-hole inequalities. -/

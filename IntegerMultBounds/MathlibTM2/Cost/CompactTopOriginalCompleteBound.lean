@@ -1,6 +1,11 @@
 module
-public import IntegerMultBounds.MathlibTM2.Cost.CompactTopRecordSetupBound
-public import IntegerMultBounds.MathlibTM2.Cost.CompactTopOriginalGeometry
+import IntegerMultBounds.MathlibTM2.Cost.CompactTopRecordSetupBound
+import IntegerMultBounds.MathlibTM2.Cost.CompactTopOriginalGeometry
+import IntegerMultBounds.MathlibTM2.Cost.CompactTopOriginalVolume
+public import IntegerMultBounds.MathlibTM2.Fast.CompactTopOriginal
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! Complete polynomial-plus-volume cost of setup from original unary inputs. -/
 @[expose] public section

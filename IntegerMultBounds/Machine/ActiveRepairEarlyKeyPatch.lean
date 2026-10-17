@@ -1,6 +1,10 @@
 module
 
 public import IntegerMultBounds.Machine.ActiveRepairEarlyKeyPlacement
+public import IntegerMultBounds.Machine.ActiveRepairDestinationPatchRun
+import Mathlib.Tactic.Positivity.Finset
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
 /-! Full original-rank reconstruction and runtime V/T/U patching on the
 shared early-key bank. All fifty-two private tapes are erased. -/

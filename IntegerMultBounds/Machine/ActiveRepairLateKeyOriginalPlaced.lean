@@ -1,6 +1,8 @@
 module
+public import IntegerMultBounds.Machine.ActiveRepairLateKeyOriginalRun
+import IntegerMultBounds.Machine.CompactGadgetReservationPlacement
+import Mathlib.Tactic.Positivity.Finset
 
-public import IntegerMultBounds.Machine.ActiveRepairLateKeyOriginalGeometry
 
 /-! Original-input later key production on arbitrary caller tapes, retaining
 all original descriptors, the scan counter, and every complementary frame. -/

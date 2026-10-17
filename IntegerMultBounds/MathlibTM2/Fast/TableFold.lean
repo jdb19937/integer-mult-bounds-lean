@@ -1,8 +1,11 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.TableWeight
-public import IntegerMultBounds.MathlibTM2.Mult.BandFoldRows
 public import IntegerMultBounds.MathlibTM2.Fast.CMulStream
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
 
 /-!
 # The folded matrix rows as a table stream

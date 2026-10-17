@@ -1,7 +1,11 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Fast.CompactMainBootstrapPipelineGlobals
-public import IntegerMultBounds.MathlibTM2.Cost.CompactCallerRuntimeParameters
+import IntegerMultBounds.MathlibTM2.Cost.CompactCallerRuntimeParameters
+public import IntegerMultBounds.MathlibTM2.Fast.CompactMainBootstrapPipelineFrame
+public import IntegerMultBounds.Machine.CompactReservationGrowth
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! The concrete main bootstrap supplies exactly the original dimension and
 guard words required by the actual compact runtime round. -/

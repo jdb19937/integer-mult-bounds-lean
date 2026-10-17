@@ -2,6 +2,10 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CompactMainBootstrapPipelineFrame
 public import IntegerMultBounds.MathlibTM2.Node.CompactBasisCleanup
+import IntegerMultBounds.MathlibTM2.Node.CompactBasisSetupRest
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! Original globals and charged cleanup at a transform boundary. -/
 @[expose] public section

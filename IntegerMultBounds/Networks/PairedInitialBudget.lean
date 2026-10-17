@@ -2,8 +2,12 @@ module
 
 public import IntegerMultBounds.Networks.PairedCircuitBudget
 public import IntegerMultBounds.Networks.PairedInitialGraph
-public import IntegerMultBounds.Networks.DAGInstructionCount
-public import IntegerMultBounds.Networks.DisjointPruningBudget
+import IntegerMultBounds.Networks.DAGInstructionCount
+import IntegerMultBounds.Networks.DisjointPruningBudget
+public import IntegerMultBounds.Networks.DAGSupportTrace
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
+import Mathlib.Data.Nat.Totient
 
 /-! Certificate-free resource bounds for the literal paired construction.
 Absent references denote zero and are omitted from the physical output list.

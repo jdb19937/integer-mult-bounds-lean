@@ -1,7 +1,8 @@
 module
 
-public import IntegerMultBounds.Schoenhage.Ops
 public import IntegerMultBounds.Spec.SignedRingProduct
+public import IntegerMultBounds.Schoenhage.Moves
+import IntegerMultBounds.Machine.PlacementBank
 
 /-! The boundary between raw bit strings and word tapes. A raw string on a
 tape (`wordAt`, bits from cell zero, blank after) becomes one word of the

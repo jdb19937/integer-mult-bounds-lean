@@ -2,6 +2,11 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Fast.DistSrcCode
 public import IntegerMultBounds.MathlibTM2.Fast.Dist
+public import IntegerMultBounds.MathlibTM2.Fast.DistSrcBase
+public import IntegerMultBounds.MathlibTM2.Fast.SrcStage
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-!
 # Phase 1 of the converter: the records and the axis lists

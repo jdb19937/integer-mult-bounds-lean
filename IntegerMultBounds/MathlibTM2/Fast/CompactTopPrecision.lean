@@ -1,7 +1,9 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Fast.CompactTopReady
-public import IntegerMultBounds.MathlibTM2.Fast.SynMath
+import IntegerMultBounds.MathlibTM2.Fast.CompactTopReady
+import IntegerMultBounds.MathlibTM2.Fast.SynMath
+public import IntegerMultBounds.MathlibTM2.Fast.CompactTopSelection
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-! The original input precision pays the computed compact top working width.
 The pre-shift array fits exactly the width emitted by the runtime constructor. -/

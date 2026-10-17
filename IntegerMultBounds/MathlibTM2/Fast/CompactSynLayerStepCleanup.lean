@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Node.CompactBasisRefresh
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-! Restored legacy files commute with the compact bank, enabling actual final cleanup. -/
 @[expose] public section

@@ -2,6 +2,7 @@ module
 
 public import IntegerMultBounds.Machine.ActivePrefixEarlySequenceOriginalHeaders
 public import IntegerMultBounds.Machine.ActivePrefixEarlySequenceOriginalPayload
+import Mathlib.Tactic.Positivity.Finset
 
 /-! End-to-end physical preparation, all four early loads and header cleanup.
 Only original geometry/stage words and the original array are supplied. -/

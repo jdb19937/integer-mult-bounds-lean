@@ -1,6 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.CountedRepairKeyAppend
+public import IntegerMultBounds.Machine.CountedRepairKeyBank
+import Mathlib.Tactic.Positivity.Finset
 
 /-! The physical conditional key writer placed in the thirty-tape repair bank. -/
 

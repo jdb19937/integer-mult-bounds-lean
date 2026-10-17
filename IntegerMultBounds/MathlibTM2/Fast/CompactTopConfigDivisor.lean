@@ -2,6 +2,7 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Fast.SynRec
 public import IntegerMultBounds.Machine.CompactGlobalRowPadding
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-! Runtime construction of the global divisor from the original axis count.
 No depth or row-reservation oracle is supplied to the machine. -/

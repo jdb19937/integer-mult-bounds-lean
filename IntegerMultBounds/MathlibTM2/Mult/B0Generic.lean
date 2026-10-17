@@ -1,6 +1,9 @@
 module
 
 public import IntegerMultBounds.Resampling.TabledMaps
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! `B̃₀ = D̃' J̃ C` for any computed inverse `J̃`: a computed inverse that keeps the unit
 disk and approximates `J (v/2)` within a scaled error gives the source-error interface of

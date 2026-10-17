@@ -1,6 +1,13 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CompactSynRoundFrame
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynHybridRound
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainBootstrapRuntime
+public import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepCost
+public import IntegerMultBounds.MathlibTM2.Fast.CompactTopExecution
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! Named runtime geometry and the exact cost/contract of the actual hybrid layer step. -/
 @[expose] public section

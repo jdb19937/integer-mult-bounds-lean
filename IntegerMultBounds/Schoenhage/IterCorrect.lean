@@ -1,7 +1,8 @@
 module
 
 public import IntegerMultBounds.Schoenhage.Iter
-public import IntegerMultBounds.Schoenhage.Level
+import IntegerMultBounds.Schoenhage.Level
+public import IntegerMultBounds.Schoenhage.Transform
 
 /-! The layer-by-layer transform of `Iter` is the recursive transform of
 `Transform`. Over residues modulo `2^N + 1`, with `K = 2^k` dividing `N` and

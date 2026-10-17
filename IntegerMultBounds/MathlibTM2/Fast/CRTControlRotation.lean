@@ -2,6 +2,11 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CRTControlAllFibers
 public import IntegerMultBounds.MathlibTM2.Fast.CRTControlWorkspace
+import IntegerMultBounds.MathlibTM2.Fast.CRTControlBounds
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
 
 /-! # The concrete indexed scanner implements the CRT rotation
 

@@ -1,6 +1,8 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CompactSynRows
+import IntegerMultBounds.MathlibTM2.Fast.SynRecB
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-! Actual top-level row padding includes every outside row and high spectator.
 One padding to the global recursive divisor costs at most twice the original

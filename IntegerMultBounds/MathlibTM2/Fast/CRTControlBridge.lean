@@ -1,7 +1,10 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CRTControlBank
-public import IntegerMultBounds.MathlibTM2.Fast.CRTControlOffset
+import IntegerMultBounds.MathlibTM2.Fast.CRTControlOffset
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! # Offsets in the descriptor scanner's own bank
 

@@ -1,9 +1,10 @@
 module
 
-public import IntegerMultBounds.Machine.CountedRankSplitEndpoint
 public import IntegerMultBounds.Machine.CountedPackedInverse
 public import IntegerMultBounds.Machine.CountedGuardOriginal
 public import IntegerMultBounds.Machine.CountedIdealToggle
+public import IntegerMultBounds.Machine.RepairScan
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Fixed extracted-field repair bank. Original V/T/current source controls,
 q/b/n and the full scan counter are retained. Inverse, guard and toggle share

@@ -1,7 +1,9 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixCorrectionLoadData
-public import IntegerMultBounds.Machine.ActivePrefixLayoutFields
+import IntegerMultBounds.Machine.ActivePrefixLayoutFields
+import Mathlib.Tactic.Positivity.Finset
+public import IntegerMultBounds.Machine.CompactGadgetReservationShape
 
 /-! Every original row receives this address's freshly computed modular
 control-minus-selected correction. Repetition preserves prefix order exactly,

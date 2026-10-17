@@ -1,7 +1,11 @@
 module
 
-public import IntegerMultBounds.Machine.ActiveRepairEarlyFieldsPlaced
-public import IntegerMultBounds.Machine.CountedRepairKeyValue
+import IntegerMultBounds.Machine.CountedRepairKeyValue
+public import IntegerMultBounds.Machine.ActiveRepairEarlyFieldsBank
+public import IntegerMultBounds.Machine.CountedRepairKeyBank
+public import IntegerMultBounds.Compact.KeyValue
+import Mathlib.Tactic.Positivity.Finset
+import Mathlib.Data.List.GetD
 
 /-! The actual extracted-field computation has the existing exact local guard
 and repair-destination rank semantics. A concatenated word is used only in

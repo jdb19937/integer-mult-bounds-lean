@@ -1,6 +1,12 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Cost.MatchSynPipe
+import IntegerMultBounds.MathlibTM2.Cost.MatchSynPipe
+import IntegerMultBounds.MathlibTM2.Cost.MatchBase
+public import IntegerMultBounds.MathlibTM2.Mult.Sizes
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
 
 /-!
 # Absorbing polynomial CRT control arithmetic

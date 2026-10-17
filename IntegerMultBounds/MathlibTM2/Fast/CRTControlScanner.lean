@@ -2,7 +2,11 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CRTControlBank
 public import IntegerMultBounds.MathlibTM2.Fast.CRTControlScan
-public import IntegerMultBounds.MathlibTM2.Fast.CRTControlBounds
+import IntegerMultBounds.MathlibTM2.Fast.CRTControlBounds
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
 
 /-! # Concrete fixed CRT descriptor scanner
 

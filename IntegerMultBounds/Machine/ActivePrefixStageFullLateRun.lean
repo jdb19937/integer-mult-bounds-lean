@@ -2,6 +2,7 @@ module
 
 public import IntegerMultBounds.Machine.ActivePrefixStageFullErase
 public import IntegerMultBounds.Machine.ActivePrefixStageFullCompose
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Complete later selected action from original node/slot geometry, including
 physical descriptor preparation and erasure around the unchanged raw array. -/

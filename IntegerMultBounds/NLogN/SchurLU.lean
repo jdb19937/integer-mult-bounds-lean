@@ -1,6 +1,7 @@
 module
 
-public import IntegerMultBounds.NLogN.SchurBlockError
+import IntegerMultBounds.NLogN.SchurBlockError
+public import IntegerMultBounds.NLogN.SchurSolve
 
 /-! LU factors of successive Schur elimination and the residual bound for
 rounded triangular solves. Eliminating in list order gives `A = L U` on the

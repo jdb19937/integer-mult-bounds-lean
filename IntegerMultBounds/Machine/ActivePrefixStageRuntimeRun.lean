@@ -1,6 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixStageRuntimeProgram
+public import IntegerMultBounds.Machine.ActivePrefixStageRuntimeData
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Physical execution of the complete runtime-selected stage. The two branch
 proofs justify the same fixed program; no branch is supplied to its input. -/

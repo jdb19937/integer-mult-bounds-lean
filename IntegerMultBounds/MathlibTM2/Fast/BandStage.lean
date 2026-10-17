@@ -1,9 +1,14 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.BandPrep
-public import IntegerMultBounds.MathlibTM2.Fast.BandFits
-public import IntegerMultBounds.MathlibTM2.Fast.ResampBPipe
-public import IntegerMultBounds.MathlibTM2.Mult.Pipeline
+import IntegerMultBounds.MathlibTM2.Fast.BandFits
+import IntegerMultBounds.MathlibTM2.Fast.ResampBPipe
+import IntegerMultBounds.MathlibTM2.Fast.PrepA
+import IntegerMultBounds.Resampling.NeumannWords
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
 
 /-!
 # The banded `B̃₀` stage

@@ -1,8 +1,12 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Fast.ResampAAxis
-public import IntegerMultBounds.MathlibTM2.Fast.ResampABox
+import IntegerMultBounds.MathlibTM2.Fast.ResampABox
 public import IntegerMultBounds.MathlibTM2.Node.SwapPass
+public import IntegerMultBounds.MathlibTM2.Fast.ResampALine
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
 
 /-!
 # Moving an axis of the box innermost

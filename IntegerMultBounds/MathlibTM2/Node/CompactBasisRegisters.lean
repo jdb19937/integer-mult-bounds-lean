@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Node.CompactBasis
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-! Concrete layer-machine wiring for compact basis changes. Global reservation
 counters persist in bc registers; current-node parameters alias the layer counters. -/

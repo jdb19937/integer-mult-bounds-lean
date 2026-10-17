@@ -2,6 +2,9 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CompactSynCompare
 public import IntegerMultBounds.MathlibTM2.Fast.CompactMainLayer
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! Actual counter-driven dispatch between compact chunk rounds and legacy direct rounds. -/
 @[expose] public section

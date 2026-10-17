@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.Machine.ActiveRepairLateKeyOriginalValid
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Actual header synthesis, full-rank later-key computation, and generated
 header erasure share ninety-one blank tapes. Original inputs are retained. -/

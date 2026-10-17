@@ -2,6 +2,7 @@ module
 
 public import IntegerMultBounds.Machine.ActiveRepairLayoutPermutation
 public import IntegerMultBounds.Machine.ActiveRepairLayoutPermutationWords
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Actual global inverse-then-ideal destinations change only the recovered
 V/T/U fields. The words computed on tapes identify those fields exactly. -/

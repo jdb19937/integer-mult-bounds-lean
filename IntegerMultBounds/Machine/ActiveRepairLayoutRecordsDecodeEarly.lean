@@ -1,7 +1,12 @@
 module
 
-public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsDecodeCommon
-public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsPipelineEarly
+import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsDecodeCommon
+import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsPipelineEarly
+public import IntegerMultBounds.Machine.ActiveRepairEarlyOriginalPipelineEndpoint
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsMove
+public import IntegerMultBounds.Machine.ActiveRepairLayoutKeysEarly
+public import IntegerMultBounds.Machine.ActiveRepairRecordFlattenPlaced
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Actual repair followed by the literal raw decoder. Decoding destroys the
 repaired record buffer, emits ideal payload bits in a clean auxiliary port,

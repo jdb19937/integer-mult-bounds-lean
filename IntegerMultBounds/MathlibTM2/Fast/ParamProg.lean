@@ -1,8 +1,12 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Fast.ParamSub
 public import IntegerMultBounds.MathlibTM2.Fast.CompactDyadicParamStageCore
-public import IntegerMultBounds.MathlibTM2.Mult.CompactDyadicRootRoom
+import IntegerMultBounds.MathlibTM2.Mult.CompactDyadicRootRoom
+public import IntegerMultBounds.MathlibTM2.Mult.Pipeline
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
 
 /-!
 # The parameter program

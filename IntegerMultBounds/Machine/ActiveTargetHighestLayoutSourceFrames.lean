@@ -1,6 +1,9 @@
 module
 
-public import IntegerMultBounds.Machine.ActiveTargetHighestLayoutWords
+import IntegerMultBounds.Machine.ActiveTargetHighestLayoutWords
+public import IntegerMultBounds.Machine.ActiveTargetHighestLayoutEarlyCoordinates
+public import IntegerMultBounds.Compact.ActiveTargetSubsegmentWords
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Highest-bit actions retain complete source intervals. For an earlier
 source, its original interval must lie strictly above target-high bit zero;

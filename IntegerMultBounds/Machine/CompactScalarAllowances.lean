@@ -1,7 +1,7 @@
 module
 
 public import IntegerMultBounds.Sizes
-public import IntegerMultBounds.Asymptotics
+import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 
 /-! The actual multiplier choices d=floor(b^epsilon), K=floor(d^spacing)
 and p=6b pay the complete original-axis repair size. No independent cubic

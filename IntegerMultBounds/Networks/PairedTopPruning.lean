@@ -1,7 +1,21 @@
 module
 
 public import IntegerMultBounds.Networks.PairedLevelBound
-public import IntegerMultBounds.Networks.PairedSingleBudget
+import IntegerMultBounds.Networks.PairedSingleBudget
+import IntegerMultBounds.Networks.PairedLevelTools
+public import IntegerMultBounds.Networks.PairedPruning
+import IntegerMultBounds.Networks.DisjointPruningBudget
+import IntegerMultBounds.Networks.DAGValueTransfer
+public import IntegerMultBounds.Networks.DAGAdditionIds
+import IntegerMultBounds.Networks.PairedBlockCorrect
+import IntegerMultBounds.Networks.PairedReconstructionKeys
+import IntegerMultBounds.Networks.PairedCoarseQuery
+import IntegerMultBounds.Networks.PairedStripSupport
+public import IntegerMultBounds.Networks.PairedStripCorrect
+import IntegerMultBounds.Networks.DisjointExclusion
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
+import Mathlib.Data.Nat.Totient
 
 /-! Dead strip totals at the top level. With zero vertex weights, the total
 of the strip at `a` is every edge from its partner to the other groups. That

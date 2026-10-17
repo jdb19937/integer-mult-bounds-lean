@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Cost.CompactFactor
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-! Actual compact factor costs: the child bound has coefficient one, and every
 other stage is paid by local volume and the compact selected-width envelope. -/

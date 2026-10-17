@@ -1,6 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.ActiveTargetHighestLayoutWords
+public import IntegerMultBounds.Machine.ActiveTargetHighestLayoutGlobal
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Composing a verified low selected-bit action with the physical highest
 bit action supplies every selected bit. The word theorem retains arbitrary

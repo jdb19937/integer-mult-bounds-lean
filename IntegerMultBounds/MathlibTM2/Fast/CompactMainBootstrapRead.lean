@@ -1,7 +1,9 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CompactMainRegs
-public import IntegerMultBounds.MathlibTM2.Node.CompactGlobalBootstrap
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! Copy the original main inputs into bootstrap scratch, preserving their named sources. -/
 @[expose] public section

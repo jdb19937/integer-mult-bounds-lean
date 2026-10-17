@@ -1,7 +1,8 @@
 module
 
-public import IntegerMultBounds.Machine.ActiveRepairLateKey
 public import IntegerMultBounds.Machine.ActiveRepairRankHeadersPlaced
+public import IntegerMultBounds.Machine.ActiveRepairLateKeyPlaced
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Original geometric descriptors and a genuine rank supply all inputs of
 the later key machine. Parser and patch headers start physically blank. -/

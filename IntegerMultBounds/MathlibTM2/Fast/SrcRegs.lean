@@ -1,10 +1,13 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Fast.PrepB
 public import IntegerMultBounds.MathlibTM2.Fast.LoadChirp
-public import IntegerMultBounds.MathlibTM2.Fast.ConvBox
-public import IntegerMultBounds.MathlibTM2.Fast.LoadRing
-public import IntegerMultBounds.MathlibTM2.Fast.CRTMachine
+public import IntegerMultBounds.MathlibTM2.Fast.CRTDrive
+public import IntegerMultBounds.MathlibTM2.Fast.ConvSynth
+public import IntegerMultBounds.MathlibTM2.Fast.ResampBAll
+public import IntegerMultBounds.MathlibTM2.Fast.ResampAAll
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-!
 # The register file of the source transform

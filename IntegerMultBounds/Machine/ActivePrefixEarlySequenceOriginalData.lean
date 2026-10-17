@@ -1,7 +1,9 @@
 module
 
-public import IntegerMultBounds.Machine.ActivePrefixLayoutHeadersLayout
 public import IntegerMultBounds.Machine.ActivePrefixEarlySequenceData
+public import IntegerMultBounds.Machine.ActivePrefixLayoutHeadersPlaced
+import IntegerMultBounds.Machine.CompactGadgetReservationPlacement
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Original caller bank for the four early loads. Twenty-two original numeric
 words and the array are supplied; both ten-word consumer header banks start

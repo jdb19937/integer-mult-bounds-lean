@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixParityOnlyCleanup
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Complete pure-parity offset producer from original prefix/source/gadget
 descriptors, including all tables, varying controls, arithmetic and cleanup.

@@ -1,6 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsShape
+public import IntegerMultBounds.Machine.ActiveRepairLayoutPermutation
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Concrete packed actual and ideal operations move whole records and retain
 all bit positions inside them. Repair uses the address-only permutation. -/

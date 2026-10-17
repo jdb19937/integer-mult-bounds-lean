@@ -1,6 +1,8 @@
 module
+import Mathlib.Analysis.SpecialFunctions.Pow.Real
+public import Mathlib.Data.ZMod.Basic
+public import IntegerMultBounds.Machine
 
-public import IntegerMultBounds.MathlibTM2.Layer.Format
 
 /-!
 # Signed-carry addition, least significant bit first

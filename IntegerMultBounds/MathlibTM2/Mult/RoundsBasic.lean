@@ -1,6 +1,8 @@
 module
 
 public import IntegerMultBounds.Spec.SyntheticTransformFacts
+import IntegerMultBounds.NLogN.SynthMultiD
+import Mathlib.Data.List.GetD
 
 /-!
 # Transform rounds: addresses, butterflies, twiddles

@@ -1,7 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixDirtyControlGlobalConjugation
-public import IntegerMultBounds.Machine.ActivePrefixDirtyControlSourceSemantics
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlGlobalTarget
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Full-array forward semantics of the actual prepared later schedule, with
 both early blocks reading the current compact U and both source conjugations

@@ -4,6 +4,9 @@ public import IntegerMultBounds.NLogN.ResamplingAssembly
 public import IntegerMultBounds.NLogN.ResamplingApprox
 public import IntegerMultBounds.NLogN.OffDiagApprox
 public import IntegerMultBounds.NLogN.NeumannApprox
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! Proposition 4.7(ii) of Harvey–van der Hoeven: numerical approximations of the
 resampling maps `A = S / 2` and `B = P_s⁻¹ D' J' C P_t`. The numerical `Ã` sums

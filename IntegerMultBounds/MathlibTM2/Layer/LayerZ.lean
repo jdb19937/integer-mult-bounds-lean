@@ -1,7 +1,9 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Layer.NodeZ
 public import IntegerMultBounds.MathlibTM2.Layer.Enc
+import Mathlib.Tactic.Positivity.Finset
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
 /-!
 # The recursive layer on Gaussian-integer arrays

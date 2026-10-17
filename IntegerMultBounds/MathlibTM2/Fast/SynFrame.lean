@@ -3,6 +3,11 @@ module
 public import IntegerMultBounds.MathlibTM2.Host.Embed
 public import IntegerMultBounds.MathlibTM2.Fast.SynFwd
 public import IntegerMultBounds.MathlibTM2.Fast.ConvSynth
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
+public import IntegerMultBounds.MathlibTM2.Mult.CRT
 
 /-!
 # The synthetic transforms in a larger register file

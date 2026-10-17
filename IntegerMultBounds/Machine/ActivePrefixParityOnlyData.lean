@@ -2,7 +2,10 @@ module
 
 public import IntegerMultBounds.Machine.ActivePrefixSelectedOffsetData
 public import IntegerMultBounds.Machine.BinaryVaryingParityOnlyGather
-public import IntegerMultBounds.Machine.GatherStreamData
+import IntegerMultBounds.Machine.GatherStreamData
+import IntegerMultBounds.Compact.KeyValue
+import Mathlib.Tactic.Positivity.Finset
+import IntegerMultBounds.Compact.PowerTwoDigits
 
 /-! Literal pure-parity offsets from the current full prefix-address target
 field and physically extracted source controls. The emitted rows are the pure-parity second-load offsets. -/

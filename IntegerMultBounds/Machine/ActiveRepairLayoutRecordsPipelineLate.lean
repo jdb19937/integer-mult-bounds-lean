@@ -1,7 +1,11 @@
 module
 
 public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsMove
-public import IntegerMultBounds.Machine.ActiveRepairLayoutKeysPipelineLate
+import IntegerMultBounds.Machine.ActiveRepairLayoutKeysPipelineLate
+public import IntegerMultBounds.Machine.ActiveRepairLateOriginalPipelineEndpoint
+public import IntegerMultBounds.Machine.ActiveRepairLayoutKeysLate
+import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsPermutation
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Full-width physical records use payload-one repair addresses and original
 geometry unchanged. The checked repair endpoint yields exact ideal records and

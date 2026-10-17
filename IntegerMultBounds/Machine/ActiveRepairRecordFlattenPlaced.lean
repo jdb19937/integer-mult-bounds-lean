@@ -1,7 +1,9 @@
 module
 
 public import IntegerMultBounds.Machine.ActiveRepairRecordFlattenAlphabet
-public import IntegerMultBounds.Machine.CompactGadgetReservationPlacement
+import IntegerMultBounds.Machine.CompactGadgetReservationPlacement
+public import IntegerMultBounds.Machine.CleanSubbank
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Actual raw decoder on two caller ports, preserving the full complementary
 frame and restoring appended private storage. -/

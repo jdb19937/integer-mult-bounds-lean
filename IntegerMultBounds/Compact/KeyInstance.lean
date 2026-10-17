@@ -1,7 +1,11 @@
 module
 
 public import IntegerMultBounds.Compact.KeyValue
-public import IntegerMultBounds.Machine.PlacementBank
+import IntegerMultBounds.Machine.PlacementBank
+import Mathlib.Tactic.Positivity.Finset
+import IntegerMultBounds.Compact.Counting
+public import IntegerMultBounds.Machine.KeyRoutine
+public import IntegerMultBounds.Machine.InjectivePlacement
 
 /-! The key routine placed into the repair scan's bank meets the scan's key
 contract for the concrete early instance: at every rank it writes the

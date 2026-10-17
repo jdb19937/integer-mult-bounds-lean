@@ -3,6 +3,10 @@ module
 public import IntegerMultBounds.Machine.ActiveRepairDestinationPatchData
 public import IntegerMultBounds.Machine.ActiveRepairDestinationPatchPlaced
 public import IntegerMultBounds.Machine.ActiveRepairRankFieldsPlaced
+import IntegerMultBounds.Machine.CountedRankSplitData
+import Mathlib.Tactic.Positivity.Finset
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
 /-! Full-width rank reconstruction from the genuine short counter, followed by
 three runtime field replacements. Twelve caller slots share nine erased slots. -/

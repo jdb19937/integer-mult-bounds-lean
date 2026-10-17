@@ -1,7 +1,9 @@
 module
 
-public import IntegerMultBounds.Machine.ActivePrefixStageWidthBranch
 public import IntegerMultBounds.Machine.ActivePrefixStageDispatchData
+public import IntegerMultBounds.Machine.ActivePrefixStageWidthPlaced
+import Mathlib.Tactic.Positivity.Finset
+import IntegerMultBounds.Machine.BinaryDescriptorStackRoundtrip
 
 /-! The width selector reads original public slot seven. Its separate flag
 follows the existing original13/raw/direction-flag caller, so the source-order

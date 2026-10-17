@@ -2,6 +2,12 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Fast.ResampASwap
 public import IntegerMultBounds.MathlibTM2.Mult.Pipeline
+public import IntegerMultBounds.MathlibTM2.Fast.ResampABox
+public import IntegerMultBounds.MathlibTM2.Fast.ResampAAxis
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
 
 /-!
 # The numeric `Ã` along every axis of the padded box

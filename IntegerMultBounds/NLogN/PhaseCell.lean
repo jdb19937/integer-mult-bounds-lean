@@ -1,6 +1,9 @@
 module
 
 public import IntegerMultBounds.NLogN.ResamplingInverse
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! Exact phase-cell structure of the existing normalized resampling matrix.
 The phase-cell inverse construction uses this identity to replace each local

@@ -2,6 +2,7 @@ module
 
 public import IntegerMultBounds.Machine.ActivePrefixStageSingletonSelected
 public import IntegerMultBounds.Machine.ActivePrefixStageSingletonDispatch
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Highest-only singleton actions and their physical direction selection
 square to the identity on the complete original array. -/

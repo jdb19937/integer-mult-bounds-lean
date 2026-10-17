@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsBankHeaders
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Original geometry pays the complete physical repair-header preparation,
 including measurement, arithmetic, record-count synthesis and metadata copies. -/

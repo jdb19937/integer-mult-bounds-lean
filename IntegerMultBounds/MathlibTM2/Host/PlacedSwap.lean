@@ -2,6 +2,7 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Host.ChunkSwap
 public import IntegerMultBounds.MathlibTM2.Host.Placed
+import IntegerMultBounds.Machine.PlacementBank
 
 /-!
 # Rectangular interchange on placed host registers

@@ -1,6 +1,5 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Node.CompactRotRuntime
 public import IntegerMultBounds.MathlibTM2.Node.SlotXor
 public import IntegerMultBounds.MathlibTM2.Host.SSMul
 

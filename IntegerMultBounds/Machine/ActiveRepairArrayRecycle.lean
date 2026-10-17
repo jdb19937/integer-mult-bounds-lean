@@ -1,6 +1,5 @@
 module
 
-public import IntegerMultBounds.Machine.WordBankCleanup
 public import IntegerMultBounds.Machine.ActiveTargetRotation
 
 /-! Physically return a repaired full-width array to its original caller tape,

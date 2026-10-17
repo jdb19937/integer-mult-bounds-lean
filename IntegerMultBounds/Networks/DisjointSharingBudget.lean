@@ -1,7 +1,16 @@
 module
 
-public import IntegerMultBounds.Networks.PairedCircuitBudget
-public import IntegerMultBounds.Networks.DisjointUnique
+import IntegerMultBounds.Networks.PairedCircuitBudget
+import IntegerMultBounds.Networks.DisjointUnique
+public import IntegerMultBounds.Networks.DAGAllocatorBudget
+public import IntegerMultBounds.Networks.PairedCircuit
+import Mathlib.Tactic.NormNum.OfScientific
+import Mathlib.Tactic.NormNum.DivMod
+import Mathlib.Tactic.NormNum.Abs
+import Mathlib.Data.Rat.Cast.Order
+import Mathlib.Order.Lattice.Nat
+import Mathlib.Tactic.NormNum.Pow
+import Mathlib.Algebra.Group.Action.Defs
 
 /-! Exact allocation accounting for persistent support interning. The cost is
 zero for absent operands and for an already stored union. Stateful loops charge

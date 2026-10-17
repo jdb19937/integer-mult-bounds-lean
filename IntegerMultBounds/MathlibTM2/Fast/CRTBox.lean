@@ -3,6 +3,10 @@ module
 public import IntegerMultBounds.MathlibTM2.Mult.CRT
 public import IntegerMultBounds.MathlibTM2.Host.ChunkSwap
 public import IntegerMultBounds.MathlibTM2.Host.Index
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
 
 /-!
 # Padded boxes, layouts and the counting of valid addresses

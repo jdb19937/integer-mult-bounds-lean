@@ -3,7 +3,9 @@ module
 public import IntegerMultBounds.Machine.ActivePrefixCorrectionOffsetSubtract
 public import IntegerMultBounds.Machine.ActivePrefixSelectedOffsetPlaced
 public import IntegerMultBounds.Machine.ActivePrefixControlOffsetPlaced
-public import IntegerMultBounds.Machine.ActivePrefixOffsetHeadersCleanup
+public import IntegerMultBounds.Machine.ActivePrefixCorrectionOffsetData
+import Mathlib.Tactic.Positivity.Finset
+public import IntegerMultBounds.Machine.CompactGadgetReservationShape
 
 /-! Eight immutable caller descriptors, two internally produced operands,
 one correction output and five internally synthesized numeric descriptors. -/

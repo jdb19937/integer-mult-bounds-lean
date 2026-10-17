@@ -1,8 +1,13 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CompactSynUniformLayerContract
-public import IntegerMultBounds.MathlibTM2.Fast.CompactDistWires
-public import IntegerMultBounds.MathlibTM2.Cost.CompactCallerRetunedCapacity
+import IntegerMultBounds.MathlibTM2.Fast.CompactDistWires
+import IntegerMultBounds.MathlibTM2.Cost.CompactCallerRetunedCapacity
+public import IntegerMultBounds.MathlibTM2.Mult.CompactSizes
+public import IntegerMultBounds.MathlibTM2.Fast.DistSynMain
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! The actual distributed transform supplies the compact caller geometry.
 Its axis count is d-1; its precision and coefficient count are the original

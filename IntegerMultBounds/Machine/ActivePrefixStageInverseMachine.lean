@@ -1,6 +1,9 @@
 module
+import Mathlib.Tactic.Positivity.Finset
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
+public import IntegerMultBounds.Machine.Hoare
 
-public import IntegerMultBounds.Machine.ActivePrefixStageFullCompose
 
 /-! A proved involutive array action gives the actual same-machine return
 execution and an exact paid round trip, for arbitrary physical caller banks. -/

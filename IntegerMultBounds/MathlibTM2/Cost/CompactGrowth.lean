@@ -1,8 +1,11 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Cost.Growth
+import IntegerMultBounds.MathlibTM2.Cost.Growth
 public import IntegerMultBounds.MathlibTM2.Mult.CompactSizes
 public import IntegerMultBounds.MathlibTM2.Cost.CompactInterimParameters
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! Analytic size bounds for the actual eighth-root compact chunk. -/
 @[expose] public section

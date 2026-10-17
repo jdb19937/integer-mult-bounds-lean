@@ -1,7 +1,13 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Fast.TablePi
+import IntegerMultBounds.MathlibTM2.Fast.TablePi
 public import IntegerMultBounds.MathlibTM2.Fast.TableNum
+public import IntegerMultBounds.MathlibTM2.Fast.TableProg
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
+import Mathlib.Analysis.Real.Pi.Bounds
 
 /-!
 # Taylor magnitudes and the weight routine on the table machine

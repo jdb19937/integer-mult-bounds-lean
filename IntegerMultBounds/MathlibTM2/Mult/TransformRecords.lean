@@ -1,7 +1,7 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Mult.SynthErrRounds
-public import IntegerMultBounds.Spec.SimultaneousLayerFacts
+import IntegerMultBounds.Spec.SimultaneousLayerFacts
 
 /-! The computed forward and opposite transforms return explicit public signed
 records satisfying the numerical clauses of the existing transform interface.

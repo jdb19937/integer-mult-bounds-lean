@@ -2,6 +2,8 @@ module
 
 public import IntegerMultBounds.Machine.ActivePrefixDirtyControlSequenceData
 public import IntegerMultBounds.Machine.ActivePrefixDirtyControlSourceGeometry
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlLayoutFields
+import Mathlib.Tactic.Positivity.Finset
 
 /-! The prepared later sequence's complete geometry is obtained from the
 original unchanged array and compact parameters, including all absorption. -/

@@ -1,7 +1,12 @@
 module
 
 public import IntegerMultBounds.NLogN.SchurFill
-public import IntegerMultBounds.NLogN.PhaseCellBoundarySupport
+import IntegerMultBounds.NLogN.PhaseCellBoundarySupport
+public import IntegerMultBounds.NLogN.PhaseCellMatrix
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+public import IntegerMultBounds.Machine
 
 /-! Fill of the banded factorization of the actual rounded matrix. In
 physical order, every entry of the elimination factors lies within the band

@@ -1,7 +1,9 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Mult.B0Generic
-public import IntegerMultBounds.NLogN.PhaseCellFactorization
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! The `B̃₀` interface for a small-gap inverse computed through the rounded
 matrix. If the computed inverse is within `e` of `L (v/2) / 2^j`, where `L`

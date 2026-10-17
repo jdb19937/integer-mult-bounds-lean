@@ -2,7 +2,9 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CompactSynUniformLayerContract
 public import IntegerMultBounds.MathlibTM2.Fast.CompactSynRound
-public import IntegerMultBounds.MathlibTM2.Fast.CompactSynTwiddle
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! Actual hybrid forward and opposite rounds, with original numerator semantics. -/
 @[expose] public section

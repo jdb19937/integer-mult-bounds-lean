@@ -2,6 +2,9 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CompactDistRetune
 public import IntegerMultBounds.MathlibTM2.Fast.Dist
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! Legacy distribution followed by a charged compact chunk retuning, before
 any chunk-dependent wire layout or permutation is constructed. -/

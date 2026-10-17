@@ -2,6 +2,7 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CompactSynRec
 public import IntegerMultBounds.MathlibTM2.Fast.CompactSynRecRows
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-! # Original-parameter compact root piece records
 

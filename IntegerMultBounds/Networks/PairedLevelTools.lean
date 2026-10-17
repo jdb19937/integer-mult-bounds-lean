@@ -1,7 +1,12 @@
 module
+public import IntegerMultBounds.Networks.DAGAllocatorBudget
+public import IntegerMultBounds.Networks.PairedCircuit
+import Mathlib.Tactic.NormNum.OfScientific
+import Mathlib.Tactic.NormNum.DivMod
+import Mathlib.Tactic.NormNum.Abs
+import Mathlib.Data.Rat.Cast.Order
+import Mathlib.Tactic.NormNum.Pow
 
-public import IntegerMultBounds.Networks.PairedPresence
-public import IntegerMultBounds.Networks.PairedStripCorrect
 
 /-! Structural tools for counting one paired recursion level: every stage
 extends its DAG, loops may be charged under an invariant, the consecutive

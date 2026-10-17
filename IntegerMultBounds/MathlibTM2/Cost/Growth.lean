@@ -1,8 +1,12 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Mult.Sizes
-public import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
-public import Mathlib.Data.Nat.Size
+import Mathlib.Data.Nat.Size
+import Mathlib.Analysis.Complex.ExponentialBounds
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
 
 /-!
 # Growth of the size parameters

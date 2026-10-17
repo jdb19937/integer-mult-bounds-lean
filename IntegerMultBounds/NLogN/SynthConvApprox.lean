@@ -1,7 +1,6 @@
 module
 
 public import IntegerMultBounds.NLogN.SynthConv
-public import IntegerMultBounds.NLogN.Section5Approx
 
 /-! Proposition 3.4 of Harvey and van der Hoeven in one dimension over the
 synthetic ring in coefficient form. The normalised convolution

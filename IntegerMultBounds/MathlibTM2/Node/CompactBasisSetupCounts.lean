@@ -2,6 +2,7 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CompactSynRec
 public import IntegerMultBounds.MathlibTM2.Fast.CompactSynRecRows
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-! Call-free synthesis of the seven persistent compact basis counters from original inputs. -/
 @[expose] public section

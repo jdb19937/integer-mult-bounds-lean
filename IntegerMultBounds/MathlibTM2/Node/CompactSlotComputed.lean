@@ -2,6 +2,8 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Node.CompactDescriptorBank
 public import IntegerMultBounds.MathlibTM2.Node.CompactEncodingOffset
+public import IntegerMultBounds.MathlibTM2.Node.CompactSlotPrepared
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-! Fully computed compact slot execution: runtime descriptors, native execution,
 and cleanup. Low address digits are folded without moving the encoded stream. -/

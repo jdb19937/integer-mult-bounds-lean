@@ -1,7 +1,10 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.ResampBList
-public import IntegerMultBounds.MathlibTM2.Fast.ResampBAxis
+public import IntegerMultBounds.NLogN.ResamplingMultiNumeric
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-!
 # `B̃₀` along every axis of the padded box: the stream semantics

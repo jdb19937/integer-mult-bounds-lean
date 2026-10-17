@@ -1,6 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixDirtyControlGlobalSequence
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlSourceSemantics
+import Mathlib.Tactic.Positivity.Finset
 
 /-! The two conjugations shift exactly T or U at their original coordinates;
 the dirty back word and all spectators return to their original values. -/

@@ -1,7 +1,10 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Fast.CompactMainPrimitiveRuns
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainPrimitiveRuns
 public import IntegerMultBounds.MathlibTM2.Fast.CompactMainEntryTable
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! Primitive contracts remain valid after installing the expanded main entry. -/
 @[expose] public section

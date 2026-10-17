@@ -1,8 +1,11 @@
 module
 
-public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsFullInvolution
-public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsFullEarlyPlaced
-public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsFullLatePlaced
+import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsFullInvolution
+import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsFullLateSelected
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsFullLateData
+import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsFullEarlySelected
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsFullEarlyData
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Actual complete low/high array transformations square to the identity,
 on every original address including all spectator and payload coordinates. -/

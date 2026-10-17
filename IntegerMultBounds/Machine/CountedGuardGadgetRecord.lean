@@ -2,7 +2,8 @@ module
 
 public import IntegerMultBounds.Machine.CountedGuardTest
 public import IntegerMultBounds.Machine.CountedGuardGadgetPosition
-public import IntegerMultBounds.Machine.GuardGadget
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
 /-! Fixed-control guard-record bodies. Comparison widths are immutable runtime
 headers; both replay and constant rewinds are literal, charged tape programs. -/

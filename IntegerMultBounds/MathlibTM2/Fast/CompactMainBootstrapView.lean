@@ -1,7 +1,12 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Fast.CompactSynRoundFrame
 public import IntegerMultBounds.MathlibTM2.Fast.CompactMainBootstrapPipeline
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynMainProjection
+public import IntegerMultBounds.MathlibTM2.Fast.CompactSynDispatch
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainBootstrapRuntime
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! Derive the bootstrap setup view from the actual blank transform scratch and private bank. -/
 @[expose] public section

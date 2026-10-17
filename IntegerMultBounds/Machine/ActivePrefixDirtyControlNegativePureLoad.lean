@@ -1,6 +1,9 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixDirtyControlNegativePureLoadCleanup
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlNegativePureLoadRun
+import IntegerMultBounds.Machine.ActivePrefixDirtyControlLoad
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Four complete dirty-U physical load modes. Only original layout, row and
 suffix descriptors and the full array enter; all offset streams and dimensions

@@ -1,16 +1,15 @@
 module
 
-public import Mathlib.Algebra.Order.BigOperators.Group.Finset
-public import Mathlib.Algebra.Order.BigOperators.GroupWithZero.Finset
-public import Mathlib.Algebra.Order.Ring.Pow
+import Mathlib.Algebra.Order.BigOperators.GroupWithZero.Finset
+import Mathlib.Algebra.Order.Ring.Pow
 public import Mathlib.Basic.Real.Basic
-public import Mathlib.Data.Nat.GCD.Basic
-public import Mathlib.Data.Nat.Prime.Basic
-public import Mathlib.RingTheory.Int.Basic
-public import Mathlib.Tactic.FieldSimp
-public import Mathlib.Tactic.Linarith
-public import Mathlib.Tactic.Positivity
-public import Mathlib.Tactic.Ring
+import Mathlib.Data.Nat.GCD.Basic
+import Mathlib.RingTheory.Int.Basic
+import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.Positivity.Finset
+public import Mathlib.Data.Nat.Prime.Defs
+public import Mathlib.Data.Fintype.Basic
+public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
 
 /-!
 # Pairwise coprime odd source lengths

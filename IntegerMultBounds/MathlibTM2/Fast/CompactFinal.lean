@@ -2,8 +2,13 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CompactMainInputDistribution
 public import IntegerMultBounds.MathlibTM2.Fast.CompactMainOutput
-public import IntegerMultBounds.MathlibTM2.Fast.CompactMainChainEntry
-public import IntegerMultBounds.MathlibTM2.Fast.CompactMainPrefixCost
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainChainEntry
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainPrefixCost
+public import IntegerMultBounds.MathlibTM2.Fast.CompactMainHost
+public import IntegerMultBounds.MathlibTM2.Fast.CompactMainChain
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! The complete concrete compact multiplier at the stronger dyadic saving. -/
 @[expose] public section

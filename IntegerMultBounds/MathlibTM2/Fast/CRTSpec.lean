@@ -1,6 +1,9 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CRTRot
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-!
 # The CRT layout: from triangular rotations to `crtPhi`

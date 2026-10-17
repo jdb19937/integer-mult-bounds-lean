@@ -1,8 +1,10 @@
 module
 
 public import IntegerMultBounds.Machine.CountedGuardConstantsEdit
-public import IntegerMultBounds.Machine.CountedGuardConstantsData
 public import IntegerMultBounds.Machine.CountedGuardGadgetHeaders
+import IntegerMultBounds.Machine.BinaryDescriptorStackRoundtrip
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
 /-! Fixed eight-tape placements for original-header guard-constant production.
 Only canonical q/b are original inputs. Shared fill/replay clock starts and

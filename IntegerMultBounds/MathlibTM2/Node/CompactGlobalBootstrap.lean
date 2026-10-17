@@ -1,7 +1,9 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Node.CompactGlobalBootstrapCounts
-public import IntegerMultBounds.MathlibTM2.Node.CompactBasisSetupRest
+import IntegerMultBounds.MathlibTM2.Node.CompactBasisSetupRest
+public import IntegerMultBounds.MathlibTM2.Node.CompactBasisSetupFrame
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-! Bootstrap original depth/guard into the shared persistent bank, clearing the copied inputs. -/
 @[expose] public section

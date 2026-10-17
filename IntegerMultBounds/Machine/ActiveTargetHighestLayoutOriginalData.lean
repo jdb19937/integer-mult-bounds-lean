@@ -1,8 +1,9 @@
 module
 
-public import IntegerMultBounds.Machine.ActiveTargetHighestLayoutHeadersGeometry
 public import IntegerMultBounds.Machine.ActivePrefixLayoutHeadersEndpoint
 public import IntegerMultBounds.Machine.ActiveTargetHighestPairOriginalPlaced
+public import IntegerMultBounds.Machine.ActiveTargetHighestLayoutHeadersData
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Highest-bit action starts with the unchanged original fourteen words
 and full array; its five pair descriptors and all work tapes begin blank. -/

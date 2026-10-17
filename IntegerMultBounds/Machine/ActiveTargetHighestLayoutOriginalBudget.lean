@@ -1,10 +1,14 @@
 module
 
 public import IntegerMultBounds.Machine.ActiveTargetHighestLayoutOriginalRun
-public import IntegerMultBounds.Machine.ActiveTargetHighestLayoutHeadersBudget
-public import IntegerMultBounds.Machine.ActiveTargetHighestPairOriginalBudget
-public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsHeadersAfterBudget
-public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsHeadersBudget
+import IntegerMultBounds.Machine.ActiveTargetHighestLayoutHeadersBudget
+import IntegerMultBounds.Machine.ActiveTargetHighestPairOriginalBudget
+import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsHeadersAfterBudget
+import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsHeadersBudget
+import IntegerMultBounds.Machine.ActiveTargetHighestPairHeadersBudget
+public import IntegerMultBounds.Machine.ActivePrefixLayoutHeadersGeometry
+public import IntegerMultBounds.Machine.ActiveTargetHighestPairLayoutGeometry
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Both layers of highest-bit metadata synthesis, the literal payload action
 and all cleanup preserve a uniform linear bound in a containing array volume. -/

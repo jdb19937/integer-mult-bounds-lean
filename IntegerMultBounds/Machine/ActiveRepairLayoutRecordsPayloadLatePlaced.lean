@@ -1,7 +1,8 @@
 module
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlSequenceOriginalRun
+import IntegerMultBounds.Machine.CompactGadgetReservationPlacement
+import Mathlib.Tactic.Positivity.Finset
 
-public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsLate
-public import IntegerMultBounds.Machine.ActivePrefixDirtyControlSequenceOriginalBudget
 
 /-! The original later payload machine placed on exactly twenty-three original
 numeric/array ports. All private storage is initially and finally blank. -/

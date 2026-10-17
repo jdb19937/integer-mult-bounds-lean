@@ -1,6 +1,10 @@
 module
 
 public import IntegerMultBounds.Resampling.WeightNat
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+public import IntegerMultBounds.Machine
 
 /-!
 # Corrected downward samples from the executable exponential routine

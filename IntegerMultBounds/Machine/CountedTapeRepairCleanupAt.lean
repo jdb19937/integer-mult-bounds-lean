@@ -1,6 +1,10 @@
 module
 
 public import IntegerMultBounds.Machine.CountedTapeRepairCleanupWord
+import Mathlib.Tactic.Positivity.Finset
+public import IntegerMultBounds.Machine.FiniteReturnStackAt
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
 /-! Fixed-slot literal final cleanup, retaining the complete complementary bank. -/
 

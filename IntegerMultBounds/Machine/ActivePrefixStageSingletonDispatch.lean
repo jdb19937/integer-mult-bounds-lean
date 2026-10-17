@@ -2,6 +2,8 @@ module
 
 public import IntegerMultBounds.Machine.ActivePrefixStageDispatchPlaced
 public import IntegerMultBounds.Machine.ActivePrefixStageSingletonRun
+import IntegerMultBounds.Machine.ActivePrefixStageDispatchCommon
+import Mathlib.Tactic.Positivity.Finset
 
 /-! One fixed physical program compares original slot numbers, reads its
 flag, executes the original-input early or late stage, and erases the flag. -/

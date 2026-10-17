@@ -2,7 +2,7 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Node.Params
 public import IntegerMultBounds.MathlibTM2.Host.Route
-public import Mathlib.Tactic.IntervalCases
+import Mathlib.Tactic.IntervalCases
 
 /-!
 # Records of unary fields, residues and dispatch

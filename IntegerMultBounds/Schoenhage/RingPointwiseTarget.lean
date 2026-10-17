@@ -1,6 +1,7 @@
 module
 
-public import IntegerMultBounds.Schoenhage.RingPointwiseBound
+import IntegerMultBounds.Schoenhage.RingPointwiseBound
+public import IntegerMultBounds.Spec.PointwiseProducts
 
 /-! The pointwise-product step of the synthetic convolution meets its
 statement in the paper's formats within `O(T p log (r p) log log (r p))`

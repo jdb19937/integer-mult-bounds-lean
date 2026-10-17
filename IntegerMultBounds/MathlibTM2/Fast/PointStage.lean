@@ -3,6 +3,12 @@ module
 public import IntegerMultBounds.MathlibTM2.Fast.ChirpBox
 public import IntegerMultBounds.MathlibTM2.Fast.ResampARegs
 public import IntegerMultBounds.MathlibTM2.Layer.Shift
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+public import IntegerMultBounds.MathlibTM2.Fast.CMulStream
+public import IntegerMultBounds.MathlibTM2.Mult.SourceErr
+public import IntegerMultBounds.ExactRecovery
 
 /-!
 # Entrywise stages on box streams

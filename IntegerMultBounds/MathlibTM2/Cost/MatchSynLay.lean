@@ -1,9 +1,14 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Cost.MatchLayout
+import IntegerMultBounds.MathlibTM2.Cost.MatchLayout
 public import IntegerMultBounds.MathlibTM2.Fast.MainEmbed
 public import IntegerMultBounds.MathlibTM2.Fast.SynLaySpec
 public import IntegerMultBounds.MathlibTM2.Fast.DistWidth
+import IntegerMultBounds.MathlibTM2.Cost.MatchBase
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
 
 /-!
 # Cost matching: the layout programs of the synthetic transforms

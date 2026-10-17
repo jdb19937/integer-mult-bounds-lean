@@ -2,6 +2,11 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Fast.TableExp
 public import IntegerMultBounds.Resampling.TableIdx
+public import IntegerMultBounds.MathlibTM2.Fast.TablePi
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
 
 /-!
 # Streams of the weight tables

@@ -1,7 +1,9 @@
 module
 
-public import IntegerMultBounds.Machine.CompactGuardGrowth
+import IntegerMultBounds.Machine.CompactGuardGrowth
 public import IntegerMultBounds.Machine.CompactGlobalReservation
+public import IntegerMultBounds.Machine.CompactScalarAllowances
+import Mathlib.Analysis.SpecialFunctions.Pow.NNReal
 
 /-! The manuscript's actual original-axis reservation is sublinear in the
 actual dimension. This never asserts that a small selected-axis set contains

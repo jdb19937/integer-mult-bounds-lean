@@ -3,6 +3,7 @@ module
 public import IntegerMultBounds.Machine.ActiveRepairRankHeadersRun
 public import IntegerMultBounds.Machine.ActiveRepairRankFieldsEndpoint
 public import IntegerMultBounds.Machine.ActiveRepairDestinationPatchEndpoint
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Original active-layout widths physically generate the exact parser and
 patch descriptors. No target/T/U start or completed destination is an input. -/

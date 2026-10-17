@@ -3,6 +3,9 @@ module
 public import IntegerMultBounds.MathlibTM2.Host.IndexRoute
 public import IntegerMultBounds.MathlibTM2.Layer.Enc
 public import IntegerMultBounds.MathlibTM2.Layer.GaussStream
+import Mathlib.Tactic.Positivity.Finset
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
 /-!
 # Phase multiplication of stored arrays

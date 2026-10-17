@@ -1,11 +1,18 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Cost.CompactRetunedLayerMatchR
-public import IntegerMultBounds.MathlibTM2.Cost.CompactRetunedLayoutMatch
-public import IntegerMultBounds.MathlibTM2.Cost.CompactRetunedStashMatch
-public import IntegerMultBounds.MathlibTM2.Cost.CompactRetunedDirectCost
-public import IntegerMultBounds.MathlibTM2.Fast.CompactSynLoopsR
+import IntegerMultBounds.MathlibTM2.Cost.CompactRetunedLayerMatchR
+import IntegerMultBounds.MathlibTM2.Cost.CompactRetunedLayoutMatch
+import IntegerMultBounds.MathlibTM2.Cost.CompactRetunedStashMatch
+import IntegerMultBounds.MathlibTM2.Cost.CompactRetunedDirectCost
 public import IntegerMultBounds.MathlibTM2.Fast.CompactSynRetunedTransformsR
+public import IntegerMultBounds.MathlibTM2.Cost.CompactStageGrowth
+import IntegerMultBounds.MathlibTM2.Cost.MatchSynPipe
+import IntegerMultBounds.MathlibTM2.Cost.MatchSynOver
+import IntegerMultBounds.MathlibTM2.Cost.MatchSynLay
+import IntegerMultBounds.MathlibTM2.Cost.MatchBase
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! The cost of the rounded transforms at the retuned sizes: rounded compact chunk rounds, the
 exact direct boundary rounds and the loop bookkeeping, against the convolution envelope. -/

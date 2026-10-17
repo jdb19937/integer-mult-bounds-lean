@@ -1,7 +1,10 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Node.CompactRotHost
-public import IntegerMultBounds.Machine.ActivePrefixStageFullSelected
+import IntegerMultBounds.Machine.ActivePrefixStageFullEndpoint
+public import IntegerMultBounds.Machine.ActivePrefixStageFullLateRun
+public import IntegerMultBounds.Machine.ActivePrefixStageFullEarlyRun
+import Mathlib.Tactic.Positivity.Finset
 
 /-! # Full compact stages on normalized host banks
 

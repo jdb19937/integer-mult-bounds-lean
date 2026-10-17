@@ -1,6 +1,10 @@
 module
 
 public import IntegerMultBounds.Machine.ActiveRepairRankFieldsField
+import Mathlib.Tactic.Positivity.Finset
+import IntegerMultBounds.Machine.CountedRankSplitBank
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
 /-! Runtime fixed-width overwrite at an address supplied on an unchanged header.
 The replacement, both headers and all heads are retained; clock work is erased. -/

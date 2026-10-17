@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixDirtyControlSequenceOriginalInputs
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Three actual dirty-control numeric header banks, followed by physical
 cleanup that restores all generated metadata tapes to blank. -/

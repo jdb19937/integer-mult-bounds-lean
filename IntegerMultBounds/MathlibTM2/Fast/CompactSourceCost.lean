@@ -1,9 +1,18 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Fast.MainTimeRuns
+import IntegerMultBounds.MathlibTM2.Fast.MainTimeRuns
 public import IntegerMultBounds.MathlibTM2.Fast.CompactSrcMachine
-public import IntegerMultBounds.MathlibTM2.Cost.CompactTotal
-public import IntegerMultBounds.MathlibTM2.Cost.MatchBandB
+import IntegerMultBounds.MathlibTM2.Cost.MatchBandB
+public import IntegerMultBounds.MathlibTM2.Cost.CompactStageGrowth
+public import IntegerMultBounds.MathlibTM2.Cost.MatchConv
+import IntegerMultBounds.MathlibTM2.Cost.MatchChirp
+import IntegerMultBounds.MathlibTM2.Cost.MatchResampA
+public import IntegerMultBounds.MathlibTM2.Cost.DirectScale
+public import IntegerMultBounds.MathlibTM2.Fast.SrcDirectStage
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
 
 /-! Actual expanded source-stage costs against the retuned envelope. -/
 @[expose] public section

@@ -1,6 +1,8 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Node.CompactBasisSetupRest
+import IntegerMultBounds.MathlibTM2.Node.CompactBasisSetupRest
+public import IntegerMultBounds.MathlibTM2.Node.CompactBasisSetupFrame
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-! Clear the persistent compact counters, restoring the initially blank bank exactly. -/
 @[expose] public section

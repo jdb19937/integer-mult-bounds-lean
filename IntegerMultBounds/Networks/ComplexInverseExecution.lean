@@ -1,7 +1,9 @@
 module
 
 public import IntegerMultBounds.Networks.ComplexFramedConjugation
-public import IntegerMultBounds.Networks.BinaryColumnConjugation
+import IntegerMultBounds.Networks.BinaryColumnConjugation
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
 /-! The conjugated ORIGINAL corrected complex network computes the genuine
 inverse full tensor, including every scratch wire. The source/sink corrections

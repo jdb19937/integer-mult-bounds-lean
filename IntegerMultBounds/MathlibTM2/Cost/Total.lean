@@ -1,8 +1,12 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Cost.Growth
-public import IntegerMultBounds.MathlibTM2.Layer.Recurrence
+import IntegerMultBounds.MathlibTM2.Layer.Recurrence
 public import IntegerMultBounds.Parameters
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
 
 /-!
 # Shared analytic bounds and the legacy quadratic CRT envelope

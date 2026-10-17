@@ -1,7 +1,7 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Node.SwapPass
-public import IntegerMultBounds.Compact.Permutations
+import Mathlib.Tactic.Positivity.Finset
 
 /-! # Prepared compact-field interchange on the live host machine
 

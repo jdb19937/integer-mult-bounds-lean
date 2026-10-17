@@ -1,9 +1,9 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixStageHeadersEndpoint
-public import IntegerMultBounds.Machine.ActivePrefixStageHeadersBudget
-public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsFullEarlyPlaced
 public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsFullLatePlaced
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsFullEarlyData
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Original shape/node/slot descriptors and one raw array are the complete
 caller input. Every full-stage consumer descriptor is physically synthesized. -/

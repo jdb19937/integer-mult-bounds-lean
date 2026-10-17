@@ -3,11 +3,6 @@ module
 public import IntegerMultBounds.MathlibTM2.Stack
 public import IntegerMultBounds.MathlibTM2.Tape
 public import IntegerMultBounds.Machine.Hoare
-public import Mathlib.Data.Fintype.Pi
-public import Mathlib.Data.Fintype.Prod
-public import Mathlib.Data.Fintype.Sum
-public import Mathlib.Data.Fintype.Option
-public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Host programs and calls to multitape subroutines

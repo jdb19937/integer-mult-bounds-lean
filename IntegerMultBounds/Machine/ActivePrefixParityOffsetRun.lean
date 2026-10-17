@@ -1,6 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixParityOffsetBank
+public import IntegerMultBounds.Machine.ActivePrefixOffsetHeadersBudget
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Actual original-header setup, both generated prefix projections, batch
 source-bit extraction and parity-XOR gather share one unchanged caller bank and

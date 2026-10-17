@@ -1,7 +1,8 @@
 module
 
-public import IntegerMultBounds.Machine.ActiveTargetHighestLaterClean
-public import IntegerMultBounds.Machine.Alphabet
+import IntegerMultBounds.Machine.ActiveTargetHighestLaterClean
+public import IntegerMultBounds.Machine.ActiveTargetHighestRun
+public import IntegerMultBounds.Networks.Shared50ModularControl
 
 /-! Exact alphabet simulation for the highest-bit machine inside the binary
 interchange bank. Numerical codes and the real transition count are retained. -/

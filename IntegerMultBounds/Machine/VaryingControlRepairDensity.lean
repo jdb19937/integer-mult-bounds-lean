@@ -1,8 +1,12 @@
 module
 
 public import IntegerMultBounds.Machine.VaryingControlRepairPacked
-public import IntegerMultBounds.Machine.CountedTapeRepairDensity
-public import IntegerMultBounds.Machine.CountedLateTapeRepairDensity
+import IntegerMultBounds.Machine.CountedTapeRepairDensity
+import IntegerMultBounds.Machine.CountedLateTapeRepairDensity
+public import IntegerMultBounds.Machine.CountedLateTapeRepairBudget
+public import IntegerMultBounds.Machine.CountedTapeRepairBudget
+import Mathlib.Tactic.Positivity.Finset
+import IntegerMultBounds.Compact.Counting
 
 /-! Uniform exceptional counts over varying source words. Complete source and
 spectator fibers are counted by a finite sum; no fixed global control input or

@@ -1,8 +1,13 @@
 module
 
-public import IntegerMultBounds.NLogN.ResamplingNorm
-public import IntegerMultBounds.NLogN.Neumann
-public import IntegerMultBounds.NLogN.Approx
+import IntegerMultBounds.NLogN.ResamplingNorm
+import IntegerMultBounds.NLogN.Approx
+public import IntegerMultBounds.NLogN.Resampling
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+public import Mathlib.Analysis.InnerProductSpace.Basic
+public import Mathlib.Analysis.Normed.Operator.Basic
 
 /-! The resampling ingredients of Harvey–van der Hoeven, Section 4.1, packaged
 as continuous linear maps on `ZMod n → ℂ` with the sup norm. Proved: the

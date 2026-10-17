@@ -2,7 +2,9 @@ module
 
 public import IntegerMultBounds.Machine.VaryingControlRepairFiber
 public import IntegerMultBounds.Compact.LatePowerTwoRank
-public import IntegerMultBounds.Compact.KeyValue
+import Mathlib.Tactic.Positivity.Finset
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
 /-! Actual early and later packed permutations with a source word selected
 from the retained address coordinate. The finite local rank range depends on

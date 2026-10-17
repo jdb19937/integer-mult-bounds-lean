@@ -1,6 +1,10 @@
 module
 
-public import IntegerMultBounds.Machine.CountedRepairKeyAppend
+import IntegerMultBounds.Machine.CountedRepairKeyAppend
+public import IntegerMultBounds.Machine.CountedRepairKeyAppendMoves
+import Mathlib.Tactic.Positivity.Finset
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
 /-! Literal concatenation of the two recovered dirty words by actual scans.
 Both sources and the result are returned to their original zero heads. -/

@@ -1,6 +1,10 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Node.RepairPass
+import IntegerMultBounds.MathlibTM2.Node.RepairPass
+public import IntegerMultBounds.MathlibTM2.Node.KeyPass
+public import IntegerMultBounds.MathlibTM2.Node.Rect
+public import IntegerMultBounds.MathlibTM2.Host.IndexRoute
+import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # The top-position fixup

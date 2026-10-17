@@ -1,6 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixStageHeadersRouting
+public import IntegerMultBounds.Machine.ActivePrefixStageHeadersRun
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Complete synthesis plus paid descriptor duplication. Consumer ports43..64
 are distinct actual tapes; original13 survive and every synthesis tape clears. -/

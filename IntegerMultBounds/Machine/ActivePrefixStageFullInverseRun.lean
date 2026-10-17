@@ -1,8 +1,10 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixStageInverseMachine
-public import IntegerMultBounds.Machine.ActivePrefixStageFullInverseData
-public import IntegerMultBounds.Machine.ActivePrefixStageFullBudget
+import IntegerMultBounds.Machine.ActivePrefixStageFullInverseData
+public import IntegerMultBounds.Machine.ActivePrefixStageFullLateRun
+public import IntegerMultBounds.Machine.ActivePrefixStageFullEarlyRun
+import Mathlib.Tactic.Positivity.Finset
 
 /-! The same physical original-input stages implement recursive return. Every
 reverse run pays synthesis/action/erasure; a round trip pays two runs and join. -/

@@ -1,12 +1,17 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Cost.CompactCallerOverheadR
-public import IntegerMultBounds.MathlibTM2.Cost.CompactRetunedCallerTopCost
-public import IntegerMultBounds.MathlibTM2.Cost.CompactRetunedCallerSlack
-public import IntegerMultBounds.MathlibTM2.Cost.CompactCallerRetunedCapacity
-public import IntegerMultBounds.MathlibTM2.Cost.CompactCallerSelectedRows
+import IntegerMultBounds.MathlibTM2.Cost.CompactCallerOverheadR
+import IntegerMultBounds.MathlibTM2.Cost.CompactRetunedCallerTopCost
+import IntegerMultBounds.MathlibTM2.Cost.CompactRetunedCallerSlack
+import IntegerMultBounds.MathlibTM2.Cost.CompactCallerRetunedCapacity
+import IntegerMultBounds.MathlibTM2.Cost.CompactCallerSelectedRows
 public import IntegerMultBounds.MathlibTM2.Fast.CompactSynHybridRoundR
-public import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerFitR
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerFitR
+import IntegerMultBounds.MathlibTM2.Cost.CompactTopBoundR
+public import IntegerMultBounds.MathlibTM2.Cost.CompactRetunedTopGrowth
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! The rounded compact chunk round against its original stream volume: the rounded top at the
 actual caller records, at any working width that holds the shifts and the child scales, and the

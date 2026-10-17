@@ -2,6 +2,10 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CRTDirectEntry
 public import IntegerMultBounds.MathlibTM2.Fast.SrcStage
+public import IntegerMultBounds.MathlibTM2.Fast.CRTDirectBacking
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! # Direct CRT layouts at the source-stage interface -/
 

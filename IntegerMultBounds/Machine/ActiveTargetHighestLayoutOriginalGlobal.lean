@@ -2,6 +2,9 @@ module
 
 public import IntegerMultBounds.Machine.ActiveTargetHighestLayoutGlobal
 public import IntegerMultBounds.Machine.ActiveTargetHighestLayoutOriginalPlaced
+import IntegerMultBounds.Machine.ActiveTargetHighestLayoutHeadersGeometry
+public import IntegerMultBounds.Machine.ActivePrefixLayoutHeadersGeometry
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Original14-header physical highest-bit execution, expressed on the
 literal original full-array type rather than a separately supplied rectangle. -/

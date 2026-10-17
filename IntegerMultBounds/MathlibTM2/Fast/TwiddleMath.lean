@@ -1,8 +1,8 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CMulStream
-public import IntegerMultBounds.MathlibTM2.Host.BinArith
-public import IntegerMultBounds.MathlibTM2.Mult.Rounds
+import IntegerMultBounds.MathlibTM2.Host.BinArithBits
+public import IntegerMultBounds.MathlibTM2.Mult.RoundsBasic
 
 /-!
 # Arithmetic of the twiddle pass

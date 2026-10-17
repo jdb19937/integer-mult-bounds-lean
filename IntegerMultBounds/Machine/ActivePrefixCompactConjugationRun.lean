@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixCompactConjugationMiddle
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Paid physical swap/load/swap with literal serialized-array transport.
 The supplied load shape describes the actual prefix and source coordinates;

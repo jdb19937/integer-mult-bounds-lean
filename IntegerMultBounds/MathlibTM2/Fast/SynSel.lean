@@ -1,6 +1,11 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Fast.SynRecB
+import IntegerMultBounds.MathlibTM2.Fast.SynRecB
+public import IntegerMultBounds.MathlibTM2.Fast.SynRec
+import IntegerMultBounds.MathlibTM2.Fast.SynMath
+public import IntegerMultBounds.MathlibTM2.Fast.RingProd
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
+public import IntegerMultBounds.MathlibTM2.Fast.TwiddleL
 
 /-!
 # The records of round `h` meet the hypotheses of the layer

@@ -1,6 +1,7 @@
 module
 
-public import IntegerMultBounds.Spec.SignedRingProductFacts
+import IntegerMultBounds.Spec.SignedRingProductFacts
+public import IntegerMultBounds.Spec.SignedRingProduct
 
 /-! The pointwise-product step of the synthetic convolution
 (`prop:synthetic-convolution`, §6), stated in the paper's formats: the slice

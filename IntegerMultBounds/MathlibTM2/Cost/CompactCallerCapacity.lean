@@ -1,7 +1,12 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Cost.CompactCallerRuntimeParameters
-public import IntegerMultBounds.MathlibTM2.Fast.SynRec
+import IntegerMultBounds.MathlibTM2.Cost.CompactCallerRuntimeParameters
+public import IntegerMultBounds.Machine.CompactReservationGrowth
+public import IntegerMultBounds.MathlibTM2.Fast.CompactReservationGeometry
+public import IntegerMultBounds.MathlibTM2.Mult.Sizes
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! Actual integer-root parameters pay the shared reservation for every selected
 set above a fixed fractional cutoff. Smaller selected sets retain the explicit

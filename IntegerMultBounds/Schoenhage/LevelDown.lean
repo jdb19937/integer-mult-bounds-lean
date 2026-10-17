@@ -1,6 +1,8 @@
 module
 
 public import IntegerMultBounds.Schoenhage.LevelUp
+import IntegerMultBounds.Schoenhage.IterCorrect
+import IntegerMultBounds.Schoenhage.Wp
 
 /-! The down-sweep of one pair on word tapes: each operand is cut into its
 padded pieces and transformed; the two transformed lists are interleaved

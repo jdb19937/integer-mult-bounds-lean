@@ -1,6 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.ActiveRepairRankFieldsGeometry
+public import IntegerMultBounds.Machine.ActiveRepairRankFieldsRun
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Actual original-layout parsing endpoint: V/T/U/full source and selected
 source bits are physically extracted from the genuine short record counter.

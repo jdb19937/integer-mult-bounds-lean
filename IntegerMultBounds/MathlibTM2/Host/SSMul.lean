@@ -4,6 +4,8 @@ public import IntegerMultBounds.MathlibTM2.Host.ChunkSwap
 public import IntegerMultBounds.MathlibTM2.Host.Placed
 public import IntegerMultBounds.MathlibTM2.Host.Index
 public import IntegerMultBounds.Schoenhage.SSClean
+public import IntegerMultBounds.Schoenhage.SSCost
+import IntegerMultBounds.Machine.PlacementBank
 
 /-!
 # Schönhage–Strassen multiplication as a host subroutine

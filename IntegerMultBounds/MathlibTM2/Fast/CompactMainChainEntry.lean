@@ -1,7 +1,12 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Fast.CompactMainChainExec
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainChainExec
 public import IntegerMultBounds.MathlibTM2.Fast.CompactRetunedMainBound
+public import IntegerMultBounds.MathlibTM2.Fast.CompactMainRunsAt
+public import IntegerMultBounds.MathlibTM2.Fast.CompactMainChain
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! The complete arithmetic chain starts directly from the actual distribution output. -/
 @[expose] public section

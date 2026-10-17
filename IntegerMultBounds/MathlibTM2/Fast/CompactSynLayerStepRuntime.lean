@@ -1,7 +1,18 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepTopRegs
-public import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepBasis
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepBasis
+import IntegerMultBounds.MathlibTM2.Node.CompactBasisRefreshRest
+public import IntegerMultBounds.MathlibTM2.Node.CompactBasisRefresh
+import IntegerMultBounds.MathlibTM2.Fast.CompactTopRuntimeExecution
+public import IntegerMultBounds.MathlibTM2.Fast.CompactPieceGeometry
+public import IntegerMultBounds.Machine.CompactReservationGrowth
+public import IntegerMultBounds.MathlibTM2.Fast.CompactTopExecution
+public import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepFrame
+public import IntegerMultBounds.MathlibTM2.Mult.Sizes
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! Actual compact top execution from the concrete refreshed and parked state.
 All top register predicates and recursive readiness are derived internally. -/

@@ -1,8 +1,16 @@
 module
 
-public import IntegerMultBounds.Machine.ActiveRepairLayoutKeysPipelineBudgetCommon
-public import IntegerMultBounds.Machine.ActiveRepairLayoutKeysPipelineEarly
+import IntegerMultBounds.Machine.ActiveRepairLayoutKeysPipelineBudgetCommon
+import IntegerMultBounds.Machine.ActiveRepairLayoutKeysPipelineEarly
 public import IntegerMultBounds.Machine.ActiveRepairEarlyOriginalPipelineBudget
+import IntegerMultBounds.Machine.ActiveRepairLayoutDensityScan
+import IntegerMultBounds.Machine.ActiveRepairLayoutDensityArithmetic
+import IntegerMultBounds.Machine.ActiveRepairLayoutDensity
+public import IntegerMultBounds.Machine.VaryingControlRepairDensity
+import IntegerMultBounds.Machine.ActiveRepairLayoutKeysPipelineCommon
+import IntegerMultBounds.Machine.ActiveRepairLayoutKeysScan
+public import IntegerMultBounds.Machine.ActiveRepairLayoutKeysEarly
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Linear runtime for the concrete ideal-output repair endpoint. The sparse
 holes are counted from the physical flags and the complete global layout. -/

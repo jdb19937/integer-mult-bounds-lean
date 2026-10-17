@@ -1,9 +1,12 @@
 module
 
 public import IntegerMultBounds.NLogN.Resampling
-public import Mathlib.Analysis.Complex.ExponentialBounds
-public import Mathlib.Analysis.Real.Pi.Bounds
+import Mathlib.Analysis.Real.Pi.Bounds
 public import Mathlib.Tactic
+import IntegerMultBounds.NLogN.Gaussian
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! Section 4.2 of Harvey and van der Hoeven: solving the resampling system.
 The row-selecting map `C`, the square subsystem `T' = C T`, the diagonal map

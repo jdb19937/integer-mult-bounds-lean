@@ -1,6 +1,6 @@
 module
-public import IntegerMultBounds.MathlibTM2.Fast.CompactTopExecution
 public import IntegerMultBounds.MathlibTM2.Fast.CompactSynRows
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-! Absolute serialized coordinates and relative compact-layer coordinates. -/
 @[expose] public section

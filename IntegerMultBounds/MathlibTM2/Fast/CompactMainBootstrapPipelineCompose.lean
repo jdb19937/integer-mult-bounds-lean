@@ -2,6 +2,9 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CompactMainBootstrapPipeline
 public import IntegerMultBounds.MathlibTM2.Fast.CompactMainBootstrapPipelineExit
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! A single charged original-input bootstrap around a transform and its global cleanup. -/
 @[expose] public section

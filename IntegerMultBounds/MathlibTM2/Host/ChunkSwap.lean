@@ -2,7 +2,7 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Host.Stream
 public import IntegerMultBounds.MathlibTM2.Host.Lift
-public import IntegerMultBounds.Machine.BinaryInterchangeBudget
+public import IntegerMultBounds.Machine.BinaryInterchangeRun
 
 /-!
 # Rectangular interchange on host registers

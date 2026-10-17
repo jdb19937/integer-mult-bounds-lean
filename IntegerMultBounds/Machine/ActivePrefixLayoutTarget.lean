@@ -2,6 +2,7 @@ module
 
 public import IntegerMultBounds.Machine.ActivePrefixLayoutShapes
 public import IntegerMultBounds.Machine.ActivePrefixCorrectionOffsetData
+import Mathlib.Tactic.Positivity.Finset
 
 /-! First and third offset rows at the literal active-target fiber prefix.
 The current compact T and the complete earlier source slot come directly from

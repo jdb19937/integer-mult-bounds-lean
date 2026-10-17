@@ -1,7 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixEarlySequenceOriginalRun
-public import IntegerMultBounds.Machine.ActivePrefixEarlySequenceBudget
+import IntegerMultBounds.Machine.ActivePrefixEarlySequenceBudget
+import Mathlib.Tactic.Positivity.Finset
 
 /-! The original-input four-load machine retains the certified width exponent
 while paying both header constructions, both cleanups and all four joins. -/

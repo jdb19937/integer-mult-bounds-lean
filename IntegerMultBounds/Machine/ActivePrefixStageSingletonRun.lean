@@ -2,6 +2,9 @@ module
 
 public import IntegerMultBounds.Machine.ActivePrefixStageSingletonData
 public import IntegerMultBounds.Machine.ActivePrefixStageFullCompose
+public import IntegerMultBounds.Machine.ActivePrefixStageFullErase
+import IntegerMultBounds.Machine.ActiveTargetHighestLayoutOriginalGlobal
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Both ordered singleton stages are actual fixed finite programs: generate
 all consumer words from the original thirteen, execute the single highest

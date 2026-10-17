@@ -1,8 +1,9 @@
 module
 
-public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsPermutation
-public import IntegerMultBounds.Machine.ActiveRepairLayoutKeysPipelineCommon
 public import IntegerMultBounds.Machine.ActiveRepairRankHeadersEndpoint
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsShape
+public import IntegerMultBounds.Compact.TapeRepair
+import Mathlib.Tactic.Positivity.Finset
 
 /-! The payload-one rank indexes one entire original-width bit record. The
 flattened records are exactly the physical unchanged row-major bit array. -/

@@ -2,6 +2,8 @@ module
 
 public import IntegerMultBounds.Machine.ActivePrefixCompactNegativeLoad
 public import IntegerMultBounds.Machine.ActivePrefixLayoutSwap
+import IntegerMultBounds.Machine.BinaryParityXorOffsetValue
+import Mathlib.Tactic.Positivity.Finset
 
 /-! The physical compact negative parity-XOR action is the literal back-fiber rotation in
 the unchanged full array. These views are ordinal casts only, and their offset

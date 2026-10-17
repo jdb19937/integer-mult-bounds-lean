@@ -1,6 +1,9 @@
 module
 
 public import IntegerMultBounds.NLogN.PhaseCell
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-!
 # Exact additive scan of phase cells

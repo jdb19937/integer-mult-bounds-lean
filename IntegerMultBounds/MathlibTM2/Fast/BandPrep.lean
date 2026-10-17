@@ -2,6 +2,14 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Fast.BandPrepVM
 public import IntegerMultBounds.MathlibTM2.Fast.BandAxis
+public import IntegerMultBounds.MathlibTM2.Fast.BandLineSpec
+public import IntegerMultBounds.MathlibTM2.Fast.TableFold
+public import IntegerMultBounds.MathlibTM2.Fast.PrepB
+import IntegerMultBounds.MathlibTM2.Fast.ResampBSwap
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
 
 /-!
 # The parameter loader of the banded `B̃₀`

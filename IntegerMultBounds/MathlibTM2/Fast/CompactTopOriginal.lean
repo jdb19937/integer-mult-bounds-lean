@@ -2,6 +2,7 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CompactTopSetup
 public import IntegerMultBounds.MathlibTM2.Fast.CompactTopConfig
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-! Original-input compact piece and configuration construction. The outside row
 count comes from an explicitly chosen persistent source. Original guard/offset

@@ -1,6 +1,12 @@
 module
 
 public import IntegerMultBounds.NLogN.PhaseCellTailBounds
+import Mathlib.Analysis.Complex.ExponentialBounds
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
+import Mathlib.Analysis.Real.Pi.Bounds
 
 /-! Explicit dyadic truncation error for the selected phase-cell band.
 The width condition `16*p ≤ u*w²` is kept visible until the executable band

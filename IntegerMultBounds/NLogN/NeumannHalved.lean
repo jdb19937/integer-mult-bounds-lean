@@ -1,7 +1,12 @@
 module
 
 public import IntegerMultBounds.NLogN.OffDiagApproxSqrt
-public import IntegerMultBounds.NLogN.ResamplingPermutedNumeric
+import IntegerMultBounds.NLogN.ResamplingPermutedNumeric
+public import IntegerMultBounds.NLogN.ResamplingPermuted
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
 
 /-! The Neumann evaluation of `J' = N⁻¹/2` as in the manuscript, with no clamp.
 The input is halved and rounded first, so it lies in the disk of radius one

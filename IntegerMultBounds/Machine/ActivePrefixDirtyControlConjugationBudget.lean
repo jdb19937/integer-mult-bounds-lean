@@ -1,8 +1,9 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixDirtyControlConjugationRun
-public import IntegerMultBounds.Machine.ActivePrefixCompactSwapBudget
-public import IntegerMultBounds.Machine.ActivePrefixDirtyControlUSwapBudget
+import IntegerMultBounds.Machine.ActivePrefixCompactSwapBudget
+import IntegerMultBounds.Machine.ActivePrefixDirtyControlUSwapBudget
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Uniform full-volume sublinear-width bound for every concrete compact
 conjugation, including both swaps and the complete original-input load. -/

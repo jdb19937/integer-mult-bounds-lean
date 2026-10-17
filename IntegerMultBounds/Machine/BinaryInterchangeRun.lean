@@ -1,11 +1,8 @@
 module
 
-public import IntegerMultBounds.Machine.BinaryRadixEqualShared
 public import IntegerMultBounds.Machine.BinaryAdjacentWidthRun
-public import IntegerMultBounds.Machine.BinaryAdjacentWidthPrefixShared
-public import IntegerMultBounds.Machine.BinaryAdjacentWidthMovementShared
-public import IntegerMultBounds.Machine.BinaryAdjacentWidthInterchange
 public import IntegerMultBounds.Machine.BinaryAdjacentWidthSelectorDispatch
+import IntegerMultBounds.Machine.BinaryDescriptorStackRoundtrip
 
 /-! Physical binary rectangular interchange from five caller-owned headers. -/
 

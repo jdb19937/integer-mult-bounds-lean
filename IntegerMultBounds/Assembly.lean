@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.CostTable
+import Mathlib.Analysis.SpecialFunctions.Pow.NNReal
 
 /-! Reduction of the end-to-end theorem to a program with a cost function. A
 program that halts with the correct product on every pair of `n`-bit inputs

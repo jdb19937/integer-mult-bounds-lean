@@ -1,6 +1,10 @@
 module
 
 public import IntegerMultBounds.Machine.ActiveRepairEarlyOriginalPipelinePrepareCount
+public import IntegerMultBounds.Machine.ActiveRepairEarlyOriginalPipelineRun
+import IntegerMultBounds.Machine.CountedRepairScanPrepare
+public import IntegerMultBounds.Machine.CountedRepairScanSeed
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Literal source stream plus original metadata prepares all scan sentinels,
 the unary pass width, and an actual zero rank counter. No sentinel/counter is

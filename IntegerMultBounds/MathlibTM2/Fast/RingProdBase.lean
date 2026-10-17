@@ -1,8 +1,9 @@
 module
 
 public import IntegerMultBounds.Schoenhage.RingLemma
-public import IntegerMultBounds.MathlibTM2.Fast.CMulStream
-public import IntegerMultBounds.MathlibTM2.Mult.SynthErr
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
+public import IntegerMultBounds.MathlibTM2.Fast.CMulPass
+import IntegerMultBounds.Machine.PlacementBank
 
 /-!
 # The vendored ring product as a host subroutine: machine, banks and formats

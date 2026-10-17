@@ -2,7 +2,10 @@ module
 
 public import IntegerMultBounds.Machine.ActivePrefixDirtyControlSequenceOriginalData
 public import IntegerMultBounds.Machine.ActivePrefixEarlySequenceOriginalInputs
-public import IntegerMultBounds.Machine.ActivePrefixDirtyControlSequencePlaced
+import IntegerMultBounds.Machine.ActivePrefixDirtyControlHeadersGeometry
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlSequenceGeometry
+import Mathlib.Tactic.Positivity.Finset
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlHeadersGeometry
 
 /-! The later sequence accepts only original geometry and stage words.
 All consumer header values here are supplied by the physical producer. -/

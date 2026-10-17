@@ -1,7 +1,8 @@
 module
 
-public import IntegerMultBounds.Machine.ActiveRepairEarlyKey
 public import IntegerMultBounds.Machine.ActiveRepairRankHeadersPlaced
+public import IntegerMultBounds.Machine.ActiveRepairEarlyKeyPlaced
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Original geometric descriptors and a genuine rank supply all inputs of
 the early key machine. Parser and patch headers start physically blank. -/

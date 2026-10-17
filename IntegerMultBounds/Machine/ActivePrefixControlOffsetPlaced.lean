@@ -1,6 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixControlOffset
+import IntegerMultBounds.Machine.CompactGadgetReservationPlacement
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Clean control-mask offset production on arbitrary caller tapes, retaining every
 original descriptor and spectator. All native private storage starts and ends

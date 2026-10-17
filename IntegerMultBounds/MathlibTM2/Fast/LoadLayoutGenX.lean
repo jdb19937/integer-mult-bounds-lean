@@ -1,6 +1,8 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Fast.LoadLayoutGenM
+import IntegerMultBounds.MathlibTM2.Fast.LoadLayoutGenM
+public import IntegerMultBounds.MathlibTM2.Fast.LoadLayout
+public import IntegerMultBounds.MathlibTM2.Fast.LoadLayoutVM
 
 /-!
 # The writer of the chunk exchange stream

@@ -3,7 +3,9 @@ module
 public import IntegerMultBounds.Machine.ActivePrefixDirtyControlLayoutFields
 public import IntegerMultBounds.Machine.ActivePrefixDirtyControlCorrectionData
 public import IntegerMultBounds.Machine.ActivePrefixDirtyControlNegativeData
-public import IntegerMultBounds.Machine.ActivePrefixDirtyControlPureSemantics
+import IntegerMultBounds.Machine.ActivePrefixDirtyControlPureSemantics
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlPureBank
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Every generated early-load row is evaluated at the current compact U
 word and current target/T coordinates of the unchanged physical layout. -/

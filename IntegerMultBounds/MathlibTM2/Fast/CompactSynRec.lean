@@ -2,6 +2,7 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CompactSynRecArithmetic
 public import IntegerMultBounds.MathlibTM2.Fast.CompactSynRecPieces
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-! # Executable compact root piece-record construction
 

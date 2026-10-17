@@ -1,7 +1,12 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerContractR
-public import IntegerMultBounds.MathlibTM2.Fast.CompactSynRound
+public import IntegerMultBounds.MathlibTM2.Fast.CompactSynTwiddle
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynDirect
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainLegacyRuns
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! Rounded forward and opposite rounds: the rounded dispatch with the unchanged twiddle step.
 On records the forward round is `compactSynFQ` (`y^(-E_h)` after `compactSynLQ`) and the

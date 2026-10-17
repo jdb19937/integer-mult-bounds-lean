@@ -1,9 +1,13 @@
 module
 
-public import IntegerMultBounds.NLogN.ResamplingNorm
-public import IntegerMultBounds.NLogN.Approx
-public import Mathlib.Analysis.Complex.ExponentialBounds
-public import Mathlib.Analysis.Real.Pi.Bounds
+import IntegerMultBounds.NLogN.ResamplingNorm
+import Mathlib.Analysis.Complex.ExponentialBounds
+import Mathlib.Analysis.Real.Pi.Bounds
+public import IntegerMultBounds.NLogN.Resampling
+public import IntegerMultBounds.NLogN.Gaussian
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! Truncation of the Gaussian resampling series (Lemma 4.9 of Harvey and
 van der Hoeven). Proved: keeping only the `2m + 1` terms whose index lies within

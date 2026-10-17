@@ -1,7 +1,14 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Fast.CompactSrcBase
-public import IntegerMultBounds.MathlibTM2.Fast.CompactSrcRetunedFrame
+import IntegerMultBounds.MathlibTM2.Fast.CompactSrcBase
+import IntegerMultBounds.MathlibTM2.Fast.CompactSrcRetunedFrame
+public import IntegerMultBounds.MathlibTM2.Fast.CompactSrcMachine
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynRetunedEntrySpecs
+public import IntegerMultBounds.MathlibTM2.Fast.CompactMainEntryTable
+public import IntegerMultBounds.MathlibTM2.Fast.CompactSynRetunedTransforms
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! Concrete forward and opposite transforms with original layout programs and complete frame restoration. -/
 @[expose] public section

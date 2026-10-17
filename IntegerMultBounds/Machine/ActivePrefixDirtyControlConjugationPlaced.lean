@@ -1,6 +1,9 @@
 module
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlConjugationRun
+import IntegerMultBounds.Machine.CompactGadgetReservationPlacement
+import IntegerMultBounds.Machine.SharedBankRawCompose
+import Mathlib.Tactic.Positivity.Finset
 
-public import IntegerMultBounds.Machine.ActivePrefixDirtyControlConjugationBudget
 
 /-! Concrete compact conjugations on arbitrary seventeen-port caller banks.
 All sixteen supplied original/prepared descriptors survive; only the full

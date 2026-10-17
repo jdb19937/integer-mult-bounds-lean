@@ -2,6 +2,10 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Fast.ConvSynth
 public import IntegerMultBounds.MathlibTM2.Fast.TablePhaseTwist
+import IntegerMultBounds.MathlibTM2.Fast.PointStage
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-!
 # The complex convolution stage `M̃_ℂ = convBox` on box streams

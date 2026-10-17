@@ -1,12 +1,9 @@
 module
 
 public import Mathlib.LinearAlgebra.Matrix.Transvection
-public import Mathlib.Data.ZMod.Basic
-public import Mathlib.Tactic.FinCases
-public import Mathlib.Tactic.Ext
 public import Mathlib.Algebra.Field.ZMod
 public import Mathlib.LinearAlgebra.Matrix.ToLin
-public import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
+import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
 
 /-! Every invertible binary coordinate map has a literal finite schedule of
 row additions. All instructions carry distinct source and target registers;

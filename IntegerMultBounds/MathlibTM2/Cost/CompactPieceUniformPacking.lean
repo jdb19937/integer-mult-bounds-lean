@@ -1,9 +1,18 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Cost.CompactCallerUniformReadiness
-public import IntegerMultBounds.MathlibTM2.Cost.CompactPiecePacking
-public import IntegerMultBounds.MathlibTM2.Cost.CompactLayerReady
-public import IntegerMultBounds.MathlibTM2.Fast.CompactPieceGeometry
+import IntegerMultBounds.MathlibTM2.Cost.CompactPiecePacking
+import IntegerMultBounds.MathlibTM2.Cost.CompactLayerReady
+import IntegerMultBounds.MathlibTM2.Fast.CompactPieceGeometry
+import IntegerMultBounds.MathlibTM2.Cost.CompactCallerUniformRuntime
+import IntegerMultBounds.MathlibTM2.Cost.CompactCallerSelectedRows
+import IntegerMultBounds.MathlibTM2.Cost.CompactCallerRuntimeParameters
+public import IntegerMultBounds.Machine.CompactReservationGrowth
+public import IntegerMultBounds.MathlibTM2.Fast.CompactTopSelection
+public import IntegerMultBounds.MathlibTM2.Cost.CompactLayer
+public import IntegerMultBounds.MathlibTM2.Mult.Sizes
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! Runtime sizes pay every descendant packing obligation of an actual reserved
 piece. No execution or numerical cost oracle is assumed. -/

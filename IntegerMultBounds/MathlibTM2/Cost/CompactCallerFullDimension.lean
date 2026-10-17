@@ -1,6 +1,12 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Cost.CompactCallerCapacity
+import IntegerMultBounds.MathlibTM2.Cost.CompactCallerCapacity
+public import IntegerMultBounds.Machine.CompactReservationGrowth
+public import IntegerMultBounds.MathlibTM2.Fast.CompactReservationGeometry
+public import IntegerMultBounds.MathlibTM2.Mult.Sizes
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! The actual initial transform has original dimension minus one. Its runtime
 integer-root sizes eventually pay the complete compact reservation. -/

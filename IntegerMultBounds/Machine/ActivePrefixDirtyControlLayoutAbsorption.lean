@@ -1,6 +1,8 @@
 module
 
-public import IntegerMultBounds.Machine.ActivePrefixLayoutAbsorption
+import IntegerMultBounds.Machine.ActivePrefixLayoutAbsorption
+public import IntegerMultBounds.Machine.ActivePrefixLayoutShapes
+import Mathlib.Tactic.Positivity.Finset
 
 /-! The actual layout pays the wider dirty-U producer bound without requiring
 the wide target in a compact slot or increasing the record payload allowance. -/

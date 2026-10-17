@@ -2,6 +2,7 @@ module
 
 public import IntegerMultBounds.Machine.ActivePrefixStageFullEarlyRun
 public import IntegerMultBounds.Machine.ActivePrefixStageFullLateRun
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Literal full-stage endpoints retain only the original thirteen descriptors
 and raw array. Every synthesized, copied and private word has been erased. -/

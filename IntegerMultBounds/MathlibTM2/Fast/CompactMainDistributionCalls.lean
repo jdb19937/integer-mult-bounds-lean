@@ -1,7 +1,12 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Fast.CompactMainPrimitiveEntry
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainPrimitiveEntry
 public import IntegerMultBounds.MathlibTM2.Fast.CompactBundleWires
+public import IntegerMultBounds.MathlibTM2.Fast.CompactMainCalls
+public import IntegerMultBounds.MathlibTM2.Fast.CompactMainTransport
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! Parameter code contains no recursive main calls. -/
 @[expose] public section

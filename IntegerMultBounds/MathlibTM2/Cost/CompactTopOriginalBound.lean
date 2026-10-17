@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CompactTopOriginal
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-! Concrete configuration construction costs. Unary division is charged to its
 actual numerator times divisor; serialization and restoration are linear. -/

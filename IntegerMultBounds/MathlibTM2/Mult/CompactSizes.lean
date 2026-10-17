@@ -1,6 +1,10 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Mult.Sizes
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
 
 /-! Parallel runtime sizes for the compact caller. Only the chunk root changes;
 the established executable sizes and their public total bounds remain untouched. -/

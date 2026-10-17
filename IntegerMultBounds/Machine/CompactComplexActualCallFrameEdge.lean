@@ -2,7 +2,6 @@ module
 
 public import IntegerMultBounds.Networks.ComplexRecursiveCallSchema
 public import IntegerMultBounds.Networks.ComplexFramedExecution
-public import IntegerMultBounds.Networks.BinaryColumnFrame
 
 /-! The actual schema-chosen residual coordinates factor the named original
 frame edge. Each coordinate retains its own phase weight as well as the edge

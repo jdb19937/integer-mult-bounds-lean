@@ -1,6 +1,6 @@
 module
+public import IntegerMultBounds.MathlibTM2.Host.BinArithZip
 
-public import IntegerMultBounds.MathlibTM2.Host.BinArithDiv
 
 /-!
 # Exact binary integer arithmetic on host registers

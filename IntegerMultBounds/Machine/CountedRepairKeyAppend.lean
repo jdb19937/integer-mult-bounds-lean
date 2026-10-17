@@ -1,6 +1,11 @@
 module
 
 public import IntegerMultBounds.Machine.CountedRepairKeyAppendMoves
+import Mathlib.Tactic.Positivity.Finset
+import IntegerMultBounds.Machine.KeyRoutine
+public import IntegerMultBounds.Machine.Branch
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
 /-! Conditional key writing by actual scans, followed by physical head returns. -/
 

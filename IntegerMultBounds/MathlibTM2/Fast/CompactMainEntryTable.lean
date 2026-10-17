@@ -2,6 +2,10 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CompactMainCalls
 public import IntegerMultBounds.MathlibTM2.Fast.MainEmbed
+public import IntegerMultBounds.MathlibTM2.Fast.CompactMainLayer
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! The main entry runs the expanded program; both checked layer tables remain available. -/
 @[expose] public section

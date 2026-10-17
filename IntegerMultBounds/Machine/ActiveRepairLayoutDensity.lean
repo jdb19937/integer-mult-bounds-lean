@@ -2,7 +2,7 @@ module
 
 public import IntegerMultBounds.Machine.ActiveRepairLayoutPermutation
 public import IntegerMultBounds.Machine.VaryingControlRepairDensity
-public import IntegerMultBounds.Compact.TapeRepairStage
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Exceptional cardinalities of the unchanged full layout, transported
 through its complete source and spectator fibers. -/

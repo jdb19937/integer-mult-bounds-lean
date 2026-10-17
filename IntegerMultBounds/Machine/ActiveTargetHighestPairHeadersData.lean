@@ -2,7 +2,7 @@ module
 
 public import IntegerMultBounds.Machine.ActiveTargetHighestPairData
 public import IntegerMultBounds.Machine.ActiveRepairRankHeadersCommands
-public import IntegerMultBounds.Machine.CompactGadgetReservationHeadersPowerRound
+import Mathlib.Tactic.Positivity.Finset
 
 /-! A finite arithmetic/power schedule derives all ten highest-bit consumer
 headers from five numeric geometry inputs, with no supplied dimensions. -/

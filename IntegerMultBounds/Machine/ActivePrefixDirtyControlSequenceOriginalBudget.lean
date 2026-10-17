@@ -2,7 +2,8 @@ module
 
 public import IntegerMultBounds.Machine.ActivePrefixDirtyControlSequenceOriginalRun
 public import IntegerMultBounds.Machine.ActivePrefixDirtyControlHeadersBudget
-public import IntegerMultBounds.Machine.ActivePrefixDirtyControlSequenceBudget
+import IntegerMultBounds.Machine.ActivePrefixDirtyControlSequenceBudget
+import Mathlib.Tactic.Positivity.Finset
 
 /-! The complete original-input later algorithm pays all three physical
 header producers and cleanups while retaining the certified width exponent. -/

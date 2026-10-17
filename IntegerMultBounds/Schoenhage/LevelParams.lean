@@ -1,6 +1,9 @@
 module
 
 public import IntegerMultBounds.Schoenhage.Params
+public import IntegerMultBounds.Schoenhage.Batch
+import IntegerMultBounds.Schoenhage.Wp
+import Mathlib.Data.Nat.Size
 
 /-! A level's registers from the unary outer size `pN = ones N`: the
 transform exponent `k = kOf N`, the piece size, `K = 2^k`, the next size

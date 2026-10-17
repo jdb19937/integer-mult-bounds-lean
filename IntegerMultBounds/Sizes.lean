@@ -2,6 +2,7 @@ module
 
 public import IntegerMultBounds.TimeBound
 public import Mathlib.Analysis.SpecialFunctions.Log.Base
+import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 
 /-! Input and transform sizes (§8). From `b = lg n` the algorithm sets
 `p = 6b`, `d = ⌊b^ε⌋`, `K = ⌊d^c⌋`, a power of two `T` in `[4n/b, 8n/b)`,

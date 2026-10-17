@@ -1,6 +1,11 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepPrepare
+import IntegerMultBounds.MathlibTM2.Node.CompactBasisRefreshRest
+public import IntegerMultBounds.MathlibTM2.Fast.CompactReservationGeometry
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! Derive the actual compact basis shape from initialized globals and round preparation. -/
 @[expose] public section

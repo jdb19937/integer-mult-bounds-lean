@@ -2,6 +2,9 @@ module
 
 public import IntegerMultBounds.NLogN.BluesteinApprox
 public import IntegerMultBounds.NLogN.ResamplingPermutedNumeric
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-!
 # Approximations on a ball and the weighted chirp transform

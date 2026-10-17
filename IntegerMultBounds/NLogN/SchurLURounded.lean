@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.NLogN.SchurLU
+import IntegerMultBounds.NLogN.SchurBlockError
 
 /-! Rounded triangular solves with rounded factors. Computed multipliers and
 pivot rows differ from the exact elimination factors by row sums `εL`, `εU`;

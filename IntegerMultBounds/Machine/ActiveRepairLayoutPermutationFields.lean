@@ -1,9 +1,9 @@
 module
+public import IntegerMultBounds.Compact.KeyValue
+import Mathlib.Tactic.Positivity.Finset
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
-public import IntegerMultBounds.Machine.VaryingControlRepairPacked
-public import IntegerMultBounds.Machine.ActiveRepairLateFieldsValue
-public import IntegerMultBounds.Machine.ActiveRepairEarlyFieldsValue
-public import IntegerMultBounds.Machine.ActiveRepairRankHeadersData
 
 /-! Exact binary-field equivalences for the varying-control packed address.
 The target remains in active coordinates; neither wide field is reserved in H. -/

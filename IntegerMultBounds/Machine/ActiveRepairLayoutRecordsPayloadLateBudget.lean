@@ -1,6 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsPayloadLateRun
+import IntegerMultBounds.Machine.ActivePrefixDirtyControlSequenceOriginalBudget
+import Mathlib.Tactic.Positivity.Finset
 
 /-! The actual original-input later payload, full-width repair, cleanup and
 copy-back retain the certified payload width exponent with all joins paid. -/

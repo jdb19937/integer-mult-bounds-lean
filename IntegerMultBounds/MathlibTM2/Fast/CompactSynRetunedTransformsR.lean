@@ -2,7 +2,12 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CompactSynRoundOpR
 public import IntegerMultBounds.MathlibTM2.Fast.CompactSynTransformR
-public import IntegerMultBounds.MathlibTM2.Fast.CompactSynRetunedTransforms
+public import IntegerMultBounds.MathlibTM2.Fast.CompactBundleMnLay
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerFitR
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
 
 /-! The rounded forward and opposite transforms at every uniform chunk width, then at the
 retuned sizes: `SynFwdSpecQ`, `SynOppSpecQ` with the computed rounds `compactSynFOp`,

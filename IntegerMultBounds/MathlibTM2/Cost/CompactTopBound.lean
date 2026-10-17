@@ -2,7 +2,9 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Cost.CompactLayerBound
 public import IntegerMultBounds.MathlibTM2.Node.CompactTopProc
-public import IntegerMultBounds.MathlibTM2.Fast.CompactSynRows
+import IntegerMultBounds.MathlibTM2.Fast.SynSel
+public import IntegerMultBounds.MathlibTM2.Fast.SynRec
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-! Geometric summation and exact control-cost accounting for compact top calls.
 The control budget below retains every stage of the actual top runner. -/

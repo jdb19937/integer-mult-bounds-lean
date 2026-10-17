@@ -1,7 +1,9 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Fast.SrcStage
 public import IntegerMultBounds.MathlibTM2.Fast.CRTDirectSource
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! # Source transforms using the concrete direct CRT layouts -/
 

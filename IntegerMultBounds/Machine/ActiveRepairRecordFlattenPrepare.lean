@@ -1,6 +1,9 @@
 module
+public import IntegerMultBounds.Machine.CountedTapeRepairCleanupWord
+import Mathlib.Tactic.Positivity.Finset
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
-public import IntegerMultBounds.Machine.ActiveRepairRecordFlattenEndpoint
 
 /-! Physical left-marker installation for raw repaired record streams. -/
 

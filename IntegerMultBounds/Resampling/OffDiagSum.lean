@@ -1,6 +1,11 @@
 module
 
-public import IntegerMultBounds.Resampling.WindowSum
+import IntegerMultBounds.Resampling.WindowSum
+public import IntegerMultBounds.Machine.GaussianLineValue
+public import IntegerMultBounds.NLogN.ExplicitNumeric
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! The off-diagonal map `Ẽ` of the Neumann iteration on the Gaussian line
 machine: run with stride one (`s` outputs over `s` inputs, so the window of

@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Host.BinArithMul
+import IntegerMultBounds.MathlibTM2.Host.Route
 
 /-!
 # Binary registers: restoring division and modular multiplication

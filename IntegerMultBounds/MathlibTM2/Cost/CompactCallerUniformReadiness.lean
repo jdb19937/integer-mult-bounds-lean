@@ -1,8 +1,15 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Cost.CompactCallerUniformRuntime
-public import IntegerMultBounds.MathlibTM2.Cost.CompactCallerSelectedRows
+import IntegerMultBounds.MathlibTM2.Cost.CompactCallerUniformRuntime
+import IntegerMultBounds.MathlibTM2.Cost.CompactCallerSelectedRows
 public import IntegerMultBounds.MathlibTM2.Mult.CompactSizes
+import IntegerMultBounds.MathlibTM2.Cost.CompactCallerRuntimeParameters
+public import IntegerMultBounds.Machine.CompactReservationGrowth
+public import IntegerMultBounds.MathlibTM2.Fast.CompactReservationGeometry
+public import IntegerMultBounds.MathlibTM2.Fast.CompactTopRows
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! Primitive shared-shape obligations from the actual multiplier sizes. -/
 @[expose] public section

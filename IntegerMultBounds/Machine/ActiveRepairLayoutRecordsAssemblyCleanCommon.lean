@@ -1,7 +1,9 @@
 module
+import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsBankAfterBudget
+import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsBankBudget
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsHeadersBudget
+import Mathlib.Tactic.Positivity.Finset
 
-public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsAssemblyOriginalLate
-public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsAssemblyOriginalLateAfter
 
 /-! Real fixed-many erasure of the retained consumer metadata. Placement
 preserves every whole unselected tape; lengths are paid by original volume. -/

@@ -1,7 +1,8 @@
 module
+public import IntegerMultBounds.Machine.ActivePrefixCompactConjugationLayout
+import IntegerMultBounds.Machine.CompactGadgetReservationPlacement
+import Mathlib.Tactic.Positivity.Finset
 
-public import IntegerMultBounds.Machine.ActivePrefixCompactConjugationSemantics
-public import IntegerMultBounds.Machine.ActivePrefixCompactConjugationBudget
 
 /-! Both complete physical compact conjugations on arbitrary caller tapes.
 Nineteen ports retain all eighteen prepared input words and change only the

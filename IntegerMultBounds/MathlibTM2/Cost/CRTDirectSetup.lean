@@ -1,7 +1,11 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CRTDirectSetup
-public import IntegerMultBounds.MathlibTM2.Cost.MatchBase
+import IntegerMultBounds.MathlibTM2.Cost.MatchBase
+public import IntegerMultBounds.MathlibTM2.Mult.Sizes
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! # Actual setup and cleanup cost for the direct CRT driver -/
 

@@ -1,7 +1,9 @@
 module
 
-public import IntegerMultBounds.Schoenhage.IterCorrect
+import IntegerMultBounds.Schoenhage.IterCorrect
 public import IntegerMultBounds.Schoenhage.Schedule
+public import IntegerMultBounds.Schoenhage.Level
+public import IntegerMultBounds.Schoenhage.Iter
 
 /-! The whole Schönhage–Strassen recursion as the tapes compute it, on
 natural-number residues. A level with ring size `N` (modulus `2^N + 1`) uses

@@ -2,6 +2,9 @@ module
 
 public import IntegerMultBounds.Machine.ActiveRepairRankHeadersCommands
 public import IntegerMultBounds.Machine.CompactGadgetReservationHeadersPowerRound
+import IntegerMultBounds.Machine.BinaryDescriptorStackRoundtrip
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
 /-! Paid physical multiplication and rounding extend the fixed stage-header
 arithmetic caller without changing its shared clean private workspace. -/

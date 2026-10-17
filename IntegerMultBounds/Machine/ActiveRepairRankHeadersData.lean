@@ -1,6 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.ActiveRepairRankHeadersCommands
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
 /-! Fixed arithmetic schedules for rank parser and destination patch headers.
 Only original widths are supplied; starts are actual runtime arithmetic outputs. -/

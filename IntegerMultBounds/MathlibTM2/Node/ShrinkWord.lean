@@ -2,6 +2,7 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Node.TopWord
 public import IntegerMultBounds.MathlibTM2.Layer.TopRS
+import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # Shrinking the coefficients of a stream by one

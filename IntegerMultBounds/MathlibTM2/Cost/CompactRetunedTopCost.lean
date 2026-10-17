@@ -1,6 +1,11 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Cost.CompactRetunedTopGrowth
+import IntegerMultBounds.MathlibTM2.Cost.CompactTopCompleteBound
+public import IntegerMultBounds.MathlibTM2.Fast.CompactTopExecution
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! The complete actual compact top cost at the proposed stronger layer exponent. -/
 @[expose] public section

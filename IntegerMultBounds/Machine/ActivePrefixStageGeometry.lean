@@ -1,6 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixStageParameters
+public import IntegerMultBounds.Machine.ActiveTargetHighestPairLayoutGeometry
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Physical offsets of the two distinct original slots. Early sources lie
 strictly above the target's retained highest bit; later sources lie wholly

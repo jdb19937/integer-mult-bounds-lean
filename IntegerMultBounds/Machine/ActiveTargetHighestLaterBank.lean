@@ -1,6 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.ActiveTargetHighestLaterAlphabet
+public import IntegerMultBounds.Machine.ActiveTargetHighestLaterValue
+public import IntegerMultBounds.Machine.BinaryPackedFieldSwap
 
 /-! Literal payload replacement interface, leaving all stage descriptors and
 blank work cells unchanged, for physically composing the later-source gadget. -/

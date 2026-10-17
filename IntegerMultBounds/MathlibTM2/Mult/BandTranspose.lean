@@ -1,6 +1,9 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Mult.BandSolveList
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! The transpose of the pivot rows into backward-pass columns, as a sliding
 window. Pivots are processed in increasing order; the window holds `B` blocks of

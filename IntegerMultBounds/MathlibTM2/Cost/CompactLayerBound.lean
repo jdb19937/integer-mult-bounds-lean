@@ -3,6 +3,7 @@ module
 public import IntegerMultBounds.MathlibTM2.Cost.CompactLayerNormalized
 public import IntegerMultBounds.MathlibTM2.Layer.Recurrence
 public import IntegerMultBounds.MathlibTM2.Cost.Branching
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-! Closed bounds for the actual compact layer with its current level-zero
 stopping regime. The width factor is guard^tau; the leaf contribution remains

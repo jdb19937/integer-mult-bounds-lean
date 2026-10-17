@@ -1,6 +1,13 @@
 module
 
-public import IntegerMultBounds.Machine.ActiveRepairLayoutKeysFields
+import IntegerMultBounds.Machine.ActiveRepairLayoutKeysFields
+public import IntegerMultBounds.Machine.ActiveRepairEarlyKeyOriginalValid
+public import IntegerMultBounds.Machine.ActiveRepairRankHeadersEndpoint
+import IntegerMultBounds.Machine.ActiveRepairEarlyKeyValue
+import IntegerMultBounds.Machine.ActiveRepairLayoutPermutationDestination
+public import IntegerMultBounds.Machine.ActiveRepairLayoutPermutationWords
+public import IntegerMultBounds.Machine.ActiveRepairLayoutPermutation
+import Mathlib.Tactic.Positivity.Finset
 
 /-! The physically generated original-layout early key is the membership
 flag and complete destination rank of the concrete global permutations. -/

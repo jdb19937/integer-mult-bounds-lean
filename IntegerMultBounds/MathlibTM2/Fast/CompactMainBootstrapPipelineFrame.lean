@@ -2,6 +2,10 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CompactMainBootstrapFrame
 public import IntegerMultBounds.MathlibTM2.Fast.CompactMainTransport
+import IntegerMultBounds.MathlibTM2.Node.CompactBasisSetupRest
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! Recover original depth from its initial transform predecessor, preserving the main frame. -/
 @[expose] public section

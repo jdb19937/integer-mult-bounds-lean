@@ -1,9 +1,26 @@
 module
+public import IntegerMultBounds.MathlibTM2.Fast.DistWidth
+import IntegerMultBounds.MathlibTM2.Fast.MainEmbed
+import IntegerMultBounds.MathlibTM2.Cost.MatchBase
+public import IntegerMultBounds.MathlibTM2.Cost.Total
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+public import IntegerMultBounds.MathlibTM2.Cost.Branching
+import Mathlib.Tactic.NormNum.RealSqrt
+import Mathlib.Tactic.NormNum.Prime
+import Mathlib.Tactic.NormNum.Parity
+import Mathlib.Tactic.NormNum.Ordinal
+import Mathlib.Tactic.NormNum.NatSqrt
+import Mathlib.Tactic.NormNum.NatLog
+import Mathlib.Tactic.NormNum.NatFib
+import Mathlib.Tactic.NormNum.ModEq
+import Mathlib.Tactic.NormNum.LegendreSymbol
+import Mathlib.Tactic.NormNum.IsSquare
+import Mathlib.Tactic.NormNum.IsCoprime
+import Mathlib.Tactic.NormNum.Irrational
+import Mathlib.Tactic.Echelon.Zsqrtd
 
-public import IntegerMultBounds.MathlibTM2.Cost.MatchSynPipe
-public import IntegerMultBounds.MathlibTM2.Cost.MatchSynOver
-public import IntegerMultBounds.MathlibTM2.Cost.MatchSynTop
-public import IntegerMultBounds.MathlibTM2.Cost.MatchSynPcs
 
 /-!
 # Cost matching: the round loops of the synthetic transforms

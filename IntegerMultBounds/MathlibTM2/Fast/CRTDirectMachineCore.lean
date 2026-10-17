@@ -1,10 +1,9 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CRTDirectMachine
-public import IntegerMultBounds.MathlibTM2.Fast.CRTControlTarget
-public import IntegerMultBounds.MathlibTM2.Fast.CRTControlDriverSpec
-public import IntegerMultBounds.MathlibTM2.Fast.CRTControlStreams
-public import IntegerMultBounds.MathlibTM2.Fast.CRTReverseFull
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! # The concrete direct CRT driver -/
 

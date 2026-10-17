@@ -1,7 +1,7 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Node.CompactBasisRegisters
-public import IntegerMultBounds.MathlibTM2.Node.Factor
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-! Compact basis contract at the factor's post-division boundary. -/
 @[expose] public section

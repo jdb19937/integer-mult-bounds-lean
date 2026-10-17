@@ -1,7 +1,13 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Fast.CompactMainRunsTime
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainRunsTime
 public import IntegerMultBounds.MathlibTM2.Fast.Glue
+public import IntegerMultBounds.MathlibTM2.Fast.CompactMainTimeGlue
+public import IntegerMultBounds.MathlibTM2.Fast.CompactMainRunsCost
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
 
 /-! Final finite-machine packaging for the compact branch. The actual execution
 and complete transform-cost hypotheses remain explicit until main assembly closes. -/

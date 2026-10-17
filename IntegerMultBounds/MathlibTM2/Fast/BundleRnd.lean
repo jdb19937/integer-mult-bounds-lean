@@ -1,6 +1,11 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.BundleLay
+import IntegerMultBounds.MathlibTM2.Fast.MainCorrect
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
 
 /-!
 # The rounding and output parameters from the parameter layout

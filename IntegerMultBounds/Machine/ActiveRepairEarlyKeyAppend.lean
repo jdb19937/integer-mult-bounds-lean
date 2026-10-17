@@ -1,6 +1,10 @@
 module
 
 public import IntegerMultBounds.Machine.ActiveRepairEarlyKeyPlacement
+public import IntegerMultBounds.Machine.CountedRepairKeyAppend
+import Mathlib.Tactic.Positivity.Finset
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
 /-! Conditional output contains the complete physical destination rank. -/
 

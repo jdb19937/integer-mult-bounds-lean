@@ -1,6 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixDirtyControlConjugationSwap
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlNegativePureLoadPlaced
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Real compact rotations for the four conjugations, padded into the same
 bank as both physical interchange machines. No callback supplies a load. -/

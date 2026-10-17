@@ -1,6 +1,7 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Node.Params
+import IntegerMultBounds.MathlibTM2.Node.Params
+public import IntegerMultBounds.MathlibTM2.Host.Index
 
 /-!
 # Bit-serial transducers on binary numerals

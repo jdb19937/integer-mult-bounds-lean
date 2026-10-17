@@ -5,6 +5,8 @@ public import IntegerMultBounds.MathlibTM2.Node.RotPass
 public import IntegerMultBounds.MathlibTM2.Node.SwapPass
 public import IntegerMultBounds.MathlibTM2.Node.Params
 public import IntegerMultBounds.MathlibTM2.Layer.Enc
+public import IntegerMultBounds.MathlibTM2.Node.RepairPass
+import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # The packed slot XOR

@@ -1,6 +1,6 @@
 module
 
-public import Mathlib.Analysis.SpecialFunctions.Gaussian.PoissonSummation
+import Mathlib.Analysis.SpecialFunctions.Gaussian.PoissonSummation
 public import Mathlib.Tactic
 
 /-! Analytic preliminaries for Gaussian resampling. Proved: the Gaussian

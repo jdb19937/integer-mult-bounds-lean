@@ -2,7 +2,6 @@ module
 
 public import IntegerMultBounds.NLogN.ToeplitzInverse
 public import IntegerMultBounds.NLogN.SchurSolve
-public import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
 
 /-! Exact interior solvers. A dominance margin on a finite active set gives an
 actual solver for every right-hand side. On a block of the active set closed

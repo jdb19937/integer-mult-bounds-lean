@@ -1,10 +1,8 @@
 module
 
 public import IntegerMultBounds.Assembly
-public import Mathlib.Analysis.Asymptotics.Defs
-public import Mathlib.Analysis.Complex.ExponentialBounds
-public import Mathlib.Analysis.SpecialFunctions.Pow.Real
-public import Mathlib.Data.Fintype.Vector
+import Mathlib.Analysis.Complex.ExponentialBounds
+import Mathlib.Analysis.SpecialFunctions.Pow.NNReal
 
 /-!
 # Time bounds for the simulated machine

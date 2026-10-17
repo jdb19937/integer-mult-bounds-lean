@@ -1,8 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.BinaryPackedFieldSwap
-public import IntegerMultBounds.Machine.CompactGadgetReservationHeadersCarvedPlacedCleanup
-public import IntegerMultBounds.Machine.ActivePrefixLayoutSwap
+public import IntegerMultBounds.Machine.CompactGadgetReservationHeadersCarvedPlacedRun
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Literal compact-T/back interchange with original geometry descriptors.
 Permanent ports are chunk/axes/global-guard/n/active/rows/payload/b, four blank

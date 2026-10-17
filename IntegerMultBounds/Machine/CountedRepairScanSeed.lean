@@ -1,6 +1,9 @@
 module
+public import IntegerMultBounds.Machine.RepairScan
+import Mathlib.Tactic.Positivity.Finset
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
-public import IntegerMultBounds.Machine.CountedRepairScanMetadataRun
 
 /-! Physical sentinel initialization for the fixed fourteen-tape scan bank. -/
 

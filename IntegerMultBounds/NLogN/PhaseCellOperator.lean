@@ -1,8 +1,12 @@
 module
 
-public import IntegerMultBounds.NLogN.PhaseCellRowBudget
-public import IntegerMultBounds.NLogN.ResamplingAssembly
-public import IntegerMultBounds.NLogN.InversePerturbation
+import IntegerMultBounds.NLogN.PhaseCellRowBudget
+import IntegerMultBounds.NLogN.InversePerturbation
+public import IntegerMultBounds.NLogN.PhaseCellRow
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+public import IntegerMultBounds.Machine
 
 /-! The actual corrected periodic row as a continuous linear map, with its
 operator error and quantitative inverse transfer. Sharp exact inverse bounds

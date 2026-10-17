@@ -1,6 +1,9 @@
 module
 
 public import IntegerMultBounds.NLogN.PhaseCell
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! Executable rational exponent arguments for the selected phase-cell samples.
 Integer division implements the existing upward-tie nearest rounding. Natural

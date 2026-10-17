@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixDirtyControlSequenceStages
+import Mathlib.Tactic.Positivity.Finset
 
 /-! The complete prepared later-source physical schedule: early4, source load
 through U/back, early4 using the updated U word, and source unload through

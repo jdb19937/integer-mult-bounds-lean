@@ -1,7 +1,13 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Cost.CompactCallerParameters
+import IntegerMultBounds.MathlibTM2.Cost.CompactCallerParameters
 public import IntegerMultBounds.MathlibTM2.Mult.Sizes
+public import IntegerMultBounds.Machine.CompactReservationGrowth
+import IntegerMultBounds.MathlibTM2.Cost.CompactParameters
+public import IntegerMultBounds.MathlibTM2.Fast.CompactReservationGeometry
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! Compact caller bounds for the computable multiplier parameter generator.
 Only its precision agrees with the manuscript regime; its dimension and chunk

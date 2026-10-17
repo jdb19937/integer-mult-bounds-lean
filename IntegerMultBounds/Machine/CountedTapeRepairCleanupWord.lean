@@ -1,6 +1,10 @@
 module
+public import IntegerMultBounds.Compact.KeyInstance
+import Mathlib.Tactic.Positivity.Finset
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
+public import IntegerMultBounds.Machine.SharedPlacementAlphabet
 
-public import IntegerMultBounds.Machine.CountedTapeRepairRun
 
 /-! Physical removal of complete marked and unmarked stage words, including
 left sentinels, with literal return to the blank origin. -/

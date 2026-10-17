@@ -2,6 +2,9 @@ module
 
 public import IntegerMultBounds.Machine.ActivePrefixDirtyControlSourceGeometry
 public import IntegerMultBounds.Machine.ActivePrefixDirtyControlNegativePureData
+public import IntegerMultBounds.Machine.ActivePrefixLayoutBack
+import IntegerMultBounds.Machine.ActivePrefixDirtyControlPureSemantics
+import Mathlib.Tactic.Positivity.Finset
 
 /-! The actual shifted source projection emits precisely the selected X bits
 in compact b-bit digits. The source-load and unload streams are evaluated at

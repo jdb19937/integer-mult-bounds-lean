@@ -1,6 +1,14 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Cost.DirectGrowth
+import IntegerMultBounds.MathlibTM2.Cost.DirectGrowth
+public import IntegerMultBounds.MathlibTM2.Cost.DirectScale
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
+public import IntegerMultBounds.MathlibTM2.Binary
+public import IntegerMultBounds.MathlibTM2.Fast.CMul
+public import IntegerMultBounds.MathlibTM2.Mult.CRT
 
 /-! # Aggregate budget with linear CRT routing
 

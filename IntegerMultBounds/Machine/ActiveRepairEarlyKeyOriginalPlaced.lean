@@ -1,6 +1,8 @@
 module
+public import IntegerMultBounds.Machine.ActiveRepairEarlyKeyOriginalRun
+import IntegerMultBounds.Machine.CompactGadgetReservationPlacement
+import Mathlib.Tactic.Positivity.Finset
 
-public import IntegerMultBounds.Machine.ActiveRepairEarlyKeyOriginalGeometry
 
 /-! Original-input early key production on arbitrary caller tapes, retaining
 all original descriptors, the scan counter, and every complementary frame. -/

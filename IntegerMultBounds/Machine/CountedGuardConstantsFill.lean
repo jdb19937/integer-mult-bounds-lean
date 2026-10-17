@@ -1,7 +1,9 @@
 module
 
 public import IntegerMultBounds.Machine.CountedGuardGadgetPosition
-public import IntegerMultBounds.Machine.Gather
+import IntegerMultBounds.Machine.Gather
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
 /-! Runtime-counted literal constant filling and positioning from blank private
 clock storage. The original count is retained; all marker initialization,

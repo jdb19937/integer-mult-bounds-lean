@@ -2,6 +2,7 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CompactTopCoordinates
 public import IntegerMultBounds.MathlibTM2.Fast.CompactSynRecRoot
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-! Actual top coordinates from original parameters. Recompute the reservations
 cleared by the piece-record builder, derive a,qTop,aT,K*qTop, then clear those

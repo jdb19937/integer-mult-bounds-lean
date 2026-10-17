@@ -1,8 +1,16 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CompactMainEntryR
-public import IntegerMultBounds.MathlibTM2.Fast.SrcStageG
-public import IntegerMultBounds.MathlibTM2.Fast.CompactMainSourceStages
+import IntegerMultBounds.MathlibTM2.Fast.SrcStageG
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainSourceLift
+public import IntegerMultBounds.MathlibTM2.Fast.CompactMainStableFrame
+import IntegerMultBounds.MathlibTM2.Fast.CompactSrcRetunedFrame
+import IntegerMultBounds.MathlibTM2.Fast.CompactSrcBase
+public import IntegerMultBounds.MathlibTM2.Fast.CompactSrcMachine
+public import IntegerMultBounds.MathlibTM2.Fast.ConvBoxQPipeline
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! The source transforms of the main chain with the rounded transforms: the box stage computes
 `compactRetunedCb n`, the box convolution with the rounded rounds, and the source machines compute

@@ -1,6 +1,10 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixLayoutHeadersData
+public import IntegerMultBounds.Machine.CompactGadgetReservationHeadersPowerRound
+import IntegerMultBounds.Machine.BinaryDescriptorStackRoundtrip
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
 /-! Actual header preparation with a fixed 28+15 tape bank. A real constant
 writer, retained-word arithmetic, power constructor and product constructor

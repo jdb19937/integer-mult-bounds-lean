@@ -1,6 +1,9 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixDirtyControlHeadersData
+public import IntegerMultBounds.Machine.ActivePrefixLayoutHeadersEndpoint
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
 /-! Actual full-header producer and cleanup for the dirty-control consumers.
 The complete 43-tape bank preserves originals and erases all scratch words. -/

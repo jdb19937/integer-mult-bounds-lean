@@ -3,6 +3,12 @@ module
 public import IntegerMultBounds.MathlibTM2.Mult.ComplexConv
 public import IntegerMultBounds.NLogN.ResamplingPermuted
 public import IntegerMultBounds.Resampling.WeightTable
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
+import Mathlib.Analysis.Real.Pi.Bounds
+public import IntegerMultBounds.Machine
 
 /-!
 # The computed chirp kernel from axis tables

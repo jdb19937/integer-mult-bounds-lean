@@ -1,6 +1,8 @@
 module
 
-public import IntegerMultBounds.Schoenhage.Wp
+import IntegerMultBounds.Schoenhage.Wp
+public import IntegerMultBounds.Schoenhage.Ops
+public import IntegerMultBounds.Schoenhage.Rules
 
 /-! Residue arithmetic modulo `2^N + 1` as word programs on a fixed bank of
 tapes. Residues are `(N + 1)`-bit words, least significant bit first. A

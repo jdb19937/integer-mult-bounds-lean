@@ -1,8 +1,6 @@
 module
 
-public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Analysis.SpecialFunctions.Log.Base
-public import Mathlib.Algebra.Order.Archimedean.Basic
 public import Mathlib.Tactic
 
 /-!

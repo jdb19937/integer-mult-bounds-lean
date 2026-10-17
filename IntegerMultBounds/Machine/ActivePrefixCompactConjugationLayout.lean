@@ -1,12 +1,12 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixCompactConjugationRun
-public import IntegerMultBounds.Machine.ActivePrefixCompactSwapGeometry
 public import IntegerMultBounds.Machine.ActivePrefixCompactParityLoadLayout
 public import IntegerMultBounds.Machine.ActivePrefixCompactParityLoadLayoutAfter
 public import IntegerMultBounds.Machine.ActivePrefixCompactNegativeLoadLayout
 public import IntegerMultBounds.Machine.ActivePrefixCompactNegativeLoadLayoutAfter
-public import IntegerMultBounds.Machine.ActivePrefixLayoutAbsorption
+import IntegerMultBounds.Machine.ActivePrefixLayoutAbsorption
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Both source orders in the unchanged layout for both physical load branches.
 The original-record payload hypothesis pays prefix construction, with no

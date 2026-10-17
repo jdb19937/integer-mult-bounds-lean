@@ -1,6 +1,8 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CompactReservationGeometry
+public import IntegerMultBounds.MathlibTM2.Fast.SynSel
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-! The reserved piece records cover the back and active coordinates exactly once.
 Together with the high row/front kernel coordinates they cover the original

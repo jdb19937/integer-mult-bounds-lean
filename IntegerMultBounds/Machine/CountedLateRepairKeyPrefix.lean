@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.Machine.CountedLateRepairKeyBank
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Paid later inverse, ideal toggle, dirty-word concatenation and conditional
 key writing, all on the common fixed34 bank. -/

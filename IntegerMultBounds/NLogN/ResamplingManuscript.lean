@@ -1,6 +1,11 @@
 module
 
 public import IntegerMultBounds.NLogN.NeumannHalved
+public import IntegerMultBounds.NLogN.ResamplingPermutedNumeric
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
 
 /-! Lemma 7.1 with the manuscript's numerical maps: no clamps. For `α ≥ 2`,
 `‖A‖ ≤ 3/4`, so the unclamped window sums `Ã` land in the unit disk once their

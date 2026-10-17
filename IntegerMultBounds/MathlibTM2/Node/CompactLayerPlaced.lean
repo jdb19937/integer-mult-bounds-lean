@@ -2,6 +2,8 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Node.CompactLayerProc
 public import IntegerMultBounds.MathlibTM2.Node.CompactRegisterEmbedding
+public import IntegerMultBounds.MathlibTM2.Host.Embed
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-! Placement of the complete recursive compact layer beside the retained legacy workspace. -/
 @[expose] public section

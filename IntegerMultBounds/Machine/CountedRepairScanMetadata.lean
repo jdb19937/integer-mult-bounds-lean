@@ -1,7 +1,11 @@
 module
 
-public import IntegerMultBounds.Machine.CountedRepairKeyScan
 public import IntegerMultBounds.Machine.CountedGuardConstantsFill
+import IntegerMultBounds.Machine.CountedGuardGadgetHeaders
+import Mathlib.Tactic.Positivity.Finset
+public import IntegerMultBounds.Machine.CountedRankSplitBank
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
 /-! Runtime construction of the unary sort width and zero rank counter, using
 only original q/b/n headers and blank reusable product workspace. -/

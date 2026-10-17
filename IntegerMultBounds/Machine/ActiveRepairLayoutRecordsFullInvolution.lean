@@ -1,7 +1,7 @@
 module
+public import IntegerMultBounds.Machine.ActiveTargetHighestLayoutFullSelected
+import Mathlib.Tactic.Positivity.Finset
 
-public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsFullEarlySelected
-public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsFullLateSelected
 
 /-! The complete selected-mask address actions are involutions. Earlier
 source retention uses its explicit disjointness from target-high bit zero. -/

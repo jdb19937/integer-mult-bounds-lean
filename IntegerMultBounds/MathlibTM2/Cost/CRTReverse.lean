@@ -1,7 +1,12 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Fast.CRTReverseFull
 public import IntegerMultBounds.MathlibTM2.Cost.MatchCRT
+public import IntegerMultBounds.MathlibTM2.Fast.CRTReverse
+import IntegerMultBounds.MathlibTM2.Cost.MatchBase
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
 
 /-! # Linear-axis cost of the executable paired reversal -/
 @[expose] public section

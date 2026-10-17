@@ -2,6 +2,7 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Node.CompactFactorR
 public import IntegerMultBounds.MathlibTM2.Node.CompactLayerProc
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-!
 # The rounded compact layer

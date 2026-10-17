@@ -3,7 +3,12 @@ module
 public import IntegerMultBounds.MathlibTM2.Cost.LayerCost
 public import IntegerMultBounds.MathlibTM2.Cost.Branching
 public import IntegerMultBounds.MathlibTM2.Cost.Total
-public import IntegerMultBounds.MathlibTM2.Fast.SynSel
+import IntegerMultBounds.MathlibTM2.Fast.SynSel
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
+public import IntegerMultBounds.MathlibTM2.Fast.SynRec
 
 /-!
 # Cost matching: the pieces of a chunk round of the synthetic transforms

@@ -1,6 +1,8 @@
 module
 
 public import IntegerMultBounds.Schoenhage.Layers
+import IntegerMultBounds.Schoenhage.IterCorrect
+import IntegerMultBounds.Schoenhage.Wp
 
 /-! Inverse transform layers on word tapes. The inverse pair loop runs the
 inverse butterfly over the half-block tapes; an inverse block loads the

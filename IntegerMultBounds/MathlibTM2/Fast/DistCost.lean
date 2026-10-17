@@ -1,6 +1,11 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Fast.DistWidth
+import IntegerMultBounds.MathlibTM2.Fast.DistWidth
+public import IntegerMultBounds.MathlibTM2.Fast.Dist
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
 
 /-!
 # The cost of the distribution machine

@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixSelectedOffsetCleanup
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Complete first-offset producer from original prefix/source/gadget
 descriptors, including all tables, varying controls, arithmetic and cleanup.

@@ -3,6 +3,7 @@ module
 public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsBankPlaced
 public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsHeadersErase
 public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsHeadersAfterBudget
+import Mathlib.Tactic.Positivity.Finset
 
 /-! The real original-header consumer installation and the final generated
 header erasure both have paid linear original payload-volume contracts. -/

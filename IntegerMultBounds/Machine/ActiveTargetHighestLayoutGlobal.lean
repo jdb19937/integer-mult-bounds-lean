@@ -1,6 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.ActiveTargetHighestLayoutEarlyCoordinates
+import IntegerMultBounds.Machine.ActiveTargetHighestPairSemantics
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Full-array semantics of both physically executed highest-bit actions at
 every unchanged active-layout address, including all source and spectator

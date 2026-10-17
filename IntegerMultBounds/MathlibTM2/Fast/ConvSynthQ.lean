@@ -2,6 +2,12 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Fast.ConvSynth
 public import IntegerMultBounds.MathlibTM2.Fast.ConvSpecQ
+public import IntegerMultBounds.MathlibTM2.Mult.SynthErrQ
+import IntegerMultBounds.MathlibTM2.Fast.PointStage
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+public import IntegerMultBounds.MathlibTM2.Mult.CRT
 
 /-!
 # The synthetic convolution with computed rounds

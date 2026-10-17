@@ -1,7 +1,8 @@
 module
 
-public import IntegerMultBounds.Machine.ActivePrefixStageHeadersBudget
-public import IntegerMultBounds.Machine.BinaryDescriptorCompare
+import IntegerMultBounds.Machine.ActivePrefixStageHeadersBudget
+public import IntegerMultBounds.Machine.ActivePrefixStageParameters
+import Mathlib.Tactic.Positivity.Finset
 
 /-! The source order used by the two original-slot stages is physically
 computed from their original binary source/target slot words. Comparison

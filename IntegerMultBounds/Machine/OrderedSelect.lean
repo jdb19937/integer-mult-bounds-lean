@@ -1,12 +1,10 @@
 module
 
-public import IntegerMultBounds.Machine.BinaryCompare
 public import IntegerMultBounds.Machine.BinaryAccumulate
 public import IntegerMultBounds.Machine.BinaryDecrease
-public import IntegerMultBounds.Machine.ExactFrame
 public import IntegerMultBounds.Machine.WordMoves
 public import IntegerMultBounds.Machine.Branch
-public import IntegerMultBounds.Machine.LoopChain
+import IntegerMultBounds.Machine.LoopChain
 
 /-! Ordered selection of records by a modular counter. A list of nonblank
 records separated by single blanks is scanned once; before each record a

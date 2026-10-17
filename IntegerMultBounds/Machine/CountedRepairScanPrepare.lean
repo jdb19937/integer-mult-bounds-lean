@@ -1,7 +1,10 @@
 module
 
 public import IntegerMultBounds.Machine.CountedRepairScanSeed
-public import IntegerMultBounds.Compact.KeyInstance
+import IntegerMultBounds.Compact.KeyInstance
+public import IntegerMultBounds.Machine.CountedRepairScanMetadataRun
+public import IntegerMultBounds.Machine.CountedRepairKeyScan
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Physical preparation of the complete fixed scan bank from a source stream,
 original q/b/n descriptors, control word and otherwise blank workspace. -/

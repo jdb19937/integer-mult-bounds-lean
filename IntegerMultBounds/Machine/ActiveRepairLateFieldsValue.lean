@@ -1,7 +1,10 @@
 module
 
-public import IntegerMultBounds.Machine.ActiveRepairLateFieldsPlaced
-public import IntegerMultBounds.Machine.CountedLateRepairKeyValue
+import IntegerMultBounds.Machine.CountedLateRepairKeyValue
+public import IntegerMultBounds.Machine.CountedLateRepairKeyRun
+public import IntegerMultBounds.Compact.LatePowerTwoRank
+import Mathlib.Tactic.Positivity.Finset
+import Mathlib.Data.List.GetD
 
 /-! Identify the actual later guard and recovered destination with rankFlag
 and rankKey using only genuine extracted lengths. The concatenated local

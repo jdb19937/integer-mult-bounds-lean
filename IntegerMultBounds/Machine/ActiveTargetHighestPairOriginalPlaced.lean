@@ -1,6 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.ActiveTargetHighestPairOriginalRun
+import IntegerMultBounds.Machine.CompactGadgetReservationPlacement
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Six-port original-header highest-bit execution on arbitrary caller banks.
 The array alone changes; original words, caller spectators, and all private

@@ -1,7 +1,10 @@
 module
 public import IntegerMultBounds.MathlibTM2.Fast.CompactTopSetup
 public import IntegerMultBounds.MathlibTM2.Fast.CompactTopConfigDivisor
-public import IntegerMultBounds.MathlibTM2.Cost.MatchSynOver
+import IntegerMultBounds.MathlibTM2.Cost.MatchSynOver
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! Scalar polynomial bounds for actual original-input record and coordinate setup. -/
 @[expose] public section

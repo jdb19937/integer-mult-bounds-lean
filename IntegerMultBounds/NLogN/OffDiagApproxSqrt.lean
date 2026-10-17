@@ -1,8 +1,11 @@
 module
 
 public import IntegerMultBounds.NLogN.ExplicitNumeric
-public import Mathlib.Analysis.Complex.ExponentialBounds
-public import Mathlib.Analysis.Real.Pi.Bounds
+import Mathlib.Analysis.Complex.ExponentialBounds
+import Mathlib.Analysis.Real.Pi.Bounds
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! Lemma 4.11 of Harvey and van der Hoeven with the paper's window size. Under
 `α² θ ≥ 1` every off-diagonal term of the normalised resampling system is at

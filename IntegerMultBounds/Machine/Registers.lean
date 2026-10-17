@@ -1,9 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.GrowingCounterData
-public import IntegerMultBounds.Machine.ExactFrame
 public import IntegerMultBounds.Machine.WordMoves
-public import Mathlib.Data.List.GetD
+import Mathlib.Data.List.GetD
 
 /-! Natural-number registers on tapes. A register holding `n` is the canonical
 binary word of `n` (least significant bit first, no high zeros) at origin

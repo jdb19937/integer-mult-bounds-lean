@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsData
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Record-level ideal output serializes to the original-width physical bit
 array. This is semantic serialization; no formatting machine is assumed. -/

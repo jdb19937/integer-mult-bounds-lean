@@ -1,6 +1,9 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Mult.Sizes
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! Fixed polynomial setup work is absorbed by the actual coefficient count.
 The coefficients are powers of two and all statements use runtime sizes. -/

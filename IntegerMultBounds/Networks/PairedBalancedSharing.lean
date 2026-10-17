@@ -1,6 +1,8 @@
 module
 
 public import IntegerMultBounds.Networks.PairedVectorBudget
+public import IntegerMultBounds.Networks.DisjointUnique
+public import IntegerMultBounds.Networks.DisjointExclusion
 
 /-! Balanced coarse-edge totals already store their row sums. Reconstructing
 those rows during strip construction reuses the support bank for free. This

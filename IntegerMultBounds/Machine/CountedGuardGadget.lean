@@ -2,6 +2,8 @@ module
 
 public import IntegerMultBounds.Machine.CountedGuardGadgetOriginal
 public import IntegerMultBounds.Machine.CountedGuardGadgetFinish
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
 /-! The complete fixed-control guard gadget from sole original q/b/n headers.
 The exact legacy flag word is physically generated and reduced by AnyFlag;

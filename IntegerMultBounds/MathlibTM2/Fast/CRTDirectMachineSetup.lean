@@ -2,6 +2,9 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CRTDirectMachine
 public import IntegerMultBounds.MathlibTM2.Fast.CRTDirectSetup
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! # Runtime setup supplies the direct machine contract -/
 

@@ -3,6 +3,8 @@ module
 public import IntegerMultBounds.Machine.CountedGuardOriginalSetup
 public import IntegerMultBounds.Machine.CountedGuardOriginalCleanup
 public import IntegerMultBounds.Machine.CountedGuardGadgetValue
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
 /-! The complete original-input fixed-control exceptional-address guard.
 Only V/W and canonical q/b/n are supplied. Comparison constants, derived

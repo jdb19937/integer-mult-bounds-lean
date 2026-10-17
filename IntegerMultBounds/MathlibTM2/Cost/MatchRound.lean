@@ -1,7 +1,11 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Cost.MatchBase
+import IntegerMultBounds.MathlibTM2.Cost.MatchBase
 public import IntegerMultBounds.MathlibTM2.Fast.Round
+public import IntegerMultBounds.MathlibTM2.Cost.Total
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-!
 # Cost matching: the rounding stage

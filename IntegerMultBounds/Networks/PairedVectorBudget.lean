@@ -1,7 +1,15 @@
 module
 
 public import IntegerMultBounds.Networks.DisjointSharingBudget
-public import IntegerMultBounds.Networks.PairedVectorCorrect
+import IntegerMultBounds.Networks.PairedVectorCorrect
+import IntegerMultBounds.Networks.PairedCircuitBudget
+import IntegerMultBounds.Networks.DisjointUnique
+import Mathlib.Tactic.NormNum.OfScientific
+import Mathlib.Tactic.NormNum.DivMod
+import Mathlib.Tactic.NormNum.Abs
+import Mathlib.Data.Rat.Cast.Order
+import Mathlib.Order.Lattice.Nat
+import Mathlib.Tactic.NormNum.Pow
 
 /-! Structural sharing bounds for the actual prefix/suffix vector constructor.
 The full total built by the prefix pass is already interned when the suffix

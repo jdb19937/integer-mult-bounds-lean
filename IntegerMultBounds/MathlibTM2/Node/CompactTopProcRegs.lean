@@ -1,6 +1,10 @@
 module
+public import IntegerMultBounds.MathlibTM2.Node.Regs
+public import IntegerMultBounds.MathlibTM2.Node.TopRec
+import Mathlib.Tactic.Positivity.Finset
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
-public import IntegerMultBounds.MathlibTM2.Node.TopProc
 
 /-! Top-stage register contracts for arbitrary basis banks and persistent rest
 predicates. The legacy SXReg top machine remains unchanged. -/

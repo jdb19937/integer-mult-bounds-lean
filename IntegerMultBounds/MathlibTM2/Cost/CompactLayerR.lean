@@ -2,6 +2,7 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Cost.CompactLayerBound
 public import IntegerMultBounds.MathlibTM2.Node.CompactLayerProcR
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-! The rounded compact layer obeys the scalar recurrence `compactLayerMajorant` of the exact
 layer: the node drops the exponent program and the `Tc` terms, and each factor pays the

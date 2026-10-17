@@ -4,7 +4,7 @@ public import IntegerMultBounds.Schoenhage.FMachine
 public import IntegerMultBounds.Schoenhage.Words
 public import IntegerMultBounds.Machine.Branch
 public import IntegerMultBounds.Machine.InjectivePlacement
-public import IntegerMultBounds.Machine.PlacementBank
+import IntegerMultBounds.Machine.PlacementBank
 
 /-! Word programs: a small language over banks of word tapes, compiled to
 literal programs. A primitive is a verified machine on a few tapes with an

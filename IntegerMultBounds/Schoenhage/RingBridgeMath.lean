@@ -2,6 +2,7 @@ module
 
 public import IntegerMultBounds.Schoenhage.RingSpec
 public import IntegerMultBounds.Spec.PointwiseProducts
+import IntegerMultBounds.Spec.SignedRingProductFacts
 
 /-! The ring product's word-level output in the paper's format. A record's
 component words, most significant bit first, reversed are the multiplier's

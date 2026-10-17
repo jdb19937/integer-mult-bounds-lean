@@ -1,6 +1,10 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Cost.MatchBase
+import IntegerMultBounds.MathlibTM2.Cost.MatchBase
+public import IntegerMultBounds.MathlibTM2.Cost.Total
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! # Linear-axis routing scale
 This scale applies to the new CRT schedule and to the already-linear

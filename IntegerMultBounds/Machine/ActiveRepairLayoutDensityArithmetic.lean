@@ -1,6 +1,8 @@
 module
+public import IntegerMultBounds.Machine.VaryingControlRepairDensity
+import IntegerMultBounds.Compact.RepairBounds
+import Mathlib.Tactic.Positivity.Finset
 
-public import IntegerMultBounds.Machine.ActiveRepairLayoutDensity
 
 /-! The manuscript's dyadic radix choice pays full-address repair width. -/
 

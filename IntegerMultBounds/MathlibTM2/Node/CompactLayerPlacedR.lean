@@ -2,6 +2,7 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Node.CompactLayerPlaced
 public import IntegerMultBounds.MathlibTM2.Node.CompactLayerProcR
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-! Placement of the rounded recursive compact layer beside the retained legacy workspace:
 `compactLayerPlaced` for `CallSpecF` and the rounded table. -/

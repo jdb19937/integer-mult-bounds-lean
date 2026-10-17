@@ -2,7 +2,6 @@ module
 
 public import Mathlib.Computability.TuringMachine.Computable
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
-public import Mathlib.Analysis.Asymptotics.Defs
 
 /-!
 # Integer multiplication below `n log n`: the statement

@@ -1,7 +1,13 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Cost.CRTControl
-public import IntegerMultBounds.MathlibTM2.Fast.CRTControlScan
+import IntegerMultBounds.MathlibTM2.Cost.CRTControl
+import IntegerMultBounds.MathlibTM2.Fast.CRTControlScan
+public import IntegerMultBounds.MathlibTM2.Fast.CRTControl
+public import IntegerMultBounds.MathlibTM2.Fast.TableVM
+public import IntegerMultBounds.MathlibTM2.Mult.Sizes
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-!
 # Absorbing the executable CRT descriptor scan cost

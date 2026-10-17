@@ -1,6 +1,13 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Fast.SrcRegs
+import IntegerMultBounds.MathlibTM2.Fast.SrcRegs
+public import IntegerMultBounds.MathlibTM2.Fast.CRTSpec
+public import IntegerMultBounds.MathlibTM2.Fast.PointStage
+import IntegerMultBounds.MathlibTM2.Fast.PrepA
+public import IntegerMultBounds.MathlibTM2.Mult.Pipeline
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-!
 # Semantics of the source transform on streams

@@ -1,7 +1,9 @@
 module
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlHeadersPlaced
+public import IntegerMultBounds.Machine.ActiveTargetRotation
+public import IntegerMultBounds.Networks.Shared50ModularControl
+import Mathlib.Tactic.Positivity.Finset
 
-public import IntegerMultBounds.Machine.ActivePrefixDirtyControlHeadersGeometry
-public import IntegerMultBounds.Machine.ActivePrefixDirtyControlSequenceData
 
 /-! Original caller bank for the four early loads. Twenty-two original numeric
 words and the array are supplied; both ten-word consumer header banks start

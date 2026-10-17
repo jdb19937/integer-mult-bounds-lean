@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Node.CompactHeaderBuild
+public import IntegerMultBounds.MathlibTM2.Node.CompactRotRuntime
 
 /-! Placement of runtime-built original descriptors in the native bank. -/
 @[expose] public section

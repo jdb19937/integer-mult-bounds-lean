@@ -1,9 +1,17 @@
 module
 
-public import IntegerMultBounds.NLogN.PhaseCellBandSolve
+import IntegerMultBounds.NLogN.PhaseCellBandSolve
 public import IntegerMultBounds.NLogN.PhaseCellFold
 public import IntegerMultBounds.NLogN.NewtonRecip
-public import IntegerMultBounds.NLogN.SchurCongr
+import IntegerMultBounds.NLogN.SchurCongr
+import IntegerMultBounds.NLogN.PhaseCellBoundaryLU
+import IntegerMultBounds.NLogN.PhaseCellBoundarySolve
+import IntegerMultBounds.NLogN.PhaseCellBoundary
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
+public import IntegerMultBounds.Machine
 
 /-! The machine-faithful band solve of the actual rounded matrix in folded
 order, where the factors are an ordinary band of half width `2w+1`. -/

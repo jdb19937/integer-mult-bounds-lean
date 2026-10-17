@@ -1,9 +1,13 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Mult.Moduli
-public import IntegerMultBounds.ExactRecovery
+import IntegerMultBounds.ExactRecovery
 public import Mathlib.Analysis.SpecialFunctions.Log.Base
-public import Mathlib.Analysis.SpecificLimits.Normed
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
+public import IntegerMultBounds.NLogN.Multiplier
 
 /-!
 # Size parameters of the multiplication algorithm

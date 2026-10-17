@@ -1,7 +1,14 @@
 module
 
-public import IntegerMultBounds.Resampling.NeumannWords
-public import IntegerMultBounds.NLogN.ResamplingManuscript
+import IntegerMultBounds.Resampling.NeumannWords
+import IntegerMultBounds.NLogN.ResamplingManuscript
+public import IntegerMultBounds.NLogN.NeumannHalved
+public import IntegerMultBounds.Resampling.OffDiagSum
+public import IntegerMultBounds.Resampling.WindowSum
+public import IntegerMultBounds.NLogN.ResamplingPermutedNumeric
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! The manuscript's numerical maps with supplied weights. Exact rounding of
 an exponential cannot be computed within a provable time bound, so the tape

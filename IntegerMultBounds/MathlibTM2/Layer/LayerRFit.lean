@@ -1,7 +1,9 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Layer.LayerRBounds
+import IntegerMultBounds.MathlibTM2.Layer.LayerRBounds
 public import IntegerMultBounds.MathlibTM2.Node.CompactLayerProcR
+import IntegerMultBounds.MathlibTM2.Layer.NodeRSharp
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-!
 # The size of the inputs of the rounded children

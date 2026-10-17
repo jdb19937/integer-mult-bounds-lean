@@ -1,7 +1,11 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Fast.CompactSrcRetunedStages
 public import IntegerMultBounds.MathlibTM2.Fast.CompactSynRetunedMainFrame
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainBootstrapView
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynScanFrame
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! A main-chain invariant framed by all main stage registers; precision is supplied by the stage file. -/
 @[expose] public section

@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixDirtyControlGlobalBack
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Original-index semantics of both compact swap/rotation/swap schedules.
 The middle stream acts at the current, actually swapped address. -/

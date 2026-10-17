@@ -3,6 +3,7 @@ module
 public import IntegerMultBounds.Machine.ActivePrefixStageHeadersOps
 public import IntegerMultBounds.Machine.ActivePrefixStageGeometry
 public import IntegerMultBounds.Machine.ActivePrefixLayoutHeadersGeometry
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Thirteen original shape/node/slot numbers are the complete numeric input.
 Every layout width and source offset is generated rather than supplied. -/

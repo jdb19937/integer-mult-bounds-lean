@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.Machine.ActiveTargetHighestPairHeadersRun
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Arbitrary canonical original geometry words are retained literally;
 constructed highest-bit consumer words are canonical binary numerals. -/

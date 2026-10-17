@@ -1,10 +1,18 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Mult.ConcreteB0Sizes
 public import IntegerMultBounds.MathlibTM2.Mult.FastB0Sizes
 public import IntegerMultBounds.MathlibTM2.Mult.BandFoldRows
-public import IntegerMultBounds.NLogN.PhaseCellPerturb
-public import IntegerMultBounds.NLogN.PhaseCellFactorization
+import IntegerMultBounds.NLogN.PhaseCellPerturb
+import IntegerMultBounds.NLogN.PhaseCellFactorization
+import IntegerMultBounds.NLogN.PhaseCellSharpInverse
+import IntegerMultBounds.MathlibTM2.Mult.SmallGapSizes
+import IntegerMultBounds.NLogN.ResamplingManuscript
+import IntegerMultBounds.Resampling.NeumannWords
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
+public import IntegerMultBounds.MathlibTM2.Mult.CRT
 
 /-!
 # The banded `B̃₀` line map and its numeric facts

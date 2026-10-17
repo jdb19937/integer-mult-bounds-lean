@@ -2,6 +2,7 @@ module
 
 public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsAssemblyOriginalEarly
 public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsAlphabet
+import Mathlib.Tactic.Positivity.Finset
 
 /-! The complete original-input early repair executes in the fixed prime
 alphabet with literal binary tapes and unchanged runtime. -/

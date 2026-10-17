@@ -1,7 +1,7 @@
 module
 
 public import IntegerMultBounds.Machine.GaussianLine
-public import IntegerMultBounds.Machine.FixedMulValue
+import IntegerMultBounds.Machine.FixedMulValue
 
 /-! The accumulators of the Gaussian line hold the exact sums of the
 truncated products: when every weight and input word has magnitude at most

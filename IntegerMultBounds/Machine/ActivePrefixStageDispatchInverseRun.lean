@@ -1,8 +1,9 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixStageFullInverseRun
-public import IntegerMultBounds.Machine.ActivePrefixStageDispatchSelected
-public import IntegerMultBounds.Machine.ActivePrefixStageDispatchBudget
+import IntegerMultBounds.Machine.ActivePrefixStageDispatchSelected
+public import IntegerMultBounds.Machine.ActivePrefixStageDispatchRun
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Runtime source-order dispatch is physically self-inverse: running the
 same compare/branch/erase program restores original words, array and flags. -/

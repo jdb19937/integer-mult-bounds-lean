@@ -1,7 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixCompactSwapRun
-public import IntegerMultBounds.Machine.SharedBankFrames
+import IntegerMultBounds.Machine.CompactGadgetReservationPlacement
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Complete original-geometry compact swap on arbitrary caller tapes. Nine
 ports retain the original eight numeric words and full array, with all native

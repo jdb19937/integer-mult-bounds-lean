@@ -1,6 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixCompactConjugationLayout
+public import IntegerMultBounds.Machine.ActivePrefixCompactSwapGeometry
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Literal compact-T destination semantics of the complete physical
 conjugation, for both source orders and both parity load branches. -/

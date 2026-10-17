@@ -1,6 +1,11 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Fast.BandLineSpec
+import IntegerMultBounds.MathlibTM2.Fast.BandLineSpec
+public import IntegerMultBounds.MathlibTM2.Fast.BandLineDriver
+public import IntegerMultBounds.MathlibTM2.Fast.ResampBAxis
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-!
 # The banded `B̃₀` along the innermost axis of a padded box

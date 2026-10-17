@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.Machine.CountedRepairScanPrepare
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Literal input, output and charged costs for the uniform repair pipeline. -/
 

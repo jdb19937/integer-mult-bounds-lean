@@ -1,7 +1,9 @@
 module
 
-public import IntegerMultBounds.Machine.ActivePrefixStageOrderCompare
 public import IntegerMultBounds.Machine.Branch
+import Mathlib.Tactic.Positivity.Finset
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
 /-! Symbolic native conditional contracts with the actual flag read and paid
 branch transition. Impossible alternatives add no artificial runtime. -/

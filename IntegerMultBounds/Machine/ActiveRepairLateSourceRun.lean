@@ -2,6 +2,7 @@ module
 
 public import IntegerMultBounds.Machine.ActiveRepairRankParserPlaced
 public import IntegerMultBounds.Machine.ActiveRepairLateFieldsPlaced
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Actual original-rank parsing feeds the inverse/guard/ideal computation.
 Current source controls are physically extracted, not supplied as a common

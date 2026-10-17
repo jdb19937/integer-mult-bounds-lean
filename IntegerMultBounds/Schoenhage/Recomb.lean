@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.Schoenhage.Recursive
+import IntegerMultBounds.Schoenhage.IterCorrect
 
 /-! The up-sweep of a level as the tapes compute it. The signed coefficients
 are split into two nonnegative streams, the positive parts and the negated

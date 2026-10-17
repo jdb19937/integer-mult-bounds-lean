@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CompactTopSelection
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-! Root layouts of the actual serialized and row-rebased compact pieces. -/
 @[expose] public section

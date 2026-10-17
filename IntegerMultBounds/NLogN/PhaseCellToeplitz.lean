@@ -2,8 +2,13 @@ module
 
 public import IntegerMultBounds.NLogN.ToeplitzDominant
 public import IntegerMultBounds.NLogN.PhaseCellConcreteCoefficients
-public import Mathlib.Analysis.Complex.ExponentialBounds
-public import Mathlib.Algebra.Order.Field.GeomSum
+import Mathlib.Analysis.Complex.ExponentialBounds
+import Mathlib.Algebra.Order.Field.GeomSum
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Analysis.Real.Pi.Bounds
+public import IntegerMultBounds.Machine
 
 /-! The shared within-cell kernel of the actual rounded Gaussian matrix is a
 symmetric Toeplitz block with unit diagonal and off-diagonal row mass at most

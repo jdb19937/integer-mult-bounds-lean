@@ -1,7 +1,7 @@
 module
 
 public import IntegerMultBounds.NLogN.SynthConv
-public import IntegerMultBounds.NLogN.Bluestein
+public import IntegerMultBounds.NLogN.Multidim
 
 /-! The embedding of complex cyclic convolutions into the synthetic ring,
 Section 3.2 of Harvey and van der Hoeven. Twisting a length-`r` vector by

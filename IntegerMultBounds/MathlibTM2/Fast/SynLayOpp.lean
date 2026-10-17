@@ -2,6 +2,8 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Fast.SynLayFwd
 public import IntegerMultBounds.MathlibTM2.Fast.SynLayUnapply
+public import IntegerMultBounds.MathlibTM2.Fast.SynLayKit
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-!
 # The opposite layout program of the synthetic transforms

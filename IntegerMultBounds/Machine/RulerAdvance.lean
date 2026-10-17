@@ -1,6 +1,8 @@
 module
+import IntegerMultBounds.Machine.ReturnOrigin
+public import IntegerMultBounds.Machine.WordTape
+public import IntegerMultBounds.Machine.Hoare
 
-public import IntegerMultBounds.Machine.WordMoves
 
 /-! Advance a data head by the length of a ruler word: two tapes and one
 state step right together while the ruler reads nonblank. One transition per

@@ -1,6 +1,13 @@
 module
+public import IntegerMultBounds.Networks.DisjointSharingBudget
+import IntegerMultBounds.Networks.PairedCircuitBudget
+import Mathlib.Tactic.NormNum.OfScientific
+import Mathlib.Tactic.NormNum.DivMod
+import Mathlib.Tactic.NormNum.Abs
+import Mathlib.Data.Rat.Cast.Order
+import Mathlib.Order.Lattice.Nat
+import Mathlib.Tactic.NormNum.Pow
 
-public import IntegerMultBounds.Networks.PairedVectorBudget
 
 /-! Presence-only allocation bounds. Whether a constructed reference is zero
 depends only on which operands are zero, never on their supports, so these

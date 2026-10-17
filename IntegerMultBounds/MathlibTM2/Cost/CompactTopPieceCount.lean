@@ -1,7 +1,11 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Cost.MatchSynPcs
+import IntegerMultBounds.MathlibTM2.Cost.MatchSynPcs
 public import IntegerMultBounds.MathlibTM2.Fast.CompactTopSelection
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+public import Mathlib.Analysis.SpecialFunctions.Log.Base
 
 /-! The actual compact top emits at most one back-reservation record plus
 one record per nonzero base-m digit. -/

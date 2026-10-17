@@ -1,7 +1,12 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Mult.PhaseCellB0
-public import IntegerMultBounds.NLogN.PhaseCellBoundary
+import IntegerMultBounds.MathlibTM2.Mult.PhaseCellB0
+public import IntegerMultBounds.MathlibTM2.Mult.B0Generic
+public import IntegerMultBounds.NLogN.PhaseCellMatrix
+public import IntegerMultBounds.NLogN.PhaseCellOperator
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! The `B̃₀` interface for the small-gap inverse computed by real solves of
 the rounded matrix. The rounded operator acts on complex vectors through the

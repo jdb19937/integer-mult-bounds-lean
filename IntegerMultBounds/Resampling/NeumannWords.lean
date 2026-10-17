@@ -2,6 +2,9 @@ module
 
 public import IntegerMultBounds.Resampling.OffDiagSum
 public import IntegerMultBounds.NLogN.NeumannHalved
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! The Neumann evaluation of `J̃'` on fixed-point words. An iterate is a list of
 `2s` signed words (real and imaginary numerators, in coordinate order); one step

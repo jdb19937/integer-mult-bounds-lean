@@ -1,6 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixDirtyControlSequenceRun
+import IntegerMultBounds.Machine.ActivePrefixDirtyControlConjugationBudget
+import Mathlib.Tactic.Positivity.Finset
 
 /-! End-to-end cost of the prepared later-source schedule, including its
 twelve compact swaps, ten full rotations, generated streams and all cleanup. -/

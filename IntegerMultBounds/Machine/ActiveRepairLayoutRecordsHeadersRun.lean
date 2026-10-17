@@ -1,6 +1,9 @@
 module
 
 public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsHeadersSchedule
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsHeadersLength
+import Mathlib.Tactic.Positivity.Finset
+import IntegerMultBounds.Machine.BinaryDescriptorStackRoundtrip
 
 /-! Physical metadata bootstrap from the original fourteen early headers:
 measure the original row word, initialize one, then run retained arithmetic.

@@ -1,6 +1,9 @@
 module
 
 public import IntegerMultBounds.Machine.CountedTapeRepairBank
+import IntegerMultBounds.Compact.KeyInstance
+import Mathlib.Tactic.Positivity.Finset
+import IntegerMultBounds.Compact.Counting
 
 /-! The same finite machine repairs every admissible runtime q/b/n instance,
 starting without supplied sort width, zero counter, sentinels or constants. -/

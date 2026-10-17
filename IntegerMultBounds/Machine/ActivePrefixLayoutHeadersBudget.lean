@@ -1,6 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixLayoutHeadersRun
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
 /-! Every copy, arithmetic pass, power construction, multiplication and
 cleanup is bounded linearly by any positive containing volume that bounds

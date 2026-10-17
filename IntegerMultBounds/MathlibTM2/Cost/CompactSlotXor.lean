@@ -2,6 +2,8 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Cost.CompactRuntime
 public import IntegerMultBounds.MathlibTM2.Node.CompactSlotXor
+import IntegerMultBounds.MathlibTM2.Node.CompactEncoding
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Uniform compact-width cost for the concrete encoded slot-XOR program.
 Both codecs and transfers are included; the canonical header bank is supplied

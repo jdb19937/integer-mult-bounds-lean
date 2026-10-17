@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsHeadersCount
+import Mathlib.Tactic.Positivity.Finset
 
 /-! The actual producer's fifteen retained descriptors are exactly the repair
 caller's original geometry, source and radix metadata. Actual fixed-many copies

@@ -2,6 +2,9 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Cost.CompactCallerGuardPower
 public import IntegerMultBounds.MathlibTM2.Cost.CompactInterimParameters
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! The actual guard factor in the closed compact recurrence fits the layer exponent gap. -/
 @[expose] public section

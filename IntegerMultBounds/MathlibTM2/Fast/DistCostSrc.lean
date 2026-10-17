@@ -1,7 +1,12 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.DistSrc
-public import IntegerMultBounds.MathlibTM2.Fast.DistCost
+import IntegerMultBounds.MathlibTM2.Fast.DistCost
+public import IntegerMultBounds.MathlibTM2.Fast.DistWidth
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
 
 /-!
 # The cost of the converter at the pipeline widths

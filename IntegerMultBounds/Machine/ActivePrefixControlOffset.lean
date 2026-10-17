@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixControlOffsetCleanup
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Complete control-mask offset producer from original prefix/source/gadget
 descriptors, including all tables, varying controls, arithmetic and cleanup.

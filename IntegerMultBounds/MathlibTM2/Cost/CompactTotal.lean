@@ -1,7 +1,15 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Cost.CompactStageGrowth
-public import IntegerMultBounds.MathlibTM2.Cost.DirectGrowth
+import IntegerMultBounds.MathlibTM2.Cost.DirectGrowth
+public import IntegerMultBounds.MathlibTM2.Cost.DirectScale
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
+public import IntegerMultBounds.MathlibTM2.Binary
+public import IntegerMultBounds.MathlibTM2.Fast.CMul
+public import IntegerMultBounds.MathlibTM2.Mult.CRT
 
 /-! Stronger aggregate analytic envelope for the retuned compact multiplier.
 The fixed-machine theorem still needs an actual execution-cost match to this envelope. -/

@@ -1,6 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.CountedLateTapeRepairCleanupRun
+import Mathlib.Tactic.Positivity.Finset
+import IntegerMultBounds.Compact.Counting
 
 /-! Uniform paid repair bounds in record width and exceptional count/density. -/
 

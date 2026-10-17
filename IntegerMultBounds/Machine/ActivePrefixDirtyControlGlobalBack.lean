@@ -1,6 +1,9 @@
 module
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlSequenceGeometry
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlGlobalSwap
+public import IntegerMultBounds.Machine.BinaryPackedEarlyData
+import Mathlib.Tactic.Positivity.Finset
 
-public import IntegerMultBounds.Machine.ActivePrefixDirtyControlGlobalTarget
 
 /-! Generic full-array back rotation at the unchanged layout coordinates.
 Its explicit stream is later instantiated by the proved physical producers. -/

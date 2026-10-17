@@ -1,7 +1,15 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Fast.CompactMainSourceStages
-public import IntegerMultBounds.MathlibTM2.Fast.CompactMainPrimitiveEntry
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainSourceStages
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainPrimitiveEntry
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainPrimitiveRuns
+public import IntegerMultBounds.MathlibTM2.Fast.CompactMainStableFrame
+public import IntegerMultBounds.MathlibTM2.Fast.CompactSrcMachine
+public import IntegerMultBounds.MathlibTM2.Fast.CompactMainEntryTable
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
 
 @[expose] public section
 namespace IntegerMultBounds.MathlibTM2.Fast.Main

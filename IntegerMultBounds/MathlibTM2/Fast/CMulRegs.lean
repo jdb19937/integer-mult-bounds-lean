@@ -2,6 +2,7 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CMulAuto
 public import IntegerMultBounds.MathlibTM2.Host.SSMul
+public import IntegerMultBounds.MathlibTM2.Fast.CMulArith
 
 /-!
 # Registers of the complex fixed-point product and register-level contracts

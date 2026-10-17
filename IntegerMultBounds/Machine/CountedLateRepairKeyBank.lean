@@ -2,6 +2,8 @@ module
 
 public import IntegerMultBounds.Machine.CountedLateRepairToggle
 public import IntegerMultBounds.Machine.CountedLateRepairConcat
+public import IntegerMultBounds.Machine.CountedRepairKeyAppend
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Fixed34 common bank for later destination keys. The three rank words,
 original controls and headers, exception flag and literal destination words

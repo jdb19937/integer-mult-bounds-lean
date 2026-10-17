@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Computability.TuringMachine.Computable
-import Mathlib.Tactic.Ring
+import Mathlib.Tactic.Ring.RingNF
 
 /-!
 # Structured stack programs with recursive procedures

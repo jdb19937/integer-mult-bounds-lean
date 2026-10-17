@@ -1,8 +1,10 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Cost.CompactParameters
+import IntegerMultBounds.MathlibTM2.Cost.CompactParameters
 public import IntegerMultBounds.MathlibTM2.Fast.CompactReservationGeometry
 public import IntegerMultBounds.Machine.CompactReservationGrowth
+import IntegerMultBounds.MathlibTM2.Fast.SynRecB
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-! Caller size discharge for the shared reserved shape. Actual global padding
 and extra outer spectators are counted in the repair address. The eventual

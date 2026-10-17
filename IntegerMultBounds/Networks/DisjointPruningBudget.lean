@@ -2,6 +2,10 @@ module
 
 public import IntegerMultBounds.Networks.DAGAllocatorBudget
 public import IntegerMultBounds.Networks.DAGSupportTrace
+import IntegerMultBounds.Networks.DAGValueTransfer
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
+import Mathlib.Data.Nat.Totient
 
 /-! Compositional pruning budgets. A stored sum that cannot fit inside any
 requested output support is dead, regardless of the shape of the DAG or the

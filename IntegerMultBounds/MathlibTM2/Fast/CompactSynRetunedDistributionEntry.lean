@@ -1,7 +1,11 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Fast.CompactSynRetunedMainEntry
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynRetunedMainEntry
 public import IntegerMultBounds.MathlibTM2.Fast.CompactBundleWires
+public import IntegerMultBounds.MathlibTM2.Fast.CompactSynRetunedMainFrame
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! Actual compact distribution execution supplies the main transform entry. -/
 @[expose] public section

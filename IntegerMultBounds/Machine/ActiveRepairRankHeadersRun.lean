@@ -1,6 +1,9 @@
 module
 
 public import IntegerMultBounds.Machine.ActiveRepairRankHeadersData
+public import IntegerMultBounds.Machine.FixedHeaderBankCopy
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
 /-! Physical original-width descriptor producer and matching post-use eraser.
 Parser8 and patch7 outputs retain canonical marked words, all scratch is blank. -/

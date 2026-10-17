@@ -1,6 +1,11 @@
 module
 
 public import IntegerMultBounds.Resampling.WeightTable
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
+public import IntegerMultBounds.Machine
 
 /-! The weight routine in natural numbers, as the tape machines compute it.
 The Taylor terms of `exp (∓Y/2^q)` are `±M_n` with natural magnitudes

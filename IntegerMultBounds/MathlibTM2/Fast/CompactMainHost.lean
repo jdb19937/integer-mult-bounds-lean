@@ -3,6 +3,11 @@ module
 public import IntegerMultBounds.MathlibTM2.Fast.CompactMainEntryTable
 public import IntegerMultBounds.MathlibTM2.Fast.CompactMainCleanup
 public import IntegerMultBounds.MathlibTM2.Fast.CompactRetunedMainBound
+import IntegerMultBounds.MathlibTM2.Fast.MainPush
+public import IntegerMultBounds.MathlibTM2.Fast.Glue
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! Close the actual expanded procedure table after a verified multiplication prefix. -/
 @[expose] public section

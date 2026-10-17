@@ -1,9 +1,18 @@
 module
 
-public import IntegerMultBounds.Networks.PairedLevelTools
-public import IntegerMultBounds.Networks.PairedBaseBound
-public import IntegerMultBounds.Networks.PairedBlockCorrect
-public import IntegerMultBounds.Networks.PairedInitialBudget
+import IntegerMultBounds.Networks.PairedLevelTools
+import IntegerMultBounds.Networks.PairedBaseBound
+import IntegerMultBounds.Networks.PairedBlockCorrect
+import IntegerMultBounds.Networks.PairedInitialBudget
+import IntegerMultBounds.Networks.PairedPresence
+import IntegerMultBounds.Networks.PairedVectorBudget
+public import IntegerMultBounds.Networks.DisjointSharingBudget
+public import IntegerMultBounds.Networks.PairedCircuitBudget
+public import IntegerMultBounds.Networks.PairedInitialGraph
+import IntegerMultBounds.Networks.PairedReconstructionKeys
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
+import Mathlib.Data.Nat.Totient
 
 /-! Sharp allocation count of one paired recursion level on an odd interval.
 Edges are all present and vertex weights follow a fixed zero pattern. Zero

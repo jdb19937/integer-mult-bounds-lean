@@ -1,10 +1,13 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Node.TopProc
 public import IntegerMultBounds.MathlibTM2.Fast.Layout
-public import IntegerMultBounds.MathlibTM2.Fast.TwiddleL
-public import IntegerMultBounds.MathlibTM2.Fast.RingProd
-public import IntegerMultBounds.MathlibTM2.Cost.Branching
+import IntegerMultBounds.MathlibTM2.Cost.Branching
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
+public import IntegerMultBounds.MathlibTM2.Fast.TwiddleRec
+public import IntegerMultBounds.MathlibTM2.Node.SlotXor
+public import IntegerMultBounds.MathlibTM2.Node.Regs
+public import IntegerMultBounds.MathlibTM2.Node.TopRec
+public import IntegerMultBounds.MathlibTM2.Layer.LayerZ
 
 /-!
 # Registers and run contracts of the synthetic transform machines

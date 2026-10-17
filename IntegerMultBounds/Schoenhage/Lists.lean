@@ -1,6 +1,8 @@
 module
 
-public import IntegerMultBounds.Schoenhage.Wp
+import IntegerMultBounds.Schoenhage.Wp
+public import IntegerMultBounds.Schoenhage.Ops
+public import IntegerMultBounds.Schoenhage.Rules
 
 /-! Word-list fragments on arbitrary tapes: copy the current word, skip it,
 append every remaining word of one tape to another, and copy as many words as

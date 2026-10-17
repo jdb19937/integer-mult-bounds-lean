@@ -1,6 +1,6 @@
 module
 
-public import Mathlib.Analysis.SpecialFunctions.Complex.Arctan
+import Mathlib.Analysis.SpecialFunctions.Complex.Arctan
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-! A certified integer approximation of `2^q π` by Machin's formula,

@@ -1,7 +1,9 @@
 module
 
-public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsAssemblyOriginalEarly
 public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsAssemblyLayoutLate
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsBankBudget
+import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsPipelineLate
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Physical original-header preparation, raw formatting, repair, decoding,
 record cleanup and generated-header erasure. No formatted record buffer or

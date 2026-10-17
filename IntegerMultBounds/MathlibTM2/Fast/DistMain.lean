@@ -3,6 +3,10 @@ module
 public import IntegerMultBounds.MathlibTM2.Fast.DistWid
 public import IntegerMultBounds.MathlibTM2.Fast.DistSpec
 public import IntegerMultBounds.MathlibTM2.Fast.DistCostSrc
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
 
 /-!
 # The parameter distribution machine, assembled

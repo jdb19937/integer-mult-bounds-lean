@@ -1,6 +1,11 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Fast.SynLayKit
+import IntegerMultBounds.MathlibTM2.Fast.SynLayKit
+public import IntegerMultBounds.MathlibTM2.Fast.SynLayRegs
+import IntegerMultBounds.MathlibTM2.Fast.SynFwd
+public import IntegerMultBounds.MathlibTM2.Fast.SynRound
+public import IntegerMultBounds.MathlibTM2.Fast.LoadLayoutGen
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-!
 # Setup and cleanup of the layout programs of the synthetic transforms

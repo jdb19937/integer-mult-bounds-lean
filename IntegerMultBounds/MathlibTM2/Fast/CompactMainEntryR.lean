@@ -1,7 +1,11 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CompactSynRetunedTransformsR
-public import IntegerMultBounds.MathlibTM2.Fast.CompactSynRetunedEntrySpecs
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainTransformCalls
+public import IntegerMultBounds.MathlibTM2.Fast.CompactMainCalls
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! The completed main procedure table with the placed rounded layer table, the calls of the
 rounded transforms, and the rounded transforms under the main entry. -/

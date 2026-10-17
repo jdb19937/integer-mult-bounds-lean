@@ -1,8 +1,10 @@
 module
 
 public import IntegerMultBounds.Machine.BinaryDescriptorAdvance
-public import IntegerMultBounds.Machine.BinaryDescriptorCopyPlaced
 public import IntegerMultBounds.Machine.CompactGadgetReservationHeadersCore
+import IntegerMultBounds.Machine.BinaryDescriptorStackRoundtrip
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
 /-! Physical retained-header addition in the existing clean fifteen-tape
 workspace. Unary-counted increments have an amortized, paid linear bound. -/

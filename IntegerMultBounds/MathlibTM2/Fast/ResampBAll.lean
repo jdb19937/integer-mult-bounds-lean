@@ -1,7 +1,13 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Fast.ResampBSwap
+import IntegerMultBounds.MathlibTM2.Fast.ResampBSwap
 public import IntegerMultBounds.MathlibTM2.Fast.ResampBBox
+public import IntegerMultBounds.MathlibTM2.Fast.ResampBAxis
+public import IntegerMultBounds.MathlibTM2.Fast.ResampBLine
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
 
 /-!
 # `B̃₀` along every axis of the padded box: the generic driver

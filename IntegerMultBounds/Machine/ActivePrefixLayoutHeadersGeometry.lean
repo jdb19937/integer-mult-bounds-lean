@@ -1,8 +1,9 @@
 module
 
-public import IntegerMultBounds.Machine.ActivePrefixLayoutHeadersBudget
-public import IntegerMultBounds.Machine.ActivePrefixLayoutAbsorption
 public import IntegerMultBounds.Machine.ActivePrefixParityOnlyBank
+public import IntegerMultBounds.Machine.ActivePrefixLayoutHeadersData
+public import IntegerMultBounds.Machine.ActivePrefixLayoutShapes
+import Mathlib.Tactic.Positivity.Finset
 
 /-! The constructed numeric headers are exactly those used by the unchanged
 active-prefix selected/correction and compact parity/negative consumers. -/

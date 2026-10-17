@@ -1,6 +1,21 @@
 module
 
 import IntegerMultBounds.MathlibTM2
+import IntegerMultBounds.MathlibTM2.Fast.Glue
+import IntegerMultBounds.MathlibTM2.Fast.Input
+import IntegerMultBounds.MathlibTM2.Fast.Output
+import IntegerMultBounds.MathlibTM2.Host.SSMul
+import IntegerMultBounds.MathlibTM2.Layer.LayerZ
+import IntegerMultBounds.MathlibTM2.Layer.NodeZ
+import IntegerMultBounds.MathlibTM2.Layer.Recurrence
+import IntegerMultBounds.MathlibTM2.Layer.TopZ
+import IntegerMultBounds.MathlibTM2.Mult.Moduli
+import IntegerMultBounds.MathlibTM2.Mult.Pipeline
+import IntegerMultBounds.MathlibTM2.Mult.Rounds
+import IntegerMultBounds.MathlibTM2.Mult.SourceErr
+import IntegerMultBounds.MathlibTM2.Mult.SynthErr
+import IntegerMultBounds.MathlibTM2.Node.Body
+import IntegerMultBounds.MathlibTM2.Theorem
 
 /-! The theorem and the main intermediate results depend only on Lean's three standard axioms. -/
 

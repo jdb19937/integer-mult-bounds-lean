@@ -1,7 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixCompactConjugationRun
-public import IntegerMultBounds.Machine.ActivePrefixCompactSwapBudget
+import IntegerMultBounds.Machine.ActivePrefixCompactSwapBudget
+import Mathlib.Tactic.Positivity.Finset
 
 /-! One uniform full-volume bound for both concrete compact conjugations,
 including two interchanges, the actual load, and both sequential joins. -/

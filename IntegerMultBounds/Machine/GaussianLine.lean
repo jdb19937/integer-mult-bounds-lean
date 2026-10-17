@@ -1,9 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.FixedMul
-public import IntegerMultBounds.Machine.SignExtendAdd
 public import IntegerMultBounds.Machine.RecordTape
-public import IntegerMultBounds.Machine.LoopChain
+import IntegerMultBounds.Machine.LoopChain
 
 /-! The Gaussian window sums of the resampling map `S̃'` on tapes. The weights
 and the (cyclically extended) input words are blank-separated fixed-point

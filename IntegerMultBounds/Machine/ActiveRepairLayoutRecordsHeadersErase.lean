@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsHeadersCount
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Actual post-use erasure of all five generated repair/format descriptors.
 The fourteen original headers survive, and every auxiliary tape is blank. -/

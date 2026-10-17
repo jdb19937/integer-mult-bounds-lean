@@ -1,6 +1,11 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Node.CompactTopProcRegs
+import IntegerMultBounds.MathlibTM2.Node.TopWord
+import Mathlib.Tactic.Positivity.Finset
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
+public import IntegerMultBounds.MathlibTM2.Layer.Shift
 
 /-! Actual descent, whole-row padding, unpadding and ascent for arbitrary
 basis banks. Persistent basis-rest predicates are retained across all stages. -/

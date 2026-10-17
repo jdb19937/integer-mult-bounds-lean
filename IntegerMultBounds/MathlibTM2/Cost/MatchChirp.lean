@@ -2,7 +2,10 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Cost.MatchBase
 public import IntegerMultBounds.MathlibTM2.Fast.LoadChirp
-public import IntegerMultBounds.MathlibTM2.Fast.PointStage
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
 
 /-!
 # Cost matching: the chirp kernel and the entrywise box stages

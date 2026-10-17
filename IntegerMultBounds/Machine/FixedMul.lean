@@ -3,9 +3,8 @@ module
 public import IntegerMultBounds.Machine.BinaryMultiply
 public import IntegerMultBounds.Machine.Negate
 public import IntegerMultBounds.Machine.RulerCopy
-public import IntegerMultBounds.Machine.WordMoves
-public import IntegerMultBounds.Machine.Branch
 public import IntegerMultBounds.Machine.Gather
+public import IntegerMultBounds.Machine.RulerAdvance
 
 /-! Signed fixed-point multiplication on twelve tapes: two's complement
 words `x`, `y` of width `w`, rulers of lengths `p`, `w` and `2w`. Copies of

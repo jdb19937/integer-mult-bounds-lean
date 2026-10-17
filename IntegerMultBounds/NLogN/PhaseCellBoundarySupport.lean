@@ -1,8 +1,13 @@
 module
 
 public import IntegerMultBounds.NLogN.PhaseCellMatrix
-public import IntegerMultBounds.NLogN.PhaseCellIntervals
-public import IntegerMultBounds.NLogN.SchurSupport
+import IntegerMultBounds.NLogN.PhaseCellIntervals
+import IntegerMultBounds.NLogN.SchurSupport
+public import IntegerMultBounds.NLogN.SchurElimination
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+public import IntegerMultBounds.Machine
 
 /-! Boundary sparsity for the actual rounded periodic Gaussian matrix. Its
 entries lie in the cyclic band of the selected width. A vertex whose whole

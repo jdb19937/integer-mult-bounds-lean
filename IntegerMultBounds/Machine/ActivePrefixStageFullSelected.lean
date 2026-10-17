@@ -1,7 +1,10 @@
 module
+public import IntegerMultBounds.Machine.ActivePrefixStageFullData
+import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsFullLateSelected
+import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsFullEarlySelected
+public import IntegerMultBounds.Machine.ActiveTargetHighestLayoutFullSelected
+import Mathlib.Tactic.Positivity.Finset
 
-public import IntegerMultBounds.Machine.ActivePrefixStageFullBudget
-public import IntegerMultBounds.Machine.ActivePrefixStageFullEndpoint
 
 /-! Actual original-input array endpoints have the complete selected low and
 highest address action, preserving every original source-slot bit. -/

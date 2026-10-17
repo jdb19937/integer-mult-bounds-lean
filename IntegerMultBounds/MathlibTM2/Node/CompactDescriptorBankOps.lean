@@ -1,6 +1,23 @@
 module
+public import IntegerMultBounds.MathlibTM2.Fast.SynBase
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
+import Mathlib.Tactic.NormNum.RealSqrt
+import Mathlib.Tactic.NormNum.Prime
+import Mathlib.Tactic.NormNum.Parity
+import Mathlib.Tactic.NormNum.Ordinal
+import Mathlib.Tactic.NormNum.NatSqrt
+import Mathlib.Tactic.NormNum.NatLog
+import Mathlib.Tactic.NormNum.NatFib
+import Mathlib.Tactic.NormNum.ModEq
+import Mathlib.Tactic.NormNum.LegendreSymbol
+import Mathlib.Tactic.NormNum.IsSquare
+import Mathlib.Tactic.NormNum.IsCoprime
+import Mathlib.Tactic.NormNum.Irrational
+import Mathlib.Tactic.Measurability.Init
+import Mathlib.Tactic.Echelon.Zsqrtd
+import Mathlib.Analysis.SpecialFunctions.Pow.NNReal
+import Mathlib.Tactic.ENatToNat
 
-public import IntegerMultBounds.MathlibTM2.Node.CompactDescriptorPadding
 
 /-! Runtime row and payload arithmetic and fixed-arity slot numbering. -/
 @[expose] public section

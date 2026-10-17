@@ -1,6 +1,6 @@
 module
+public import IntegerMultBounds.Machine.SharedBankStageInput
 
-public import IntegerMultBounds.Machine.SharedBankFamily
 
 /-! Raw extension preserves any selected public port view and physically blank
 private bank. Tape counts and port maps remain symbolic. -/

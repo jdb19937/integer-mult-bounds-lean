@@ -1,8 +1,11 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Node.CompactBasisSetup
 public import IntegerMultBounds.MathlibTM2.Node.CompactBasisCleanup
 public import IntegerMultBounds.MathlibTM2.Node.CompactBasisRefreshPlacement
+import IntegerMultBounds.MathlibTM2.Node.CompactBasisSetupRest
+import IntegerMultBounds.MathlibTM2.Node.CompactBasisSetupOutput
+public import IntegerMultBounds.MathlibTM2.Node.CompactBasisSetupCounts
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-! Per-round five-counter refresh. Original depth/guard remain untouched in work13/work14. -/
 @[expose] public section

@@ -1,6 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixCorrectionOffsetRun
+import Mathlib.Tactic.Positivity.Finset
+public import IntegerMultBounds.Machine.CompactGadgetReservationShape
 
 /-! Complete original-descriptor correction producer: every current prefix
 supplies its own source controls and temporary, all arithmetic is rowwise,

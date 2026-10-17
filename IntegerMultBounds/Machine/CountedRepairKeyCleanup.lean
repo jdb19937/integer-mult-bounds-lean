@@ -1,6 +1,10 @@
 module
+public import IntegerMultBounds.Machine.CountedGuardGadgetRecord
+public import IntegerMultBounds.Machine.WordBankCleanup
+import Mathlib.Tactic.Positivity.Finset
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
-public import IntegerMultBounds.Machine.CountedRepairKeyWrite
 
 /-! Physical erasure of all nine generated words after conditional key writing. -/
 

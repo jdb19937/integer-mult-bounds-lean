@@ -1,8 +1,11 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Fast.CRTDirectMachineSetup
+import IntegerMultBounds.MathlibTM2.Fast.CRTDirectMachineSetup
 public import IntegerMultBounds.MathlibTM2.Fast.CRTDirectMachineFull
-public import IntegerMultBounds.MathlibTM2.Fast.CRTDirectBacking
+public import IntegerMultBounds.MathlibTM2.Fast.CRTDirectSetup
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! # Legacy entry and cleanup for the direct CRT machine -/
 

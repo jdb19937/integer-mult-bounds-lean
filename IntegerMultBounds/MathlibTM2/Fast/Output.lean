@@ -1,7 +1,6 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Host.Index
-public import IntegerMultBounds.MathlibTM2.Binary
 public import IntegerMultBounds.NLogN.Kronecker
 
 /-!

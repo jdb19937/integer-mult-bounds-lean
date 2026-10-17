@@ -1,6 +1,9 @@
 module
+public import IntegerMultBounds.Machine.ActivePrefixStageRuntimeProgram
+import IntegerMultBounds.Machine.ActivePrefixStageFullEndpoint
+import IntegerMultBounds.Machine.SharedBankRawCompose
+import Mathlib.Tactic.Positivity.Finset
 
-public import IntegerMultBounds.Machine.ActivePrefixStageRuntimeBudget
 
 /-! Both runtime flags and all generated/private tapes are physically blank at
 stage boundaries. Original descriptors remain in place and raw data stays65. -/

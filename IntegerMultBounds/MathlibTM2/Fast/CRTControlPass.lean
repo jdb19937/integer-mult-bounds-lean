@@ -1,9 +1,13 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Fast.CRTControlScanner
-public import IntegerMultBounds.MathlibTM2.Fast.CRTControlConstants
+import IntegerMultBounds.MathlibTM2.Fast.CRTControlScanner
 public import IntegerMultBounds.MathlibTM2.Fast.CRTControlRotate
 public import IntegerMultBounds.MathlibTM2.Fast.CRTControlReset
+import IntegerMultBounds.MathlibTM2.Fast.CRTControlBounds
+public import IntegerMultBounds.MathlibTM2.Fast.CRTControlScan
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! # One complete directly controlled CRT fiber
 

@@ -1,7 +1,12 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Mult.CompactSizes
-public import IntegerMultBounds.MathlibTM2.Cost.CompactCallerFullDimension
+import IntegerMultBounds.MathlibTM2.Cost.CompactCallerFullDimension
+public import IntegerMultBounds.Machine.CompactReservationGrowth
+public import IntegerMultBounds.MathlibTM2.Fast.CompactReservationGeometry
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! Larger compact chunks decrease the front/back reservation. The existing
 proved capacity therefore applies to the parallel eighth-root sizes. -/

@@ -1,8 +1,12 @@
 module
 
-public import IntegerMultBounds.Machine.WordTapeBridge
-public import IntegerMultBounds.Machine.ElementaryMultiplyOutputData
+import IntegerMultBounds.Machine.WordTapeBridge
+import IntegerMultBounds.Machine.ElementaryMultiplyOutputData
 public import IntegerMultBounds.Assembly
+public import IntegerMultBounds.Machine.DoubleClockReverseCopy
+public import IntegerMultBounds.Machine.ElementaryMultiplyCore
+import Mathlib.Analysis.SpecialFunctions.Pow.NNReal
+public import IntegerMultBounds.Machine.WordMoves
 
 /-! A complete fixed elementary multiplication machine. Real scanning erases
 the original packed input, and a preserved operand clocks the padded reverse

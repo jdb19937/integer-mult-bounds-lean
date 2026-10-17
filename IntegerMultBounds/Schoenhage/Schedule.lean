@@ -1,6 +1,6 @@
 module
 
-public import Mathlib.Data.Nat.Size
+import Mathlib.Data.Nat.Size
 public import Mathlib.Tactic
 
 /-! The size schedule and cost recurrence of the Schönhage–Strassen recursion.

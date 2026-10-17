@@ -1,6 +1,7 @@
 module
+public import IntegerMultBounds.Machine.CompactActiveTargetLayout
+import Mathlib.Tactic.Positivity.Finset
 
-public import IntegerMultBounds.Machine.ActiveRepairLayoutPermutation
 
 /-! Separate the actual physical record width from the payload-one address
 space used by repair keys. No physical shape or reservation is changed. -/

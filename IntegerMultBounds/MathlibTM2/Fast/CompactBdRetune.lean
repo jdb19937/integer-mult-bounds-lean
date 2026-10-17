@@ -1,6 +1,10 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CompactDistWiresExec
+public import IntegerMultBounds.MathlibTM2.Fast.CompactDistRetune
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! Retune actual source-converter parking before constructing compact wires. -/
 @[expose] public section

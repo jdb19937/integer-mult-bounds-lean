@@ -2,6 +2,7 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Node.Body
 public import IntegerMultBounds.MathlibTM2.Node.Basis
+import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # The factor programs of the layer machine

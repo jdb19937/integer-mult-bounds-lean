@@ -3,6 +3,7 @@ module
 public import IntegerMultBounds.MathlibTM2.Node.CompactTopProcStages
 public import IntegerMultBounds.MathlibTM2.Node.CompactTopProcPieces
 public import IntegerMultBounds.MathlibTM2.Node.CompactTopProcKernel
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Complete actual top runner over arbitrary basis banks. -/
 @[expose] public section

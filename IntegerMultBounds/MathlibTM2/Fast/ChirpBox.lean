@@ -1,7 +1,13 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.ResampABox
-public import IntegerMultBounds.MathlibTM2.Mult.Pipeline
+public import IntegerMultBounds.MathlibTM2.Mult.Chirp
+import Mathlib.Analysis.Complex.ExponentialBounds
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+public import IntegerMultBounds.MathlibTM2.Fast.CMul
+public import IntegerMultBounds.MathlibTM2.Mult.CRT
 
 /-!
 # Numerator boxes and the chirp kernel on numerators

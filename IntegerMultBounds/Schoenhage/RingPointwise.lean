@@ -3,8 +3,10 @@ module
 public import IntegerMultBounds.Schoenhage.RingRecord
 public import IntegerMultBounds.Schoenhage.RingHeader
 public import IntegerMultBounds.Schoenhage.Chunk
-public import IntegerMultBounds.Schoenhage.Seal
 public import IntegerMultBounds.Schoenhage.RingBridgeMath
+import IntegerMultBounds.Schoenhage.Wp
+import IntegerMultBounds.Spec.SignedRingProductFacts
+import Mathlib.Data.Nat.Size
 
 /-! The pointwise-product step on word tapes: decode the header, build the
 ring product's constants, cut both operand arrays into their component

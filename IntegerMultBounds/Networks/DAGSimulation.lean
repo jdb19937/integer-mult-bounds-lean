@@ -1,7 +1,14 @@
 module
 
 public import IntegerMultBounds.Networks.PairedCircuit
-public import IntegerMultBounds.Networks.DAGCompact
+import IntegerMultBounds.Networks.DAGCompact
+import IntegerMultBounds.Networks.DisjointUnique
+public import IntegerMultBounds.Networks.DAGAllocatorBudget
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
+import Mathlib.Data.Nat.Totient
+import Mathlib.Tactic.ContinuousFunctionalCalculus
+public import Mathlib.Data.Finset.Union
 
 /-! Simulation of a construction by the same construction over a small atom
 alphabet. Each abstract atom stands for a real support; when every abstract

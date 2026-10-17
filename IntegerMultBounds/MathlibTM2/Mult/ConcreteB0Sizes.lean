@@ -1,7 +1,11 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Mult.SmallGapSizes
 public import IntegerMultBounds.NLogN.Approx
+public import IntegerMultBounds.MathlibTM2.Mult.Sizes
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
 
 /-! Precision of the concrete small-gap `B̃₀` at the existing sizes. With
 working precision `3p`, normalization `j = ⌈log₂(4p)⌉` and the axis lengths

@@ -1,6 +1,10 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Fast.CRTReverse
+import IntegerMultBounds.MathlibTM2.Fast.CRTReverse
+public import IntegerMultBounds.MathlibTM2.Fast.CRTDrive
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! # Unary traversal for the direct CRT target driver
 

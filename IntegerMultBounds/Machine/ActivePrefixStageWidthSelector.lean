@@ -1,7 +1,8 @@
 module
 
-public import IntegerMultBounds.Machine.ActivePrefixStageHeadersBudget
-public import IntegerMultBounds.Machine.BinaryDescriptorCompare
+import IntegerMultBounds.Machine.ActivePrefixStageHeadersBudget
+public import IntegerMultBounds.Machine.ActivePrefixStageParameters
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Runtime f=1 versus f≥2 selection from the retained original f word.
 The literal one descriptor is physically written and erased; only the

@@ -1,8 +1,10 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixDirtyControlData
-public import IntegerMultBounds.Machine.ActivePrefixLayoutBack
-public import IntegerMultBounds.Machine.ActivePrefixDirtyControlLayoutAbsorption
+import IntegerMultBounds.Machine.ActivePrefixDirtyControlLayoutAbsorption
+public import IntegerMultBounds.Machine.ActivePrefixLayoutShapes
+import IntegerMultBounds.Machine.ActiveRepairRankFieldsGeometry
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Compact U in the actual target and back prefixes, with no extra source
 digit or fictitious wide source slot. -/

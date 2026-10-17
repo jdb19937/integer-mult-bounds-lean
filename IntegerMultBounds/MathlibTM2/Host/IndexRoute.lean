@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Host.Index
+public import IntegerMultBounds.MathlibTM2.Host.Route
 
 /-!
 # Routing and merging records by index code

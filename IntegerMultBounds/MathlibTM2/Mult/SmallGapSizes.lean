@@ -1,6 +1,10 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Mult.Sizes
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
 
 /-! Small-gap parameters at the existing sizes. With `u = ⌈log₂(8p)⌉` and the
 dimension `d` as cell parameter, the existing source/axis lengths satisfy every

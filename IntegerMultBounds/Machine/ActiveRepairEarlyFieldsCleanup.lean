@@ -1,7 +1,8 @@
 module
 
-public import IntegerMultBounds.Machine.ActiveRepairEarlyFieldsRun
 public import IntegerMultBounds.Machine.CountedRepairKeyCleanup
+public import IntegerMultBounds.Machine.ActiveRepairEarlyFieldsBank
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Retain only the extracted originals, actual guard flag and recovered
 repair destination fields; physically erase the four inverse intermediates. -/

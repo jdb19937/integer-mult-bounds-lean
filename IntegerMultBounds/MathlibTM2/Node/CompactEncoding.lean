@@ -1,7 +1,8 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Node.CompactGeometryRecursive
-public import IntegerMultBounds.Machine.ActivePrefixStageRuntimeInverseRun
+import IntegerMultBounds.Machine.ActivePrefixStageRuntimeInverseRun
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Exact three-bit serialization of live coefficient streams for native compact stages. -/
 

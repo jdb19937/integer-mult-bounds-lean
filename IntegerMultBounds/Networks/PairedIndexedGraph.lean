@@ -1,8 +1,14 @@
 module
 
-public import IntegerMultBounds.Networks.PairedCircuitUnique
+import IntegerMultBounds.Networks.PairedCircuitUnique
 public import IntegerMultBounds.Networks.PairedInitialBudget
 public import IntegerMultBounds.Networks.PairedLocalCircuit
+public import IntegerMultBounds.Networks.DisjointUnique
+import IntegerMultBounds.Networks.PairedBlockCorrect
+import IntegerMultBounds.Networks.PairedQuerySupport
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
+import Mathlib.Data.Nat.Totient
 
 /-! The literal recursive paired constructor in canonical finite source
 coordinates. This construction can implement the same local-circuit interface

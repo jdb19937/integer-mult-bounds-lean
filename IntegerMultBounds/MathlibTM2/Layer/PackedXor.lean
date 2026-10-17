@@ -1,21 +1,10 @@
 module
 
 public import IntegerMultBounds.Compact.RepairPipeline
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import Mathlib.Algebra.Order.Field.Basic
-public import Mathlib.Data.Fintype.Perm
-public import Mathlib.Data.Fintype.Pi
-public import Mathlib.Data.Nat.Bitwise
-public import Mathlib.Logic.Equiv.Fin.Basic
-public import Mathlib.Tactic.FinCases
-public import Mathlib.Tactic.GCongr
-public import Mathlib.Tactic.Linarith
-public import Mathlib.Tactic.NormNum
-public import Mathlib.Tactic.Positivity
-public import Mathlib.Tactic.Ring
-public import Mathlib.Tactic.Set
-public import Mathlib.Tactic.SplitIfs
-public import Mathlib.Tactic.Tauto
+import Mathlib.Data.Fintype.Perm
+import Mathlib.Data.Nat.Bitwise
+import Mathlib.Tactic.Positivity.Finset
+import IntegerMultBounds.Compact.Repair
 
 /-!
 # Packed XOR of selected address bits

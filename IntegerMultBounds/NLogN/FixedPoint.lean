@@ -1,7 +1,6 @@
 module
 
 public import IntegerMultBounds.NLogN.FFT
-public import Mathlib.Analysis.Complex.Basic
 
 /-! Rounding-error analysis of the radix-2 transform over `ℂ`. Each output at
 each level of the recursion is perturbed by an explicit error term of norm at

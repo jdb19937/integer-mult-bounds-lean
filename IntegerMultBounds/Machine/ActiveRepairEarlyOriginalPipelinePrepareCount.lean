@@ -1,9 +1,11 @@
 module
 
-public import IntegerMultBounds.Machine.ActiveRepairEarlyOriginalPipelineRun
 public import IntegerMultBounds.Machine.CountedGuardConstantsFill
-public import IntegerMultBounds.Machine.CountedGuardGadgetPosition
-public import IntegerMultBounds.Machine.CountedRepairScanPrepare
+import IntegerMultBounds.Machine.CountedGuardGadgetHeaders
+import IntegerMultBounds.Machine.CompactGadgetReservationPlacement
+public import IntegerMultBounds.Machine.CleanSubbank
+import Mathlib.Tactic.Positivity.Finset
+public import IntegerMultBounds.Machine.RadixZeroFill
 
 /-! Runtime unary filling and return from the original address-width header.
 One reusable three-tape bank is physically blank between all operations. -/

@@ -1,6 +1,10 @@
 module
 
 public import IntegerMultBounds.Networks.PairedInitialBudget
+import IntegerMultBounds.Networks.DisjointPruningBudget
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
+import Mathlib.Data.Nat.Totient
 
 /-! Structural pruning of unused single-exclusion outputs. A single-exclusion
 sum always contains an edge forbidden by each pair-exclusion output, so it

@@ -1,7 +1,11 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Fast.CompactBdWiresCost
-public import IntegerMultBounds.MathlibTM2.Fast.CompactBundleMnLay
+import IntegerMultBounds.MathlibTM2.Fast.CompactBdWiresCost
+public import IntegerMultBounds.MathlibTM2.Fast.CompactBdRetune
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
 
 /-! The actual retuned wires and source distribution as complete charged bundles. -/
 @[expose] public section

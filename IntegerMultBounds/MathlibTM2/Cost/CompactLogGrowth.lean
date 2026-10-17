@@ -1,9 +1,9 @@
 module
 
-public import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
-public import Mathlib.Data.Nat.Size
-public import Mathlib.Analysis.SpecialFunctions.Log.Base
-public import Mathlib.Analysis.Complex.ExponentialBounds
+import Mathlib.Analysis.SpecialFunctions.Log.Base
+import Mathlib.Analysis.Complex.ExponentialBounds
+import Mathlib.Analysis.SpecialFunctions.Pow.NNReal
+public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 /-! Dyadic logarithm bounds independent of the multiplication size parameters. -/
 @[expose] public section

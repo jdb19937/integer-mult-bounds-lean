@@ -1,7 +1,10 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CRTControlParameters
-public import IntegerMultBounds.MathlibTM2.Fast.CRTLinear
+public import IntegerMultBounds.MathlibTM2.Fast.CRTSchedule
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! # Routing headers from the existing CRT target counters
 

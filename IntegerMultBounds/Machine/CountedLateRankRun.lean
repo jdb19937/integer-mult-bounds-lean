@@ -1,6 +1,9 @@
 module
 
 public import IntegerMultBounds.Machine.CountedLateRankBank
+import Mathlib.Tactic.Positivity.Finset
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
 /-! Complete original-header V/W/U rank split with paid reads over the blank
 tail, charged rewind of all four heads, and literal descriptor/work erasure. -/

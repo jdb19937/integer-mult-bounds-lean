@@ -1,8 +1,26 @@
 module
-
-public import IntegerMultBounds.Resampling.TabledMaps
-public import IntegerMultBounds.MathlibTM2.Mult.SourceErr
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
+import Mathlib.Tactic.NormNum.RealSqrt
+import Mathlib.Tactic.NormNum.Prime
+import Mathlib.Tactic.NormNum.Parity
+import Mathlib.Tactic.NormNum.Ordinal
+import Mathlib.Tactic.NormNum.NatSqrt
+import Mathlib.Tactic.NormNum.NatLog
+import Mathlib.Tactic.NormNum.NatFib
+import Mathlib.Tactic.NormNum.ModEq
+import Mathlib.Tactic.NormNum.LegendreSymbol
+import Mathlib.Tactic.NormNum.IsSquare
+import Mathlib.Tactic.NormNum.IsCoprime
+import Mathlib.Tactic.NormNum.Irrational
+import Mathlib.Tactic.Echelon.Zsqrtd
+public import Mathlib.Basic.Real.Basic
+public import IntegerMultBounds.MathlibTM2.Mult.CRT
+public import IntegerMultBounds.Machine
 public import IntegerMultBounds.MathlibTM2.Mult.Sizes
+
 
 /-!
 # The window of the banded `B̃₀`

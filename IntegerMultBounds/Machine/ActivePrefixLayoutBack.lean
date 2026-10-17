@@ -3,6 +3,7 @@ module
 public import IntegerMultBounds.Machine.ActivePrefixLayoutShapes
 public import IntegerMultBounds.Machine.ActivePrefixParityOnlyBank
 public import IntegerMultBounds.Machine.ActivePrefixParityNegativeData
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Compact back-fiber offsets read the current active target and the complete
 source slot on either side of it. Outer repetition is arbitrary and every

@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.Schoenhage.Batch
+import IntegerMultBounds.Schoenhage.Wp
 
 /-! The base case on word tapes: schoolbook multiplication modulo `2^N + 1`.
 For every bit `yᵢ` of the second operand the residue `2^i x` is added to the

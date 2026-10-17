@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Node.CompactBasisSetupPlacement
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-! A fixed register permutation directs synthesized counters into the persistent compact bank. -/
 @[expose] public section

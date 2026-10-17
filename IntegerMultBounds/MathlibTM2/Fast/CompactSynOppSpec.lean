@@ -1,6 +1,13 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CompactSynTransformPre
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainTransformPipeline
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainBootstrapTransformFrame
+public import IntegerMultBounds.MathlibTM2.Fast.CompactSynOpp
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
 
 /-! Concrete opposite hybrid scan followed by inverse layout, with original transform semantics. -/
 @[expose] public section

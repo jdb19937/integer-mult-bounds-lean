@@ -2,7 +2,7 @@ module
 
 public import IntegerMultBounds.Networks.BinaryPhase
 public import IntegerMultBounds.Networks.BinaryRowProgram
-public import Mathlib.LinearAlgebra.Basis.Prod
+import Mathlib.Data.Nat.Totient
 
 /-! Extend an actual nondegenerate phase-subspace basis by its orthogonal
 complement, retaining its literal first coordinates. The resulting ambient

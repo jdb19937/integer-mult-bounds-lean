@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.Machine.CountedLateRepairPrefix
+import Mathlib.Tactic.Positivity.Finset
 
 /-! The later repair physically applies the ideal low-bit toggle to the
 recovered target, retaining both recovered dirty words and the original flag. -/

@@ -1,6 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.ActiveTargetHighestPairOriginalData
+public import IntegerMultBounds.Machine.ActiveTargetHighestPairPlaced
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Original-five-input highest-bit execution: construct every actual load
 and swap descriptor, execute the complete physical action, erase every

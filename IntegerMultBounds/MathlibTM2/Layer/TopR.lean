@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Layer.LayerR
+import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # The top of a round with rounded pieces

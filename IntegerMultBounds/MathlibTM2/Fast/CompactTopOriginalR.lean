@@ -2,6 +2,7 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CompactTopPlaced
 public import IntegerMultBounds.MathlibTM2.Node.CompactTopProcR
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-! Original-input construction of the rounded top configuration. The record setup runs with no
 factor term, so its exponent sum is the scale sum `E_R` of the rounded pieces. The guard

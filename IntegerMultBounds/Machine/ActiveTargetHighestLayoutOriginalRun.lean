@@ -1,6 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.ActiveTargetHighestLayoutOriginalData
+public import IntegerMultBounds.Machine.ActiveTargetHighestLayoutHeadersRun
+import Mathlib.Tactic.Positivity.Finset
 
 /-! The actual highest-bit machine now accepts only original14 layout words.
 Construction of both levels of headers, all scans and swaps, and all cleanup

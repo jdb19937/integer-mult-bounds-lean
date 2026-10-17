@@ -2,6 +2,12 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Fast.ChirpBox
 public import IntegerMultBounds.MathlibTM2.Fast.ResampARegs
+public import IntegerMultBounds.MathlibTM2.Mult.Pipeline
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
+public import IntegerMultBounds.MathlibTM2.Fast.CMulStream
 
 /-!
 # The chirp kernel box

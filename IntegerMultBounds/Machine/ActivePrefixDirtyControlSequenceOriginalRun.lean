@@ -2,6 +2,7 @@ module
 
 public import IntegerMultBounds.Machine.ActivePrefixDirtyControlSequenceOriginalHeaders
 public import IntegerMultBounds.Machine.ActivePrefixDirtyControlSequenceOriginalPayload
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Original-input later execution: physically synthesize three header banks,
 perform the full dirty-control schedule, then erase every generated word. -/

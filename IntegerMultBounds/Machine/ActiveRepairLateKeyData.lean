@@ -1,9 +1,12 @@
 module
 
 public import IntegerMultBounds.Machine.ActiveRepairLateSourceRun
-public import IntegerMultBounds.Machine.ActiveRepairLateKeyPatch
-public import IntegerMultBounds.Machine.ActiveRepairLateKeyAppend
 public import IntegerMultBounds.Machine.ActiveRepairLateKeyCleanup
+public import IntegerMultBounds.Machine.ActiveRepairEarlyKeyPlacement
+public import IntegerMultBounds.Machine.ActiveRepairDestinationPatchRun
+public import IntegerMultBounds.Machine.CountedRepairKeyAppend
+import IntegerMultBounds.Machine.CompactGadgetReservationPlacement
+import Mathlib.Tactic.Positivity.Finset
 
 /-! The actual full-rank later key bank. Only original counter and runtime
 descriptors are inputs; every address-dependent word is computed internally. -/

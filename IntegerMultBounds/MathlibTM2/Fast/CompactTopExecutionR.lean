@@ -1,8 +1,10 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Fast.CompactTopExecution
 public import IntegerMultBounds.MathlibTM2.Fast.CompactTopReadyR
 public import IntegerMultBounds.MathlibTM2.Node.CompactLayerPlacedR
+public import IntegerMultBounds.MathlibTM2.Fast.CompactTopReady
+public import IntegerMultBounds.MathlibTM2.Cost.CompactLayer
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-! The reserved rounded top transform running the placed rounded layer table: the rounded
 twins of `compactTopActual_callSpec` and `compactTopActual_exec_Hl`. The output is the rounded top

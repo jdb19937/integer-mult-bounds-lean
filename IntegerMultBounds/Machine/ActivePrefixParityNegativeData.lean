@@ -1,8 +1,9 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixParityOffsetBank
-public import IntegerMultBounds.Machine.BinaryParityXorOffsetNegate
-public import IntegerMultBounds.Machine.BinaryParityXorOffsetValue
+import IntegerMultBounds.Machine.BinaryParityXorOffsetValue
+public import IntegerMultBounds.Machine.BinaryParityXorOffsetLoop
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Independent modular negation of each current original-prefix parity row,
 including zero-width rows when n is zero. -/

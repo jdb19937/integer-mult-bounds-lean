@@ -1,7 +1,11 @@
 module
 
-public import IntegerMultBounds.Machine.ActivePrefixDirtyControlGlobalCoordinates
-public import IntegerMultBounds.Machine.BinaryPackedLatePermutation
+import IntegerMultBounds.Machine.ActivePrefixDirtyControlGlobalCoordinates
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlGlobalSequence
+public import IntegerMultBounds.Machine.BinaryPackedLateData
+import IntegerMultBounds.Machine.CountedPackedControlLoadValue
+import IntegerMultBounds.Machine.BinaryParityXorOffsetValue
+import Mathlib.Tactic.Positivity.Finset
 
 /-! The physical compact source offsets are the exact load/unload arithmetic
 of the packed late permutation, including modular carry and borrow. -/

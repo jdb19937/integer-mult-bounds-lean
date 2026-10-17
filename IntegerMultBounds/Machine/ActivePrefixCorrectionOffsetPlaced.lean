@@ -1,6 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixCorrectionOffset
+import IntegerMultBounds.Machine.CompactGadgetReservationPlacement
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Caller-placed complete correction producer. Only the eight original
 headers are inputs; the correction output starts blank. All private tapes

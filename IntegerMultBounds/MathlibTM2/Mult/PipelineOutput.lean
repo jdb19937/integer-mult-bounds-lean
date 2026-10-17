@@ -2,6 +2,9 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Mult.Pipeline
 public import IntegerMultBounds.ExactRecoveryOutput
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! The concrete numerical pipeline supplies the existing exact-width output
 contract. This uses the pipeline's own size parameters; no compatibility with

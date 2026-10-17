@@ -1,7 +1,11 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Fast.CompactSynSel
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynSel
 public import IntegerMultBounds.Machine.CompactGlobalRowPadding
+import IntegerMultBounds.MathlibTM2.Fast.SynSel
+import IntegerMultBounds.MathlibTM2.Fast.SynRecB
+public import IntegerMultBounds.MathlibTM2.Fast.CompactSynRecPieces
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-! Reinterpret the unchanged runtime piece records at the actual padded row count.
 The base-row metadata is not serialized; its exact quotient is justified by the

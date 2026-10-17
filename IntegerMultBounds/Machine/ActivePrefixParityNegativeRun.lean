@@ -1,6 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixParityNegativeBank
+import Mathlib.Tactic.Positivity.Finset
+public import IntegerMultBounds.Machine.CompactGadgetReservationShape
 
 /-! Complete original-input production and rowwise negation. Header arithmetic,
 positive offsets, negation, cleanup and every sequential join are paid. -/

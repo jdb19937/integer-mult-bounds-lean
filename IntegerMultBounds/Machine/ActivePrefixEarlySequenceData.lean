@@ -2,8 +2,8 @@ module
 
 public import IntegerMultBounds.Machine.ActivePrefixSelectedLoadPlaced
 public import IntegerMultBounds.Machine.ActivePrefixCorrectionLoadPlaced
-public import IntegerMultBounds.Machine.ActivePrefixCompactConjugationPlaced
-public import IntegerMultBounds.Machine.SharedBankFamily
+public import IntegerMultBounds.Machine.ActivePrefixCompactConjugationLayout
+import Mathlib.Tactic.Positivity.Finset
 
 /-! One literal original-array bank for the four active early payload actions.
 Numeric stage headers are prepared inputs; no offset table is supplied. -/

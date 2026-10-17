@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixCompactConjugationData
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Concrete pure and negative load branches on the same caller geometry.
 The surrounding interchange workspace is framed, and each load's complete

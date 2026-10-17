@@ -1,7 +1,9 @@
 module
 
 public import IntegerMultBounds.Machine.CountedGuardConstantsFill
-public import IntegerMultBounds.Machine.CountedGuardGadgetFinish
+public import IntegerMultBounds.Machine.CountedGuardGadgetRecord
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
 /-! Fixed-control overwrite at the cell b+1 using the original b descriptor,
 with real outward movement and replay to the origin. Exact complete tapes,

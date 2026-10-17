@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.Machine.ActiveTargetHighestPairHeadersRun
+import Mathlib.Tactic.Positivity.Finset
 
 /-! All highest-bit header construction and erasure costs are absorbed into
 the original array volume, without a record-width allowance. -/

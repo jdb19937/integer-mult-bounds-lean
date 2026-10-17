@@ -2,6 +2,10 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Cost.CompactLayerBound
 public import IntegerMultBounds.MathlibTM2.Mult.CompactSizes
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
 
 /-! Actual original-precision guards fit any positive original-dimension power. -/
 @[expose] public section

@@ -3,6 +3,8 @@ module
 public import IntegerMultBounds.MathlibTM2.Fast.CompactTopConfigDivisor
 public import IntegerMultBounds.MathlibTM2.Fast.CompactTopConfigPadding
 public import IntegerMultBounds.MathlibTM2.Fast.CompactTopRows
+import IntegerMultBounds.MathlibTM2.Fast.SynRecB
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-! Exact padded rows computed from original axis count, outside row count and
 high spectator axes. The only output is s7; inputs and other scratch are restored. -/

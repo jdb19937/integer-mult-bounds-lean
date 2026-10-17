@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Layer.PackedXor
+import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # Record streams on the packed rectangle

@@ -1,6 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.CountedLateRepairGuard
+public import IntegerMultBounds.Machine.CountedLateRepairInverse
+import Mathlib.Tactic.Positivity.Finset
 
 /-! The actual later repair prefix first classifies the original address,
 then physically executes the unrestricted inverse while retaining its flag. -/

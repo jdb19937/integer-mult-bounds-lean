@@ -1,7 +1,11 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CompactMainTransport
-public import IntegerMultBounds.MathlibTM2.Fast.MainPush
+import IntegerMultBounds.MathlibTM2.Fast.MainPush
+import IntegerMultBounds.MathlibTM2.Fast.Glue
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! Complete expanded-register cleanup and restoration of the initial local state. -/
 @[expose] public section

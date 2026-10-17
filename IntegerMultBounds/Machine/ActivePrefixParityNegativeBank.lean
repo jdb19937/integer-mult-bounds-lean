@@ -3,7 +3,8 @@ module
 public import IntegerMultBounds.Machine.ActivePrefixParityNegativeData
 public import IntegerMultBounds.Machine.ActivePrefixParityNegativeNegate
 public import IntegerMultBounds.Machine.ActivePrefixParityOffsetPlaced
-public import IntegerMultBounds.Machine.ActivePrefixOffsetHeadersCleanup
+import Mathlib.Tactic.Positivity.Finset
+public import IntegerMultBounds.Machine.CompactGadgetReservationShape
 
 /-! Original eight descriptors, a consumed positive stream, the final negative
 stream and five genuinely synthesized headers share one permanent caller bank. -/

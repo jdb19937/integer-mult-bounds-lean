@@ -1,7 +1,12 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Mult.Pipeline
-public import IntegerMultBounds.Resampling.WeightNat
+import Mathlib.Analysis.Complex.ExponentialBounds
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
+import Mathlib.Analysis.Real.Pi.Bounds
 
 /-!
 # Integer numerators of the phase tables

@@ -3,6 +3,7 @@ module
 public import IntegerMultBounds.MathlibTM2.Fast.LayoutMath
 public import IntegerMultBounds.MathlibTM2.Node.FixPass
 public import IntegerMultBounds.MathlibTM2.Node.SwapPass
+import IntegerMultBounds.MathlibTM2.Host.Radix
 
 /-!
 # The two moves of the layout on record streams

@@ -1,7 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixStageWidthSelector
-public import IntegerMultBounds.Machine.CompactGadgetReservationPlacement
+import IntegerMultBounds.Machine.CompactGadgetReservationPlacement
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Width selection exposes just the original f word and one blank result
 flag on an arbitrary caller. The physically constructed one lives in the

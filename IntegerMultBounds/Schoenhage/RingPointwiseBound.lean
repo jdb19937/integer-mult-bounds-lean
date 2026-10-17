@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.Schoenhage.RingPointwiseProgram
+import Mathlib.Data.Nat.Size
 
 /-! The pointwise-product step's time bound is `O(T p log(r p) log log(r p) + H)`
 for each fixed width constant `Cw` (`pointwiseTime_le`): the four

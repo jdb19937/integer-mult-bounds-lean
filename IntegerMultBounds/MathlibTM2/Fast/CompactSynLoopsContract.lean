@@ -1,7 +1,13 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Fast.CompactSynLoopF
-public import IntegerMultBounds.MathlibTM2.Fast.CompactSynLoopO
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynLoopF
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynLoopO
+public import IntegerMultBounds.MathlibTM2.Fast.CompactSynLoopCost
+public import IntegerMultBounds.MathlibTM2.Fast.CompactSynLoopBody
+public import IntegerMultBounds.MathlibTM2.Fast.SynFwd
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! Uniform original-semantics contracts for both concrete hybrid scans. -/
 @[expose] public section

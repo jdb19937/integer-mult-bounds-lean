@@ -1,7 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixDirtyControlHeadersRun
-public import IntegerMultBounds.Machine.ActivePrefixLayoutHeadersBudget
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
 /-! Paid linear bounds for all three original-input dirty-control header
 producers and their actual post-use cleanup, including arithmetic patches. -/

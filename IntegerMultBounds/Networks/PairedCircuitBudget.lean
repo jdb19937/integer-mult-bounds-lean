@@ -2,6 +2,12 @@ module
 
 public import IntegerMultBounds.Networks.PairedCircuit
 public import IntegerMultBounds.Networks.DAGAllocatorBudget
+import Mathlib.Tactic.NormNum.OfScientific
+import Mathlib.Tactic.NormNum.DivMod
+import Mathlib.Tactic.NormNum.Abs
+import Mathlib.Data.Rat.Cast.Order
+import Mathlib.Tactic.NormNum.Pow
+import Mathlib.Algebra.Group.Action.Defs
 
 /-! Compositional bounds for the actual paired-circuit constructors. These count
 allocated addition nodes, so zero elision and support interning can only improve

@@ -1,7 +1,9 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Layer.LayerRFit
+import IntegerMultBounds.MathlibTM2.Layer.LayerRFit
 public import IntegerMultBounds.MathlibTM2.Node.CompactTopProcR
+public import IntegerMultBounds.MathlibTM2.Layer.LayerRBounds
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-!
 # The tape pieces are the rounded pieces

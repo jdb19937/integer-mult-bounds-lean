@@ -1,10 +1,14 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Mult.FastB0Sizes
 public import IntegerMultBounds.MathlibTM2.Mult.BandSpec
-public import IntegerMultBounds.MathlibTM2.Mult.SourceErrScaled
+import IntegerMultBounds.MathlibTM2.Mult.SourceErrScaled
 public import IntegerMultBounds.MathlibTM2.Mult.Chirp
 public import IntegerMultBounds.MathlibTM2.Mult.SynthErr
+public import IntegerMultBounds.MathlibTM2.Mult.SourceErr
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
 
 /-!
 # The numeric pipeline with concrete ingredients

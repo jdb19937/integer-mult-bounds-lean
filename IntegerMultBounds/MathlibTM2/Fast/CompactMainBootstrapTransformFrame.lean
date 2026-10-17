@@ -1,7 +1,12 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Fast.CompactMainBootstrapView
 public import IntegerMultBounds.MathlibTM2.Fast.CompactMainBootstrapPipelineExit
+public import IntegerMultBounds.MathlibTM2.Fast.CompactSynRoundFrame
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainBootstrapRuntime
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainBootstrapPipelineGlobals
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! Bootstrap and exit preserve the transform's legacy registers exactly. -/
 @[expose] public section

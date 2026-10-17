@@ -1,6 +1,9 @@
 module
+import Mathlib.Tactic.Positivity.Finset
+public import IntegerMultBounds.Machine.CountedRankSplitBank
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
-public import IntegerMultBounds.Machine.CountedRankSplitEndpoint
 
 /-! Thirteen tapes: the original twelve-tape short-counter splitter bank plus
 one third address word. The existing nq/nb descriptors are shared and erased. -/

@@ -1,6 +1,10 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Fast.CompactMainBootstrapPipelineFrame
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainBootstrapPipelineFrame
+public import IntegerMultBounds.MathlibTM2.Fast.CompactMainBootstrapFrame
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! One bootstrap per initialized transform, carrying original depth across its rounds. -/
 @[expose] public section

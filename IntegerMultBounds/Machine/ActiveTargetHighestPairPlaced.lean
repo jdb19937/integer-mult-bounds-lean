@@ -1,6 +1,9 @@
 module
+public import IntegerMultBounds.Machine.ActiveTargetHighestPairRun
+import IntegerMultBounds.Machine.CompactGadgetReservationPlacement
+import IntegerMultBounds.Machine.SharedBankRawCompose
+import Mathlib.Tactic.Positivity.Finset
 
-public import IntegerMultBounds.Machine.ActiveTargetHighestPairSemantics
 
 /-! Both actual highest-bit source orders run on arbitrary caller banks,
 change only the array and preserve all original/prepared metadata. -/

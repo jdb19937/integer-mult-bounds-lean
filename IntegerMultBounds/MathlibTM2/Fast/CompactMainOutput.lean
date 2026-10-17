@@ -1,6 +1,11 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Fast.CompactMainCoefficients
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainCoefficients
+public import IntegerMultBounds.MathlibTM2.Fast.CompactRetunedMainBound
+public import IntegerMultBounds.MathlibTM2.Fast.MainCorrect
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! Carry the verified coefficient stream directly onto the expanded host output. -/
 @[expose] public section

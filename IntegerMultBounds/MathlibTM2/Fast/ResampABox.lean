@@ -1,8 +1,12 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Fast.ResampASem
 public import IntegerMultBounds.MathlibTM2.Host.ChunkSwap
 public import IntegerMultBounds.NLogN.ResamplingMultiNumeric
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+public import Mathlib.NumberTheory.Zsqrtd.GaussianInt
+public import IntegerMultBounds.MathlibTM2.Fast.CMul
 
 /-!
 # Line maps on box streams

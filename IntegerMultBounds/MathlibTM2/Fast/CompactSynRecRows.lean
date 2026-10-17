@@ -2,6 +2,7 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Fast.SynRec
 public import IntegerMultBounds.Machine.CompactGlobalRowPadding
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-! # Runtime computation of the original row reservation
 

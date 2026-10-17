@@ -1,6 +1,9 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Cost.CompactTopOriginalBound
+import IntegerMultBounds.MathlibTM2.Cost.CompactTopOriginalBound
+public import IntegerMultBounds.MathlibTM2.Fast.CompactTopOriginal
+import IntegerMultBounds.MathlibTM2.Fast.SynRecB
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-! Volume absorption for the concrete original-input adapter. The unary
 division budget remains explicit geometry, rather than an assumed cost bound. -/

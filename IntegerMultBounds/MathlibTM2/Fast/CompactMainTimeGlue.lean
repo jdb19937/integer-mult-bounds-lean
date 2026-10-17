@@ -1,7 +1,14 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Fast.MainTimeGlue
+import IntegerMultBounds.MathlibTM2.Fast.MainTimeGlue
 public import IntegerMultBounds.MathlibTM2.Cost.CompactTotal
+import IntegerMultBounds.MathlibTM2.Cost.MatchRound
+import IntegerMultBounds.MathlibTM2.Cost.MatchChirp
+public import IntegerMultBounds.MathlibTM2.Fast.MainProg
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
 
 /-! Aggregate unchanged main stages and expanded source costs against the retuned envelope. -/
 @[expose] public section

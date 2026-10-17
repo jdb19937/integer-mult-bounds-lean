@@ -1,6 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixSelectedLoadHeaders
+import Mathlib.Tactic.Positivity.Finset
+public import IntegerMultBounds.Machine.CompactGadgetReservationShape
 
 /-! Actual original-input selected offset production, original-row repetition
 and containing-target rotation, without supplied derived descriptors or tables.

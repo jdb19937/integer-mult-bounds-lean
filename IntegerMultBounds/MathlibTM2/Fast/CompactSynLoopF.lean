@@ -1,6 +1,13 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Fast.CompactSynLoopFStep
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynLoopFStep
+public import IntegerMultBounds.MathlibTM2.Fast.CompactSynLoopCost
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynScanFrame
+public import IntegerMultBounds.MathlibTM2.Fast.CompactSynLoopBody
+public import IntegerMultBounds.MathlibTM2.Fast.SynFwd
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! Execution of the actual forward scan of hybrid synthetic rounds. -/
 @[expose] public section

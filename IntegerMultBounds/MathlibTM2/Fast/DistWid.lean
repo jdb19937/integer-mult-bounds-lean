@@ -1,6 +1,12 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.DistSrcBase
+public import IntegerMultBounds.MathlibTM2.Fast.DistWidth
+import IntegerMultBounds.MathlibTM2.Fast.SrcStage
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
 
 /-!
 # The widths of the pipeline, computed by the machine

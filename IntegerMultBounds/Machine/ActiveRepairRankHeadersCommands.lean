@@ -1,6 +1,10 @@
 module
 
 public import IntegerMultBounds.Machine.ActiveRepairRankHeadersArithmetic
+public import IntegerMultBounds.Machine.BinaryDescriptorCopyPlaced
+import IntegerMultBounds.Machine.BinaryDescriptorStackRoundtrip
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
 /-! A finite descriptor-arithmetic schedule compiles to actual copy, addition,
 subtraction, constant-initialization and erase machines with clean workspace. -/

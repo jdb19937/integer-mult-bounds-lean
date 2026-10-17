@@ -2,6 +2,8 @@ module
 
 public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsMove
 public import IntegerMultBounds.Machine.ActivePrefixEarlySequenceGlobal
+import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsPermutation
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Grouping the actual early four-load output into original-width records
 supplies exactly the payload-one global repair input, retaining wide physical

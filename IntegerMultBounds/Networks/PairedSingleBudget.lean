@@ -2,6 +2,11 @@ module
 
 public import IntegerMultBounds.Networks.PairedPruning
 public import IntegerMultBounds.Networks.DAGAdditionIds
+import IntegerMultBounds.Networks.DisjointPruningBudget
+import IntegerMultBounds.Networks.DAGValueTransfer
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
+import Mathlib.Data.Nat.Totient
 
 /-! Symbolic count of unused single-exclusion additions. With at least four
 vertices each single output is a distinct genuine addition, so all n outputs

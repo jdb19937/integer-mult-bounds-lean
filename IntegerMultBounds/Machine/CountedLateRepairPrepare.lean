@@ -2,7 +2,9 @@ module
 
 public import IntegerMultBounds.Machine.CountedLateRepairMetadata
 public import IntegerMultBounds.Machine.CountedLateRepairScanBank
-public import IntegerMultBounds.Machine.CountedRepairScanPrepare
+import IntegerMultBounds.Machine.CountedRepairScanPrepare
+public import IntegerMultBounds.Machine.CountedRepairScanSeed
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Physical preparation of the complete fixed scan bank from a source stream,
 original q/b/n descriptors, control word and otherwise blank workspace. -/

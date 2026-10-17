@@ -1,6 +1,10 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepRefresh
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepRefresh
+public import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepRecords
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! Source-copy cleanup preserves constructed records and restores the original scratch view. -/
 @[expose] public section

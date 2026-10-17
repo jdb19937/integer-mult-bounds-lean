@@ -1,6 +1,8 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Node.CompactTopProcCall
+public import IntegerMultBounds.MathlibTM2.Node.CompactTopProcRegs
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Concrete top-kernel stage on an arbitrary basis bank, with persistent basis
 rest state. Only the existing per-layer CallSpec is an induction boundary;

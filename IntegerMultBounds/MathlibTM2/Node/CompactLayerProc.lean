@@ -2,6 +2,7 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Node.CompactFactor
 public import IntegerMultBounds.MathlibTM2.Node.LayerProc
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-! Recursive execution of the compact layer with one fixed global reservation. -/
 @[expose] public section

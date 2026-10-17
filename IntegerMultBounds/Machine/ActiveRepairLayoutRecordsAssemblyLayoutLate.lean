@@ -1,7 +1,11 @@
 module
 
 public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsAssemblyLate
-public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsDecodeBudgetLate
+import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsDecodeBudgetLate
+public import IntegerMultBounds.Machine.ActiveRepairLateOriginalPipelineBudget
+public import IntegerMultBounds.Machine.VaryingControlRepairDensity
+import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsPipelineLate
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Literal source and ideal-result arrays for the entire physical format,
 repair, decode and cleanup program. Chunks are derived from real record cells. -/

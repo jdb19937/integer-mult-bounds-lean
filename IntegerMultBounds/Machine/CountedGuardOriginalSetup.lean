@@ -2,6 +2,8 @@ module
 
 public import IntegerMultBounds.Machine.CountedGuardConstants
 public import IntegerMultBounds.Machine.CountedGuardGadget
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
 /-! Fixed fifteen-tape guard initialization from original q/b/n headers and
 literal V/W alone. The three comparison constants are physically synthesized

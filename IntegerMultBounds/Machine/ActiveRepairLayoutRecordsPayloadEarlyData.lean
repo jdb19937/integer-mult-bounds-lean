@@ -2,7 +2,8 @@ module
 
 public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsOriginalEarlyAlphabet
 public import IntegerMultBounds.Machine.ActivePrefixEarlySequenceOriginalPlaced
-public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsEarly
+import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsEarly
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Literal shared prime-alphabet caller for early payload then repair.
 Twenty-two original words and one original raw array are the only inputs. -/

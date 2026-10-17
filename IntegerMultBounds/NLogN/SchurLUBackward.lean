@@ -1,6 +1,8 @@
 module
 
-public import IntegerMultBounds.NLogN.SchurLURounded
+import IntegerMultBounds.NLogN.SchurLURounded
+public import IntegerMultBounds.NLogN.SchurSolve
+public import Mathlib.Data.Finset.Card
 
 /-! Backward stability of rounded elimination. Each multiplier and each
 updated entry is rounded within `η`. A stage keeps dominance with margin

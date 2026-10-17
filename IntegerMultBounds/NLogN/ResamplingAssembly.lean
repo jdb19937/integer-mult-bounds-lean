@@ -2,6 +2,12 @@ module
 
 public import IntegerMultBounds.NLogN.ResamplingInverse
 public import IntegerMultBounds.NLogN.ResamplingCLM
+import Mathlib.Analysis.Complex.ExponentialBounds
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import IntegerMultBounds.NLogN.Neumann
+import Mathlib.Analysis.Real.Pi.Bounds
 
 /-! Proposition 4.7(i) of Harvey–van der Hoeven in one dimension. The row
 selection `C`, the diagonal map `D` with its inverse, and the off-diagonal part

@@ -1,6 +1,10 @@
 module
 
 public import IntegerMultBounds.Machine.ActiveRepairRecordFlattenPrepare
+public import IntegerMultBounds.Machine.ActiveRepairRecordFlattenEndpoint
+import Mathlib.Tactic.Positivity.Finset
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
 /-! Complete decoder from the literal unmarked record word. Its marker is
 physically installed, consumed by cleanup, and absent from the final bank. -/

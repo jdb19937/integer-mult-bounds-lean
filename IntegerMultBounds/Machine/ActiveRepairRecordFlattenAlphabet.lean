@@ -1,7 +1,9 @@
 module
 
 public import IntegerMultBounds.Machine.ActiveRepairRecordFlattenOriginal
-public import IntegerMultBounds.Machine.Alphabet
+import Mathlib.Tactic.Positivity.Finset
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
 /-! The real record flattening endpoint on larger caller alphabets. Existing
 blank, bits, separators and the temporary source marker keep literal codes. -/

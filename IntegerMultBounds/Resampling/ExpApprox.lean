@@ -1,7 +1,8 @@
 module
 
-public import Mathlib.Analysis.SpecialFunctions.Exponential
-public import Mathlib.Analysis.SpecialFunctions.Exp
+import Mathlib.Analysis.SpecialFunctions.Exponential
+import Mathlib.Analysis.Complex.Trigonometric
+public import Mathlib.Analysis.Complex.Exponential
 
 /-! A certified integer approximation of `2^q exp (X / 2^q)` by the truncated
 Taylor series, each term obtained from the previous one by one multiplication

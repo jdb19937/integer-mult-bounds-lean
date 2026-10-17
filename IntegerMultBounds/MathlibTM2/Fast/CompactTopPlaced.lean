@@ -2,6 +2,8 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CompactTopOriginal
 public import IntegerMultBounds.MathlibTM2.Node.CompactRegisterEmbedding
+public import IntegerMultBounds.MathlibTM2.Host.Embed
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-! Original-input construction runs on the compact register bank through a
 fixed embedding. Empty procedure names ensure no compatibility assumption on

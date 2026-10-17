@@ -2,6 +2,9 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CRTControlGenerateTraversal
 public import IntegerMultBounds.MathlibTM2.Fast.CRTControlGenerateLayout
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! # Semantic invariant of runtime descriptor selection -/
 

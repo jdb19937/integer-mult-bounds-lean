@@ -2,6 +2,7 @@ module
 
 public import IntegerMultBounds.Machine.ActiveRepairEarlyOriginalPipelinePrepare
 public import IntegerMultBounds.Machine.CountedTapeRepairCleanupRun
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Erase the actual sorted-key words, all scan sentinels/pass metadata and
 counter, and return original source and repaired output to their origins. -/

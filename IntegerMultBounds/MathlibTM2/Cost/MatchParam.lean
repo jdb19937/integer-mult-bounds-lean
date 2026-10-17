@@ -1,8 +1,13 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Cost.MatchBase
+import IntegerMultBounds.MathlibTM2.Cost.MatchBase
 public import IntegerMultBounds.MathlibTM2.Fast.Input
 public import IntegerMultBounds.MathlibTM2.Fast.Output
+public import IntegerMultBounds.MathlibTM2.Fast.ParamMachine
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
 
 /-!
 # Cost matching: parameters, input and output

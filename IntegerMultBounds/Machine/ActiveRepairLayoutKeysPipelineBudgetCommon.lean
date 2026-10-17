@@ -1,7 +1,9 @@
 module
+public import IntegerMultBounds.Machine.CompactGadgetReservationShape
+public import IntegerMultBounds.Compact.TapeRepair
+import Mathlib.Tactic.Positivity.Finset
+public import IntegerMultBounds.Machine.CompactActiveTargetLayout
 
-public import IntegerMultBounds.Machine.ActiveRepairLayoutDensityArithmetic
-public import IntegerMultBounds.Machine.ActiveRepairLayoutDensityScan
 
 /-! Positive record counts and payload bounds for complete layout streams. -/
 

@@ -1,6 +1,7 @@
 module
+public import IntegerMultBounds.Machine.ActiveRepairEarlyKeyOriginalRun
+import Mathlib.Tactic.Positivity.Finset
 
-public import IntegerMultBounds.Machine.ActiveRepairEarlyKeyOriginalPlaced
 
 /-! Complete original-descriptor early key execution and paid cleanup. -/
 

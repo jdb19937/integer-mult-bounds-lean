@@ -1,31 +1,12 @@
 module
 
-public import IntegerMultBounds.Machine.OneSourceCircuit
 public import IntegerMultBounds.Machine.Shared50RecursiveInduction
-public import IntegerMultBounds.Machine.Shared50RecursiveNodeTranspose
-public import IntegerMultBounds.Machine.Shared50RecursiveSegments
 public import IntegerMultBounds.Machine.Shared50TapeInvocation
-public import IntegerMultBounds.Machine.Shared50XorLists
 public import IntegerMultBounds.Networks.BinaryOrthonormal
-public import IntegerMultBounds.Networks.BinaryPhase
 public import IntegerMultBounds.Networks.ComplexEndpoints
 public import IntegerMultBounds.Networks.GaussianPrecision
 public import IntegerMultBounds.Networks.GlobalBinaryResiduals
-public import IntegerMultBounds.Networks.GlobalCircuit
-public import IntegerMultBounds.Networks.GlobalCircuitBits
-public import IntegerMultBounds.Networks.GroupedFrames
-public import IntegerMultBounds.Networks.Labels
-public import IntegerMultBounds.Networks.NeighborCounts
 public import IntegerMultBounds.Networks.NeighborResidual
-public import IntegerMultBounds.Networks.Shared50Certificate
-public import IntegerMultBounds.Networks.Shared50Finite
-public import IntegerMultBounds.Networks.Shared50FiniteFramed
-public import IntegerMultBounds.Networks.Shared50FiniteInterchange
-public import IntegerMultBounds.Networks.Shared50GlobalShear
-public import IntegerMultBounds.Networks.Shared50ModularExecution
-public import IntegerMultBounds.Networks.ShearFrame
-public import IntegerMultBounds.Networks.TensorLabels
-public import IntegerMultBounds.Networks.Wires
 
 /-! §3 milestones (plan/03-finite-networks-rank.md): one theorem per sub-problem, each bundling the exact statements of its proved pieces. -/
 

@@ -1,6 +1,11 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Fast.CompactSynInitialGeometry
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynInitialGeometry
+public import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerContract
+public import IntegerMultBounds.MathlibTM2.Fast.DistSynMain
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! The actual distributed transform meets the concrete hybrid layer contract
 with the existing finite alphabet and canonical network directions. -/

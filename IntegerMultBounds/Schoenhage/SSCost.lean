@@ -1,6 +1,8 @@
 module
 
 public import IntegerMultBounds.Schoenhage.SSMain
+import IntegerMultBounds.Schoenhage.SSMath
+import IntegerMultBounds.Schoenhage.IterCorrect
 
 /-! The multiplier's cost within the schedule's recurrence: `ssCost N [x, y]`
 is at most `cost A B C0 N` for fixed constants plus a linear term, hence

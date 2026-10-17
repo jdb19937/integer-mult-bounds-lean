@@ -1,6 +1,11 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CompactDyadicDimension
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+public import IntegerMultBounds.MathlibTM2.Fast.CMulArith
+public import IntegerMultBounds.MathlibTM2.Mult.CRT
 
 /-! Independent forty-variable dyadic dimension stage, importable by ParamProg. -/
 @[expose] public section

@@ -1,7 +1,10 @@
 module
 
 public import IntegerMultBounds.Machine.ActiveTargetHighestLayoutHeadersRun
-public import IntegerMultBounds.Machine.ActivePrefixLayoutHeadersBudget
+import IntegerMultBounds.Machine.ActivePrefixLayoutHeadersBudget
+import Mathlib.Tactic.Positivity.Finset
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
 /-! Paid linear bounds for deriving the highest-bit geometry from the same
 original layout words used by the compact low-bit schedules. -/

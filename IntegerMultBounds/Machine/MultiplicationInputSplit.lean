@@ -2,8 +2,8 @@ module
 
 public import IntegerMultBounds.Machine.Copy
 public import IntegerMultBounds.Machine.Reflection
-public import IntegerMultBounds.Machine.WordMoves
 public import IntegerMultBounds.Machine.Frame
+import IntegerMultBounds.Machine.ExactFrame
 
 /-! A fixed parser for the literal multiplication input. It preserves the
 packed input and physically copies both operands backwards onto blank tapes.

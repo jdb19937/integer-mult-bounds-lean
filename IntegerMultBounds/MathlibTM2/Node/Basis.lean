@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Node.SlotXor
+import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # The basis change of a factor

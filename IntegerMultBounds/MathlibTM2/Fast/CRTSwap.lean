@@ -2,6 +2,11 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CRTBase
 public import IntegerMultBounds.MathlibTM2.Fast.CRTBox
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
+public import IntegerMultBounds.MathlibTM2.Node.SwapPass
 
 /-!
 # Exchanging two adjacent axes of a box

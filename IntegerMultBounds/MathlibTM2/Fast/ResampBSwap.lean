@@ -1,7 +1,10 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.ResampBList
-public import IntegerMultBounds.MathlibTM2.Fast.ResampBAxis
+public import IntegerMultBounds.MathlibTM2.Fast.ResampBCore
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-!
 # Moving an axis of the box innermost, on any register type

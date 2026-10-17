@@ -2,6 +2,11 @@ module
 
 public import IntegerMultBounds.Networks.PairedInitialGraph
 public import IntegerMultBounds.Networks.DisjointUnique
+import Mathlib.Tactic.NormNum.OfScientific
+import Mathlib.Tactic.NormNum.DivMod
+import Mathlib.Tactic.NormNum.Abs
+import Mathlib.Data.Rat.Cast.Order
+import Mathlib.Tactic.NormNum.Pow
 
 /-! Support uniqueness of the actual recursive paired constructor. Every stage
 uses the persistent intern bank, so uniqueness follows by composition for all

@@ -1,8 +1,12 @@
 module
 
-public import IntegerMultBounds.Machine.ActiveRepairEarlyKeyPatch
-public import IntegerMultBounds.Machine.ActiveRepairEarlyKeyAppend
 public import IntegerMultBounds.Machine.ActiveRepairEarlyKeyCleanup
+public import IntegerMultBounds.Machine.ActiveRepairEarlyKeyPlacement
+public import IntegerMultBounds.Machine.ActiveRepairDestinationPatchRun
+public import IntegerMultBounds.Machine.ActiveRepairEarlySourceRun
+public import IntegerMultBounds.Machine.CountedRepairKeyAppend
+import IntegerMultBounds.Machine.CompactGadgetReservationPlacement
+import Mathlib.Tactic.Positivity.Finset
 
 /-! The actual full-rank early key bank. Only original counter and runtime
 descriptors are inputs; every address-dependent word is computed internally. -/

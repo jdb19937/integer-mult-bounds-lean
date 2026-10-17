@@ -1,8 +1,14 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.DistLoop
-public import IntegerMultBounds.MathlibTM2.Fast.DistWidth
-public import IntegerMultBounds.MathlibTM2.Fast.CRTMachine
+import IntegerMultBounds.MathlibTM2.Fast.DistWidth
+import IntegerMultBounds.MathlibTM2.Fast.DistRec
+public import IntegerMultBounds.MathlibTM2.Fast.DistAxis
+public import IntegerMultBounds.MathlibTM2.Fast.CRTDrive
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
 
 /-!
 # The parameters of the CRT machines

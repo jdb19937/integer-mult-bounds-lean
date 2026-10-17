@@ -1,7 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.ActiveRepairRankFieldsRun
-public import IntegerMultBounds.Machine.SharedBankFrames
+import IntegerMultBounds.Machine.CompactGadgetReservationPlacement
+import Mathlib.Tactic.Positivity.Finset
 
 /-! The complete genuine-rank field/source parser placed on arbitrary caller
 slots, with literal retained descriptors and clean private storage. -/

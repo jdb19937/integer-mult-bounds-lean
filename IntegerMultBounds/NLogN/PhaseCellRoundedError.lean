@@ -1,6 +1,9 @@
 module
 
 public import IntegerMultBounds.NLogN.PhaseCellRounded
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! Entrywise accuracy of the actual rational within-cell constructor.
 The lower similarity-weight bound is explicit. Converting these estimates to

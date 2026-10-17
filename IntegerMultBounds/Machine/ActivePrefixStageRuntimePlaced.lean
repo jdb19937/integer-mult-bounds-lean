@@ -1,8 +1,11 @@
 module
+import IntegerMultBounds.Machine.SharedBankRawCompose
+public import IntegerMultBounds.Machine.SharedBankStageInput
+public import IntegerMultBounds.Machine.CleanSubbank
+import Mathlib.Tactic.Positivity.Finset
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
-public import IntegerMultBounds.Machine.ActivePrefixStageWidthOriginal
-public import IntegerMultBounds.Machine.ActivePrefixStageSingletonDispatch
-public import IntegerMultBounds.Machine.ActivePrefixStageDispatchSelected
 
 /-! Extend a leading-bank clean routine with a separate width flag. The new
 flag is framed and all native private tapes remain physically blank. -/

@@ -3,6 +3,10 @@ module
 public import IntegerMultBounds.MathlibTM2.Fast.DistSyn
 public import IntegerMultBounds.MathlibTM2.Fast.BundleDist
 public import IntegerMultBounds.MathlibTM2.Fast.BundleMnLay
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
 
 /-!
 # The wires program of the fast multiplier

@@ -4,6 +4,10 @@ public import IntegerMultBounds.MathlibTM2.Fast.CompactSynHybridRoundR
 public import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerContract
 public import IntegerMultBounds.MathlibTM2.Fast.CompactSynUniformLayerContract
 public import IntegerMultBounds.MathlibTM2.Fast.SynFwd
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainBootstrapRuntime
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! The rounded layer contract on records. `synDec p L Y` reads physical numerators `Y` back as
 logical records; `compactSynLQ` is the rounded dispatch round on records: the rounded chunk

@@ -4,6 +4,9 @@ public import IntegerMultBounds.Machine.ActiveRepairLayoutPermutationFields
 public import IntegerMultBounds.Machine.CompactActiveTargetLayout
 public import IntegerMultBounds.Machine.SelectedSourceBitsData
 public import IntegerMultBounds.Machine.BinaryAddressTableData
+public import IntegerMultBounds.Machine.ActiveRepairRankHeadersData
+public import IntegerMultBounds.Machine.VaryingControlRepairPacked
+import Mathlib.Tactic.Positivity.Finset
 
 /-! The actual unchanged active-target address is a complete varying-source
 fiber: both source coordinates and all unused tails/slack/back/payload bits

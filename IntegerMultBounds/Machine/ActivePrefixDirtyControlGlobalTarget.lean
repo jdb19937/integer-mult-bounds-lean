@@ -2,9 +2,9 @@ module
 
 public import IntegerMultBounds.Machine.ActivePrefixDirtyControlSequenceGeometry
 public import IntegerMultBounds.Machine.ActivePrefixDirtyControlLayoutRows
-public import IntegerMultBounds.Machine.ActivePrefixDirtyControlGlobalSwap
-public import IntegerMultBounds.Machine.ActivePrefixLayoutTarget
+import IntegerMultBounds.Machine.ActivePrefixLayoutTarget
 public import IntegerMultBounds.Machine.BinaryPackedEarlyData
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Physical target selected/correction loads at every original address,
 using the current compact U parity controls. -/

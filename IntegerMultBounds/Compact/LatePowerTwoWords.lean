@@ -1,6 +1,10 @@
 module
 
 public import IntegerMultBounds.Compact.LatePowerTwoRank
+import Mathlib.Tactic.Positivity.Finset
+public import IntegerMultBounds.Compact.PowerTwoDigits
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
 /-! Unrestricted late word/address digit extraction and rank encoding.
 These identities require word lengths, never guard membership or long counters. -/

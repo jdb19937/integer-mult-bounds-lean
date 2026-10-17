@@ -1,7 +1,11 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Fast.CompactMainBootstrapTransformFrame
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainBootstrapTransformFrame
 public import IntegerMultBounds.MathlibTM2.Fast.CompactMainBootstrapPipelineCompose
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainBootstrapView
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! A fully charged transform boundary from real input sources and blank scratch. -/
 @[expose] public section

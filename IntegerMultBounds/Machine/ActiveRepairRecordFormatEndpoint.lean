@@ -1,6 +1,10 @@
 module
 
 public import IntegerMultBounds.Machine.ActiveRepairRecordFormatEndpointAt
+public import IntegerMultBounds.Machine.ActiveRepairRecordFormatStream
+public import IntegerMultBounds.Machine.BinaryDescriptorCleanupList
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
 /-! Complete raw-to-record formatting from blank clock storage, retaining
 both canonical binary headers and the original source. Scratch clocks are

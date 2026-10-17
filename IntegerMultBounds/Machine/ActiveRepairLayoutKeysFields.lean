@@ -1,8 +1,8 @@
 module
+public import IntegerMultBounds.Machine.ActiveRepairRankHeadersEndpoint
+public import IntegerMultBounds.Machine.ActiveRepairLayoutPermutationFiber
+import Mathlib.Tactic.Positivity.Finset
 
-public import IntegerMultBounds.Machine.ActiveRepairLayoutPermutationDestination
-public import IntegerMultBounds.Machine.ActiveRepairEarlyKeyOriginal
-public import IntegerMultBounds.Machine.ActiveRepairLateKeyOriginal
 
 /-! Original geometric descriptors decode exactly the global permutation's
 current target/T/U and varying retained source. No computed field starts or

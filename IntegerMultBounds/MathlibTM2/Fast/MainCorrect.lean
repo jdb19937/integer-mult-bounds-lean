@@ -2,6 +2,11 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Fast.MainChain
 public import IntegerMultBounds.MathlibTM2.Fast.MainPush
+public import IntegerMultBounds.MathlibTM2.Fast.Glue
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
 
 /-!
 # Correctness of the fast multiplier

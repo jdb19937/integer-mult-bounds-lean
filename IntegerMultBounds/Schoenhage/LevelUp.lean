@@ -1,6 +1,9 @@
 module
 
 public import IntegerMultBounds.Schoenhage.LevelTape
+public import IntegerMultBounds.Schoenhage.InvLayers
+import IntegerMultBounds.Schoenhage.IterCorrect
+import IntegerMultBounds.Schoenhage.Wp
 
 /-! The up-sweep of one group on word tapes: the inverse transform of the
 group's `K` products, the coefficient split, the two shifted sums and their

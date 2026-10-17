@@ -1,7 +1,7 @@
 module
+public import IntegerMultBounds.Machine.ActivePrefixStageFullData
+import Mathlib.Tactic.Positivity.Finset
 
-public import IntegerMultBounds.Machine.ActivePrefixStageFullErase
-public import IntegerMultBounds.Machine.ActiveTargetHighestLayoutOriginalGlobal
 
 /-! The f=1 branch has no low packed target. Its single selected bit is the
 physical highest-bit action, starting from the same thirteen original words

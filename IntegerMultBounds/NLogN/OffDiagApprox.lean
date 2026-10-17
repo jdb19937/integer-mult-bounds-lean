@@ -2,6 +2,10 @@ module
 
 public import IntegerMultBounds.NLogN.ResamplingInverse
 public import IntegerMultBounds.NLogN.Approx
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Analysis.Real.Pi.Bounds
 
 /-! Lemmas 4.8 and 4.11 of Harvey and van der Hoeven, at the level of error
 bounds. The off-diagonal map `E` of the normalised resampling system is

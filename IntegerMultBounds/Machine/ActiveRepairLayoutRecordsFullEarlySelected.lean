@@ -1,7 +1,8 @@
 module
 
-public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsFullEarlyBudget
 public import IntegerMultBounds.Machine.ActiveTargetHighestLayoutFullSelected
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsFullEarlyData
+import Mathlib.Tactic.Positivity.Finset
 
 /-! The actual complete early low/high machine has the full-selected address
 destination. Its literal forward array equation covers every original address;

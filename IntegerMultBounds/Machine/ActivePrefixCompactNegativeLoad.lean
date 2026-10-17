@@ -1,6 +1,9 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixCompactNegativeLoadCleanup
+public import IntegerMultBounds.Machine.ActivePrefixCompactNegativeLoadRun
+import Mathlib.Tactic.Positivity.Finset
+public import IntegerMultBounds.Machine.CompactGadgetReservationShape
 
 /-! Complete compact negative parity-XOR load from original prefix/gadget descriptors, original
 rows and suffix width, and the original full array. Offset production, repeat,

@@ -1,6 +1,6 @@
 module
+public import IntegerMultBounds.Machine.KeySelectData
 
-public import IntegerMultBounds.Machine.DropFlag
 
 /-! Literal two-state removal of record flags and delimiters. Payload bits
 are copied contiguously, source retention/erasure is explicit, and every

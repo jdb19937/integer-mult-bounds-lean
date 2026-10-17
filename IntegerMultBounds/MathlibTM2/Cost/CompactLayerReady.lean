@@ -1,7 +1,8 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Cost.CompactLayer
-public import IntegerMultBounds.MathlibTM2.Node.CompactLayerGeometry
+import IntegerMultBounds.MathlibTM2.Node.CompactLayerGeometry
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-! The actual compact basis estimate supplies the recursive layer budget.
 Only geometric packing remains a caller premise, not an arbitrary cost oracle. -/

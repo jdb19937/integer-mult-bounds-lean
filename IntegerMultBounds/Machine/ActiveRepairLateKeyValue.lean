@@ -1,8 +1,12 @@
 module
 
 public import IntegerMultBounds.Machine.ActiveRepairLateKeyRun
-public import IntegerMultBounds.Machine.ActiveRepairLateFieldsValue
-public import IntegerMultBounds.Machine.ActiveRepairDestinationPatchEndpoint
+import IntegerMultBounds.Machine.ActiveRepairLateFieldsValue
+import IntegerMultBounds.Machine.ActiveRepairDestinationPatchEndpoint
+public import IntegerMultBounds.Machine.ActiveRepairDestinationPatchGeometry
+public import IntegerMultBounds.Compact.LatePowerTwoRank
+import IntegerMultBounds.Machine.CountedPackedGuarded
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Exact guard classification and complete original-layout destination of
 the physical later-key writer. Local concatenation appears only in the proof. -/

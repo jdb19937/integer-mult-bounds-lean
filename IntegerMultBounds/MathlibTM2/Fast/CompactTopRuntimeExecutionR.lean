@@ -1,7 +1,16 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CompactTopExecutionR
-public import IntegerMultBounds.MathlibTM2.Fast.CompactTopRuntimeExecution
+import IntegerMultBounds.MathlibTM2.Cost.CompactCallerShape
+import IntegerMultBounds.MathlibTM2.Cost.CompactPiecePacking
+public import IntegerMultBounds.MathlibTM2.Fast.CompactPieceGeometry
+public import IntegerMultBounds.Machine.CompactReservationGrowth
+import IntegerMultBounds.MathlibTM2.Fast.CompactTopPrecision
+import IntegerMultBounds.MathlibTM2.Cost.CompactLayerReady
+public import IntegerMultBounds.MathlibTM2.Mult.Sizes
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! The reserved rounded top transform at actual runtime parameters: readiness of every
 rounded piece follows from original precision and geometric capacity

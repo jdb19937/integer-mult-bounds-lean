@@ -1,6 +1,9 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixCompactParityLoadCleanup
+public import IntegerMultBounds.Machine.ActivePrefixCompactParityLoadRun
+import Mathlib.Tactic.Positivity.Finset
+public import IntegerMultBounds.Machine.CompactGadgetReservationShape
 
 /-! Complete compact parity load from original prefix/gadget descriptors, original
 rows and suffix width, and the original full array. Offset production, repeat,

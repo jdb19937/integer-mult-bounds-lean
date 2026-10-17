@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsHeadersRun
+import Mathlib.Tactic.Positivity.Finset
 
 /-! The actual forward record formatter's count is generated from original
 rows and the derived address exponent. No full record count is supplied. -/

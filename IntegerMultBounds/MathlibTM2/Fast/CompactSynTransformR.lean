@@ -2,9 +2,18 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CompactSynLoopsR
 public import IntegerMultBounds.MathlibTM2.Fast.ConvSpecQ
-public import IntegerMultBounds.MathlibTM2.Fast.CompactSynFwdSpec
-public import IntegerMultBounds.MathlibTM2.Fast.CompactSynOppSpec
-public import IntegerMultBounds.MathlibTM2.Fast.CompactSynUniformTransformPre
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynUniformTransformPre
+public import IntegerMultBounds.MathlibTM2.Fast.CompactSynTransformPre
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainTransformPipeline
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainBootstrapTransformFrame
+public import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayoutTransport
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynDirect
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainLegacyRuns
+public import IntegerMultBounds.MathlibTM2.Fast.CompactMainBootstrapPipelineCompose
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
 
 /-! The rounded forward and opposite transforms: the layout programs around the rounded loops.
 `SynFwdSpecQ`, `SynOppSpecQ` are the transform contracts of `Fast/ConvSpec` with the computed

@@ -1,10 +1,11 @@
 module
 
 public import Mathlib.Data.ZMod.QuotientRing
-public import IntegerMultBounds.NLogN.MultidimD
-public import IntegerMultBounds.NLogN.ResamplingPermuted
 public import IntegerMultBounds.NLogN.ResamplingPermutedNumeric
 public import IntegerMultBounds.ExactRecovery
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-!
 # The CRT layout `Φ` and the normalized permutation cancellation

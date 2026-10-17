@@ -1,8 +1,10 @@
 module
 
-public import IntegerMultBounds.Machine.ActivePrefixDirtyControlHeadersPlaced
-public import IntegerMultBounds.Machine.ActivePrefixDirtyControlSequenceGeometry
 public import IntegerMultBounds.Machine.ActivePrefixLayoutHeadersGeometry
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlHeadersData
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlSourceGeometry
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlLayoutFields
+import Mathlib.Tactic.Positivity.Finset
 
 /-! The physical header producer's six-word groups are the exact target,
 compact-back and later-source geometries of the unchanged original array. -/

@@ -1,8 +1,14 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Cost.CompactCallerFullDimension
-public import IntegerMultBounds.MathlibTM2.Cost.MatchSynOver
-public import IntegerMultBounds.MathlibTM2.Fast.CompactTopConfigDivisor
+import IntegerMultBounds.MathlibTM2.Cost.MatchSynOver
+import IntegerMultBounds.MathlibTM2.Fast.CompactTopConfigDivisor
+public import IntegerMultBounds.MathlibTM2.Mult.Sizes
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+public import IntegerMultBounds.Machine.CompactGlobalRowPadding
+public import IntegerMultBounds.MathlibTM2.Layer.LayerZ
+public import IntegerMultBounds.MathlibTM2.Mult.CRT
 
 /-! A fixed polynomial bounds the actual original-depth row divisor. All
 constants are named expressions; finite wire cardinalities are not normalized. -/

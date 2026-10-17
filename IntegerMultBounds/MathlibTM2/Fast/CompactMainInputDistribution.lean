@@ -1,10 +1,15 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CompactMainCleanup
-public import IntegerMultBounds.MathlibTM2.Fast.CompactMainParamCalls
-public import IntegerMultBounds.MathlibTM2.Fast.CompactSynRetunedDistributionEntry
-public import IntegerMultBounds.MathlibTM2.Fast.CompactMainDistributionCalls
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainParamCalls
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynRetunedDistributionEntry
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainDistributionCalls
 public import IntegerMultBounds.MathlibTM2.Fast.CompactMainStableFrame
+public import IntegerMultBounds.MathlibTM2.Fast.CompactBundleWires
+public import IntegerMultBounds.MathlibTM2.Fast.CompactMainEntryTable
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! Actual input, parameters, and retuned distribution enter the expanded main chain. -/
 @[expose] public section

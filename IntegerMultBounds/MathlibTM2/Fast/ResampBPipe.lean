@@ -1,7 +1,13 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.ResampBAll
-public import IntegerMultBounds.MathlibTM2.Mult.Pipeline
+import IntegerMultBounds.MathlibTM2.Mult.BandSpec
+public import IntegerMultBounds.Resampling.WeightTable
+public import IntegerMultBounds.MathlibTM2.Mult.Sizes
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+public import IntegerMultBounds.MathlibTM2.Mult.CRT
 
 /-!
 # Box streams of the pipeline

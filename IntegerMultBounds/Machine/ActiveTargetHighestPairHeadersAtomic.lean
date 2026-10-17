@@ -1,6 +1,11 @@
 module
+public import IntegerMultBounds.Machine.ActiveRepairRankHeadersCommands
+public import IntegerMultBounds.Machine.CompactGadgetReservationHeadersPowerRound
+import Mathlib.Tactic.Positivity.Finset
+import IntegerMultBounds.Machine.BinaryDescriptorStackRoundtrip
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
-public import IntegerMultBounds.Machine.ActiveTargetHighestPairHeadersData
 
 /-! Exact state-indexed wrappers around actual constant, power and product
 machines in the common 28+15 descriptor bank. -/

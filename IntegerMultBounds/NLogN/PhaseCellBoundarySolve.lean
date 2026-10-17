@@ -1,7 +1,13 @@
 module
 
-public import IntegerMultBounds.NLogN.PhaseCellBoundary
+import IntegerMultBounds.NLogN.PhaseCellBoundary
 public import IntegerMultBounds.NLogN.SchurSolve
+public import IntegerMultBounds.NLogN.PhaseCellMatrix
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
+public import IntegerMultBounds.Machine
 
 /-! Exact boundary solves for the actual rounded periodic Gaussian matrix.
 After any interior elimination, the reduced system with the carried

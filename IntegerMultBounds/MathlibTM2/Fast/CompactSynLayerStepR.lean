@@ -1,10 +1,23 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepPrepR
-public import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepRuntime
-public import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepCompose
-public import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepStream
-public import IntegerMultBounds.MathlibTM2.Fast.CompactTopRuntimeExecutionR
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepCompose
+import IntegerMultBounds.MathlibTM2.Fast.CompactTopRuntimeExecutionR
+public import IntegerMultBounds.MathlibTM2.Fast.CompactTopExecutionR
+public import IntegerMultBounds.MathlibTM2.Layer.LayerRBounds
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepCleanup
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepBasis
+public import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepTopRegs
+public import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepPark
+import IntegerMultBounds.MathlibTM2.Node.CompactBasisRefreshRest
+public import IntegerMultBounds.MathlibTM2.Fast.CompactPieceGeometry
+public import IntegerMultBounds.Machine.CompactReservationGrowth
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynRoundCompose
+public import IntegerMultBounds.MathlibTM2.Mult.Sizes
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+public import IntegerMultBounds.MathlibTM2.Fast.SynMath
 
 /-! The rounded chunk round: the rounded preparation, parking, the rounded top program
 `compactTopProgR` on the placed rounded layer table, unparking and cleanup. The parked runtime

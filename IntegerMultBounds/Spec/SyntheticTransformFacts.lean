@@ -1,9 +1,8 @@
 module
 
 public import IntegerMultBounds.Spec.SyntheticTransform
-public import IntegerMultBounds.NLogN.SynthMultiD
-public import IntegerMultBounds.NLogN.SynthConv
-public import Mathlib.Data.List.GetD
+import IntegerMultBounds.NLogN.SynthMultiD
+import Mathlib.Data.List.GetD
 
 /-! Sanity facts for the synthetic transform statement: mixed-radix addresses
 and their digits are inverse; bit reversal of every axis address is an

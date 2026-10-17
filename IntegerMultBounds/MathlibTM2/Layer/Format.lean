@@ -2,6 +2,7 @@ module
 
 public import Mathlib.Data.ZMod.Basic
 public import Mathlib.NumberTheory.Zsqrtd.GaussianInt
+import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import IntegerMultBounds.Machine
 
 /-!

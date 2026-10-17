@@ -1,7 +1,7 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixStageHeadersSchedule
-public import IntegerMultBounds.Machine.CompactGadgetReservationHeadersCarvedSchedule
+import Mathlib.Tactic.Positivity.Finset
 
 /-! An actual fixed physical arithmetic schedule generates all numeric stage
 geometry from the original thirteen retained words and clears its scratch. -/

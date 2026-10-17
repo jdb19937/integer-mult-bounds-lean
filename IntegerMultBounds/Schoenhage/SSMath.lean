@@ -1,6 +1,8 @@
 module
 
 public import IntegerMultBounds.Schoenhage.DriverUp
+import IntegerMultBounds.Schoenhage.BatchMath
+import IntegerMultBounds.Schoenhage.IterCorrect
 
 /-! The driver's trajectory computes `ssMul`: the up-sweep over the saved
 levels of the base products returns the products of the top batch. -/

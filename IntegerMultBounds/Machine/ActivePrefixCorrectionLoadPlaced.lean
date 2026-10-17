@@ -1,6 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixCorrectionLoad
+import IntegerMultBounds.Machine.CompactGadgetReservationPlacement
+import Mathlib.Tactic.Positivity.Finset
 
 /-! The complete original-input correction load on arbitrary caller
 tapes. Ten original headers and the array are permanent; all private storage

@@ -1,7 +1,9 @@
 module
 
-public import IntegerMultBounds.Machine.ActivePrefixStageRuntimeEndpoint
 public import IntegerMultBounds.Machine.ActivePrefixStageSingletonSelected
+public import IntegerMultBounds.Machine.ActivePrefixStageRuntimeData
+public import IntegerMultBounds.Machine.ActivePrefixStageDispatchSelected
+import Mathlib.Tactic.Positivity.Finset
 
 /-! The single runtime stage has an exact entrywise selected-address endpoint
 for every positive width, including the physically highest-only singleton. -/

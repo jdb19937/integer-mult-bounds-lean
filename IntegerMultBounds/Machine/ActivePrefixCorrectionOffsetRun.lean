@@ -1,6 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixCorrectionOffsetBank
+import Mathlib.Tactic.Positivity.Finset
+public import IntegerMultBounds.Machine.CompactGadgetReservationShape
 
 /-! Actual complete producers and rowwise modular subtraction share forty-one
 blank private tapes. Operand tables and derived descriptors are erased before

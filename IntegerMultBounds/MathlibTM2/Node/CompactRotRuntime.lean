@@ -1,7 +1,12 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Node.CompactRotStage
-public import IntegerMultBounds.Machine.ActivePrefixStageRuntimeEndpoint
+import IntegerMultBounds.Machine.ActivePrefixStageRuntimeEndpoint
+import IntegerMultBounds.Machine.ActivePrefixStageRuntimeRun
+public import IntegerMultBounds.Machine.ActivePrefixStageRuntimeProgram
+public import IntegerMultBounds.Machine.ActivePrefixStageRuntimeData
+import IntegerMultBounds.Machine.SharedBankRawCompose
+import Mathlib.Tactic.Positivity.Finset
 
 /-! # Runtime compact stages on normalized host banks
 

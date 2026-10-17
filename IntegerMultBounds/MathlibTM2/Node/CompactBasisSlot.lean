@@ -1,7 +1,7 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Node.CompactSlotComputed
-public import IntegerMultBounds.MathlibTM2.Node.Basis
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-! A slot operation at the post-saveDiv boundary: construct parent length from
 the child length, seed the two fixed slot indices, and restore all three counters. -/

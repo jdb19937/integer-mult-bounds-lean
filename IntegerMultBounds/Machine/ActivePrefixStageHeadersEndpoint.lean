@@ -2,6 +2,7 @@ module
 
 public import IntegerMultBounds.Machine.ActivePrefixStageHeadersPlaced
 public import IntegerMultBounds.Machine.ActivePrefixEarlySequenceOriginalInputs
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Physically generated separate descriptor words are the exact caller words
 accepted by the existing complete early and later stages. -/

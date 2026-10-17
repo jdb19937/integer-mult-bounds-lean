@@ -1,8 +1,8 @@
 module
 
-public import IntegerMultBounds.Machine.CountedLateRepairInverse
 public import IntegerMultBounds.Machine.CountedLateRepairFlag
-public import IntegerMultBounds.Machine.CountedRepairKeyPrefix
+public import IntegerMultBounds.Machine.CountedRepairKeyBank
+import Mathlib.Tactic.Positivity.Finset
 
 /-! A fixed later-address guard: the original-header early guard is run on
 V/W and V/U, and its two literal flags are combined and cleaned physically. -/

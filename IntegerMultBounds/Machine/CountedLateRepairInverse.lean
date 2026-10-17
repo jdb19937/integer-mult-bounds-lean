@@ -1,6 +1,10 @@
 module
 
 public import IntegerMultBounds.Machine.CountedPackedLateRun
+import IntegerMultBounds.Machine.CountedPackedControlLoadValue
+import IntegerMultBounds.Machine.CountedPackedParityValue
+import IntegerMultBounds.Machine.CountedPackedGuarded
+import IntegerMultBounds.Compact.PackedInverseValue
 
 /-! Fixed-control reverse execution of the later packed gadget. All stages
 use the original three headers and restore their physical private tapes. -/

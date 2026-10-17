@@ -2,8 +2,7 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CompactTopPlaced
 public import IntegerMultBounds.MathlibTM2.Fast.SynRound
-public import IntegerMultBounds.MathlibTM2.Node.CompactLayerPlaced
-public import IntegerMultBounds.MathlibTM2.Node.CompactTopProcRegs
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-! Call-free round staging on the union host, preserving its compact bank. -/
 @[expose] public section

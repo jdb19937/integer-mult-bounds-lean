@@ -248,6 +248,23 @@ import IntegerMultBounds.MathlibTM2.Fast.CompactMainInputDistribution
 import IntegerMultBounds.MathlibTM2.Fast.CompactMainOutput
 import IntegerMultBounds.MathlibTM2.Fast.CompactFinal
 import IntegerMultBounds.MathlibTM2.Cost.CompactDimensionParameters
+import IntegerMultBounds.MathlibTM2.Cost.CompactTopAbsoluteBound
+import IntegerMultBounds.MathlibTM2.Cost.CompactTopActualBound
+import IntegerMultBounds.MathlibTM2.Cost.CompactTopOriginalBound
+import IntegerMultBounds.MathlibTM2.Cost.CompactTopOriginalVolume
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainBootstrapPipelineGlobals
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainBootstrapPipelineSource
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainLegacyRuns
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynDirect
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepAlgebra
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepCompose
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepReady
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepRefresh
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepRuntime
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepSemantics
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepUnpark
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynMainProjection
+import IntegerMultBounds.MathlibTM2.Node.CompactBasisRefreshInput
 
 /-! Focused integrity audit for the compact-control host primitives.
 These are prepared execution contracts, not an improved layer or multiplier theorem. -/

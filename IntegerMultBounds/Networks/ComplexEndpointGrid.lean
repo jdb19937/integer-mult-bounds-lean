@@ -2,6 +2,8 @@ module
 
 public import IntegerMultBounds.Networks.ComplexEndpoints
 public import IntegerMultBounds.Networks.GaussianPrecision
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
 /-! Physical source and sink corrections preserve the exact denominator and
 both integer numerator bounds. They require no additional precision reserve

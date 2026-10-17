@@ -1,6 +1,7 @@
 module
+public import IntegerMultBounds.MathlibTM2.Node.Factor
+import Mathlib.Tactic.Positivity.Finset
 
-public import IntegerMultBounds.MathlibTM2.Node.CompactTopProcRegs
 
 /-! Actual layer-call cleanup for arbitrary basis banks and persistent rest
 predicates. CallSpec is the existing recursive layer boundary, not a top-program oracle. -/

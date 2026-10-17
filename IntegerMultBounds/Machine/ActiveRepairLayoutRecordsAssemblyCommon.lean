@@ -1,9 +1,9 @@
 module
 
 public import IntegerMultBounds.Machine.ActiveRepairRecordFormatPlaced
-public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsDecodeEarly
-public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsDecodeLate
-public import IntegerMultBounds.Machine.CountedTapeRepairCleanupWord
+public import IntegerMultBounds.Machine.ActiveRepairRecordFlattenOriginal
+import IntegerMultBounds.Machine.RowPaddingConstructedAlphabet
+import Mathlib.Tactic.Positivity.Finset
 
 @[expose] public section
 

@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.SynBase
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-! Runtime unary arithmetic for compact stage descriptors. The arity `m` is a
 fixed machine constant; lengths, offsets, and chunk sizes are runtime inputs. -/

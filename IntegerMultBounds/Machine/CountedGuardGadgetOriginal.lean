@@ -2,6 +2,9 @@ module
 
 public import IntegerMultBounds.Machine.CountedGuardGadgetArray
 public import IntegerMultBounds.Machine.CountedGuardGadgetHeaders
+import IntegerMultBounds.Machine.BinaryDescriptorStackRoundtrip
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
 /-! Whole original-header guard-word construction: q−1 is physically derived,
 all records execute under fixed counted control, and the derived header is

@@ -2,6 +2,8 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Cost.CompactSlotXor
 public import IntegerMultBounds.MathlibTM2.Node.CompactSlotPrepared
+import IntegerMultBounds.MathlibTM2.Node.CompactEncoding
+import IntegerMultBounds.Machine.ActivePrefixStageHeadersBudget
 
 /-! Complete prepared compact slot-XOR cost, including conversion of all thirteen
 unary descriptors and exact cleanup. Descriptor values remain runtime inputs;

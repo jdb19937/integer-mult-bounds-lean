@@ -1,6 +1,10 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Fast.CRTMachine
+import IntegerMultBounds.MathlibTM2.Fast.CRTMachine
+public import IntegerMultBounds.MathlibTM2.Fast.CRTSpec
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! # Content recurrences for the linear CRT driver
 

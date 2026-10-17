@@ -1,7 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixStageRuntimeSelected
-public import IntegerMultBounds.Machine.ActivePrefixSelectedOffsetData
+import Mathlib.Tactic.Positivity.Finset
+import Mathlib.Data.List.GetD
 
 /-! Literal complete active words and bits of the physically selected stage.
 The source control and target mask are extracted from original addresses. -/

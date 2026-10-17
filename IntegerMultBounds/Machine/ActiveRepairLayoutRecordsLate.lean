@@ -2,8 +2,9 @@ module
 
 public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsMove
 public import IntegerMultBounds.Machine.ActivePrefixDirtyControlLateGlobal
-public import IntegerMultBounds.Machine.ActivePrefixDirtyControlSequenceRun
 public import IntegerMultBounds.Machine.ActivePrefixDirtyControlSequenceOriginalRun
+import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsPermutation
+import Mathlib.Tactic.Positivity.Finset
 
 /-! The actual prepared later array supplies exactly the global late repair
 records, with full physical-width payloads and a paid machine execution. -/

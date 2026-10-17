@@ -1,6 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixEarlySequenceRun
+import IntegerMultBounds.Machine.ActivePrefixCompactConjugationBudget
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Certified width-exponent cost for the actual four-call shared schedule.
 Every producer, repeated offset, swap, rotation, cleanup and join is charged. -/

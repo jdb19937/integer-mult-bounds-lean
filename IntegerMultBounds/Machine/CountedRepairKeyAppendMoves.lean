@@ -1,8 +1,13 @@
 module
 
-public import IntegerMultBounds.Machine.CountedRepairKeyPrefix
-public import IntegerMultBounds.Machine.Branch
 public import IntegerMultBounds.Machine.MarkedReturn
+public import IntegerMultBounds.Machine.CountedGuardGadgetRecord
+import Mathlib.Tactic.Positivity.Finset
+public import IntegerMultBounds.Machine.FlagCopy
+import IntegerMultBounds.Machine.CountedRankSplitBank
+public import IntegerMultBounds.Machine.WordMoves
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
 /-! Four-tape physical moves used by the conditional repair-key writer. -/
 

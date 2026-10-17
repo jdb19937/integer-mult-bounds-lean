@@ -1,6 +1,13 @@
 module
 
 public import IntegerMultBounds.Machine.CountedLateRankRun
+import IntegerMultBounds.Machine.CountedRankSplitEndpoint
+import IntegerMultBounds.Machine.CountedRankSplitData
+public import IntegerMultBounds.Machine.RepairScan
+import Mathlib.Tactic.Positivity.Finset
+public import IntegerMultBounds.Machine.Gather
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
 /-! Actual short RepairScan counter to the three literal late-address words.
 No full-width counter assumption, derived-width input, or free head reset. -/

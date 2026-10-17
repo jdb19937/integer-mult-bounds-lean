@@ -1,7 +1,10 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.DistSynMain
-public import IntegerMultBounds.MathlibTM2.Fast.CompactDist
+public import IntegerMultBounds.MathlibTM2.Mult.CompactSizes
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! Consistent compact chunk-dependent wires: chunk, block width and permutation. -/
 @[expose] public section

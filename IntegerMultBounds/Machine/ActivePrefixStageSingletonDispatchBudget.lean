@@ -1,8 +1,9 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixStageSingletonDispatch
-public import IntegerMultBounds.Machine.ActivePrefixStageSingletonBudget
-public import IntegerMultBounds.Machine.ActivePrefixStageDispatchBudget
+import IntegerMultBounds.Machine.ActivePrefixStageSingletonBudget
+import IntegerMultBounds.Machine.ActivePrefixStageDispatchBudget
+import Mathlib.Tactic.Positivity.Finset
 
 /-! The dynamic singleton direction test and its paid cleanup add only linear
 work to the complete singleton stage. -/

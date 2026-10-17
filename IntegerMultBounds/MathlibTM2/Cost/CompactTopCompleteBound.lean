@@ -1,6 +1,10 @@
 module
-public import IntegerMultBounds.MathlibTM2.Cost.CompactTopAbsoluteBound
+import IntegerMultBounds.MathlibTM2.Cost.CompactTopAbsoluteBound
 public import IntegerMultBounds.MathlibTM2.Cost.CompactTopControlPower
+public import IntegerMultBounds.MathlibTM2.Fast.CompactTopExecution
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! Complete actual top-transform cost, with back and kernel axes explicit. -/
 @[expose] public section

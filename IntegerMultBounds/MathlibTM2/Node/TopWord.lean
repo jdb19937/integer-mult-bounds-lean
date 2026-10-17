@@ -2,8 +2,10 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Node.Params
 public import IntegerMultBounds.MathlibTM2.Layer.Shift
-public import IntegerMultBounds.MathlibTM2.Layer.Carry
 public import IntegerMultBounds.MathlibTM2.Layer.TopZ
+import Mathlib.Tactic.Positivity.Finset
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
 /-!
 # Word passes of the simultaneous layer: widening and the truncating shift

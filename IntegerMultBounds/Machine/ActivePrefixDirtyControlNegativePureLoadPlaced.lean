@@ -1,6 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixDirtyControlNegativePureLoad
+import IntegerMultBounds.Machine.CompactGadgetReservationPlacement
+import Mathlib.Tactic.Positivity.Finset
 
 /-! The complete original-input dirty-U load actions on arbitrary caller
 tapes. Eight original headers and the array are permanent; all private storage

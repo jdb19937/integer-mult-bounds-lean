@@ -1,6 +1,8 @@
 module
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlUSwapData
+public import IntegerMultBounds.Machine.ActivePrefixLayoutShapes
+import Mathlib.Tactic.Positivity.Finset
 
-public import IntegerMultBounds.Machine.ActivePrefixDirtyControlUSwapPlaced
 
 /-! Literal compact U/back interchange on the unchanged full-array address.
 Every coordinate apart from U and the high back field remains in place. -/

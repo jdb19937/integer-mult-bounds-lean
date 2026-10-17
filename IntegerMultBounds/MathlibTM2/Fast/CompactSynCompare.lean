@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.SynBase
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-! A reversible unary comparison used to select the actual synthetic round. -/
 @[expose] public section

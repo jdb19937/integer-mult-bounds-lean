@@ -1,8 +1,10 @@
 module
 
-public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsEarly
 public import IntegerMultBounds.Machine.ActivePrefixEarlySequenceOriginalInputs
-public import IntegerMultBounds.Machine.ActiveRepairEarlyKeyOriginalGeometry
+import IntegerMultBounds.Machine.ActiveRepairEarlyKeyOriginalGeometry
+public import IntegerMultBounds.Machine.ActiveRepairEarlyKeyOriginalValid
+public import IntegerMultBounds.Machine.ActiveRepairRankHeadersEndpoint
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Original early caller descriptors determine the full-width record repair
 metadata. New words are row length, n+1, source width and complete address width;

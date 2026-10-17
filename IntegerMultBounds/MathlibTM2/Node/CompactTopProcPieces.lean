@@ -2,6 +2,8 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Node.CompactTopProcRows
 public import IntegerMultBounds.MathlibTM2.Node.CompactTopProcCall
+public import IntegerMultBounds.MathlibTM2.Node.TopProc
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Actual recursive piece dispatch and padded top block for arbitrary basis
 banks. Each piece uses the established per-layer CallSpec induction boundary;

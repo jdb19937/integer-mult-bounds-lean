@@ -2,6 +2,8 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Node.Body
 public import IntegerMultBounds.Machine.CompactComplexActualCallLoweredNetwork
+import Mathlib.Tactic.Positivity.Finset
+import IntegerMultBounds.Networks.NetworkBudget
 
 /-!
 # The branching ratio of the layer recursion

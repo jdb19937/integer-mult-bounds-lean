@@ -1,9 +1,10 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Node.CompactBasisSetupCounts
 public import IntegerMultBounds.MathlibTM2.Node.CompactBasisSetupPlacement
-public import IntegerMultBounds.MathlibTM2.Node.CompactLayerPlaced
-public import IntegerMultBounds.MathlibTM2.Fast.CompactTopPlaced
+import IntegerMultBounds.MathlibTM2.Fast.CompactTopPlaced
+public import IntegerMultBounds.MathlibTM2.Host.Embed
+public import IntegerMultBounds.Machine.CompactGlobalRowPadding
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-! Actual persistent compact bank setup, with original source words and all scratch restored. -/
 @[expose] public section

@@ -3,6 +3,7 @@ module
 public import IntegerMultBounds.Machine.ActivePrefixParityOffsetRun
 public import IntegerMultBounds.Machine.ActivePrefixOffsetStreamsCleanup
 public import IntegerMultBounds.Machine.ActivePrefixOffsetHeadersCleanup
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Generated source/temp/control streams and all five derived descriptors
 are actually erased. Only the original eight words and generated offsets

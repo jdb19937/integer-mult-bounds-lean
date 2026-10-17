@@ -1,6 +1,8 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Cost.CompactTopOverhead
+import IntegerMultBounds.MathlibTM2.Cost.CompactTopOverhead
+public import IntegerMultBounds.MathlibTM2.Cost.CompactTopBound
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-! Complete actual top controls cost padded volume times the number of records.
 The logarithmic record count remains visible for asymptotic absorption. -/

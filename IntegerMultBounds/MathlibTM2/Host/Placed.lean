@@ -1,7 +1,7 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Host.Core
-public import IntegerMultBounds.Machine.PlacementBank
+public import IntegerMultBounds.Machine.InjectivePlacement
 
 /-!
 # Placed subroutines on the host

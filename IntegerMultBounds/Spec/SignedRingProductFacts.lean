@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.Spec.SignedRingProduct
+import Mathlib.Data.Nat.Size
 
 /-! Sanity facts for the signed ring product's formats: the code `Γ` is
 self-delimiting and the header reads back as `p, r, w`; component words have

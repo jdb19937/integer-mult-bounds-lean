@@ -1,6 +1,7 @@
 module
+public import IntegerMultBounds.Schoenhage.Ops
+public import IntegerMultBounds.Schoenhage.Rules
 
-public import IntegerMultBounds.Schoenhage.Reverse
 
 /-! Cutting a word into pieces of a fixed width. A three-tape machine copies
 the source's current word to the destination while stepping a unary width

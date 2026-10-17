@@ -1,13 +1,18 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CRTControlTarget
-public import IntegerMultBounds.MathlibTM2.Fast.CRTControlExposeRotation
-public import IntegerMultBounds.MathlibTM2.Fast.CRTControlRouting
-public import IntegerMultBounds.MathlibTM2.Fast.CRTControlGenerateLayout
+import IntegerMultBounds.MathlibTM2.Fast.CRTControlGenerateLayout
 public import IntegerMultBounds.MathlibTM2.Cost.CRTControlAllFibers
-public import IntegerMultBounds.MathlibTM2.Cost.CRTControlProducer
+import IntegerMultBounds.MathlibTM2.Cost.CRTControlProducer
 public import IntegerMultBounds.MathlibTM2.Cost.CRTReverse
 public import IntegerMultBounds.MathlibTM2.Cost.DirectScale
+import IntegerMultBounds.MathlibTM2.Cost.CRTControlGenerate
+import IntegerMultBounds.MathlibTM2.Fast.CRTControlGenerateTraversal
+import IntegerMultBounds.MathlibTM2.Cost.MatchBase
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
 
 /-! # Cost matching for a complete runtime CRT target step -/
 

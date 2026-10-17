@@ -3,6 +3,7 @@ module
 public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsPayloadLatePlaced
 public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsCleanAlphabet
 public import IntegerMultBounds.Machine.ActiveRepairArrayRecycle
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Literal original caller and actual/ideal arrays for the later payload,
 repair and recycle stage. No formatted stream or generated header is supplied. -/

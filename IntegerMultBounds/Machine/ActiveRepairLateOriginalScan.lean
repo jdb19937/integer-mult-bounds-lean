@@ -1,7 +1,7 @@
 module
+public import IntegerMultBounds.Machine.ActiveRepairLateKeyOriginalPlaced
+import Mathlib.Tactic.Positivity.Finset
 
-public import IntegerMultBounds.Machine.ActiveRepairLateKeyOriginal
-public import IntegerMultBounds.Machine.RepairScan
 
 /-! Every physical scan record generates its own field headers, parses its
 genuine growing original rank, writes the full later key, and erases headers.

@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CompactTopRows
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-! The actual padded working array differs from the original stream volume
 by at most a fixed dyadic factor when the caller pays its precision shift. -/

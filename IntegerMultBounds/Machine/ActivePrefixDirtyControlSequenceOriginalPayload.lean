@@ -1,6 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixDirtyControlSequenceOriginalInputs
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlSequencePlaced
+import Mathlib.Tactic.Positivity.Finset
 
 /-! The complete actual later sequence consumes the physically generated
 header groups in the original 53-tape caller and preserves every spectator. -/

@@ -2,6 +2,8 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Fast.SynStep
 public import IntegerMultBounds.MathlibTM2.Fast.ConvSpec
+public import IntegerMultBounds.MathlibTM2.Cost.Branching
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-!
 # The computed synthetic transforms

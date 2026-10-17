@@ -1,6 +1,8 @@
 module
 
-public import IntegerMultBounds.Machine.CountedLateRepairKeyPrefix
+import IntegerMultBounds.Machine.CountedLateRepairKeyPrefix
+public import IntegerMultBounds.Machine.CountedLateRepairKeyBank
+import Mathlib.Tactic.Positivity.Finset
 
 /-! The conditional writer physically emits the later destination bits,
 using the paid concatenation of its two recovered dirty words. -/

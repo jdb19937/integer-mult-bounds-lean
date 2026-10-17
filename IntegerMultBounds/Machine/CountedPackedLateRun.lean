@@ -1,9 +1,7 @@
 module
 
 public import IntegerMultBounds.Machine.CountedPackedLateData
-public import IntegerMultBounds.Machine.CountedPackedParityRun
 public import IntegerMultBounds.Machine.CountedPackedReusable
-public import IntegerMultBounds.Machine.CountedPackedControlLoadValue
 
 /-! Entire fixed-control late gadget on a common bank, sharing physically
 blank metadata and recycling the parity word between the two early calls. -/

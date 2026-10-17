@@ -1,6 +1,10 @@
 module
 
 public import IntegerMultBounds.NLogN.PhaseCellRow
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+public import IntegerMultBounds.Machine
 
 /-! Dyadic error budgeting for the actual periodic rounded Gaussian row. -/
 @[expose] public section

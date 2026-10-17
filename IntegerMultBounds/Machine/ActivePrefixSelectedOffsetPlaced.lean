@@ -1,6 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixSelectedOffset
+import IntegerMultBounds.Machine.CompactGadgetReservationPlacement
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Clean first-offset production on arbitrary caller tapes, retaining every
 original descriptor and spectator. All native private storage starts and ends

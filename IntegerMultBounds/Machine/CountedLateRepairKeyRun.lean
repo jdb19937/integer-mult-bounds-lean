@@ -1,7 +1,10 @@
 module
 
 public import IntegerMultBounds.Machine.CountedLateRepairKeyCleanup
-public import IntegerMultBounds.Machine.CountedLateRankEndpoint
+import IntegerMultBounds.Machine.CountedLateRankEndpoint
+public import IntegerMultBounds.Machine.CountedLateRepairKeyWrite
+public import IntegerMultBounds.Machine.CountedLateRankRun
+import Mathlib.Tactic.Positivity.Finset
 
 /-! The complete original-header late key machine on fixed34 tapes.
 An actual short rank counter is split; the original address is classified,

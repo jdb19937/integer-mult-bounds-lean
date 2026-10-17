@@ -1,9 +1,14 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Fast.MainFinal
-public import IntegerMultBounds.MathlibTM2.Fast.BundleMnLay
-public import IntegerMultBounds.MathlibTM2.Fast.BundleWires
+import IntegerMultBounds.MathlibTM2.Fast.MainFinal
+import IntegerMultBounds.MathlibTM2.Fast.BundleWires
 public import IntegerMultBounds.MathlibTM2.Cost.MatchSynLay
+import IntegerMultBounds.MathlibTM2.Fast.DistSynCost
+public import IntegerMultBounds.MathlibTM2.Fast.DistSynMain
+import IntegerMultBounds.MathlibTM2.Cost.MatchBase
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-!
 # The final combination

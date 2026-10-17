@@ -1,7 +1,7 @@
 module
+public import IntegerMultBounds.Machine.ActiveRepairEarlyKeyRun
+import Mathlib.Tactic.Positivity.Finset
 
-public import IntegerMultBounds.Machine.ActiveRepairEarlyKeyValue
-public import IntegerMultBounds.Machine.ActiveRepairEarlyKeyPlaced
 
 /-! Complete current-address early key production, from genuine short rank
 through exact full-rank reconstruction, conditional output and paid erasure. -/

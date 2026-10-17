@@ -3,7 +3,7 @@ module
 public import IntegerMultBounds.Machine.BinaryAccumulate
 public import IntegerMultBounds.Machine.ExactFrame
 public import IntegerMultBounds.Machine.Branch
-public import IntegerMultBounds.Machine.LoopChain
+import IntegerMultBounds.Machine.LoopChain
 
 /-! Literal binary multiplication by Horner's rule on three tapes. The
 multiplier is read from its most significant bit downwards; each bit doubles

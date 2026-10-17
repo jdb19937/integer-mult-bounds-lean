@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.TwiddleExp
+public import IntegerMultBounds.MathlibTM2.Mult.Rounds
 
 /-!
 # The twiddle pass

@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CompactTopSelection
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-! Selection and precision obligations for the computed compact top configuration. -/
 @[expose] public section

@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Node.LayerProc
+import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # Step counts of the layer machine: the linear parts

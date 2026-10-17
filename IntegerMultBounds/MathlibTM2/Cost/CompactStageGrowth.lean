@@ -2,6 +2,9 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Cost.CompactGrowth
 public import IntegerMultBounds.MathlibTM2.Cost.Total
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! Actual compact convolution and unchanged auxiliary stage exponents at the stronger saving.
 These analytic envelopes still require the executable total-cost matching theorem. -/

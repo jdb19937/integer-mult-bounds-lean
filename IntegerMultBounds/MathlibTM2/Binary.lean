@@ -2,8 +2,7 @@ module
 
 public import IntegerMultBounds.Machine
 public import Mathlib.Computability.Encoding
-public import Mathlib.Data.Num.Lemmas
-public import Mathlib.Data.List.TakeWhile
+import Mathlib.Data.List.TakeWhile
 
 /-!
 # Most-significant-first words and Mathlib's binary encoding

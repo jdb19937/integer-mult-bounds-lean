@@ -1,7 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixStageWidthPlaced
-public import IntegerMultBounds.Machine.ActivePrefixStageDispatchCommon
+import IntegerMultBounds.Machine.ActivePrefixStageDispatchCommon
+import Mathlib.Tactic.Positivity.Finset
 
 /-! An actual width selector precedes a genuine finite-state branch. The
 computed flag is erased before entering either original-input stage; branch

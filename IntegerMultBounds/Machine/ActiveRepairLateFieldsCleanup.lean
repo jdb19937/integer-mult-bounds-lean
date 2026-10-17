@@ -1,6 +1,7 @@
 module
+public import IntegerMultBounds.Machine.ActiveRepairLateFieldsBank
+import Mathlib.Tactic.Positivity.Finset
 
-public import IntegerMultBounds.Machine.ActiveRepairLateFieldsRun
 
 /-! Physically erase the recovered pre-toggle target; retain only the actual
 repair destination words and flag, originals, headers and full scan counter. -/

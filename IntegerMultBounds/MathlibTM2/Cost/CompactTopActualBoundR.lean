@@ -1,7 +1,9 @@
 module
-public import IntegerMultBounds.MathlibTM2.Cost.CompactLayerR
-public import IntegerMultBounds.MathlibTM2.Cost.CompactTopAbsoluteBound
+import IntegerMultBounds.MathlibTM2.Cost.CompactLayerR
 public import IntegerMultBounds.MathlibTM2.Fast.CompactTopExecutionR
+public import IntegerMultBounds.MathlibTM2.Cost.CompactTopCoordinates
+public import IntegerMultBounds.MathlibTM2.Cost.CompactTopBound
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-! The rounded pieces of the top cost the closed layer bound of the exact pieces. A rounded
 piece needs its geometry (`OkS`: the fields of `TopPc.OkR`) and child scales below the width

@@ -2,6 +2,7 @@ module
 
 public import IntegerMultBounds.Schoenhage.Alu
 public import IntegerMultBounds.Schoenhage.Lists
+import IntegerMultBounds.Schoenhage.Wp
 
 /-! Butterflies of the twisted transform on word tapes. The forward butterfly
 reads `u` and `v` from the half-block tapes and appends `u + 2^t v` and

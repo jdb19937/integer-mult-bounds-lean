@@ -1,8 +1,11 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Cost.CompactCallerGuardPower
-public import IntegerMultBounds.MathlibTM2.Cost.CompactInterimParameters
-public import IntegerMultBounds.MathlibTM2.Cost.CompactCallerRuntimeParameters
+import IntegerMultBounds.Machine.CompactReservationGrowth
+public import IntegerMultBounds.Machine.CompactGlobalReservation
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! Quantitative reservation savings for the actual eighth-root compact chunk. -/
 @[expose] public section

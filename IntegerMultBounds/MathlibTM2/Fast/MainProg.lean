@@ -3,6 +3,10 @@ module
 public import IntegerMultBounds.MathlibTM2.Fast.MainRegs
 public import IntegerMultBounds.MathlibTM2.Fast.SrcDirectStage
 public import IntegerMultBounds.MathlibTM2.Cost.Total
+public import IntegerMultBounds.MathlibTM2.Fast.ParamMachine
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-!
 # The top-level host program of the fast multiplier

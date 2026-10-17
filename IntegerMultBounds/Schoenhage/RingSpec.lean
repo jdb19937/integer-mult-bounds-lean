@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.Schoenhage.RingProduct
+public import IntegerMultBounds.Schoenhage.RingMath
 
 /-! What the ring product's output words mean. Each packed residue is the
 evaluation of the signed coefficients at `2^W` modulo `2^N + 1`, so the

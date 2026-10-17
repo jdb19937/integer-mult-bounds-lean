@@ -2,6 +2,7 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Node.SlotXor
 public import IntegerMultBounds.Machine.ActivePrefixStageRuntimeOrdinal
+import Mathlib.Tactic.Positivity.Finset
 
 /-! # Reserved geometry for compact slot-XOR integration
 

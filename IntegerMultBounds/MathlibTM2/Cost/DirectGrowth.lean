@@ -1,6 +1,11 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Cost.DirectScale
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+public import IntegerMultBounds.MathlibTM2.Binary
+public import IntegerMultBounds.MathlibTM2.Mult.CRT
 
 /-! # Exponent margin for linear CRT routing
 

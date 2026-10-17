@@ -1,8 +1,10 @@
 module
+public import IntegerMultBounds.Machine.ActivePrefixStageOrderCompare
+public import IntegerMultBounds.Machine.ActivePrefixStageFullData
+import IntegerMultBounds.Machine.CompactGadgetReservationPlacement
+import Mathlib.Tactic.Positivity.Finset
+import IntegerMultBounds.Machine.BinaryDescriptorStackRoundtrip
 
-public import IntegerMultBounds.Machine.ActivePrefixStageDispatchCommon
-public import IntegerMultBounds.Machine.ActivePrefixStageFullEarlyRun
-public import IntegerMultBounds.Machine.ActivePrefixStageFullLateRun
 
 /-! A separate permanent flag follows original thirteen numeric words and raw
 array. Its bit is computed from source/target words, never supplied as input. -/

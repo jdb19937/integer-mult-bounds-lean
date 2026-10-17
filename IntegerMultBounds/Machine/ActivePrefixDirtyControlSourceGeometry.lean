@@ -1,7 +1,9 @@
 module
 
-public import IntegerMultBounds.Machine.ActivePrefixDirtyControlLayoutFields
 public import IntegerMultBounds.Machine.ActivePrefixDirtyControlLoadData
+import IntegerMultBounds.Machine.ActivePrefixDirtyControlLayoutAbsorption
+public import IntegerMultBounds.Machine.ActivePrefixLayoutShapes
+import Mathlib.Tactic.Positivity.Finset
 
 /-! The later source-loading conjugation uses the selected source bits in the
 actual active-after field and the retained compact T field as controls. -/

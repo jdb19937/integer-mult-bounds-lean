@@ -3,7 +3,10 @@ module
 public import IntegerMultBounds.MathlibTM2.Correct
 public import IntegerMultBounds.MathlibTM2.Asymptotics
 public import IntegerMultBounds.MathlibTM2.Statement
-public import IntegerMultBounds.Machine.ElementaryMultiply
+import IntegerMultBounds.Machine.ElementaryMultiply
+import Mathlib.Analysis.SpecialFunctions.Pow.NNReal
+import Mathlib.Algebra.Order.Algebra
+import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # From multitape programs to Mathlib's `TM2ComputableInTime`

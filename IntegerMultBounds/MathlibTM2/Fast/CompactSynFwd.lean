@@ -2,6 +2,10 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayoutTransport
 public import IntegerMultBounds.MathlibTM2.Fast.CompactMainBootstrapPipelineCompose
+public import IntegerMultBounds.MathlibTM2.Fast.CompactSynLoopsContract
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! Forward layout followed by the concrete hybrid scan, with original transform semantics. -/
 @[expose] public section

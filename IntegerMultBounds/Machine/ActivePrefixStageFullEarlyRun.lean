@@ -2,6 +2,8 @@ module
 
 public import IntegerMultBounds.Machine.ActivePrefixStageFullErase
 public import IntegerMultBounds.Machine.ActivePrefixStageFullCompose
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsFullEarlyPlaced
+import Mathlib.Tactic.Positivity.Finset
 
 /-! The complete early selected stage from original shape/node/slot words.
 Synthesis, same-array action and consumer erasure are all physical and paid. -/

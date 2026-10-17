@@ -1,6 +1,14 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepTopRegs
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepWires
+public import IntegerMultBounds.MathlibTM2.Fast.CompactSynRoundPark
+public import IntegerMultBounds.MathlibTM2.Fast.CompactSynRoundRest
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepFrame
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynRoundCompose
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! Concrete configuration removal and restoration after the compact top call. -/
 @[expose] public section

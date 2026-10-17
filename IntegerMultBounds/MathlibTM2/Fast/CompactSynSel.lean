@@ -1,7 +1,8 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Fast.SynSel
+import IntegerMultBounds.MathlibTM2.Fast.SynSel
 public import IntegerMultBounds.MathlibTM2.Fast.CompactSynRecPieces
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-! Reserved active pieces reuse a common row depth even when reservation reduces
 active width. These are semantic validity and precision contracts for actual records;

@@ -1,8 +1,9 @@
 module
 
-public import IntegerMultBounds.Machine.ActivePrefixStageSingletonRun
 public import IntegerMultBounds.Machine.ActiveTargetHighestLayoutCompose
-public import IntegerMultBounds.Machine.ActiveTargetHighestLayoutSourceFrames
+import IntegerMultBounds.Machine.ActiveTargetHighestLayoutSourceFrames
+public import IntegerMultBounds.Machine.ActivePrefixStageSingletonData
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Exact singleton selected-XOR semantics on original array addresses. The
 single physically read source bit is the complete selection when f=1; no low

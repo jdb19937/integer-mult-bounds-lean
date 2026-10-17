@@ -1,7 +1,11 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepRecords
-public import IntegerMultBounds.MathlibTM2.Node.CompactBasisRefreshInput
+import IntegerMultBounds.MathlibTM2.Node.CompactBasisRefreshInput
+public import IntegerMultBounds.MathlibTM2.Node.CompactBasisRefresh
+import IntegerMultBounds.MathlibTM2.Node.CompactBasisSetupRest
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! Refresh actual per-round counters from the original constructor's preserved sources. -/
 @[expose] public section

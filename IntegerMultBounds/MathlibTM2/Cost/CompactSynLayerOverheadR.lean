@@ -1,8 +1,18 @@
 module
-public import IntegerMultBounds.MathlibTM2.Cost.CompactSynLayerOverheadBound
-public import IntegerMultBounds.MathlibTM2.Cost.CompactRuntimePolynomial
-public import IntegerMultBounds.MathlibTM2.Cost.CompactTopBoundR
+import IntegerMultBounds.MathlibTM2.Cost.CompactSynLayerOverheadBound
+import IntegerMultBounds.MathlibTM2.Cost.CompactRuntimePolynomial
+import IntegerMultBounds.MathlibTM2.Cost.CompactTopBoundR
 public import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepPrepR
+public import IntegerMultBounds.MathlibTM2.Fast.CompactTopSelection
+import IntegerMultBounds.MathlibTM2.Cost.CompactTopOriginalGeometry
+import IntegerMultBounds.MathlibTM2.Cost.CompactTopOriginalVolume
+import IntegerMultBounds.MathlibTM2.Cost.CompactTopRecordSetupBound
+import IntegerMultBounds.MathlibTM2.Cost.MatchSynOver
+public import IntegerMultBounds.MathlibTM2.Mult.Sizes
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+public import IntegerMultBounds.MathlibTM2.Mult.CRT
 
 /-! Complete non-transform overhead of a rounded compact chunk round: the setup from the original
 unary inputs now also prepares the guard fields, the configuration has the three fields

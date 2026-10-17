@@ -1,6 +1,8 @@
 module
+public import IntegerMultBounds.Machine.CompactGadgetReservationShape
+public import IntegerMultBounds.Compact.TapeRepair
+import Mathlib.Tactic.Positivity.Finset
 
-public import IntegerMultBounds.Machine.ActiveRepairLayoutKeysScan
 
 /-! Bounded physical scan-key identification suffices for the complete
 list repair. No behavior beyond the finite original layout is assumed. -/

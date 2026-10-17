@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.SynRec
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-! Original precision/depth bootstrap. The precision source is the original unary p,
 not the subsequently widened working width. Main keeps p at mnIo.dp(n) and mnRnd.pn;

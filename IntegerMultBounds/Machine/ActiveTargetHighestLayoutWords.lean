@@ -1,8 +1,10 @@
 module
 
-public import IntegerMultBounds.Machine.ActiveTargetHighestLayoutGlobal
-public import IntegerMultBounds.Machine.ActiveTargetHighestBitsWords
+import IntegerMultBounds.Machine.ActiveTargetHighestBitsWords
 public import IntegerMultBounds.Machine.ActiveRepairLayoutPermutationFiber
+public import IntegerMultBounds.Machine.ActiveTargetHighestLayoutEarlyCoordinates
+public import IntegerMultBounds.Compact.ActiveTargetSubsegmentWords
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Highest-bit destinations implement the literal omitted selected-bit XOR
 on the retained high interval of the containing target word. -/

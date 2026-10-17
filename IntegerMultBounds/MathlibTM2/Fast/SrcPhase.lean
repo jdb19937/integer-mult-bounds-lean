@@ -2,6 +2,13 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Fast.SrcSem
 public import IntegerMultBounds.MathlibTM2.Fast.BandStage
+public import IntegerMultBounds.MathlibTM2.Fast.SrcRegs
+public import IntegerMultBounds.MathlibTM2.Fast.LoadRing
+public import IntegerMultBounds.MathlibTM2.Fast.ConvBox
+public import IntegerMultBounds.MathlibTM2.Fast.PrepA
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-!
 # The phases of the source transform

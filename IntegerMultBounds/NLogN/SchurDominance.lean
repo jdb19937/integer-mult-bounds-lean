@@ -1,7 +1,5 @@
 module
 
-public import Mathlib.Analysis.SpecialFunctions.Complex.Arg
-public import Mathlib.LinearAlgebra.Matrix.SchurComplement
 public import Mathlib.Tactic
 
 /-! One-step Schur elimination preserves a positive row-dominance margin and

@@ -2,6 +2,9 @@ module
 
 public import IntegerMultBounds.Networks.PairedLocalCircuit
 public import IntegerMultBounds.Networks.DAGCompact
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
+import Mathlib.Data.Nat.Totient
 
 /-! Prune any local pair-exclusion circuit to the ancestors of its requested
 outputs before replay. The pruned circuit satisfies the same contract, and

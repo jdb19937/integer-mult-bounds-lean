@@ -2,6 +2,9 @@ module
 
 public import IntegerMultBounds.Networks.PairedIndexedPruning
 public import IntegerMultBounds.Networks.SharedPointLocalReplay
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
+import Mathlib.Data.Nat.Totient
 
 /-! End-to-end shared-point execution from the literal recursive local
 constructor, pruned to the ancestors of its outputs before replay. No

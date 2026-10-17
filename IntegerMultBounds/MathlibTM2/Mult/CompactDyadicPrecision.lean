@@ -1,6 +1,12 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Mult.Sizes
+import IntegerMultBounds.MathlibTM2.Mult.Sizes
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
+public import Mathlib.Tactic.ToDual
+public import Mathlib.Algebra.Group.Nat.Defs
 
 /-! Natural arithmetic room bounds for a candidate dyadic dimension.
 These lemmas do not change the executable size generator or assert a machine-time bound. -/

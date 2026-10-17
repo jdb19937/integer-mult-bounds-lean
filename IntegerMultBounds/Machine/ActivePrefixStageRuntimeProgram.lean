@@ -1,6 +1,12 @@
 module
+public import IntegerMultBounds.Machine.ActivePrefixStageRuntimePlaced
+public import IntegerMultBounds.Machine.ActivePrefixStageDispatchRun
+public import IntegerMultBounds.Machine.ActivePrefixStageSingletonDispatch
+public import IntegerMultBounds.Machine.ActivePrefixStageWidthOriginal
+public import IntegerMultBounds.Machine.ActivePrefixStageWidthBranch
+import IntegerMultBounds.Machine.SharedBankRawCompose
+import Mathlib.Tactic.Positivity.Finset
 
-public import IntegerMultBounds.Machine.ActivePrefixStageRuntimeData
 
 /-! One fixed tape bank and finite transition table for every positive stage
 width. The original width and source/target slots are read physically. -/

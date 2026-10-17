@@ -1,7 +1,13 @@
 module
+import IntegerMultBounds.Machine.ActiveRepairRankHeadersCommands
+public import IntegerMultBounds.Machine.BinaryDescriptorCopyPlaced
+import Mathlib.Tactic.Positivity.Finset
+public import IntegerMultBounds.Machine.BinaryDescriptorCleanupList
+public import IntegerMultBounds.Machine.RecursiveChildQuotientsConstant
+import IntegerMultBounds.Machine.BinaryDescriptorStackRoundtrip
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
-public import IntegerMultBounds.Machine.ActivePrefixStageHeadersRun
-public import IntegerMultBounds.Machine.SharedBankFamily
 
 /-! Each consumer descriptor has its own physically copied tape, including
 repeated numeric values. Copies retain original inputs; erase clears synthesis. -/

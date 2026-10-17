@@ -1,6 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixDirtyControlUSwapData
+public import IntegerMultBounds.Machine.CompactGadgetReservationHeadersCarvedPlacedCleanup
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Physical construction, binary interchange and erasure of compact-U swap
 geometry. The fixed forty-tape header workspace and the complete interchange

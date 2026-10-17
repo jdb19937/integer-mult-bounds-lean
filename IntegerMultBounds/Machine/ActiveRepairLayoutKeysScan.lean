@@ -4,6 +4,7 @@ public import IntegerMultBounds.Machine.ActiveRepairLayoutKeysEarly
 public import IntegerMultBounds.Machine.ActiveRepairLayoutKeysLate
 public import IntegerMultBounds.Machine.ActiveRepairEarlyOriginalScan
 public import IntegerMultBounds.Machine.ActiveRepairLateOriginalScan
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Every genuine growing scan rank generates the concrete global membership
 flag and ideal-after-actual-inverse full destination, for both source cases. -/

@@ -1,8 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.ActiveRepairEarlyFields
-public import IntegerMultBounds.Machine.CleanSubbank
-public import IntegerMultBounds.Machine.CompactGadgetReservationPlacement
+import IntegerMultBounds.Machine.CompactGadgetReservationPlacement
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Actual extracted-field early repair on arbitrary caller ports. Inputs are
 V/T/current controls, q/b/n and original rank; outputs are recovered T, ideal

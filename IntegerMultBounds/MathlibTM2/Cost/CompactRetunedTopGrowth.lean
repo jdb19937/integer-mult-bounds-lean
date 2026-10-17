@@ -1,8 +1,12 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Cost.CompactRetunedReservationGrowth
-public import IntegerMultBounds.MathlibTM2.Cost.CompactCallerLayerGrowth
-public import IntegerMultBounds.MathlibTM2.Cost.CompactTopCompleteBound
+import IntegerMultBounds.MathlibTM2.Cost.CompactCallerLayerGrowth
+public import IntegerMultBounds.MathlibTM2.Cost.CompactInterimParameters
+public import IntegerMultBounds.MathlibTM2.Cost.CompactTopControlPower
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! The complete compact top cost envelope at the actual eighth-root sizes. -/
 @[expose] public section

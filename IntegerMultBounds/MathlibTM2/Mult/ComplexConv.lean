@@ -2,9 +2,7 @@ module
 
 public import IntegerMultBounds.NLogN.SynthEmbed
 public import IntegerMultBounds.NLogN.BluesteinApprox
-public import IntegerMultBounds.NLogN.FixedOps
-public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Bounds
-public import Mathlib.Analysis.Real.Pi.Bounds
+import Mathlib.Analysis.Real.Pi.Bounds
 
 /-!
 # Computed complex convolution by a coefficient twist

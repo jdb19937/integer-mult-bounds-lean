@@ -1,7 +1,8 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Cost.CompactCallerParameters
 public import IntegerMultBounds.MathlibTM2.Fast.CompactTopRows
+import IntegerMultBounds.MathlibTM2.Fast.SynRecB
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-! The actual top-level padding includes outside rows and high spectators.
 Its factor-two bound, rather than an equality between padded stocks, supplies

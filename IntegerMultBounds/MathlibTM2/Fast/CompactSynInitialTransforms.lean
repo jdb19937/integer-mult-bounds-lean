@@ -1,8 +1,16 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Fast.CompactSynFwdSpec
-public import IntegerMultBounds.MathlibTM2.Fast.CompactSynOppSpec
-public import IntegerMultBounds.MathlibTM2.Fast.CompactSynInitialLoops
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynFwdSpec
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynOppSpec
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynInitialLoops
+public import IntegerMultBounds.MathlibTM2.Fast.CompactSynTransformPre
+public import IntegerMultBounds.MathlibTM2.Fast.CompactSynOpp
+public import IntegerMultBounds.MathlibTM2.Fast.CompactSynFwd
+public import IntegerMultBounds.MathlibTM2.Fast.DistSynMain
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
 
 /-! Forward layout followed by the concrete hybrid scan, with original transform semantics. -/
 @[expose] public section

@@ -1,7 +1,9 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CompactMainLayer
-public import IntegerMultBounds.MathlibTM2.Fast.MainChain
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! Primitive source-register contracts on the expanded main host. -/
 @[expose] public section

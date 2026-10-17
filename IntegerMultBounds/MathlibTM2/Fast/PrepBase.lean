@@ -1,10 +1,14 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.TwiddleRuns
-public import IntegerMultBounds.MathlibTM2.Fast.Tables
 public import IntegerMultBounds.MathlibTM2.Node.SlotXor
 public import IntegerMultBounds.MathlibTM2.Fast.ResampARegs
 public import IntegerMultBounds.MathlibTM2.Fast.ResampBCore
+public import IntegerMultBounds.MathlibTM2.Fast.TableLoad
+public import IntegerMultBounds.MathlibTM2.Fast.TableProg
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-!
 # Parameter loaders: host primitives

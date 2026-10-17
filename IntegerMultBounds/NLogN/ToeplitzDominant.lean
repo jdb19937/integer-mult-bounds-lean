@@ -1,8 +1,9 @@
 module
 
 public import IntegerMultBounds.NLogN.ToeplitzInverse
-public import IntegerMultBounds.NLogN.SchurSolve
+import IntegerMultBounds.NLogN.SchurSolve
 public import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
+public import IntegerMultBounds.NLogN.SchurDominance
 
 /-! A symmetric Toeplitz matrix with unit diagonal and off-diagonal row mass
 `ρ<1` has an actual two-sided inverse. Its rows have absolute sum at most

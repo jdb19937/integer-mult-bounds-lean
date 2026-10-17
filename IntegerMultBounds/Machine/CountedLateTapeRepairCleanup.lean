@@ -1,6 +1,9 @@
 module
 
 public import IntegerMultBounds.Machine.CountedLateTapeRepairCleanupAt
+import Mathlib.Tactic.Positivity.Finset
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
 /-! Complete physical cleanup of fourteen scan/stage tapes, retaining source
 and repaired output at their origins and restoring all stage work to blank. -/

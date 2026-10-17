@@ -1,7 +1,9 @@
 module
 
 public import IntegerMultBounds.Machine.ActiveTargetHighestPairHeadersEndpoint
-public import IntegerMultBounds.Machine.ActiveTargetHighestPairPlaced
+public import IntegerMultBounds.Machine.ActiveTargetHighestPairRun
+import IntegerMultBounds.Machine.SharedBankRawCompose
+import Mathlib.Tactic.Positivity.Finset
 
 /-! The highest-pair machine starts with five original numeric words and the
 unchanged full array. Ten headers and every native work tape begin blank. -/

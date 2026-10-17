@@ -1,6 +1,9 @@
 module
 
 public import IntegerMultBounds.Machine.CountedGuardGadgetRecord
+public import IntegerMultBounds.Machine.GuardGadget
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
 /-! One fixed pair of counted loops generates exactly the legacy three-flag
 word for every record. The original record-count descriptor is retained. -/

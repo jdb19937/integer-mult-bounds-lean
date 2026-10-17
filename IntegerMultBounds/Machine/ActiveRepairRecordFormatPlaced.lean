@@ -1,7 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.ActiveRepairRecordFormatAlphabet
-public import IntegerMultBounds.Machine.CompactGadgetReservationPlacement
+import IntegerMultBounds.Machine.CompactGadgetReservationPlacement
+public import IntegerMultBounds.Machine.CleanSubbank
 
 /-! Caller placement for the real formatter: raw source, record output and
 original binary width/count are the only four permanent ports. -/

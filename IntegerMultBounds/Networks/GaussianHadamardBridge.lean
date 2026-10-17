@@ -1,7 +1,8 @@
 module
 
-public import IntegerMultBounds.Networks.BinaryColumns
 public import IntegerMultBounds.Networks.ComplexEndpoints
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
 /-! Exact conversion of the certified Gaussian phase frame to normalized
 Hadamard butterflies. Input/output address phases and the dyadic Gaussian

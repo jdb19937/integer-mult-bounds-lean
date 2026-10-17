@@ -1,11 +1,13 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Fast.SrcStage
 public import IntegerMultBounds.MathlibTM2.Fast.Round
-public import IntegerMultBounds.MathlibTM2.Fast.ParamMachine
-public import IntegerMultBounds.MathlibTM2.Fast.Input
-public import IntegerMultBounds.MathlibTM2.Fast.Glue
-public import IntegerMultBounds.MathlibTM2.Node.TopProc
+public import IntegerMultBounds.MathlibTM2.Fast.Output
+public import IntegerMultBounds.MathlibTM2.Fast.SrcPhase
+public import IntegerMultBounds.MathlibTM2.Fast.ParamProg
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+public import IntegerMultBounds.MathlibTM2.Node.LayerProc
 
 /-!
 # The register file, the procedures and the machine constants of the fast multiplier

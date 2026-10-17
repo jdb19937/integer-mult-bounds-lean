@@ -1,6 +1,14 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Cost.CompactCallerRuntimeParameters
+import IntegerMultBounds.MathlibTM2.Cost.CompactCallerRuntimeParameters
+import IntegerMultBounds.MathlibTM2.Cost.CompactCallerParameters
+public import IntegerMultBounds.Machine.CompactReservationGrowth
+import IntegerMultBounds.MathlibTM2.Cost.CompactParameters
+public import IntegerMultBounds.MathlibTM2.Fast.CompactReservationGeometry
+public import IntegerMultBounds.MathlibTM2.Mult.Sizes
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! Packing is uniform over larger chunks up to the original dimension. This
 lets the retuned compact sizes reuse the same actual repair implementation. -/

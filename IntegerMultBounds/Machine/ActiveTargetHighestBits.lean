@@ -1,6 +1,7 @@
 module
+public import IntegerMultBounds.Machine.ActiveTargetHighestLaterValue
+import Mathlib.Tactic.Positivity.Finset
 
-public import IntegerMultBounds.Machine.ActiveTargetHighestPairLayoutGeometry
 
 /-! Literal finite-word split at one selected bit, retaining both surrounding
 intervals. These are coordinate equalities, with no machine assumptions. -/

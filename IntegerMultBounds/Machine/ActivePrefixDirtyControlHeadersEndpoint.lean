@@ -1,6 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixDirtyControlHeadersRun
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
 /-! Canonical dirty-control headers, with literal original inputs and complete
 physical retention. No derived address start is supplied as an input. -/

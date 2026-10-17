@@ -2,6 +2,7 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CompactTopConfigRows
 public import IntegerMultBounds.MathlibTM2.Fast.CompactTopConfigWrite
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-! Complete top configuration from derived scalar coordinates. The machine
 computes the global recursive divisor and exact padded row stock, serializes

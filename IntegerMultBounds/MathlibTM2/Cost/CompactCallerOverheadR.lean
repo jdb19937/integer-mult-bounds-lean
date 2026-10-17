@@ -1,10 +1,18 @@
 module
-public import IntegerMultBounds.MathlibTM2.Cost.CompactSynLayerOverheadR
-public import IntegerMultBounds.MathlibTM2.Cost.CompactCallerCombinedBudget
-public import IntegerMultBounds.MathlibTM2.Cost.CompactCallerDivisorPolynomial
-public import IntegerMultBounds.MathlibTM2.Cost.CompactCallerRuntimeParameters
+import IntegerMultBounds.MathlibTM2.Cost.CompactSynLayerOverheadR
+import IntegerMultBounds.MathlibTM2.Cost.CompactCallerCombinedBudget
+import IntegerMultBounds.MathlibTM2.Cost.CompactCallerDivisorPolynomial
+import IntegerMultBounds.MathlibTM2.Cost.CompactCallerRuntimeParameters
 public import IntegerMultBounds.MathlibTM2.Mult.CompactSizes
-public import IntegerMultBounds.MathlibTM2.Fast.CompactTopReadyR
+import IntegerMultBounds.MathlibTM2.Fast.CompactTopReadyR
+public import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepPrepR
+public import IntegerMultBounds.Machine.CompactReservationGrowth
+import IntegerMultBounds.MathlibTM2.Fast.CompactTopReady
+public import IntegerMultBounds.MathlibTM2.Fast.CompactTopSelection
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+public import IntegerMultBounds.MathlibTM2.Mult.CRT
 
 /-! The working width of a rounded round and the eventual absorption of its overhead at the
 actual caller sizes. With no factor term the scale sum is `synE G 0 ≤ D(D+G)`, so the guard and

@@ -1,8 +1,9 @@
 module
 
 public import IntegerMultBounds.Machine.GuardTest
-public import IntegerMultBounds.Machine.CountedLoopReuseAlphabet
 public import IntegerMultBounds.Machine.BinaryDescriptorCleanupList
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
 /-! Fixed-control comparison of a runtime-width field and constant, followed
 by actual guard-flag append. The original comparison-width header is retained;

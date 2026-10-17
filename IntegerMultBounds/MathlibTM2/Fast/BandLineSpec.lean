@@ -3,6 +3,10 @@ module
 public import IntegerMultBounds.MathlibTM2.Fast.BandLineDriver
 public import IntegerMultBounds.MathlibTM2.Mult.BandSolveFold
 public import IntegerMultBounds.MathlibTM2.Fast.ResampBBox
+public import IntegerMultBounds.MathlibTM2.Fast.ResampBAxis
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-!
 # What the banded line computes

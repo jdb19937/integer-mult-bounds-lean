@@ -3,6 +3,7 @@ module
 public import IntegerMultBounds.MathlibTM2.Node.Factor
 public import IntegerMultBounds.MathlibTM2.Node.TopWord
 public import IntegerMultBounds.MathlibTM2.Layer.LayerR
+import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # The rounded child call

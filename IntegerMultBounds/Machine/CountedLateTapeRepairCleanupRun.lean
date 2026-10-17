@@ -2,6 +2,8 @@ module
 
 public import IntegerMultBounds.Machine.CountedLateTapeRepairCleanup
 public import IntegerMultBounds.Machine.CountedLateTapeRepairBank
+import IntegerMultBounds.Machine.CountedRepairScanPrepare
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Concrete final cleanup of the actual repair endpoint, including all sort
 markers, unary metadata and counter, retaining only caller inputs and output. -/

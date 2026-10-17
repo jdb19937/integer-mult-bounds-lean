@@ -1,6 +1,9 @@
 module
 
 public import IntegerMultBounds.Machine.CountedRepairKeyRun
+import IntegerMultBounds.Machine.CountedRankSplitData
+public import IntegerMultBounds.Compact.KeyValue
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Rank membership and destination key bridges for actual short counters. -/
 

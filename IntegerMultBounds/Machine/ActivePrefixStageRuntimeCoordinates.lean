@@ -2,7 +2,7 @@ module
 
 public import IntegerMultBounds.Machine.ActivePrefixStageRuntimeWord
 public import IntegerMultBounds.Networks.BinaryRowColumns
-public import IntegerMultBounds.Machine.CompactBinaryBasisSchedule
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Actual runtime address destinations perform the literal binary row
 addition on every selected column, retaining every other original slot. -/

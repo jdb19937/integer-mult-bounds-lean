@@ -1,6 +1,8 @@
 module
 
-public import IntegerMultBounds.Machine.ActiveRepairRankHeadersEndpoint
+import IntegerMultBounds.Machine.ActiveRepairRankHeadersEndpoint
+public import IntegerMultBounds.Machine.ActiveRepairRankHeadersRun
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Physical repair-header generation and erasure on arbitrary caller ports.
 Ten originals and fifteen generated outputs are selected; all private native

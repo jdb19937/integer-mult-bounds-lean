@@ -1,7 +1,13 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Cost.CRTControlGenerate
+import IntegerMultBounds.MathlibTM2.Cost.CRTControlGenerate
 public import IntegerMultBounds.MathlibTM2.Fast.CRTControlProducer
+import IntegerMultBounds.MathlibTM2.Fast.CRTControlGenerateTraversal
+import IntegerMultBounds.MathlibTM2.Cost.MatchBase
+public import IntegerMultBounds.MathlibTM2.Mult.Sizes
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! # Cost matching for the complete runtime descriptor producer -/
 

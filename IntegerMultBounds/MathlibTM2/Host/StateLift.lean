@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Host.StateTransport
+public import IntegerMultBounds.MathlibTM2.Host.Core
 
 /-! Increase a host program's simulated state capacity without changing its stacks or image-state timing. -/
 @[expose] public section

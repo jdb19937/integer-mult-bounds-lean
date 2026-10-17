@@ -1,7 +1,10 @@
 module
 
-public import IntegerMultBounds.Machine.ActiveRepairLayoutKeysPipelineCommon
+import IntegerMultBounds.Machine.ActiveRepairLayoutKeysPipelineCommon
 public import IntegerMultBounds.Machine.ActiveRepairLateOriginalPipelineEndpoint
+import IntegerMultBounds.Machine.ActiveRepairLayoutKeysScan
+public import IntegerMultBounds.Machine.ActiveRepairLayoutKeysLate
+import Mathlib.Tactic.Positivity.Finset
 
 /-! The actual original-input repair endpoint produces the concrete global
 ideal permutation, while retaining its complete exact bank and runtime. -/

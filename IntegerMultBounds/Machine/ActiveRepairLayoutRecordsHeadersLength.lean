@@ -2,8 +2,11 @@ module
 
 public import IntegerMultBounds.Machine.BinaryLengthInit
 public import IntegerMultBounds.Machine.BinaryDescriptorCopyPlaced
-public import IntegerMultBounds.Machine.DescriptorStackControl
-public import IntegerMultBounds.Machine.CompactGadgetReservationHeadersCore
+import IntegerMultBounds.Machine.CompactGadgetReservationHeadersCore
+import IntegerMultBounds.Machine.PlacedDescriptorConstruction
+public import IntegerMultBounds.Machine.RecursiveChildQuotientsConstant
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
 /-! An actual fixed length scanner reads an original canonical row-count word,
 constructs its binary word-length descriptor on a blank tape and restores both

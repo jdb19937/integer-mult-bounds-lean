@@ -1,8 +1,9 @@
 module
+public import IntegerMultBounds.MathlibTM2.Layer.PackedXor
+import Mathlib.Tactic.Positivity.Finset
+public import IntegerMultBounds.MathlibTM2.Host.Index
+public import IntegerMultBounds.MathlibTM2.Host.Route
 
-public import IntegerMultBounds.MathlibTM2.Node.Rect
-public import IntegerMultBounds.MathlibTM2.Host.IndexRoute
-public import IntegerMultBounds.MathlibTM2.Host.Radix
 
 /-!
 # Destination keys for the exceptional repair

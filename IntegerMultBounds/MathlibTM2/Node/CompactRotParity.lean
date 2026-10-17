@@ -2,6 +2,9 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Node.TopWord
 public import IntegerMultBounds.MathlibTM2.Node.KeyPass
+import Mathlib.Tactic.Positivity.Finset
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
 /-! # Runtime parity packing for compact rotation offsets
 

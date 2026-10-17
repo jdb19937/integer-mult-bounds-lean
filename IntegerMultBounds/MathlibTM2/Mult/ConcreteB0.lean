@@ -1,10 +1,19 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Mult.BandedB0
+import IntegerMultBounds.MathlibTM2.Mult.BandedB0
 public import IntegerMultBounds.NLogN.PhaseCellBandSolve
 public import IntegerMultBounds.NLogN.PhaseCellFoldSolve
 public import IntegerMultBounds.NLogN.PhaseCellMachMatrix
-public import IntegerMultBounds.NLogN.ToeplitzLocal
+import IntegerMultBounds.NLogN.ToeplitzLocal
+import IntegerMultBounds.NLogN.PhaseCellPerturb
+public import IntegerMultBounds.MathlibTM2.Mult.B0Generic
+import IntegerMultBounds.NLogN.PhaseCellBoundary
+import IntegerMultBounds.NLogN.PhaseCellSharpInverse
+public import IntegerMultBounds.NLogN.PhaseCellOperator
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
 
 /-! The concrete small-gap `B̃₀` line map. The inverse is computed by the
 rounded band solve of the rounded matrix on the real and imaginary parts of

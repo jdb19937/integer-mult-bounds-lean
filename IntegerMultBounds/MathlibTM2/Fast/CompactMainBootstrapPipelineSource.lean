@@ -1,7 +1,11 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Fast.CompactMainBootstrapPipeline
 public import IntegerMultBounds.MathlibTM2.Fast.DistSynMain
+public import IntegerMultBounds.MathlibTM2.Fast.CompactMainTransport
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainBootstrapRead
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! The actual distribution wire file supplies predecessor depth to the bootstrap. -/
 @[expose] public section

@@ -1,11 +1,10 @@
 module
 
-public import Mathlib.Algebra.Order.Ring.Basic
-public import Mathlib.Tactic.IntervalCases
-public import Mathlib.Tactic.NormNum
-public import Mathlib.Tactic.Linarith
-public import Mathlib.Tactic.Ring
-public import Lean.Elab.Tactic.Omega
+import Mathlib.Tactic.IntervalCases
+import Mathlib.Tactic.Linarith.Frontend
+import Mathlib.Tactic.Ring.RingNF
+public import Mathlib.Tactic.ToDual
+public import Mathlib.Algebra.Group.Nat.Defs
 
 /-! Integer width bounds for a possible dyadic dimension generator.
 These arithmetic lemmas neither redefine executable sizes nor assert a time improvement. -/

@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.Spec.SimultaneousLayer
+import IntegerMultBounds.Spec.SignedRingProductFacts
 
 /-! The numerical guarantees of `prop:simultaneous-layer` follow from the
 statement's definitions: for disk grid input, every coefficient of the

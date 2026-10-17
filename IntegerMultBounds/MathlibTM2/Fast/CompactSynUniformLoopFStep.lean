@@ -1,7 +1,12 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CompactSynLoopFStep
-public import IntegerMultBounds.MathlibTM2.Fast.CompactSynUniformLoopCost
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynUniformLoopCost
+public import IntegerMultBounds.MathlibTM2.Fast.CompactSynUniformRound
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynScanFrame
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! One actual forward scan iteration, including its changing synthetic counters. -/
 @[expose] public section

@@ -2,6 +2,8 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Node.Rect
 public import IntegerMultBounds.MathlibTM2.Host.PlacedSwap
+public import IntegerMultBounds.Machine.BinaryInterchangeBudget
+import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # The field-swap pass

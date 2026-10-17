@@ -1,10 +1,18 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepReady
-public import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepAlgebra
-public import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepBasis
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepAlgebra
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepBasis
 public import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepCost
 public import IntegerMultBounds.MathlibTM2.Fast.CompactTopOriginalR
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepCleanup
+public import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepClear
+public import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepWires
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepRefresh
+import IntegerMultBounds.MathlibTM2.Node.CompactBasisRefreshRest
+public import IntegerMultBounds.MathlibTM2.Fast.CompactReservationGeometry
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! The preparation of a rounded chunk round: the rounded original-input constructor
 (`compactTopPlacedR`) in place of the exact one. The synthetic view after preparation is

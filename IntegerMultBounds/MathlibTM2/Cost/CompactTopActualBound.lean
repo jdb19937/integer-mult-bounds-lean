@@ -1,6 +1,7 @@
 module
 public import IntegerMultBounds.MathlibTM2.Cost.CompactTopBound
 public import IntegerMultBounds.MathlibTM2.Fast.CompactTopExecution
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 @[expose] public section
 namespace IntegerMultBounds.MathlibTM2.Cost
 open IntegerMultBounds IntegerMultBounds.Networks IntegerMultBounds.Machine

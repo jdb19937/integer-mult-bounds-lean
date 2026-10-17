@@ -2,7 +2,6 @@ module
 
 public import IntegerMultBounds.Machine.MultiplicationInputSplit
 public import IntegerMultBounds.Machine.BinaryMultiply
-public import IntegerMultBounds.Machine.Placement
 
 /-! A fixed elementary multiplication core from the original packed input.
 It splits/reverses both operands, positions their heads, and runs literal

@@ -1,8 +1,14 @@
 module
-public import IntegerMultBounds.MathlibTM2.Cost.CompactTopOriginalCompleteBound
-public import IntegerMultBounds.MathlibTM2.Cost.CompactTopRecordBound
-public import IntegerMultBounds.MathlibTM2.Cost.MatchSynPcs
+import IntegerMultBounds.MathlibTM2.Cost.CompactTopOriginalCompleteBound
+import IntegerMultBounds.MathlibTM2.Cost.CompactTopRecordBound
+import IntegerMultBounds.MathlibTM2.Cost.MatchSynPcs
 public import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepCost
+public import IntegerMultBounds.MathlibTM2.Fast.CompactTopSelection
+import IntegerMultBounds.MathlibTM2.Cost.CompactTopRecordSetupBound
+import IntegerMultBounds.MathlibTM2.Cost.MatchSynOver
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! Complete actual non-transform overhead of a compact chunk round. -/
 @[expose] public section

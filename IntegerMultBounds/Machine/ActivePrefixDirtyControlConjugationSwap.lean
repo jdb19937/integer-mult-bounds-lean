@@ -1,6 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixDirtyControlConjugationData
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlUSwapPlaced
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Actual original-input T/back and U/back swaps on one full-array bank.
 The complementary load workspace is stationary and blank. -/

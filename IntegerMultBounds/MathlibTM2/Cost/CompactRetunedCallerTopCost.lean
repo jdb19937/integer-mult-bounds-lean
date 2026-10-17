@@ -1,9 +1,14 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Cost.CompactRetunedTopCost
-public import IntegerMultBounds.MathlibTM2.Cost.CompactCallerRuntimeParameters
-public import IntegerMultBounds.MathlibTM2.Fast.CompactTopReady
-public import IntegerMultBounds.MathlibTM2.Fast.CompactPieceGeometry
+import IntegerMultBounds.MathlibTM2.Cost.CompactRetunedTopCost
+import IntegerMultBounds.MathlibTM2.Cost.CompactCallerRuntimeParameters
+import IntegerMultBounds.MathlibTM2.Fast.CompactPieceGeometry
+public import IntegerMultBounds.MathlibTM2.Cost.CompactRetunedTopGrowth
+public import IntegerMultBounds.Machine.CompactReservationGrowth
+public import IntegerMultBounds.MathlibTM2.Fast.CompactTopExecution
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! The top envelope specialized to the actual caller records and address split. -/
 @[expose] public section

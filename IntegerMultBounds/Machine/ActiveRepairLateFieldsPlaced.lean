@@ -1,8 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.ActiveRepairLateFields
-public import IntegerMultBounds.Machine.CleanSubbank
-public import IntegerMultBounds.Machine.CompactGadgetReservationPlacement
+import IntegerMultBounds.Machine.CompactGadgetReservationPlacement
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Clean placement of the actual later extracted-field computation. Original
 fields, current controls, headers and full rank are retained; only recovered

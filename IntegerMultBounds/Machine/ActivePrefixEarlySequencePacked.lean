@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixEarlySequenceSemantics
+import Mathlib.Tactic.Positivity.Finset
 
 /-! The physical four-load coordinate map is the packed early arithmetic on
 every address, with its actual address-dependent source controls. -/

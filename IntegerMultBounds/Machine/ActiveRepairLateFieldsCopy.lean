@@ -1,7 +1,10 @@
 module
 
 public import IntegerMultBounds.Machine.WordBankCleanup
-public import IntegerMultBounds.Machine.CountedRepairKeyCleanup
+public import IntegerMultBounds.Machine.CountedGuardGadgetRecord
+import Mathlib.Tactic.Positivity.Finset
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
 /-! Paid copying of an extracted unmarked binary word to blank workspace,
 with both heads restored and every complementary tape retained. -/

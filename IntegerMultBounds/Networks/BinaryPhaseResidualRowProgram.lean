@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.Networks.BinaryPhaseBasisExtension
+import Mathlib.Data.Nat.Totient
 
 /-! Actual nested phase labels choose their proved orthonormal residual basis,
 then produce the literal ambient row-addition word. No basis or decomposition

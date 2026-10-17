@@ -1,8 +1,6 @@
 module
 
 public import Mathlib.Analysis.Normed.Operator.Mul
-public import Mathlib.Analysis.Normed.Operator.Bilinear
-public import Mathlib.Analysis.Complex.Basic
 public import Mathlib.Tactic
 
 /-! The fixed-point approximation framework of Harvey and van der Hoeven,

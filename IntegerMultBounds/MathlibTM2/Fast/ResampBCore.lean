@@ -3,7 +3,9 @@ module
 public import IntegerMultBounds.MathlibTM2.Fast.CMulStream
 public import IntegerMultBounds.MathlibTM2.Fast.Input
 public import IntegerMultBounds.MathlibTM2.Layer.GaussStream
-public import IntegerMultBounds.MathlibTM2.Fast.ResampBMath
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-!
 # Register-file contracts for the `B̃₀` machines

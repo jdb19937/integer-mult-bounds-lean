@@ -1,7 +1,9 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Node.CompactRotRuntime
-public import IntegerMultBounds.MathlibTM2.Node.CompactEncoding
+import IntegerMultBounds.MathlibTM2.Node.CompactEncoding
+public import IntegerMultBounds.MathlibTM2.Node.CompactGeometryRecursive
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Actual symbol-stream execution of the complete compact runtime, including both
 three-bit codecs, their transfers, and restoration of the supplied native header bank. -/

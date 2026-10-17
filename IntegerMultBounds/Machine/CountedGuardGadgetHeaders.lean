@@ -1,6 +1,11 @@
 module
 
 public import IntegerMultBounds.Machine.BinaryDescriptorDifference
+public import IntegerMultBounds.Machine.BinaryDescriptorCleanupList
+import IntegerMultBounds.Machine.BinaryDescriptorStackRoundtrip
+public import IntegerMultBounds.Machine.RadixZeroFill
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
 /-! Original-width preparation for the fixed runtime guard gadget. The original
 q header is retained; one is physically written on blank private storage,

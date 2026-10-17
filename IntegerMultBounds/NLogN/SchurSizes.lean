@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.NLogN.SchurStages
+import IntegerMultBounds.NLogN.SchurFill
 
 /-! Sizes of the values met by the rounded band solve. Every stage matrix of
 the rounded elimination keeps the stage invariant, so its active entries are

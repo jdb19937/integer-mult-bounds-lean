@@ -2,6 +2,14 @@ module
 
 public import IntegerMultBounds.Machine.BinaryAddressTableData
 public import IntegerMultBounds.Machine.ActiveRepairLayoutPermutationFields
+import IntegerMultBounds.Machine.ActiveRepairEarlyFieldsValue
+public import IntegerMultBounds.Machine.ActiveRepairEarlyFieldsBank
+import IntegerMultBounds.Machine.ActiveRepairLateFieldsValue
+import IntegerMultBounds.Compact.LatePowerTwoBridges
+public import IntegerMultBounds.Compact.LatePowerTwoWords
+public import IntegerMultBounds.Machine.CountedLateRepairGuard
+public import IntegerMultBounds.Machine.CountedLateRepairInverse
+import Mathlib.Tactic.Positivity.Finset
 
 /-! The real recovered machine words are the local permutation destination,
 including unrestricted bad addresses. Concatenation is mathematical only. -/

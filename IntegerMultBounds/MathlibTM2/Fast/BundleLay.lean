@@ -1,7 +1,12 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Fast.MainStatement
 public import IntegerMultBounds.MathlibTM2.Fast.DistMain
+import IntegerMultBounds.MathlibTM2.Fast.MainCorrect
+public import IntegerMultBounds.MathlibTM2.Fast.MainEmbed
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
 
 /-!
 # The distribution machine on the register file of the fast multiplier

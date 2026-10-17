@@ -2,6 +2,9 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CompactParamProg
 public import IntegerMultBounds.MathlibTM2.Fast.DistBase
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! Retune the retained parameter table and unary chunk after legacy distribution,
 before layout wires and permutations are constructed. -/

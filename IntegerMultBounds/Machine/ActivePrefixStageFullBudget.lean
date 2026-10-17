@@ -2,6 +2,10 @@ module
 
 public import IntegerMultBounds.Machine.ActivePrefixStageFullEarlyRun
 public import IntegerMultBounds.Machine.ActivePrefixStageFullLateRun
+import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsFullLateBudget
+import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsFullEarlyBudget
+import IntegerMultBounds.Machine.ActivePrefixStageHeadersBudget
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Original-only full selected stages retain the certified compact-width
 exponent after paying descriptor synthesis, copying, erasure and both joins. -/

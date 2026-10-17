@@ -1,6 +1,9 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Node.CompactBasisRefresh
+import IntegerMultBounds.MathlibTM2.Node.CompactBasisSetupRest
+public import IntegerMultBounds.MathlibTM2.Node.CompactLayerPlaced
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-! Five-counter refresh establishes the compact invariant while retaining original global d/g. -/
 @[expose] public section

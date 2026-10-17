@@ -1,6 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsAssemblyCleanCommon
+public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsAssemblyOriginalEarly
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Original-header raw repair with actual final erasure of every copied
 consumer descriptor. Only the original headers and two raw array tapes remain. -/

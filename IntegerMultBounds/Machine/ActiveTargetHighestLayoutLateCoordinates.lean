@@ -2,6 +2,8 @@ module
 
 public import IntegerMultBounds.Machine.ActiveTargetHighestBits
 public import IntegerMultBounds.Machine.ActivePrefixDirtyControlGlobalSwap
+public import IntegerMultBounds.Machine.ActiveTargetHighestPairLayoutGeometry
+import Mathlib.Tactic.Positivity.Finset
 
 /-! On every original address, the highest later-source action changes just
 the lowest activeBefore bit, controlled by the highest selected activeAfter

@@ -3,8 +3,10 @@ module
 public import IntegerMultBounds.Networks.PairedIndexedGraph
 public import IntegerMultBounds.Networks.PairedRename
 public import IntegerMultBounds.Networks.PairedLocalPruning
-public import IntegerMultBounds.Networks.PairedSingleBudget
-public import IntegerMultBounds.Networks.PairedBasePruning
+import IntegerMultBounds.Networks.PairedBasePruning
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
+import Mathlib.Data.Nat.Totient
 
 /-! The finite-coordinate constructor is the pair-keyed constructor with its
 input atoms relabeled. Live counts and pruning credits proved for the

@@ -1,7 +1,9 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CompactSynRecArithmetic
-public import IntegerMultBounds.Machine.CompactRowPaddingRound
+import IntegerMultBounds.Machine.CompactRowPaddingRound
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
+public import IntegerMultBounds.Compact.Layout
 
 /-! Exact runtime rounding of the actual row stock to a runtime divisor.
 Both inputs are preserved, and all temporary registers are restored. -/

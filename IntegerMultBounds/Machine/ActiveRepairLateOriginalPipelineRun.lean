@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.Machine.ActiveRepairLateOriginalScan
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Physical original-input later repair: scan, stable key radix sort,
 prefix stripping, and exact payload reinsertion. Per-record synthesized

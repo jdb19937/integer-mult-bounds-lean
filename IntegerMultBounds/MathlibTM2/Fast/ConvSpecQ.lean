@@ -1,7 +1,8 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.ConvSpec
-public import IntegerMultBounds.MathlibTM2.Mult.SynthErrQ
+public import IntegerMultBounds.MathlibTM2.Mult.SynthErrRoundsQ
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-!
 # The synthetic transform contracts with computed rounds

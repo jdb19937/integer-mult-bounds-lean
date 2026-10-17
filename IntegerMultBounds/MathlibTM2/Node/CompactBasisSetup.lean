@@ -1,6 +1,9 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Node.CompactBasisSetupOutput
+import IntegerMultBounds.MathlibTM2.Node.CompactBasisSetupOutput
+public import IntegerMultBounds.MathlibTM2.Node.CompactBasisSetupFrame
+public import IntegerMultBounds.MathlibTM2.Node.CompactBasisSetupCounts
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-! Actual persistent compact bank setup, with original source words and all scratch restored. -/
 @[expose] public section

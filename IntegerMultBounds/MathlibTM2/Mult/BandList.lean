@@ -3,6 +3,9 @@ module
 public import IntegerMultBounds.NLogN.SchurSubst
 public import IntegerMultBounds.MathlibTM2.Mult.ConcreteB0Sizes
 public import IntegerMultBounds.MathlibTM2.Fast.CMulArith
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! List-level forward substitution on integer numerators, as the tape
 machine computes it: the head of the pending list is final, and each later

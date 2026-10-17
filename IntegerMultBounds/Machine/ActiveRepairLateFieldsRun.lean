@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.Machine.ActiveRepairLateFieldsBank
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Actual paid copies, later exceptional guard, unrestricted inverse and
 ideal toggle, retaining the genuine full scan counter throughout. -/

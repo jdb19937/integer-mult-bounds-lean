@@ -2,6 +2,9 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CompactMainChain
 public import IntegerMultBounds.MathlibTM2.Fast.CompactMainRunsAt
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 @[expose] public section
 namespace IntegerMultBounds.MathlibTM2.Fast.Main

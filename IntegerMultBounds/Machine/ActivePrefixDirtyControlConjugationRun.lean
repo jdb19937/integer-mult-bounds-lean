@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixDirtyControlConjugationMiddle
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Physical T/back or U/back swap, actual compact load, and physical swap
 back. Original caller words survive and every private tape is restored blank. -/

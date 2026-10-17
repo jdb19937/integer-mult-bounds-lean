@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.Machine.CountedLateRepairKeyRun
+import Mathlib.Tactic.Positivity.Finset
 
 /-! The fixed later repair scan bank: fourteen scan tapes and thirty-two
 retained scratch tapes, with the actual key machine placed on thirty-four. -/

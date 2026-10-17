@@ -1,6 +1,14 @@
 module
 
-public import IntegerMultBounds.NLogN.PhaseCellDominance
+import IntegerMultBounds.NLogN.PhaseCellDominance
+import Mathlib.Analysis.Complex.ExponentialBounds
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
+import Mathlib.Analysis.Real.Pi.Bounds
+public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
+public import IntegerMultBounds.Machine
 
 /-! Selected logarithmic Gaussian width gives a polynomial inverse gap even
 when alpha squared times the axis gap tends to zero. -/

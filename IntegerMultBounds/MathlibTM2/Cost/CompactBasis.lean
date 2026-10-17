@@ -2,6 +2,7 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Cost.CompactPrepared
 public import IntegerMultBounds.MathlibTM2.Node.CompactBasis
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-! Full compact basis budgets, including quadratic unary division costs in
 runtime descriptor synthesis, native preparation, and both cleanup stages. -/

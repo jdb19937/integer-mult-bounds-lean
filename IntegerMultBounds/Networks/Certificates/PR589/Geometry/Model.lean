@@ -6,6 +6,7 @@ public import IntegerMultBounds.Networks.ProjectionTrace
 public import Mathlib.LinearAlgebra.LinearIndependent.Lemmas
 public import Mathlib.LinearAlgebra.Dimension.Constructions
 public import Mathlib.Algebra.Order.BigOperators.Ring.Finset
+public import IntegerMultBounds.Networks.Labels
 
 /-! The selected E8 labels are rational subspaces with form dot/2.
 Their address shears act on binary-valued streams; rational coordinates are

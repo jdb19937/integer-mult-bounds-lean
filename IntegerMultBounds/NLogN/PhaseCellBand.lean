@@ -1,7 +1,10 @@
 module
 
-public import IntegerMultBounds.NLogN.PhaseCellSelectedTail
-public import Mathlib.Data.Nat.Sqrt
+import IntegerMultBounds.NLogN.PhaseCellSelectedTail
+public import IntegerMultBounds.NLogN.PhaseCellTailBounds
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! An executable square-root band for the entire-lattice Gaussian tail.
 The width is within one of the real square-root scale, with no dimension

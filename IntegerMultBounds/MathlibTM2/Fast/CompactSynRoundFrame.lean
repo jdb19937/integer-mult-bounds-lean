@@ -1,8 +1,12 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Fast.CompactSynHybridRound
-public import IntegerMultBounds.MathlibTM2.Fast.CompactMainBootstrapRuntime
-public import IntegerMultBounds.MathlibTM2.Fast.SynFwd
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainBootstrapRuntime
+public import IntegerMultBounds.MathlibTM2.Fast.CompactSynDispatch
+public import IntegerMultBounds.MathlibTM2.Fast.CompactMainBootstrapPipelineFrame
+public import IntegerMultBounds.Machine.CompactReservationGrowth
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! Stable runtime globals and the synthetic view on the expanded main machine. -/
 @[expose] public section

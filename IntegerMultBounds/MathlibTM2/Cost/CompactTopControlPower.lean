@@ -1,7 +1,12 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Cost.CompactTopControlVolume
-public import IntegerMultBounds.MathlibTM2.Cost.CompactTopPieceCount
+import IntegerMultBounds.MathlibTM2.Cost.CompactTopControlVolume
+import IntegerMultBounds.MathlibTM2.Cost.CompactTopPieceCount
+public import IntegerMultBounds.MathlibTM2.Fast.CompactTopSelection
+public import IntegerMultBounds.MathlibTM2.Cost.CompactTopBound
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! Absorb complete actual top controls into any fixed positive dimension
 power. Every constant is rounded upward to a power of two. -/

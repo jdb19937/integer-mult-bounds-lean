@@ -1,6 +1,8 @@
 module
 
-public import IntegerMultBounds.NLogN.SchurFill
+import IntegerMultBounds.NLogN.SchurFill
+public import IntegerMultBounds.NLogN.SchurLUBackward
+import IntegerMultBounds.NLogN.SchurLURounded
 
 /-! Rounded forward and back substitution in elimination order. Forward
 substitution rounds each unit-lower row once; back substitution rounds each

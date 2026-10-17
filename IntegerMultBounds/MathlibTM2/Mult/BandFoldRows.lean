@@ -1,7 +1,9 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Mult.BandSolveFold
-public import IntegerMultBounds.Resampling.WeightTable
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! The folded matrix rows the table machine emits. Coefficients are the Gaussian
 table entries `tableE` at precision `P` off the diagonal and exactly `2^P` on it.

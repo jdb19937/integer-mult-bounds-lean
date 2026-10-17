@@ -2,6 +2,9 @@ module
 
 public import IntegerMultBounds.Machine.ActiveTargetHighestLayoutHeadersData
 public import IntegerMultBounds.Machine.ActiveTargetHighestPairHeadersAtomic
+import Mathlib.Tactic.Positivity.Finset
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
 /-! Charged physical construction and erasure of the highest-bit pair's
 five original words from the existing fourteen layout headers. -/

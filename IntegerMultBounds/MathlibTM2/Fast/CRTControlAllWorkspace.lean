@@ -2,6 +2,9 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CRTControlAllFibers
 public import IntegerMultBounds.MathlibTM2.Fast.CRTControlWorkspace
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! # All CRT fibers with a returned arithmetic workspace -/
 

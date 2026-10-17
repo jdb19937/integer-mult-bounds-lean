@@ -1,8 +1,10 @@
 module
 
 public import IntegerMultBounds.Machine.ActiveTargetHighestLayoutCompose
-public import IntegerMultBounds.Machine.ActiveTargetHighestLayoutSourceFrames
-public import IntegerMultBounds.Machine.ActiveRepairLayoutIdealCoordinates
+import IntegerMultBounds.Machine.ActiveTargetHighestLayoutSourceFrames
+import IntegerMultBounds.Machine.ActiveRepairLayoutIdealCoordinates
+public import IntegerMultBounds.Machine.ActiveRepairLayoutPermutation
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Both complete repaired low-plus-high address destinations implement the
 full selected XOR mask, with no remaining conditional low-row specification.

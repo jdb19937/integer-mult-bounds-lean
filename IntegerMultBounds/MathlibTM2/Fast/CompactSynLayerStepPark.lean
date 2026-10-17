@@ -1,6 +1,13 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepWires
+public import IntegerMultBounds.MathlibTM2.Fast.CompactSynRoundPark
+public import IntegerMultBounds.MathlibTM2.Fast.CompactSynRoundRest
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepFrame
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynRoundCompose
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! Concrete rest setup and parking for a prepared compact round. -/
 @[expose] public section

@@ -3,6 +3,8 @@ module
 public import IntegerMultBounds.Machine.ActivePrefixParityNegativePlaced
 public import IntegerMultBounds.Machine.ActivePrefixOffsetRepeatPlaced
 public import IntegerMultBounds.Machine.ActiveTargetRotation
+import Mathlib.Tactic.Positivity.Finset
+public import IntegerMultBounds.Machine.CompactGadgetReservationShape
 
 /-! One fixed caller bank for a complete original-input compact negative parity-XOR load. Only
 original descriptors and the array are supplied; all offset words and rotation

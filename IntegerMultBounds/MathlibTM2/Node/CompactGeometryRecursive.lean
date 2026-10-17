@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Node.CompactGeometry
+import Mathlib.Tactic.Positivity.Finset
 
 /-! # Recursive reserved geometry for compact slot-XOR integration
 

@@ -1,8 +1,11 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Layer.GaussLin
+import IntegerMultBounds.MathlibTM2.Layer.GaussLin
 public import IntegerMultBounds.MathlibTM2.Host.Index
-public import IntegerMultBounds.NLogN.FixedOps
+import IntegerMultBounds.NLogN.FixedOps
+public import IntegerMultBounds.NLogN.Approx
+public import IntegerMultBounds.MathlibTM2.Layer.Carry
+public import Mathlib.NumberTheory.Zsqrtd.GaussianInt
 
 /-!
 # Arithmetic of the complex fixed-point product

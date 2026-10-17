@@ -1,6 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.ActiveRepairEarlyFieldsCleanup
+public import IntegerMultBounds.Machine.ActiveRepairEarlyFieldsRun
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Reusable early repair calculation from actual extracted fields and their
 current source controls. Full original-layout rank patching is separate. -/

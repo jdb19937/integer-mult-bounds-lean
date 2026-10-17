@@ -1,6 +1,9 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixLayoutHeadersBudget
+public import IntegerMultBounds.Machine.FixedHeaderBankCopy
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
 /-! Arbitrary canonical original words are retained exactly. Ten constructed
 outputs are canonical, and the complete arithmetic workspace is restored. -/

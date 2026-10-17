@@ -4,6 +4,8 @@ public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsAssemblyCleanEa
 public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsAssemblyCleanLateAfter
 public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsOriginalEarlyAlphabet
 public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsOriginalLateAlphabet
+import IntegerMultBounds.Machine.ActiveTargetHighestLaterBank
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Complete original-input repairs with all generated metadata erased run
 in the payload prime alphabet, preserving exact literal banks and costs. -/

@@ -1,11 +1,14 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CompactTopExecution
-public import IntegerMultBounds.MathlibTM2.Cost.CompactPieceUniformPacking
-public import IntegerMultBounds.MathlibTM2.Cost.CompactCallerUniformReadiness
-public import IntegerMultBounds.MathlibTM2.Node.CompactLayerPlaced
-public import IntegerMultBounds.MathlibTM2.Cost.CompactLayerReady
-public import IntegerMultBounds.MathlibTM2.Fast.CompactTopPrecision
+import IntegerMultBounds.MathlibTM2.Cost.CompactPieceUniformPacking
+import IntegerMultBounds.MathlibTM2.Cost.CompactCallerUniformReadiness
+public import IntegerMultBounds.MathlibTM2.Fast.CompactPieceGeometry
+public import IntegerMultBounds.Machine.CompactReservationGrowth
+public import IntegerMultBounds.MathlibTM2.Mult.Sizes
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! The reserved top transform running the actual placed recursive layer table.
 The remaining recursive readiness predicate describes geometry and packing only. -/

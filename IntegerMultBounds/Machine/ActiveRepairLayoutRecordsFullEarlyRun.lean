@@ -1,6 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsFullEarlyData
+import IntegerMultBounds.Machine.ActiveTargetHighestLayoutOriginalGlobal
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Actual full early low/high execution on one original array: clean repaired
 low payload followed by original-header highest-bit action, with all private

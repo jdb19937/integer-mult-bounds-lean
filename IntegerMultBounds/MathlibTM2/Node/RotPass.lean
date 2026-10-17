@@ -2,6 +2,7 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Node.Rect
 public import IntegerMultBounds.MathlibTM2.Host.IndexRoute
+import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # The host pass of one controlled rotation

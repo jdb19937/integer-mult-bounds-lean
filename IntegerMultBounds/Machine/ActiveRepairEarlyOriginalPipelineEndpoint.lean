@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.Machine.ActiveRepairEarlyOriginalPipelineCleanup
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Actual original-input early repair from literal source and blank scan
 workspace through preparation, varying-rank scan, sort/reinsert and complete

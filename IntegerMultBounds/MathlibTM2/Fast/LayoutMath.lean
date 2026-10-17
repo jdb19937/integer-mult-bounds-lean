@@ -1,7 +1,7 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Mult.SynthErrRounds
-public import Mathlib.Data.Nat.Bitwise
+import Mathlib.Data.Nat.Bitwise
 
 /-!
 # The layout of the synthetic transforms

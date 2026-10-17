@@ -2,6 +2,7 @@ module
 
 public import IntegerMultBounds.Compact.LatePowerTwoWords
 public import IntegerMultBounds.Machine.CountedLateRepairKeyBank
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Literal physical later inverse and toggle words encode the exact destination rank. -/
 

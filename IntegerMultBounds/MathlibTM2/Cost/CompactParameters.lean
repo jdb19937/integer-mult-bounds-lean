@@ -1,7 +1,8 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Cost.CompactRuntime
-public import IntegerMultBounds.Machine.ActiveRepairLayoutDensityArithmetic
+import IntegerMultBounds.Machine.ActiveRepairLayoutDensityArithmetic
+public import IntegerMultBounds.Machine.ActivePrefixStageRuntimeData
+import Mathlib.Tactic.Positivity.Finset
 
 /-! # A uniform repair allowance for compact host stages
 

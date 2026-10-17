@@ -1,6 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.ActiveTargetHighestPairHeadersAtomic
+public import IntegerMultBounds.Machine.ActiveTargetHighestPairHeadersData
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Complete physical highest-pair header synthesis and cleanup. All five
 original words survive, and every temporary power/product word is erased. -/

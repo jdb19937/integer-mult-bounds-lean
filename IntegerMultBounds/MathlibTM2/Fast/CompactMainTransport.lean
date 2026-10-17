@@ -3,6 +3,9 @@ module
 public import IntegerMultBounds.MathlibTM2.Host.StatePlacement
 public import IntegerMultBounds.MathlibTM2.Fast.CompactMainConstants
 public import IntegerMultBounds.MathlibTM2.Fast.MainProg
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! Executable legacy main stages on the expanded compact register and state capacities. -/
 @[expose] public section

@@ -2,6 +2,7 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CompactTopPlaced
 public import IntegerMultBounds.MathlibTM2.Fast.SynRound
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-! Concrete parking, configuration pushing/popping and restoration stages on
 the union host. The disjoint compact bank is preserved by call-free placement. -/

@@ -2,6 +2,9 @@ module
 
 public import IntegerMultBounds.NLogN.ResamplingAssembly
 public import IntegerMultBounds.NLogN.Bluestein
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! Resampling with the permutations left in the transform (§7). The one
 dimensional factorization `F_s = 2^γ B F_t A` of `ResamplingAssembly` carries

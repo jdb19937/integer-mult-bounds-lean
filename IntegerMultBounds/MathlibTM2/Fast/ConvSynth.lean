@@ -1,7 +1,14 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.ConvSpec
-public import IntegerMultBounds.MathlibTM2.Fast.PointStage
+import IntegerMultBounds.MathlibTM2.Fast.PointStage
+public import IntegerMultBounds.MathlibTM2.Fast.ChirpBox
+public import IntegerMultBounds.MathlibTM2.Fast.ResampARegs
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+public import IntegerMultBounds.MathlibTM2.Layer.Shift
+public import IntegerMultBounds.MathlibTM2.Mult.CRT
 
 /-!
 # The synthetic convolution `M̃_r` on the host

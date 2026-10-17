@@ -1,7 +1,9 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Fast.CompactTopReady
+import IntegerMultBounds.MathlibTM2.Fast.CompactTopReady
 public import IntegerMultBounds.MathlibTM2.Node.CompactTopProcR
+public import IntegerMultBounds.MathlibTM2.Fast.CompactTopSelection
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-! Selection and shift obligations of the rounded compact top: the pieces as rounded pieces
 (`TopPc.OkR`), and the sum of their scales `Piece.expR`, which is the runtime exponent sum

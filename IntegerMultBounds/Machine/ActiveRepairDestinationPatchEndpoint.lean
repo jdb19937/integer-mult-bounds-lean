@@ -1,6 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.ActiveRepairDestinationPatchGeometry
+import IntegerMultBounds.Machine.CountedPackedGuarded
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Full physical destination-rank endpoint, from the real short record counter.
 The record's physical payload width is separate from this payload-one address. -/

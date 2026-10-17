@@ -1,7 +1,9 @@
 module
 
-public import IntegerMultBounds.Machine.ActivePrefixDirtyControlGlobalCoordinates
+import IntegerMultBounds.Machine.ActivePrefixDirtyControlGlobalCoordinates
 public import IntegerMultBounds.Machine.BinaryPackedLateData
+public import IntegerMultBounds.Machine.ActivePrefixDirtyControlGlobalSequence
+import Mathlib.Tactic.Positivity.Finset
 
 /-! The actual dirty-U-controlled early block is precisely the early step of
 the packed late algorithm, with every original spectator retained. -/

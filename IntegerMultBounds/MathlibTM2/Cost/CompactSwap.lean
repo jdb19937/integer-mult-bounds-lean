@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Node.CompactSwap
+import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # Volume bounds for the prepared compact interchange

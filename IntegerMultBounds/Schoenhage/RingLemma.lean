@@ -1,7 +1,9 @@
 module
 
 public import IntegerMultBounds.Schoenhage.RingLemmaHeader
-public import IntegerMultBounds.Schoenhage.RingPointwiseTarget
+import IntegerMultBounds.Schoenhage.RingPointwiseBound
+public import IntegerMultBounds.Schoenhage.RingPointwiseProgram
+import Mathlib.Data.Nat.Size
 
 /-! The signed ring product lemma (`lem:signed-ring-product`) on its own
 interface: header `Γ(p)Γ(r)Γ(w)` on tape 0, the two records on tapes 1 and 2,

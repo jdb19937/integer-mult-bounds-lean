@@ -1,9 +1,11 @@
 module
 
-public import IntegerMultBounds.Machine.CountedRankSplitEndpoint
 public import IntegerMultBounds.Machine.CountedPackedInverse
 public import IntegerMultBounds.Machine.CountedGuardOriginal
 public import IntegerMultBounds.Machine.CountedIdealToggle
+public import IntegerMultBounds.Machine.CountedRankSplitRun
+public import IntegerMultBounds.Machine.RepairScan
+import Mathlib.Tactic.Positivity.Finset
 
 /-! A fixed thirty-tape repair-key bank. The original scan counter, control and
 q/b/n headers are retained; inverse, guard and toggle share blank workspace. -/

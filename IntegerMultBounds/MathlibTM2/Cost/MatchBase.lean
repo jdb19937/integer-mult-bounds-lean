@@ -1,11 +1,15 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Cost.Total
-public import IntegerMultBounds.MathlibTM2.Cost.CompactLogGrowth
+import IntegerMultBounds.MathlibTM2.Cost.CompactLogGrowth
 public import IntegerMultBounds.MathlibTM2.Fast.CRTSwap
 public import IntegerMultBounds.MathlibTM2.Fast.CMul
-public import IntegerMultBounds.MathlibTM2.Fast.ParamMachine
-public import IntegerMultBounds.MathlibTM2.Mult.Pipeline
+import IntegerMultBounds.MathlibTM2.Fast.ParamMachine
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
+public import IntegerMultBounds.MathlibTM2.Node.SlotXor
 
 /-!
 # Cost matching: shared bounds

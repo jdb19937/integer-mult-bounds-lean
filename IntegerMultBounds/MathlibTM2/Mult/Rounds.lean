@@ -1,8 +1,9 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Layer.H0
-public import IntegerMultBounds.MathlibTM2.Mult.RoundsForward
-public import IntegerMultBounds.MathlibTM2.Mult.RoundsOpposite
+import IntegerMultBounds.MathlibTM2.Mult.RoundsForward
+import IntegerMultBounds.MathlibTM2.Mult.RoundsOpposite
+public import IntegerMultBounds.MathlibTM2.Mult.RoundsBasic
 
 /-!
 # Iterative rounds of the multi-axis synthetic transforms

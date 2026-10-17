@@ -1,7 +1,9 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Fast.CompactTopSelection
 public import IntegerMultBounds.MathlibTM2.Fast.SynSel
+public import IntegerMultBounds.MathlibTM2.Fast.SynMath
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
+public import IntegerMultBounds.Machine.CompactGadgetReservationCapacity
 
 /-! The actual compact chunk selection implements the original synthetic butterfly round. -/
 @[expose] public section

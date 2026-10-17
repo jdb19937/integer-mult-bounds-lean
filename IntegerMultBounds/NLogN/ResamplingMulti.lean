@@ -1,7 +1,13 @@
 module
 
-public import IntegerMultBounds.NLogN.ResamplingAssembly
-public import IntegerMultBounds.NLogN.TensorApproxD
+import IntegerMultBounds.NLogN.ResamplingAssembly
+public import IntegerMultBounds.NLogN.ResamplingCLM
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+public import IntegerMultBounds.NLogN.TensorApprox
+public import IntegerMultBounds.NLogN.MultidimD
+public import Mathlib.CategoryTheory.Category.Basic
 
 /-! Theorem 4.1 of Harvey and van der Hoeven: the multidimensional resampling
 factorization. Proved: the normalized transform `dftC` is the normalized `dft`

@@ -1,6 +1,9 @@
 module
 
 public import IntegerMultBounds.Schoenhage.RingUnpack
+public import IntegerMultBounds.Schoenhage.RingPack
+import IntegerMultBounds.Schoenhage.RingMath
+public import IntegerMultBounds.Schoenhage.SSCost
 
 /-! The packed ring product on tapes (the paper's signed ring product,
 `lem:signed-ring-product`). Both polynomials come as coefficient pairs of

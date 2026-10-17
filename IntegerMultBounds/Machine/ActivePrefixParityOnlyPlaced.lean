@@ -1,6 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixParityOnly
+import IntegerMultBounds.Machine.CompactGadgetReservationPlacement
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Clean pure-parity offset production on arbitrary caller tapes, retaining every
 original descriptor and spectator. All native private storage starts and ends

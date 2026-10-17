@@ -2,7 +2,7 @@ module
 
 public import IntegerMultBounds.Machine.BinaryAdjacentWidthHeadersShared
 public import IntegerMultBounds.Machine.RadixDigitMoveBlockExecution
-public import IntegerMultBounds.Machine.SharedPlacementAlphabet
+import IntegerMultBounds.Machine.RadixDigitMoveCounts
 
 /-! Binary block-digit movement sharing the caller's payload tape. All three
 execution headers are copied physically into a blank private bank and erased

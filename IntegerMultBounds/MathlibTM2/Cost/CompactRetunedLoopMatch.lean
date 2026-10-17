@@ -1,8 +1,9 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Cost.CompactRetunedRoundMatch
-public import IntegerMultBounds.MathlibTM2.Cost.CompactRetunedDirectCost
 public import IntegerMultBounds.MathlibTM2.Fast.CompactSynUniformLoopCost
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! Actual retuned round costs: compact bulk and explicit direct boundary rounds. -/
 @[expose] public section

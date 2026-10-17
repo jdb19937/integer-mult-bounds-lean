@@ -1,7 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixSelectedLoadData
-public import IntegerMultBounds.Machine.ActivePrefixOffsetHeadersCleanup
+import Mathlib.Tactic.Positivity.Finset
+public import IntegerMultBounds.Machine.CompactGadgetReservationShape
 
 /-! Paid construction of P=rows times two-to-W and target width n*q from
 original descriptors, in the same blank workspace used by offset production. -/

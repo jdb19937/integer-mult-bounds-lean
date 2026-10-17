@@ -3,6 +3,9 @@ module
 public import IntegerMultBounds.MathlibTM2.Layer.NodeZ
 public import IntegerMultBounds.MathlibTM2.Layer.GaussLin
 public import IntegerMultBounds.MathlibTM2.Host.Route
+import Mathlib.Tactic.Positivity.Finset
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
 /-!
 # Streams of Gaussian-integer arrays

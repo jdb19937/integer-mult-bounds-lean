@@ -1,6 +1,9 @@
 module
 
 public import IntegerMultBounds.Machine.CountedRepairKeyCleanup
+public import IntegerMultBounds.Machine.CountedRepairKeyWrite
+public import IntegerMultBounds.Machine.CountedRepairKeyPrefix
+import Mathlib.Tactic.Positivity.Finset
 
 /-! A fixed-control repair key machine from the original headers and actual
 short scan counter, with all generated words erased at its endpoint. -/

@@ -1,6 +1,8 @@
 module
+public import IntegerMultBounds.MathlibTM2.Host.Placed
+public import IntegerMultBounds.MathlibTM2.Host.ChunkSwap
+import IntegerMultBounds.Machine.PlacementBank
 
-public import IntegerMultBounds.MathlibTM2.Host.PlacedSwap
 
 /-! # Normalized host transport for compact native banks
 

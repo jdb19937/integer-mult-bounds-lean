@@ -1,6 +1,6 @@
 module
+public import IntegerMultBounds.Parameters
 
-public import IntegerMultBounds.MathlibTM2.Cost.CompactInterimParameters
 
 /-! Candidate next dyadic saving by increasing the dimension exponent.
 This is parameter arithmetic only: runtime sizing and precision must be retuned

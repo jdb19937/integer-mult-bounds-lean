@@ -1,6 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixSelectedOffsetBank
+public import IntegerMultBounds.Machine.ActivePrefixOffsetHeadersBudget
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Actual original-header setup, both generated prefix projections, batch
 source-bit extraction and selected gather share one unchanged caller bank and

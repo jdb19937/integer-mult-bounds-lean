@@ -2,7 +2,8 @@ module
 
 public import IntegerMultBounds.Machine.CountedPosition
 public import IntegerMultBounds.Machine.BinaryDescriptorCleanupList
-public import IntegerMultBounds.Machine.RecursiveChildQuotientsConstant
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
 /-! Real runtime-distance replay inside a guard record. One is not compiled
 per width: the canonical count is read by the reusable countdown, with physical

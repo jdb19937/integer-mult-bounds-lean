@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.Machine.ActiveRepairEarlyKeyOriginalValid
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Actual header synthesis, full-rank early-key computation, and generated
 header erasure share eighty-four blank tapes. Original inputs are retained. -/

@@ -1,7 +1,11 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CompactSynDispatch
-public import IntegerMultBounds.MathlibTM2.Fast.CompactMainLegacyRuns
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainLegacyRuns
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepCleanup
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! The unchanged direct synthetic round runs on the expanded host and restores its frame. -/
 @[expose] public section

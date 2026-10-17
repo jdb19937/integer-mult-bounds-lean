@@ -1,6 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixStageDispatchData
+import IntegerMultBounds.Machine.CompactGadgetReservationPlacement
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Physical comparison and clean original-input branches share a separate
 runtime flag; all other caller words and every private tape are framed. -/

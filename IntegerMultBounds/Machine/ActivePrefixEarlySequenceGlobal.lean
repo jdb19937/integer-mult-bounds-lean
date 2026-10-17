@@ -1,7 +1,9 @@
 module
 
-public import IntegerMultBounds.Machine.ActivePrefixEarlySequencePacked
+import IntegerMultBounds.Machine.ActivePrefixEarlySequencePacked
 public import IntegerMultBounds.Machine.ActiveRepairLayoutPermutation
+public import IntegerMultBounds.Machine.ActivePrefixEarlySequenceSemantics
+import Mathlib.Tactic.Positivity.Finset
 
 /-! The physically implemented early four-load schedule is the complete
 varying-source permutation of the unchanged full array. -/

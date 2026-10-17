@@ -1,6 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.ActiveTargetHighestLayoutOriginalRun
+import IntegerMultBounds.Machine.CompactGadgetReservationPlacement
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Fifteen-port original-layout highest-bit execution on arbitrary caller banks.
 The array alone changes; original fourteen words, caller spectators, and all private

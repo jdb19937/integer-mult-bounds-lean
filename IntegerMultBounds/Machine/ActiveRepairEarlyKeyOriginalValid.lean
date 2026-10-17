@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.Machine.ActiveRepairEarlyKeyOriginalData
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Generated header values satisfy the complete early-key execution contract.
 All start positions are functions of the original geometric widths. -/

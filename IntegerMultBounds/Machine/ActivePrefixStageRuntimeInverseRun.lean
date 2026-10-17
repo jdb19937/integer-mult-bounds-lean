@@ -1,8 +1,11 @@
 module
 
-public import IntegerMultBounds.Machine.ActivePrefixStageSingletonInverseData
-public import IntegerMultBounds.Machine.ActivePrefixStageDispatchInverseRun
-public import IntegerMultBounds.Machine.ActivePrefixStageRuntimeRun
+import IntegerMultBounds.Machine.ActivePrefixStageSingletonInverseData
+public import IntegerMultBounds.Machine.ActivePrefixStageInverseMachine
+public import IntegerMultBounds.Machine.ActivePrefixStageRuntimeProgram
+public import IntegerMultBounds.Machine.ActivePrefixStageRuntimeData
+import IntegerMultBounds.Machine.ActivePrefixStageDispatchSelected
+import Mathlib.Tactic.Positivity.Finset
 
 /-! The complete fixed width-and-direction program executes its own inverse.
 Both runtime flags and every private tape are restored on each return. -/

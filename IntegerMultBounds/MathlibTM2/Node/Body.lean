@@ -1,6 +1,12 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Node.Regs
+public import IntegerMultBounds.MathlibTM2.Node.Gate
+public import IntegerMultBounds.MathlibTM2.Layer.LayerZ
+import Mathlib.Tactic.Positivity.Finset
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
+public import IntegerMultBounds.MathlibTM2.Node.Params
 
 /-!
 # The node body of the layer machine

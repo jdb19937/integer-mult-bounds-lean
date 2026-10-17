@@ -1,6 +1,8 @@
 module
+public import IntegerMultBounds.Machine.ActivePrefixCompactSwapData
+public import IntegerMultBounds.Machine.ActivePrefixLayoutSwap
+import Mathlib.Tactic.Positivity.Finset
 
-public import IntegerMultBounds.Machine.ActivePrefixCompactSwapRun
 
 /-! Exact physical interchange geometry for compact T in the unchanged active
 layout. Only compact n*b fits H; the target n*q remains in the active block. -/

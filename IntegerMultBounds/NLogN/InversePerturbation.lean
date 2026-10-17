@@ -1,6 +1,9 @@
 module
 
-public import IntegerMultBounds.NLogN.Neumann
+import IntegerMultBounds.NLogN.Neumann
+import Mathlib.Analysis.Normed.Operator.NormedSpace
+public import Mathlib.Analysis.Normed.Operator.Basic
+public import Mathlib.Analysis.Complex.Basic
 
 /-!
 # Quantitative perturbation of a two-sided operator inverse

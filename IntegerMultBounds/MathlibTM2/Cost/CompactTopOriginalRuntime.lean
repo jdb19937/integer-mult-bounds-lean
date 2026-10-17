@@ -1,7 +1,12 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Cost.CompactTopOriginalGeometry
-public import IntegerMultBounds.MathlibTM2.Cost.CompactCallerRuntimeParameters
+import IntegerMultBounds.MathlibTM2.Cost.CompactTopOriginalGeometry
+public import IntegerMultBounds.MathlibTM2.Fast.CompactTopRows
+public import IntegerMultBounds.MathlibTM2.Mult.Sizes
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
 
 /-! Runtime integer-root sizes discharge the row-division budget uniformly for
 selected intervals at least one chunk long. -/

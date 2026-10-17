@@ -1,8 +1,9 @@
 module
 
 public import IntegerMultBounds.Machine.ActiveRepairDestinationPatchOverwrite
-public import IntegerMultBounds.Machine.CountedRankSplitEndpoint
-public import IntegerMultBounds.Machine.CompactGadgetReservationPlacement
+import IntegerMultBounds.Machine.CompactGadgetReservationPlacement
+public import IntegerMultBounds.Machine.CleanSubbank
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Runtime replacement writes on caller-selected tapes, sharing nine blank
 private slots with field parsing and preserving the replacement word and headers. -/

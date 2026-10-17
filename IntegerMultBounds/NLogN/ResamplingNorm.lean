@@ -1,8 +1,12 @@
 module
 
 public import IntegerMultBounds.NLogN.Resampling
-public import Mathlib.Analysis.SpecialFunctions.Gaussian.GaussianIntegral
-public import Mathlib.Analysis.SumIntegralComparisons
+import Mathlib.Analysis.SpecialFunctions.Gaussian.GaussianIntegral
+import Mathlib.Analysis.SumIntegralComparisons
+public import IntegerMultBounds.NLogN.Gaussian
+public import Mathlib.MeasureTheory.Measure.Haar.OfBasis
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+public import Mathlib.MeasureTheory.Integral.Bochner.Basic
 
 /-! The sup-norm bound on the Gaussian resampling map `S`, Lemma 4.5 of
 Harvey and van der Hoeven. Proved: the periodised Gaussian `θ_a` is even and

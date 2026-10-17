@@ -1,6 +1,9 @@
 module
 
 public import IntegerMultBounds.Machine.CountedRepairScanMetadataRun
+import Mathlib.Tactic.Positivity.Finset
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
 /-! Runtime later sort width and zero rank counter. The original products
 n*q and n*b are physically synthesized; the latter is replayed twice, with

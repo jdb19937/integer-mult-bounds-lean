@@ -1,7 +1,9 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Node.CompactDescriptorBankOps
-public import IntegerMultBounds.MathlibTM2.Node.CompactSlotPrepared
+public import IntegerMultBounds.MathlibTM2.Node.CompactDescriptorPadding
+public import IntegerMultBounds.MathlibTM2.Node.CompactGeometryRecursive
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-! A complete runtime unary source bank for all thirteen native descriptors. -/
 @[expose] public section

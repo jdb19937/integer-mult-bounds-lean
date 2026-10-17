@@ -2,6 +2,8 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Node.CompactTopProcKernel
 public import IntegerMultBounds.MathlibTM2.Node.CompactBasisRegisters
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
+public import IntegerMultBounds.MathlibTM2.Node.LayerProc
 
 /-! Fully executed top kernels for the compact bank. The level-zero layer is the
 existing generic leaf machine; no recursive layer-call premise remains. -/

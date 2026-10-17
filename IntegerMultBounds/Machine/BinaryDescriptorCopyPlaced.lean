@@ -1,7 +1,11 @@
 module
 
 public import IntegerMultBounds.Machine.BinaryDescriptorCopy
-public import IntegerMultBounds.Machine.PlacedDescriptorConstruction
+import IntegerMultBounds.Machine.PlacedDescriptorConstruction
+public import IntegerMultBounds.Machine.SharedPlacementAlphabet
+public import IntegerMultBounds.Machine.SharedBank
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
 /-! Physical marked descriptor duplication on two actual caller tapes.
 The source word and head survive, the blank destination becomes the same

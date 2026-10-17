@@ -1,6 +1,13 @@
 module
-public import IntegerMultBounds.MathlibTM2.Cost.CompactSynLayerOverheadBound
-public import IntegerMultBounds.MathlibTM2.Cost.CompactRuntimePolynomial
+import IntegerMultBounds.MathlibTM2.Cost.CompactSynLayerOverheadBound
+import IntegerMultBounds.MathlibTM2.Cost.CompactRuntimePolynomial
+public import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepCost
+public import IntegerMultBounds.MathlibTM2.Fast.CompactTopSelection
+public import IntegerMultBounds.MathlibTM2.Mult.Sizes
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+public import IntegerMultBounds.MathlibTM2.Mult.CRT
 
 /-! Eventual absorption of actual complete compact-round overhead. -/
 @[expose] public section

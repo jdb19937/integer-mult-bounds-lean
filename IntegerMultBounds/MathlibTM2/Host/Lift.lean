@@ -1,6 +1,7 @@
 module
-
+public import IntegerMultBounds.Machine.Hoare
 public import IntegerMultBounds.MathlibTM2.Host.Core
+
 
 /-!
 # Running smaller multitape programs on the host

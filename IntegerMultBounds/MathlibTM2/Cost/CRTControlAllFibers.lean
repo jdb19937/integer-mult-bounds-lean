@@ -3,6 +3,11 @@ module
 public import IntegerMultBounds.MathlibTM2.Fast.CRTControlAllFibers
 public import IntegerMultBounds.MathlibTM2.Cost.CRTControlScan
 public import IntegerMultBounds.MathlibTM2.Cost.CRTControlOffset
+import IntegerMultBounds.MathlibTM2.Cost.CRTControl
+import IntegerMultBounds.MathlibTM2.Cost.MatchBase
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-!
 # Complete physical fiber-pass cost

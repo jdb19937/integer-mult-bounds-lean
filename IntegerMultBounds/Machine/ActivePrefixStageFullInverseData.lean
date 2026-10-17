@@ -1,7 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.ActivePrefixStageFullData
-public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsFullInverseData
+import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsFullInverseData
+import Mathlib.Tactic.Positivity.Finset
 
 @[expose] public section
 

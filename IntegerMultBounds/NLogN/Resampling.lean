@@ -1,8 +1,8 @@
 module
 
-public import IntegerMultBounds.NLogN.Gaussian
-public import IntegerMultBounds.NLogN.DFT
-public import Mathlib.NumberTheory.ModularForms.JacobiTheta.TwoVariable
+import IntegerMultBounds.NLogN.Gaussian
+import IntegerMultBounds.NLogN.DFT
+import Mathlib.NumberTheory.ModularForms.JacobiTheta.TwoVariable
 public import Mathlib.Tactic
 
 /-! Gaussian resampling, after Harvey and van der Hoeven, Section 4.1. The

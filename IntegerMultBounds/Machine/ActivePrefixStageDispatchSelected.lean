@@ -1,8 +1,9 @@
 module
 
-public import IntegerMultBounds.Machine.ActivePrefixStageDispatchEndpoint
 public import IntegerMultBounds.Machine.ActivePrefixStageFullSelected
-public import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsFullInverseData
+import IntegerMultBounds.Machine.ActiveRepairLayoutRecordsFullInverseData
+public import IntegerMultBounds.Machine.ActivePrefixStageDispatchData
+import Mathlib.Tactic.Positivity.Finset
 
 /-! The runtime-selected full stage acts on every original address and is its
 own inverse. Branch geometry is derived from the original source/target slots. -/

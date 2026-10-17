@@ -1,6 +1,8 @@
 module
 
 public import IntegerMultBounds.Machine.ActiveRepairLayoutPermutationFiber
+import Mathlib.Tactic.Positivity.Finset
+import IntegerMultBounds.Compact.Repair
 
 /-! Concrete global permutations of the actual unchanged active-target
 address. Source coordinates choose the local packed operation at every fiber;

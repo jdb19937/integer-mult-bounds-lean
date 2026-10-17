@@ -1,7 +1,9 @@
 module
 
 public import IntegerMultBounds.Schoenhage.Butterfly
-public import IntegerMultBounds.Schoenhage.IterCorrect
+import IntegerMultBounds.Schoenhage.IterCorrect
+public import IntegerMultBounds.Schoenhage.Iter
+import IntegerMultBounds.Schoenhage.Wp
 
 /-! Transform layers on word tapes. The pair loop runs the butterfly over the
 two half-block tapes; the block loop splits the data into blocks, runs the

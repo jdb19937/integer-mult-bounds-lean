@@ -1,9 +1,11 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayoutTransport
 public import IntegerMultBounds.MathlibTM2.Fast.CompactSynOpp
 public import IntegerMultBounds.MathlibTM2.Fast.CompactSynUniformLoopsContract
-public import IntegerMultBounds.MathlibTM2.Fast.CompactMainBootstrapPipelineCompose
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Algebra.Order.Ring.Star
 
 /-! Concrete opposite hybrid scan followed by inverse layout, with original transform semantics. -/
 @[expose] public section

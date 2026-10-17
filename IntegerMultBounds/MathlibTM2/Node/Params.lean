@@ -1,7 +1,7 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Host.Index
-public import Mathlib.Combinatorics.Colex
+import Mathlib.Combinatorics.Colex
 
 /-!
 # Unary parameter registers and binary masks

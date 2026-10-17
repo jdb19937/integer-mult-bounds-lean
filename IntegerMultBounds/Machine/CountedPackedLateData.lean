@@ -1,8 +1,11 @@
 module
 
-public import IntegerMultBounds.Machine.CountedPackedParityValue
-public import IntegerMultBounds.Machine.CountedPackedControlLoadValue
-public import IntegerMultBounds.Machine.CountedPackedGuarded
+import IntegerMultBounds.Machine.CountedPackedParityValue
+import IntegerMultBounds.Machine.CountedPackedControlLoadValue
+import IntegerMultBounds.Machine.CountedPackedGuarded
+public import IntegerMultBounds.Machine.CountedPackedControlLoadRun
+public import IntegerMultBounds.Machine.CountedPackedParityRun
+public import IntegerMultBounds.Compact.ToggleValue
 
 /-! Exact word specification for the two early gadgets and the physical dirty
 load/unload used by the later-source gadget. These are data semantics; the

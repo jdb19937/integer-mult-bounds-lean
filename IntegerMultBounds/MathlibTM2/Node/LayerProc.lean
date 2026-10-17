@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Node.Factor
+import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # The layer procedure

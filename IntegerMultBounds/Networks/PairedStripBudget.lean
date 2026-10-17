@@ -2,6 +2,8 @@ module
 
 public import IntegerMultBounds.Networks.PairedVectorBudget
 public import IntegerMultBounds.Networks.PairedStripCorrect
+public import IntegerMultBounds.Networks.DisjointExclusion
+public import IntegerMultBounds.Networks.PairedCircuitBudget
 
 /-! Sharp structural budgets for the actual batch-then-vector strip builder.
 Nonempty query supports establish present operands semantically. The same

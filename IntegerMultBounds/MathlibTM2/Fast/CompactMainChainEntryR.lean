@@ -1,8 +1,12 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CompactMainChainR
-public import IntegerMultBounds.MathlibTM2.Fast.CompactMainChainEntry
 public import IntegerMultBounds.MathlibTM2.Fast.CompactMainOutput
+public import IntegerMultBounds.MathlibTM2.Fast.CompactMainRunsAt
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynRetunedGeometry
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! The rounded main chain from the distributed register file, and the coefficients and the
 carry stage for any box convolution with the guarantee `BoxConvSpec`. -/

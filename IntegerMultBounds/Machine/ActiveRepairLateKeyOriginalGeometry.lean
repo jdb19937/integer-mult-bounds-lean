@@ -1,6 +1,8 @@
 module
+public import IntegerMultBounds.Machine.ActiveRepairLateKeyOriginalValid
+public import IntegerMultBounds.Machine.ActiveRepairRankHeadersEndpoint
+import Mathlib.Tactic.Positivity.Finset
 
-public import IntegerMultBounds.Machine.ActiveRepairLateKeyOriginalRun
 
 /-! Both original source geometries imply every generated descriptor fit.
 No runtime field start or prefix-dependent source-control word is supplied. -/

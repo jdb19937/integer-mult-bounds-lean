@@ -1,7 +1,7 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Node.CompactBasisRegisters
-public import IntegerMultBounds.MathlibTM2.Host.Embed
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-! A fixed embedding preserves every ordinary layer register while placing
 the two private basis workspaces in disjoint parts of one fixed bank. This allows the checked

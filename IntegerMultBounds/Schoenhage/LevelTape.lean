@@ -1,8 +1,9 @@
 module
 
-public import IntegerMultBounds.Schoenhage.InvLayers
 public import IntegerMultBounds.Schoenhage.Split
 public import IntegerMultBounds.Schoenhage.Recomb
+public import IntegerMultBounds.Schoenhage.Layers
+import IntegerMultBounds.Schoenhage.Wp
 
 /-! One Schönhage–Strassen level on word tapes: cutting an operand into its
 padded pieces by one pass over a ruler. -/

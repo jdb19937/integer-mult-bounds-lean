@@ -1,7 +1,8 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Host.BinArithBits
-public import Mathlib.Tactic.CasesM
+public import IntegerMultBounds.MathlibTM2.Node.Params
+import IntegerMultBounds.MathlibTM2.Host.Route
 
 /-!
 # Binary registers: zip passes, copies, padding, addition, subtraction, comparison

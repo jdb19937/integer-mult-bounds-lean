@@ -1,8 +1,10 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Fast.BundleDist
 public import IntegerMultBounds.MathlibTM2.Fast.DistSynMain
-public import IntegerMultBounds.MathlibTM2.Fast.DistSynCost
+import IntegerMultBounds.MathlibTM2.Fast.DistSynCost
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-!
 # The wires program as a `BdWires` bundle

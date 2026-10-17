@@ -1,7 +1,9 @@
 module
 
-public import IntegerMultBounds.Schoenhage.RingPack
+import IntegerMultBounds.Schoenhage.RingPack
 public import IntegerMultBounds.Schoenhage.RingDigit
+public import IntegerMultBounds.Schoenhage.RingAlu
+import IntegerMultBounds.Schoenhage.Wp
 
 /-! Unpacking a residue into output coefficients. Each digit `e` of the offset
 residue is compared with the half `H = 2^(W-1)`: the difference is the signed

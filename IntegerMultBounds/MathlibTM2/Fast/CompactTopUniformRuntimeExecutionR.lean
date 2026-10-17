@@ -1,7 +1,30 @@
 module
+import IntegerMultBounds.MathlibTM2.Cost.CompactPieceUniformPacking
+import IntegerMultBounds.MathlibTM2.Cost.CompactCallerUniformReadiness
+public import IntegerMultBounds.MathlibTM2.Fast.CompactTopExecutionR
+import IntegerMultBounds.MathlibTM2.Cost.CompactPiecePacking
+public import IntegerMultBounds.MathlibTM2.Fast.CompactPieceGeometry
+public import IntegerMultBounds.Machine.CompactReservationGrowth
+import IntegerMultBounds.MathlibTM2.Fast.CompactTopPrecision
+import IntegerMultBounds.MathlibTM2.Cost.CompactLayerReady
+public import IntegerMultBounds.MathlibTM2.Mult.Sizes
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Tactic.NormNum.RealSqrt
+import Mathlib.Tactic.NormNum.Prime
+import Mathlib.Tactic.NormNum.Parity
+import Mathlib.Tactic.NormNum.Ordinal
+import Mathlib.Tactic.NormNum.NatSqrt
+import Mathlib.Tactic.NormNum.NatLog
+import Mathlib.Tactic.NormNum.NatFib
+import Mathlib.Tactic.NormNum.ModEq
+import Mathlib.Tactic.NormNum.LegendreSymbol
+import Mathlib.Tactic.NormNum.IsSquare
+import Mathlib.Tactic.NormNum.IsCoprime
+import Mathlib.Tactic.NormNum.Irrational
+import Mathlib.Tactic.Echelon.Zsqrtd
 
-public import IntegerMultBounds.MathlibTM2.Fast.CompactTopRuntimeExecutionR
-public import IntegerMultBounds.MathlibTM2.Fast.CompactTopUniformRuntimeExecution
 
 /-! The reserved rounded top transform at runtime for every chunk width `K` between
 `Mult.Sizes.K N` and `d`: the uniform twin of `compactTopRuntimeR_eventually_exec`. -/

@@ -2,6 +2,9 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Node.Phase
 public import IntegerMultBounds.MathlibTM2.Layer.TopZ
+import Mathlib.Tactic.Positivity.Finset
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
 /-!
 # Streams of the simultaneous layer

@@ -2,7 +2,10 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Mult.BandSolveList
 public import IntegerMultBounds.MathlibTM2.Mult.ConcreteB0
-public import IntegerMultBounds.NLogN.PhaseCellInteriorRow
+import IntegerMultBounds.NLogN.PhaseCellInteriorRow
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-! The banded line solve in folded positions. The machine stores the window
 matrix of coefficient numerators `aZ` at folded positions: row `i` and column

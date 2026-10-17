@@ -1,6 +1,9 @@
 module
 
 public import IntegerMultBounds.Machine.ActiveRepairLateKeyData
+public import IntegerMultBounds.Machine.ActiveRepairLateKeyAppend
+public import IntegerMultBounds.Machine.ActiveRepairLateKeyPatch
+import Mathlib.Tactic.Positivity.Finset
 
 /-! One fixed machine computes a conditional full later-repair key from the
 genuine short original rank, then erases all ten generated caller words. -/

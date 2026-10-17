@@ -2,6 +2,8 @@ module
 
 public import IntegerMultBounds.Schoenhage.RingAlu
 public import IntegerMultBounds.Schoenhage.RingWords
+import IntegerMultBounds.Schoenhage.RingMath
+import IntegerMultBounds.Schoenhage.Wp
 
 /-! Packing one component of a polynomial into a residue. The input tape
 holds the coefficient pairs, real word then imaginary word. One pass flips

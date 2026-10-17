@@ -1,7 +1,12 @@
 module
 
 public import IntegerMultBounds.Networks.DAGReplay
-public import IntegerMultBounds.Networks.DisjointPruningBudget
+import IntegerMultBounds.Networks.DisjointUnique
+public import IntegerMultBounds.Networks.DAGAllocatorBudget
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
+import Mathlib.Data.Nat.Totient
+import Mathlib.Tactic.ContinuousFunctionalCalculus
 
 /-! Compaction of a DAG to a parent-closed active set. Active nodes are
 re-interned in topological order with renumbered references; inactive nodes

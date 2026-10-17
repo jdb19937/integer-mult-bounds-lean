@@ -2,10 +2,9 @@ module
 
 public import IntegerMultBounds.Machine.ActivePrefixParityOffsetBank
 public import IntegerMultBounds.Machine.ActivePrefixParityOnlyData
-public import IntegerMultBounds.Machine.ActivePrefixOffsetHeadersBudget
-public import IntegerMultBounds.Machine.BinaryPrefixFieldTablePlaced
-public import IntegerMultBounds.Machine.SelectedSourceBitsStreamPlaced
 public import IntegerMultBounds.Machine.BinaryVaryingParityOnlyPlaced
+import IntegerMultBounds.Machine.CompactGadgetReservationPlacement
+import Mathlib.Tactic.Positivity.Finset
 
 /-! One permanent caller bank for the original-input varying pure-parity load.
 The wide target is not placed in a compact front field: this bank only

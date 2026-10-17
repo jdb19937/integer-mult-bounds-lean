@@ -1,7 +1,9 @@
 module
 
-public import IntegerMultBounds.Machine.CountedGuardGadget
 public import IntegerMultBounds.Machine.WordBankCleanup
+public import IntegerMultBounds.Machine.CountedGuardGadgetRecord
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Data.Sym.Sym2.Init
 
 /-! Actual scan-and-erase cleanup of the three synthesized guard constants.
 The fixed fifteen-tape program retains the result and every source/header. -/

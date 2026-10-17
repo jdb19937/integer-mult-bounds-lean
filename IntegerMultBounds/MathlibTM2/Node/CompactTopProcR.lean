@@ -1,8 +1,11 @@
 module
 
-public import IntegerMultBounds.MathlibTM2.Node.CompactTopProc
 public import IntegerMultBounds.MathlibTM2.Node.CompactLayerProcR
 public import IntegerMultBounds.MathlibTM2.Node.ShrinkWord
+public import IntegerMultBounds.MathlibTM2.Node.CompactTopProcKernel
+public import IntegerMultBounds.MathlibTM2.Node.CompactTopProcPieces
+public import IntegerMultBounds.MathlibTM2.Node.CompactTopProcStages
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-!
 # The rounded top program

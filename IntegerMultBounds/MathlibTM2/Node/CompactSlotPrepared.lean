@@ -1,7 +1,7 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Node.CompactSlotXor
-public import IntegerMultBounds.MathlibTM2.Node.CompactHeaderBank
+import IntegerMultBounds.MathlibTM2.Node.CompactHeaderBank
 public import IntegerMultBounds.MathlibTM2.Node.CompactHeaderClear
 
 /-! Runtime unary descriptors prepare the native bank, execute an encoded slot XOR,

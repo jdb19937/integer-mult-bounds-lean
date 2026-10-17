@@ -1,7 +1,9 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.CRTControl
-public import Mathlib.Data.List.Induction
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Data.Nat.Factorial.DoubleFactorial
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-!
 # Linear CRT axis routing

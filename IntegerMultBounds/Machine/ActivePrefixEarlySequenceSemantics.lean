@@ -2,8 +2,9 @@ module
 
 public import IntegerMultBounds.Machine.ActivePrefixEarlySequenceData
 public import IntegerMultBounds.Machine.ActivePrefixLayoutTarget
-public import IntegerMultBounds.Machine.ActivePrefixCompactConjugationSemantics
+import IntegerMultBounds.Machine.ActivePrefixCompactConjugationSemantics
 public import IntegerMultBounds.Machine.BinaryPackedEarlyData
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Forward coordinate semantics of the four physical early loads on the
 original array. Every spectator remains in its original serialized position. -/
