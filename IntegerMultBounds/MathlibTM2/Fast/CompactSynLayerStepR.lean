@@ -271,7 +271,7 @@ theorem compactSynLayerStepR_eventually_exec (hQ : compactRuntimeStates≤Q)
     let gb := guardG (cGain ds) es.sum l D
     let s := (D+1)/2+q+(gb+E)
     let s' := gb+E-5
-    let working := W+s+D+guardKc (cGain ds) es.sum l D+gateCount (program ds)+4
+    let working := W+s+D+guardKc (cGain ds) es.sum l D+gateCount (program ds)+m+4
     let shape := compactReservationShape d g K D (2^o*(3*(r*working)))
     let pcs := compactTopPcs d g K D o R₂
     let cfg := topCfgR W s a 1 R₂ q aT K o D gb s' 1
@@ -328,7 +328,7 @@ theorem compactSynLayerStepR_eventually_exec (hQ : compactRuntimeStates≤Q)
   let gb := guardG (cGain ds) es.sum l D
   let s := (D+1)/2+q+(gb+E)
   let s' := gb+E-5
-  let working := W+s+D+guardKc (cGain ds) es.sum l D+gateCount (program ds)+4
+  let working := W+s+D+guardKc (cGain ds) es.sum l D+gateCount (program ds)+m+4
   let shape := compactReservationShape d g K D (2^o*(3*(r*working)))
   let pcs := compactTopPcs d g K D o R₂
   let cfg := topCfgR W s a 1 R₂ q aT K o D gb s' 1
@@ -455,7 +455,7 @@ theorem compactSynLayerStepR_eventually_exec_stream (hQ : compactRuntimeStates�
     let gb := guardG (cGain ds) es.sum l D
     let s := (D+1)/2+q+(gb+E)
     let s' := gb+E-5
-    let working := W+s+D+guardKc (cGain ds) es.sum l D+gateCount (program ds)+4
+    let working := W+s+D+guardKc (cGain ds) es.sum l D+gateCount (program ds)+m+4
     let shape := compactReservationShape d g K D (2^o*(3*(r*working)))
     let pcs := compactTopPcs d g K D o R₂
     let cfg := topCfgR W s a 1 R₂ q aT K o D gb s' 1

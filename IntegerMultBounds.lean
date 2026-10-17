@@ -2672,3 +2672,11 @@ import IntegerMultBounds.MathlibTM2.Fast.CompactTopOriginalR
 import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepPrepR
 import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepR
 import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerStepUniformR
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynHybridRoundR
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerContractR
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynRoundR
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynLoopsR
+import IntegerMultBounds.MathlibTM2.Fast.ConvSpecQ
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynTransformR
+import IntegerMultBounds.MathlibTM2.Fast.ConvSynthQ
+import IntegerMultBounds.MathlibTM2.Fast.ConvBoxQ

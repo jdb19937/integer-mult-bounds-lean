@@ -42,7 +42,7 @@ def compactSynLayerRecordWR (v : SynW → List (Fin (A+4))) (G cG N d g K D o W 
       (CompactGlobalRowPadding.depth m d) active)))) (.p .cf)
     (topRec (topCfgR W shift a 1 (compactTopRows d 1 a) (q+f)
       (o+K*(b+active)) K o D gb (gb+E-5) 1)).reverse) (.p .w2)
-    (List.replicate (W+shift+D+guardKc cG N l D+G+4) tick)
+    (List.replicate (W+shift+D+guardKc cG N l D+G+m+4) tick)
 /-- Every scalar and blank-source condition comes from the existing round invariant
 and the concrete source stage, rather than a supplied constructor execution. -/
 theorem compactSynLayerRecordsR_runs (body : P → Pr P (nT CompactHostBReg) Q A U)
@@ -231,7 +231,7 @@ theorem compactSynLayerPrepareR_projection
     let shift := (D+1)/2+(q+f)+(gb+E)
     let a := es.sum-(o+K*(D-q))
     compactSynSourceClearOut (compactSynLayerRefreshOutR R Ro v es ℓ K W l h G cG d g) ∘ compactLegacyReg=
-      synG Ro (compactSynPreparedW v K ((h-layB ℓ K)%K) (W+shift+D+guardKc cG es.sum l D+G+4)
+      synG Ro (compactSynPreparedW v K ((h-layB ℓ K)%K) (W+shift+D+guardKc cG es.sum l D+G+m+4)
         (topRec (topPcRec K (compactReservedPcs K 0 o b (o+K*b) (CompactGlobalRowPadding.depth m d) active)))
         (topRec (topCfgR W shift a 1 (compactTopRows d 1 a) (q+f) (o+K*(b+active)) K o D
           gb (gb+E-5) 1)).reverse) := by

@@ -41,15 +41,19 @@ noncomputable def convQ (F : RoundOp (List.ofFn a).sum p (fwdRound (r := r) (Lis
 theorem convQ_err
     (F : RoundOp (List.ofFn a).sum p (fwdRound (r := r) (List.ofFn a)) (etaQ p t))
     (O : RoundOp (List.ofFn a).sum p (oppRound (r := r) (List.ofFn a)) (etaQ p t)) {u v : Recs r}
-    (hu : SupLe (List.ofFn a).sum u 1) (hv : SupLe (List.ofFn a).sum v 1) :
+    (hu : SupLe (List.ofFn a).sum u 1) (hv : SupLe (List.ofFn a).sum v 1)
+    (hug : GridR p u) (hvg : GridR p v) :
     ∀ n < (tsA a).prod, ∀ c, 2 ^ p * ‖convQ a F O u v n c - convE a u v n c‖ ≤
       Real.sqrt 2 * (tsA a).prod * (3 * nRounds a * (1 + t) + 1) := by
-  have hfu := fwdRoundsQ_err (List.ofFn a) F (nRounds a) (supLe_sub_self (List.ofFn a).sum u)
-  have hfv := fwdRoundsQ_err (List.ofFn a) F (nRounds a) (supLe_sub_self (List.ofFn a).sum v)
+  have hfu := fwdRoundsQ_err (List.ofFn a) F (nRounds a) hu hug
+    (supLe_sub_self (List.ofFn a).sum u)
+  have hfv := fwdRoundsQ_err (List.ofFn a) F (nRounds a) hv hvg
+    (supLe_sub_self (List.ofFn a).sum v)
   have hd := fwdRounds_supLe (List.ofFn a) (nRounds a) hu
-  have hd' := fwdRoundsQ_supLe (List.ofFn a) F (nRounds a) hv
+  have hdu := (fwdRoundsQ_dom (List.ofFn a) F (nRounds a) hu hug).1
+  have hd' := (fwdRoundsQ_dom (List.ofFn a) F (nRounds a) hv hvg).1
   have hpw := pwC_err p hd hd' hfu hfv
-  have ho := oppRoundsQ_err (List.ofFn a) O (nRounds a) hpw
+  have ho := oppRoundsQ_err (List.ofFn a) O (nRounds a) (pwC_supLe p hdu hd') (gridR_rdR p _) hpw
   intro n hn c
   rw [tsA_prod] at hn
   have h := ho n hn c
@@ -95,11 +99,13 @@ theorem synthMrQ_ringApprox (hN : ∀ i, N i = 2 ^ a i) (hr : ∀ i, 2 ^ a i ∣
   have hlt : enc N z < (tsA a).prod := hts ▸ enc_lt N z
   have hU' : SupLe (List.ofFn a).sum (ιR N U) 1 := fun n _ c => (hU _ c).2
   have hV' : SupLe (List.ofFn a).sum (ιR N V) 1 := fun n _ c => (hV _ c).2
+  have hUg : GridR p (ιR N U) := fun n c => (hU _ c).1
+  have hVg : GridR p (ιR N V) := fun n c => (hV _ c).1
   have hP : PowAxes r (List.ofFn N) := hts ▸ powAxes_tsA a hr
   have hex : synthConvNormG U V z = convE a (ιR N U) (ιR N V) (enc N z) := by
     rw [convE_eq_pipeE a hr _ _ hlt, ← hts, pipeE_ιR N hP]
   have hM : (tsA a).prod = ∏ i, N i := by rw [← hts, List.prod_ofFn]
-  have := convQ_err a F O hU' hV' (enc N z) hlt k
+  have := convQ_err a F O hU' hV' hUg hVg (enc N z) hlt k
   rw [hM] at this
   rw [hex]
   exact this

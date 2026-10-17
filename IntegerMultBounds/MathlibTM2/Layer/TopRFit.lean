@@ -221,4 +221,223 @@ theorem topPreRW_fits {R : ℕ} (ds : Directions) (hd : ComplexPhaseBudget.Reali
     ((2 : ℂ) ^ s * Hl _ (low.map (Fin.castAdd a) ++ top) (toC Z) p)
   linarith
 
+/-! ### The size of the input of the pieces -/
+
+section Input
+
+variable {R : ℕ}
+
+lemma l2_le_of_injOn {X X' : Type} [Fintype X] [Fintype X'] (F : X → ℂ) (G : X' → ℂ) (ι : X → X')
+    (hι : ∀ x y, F x ≠ 0 → F y ≠ 0 → ι x = ι y → x = y) (hF : ∀ x, F x ≠ 0 → F x = G (ι x)) :
+    l2 F ≤ l2 G := by
+  classical
+  unfold l2
+  apply Real.sqrt_le_sqrt
+  set T := Finset.univ.filter fun x => F x ≠ 0
+  have h1 : ∑ x, ‖F x‖ ^ 2 = ∑ x ∈ T, ‖G (ι x)‖ ^ 2 := by
+    rw [← Finset.sum_filter_add_sum_filter_not Finset.univ (fun x => F x ≠ 0)]
+    have h0 : ∑ x ∈ Finset.univ.filter (fun x => ¬F x ≠ 0), ‖F x‖ ^ 2 = 0 :=
+      Finset.sum_eq_zero fun x hx => by
+        simp only [Finset.mem_filter, not_not] at hx; simp [hx.2]
+    rw [h0, add_zero]
+    exact Finset.sum_congr rfl fun x hx => by
+      rw [hF x (Finset.mem_filter.1 hx).2]
+  rw [h1, ← Finset.sum_image (f := fun y => ‖G y‖ ^ 2) (fun x hx y hy h =>
+    hι x y (Finset.mem_filter.1 hx).2 (Finset.mem_filter.1 hy).2 h)]
+  exact Finset.sum_le_sum_of_subset_of_nonneg (Finset.subset_univ _) fun _ _ _ => by positivity
+
+lemma l2_padRows_le (hR : 0 < R) (R₂ : ℕ) (X : ZArr (Fin R × Fin r) n) :
+    l2 (toC (padRows R₂ X)) ≤ l2 (toC X) := by
+  refine l2_le_of_injOn _ _ (fun p => ((⟨p.1.1 % R, Nat.mod_lt _ hR⟩, p.1.2), p.2))
+    (fun x y hx hy h => ?_) (fun x hx => ?_)
+  · have hx' : (x.1.1 : ℕ) < R := by
+      by_contra hc; apply hx; simp [toC, padRows, hc]
+    have hy' : (y.1.1 : ℕ) < R := by
+      by_contra hc; apply hy; simp [toC, padRows, hc]
+    simp only [Prod.mk.injEq, Fin.mk.injEq, Nat.mod_eq_of_lt hx', Nat.mod_eq_of_lt hy'] at h
+    exact Prod.ext (Prod.ext (Fin.ext h.1.1) h.1.2) h.2
+  · have hx' : (x.1.1 : ℕ) < R := by
+      by_contra hc; apply hx; simp [toC, padRows, hc]
+    simp [toC, padRows, hx', Nat.mod_eq_of_lt hx']
+
+lemma l2_toRows_le (a : ℕ) (Y : ZArr (Fin R × Fin r) (n + a)) :
+    l2 (toC (toRows a Y)) ≤ l2 (toC Y) := by
+  have hbij : Function.Bijective (ofRowsIdx (R := R) (r := r) (n := n) a) := by
+    refine (Fintype.bijective_iff_injective_and_card _).2 ⟨ofRowsIdx_injective a, ?_⟩
+    simp only [Fintype.card_prod, Fintype.card_fin, Fintype.card_fun, ZMod.card]
+    ring
+  have hinj : Function.Injective (toRowsIdx (R := R) (r := r) (n := n) a) := by
+    intro x y h
+    obtain ⟨p, rfl⟩ := hbij.2 x
+    obtain ⟨q, rfl⟩ := hbij.2 y
+    rw [toRowsIdx_ofRowsIdx, toRowsIdx_ofRowsIdx] at h
+    rw [h]
+  have : toC (toRows a Y) = toC Y ∘ toRowsIdx a := rfl
+  rw [this]
+  exact l2_le_of_injective _ _ hinj
+
+lemma l2_k2s (l : List (Fin n)) (f : ZArr (Fin R × Fin r) n) :
+    l2 (toC (k2s l f)) = 2 ^ l.length * l2 (toC f) := by
+  rw [toC_k2s, l2_smul, prod_reverse_kBit, l2_prod_kBit, norm_pow, RCLike.norm_two]
+
+lemma l2_sZ (l : List (Fin n)) (Z : ZArr (Fin R × Fin r) n) : l2 (toC (sZ l Z)) = l2 (toC Z) := by
+  rw [toC_sZ, l2_Sl]
+
+lemma l2_two_pow_smul (g : ℕ) (Z : ZArr (Fin R × Fin r) n) :
+    l2 (toC ((2 ^ g : GaussianInt) • Z)) = 2 ^ g * l2 (toC Z) := by
+  have : toC ((2 ^ g : GaussianInt) • Z) = (2 : ℂ) ^ g • toC Z := by
+    funext q; simp [toC, toComplex_two]
+  rw [this, l2_smul, norm_pow, RCLike.norm_two]
+
+end Input
+
+/-! ### The fits of a round from the parameters -/
+
+section Round
+
+lemma two_pow_le_two_pow {x y : ℕ} (h : x ≤ y) : (2 : ℝ) ^ x ≤ 2 ^ y :=
+  pow_le_pow_right₀ (by norm_num) h
+
+lemma sqrt_two_pow_le (x : ℕ) : √((2 : ℝ) ^ x) ≤ 2 ^ x := by
+  rw [Real.sqrt_le_left (by positivity)]
+  have : (1 : ℝ) ≤ 2 ^ x := one_le_pow₀ (by norm_num)
+  nlinarith
+
+lemma rowsAt_mono (R₀ : ℕ) {i j : ℕ} (h : i ≤ j) : rowsAt R₀ i ≤ rowsAt R₀ j := by
+  rw [rowsAt_eq, rowsAt_eq]
+  exact Nat.mul_le_mul_right _ (Nat.pow_le_pow_right (Nat.pos_of_neZero NW) h)
+
+/-- **The fits of a rounded round.** For a one-row round on `n + a` address bits with `r = 2^l`
+coefficients, entries of norm at most `2^p`, at most `D + 1` pieces of level at most `D` with
+child scales at most `S`, the guard `g ≥ K + D + 6` for `K = Lb + D (cGain + 1)`,
+`Lb = n + a + l + 2`, and the width `w' ≥ S + cGain D + s + p + Lb + 5`: the tape pieces are the
+rounded pieces on the padded input, and the array before the shifts fits `w'` signed bits. -/
+theorem topR_fits (ds : Directions) (hd : ComplexPhaseBudget.Realizes ds) (a l : ℕ)
+    (low : List (Fin n)) (top : List (Fin (n + a))) {R₂ : ℕ} (hR₂ : 1 * 2 ^ a ≤ R₂)
+    (hR₂' : R₂ ≤ 2 * (1 * 2 ^ a)) (Ps : List (Piece n R₂)) (hinj : ∀ P ∈ Ps, Function.Injective P.e)
+    (hcover : (Ps.flatMap Piece.bitsList).Perm low)
+    (hsel : (low.map (Fin.castAdd a) ++ top).Nodup) (g s w' p D S : ℕ)
+    (hs : s = (low.length + top.length + 1) / 2 + top.length + (Ps.map (Piece.expR ds)).sum + g)
+    (Z : ZArr (Fin 1 × Fin (2 ^ l)) (n + a)) (hZ : ∀ z, ‖GaussianInt.toComplex (Z z)‖ ≤ 2 ^ p)
+    (hj : ∀ P ∈ Ps, P.j ≤ D) (hlen : Ps.length ≤ D + 1)
+    (hS : ∀ P ∈ Ps, ∀ i < P.j, scaleR P.u ds i ≤ S)
+    (hg : (n + a + l + 2) + D * (cGain ds + 1) + D + 6 ≤ g)
+    (hw : S + cGain ds * D + s + p + (n + a + l + 2) + 5 ≤ w') :
+    piecesRW w' ds Ps (padRows R₂ (toRows a
+        (k2s top ((2 ^ g : GaussianInt) • sZ (LayerMachine.topSel a low top) Z)))) =
+      piecesR ds Ps (padRows R₂ (toRows a
+        (k2s top ((2 ^ g : GaussianInt) • sZ (LayerMachine.topSel a low top) Z)))) ∧
+    ∀ z, Node.TopFitsZ w' (LayerMachine.topPreRW ds w' a low top hR₂ Ps g Z z) := by
+  set Lb := n + a + l + 2 with hLb
+  set K := Lb + D * (cGain ds + 1) with hK
+  set E := (Ps.map (Piece.expR ds)).sum with hE
+  set q := top.length with hq
+  have hw1 : 1 ≤ w' := by omega
+  -- the level errors
+  have hK' : ∀ P ∈ Ps, ∀ i ≤ P.j, errL P.u ds P.R₀ (2 ^ l) n i ≤ 2 ^ K := by
+    intro P hP i hi
+    refine errL_le_K P.u ds P.R₀ (2 ^ l) n i Lb D (hi.trans (hj P hP)) ?_
+    have h1 : rowsAt P.R₀ i ≤ R₂ := by
+      have := rowsAt_mono P.R₀ hi; rw [← P.hR] at this; exact this
+    have h2 : 2 * (rowsAt P.R₀ i * 2 ^ l * 2 ^ n) ≤ 2 * (2 * 2 ^ a * 2 ^ l * 2 ^ n) := by
+      have : rowsAt P.R₀ i ≤ 2 * 2 ^ a := by omega
+      gcongr
+    refine h2.trans (le_of_eq ?_)
+    rw [hLb]; ring
+  -- the input of the pieces
+  have hZ2 : l2 (toC Z) ≤ 2 ^ (p + Lb) := by
+    have h := l2_le_of_norm_le (by positivity) (toC Z) (fun z => hZ z)
+    have hc : (Fintype.card ((Fin 1 × Fin (2 ^ l)) × (Fin (n + a) → ZMod 2)) : ℝ) = 2 ^ (l + (n + a)) := by
+      simp [pow_add]
+    rw [hc] at h
+    refine h.trans ?_
+    have := sqrt_two_pow_le (l + (n + a))
+    calc √((2 : ℝ) ^ (l + (n + a))) * 2 ^ p ≤ 2 ^ (l + (n + a)) * 2 ^ p := by gcongr
+      _ ≤ 2 ^ (p + Lb) := by rw [← pow_add]; exact two_pow_le_two_pow (by omega)
+  set W0 := padRows R₂ (toRows a (k2s top ((2 ^ g : GaussianInt) • sZ (LayerMachine.topSel a low top) Z)))
+  have hW0 : l2 (toC W0) ≤ 2 ^ (g + q + p + Lb) := by
+    refine (l2_padRows_le (R := 1 * 2 ^ a) (by positivity) R₂ _).trans
+      ((l2_toRows_le (R := 1) a _).trans ?_)
+    rw [l2_k2s, l2_two_pow_smul, l2_sZ]
+    calc (2 : ℝ) ^ top.length * (2 ^ g * l2 (toC Z)) ≤ 2 ^ q * (2 ^ g * 2 ^ (p + Lb)) := by gcongr
+      _ = 2 ^ (g + q + p + Lb) := by rw [← pow_add, ← pow_add]; congr 1; omega
+  -- the bound on every piece input
+  set B : ℝ := 2 ^ E * (2 ^ (g + q + p + Lb) + (D + 1) * 2 ^ K)
+  have hDK : ((D : ℝ) + 1) * 2 ^ K ≤ 2 ^ (g + q + p + Lb) := by
+    have h1 : ((D : ℝ) + 1) ≤ 2 ^ D := by
+      have := Nat.lt_two_pow_self (n := D); exact_mod_cast this
+    calc ((D : ℝ) + 1) * 2 ^ K ≤ 2 ^ D * 2 ^ K := by gcongr
+      _ ≤ 2 ^ (g + q + p + Lb) := by rw [← pow_add]; exact two_pow_le_two_pow (by omega)
+  have hB : B ≤ 2 ^ (E + g + q + p + Lb + 1) := by
+    calc B ≤ 2 ^ E * (2 * 2 ^ (g + q + p + Lb)) := by
+          simp only [B]; gcongr; linarith
+      _ = 2 ^ (E + g + q + p + Lb + 1) := by
+          rw [← pow_succ', ← pow_add]; congr 1; omega
+  have hEs : E + g + q ≤ s := by omega
+  have hpieces := piecesRW_eq_of_le w' ds hd hw1 (lipProd_le_two_pow ds) B Ps hinj hK' hS
+    (fun P hP => by
+      have hjD := hj P hP
+      have h1 : (P.j : ℝ) * 2 ^ K ≤ 2 ^ (E + g + q + p + Lb + 1) := by
+        have : (P.j : ℝ) * 2 ^ K ≤ ((D : ℝ) + 1) * 2 ^ K := by
+          gcongr; have : (P.j : ℝ) ≤ D := by exact_mod_cast hjD
+          linarith
+        refine this.trans (hDK.trans ?_)
+        exact two_pow_le_two_pow (by omega)
+      have h2 : B + P.j * 2 ^ K ≤ 2 ^ (E + g + q + p + Lb + 2) := by
+        rw [pow_succ]; linarith
+      have h3 : (2 : ℝ) ^ (S + cGain ds * P.j) ≤ 2 ^ (S + cGain ds * D) :=
+        two_pow_le_two_pow (by have := Nat.mul_le_mul_left (cGain ds) hjD; omega)
+      have hB0 : 0 ≤ B := by positivity
+      have h4 : (2 : ℝ) ^ (S + cGain ds * P.j) * (B + P.j * 2 ^ K) ≤
+          2 ^ (S + cGain ds * D + (E + g + q + p + Lb + 2)) := by
+        calc (2 : ℝ) ^ (S + cGain ds * P.j) * (B + P.j * 2 ^ K)
+            ≤ 2 ^ (S + cGain ds * D) * 2 ^ (E + g + q + p + Lb + 2) :=
+              mul_le_mul h3 h2 (by positivity) (by positivity)
+          _ = _ := (pow_add _ _ _).symm
+      have h5 : (2 : ℝ) ^ (S + cGain ds * D + (E + g + q + p + Lb + 2)) ≤ 2 ^ (w' - 3) :=
+        two_pow_le_two_pow (by omega)
+      have h6 : (2 : ℝ) ^ K ≤ 2 ^ (w' - 3) := two_pow_le_two_pow (by omega)
+      have h7 : (2 : ℝ) ^ (w' - 3) * 2 < 2 ^ (w' - 1) := by
+        rw [← pow_succ]; exact pow_lt_pow_right₀ (by norm_num) (by omega)
+      linarith)
+    (l2 (toC W0)) W0 (l2_nonneg _) le_rfl (by
+      simp only [B]
+      gcongr
+      · have : ((Ps.length : ℕ) : ℝ) ≤ D + 1 := by exact_mod_cast hlen
+        exact this)
+  refine ⟨hpieces, ?_⟩
+  -- the array before the shifts
+  refine topPreRW_fits ds hd w' w' a low top hR₂ Ps hinj hcover hsel g s hs Z hpieces ?_
+  have hpe : piecesErr ds (2 ^ l) Ps ≤ 2 ^ (E + g) := by
+    refine (piecesErr_le ds (2 ^ l) Ps).trans ?_
+    have hsum : (Ps.map fun P => errL P.u ds P.R₀ (2 ^ l) n P.j).sum ≤ Ps.length * 2 ^ K := by
+      have := List.sum_le_length_nsmul (Ps.map fun P => errL P.u ds P.R₀ (2 ^ l) n P.j) (2 ^ K)
+        (fun x hx => by obtain ⟨Q, hQ, rfl⟩ := List.mem_map.1 hx; exact hK' Q hQ Q.j le_rfl)
+      simpa using this
+    have h1 : ((Ps.length : ℕ) : ℝ) * 2 ^ K ≤ 2 ^ g := by
+      have : ((Ps.length : ℕ) : ℝ) ≤ 2 ^ D := by
+        have h := Nat.lt_two_pow_self (n := D)
+        have : Ps.length ≤ 2 ^ D := by omega
+        exact_mod_cast this
+      calc ((Ps.length : ℕ) : ℝ) * 2 ^ K ≤ 2 ^ D * 2 ^ K := by gcongr
+        _ ≤ 2 ^ g := by rw [← pow_add]; exact two_pow_le_two_pow (by omega)
+    calc (2 : ℝ) ^ E * (Ps.map fun P => errL P.u ds P.R₀ (2 ^ l) n P.j).sum
+        ≤ 2 ^ E * 2 ^ g := by gcongr; linarith
+      _ = 2 ^ (E + g) := (pow_add _ _ _).symm
+  have h1 : (2 : ℝ) ^ s * l2 (toC Z) ≤ 2 ^ (s + p + Lb) := by
+    calc (2 : ℝ) ^ s * l2 (toC Z) ≤ 2 ^ s * 2 ^ (p + Lb) := by gcongr
+      _ = 2 ^ (s + p + Lb) := by rw [← pow_add, add_assoc]
+  have h2 : √2 * piecesErr ds (2 ^ l) Ps ≤ 2 * 2 ^ (s + p + Lb) := by
+    have hs2 : √2 ≤ 2 := by rw [Real.sqrt_le_left (by norm_num)]; norm_num
+    have : (2 : ℝ) ^ (E + g) ≤ 2 ^ (s + p + Lb) := two_pow_le_two_pow (by omega)
+    have h0 := piecesErr_nonneg ds (2 ^ l) Ps
+    nlinarith
+  have h3 : (2 : ℝ) ^ (s + p + Lb) * 4 < 2 ^ (w' - 1) := by
+    rw [show (4 : ℝ) = 2 ^ 2 by norm_num, ← pow_add]
+    exact pow_lt_pow_right₀ (by norm_num) (by omega)
+  have h4 : (0 : ℝ) ≤ 2 ^ (s + p + Lb) := by positivity
+  linarith
+
+end Round
+
 end IntegerMultBounds.MathlibTM2.Layer

@@ -104,7 +104,7 @@ def compactTopExtraFields (G : ℕ) : Pr P (nT SXReg) Q A U :=
   .seq (.seq (synPush (sreg (.p .cf)) tick) (synPush (sreg (.p .cf)) topSep)) <|
   .seq (ucopy (sreg (.ly 20)) (sreg (.p .w2)) (sreg (.s 2))) <|
   .seq (uclear (sreg (.ly 20))) <| .seq (synPush (sreg (.ly 20)) tick) <|
-  .seq (umul (G+4) (sreg (.ly 20)) (sreg (.p .w2)) (sreg (.s 2))) <|
+  .seq (umul (G+m+4) (sreg (.ly 20)) (sreg (.p .w2)) (sreg (.s 2))) <|
   .seq (uclear (sreg (.ly 20))) <|
   .seq (uclear (sreg (.ly 21))) (uclear (sreg (.ly 22)))
 
@@ -120,7 +120,7 @@ theorem sg_compactTopExtraFields (body : P → Pr P (nT SXReg) Q A U)
     LayRuns body (compactTopExtraFields G) (synG R v)
       (synG R (Function.update (Function.update (Function.update (Function.update
         (Function.update v (.p .cf) (topRec (l ++ [g, s', 1])).reverse) (.p .w2)
-          (List.replicate (X+Kc+G+4) tick)) (.ly 20) []) (.ly 21) []) (.ly 22) []))
+          (List.replicate (X+Kc+G+m+4) tick)) (.ly 20) []) (.ly 21) []) (.ly 22) []))
       (compactTopExtraFieldsCost Kc g s') := by
   refine lr_weaken body
     ((sg_synCF body (x := .ly 21) (by decide) (by decide) _ l g (by simp [h2]) (by simp [h21])
@@ -132,7 +132,7 @@ theorem sg_compactTopExtraFields (body : P → Pr P (nT SXReg) Q A U)
       (by decide) (by decide) (by simp [h2]) (by simp [h20]) (by simp [hw2])).seq <|
     (sgU_clear body (a := .ly 20) (x := Kc) (by simp [h20])).seq <|
     (sgU_push body (a := .ly 20) (y := 0) (by simp)).seq <|
-    (sgU_umul body (G+4) (a := .ly 20) (b := .p .w2) (t := .s 2) (x := 0+1) (y := Kc+X)
+    (sgU_umul body (G+m+4) (a := .ly 20) (b := .p .w2) (t := .s 2) (x := 0+1) (y := Kc+X)
       (by decide) (by decide) (by decide) (by simp [h2]) (by simp) (by simp)).seq <|
     (sgU_clear body (a := .ly 20) (x := 0+1) (by simp)).seq <|
     (sgU_clear body (a := .ly 21) (x := g) (by simp [h21])).seq <|
@@ -196,7 +196,7 @@ theorem sg_compactTopOriginalRFinish (body : P → Pr P (nT SXReg) Q A U)
         (topRec (topCfgR W ((D+1)/2+q+(guardG cG N l D+E)) a Rv (compactTopRows d Rv a) q aT K o D
           (guardG cG N l D) (guardG cG N l D+E-5) 1)).reverse)
         (.p .w2) (List.replicate
-          (W+((D+1)/2+q+(guardG cG N l D+E))+D+guardKc cG N l D+G+4) tick)))
+          (W+((D+1)/2+q+(guardG cG N l D+E))+D+guardKc cG N l D+G+m+4) tick)))
       (prepCost+(compactTopGuardPrepCost cG N l D E+
         (compactTopOriginalAdapterCost d g W a D q (guardG cG N l D+E) Rv aT K o+
           compactTopExtraFieldsCost (guardKc cG N l D) (guardG cG N l D)
@@ -295,7 +295,7 @@ theorem sg_compactTopOriginalR (body : P → Pr P (nT SXReg) Q A U)
       (synG R (Function.update (Function.update (Function.update v (.p .pr) record) (.p .cf)
         (topRec (topCfgR W shift a Rv (compactTopRows d Rv a) (q+f)
           (o+K*(b+active)) K o D gb (gb+E-5) 1)).reverse)
-        (.p .w2) (List.replicate (W+shift+D+guardKc cG N l D+G+4) tick)))
+        (.p .w2) (List.replicate (W+shift+D+guardKc cG N l D+G+m+4) tick)))
       (compactTopOriginalRCost G cG N d g K D o W Rv l) := by
   let q := CompactGlobalRowPadding.rowAxes NW m d
   let f := frontChunks d g K
@@ -340,7 +340,7 @@ theorem compactTopPlacedR_runs (body : P → Pr P (nT CompactHostBReg) Q A U)
       (synG R (Function.update (Function.update (Function.update v (.p .pr) record) (.p .cf)
         (topRec (topCfgR W shift a Rv (compactTopRows d Rv a) (q+f)
           (o+K*(b+active)) K o D gb (gb+E-5) 1)).reverse)
-        (.p .w2) (List.replicate (W+shift+D+guardKc cG N l D+G+4) tick)))
+        (.p .w2) (List.replicate (W+shift+D+guardKc cG N l D+G+m+4) tick)))
       (compactTopOriginalRCost G cG N d g K D o W Rv l) := by
   dsimp only
   intro vbig S hL hR
