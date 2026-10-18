@@ -35,7 +35,7 @@ theorem run_hosted (G : GroupData) (slot : ℕ) (x : Fin 8 → S) :
   | cons h l ih =>
     funext i
     by_cases hs : h.1 = slot
-    · rw [List.filterMap_cons_some (by simp [hs])]
+    · rw [List.filterMap_cons_some (by split_ifs <;> first | rfl | contradiction)]
       change run M _ (Event.run M (.phase (toStream h.2.1) (h.2.2, 0)) x) i = _
       rw [ih]
       simp only [Event.run]
@@ -44,7 +44,7 @@ theorem run_hosted (G : GroupData) (slot : ℕ) (x : Fin 8 → S) :
         rw [Function.update_self, List.filter_cons_of_pos (by simp [hs]), List.foldr_cons,
           Vec.toFun_add, add_comm, op_add]
       · rw [Function.update_of_ne hi, List.filter_cons_of_neg (by simp [Ne.symm hi])]
-    · rw [List.filterMap_cons_none (by simp [hs]), ih,
+    · rw [List.filterMap_cons_none (by split_ifs <;> first | rfl | contradiction), ih,
         List.filter_cons_of_neg (by simp [hs])]
 
 /-- **Data events.** The forward and reverse sweeps of the active pair. -/
