@@ -32,6 +32,9 @@ lemma le_errRun {δ : ℝ} (hδ : 0 ≤ δ) : ∀ (l : List Instr) {E : ℝ}, 0 
     have h := one_le_gateLip g
     have h1 : E ≤ 2 * gateLip g * E := by nlinarith
     exact h1.trans (le_errRun hδ rest (by positivity))
+  | .trans _ _ :: rest, E, hE => by simp only [errRun]; exact le_errRun hδ rest hE
+  | .xor _ _ _ :: rest, E, hE => by simp only [errRun]; exact le_errRun hδ rest hE
+  | .phase _ _ _ :: rest, E, hE => by simp only [errRun]; exact le_errRun hδ rest hE
 
 section Run
 
@@ -162,6 +165,54 @@ lemma runM_congr (he : Function.Injective e) (child child' : Fin m → ZArr Y n 
             _ = 2 ^ s * (2 * gateLip g * lipProd rest) * bl2 X := by ring
         simp only [errRun] at hβ
         linarith
+    | trans w v =>
+      simp only [runM]
+      have hex : execM e child 0 (.trans w v) B = execM e child' 0 (.trans w v) B := rfl
+      rw [← hex]
+      have hinv : ∀ a : BinaryWalsh.Address m, a + v + v = a := fun a => by
+        funext t; simp only [Pi.add_apply]; rw [add_assoc, CharTwo.add_self_eq_zero, add_zero]
+      refine ih hrest s _ (execWith facImpl (.trans w v) X) (E := E) ?_ ?_
+      · change bl2 ((fun u => view e (toC (Function.update B w (pullM e (· + v) (B w)) u))) -
+          (2 : ℂ) ^ s • Function.update X w (pullArr (· + v) (X w))) ≤ E
+        rw [view_update, view_pullM he]
+        exact (bl2_iso_update _ _ _ (pullArr (· + v)) (fun a u => pullArr_smul _ a u)
+          (fun u u' => pullArr_sub _ u u') (fun u => l2_pullArr _ hinv u) s).trans_le hE
+      · have hX' : bl2 (execWith facImpl (.trans w v) X) = bl2 X :=
+          bl2_update_eq X w _ (l2_pullArr _ hinv (X w))
+        rw [hX']
+        simpa [lipProd, errRun] using hβ
+    | xor w i j =>
+      simp only [runM]
+      have hex : execM e child 0 (.xor w i j) B = execM e child' 0 (.xor w i j) B := rfl
+      rw [← hex]
+      have hinv := Networks.Certificates.T16.Impl.xorMap_involutive i j
+      refine ih hrest s _ (execWith facImpl (.xor w i j) X) (E := E) ?_ ?_
+      · change bl2 ((fun u => view e (toC (Function.update B w
+          (pullM e (Networks.Certificates.T16.Impl.xorMap i j) (B w)) u))) -
+          (2 : ℂ) ^ s • Function.update X w
+            (pullArr (Networks.Certificates.T16.Impl.xorMap i j) (X w))) ≤ E
+        rw [view_update, view_pullM he]
+        exact (bl2_iso_update _ _ _ _ (fun a u => pullArr_smul _ a u)
+          (fun u u' => pullArr_sub _ u u') (fun u => l2_pullArr _ hinv u) s).trans_le hE
+      · have hX' : bl2 (execWith facImpl (.xor w i j) X) = bl2 X :=
+          bl2_update_eq X w _ (l2_pullArr _ hinv (X w))
+        rw [hX']
+        simpa [lipProd, errRun] using hβ
+    | phase w i c =>
+      simp only [runM]
+      have hex : execM e child 0 (.phase w i c) B = execM e child' 0 (.phase w i c) B := rfl
+      rw [← hex]
+      refine ih hrest s _ (execWith facImpl (.phase w i c) X) (E := E) ?_ ?_
+      · change bl2 ((fun u => view e (toC (Function.update B w (phaseM e i c (B w)) u))) -
+          (2 : ℂ) ^ s • Function.update X w (phaseArr i c (X w))) ≤ E
+        rw [view_update, view_phaseM he]
+        exact (bl2_iso_update _ _ _ (phaseArr i c) (fun a u => phaseArr_smul i c a u)
+          (fun u u' => by funext p; simp only [phaseArr, Pi.sub_apply]; ring)
+          (fun u => l2_phaseArr i c u) s).trans_le hE
+      · have hX' : bl2 (execWith facImpl (.phase w i c) X) = bl2 X :=
+          bl2_update_eq X w _ (l2_phaseArr i c (X w))
+        rw [hX']
+        simpa [lipProd, errRun] using hβ
 
 end Run
 
@@ -205,21 +256,18 @@ lemma l2_swap_bank {Y W : Type} [Fintype Y] [Fintype W] (F : Arr (Y × W) n) :
   congr 1
   exact Equiv.sum_comp σ (fun p => ‖F p‖ ^ 2)
 
-lemma bl2_corrInM (e : Fin (m * k) → Fin n) (f : ZArr (Y × NWire) n) :
-    bl2 (fun w => toC (corrInM e (bankZ f) w)) = l2 (toC f) := by
-  have h1 : bl2 (fun w => toC (corrInM e (bankZ f) w)) = bl2 (fun w => toC (bankZ f w)) := by
-    have hs := bl2_sq (fun w => toC (corrInM e (bankZ f) w))
-    have hs' := bl2_sq (fun w => toC (bankZ f w))
-    have hw : ∀ w, l2 (toC (corrInM e (bankZ f) w)) = l2 (toC (bankZ f w)) := by
-      intro w
-      rcases w with b | b
-      · exact l2_signM e _ _
-      · rfl
-    simp only [hw] at hs
-    rw [← hs'] at hs
-    exact (pow_left_inj₀ (bl2_nonneg _) (bl2_nonneg _) two_ne_zero).1 hs
-  rw [h1]
-  exact l2_swap_bank (toC f)
+lemma bl2_bankZ (f : ZArr (Y × DWire) n) :
+    bl2 (fun w => toC (bankZ f w)) = l2 (toC f) := by
+  have hs := bl2_sq (fun w => toC (bankZ f w))
+  have hs' := bl2_sq (fun (j : DWire) (p : Y × (Fin n → ZMod 2)) => toC f ((p.1, j), p.2))
+  rw [l2_swap_bank (toC f)] at hs'
+  have h0 : ∀ c : Fin 8, l2 (toC (bankZ f (.inr c))) = 0 := by
+    intro c; unfold l2 toC; simp [bankZ]
+  rw [Fintype.sum_sum_type] at hs
+  simp only [h0, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow, Finset.sum_const_zero,
+    add_zero] at hs
+  have h : bl2 (fun w => toC (bankZ f w)) ^ 2 = l2 (toC f) ^ 2 := by rw [hs, hs']; rfl
+  exact (pow_left_inj₀ (bl2_nonneg _) (l2_nonneg _) two_ne_zero).1 h
 
 variable (e : Fin (m * k) → Fin n)
 
@@ -231,7 +279,7 @@ theorem nodeM_congr (he : Function.Injective e) (ds : Directions)
     (hchild : ∀ (j : Fin m) (u : ZArr Y n), l2 (toC (child j u) -
       ((List.finRange k).map fun c => kBit 1 (e (bitIdx j c))).prod (toC u)) ≤ δ)
     (hagree : ∀ (j : Fin m) (u : ZArr Y n), l2 (toC u) ≤ β → child j u = child' j u)
-    (f : ZArr (Y × NWire) n)
+    (f : ZArr (Y × DWire) n)
     (hβ : lipProd (program ds) * l2 (toC f) + errRun δ (program ds) 0 ≤ β) :
     nodeM e child 0 ds f = nodeM e child' 0 ds f := by
   have hchildV : ∀ (j : Fin m) (u : ZArr Y n),
@@ -250,13 +298,13 @@ theorem nodeM_congr (he : Function.Injective e) (ds : Directions)
     intro j u hu
     rw [l2_view he] at hu
     exact hagree j u (le_of_mul_le_mul_left hu hpos)
-  set B := corrInM e (bankZ f)
+  set B := bankZ f
   have hrun := runM_congr he child child' (by positivity) hchildV hagreeV (program ds)
     (program_gate_coeff ds) 0 B (fun w => view e (toC (B w))) (E := 0)
     (by rw [pow_zero, one_smul, sub_self]; unfold bl2 l2; simp) (by
       have h0 := errRun_smul (c := √(2 ^ (m * k))) (Real.sqrt_nonneg _) hδ (program ds) 0
       rw [mul_zero] at h0
-      rw [h0, pow_zero, one_mul, bl2_view e he, bl2_corrInM]
+      rw [h0, pow_zero, one_mul, bl2_view e he, bl2_bankZ]
       have := mul_le_mul_of_nonneg_left hβ (Real.sqrt_nonneg (2 ^ (m * k)))
       linarith)
   unfold nodeM
@@ -275,7 +323,7 @@ variable {r n : ℕ}
 
 lemma l2_toBank_le (R' : ℕ) (f : ZArr (Fin (NW * R') × Fin r) n) :
     l2 (toC (toBank R' f)) ≤ l2 (toC f) := by
-  let χ : ((Fin R' × Fin r) × NWire) × (Fin n → ZMod 2) → (Fin (NW * R') × Fin r) × (Fin n → ZMod 2) :=
+  let χ : ((Fin R' × Fin r) × DWire) × (Fin n → ZMod 2) → (Fin (NW * R') × Fin r) × (Fin n → ZMod 2) :=
     fun p => ((⟨NW * p.1.1.1 + wireOf.symm p.1.2, role_lt p.1.1.1.2 (wireOf.symm p.1.2).2⟩,
       p.1.1.2), p.2)
   have hχ : Function.Injective χ := by
@@ -287,7 +335,7 @@ lemma l2_toBank_le (R' : ℕ) (f : ZArr (Fin (NW * R') × Fin r) n) :
     have hi' := (wireOf.symm v').2
     have hg : (g : ℕ) = g' := by
       have := congrArg (· / NW) h1
-      simp only [Nat.mul_add_div hpos, Nat.div_eq_of_lt hi, Nat.div_eq_of_lt hi', add_zero] at this
+      simp only [Nat.mul_add_div hpos, Nat.div_eq_of_lt hi, Nat.div_eq_of_lt hi'] at this
       exact this
     have hv : wireOf.symm v = wireOf.symm v' := by
       have := congrArg (· % NW) h1

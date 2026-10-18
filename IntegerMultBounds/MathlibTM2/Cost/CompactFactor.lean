@@ -50,6 +50,11 @@ theorem compactFactorCost_linear (T : ℕ) (ds : ComplexFramedExecution.Directio
     fun x hx => Nat.mul_le_mul_left _ hx
   have hNWV1 : NW ≤ NW * (R * 2 ^ n * (r * w)) := Nat.le_mul_of_pos_right _ hV1
   have hVNW : R * 2 ^ n * (r * w) ≤ NW * (R * 2 ^ n * (r * w)) := Nat.le_mul_of_pos_left _ hNW
+  have hNB : NB ≤ 2 * NW := by rw [NB_eq, NW_eq]; norm_num
+  have hNBx : ∀ x, NB * x ≤ 2 * NW * x := fun x => Nat.mul_le_mul_right x hNB
+  have hs1 := hNBx (2 * (R * 2 ^ n * (r * w)) + 2)
+  have hs2 := hNBx (4 * (R * 2 ^ n * (r * w)) + 5)
+  have hs3 := hNBx (R * 2 ^ n * r * (6 * w + 4 * expZ u ds j + 14) + 4)
   unfold compactFactorCost
   split_ifs with hpiv
   · set s : Fin m := Fin.find _ hpiv

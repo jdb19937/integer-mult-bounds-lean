@@ -10,15 +10,16 @@ Natural-number bounds on the step bound `layerCost T ds u K ρ R₀ n r w j a₀
 `Node/LayerProc.lean`. At a node of level `j + 1` write `R = rowsAt R₀ j` for the rows of one
 wire, `V = R 2^n (r w)` for the volume of a wire (the volume of a child array), `W = R 2^n n`, and
 `X = NW (V + W)`; the level-`j + 1` array has volume `NW V`, so `X = V_{j+1} (1 + n / (r w))`.
-Let `F = factorCount (program ds)`, `G = gateCount (program ds)`, `c₂₅ = |Wires.Address 25|`.
+Let `F = factorCount (program ds)`, `G = gateCount (program ds)`, `Mo = monoCount (program ds)`.
 
 * `lc_leaf_nat`: `layerCost … 0 a₀ ≤ 200 u (R₀ 2^n (r w) + R₀ 2^n n)`.
-* `lc_signStage_le`: a sign stage costs at most `(4 m c₂₅ + 200 c₂₅ + 200) X`.
+* `lc_phaseInstr_le`: a slot phase costs at most `(4 m + 400) X`.
 * `lc_factor_nat`: the factor program of `(fw, g)` costs at most `cc + 2 B + 400 NW (V + W)`,
   for a child call within `cc` steps and basis changes within `B` steps each.
-* `lc_node_nat`: `layerCost … (j + 1) a₀ ≤ F (M + 2 B) + lcLin ds · X` when every child call
-  (offset `a₀ + s K bits u j`, `s < m`) is within `M` steps and every basis change within `B`
-  steps; `lcLin ds = 400 F + 50 G + 8 m c₂₅ + 500 c₂₅ + 500`.
+* `lc_mono_nat`: an exact instruction costs at most `2 B + 692 X`.
+* `lc_node_nat`: `layerCost … (j + 1) a₀ ≤ F M + 2 lcBas ds · B + lcLin ds · X` when every child
+  call (offset `a₀ + s K bits u j`, `s < m`) is within `M` steps and every basis change within `B`
+  steps; `lcBas ds = F + Mo`, `lcLin ds = 400 F + 100 G + 692 Mo + 500`.
 
 Hypotheses: `1 ≤ u, r, w, R₀`, `ρ < K`, the active bits fit (`a₀ + K · bits u (j + 1) ≤ n`) and
 the child exponents fit the word (`expZ u ds i ≤ w` for `i ≤ j`). The fit gives
@@ -147,11 +148,10 @@ lemma lc_X_ge {R n r w : ℕ} (hV1 : 1 ≤ R * 2 ^ n * (r * w)) :
   have h := Nat.le_mul_of_pos_left (R * 2 ^ n * (r * w) + R * 2 ^ n * n) hNW
   refine ⟨?_, ?_, ?_⟩ <;> omega
 
-/-- **The sign stage**: `signStageCost ≤ (4 m c₂₅ + 200 c₂₅ + 200) X`. -/
-theorem lc_signStage_le {u K ρ a₀ R n r w j : ℕ} (hF : LcFacts u K a₀ R n r w j) (hρ : ρ < K) :
-    signStageCost u j a₀ ρ K R n r w ≤
-      (4 * m * Fintype.card (Wires.Address 25) + 200 * Fintype.card (Wires.Address 25) + 200) *
-        (NW * (R * 2 ^ n * (r * w) + R * 2 ^ n * n)) := by
+/-- **A slot phase**: `phaseInstrCost ≤ (4 m + 400) X`. -/
+theorem lc_phaseInstr_le {u K ρ a₀ R n r w j : ℕ} (hF : LcFacts u K a₀ R n r w j) (hρ : ρ < K) :
+    phaseInstrCost u j a₀ ρ K R n r w ≤
+      (4 * m + 400) * (NW * (R * 2 ^ n * (r * w) + R * 2 ^ n * n)) := by
   obtain ⟨hX1, hXV, hXW⟩ := lc_X_ge hF.hV1
   have hNW : 1 ≤ NW := one_le_NW
   have hdiv : NW * R / NW = R := Nat.mul_div_cancel_left R (by omega)
@@ -169,17 +169,31 @@ theorem lc_signStage_le {u K ρ a₀ R n r w j : ℕ} (hF : LcFacts u K a₀ R n
     nlinarith [hF.hPV, hF.hnW, hF.ha₀, hF.hKn]
   have hNWR : NW * R ≤ NW * (R * 2 ^ n * (r * w) + R * 2 ^ n * n) :=
     Nat.mul_le_mul_left NW (hF.hRV.trans (Nat.le_add_right _ _))
-  have hc := Nat.mul_le_mul_left (Fintype.card (Wires.Address 25)) hsign
-  unfold signStageCost maskPrepCost
+  unfold phaseInstrCost maskPrepCost
   rw [hdiv]
   have h2R : 2 ^ n * R ≤ R * 2 ^ n * (r * w) := by
     have : 2 ^ n * R = R * 2 ^ n := Nat.mul_comm _ _
     have := hF.hPV
     omega
   have hjn := hF.hjn
-  have hc1 : Fintype.card (Wires.Address 25) ≤ Fintype.card (Wires.Address 25) *
-      (NW * (R * 2 ^ n * (r * w) + R * 2 ^ n * n)) := Nat.le_mul_of_pos_right _ hX1
   nlinarith [hF.ha₀, hF.hun, hF.hjle, hF.hk1, hF.hkn, hF.hKn, hF.hnW]
+
+/-- **A framed wire program**: `framedCost … cp ≤ cp + 100 X`. -/
+theorem lc_framed_le {u K a₀ R₀ n r w j : ℕ} (hF : LcFacts u K a₀ (rowsAt R₀ j) n r w j) (cp : ℕ) :
+    framedCost j u K R₀ cp ≤
+      cp + 100 * (NW * (rowsAt R₀ j * 2 ^ n * (r * w) + rowsAt R₀ j * 2 ^ n * n)) := by
+  obtain ⟨hX1, hXV, hXW⟩ := lc_X_ge hF.hV1
+  have hNWR : NW * rowsAt R₀ j ≤
+      NW * (rowsAt R₀ j * 2 ^ n * (r * w) + rowsAt R₀ j * 2 ^ n * n) :=
+    Nat.mul_le_mul_left NW (hF.hRV.trans (Nat.le_add_right _ _))
+  have hRX : rowsAt R₀ j ≤ NW * (rowsAt R₀ j * 2 ^ n * (r * w) + rowsAt R₀ j * 2 ^ n * n) :=
+    hF.hRV.trans hXV
+  have hnX : n ≤ NW * (rowsAt R₀ j * 2 ^ n * (r * w) + rowsAt R₀ j * 2 ^ n * n) :=
+    hF.hnW.trans hXW
+  have hKk := hF.hKk
+  have hLc := hF.hLc
+  unfold framedCost
+  omega
 
 /-- **The factor program**: `factorCost … g cc ≤ cc + 2 B + 400 NW (V + W)`. -/
 theorem lc_factor_nat (T : ℕ) (ds : ComplexFramedExecution.Directions)
@@ -215,6 +229,11 @@ theorem lc_factor_nat (T : ℕ) (ds : ComplexFramedExecution.Directions)
   have hNWV1 : NW ≤ NW * (R * 2 ^ n * (r * w)) := Nat.le_mul_of_pos_right _ hV1
   have hVNW : R * 2 ^ n * (r * w) ≤ NW * (R * 2 ^ n * (r * w)) := Nat.le_mul_of_pos_left _ hNW
   have hWNW : R * 2 ^ n * n ≤ NW * (R * 2 ^ n * n) := Nat.le_mul_of_pos_left _ hNW
+  have hNB : NB ≤ 2 * NW := by rw [NB_eq, NW_eq]; norm_num
+  have hNBx : ∀ x, NB * x ≤ 2 * NW * x := fun x => Nat.mul_le_mul_right x hNB
+  have hs1 := hNBx (2 * (R * 2 ^ n * (r * w)) + 2)
+  have hs2 := hNBx (4 * (R * 2 ^ n * (r * w)) + 5)
+  have hs3 := hNBx (R * 2 ^ n * r * (6 * w + 4 * expZ u ds j + 14) + 4)
   unfold factorCost
   split_ifs with hpiv
   · set s : Fin m := Fin.find _ hpiv
@@ -247,57 +266,106 @@ lemma lc_facMax_le (ds : ComplexFramedExecution.Directions)
       simp only [List.map_cons, List.foldr_cons]
       refine max_le ?_ (ih fun fw g hg => h fw g (List.mem_cons_of_mem _ hg))
       cases i with
-      | gate _ => exact Nat.zero_le _
       | factor fw g => exact h fw g List.mem_cons_self
+      | _ => exact Nat.zero_le _
 
-/-- The constant of the linear part of a node:
-`400 F + 50 G + 8 m c₂₅ + 500 c₂₅ + 500`. -/
-noncomputable def lcLin (ds : ComplexFramedExecution.Directions) : ℕ :=
-  400 * factorCount (program ds) + 50 * gateCount (program ds) +
-    8 * m * Fintype.card (Wires.Address 25) + 500 * Fintype.card (Wires.Address 25) + 500
+/-- `monoMax` is at most any bound of its values. -/
+lemma lc_monoMax_le (ds : ComplexFramedExecution.Directions) (f : Instr → ℕ) (b : ℕ)
+    (h : ∀ i ∈ program ds, f i ≤ b) : monoMax ds f ≤ b := by
+  unfold monoMax
+  generalize program ds = l at h
+  induction l with
+  | nil => simp
+  | cons i l ih =>
+      simp only [List.map_cons, List.foldr_cons]
+      exact max_le (h i List.mem_cons_self) (ih fun i' hi => h i' (List.mem_cons_of_mem _ hi))
 
-/-- **The node in natural numbers.** With every child call within `M` steps and every basis
-change within `B` steps, `layerCost … (j + 1) a₀ ≤ F (M + 2 B) + lcLin ds · NW (V + W)`. -/
-theorem lc_node_nat (T : ℕ) (ds : ComplexFramedExecution.Directions)
-    {u K ρ R₀ n r w j a₀ M B : ℕ}
+/-- **An exact instruction**: `monoCostN … ins ≤ 2 B + 692 X`, for basis changes within `B`
+steps each. -/
+theorem lc_mono_nat (T : ℕ) {j u K ρ a₀ R₀ n r w B : ℕ}
     (hu : 1 ≤ u) (hr : 1 ≤ r) (hw : 1 ≤ w) (hR₀ : 1 ≤ R₀) (hρ : ρ < K)
-    (hfit : a₀ + K * bits u (j + 1) ≤ n) (hTw : ∀ i ≤ j, expZ u ds i ≤ w)
-    (hM : ∀ s < m, layerCost T ds u K ρ R₀ n r w j (a₀ + s * (K * bits u j)) ≤ M)
+    (hfit : a₀ + K * bits u (j + 1) ≤ n)
     (hB : ∀ (vv : BinaryWalsh.Address m) (s : Fin m),
-      basisCostN T a₀ K ρ (K * bits u j) (rowsAt R₀ j) n (r * w) (bits u j) vv s ≤ B) :
-    layerCost T ds u K ρ R₀ n r w (j + 1) a₀ ≤
-      factorCount (program ds) * (M + 2 * B) +
-        lcLin ds * (NW * (rowsAt R₀ j * 2 ^ n * (r * w) + rowsAt R₀ j * 2 ^ n * n)) := by
+      basisCostN T a₀ K ρ (K * bits u j) (rowsAt R₀ j) n (r * w) (bits u j) vv s ≤ B)
+    (ins : Instr) :
+    monoCostN T j u K ρ a₀ R₀ n r w ins ≤
+      2 * B + 692 * (NW * (rowsAt R₀ j * 2 ^ n * (r * w) + rowsAt R₀ j * 2 ^ n * n)) := by
+  have hF : LcFacts u K a₀ (rowsAt R₀ j) n r w j :=
+    lcFacts_of hu hr hw (rowsAt_pos hR₀ j) hρ hfit
+  obtain ⟨hX1, hXV, hXW⟩ := lc_X_ge hF.hV1
+  have hV : rowsAt R₀ j * 2 ^ n * r * w = rowsAt R₀ j * 2 ^ n * (r * w) := by ring
+  cases ins with
+  | trans fw tv =>
+    simp only [monoCostN]
+    split_ifs with h
+    · have h1 := lc_framed_le hF (2 * basisCostN T a₀ K ρ (K * bits u j) (rowsAt R₀ j) n (r * w)
+        (bits u j) (tv + Pi.single (Fin.find _ h) 1) (Fin.find _ h) +
+        2 * (6 * (rowsAt R₀ j * 2 ^ n * r * w) + 6))
+      have h2 := hB (tv + Pi.single (Fin.find _ h) 1) (Fin.find _ h)
+      omega
+    · omega
+  | xor fw i j' =>
+    simp only [monoCostN]
+    have h1 := lc_framed_le hF (basisCostN T a₀ K ρ (K * bits u j) (rowsAt R₀ j) n (r * w)
+      (bits u j) (Pi.single i 1 + Pi.single j' 1) i)
+    have h2 := hB (Pi.single i 1 + Pi.single j' 1) i
+    omega
+  | phase fw i c =>
+    simp only [monoCostN]
+    have h1 := lc_phaseInstr_le hF hρ
+    rw [show 4 * m + 400 = 692 from rfl] at h1
+    omega
+  | factor fw g => simp only [monoCostN]; omega
+  | gate g => simp only [monoCostN]; omega
+
+/-- The multiplier of the basis changes of a node: `F + Mo`. -/
+noncomputable def lcBas (ds : ComplexFramedExecution.Directions) : ℕ :=
+  factorCount (program ds) + monoCount (program ds)
+
+/-- The constant of the linear part of a node: `400 F + 100 G + 692 Mo + 500`. -/
+noncomputable def lcLin (ds : ComplexFramedExecution.Directions) : ℕ :=
+  400 * factorCount (program ds) + 100 * gateCount (program ds) + 692 * monoCount (program ds) + 500
+
+lemma lc_NB_mul (x : ℕ) : NB * x ≤ 2 * (NW * x) := by
+  have hNB : NB ≤ 2 * NW := by rw [NB_eq, NW_eq]; norm_num
+  rw [← Nat.mul_assoc]; exact Nat.mul_le_mul_right x hNB
+
+/-- The gates: `gateCost ≤ 90 X`. -/
+lemma lc_gate_le {R n r w : ℕ} (hPr : R * 2 ^ n * r ≤ R * 2 ^ n * (r * w))
+    (hV1 : 1 ≤ R * 2 ^ n * (r * w)) :
+    gateCost R n r w ≤ 90 * (NW * (R * 2 ^ n * (r * w) + R * 2 ^ n * n)) := by
+  unfold gateCost
+  have hNW : 1 ≤ NW := one_le_NW
+  have hNB : NB ≤ 2 * NW := by rw [NB_eq, NW_eq]; norm_num
+  rw [← NB_card]
+  have h1 : NB * (R * 2 ^ n * r) * (11 * w + 24) ≤ 2 * NW * (R * 2 ^ n * r) * (11 * w + 24) :=
+    Nat.mul_le_mul_right _ (Nat.mul_le_mul_right _ hNB)
+  have h1' : NW * (R * 2 ^ n * r) * (11 * w + 24) ≤ 35 * (NW * (R * 2 ^ n * (r * w))) := by
+    have := Nat.mul_le_mul_left NW hPr
+    nlinarith
+  have h2 : NW * (R * 2 ^ n * (r * w)) ≤ NW * (R * 2 ^ n * (r * w) + R * 2 ^ n * n) :=
+    Nat.mul_le_mul_left NW (Nat.le_add_right _ _)
+  have h3 : NW ≤ NW * (R * 2 ^ n * (r * w) + R * 2 ^ n * n) :=
+    Nat.le_mul_of_pos_right _ (by omega)
+  have h4 : 2 * NW * (R * 2 ^ n * r) * (11 * w + 24) = 2 * (NW * (R * 2 ^ n * r) * (11 * w + 24)) := by
+    ring
+  omega
+
+/-- **The node assembly in natural numbers**: with factors within `cf` and exact instructions
+within `cm` steps, `nodeCost … + 4 ≤ F cf + Mo cm + (100 G + 500) X`. -/
+theorem lc_nodeCost_nat (ds : ComplexFramedExecution.Directions)
+    {u K ρ R₀ n r w j a₀ cf cm : ℕ}
+    (hu : 1 ≤ u) (hr : 1 ≤ r) (hw : 1 ≤ w) (hR₀ : 1 ≤ R₀) (hρ : ρ < K)
+    (hfit : a₀ + K * bits u (j + 1) ≤ n) (hTw : ∀ i ≤ j, expZ u ds i ≤ w) :
+    nodeCost ds u j K ρ a₀ (rowsAt R₀ j) n r w cf cm + 4 ≤
+      factorCount (program ds) * cf + monoCount (program ds) * cm +
+        (100 * gateCount (program ds) + 500) *
+          (NW * (rowsAt R₀ j * 2 ^ n * (r * w) + rowsAt R₀ j * 2 ^ n * n)) := by
   have hF : LcFacts u K a₀ (rowsAt R₀ j) n r w j :=
     lcFacts_of hu hr hw (rowsAt_pos hR₀ j) hρ hfit
   obtain ⟨hX1, hXV, hXW⟩ := lc_X_ge hF.hV1
   have hNW : 1 ≤ NW := one_le_NW
-  have hcf : facMax ds (fun _ g => factorCost T ds j u K ρ a₀ R₀ n r w g
-      (layerCost T ds u K ρ R₀ n r w j (a₀ + pivotOf g.2 * (K * bits u j)))) ≤
-      M + 2 * B + 400 * NW * (rowsAt R₀ j * 2 ^ n * (r * w) + rowsAt R₀ j * 2 ^ n * n) := by
-    refine lc_facMax_le ds _ _ fun fw g _ => ?_
-    refine le_trans (lc_factor_nat T ds g _ B hu hr hw hR₀ hρ hfit hTw hB) ?_
-    have := hM _ (lc_pivotOf_lt g.2)
-    omega
-  have hSS := lc_signStage_le hF hρ
-  have hgate : gateCost (rowsAt R₀ j) n r w ≤
-      43 * (NW * (rowsAt R₀ j * 2 ^ n * (r * w) + rowsAt R₀ j * 2 ^ n * n)) := by
-    unfold gateCost
-    have h1 : NW * (rowsAt R₀ j * 2 ^ n * r) * (11 * w + 24) ≤
-        35 * (NW * (rowsAt R₀ j * 2 ^ n * (r * w))) := by
-      have := Nat.mul_le_mul_left NW hF.hPr
-      nlinarith
-    have h2 : NW * (rowsAt R₀ j * 2 ^ n * (r * w)) ≤
-        NW * (rowsAt R₀ j * 2 ^ n * (r * w) + rowsAt R₀ j * 2 ^ n * n) :=
-      Nat.mul_le_mul_left NW (Nat.le_add_right _ _)
-    have h3 : NW ≤ NW * (rowsAt R₀ j * 2 ^ n * (r * w) + rowsAt R₀ j * 2 ^ n * n) :=
-      Nat.le_mul_of_pos_right _ (by have := hF.hV1; omega)
-    rw [show Fintype.card NWire = NW from rfl]
-    omega
-  have hexch : exchCost u (rowsAt R₀ j) n r w ≤
-      30 * (NW * (rowsAt R₀ j * 2 ^ n * (r * w) + rowsAt R₀ j * 2 ^ n * n)) := by
-    unfold exchCost
-    nlinarith [hF.hPr, hF.hun, hF.hnW]
+  have hgate := lc_gate_le hF.hPr hF.hV1
   have hE : expCost (gateCount (program ds)) (factorCount (program ds)) u j ≤
       4 * u + 2 * j + 8 + j * (8 * w + 12) := lc_expCost_le fun i hi => by
     rw [← expZ_eq_expSeq]; exact hTw i hi.le
@@ -310,27 +378,62 @@ theorem lc_node_nat (T : ℕ) (ds : ComplexFramedExecution.Directions)
     Nat.mul_le_mul_left NW (Nat.le_add_right _ _)
   have hNW1 : NW ≤ NW * (rowsAt R₀ j * 2 ^ n * (r * w) + rowsAt R₀ j * 2 ^ n * n) :=
     Nat.le_mul_of_pos_right _ (by have := hF.hV1; omega)
-  have h1 := Nat.mul_le_mul_left (factorCount (program ds)) hcf
+  have hV : rowsAt R₀ j * 2 ^ n * r * w = rowsAt R₀ j * 2 ^ n * (r * w) := by ring
   have h2 := Nat.mul_le_mul_left (gateCount (program ds)) hgate
-  have h3 := Nat.mul_le_mul_left (Fintype.card (Wires.Address 25)) hexch
-  simp only [layerCost]
-  unfold nodeCost lcLin
+  unfold nodeCost
+  rw [hV]
   have hjw := hF.hjw
   have hun := hF.hun
   have hjle := hF.hjle
   have hnW := hF.hnW
   have hwV := hF.hwV
-  generalize Fintype.card (Wires.Address 25) = c25 at *
   generalize factorCount (program ds) = F at *
   generalize gateCount (program ds) = G at *
+  generalize monoCount (program ds) = Mo at *
   generalize rowsAt R₀ j * 2 ^ n * (r * w) = V at *
   generalize rowsAt R₀ j * 2 ^ n * n = Wn at *
   have := Nat.zero_le (G * (NW * (V + Wn)))
-  have := Nat.zero_le (c25 * (NW * (V + Wn)))
-  have := Nat.zero_le (m * c25 * (NW * (V + Wn)))
-  have := Nat.zero_le (F * (NW * (V + Wn)))
   have := Nat.zero_le (NW * (V + Wn))
-  linarith
+  nlinarith
+
+/-- The node assembly with factors within `M + 2 B + 400 X` and exact instructions within
+`2 B + 692 X` steps. -/
+lemma lc_assemble {F Mo G cf cm M B X N : ℕ} (hN : N ≤ F * cf + Mo * cm + (100 * G + 500) * X)
+    (hcf : cf ≤ M + 2 * B + 400 * X) (hcm : cm ≤ 2 * B + 692 * X) :
+    N ≤ F * M + 2 * (F + Mo) * B + (400 * F + 100 * G + 692 * Mo + 500) * X := by
+  have h1 := Nat.mul_le_mul_left F hcf
+  have h2 := Nat.mul_le_mul_left Mo hcm
+  nlinarith
+
+/-- **The node in natural numbers.** With every child call within `M` steps and every basis
+change within `B` steps, `layerCost … (j + 1) a₀ ≤ F M + 2 lcBas ds · B + lcLin ds · NW (V + W)`. -/
+theorem lc_node_nat (T : ℕ) (ds : ComplexFramedExecution.Directions)
+    {u K ρ R₀ n r w j a₀ M B : ℕ}
+    (hu : 1 ≤ u) (hr : 1 ≤ r) (hw : 1 ≤ w) (hR₀ : 1 ≤ R₀) (hρ : ρ < K)
+    (hfit : a₀ + K * bits u (j + 1) ≤ n) (hTw : ∀ i ≤ j, expZ u ds i ≤ w)
+    (hM : ∀ s < m, layerCost T ds u K ρ R₀ n r w j (a₀ + s * (K * bits u j)) ≤ M)
+    (hB : ∀ (vv : BinaryWalsh.Address m) (s : Fin m),
+      basisCostN T a₀ K ρ (K * bits u j) (rowsAt R₀ j) n (r * w) (bits u j) vv s ≤ B) :
+    layerCost T ds u K ρ R₀ n r w (j + 1) a₀ ≤
+      factorCount (program ds) * M + 2 * lcBas ds * B +
+        lcLin ds * (NW * (rowsAt R₀ j * 2 ^ n * (r * w) + rowsAt R₀ j * 2 ^ n * n)) := by
+  have hcf : facMax ds (fun _ g => factorCost T ds j u K ρ a₀ R₀ n r w g
+      (layerCost T ds u K ρ R₀ n r w j (a₀ + pivotOf g.2 * (K * bits u j)))) ≤
+      M + 2 * B + 400 * NW * (rowsAt R₀ j * 2 ^ n * (r * w) + rowsAt R₀ j * 2 ^ n * n) := by
+    refine lc_facMax_le ds _ _ fun fw g _ => ?_
+    refine le_trans (lc_factor_nat T ds g _ B hu hr hw hR₀ hρ hfit hTw hB) ?_
+    have := hM _ (lc_pivotOf_lt g.2)
+    omega
+  have hcm : monoMax ds (monoCostN T j u K ρ a₀ R₀ n r w) ≤
+      2 * B + 692 * (NW * (rowsAt R₀ j * 2 ^ n * (r * w) + rowsAt R₀ j * 2 ^ n * n)) :=
+    lc_monoMax_le ds _ _ fun ins _ => lc_mono_nat T hu hr hw hR₀ hρ hfit hB ins
+  have hN := lc_nodeCost_nat ds (cf := facMax ds (fun _ g => factorCost T ds j u K ρ a₀ R₀ n r w g
+      (layerCost T ds u K ρ R₀ n r w j (a₀ + pivotOf g.2 * (K * bits u j)))))
+    (cm := monoMax ds (monoCostN T j u K ρ a₀ R₀ n r w)) hu hr hw hR₀ hρ hfit hTw
+  rw [Nat.mul_assoc 400 NW] at hcf
+  simp only [layerCost]
+  unfold lcLin lcBas
+  exact lc_assemble hN hcf hcm
 
 /-! ### The leaf -/
 

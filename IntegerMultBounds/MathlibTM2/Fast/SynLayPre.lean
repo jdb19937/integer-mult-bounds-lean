@@ -45,7 +45,7 @@ section Regs
 
 variable {A : ℕ}
 
-theorem slyT_eq (c : Fin 64) : slyT c = reg (BReg := SXReg) (.wtmp (wireOf (Fin.castLE sly_NW c))) :=
+theorem slyT_eq (c : Fin 64) : slyT c = reg (BReg := SXReg) (.wtmp (.inl (wireOf (Fin.castLE sly_NW c)))) :=
   rfl
 
 @[simp] theorem synIdle_slyT (io P₀ : List (Fin (A + 4))) (c : Fin 64) :

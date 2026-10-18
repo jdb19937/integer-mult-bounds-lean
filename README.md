@@ -8,15 +8,14 @@
 `Turing.FinTM2` machine multiplies every pair of natural numbers, with standard
 binary input/output encodings, in worst-case time `O(n (log n)^(1-kappa))`.
 The construction proves the positive saving
-`kappa = 651/2^39` (about `2^-29.65`), exposed by `MathlibTM2.mulInTime`, where `n` is the
+`kappa = 88279/2^46` (about `2^-29.57`), exposed by `MathlibTM2.mulInTime`, where `n` is the
 total encoded input length. See [the completed plan](plan/C-mathlib-end-to-end.md).
 
 The running multiplier combines linear direct CRT routing with compact controls
-and seven-eighths-power chunks `K = ⌊d^(7/8)⌋`. It uses rounded synthetic layers. Its complex
-finite-network supplier is the size-25 mixer network (`Networks.Mixer`), whose branching exponent is
-`1-25/10^10`. Its parameters are `epsilon = 31/64`, `c = 7/8`, `lambda = 1-249/10^11` and
-`lambda' = 1-21/2^33`. Internal parameters are exact dyadic rationals; the public
-saving is exactly the binding layer margin `epsilon (1-lambda')`. Complete input preparation, distribution, transforms,
+and seven-eighths-power chunks `K = ⌊d^(7/8)⌋`. It uses rounded synthetic layers on the T16 node (73 slots, 14336 data
+roles, 1,041,408 children, so `log_73 (F/NW) < 999/1000`). Its parameters are `epsilon = 31/64`,
+`c = 7/8`, `lambda = 1-28/10^10` and `lambda' = 1-23/2^33`. The public saving is the binding layout
+margin `epsilon c (1-tau)`, `tau = 1-296/10^11`, rounded down to `2^-46`. Complete input preparation, distribution, transforms,
 output and cleanup are included in the fixed-machine proof. The public saving
 is more than `2^36` times the historical M2 saving `2^-66`, as an exponent improvement.
 

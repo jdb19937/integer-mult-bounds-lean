@@ -5,11 +5,13 @@ public import IntegerMultBounds.MathlibTM2.Layer.Columns
 /-!
 # A network node on arrays with spectators
 
-At a node the spectator carries the wire role, so an array on `Y × NWire` with `m · k` active
-bits is a bank of arrays on `Y`. The node applies the source correction, runs the network
+At a node the spectator carries the data family, so an array on `Y × DWire` with `m · k` active
+bits is a bank of arrays on `Y`; the private centres start at zero. The node runs the network
 program with each factor `(q, v)` implemented by `facImpl` — a change of basis, the forward
-child on one slot (conjugated for `q = -1`), and the change of basis again — and applies the
-sink correction. `nodeA_correct`: the node applies `C` to every active bit.
+child on one slot (conjugated for `q = -1`), and the change of basis again —, translations and
+slot XORs as pullbacks of the columns and slot phases as multiplications. On column arrays every
+instruction is the T16 operator in every column (`slice_runWith`), so the node applies `C` to
+every active bit (`nodeA_correct`, from `Impl.layerProgram_cAll`).
 -/
 
 @[expose] public section
@@ -19,6 +21,7 @@ namespace IntegerMultBounds.MathlibTM2.Layer
 
 open IntegerMultBounds.Networks BinaryWalsh BinaryPhase BinaryColumns ComplexEndpoints
   ComplexFramedExecution
+open IntegerMultBounds.Networks.Certificates.T16
 
 
 variable {Y : Type} {k : ℕ}
@@ -119,30 +122,49 @@ theorem facImpl_eq (g : ZMod 4 × BinaryWalsh.Address m) (hq : g.1 = 1 ∨ g.1 =
     funext p
     simp [lift, vf, vectorFactor_zero]
 
+/-! ### Instructions on banks -/
+
+/-- The slot phase `i^{c x_i}` in every column. -/
+noncomputable def phaseArr (i : Fin m) (c : ZMod 4) (u : Arr Y (m * k)) : Arr Y (m * k) :=
+  fun p => (∏ col : Fin k, BinaryPhase.phase (c * bitLift (toCols p.2 col i))) * u p
+
+/-- Execute one instruction on a bank of spectator arrays, with factors implemented by `fac`. -/
+noncomputable def execWith (fac : ZMod 4 × BinaryWalsh.Address m → Arr Y (m * k) → Arr Y (m * k)) :
+    Instr → (NWire → Arr Y (m * k)) → (NWire → Arr Y (m * k))
+  | .factor w g, x => Function.update x w (fac g (x w))
+  | .gate g, x => FramedCircuit.moduleGate g x
+  | .trans w v, x => Function.update x w (pullArr (· + v) (x w))
+  | .xor w i j, x => Function.update x w (pullArr (Impl.xorMap i j) (x w))
+  | .phase w i c, x => Function.update x w (phaseArr i c (x w))
+
+/-- Execute a program on a bank, with factors implemented by `fac`. -/
+noncomputable def runWith (fac : ZMod 4 × BinaryWalsh.Address m → Arr Y (m * k) → Arr Y (m * k)) :
+    List Instr → (NWire → Arr Y (m * k)) → (NWire → Arr Y (m * k))
+  | [], x => x
+  | i :: rest, x => runWith fac rest (execWith fac i x)
+
+lemma runWith_append (fac : ZMod 4 × BinaryWalsh.Address m → Arr Y (m * k) → Arr Y (m * k))
+    (p q : List Instr) (x : NWire → Arr Y (m * k)) :
+    runWith fac (p ++ q) x = runWith fac q (runWith fac p x) := by
+  induction p generalizing x with
+  | nil => rfl
+  | cons i rest ih => exact ih _
+
 /-! ### The node -/
 
 variable (k)
 
-/-- The array of each wire. -/
-def bankOf (f : Arr (Y × NWire) (m * k)) : NWire → Arr Y (m * k) := fun w p => f ((p.1, w), p.2)
+/-- The array of each wire: the data families, and zero on the private centres. -/
+def bankOf (f : Arr (Y × DWire) (m * k)) : NWire → Arr Y (m * k)
+  | .inl j => fun p => f ((p.1, j), p.2)
+  | .inr _ => 0
 
-/-- Reassemble an array from the arrays of the wires. -/
-def unbank (B : NWire → Arr Y (m * k)) : Arr (Y × NWire) (m * k) := fun p => B p.1.2 (p.1.1, p.2)
-
-/-- Source correction: the sign character of each X terminal in every column. -/
-noncomputable def correctInputA (B : NWire → Arr Y (m * k)) : NWire → Arr Y (m * k)
-  | Sum.inl b => lift (fun g => signColumns k (terminalVector b) g) (B (Sum.inl b))
-  | Sum.inr i => B (Sum.inr i)
-
-/-- Sink correction and the undoing of the signed bank exchange. -/
-noncomputable def correctOutputA (B : NWire → Arr Y (m * k)) : NWire → Arr Y (m * k)
-  | Sum.inl b => Complex.I ^ (27 * k) • lift (fun g => signColumns k (terminalVector b) g) (B (Sum.inr (Sum.inl b)))
-  | Sum.inr (Sum.inl b) => -B (Sum.inl b)
-  | Sum.inr (Sum.inr s) => B (Sum.inr (Sum.inr s))
+/-- Reassemble an array from the arrays of the data families. -/
+def unbank (B : NWire → Arr Y (m * k)) : Arr (Y × DWire) (m * k) := fun p => B (.inl p.1.2) (p.1.1, p.2)
 
 /-- One node of the layer recursion. -/
-noncomputable def nodeA (ds : Directions) (f : Arr (Y × NWire) (m * k)) : Arr (Y × NWire) (m * k) :=
-  unbank k (correctOutputA k (runWith facImpl (program ds) (correctInputA k (bankOf k f))))
+noncomputable def nodeA (ds : Directions) (f : Arr (Y × DWire) (m * k)) : Arr (Y × DWire) (m * k) :=
+  unbank k (runWith facImpl (program ds) (bankOf k f))
 
 variable {k}
 
@@ -174,92 +196,175 @@ lemma slice_moduleGate (y : Y) (g : Circuit.Gate NWire ℚ) (B : NWire → Arr Y
     rfl
   · simp [Function.update_of_ne hw]
 
-lemma forall₂_right {α β : Type*} {R : α → β → Prop} :
-    ∀ {l₁ : List α} {l₂ : List β}, List.Forall₂ R l₁ l₂ → ∀ b ∈ l₂, ∃ a ∈ l₁, R a b
-  | _, _, .nil, b, hb => by simp at hb
-  | _, _, .cons hab rest, b, hb => by
-      rcases List.mem_cons.1 hb with rfl | hb
-      · exact ⟨_, List.mem_cons_self .., hab⟩
-      · obtain ⟨a, ha, h⟩ := forall₂_right rest b hb
-        exact ⟨a, List.mem_cons_of_mem _ ha, h⟩
+/-! ### The column representation -/
 
-/-- Every factor of the program comes from the direction lists. -/
-lemma factor_mem_lowerSkel (sk : List Skel) (ds : Directions) (w : NWire)
-    (g : ZMod 4 × BinaryWalsh.Address m) (h : Instr.factor w g ∈ lowerSkel sk ds) :
-    ∃ gs ∈ ds, g ∈ gs := by
-  induction sk generalizing ds with
-  | nil => simp [lowerSkel] at h
-  | cons s rest ih =>
-      cases s with
-      | edge w' =>
-          simp only [lowerSkel, List.mem_append, List.mem_map, List.mem_reverse] at h
-          rcases h with ⟨g', hg', he⟩ | h
-          · cases he
-            cases ds with
-            | nil => simp at hg'
-            | cons gs ds => exact ⟨gs, List.mem_cons_self .., hg'⟩
-          · obtain ⟨gs, hgs, hg⟩ := ih ds.tail h
-            exact ⟨gs, List.mem_of_mem_tail hgs, hg⟩
-      | gate g' =>
-          simp only [lowerSkel, List.mem_cons, reduceCtorEq, false_or] at h
-          exact ih ds h
+/-- The T16 operators in every column. -/
+noncomputable def ρcols (k : ℕ) :
+    Module.End ℂ (BinaryWalsh.Arrays 73) →* Module.End ℂ (BinaryColumns.Arrays 73 k) where
+  toFun := BinaryColumns.tensorColumns k
+  map_one' := BinaryColumns.tensorColumns_one
+  map_mul' := BinaryColumns.tensorColumns_mul
 
-/-- Slicing commutes with running the program when the factors are the lifted vendored ones. -/
-lemma slice_runWith (y : Y) (p : List Instr)
-    (hp : ∀ w g, Instr.factor w g ∈ p → g.1 = 1 ∨ g.1 = -1) (B : NWire → Arr Y (m * k)) :
-    (fun w => slice y (runWith facImpl p B w)) = runWith (vf k) p (fun w => slice y (B w)) := by
-  induction p generalizing B with
+lemma liftColumns_pull (T : Module.End ℂ (BinaryWalsh.Arrays 73))
+    (σ : BinaryWalsh.Address 73 → BinaryWalsh.Address 73) (hT : ∀ f x, T f x = f (σ x)) :
+    ∀ (l : List (Fin k)), l.Nodup → ∀ (f : BinaryColumns.Arrays 73 k) x,
+      (l.map fun j => BinaryColumns.liftColumn j T).prod f x =
+        f (fun c => if c ∈ l then σ (x c) else x c) := by
+  intro l hl
+  induction l with
+  | nil => intro f x; simp
+  | cons j l ih =>
+    intro f x
+    obtain ⟨hj, hl⟩ := List.nodup_cons.mp hl
+    simp only [List.map_cons, List.prod_cons, Module.End.mul_apply]
+    change T (fun y => _) (x j) = _
+    rw [hT]
+    simp only [ih hl]
+    congr 1
+    funext c
+    by_cases hc : c = j
+    · subst hc; simp [hj]
+    · simp [hc, Function.update_of_ne hc]
+
+lemma ρcols_pull (T : Module.End ℂ (BinaryWalsh.Arrays 73))
+    (σ : BinaryWalsh.Address 73 → BinaryWalsh.Address 73) (hT : ∀ f x, T f x = f (σ x))
+    (f : BinaryColumns.Arrays 73 k) (x : BinaryColumns.Address 73 k) :
+    ρcols k T f x = f (fun c => σ (x c)) := by
+  change (List.ofFn fun j : Fin k => BinaryColumns.liftColumn j T).prod f x = _
+  rw [List.ofFn_eq_map, liftColumns_pull T σ hT _ (List.nodup_finRange k)]
+  simp
+
+lemma liftColumns_mul (T : Module.End ℂ (BinaryWalsh.Arrays 73))
+    (φ : BinaryWalsh.Address 73 → ℂ) (hT : ∀ f x, T f x = φ x * f x) :
+    ∀ (l : List (Fin k)), l.Nodup → ∀ (f : BinaryColumns.Arrays 73 k) x,
+      (l.map fun j => BinaryColumns.liftColumn j T).prod f x = (l.map fun c => φ (x c)).prod * f x := by
+  intro l hl
+  induction l with
+  | nil => intro f x; simp
+  | cons j l ih =>
+    intro f x
+    obtain ⟨hj, hl⟩ := List.nodup_cons.mp hl
+    simp only [List.map_cons, List.prod_cons, Module.End.mul_apply]
+    change T (fun y => _) (x j) = _
+    rw [hT]
+    simp only [ih hl, Function.update_eq_self]
+    ring
+
+lemma ρcols_mul (T : Module.End ℂ (BinaryWalsh.Arrays 73)) (φ : BinaryWalsh.Address 73 → ℂ)
+    (hT : ∀ f x, T f x = φ x * f x) (f : BinaryColumns.Arrays 73 k) (x : BinaryColumns.Address 73 k) :
+    ρcols k T f x = (∏ c : Fin k, φ (x c)) * f x := by
+  change (List.ofFn fun j : Fin k => BinaryColumns.liftColumn j T).prod f x = _
+  rw [List.ofFn_eq_map, liftColumns_mul T φ hT _ (List.nodup_finRange k), ← List.ofFn_eq_map,
+    List.prod_ofFn]
+
+lemma ρcols_kernel (g : ZMod 4 × BinaryWalsh.Address m) :
+    ρcols k (BinaryWalsh.kernel g.1 g.2) = BinaryColumns.vectorFactor k g := by
+  have h := BinaryColumns.tensorColumns_kernel_prod (k := k) [g]
+  change BinaryColumns.tensorColumns k _ = _
+  simpa using h
+
+/-- On column arrays, an instruction is its T16 operator in every column. -/
+lemma slice_execWith (y : Y) (i : Impl.KInstr NWire) (hi : i.Fit) (B : NWire → Arr Y (m * k)) :
+    (fun w => slice y (execWith facImpl (ofK i) B w)) =
+      i.run (ρcols k) (fun w => slice y (B w)) := by
+  cases i with
+  | factor w g =>
+    funext w'
+    simp only [ofK, execWith, Impl.KInstr.run]
+    by_cases hw : w' = w
+    · subst hw
+      simp only [Function.update_self]
+      rw [facImpl_eq g hi, slice_lift, ρcols_kernel]
+      rfl
+    · simp [Function.update_of_ne hw]
+  | gate g => exact slice_moduleGate y g B
+  | trans w v =>
+    funext w'
+    simp only [ofK, execWith, Impl.KInstr.run]
+    by_cases hw : w' = w
+    · subst hw
+      simp only [Function.update_self]
+      funext x
+      rw [ρcols_pull _ (· + v) (fun f x => Impl.kernel_two_apply v f x)]
+      simp [slice, pullArr]
+    · simp [Function.update_of_ne hw]
+  | xor w i j =>
+    funext w'
+    simp only [ofK, execWith, Impl.KInstr.run]
+    by_cases hw : w' = w
+    · subst hw
+      simp only [Function.update_self]
+      funext x
+      rw [ρcols_pull _ (Impl.xorMap i j) (fun f x => rfl)]
+      simp [slice, pullArr]
+    · simp [Function.update_of_ne hw]
+  | phase w i c =>
+    funext w'
+    simp only [ofK, execWith, Impl.KInstr.run]
+    by_cases hw : w' = w
+    · subst hw
+      simp only [Function.update_self]
+      funext x
+      rw [ρcols_mul _ (fun x => BinaryPhase.phase (c * bitLift (x i))) (fun f x => rfl)]
+      simp [slice, phaseArr]
+    · simp [Function.update_of_ne hw]
+
+/-- **Slicing a run.** On column arrays the node program is the T16 layer program in every
+column. -/
+lemma slice_runWith (y : Y) (l : List (Impl.KInstr NWire)) (hl : ∀ i ∈ l, i.Fit)
+    (B : NWire → Arr Y (m * k)) :
+    (fun w => slice y (runWith facImpl (l.map ofK) B w)) =
+      Impl.runK (ρcols k) l (fun w => slice y (B w)) := by
+  induction l generalizing B with
   | nil => rfl
   | cons i rest ih =>
-      have hrest : ∀ w g, Instr.factor w g ∈ rest → g.1 = 1 ∨ g.1 = -1 :=
-        fun w g hg => hp w g (List.mem_cons_of_mem _ hg)
-      simp only [runWith]
-      rw [ih hrest]
-      congr 1
-      cases i with
-      | factor w g =>
-          funext w'
-          simp only [execWith]
-          by_cases hw : w' = w
-          · subst hw
-            simp only [Function.update_self]
-            rw [facImpl_eq g (hp w' g (List.mem_cons_self ..)), slice_lift]
-          · simp [Function.update_of_ne hw]
-      | gate g => exact slice_moduleGate y g B
+    simp only [List.map_cons, runWith, Impl.runK]
+    rw [ih (fun i' h' => hl i' (List.mem_cons_of_mem _ h')),
+      slice_execWith y i (hl i List.mem_cons_self)]
 
-/-- A node of the layer recursion applies `C` to every active bit. -/
-theorem nodeA_correct (ds : Directions) (hd : ComplexPhaseBudget.Realizes ds)
-    (f : Arr (Y × NWire) (m * k)) : nodeA k ds f = Cfull (Y × NWire) (m * k) f := by
-  have hq : ∀ w g, Instr.factor w g ∈ program ds → g.1 = 1 ∨ g.1 = -1 := by
-    intro w g hg
-    obtain ⟨gs, hgs, hg⟩ := factor_mem_lowerSkel _ ds w g hg
-    obtain ⟨_, -, he⟩ := forall₂_right hd gs hgs
-    exact he.1 g hg
-  funext ⟨⟨y, w⟩, b⟩
-  have hin : (fun v => slice y (correctInputA k (bankOf k f) v)) =
-      correctInput k (fun v => slice y (bankOf k f v)) := by
-    funext v; rcases v with v | v <;> simp [correctInputA, correctInput, slice_lift]
-  have hout : ∀ B : NWire → Arr Y (m * k), (fun v => slice y (correctOutputA k B v)) =
-      correctOutput k (fun v => slice y (B v)) := by
-    intro B; funext v
-    rcases v with v | v | v
-    · change slice y (Complex.I ^ (27 * k) • lift _ (B _)) = _
-      rw [slice_csmul, slice_lift]; rfl
-    · change slice y (-B _) = _
-      rw [slice_neg]; rfl
-    · rfl
-  have key := congrFun (congrArg (fun F => F w) (hout (runWith facImpl (program ds)
-    (correctInputA k (bankOf k f))))) (toCols b)
-  simp only at key
-  rw [slice_runWith y _ hq, hin, node_correct k ds hd] at key
+/-- `C_all` is the product of the coordinate kernels. -/
+lemma cAll_eq : Streams.cAll =
+    ((coordinateKernels 73).map fun g => BinaryWalsh.kernel g.1 g.2).prod := by
+  have h1 : (Multiplicative.ofAdd fun _ : Fin 73 => (1 : ZMod 4)) =
+      ((List.finRange 73).map fun i => Multiplicative.ofAdd (Pi.single i (1 : ZMod 4))).prod := by
+    rw [show ((List.finRange 73).map fun i => Multiplicative.ofAdd (Pi.single i (1 : ZMod 4))) =
+      (((List.finRange 73).map fun i => Pi.single i (1 : ZMod 4)).map Multiplicative.ofAdd) by
+        rw [List.map_map]; rfl, ← ofAdd_list_prod, ← Fin.sum_univ_def, Finset.univ_sum_single]
+  rw [Streams.cAll, h1, map_list_prod, coordinateKernels, List.ofFn_eq_map, List.map_map,
+    List.map_map]
+  refine congrArg List.prod (List.map_congr_left fun i _ => ?_)
+  simp [Streams.basisOp_single, Streams.stdBasis]
+
+lemma ρcols_cAll : ρcols k Streams.cAll = (fullFrame (h := 73) k).toLinearMap := by
+  rw [fullFrame_coordinate_product, cAll_eq]
+  exact BinaryColumns.tensorColumns_kernel_prod (coordinateKernels 73)
+
+/-- Every family is a stream unit of some replica, port and stream. -/
+lemma family_streamUnit (j : DWire) :
+    ∃ r a : ℕ, r < 16 ∧ a < 112 ∧ ∃ i : Fin 8, Streams.streamUnit r a i = Sum.inl j := by
+  refine ⟨j.val / 896, j.val % 112, by omega, by omega, ⟨(j.val % 896) / 112, by omega⟩, ?_⟩
+  simp only [Streams.streamUnit, Streams.famIdx, Sum.inl.injEq]
+  ext
+  simp only
+  omega
+
+/-- **A node of the layer recursion applies `C` to every active bit.** -/
+theorem nodeA_correct (ds : Directions) (_hd : ComplexPhaseBudget.Realizes ds)
+    (f : Arr (Y × DWire) (m * k)) : nodeA k ds f = Cfull (Y × DWire) (m * k) f := by
+  funext ⟨⟨y, j⟩, b⟩
+  obtain ⟨r, a, hr, ha, i, hj⟩ := family_streamUnit j
+  have key := congrFun (congrFun (slice_runWith y Impl.layerProgram Impl.layerProgram_fit
+    (bankOf k f)) (Sum.inl j)) (toCols b)
+  rw [← program_eq ds] at key
+  rw [← hj, Impl.layerProgram_cAll (ρcols k) _ hr ha i, hj, ρcols_cAll] at key
   have hb : b = ofCols (toCols b) := (ofCols_toCols b).symm
-  calc nodeA k ds f ((y, w), b)
-      = slice y (correctOutputA k (runWith facImpl (program ds) (correctInputA k (bankOf k f))) w)
-          (toCols b) := by simp [nodeA, unbank, slice]
-    _ = fullFrame k (slice y (bankOf k f w)) (toCols b) := key
-    _ = lift (fun g => fullFrame k g) (bankOf k f w) (y, b) := rfl
-    _ = Cfull Y (m * k) (bankOf k f w) (y, b) := by rw [lift_fullFrame]
-    _ = Cfull (Y × NWire) (m * k) f ((y, w), b) := by
-        rw [Cfull_respec (fun y : Y => (y, w)) f y b]; rfl
+  calc nodeA k ds f ((y, j), b)
+      = slice y (runWith facImpl (program ds) (bankOf k f) (Sum.inl j)) (toCols b) := by
+        simp [nodeA, unbank, slice]
+    _ = fullFrame k (slice y (bankOf k f (Sum.inl j))) (toCols b) := key
+    _ = lift (fun g => fullFrame k g) (bankOf k f (Sum.inl j)) (y, b) := rfl
+    _ = Cfull Y (m * k) (bankOf k f (Sum.inl j)) (y, b) := by rw [lift_fullFrame]
+    _ = Cfull (Y × DWire) (m * k) f ((y, j), b) := by
+        rw [Cfull_respec (fun y : Y => (y, j)) f y b]; rfl
 
 end IntegerMultBounds.MathlibTM2.Layer

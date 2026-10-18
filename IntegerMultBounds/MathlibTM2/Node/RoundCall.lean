@@ -494,8 +494,8 @@ noncomputable def childCallR (fw : NWire) (s : ℕ) (cp : Pr P (nT BReg) Q A U) 
 
 /-- The step bound of `childCallR` on wires of `N` symbols. -/
 noncomputable def childCostR (N Lc s cc : ℕ) : ℕ :=
-  (NW * (2 * N + 2) + 1) + (2 * N + 2) + (2 * N + 2) + callCostR Lc s cc + (4 * N + 4) +
-    (2 * N + 2) + (2 * N + 2) + (NW * (4 * N + 5) + 1) + (2 * N + 2)
+  (NB * (2 * N + 2) + 1) + (2 * N + 2) + (2 * N + 2) + callCostR Lc s cc + (4 * N + 4) +
+    (2 * N + 2) + (2 * N + 2) + (NB * (4 * N + 5) + 1) + (2 * N + 2)
 
 /-- **The child call on a wire with an empty `Tc`.** From the node-internal state at level
 `j + 1` with the child's slot width `Lc` and row count, `Tc` empty and the wires holding the bank
@@ -650,11 +650,11 @@ theorem childCallR_exec {bcRest : BReg → List (Fin (A + 4)) → Prop}
   refine ⟨v₉, _, by rw [hu₉, hu₈, hu₇, hu₆, hu₅, hu₄, hu₃, hu₂, hu₁], ?_,
     Exec.cast (Exec.seq he₁ (Exec.seq he₂ (Exec.seq he₃ (Exec.seq he₄ (Exec.seq he₅
       (Exec.seq he₆ (Exec.seq he₇ (Exec.seq he₈ he₉)))))))) rfl ?_⟩
-  · have hsum : ((otherW fw).map fun x => 2 * (W x).length + 2).sum ≤ NW * (2 * N + 2) := by
+  · have hsum : ((otherW fw).map fun x => 2 * (W x).length + 2).sum ≤ NB * (2 * N + 2) := by
       rw [List.map_congr_left (g := fun _ => 2 * N + 2) (fun x _ => by rw [hWN])]
       simp only [List.map_const', List.sum_replicate, smul_eq_mul]
       exact Nat.mul_le_mul_right _ (length_otherW_le fw)
-    have hlo : (otherW fw).reverse.length * (4 * N + 5) ≤ NW * (4 * N + 5) := by
+    have hlo : (otherW fw).reverse.length * (4 * N + 5) ≤ NB * (4 * N + 5) := by
       rw [List.length_reverse]; exact Nat.mul_le_mul_right _ (length_otherW_le fw)
     dsimp only
     rw [h1fw, hWN, h2t, List.length_reverse, hWN, h4io, hYN, h5io, hYN, h6t, List.length_reverse,

@@ -10,7 +10,7 @@ import Mathlib.Data.Sym.Sym2.Init
 
 `layerZ u ds R₀ j e` is the function the layer machine computes on an array with `W ^ j R₀` rows: at
 level `0` it applies the doubled kernel `k2` to each of the `u` active bits `e`; at level `j + 1`
-the `m · bits u j` active bits are split into `m` slots, the rows into the `W = card NWire` roles
+the `m · bits u j` active bits are split into `m` slots, the rows into the `W = 14336` data roles
 `u = W g + i`, and the scaled node `nodeM` runs with the level-`j` layer as the child on every slot.
 
 `layerZ_correct`: on `rowsAt R₀ j = W ^ j R₀` rows the layer is `2 ^ expZ` times `C` on every
@@ -24,16 +24,23 @@ namespace IntegerMultBounds.MathlibTM2.Layer
 
 open IntegerMultBounds.Networks ComplexFramedExecution
 
-/-- The number of wire roles. -/
-noncomputable abbrev NW : ℕ := Fintype.card NWire
+/-- The number of data roles: the families of the node. -/
+@[irreducible] def NW : ℕ := 14336
 
-instance : NeZero NW := ⟨by
-  have h : NW = Fintype.card Mixer.Supplier25.Wire := rfl
-  rw [h, Mixer.Supplier25.wire_card]
-  norm_num⟩
+theorem NW_eq : NW = 14336 := by unfold NW; rfl
 
-/-- Wire of a role index. -/
-noncomputable def wireOf : Fin NW ≃ NWire := (Fintype.equivFin NWire).symm
+instance : NeZero NW := ⟨by rw [NW_eq]; decide⟩
+
+/-- The number of bank wires: the families and the private centres. -/
+@[irreducible] def NB : ℕ := Fintype.card NWire
+
+theorem NB_card : NB = Fintype.card NWire := by unfold NB; rfl
+
+theorem NB_eq : NB = 14344 := by
+  rw [NB_card]; simp [NWire, Networks.Certificates.T16.Streams.NodeUnit]
+
+/-- Data family of a role index. -/
+def wireOf : Fin NW ≃ DWire := finCongr NW_eq
 
 /-- Active bits at level `j` with `u` bits per leaf. -/
 def bits (u : ℕ) : ℕ → ℕ
@@ -54,11 +61,11 @@ def k2s : List (Fin n) → ZArr (Fin R × Fin r) n → ZArr (Fin R × Fin r) n
 
 /-- An array with `W R'` rows as a bank-indexed array: row `W g + i` is row `g` of wire
 `wireOf i`. -/
-noncomputable def toBank (R' : ℕ) (Z : ZArr (Fin (NW * R') × Fin r) n) : ZArr ((Fin R' × Fin r) × NWire) n :=
+noncomputable def toBank (R' : ℕ) (Z : ZArr (Fin (NW * R') × Fin r) n) : ZArr ((Fin R' × Fin r) × DWire) n :=
   fun p => roleArr NW R' (wireOf.symm p.1.2) Z (p.1.1, p.2)
 
 /-- The inverse of `toBank`. -/
-noncomputable def ofBank (R' : ℕ) (f : ZArr ((Fin R' × Fin r) × NWire) n) : ZArr (Fin (NW * R') × Fin r) n :=
+noncomputable def ofBank (R' : ℕ) (f : ZArr ((Fin R' × Fin r) × DWire) n) : ZArr (Fin (NW * R') × Fin r) n :=
   unroles NW R' (fun i p => f ((p.1, wireOf i), p.2))
 
 /-- Rows at level `j`: `NW ^ j * R₀`, split definitionally into `NW` roles. -/
@@ -97,18 +104,18 @@ lemma prod_reverse_kBit {X : Type} (l : List (Fin n)) :
 /-- A product of kernels passes through the bank reindexing: if `g` is `c` times the kernels on
 the bank form of `f`, then `ofBank g` is `c` times the kernels on `f`. -/
 lemma toC_ofBank (R' k : ℕ) (e : Fin k → Fin n) (c : ℂ) (f : ZArr (Fin (NW * R') × Fin r) n)
-    (g : ZArr ((Fin R' × Fin r) × NWire) n)
+    (g : ZArr ((Fin R' × Fin r) × DWire) n)
     (hg : toC g = c • ((List.finRange k).map fun i => kBit 1 (e i)).prod (toC (toBank R' f))) :
     toC (ofBank R' g) = c • ((List.finRange k).map fun i => kBit 1 (e i)).prod (toC f) := by
   have hl : ((List.finRange k).map fun i => kBit 1 (e i)) =
-      ((List.finRange k).map e).map (kBit (X := (Fin R' × Fin r) × NWire) 1) := by
+      ((List.finRange k).map e).map (kBit (X := (Fin R' × Fin r) × DWire) 1) := by
     rw [List.map_map]; rfl
   have hl' : ((List.finRange k).map fun i => kBit 1 (e i)) =
       ((List.finRange k).map e).map (kBit (X := Fin (NW * R') × Fin r) 1) := by
     rw [List.map_map]; rfl
   rw [hl] at hg
   rw [hl']
-  let φ : Fin (NW * R') × Fin r → (Fin R' × Fin r) × NWire := fun z =>
+  let φ : Fin (NW * R') × Fin r → (Fin R' × Fin r) × DWire := fun z =>
     ((⟨z.1 / NW, Nat.div_lt_of_lt_mul z.1.2⟩, z.2), wireOf (roleSel NW z.1))
   have h2 : (fun q : (Fin (NW * R') × Fin r) × (Fin n → ZMod 2) => toC (toBank R' f) (φ q.1, q.2)) =
       toC f := by

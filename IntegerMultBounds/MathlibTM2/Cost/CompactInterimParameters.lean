@@ -13,20 +13,23 @@ noncomputable section
 def epsilon : ℝ := 31 / (2^6:ℝ)
 /-- Larger chunks become possible after removing the old chunk-width power. -/
 def spacing : ℝ := 7/(2^3:ℝ)
+/-- The layer exponent of the T16 node: above `τ` and above `log_m (F / NW) < 999/1000`
+(`Cost.br_branching_999`). -/
+def lam : ℝ := 1-28/(10^10:ℝ)
 /-- Absorb the full-depth compact recurrence and all polylogarithmic factors. -/
-def lam' : ℝ := 1-21/(2^33:ℝ)
+def lam' : ℝ := 1-23/(2^33:ℝ)
 /-- Dyadic allowance for the unchanged quasi-linear multiplier. -/
 def delta : ℝ := (2^7:ℝ)⁻¹
-/-- The public saving: exactly the compact layer margin `ε (1-λ')`, about `2^-29.65`. -/
-def kappa : ℝ := 651/(2^39:ℝ)
+/-- The public saving: the layout margin `ε s (1-τ)` rounded down to `2^-46`, about `2^-29.57`. -/
+def kappa : ℝ := 88279/(2^46:ℝ)
 
 /-- The compact recurrence and reserved axes fit strictly below the target
 layer exponent; this does not assert the old full-width recurrence condition. -/
 theorem compact_slacks :
     0 < epsilon ∧ 0 < spacing ∧ spacing < 1 ∧
-      Parameters.tau < Parameters.lam ∧ Parameters.sigma < Parameters.lam ∧
-      Parameters.lam < lam' ∧ 1-spacing < lam' ∧ lam' < 1 := by
-  norm_num [epsilon,spacing,lam',Parameters.tau,Parameters.sigma,Parameters.lam]
+      Parameters.tau < lam ∧ 999/1000 < lam ∧
+      lam < lam' ∧ 1-spacing < lam' ∧ lam' < 1 := by
+  norm_num [epsilon,spacing,lam,lam',Parameters.tau]
 
 /-- Exact candidate margins for layout, compact layers, direct rounds, CRT,
 and the resampling stage with the logarithmic band width `α ≤ 4 b^{ε/2^33}`. -/
@@ -40,8 +43,9 @@ def margin : Fin 5 → ℝ := ![
 theorem margin_covers (i : Fin 5) : kappa ≤ margin i := by
   fin_cases i <;> norm_num [margin,kappa,epsilon,spacing,lam',delta,Parameters.tau]
 
-theorem layer_margin : margin 1 = kappa := by
-  norm_num [margin,kappa,epsilon,lam']
+/-- The layout margin is the binding one. -/
+theorem layout_margin_lt : margin 0 - kappa < (2^46:ℝ)⁻¹ := by
+  norm_num [margin,kappa,epsilon,spacing,Parameters.tau]
 
 /-- The saving strictly exceeds `2^-33`. -/
 theorem kappa_gt : (2^33:ℝ)⁻¹ < kappa := by

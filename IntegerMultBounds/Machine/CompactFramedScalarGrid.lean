@@ -5,7 +5,6 @@ public import IntegerMultBounds.Networks.RationalScalarGrid
 public import IntegerMultBounds.Networks.GaussianFrameGrid
 public import IntegerMultBounds.Networks.GaussianBoundedMotif
 public import IntegerMultBounds.Networks.ComplexFramedExecution
-public import IntegerMultBounds.Networks.Mixer.Coefficients
 public import IntegerMultBounds.Machine.ActivePrefixStageParameters
 
 /-! Exact scalar-prefix grids for the actual labeled complex25 grouped
@@ -16,10 +15,7 @@ budget is derived from the finite Walsh definition, not a supplied contract. -/
 
 namespace IntegerMultBounds.Machine.CompactFramedScalarGrid
 noncomputable section
-attribute [local irreducible] IntegerMultBounds.Networks.Mixer.Supplier25.program
-  IntegerMultBounds.Networks.Mixer.Global.program IntegerMultBounds.Networks.Mixer.Global.stage
-  IntegerMultBounds.Networks.Mixer.Global.partialStage
-  IntegerMultBounds.Networks.Mixer.Global.invocationGroups IntegerMultBounds.Networks.Mixer.Global.localGroups
+attribute [local irreducible] IntegerMultBounds.Networks.ComplexRank25.program
   IntegerMultBounds.Networks.GlobalGrouped.program IntegerMultBounds.Networks.GlobalGrouped.stage
   IntegerMultBounds.Networks.GlobalGrouped.partialStage IntegerMultBounds.Networks.GlobalGrouped.invocationGroups
   IntegerMultBounds.Networks.GlobalGrouped.localGroups
@@ -28,27 +24,13 @@ open ComplexFramedExecution (Wire frameOf)
 
 def coeffGood (c : ℚ) := BoundedGrid 1 52 (c:ℂ)
 
-theorem weightOf_coefficient (σ : Mixer.Instance25.Side) :
-    BoundedGrid 1 1 ((Mixer.Instance25.weightOf σ : ℚ) : ℂ) := by
-  rcases σ with σ | τ | d
-  · simpa [Mixer.Instance25.weightOf] using bounded_zero 1 1
-  · simpa [Mixer.Instance25.weightOf] using bounded_half (bounded_int 1 1 (by norm_num))
-  · simpa [Mixer.Instance25.weightOf] using
-      bounded_neg (bounded_half (bounded_int 1 1 (by norm_num)))
-
-theorem weight_coefficient (i : Fin 2300) (p : Fin Mixer.Instance25.a25) :
-    BoundedGrid 1 1 ((Mixer.Fits25.J i p : ℚ) : ℂ) := by
-  simp only [Mixer.Fits25.J, Mixer.Scalar.injectMatrix]
-  split_ifs
-  · exact weightOf_coefficient (Mixer.Instance25.sideEquiv p)
-  · simpa using bounded_zero 1 1
-
 theorem group_coefficients : GroupedCoefficients.AllGroups coeffGood
-    (Mixer.Supplier25.program.map GroupedFrames.Vertex.group) := by
-  rw [Mixer.Supplier25.program_groups]
-  refine Mixer.Coefficients.program_all coeffGood (fun c hc => by
-    simpa only [coeffGood,Rat.cast_neg] using bounded_neg hc) ?_ ?_ _ _ _ _ ?_ ?_ ?_
-    ComplexRank25.triples Mixer.Supplier25.sideRoles (Equiv.refl (Fin 26))
+    (ComplexRank25.program.map GroupedFrames.Vertex.group) := by
+  rw [ComplexRank25.program_groups]
+  unfold GlobalGrouped.complexProgram
+  refine GroupedCoefficients.global coeffGood (fun c hc => by
+    simpa only [coeffGood,Rat.cast_neg] using bounded_neg hc) ?_ ?_
+    ComplexRank25.triples ComplexRank25.pairs (Equiv.refl (Fin 26)) _ _ _ _ ?_ ?_ ?_
   · simpa only [coeffGood,Rat.cast_zero] using bounded_zero 1 52
   · simpa only [coeffGood,Rat.cast_one,Int.cast_one,Nat.zero_add] using
       bound_mono (by norm_num : 1*2^1≤52) (bounded_raise (bounded_int 1 1 (by norm_num)) 1)
@@ -56,13 +38,14 @@ theorem group_coefficients : GroupedCoefficients.AllGroups coeffGood
     exact bound_mono (by norm_num : 1*2^1≤52)
       (bounded_raise (bounded_complexGather (fun i => (ComplexRank25.triples i).val) i j) 1)
   · intro i j
-    exact bound_mono (by norm_num : 1≤52) (weight_coefficient i j)
+    exact bound_mono (by norm_num : 25+1≤52)
+      (bounded_complexInject (GlobalCircuit.complexLocalPairs ComplexRank25.triples ComplexRank25.pairs) i j)
   · intro i j
     exact bound_mono (by norm_num : 1≤52)
       (bounded_complexScatter (fun i => (ComplexRank25.triples i).val) i j)
 
 def rows (g : ℕ) := GroupedCircuit.compileGroups
-  ((Mixer.Supplier25.program.take g).map GroupedFrames.Vertex.group)
+  ((ComplexRank25.program.take g).map GroupedFrames.Vertex.group)
 def bound (g M : ℕ) := scalarBound 1 52 (RationalScalarGrid.castRows (rows g)) M
 
 theorem row_coefficients (g : ℕ) : CircuitCoefficients.All coeffGood (rows g) := by
@@ -75,12 +58,12 @@ theorem row_coefficients (g : ℕ) : CircuitCoefficients.All coeffGood (rows g) 
   (RationalScalarGrid.castRows ComplexFramedExecution.rows) 1
 
 theorem rows_split (g : ℕ) : rows g++GroupedCircuit.compileGroups
-    ((Mixer.Supplier25.program.drop g).map GroupedFrames.Vertex.group)=ComplexFramedExecution.rows := by
+    ((ComplexRank25.program.drop g).map GroupedFrames.Vertex.group)=ComplexFramedExecution.rows := by
   simp only [rows,ComplexFramedExecution.rows,GroupedCircuit.compileGroups,
     ←List.flatMap_append,←List.map_append,List.take_append_drop]
 
 theorem bound_le (g M C : ℕ) (hC : growthConstant≤C) : bound g M≤M*C := by
-  let tail := GroupedCircuit.compileGroups ((Mixer.Supplier25.program.drop g).map GroupedFrames.Vertex.group)
+  let tail := GroupedCircuit.compileGroups ((ComplexRank25.program.drop g).map GroupedFrames.Vertex.group)
   have hs : RationalScalarGrid.castRows (rows g)++RationalScalarGrid.castRows tail=
       RationalScalarGrid.castRows ComplexFramedExecution.rows := by
     simp only [RationalScalarGrid.castRows,←List.map_append]
@@ -96,15 +79,15 @@ theorem bound_le (g M C : ℕ) (hC : growthConstant≤C) : bound g M≤M*C := by
     _ ≤ M*C := Nat.mul_le_mul_left M hC
 
 def initialLabels : Wire → ComplexPhaseBudget.Label := GlobalLabels.source ComplexRank25.vector
-def labels (g : ℕ) := GroupedFrames.finalLabels initialLabels (Mixer.Supplier25.program.take g)
-def prefixProgram (k g : ℕ) := GroupedModuleFrames.compile (frameOf k) initialLabels (Mixer.Supplier25.program.take g)
+def labels (g : ℕ) := GroupedFrames.finalLabels initialLabels (ComplexRank25.program.take g)
+def prefixProgram (k g : ℕ) := GroupedModuleFrames.compile (frameOf k) initialLabels (ComplexRank25.program.take g)
 def profile (k g : ℕ) := GroupedModuleFrames.profile (frameOf k) (labels g)
 
 theorem prefix_exact (k g : ℕ) (x : Wire → BinaryColumns.Arrays (25^3) k) :
     FramedCircuit.run (prefixProgram k g)
       (FramedCircuit.encode (GroupedModuleFrames.profile (frameOf k) initialLabels) x)=
       FramedCircuit.encode (profile k g) (FramedCircuit.moduleRun (rows g) x) :=
-  GroupedModuleFrames.compile_invariant (frameOf k) initialLabels (Mixer.Supplier25.program.take g) x
+  GroupedModuleFrames.compile_invariant (frameOf k) initialLabels (ComplexRank25.program.take g) x
 
 /-- The current actual role frames decode to an explicitly bounded scalar
 prefix, including every scratch role and every original column address. -/
@@ -156,18 +139,18 @@ private theorem edges_append {ι R E : Type*} [DecidableEq ι] [CommRing R]
   | cons i xs ih =>
     simp only [List.cons_append,FramedCircuit.edges,FramedCircuit.afterEdges,ih]
 
-def vertex (g : Fin Mixer.Supplier25.program.length) := Mixer.Supplier25.program[g.val]
-def edgeWires (g : Fin Mixer.Supplier25.program.length) (e : ℕ) :=
+def vertex (g : Fin ComplexRank25.program.length) := ComplexRank25.program[g.val]
+def edgeWires (g : Fin ComplexRank25.program.length) (e : ℕ) :=
   (GroupedCircuit.touched (vertex g).group).take e
 
-def edgeLabels (g : Fin Mixer.Supplier25.program.length) (e : ℕ) (i : Wire) :=
+def edgeLabels (g : Fin ComplexRank25.program.length) (e : ℕ) (i : Wire) :=
   if i ∈ edgeWires g e then (vertex g).label else labels g.val i
 
-def alignmentProgram (k : ℕ) (g : Fin Mixer.Supplier25.program.length) (e : ℕ) :=
+def alignmentProgram (k : ℕ) (g : Fin ComplexRank25.program.length) (e : ℕ) :=
   prefixProgram k g.val ++ FramedCircuit.edges (profile k g.val)
     (fun _ => frameOf k (vertex g).label) (edgeWires g e)
 
-theorem alignment_profile (k : ℕ) (g : Fin Mixer.Supplier25.program.length) (e : ℕ) :
+theorem alignment_profile (k : ℕ) (g : Fin ComplexRank25.program.length) (e : ℕ) :
     FramedCircuit.afterEdges (profile k g.val) (fun _ => frameOf k (vertex g).label)
       (edgeWires g e) = GroupedModuleFrames.profile (frameOf k) (edgeLabels g e) := by
   funext i
@@ -177,7 +160,7 @@ theorem alignment_profile (k : ℕ) (g : Fin Mixer.Supplier25.program.length) (e
 
 /-- The state immediately before an actual listed edge call has the exact
 retained role labels and the same logical scalar prefix. -/
-theorem alignment_exact (k : ℕ) (g : Fin Mixer.Supplier25.program.length) (e : ℕ)
+theorem alignment_exact (k : ℕ) (g : Fin ComplexRank25.program.length) (e : ℕ)
     (x : Wire → BinaryColumns.Arrays (25^3) k) :
     FramedCircuit.run (alignmentProgram k g e)
       (FramedCircuit.encode (GroupedModuleFrames.profile (frameOf k) initialLabels) x) =
@@ -188,7 +171,7 @@ theorem alignment_exact (k : ℕ) (g : Fin Mixer.Supplier25.program.length) (e :
 
 /-- Alignment changes actual stored frames, without introducing any new
 logical scalar rows or any assumed recursive execution certificate. -/
-theorem alignment_stored_grid (k n M : ℕ) (g : Fin Mixer.Supplier25.program.length)
+theorem alignment_stored_grid (k n M : ℕ) (g : Fin ComplexRank25.program.length)
     (e : ℕ) (x : Wire → BinaryColumns.Arrays (25^3) k)
     (hx : ∀ i ω,BoundedGrid n M (x i ω)) (i : Wire)
     (ω : BinaryColumns.Address (25^3) k) :
@@ -235,16 +218,16 @@ private theorem compile_alignment_prefix {ι L R E : Type*} [DecidableEq ι]
 
 /-- Each alignment boundary is a literal prefix of the original complete
 compiler, including its actual ordered edge instructions and terminal edges. -/
-theorem alignment_prefix (k : ℕ) (g : Fin Mixer.Supplier25.program.length) (e : ℕ) :
+theorem alignment_prefix (k : ℕ) (g : Fin ComplexRank25.program.length) (e : ℕ) :
     ∃ rest, ComplexFramedExecution.network k = alignmentProgram k g e ++ rest := by
-  obtain ⟨rest,hr⟩ := compile_alignment_prefix (frameOf k) initialLabels Mixer.Supplier25.program g e
+  obtain ⟨rest,hr⟩ := compile_alignment_prefix (frameOf k) initialLabels ComplexRank25.program g e
   let sink := FramedCircuit.edges
     (GroupedModuleFrames.profile (frameOf k)
-      (GroupedFrames.finalLabels initialLabels Mixer.Supplier25.program))
+      (GroupedFrames.finalLabels initialLabels ComplexRank25.program))
     (GroupedModuleFrames.profile (frameOf k)
-      (GlobalLabels.sink (Labels.binary 25) ComplexRank25.vector)) Mixer.Supplier25.wires
+      (GlobalLabels.sink (Labels.binary 25) ComplexRank25.vector)) ComplexRank25.wires
   refine ⟨rest++sink, ?_⟩
-  change GroupedModuleFrames.compile (frameOf k) initialLabels Mixer.Supplier25.program ++ sink = _
+  change GroupedModuleFrames.compile (frameOf k) initialLabels ComplexRank25.program ++ sink = _
   rw [hr]
   change (alignmentProgram k g e ++ rest) ++ sink = alignmentProgram k g e ++ (rest++sink)
   exact List.append_assoc _ _ _

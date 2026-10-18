@@ -5,20 +5,18 @@ public import IntegerMultBounds.Networks.BinaryColumnFrame
 public import IntegerMultBounds.Networks.GroupedModuleFrames
 public import IntegerMultBounds.Networks.FramedFactorExecution
 
-/-! Actual framed execution of the size-25 complex mixer network on complex
-arrays. Rational gates retain their original graph and coefficients. The theorem
-identifies the whole physical run with the signed bank exchange conjugated by its
-actual endpoint frames, including every scratch wire. -/
+/-! Actual framed execution of the size-25 complex network on complex arrays.
+Rational gates retain their original graph and coefficients. The theorem
+identifies the whole physical run with the signed bank exchange conjugated
+by its actual endpoint frames, including every scratch wire. -/
 
 @[expose] public section
 
 namespace IntegerMultBounds.Networks.ComplexFramedExecution
 
-open ComplexRank25 (vector triples)
-open ComplexPhaseBudget
-open Mixer.Supplier25 (program wires wires_complete)
+open ComplexRank25 ComplexPhaseBudget
 
-abbrev Wire := Mixer.Supplier25.Wire
+abbrev Wire := Wires.ComplexRole 25
 
 /-- The actual signed exchange sends each output bank to the other input bank. -/
 def route : Wire → Wire
@@ -32,11 +30,9 @@ def sign : Wire → ℚ
 
 noncomputable def rows := GroupedCircuit.compileGroups (program.map GroupedFrames.Vertex.group)
 
-/-- The exact rational scalar program, in routed form. -/
+/-- The exact existing rational scalar program, in routed form. -/
 theorem scalar_route (x : Wire → ℚ) : Circuit.run rows x = fun i => sign i * x (route i) := by
-  have he := Mixer.Global.program_run triples Mixer.Supplier25.sideRoles (Equiv.refl (Fin 26))
-    Mixer.Instance25.kind Mixer.Supplier25.gather Mixer.Fits25.J Mixer.Supplier25.scatter
-    Mixer.Instance25.reconstruct
+  have he := GlobalGrouped.complexProgram_run triples pairs
     (fun b => x (Sum.inl b)) (fun b => x (Sum.inr (Sum.inl b)))
     (fun s => x (Sum.inr (Sum.inr s)))
   have hx : GlobalCircuit.contents (fun b => x (Sum.inl b))
@@ -45,7 +41,7 @@ theorem scalar_route (x : Wire → ℚ) : Circuit.run rows x = fun i => sign i *
     rcases i with b | b | s <;> rfl
   rw [hx] at he
   unfold rows
-  rw [Mixer.Supplier25.program_groups, GroupedCircuit.compileGroups_run, he]
+  rw [program_groups, GroupedCircuit.compileGroups_run, he]
   funext i
   rcases i with b | b | s <;> simp [GlobalCircuit.contents, sign, route]
 
@@ -136,7 +132,7 @@ theorem lowered_length (k : ℕ) (directions : Directions) (hd : Realizes direct
 for every column count, with actual executed factor count equal to its rank. -/
 theorem exists_uniform_execution :
     ∃ directions : Directions, Realizes directions ∧
-      ∀ k, FramedFactorExecution.linearCount (lowered k directions) = Mixer.Supplier25.rankSum ∧
+      ∀ k, FramedFactorExecution.linearCount (lowered k directions) = rankSum ∧
         ∀ stored : Wire → BinaryColumns.Arrays (25 ^ 3) k,
           FramedFactorExecution.run (lowered k directions) stored = fun i =>
             frameOf k (GlobalLabels.sink (Labels.binary 25) vector i)
@@ -148,8 +144,8 @@ theorem exists_uniform_execution :
 uniformly in column count. This counts array instructions, not tape steps. -/
 theorem exists_uniform_execution_budget :
     ∃ directions : Directions, Realizes directions ∧
-      ∀ k, FramedFactorExecution.linearCount (lowered k directions) ≤ 149516060359500000 ∧
-        (FramedFactorExecution.linearCount (lowered k directions) : ℝ) / 9569028100000 <
+      ∀ k, FramedFactorExecution.linearCount (lowered k directions) ≤ 916333630984500000 ∧
+        (FramedFactorExecution.linearCount (lowered k directions) : ℝ) / 58645352620000 <
           (15625 : ℝ) ^ Parameters.sigma ∧
         ∀ stored : Wire → BinaryColumns.Arrays (25 ^ 3) k,
           FramedFactorExecution.run (lowered k directions) stored = fun i =>
@@ -158,8 +154,6 @@ theorem exists_uniform_execution_budget :
   obtain ⟨directions, hd, he⟩ := exists_uniform_execution
   refine ⟨directions, hd, fun k => ?_⟩
   obtain ⟨hc, hr⟩ := he k
-  refine ⟨hc ▸ Mixer.Supplier25.rank_budget, ?_, hr⟩
-  rw [hc, sigma_eq]
-  exact Mixer.Supplier25.branching_bound
+  exact ⟨hc ▸ rank_budget, hc ▸ branching_bound, hr⟩
 
 end IntegerMultBounds.Networks.ComplexFramedExecution

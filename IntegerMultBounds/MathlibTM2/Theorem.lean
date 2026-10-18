@@ -23,13 +23,14 @@ of the commit that introduced this note.
 
 namespace IntegerMultBounds.MathlibTM2
 
-/-- The complete compact multiplier has the explicit saving `651 · 2^-39 = ε (1-λ')`,
-with `ε = 31/64` and `1-λ' = 21 · 2^-33`, about `2^-29.65`. -/
-theorem mulInTime : MulInTime (651 / 2 ^ 39 : ℝ) :=
+/-- The complete compact multiplier has the explicit saving `88279 · 2^-46`, the layout margin
+`ε c (1-τ)` rounded down, with `ε = 31/64`, `c = 7/8` and `1-τ = 296 · 10^-11`, about
+`2^-29.57`. -/
+theorem mulInTime : MulInTime (88279 / 2 ^ 46 : ℝ) :=
   Fast.Main.compactR_mulInTime_final
 
-/-- The saving exceeds ten times `2^-33`. -/
-theorem saving_gt : 10 * (2 ^ 33 : ℝ)⁻¹ < 651 / 2 ^ 39 := by norm_num
+/-- The saving exceeds `10 · 2^-33`. -/
+theorem saving_gt : 10 * (2 ^ 33 : ℝ)⁻¹ < 88279 / 2 ^ 46 := by norm_num
 
 theorem statement : Statement :=
   ⟨_, by positivity, mulInTime⟩

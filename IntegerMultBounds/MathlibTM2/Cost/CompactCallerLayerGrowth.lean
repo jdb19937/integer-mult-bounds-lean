@@ -46,11 +46,11 @@ theorem compactCaller_layer_guard_absorbed (M : ℕ) (hM : 2≤M)
 
 /-- The proposed dyadic compact layer exponent pays its full guard factor. -/
 theorem compactCaller_interim_layer_growth (M : ℕ) (hM : 2≤M) :
-    (Mult.Sizes.d M:ℝ)^Parameters.lam*(Mult.CompactSizes.guard M:ℝ)^Parameters.tau≤
-      compactCallerGuardPowerCoeff (CompactInterim.lam'-Parameters.lam)*
+    (Mult.Sizes.d M:ℝ)^CompactInterim.lam*(Mult.CompactSizes.guard M:ℝ)^Parameters.tau≤
+      compactCallerGuardPowerCoeff (CompactInterim.lam'-CompactInterim.lam)*
         (Mult.Sizes.d M:ℝ)^CompactInterim.lam' :=
-  compactCaller_layer_guard_absorbed M hM Parameters.lam CompactInterim.lam'
-    (by norm_num [Parameters.lam,CompactInterim.lam'])
+  compactCaller_layer_guard_absorbed M hM CompactInterim.lam CompactInterim.lam'
+    (by norm_num [CompactInterim.lam,CompactInterim.lam'])
 
 end
 end IntegerMultBounds.MathlibTM2.Cost

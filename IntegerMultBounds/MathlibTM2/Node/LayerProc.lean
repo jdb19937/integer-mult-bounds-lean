@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Node.Factor
+public import IntegerMultBounds.MathlibTM2.Node.MonoN
 import Mathlib.Tactic.Positivity.Finset
 
 /-!
@@ -72,20 +73,24 @@ of the instructions of `l ⊆ program ds` leave the wires holding `runM e child 
 register as it was. -/
 theorem instrs_execL (ds : ComplexFramedExecution.Directions)
     (fp : NWire → ZMod 4 × BinaryWalsh.Address m → Pr P (nT BReg) Q A U)
+    (mp : Instr → Pr P (nT BReg) Q A U)
     {bcRest : BReg → List (Fin (A + 4)) → Prop} (hA : 4 ≤ A)
     (hgate : ∀ g, Instr.gate g ∈ program ds →
       (2 * gateBound g + 1) ^ (2 * (gateWires g).length) ≤ A + 4)
-    {j u K ρ a₀ L rows n r w Tc cf R k : ℕ} (hw : 1 ≤ w) (e : Fin (m * k) → Fin n)
+    {j u K ρ a₀ L rows n r w Tc cf cm R k : ℕ} (hw : 1 ≤ w) (e : Fin (m * k) → Fin n)
     (child : Fin m → ZArr (Fin R × Fin r) n → ZArr (Fin R × Fin r) n)
     (hfac : ∀ fw g, Instr.factor fw g ∈ program ds →
-      FactorSpecL body (fp fw g) bcRest j u K ρ a₀ L rows n r w e child Tc fw g cf) :
+      FactorSpecL body (fp fw g) bcRest j u K ρ a₀ L rows n r w e child Tc fw g cf)
+    (hmono : ∀ i ∈ program ds, i.IsMono →
+      MonoSpecL body (mp i) bcRest j u K ρ a₀ L rows n r w e child Tc i cm) :
     ∀ l : List Instr, (∀ i ∈ l, i ∈ program ds) →
       ∀ (B : NWire → ZArr (Fin R × Fin r) n) (v : HS (nT BReg) Q A U) (S : Stacks (nT BReg) A),
       (∀ y, S.L y = []) → NodeRegs bcRest S.R j u K ρ a₀ L rows n r w Tc →
       (∀ x, S.R (reg (.wire x)) = encZ A w (B x)) →
       ∃ (v' : HS (nT BReg) Q A U) (c : ℕ) (R' : Fin (nT BReg) → List (Fin (A + 4))),
-        v'.user = v.user ∧ c ≤ gateCount l * gateCost R n r w + factorCount l * cf + 1 ∧
-        Exec body (Prog.seqList (l.map (instrProg fp))) (mk v S) c (mk v' { S with R := R' }) ∧
+        v'.user = v.user ∧
+        c ≤ gateCount l * gateCost R n r w + factorCount l * cf + monoCount l * cm + 1 ∧
+        Exec body (Prog.seqList (l.map (instrProg fp mp))) (mk v S) c (mk v' { S with R := R' }) ∧
         (∀ x, R' (reg (.wire x)) = encZ A w (runM e child Tc l B x)) ∧
         ∀ q, (∀ x, q ≠ reg (.wire x)) → R' q = S.R q := by
   intro l
@@ -93,7 +98,7 @@ theorem instrs_execL (ds : ComplexFramedExecution.Directions)
   | nil =>
       intro _ B v S _ _ hB
       have he := Exec.act (body := body) .done (mk v S)
-      exact ⟨v, 1, S.R, rfl, by simp [gateCount, factorCount],
+      exact ⟨v, 1, S.R, rfl, by simp [gateCount, factorCount, monoCount],
         by simpa [Prog.seqList] using he, hB, fun _ _ => rfl⟩
   | cons ins l ih =>
       intro hl B v S hL hN hB
@@ -112,7 +117,7 @@ theorem instrs_execL (ds : ComplexFramedExecution.Directions)
           refine ⟨v₂, m₁ + m₂, R₂, hu₂.trans hu₁, ?_, Exec.seq he₁ he₂, hw₂,
             fun q hq => (hfr₂ q hq).trans (hfr q hq)⟩
           have hm₁' : m₁ ≤ gateCost R n r w := hm₁
-          simp only [gateCount, factorCount, Nat.add_mul, Nat.one_mul]
+          simp only [gateCount, factorCount, monoCount, Nat.add_mul, Nat.one_mul]
           omega
       | factor fw g =>
           obtain ⟨v₁, m₁, R₁, hu₁, hm₁, he₁, hw₁, hfr₁⟩ :=
@@ -121,7 +126,34 @@ theorem instrs_execL (ds : ComplexFramedExecution.Directions)
             (execM e child Tc (.factor fw g) B) v₁ { S with R := R₁ } hL (hN.congr hfr₁) hw₁
           refine ⟨v₂, m₁ + m₂, R₂, hu₂.trans hu₁, ?_, Exec.seq he₁ he₂, hw₂,
             fun q hq => (hfr₂ q hq).trans (hfr₁ q hq)⟩
-          simp only [gateCount, factorCount, Nat.add_mul, Nat.one_mul]
+          simp only [gateCount, factorCount, monoCount, Nat.add_mul, Nat.one_mul]
+          omega
+      | trans fw tv =>
+          obtain ⟨v₁, m₁, R₁, hu₁, hm₁, he₁, hw₁, hfr₁⟩ :=
+            hmono _ (hl _ List.mem_cons_self) trivial B v S hL hN hB
+          obtain ⟨v₂, m₂, R₂, hu₂, hm₂, he₂, hw₂, hfr₂⟩ := ih hl'
+            (execM e child Tc (.trans fw tv) B) v₁ { S with R := R₁ } hL (hN.congr hfr₁) hw₁
+          refine ⟨v₂, m₁ + m₂, R₂, hu₂.trans hu₁, ?_, Exec.seq he₁ he₂, hw₂,
+            fun q hq => (hfr₂ q hq).trans (hfr₁ q hq)⟩
+          simp only [gateCount, factorCount, monoCount, Nat.add_mul, Nat.one_mul]
+          omega
+      | xor fw i' j' =>
+          obtain ⟨v₁, m₁, R₁, hu₁, hm₁, he₁, hw₁, hfr₁⟩ :=
+            hmono _ (hl _ List.mem_cons_self) trivial B v S hL hN hB
+          obtain ⟨v₂, m₂, R₂, hu₂, hm₂, he₂, hw₂, hfr₂⟩ := ih hl'
+            (execM e child Tc (.xor fw i' j') B) v₁ { S with R := R₁ } hL (hN.congr hfr₁) hw₁
+          refine ⟨v₂, m₁ + m₂, R₂, hu₂.trans hu₁, ?_, Exec.seq he₁ he₂, hw₂,
+            fun q hq => (hfr₂ q hq).trans (hfr₁ q hq)⟩
+          simp only [gateCount, factorCount, monoCount, Nat.add_mul, Nat.one_mul]
+          omega
+      | phase fw i' c' =>
+          obtain ⟨v₁, m₁, R₁, hu₁, hm₁, he₁, hw₁, hfr₁⟩ :=
+            hmono _ (hl _ List.mem_cons_self) trivial B v S hL hN hB
+          obtain ⟨v₂, m₂, R₂, hu₂, hm₂, he₂, hw₂, hfr₂⟩ := ih hl'
+            (execM e child Tc (.phase fw i' c') B) v₁ { S with R := R₁ } hL (hN.congr hfr₁) hw₁
+          refine ⟨v₂, m₁ + m₂, R₂, hu₂.trans hu₁, ?_, Exec.seq he₁ he₂, hw₂,
+            fun q hq => (hfr₂ q hq).trans (hfr₁ q hq)⟩
+          simp only [gateCount, factorCount, monoCount, Nat.add_mul, Nat.one_mul]
           omega
 
 
@@ -136,7 +168,8 @@ holding the stream of the level-`j + 1` layer
 `nodeCost ds u j K ρ a₀ (rowsAt R₀ j) n r w cf` steps. -/
 theorem nodeBody_execL (ds : ComplexFramedExecution.Directions)
     (fp : NWire → ZMod 4 × BinaryWalsh.Address m → Pr P (nT BReg) Q A U)
-    {bcRest : BReg → List (Fin (A + 4)) → Prop} {R₀ j u K ρ a₀ L n r w cf : ℕ}
+    (mp : Instr → Pr P (nT BReg) Q A U)
+    {bcRest : BReg → List (Fin (A + 4)) → Prop} {R₀ j u K ρ a₀ L n r w cf cm : ℕ}
     (hA : 5 ≤ A) (hNW : NW ≤ A + 4)
     (hgate : ∀ g, Instr.gate g ∈ program ds →
       (2 * gateBound g + 1) ^ (2 * (gateWires g).length) ≤ A + 4)
@@ -146,126 +179,136 @@ theorem nodeBody_execL (ds : ComplexFramedExecution.Directions)
         (actMap a₀ ρ K (bits u (j + 1)) n hfit)
         (fun s => layerZ u ds R₀ j fun c => actMap a₀ ρ K (bits u (j + 1)) n hfit (bitIdx s c))
         (expZ u ds j) fw g cf)
+    (hmono : ∀ i ∈ program ds, i.IsMono →
+      MonoSpecL body (mp i) bcRest j u K ρ a₀ L (rowsAt R₀ (j + 1)) n r w (k := bits u j)
+        (actMap a₀ ρ K (bits u (j + 1)) n hfit)
+        (fun s => layerZ u ds R₀ j fun c => actMap a₀ ρ K (bits u (j + 1)) n hfit (bitIdx s c))
+        (expZ u ds j) i cm)
     (Z : ZArr (Fin (rowsAt R₀ (j + 1)) × Fin r) n) (v : HS (nT BReg) Q A U)
     (S : Stacks (nT BReg) A) (hL : ∀ y, S.L y = [])
     (hpar : ParState S.R (j + 1) u K ρ a₀ L (rowsAt R₀ (j + 1)) n w (r * w))
     (hrest : Rest bcRest n r w S.R) (hio : S.R (reg .io) = encZ A w Z) :
     ∃ (v' : HS (nT BReg) Q A U) (c : ℕ), v'.user = v.user ∧
-      c ≤ nodeCost ds u j K ρ a₀ (rowsAt R₀ j) n r w cf ∧
-      Exec body (nodeBody ds fp) (mk v S) c (mk v' { S with
+      c ≤ nodeCost ds u j K ρ a₀ (rowsAt R₀ j) n r w cf cm ∧
+      Exec body (nodeBody ds fp mp) (mk v S) c (mk v' { S with
         R := Function.update S.R (reg .io) (encZ A w (ofBank (rowsAt R₀ j)
           (nodeM (k := bits u j) (actMap a₀ ρ K (bits u (j + 1)) n hfit)
             (fun s => layerZ u ds R₀ j fun c => actMap a₀ ρ K (bits u (j + 1)) n hfit (bitIdx s c))
             (expZ u ds j) ds (toBank (rowsAt R₀ j) Z)))) }) := by
+  set B₀ := bankZ (toBank (rowsAt R₀ j) Z)
   -- the row split
   have hsplit := splitProg_exec body hNW hr hw (R := rowsAt R₀ j) Z v S hio (hrest .rowctr)
     (hrest .rowtmp) (fun x => hrest (.wtmp x)) (fun x => hrest (.wire x))
   obtain ⟨v₁, m₁, R₁, hu₁, hm₁, he₁, hio₁, hw₁, hfr₁⟩ := hsplit
-  have h₁ : ∀ x : LReg BReg, x ≠ .io → (∀ y, x ≠ .wire y) → R₁ (reg x) = S.R (reg x) :=
+  have h₁ : ∀ x : LReg BReg, x ≠ .io → (∀ y : DWire, x ≠ .wire (.inl y)) →
+      R₁ (reg x) = S.R (reg x) :=
     fun x h1 h2 => hfr₁ _ (reg_ne h1) (fun y => reg_ne (h2 y))
-  have hpar₁ : ParState R₁ (j + 1) u K ρ a₀ L (rowsAt R₀ (j + 1)) n w (r * w) :=
-    hpar.congr fun x hx => h₁ x (parRegs_ne hx).1 (parRegs_ne hx).2.1
-  -- the source signs
-  obtain ⟨v₂, m₂, R₂, hu₂, hm₂, he₂, hw₂, hfr₂⟩ := signStage_exec body hA hr hw hK hfit
-    (bankZ (toBank (rowsAt R₀ j) Z)) v₁ { S with R := R₁ } hpar₁
-    (hrest.restBut_of_frame _ fun x hx hx' => h₁ x hx fun y h => hx' ⟨y, h⟩) hw₁
-  have h₂ : ∀ x : LReg BReg, (∀ y, x ≠ .wire y) → R₂ (reg x) = R₁ (reg x) :=
-    fun x hx => hfr₂ _ fun y => reg_ne (hx y)
+  -- the zero centres
+  obtain ⟨v₂, m₂, R₂, hu₂, hm₂, he₂, hc₂, hfr₂⟩ := zeroCentres_exec body (B₀ (.inl 0)) v₁
+    { S with R := R₁ } (hw₁ 0) (by dsimp only; rw [h₁ _ (by simp) (by simp)]; exact hrest .tmp)
+    (fun c => by dsimp only; rw [h₁ _ (by simp) (by simp)]; exact hrest (.wire (.inr c)))
+  have hw₂ : ∀ x, R₂ (reg (.wire x)) = encZ A w (B₀ x) := by
+    intro x
+    rcases x with d | c
+    · rw [hfr₂ _ (fun c => reg_ne (by simp))]; exact hw₁ d
+    · exact hc₂ c
+  have h₂ : ∀ x : LReg BReg, x ≠ .io → (∀ y, x ≠ .wire y) → R₂ (reg x) = S.R (reg x) :=
+    fun x h1 h2 => (hfr₂ _ fun c => reg_ne (h2 _)).trans (h₁ x h1 fun y => h2 _)
+  have hpar₂ : ParState R₂ (j + 1) u K ρ a₀ L (rowsAt R₀ (j + 1)) n w (r * w) :=
+    hpar.congr fun x hx => h₂ x (parRegs_ne hx).1 (parRegs_ne hx).2.1
   -- the child exponent
   obtain ⟨v₃, m₃, R₃, hu₃, hm₃, he₃, hTc₃, hfr₃⟩ := tcBuild_exec body ds (j := j) v₂
-    { S with R := R₂ } (hpar₁.congr fun x hx => h₂ x (parRegs_ne hx).2.1)
-    (fun i => by
-      dsimp only; rw [h₂ _ (by simp), h₁ _ (by simp) (by simp)]; exact hrest (.sc i))
-    (by dsimp only; rw [h₂ _ (by simp), h₁ _ (by simp) (by simp)]; exact hrest .Tc)
-  have h₃ : ∀ x : LReg BReg, (∀ y, x ≠ .wire y) → x ≠ .Tc → R₃ (reg x) = R₁ (reg x) :=
-    fun x hx hT => (hfr₃ _ (reg_ne hT)).trans (h₂ x hx)
+    { S with R := R₂ } hpar₂
+    (fun i => by dsimp only; rw [h₂ _ (by simp) (by simp)]; exact hrest (.sc i))
+    (by dsimp only; rw [h₂ _ (by simp) (by simp)]; exact hrest .Tc)
+  have h₃ : ∀ x : LReg BReg, x ≠ .io → (∀ y, x ≠ .wire y) → x ≠ .Tc → R₃ (reg x) = S.R (reg x) :=
+    fun x h1 hx hT => (hfr₃ _ (reg_ne hT)).trans (h₂ x h1 hx)
   -- the instructions
   have hN₃ : NodeRegs bcRest R₃ j u K ρ a₀ L (rowsAt R₀ (j + 1)) n r w (expZ u ds j) :=
-    { par := hpar₁.congr fun x hx => h₃ x (parRegs_ne hx).2.1 (parRegs_ne hx).2.2
+    { par := hpar.congr fun x hx => h₃ x (parRegs_ne hx).1 (parRegs_ne hx).2.1 (parRegs_ne hx).2.2
       rest := hrest.restBut_of_frame _ fun x hx hx' => by
-        rw [h₃ x (fun y h => hx' (Or.inl ⟨y, h⟩)) (fun h => hx' (Or.inr h))]
-        exact h₁ x hx fun y h => hx' (Or.inl ⟨y, h⟩)
-      io := by rw [h₃ _ (by simp) (by simp)]; exact hio₁
+        rw [h₃ x hx (fun y h => hx' (Or.inl ⟨y, h⟩)) (fun h => hx' (Or.inr h))]
+      io := by
+        rw [hfr₃ _ (reg_ne (by simp))]; dsimp only; rw [hfr₂ _ (fun c => reg_ne (by simp))]
+        exact hio₁
       tc := hTc₃ }
-  obtain ⟨v₄, m₄, R₄, hu₄, hm₄, he₄, hw₄, hfr₄⟩ := instrs_execL body ds fp (by omega) hgate
+  obtain ⟨v₄, m₄, R₄, hu₄, hm₄, he₄, hw₄, hfr₄⟩ := instrs_execL body ds fp mp (by omega) hgate
     (k := bits u j) hw (actMap a₀ ρ K (bits u (j + 1)) n hfit)
     (fun s => layerZ u ds R₀ j fun c => actMap a₀ ρ K (bits u (j + 1)) n hfit (bitIdx s c)) hfac
-    (program ds) (fun i hi => hi)
-    (corrInM (k := bits u j) (actMap a₀ ρ K (bits u (j + 1)) n hfit)
-      (bankZ (toBank (rowsAt R₀ j) Z))) v₃ { S with R := R₃ } hL hN₃
+    hmono (program ds) (fun i hi => hi) B₀ v₃ { S with R := R₃ } hL hN₃
     (fun x => by dsimp only; rw [hfr₃ _ (reg_ne (by simp))]; exact hw₂ x)
+  set Bf := runM (actMap a₀ ρ K (bits u (j + 1)) n hfit)
+    (fun s => layerZ u ds R₀ j fun c => actMap a₀ ρ K (bits u (j + 1)) n hfit (bitIdx s c))
+    (expZ u ds j) (program ds) B₀
   -- clearing `Tc`
   obtain ⟨v₅, hu₅, he₅⟩ := uclear_exec body (reg .Tc) v₄ { S with R := R₄ }
   obtain ⟨R₅, he₅, hR₅b, hR₅⟩ := exec_upd body (S := S) (R := R₄) he₅
-  have h₅ : ∀ x : LReg BReg, (∀ y, x ≠ .wire y) → R₅ (reg x) = R₁ (reg x) := by
-    intro x hx
+  have h₅ : ∀ x : LReg BReg, x ≠ .io → (∀ y, x ≠ .wire y) → R₅ (reg x) = S.R (reg x) := by
+    intro x h1 hx
     by_cases hT : x = .Tc
     · subst hT
-      rw [hR₅b, h₁ _ (by simp) (by simp)]
+      rw [hR₅b]
       exact (hrest .Tc).symm
     · rw [hR₅ _ (reg_ne hT), hfr₄ _ (fun y => reg_ne (hx y))]
-      exact h₃ x hx hT
-  have h₅S : ∀ x : LReg BReg, x ≠ .io → (∀ y, x ≠ .wire y) → R₅ (reg x) = S.R (reg x) :=
-    fun x h1 h2 => (h₅ x h2).trans (h₁ x h1 h2)
-  -- the signed exchange
-  obtain ⟨v₆, m₆, R₆, hu₆, hm₆, he₆, hw₆, hfr₆⟩ := exchStage_exec body hA hw (u := u)
-    (runM (actMap a₀ ρ K (bits u (j + 1)) n hfit)
-      (fun s => layerZ u ds R₀ j fun c => actMap a₀ ρ K (bits u (j + 1)) n hfit (bitIdx s c))
-      (expZ u ds j) (program ds)
-      (corrInM (k := bits u j) (actMap a₀ ρ K (bits u (j + 1)) n hfit)
-        (bankZ (toBank (rowsAt R₀ j) Z)))) v₅ { S with R := R₅ }
-    (by dsimp only; rw [h₅S _ (by simp) (by simp)]; exact hrest .ctr)
-    (by dsimp only; rw [h₅S _ (by simp) (by simp)]; exact hrest .tmp)
-    (by dsimp only; rw [h₅S _ (by simp) (by simp)]; exact hpar .u)
-    (by dsimp only; rw [h₅S _ (by simp) (by simp)]; exact hrest (.sc 0))
-    (fun x => by dsimp only; rw [h₅S _ (by simp) (by simp)]; exact hrest (.wtmp x))
-    (fun x => by dsimp only; rw [hR₅ _ (reg_ne (by simp))]; exact hw₄ x)
-  have h₆ : ∀ x : LReg BReg, (∀ y, x ≠ .wire y) → R₆ (reg x) = R₁ (reg x) :=
-    fun x hx => (hfr₆ _ fun y => reg_ne (hx y)).trans (h₅ x hx)
-  -- the sink signs
-  obtain ⟨v₇, m₇, R₇, hu₇, hm₇, he₇, hw₇, hfr₇⟩ := signStage_exec body hA hr hw hK hfit _ v₆
-    { S with R := R₆ } (hpar₁.congr fun x hx => h₆ x (parRegs_ne hx).2.1)
-    (hrest.restBut_of_frame _ fun x hx hx' => (h₆ x fun y h => hx' ⟨y, h⟩).trans
-      (h₁ x hx fun y h => hx' ⟨y, h⟩)) hw₆
-  have h₇ : ∀ x : LReg BReg, (∀ y, x ≠ .wire y) → R₇ (reg x) = R₁ (reg x) :=
-    fun x hx => (hfr₇ _ fun y => reg_ne (hx y)).trans (h₆ x hx)
+      exact h₃ x h1 hx hT
+  have hw₅ : ∀ x, R₅ (reg (.wire x)) = encZ A w (Bf x) := fun x => by
+    rw [hR₅ _ (reg_ne (by simp))]; exact hw₄ x
+  have hio₅ : R₅ (reg .io) = [] := by
+    rw [hR₅ _ (reg_ne (by simp)), hfr₄ _ (fun y => reg_ne (by simp))]; exact hN₃.io
+  -- clearing the centres
+  obtain ⟨v₆, m₆, R₆, hu₆, hm₆, he₆, hc₆, hfr₆⟩ := clearCentres_exec body
+    (rowsAt R₀ j * 2 ^ n * r * w) v₅ { S with R := R₅ }
+    (fun c => by dsimp only; rw [hw₅, length_encZ]; ring)
+  dsimp only at hc₆ hfr₆
   -- the row merge
   obtain ⟨v₈, m₈, R₈, hu₈, hm₈, he₈, hio₈, hw₈, hfr₈⟩ := mergeProg_exec body hNW
-    (R := rowsAt R₀ j) _ v₇ { S with R := R₇ } hw₇
-    (by dsimp only; rw [h₇ _ (by simp), h₁ _ (by simp) (by simp)]; exact hrest .rowctr)
-    (by dsimp only; rw [h₇ _ (by simp), h₁ _ (by simp) (by simp)]; exact hrest .rowtmp)
-    (by dsimp only; rw [h₇ _ (by simp), h₁ _ (by simp) (by simp)]; exact hpar .rows)
-    (by dsimp only; rw [h₇ _ (by simp), h₁ _ (by simp) (by simp)]; exact hrest .rctmp)
-    (by dsimp only; rw [h₇ _ (by simp), h₁ _ (by simp) (by simp)]; exact hrest .racc)
-    (by dsimp only; rw [h₇ _ (by simp)]; exact hio₁)
+    (R := rowsAt R₀ j) Bf v₆ { S with R := R₆ }
+    (fun d => by dsimp only; rw [hfr₆ _ (fun c => reg_ne (by simp))]; exact hw₅ _)
+    (by dsimp only; rw [hfr₆ _ (fun c => reg_ne (by simp)), h₅ _ (by simp) (by simp)];
+        exact hrest .rowctr)
+    (by dsimp only; rw [hfr₆ _ (fun c => reg_ne (by simp)), h₅ _ (by simp) (by simp)];
+        exact hrest .rowtmp)
+    (by dsimp only; rw [hfr₆ _ (fun c => reg_ne (by simp)), h₅ _ (by simp) (by simp)];
+        exact hpar .rows)
+    (by dsimp only; rw [hfr₆ _ (fun c => reg_ne (by simp)), h₅ _ (by simp) (by simp)];
+        exact hrest .rctmp)
+    (by dsimp only; rw [hfr₆ _ (fun c => reg_ne (by simp)), h₅ _ (by simp) (by simp)];
+        exact hrest .racc)
+    (by dsimp only; rw [hfr₆ _ (fun c => reg_ne (by simp))]; exact hio₅)
+  dsimp only at hio₈ hw₈ hfr₈
   -- the final registers
-  have hc : (⟨0, 1⟩ : GaussianInt) ^ ((3 * (u % 4)) % 4) =
-      (⟨0, 1⟩ : GaussianInt) ^ (27 * bits u j) := by
-    rw [pow_I_27, bits_mod_four]
   have hfin : R₈ = Function.update S.R (reg .io) (encZ A w (ofBank (rowsAt R₀ j)
       (nodeM (k := bits u j) (actMap a₀ ρ K (bits u (j + 1)) n hfit)
         (fun s => layerZ u ds R₀ j fun c => actMap a₀ ρ K (bits u (j + 1)) n hfit (bitIdx s c))
         (expZ u ds j) ds (toBank (rowsAt R₀ j) Z)))) := by
     funext q
     by_cases hq : q = reg .io
-    · rw [hq, Function.update_self, hio₈, hc, corrInM_exchZ]
+    · rw [hq, Function.update_self, hio₈]
       rfl
     rw [Function.update_of_ne hq]
-    by_cases hqw : ∃ x, q = reg (.wire x)
-    · obtain ⟨x, rfl⟩ := hqw
-      rw [hw₈ x]
-      exact (hrest (.wire x)).symm
+    by_cases hqw : ∃ d : DWire, q = reg (.wire (.inl d))
+    · obtain ⟨d, rfl⟩ := hqw
+      rw [hw₈ d]
+      exact (hrest (.wire (.inl d))).symm
     push Not at hqw
     rw [hfr₈ q hq hqw]
+    by_cases hqc : ∃ c, q = reg (.wire (.inr c))
+    · obtain ⟨c, rfl⟩ := hqc
+      rw [hc₆ c]
+      exact (hrest (.wire (.inr c))).symm
+    push Not at hqc
+    rw [hfr₆ q hqc]
     obtain ⟨x, rfl⟩ := (regEquiv BReg).surjective q
-    exact (h₇ x fun y h => hqw y (by rw [h]; rfl)).trans
-      (h₁ x (fun h => hq (by rw [h]; rfl)) fun y h => hqw y (by rw [h]; rfl))
+    refine h₅ x (fun h => hq (by rw [h]; rfl)) fun y h => ?_
+    rcases y with d | c
+    · exact hqw d (by rw [h]; rfl)
+    · exact hqc c (by rw [h]; rfl)
   have hTc₄ : (R₄ (reg .Tc)).length = expZ u ds j := by
     rw [hfr₄ _ (fun y => reg_ne (by simp))]; exact hTc₃
-  refine ⟨v₈, m₁ + (m₂ + (m₃ + (m₄ + ((2 * (R₄ (reg .Tc)).length + 2) + (m₆ + (m₇ + m₈)))))),
-    by rw [hu₈, hu₇, hu₆, hu₅, hu₄, hu₃, hu₂, hu₁], ?_,
+  refine ⟨v₈, m₁ + (m₂ + (m₃ + (m₄ + ((2 * (R₄ (reg .Tc)).length + 2) + (m₆ + m₈))))),
+    by rw [hu₈, hu₆, hu₅, hu₄, hu₃, hu₂, hu₁], ?_,
     Exec.cast (Exec.seq he₁ (Exec.seq he₂ (Exec.seq he₃ (Exec.seq he₄ (Exec.seq he₅
-      (Exec.seq he₆ (Exec.seq he₇ he₈))))))) rfl (by rw [hfin])⟩
+      (Exec.seq he₆ he₈)))))) rfl (by rw [hfin])⟩
   rw [hTc₄]
   unfold nodeCost
   omega
@@ -273,7 +316,8 @@ theorem nodeBody_execL (ds : ComplexFramedExecution.Directions)
 /-- `nodeBody_execL` with the result written as the level-`j + 1` layer `layerZ`. -/
 theorem nodeBody_execL_layerZ (ds : ComplexFramedExecution.Directions)
     (fp : NWire → ZMod 4 × BinaryWalsh.Address m → Pr P (nT BReg) Q A U)
-    {bcRest : BReg → List (Fin (A + 4)) → Prop} {R₀ j u K ρ a₀ L n r w cf : ℕ}
+    (mp : Instr → Pr P (nT BReg) Q A U)
+    {bcRest : BReg → List (Fin (A + 4)) → Prop} {R₀ j u K ρ a₀ L n r w cf cm : ℕ}
     (hA : 5 ≤ A) (hNW : NW ≤ A + 4)
     (hgate : ∀ g, Instr.gate g ∈ program ds →
       (2 * gateBound g + 1) ^ (2 * (gateWires g).length) ≤ A + 4)
@@ -283,16 +327,21 @@ theorem nodeBody_execL_layerZ (ds : ComplexFramedExecution.Directions)
         (actMap a₀ ρ K (bits u (j + 1)) n hfit)
         (fun s => layerZ u ds R₀ j fun c => actMap a₀ ρ K (bits u (j + 1)) n hfit (bitIdx s c))
         (expZ u ds j) fw g cf)
+    (hmono : ∀ i ∈ program ds, i.IsMono →
+      MonoSpecL body (mp i) bcRest j u K ρ a₀ L (rowsAt R₀ (j + 1)) n r w (k := bits u j)
+        (actMap a₀ ρ K (bits u (j + 1)) n hfit)
+        (fun s => layerZ u ds R₀ j fun c => actMap a₀ ρ K (bits u (j + 1)) n hfit (bitIdx s c))
+        (expZ u ds j) i cm)
     (Z : ZArr (Fin (rowsAt R₀ (j + 1)) × Fin r) n) (v : HS (nT BReg) Q A U)
     (S : Stacks (nT BReg) A) (hL : ∀ y, S.L y = [])
     (hpar : ParState S.R (j + 1) u K ρ a₀ L (rowsAt R₀ (j + 1)) n w (r * w))
     (hrest : Rest bcRest n r w S.R) (hio : S.R (reg .io) = encZ A w Z) :
     ∃ (v' : HS (nT BReg) Q A U) (c : ℕ), v'.user = v.user ∧
-      c ≤ nodeCost ds u j K ρ a₀ (rowsAt R₀ j) n r w cf ∧
-      Exec body (nodeBody ds fp) (mk v S) c (mk v' { S with
+      c ≤ nodeCost ds u j K ρ a₀ (rowsAt R₀ j) n r w cf cm ∧
+      Exec body (nodeBody ds fp mp) (mk v S) c (mk v' { S with
         R := Function.update S.R (reg .io)
           (encZ A w (layerZ u ds R₀ (j + 1) (actMap a₀ ρ K (bits u (j + 1)) n hfit) Z)) }) :=
-  nodeBody_execL body ds fp hA hNW hgate hr hw hK hfit hfac Z v S hL hpar hrest hio
+  nodeBody_execL body ds fp mp hA hNW hgate hr hw hK hfit hfac hmono Z v S hL hpar hrest hio
 
 end NodeL
 
@@ -583,7 +632,7 @@ otherwise, with the factor programs calling the layer procedure for the child. -
 noncomputable def layerBody (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
     (ds : ComplexFramedExecution.Directions) : Pr LProc (nT SXReg) Q (prime + Ka) U :=
   .seq (.act (peekR (reg .lev)))
-    (.cond (fun v => !v.flag) leafP (nodeBody ds (factorProg hQ (.call .layer) ds)))
+    (.cond (fun v => !v.flag) leafP (nodeBody ds (factorProg hQ (.call .layer) ds) (monoProgN hQ)))
 
 /-- The procedure table of the layer machine. -/
 noncomputable def layerTable (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
@@ -599,7 +648,7 @@ noncomputable def facMax (ds : ComplexFramedExecution.Directions)
     (f : NWire → ZMod 4 × BinaryWalsh.Address m → ℕ) : ℕ :=
   ((program ds).map fun i => match i with
     | .factor fw g => f fw g
-    | .gate _ => 0).foldr max 0
+    | _ => 0).foldr max 0
 
 lemma le_facMax (ds : ComplexFramedExecution.Directions)
     (f : NWire → ZMod 4 × BinaryWalsh.Address m → ℕ) {fw : NWire}
@@ -624,7 +673,8 @@ noncomputable def layerCost (T : ℕ) (ds : ComplexFramedExecution.Directions)
   | 0, a₀ => leafCost u K ρ a₀ R₀ n r w + 4
   | j + 1, a₀ => nodeCost ds u j K ρ a₀ (rowsAt R₀ j) n r w
       (facMax ds fun _ g => factorCost T ds j u K ρ a₀ R₀ n r w g
-        (layerCost T ds u K ρ R₀ n r w j (a₀ + pivotOf g.2 * (K * bits u j)))) + 4
+        (layerCost T ds u K ρ R₀ n r w j (a₀ + pivotOf g.2 * (K * bits u j))))
+      (monoMax ds (monoCostN T j u K ρ a₀ R₀ n r w)) + 4
 
 /-- **The layer procedure.** From the parameters of level `j` (`L = K · bits u j`,
 `rows = rowsAt R₀ j`, `rw = r w`), every register at rest (the `bc` registers empty), every left
@@ -701,9 +751,17 @@ theorem layer_exec (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
           omega
         intro Z' v' S' hL' hpar' hrest' hio'
         exact ih (fun i hi => hTw i (by omega)) _ hfit' hfitL' Z' v' S' hL' hpar' hrest' hio'
+      have hmono : ∀ i ∈ program ds, i.IsMono →
+          MonoSpecL (layerTable (Ka := Ka) (U := U) hQ ds) (monoProgN hQ i) bcEmpty j u K ρ a₀
+            (K * bits u (j + 1)) (rowsAt R₀ (j + 1)) n r w (k := bits u j)
+            (actMap a₀ ρ K (bits u (j + 1)) n hfit)
+            (fun s => layerZ u ds R₀ j fun c => actMap a₀ ρ K (bits u (j + 1)) n hfit (bitIdx s c))
+            (expZ u ds j) i (monoMax ds (monoCostN (nT SXReg) j u K ρ a₀ R₀ n r w)) :=
+        fun i hi hm => MonoSpecL.mono _ (monoProgN_spec (layerTable hQ ds) hQ hA hr hw hρ hu hR₀
+          hfit hfitL _ i (program_fit ds i hi) hm) (le_monoMax ds _ hi)
       obtain ⟨v₁, c₁, hu₁, hc₁, he₁⟩ := nodeBody_execL_layerZ (layerTable hQ ds) ds
-        (factorProg hQ (.call .layer) ds) (by omega) hNW hgate hr hw (by omega) hfit hfac Z
-        { v with flag := (S.R (reg .lev)).head?.isSome } S hL hpar hrest hio
+        (factorProg hQ (.call .layer) ds) (monoProgN hQ) (by omega) hNW hgate hr hw (by omega)
+        hfit hfac hmono Z { v with flag := (S.R (reg .lev)).head?.isSome } S hL hpar hrest hio
       refine ⟨v₁, 1 + (c₁ + 1) + 2, hu₁, ?_, ?_⟩
       · simp only [layerCost]; rw [← hcf]; omega
       · exact Exec.call (Exec.seq hp (Exec.cond_false (by simp [hl]) he₁))
