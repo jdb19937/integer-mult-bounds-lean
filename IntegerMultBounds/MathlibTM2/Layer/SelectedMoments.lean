@@ -3,6 +3,9 @@ module
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Algebra.BigOperators.Fin
 public import IntegerMultBounds.MathlibTM2.Layer.OccurrenceRecurrence
+public import IntegerMultBounds.Networks.Certificates.T16.Geometry.Forward
+public import IntegerMultBounds.Networks.Certificates.T16.Geometry.Backward
+public import IntegerMultBounds.Networks.Certificates.T16.Streams.Template
 
 /-!
 # Exact moment inequalities for the selected suppliers
@@ -260,28 +263,109 @@ theorem occurrence_moment_eq {L : List ℕ} {hist : List (ℕ × ℕ)} (hL : Rea
     List.sum_map_mul_left, hL.sum_map, histMoment]
   ring
 
-/-! ### T16 child occurrences from the selected call profile -/
+/-! ### T16 child occurrences from the native traces -/
 
 section T16
 
-/-- The selected per-call charge profile `(rank, count)`; both orientations agree. -/
+open IntegerMultBounds.Networks.Certificates.T16
+
+/-- The child rank charged by a trace event: frame climbs and center moves. -/
+def eventRank : Trace.Event → Option ℕ
+  | .climb _ _ _ _ rank => some rank
+  | .center _ _ _ rank => some rank
+  | _ => none
+
+/-- Child ranks charged by one call in the given orientation. -/
+def callRanks (backward : Bool) : List ℕ :=
+  (if backward then Trace.backwardEvents else Trace.forwardEvents).filterMap eventRank
+
+/-- Every charged rank is the dimension jump of a certified frame edge. -/
+theorem callRanks_geometry {backward : Bool} {rank : ℕ} (h : rank ∈ callRanks backward) :
+    ∃ old next, Geometry.EdgeGood Geometry.catalog old next rank := by
+  obtain ⟨event, hmem, hrank⟩ := List.mem_filterMap.mp h
+  have hgood : Geometry.EventGood Geometry.catalog backward event := by
+    cases backward
+    · exact Geometry.forward_geometry event hmem
+    · exact Geometry.backward_geometry event hmem
+  cases event <;> simp only [eventRank, Option.some.injEq, reduceCtorEq] at hrank <;>
+    subst hrank <;> simp only [Geometry.EventGood] at hgood
+  · exact ⟨_, _, hgood⟩
+  · split at hgood
+    · exact ⟨_, _, hgood⟩
+    · exact ⟨_, _, hgood⟩
+
+/-- The per-call rank profile `(rank, count)`. -/
 def callProfile : List (ℕ × ℕ) :=
   [(1, 2412), (2, 418), (3, 432), (4, 142), (5, 82), (8, 8)]
 
-/-- Child ranks charged by one scheduled call. -/
-def callRanks : List ℕ := (callProfile.map fun e => List.replicate e.2 e.1).flatten
+def profileRanks : List ℕ := (callProfile.map fun e => List.replicate e.2 e.1).flatten
 
-/-- The residual (idle) inventory added to the 144 scheduled calls. -/
+theorem perm_of_counts {l l' ks : List ℕ} (hl : ∀ x ∈ l, x ∈ ks) (hl' : ∀ x ∈ l', x ∈ ks)
+    (hcount : ks.all (fun k => l.count k == l'.count k) = true) : l.Perm l' := by
+  rw [List.perm_iff_count]
+  intro a
+  by_cases ha : a ∈ ks
+  · simpa using List.all_eq_true.mp hcount a ha
+  · rw [List.count_eq_zero.mpr (fun hx => ha (hl a hx)),
+      List.count_eq_zero.mpr (fun hx => ha (hl' a hx))]
+
+theorem forward_ranks_all :
+    (callRanks false).all (· ∈ [1, 2, 3, 4, 5, 8]) = true := by decide +kernel
+
+theorem backward_ranks_all :
+    (callRanks true).all (· ∈ [1, 2, 3, 4, 5, 8]) = true := by decide +kernel
+
+theorem forward_ranks_count :
+    [1, 2, 3, 4, 5, 8].all (fun k => (callRanks false).count k == profileRanks.count k) = true := by
+  decide +kernel
+
+theorem backward_ranks_count :
+    [1, 2, 3, 4, 5, 8].all (fun k => (callRanks true).count k == profileRanks.count k) = true := by
+  decide +kernel
+
+/-- Both orientations charge exactly the per-call profile. -/
+theorem callRanks_perm (backward : Bool) : (callRanks backward).Perm profileRanks := by
+  have hprofile : ∀ x ∈ profileRanks, x ∈ [1, 2, 3, 4, 5, 8] := by
+    simpa using (by decide +kernel : profileRanks.all (· ∈ [1, 2, 3, 4, 5, 8]) = true)
+  cases backward
+  · exact perm_of_counts (by simpa using forward_ranks_all) hprofile forward_ranks_count
+  · exact perm_of_counts (by simpa using backward_ranks_all) hprofile backward_ranks_count
+
+/-- The residual (idle) inventory added to the scheduled calls. -/
 def idleRanks : List ℕ :=
   List.replicate 2276 1 ++ List.replicate 377 3 ++ List.replicate 7 7 ++ List.replicate 4866 48
 
+/-- One call per stage and replica, in the stage's orientation. -/
+def scheduledRanks : List ℕ :=
+  ((List.range 9).flatMap fun s =>
+    (List.range 16).map fun _ => callRanks (Streams.localReverse s)).flatten
+
 /-- Every T16 child occurrence: the 144 scheduled calls, then the residual inventory. -/
-def t16Ranks : List ℕ := (List.replicate 144 callRanks).flatten ++ idleRanks
+def t16Ranks : List ℕ := scheduledRanks ++ idleRanks
+
+theorem sum_flatten_const {l : List (List ℕ)} {price : ℕ → ℕ} {c : ℕ}
+    (h : ∀ x ∈ l, (x.map price).sum = c) : (l.flatten.map price).sum = l.length * c := by
+  induction l with
+  | nil => simp
+  | cons x l ih =>
+    rw [List.flatten_cons, List.map_append, List.sum_append, h x List.mem_cons_self,
+      ih fun y hy => h y (List.mem_cons_of_mem x hy), List.length_cons]
+    ring
+
+theorem scheduledRanks_cost (price : ℕ → ℕ) :
+    (scheduledRanks.map price).sum = 144 * (profileRanks.map price).sum := by
+  rw [scheduledRanks, sum_flatten_const (c := (profileRanks.map price).sum)]
+  · rfl
+  · intro x hx
+    obtain ⟨s, -, hs⟩ := List.mem_flatMap.mp hx
+    obtain ⟨-, -, rfl⟩ := List.mem_map.mp hs
+    exact ((callRanks_perm _).map price).sum_eq
 
 theorem t16Ranks_cost (price : ℕ → ℕ) :
     (t16Ranks.map price).sum = (complexHistogram.map fun e => e.2 * price e.1).sum := by
-  simp only [t16Ranks, callRanks, callProfile, idleRanks, complexHistogram, List.map_append,
-    List.sum_append, List.map_flatten, List.sum_flatten, List.map_replicate, List.sum_replicate,
+  rw [t16Ranks, List.map_append, List.sum_append, scheduledRanks_cost]
+  simp only [profileRanks, callProfile, idleRanks, complexHistogram, List.map_append,
+    List.sum_append, List.map_replicate, List.sum_replicate,
     List.map_cons, List.map_nil, List.flatten_cons, List.flatten_nil, List.sum_cons,
     List.sum_nil, smul_eq_mul]
   ring
