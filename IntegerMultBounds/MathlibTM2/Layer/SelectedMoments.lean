@@ -4,7 +4,7 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Algebra.BigOperators.Fin
 public import IntegerMultBounds.MathlibTM2.Layer.OccurrenceRecurrence
 public import IntegerMultBounds.Networks.Certificates.T16.Geometry.Forward
-public import IntegerMultBounds.Networks.Certificates.T16.Geometry.Backward
+public import IntegerMultBounds.Networks.Certificates.T16.Trace.Backward
 public import IntegerMultBounds.Networks.Certificates.T16.Streams.Template
 
 /-!
@@ -279,20 +279,22 @@ def eventRank : Trace.Event → Option ℕ
 def callRanks (backward : Bool) : List ℕ :=
   (if backward then Trace.backwardEvents else Trace.forwardEvents).filterMap eventRank
 
+/-- The backward trace charges the forward ranks in the same order: its climbs are identical and
+its centers swap only the old and new frames. -/
+theorem callRanks_backward : callRanks true = callRanks false := by decide +kernel
+
 /-- Every charged rank is the dimension jump of a certified frame edge. -/
 theorem callRanks_geometry {backward : Bool} {rank : ℕ} (h : rank ∈ callRanks backward) :
     ∃ old next, Geometry.EdgeGood Geometry.catalog old next rank := by
-  obtain ⟨event, hmem, hrank⟩ := List.mem_filterMap.mp h
-  have hgood : Geometry.EventGood Geometry.catalog backward event := by
+  have hforward : rank ∈ callRanks false := by
     cases backward
-    · exact Geometry.forward_geometry event hmem
-    · exact Geometry.backward_geometry event hmem
+    · exact h
+    · rwa [← callRanks_backward]
+  obtain ⟨event, hmem, hrank⟩ := List.mem_filterMap.mp hforward
+  have hgood := Geometry.forward_geometry event hmem
   cases event <;> simp only [eventRank, Option.some.injEq, reduceCtorEq] at hrank <;>
-    subst hrank <;> simp only [Geometry.EventGood] at hgood
-  · exact ⟨_, _, hgood⟩
-  · split at hgood
-    · exact ⟨_, _, hgood⟩
-    · exact ⟨_, _, hgood⟩
+    subst hrank <;> simp only [Geometry.EventGood, Bool.false_eq_true, ↓reduceIte] at hgood <;>
+    exact ⟨_, _, hgood⟩
 
 /-- The per-call rank profile `(rank, count)`. -/
 def callProfile : List (ℕ × ℕ) :=
@@ -312,24 +314,18 @@ theorem perm_of_counts {l l' ks : List ℕ} (hl : ∀ x ∈ l, x ∈ ks) (hl' : 
 theorem forward_ranks_all :
     (callRanks false).all (· ∈ [1, 2, 3, 4, 5, 8]) = true := by decide +kernel
 
-theorem backward_ranks_all :
-    (callRanks true).all (· ∈ [1, 2, 3, 4, 5, 8]) = true := by decide +kernel
-
 theorem forward_ranks_count :
     [1, 2, 3, 4, 5, 8].all (fun k => (callRanks false).count k == profileRanks.count k) = true := by
-  decide +kernel
-
-theorem backward_ranks_count :
-    [1, 2, 3, 4, 5, 8].all (fun k => (callRanks true).count k == profileRanks.count k) = true := by
   decide +kernel
 
 /-- Both orientations charge exactly the per-call profile. -/
 theorem callRanks_perm (backward : Bool) : (callRanks backward).Perm profileRanks := by
   have hprofile : ∀ x ∈ profileRanks, x ∈ [1, 2, 3, 4, 5, 8] := by
     simpa using (by decide +kernel : profileRanks.all (· ∈ [1, 2, 3, 4, 5, 8]) = true)
+  have hforward := perm_of_counts (by simpa using forward_ranks_all) hprofile forward_ranks_count
   cases backward
-  · exact perm_of_counts (by simpa using forward_ranks_all) hprofile forward_ranks_count
-  · exact perm_of_counts (by simpa using backward_ranks_all) hprofile backward_ranks_count
+  · exact hforward
+  · rwa [callRanks_backward]
 
 /-- The residual (idle) inventory added to the scheduled calls. -/
 def idleRanks : List ℕ :=
