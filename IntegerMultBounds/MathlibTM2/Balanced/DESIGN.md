@@ -4,8 +4,8 @@ M5 removes the multiplicative layout loss of the synthetic transforms (plan
 `plan/D-sharper-bound.md`, §6, "M5"). It has two independent parts:
 
 * **M5a, the balanced positional layout.** The prefix charge `T p d K` becomes `T p d`, so the
-  prefix margin moves from `1 - ε(1+c)` to `1 - ε`. It uses only the existing single-bit moves and
-  equal-width chunk interchanges.
+  prefix margin moves from `1 - ε(1+c)` to `1 - ε`. It uses only the existing layout and its
+  single-bit moves and equal-width chunk interchanges, at a chunk width chosen from `n = ℓ - 1`.
 * **M5b, arbitrary-source coordinate routing.** The layout charge `T p · p K^(τ-1)` becomes
   `T p · p^τ polylog p`, so the layout margin moves from `ε c a_b` to `a_b`. It needs a new
   routing machine.
@@ -157,32 +157,33 @@ permutation of the `n` named coordinates, given by a poly(`p`) description. The 
 
 ### M5a
 
-* **Layout.** `balPerm es ℓ K : Equiv.Perm (Fin es.sum)` replaces `layPerm`. Its moves are the
-  long-axis top-slot moves, then the scan of the variable-width chunk transposition, each
-  unequal transposition lowered to one bit move and one equal-width exchange. `layBits` and
-  `layXcs` get balanced counterparts with the same register-level description-stream formats.
-  The writer `ldgWriter` and the loaders `ldlPrepM`, `ldlPrepX` stay unchanged and consume the
-  new lists.
-* **Register and stack interface.** It is unchanged:
-  * record stream on `lreg .io`;
-  * layout wires `ly 1 … ly 22` (`slyRg`), interchange bank `swp 0`, temporaries `slyT c`;
-  * park predicate `slyPk W E`;
-  * unary sizes on `p .N, p .ℓ, p .K, p .D`.
-* **One new per-round input: the group width `K_j`.** The persistent wire `p .K` keeps
-  `K = ⌊d^c⌋`. The round header (`synCfg`) carries `K_j` and the group offset `balOff n q j`.
-* **Rounds.**
-  * Forward: the top round on the long axes (individual prefix processing, as the present prefix
-    rounds), then the common rounds `h = ℓ - 2, …, 0` in decreasing order. All are chunk rounds
-    of their group.
-  * Opposite: the same rounds in reverse, ending with the top round.
-  * Frequency order: slot `(i, h)` keeps frequency significance `aᵢ - 1 - h`, and the monomial
-    exponent `E = -Σ (2r/2^(h+1)) bᵢ kᵢ mod 2r` is computed from the named slots. The exact
-    operators are `L_bal B F⁻` and `F⁺ B⁻¹ L_bal⁻¹`, so the pointwise product and the
-    opposite transform keep their present conventions.
-* **Spectators.** Prefix slots and the other chunk groups are spectators of every common round.
-  The opposite program restores the original box order with the inverse moves in reverse.
-* **Charge.** At most `d - 1` bit moves and `D q - 1` transpositions, `O(T p (d + p K^(τ-1)))`.
-  There is one prefix round, so `O(T p d)` for prefix rounds.
+The present layout cuts the `n = ℓ - 1` common slots of every axis into `q = ⌊n/K⌋` chunks of
+width `K` and moves the remaining `b = n mod K` low slots to the prefix. The prefix charge
+`d (b + 1)` bit moves and `b + 1` prefix rounds is `T p d K` only because `b < K`. A chunk width
+that leaves a small remainder removes it.
+
+* **The uniform balanced width.** `unifWidth n K = max K (n / ⌊n/K⌋)` (`Balanced/Widths.lean`).
+  For `1 ≤ K ≤ n` it is `w = n / q`, with `K ≤ w < 2K` (`le_unifWidth`, `unifWidth_le_two_mul`)
+  and remainder `n mod w < q` (`mod_unifWidth_lt`): `n = w q + r` with `r = n mod q < q`, and
+  `n mod w = r mod w ≤ r`. Every chunk has the one width `w`, so the rounds, the selected-bit
+  offsets (`layPerm_sel_chunk`) and the layout programs are the present ones at `K := w`.
+* **The chunk width of the compact chain.** `CompactSizes.K n` becomes
+  `min d (max K₀ (unifWidth (ℓ - 1) K₀))` with the root `K₀ = ⌊d^(7/8)⌋`. Under `Big`,
+  `2 K₀ ≤ d` and `K₀ < ℓ - 1`, so it is the uniform width. Unconditionally
+  `K₀ ≤ K ≤ min (d, 2 K₀)`: every lower bound on `K` stays as it is, and the upper bounds
+  `K ≤ d^c`, `K ≤ B^(εc)` lose a factor `2`. The parameter program computes it after the root
+  with two divisions and two comparisons.
+* **Charge.** Under `Big` the prefix holds `b + 1 ≤ q ≤ (ℓ - 1)/K₀` slots per axis, so the
+  bit moves and the prefix rounds cost
+  `T p d (b + 1) ≤ T p · d ℓ / K₀ ≤ T p · p/(3 K₀) ≤ T p · p K^(τ-1)`, with `dℓ ≤ p/3`,
+  `K ≤ 2 K₀` and `K^(τ-1) ≥ K^(-1)`. The prefix charge joins the chunk-exchange charge, and the
+  convolution envelope becomes `T p (d + p K^(τ-1) + ℓ d^λ' + log log (r p))`.
+* **Register, stack and round interface.** Unchanged: `p .K` holds the new width, and the
+  rounds, `synChunk`, `synOS`, `synCfg` and the move lists are the present ones at that width.
+
+The variable-width layout of (b) (`balWidth`, `balOff`, chunks of widths `L` and `L + 1`, one
+unequal transposition lowered to a bit move and an equal-width exchange) reaches the same
+charge with a per-round width; the uniform width needs none of it.
 
 ### M5b
 
@@ -212,34 +213,21 @@ permutation of the `n` named coordinates, given by a poly(`p`) description. The 
 
 **Statement changes, M5a:**
 
-* `Fast/LayoutMath.lean`: new `balPerm`, `balMoves`. `layPerm` and `layB` stay for the present
-  route.
-* `Fast/SynRec.lean`: `synChunk`, `synOS`, `synCfg`, `synPcsR` take the group width `K_j` and the
-  offset `balOff`. The low rounds disappear (`layB` no longer occurs).
-* `Fast/SynSel.lean`: `synSel_chunk` and `synSel_top` for `balPerm`. `synSel_low` has no
-  counterpart.
-* `Fast/SynFwd.lean`: `synFwd_spec_br`, `synOpp_spec_br` and `SynV` take the layout permutation as
-  a parameter, so `layPerm` becomes a variable `L` with the selected-bit property as a hypothesis.
-* `Fast/SynLaySpec.lean`: `slyFwd_spec_br`, `slyOpp_spec_br` at `balPerm`.
-* The compact layer chain, statement change in the chunk width: every lemma taking
-  `Mult.CompactSizes.K M` as the round width takes a supplied `K'` with
-  `K ≤ K' < 2K`. This covers `CompactSynHybridRoundR`, `CompactSynLayerFitR`,
-  `CompactRetunedLayerMatchR` (`compactRetunedR_layer_chunk_eventually`),
-  `CompactReservationFits`, `compactTopRows_bounds`, `CompactCallerRetunedCapacity` and the
-  reservation counts (`ceil(2dG/K')+ceil(dG/K')` only decreases in `K'`).
-* `Cost/MatchSynLay.lean` `ml_stage_le`, `Cost/CompactRetunedLayoutMatch.lean`
-  `compactRetuned_ml_stage_le`: the right side `d K + p K^(τ-1)` becomes `d + p K^(τ-1)`.
-* `Cost/MatchSynLoop.lean` `mr_rounds_split`, `mr_prefix_layer_le`: one prefix round.
-* `CompactTotal.conv` and `CompactStageGrowth.conv`: `d K` becomes `d`. `exp_facts` replaces
-  `2ε ≤ 1 - κ` by `ε ≤ 1 - κ`.
+* `Mult/CompactSizes.lean`: `K` becomes the uniform width above `Kroot = ⌊d^(7/8)⌋`;
+  `K_eq_floor`, `K_pow_le`, `le_K_iff` move to `Kroot`; new `Kroot_le_K`, `K_le_two_Kroot`,
+  `two_Kroot_lt_d`, `K_eq_unif`, `mod_K_succ_le`.
+* `Fast/CompactParamProg.lean`: `compactPmOverwrite` gains the width program;
+  `compactPmOverwriteAtoms` gains its atoms.
+* `Cost/CompactGrowth.lean`: `compact_K_le_d_rpow`, `compact_K_le_rpow` with the factor `2`.
+* `Cost/CompactStageGrowth.lean`: `conv` with `d` in place of `d K`; `exp_facts` with `ε ≤ 1 - κ`
+  in place of `2ε ≤ 1 - κ`; `conv_le` and its constants.
+* `Cost/CompactRetunedLayoutMatch.lean`, `Cost/CompactRetunedTransformMatchR.lean`,
+  `Cost/CompactRetunedDirectCost.lean` (`compactRetuned_conv_ge`): the bit moves and the prefix
+  rounds against `p K^(τ-1)` through `CompactTotal.prefix_le`
+  (`d ((ℓ - 1) mod K + 1) ≤ p K^(τ-1)` under `Big`).
 
-**Proof-only changes, M5a:**
-
-* `slyFwd_lay`, `slyOpp_lay`, `sly_post_fwd`, `sly_post_opp`, `ldLayGenStage_exec` and the
-  writer lemmas, now on the new move lists with the same formats;
-* the twiddle-exponent lemmas (`Fast/TwiddleL.lean`, `twPosL`), which already take the
-  permutation;
-* `mrP_pieces_le`.
+**Proof-only changes, M5a:** the consumers of the upper bounds of `CompactSizes.K` (`K ≤ d`,
+`K ≤ d^c`) and of `compactPmOverwrite_do`.
 
 **Statement changes, M5b:**
 
@@ -263,15 +251,15 @@ Line counts and agent time are conservative. Times assume the shared Lean lock a
 | stage | content | new or changed lines | agent time |
 | --- | --- | --- | --- |
 | 0 | Confirm with Kenny that M5 is unclaimed; agree on file ownership for the compact layer width change | — | days |
-| 1 | Balanced arithmetic: widths, offsets (`Balanced/Widths.lean`), `balPerm`, unequal-transposition lowering, selected-bit offsets per group, frequency order | 1.2–1.8k | 1–2 weeks |
-| 2 | Supplied chunk width `K'` through `SynRec`, `SynSel` and the compact layer chain | 2.5–4k changed | 3–5 weeks |
-| 3 | Balanced move lists and layout programs on the existing writer and loaders | 1.5–2.5k | 2–3 weeks |
-| 4 | M5a cost matching and margin rewiring (`d K → d`, one prefix round) | 0.8–1.2k | 1–2 weeks |
+| 1 | The uniform balanced width (`Balanced/Widths.lean`: `unifWidth`, `mod_unifWidth_lt`) | 100 | done |
+| 2 | The uniform width as `CompactSizes.K`: sizes, parameter program, consumers of its upper bounds | about 250 changed | done |
+| 3 | Layout programs | none (the present programs at the new width) | — |
+| 4 | M5a cost matching and margin rewiring (`d K → d`, `2ε → ε`, `CompactTotal.prefix_le`) | about 150 changed | done |
 | 5 | M5b mathematics: shear identity, good set, bijectivity, repair correctness, reservoir partition, involution decomposition, spectators | 2.5–4k | 4–6 weeks |
 | 6 | M5b machine: gadget rotations, bad-record extraction and reinsertion, descriptor generation, spectator placement | 5–8k | 8–12 weeks |
 | 7 | M5b cost matching, layout replacement, `conv` and margin rewiring | 1.5–2.5k | 2–4 weeks |
 
-Total: 15–24k lines, 5–8 months of agent time. Stages 1–4 (M5a) are 6–9k lines and 2–3 months
-and can finish independently. The riskiest parts are stage 2, which touches the compact layer
-chain that Kenny is extending under M3, and stage 6, whose argument is still awaiting review
-upstream.
+Stages 1–4 (M5a) are under 1k lines and finish independently of M5b. M5b is 9–15k lines and 3–5
+months of agent time. The riskiest parts are stage 2, which changes the chunk width of the
+compact layer chain that Kenny is extending under M3, and stage 6, whose argument is still
+awaiting review upstream.

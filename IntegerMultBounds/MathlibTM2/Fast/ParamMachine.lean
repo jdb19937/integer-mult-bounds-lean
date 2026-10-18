@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Fast.ParamProg
+public import IntegerMultBounds.Primes.SizeFacts
 public import IntegerMultBounds.MathlibTM2.Node.SlotXor
 import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 import Mathlib.Data.Nat.Factorial.DoubleFactorial
@@ -38,8 +39,9 @@ The table machine has `pmNV = 40` variables on the injective register layout `rg
 `pmParams_exec`: exact final contents of every register (variables `binSyms (pmW n) (pmVals n i)`,
 width registers `pmW n` ticks, `acc` and scratch empty, the two streams and the unary copies on
 top of their registers, every other register unchanged), within `pmCost n us` steps.
-`pmCost_le`: `pmCost n us ≤ 16 n + (2^23) (size n + 5)^4 + pmUnaryCost (pmW n) (pmVals n) us`.
-The unary copies of the parameters bounded by a polynomial in `b` cost `poly(log n)`; those of
+`pmCost_le`: `pmCost n us ≤ 17 n + (2^23) (size n + 5)^4 + pmUnaryCost (pmW n) (pmVals n) us`
+for `Big n`: `n` for the binary conversion of `n`, at most `n` for the search for the prime
+source lengths (`Big.search_cost_le`), a polynomial in `log n` for the rest. The unary copies of the parameters bounded by a polynomial in `b` cost `poly(log n)`; those of
 `T` and `r` cost `O(n)` (`pm_W_T_le`: `pmW n · T ≤ (2^9) n`, `pm_r_le_T`).
 -/
 
@@ -620,7 +622,7 @@ theorem pmParams_exec (hA : 4 ≤ A) (hrg : Function.Injective rg) {uN oT oS : F
   -- the second program
   obtain ⟨v₃, S₃, m₃, st₂, ⟨hv₂, ha₂⟩, hlt₂, hu₃, hm₃, he₃, hT₃, hS₃, hi₃, ho₃, hL₃, hk₃⟩ :=
     pm_host_runs (body := body) hrg hoS pmBitOfPair (pmTicks A W) (pmTicks A W) hwl hwl le_rfl
-      (pmCode2_do (w := W) hn hW' ⟨pmVals n, []⟩ ⟨rfl, fun i _ => rfl⟩) hlt₁ v₂ S₂ hS₂
+      (pmCode2_do (w := W) hB hW' ⟨pmVals n, []⟩ ⟨rfl, fun i _ => rfl⟩) hlt₁ v₂ S₂ hS₂
   rw [hv₂] at hS₃
   -- the unary copies
   obtain ⟨v₄, R₄, m₄, hu₄, hm₄, he₄, hR₄, hR₄'⟩ :=
@@ -665,23 +667,45 @@ end Machine
 theorem pm_size_le {n : ℕ} : Nat.size n ≤ b n + 1 :=
   Nat.size_le.2 ((le_two_pow_b n).trans_lt (Nat.pow_lt_pow_right (by norm_num) (by omega)))
 
-/-- `pmCost n us ≤ 16 n + (2^23) (size n + 5)^4 + pmUnaryCost`: linear in `n` for the
-conversion of `n` to binary, polynomial in `log n` for everything else but the unary copies. -/
-theorem pmCost_le {n : ℕ} (hn : 2 ≤ n) {α : Type} (us : List (Fin pmNV × α)) :
-    pmCost n us ≤ 16 * n + (2^23) * (Nat.size n + 5) ^ 4 + pmUnaryCost (pmW n) (pmVals n) us := by
+/-- `pmCost n us ≤ 17 n + (2^23) (size n + 5)^4 + pmUnaryCost`: linear in `n` for the
+conversion of `n` to binary and for the search for the source lengths, polynomial in `log n` for
+everything else but the unary copies. -/
+theorem pmCost_le {n : ℕ} (hB : Big n) {α : Type} (us : List (Fin pmNV × α)) :
+    pmCost n us ≤ 17 * n + (2^23) * (Nat.size n + 5) ^ 4 + pmUnaryCost (pmW n) (pmVals n) us := by
+  have hn : 2 ≤ n := hB.1
   have h1 := pmAtoms1_le hn
   have h2 := pmAtoms2_le n
   have hb := pm_b_le_size n
   have hd := d_le_b n
+  have hL1 : Nat.size n ≤ b n + 1 := pm_size_le
   set L := Nat.size n
-  have hA : pmAtoms1 n + pmAtoms2 n ≤ 2525 * (L + 5) ^ 2 := by
+  have hA : pmAtoms1 n + pmAtoms2 n ≤ 2525 * (L + 5) ^ 2 + pmSearchAtoms n := by
     have : (b n + 1) ^ 2 ≤ (L + 5) ^ 2 := Nat.pow_le_pow_left (by omega) 2
     omega
   have hC : tblC (pmW n) (pmW n) ≤ (2^11) * (L + 5) ^ 2 := by
     unfold tblC pmW
     nlinarith
+  have hs : pmSearchAtoms n ≤ 100 * (d n + 1) * 4 ^ ℓ n :=
+    Primes.ptPackAtoms_le (one_le_d hn) (numHalf_lt (one_le_d hn)).le
+      (by rw [← pm_r_eq_two_mul hn]; exact le_rfl)
+  have hsC : pmSearchAtoms n * tblC (pmW n) (pmW n) ≤ n := by
+    have g1 : d n + 1 ≤ b n + 6 := by omega
+    have g2 : (L + 5) ^ 2 ≤ (b n + 6) ^ 2 := Nat.pow_le_pow_left (by omega) 2
+    calc pmSearchAtoms n * tblC (pmW n) (pmW n)
+        ≤ 100 * (d n + 1) * 4 ^ ℓ n * ((2^11) * (L + 5) ^ 2) := Nat.mul_le_mul hs hC
+      _ = 204800 * ((d n + 1) * (L + 5) ^ 2) * 4 ^ ℓ n := by ring
+      _ ≤ 262144 * ((b n + 6) * (b n + 6) ^ 2) * 4 ^ ℓ n :=
+          Nat.mul_le_mul_right _ (Nat.mul_le_mul (by norm_num) (Nat.mul_le_mul g1 g2))
+      _ = 2 ^ 18 * (b n + 6) ^ 3 * 4 ^ ℓ n := by ring
+      _ ≤ n := hB.search_cost_le
   have hP : (pmAtoms1 n + pmAtoms2 n) * tblC (pmW n) (pmW n) ≤
-      2525 * (L + 5) ^ 2 * ((2^11) * (L + 5) ^ 2) := Nat.mul_le_mul hA hC
+      2525 * (L + 5) ^ 2 * ((2^11) * (L + 5) ^ 2) + pmSearchAtoms n * tblC (pmW n) (pmW n) := by
+    calc (pmAtoms1 n + pmAtoms2 n) * tblC (pmW n) (pmW n)
+        ≤ (2525 * (L + 5) ^ 2 + pmSearchAtoms n) * tblC (pmW n) (pmW n) :=
+          Nat.mul_le_mul_right _ hA
+      _ = 2525 * (L + 5) ^ 2 * tblC (pmW n) (pmW n) + pmSearchAtoms n * tblC (pmW n) (pmW n) := by
+          ring
+      _ ≤ _ := Nat.add_le_add_right (Nat.mul_le_mul_left _ hC) _
   have hdW : 4 * d n * pmW n ≤ 32 * (L + 5) ^ 2 := by
     unfold pmW
     have : d n ≤ L := hd.trans hb
@@ -692,7 +716,7 @@ theorem pmCost_le {n : ℕ} (hn : 2 ≤ n) {α : Type} (us : List (Fin pmNV × �
   have h6 : L + 5 ≤ (L + 5) ^ 4 := Nat.le_self_pow (by norm_num) _
   unfold pmCost pmPreCost
   have hW : pmW n = 4 * L + 32 := rfl
-  rw [hW] at hdW hP ⊢
+  rw [hW] at hdW hP hsC ⊢
   omega
 
 /-- The unary copy of `T` (and of `r ≤ T`) costs `O(n)`: `pmW n · T ≤ (2^9) n`. -/

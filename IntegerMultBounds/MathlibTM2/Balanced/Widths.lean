@@ -7,14 +7,19 @@ import Mathlib.Tactic.Ring
 /-!
 # Balanced chunk widths of the positional transform layout
 
-The balanced positional layout (`Balanced/DESIGN.md`, M5a) splits the `n = ℓ - 1` common named
-bit slots of every axis into `q` consecutive chunks: the first `n % q` chunks have width
-`n / q + 1`, the others `n / q`. Every round of a chunk group then sees one common width.
+The positional layout (`Fast/LayoutMath.lean`) cuts the `n = ℓ - 1` common named bit slots of
+every axis into chunks of one width `K` and leaves the `n mod K` lowest slots to the prefix. At
+`K = ⌊d^c⌋` that remainder can be almost `K` slots per axis, which costs `d K` single-bit moves
+and up to `K` prefix rounds.
 
-* `balWidth n q j`: the width of chunk `j`. `balOff n q j`: its offset, the total width of the
-  chunks before it (`balOff_succ`, `balOff_eq_sum`, `balOff_top`).
-* `balWidth_sum`: the widths of the `q` chunks add up to `n`.
-* `le_balWidth`, `balWidth_lt`: at `q = n / K` with `1 ≤ K ≤ n`, every width lies in `[K, 2K)`.
+* `balWidth n q j`, `balOff n q j`: the split of `n` slots into `q` chunks of widths `n / q` and
+  `n / q + 1` (`balOff_succ`, `balOff_eq_sum`, `balOff_top`, `balWidth_sum`); at `q = n / K`
+  with `1 ≤ K ≤ n` every width lies in `[K, 2K)` (`le_balWidth`, `balWidth_lt`).
+* `unifWidth n K = max K (n / ⌊n/K⌋)`: one width for all chunks. For `1 ≤ K ≤ n` it is the
+  narrow balanced width `n / ⌊n/K⌋`, in `[K, 2K)` and at most `n` (`unifWidth_eq`,
+  `le_unifWidth`, `unifWidth_le_two_mul`, `unifWidth_le`), and the remainder it leaves is below
+  the number of chunks: `n mod unifWidth n K < ⌊n/K⌋` (`mod_unifWidth_lt`). The prefix then
+  holds fewer than `n / K` slots per axis.
 -/
 
 @[expose] public section
@@ -99,5 +104,63 @@ theorem balWidth_lt (j : ℕ) : balWidth n (n / K) j < 2 * K := by
     linarith
 
 end Bounds
+
+/-! ### One uniform width -/
+
+/-- The uniform chunk width `n / ⌊n/K⌋`, and `K` when `n < K`. -/
+def unifWidth (n K : ℕ) : ℕ := max K (n / (n / K))
+
+theorem le_unifWidth (n K : ℕ) : K ≤ unifWidth n K := le_max_left _ _
+
+/-- The uniform width is at most `2 K` for every `n`. -/
+theorem unifWidth_le_two_mul (n K : ℕ) : unifWidth n K ≤ 2 * K := by
+  unfold unifWidth
+  rcases Nat.eq_zero_or_pos (n / K) with hq | hq
+  · rw [hq, Nat.div_zero]
+    omega
+  · have hK : 0 < K := Nat.pos_of_ne_zero fun h => by simp [h] at hq
+    have hKn : K ≤ n := by
+      by_contra hc
+      rw [Nat.div_eq_of_lt (by omega)] at hq
+      omega
+    have h := balWidth_lt hK hKn (n / K)
+    have hmod := Nat.mod_lt n hq
+    simp only [balWidth, show ¬ n / K < n % (n / K) by omega, ↓reduceIte, Nat.add_zero] at h
+    omega
+
+section Uniform
+
+variable {n K : ℕ} (hK : 0 < K) (hKn : K ≤ n)
+include hK hKn
+
+theorem unifWidth_eq : unifWidth n K = n / (n / K) := by
+  have h := le_balWidth hK hKn (n / K)
+  have hmod := Nat.mod_lt n (balQ_pos hK hKn)
+  simp only [balWidth, show ¬ n / K < n % (n / K) by omega, ↓reduceIte, Nat.add_zero] at h
+  unfold unifWidth
+  exact max_eq_right h
+
+theorem unifWidth_le : unifWidth n K ≤ n := by
+  rw [unifWidth_eq hK hKn]
+  exact Nat.div_le_self _ _
+
+/-- **The remainder of the uniform width.** Cutting `n` slots into chunks of `n / ⌊n/K⌋`
+leaves fewer than `⌊n/K⌋` slots: `n = w q + r` with `r = n mod q < q`, and
+`n mod w = r mod w ≤ r`. -/
+theorem mod_unifWidth_lt : n % unifWidth n K < n / K := by
+  have hq := balQ_pos hK hKn
+  rw [unifWidth_eq hK hKn]
+  set q := n / K
+  have hsplit := Nat.div_add_mod n q
+  have hr := Nat.mod_lt n hq
+  calc n % (n / q) = (n % q + (n / q) * q) % (n / q) := by
+        congr 1
+        rw [Nat.mul_comm]
+        omega
+    _ = n % q % (n / q) := Nat.add_mul_mod_self_left _ _ _
+    _ ≤ n % q := Nat.mod_le _ _
+    _ < q := hr
+
+end Uniform
 
 end IntegerMultBounds.MathlibTM2.Balanced

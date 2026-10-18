@@ -1,0 +1,433 @@
+\documentclass[11pt]{amsart}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage[margin=1.1in]{geometry}
+\usepackage{newtxtext,newtxmath}
+\usepackage{microtype}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage[colorlinks=true, linkcolor=blue, citecolor=blue, urlcolor=blue]{hyperref}
+
+\newtheorem{proposition}{Proposition}[section]
+\newtheorem{remark}[proposition]{Remark}
+
+\setlength{\emergencystretch}{3em}
+\raggedbottom
+
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\F}{\mathbb{F}}
+\newcommand{\lean}[1]{\texttt{#1}}
+\newcommand{\tagL}{\textsc{[Lean]}}
+\newcommand{\tagP}{\textsc{[paper]}}
+\newcommand{\tagC}{\textsc{[computation]}}
+
+\begin{document}
+
+\title[PR589 hosting and realizability]{Hosting and realizability in the selected PR589 bit supplier}
+
+\author{Dan Brown$^*$}
+\email{jdb1729@gmail.com}
+\thanks{$^*$Author of \emph{The Da Vinci Code}.}
+\author{Kenny Daniel}
+\email{platypii@gmail.com}
+
+\date{October 18, 2026}
+
+\begin{abstract}
+The selected bit supplier of the community bound on integer multiplication~\cite{CS}, PR589 on
+PR555, prices one interchange node at the saving $a_b = 10/5769$. Its accounting makes every
+rank-$r$ frame change of its word one child interchange of width $r b$, and its routes and charts
+free. We record what happens when this node is ported to the recursive interchange machine that is
+formalized in Lean~\cite{IMB}. (A) In one invocation a family hosts up to five helpers. Upstream
+separates them by classes of an orthogonal-group cover. A machine with a fixed role count can
+instead split each family into five row classes, which leaves the occurrence moment unchanged. The
+role-level node theorem of this scheme is checked in Lean.
+(B) The machine's cheap operations are lower triangular, so a frame change whose projector
+difference is not diagonal is not one child, and the routes and charts are coordinate changes that
+cost interchanges. Oblique flag frames, with each frame change split into runs of consecutive pivots, turn the
+frame changes into cheap conjugates of children.
+The routes remain: in a stated machine model, which charges sub-field transpositions as children of
+the same recursion, they raise the occurrence moment of upstream's compressed geometry above one,
+and no saving remains. The saving needs the compression, since an uncompressed block geometry
+loses its only free coordinate. These are arguments on paper with computation, not Lean theorems.
+The no-go holds for architectures without class-indexed covers. Upstream's later packages pay for
+the routes with a cover indexed by $\mathrm{GL}_{64}(\mathbb{Z}/q^w)$, a different machine whose
+completion is open by upstream's own account. The finite certificates of the supplier, re-checked in Lean, agree with upstream.
+\end{abstract}
+
+\maketitle
+
+\section{Introduction}
+
+The verified multiplier of~\cite{IMB} runs in time $O\bigl(n(\log n)^{1-\kappa}\bigr)$ on Mathlib's
+finite multi-stack Turing machines, with $\kappa = 88279 \cdot 2^{-46}$. Upstream's selected record~\cite{CS} combines a complex
+supplier (T16) with a bit supplier (PR589, tuned by DreamingOfClouds on eumemic's PR555) and states
+the conditional exponent $\kappa = 0.001672660197076918$. Its README lists the open parts: ``All-size/compiler,
+common-label/mutable-source realization, whole-call hosting, precision/tape, exact recovery and
+analytic obligations remain conditional.''
+
+The Lean development runs T16 on its complex side, through Kenny Daniel's T16 node on the layer
+machine, and its bit interchange binds $\kappa$. Under upstream's accounting, adding PR589 would
+move the cap on $\kappa$ from about $2^{-29.4}$ to about $2^{-10.3}$. This note records what the
+port of PR589 found.
+
+Each claim carries a tag. \tagL{} marks a theorem checked in~\cite{IMB}, under the name given, with
+only Lean's standard axioms. \tagP{} marks a written argument, here or in the design notes of the
+development, that is not formalized. \tagC{} marks a number computed by a script from upstream's
+pinned data. Upstream sources are pinned at the scientific base \texttt{0fdd7d82} and, for later
+packages, at \texttt{463113d6}.
+
+\section{The supplier and its bill}
+
+The parent of a bit interchange node holds records whose addresses are pairs $(x,y)$, with $x$ the
+$H$ field and $y$ the $D$ field, each of $64$ coordinates; the interchange exchanges them. For an
+idempotent $U$ write
+\[
+  D_U(x, y) = \bigl((1-U)x + Uy,\; Ux + (1-U)y\bigr),
+\]
+so the parent interchange is $D_1$ (\lean{exchange} in \lean{Nine/PortFrame}). The supplier's word
+has $5583$ instructions on $661$ registers. Each register carries a frame: a label $V \subseteq
+\Q^8$ spanned by $E_8$ lines, with orthogonal projector $P_V$. A MOVE takes a register from $P_V$ to
+$P_{V'}$ with $V \subseteq V'$, and \lean{exchange\_change} \tagL{} gives
+$D_{P_V} D_{P_{V'}} = D_{P_{V'} - P_V}$. Its rank is $\operatorname{rank}(P_{V'} - P_V)$.
+
+The node runs the word in nine stages over four pairs of data banks, in $32$ replicas, on $111$
+live ports, with $439$ helpers per invocation hosted in idle families. It has $W = 28416$ live roles.
+The accounting makes every rank-$r$ MOVE of every invocation, and every hosted idle remainder of
+rank $r$, one child interchange of width $r b$, where $b = w/64$ for a parent of width $w$. The
+children of one node then have the rank histogram
+\begin{center}
+\begin{tabular}{lcccccccc}
+\toprule
+rank & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 42\\
+count & 381024 & 400416 & 22752 & 26880 & 29376 & 17376 & 26784 & 288\\
+\bottomrule
+\end{tabular}
+\end{center}
+which is \lean{bitHistogram}, equal to upstream's profile. \tagL{}
+\begin{itemize}
+\item \lean{nodeChildren\_realizes}: the node's children, in schedule order, realize
+  \lean{bitHistogram}.
+\item \lean{bit\_bill\_le}: the occurrence moment $\frac{1}{W}\sum_{\text{children}} (r/64)^{1-a_b}$
+  plus its surcharge is at most $1$, at $a_b = 10/5769 \approx 1.7334 \cdot 10^{-3}$.
+\item \lean{bit\_variable\_closed}: a node whose children have sizes at most $r/64$ of the parent
+  (the premise \lean{hsize}) and weight $1/W$ costs $O(e^\lambda)$ for every
+  $\lambda > 1 - a_b$.
+\end{itemize}
+These results take the accounting as given. Its two assumptions are the subject of this note:
+a rank-$r$ frame change is one child of width $r b$, and routes and charts are free.
+
+\section{Hole A: hosting}
+
+\subsection{Five helpers in one family}
+In one invocation a family of an inactive pair can host up to five helpers. They lie on slots of a
+single idle (\lean{same\_pair\_windows} \tagL{}) at offsets $8j$ with $j < 5$ (\lean{slot\_fits}
+\tagL{}). Upstream's hosting audit~\cite{HA} counts the same maximum of five. In upstream's first
+example~\cite{FH}, at stage~2, replica~0, pair~0, helpers $232$ through $236$ share family $666$, on
+the supports $1..8$, $9..16$, $17..24$, $25..32$ and $33..40$ of idle child~4's $42$-dimensional
+pending projector. The helpers are separate registers with possibly correlated contents, so they
+need separate storage.
+
+\subsection{Upstream's cover}
+Upstream separates them with a cover~\cite[\S\S2,4]{FH}. A physical stream is indexed by a pair
+$(F, g)$, with $F$ a family and $g$ an element of the full orthogonal group $G$ of the form
+$I_{64}/2$ over a finite field, and a cover sweep visits every element of $G$ once. At invocation
+$d$ the helper on slot $S$ is owned by $(F, d\sigma_S^{-1})$, so helpers that share $F$ have
+different classes. Upstream's later row allocations carry this group in the row stock, through the
+factor $\lvert \mathrm{GL}_{64}(\F_q)\rvert\, q^{4096(w-1)}$~\cite{LRS}. The machine
+of~\cite{IMB} has a fixed role count, and its row divisor is a power of that count
+(\lean{RecursiveRowDivisor}). It has no cover classes.
+
+\subsection{Five row classes}
+Split each family's rows into five classes. Run each invocation once per class $d \in
+\mathbb{Z}/5$, and give the helper on the slot at offset $8j$ the class $(d + j) \bmod 5$ of its
+host family (\lean{hostClass}).
+\begin{itemize}
+\item \tagL{} \lean{hostClass\_distinct}: two distinct slots of one stage, pair and copy receive
+  distinct classes for every $d$. \lean{hostClass\_bijective}: as $d$ runs through $\mathbb{Z}/5$,
+  each slot visits each class of its family once. \lean{card\_role}: the node has $5W = 142080$
+  roles.
+\item \tagL{} One class run, on these roles: both sides of the active pair change between their
+  stage frames, and a hosted helper's role changes by the exchange on its slot
+  (\lean{invoke\_side\_zero}, \lean{invoke\_side\_one}, \lean{invoke\_host}). All $160$ class runs
+  of a stage: two runs host orthogonal slots on a role (\lean{hostSpan\_orthogonal}), each residual
+  of the stage arrives on its role exactly once (\lean{hostSpan\_sum}), and each role of another
+  pair changes by the exchange on the sum of the slots its family hosts at that stage
+  (\lean{stagePiece\_inactive}).
+\item \tagL{} The node: \lean{nodeProgram} has $29$ pieces, and on arbitrary dirty streams it
+  changes every role by $D_1$ (\lean{runNode\_interchange}). Every child appears five times, with
+  weight $1/(5W)$: the child list realizes five times \lean{bitHistogram}, and the occurrence
+  moment $\frac{1}{5W}\cdot 5\sum (r/64)^\lambda$ is at most $1$ at $\lambda = 1 - a_b$
+  (\lean{five\_class\_node}). \lean{five\_variable\_closed} is the closed recurrence at
+  weight $1/(5W)$, with the per-node cost as a hypothesis.
+\end{itemize}
+These semantics are at role level. Streams are functions of rational address pairs; routes,
+charts and frame changes act on them as exact operators; and each frame change is priced as one
+child of its rank. The scheme is sound at that level. Its realization on tape depends on hole~B.
+
+\section{Hole B: realizability}
+
+\subsection{The machine model}\label{sec:model}
+The arguments of this section use the following model of a node of the recursive interchange
+machine, on volume $V$, with each address field split into sub-fields of $b$ digits stored in
+$H$-before-$D$ order.
+\begin{enumerate}
+\item[(1)] The nonrecursive work of a node costs $O(V)$, with a constant independent of the
+  width.
+\item[(2)] Linear passes are: scalings; shifts whose control sub-field is more significant than
+  the target in the $H$-before-$D$ layout; cross shears $D \mathrel{+}= M H$; XORs and copies of
+  role arrays; and role relabeling. On the address coordinates of one role these act by lower
+  triangular matrices. In~\cite{IMB} the scalings and shifts are \lean{FlatCoordinateSchedule.Op},
+  whose shift control precedes its target. The shear programs of the manuscript~\cite{OAI} have the same form:
+  Lemma~4.2, \lean{exists\_prime\_shear} \tagL{}, uses exactly $\operatorname{rank} A$
+  interchanges and otherwise lower triangular transformations, and every transformation of the
+  generated Shared50 program is lower triangular (\lean{programs\_triangular} \tagL{}).
+\item[(3)] Moving data from a less significant into a more significant sub-field, as in upper
+  transvections and sub-field transpositions, is charged as an interchange child, since a
+  transposition of two sub-fields of width $b$ is itself an interchange instance. A child of
+  rank $r$ swaps $r$ consecutive $H$ sub-fields with $r$ consecutive $D$ sub-fields, at width
+  $r b$ (\lean{childR} \tagL{}).
+\item[(4)] Upstream's cover model sidesteps (3), and upstream lists the all-size compiler as an
+  inherited assumption.
+\end{enumerate}
+
+\subsection{Frame changes}
+\begin{proposition}[\tagP]\label{prop:triangular}
+Let $A$ and $B$ be lower triangular in the $H$-before-$D$ order, and let $E$ be a diagonal
+$0/1$ matrix. The upper-right block of $A D_E B$ is lower triangular. Hence, if $U$ is symmetric
+and not diagonal, $D_U$ is not of the form $A D_E B$.
+\end{proposition}
+
+\begin{proof}
+Write $A = \begin{pmatrix} A_1 & 0\\ A_3 & A_4\end{pmatrix}$ and $B = \begin{pmatrix} B_1 &
+0\\ B_3 & B_4\end{pmatrix}$, with $A_1, A_4, B_1, B_4$ lower triangular. Since $D_E =
+\begin{pmatrix} 1-E & E\\ E & 1-E\end{pmatrix}$, the upper-right block of $A D_E B$ is $A_1 E B_4$,
+a product of lower triangular matrices. The upper-right block of $D_U$ is $U$, and a symmetric lower
+triangular matrix is diagonal.
+\end{proof}
+
+So with orthogonal frames, a MOVE whose projector difference $P_{V'} - P_V$ is not diagonal is not
+one child between linear passes. In the word's local coordinates, $2787$ of its $2911$ paid MOVEs
+(phase incidences of positive rank) have a non-diagonal difference \tagC.
+
+\tagP{} Oblique flag frames remove this obstacle. Give each label $V$ the idempotent $\Pi_V$ with
+range $V$ whose kernel is spanned by the coordinate vectors outside the pivot set $S_V$ of $V$, the
+set of leading positions of nonzero vectors of $V$. From a reduced echelon basis, $\Pi_V$ is lower
+triangular with diagonal $1_{S_V}$. For $V \subseteq V'$ one has $S_V \subseteq S_{V'}$ and
+$\Pi_V \Pi_{V'} = \Pi_{V'} \Pi_V = \Pi_V$, so \lean{exchange\_change} applies with these frames,
+and the frame change is $D_U$ with $U = \Pi_{V'} - \Pi_V$, of rank $\dim V' - \dim V$. The
+idempotent $U$ is lower triangular with diagonal $E = 1_{S_{V'} \setminus S_V}$, so $U = C E
+C^{-1}$ for a lower triangular $C$, and $D_U = \operatorname{diag}(C,C)\, D_E\,
+\operatorname{diag}(C,C)^{-1}$ (\lean{exchange\_conj} \tagL{}). The frame change is a cheap
+conjugate of the swap of its new pivot coordinates. The Lean frame identities of \S6 use orthogonal
+frames; their oblique counterparts are not formalized.
+
+\tagC{} The new pivots need not be consecutive, and \lean{childR} needs consecutive sub-fields.
+Over the $40320$ orders of the local axes, the order $(3,0,2,4,6,5,7,1)$ gives consecutive new
+pivots for $2281$ of the $2911$ paid MOVEs, which carry $3458$ of the rank mass $5066$ ($68\%$).
+Splitting each MOVE into one child per maximal run of consecutive new pivots gives the run
+histogram $\{1{:}2443,\ 2{:}979,\ 3{:}86,\ 4{:}35,\ 5{:}35,\ 6{:}6,\ 7{:}8\}$, $3592$ runs. Each run
+is a cheap conjugate of a \lean{childR} child, since the exchanges on orthogonal diagonal
+projectors multiply (\lean{exchange\_mul\_of\_orthogonal} \tagL{}).
+
+\subsection{Routes in the compressed geometry}
+The stage route of a port with line $q$ is $\rho = \begin{pmatrix} P & A\\ A^{\mathsf T} & 0
+\end{pmatrix}$ on the eight local axes and one exterior block of seven, with $P = qq^{\mathsf T}/4$.
+It is a symmetric involution (\lean{route\_transpose}, \lean{route\_mul\_self} \tagL{}), with
+entries in $\{0, \pm\frac14, \pm\frac12, \pm 1\}$, and a lifted MOVE is the route conjugate of the
+local one, extended by zero (\lean{lift\_sub} \tagL{}). The slot charts embed a helper's eight
+local axes isometrically onto its slot (\lean{slotChart\_orthonormal} \tagL{}). Routes and charts
+are orthogonal and not triangular. In upstream's cover model they are free: $g\sigma = d$ for every
+role, so ``a chart-routed ADD is exactly a common native address ADD''~\cite[\S2]{FH}. On a tape
+they are coordinate changes, that is, permutations of the address space applied to stored records.
+
+In the model of \S\ref{sec:model}, with route transpositions executed as children of this
+recursion, the routes cost more than the saving.
+\begin{itemize}
+\item \tagC{} Every invertible matrix factors as $L_1 \pi L_2$ with $L_1, L_2$ lower triangular and
+  $\pi$ a unique permutation (Bruhat). With the local axes in the order $(3,0,2,4,6,5,7,1)$ and the
+  exterior block after them, the permutation of each of the $111$ port routes has $7$
+  transpositions on each field.
+\item \tagP{} The routes must depend on the port: a route common to all ports would map all $111$
+  lines to one axis.
+\item \tagP{} By (3), executing a route through its Bruhat form costs sub-field transpositions,
+  each an interchange child. The feasibility study counts about $4.5$ rank-seven interchanges, of
+  width $7b$, per role per node.
+\item \tagP{} At $\lambda = 1$ the occurrence moment is the rank mass over $64W$. Without routes
+  the mass per role is $1808352/W \approx 63.6385$, so the moment is $63.6385/64 \approx 0.99435$,
+  a slack of about $0.0056$. The routes add about $4.5\,(7/64)^{\lambda} \approx 0.49$ to the moment
+  near $\lambda = 1$, so it exceeds $1$ for every $\lambda \le 1$. No saving remains.
+\item \tagC{} Without routes, splitting each MOVE into consecutive runs would give the saving
+  $1.6407 \cdot 10^{-3}$, and rank-one children $1.362 \cdot 10^{-3}$. Both still need the routes of
+  the compressed geometry, so neither escapes the count above.
+\end{itemize}
+
+\subsection{Why the saving needs the compression}
+\tagP{} A bit saving needs rank mass below $mW$ at $\lambda = 1$, for parent width $m$. The only
+free coordinate of PR589 is the shared port line. It is worth $1$ per data column, against a COPY
+overhead of $L \cdot \mathrm{CST}/(2KV) = 9 \cdot 63/888 \approx 0.638$, where $\mathrm{CST} = 63$
+is the sum of the nine COPY ranks. That leaves about $0.362$ per role, and
+$W \cdot 0.362 \approx 10272$ is upstream's deficit $T(2KV - L \cdot \mathrm{CST})$ at $T = 32$,
+$K = 4$, $V = 111$, $L = 9$~\cite{TW}.
+
+In an uncompressed block geometry, with each stage running the word on its own block of eight axes
+and parent width $m = 72$, no routes or charts are needed. Without compression, the
+asymmetry between the two sides leaves the stage window after the first stage. Moving the line to a
+port-independent axis $u$ makes the bank matrix a scalar multiple of the identity, so the free
+coordinate cancels \tagC. The mass per role is then $72.638 > 72$, and the moment at $\lambda = 1$
+is $1.0089 > 1$. The uncompressed geometry has no saving.
+
+\subsection{Upstream's later treatment of the routes}
+After the base, upstream merged packages that price the routes explicitly, at
+\texttt{463113d6}. \texttt{selected-bit-stream-routes}~\cite{SR} compiles the $999$ data and
+$124$ hosted route types into exact rational column words and charges up to $3520$ ordinary
+interchange calls per route action. \texttt{selected-bit-recursive-caller}~\cite{RCa} states that
+``its routing and leaf swaps still cost $O(wV)$''.
+\texttt{selected-bit-fast-primitives}~\cite{FP} replaces both ordinary-interchange sites with a
+previously constructed native interchange and claims a local toll $O_q\bigl(V(n +
+w^{1-a_1})\bigr)$ with $a_1 = 169711/10^8$. \texttt{selected-bit-recursive-closure}~\cite{RCl}
+claims ordinary binary chunk interchange in $O(V E^{1-a})$ with $a = 0.00169711$, in its fixed-tape
+complete-stream model. Their authors present them as written arguments without independent or
+proof-assistant verification.
+
+\tagP{} Their toll rests on a class-indexed cover. Every stream is indexed by $g \in
+\mathrm{GL}_{64}(\mathbb{Z}/q^w)$, written $g = g_0 + qG$ with a low class $g_0 \in
+\mathrm{GL}_{64}(\F_q)$ and $4096$ high fields $G_{ij}$ of $w-1$ digits, and each packet is ordered
+as its low-class label, then the high fields, then the payload~\cite[PROOF.md \S1]{SR}. A route is
+the right action $g \mapsto g\sigma$ on this label of fixed size: a block permutation of the low
+classes, plus carry-aware updates of the high fields through the previous-stage interchange at width
+$w-1$ (``B1, ordered ADD, B1''~\cite[PROOF.md \S4]{FP}). A route therefore costs $O_q(V w^p)$ for a
+fixed exponent $p$, independent of the payload width, because it never moves payload address
+digits.
+
+\tagP{} In the model of \S\ref{sec:model} roles carry no class label, so a route acts on the
+payload's own $64$ sub-fields of $n/64$ atoms each. Whether it runs as $q$-adic sub-field arithmetic
+or as atom-wise elementary operations, its cost per node is about $V n w^p$: a product of the two
+widths where upstream's toll has a sum, superlinear in the payload width.
+
+\tagP{} The cover costs volume. The stock carries a factor $\lvert
+\mathrm{GL}_{64}(\mathbb{Z}/q^w)\rvert$, constant for fixed $q$ and $w$, with $\lvert
+\mathrm{GL}_{64}(\F_q)\rvert > 2^{327680}$ at $q > 2^{80}$, and children need their own classes,
+through the stock and a fresh-class contract. The saving also needs $w$ to grow: at fixed $w$ the
+time per unit volume is $\Theta(n)$. It comes from balancing $n \approx e^{\theta}$ against $w
+\approx e^{1-\theta}$, which gives $a_{k+1} = c(1-c) + c\,a_k$ with $c = 17/10000$~\cite{FP}.
+
+\tagC{} If that architecture were completed, one bootstrap from the Shared50 interchange would give
+$a_b \approx c(1-c) \approx 1.697 \cdot 10^{-3}$, and with T16, $\kappa \approx 2^{-10.82}$ with
+rank-one T16 children or $\kappa \approx 2^{-10.44}$ with variable-rank ones.
+
+So the no-go of \S4.3 holds for architectures without class-indexed covers. Upstream's cover
+architecture is a different machine, and its completion is open by its own account: ``We retain
+the data-dependent recursive compiler, weighted calls, correlated-helper domain bridge and COPY
+lifetime obligations. [\dots] The selected result remains conditional.''~\cite{SR}
+
+\section{Paths forward}
+
+Besides completing upstream's cover architecture (\S4.5), three paths remain.
+\begin{enumerate}
+\item[(i)] A bit word whose sources share a port-independent line, so that compression needs no
+  routes.
+\item[(ii)] A primitive that makes the needed sub-field moves linear, against which assumption (3)
+  of \S\ref{sec:model} argues.
+\item[(iii)] A different bit supplier.
+\end{enumerate}
+The hosting scheme of hole~A and the oblique frames of \S4.2 apply to any compressed geometry
+with these hosting windows, so they carry over to path~(i).
+
+\section{What holds}
+
+The finite certificates of the supplier are re-checked in Lean and agree with upstream. \tagL{}
+\begin{itemize}
+\item Local MOVE profile: every phase incidence is a nested frame pair whose rank is the certified
+  dimension difference (\lean{phase\_ranks}, \lean{phase\_histogram}); final alignment pays no rank
+  (\lean{final\_ranks}); the nine COPY ranks are all $7$ (\lean{copyRanks\_eq}); the local paid
+  histogram is upstream's $\{1{:}1323,\ 2{:}1342,\ 3{:}79,\ 4{:}44,\ 5{:}102,\ 6{:}11,\ 7{:}19\}$
+  (\lean{localPaid\_histogram}).
+\item Stage geometry: the $111$ port certificates repeat upstream's reflection walk
+  (\lean{ports\_checked}); each column leaves a stage in the frame in which it enters the next
+  (\lean{stage\_source}); after nine stages and the exchange, every column's frame is $D_1$ after its
+  initial frame (\lean{node\_exchange\_source}); lifts are route conjugates (\lean{lift\_sub}).
+\item Windows: upstream's nine-stage windows (\lean{windows\_four}), and every hosted stage lies in
+  its idle's window (\lean{selection\_in\_windows}).
+\item Occurrence link and bill: \lean{nodeChildren\_realizes}, \lean{bit\_bill\_le}, and the
+  recurrence \lean{bit\_variable\_closed}.
+\end{itemize}
+The occurrence link and the recurrence stand, given the accounting. Hole~B asks whether a machine
+realizes the accounting.
+
+The complex side has no analogue of either hole with rank-one children. Kenny Daniel's T16 node
+program runs on a fixed set of $14336$ data families and eight private centres, with no cover
+classes. Every family ends with $C_{\mathrm{all}}$ applied to its input (\lean{nodeProgram\_cAll}
+\tagL{}), its child calls are $1041408$ rank-one odd kernels (\lean{nodeProgram\_children}
+\tagL{}), and in every column such a kernel is the layer machine's factor (\lean{colRep\_kernel}
+\tagL{}).
+
+\section{Status}
+
+\begin{center}
+\small
+\begin{tabularx}{\textwidth}{@{}Xl@{}}
+\toprule
+item & status\\
+\midrule
+Profile, stage geometry, windows, occurrence link, bill, recurrence & Lean\\
+Five classes: class facts, one class run, all class runs of a stage & Lean\\
+Five classes: node program, node theorem, moment at weight $1/(5W)$ & Lean\\
+A MOVE with non-diagonal difference is not one child (Prop.~\ref{prop:triangular}) & paper\\
+$2787$ of $2911$ paid MOVEs have a non-diagonal difference & computation\\
+Oblique flag frames make frame changes cheap conjugates of children & paper\\
+Pivot runs at the best axis order & computation\\
+Bruhat counts of the $111$ routes & computation\\
+Compressed geometry: no saving in the model of \S\ref{sec:model} & paper and computation\\
+Uncompressed block geometry at $m = 72$: no saving & paper and computation\\
+Cheap routes need a class-indexed cover (\S4.5) & paper\\
+Upstream's cover architecture & open by upstream's account\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\begin{thebibliography}{9}\raggedright
+
+\bibitem{CS} D. Colkitt (maintainer) and contributors, \texttt{integer-mult-bounds}: community
+research on integer multiplication below $n \log n$, base \texttt{0fdd7d82}, head
+\texttt{463113d6}, \url{https://github.com/CrocSwap/integer-mult-bounds}.
+
+\bibitem{FH} \texttt{research/pr589-five-helper-hosting}, PROOF.md, in~\cite{CS} at
+\texttt{0fdd7d82},
+\url{https://github.com/CrocSwap/integer-mult-bounds/tree/0fdd7d82de03e43c9e5a1000dfbcd380d1b687d2/research/pr589-five-helper-hosting}.
+
+\bibitem{FP} \texttt{research/selected-bit-fast-primitives}, in~\cite{CS} at \texttt{463113d6},
+\url{https://github.com/CrocSwap/integer-mult-bounds/tree/463113d675af7410ac91d53a4fed51ec6494eb9a/research/selected-bit-fast-primitives}.
+
+\bibitem{HA} \texttt{research/selected-bit-hosting-audit}, in~\cite{CS} at \texttt{0fdd7d82},
+\url{https://github.com/CrocSwap/integer-mult-bounds/tree/0fdd7d82de03e43c9e5a1000dfbcd380d1b687d2/research/selected-bit-hosting-audit}.
+
+\bibitem{IMB} K. Daniel, \texttt{integer-mult-bounds-lean}: integer multiplication
+below $n \log n$ in Lean on Mathlib's finite Turing machines,
+\url{https://github.com/platypii/integer-mult-bounds-lean}.
+
+\bibitem{LRS} \texttt{research/selected-bit-local-ring-sweeps}, in~\cite{CS} at
+\texttt{463113d6},
+\url{https://github.com/CrocSwap/integer-mult-bounds/tree/463113d675af7410ac91d53a4fed51ec6494eb9a/research/selected-bit-local-ring-sweeps}.
+
+\bibitem{OAI} OpenAI,
+\emph{Integer multiplication below $n \log n$}, OpenAI Math Release preprint, September 23, 2026,
+\url{https://github.com/openai/math/blob/main/preprints/Integer-multiplication-below-n-log-n-September-23-2026/paper.pdf}.
+
+\bibitem{RCa} \texttt{research/selected-bit-recursive-caller}, in~\cite{CS} at
+\texttt{463113d6},
+\url{https://github.com/CrocSwap/integer-mult-bounds/tree/463113d675af7410ac91d53a4fed51ec6494eb9a/research/selected-bit-recursive-caller}.
+
+\bibitem{RCl} \texttt{research/selected-bit-recursive-closure}, in~\cite{CS} at
+\texttt{463113d6},
+\url{https://github.com/CrocSwap/integer-mult-bounds/tree/463113d675af7410ac91d53a4fed51ec6494eb9a/research/selected-bit-recursive-closure}.
+
+\bibitem{SR} \texttt{research/selected-bit-stream-routes}, in~\cite{CS} at \texttt{463113d6},
+\url{https://github.com/CrocSwap/integer-mult-bounds/tree/463113d675af7410ac91d53a4fed51ec6494eb9a/research/selected-bit-stream-routes}.
+
+\bibitem{TW} \texttt{research/e8-bit-p111-tuned/code/adapt9p.py}, in~\cite{CS} at
+\texttt{0fdd7d82},
+\url{https://github.com/CrocSwap/integer-mult-bounds/blob/0fdd7d82de03e43c9e5a1000dfbcd380d1b687d2/research/e8-bit-p111-tuned/code/adapt9p.py}.
+
+\end{thebibliography}
+
+\end{document}

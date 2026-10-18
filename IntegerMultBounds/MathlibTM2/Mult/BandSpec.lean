@@ -32,8 +32,7 @@ namespace IntegerMultBounds.MathlibTM2.Mult.Pipeline
 open Sizes Moduli
 
 instance neZero_s (n : ℕ) (i : Fin (d n)) : NeZero (s n i) :=
-  ⟨(modulus_odd (oddProd_odd (d n)) (start_even (d n) (N n) (2 ^ (ℓ n - 1))) (numHalf n)
-    i).pos.ne'⟩
+  ⟨(srcLen_prime n i).pos.ne'⟩
 
 instance neZero_t (n : ℕ) (i : Fin (d n)) : NeZero (t n i) :=
   ⟨by unfold t; split_ifs <;> positivity⟩

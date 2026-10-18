@@ -3,6 +3,7 @@ module
 public import IntegerMultBounds.MathlibTM2.Fast.CompactDyadicParamStageCore
 import IntegerMultBounds.MathlibTM2.Mult.CompactDyadicRootRoom
 public import IntegerMultBounds.MathlibTM2.Mult.Pipeline
+public import IntegerMultBounds.Primes.Pack
 import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 import Mathlib.Data.Nat.Factorial.DoubleFactorial
 import Mathlib.Analysis.SpecialFunctions.Bernstein
@@ -34,8 +35,8 @@ exactly, in words of `W ≥ 4 b + 32` bits (`b = ⌈log₂ n⌉`). Variable `i <
 | 13 | `α²` | band scale `2^-α²` of `Pipeline.lineB` |
 | 14 | `γ` | `Sizes.gamma` |
 | 15 | `q` | `Sizes.q` |
-| 16 | `N = oddProd d` | `Sizes.N` |
-| 17 | `x₀ = start d N R` | `Moduli.start` |
+| 16 | `winLo d R` | the window of the first `numHalf` source lengths |
+| 17 | `Σ s_i P_i` | the packed source lengths, `P_i = ∏_{j<i} t_j` (`Primes.packVal`) |
 | 18 | `S` | `Sizes.S` |
 | 19 | `windowA p α` | `Pipeline.windowA` |
 | 20 | `fastWindow p α` | `FastB0.fastWindow` |
@@ -53,12 +54,18 @@ exactly, in words of `W ≥ 4 b + 32` bits (`b = ⌈log₂ n⌉`). Variable `i <
 Each stage is a small program of `Fast/ParamSub.lean` renamed into the parameter state
 (`pm_stage`): the facts `PmF n j acc` (variables below `j` correct, `acc` fixed) become
 `PmF n (j + 1) acc'`. `pmCode1` runs the 30 stages, emits the axis lengths `t_i` (`pmEmitTC`) and
-clears the scratch; `pmCode2` emits the source lengths `s_i` (`pmEmitSC`) and clears the scratch.
+clears the scratch; `pmCode2` emits the source lengths `s_i`, the digits of variable `17`
+(`Primes.ptEmitPC`), and clears the scratch.
+
+The source lengths are primes (`Sizes.srcLen`). Stage 17 finds them by trial division
+(`Primes.ptPackC`), `pmSearchAtoms n ≤ 100 (d + 1) 4^ℓ` atoms; every reader recovers `s_i` as
+`(v₁₇ / P_i) mod t_i` (`Primes.packVal_digit`).
 
 `pmCode1_do`, `pmCode2_do`: the contracts, within `pmAtoms1 n` and `pmAtoms2 n` atoms, at most
-`2500 (b + 1)²` and `25 (b + 1)²` (`pmAtoms1_le`, `pmAtoms2_le`). The value lemmas `pm_b_eq`,
-`pm_d_eq`, …, `pm_chAngle_eq` name each entry of `pmVals n`; `pm_t_box`, `pmTv_eq`, `pm_s_modulus`,
-`pm_S_prod`, `pm_R_half` relate the emitted lengths to `Sizes.t`, `Sizes.s` and `Moduli`.
+`2500 (b + 1)² + pmSearchAtoms n` and `25 (b + 1)²` (`pmAtoms1_le`, `pmAtoms2_le`). The value
+lemmas `pm_b_eq`, `pm_d_eq`, …, `pm_chAngle_eq` name each entry of `pmVals n`; `pm_t_box`,
+`pmTv_eq`, `pm_S_prod`, `pm_R_half` relate the emitted lengths to `Sizes.t`, `Sizes.s` and
+`Moduli`.
 -/
 
 @[expose] public section
@@ -95,8 +102,8 @@ def pmVal (n : ℕ) : ℕ → ℕ
   | 13 => alpha n ^ 2
   | 14 => gamma n
   | 15 => q n
-  | 16 => N n
-  | 17 => pmX0 n
+  | 16 => Primes.winLo (d n) (2 ^ (ℓ n - 1))
+  | 17 => Primes.packVal (srcLen n) (pmTv (numHalf n) (2 ^ (ℓ n - 1)) (r n)) (d n)
   | 18 => S n
   | 19 => windowA (p n) (alpha n)
   | 20 => fastWindow (p n) (alpha n)
@@ -189,6 +196,48 @@ theorem pm_two_le_t (hn : 2 ≤ n) : 2 ≤ 2 ^ b n := by
 
 end Bounds
 
+/-! ### The packed source lengths -/
+
+section Pack
+
+variable {n : ℕ}
+
+/-- The atoms of the search for the source lengths (stage 17). -/
+def pmSearchAtoms (n : ℕ) : ℕ := Primes.ptPackAtoms (d n) (numHalf n) (2 ^ (ℓ n - 1))
+
+theorem pm_r_eq_two_mul (hn : 2 ≤ n) : r n = 2 * 2 ^ (ℓ n - 1) := by
+  have := pm_one_le_ℓ hn
+  unfold r
+  rw [← pow_succ']
+  congr 1
+  omega
+
+theorem pm_tv_eq_t (n : ℕ) (i : Fin (d n)) :
+    pmTv (numHalf n) (2 ^ (ℓ n - 1)) (r n) i = t n i := by
+  unfold pmTv t r
+  rfl
+
+/-- The weight of all `d` digits is `T`. -/
+theorem pm_packW_T (hn : 2 ≤ n) :
+    Primes.packW (pmTv (numHalf n) (2 ^ (ℓ n - 1)) (r n)) (d n) = T n := by
+  rw [← prod_t (one_le_d hn), Primes.packW, ← Fin.prod_univ_eq_prod_range]
+  exact Finset.prod_congr rfl fun i _ => pm_tv_eq_t n i
+
+/-- The digits `s_i < t_i`. -/
+theorem pm_src_lt (hB : Big n) {i : ℕ} (hi : i < d n) :
+    srcLen n i < pmTv (numHalf n) (2 ^ (ℓ n - 1)) (r n) i := by
+  have := hB.good.lt ⟨i, hi⟩
+  rwa [← pm_tv_eq_t n ⟨i, hi⟩] at this
+
+theorem pm_pack_eq (hB : Big n) :
+    Primes.packVal (Primes.primeSrc (d n) (numHalf n) (2 ^ (ℓ n - 1)))
+        (pmTv (numHalf n) (2 ^ (ℓ n - 1)) (2 * 2 ^ (ℓ n - 1))) (d n) =
+      Primes.packVal (srcLen n) (pmTv (numHalf n) (2 ^ (ℓ n - 1)) (r n)) (d n) := by
+  rw [← pm_r_eq_two_mul hB.1]
+  exact Primes.packVal_congr fun i _ => (hB.srcLen_eq i).symm
+
+end Pack
+
 /-! ### The stages -/
 
 section Stages
@@ -239,9 +288,9 @@ theorem pm_s3 (hB : Big n) (hW : 4 * b n + 32 ≤ W) :
   intro s hs
   have hb : s.val 1 = b n := by simpa [pmVal, pmNV] using hs.2 1 (by decide)
   have hb512 : 512 ≤ b n := by
-    have h2 := hB.pow_le_b (k := 2) le_rfl
+    have h2 := d_le_b n
     have h1 := hB.2
-    nlinarith
+    omega
   have hfit : (b n ^ 31 + 1)^2 < 2^W :=
     (CompactDyadicRootRoom.squared_thirty_first_cap_lt hb512).trans_le
       (Nat.pow_le_pow_right (by decide) hW)
@@ -454,71 +503,97 @@ theorem pm_s15 (hn : 2 ≤ n) (hW : 4 * b n + 32 ≤ W) :
     fin_cases y <;> simp [pmVal, pmNV] at hy ⊢ <;> assumption
 
 theorem pm_s16 (hn : 2 ≤ n) (hW : 4 * b n + 32 ≤ W) :
-    ∀ s, PmF n 16 acc s → TblDo A W w (pmOddC.rename ![3, 16, 31, 32, 33]) s (PmF n 17 acc)
-      (12 * d n + 6) :=
-  pm_stage (by decide) 1 rfl fun s hs => by
-    have h0 : (s.restrict ![3, 16, 31, 32, 33]).val 0 = d n := by simpa [pmVal, pmNV] using hs.val 3
-    have hb := pm_W_pow hW (k := b n + 5) (by omega)
-    have e : 2 ^ (b n + 5) = 2 * 2 ^ (b n + 4) := by rw [pow_succ]; ring
-    have e2 : 2 ^ (b n + 4) = 16 * 2 ^ b n := by rw [pow_add]; ring
-    have := pm_N_le hn
-    have := d_le_b n
-    have := pm_b_lt n
-    have hN : N n = oddProd (d n) := rfl
-    refine (pmOddC_do _ h0 (by omega)).mono ?_ le_rfl
-    rintro s' ⟨e0, e1, ea⟩
-    refine ⟨by rw [ea]; exact hs.1, by rw [e1]; simp [pmVal, N], fun y hy => ?_⟩
-    fin_cases y <;> simp [pmVal, pmNV] at hy ⊢; assumption
-
-theorem pm_s17 (hn : 2 ≤ n) (hW : 4 * b n + 32 ≤ W) :
-    ∀ s, PmF n 17 acc s → TblDo A W w (pmStartC.rename ![3, 10, 16, 17, 31, 32]) s
-      (PmF n 18 acc) 11 :=
-  pm_stage (by decide) 3 rfl fun s hs => by
-    have h0 : (s.restrict ![3, 10, 16, 17, 31, 32]).val 0 = d n := by
-      simpa [pmVal, pmNV] using hs.val 3
-    have h1 : (s.restrict ![3, 10, 16, 17, 31, 32]).val 1 = 2 ^ (ℓ n - 1) := by
+    ∀ s, PmF n 16 acc s → TblDo A W w (Primes.winLoC.rename ![10, 3, 16, 31, 32, 33, 34]) s
+      (PmF n 17 acc) 7 :=
+  pm_stage (by decide) 2 rfl fun s hs => by
+    have h0 : (s.restrict ![10, 3, 16, 31, 32, 33, 34]).val 0 = 2 ^ (ℓ n - 1) := by
       simpa [pmVal, pmNV] using hs.val 10
-    have h2 : (s.restrict ![3, 10, 16, 17, 31, 32]).val 2 = N n := by
-      simpa [pmVal, pmNV] using hs.val 16
-    have hd : d n ≤ 2 ^ b n := (d_le_b n).trans (pm_b_lt n).le
-    have hN := pm_N_le hn
+    have h1 : (s.restrict ![10, 3, 16, 31, 32, 33, 34]).val 1 = d n := by
+      simpa [pmVal, pmNV] using hs.val 3
     have hR : 2 ^ (ℓ n - 1) ≤ 2 ^ (b n + 1) := pm_two_pow_le (by have := pm_ℓ_le hn; omega)
-    have h3 : d n * N n ≤ 2 ^ b n * 2 ^ (b n + 4) := Nat.mul_le_mul hd hN
-    have h4 : d n * 2 ^ (ℓ n - 1) ≤ 2 ^ b n * 2 ^ (b n + 1) := Nat.mul_le_mul hd hR
-    have e3 : 2 ^ b n * 2 ^ (b n + 4) = 16 * 2 ^ (2 * b n) := by
-      rw [← pow_add, show b n + (b n + 4) = 4 + 2 * b n by ring, pow_add]; norm_num
-    have e4 : 2 ^ b n * 2 ^ (b n + 1) = 2 * 2 ^ (2 * b n) := by
-      rw [← pow_add, show b n + (b n + 1) = 1 + 2 * b n by ring, pow_add]; norm_num
-    have e5 : 2 ^ (2 * b n + 7) = 128 * 2 ^ (2 * b n) := by rw [pow_add]; ring
-    have hb := pm_W_pow hW (k := 2 * b n + 7) (by omega)
-    have h6 : 1 ≤ 2 ^ (2 * b n) := Nat.one_le_two_pow
-    have e6 : 4 * d n * N n = 4 * (d n * N n) := by ring
-    have e7 : 4 * d n * 2 ^ (ℓ n - 1) = 4 * (d n * 2 ^ (ℓ n - 1)) := by ring
-    refine (pmStartC_do _ h0 h1 h2 (one_le_d hn) (pm_one_le_N n) (by omega)).mono ?_ le_rfl
-    rintro s' ⟨e0, e1, e2, e3, ea⟩
-    refine ⟨by rw [ea]; exact hs.1, by rw [e3]; simp [pmVal, pmX0], fun y hy => ?_⟩
+    have hd := d_le_b n
+    have := pm_b_lt n
+    have hb := pm_W_pow hW (k := b n + 3) (by omega)
+    have e : 2 ^ (b n + 3) = 4 * 2 ^ (b n + 1) := by
+      rw [show b n + 3 = 2 + (b n + 1) by ring, pow_add]; norm_num
+    have e2 : 2 ^ (b n + 1) = 2 * 2 ^ b n := by rw [pow_succ]; ring
+    refine (Primes.winLoC_do _ h0 h1 (one_le_d hn) (by omega)).mono ?_ le_rfl
+    rintro s' ⟨e0, e1, e3, ea⟩
+    refine ⟨by rw [ea]; exact hs.1, by rw [e3]; simp [pmVal], fun y hy => ?_⟩
     fin_cases y <;> simp [pmVal, pmNV] at hy ⊢ <;> assumption
+
+/-- The registers of the search: scratch `31 … 39`, the weight and the radix in `18`, `19`, the
+packed value in `17`, `R`, `r`, `d`, `numHalf`, `winLo d R` in `10`, `8`, `3`, `11`, `16`. -/
+def pmSrcPackReg : Fin 17 → Fin pmNV :=
+  ![31, 32, 33, 34, 35, 36, 37, 38, 39, 18, 19, 17, 10, 8, 3, 11, 16]
+
+theorem pm_s17 (hB : Big n) (hW : 4 * b n + 32 ≤ W) :
+    ∀ s, PmF n 17 acc s → TblDo A W w (Primes.ptPackC.rename pmSrcPackReg) s
+      (PmF n 18 acc) (pmSearchAtoms n) :=
+  pm_stage (by decide) 11 rfl fun s hs => by
+    have hn : 2 ≤ n := hB.1
+    have hr := pm_r_eq_two_mul hn
+    obtain ⟨hd2, -, hc₁, hc₂⟩ := hB.primeSupply
+    have hnh := numHalf_lt (n := n) (by omega)
+    have hin : Primes.PtPackIn (2 ^ (ℓ n - 1)) (d n) (numHalf n) (s.restrict pmSrcPackReg) := by
+      refine ⟨?_, ?_, ?_, ?_, ?_⟩
+      · simpa [pmSrcPackReg, pmVal, pmNV] using hs.val 10
+      · have := hs.val 8
+        simp only [pmVal] at this
+        simpa [pmSrcPackReg, pmNV, hr] using this
+      · simpa [pmSrcPackReg, pmVal, pmNV] using hs.val 3
+      · simpa [pmSrcPackReg, pmVal, pmNV] using hs.val 11
+      · simpa [pmSrcPackReg, pmVal, pmNV] using hs.val 16
+    have hR : 2 ^ (ℓ n - 1) ≤ 2 ^ (b n + 1) := pm_two_pow_le (by have := pm_ℓ_le hn; omega)
+    have hd := d_le_b n
+    have := pm_b_lt n
+    have hb := pm_W_pow hW (k := b n + 4) (by omega)
+    have e : 2 ^ (b n + 4) = 8 * 2 ^ (b n + 1) := by
+      rw [show b n + 4 = 3 + (b n + 1) by ring, pow_add]; norm_num
+    have e2 : 2 ^ (b n + 1) = 2 * 2 ^ b n := by rw [pow_succ]; ring
+    have hT : T n ≤ 2 ^ (b n + 2) := pm_two_pow_le (pm_logT_le hn)
+    have e3 : 2 ^ (b n + 4) = 4 * 2 ^ (b n + 2) := by
+      rw [show b n + 4 = 2 + (b n + 2) by ring, pow_add]; norm_num
+    have hP : Primes.packW (pmTv (numHalf n) (2 ^ (ℓ n - 1)) (2 * 2 ^ (ℓ n - 1))) (d n) = T n := by
+      rw [← hr]; exact pm_packW_T hn
+    refine (Primes.ptPackC_do _ hin (by omega) hnh.le Nat.one_le_two_pow (by omega) (by omega)
+      (by omega) (by omega) (by rw [hP]; omega)).mono ?_ le_rfl
+    rintro s' ⟨⟨g12, g13, g14, g15, g16⟩, gv, ga⟩
+    rw [← hr] at g13
+    refine ⟨by rw [ga]; exact hs.1, by rw [gv, pm_pack_eq hB]; simp [pmVal], fun y hy => ?_⟩
+    fin_cases y <;> simp [pmSrcPackReg, pmVal, pmNV] at hy ⊢ <;> assumption
+
+/-- The registers of the product of the digits. -/
+def pmSrcProdReg : Fin 10 → Fin pmNV := ![31, 3, 11, 10, 8, 17, 18, 32, 33, 34]
 
 theorem pm_s18 (hB : Big n) (hW : 4 * b n + 32 ≤ W) :
-    ∀ s, PmF n 18 acc s → TblDo A W w (pmProdSC.rename ![16, 17, 11, 3, 18, 31, 32, 33]) s
-      (PmF n 19 acc) (13 * d n + 5) :=
-  pm_stage (by decide) 4 rfl fun s hs => by
-    have h0 : (s.restrict ![16, 17, 11, 3, 18, 31, 32, 33]).val 0 = N n := by
-      simpa [pmVal, pmNV] using hs.val 16
-    have h1 : (s.restrict ![16, 17, 11, 3, 18, 31, 32, 33]).val 1 = pmX0 n := by
-      simpa [pmVal, pmNV] using hs.val 17
-    have h2 : (s.restrict ![16, 17, 11, 3, 18, 31, 32, 33]).val 2 = numHalf n := by
-      simpa [pmVal, pmNV] using hs.val 11
-    have h3 : (s.restrict ![16, 17, 11, 3, 18, 31, 32, 33]).val 3 = d n := by
-      simpa [pmVal, pmNV] using hs.val 3
-    have hS : pmSProd (N n) (pmX0 n) (numHalf n) (d n) = S n := (pm_S_prod n).symm
-    refine (pmProdSC_do _ h0 h1 h2 h3 (pm_one_le_N n)
-      (fun i hi => lt_of_lt_of_le (pm_modBound_lt hB.1 hi) (pm_W_pow hW (by omega)))
-      (by rw [hS]; exact lt_of_lt_of_le (pm_S_lt hB) (pm_W_pow hW (by omega)))
-      (lt_of_lt_of_le ((d_le_b n).trans_lt (pm_b_lt n)) (pm_W_pow hW (by omega)))).mono ?_ le_rfl
-    rintro s' ⟨e0, e1, e2, e3, e4, ea⟩
-    refine ⟨by rw [ea]; exact hs.1, by rw [e4, hS]; simp [pmVal], fun y hy => ?_⟩
-    fin_cases y <;> simp [pmVal, pmNV] at hy ⊢ <;> assumption
+    ∀ s, PmF n 18 acc s → TblDo A W w (Primes.ptProdPC.rename pmSrcProdReg) s
+      (PmF n 19 acc) (9 * d n + 7) :=
+  pm_stage (by decide) 6 rfl fun s hs => by
+    have hn : 2 ≤ n := hB.1
+    have h1 : (s.restrict pmSrcProdReg).val 1 = d n := by
+      simpa [pmSrcProdReg, pmVal, pmNV] using hs.val 3
+    have h2 : (s.restrict pmSrcProdReg).val 2 = numHalf n := by
+      simpa [pmSrcProdReg, pmVal, pmNV] using hs.val 11
+    have h3 : (s.restrict pmSrcProdReg).val 3 = 2 ^ (ℓ n - 1) := by
+      simpa [pmSrcProdReg, pmVal, pmNV] using hs.val 10
+    have h4 : (s.restrict pmSrcProdReg).val 4 = r n := by
+      simpa [pmSrcProdReg, pmVal, pmNV] using hs.val 8
+    have h5 : (s.restrict pmSrcProdReg).val 5 =
+        Primes.packVal (srcLen n) (pmTv (numHalf n) (2 ^ (ℓ n - 1)) (r n)) (d n) := by
+      simpa [pmSrcProdReg, pmVal, pmNV] using hs.val 17
+    have hT : T n ≤ 2 ^ (b n + 2) := pm_two_pow_le (pm_logT_le hn)
+    have hTW := pm_W_pow hW (k := b n + 3) (by omega)
+    have eT : 2 ^ (b n + 3) = 2 * 2 ^ (b n + 2) := by rw [pow_succ]; ring
+    have hS : ∏ i ∈ Finset.range (d n), srcLen n i = S n := (pm_S_prod n).symm
+    refine (Primes.ptProdPC_do _ h1 h2 h3 h4 h5 (fun i hi => pm_src_lt hB hi)
+      (fun i _ => (srcLen_prime n i).one_lt.le)
+      (lt_of_lt_of_le ((d_le_b n).trans_lt (pm_b_lt n)) (pm_W_pow hW (by omega)))
+      (by rw [pm_packW_T hn]; have := Nat.one_le_two_pow (n := b n + 2); omega)
+      (by rw [hS]; have := hB.S_lt_T; omega)).mono ?_ le_rfl
+    rintro s' ⟨e1, e2, e3, e4, e5, e6, ea⟩
+    refine ⟨by rw [ea]; exact hs.1, by rw [e6, hS]; simp [pmVal], fun y hy => ?_⟩
+    fin_cases y <;> simp [pmSrcProdReg, pmVal, pmNV] at hy ⊢ <;> assumption
 
 theorem pm_s19 (hn : 2 ≤ n) (hW : 4 * b n + 32 ≤ W) :
     ∀ s, PmF n 19 acc s → TblDo A W w (pmWinAC.rename ![2, 13, 19, 31, 32, 33]) s
@@ -711,7 +786,7 @@ def pmTList (A w n : ℕ) : List (Fin (A + 4)) :=
 
 /-- The emitted source lengths `s_0, …, s_{d-1}`, as pair symbols. -/
 def pmSList (A w n : ℕ) : List (Fin (A + 4)) :=
-  pmEmitList A w (modulus (N n) (pmX0 n) (numHalf n)) (d n)
+  pmEmitList A w (srcLen n) (d n)
 
 theorem pm_s31 (hW : 4 * b n + 32 ≤ W) :
     ∀ s, PmF n 31 acc s → TblDo A W w (pmEmitTC.rename ![3, 11, 10, 8, 31, 32]) s
@@ -731,25 +806,34 @@ theorem pm_s31 (hW : 4 * b n + 32 ≤ W) :
     refine ⟨by rw [ea]; simp [hs.1, pmTList], fun y hy => ?_⟩
     fin_cases y <;> simp [pmVal, pmNV] at hy ⊢ <;> assumption
 
-theorem pm_s32 (hn : 2 ≤ n) (hW : 4 * b n + 32 ≤ W) :
-    ∀ s, PmF n 31 acc s → TblDo A W w (pmEmitSC.rename ![16, 17, 11, 3, 31, 32, 33]) s
-      (PmF n 31 ((pmSList A w n).reverse ++ acc)) (13 * d n + 3) :=
+/-- The registers of the emission of the digits. -/
+def pmSrcEmitReg : Fin 9 → Fin pmNV := ![31, 3, 11, 10, 8, 17, 32, 33, 34]
+
+theorem pm_s32 (hB : Big n) (hW : 4 * b n + 32 ≤ W) :
+    ∀ s, PmF n 31 acc s → TblDo A W w (Primes.ptEmitPC.rename pmSrcEmitReg) s
+      (PmF n 31 ((pmSList A w n).reverse ++ acc)) (9 * d n + 5) :=
   pm_stage_acc (by decide) fun s hs => by
-    have h0 : (s.restrict ![16, 17, 11, 3, 31, 32, 33]).val 0 = N n := by
-      simpa [pmVal, pmNV] using hs.val 16
-    have h1 : (s.restrict ![16, 17, 11, 3, 31, 32, 33]).val 1 = pmX0 n := by
-      simpa [pmVal, pmNV] using hs.val 17
-    have h2 : (s.restrict ![16, 17, 11, 3, 31, 32, 33]).val 2 = numHalf n := by
-      simpa [pmVal, pmNV] using hs.val 11
-    have h3 : (s.restrict ![16, 17, 11, 3, 31, 32, 33]).val 3 = d n := by
-      simpa [pmVal, pmNV] using hs.val 3
-    have hd : d n < 2 ^ W := lt_of_lt_of_le ((d_le_b n).trans_lt (pm_b_lt n)) (pm_W_pow hW (by omega))
-    refine (pmEmitSC_do _ h0 h1 h2 h3 (pm_one_le_N n)
-      (fun i hi => lt_of_lt_of_le (pm_modBound_lt hn hi) (pm_W_pow hW (by omega))) hd).mono ?_
-      le_rfl
-    rintro s' ⟨e0, e1, e2, e3, ea⟩
+    have hn : 2 ≤ n := hB.1
+    have h1 : (s.restrict pmSrcEmitReg).val 1 = d n := by
+      simpa [pmSrcEmitReg, pmVal, pmNV] using hs.val 3
+    have h2 : (s.restrict pmSrcEmitReg).val 2 = numHalf n := by
+      simpa [pmSrcEmitReg, pmVal, pmNV] using hs.val 11
+    have h3 : (s.restrict pmSrcEmitReg).val 3 = 2 ^ (ℓ n - 1) := by
+      simpa [pmSrcEmitReg, pmVal, pmNV] using hs.val 10
+    have h4 : (s.restrict pmSrcEmitReg).val 4 = r n := by
+      simpa [pmSrcEmitReg, pmVal, pmNV] using hs.val 8
+    have h5 : (s.restrict pmSrcEmitReg).val 5 =
+        Primes.packVal (srcLen n) (pmTv (numHalf n) (2 ^ (ℓ n - 1)) (r n)) (d n) := by
+      simpa [pmSrcEmitReg, pmVal, pmNV] using hs.val 17
+    have hT : T n ≤ 2 ^ (b n + 2) := pm_two_pow_le (pm_logT_le hn)
+    have hTW := pm_W_pow hW (k := b n + 3) (by omega)
+    have eT : 2 ^ (b n + 3) = 2 * 2 ^ (b n + 2) := by rw [pow_succ]; ring
+    refine (Primes.ptEmitPC_do _ h1 h2 h3 h4 h5 (fun i hi => pm_src_lt hB hi)
+      (lt_of_lt_of_le ((d_le_b n).trans_lt (pm_b_lt n)) (pm_W_pow hW (by omega)))
+      (by rw [pm_packW_T hn]; have := Nat.one_le_two_pow (n := b n + 2); omega)).mono ?_ le_rfl
+    rintro s' ⟨e1, e2, e3, e4, e5, ea⟩
     refine ⟨by rw [ea]; simp [hs.1, pmSList], fun y hy => ?_⟩
-    fin_cases y <;> simp [pmVal, pmNV] at hy ⊢ <;> assumption
+    fin_cases y <;> simp [pmSrcEmitReg, pmVal, pmNV] at hy ⊢ <;> assumption
 
 /-- Clear the scratch variables `31, …, 39`. -/
 def pmClearC : TblCode pmNV :=
@@ -800,9 +884,9 @@ def pmStages : TblCode pmNV :=
   pmSqC.rename ![12, 13] ;;
   pmGammaC.rename ![3, 13, 14, 31] ;;
   (pmCeilDivC 1).rename ![0, 1, 15, 31] ;;
-  pmOddC.rename ![3, 16, 31, 32, 33] ;;
-  pmStartC.rename ![3, 10, 16, 17, 31, 32] ;;
-  pmProdSC.rename ![16, 17, 11, 3, 18, 31, 32, 33] ;;
+  Primes.winLoC.rename ![10, 3, 16, 31, 32, 33, 34] ;;
+  Primes.ptPackC.rename pmSrcPackReg ;;
+  Primes.ptProdPC.rename pmSrcProdReg ;;
   pmWinAC.rename ![2, 13, 19, 31, 32, 33] ;;
   pmWinBC.rename ![2, 12, 20, 31, 32, 33, 34] ;;
   (pmClogAddC 4).rename ![3, 21, 31, 32] ;;
@@ -820,17 +904,18 @@ def pmStages : TblCode pmNV :=
 def pmCode1 : TblCode pmNV := pmStages ;; pmEmitTC.rename ![3, 11, 10, 8, 31, 32] ;; pmClearC
 
 /-- The second parameter program: the emission of the source lengths, the cleanup. -/
-def pmCode2 : TblCode pmNV := pmEmitSC.rename ![16, 17, 11, 3, 31, 32, 33] ;; pmClearC
+def pmCode2 : TblCode pmNV := Primes.ptEmitPC.rename pmSrcEmitReg ;; pmClearC
 
 /-- The atoms of `pmCode1`. -/
 def pmAtoms1 (n : ℕ) : ℕ :=
   1205 + 4 * b n + 489 * d n + 344 * K n + 8 * logT n + 8 * ℓ n + 5 * alpha n +
     4 * Nat.clog 2 (p n) +
     6 * Nat.sqrt (p n * alpha n ^ 2) + 6 * Nat.sqrt (p n) + 4 * Nat.clog 2 (d n) +
-    4 * Nat.clog 2 (taylorTerms (p n) 0) + 4 * Nat.clog 2 (taylorTerms (p n) (chirpGuard (d n)))
+    4 * Nat.clog 2 (taylorTerms (p n) 0) + 4 * Nat.clog 2 (taylorTerms (p n) (chirpGuard (d n))) +
+    pmSearchAtoms n
 
 /-- The atoms of `pmCode2`. -/
-def pmAtoms2 (n : ℕ) : ℕ := 13 * d n + 12
+def pmAtoms2 (n : ℕ) : ℕ := 9 * d n + 14
 
 section Main
 
@@ -841,7 +926,7 @@ theorem pmStages_do (hB : Big n) (hW : 4 * b n + 32 ≤ W) :
       ((4 * b n + 5) + (10 + ((7 * 30 + 11 + d n * (6 * 30 + 8)) +
         ((7 * 34 + 11 + K n * (6 * 34 + 8)) + ((4 * logT n + 16) + ((4 * logT n + 5) + (8 +
         ((4 * ℓ n + 5) + (3 + ((4 * (ℓ n - 1) + 5) + (2 + ((4 * Nat.clog 2 (p n) + 5 * alpha n + 15) + (1 + (5 + (8 +
-        ((12 * d n + 6) + (11 + ((13 * d n + 5) + ((6 * Nat.sqrt (p n * alpha n ^ 2) + 9) +
+        (7 + (pmSearchAtoms n + ((9 * d n + 7) + ((6 * Nat.sqrt (p n * alpha n ^ 2) + 9) +
         ((6 * Nat.sqrt (p n) + 10) + ((4 * Nat.clog 2 (d n) + 4 + 7) + ((1 + 14 + 4) +
         ((4 * Nat.clog 2 (taylorTerms (p n) 0) + 4 + 7) + ((1 + 2 + 5) + ((5 + 4 + 4) +
         ((1 + 14 + 5) + ((4 * Nat.clog 2 (taylorTerms (p n) (chirpGuard (d n))) + 4 + 7) +
@@ -851,7 +936,7 @@ theorem pmStages_do (hB : Big n) (hW : 4 * b n + 32 ≤ W) :
   pm_seq (pm_s8 hB.1 hW) <| pm_seq (pm_s9 hB.1 hW) <| pm_seq (pm_s10 hB.1 hW) <|
   pm_seq (pm_s11 hB.1 hW) <| pm_seq (pm_s12 hB.1 hW) <| pm_seq (pm_s13 hB.1 hW) <|
   pm_seq (pm_s14 hB.1 hW) <| pm_seq (pm_s15 hB.1 hW) <| pm_seq (pm_s16 hB.1 hW) <|
-  pm_seq (pm_s17 hB.1 hW) <| pm_seq (pm_s18 hB hW) <| pm_seq (pm_s19 hB.1 hW) <|
+  pm_seq (pm_s17 hB hW) <| pm_seq (pm_s18 hB hW) <| pm_seq (pm_s19 hB.1 hW) <|
   pm_seq (pm_s20 hB.1 hW) <| pm_seq (pm_s21 hW) <| pm_seq (pm_s22 hW) <| pm_seq (pm_s23 hW) <|
   pm_seq (pm_s24 hW) <| pm_seq (pm_s25 hW) <| pm_seq (pm_s26 hW) <| pm_seq (pm_s27 hW) <|
   pm_seq (pm_s28 hW) <| pm_seq (pm_s29 hW) (pm_s30 hW)
@@ -872,11 +957,11 @@ theorem pmCode1_do (hB : Big n) (hW : 4 * b n + 32 ≤ W) (st : TblSt pmNV A)
 
 /-- **The second parameter program.** From the final state of `pmCode1` with `acc` emptied,
 `pmCode2` ends in the same values with the source lengths emitted, within `pmAtoms2 n` atoms. -/
-theorem pmCode2_do (hn : 2 ≤ n) (hW : 4 * b n + 32 ≤ W) (st : TblSt pmNV A)
+theorem pmCode2_do (hB : Big n) (hW : 4 * b n + 32 ≤ W) (st : TblSt pmNV A)
     (hst : PmF n 31 acc st) :
     TblDo A W w pmCode2 st (fun s => s.val = pmVals n ∧ s.acc = (pmSList A w n).reverse ++ acc)
       (pmAtoms2 n) :=
-  ((pm_s32 hn hW st hst).seq (fun s hs => pm_clear_do s hs)).mono (fun _ h => h)
+  ((pm_s32 hB hW st hst).seq (fun s hs => pm_clear_do s hs)).mono (fun _ h => h)
     (by unfold pmAtoms2; omega)
 
 end Main
@@ -903,8 +988,8 @@ theorem pm_sqrt_le (hn : 2 ≤ n) : Nat.sqrt (p n * alpha n ^ 2) ≤ 48 * b n ^ 
   have e2 : b n ≤ b n ^ 2 := Nat.le_self_pow (by norm_num) _
   omega
 
-/-- `pmAtoms1 n ≤ 2500 (b + 1)²`. -/
-theorem pmAtoms1_le (hn : 2 ≤ n) : pmAtoms1 n ≤ 2500 * (b n + 1) ^ 2 := by
+/-- `pmAtoms1 n ≤ 2500 (b + 1)² + pmSearchAtoms n`. -/
+theorem pmAtoms1_le (hn : 2 ≤ n) : pmAtoms1 n ≤ 2500 * (b n + 1) ^ 2 + pmSearchAtoms n := by
   have hd := d_le_b n
   have hK := K_le_d n
   have hL := pm_logT_le hn
@@ -948,8 +1033,8 @@ abbrev pmIalpha : Fin pmNV := 12
 abbrev pmIalphaSq : Fin pmNV := 13
 abbrev pmIgamma : Fin pmNV := 14
 abbrev pmIq : Fin pmNV := 15
-abbrev pmIN : Fin pmNV := 16
-abbrev pmIx0 : Fin pmNV := 17
+abbrev pmIwinLo : Fin pmNV := 16
+abbrev pmIpack : Fin pmNV := 17
 abbrev pmIS : Fin pmNV := 18
 abbrev pmIwinA : Fin pmNV := 19
 abbrev pmIwinB : Fin pmNV := 20
@@ -980,8 +1065,10 @@ theorem pm_alpha_eq (n : ℕ) : pmVals n pmIalpha = alpha n := rfl
 theorem pm_alphaSq_eq (n : ℕ) : pmVals n pmIalphaSq = alpha n ^ 2 := rfl
 theorem pm_gamma_eq (n : ℕ) : pmVals n pmIgamma = gamma n := rfl
 theorem pm_q_eq (n : ℕ) : pmVals n pmIq = q n := rfl
-theorem pm_N_eq (n : ℕ) : pmVals n pmIN = N n := rfl
-theorem pm_x0_eq (n : ℕ) : pmVals n pmIx0 = start (d n) (N n) (2 ^ (ℓ n - 1)) := rfl
+theorem pm_winLo_eq (n : ℕ) : pmVals n pmIwinLo = Primes.winLo (d n) (2 ^ (ℓ n - 1)) := rfl
+theorem pm_pack_val_eq (n : ℕ) :
+    pmVals n pmIpack = Primes.packVal (srcLen n) (pmTv (numHalf n) (2 ^ (ℓ n - 1)) (r n)) (d n) :=
+  rfl
 theorem pm_S_eq (n : ℕ) : pmVals n pmIS = S n := rfl
 theorem pm_windowA_eq (n : ℕ) : pmVals n pmIwinA = windowA (p n) (alpha n) := rfl
 theorem pm_fastWindow_eq (n : ℕ) : pmVals n pmIwinB = fastWindow (p n) (alpha n) := rfl

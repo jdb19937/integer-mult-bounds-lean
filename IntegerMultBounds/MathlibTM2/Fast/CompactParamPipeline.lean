@@ -42,7 +42,7 @@ theorem compactPmCode1_do (n : ℕ) (hB : Big n) (hW : 4*b n+32≤W)
 
 /-- The patch has a uniform polynomial atom budget in the existing precision scale. -/
 theorem compactPmOverwriteAtoms_le (n : ℕ) : compactPmOverwriteAtoms n≤64*(b n+1) := by
-  have hk : CompactSizes.K n≤b n := (CompactSizes.K_le_d n).trans (d_le_b n)
+  have hk : CompactSizes.Kroot n≤b n := (CompactSizes.Kroot_le_d n).trans (d_le_b n)
   unfold compactPmOverwriteAtoms
   omega
 

@@ -61,20 +61,27 @@ theorem compactRetuned_direct_w2_le {n : ℕ} (h : Big n) {hh : ℕ}
   have h15 : 15 * (6 * b n) ≤ (G + m + 15) * (6 * b n) := Nat.mul_le_mul_right _ (by omega)
   omega
 
+/-- `conv` covers `T p`, the prefix `T p d (b + 1)` (`CompactTotal.prefix_le`) and the layer
+`T p ℓ d^λ'`. -/
 theorem compactRetuned_conv_ge {n : ℕ} (h : Big n) :
-    (T n : ℝ) * p n ≤ CompactTotal.conv n ∧ (T n : ℝ) * p n * ((d n : ℝ) * Mult.CompactSizes.K n) ≤ CompactTotal.conv n ∧
+    (T n : ℝ) * p n ≤ CompactTotal.conv n ∧
+      (T n : ℝ) * p n * ((d n : ℝ) * ((layB (ℓ n) (Mult.CompactSizes.K n) : ℝ) + 1)) ≤
+        CompactTotal.conv n ∧
       (T n : ℝ) * p n * ((ℓ n : ℝ) * (d n : ℝ) ^ CompactInterim.lam') ≤ CompactTotal.conv n := by
   have hTp := mt_Tp_nonneg n
   have hr : (1 : ℝ) ≤ r n := mt_one_le_r n
   have hp : (1 : ℝ) ≤ p n := mt_one_le_p h
   have hll := gr_one_le_logLog (one_le_mul_of_one_le_of_one_le hr hp)
-  have h1 : (0 : ℝ) ≤ (d n : ℝ) * Mult.CompactSizes.K n := by positivity
+  have hpre : (d n : ℝ) * ((layB (ℓ n) (Mult.CompactSizes.K n) : ℝ) + 1) ≤
+      (p n : ℝ) * (Mult.CompactSizes.K n : ℝ) ^ (Parameters.tau - 1) := CompactTotal.prefix_le h
+  have h1 : (0 : ℝ) ≤ (d n : ℝ) := Nat.cast_nonneg _
   have h2 : (0 : ℝ) ≤ (p n : ℝ) * (Mult.CompactSizes.K n : ℝ) ^ (Parameters.tau - 1) := by positivity
   have h3 : (0 : ℝ) ≤ (ℓ n : ℝ) * (d n : ℝ) ^ CompactInterim.lam' := by positivity
   unfold CompactTotal.conv
-  generalize (d n : ℝ) * Mult.CompactSizes.K n = x at h1 ⊢
-  generalize (p n : ℝ) * (Mult.CompactSizes.K n : ℝ) ^ (Parameters.tau - 1) = y at h2 ⊢
+  generalize (d n : ℝ) * ((layB (ℓ n) (Mult.CompactSizes.K n) : ℝ) + 1) = u at hpre ⊢
   generalize (ℓ n : ℝ) * (d n : ℝ) ^ CompactInterim.lam' = z at h3 ⊢
+  generalize (p n : ℝ) * (Mult.CompactSizes.K n : ℝ) ^ (Parameters.tau - 1) = y at h2 hpre ⊢
+  generalize (d n : ℝ) = x at h1 ⊢
   generalize grLogLog ((r n : ℝ) * p n) = g at hll ⊢
   generalize (T n : ℝ) * p n = v at hTp ⊢
   refine ⟨?_, ?_, ?_⟩ <;> nlinarith

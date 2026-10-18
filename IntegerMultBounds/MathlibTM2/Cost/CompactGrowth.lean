@@ -25,19 +25,28 @@ lemma compact_cParam_le_one : cParam≤1 := by
   rw [Mult.CompactSizes.cParam_eq]
   norm_num
 
-theorem compact_K_le_d_rpow (n : ℕ) : (K n:ℝ)≤(d n:ℝ)^cParam := by
-  change (Mult.CompactSizes.K n:ℝ)≤(d n:ℝ)^Mult.CompactSizes.cParam
-  rw [Mult.CompactSizes.K_eq_floor]
-  exact Nat.floor_le (Real.rpow_nonneg (Nat.cast_nonneg _) _)
+theorem compact_K_le_d_rpow (n : ℕ) : (K n:ℝ)≤2*(d n:ℝ)^cParam := by
+  change (Mult.CompactSizes.K n:ℝ)≤2*(d n:ℝ)^Mult.CompactSizes.cParam
+  have h2 : (Mult.CompactSizes.K n:ℝ)≤2*Mult.CompactSizes.Kroot n := by
+    exact_mod_cast Mult.CompactSizes.K_le_two_Kroot n
+  have hr : (Mult.CompactSizes.Kroot n:ℝ)≤(d n:ℝ)^Mult.CompactSizes.cParam := by
+    rw [Mult.CompactSizes.Kroot_eq_floor]
+    exact Nat.floor_le (Real.rpow_nonneg (Nat.cast_nonneg _) _)
+  linarith
 
 theorem compact_d_rpow_le_two_K {n : ℕ} (hK : 1≤K n) : (d n:ℝ)^cParam≤2*K n := by
   have hf := Nat.lt_floor_add_one ((d n:ℝ)^cParam)
-  rw [←Mult.CompactSizes.K_eq_floor] at hf
-  have hk : (1:ℝ)≤K n := by exact_mod_cast hK
+  rw [←Mult.CompactSizes.Kroot_eq_floor] at hf
+  have hk : (1:ℝ)≤Mult.CompactSizes.Kroot n := by
+    have := Mult.CompactSizes.K_le_two_Kroot n
+    change 1≤Mult.CompactSizes.K n at hK
+    exact_mod_cast (show 1≤Mult.CompactSizes.Kroot n by omega)
+  have hrk : (Mult.CompactSizes.Kroot n:ℝ)≤K n := by exact_mod_cast Mult.CompactSizes.Kroot_le_K n
   linarith
 
-theorem compact_K_le_rpow (n : ℕ) : (K n:ℝ)≤(b n:ℝ)^(epsilon*cParam) :=
-  (compact_K_le_d_rpow n).trans (gr_d_rpow_le n compact_cParam_pos.le)
+theorem compact_K_le_rpow (n : ℕ) : (K n:ℝ)≤2*(b n:ℝ)^(epsilon*cParam) :=
+  (compact_K_le_d_rpow n).trans (mul_le_mul_of_nonneg_left
+    (gr_d_rpow_le n compact_cParam_pos.le) (by norm_num))
 
 theorem compact_rpow_le_four_K_rpow {n : ℕ} (hK : 1≤K n) {a : ℝ}
     (ha : 0≤a) (ha1 : a≤1) : (b n:ℝ)^(epsilon*cParam*a)≤4*(K n:ℝ)^a := by

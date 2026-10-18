@@ -234,8 +234,8 @@ theorem pmCost_nil {α : Type} (n : ℕ) :
 /-- **The cost of `dsAll`**: eventually `dsAllCost n ≤ 2·10^10 n + 2·10^10 (b n + 1)^5`. -/
 theorem dsAll_cost_le :
     ∀ᶠ n in Filter.atTop, dsAllCost n ≤ 2^35 * n + 2^35 * (b n + 1) ^ 5 := by
-  filter_upwards [ds_mainCost_le, Filter.eventually_ge_atTop 2] with n hm hn
-  have h1 := pmCost_le hn ([] : List (Fin pmNV × Unit))
+  filter_upwards [ds_mainCost_le, Filter.eventually_ge_atTop 2, eventually_big] with n hm hn hB
+  have h1 := pmCost_le hB ([] : List (Fin pmNV × Unit))
   have h2 : Nat.size n ≤ b n + 1 := pm_size_le
   have h3 : (Nat.size n + 5) ^ 4 ≤ (6 * (b n + 1)) ^ 4 := Nat.pow_le_pow_left (by omega) 4
   have h4 : (6 * (b n + 1)) ^ 4 = 1296 * (b n + 1) ^ 4 := by ring

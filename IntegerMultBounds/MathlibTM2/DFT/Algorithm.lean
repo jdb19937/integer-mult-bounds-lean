@@ -26,8 +26,8 @@ representatives of the transform (`fastDFT_transform`).
 * `packProduct_digit`: digit `n - 1 + k` of `pack B u n * pack B v (2 n - 1)` is
   `∑ j < n, u (n - 1 - j) v (j + k)` when all digits fit. `correlation_cast`: if `u` and `v`
   represent the reversed chirped input and the chirp up to factors `c₁`, `c₂` in `ZMod p`, this
-  correlation times the inverse chirp is `c₁ c₂ (dft ω x k)`. The machine's Montgomery
-  representatives carry powers of the radix as these factors.
+  correlation times the inverse chirp is `c₁ c₂ (dft ω x k)`. The machine works with the
+  residues themselves (Barrett reduction), so `c₁ = c₂ = 1`.
 * `fastDFT p ω n B a k` reduces the input and the chirp mod `p`, packs both in base `B`,
   multiplies, reads coefficient `n - 1 + k`, reduces it mod `p` and multiplies by the inverse
   chirp. `fastDFT_cast` identifies it with the transform in `ZMod p` whenever `ω ^ n = 1` and

@@ -15,8 +15,9 @@ import Mathlib.Algebra.Order.Ring.Star
 The stages F1, F2 (parameter machine), F3 and F11 of `docs/fast-pipeline.md` against the terms
 `n` and `n + B^C` of `Cost/Total.totBound` (`B = b n`, `n` the input length).
 
-* `mt_pm_le` (F2, `pmParams_exec`): `pmCost n us ≤ (17 + (2^12) |us|) n + (2^35) B⁴` whenever
-  every requested unary copy is a value at most `T` (`pmCost_le`, `pm_W_T_le`); the unary copies
+* `mt_pm_le` (F2, `pmParams_exec`): `pmCost n us ≤ (17 + (2^12) |us|) n + (2^35) B⁴` for `Big n`
+  whenever every requested unary copy is a value at most `T` (`pmCost_le`, `pm_W_T_le`); the
+  search for the prime source lengths costs at most `n`, the unary copies
   of `T` and `r` cost `O(n)` each. `mt_pm_vals_le_T`: the values `b, p, d, K, log T, T, ℓ, r,
   ℓ - 1, 2^(ℓ-1), numHalf, α, α², γ, q, S` are eventually at most `T`. `mt_pm_le_real`: the
   bound against `n + B^C` for every `C ≥ 4`.
@@ -65,12 +66,13 @@ theorem mt_pm_unary_le {n : ℕ} (hn : 2 ≤ n) {α : Type} (us : List (Fin pmNV
     simpa using this
   nlinarith
 
-/-- **The parameter machine** (`pmParams_exec`): for `n ≥ 2` and unary copies of values at most
+/-- **The parameter machine** (`pmParams_exec`): for `Big n` and unary copies of values at most
 `T`, `pmCost n us ≤ (17 + (2^12) |us|) n + (2^35) B⁴`. -/
-theorem mt_pm_le {n : ℕ} (hn : 2 ≤ n) {α : Type} (us : List (Fin pmNV × α))
+theorem mt_pm_le {n : ℕ} (hB : Big n) {α : Type} (us : List (Fin pmNV × α))
     (hus : ∀ x ∈ us, pmVals n x.1 ≤ T n) :
     pmCost n us ≤ (17 + (2^12) * us.length) * n + (2^35) * b n ^ 4 := by
-  have h1 := pmCost_le hn us
+  have hn : 2 ≤ n := hB.1
+  have h1 := pmCost_le hB us
   have h2 := mt_pm_unary_le hn us hus
   have h3 : Nat.size n ≤ b n + 1 := pm_size_le
   have hb := one_le_b hn
@@ -80,10 +82,11 @@ theorem mt_pm_le {n : ℕ} (hn : 2 ≤ n) {α : Type} (us : List (Fin pmNV × α
   nlinarith
 
 /-- `mt_pm_le` against `n + B^C` for `C ≥ 4`. -/
-theorem mt_pm_le_real {n C : ℕ} (hn : 2 ≤ n) (hC : 4 ≤ C) {α : Type} (us : List (Fin pmNV × α))
+theorem mt_pm_le_real {n C : ℕ} (hB : Big n) (hC : 4 ≤ C) {α : Type} (us : List (Fin pmNV × α))
     (hus : ∀ x ∈ us, pmVals n x.1 ≤ T n) :
     (pmCost n us : ℝ) ≤ ((2^36) + (2^12) * us.length) * ((n : ℝ) + (b n : ℝ) ^ C) := by
-  have h := mt_pm_le hn us hus
+  have hn : 2 ≤ n := hB.1
+  have h := mt_pm_le hB us hus
   have hb : 1 ≤ b n := one_le_b hn
   have hbC : b n ^ 4 ≤ b n ^ C := Nat.pow_le_pow_right hb hC
   have h' : (pmCost n us : ℝ) ≤ (17 + (2^12) * us.length) * n + (2^35) * (b n : ℝ) ^ C := by
@@ -158,7 +161,7 @@ theorem mt_pm_stage_le (C : ℕ) (hC : 4 ≤ C) {α : Type} (us : List (Fin pmNV
     ∀ᶠ n in atTop,
       (pmCost n us : ℝ) ≤ ((2^36) + (2^12) * us.length) * ((n : ℝ) + (b n : ℝ) ^ C) := by
   filter_upwards [eventually_big, mt_pm_vals_le_T] with n h hv
-  exact mt_pm_le_real h.1 hC us fun x hx => hv x.1 (hus x hx)
+  exact mt_pm_le_real h hC us fun x hx => hv x.1 (hus x hx)
 
 /-! ### Input and output -/
 

@@ -220,7 +220,7 @@ variable {n : ℕ}
 
 /-- The source lengths are pairwise coprime for every `n`. -/
 theorem s_pairwise (n : ℕ) : Pairwise (Nat.Coprime on (s n)) :=
-  modulus_pairwise (oddProd_odd (d n)) (start_even _ _ _) prime_dvd_oddProd (numHalf n)
+  s_pairwise_coprime n
 
 /-- The window of `Ã`: `m = ⌊√(p α²)⌋ + 1`, the least integer above `α √p`. -/
 def windowA (p a : ℕ) : ℕ := Nat.sqrt (p * a ^ 2) + 1

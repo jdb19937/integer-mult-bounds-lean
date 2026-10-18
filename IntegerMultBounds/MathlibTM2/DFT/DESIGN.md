@@ -10,14 +10,16 @@ An instance is `p`, `ω`, `a 0, …, a (n - 1)`. Write `w = Nat.size p`. The inp
 `N = (n + 2) (w + 1)`. For `n ≥ 1`, `ω` has order `n` in `(ZMod p)ˣ`, so `n ∣ p - 1`, `n < p`
 and `Nat.size n ≤ w`. Every size below is `O(w)` per scalar and `O(N)` for the one big product.
 
-* Montgomery radix `R = 2 ^ r`, `r = w + Nat.size n`, so `n p < R` and `p < R`.
-* Kronecker base `B = 2 ^ s`, `s = 2 w + Nat.size n`, so `n (p - 1) ^ 2 < B` (the hypothesis
-  `hB` of `fastDFT_cast`).
-* The product has two factors of `n s` and `(2 n - 1) s` bits: input length at most
-  `3 n s + 2 ≤ 9 N`.
+* Reciprocal precision `r = 2 w`: `recip_exec` returns `μ = ⌊2 ^ (k' + w) / p⌋` with
+  `2 w < k' ≤ 4 w`, so every value below `2 ^ (3w + 1)` reduces by Barrett's method.
+* Kronecker base `B = 2 ^ s`, `s = 3 w`, so `n (p - 1) ^ 2 < 2 ^ w · 2 ^ (2w) = B` (the
+  hypothesis `hB` of `fastDFT_transform`).
+* The product has two factors of `(n + 1) s` and `2 n s` bits: input length at most
+  `(3 n + 1) s + 2 ≤ 9 N + 2`.
 
-Small cases: `n = 0` prints nothing; `n = 1` prints `a 0` (`ω = 1`, `dft = a`). For `n ≥ 2`,
-`p ≥ 3` is odd, which Montgomery reduction needs.
+Small cases need no separate code: for `n = 0` every loop runs zero rounds and nothing is
+printed. Since `p` is prime, `2 ^ (w - 1) ≤ p < 2 ^ w` with `w ≥ 2` normalizes the divisor of
+the reciprocal.
 
 ## The arithmetic (`DFT/Algorithm.lean`, proved)
 
@@ -40,10 +42,12 @@ Small cases: `n = 0` prints nothing; `n = 1` prints `a 0` (`ω = 1`, `dft = a`).
   `henselInv_dvd`, `montInv_dvd` (the Montgomery constant for `R = 2 ^ r`, `r ≤ 2 ^ i`).
 * `barrett_le`, `barrett_lt`, `barrett_mod`: Barrett reduction with `μ = ⌊4 ^ w / p⌋`.
 
-The machine reduces with Montgomery's REDC. Its representatives enter through
-`packProduct_digit` (any digits `≤ p - 1`) and `correlation_cast` (casts equal to the chirped
-input and the chirp up to factors `c₁`, `c₂`, here powers of `R`); the printed value is the
-unique representative below `p`.
+The machine reduces with Barrett's method (`barrett2_le`, `barrett2_lt` in `DFT/Newton.lean`:
+for `μ = ⌊2 ^ s / p⌋` and `x < 2 ^ s`, `q = ⌊x μ / 2 ^ s⌋` has `q p ≤ x < q p + 2 p`, so one
+conditional subtraction finishes). All register values are plain residues below `p`; they enter
+through `packProduct_digit` (any digits `≤ p - 1`) and `correlation_cast` (with `c₁ = c₂ = 1`),
+and the printed value is the unique representative below `p`. REDC, the Hensel inverse and
+`montMul` (§5) are proved and unused by the pipeline.
 
 ## Machine layers
 
@@ -72,7 +76,7 @@ with `K = HK T`, `Γ = HΓ A` (`DecidableEq` derived, `Fintype` through `Bool �
   `hostCode p` (`P = Empty`, `exec_hostCode`) runs a host program without calls in any table:
   every library procedure of `Host/*` is used this way.
 
-### 2. Top level (`DFT/Keys.lean`, proved; `DFT/Top.lean`, to do)
+### 2. Top level (`DFT/Keys.lean`, `DFT/Top.lean`, proved)
 
 `computableInTime` builds `TM2ComputableInTime ea eb f` from `Stack.machine body main .gin .gout
 σ₀` (input and output alphabets `Equiv.refl Γ'`) and `ComputesWithin`: for every `a`, an
@@ -110,7 +114,7 @@ Lists of numbers live on one register with a `separator` after each number: `fie
 contract `∀ x y, HostMulWithin body pm v₀ time x y` (from `Store.only v₀ .inp (pairEnc (x, y))`
 to `Store.only v₀ .out (encodeNat (x y))` in `m` steps, `m + 2 ≤ time |pairEnc (x, y)|`) and
 `time =O n (log n) ^ (1 - κ)`. `dispatch_exec` (`Fast/Glue.lean`) gives the contract for every
-`x y` from the final multiplier's large-input execution; `DFTCheck.lean` builds the instance.
+`x y` from the final multiplier's large-input execution; `DFT/DFTCheck.lean` builds the instance.
 Nothing in `DFT/` depends on the value of `κ`.
 
 The DFT machine runs on `M.T + D` registers: the multiplier's first (`M.emb D = Fin.castAdd D`),
@@ -135,67 +139,128 @@ holds `main` at `none` and, at `some f`, the multiplier's procedure `f` embedded
 For step bounds, `time` is replaced by a monotone majorant `Tm L = C₀ L (log (L+2))^(1-κ) + C₀`
 (from the big-O bound and a finite maximum over small `L`).
 
-### 5. Montgomery arithmetic (`DFT/Trunc.lean`, `DFT/RedcTail.lean`, `DFT/Redc.lean`)
+### 5. Reduction on the host
 
-Registers of width `r`, `R = 2 ^ r`, `2 p ≤ R`; values `< p` unless stated.
+Shared pieces (`DFT/Trunc.lean`, `DFT/HostSteps.lean`): `btrunc` (low `r` bits), `usub` by a
+width register (`bhigh_exec`, high bits), `push_exec`, `peek_exec`, `update3_idem`.
 
-* `btrunc` (low `r` bits) and `usub` by a width register (`bhigh_exec`, high bits).
-* `redcTail`: `oR := (t + q) / R`, minus `p` when not below `p` (`badd`, `usub`, `blt`, `bcopy`
-  or `bsub`).
-* `redc_exec`: `redcProg` puts `binSyms r (redc p R p' t)` on `oR` from `t < p R`,
-  `R ∣ p p' + 1`: `mulCall` for `t p'`, `btrunc` to `m = t p' mod R`, `mulCall` for `m p`, then
-  `redcTail`. At most `250 r + 200 + m₁ + m₂` steps; `m₁`, `m₂` are bounded by the multiplier's
-  time on the two products.
-* `montMul_exec` (`DFT/Montgomery.lean`): `montMulProg` puts `binSyms r (redc p R p' (x y))` on
-  `oR` for `x, y < p` (`mulCall`, `redcProg`, `bclear`), at most `330 r + 270` steps plus the
-  three products. `redc_cast`, `redc_lt` identify the value as `x y R⁻¹` below `p`.
+**The Newton reciprocal** (`DFT/Newton*.lean`, proved). For `2 ^ (N - 1) ≤ D < 2 ^ N` let
+`μ k = ⌊2 ^ (2k) / ⌊D / 2 ^ (N - k)⌋⌋`, the reciprocal of the top `k` bits.
 
-To do:
+* `newton_step` (`DFT/Newton.lean`): with `d` the top `2 k` bits and `a = μ k`, the guess
+  `y = 2 ^ (k+1) a - (⌊d a² / 4 ^ k⌋ + 1)` has `y d < 16 ^ k < (y + 9) d`.
+  `newton_level_arith` (`DFT/NewtonLevel.lean`): `μ (2k) = y + (2 ^ (4k) - y d) / d`, the
+  correction at most `8`.
+* Host blocks in `L = 4 k + 4` bits: `newtonPrep` (counter, width registers `2 k` and `L`,
+  `ONE`, `SIX = 2 ^ (4k)`, `DFT/NewtonSetup.lean`), `newtonLoad` (`d` from the top of `Dp`, which
+  holds `D` most significant bit first, `DFT/NewtonBlocks.lean`), `newtonSq`, `newtonGuessProg`,
+  `newtonFinish` (`R := 2 ^ (4k) - y d`, then `corrLoop`: at most `8` rounds of `R := R - d`,
+  `Y := Y + 1`, `DFT/NewtonHost.lean`, `DFT/NewtonGuess.lean`).
+* `newtonLevel_exec` (`DFT/NewtonLevel.lean`): the blocks with the three products `a · a`,
+  `d · a²`, `y · d` take `A` from `binSyms (2k + 4) (μ k)` to `binSyms (4k + 4) (μ (2k))` in
+  `(3200 + 12 h) k + 4000 + 15 h` steps, for `M.time n ≤ (n + 1) H n`, `H` monotone,
+  `h = H (4k + 4)`. The proof is split in `newtonLevelA_exec` and `newtonLevelB_exec` to stay
+  under the default heartbeat limit.
+* `recip_exec` (`DFT/NewtonLoop.lean`): from `Pw = binSyms w p`, `2 ^ (w - 1) ≤ p < 2 ^ w`, and a
+  width register of `r ≥ w` symbols, `recipProg` builds `D = 2 ^ (2r) p` in `N = 2 r + w` bits,
+  starts from `μ 1 = 4`, runs levels while a unary copy of `r` (losing `k` symbols per level) is
+  nonempty, and leaves `A = binSyms (2k' + 4) ⌊2 ^ (k' + w) / p⌋` and `k'` symbols in `wK`, for
+  some `r < k' ≤ 2 r` (`recip_value`). At most `(7200 + 27 H (4r + 4)) (2r + 1) + 20 r + 10 w + 40`
+  steps.
 
-| procedure | interface | correctness | steps |
-|---|---|---|---|
-| `hensel` | `p` (odd) → `p' = -p⁻¹ mod R` | `henselStep`, `montInv_dvd` (`DFT/Reduction.lean`); round `k → 2k` by `y ↦ 2 y + (p y mod 2 ^ (2k)) y mod 2 ^ (2k)`, run while a unary copy of `r`, losing `k` symbols per round, is nonempty | `O(r)` plus the products, geometric in `k` |
-| `modDouble` | `x` → `2 x mod p` | shift, compare, subtract | `O(r)` |
-| `montPow` | `x`, exponent register `e` → Montgomery power | square and multiply over the bits of `e` | `O(size e · Tm(2r))` |
-| `rSquare` | `p` → `R ^ 2 mod p` | `R mod p` by doublings from `2 ^ w - p`; `R ^ 2 mod p` as the Montgomery power `2 ^ r` of `2 R mod p` | `O(r log n + log r · Tm(2r))` |
-| `toMont`, `fromMont` | `x ↦ REDC (x R²)`, `x ↦ REDC x` | `redc_cast` | `montMul` |
+**Barrett reduction** (`DFT/Barrett.lean`, proved). `μ = ⌊2 ^ (k + w) / p⌋` in `A` (width
+`2k + 4`, `recip_le`), `k` symbols in `wK`, `w ≤ k`.
 
-Every correctness statement is an exact congruence plus a bound below `p`.
+* `barrett_tail_val`: after `q p ≤ x < q p + 2 p`, one conditional subtraction of `p` from
+  `x - q p` gives `x mod p`.
+* `barrettTail_exec`: from `X = binSyms L x` and `Q2 = binSyms (L + e) (q p)`, `O := x mod p` in
+  `w` bits (`btrunc`, `bsub`, `bcopy` and `bwiden` of `p`, `blt`, `bcopy` or `bsub`, `btrunc`),
+  the work registers end empty, in `2 |Q1| + 60 L + 2 e + 12 w + 100` steps.
+* `barrett_exec`: `barrettProg` (`mulCall` for `x μ`, `usub` by `wK` and by `Pw` for `q`,
+  `mulCall` for `q p`, `barrettTail`) puts `binSyms w (x mod p)` on `O` for `x < 2 ^ (k + w)`,
+  in `150 L + 120 k + 600` steps plus the two products.
+* `modMul_exec`: `modMulProg` (`mulCall` for `x y`, `barrettProg`, the product cleared) puts
+  `binSyms w (x y mod p)` on `O` for `x, y < p`, in `(520 + 9 h) k + 700 + 12 h` steps for
+  `h = H (3k + 3)`.
 
-### 6. The pipeline (`DFT/Pipeline.lean`)
+**Montgomery arithmetic** (`DFT/Reduction.lean`, `DFT/RedcTail.lean`, `DFT/Redc.lean`,
+`DFT/Montgomery.lean`, `DFT/Hensel*.lean`, proved, unused by the pipeline): `redc_exec`
+(`redcProg`, `binSyms r (redc p R p' t)` from `t < p R`, `R ∣ p p' + 1`, in
+`250 r + 200 + m₁ + m₂` steps), `montMul_exec` (`330 r + 270` steps plus three products) and
+`hensel_exec` (`-p⁻¹ mod 2 ^ r` for odd `p` by rounds `y ↦ 2 y + (p y mod 2 ^ (2k)) y`, in
+`(400 + 8 H (3r)) (2r + 1) + 270 r + 20` steps).
 
-Vector registers hold `fieldSyms` lists (fields of width `w`, `r` or `s`, first field on top);
-the two Kronecker factors hold packs `binSyms (n s) (pack B u n)` with no separators.
+Entering Montgomery form needs `R² mod p` for `R = 2 ^ r`. From `R mod p` it takes either `r`
+modular doublings, `O(r)` bit operations each and `O(r²)` in all, or a Montgomery power with
+`log r` squarings of `M(r)` each, `O(M(w) log w)` for `r = O(w)`. The budget of the transform is
+`O(N (log N) ^ (1 - κ))` with `N = Θ(n w)`, about `n M(w)`, and both costs exceed it when
+`n < log w`. The Newton reciprocal costs `O(M(r))`: the precisions double, so the products of
+the levels sum geometrically. The pipeline therefore reduces by Barrett's method.
 
-1. Precompute `pinv`, `R² mod p`; `ω̃ = toMont ω`; `ω̃⁻¹ = montPow ω̃ (n - 1)`.
-   `O(log n · Tm(2r) + Tm(4r) log r)`.
-2. Chirps: `c̃ m = ω̃ ^ C(m,2)` for `m < 2n - 1` by `c̃ (m+1) = montMul (c̃ m) (ω̃ ^ m)` and
-   `ω̃ ^ (m+1) = montMul (ω̃ ^ m) ω̃`; the same with `ω̃⁻¹` for `m < n`. Fields of width `s`
-   (high zeros). `O(n Tm(2r) + n s)`.
-3. Chirped input, reversed: `u i = montMul (toMont (a (n-1-i))) (c̃⁻¹ (n-1-i))`, pushed so that
-   the vector register is `binSyms (n s) (pack B u n)`. `O(n Tm(2r) + n s)`.
-4. One product: `mulCall` of the two packs, into width `(3n - 1) s`.
-   `Tm(3 n s + 2) + O(n s)`.
-5. Unpack and reduce: drop the low `(n - 1) s` bits; for `k < n`, field `k` is
-   `T k = ∑ j, u j c̃ (j + k)` (`pack_div_pow_mod`, `conv_reflect`), `T k < n p² < p R`;
-   `X k = fromMont (montMul (redc (T k)) (c̃⁻¹ k))`. `O(n Tm(2r) + n s)`.
-6. Each `X k` (width `r`, `< p`) goes through `emitNat` onto the output register, which then
-   holds `natSyms X` reversed for `print_exec`. `O(n r)`.
+### 6. The pipeline (`DFT/PipeA.lean` … `DFT/Main.lean`, proved)
 
-Total: `O(n Tm(2r) + Tm(9N) + log n · Tm(2r) + Tm(4r) log r + N)` = `O(N (log N)^(1-κ))`,
-since `n r = O(N)` and `Tm` is superadditive up to constants.
+Widths: `w = Nat.size p` (so `2 ^ (w - 1) ≤ p < 2 ^ w`), digit width `s = 3 w` (`B = 2 ^ s`),
+reciprocal precision `r = 2 w`. For `n ≥ 1`, `n ∣ p - 1`, so `n < p ≤ 2 ^ w`: every correlation
+`T k < n p ^ 2 < 2 ^ s = B` (the hypothesis `hB` of `fastDFT_transform`), and `s < k' + w` for
+the `k' > r` of `recip_exec`, so Barrett applies to every `T k` and every product of residues.
+No `Nat.size n` is computed.
 
-Correctness: each register value is pinned by its cast to `ZMod p` and a bound below `p`; the
-final `X k` equal `(dft ω a k).val` by `correlation_cast`.
+Registers of the DFT part are concrete numerals of `Fin D` for one fixed `D`, so register
+disequalities in the composition proofs are decided by `simp` on literals; the loop and block
+lemmas stay generic in their registers.
 
-### 7. `DFTCheck.lean`
+1. Widths `wR = 2 w` and `w3 = 3 w` (copies of `Pw`); `recipProg` for `μ`. `O(w H (8w + 4))`.
+2. Chirps, natural order. `C := 1`, `E := 1`. Loop A over a copy of the entry register (`n`
+   rounds, round `m`): `Winv := E`, push `binSyms s (c m)` widened, most significant bit first,
+   onto `V` (`bwiden`, `moveR`), `C := C E mod p`, `E := E ω mod p` (`modMul`). Loop B over a
+   second copy: the same without `Winv`. Then `C m = ω ^ C(m,2) mod p` (`choose_two_succ`),
+   `Winv = ω ^ (n - 1) mod p = inverseRoot p ω n`, and `moveR V V2` leaves
+   `V2 = binSyms (2 n s) (pack B (chirp p ω) (2 n))`. `O(n w H(12 w + 3))`.
+3. Chirped input, reversed. `C' := 1`, `E' := 1`. Loop I over the entry register (round `j`
+   takes `a j`): `U := binSyms s (a j · C' mod p) ++ U` (`bcopy` prepends in order),
+   `C' := C' E'`, `E' := E' Winv`, one tick onto `Ncnt`. Then
+   `U = binSyms (n s) (pack B (chirpedInput p ω n a) n)`; `Dw := U` (a width register of `n s`
+   symbols); `s` zeros pushed onto `U`, so `U = binSyms ((n + 1) s) (B · pack …)`.
+4. One product: `mulCall U V2 Z`, then `usub Dw Z`: `Z = binSyms _ (chirpProduct' / B ^ n)`
+   with `chirpProduct' = B · chirpProduct` on `2 n` chirp digits; digit `n + k` of it is the
+   correlation `T k = ∑ j < n, chirpedInput (n - 1 - j) · chirp (j + k)` (`packProduct_digit`
+   for `m ≥ n + k` chirp digits). `Tm(9 n w + 2) + O(n w)`.
+5. Unpack and reduce. `C' := 1`, `E' := 1`. Loop over `Ncnt` (round `k`): the low `s` bits of
+   `Z` onto `Tk` (`splitLow`), `O := T k mod p` (`barrettProg`), `X k = C' · O mod p`
+   (`modMulProg`), `emitNat` onto `Out`, `C' := C' E'`, `E' := E' Winv`. `O(n w H(12w + 3))`.
+6. Every work register cleared; `writeOut Out` prints `encodeNatList (fastDFT …)`
+   (`print_exec`), equal to `DFTInstance.transform` (`fastDFT_transform`).
+
+For `n = 0` every loop runs zero rounds and the output is empty, with no separate case.
+
+`dftMain_exec` (`DFT/Main.lean`): `dftMain = parse ; pipeline ; clearAll ; writeOut rOut ;
+load σ₀` runs, on every instance `x`, from `Store.only σ₀ .gin x.encode` to
+`Store.only σ₀ .gout (encodeNatList x.transform)` in at most `dftBound H n w` steps, for any
+monotone `H` with `M.time m ≤ (m + 1) H m`.
+
+The loops share one lemma: a round `iter` followed by a test of the counter register runs while
+the counter is nonempty, from an invariant `Inv i` with `Inv i → (counter nonempty ↔ i < n)`,
+and each round takes `Inv i` to `Inv (i + 1)` in at most `c` steps.
+
+Total: `O(n w H(12 w + 3) + Tm(9N) + w H(8w + 4) + N)` = `O(N (log N)^(1-κ))`, since `n w ≤ N`.
+
+### 7. `DFT/Top.lean` and `DFT/DFTCheck.lean` (proved)
+
+* `tH m = max_{m' ≤ m} ⌈M.time m' / (m' + 1)⌉` is monotone with `M.time m ≤ (m + 1) tH m`,
+  and `tH m ≤ K + c (log m) ^ (1 - κ) + 1` (`tH_le`, from `M.isBigO`).
+* `dftTimeOf H N = 100000 (N + 1) (H (16 N + 16) + 1)` bounds `dftBound H n w + 2` at
+  `N = (n + 2) (w + 1)` (`dftBound_le`); `computesWithin` gives `ComputesWithin` for
+  `M.tab 50 Unit (M.dftMain Unit M.dftσ₀)`, and `dftTime_isBigO` gives
+  `dftTimeOf M.tH =O N (log N) ^ (1 - κ)` for `κ ≤ 1`. `HostMultiplier.dftInTime`:
+  `κ ≤ 1 → DFTInTime κ`.
+* `finalHostMultiplier : Nonempty (HostMultiplier (88279 / 2 ^ 46))` packages the rounded compact
+  multiplier (`compactRetunedPrefixR_exec`, `compactCompletedR_hostMul`, `dispatch_exec`,
+  `compactMain_runs_time_isBigO`), and
 
 ```
 theorem dft_in_time : DFTStatement
-#print axioms dft_in_time
+#print axioms dft_in_time   -- propext, Classical.choice, Quot.sound
 ```
-
-from `HostMultiplier κ → DFTInTime κ` and the final multiplier.
 
 ## Files
 
@@ -203,18 +268,35 @@ from `HostMultiplier κ → DFTInTime κ` and the final multiplier.
 |---|---|---|
 | `DFT/Statement.lean` | statement, Mathlib only | written |
 | `DFT/Algorithm.lean` | transform arithmetic | written |
-| `DFT/Reduction.lean` | REDC, Hensel inverse, Barrett | written |
+| `DFT/Reduction.lean` | REDC, Hensel inverse, Barrett with `4 ^ w` | written |
 | `DFT/Keys.lean` | `DK`, `hostProg`, `exec_hostProg`, `computableInTime` | written |
 | `DFT/IO.lean` | `readIn`, `writeOut`, symbol codes, encodings | written |
 | `DFT/Fields.lean` | `takeField`, `stripZeros`, `emitNat` | written |
 | `DFT/Parse.lean` | `parse`, `print_exec` | written |
 | `DFT/MulIO.lean` | `pushNat`, `readProduct` | written |
 | `DFT/MulCall.lean` | `HostMultiplier`, `tab`, `mulCall_exec` | written |
+| `DFT/HostSteps.lean` | `push_exec`, `peek_exec`, `update3_idem` | written |
 | `DFT/Trunc.lean` | `btrunc`, `bhigh_exec` | written |
-| `DFT/RedcTail.lean` | `redcTail` | written |
-| `DFT/Redc.lean` | `redcProg`, `redc_exec` | written |
-| `DFT/Montgomery.lean` | `montMulProg`, `montMul_exec` | written |
-| `DFT/Montgomery.lean` (rest) | Hensel, `montPow`, `rSquare`, conversions | to do |
-| `DFT/Pipeline.lean` | §6 | to do |
-| `DFT/Top.lean` | `ComputesWithin` for the pipeline, `HostMultiplier κ → DFTInTime κ` | to do |
-| `DFTCheck.lean` | `dft_in_time` | to do |
+| `DFT/RedcTail.lean` | `redcTail` | written, unused |
+| `DFT/Redc.lean` | `dreg` lemmas, `redcProg`, `redc_exec` | written; `redcProg` unused |
+| `DFT/Montgomery.lean` | `montMulProg`, `montMul_exec` | written, unused |
+| `DFT/HenselHost.lean`, `DFT/Hensel.lean`, `DFT/HenselLoop.lean` | `hensel_exec` | written, unused |
+| `DFT/Newton.lean` | `newton_step`, `barrett2_le`, `barrett2_lt` | written |
+| `DFT/NewtonHost.lean` | `bcopyTop`, `corrStep`, `corrLoop` | written |
+| `DFT/NewtonSetup.lean` | `pushS`, `newtonPrep` | written |
+| `DFT/NewtonBlocks.lean` | `newtonLoad`, `newtonSq` | written |
+| `DFT/NewtonGuess.lean` | `newtonGuessProg`, `newtonFinish` | written |
+| `DFT/NewtonLevel.lean` | `newton_level_arith`, `newtonLevel_exec` | written |
+| `DFT/NewtonLoop.lean` | `recipSetup`, `newtonLoop_aux`, `recip_exec` | written |
+| `DFT/Barrett.lean` | `barrettTail`, `barrettProg`, `modMulProg` | written |
+| `DFT/CountLoop.lean` | `countLoop_exec`, the loop over a counter register | written |
+| `DFT/PipeMath.lean` | chirp recurrences, packed registers, `chirpProduct2_digit` | written |
+| `DFT/PipeHost.lean`, `DFT/PipeSetup.lean` | host blocks between the loops | written |
+| `DFT/Regs.lean` | the `50` pipeline registers as numerals | written |
+| `DFT/Chirp.lean`, `DFT/ChirpLoop.lean` | `chirpStep`, loops A and B | written |
+| `DFT/Input.lean`, `DFT/Unpack.lean` | the input loop, the unpacking loop | written |
+| `DFT/PipeA.lean`, `DFT/PipeB.lean`, `DFT/PipeC.lean`, `DFT/Pipeline.lean` | §6 steps 1–5 | written |
+| `DFT/Output.lean` | the printed values are `DFTInstance.transform` | written |
+| `DFT/Main.lean` | `dftMain`, `dftMain_exec` | written |
+| `DFT/Top.lean` | `tH`, `dftTimeOf`, `computesWithin`, `dftTime_isBigO`, `dftInTime` | written |
+| `DFT/DFTCheck.lean` | `finalHostMultiplier`, `dft_in_time` | written |

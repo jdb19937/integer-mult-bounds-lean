@@ -128,9 +128,9 @@ theorem ds_topK_le (w : ℕ) : dsTopK w ≤ 6 * w + 7 := by
   have : Nat.size (2 * w) ≤ 2 * w := Nat.size_le.2 Nat.lt_two_pow_self
   omega
 
-theorem ds_r_le_T (hn : 2 ≤ n) : r n ≤ T n := by
-  have h1 := ds_d_mul_r_le hn
-  have h2 := one_le_d hn
+theorem ds_r_le_T (hB : Big n) : r n ≤ T n := by
+  have h1 := ds_d_mul_r_le hB
+  have h2 := one_le_d hB.1
   calc r n ≤ d n * r n := Nat.le_mul_of_pos_left _ h2
     _ ≤ T n := h1
 
@@ -324,13 +324,13 @@ theorem ds_recLen_le (hB : Big n) {Wt : ℕ} (hWt : Wt ≤ 500 * (b n + 1)) :
   have hn : 2 ≤ n := hB.1
   have hA := ds_recLenA_le hB Wt
   have hBloc := ds_recLenB_le hB Wt
-  have hdr := ds_d_mul_r_le hn
+  have hdr := ds_d_mul_r_le hB
   have hTr : d n * (T n / r n) ≤ T n := by
-    have := ds_d_mul_r_le hn
+    have := ds_d_mul_r_le hB
     have hr := ds_two_le_r hn
     calc d n * (T n / r n) ≤ d n * (T n / r n) + T n % r n := Nat.le_add_right _ _
       _ ≤ (T n / r n) * r n + T n % r n := by
-          have : d n ≤ r n := ds_d_le_r hn
+          have : d n ≤ r n := ds_d_le_r hB
           have := Nat.mul_le_mul_right (T n / r n) this
           nlinarith
       _ = T n := Nat.div_add_mod' _ _
@@ -404,15 +404,15 @@ theorem ds_main_bound (hbig : Big n) :
   have hK : K n ≤ b n + 1 := by have := K_le_d n; omega
   have hγ : gamma n ≤ 50 * (b n + 1) ^ 3 := ds_gamma_le hn
   have hnh : numHalf n ≤ 3 * (b n + 1) ^ 2 := ds_numHalf_le hn
-  have hrT : r n ≤ T n := ds_r_le_T hn
-  have hdr : d n * r n ≤ T n := ds_d_mul_r_le hn
+  have hrT : r n ≤ T n := ds_r_le_T hbig
+  have hdr : d n * r n ≤ T n := ds_d_mul_r_le hbig
   have hTr : T n / r n ≤ T n := Nat.div_le_self _ _
   have hT : T n ≤ pmW n * T n := Nat.le_mul_of_pos_left _ hW1
   have hdTr : d n * (T n / r n) ≤ T n := by
     have hr := ds_two_le_r hn
     calc d n * (T n / r n) ≤ d n * (T n / r n) + T n % r n := Nat.le_add_right _ _
       _ ≤ (T n / r n) * r n + T n % r n := by
-          have : d n ≤ r n := ds_d_le_r hn
+          have : d n ≤ r n := ds_d_le_r hbig
           have := Nat.mul_le_mul_right (T n / r n) this
           nlinarith
       _ = T n := Nat.div_add_mod' _ _
@@ -432,7 +432,7 @@ theorem ds_main_bound (hbig : Big n) :
     have hl := ds_loopCost₁_le hbig (dsWW n)
     have hl2 := ds_ar_loop₁ (T := T n) (Tr := T n / r n) hB1 hd hdr hdTr hW hC hWt
     have hrec := ds_recLen_le hbig hWt
-    have hst := ds_sum_t hn
+    have hst := ds_sum_t hbig
     have hss := ds_sum_s hbig
     have h1 : dsWW n * (4 * pmW n + 10) ≤ 500 * (b n + 1) * (4 * (20 * (b n + 1)) + 10) :=
       Nat.mul_le_mul hWt (by omega)

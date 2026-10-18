@@ -37,9 +37,10 @@ every size of `Mult/Sizes.lean` from the operand length `n ≥ 2`.
 * **Loop exits** of the searches: `⌈log₂ x⌉` (`pm_pow_lt_of_lt_clog`), integer roots
   (`Sizes.le_iroot_iff`), `⌊√x⌋` (`Nat.le_sqrt`), the least `a` with `t ≤ a^4`.
 * **Sizes** for every `n ≥ 2`, with `B = b n`: `1 ≤ log₂ T ≤ B + 2`, `1 ≤ ℓ ≤ log₂ T`,
-  `N ≤ 2^(B + 4)`, every source length `s_i ≤ 2 R + N (2d + 5) + 2` with `R = 2^(ℓ - 1)`,
-  `S < 2^(3B + 6)` (`pm_S_lt`, for `Big n`, through the room `8 d² N + 4d ≤ R`), `α^4 < 2^(3B + 8)`,
+  `S < 2^(3B + 6)` (`pm_S_lt`, for `Big n`, from `S < T`), `α^4 < 2^(3B + 8)`,
   `p α² < 2^(4B + 11)`. Every value a parameter program forms is below `2^(4B + 16)`.
+* **The elementary moduli** `Moduli.modulus N x₀ a i` of the programs `pmModC`, `pmProdSC`,
+  `pmEmitSC`: the bounds `pmModBound`, `pm_modBound_le`, `pm_modulus_le_bound`.
 -/
 
 @[expose] public section
@@ -144,107 +145,6 @@ theorem pm_ℓ_le_logT (hn : 2 ≤ n) : ℓ n ≤ logT n := by
 
 theorem pm_ℓ_le (hn : 2 ≤ n) : ℓ n ≤ b n + 2 := (pm_ℓ_le_logT hn).trans (pm_logT_le hn)
 
-theorem pm_N_le (hn : 2 ≤ n) : N n ≤ 2 ^ (b n + 4) := by
-  have hroot : d n ^ 64 ≤ b n ^ 31 := d_pow_le n
-  have hN : N n ≤ (4 * d n) ^ (2 * d n) := oddProd_le (d n)
-  rcases Nat.lt_or_ge (d n) 11 with h | h
-  · -- `d ≤ 10`: each value of `d` forces a lower bound on `b`
-    have hd := one_le_d hn
-    interval_cases hd' : d n
-    · calc N n ≤ (4 * 1) ^ (2 * 1) := hN
-        _ = 2 ^ 4 := by norm_num
-        _ ≤ 2 ^ (b n + 4) := pm_two_pow_le (by omega)
-    · have hb : 5 ≤ b n := by
-        by_contra hc
-        have := Nat.pow_le_pow_left (show b n ≤ 4 by omega) 31
-        norm_num at hroot this
-        omega
-      calc N n = 105 := by simp [N, hd', oddProd, Finset.prod_range_succ]
-        _ ≤ 2 ^ 7 := by norm_num
-        _ ≤ 2 ^ (b n + 4) := pm_two_pow_le (by omega)
-    · have hb : 10 ≤ b n := by
-        by_contra hc
-        have := Nat.pow_le_pow_left (show b n ≤ 9 by omega) 31
-        norm_num at hroot this
-        omega
-      calc N n = 10395 := by simp [N, hd', oddProd, Finset.prod_range_succ]
-        _ ≤ 2 ^ 14 := by norm_num
-        _ ≤ 2 ^ (b n + 4) := pm_two_pow_le (by omega)
-    · have hb : 18 ≤ b n := by
-        by_contra hc
-        have := Nat.pow_le_pow_left (show b n ≤ 17 by omega) 31
-        norm_num at hroot this
-        omega
-      calc N n = 2027025 := by simp [N, hd', oddProd, Finset.prod_range_succ]
-        _ ≤ 2 ^ 21 := by norm_num
-        _ ≤ 2 ^ (b n + 4) := pm_two_pow_le (by omega)
-    · have hb : 28 ≤ b n := by
-        by_contra hc
-        have := Nat.pow_le_pow_left (show b n ≤ 27 by omega) 31
-        norm_num at hroot this
-        omega
-      calc N n = 654729075 := by simp [N, hd', oddProd, Finset.prod_range_succ]
-        _ ≤ 2 ^ 30 := by norm_num
-        _ ≤ 2 ^ (b n + 4) := pm_two_pow_le (by omega)
-    · have hb : 41 ≤ b n := by
-        by_contra hc
-        have := Nat.pow_le_pow_left (show b n ≤ 40 by omega) 31
-        norm_num at hroot this
-        omega
-      calc N n = 316234143225 := by simp [N, hd', oddProd, Finset.prod_range_succ]
-        _ ≤ 2 ^ 39 := by norm_num
-        _ ≤ 2 ^ (b n + 4) := pm_two_pow_le (by omega)
-    · have hb : 56 ≤ b n := by
-        by_contra hc
-        have := Nat.pow_le_pow_left (show b n ≤ 55 by omega) 31
-        norm_num at hroot this
-        omega
-      calc N n = 213458046676875 := by simp [N, hd', oddProd, Finset.prod_range_succ]
-        _ ≤ 2 ^ 48 := by norm_num
-        _ ≤ 2 ^ (b n + 4) := pm_two_pow_le (by omega)
-    · have hb : 74 ≤ b n := by
-        by_contra hc
-        have := Nat.pow_le_pow_left (show b n ≤ 73 by omega) 31
-        norm_num at hroot this
-        omega
-      calc N n = 191898783962510625 := by simp [N, hd', oddProd, Finset.prod_range_succ]
-        _ ≤ 2 ^ 58 := by norm_num
-        _ ≤ 2 ^ (b n + 4) := pm_two_pow_le (by omega)
-    · have hb : 94 ≤ b n := by
-        by_contra hc
-        have := Nat.pow_le_pow_left (show b n ≤ 93 by omega) 31
-        norm_num at hroot this
-        omega
-      calc N n = 221643095476699771875 := by simp [N, hd', oddProd, Finset.prod_range_succ]
-        _ ≤ 2 ^ 68 := by norm_num
-        _ ≤ 2 ^ (b n + 4) := pm_two_pow_le (by omega)
-    · have hb : 117 ≤ b n := by
-        by_contra hc
-        have := Nat.pow_le_pow_left (show b n ≤ 116 by omega) 31
-        norm_num at hroot this
-        omega
-      calc N n = 319830986772877770815625 := by simp [N, hd', oddProd, Finset.prod_range_succ]
-        _ ≤ 2 ^ 79 := by norm_num
-        _ ≤ 2 ^ (b n + 4) := pm_two_pow_le (by omega)
-  · -- `(4d)² ≤ 2^d` from `d = 11` on, so `N ≤ 2^(d²) ≤ 2^b`
-    have h2 : (4 * d n) ^ 2 ≤ 2 ^ d n := by
-      have key : ∀ m : ℕ, 11 ≤ m → (4 * m) ^ 2 ≤ 2 ^ m := by
-        intro m hm
-        induction m, hm using Nat.le_induction with
-        | base => norm_num
-        | succ m hm ih =>
-          have : (4 * (m + 1)) ^ 2 ≤ 2 * (4 * m) ^ 2 := by nlinarith
-          rw [pow_succ 2 m]; omega
-      exact key _ h
-    have hsq : d n ^ 2 ≤ b n := pow_le_b_of (k := 2) (by unfold powerCap; norm_num) (one_le_d hn)
-    calc N n ≤ (4 * d n) ^ (2 * d n) := hN
-      _ = ((4 * d n) ^ 2) ^ d n := by rw [← pow_mul]
-      _ ≤ (2 ^ d n) ^ d n := Nat.pow_le_pow_left h2 _
-      _ = 2 ^ (d n ^ 2) := by rw [← pow_mul, sq]
-      _ ≤ 2 ^ (b n + 4) := pm_two_pow_le (by omega)
-
-theorem pm_one_le_N (n : ℕ) : 1 ≤ N n := oddProd_pos _
-
 /-- `N x₀ ≤ R + 2N` for the start `x₀ = start d N R`. -/
 theorem pm_N_start_le {d N R : ℕ} (hd : 1 ≤ d) (hN : 1 ≤ N) : N * start d N R ≤ R + 2 * N := by
   have h := (start_bounds (R := R) hd hN).2
@@ -272,85 +172,13 @@ theorem pm_one_le_modulus (N x₀ a i : ℕ) : 1 ≤ modulus N x₀ a i := by
   unfold modulus modA modB
   split_ifs <;> omega
 
-/-- The room `8 d² N + 4 d ≤ 2^(ℓ - 1)`: `Sizes.Big.moduli_room`. -/
-theorem pm_room (hn : Big n) : 8 * d n ^ 2 * N n + 4 * d n ≤ 2 ^ (ℓ n - 1) :=
-  hn.moduli_room
-
-/-- The start of the moduli at `n`. -/
-def pmX0 (n : ℕ) : ℕ := start (d n) (N n) (2 ^ (ℓ n - 1))
-
-theorem pm_s_modulus (n : ℕ) (i : Fin (d n)) : s n i = modulus (N n) (pmX0 n) (numHalf n) i := rfl
-
-theorem pm_S_prod (n : ℕ) : S n = ∏ i ∈ range (d n), modulus (N n) (pmX0 n) (numHalf n) i :=
-  Fin.prod_univ_eq_prod_range (fun i => modulus (N n) (pmX0 n) (numHalf n) i) (d n)
-
-theorem pm_modBound_lt (hn : 2 ≤ n) {i : ℕ} (hi : i < d n) :
-    pmModBound (N n) (pmX0 n) i < 2 ^ (2 * b n + 9) := by
-  have h1 := pm_modBound_le (R := 2 ^ (ℓ n - 1)) (one_le_d hn) (pm_one_le_N n) hi
-  have hR : 2 ^ (ℓ n - 1) ≤ 2 ^ (b n + 1) := pm_two_pow_le (by have := pm_ℓ_le hn; omega)
-  have hN := pm_N_le hn
-  have hd : 2 * d n + 5 ≤ 2 ^ (b n + 3) := by
-    have := d_le_b n
-    have := Nat.lt_two_pow_self (n := b n)
-    rw [pow_add]; omega
-  have hNd : N n * (2 * d n + 5) ≤ 2 ^ (b n + 4) * 2 ^ (b n + 3) := Nat.mul_le_mul hN hd
-  have e1 : 2 ^ (b n + 4) * 2 ^ (b n + 3) = 2 ^ (2 * b n + 7) := by rw [← pow_add]; ring_nf
-  have e2 : 2 ^ (2 * b n + 9) = 4 * 2 ^ (2 * b n + 7) := by rw [show 2 * b n + 9 = 2 + (2 * b n + 7) by ring, pow_add]; norm_num
-  have e3 : 2 ^ (b n + 1) ≤ 2 ^ (2 * b n + 7) := pm_two_pow_le (by omega)
-  have h7 : 2 ^ 7 ≤ 2 ^ (2 * b n + 7) := pm_two_pow_le (by omega)
-  unfold pmX0
-  omega
+theorem pm_S_prod (n : ℕ) : S n = ∏ i ∈ range (d n), srcLen n i :=
+  Fin.prod_univ_eq_prod_range (fun i => srcLen n i) (d n)
 
 theorem pm_S_lt (hB : Big n) : S n < 2 ^ (3 * b n + 6) := by
-  have hn : 2 ≤ n := hB.1
-  have hd1 := one_le_d hn
-  have hb1 := one_le_b hn
-  set D := d n with hD
-  set R := 2 ^ (ℓ n - 1) with hR
-  set M := 2 * R + N n * (2 * D + 5) + 2 with hM
-  have hs : ∀ i ∈ range D, modulus (N n) (pmX0 n) (numHalf n) i ≤ M := fun i hi =>
-    (pm_modulus_le_bound _ _ _ _).trans
-      (pm_modBound_le hd1 (pm_one_le_N n) (Finset.mem_range.1 hi))
-  have hSM : S n ≤ M ^ D := by
-    rw [pm_S_prod]
-    have := Finset.prod_le_pow_card (range D) _ M hs
-    rwa [Finset.card_range] at this
-  rcases Nat.lt_or_ge D 2 with h | h
-  · have e : D = 1 := by omega
-    rw [e, pow_one] at hSM
-    have hM1 : M = 2 * R + 7 * N n + 2 := by rw [hM, e]; ring
-    have hR' : R ≤ 2 ^ (b n + 1) := pm_two_pow_le (by have := pm_ℓ_le hn; omega)
-    have hN := pm_N_le hn
-    have e1 : 2 ^ (b n + 1) = 2 * 2 ^ b n := by rw [pow_succ]; ring
-    have e2 : 2 ^ (b n + 4) = 16 * 2 ^ b n := by rw [pow_add]; ring
-    have e3 : 2 ^ (b n + 7) = 128 * 2 ^ b n := by rw [pow_add]; ring
-    have h3 : 2 ^ (b n + 7) ≤ 2 ^ (3 * b n + 6) := pm_two_pow_le (by omega)
-    have h4 : 2 ≤ 2 ^ b n := by
-      calc 2 = 2 ^ 1 := by norm_num
-        _ ≤ 2 ^ b n := pm_two_pow_le hb1
-    omega
-  · have hroom := pm_room hB
-    have hM3 : M ≤ 2 ^ (ℓ n + 1) := by
-      have hl := pm_one_le_ℓ hn
-      have e : 2 ^ (ℓ n + 1) = 4 * R := by
-        rw [hR, show ℓ n + 1 = 2 + (ℓ n - 1) by omega, pow_add]; norm_num
-      rw [← hD] at hroom
-      have h1 : 2 * D + 5 ≤ 8 * D ^ 2 := by nlinarith
-      have h2 : N n * (2 * D + 5) ≤ 8 * D ^ 2 * N n := by
-        rw [mul_comm]; exact Nat.mul_le_mul_right _ h1
-      omega
-    have hpow : M ^ D ≤ 2 ^ ((ℓ n + 1) * D) := by
-      rw [pow_mul]; exact Nat.pow_le_pow_left hM3 D
-    have hdl := dℓ_lt (n := n) hd1
-    have hL := pm_logT_le hn
-    have hDb := d_le_b n
-    rw [← hD] at hdl hDb
-    have : (ℓ n + 1) * D < 3 * b n + 6 := by
-      have e : (ℓ n + 1) * D = D * ℓ n + D := by ring
-      omega
-    calc S n ≤ M ^ D := hSM
-      _ ≤ 2 ^ ((ℓ n + 1) * D) := hpow
-      _ < 2 ^ (3 * b n + 6) := Nat.pow_lt_pow_right (by norm_num) this
+  have h1 := hB.S_lt_T
+  have h2 : T n ≤ 2 ^ (3 * b n + 6) := pm_two_pow_le (by have := pm_logT_le hB.1; omega)
+  omega
 
 theorem pm_alpha_four_lt (hn : 2 ≤ n) : alpha n ^ 4 < 2 ^ (3 * b n + 8) := by
   have h1 := alpha_pow_four_lt n

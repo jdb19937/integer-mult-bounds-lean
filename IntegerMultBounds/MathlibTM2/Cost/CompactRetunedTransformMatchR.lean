@@ -162,7 +162,6 @@ theorem compactRetunedR_loop_cost_le {Ka : ℕ} : ∀ C_s k : ℕ, ∃ C : ℝ, 
   have hdl : 1 ≤ (d n : ℝ) ^ CompactInterim.lam' :=
     Real.one_le_rpow (by exact_mod_cast (show 1 ≤ d n by omega)) (by norm_num [CompactInterim.lam'])
   have hAℓ : (A : ℝ) ≤ ℓ n := by exact_mod_cast hA
-  have hbK : (layB (ℓ n) (Mult.CompactSizes.K n) : ℝ) + 1 ≤ Mult.CompactSizes.K n := by exact_mod_cast H.b_lt
   have hd0 : (1 : ℝ) ≤ d n := by exact_mod_cast (show 1 ≤ d n by omega)
   have hA0 : (0 : ℝ) ≤ A := Nat.cast_nonneg _
   have hℓ0 : (0 : ℝ) ≤ ℓ n := Nat.cast_nonneg _
@@ -216,10 +215,9 @@ theorem compactRetunedR_loop_cost_le {Ka : ℕ} : ∀ C_s k : ℕ, ∃ C : ℝ, 
   have hmain2 : ((layB (ℓ n) (Mult.CompactSizes.K n) : ℝ) + 1) * (C₂ * ((T n : ℝ) * p n) * d n) ≤
       C₂ * CompactTotal.conv n := by
     calc ((layB (ℓ n) (Mult.CompactSizes.K n) : ℝ) + 1) * (C₂ * ((T n : ℝ) * p n) * d n)
-        ≤ (Mult.CompactSizes.K n : ℝ) * (C₂ * ((T n : ℝ) * p n) * d n) :=
-          mul_le_mul_of_nonneg_right hbK (mul_nonneg (mul_nonneg hC₂ hTp) (Nat.cast_nonneg _))
-      _ = C₂ * ((T n : ℝ) * p n * ((d n : ℝ) * Mult.CompactSizes.K n)) := by ring
-      _ ≤ C₂ * CompactTotal.conv n := by gcongr
+        = C₂ * ((T n : ℝ) * p n * ((d n : ℝ) * ((layB (ℓ n) (Mult.CompactSizes.K n) : ℝ) + 1))) := by
+          ring
+      _ ≤ C₂ * CompactTotal.conv n := mul_le_mul_of_nonneg_left hc2 hC₂
   have hpark' : (A : ℝ) * (2 * stk + 2) ≤ 2 * CompactTotal.conv n := by
     have : ((A * (2 * stk + 2) : ℕ) : ℝ) = (A : ℝ) * (2 * stk + 2) := by push_cast; ring
     linarith

@@ -16,7 +16,7 @@ noncomputable section
 
 /-- Every shared stage margin covers the proposed compact saving. -/
 theorem exp_facts :
-    0≤1-kappa ∧ 2*epsilon≤1-kappa ∧
+    0≤1-kappa ∧ epsilon≤1-kappa ∧
       epsilon*(1-Parameters.tau)+Parameters.tau≤1-kappa ∧
       epsilon+epsilon*Mult.Sizes.cParam*(1/2)+(1/2+totDelta)≤1-kappa ∧
       1-epsilon*(1-lam')≤1-kappa ∧
@@ -25,12 +25,44 @@ theorem exp_facts :
   norm_num [kappa,lam',cParam,Mult.CompactSizes.cParam,Mult.CompactSizes.cExp,
     CompactInterim.kappa,CompactInterim.lam',Parameters.tau,totDelta]
 
-/-- The convolution envelope uses the executable eighth-root chunk and new layer exponent. -/
+/-- The convolution envelope with the uniform balanced chunk and the new layer exponent: the
+prefix costs `T p d`, the chunk exchanges `T p · p K^(τ-1)`, the layer `T p ℓ d^λ'`. -/
 def conv (n : ℕ) : ℝ :=
-  (T n:ℝ)*p n*((d n:ℝ)*K n+(p n:ℝ)*(K n:ℝ)^(Parameters.tau-1)+
+  (T n:ℝ)*p n*((d n:ℝ)+(p n:ℝ)*(K n:ℝ)^(Parameters.tau-1)+
     (ℓ n:ℝ)*(d n:ℝ)^lam'+grLogLog ((r n:ℝ)*p n))
 
 variable {n : ℕ}
+
+/-- **The prefix is paid by the chunk exchanges.** Under `Big` the prefix of an axis holds at
+most `(ℓ - 1)/Kroot` slots (`CompactSizes.mod_K_succ_le`); with `3 d ℓ ≤ p`, `K ≤ 2 Kroot` and
+`K^(τ-1) ≥ 1/K`, the `d` axes give `d (b + 1) ≤ p K^(τ-1)`. -/
+theorem prefix_le (h : Big n) :
+    (d n:ℝ)*((((ℓ n-1)%K n : ℕ) : ℝ)+1)≤(p n:ℝ)*(K n:ℝ)^(Parameters.tau-1) := by
+  have hq := Mult.CompactSizes.mod_K_succ_le h
+  have hK2 := Mult.CompactSizes.K_le_two_Kroot n
+  have hK1 : 1≤K n := Mult.CompactSizes.one_le_K h.1
+  have h3 : 3*d n*ℓ n≤p n := h.ℓ_bounds.2
+  have hn1 : ((ℓ n-1)%K n+1)*Mult.CompactSizes.Kroot n≤ℓ n :=
+    ((Nat.mul_le_mul_right _ hq).trans (Nat.div_mul_le_self _ _)).trans (Nat.sub_le _ _)
+  have hn2 : 3*(d n*((ℓ n-1)%K n+1))*K n≤2*p n := by
+    calc 3*(d n*((ℓ n-1)%K n+1))*K n≤3*(d n*((ℓ n-1)%K n+1))*(2*Mult.CompactSizes.Kroot n) :=
+          Nat.mul_le_mul_left _ hK2
+      _ = 2*(3*d n*(((ℓ n-1)%K n+1)*Mult.CompactSizes.Kroot n)) := by ring
+      _ ≤ 2*(3*d n*ℓ n) := Nat.mul_le_mul_left _ (Nat.mul_le_mul_left _ hn1)
+      _ ≤ 2*p n := Nat.mul_le_mul_left _ h3
+  have hK0 : (0:ℝ)<K n := by exact_mod_cast hK1
+  have hX : (d n:ℝ)*((((ℓ n-1)%K n : ℕ) : ℝ)+1)*K n≤p n := by
+    have : ((3*(d n*((ℓ n-1)%K n+1))*K n : ℕ) : ℝ)≤((2*p n : ℕ) : ℝ) := by exact_mod_cast hn2
+    push_cast at this
+    have hp0 : (0:ℝ)≤p n := Nat.cast_nonneg _
+    nlinarith
+  have hKτ : (K n:ℝ)^(-1:ℝ)≤(K n:ℝ)^(Parameters.tau-1) :=
+    Real.rpow_le_rpow_of_exponent_le (by exact_mod_cast hK1) (by linarith [tot_tau_nonneg])
+  rw [Real.rpow_neg_one] at hKτ
+  have hdiv : (d n:ℝ)*((((ℓ n-1)%K n : ℕ) : ℝ)+1)≤(p n:ℝ)*(K n:ℝ)⁻¹ := by
+    rw [← div_eq_mul_inv, le_div_iff₀ hK0]
+    exact hX
+  exact hdiv.trans (mul_le_mul_of_nonneg_left hKτ (Nat.cast_nonneg _))
 
 theorem mp_le (h : Big n) :
     (T n : ℝ) * totMp n ≤ 512 * ((n : ℝ) * (b n : ℝ) ^ (1 - kappa)) := by
@@ -79,7 +111,7 @@ theorem resamp_le (h : Big n) (hK : 1 ≤ Mult.Sizes.K n)
 
 
 theorem conv_inner_nonneg (h : Big n) :
-    0 ≤ (d n : ℝ) * K n + (p n : ℝ) * (K n : ℝ) ^ (Parameters.tau - 1) +
+    0 ≤ (d n : ℝ) + (p n : ℝ) * (K n : ℝ) ^ (Parameters.tau - 1) +
       (ℓ n : ℝ) * (d n : ℝ) ^ lam' + grLogLog ((r n : ℝ) * p n) := by
   have h1 : 0 ≤ grLogLog ((r n : ℝ) * p n) := by
     have hr : (1 : ℝ) ≤ r n := by rw [gr_r_eq]; exact one_le_pow₀ (by norm_num)
@@ -87,33 +119,27 @@ theorem conv_inner_nonneg (h : Big n) :
       have := h.thirteen_le_p; exact_mod_cast (show 1 ≤ p n by omega)
     have := gr_one_le_logLog (one_le_mul_of_one_le_of_one_le hr hp)
     linarith
-  have h2 : (0 : ℝ) ≤ (d n : ℝ) * K n := mul_nonneg (Nat.cast_nonneg _) (Nat.cast_nonneg _)
+  have h2 : (0 : ℝ) ≤ (d n : ℝ) := Nat.cast_nonneg _
   have h3 : (0 : ℝ) ≤ (p n : ℝ) * (K n : ℝ) ^ (Parameters.tau - 1) :=
     mul_nonneg (Nat.cast_nonneg _) (Real.rpow_nonneg (Nat.cast_nonneg _) _)
   have h4 : (0 : ℝ) ≤ (ℓ n : ℝ) * (d n : ℝ) ^ lam' :=
     mul_nonneg (Nat.cast_nonneg _) (Real.rpow_nonneg (Nat.cast_nonneg _) _)
   linarith
 
-/-- `T p (d K + p K^{τ-1} + ℓ d^{λ'} + grLogLog (r p)) ≤ 4096 n B^{1-κ}`, given `K ≥ 1` and
+/-- `T p (d + p K^{τ-1} + ℓ d^{λ'} + grLogLog (r p)) ≤ 4096 n B^{1-κ}`, given `K ≥ 1` and
 `log₂ p ≤ K`. -/
 theorem conv_le (h : Big n) (hK : 1 ≤ K n) (hlogp : Real.logb 2 (p n) ≤ K n) :
     conv n ≤ 4096 * ((n : ℝ) * (b n : ℝ) ^ (1 - kappa)) := by
-  obtain ⟨-, h2e, -, -, hlam, hll, -⟩ := exp_facts
+  obtain ⟨-, he, -, -, hlam, hll, -⟩ := exp_facts
   have hB1 := tot_one_le_b h
   have hB : (0 : ℝ) < b n := by linarith
   have hD : (0 : ℝ) < d n := by exact_mod_cast h.one_le_d
   have hK0 : (0 : ℝ) < K n := by exact_mod_cast hK
   have hτ0 := tot_tau_nonneg
   have hτ1 := tot_tau_le_one
-  -- `d K ≤ d² ≤ B^{2ε}`
-  have i1 : (d n : ℝ) * K n ≤ (b n : ℝ) ^ (1 - kappa) := by
-    have hKd : (K n : ℝ) ≤ d n := by exact_mod_cast Mult.CompactSizes.K_le_d n
-    have e : (d n : ℝ) * d n = (d n : ℝ) ^ (2 : ℝ) := by
-      rw [show (2 : ℝ) = ((2 : ℕ) : ℝ) by norm_num, Real.rpow_natCast]; ring
-    calc (d n : ℝ) * K n ≤ (d n : ℝ) * d n := mul_le_mul_of_nonneg_left hKd hD.le
-      _ = (d n : ℝ) ^ (2 : ℝ) := e
-      _ ≤ (b n : ℝ) ^ (epsilon * 2) := gr_d_rpow_le n (by norm_num)
-      _ ≤ (b n : ℝ) ^ (1 - kappa) := Real.rpow_le_rpow_of_exponent_le hB1 (by linarith)
+  -- `d ≤ B^ε`
+  have i1 : (d n : ℝ) ≤ (b n : ℝ) ^ (1 - kappa) :=
+    (gr_d_le_rpow n).trans (Real.rpow_le_rpow_of_exponent_le hB1 he)
   -- `p K^{τ-1} = 6 B / K^{1-τ} ≤ 24 B^{1-κ}`
   have i2 : (p n : ℝ) * (K n : ℝ) ^ (Parameters.tau - 1) ≤ 24 * (b n : ℝ) ^ (1 - kappa) := by
     have hKτ : 0 < (K n : ℝ) ^ (1 - Parameters.tau) := Real.rpow_pos_of_pos hK0 _
@@ -153,7 +179,7 @@ theorem conv_le (h : Big n) (hK : 1 ≤ K n) (hlogp : Real.logb 2 (p n) ≤ K n)
     rw [e]; linarith
   -- `Λ = log₂ (r p) = ℓ + log₂ p ≤ 2ℓ`, so `Λ + 1 ≤ 9 B^{1-ε}` and
   -- `log₂ (Λ + 1) + 1 ≤ log₂ (4p) + 1 ≤ K + 3 ≤ 4 B^{εc}`
-  have i4 : grLogLog ((r n : ℝ) * p n) ≤ 36 * (b n : ℝ) ^ (1 - kappa) := by
+  have i4 : grLogLog ((r n : ℝ) * p n) ≤ 45 * (b n : ℝ) ^ (1 - kappa) := by
     have hp1 : 1 ≤ p n := by have := h.thirteen_le_p; omega
     have hp1' : (1 : ℝ) ≤ p n := by exact_mod_cast hp1
     have hΛ := gr_logb_rp hp1
@@ -181,21 +207,23 @@ theorem conv_le (h : Big n) (hK : 1 ≤ K n) (hlogp : Real.logb 2 (p n) ≤ K n)
     have hlΛ : Real.logb 2 (Λ + 1) ≤ Real.logb 2 (4 * p n) :=
       Real.logb_le_logb_of_le one_lt_two (by linarith) (by linarith)
     have hK1 : (1 : ℝ) ≤ K n := by exact_mod_cast hK
-    have f2 : Real.logb 2 (Λ + 1) + 1 ≤ 4 * (b n : ℝ) ^ (epsilon * cParam) := by
+    have f2 : Real.logb 2 (Λ + 1) + 1 ≤ 5 * (b n : ℝ) ^ (epsilon * cParam) := by
       have := compact_K_le_rpow n
+      have : (1 : ℝ) ≤ (b n : ℝ) ^ (epsilon * cParam) :=
+        Real.one_le_rpow hB1 (mul_nonneg (by rw [epsilon_eq]; norm_num) compact_cParam_pos.le)
       linarith
     have f12 := gr_mul_le hB (by linarith [gr_logb_nonneg (show (1 : ℝ) ≤ Λ + 1 by linarith)])
       (by norm_num) f1 f2
     have := gr_le_rpow_of_le hB1 (by norm_num) f12 hll
     linarith
-  have hsum : (d n : ℝ) * K n + (p n : ℝ) * (K n : ℝ) ^ (Parameters.tau - 1) +
+  have hsum : (d n : ℝ) + (p n : ℝ) * (K n : ℝ) ^ (Parameters.tau - 1) +
       (ℓ n : ℝ) * (d n : ℝ) ^ lam' + grLogLog ((r n : ℝ) * p n) ≤
-        65 * (b n : ℝ) ^ (1 - kappa) := by linarith
+        74 * (b n : ℝ) ^ (1 - kappa) := by linarith
   have hTp := gr_Tp_le h.1
   unfold conv
-  calc _ ≤ (48 * n) * (65 * (b n : ℝ) ^ (1 - kappa)) :=
+  calc _ ≤ (48 * n) * (74 * (b n : ℝ) ^ (1 - kappa)) :=
         mul_le_mul hTp hsum (conv_inner_nonneg h) (by positivity)
-    _ = 3120 * ((n : ℝ) * (b n : ℝ) ^ (1 - kappa)) := by ring
+    _ = 3552 * ((n : ℝ) * (b n : ℝ) ^ (1 - kappa)) := by ring
     _ ≤ 4096 * ((n : ℝ) * (b n : ℝ) ^ (1 - kappa)) := by
       exact mul_le_mul_of_nonneg_right (by norm_num) (by positivity)
 

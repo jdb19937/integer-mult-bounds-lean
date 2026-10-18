@@ -1,0 +1,360 @@
+\documentclass[11pt]{amsart}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage[margin=1.1in]{geometry}
+\usepackage{newtxtext,newtxmath}
+\usepackage{graphicx}
+\usepackage{microtype}
+\usepackage[colorlinks=true, linkcolor=blue, citecolor=blue, urlcolor=blue]{hyperref}
+\usepackage{listings}
+\usepackage{upquote}
+\lstdefinelanguage{Lean}{
+  morekeywords={def,theorem,open,structure,where,fun},
+  sensitive=true,
+  morecomment=[l]{--},
+}
+\lstset{language=Lean, basicstyle=\small\fontfamily{lmtt}\selectfont\upshape, keywordstyle=\bfseries,
+  columns=fullflexible, keepspaces=true, breaklines=false,
+  xleftmargin=1em, aboveskip=6pt, belowskip=6pt,
+  literate={ℕ}{{$\mathbb{N}$}}1 {ℝ}{{$\mathbb{R}$}}1 {ℤ}{{$\mathbb{Z}$}}1
+    {→}{{$\rightarrow$}}1 {×}{{$\times$}}1 {∃}{{$\exists$}}1 {∀}{{$\forall$}}1
+    {ε}{{$\varepsilon$}}1 {≤}{{$\le$}}1 {≥}{{$\ge$}}1 {∧}{{$\wedge$}}1
+    {¬}{{$\neg$}}1 {∣}{{$\mid$}}1 {∈}{{$\in$}}1 {₀}{{$_0$}}1 {Γ}{{$\Gamma$}}1
+    {ω}{{$\omega$}}1 {κ}{{$\kappa$}}1 {∑}{{$\sum$}}1
+}
+
+\newtheorem{lemma}{Lemma}[section]
+\newtheorem{remark}[lemma]{Remark}
+\newtheorem*{theoremA}{Theorem}
+
+\setlength{\emergencystretch}{3em}
+
+\newcommand{\F}{\mathbb{F}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\size}{\operatorname{size}}
+\newcommand{\DFT}{\operatorname{DFT}}
+
+\begin{document}
+
+\title[The prime-field DFT below \texorpdfstring{$N\log N$}{N log N}]{The discrete Fourier transform over prime fields\\ below \texorpdfstring{$N \log N$}{N log N} on multitape machines}
+
+\author{Dan Brown$^*$}
+\email{jdb1729@gmail.com}
+\thanks{$^*$Author of \emph{The Da Vinci Code}.}
+
+\date{October 17, 2026}
+
+\begin{abstract}
+A fixed finite multi-stack Turing machine, in the model \texttt{Turing.FinTM2} of Lean's
+Mathlib, computes the discrete Fourier transform of length $n$ over a prime field
+$\F_p$, given $p$, a primitive $n$-th root of unity and the $n$ entries in binary of fixed
+width, in worst-case time $O\bigl(N (\log N)^{1-\kappa}\bigr)$, where $N$ is the input length
+and $\kappa > 0$ is the saving of the formally verified integer multiplier below $n \log n$.
+The reduction is the standard reduction of the transform to one integer product: Bluestein's
+chirp, written with binomial coefficients so that no square root of the root of unity is
+needed, Kronecker packing, and Barrett reduction with a reciprocal computed by Newton's
+iteration. The contribution is the explicit sub-$N\log N$ bound on multitape machines,
+inherited from the multiplier, and a statement of it in Lean that uses Mathlib definitions
+only. The Lean proof is in progress; we list what it proves.
+\end{abstract}
+
+\maketitle
+
+\section{Introduction}
+
+For a prime $p$, an integer $n \ge 1$, a primitive $n$-th root of unity $\omega \in \F_p$ and a
+vector $a \in \F_p^n$, the discrete Fourier transform is
+\[
+  \DFT_\omega(a)_k = \sum_{j=0}^{n-1} a_j\, \omega^{jk} \qquad (0 \le k < n).
+\]
+Over a field whose transform lengths are smooth, the fast Fourier transform computes it with
+$O(n \log n)$ field operations. The bit complexity on a multitape Turing machine is a different
+question: the field elements have $w = \size(p)$ bits, $n$ need not be smooth, and the machine
+must move its data along tapes. The classical route reduces the transform to a single
+integer multiplication of $O(N)$ bits, where $N \asymp n w$ is the input length, so the
+transform costs the time of that product plus $O(N)$ for the surrounding passes and
+$O(n)$ multiplications of $w$-bit numbers.
+
+The time of integer multiplication on multitape machines has been bounded by
+$O(n \log n)$ by Harvey and van der Hoeven \cite{HvdH}, and below $n \log n$ by the
+OpenAI manuscript \cite{OAI}: time $O\bigl(n (\log n)^{1-\kappa}\bigr)$ for a positive
+$\kappa$. A complete formal proof of a bound of this form, for one fixed machine in Mathlib's
+multi-stack model, is the Lean development \texttt{IntegerMultBounds} \cite{IMB}; its theorem
+\texttt{MathlibTM2.mulInTime} gives the saving $\kappa = 88279\cdot 2^{-46} \approx 2^{-29.57}$.
+The reduction then gives the same saving for the transform.
+
+\begin{theoremA}
+Let $\kappa > 0$ be such that some fixed finite multi-stack machine multiplies natural numbers
+in time $O\bigl(n (\log n)^{1-\kappa}\bigr)$, with binary inputs and outputs. Then a fixed
+finite multi-stack machine computes $\DFT_\omega(a)$ for every prime $p$, every primitive
+$n$-th root of unity $\omega \in \F_p$ and every $a \in \F_p^n$, with the input written as $p$,
+$\omega$, $a_0, \dots, a_{n-1}$ in exactly $\size(p)$ binary digits each, in time
+\[
+  O\bigl(N (\log N)^{1-\kappa}\bigr),
+\]
+where $N = (n+2)(\size(p)+1)$ is the input length. The implicit constant depends neither on $p$
+nor on $n$. In particular this holds with $\kappa = 88279\cdot 2^{-46}$.
+\end{theoremA}
+
+The bound is uniform in the relation between $n$ and $p$: it covers $n = 2$ with $p$ of
+millions of bits as well as $n = p - 1$. The first regime requires that every one-time setup
+on $p$ costs $O(M(w))$, the time of one product of $w$-bit numbers, without a logarithmic
+number of such products; Section~\ref{sec:cost} explains where this forces the choice of the
+modular reduction.
+
+Section~\ref{sec:statement} gives the statement in Lean and explains why the inputs have
+fixed width. Section~\ref{sec:reduction} gives the reduction, Section~\ref{sec:cost} the
+cost accounting, and Section~\ref{sec:formal} the state of the formalization.
+
+\section{The statement}
+\label{sec:statement}
+
+The Lean statement is \texttt{DFTStatement} in \texttt{MathlibTM2/DFT/Statement.lean}. Apart from
+the few definitions shown, everything in it is Mathlib vocabulary: the alphabet $\Gamma'$, the
+encoding \texttt{encodeNat} of $\N$ in binary, \texttt{ZMod}, \texttt{IsPrimitiveRoot},
+\texttt{TM2ComputableInTime} and the asymptotic relation \texttt{=O[atTop]}. Numbers are
+written least significant bit first, each followed by a comma.
+
+\noindent\begin{minipage}{\linewidth}
+\begin{lstlisting}
+def encodeFixed (w x : ℕ) : List Γ' :=
+  List.ofFn fun i : Fin w => Γ'.bit (x.testBit i)
+
+def encodeFixedList (w : ℕ) (l : List ℕ) : List Γ' :=
+  l.flatMap fun x => encodeFixed w x ++ [Γ'.comma]
+
+def encodeNatList (l : List ℕ) : List Γ' :=
+  l.flatMap fun x => (encodeNat x).map inclusionBoolΓ' ++ [Γ'.comma]
+
+def dft {p n : ℕ} (ω : ZMod p) (a : Fin n → ZMod p) (k : Fin n) : ZMod p :=
+  ∑ j, a j * ω ^ ((j : ℕ) * k)
+
+structure DFTInstance where
+  p : ℕ
+  [prime : Fact p.Prime]
+  n : ℕ
+  ω : ZMod p
+  primitive : IsPrimitiveRoot ω n
+  a : Fin n → ZMod p
+
+def DFTInstance.encode (x : DFTInstance) : List Γ' :=
+  encodeFixedList (Nat.size x.p) (x.p :: x.ω.val :: List.ofFn fun j => (x.a j).val)
+
+def DFTInstance.transform (x : DFTInstance) : List ℕ :=
+  List.ofFn fun k => (dft x.ω x.a k).val
+
+def DFTInTime (κ : ℝ) : Prop :=
+  ∃ M : TM2ComputableInTime DFTInstance.encode encodeNatList DFTInstance.transform,
+    (fun N : ℕ => (M.time N : ℝ)) =O[atTop]
+      fun N : ℕ => (N : ℝ) * Real.log N ^ (1 - κ)
+
+def DFTStatement : Prop := ∃ κ : ℝ, 0 < κ ∧ DFTInTime κ
+\end{lstlisting}
+\end{minipage}
+
+\texttt{TM2ComputableInTime} is Mathlib's notion: a machine of type \texttt{Turing.FinTM2}, a
+time function of the input length, and a proof that on every input the machine halts with the
+encoded output within that time. The time function therefore bounds the worst case over all
+instances of a given length. The output is the list of canonical representatives
+$\DFT_\omega(a)_k \in \{0, \dots, p-1\}$ in shortest binary form; its length is at most
+$n (\size(p) + 1) \le N$.
+
+\begin{remark}[Fixed-width inputs]
+\label{rem:width}
+With shortest binary forms on input as well, no bound $O\bigl(N (\log N)^{1-\kappa}\bigr)$ is
+possible. Take $n = p - 1$, a generator $\omega$ of $\F_p^\times$, and
+$a = (0, 1, 0, \dots, 0)$. In shortest form each zero entry is a single comma, so the input has about
+$p + 2\log_2 p$ symbols. The transform is $\DFT_\omega(a)_k = \omega^k$, which runs over all of $\F_p^\times$, so
+the output has $\sum_{x=1}^{p-1} (\size(x) + 1) \asymp p \log p$ symbols. A machine writes at
+most one output symbol per step, so its time on these inputs is at least of order $N \log N$.
+With every entry written in exactly $\size(p)$ digits, the output is never longer than the
+input, and this lower bound disappears.
+\end{remark}
+
+\section{The reduction}
+\label{sec:reduction}
+
+Fix an instance with $n \ge 2$ and write $w = \size(p)$, so $2^{w-1} \le p < 2^w$. Since
+$\omega$ has order $n$ in $\F_p^\times$, $n \mid p - 1$; hence $n < p$, $\size(n) \le w$, and
+$p$ is odd. The cases $n \le 1$ are immediate: for $n = 0$ the output is empty, and for $n = 1$
+we have $\omega = 1$ and $\DFT_\omega(a) = a$.
+
+\subsection{The chirp without a square root}
+Bluestein \cite{Blu} turns the transform into a correlation through the identity
+$jk = \tfrac{1}{2}\bigl((j+k)^2 - j^2 - k^2\bigr)$, which uses a square root of $\omega$. The
+binomial form avoids it:
+\[
+  jk = \binom{j+k}{2} - \binom{j}{2} - \binom{k}{2},
+\]
+an identity of integers. Put $\omega' = \omega^{n-1}$, so $\omega'\omega = 1$, and
+$c_m = \omega^{\binom{m}{2}}$, $c'_m = \omega'^{\binom{m}{2}}$. Then
+$\omega^{jk} = c'_j\, c'_k\, c_{j+k}$, and
+\[
+  \DFT_\omega(a)_k = c'_k \sum_{j=0}^{n-1} u_j\, c_{j+k}, \qquad u_j = a_j\, c'_j .
+\]
+The sum is a correlation of the vector $u$ of length $n$ with the chirp $c$ of length
+$2n - 1$.
+
+\subsection{Kronecker packing}
+Let $\bar u_j, \bar c_m \in \{0, \dots, p-1\}$ be the representatives and $B = 2^s$ with
+$s = 2w + \size(n)$, so that $n (p-1)^2 < B$. Pack the reversed vector and the chirp as integers,
+\[
+  U = \sum_{i=0}^{n-1} \bar u_{n-1-i}\, B^i, \qquad C = \sum_{m=0}^{2n-2} \bar c_m\, B^m .
+\]
+The coefficient of $B^{n-1+k}$ in the polynomial product is
+$T_k = \sum_{j=0}^{n-1} \bar u_j\, \bar c_{j+k}$, and every coefficient of the product is a sum
+of at most $n$ terms below $(p-1)^2$, hence below $B$. So no carries occur, and $T_k$ is the
+digit of index $n - 1 + k$ of the integer $UC$ in base $B$:
+\[
+  T_k = \bigl\lfloor UC / B^{n-1+k} \bigr\rfloor \bmod B .
+\]
+The two factors have $ns$ and $(2n-1)s$ bits, so the single product has input length at most
+$3ns + O(1) = O(N)$. Then $\DFT_\omega(a)_k = c'_k\, T_k$ in $\F_p$.
+
+\subsection{Reduction modulo \texorpdfstring{$p$}{p}}
+The remaining arithmetic is $O(n)$ products of residues and $n$ reductions of $T_k < n p^2$.
+Both are Barrett reductions \cite{Bar}. With $\mu = \lfloor 2^{s'}/p \rfloor$ and $x < 2^{s'}$,
+the quotient $q = \lfloor x\mu / 2^{s'} \rfloor$ satisfies
+\[
+  qp \le x < qp + 2p ,
+\]
+so $x \bmod p$ is $x - qp$ after at most two subtractions of $p$. One reduction costs two
+products of $O(s')$-bit numbers. We use $s' = 2w$ for products of residues and $s' = s$ for the
+sums $T_k$.
+
+The constant $\mu$ is computed by Newton's iteration for the reciprocal with precision
+doubling \cite[\S 4.3.3]{Knu}. For a divisor $d$ of $2k$ bits and $a$ the reciprocal of its top
+$k$ bits at precision $k$, the step
+\[
+  y = 2^{k+1} a - \bigl(\lfloor d a^2 / 4^k \rfloor + 1\bigr)
+\]
+satisfies $y d < 16^k < (y + 9) d$, so the reciprocal $\lfloor 16^k / d \rfloor$ at precision
+$2k$ is $y$ plus at most eight corrections. The levels have precisions $1, 2, 4, \dots$ up to
+$O(w)$, each with three products, so the total is a geometric sum, $O(M(w))$.
+
+\begin{remark}[Montgomery reduction]
+\label{rem:montgomery}
+Montgomery's reduction \cite{Mon} replaces division by $p$ with division by $R = 2^r$,
+$R > np$, given the constant $-p^{-1} \bmod R$. That constant is computed by Hensel lifting
+$y \mapsto y(2 + py)$ in $O(M(w))$ time, again a geometric sum. Entering Montgomery form,
+however, needs $R^2 \bmod p$, a reduction of a $2r$-bit number modulo $p$. Computed by
+$\log_2 r$ Montgomery squarings, it costs $O(M(w) \log w)$, which exceeds the budget of
+Section~\ref{sec:cost} by a factor of order $\log w$ when $n$ is bounded. Computing it in $O(M(w))$ requires a division by $p$, and with the
+reciprocal $\mu$ in hand Barrett reduction performs every reduction of the pipeline directly.
+\end{remark}
+
+\section{Cost}
+\label{sec:cost}
+
+Let $M(L)$ be the time of the multiplier on inputs of total length $L$, replaced by a monotone
+majorant with $M(L) \le C_0\, L (\log(L+2))^{1-\kappa} + C_0$; then $M(L)/L$ is bounded by a
+nondecreasing function, and $M(cL) = O(M(L))$ for fixed $c$. Every product of $O(w)$-bit numbers
+costs $O(M(w))$ including the transfer of its operands and its result, and every pass over the
+data costs $O(N)$. With $N = (n+2)(w+1)$ and $n \ge 2$:
+
+\begin{enumerate}
+\item reading the input and printing the output: $O(N)$;
+\item the reciprocals $\lfloor 4^w / p \rfloor$ and $\lfloor 2^s / p \rfloor$ by Newton's
+  iteration: $O(M(w))$;
+\item $\omega' = \omega^{n-1}$ by repeated squaring: $O(\log n \cdot M(w))$;
+\item the chirps $c_m$ $(m < 2n-1)$ and $c'_m$ $(m < n)$, from $c_{m+1} = c_m\, \omega^m$ and
+  $\omega^{m+1} = \omega^m \omega$: $O(n\, M(w))$;
+\item the chirped input $u_j = a_j c'_j$, packed in reverse: $O(n\, M(w) + N)$;
+\item the product $UC$: $M(9N)$, since $3ns \le 9 n w \le 9N$;
+\item the digits $T_k$, their reductions and the products $c'_k T_k$:
+  $O\bigl(n\, M(w) + N\bigr)$, since $s \le 3w$.
+\end{enumerate}
+
+Since $nw \le N$ and $M(w)/w$ is bounded by $O\bigl((\log N)^{1-\kappa}\bigr)$, each term
+$n\, M(w)$, $\log n \cdot M(w)$ and $M(w)$ is $O\bigl(N (\log N)^{1-\kappa}\bigr)$, and so is
+$M(9N)$. The total is $O\bigl(N (\log N)^{1-\kappa}\bigr)$, uniformly in $n$ and $p$.
+
+\begin{remark}[Tiny $n$, huge $p$]
+For $n = 2$ the input length is $N = 4(w+1)$ and the budget is $O\bigl(w (\log w)^{1-\kappa}\bigr)$,
+the time of a constant number of products of $w$-bit numbers. Every step of the list fits: the
+Newton reciprocal is a geometric sum of products, and the other steps use $O(n)$ products.
+A setup with $\Theta(\log w)$ products of $w$-bit numbers does not fit, which is the reason for
+the choice in Remark~\ref{rem:montgomery}. For $n$ close to $p$ the product $UC$ dominates.
+\end{remark}
+
+\section{Formalization}
+\label{sec:formal}
+
+The statement of Section~\ref{sec:statement} is in \texttt{MathlibTM2/DFT/Statement.lean} of the
+repository \cite{IMB}, which imports Mathlib only; its examples check \texttt{encodeFixedList},
+\texttt{encodeNatList} and one transform over $\F_5$ by \texttt{decide}. The proof of
+\texttt{DFTStatement} is in progress. The development takes the multiplier as a parameter,
+a structure \texttt{HostMultiplier}~$\kappa$ holding a machine table, its time function and the
+bound $O\bigl(n(\log n)^{1-\kappa}\bigr)$, so nothing in it depends on the value of $\kappa$.
+The following parts are proved, with no \texttt{sorry}:
+
+\begin{itemize}
+\item \texttt{DFT/Algorithm.lean}: the arithmetic of Section~\ref{sec:reduction} on natural
+  numbers. \texttt{chirp\_identity} is the binomial form of Bluestein's identity with
+  $\omega'\omega = 1$; \texttt{pack\_mul}, \texttt{pack\_div\_pow\_mod}, \texttt{conv\_le} and
+  \texttt{conv\_reflect} are Kronecker packing and digit read-back; \texttt{correlation\_cast}
+  allows arbitrary representatives; \texttt{fastDFT\_transform} states that the whole
+  computation, with reductions modulo $p$, equals \texttt{DFTInstance.transform} when
+  $n(p-1)^2 < B$.
+\item \texttt{DFT/Reduction.lean} and \texttt{DFT/Newton.lean}: Montgomery's REDC
+  (\texttt{redc\_lt}, \texttt{redc\_cast}), the Hensel constant (\texttt{montInv\_dvd}), Barrett
+  reduction (\texttt{barrett\_mod}, \texttt{barrett2\_le}, \texttt{barrett2\_lt}) and the Newton
+  step (\texttt{newton\_step}).
+\item \texttt{DFT/Keys.lean}: a machine with two $\Gamma'$ stacks around the host register file
+  of \cite{IMB}, the transfer of host programs (\texttt{exec\_hostProg}), and the packaging into
+  \texttt{TM2ComputableInTime} and \texttt{DFTInTime} (\texttt{computableInTime},
+  \texttt{dftInTime\_of\_computes}).
+\item \texttt{DFT/IO.lean}, \texttt{DFT/Fields.lean}, \texttt{DFT/Parse.lean}: reading the
+  fixed-width input and printing the output (\texttt{parse\_exec}, \texttt{print\_exec}).
+\item \texttt{DFT/MulIO.lean}, \texttt{DFT/MulCall.lean}: the multiplier as a subroutine on
+  internal registers (\texttt{call\_exec}, \texttt{mulCall\_exec}).
+\item \texttt{DFT/Trunc.lean}, \texttt{DFT/RedcTail.lean}, \texttt{DFT/Redc.lean},
+  \texttt{DFT/Montgomery.lean}: REDC and Montgomery multiplication on the host
+  (\texttt{redc\_exec}, \texttt{montMul\_exec}).
+\item \texttt{DFT/Hensel.lean}, \texttt{DFT/HenselHost.lean}, \texttt{DFT/HenselLoop.lean}: the
+  Hensel iteration with its step bound (\texttt{henselRound\_exec}, \texttt{hensel\_exec}).
+\item \texttt{DFT/NewtonHost.lean}, \texttt{NewtonSetup.lean}, \texttt{NewtonBlocks.lean} and
+  \texttt{NewtonGuess.lean}: the host blocks of one Newton level (\texttt{newtonPrep\_exec},
+  \texttt{newtonLoad\_exec}, \texttt{newtonSq\_exec}, \texttt{newtonGuessProg\_exec},
+  \texttt{newtonFinish\_exec}) and the correction loop (\texttt{corrLoop\_exec}).
+\end{itemize}
+
+Still to be written are the Newton iteration over all levels and Barrett reduction on the
+host, the pipeline of Sections~\ref{sec:reduction} and~\ref{sec:cost} as one host procedure
+with its step bound, the top level that turns it into \texttt{HostMultiplier}~$\kappa \to$
+\texttt{DFTInTime}~$\kappa$, and the final theorem \texttt{dft\_in\_time : DFTStatement},
+obtained from the multiplier of \texttt{MathlibTM2.mulInTime}, with its axiom audit.
+
+\begin{thebibliography}{9}
+
+\bibitem{Bar} P. Barrett,
+\emph{Implementing the Rivest Shamir and Adleman public key encryption algorithm on a standard
+digital signal processor}, Advances in Cryptology -- CRYPTO '86, Lecture Notes in Comput.
+Sci. \textbf{263}, Springer, 1987, 311--323.
+
+\bibitem{Blu} L. I. Bluestein,
+\emph{A linear filtering approach to the computation of discrete Fourier transform},
+IEEE Trans. Audio Electroacoust. \textbf{18} (1970), 451--455.
+
+\bibitem{HvdH} D. Harvey, J. van der Hoeven,
+\emph{Integer multiplication in time $O(n \log n)$}, Ann. of Math. \textbf{193} (2021),
+563--617.
+
+\bibitem{IMB} \texttt{IntegerMultBounds}: integer multiplication below $n \log n$ in Lean on
+Mathlib's finite Turing machines,
+\url{https://github.com/platypii/integer-mult-bounds-lean}.
+
+\bibitem{Knu} D. E. Knuth,
+\emph{The Art of Computer Programming}, Vol.~2: \emph{Seminumerical Algorithms}, 3rd ed.,
+Addison-Wesley, 1997.
+
+\bibitem{Mon} P. L. Montgomery,
+\emph{Modular multiplication without trial division}, Math. Comp. \textbf{44} (1985),
+519--521.
+
+\bibitem{OAI} OpenAI,
+\emph{Integer multiplication below $n \log n$}, manuscript, September 23, 2026,
+\url{https://github.com/openai/math}.
+
+\end{thebibliography}
+
+\end{document}

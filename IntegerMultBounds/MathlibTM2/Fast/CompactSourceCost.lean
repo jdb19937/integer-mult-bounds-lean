@@ -55,16 +55,16 @@ theorem compactSource_box_le (Tm cw : ℕ) :
   filter_upwards [mt_cv_box_le Tm cw, eventually_big] with n hn h w hw1 hw
   refine (hn w hw1 hw).trans (mul_le_mul_of_nonneg_left ?_ ?_)
   · have hI := CompactTotal.conv_inner_nonneg h
-    have hdK : (0 : ℝ) ≤ (d n : ℝ) * Mult.CompactSizes.K n := mul_nonneg (Nat.cast_nonneg _) (Nat.cast_nonneg _)
+    have hdK : (0 : ℝ) ≤ (d n : ℝ) := Nat.cast_nonneg _
     have hpK : (0 : ℝ) ≤ (p n : ℝ) * (Mult.CompactSizes.K n : ℝ) ^ (Parameters.tau - 1) :=
       mul_nonneg (Nat.cast_nonneg _) (Real.rpow_nonneg (Nat.cast_nonneg _) _)
     have hℓd : (0 : ℝ) ≤ (ℓ n : ℝ) * (d n : ℝ) ^ CompactInterim.lam' :=
       mul_nonneg (Nat.cast_nonneg _) (Real.rpow_nonneg (Nat.cast_nonneg _) _)
     have hTp := mt_Tp_nonneg n
-    have e : CompactTotal.conv n = (T n : ℝ) * p n * ((d n : ℝ) * Mult.CompactSizes.K n +
+    have e : CompactTotal.conv n = (T n : ℝ) * p n * ((d n : ℝ) +
         (p n : ℝ) * (Mult.CompactSizes.K n : ℝ) ^ (Parameters.tau - 1) + (ℓ n : ℝ) * (d n : ℝ) ^ CompactInterim.lam') +
         (T n : ℝ) * p n * grLogLog ((r n : ℝ) * p n) := by unfold CompactTotal.conv; ring
-    have hrest : 0 ≤ (T n : ℝ) * p n * ((d n : ℝ) * Mult.CompactSizes.K n +
+    have hrest : 0 ≤ (T n : ℝ) * p n * ((d n : ℝ) +
         (p n : ℝ) * (Mult.CompactSizes.K n : ℝ) ^ (Parameters.tau - 1) + (ℓ n : ℝ) * (d n : ℝ) ^ CompactInterim.lam') :=
       mul_nonneg hTp (by linarith)
     rw [e]

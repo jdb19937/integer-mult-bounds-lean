@@ -86,14 +86,15 @@ theorem ds_ax_vals (hB : Big n) {i : ℕ} (hi : i < d n) (Wt : ℕ) :
   omega
 
 /-- `Σ_{i < d} t_i ≤ T`. -/
-theorem ds_sum_t (hn : 2 ≤ n) : (List.ofFn (t n)).sum ≤ T n := by
+theorem ds_sum_t (hB : Big n) : (List.ofFn (t n)).sum ≤ T n := by
+  have hn : 2 ≤ n := hB.1
   rw [ds_ofFn_t]
   have h := List.sum_le_length_nsmul ((List.range (d n)).map (dsT n)) (r n) (by
     intro x hx
     obtain ⟨i, -, rfl⟩ := List.mem_map.1 hx
     exact dsT_le hn i)
   simp only [List.length_map, List.length_range, smul_eq_mul] at h
-  exact h.trans (ds_d_mul_r_le hn)
+  exact h.trans (ds_d_mul_r_le hB)
 
 /-- `Σ_{i < d} s_i ≤ 2 T + 23 d`. -/
 theorem ds_sum_s (hB : Big n) : (List.ofFn (s n)).sum ≤ 2 * T n + 23 * d n := by
@@ -104,7 +105,7 @@ theorem ds_sum_s (hB : Big n) : (List.ofFn (s n)).sum ≤ 2 * T n + 23 * d n := 
     obtain ⟨i, hi, rfl⟩ := List.mem_map.1 hx
     exact dsS_le hB (List.mem_range.1 hi))
   simp only [List.length_map, List.length_range, smul_eq_mul] at h
-  have := ds_d_mul_r_le hn
+  have := ds_d_mul_r_le hB
   nlinarith
 
 theorem ds_tblC_le (n : ℕ) : tblC (pmW n) (pmW n) ≤ 2^16 * (b n + 1) ^ 2 := by
