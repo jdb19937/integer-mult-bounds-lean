@@ -1,8 +1,10 @@
 name: Lean
 on: [push, pull_request]
+# On master a running build finishes and only the newest push waits behind it; frequent pushes
+# would otherwise cancel every build before its slowest modules complete.
 concurrency:
   group: lean-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 jobs:
   check:
     runs-on: ubuntu-latest
