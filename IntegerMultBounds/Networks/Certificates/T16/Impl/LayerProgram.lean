@@ -277,6 +277,7 @@ theorem runK_flatMap_toK (p : List (MInstr ι)) (x : ι → S) :
   | nil => rfl
   | cons i p ih => rw [List.flatMap_cons, runK_append, runK_toK, ih]; rfl
 
+omit [DecidableEq ι] in
 theorem kChildren_flatMap_toK (p : List (MInstr ι)) :
     kChildren (p.flatMap toK) = mprogramChildren p := by
   induction p with
