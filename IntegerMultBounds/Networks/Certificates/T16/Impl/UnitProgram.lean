@@ -51,6 +51,7 @@ def unitProper : UnitOp → Prop
   | .exchange x w => x ≠ w
   | _ => True
 
+omit [IsScalarTower ℚ ℂ S] in
 /-- **Unit operations.** -/
 theorem unitProgram_run (o : UnitOp) (ho : unitProper o) (y : NodeUnit → S) :
     runT ρ (unitProgram o) y = o.run (portRep ρ) y := by

@@ -202,7 +202,7 @@ theorem good_kernel (q : ZMod 4) (v : Geometry.Address) : Good (BinaryWalsh.kern
   have hS : conj S = S := by
     simp only [S, map_sum, map_mul, Complex.conj_conj]
     exact Fintype.sum_equiv (Equiv.addRight v) _ _ fun x => by
-      simp [add_assoc, CharTwo.add_self_eq_zero, mul_comm]
+      simp [add_assoc, mul_comm]
   have hSim : S.im = 0 := Complex.conj_eq_iff_im.mp hS
   have hshift : ∑ x, Complex.normSq (f (x + v)) = ∑ x, Complex.normSq (f x) :=
     Fintype.sum_equiv (Equiv.addRight v) _ _ fun x => rfl
@@ -340,7 +340,7 @@ theorem dyadic_hadamard (r : ℕ) : (hadamardRealization r).Dyadic :=
 
 theorem nsq_single : nsq (Pi.single 0 1) = 1 := by
   unfold nsq
-  rw [Finset.sum_eq_single 0 (fun x _ hx => by simp [Pi.single_apply, hx]) (by simp)]
+  rw [Finset.sum_eq_single 0 (fun x _ hx => by simp [hx]) (by simp)]
   simp
 
 /-- **A scalar relating two good operators is a fourth root of unity.** -/

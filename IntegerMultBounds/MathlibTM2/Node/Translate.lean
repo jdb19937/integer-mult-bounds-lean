@@ -35,6 +35,7 @@ def revW (fw : NWire) : Pr P (nT BReg) Q A U :=
   .seq (moveR (reg (.wire fw)) (reg (.wtmp fw)) id)
     (.seq (moveR (reg (.wtmp fw)) (reg .tmp) id) (moveR (reg .tmp) (reg (.wire fw)) id))
 
+omit [DecidableEq BReg] in
 /-- `revW`: wire `fw` goes from the stream of `Z` to the stream of `zrev w Z`; every other register
 ends as it started. -/
 theorem revW_exec {R r n w : ℕ} (fw : NWire) (Z : ZArr (Fin R × Fin r) n)
@@ -52,18 +53,17 @@ theorem revW_exec {R r n w : ℕ} (fw : NWire) (Z : ZArr (Fin R × Fin r) n)
   let R₂ := movedR R₁ (reg (.wtmp fw)) (reg .tmp) id (R₁ (reg (.wtmp fw)))
   let R₃ := movedR R₂ (reg .tmp) (reg (.wire fw)) id (R₂ (reg .tmp))
   have h1 : R₁ (reg (.wtmp fw)) = (encZ A w Z).reverse := by
-    simp [R₁, movedR, Function.update_of_ne (Ne.symm n12), hx, hwt]
+    simp [R₁, movedR, hx, hwt]
   have h2 : R₂ (reg .tmp) = encZ A w Z := by
     simp only [R₂, movedR, Function.update_self, List.map_id, h1, List.reverse_reverse]
-    simp [R₁, movedR, Function.update_of_ne n31, Function.update_of_ne (Ne.symm n23), htmp]
+    simp [R₁, movedR, htmp]
   have h3 : R₃ = Function.update S.R (reg (.wire fw)) (encZ A w (zrev w Z)) := by
     funext k
     simp only [R₃, movedR, List.map_id, h2]
     by_cases hk1 : k = reg (.wire fw)
     · subst hk1
       rw [Function.update_self, Function.update_self, ← encZ_reverse]
-      simp [R₂, R₁, movedR, Function.update_of_ne n31.symm, Function.update_of_ne n12.symm,
-        Function.update_of_ne n23]
+      simp [R₂, R₁, movedR]
     rw [Function.update_of_ne hk1, Function.update_of_ne hk1]
     by_cases hk3 : k = reg .tmp
     · subst hk3
@@ -72,7 +72,7 @@ theorem revW_exec {R r n w : ℕ} (fw : NWire) (Z : ZArr (Fin R × Fin r) n)
     simp only [R₂, R₁, movedR]
     by_cases hk2 : k = reg (.wtmp fw)
     · subst hk2
-      simp [Function.update_apply, n23, hwt]
+      simp [n23, hwt]
     rw [Function.update_of_ne hk3, Function.update_of_ne hk2, Function.update_of_ne hk2,
       Function.update_of_ne hk1]
   obtain ⟨v₁, hu₁, he₁⟩ := moveR_exec body (reg (.wire fw)) (reg (.wtmp fw)) n12 id v S
@@ -104,6 +104,7 @@ theorem encZ_mulIZ {R r n w : ℕ} (Z : ZArr (Fin R × Fin r) n) :
     simp [red, GR.mulI, Zsqrtd.re_mul, Zsqrtd.im_mul]) Z]
   rfl
 
+omit [DecidableEq BReg] in
 /-- `mulIW`: wire `fw` goes from the stream of `Z` to the stream of `i Z`; every other register
 ends as it started. -/
 theorem mulIW_exec (hA : 5 ≤ A) {R r n w : ℕ} (hw : 1 ≤ w) (fw : NWire)

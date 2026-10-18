@@ -193,13 +193,13 @@ theorem takeField_exec {i j t : Fin T} (hij : i ≠ j) (hit : i ≠ t) (hjt : j 
   simp only [fieldR]
   by_cases hkj : k = j
   · subst hkj
-    simp [movedR, hij, hij.symm, hit, hit.symm, hjt, hjt.symm, ht, hj]
+    simp [movedR, hij.symm, hjt, ht, hj]
   · by_cases hkt : k = t
     · subst hkt
-      simp [movedR, hkj, hij, hij.symm, hit, hit.symm, hjt, hjt.symm, ht, hj]
+      simp [movedR, hkj, hij.symm, hit.symm, hjt, ht, hj]
     · by_cases hki : k = i
       · subst hki
-        simp [movedR, hkj, hkt, hij, hij.symm, hit, hit.symm, hjt, hjt.symm]
+        simp [movedR, hkj, hkt, hij.symm, hjt]
       · simp [movedR, hkj, hkt, hki]
 
 /-! ### Emitting a number in shortest form -/

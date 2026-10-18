@@ -224,7 +224,7 @@ lemma liftColumns_pull (T : Module.End ℂ (BinaryWalsh.Arrays 73))
     funext c
     by_cases hc : c = j
     · subst hc; simp [hj]
-    · simp [hc, Function.update_of_ne hc]
+    · simp [hc]
 
 lemma ρcols_pull (T : Module.End ℂ (BinaryWalsh.Arrays 73))
     (σ : BinaryWalsh.Address 73 → BinaryWalsh.Address 73) (hT : ∀ f x, T f x = f (σ x))

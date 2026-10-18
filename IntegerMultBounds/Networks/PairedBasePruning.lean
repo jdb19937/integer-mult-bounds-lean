@@ -775,7 +775,7 @@ theorem dead_finset (N : List (Node Input)) (h : DeadSupports N) :
   let idx : Finset Input → ℕ := fun s => if hs : s ∈ T then Classical.choose (hex s hs) else 0
   have hidx : ∀ s ∈ T, ∃ hk : idx s < N.length, N[idx s].support = s := by
     intro s hs
-    simp only [idx, dite_cond_eq_true (eq_true hs)]
+    simp only [idx, dite_eq_left_of_eq_true (eq_true hs)]
     exact Classical.choose_spec (hex s hs)
   have key : ∀ i j (hi : i < N.length) (hj : j < N.length), i = j → N[i].support = N[j].support := by
     intro i j hi hj he; subst he; rfl

@@ -119,17 +119,17 @@ theorem henselRound_exec (main : DPr (Option M.P) (M.T + D) M.Q M.A (M.U × B))
     (t₃ := M.dreg D t₃) (t₄ := M.dreg D t₄) (t₅ := M.dreg D t₅)
     (by simpa using hnd [Z, P2, Y, t₁, t₂, t₃, t₄, t₅] (by regs_nodup)) hp₂lt hy v₁ S₁
     (by simp [hS₁, hinp]) (by simp [hS₁, hout]) (by simp [hS₁, hL]) (by intro i; simp [hS₁, hR])
-    (by simp [hS₁]) (by simp [hS₁, *, Ne.symm]) (by simp [hS₁, *, Ne.symm])
-    (by simp [hS₁, *, Ne.symm]) (by simp [hS₁, *, Ne.symm]) (by simp [hS₁, *, Ne.symm])
-    (by simp [hS₁, *, Ne.symm]) (by simp [hS₁, *, Ne.symm]) gi go
+    (by simp [hS₁]) (by simp [*, Ne.symm]) (by simp [*, Ne.symm])
+    (by simp [*, Ne.symm]) (by simp [*, Ne.symm]) (by simp [*, Ne.symm])
+    (by simp [*, Ne.symm]) (by simp [*, Ne.symm]) gi go
   set S₂ : Stacks (M.T + D) M.A :=
     { S₁ with R := Function.update S₁.R (M.dreg D Z) (binSyms (k + k + k) (p₂ * y)) } with hS₂
   -- `Z := p₂ y mod 2 ^ (2k)`
   obtain ⟨v₃, hu₃, e₃⟩ := btrunc_exec Empty.elim (a := M.dreg D Z) (wR := M.dreg D K2)
     (t₁ := M.dreg D t₁) (t₂ := M.dreg D t₂)
     (by simpa using hnd [Z, K2, t₁, t₂] (by regs_nodup)) (r := k + k) (e := k) (X := p₂ * y)
-    v₂ S₂ (by simp [hS₂]) (by simp [hS₂, hS₁, *, Ne.symm]) (by simp [hS₂, hS₁, *, Ne.symm])
-    (by simp [hS₂, hS₁, *, Ne.symm])
+    v₂ S₂ (by simp [hS₂]) (by simp [*]) (by simp [*, Ne.symm])
+    (by simp [*, Ne.symm])
   rw [← binSyms_mod (k + k) (p₂ * y)] at e₃
   set z := p₂ * y % 2 ^ (k + k) with hz
   have hzlt : z < 2 ^ (k + k) := Nat.mod_lt _ hM
@@ -142,10 +142,10 @@ theorem henselRound_exec (main : DPr (Option M.P) (M.T + D) M.Q M.A (M.U × B))
     (by simpa using hnd [Ur, Z, Y, t₁, t₂, t₃, t₄, t₅] (by regs_nodup)) hzlt hy v₃ S₃
     (by simp [hS₃, hS₂, hS₁, hinp]) (by simp [hS₃, hS₂, hS₁, hout])
     (by simp [hS₃, hS₂, hS₁, hL]) (by intro i; simp [hS₃, hS₂, hS₁, hR]) (by simp [hS₃])
-    (by simp [hS₃, hS₂, hS₁, *, Ne.symm]) (by simp [hS₃, hS₂, hS₁, *, Ne.symm])
-    (by simp [hS₃, hS₂, hS₁, *, Ne.symm]) (by simp [hS₃, hS₂, hS₁, *, Ne.symm])
-    (by simp [hS₃, hS₂, hS₁, *, Ne.symm]) (by simp [hS₃, hS₂, hS₁, *, Ne.symm])
-    (by simp [hS₃, hS₂, hS₁, *, Ne.symm]) gi go
+    (by simp [*, Ne.symm]) (by simp [*, Ne.symm])
+    (by simp [*, Ne.symm]) (by simp [*, Ne.symm])
+    (by simp [*, Ne.symm]) (by simp [*, Ne.symm])
+    (by simp [*, Ne.symm]) gi go
   set S₄ : Stacks (M.T + D) M.A :=
     { S₃ with R := Function.update S₃.R (M.dreg D Ur) (binSyms (k + k + k) (z * y)) } with hS₄
   -- `henselC`
@@ -154,12 +154,12 @@ theorem henselRound_exec (main : DPr (Option M.P) (M.T + D) M.Q M.A (M.U × B))
     (Yn := M.dreg D Yn) (cnt := M.dreg D t₃) (t₁ := M.dreg D t₁) (t₂ := M.dreg D t₂)
     (by simpa using hnd [Y, K, K2, P2, Z, Ur, Yn, t₃, t₁, t₂] (by regs_nodup)) (k := k)
     (X := z * y) (y := y) (z := z) (q := p₂) hk hy v₄ S₄ (by simp [hS₄])
-    (by simp [hS₄, hS₃, hS₂, hS₁, *, Ne.symm]) (by simp [hS₄, hS₃, *, Ne.symm])
-    (by simp [hS₄, hS₃, hS₂, hS₁, *, Ne.symm]) (by simp [hS₄, hS₃, hS₂, hS₁, *, Ne.symm])
-    (by simp [hS₄, hS₃, hS₂, hS₁, *, Ne.symm]) (by simp [hS₄, hS₃, hS₂, hS₁, *, Ne.symm])
-    (by simp [hS₄, hS₃, hS₂, hS₁, *, Ne.symm]) (by simp [hS₄, hS₃, hS₂, hS₁, *, Ne.symm])
-    (by simp [hS₄, hS₃, hS₂, hS₁, *, Ne.symm])
-  have hS₄K2 : S₄.R (M.dreg D K2) = KK := by simp [hS₄, hS₃, hS₂, hS₁, *, Ne.symm]
+    (by simp [*, Ne.symm]) (by simp [*])
+    (by simp [*]) (by simp [*])
+    (by simp [*, Ne.symm]) (by simp [*, Ne.symm])
+    (by simp [*, Ne.symm]) (by simp [*, Ne.symm])
+    (by simp [*, Ne.symm])
+  have hS₄K2 : S₄.R (M.dreg D K2) = KK := by simp [*]
   rw [hS₄K2] at e₅
   have hsz₁ : Nat.size (p₂ * y) ≤ k + k + k :=
     Nat.size_le.2 (by rw [pow_add]; exact Nat.mul_lt_mul'' hp₂lt hy)
@@ -183,7 +183,7 @@ theorem henselRound_exec (main : DPr (Option M.P) (M.T + D) M.Q M.A (M.U × B))
     by_cases hj : j = M.dreg D K2
     · subst hj; simp [*, Ne.symm]
     by_cases hj' : j = M.dreg D K
-    · subst hj'; simp [*, Ne.symm]
+    · subst hj'; simp [*]
     by_cases hjY : j = M.dreg D Y
     · subst hjY; simp [*, Ne.symm]
     by_cases hjU : j = M.dreg D Ur

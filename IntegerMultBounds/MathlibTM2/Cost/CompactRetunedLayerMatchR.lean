@@ -269,7 +269,7 @@ theorem compactRetunedR_layer_chunk_eventually {Ka : ℕ}
   have hbound := mergeBoundR _ _ _ _ stash (compactRetunedTopCoeff 1 ds)
     ((d:ℝ)^CompactInterim.lam') ho ht hV hC hP
   dsimp only [compactSynLayerCostR]
-  rw [if_pos hchunk]
+  rw [ite_eq_left hchunk]
   simp only [length_topRec',Nat.cast_add]
   dsimp only [compactRetunedRoundCoeffR,d,g,K,D,o,ρ,r] at hbound ⊢
   exact add_le_add (le_refl (compactSynDispatchCost ℓ K h:ℝ))

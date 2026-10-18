@@ -52,7 +52,7 @@ theorem parse_exec {a b pr wr t : Fin T} (hreg : [a, b, pr, wr, t].Nodup) (w p �
       S'.R a = [] ∧ S'.R t = [] ∧
       (∀ k, k ≠ a → k ≠ b → k ≠ pr → k ≠ wr → k ≠ t → S'.R k = S.R k) ∧
       S'.inp = S.inp ∧ S'.out = S.out ∧ S'.L = S.L := by
-  simp only [List.nodup_cons, List.mem_cons, List.mem_singleton, List.not_mem_nil, or_false,
+  simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false,
     not_or, List.nodup_nil, not_false_eq_true, and_true] at hreg
   obtain ⟨⟨hab, hap, haw, hat⟩, ⟨hbp, hbw, hbt⟩, ⟨hpw, hpt⟩, hwt⟩ := hreg
   -- read `gin` onto `a`

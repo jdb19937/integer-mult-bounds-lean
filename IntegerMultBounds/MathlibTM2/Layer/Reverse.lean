@@ -36,7 +36,7 @@ theorem testBit_revBitsVal (bs : List Bool) (t : ℕ) : (revBitsVal bs).testBit 
     | zero => cases b <;> simp [revBitsVal, Nat.testBit_zero, Nat.add_mul_mod_self_left]
     | succ t =>
       rw [revBitsVal, Nat.testBit_succ, show (b.toNat + 2 * revBitsVal bs) / 2 = revBitsVal bs by
-        cases b <;> simp <;> omega, ih]
+        cases b <;> simp; omega, ih]
       simp
 
 theorem revBitsVal_lt (bs : List Bool) : revBitsVal bs < 2 ^ bs.length := by
@@ -145,7 +145,7 @@ def revCell (p : (Fin R × Fin r) × (Fin n → ZMod 2)) : (Fin R × Fin r) × (
 
 theorem revCell_revCell (p : (Fin R × Fin r) × (Fin n → ZMod 2)) : revCell (revCell p) = p := by
   obtain ⟨⟨u, c⟩, b⟩ := p
-  simp only [revCell, Fin.rev_rev, Prod.mk.injEq, true_and, and_self]
+  simp only [revCell, Fin.rev_rev, Prod.mk.injEq, true_and]
   funext t
   simp only [compl]
   rw [add_assoc, CharTwo.add_self_eq_zero, add_zero]
@@ -160,7 +160,7 @@ theorem cellList_reverse : (cellList R r n).reverse = (cellList R r n).map revCe
   have ha' : a < 2 ^ n := by simpa using ha
   rw [Function.comp_apply, reverse_ofFn', List.map_ofFn]
   refine congrArg List.ofFn (funext fun c => ?_)
-  simp only [Function.comp_apply, revCell, Fin.rev_rev, zero_add]
+  simp only [Function.comp_apply, revCell, zero_add]
   rw [addrBits_rev ha']
 
 theorem coeffList_zrev (w : ℕ) (Z : ZArr (Fin R × Fin r) n) :
@@ -223,12 +223,12 @@ theorem pullM_pullM (he : Function.Injective e) (L₁ L₂ : BinaryWalsh.Address
 theorem encZ_pullM_congr {A w : ℕ} (L : BinaryWalsh.Address m → BinaryWalsh.Address m)
     {Z Z' : ZArr (Fin R × Fin r) n} (h : ∀ p, red w (Z p) = red w (Z' p)) :
     encZ A w (pullM e L Z) = encZ A w (pullM e L Z') :=
-  encZ_congr fun p => h _
+  encZ_congr fun _p => h _
 
 theorem basisMap_one (w : BinaryWalsh.Address m) (x : Fin m) (hx : w x = 0) :
     basisMap (w + Pi.single x 1) x 1 = 1 + w := by
   funext j
-  simp only [basisMap, Pi.add_apply, Pi.one_apply, one_smul, Pi.smul_apply, smul_eq_mul, one_mul]
+  simp only [basisMap, Pi.add_apply, Pi.one_apply, one_smul]
   by_cases hj : j = x
   · subst hj; simp [hx]; decide
   · simp [hj]

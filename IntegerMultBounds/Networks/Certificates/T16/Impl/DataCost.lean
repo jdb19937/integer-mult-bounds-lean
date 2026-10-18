@@ -156,7 +156,7 @@ theorem space_rank_one {i : ℕ} (h : (Geometry.catalog i).data.rank = 1) :
   change Submodule.span _ (Set.range _) = _
   congr 1
   ext v
-  simp only [Set.mem_range, List.mem_singleton, Set.mem_setOf_eq]
+  simp only [Set.mem_range, List.mem_singleton, Set.mem_ofPred_eq]
   constructor
   · rintro ⟨j, rfl⟩
     congr 1

@@ -41,7 +41,7 @@ theorem compactSeventhC_do (st : TblSt 2 A) {x : ℕ} (hx : st.val 0=x) (hW : x^
   have e7 : x^6*x=x^7 := by ring
   rw [pow_one] at h1
   refine TblDo.block _ _ ?_ ?_
-  · simp [tblFitsList,TblIns.fits,TblIns.exact,hx,e2,e3,e6,e7,h1,h2,h3,h6,hW]
+  · simp [tblFitsList,TblIns.fits,TblIns.exact,hx,e2,e3,e6,e7,h2,h3,h6,hW]
   · simp [tblExactList,TblIns.exact,hx,e2,e3,e6,e7]
 
 /-- The seventh power of the dimension and its successor square fit the parameter word. -/

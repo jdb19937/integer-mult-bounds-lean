@@ -57,12 +57,15 @@ theorem hostStk_update_gout (S : ∀ k, List (Γ k)) (gi go l : List Γ') :
   | gout => exact Function.update_self _ _ _
   | host k => exact Function.update_of_ne (show (DK.host k : DK K) ≠ .gout from nofun) _ _
 
+omit [DecidableEq K] in
 @[simp] lemma hostStk_gin (S : ∀ k, List (Γ k)) (gi go : List Γ') : hostStk S gi go .gin = gi :=
   rfl
 
+omit [DecidableEq K] in
 @[simp] lemma hostStk_gout (S : ∀ k, List (Γ k)) (gi go : List Γ') :
     hostStk S gi go .gout = go := rfl
 
+omit [DecidableEq K] in
 @[simp] lemma hostStk_host (S : ∀ k, List (Γ k)) (gi go : List Γ') (k : K) :
     hostStk S gi go (.host k) = S k := rfl
 

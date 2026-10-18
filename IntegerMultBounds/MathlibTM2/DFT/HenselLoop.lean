@@ -93,21 +93,21 @@ theorem henselLoop_aux (main : DPr (Option M.P) (M.T + D) M.Q M.A (M.U × B))
         (M.dreg D Y) (binSyms (k + k) (henselNext p k y)) } with hS₁
     have e₂ := M.peek_exec D B main (M.dreg D W) v₁ S₁ gi go
     -- the next state
-    have hS₁w : (S₁.R (M.dreg D W)).length = w - k := by simp [hS₁, *, Ne.symm]
+    have hS₁w : (S₁.R (M.dreg D W)).length = w - k := by simp [*]
     obtain ⟨v₂, Kc, k', y', n₂, hu₂, hKc, hy', hdvd', hrk', hk2r', hn₂, e₃⟩ :=
       ih (w - k) (by omega) (k + k) (henselNext p k y)
         { v₁ with flag := (S₁.R (M.dreg D W)).head?.isSome } S₁ hS₁w
-        (by simp [hS₁, *, Ne.symm]) (by omega) (by simp [hS₁]) (henselNext_lt p k y)
+        (by simp [*]) (by omega) (by simp [hS₁]) (henselNext_lt p k y)
         (hensel_round_dvd p k y hdvd)
         (by
           by_cases hwk' : w ≤ k
           · exact Or.inl ⟨by omega, by omega, by omega⟩
           · exact Or.inr ⟨by omega, by omega⟩)
         rfl (by simp [hS₁, hinp]) (by simp [hS₁, hout]) (by simp [hS₁, hL])
-        (by intro i; simp [hS₁, hR]) (by simp [hS₁, *, Ne.symm]) (by simp [hS₁, *, Ne.symm])
-        (by simp [hS₁, *, Ne.symm]) (by simp [hS₁, *, Ne.symm]) (by simp [hS₁, *, Ne.symm])
-        (by simp [hS₁, *, Ne.symm]) (by simp [hS₁, *, Ne.symm]) (by simp [hS₁, *, Ne.symm])
-        (by simp [hS₁, *, Ne.symm]) (by simp [hS₁, *, Ne.symm]) (by simp [hS₁, *, Ne.symm])
+        (by intro i; simp [hS₁, hR]) (by simp [*, Ne.symm]) (by simp [*, Ne.symm])
+        (by simp [*, Ne.symm]) (by simp [*, Ne.symm]) (by simp [*, Ne.symm])
+        (by simp [*, Ne.symm]) (by simp [*, Ne.symm]) (by simp [*, Ne.symm])
+        (by simp [*, Ne.symm]) (by simp [*, Ne.symm]) (by simp [*, Ne.symm])
     -- the time of the round
     set h := H (3 * r) with hh
     have hL₁ : Nat.size (p % 2 ^ (k + k)) + Nat.size y ≤ 3 * k := by
@@ -137,7 +137,7 @@ theorem henselLoop_aux (main : DPr (Option M.P) (M.T + D) M.Q M.A (M.U × B))
     · -- the potential
       have hpot : henselPot (400 + 8 * h) w k = (400 + 8 * h) * (2 * w) + (400 + 8 * h) * k +
           252 * w + 1 := by
-        simp only [henselPot, if_neg (show w ≠ 0 by omega), Nat.mul_add]
+        simp only [henselPot, ite_eq_right (show w ≠ 0 by omega), Nat.mul_add]
       rw [hpot]
       by_cases hwk' : w ≤ k
       · have : henselPot (400 + 8 * h) (w - k) (k + k) = 1 := by
@@ -147,7 +147,7 @@ theorem henselLoop_aux (main : DPr (Option M.P) (M.T + D) M.Q M.A (M.U × B))
         omega
       · have : henselPot (400 + 8 * h) (w - k) (k + k) =
             (400 + 8 * h) * (2 * w) + 252 * (w - k) + 1 := by
-          simp only [henselPot, if_neg (show w - k ≠ 0 by omega),
+          simp only [henselPot, ite_eq_right (show w - k ≠ 0 by omega),
             show 2 * (w - k) + (k + k) = 2 * w by omega]
         rw [this] at hn₂
         omega
@@ -201,11 +201,11 @@ theorem hensel_exec (main : DPr (Option M.P) (M.T + D) M.Q M.A (M.U × B))
     { S with R := Function.update S.R (M.dreg D W) (S.R (M.dreg D wR)) } with hS₁
   -- `K := [tick]`, `Y := binSyms 1 1`
   have e₂ := M.push_exec D B main (M.dreg D K) tick v₁ S₁ gi go
-  rw [show S₁.R (M.dreg D K) = [] by simp [hS₁, *, Ne.symm]] at e₂
+  rw [show S₁.R (M.dreg D K) = [] by simp [*, Ne.symm]] at e₂
   set S₂ : Stacks (M.T + D) M.A :=
     { S₁ with R := Function.update S₁.R (M.dreg D K) [tick] } with hS₂
   have e₃ := M.push_exec D B main (M.dreg D Y) (bitSymbol true) v₁ S₂ gi go
-  rw [show S₂.R (M.dreg D Y) = [] by simp [hS₂, hS₁, *, Ne.symm]] at e₃
+  rw [show S₂.R (M.dreg D Y) = [] by simp [*, Ne.symm]] at e₃
   set S₃ : Stacks (M.T + D) M.A :=
     { S₂ with R := Function.update S₂.R (M.dreg D Y) [bitSymbol true] } with hS₃
   have e₄ := M.peek_exec D B main (M.dreg D W) v₁ S₃ gi go
@@ -216,16 +216,16 @@ theorem hensel_exec (main : DPr (Option M.P) (M.T + D) M.Q M.A (M.U × B))
       (Y := Y) (Z := Z) (Ur := Ur) (Yn := Yn) (t₁ := t₁) (t₂ := t₂) (t₃ := t₃) (t₄ := t₄)
       (t₅ := t₅) (by regs_nodup) (r := r) (p := p) gi go r 1 1
       { v₁ with flag := (S₃.R (M.dreg D W)).head?.isSome } S₃
-      (by simp [hS₃, hS₂, hS₁, *, Ne.symm]) (by simp [hS₃, hS₂, *, Ne.symm]) le_rfl
+      (by simp [*]) (by simp [*]) le_rfl
       (by simp [hS₃, hone]) (by norm_num) (by simpa using hp) (Or.inr ⟨hr, rfl⟩) rfl
       (by simp [hS₃, hS₂, hS₁, hinp]) (by simp [hS₃, hS₂, hS₁, hout])
       (by simp [hS₃, hS₂, hS₁, hL]) (by intro i; simp [hS₃, hS₂, hS₁, hR])
-      (by simp [hS₃, hS₂, hS₁, *, Ne.symm]) (by simp [hS₃, hS₂, hS₁, *, Ne.symm])
-      (by simp [hS₃, hS₂, hS₁, *, Ne.symm]) (by simp [hS₃, hS₂, hS₁, *, Ne.symm])
-      (by simp [hS₃, hS₂, hS₁, *, Ne.symm]) (by simp [hS₃, hS₂, hS₁, *, Ne.symm])
-      (by simp [hS₃, hS₂, hS₁, *, Ne.symm]) (by simp [hS₃, hS₂, hS₁, *, Ne.symm])
-      (by simp [hS₃, hS₂, hS₁, *, Ne.symm]) (by simp [hS₃, hS₂, hS₁, *, Ne.symm])
-      (by simp [hS₃, hS₂, hS₁, *, Ne.symm])
+      (by simp [*, Ne.symm]) (by simp [*, Ne.symm])
+      (by simp [*, Ne.symm]) (by simp [*, Ne.symm])
+      (by simp [*, Ne.symm]) (by simp [*, Ne.symm])
+      (by simp [*, Ne.symm]) (by simp [*, Ne.symm])
+      (by simp [*, Ne.symm]) (by simp [*, Ne.symm])
+      (by simp [*, Ne.symm])
   set S₅ : Stacks (M.T + D) M.A := { S₃ with
     R := Function.update (Function.update (Function.update S₃.R (M.dreg D W) [])
       (M.dreg D K) Kc) (M.dreg D Y) (binSyms k' y') } with hS₅
@@ -234,15 +234,15 @@ theorem hensel_exec (main : DPr (Option M.P) (M.T + D) M.Q M.A (M.U × B))
     (t₁ := M.dreg D t₁) (t₂ := M.dreg D t₂) (by simpa using hnd [Y, wR, t₁, t₂] (by regs_nodup))
     (r := r) (e := k' - r) (X := y') v₅ S₅
     (by rw [show r + (k' - r) = k' by omega]; simp [hS₅])
-    (by simp [hS₅, hS₃, hS₂, hS₁, *, Ne.symm]) (by simp [hS₅, hS₃, hS₂, hS₁, *, Ne.symm])
-    (by simp [hS₅, hS₃, hS₂, hS₁, *, Ne.symm])
+    (by simp [*]) (by simp [*, Ne.symm])
+    (by simp [*, Ne.symm])
   rw [← binSyms_mod r y'] at e₆
   set S₆ : Stacks (M.T + D) M.A :=
     { S₅ with R := Function.update S₅.R (M.dreg D Y) (binSyms r (y' % 2 ^ r)) } with hS₆
   -- clear `K`
   obtain ⟨v₇, hu₇, -, e₇⟩ := bclear_exec Empty.elim (M.dreg D K) v₆ S₆
-  rw [show (S₆.R (M.dreg D K)).length = k' by simp [hS₆, hS₅, *, Ne.symm]] at e₇
-  simp only [henselPot, if_neg (show r ≠ 0 by omega)] at hn₅
+  rw [show (S₆.R (M.dreg D K)).length = k' by simp [*]] at e₇
+  simp only [henselPot, ite_eq_right (show r ≠ 0 by omega)] at hn₅
   refine ⟨v₇, y' % 2 ^ r, _, ?_, Nat.mod_lt _ (by positivity), dvd_low (by omega) hdvd', ?_,
     Exec.cast (Exec.seq (exec_hostCode e₁ gi go) (Exec.seq e₂ (Exec.seq e₃ (Exec.seq e₄
       (Exec.seq e₅ (Exec.seq (exec_hostCode e₆ gi go) (exec_hostCode e₇ gi go))))))) rfl ?_⟩
@@ -258,9 +258,9 @@ theorem hensel_exec (main : DPr (Option M.P) (M.T + D) M.Q M.A (M.U × B))
     by_cases hjY : j = M.dreg D Y
     · subst hjY; simp [*, Ne.symm]
     by_cases hjK : j = M.dreg D K
-    · subst hjK; simp [*, Ne.symm]
+    · subst hjK; simp [*]
     by_cases hjW : j = M.dreg D W
-    · subst hjW; simp [*, Ne.symm]
+    · subst hjW; simp [*]
     simp [*]
 
 end HostMultiplier

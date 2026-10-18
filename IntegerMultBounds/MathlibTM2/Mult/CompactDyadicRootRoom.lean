@@ -69,6 +69,7 @@ private theorem successor_fortieth_le {n : ℕ} (hn : 64≤n) : (n+1)^40≤2*n^4
       _ = 64^40*(2*n^40) := by ring
   exact Nat.le_of_mul_le_mul_left (hpow.trans hratio) (by norm_num)
 
+set_option exponentiation.threshold 512 in
 /-- The fortieth power is below the exponential from `512` on. -/
 theorem fortieth_power_lt {n : ℕ} (hn : 512≤n) : n^40<2^n := by
   induction n, hn using Nat.le_induction with

@@ -45,7 +45,7 @@ theorem clearAll_exec : ∀ (r : Fin T) (rs : List (Fin T)), (r :: rs).Nodup →
       refine ⟨v', hu, e.cast (by simp) ?_⟩
       congr 2
       funext j
-      by_cases h : j = r <;> simp [h, Function.update_apply]
+      by_cases h : j = r <;> simp [h]
   | r, s :: rs, hnd, v, S => by
       obtain ⟨v₁, hu₁, -, e₁⟩ := bclear_exec body r v S
       obtain ⟨v₂, hu₂, e₂⟩ := clearAll_exec s rs hnd.of_cons v₁
@@ -63,7 +63,7 @@ theorem clearAll_exec : ∀ (r : Fin T) (rs : List (Fin T)), (r :: rs).Nodup →
       funext j
       by_cases h : j = r
       · subst h; simp
-      · simp [h, Function.update_of_ne h]
+      · simp [h]
 
 end Clear
 
@@ -138,13 +138,13 @@ theorem pipeR_frame {w p ω k : ℕ} (as : List ℕ) (Kc : List (Fin (M.A + 4)))
     M.pipeR w p ω k as Kc R (M.dreg 50 j) = R (M.dreg 50 j) := by
   simp only [touched, List.mem_cons, List.not_mem_nil, or_false, not_or] at hj
   obtain ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, h13, h14, h15, h16⟩ := hj
-  simp [pipeR, unpackR, pipeR3, inputR, pipeR2, chirpB, chirpA, pipeR1, Function.update_apply, h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, h13,
+  simp [pipeR, unpackR, pipeR3, inputR, pipeR2, chirpB, chirpA, pipeR1, h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, h13,
     h14, h15, h16]
 
 theorem pipeR_emb {w p ω k : ℕ} (as : List ℕ) (Kc : List (Fin (M.A + 4)))
     (R : Fin (M.T + 50) → List (Fin (M.A + 4))) (i : Fin M.T) :
     M.pipeR w p ω k as Kc R (M.emb 50 i) = R (M.emb 50 i) := by
-  simp [pipeR, unpackR, pipeR3, inputR, pipeR2, chirpB, chirpA, pipeR1, Function.update_apply]
+  simp [pipeR, unpackR, pipeR3, inputR, pipeR2, chirpB, chirpA, pipeR1]
 
 theorem pipeR_out {w p ω k : ℕ} (as : List ℕ) (Kc : List (Fin (M.A + 4)))
     (R : Fin (M.T + 50) → List (Fin (M.A + 4))) :
@@ -183,7 +183,7 @@ theorem final_empty {w p ω k : ℕ} (as : List ℕ) (Kc : List (Fin (M.A + 4)))
   · have : M.emb 50 i ≠ M.dreg 50 rOut := by simp
     rw [Function.update_of_ne this]
     have hm : M.emb 50 i ∉ M.dreg 50 rPw :: clearList.map (M.dreg 50) := by simp [clearList]
-    simp only [if_neg hm]
+    simp only [ite_eq_right hm]
     rw [pipeR_emb]
     exact hR i
   · by_cases hO : j' = rOut
@@ -192,10 +192,10 @@ theorem final_empty {w p ω k : ℕ} (as : List ℕ) (Kc : List (Fin (M.A + 4)))
     by_cases hm : j' ∈ rPw :: clearList
     · have : M.dreg 50 j' ∈ M.dreg 50 rPw :: clearList.map (M.dreg 50) := by
         simpa using hm
-      simp only [if_pos this]
+      simp only [ite_eq_left this]
     · have hm' : M.dreg 50 j' ∉ M.dreg 50 rPw :: clearList.map (M.dreg 50) := by
         simpa using hm
-      simp only [if_neg hm']
+      simp only [ite_eq_right hm']
       by_cases he : j' ∈ [rF, rV, rEnt, rNcnt]
       · exact M.pipeR_empty as Kc R j' he
       · have ht : j' ∉ touched := by
@@ -313,7 +313,7 @@ theorem dftMain_exec (H : ℕ → ℕ) (hH : Monotone H) (hT : ∀ n, M.time n �
     ∃ m, m ≤ dftBound H x.n (Nat.size x.p) ∧
       Exec (M.tab 50 B (M.dftMain B σ₀)) (M.dftMain B σ₀)
         (Store.only σ₀ .gin x.encode) m (Store.only σ₀ .gout (encodeNatList x.transform)) := by
-  haveI := x.prime
+  have := x.prime
   have hp2 : 2 ≤ x.p := x.prime.out.two_le
   have hw : 1 ≤ Nat.size x.p := Nat.size_pos.2 (by omega)
   have hp : x.p < 2 ^ Nat.size x.p := Nat.lt_size_self x.p

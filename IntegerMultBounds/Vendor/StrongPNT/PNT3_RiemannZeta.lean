@@ -219,7 +219,7 @@ lemma one_sub_ne_zero_of_abs_lt_one (z : ℂ) (hz : norm z < 1) : 1 - z ≠ 0 :=
     have := congrArg (fun w : ℂ => w + z) h
     simpa [sub_add_cancel, zero_add] using this
   have habs1lt : norm (1 : ℂ) < 1 := by simpa [h1] using hz
-  have hnorm1lt : ‖(1 : ℂ)‖ < 1 := by simp [norm] at habs1lt
+  have hnorm1lt : ‖(1 : ℂ)‖ < 1 := by simp at habs1lt
   have : (1 : ℝ) < 1 := by simp [norm_one] at hnorm1lt
   exact (lt_irrefl _) this
 
@@ -322,7 +322,7 @@ lemma condp32 (p : ℙ) (t : ℝ) : 1 - ((p : ℕ) : ℂ) ^ (-(((3 : ℝ) / 2) +
   have h_abs_lt : norm (((p : ℕ) : ℂ) ^ (-s)) < 1 := p_s_abs_1 p s hs
   have h_s_eq : ((p : ℕ) : ℂ) ^ (-s) = ((p : ℕ) : ℂ) ^ (-(((3 : ℝ) / 2) + t * Complex.I)) := by simp only [s]
   rw [h_s_eq, hp_eq_one] at h_abs_lt
-  have : norm (1 : ℂ) = 1 := by simp [norm]
+  have : norm (1 : ℂ) = 1 := by simp
   rw [this] at h_abs_lt
   exact lt_irrefl 1 h_abs_lt
 

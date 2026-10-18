@@ -145,7 +145,7 @@ lemma compactDescriptorReverse_runs (body : P → Pr P T Q A U)
     (lr_usub body (a:=e 0) (b:=e 1) (t:=e 2)
       (he.ne (by decide)) (he.ne (by decide)) (he.ne (by decide))
       (by simp [he.eq_iff,h2]))) ?_ ?_
-  · simp only [he.eq_iff, Function.update_self, Function.update_idem, h1, List.append_nil]
+  · simp only [Function.update_self, Function.update_idem, h1, List.append_nil]
     rw [List.drop_replicate]
     simp [he.eq_iff]
   · simp [he.eq_iff]

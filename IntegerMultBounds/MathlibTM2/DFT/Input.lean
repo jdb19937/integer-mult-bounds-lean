@@ -50,17 +50,17 @@ theorem inputMid_exec {Xa O Ow w3 Wc Up Nc t₁ t₂ : Fin T}
   rw [hXa] at e₁
   set S₁ : Stacks T A := { S with R := Function.update S.R Xa [] } with hS₁
   obtain ⟨v₂, hu₂, e₂⟩ := pushBlock_exec body (O := O) (Ow := Ow) (w3 := w3) (Wc := Wc)
-    (Up := Up) (t₁ := t₁) (t₂ := t₂) (by regs_nodup) hws hx v₁ S₁ (by simp [hS₁, *, Ne.symm])
-    (by simp [hS₁, *, Ne.symm]) (by simp [hS₁, *, Ne.symm]) (by simp [hS₁, *, Ne.symm])
-    (by simp [hS₁, *, Ne.symm]) (by simp [hS₁, *, Ne.symm])
-  rw [show S₁.R Up = S.R Up by simp [hS₁, *, Ne.symm]] at e₂
+    (Up := Up) (t₁ := t₁) (t₂ := t₂) (by regs_nodup) hws hx v₁ S₁ (by simp [*, Ne.symm])
+    (by simp [*, Ne.symm]) (by simp [*, Ne.symm]) (by simp [*, Ne.symm])
+    (by simp [*, Ne.symm]) (by simp [*, Ne.symm])
+  rw [show S₁.R Up = S.R Up by simp [*, Ne.symm]] at e₂
   set S₂ : Stacks T A := { S₁ with R := Function.update S₁.R Up (binSyms s x ++ S.R Up) }
     with hS₂
   obtain ⟨v₃, hu₃, -, e₃⟩ := bclear_exec body O v₂ S₂
-  rw [show (S₂.R O).length = w by simp [hS₂, hS₁, *, Ne.symm]] at e₃
+  rw [show (S₂.R O).length = w by simp [*, Ne.symm]] at e₃
   set S₃ : Stacks T A := { S₂ with R := Function.update S₂.R O [] } with hS₃
   have e₄ := pushS_exec body Nc tick v₃ S₃
-  rw [show S₃.R Nc = S.R Nc by simp [hS₃, hS₂, hS₁, *, Ne.symm]] at e₄
+  rw [show S₃.R Nc = S.R Nc by simp [*, Ne.symm]] at e₄
   refine ⟨v₃, by rw [hu₃, hu₂, hu₁], Exec.cast (Exec.seq e₁ (Exec.seq e₂ (Exec.seq e₃ e₄)))
     (by ring) ?_⟩
   rfl

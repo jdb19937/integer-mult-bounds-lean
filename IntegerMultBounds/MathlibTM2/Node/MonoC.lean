@@ -43,7 +43,7 @@ def monoCostC {s : Shape} {n a₀ k ρ left right : ℕ} (layout : CompactRecurs
   | _ => 1
 
 /-- The step bound of the compact program of an exact instruction with a numerical basis budget. -/
-def monoCostB (budget : BinaryWalsh.Address m → Fin m → ℕ) (j u K a₀' R₀ n' o r w ρ R : ℕ) :
+def monoCostB (budget : BinaryWalsh.Address m → Fin m → ℕ) (j u K a₀' R₀ n' _o r w ρ R : ℕ) :
     Instr → ℕ
   | .trans _ tv => if h : ∃ x, tv x = 0 then framedCost j u K R₀
       (2 * budget (tv + Pi.single (Fin.find _ h) 1) (Fin.find _ h) + 2 * (6 * (R * 2 ^ n' * r * w) + 6))
@@ -78,7 +78,7 @@ lemma monoCostC_le {s : Shape} {n a₀ k ρ left right : ℕ} (layout : CompactR
 
 /-- **The exact instructions on the compact register file.** -/
 theorem monoProgC_spec (hQ : compactRuntimeStates ≤ Q) (hA : 14 ≤ prime + Ka) {shape : Shape}
-    {R₀ j u ρ a₀ n o r w left right Tc : ℕ} (hr : 1 ≤ r) (hw : 1 ≤ w) (hu : 1 ≤ u) (hR₀ : 1 ≤ R₀)
+    {R₀ j u ρ a₀ n o r w left right Tc : ℕ} (hr : 1 ≤ r) (hw : 1 ≤ w) (_hu : 1 ≤ u) (hR₀ : 1 ≤ R₀)
     (layout : CompactRecursiveLayout shape n a₀ (bits u j) ρ left right)
     (hGuard : 1 ≤ shape.guard) (hGuardChunk : shape.guard + 1 ≤ shape.chunk)
     (hRecord : shape.bits + 1 ≤ shape.payload) (hPayload : shape.payload = 2 ^ o * (3 * (r * w)))

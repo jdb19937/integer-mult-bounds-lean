@@ -179,7 +179,7 @@ theorem baseBlock_additions_le (nodes : List (Node ι)) (points : List ℕ)
           additionCount two.1 + (removed edges weights [a]).length := by
         cases hre : removed edges weights [a] with
         | nil =>
-          simp only [hre, DisjointBalanced.total]
+          simp only [DisjointBalanced.total]
           cases lookup one.2 a <;> simp [smartAdd]
         | cons r rs =>
           rw [hre] at h1 h2

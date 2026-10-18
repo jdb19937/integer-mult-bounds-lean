@@ -80,25 +80,25 @@ theorem newtonPrep_exec {Cnt wK w2K wL ONE SIX t₁ t₂ : Fin T}
   set S₁ : Stacks T A := { S with R := Function.update S.R Cnt ((S.R Cnt).drop k) } with hS₁
   -- `w2K`
   obtain ⟨v₂, hu₂, e₂⟩ := bcopy_exec body (a := wK) (c := w2K) (t₁ := t₁) (t₂ := t₂)
-    (by regs_nodup) v₁ S₁ (by simp [hS₁, *, Ne.symm]) (by simp [hS₁, *, Ne.symm])
-  rw [show S₁.R wK = S.R wK by simp [hS₁, *, Ne.symm], hK,
-    show S₁.R w2K = [] by simp [hS₁, *, Ne.symm], List.append_nil] at e₂
+    (by regs_nodup) v₁ S₁ (by simp [*, Ne.symm]) (by simp [*, Ne.symm])
+  rw [show S₁.R wK = S.R wK by simp [*, Ne.symm], hK,
+    show S₁.R w2K = [] by simp [*, Ne.symm], List.append_nil] at e₂
   set S₂ : Stacks T A := { S₁ with R := Function.update S₁.R w2K (S.R wK) } with hS₂
   obtain ⟨v₃, hu₃, e₃⟩ := bcopy_exec body (a := wK) (c := w2K) (t₁ := t₁) (t₂ := t₂)
-    (by regs_nodup) v₂ S₂ (by simp [hS₂, hS₁, *, Ne.symm]) (by simp [hS₂, hS₁, *, Ne.symm])
-  rw [show S₂.R wK = S.R wK by simp [hS₂, hS₁, *, Ne.symm], hK,
+    (by regs_nodup) v₂ S₂ (by simp [*, Ne.symm]) (by simp [*, Ne.symm])
+  rw [show S₂.R wK = S.R wK by simp [*, Ne.symm], hK,
     show S₂.R w2K = S.R wK by simp [hS₂]] at e₃
   set S₃ : Stacks T A := { S₂ with R := Function.update S₂.R w2K KK } with hS₃
   -- `wL`
   obtain ⟨v₄, hu₄, e₄⟩ := bcopy_exec body (a := w2K) (c := wL) (t₁ := t₁) (t₂ := t₂)
-    (by regs_nodup) v₃ S₃ (by simp [hS₃, hS₂, hS₁, *, Ne.symm])
-    (by simp [hS₃, hS₂, hS₁, *, Ne.symm])
+    (by regs_nodup) v₃ S₃ (by simp [*, Ne.symm])
+    (by simp [*, Ne.symm])
   rw [show S₃.R w2K = KK by simp [hS₃], hKKl,
-    show S₃.R wL = [] by simp [hS₃, hS₂, hS₁, *, Ne.symm], List.append_nil] at e₄
+    show S₃.R wL = [] by simp [*, Ne.symm], List.append_nil] at e₄
   set S₄ : Stacks T A := { S₃ with R := Function.update S₃.R wL KK } with hS₄
   obtain ⟨v₅, hu₅, e₅⟩ := bcopy_exec body (a := w2K) (c := wL) (t₁ := t₁) (t₂ := t₂)
-    (by regs_nodup) v₄ S₄ (by simp [hS₄, hS₃, hS₂, hS₁, *, Ne.symm])
-    (by simp [hS₄, hS₃, hS₂, hS₁, *, Ne.symm])
+    (by regs_nodup) v₄ S₄ (by simp [*, Ne.symm])
+    (by simp [*, Ne.symm])
   rw [show S₄.R w2K = KK by simp [hS₄, hS₃, ‹w2K ≠ wL›], hKKl,
     show S₄.R wL = KK by simp [hS₄]] at e₅
   set S₅ : Stacks T A := { S₄ with R := Function.update S₄.R wL (KK ++ KK) } with hS₅
@@ -120,9 +120,9 @@ theorem newtonPrep_exec {Cnt wK w2K wL ONE SIX t₁ t₂ : Fin T}
   set S₉ : Stacks T A := { S₈ with R := Function.update S₈.R wL WL } with hS₉
   -- `ONE`
   obtain ⟨v₁₀, hu₁₀, e₁₀⟩ := bzero_exec body (wR := wL) (c := ONE) (t := t₁) (by regs_nodup)
-    v₅ S₉ (by simp [hS₉, hS₈, hS₇, hS₆, hS₅, hS₄, hS₃, hS₂, hS₁, *, Ne.symm])
+    v₅ S₉ (by simp [*, Ne.symm])
   rw [show S₉.R wL = WL by simp [hS₉], hWLl,
-    show S₉.R ONE = [] by simp [hS₉, hS₈, hS₇, hS₆, hS₅, hS₄, hS₃, hS₂, hS₁, *, Ne.symm],
+    show S₉.R ONE = [] by simp [*, Ne.symm],
     List.append_nil] at e₁₀
   set S₁₀ : Stacks T A := { S₉ with R := Function.update S₉.R ONE (binSyms (4 * k + 4) 0) }
     with hS₁₀
@@ -140,7 +140,7 @@ theorem newtonPrep_exec {Cnt wK w2K wL ONE SIX t₁ t₂ : Fin T}
   -- `SIX`
   have e₁₃ := pushS_exec body SIX (bitSymbol false) v₁₀ S₁₂
   rw [show S₁₂.R SIX = [] by
-    simp [hS₁₂, hS₁₁, hS₁₀, hS₉, hS₈, hS₇, hS₆, hS₅, hS₄, hS₃, hS₂, hS₁, *, Ne.symm]] at e₁₃
+    simp [*, Ne.symm]] at e₁₃
   set S₁₃ : Stacks T A := { S₁₂ with R := Function.update S₁₂.R SIX [bitSymbol false] }
     with hS₁₃
   have e₁₄ := pushS_exec body SIX (bitSymbol false) v₁₀ S₁₃
@@ -157,11 +157,9 @@ theorem newtonPrep_exec {Cnt wK w2K wL ONE SIX t₁ t₂ : Fin T}
     ← binSyms_four_one] at e₁₆
   set S₁₆ : Stacks T A := { S₁₅ with R := Function.update S₁₅.R SIX (binSyms 4 1) } with hS₁₆
   have hS₁₆w : (S₁₆.R w2K).length = k + k := by
-    simp [hS₁₆, hS₁₅, hS₁₄, hS₁₃, hS₁₂, hS₁₁, hS₁₀, hS₉, hS₈, hS₇, hS₆, hS₅, hS₄, hS₃, *,
-      Ne.symm]
+    simp [*]
   have hS₁₆t : S₁₆.R t₁ = [] := by
-    simp [hS₁₆, hS₁₅, hS₁₄, hS₁₃, hS₁₂, hS₁₁, hS₁₀, hS₉, hS₈, hS₇, hS₆, hS₅, hS₄, hS₃, hS₂,
-      hS₁, *, Ne.symm]
+    simp [*, Ne.symm]
   obtain ⟨v₁₇, hu₁₇, e₁₇⟩ := bzero_exec body (wR := w2K) (c := SIX) (t := t₁) (by regs_nodup)
     v₁₀ S₁₆ hS₁₆t
   rw [hS₁₆w, show S₁₆.R SIX = binSyms 4 1 by simp [hS₁₆]] at e₁₇
@@ -190,15 +188,15 @@ theorem newtonPrep_exec {Cnt wK w2K wL ONE SIX t₁ t₂ : Fin T}
     congr 2
     funext j
     by_cases hjC : j = Cnt
-    · subst hjC; simp [*, Ne.symm]
+    · subst hjC; simp [*]
     by_cases hj2 : j = w2K
-    · subst hj2; simp [*, Ne.symm]
+    · subst hj2; simp [*]
     by_cases hjL : j = wL
-    · subst hjL; simp [*, Ne.symm]
+    · subst hjL; simp [*]
     by_cases hjO : j = ONE
-    · subst hjO; simp [*, Ne.symm]
+    · subst hjO; simp [*]
     by_cases hj6 : j = SIX
-    · subst hj6; simp [*, Ne.symm]
+    · subst hj6; simp [*]
     simp [*]
 
 end IntegerMultBounds.MathlibTM2.DFT

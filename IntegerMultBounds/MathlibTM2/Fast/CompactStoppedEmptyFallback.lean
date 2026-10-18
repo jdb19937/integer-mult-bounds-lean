@@ -28,6 +28,6 @@ theorem compactStopped_empty_dispatch_cost (d g K ℓ h chunkCost directCost : �
     (hcap : synChunk ℓ K h → CompactReservationFits d g K 0) :
     Main.compactSynDispatchCost ℓ K h+(if synChunk ℓ K h then chunkCost else directCost) =
       Main.compactSynDispatchCost ℓ K h+directCost := by
-  rw [if_neg (compactStopped_empty_no_chunk d g K ℓ h hd hg hK hcap)]
+  rw [ite_eq_right (compactStopped_empty_no_chunk d g K ℓ h hd hg hK hcap)]
 
 end IntegerMultBounds.MathlibTM2.Fast

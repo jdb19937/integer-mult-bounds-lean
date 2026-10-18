@@ -61,7 +61,7 @@ theorem dataOut_dataIn {s a : ℕ} (ha : a < 112) {f f' : Fin 73 → ZMod 4} (he
   unfold dataOut dataIn
   simp only [ha, ↓reduceDIte]
   by_cases hs : 1 ≤ s ∧ s ≤ 8
-  · simp only [hs, ↓reduceDIte]
+  · simp only [hs]
     refine data_through _ _ ?_ l l'
     funext k
     change (if k ∈ stageIndices s hs then 0 else f k) = (if k ∈ stageIndices s hs then 0 else f' k)

@@ -42,25 +42,25 @@ theorem widths_exec {Pw WR W3 t₁ t₂ : Fin T} (hreg : [Pw, WR, W3, t₁, t₂
   rw [hWR, List.append_nil, hPw] at e₁
   set S₁ : Stacks T A := { S with R := Function.update S.R WR (S.R Pw) } with hS₁
   obtain ⟨v₂, hu₂, e₂⟩ := bcopy_exec body (a := Pw) (c := WR) (t₁ := t₁) (t₂ := t₂)
-    (by regs_nodup) v₁ S₁ (by simp [hS₁, *, Ne.symm]) (by simp [hS₁, *, Ne.symm])
-  rw [show S₁.R Pw = S.R Pw by simp [hS₁, *, Ne.symm], show S₁.R WR = S.R Pw by simp [hS₁],
+    (by regs_nodup) v₁ S₁ (by simp [*, Ne.symm]) (by simp [*, Ne.symm])
+  rw [show S₁.R Pw = S.R Pw by simp [*], show S₁.R WR = S.R Pw by simp [hS₁],
     hPw] at e₂
   set S₂ : Stacks T A := { S₁ with R := Function.update S₁.R WR (S.R Pw ++ S.R Pw) } with hS₂
   obtain ⟨v₃, hu₃, e₃⟩ := bcopy_exec body (a := Pw) (c := W3) (t₁ := t₁) (t₂ := t₂)
-    (by regs_nodup) v₂ S₂ (by simp [hS₂, hS₁, *, Ne.symm]) (by simp [hS₂, hS₁, *, Ne.symm])
-  rw [show S₂.R Pw = S.R Pw by simp [hS₂, hS₁, *, Ne.symm],
-    show S₂.R W3 = [] by simp [hS₂, hS₁, *, Ne.symm], List.append_nil, hPw] at e₃
+    (by regs_nodup) v₂ S₂ (by simp [*, Ne.symm]) (by simp [*, Ne.symm])
+  rw [show S₂.R Pw = S.R Pw by simp [*],
+    show S₂.R W3 = [] by simp [*, Ne.symm], List.append_nil, hPw] at e₃
   set S₃ : Stacks T A := { S₂ with R := Function.update S₂.R W3 (S.R Pw) } with hS₃
   obtain ⟨v₄, hu₄, e₄⟩ := bcopy_exec body (a := Pw) (c := W3) (t₁ := t₁) (t₂ := t₂)
-    (by regs_nodup) v₃ S₃ (by simp [hS₃, hS₂, hS₁, *, Ne.symm])
-    (by simp [hS₃, hS₂, hS₁, *, Ne.symm])
-  rw [show S₃.R Pw = S.R Pw by simp [hS₃, hS₂, hS₁, *, Ne.symm],
+    (by regs_nodup) v₃ S₃ (by simp [*, Ne.symm])
+    (by simp [*, Ne.symm])
+  rw [show S₃.R Pw = S.R Pw by simp [*],
     show S₃.R W3 = S.R Pw by simp [hS₃], hPw] at e₄
   set S₄ : Stacks T A := { S₃ with R := Function.update S₃.R W3 (S.R Pw ++ S.R Pw) } with hS₄
   obtain ⟨v₅, hu₅, e₅⟩ := bcopy_exec body (a := Pw) (c := W3) (t₁ := t₁) (t₂ := t₂)
-    (by regs_nodup) v₄ S₄ (by simp [hS₄, hS₃, hS₂, hS₁, *, Ne.symm])
-    (by simp [hS₄, hS₃, hS₂, hS₁, *, Ne.symm])
-  rw [show S₄.R Pw = S.R Pw by simp [hS₄, hS₃, hS₂, hS₁, *, Ne.symm],
+    (by regs_nodup) v₄ S₄ (by simp [*, Ne.symm])
+    (by simp [*, Ne.symm])
+  rw [show S₄.R Pw = S.R Pw by simp [*],
     show S₄.R W3 = S.R Pw ++ S.R Pw by simp [hS₄], hPw] at e₅
   refine ⟨v₅, by rw [hu₅, hu₄, hu₃, hu₂, hu₁], Exec.cast (Exec.seq e₁ (Exec.seq e₂ (Exec.seq e₃
     (Exec.seq e₄ e₅)))) (by ring) ?_⟩
@@ -91,15 +91,15 @@ theorem prepA_exec {Ent F C E Wi Pw t₁ t₂ : Fin T} (hreg : [Ent, F, C, E, Wi
   rw [hF, List.append_nil] at e₁
   set S₁ : Stacks T A := { S with R := Function.update S.R F (S.R Ent) } with hS₁
   obtain ⟨v₂, hu₂, e₂⟩ := setOne_exec body (C := C) (Pw := Pw) (t := t₁) (by regs_nodup) hw v₁ S₁
-    (by simp [hS₁, *, Ne.symm]) (by simp [hS₁, *, Ne.symm]) (by simp [hS₁, *, Ne.symm])
+    (by simp [*, Ne.symm]) (by simp [*, Ne.symm]) (by simp [*, Ne.symm])
   set S₂ : Stacks T A := { S₁ with R := Function.update S₁.R C (binSyms w 1) } with hS₂
   obtain ⟨v₃, hu₃, e₃⟩ := setOne_exec body (C := E) (Pw := Pw) (t := t₁) (by regs_nodup) hw v₂ S₂
-    (by simp [hS₂, hS₁, *, Ne.symm]) (by simp [hS₂, hS₁, *, Ne.symm])
-    (by simp [hS₂, hS₁, *, Ne.symm])
+    (by simp [*, Ne.symm]) (by simp [*, Ne.symm])
+    (by simp [*, Ne.symm])
   set S₃ : Stacks T A := { S₂ with R := Function.update S₂.R E (binSyms w 1) } with hS₃
   obtain ⟨v₄, hu₄, e₄⟩ := setOne_exec body (C := Wi) (Pw := Pw) (t := t₁) (by regs_nodup) hw v₃
-    S₃ (by simp [hS₃, hS₂, hS₁, *, Ne.symm]) (by simp [hS₃, hS₂, hS₁, *, Ne.symm])
-    (by simp [hS₃, hS₂, hS₁, *, Ne.symm])
+    S₃ (by simp [*, Ne.symm]) (by simp [*, Ne.symm])
+    (by simp [*, Ne.symm])
   exact ⟨v₄, by rw [hu₄, hu₃, hu₂, hu₁], Exec.cast (Exec.seq e₁ (Exec.seq e₂ (Exec.seq e₃ e₄)))
     (by ring) rfl⟩
 
@@ -120,13 +120,13 @@ theorem restartCE_exec {C E Pw t₁ : Fin T} (hreg : [C, E, Pw, t₁].Nodup) {w 
   rw [hC] at e₁
   set S₁ : Stacks T A := { S with R := Function.update S.R C [] } with hS₁
   obtain ⟨v₂, hu₂, e₂⟩ := setOne_exec body (C := C) (Pw := Pw) (t := t₁) (by regs_nodup) hw v₁ S₁
-    (by simp [hS₁, *, Ne.symm]) (by simp [hS₁]) (by simp [hS₁, *, Ne.symm])
+    (by simp [*, Ne.symm]) (by simp [hS₁]) (by simp [*, Ne.symm])
   set S₂ : Stacks T A := { S₁ with R := Function.update S₁.R C (binSyms w 1) } with hS₂
   obtain ⟨v₃, hu₃, -, e₃⟩ := bclear_exec body E v₂ S₂
-  rw [show (S₂.R E).length = w by simp [hS₂, hS₁, *, Ne.symm]] at e₃
+  rw [show (S₂.R E).length = w by simp [*, Ne.symm]] at e₃
   set S₃ : Stacks T A := { S₂ with R := Function.update S₂.R E [] } with hS₃
   obtain ⟨v₄, hu₄, e₄⟩ := setOne_exec body (C := E) (Pw := Pw) (t := t₁) (by regs_nodup) hw v₃
-    S₃ (by simp [hS₃, hS₂, hS₁, *, Ne.symm]) (by simp [hS₃]) (by simp [hS₃, hS₂, hS₁, *, Ne.symm])
+    S₃ (by simp [*, Ne.symm]) (by simp [hS₃]) (by simp [*, Ne.symm])
   refine ⟨v₄, by rw [hu₄, hu₃, hu₂, hu₁], Exec.cast (Exec.seq e₁ (Exec.seq e₂ (Exec.seq e₃ e₄)))
     (by ring) ?_⟩
   clear e₁ e₂ e₃ e₄
@@ -155,9 +155,9 @@ theorem prepP_exec {Up Dw W3 t₁ t₂ : Fin T} (hreg : [Up, Dw, W3, t₁, t₂]
   rw [hDw, List.append_nil] at e₁
   set S₁ : Stacks T A := { S with R := Function.update S.R Dw (S.R Up) } with hS₁
   obtain ⟨v₂, hu₂, e₂⟩ := bzero_exec body (wR := W3) (c := Up) (t := t₁) (by regs_nodup) v₁ S₁
-    (by simp [hS₁, *, Ne.symm])
-  rw [show (S₁.R W3).length = s by simp [hS₁, *, Ne.symm],
-    show S₁.R Up = S.R Up by simp [hS₁, *, Ne.symm]] at e₂
+    (by simp [*, Ne.symm])
+  rw [show (S₁.R W3).length = s by simp [*, Ne.symm],
+    show S₁.R Up = S.R Up by simp [*]] at e₂
   exact ⟨v₂, by rw [hu₂, hu₁], Exec.cast (Exec.seq e₁ e₂) (by ring) rfl⟩
 
 end IntegerMultBounds.MathlibTM2.DFT

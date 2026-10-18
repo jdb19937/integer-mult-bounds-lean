@@ -173,7 +173,7 @@ theorem nodeBody_execL (ds : ComplexFramedExecution.Directions)
     (hA : 5 ≤ A) (hNW : NW ≤ A + 4)
     (hgate : ∀ g, Instr.gate g ∈ program ds →
       (2 * gateBound g + 1) ^ (2 * (gateWires g).length) ≤ A + 4)
-    (hr : 1 ≤ r) (hw : 1 ≤ w) (hK : 1 ≤ K) (hfit : ∀ i < bits u (j + 1), a₀ + ρ + K * i < n)
+    (hr : 1 ≤ r) (hw : 1 ≤ w) (_hK : 1 ≤ K) (hfit : ∀ i < bits u (j + 1), a₀ + ρ + K * i < n)
     (hfac : ∀ fw g, Instr.factor fw g ∈ program ds →
       FactorSpecL body (fp fw g) bcRest j u K ρ a₀ L (rowsAt R₀ (j + 1)) n r w (k := bits u j)
         (actMap a₀ ρ K (bits u (j + 1)) n hfit)

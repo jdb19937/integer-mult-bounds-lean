@@ -82,8 +82,8 @@ theorem chirpStep_exec (main : DPr (Option M.P) (M.T + D) M.Q M.A (M.U × B))
   -- `C := O`
   obtain ⟨v₂, hu₂, e₂⟩ := moveBack_exec Empty.elim (O := M.dreg D O) (C := M.dreg D C)
     (t₁ := M.dreg D t₁) (t₂ := M.dreg D t₂) (by simpa only [List.map_cons, List.map_nil] using hnd₂)
-    (w := w) v₁ S₁ (by simp [hS₁, *, Ne.symm]) (by simp [hS₁]) (by simp [hS₁, *, Ne.symm])
-    (by simp [hS₁, *, Ne.symm])
+    (w := w) v₁ S₁ (by simp [*]) (by simp [hS₁]) (by simp [*, Ne.symm])
+    (by simp [*, Ne.symm])
   rw [show S₁.R (M.dreg D O) = binSyms w (c * e % p) by simp [hS₁]] at e₂
   set S₂ : Stacks (M.T + D) M.A := { S₁ with
     R := Function.update (Function.update S₁.R (M.dreg D C) (binSyms w (c * e % p)))
@@ -93,21 +93,21 @@ theorem chirpStep_exec (main : DPr (Option M.P) (M.T + D) M.Q M.A (M.U × B))
     (Aa := Aa) (Pw := Pw) (wK := wK) (Q1 := Q1) (Q2 := Q2) (P3 := P3) (O := O) (t₁ := t₁)
     (t₂ := t₂) (t₃ := t₃) (t₄ := t₄) (t₅ := t₅) (by regs_nodup) hw hwk hp1 hp he hx v₂ S₂
     (by simp [hS₂, hS₁, hinp]) (by simp [hS₂, hS₁, hout]) (by simp [hS₂, hS₁, hL])
-    (by intro i; simp [hS₂, hS₁, hR]) (by simp [hS₂, hS₁, *, Ne.symm])
-    (by simp [hS₂, hS₁, *, Ne.symm]) (by simp [hS₂, hS₁, *, Ne.symm])
-    (by simp [hS₂, hS₁, *, Ne.symm]) (by simp [hS₂, hS₁, *, Ne.symm])
-    (by simp [hS₂, hS₁, *, Ne.symm]) (by simp [hS₂, hS₁, *, Ne.symm])
-    (by simp [hS₂, hS₁, *, Ne.symm]) (by simp [hS₂, hS₁, *, Ne.symm]) (by simp [hS₂])
-    (by simp [hS₂, hS₁, *, Ne.symm]) (by simp [hS₂, hS₁, *, Ne.symm])
-    (by simp [hS₂, hS₁, *, Ne.symm]) (by simp [hS₂, hS₁, *, Ne.symm])
-    (by simp [hS₂, hS₁, *, Ne.symm]) gi go
+    (by intro i; simp [hS₂, hS₁, hR]) (by simp [*, Ne.symm])
+    (by simp [*, Ne.symm]) (by simp [*, Ne.symm])
+    (by simp [*, Ne.symm]) (by simp [*, Ne.symm])
+    (by simp [*, Ne.symm]) (by simp [*, Ne.symm])
+    (by simp [*, Ne.symm]) (by simp [*, Ne.symm]) (by simp [hS₂])
+    (by simp [*, Ne.symm]) (by simp [*, Ne.symm])
+    (by simp [*, Ne.symm]) (by simp [*, Ne.symm])
+    (by simp [*, Ne.symm]) gi go
   set S₃ : Stacks (M.T + D) M.A := { S₂ with
     R := Function.update S₂.R (M.dreg D O) (binSyms w (e * x % p)) } with hS₃
   -- `E := O`
   obtain ⟨v₄, hu₄, e₄⟩ := moveBack_exec Empty.elim (O := M.dreg D O) (C := M.dreg D E)
     (t₁ := M.dreg D t₁) (t₂ := M.dreg D t₂) (by simpa only [List.map_cons, List.map_nil] using hnd₄)
-    (w := w) v₃ S₃ (by simp [hS₃, hS₂, hS₁, *, Ne.symm]) (by simp [hS₃])
-    (by simp [hS₃, hS₂, hS₁, *, Ne.symm]) (by simp [hS₃, hS₂, hS₁, *, Ne.symm])
+    (w := w) v₃ S₃ (by simp [*, Ne.symm]) (by simp [hS₃])
+    (by simp [*, Ne.symm]) (by simp [*, Ne.symm])
   rw [show S₃.R (M.dreg D O) = binSyms w (e * x % p) by simp [hS₃]] at e₄
   refine ⟨v₄, _, by rw [hu₄, hu₃, hu₂, hu₁], ?_, Exec.cast (Exec.seq e₁ (Exec.seq
     (exec_hostCode e₂ gi go) (Exec.seq e₃ (exec_hostCode e₄ gi go)))) rfl ?_⟩
@@ -124,9 +124,9 @@ theorem chirpStep_exec (main : DPr (Option M.P) (M.T + D) M.Q M.A (M.U × B))
     by_cases hj1 : j = M.dreg D O
     · subst hj1; simp [*, Ne.symm]
     by_cases hj2 : j = M.dreg D C
-    · subst hj2; simp [*, Ne.symm]
+    · subst hj2; simp [*]
     by_cases hj3 : j = M.dreg D E
-    · subst hj3; simp [*, Ne.symm]
+    · subst hj3; simp [*]
     simp [*]
 
 end HostMultiplier

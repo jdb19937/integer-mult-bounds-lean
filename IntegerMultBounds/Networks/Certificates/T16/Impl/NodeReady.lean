@@ -228,6 +228,7 @@ noncomputable def machineProgram : List (MInstr NodeUnit) := lowerProgram nodePr
 variable {S : Type*} [AddCommGroup S] [Module ℂ S] [Module ℚ S] [IsScalarTower ℚ ℂ S]
 variable (ρ : Module.End ℂ (Arrays 73) →* Module.End ℂ S)
 
+omit [IsScalarTower ℚ ℂ S] in
 theorem machineProgram_run (y : NodeUnit → S) : runM ρ machineProgram y = runT ρ nodeProgram y :=
   (lowerProgram_spec ρ nodeProgram nodeProgram_ready).1 y
 

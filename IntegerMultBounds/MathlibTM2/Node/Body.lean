@@ -1291,7 +1291,7 @@ noncomputable def nodeBody (ds : ComplexFramedExecution.Directions)
 /-- The step bound of the node body at level `j + 1` with `R` rows per wire (`NW R` rows on
 `io`), factor programs within `cf` steps and exact instruction programs within `cm` steps. -/
 noncomputable def nodeCost (ds : ComplexFramedExecution.Directions)
-    (u j K ρ a₀ R n r w cf cm : ℕ) : ℕ :=
+    (u j _K _ρ _a₀ R n r w cf cm : ℕ) : ℕ :=
   (6 * (NW * (R * 2 ^ n * (r * w))) + 6 * (NW * R) + 2 * NW + 3) +
     (8 * (4 * (R * 2 ^ n * r * w) + 4) + 1) +
     (expCost (gateCount (program ds)) (factorCount (program ds)) u j + 2) +
@@ -1316,7 +1316,7 @@ theorem nodeBody_exec (ds : ComplexFramedExecution.Directions)
     (hA : 5 ≤ A) (hNW : NW ≤ A + 4)
     (hgate : ∀ g, Instr.gate g ∈ program ds →
       (2 * gateBound g + 1) ^ (2 * (gateWires g).length) ≤ A + 4)
-    (hr : 1 ≤ r) (hw : 1 ≤ w) (hK : 1 ≤ K) (hfit : ∀ i < bits u (j + 1), a₀ + ρ + K * i < n)
+    (hr : 1 ≤ r) (hw : 1 ≤ w) (_hK : 1 ≤ K) (hfit : ∀ i < bits u (j + 1), a₀ + ρ + K * i < n)
     (hfac : ∀ fw g, Instr.factor fw g ∈ program ds →
       FactorSpec body (fp fw g) bcRest j u K ρ a₀ L (rowsAt R₀ (j + 1)) n r w (k := bits u j)
         (actMap a₀ ρ K (bits u (j + 1)) n hfit)

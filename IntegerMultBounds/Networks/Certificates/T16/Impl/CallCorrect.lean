@@ -18,6 +18,7 @@ variable (ρ : Module.End ℂ (Arrays 73) →* Module.End ℂ S)
 /-- The stream operators of the ports, through `ρ`. -/
 noncomputable def portRep (a : ℕ) : Op S := ρ.comp (portOp a)
 
+omit [Module ℚ S] [IsScalarTower ℚ ℂ S] in
 theorem portRep_apply (a : ℕ) (c : Fin 73 → ZMod 4) (z : S) :
     portRep ρ a (ofAdd c) z = ρ (basisOp (portBasis (portData a)) (ofAdd c)) z := rfl
 
@@ -82,6 +83,7 @@ theorem callReg_helper {s r h : ℕ} (hh : h < 480) :
   simp [callReg, show ¬ 224 + h < 112 by omega, show ¬ 224 + h < 224 by omega,
     show 224 + h < 704 by omega]
 
+omit [Module ℚ S] [IsScalarTower ℚ ℂ S] in
 /-- A frame change through the data wrappers of two registers of the same port. -/
 theorem data_change {s r a : ℕ} (ha : a < 112) {win wout : ℕ} {f f' : Fin 73 → ZMod 4}
     (hin : callIn s r win = dataIn s a f (entryLabel (localReverse s) win))
@@ -95,7 +97,7 @@ theorem data_change {s r a : ℕ} (ha : a < 112) {win wout : ℕ} {f f' : Fin 73
 
 /-! ### Families -/
 
-theorem famIdx_decomp (j : ℕ) (hj : j < 14336) :
+theorem famIdx_decomp (j : ℕ) (_hj : j < 14336) :
     famIdx (j / 896) (j % 112) (toStream ((j % 896) / 112)) = j := by
   simp only [famIdx, toStream]
   omega
@@ -114,11 +116,13 @@ theorem famUnit_eq (f : ℕ) (hf : f < 14336) :
 
 /-! ### The stream side -/
 
+omit [Module ℚ S] [IsScalarTower ℚ ℂ S] in
 theorem hostAcc_zero_apply {a : ℕ} {G : GroupData} {slot : ℕ} {i : Fin 8}
     (h : hostAcc G slot i = Vec.zero) (z : S) :
     portRep ρ a (ofAdd (hostAcc G slot i).toFun) z = z := by
   rw [h, Vec.toFun_zero, op_zero]
 
+omit [Module ℚ S] [IsScalarTower ℚ ℂ S] in
 /-- The stream side of a local event at one group. -/
 theorem local_rhs (s r : ℕ) {r' a' : ℕ} (hr' : r' < 16) (ha' : a' < 112) (y : NodeUnit → S)
     (i : Fin 8) :
@@ -337,10 +341,10 @@ theorem call_correct {s r : ℕ} (hr : r < 16) (F : CallFacts s r) (y : NodeUnit
       by_cases hrr : r = r'
       · rcases hdata with hl | ⟨h1, h2⟩
         · simp [hrr, dataEvents] at hl
-        · rw [if_pos hrr, run_data]
+        · rw [ite_eq_left hrr, run_data]
           simp only [Xs, Ys] at h1 h2
           simp [h1, h2]
-      · rw [if_neg hrr]
+      · rw [ite_eq_right hrr]
         rfl
     rw [hrun]
     have hf : helperFamily s r h = j.val := he
@@ -373,27 +377,27 @@ theorem call_correct {s r : ℕ} (hr : r < 16) (F : CallFacts s r) (y : NodeUnit
         rw [not_helper_hostAcc F hr' ha' Ys (fun h hh e => data_not_helper F hr ha' 1 (by omega) h hh
           (by rw [e, hrr])), Vec.toFun_zero, op_zero]
       have hXY := toStream_two_mul_ne (localPair s)
-      rw [if_pos hrr, run_data]
+      rw [ite_eq_left hrr, run_data]
       by_cases hiX : i = Xs
       · -- a source
         have hreg : callReg s r a' = streamUnit r' a' i := by rw [callReg_X ha', hrr, hiX]
-        rw [← hreg, lhs_X ρ F ha' y, hreg, if_pos hiX, hxi,
+        rw [← hreg, lhs_X ρ F ha' y, hreg, ite_eq_left hiX, hxi,
           show x (toStream (2 * localPair s + 1)) = y (callReg s r (a' + 112)) by
             rw [callReg_Y ha', hrr]; exact hxY]
         simp only [frameX, frameY, Vec.toFun_neg]
       · by_cases hiY : i = Ys
         · -- a target
           have hreg : callReg s r (a' + 112) = streamUnit r' a' i := by rw [callReg_Y ha', hrr, hiY]
-          rw [← hreg, lhs_Y ρ F ha' y, hreg, if_neg hiX, if_pos hiY, hxi,
+          rw [← hreg, lhs_Y ρ F ha' y, hreg, ite_eq_right hiX, ite_eq_left hiY, hxi,
             show x (toStream (2 * localPair s)) = y (callReg s r a') by
               rw [callReg_X ha', hrr]; exact hxX]
           simp only [frameX, frameY, Vec.toFun_neg]
         · -- neither
-          rw [if_neg hiX, if_neg hiY, hxi]
+          rw [ite_eq_right hiX, ite_eq_right hiY, hxi]
           exact lhs_other ρ F _ (by
             rw [hv]
             exact not_register hr F hr' ha' hv (fun h => hiX h.2) (fun h => hiY h.2) hhelp) y
-    · rw [if_neg hrr]
+    · rw [ite_eq_right hrr]
       change _ = x i
       rw [hxi]
       exact lhs_other ρ F _ (by

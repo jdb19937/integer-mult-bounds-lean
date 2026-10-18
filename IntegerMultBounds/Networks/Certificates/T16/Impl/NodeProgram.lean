@@ -46,6 +46,7 @@ theorem onFamilies_eventOps (te : TEvent) : ∀ o ∈ eventOps te, OnFamilies o 
   obtain ⟨r, -, a, -, e, -, rfl⟩ := ho
   exact onFamilies_toUnitOp r a e
 
+omit [Module ℚ S] [IsScalarTower ℚ ℂ S] in
 theorem famEq_run (M : ℕ → Op S) (o : UnitOp) (ho : OnFamilies o) {y y' : NodeUnit → S}
     (h : FamEq y y') : FamEq (o.run M y) (o.run M y') := by
   intro j
@@ -74,6 +75,7 @@ theorem famEq_run (M : ℕ → Op S) (o : UnitOp) (ho : OnFamilies o) {y y' : No
       · rw [Function.update_of_ne (fun e => hk (Sum.inl_injective e)),
           Function.update_of_ne (fun e => hk (Sum.inl_injective e)), h j]
 
+omit [Module ℚ S] [IsScalarTower ℚ ℂ S] in
 theorem famEq_runUnits (M : ℕ → Op S) (os : List UnitOp) (hos : ∀ o ∈ os, OnFamilies o)
     {y y' : NodeUnit → S} (h : FamEq y y') : FamEq (runUnits M os y) (runUnits M os y') := by
   induction os generalizing y y' with
@@ -93,6 +95,7 @@ theorem unitProper_eventOps (te : TEvent) : ∀ o ∈ eventOps te, unitProper o 
     intro he
     exact pairX_ne_pairY p (streamUnit_inj hr ha hr ha he).2.2
 
+omit [IsScalarTower ℚ ℂ S] in
 theorem runT_unitPrograms (os : List UnitOp) (hos : ∀ o ∈ os, unitProper o) (y : NodeUnit → S) :
     runT ρ (os.flatMap unitProgram) y = runUnits (portRep ρ) os y := by
   induction os generalizing y with

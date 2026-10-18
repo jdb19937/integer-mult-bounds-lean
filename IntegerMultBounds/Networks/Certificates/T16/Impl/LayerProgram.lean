@@ -57,6 +57,7 @@ def KInstr.isChild : KInstr ι → Bool
 /-- The child calls of a layer program. -/
 def kChildren (p : List (KInstr ι)) : ℕ := (p.filter KInstr.isChild).length
 
+omit [DecidableEq ι] in
 theorem kChildren_append (p q : List (KInstr ι)) : kChildren (p ++ q) = kChildren p + kChildren q := by
   simp [kChildren, List.filter_append]
 
@@ -136,11 +137,13 @@ noncomputable def toK : MInstr ι → List (KInstr ι)
   | .prim w (.phase i c) => [.phase w i c]
   | .prim w (.unit c) => [.phase w 0 c, .trans w e0, .phase w 0 c, .trans w e0]
 
+omit [Module ℚ S] in
 theorem run_update_update (w : ι) (A B : Module.End ℂ (Arrays 73)) (x : ι → S) :
     Function.update (Function.update x w (ρ A (x w))) w
         (ρ B (Function.update x w (ρ A (x w)) w)) = Function.update x w (ρ (B * A) (x w)) := by
   rw [Function.update_self, Function.update_idem, map_mul, Module.End.mul_apply]
 
+omit [Module ℚ S] in
 theorem update_one (w : ι) (x : ι → S) : Function.update x w (ρ 1 (x w)) = x := by
   rw [map_one, Module.End.one_apply, Function.update_eq_self]
 
@@ -186,11 +189,13 @@ theorem runK_toK (i : MInstr ι) (x : ι → S) : runK ρ (toK i) x = i.run ρ x
       rw [run_update_update, run_update_update, run_update_update, e0, unit_eq]
       rfl
 
+omit [DecidableEq ι] in
 theorem kChildren_transK (w : ι) (v : Addr) : kChildren (transK w v) = 0 := by
   classical
   unfold transK
   split_ifs <;> rfl
 
+omit [DecidableEq ι] in
 theorem kChildren_toK (i : MInstr ι) : kChildren (toK i) = mprogramChildren [i] := by
   cases i with
   | gate g => rfl
@@ -209,6 +214,7 @@ theorem kChildren_toK (i : MInstr ι) : kChildren (toK i) = mprogramChildren [i]
     | phase i c => rfl
     | unit c => rfl
 
+omit [DecidableEq ι] in
 theorem fit_transK (w : ι) (v : Addr) : ∀ i ∈ transK w v, i.Fit := by
   classical
   unfold transK
@@ -217,7 +223,7 @@ theorem fit_transK (w : ι) (v : Addr) : ∀ i ∈ transK w v, i.Fit := by
   · intro i hi; simp only [List.mem_singleton] at hi; subst hi; exact h1
   · intro i hi
     simp only [List.mem_cons, List.not_mem_nil, or_false] at hi
-    push_neg at h1
+    push Not at h1
     rcases hi with rfl | rfl
     · exact ⟨1, by simp [e0]⟩
     · refine ⟨0, ?_⟩
@@ -226,6 +232,7 @@ theorem fit_transK (w : ι) (v : Addr) : ∀ i ∈ transK w v, i.Fit := by
       generalize v 0 = b at h ⊢
       revert b; decide
 
+omit [DecidableEq ι] in
 theorem fit_toK (i : MInstr ι) (hi : ∀ g, i = .gate g → HalfGate g) : ∀ k ∈ toK i, k.Fit := by
   cases i with
   | gate g => intro k hk; simp only [toK, List.mem_singleton] at hk; subst hk; exact hi g rfl

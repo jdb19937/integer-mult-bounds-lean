@@ -80,7 +80,7 @@ theorem newton_i (hX : 2 ≤ X) {d : ℤ} (hd0 : 0 < d)
   linarith
 
 /-- The reciprocal is less than `9` above the Newton guess. -/
-theorem newton_ii (hX : 2 ≤ X) {d : ℤ} (hd0 : 0 < d) (hd2 : X * X ≤ 2 * d)
+theorem newton_ii (_hX : 2 ≤ X) {d : ℤ} (hd0 : 0 < d) (hd2 : X * X ≤ 2 * d)
     (hu1 : -(2 * (X * X)) < X * X * X - a * d) (hu2 : X * X * X - a * d < X * X)
     (hz1 : z * (X * X) ≤ d * a ^ 2) :
     X * X * (X * X) < (2 * X * a - (z + 1) + 9) * d := by
@@ -125,7 +125,7 @@ theorem newton_step {k d : ℕ} (hk : 1 ≤ k) (hd : 4 ^ k ≤ 2 * d) (hd' : d <
   have hdh_lt : dh < X := Nat.div_lt_of_lt_mul hd'
   have hdh_ge : X ≤ 2 * dh := by
     by_contra h
-    push_neg at h
+    push Not at h
     have : 2 * d < X * X := by
       calc 2 * d = 2 * (dh * X + ℓ) := by rw [← hdX]
         _ < 2 * (dh * X + X) := by omega
@@ -148,7 +148,7 @@ theorem newton_step {k d : ℕ} (hk : 1 ≤ k) (hd : 4 ^ k ≤ 2 * d) (hd' : d <
     exact Nat.le_of_mul_le_mul_right hax (by omega : 0 < X)
   have ha_ge : X ≤ a := by
     by_contra h
-    push_neg at h
+    push Not at h
     have h1 : (a + 1) * dh ≤ X * dh := Nat.mul_le_mul_right _ h
     have h2 : X * dh < X * X := Nat.mul_lt_mul_of_pos_left hdh_lt (by omega)
     omega

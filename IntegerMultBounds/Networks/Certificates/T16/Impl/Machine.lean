@@ -36,7 +36,7 @@ theorem xorMap_apply (i j : Fin 73) (x : Addr) (k : Fin 73) :
   · simp [hij]
   · by_cases hk : k = j
     · subst hk; simp [hij]
-    · simp [hij, hk, Pi.single_apply]
+    · simp [hij, hk]
 
 theorem xorMap_involutive (i j : Fin 73) : Function.Involutive (xorMap i j) := by
   intro x
@@ -139,7 +139,7 @@ theorem transvection_mulVec (i j : Fin 73) (hij : i ≠ j) (x : Addr) :
   by_cases hk : k = i
   · subst hk
     simp [Matrix.mulVec, dotProduct, Matrix.single_apply, Ne.symm hij]
-  · simp [Matrix.mulVec, dotProduct, Matrix.single_apply, hk, Ne.symm hk]
+  · simp [Matrix.mulVec, dotProduct, hk, Ne.symm hk]
 
 theorem realizable_pullOp_transvection (t : TransvectionStruct (Fin 73) (ZMod 2)) :
     Realizable (pullOp t.toMatrix) := by

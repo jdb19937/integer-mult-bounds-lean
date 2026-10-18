@@ -60,7 +60,7 @@ def barrettTail (X Pw Q1 Q2 P3 O t₁ t₂ t₃ : Fin T) : Pr P T Q A U :=
 
 theorem barrettTail_exec {X Pw Q1 Q2 P3 O t₁ t₂ t₃ : Fin T}
     (hreg : [X, Pw, Q1, Q2, P3, O, t₁, t₂, t₃].Nodup) {L e w p x z : ℕ} (hwL : w ≤ L)
-    (hp0 : 0 < p) (hp : p < 2 ^ w) (hx : x < 2 ^ L) (hpz : p ∣ z) (hz : z ≤ x)
+    (_hp0 : 0 < p) (hp : p < 2 ^ w) (hx : x < 2 ^ L) (hpz : p ∣ z) (hz : z ≤ x)
     (hxz : x < z + 2 * p) (v : HS T Q A U) (S : Stacks T A) (hX : S.R X = binSyms L x)
     (hPw : S.R Pw = binSyms w p) (hQ2 : S.R Q2 = binSyms (L + e) z) (hP3 : S.R P3 = [])
     (hO : S.R O = []) (h₁ : S.R t₁ = []) (h₂ : S.R t₂ = []) (h₃ : S.R t₃ = []) :
@@ -85,37 +85,37 @@ theorem barrettTail_exec {X Pw Q1 Q2 P3 O t₁ t₂ t₃ : Fin T}
   -- `Q1 := x - z`
   obtain ⟨v₃, hu₃, -, -, e₃⟩ := bsub_exec body (a := X) (b := Q2) (c := Q1) (tx := t₁) (ty := t₂)
     (tz := t₃) (cy := O) (by regs_nodup) ‹X ≠ O›.symm ‹Q2 ≠ O›.symm hx hzL v₂ S₂
-    (by simp [hS₂, hS₁, *, Ne.symm]) (by simp [hS₂, hS₁, *, Ne.symm])
-    (by simp [hS₂, hS₁, *, Ne.symm]) (by simp [hS₂, hS₁, *, Ne.symm])
-    (by simp [hS₂, hS₁, *, Ne.symm])
+    (by simp [*]) (by simp [*, Ne.symm])
+    (by simp [*, Ne.symm]) (by simp [*, Ne.symm])
+    (by simp [*, Ne.symm])
   have hval : (x + 2 ^ L - z) % 2 ^ L = x - z := by
     rw [Nat.sub_add_comm hz, Nat.add_mod_right, Nat.mod_eq_of_lt hdL]
   rw [hval, show S₂.R Q1 = [] by simp [hS₂], List.append_nil] at e₃
   set S₃ : Stacks T A := { S₂ with R := Function.update S₂.R Q1 (binSyms L (x - z)) } with hS₃
   obtain ⟨v₄, hu₄, -, e₄⟩ := bclear_exec body Q2 v₃ S₃
-  rw [show (S₃.R Q2).length = L by simp [hS₃, hS₂, hS₁, *, Ne.symm]] at e₄
+  rw [show (S₃.R Q2).length = L by simp [*, Ne.symm]] at e₄
   set S₄ : Stacks T A := { S₃ with R := Function.update S₃.R Q2 [] } with hS₄
   -- `P3 := p` in `L` bits
   obtain ⟨v₅, hu₅, e₅⟩ := bcopy_exec body (a := Pw) (c := P3) (t₁ := t₁) (t₂ := t₂)
-    (by regs_nodup) v₄ S₄ (by simp [hS₄, hS₃, hS₂, hS₁, *, Ne.symm])
-    (by simp [hS₄, hS₃, hS₂, hS₁, *, Ne.symm])
-  rw [show S₄.R Pw = binSyms w p by simp [hS₄, hS₃, hS₂, hS₁, *, Ne.symm],
-    show S₄.R P3 = [] by simp [hS₄, hS₃, hS₂, hS₁, *, Ne.symm], List.append_nil,
+    (by regs_nodup) v₄ S₄ (by simp [*, Ne.symm])
+    (by simp [*, Ne.symm])
+  rw [show S₄.R Pw = binSyms w p by simp [*],
+    show S₄.R P3 = [] by simp [*, Ne.symm], List.append_nil,
     length_binSyms] at e₅
   set S₅ : Stacks T A := { S₄ with R := Function.update S₄.R P3 (binSyms w p) } with hS₅
   obtain ⟨v₆, hu₆, e₆⟩ := bwiden_exec body (a := P3) (wR := X) (cnt := O) (t₁ := t₁) (t₂ := t₂)
     (by regs_nodup) hwL hp v₅ S₅ (by simp [hS₅])
-    (by simp [hS₅, hS₄, hS₃, hS₂, hS₁, *, Ne.symm])
-    (by simp [hS₅, hS₄, hS₃, hS₂, hS₁, *, Ne.symm])
-    (by simp [hS₅, hS₄, hS₃, hS₂, hS₁, *, Ne.symm])
-    (by simp [hS₅, hS₄, hS₃, hS₂, hS₁, *, Ne.symm])
+    (by simp [*])
+    (by simp [*, Ne.symm])
+    (by simp [*, Ne.symm])
+    (by simp [*, Ne.symm])
   set S₆ : Stacks T A := { S₅ with R := Function.update S₅.R P3 (binSyms L p) } with hS₆
-  have hS₆Q : S₆.R Q1 = binSyms L (x - z) := by simp [hS₆, hS₅, hS₄, hS₃, *, Ne.symm]
+  have hS₆Q : S₆.R Q1 = binSyms L (x - z) := by simp [*]
   have hS₆P : S₆.R P3 = binSyms L p := by simp [hS₆]
-  have hS₆O : S₆.R O = [] := by simp [hS₆, hS₅, hS₄, hS₃, hS₂, hS₁, *, Ne.symm]
-  have hS₆t₁ : S₆.R t₁ = [] := by simp [hS₆, hS₅, hS₄, hS₃, hS₂, hS₁, *, Ne.symm]
-  have hS₆t₂ : S₆.R t₂ = [] := by simp [hS₆, hS₅, hS₄, hS₃, hS₂, hS₁, *, Ne.symm]
-  have hS₆t₃ : S₆.R t₃ = [] := by simp [hS₆, hS₅, hS₄, hS₃, hS₂, hS₁, *, Ne.symm]
+  have hS₆O : S₆.R O = [] := by simp [*, Ne.symm]
+  have hS₆t₁ : S₆.R t₁ = [] := by simp [*, Ne.symm]
+  have hS₆t₂ : S₆.R t₂ = [] := by simp [*, Ne.symm]
+  have hS₆t₃ : S₆.R t₃ = [] := by simp [*, Ne.symm]
   -- compare with `p`
   obtain ⟨v₇, hu₇, hsc₇, -, e₇⟩ := blt_exec body (a := Q1) (b := P3) (tx := t₁) (ty := t₂)
     (tz := t₃) (cy := O) (by regs_nodup) ‹Q1 ≠ O›.symm ‹P3 ≠ O›.symm hdL hpL v₆ S₆ hS₆Q hS₆P
@@ -150,7 +150,7 @@ theorem barrettTail_exec {X Pw Q1 Q2 P3 O t₁ t₂ t₃ : Fin T}
   obtain ⟨v₉, hu₉, e₉⟩ := btrunc_exec body (a := O) (wR := Pw) (t₁ := t₁) (t₂ := t₂)
     (by regs_nodup) (r := w) (e := L - w) (X := x % p) v₈ S₈
     (by rw [show w + (L - w) = L by omega]; simp [hS₈])
-    (by simp [hS₈, hS₆, hS₅, hS₄, hS₃, hS₂, hS₁, *, Ne.symm])
+    (by simp [*])
     (by simp [hS₈, hS₆t₁, ‹O ≠ t₁›.symm]) (by simp [hS₈, hS₆t₂, ‹O ≠ t₂›.symm])
   set S₉ : Stacks T A := { S₈ with R := Function.update S₈.R O (binSyms w (x % p)) } with hS₉
   obtain ⟨v₁₀, hu₁₀, -, e₁₀⟩ := bclear_exec body Q1 v₉ S₉
@@ -169,7 +169,7 @@ theorem barrettTail_exec {X Pw Q1 Q2 P3 O t₁ t₂ t₃ : Fin T}
     congr 2
     funext j
     by_cases hj1 : j = Q1
-    · subst hj1; simp [*, Ne.symm]
+    · subst hj1; simp [*]
     by_cases hj2 : j = Q2
     · subst hj2; simp [*, Ne.symm]
     by_cases hj3 : j = P3
@@ -246,13 +246,13 @@ theorem barrett_exec (main : DPr (Option M.P) (M.T + D) M.Q M.A (M.U × B))
   obtain ⟨v₂, hu₂, e₂⟩ := bhigh_exec Empty.elim (a := M.dreg D Q1) (wR := M.dreg D wK)
     (t := M.dreg D t₁) (by simpa only [List.map_cons, List.map_nil] using hnd₂) (r := k) (e := L + k + 4) (X := x * μ) v₁ S₁
     (by rw [show k + (L + k + 4) = L + (k + k + 4) by ring]; simp [hS₁])
-    (by simp [hS₁, *, Ne.symm]) (by simp [hS₁, *, Ne.symm])
+    (by simp [*]) (by simp [*, Ne.symm])
   set S₂ : Stacks (M.T + D) M.A := { S₁ with
     R := Function.update S₁.R (M.dreg D Q1) (binSyms (L + k + 4) (x * μ / 2 ^ k)) } with hS₂
   obtain ⟨v₃, hu₃, e₃⟩ := bhigh_exec Empty.elim (a := M.dreg D Q1) (wR := M.dreg D Pw)
     (t := M.dreg D t₁) (by simpa only [List.map_cons, List.map_nil] using hnd₃) (r := w) (e := L + k + 4 - w) (X := x * μ / 2 ^ k) v₂ S₂
     (by rw [show w + (L + k + 4 - w) = L + k + 4 by omega]; simp [hS₂])
-    (by simp [hS₂, hS₁, *, Ne.symm]) (by simp [hS₂, hS₁, *, Ne.symm])
+    (by simp [*]) (by simp [*, Ne.symm])
   rw [Nat.div_div_eq_div_mul, ← pow_add, ← hq] at e₃
   set S₃ : Stacks (M.T + D) M.A := { S₂ with
     R := Function.update S₂.R (M.dreg D Q1) (binSyms (L + k + 4 - w) q) } with hS₃
@@ -263,10 +263,10 @@ theorem barrett_exec (main : DPr (Option M.P) (M.T + D) M.Q M.A (M.U × B))
     (by simpa only [List.map_cons, List.map_nil] using
       hnd [Q2, Q1, Pw, t₁, t₂, t₃, t₄, t₅] (by regs_nodup)) hqL hp v₃ S₃
     (by simp [hS₃, hS₂, hS₁, hinp]) (by simp [hS₃, hS₂, hS₁, hout]) (by simp [hS₃, hS₂, hS₁, hL])
-    (by intro i; simp [hS₃, hS₂, hS₁, hR]) (by simp [hS₃]) (by simp [hS₃, hS₂, hS₁, *, Ne.symm])
-    (by simp [hS₃, hS₂, hS₁, *, Ne.symm]) (by simp [hS₃, hS₂, hS₁, *, Ne.symm])
-    (by simp [hS₃, hS₂, hS₁, *, Ne.symm]) (by simp [hS₃, hS₂, hS₁, *, Ne.symm])
-    (by simp [hS₃, hS₂, hS₁, *, Ne.symm]) (by simp [hS₃, hS₂, hS₁, *, Ne.symm]) gi go
+    (by intro i; simp [hS₃, hS₂, hS₁, hR]) (by simp [hS₃]) (by simp [*])
+    (by simp [*, Ne.symm]) (by simp [*, Ne.symm])
+    (by simp [*, Ne.symm]) (by simp [*, Ne.symm])
+    (by simp [*, Ne.symm]) (by simp [*, Ne.symm]) gi go
   set S₄ : Stacks (M.T + D) M.A := { S₃ with
     R := Function.update S₃.R (M.dreg D Q2) (binSyms (L + k + 4 - w + w) (q * p)) } with hS₄
   -- the tail
@@ -275,14 +275,14 @@ theorem barrett_exec (main : DPr (Option M.P) (M.T + D) M.Q M.A (M.U × B))
     (O := M.dreg D O) (t₁ := M.dreg D t₁) (t₂ := M.dreg D t₂) (t₃ := M.dreg D t₃)
     (by simpa only [List.map_cons, List.map_nil] using
       hnd [X, Pw, Q1, Q2, P3, O, t₁, t₂, t₃] (by regs_nodup)) (L := L) (e := k + 4) hwL hp0 hp hx
-    (Dvd.intro_left q rfl) hqp hxq v₄ S₄ (by simp [hS₄, hS₃, hS₂, hS₁, *, Ne.symm])
-    (by simp [hS₄, hS₃, hS₂, hS₁, *, Ne.symm])
+    (Dvd.intro_left q rfl) hqp hxq v₄ S₄ (by simp [*])
+    (by simp [*])
     (by rw [show L + (k + 4) = L + k + 4 - w + w by omega]; simp [hS₄])
-    (by simp [hS₄, hS₃, hS₂, hS₁, *, Ne.symm]) (by simp [hS₄, hS₃, hS₂, hS₁, *, Ne.symm])
-    (by simp [hS₄, hS₃, hS₂, hS₁, *, Ne.symm]) (by simp [hS₄, hS₃, hS₂, hS₁, *, Ne.symm])
-    (by simp [hS₄, hS₃, hS₂, hS₁, *, Ne.symm])
+    (by simp [*, Ne.symm]) (by simp [*, Ne.symm])
+    (by simp [*, Ne.symm]) (by simp [*, Ne.symm])
+    (by simp [*, Ne.symm])
   rw [show (S₄.R (M.dreg D Q1)).length = L + k + 4 - w by
-    simp [hS₄, hS₃, *, Ne.symm]] at hn₅
+    simp [*]] at hn₅
   refine ⟨v₅, m₁, m₂, _, ?_, hm₁, hm₂, ?_, Exec.cast (Exec.seq e₁ (Exec.seq
     (exec_hostCode (Exec.seq e₂ e₃) gi go) (Exec.seq e₄ (exec_hostCode e₅ gi go)))) rfl ?_⟩
   · rw [hu₅, hu₄, hu₃, hu₂, hu₁]
@@ -299,11 +299,11 @@ theorem barrett_exec (main : DPr (Option M.P) (M.T + D) M.Q M.A (M.U × B))
     congr 1
     funext j
     by_cases hj1 : j = M.dreg D Q1
-    · subst hj1; simp [*, Ne.symm]
+    · subst hj1; simp [*]
     by_cases hj2 : j = M.dreg D Q2
-    · subst hj2; simp [*, Ne.symm]
+    · subst hj2; simp [*]
     by_cases hj3 : j = M.dreg D O
-    · subst hj3; simp [*, Ne.symm]
+    · subst hj3; simp [*]
     simp [*]
 
 /-- `O := x y mod p` for `x`, `y` in `w` bits. -/
@@ -359,16 +359,16 @@ theorem modMul_exec (main : DPr (Option M.P) (M.T + D) M.Q M.A (M.U × B))
     (Pw := Pw) (wK := wK) (Q1 := Q1) (Q2 := Q2) (P3 := P3) (O := O) (t₁ := t₁) (t₂ := t₂)
     (t₃ := t₃) (t₄ := t₄) (t₅ := t₅) (by regs_nodup) (L := w + w) (k := k) hw (by omega) hwk hp1
     hp hxy hxys v₁ S₁ (by simp [hS₁, hinp]) (by simp [hS₁, hout]) (by simp [hS₁, hL])
-    (by intro i; simp [hS₁, hR]) (by simp [hS₁]) (by simp [hS₁, *, Ne.symm])
-    (by simp [hS₁, *, Ne.symm]) (by simp [hS₁, *, Ne.symm]) (by simp [hS₁, *, Ne.symm])
-    (by simp [hS₁, *, Ne.symm]) (by simp [hS₁, *, Ne.symm]) (by simp [hS₁, *, Ne.symm])
-    (by simp [hS₁, *, Ne.symm]) (by simp [hS₁, *, Ne.symm]) (by simp [hS₁, *, Ne.symm])
-    (by simp [hS₁, *, Ne.symm]) (by simp [hS₁, *, Ne.symm]) gi go
+    (by intro i; simp [hS₁, hR]) (by simp [hS₁]) (by simp [*, Ne.symm])
+    (by simp [*, Ne.symm]) (by simp [*, Ne.symm]) (by simp [*, Ne.symm])
+    (by simp [*, Ne.symm]) (by simp [*, Ne.symm]) (by simp [*, Ne.symm])
+    (by simp [*, Ne.symm]) (by simp [*, Ne.symm]) (by simp [*, Ne.symm])
+    (by simp [*, Ne.symm]) (by simp [*, Ne.symm]) gi go
   set S₂ : Stacks (M.T + D) M.A := { S₁ with
     R := Function.update S₁.R (M.dreg D O) (binSyms w (x * y % p)) } with hS₂
   -- clear `Z`
   obtain ⟨v₃, hu₃, -, e₃⟩ := bclear_exec Empty.elim (M.dreg D Z) v₂ S₂
-  rw [show (S₂.R (M.dreg D Z)).length = w + w by simp [hS₂, hS₁, *, Ne.symm]] at e₃
+  rw [show (S₂.R (M.dreg D Z)).length = w + w by simp [*]] at e₃
   refine ⟨v₃, _, by rw [hu₃, hu₂, hu₁], ?_, Exec.cast (Exec.seq e₁ (Exec.seq e₂
     (exec_hostCode e₃ gi go))) rfl ?_⟩
   · -- the time
@@ -402,7 +402,7 @@ theorem modMul_exec (main : DPr (Option M.P) (M.T + D) M.Q M.A (M.U × B))
     congr 1
     funext j
     by_cases hj1 : j = M.dreg D Z
-    · subst hj1; simp [*, Ne.symm]
+    · subst hj1; simp [*]
     by_cases hj2 : j = M.dreg D O
     · subst hj2; simp [*, Ne.symm]
     simp [*]

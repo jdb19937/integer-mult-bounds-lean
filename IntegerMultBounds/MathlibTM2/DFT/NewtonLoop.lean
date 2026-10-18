@@ -95,16 +95,16 @@ theorem recipSetup_exec {Pw wR Cnt Dp wK Aa B1 t₁ t₂ : Fin T}
   rw [hwR, hDp, List.append_nil] at e₁
   set S₁ : Stacks T A := { S with R := Function.update S.R Dp (binSyms r 0) } with hS₁
   obtain ⟨v₂, hu₂, e₂⟩ := bzero_exec body (wR := wR) (c := Dp) (t := t₁) (by regs_nodup) v₁ S₁
-    (by simp [hS₁, *, Ne.symm])
-  rw [show (S₁.R wR).length = r by simp [hS₁, *, Ne.symm],
+    (by simp [*, Ne.symm])
+  rw [show (S₁.R wR).length = r by simp [*],
     show S₁.R Dp = binSyms r 0 by simp [hS₁]] at e₂
   set S₂ : Stacks T A := { S₁ with R := Function.update S₁.R Dp (binSyms r 0 ++ binSyms r 0) }
     with hS₂
   -- `p`, most significant bit on top
   obtain ⟨v₃, hu₃, e₃⟩ := bcopy_exec body (a := Pw) (c := B1) (t₁ := t₁) (t₂ := t₂)
-    (by regs_nodup) v₂ S₂ (by simp [hS₂, hS₁, *, Ne.symm]) (by simp [hS₂, hS₁, *, Ne.symm])
-  rw [show S₂.R Pw = binSyms w p by simp [hS₂, hS₁, *, Ne.symm],
-    show S₂.R B1 = [] by simp [hS₂, hS₁, *, Ne.symm], List.append_nil, length_binSyms] at e₃
+    (by regs_nodup) v₂ S₂ (by simp [*, Ne.symm]) (by simp [*, Ne.symm])
+  rw [show S₂.R Pw = binSyms w p by simp [*],
+    show S₂.R B1 = [] by simp [*, Ne.symm], List.append_nil, length_binSyms] at e₃
   set S₃ : Stacks T A := { S₂ with R := Function.update S₂.R B1 (binSyms w p) } with hS₃
   obtain ⟨v₄, hu₄, e₄⟩ := moveR_exec body B1 Dp (Ne.symm ‹Dp ≠ B1›) id v₃ S₃
   have hDpv : ((binSyms w p).map id).reverse ++ (binSyms r 0 ++ binSyms r 0) =
@@ -120,16 +120,16 @@ theorem recipSetup_exec {Pw wR Cnt Dp wK Aa B1 t₁ t₂ : Fin T}
     R := Function.update (Function.update S₃.R B1 []) Dp
       (binSyms (r + r + w) (2 ^ (r + r) * p)).reverse } with hS₄
   -- `A`, `wK`, `Cnt`
-  have e₅ := pushFour_exec body Aa v₄ S₄ (by simp [hS₄, hS₃, hS₂, hS₁, *, Ne.symm])
+  have e₅ := pushFour_exec body Aa v₄ S₄ (by simp [*, Ne.symm])
   set S₅ : Stacks T A := { S₄ with R := Function.update S₄.R Aa (binSyms 6 4) } with hS₅
   have e₆ := pushS_exec body wK tick v₄ S₅
-  rw [show S₅.R wK = [] by simp [hS₅, hS₄, hS₃, hS₂, hS₁, *, Ne.symm]] at e₆
+  rw [show S₅.R wK = [] by simp [*, Ne.symm]] at e₆
   set S₆ : Stacks T A := { S₅ with R := Function.update S₅.R wK [tick] } with hS₆
   obtain ⟨v₇, hu₇, e₇⟩ := bcopy_exec body (a := wR) (c := Cnt) (t₁ := t₁) (t₂ := t₂)
-    (by regs_nodup) v₄ S₆ (by simp [hS₆, hS₅, hS₄, hS₃, hS₂, hS₁, *, Ne.symm])
-    (by simp [hS₆, hS₅, hS₄, hS₃, hS₂, hS₁, *, Ne.symm])
-  rw [show S₆.R wR = S.R wR by simp [hS₆, hS₅, hS₄, hS₃, hS₂, hS₁, *, Ne.symm],
-    show S₆.R Cnt = [] by simp [hS₆, hS₅, hS₄, hS₃, hS₂, hS₁, *, Ne.symm], List.append_nil,
+    (by regs_nodup) v₄ S₆ (by simp [*, Ne.symm])
+    (by simp [*, Ne.symm])
+  rw [show S₆.R wR = S.R wR by simp [*],
+    show S₆.R Cnt = [] by simp [*], List.append_nil,
     hwR] at e₇
   refine ⟨v₇, by rw [hu₇, hu₄, hu₃, hu₂, hu₁], Exec.cast (Exec.seq e₁ (Exec.seq e₂ (Exec.seq e₃
     (Exec.seq e₄ (Exec.seq e₅ (Exec.seq e₆ e₇)))))) (by ring) ?_⟩
@@ -147,7 +147,7 @@ theorem recipSetup_exec {Pw wR Cnt Dp wK Aa B1 t₁ t₂ : Fin T}
   by_cases hj4 : j = wK
   · subst hj4; simp [*, Ne.symm]
   by_cases hj5 : j = Cnt
-  · subst hj5; simp [*, Ne.symm]
+  · subst hj5; simp [*]
   simp [*]
 
 end Setup
@@ -223,25 +223,25 @@ theorem newtonLoop_aux (main : DPr (Option M.P) (M.T + D) M.Q M.A (M.U × B))
       with hS₁
     have e₂ := M.peek_exec D B main (M.dreg D Cnt) v₁ S₁ gi go
     -- the next state
-    have hS₁w : (S₁.R (M.dreg D Cnt)).length = w - k := by simp [hS₁, *, Ne.symm]
+    have hS₁w : (S₁.R (M.dreg D Cnt)).length = w - k := by simp [*]
     have hA₁ : S₁.R (M.dreg D Aa) =
         binSyms (k + k + (k + k) + 4) (2 ^ (k + k + (k + k)) / (Dv / 2 ^ (N - (k + k)))) := by
       rw [show k + k + (k + k) + 4 = 4 * k + 4 by ring]
       simp [hS₁]
     obtain ⟨v₂, Kc, k', n₂, hu₂, hKc, hrk', hk2r', hn₂, e₃⟩ :=
       ih (w - k) (by omega) (k + k) { v₁ with flag := (S₁.R (M.dreg D Cnt)).head?.isSome } S₁
-        hS₁w (by simp [hS₁, *, Ne.symm]) (by omega) hA₁
+        hS₁w (by simp [*]) (by omega) hA₁
         (by
           by_cases hwk' : w ≤ k
           · exact Or.inl ⟨by omega, by omega, by omega⟩
           · exact Or.inr ⟨by omega, by omega⟩)
         rfl (by simp [hS₁, hinp]) (by simp [hS₁, hout]) (by simp [hS₁, hL])
-        (by intro i; simp [hS₁, hR]) (by simp [hS₁, *, Ne.symm]) (by simp [hS₁, *, Ne.symm])
-        (by simp [hS₁, *, Ne.symm]) (by simp [hS₁, *, Ne.symm]) (by simp [hS₁, *, Ne.symm])
-        (by simp [hS₁, *, Ne.symm]) (by simp [hS₁, *, Ne.symm]) (by simp [hS₁, *, Ne.symm])
-        (by simp [hS₁, *, Ne.symm]) (by simp [hS₁, *, Ne.symm]) (by simp [hS₁, *, Ne.symm])
-        (by simp [hS₁, *, Ne.symm]) (by simp [hS₁, *, Ne.symm]) (by simp [hS₁, *, Ne.symm])
-        (by simp [hS₁, *, Ne.symm]) (by simp [hS₁, *, Ne.symm])
+        (by intro i; simp [hS₁, hR]) (by simp [*, Ne.symm]) (by simp [*, Ne.symm])
+        (by simp [*, Ne.symm]) (by simp [*, Ne.symm]) (by simp [*, Ne.symm])
+        (by simp [*, Ne.symm]) (by simp [*, Ne.symm]) (by simp [*, Ne.symm])
+        (by simp [*, Ne.symm]) (by simp [*, Ne.symm]) (by simp [*, Ne.symm])
+        (by simp [*, Ne.symm]) (by simp [*, Ne.symm]) (by simp [*, Ne.symm])
+        (by simp [*, Ne.symm]) (by simp [*, Ne.symm])
     -- the time of the level
     set h := H (4 * r + 4) with hh
     have hHk : H (4 * k + 4) ≤ h := hH (by omega)
@@ -262,7 +262,7 @@ theorem newtonLoop_aux (main : DPr (Option M.P) (M.T + D) M.Q M.A (M.U × B))
     · -- the potential
       have hpot : newtonPot (7200 + 27 * h) w k =
           (7200 + 27 * h) * (2 * w) + (7200 + 27 * h) * k + 2 * w + 1 := by
-        simp only [newtonPot, if_neg (show w ≠ 0 by omega), Nat.mul_add]
+        simp only [newtonPot, ite_eq_right (show w ≠ 0 by omega), Nat.mul_add]
       rw [hpot]
       by_cases hwk' : w ≤ k
       · have : newtonPot (7200 + 27 * h) (w - k) (k + k) = 1 := by
@@ -271,7 +271,7 @@ theorem newtonLoop_aux (main : DPr (Option M.P) (M.T + D) M.Q M.A (M.U × B))
         omega
       · have : newtonPot (7200 + 27 * h) (w - k) (k + k) =
             (7200 + 27 * h) * (2 * w) + 2 * (w - k) + 1 := by
-          simp only [newtonPot, if_neg (show w - k ≠ 0 by omega),
+          simp only [newtonPot, ite_eq_right (show w - k ≠ 0 by omega),
             show 2 * (w - k) + (k + k) = 2 * w by omega]
         rw [this] at hn₂
         omega
@@ -353,26 +353,26 @@ theorem recip_exec (main : DPr (Option M.P) (M.T + D) M.Q M.A (M.U × B))
     (B1 := B1) (Dd := Dd) (Aa := Aa) (B2 := B2) (B3 := B3) (Y := Y) (Yn := Yn) (t₁ := t₁)
     (t₂ := t₂) (t₃ := t₃) (t₄ := t₄) (t₅ := t₅) (by regs_nodup) (r := r) (N := r + r + w)
     (Dv := 2 ^ (r + r) * p) (by omega) hD1 hD gi go r 1
-    { v₁ with flag := (S₁.R (M.dreg D Cnt)).head?.isSome } S₁ (by simp [hS₁, *, Ne.symm])
-    (by simp [hS₁, *, Ne.symm]) le_rfl (by rw [hbase]; simp [hS₁, *, Ne.symm])
+    { v₁ with flag := (S₁.R (M.dreg D Cnt)).head?.isSome } S₁ (by simp [*])
+    (by simp [*, Ne.symm]) le_rfl (by rw [hbase]; simp [*, Ne.symm])
     (Or.inr ⟨hr1, rfl⟩) rfl (by simp [hS₁, hinp]) (by simp [hS₁, hout]) (by simp [hS₁, hL])
-    (by intro i; simp [hS₁, hR]) (by simp [hS₁, *, Ne.symm]) (by simp [hS₁, *, Ne.symm])
-    (by simp [hS₁, *, Ne.symm]) (by simp [hS₁, *, Ne.symm]) (by simp [hS₁, *, Ne.symm])
-    (by simp [hS₁, *, Ne.symm]) (by simp [hS₁, *, Ne.symm]) (by simp [hS₁, *, Ne.symm])
-    (by simp [hS₁, *, Ne.symm]) (by simp [hS₁, *, Ne.symm]) (by simp [hS₁, *, Ne.symm])
-    (by simp [hS₁, *, Ne.symm]) (by simp [hS₁, *, Ne.symm]) (by simp [hS₁, *, Ne.symm])
-    (by simp [hS₁, *, Ne.symm]) (by simp [hS₁, *, Ne.symm])
+    (by intro i; simp [hS₁, hR]) (by simp [*, Ne.symm]) (by simp [*, Ne.symm])
+    (by simp [*, Ne.symm]) (by simp [*, Ne.symm]) (by simp [*, Ne.symm])
+    (by simp [*, Ne.symm]) (by simp [*, Ne.symm]) (by simp [*, Ne.symm])
+    (by simp [*, Ne.symm]) (by simp [*, Ne.symm]) (by simp [*, Ne.symm])
+    (by simp [*, Ne.symm]) (by simp [*, Ne.symm]) (by simp [*, Ne.symm])
+    (by simp [*, Ne.symm]) (by simp [*, Ne.symm])
   rw [recip_value hwr hrk' hk2r'] at e₃
   set S₃ : Stacks (M.T + D) M.A := { S₁ with
     R := Function.update (Function.update (Function.update S₁.R (M.dreg D Cnt) [])
       (M.dreg D wK) Kc) (M.dreg D Aa) (binSyms (k' + k' + 4) (2 ^ (k' + w) / p)) } with hS₃
   -- clear `Dp`
   obtain ⟨v₄, hu₄, -, e₄⟩ := bclear_exec Empty.elim (M.dreg D Dp) v₃ S₃
-  rw [show (S₃.R (M.dreg D Dp)).length = r + r + w by simp [hS₃, hS₁, *, Ne.symm]] at e₄
+  rw [show (S₃.R (M.dreg D Dp)).length = r + r + w by simp [*, Ne.symm]] at e₄
   refine ⟨v₄, Kc, k', _, by rw [hu₄, hu₃, hu₁], hKc, hrk', hk2r', ?_,
     Exec.cast (Exec.seq (exec_hostCode e₁ gi go) (Exec.seq e₂ (Exec.seq e₃
       (exec_hostCode e₄ gi go)))) rfl ?_⟩
-  · simp only [newtonPot, if_neg (show r ≠ 0 by omega)] at hn₃
+  · simp only [newtonPot, ite_eq_right (show r ≠ 0 by omega)] at hn₃
     omega
   · clear e₁ e₂ e₃ e₄
     show dmk v₄ _ gi go = dmk v₄ _ gi go
@@ -382,13 +382,13 @@ theorem recip_exec (main : DPr (Option M.P) (M.T + D) M.Q M.A (M.U × B))
     congr 1
     funext j
     by_cases hj1 : j = M.dreg D Dp
-    · subst hj1; simp [*, Ne.symm]
+    · subst hj1; simp [*]
     by_cases hj2 : j = M.dreg D Aa
     · subst hj2; simp [*, Ne.symm]
     by_cases hj3 : j = M.dreg D wK
     · subst hj3; simp [*, Ne.symm]
     by_cases hj4 : j = M.dreg D Cnt
-    · subst hj4; simp [*, Ne.symm]
+    · subst hj4; simp [*]
     simp [*]
 
 end HostMultiplier

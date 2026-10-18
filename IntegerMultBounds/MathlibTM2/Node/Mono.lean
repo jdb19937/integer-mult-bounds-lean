@@ -251,13 +251,13 @@ lemma basisMap_xor {i j : Fin m} (hij : i ≠ j) :
   rw [Networks.Certificates.T16.Impl.xorMap_apply]
   simp only [basisMap, Pi.add_apply, Pi.smul_apply, smul_eq_mul]
   by_cases ht : t = j
-  · subst ht; simp [hij, Pi.single_apply, Ne.symm hij]
+  · subst ht; simp [hij, Ne.symm hij]
   · by_cases hti : t = i
-    · subst hti; simp [Pi.single_apply, hij, CharTwo.add_self_eq_zero]
-    · simp [Pi.single_apply, ht, hti]
+    · subst hti; simp [hij, CharTwo.add_self_eq_zero]
+    · simp [ht, hti]
 
 lemma xor_pivot {i j : Fin m} (hij : i ≠ j) : (Pi.single i 1 + Pi.single j 1 : BinaryWalsh.Address m) i = 1 := by
-  simp [Pi.single_apply, Ne.symm hij]
+  simp [Ne.symm hij]
 
 end Mono
 

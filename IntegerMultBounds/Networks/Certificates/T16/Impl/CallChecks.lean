@@ -22,7 +22,7 @@ theorem testBit_foldl (l : List ℕ) (m f : ℕ) :
   | nil => simp
   | cons g l ih =>
     rw [List.foldl_cons, ih, testBit_or_pow]
-    by_cases h : f = g <;> simp [h, Bool.or_assoc]
+    by_cases h : f = g <;> simp [h]
 
 theorem mem_of_helperBits {s r f : ℕ} (h : (helperBits s r).testBit f = true) : f ∈ rolesList s r := by
   rw [helperBits, testBit_foldl] at h

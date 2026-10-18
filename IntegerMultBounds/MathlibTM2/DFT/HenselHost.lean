@@ -198,13 +198,12 @@ theorem henselC_exec {Y K K2 P2 Z Ur Yn cnt t₁ t₂ : Fin T}
   set S₃ : Stacks T A := { S₂ with R := Function.update S₂.R P2 [] } with hS₃
   -- `Y := 2 y` in `k + k` bits
   obtain ⟨v₄, hu₄, e₄⟩ := bwiden_exec body (a := Y) (wR := K2) (cnt := cnt) (t₁ := t₁) (t₂ := t₂)
-    (by regs_nodup) hkk hy v₃ S₃ (by simp [hS₃, hS₂, hS₁, *, Ne.symm])
-    (by simp [hS₃, hS₂, hS₁, *, Ne.symm]) (by simp [hS₃, hS₂, hS₁, *, Ne.symm])
-    (by simp [hS₃, hS₂, hS₁, *, Ne.symm]) (by simp [hS₃, hS₂, hS₁, *, Ne.symm])
+    (by regs_nodup) hkk hy v₃ S₃ (by simp [*])
+    (by simp [*]) (by simp [*, Ne.symm])
+    (by simp [*, Ne.symm]) (by simp [*, Ne.symm])
   set S₄ : Stacks T A := { S₃ with R := Function.update S₃.R Y (binSyms (k + k) y) } with hS₄
   obtain ⟨v₅, hu₅, e₅⟩ := bshift_exec body (s := Y) (t := t₁) ‹Y ≠ t₁› (fun _ => bitSymbol false)
-    v₄ S₄ (by simp [hS₄, hS₃, hS₂, hS₁, *, Ne.symm])
-  beta_reduce at e₅
+    v₄ S₄ (by simp [*, Ne.symm])
   rw [show S₄.R Y = binSyms (k + k) y by simp [hS₄], length_binSyms, binSyms_shift,
     Bool.toNat_false, Nat.add_zero] at e₅
   set S₅ : Stacks T A := { S₄ with R := Function.update S₄.R Y (binSyms (k + k) (2 * y)) }
@@ -212,42 +211,42 @@ theorem henselC_exec {Y K K2 P2 Z Ur Yn cnt t₁ t₂ : Fin T}
   -- `Yn := Ur + Y`
   obtain ⟨v₆, hu₆, -, -, e₆⟩ := badd_exec body (a := Ur) (b := Y) (c := Yn) (tx := t₁) (ty := t₂)
     (tz := cnt) (cy := Yn) (by regs_nodup) ‹Ur ≠ Yn›.symm ‹Y ≠ Yn›.symm hXm h2y v₅ S₅
-    (by simp [hS₅, hS₄, hS₃, hS₂, hS₁, *, Ne.symm]) (by simp [hS₅])
-    (by simp [hS₅, hS₄, hS₃, hS₂, hS₁, *, Ne.symm]) (by simp [hS₅, hS₄, hS₃, hS₂, hS₁, *, Ne.symm])
-    (by simp [hS₅, hS₄, hS₃, hS₂, hS₁, *, Ne.symm])
-  rw [show S₅.R Yn = [] by simp [hS₅, hS₄, hS₃, hS₂, hS₁, *, Ne.symm], List.append_nil] at e₆
+    (by simp [*, Ne.symm]) (by simp [hS₅])
+    (by simp [*, Ne.symm]) (by simp [*, Ne.symm])
+    (by simp [*, Ne.symm])
+  rw [show S₅.R Yn = [] by simp [*, Ne.symm], List.append_nil] at e₆
   set y' := (X % 2 ^ (k + k) + 2 * y) % 2 ^ (k + k) with hy'
   set S₆ : Stacks T A := { S₅ with R := Function.update S₅.R Yn (binSyms (k + k) y') } with hS₆
   -- clear `Ur`, `Y`; `Y := Yn`; clear `Yn`
   obtain ⟨v₇, hu₇, -, e₇⟩ := bclear_exec body Ur v₆ S₆
   rw [show S₆.R Ur = binSyms (k + k) (X % 2 ^ (k + k)) by
-    simp [hS₆, hS₅, hS₄, hS₃, hS₂, hS₁, *, Ne.symm], length_binSyms] at e₇
+    simp [*, Ne.symm], length_binSyms] at e₇
   set S₇ : Stacks T A := { S₆ with R := Function.update S₆.R Ur [] } with hS₇
   obtain ⟨v₈, hu₈, -, e₈⟩ := bclear_exec body Y v₇ S₇
-  rw [show S₇.R Y = binSyms (k + k) (2 * y) by simp [hS₇, hS₆, hS₅, *, Ne.symm],
+  rw [show S₇.R Y = binSyms (k + k) (2 * y) by simp [*],
     length_binSyms] at e₈
   set S₈ : Stacks T A := { S₇ with R := Function.update S₇.R Y [] } with hS₈
   obtain ⟨v₉, hu₉, e₉⟩ := bcopy_exec body (a := Yn) (c := Y) (t₁ := t₁) (t₂ := t₂)
-    (by regs_nodup) v₈ S₈ (by simp [hS₈, hS₇, hS₆, hS₅, hS₄, hS₃, hS₂, hS₁, *, Ne.symm])
-    (by simp [hS₈, hS₇, hS₆, hS₅, hS₄, hS₃, hS₂, hS₁, *, Ne.symm])
-  rw [show S₈.R Yn = binSyms (k + k) y' by simp [hS₈, hS₇, hS₆, *, Ne.symm],
+    (by regs_nodup) v₈ S₈ (by simp [*, Ne.symm])
+    (by simp [*, Ne.symm])
+  rw [show S₈.R Yn = binSyms (k + k) y' by simp [*, Ne.symm],
     show S₈.R Y = [] by simp [hS₈], List.append_nil, length_binSyms] at e₉
   set S₉ : Stacks T A := { S₈ with R := Function.update S₈.R Y (binSyms (k + k) y') } with hS₉
   obtain ⟨v₁₀, hu₁₀, -, e₁₀⟩ := bclear_exec body Yn v₉ S₉
-  rw [show S₉.R Yn = binSyms (k + k) y' by simp [hS₉, hS₈, hS₇, hS₆, *, Ne.symm],
+  rw [show S₉.R Yn = binSyms (k + k) y' by simp [*, Ne.symm],
     length_binSyms] at e₁₀
   set S₁₀ : Stacks T A := { S₉ with R := Function.update S₉.R Yn [] } with hS₁₀
   -- `K := K2`
   obtain ⟨v₁₁, hu₁₁, -, e₁₁⟩ := bclear_exec body K v₁₀ S₁₀
   rw [show (S₁₀.R K).length = k by
-    simp [hS₁₀, hS₉, hS₈, hS₇, hS₆, hS₅, hS₄, hS₃, hS₂, hS₁, *, Ne.symm]] at e₁₁
+    simp [*, Ne.symm]] at e₁₁
   set S₁₁ : Stacks T A := { S₁₀ with R := Function.update S₁₀.R K [] } with hS₁₁
   obtain ⟨v₁₂, hu₁₂, e₁₂⟩ := bcopy_exec body (a := K2) (c := K) (t₁ := t₁) (t₂ := t₂)
     (by regs_nodup) v₁₁ S₁₁
-    (by simp [hS₁₁, hS₁₀, hS₉, hS₈, hS₇, hS₆, hS₅, hS₄, hS₃, hS₂, hS₁, *, Ne.symm])
-    (by simp [hS₁₁, hS₁₀, hS₉, hS₈, hS₇, hS₆, hS₅, hS₄, hS₃, hS₂, hS₁, *, Ne.symm])
+    (by simp [*, Ne.symm])
+    (by simp [*, Ne.symm])
   have hS₁₁K2 : S₁₁.R K2 = S.R K2 := by
-    simp [hS₁₁, hS₁₀, hS₉, hS₈, hS₇, hS₆, hS₅, hS₄, hS₃, hS₂, hS₁, *, Ne.symm]
+    simp [*, Ne.symm]
   rw [hS₁₁K2, hK2, show S₁₁.R K = [] by simp [hS₁₁], List.append_nil] at e₁₂
   set S₁₂ : Stacks T A := { S₁₁ with R := Function.update S₁₁.R K (S.R K2) } with hS₁₂
   obtain ⟨v₁₃, hu₁₃, -, e₁₃⟩ := bclear_exec body K2 v₁₂ S₁₂
@@ -268,7 +267,7 @@ theorem henselC_exec {Y K K2 P2 Z Ur Yn cnt t₁ t₂ : Fin T}
     by_cases hjK : j = K
     · subst hjK; simp [hjK2]
     by_cases hjY : j = Y
-    · subst hjY; simp [*, Ne.symm]
+    · subst hjY; simp [*]
     by_cases hjU : j = Ur
     · subst hjU; simp [*, Ne.symm]
     by_cases hjYn : j = Yn

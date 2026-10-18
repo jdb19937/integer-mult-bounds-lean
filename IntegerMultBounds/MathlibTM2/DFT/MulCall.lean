@@ -200,7 +200,7 @@ theorem mulCall_exec (main : DPr (Option M.P) (M.T + D) M.Q M.A (M.U × B))
     (Exec.seq (exec_hostCode e₂ gi go) (Exec.seq e₃ (Exec.seq e₄ (exec_hostCode e₅ gi go)))))
     (by ring) ?_⟩
   · rw [hu₅, hw']
-    simp [setV₀, splitUser, withBuf, hu₂, hu₁]
+    simp [hu₂, hu₁]
   · show dmk v₅ _ gi go = dmk v₅ _ gi go
     congr 1
     simp [hS₃, hS₂, hS₁, hinp, hout]

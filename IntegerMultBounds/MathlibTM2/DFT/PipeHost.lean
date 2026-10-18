@@ -79,8 +79,8 @@ theorem pushWide_exec {C Cw w3 Wc V t₁ t₂ : Fin T} (hreg : [C, Cw, w3, Wc, V
   rw [hC, hCw, List.append_nil, length_binSyms] at e₁
   set S₁ : Stacks T A := { S with R := Function.update S.R Cw (binSyms w c) } with hS₁
   obtain ⟨v₂, hu₂, e₂⟩ := bwiden_exec body (a := Cw) (wR := w3) (cnt := Wc) (t₁ := t₁)
-    (t₂ := t₂) (by regs_nodup) hws hc v₁ S₁ (by simp [hS₁]) (by simp [hS₁, *, Ne.symm])
-    (by simp [hS₁, *, Ne.symm]) (by simp [hS₁, *, Ne.symm]) (by simp [hS₁, *, Ne.symm])
+    (t₂ := t₂) (by regs_nodup) hws hc v₁ S₁ (by simp [hS₁]) (by simp [*, Ne.symm])
+    (by simp [*, Ne.symm]) (by simp [*, Ne.symm]) (by simp [*, Ne.symm])
   set S₂ : Stacks T A := { S₁ with R := Function.update S₁.R Cw (binSyms s c) } with hS₂
   obtain ⟨v₃, hu₃, e₃⟩ := moveR_exec body Cw V ‹Cw ≠ V› id v₂ S₂
   rw [show S₂.R Cw = binSyms s c by simp [hS₂], length_binSyms] at e₃
@@ -110,13 +110,13 @@ theorem pushBlock_exec {O Ow w3 Wc Up t₁ t₂ : Fin T} (hreg : [O, Ow, w3, Wc,
   rw [hO, hOw, List.append_nil, length_binSyms] at e₁
   set S₁ : Stacks T A := { S with R := Function.update S.R Ow (binSyms w x) } with hS₁
   obtain ⟨v₂, hu₂, e₂⟩ := bwiden_exec body (a := Ow) (wR := w3) (cnt := Wc) (t₁ := t₁)
-    (t₂ := t₂) (by regs_nodup) hws hx v₁ S₁ (by simp [hS₁]) (by simp [hS₁, *, Ne.symm])
-    (by simp [hS₁, *, Ne.symm]) (by simp [hS₁, *, Ne.symm]) (by simp [hS₁, *, Ne.symm])
+    (t₂ := t₂) (by regs_nodup) hws hx v₁ S₁ (by simp [hS₁]) (by simp [*, Ne.symm])
+    (by simp [*, Ne.symm]) (by simp [*, Ne.symm]) (by simp [*, Ne.symm])
   set S₂ : Stacks T A := { S₁ with R := Function.update S₁.R Ow (binSyms s x) } with hS₂
   obtain ⟨v₃, hu₃, e₃⟩ := bcopy_exec body (a := Ow) (c := Up) (t₁ := t₁) (t₂ := t₂)
-    (by regs_nodup) v₂ S₂ (by simp [hS₂, hS₁, *, Ne.symm]) (by simp [hS₂, hS₁, *, Ne.symm])
+    (by regs_nodup) v₂ S₂ (by simp [*, Ne.symm]) (by simp [*, Ne.symm])
   rw [show S₂.R Ow = binSyms s x by simp [hS₂], show S₂.R Up = S.R Up by
-    simp [hS₂, hS₁, *, Ne.symm], length_binSyms] at e₃
+    simp [*, Ne.symm], length_binSyms] at e₃
   set S₃ : Stacks T A := { S₂ with R := Function.update S₂.R Up (binSyms s x ++ S.R Up) } with hS₃
   obtain ⟨v₄, hu₄, -, e₄⟩ := bclear_exec body Ow v₃ S₃
   rw [show (S₃.R Ow).length = s by simp [hS₃, hS₂, ‹Ow ≠ Up›]] at e₄
@@ -147,12 +147,12 @@ theorem moveBack_exec {O C t₁ t₂ : Fin T} (hreg : [O, C, t₁, t₂].Nodup) 
   rw [hC] at e₁
   set S₁ : Stacks T A := { S with R := Function.update S.R C [] } with hS₁
   obtain ⟨v₂, hu₂, e₂⟩ := bcopy_exec body (a := O) (c := C) (t₁ := t₁) (t₂ := t₂)
-    (by regs_nodup) v₁ S₁ (by simp [hS₁, *, Ne.symm]) (by simp [hS₁, *, Ne.symm])
-  rw [show S₁.R O = S.R O by simp [hS₁, *, Ne.symm], show S₁.R C = [] by simp [hS₁], hO,
+    (by regs_nodup) v₁ S₁ (by simp [*, Ne.symm]) (by simp [*, Ne.symm])
+  rw [show S₁.R O = S.R O by simp [*], show S₁.R C = [] by simp [hS₁], hO,
     List.append_nil] at e₂
   set S₂ : Stacks T A := { S₁ with R := Function.update S₁.R C (S.R O) } with hS₂
   obtain ⟨v₃, hu₃, -, e₃⟩ := bclear_exec body O v₂ S₂
-  rw [show (S₂.R O).length = w by simp [hS₂, hS₁, *, Ne.symm]] at e₃
+  rw [show (S₂.R O).length = w by simp [*]] at e₃
   refine ⟨v₃, by rw [hu₃, hu₂, hu₁], Exec.cast (Exec.seq e₁ (Exec.seq e₂ e₃)) (by ring) ?_⟩
   clear e₁ e₂ e₃
   simp only [hS₂, hS₁]
@@ -176,8 +176,8 @@ theorem copyOver_exec {E W t₁ t₂ : Fin T} (hreg : [E, W, t₁, t₂].Nodup) 
   rw [hW] at e₁
   set S₁ : Stacks T A := { S with R := Function.update S.R W [] } with hS₁
   obtain ⟨v₂, hu₂, e₂⟩ := bcopy_exec body (a := E) (c := W) (t₁ := t₁) (t₂ := t₂)
-    (by regs_nodup) v₁ S₁ (by simp [hS₁, *, Ne.symm]) (by simp [hS₁, *, Ne.symm])
-  rw [show S₁.R E = S.R E by simp [hS₁, *, Ne.symm], show S₁.R W = [] by simp [hS₁], hE,
+    (by regs_nodup) v₁ S₁ (by simp [*, Ne.symm]) (by simp [*, Ne.symm])
+  rw [show S₁.R E = S.R E by simp [*], show S₁.R W = [] by simp [hS₁], hE,
     List.append_nil] at e₂
   refine ⟨v₂, by rw [hu₂, hu₁], Exec.cast (Exec.seq e₁ e₂) (by ring) ?_⟩
   clear e₁ e₂

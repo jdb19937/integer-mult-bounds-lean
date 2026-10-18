@@ -23,8 +23,8 @@ lemma pushSym_run {T Q A : ℕ} {U : Type} (i : Fin T) (x : Fin (A + 4)) (v : HS
       mk v { S with R := Function.update S.R i (x :: S.R i) } := by
   simp [Action.run, update_rt]
 
-theorem update3_idem {α β : Type} [DecidableEq α] (R : α → β) {a b c : α} (hab : a ≠ b)
-    (hac : a ≠ c) (hbc : b ≠ c) (x y z x' y' z' : β) :
+theorem update3_idem {α β : Type} [DecidableEq α] (R : α → β) {a b c : α} (_hab : a ≠ b)
+    (_hac : a ≠ c) (_hbc : b ≠ c) (x y z x' y' z' : β) :
     Function.update (Function.update (Function.update (Function.update (Function.update
       (Function.update R a x) b y) c z) a x') b y') c z' =
       Function.update (Function.update (Function.update R a x') b y') c z' := by

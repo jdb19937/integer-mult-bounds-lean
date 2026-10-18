@@ -30,7 +30,7 @@ theorem compactStoppedReservedPcs_vals (ρ K a oS B activeOffset J D globalD R :
     ((compactReservedPcs K a oS B activeOffset J D).map
       (compactRebasePc R)).flatMap (synPcVals ρ K) := by
   rw [compactRebasePc_vals,compactRebasePc_vals,compactStoppedReservedPcs_eq_map]
-  simp only [List.flatMap_map,Function.comp_def,compactStoppedPiece_vals]
+  simp only [List.flatMap_map,compactStoppedPiece_vals]
 
 theorem compactStoppedReservedPcs_level {K a oS B activeOffset J D globalD : ℕ}
     (hlevels : synJ D D-1≤J) {pc : TopPc}

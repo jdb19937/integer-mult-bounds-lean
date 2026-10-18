@@ -186,9 +186,9 @@ theorem newtonLevelA_exec (main : DPr (Option M.P) (M.T + D) M.Q M.A (M.U × B))
     (Aa := M.dreg D Aa) (B2 := M.dreg D B2) (t₁ := M.dreg D t₁) (t₂ := M.dreg D t₂)
     (by simpa only [List.map_cons, List.map_nil] using
       hnd [Dp, w2K, wL, B1, Dd, Aa, B2, t₁, t₂] (by regs_nodup)) hkN hD haW v₁ S₁
-    (by simp [hS₁, *, Ne.symm]) (by simp [hS₁, *, Ne.symm]) (by simp [hS₁, *, Ne.symm] <;> omega)
-    (by simp [hS₁, *, Ne.symm]) (by simp [hS₁, *, Ne.symm]) (by simp [hS₁, *, Ne.symm])
-    (by simp [hS₁, *, Ne.symm]) (by simp [hS₁, *, Ne.symm]) (by simp [hS₁, *, Ne.symm])
+    (by simp [*, Ne.symm]) (by simp [*]) (by simp [*]; omega)
+    (by simp [*, Ne.symm]) (by simp [*, Ne.symm]) (by simp [*, Ne.symm])
+    (by simp [*, Ne.symm]) (by simp [*, Ne.symm]) (by simp [*, Ne.symm])
   rw [← hd] at e₂
   set S₂ : Stacks (M.T + D) M.A := { S₁ with
     R := Function.update (Function.update (Function.update S₁.R (M.dreg D Dd)
@@ -201,10 +201,10 @@ theorem newtonLevelA_exec (main : DPr (Option M.P) (M.T + D) M.Q M.A (M.U × B))
     (by simpa only [List.map_cons, List.map_nil] using
       hnd [B3, Aa, B2, t₁, t₂, t₃, t₄, t₅] (by regs_nodup)) haL haL v₂ S₂
     (by simp [hS₂, hS₁, hinp]) (by simp [hS₂, hS₁, hout]) (by simp [hS₂, hS₁, hL])
-    (by intro i; simp [hS₂, hS₁, hR]) (by simp [hS₂, *, Ne.symm]) (by simp [hS₂])
-    (by simp [hS₂, hS₁, *, Ne.symm]) (by simp [hS₂, hS₁, *, Ne.symm])
-    (by simp [hS₂, hS₁, *, Ne.symm]) (by simp [hS₂, hS₁, *, Ne.symm])
-    (by simp [hS₂, hS₁, *, Ne.symm]) (by simp [hS₂, hS₁, *, Ne.symm]) gi go
+    (by intro i; simp [hS₂, hS₁, hR]) (by simp [*]) (by simp [hS₂])
+    (by simp [*, Ne.symm]) (by simp [*, Ne.symm])
+    (by simp [*, Ne.symm]) (by simp [*, Ne.symm])
+    (by simp [*, Ne.symm]) (by simp [*, Ne.symm]) gi go
   set S₃ : Stacks (M.T + D) M.A := { S₂ with
     R := Function.update S₂.R (M.dreg D B3) (binSyms (4 * k + 4 + (4 * k + 4)) (a * a)) }
     with hS₃
@@ -213,9 +213,9 @@ theorem newtonLevelA_exec (main : DPr (Option M.P) (M.T + D) M.Q M.A (M.U × B))
     (wL := M.dreg D wL) (t₁ := M.dreg D t₁) (t₂ := M.dreg D t₂)
     (by simpa only [List.map_cons, List.map_nil] using hnd [B2, B3, wL, t₁, t₂] (by regs_nodup))
     (L := 4 * k + 4) (X := a * a) v₃ S₃
-    (by simp [hS₃, hS₂, *, Ne.symm]) (by simp [hS₃])
-    (by simp [hS₃, hS₂, hS₁, *, Ne.symm] <;> omega) (by simp [hS₃, hS₂, hS₁, *, Ne.symm])
-    (by simp [hS₃, hS₂, hS₁, *, Ne.symm])
+    (by simp [*]) (by simp [hS₃])
+    (by simp [*]; omega) (by simp [*, Ne.symm])
+    (by simp [*, Ne.symm])
   set S₄ : Stacks (M.T + D) M.A := { S₃ with
     R := Function.update (Function.update S₃.R (M.dreg D B3) (binSyms (4 * k + 4) (a * a)))
       (M.dreg D B2) [] } with hS₄
@@ -227,10 +227,10 @@ theorem newtonLevelA_exec (main : DPr (Option M.P) (M.T + D) M.Q M.A (M.U × B))
       hnd [B2, Dd, B3, t₁, t₂, t₃, t₄, t₅] (by regs_nodup)) hdL haaL v₄ S₄
     (by simp [hS₄, hS₃, hS₂, hS₁, hinp]) (by simp [hS₄, hS₃, hS₂, hS₁, hout])
     (by simp [hS₄, hS₃, hS₂, hS₁, hL]) (by intro i; simp [hS₄, hS₃, hS₂, hS₁, hR])
-    (by simp [hS₄, hS₃, hS₂, *, Ne.symm]) (by simp [hS₄, *, Ne.symm]) (by simp [hS₄])
-    (by simp [hS₄, hS₃, hS₂, hS₁, *, Ne.symm]) (by simp [hS₄, hS₃, hS₂, hS₁, *, Ne.symm])
-    (by simp [hS₄, hS₃, hS₂, hS₁, *, Ne.symm]) (by simp [hS₄, hS₃, hS₂, hS₁, *, Ne.symm])
-    (by simp [hS₄, hS₃, hS₂, hS₁, *, Ne.symm]) gi go
+    (by simp [*]) (by simp [*, Ne.symm]) (by simp [hS₄])
+    (by simp [*, Ne.symm]) (by simp [*, Ne.symm])
+    (by simp [*, Ne.symm]) (by simp [*, Ne.symm])
+    (by simp [*, Ne.symm]) gi go
   refine ⟨v₅, m₁, m₂, _, ?_, hm₁, hm₂, ?_, Exec.cast (Exec.seq (exec_hostCode e₁ gi go)
     (Exec.seq (exec_hostCode e₂ gi go) (Exec.seq e₃ (Exec.seq (exec_hostCode e₄ gi go) e₅))))
     rfl ?_⟩
@@ -246,23 +246,23 @@ theorem newtonLevelA_exec (main : DPr (Option M.P) (M.T + D) M.Q M.A (M.U × B))
     congr 1
     funext j
     by_cases hj1 : j = M.dreg D B2
-    · subst hj1; simp [*, Ne.symm]
+    · subst hj1; simp [*]
     by_cases hj2 : j = M.dreg D B3
     · subst hj2; simp [*, Ne.symm]
     by_cases hj3 : j = M.dreg D Aa
-    · subst hj3; simp [*, Ne.symm]
+    · subst hj3; simp [*]
     by_cases hj4 : j = M.dreg D Dd
-    · subst hj4; simp [*, Ne.symm]
+    · subst hj4; simp [*]
     by_cases hj5 : j = M.dreg D SIX
-    · subst hj5; simp [*, Ne.symm]
+    · subst hj5; simp [*]
     by_cases hj6 : j = M.dreg D ONE
-    · subst hj6; simp [*, Ne.symm]
+    · subst hj6; simp [*]
     by_cases hj7 : j = M.dreg D wL
-    · subst hj7; simp [*, Ne.symm]
+    · subst hj7; simp [*]
     by_cases hj8 : j = M.dreg D w2K
-    · subst hj8; simp [*, Ne.symm]
+    · subst hj8; simp [*]
     by_cases hj9 : j = M.dreg D Cnt
-    · subst hj9; simp [*, Ne.symm]
+    · subst hj9; simp [*]
     simp [*]
 
 /-! ### The second half: the guess, `y d` and the correction -/
@@ -337,9 +337,9 @@ theorem newtonLevelB_exec (main : DPr (Option M.P) (M.T + D) M.Q M.A (M.U × B))
     (by simpa only [List.map_cons, List.map_nil] using
       hnd [B2, Y, Dd, t₁, t₂, t₃, t₄, t₅] (by regs_nodup)) hyL hdL v₁ S₁
     (by simp [hS₁, hinp]) (by simp [hS₁, hout]) (by simp [hS₁, hL]) (by intro i; simp [hS₁, hR])
-    (by simp [hS₁, *, Ne.symm]) (by simp [hS₁, *, Ne.symm]) (by simp [hS₁, *, Ne.symm])
-    (by simp [*, Ne.symm]) (by simp [hS₁, *, Ne.symm]) (by simp [hS₁, *, Ne.symm])
-    (by simp [hS₁, *, Ne.symm]) (by simp [hS₁, *, Ne.symm]) gi go
+    (by simp [*, Ne.symm]) (by simp [*]) (by simp [*])
+    (by simp [*, Ne.symm]) (by simp [*, Ne.symm]) (by simp [*, Ne.symm])
+    (by simp [*, Ne.symm]) (by simp [*, Ne.symm]) gi go
   set S₂ : Stacks (M.T + D) M.A := { S₁ with
     R := Function.update S₁.R (M.dreg D B2) (binSyms (4 * k + 4 + (4 * k + 4)) (y * d)) }
     with hS₂
@@ -352,13 +352,13 @@ theorem newtonLevelB_exec (main : DPr (Option M.P) (M.T + D) M.Q M.A (M.U × B))
     (by simpa only [List.map_cons, List.map_nil] using
       hnd [B2, SIX, B1, Dd, Y, ONE, B3, Yn, Aa, wK, w2K, wL, t₁, t₂, t₃] (by regs_nodup))
     (k := k) (d := d) (y := y) hyd hd0 hdL hμL hc v₂ S₂
-    (by simp [hS₂]) (by simp [hS₂, hS₁, *, Ne.symm]) (by simp [hS₂, hS₁, *, Ne.symm])
-    (by simp [hS₂, hS₁, *, Ne.symm]) (by simp [hS₂, hS₁, *, Ne.symm])
-    (by simp [hS₂, hS₁, *, Ne.symm]) (by simp [hS₂, hS₁, *, Ne.symm])
-    (by simp [hS₂, hS₁, *, Ne.symm]) (by simp [hS₂, hS₁, *, Ne.symm])
-    (by simp [hS₂, hS₁, *, Ne.symm]) (by simp [hS₂, hS₁, *, Ne.symm])
-    (by simp [hS₂, hS₁, *, Ne.symm]) (by simp [hS₂, hS₁, *, Ne.symm])
-    (by simp [hS₂, hS₁, *, Ne.symm]) (by simp [hS₂, hS₁, *, Ne.symm])
+    (by simp [hS₂]) (by simp [*]) (by simp [*])
+    (by simp [*, Ne.symm]) (by simp [*, Ne.symm])
+    (by simp [*]) (by simp [*, Ne.symm])
+    (by simp [*, Ne.symm]) (by simp [*, Ne.symm])
+    (by simp [*]) (by simp [*, Ne.symm])
+    (by simp [*, Ne.symm]) (by simp [*, Ne.symm])
+    (by simp [*, Ne.symm]) (by simp [*, Ne.symm])
   refine ⟨v₃, m₃, _, ?_, hm₃, ?_, Exec.cast (Exec.seq (exec_hostCode e₁ gi go)
     (Exec.seq e₂ (exec_hostCode e₃ gi go))) rfl ?_⟩
   · rw [hu₃, hu₂, hu₁]
@@ -484,12 +484,12 @@ theorem newtonLevel_exec (main : DPr (Option M.P) (M.T + D) M.Q M.A (M.U × B))
     (wK := wK) (w2K := w2K) (wL := wL) (t₁ := t₁) (t₂ := t₂) (t₃ := t₃) (t₄ := t₄) (t₅ := t₅)
     (by regs_nodup) hy hX₂ h2a hz hyd hd0 hdL hμL hc v₁ S₁ (by simp [hS₁, hinp])
     (by simp [hS₁, hout]) (by simp [hS₁, hL]) (by intro i; simp [hS₁, hR]) (by simp [hS₁])
-    (by simp [hS₁, *, Ne.symm]) (by simp [hS₁, *, Ne.symm]) (by simp [hS₁, *, Ne.symm])
-    (by simp [*, Ne.symm]) (by simp [hS₁, *, Ne.symm]) (by simp [hS₁, *, Ne.symm])
-    (by simp [hS₁, *, Ne.symm]) (by simp [hS₁, *, Ne.symm] <;> omega)
-    (by simp [hS₁, *, Ne.symm]) (by simp [hS₁, *, Ne.symm]) (by simp [hS₁, *, Ne.symm])
-    (by simp [hS₁, *, Ne.symm]) (by simp [hS₁, *, Ne.symm]) (by simp [hS₁, *, Ne.symm])
-    (by simp [hS₁, *, Ne.symm]) (by simp [hS₁, *, Ne.symm]) gi go
+    (by simp [*, Ne.symm]) (by simp [*]) (by simp [*])
+    (by simp [*]) (by simp [*]) (by simp [*, Ne.symm])
+    (by simp [*]) (by simp [*]; omega)
+    (by simp [*, Ne.symm]) (by simp [*, Ne.symm]) (by simp [*, Ne.symm])
+    (by simp [*, Ne.symm]) (by simp [*, Ne.symm]) (by simp [*, Ne.symm])
+    (by simp [*, Ne.symm]) (by simp [*, Ne.symm]) gi go
   rw [hμ] at e₂
   refine ⟨v₂, _, by rw [hu₂, hu₁], ?_, Exec.cast (Exec.seq e₁ e₂) rfl ?_⟩
   · -- the time
@@ -519,7 +519,7 @@ theorem newtonLevel_exec (main : DPr (Option M.P) (M.T + D) M.Q M.A (M.U × B))
     congr 1
     funext j
     by_cases hj1 : j = M.dreg D Cnt
-    · subst hj1; simp [*, Ne.symm]
+    · subst hj1; simp [*]
     by_cases hj2 : j = M.dreg D w2K
     · subst hj2; simp [*, Ne.symm]
     by_cases hj3 : j = M.dreg D wL
@@ -539,7 +539,7 @@ theorem newtonLevel_exec (main : DPr (Option M.P) (M.T + D) M.Q M.A (M.U × B))
     by_cases hj10 : j = M.dreg D Y
     · subst hj10; simp [*, Ne.symm]
     by_cases hj11 : j = M.dreg D wK
-    · subst hj11; simp [*, Ne.symm]
+    · subst hj11; simp [*]
     simp [*]
 
 end HostMultiplier

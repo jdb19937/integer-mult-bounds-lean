@@ -28,6 +28,7 @@ def dyadicB (g : Circuit.Gate ι ℚ) : Bool :=
   g.terms.all (fun p => isPow2 p.2.den) &&
     (g.terms.length == 1 || g.terms.all fun p => (2 * p.2).den == 1)
 
+omit [DecidableEq ι] in
 theorem dyadicB_spec {g : Circuit.Gate ι ℚ} (h : dyadicB g = true) : DyadicGate g := by
   simp only [dyadicB, Bool.and_eq_true, List.all_eq_true, Bool.or_eq_true, beq_iff_eq] at h
   exact ⟨fun p hp => isPow2_spec (h.1 p hp), h.2⟩
@@ -68,6 +69,7 @@ theorem dyadic_implEvents (es : List (FramedEventTrace.Event ℕ ℕ ℚ)) (h : 
       simp only [FramedEventTrace.copyGate, List.mem_cons, List.not_mem_nil, or_false] at hp <;>
       rcases hp with rfl | rfl <;> norm_num
 
+omit [DecidableEq ι] [DecidableEq κ] in
 theorem dyadic_rename (u : ι → κ) {prog : List (TInstr ι)}
     (h : ∀ g, TInstr.gate g ∈ prog → DyadicGate g) :
     ∀ g, TInstr.gate g ∈ prog.map (TInstr.rename u) → DyadicGate g := by
@@ -92,6 +94,7 @@ theorem dyadic_rename (u : ι → κ) {prog : List (TInstr ι)}
         exact hl q hq
   | prim w p => simp [TInstr.rename] at he
 
+omit [DecidableEq ι] in
 theorem no_gate_prims (w : ι) (ps : List Prim) (g : Circuit.Gate ι ℚ) :
     TInstr.gate g ∉ ps.map (TInstr.prim w) := by
   simp

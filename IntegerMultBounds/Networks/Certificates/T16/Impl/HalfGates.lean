@@ -161,7 +161,7 @@ theorem fitGate_half (g : Circuit.Gate ι ℚ) (hg : DyadicGate g) : ∀ g' ∈ 
           refine den_eq_one_of_eq_int (z := 2 ^ (k + 1) + z - 2) ?_
           simp only [Nat.add_sub_cancel] at hz ⊢
           push_cast
-          linear_combination (2 : ℚ) ^ k * 2 * 1 + hz - 2 ^ k * 2
+          linear_combination hz
     · simp only [List.mem_append, List.mem_replicate, List.mem_singleton] at hg'
       rcases hg' with (⟨-, rfl⟩ | rfl) | ⟨-, rfl⟩
       · exact hhalve s

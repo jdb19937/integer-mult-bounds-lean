@@ -82,23 +82,23 @@ theorem newtonLoad_exec {Dp w2K wL B1 Dd Aa B2 t₁ t₂ : Fin T}
   -- widen `Dd` and `A`
   obtain ⟨v₃, hu₃, e₃⟩ := bwiden_exec body (a := Dd) (wR := wL) (cnt := B1) (t₁ := t₁)
     (t₂ := t₂) (by regs_nodup) (by omega : k + k ≤ 4 * k + 4) hdlt v₂ S₂ hS₂Dd
-    (by simp [hS₂, hS₁, movedR, *, Ne.symm]) hS₂B1 (by simp [hS₂, hS₁, movedR, *, Ne.symm])
-    (by simp [hS₂, hS₁, movedR, *, Ne.symm])
+    (by simp [movedR, *, Ne.symm]) hS₂B1 (by simp [movedR, *, Ne.symm])
+    (by simp [movedR, *, Ne.symm])
   set S₃ : Stacks T A := { S₂ with R := Function.update S₂.R Dd (binSyms (4 * k + 4) d) }
     with hS₃
   obtain ⟨v₄, hu₄, e₄⟩ := bwiden_exec body (a := Aa) (wR := wL) (cnt := B1) (t₁ := t₁)
     (t₂ := t₂) (by regs_nodup) (by omega : k + k + 4 ≤ 4 * k + 4) ha v₃ S₃
-    (by simp [hS₃, hS₂, hS₁, movedR, *, Ne.symm]) (by simp [hS₃, hS₂, hS₁, movedR, *, Ne.symm])
-    (by simp [hS₃, hS₂B1, ‹B1 ≠ Dd›]) (by simp [hS₃, hS₂, hS₁, movedR, *, Ne.symm])
-    (by simp [hS₃, hS₂, hS₁, movedR, *, Ne.symm])
+    (by simp [movedR, *, Ne.symm]) (by simp [movedR, *, Ne.symm])
+    (by simp [hS₃, hS₂B1, ‹B1 ≠ Dd›]) (by simp [movedR, *, Ne.symm])
+    (by simp [movedR, *, Ne.symm])
   set S₄ : Stacks T A := { S₃ with R := Function.update S₃.R Aa (binSyms (4 * k + 4) a) }
     with hS₄
   -- copy `A` onto `B2`
   obtain ⟨v₅, hu₅, e₅⟩ := bcopy_exec body (a := Aa) (c := B2) (t₁ := t₁) (t₂ := t₂)
-    (by regs_nodup) v₄ S₄ (by simp [hS₄, hS₃, hS₂, hS₁, movedR, *, Ne.symm])
-    (by simp [hS₄, hS₃, hS₂, hS₁, movedR, *, Ne.symm])
+    (by regs_nodup) v₄ S₄ (by simp [movedR, *, Ne.symm])
+    (by simp [movedR, *, Ne.symm])
   rw [show S₄.R Aa = binSyms (4 * k + 4) a by simp [hS₄], length_binSyms,
-    show S₄.R B2 = [] by simp [hS₄, hS₃, hS₂, hS₁, movedR, *, Ne.symm], List.append_nil] at e₅
+    show S₄.R B2 = [] by simp [movedR, *, Ne.symm], List.append_nil] at e₅
   refine ⟨v₅, _, by rw [hu₅, hu₄, hu₃, hu₂, hu₁], ?_,
     Exec.cast (Exec.seq e₁ (Exec.seq e₂ (Exec.seq e₃ (Exec.seq e₄ e₅)))) rfl ?_⟩
   · omega

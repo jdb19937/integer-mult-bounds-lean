@@ -107,7 +107,7 @@ theorem corrStep_exec {R Dd Y ONE Rn Yn t₁ t₂ t₃ : Fin T}
   rw [show S₁.R R = binSyms L ρ by simp [hS₁, ‹R ≠ Rn›, hR], length_binSyms] at e₂
   set S₂ : Stacks T A := { S₁ with R := Function.update S₁.R R [] } with hS₂
   obtain ⟨v₃, hu₃, e₃⟩ := bcopy_exec body (a := Rn) (c := R) (t₁ := t₁) (t₂ := t₂)
-    (by regs_nodup) v₂ S₂ (by simp [hS₂, hS₁, *, Ne.symm]) (by simp [hS₂, hS₁, *, Ne.symm])
+    (by regs_nodup) v₂ S₂ (by simp [*, Ne.symm]) (by simp [*, Ne.symm])
   rw [show S₂.R Rn = binSyms L (ρ - d) by simp [hS₂, hS₁, ‹R ≠ Rn›.symm],
     show S₂.R R = [] by simp [hS₂], List.append_nil, length_binSyms] at e₃
   set S₃ : Stacks T A := { S₂ with R := Function.update S₂.R R (binSyms L (ρ - d)) } with hS₃
@@ -118,19 +118,19 @@ theorem corrStep_exec {R Dd Y ONE Rn Yn t₁ t₂ t₃ : Fin T}
   -- `Yn := Y + 1`
   obtain ⟨v₅, hu₅, -, -, e₅⟩ := badd_exec body (a := Y) (b := ONE) (c := Yn) (tx := t₁)
     (ty := t₂) (tz := t₃) (cy := Rn) (by regs_nodup) ‹Y ≠ Rn›.symm ‹ONE ≠ Rn›.symm
-    (L := L) (x := y) (y := 1) (by omega) h1L v₄ S₄ (by simp [hS₄, hS₃, hS₂, hS₁, *, Ne.symm])
-    (by simp [hS₄, hS₃, hS₂, hS₁, *, Ne.symm]) (by simp [hS₄, hS₃, hS₂, hS₁, *, Ne.symm])
-    (by simp [hS₄, hS₃, hS₂, hS₁, *, Ne.symm]) (by simp [hS₄, hS₃, hS₂, hS₁, *, Ne.symm])
-  rw [Nat.mod_eq_of_lt hy, show S₄.R Yn = [] by simp [hS₄, hS₃, hS₂, hS₁, *, Ne.symm],
+    (L := L) (x := y) (y := 1) (by omega) h1L v₄ S₄ (by simp [*, Ne.symm])
+    (by simp [*, Ne.symm]) (by simp [*, Ne.symm])
+    (by simp [*, Ne.symm]) (by simp [*, Ne.symm])
+  rw [Nat.mod_eq_of_lt hy, show S₄.R Yn = [] by simp [*, Ne.symm],
     List.append_nil] at e₅
   set S₅ : Stacks T A := { S₄ with R := Function.update S₄.R Yn (binSyms L (y + 1)) } with hS₅
   obtain ⟨v₆, hu₆, -, e₆⟩ := bclear_exec body Y v₅ S₅
-  rw [show S₅.R Y = binSyms L y by simp [hS₅, hS₄, hS₃, hS₂, hS₁, *, Ne.symm],
+  rw [show S₅.R Y = binSyms L y by simp [*, Ne.symm],
     length_binSyms] at e₆
   set S₆ : Stacks T A := { S₅ with R := Function.update S₅.R Y [] } with hS₆
   obtain ⟨v₇, hu₇, e₇⟩ := bcopy_exec body (a := Yn) (c := Y) (t₁ := t₁) (t₂ := t₂)
-    (by regs_nodup) v₆ S₆ (by simp [hS₆, hS₅, hS₄, hS₃, hS₂, hS₁, *, Ne.symm])
-    (by simp [hS₆, hS₅, hS₄, hS₃, hS₂, hS₁, *, Ne.symm])
+    (by regs_nodup) v₆ S₆ (by simp [*, Ne.symm])
+    (by simp [*, Ne.symm])
   rw [show S₆.R Yn = binSyms L (y + 1) by simp [hS₆, hS₅, ‹Y ≠ Yn›.symm],
     show S₆.R Y = [] by simp [hS₆], List.append_nil, length_binSyms] at e₇
   set S₇ : Stacks T A := { S₆ with R := Function.update S₆.R Y (binSyms L (y + 1)) } with hS₇
@@ -142,11 +142,11 @@ theorem corrStep_exec {R Dd Y ONE Rn Yn t₁ t₂ t₃ : Fin T}
   obtain ⟨v₉, hu₉, hsc₉, -, e₉⟩ := blt_exec body (a := R) (b := Dd) (tx := t₁) (ty := t₂)
     (tz := t₃) (cy := Rn) (by regs_nodup) ‹R ≠ Rn›.symm ‹Dd ≠ Rn›.symm (L := L) (x := ρ - d)
     (y := d) (by omega) hd v₈ S₈
-    (by simp [hS₈, hS₇, hS₆, hS₅, hS₄, hS₃, *, Ne.symm])
-    (by simp [hS₈, hS₇, hS₆, hS₅, hS₄, hS₃, hS₂, hS₁, *, Ne.symm])
-    (by simp [hS₈, hS₇, hS₆, hS₅, hS₄, hS₃, hS₂, hS₁, *, Ne.symm])
-    (by simp [hS₈, hS₇, hS₆, hS₅, hS₄, hS₃, hS₂, hS₁, *, Ne.symm])
-    (by simp [hS₈, hS₇, hS₆, hS₅, hS₄, hS₃, hS₂, hS₁, *, Ne.symm])
+    (by simp [*])
+    (by simp [*, Ne.symm])
+    (by simp [*, Ne.symm])
+    (by simp [*, Ne.symm])
+    (by simp [*, Ne.symm])
   refine ⟨v₉, by rw [hu₉, hu₈, hu₇, hu₆, hu₅, hu₄, hu₃, hu₂, hu₁], hsc₉,
     Exec.cast (Exec.seq e₁ (Exec.seq e₂ (Exec.seq e₃ (Exec.seq e₄ (Exec.seq e₅ (Exec.seq e₆
       (Exec.seq e₇ (Exec.seq e₈ e₉)))))))) (by ring) ?_⟩
@@ -156,9 +156,9 @@ theorem corrStep_exec {R Dd Y ONE Rn Yn t₁ t₂ t₃ : Fin T}
   congr 2
   funext j
   by_cases hjR : j = R
-  · subst hjR; simp [*, Ne.symm]
+  · subst hjR; simp [*]
   by_cases hjY : j = Y
-  · subst hjY; simp [*, Ne.symm]
+  · subst hjY; simp [*]
   by_cases hjRn : j = Rn
   · subst hjRn; simp [*, Ne.symm]
   by_cases hjYn : j = Yn
@@ -187,7 +187,7 @@ theorem corrLoop_aux {R Dd Y ONE Rn Yn t₁ t₂ t₃ : Fin T}
     intro ρ y v S hc hρ hy hR hD hY hO hRn hYn h₁ h₂ h₃ hsc
     have hlt : ρ < d := by
       by_contra h
-      push_neg at h
+      push Not at h
       have := Nat.div_pos h hd0
       omega
     refine ⟨v, 1, rfl, by omega, ?_⟩
@@ -206,7 +206,7 @@ theorem corrLoop_aux {R Dd Y ONE Rn Yn t₁ t₂ t₃ : Fin T}
     intro ρ y v S hc hρ hy hR hD hY hO hRn hYn h₁ h₂ h₃ hsc
     have hge : d ≤ ρ := by
       by_contra h
-      push_neg at h
+      push Not at h
       rw [Nat.div_eq_of_lt h] at hc
       omega
     have hdec : ρ = (ρ - d) + d := by omega
@@ -225,9 +225,9 @@ theorem corrLoop_aux {R Dd Y ONE Rn Yn t₁ t₂ t₃ : Fin T}
       R := Function.update (Function.update S.R R (binSyms L (ρ - d))) Y (binSyms L (y + 1)) }
       with hS₁
     obtain ⟨v₂, n₂, hu₂, hn₂, e₂⟩ := ih (ρ - d) (y + 1) v₁ S₁ hc' (by omega) (by omega)
-      (by simp [hS₁, ‹R ≠ Y›]) (by simp [hS₁, *, Ne.symm]) (by simp [hS₁])
-      (by simp [hS₁, *, Ne.symm]) (by simp [hS₁, *, Ne.symm]) (by simp [hS₁, *, Ne.symm])
-      (by simp [hS₁, *, Ne.symm]) (by simp [hS₁, *, Ne.symm]) (by simp [hS₁, *, Ne.symm]) hsc₁
+      (by simp [hS₁, ‹R ≠ Y›]) (by simp [*, Ne.symm]) (by simp [hS₁])
+      (by simp [*, Ne.symm]) (by simp [*, Ne.symm]) (by simp [*, Ne.symm])
+      (by simp [*, Ne.symm]) (by simp [*, Ne.symm]) (by simp [*, Ne.symm]) hsc₁
     have hf : (!slotTrue Rn v) = true := by
       simp [slotTrue, hsc, show ¬ ρ < d by omega, bitSymbol_true_ne_false.symm]
     refine ⟨v₂, _, by rw [hu₂, hu₁], ?_, Exec.loop_true hf e₁ (e₂.cast rfl ?_)⟩

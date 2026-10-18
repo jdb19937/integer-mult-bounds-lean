@@ -42,7 +42,7 @@ abbrev dreg (j : Fin D) : Fin (M.T + D) := Fin.natAdd M.T j
 @[simp] theorem emb_eq_dreg (i : Fin M.T) (j : Fin D) : M.emb D i = M.dreg D j ↔ False := by
   refine iff_false_intro fun h => ?_
   have h' := congrArg Fin.val h
-  simp only [Fin.coe_castAdd, Fin.coe_natAdd] at h'
+  simp only [Fin.val_castAdd, Fin.val_natAdd] at h'
   have := i.isLt
   omega
 

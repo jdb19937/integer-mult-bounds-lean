@@ -48,7 +48,7 @@ theorem range_map_eq_ofFn {n : ℕ} {f : ℕ → ℕ} {g : Fin n → ℕ} (h : �
   exact h ⟨i, by simpa using h2⟩
 
 theorem DFTInstance.n_lt_p (x : DFTInstance) : x.n < x.p := by
-  haveI := x.prime
+  have := x.prime
   have hp := x.prime.out
   rcases Nat.eq_zero_or_pos x.n with h | h
   · rw [h]; exact hp.pos

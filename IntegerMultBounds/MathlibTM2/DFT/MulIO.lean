@@ -253,25 +253,25 @@ theorem readProduct_exec {c a b t₁ t₂ t₃ t₄ t₅ : Fin T}
     simp [hS₂, hS₁, movedR, ‹c ≠ t₁›, hc, binSyms_eq, encodeNat_eq_binBits]
   -- the width register `t₂`
   obtain ⟨v₃, hu₃, e₃⟩ := bcopy_exec body (a := a) (c := t₂) (t₁ := t₃) (t₂ := t₄)
-    (by regs_nodup) v₂ S₂ (by simp [hS₂, hS₁, movedR, *, Ne.symm])
-    (by simp [hS₂, hS₁, movedR, *, Ne.symm])
+    (by regs_nodup) v₂ S₂ (by simp [movedR, *, Ne.symm])
+    (by simp [movedR, *, Ne.symm])
   set S₃ : Stacks T A := { S₂ with R := Function.update S₂.R t₂ (S₂.R a ++ S₂.R t₂) } with hS₃
   obtain ⟨v₄, hu₄, e₄⟩ := bcopy_exec body (a := b) (c := t₂) (t₁ := t₃) (t₂ := t₄)
-    (by regs_nodup) v₃ S₃ (by simp [hS₃, hS₂, hS₁, movedR, *, Ne.symm])
-    (by simp [hS₃, hS₂, hS₁, movedR, *, Ne.symm])
+    (by regs_nodup) v₃ S₃ (by simp [movedR, *, Ne.symm])
+    (by simp [movedR, *, Ne.symm])
   set S₄ : Stacks T A := { S₃ with R := Function.update S₃.R t₂ (S₃.R b ++ S₃.R t₂) } with hS₄
-  have hS₂a : S₂.R a = S.R a := by simp [hS₂, hS₁, movedR, *, Ne.symm]
-  have hS₂b : S₂.R b = S.R b := by simp [hS₂, hS₁, movedR, *, Ne.symm]
+  have hS₂a : S₂.R a = S.R a := by simp [movedR, *, Ne.symm]
+  have hS₂b : S₂.R b = S.R b := by simp [movedR, *, Ne.symm]
   have hS₄w : (S₄.R t₂).length = W := by
-    simp [hS₄, hS₃, hS₂, hS₁, movedR, *, Ne.symm]
+    simp [movedR, *, Ne.symm]
     omega
   -- widen `c`
   obtain ⟨v₅, hu₅, e₅⟩ := bwiden_exec body (a := c) (wR := t₂) (cnt := t₃) (t₁ := t₄) (t₂ := t₅)
     (by regs_nodup) hsize (Nat.lt_size_self z) v₄ S₄
     (by simp [hS₄, hS₃, ‹c ≠ t₂›, hS₂c]) hS₄w
-    (by simp [hS₄, hS₃, hS₂, hS₁, movedR, *, Ne.symm])
-    (by simp [hS₄, hS₃, hS₂, hS₁, movedR, *, Ne.symm])
-    (by simp [hS₄, hS₃, hS₂, hS₁, movedR, *, Ne.symm])
+    (by simp [movedR, *, Ne.symm])
+    (by simp [movedR, *, Ne.symm])
+    (by simp [movedR, *, Ne.symm])
   set S₅ : Stacks T A := { S₄ with R := Function.update S₄.R c (binSyms W z) } with hS₅
   obtain ⟨v₆, hu₆, -, e₆⟩ := bclear_exec body t₂ v₅ S₅
   have hS₅w : (S₅.R t₂).length = W := by simp [hS₅, ‹c ≠ t₂›.symm, hS₄w]
