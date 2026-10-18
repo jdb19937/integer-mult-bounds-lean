@@ -16,30 +16,21 @@ jobs:
           path: .lake
           key: lake-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-${{ github.sha }}
           restore-keys: lake-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-
-      # Extra swap absorbs short memory spikes between the guard's samples.
+      # Heavy kernel checks running side by side can exceed the runner's 16 GB. With swap the
+      # runner slows down instead of dying, so the build either finishes or times out and the
+      # cache save below still runs.
       - run: |
           sudo swapoff -a || true
-          sudo fallocate -l 16G /swapfile-ci
-          sudo chmod 600 /swapfile-ci
-          sudo mkswap /swapfile-ci
-          sudo swapon /swapfile-ci
+          sudo fallocate -l 24G /mnt/swapfile-ci || sudo fallocate -l 16G /swapfile-ci
+          f=$(ls /mnt/swapfile-ci /swapfile-ci 2>/dev/null | head -1)
+          sudo chmod 600 "$f"
+          sudo mkswap "$f"
+          sudo swapon "$f"
+          free -g
       - uses: leanprover/lean-action@v1
+        timeout-minutes: 55
         with:
           use-github-cache: false
-          build: false
-          test: false
-          lint: false
-      # The guard stops the build before the runner runs out of memory, so the cache save
-      # below still runs. Lake resumes from the finished modules on each retry.
-      - timeout-minutes: 55
-        run: |
-          for attempt in 1 2 3 4 5; do
-            status=0
-            python3 scripts/build-lean-guarded.py --budget-gib 14 || status=$?
-            [ "$status" -ne 137 ] && exit "$status"
-            echo "Build stopped by the memory guard; retrying (attempt $attempt)."
-          done
-          exit 137
       # A timed-out build can leave Lean processes writing into .lake; stop them so the archive is consistent.
       - if: always()
         run: |
