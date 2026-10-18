@@ -51,7 +51,7 @@ noncomputable def split0 (hP : portCheck P = true) (f : Fin 73 → ZMod 4) :
     ChartSplit (LinearEquiv.refl (ZMod 2) Addr) (portBasis P) f :=
   ChartSplit.ofLocal _ refl_orth _ f lowIndices lowIndices_nodup
     (fun k hk => portBasis_local hP k ((mem_lowIndices k).mp hk))
-    (fun k hk => by
+    (fun k hk _ => by
       have h9 : 9 ≤ k.val := by rw [mem_lowIndices] at hk; omega
       change lowPart (portBasis P k) = 0
       rw [portBasis_high k h9, lowPart_single_high k h9])
@@ -197,7 +197,7 @@ noncomputable def splitStage (hP : portCheck P = true) (s : ℕ) (hs : 1 ≤ s �
         exact portBasis_local hP 0 (by simp)
       · rw [stageChart_entering]
         exact portBasis_local hP _ (by simp; omega))
-    (fun k hk => by
+    (fun k hk _ => by
       simp only [stageIndices, List.mem_cons, List.mem_map, List.mem_finRange, true_and,
         not_or, not_exists] at hk
       by_cases h9 : k.val < 9

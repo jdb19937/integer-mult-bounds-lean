@@ -138,7 +138,7 @@ off `L`. -/
 noncomputable def ChartSplit.ofLocal (χ : Addr ≃ₗ[ZMod 2] Addr) (hχ : IsOrth χ) (B : Fin 73 → Addr)
     (f : Fin 73 → ZMod 4) (L : List (Fin 73)) (hL : L.Nodup)
     (hloc : ∀ k ∈ L, χ.symm (B k) = padLow (lowPart (χ.symm (B k))))
-    (hext : ∀ k, k ∉ L → lowPart (χ.symm (B k)) = 0) : ChartSplit χ B f where
+    (hext : ∀ k, k ∉ L → f k ≠ 0 → lowPart (χ.symm (B k)) = 0) : ChartSplit χ B f where
   gs := L.map fun k => (f k, lowPart (χ.symm (B k)))
   ext k := if k ∈ L then 0 else f k
   split := by
@@ -152,7 +152,7 @@ noncomputable def ChartSplit.ofLocal (χ : Addr ≃ₗ[ZMod 2] Addr) (hχ : IsOr
   exterior k hk := by
     by_cases h : k ∈ L
     · simp [h] at hk
-    · exact hext k h
+    · exact hext k h (by simpa [h] using hk)
 
 theorem ChartSplit.ofLocal_gs (χ : Addr ≃ₗ[ZMod 2] Addr) (hχ : IsOrth χ) (B : Fin 73 → Addr)
     (f : Fin 73 → ZMod 4) (L : List (Fin 73)) (hL : L.Nodup) (hloc) (hext) :

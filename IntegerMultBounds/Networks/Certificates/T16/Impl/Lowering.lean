@@ -171,4 +171,61 @@ theorem Realization.exists_prims (K : Realization) :
   rw [childCount_append, childCount_append, childCount_append, childCount_hadamardPrims, hm, hp, hs]
   omega
 
+/-! ### Inverse words -/
+
+/-- The inverse of a primitive. -/
+noncomputable def Prim.inv : Prim → Prim
+  | .kernel q v => .kernel (-q) v
+  | .perm G => .perm G.symm
+  | .diag φ => .diag (-φ)
+  | .scale c => .scale c⁻¹
+
+/-- A primitive with a nonzero scale. -/
+def Prim.Invertible : Prim → Prop
+  | .scale c => c ≠ 0
+  | _ => True
+
+theorem Prim.inv_op {p : Prim} (hp : p.Invertible) (f : Arrays 73) : p.inv.op (p.op f) = f := by
+  cases p with
+  | kernel q v => exact kernel_inverse q v f
+  | perm G =>
+    funext x
+    simp [Prim.inv, Prim.op, permOp_apply]
+  | diag φ =>
+    funext x
+    change phase (-φ x) * (phase (φ x) * f x) = f x
+    rw [← mul_assoc, ← phase_add, neg_add_cancel, phase_zero, one_mul]
+  | scale c =>
+    change c⁻¹ • c • f = f
+    rw [smul_smul, inv_mul_cancel₀ (hp : c ≠ 0), one_smul]
+
+/-- The inverse of a word: the inverses in reverse order. -/
+noncomputable def invPrims (ws : List Prim) : List Prim := (ws.map Prim.inv).reverse
+
+theorem wordOp_invPrims (ws : List Prim) (hws : ∀ p ∈ ws, p.Invertible) (f : Arrays 73) :
+    wordOp (invPrims ws) (wordOp ws f) = f := by
+  induction ws generalizing f with
+  | nil => rfl
+  | cons p ps ih =>
+    rw [invPrims, List.map_cons, List.reverse_cons, ← invPrims, wordOp_append]
+    change wordOp [p.inv] (wordOp (invPrims ps) (wordOp ps (p.op f))) = f
+    rw [ih (fun q hq => hws q (List.mem_cons_of_mem _ hq))]
+    exact Prim.inv_op (hws p List.mem_cons_self) f
+
+theorem Prim.isChild_inv (p : Prim) : p.inv.isChild = p.isChild := by
+  cases p with
+  | kernel q v =>
+    change ((-q).val % 2 == 1) = (q.val % 2 == 1)
+    generalize q = q
+    revert q
+    decide
+  | _ => rfl
+
+theorem childCount_invPrims (ws : List Prim) : childCount (invPrims ws) = childCount ws := by
+  simp only [childCount, invPrims, ← List.countP_eq_length_filter, List.countP_reverse,
+    List.countP_map]
+  congr 1
+  funext p
+  exact Prim.isChild_inv p
+
 end IntegerMultBounds.Networks.Certificates.T16.Impl
