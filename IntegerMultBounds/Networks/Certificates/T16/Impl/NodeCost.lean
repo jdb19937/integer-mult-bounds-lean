@@ -234,7 +234,78 @@ theorem eventProgram_children (te : TEvent) (hte : te ∈ template) :
     simp only [expand]
     simp [eventOdd, eventChildren, apply_ite, Function.comp_def]
 
-theorem template_children : (template.map eventChildren).sum = 1041408 := by decide +kernel
+/-- A sum over a list, as the sum of its chunks of width `w`. -/
+theorem sum_map_chunks {α : Type*} (f : α → ℕ) (w : ℕ) : ∀ n (l : List α), l.length ≤ w * n →
+    (l.map f).sum = ((List.range n).map fun k => (((l.drop (w * k)).take w).map f).sum).sum
+  | 0, l, h => by cases l with
+    | nil => rfl
+    | cons _ _ => simp at h
+  | n + 1, l, h => by
+    have ih := sum_map_chunks f w n (l.drop w) (by rw [List.length_drop]; rw [Nat.mul_succ] at h; omega)
+    have hshift : (List.range n).map ((fun k => (((l.drop (w * k)).take w).map f).sum) ∘ Nat.succ) =
+        (List.range n).map fun k => ((((l.drop w).drop (w * k)).take w).map f).sum :=
+      List.map_congr_left fun k _ => by
+        simp only [Function.comp_apply, List.drop_drop, Nat.mul_succ, Nat.add_comm]
+    rw [List.range_succ_eq_map, List.map_cons, List.sum_cons, List.map_map, hshift, ← ih, Nat.mul_zero,
+      List.drop_zero, ← List.sum_append, ← List.map_append, List.take_append_drop]
+
+theorem template_length : template.length = 480 := by decide +kernel
+
+theorem template_chunk0 : (((template.drop (30 * 0)).take 30).map eventChildren).sum = 90513 := by
+  decide +kernel
+
+theorem template_chunk1 : (((template.drop (30 * 1)).take 30).map eventChildren).sum = 61648 := by
+  decide +kernel
+
+theorem template_chunk2 : (((template.drop (30 * 2)).take 30).map eventChildren).sum = 61796 := by
+  decide +kernel
+
+theorem template_chunk3 : (((template.drop (30 * 3)).take 30).map eventChildren).sum = 86207 := by
+  decide +kernel
+
+theorem template_chunk4 : (((template.drop (30 * 4)).take 30).map eventChildren).sum = 80144 := by
+  decide +kernel
+
+theorem template_chunk5 : (((template.drop (30 * 5)).take 30).map eventChildren).sum = 70219 := by
+  decide +kernel
+
+theorem template_chunk6 : (((template.drop (30 * 6)).take 30).map eventChildren).sum = 72763 := by
+  decide +kernel
+
+theorem template_chunk7 : (((template.drop (30 * 7)).take 30).map eventChildren).sum = 62146 := by
+  decide +kernel
+
+theorem template_chunk8 : (((template.drop (30 * 8)).take 30).map eventChildren).sum = 69687 := by
+  decide +kernel
+
+theorem template_chunk9 : (((template.drop (30 * 9)).take 30).map eventChildren).sum = 39881 := by
+  decide +kernel
+
+theorem template_chunk10 : (((template.drop (30 * 10)).take 30).map eventChildren).sum = 76581 := by
+  decide +kernel
+
+theorem template_chunk11 : (((template.drop (30 * 11)).take 30).map eventChildren).sum = 62025 := by
+  decide +kernel
+
+theorem template_chunk12 : (((template.drop (30 * 12)).take 30).map eventChildren).sum = 56238 := by
+  decide +kernel
+
+theorem template_chunk13 : (((template.drop (30 * 13)).take 30).map eventChildren).sum = 70976 := by
+  decide +kernel
+
+theorem template_chunk14 : (((template.drop (30 * 14)).take 30).map eventChildren).sum = 44097 := by
+  decide +kernel
+
+theorem template_chunk15 : (((template.drop (30 * 15)).take 30).map eventChildren).sum = 36487 := by
+  decide +kernel
+
+/-- The child calls of the template, summed in chunks of thirty events so that no single kernel
+check holds the whole template. -/
+theorem template_children : (template.map eventChildren).sum = 1041408 := by
+  rw [sum_map_chunks eventChildren 30 16 template (by rw [template_length]),
+    show List.range 16 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15] from rfl]
+  simp only [List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, template_chunk0, template_chunk1, template_chunk2, template_chunk3, template_chunk4, template_chunk5, template_chunk6, template_chunk7, template_chunk8, template_chunk9, template_chunk10, template_chunk11, template_chunk12, template_chunk13, template_chunk14, template_chunk15]
+  rfl
 
 /-- **The T16 node makes exactly `F = 1,041,408` child calls.** -/
 theorem nodeProgram_children : programChildren nodeProgram = 1041408 := by
