@@ -228,4 +228,121 @@ def dataPatternCheck (s a : ℕ) : Bool :=
 theorem dataPatterns : (List.range 9).all (fun s => (List.range 112).all (dataPatternCheck s)) = true := by
   decide +kernel
 
+theorem pattern_of {s a : ℕ} (hs : s < 9) (ha : a < 112) : dataPatternCheck s a = true :=
+  List.all_eq_true.mp (List.all_eq_true.mp dataPatterns s (List.mem_range.mpr hs)) a
+    (List.mem_range.mpr ha)
+
+theorem dataIndices_length (s : ℕ) : (dataIndices s).length = 9 := by
+  unfold dataIndices
+  split_ifs with h
+  · simp [stageIndices]
+  · rw [lowIndices_eq]; simp
+
+theorem oddVecs_dataGs (hP : portCheck P = true) (s : ℕ) (f : Fin 73 → ZMod 4) :
+    oddVecs (dataGs hP s f) =
+      (((lowBasis P).zip (((dataIndices s).map f).map isOdd)).filter (·.2)).map (·.1) := by
+  rw [dataGs_eq, oddVecs_zip]
+  simp [lowBasis, dataIndices_length]
+
+/-- The label facts of the data registers of a port. -/
+def DataLabels (a : ℕ) : Prop :=
+  (∃ h : (catalog (Trace.forwardInitial.label a)).data.rank = 1,
+    (catalog (Trace.forwardInitial.label a)).data.vectors ⟨0, by omega⟩ =
+      lowPart (portBasis (portData a) 0)) ∧
+  (catalog (Trace.forwardFinal.label a)).data.rank = 9 ∧
+  (catalog (Trace.forwardInitial.label (a + 112))).data.rank = 0 ∧
+  (catalog (Trace.forwardFinal.label (a + 112))).data.rank = 8 ∧
+  ∀ j : Fin (catalog (Trace.forwardFinal.label (a + 112))).data.rank,
+    Tableau.dot (lowPart (portBasis (portData a) 0))
+      ((catalog (Trace.forwardFinal.label (a + 112))).data.vectors j) = 0
+
+instance (a : ℕ) : Decidable (DataLabels a) := by unfold DataLabels; infer_instance
+
+theorem dataLabels_all : ∀ a < 112, DataLabels a := by decide +kernel
+
+theorem finals_agree : ∀ w < 224, Trace.backwardFinal.label w = Trace.forwardFinal.label w := by
+  decide +kernel
+
+theorem filter_zip_sublist {α : Type*} (bs : List α) (ps : List Bool) :
+    (((bs.zip ps).filter (·.2)).map (·.1)).Sublist bs := by
+  induction bs generalizing ps with
+  | nil => simp
+  | cons b bs ih =>
+    cases ps with
+    | nil => simp
+    | cons p ps =>
+      simp only [List.zip_cons_cons, List.filter_cons]
+      split_ifs
+      · simpa using (ih ps).cons_cons b
+      · exact (ih ps).cons b
+
+theorem oddVecs_ortho (hP : portCheck P = true) (s : ℕ) (f : Fin 73 → ZMod 4) :
+    OrthoList (oddVecs (dataGs hP s f)) := by
+  rw [oddVecs_dataGs]
+  exact (lowBasis_ortho hP).sublist (filter_zip_sublist _ _)
+
+section Cases
+variable {s a : ℕ} (hs : s < 9) (ha : a < 112)
+include hs ha
+
+theorem matches_X_entry :
+    Matches (dataGs (portData_check ha) s (frameX s a)) (Trace.forwardInitial.label a) := by
+  have hp := pattern_of hs ha
+  simp only [dataPatternCheck, Bool.and_eq_true, beq_iff_eq] at hp
+  obtain ⟨hr, hv⟩ := (dataLabels_all a ha).1
+  refine matches_of (oddVecs_ortho _ _ _) ?_
+  rw [oddVecs_dataGs, hp.1.1.1, space_rank_one hr, hv]
+  simp [lowBasis, List.finRange_succ]
+
+theorem matches_X_exit :
+    Matches (dataGs (portData_check ha) s (frameX (s + 1) a)) (Trace.forwardFinal.label a) := by
+  have hp := pattern_of hs ha
+  simp only [dataPatternCheck, Bool.and_eq_true, beq_iff_eq] at hp
+  refine matches_of (oddVecs_ortho _ _ _) ?_
+  rw [space_rank_nine (dataLabels_all a ha).2.1]
+  apply span_ortho_nine (oddVecs_ortho _ _ _)
+  rw [oddVecs_dataGs, hp.1.1.2]
+  simp [lowBasis, List.finRange_succ]
+
+theorem matches_Y_entry :
+    Matches (dataGs (portData_check ha) s (frameY s a)) (Trace.forwardInitial.label (a + 112)) := by
+  have hp := pattern_of hs ha
+  simp only [dataPatternCheck, Bool.and_eq_true, beq_iff_eq] at hp
+  refine matches_of (oddVecs_ortho _ _ _) ?_
+  rw [space_rank_zero (dataLabels_all a ha).2.2.1, oddVecs_dataGs, hp.1.2]
+  simp [lowBasis, List.finRange_succ]
+
+theorem matches_Y_exit :
+    Matches (dataGs (portData_check ha) s (frameY (s + 1) a)) (Trace.forwardFinal.label (a + 112)) := by
+  have hp := pattern_of hs ha
+  simp only [dataPatternCheck, Bool.and_eq_true, beq_iff_eq] at hp
+  obtain ⟨-, -, -, hr8, hperp⟩ := dataLabels_all a ha
+  have hP := portData_check ha
+  have ho := lowBasis_ortho hP
+  have hq : Tableau.dot (lowPart (portBasis (portData a) 0)) (lowPart (portBasis (portData a) 0)) = 1 :=
+    ho.2 _ (by simp [lowBasis, List.finRange_succ])
+  have hodd : oddVecs (dataGs hP s (frameY (s + 1) a)) = (lowBasis (portData a)).tail := by
+    rw [oddVecs_dataGs, hp.2]
+    simp [lowBasis, List.finRange_succ]
+  refine matches_of (oddVecs_ortho _ _ _) ?_
+  apply span_eq_of_complement hq
+  · apply le_complement
+    rw [hodd]
+    intro v hv
+    have hpw := List.pairwise_cons.mp (show (lowBasis (portData a)).Pairwise _ from ho.1)
+    simp only [lowBasis, List.finRange_succ, List.map_cons, List.tail_cons] at hv hpw ⊢
+    exact hpw.1 v hv
+  · rw [Geometry.CertifiedFrame.space, Geometry.Frame.space, Submodule.span_le]
+    rintro _ ⟨j, rfl⟩
+    rw [SetLike.mem_coe, Geometry.binaryOrthogonal, LinearMap.BilinForm.mem_orthogonal_iff]
+    intro u hu
+    obtain ⟨c, rfl⟩ := Submodule.mem_span_singleton.mp hu
+    change Tableau.dot (c • _) _ = 0
+    rw [map_smul, LinearMap.smul_apply, hperp j, smul_zero]
+  · rw [(oddVecs_ortho _ _ _).finrank_span, hodd]
+    simp [lowBasis]
+  · rw [Geometry.catalog_dimension, hr8]
+
+end Cases
+
 end IntegerMultBounds.Networks.Certificates.T16.Impl
