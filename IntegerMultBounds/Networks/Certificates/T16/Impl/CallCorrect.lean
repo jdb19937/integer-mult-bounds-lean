@@ -202,4 +202,34 @@ theorem lhs_Y {s r a : ℕ} (F : CallFacts s r) (ha : a < 112) (y : NodeUnit →
       data_change ρ ha (callIn_Y ha) (callOut_Y ha) e2]
     rfl
 
+/-- A helper register. -/
+theorem lhs_helper {s r h : ℕ} (F : CallFacts s r) (hh : h < 480) (y : NodeUnit → S) :
+    runT ρ (callProgram s r) y (callReg s r (224 + h)) =
+      portRep ρ (famPort (helperFamily s r h))
+        (ofAdd (maskFrame (helperMask (slotOf s r) (helperFamily s r h))))
+        (y (callReg s r (224 + h))) := by
+  have key : ρ (throughOp (callOut s r (224 + h)) (callIn s r (224 + h))
+      (entryLabel (localReverse s) (224 + h)) (exitLabel (localReverse s) (224 + h))) =
+        ρ (basisOp (portBasis (portData (famPort (helperFamily s r h))))
+          (ofAdd (maskFrame (helperMask (slotOf s r) (helperFamily s r h))))) := by
+    rw [callIn_helper hh, callOut_helper hh, hostIn, hostOut,
+      helper_through _ _ (F.width h hh) _ _ (F.rank h hh)]
+    rfl
+  cases hrev : localReverse s
+  · rw [callProgram_forward hrev, (forward_invocation ρ _ F.inj _ _ y).2.2.1 (224 + h)
+      (by omega) (by omega), entry_forward hrev, exit_forward hrev, key]
+    rfl
+  · rw [callProgram_backward hrev, (backward_invocation ρ _ F.inj _ _ y).2.1 (224 + h)
+      (by omega) (by omega), entry_backward hrev, exit_backward hrev, key]
+    rfl
+
+/-- Any other unit is unchanged. -/
+theorem lhs_other {s r : ℕ} (F : CallFacts s r) (v : NodeUnit) (hv : ∀ w < 712, callReg s r w ≠ v)
+    (y : NodeUnit → S) : runT ρ (callProgram s r) y v = y v := by
+  cases hrev : localReverse s
+  · rw [callProgram_forward hrev]
+    exact (forward_invocation ρ _ F.inj _ _ y).2.2.2 v hv
+  · rw [callProgram_backward hrev]
+    exact (backward_invocation ρ _ F.inj _ _ y).2.2 v hv
+
 end IntegerMultBounds.Networks.Certificates.T16.Impl
