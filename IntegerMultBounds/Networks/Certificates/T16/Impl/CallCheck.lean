@@ -51,24 +51,29 @@ theorem nodup_of_insertAll {fs : List ℕ} (h : insertAll 0 fs ≠ none) : fs.No
 def callFamilies (s r : ℕ) : List ℕ :=
   (List.range 112).map (fun a => famIdx r a (toStream (2 * localPair s))) ++
     (List.range 112).map (fun a => famIdx r a (toStream (2 * localPair s + 1))) ++
-      (List.range 480).map (helperFamily s r)
+      rolesList s r
 
-theorem callFamilies_length (s r : ℕ) : (callFamilies s r).length = 704 := by
-  simp [callFamilies]
+theorem callFamilies_length {s r : ℕ} (hl : (rolesList s r).length = 480) :
+    (callFamilies s r).length = 704 := by
+  simp [callFamilies, hl]
 
-theorem callReg_family {s r : ℕ} (hr : r < 16) (hlt : ∀ h < 480, helperFamily s r h < 14336)
-    (w : ℕ) (hw : w < 704) :
-    ∃ hf : (callFamilies s r)[w]'(by rw [callFamilies_length]; exact hw) < 14336,
-      callReg s r w = .inl ⟨(callFamilies s r)[w]'(by rw [callFamilies_length]; exact hw), hf⟩ := by
+theorem helperFamily_eq {s r h : ℕ} (hh : h < (rolesList s r).length) :
+    helperFamily s r h = (rolesList s r)[h] := by
+  simp [helperFamily, List.getD_eq_getElem?_getD, List.getElem?_eq_getElem hh]
+
+theorem callReg_family {s r : ℕ} (hr : r < 16) (hl : (rolesList s r).length = 480)
+    (hlt : ∀ h < 480, helperFamily s r h < 14336) (w : ℕ) (hw : w < 704) :
+    ∃ hf : (callFamilies s r)[w]'(by rw [callFamilies_length hl]; exact hw) < 14336,
+      callReg s r w = .inl ⟨(callFamilies s r)[w]'(by rw [callFamilies_length hl]; exact hw), hf⟩ := by
   by_cases h1 : w < 112
-  · have e : (callFamilies s r)[w]'(by rw [callFamilies_length]; exact hw) =
+  · have e : (callFamilies s r)[w]'(by rw [callFamilies_length hl]; exact hw) =
         famIdx r w (toStream (2 * localPair s)) := by
       simp [callFamilies, List.getElem_append_left, h1]
     refine ⟨e ▸ famIdx_lt hr h1 _, ?_⟩
     rw [callReg_X h1, streamUnit_val hr h1]
     simp [e]
   · by_cases h2 : w < 224
-    · have e : (callFamilies s r)[w]'(by rw [callFamilies_length]; exact hw) =
+    · have e : (callFamilies s r)[w]'(by rw [callFamilies_length hl]; exact hw) =
           famIdx r (w - 112) (toStream (2 * localPair s + 1)) := by
         simp only [callFamilies]
         rw [List.getElem_append_left (by simp; omega), List.getElem_append_right (by simp; omega)]
@@ -78,10 +83,10 @@ theorem callReg_family {s r : ℕ} (hr : r < 16) (hlt : ∀ h < 480, helperFamil
       rw [show w - 112 + 112 = w by omega] at this
       rw [this, streamUnit_val hr (by omega)]
       simp [e]
-    · have e : (callFamilies s r)[w]'(by rw [callFamilies_length]; exact hw) =
+    · have e : (callFamilies s r)[w]'(by rw [callFamilies_length hl]; exact hw) =
           helperFamily s r (w - 224) := by
         simp only [callFamilies]
-        rw [List.getElem_append_right (by simp; omega)]
+        rw [List.getElem_append_right (by simp; omega), helperFamily_eq (by rw [hl]; omega)]
         simp
       refine ⟨e ▸ hlt _ (by omega), ?_⟩
       have := callReg_helper (s := s) (r := r) (h := w - 224) (by omega)
@@ -90,21 +95,21 @@ theorem callReg_family {s r : ℕ} (hr : r < 16) (hlt : ∀ h < 480, helperFamil
       simp [e]
 
 /-- **Distinct registers.** -/
-theorem callReg_inj {s r : ℕ} (hr : r < 16) (hlt : ∀ h < 480, helperFamily s r h < 14336)
-    (hd : insertAll 0 (callFamilies s r) ≠ none) :
+theorem callReg_inj {s r : ℕ} (hr : r < 16) (hl : (rolesList s r).length = 480)
+    (hlt : ∀ h < 480, helperFamily s r h < 14336) (hd : insertAll 0 (callFamilies s r) ≠ none) :
     ∀ w < 712, ∀ w' < 712, callReg s r w = callReg s r w' → w = w' := by
   have hnd := nodup_of_insertAll hd
   intro w hw w' hw' e
   by_cases h1 : w < 704 <;> by_cases h2 : w' < 704
-  · obtain ⟨hf, ef⟩ := callReg_family hr hlt w h1
-    obtain ⟨hf', ef'⟩ := callReg_family hr hlt w' h2
+  · obtain ⟨hf, ef⟩ := callReg_family hr hl hlt w h1
+    obtain ⟨hf', ef'⟩ := callReg_family hr hl hlt w' h2
     rw [ef, ef'] at e
     have := congrArg Fin.val (Sum.inl_injective e)
     exact (List.Nodup.getElem_inj_iff hnd).mp this
-  · obtain ⟨hf, ef⟩ := callReg_family hr hlt w h1
+  · obtain ⟨hf, ef⟩ := callReg_family hr hl hlt w h1
     rw [ef] at e
     simp [callReg, show ¬ w' < 112 by omega, show ¬ w' < 224 by omega, h2] at e
-  · obtain ⟨hf', ef'⟩ := callReg_family hr hlt w' h2
+  · obtain ⟨hf', ef'⟩ := callReg_family hr hl hlt w' h2
     rw [ef'] at e
     simp [callReg, show ¬ w < 112 by omega, show ¬ w < 224 by omega, h1] at e
   · simp only [callReg, show ¬ w < 112 by omega, show ¬ w < 224 by omega, h1,

@@ -14,8 +14,8 @@ public import IntegerMultBounds.Networks.Certificates.T16.Impl.Roles8
 @[expose] public section
 namespace IntegerMultBounds.Networks.Certificates.T16.Impl
 
-/-- The family of helper register `h` of the invocation at stage `s`, replica `r`. -/
-def helperFamily (s r h : ℕ) : ℕ :=
+/-- The helper families of the invocation at stage `s`, replica `r`, in register order. -/
+def rolesList (s r : ℕ) : List ℕ :=
   (match s with
     | 0 => roles0
     | 1 => roles1
@@ -26,6 +26,9 @@ def helperFamily (s r h : ℕ) : ℕ :=
     | 6 => roles6
     | 7 => roles7
     | 8 => roles8
-    | _ => fun _ => []) r |>.getD h 0
+    | _ => fun _ => []) r
+
+/-- The family of helper register `h` of the invocation at stage `s`, replica `r`. -/
+def helperFamily (s r h : ℕ) : ℕ := (rolesList s r).getD h 0
 
 end IntegerMultBounds.Networks.Certificates.T16.Impl
