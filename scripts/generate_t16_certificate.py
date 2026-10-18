@@ -46,7 +46,7 @@ def main():
         raw=(a.source/name).read_bytes()
         if hashlib.sha256(raw).hexdigest()!=digest: raise SystemExit('Pinned hash mismatch: '+name)
         data[name]=json.loads(gzip.decompress(raw) if name.endswith('.gz') else raw)
-    plan=data[PACKAGE+'/data/PLAN.json']; owners=data[PACKAGE+'/data/OWNERS.json.gz']
+    plan=data[PACKAGE+'/data/PLAN.json']
     programs=data[LOCAL+'/LOCAL-PROGRAMS.json.gz']; word=data[LOCAL+'/CANONICAL-WORD.json.gz']
     assert (word['v'],word['R'],len(word['frames']))==(112,480,1004)
     OUT.mkdir(parents=True,exist_ok=True)
@@ -77,39 +77,6 @@ def main():
         text+='    2412*price 1+418*price 2+432*price 3+142*price 4+82*price 5+8*price 8 := by\n'
         text+=f'  rw [chunkCost_eq, {ori}_profile]\n  rfl\n'
         emit(ori.capitalize(),text)
-    # Owner projections retain every coordinate and offset; no interval or disjointness claim.
-    for part in range(4):
-        text=header(['Profile']); subset=owners[part*17280:(part+1)*17280]
-        names=[]
-        for j,lo in enumerate(range(0,len(subset),64)):
-            rs=subset[lo:lo+64];name=f'owners{part}_{j}'
-            names.append(name)
-            fields=['time','stage','replica','helper','owner_replica','child','port','copy','family','offset','width']
-            rows=['⟨'+','.join(str(o[k]) for k in fields)+'⟩' for o in rs]
-            text+=f'def {name} : List Owner := [\n'+',\n'.join(rows)+']\n'
-            text+=f'theorem {name}_valid : {name}.all Owner.valid = true := by decide\n\n'
-            text+=f'theorem {name}_length : {name}.length = {len(rs)} := rfl\n'
-        groups=[]
-        for g,lo in enumerate(range(0,len(names),30)):
-            gn=f'ownerGroup{part}_{g}'; groups.append(gn); ns=names[lo:lo+30]
-            text+=f'def {gn} : List (List Owner) := ['+','.join(ns)+']\n'
-            text+=f'theorem {gn}_valid : ({gn}.map fun xs => xs.all Owner.valid).all id = true := by\n'
-            text+='  simp only ['+gn+', List.map_cons, List.map_nil, '+','.join(n+'_valid' for n in ns)+']\n  rfl\n'
-            text+=f'theorem {gn}_length : ({gn}.map List.length).sum = {64*len(ns)} := by\n'
-            text+='  simp only ['+gn+', List.map_cons, List.map_nil, '+','.join(n+'_length' for n in ns)+']\n  rfl\n'
-        text+=f'def ownerChunks{part} : List (List Owner) := '+' ++ '.join(groups)+'\n'
-        text+=f'theorem ownerChunks{part}_valid : (ownerChunks{part}.map fun xs => xs.all Owner.valid).all id = true := by\n'
-        text+='  simp only [ownerChunks'+str(part)+', List.map_append, List.all_append, '+','.join(n+'_valid' for n in groups)+']\n  rfl\n'
-        text+=f'theorem ownerChunks{part}_length : (ownerChunks{part}.map List.length).sum = 17280 := by\n'
-        text+='  simp [ownerChunks'+str(part)+', List.map_append, List.sum_append, '+','.join(n+'_length' for n in groups)+']\n'
-        emit('Owners'+str(part),text)
-    text=header(['Owners0','Owners1','Owners2','Owners3'])
-    text+='def allOwnerChunks := ownerChunks0 ++ ownerChunks1 ++ ownerChunks2 ++ ownerChunks3\n'
-    text+='theorem allOwnerChunks_valid : (allOwnerChunks.map fun xs => xs.all Owner.valid).all id = true := by\n'
-    text+='  simp only [allOwnerChunks, List.map_append, List.all_append, ownerChunks0_valid, ownerChunks1_valid, ownerChunks2_valid, ownerChunks3_valid]\n  rfl\n'
-    text+='theorem allOwnerChunks_length : (allOwnerChunks.map List.length).sum = 69120 := by\n'
-    text+='  simp [allOwnerChunks, List.map_append, List.sum_append, ownerChunks0_length, ownerChunks1_length, ownerChunks2_length, ownerChunks3_length]\n'
-    emit('Owners',text)
     calls=plan['provider_calls'];assert len(calls)==144
     text=header(['Forward','Backward'])
     callnames=[]
