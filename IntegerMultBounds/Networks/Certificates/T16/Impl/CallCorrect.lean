@@ -232,4 +232,40 @@ theorem lhs_other {s r : ℕ} (F : CallFacts s r) (v : NodeUnit) (hv : ∀ w < 7
   · rw [callProgram_backward hrev]
     exact (backward_invocation ρ _ F.inj _ _ y).2.2 v hv
 
+/-! ### Correctness -/
+
+theorem famUnit_inl {f : ℕ} (hf : f < 14336) : famUnit f = .inl ⟨f, hf⟩ := by
+  simp only [famUnit, Sum.inl.injEq]
+  exact Fin.ext (Nat.mod_eq_of_lt hf)
+
+theorem not_helper_hostAcc {s r : ℕ} (F : CallFacts s r) {r' a' : ℕ} (hr' : r' < 16)
+    (ha' : a' < 112) (i : Fin 8) (hn : ∀ h < 480, helperFamily s r h ≠ famIdx r' a' i) :
+    hostAcc (groupData r' a') (slotOf s r) i = Vec.zero := by
+  by_contra hne
+  obtain ⟨h, hh, he⟩ := F.complete r' hr' a' ha' i hne
+  exact hn h hh he
+
+theorem streamUnit_val {r a : ℕ} (hr : r < 16) (ha : a < 112) (i : Fin 8) :
+    streamUnit r a i = .inl ⟨famIdx r a i, famIdx_lt hr ha i⟩ := by
+  simp only [streamUnit, Sum.inl.injEq]
+  exact Fin.ext (Nat.mod_eq_of_lt (famIdx_lt hr ha i))
+
+/-- Data units of the invocation are not helper families. -/
+theorem data_not_helper {s r : ℕ} (F : CallFacts s r) (hr : r < 16) {a : ℕ} (ha : a < 112)
+    (side : ℕ) (hside : side < 2) (h : ℕ) (hh : h < 480) :
+    helperFamily s r h ≠ famIdx r a (toStream (2 * localPair s + side)) := by
+  intro e
+  have hw : callReg s r (a + 112 * side) = callReg s r (224 + h) := by
+    rw [callReg_helper hh, famUnit_inl (F.helper_lt h hh)]
+    interval_cases side
+    · rw [show a + 112 * 0 = a by omega, callReg_X ha, streamUnit_val hr ha]
+      simp only [Sum.inl.injEq, Fin.mk.injEq]
+      rw [e]
+      rfl
+    · rw [show a + 112 * 1 = a + 112 by omega, callReg_Y ha, streamUnit_val hr ha]
+      simp only [Sum.inl.injEq, Fin.mk.injEq]
+      rw [e]
+  have := F.inj _ (by omega) _ (by omega) hw
+  omega
+
 end IntegerMultBounds.Networks.Certificates.T16.Impl
