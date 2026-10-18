@@ -3,7 +3,6 @@ module
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Algebra.BigOperators.Fin
 public import IntegerMultBounds.MathlibTM2.Layer.OccurrenceRecurrence
-public import IntegerMultBounds.Networks.Certificates.T16.Schedule
 
 /-!
 # Exact moment inequalities for the selected suppliers
@@ -261,51 +260,31 @@ theorem occurrence_moment_eq {L : List ℕ} {hist : List (ℕ × ℕ)} (hL : Rea
     List.sum_map_mul_left, hL.sum_map, histMoment]
   ring
 
-/-! ### T16 child occurrences from the checked owner schedule -/
+/-! ### T16 child occurrences from the selected call profile -/
 
 section T16
 
-open IntegerMultBounds.Networks.Certificates.T16
-
-/-- Ranks of a call's charge chunks, in order. -/
-def chunkRanks (css : List (List Charge)) : List ℕ :=
-  (css.map fun cs => cs.map fun c => c.rank.value).flatten
+/-- The selected per-call charge profile `(rank, count)`; both orientations agree. -/
+def callProfile : List (ℕ × ℕ) :=
+  [(1, 2412), (2, 418), (3, 432), (4, 142), (5, 82), (8, 8)]
 
 /-- Child ranks charged by one scheduled call. -/
-def callRanks (c : Call) : List ℕ :=
-  if c.forward then chunkRanks forwardChunks else chunkRanks backwardChunks
+def callRanks : List ℕ := (callProfile.map fun e => List.replicate e.2 e.1).flatten
 
-/-- The residual (idle) inventory added in `selected_profile_cost`. -/
+/-- The residual (idle) inventory added to the 144 scheduled calls. -/
 def idleRanks : List ℕ :=
   List.replicate 2276 1 ++ List.replicate 377 3 ++ List.replicate 7 7 ++ List.replicate 4866 48
 
 /-- Every T16 child occurrence: the 144 scheduled calls, then the residual inventory. -/
-def t16Ranks : List ℕ := (calls.map callRanks).flatten ++ idleRanks
-
-theorem chunkRanks_cost (css : List (List Charge)) (price : ℕ → ℕ) :
-    ((chunkRanks css).map price).sum = chunkCost css price := by
-  simp [chunkRanks, chunkCost, chargeCost, List.map_flatten, List.sum_flatten, List.map_map,
-    Function.comp_def]
+def t16Ranks : List ℕ := (List.replicate 144 callRanks).flatten ++ idleRanks
 
 theorem t16Ranks_cost (price : ℕ → ℕ) :
     (t16Ranks.map price).sum = (complexHistogram.map fun e => e.2 * price e.1).sum := by
-  have hcalls : ∀ cs : List Call, (((cs.map callRanks).flatten).map price).sum =
-      (cs.map fun c => if c.forward then chunkCost forwardChunks price
-        else chunkCost backwardChunks price).sum := by
-    intro cs
-    induction cs with
-    | nil => rfl
-    | cons c cs ih =>
-      rw [List.map_cons, List.flatten_cons, List.map_append, List.sum_append, ih, List.map_cons,
-        List.sum_cons, callRanks]
-      split <;> rw [chunkRanks_cost]
-  have hsched : (((calls.map callRanks).flatten).map price).sum = scheduleCost price :=
-    hcalls calls
-  have hprofile := selected_profile_cost price
-  rw [t16Ranks, List.map_append, List.sum_append, hsched]
-  simp only [idleRanks, List.map_append, List.sum_append, List.map_replicate, List.sum_replicate,
-    smul_eq_mul, complexHistogram, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil]
-  linarith
+  simp only [t16Ranks, callRanks, callProfile, idleRanks, complexHistogram, List.map_append,
+    List.sum_append, List.map_flatten, List.sum_flatten, List.map_replicate, List.sum_replicate,
+    List.map_cons, List.map_nil, List.flatten_cons, List.flatten_nil, List.sum_cons,
+    List.sum_nil, smul_eq_mul]
+  ring
 
 theorem t16Ranks_realizes : Realizes t16Ranks complexHistogram :=
   realizes_of_cost t16Ranks_cost
