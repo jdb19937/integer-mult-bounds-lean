@@ -85,7 +85,7 @@ theorem kernelHom_commute (B : Fin 73 → Address 73) :
   fun _ _ _ _ _ => kernel_commute _ _ _ _
 
 /-- The operator of a coefficient vector over the basis `B`. -/
-noncomputable def basisOp (B : Fin 73 → Address 73) : Op (Arrays 73) :=
+@[irreducible] noncomputable def basisOp (B : Fin 73 → Address 73) : Op (Arrays 73) :=
   (MonoidHom.noncommPiCoprod (fun k => kernelHom (B k)) (kernelHom_commute B)).comp splitHom
 
 theorem basisOp_single (B : Fin 73 → Address 73) (k : Fin 73) (q : ZMod 4) :

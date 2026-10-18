@@ -49,6 +49,23 @@ theorem eq_of_chars {A B : Arrays h →ₗ[ℂ] Arrays h} (hAB : ∀ u, A (charV
   intro u _
   rw [map_smul, map_smul, hAB]
 
+/-- Additive, homogeneous functions agreeing on all characters are equal. Composites of
+operators are compared through this form, so the kernel never unfolds a packaged composite. -/
+theorem eq_of_chars_fun {A B : Arrays h → Arrays h}
+    (hA0 : A 0 = 0) (hAadd : ∀ x y, A (x + y) = A x + A y) (hAsmul : ∀ (z : ℂ) x, A (z • x) = z • A x)
+    (hB0 : B 0 = 0) (hBadd : ∀ x y, B (x + y) = B x + B y) (hBsmul : ∀ (z : ℂ) x, B (z • x) = z • B x)
+    (hAB : ∀ u, A (charVec u) = B (charVec u)) (f : Arrays h) : A f = B f := by
+  have key : ∀ (C : Arrays h → Arrays h), C 0 = 0 → (∀ x y, C (x + y) = C x + C y) →
+      (∀ (z : ℂ) x, C (z • x) = z • C x) → ∀ s : Finset (Address h),
+        C (∑ u ∈ s, ((volume h)⁻¹ * walsh h f u) • charVec u) =
+          ∑ u ∈ s, ((volume h)⁻¹ * walsh h f u) • C (charVec u) := by
+    intro C h0 hadd hsmul s
+    induction s using Finset.induction_on with
+    | empty => simpa using h0
+    | insert a s ha ih => rw [Finset.sum_insert ha, Finset.sum_insert ha, hadd, hsmul, ih]
+  rw [sum_chars f, key A hA0 hAadd hAsmul, key B hB0 hBadd hBsmul]
+  simp only [hAB]
+
 /-- The phase function of a coefficient vector over a basis. -/
 def phaseExp (B : Fin 73 → Address 73) (c : Fin 73 → ZMod 4) (u : Address 73) : ZMod 4 :=
   ∑ k, c k * bitLift (Labels.binary 73 u (B k))
