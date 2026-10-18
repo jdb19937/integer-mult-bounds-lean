@@ -4,15 +4,48 @@ public import IntegerMultBounds.Networks.Certificates.T16.Impl.Lowering
 public import IntegerMultBounds.Networks.Certificates.T16.Trace.Framed
 public import IntegerMultBounds.Networks.Certificates.T16.TableauNative
 
-/-! The native local words as programs of rational gates and primitives. Every native label is
-framed by the lift of its exact canonical realization; every climb or centre edge becomes the
-primitive word of its exact frame transition (`Realization.exists_prims`), with as many child
-calls as its certified rank. The resulting programs act on arbitrary 73-bit register arrays by
-the framed execution of `Trace.forward_run` and `Trace.backward_run`. -/
+/-! The native local words as programs of rational gates and primitives. Programs run on
+arrays of any module `S` carrying a representation `ρ` of the 73-bit operators, such as the
+column tensor powers of the layer machine; a primitive acts on its wire by `ρ` of its operator.
+Every native label is framed by `ρ` of the lift of its exact canonical realization; every climb
+or centre edge becomes the primitive word of its exact frame transition
+(`Realization.exists_prims`), with as many child calls as its certified rank. The resulting
+programs act on arbitrary register arrays by the framed execution of `Trace.forward_run` and
+`Trace.backward_run`. -/
 @[expose] public section
 namespace IntegerMultBounds.Networks.Certificates.T16.Impl
 
 open BinaryWalsh BinaryPhase Streams Pauli FramedCircuit
+
+/-! ### Primitive operators -/
+
+/-- The operator of a primitive, as a linear map. -/
+noncomputable def Prim.lin : Prim → Module.End ℂ (Arrays 73)
+  | .kernel q v => BinaryWalsh.kernel q v
+  | .perm G => permOp G
+  | .diag φ => (phaseDiagonal φ).toLinearMap
+  | .scale c => c • LinearMap.id
+
+theorem Prim.lin_apply (p : Prim) (f : Arrays 73) : p.lin f = p.op f := by
+  cases p <;> rfl
+
+/-- The operator of a word, applied head first. -/
+noncomputable def wordLin : List Prim → Module.End ℂ (Arrays 73)
+  | [] => 1
+  | p :: ps => wordLin ps * p.lin
+
+theorem wordLin_apply (ps : List Prim) (f : Arrays 73) : wordLin ps f = wordOp ps f := by
+  induction ps generalizing f with
+  | nil => rfl
+  | cons p ps ih =>
+    change wordLin ps (p.lin f) = wordOp ps (p.op f)
+    rw [ih, Prim.lin_apply]
+
+theorem Lowers.lin {K : Realization} {ws : List Prim} (h : Lowers K ws) :
+    lift9 K.scalar.toLinearMap = wordLin ws :=
+  LinearMap.ext fun f => (h f).trans (wordLin_apply ws f).symm
+
+/-! ### Programs -/
 
 /-- One instruction: a rational gate or a primitive on one wire. -/
 inductive TInstr (ι : Type) where
@@ -20,30 +53,33 @@ inductive TInstr (ι : Type) where
   | prim (w : ι) (p : Prim)
 
 variable {ι : Type} [DecidableEq ι]
+variable {S : Type*} [AddCommGroup S] [Module ℂ S] [Module ℚ S]
+variable (ρ : Module.End ℂ (Arrays 73) →* Module.End ℂ S)
 
-noncomputable def TInstr.run : TInstr ι → (ι → Arrays 73) → (ι → Arrays 73)
+noncomputable def TInstr.run : TInstr ι → (ι → S) → (ι → S)
   | .gate g, x => moduleGate g x
-  | .prim w p, x => Function.update x w (p.op (x w))
+  | .prim w p, x => Function.update x w (ρ p.lin (x w))
 
 /-- Run a program, head first. -/
-noncomputable def runT : List (TInstr ι) → (ι → Arrays 73) → (ι → Arrays 73)
+noncomputable def runT : List (TInstr ι) → (ι → S) → (ι → S)
   | [], x => x
-  | i :: is, x => runT is (i.run x)
+  | i :: is, x => runT is (i.run ρ x)
 
-theorem runT_append (p q : List (TInstr ι)) (x : ι → Arrays 73) :
-    runT (p ++ q) x = runT q (runT p x) := by
+theorem runT_append (p q : List (TInstr ι)) (x : ι → S) :
+    runT ρ (p ++ q) x = runT ρ q (runT ρ p x) := by
   induction p generalizing x with
   | nil => rfl
   | cons i p ih => exact ih _
 
-theorem runT_prims (w : ι) (ps : List Prim) (x : ι → Arrays 73) :
-    runT (ps.map (TInstr.prim w)) x = Function.update x w (wordOp ps (x w)) := by
+theorem runT_prims (w : ι) (ps : List Prim) (x : ι → S) :
+    runT ρ (ps.map (TInstr.prim w)) x = Function.update x w (ρ (wordLin ps) (x w)) := by
   induction ps generalizing x with
-  | nil => simp [runT, wordOp]
+  | nil =>
+    change x = Function.update x w (ρ 1 (x w))
+    rw [map_one, Module.End.one_apply, Function.update_eq_self]
   | cons p ps ih =>
     simp only [List.map_cons, runT, TInstr.run]
-    rw [ih, Function.update_self, Function.update_idem]
-    rfl
+    rw [ih, Function.update_self, Function.update_idem, wordLin, map_mul, Module.End.mul_apply]
 
 /-- The number of child calls of a program. -/
 def TInstr.isChild : TInstr ι → Bool
@@ -65,9 +101,23 @@ theorem programChildren_prims (w : ι) (ps : List Prim) :
 
 /-! ### Frames and edges -/
 
-/-- The frame of a native label: the lift of its exact canonical realization. -/
-noncomputable def labelFrame (i : ℕ) : Frame ℚ (Arrays 73) :=
-  (lift9Equiv (nativeRealization i).scalar).restrictScalars ℚ
+/-- `ρ` of an equivalence, as an equivalence. -/
+noncomputable def repEquiv (T : Arrays 73 ≃ₗ[ℂ] Arrays 73) : S ≃ₗ[ℂ] S :=
+  LinearEquiv.ofLinearMap (ρ T.toLinearMap) (ρ T.symm.toLinearMap)
+    (by
+      rw [← Module.End.mul_eq_comp, ← map_mul,
+        show T.toLinearMap * T.symm.toLinearMap = 1 from by ext f; simp, map_one]
+      rfl)
+    (by
+      rw [← Module.End.mul_eq_comp, ← map_mul,
+        show T.symm.toLinearMap * T.toLinearMap = 1 from by ext f; simp, map_one]
+      rfl)
+
+variable [IsScalarTower ℚ ℂ S]
+
+/-- The frame of a native label: `ρ` of the lift of its exact canonical realization. -/
+noncomputable def labelFrame (i : ℕ) : Frame ℚ S :=
+  (repEquiv ρ (lift9Equiv (nativeRealization i).scalar)).restrictScalars ℚ
 
 /-- The primitive word of the transition from label `a` to label `b`. -/
 noncomputable def edgePrims (a b : ℕ) : List Prim :=
@@ -82,13 +132,16 @@ theorem childCount_edgePrims (a b : ℕ) :
   rw [edgePrims, (Classical.choose_spec (Realization.exists_prims (edgeRealization a b))).2,
     edgeRealization_width]
 
-theorem edge_apply (a b : ℕ) (f : Arrays 73) :
-    labelFrame b ((labelFrame a).symm f) = wordOp (edgePrims a b) f := by
-  rw [← edgePrims_lowers]
-  change lift9 (nativeRealization b).scalar.toLinearMap
-    (lift9 (nativeRealization a).scalar.symm.toLinearMap f) = _
-  rw [lift9_comp]
-  rfl
+theorem edge_apply (a b : ℕ) (y : S) :
+    labelFrame ρ b ((labelFrame ρ a).symm y) = ρ (wordLin (edgePrims a b)) y := by
+  rw [← (edgePrims_lowers a b).lin]
+  change ρ (lift9 (nativeRealization b).scalar.toLinearMap)
+    (ρ (lift9 (nativeRealization a).scalar.symm.toLinearMap) y) = _
+  have e : lift9 (nativeRealization b).scalar.toLinearMap *
+      lift9 (nativeRealization a).scalar.symm.toLinearMap =
+        lift9 (edgeRealization a b).scalar.toLinearMap :=
+    LinearMap.ext fun f => lift9_comp _ _ f
+  rw [← Module.End.mul_apply, ← map_mul, e]
 
 /-- The program of one framed event. -/
 noncomputable def implEvent : FramedEventTrace.Event ℕ ℕ ℚ → List (TInstr ℕ)
@@ -97,8 +150,8 @@ noncomputable def implEvent : FramedEventTrace.Event ℕ ℕ ℚ → List (TInst
   | .clear i _ => [.gate (FramedEventTrace.clearGate i)]
   | .copy s t _ => [.gate (FramedEventTrace.copyGate s t)]
 
-theorem implEvent_run (e : FramedEventTrace.Event ℕ ℕ ℚ) (x : ℕ → Arrays 73) :
-    runT (implEvent e) x = execute (FramedEventTrace.instruction labelFrame e) x := by
+theorem implEvent_run (e : FramedEventTrace.Event ℕ ℕ ℚ) (x : ℕ → S) :
+    runT ρ (implEvent e) x = execute (FramedEventTrace.instruction (labelFrame ρ) e) x := by
   cases e with
   | edge i old next =>
     rw [implEvent, runT_prims, ← edge_apply]
@@ -107,8 +160,9 @@ theorem implEvent_run (e : FramedEventTrace.Event ℕ ℕ ℚ) (x : ℕ → Arra
   | clear i _ => rfl
   | copy s t _ => rfl
 
-theorem impl_run (es : List (FramedEventTrace.Event ℕ ℕ ℚ)) (x : ℕ → Arrays 73) :
-    runT (es.flatMap implEvent) x = FramedCircuit.run (FramedEventTrace.lower labelFrame es) x := by
+theorem impl_run (es : List (FramedEventTrace.Event ℕ ℕ ℚ)) (x : ℕ → S) :
+    runT ρ (es.flatMap implEvent) x =
+      FramedCircuit.run (FramedEventTrace.lower (labelFrame ρ) es) x := by
   induction es generalizing x with
   | nil => rfl
   | cons e es ih =>
@@ -124,15 +178,16 @@ noncomputable def forwardWord : List (TInstr ℕ) := (Trace.framed Trace.forward
 noncomputable def backwardWord : List (TInstr ℕ) :=
   (Trace.framed Trace.backwardEvents).flatMap implEvent
 
-theorem forwardWord_run (x : ℕ → Arrays 73) :
-    runT forwardWord x = encode (fun i => labelFrame (Trace.forwardFinal.label i))
-      (moduleRun Trace.forwardProgram (decode (fun i => labelFrame (Trace.forwardInitial.label i)) x)) := by
+theorem forwardWord_run (x : ℕ → S) :
+    runT ρ forwardWord x = encode (fun i => labelFrame ρ (Trace.forwardFinal.label i))
+      (moduleRun Trace.forwardProgram
+        (decode (fun i => labelFrame ρ (Trace.forwardInitial.label i)) x)) := by
   rw [forwardWord, impl_run, Trace.forward_run]
 
-theorem backwardWord_run (x : ℕ → Arrays 73) :
-    runT backwardWord x = encode (fun i => labelFrame (Trace.backwardFinal.label i))
+theorem backwardWord_run (x : ℕ → S) :
+    runT ρ backwardWord x = encode (fun i => labelFrame ρ (Trace.backwardFinal.label i))
       (moduleRun Trace.backwardProgram
-        (decode (fun i => labelFrame (Trace.backwardInitial.label i)) x)) := by
+        (decode (fun i => labelFrame ρ (Trace.backwardInitial.label i)) x)) := by
   rw [backwardWord, impl_run, Trace.backward_run]
 
 /-! ### Child calls -/
