@@ -268,4 +268,139 @@ theorem data_not_helper {s r : ℕ} (F : CallFacts s r) (hr : r < 16) {a : ℕ} 
   have := F.inj _ (by omega) _ (by omega) hw
   omega
 
+theorem toStream_two_mul_ne (n : ℕ) : toStream (2 * n) ≠ toStream (2 * n + 1) := by
+  simp only [toStream, ne_eq, Fin.mk.injEq]
+  omega
+
+/-- A family that is neither a data unit of the invocation nor a helper family is no register. -/
+theorem not_register {s r : ℕ} (hr : r < 16) (F : CallFacts s r) {r' a' : ℕ} (hr' : r' < 16)
+    (ha' : a' < 112) {i : Fin 8} {j : Fin 14336} (hv : streamUnit r' a' i = .inl j)
+    (hX : ¬ (r = r' ∧ i = toStream (2 * localPair s)))
+    (hY : ¬ (r = r' ∧ i = toStream (2 * localPair s + 1)))
+    (hhelp : ∀ h, h < 480 → ¬ helperFamily s r h = j.val) :
+    ∀ w < 712, callReg s r w ≠ .inl j := by
+  intro w hw e
+  rw [← hv] at e
+  by_cases h1 : w < 112
+  · rw [callReg_X h1] at e
+    obtain ⟨e1, -, e3⟩ := streamUnit_inj hr h1 hr' ha' e
+    exact hX ⟨e1, e3.symm⟩
+  · by_cases h2 : w < 224
+    · have e' : callReg s r ((w - 112) + 112) = streamUnit r' a' i := by
+        rw [show w - 112 + 112 = w by omega]; exact e
+      rw [callReg_Y (by omega)] at e'
+      obtain ⟨e1, -, e3⟩ := streamUnit_inj hr (by omega) hr' ha' e'
+      exact hY ⟨e1, e3.symm⟩
+    · by_cases h3 : w < 704
+      · have e' : callReg s r (224 + (w - 224)) = streamUnit r' a' i := by
+          rw [show 224 + (w - 224) = w by omega]; exact e
+        rw [callReg_helper (by omega), famUnit_inl (F.helper_lt _ (by omega)), hv] at e'
+        exact hhelp (w - 224) (by omega) (congrArg Fin.val (Sum.inl_injective e'))
+      · simp [callReg, h1, h2, h3, hv] at e
+
+/-- **A local invocation.** On every family, the program of the invocation at stage `s`,
+replica `r` acts exactly as the stream events of that template event. -/
+theorem call_correct {s r : ℕ} (hr : r < 16) (F : CallFacts s r) (y : NodeUnit → S)
+    (j : Fin 14336) :
+    runT ρ (callProgram s r) y (.inl j) = runUnits (portRep ρ) (eventOps (.local s r)) y (.inl j) := by
+  set r' := j.val / 896
+  set a' := j.val % 112
+  set i := toStream ((j.val % 896) / 112)
+  have hr' : r' < 16 := by omega
+  have ha' : a' < 112 := Nat.mod_lt _ (by decide)
+  have hv : streamUnit r' a' i = .inl j := streamUnit_decomp j
+  have hfam : famIdx r' a' i = j.val := famIdx_decomp j.val j.isLt
+  rw [← hv, local_rhs ρ s r hr' ha' y i]
+  set Xs := toStream (2 * localPair s)
+  set Ys := toStream (2 * localPair s + 1)
+  set x : Fin 8 → S := fun i => portRep ρ a' (ofAdd (hostAcc (groupData r' a') (slotOf s r) i).toFun)
+    (y (streamUnit r' a' i))
+  by_cases hhelp : ∃ h < 480, helperFamily s r h = j.val
+  · -- a helper
+    obtain ⟨h, hh, he⟩ := hhelp
+    have hreg : callReg s r (224 + h) = streamUnit r' a' i := by
+      rw [callReg_helper hh, famUnit_inl (F.helper_lt h hh), hv]
+      exact congrArg Sum.inl (Fin.ext he)
+    rw [← hreg, lhs_helper ρ F hh y, hreg]
+    have hdata : (if r = r' then dataEvents (portData a') s (localPair s) (localReverse s) else []).length = 0 ∨
+        (i ≠ Xs ∧ i ≠ Ys) := by
+      by_cases hrr : r = r'
+      · right
+        constructor
+        · intro hi
+          exact data_not_helper F hr (a := a') ha' 0 (by omega) h hh (by
+            rw [he, ← hfam, hi, hrr]; rfl)
+        · intro hi
+          exact data_not_helper F hr (a := a') ha' 1 (by omega) h hh (by
+            rw [he, ← hfam, hi, hrr])
+      · left
+        simp [hrr]
+    have hrun : run (portRep ρ a') (if r = r' then dataEvents (portData a') s (localPair s)
+        (localReverse s) else []) x i = x i := by
+      by_cases hrr : r = r'
+      · rcases hdata with hl | ⟨h1, h2⟩
+        · simp [hrr, dataEvents] at hl
+        · rw [if_pos hrr, run_data]
+          simp only [Xs, Ys] at h1 h2
+          simp [h1, h2]
+      · rw [if_neg hrr]
+        rfl
+    rw [hrun]
+    have hf : helperFamily s r h = j.val := he
+    have hrep : famReplica (helperFamily s r h) = r' := by rw [hf]; rfl
+    have hport : famPort (helperFamily s r h) = a' := by rw [hf]; rfl
+    have hstr : famStream (helperFamily s r h) = i := by rw [hf]; rfl
+    have hpure := F.pure h hh
+    rw [hrep, hport, hstr] at hpure
+    change _ = portRep ρ a' (ofAdd (hostAcc (groupData r' a') (slotOf s r) i).toFun)
+      (y (streamUnit r' a' i))
+    have hv' : ((hostAcc (groupData r' a') (slotOf s r) i).1, 0) =
+        hostAcc (groupData r' a') (slotOf s r) i := Prod.ext rfl hpure.symm
+    rw [hport, helperMask, hrep, hport, hstr, maskFrame_eq, hv']
+  · simp only [not_exists, not_and] at hhelp
+    have hacc : ∀ i', famIdx r' a' i' = j.val →
+        hostAcc (groupData r' a') (slotOf s r) i' = Vec.zero := by
+      intro i' hi'
+      exact not_helper_hostAcc F hr' ha' i' (fun h hh e => hhelp h hh (e.trans hi'))
+    have hxi : x i = y (streamUnit r' a' i) := by
+      change portRep ρ a' _ _ = _
+      rw [hacc i hfam, Vec.toFun_zero, op_zero]
+    by_cases hrr : r = r'
+    · -- the data streams of this replica are not hosted here
+      have hxX : x Xs = y (streamUnit r' a' Xs) := by
+        change portRep ρ a' _ _ = _
+        rw [not_helper_hostAcc F hr' ha' Xs (fun h hh e => data_not_helper F hr ha' 0 (by omega) h hh
+          (by rw [e, hrr]; rfl)), Vec.toFun_zero, op_zero]
+      have hxY : x Ys = y (streamUnit r' a' Ys) := by
+        change portRep ρ a' _ _ = _
+        rw [not_helper_hostAcc F hr' ha' Ys (fun h hh e => data_not_helper F hr ha' 1 (by omega) h hh
+          (by rw [e, hrr])), Vec.toFun_zero, op_zero]
+      have hXY := toStream_two_mul_ne (localPair s)
+      rw [if_pos hrr, run_data]
+      by_cases hiX : i = Xs
+      · -- a source
+        have hreg : callReg s r a' = streamUnit r' a' i := by rw [callReg_X ha', hrr, hiX]
+        rw [← hreg, lhs_X ρ F ha' y, hreg, if_pos hiX, hxi,
+          show x (toStream (2 * localPair s + 1)) = y (callReg s r (a' + 112)) by
+            rw [callReg_Y ha', hrr]; exact hxY]
+        simp only [frameX, frameY, Vec.toFun_neg]
+      · by_cases hiY : i = Ys
+        · -- a target
+          have hreg : callReg s r (a' + 112) = streamUnit r' a' i := by rw [callReg_Y ha', hrr, hiY]
+          rw [← hreg, lhs_Y ρ F ha' y, hreg, if_neg hiX, if_pos hiY, hxi,
+            show x (toStream (2 * localPair s)) = y (callReg s r a') by
+              rw [callReg_X ha', hrr]; exact hxX]
+          simp only [frameX, frameY, Vec.toFun_neg]
+        · -- neither
+          rw [if_neg hiX, if_neg hiY, hxi]
+          exact lhs_other ρ F _ (by
+            rw [hv]
+            exact not_register hr F hr' ha' hv (fun h => hiX h.2) (fun h => hiY h.2) hhelp) y
+    · rw [if_neg hrr]
+      change _ = x i
+      rw [hxi]
+      exact lhs_other ρ F _ (by
+        rw [hv]
+        exact not_register hr F hr' ha' hv (fun h => hrr h.1) (fun h => hrr h.1) hhelp) y
+
 end IntegerMultBounds.Networks.Certificates.T16.Impl
