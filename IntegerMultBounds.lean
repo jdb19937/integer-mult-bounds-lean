@@ -1948,9 +1948,6 @@ public import IntegerMultBounds.MathlibTM2.Fast.CompactMainBootstrapTransformFra
 public import IntegerMultBounds.MathlibTM2.Fast.CompactMainTransformPipeline
 
 public import IntegerMultBounds.MathlibTM2.Cost.CompactCallerCombinedBudget
-public import IntegerMultBounds.MathlibTM2.Cost.CompactCallerOverheadRuntime
-public import IntegerMultBounds.MathlibTM2.Cost.CompactCallerUniformBudget
-public import IntegerMultBounds.MathlibTM2.Cost.CompactCallerUniformOverhead
 public import IntegerMultBounds.MathlibTM2.Cost.CompactCallerUniformReadiness
 public import IntegerMultBounds.MathlibTM2.Cost.CompactPieceUniformPacking
 public import IntegerMultBounds.MathlibTM2.Fast.CompactTopUniformRuntimeExecution
@@ -2014,7 +2011,6 @@ public import IntegerMultBounds.MathlibTM2.Fast.CompactSynRetunedMainEntry
 public import IntegerMultBounds.MathlibTM2.Fast.CompactSynRetunedDistributionEntry
 public import IntegerMultBounds.MathlibTM2.Fast.CompactMainCalls
 public import IntegerMultBounds.MathlibTM2.Fast.CompactMainEntryTable
-public import IntegerMultBounds.MathlibTM2.Cost.CompactRetunedLayerMatch
 public import IntegerMultBounds.MathlibTM2.Cost.CompactRetunedDirectCost
 public import IntegerMultBounds.MathlibTM2.Fast.CompactMainTransformCalls
 public import IntegerMultBounds.MathlibTM2.Fast.CompactSynRetunedEntrySpecs
@@ -2023,7 +2019,6 @@ public import IntegerMultBounds.MathlibTM2.Fast.CompactSrcRetunedStages
 public import IntegerMultBounds.MathlibTM2.Fast.CompactMainTimeGlue
 public import IntegerMultBounds.MathlibTM2.Fast.CompactMainTimeBound
 public import IntegerMultBounds.MathlibTM2.Fast.CompactMainPrimitiveRuns
-public import IntegerMultBounds.MathlibTM2.Cost.CompactRetunedRoundMatch
 public import IntegerMultBounds.MathlibTM2.Cost.CompactRetunedLoopMatch
 public import IntegerMultBounds.MathlibTM2.Fast.CompactSourceCost
 public import IntegerMultBounds.MathlibTM2.Fast.CompactMainRunsCost
@@ -2033,7 +2028,6 @@ public import IntegerMultBounds.MathlibTM2.Fast.CompactMainSourceLift
 public import IntegerMultBounds.MathlibTM2.Fast.CompactMainSourceStages
 public import IntegerMultBounds.MathlibTM2.Cost.CompactRetunedLayoutMatch
 public import IntegerMultBounds.MathlibTM2.Cost.CompactRetunedStashMatch
-public import IntegerMultBounds.MathlibTM2.Cost.CompactRetunedTransformMatch
 public import IntegerMultBounds.MathlibTM2.Fast.CompactMainPrimitiveEntry
 public import IntegerMultBounds.MathlibTM2.Fast.CompactMainDispatch
 public import IntegerMultBounds.MathlibTM2.Fast.CompactRetunedMainBound

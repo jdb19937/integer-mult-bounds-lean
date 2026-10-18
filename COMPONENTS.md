@@ -4869,7 +4869,7 @@ Parameters and asymptotics.
 - `MathlibTM2/Mult/CompactSizes.lean`, `Cost/CompactCallerRetunedCapacity.lean`, `CompactCallerUniformRuntime.lean`: Parallel eighth-root chunk sizes, monotone reservation capacity and uniform actual packing between the original and larger chunk sizes. Executable retuning and the stronger total-cost theorem remain separate.
 
 - `MathlibTM2/Fast/CompactSynFwd.lean`, `CompactSynOpp.lean`, `CompactSynTransformPre.lean`, `CompactSynFwdSpec.lean`, `CompactSynOppSpec.lean`, `CompactSynInitialTransforms.lean`, `CompactSynConcreteTransforms.lean`: Complete concrete forward/opposite transform specifications on the expanded main host, with original numerical/error semantics, actual initial parameters and existing layouts. Charged bootstrap/core/exit restore all non-output registers; final eventual contracts require no execution, layout or readiness oracle.
-- `MathlibTM2/Cost/CompactCallerCombinedBudget.lean`, `CompactCallerOverheadRuntime.lean`, `CompactCallerUniformBudget.lean`, `CompactCallerUniformOverhead.lean`: Combined dyadic scalar/divisor polynomial budget, derived actual piece validity and complete overhead bounded by `2^15*V+2*stash`, uniformly for larger chunk sizes and explicitly for eighth-root chunks.
+- `MathlibTM2/Cost/CompactCallerCombinedBudget.lean`: Combined dyadic scalar/divisor polynomial budget, derived actual piece validity and complete overhead bounded by `2^15*V+2*stash`, uniformly for larger chunk sizes and explicitly for eighth-root chunks.
 - `MathlibTM2/Cost/CompactCallerUniformReadiness.lean`, `CompactPieceUniformPacking.lean`, `Fast/CompactTopUniformRuntimeExecution.lean`, `CompactSynLayerStepUniformRuntime.lean`: Uniform shared shape, selected row and descendant repair packing; actual recursive top execution from refreshed/parked files, for every chunk size between the legacy chunk and original dimension.
 - `MathlibTM2/Cost/CompactCallerGuardPower.lean`, `CompactCallerLayerGrowth.lean`: Actual precision guard bounded by a dyadic coefficient times any positive original-dimension power; the full guard factor in the closed compact layer recurrence fits the proposed layer exponent gap.
 
@@ -4887,17 +4887,17 @@ Parameters and asymptotics.
 - `MathlibTM2/Fast/CompactSynRetunedMainFrame.lean`, `CompactSynRetunedMainEntry.lean`, `CompactSynRetunedDistributionEntry.lean`: Actual distribution establishes placed retuned transform entry; forward/opposite specifications preserve the main frame.
 - `MathlibTM2/Fast/CompactMainCalls.lean`, `CompactMainEntryTable.lean`: Restricted-call execution transport allows replacement of the main entry while preserving both recursive layer tables.
 
-- `MathlibTM2/Cost/CompactRetunedLayerMatch.lean`, `CompactRetunedDirectCost.lean`: Actual full-dimension chunk-layer cost with caller obligations discharged, and actual retuned direct-branch costs matched to the compact convolution envelope.
+- `MathlibTM2/Cost/CompactRetunedDirectCost.lean`: Actual full-dimension chunk-layer cost with caller obligations discharged, and actual retuned direct-branch costs matched to the compact convolution envelope.
 - `MathlibTM2/Fast/CompactMainTransformCalls.lean`, `CompactSynRetunedEntrySpecs.lean`, `CompactSrcRetunedFrame.lean`, `CompactSrcRetunedStages.lean`: Full retuned source transforms under an arbitrary expanded main entry, with restricted-call transport, preserved source frame and exact stage costs.
 - `MathlibTM2/Fast/CompactMainPrimitiveRuns.lean`: Legacy source primitives transported into the expanded host with preserved private bank and one charged normalization step.
 - `MathlibTM2/Fast/CompactMainTimeGlue.lean`, `CompactMainTimeBound.lean`: Aggregate unchanged primitive costs with supplied expanded source costs and symbolic host cleanup; fixed normalization overhead is absorbed, yielding the stronger asymptotic bound conditional on the source-run cost match.
 
-- `MathlibTM2/Cost/CompactRetunedRoundMatch.lean`, `CompactRetunedLoopMatch.lean`: Actual compact/direct round costs and both loop sums fit the retuned convolution envelope with an explicit stash budget.
+- `MathlibTM2/Cost/CompactRetunedLoopMatch.lean`: Actual compact/direct round costs and both loop sums fit the retuned convolution envelope with an explicit stash budget.
 - `MathlibTM2/Fast/CompactSourceCost.lean`, `CompactMainRunsCost.lean`, `CompactMainRunsTime.lean`: Expanded-host source core and forward/opposite costs; all three source runs and full main-cost envelope yield the stronger asymptotic bound once complete transform costs are matched.
 
 - `MathlibTM2/Fast/CompactMainStableFrame.lean`, `CompactMainSourceLift.lean`, `CompactMainSourceStages.lean`: Main-chain invariant stable under main-register changes, and placed source stages that recover their precision source at entry.
 
-- `MathlibTM2/Cost/CompactRetunedLayoutMatch.lean`, `CompactRetunedStashMatch.lean`, `CompactRetunedTransformMatch.lean`: Complete concrete forward/opposite costs, including layouts, actual stored wires, original-source bootstrap, loops and cleanup, fit the retuned convolution envelope without supplied stage-cost hypotheses.
+- `MathlibTM2/Cost/CompactRetunedLayoutMatch.lean`, `CompactRetunedStashMatch.lean`: Complete concrete forward/opposite costs, including layouts, actual stored wires, original-source bootstrap, loops and cleanup, fit the retuned convolution envelope without supplied stage-cost hypotheses.
 - `MathlibTM2/Fast/CompactMainPrimitiveEntry.lean`: Original primitive executions and call support transported under the replaced main entry, preserving private registers with one charged normalization step.
 - `MathlibTM2/Fast/CompactMainDispatch.lean`, `CompactRetunedMainBound.lean`: Concrete full-time estimate at saving `2^-37` and final finite-machine packaging, conditional only on eventual execution within that estimate; public multiplier theorem remains unchanged.
 
