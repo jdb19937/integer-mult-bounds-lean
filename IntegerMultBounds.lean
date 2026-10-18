@@ -72,8 +72,6 @@ public import IntegerMultBounds.Parameters
 public import IntegerMultBounds.Asymptotics
 public import IntegerMultBounds.TimeBound
 public import IntegerMultBounds.Sizes
-public import IntegerMultBounds.CostTable
-public import IntegerMultBounds.Assembly
 public import IntegerMultBounds.ExactRecovery
 public import IntegerMultBounds.Compact.Layout
 public import IntegerMultBounds.Compact.Radix
@@ -771,7 +769,6 @@ public import IntegerMultBounds.Machine.GaussianLineValue
 public import IntegerMultBounds.Resampling.WindowSum
 public import IntegerMultBounds.Resampling.OffDiagSum
 public import IntegerMultBounds.Resampling.NeumannWords
-public import IntegerMultBounds.Machine.Registers
 public import IntegerMultBounds.Resampling.TabledMaps
 public import IntegerMultBounds.Resampling.PiApprox
 public import IntegerMultBounds.Resampling.ExpApprox
@@ -1009,16 +1006,11 @@ public import IntegerMultBounds.Machine.CountedGatherMetadata
 public import IntegerMultBounds.Machine.CountedPackedLine
 public import IntegerMultBounds.Machine.CountedGatherClockPair
 public import IntegerMultBounds.Machine.CountedPackedShapeHeaders
-public import IntegerMultBounds.Machine.MultiplicationInputSplit
 public import IntegerMultBounds.Machine.CountedGatherOriginalRun
-public import IntegerMultBounds.Machine.ElementaryMultiplyCore
 public import IntegerMultBounds.Machine.CountedPackedOriginalLine
 public import IntegerMultBounds.Machine.CountedPackedRuntimeLine
-public import IntegerMultBounds.Machine.DoubleClockReverseCopy
 public import IntegerMultBounds.Machine.CountedPackedArith
 public import IntegerMultBounds.Machine.CountedPackedInverse
-public import IntegerMultBounds.Machine.ElementaryMultiplyOutputData
-public import IntegerMultBounds.Machine.ElementaryMultiply
 public import IntegerMultBounds.Machine.EqualWordReplace
 public import IntegerMultBounds.Machine.WordBankCleanup
 public import IntegerMultBounds.Machine.CountedPackedRecycle
@@ -1852,7 +1844,6 @@ public import IntegerMultBounds.Networks.GaussianHadamardPhase
 
 
 
-public import IntegerMultBounds.MathlibTM2
 public import IntegerMultBounds.MathlibTM2.Cost.CompactSwap
 public import IntegerMultBounds.MathlibTM2.Node.CompactRotParity
 public import IntegerMultBounds.MathlibTM2.Cost.CompactStageExec

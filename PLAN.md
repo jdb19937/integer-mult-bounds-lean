@@ -56,8 +56,9 @@ transitive proof dependency set is larger, as recorded by the
 [retention audit](docs/proof-retention.md).
 
 At `88279/2^46` the checks pass: `CompletedProofCheck` (only `propext`, `Classical.choice` and
-`Quot.sound`), `AxiomAudit` (122494 declarations), `CompactControlCheck` (558 contracts),
-`MathlibTM2Check` and `FastPathCheck`.
+`Quot.sound`), `AxiomAudit` (122494 declarations) and `CompactControlCheck` (558 contracts).
+The native-machine bridge and its `MathlibTM2Check`/`FastPathCheck` audits were removed
+2026-10-18 (restore from 5e12c129).
 
 **Corollary.** `MathlibTM2.DFT.dftInTime : DFTInTime (88279/2^46)`: one fixed finite machine
 computes the discrete Fourier transform over every prime field `F_p`, at every length with a

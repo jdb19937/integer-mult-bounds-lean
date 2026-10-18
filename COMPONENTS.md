@@ -4,8 +4,6 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 ## Machine
 
-- `Machine/WordTapeBridge.lean`: Whole-tape equality between writing a symbol word at the origin of a blank tape and the canonical `wordTape`, including negative cells and the blank suffix. Shared by the elementary multiplier's final output proof and the section 8 recovered-output installer.
-
 - `Machine/Composition.lean` and `Machine/Hoare.lean`: a concrete sequential
   composition of finite transition tables, exact execution with one extra
   transition, preservation of all tapes and heads at the connection, and
@@ -1476,25 +1474,15 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 - `Machine/CountedPackedShapeHeaders.lean`: Constructs the six original gather headers for each of the three static packed-line shapes from caller-owned canonical q/b/n alone. Physically writes and erases temporary zero/one, copies all six headers, preserves the caller and erases all eight private tapes on cleanup; setup and cleanup are linear in q+b+n+1. No derived-header input is supplied.
 
-- `Machine/MultiplicationInputSplit.lean`: A fixed three-tape thirteen-state parser preserves the original MSB-first x/separator/y input and physically writes least-significant-first copies of both operands to blank tapes. Literal endpoint, genuine halting and cost at most three x lengths plus two y lengths plus twelve include empty operands. Connecting multiplication and exact-width output installation remains separate.
-
 - `Machine/CountedGatherOriginalRun.lean`: One actual fixed gather constructs four suffix headers and two independent clocks from blank storage, executes the complete runtime-driven gather through caller-owned payload and original six headers, then physically erases every private tape. Exact gathered output, retained source/control and originals, arbitrary target exterior and a uniform169-times-full-stride bound include zero dimensions/counts; no prepared metadata or branch callbacks are supplied.
-
-- `Machine/ElementaryMultiplyCore.lean`: One fixed four-tape machine parses original packed input, physically positions the reversed operands and executes the literal Horner multiplier. The original input is retained and the literal accumulator has exact product value; equal-length runtime is at most24 times n squared plus n plus one, including empty operands. Exact twice-length MSB output installation and the fast path remain separate; no sublogarithmic claim is made.
 
 - `Machine/CountedPackedOriginalLine.lean`: One fixed seventeen-tape modular line constructs and erases all gather suffixes and both clocks from blank workspace, performs exact gathered column arithmetic, erases offset scratch and restores every payload head. Only the six original canonical gather headers remain inputs; they are retained, all six private tapes return blank, and the total uniform full-stride bound includes zero cases. Runtime q/b/n shape construction and multi-line composition are separate.
 
 - `Machine/CountedPackedRuntimeLine.lean`: One fixed twenty-two-tape line constructs shape headers from only original q/b/n, executes the original-header gathered modular arithmetic and erases all fourteen private tapes. Exact result semantics retain source/control/accumulator and original q/b/n, restore every payload head and offset scratch, and have uniform530-times-full-stride plus three accumulator lengths, including zero digits. The static shape kind and Boolean/rule operations are compile-time choices; no runtime dimensions appear in the program.
 
-- `Machine/DoubleClockReverseCopy.lean`: Fixed two-state machines use a literal bit word as a length clock to seek two source cells or copy two descending source cells per clock symbol. Exact twice-length execution retains every source/clock cell, preserves arbitrary target exterior and maps blank source cells to false bits, including empty clocks. Product-specific output semantics and final multiplication installation remain separate.
-
 - `Machine/CountedPackedArith.lean`: Fixed twenty-six-tape forward packed arithmetic composes five runtime-driven modular lines from original q/b/n and blank metadata storage. Exact packedEarly values, restored original descriptors and all fourteen private metadata tapes blank are proved, with uniform2669-times-full-stride cost. Intermediate payload words remain; reusable copy-back and payload erasure are separate.
 
 - `Machine/CountedPackedInverse.lean`: Fixed twenty-six-tape inverse packed arithmetic composes five runtime-driven lines, proves a true packedEarly preimage and restores original q/b/n and fourteen private metadata tapes with the same uniform stride bound. Intermediate payload words remain; physical permutation and reusable payload cleanup are separate.
-
-- `Machine/ElementaryMultiplyOutputData.lean`: Connects literal descending accumulator reads to exactly twice-length MSB product bits, padding blanks as zero. `horner_output_spec` combines output length and value for the Horner accumulator including empty operands, closing the fallback mathematics milestone and supplying the joint contract used by `ElementaryMultiply.runs_correct`.
-
-- `Machine/ElementaryMultiply.lean`: One fixed four-tape machine parses original multiplication input, computes the Horner accumulator, physically erases input and copies exactly twice-length MSB product bits using an operand clock. Genuine halting, literal outputCorrect and Assembly.RunsWithin at40 times n squared plus n plus one hold for every equal input length, including zero. This completes the ordinary quadratic fallback; fast-path assembly and the sub-n-log-n bound remain open.
 
 - `Machine/EqualWordReplace.lean`: One fixed two-tape seven-state machine copies an equal-width word over an existing target, rewinds both heads and preserves arbitrary exteriors. A literal overwrite lemma justifies replacing every target cell without a preliminary erasure; total cost is at most three lengths plus six, including empty words.
 
@@ -4267,12 +4255,6 @@ Transform, fixed-point, Kronecker and Gaussian resampling mathematics used by th
   `expPi` equals the natural `expPiNat` (even minus odd partial sums, shifted)
   and the three tables equal `tableANat`, `tableENat`, `tableDNat`.
 
-- `Machine/Registers.lean`: natural-number registers on tapes. A register of
-  `n` is the canonical binary word `canon n` at origin zero; canonical words
-  are unique for their value (`canonical_unique`), and the trim machine
-  (scan, step left, erase high zeros, return; `Trim.trim_hoare`) turns any
-  word into the register of its value (`norm_hoare`).
-
 - `Resampling/PiNat.lean`: Machin's sums in natural numbers, as the tape
   machine computes them: iterated quotients `dSeq` (`⌊2^q/m^(2k+1)⌋`),
   nonincreasing terms, even and odd partial sums whose difference is
@@ -4646,7 +4628,7 @@ Schönhage–Strassen multiplication, the fast multiplier used for the packed pr
 - `MathlibTM2/Node/CompactSwap.lean`, `Cost/CompactSwap.lean`: Prepared two-field interchange on actual host bit streams, with arbitrary dirty compact fields, preserved spectators and exact register restoration. Runtime is bounded in compact width and total bit volume, with bank-size assumptions explicit. Header production and conversion from the live layer encoding remain separate.
 - `MathlibTM2/Node/CompactRotParity.lean`: Seven-register host scanner packs the low bit of each runtime-width block into padded output blocks, preserves the source and parameter registers, and restores scratch with an exact linear step count. This builds an offset word; it does not execute a full compact toggle. `CompactControlCheck.lean` audits the new primitive contracts.
 - `MathlibTM2/Theorem.lean`: Unconditional `MathlibTM2.statement` proves that one fixed finite Mathlib machine multiplies every input pair in worst-case time below n log n. The complete host program and actual cost bound are supplied internally, with positive saving `2^-66`. This is the completed route in plan C; the original compact-control target uses the larger saving `83/10^12`.
-- `MathlibTM2/Fast/Final.lean`, `Cost/MatchSynLoop.lean`, `Cost/Total.lean`: Assemble the implemented parameter distribution, synthetic transforms and full multiplier, discharge the last transform-loop cost premise, and prove the total-time bound. `Fast/MainCorrect.mn_hostMul_ge` supplies large-input correctness; the finite dispatcher covers short inputs. `FastPathCheck.lean` checks the final theorem's three-standard-axiom dependency set.
+- `MathlibTM2/Fast/Final.lean`, `Cost/MatchSynLoop.lean`, `Cost/Total.lean`: Assemble the implemented parameter distribution, synthetic transforms and full multiplier, discharge the last transform-loop cost premise, and prove the total-time bound. `Fast/MainCorrect.mn_hostMul_ge` supplies large-input correctness; the finite dispatcher covers short inputs. `CompletedProofCheck.lean` checks the final theorem's three-standard-axiom dependency set.
 - `MathlibTM2/Mult/PipelineOutput.lean`: Instantiates exact-width carry normalization and the literal output contract with the contribution's concrete numerical multiplication pipeline. For all large input lengths, original equal-length MSB words yield exactly twice-length product bits with no supplied coefficient or transform-error hypothesis. The complete host machine now produces canonical Mathlib output through `MathlibTM2.statement`; installing this separate exact-width native word and matching the stronger compact-control parameters remain separate targets.
 - `MathlibTM2/Mult/TransformRecords.lean`: Converts both computed synthetic transforms to explicit public signed records. Original disk-grid records imply exact output record count, disk-grid numerator bounds and the existing strict forward/opposite `Close` guarantees with identity layout. Actual host transform loops in their physical layout and their total step bound are now supplied by `Fast/SynFwd` and `Cost/MatchSynLoop`; the original native public-bank target remains distinct.
 - `MathlibTM2/Layer/LayerZ.lean`, `NodeZ.lean`, `TopZ.lean`: The contributed scaled Gaussian recursion has unconditional mathematical correctness by induction over children; the normalized top-level function includes phases, padding, piece composition and final truncation. This is a different representation from the native event schedule and its ledger.
@@ -4749,23 +4731,6 @@ Parameters and asymptotics.
   `ℓ = ⌈log₂ T / d⌉`, and the axis length `r = 2^ℓ` is at least
   `2^(p^(1-ε) / 12)`. These are the comparison constants `a_d = a_r = 1/12`,
   `b_d = 1`, `b_r = 1/3` of the layer and transform interfaces.
-- `CostTable.lean`: the cost table of §8 with the witness margins. Each row's
-  cost per unit volume, written in the size parameters, is eventually a fixed
-  multiple of `p^(1 - margin i)`: prefix-slot moves `d K`, chunk exchanges
-  `p K^(τ-1)`, simultaneous rounds `ℓ d^λ'`, CRT and axis layouts
-  `d (1 + ℓ^τ)`, Gaussian line maps `d p^(1/2+δ) α` with
-  `α = ⌈(12 d b)^(1/4)⌉`, chirps and twists `d p^δ`, and packed products
-  `log (r p)`, with explicit constants. A total cost at most the volume times
-  the seven rows, plus polynomial setup and bounded overheads, is therefore
-  `O(n (lg n)^(1 - κ))` with `κ = 83 / 10^12`. That the components achieve
-  these rows is their own obligation.
-- `Assembly.lean`: the reduction of `Machine.EndToEnd` to a program with a
-  cost function. A program that halts with the correct product on every pair
-  of `n`-bit inputs within `total n` steps satisfies `ComputesWithin` whenever
-  `total` is eventually a fixed multiple of the target time, and a `total`
-  bounded by the volume times the cost table rows, polynomial setup, and
-  bounded overheads is such a function. The program, its correctness, and its
-  cost proofs are the remaining obligation.
 - `ExactRecovery.lean`: precision and exact recovery (§8, the final integer
   coefficients). With computed source and opposite transforms within scaled
   error `E_s` of the exact contractions on the half ball and the pointwise
