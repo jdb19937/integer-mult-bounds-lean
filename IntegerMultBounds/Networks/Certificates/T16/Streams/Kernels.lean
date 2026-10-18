@@ -3,6 +3,7 @@ module
 public import IntegerMultBounds.Networks.Certificates.T16.Streams.Model
 public import IntegerMultBounds.Networks.BinaryWalsh
 public import Mathlib.GroupTheory.NoncommPiCoprod
+public import Mathlib.Tactic.IrreducibleDef
 
 /-! The T16 operator interpretation of coefficient vectors. Translation kernels
 `kernel q v = ((1+i^q)/2) I + ((1-i^q)/2) X_v` satisfy `kernel (a+b) v = kernel a v ∘ kernel b v`
@@ -85,7 +86,7 @@ theorem kernelHom_commute (B : Fin 73 → Address 73) :
   fun _ _ _ _ _ => kernel_commute _ _ _ _
 
 /-- The operator of a coefficient vector over the basis `B`. -/
-@[irreducible] noncomputable def basisOp (B : Fin 73 → Address 73) : Op (Arrays 73) :=
+noncomputable irreducible_def basisOp (B : Fin 73 → Address 73) : Op (Arrays 73) :=
   (MonoidHom.noncommPiCoprod (fun k => kernelHom (B k)) (kernelHom_commute B)).comp splitHom
 
 theorem basisOp_single (B : Fin 73 → Address 73) (k : Fin 73) (q : ZMod 4) :
@@ -96,7 +97,7 @@ theorem basisOp_single (B : Fin 73 → Address 73) (k : Fin 73) (q : ZMod 4) :
     by_cases hj : j = k
     · subst hj; simp [splitHom]
     · simp [splitHom, hj]
-  rw [basisOp, MonoidHom.comp_apply, e, MonoidHom.noncommPiCoprod_mulSingle]
+  rw [basisOp_def, MonoidHom.comp_apply, e, MonoidHom.noncommPiCoprod_mulSingle]
   rfl
 
 end IntegerMultBounds.Networks.Certificates.T16.Streams

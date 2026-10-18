@@ -91,7 +91,7 @@ theorem Orthonormal73.weight {B : Fin 73 → Address 73} (hB : Orthonormal73 B) 
 def stdBasis (k : Fin 73) : Address 73 := Pi.single k 1
 
 /-- `C_all`, the product of the coordinate kernels. -/
-noncomputable def cAll : Module.End ℂ (Arrays 73) := basisOp stdBasis (ofAdd fun _ => 1)
+noncomputable def cAll := basisOp stdBasis (ofAdd fun _ => 1)
 
 theorem binary_single (u : Address 73) (k : Fin 73) : Labels.binary 73 u (Pi.single k 1) = u k := by
   simp [Labels.binary, Labels.form_single]
