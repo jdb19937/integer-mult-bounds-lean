@@ -120,6 +120,29 @@ T2 instantiates these at `m = 73` (`pullMH = NodeZ.pullM`), sets `NWire := Fin 1
 centre registers, and builds the T16 node body: split, zero-fill the centres, the program with
 the five primitive passes plus the child calls, clear the centres, merge.
 
+**T2, in new files, checked** (standard axioms).
+- `M6/T16NodeZ.lean`, the scaled T16 node on Gaussian-integer arrays:
+  - `facImplH_eq`: at any width, the machine's factor (pivot change of basis, slot child, change
+    of basis) is `lift (vectorFactor k g)` for the phases `±1`.
+  - `facMH`, `gateZT`, `execT`, `runT` and `progExpT`: the scaled semantics. Gates are doubled,
+    a child is scaled by `2^Tc` together with the other wires, and the other primitives run their
+    tape passes unscaled.
+  - `view_runT`: the decoded views of a scaled run are `2^progExpT` times
+    `Impl.runM (liftRep …)`.
+  - `nodeT_correct`: with zero centres, the node computes `2^(progExpT Tc fittedProgram)` times
+    `C` on every active bit, in the form of `NodeZ.nodeM_correct`.
+- `M6/T16Branching.lean`: `branching_lt : 1041408/14336 < 73^σ`, `σ = 1 − 1/875`, from the
+  integer certificate `F^875 < 73^874 W^875` (`decide +kernel`).
+
+**T2 after the switch-over.**
+- Set `Layer.m := 73` and `NWire := Fin 14336`, with eight centre registers.
+- The T16 node body on the tape, compiled against `nodeT_correct`: the split, a `zeroFill` per
+  centre, the program as gate/child/`transW`/`compactBasisW`/`slotPhase`/`mulIW^(c·k mod 4)`
+  passes, `uclear` per centre, and the merge.
+- Its cost from the pass bounds.
+- `Parameters.sigma := 1 − 1/875` through `Cost/Branching`, `BranchingMoment` and
+  `CompactLayerBound`.
+
 ## κ with rank-one T16 and bit-side fallbacks
 
 `ε = 31/64`, `β = 1/1000`, rank-one `a_c = 1.1431e-3`. The layer margin is

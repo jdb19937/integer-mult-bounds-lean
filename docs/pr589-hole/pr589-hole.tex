@@ -40,7 +40,7 @@ free. We record what happens when this node is ported to the recursive interchan
 formalized in Lean~\cite{IMB}. (A) In one invocation a family hosts up to five helpers. Upstream
 separates them by classes of an orthogonal-group cover. A machine with a fixed role count can
 instead split each family into five row classes, which leaves the occurrence moment unchanged. The
-role-level semantics of this scheme are checked in Lean; the node theorem is in progress.
+role-level node theorem of this scheme is checked in Lean.
 (B) The machine's cheap operations are lower triangular, so a frame change whose projector
 difference is not diagonal is not one child, and the routes and charts are coordinate changes that
 cost interchanges. Oblique flag frames, with each frame change split into runs of consecutive pivots, turn the
@@ -152,11 +152,12 @@ host family (\lean{hostClass}).
   of the stage arrives on its role exactly once (\lean{hostSpan\_sum}), and each role of another
   pair changes by the exchange on the sum of the slots its family hosts at that stage
   (\lean{stagePiece\_inactive}).
-\item \tagP{} Every child appears five times, with weight $1/(5W)$. The occurrence moment
-  $\frac{1}{5W}\cdot 5\sum (r/64)^\lambda$ is unchanged, and so is \lean{bit\_variable\_closed},
-  with row divisor $5W$.
-\item In progress: the node program of $29$ pieces, the theorem that it acts as $D_1$ on every
-  role, and the cost corollary at weight $1/(5W)$ are written and not yet checked.
+\item \tagL{} The node: \lean{nodeProgram} has $29$ pieces, and on arbitrary dirty streams it
+  changes every role by $D_1$ (\lean{runNode\_interchange}). Every child appears five times, with
+  weight $1/(5W)$: the child list realizes five times \lean{bitHistogram}, and the occurrence
+  moment $\frac{1}{5W}\cdot 5\sum (r/64)^\lambda$ is at most $1$ at $\lambda = 1 - a_b$
+  (\lean{five\_class\_node}). \lean{five\_variable\_closed} is the closed recurrence at
+  weight $1/(5W)$, with the per-node cost as a hypothesis.
 \end{itemize}
 These semantics are at role level. Streams are functions of rational address pairs; routes,
 charts and frame changes act on them as exact operators; and each frame change is priced as one
@@ -369,7 +370,7 @@ item & status\\
 \midrule
 Profile, stage geometry, windows, occurrence link, bill, recurrence & Lean\\
 Five classes: class facts, one class run, all class runs of a stage & Lean\\
-Five classes: node program, node theorem, cost at weight $1/(5W)$ & written, not checked\\
+Five classes: node program, node theorem, moment at weight $1/(5W)$ & Lean\\
 A MOVE with non-diagonal difference is not one child (Prop.~\ref{prop:triangular}) & paper\\
 $2787$ of $2911$ paid MOVEs have a non-diagonal difference & computation\\
 Oblique flag frames make frame changes cheap conjugates of children & paper\\

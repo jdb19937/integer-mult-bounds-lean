@@ -433,30 +433,51 @@ each residual once. The node then has `5W = 142080` roles; every child appears f
 weight `1/(5W)`, so the occurrence moment, and `bit_variable_closed`, are unchanged. The machine's
 row divisor becomes `5W`.
 
-**Routes.** Upstream's model also makes the data routes `ρ` and the slot charts free, by
-relabeling cover classes. Here they are coordinate changes applied to the data columns and the
-hosted streams before and after each invocation; their physical cost is the open point under
-"Realizability of the PR589 accounting".
+**Routes.** In upstream's model the data routes `ρ` and the slot charts act on the class labels
+of the cover streams, not on the payload's address digits. Here they are coordinate changes
+applied to the data columns and the hosted streams before and after each invocation; their
+physical cost is the subject of "Realizability of the PR589 accounting".
 
-### S5d.3: the five-class node (in progress)
+### S5d.3: checked, conditional on upstream's idealization
 
-Checked: `Nine/StreamFrames.lean` (exchange frames `f ↦ f ∘ D_U` on bit streams),
-`Nine/Invocation.lean` (the framed word in its stage window, forward and reflected, on arbitrary
-dirty registers), `Nine/Charts.lean` (stage routes; the port chart `A_q` and the helper charts onto
-slots), `M6/BitInvocation.lean` and `M6/BitInvocationFrames.lean` (one class run on the
-`5W = 142080` roles: both sides of the active pair change between their stage frames, a hosted
-helper's role changes by the exchange on its slot), `M6/BitStagePiece.lean` and
-`M6/BitStageHost.lean` (all 160 class runs of a stage: each role of another pair changes by the
-exchange on the sum of the slots its family hosts at that stage).
+The invocation and stage layers:
+- `Nine/StreamFrames.lean`: exchange frames `f ↦ f ∘ D_U` on bit streams.
+- `Nine/Invocation.lean`: the framed word in its stage window, forward and reflected, on arbitrary
+  dirty registers.
+- `Nine/Charts.lean`: stage routes; the port chart `A_q` and the helper charts onto slots.
+- `M6/BitInvocation.lean`, `M6/BitInvocationFrames.lean`: one class run on the `5W = 142080` roles.
+  Both sides of the active pair change between their stage frames, and a hosted helper's role
+  changes by the exchange on its slot (`invoke_host`).
+- `M6/BitStagePiece.lean`, `M6/BitStageHost.lean`: all 160 class runs of a stage. Each role of
+  another pair changes by the exchange on the sum of the slots its family hosts at that stage.
 
-Written, not yet checked: `M6/BitNodeProgram.lean` (the 29-piece node program and kernel facts on
-the schedule), `M6/BitNodeFrames.lean`, `M6/BitNodeSteps.lean`, `M6/BitNodeIdle.lean` (frame
-bookkeeping per piece), `M6/BitNodeInterchange.lean` (`runNode_interchange`: the node is `D_1` on
-every role), `M6/BitNodeCost.lean` (child list realizing five times `bitHistogram`, the moment at
-weight `1/(5W)`, `five_variable_closed`, and the headline `five_class_node`).
+The node:
+- `M6/BitNodeProgram.lean`: `nodeProgram`, the node as 29 pieces, one per schedule entry
+  (`nodeProgram_schedule`): stage pieces, remainder pieces (the exchange on the pending interval
+  the hosted slots leave), bridges and the exchange of sides. `logicalStep` runs the same schedule
+  on logical streams. Kernel facts give the levels and pending slots, checked on the 14
+  (idle, stage) pairs that occur.
+- `M6/BitNodeFrames.lean`: after `τ` entries a role is stored in the exchange frame `frameAt τ ρ`:
+  the line on side zero, the flag prefix `span 0 (7·level)`, and its family's pending slots.
+  `Inv τ X L` says every role is its logical stream in that frame.
+- `M6/BitNodeSteps.lean`, `M6/BitNodeIdle.lean`: every piece keeps `Inv` (`sweep_step`,
+  `idle_step`, `bridge_step`).
+- `M6/BitNodeInterchange.lean`: `runNode_interchange`. On arbitrary dirty streams the node changes
+  every role by `D_1`. The logical streams return by `Nine.recipe_runBank`, and each role ends in
+  its exchanged frame.
+- `M6/BitNodeCost.lean`: the child list `nodeChildren5` realizes `fiveHistogram`, five times
+  `bitHistogram`. At weight `1/(5W)` the occurrence moment is at most one at `1 - 10/5769`
+  (`five_moment_le_one`), and `five_variable_closed` instantiates the variable recurrence. The
+  headline `five_class_node` collects these facts.
 
-These are role-level semantics: routes, charts and frame changes are exact operators on streams
-over rational address pairs, and each frame change is priced as one child of its rank.
+All use only `propext`, `Classical.choice` and `Quot.sound`. `BitNodeCost` peaks at 4.0 GB.
+
+**Scope: an upstream-conditional certificate.** These theorems certify upstream's PR589 accounting
+under its idealization. Each frame change is an exact partial swap priced as one child of its
+rank, and the routes and charts are exact coordinate changes priced at nothing.
+`five_variable_closed` takes the per-node cost as the hypothesis `hcost`, and only a machine that
+realizes the idealization discharges it. The next section finds no such machine on this tape.
+S5d.4 and S5d.5 need one.
 
 ### Realizability of the PR589 accounting
 
@@ -474,11 +495,44 @@ directly:
   Those coordinates are in general not consecutive sub-fields, and `childR` and the recursion's
   layout need consecutive ones.
 - **Routes and charts are coordinate permutations.** The stage routes `ρ` and the helper charts
-  are orthogonal and not triangular. On a tape they move data across sub-fields, which costs like
-  extra children. Upstream makes them free by relabeling the classes of its orthogonal-group cover
-  (`selected-bit-qadic-route`), the same cover as its hosting. A compressed geometry needs
-  port-dependent routes, because the word adds registers of different ports in one frame.
+  are orthogonal and not triangular; in Bruhat form each route contains 7 sub-field
+  transpositions per field, for all 111 ports. On a tape they move data from less significant
+  sub-fields into more significant ones, which costs an interchange of those sub-fields. A
+  compressed geometry needs port-dependent routes, because the word adds registers of different
+  ports in one frame.
 
-The feasibility of the leap on the bit side depends on resolving these; the study of options
-(oblique frames, consecutive pivots, legal routes, a rank-one fallback, coordinate-native
-frames) is the next item before the physical machine (S5d.4).
+**Cost model.** A node's nonrecursive work must be `O(V)`: a constant number of linear passes,
+with a constant independent of the width. The linear passes are scalings of one address coordinate,
+shifts whose control sub-field is more significant than the target (`FlatCoordinateSchedule.Op`),
+cross shears of D by H, XORs and copies of role arrays, and relabeling roles. An operation that
+moves data from a less significant sub-field into a more significant one (an upper transvection or
+a sub-field transposition) is an instance of the interchange problem: if a transposition of two
+width-`b` sub-fields were linear, the parent interchange, 64 such transpositions, would be linear.
+Implementing an upper shift by offset copies takes one pass per digit of the shift amount, so
+`O(V · width)` per node.
+
+**Verdict for this machine.** With these costs the PR589 accounting gives no bit saving.
+- *Compressed geometry.* At `λ = 1` the base moment is `63.6385/64 = 0.99435`, a slack of `0.0056`.
+  The routes add at least two width-`7b` interchanges per active column per stage, about `4.5` per
+  role and `+0.49` to the moment.
+- *Uncompressed geometry* (`m = 72`, one block of 8 axes per stage, no routes). A saving needs
+  child mass below `m·W`, since at `λ = 1` the moment is the mass over `m·W` whatever the ranks.
+  PR589's only coordinates exchanged without a child are the shared line: side zero starts in
+  `P_t` and side one ends in `1 - P_t`, one per role, against `0.638` per role of COPY overhead.
+  That needs the side asymmetry inside the active window at every sweep. With a block per stage it
+  leaves the window; moving it to a port-independent axis outside the windows makes every sweep add
+  the other side through `τ = D_u`, and the recipe's bank matrix over `F₂[τ]/(τ² - 1)` is `τ·I`,
+  which cancels it. The mass is then at least `72.638·W`.
+- *Upstream's fast routes* (`selected-bit-stream-routes`, `selected-bit-fast-primitives`) index every
+  stream by a class of `GL_64(Z/q^w)`. A route is the right action on the class label: a
+  permutation of the `|GL_64(F_q)|` low-class blocks and carry-aware updates of the `4096` label
+  fields of fixed width `w - 1`, through a bootstrapped interchange at that width; this gives the
+  local toll `O_q(V(n + w^(1-a1)))`. Our roles carry no class label, so a route acts on the payload's
+  own sub-fields, of width growing with the node, and costs about `V·n·w^p` per node in place of the
+  sum. Upstream's result is itself conditional: it leaves open the finite-cover to stopped-GL domain
+  bridge, data-dependent normalizers for the MOVE children, the correlated-helper premise and the
+  COPY lifetimes. Completed, a class-indexed machine bootstrapped once from Shared50 would give
+  `a_b = c(1 - c) = 1.697·10^-3`, `c = 17/10000`.
+
+The semantic five-class node (S5d.3) certifies upstream's accounting under ideal routes and
+partial swaps. Its exponent `1 - 10/5769` holds under that idealization only.

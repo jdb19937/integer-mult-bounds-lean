@@ -2135,6 +2135,9 @@ public import IntegerMultBounds.NLogN.PhaseCellRoundedInverse
 public import IntegerMultBounds.NLogN.PhaseCellBoundaryFold
 public import IntegerMultBounds.NLogN.PhaseCellConcreteInterior
 public import IntegerMultBounds.NLogN.PhaseCellConcreteSolve
+public import IntegerMultBounds.MathlibTM2.Mult.PhaseCellB0Line
+public import IntegerMultBounds.NLogN.ChirpForward
+public import IntegerMultBounds.MathlibTM2.Mult.ChirpRing
 public import IntegerMultBounds.NLogN.Primes
 public import IntegerMultBounds.NLogN.ToeplitzApply
 public import IntegerMultBounds.NLogN.ToeplitzRounded

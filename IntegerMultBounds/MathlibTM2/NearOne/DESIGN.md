@@ -63,10 +63,25 @@ the working width needs only `(cG + G + m + 30) d ≤ b`.
 
 ## (b) M7: the faster Gaussian inverse and its execution
 
-**Status** (`PLAN.md`, M7 row; plan §8, M7a/M7b). Kenny's last substantive M7 commit is
-`8b9f9194` (2026-10-16 18:14, "Small Gaussian width"). Remaining, quoted from the plan: "Rounded
-boundary factorization, boundary ordering, tape costs and bulk execution remain; these must remove
-the Gaussian restriction and support near-one dimensions."
+**Status** (`PLAN.md`, M7 row; plan §8, M7a/M7b). Paused. Done and checked, off the main route
+(nothing in `mulInTime` uses them): b1, b2, b3a and b5a, and the math of b3s with the ring
+arithmetic of b5 (items 1–5 below; files `NLogN/SchurPerturbSolve`, `PhaseCellRoundedSchur`,
+`PhaseCellRoundedInterior`, `PhaseCellRoundedInverse`, `PhaseCellBoundaryOrder`,
+`PhaseCellBoundaryFold`, `PhaseCellConcreteInterior`, `PhaseCellConcreteSolve`, `ChirpForward`,
+`Mult/PhaseCellB0Line`, `Mult/ShortConv`, `Mult/ChirpRing`). What remains is machine work, and
+its payoff needs the bit supplier: near one the binding margins are the supplier-driven layer,
+chunk and exposure margins (the table in (c)).
+
+**Resume point.** The b3s machine glue: a generic wrapper around `ldRpStage` (`Fast/LoadRing`) on
+its own register enum, placed by a layout in the manner of `RpLayout`/`RpRuns`
+(`Fast/RingProdRegs`), so that the b3 and b5 line machines share it. It pads `M` blocks of `A`
+input records and `M` kernels of `B` records into the stream format `rpStream M X` with records of
+`2^l` coefficients (zero beyond `A`, resp. `B`), runs the stage, and keeps a range of coefficients of
+each output record; its contract is stated against `rpOut_recOf`, its cost against `rpCost_le`.
+After it: b5b against `chirpAR` and `chirpAR_approx` (setup tables from the exponential evaluators
+of `Fast/TableExp` and `NLogN/PhaseCellExpSample`, the line machine with overlapping block windows
+on a periodically extended line, the replacement of the window line of `Fast/ResampA*`, costs in
+`Cost/MatchResampA`), then b3b and b3c against `pcSolve` and `phase_resampB₀_spec`.
 
 **Checked pieces on the main route** (they serve the banded `B̃₀` of the present multiplier,
 `Mult/BandSpec`, `ConcreteB0`, `Fast/BandFits`): `NLogN/PhaseCellFactorization`
@@ -82,7 +97,8 @@ the Gaussian restriction and support near-one dimensions."
 * `PhaseCellInteriorSolve` (`cell_solve`), `PhaseCellRoundedCell`, `PhaseCellInteriorCover`,
   `PhaseCellWeightRange`;
 * `SchurIdentify` (`schurOp_eq_run`), `SchurBlockSolve` (`four_step`), `SchurBlockError`,
-  `PhaseCellBoundaryLU` (`rounded_boundary`).
+  `PhaseCellBoundaryLU` (`rounded_boundary`), `PhaseCellRoundedSolve` (`rounded_four_step`);
+* the files of b1–b5 listed under **Status**.
 
 `PhaseCellFourStep` and `PhaseCellBandFill` are imported by no module and not by the root, so the
 default build does not check them.
@@ -132,9 +148,10 @@ default build does not check them.
      the cell runs, the two rounded couplings, the machine solve `bandSolveG` with the rules
      `machMul`, `newtonR` (Newton at `β = 1/(32p)`) of the computed boundary matrix in folded
      order, and the recovery; it is within `2^(8p+46) p⁷ s² η` of the exact solution for
-     `|b| ≤ 1/2` and `2^(8p+46) p⁷ s² η ≤ 1/2` (`pcSolve_error`). Remaining: the `B̃₀` interface
-     through `concrete_resampB₀_specX`, and the precision `P ≥ 9p + 46 + 7 log₂ p + 2 log₂ s`
-     in place of the banded line's `5p`.
+     `|b| ≤ 1/2` and `2^(8p+46) p⁷ s² η ≤ 1/2` (`pcSolve_error`). Through
+     `concrete_resampB₀_specX` the line map `bandJtX p j (pcSolve …)` has the pipeline
+     interface of `B̃₀` (`Mult/PhaseCellB0Line.phase_resampB₀_spec`). Its working precision is
+     about `9p + 46 + 7 log₂ p + 2 log₂ s` bits against the banded line's `5p`.
    * **b3b, the machines.** A per-axis loader (the `prep` of the generic driver `rsbAllG`):
      cell and boundary masks from the phase generator (`PhaseCellScan`), reciprocal weights,
      Gohberg–Semencul generators per cell length, coupling tables, the computed boundary matrix
@@ -153,8 +170,34 @@ default build does not check them.
    prime-box order. Nothing exists yet.
 5. **The forward map.** `totResamp` charges the `Ã` window of `2m + 1 ≤ 4α√p` lines per
    output (`Cost/MatchResampA.lean`); with `α² ≍ p^r` this grows with `r`. The selected route
-   replaces it by a chirped-correlation forward map in `O(M(p))` per output (plan, the cap
-   paragraph). Without it the Gaussian margin stays below `1/2 - ε`.
+   replaces it by a chirped-correlation forward map in `O(M(p))` per output
+   (`notes/fast-gaussian-resampling.tex`). Without it the Gaussian margin stays below `1/2 - ε`.
+   * **b5a, the math** (`NLogN/ChirpForward.lean`). Outputs in blocks of `m`; the block starting
+     at `k₀` reads the `3m + 1` inputs from `⌊s k₀/t⌋ - m`, which contain the truncation window
+     of each of its outputs (`truncWindow_subset_block`), so its sums are within `3/(α 2^p)` of
+     `S u` (`resampS_superset_err`, `chirpBlock_err`). The chirp identity splits each weight
+     into an output factor `exp(πλθ b²)`, an input factor and a correlation kernel
+     (`chirp_weight`, `chirpBlock_split`). `chirpA` computes a block from tables within `η` of
+     the factors: the scaled inputs rounded once, the exact correlation (`chirpCorr`), the
+     output factor over `2^Γ`, the shift, the factor `1/(2α)` and the `p`-grid rounding. With
+     `exp(πλθ b²) ≤ 2^Γ` on a block (`chirpE_le_two_pow` from `πλθ m² ≤ Γ log 2`) and
+     `2^(p+Γ) (12m + 7) η ≤ 1/2`, it approximates `Ã` with scaled error `4` independently of
+     `m` (`chirpA_approx`; clamped, the pipeline interface, `chirpA_clamp`), against the
+     window's `(4(2m + 1) + 3)/2`. The output stage `chirpAG` takes any computed correlation
+     within `ζ` of the exact one (`chirpAG_approx`).
+   * **b3s, the shared convolution** (`Mult/ShortConv.lean`, math part). Zero-padded records of
+     size `r ≥ A + B - 1` have the linear convolution as negacyclic product
+     (`negacyclicMul_recOf`); the ring product's output numerators on records of size `2^l` are
+     the truncated divisions of the integer convolution by `2^(p+l)` (`rpOut_recOf`), and the
+     rescaled output is within `2r/2^p` of the convolution (`pwC_recOf_err`). The block
+     correlation of b5 has `A = 3m + 1` inputs and `4m` kernel values, so `r ≥ 7m`; the cell
+     products of b3 have `A = B = L`, `r ≥ 2L`.
+   * **The ring arithmetic of b5** (`Mult/ChirpRing.lean`). Per block, the reversed halved
+     computed inputs and the shifted halved kernel are one disk record pair of size `2^l ≥ 7m`
+     (`norm_chirpRec_le`); coefficient `4m - 1 - b` of their convolution is the correlation
+     (`chirpCorr_conv`), and the rescaled ring output at precision `q` is within `8·2^l/2^q` of
+     it (`chirpRingCorr_err`). `chirpAR` is the output stage on it, within scaled error `4` of
+     `Ã` (`chirpAR_approx`): the exact arithmetic the b5b line machine implements.
 6. **Integration.** `Fast/ResampA*`, `Fast/ResampB*`, `Mult/Sizes`, `Cost/MatchResampA`,
    `Cost/MatchResampB`; the Gaussian conjunct of `exp_facts`
    (`ε + ε c₀/2 + (1/2 + δ) ≤ 1 - κ`, from `totResamp = d T √p α M(p)`) becomes
@@ -222,12 +265,19 @@ Conservative, agent time, on the shared lock and the 24 GB machine.
 | a6 | the machine dimension `iroot M (b^N)`, its root rooms, and the exponent arithmetic of the bundle for a general `ε = N/M` | 600–1200 | 2–3 weeks |
 | b1 | rounded boundary factorization | 668 | done |
 | b2 | boundary ordering | 457 | done |
-| b3 | tape machines and costs for the inverse: b3a concrete solve, b3b machines, b3c costs | 1k + 5–9k + 1–2k | 3–5 months |
+| b3a | the concrete phase-cell solve and its `B̃₀` interface | 924 | done |
+| b3s | the shared short-convolution layer on the ring product (also for b5): math and the b5 ring arithmetic done (150 + 176); the machine glue | 1–2k | 3–5 weeks |
+| b3b | the phase-cell machines: the per-axis loader (masks, weights, generators, boundary matrix, factor tables) and the line machine | 6–10k | 3–5 months |
+| b3c | the costs of b3b, matched into `rsbAllCostG` | 1–2k | 4–6 weeks |
 | b4 | bulk core/halo execution and tape transfer (M7b) | 6–12k | 3–6 months |
-| b5 | the chirped-correlation forward map for `Ã` | 2–4k | 1–2 months |
+| b5a | the chirped-correlation forward map for `Ã`: chirp identity, blocks, rounding errors | 588 | done |
+| b5b | its machine on b3s, the exponential tables, specs and costs | 3–5k | 2–3 months |
 | b6 | integration into `ResampA/B`, `MatchResampA/B`, the Gaussian conjunct | 2–4k | 1–2 months |
 | c | bulk exposure on b4 and M5b (M5b: 9–15k, 3–5 months, `Balanced/DESIGN.md`) | 1–2k beyond b4 and M5b | 3–6 weeks |
 | r | the retune to a near-one `ε` | 1–2k | 2–4 weeks |
 
-a1–a4 are done: no proof uses `d² ≤ b`. a5 and a6 belong to the retune. (b), (c) and M5b are
-the bulk of the work, about a year of agent time together.
+a1–a4, b1, b2, b3a and b5a are done: no proof uses `d² ≤ b`. a5 and a6 belong to the retune. The
+rest of (b) is about 20–37k lines and 11–19 months of agent time; (c) with M5b adds 10–17k lines
+and 4–6 months. b5 alone, with the banded `B̃₀` at `α² ≍ p^r`, `r < 1 - ε`, keeps the Gaussian
+margin `(1 + r)/2 - ε - δ` positive up to `ε < 2/3` (plan, the `2^-33` route); b3 is needed
+above that.
