@@ -12,16 +12,16 @@ noncomputable section
 /-- Preserve the actual dimension exponent. -/
 def epsilon : ℝ := 31 / (2^6:ℝ)
 /-- Larger chunks become possible after removing the old chunk-width power. -/
-def spacing : ℝ := (2^2:ℝ)⁻¹
+def spacing : ℝ := 7/(2^3:ℝ)
 /-- The layer exponent of the T16 node: above `τ` and above `log_m (F / NW) < 999/1000`
 (`Cost.br_branching_999`). -/
-def lam : ℝ := 1-2/(10^9:ℝ)
+def lam : ℝ := 1-28/(10^10:ℝ)
 /-- Absorb the full-depth compact recurrence and all polylogarithmic factors. -/
-def lam' : ℝ := 1-(2^30:ℝ)⁻¹
+def lam' : ℝ := 1-23/(2^33:ℝ)
 /-- Dyadic allowance for the unchanged quasi-linear multiplier. -/
 def delta : ℝ := (2^7:ℝ)⁻¹
-/-- The public saving: the layout margin `ε s (1-τ)` rounded down to `2^-46`, about `2^-31.38`. -/
-def kappa : ℝ := 25222/(2^46:ℝ)
+/-- The public saving: the layout margin `ε s (1-τ)` rounded down to `2^-46`, about `2^-29.57`. -/
+def kappa : ℝ := 88279/(2^46:ℝ)
 
 /-- The compact recurrence and reserved axes fit strictly below the target
 layer exponent; this does not assert the old full-width recurrence condition. -/

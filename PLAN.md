@@ -3,7 +3,7 @@
 ✅ Complete · 🟡 In progress / partially complete · ⬜ Not started.
 
 **Bound improvement progress:** M1 ✅ · M2 ✅ · M3 🟡 · M4 ⬜ · M5 ⬜ · M6 🟡 · M7 🟡 · M8 ⬜.
-The completed compact multiplier proves saving `25222/2^46 ≈ 2^-31.3776`, up from the previous `14229/2^46 ≈ 2^-32.2035` (and `3213/2^44 ≈ 2^-32.3512` and `36261/2^48 ≈ 2^-32.8539` before that); further structural improvements remain in progress.
+The completed compact multiplier proves saving `88279/2^46 ≈ 2^-29.5702`, up from the previous `25222/2^46 ≈ 2^-31.3776` (and `14229/2^46 ≈ 2^-32.2035`, `3213/2^44 ≈ 2^-32.3512` and `36261/2^48 ≈ 2^-32.8539` before that); further structural improvements remain in progress.
 
 ## Bound scoreboard
 
@@ -12,15 +12,18 @@ time `O(n (log n)^(1-kappa))`. Larger saving means a smaller time exponent.
 
 | Bound | Exponent saving `kappa` | Status |
 | --- | --- | --- |
-| **Current unconditional result** | **`25222/2^46 ≈ 2^-31.3776`** | ✅ T16 layer node: 73 slots, 14336 data roles and 8 private centres, 1,041,408 children (`log_73 (F/NW) < 999/1000`), lowered to factors, half-integral gates, translations, slot XORs and slot phases on the layer machine. With `lambda = 1-2/10^9`, `lambda' = 1-2^-30` the layer margin `epsilon (1-lambda')` no longer binds; the saving is the layout margin `epsilon c (1-tau)` rounded down. |
-| **Previous T25 result** | `14229/2^46 ≈ 2^-32.2035` | ✅ Superseded; retune to `epsilon=31/64`, `delta=2^-7`, `lambda'=1-459/2^40` (previously `3213/2^44 ≈ 2^-32.3512` at `epsilon=7/16`, `delta=2^-5`): the Schönhage–Strassen allowance is `M(p) = p^{1+2^-7}`, the resampling envelope uses the logarithmic band width `α ≤ 4 b^{ε/2^33}`, and every size relation (moduli room, `d ≤ 2^(ℓ-1)`, `d+1 ≤ ℓ`, `16 d α² ≤ b`) is re-proved from `d^64 ≤ b^31` with `d ≥ 2^192`. All-input correctness and cost bound on one fixed finite Mathlib machine. |
+| **Current unconditional result** | **`88279/2^46 ≈ 2^-29.5702`** | ✅ T16 node with seven-eighths-power chunks `K = ⌊d^(7/8)⌋` (`c = 7/8`, from PR 4). The binding layout margin `epsilon c (1-tau)` grows by `7/2`; `lambda = 1-28/10^10`, `lambda' = 1-23/2^33` keep the layer margin `epsilon (1-lambda')` above it. The saving is the layout margin rounded down to `2^-46`. |
+| **PR 4 mixer result** | `651/2^39 ≈ 2^-29.6534` | Proved on the `further-improvements` branch only; not adopted. Size-25 mixer supplier (`sigma = 1-25/10^10`) with `c = 7/8`, binding layer margin `epsilon (1-lambda')` at `lambda' = 1-21/2^33`. T16 replaces the mixer in the complex-supplier slot. |
+| **Previous T16 result** | `25222/2^46 ≈ 2^-31.3776` | ✅ Superseded; T16 layer node: 73 slots, 14336 data roles and 8 private centres, 1,041,408 children (`log_73 (F/NW) < 999/1000`), lowered to factors, half-integral gates, translations, slot XORs and slot phases on the layer machine. With `lambda = 1-2/10^9`, `lambda' = 1-2^-30` the layer margin `epsilon (1-lambda')` no longer binds; the saving is the layout margin `epsilon c (1-tau)` rounded down. |
+| **Previous T25 result** | `14229/2^46 ≈ 2^-32.2035` | ✅ Superseded; retune to `epsilon=31/64`, `delta=2^-7`, `lambda'=1-459/2^40`: the Schönhage–Strassen allowance is `M(p) = p^{1+2^-7}`, the resampling envelope uses the logarithmic band width `α ≤ 4 b^{ε/2^33}`, and every size relation (moduli room, `d ≤ 2^(ℓ-1)`, `d+1 ≤ ℓ`, `16 d α² ≤ b`) is re-proved from `d^64 ≤ b^31` with `d ≥ 2^192`. All-input correctness and cost bound on one fixed finite Mathlib machine. |
+| **Previous T25 dimension result** | `3213/2^44 ≈ 2^-32.3512` | ✅ Superseded; `epsilon=7/16`, `delta=2^-5`. |
 | **Previous dyadic-dimension result** | `36261/2^48 ≈ 2^-32.8539` | ✅ Superseded; `epsilon=79/256`, capped by the coarse `α ≤ 2√d` resampling bound. |
 | **Previous rounded result** | `2^-33.0000` | ✅ Rounded synthetic layers and transforms at `epsilon=9/32`. |
 | **Previous dyadic result** | `2^-34` | ✅ Superseded by rounded synthetic layers, which allow the `9/32` dimension. |
 | **Previous eighth-root result** | `2^-35` | ✅ Superseded by the audited dyadic dimension retune and fourth-root chunks. |
 | **Previous dimension result** | `2^-36` | ✅ Superseded by the audited eighth-root retune and sharper logarithmic cost estimates. |
 | **Previous compact result** | `2^-37` | ✅ Superseded by the checked sixteenth-root dimension retune. |
-| **Historical M2 result** | `2^-66` | ✅ Superseded; the current theorem improves the public saving by `2^33`, not a measured runtime speedup. |
+| **Historical M2 result** | `2^-66` | ✅ Superseded; the current theorem improves the public saving by more than `2^36`, not a measured runtime speedup. |
 | **Pre-M1 unconditional result** | `296 / (10^11 * 2^131)` (between `2^-160` and `2^-159`) | Superseded by M1; the existential theorem remains compatible. |
 | **Historical M1 result** | `2^-93` | M2 improves the public exponent saving by `2^27`; this is not a timing speedup. |
 | **Goal: match the selected community construction** | **`836330098538459 / 500000000000000000 = 0.001672660197076918`** | ⬜ Not yet proved here. Upstream construction is conditional; our goal is an unconditional machine theorem at this exact saving. |
@@ -35,7 +38,7 @@ certificate alone does not improve the proved multiplication bound.
 `IntegerMultBounds.MathlibTM2.statement` constructs a fixed finite Mathlib
 machine that multiplies every input pair correctly in worst-case time
 `O(n (log n)^(1-kappa))`, with positive saving
-`kappa = 25222/2^46`. No algorithmic or runtime assumption remains.
+`kappa = 88279/2^46`. No algorithmic or runtime assumption remains.
 
 ## Completed proof
 
@@ -61,7 +64,7 @@ only `propext`, `Classical.choice` and `Quot.sound`.
 
 The [section-by-section implementation plan](plan/D-sharper-bound.md) is based
 on the original OpenAI manuscript and the pinned selected community
-construction. **Today's binding margin is the compact layout: `epsilon c (1-tau) ≈ 2^-31.3776`, rounded down to the public saving `25222/2^46`.** The T16 node moved the §5 layer margin `epsilon (1-lambda')` off the critical path: `1-lambda'` is now capped only by `lambda' > lambda > tau`, i.e. by the basis-change exponent `tau = 1-296/10^11`. Both remaining margins scale with `1-tau` and with `epsilon` (`epsilon < 1/2` from the resampling margin and the moduli construction), so beyond `2^-31.38` the route needs a smaller `tau` (sharper slot-XOR interchanges) or `epsilon > 1/2`.
+construction. **Today's binding margin is the compact layout: `epsilon c (1-tau) ≈ 2^-29.5702` at `c = 7/8`, rounded down to the public saving `88279/2^46`.** The T16 node moved the §5 layer margin `epsilon (1-lambda')` off the critical path: `1-lambda'` is now capped only by `lambda' > lambda > tau`, i.e. by the basis-change exponent `tau = 1-296/10^11`. Both remaining margins scale with `1-tau` and with `epsilon` (`epsilon < 1/2` from the resampling margin and the moduli construction), and `c < 1`, so beyond about `2^-29.4` the route needs a smaller `tau` (sharper slot-XOR interchanges) or `epsilon > 1/2`.
 
 **The `epsilon < 1/2` barrier.** `2^-32` needs `epsilon > 0.557` with the existing supplier. Beyond `1/2` the `d` pairwise coprime moduli must sit in windows `[(1-2η)t, (1-η)t]` of relative width `η = 1/(4d)`, with `d ≫ log t`. Every elementary construction (`oddProd`, `1 + iM`, primorial shifts) needs `d² log d ≲ b`; the selected construction instead cites Baker–Harman–Pintz primes in short intervals. Mathlib has only Chebyshev bounds and Bertrand. So the next dyadic step needs **both** a short-interval prime supply (at least PNT with a `(log x)^-A` error term, `A > 2`) **and** a faster forward Gaussian map. The forward map is the selected chirped correlation (`notes/fast-gaussian-resampling.tex`), `O(M(p))` per element. The existing banded `B̃₀` with a larger `α² ≈ p^r`, `r < 1-ε`, suffices for the inverse up to `epsilon < 2/3`, so the phase-cell inverse is not on the critical path for `2^-32`.
 The actual compact runtime removes the old full-slot control restriction. A

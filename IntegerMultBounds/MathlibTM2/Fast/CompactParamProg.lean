@@ -6,8 +6,9 @@ import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 import Mathlib.Data.Nat.Factorial.DoubleFactorial
 import Mathlib.Analysis.SpecialFunctions.Bernstein
 import Mathlib.Algebra.Order.Ring.Star
+import IntegerMultBounds.MathlibTM2.Mult.CompactDyadicRootRoom
 
-/-! Charged fourth-root overwrite of the clean parameter table. The legacy
+/-! Charged seven-eighths-power overwrite of the clean parameter table. The legacy
 parameter program and table contracts retain their original meanings. -/
 @[expose] public section
 namespace IntegerMultBounds.MathlibTM2.Fast.TableVM
@@ -19,47 +20,109 @@ variable {A W w : ℕ}
 /-- Same parameter table, with only the chunk entry replaced. -/
 def compactPmVals (n : ℕ) : Fin pmNV → ℕ := Function.update (pmVals n) 4 (CompactSizes.K n)
 
-def compactPmRootReg : Fin 6 → Fin pmNV := ![3,4,31,32,33,34]
+/-- Preserve `x` in `0` and place `x^7` in `1`: `x, x^2, x^3, x^6, x^7`. -/
+def compactSeventhC : TblCode 2 := tblBlock 2 [.copy 0 1,.mul 1 0 1,.mul 1 0 1,.mul 1 1 1] (.mul 1 0 1)
+
+theorem compactSeventhC_do (st : TblSt 2 A) {x : ℕ} (hx : st.val 0=x) (hW : x^7<2^W) :
+    TblDo A W w compactSeventhC st (fun s => s.val 0=x ∧ s.val 1=x^7 ∧ s.acc=st.acc) 5 := by
+  have hp (k : ℕ) (hk : 1≤k) (hk7 : k≤7) : x^k<2^W := by
+    by_cases hx0 : x=0
+    · simp [hx0,Nat.ne_of_gt hk]
+    · exact (Nat.pow_le_pow_right (by omega : 1≤x) hk7).trans_lt hW
+  have h1 := hp 1 le_rfl (by omega)
+  have h2 := hp 2 (by omega) (by omega)
+  have h3 := hp 3 (by omega) (by omega)
+  have h6 := hp 6 (by omega) (by omega)
+  have e2 : x*x=x^2 := by ring
+  have e3 : x^2*x=x^3 := by ring
+  have e6 : x^3*x^3=x^6 := by ring
+  have e7 : x^6*x=x^7 := by ring
+  rw [pow_one] at h1
+  refine TblDo.block _ _ ?_ ?_
+  · simp [tblFitsList,TblIns.fits,TblIns.exact,hx,e2,e3,e6,e7,h1,h2,h3,h6,hW]
+  · simp [tblExactList,TblIns.exact,hx,e2,e3,e6,e7]
+
+/-- The seventh power of the dimension and its successor square fit the parameter word. -/
+theorem pm_seventh_sq_lt {n : ℕ} (hW : 4*b n+32≤W) : (d n^7+1)*(d n^7+1)<2^W := by
+  have hd2 : d n^2≤b n := by simpa [powerCap] using d_sq_le n
+  have h7 : d n^7≤b n^4 := by
+    calc d n^7=d n*(d n^2)^3 := by ring
+      _ ≤ b n*b n^3 := Nat.mul_le_mul (d_le_b n) (Nat.pow_le_pow_left hd2 3)
+      _ = b n^4 := by ring
+  have h4 : b n^4+1≤(b n+1)^4 := by
+    simpa only [one_pow] using
+      (pow_add_pow_le (Nat.zero_le (b n)) (by decide : (0:ℕ)≤1) (by decide : 4≠0))
+  have h8 : (d n^7+1)*(d n^7+1)≤(b n+1)^18 := by
+    calc (d n^7+1)*(d n^7+1)≤(b n+1)^4*(b n+1)^4 := Nat.mul_le_mul (by omega) (by omega)
+      _ = (b n+1)^8 := by ring
+      _ ≤ (b n+1)^18 := Nat.pow_le_pow_right (by omega) (by norm_num)
+  exact (h8.trans_lt (Mult.CompactDyadicRootRoom.eighteenth_power_lt (b n))).trans_le
+    (pm_W_pow hW le_rfl)
+
+def compactPmPowerReg : Fin 2 → Fin pmNV := ![3,35]
+
+def compactPmRootReg : Fin 6 → Fin pmNV := ![35,4,31,32,33,34]
 
 def compactPmRootClear : TblCode pmNV :=
-  tblBlock pmNV [.zero 31,.zero 32,.zero 33] (.zero 34)
+  tblBlock pmNV [.zero 31,.zero 32,.zero 33,.zero 34] (.zero 35)
 
 def compactPmOverwrite : TblCode pmNV :=
-  (pmIrootC 2).rename compactPmRootReg ;; compactPmRootClear
+  compactSeventhC.rename compactPmPowerReg ;; ((pmIrootC 3).rename compactPmRootReg ;; compactPmRootClear)
 
-def compactPmOverwriteAtoms (n : ℕ) : ℕ := 29+20*CompactSizes.K n
+def compactPmOverwriteAtoms (n : ℕ) : ℕ := 42+26*CompactSizes.K n
 
 private theorem compactPm_clear (n : ℕ) (s : TblSt pmNV A) (acc : List (Fin (A+4)))
-    (ha : s.acc=acc) (h3 : s.val 3=d n) (h4 : s.val 4=CompactSizes.K n)
+    (ha : s.acc=acc) (h4 : s.val 4=CompactSizes.K n)
     (hoff : ∀ i, (∀ j,compactPmRootReg j≠i) → s.val i=pmVals n i) :
     TblDo A W w compactPmRootClear s
-      (fun s' => s'.val=compactPmVals n ∧ s'.acc=acc) 4 := by
+      (fun s' => s'.val=compactPmVals n ∧ s'.acc=acc) 5 := by
   refine TblDo.block _ _ (by simp [tblFitsList,TblIns.fits]) ⟨funext fun i => ?_,?_⟩
-  · have hsrc : ∀ i : Fin pmNV,i≠3 → i≠4 → i≠31 → i≠32 → i≠33 → i≠34 →
+  · have hsrc : ∀ i : Fin pmNV,i≠4 → i≠31 → i≠32 → i≠33 → i≠34 → i≠35 →
         s.val i=pmVals n i := by
-      intro i h3 h4 h31 h32 h33 h34
+      intro i h4 h31 h32 h33 h34 h35
       apply hoff i
       intro j
       fin_cases j <;> simp_all [compactPmRootReg,ne_comm]
     fin_cases i <;> simp [compactPmVals,tblExactList,TblIns.exact,
-      pmVals,pmVal,h3,h4,hsrc,pmNV]
+      pmVals,pmVal,h4,hsrc,pmNV]
   · simp [tblExactList,TblIns.exact,ha]
 
-/-- Recompute slot 4 from original slot 3, restoring all scratch cells to zero.
-Every other parameter and the accumulator are preserved exactly. -/
+/-- Recompute slot 4 as the eighth root of the seventh power of slot 3, through scratch slot 35, restoring
+all scratch cells to zero. Every other parameter and the accumulator are preserved exactly. -/
 theorem compactPmOverwrite_do (n : ℕ) (hW : 4*b n+32≤W) (s : TblSt pmNV A)
     (hs : s.val=pmVals n) :
     TblDo A W w compactPmOverwrite s
       (fun s' => s'.val=compactPmVals n ∧ s'.acc=s.acc) (compactPmOverwriteAtoms n) := by
-  have hd : (s.restrict compactPmRootReg).val 0=d n := by
-    simp [TblSt.restrict,compactPmRootReg,hs,pmVals,pmVal,pmNV]
-  have hroot := TblDo.rename (f:=compactPmRootReg) (by decide : Function.Injective compactPmRootReg)
-    (pmIrootC_do (w:=w) 2 (s.restrict compactPmRootReg) hd (pm_sq_lt hW (d_le_b n))
-      (pm_const_lt hW (by norm_num)))
-  refine (hroot.seq (fun s' h => compactPm_clear n s' s.acc h.1.2.2 h.1.1 h.1.2.1
-    (fun i hi => (h.2 i hi).trans (congrFun hs i)))).mono (fun _ h => h) ?_
-  simp [compactPmOverwriteAtoms,CompactSizes.K,CompactSizes.cExp,CompactSizes.d]
-  omega
+  have hsq := pm_seventh_sq_lt (n:=n) hW
+  have hpowW : d n^7<2^W := lt_of_le_of_lt ((Nat.le_succ _).trans (Nat.le_mul_self _)) hsq
+  have hd : (s.restrict compactPmPowerReg).val 0=d n := by
+    simp [TblSt.restrict,compactPmPowerReg,hs,pmVals,pmVal,pmNV]
+  have hpow := TblDo.rename (f:=compactPmPowerReg) (by decide : Function.Injective compactPmPowerReg)
+    (compactSeventhC_do (w:=w) (s.restrict compactPmPowerReg) hd hpowW)
+  refine (hpow.seq (K₂ := (32+26*CompactSizes.K n)+5) (fun s₁ h₁ => ?_)).mono (fun _ h => h) ?_
+  · have hx : (s₁.restrict compactPmRootReg).val 0=d n^7 := by
+      simpa [TblSt.restrict,compactPmRootReg,compactPmPowerReg] using h₁.1.2.1
+    have hroot := TblDo.rename (f:=compactPmRootReg) (by decide : Function.Injective compactPmRootReg)
+      (pmIrootC_do (w:=w) 3 (s₁.restrict compactPmRootReg) hx hsq (pm_const_lt hW (by norm_num)))
+    refine (hroot.seq (fun s₂ h₂ => compactPm_clear n s₂ s.acc ?_ ?_ ?_)).mono (fun _ h => h) ?_
+    · simpa [TblSt.restrict] using h₂.1.2.2.trans h₁.1.2.2
+    · simpa [TblSt.restrict,compactPmRootReg,CompactSizes.K,CompactSizes.cExp] using h₂.1.2.1
+    · intro i hi
+      rw [h₂.2 i hi]
+      by_cases h3 : i=3
+      · subst h3
+        have h₁₀ := h₁.1.1
+        simp only [TblSt.restrict,compactPmPowerReg] at h₁₀
+        simpa [pmVals,pmVal,pmNV] using h₁₀
+      · rw [h₁.2 i ?_, hs]
+        intro y
+        fin_cases y
+        · simpa [compactPmPowerReg] using Ne.symm h3
+        · simpa [compactPmRootReg,compactPmPowerReg] using hi 0
+    · simp only [CompactSizes.K,CompactSizes.cExp,CompactSizes.d]
+      omega
+  · unfold compactPmOverwriteAtoms
+    omega
 
 lemma compactPmVals_chunk (n : ℕ) : compactPmVals n 4=CompactSizes.K n := by
   simp [compactPmVals]
