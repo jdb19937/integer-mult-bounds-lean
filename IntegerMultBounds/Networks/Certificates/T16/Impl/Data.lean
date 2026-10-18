@@ -133,6 +133,36 @@ theorem ChartSplit.change {χ : Addr ≃ₗ[ZMod 2] Addr} {B : Fin 73 → Addr} 
     _ = permOp χ * lift9 s'.local.toLinearMap * lift9 s.local.symm.toLinearMap *
           permOp χ.symm := by rw [hE, mul_one, s'.local_toLinearMap]
 
+/-- The split of a frame through a chart whose pulled-back basis is local on `L` and exterior
+off `L`. -/
+noncomputable def ChartSplit.ofLocal (χ : Addr ≃ₗ[ZMod 2] Addr) (hχ : IsOrth χ) (B : Fin 73 → Addr)
+    (f : Fin 73 → ZMod 4) (L : List (Fin 73)) (hL : L.Nodup)
+    (hloc : ∀ k ∈ L, χ.symm (B k) = padLow (lowPart (χ.symm (B k))))
+    (hext : ∀ k, k ∉ L → lowPart (χ.symm (B k)) = 0) : ChartSplit χ B f where
+  gs := L.map fun k => (f k, lowPart (χ.symm (B k)))
+  ext k := if k ∈ L then 0 else f k
+  split := by
+    apply LinearMap.ext
+    intro g
+    change permOp χ.symm (basisOp B (ofAdd f) g) = _
+    rw [permOp_basisOp hχ.symm]
+    change _ = lift9 (kernelList _) (basisOp (fun k => χ.symm (B k)) (ofAdd _) (permOp χ.symm g))
+    exact basisOp_split _ f _ _ _
+      (phaseExp_split _ f L hL (fun k => lowPart (χ.symm (B k))) hloc) _
+  exterior k hk := by
+    by_cases h : k ∈ L
+    · simp [h] at hk
+    · exact hext k h
+
+theorem ChartSplit.ofLocal_gs (χ : Addr ≃ₗ[ZMod 2] Addr) (hχ : IsOrth χ) (B : Fin 73 → Addr)
+    (f : Fin 73 → ZMod 4) (L : List (Fin 73)) (hL : L.Nodup) (hloc) (hext) :
+    (ChartSplit.ofLocal χ hχ B f L hL hloc hext).gs = L.map fun k => (f k, lowPart (χ.symm (B k))) :=
+  rfl
+
+theorem ChartSplit.ofLocal_ext (χ : Addr ≃ₗ[ZMod 2] Addr) (hχ : IsOrth χ) (B : Fin 73 → Addr)
+    (f : Fin 73 → ZMod 4) (L : List (Fin 73)) (hL : L.Nodup) (hloc) (hext) :
+    (ChartSplit.ofLocal χ hχ B f L hL hloc hext).ext = fun k => if k ∈ L then 0 else f k := rfl
+
 /-! ### Registers wrapped by adapters -/
 
 theorem preAdapter_lift (gs : List (ZMod 4 × Address 9)) (i : ℕ) :
