@@ -31,7 +31,8 @@ local coordinates and another monomial word, with `r` its X-block rank. -/
 theorem Realization.exists_split (K : Realization) :
     ∃ Lw Rw : List Prim, (∀ p ∈ Lw ++ Rw, p.Invertible) ∧ childCount Lw = 0 ∧
       childCount Rw = 0 ∧
-      Lowers K (Lw ++ cPrims (Module.finrank Geometry.F (Tableau.xRange K.binary)) ++ Rw) := by
+      Lowers K (Lw ++ cPrims (Module.finrank Geometry.F (Tableau.xRange K.binary)) ++ Rw) ∧
+      (K.Dyadic → ∀ p ∈ Lw ++ Rw, p.Ready) := by
   obtain ⟨A₂, G, S₂, S, hS₂, hS, c, κ, h⟩ := K.lowering
   set r := Module.finrank Geometry.F (Tableau.xRange K.binary)
   have hκ : κ ≠ 0 := Realization.scalar_ne_zero_smul K h
@@ -45,7 +46,7 @@ theorem Realization.exists_split (K : Realization) :
     [.diag (fun x => qValue (shearMatrix (Tableau.cut r))
         (defaultAlpha (shearMatrix (Tableau.cut r))) (lowPart x)),
       .diag (fun x => qValue (shearMatrix S) (defaultAlpha (shearMatrix S)) (lowPart x)),
-      .perm (liftGL G)] ++ (pauliPrims c ++ [.scale κ]), ?_, rfl, rfl, ?_⟩
+      .perm (liftGL G)] ++ (pauliPrims c ++ [.scale κ]), ?_, rfl, rfl, ?_, fun hK => ?_⟩
   · intro p hp
     simp only [List.mem_append, List.mem_cons, List.mem_nil_iff, or_false, pauliPrims] at hp
     rcases hp with ((rfl | rfl | rfl) | ((rfl | rfl | rfl) | (rfl | rfl | rfl) | rfl)) <;>
@@ -53,6 +54,26 @@ theorem Realization.exists_split (K : Realization) :
   · intro f
     rw [hl f]
     simp only [hadamardPrims, List.append_assoc, List.cons_append, List.nil_append]
+  · obtain ⟨j, hj⟩ := phase_of_good hK.1 (((dyadic_monomial A₂ S₂ hS₂).then ((dyadic_hadamard r).then
+      ((dyadic_shear S hS).then (dyadic_permutation G)))).1.comp (good_operator c)) h
+    refine List.forall_mem_append.mpr ⟨?_, List.forall_mem_append.mpr ⟨?_,
+      List.forall_mem_append.mpr ⟨ready_pauliPrims c, ?_⟩⟩⟩
+    · intro p hp
+      simp only [List.mem_cons, List.not_mem_nil, or_false] at hp
+      rcases hp with rfl | rfl | rfl
+      · exact trivial
+      · exact quadratic_qValue _ _
+      · exact quadratic_qValue _ _
+    · intro p hp
+      simp only [List.mem_cons, List.not_mem_nil, or_false] at hp
+      rcases hp with rfl | rfl | rfl
+      · exact quadratic_qValue _ _
+      · exact quadratic_qValue _ _
+      · exact trivial
+    · intro p hp
+      simp only [List.mem_cons, List.not_mem_nil, or_false] at hp
+      subst hp
+      exact ⟨j, hj⟩
 
 theorem wordOp_invPrims_right (ws : List Prim) (hws : ∀ p ∈ ws, p.Invertible) (f : Arrays 73) :
     wordOp ws (wordOp (invPrims ws) f) = f := by

@@ -129,7 +129,7 @@ theorem edgePrims_lowers (a b : ℕ) : Lowers (edgeRealization a b) (edgePrims a
 theorem childCount_edgePrims (a b : ℕ) :
     childCount (edgePrims a b) = Module.finrank Geometry.F (LinearMap.range
       (Tableau.bBlock (Tableau.nativeTableau a) (Tableau.nativeTableau b))) := by
-  rw [edgePrims, (Classical.choose_spec (Realization.exists_prims (edgeRealization a b))).2,
+  rw [edgePrims, (Classical.choose_spec (Realization.exists_prims (edgeRealization a b))).2.1,
     edgeRealization_width]
 
 theorem edge_apply (a b : ℕ) (y : S) :

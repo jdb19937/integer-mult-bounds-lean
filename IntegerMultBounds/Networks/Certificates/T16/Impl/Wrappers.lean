@@ -47,7 +47,7 @@ theorem wordLin_adapterOut (χ : Addr ≃ₗ[ZMod 2] Addr) (gs : List (ZMod 4 ×
 theorem childCount_adapterIn (χ : Addr ≃ₗ[ZMod 2] Addr) (gs : List (ZMod 4 × Address 9)) (a : ℕ)
     (h : Matches gs a) : childCount (adapterIn χ gs a) = 0 := by
   rw [adapterIn, show ∀ (p : Prim) ps, p :: ps = [p] ++ ps from fun _ _ => rfl, childCount_append,
-    (Classical.choose_spec (Realization.exists_prims (preAdapter gs a))).2,
+    (Classical.choose_spec (Realization.exists_prims (preAdapter gs a))).2.1,
     show (preAdapter gs a).binary =
       (kernelListRealization gs).binary.symm.trans (nativeRealization a).binary from rfl,
     finrank_xRange_eq_zero h.inverseZ]
@@ -56,7 +56,7 @@ theorem childCount_adapterIn (χ : Addr ≃ₗ[ZMod 2] Addr) (gs : List (ZMod 4 
 theorem childCount_adapterOut (χ : Addr ≃ₗ[ZMod 2] Addr) (gs : List (ZMod 4 × Address 9)) (b : ℕ)
     (h : Matches gs b) : childCount (adapterOut χ gs b) = 0 := by
   rw [adapterOut, childCount_append,
-    (Classical.choose_spec (Realization.exists_prims (postAdapter gs b))).2,
+    (Classical.choose_spec (Realization.exists_prims (postAdapter gs b))).2.1,
     show (postAdapter gs b).binary =
       (nativeRealization b).binary.symm.trans (kernelListRealization gs).binary from rfl,
     finrank_xRange_eq_zero h.inverseZ.symm]
@@ -85,7 +85,12 @@ theorem split_spec (a b : ℕ) :
       Lowers (edgeRealization a b) (splitL a b ++
         cPrims (Module.finrank Geometry.F (Tableau.xRange (edgeRealization a b).binary)) ++
           splitR a b) :=
-  Classical.choose_spec (Classical.choose_spec (Realization.exists_split (edgeRealization a b)))
+  let h := Classical.choose_spec (Classical.choose_spec (Realization.exists_split (edgeRealization a b)))
+  ⟨h.1, h.2.1, h.2.2.1, h.2.2.2.1⟩
+
+theorem split_ready (a b : ℕ) : ∀ p ∈ splitL a b ++ splitR a b, p.Ready :=
+  (Classical.choose_spec (Classical.choose_spec
+    (Realization.exists_split (edgeRealization a b)))).2.2.2.2 (dyadic_edge a b)
 
 /-- The pre-wrapper of a helper register. -/
 noncomputable def helperIn {P : PortData} (hP : portCheck P = true) (m a b : ℕ) : List Prim :=

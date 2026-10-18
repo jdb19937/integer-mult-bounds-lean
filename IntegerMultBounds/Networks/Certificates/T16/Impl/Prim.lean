@@ -28,6 +28,19 @@ noncomputable def Prim.op : Prim → Arrays 73 → Arrays 73
   | .diag φ, f => phaseDiagonal φ f
   | .scale c, f => c • f
 
+/-- A `Z/4`-quadratic exponent on 73 bits. -/
+def Quadratic (φ : Addr → ZMod 4) : Prop :=
+  ∃ (k : ZMod 4) (c : Fin 73 → ZMod 4) (d : Fin 73 → Fin 73 → ZMod 4), ∀ x,
+    φ x = k + ∑ i, c i * bitLift (x i) + ∑ i, ∑ j, 2 * d i j * (bitLift (x i) * bitLift (x j))
+
+/-- A primitive the machine runs: a kernel, a permutation, a quadratic phase or a fourth-root
+scalar. -/
+def Prim.Ready : Prim → Prop
+  | .kernel _ _ => True
+  | .perm _ => True
+  | .diag φ => Quadratic φ
+  | .scale c => ∃ j : ZMod 4, c = phase j
+
 /-- Whether a primitive is a child call: a kernel with an odd phase. -/
 def Prim.isChild : Prim → Bool
   | .kernel q _ => q.val % 2 == 1

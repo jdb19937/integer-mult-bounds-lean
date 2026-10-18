@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.Networks.Certificates.T16.Impl.Prim
+public import IntegerMultBounds.Networks.Certificates.T16.Dyadic
 
 /-! Lowering lifted nine-bit realizations to primitive words. `Lowers K ws` says that the lift
 of the exact operator of `K` is the word `ws`. Permutations, diagonal gates and C gates lower to
@@ -139,6 +140,85 @@ theorem lift9_operator (p : Label) (f : Arrays 73) :
   rw [lift9_smul, ← lift9_comp, lift9_characterMultiply, lift9_translation]
   rfl
 
+/-! ### Ready words -/
+
+theorem sum73 {M : Type*} [AddCommMonoid M] (g : Fin 73 → M) (hg : ∀ k : Fin 73, 9 ≤ k.val → g k = 0) :
+    ∑ k, g k = ∑ i : Fin 9, g (Fin.castAdd 64 i) := by
+  rw [show (∑ k : Fin 73, g k) = ∑ k : Fin (9 + 64), g k from rfl, Fin.sum_univ_add,
+    Finset.sum_eq_zero (s := Finset.univ) (f := fun j : Fin 64 => g (Fin.natAdd 9 j))
+      (fun j _ => hg _ (by simp)), add_zero]
+
+/-- A quadratic exponent on the nine low bits is quadratic on all 73. -/
+theorem quadratic_lowPart (ψ : Address 9 → ZMod 4) (k : ZMod 4) (c : Fin 9 → ZMod 4)
+    (d : Fin 9 → Fin 9 → ZMod 4)
+    (h : ∀ y, ψ y = k + ∑ i, c i * bitLift (y i) + ∑ i, ∑ j, 2 * d i j * (bitLift (y i) * bitLift (y j))) :
+    Quadratic fun x => ψ (lowPart x) := by
+  refine ⟨k, fun l => if hl : l.val < 9 then c ⟨l.val, hl⟩ else 0,
+    fun l l' => if hl : l.val < 9 then if hl' : l'.val < 9 then d ⟨l.val, hl⟩ ⟨l'.val, hl'⟩ else 0
+      else 0, fun x => ?_⟩
+  show ψ (lowPart x) = _
+  rw [h]
+  have hlin : ∑ l : Fin 73, (if hl : l.val < 9 then c ⟨l.val, hl⟩ else 0) * bitLift (x l) =
+      ∑ i, c i * bitLift (lowPart x i) := by
+    rw [sum73 _ fun l hl => by simp [show ¬ l.val < 9 by omega]]
+    refine Finset.sum_congr rfl fun i _ => ?_
+    simp [lowPart, i.isLt]
+  have hquad : ∑ l : Fin 73, ∑ l' : Fin 73, 2 * (if hl : l.val < 9 then if hl' : l'.val < 9 then
+      d ⟨l.val, hl⟩ ⟨l'.val, hl'⟩ else 0 else 0) * (bitLift (x l) * bitLift (x l')) =
+      ∑ i, ∑ j, 2 * d i j * (bitLift (lowPart x i) * bitLift (lowPart x j)) := by
+    rw [sum73 _ fun l hl => Finset.sum_eq_zero fun l' _ => by simp [show ¬ l.val < 9 by omega]]
+    refine Finset.sum_congr rfl fun i _ => ?_
+    rw [sum73 _ fun l' hl' => by simp [show ¬ l'.val < 9 by omega]]
+    refine Finset.sum_congr rfl fun j _ => ?_
+    simp [lowPart, i.isLt, j.isLt]
+  rw [hlin, hquad]
+
+theorem quadratic_qValue (Q : BinaryMatrix) (alpha : Fin 9 → ZMod 4) :
+    Quadratic fun x => qValue Q alpha (lowPart x) := by
+  refine quadratic_lowPart _ 0 alpha (fun i j => if i < j then bitLift (Q i j) else 0) fun y => ?_
+  rw [qValue_source, zero_add]
+  refine congrArg _ (Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_)
+  split_ifs <;> ring
+
+theorem doubleLift_mul (a b : ZMod 2) : doubleLift (a * b) = 2 * bitLift a * bitLift b := by
+  revert a b; decide
+
+theorem quadratic_character (z : Address 9) :
+    Quadratic fun x => 2 * bitLift (Labels.binary 9 z (lowPart x)) := by
+  refine quadratic_lowPart (fun y => 2 * bitLift (Labels.binary 9 z y)) 0
+    (fun i => 2 * bitLift (z i)) (fun _ _ => 0) fun y => ?_
+  change doubleLift (Labels.form 0 z y) = _
+  rw [Labels.form_apply, zero_mul, zero_mul, sub_zero, doubleLift_sum]
+  simp [doubleLift_mul, mul_assoc]
+
+theorem ready_cPrims (r : ℕ) : ∀ p ∈ cPrims r, p.Ready := by
+  induction r with
+  | zero => simp [cPrims]
+  | succ k ih =>
+    intro p hp
+    rw [cPrims, List.mem_append] at hp
+    rcases hp with hp | hp
+    · exact ih p hp
+    · split_ifs at hp
+      · rw [List.mem_singleton] at hp; subst hp; trivial
+      · simp at hp
+
+theorem ready_hadamardPrims (r : ℕ) : ∀ p ∈ hadamardPrims r, p.Ready := by
+  intro p hp
+  simp only [hadamardPrims, List.mem_append, List.mem_singleton] at hp
+  rcases hp with rfl | hp | rfl
+  · exact quadratic_qValue _ _
+  · exact ready_cPrims r p hp
+  · exact quadratic_qValue _ _
+
+theorem ready_pauliPrims (c : Label) : ∀ p ∈ pauliPrims c, p.Ready := by
+  intro p hp
+  simp only [pauliPrims, List.mem_cons, List.not_mem_nil, or_false] at hp
+  rcases hp with rfl | rfl | rfl
+  · exact quadratic_character _
+  · trivial
+  · exact ⟨_, rfl⟩
+
 /-! ### General lowering -/
 
 theorem lowers_smul_operator {K W : Realization} {ws : List Prim} (κ : ℂ) (c : Label)
@@ -154,7 +234,8 @@ theorem lowers_smul_operator {K W : Realization} {ws : List Prim} (κ : ℂ) (c 
 with exactly as many child calls as the X-block rank of its tableau. -/
 theorem Realization.exists_prims (K : Realization) :
     ∃ ws : List Prim, Lowers K ws ∧
-      childCount ws = Module.finrank Geometry.F (Tableau.xRange K.binary) := by
+      childCount ws = Module.finrank Geometry.F (Tableau.xRange K.binary) ∧
+      (K.Dyadic → ∀ p ∈ ws, p.Ready) := by
   obtain ⟨A₂, G, S₂, S, hS₂, hS, c, κ, h⟩ := K.lowering
   set r := Module.finrank Geometry.F (Tableau.xRange K.binary)
   have hr : r ≤ 9 := by
@@ -162,7 +243,27 @@ theorem Realization.exists_prims (K : Realization) :
     simpa using this
   refine ⟨_, lowers_smul_operator κ c h
     ((lowers_monomial A₂ S₂ hS₂).then ((lowers_hadamard r).then
-      ((lowers_shear S hS).then (lowers_permutation G)))), ?_⟩
+      ((lowers_shear S hS).then (lowers_permutation G)))), ?_, fun hK => ?_⟩
+  swap
+  · obtain ⟨j, hj⟩ := phase_of_good hK.1 (((dyadic_monomial A₂ S₂ hS₂).then ((dyadic_hadamard r).then
+      ((dyadic_shear S hS).then (dyadic_permutation G)))).1.comp (good_operator c)) h
+    refine List.forall_mem_append.mpr ⟨List.forall_mem_append.mpr ⟨?_,
+      List.forall_mem_append.mpr ⟨ready_hadamardPrims r, ?_⟩⟩,
+      List.forall_mem_append.mpr ⟨ready_pauliPrims c, ?_⟩⟩
+    · intro p hp
+      simp only [List.mem_cons, List.not_mem_nil, or_false] at hp
+      rcases hp with rfl | rfl
+      · trivial
+      · exact quadratic_qValue _ _
+    · intro p hp
+      simp only [List.mem_append, List.mem_cons, List.not_mem_nil, or_false] at hp
+      rcases hp with rfl | rfl
+      · exact quadratic_qValue _ _
+      · trivial
+    · intro p hp
+      simp only [List.mem_cons, List.not_mem_nil, or_false] at hp
+      subst hp
+      exact ⟨j, hj⟩
   have hm : childCount [Prim.perm (liftGL A₂), .diag (fun x => qValue (shearMatrix S₂)
       (defaultAlpha (shearMatrix S₂)) (lowPart x))] = 0 := rfl
   have hp : childCount (pauliPrims c ++ [Prim.scale κ]) = 0 := rfl
