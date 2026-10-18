@@ -251,12 +251,12 @@ theorem Matches.inverseZ {gs : List (ZMod 4 × Geometry.Address)} {i : ℕ} (h :
 /-- **Rank-zero adapters.** A matching pre-adapter lowers to a word without child calls. -/
 theorem exists_preAdapter_prims {gs : List (ZMod 4 × Geometry.Address)} {i : ℕ}
     (h : Matches gs i) : ∃ ws, Lowers (preAdapter gs i) ws ∧ childCount ws = 0 := by
-  obtain ⟨ws, hw, hc⟩ := Realization.exists_prims (preAdapter gs i)
+  obtain ⟨ws, hw, hc, -⟩ := Realization.exists_prims (preAdapter gs i)
   exact ⟨ws, hw, hc.trans (finrank_xRange_eq_zero h.inverseZ)⟩
 
 theorem exists_postAdapter_prims {gs : List (ZMod 4 × Geometry.Address)} {i : ℕ}
     (h : Matches gs i) : ∃ ws, Lowers (postAdapter gs i) ws ∧ childCount ws = 0 := by
-  obtain ⟨ws, hw, hc⟩ := Realization.exists_prims (postAdapter gs i)
+  obtain ⟨ws, hw, hc, -⟩ := Realization.exists_prims (postAdapter gs i)
   exact ⟨ws, hw, hc.trans (finrank_xRange_eq_zero h.inverseZ.symm)⟩
 
 end IntegerMultBounds.Networks.Certificates.T16.Impl
