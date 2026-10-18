@@ -136,4 +136,70 @@ theorem local_rhs (s r : ℕ) {r' a' : ℕ} (hr' : r' < 16) (ha' : a' < 112) (y 
   rw [run_append, run_hosted]
   rfl
 
+/-! ### The program side -/
+
+theorem callProgram_forward {s r : ℕ} (h : localReverse s = false) :
+    callProgram s r = invocation (callReg s r) (callIn s r) (callOut s r) forwardWord := by
+  simp [callProgram, h]
+
+theorem callProgram_backward {s r : ℕ} (h : localReverse s = true) :
+    callProgram s r = invocation (callReg s r) (callIn s r) (callOut s r) backwardWord := by
+  simp [callProgram, h]
+
+theorem entry_forward {s : ℕ} (h : localReverse s = false) (w : ℕ) :
+    Trace.forwardInitial.label w = entryLabel (localReverse s) w := by simp [entryLabel, h]
+
+theorem exit_forward {s : ℕ} (h : localReverse s = false) (w : ℕ) :
+    Trace.forwardFinal.label w = exitLabel (localReverse s) w := by simp [exitLabel, h]
+
+theorem entry_backward {s : ℕ} (h : localReverse s = true) (w : ℕ) :
+    Trace.backwardInitial.label w = entryLabel (localReverse s) w := by simp [entryLabel, h]
+
+theorem exit_backward {s : ℕ} (h : localReverse s = true) (w : ℕ) :
+    Trace.backwardFinal.label w = exitLabel (localReverse s) w := by simp [exitLabel, h]
+
+/-- A source register. -/
+theorem lhs_X {s r a : ℕ} (F : CallFacts s r) (ha : a < 112) (y : NodeUnit → S) :
+    runT ρ (callProgram s r) y (callReg s r a) =
+      if localReverse s then
+        portRep ρ a (ofAdd (frameX (s + 1) a)) (portRep ρ a (ofAdd (-frameX s a)) (y (callReg s r a)) +
+          (-1 : ℤ) • portRep ρ a (ofAdd (-frameY s a)) (y (callReg s r (a + 112))))
+      else portRep ρ a (ofAdd (frameX (s + 1) a))
+        (portRep ρ a (ofAdd (-frameX s a)) (y (callReg s r a))) := by
+  obtain ⟨e1, -, -, e4⟩ := F.ext a ha
+  cases hrev : localReverse s
+  · rw [callProgram_forward hrev, (forward_invocation ρ _ F.inj _ _ y).1 a ha,
+      entry_forward hrev, exit_forward hrev,
+      data_change ρ ha (callIn_X ha) (callOut_X ha) e1]
+    rfl
+  · rw [callProgram_backward hrev, (backward_invocation ρ _ F.inj _ _ y).1 a ha,
+      entry_backward hrev, exit_backward hrev, entry_backward hrev,
+      data_change ρ ha (callIn_X ha) (callOut_X ha) e1,
+      data_change ρ ha (callIn_Y ha) (callOut_X ha) e4]
+    simp only [ite_true, neg_one_smul, map_add, map_neg, sub_eq_add_neg]
+
+/-- A target register. -/
+theorem lhs_Y {s r a : ℕ} (F : CallFacts s r) (ha : a < 112) (y : NodeUnit → S) :
+    runT ρ (callProgram s r) y (callReg s r (a + 112)) =
+      if localReverse s then
+        portRep ρ a (ofAdd (frameY (s + 1) a))
+          (portRep ρ a (ofAdd (-frameY s a)) (y (callReg s r (a + 112))))
+      else portRep ρ a (ofAdd (frameY (s + 1) a))
+        (portRep ρ a (ofAdd (-frameY s a)) (y (callReg s r (a + 112))) +
+          (1 : ℤ) • portRep ρ a (ofAdd (-frameX s a)) (y (callReg s r a))) := by
+  obtain ⟨-, e2, e3, -⟩ := F.ext a ha
+  cases hrev : localReverse s
+  · have h2 := (forward_invocation ρ _ F.inj (callIn s r) (callOut s r) y).2.1 (a + 112)
+      (by omega) (by omega)
+    rw [callProgram_forward hrev, h2, show a + 112 - 112 = a by omega,
+      entry_forward hrev, exit_forward hrev, entry_forward hrev,
+      data_change ρ ha (callIn_X ha) (callOut_Y ha) e3,
+      data_change ρ ha (callIn_Y ha) (callOut_Y ha) e2]
+    simp only [Bool.false_eq_true, ite_false, one_smul, map_add, add_comm]
+  · have h2 := (backward_invocation ρ _ F.inj (callIn s r) (callOut s r) y).2.1 (a + 112)
+      (by omega) (by omega)
+    rw [callProgram_backward hrev, h2, entry_backward hrev, exit_backward hrev,
+      data_change ρ ha (callIn_Y ha) (callOut_Y ha) e2]
+    rfl
+
 end IntegerMultBounds.Networks.Certificates.T16.Impl
