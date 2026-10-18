@@ -44,7 +44,7 @@ theorem compactDsyWires_spec : ∀ᶠ n in atTop, ∀ mainP : MnPr bdA,
   have H := compactDs_layHyp hbig
   have hE := ds_lay_E hn
   have hw1 : 1 ≤ dsW n := by unfold dsW; omega
-  obtain ⟨hEW, -, -, -, -⟩ := ds_lay_widths hn hw1
+  obtain ⟨hEW, -, -, -, -⟩ := ds_lay_widths hbig hw1
   have hsum := ds_sum_cvAx hn
   have hlen := ds_length_cvAx n
   have hℓr : ℓ n ≤ 2 ^ ℓ n * dsW n :=

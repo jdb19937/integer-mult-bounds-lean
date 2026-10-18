@@ -124,10 +124,7 @@ theorem crtControl_polynomial_pipeline_le (A k : ℕ) :
       (∀ i, cost i ≤ A * (logT n + 1) ^ k) →
       (∑ i, 2 ^ (logT n - a i) * cost i) ≤ 2 * (A * 2 ^ k) * T n := by
   filter_upwards [crtControl_polynomial_total_le A k, eventually_big] with n h hb a cost ha hw hc
-  have hd : d n ≤ b n := by
-    have := hb.d_le_ℓ
-    have := mt_ℓ_le_b hb
-    omega
+  have hd : d n ≤ b n := d_le_b n
   exact h (logT n) (d n) a cost (mt_logT_le_b hb) hd ha hw hc
 
 end IntegerMultBounds.MathlibTM2.Cost

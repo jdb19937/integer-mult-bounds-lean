@@ -34,10 +34,14 @@ private theorem compactRetuned_K_le_b {n : ℕ} (h : Big n) : Mult.CompactSizes.
   obtain ⟨_,_,_,_,_,_,_,_,hK,_⟩ := compactRetuned_inst h
   exact hK
 private theorem compactRetuned_lay_le_conv {n : ℕ} (h : Big n) :
-    (T n:ℝ)*p n*((d n:ℝ)*Mult.CompactSizes.K n+(p n:ℝ)*(Mult.CompactSizes.K n:ℝ)^(Parameters.tau-1))≤CompactTotal.conv n := by
+    (T n:ℝ)*p n*((d n:ℝ)*((layB (ℓ n) (Mult.CompactSizes.K n):ℝ)+1)+
+      (p n:ℝ)*(Mult.CompactSizes.K n:ℝ)^(Parameters.tau-1))≤2*CompactTotal.conv n := by
   have hg := gr_one_le_logLog (one_le_mul_of_one_le_of_one_le (mt_one_le_r n) (mt_one_le_p h))
+  have hpre : (d n:ℝ)*((layB (ℓ n) (Mult.CompactSizes.K n):ℝ)+1)≤
+      (p n:ℝ)*(Mult.CompactSizes.K n:ℝ)^(Parameters.tau-1) := CompactTotal.prefix_le h
   unfold CompactTotal.conv
   have hp : 0≤(ℓ n:ℝ)*(d n:ℝ)^CompactInterim.lam' := by positivity
+  have hd : (0:ℝ)≤d n := Nat.cast_nonneg _
   nlinarith [mt_Tp_nonneg n]
 
 theorem compactRetuned_ml_counts {n : ℕ} {es : List ℕ} (H : LayHyp es (ℓ n) (Mult.CompactSizes.K n)) (hK1 : 1 ≤ Mult.CompactSizes.K n) (B : ℕ) :
@@ -118,7 +122,7 @@ theorem compactRetuned_ml_stage_le (Tm t₀ Ka cv : ℕ) :
       ((layBitCost es.sum B (fun _ => 14 * es.sum + 12) (layBits es (ℓ n) (Mult.CompactSizes.K n)).length +
         layXcLoopCost Tm t₀ es.sum (Mult.CompactSizes.K n) B rg Wf (fun _ => 60 * (es.sum + B + 2) + 75) xs :
           ℕ) : ℝ) ≤
-        C * ((T n : ℝ) * p n * ((d n : ℝ) * Mult.CompactSizes.K n + (p n : ℝ) * (Mult.CompactSizes.K n : ℝ) ^ (Parameters.tau - 1))) := by
+        C * ((T n : ℝ) * p n * ((d n : ℝ) * ((layB (ℓ n) (Mult.CompactSizes.K n) : ℝ) + 1) + (p n : ℝ) * (Mult.CompactSizes.K n : ℝ) ^ (Parameters.tau - 1))) := by
   obtain ⟨C2, hC2def⟩ : ∃ C2, C2 = mlC2 Tm t₀ cv := ⟨_, rfl⟩
   have hC2 : 0 ≤ C2 := hC2def ▸ ml_C2_nonneg Tm t₀ cv
   refine ⟨18 * cv + 130 + C2, by positivity, ?_⟩
@@ -132,7 +136,7 @@ theorem compactRetuned_ml_stage_le (Tm t₀ Ka cv : ℕ) :
     exact Nat.pow_le_pow_right (by norm_num) hN
   have hTpos : 1 ≤ T n := Nat.one_le_two_pow
   have hNb : es.sum ≤ b n := hN.trans (mt_logT_le_b h)
-  obtain ⟨hlen1, -, hbK, hq, -⟩ := compactRetuned_ml_counts H hK1 B
+  obtain ⟨hlen1, -, -, hq, -⟩ := compactRetuned_ml_counts H hK1 B
   have h3dℓ : 3 * d n * ℓ n ≤ p n := h.ℓ_bounds.2
   -- one exchange
   obtain ⟨V, hVdef⟩ : ∃ V, V = 2 ^ es.sum * B := ⟨_, rfl⟩
@@ -165,7 +169,8 @@ theorem compactRetuned_ml_stage_le (Tm t₀ Ka cv : ℕ) :
   have hbt := ml_bitLoop_le es.sum B (14 * es.sum + 12) (layBits es (ℓ n) (Mult.CompactSizes.K n)).length
   -- the natural-number bound
   have hNp : es.sum ≤ p n := by rw [hpb]; omega
-  have hA1 : (layBits es (ℓ n) (Mult.CompactSizes.K n)).length ≤ d n * Mult.CompactSizes.K n := hlen1.trans (Nat.mul_le_mul hD hbK)
+  have hA1 : (layBits es (ℓ n) (Mult.CompactSizes.K n)).length ≤ d n * (layB (ℓ n) (Mult.CompactSizes.K n) + 1) :=
+    hlen1.trans (Nat.mul_le_mul_right _ hD)
   have hA2 : 14 * es.sum + 12 + layMvCost es.sum B + 5 ≤ (18 * cv + 121) * (T n * p n) := by
     unfold layMvCost
     have hp1 : 1 ≤ p n := by omega
@@ -187,11 +192,11 @@ theorem compactRetuned_ml_stage_le (Tm t₀ Ka cv : ℕ) :
     rw [this]; exact Nat.mul_le_mul_right _ hxl
   have hN1 : layBitCost es.sum B (fun _ => 14 * es.sum + 12) (layBits es (ℓ n) (Mult.CompactSizes.K n)).length +
       layXcLoopCost Tm t₀ es.sum (Mult.CompactSizes.K n) B rg Wf (fun _ => 60 * (es.sum + B + 2) + 75) xs ≤
-      d n * Mult.CompactSizes.K n * ((18 * cv + 121) * (T n * p n)) +
+      d n * (layB (ℓ n) (Mult.CompactSizes.K n) + 1) * ((18 * cv + 121) * (T n * p n)) +
         es.length * layQ (ℓ n) (Mult.CompactSizes.K n) * (60 * (es.sum + B + 2) + 80 + ⌈Xr⌉₊) + 8 := by
     omega
   have hR1 := (Nat.cast_le (α := ℝ)).2 hN1
-  simp only [Nat.cast_add, Nat.cast_mul, Nat.cast_ofNat] at hR1
+  simp only [Nat.cast_add, Nat.cast_mul, Nat.cast_ofNat, Nat.cast_one] at hR1
   -- real facts
   have hTr1 : (1 : ℝ) ≤ T n := mt_one_le_T n
   have hPr1 : (1 : ℝ) ≤ p n := mt_one_le_p h
@@ -236,18 +241,20 @@ theorem compactRetuned_ml_stage_le (Tm t₀ Ka cv : ℕ) :
     rw [mul_assoc]
     exact hXrb
   -- assembly
-  have hDK : (1 : ℝ) ≤ (d n : ℝ) * Mult.CompactSizes.K n := by nlinarith only [hDr1, hKr1]
-  have hX1 : (T n : ℝ) * p n ≤ (T n : ℝ) * p n * ((d n : ℝ) * Mult.CompactSizes.K n) := by
+  have hDK : (1 : ℝ) ≤ (d n : ℝ) * ((layB (ℓ n) (Mult.CompactSizes.K n) : ℝ) + 1) := by
+    have : (0 : ℝ) ≤ (layB (ℓ n) (Mult.CompactSizes.K n) : ℝ) := Nat.cast_nonneg _
+    nlinarith only [hDr1, this]
+  have hX1 : (T n : ℝ) * p n ≤ (T n : ℝ) * p n * ((d n : ℝ) * ((layB (ℓ n) (Mult.CompactSizes.K n) : ℝ) + 1)) := by
     nlinarith only [hDK, hTP0]
   have hX2 : (0 : ℝ) ≤ (T n : ℝ) * p n * ((p n : ℝ) * (Mult.CompactSizes.K n : ℝ) ^ (Parameters.tau - 1)) :=
     mul_nonneg hTP0 (mul_nonneg (by linarith only [hPr1]) hKτ1)
-  have hX10 : (0 : ℝ) ≤ (T n : ℝ) * p n * ((d n : ℝ) * Mult.CompactSizes.K n) := by linarith only [hX1, hTP0]
+  have hX10 : (0 : ℝ) ≤ (T n : ℝ) * p n * ((d n : ℝ) * ((layB (ℓ n) (Mult.CompactSizes.K n) : ℝ) + 1)) := by linarith only [hX1, hTP0]
   have hTP1 : (1 : ℝ) ≤ (T n : ℝ) * p n := by nlinarith only [hTr1, hPr1]
   have hcvY : (0 : ℝ) ≤ (cv : ℝ) *
       ((T n : ℝ) * p n * ((p n : ℝ) * (Mult.CompactSizes.K n : ℝ) ^ (Parameters.tau - 1))) :=
     mul_nonneg (Nat.cast_nonneg _) hX2
-  have hC2X : (0 : ℝ) ≤ C2 * ((T n : ℝ) * p n * ((d n : ℝ) * Mult.CompactSizes.K n)) := mul_nonneg hC2 hX10
-  have h8 : (8 : ℝ) ≤ 8 * ((T n : ℝ) * p n * ((d n : ℝ) * Mult.CompactSizes.K n)) := by
+  have hC2X : (0 : ℝ) ≤ C2 * ((T n : ℝ) * p n * ((d n : ℝ) * ((layB (ℓ n) (Mult.CompactSizes.K n) : ℝ) + 1))) := mul_nonneg hC2 hX10
+  have h8 : (8 : ℝ) ≤ 8 * ((T n : ℝ) * p n * ((d n : ℝ) * ((layB (ℓ n) (Mult.CompactSizes.K n) : ℝ) + 1))) := by
     linarith only [hX1, hTP1]
   rw [Nat.cast_add]
   linarith [hR1, hexch, hX1, h8, hC2X, hcvY, hX2]
@@ -261,7 +268,7 @@ theorem compactRetuned_ml_lay_cost_le_gen :
           (slyW (List.ofFn (cvAx (t n))).sum (2 ^ ℓ n * dsW n) (ℓ n) (d n - 1)) E v₀ : ℕ) : ℝ) ≤
         C * CompactTotal.conv n := by
   obtain ⟨Cs, hCs0, hst⟩ := compactRetuned_ml_stage_le (nT SXReg) 6 mnKa 12
-  refine ⟨2 * Cs + 16, ?_⟩
+  refine ⟨4 * Cs + 32, ?_⟩
   filter_upwards [eventually_big, hst, compactRetuned_ml_writer_le 72 80, ml_aux_le, compactRetuned_one_le_K] with n h hst
     hwr haux hK1
   intro E v₀
@@ -387,13 +394,15 @@ theorem compactRetuned_ml_lay_cost_le_gen :
   have hKτ1 : (0 : ℝ) ≤ (Mult.CompactSizes.K n : ℝ) ^ (Parameters.tau - 1) :=
     Real.rpow_nonneg (by linarith only [hKr1]) _
   have hTP0 : (0 : ℝ) ≤ (T n : ℝ) * p n := by positivity
-  have hDK : (1 : ℝ) ≤ (d n : ℝ) * Mult.CompactSizes.K n := by nlinarith only [hDr1, hKr1]
+  have hDK : (1 : ℝ) ≤ (d n : ℝ) * ((layB (ℓ n) (Mult.CompactSizes.K n) : ℝ) + 1) := by
+    have : (0 : ℝ) ≤ (layB (ℓ n) (Mult.CompactSizes.K n) : ℝ) := Nat.cast_nonneg _
+    nlinarith only [hDr1, this]
   have hpK : (0 : ℝ) ≤ (p n : ℝ) * (Mult.CompactSizes.K n : ℝ) ^ (Parameters.tau - 1) := by positivity
   have hTpX : (T n : ℝ) * p n ≤ (T n : ℝ) * p n *
-      ((d n : ℝ) * Mult.CompactSizes.K n + (p n : ℝ) * (Mult.CompactSizes.K n : ℝ) ^ (Parameters.tau - 1)) := by
+      ((d n : ℝ) * ((layB (ℓ n) (Mult.CompactSizes.K n) : ℝ) + 1) + (p n : ℝ) * (Mult.CompactSizes.K n : ℝ) ^ (Parameters.tau - 1)) := by
     nlinarith only [hDK, hpK, hTP0]
   have hCsX := mul_le_mul_of_nonneg_left hconv hCs0
-  have hTpc : (T n : ℝ) * p n ≤ CompactTotal.conv n := hTpX.trans hconv
+  have hTpc : (T n : ℝ) * p n ≤ 2 * CompactTotal.conv n := hTpX.trans hconv
   push_cast at hF hO hAux ⊢
   linarith [hF, hO, hWr, hAux, hCsX, hTpc, hTP0]
 

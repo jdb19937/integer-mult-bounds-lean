@@ -1,6 +1,8 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Mult.Moduli
+public import IntegerMultBounds.Primes.Moduli
+import IntegerMultBounds.Primes.Window
 import IntegerMultBounds.ExactRecovery
 public import Mathlib.Analysis.SpecialFunctions.Log.Base
 import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
@@ -23,11 +25,20 @@ functions of the operand length `n`, with the retuned constants `ε = 31/64`, `c
   particular the last) are `r`;
 * `α`, the least integer with `α^4 ≥ 12 d² b`; `γ = d (2α² + 2)`; `η = 1/(4d)`;
   `q = ⌈n/b⌉`;
-* source lengths `s_i` from `Moduli.src` with `N = oddProd d`, and `S = ∏ s_i`.
+* source lengths `s_i`, the prime moduli `Primes.primeSrc`: the first `numHalf` primes of the
+  window `((1 - 2η) r/2, (1 - η) r/2]` and the first `d - numHalf` primes of the window
+  `((1 - 2η) r, (1 - η) r]` (`srcLen`), and `S = ∏ s_i`.
+
+The windows hold enough primes for all large `n` (`PrimeSupply`, `eventually_primeSupply`, from
+the strong prime number theorem). With the chunk room `256 d^7 < ℓ^8` and the Gaussian width room
+`64 d (⌈log₂ p⌉ + 3) ≤ b` it forms the regime facts `BigFacts`, eventual statements whose
+thresholds are existential; `bigDim` names a dimension from which on they hold. None of them
+needs `d² ≤ b`: they use `d^64 ≤ b^31` and `b^33 ≤ (2ℓ)^64` (`b_pow_le_ℓ`).
 
 Every relation used downstream is proved for all large `n`, as a `Filter.Eventually` along
-`atTop`. Most of them follow deterministically from the regime `Big n : 2 ≤ n ∧ 2^192 ≤ d n`
-(`eventually_big`), whose consequences are the `Big.*` lemmas:
+`atTop`. Most of them follow deterministically from the regime
+`Big n : 2 ≤ n ∧ 2^192 + bigDim ≤ d n` (`eventually_big`), whose consequences are the `Big.*`
+lemmas:
 
 * `prod_t`, `t_last`, `t_eq`: `∏ t_i = T`, `t_d = r`, `t_i ∈ {r/2, r}`;
 * `volume_bounds`: `24 n ≤ T p < 48 n`; `Big.logT_bounds`: `b ≤ 2 log₂ T`, `log₂ T < b`;
@@ -36,12 +47,12 @@ Every relation used downstream is proved for all large `n`, as a `Filter.Eventua
 * `two_le_alpha`, `alpha_sq_lt`, `Big.alpha_sq_le_p`, `Big.eta_lt_theta`,
   `Big.quarter_p_le_theta`, `Big.band_width`, `Big.band_budget`;
 * `Big.four_gamma_le_b`, `Big.gamma_le_real`: `γ ≤ b/4`;
-* `Big.good`: the moduli (`Moduli.Good`), with `Big.S_lt_T`, `Big.T_lt_two_S`;
+* `Big.primeSupply`, `Big.good`: the moduli (`Moduli.Good`), with `Big.S_lt_T`, `Big.T_lt_two_S`;
 * `Big.two_q_le`, `Big.digits_length_le`: no wraparound, `2q - 2 < S`;
 * `Big.margin_hyps`, `eventually_threshold`, `eventually_margins`: the hypotheses and the
   conclusion of `ExactRecovery.margins_of_sizes` at `k = b`, `L = log₂ T`;
 * `eventually_pow_p_le_r`, `eventually_clog_p_le_K`, `eventually_logb_p_le_K`,
-  `eventually_mul_K_le_ℓ`, `eventually_small`: the growth statements `p^C ≤ r`,
+  `eventually_small`: the growth statements `p^C ≤ r`,
   `C log₂ p ≤ K`, `C K ≤ ℓ`, `2 d p² ≤ T log₂ T`.
 -/
 
@@ -51,6 +62,7 @@ Every relation used downstream is proved for all large `n`, as a `Filter.Eventua
 namespace IntegerMultBounds.MathlibTM2.Mult.Sizes
 
 open Filter Finset IntegerMultBounds.MathlibTM2.Mult.Moduli
+open IntegerMultBounds.Primes (primeSrc windowPrime winLo winHi)
 open scoped Function
 
 /-! ### Integer roots -/
@@ -137,9 +149,6 @@ def rootExp : ℕ := 64
 
 /-- The power applied before taking the integer root. -/
 def rootNumerator : ℕ := 31
-
-/-- The available integer lower size cap, distinct from the root degree. -/
-def powerCap : ℕ := 2
 
 /-- A coarse upper growth power, not the reciprocal of `epsilon`. -/
 def upperPower : ℕ := 8
@@ -242,11 +251,26 @@ noncomputable def eta (n : ℕ) : ℝ := 1 / (4 * d n)
 /-- The number `q = ⌈n/b⌉` of radix-`2^b` digits. -/
 def q (n : ℕ) : ℕ := (n + b n - 1) / b n
 
-/-- `N = 1 · 3 ⋯ (4d - 1)`. -/
-def N (n : ℕ) : ℕ := oddProd (d n)
+/-- The prime supply at `n`: `d ≥ 2`, `ℓ ≥ 4`, and both windows, below `R = 2^(ℓ-1)` and
+below `2R`, hold at least `d` primes. -/
+def PrimeSupply (n : ℕ) : Prop :=
+  2 ≤ d n ∧ 4 ≤ ℓ n ∧
+    d n ≤ ((Ioc (winLo (d n) (2 ^ (ℓ n - 1))) (winHi (d n) (2 ^ (ℓ n - 1)))).filter
+      Nat.Prime).card ∧
+    d n ≤ ((Ioc (winLo (d n) (2 * 2 ^ (ℓ n - 1))) (winHi (d n) (2 * 2 ^ (ℓ n - 1)))).filter
+      Nat.Prime).card
 
-/-- The source lengths `s_i` (`Moduli.src` with `N = oddProd d`, `R = r/2`). -/
-def s (n : ℕ) : Fin (d n) → ℕ := src (d n) (N n) (numHalf n) (ℓ n - 1)
+instance (n : ℕ) : Decidable (PrimeSupply n) := by
+  unfold PrimeSupply
+  infer_instance
+
+/-- The source length `s_i` on ℕ indices: the prime moduli `Primes.primeSrc` with `R = r/2`
+under the prime supply, and the primes above `2` otherwise. -/
+def srcLen (n i : ℕ) : ℕ :=
+  if PrimeSupply n then primeSrc (d n) (numHalf n) (2 ^ (ℓ n - 1)) i else windowPrime 2 i
+
+/-- The source lengths `s_i`. -/
+def s (n : ℕ) : Fin (d n) → ℕ := fun i => srcLen n i
 
 /-- `S = ∏ s_i`. -/
 def S (n : ℕ) : ℕ := ∏ i, s n i
@@ -305,36 +329,16 @@ theorem le_d_iff {D : ℕ} : D ≤ d n ↔ D ^ rootExp ≤ b n ^ rootNumerator :
 theorem one_le_d (hn : 2 ≤ n) : 1 ≤ d n :=
   one_le_iroot rootExp_ne (one_le_pow₀ (one_le_b hn))
 
-theorem d_sq_le (n : ℕ) : d n ^ powerCap ≤ b n := by
-  have hroot := d_pow_le n
-  rcases Nat.eq_zero_or_pos (b n) with hb | hb
-  · have hd : d n = 0 := by simpa [hb, rootNumerator, rootExp] using hroot
-    simp [hd, powerCap]
-  · apply (Nat.pow_le_pow_iff_left (by decide : 32≠0)).mp
-    change d n ^ 64 ≤ b n ^ 31 at hroot
-    change (d n ^ 2)^32 ≤ b n ^ 32
-    calc
-      (d n^2)^32=d n^64 := by rw [←pow_mul]
-      _ ≤ b n^31 := hroot
-      _ ≤ b n^32 := Nat.pow_le_pow_right hb (by decide)
-
-theorem d_le_b (n : ℕ) : d n ≤ b n :=
-  (Nat.le_self_pow (by decide : powerCap≠0) _).trans (d_sq_le n)
-
-theorem pow_le_b_of {k : ℕ} (hk : k ≤ powerCap) (hd : 1 ≤ d n) : d n ^ k ≤ b n :=
-  (Nat.pow_le_pow_right hd hk).trans (d_sq_le n)
-
-/-- `F d² ≤ b` whenever `F^16 ≤ d`: `(F d²)^32 = F^32 d^64 ≤ d² b^31 ≤ b^32`. -/
-theorem mul_sq_le_b {F : ℕ} (hF : F ^ 16 ≤ d n) : F * d n ^ 2 ≤ b n := by
-  rcases Nat.eq_zero_or_pos (d n) with h | h
-  · simp [h]
+/-- `d ≤ b`, from `d^64 ≤ b^31`. -/
+theorem d_le_b (n : ℕ) : d n ≤ b n := by
   have hroot : d n ^ 64 ≤ b n ^ 31 := d_pow_le n
-  have hsq : d n ^ 2 ≤ b n := pow_le_b_of (k := 2) le_rfl h
-  apply (Nat.pow_le_pow_iff_left (by decide : 32≠0)).mp
-  calc (F * d n ^ 2) ^ 32 = (F ^ 16) ^ 2 * d n ^ 64 := by ring
-    _ ≤ d n ^ 2 * b n ^ 31 := Nat.mul_le_mul (Nat.pow_le_pow_left hF 2) hroot
-    _ ≤ b n * b n ^ 31 := Nat.mul_le_mul_right _ hsq
-    _ = b n ^ 32 := by ring
+  by_contra hc
+  have h1 : b n ^ 64 < d n ^ 64 := Nat.pow_lt_pow_left (by omega) (by norm_num)
+  have h2 : b n ^ 31 ≤ b n ^ 64 := by
+    rcases Nat.eq_zero_or_pos (b n) with hb | hb
+    · simp [hb]
+    · exact Nat.pow_le_pow_right hb (by norm_num)
+  omega
 
 theorem tendsto_d : Tendsto d atTop atTop :=
   tendsto_atTop.2 fun D => (tendsto_atTop.1 tendsto_b (D ^ rootExp)).mono fun n h =>
@@ -440,65 +444,21 @@ theorem d_pow_le_ℓ (hn : 2 ≤ n) : d n ^ 33 ≤ (2 * ℓ n) ^ 31 := by
       _ = d n ^ 31 * (2 * ℓ n) ^ 31 := by ring
   exact Nat.le_of_mul_le_mul_left h4 (by positivity)
 
-/-- `d ≤ 2ℓ` for every `n ≥ 2`. -/
-theorem d_le_two_ℓ (hn : 2 ≤ n) : d n ≤ 2 * ℓ n := by
-  have h := d_pow_le_ℓ hn
+/-- `b^33 ≤ (2ℓ)^64` for every `n ≥ 2`: `b^64 ≤ (2dℓ)^64 = d^64 (2ℓ)^64 ≤ b^31 (2ℓ)^64`. The axis
+length grows like `b^(1-ε)` for every dimension exponent `ε`. -/
+theorem b_pow_le_ℓ (hn : 2 ≤ n) : b n ^ 33 ≤ (2 * ℓ n) ^ 64 := by
   have hd := one_le_d hn
-  by_contra hc
-  have h1 : (2 * ℓ n) ^ 31 < d n ^ 31 := Nat.pow_lt_pow_left (by omega) (by norm_num)
-  have h2 : d n ^ 31 ≤ d n ^ 33 := Nat.pow_le_pow_right hd (by norm_num)
-  omega
-
-/-- `2m ≤ 2^(m-1)` from `m = 4` on. -/
-private theorem two_mul_le_two_pow_pred {m : ℕ} (hm : 4 ≤ m) : 2 * m ≤ 2 ^ (m - 1) := by
-  induction m, hm using Nat.le_induction with
-  | base => norm_num
-  | succ m hm ih =>
-    rw [show m + 1 - 1 = (m - 1) + 1 by omega, pow_succ]; omega
-
-/-- `d ≤ 2^(ℓ-1)` for every `n ≥ 2`. For `ℓ ≤ 3` the root cap leaves `d = 3` at `ℓ = 2` and
-`d = 5` at `ℓ = 3`, which `2^(b+1) < 4n ≤ b T` excludes. -/
-theorem d_le_two_pow_pred_ℓ (hn : 2 ≤ n) : d n ≤ 2 ^ (ℓ n - 1) := by
-  have h33 := d_pow_le_ℓ hn
-  have h2l := d_le_two_ℓ hn
-  rcases Nat.lt_or_ge (ℓ n) 4 with hl | hl
-  · have hd := one_le_d hn
-    have hroot : d n ^ 64 ≤ b n ^ 31 := d_pow_le n
-    have hL := logT_le_dℓ hd
-    have hbL := b_le_two_mul_logT hn
-    have hb1 := one_le_b hn
-    have hT : 2 ^ (b n + 1) < b n * 2 ^ logT n := by
-      have h1 := two_pow_b_lt hn
-      have h2 := four_mul_le_bT hn
-      unfold T at h2
-      rw [pow_succ]; omega
-    by_contra hc
-    interval_cases hl' : ℓ n
-    · simp at hL; omega
-    · have := Nat.pow_le_pow_left (show 2 ≤ d n by norm_num at hc; omega) 33
-      norm_num at h33 this; omega
-    · norm_num at hc h2l
-      interval_cases hd' : d n
-      · have hb : 10 ≤ b n := by
-          by_contra hc'
-          have := Nat.pow_le_pow_left (show b n ≤ 9 by omega) 31
-          norm_num at hroot this; omega
-        have h64 : 2 ^ logT n ≤ 2 ^ 6 := Nat.pow_le_pow_right (by norm_num) (by omega)
-        have hb12 : b n ≤ 12 := by omega
-        interval_cases hb' : b n <;> norm_num at hT h64 <;> omega
-      · norm_num at h33
-    · norm_num at hc h2l
-      interval_cases hd' : d n
-      · have hb : 28 ≤ b n := by
-          by_contra hc'
-          have := Nat.pow_le_pow_left (show b n ≤ 27 by omega) 31
-          norm_num at hroot this; omega
-        have h15 : 2 ^ logT n ≤ 2 ^ 15 := Nat.pow_le_pow_right (by norm_num) (by omega)
-        have hb30 : b n ≤ 30 := by omega
-        interval_cases hb' : b n <;> norm_num at hT h15 <;> omega
-      · norm_num at h33
-  · have := two_mul_le_two_pow_pred hl
-    omega
+  have h1 := b_le_two_mul_logT hn
+  have h2 := logT_le_dℓ hd
+  have hroot : d n ^ 64 ≤ b n ^ 31 := d_pow_le n
+  have hb1 := one_le_b hn
+  have h3 : b n ^ 64 ≤ (2 * (d n * ℓ n)) ^ 64 := Nat.pow_le_pow_left (by omega) 64
+  have h4 : b n ^ 31 * b n ^ 33 ≤ b n ^ 31 * (2 * ℓ n) ^ 64 := by
+    calc b n ^ 31 * b n ^ 33 = b n ^ 64 := by ring
+      _ ≤ (2 * (d n * ℓ n)) ^ 64 := h3
+      _ = d n ^ 64 * (2 * ℓ n) ^ 64 := by ring
+      _ ≤ b n ^ 31 * (2 * ℓ n) ^ 64 := Nat.mul_le_mul_right _ hroot
+  exact Nat.le_of_mul_le_mul_left h4 (by positivity)
 
 theorem dℓ_lt (hd : 1 ≤ d n) : d n * ℓ n < logT n + d n := by
   have h := Nat.mul_div_le (logT n + d n - 1) (d n)
@@ -709,14 +669,264 @@ theorem clog_p_le (n : ℕ) : Nat.clog 2 (p n) ≤ 3 + cExp * upperPower * Nat.c
 
 end Small
 
+/-! ### The prime supply -/
+
+section Supply
+
+variable {n : ℕ}
+
+theorem d_mono : Monotone d := fun _ _ hxy =>
+  (le_iroot_iff rootExp_ne).2 ((iroot_pow_le rootExp_ne _).trans
+    (Nat.pow_le_pow_left (Nat.clog_mono_right 2 hxy) _))
+
+theorem tendsto_ℓ : Tendsto ℓ atTop atTop := by
+  refine tendsto_atTop.2 fun M => ((eventually_ge_atTop 2).and
+    (tendsto_atTop.1 tendsto_b ((2 * M) ^ 2 + 1))).mono fun n h => ?_
+  have h1 := b_pow_le_ℓ h.1
+  by_contra hc
+  have hc' : ℓ n < M := not_le.mp hc
+  have h2 : (2 * ℓ n) ^ 64 < (2 * M) ^ 64 := Nat.pow_lt_pow_left (by omega) (by norm_num)
+  have h3 : (2 * M) ^ 64 ≤ b n ^ 33 := by
+    calc (2 * M) ^ 64 = ((2 * M) ^ 2) ^ 32 := by ring
+      _ ≤ b n ^ 32 := Nat.pow_le_pow_left (by omega) 32
+      _ ≤ b n ^ 33 := Nat.pow_le_pow_right (by have := h.2; omega) (by norm_num)
+  omega
+
+/-- **The prime supply.** For all large `n` both windows hold at least `d` primes:
+`d^33 ≤ (2ℓ)^31 ≤ (ℓ - 1)^62`, so `d ≤ (ℓ - 1)^2`, and `primes_in_window_two_pow 2` applies
+below `2^(ℓ-1)` and below `2^ℓ`. -/
+theorem eventually_primeSupply : ∀ᶠ n in atTop, PrimeSupply n := by
+  have hℓ1 : Tendsto (fun n => ℓ n - 1) atTop atTop :=
+    (tendsto_sub_atTop_nat 1).comp tendsto_ℓ
+  filter_upwards [eventually_ge_atTop 2, tendsto_atTop.1 tendsto_d 8,
+    hℓ1.eventually (Primes.window_card_two_pow 2),
+    tendsto_ℓ.eventually (Primes.window_card_two_pow 2),
+    tendsto_ℓ.eventually (eventually_ge_atTop 4)] with n hn hd8 h₁ h₂ hl4
+  have hd1 : 1 ≤ d n := by omega
+  have hsq : 2 * ℓ n ≤ (ℓ n - 1) ^ 2 := by
+    obtain ⟨m, hm⟩ : ∃ m, ℓ n = m + 4 := ⟨ℓ n - 4, by omega⟩
+    rw [hm, show m + 4 - 1 = m + 3 by omega]
+    nlinarith
+  have hdl : d n ≤ (ℓ n - 1) ^ 2 := by
+    have h33 := d_pow_le_ℓ hn
+    have h1 : (2 * ℓ n) ^ 31 ≤ ((ℓ n - 1) ^ 2) ^ 33 :=
+      (Nat.pow_le_pow_left hsq 31).trans (Nat.pow_le_pow_right (by omega) (by norm_num))
+    exact (Nat.pow_le_pow_iff_left (by norm_num)).mp (h33.trans h1)
+  have hsq' : (ℓ n - 1) ^ 2 ≤ ℓ n ^ 2 := Nat.pow_le_pow_left (Nat.sub_le _ _) 2
+  have e2 : 2 * 2 ^ (ℓ n - 1) = 2 ^ ℓ n := by
+    rw [← pow_succ']
+    congr 1
+    omega
+  refine ⟨by omega, hl4, ?_, ?_⟩
+  · rw [Primes.winLo_two_pow hd1, Primes.winHi_two_pow hd1]
+    exact h₁ (d n) hd1 (by omega)
+  · rw [e2, Primes.winLo_two_pow hd1, Primes.winHi_two_pow hd1]
+    exact h₂ (d n) hd1 (by omega)
+
+/-- `r` exceeds every fixed power of `p`: `p^33 = 6^33 b^33 ≤ 6^33 (2ℓ)^64`. -/
+theorem eventually_pow_p_le_r (C : ℕ) : ∀ᶠ n in atTop, p n ^ C ≤ r n := by
+  filter_upwards [eventually_ge_atTop 2,
+    tendsto_ℓ.eventually (eventually_mul_pow_le_two_pow ((6 ^ 33 * 2 ^ 64) ^ C) (64 * C))]
+    with n hn hl
+  have hb := b_pow_le_ℓ hn
+  have hp33 : p n ^ 33 ≤ 6 ^ 33 * 2 ^ 64 * ℓ n ^ 64 := by
+    calc p n ^ 33 = 6 ^ 33 * b n ^ 33 := by unfold p; rw [mul_pow]
+      _ ≤ 6 ^ 33 * (2 * ℓ n) ^ 64 := Nat.mul_le_mul_left _ hb
+      _ = 6 ^ 33 * 2 ^ 64 * ℓ n ^ 64 := by rw [mul_pow, mul_assoc]
+  have h1 : (p n ^ C) ^ 33 ≤ (6 ^ 33 * 2 ^ 64) ^ C * ℓ n ^ (64 * C) := by
+    calc (p n ^ C) ^ 33 = (p n ^ 33) ^ C := by rw [← pow_mul, ← pow_mul, Nat.mul_comm]
+      _ ≤ (6 ^ 33 * 2 ^ 64 * ℓ n ^ 64) ^ C := Nat.pow_le_pow_left hp33 C
+      _ = (6 ^ 33 * 2 ^ 64) ^ C * ℓ n ^ (64 * C) := by rw [mul_pow, ← pow_mul]
+  have h2 : 2 ^ ℓ n ≤ (2 ^ ℓ n) ^ 33 := Nat.le_self_pow (by norm_num) _
+  exact (Nat.pow_le_pow_iff_left (by norm_num)).mp ((h1.trans hl).trans h2)
+
+/-- The chunk room `2^8 d^7 < ℓ^8`: the compact chunk `⌊d^(7/8)⌋` (`CompactSizes.Kroot`) stays
+below `ℓ/2` eventually, since `(7/8) ε < 1 - ε`. From `d^64 ≤ b^31` and `b^33 ≤ (2ℓ)^64`:
+`(2^8 d^7)^64 ≤ 2^512 b^217 < 2^(-512) b^264 ≤ ℓ^512` once `b^47 > 2^1024`. -/
+theorem eventually_chunk_room : ∀ᶠ n in atTop, 2 ^ 8 * d n ^ 7 < ℓ n ^ 8 := by
+  filter_upwards [eventually_ge_atTop 2, tendsto_atTop.1 tendsto_b (2 ^ 22)] with n hn hb
+  have hroot : d n ^ 64 ≤ b n ^ 31 := d_pow_le n
+  have hℓ := b_pow_le_ℓ hn
+  obtain ⟨t, ht⟩ : ∃ t : ℕ, t = 2 := ⟨_, rfl⟩
+  rw [← ht] at hℓ hb ⊢
+  have ht1 : 1 < t := by omega
+  have hb1 : 0 < b n := lt_of_lt_of_le (Nat.pow_pos (by omega)) hb
+  have h1 : (t ^ 8 * d n ^ 7) ^ 64 ≤ t ^ 512 * b n ^ 217 := by
+    calc (t ^ 8 * d n ^ 7) ^ 64 = t ^ 512 * (d n ^ 64) ^ 7 := by ring
+      _ ≤ t ^ 512 * (b n ^ 31) ^ 7 := Nat.mul_le_mul_left _ (Nat.pow_le_pow_left hroot 7)
+      _ = t ^ 512 * b n ^ 217 := by ring
+  have h2 : b n ^ 264 ≤ t ^ 512 * ℓ n ^ 512 := by
+    calc b n ^ 264 = (b n ^ 33) ^ 8 := by ring
+      _ ≤ ((t * ℓ n) ^ 64) ^ 8 := Nat.pow_le_pow_left hℓ 8
+      _ = t ^ 512 * ℓ n ^ 512 := by ring
+  have h3 : t ^ 1024 < b n ^ 47 := by
+    have h10 : 1 < t ^ 10 := Nat.one_lt_pow (by norm_num) ht1
+    have hpos : 0 < t ^ 1024 := pow_pos (Nat.lt_trans Nat.zero_lt_one ht1) 1024
+    calc t ^ 1024 < t ^ 1024 * t ^ 10 := lt_mul_of_one_lt_right hpos h10
+      _ = (t ^ 22) ^ 47 := by ring
+      _ ≤ b n ^ 47 := Nat.pow_le_pow_left hb 47
+  have hpos : 0 < b n ^ 217 := Nat.pow_pos hb1
+  have h4 : t ^ 512 * (t ^ 512 * b n ^ 217) < t ^ 512 * ℓ n ^ 512 := by
+    calc t ^ 512 * (t ^ 512 * b n ^ 217) = t ^ 1024 * b n ^ 217 := by ring
+      _ < b n ^ 47 * b n ^ 217 := Nat.mul_lt_mul_of_pos_right h3 hpos
+      _ = b n ^ 264 := by ring
+      _ ≤ t ^ 512 * ℓ n ^ 512 := h2
+  have h5 : (t ^ 8 * d n ^ 7) ^ 64 < (ℓ n ^ 8) ^ 64 := by
+    have := Nat.lt_of_mul_lt_mul_left h4
+    calc (t ^ 8 * d n ^ 7) ^ 64 ≤ t ^ 512 * b n ^ 217 := h1
+      _ < ℓ n ^ 512 := this
+      _ = (ℓ n ^ 8) ^ 64 := by ring
+  exact (Nat.pow_lt_pow_iff_left (by norm_num)).mp h5
+
+/-- The Gaussian width room `64 d (⌈log₂ p⌉ + 3) ≤ b`: `d ≤ b^(31/64)` against a logarithm. -/
+theorem eventually_gauss_room : ∀ᶠ n in atTop, 64 * d n * (Nat.clog 2 (p n) + 3) ≤ b n := by
+  have hm : Tendsto (fun n => Nat.clog 2 (b n)) atTop atTop :=
+    tendsto_atTop.2 fun M => (tendsto_atTop.1 tendsto_b (2 ^ M)).mono fun n h => by
+      have := Nat.clog_mono_right 2 h
+      rwa [Nat.clog_pow 2 M one_lt_two] at this
+  filter_upwards [eventually_ge_atTop 2, tendsto_atTop.1 tendsto_b 2,
+    hm.eventually (eventually_mul_pow_le_two_pow (2 ^ 481) 64),
+    hm.eventually (eventually_ge_atTop 16)] with n hn hb2 hpow hm16
+  obtain ⟨m, hmdef⟩ : ∃ m, m = Nat.clog 2 (b n) := ⟨_, rfl⟩
+  rw [← hmdef] at hpow hm16
+  have hroot : d n ^ 64 ≤ b n ^ 31 := d_pow_le n
+  have hbm : 2 ^ (m - 1) < b n := by
+    have := Nat.pow_pred_clog_lt_self (b := 2) one_lt_two (x := b n) hb2
+    rwa [Nat.pred_eq_sub_one, ← hmdef] at this
+  have hp : Nat.clog 2 (p n) + 3 ≤ m + 6 := by
+    have h8 : p n ≤ 2 ^ 3 * b n := by unfold p; norm_num; omega
+    have h := Nat.clog_mono_right 2 h8
+    have hle : Nat.clog 2 (2 ^ 3 * b n) ≤ 3 + m := by
+      apply Nat.clog_le_of_le_pow
+      rw [pow_add, hmdef]
+      exact Nat.mul_le_mul_left _ (Nat.le_pow_clog one_lt_two _)
+    omega
+  obtain ⟨t, ht⟩ : ∃ t : ℕ, t = 2 := ⟨_, rfl⟩
+  rw [← ht] at hpow hbm
+  have ht1 : 1 ≤ t := by omega
+  have hL : (m + 6) ^ 64 ≤ t ^ 64 * m ^ 64 := by
+    calc (m + 6) ^ 64 ≤ (t * m) ^ 64 := Nat.pow_le_pow_left (by rw [ht]; omega) 64
+      _ = t ^ 64 * m ^ 64 := by ring
+  have hb33 : t ^ (33 * (m - 1)) ≤ b n ^ 33 := by
+    rw [pow_mul']
+    exact Nat.pow_le_pow_left hbm.le 33
+  have hm64 : m ^ 64 ≤ t ^ m :=
+    (Nat.le_mul_of_pos_left _ (Nat.pow_pos (by omega))).trans hpow
+  have hkey : t ^ 384 * (m + 6) ^ 64 ≤ b n ^ 33 := by
+    calc t ^ 384 * (m + 6) ^ 64 ≤ t ^ 384 * (t ^ 64 * m ^ 64) := Nat.mul_le_mul_left _ hL
+      _ = t ^ 448 * m ^ 64 := by ring
+      _ ≤ t ^ 448 * t ^ m := Nat.mul_le_mul_left _ hm64
+      _ = t ^ (448 + m) := by rw [pow_add]
+      _ ≤ t ^ (33 * (m - 1)) := Nat.pow_le_pow_right ht1 (by omega)
+      _ ≤ b n ^ 33 := hb33
+  have h64 : (t ^ 6 * d n * (m + 6)) ^ 64 ≤ b n ^ 64 := by
+    calc (t ^ 6 * d n * (m + 6)) ^ 64 = t ^ 384 * d n ^ 64 * (m + 6) ^ 64 := by ring
+      _ ≤ t ^ 384 * b n ^ 31 * (m + 6) ^ 64 :=
+          Nat.mul_le_mul_right _ (Nat.mul_le_mul_left _ hroot)
+      _ = b n ^ 31 * (t ^ 384 * (m + 6) ^ 64) := by ring
+      _ ≤ b n ^ 31 * b n ^ 33 := Nat.mul_le_mul_left _ hkey
+      _ = b n ^ 64 := by ring
+  have h := (Nat.pow_le_pow_iff_left (by norm_num)).mp h64
+  have e64 : t ^ 6 = 64 := by rw [ht]; norm_num
+  rw [e64] at h
+  calc 64 * d n * (Nat.clog 2 (p n) + 3) ≤ 64 * d n * (m + 6) := Nat.mul_le_mul_left _ hp
+    _ ≤ b n := h
+
+/-- The facts of the large regime that hold eventually for the present exponents: the prime
+supply, the chunk room `2^8 d^7 < ℓ^8`, the Gaussian width room
+`64 d (⌈log₂ p⌉ + 3) ≤ b`, `d ≤ 2^(ℓ-1)` and `8p ≤ r`. Each holds eventually for every dimension exponent
+`ε < 1` with the chunk exponent `c` of `CompactSizes` in `εc < 1 - ε`. -/
+def BigFacts (n : ℕ) : Prop :=
+  PrimeSupply n ∧ 2 ^ 8 * d n ^ 7 < ℓ n ^ 8 ∧ 64 * d n * (Nat.clog 2 (p n) + 3) ≤ b n ∧
+    d n ≤ 2 ^ (ℓ n - 1) ∧ 8 * p n ≤ r n
+
+theorem eventually_bigFacts : ∀ᶠ n in atTop, BigFacts n := by
+  filter_upwards [eventually_primeSupply, eventually_chunk_room, eventually_gauss_room,
+    tendsto_ℓ.eventually (eventually_mul_pow_le_two_pow 2 8), eventually_ge_atTop 2,
+    eventually_pow_p_le_r 3] with n h₁ h₂ h₃ h₄ hn h₅
+  have e8 : (2:ℕ) ^ 8 = 256 := by norm_num
+  have h₂' := h₂
+  rw [e8] at h₂'
+  refine ⟨h₁, h₂, h₃, ?_, ?_⟩
+  swap
+  · have hb := one_le_b hn
+    have hp : 6 ≤ p n := by unfold p; omega
+    have hpp : 8 ≤ p n * p n := by nlinarith
+    have h8 : 8 * p n ≤ p n * p n * p n := Nat.mul_le_mul_right _ hpp
+    have e : p n ^ 3 = p n * p n * p n := by ring
+    omega
+  have hd := one_le_d hn
+  have hl := h₁.2.1
+  have h7 : d n ≤ d n ^ 7 := Nat.le_self_pow (by norm_num) _
+  have e : 2 ^ ℓ n = 2 * 2 ^ (ℓ n - 1) := by
+    rw [← pow_succ']; congr 1; omega
+  omega
+
+/-- A dimension from which on the regime facts hold. -/
+noncomputable def bigDim : ℕ := d (Classical.choose (eventually_atTop.1 eventually_bigFacts)) + 1
+
+theorem bigFacts_of_bigDim_le (h : bigDim ≤ d n) : BigFacts n := by
+  apply Classical.choose_spec (eventually_atTop.1 eventually_bigFacts)
+  by_contra hlt
+  have := d_mono (Nat.le_of_lt (not_le.mp hlt))
+  unfold bigDim at h
+  omega
+
+theorem srcLen_prime (n i : ℕ) : (srcLen n i).Prime := by
+  unfold srcLen
+  split_ifs
+  · exact Primes.primeSrc_prime _ _ _ _
+  · exact Primes.windowPrime_prime _ _
+
+theorem three_le_srcLen (n i : ℕ) : 3 ≤ srcLen n i := by
+  unfold srcLen
+  split_ifs with h
+  · have h8 : 8 ≤ 2 ^ (ℓ n - 1) := by
+      calc 8 = 2 ^ 3 := by norm_num
+        _ ≤ 2 ^ (ℓ n - 1) := Nat.pow_le_pow_right (by norm_num) (by have := h.2.1; omega)
+    exact Primes.three_le_primeSrc (by have := h.1; omega) h8 i
+  · exact Primes.lo_lt_windowPrime 2 i
+
+theorem t_eq_box (hl : 1 ≤ ℓ n) : t n = Moduli.box (d n) (numHalf n) (ℓ n - 1) := by
+  funext i
+  unfold t Moduli.box axisLen
+  split_ifs
+  · rfl
+  · congr 1; omega
+
+/-- Under the prime supply the source lengths are the prime moduli, `Good` for the axes. -/
+theorem good_of_primeSupply (h : PrimeSupply n) : Good (s n) (t n) := by
+  obtain ⟨hd, hl, h₁, h₂⟩ := h
+  have hs : s n = fun i : Fin (d n) => primeSrc (d n) (numHalf n) (2 ^ (ℓ n - 1)) i := by
+    funext i
+    simp only [s, srcLen, show PrimeSupply n from ⟨hd, hl, h₁, h₂⟩, ↓reduceIte]
+  have hnh := numHalf_lt (n := n) (by omega)
+  rw [hs, t_eq_box (by omega)]
+  exact Primes.primeSrc_good hd hnh.le (by omega) (by omega) (by omega)
+
+/-- The source lengths are pairwise coprime for every `n`. -/
+theorem s_pairwise_coprime (n : ℕ) : Pairwise (Nat.Coprime on (s n)) := by
+  by_cases h : PrimeSupply n
+  · exact (good_of_primeSupply h).pairwise
+  · intro i j hij
+    have hs : ∀ k : Fin (d n), s n k = windowPrime 2 k := fun k => by simp [s, srcLen, h]
+    simp only [Function.onFun, hs]
+    exact (Nat.coprime_primes (Primes.windowPrime_prime _ _) (Primes.windowPrime_prime _ _)).2
+      ((Primes.windowPrime_strictMono 2).injective.ne (fun e => hij (Fin.ext e)))
+
+end Supply
+
 /-! ### The large regime -/
 
-/-- The regime of the deterministic size relations: `n ≥ 2` and `d ≥ 2^192`. With
-`d^64 ≤ b^31` this pays every fixed `F d² ≤ b` with `F^16 ≤ d` (`mul_sq_le_b`). -/
-def Big (n : ℕ) : Prop := 2 ≤ n ∧ 6277101735386680763835789423207666416102355444464034512896 ≤ d n
+/-- The regime of the deterministic size relations: `n ≥ 2` and `d ≥ 2^192 + bigDim`, so that
+the regime facts hold (`Big.bigFacts`): the prime supply, the chunk room and the Gaussian width
+room. -/
+def Big (n : ℕ) : Prop :=
+  2 ≤ n ∧ 6277101735386680763835789423207666416102355444464034512896 + bigDim ≤ d n
 
 theorem eventually_big : ∀ᶠ n in atTop, Big n :=
-  (eventually_ge_atTop 2).and (tendsto_atTop.1 tendsto_d 6277101735386680763835789423207666416102355444464034512896)
+  (eventually_ge_atTop 2).and (tendsto_atTop.1 tendsto_d
+    (6277101735386680763835789423207666416102355444464034512896 + bigDim))
 
 section Big
 
@@ -726,17 +936,11 @@ theorem Big.one_le_d (h : Big n) : 1 ≤ d n := by have := h.2; omega
 
 theorem Big.two_le_d (h : Big n) : 2 ≤ d n := by have := h.2; omega
 
-theorem Big.pow_le_b (h : Big n) {k : ℕ} (hk : k ≤ 2) : d n ^ k ≤ b n :=
-  pow_le_b_of hk h.one_le_d
-
-/-- `F d² ≤ b` for `F^16 ≤ d`. -/
-theorem Big.mul_sq_le (_h : Big n) {F : ℕ} (hF : F ^ 16 ≤ d n) : F * d n ^ 2 ≤ b n :=
-  mul_sq_le_b hF
+theorem Big.bigFacts (h : Big n) : BigFacts n := bigFacts_of_bigDim_le (by have := h.2; omega)
 
 theorem Big.sixteen_le_b (h : Big n) : 16 ≤ b n := by
-  have := h.pow_le_b (k := 1) (by norm_num)
+  have := d_le_b n
   have := h.2
-  rw [pow_one] at *
   omega
 
 theorem Big.logT_bounds (h : Big n) : b n ≤ 2 * logT n ∧ logT n < b n :=
@@ -751,24 +955,35 @@ theorem Big.b_le_two_dℓ (h : Big n) : b n ≤ 2 * (d n * ℓ n) := by
   have := logT_le_dℓ h.one_le_d
   omega
 
-/-- `2d ≤ ℓ`: `4 d² ≤ b ≤ 2 d ℓ`. -/
-theorem Big.two_d_le_ℓ (h : Big n) : 2 * d n ≤ ℓ n := by
-  have h1 := h.b_le_two_dℓ
-  have h2 := h.mul_sq_le (F := 4) (by have := h.2; norm_num; omega)
-  have hd := h.one_le_d
-  have h3 : d n * (2 * (2 * d n)) ≤ d n * (2 * ℓ n) := by
-    calc d n * (2 * (2 * d n)) = 4 * d n ^ 2 := by ring
-      _ ≤ 2 * (d n * ℓ n) := h2.trans h1
-      _ = d n * (2 * ℓ n) := by ring
-  have := Nat.le_of_mul_le_mul_left h3 hd
-  omega
+theorem Big.primeSupply (h : Big n) : PrimeSupply n := h.bigFacts.1
 
-theorem Big.d_le_ℓ (h : Big n) : d n + 1 ≤ ℓ n := by
-  have := h.two_d_le_ℓ
-  have := h.one_le_d
-  omega
+theorem Big.four_le_ℓ (h : Big n) : 4 ≤ ℓ n := h.primeSupply.2.1
 
-theorem Big.two_le_ℓ (h : Big n) : 2 ≤ ℓ n := by have := h.d_le_ℓ; have := h.2; omega
+theorem Big.two_le_ℓ (h : Big n) : 2 ≤ ℓ n := by have := h.four_le_ℓ; omega
+
+/-- The chunk room `256 d^7 < ℓ^8`. -/
+theorem Big.chunk_room (h : Big n) : 256 * d n ^ 7 < ℓ n ^ 8 := by
+  have h1 := h.bigFacts.2.1
+  rwa [show (2:ℕ) ^ 8 = 256 by norm_num] at h1
+
+theorem Big.d_le_two_pow_pred_ℓ (h : Big n) : d n ≤ 2 ^ (ℓ n - 1) := h.bigFacts.2.2.2.1
+
+theorem Big.eight_p_le_r (h : Big n) : 8 * p n ≤ r n := h.bigFacts.2.2.2.2
+
+/-- `F d ≤ b` whenever `F^64 ≤ b^33`: `(F d)^64 ≤ b^33 b^31`. -/
+theorem mul_d_le_b {F : ℕ} (hF : F ^ 64 ≤ b n ^ 33) : F * d n ≤ b n := by
+  have hroot : d n ^ 64 ≤ b n ^ 31 := d_pow_le n
+  apply (Nat.pow_le_pow_iff_left (by norm_num : 64 ≠ 0)).mp
+  calc (F * d n) ^ 64 = F ^ 64 * d n ^ 64 := by ring
+    _ ≤ b n ^ 33 * b n ^ 31 := Nat.mul_le_mul hF hroot
+    _ = b n ^ 64 := by ring
+
+theorem Big.eight_d_le_b (h : Big n) : 8 * d n ≤ b n := by
+  apply mul_d_le_b
+  have hb : 2 ^ 192 ≤ b n := by have := d_le_b n; have := h.2; omega
+  calc (8 : ℕ) ^ 64 = 2 ^ 192 := by norm_num
+    _ ≤ b n := hb
+    _ ≤ b n ^ 33 := Nat.le_self_pow (by norm_num) _
 
 /-- `p/(12d) ≤ ℓ ≤ p/(3d)`, integer form. -/
 theorem Big.ℓ_bounds (h : Big n) : p n ≤ 12 * d n * ℓ n ∧ 3 * d n * ℓ n ≤ p n := by
@@ -792,91 +1007,29 @@ theorem Big.ℓ_bounds_real (h : Big n) :
   · rw [div_le_iff₀ (by positivity)]; linarith
   · rw [le_div_iff₀ (by positivity)]; linarith
 
-/-- `K + 1 ≤ ℓ`. -/
+/-- `K + 1 ≤ ℓ`: `K^8 ≤ K^(2^32) ≤ d ≤ d^7 < ℓ^8`. -/
 theorem Big.K_succ_le_ℓ (h : Big n) : K n + 1 ≤ ℓ n := by
-  have := K_le_d n
-  have := h.d_le_ℓ
+  have hroom := h.chunk_room
+  have hK := K_pow_le n
+  have hd := h.one_le_d
+  by_contra hc
+  have h1 : ℓ n ^ 8 ≤ K n ^ 8 := Nat.pow_le_pow_left (by omega) 8
+  have h2 : K n ^ 8 ≤ K n ^ cExp := by
+    rcases Nat.eq_zero_or_pos (K n) with h0 | h0
+    · rw [h0, zero_pow (by norm_num)]; exact Nat.zero_le _
+    · exact Nat.pow_le_pow_right h0 (by norm_num [cExp])
+  have h3 : d n ≤ d n ^ 7 := Nat.le_self_pow (by norm_num) _
   omega
 
-/-- `(6(x+3))^16 ≤ 2^x` from `x = 192` on. -/
-private theorem six_mul_pow_sixteen_le {x : ℕ} (hx : 192 ≤ x) : (6 * (x + 3)) ^ 16 ≤ 2 ^ x := by
-  induction x, hx using Nat.le_induction with
-  | base => norm_num
-  | succ x hx ih =>
-    set A := 6 * (x + 1 + 3)
-    set B := 6 * (x + 3)
-    have h1 : (24 * A) ^ 16 ≤ (25 * B) ^ 16 := Nat.pow_le_pow_left (by omega) 16
-    have h2 : (24 * A) ^ 16 = 24 ^ 16 * A ^ 16 := mul_pow 24 A 16
-    have h2' : (25 * B) ^ 16 = 25 ^ 16 * B ^ 16 := mul_pow 25 B 16
-    have h3 : 24 ^ 16 * A ^ 16 ≤ 24 ^ 16 * (2 * B ^ 16) := by
-      have : 25 ^ 16 * B ^ 16 ≤ 24 ^ 16 * (2 * B ^ 16) := by
-        rw [← mul_assoc]; exact Nat.mul_le_mul_right _ (by norm_num)
-      omega
-    have h4 := Nat.le_of_mul_le_mul_left h3 (by norm_num)
-    calc A ^ 16 ≤ 2 * B ^ 16 := h4
-      _ ≤ 2 * 2 ^ x := Nat.mul_le_mul_left _ ih
-      _ = 2 ^ (x + 1) := by rw [pow_succ]; ring
-
-/-- The modulus condition `8 d² N + 4d ≤ r/2` of `Moduli.src_good`: with `4d ≤ 2^E`,
-`16 d² N ≤ (4d)^(2d+2) ≤ 2^(E(2d+2))`, and `6 E d² ≤ b ≤ 2 d ℓ` from `(6E)^16 ≤ d`. -/
-theorem Big.moduli_room (h : Big n) : 8 * d n ^ 2 * N n + 4 * d n ≤ 2 ^ (ℓ n - 1) := by
-  set D := d n with hDdef
-  have hD : 6277101735386680763835789423207666416102355444464034512896 ≤ D := h.2
-  have hN1 : 1 ≤ N n := oddProd_pos D
-  have hN : N n ≤ (4 * D) ^ (2 * D) := oddProd_le D
-  have hDN : D ≤ D ^ 2 * N n := by
-    calc D ≤ D ^ 2 := Nat.le_self_pow (by norm_num) D
-      _ ≤ D ^ 2 * N n := Nat.le_mul_of_pos_right _ hN1
-  have h1 : 8 * D ^ 2 * N n + 4 * D ≤ 16 * (D ^ 2 * N n) := by
-    have e : 8 * D ^ 2 * N n = 8 * (D ^ 2 * N n) := by ring
-    omega
-  have h2 : 16 * (D ^ 2 * N n) ≤ (4 * D) ^ (2 * D + 2) := by
-    calc 16 * (D ^ 2 * N n) = (4 * D) ^ 2 * N n := by ring
-      _ ≤ (4 * D) ^ 2 * (4 * D) ^ (2 * D) := Nat.mul_le_mul_left _ hN
-      _ = (4 * D) ^ (2 * D + 2) := by rw [← pow_add, add_comm]
-  set x := Nat.log 2 D with hx
-  have hx1 : 2 ^ x ≤ D := Nat.pow_log_le_self 2 (by omega)
-  have hx2 : D < 2 ^ (x + 1) := Nat.lt_pow_succ_log_self (by norm_num) D
-  have hx40 : 192 ≤ x := by
-    rw [hx]
-    exact Nat.le_log_of_pow_le (by norm_num) (by norm_num; omega)
-  have hE : 4 * D ≤ 2 ^ (x + 3) := by
-    have e : 2 ^ (x + 3) = 4 * 2 ^ (x + 1) := by rw [pow_add, pow_add]; ring
-    omega
-  have hroom : 6 * (x + 3) * D ^ 2 ≤ b n :=
-    h.mul_sq_le ((six_mul_pow_sixteen_le hx40).trans hx1)
-  have hb := h.b_le_two_dℓ
-  have hℓ : 3 * (x + 3) * D ≤ ℓ n := by
-    have hd : 0 < D := by omega
-    have h5 : D * (2 * (3 * (x + 3) * D)) ≤ D * (2 * ℓ n) := by
-      calc D * (2 * (3 * (x + 3) * D)) = 6 * (x + 3) * D ^ 2 := by ring
-        _ ≤ 2 * (D * ℓ n) := hroom.trans hb
-        _ = D * (2 * ℓ n) := by ring
-    have := Nat.le_of_mul_le_mul_left h5 hd
-    omega
-  have hexp : (x + 3) * (2 * D + 2) ≤ ℓ n - 1 := by
-    have e : 3 * (x + 3) * D = (x + 3) * (2 * D + 2) + (x + 3) * (D - 2) := by
-      rw [show 3 * (x + 3) * D = (x + 3) * (3 * D) by ring, ← Nat.mul_add]
-      congr 1; omega
-    have : 1 ≤ (x + 3) * (D - 2) := Nat.mul_pos (by omega) (by omega)
-    omega
-  calc 8 * D ^ 2 * N n + 4 * D ≤ (4 * D) ^ (2 * D + 2) := h1.trans h2
-    _ ≤ (2 ^ (x + 3)) ^ (2 * D + 2) := Nat.pow_le_pow_left hE _
-    _ = 2 ^ ((x + 3) * (2 * D + 2)) := by rw [← pow_mul]
-    _ ≤ 2 ^ (ℓ n - 1) := Nat.pow_le_pow_right (by norm_num) hexp
-
-theorem t_eq_box (hl : 1 ≤ ℓ n) : t n = Moduli.box (d n) (numHalf n) (ℓ n - 1) := by
-  funext i
-  unfold t Moduli.box axisLen
-  split_ifs
-  · rfl
-  · congr 1; omega
+/-- Under `Big` the source lengths are the prime moduli. -/
+theorem Big.srcLen_eq (h : Big n) (i : ℕ) :
+    srcLen n i = primeSrc (d n) (numHalf n) (2 ^ (ℓ n - 1)) i := by
+  simp only [srcLen, h.primeSupply, ↓reduceIte]
 
 /-- **The moduli at the chosen sizes**: odd, `s_i < t_i`, coprime to `t_i`, pairwise
 coprime, `(1 - 2η) t_i < s_i ≤ (1 - η) t_i`, `T/2 < S < T`. -/
-theorem Big.good (h : Big n) : Good (s n) (t n) := by
-  rw [t_eq_box (by have := h.two_le_ℓ; omega)]
-  exact src_good_oddProd h.two_le_d h.moduli_room
+theorem Big.good (h : Big n) : Good (s n) (t n) :=
+  good_of_primeSupply h.primeSupply
 
 theorem Big.bounds_real (h : Big n) (i : Fin (d n)) :
     (1 - 2 * eta n) * t n i < s n i ∧ (s n i : ℝ) ≤ (1 - eta n) * t n i :=
@@ -971,13 +1124,11 @@ theorem Big.quarter_p_le_theta (h : Big n) (i : Fin (d n)) :
 /-- `16 d α² ≤ b`. -/
 theorem Big.sixteen_d_alpha_sq_le_b (h : Big n) : 16 * d n * alpha n ^ 2 ≤ b n := by
   have h1 := alpha_sq_lt n
-  have h2 := h.alphaU_le_d
-  have h7 := h.mul_sq_le (F := 64) (by have := h.2; norm_num; omega)
-  have hD := h.2
-  have h3 : 64 * d n ^ 2 ≤ b n := h7
-  have h4 : 16 * d n * alpha n ^ 2 ≤ 16 * d n * (4 * d n) :=
-    Nat.mul_le_mul_left _ (by omega)
-  have e : 16 * d n * (4 * d n) = 64 * d n ^ 2 := by ring
+  have h3 := h.bigFacts.2.2.1
+  have h4 : 16 * d n * alpha n ^ 2 ≤ 16 * d n * (4 * alphaU n) :=
+    Nat.mul_le_mul_left _ h1.le
+  have e : 16 * d n * (4 * alphaU n) = 64 * d n * (Nat.clog 2 (p n) + 3) := by
+    unfold alphaU; ring
   omega
 
 /-- `γ ≤ b/4`, integer form `4γ ≤ b`. -/
@@ -1062,31 +1213,6 @@ end Big
 
 /-! ### Eventual statements -/
 
-theorem tendsto_ℓ : Tendsto ℓ atTop atTop :=
-  tendsto_atTop.2 fun M => (eventually_big.and (tendsto_atTop.1 tendsto_d M)).mono
-    fun _ h => by have := h.1.d_le_ℓ; have := h.2; omega
-
-/-- `b ≤ 4ℓ²`, hence `p ≤ 24 ℓ²`. -/
-theorem Big.p_le_ℓ_sq {n : ℕ} (h : Big n) : p n ≤ 24 * ℓ n ^ 2 := by
-  have h1 := h.b_le_two_dℓ
-  have h2 := h.pow_le_b (k := 2) (by norm_num)
-  have hd : 0 < d n ^ 2 := by have := h.one_le_d; positivity
-  have h3 : d n ^ 2 * b n ≤ d n ^ 2 * (4 * ℓ n ^ 2) := by
-    calc d n ^ 2 * b n ≤ b n * b n := Nat.mul_le_mul_right _ h2
-      _ ≤ (2 * (d n * ℓ n)) * (2 * (d n * ℓ n)) := Nat.mul_le_mul h1 h1
-      _ = d n ^ 2 * (4 * ℓ n ^ 2) := by ring
-  have h4 := Nat.le_of_mul_le_mul_left h3 hd
-  unfold p
-  omega
-
-/-- `r` exceeds every fixed power of `p`. -/
-theorem eventually_pow_p_le_r (C : ℕ) : ∀ᶠ n in atTop, p n ^ C ≤ r n := by
-  filter_upwards [eventually_big,
-    tendsto_ℓ.eventually (eventually_mul_pow_le_two_pow (24 ^ C) (2 * C))] with n h hl
-  calc p n ^ C ≤ (24 * ℓ n ^ 2) ^ C := Nat.pow_le_pow_left h.p_le_ℓ_sq C
-    _ = 24 ^ C * ℓ n ^ (2 * C) := by rw [mul_pow, ← pow_mul]
-    _ ≤ r n := hl
-
 theorem tendsto_clog_succ : Tendsto (fun k : ℕ => Nat.clog 2 (k + 1)) atTop atTop :=
   tendsto_atTop.2 fun m => eventually_atTop.2 ⟨2 ^ m, fun k hk => by
     have := Nat.clog_mono_right 2 (show 2 ^ m ≤ k + 1 by omega)
@@ -1136,20 +1262,6 @@ theorem eventually_logb_p_le_K (C : ℝ) : ∀ᶠ n in atTop, C * Real.logb 2 (p
     _ ≤ ⌈C⌉₊ * Nat.clog 2 (p n) := by
         exact mul_le_mul_of_nonneg_left hlog (Nat.cast_nonneg _)
     _ ≤ K n := hK
-
-/-- `ℓ / K → ∞`: for every `C`, eventually `C K ≤ ℓ`. -/
-theorem eventually_mul_K_le_ℓ (C : ℕ) : ∀ᶠ n in atTop, C * K n ≤ ℓ n := by
-  filter_upwards [eventually_big, tendsto_atTop.1 tendsto_d ((2 * C) ^ 16)] with n h hC
-  have h1 := h.mul_sq_le hC
-  have h2 := h.b_le_two_dℓ
-  have h3 : C * K n ≤ C * d n := Nat.mul_le_mul_left _ (K_le_d n)
-  have hd := h.one_le_d
-  have h4 : d n * (2 * (C * d n)) ≤ d n * (2 * ℓ n) := by
-    calc d n * (2 * (C * d n)) = 2 * C * d n ^ 2 := by ring
-      _ ≤ 2 * (d n * ℓ n) := h1.trans h2
-      _ = d n * (2 * ℓ n) := by ring
-  have := Nat.le_of_mul_le_mul_left h4 hd
-  omega
 
 /-- `2 d p² ≤ T log₂ T` (the hypothesis `hsmall` of the source-transform assembly). -/
 theorem eventually_small : ∀ᶠ n in atTop, 2 * d n * p n ^ 2 ≤ T n * logT n := by

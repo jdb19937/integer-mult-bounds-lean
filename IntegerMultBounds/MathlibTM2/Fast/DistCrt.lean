@@ -14,7 +14,7 @@ import Mathlib.Algebra.Order.Ring.Star
 # The parameters of the CRT machines
 
 A second axis loop on the parameter layout (`ds_gloop`) computes, for `j = 0, …, d - 1`:
-the source length `s_j` (`pmModC`), the offset `μ_j = (∏_{i<j} s_i)⁻¹ mod s_j` (`crtMu`) by a
+the source length `s_j = (v₁₇ / P_j) mod t_j`, the offset `μ_j = (∏_{i<j} s_i)⁻¹ mod s_j` (`crtMu`) by a
 search over `x = 1, 2, …` for `x ∏_{i<j} s_i ≡ 1 (mod s_j)`, and the running values
 `S_j = ∏_{i<j} s_i`, `P_j = ∏_{i<j} t_i = 2^{crtPre a j}`, `sig_j = Σ_{i<j} s_i P_i`
 (`crtSig`), `msk_j = Σ_{i<j} P_{i+1}/2` (`crtMask`), with `a = srcAx n` (`aᵢ = log₂ tᵢ`).
@@ -60,13 +60,7 @@ noncomputable def dsMu (n j : ℕ) : ℕ :=
 
 variable {n : ℕ}
 
-theorem dsS_ge (n i : ℕ) : 3 ≤ dsS n i := by
-  have hx : 2 ≤ pmX0 n := by
-    unfold pmX0 start
-    exact (fun x => by omega : ∀ x : ℕ, 2 ≤ 2 * (x + 1)) _
-  have hN := pm_one_le_N n
-  unfold dsS modulus modA modB
-  split_ifs <;> nlinarith
+theorem dsS_ge (n i : ℕ) : 3 ≤ dsS n i := three_le_srcLen n i
 
 theorem dsSP_succ (n j : ℕ) : dsSP n (j + 1) = dsSP n j * dsS n j := Finset.prod_range_succ _ _
 
@@ -204,10 +198,11 @@ noncomputable def dsCW (n j : ℕ) (x : Fin pmNV) : ℕ :=
   if x.val = 36 then dsS n j else if x.val = 37 then 1 else if x.val = 38 then dsMu n j
   else if x.val = 39 then 1 else dsCV n j x
 
-/-- The axis code: `s_j` (`pmModC`), `x := 1`, `y := x S mod s`, and `x := x + 1`,
-`y := x S mod s` while `1 < y`. -/
+/-- The axis code: `t := t_j` in `37`, `s_j = (v₁₇ / P_j) mod t`, `x := 1`, `y := x S mod s`,
+and `x := x + 1`, `y := x S mod s` while `1 < y`. -/
 def dsCC₁ : TblCode pmNV :=
-  pmModC.rename ![16, 17, 11, 31, 36, 39] ;;
+  (.ite 31 11 (.ins (.copy 10 37)) (.ins (.copy 8 37)) ;;
+    tblBlock pmNV [.div 17 33 36] (.mod 36 37 36)) ;;
   tblBlock pmNV [.zero 37, .inc 37, .zero 38, .inc 38, .mul 38 32 39] (.mod 39 36 39) ;;
   .loop 37 39 (tblBlock pmNV [.inc 38, .mul 38 32 39] (.mod 39 36 39))
 
@@ -239,9 +234,6 @@ theorem ds_crt_bound (hB : Big n) {j : ℕ} (hj : j < d n) : dsSP n (j + 1) < 2 
 theorem dsCC₁_do (hB : Big n) {j : ℕ} (hj : j < d n) :
     TblDo A (pmW n) w dsCC₁ ⟨dsCV n j, []⟩ (· = ⟨dsCW n j, []⟩) (dsCK₁ n) := by
   have hn : 2 ≤ n := hB.1
-  have hf : Function.Injective (![16, 17, 11, 31, 36, 39] : Fin 6 → Fin pmNV) := by decide
-  have hMB : pmModBound (N n) (pmX0 n) j < 2 ^ pmW n :=
-    (pm_modBound_lt hn hj).trans_le (pm_two_pow_le (by have := pmW_ge n; omega))
   obtain ⟨hmu1, hmu2, hmu3⟩ := ds_mu_spec n j hj
   have hmus := dsMu_lt n j hj
   have hSj := ds_crt_bound hB hj
@@ -249,27 +241,31 @@ theorem dsCC₁_do (hB : Big n) {j : ℕ} (hj : j < d n) :
   have hs3 := dsS_ge n j
   have hW1 : 1 < 2 ^ pmW n := Nat.one_lt_two_pow (by have := pmW_ge n; omega)
   -- `s_j`
-  have hM := pmModC_do (A := A) (W := pmW n) (w := w) (N := N n) (x₀ := pmX0 n)
-    (a := numHalf n) (i := j) ((⟨dsCV n j, []⟩ : TblSt pmNV A).restrict ![16, 17, 11, 31, 36, 39])
-    (by simp [dsCV, pmVal, pmNV]) (by simp [dsCV, pmVal, pmNV]) (by simp [dsCV, pmVal, pmNV])
-    (by simp [dsCV, pmNV]) (pm_one_le_N n) hMB
-  have hA : TblDo A (pmW n) w (pmModC.rename ![16, 17, 11, 31, 36, 39]) ⟨dsCV n j, []⟩
+  have hdig : Primes.packVal (srcLen n) (pmTv (numHalf n) (2 ^ (ℓ n - 1)) (r n)) (d n) /
+      dsP n j % dsT n j = dsS n j :=
+    Primes.packVal_digit (fun i hi => pm_src_lt hB hi) hj
+  have hA : TblDo A (pmW n) w (.ite 31 11 (.ins (.copy 10 37)) (.ins (.copy 8 37)) ;;
+      tblBlock pmNV [.div 17 33 36] (.mod 36 37 36)) ⟨dsCV n j, []⟩
       (fun s => s.acc = [] ∧ s.val 36 = dsS n j ∧
         ∀ x : Fin pmNV, x.val < 36 → s.val x = dsCV n j x) 9 := by
-    refine (TblDo.rename hf hM).mono (fun s ⟨⟨hv, hfr, hac⟩, hout⟩ => ⟨?_, ?_, fun x hx => ?_⟩) le_rfl
-    · simpa using hac
-    · simpa [dsS] using hv
-    · by_cases hex : ∃ y, (![16, 17, 11, 31, 36, 39] : Fin 6 → Fin pmNV) y = x
-      · obtain ⟨y, rfl⟩ := hex
-        fin_cases y
-        · simpa using hfr 0 (by decide) (by decide)
-        · simpa using hfr 1 (by decide) (by decide)
-        · simpa using hfr 2 (by decide) (by decide)
-        · simpa using hfr 3 (by decide) (by decide)
-        · simp [pmNV] at hx
-        · simp [pmNV] at hx
-      · push Not at hex
-        exact hout x hex
+    have hite : TblDo A (pmW n) w (.ite 31 11 (.ins (.copy 10 37)) (.ins (.copy 8 37)))
+        ⟨dsCV n j, []⟩ (· = ⟨Function.update (dsCV n j) 37 (dsT n j), []⟩) 2 := by
+      by_cases h : j < numHalf n
+      · refine TblDo.iteT (by simp [dsCV, pmNV, pmVal, h]) (TblDo.ins _ ?_)
+        simp [TblIns.run, dsCV, pmNV, pmVal, dsT, pmTv, h]
+      · refine TblDo.iteF (by simp [dsCV, pmNV, pmVal, h]) (TblDo.ins _ ?_)
+        simp [TblIns.run, dsCV, pmNV, pmVal, dsT, pmTv, h]
+    refine (hite.seq (K₂ := 2) fun s hs => ?_).mono (fun _ h => h) (by norm_num)
+    subst hs
+    refine TblDo.block _ _ (by simp [tblFitsList, TblIns.fits]) ⟨rfl, ?_, fun x hx => ?_⟩
+    · have h17 : dsCV n j 17 =
+          Primes.packVal (srcLen n) (pmTv (numHalf n) (2 ^ (ℓ n - 1)) (r n)) (d n) := by
+        simp [dsCV, pmVal, pmNV]
+      have h33 : dsCV n j 33 = dsP n j := by simp [dsCV, pmNV]
+      simp [tblExactList, TblIns.exact, h17, h33, hdig]
+    · have h36 : x ≠ 36 := by rintro rfl; simp [pmNV] at hx
+      have h37 : x ≠ 37 := by rintro rfl; simp [pmNV] at hx
+      simp [tblExactList, TblIns.exact, Function.update_of_ne h36, Function.update_of_ne h37]
   -- `x := 1`, `y := S mod s`
   have hBk : ∀ s : TblSt pmNV A, (s.acc = [] ∧ s.val 36 = dsS n j ∧
       ∀ x : Fin pmNV, x.val < 36 → s.val x = dsCV n j x) →
@@ -412,7 +408,7 @@ theorem dsCV_lt (hbig : Big n) {j : ℕ} (hj : j ≤ d n) (x : Fin pmNV) :
 theorem dsCW_lt (hbig : Big n) {j : ℕ} (hj : j < d n) (x : Fin pmNV) :
     dsCW n j x < 2 ^ pmW n := by
   have hn := hbig.1
-  have hs := dsS_lt hn hj
+  have hs := dsS_lt hbig hj
   have hmu := dsMu_lt n j hj
   have hW1 : 1 < 2 ^ pmW n := Nat.one_lt_two_pow (by have := pmW_ge n; omega)
   unfold dsCW

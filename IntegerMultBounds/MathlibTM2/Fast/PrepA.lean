@@ -752,14 +752,6 @@ section PipeFacts
 open IntegerMultBounds.MathlibTM2.Mult.Pipeline IntegerMultBounds.MathlibTM2.Mult.Sizes IntegerMultBounds.NLogN
 open IntegerMultBounds.Resampling.WeightTable (tableA tables_ok)
 
-lemma pre_pow_bound : ∀ k : ℕ, 12 * (k + 17) ^ 2 ≤ 2 ^ (k + 15)
-  | 0 => by norm_num
-  | k + 1 => by
-      have := pre_pow_bound k
-      rw [show k + 1 + 15 = (k + 15) + 1 by ring, pow_succ 2 (k + 15)]
-      have h2 : (k + 1 + 17) ^ 2 ≤ 2 * (k + 17) ^ 2 := by ring_nf; nlinarith
-      omega
-
 variable {n : ℕ}
 
 lemma pre_t_ge (i : Fin (d n)) : 2 ^ (ℓ n - 1) ≤ t n i := by
@@ -776,17 +768,14 @@ lemma pre_p_le_s (h : Big n) (i : Fin (d n)) : p n ≤ s n i := by
     by_contra hc
     simp only [not_lt] at hc
     nlinarith
-  have hpl := h.ℓ_bounds.1
-  have hdl := h.d_le_ℓ
-  have hd16 := h.2
-  obtain ⟨k, hk⟩ : ∃ k, ℓ n = k + 17 := ⟨ℓ n - 17, by omega⟩
-  have hpow := pre_pow_bound k
   have ht := pre_t_ge (n := n) i
-  rw [hk, show k + 17 - 1 = (k + 15) + 1 by omega, pow_succ] at ht
-  have h12 : p n ≤ 12 * (k + 17) ^ 2 := by
-    calc p n ≤ 12 * d n * ℓ n := hpl
-      _ ≤ 12 * ℓ n * ℓ n := by gcongr; omega
-      _ = 12 * (k + 17) ^ 2 := by rw [hk]; ring
+  have hp := h.eight_p_le_r
+  have hl := h.two_le_ℓ
+  have e : 2 ^ ℓ n = 2 * 2 ^ (ℓ n - 1) := by
+    rw [← pow_succ']
+    congr 1
+    omega
+  unfold r at hp
   omega
 
 lemma pre_windowA_le_s (h : Big n) (i : Fin (d n)) : windowA (p n) (alpha n) ≤ s n i :=

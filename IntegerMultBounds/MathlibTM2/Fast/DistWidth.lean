@@ -85,10 +85,9 @@ theorem ds_two_le_r (hn : 2 ≤ n) : 2 ≤ r n := by
     _ ≤ r n := Nat.pow_le_pow_right (by norm_num) this
 
 /-- `d ≤ r`. -/
-theorem ds_d_le_r (hn : 2 ≤ n) : d n ≤ r n := by
-  have h1 := d_le_two_ℓ hn
-  have hl := ds_one_le_ℓ hn
-  have : 2 * ℓ n ≤ 2 ^ ℓ n := two_mul_le_two_pow (ℓ n)
+theorem ds_d_le_r (hB : Big n) : d n ≤ r n := by
+  have h1 := hB.d_le_two_pow_pred_ℓ
+  have : 2 ^ (ℓ n - 1) ≤ 2 ^ ℓ n := Nat.pow_le_pow_right (by norm_num) (Nat.sub_le _ _)
   unfold r; omega
 
 /-- `T / r = P_{d-1}`. -/
@@ -96,14 +95,15 @@ theorem ds_T_div_r (hn : 2 ≤ n) : T n / r n = dsP n (d n - 1) := by
   rw [← dsP_last hn, Nat.mul_div_cancel _ (by have := ds_two_le_r hn; omega)]
 
 /-- `d r ≤ T`. -/
-theorem ds_d_mul_r_le (hn : 2 ≤ n) : d n * r n ≤ T n := by
+theorem ds_d_mul_r_le (hB : Big n) : d n * r n ≤ T n := by
+  have hn : 2 ≤ n := hB.1
   rw [← dsP_last hn]
   refine Nat.mul_le_mul_right _ ?_
   rcases Nat.lt_or_ge (d n) 2 with h | h
   · have := one_le_d hn
     have e : d n = 1 := by omega
     rw [e]; exact le_rfl
-  · have h1 : d n ≤ 2 ^ (ℓ n - 1) := d_le_two_pow_pred_ℓ hn
+  · have h1 : d n ≤ 2 ^ (ℓ n - 1) := hB.d_le_two_pow_pred_ℓ
     have h2 : dsP n 1 ≤ dsP n (d n - 1) :=
       Nat.le_of_dvd (dsP_pos n _) (dsP_dvd n (by omega))
     have h3 : 2 ^ (ℓ n - 1) ≤ dsT n 0 := by
@@ -115,26 +115,10 @@ theorem ds_d_mul_r_le (hn : 2 ≤ n) : d n * r n ≤ T n := by
 
 /-- `s_i ≤ 2 r + 23`. -/
 theorem dsS_le (hB : Big n) {i : ℕ} (hi : i < d n) : dsS n i ≤ 2 * r n + 23 := by
-  have hn : 2 ≤ n := hB.1
-  have h1 := pm_modulus_le_bound (N n) (pmX0 n) (numHalf n) i
-  have h2 : pmModBound (N n) (pmX0 n) i ≤ 2 * 2 ^ (ℓ n - 1) + N n * (2 * d n + 5) + 2 :=
-    pm_modBound_le (R := 2 ^ (ℓ n - 1)) (one_le_d hn) (pm_one_le_N n) hi
-  have hR : 2 * 2 ^ (ℓ n - 1) = r n := by
-    have := ds_one_le_ℓ hn
-    unfold r
-    rw [← pow_succ']; congr 1; omega
+  have h1 := pm_src_lt hB hi
+  have h2 : pmTv (numHalf n) (2 ^ (ℓ n - 1)) (r n) i ≤ r n := dsT_le hB.1 i
   unfold dsS
-  rcases Nat.lt_or_ge (d n) 2 with h | h
-  · have e : d n = 1 := by have := one_le_d hn; omega
-    have hN : N n = 3 := by simp [N, e, oddProd, Finset.prod_range_succ]
-    have h3 : N n * (2 * d n + 5) = 21 := by rw [e, hN]
-    omega
-  · have h3 := pm_room hB
-    have h4 : N n * (2 * d n + 5) ≤ 8 * d n ^ 2 * N n := by
-      have : 2 * d n + 5 ≤ 8 * d n ^ 2 := by nlinarith
-      calc N n * (2 * d n + 5) ≤ N n * (8 * d n ^ 2) := Nat.mul_le_mul_left _ this
-        _ = 8 * d n ^ 2 * N n := by ring
-    omega
+  omega
 
 /-- `P_i ≤ T / r` for `i < d`. -/
 theorem dsP_le_Tr (hn : 2 ≤ n) {i : ℕ} (hi : i < d n) : dsP n i ≤ T n / r n := by
@@ -368,12 +352,13 @@ theorem dsE_lt (n : ℕ) : dsE n < 2 ^ (d n - 1) := by
   omega
 
 /-- The word sizes of the layout stage at `W_L = dsWL n w`, `B = r w`, `w ≥ 1`. -/
-theorem ds_lay_widths (hn : 2 ≤ n) {w : ℕ} (hw : 1 ≤ w) :
+theorem ds_lay_widths (hB : Big n) {w : ℕ} (hw : 1 ≤ w) :
     dsE n < 2 ^ dsWL n w ∧
       ((List.ofFn (ConvSt.cvAx (t n))).sum + 1) ^ (List.ofFn (ConvSt.cvAx (t n))).sum <
         2 ^ dsWL n w ∧
       (List.ofFn (ConvSt.cvAx (t n))).sum + r n * w + 4 ≤ dsWL n w ∧ ℓ n < 2 ^ dsWL n w ∧
       1 ≤ r n * w := by
+  have hn : 2 ≤ n := hB.1
   rw [ds_sum_cvAx hn]
   set N := logT n - ℓ n
   have hr := ds_two_le_r hn
@@ -381,7 +366,7 @@ theorem ds_lay_widths (hn : 2 ≤ n) {w : ℕ} (hw : 1 ≤ w) :
   have hWL : r n * w ≤ dsWL n w := by unfold dsWL; omega
   refine ⟨?_, ?_, by unfold dsWL; nlinarith, ?_, by nlinarith⟩
   · refine (dsE_lt n).trans_le (Nat.pow_le_pow_right (by norm_num) ?_)
-    have := ds_d_le_r hn; omega
+    have := ds_d_le_r hB; omega
   · have h1 : N + 1 ≤ 2 ^ N := Nat.lt_two_pow_self
     calc (N + 1) ^ N ≤ (2 ^ N) ^ N := Nat.pow_le_pow_left h1 N
       _ = 2 ^ (N * N) := by rw [← pow_mul]

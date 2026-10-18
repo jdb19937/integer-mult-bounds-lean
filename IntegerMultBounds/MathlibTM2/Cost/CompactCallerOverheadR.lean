@@ -39,15 +39,30 @@ theorem synE_zero_le (G D t : ℕ) : synE G 0 D t≤t*(D+G) := by
   have hs := Finset.sum_le_card_nsmul _ _ _ h
   simpa only [Finset.card_range,smul_eq_mul] using hs
 
+/-- Every level scale is below `m + G`: the lowest digit is below the radix `m`. -/
+theorem synE_zero_le_radix (G D t : ℕ) : synE G 0 D t≤t*(m+G) := by
+  unfold synE
+  have h : ∀ j∈Finset.range t,
+      (if synDg D j=0 then 0 else expSeq G 0 (synDg D j) j)≤m+G := by
+    intro j _
+    split_ifs
+    · omega
+    · cases j with
+      | zero =>
+        have : synDg D 0<m := Nat.mod_lt _ (by norm_num [m])
+        simp only [expSeq]; omega
+      | succ j => simp only [expSeq]; omega
+  have hs := Finset.sum_le_card_nsmul _ _ _ h
+  simpa only [Finset.card_range,smul_eq_mul] using hs
+
 theorem synE_zero_active_le (G d g K D : ℕ) :
-    synE G 0 (compactReservationActive d g K D) (compactReservationActive d g K D)≤D*D+D*G := by
+    synE G 0 (compactReservationActive d g K D) (compactReservationActive d g K D)≤D*(m+G) := by
   have ha : compactReservationActive d g K D≤D :=
     (Nat.sub_le _ _).trans ((Nat.sub_le _ _).trans (Nat.sub_le _ _))
-  have h := (synE_zero_le G _ _).trans (Nat.mul_le_mul ha (Nat.add_le_add_right ha G))
-  rwa [Nat.mul_add] at h
+  exact (synE_zero_le_radix G _ _).trans (Nat.mul_le_mul_right _ ha)
 
 /-- **The rounded working width** is linear in `W`: the guard fields are at most `4W` and the
-working width at most `8W`. Only `d^2 ≤ b` is used. -/
+working width at most `8W`. Only `(cG + G + m + 30) d ≤ b` is used. -/
 theorem compactCallerR_eventually_width (G cG : ℕ) :
     ∀ᶠ M : ℕ in atTop, ∀ K D W N l : ℕ,
     D≤Mult.Sizes.d M →
@@ -63,19 +78,26 @@ theorem compactCallerR_eventually_width (G cG : ℕ) :
     let working := W+s+D+guardKc cG N l D+G+m+4
     gb+E≤4*W ∧ working≤8*W := by
   filter_upwards [Mult.Sizes.eventually_big,
-    tendsto_atTop.1 Mult.Sizes.tendsto_d (cG+G+m+20)] with M hbig hlarge
+    tendsto_atTop.1 Mult.Sizes.tendsto_b ((cG+G+m+30)^2)] with M hbig hbF
   intro K D W N l hD hfit hW hN hl
   dsimp only
-  have hdd : Mult.Sizes.d M^2≤Mult.Sizes.b M :=
-    Mult.Sizes.pow_le_b_of (by norm_num [Mult.Sizes.powerCap]) hbig.one_le_d
-  rw [pow_two] at hdd
+  obtain ⟨F, hF⟩ : ∃ F, F=cG+G+m+30 := ⟨_, rfl⟩
+  rw [← hF] at hbF
+  have hFd : F*Mult.Sizes.d M≤Mult.Sizes.b M := Mult.Sizes.mul_d_le_b (by
+    calc F^64 = (F^2)^32 := by rw [← pow_mul]
+      _ ≤ Mult.Sizes.b M^32 := Nat.pow_le_pow_left hbF 32
+      _ ≤ Mult.Sizes.b M^33 := Nat.pow_le_pow_right (by have := hbig.sixteen_le_b; omega)
+          (by norm_num))
   have hp : Mult.Sizes.p M=6*Mult.Sizes.b M := rfl
+  have hb16 := hbig.sixteen_le_b
+  have hFle : F≤F*Mult.Sizes.d M := Nat.le_mul_of_pos_right _ hbig.one_le_d
   have hax := compactReservation_axes hfit
   have hE := synE_zero_active_le G (Mult.Sizes.d M) (CompactReservationGrowth.guard M) K D
-  have hDD : D*D≤Mult.Sizes.d M*Mult.Sizes.d M := Nat.mul_le_mul hD hD
-  have hDG : D*G≤Mult.Sizes.d M*Mult.Sizes.d M := Nat.mul_le_mul hD (by omega)
-  have hDc : (cG+1)*D≤Mult.Sizes.d M*Mult.Sizes.d M := Nat.mul_le_mul (by omega) hD
-  have h20 : 20*Mult.Sizes.d M≤Mult.Sizes.d M*Mult.Sizes.d M := Nat.mul_le_mul_right _ (by omega)
+  have hlin : D*(m+G)+(cG+1)*D+D≤(cG+G+m+2)*Mult.Sizes.d M := by
+    calc D*(m+G)+(cG+1)*D+D = D*(cG+G+m+2) := by ring
+      _ ≤ Mult.Sizes.d M*(cG+G+m+2) := Nat.mul_le_mul_right _ hD
+      _ = (cG+G+m+2)*Mult.Sizes.d M := by ring
+  have h28 : (cG+G+m+2)*Mult.Sizes.d M+28*Mult.Sizes.d M=F*Mult.Sizes.d M := by rw [hF]; ring
   have hhalf := Nat.div_le_self (D+1) 2
   unfold guardG guardKc compactTopKernelCount
   omega

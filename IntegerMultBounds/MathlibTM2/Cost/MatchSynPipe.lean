@@ -53,18 +53,8 @@ open IntegerMultBounds.MathlibTM2.Mult.Sizes Filter IntegerMultBounds.MathlibTM2
 
 /-- `b^k ≤ r` eventually. -/
 theorem mr_b_pow_le_r (k : ℕ) : ∀ᶠ n in atTop, b n ^ k ≤ r n := by
-  have h := tendsto_d.eventually (eventually_mul_pow_le_two_pow (2 ^ (upperPower * k)) (upperPower * k))
-  filter_upwards [eventually_big, h] with n hb hd
-  have h1 : b n ^ k ≤ (d n + 1) ^ (upperPower * k) := by
-    rw [pow_mul]
-    exact Nat.pow_le_pow_left (b_lt_d_succ_pow n).le k
-  have h2 : (d n + 1) ^ (upperPower * k) ≤ 2 ^ (upperPower * k) * d n ^ (upperPower * k) := by
-    rw [← mul_pow]
-    exact Nat.pow_le_pow_left (by have := hb.one_le_d; omega) _
-  have h3 : 2 ^ d n ≤ r n := by
-    unfold r
-    exact Nat.pow_le_pow_right (by norm_num) (by have := hb.d_le_ℓ; omega)
-  omega
+  filter_upwards [eventually_pow_p_le_r k] with n h
+  exact (Nat.pow_le_pow_left (by unfold p; omega) k).trans h
 
 /-- `p^k ≤ 2^K` eventually. -/
 theorem mr_p_pow_le_two_pow_K (k : ℕ) : ∀ᶠ n in atTop, p n ^ k ≤ 2 ^ K n := by

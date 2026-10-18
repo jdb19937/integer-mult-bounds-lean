@@ -32,7 +32,7 @@ the per-axis values of the records of the stage loaders and pushes them in unary
 
 On ℕ indices: `dsT n i = t_i` (`R = 2^(ℓ-1)` below `numHalf`, `r` above; `dsT_eq`),
 `dsP n i = ∏_{j<i} t_j`, `dsL n i = log₂ t_i`, `dsQ n i = p + 1` (`p` on the last axis),
-`dsS n i = s_i` (`Moduli.modulus`), `dsG n i = (T / r) / (P_i t_i)` (`1` on the last axis): the
+`dsS n i = s_i` (`Sizes.srcLen`), `dsG n i = (T / r) / (P_i t_i)` (`1` on the last axis): the
 product of the lengths strictly between axis `i` and the last axis.
 
 ## States
@@ -78,7 +78,7 @@ def dsL (n i : ℕ) : ℕ := if i < numHalf n then ℓ n - 1 else ℓ n
 def dsQ (n i : ℕ) : ℕ := if i + 1 < d n then p n + 1 else p n
 
 /-- The source length `s_i`. -/
-def dsS (n i : ℕ) : ℕ := modulus (N n) (pmX0 n) (numHalf n) i
+def dsS (n i : ℕ) : ℕ := srcLen n i
 
 /-- The product of the lengths strictly between axis `i` and the last axis. -/
 def dsG (n i : ℕ) : ℕ := if i + 1 < d n then T n / r n / (dsP n i * dsT n i) else 1
@@ -179,14 +179,14 @@ def dsAV (n W i : ℕ) (j : Fin pmNV) : ℕ :=
   else if j.val = 36 then dsQ n i else if j.val = 37 then dsG n i else dsLV n W i j
 
 /-- The axis code: `t`, `log₂ t` by the test `i < numHalf`; `q := p`, `+ 1` and
-`G := (T / r) / (P t)` when `i + 1 < d` (else `G := 1`); `s_i` by `pmModC`; scratch `39`
-cleared. -/
+`G := (T / r) / (P t)` when `i + 1 < d` (else `G := 1`); `s_i = (v₁₇ / P) mod t`, the digit
+of the packed source lengths (`Primes.packVal_digit`); scratch `39` cleared. -/
 def dsAxC : TblCode pmNV :=
   .ite 31 11 (tblBlock pmNV [.copy 10 33] (.copy 9 34)) (tblBlock pmNV [.copy 8 33] (.copy 7 34)) ;;
   tblBlock pmNV [.copy 2 36, .copy 31 39] (.inc 39) ;;
   .ite 39 3 (tblBlock pmNV [.inc 36, .div 6 8 37, .mul 32 33 39] (.div 37 39 37))
     (tblBlock pmNV [.zero 37] (.inc 37)) ;;
-  pmModC.rename ![16, 17, 11, 31, 35, 39] ;; .ins (.zero 39)
+  tblBlock pmNV [.div 17 32 35, .mod 35 33 35] (.zero 39)
 
 /-- The update code: `P := P t`, `i := i + 1`, `33 … 37` cleared. -/
 def dsUpC : TblCode pmNV :=
@@ -199,10 +199,10 @@ theorem ds_small (n : ℕ) {x : ℕ} (hx : x ≤ 1000 * (b n + 1)) : x < 2 ^ pmW
   have e : 2 ^ (b n + 10) = 1024 * 2 ^ b n := by rw [pow_add]; ring
   omega
 
-theorem dsS_lt {n : ℕ} (hn : 2 ≤ n) {i : ℕ} (hi : i < d n) : dsS n i < 2 ^ pmW n := by
-  have h1 := pm_modulus_le_bound (N n) (pmX0 n) (numHalf n) i
-  have h2 := pm_modBound_lt hn hi
-  have h3 : 2 ^ (2 * b n + 9) ≤ 2 ^ pmW n := pm_two_pow_le (by have := pmW_ge n; omega)
+theorem dsS_lt {n : ℕ} (hB : Big n) {i : ℕ} (hi : i < d n) : dsS n i < 2 ^ pmW n := by
+  have h1 := pm_src_lt hB hi
+  have h2 : pmTv (numHalf n) (2 ^ (ℓ n - 1)) (r n) i ≤ r n := dsT_le hB.1 i
+  have h3 : r n ≤ 2 ^ pmW n := pm_two_pow_le (by have := pm_ℓ_le hB.1; have := pmW_ge n; omega)
   unfold dsS; omega
 
 /-- The parameters fit the words of the parameter machine. -/
@@ -250,7 +250,7 @@ theorem dsAV_lt {n W : ℕ} (hB : Big n) (hW : W < 2 ^ pmW n) {i : ℕ} (hi : i 
   split_ifs
   · omega
   · unfold dsL; split_ifs <;> omega
-  · exact dsS_lt hn hi
+  · exact dsS_lt hB hi
   · unfold dsQ; split_ifs <;> omega
   · omega
   · exact dsLV_lt hB hW hi.le j
@@ -340,44 +340,30 @@ theorem dsAxC_C (hB : Big n) (hi : i < d n) :
       · simp [dsSC, dsQ, h]
       simp [dsSC, Function.update_of_ne h37, Function.update_of_ne h36]
 
-theorem dsAxC_D (hn : 2 ≤ n) (hi : i < d n) (s : TblSt pmNV A) (hacc : s.acc = [])
+theorem dsAxC_D (hB : Big n) (hi : i < d n) (s : TblSt pmNV A) (hacc : s.acc = [])
     (hs : ∀ j, j ≠ 39 → s.val j = dsSC n Wt i j) :
-    TblDo A (pmW n) w (pmModC.rename ![16, 17, 11, 31, 35, 39] ;; .ins (.zero 39)) s
+    TblDo A (pmW n) w (tblBlock pmNV [.div 17 32 35, .mod 35 33 35] (.zero 39)) s
       (· = ⟨dsAV n Wt i, []⟩) 10 := by
-  have hf : Function.Injective (![16, 17, 11, 31, 35, 39] : Fin 6 → Fin pmNV) := by decide
-  have hB : pmModBound (N n) (pmX0 n) i < 2 ^ pmW n :=
-    (pm_modBound_lt hn hi).trans_le (pm_two_pow_le (by have := pmW_ge n; omega))
-  have hM := pmModC_do (A := A) (W := pmW n) (w := w) (N := N n) (x₀ := pmX0 n)
-    (a := numHalf n) (i := i) (s.restrict ![16, 17, 11, 31, 35, 39])
-    (by simp [hs, dsSC, dsSB, dsSA, dsLV, pmVal, pmNV])
-    (by simp [hs, dsSC, dsSB, dsSA, dsLV, pmVal, pmNV])
-    (by simp [hs, dsSC, dsSB, dsSA, dsLV, pmVal, pmNV])
-    (by simp [hs, dsSC, dsSB, dsSA, dsLV, pmNV]) (pm_one_le_N n) hB
-  refine ((TblDo.rename hf hM).seq (K₂ := 1)
-    (fun s₁ ⟨⟨hv, hfr, hac₁⟩, hout⟩ => TblDo.ins _ ?_)).mono (fun _ h => h) (by norm_num)
-  simp only [TblIns.run]
+  have h17 : s.val 17 =
+      Primes.packVal (srcLen n) (pmTv (numHalf n) (2 ^ (ℓ n - 1)) (r n)) (d n) := by
+    rw [hs 17 (by decide)]; simp [dsSC, dsSB, dsSA, dsLV, pmVal, pmNV]
+  have h32 : s.val 32 = dsP n i := by rw [hs 32 (by decide)]; simp [dsSC, pmNV]
+  have h33 : s.val 33 = dsT n i := by rw [hs 33 (by decide)]; simp [dsSC, pmNV]
+  have hdig : Primes.packVal (srcLen n) (pmTv (numHalf n) (2 ^ (ℓ n - 1)) (r n)) (d n) /
+      dsP n i % dsT n i = dsS n i :=
+    Primes.packVal_digit (fun j hj => pm_src_lt hB hj) hi
+  refine (TblDo.block _ _ (by simp [tblFitsList, TblIns.fits]) ?_).mono (fun _ h => h)
+    (by norm_num)
   rw [dsAV_eq]
-  simp only [TblSt.restrict_val, TblSt.restrict_acc] at hv hfr hac₁
+  simp only [tblExactList, TblIns.exact, List.cons_append, List.nil_append]
   congr 1
   · funext j
     rcases eq_or_ne j 39 with rfl | h39
     · simp
     rw [Function.update_of_ne h39, Function.update_of_ne h39]
     rcases eq_or_ne j 35 with rfl | h35
-    · simpa [dsS] using hv
-    rw [Function.update_of_ne h35, ← hs j h39]
-    by_cases hj : ∃ y, (![16, 17, 11, 31, 35, 39] : Fin 6 → Fin pmNV) y = j
-    · obtain ⟨y, rfl⟩ := hj
-      fin_cases y
-      · simpa using hfr 0 (by decide) (by decide)
-      · simpa using hfr 1 (by decide) (by decide)
-      · simpa using hfr 2 (by decide) (by decide)
-      · simpa using hfr 3 (by decide) (by decide)
-      · exact absurd rfl h35
-      · exact absurd rfl h39
-    · push Not at hj
-      exact hout j hj
-  · rw [hac₁, hacc]
+    · simp [h17, h32, h33, hdig]
+    rw [Function.update_of_ne h35, Function.update_of_ne h35, Function.update_of_ne h35, hs j h39]
 
 end Steps
 
@@ -386,7 +372,7 @@ theorem dsAxC_do {n Wt i : ℕ} (hB : Big n) (hi : i < d n) :
     TblDo A (pmW n) w dsAxC ⟨dsLV n Wt i, []⟩ (· = ⟨dsAV n Wt i, []⟩) 21 :=
   (dsAxC_A.seq fun _ hs => hs ▸ (dsAxC_B hB hi).seq fun _ hs => hs ▸ (dsAxC_C hB hi).seq
     fun s (h : s.acc = [] ∧ ∀ j, j ≠ 39 → s.val j = dsSC n Wt i j) =>
-      dsAxC_D hB.1 hi s h.1 h.2).mono (fun _ h => h) (by norm_num)
+      dsAxC_D hB hi s h.1 h.2).mono (fun _ h => h) (by norm_num)
 
 /-- **The update code**: from `dsAV n Wt i` to `dsLV n Wt (i + 1)`, `7` atoms. -/
 theorem dsUpC_do {n Wt i : ℕ} (hB : Big n) (hi : i < d n) :

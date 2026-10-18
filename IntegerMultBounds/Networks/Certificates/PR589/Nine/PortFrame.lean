@@ -1,0 +1,221 @@
+module
+
+public import Mathlib.Data.Matrix.Block
+public import Mathlib.Algebra.BigOperators.Fin
+public import Mathlib.Algebra.Field.Rat
+public import Mathlib.Tactic.Ring
+public import Mathlib.Tactic.Abel
+
+/-!
+# Port isometries of the compressed nine-stage geometry
+
+Upstream's compressed geometry (`nine/geometry.py`) gives each port `t` its line `q` (an E8 root of
+norm `4` under the dot product, norm `2` under the form `⟨x, y⟩/2`) and an orthonormal basis `A` of
+the orthogonal space of `q`, the last seven columns of a Weyl element mapping line zero to `q`.
+* `PortCertificate` stores `q` and `2A`, both integral; `Checked` is the integer form of
+  `qᵀq = 4`, `AᵀA = 1`, `AAᵀ + qqᵀ/4 = 1` and `qᵀA = 0`.
+* `lineProj = qqᵀ/4` is the orthogonal projector onto the line, `1 - lineProj` the one onto its
+  orthogonal space.
+* `rho = [[P, A], [Aᵀ, 0]]` is upstream's stage map on the eight local and seven exterior axes.
+  `rho_transpose` and `rho_mul_self` show it is a symmetric involution, hence an isometry.
+  `rho_conj_line`, `rho_conj_one`, `rho_conj_zero` and `rho_conj_complement` are upstream's four
+  conjugation identities: `ρ (U ⊕ 1) ρ` for `U = P, 1, 0, 1 - P`.
+* `exchange U = [[1 - U, U], [U, 1 - U]]` is the bit address operator `D_U`, which exchanges the
+  `U`-components of the two address halves. `exchange_one_mul` is upstream's `D_1 D_P = D_(1-P)`,
+  and `exchange_mul_self` its `D_P² = 1`. Exchanges compose additively when `UV = 0`
+  (`exchange_mul_of_orthogonal`), a nested frame change is the exchange on the projector
+  difference (`exchange_change`), and an invertible coordinate change conjugates `D_U` to the
+  exchange on the conjugated projector (`exchange_conj`).
+-/
+
+@[expose] public section
+
+namespace IntegerMultBounds.Networks.Certificates.PR589.Nine
+
+open Matrix
+
+/-- A port's line `q` and twice its complement columns. -/
+structure PortCertificate where
+  line : Fin 8 → ℤ
+  twiceComplement : Fin 8 → Fin 7 → ℤ
+
+instance : Inhabited PortCertificate := ⟨⟨0, 0⟩⟩
+
+namespace PortCertificate
+
+/-- The integer orthonormality equations of the line and the complement columns. -/
+def Checked (c : PortCertificate) : Prop :=
+  ∑ i, c.line i * c.line i = 4 ∧
+  (∀ k l, ∑ i, c.twiceComplement i k * c.twiceComplement i l = if k = l then 4 else 0) ∧
+  (∀ i j, ∑ k, c.twiceComplement i k * c.twiceComplement j k + c.line i * c.line j =
+    if i = j then 4 else 0) ∧
+  ∀ k, ∑ i, c.line i * c.twiceComplement i k = 0
+
+instance (c : PortCertificate) : Decidable c.Checked := inferInstanceAs
+  (Decidable (∑ i, c.line i * c.line i = 4 ∧
+    (∀ k l, ∑ i, c.twiceComplement i k * c.twiceComplement i l = if k = l then 4 else 0) ∧
+    (∀ i j, ∑ k, c.twiceComplement i k * c.twiceComplement j k + c.line i * c.line j =
+      if i = j then 4 else 0) ∧
+    ∀ k, ∑ i, c.line i * c.twiceComplement i k = 0))
+
+/-- The orthogonal projector `qqᵀ/4` onto the port's line. -/
+def lineProj (c : PortCertificate) : Matrix (Fin 8) (Fin 8) ℚ :=
+  of fun i j => (c.line i : ℚ) * c.line j / 4
+
+/-- The complement columns `A`. -/
+def complement (c : PortCertificate) : Matrix (Fin 8) (Fin 7) ℚ :=
+  of fun i k => (c.twiceComplement i k : ℚ) / 2
+
+/-- The stage map `ρ = [[P, A], [Aᵀ, 0]]` on the local and exterior axes. -/
+def rho (c : PortCertificate) : Matrix (Fin 8 ⊕ Fin 7) (Fin 8 ⊕ Fin 7) ℚ :=
+  fromBlocks c.lineProj c.complement c.complementᵀ 0
+
+variable {c : PortCertificate}
+
+theorem lineProj_transpose : c.lineProjᵀ = c.lineProj := by
+  ext i j
+  simp only [transpose_apply, lineProj, of_apply]
+  ring
+
+theorem lineProj_mul_self (h : c.Checked) : c.lineProj * c.lineProj = c.lineProj := by
+  ext i j
+  have hn := congrArg (Int.cast : ℤ → ℚ) h.1
+  push_cast at hn
+  simp only [mul_apply, lineProj, of_apply]
+  calc ∑ k, (c.line i : ℚ) * c.line k / 4 * ((c.line k : ℚ) * c.line j / 4)
+      = (c.line i : ℚ) * c.line j / 16 * ∑ k, (c.line k : ℚ) * c.line k := by
+        rw [Finset.mul_sum]
+        exact Finset.sum_congr rfl fun k _ => by ring
+    _ = (c.line i : ℚ) * c.line j / 4 := by rw [hn]; ring
+
+theorem complement_orthonormal (h : c.Checked) : c.complementᵀ * c.complement = 1 := by
+  ext k l
+  have hkl := congrArg (Int.cast : ℤ → ℚ) (h.2.1 k l)
+  push_cast at hkl
+  simp only [mul_apply, transpose_apply, complement, of_apply, one_apply]
+  calc ∑ i, (c.twiceComplement i k : ℚ) / 2 * ((c.twiceComplement i l : ℚ) / 2)
+      = 1 / 4 * ∑ i, (c.twiceComplement i k : ℚ) * c.twiceComplement i l := by
+        rw [Finset.mul_sum]
+        exact Finset.sum_congr rfl fun i _ => by ring
+    _ = if k = l then 1 else 0 := by rw [hkl]; split_ifs <;> norm_num
+
+theorem complement_mul_transpose (h : c.Checked) :
+    c.complement * c.complementᵀ = 1 - c.lineProj := by
+  ext i j
+  have hij := congrArg (Int.cast : ℤ → ℚ) (h.2.2.1 i j)
+  push_cast at hij
+  simp only [mul_apply, transpose_apply, complement, of_apply, sub_apply, one_apply, lineProj]
+  have hs : ∑ k, (c.twiceComplement i k : ℚ) / 2 * ((c.twiceComplement j k : ℚ) / 2) =
+      1 / 4 * ∑ k, (c.twiceComplement i k : ℚ) * c.twiceComplement j k := by
+    rw [Finset.mul_sum]
+    exact Finset.sum_congr rfl fun k _ => by ring
+  rw [hs, eq_sub_of_add_eq hij]
+  split_ifs <;> ring
+
+theorem lineProj_mul_complement (h : c.Checked) : c.lineProj * c.complement = 0 := by
+  ext i k
+  have hk := congrArg (Int.cast : ℤ → ℚ) (h.2.2.2 k)
+  push_cast at hk
+  simp only [mul_apply, lineProj, complement, of_apply, zero_apply]
+  calc ∑ j, (c.line i : ℚ) * c.line j / 4 * ((c.twiceComplement j k : ℚ) / 2)
+      = (c.line i : ℚ) / 8 * ∑ j, (c.line j : ℚ) * c.twiceComplement j k := by
+        rw [Finset.mul_sum]
+        exact Finset.sum_congr rfl fun j _ => by ring
+    _ = 0 := by rw [hk, mul_zero]
+
+theorem transpose_complement_mul_lineProj (h : c.Checked) : c.complementᵀ * c.lineProj = 0 := by
+  have ht := congrArg transpose (lineProj_mul_complement h)
+  rwa [transpose_mul, lineProj_transpose, transpose_zero] at ht
+
+theorem lineProj_mul_orth (h : c.Checked) : c.lineProj * (1 - c.lineProj) = 0 := by
+  rw [mul_sub, mul_one, lineProj_mul_self h, sub_self]
+
+theorem orth_mul_lineProj (h : c.Checked) : (1 - c.lineProj) * c.lineProj = 0 := by
+  rw [sub_mul, one_mul, lineProj_mul_self h, sub_self]
+
+theorem orth_mul_self (h : c.Checked) : (1 - c.lineProj) * (1 - c.lineProj) = 1 - c.lineProj := by
+  rw [sub_mul, one_mul, lineProj_mul_orth h, sub_zero]
+
+theorem rho_transpose : c.rhoᵀ = c.rho := by
+  rw [rho, fromBlocks_transpose, transpose_transpose, transpose_zero, lineProj_transpose]
+
+theorem rho_mul_self (h : c.Checked) : c.rho * c.rho = 1 := by
+  rw [rho, fromBlocks_multiply, lineProj_mul_self h, complement_mul_transpose h,
+    lineProj_mul_complement h, transpose_complement_mul_lineProj h, complement_orthonormal h]
+  simp [← fromBlocks_one]
+
+/-- `ρ (U ⊕ 1) ρ`, for any local frame `U`. -/
+theorem rho_conj (h : c.Checked) (U : Matrix (Fin 8) (Fin 8) ℚ) :
+    c.rho * fromBlocks U 0 0 1 * c.rho =
+      fromBlocks (c.lineProj * U * c.lineProj + (1 - c.lineProj)) (c.lineProj * U * c.complement)
+        (c.complementᵀ * U * c.lineProj) (c.complementᵀ * U * c.complement) := by
+  simp only [rho, fromBlocks_multiply, Matrix.mul_zero, Matrix.zero_mul, Matrix.mul_one,
+    add_zero, zero_add, complement_mul_transpose h]
+
+theorem rho_conj_line (h : c.Checked) :
+    c.rho * fromBlocks c.lineProj 0 0 1 * c.rho = fromBlocks 1 0 0 0 := by
+  rw [rho_conj h]
+  simp [lineProj_mul_self h, lineProj_mul_complement h, transpose_complement_mul_lineProj h]
+
+theorem rho_conj_one (h : c.Checked) : c.rho * fromBlocks 1 0 0 1 * c.rho = 1 := by
+  rw [fromBlocks_one, Matrix.mul_one, rho_mul_self h]
+
+theorem rho_conj_zero (h : c.Checked) :
+    c.rho * fromBlocks 0 0 0 1 * c.rho = fromBlocks (1 - c.lineProj) 0 0 0 := by
+  rw [rho_conj h]
+  simp
+
+theorem rho_conj_complement (h : c.Checked) :
+    c.rho * fromBlocks (1 - c.lineProj) 0 0 1 * c.rho = fromBlocks (1 - c.lineProj) 0 0 1 := by
+  rw [rho_conj h]
+  simp [Matrix.mul_sub, lineProj_mul_self h, transpose_complement_mul_lineProj h,
+    complement_orthonormal h]
+
+end PortCertificate
+
+/-! ### The bit address operators -/
+
+section Exchange
+
+variable {ι : Type*} [Fintype ι] [DecidableEq ι]
+
+/-- The bit address operator `D_U` on the two address halves. -/
+def exchange (U : Matrix ι ι ℚ) : Matrix (ι ⊕ ι) (ι ⊕ ι) ℚ := fromBlocks (1 - U) U U (1 - U)
+
+omit [Fintype ι] in
+theorem exchange_zero : exchange (0 : Matrix ι ι ℚ) = 1 := by
+  simp [exchange, fromBlocks_one]
+
+/-- `D_1 D_U = D_(1-U)`. -/
+theorem exchange_one_mul (U : Matrix ι ι ℚ) : exchange 1 * exchange U = exchange (1 - U) := by
+  simp [exchange, fromBlocks_multiply]
+
+/-- Exchanges compose additively when `U * V = 0`. -/
+theorem exchange_mul_of_orthogonal {U V : Matrix ι ι ℚ} (hUV : U * V = 0) :
+    exchange U * exchange V = exchange (U + V) := by
+  simp only [exchange, fromBlocks_multiply, sub_mul, mul_sub, one_mul, mul_one, hUV]
+  rw [fromBlocks_inj]
+  refine ⟨?_, ?_, ?_, ?_⟩ <;> abel
+
+theorem exchange_mul_self {U : Matrix ι ι ℚ} (hU : U * U = U) : exchange U * exchange U = 1 := by
+  simp only [exchange, fromBlocks_multiply, sub_mul, mul_sub, one_mul, mul_one, hU]
+  rw [← fromBlocks_one]
+  congr 1 <;> abel
+
+/-- A nested frame change `U ≤ V` is the exchange on the projector difference. -/
+theorem exchange_change {U V : Matrix ι ι ℚ} (hU : U * U = U) (hUV : U * V = U) :
+    exchange U * exchange V = exchange (V - U) := by
+  have hsplit : exchange V = exchange U * exchange (V - U) := by
+    rw [exchange_mul_of_orthogonal (by rw [mul_sub, hUV, hU, sub_self]), add_sub_cancel]
+  rw [hsplit, ← Matrix.mul_assoc, exchange_mul_self hU, Matrix.one_mul]
+
+/-- A coordinate change `R`, applied to both address halves, conjugates `D_U` to the exchange on
+the conjugated projector. -/
+theorem exchange_conj (R S U : Matrix ι ι ℚ) (h : R * S = 1) :
+    fromBlocks R 0 0 R * exchange U * fromBlocks S 0 0 S = exchange (R * U * S) := by
+  simp only [exchange, fromBlocks_multiply, mul_sub, sub_mul, mul_one, h, Matrix.mul_zero,
+    Matrix.zero_mul, add_zero, zero_add, sub_self]
+
+end Exchange
+
+end IntegerMultBounds.Networks.Certificates.PR589.Nine

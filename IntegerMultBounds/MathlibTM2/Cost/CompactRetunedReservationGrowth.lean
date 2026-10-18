@@ -18,9 +18,11 @@ noncomputable section
 /-- Integer-root rounding loses at most a factor of two for positive chunks. -/
 theorem compactRetuned_chunk_lower (M : ℕ) (hM : 2≤M) :
     (Mult.Sizes.d M:ℝ)^Mult.CompactSizes.cParam≤2*(Mult.CompactSizes.K M:ℝ) := by
-  have hK : (1:ℝ)≤Mult.CompactSizes.K M := by exact_mod_cast Mult.CompactSizes.one_le_K hM
+  have hK : (1:ℝ)≤Mult.CompactSizes.Kroot M := by exact_mod_cast Mult.CompactSizes.one_le_Kroot hM
+  have hrk : (Mult.CompactSizes.Kroot M:ℝ)≤Mult.CompactSizes.K M := by
+    exact_mod_cast Mult.CompactSizes.Kroot_le_K M
   have hf := Nat.lt_floor_add_one ((Mult.Sizes.d M:ℝ)^Mult.CompactSizes.cParam)
-  rw [←Mult.CompactSizes.K_eq_floor] at hf
+  rw [←Mult.CompactSizes.Kroot_eq_floor] at hf
   linarith
 
 private theorem fieldsRate {d g k f c : ℝ} (hd : 0<d) (hg : 0≤g) (hk : 0<k)

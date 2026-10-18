@@ -40,21 +40,27 @@ theorem Big.uSG_sq_le (h : Big n) : uSG n^2≤36*b n := by
   have hc : 10≤uSG n := by
     by_contra hlt10
     have hle : 8*p n≤2^9 := (two_pow_uSG n).trans (Nat.pow_le_pow_right (by norm_num) (by omega))
-    have := h.pow_le_b (k := 2) (by norm_num)
+    have := d_le_b n
     have := h.2
     nlinarith
   have := four_sq_le _ hc
   nlinarith
 
-/-- `u d ≤ p`. -/
+/-- `u d ≤ p`: `u ≤ ⌈log₂ p⌉ + 3` and the Gaussian width room `64 d (⌈log₂ p⌉ + 3) ≤ b`. -/
 theorem Big.uSG_mul_d_le (h : Big n) : uSG n*d n≤p n := by
-  have hu := h.uSG_sq_le
-  have hd := h.pow_le_b (k := 2) (by norm_num)
-  have hsq : (uSG n*d n)^2≤(p n)^2 := by
-    unfold p
-    rw [mul_pow]
-    nlinarith
-  exact (Nat.pow_le_pow_iff_left (by norm_num)).1 hsq
+  have hroom := h.bigFacts.2.2.1
+  have hu : uSG n≤Nat.clog 2 (p n)+3 := by
+    unfold uSG
+    apply Nat.clog_le_of_le_pow
+    rw [pow_add]
+    have := Nat.le_pow_clog one_lt_two (p n)
+    have h8 : (2:ℕ)^3=8 := by norm_num
+    rw [h8]
+    omega
+  have h1 : uSG n*d n≤(Nat.clog 2 (p n)+3)*d n := Nat.mul_le_mul_right _ hu
+  have e : (Nat.clog 2 (p n)+3)*d n*64=64*d n*(Nat.clog 2 (p n)+3) := by ring
+  have hp : p n=6*b n := rfl
+  omega
 
 /-- All small-gap hypotheses on every axis. -/
 theorem Big.smallgap (h : Big n) (i : Fin (d n)) :
