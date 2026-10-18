@@ -37,7 +37,7 @@ theorem compactRetuned_top_cost (ds : ComplexFramedExecution.Directions)
     (hqactual : q=CompactGlobalRowPadding.rowAxes NW m d+
       frontChunks d g K)
     (hcap : 2^a*R≤R₂)
-    (hal : Real.logb (m:ℝ) ((factorCount (program ds):ℝ)/NW)<Parameters.lam)
+    (hal : Real.logb (m:ℝ) ((factorCount (program ds):ℝ)/NW)<CompactInterim.lam)
     (hpcs : ∀ pc∈compactTopPcs d g
       K D oS R₂,pc.Ok ds K n w R₂)
     (hbase : ∀ pc∈compactTopPcs d g
@@ -54,9 +54,9 @@ theorem compactRetuned_top_cost (ds : ComplexFramedExecution.Directions)
     omega
   have hd : 1≤d := by rw [hdActual]; exact Mult.Sizes.one_le_d hM
   have hk : 1≤K := by rw [hKActual]; exact Mult.CompactSizes.one_le_K hM
-  have h := compactTopCost_complete (lam:=Parameters.lam) ds shape packD d g K D oS R₂ W w shift n a R r ρ o q aT
+  have h := compactTopCost_complete (lam:=CompactInterim.lam) ds shape packD d g K D oS R₂ W w shift n a R r ρ o q aT
     hd hD hactive hK hk hR hr hw hρ hG hn hoS hbits hpayload hsw hN hρo hDK hker hqa hq hcap
-    (by norm_num [Parameters.lam]) (by norm_num [Parameters.tau,Parameters.lam]) hal hpcs hbase
+    (by norm_num [CompactInterim.lam]) (by norm_num [Parameters.tau,CompactInterim.lam]) hal hpcs hbase
   rw [hguard,hqactual] at h
   have hdenv : D≤Mult.Sizes.d M := by simpa only [hdActual] using hD
   have henv := compactRetuned_top_envelope packD ds M hM D hdenv

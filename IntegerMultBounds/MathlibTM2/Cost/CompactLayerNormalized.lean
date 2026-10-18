@@ -12,11 +12,11 @@ open IntegerMultBounds.MathlibTM2 IntegerMultBounds.MathlibTM2.Node
 open IntegerMultBounds.MathlibTM2.Layer IntegerMultBounds.MathlibTM2.LayerMachine
 noncomputable section
 
-private theorem normalized_algebra {F C M B W R P q N : ℕ}
+private theorem normalized_algebra {F Fb C M B W R P q N : ℕ}
     (hW : 0<W) (hR : 0<R) (hP : 0<P) (hq : 0<q) :
-    (((F*(M+2*B)+C*(W*(R*P*q+R*P*N)) : ℕ):ℝ)/((W*R*P*q:ℕ):ℝ)) =
+    (((F*M+2*Fb*B+C*(W*(R*P*q+R*P*N)) : ℕ):ℝ)/((W*R*P*q:ℕ):ℝ)) =
       (F:ℝ)/W*((M:ℝ)/((R*P*q:ℕ):ℝ))+
-      2*(F:ℝ)/W*((B:ℝ)/((R*P*q:ℕ):ℝ))+(C:ℝ)*(1+(N:ℝ)/q) := by
+      2*(Fb:ℝ)/W*((B:ℝ)/((R*P*q:ℕ):ℝ))+(C:ℝ)*(1+(N:ℝ)/q) := by
   have hw : (W:ℝ)≠0 := by exact_mod_cast (Nat.ne_of_gt hW)
   have hr : (R:ℝ)≠0 := by exact_mod_cast (Nat.ne_of_gt hR)
   have hp : (P:ℝ)≠0 := by exact_mod_cast (Nat.ne_of_gt hP)
@@ -31,17 +31,18 @@ def compactLayerNormalized (ds : ComplexFramedExecution.Directions)
     ((rowsAt R₀ j*2^N*(r*w) : ℕ):ℝ)
 
 /-- Exact recursive ratio: factor count divided by row fanout. The only basis
-term is the explicit levelwise compact basis budget per local wire volume. -/
+term is the explicit levelwise compact basis budget per local wire volume, paid by the factors
+and the exact instructions (`lcBas`). -/
 theorem compactLayerNormalized_succ (ds : ComplexFramedExecution.Directions)
     (u R₀ N r w : ℕ) (B : ℕ → ℕ) (j : ℕ)
     (hR₀ : 0<R₀) (hr : 0<r) (hw : 0<w) :
     compactLayerNormalized ds u R₀ N r w B (j+1) =
       (factorCount (program ds):ℝ)/NW*compactLayerNormalized ds u R₀ N r w B j+
-      2*(factorCount (program ds):ℝ)/NW*
+      2*(lcBas ds:ℝ)/NW*
         ((B j:ℝ)/((rowsAt R₀ j*2^N*(r*w):ℕ):ℝ))+
       (lcLin ds:ℝ)*(1+(N:ℝ)/(r*w:ℕ)) := by
   unfold compactLayerNormalized
-  exact normalized_algebra (F := factorCount (program ds)) (C := lcLin ds)
+  exact normalized_algebra (F := factorCount (program ds)) (Fb := lcBas ds) (C := lcLin ds)
     (M := compactLayerMajorant ds u R₀ N r w B j) (B := B j) (N := N) (Nat.pos_of_neZero NW) (rowsAt_pos hR₀ j)
     (pow_pos (by decide : 0<2) N) (Nat.mul_pos hr hw)
 

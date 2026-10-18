@@ -52,7 +52,7 @@ theorem compactRetuned_caller_top_cost (ds : ComplexFramedExecution.Directions)
       (Mult.CompactSizes.K M) D≠0)
     (hq : 1≤compactTopKernelCount (Mult.Sizes.d M) (CompactReservationGrowth.guard M)
       (Mult.CompactSizes.K M))
-    (hal : Real.logb (m:ℝ) ((factorCount (program ds):ℝ)/NW)<Parameters.lam) :
+    (hal : Real.logb (m:ℝ) ((factorCount (program ds):ℝ)/NW)<CompactInterim.lam) :
     let d := Mult.Sizes.d M
     let g := CompactReservationGrowth.guard M
     let K := Mult.CompactSizes.K M

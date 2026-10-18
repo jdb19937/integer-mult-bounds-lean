@@ -21,9 +21,10 @@ small ratios are `δ = k' / (r w)` (`lcDelta`) and
 and every bound below holds uniformly in the admissible offset.
 
 **Constants.** `S = swapConst (T + 12 swapT 6 + 5)` (`lcS`), `c_T = 20 T + 60 swapT 6 + 20000`
-(`lcCT`), `lcLin ds = 400 F + 50 G + 8 m c₂₅ + 500 c₂₅ + 500` (`Cost/LayerCostNat.lean`), and
-`C₁ = lcC1 T ds = 2 m F (30 S + c_T + 40013) + 4 F + lcLin ds`: the fixed network (`F`, `G`,
-`c₂₅`, `m`), the host register count `T` and the vendored constants `swapConst`, `swapT 6`.
+(`lcCT`), `lcBas ds = F + Mo` and `lcLin ds = 400 F + 100 G + 692 Mo + 500`
+(`Cost/LayerCostNat.lean`, `Mo` the exact instructions), and
+`C₁ = lcC1 T ds = 2 m lcBas (30 S + c_T + 40013) + 4 lcBas + lcLin ds`: the fixed network (`F`, `G`,
+`Mo`, `m`), the host register count `T` and the vendored constants `swapConst`, `swapT 6`.
 
 **Main results.**
 * `lc_leaf_le`: `layerCost … 0 a₀ ≤ 200 u V₀ (1 + n / (r w))`.
@@ -286,10 +287,10 @@ lemma lc_max_eq_zero (T : ℕ) (ds : ComplexFramedExecution.Directions) {u K ρ 
 
 /-! ### The node -/
 
-/-- The node constant `C₁ = 2 m F (30 S + c_T + 40013) + 4 F + lcLin`. -/
+/-- The node constant `C₁ = 2 m lcBas (30 S + c_T + 40013) + 4 lcBas + lcLin`. -/
 noncomputable def lcC1 (T : ℕ) (ds : ComplexFramedExecution.Directions) : ℝ :=
-  2 * m * factorCount (program ds) * (30 * lcS T + lcCT T + 40013) +
-    4 * factorCount (program ds) + lcLin ds
+  2 * m * lcBas ds * (30 * lcS T + lcCT T + 40013) +
+    4 * lcBas ds + lcLin ds
 
 lemma lcC1_nonneg (T : ℕ) (ds : ComplexFramedExecution.Directions) : 0 ≤ lcC1 T ds := by
   have := lcS_nonneg T
@@ -297,13 +298,13 @@ lemma lcC1_nonneg (T : ℕ) (ds : ComplexFramedExecution.Directions) : 0 ≤ lcC
 
 /-- The real algebra of the node bound: `lc_node_nat` with the basis changes within
 `m · lcBt + 2` steps, `lcBt_le_vol` and `W ≤ V δ`. -/
-lemma lc_node_alg {Lc M B Bt F NW V Wn δ E Lτ mm S cT Lin : ℝ}
-    (hF : 0 ≤ F) (hmm : 0 ≤ mm) (hS : 0 ≤ S) (hcT : 0 ≤ cT) (hLin : 0 ≤ Lin)
+lemma lc_node_alg {Lc M B Bt F Fb NW V Wn δ E Lτ mm S cT Lin : ℝ}
+    (hF : 0 ≤ Fb) (hmm : 0 ≤ mm) (hS : 0 ≤ S) (hcT : 0 ≤ cT) (hLin : 0 ≤ Lin)
     (hδ : 0 ≤ δ) (hE : 0 ≤ E) (hLτ : 0 ≤ Lτ) (hNW : 1 ≤ NW) (hV : 1 ≤ V)
-    (hN : Lc ≤ F * (M + 2 * B) + Lin * (NW * (V + Wn))) (hB : B ≤ mm * Bt + 2)
+    (hN : Lc ≤ F * M + 2 * Fb * B + Lin * (NW * (V + Wn))) (hB : B ≤ mm * Bt + 2)
     (hBt : Bt ≤ V * (30 * S * (1 + δ) * Lτ + 20000 * (2 + δ) + 13 * E + cT))
     (hWn : Wn ≤ V * δ) :
-    Lc ≤ F * M + (2 * mm * F * (30 * S + cT + 40013) + 4 * F + Lin) * (NW * V) *
+    Lc ≤ F * M + (2 * mm * Fb * (30 * S + cT + 40013) + 4 * Fb + Lin) * (NW * V) *
       ((1 + δ) * Lτ + 1 + δ + E) := by
   set Q : ℝ := (1 + δ) * Lτ + 1 + δ + E with hQ
   have hQ1 : 1 + δ ≤ Q := by nlinarith
@@ -326,11 +327,11 @@ lemma lc_node_alg {Lc M B Bt F NW V Wn δ E Lτ mm S cT Lin : ℝ}
       _ ≤ mm * (NW * V * ((30 * S + cT + 40013) * Q)) :=
           mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_right hVV hC0) hmm
       _ = _ := by ring
-  have hbasis : 2 * F * B ≤
-      2 * mm * F * (30 * S + cT + 40013) * (NW * V * Q) + 4 * F * (NW * V * Q) := by
-    have h4 : 2 * F * 2 ≤ 4 * F * (NW * V * Q) := by nlinarith
-    have h5 : 2 * F * B ≤ 2 * F * (mm * Bt) + 2 * F * 2 := by nlinarith
-    have h6 : 2 * F * (mm * Bt) ≤ 2 * F * (mm * (NW * V) * ((30 * S + cT + 40013) * Q)) :=
+  have hbasis : 2 * Fb * B ≤
+      2 * mm * Fb * (30 * S + cT + 40013) * (NW * V * Q) + 4 * Fb * (NW * V * Q) := by
+    have h4 : 2 * Fb * 2 ≤ 4 * Fb * (NW * V * Q) := by nlinarith
+    have h5 : 2 * Fb * B ≤ 2 * Fb * (mm * Bt) + 2 * Fb * 2 := by nlinarith
+    have h6 : 2 * Fb * (mm * Bt) ≤ 2 * Fb * (mm * (NW * V) * ((30 * S + cT + 40013) * Q)) :=
       mul_le_mul_of_nonneg_left hBt' (by positivity)
     nlinarith
   have hlin : Lin * (NW * (V + Wn)) ≤ Lin * (NW * V * Q) := by
@@ -338,8 +339,8 @@ lemma lc_node_alg {Lc M B Bt F NW V Wn δ E Lτ mm S cT Lin : ℝ}
     have : V + Wn ≤ V * Q := by nlinarith
     calc NW * (V + Wn) ≤ NW * (V * Q) := mul_le_mul_of_nonneg_left this (by linarith)
       _ = _ := by ring
-  calc Lc ≤ F * M + 2 * F * B + Lin * (NW * (V + Wn)) := by linarith
-    _ ≤ F * M + (2 * mm * F * (30 * S + cT + 40013) * (NW * V * Q) + 4 * F * (NW * V * Q)) +
+  calc Lc ≤ F * M + 2 * Fb * B + Lin * (NW * (V + Wn)) := by linarith
+    _ ≤ F * M + (2 * mm * Fb * (30 * S + cT + 40013) * (NW * V * Q) + 4 * Fb * (NW * V * Q)) +
           Lin * (NW * V * Q) := by linarith
     _ = _ := by ring
 
@@ -395,8 +396,8 @@ theorem lc_node_le (T : ℕ) (ds : ComplexFramedExecution.Directions)
     nlinarith
   have hN := lc_node_nat T ds hu hr hw hR₀ hρ hfit hTw hM hB
   have hNr : (layerCost T ds u K ρ R₀ n r w (j + 1) a₀ : ℝ) ≤
-      (factorCount (program ds) : ℝ) * ((lcMax T ds u K ρ R₀ n r w j : ℝ) +
-        2 * (⌈(m : ℝ) * lcBt T K (K * bits u j) (bits u j) (rowsAt R₀ j) n (r * w) + 1⌉₊ : ℕ)) +
+      (factorCount (program ds) : ℝ) * (lcMax T ds u K ρ R₀ n r w j : ℝ) + 2 * (lcBas ds : ℝ) *
+        (⌈(m : ℝ) * lcBt T K (K * bits u j) (bits u j) (rowsAt R₀ j) n (r * w) + 1⌉₊ : ℕ) +
         (lcLin ds : ℝ) * ((NW : ℕ) * (((rowsAt R₀ j * 2 ^ n * (r * w)) : ℕ) +
         ((rowsAt R₀ j * 2 ^ n * n : ℕ) : ℝ))) := by
     exact_mod_cast hN

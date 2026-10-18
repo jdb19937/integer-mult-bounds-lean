@@ -2,6 +2,7 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Node.CompactFactor
 public import IntegerMultBounds.MathlibTM2.Node.LayerProc
+public import IntegerMultBounds.MathlibTM2.Node.MonoC
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-! Recursive execution of the compact layer with one fixed global reservation. -/
@@ -18,7 +19,8 @@ variable {Q Ka : ℕ} {U : Type}
 noncomputable def compactLayerBody (hQ : compactRuntimeStates ≤ Q)
     (ds : ComplexFramedExecution.Directions) : Pr LProc (nT CompactBReg) Q (prime+Ka) U :=
   .seq (.act (peekR (reg .lev)))
-    (.cond (fun v => !v.flag) leafP (nodeBody ds (compactFactorProg hQ (.call .layer) ds)))
+    (.cond (fun v => !v.flag) leafP
+      (nodeBody ds (compactFactorProg hQ (.call .layer) ds) (monoProgC hQ)))
 
 noncomputable def compactLayerTable (hQ : compactRuntimeStates ≤ Q)
     (ds : ComplexFramedExecution.Directions) : LProc → Pr LProc (nT CompactBReg) Q (prime+Ka) U :=
@@ -48,7 +50,8 @@ noncomputable def compactLayerCost (ds : ComplexFramedExecution.Directions)
   | j+1, a => nodeCost ds u j K ρ (o+a) (rowsAt R₀ j) (o+n) r w
       (facMax ds fun _ g => compactFactorCost (nT CompactBReg) ds j u K ρ (o+a) R₀ (o+n) r w g
         (compactLayerCost ds u K ρ R₀ n o r w budget j (a+pivotOf g.2*(K*bits u j)))
-        (budget j a g.2)) + 4
+        (budget j a g.2))
+      (monoMax ds (monoCostB (budget j a) j u K (o+a) R₀ (o+n) o r w ρ (rowsAt R₀ j))) + 4
 
 lemma compactFactorCost_mono_basis (ds : ComplexFramedExecution.Directions)
     (T j u K ρ a R₀ n r w : ℕ) (g : ZMod 4 × BinaryWalsh.Address m) (cc : ℕ)
@@ -146,9 +149,21 @@ theorem compactLayer_exec (hQ : compactRuntimeStates ≤ Q)
             (a+(Fin.find _ hs : ℕ)*(shape.chunk*bits u j)) (hchildren (Fin.find _ hs))
           rw [← Nat.add_assoc o a] at ih'
           exact ih' hfit' hfitL'
+      have hmono : ∀ i ∈ program ds, i.IsMono →
+          MonoSpecL (compactLayerTable (Ka := Ka) (U := U) hQ ds) (monoProgC hQ i)
+            (compactBasisRest shape o r) j u shape.chunk ρ (o+a) (shape.chunk*bits u (j+1))
+            (rowsAt R₀ (j+1)) (o+n) r w (k:=bits u j)
+            (actMap (o+a) ρ shape.chunk (bits u (j+1)) (o+n) hfit)
+            (fun s => layerZ u ds R₀ j fun c => actMap (o+a) ρ shape.chunk (bits u (j+1)) (o+n) hfit (bitIdx s c))
+            (expZ u ds j) i
+            (monoMax ds (monoCostB (budget j a) j u shape.chunk (o+a) R₀ (o+n) o r w ρ (rowsAt R₀ j))) :=
+        fun i hi hm => MonoSpecL.mono _ (MonoSpecL.mono _ (monoProgC_spec (compactLayerTable hQ ds) hQ hA
+          hr hw hu hR₀ layout hG hGK hrecord hpayload D hpack hfit _ i (program_fit ds i hi) hm)
+          (monoCostC_le layout hG hGK (rowsAt_pos hR₀ j) hrecord D hpack (nT CompactBReg) o r w j u
+            (o+a) R₀ (budget j a) hbudget i)) (le_monoMax ds _ hi)
       obtain ⟨v₁,c₁,hu₁,hc₁,he₁⟩ := nodeBody_execL_layerZ (compactLayerTable hQ ds) ds
-        (compactFactorProg hQ (.call .layer) ds) (by omega) hNW hgate hr hw (by omega)
-        hfit hfac Z {v with flag := (S.R (reg .lev)).head?.isSome} S hL hpar hrest hio
+        (compactFactorProg hQ (.call .layer) ds) (monoProgC hQ) (by omega) hNW hgate hr hw (by omega)
+        hfit hfac hmono Z {v with flag := (S.R (reg .lev)).head?.isSome} S hL hpar hrest hio
       refine ⟨v₁,1+(c₁+1)+2,hu₁,?_,?_⟩
       · simp only [compactLayerCost]; rw [← hcf]; omega
       · exact Exec.call (Exec.seq hp (Exec.cond_false (by simp [hl]) he₁))

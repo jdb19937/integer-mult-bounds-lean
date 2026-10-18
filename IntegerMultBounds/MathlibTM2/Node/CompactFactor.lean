@@ -46,8 +46,8 @@ noncomputable def compactFactorCost (_T : ℕ) (ds : ComplexFramedExecution.Dire
       basisBound (Fin.find _ h) +
       (6 * (K * bits u j) + 6 * (K * bits u (j + 1)) + 13) +
       (6 * rowsAt R₀ j + 6 * (NW * rowsAt R₀ j) + 13) +
-      shiftCost NW (rowsAt R₀ j) n r w (expZ u ds j)
-  else shiftCost NW (rowsAt R₀ j) n r w (expZ u ds j)
+      shiftCost NB (rowsAt R₀ j) n r w (expZ u ds j)
+  else shiftCost NB (rowsAt R₀ j) n r w (expZ u ds j)
 
 /-- The complete factor, using the computed compact basis on both sides of the
 existing child call. The global reservation is fixed and its counters persist. -/
@@ -386,7 +386,7 @@ theorem compactFactorProg_spec (hQ : compactRuntimeStates ≤ Q)
         basisBound s +
         (6 * Lc + 6 * (shape.chunk * bits u (j + 1)) + 13) +
         (6 * (rowsAt R₀ j) + 6 * (NW * (rowsAt R₀ j)) + 13) +
-        shiftCost NW (rowsAt R₀ j) (o+n) r w Tc := by
+        shiftCost NB (rowsAt R₀ j) (o+n) r w Tc := by
       simp only [compactFactorCost, hpiv, ↓reduceDIte]; rfl
     rw [hfc, hL₁]
     rw [hL₀l] at hc₂

@@ -933,8 +933,8 @@ lemma mem_otherW {fw x : NWire} : x ∈ otherW fw ↔ x ≠ fw := by simp [other
 
 lemma nodup_otherW (fw : NWire) : (otherW fw).Nodup := Finset.nodup_toList _
 
-lemma length_otherW_le (fw : NWire) : (otherW fw).length ≤ NW := by
-  rw [otherW, Finset.length_toList]
+lemma length_otherW_le (fw : NWire) : (otherW fw).length ≤ NB := by
+  rw [otherW, Finset.length_toList, NB_card]
   exact (Finset.card_erase_le).trans (by rw [Finset.card_univ])
 
 /-- **The child call on wire `fw`**: park the other wires, move `fw` onto `io`, `callCore`, move
@@ -954,8 +954,8 @@ noncomputable def childCall (fw : NWire) (s G F : ℕ) (cp : Pr P (nT BReg) Q A 
 
 /-- The step bound of `childCall` on wires of `N` symbols. -/
 noncomputable def childCost (N G F u j Lc s Tc cc : ℕ) : ℕ :=
-  (NW * (2 * N + 2) + 1) + (2 * N + 2) + (2 * N + 2) + callCost G F u j Lc s Tc cc + (4 * N + 4) +
-    (2 * N + 2) + (2 * N + 2) + (NW * (4 * N + 5) + 1) + (2 * N + 2)
+  (NB * (2 * N + 2) + 1) + (2 * N + 2) + (2 * N + 2) + callCost G F u j Lc s Tc cc + (4 * N + 4) +
+    (2 * N + 2) + (2 * N + 2) + (NB * (4 * N + 5) + 1) + (2 * N + 2)
 
 /-- **The child call on a wire.** From the node-internal state at level `j + 1` with the child's
 slot width `Lc` and row count, `Tc` holding `expSeq G F u j` symbols and the wires holding the bank
@@ -1113,11 +1113,11 @@ theorem childCall_exec {bcRest : BReg → List (Fin (A + 4)) → Prop}
   refine ⟨v₉, _, by rw [hu₉, hu₈, hu₇, hu₆, hu₅, hu₄, hu₃, hu₂, hu₁], ?_,
     Exec.cast (Exec.seq he₁ (Exec.seq he₂ (Exec.seq he₃ (Exec.seq he₄ (Exec.seq he₅
       (Exec.seq he₆ (Exec.seq he₇ (Exec.seq he₈ he₉)))))))) rfl ?_⟩
-  · have hsum : ((otherW fw).map fun x => 2 * (W x).length + 2).sum ≤ NW * (2 * N + 2) := by
+  · have hsum : ((otherW fw).map fun x => 2 * (W x).length + 2).sum ≤ NB * (2 * N + 2) := by
       rw [List.map_congr_left (g := fun _ => 2 * N + 2) (fun x _ => by rw [hWN])]
       simp only [List.map_const', List.sum_replicate, smul_eq_mul]
       exact Nat.mul_le_mul_right _ (length_otherW_le fw)
-    have hlo : (otherW fw).reverse.length * (4 * N + 5) ≤ NW * (4 * N + 5) := by
+    have hlo : (otherW fw).reverse.length * (4 * N + 5) ≤ NB * (4 * N + 5) := by
       rw [List.length_reverse]; exact Nat.mul_le_mul_right _ (length_otherW_le fw)
     dsimp only
     rw [h1fw, hWN, h2t, List.length_reverse, hWN, h4io, hYN, h5io, hYN, h6t, List.length_reverse,
@@ -1282,7 +1282,8 @@ lemma mem_allW (x : NWire) : x ∈ allW := by simp [allW]
 
 lemma nodup_allW : allW.Nodup := Finset.nodup_toList _
 
-lemma length_allW : allW.length = NW := by rw [allW, Finset.length_toList, Finset.card_univ]
+lemma length_allW : allW.length = NB := by
+  rw [allW, Finset.length_toList, Finset.card_univ, NB_card]
 
 lemma bits_pos {u : ℕ} (hu : 1 ≤ u) : ∀ j, 1 ≤ bits u j
   | 0 => hu
@@ -1344,8 +1345,8 @@ noncomputable def factorCost (T : ℕ) (ds : ComplexFramedExecution.Directions)
       basisCostN T a₀ K ρ (K * bits u j) (rowsAt R₀ j) n (r * w) (bits u j) g.2 (Fin.find _ h) +
       (6 * (K * bits u j) + 6 * (K * bits u (j + 1)) + 13) +
       (6 * rowsAt R₀ j + 6 * (NW * rowsAt R₀ j) + 13) +
-      shiftCost NW (rowsAt R₀ j) n r w (expZ u ds j)
-  else shiftCost NW (rowsAt R₀ j) n r w (expZ u ds j)
+      shiftCost NB (rowsAt R₀ j) n r w (expZ u ds j)
+  else shiftCost NB (rowsAt R₀ j) n r w (expZ u ds j)
 
 /-- **The factor program.** At a node of level `j + 1` (`L = K bits u (j + 1)`,
 `rows = rowsAt R₀ (j + 1)`) with active bits `e i = a₀ + ρ + K i` inside the address
@@ -1688,7 +1689,7 @@ theorem factorProg_spec (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)
         basisCostN (nT SXReg) a₀ K ρ Lc (rowsAt R₀ j) n (r * w) (bits u j) g.2 s +
         (6 * Lc + 6 * (K * bits u (j + 1)) + 13) +
         (6 * (rowsAt R₀ j) + 6 * (NW * (rowsAt R₀ j)) + 13) +
-        shiftCost NW (rowsAt R₀ j) n r w Tc := by
+        shiftCost NB (rowsAt R₀ j) n r w Tc := by
       simp only [factorCost, hpiv, ↓reduceDIte]; rfl
     rw [hfc, hL₁]
     rw [hL₀l] at hc₂

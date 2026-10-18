@@ -82,11 +82,19 @@ def gateZ (g : Circuit.Gate NWire ℚ) (B : NWire → ZArr Y n) : NWire → ZArr
       2 * B g.target p + (g.terms.map fun t => dbl t.2 * B t.1 p).sum
     else 2 * B v p
 
-/-- One scaled instruction. A factor updates its wire and multiplies the others by `2^Tc`. -/
+/-- The slot phase `i^{c x_i}` in every column of the active bits. -/
+def phaseM (i : Fin m) (c : ZMod 4) (f : ZArr Y n) : ZArr Y n :=
+  fun p => (∏ col : Fin k, (⟨0, 1⟩ : GaussianInt) ^ (c * BinaryPhase.bitLift (colBits e col p.2 i)).val) * f p
+
+/-- One scaled instruction. A factor updates its wire and multiplies the others by `2^Tc`; the
+translations, slot XORs and slot phases are exact. -/
 noncomputable def execM (child : Fin m → ZArr Y n → ZArr Y n) (Tc : ℕ) :
     Instr → (NWire → ZArr Y n) → (NWire → ZArr Y n)
   | .factor w g, B => fun v => if v = w then facM e child Tc g (B w) else (2 ^ Tc : GaussianInt) • B v
   | .gate g, B => gateZ g B
+  | .trans w v, B => Function.update B w (pullM e (· + v) (B w))
+  | .xor w i j, B => Function.update B w (pullM e (Networks.Certificates.T16.Impl.xorMap i j) (B w))
+  | .phase w i c, B => Function.update B w (phaseM e i c (B w))
 
 /-- Run a scaled program. -/
 noncomputable def runM (child : Fin m → ZArr Y n → ZArr Y n) (Tc : ℕ) :
@@ -99,32 +107,25 @@ def progExp (Tc : ℕ) : List Instr → ℕ
   | [] => 0
   | .gate _ :: rest => 1 + progExp Tc rest
   | .factor _ _ :: rest => Tc + progExp Tc rest
+  | .trans _ _ :: rest => progExp Tc rest
+  | .xor _ _ _ :: rest => progExp Tc rest
+  | .phase _ _ _ :: rest => progExp Tc rest
 
 /-- The exponent of the scaled node. -/
 noncomputable def nodeExp (ds : Directions) (Tc : ℕ) : ℕ := progExp Tc (program ds)
 
-/-- The bank of wire arrays. -/
-def bankZ (f : ZArr (Y × NWire) n) : NWire → ZArr Y n := fun w p => f ((p.1, w), p.2)
+/-- The bank of wire arrays: the data families, and zero on the private centres. -/
+def bankZ (f : ZArr (Y × DWire) n) : NWire → ZArr Y n
+  | .inl j => fun p => f ((p.1, j), p.2)
+  | .inr _ => 0
 
-/-- Reassemble an array from its wires. -/
-def unbankZ (B : NWire → ZArr Y n) : ZArr (Y × NWire) n := fun p => B p.1.2 (p.1.1, p.2)
-
-/-- Source correction on the X terminals. -/
-noncomputable def corrInM (B : NWire → ZArr Y n) : NWire → ZArr Y n
-  | Sum.inl b => signM (k := k) e (terminalVector b) (B (Sum.inl b))
-  | Sum.inr i => B (Sum.inr i)
-
-/-- Sink correction and the undoing of the signed bank exchange. -/
-noncomputable def corrOutM (B : NWire → ZArr Y n) : NWire → ZArr Y n
-  | Sum.inl b => (⟨0, 1⟩ ^ (27 * k) : GaussianInt) •
-      signM (k := k) e (terminalVector b) (B (Sum.inr (Sum.inl b)))
-  | Sum.inr (Sum.inl b) => -B (Sum.inl b)
-  | Sum.inr (Sum.inr s) => B (Sum.inr (Sum.inr s))
+/-- Reassemble an array from its data families. -/
+def unbankZ (B : NWire → ZArr Y n) : ZArr (Y × DWire) n := fun p => B (.inl p.1.2) (p.1.1, p.2)
 
 /-- The scaled node. -/
 noncomputable def nodeM (child : Fin m → ZArr Y n → ZArr Y n) (Tc : ℕ) (ds : Directions)
-    (f : ZArr (Y × NWire) n) : ZArr (Y × NWire) n :=
-  unbankZ (corrOutM (k := k) e (runM e child Tc (program ds) (corrInM (k := k) e (bankZ f))))
+    (f : ZArr (Y × DWire) n) : ZArr (Y × DWire) n :=
+  unbankZ (runM e child Tc (program ds) (bankZ f))
 
 /-! ### Correctness -/
 
@@ -135,59 +136,6 @@ theorem toC_k2 (t : Fin n) (f : ZArr Y n) : toC (k2 t f) = (2 : ℂ) • kBit 1 
     Pi.smul_apply, smul_eq_mul]
   push_cast
   ring
-
-/-! #### Gate coefficients -/
-
-/-- Every gate of a lowered skeleton is a gate of the skeleton. -/
-lemma gate_mem_lowerSkel (sk : List Skel) (ds : Directions) (g : Circuit.Gate NWire ℚ)
-    (h : Instr.gate g ∈ lowerSkel sk ds) : Skel.gate g ∈ sk := by
-  induction sk generalizing ds with
-  | nil => simp [lowerSkel] at h
-  | cons s rest ih =>
-      cases s with
-      | edge w' =>
-          simp only [lowerSkel, List.mem_append, List.mem_map, List.mem_reverse] at h
-          rcases h with ⟨g', -, he⟩ | h
-          · cases he
-          · exact List.mem_cons_of_mem _ (ih ds.tail h)
-      | gate g' =>
-          simp only [lowerSkel, List.mem_cons] at h
-          rcases h with h | h
-          · cases h; exact List.mem_cons_self ..
-          · exact List.mem_cons_of_mem _ (ih ds h)
-
-lemma mem_originalGates {E : Type*} [AddCommGroup E] [Module ℚ E]
-    (p : List (FramedCircuit.Instruction NWire ℚ E)) (g : Circuit.Gate NWire ℚ)
-    (h : FramedCircuit.Instruction.gate g ∈ p) : g ∈ FramedFactorExecution.originalGates p := by
-  induction p with
-  | nil => simp at h
-  | cons i rest ih =>
-      rcases List.mem_cons.1 h with h' | h'
-      · subst h'; simp [FramedFactorExecution.originalGates]
-      · cases i <;> simp [FramedFactorExecution.originalGates, ih h']
-
-/-- Gate coefficients of the network are halves of integers. -/
-theorem program_gate_coeff (ds : Directions) (g : Circuit.Gate NWire ℚ) (hg : Instr.gate g ∈ program ds)
-    (t : NWire × ℚ) (ht : t ∈ g.terms) : (2 * t.2).den = 1 := by
-  have hs : Skel.gate g ∈ skeleton := gate_mem_lowerSkel _ ds g hg
-  obtain ⟨i, hi, hie⟩ := List.mem_map.1 hs
-  cases i with
-  | edge w _ _ => cases hie
-  | gate g' =>
-      cases hie
-      have hrows : FramedFactorExecution.originalGates (network 0) = ComplexFramedExecution.rows := by
-        have := ComplexFramedExecution.lowered_gates 0 []
-        rwa [lowered, FramedFactorExecution.gates_lower] at this
-      have hmem : g ∈ ComplexFramedExecution.rows := hrows ▸ mem_originalGates _ g hi
-      have hgood := GroupedCoefficients.compileGroups _ _
-        IntegerMultBounds.Machine.CompactFramedScalarGrid.group_coefficients g hmem t ht
-      obtain ⟨a, b, hab, -, -⟩ := hgood
-      have hre := congrArg Complex.re hab
-      simp at hre
-      have h2 : ((2 * t.2 : ℚ) : ℝ) = ((a : ℚ) : ℝ) := by push_cast; linarith
-      have h3 : (2 * t.2 : ℚ) = a := by exact_mod_cast h2
-      rw [h3]
-      exact Rat.den_intCast a
 
 /-! #### Views of the wires -/
 
@@ -326,6 +274,19 @@ lemma moduleGate_smul (g : Circuit.Gate NWire ℚ) (c : ℂ) (X : NWire → Arr 
     | cons t ts ih => simp only [List.map_cons, List.sum_cons, smul_add, ih, smul_comm c t.2]
   · simp [Function.update_of_ne hw]
 
+lemma phaseArr_smul (i : Fin m) (c : ZMod 4) (a : ℂ) (u : Arr Y (m * k)) :
+    phaseArr i c (a • u) = a • phaseArr i c u := by
+  funext p; simp only [phaseArr, Pi.smul_apply, smul_eq_mul]; ring
+
+lemma update_two_pow_smul (X : NWire → Arr Y (m * k)) (w : NWire) (T : Arr Y (m * k) → Arr Y (m * k))
+    (hT : ∀ (a : ℂ) u, T (a • u) = a • T u) (s : ℕ) :
+    Function.update ((2 : ℂ) ^ s • X) w (T (((2 : ℂ) ^ s • X) w)) =
+      (2 : ℂ) ^ s • Function.update X w (T (X w)) := by
+  funext v
+  by_cases hv : v = w
+  · subst hv; simp [Function.update_self, hT]
+  · simp [Function.update_of_ne hv]
+
 lemma execWith_two_pow_smul (i : Instr) (s : ℕ) (X : NWire → Arr Y (m * k)) :
     execWith facImpl i ((2 : ℂ) ^ s • X) = (2 : ℂ) ^ s • execWith facImpl i X := by
   cases i with
@@ -336,6 +297,9 @@ lemma execWith_two_pow_smul (i : Instr) (s : ℕ) (X : NWire → Arr Y (m * k)) 
       · subst hv; simp [Function.update_self, facImpl_two_pow_smul]
       · simp [Function.update_of_ne hv]
   | gate g => exact moduleGate_smul g _ X
+  | trans w v => exact update_two_pow_smul X w _ (fun a u => pullArr_smul _ a u) s
+  | xor w i j => exact update_two_pow_smul X w _ (fun a u => pullArr_smul _ a u) s
+  | phase w i c => exact update_two_pow_smul X w _ (fun a u => phaseArr_smul i c a u) s
 
 lemma runWith_two_pow_smul (l : List Instr) (s : ℕ) (X : NWire → Arr Y (m * k)) :
     runWith facImpl l ((2 : ℂ) ^ s • X) = (2 : ℂ) ^ s • runWith facImpl l X := by
@@ -348,16 +312,6 @@ lemma lift_signColumns_smul (u : BinaryWalsh.Address m) (c : ℂ) (X : Arr Y (m 
   funext p
   simp only [lift, Pi.smul_apply, signColumns_apply, smul_eq_mul]
   ring
-
-lemma correctOutputA_smul (c : ℂ) (X : NWire → Arr Y (m * k)) :
-    correctOutputA k (c • X) = c • correctOutputA k X := by
-  funext w
-  rcases w with b | b | s
-  · change Complex.I ^ (27 * k) • lift _ (c • X _) = c • (Complex.I ^ (27 * k) • lift _ (X _))
-    rw [lift_signColumns_smul, smul_comm]
-  · change -(c • X _) = c • -X _
-    rw [smul_neg]
-  · rfl
 
 /-! #### Transport through the program -/
 
@@ -373,6 +327,22 @@ lemma view_facM (he : Function.Injective e) (child : Fin m → ZArr Y n → ZArr
   · rw [view_pullM he, view_conjZ, view_child he child Tc hchild, view_conjZ, view_pullM he,
       conjArr_two_pow_smul, pullArr_smul]
   · rw [view_smulZ, map_pow, toComplex_two]
+
+lemma view_phaseM (he : Function.Injective e) (i : Fin m) (c : ZMod 4) (u : ZArr Y n) :
+    view e (toC (phaseM e i c u)) = phaseArr i c (view e (toC u)) := by
+  funext ⟨⟨y, r⟩, a⟩
+  simp only [view, toC, phaseM, phaseArr, map_mul, map_prod, map_pow, colBits_merge he]
+  congr 1
+  refine Finset.prod_congr rfl fun col _ => ?_
+  simp [BinaryPhase.phase, GaussianInt.toComplex_def']
+
+lemma view_update (B : NWire → ZArr Y n) (w : NWire) (u : ZArr Y n) :
+    (fun v => view e (toC (Function.update B w u v))) =
+      Function.update (fun v => view e (toC (B v))) w (view e (toC u)) := by
+  funext v
+  by_cases hv : v = w
+  · subst hv; simp
+  · simp [Function.update_of_ne hv]
 
 /-- The views of a scaled run are `2^(progExp Tc l)` times the complex run on the views. -/
 lemma view_runM (he : Function.Injective e) (child : Fin m → ZArr Y n → ZArr Y n) (Tc : ℕ)
@@ -410,26 +380,22 @@ lemma view_runM (he : Function.Injective e) (child : Fin m → ZArr Y n → ZArr
             exact view_gateZ g (hl g List.mem_cons_self) B v
           rw [hx, runWith_two_pow_smul, smul_smul, ← pow_add, Nat.add_comm]
           rfl
-
-lemma view_corrInM (he : Function.Injective e) (B : NWire → ZArr Y n) :
-    (fun w => view e (toC (corrInM e B w))) = correctInputA k (fun w => view e (toC (B w))) := by
-  funext w
-  rcases w with b | b
-  · exact view_signM he _ _
-  · rfl
-
-lemma view_corrOutM (he : Function.Injective e) (B : NWire → ZArr Y n) :
-    (fun w => view e (toC (corrOutM e B w))) = correctOutputA k (fun w => view e (toC (B w))) := by
-  funext w
-  rcases w with b | b | s
-  · change view e (toC ((⟨0, 1⟩ ^ (27 * k) : GaussianInt) • signM e _ _)) =
-      Complex.I ^ (27 * k) • lift _ _
-    rw [view_smulZ, view_signM he]
-    simp [GaussianInt.toComplex_def']
-    rfl
-  · change view e (toC (-B _)) = -_
-    rw [view_negZ]
-  · rfl
+      | trans w v =>
+          change (2 : ℂ) ^ progExp Tc rest • runWith facImpl rest
+              (fun u => view e (toC (Function.update B w (pullM e (· + v) (B w)) u))) = _
+          rw [view_update, view_pullM he]
+          rfl
+      | xor w i j =>
+          change (2 : ℂ) ^ progExp Tc rest • runWith facImpl rest
+              (fun u => view e (toC (Function.update B w
+                (pullM e (Networks.Certificates.T16.Impl.xorMap i j) (B w)) u))) = _
+          rw [view_update, view_pullM he]
+          rfl
+      | phase w i c =>
+          change (2 : ℂ) ^ progExp Tc rest • runWith facImpl rest
+              (fun u => view e (toC (Function.update B w (phaseM e i c (B w)) u))) = _
+          rw [view_update, view_phaseM he]
+          rfl
 
 variable (e)
 
@@ -438,32 +404,32 @@ theorem nodeM_correct (he : Function.Injective e) (ds : Directions)
     (hd : ComplexPhaseBudget.Realizes ds) (child : Fin m → ZArr Y n → ZArr Y n) (Tc : ℕ)
     (hchild : ∀ (j : Fin m) (f : ZArr Y n), toC (child j f) =
       (2 : ℂ) ^ Tc • ((List.finRange k).map fun c => kBit 1 (e (bitIdx j c))).prod (toC f))
-    (f : ZArr (Y × NWire) n) :
+    (f : ZArr (Y × DWire) n) :
     toC (nodeM e child Tc ds f) =
       (2 : ℂ) ^ nodeExp ds Tc • ((List.finRange (m * k)).map fun i => kBit 1 (e i)).prod (toC f) := by
   -- the array on the active bits, with spectators the original spectator and the bit vector
-  let F : Arr ((Y × (Fin n → ZMod 2)) × NWire) (m * k) :=
+  let F : Arr ((Y × (Fin n → ZMod 2)) × DWire) (m * k) :=
     fun p => toC f ((p.1.1.1, p.1.2), merge e p.1.1.2 p.2)
-  have hrun := view_runM he child Tc hchild (program ds) (program_gate_coeff ds)
-    (corrInM e (bankZ f))
-  rw [view_corrInM he] at hrun
-  have hbank : (fun w => view e (toC (bankZ f w))) = bankOf k F := rfl
+  have hrun := view_runM he child Tc hchild (program ds) (program_gate_coeff ds) (bankZ f)
+  have hbank : (fun w => view e (toC (bankZ f w))) = bankOf k F := by
+    funext w
+    rcases w with j | c
+    · rfl
+    · funext p; simp [bankZ, bankOf, view, toC]
   rw [hbank] at hrun
   have hA := nodeA_correct (Y := Y × (Fin n → ZMod 2)) ds hd F
-  funext ⟨⟨y, w⟩, r⟩
-  have h1 : toC (nodeM e child Tc ds f) ((y, w), r) =
-      view e (toC (corrOutM e (runM e child Tc (program ds) (corrInM e (bankZ f))) w))
-        ((y, r), fun i => r (e i)) := by
+  funext ⟨⟨y, j⟩, r⟩
+  have h1 : toC (nodeM e child Tc ds f) ((y, j), r) =
+      view e (toC (runM e child Tc (program ds) (bankZ f) (.inl j))) ((y, r), fun i => r (e i)) := by
     simp only [view, merge_extract]
     rfl
-  have h2 := congrFun (congrFun (view_corrOutM he
-    (runM e child Tc (program ds) (corrInM e (bankZ f)))) w) ((y, r), fun i => r (e i))
-  rw [h1, h2, hrun, correctOutputA_smul]
-  have h3 : correctOutputA k (runWith facImpl (program ds) (correctInputA k (bankOf k F))) w
-      ((y, r), fun i => r (e i)) = nodeA k ds F (((y, r), w), fun i => r (e i)) := rfl
-  rw [Pi.smul_apply, Pi.smul_apply, h3, hA, Pi.smul_apply, ← view_Cfull e he (toC f) (y, w) r]
+  have h2 := congrFun (congrFun hrun (.inl j)) ((y, r), fun i => r (e i))
+  rw [h1, h2]
+  have h3 : runWith facImpl (program ds) (bankOf k F) (.inl j) ((y, r), fun i => r (e i)) =
+      nodeA k ds F (((y, r), j), fun i => r (e i)) := rfl
+  rw [Pi.smul_apply, Pi.smul_apply, h3, hA, Pi.smul_apply, ← view_Cfull e he (toC f) (y, j) r]
   congr 1
-  exact (Cfull_respec (fun z : (Y × (Fin n → ZMod 2)) × NWire => ((z.1.1, z.2), z.1.2))
-    (view e (toC f)) ((y, r), w) (fun i => r (e i))).symm
+  exact (Cfull_respec (fun z : (Y × (Fin n → ZMod 2)) × DWire => ((z.1.1, z.2), z.1.2))
+    (view e (toC f)) ((y, r), j) (fun i => r (e i))).symm
 
 end IntegerMultBounds.MathlibTM2.Layer

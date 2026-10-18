@@ -89,11 +89,11 @@ theorem synW_card : Fintype.card SynW ≤ NW := by
 
 /-- The wire holding a transform register. -/
 noncomputable def synWire (x : SynW) : NWire :=
-  wireOf (Fin.castLE synW_card (Fintype.equivFin SynW x))
+  .inl (wireOf (Fin.castLE synW_card (Fintype.equivFin SynW x)))
 
 theorem synWire_inj : Function.Injective synWire := by
   intro x y h
-  have h1 := wireOf.injective h
+  have h1 := wireOf.injective (Sum.inl_injective h)
   have h2 := Fin.castLE_injective synW_card h1
   exact (Fintype.equivFin SynW).injective h2
 

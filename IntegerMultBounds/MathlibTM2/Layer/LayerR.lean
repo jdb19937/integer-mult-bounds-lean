@@ -57,6 +57,9 @@ lemma errRun_nonneg {δ : ℝ} (hδ : 0 ≤ δ) (l : List Instr) {E : ℝ} (hE :
     cases i with
     | factor w g => exact ih (by linarith)
     | gate g => exact ih (mul_nonneg (by have := one_le_gateLip g; linarith) hE)
+    | trans w v => exact ih hE
+    | xor w i j => exact ih hE
+    | phase w i c => exact ih hE
 
 lemma errL_nonneg (u : ℕ) (ds : Directions) (R₀ r n : ℕ) : ∀ j, 0 ≤ errL u ds R₀ r n j
   | 0 => le_rfl
@@ -122,10 +125,10 @@ lemma l2_tdivArr_sub_le {Y : Type} [Fintype Y] (s : ℕ) (f : ZArr Y n) :
 /-! ### The bank reindexing -/
 
 lemma l2_ofBank_sub_le (R' k : ℕ) (e : Fin k → Fin n) (c : ℂ) (f : ZArr (Fin (NW * R') × Fin r) n)
-    (g : ZArr ((Fin R' × Fin r) × NWire) n) :
+    (g : ZArr ((Fin R' × Fin r) × DWire) n) :
     l2 (toC (ofBank R' g) - c • ((List.finRange k).map fun i => kBit 1 (e i)).prod (toC f)) ≤
       l2 (toC g - c • ((List.finRange k).map fun i => kBit 1 (e i)).prod (toC (toBank R' f))) := by
-  let φ : Fin (NW * R') × Fin r → (Fin R' × Fin r) × NWire := fun z =>
+  let φ : Fin (NW * R') × Fin r → (Fin R' × Fin r) × DWire := fun z =>
     ((⟨z.1 / NW, Nat.div_lt_of_lt_mul z.1.2⟩, z.2), wireOf (roleSel NW z.1))
   have hφ : Function.Injective φ := by
     intro a b h
@@ -135,7 +138,7 @@ lemma l2_ofBank_sub_le (R' k : ℕ) (e : Fin k → Fin n) (c : ℂ) (f : ZArr (F
     simp only [roleSel, Fin.mk.injEq] at h3'
     refine Prod.ext (Fin.ext ?_) h2
     rw [← Nat.div_add_mod a.1 NW, ← Nat.div_add_mod b.1 NW, h1, h3']
-  let ψ : (Fin (NW * R') × Fin r) × (Fin n → ZMod 2) → ((Fin R' × Fin r) × NWire) × (Fin n → ZMod 2) :=
+  let ψ : (Fin (NW * R') × Fin r) × (Fin n → ZMod 2) → ((Fin R' × Fin r) × DWire) × (Fin n → ZMod 2) :=
     fun q => (φ q.1, q.2)
   have hψ : Function.Injective ψ := fun a b h => by
     simp only [ψ, Prod.mk.injEq] at h
@@ -154,7 +157,7 @@ lemma l2_ofBank_sub_le (R' k : ℕ) (e : Fin k → Fin n) (c : ℂ) (f : ZArr (F
     congr 2
     rw [← h2]
     have hl : ((List.finRange k).map fun i => kBit 1 (e i)) =
-        ((List.finRange k).map e).map (kBit (X := (Fin R' × Fin r) × NWire) 1) := by
+        ((List.finRange k).map e).map (kBit (X := (Fin R' × Fin r) × DWire) 1) := by
       rw [List.map_map]; rfl
     have hl' : ((List.finRange k).map fun i => kBit 1 (e i)) =
         ((List.finRange k).map e).map (kBit (X := Fin (NW * R') × Fin r) 1) := by

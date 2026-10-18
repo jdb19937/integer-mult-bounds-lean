@@ -61,10 +61,10 @@ noncomputable section
 section Alphabet
 
 /-- The alphabet bound of one instruction: `(2 gateBound g + 1)^(2 |gateWires g|)` for a gate,
-`0` for a factor. -/
+`0` otherwise. -/
 def embGateBd : Instr → ℕ
   | .gate g => (2 * gateBound g + 1) ^ (2 * (gateWires g).length)
-  | .factor _ _ => 0
+  | _ => 0
 
 /-- The alphabet constant: `9^4`, `NW` and every gate bound of `program Cost.brDirs`. -/
 def embKa : ℕ := max (max (9 ^ 4) NW) (((program Cost.brDirs).map embGateBd).foldr max 0)

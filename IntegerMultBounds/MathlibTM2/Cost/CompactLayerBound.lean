@@ -3,6 +3,7 @@ module
 public import IntegerMultBounds.MathlibTM2.Cost.CompactLayerNormalized
 public import IntegerMultBounds.MathlibTM2.Layer.Recurrence
 public import IntegerMultBounds.MathlibTM2.Cost.BranchingMoment
+public import IntegerMultBounds.MathlibTM2.Cost.CompactInterimParameters
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-! Closed bounds for the actual compact layer with its current level-zero
@@ -32,21 +33,21 @@ theorem compactLayerDyadic_pos (x : ℝ) : 0<compactLayerDyadic x := by
   positivity
 
 def compactLayerStepConst (T D : ℕ) (ds : ComplexFramedExecution.Directions) : ℝ :=
-  compactLayerDyadic (6*((factorCount (program ds):ℝ)/NW)*compactBasisConst T D+
-    2*((factorCount (program ds):ℝ)/NW)+2*(lcLin ds:ℝ))
+  compactLayerDyadic (6*((lcBas ds:ℝ)/NW)*compactBasisConst T D+
+    2*((lcBas ds:ℝ)/NW)+2*(lcLin ds:ℝ))
 
-private theorem step_absorption {q q' a b L C E X inv ratio S : ℝ}
-    (ha : 0≤a) (hL : 0≤L) (hC : 0≤C) (hX : 0≤X)
-    (hq : q'=a*q+2*a*b+L*(1+ratio))
+private theorem step_absorption {q q' a a' b L C E X inv ratio S : ℝ}
+    (ha' : 0≤a') (hL : 0≤L) (hC : 0≤C) (hX : 0≤X)
+    (hq : q'=a*q+2*a'*b+L*(1+ratio))
     (hb : b≤3*C*E+inv) (hE : E≤X) (hi : inv≤1) (hr : ratio≤1)
-    (hS : 6*a*C+2*a+2*L≤S) : q'≤a*q+S*(X+1) := by
-  have hb' := mul_le_mul_of_nonneg_left hb (show 0≤2*a by positivity)
-  have he := mul_le_mul_of_nonneg_left hE (show 0≤6*a*C by positivity)
-  have hi' := mul_le_mul_of_nonneg_left hi (show 0≤2*a by positivity)
+    (hS : 6*a'*C+2*a'+2*L≤S) : q'≤a*q+S*(X+1) := by
+  have hb' := mul_le_mul_of_nonneg_left hb (show 0≤2*a' by positivity)
+  have he := mul_le_mul_of_nonneg_left hE (show 0≤6*a'*C by positivity)
+  have hi' := mul_le_mul_of_nonneg_left hi (show 0≤2*a' by positivity)
   have hr' := mul_le_mul_of_nonneg_left hr hL
   have hs := mul_le_mul_of_nonneg_right hS (show 0≤X+1 by positivity)
-  have hx := mul_nonneg (show 0≤2*a+2*L by positivity) hX
-  have hac : 0≤6*a*C := by positivity
+  have hx := mul_nonneg (show 0≤2*a'+2*L by positivity) hX
+  have hac : 0≤6*a'*C := by positivity
   nlinarith only [hq,hb',he,hi',hr',hs,hx,hac]
 
 /-- The full normalized recurrence has guard times selected width, with all
@@ -176,8 +177,8 @@ theorem compactLayerCost_closed_moment (ds : ComplexFramedExecution.Directions)
 /-- The checked branching network permits the manuscript's sigma/tau gap, through the h=25
 instance of the layer occurrence moment. -/
 theorem compactLayer_br_logb :
-    Real.logb (m:ℝ) ((factorCount (program brDirs):ℝ)/NW)<Parameters.lam :=
-  logb_lt_of_layerMoment brDirs (by norm_num [Parameters.lam]) br_layerMoment_lt
+    Real.logb (m:ℝ) ((factorCount (program brDirs):ℝ)/NW)<CompactInterim.lam :=
+  br_logb_lt_999.trans (by norm_num [CompactInterim.lam])
 
 end
 end IntegerMultBounds.MathlibTM2.Cost

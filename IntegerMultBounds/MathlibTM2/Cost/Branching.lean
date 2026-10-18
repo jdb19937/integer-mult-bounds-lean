@@ -3,24 +3,18 @@ module
 public import IntegerMultBounds.MathlibTM2.Node.Body
 public import IntegerMultBounds.Machine.CompactComplexActualCallLoweredNetwork
 import Mathlib.Tactic.Positivity.Finset
+public import Mathlib.Analysis.SpecialFunctions.Log.Base
 import IntegerMultBounds.Networks.NetworkBudget
 
 /-!
 # The branching ratio of the layer recursion
 
 A node of level `j + 1` of the layer machine runs `F = factorCount (program ds)` child calls on
-`NW` wires. This file computes `F` and bounds the ratio `F / NW` by `m ^ σ`.
+`NW` data roles. For the T16 node `F = 1,041,408` (`Impl.layerProgram_children`) and
+`NW = 14,336`, so `F / NW < m ^ (999/1000)` with `m = 73` (`br_branching_999`).
 
-* `br_factorCount_program`: `F` is the total length of the first `brEdges skeleton` direction
-  lists (`lowerSkel` consumes one list per edge of the skeleton and ignores the rest).
-* `br_edges_eq_length`: for directions realizing the edge operators (`Realizes ds`), there is one
-  list per edge, so `F = (ds.map List.length).sum` (`br_factorCount_realizes`). `Realizes` fixes
-  the product of each list and leaves its length free.
-* `br_directions_realizes`, `br_factorCount_directions`: the directions `brDirs` of the original
-  recursive call schema (`CompactComplexActualCallLoweredNetwork.directions`) realize the edges,
-  and `F = rankSum` for them, the sum of the projector-difference ranks of the edges.
-* `br_NW_eq`: `NW = 58645352620000`.
-* `br_branching`: `F / NW < m ^ σ` for `brDirs`, with `σ < 1` (`br_sigma_lt_one`).
+The direction lists `brDirs` of the earlier network remain a parameter of `program` and of the
+statements below; the program does not read them.
 -/
 
 @[expose] public section
@@ -31,13 +25,7 @@ namespace IntegerMultBounds.MathlibTM2.Cost
 open IntegerMultBounds.MathlibTM2.LayerMachine IntegerMultBounds.MathlibTM2.Layer IntegerMultBounds IntegerMultBounds.Networks
   IntegerMultBounds.Machine ComplexFramedExecution
 
-/-! ### Factor count of a lowered skeleton -/
-
-/-- The number of edges of a skeleton. -/
-def brEdges : List Skel → ℕ
-  | [] => 0
-  | .edge _ :: rest => brEdges rest + 1
-  | .gate _ :: rest => brEdges rest
+/-! ### Factor count of the node program -/
 
 lemma br_factorCount_append (p q : List Instr) :
     factorCount (p ++ q) = factorCount p + factorCount q := by
@@ -47,98 +35,96 @@ lemma br_factorCount_append (p q : List Instr) :
       cases i with
       | factor w g => simp only [List.cons_append, factorCount, ih]; ring
       | gate g => simp only [List.cons_append, factorCount, ih]
+      | trans w v => simp only [List.cons_append, factorCount, ih]
+      | xor w i j => simp only [List.cons_append, factorCount, ih]
+      | phase w i c => simp only [List.cons_append, factorCount, ih]
 
-lemma br_factorCount_factors (w : NWire) (gs : List (ZMod 4 × BinaryWalsh.Address m)) :
-    factorCount (gs.map (Instr.factor w)) = gs.length := by
-  induction gs with
+lemma br_factorCount_ofK (l : List (Networks.Certificates.T16.Impl.KInstr NWire)) :
+    factorCount (l.map ofK) = Networks.Certificates.T16.Impl.kChildren l := by
+  induction l with
   | nil => rfl
-  | cons g gs ih => simp only [List.map_cons, factorCount, ih, List.length_cons]
+  | cons i rest ih =>
+    rw [List.map_cons, show Networks.Certificates.T16.Impl.kChildren (i :: rest) =
+      Networks.Certificates.T16.Impl.kChildren [i] + Networks.Certificates.T16.Impl.kChildren rest from
+        Networks.Certificates.T16.Impl.kChildren_append [i] rest]
+    cases i with
+    | factor w g =>
+      simp only [ofK, factorCount, ih]
+      rw [show Networks.Certificates.T16.Impl.kChildren
+        [Networks.Certificates.T16.Impl.KInstr.factor w g] = 1 from rfl]; omega
+    | gate g =>
+      simp only [ofK, factorCount, ih]
+      rw [show Networks.Certificates.T16.Impl.kChildren
+        [Networks.Certificates.T16.Impl.KInstr.gate g] = 0 from rfl]; omega
+    | trans w v =>
+      simp only [ofK, factorCount, ih]
+      rw [show Networks.Certificates.T16.Impl.kChildren
+        [Networks.Certificates.T16.Impl.KInstr.trans w v] = 0 from rfl]; omega
+    | xor w i j =>
+      simp only [ofK, factorCount, ih]
+      rw [show Networks.Certificates.T16.Impl.kChildren
+        [Networks.Certificates.T16.Impl.KInstr.xor w i j] = 0 from rfl]; omega
+    | phase w i c =>
+      simp only [ofK, factorCount, ih]
+      rw [show Networks.Certificates.T16.Impl.kChildren
+        [Networks.Certificates.T16.Impl.KInstr.phase w i c] = 0 from rfl]; omega
 
-/-- The factor count of a lowered skeleton: one direction list per edge, in order. -/
-theorem br_factorCount_lowerSkel (s : List Skel) (ds : Directions) :
-    factorCount (lowerSkel s ds) = ((ds.take (brEdges s)).map List.length).sum := by
-  induction s generalizing ds with
-  | nil => simp [lowerSkel, factorCount, brEdges]
-  | cons x rest ih =>
-      cases x with
-      | edge w =>
-          rw [lowerSkel, br_factorCount_append, br_factorCount_factors, ih, brEdges]
-          cases ds with
-          | nil => simp
-          | cons d ds => simp [List.take_succ_cons]
-      | gate g => rw [lowerSkel, factorCount, brEdges, ih]
+/-- **The factor count of the node program.** -/
+theorem br_factorCount_program (ds : Directions) : factorCount (program ds) = 1041408 := by
+  rw [program_eq, br_factorCount_ofK, Networks.Certificates.T16.Impl.layerProgram_children]
 
-/-- The factor count of the node program. -/
-theorem br_factorCount_program (ds : Directions) :
-    factorCount (program ds) = ((ds.take (brEdges skeleton)).map List.length).sum :=
-  br_factorCount_lowerSkel skeleton ds
+/-! ### The directions of the earlier call schema -/
 
-/-! ### Edges of the skeleton -/
-
-lemma br_edges_map {E : Type*} [AddCommGroup E] [Module ℚ E]
-    (p : List (FramedCircuit.Instruction NWire ℚ E)) :
-    brEdges (p.map skel) = (FramedFactorExecution.edgeOperators p).length := by
-  induction p with
-  | nil => rfl
-  | cons instr rest ih =>
-      cases instr with
-      | edge w old next =>
-          simp only [List.map_cons, skel, brEdges, FramedFactorExecution.edgeOperators,
-            List.length_cons, ih]
-      | gate g => simp only [List.map_cons, skel, brEdges, FramedFactorExecution.edgeOperators, ih]
-
-/-- A realizing family has one direction list per edge of the skeleton. -/
-theorem br_edges_eq_length (ds : Directions) (hd : ComplexPhaseBudget.Realizes ds) :
-    brEdges skeleton = ds.length := by
-  rw [skeleton, br_edges_map, (factor_certificate 0 ds hd).length_eq, factorMaps,
-    List.length_map]
-
-/-- The skeleton has one edge per physical edge of the network. -/
-theorem br_edges_skeleton : brEdges skeleton = ComplexPhaseBudget.edges.length :=
-  (br_edges_eq_length _ CompactComplexActualCallLoweredNetwork.realizes).trans
-    CompactComplexActualCallLoweredNetwork.realizes.length_eq.symm
-
-/-- For a realizing family the factor count is the total length of the direction lists. -/
-theorem br_factorCount_realizes (ds : Directions) (hd : ComplexPhaseBudget.Realizes ds) :
-    factorCount (program ds) = (ds.map List.length).sum := by
-  rw [br_factorCount_program, br_edges_eq_length ds hd, List.take_length]
-
-/-! ### The directions of the recursive call schema -/
-
-/-- The directions of the original recursive call schema. -/
+/-- The directions of the original recursive call schema (not read by the program). -/
 noncomputable abbrev brDirs : Directions := CompactComplexActualCallLoweredNetwork.directions
 
 theorem br_directions_realizes : ComplexPhaseBudget.Realizes brDirs :=
   CompactComplexActualCallLoweredNetwork.realizes
 
-/-- With the call-schema directions, a node makes `rankSum` child calls. -/
-theorem br_factorCount_directions : factorCount (program brDirs) = ComplexRank25.rankSum := by
-  rw [br_factorCount_realizes _ br_directions_realizes]
-  exact CompactComplexActualCallLoweredNetwork.direction_count
+theorem br_factorCount_directions : factorCount (program brDirs) = 1041408 :=
+  br_factorCount_program brDirs
 
-theorem br_factorCount_le : factorCount (program brDirs) ≤ 916333630984500000 :=
-  br_factorCount_directions ▸ ComplexRank25.rank_budget
+theorem br_factorCount_le : factorCount (program brDirs) ≤ 1041408 :=
+  (br_factorCount_directions).le
 
 /-! ### The branching ratio -/
 
-/-- The number of wire roles. -/
-theorem br_NW_eq : NW = 58645352620000 := NetworkBudget.complex_role_card_25
+/-- The number of data roles. -/
+theorem br_NW_eq : NW = 14336 := NW_eq
 
 theorem br_sigma_lt_one : Parameters.sigma < 1 := by
   norm_num [Parameters.sigma]
 
+/-- The branching ratio of the T16 node: `F / NW < m ^ (999/1000)`. -/
+theorem br_branching_999 :
+    (factorCount (program brDirs) : ℝ) / NW < (m : ℝ) ^ (999 / 1000 : ℝ) := by
+  rw [br_factorCount_directions, br_NW_eq, show ((m : ℕ) : ℝ) = 73 by norm_num [m]]
+  simp only [Nat.cast_ofNat]
+  have hpos : (0 : ℝ) < (1041408 : ℝ) / 14336 := by norm_num
+  rw [← Real.rpow_lt_rpow_iff hpos.le (by positivity) (by norm_num : (0 : ℝ) < 1000),
+    ← Real.rpow_mul (by norm_num), show (999 / 1000 : ℝ) * 1000 = (999 : ℕ) by norm_num,
+    Real.rpow_natCast, show (1000 : ℝ) = (1000 : ℕ) by norm_num, Real.rpow_natCast]
+  rw [div_pow, div_lt_iff₀ (by positivity)]
+  exact_mod_cast (show (1041408 : ℕ) ^ 1000 < 73 ^ 999 * 14336 ^ 1000 by decide +kernel)
+
 /-- The branching ratio: `F / NW < m ^ σ` with `σ < 1`. -/
 theorem br_branching :
-    (factorCount (program brDirs) : ℝ) / NW < (m : ℝ) ^ Parameters.sigma := by
-  rw [br_factorCount_directions, br_NW_eq,
-    show ((m : ℕ) : ℝ) = 15625 by norm_num [m]]
-  exact_mod_cast ComplexRank25.branching_bound
+    (factorCount (program brDirs) : ℝ) / NW < (m : ℝ) ^ Parameters.sigma :=
+  br_branching_999.trans_le (Real.rpow_le_rpow_of_exponent_le (by norm_num [m])
+    (by norm_num [Parameters.sigma]))
 
-/-- Some realizing family of directions makes `rankSum` child calls per node, with branching
+/-- `log_m (F / NW) < 999/1000`. -/
+theorem br_logb_lt_999 :
+    Real.logb (m : ℝ) ((factorCount (program brDirs) : ℝ) / NW) < 999 / 1000 := by
+  have hpos : (0 : ℝ) < (factorCount (program brDirs) : ℝ) / NW := by
+    rw [br_factorCount_directions, br_NW_eq]; norm_num
+  exact (Real.logb_lt_iff_lt_rpow (by norm_num [m]) hpos).2 br_branching_999
+
+/-- Some realizing family of directions makes `1,041,408` child calls per node, with branching
 ratio below `m ^ σ`. -/
 theorem br_exists_branching :
     ∃ ds : Directions, ComplexPhaseBudget.Realizes ds ∧
-      factorCount (program ds) = ComplexRank25.rankSum ∧
+      factorCount (program ds) = 1041408 ∧
       (factorCount (program ds) : ℝ) / NW < (m : ℝ) ^ Parameters.sigma :=
   ⟨brDirs, br_directions_realizes, br_factorCount_directions, br_branching⟩
 

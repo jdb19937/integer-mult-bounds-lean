@@ -32,6 +32,10 @@ section Iso
 
 variable {Y : Type} [Fintype Y] {k : ℕ}
 
+lemma l2_congr_norm' {X : Type} [Fintype X] (f g : X → ℂ) (h : ∀ x, ‖f x‖ = ‖g x‖) :
+    l2 f = l2 g := by
+  unfold l2; simp only [h]
+
 /-- Pulling back along an involutive change of basis of the columns preserves the norm. -/
 lemma l2_pullArr (L : BinaryWalsh.Address m → BinaryWalsh.Address m) (hL : ∀ a, L (L a) = a)
     (u : Arr Y (m * k)) : l2 (pullArr L u) = l2 u := by
@@ -257,6 +261,15 @@ lemma view_sub (e : Fin k → Fin n) (f g : Arr Y n) : view e (f - g) = view e f
 
 end View
 
+lemma l2_phaseArr {Y : Type} [Fintype Y] {k : ℕ} (i : Fin m) (c : ZMod 4) (u : Arr Y (m * k)) :
+    l2 (phaseArr i c u) = l2 u := by
+  apply l2_congr_norm'
+  intro p
+  simp only [phaseArr, norm_mul, norm_prod]
+  have : ∀ col : Fin k, ‖BinaryPhase.phase (c * BinaryPhase.bitLift (toCols p.2 col i))‖ = 1 :=
+    fun col => by simp [BinaryPhase.phase]
+  simp [this]
+
 /-! ### A run with rounded children -/
 
 section Run
@@ -268,6 +281,9 @@ noncomputable def errRun (δ : ℝ) : List Instr → ℝ → ℝ
   | [], E => E
   | .gate g :: rest, E => errRun δ rest (2 * gateLip g * E)
   | .factor _ _ :: rest, E => errRun δ rest (E + δ)
+  | .trans _ _ :: rest, E => errRun δ rest E
+  | .xor _ _ _ :: rest, E => errRun δ rest E
+  | .phase _ _ _ :: rest, E => errRun δ rest E
 
 lemma errRun_mono (δ : ℝ) (l : List Instr) {E E' : ℝ} (h : E ≤ E') : errRun δ l E ≤ errRun δ l E' := by
   induction l generalizing E E' with
@@ -276,18 +292,27 @@ lemma errRun_mono (δ : ℝ) (l : List Instr) {E E' : ℝ} (h : E ≤ E') : errR
     cases i with
     | factor w g => exact ih (by linarith)
     | gate g => exact ih (mul_le_mul_of_nonneg_left h (by have := one_le_gateLip g; linarith))
+    | trans w v => exact ih h
+    | xor w i j => exact ih h
+    | phase w i c => exact ih h
 
 /-- The product of twice the gate constants of a program. -/
 noncomputable def lipProd : List Instr → ℝ
   | [] => 1
   | .gate g :: rest => 2 * gateLip g * lipProd rest
   | .factor _ _ :: rest => lipProd rest
+  | .trans _ _ :: rest => lipProd rest
+  | .xor _ _ _ :: rest => lipProd rest
+  | .phase _ _ _ :: rest => lipProd rest
 
 /-- The number of factors of a program. -/
 def facCount : List Instr → ℕ
   | [] => 0
   | .gate _ :: rest => facCount rest
   | .factor _ _ :: rest => 1 + facCount rest
+  | .trans _ _ :: rest => facCount rest
+  | .xor _ _ _ :: rest => facCount rest
+  | .phase _ _ _ :: rest => facCount rest
 
 lemma one_le_lipProd : ∀ l : List Instr, 1 ≤ lipProd l
   | [] => le_rfl
@@ -296,6 +321,9 @@ lemma one_le_lipProd : ∀ l : List Instr, 1 ≤ lipProd l
     have h2 := one_le_lipProd rest
     simp only [lipProd]; nlinarith
   | .factor _ _ :: rest => one_le_lipProd rest
+  | .trans _ _ :: rest => one_le_lipProd rest
+  | .xor _ _ _ :: rest => one_le_lipProd rest
+  | .phase _ _ _ :: rest => one_le_lipProd rest
 
 /-- **The closed form of the run error**: `errRun δ l E ≤ lipProd l (E + facCount l δ)`. -/
 lemma errRun_le {δ : ℝ} (hδ : 0 ≤ δ) (l : List Instr) {E : ℝ} (hE : 0 ≤ E) :
@@ -320,6 +348,32 @@ lemma errRun_le {δ : ℝ} (hδ : 0 ≤ δ) (l : List Instr) {E : ℝ} (hE : 0 �
           lipProd rest * (2 * gateLip g * (E + facCount rest * δ)) :=
             mul_le_mul_of_nonneg_left h1 (by linarith)
         _ = 2 * gateLip g * lipProd rest * (E + facCount rest * δ) := by ring
+    | trans w v => simp only [errRun, lipProd, facCount]; exact ih hE
+    | xor w i j => simp only [errRun, lipProd, facCount]; exact ih hE
+    | phase w i c => simp only [errRun, lipProd, facCount]; exact ih hE
+
+/-- An isometric linear update of one wire does not change the bank error. -/
+lemma bl2_iso_update {Z : Type} [Fintype Z] (V X : NWire → Z → ℂ) (w : NWire) (T : (Z → ℂ) → Z → ℂ)
+    (hT : ∀ (a : ℂ) u, T (a • u) = a • T u) (hsub : ∀ u u', T (u - u') = T u - T u')
+    (hiso : ∀ u, l2 (T u) = l2 u) (s : ℕ) :
+    bl2 (Function.update V w (T (V w)) - (2 : ℂ) ^ s • Function.update X w (T (X w))) =
+      bl2 (V - (2 : ℂ) ^ s • X) := by
+  have h : Function.update V w (T (V w)) - (2 : ℂ) ^ s • Function.update X w (T (X w)) =
+      Function.update (V - (2 : ℂ) ^ s • X) w (T ((V - (2 : ℂ) ^ s • X) w)) := by
+    funext v
+    by_cases hv : v = w
+    · subst hv; simp [hsub, hT]
+    · simp [Function.update_of_ne hv]
+  rw [h]
+  generalize V - (2 : ℂ) ^ s • X = D
+  refine le_antisymm ?_ ?_
+  · have h := bl2_update_le D w (T (D w)) (δ := 0) (by rw [hiso, add_zero]) le_rfl
+    rw [add_zero] at h
+    exact h
+  · have h := bl2_update_le (Function.update D w (T (D w))) w (D w) (δ := 0)
+      (by rw [Function.update_self, hiso, add_zero]) le_rfl
+    rw [Function.update_idem, Function.update_eq_self, add_zero] at h
+    exact h
 
 /-- A factor with a rounded child, against the complex factor: the child's error `δ` in the view. -/
 lemma view_facM_err (he : Function.Injective e) (child : Fin m → ZArr Y n → ZArr Y n) {δ : ℝ}
@@ -406,6 +460,35 @@ lemma view_runM_err (he : Function.Injective e) (child : Fin m → ZArr Y n → 
       calc 2 * bl2 (FramedCircuit.moduleGate g _) ≤ 2 * (gateLip g * bl2 _) := by gcongr
         _ ≤ 2 * gateLip g * E := by
           rw [← mul_assoc]; exact mul_le_mul_of_nonneg_left hE (by linarith)
+    | trans w v =>
+      simp only [runM, runWith, progExp, errRun]
+      refine ih hrest s _ _ ?_
+      change bl2 ((fun u => view e (toC (Function.update B w (pullM e (· + v) (B w)) u))) -
+        (2 : ℂ) ^ s • Function.update X w (pullArr (· + v) (X w))) ≤ E
+      rw [view_update, view_pullM he]
+      exact (bl2_iso_update _ _ _ (pullArr (· + v)) (fun a u => pullArr_smul _ a u)
+        (fun u u' => pullArr_sub _ u u') (fun u => l2_pullArr _ (fun a => by
+          funext t; simp only [Pi.add_apply]; rw [add_assoc, CharTwo.add_self_eq_zero, add_zero]) u)
+          s).trans_le hE
+    | xor w i j =>
+      simp only [runM, runWith, progExp, errRun]
+      refine ih hrest s _ _ ?_
+      change bl2 ((fun u => view e (toC (Function.update B w
+        (pullM e (Networks.Certificates.T16.Impl.xorMap i j) (B w)) u))) -
+        (2 : ℂ) ^ s • Function.update X w (pullArr (Networks.Certificates.T16.Impl.xorMap i j) (X w))) ≤ E
+      rw [view_update, view_pullM he]
+      exact (bl2_iso_update _ _ _ _ (fun a u => pullArr_smul _ a u)
+        (fun u u' => pullArr_sub _ u u') (fun u => l2_pullArr _
+          (Networks.Certificates.T16.Impl.xorMap_involutive i j) u) s).trans_le hE
+    | phase w i c =>
+      simp only [runM, runWith, progExp, errRun]
+      refine ih hrest s _ _ ?_
+      change bl2 ((fun u => view e (toC (Function.update B w (phaseM e i c (B w)) u))) -
+        (2 : ℂ) ^ s • Function.update X w (phaseArr i c (X w))) ≤ E
+      rw [view_update, view_phaseM he]
+      exact (bl2_iso_update _ _ _ (phaseArr i c) (fun a u => phaseArr_smul i c a u)
+        (fun u u' => by funext p; simp only [phaseArr, Pi.sub_apply]; ring)
+        (fun u => l2_phaseArr i c u) s).trans_le hE
 
 end Run
 
@@ -428,44 +511,7 @@ lemma l2_le_of_injective {X X' : Type} [Fintype X] [Fintype X'] (f : X → ℂ) 
 
 omit [Fintype Y] in
 lemma l2_congr_norm {X : Type} [Fintype X] (f g : X → ℂ) (h : ∀ x, ‖f x‖ = ‖g x‖) :
-    l2 f = l2 g := by
-  unfold l2; simp only [h]
-
-/-- The wire whose array the output correction reads. -/
-def corrSrc : NWire → NWire
-  | Sum.inl b => Sum.inr (Sum.inl b)
-  | Sum.inr (Sum.inl b) => Sum.inl b
-  | Sum.inr (Sum.inr s) => Sum.inr (Sum.inr s)
-
-lemma corrSrc_invol (w : NWire) : corrSrc (corrSrc w) = w := by
-  rcases w with b | b | s <;> rfl
-
-omit [Fintype Y] in
-lemma correctOutputA_sub (A B : NWire → Arr Y (m * k)) :
-    correctOutputA k (A - B) = correctOutputA k A - correctOutputA k B := by
-  funext w p
-  rcases w with b | b | s
-  · change Complex.I ^ (27 * k) * lift _ (A _ - B _) p =
-      Complex.I ^ (27 * k) * lift _ (A _) p - Complex.I ^ (27 * k) * lift _ (B _) p
-    simp only [lift, signColumns_apply, Pi.sub_apply]; ring
-  · change -(A _ - B _) p = -(A _ p) - -(B _ p)
-    simp only [Pi.sub_apply]; ring
-  · rfl
-
-omit [Fintype Y] in
-lemma norm_correctOutputA (D : NWire → Arr Y (m * k)) (w : NWire) (p : Y × (Fin (m * k) → ZMod 2)) :
-    ‖correctOutputA k D w p‖ = ‖D (corrSrc w) p‖ := by
-  rcases w with b | b | s
-  · change ‖Complex.I ^ (27 * k) * lift _ (D _) p‖ = _
-    simp only [lift, signColumns_apply, ofCols_toCols, norm_mul, norm_pow, Complex.norm_I, one_pow,
-      one_mul, norm_prod]
-    have : ∀ j, ‖chi (terminalVector b) (toCols p.2 j)‖ = 1 := fun j => by
-      simp only [chi, BinaryWalsh.sign]; split_ifs <;> simp
-    simp only [this, Finset.prod_const_one, one_mul]
-    rfl
-  · change ‖-(D _ p)‖ = _
-    rw [norm_neg]; rfl
-  · rfl
+    l2 f = l2 g := l2_congr_norm' f g h
 
 variable (e : Fin (m * k) → Fin n)
 

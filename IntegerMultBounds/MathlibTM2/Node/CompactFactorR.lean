@@ -69,8 +69,8 @@ noncomputable def compactFactorCostR (j u K R₀ n r w : ℕ) (g : ZMod 4 × Bin
       basisBound (Fin.find _ h) +
       (6 * (K * bits u j) + 6 * (K * bits u (j + 1)) + 13) +
       (6 * rowsAt R₀ j + 6 * (NW * rowsAt R₀ j) + 13) +
-      shiftCost NW (rowsAt R₀ j) n r w 0
-  else shiftCost NW (rowsAt R₀ j) n r w 0
+      shiftCost NB (rowsAt R₀ j) n r w 0
+  else shiftCost NB (rowsAt R₀ j) n r w 0
 
 lemma compactFactorCostR_mono_basis (j u K R₀ n r w : ℕ) (g : ZMod 4 × BinaryWalsh.Address m)
     (cc : ℕ) {b b' : Fin m → ℕ} (hb : ∀ x, b x ≤ b' x) :
@@ -400,7 +400,7 @@ theorem compactFactorProgR_spec (hQ : compactRuntimeStates ≤ Q)
         basisBound s +
         (6 * Lc + 6 * (shape.chunk * bits u (j + 1)) + 13) +
         (6 * (rowsAt R₀ j) + 6 * (NW * (rowsAt R₀ j)) + 13) +
-        shiftCost NW (rowsAt R₀ j) (o+n) r w 0 := by
+        shiftCost NB (rowsAt R₀ j) (o+n) r w 0 := by
       simp only [compactFactorCostR, hpiv, ↓reduceDIte]; rfl
     rw [hfc, hL₁]
     rw [hL₀l] at hc₂

@@ -17,71 +17,55 @@ open IntegerMultBounds.MathlibTM2.Layer IntegerMultBounds.MathlibTM2.LayerMachin
 open CompactGadgetReservationShape (Shape)
 noncomputable section
 
-/-- Node assembly accounting, independent of the implementation of its factors. -/
+/-- Node assembly accounting, independent of the implementation of its factors and exact
+instructions. -/
 theorem compactNodeCost_linear (ds : ComplexFramedExecution.Directions)
-    {u K ρ R₀ n r w j a₀ M B cf : ℕ}
+    {u K ρ R₀ n r w j a₀ M B cf cm : ℕ}
     (hu : 1≤u) (hr : 1≤r) (hw : 1≤w) (hR₀ : 1≤R₀) (hρ : ρ<K)
     (hfit : a₀+K*bits u (j+1)≤n) (hTw : ∀ i≤j,expZ u ds i≤w)
-    (hcf : cf≤M+2*B+400*NW*(rowsAt R₀ j*2^n*(r*w)+rowsAt R₀ j*2^n*n)) :
-    nodeCost ds u j K ρ a₀ (rowsAt R₀ j) n r w cf+4 ≤
-      factorCount (program ds)*(M+2*B)+
+    (hcf : cf≤M+2*B+400*NW*(rowsAt R₀ j*2^n*(r*w)+rowsAt R₀ j*2^n*n))
+    (hcm : cm≤2*B+692*(NW*(rowsAt R₀ j*2^n*(r*w)+rowsAt R₀ j*2^n*n))) :
+    nodeCost ds u j K ρ a₀ (rowsAt R₀ j) n r w cf cm+4 ≤
+      factorCount (program ds)*M+2*lcBas ds*B+
         lcLin ds*(NW*(rowsAt R₀ j*2^n*(r*w)+rowsAt R₀ j*2^n*n)) := by
-  have hF : LcFacts u K a₀ (rowsAt R₀ j) n r w j :=
+  have hN := lc_nodeCost_nat ds (cf := cf) (cm := cm) hu hr hw hR₀ hρ hfit hTw
+  rw [Nat.mul_assoc 400 NW] at hcf
+  unfold lcLin lcBas
+  exact lc_assemble hN hcf hcm
+
+/-- **An exact instruction of the compact layer** with a basis budget within `B`:
+`monoCostB … ins ≤ 2 B + 692 X`. -/
+theorem compactMono_linear {u K ρ R₀ n o r w j a B : ℕ}
+    (budget : BinaryWalsh.Address m → Fin m → ℕ)
+    (hu : 1≤u) (hr : 1≤r) (hw : 1≤w) (hR₀ : 1≤R₀) (hρ : ρ<K)
+    (hfit : (o+a)+K*bits u (j+1)≤o+n) (hB : ∀ vv x,budget vv x≤B) (ins : Instr) :
+    monoCostB budget j u K (o+a) R₀ (o+n) o r w ρ (rowsAt R₀ j) ins ≤
+      2*B+692*(NW*(rowsAt R₀ j*2^(o+n)*(r*w)+rowsAt R₀ j*2^(o+n)*(o+n))) := by
+  have hF : LcFacts u K (o+a) (rowsAt R₀ j) (o+n) r w j :=
     lcFacts_of hu hr hw (rowsAt_pos hR₀ j) hρ hfit
   obtain ⟨hX1, hXV, hXW⟩ := lc_X_ge hF.hV1
-  have hNW : 1 ≤ NW := one_le_NW
-  have hSS := lc_signStage_le hF hρ
-  have hgate : gateCost (rowsAt R₀ j) n r w ≤
-      43 * (NW * (rowsAt R₀ j * 2 ^ n * (r * w) + rowsAt R₀ j * 2 ^ n * n)) := by
-    unfold gateCost
-    have h1 : NW * (rowsAt R₀ j * 2 ^ n * r) * (11 * w + 24) ≤
-        35 * (NW * (rowsAt R₀ j * 2 ^ n * (r * w))) := by
-      have := Nat.mul_le_mul_left NW hF.hPr
-      nlinarith
-    have h2 : NW * (rowsAt R₀ j * 2 ^ n * (r * w)) ≤
-        NW * (rowsAt R₀ j * 2 ^ n * (r * w) + rowsAt R₀ j * 2 ^ n * n) :=
-      Nat.mul_le_mul_left NW (Nat.le_add_right _ _)
-    have h3 : NW ≤ NW * (rowsAt R₀ j * 2 ^ n * (r * w) + rowsAt R₀ j * 2 ^ n * n) :=
-      Nat.le_mul_of_pos_right _ (by have := hF.hV1; omega)
-    rw [show Fintype.card NWire = NW from rfl]
+  have hV : rowsAt R₀ j*2^(o+n)*r*w = rowsAt R₀ j*2^(o+n)*(r*w) := by ring
+  cases ins with
+  | trans fw tv =>
+    simp only [monoCostB]
+    split_ifs with h
+    · have h1 := lc_framed_le hF (2*budget (tv+Pi.single (Fin.find _ h) 1) (Fin.find _ h)+
+        2*(6*(rowsAt R₀ j*2^(o+n)*r*w)+6))
+      have h2 := hB (tv+Pi.single (Fin.find _ h) 1) (Fin.find _ h)
+      omega
+    · omega
+  | xor fw i j' =>
+    simp only [monoCostB]
+    have h1 := lc_framed_le hF (budget (Pi.single i 1+Pi.single j' 1) i)
+    have h2 := hB (Pi.single i 1+Pi.single j' 1) i
     omega
-  have hexch : exchCost u (rowsAt R₀ j) n r w ≤
-      30 * (NW * (rowsAt R₀ j * 2 ^ n * (r * w) + rowsAt R₀ j * 2 ^ n * n)) := by
-    unfold exchCost
-    nlinarith [hF.hPr, hF.hun, hF.hnW]
-  have hE : expCost (gateCount (program ds)) (factorCount (program ds)) u j ≤
-      4 * u + 2 * j + 8 + j * (8 * w + 12) := lc_expCost_le fun i hi => by
-    rw [← expZ_eq_expSeq]; exact hTw i hi.le
-  have hTc : expZ u ds j ≤ w := hTw j le_rfl
-  have hNWR : NW * rowsAt R₀ j ≤
-      NW * (rowsAt R₀ j * 2 ^ n * (r * w) + rowsAt R₀ j * 2 ^ n * n) :=
-    Nat.mul_le_mul_left NW (hF.hRV.trans (Nat.le_add_right _ _))
-  have hNWV : NW * (rowsAt R₀ j * 2 ^ n * (r * w)) ≤
-      NW * (rowsAt R₀ j * 2 ^ n * (r * w) + rowsAt R₀ j * 2 ^ n * n) :=
-    Nat.mul_le_mul_left NW (Nat.le_add_right _ _)
-  have hNW1 : NW ≤ NW * (rowsAt R₀ j * 2 ^ n * (r * w) + rowsAt R₀ j * 2 ^ n * n) :=
-    Nat.le_mul_of_pos_right _ (by have := hF.hV1; omega)
-  have h1 := Nat.mul_le_mul_left (factorCount (program ds)) hcf
-  have h2 := Nat.mul_le_mul_left (gateCount (program ds)) hgate
-  have h3 := Nat.mul_le_mul_left (Fintype.card (Wires.Address 25)) hexch
-  unfold nodeCost lcLin
-  have hjw := hF.hjw
-  have hun := hF.hun
-  have hjle := hF.hjle
-  have hnW := hF.hnW
-  have hwV := hF.hwV
-  generalize Fintype.card (Wires.Address 25) = c25 at *
-  generalize factorCount (program ds) = F at *
-  generalize gateCount (program ds) = G at *
-  generalize rowsAt R₀ j * 2 ^ n * (r * w) = V at *
-  generalize rowsAt R₀ j * 2 ^ n * n = Wn at *
-  have := Nat.zero_le (G * (NW * (V + Wn)))
-  have := Nat.zero_le (c25 * (NW * (V + Wn)))
-  have := Nat.zero_le (m * c25 * (NW * (V + Wn)))
-  have := Nat.zero_le (F * (NW * (V + Wn)))
-  have := Nat.zero_le (NW * (V + Wn))
-  linarith
-
+  | phase fw i c =>
+    simp only [monoCostB]
+    have h1 := lc_phaseInstr_le hF hρ
+    rw [show 4*m+400=692 from rfl] at h1
+    omega
+  | factor fw g => simp only [monoCostB]; omega
+  | gate g => simp only [monoCostB]; omega
 
 /-- Levelwise basis budget; its width is selected axes times guard, never chunk
 width times selected axes. It is independent of local offset and direction. -/
@@ -111,7 +95,7 @@ theorem compactLayerBasisBudget_covers {s : Shape} {n a kρ left right o R₀ u 
 def compactLayerMajorant (ds : ComplexFramedExecution.Directions)
     (u R₀ N r w : ℕ) (B : ℕ → ℕ) : ℕ → ℕ
   | 0 => 200*u*(R₀*2^N*(r*w)+R₀*2^N*N)
-  | j+1 => factorCount (program ds)*(compactLayerMajorant ds u R₀ N r w B j+2*B j)+
+  | j+1 => factorCount (program ds)*compactLayerMajorant ds u R₀ N r w B j+2*lcBas ds*B j+
       lcLin ds*(NW*(rowsAt R₀ j*2^N*(r*w)+rowsAt R₀ j*2^N*N))
 
 /-- Every branch of the concrete recursive cost is bounded by the scalar
@@ -154,8 +138,12 @@ theorem compactLayerCost_majorant (ds : ComplexFramedExecution.Directions)
         have hextra := Nat.mul_le_mul_left (400*NW)
           (Nat.le_add_right (rowsAt R₀ j*2^(o+n)*(r*w)) (rowsAt R₀ j*2^(o+n)*(o+n)))
         omega
+      have hcm : monoMax ds (monoCostB (budget j a) j u K (o+a) R₀ (o+n) o r w ρ (rowsAt R₀ j)) ≤
+          2*B j+692*(NW*(rowsAt R₀ j*2^(o+n)*(r*w)+rowsAt R₀ j*2^(o+n)*(o+n))) :=
+        lc_monoMax_le ds _ _ fun ins _ =>
+          compactMono_linear (budget j a) hu hr hw hR₀ hρ hfit (hB j a) ins
       exact compactNodeCost_linear ds hu hr hw hR₀ hρ hfit
-        (fun i hi => hTw i (by omega)) hcf
+        (fun i hi => hTw i (by omega)) hcf hcm
 
 /-- The actual layer with the concrete compact-width budget satisfies the full
 scalar recurrence, with the original leaf/stopping cost unchanged. -/

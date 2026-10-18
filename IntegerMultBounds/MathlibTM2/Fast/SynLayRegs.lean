@@ -62,12 +62,12 @@ theorem sly_NW : 64 ≤ NW := by rw [IntegerMultBounds.MathlibTM2.Cost.br_NW_eq]
 
 /-- The temporary `c` of the layout programs: the bank temporary of wire `c`. -/
 noncomputable def slyT (c : Fin 64) : Fin (nT SXReg) :=
-  reg (BReg := SXReg) (.wtmp (wireOf (Fin.castLE sly_NW c)))
+  reg (BReg := SXReg) (.wtmp (.inl (wireOf (Fin.castLE sly_NW c))))
 
 @[simp] theorem slyT_inj {a b : Fin 64} : slyT a = slyT b ↔ a = b := by
   constructor
   · intro h
-    simp only [slyT, reg_inj, LReg.wtmp.injEq] at h
+    simp only [slyT, reg_inj, LReg.wtmp.injEq, Sum.inl.injEq] at h
     exact Fin.castLE_injective sly_NW (wireOf.injective h)
   · rintro rfl; rfl
 

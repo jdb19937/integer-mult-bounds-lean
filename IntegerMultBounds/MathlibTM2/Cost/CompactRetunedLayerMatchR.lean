@@ -57,7 +57,7 @@ theorem compactRetunedR_caller_top_cost (ds : ComplexFramedExecution.Directions)
       (Mult.CompactSizes.K M) D≠0)
     (hq : 1≤compactTopKernelCount (Mult.Sizes.d M) (CompactReservationGrowth.guard M)
       (Mult.CompactSizes.K M))
-    (hal : Real.logb (m:ℝ) ((factorCount (program ds):ℝ)/NW)<Parameters.lam)
+    (hal : Real.logb (m:ℝ) ((factorCount (program ds):ℝ)/NW)<CompactInterim.lam)
     (hsw : s+W≤working) (hgw : gb≤working) (hs'w : s'≤working) (hssw : (s-s')+W≤working)
     (hchild : D+m+gateCount (program ds)≤working) :
     let d := Mult.Sizes.d M
@@ -120,33 +120,33 @@ theorem compactRetunedR_caller_top_cost (ds : ComplexFramedExecution.Directions)
     change 1≤4*Nat.clog 2 (Mult.Sizes.p M)+6
     omega
   have hd : 1≤d := Mult.Sizes.one_le_d hM
-  have h := compactTopCostR_complete (lam:=Parameters.lam) ds shape 1 d g K D o R₂ W working s n a
+  have h := compactTopCostR_complete (lam:=CompactInterim.lam) ds shape 1 d g K D o R₂ W working s n a
     1 r ρ o q aT gb s' 1 hd hD hactive rfl hK (le_refl 1) hr hw hρ hG hon (le_refl o) hbits rfl
     hsw hgw hs'w hssw (le_refl 1) hN (hρN.trans htotal.ge) (hDK.trans htotal.ge) hker hqa hq hcap
-    (by norm_num [Parameters.lam]) (by norm_num [Parameters.tau,Parameters.lam]) hal hpcsR hpcsS
+    (by norm_num [CompactInterim.lam]) (by norm_num [Parameters.tau,CompactInterim.lam]) hal hpcsR hpcsS
     (fun _ hp => compactTopPcs_offset hp)
   have henv := compactRetuned_top_envelope 1 ds M hM D hD
   unfold compactRetunedTopEnvelope at henv
   simp only [←hgA] at henv
   change _≤((R₂*2^n*(r*working):ℕ):ℝ)*
-    (32768*compactTopCountConst Parameters.lam*(d:ℝ)^Parameters.lam+
+    (32768*compactTopCountConst CompactInterim.lam*(d:ℝ)^CompactInterim.lam+
      512*(backChunks d g K:ℝ)+512*(q:ℝ)+
-     compactDigitSumConst (compactLayerClosedConst (nT CompactBReg) 1 ds Parameters.lam) m
-       Parameters.lam*(compactReservationActive d g K D:ℝ)^Parameters.lam*
+     compactDigitSumConst (compactLayerClosedConst (nT CompactBReg) 1 ds CompactInterim.lam) m
+       CompactInterim.lam*(compactReservationActive d g K D:ℝ)^CompactInterim.lam*
        (g:ℝ)^Parameters.tau) at h
-  have hC : 0≤compactDigitSumConst (compactLayerClosedConst (nT CompactBReg) 1 ds Parameters.lam) m
-      Parameters.lam := (compactLayerDyadic_pos _).le
-  have hCt : 0≤compactDigitSumConst (compactLayerClosedConst (nT CompactBReg) 1 ds Parameters.lam) m
-      Parameters.lam*(compactReservationActive d g K D:ℝ)^Parameters.lam*(g:ℝ)^Parameters.tau :=
+  have hC : 0≤compactDigitSumConst (compactLayerClosedConst (nT CompactBReg) 1 ds CompactInterim.lam) m
+      CompactInterim.lam := (compactLayerDyadic_pos _).le
+  have hCt : 0≤compactDigitSumConst (compactLayerClosedConst (nT CompactBReg) 1 ds CompactInterim.lam) m
+      CompactInterim.lam*(compactReservationActive d g K D:ℝ)^CompactInterim.lam*(g:ℝ)^Parameters.tau :=
     mul_nonneg (mul_nonneg hC (Real.rpow_nonneg (Nat.cast_nonneg _) _))
       (Real.rpow_nonneg (Nat.cast_nonneg _) _)
-  have htwice := twiceEnvelope (compactTopCountConst Parameters.lam) ((d:ℝ)^Parameters.lam)
+  have htwice := twiceEnvelope (compactTopCountConst CompactInterim.lam) ((d:ℝ)^CompactInterim.lam)
     (backChunks d g K:ℝ) (q:ℝ) _ (Nat.cast_nonneg _) (Nat.cast_nonneg _) hCt
   have hV : (0:ℝ)≤((R₂*2^n*(r*working):ℕ):ℝ) := Nat.cast_nonneg _
-  have henv' : 16384*compactTopCountConst Parameters.lam*(d:ℝ)^Parameters.lam+
+  have henv' : 16384*compactTopCountConst CompactInterim.lam*(d:ℝ)^CompactInterim.lam+
       512*(backChunks d g K:ℝ)+512*(q:ℝ)+
-      compactDigitSumConst (compactLayerClosedConst (nT CompactBReg) 1 ds Parameters.lam) m
-        Parameters.lam*(compactReservationActive d g K D:ℝ)^Parameters.lam*
+      compactDigitSumConst (compactLayerClosedConst (nT CompactBReg) 1 ds CompactInterim.lam) m
+        CompactInterim.lam*(compactReservationActive d g K D:ℝ)^CompactInterim.lam*
         (g:ℝ)^Parameters.tau≤
       compactRetunedTopCoeff 1 ds*(d:ℝ)^CompactInterim.lam' := henv
   calc _ ≤ _ := h
@@ -175,7 +175,7 @@ private theorem mergeBoundR (overhead top V B stash : ℕ) (C P : ℝ)
 with the new premise `l ≤ p` on the ring exponent and no power cap beyond `d^2 ≤ b`. -/
 theorem compactRetunedR_layer_chunk_eventually {Ka : ℕ}
     (ds : ComplexFramedExecution.Directions) (c : ℕ)
-    (hal : Real.logb (m:ℝ) ((factorCount (program ds):ℝ)/NW)<Parameters.lam) :
+    (hal : Real.logb (m:ℝ) ((factorCount (program ds):ℝ)/NW)<CompactInterim.lam) :
     ∀ᶠ M : ℕ in atTop, ∀ (es : List ℕ) (ℓ W l h stash : ℕ),
     LayHyp es ℓ (Mult.CompactSizes.K M) → es.length=Mult.Sizes.d M-1 →
     es.sum≤Mult.Sizes.p M → ℓ≤Mult.Sizes.p M →
