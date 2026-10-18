@@ -105,17 +105,9 @@ theorem sumNat_eq (l : List ℕ) : sumNat l = l.sum := by
 theorem matched_total :
     40256 ≤ ((List.range 50).map fun c' =>
       ((List.range c').map fun c => (matched c c').length).sum).sum := by
-  have hl := lowCount_eq
-  have hh := highCount_eq
-  have hsplit : List.range 50 = List.range 25 ++ List.range' 25 25 := by decide
-  rw [hsplit, List.map_append, List.sum_append]
-  simp only [lowCount, highCount, sumNat_eq] at hl hh
-  have h1 : ((List.range 25).map rowCount).sum ≤ ((List.range 25).map fun c' =>
-      ((List.range c').map fun c => (matched c c').length).sum).sum :=
-    sum_map_le _ _ _ (fun c' _ => rowCount_le c')
-  have h2 : ((List.range' 25 25).map rowCount).sum ≤ ((List.range' 25 25).map fun c' =>
-      ((List.range c').map fun c => (matched c c').length).sum).sum :=
-    sum_map_le _ _ _ (fun c' _ => rowCount_le c')
+  have h := total_eq
+  rw [sumNat_eq] at h
+  have := sum_map_le _ _ _ (fun c' (_ : c' ∈ List.range 50) => rowCount_le c')
   omega
 
 /-! ### Masks and leaf sets -/

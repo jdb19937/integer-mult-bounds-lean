@@ -78,13 +78,100 @@ def pairCount (c c' : ℕ) : ℕ := mergeCount (lifted c (c' - 1)) (lifted c' c)
 
 def rowCount (c' : ℕ) : ℕ := sumNat ((List.range c').map fun c => pairCount c c')
 
-def lowCount : ℕ := sumNat ((List.range 25).map rowCount)
+/-! ### Fast evaluation
 
-def highCount : ℕ := sumNat ((List.range' 25 25).map rowCount)
+The kernel evaluates the count over arithmetic masks, sorted once per center,
+in ten blocks of five rows so that no single check holds every row. -/
 
-theorem lowCount_eq : lowCount = 13276 := by decide +kernel
+/-- Mask of coarse group `j`. -/
+def grpMask (j : ℕ) : ℕ := if j < 24 then 3 * 2 ^ (2 * j) else if j = 24 then 2 ^ 48 else 0
 
-theorem highCount_eq : highCount = 26980 := by decide +kernel
+/-- Mask of the coarse groups below `t`. -/
+def lowMask (t : ℕ) : ℕ := 2 ^ min (2 * t) 49 - 1
+
+def blockMask (w k : ℕ) : ℕ := (2 ^ w - 1) * 2 ^ (w * k)
+
+/-- The masks of `fam v`, computed without building leaf lists. -/
+def famMasks (v : ℕ) : List ℕ :=
+  if v = 48 then
+    (List.range 24).map grpMask ++ (List.range 12).map (blockMask 4) ++
+      (List.range 6).map (blockMask 8) ++ (List.range 3).map (blockMask 16) ++
+      [blockMask 16 0 + blockMask 16 2, 2 ^ 32 - 1, (2 ^ 32 - 1) * 2 ^ 16]
+  else
+    let i := v / 2
+    let rest := 2 ^ 49 - 1 - grpMask i
+    let pre (s : ℕ) := if s ≤ i then lowMask s else lowMask (s + 1) - grpMask i
+    (((List.range 24).filter (· != i)).map grpMask ++ (List.range' 2 21).map pre) ++
+    ((List.range' 2 21).map (fun s => rest - pre s) ++
+      (List.range 24).map (fun t => rest - grpMask (if t < i then t else t + 1)) ++
+      (List.range (2 * i)).map (fun a => rest - 2 ^ a))
+
+theorem famMasks_eq : ∀ v < 49, (fam v).map maskOf = famMasks v := by decide +kernel
+
+/-- The sorted masks of every center, shared by all copy pairs. -/
+def sorts : List (List ℕ) := (List.range 49).map fun v => sortList (famMasks v)
+
+theorem sortedMasks_eq (v : ℕ) (hv : v < 49) : sortedMasks v = sorts.getD v [] := by
+  rw [sortedMasks, famMasks_eq v hv, sorts, List.getD_eq_getElem?_getD, List.getElem?_map,
+    List.getElem?_range hv]
+  rfl
+
+def fastPair (c c' : ℕ) : ℕ :=
+  mergeCount ((sorts.getD (c' - 1) []).map (liftMask c)) ((sorts.getD c []).map (liftMask c'))
+
+def fastRow (c' : ℕ) : ℕ := sumNat ((List.range c').map fun c => fastPair c c')
+
+theorem rowCount_eq (c' : ℕ) (hc' : c' ≤ 49) : rowCount c' = fastRow c' := by
+  simp only [rowCount, fastRow]
+  congr 1
+  refine List.map_congr_left fun c hc => ?_
+  rw [List.mem_range] at hc
+  simp only [pairCount, fastPair, lifted, sortedMasks_eq _ (show c' - 1 < 49 by omega),
+    sortedMasks_eq _ (show c < 49 by omega)]
+
+theorem sumNat_append (l l' : List ℕ) : sumNat (l ++ l') = sumNat l + sumNat l' := by
+  induction l with
+  | nil => simp [sumNat]
+  | cons a as ih => simp [sumNat, ih, Nat.add_assoc]
+
+theorem block0_eq : sumNat ((List.range' 0 5).map fastRow) = 716 := by
+  decide +kernel
+
+theorem block1_eq : sumNat ((List.range' 5 5).map fastRow) = 1829 := by
+  decide +kernel
+
+theorem block2_eq : sumNat ((List.range' 10 5).map fastRow) = 2826 := by
+  decide +kernel
+
+theorem block3_eq : sumNat ((List.range' 15 5).map fastRow) = 3569 := by
+  decide +kernel
+
+theorem block4_eq : sumNat ((List.range' 20 5).map fastRow) = 4336 := by
+  decide +kernel
+
+theorem block5_eq : sumNat ((List.range' 25 5).map fastRow) = 4809 := by
+  decide +kernel
+
+theorem block6_eq : sumNat ((List.range' 30 5).map fastRow) = 5346 := by
+  decide +kernel
+
+theorem block7_eq : sumNat ((List.range' 35 5).map fastRow) = 5549 := by
+  decide +kernel
+
+theorem block8_eq : sumNat ((List.range' 40 5).map fastRow) = 5856 := by
+  decide +kernel
+
+theorem block9_eq : sumNat ((List.range' 45 5).map fastRow) = 5420 := by
+  decide +kernel
+
+/-- All 40,256 merge matches over the copy pairs `c < c' < 50`. -/
+theorem total_eq : sumNat ((List.range 50).map rowCount) = 40256 := by
+  have hsplit : List.range 50 = List.range' 0 5 ++ List.range' 5 5 ++ List.range' 10 5 ++
+      List.range' 15 5 ++ List.range' 20 5 ++ List.range' 25 5 ++ List.range' 30 5 ++
+      List.range' 35 5 ++ List.range' 40 5 ++ List.range' 45 5 := by decide
+  rw [List.map_congr_left fun c' hc' => rowCount_eq c' (by rw [List.mem_range] at hc'; omega), hsplit]
+  simp only [List.map_append, sumNat_append, block0_eq, block1_eq, block2_eq, block3_eq, block4_eq,
+    block5_eq, block6_eq, block7_eq, block8_eq, block9_eq]
 
 /-- Strictly increasing, by one structural pass. -/
 def increasing : List ℕ → Bool
@@ -100,6 +187,9 @@ def leafShape (v : ℕ) (xs : List ℕ) : Bool :=
 theorem fam_shape : ∀ v < 49, (fam v).all (leafShape v) = true := by decide +kernel
 
 /-- Distinct leaf lists at each center have distinct masks. -/
-theorem masks_increasing : ∀ v < 49, increasing (sortedMasks v) = true := by decide +kernel
+theorem masks_increasing (v : ℕ) (hv : v < 49) : increasing (sortedMasks v) = true := by
+  rw [sortedMasks_eq v hv]
+  revert v
+  decide +kernel
 
 end IntegerMultBounds.Networks.PairedStarCount
