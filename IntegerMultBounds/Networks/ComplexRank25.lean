@@ -84,7 +84,7 @@ theorem rank_budget : rankSum ≤ 916333630984500000 := by
 
 /-- The actual finite network meets the chosen complex branching exponent. -/
 theorem branching_bound :
-    (rankSum : ℝ) / 58645352620000 < (15625 : ℝ) ^ Parameters.sigma := by
+    (rankSum : ℝ) / 58645352620000 < (15625 : ℝ) ^ Parameters.directSigma := by
   have hr : (rankSum : ℝ) ≤ 916333630984500000 := by exact_mod_cast rank_budget
   exact lt_of_le_of_lt (div_le_div_of_nonneg_right hr (by norm_num))
     Parameters.complex_branching_bound

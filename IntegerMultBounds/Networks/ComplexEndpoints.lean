@@ -417,8 +417,8 @@ theorem corrected_lowered_run (k : ℕ) (directions : Directions) (hd : Realizes
 transform and the strict branching budget, uniformly in column count. -/
 theorem exists_corrected_execution_budget :
     ∃ directions : Directions, Realizes directions ∧
-      ∀ k, FramedFactorExecution.linearCount (lowered k directions) ≤ 916333630984500000 ∧
-        (FramedFactorExecution.linearCount (lowered k directions) : ℝ) / 58645352620000 <
+      ∀ k, FramedFactorExecution.linearCount (lowered k directions) ≤ 149516060359500000 ∧
+        (FramedFactorExecution.linearCount (lowered k directions) : ℝ) / 9569028100000 <
           (15625 : ℝ) ^ Parameters.sigma ∧
         ∀ stored : Wire → BinaryColumns.Arrays (25 ^ 3) k,
           correctOutput k (FramedFactorExecution.run (lowered k directions) (correctInput k stored)) =

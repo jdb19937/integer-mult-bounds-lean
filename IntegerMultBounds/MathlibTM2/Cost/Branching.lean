@@ -112,17 +112,17 @@ theorem br_directions_realizes : ComplexPhaseBudget.Realizes brDirs :=
   CompactComplexActualCallLoweredNetwork.realizes
 
 /-- With the call-schema directions, a node makes `rankSum` child calls. -/
-theorem br_factorCount_directions : factorCount (program brDirs) = ComplexRank25.rankSum := by
+theorem br_factorCount_directions : factorCount (program brDirs) = Mixer.Supplier25.rankSum := by
   rw [br_factorCount_realizes _ br_directions_realizes]
   exact CompactComplexActualCallLoweredNetwork.direction_count
 
-theorem br_factorCount_le : factorCount (program brDirs) ≤ 916333630984500000 :=
-  br_factorCount_directions ▸ ComplexRank25.rank_budget
+theorem br_factorCount_le : factorCount (program brDirs) ≤ 149516060359500000 :=
+  br_factorCount_directions ▸ Mixer.Supplier25.rank_budget
 
 /-! ### The branching ratio -/
 
 /-- The number of wire roles. -/
-theorem br_NW_eq : NW = 58645352620000 := NetworkBudget.complex_role_card_25
+theorem br_NW_eq : NW = 9569028100000 := Mixer.Supplier25.wire_card
 
 theorem br_sigma_lt_one : Parameters.sigma < 1 := by
   norm_num [Parameters.sigma]
@@ -131,14 +131,14 @@ theorem br_sigma_lt_one : Parameters.sigma < 1 := by
 theorem br_branching :
     (factorCount (program brDirs) : ℝ) / NW < (m : ℝ) ^ Parameters.sigma := by
   rw [br_factorCount_directions, br_NW_eq,
-    show ((m : ℕ) : ℝ) = 15625 by norm_num [m]]
-  exact_mod_cast ComplexRank25.branching_bound
+    show ((m : ℕ) : ℝ) = 15625 by norm_num [m], ComplexPhaseBudget.sigma_eq]
+  exact_mod_cast Mixer.Supplier25.branching_bound
 
 /-- Some realizing family of directions makes `rankSum` child calls per node, with branching
 ratio below `m ^ σ`. -/
 theorem br_exists_branching :
     ∃ ds : Directions, ComplexPhaseBudget.Realizes ds ∧
-      factorCount (program ds) = ComplexRank25.rankSum ∧
+      factorCount (program ds) = Mixer.Supplier25.rankSum ∧
       (factorCount (program ds) : ℝ) / NW < (m : ℝ) ^ Parameters.sigma :=
   ⟨brDirs, br_directions_realizes, br_factorCount_directions, br_branching⟩
 

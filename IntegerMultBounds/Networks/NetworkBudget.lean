@@ -178,7 +178,7 @@ the selected complex exponent without any further numerical hypothesis. -/
 theorem complex_branching_of_balance {s ℓ : ℕ}
     (hbalance : s + 12167000000 + 12167000000 = 58645352620000 * 15625 + 2 * ℓ)
     (hloss : ℓ ≤ 3 * 2300 ^ 2 * 26 * 25) :
-    (s : ℝ) / 58645352620000 < (15625 : ℝ) ^ Parameters.sigma := by
+    (s : ℝ) / 58645352620000 < (15625 : ℝ) ^ Parameters.directSigma := by
   have hs : (s : ℝ) ≤ 916333630984500000 := by exact_mod_cast complex_budget_25 hbalance hloss
   exact lt_of_le_of_lt (div_le_div_of_nonneg_right hs (by norm_num)) Parameters.complex_branching_bound
 

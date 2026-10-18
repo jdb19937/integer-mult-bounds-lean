@@ -19,30 +19,41 @@ abbrev ℓ := Sizes.ℓ
 abbrev r := Sizes.r
 abbrev t := Sizes.t
 
-/-- Fourth-root chunk, corresponding to the proposed compact exponent `1/4`. -/
-def cExp : ℕ := 2^2
-noncomputable def cParam : ℝ := (cExp : ℝ)⁻¹
-def K (n : ℕ) : ℕ := Sizes.iroot cExp (d n)
+/-- Root degree of the chunk `K = ⌊d^(7/8)⌋`, the eighth root of `d^7`. -/
+def cExp : ℕ := 2^3
+noncomputable def cParam : ℝ := 7/(cExp : ℝ)
+def K (n : ℕ) : ℕ := Sizes.iroot cExp (d n^7)
 
-theorem cExp_eq : cExp=4 := by norm_num [cExp]
+theorem cExp_eq : cExp=8 := by norm_num [cExp]
 theorem cExp_ne : cExp≠0 := by norm_num [cExp]
-theorem cParam_eq : cParam=(2^2 : ℝ)⁻¹ := by norm_num [cParam,cExp]
+theorem cParam_eq : cParam=7/(2^3 : ℝ) := by norm_num [cParam,cExp]
 theorem cParam_pos : 0<cParam := by norm_num [cParam,cExp]
 
-theorem K_pow_le (n : ℕ) : K n^cExp≤d n := Sizes.iroot_pow_le cExp_ne _
-theorem d_lt_K_succ_pow (n : ℕ) : d n<(K n+1)^cExp := Sizes.lt_succ_iroot_pow cExp_ne _
-theorem le_K_iff {n k : ℕ} : k≤K n ↔ k^cExp≤d n := Sizes.le_iroot_iff cExp_ne
-theorem K_le_d (n : ℕ) : K n≤d n := Sizes.iroot_le_self cExp_ne _
+theorem K_pow_le (n : ℕ) : K n^cExp≤d n^7 := Sizes.iroot_pow_le cExp_ne _
+theorem d_lt_K_succ_pow (n : ℕ) : d n^7<(K n+1)^cExp := Sizes.lt_succ_iroot_pow cExp_ne _
+theorem le_K_iff {n k : ℕ} : k≤K n ↔ k^cExp≤d n^7 := Sizes.le_iroot_iff cExp_ne
+theorem K_le_d (n : ℕ) : K n≤d n := by
+  by_contra h
+  have h1 : (d n+1)^cExp≤K n^cExp := Nat.pow_le_pow_left (by omega) _
+  have h3 : d n^7<(d n+1)^cExp := by
+    rw [cExp_eq]
+    calc d n^7<(d n+1)^7 := Nat.pow_lt_pow_left (Nat.lt_succ_self _) (by norm_num)
+      _ ≤ (d n+1)^8 := Nat.pow_le_pow_right (Nat.succ_pos _) (by norm_num)
+  exact absurd (h1.trans (K_pow_le n)) (not_le.mpr h3)
 theorem one_le_K {n : ℕ} (hn : 2≤n) : 1≤K n :=
-  Sizes.one_le_iroot cExp_ne (Sizes.one_le_d hn)
-theorem K_eq_floor (n : ℕ) : K n=⌊(d n : ℝ)^cParam⌋₊ := Sizes.iroot_eq_floor cExp_ne _
+  Sizes.one_le_iroot cExp_ne (Nat.one_le_pow _ _ (Sizes.one_le_d hn))
+theorem K_eq_floor (n : ℕ) : K n=⌊(d n : ℝ)^cParam⌋₊ := by
+  rw [K, Sizes.iroot_eq_floor cExp_ne, Nat.cast_pow,
+    ←Real.rpow_natCast_mul (Nat.cast_nonneg _)]
+  congr 2
 
-/-- Increasing the exponent from `2^-32` to `2^-2` increases the chunk. -/
+/-- Increasing the exponent from `2^-32` to `7/8` increases the chunk. -/
 theorem old_K_le_K (n : ℕ) : Sizes.K n≤K n := by
   apply le_K_iff.mpr
   rcases Nat.eq_zero_or_pos (Sizes.K n) with h | h
   · rw [h,zero_pow cExp_ne]; exact Nat.zero_le _
-  · exact (Nat.pow_le_pow_right h (by norm_num [cExp,Sizes.cExp])).trans (Sizes.K_pow_le n)
+  · exact ((Nat.pow_le_pow_right h (by norm_num [cExp,Sizes.cExp])).trans
+      (Sizes.K_pow_le n)).trans (Nat.le_self_pow (by norm_num) _)
 
 theorem tendsto_K : Tendsto K atTop atTop :=
   tendsto_atTop.2 fun M => (tendsto_atTop.1 Sizes.tendsto_K M).mono fun n h => h.trans (old_K_le_K n)
@@ -84,9 +95,14 @@ theorem eventually_guard_room : ∀ᶠ n in atTop, 8*Nat.clog 2 (p n)+16≤K n :
 /-- The new chunk still fits the actual initial `d-1` transform dimension. -/
 theorem eventually_K_le_predecessor : ∀ᶠ n in atTop, K n≤d n-1 := by
   filter_upwards [tendsto_K.eventually (eventually_ge_atTop 2)] with n hK
-  have hpow : K n^2≤K n^cExp := Nat.pow_le_pow_right (by omega) (by norm_num [cExp])
-  have hd := hpow.trans (K_pow_le n)
-  have hlt : K n<d n := by nlinarith
+  have hlt : K n<d n := by
+    by_contra h
+    have h8 : d n^8≤K n^8 := Nat.pow_le_pow_left (by omega) 8
+    have hp := K_pow_le n
+    rw [cExp_eq] at hp
+    have hd : 2≤d n := hK.trans (K_le_d n)
+    have h7 : d n^7<d n^8 := Nat.pow_lt_pow_right (by omega) (by norm_num)
+    omega
   omega
 
 /-- Layout block width eventually dominates any fixed multiple of the chunk. -/

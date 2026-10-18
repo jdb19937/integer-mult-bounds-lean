@@ -11,7 +11,7 @@ call sites. This is the fixed finite call schema, not a tape controller. -/
 namespace IntegerMultBounds.Networks.ComplexRecursiveCallSchema
 noncomputable section
 open ComplexPhaseBudget ComplexPhaseRowSchedule
-abbrev Wire := Wires.ComplexRole 25
+abbrev Wire := Mixer.Supplier25.Wire
 
 private theorem trace_length {ι L : Type*} [DecidableEq ι]
     (current : ι → L) (us : List (ι × L)) : (RankTrace.edges current us).length = us.length := by
@@ -167,7 +167,7 @@ private theorem sum_dimensions (es : List Edge) :
   exact dimension_eq_rank _
 
 /-- Exactly the proved actual complex-network rank sum many child calls. -/
-theorem calls_rankSum : calls.length = ComplexRank25.rankSum := by
+theorem calls_rankSum : calls.length = Mixer.Supplier25.rankSum := by
   rw [calls_length]
   change (∑ site : Fin sites.length, dimension sites[site.val]) = _
   rw [sum_dimensions sites]

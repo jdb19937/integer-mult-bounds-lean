@@ -73,11 +73,9 @@ theorem compactNodeCostR_linear (ds : ComplexFramedExecution.Directions)
   linarith
 
 lemma four_le_NW : 4 ≤ NW := by
-  have h : NW = Fintype.card (Wires.ComplexRole 25) := rfl
-  rw [h, Wires.complex_role_card]
-  have hc : 2 ≤ (25:ℕ).choose 3 := by decide
-  have h3 : 2 ^ 3 ≤ ((25:ℕ).choose 3) ^ 3 := Nat.pow_le_pow_left hc 3
-  omega
+  have h : NW = Fintype.card Mixer.Supplier25.Wire := rfl
+  rw [h, Mixer.Supplier25.wire_card]
+  norm_num
 
 /-- The truncation of a child result is linear in the wire volume. -/
 theorem truncCost_linear {G u j K a₀ R n r w : ℕ} (hF : LcFacts u K a₀ R n r w j)

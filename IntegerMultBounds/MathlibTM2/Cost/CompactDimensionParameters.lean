@@ -17,13 +17,13 @@ def layer : ℝ := 1-(2^32:ℝ)⁻¹
 def epsilon : ℝ := (2^4:ℝ)⁻¹
 def kappa : ℝ := (2^36:ℝ)⁻¹
 
-/-- Existing supplier accuracy prevents the next dyadic saving at the prior thirty-second-root
- dimension exponent, even if the layer bound approaches `sigma`. -/
-theorem prior_dimension_obstruction {layer : ℝ} (h : Parameters.sigma ≤ layer) :
+/-- The direct supplier's accuracy prevents the next dyadic saving at the prior thirty-second-root
+ dimension exponent, even if the layer bound approaches `directSigma`. -/
+theorem prior_dimension_obstruction {layer : ℝ} (h : Parameters.directSigma ≤ layer) :
     ((2^5:ℝ)⁻¹) * (1-layer) < kappa := by
   have he : 0 ≤ ((2^5:ℝ)⁻¹) := by norm_num
-  have hb : ((2^5:ℝ)⁻¹) * (1-Parameters.sigma) < kappa := by
-    norm_num [Parameters.sigma,kappa]
+  have hb : ((2^5:ℝ)⁻¹) * (1-Parameters.directSigma) < kappa := by
+    norm_num [Parameters.directSigma,kappa]
   exact (mul_le_mul_of_nonneg_left (sub_le_sub_left h 1) he).trans_lt hb
 
 /-- All five analytic stage margins cover the next dyadic saving after doubling
@@ -47,13 +47,13 @@ theorem layer_margin : margin 1 = kappa := by
 theorem twentieth_power_exceeds_sixteenth {d : ℕ} (hd : 2≤d) : d^16 < d^20 := by
   exact Nat.pow_lt_pow_right (by omega : 1<d) (by decide : 16<20)
 
-/-- At the proposed sixteenth-root dimension the existing complex supplier
+/-- At the proposed sixteenth-root dimension the direct complex supplier
  still cannot support the following dyadic saving by layer tuning alone. -/
-theorem next_supplier_obstruction {layer : ℝ} (h : Parameters.sigma ≤ layer) :
+theorem next_supplier_obstruction {layer : ℝ} (h : Parameters.directSigma ≤ layer) :
     epsilon * (1-layer) < (2^35:ℝ)⁻¹ := by
   have he : 0 ≤ epsilon := by norm_num [epsilon]
-  have hb : epsilon * (1-Parameters.sigma) < (2^35:ℝ)⁻¹ := by
-    norm_num [epsilon,Parameters.sigma]
+  have hb : epsilon * (1-Parameters.directSigma) < (2^35:ℝ)⁻¹ := by
+    norm_num [epsilon,Parameters.directSigma]
   exact (mul_le_mul_of_nonneg_left (sub_le_sub_left h 1) he).trans_lt hb
 
 /-- Doubling the dimension again violates the current Gaussian-stage margin. -/
@@ -82,13 +82,13 @@ theorem margin_covers (i : Fin 5) : kappa ≤ margin i := by
 theorem gaussian_margin : margin 4 = (2^5:ℝ)⁻¹ := by
   norm_num [margin,epsilon,delta]
 
-/-- At eighth-root dimension the current supplier cannot support the next
+/-- At eighth-root dimension the direct supplier cannot support the next
 dyadic saving, even if the layer estimate is tightened to the supplier exponent. -/
-theorem supplier_obstruction {layer : ℝ} (h : Parameters.sigma ≤ layer) :
+theorem supplier_obstruction {layer : ℝ} (h : Parameters.directSigma ≤ layer) :
     epsilon * (1-layer) < (2^34:ℝ)⁻¹ := by
   have he : 0 ≤ epsilon := by norm_num [epsilon]
-  have hb : epsilon * (1-Parameters.sigma) < (2^34:ℝ)⁻¹ := by
-    norm_num [epsilon,Parameters.sigma]
+  have hb : epsilon * (1-Parameters.directSigma) < (2^34:ℝ)⁻¹ := by
+    norm_num [epsilon,Parameters.directSigma]
   exact (mul_le_mul_of_nonneg_left (sub_le_sub_left h 1) he).trans_lt hb
 
 /-- A fourth-root dimension cannot fit this resampling estimate even with no

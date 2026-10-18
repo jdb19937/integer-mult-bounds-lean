@@ -2,37 +2,38 @@ module
 
 public import IntegerMultBounds.Parameters
 
-/-! Arithmetic limits of the current supplier and coarse Gaussian estimate.
+/-! Arithmetic limits of the direct size-25 supplier (`Parameters.directSigma`) and the coarse
+Gaussian estimate.
 These are route-specific constraints, not obstructions to better algorithms.
 The non-root dimension candidate below asserts arithmetic feasibility only. -/
 @[expose] public section
 namespace IntegerMultBounds.MathlibTM2.Cost.CompactSupplierCeiling
 noncomputable section
 
-/-- The supplier leaves a positive, exactly known exponent saving. -/
+/-- The direct supplier leaves a positive, exactly known exponent saving. -/
 theorem supplier_saving :
-    1 - Parameters.sigma = (418 : ℝ) / 10^12 ∧
-    0 < 1 - Parameters.sigma := by
-  norm_num [Parameters.sigma]
+    1 - Parameters.directSigma = (418 : ℝ) / 10^12 ∧
+    0 < 1 - Parameters.directSigma := by
+  norm_num [Parameters.directSigma]
 
 /-- Positive coarse Gaussian margin forces dimension exponent below one sixth. -/
 theorem dimension_lt_sixth {epsilon loss : ℝ} (hloss : 0 ≤ loss)
     (hmargin : 0 < 1/4 - loss - 3*epsilon/2) : epsilon < 1/6 := by
   linarith
 
-/-- With this supplier and this Gaussian estimate, every admissible dimension
+/-- With the direct supplier and this Gaussian estimate, every admissible dimension
 and layer give a saving strictly below the displayed dyadic ceiling. -/
 theorem saving_lt_ceiling {epsilon layer loss : ℝ} (hepsilon : 0 ≤ epsilon)
-    (hlayer : Parameters.sigma ≤ layer) (hloss : 0 ≤ loss)
+    (hlayer : Parameters.directSigma ≤ layer) (hloss : 0 ≤ loss)
     (hmargin : 0 < 1/4 - loss - 3*epsilon/2) :
     epsilon * (1-layer) < (2^33 : ℝ)⁻¹ := by
   have hdim := dimension_lt_sixth hloss hmargin
   have hsaving := supplier_saving.2
   calc
-    epsilon * (1-layer) ≤ epsilon * (1-Parameters.sigma) :=
+    epsilon * (1-layer) ≤ epsilon * (1-Parameters.directSigma) :=
       mul_le_mul_of_nonneg_left (sub_le_sub_left hlayer 1) hepsilon
-    _ < (1/6) * (1-Parameters.sigma) := mul_lt_mul_of_pos_right hdim hsaving
-    _ < (2^33 : ℝ)⁻¹ := by norm_num [Parameters.sigma]
+    _ < (1/6) * (1-Parameters.directSigma) := mul_lt_mul_of_pos_right hdim hsaving
+    _ < (2^33 : ℝ)⁻¹ := by norm_num [Parameters.directSigma]
 
 namespace NineSixtyFourths
 

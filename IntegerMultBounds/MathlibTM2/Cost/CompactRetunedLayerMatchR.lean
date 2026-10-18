@@ -111,7 +111,7 @@ theorem compactRetunedR_caller_top_cost (ds : ComplexFramedExecution.Directions)
     have hu := (hpf.2 pc hpc).2
     cases i with
     | zero => simp only [expSeq]; omega
-    | succ i => simp only [expSeq,Nat.zero_mul,Nat.add_zero]; omega
+    | succ i => rw [expSeq,Nat.zero_mul,Nat.add_zero]; omega
   have hgA := compactRetuned_caller_guard hM
   have hG : 1≤shape.guard := by
     change 1≤g

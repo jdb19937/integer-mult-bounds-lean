@@ -28,10 +28,9 @@ open IntegerMultBounds.Networks ComplexFramedExecution
 noncomputable abbrev NW : ℕ := Fintype.card NWire
 
 instance : NeZero NW := ⟨by
-  have h : NW = Fintype.card (Wires.ComplexRole 25) := rfl
-  have hc : 0 < (25 : ℕ).choose 3 := Nat.choose_pos (by norm_num)
-  rw [h, Wires.complex_role_card]
-  exact Nat.pos_iff_ne_zero.mp (Nat.add_pos_left (Nat.mul_pos two_pos (pow_pos hc 3)) _)⟩
+  have h : NW = Fintype.card Mixer.Supplier25.Wire := rfl
+  rw [h, Mixer.Supplier25.wire_card]
+  norm_num⟩
 
 /-- Wire of a role index. -/
 noncomputable def wireOf : Fin NW ≃ NWire := (Fintype.equivFin NWire).symm

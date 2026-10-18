@@ -15,7 +15,7 @@ open Networks
 open ComplexRecursiveCallSchema (Call Occurrence edge callsAt)
 open ComplexPhaseRowSchedule (Edge direction low high dimension)
 open BinaryWalsh BinaryColumns
-attribute [local irreducible] ComplexRank25.program ComplexRecursiveCallSchema.sites
+attribute [local irreducible] Mixer.Supplier25.program ComplexRecursiveCallSchema.sites
   ComplexPhaseBudget.edges ComplexPhaseBudget.updates
 
 def basisVector (e : Edge) (i : Fin (dimension e)) : BinaryWalsh.Address (25^3) :=

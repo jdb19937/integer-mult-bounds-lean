@@ -13,7 +13,7 @@ noncomputable section
 open Networks
 open ComplexRecursiveCallSchema (Call Occurrence edge callsAt calls sites)
 open CompactComplexActualCallFrameEdge (kernel)
-attribute [local irreducible] ComplexRank25.program sites ComplexPhaseBudget.edges
+attribute [local irreducible] Mixer.Supplier25.program sites ComplexPhaseBudget.edges
 
 def directions : ComplexFramedExecution.Directions :=
   List.ofFn (fun site : Occurrence => (callsAt site).map kernel)
@@ -51,7 +51,7 @@ theorem realizes : ComplexPhaseBudget.Realizes directions := by
     exact CompactComplexActualCallFrameEdge.calls_frame_edge columns site
 
 /-- The exact factor count is the original recursive call count and rank sum. -/
-theorem direction_count : (directions.map List.length).sum=ComplexRank25.rankSum := by
+theorem direction_count : (directions.map List.length).sum=Mixer.Supplier25.rankSum := by
   have h : (directions.map List.length).sum=calls.length := by
     simp only [directions,calls,ComplexRecursiveCallSchema.callsFor,
       List.length_flatten,List.map_ofFn,Function.comp_def,List.length_map,callsAt]
@@ -72,7 +72,7 @@ theorem network_run (columns : ℕ)
 
 theorem factor_count (columns : ℕ) :
     FramedFactorExecution.linearCount (ComplexFramedExecution.lowered columns directions)=
-      ComplexRank25.rankSum :=
+      Mixer.Supplier25.rankSum :=
   (ComplexFramedExecution.lowered_count columns directions realizes).trans direction_count
 
 end

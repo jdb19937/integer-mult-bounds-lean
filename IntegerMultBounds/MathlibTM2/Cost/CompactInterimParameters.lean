@@ -12,13 +12,13 @@ noncomputable section
 /-- Preserve the actual dimension exponent. -/
 def epsilon : ℝ := 31 / (2^6:ℝ)
 /-- Larger chunks become possible after removing the old chunk-width power. -/
-def spacing : ℝ := (2^2:ℝ)⁻¹
+def spacing : ℝ := 7/(2^3:ℝ)
 /-- Absorb the full-depth compact recurrence and all polylogarithmic factors. -/
-def lam' : ℝ := 1-459/(2^40:ℝ)
+def lam' : ℝ := 1-21/(2^33:ℝ)
 /-- Dyadic allowance for the unchanged quasi-linear multiplier. -/
 def delta : ℝ := (2^7:ℝ)⁻¹
-/-- The public saving: exactly the compact layer margin `ε (1-λ')`, about `2^-32.20`. -/
-def kappa : ℝ := 14229/(2^46:ℝ)
+/-- The public saving: exactly the compact layer margin `ε (1-λ')`, about `2^-29.65`. -/
+def kappa : ℝ := 651/(2^39:ℝ)
 
 /-- The compact recurrence and reserved axes fit strictly below the target
 layer exponent; this does not assert the old full-width recurrence condition. -/
