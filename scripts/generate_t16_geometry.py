@@ -108,7 +108,8 @@ def main():
     text=header([NS+'.Edges'+str(i) for i in range((len(edge_keys)+GROUP-1)//GROUP)])
     text+='def edgeBank (key : ℕ) : CertifiedEdge catalog :=\n  '+tree(sorted(encoded),'key',lambda key:'edge'+str(encoded[key]))+'\n'
     save('EdgeBank',text)
-    for ori in ['forward','backward']:
+    # Geometry/Backward.lean derives the backward checks from the forward ones.
+    for ori in ['forward']:
         back=str(ori=='backward').lower()
         chunk_count=(len(programs[ori])+31)//32
         group_count=(chunk_count+31)//32

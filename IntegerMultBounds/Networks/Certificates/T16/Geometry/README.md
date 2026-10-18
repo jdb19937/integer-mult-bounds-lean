@@ -21,8 +21,10 @@ actual finite-dimension difference equal to the declared positive rank, and
 positivity. The event checks run over the **committed literal trace definitions**,
 not a replacement event list. Climbs ascend in both orientations; forward
 centers descend and backward centers ascend. Every one of the 24,767 retained
-native events per orientation is checked, with scalar and wrapper events imposing
-no additional geometric assertion here. Trace label continuity and scalar
+forward events is checked, with scalar and wrapper events imposing no additional
+geometric assertion here. `Backward.lean` proves the backward events from these:
+each is the dual of a forward event, whose reversed center move the orientation
+flip in `EventGood` cancels, or a scalar gate. Trace label continuity and scalar
 incidence remain provided by the separate committed trace certificate.
 
 This does not construct ambient frame operators or interpret adapters, prove the

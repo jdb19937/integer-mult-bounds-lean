@@ -7,6 +7,7 @@ import argparse
 import gzip
 import hashlib
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -36,6 +37,30 @@ def z(n): return '('+str(n)+')' if n<0 else str(n)
 def wire(r):
     tag,n=r;assert (tag=='L' and 0<=n<704) or (tag=='C' and 0<=n<8)
     return n if tag=='L' else 704+n
+
+ADD=re.compile(r'\.scalar \(\.add (\d+) (\d+) (\(-?\d+\)|\d+) (\(-?\d+\)|\d+) (\d+)\)$')
+SCALE=re.compile(r'\.scalar \(\.scale (\d+) (\(-?\d+\)|\d+) (\(-?\d+\)|\d+) (\d+)\)$')
+CENTER=re.compile(r'\.center (\d+) (\d+) (\d+) (\d+)$')
+CENTER_START=12551
+CENTER_LENGTH=26
+def num(x): return int(x.strip('()'))
+def dual(row):
+    if m:=ADD.match(row):t,r,n,d,f=m.groups();return f'.scalar (.add {r} {t} {z(-num(n))} {d} {f})'
+    if m:=SCALE.match(row):t,n,d,f=m.groups();return f'.scalar (.scale {t} {d} {n} {f})'
+    if m:=CENTER.match(row):i,old,new,rank=m.groups();return f'.center {i} {new} {old} {rank}'
+    return row
+def transpose(row):
+    if m:=ADD.match(row):t,r,n,d,f=m.groups();return f'.scalar (.add {r} {t} {n} {d} {f})'
+    return dual(row)
+def center_dual(block):
+    c,f=re.match(r'\.scalar \(\.clear (\d+) (\d+)\)$',block[0]).groups()
+    s=re.match(r'\.scalar \(\.copy \d+ (\d+) \d+\)$',block[1]).group(1)
+    return [dual(block[-1])]+[transpose(e) for e in block[3:-1]]+[dual(block[2]),f'.scalar (.add {s} {c} (-1) 1 {f})',f'.scalar (.clear {c} {f})']
+def backward_rows(rows):
+    """Mirror of `Trace.backwardEvents`: the Lean backward trace is derived from these rows."""
+    out=[dual(e) for e in rows[:CENTER_START]]
+    for k in range(8):out+=center_dual(rows[CENTER_START+CENTER_LENGTH*k:CENTER_START+CENTER_LENGTH*(k+1)])
+    return out+[dual(e) for e in rows[CENTER_START+8*CENTER_LENGTH:]]
 
 def main():
     global OUT
@@ -98,6 +123,8 @@ def main():
             if (i+1)%CHUNK_SIZE==0 or i+1==len(programs[ori]):boundaries.append(state_id(labels,phase))
         assert labels[:704]==word['final'] and phase==10
         streams[ori]=(rows,boundaries)
+    if backward_rows(streams['forward'][0])!=streams['backward'][0]:
+        raise SystemExit('The backward native trace is not the derived dual of the forward trace')
     OUT.mkdir(parents=True,exist_ok=True)
     text=header(['Model'])
     nodes={};node_lines=[]
@@ -114,7 +141,8 @@ def main():
         name=tree(labels+[0]*(1024-len(labels)))
         state_lines.append(f'def state{i} : State := ⟨{name}, {phase}⟩\n')
     save('States',text+''.join(node_lines)+''.join(state_lines))
-    for ori,(rows,bs) in streams.items():
+    # Backward.lean derives the backward events; its snapshot states stay for stable numbering.
+    for ori,(rows,bs) in [('forward',streams['forward'])]:
         chunks=[rows[i:i+CHUNK_SIZE] for i in range(0,len(rows),CHUNK_SIZE)]
         if a.probe:
             j=9296//CHUNK_SIZE
