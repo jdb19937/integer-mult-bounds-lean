@@ -1,6 +1,6 @@
 module
 
-public import IntegerMultBounds.Networks.Certificates.T16.Impl.CallChecks
+public import IntegerMultBounds.Networks.Certificates.T16.Impl.CallCheckDefs
 
 /-! The checks of the sixteen stage-1 invocations, evaluated by the kernel one at a time. -/
 @[expose] public section

@@ -1,5 +1,6 @@
 module
 
+public import IntegerMultBounds.Networks.Certificates.T16.Impl.CallCheckDefs
 public import IntegerMultBounds.Networks.Certificates.T16.Impl.CallCheck
 public import IntegerMultBounds.Networks.Certificates.T16.TableauFramesCatalog
 
@@ -32,12 +33,6 @@ theorem edge_rank_of_le {a b : ℕ} (hle : (catalog a).space ≤ (catalog b).spa
       (catalog b).data.rank - (catalog a).data.rank := by
   rw [edgeRealization_width]
   exact native_edge_rank (catalogExtension a) (catalogExtension b) (edgeGood_of_le hle hlt)
-
-/-- The label pairs of the helpers. -/
-def helperPairOK (a b : ℕ) : Bool :=
-  ((catalog a).data.rank < (catalog b).data.rank) &&
-    (((catalog a).data.rank == 0) || ((catalog b).data.rank == 9) ||
-      (a == 2 && b == 999) || (a == 3 && b == 998))
 
 def witness_2_999 : Fin frame2.rank → ℕ := ![112]
 

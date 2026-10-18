@@ -1,5 +1,6 @@
 module
 
+public import IntegerMultBounds.Networks.Certificates.T16.Impl.CallCheckDefs
 public import IntegerMultBounds.Networks.Certificates.T16.Impl.Data
 
 /-! Helper registers. A helper hosts a slice of its family: the word must apply `C` on the
@@ -112,9 +113,6 @@ theorem wordLin_append (ps qs : List Prim) : wordLin (ps ++ qs) = wordLin qs * w
 def maskOrder (m : ℕ) : List (Fin 73) :=
   (List.finRange 73).filter (fun k : Fin 73 => m.testBit k.val) ++
     (List.finRange 73).filter (fun k : Fin 73 => !m.testBit k.val)
-
-/-- The basis indices in a mask. -/
-def maskIndices (m : ℕ) : List (Fin 73) := (List.finRange 73).filter fun k : Fin 73 => m.testBit k.val
 
 theorem maskOrder_nodup (m : ℕ) : (maskOrder m).Nodup := by
   rw [maskOrder, List.nodup_append]

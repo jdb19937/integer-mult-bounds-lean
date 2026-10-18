@@ -1,5 +1,6 @@
 module
 
+public import IntegerMultBounds.Networks.Certificates.T16.Impl.CallCheckDefs
 public import IntegerMultBounds.Networks.Certificates.T16.Impl.Data
 
 /-! The charts of the data registers. At stage zero a data register is its family array: the
@@ -37,9 +38,6 @@ theorem portBasis_local (hP : portCheck P = true) (k : Fin 73) (hk : k.val < 9) 
 
 /-! ### Stage zero -/
 
-/-- The nine low basis indices. -/
-def lowIndices : List (Fin 73) := (List.finRange 73).filter fun k => k.val < 9
-
 theorem mem_lowIndices (k : Fin 73) : k ∈ lowIndices ↔ k.val < 9 := by simp [lowIndices]
 
 theorem lowIndices_nodup : lowIndices.Nodup := (List.nodup_finRange 73).filter _
@@ -57,10 +55,6 @@ noncomputable def split0 (hP : portCheck P = true) (f : Fin 73 → ZMod 4) :
       rw [portBasis_high k h9, lowPart_single_high k h9])
 
 /-! ### Stages one to eight -/
-
-/-- The coordinate entering at stage `s` in place `i`. -/
-def entering (s : ℕ) (hs : 1 ≤ s ∧ s ≤ 8) (i : Fin 8) : Fin 73 :=
-  ⟨9 + 8 * (s - 1) + i.val, by omega⟩
 
 /-- The exchanged pairs `B_{i+1} + e_{entering i}`. -/
 def stageSwap (P : PortData) (s : ℕ) (hs : 1 ≤ s ∧ s ≤ 8) (i : Fin 8) : Addr :=
@@ -174,10 +168,6 @@ theorem stageChart_other (hP : portCheck P = true) (s : ℕ) (hs : 1 ≤ s ∧ s
 
 theorem stageChart_orth (hP : portCheck P = true) (s : ℕ) (hs : 1 ≤ s ∧ s ≤ 8) :
     IsOrth (stageChart hP s hs) := swapChart_orth _ _
-
-/-- The local indices at stage `s ≥ 1`: `B_0` and the entering coordinates. -/
-def stageIndices (s : ℕ) (hs : 1 ≤ s ∧ s ≤ 8) : List (Fin 73) :=
-  0 :: (List.finRange 8).map (entering s hs)
 
 theorem stageIndices_nodup (s : ℕ) (hs : 1 ≤ s ∧ s ≤ 8) : (stageIndices s hs).Nodup := by
   refine List.nodup_cons.mpr ⟨?_, (List.nodup_finRange 8).map (entering_injective s hs)⟩

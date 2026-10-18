@@ -1,5 +1,6 @@
 module
 
+public import IntegerMultBounds.Networks.Certificates.T16.Impl.CallCheckDefs
 public import IntegerMultBounds.Networks.Certificates.T16.Impl.HelperRank
 public import IntegerMultBounds.Networks.Certificates.T16.Impl.HelperBits
 
@@ -67,28 +68,6 @@ theorem complete_of_covered (hc : hostedCovered = true) (ha : bitsAgree = true) 
   rw [helperFamily_eq hh, he']
 
 /-! ### The checks of one invocation -/
-
-/-- The data frames agree off the chart. -/
-def extCheck (s a : ℕ) : Bool :=
-  (List.finRange 73).all fun k => decide (k ∈ dataIndices s) ||
-    (frameX s a k == frameX (s + 1) a k && frameY s a k == frameY (s + 1) a k &&
-      frameX s a k == frameY (s + 1) a k)
-
-/-- The checks of one helper register. -/
-@[irreducible] def helperCheck (s r h f : ℕ) : Bool :=
-  let m := helperMask (slotOf s r) f
-  let a := entryLabel (localReverse s) (224 + h)
-  let b := exitLabel (localReverse s) (224 + h)
-  decide (f < 14336) &&
-    ((hostAcc (groupData (famReplica f) (famPort f)) (slotOf s r) (famStream f)).2 == 0) &&
-    decide ((maskIndices m).length ≤ 9) && helperPairOK a b &&
-    ((catalog b).data.rank - (catalog a).data.rank == (maskIndices m).length)
-
-/-- The checks of one invocation. -/
-@[irreducible] def callCheck (s r : ℕ) : Bool :=
-  ((rolesList s r).length == 480) && (insertAll 0 (callFamilies s r)).isSome &&
-    ((List.range 480).zip (rolesList s r)).all (fun hf => helperCheck s r hf.1 hf.2) &&
-    (List.range 112).all (extCheck s)
 
 theorem helperCheck_of {s r : ℕ} (hc : callCheck s r = true) {h : ℕ} (hh : h < 480) :
     helperCheck s r h (helperFamily s r h) = true := by

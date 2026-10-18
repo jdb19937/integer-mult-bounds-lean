@@ -1,5 +1,6 @@
 module
 
+public import IntegerMultBounds.Networks.Certificates.T16.Impl.CallCheckDefs
 public import IntegerMultBounds.Networks.Certificates.T16.Impl.CallDef
 
 /-! **Correctness of a local invocation.** Under facts that are checked on the data (distinct
@@ -19,10 +20,6 @@ noncomputable def portRep (a : ℕ) : Op S := ρ.comp (portOp a)
 
 theorem portRep_apply (a : ℕ) (c : Fin 73 → ZMod 4) (z : S) :
     portRep ρ a (ofAdd c) z = ρ (basisOp (portBasis (portData a)) (ofAdd c)) z := rfl
-
-/-- The source frame of port `a` at stage `s`, and the others. -/
-def frameX (s a : ℕ) : Fin 73 → ZMod 4 := (frameVec (portData a) s 0).toFun
-def frameY (s a : ℕ) : Fin 73 → ZMod 4 := (frameVec (portData a) s 1).toFun
 
 /-- The facts a local invocation needs, all checked on the data. -/
 structure CallFacts (s r : ℕ) : Prop where

@@ -1,5 +1,6 @@
 module
 
+public import IntegerMultBounds.Networks.Certificates.T16.Impl.CallCheckDefs
 public import IntegerMultBounds.Networks.Certificates.T16.Impl.CallCorrect
 
 /-! Checkable forms of the facts of a local invocation. Distinct register families are checked
@@ -11,11 +12,6 @@ namespace IntegerMultBounds.Networks.Certificates.T16.Impl
 open Streams
 
 /-! ### Distinctness by a bitmask -/
-
-/-- Insert naturals into a bitmask, failing on a repeat. -/
-def insertAll : ℕ → List ℕ → Option ℕ
-  | m, [] => some m
-  | m, f :: fs => if m.testBit f then none else insertAll (m ||| 2 ^ f) fs
 
 theorem testBit_or_pow (m f g : ℕ) : (m ||| 2 ^ f).testBit g = (m.testBit g || decide (g = f)) := by
   rw [Nat.testBit_or, Nat.testBit_two_pow]
@@ -46,12 +42,6 @@ theorem nodup_of_insertAll {fs : List ℕ} (h : insertAll 0 fs ≠ none) : fs.No
   (insertAll_spec fs 0 h).1
 
 /-! ### Register families -/
-
-/-- The families of the 704 non-private registers of an invocation. -/
-def callFamilies (s r : ℕ) : List ℕ :=
-  (List.range 112).map (fun a => famIdx r a (toStream (2 * localPair s))) ++
-    (List.range 112).map (fun a => famIdx r a (toStream (2 * localPair s + 1))) ++
-      rolesList s r
 
 theorem callFamilies_length {s r : ℕ} (hl : (rolesList s r).length = 480) :
     (callFamilies s r).length = 704 := by

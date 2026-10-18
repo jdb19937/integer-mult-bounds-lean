@@ -1,5 +1,6 @@
 module
 
+public import IntegerMultBounds.Networks.Certificates.T16.Impl.CallCheckDefs
 public import IntegerMultBounds.Networks.Certificates.T16.Impl.Wrappers
 public import IntegerMultBounds.Networks.Certificates.T16.Impl.DataChart
 public import IntegerMultBounds.Networks.Certificates.T16.Impl.StreamLocal
@@ -19,23 +20,12 @@ open BinaryWalsh Streams Pauli
 /-- The family unit with index `f`. -/
 def famUnit (f : ℕ) : NodeUnit := .inl ⟨f % 14336, Nat.mod_lt _ (by decide)⟩
 
-/-- The slot of an invocation in the hosted records. -/
-def slotOf (s r : ℕ) : ℕ := s * 16 + r
-
 /-- The registers of the invocation at stage `s`, replica `r`. -/
 def callReg (s r w : ℕ) : NodeUnit :=
   if w < 112 then streamUnit r w (toStream (2 * localPair s))
   else if w < 224 then streamUnit r (w - 112) (toStream (2 * localPair s + 1))
   else if w < 704 then famUnit (helperFamily s r (w - 224))
   else .inr ⟨(w - 704) % 8, Nat.mod_lt _ (by decide)⟩
-
-/-- The entry label of register `w` in the word of orientation `rev`. -/
-def entryLabel (rev : Bool) (w : ℕ) : ℕ :=
-  if rev then Trace.backwardInitial.label w else Trace.forwardInitial.label w
-
-/-- The exit label of register `w` in the word of orientation `rev`. -/
-def exitLabel (rev : Bool) (w : ℕ) : ℕ :=
-  if rev then Trace.backwardFinal.label w else Trace.forwardFinal.label w
 
 theorem portData_check {a : ℕ} (ha : a < 112) : portCheck (portData a) = true :=
   List.all_eq_true.mp ports_check _ (portData_mem ha)
@@ -57,10 +47,6 @@ noncomputable def dataOut (s a : ℕ) (f : Fin 73 → ZMod 4) (l : ℕ) : List P
       adapterOut (stageChart (portData_check ha) s hs) (splitStage (portData_check ha) s hs f).gs l
     else adapterOut (LinearEquiv.refl _ _) (split0 (portData_check ha) f).gs l
   else []
-
-/-- The local indices of the data chart at stage `s`. -/
-def dataIndices (s : ℕ) : List (Fin 73) :=
-  if hs : 1 ≤ s ∧ s ≤ 8 then stageIndices s hs else lowIndices
 
 /-- Two frames agree off the local indices of the data chart. -/
 def SameExterior (s : ℕ) (f f' : Fin 73 → ZMod 4) : Prop :=
@@ -91,15 +77,6 @@ theorem dataOut_dataIn {s a : ℕ} (ha : a < 112) {f f' : Fin 73 → ZMod 4} (he
     · exact he k (by simp [dataIndices, hs, hk])
 
 /-! ### Helper wrappers -/
-
-/-- The group, stream and port of a family index. -/
-def famReplica (f : ℕ) : ℕ := f / 896
-def famStream (f : ℕ) : Fin 8 := toStream ((f % 896) / 112)
-def famPort (f : ℕ) : ℕ := f % 112
-
-/-- The hosted slice of a helper family at a slot, as a basis mask. -/
-def helperMask (slot f : ℕ) : ℕ :=
-  (hostAcc (groupData (famReplica f) (famPort f)) slot (famStream f)).1
 
 /-- The pre-wrapper of a helper register hosting family `f` between labels `l` and `l'`. -/
 noncomputable def hostIn (slot f l l' : ℕ) : List Prim :=
