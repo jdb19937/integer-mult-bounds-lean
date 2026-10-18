@@ -35,7 +35,7 @@ theorem run_hosted (G : GroupData) (slot : ℕ) (x : Fin 8 → S) :
   | cons h l ih =>
     funext i
     by_cases hs : h.1 = slot
-    · rw [List.filterMap_cons_some (by split_ifs <;> first | rfl | contradiction)]
+    · rw [List.filterMap_cons_some (by split_ifs; rfl)]
       change run M _ (Event.run M (.phase (toStream h.2.1) (h.2.2, 0)) x) i = _
       rw [ih]
       simp only [Event.run]
@@ -44,7 +44,7 @@ theorem run_hosted (G : GroupData) (slot : ℕ) (x : Fin 8 → S) :
         rw [Function.update_self, List.filter_cons_of_pos (by simp [hs]), List.foldr_cons,
           Vec.toFun_add, add_comm, op_add]
       · rw [Function.update_of_ne hi, List.filter_cons_of_neg (by simp [Ne.symm hi])]
-    · rw [List.filterMap_cons_none (by split_ifs <;> first | rfl | contradiction), ih,
+    · rw [List.filterMap_cons_none (by split_ifs; rfl), ih,
         List.filter_cons_of_neg (by simp [hs])]
 
 /-- **Data events.** The forward and reverse sweeps of the active pair. -/
@@ -67,6 +67,6 @@ theorem run_data (P : PortData) (stage pair : ℕ) (rev : Bool) (x : Fin 8 → S
     simp only [toStream, ne_eq, Fin.mk.injEq]
     omega
   cases rev <;> by_cases h1 : i = toStream (2 * pair) <;> by_cases h2 : i = toStream (2 * pair + 1) <;>
-    simp_all [dataEvents, run, Event.run, Function.update_apply, Ne.symm hxy]
+    simp_all [dataEvents, run, Event.run, Ne.symm hxy]
 
 end IntegerMultBounds.Networks.Certificates.T16.Impl

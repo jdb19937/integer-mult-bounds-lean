@@ -43,7 +43,7 @@ noncomputable def basisChart (B : Fin 73 → Addr) (hB : Orthonormal73 B) (σ : 
     funext j
     have hB' : ∀ i j, Labels.binary 73 (B i) (B j) = if i = j then 1 else 0 := hB
     simp only [binary_sum_left, binary_smul_left, hB', σ.injective.eq_iff, mul_ite, mul_one,
-      mul_zero, Finset.sum_ite_eq, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
+      mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   right_inv y := by
     conv_rhs => rw [hB.expand y]
     exact (Equiv.sum_comp σ (fun k => Labels.binary 73 y (B k) • B k))
@@ -69,7 +69,7 @@ theorem basisChart_orth (B : Fin 73 → Addr) (hB : Orthonormal73 B) (σ : Equiv
   change Labels.binary 73 (∑ j, x j • B (σ j)) (∑ j, y j • B (σ j)) = _
   have hB' : ∀ i j, Labels.binary 73 (B i) (B j) = if i = j then 1 else 0 := hB
   simp only [binary_sum_left, binary_sum_right, binary_smul_left, binary_smul_right, hB',
-    σ.injective.eq_iff, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
+    σ.injective.eq_iff, mul_ite, mul_one, mul_zero]
   simp [Labels.binary, Labels.form_apply, mul_comm]
 
 /-! ### Swap charts -/
