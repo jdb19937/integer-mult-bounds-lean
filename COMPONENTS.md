@@ -1751,8 +1751,6 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 - `Machine/CountedTapeRepairBank.lean`: Literal original-input and full repair-stage output banks, including the exact ideal stream on output10 and retained key scratch. Defines paid preparation plus scan/sort/strip/reinsert costs. Stage streams, selectors and sentinels remain explicit at the endpoint.
 
-- `Machine/CountedTapeRepairRun.lean`: One fixed forty-two-tape machine physically prepares scan metadata, invokes the fixed runtime-driven repair key and executes actual scan, radix sort, prefix stripping and reinsertion. The exact output is the ideal early permutation, with all preparation and execution charged. Uniform record-volume/density budgeting and reusable final stage cleanup remain separate.
-
 - `Machine/BinaryCorrectionOffsetRow.lean`: Copies exactly one runtime-width row from both operands, invokes the actual subtraction rule with fresh zero borrow, and erases both row scratch words. Exact modular difference and cost15W+14*headerLength+46 are proved; borrows never cross row boundaries.
 
 - `Machine/BinaryCorrectionOffsetLoop.lean`: Fixed nested row traversal executes the physical subtraction independently for each address row, with exact output concatenation, restored row scratch and all counted-loop transitions charged.
@@ -2255,8 +2253,6 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 - `Machine/ActiveRepairEarlyKeyPlaced.lean`: Complete early full-rank key computation on thirty-two arbitrary caller ports retains every spectator and restores eighty-four appended private tapes with unchanged linear bound.
 
-- `Machine/ActiveRepairEarlyKey.lean`: Complete genuine-current-rank early key endpoint through physical parsing, inverse/guard, full-rank reconstruction, conditional key output and cleanup. Original geometric header-producer wiring and scan/pipeline integration remain separate.
-
 - `Machine/ActiveRepairLateFieldsCopy.lean`: Paid physical copies of genuine extracted V/T/U into blank late-inverse work preserve every original and the full counter.
 
 - `Machine/ActiveRepairLateFieldsBank.lean`: Thirty-five-tape extracted-field late repair bank retains V/T/U/current controls, q/b/n and full rank, separating recovered outputs and blank private work.
@@ -2295,8 +2291,6 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 - `Machine/ActiveRepairEarlyKeyOriginalPlaced.lean`: Arbitrary forty-two-port original-input caller placement retains all originals/spectators and restores126 appended private tapes, with the actual original-header generation and erasure costs.
 
-- `Machine/ActiveRepairEarlyKeyOriginal.lean`: Complete original-width early key endpoint requires no supplied parser/patch starts, source control word, local rank or destination. Final packing parameter synthesis, scan initialization and repair assembly remain separate.
-
 - `Machine/ActiveRepairEarlyOriginalScan.lean`: Actual original-input early key satisfies the growing-counter RepairScan contract: each record physically derives all field headers, computes its varying-control full key and restores every header/work tape.
 
 - `Machine/ActiveRepairEarlyOriginalPipelineRun.lean`: Fixed180-tape original-descriptor scan/sort/strip/reinsert program returns exact filled stream with paid per-record synthesis, extraction and sorting costs. Scan initialization, final working-tape cleanup, global ideal-permutation and density bridges remain separate.
@@ -2315,10 +2309,6 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 - `Machine/ActiveRepairLateKeyPlaced.lean`: Complete late full-key machine on thirty-three arbitrary caller ports preserves original/spectator tapes and heads and restores91 appended private tapes with unchanged cost.
 
-- `Machine/ActiveRepairLateKeyValue.lean`: Actual late flag/local key equal late rank semantics; generated full original-layout destination replaces recovered V/T/U and retains all source/back/spectator fields.
-
-- `Machine/ActiveRepairLateKey.lean`: Complete genuine-current-rank later key computation, three-field destination patch, conditional key write and cleanup. Original-width header synthesis wiring and scan/pipeline integration remain separate.
-
 - `Machine/ActiveRepairLateKeyOriginalData.lean`: Original geometric/source/b descriptors, genuine rank and marked empty key form the late input, with all derived headers and parsed/repaired fields blank.
 
 - `Machine/ActiveRepairLateKeyOriginalValid.lean`: Original width descriptors and packing identities imply every late parsing/inverse/patch premise, including recovered-U geometry without supplied computed starts.
@@ -2328,8 +2318,6 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 - `Machine/ActiveRepairLateKeyOriginalGeometry.lean`: Both original-layout source orders derive all width bounds and V/T/U/source fits from active geometry, compact capacity and source containment.
 
 - `Machine/ActiveRepairLateKeyOriginalPlaced.lean`: Forty-three-port original-input late key caller placement preserves every original/spectator and restores134 appended private tapes, paying all synthesis and erasure.
-
-- `Machine/ActiveRepairLateKeyOriginal.lean`: Complete original-width later key needs no supplied computed starts, varying controls, local rank or destination. Final original packing parameter synthesis, scan initialization and repair assembly remain open.
 
 - `Machine/ActivePrefixEarlySequenceData.lean`: One unchanged original-array bank aligns target and compact views for all four early actions and retains prepared stage headers. Literal result composes selected, pure parity, correction and negative parity-XOR in source order.
 
@@ -2709,8 +2697,6 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 - `Machine/ActiveRepairLayoutRecordsAssemblyOriginalEarly.lean`: Actual original-fourteen-input early repair constructs all metadata and record count, formats the literal early-permuted full array, repairs and decodes it, cleans record buffers and restores the producer; exact ideal raw output and full linear volume bound are proved. Fifteen copied consumer metadata words remain retained.
 
-- `Machine/ActiveRepairLayoutRecordsAssemblyOriginalLate.lean`: Actual original-fourteen-input later repair for the before-source layout constructs metadata/count, formats and repairs the literal full array, decodes ideal output and restores the producer with a full linear volume bound. Fifteen consumer metadata words remain retained; the actual after-source payload connection is separate.
-
 - `Machine/ActiveRepairLayoutRecordsHeadersAfterBudget.lean`: Actual unchanged original-header producer/copy costs have linear full-volume bounds under source fit in the active-after field, without an active-before source-fit premise.
 
 - `Machine/ActiveRepairLayoutRecordsBankAfterBudget.lean`: Physical repair metadata installation and producer erasure have paid linear full-volume bounds for the active-after source layout.
@@ -2881,8 +2867,6 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 - `Machine/ActivePrefixStageDispatchBudget.lean`: The complete runtime source-order dispatcher retains the certified compact-width exponent, paying original comparison, selected stage and flag erasure without charging both branches.
 
-- `Machine/ActivePrefixStageDispatchEndpoint.lean`: Literal raw-array output at origin, original headers retained and every generated/private tape including the runtime direction flag blank at the actual dispatcher boundary.
-
 - `Machine/ActivePrefixStageDispatchSelected.lean`: Runtime-derived selected destination matches every original array address; the whole actual dispatched array action squares to identity under original source disjointness.
 
 - `Machine/ActivePrefixStageWidthSelector.lean`: The real reusable width selector physically writes fixed one, compares the original f word, erases the generated constant and yields the packed-versus-singleton flag with paid cleanup.
@@ -2911,15 +2895,7 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 - `Machine/ActivePrefixStageRuntimeSelected.lean`: The runtime-selected array action gives literal original source-selected XOR on target fields, preserves the full source and every other field, for every positive width.
 
-- `Machine/CompactBinaryBasisSchedule.lean`: Actual old/new binary bases determine literal selected-bit Stage instructions on a supplied consecutive-slot Node, retaining its width and selected column; fixed word length and independent-column basis-change semantics are proved. Ambient phase-basis extension, physical address-coordinate correspondence and repeated tape execution remain separate.
-
 - `Machine/ActivePrefixStageInverseMachine.lean`: A single proved involutive array machine implements its own reverse with unchanged runtime, and its actual two-run composition restores the complete caller at twice the cost plus one join.
-
-- `Machine/ActivePrefixStageFullInverseData.lean`: Both original-input full stage array actions are involutions under the actual ordered-slot disjointness proofs.
-
-- `Machine/ActivePrefixStageFullInverseRun.lean`: Both original-input physical full stage machines undo their forward action and make exact paid round trips, restoring every descriptor and private tape.
-
-- `Machine/ActivePrefixStageDispatchInverseRun.lean`: The fixed original-input runtime direction dispatcher executes its own inverse and exact paid round trip, retaining original slot words and clearing its computed flag.
 
 - `Machine/ActivePrefixStageSingletonInverseData.lean`: Both actual singleton coordinate and array actions, including runtime source-order selection, square to identity with original source preserved.
 
@@ -3066,9 +3042,6 @@ Compact packed controls, repair, and density bounds.
 - `Compact/ActiveTargetSubsegmentWords.lean`: Guarded packed toggles equal the literal stride-q selected XOR mask inside the full target slot, with exact spectator intervals. The omitted highest selected toggle acts separately on the first retained high bit; the combined full-selected mask and full slot width are proved. Physical highest-toggle execution remains separate.
 
 ## Networks
-
-- `Networks/GaussianHadamardPhase.lean`: Literal pointwise readout of the same all-coordinate and tensor-column diagonal corrections in GaussianHadamardBridge. The exact product of original unit phases is shared with the physical native phase scanner, including zero dimensions.
-- `Networks/GaussianHadamardBridge.lean`: Unconditional exact normalized half-sum/half-difference semantics, coordinate phase conversion and distinct-selected-coordinate product identity. The all-coordinate tensor theorem wraps the same fullFrame certified by actual roots in explicit input/output phases, with normalization once per bit per column, including zero dimensions. Public natural-address identification, physical phase/normalization execution, final rounding and wrapper cost remain open.
 
 - `Networks/AffineFieldBijective.lean`: Legal finite field programs are bijections, including reflected subtraction and literal coordinate interchange, validating original inverse-function address semantics.
 
@@ -3900,18 +3873,6 @@ Bit and complex networks.
 
 - `Networks/RationalScalarGrid.lean`: Transports actual rational scalar module rows pointwise into the Gaussian grid representation without changing retained wire roles.
 
-- `Networks/GaussianFrameInverseGrid.lean`: Derives bounded inverse Walsh label frames, inverse tensor-phase frames and rational label-frame decoding from actual finite sums.
-
-- `Networks/BinaryWalshComplexConjugation.lean`: Complex conjugation preserves the real binary characters, forward Walsh transform and explicit inverse Walsh transform, and negates actual phase diagonals and complete phase frames. It converts the literal translation-kernel list to the inverse-phase list in the same order, yielding an exact conjugate-forward-conjugate identity. This is a mathematical foundation for faithful inverse-oriented recursive execution; physical conjugation, original framed-network assembly and full recursion remain separate obligations.
-
-- `Networks/BinaryColumnConjugation.lean`: Complex conjugation lifts through actual column operators and tensor products, including zero columns. The genuine whole-array phase frame and rational label frame conjugate to their actual inverses. This identifies the inverse-oriented mathematical target; physical wrappers and recursive assembly remain separate.
-
-- `Networks/ComplexFramedConjugation.lean`: Every original rational scalar gate commutes with complex conjugation. The literal conjugated framed instruction list retains every gate and original order, with exact conjugated source/sink endpoints. Conjugating the original endpoint correction routines as well yields conjugate-full-frame-conjugate on every data and scratch wire. The physical correction/wrapper traffic and full recursive execution remain open.
-
-- `Networks/ComplexInverseExecution.lean`: The original corrected compiler network and its original conjugated version compute the genuine forward or inverse full tensor on every data and dirty scratch wire. The joint oriented_corrected_network theorem covers both orientations, including their source/sink corrections; actual conjugated frameOf values are identified with their true inverses. This closes the mathematical orientation milestone. Physical table joins and full recursive tape execution remain separate.
-
-- `Networks/ComplexEndpointGrid.lean`: Original source sign characters and sink signs, runtime I phase, negation and named bank exchange preserve the exact Gaussian dyadic denominator and both numerator bounds, including arbitrary scratch. Pre-correction and post-correction require no extra numerical reserve; actual tape boundary assembly remains separate.
-
 - `Networks/FramedControlSchedule.lean`: Role-preserving zipper attaches field programs to framed edges while retaining every scalar gate and original instruction order, with exact execution under edge realization.
 
 - `Networks/FramedControlShape.lean`: Exact shape forgets only frame operators, retaining edge roles and scalar gates; equal shapes imply identical attached controls, including restriction and renaming.
@@ -4512,9 +4473,6 @@ Schönhage–Strassen multiplication, the fast multiplier used for the packed pr
   recurrence (`ssCost_le`) and its `O(N log N log log N)` runtime
   (`runs_ssMain_bound`); exact products below `2^m` (`runs_ssExact`).
 
-- `Schoenhage/SSProgram.lean`: the multiplier compiled to a literal 64-tape
-  `Program` with a `HoareTime` contract on encoded tapes (`ssProgram_hoare`).
-
 - `Schoenhage/Relabel.lean`: word programs moved into a larger bank by an
   injective map of tape names, with the same cost and every other tape
   untouched (`Runs.map`).
@@ -4612,13 +4570,6 @@ Schönhage–Strassen multiplication, the fast multiplier used for the packed pr
   address subtraction, error `√2 M (3ℓ + 1) 2^(-p)`, output width `w + log₂ M`
   with `Γ(w_M)` on a descriptor tape, the paper's cost (`MeetsConvolution`,
   `convolutionTarget`). Definitions only.
-- `Spec/SimultaneousLayer.lean`: the statement of the paper's simultaneous
-  normalized butterfly layer: header `Γ(p)Γ(d)Γ(r)Γ(D)Γ(P)Γ(S)Γ(K)Γ(ρ+1)Γ(w)`, an
-  array on `[P] × [2^K]^D × [S]`, `ℋ` the tensor of `H₀` on bit `ρ` of every chunk
-  (`hadamard`), output `Q_p(ℋ z)` in place (`layerOut`) within `O(V d^λ')`
-  (`MeetsLayer`, `layerTarget`). Definitions only.
-- `Spec/SimultaneousLayerFacts.lean`: the returned coefficients lie in the unit
-  disk (`layerOut_norm_le`) and within `√2 2^(-p)` of `ℋ z` (`layerOut_close`).
 
 ## MathlibTM2 integration
 
@@ -4628,9 +4579,7 @@ Schönhage–Strassen multiplication, the fast multiplier used for the packed pr
 - `MathlibTM2/Node/CompactSwap.lean`, `Cost/CompactSwap.lean`: Prepared two-field interchange on actual host bit streams, with arbitrary dirty compact fields, preserved spectators and exact register restoration. Runtime is bounded in compact width and total bit volume, with bank-size assumptions explicit. Header production and conversion from the live layer encoding remain separate.
 - `MathlibTM2/Node/CompactRotParity.lean`: Seven-register host scanner packs the low bit of each runtime-width block into padded output blocks, preserves the source and parameter registers, and restores scratch with an exact linear step count. This builds an offset word; it does not execute a full compact toggle. `CompactControlCheck.lean` audits the new primitive contracts.
 - `MathlibTM2/Theorem.lean`: Unconditional `MathlibTM2.statement` proves that one fixed finite Mathlib machine multiplies every input pair in worst-case time below n log n. The complete host program and actual cost bound are supplied internally, with positive saving `2^-66`. This is the completed route in plan C; the original compact-control target uses the larger saving `83/10^12`.
-- `MathlibTM2/Fast/Final.lean`, `Cost/MatchSynLoop.lean`, `Cost/Total.lean`: Assemble the implemented parameter distribution, synthetic transforms and full multiplier, discharge the last transform-loop cost premise, and prove the total-time bound. `Fast/MainCorrect.mn_hostMul_ge` supplies large-input correctness; the finite dispatcher covers short inputs. `CompletedProofCheck.lean` checks the final theorem's three-standard-axiom dependency set.
-- `MathlibTM2/Mult/PipelineOutput.lean`: Instantiates exact-width carry normalization and the literal output contract with the contribution's concrete numerical multiplication pipeline. For all large input lengths, original equal-length MSB words yield exactly twice-length product bits with no supplied coefficient or transform-error hypothesis. The complete host machine now produces canonical Mathlib output through `MathlibTM2.statement`; installing this separate exact-width native word and matching the stronger compact-control parameters remain separate targets.
-- `MathlibTM2/Mult/TransformRecords.lean`: Converts both computed synthetic transforms to explicit public signed records. Original disk-grid records imply exact output record count, disk-grid numerator bounds and the existing strict forward/opposite `Close` guarantees with identity layout. Actual host transform loops in their physical layout and their total step bound are now supplied by `Fast/SynFwd` and `Cost/MatchSynLoop`; the original native public-bank target remains distinct.
+- `MathlibTM2/Cost/MatchSynLoop.lean`, `Cost/Total.lean`: Assemble the implemented parameter distribution, synthetic transforms and full multiplier, discharge the last transform-loop cost premise, and prove the total-time bound. `Fast/MainCorrect.mn_hostMul_ge` supplies large-input correctness; the finite dispatcher covers short inputs. `CompletedProofCheck.lean` checks the final theorem's three-standard-axiom dependency set.
 - `MathlibTM2/Layer/LayerZ.lean`, `NodeZ.lean`, `TopZ.lean`: The contributed scaled Gaussian recursion has unconditional mathematical correctness by induction over children; the normalized top-level function includes phases, padding, piece composition and final truncation. This is a different representation from the native event schedule and its ledger.
 - `MathlibTM2/Layer/Recurrence.lean`, `MathlibTM2/Node/Body.lean`, `MathlibTM2/Node/LayerProc.lean`, `MathlibTM2/Node/TopProc.lean`: The recurrence solution and node-body execution now have concrete recursive factor procedures and complete layer/top programs, proved by induction with actual execution costs. The host route is complete; reconciling its parameter choices with the stronger compact-control witness is a separate target.
 
@@ -4689,8 +4638,6 @@ The 669 modules that neither `MathlibTM2/Theorem.lean` nor any audit or check fi
 - `Swap/ArbitraryWidth.lean`: the cost assembly of Lemma 4.4.
 
 ## Top-level
-
-- `ExactRecoveryOutput.lean`: Turns the actual recovered coefficients into exactly twice the input length in bits by proving that excess leading padding is zero. Covers nondivisible chunk widths, directly instantiates `ExactRecovery.exact_product`, and identifies the literal machine output contract once the word is installed. Carry compilation, physical installation and runtime are separate obligations.
 
 Parameters and asymptotics.
 
