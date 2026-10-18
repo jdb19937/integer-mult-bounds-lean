@@ -2080,3 +2080,82 @@ forward map (`notes/fast-gaussian-resampling.tex` at the selected revision,
 `O(M(p))` per element, replacing the `α√p` window) and the banded `B̃₀` at
 `α² ≈ p^r` with `r < 1-ε`; its margin `(1+r)/2-epsilon-delta` stays positive for
 `epsilon < 2/3`, so the phase-cell inverse is not needed for this step.
+
+## Milestone detail
+
+Moved from `PLAN.md` on 2026-10-18, when `PLAN.md` became a one-screen dashboard. These records
+describe the state at `25222/2^46`, before the merge of PR 4 (seven-eighths chunks) and PR 5
+(prime moduli, balanced prefix, DFT corollary, PR589 bit-side work). Current status is in
+`PLAN.md`; the per-milestone designs since then are `IntegerMultBounds/MathlibTM2/Balanced/DESIGN.md`
+(M5), `IntegerMultBounds/MathlibTM2/M6/DESIGN.md` (M6), `IntegerMultBounds/MathlibTM2/NearOne/DESIGN.md`
+(M7 and near-one dimensions) and `IntegerMultBounds/Primes/DESIGN.md` (prime moduli).
+
+#### Milestone table at `25222/2^46`
+
+| ID | Progress | Original sections | Concrete deliverable | Bound effect / remaining work |
+| --- | --- | --- | --- | --- |
+| **M1** | ✅ | **§§5, 6, 9** | **Set `epsilon=2^-30`, `c=2^-34`; reprove dependent sizing, executable parameter generation, cost and machine lemmas.** | **Complete, historical.** Public saving `kappa=2^-93`; exact internal margin `296/(10^11 * 2^64)` lies between `2^-93` and `2^-92`. Internal margin improved by `2^67`; public saving improves the former exact bound by more than `2^66`. |
+| M2 | ✅ | §§4.3, 8.2, 9.3 | Replace adjacent CRT walks by direct nonadjacent swaps; preserve exact semantics and price setup, controls, movement and cleanup. | **Complete.** The running multiplier uses linear CRT routing and sharp linear resampling costs. Final parameters `epsilon=2^-5`, `c=2^-32`, `lambda'=1-1/10^11` give exact margin `296/(10^11 * 2^37)` and public saving `2^-66`; theorem and focused audit pass. |
+| M3 | 🟡 | §5.2–5.3, Appendix A | Compact dirty controls, actual caller integration, stopped recursion and local repair costs. | **Compact integration complete:** actual fourth-root transforms, main input/distribution, full arithmetic chain, output, cleanup and finite-machine dispatch prove public saving `2^-33`, with rounded synthetic layers (one scale per level, truncation errors absorbed by the rounds) at `epsilon=9/32`. **Remaining:** stopped top/layer integration and cost absorption; actual global cutoff, reservation/root construction and configured precision are checked. |
+| M4 | ⬜ | §5.4, §9.7 | Linear completed-child precision bound and explicit recursive workspace/stock contracts. | Planned. Remove conservative guard-growth restrictions and prove the reserve coefficients required at selected cutoffs. |
+| M5 | ⬜ | §6.2, §4 | Balanced prefix and arbitrary-source coordinate routing in both transform directions. | Planned. Replace layout saving `epsilon c a_b` by direct movement saving `a_b`; restore spectators and frequency order. |
+| M6 | 🟡 | §3.1–3.6, §§4–5 interfaces | Prove both selected finite suppliers, their variable-rank moments and the 144-call owner schedule. | The complete selected PR589 scalar word and finite-register dirty endpoint are checked, including source/helper restoration. Exact PR589 frame-state/compiler boundaries, concrete rational frame/COPY interpretation and all636 label dimensions, plus T16 charge profile, owner-row bounds, label traces, finite geometry and source-faithful binary tableau ranks for every native event with all1004 literal extension matrices are checked. Exact selected moment bills (T16 at `7/4178` tied to the checked schedule; PR589 at `10/5769`, occurrence link open) and the layer moment interface are checked. The T16 node is lowered to the layer machine and runs in the completed proof; the PR589 bit supplier and a variable-child layer recurrence remain. Target primitive endpoints about `0.00173343` (bit) and `0.00167546` (complex); component bounds alone do not update the final bound. |
+| M7 | 🟡 | §8.1–8.3, §9.2/9.7 | Prove faster rounded Gaussian inverse and bulk core/halo tape execution, including prime supply and exact recovery interfaces. | Actual executable coefficients, square-root band, periodic operator error≤`2^(-45p)` and small-gap exact/rounded inverse bounds `4p`/`8p` are checked and audited, including all aliases. Also checked: the actual rational periodic matrix with elimination margin `1/(8p)`; exact, `8p`-conditioned boundary solves with band-or-same-cell sparsity and block-Schur identification; Gohberg–Semencul inverses of actual interior Toeplitz blocks with rounded scaled block-solve errors; and the exact four-step interior/boundary solve with rounded-error composition. Rounded boundary factorization, boundary ordering, tape costs and bulk execution remain; these must remove the Gaussian restriction and support near-one dimensions. |
+| M8 | ⬜ | §9.1–9.8 | Prove bootstrap base/stages, link all 47 inequalities to actual stages and close the audited fixed-machine theorem. | Planned. Goal: exact unconditional saving `0.001672660197076918`. |
+
+#### Section bottlenecks at `25222/2^46`
+
+| Manuscript section | Progress | What limits our bound | Improvement needed |
+| --- | --- | --- | --- |
+| §2 Machine model and streams | 🟡 | Every new algorithm needs actual finite-machine costs and clean returned state. | Reuse Mathlib FinTM2 and existing host primitives; price new schedules. |
+| §3 Finite networks | 🟡 | Current bit/complex primitive savings are `2.96e-9` and, with the T16 node on the layer machine, `10^-3` (`log_73 (F/NW) < 999/1000`). | Selected PR589 bit supplier and T16 complex supplier, with checked words, restoration, owner schedules and variable-rank moments. |
+| §4 Address interchange | 🟡 | All field moves inherit the bit exponent; the running CRT now uses linear direct routing. | Prove selected arbitrary-source routing contracts. |
+| §5 Butterfly layers; Appendix A | 🟡 | **The T16 node takes the layer margin `epsilon (1-lambda')` off the critical path; the layout margin `epsilon c (1-tau)` binds.** Complete compact runtime is proved. | Tighten recursive layer costs using stopped recursion, precision and proved recursive stock. |
+| **§6 Synthetic transforms/layout** | 🟡 | **Layout saving `epsilon c (1-tau)` exceeds the public saving by a factor of about `1.77` but remains a nearby restriction.** | M2 retuned epsilon/c; next replace this charge by selected coordinate routing and a balanced prefix. |
+| §7 Exact polynomial products | ✅ | Packing widths and extra logarithms must remain within budget. | Reuse the proved fast subroutine and exact algebra; revalidate under new widths. Not currently binding. |
+| §8 Resampling | 🟡 | Current Gaussian exponent is `1/2 + 2^-7 + epsilon(1+2^-33)` (band width `α` logarithmic); margin `2^-7 - 31/2^39` at `epsilon=31/64`. | Chirped-correlation forward map (`O(M(p))` per element) and a wider banded inverse for `epsilon > 1/2`. |
+| §9 Exact multiplication/cost | 🟡 | Direct CRT charge is `d(1+ell^tau)`; the final bound is the smallest stage margin. | Seven-stage bootstrap, all 47 linked target inequalities and unchanged exact output semantics. |
+| §§10–11 Arithmetic/transposition corollaries | ⬜ | Downstream consequences, not multiplication bottlenecks. | Defer until the multiplication bound advances. |
+
+#### The `epsilon < 1/2` barrier before the prime moduli
+
+**The `epsilon < 1/2` barrier.** `2^-32` needs `epsilon > 0.557` with the existing supplier. Beyond `1/2` the `d` pairwise coprime moduli must sit in windows `[(1-2η)t, (1-η)t]` of relative width `η = 1/(4d)`, with `d ≫ log t`. Every elementary construction (`oddProd`, `1 + iM`, primorial shifts) needs `d² log d ≲ b`; the selected construction instead cites Baker–Harman–Pintz primes in short intervals. Mathlib has only Chebyshev bounds and Bertrand. So the next dyadic step needs **both** a short-interval prime supply (at least PNT with a `(log x)^-A` error term, `A > 2`) **and** a faster forward Gaussian map. The forward map is the selected chirped correlation (`notes/fast-gaussian-resampling.tex`), `O(M(p))` per element. The existing banded `B̃₀` with a larger `α² ≈ p^r`, `r < 1-ε`, suffices for the inverse up to `epsilon < 2/3`, so the phase-cell inverse is not on the critical path for `2^-32`.
+The actual compact runtime removes the old full-slot control restriction. A
+checked route certificate (`CompactGaussianRoute`) shows that with the **existing** supplier the selected Gaussian margin
+lets every stage margin cover `2^-32` at `epsilon=5/8`, while no Gaussian
+improvement alone reaches `2^-31`; M6 is needed beyond `2^-32`. Stopped recursion and precision/workspace accounting in M3–M5 continue.
+
+#### M3 integration checklist
+
+| Deliverable | Progress | Remaining gate |
+| --- | --- | --- |
+| Compact slot, basis, factor and recursive layer execution | ✅ | Checked actual programs and local costs. |
+| Full runtime top transform and original size/precision bridges | ✅ | No per-piece readiness or execution premise remains. |
+| Persistent original guard/dimension, per-round refresh and cleanup | ✅ | Checked from explicit original parameter sources. |
+| Individual round stages and expanded main-host placement | ✅ | Checked staging/frame contracts and register embeddings. |
+| Complete compact chunk round | ✅ | Checked actual preparation, top execution, restoration and cleanup from original round state. |
+| Original-input bootstrap and transform-boundary cleanup | ✅ | Checked the dimension-minus-one correction, parameter precision source, retained globals and charged exit. |
+| Counter-driven compact/direct dispatch | ✅ | Checked both actual branches, original butterfly semantics and full main-register frame. |
+| Forward/opposite rounds and complete scans | ✅ | Checked original transform stream semantics and full-register restoration except I/O. |
+| Bootstrap-to-transform frame | ✅ | Derives setup from real sources, establishes readiness and restores the original file except output after charged exit. |
+| Complete forward/opposite transform specifications | ✅ | Existing layouts, actual distributed parameters and charged setup/exit; no layout, execution or readiness oracle remains. |
+| Expanded main/source-stage entry and execution | ✅ | Original main invariant supplies entry; concrete source forward/opposite stages run with exact costs. |
+| Expanded fifteen-stage arithmetic chain | ✅ | Actual retuned source stages and original primitive stages compose with exact twelve-step normalization overhead; outer input/distribution/output and full cleanup are also integrated. |
+| Concrete round and setup cost accounting | ✅ | Checked actual records, setup, recursive calls, controls and cleanup; scalar-budget obligations remain explicit. |
+| Uniform caller budgets and round overhead | ✅ | Combined scalar/divisor budgets, actual record validity and full overhead are derived for the old and larger chunks. |
+| Larger-chunk recursive readiness and top execution | ✅ | Uniform shape, selected rows, descendant packing and actual parked top execution; full retuned chunk/transform composition remains. |
+| Compact layer guard growth | ✅ | Actual original-precision guard fits any positive dimension power with dyadic constants; closed recurrence guard factor fits the proposed layer exponent. |
+| Executable fourth-root parameters and distribution | ✅ | Charged table-slot overwrite and distribution wrapper preserve other fields; derived synthetic/layout fields consistently use the new chunk. |
+| Complete fourth-root transforms | ✅ | Actual forward/opposite specifications use the new initial wires and existing executable layouts, with no execution/layout/readiness oracles. |
+| Retuned reservation and complete top-cost exponent | ✅ | All reserved axes and the actual recursive top program, kernels and controls fit the proposed layer exponent with dyadic coefficients. |
+| Retuned distribution-to-transform entry | ✅ | Actual charged distribution preserves the main invariant and supplies the new transform entry state. |
+| Retuned aggregate analytic bound | ✅ | Stage envelope and actual machine costs are matched at saving `2^-34`. |
+| Replaceable main procedure entry | ✅ | Checked restricted-call transport preserves layer execution when installing the expanded main body. |
+| Actual retuned layer costs | ✅ | Complete chunk layer and direct branch costs match the retuned envelope; loop summation remains. |
+| Retuned source transforms under replaceable main entry | ✅ | Full source stages execute with exact costs under the expanded recursive procedure table. |
+| Main overhead, normalization and cleanup cost bridge | ✅ | Original primitive costs, fixed wrapper steps and expanded-host cleanup fit the sharper bound given the actual source-run match. |
+| Actual compact round and loop cost sums | ✅ | Both loop directions fit the retuned convolution envelope given the explicit stash budget. |
+| Expanded source and total-time aggregation | ✅ | All three actual source-run costs plus main overhead fit the stronger asymptotic bound, conditional on the two complete transform costs. |
+| Complete transform and concrete main-time estimate | ✅ | Actual stash, layout, bootstrap, loops, source runs and main overhead satisfy the `2^-34` envelope with no remaining stage-cost hypotheses. |
+| Stronger fixed-machine theorem | ✅ | Public `MathlibTM2.mulInTime` proves `2^-34` for every input pair; complete actual execution and cost hypotheses are discharged. |
+| Stopped recursion | 🟡 | The full stopped digit scanner, semantic rebased records and cutoff from a supplied threshold are checked; global threshold generation, caller/precision integration and final layer-cost matching remain. |
