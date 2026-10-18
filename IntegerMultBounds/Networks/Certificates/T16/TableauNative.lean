@@ -1,20 +1,12 @@
 module
 
-public import IntegerMultBounds.Networks.Certificates.T16.TableauFramesCatalog
+public import IntegerMultBounds.Networks.Certificates.T16.TableauExtension
 
-/-! Unconditional binary X-block ranks for the exact source extension matrices
+/-! Unconditional binary X-block ranks for the completed frame extensions
 and the retained native forward/backward events. Phases remain out of scope. -/
 @[expose] public section
 namespace IntegerMultBounds.Networks.Certificates.T16.Tableau
 open Geometry
-
-/-- The checked dual masks are exactly the rows of the inverse address map. -/
-theorem MatrixWitness.equiv_symm (m : MatrixWitness) (h : m.DualCheck) (x : Address) :
-    (m.equiv h).symm x = m.backward x := by
-  have hi := LinearMap.congr_fun (m.left_inverse h) ((m.equiv h).symm x)
-  change m.backward (m.equiv h ((m.equiv h).symm x)) = (m.equiv h).symm x at hi
-  rw [LinearEquiv.apply_symm_apply] at hi
-  exact hi.symm
 
 theorem nativeTableau_inverse_Z (id : ℕ) :
     inverseZ (nativeTableau id) = frameLagrangian (catalog id).space := by

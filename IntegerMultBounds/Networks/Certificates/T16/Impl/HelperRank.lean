@@ -2,7 +2,7 @@ module
 
 public import IntegerMultBounds.Networks.Certificates.T16.Impl.CallCheckDefs
 public import IntegerMultBounds.Networks.Certificates.T16.Impl.CallCheck
-public import IntegerMultBounds.Networks.Certificates.T16.TableauFramesCatalog
+public import IntegerMultBounds.Networks.Certificates.T16.TableauExtension
 
 /-! The X-block ranks of the helper transitions. Every helper starts at the empty label or ends
 at the full label, except two pairs whose inclusion is witnessed explicitly; nested labels
