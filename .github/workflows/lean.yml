@@ -27,12 +27,8 @@ jobs:
           sudo mkswap "$f"
           sudo swapon "$f"
           free -g
-      # Lake runs one module per Lean worker thread; three heavy kernel checks fit in 16 GB,
-      # four do not and leave the runner thrashing in swap.
       - uses: leanprover/lean-action@v1
         timeout-minutes: 55
-        env:
-          LEAN_NUM_THREADS: 3
         with:
           use-github-cache: false
       # A timed-out build can leave Lean processes writing into .lake; stop them so the archive is consistent.
