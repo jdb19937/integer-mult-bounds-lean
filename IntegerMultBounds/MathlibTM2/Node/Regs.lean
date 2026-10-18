@@ -395,6 +395,23 @@ def FactorSpec (body : P → Pr P (nT BReg) Q A U) (prog : Pr P (nT BReg) Q A U)
       (∀ x, R' (reg (.wire x)) = encZ A w (execM e child Tc (.factor fw g) B x)) ∧
       ∀ i, (∀ x, i ≠ reg (.wire x)) → R' i = S.R i
 
+/-- **Exact instruction programs.** `prog` implements the translation, slot XOR or slot phase
+`ins` of the node at level `j + 1`: from the node-internal state with every wire `x` holding
+`encZ A w (B x)`, it ends with every wire `x` holding `encZ A w (execM e child Tc ins B x)`, every
+other register and `user` as before, within `cm` steps. -/
+def MonoSpec (body : P → Pr P (nT BReg) Q A U) (prog : Pr P (nT BReg) Q A U)
+    (bcRest : BReg → List (Fin (A + 4)) → Prop) (j u K ρ a₀ L rows n r w : ℕ) {R k : ℕ}
+    (e : Fin (m * k) → Fin n)
+    (child : Fin m → ZArr (Fin R × Fin r) n → ZArr (Fin R × Fin r) n) (Tc : ℕ) (ins : Instr)
+    (cm : ℕ) : Prop :=
+  ∀ (B : NWire → ZArr (Fin R × Fin r) n) (v : HS (nT BReg) Q A U) (S : Stacks (nT BReg) A),
+    NodeRegs bcRest S.R j u K ρ a₀ L rows n r w Tc →
+    (∀ x, S.R (reg (.wire x)) = encZ A w (B x)) →
+    ∃ (v' : HS (nT BReg) Q A U) (c : ℕ) (R' : Fin (nT BReg) → List (Fin (A + 4))),
+      v'.user = v.user ∧ c ≤ cm ∧ Exec body prog (mk v S) c (mk v' { S with R := R' }) ∧
+      (∀ x, R' (reg (.wire x)) = encZ A w (execM e child Tc ins B x)) ∧
+      ∀ i, (∀ x, i ≠ reg (.wire x)) → R' i = S.R i
+
 end Factor
 
 end IntegerMultBounds.MathlibTM2.LayerMachine

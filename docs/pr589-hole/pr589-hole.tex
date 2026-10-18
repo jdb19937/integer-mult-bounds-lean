@@ -59,15 +59,16 @@ completion is open by upstream's own account. The finite certificates of the sup
 \section{Introduction}
 
 The verified multiplier of~\cite{IMB} runs in time $O\bigl(n(\log n)^{1-\kappa}\bigr)$ on Mathlib's
-finite multi-stack Turing machines, with $\kappa = 651 \cdot 2^{-39}$. Upstream's selected record~\cite{CS} combines a complex
+finite multi-stack Turing machines, with $\kappa = 88279 \cdot 2^{-46}$. Upstream's selected record~\cite{CS} combines a complex
 supplier (T16) with a bit supplier (PR589, tuned by DreamingOfClouds on eumemic's PR555) and states
 the conditional exponent $\kappa = 0.001672660197076918$. Its README lists the open parts: ``All-size/compiler,
 common-label/mutable-source realization, whole-call hosting, precision/tape, exact recovery and
 analytic obligations remain conditional.''
 
-The Lean development is porting both selected suppliers into its machine. Under upstream's
-accounting, the two together would move the cap on $\kappa$ from about $2^{-29.6}$ to about
-$2^{-10.3}$; either alone leaves it near $2^{-29.4}$. This note records what the port found on the bit side.
+The Lean development runs T16 on its complex side, through Kenny Daniel's T16 node on the layer
+machine, and its bit interchange binds $\kappa$. Under upstream's accounting, adding PR589 would
+move the cap on $\kappa$ from about $2^{-29.4}$ to about $2^{-10.3}$. This note records what the
+port of PR589 found.
 
 Each claim carries a tag. \tagL{} marks a theorem checked in~\cite{IMB}, under the name given, with
 only Lean's standard axioms. \tagP{} marks a written argument, here or in the design notes of the

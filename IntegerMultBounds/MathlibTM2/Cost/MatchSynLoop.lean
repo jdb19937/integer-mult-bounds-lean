@@ -58,7 +58,7 @@ open IntegerMultBounds.MathlibTM2.Mult.Sizes Filter IntegerMultBounds.MathlibTM2
 /-- `F + 1 ≤ m^5` for the fixed directions. -/
 theorem mr_F_le : factorCount (program Cost.brDirs) + 1 ≤ m ^ 5 := by
   have := br_factorCount_le
-  have h : m ^ 5 = 931322574615478515625 := by norm_num [m]
+  have h : m ^ 5 = 2073071593 := by norm_num [m]
   omega
 
 /-- The parameters of the pipeline instance at a large `n`. -/

@@ -79,7 +79,7 @@ $O(n \log n)$ by Harvey and van der Hoeven \cite{HvdH}, and below $n \log n$ by 
 OpenAI manuscript \cite{OAI}: time $O\bigl(n (\log n)^{1-\kappa}\bigr)$ for a positive
 $\kappa$. A complete formal proof of a bound of this form, for one fixed machine in Mathlib's
 multi-stack model, is the Lean development \texttt{IntegerMultBounds} \cite{IMB}; its theorem
-\texttt{MathlibTM2.mulInTime} gives the saving $\kappa = 651\cdot 2^{-39} \approx 2^{-29.65}$.
+\texttt{MathlibTM2.mulInTime} gives the saving $\kappa = 88279\cdot 2^{-46} \approx 2^{-29.57}$.
 The reduction then gives the same saving for the transform.
 
 \begin{theoremA}
@@ -92,7 +92,7 @@ $\omega$, $a_0, \dots, a_{n-1}$ in exactly $\size(p)$ binary digits each, in tim
   O\bigl(N (\log N)^{1-\kappa}\bigr),
 \]
 where $N = (n+2)(\size(p)+1)$ is the input length. The implicit constant depends neither on $p$
-nor on $n$. In particular this holds with $\kappa = 651\cdot 2^{-39}$.
+nor on $n$. In particular this holds with $\kappa = 88279\cdot 2^{-46}$.
 \end{theoremA}
 
 The bound is uniform in the relation between $n$ and $p$: it covers $n = 2$ with $p$ of

@@ -2,26 +2,26 @@ module
 
 public import IntegerMultBounds.Parameters
 
-/-! Arithmetic reach of the faster Gaussian route with the direct size-25 supplier.
+/-! Arithmetic reach of the faster Gaussian route with the existing supplier.
 Replacing the coarse Gaussian margin `1/4 - δ - 3ε/2` by the selected
 phase-cell margin `min (1-ε-δ) (r-δ)` (with `ε + r < 1` and `ε > (1-r)/2`)
 lets every stage margin cover `2^-32` at `ε = 5/8`, `r = 1/4`, without
 changing the supplier. Conversely no Gaussian improvement alone reaches
-`2^-31`, since the layer margin stays below `1 - directSigma`. These are arithmetic
+`2^-31`, since the layer margin stays below `1 - σ`. These are arithmetic
 route certificates, not multiplication-time theorems. -/
 @[expose] public section
 namespace IntegerMultBounds.MathlibTM2.Cost.CompactGaussianRoute
 noncomputable section
 
-/-- With the direct supplier, the layer margin is below `2^-31` for every
+/-- With the existing supplier, the layer margin is below `2^-31` for every
 dimension exponent at most one, whatever the Gaussian estimate. -/
 theorem layer_lt_ceiling {epsilon layer : ℝ} (hepsilon : 0 ≤ epsilon) (hone : epsilon ≤ 1)
-    (hlayer : Parameters.directSigma ≤ layer) :
+    (hlayer : Parameters.sigma ≤ layer) :
     epsilon*(1-layer) < (2^31 : ℝ)⁻¹ := by
-  have h1 : 1-layer ≤ 1-Parameters.directSigma := by linarith
-  have hσ : 1-Parameters.directSigma = 418/10^12 := by norm_num [Parameters.directSigma]
-  have h0 : 0 ≤ 1-Parameters.directSigma := by rw [hσ]; norm_num
-  calc epsilon*(1-layer) ≤ 1*(1-Parameters.directSigma) := by
+  have h1 : 1-layer ≤ 1-Parameters.sigma := by linarith
+  have hσ : 1-Parameters.sigma = 418/10^12 := by norm_num [Parameters.sigma]
+  have h0 : 0 ≤ 1-Parameters.sigma := by rw [hσ]; norm_num
+  calc epsilon*(1-layer) ≤ 1*(1-Parameters.sigma) := by
         by_cases hl : 0 ≤ 1-layer
         · exact mul_le_mul hone h1 hl zero_le_one
         · nlinarith

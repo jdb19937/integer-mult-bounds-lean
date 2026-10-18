@@ -51,7 +51,7 @@ A fixed finite multi-stack Turing machine, in the model \texttt{Turing.FinTM2} o
 Mathlib, computes the discrete Fourier transform of every length $n$ over every prime field
 $\F_p$, given $p$, a primitive $n$-th root of unity and the $n$ entries in binary of fixed
 width, in worst-case time $O\bigl(N (\log N)^{1-\kappa}\bigr)$, where $N$ is the input length
-and $\kappa = 651 \cdot 2^{-39} \approx 2^{-29.65}$. The saving $\kappa$ is inherited from a
+and $\kappa = 88279 \cdot 2^{-46} \approx 2^{-29.57}$. The saving $\kappa$ is inherited from a
 formally verified integer multiplier on the same machine model. The reduction is the standard
 reduction of the transform to one integer product: Bluestein's chirp, written with binomial
 coefficients and the inverse root $\omega^{n-1}$, Kronecker packing, and Barrett reduction
@@ -81,10 +81,10 @@ Hoeven \cite{HvdH}, and time $O\bigl(n (\log n)^{1-\kappa}\bigr)$ for a positive
 the OpenAI manuscript \cite{OAI}. Kenny Daniel's repository \texttt{integer-mult-bounds-lean}
 \cite{IMB} formalizes the bound of \cite{OAI} in Lean, for one fixed machine in Mathlib's
 multi-stack model. Its theorem \lean{MathlibTM2.mulInTime} gives
-$\kappa = \varepsilon(1-\lambda') = 651 \cdot 2^{-39}$, with $\varepsilon = 31/64$ and
-$1 - \lambda' = 21 \cdot 2^{-33}$. This value of $\kappa$ comes from the size-25 mixer network
-that supplies its complex transforms, with branching exponent $1 - 25 \cdot 10^{-10}$, and from
-the retuned parameters that go with it. The reduction carries the same saving to the
+$\kappa = 88279 \cdot 2^{-46}$, the layout margin $\varepsilon c (1-\tau)$ rounded down to a
+multiple of $2^{-46}$, with $\varepsilon = 31/64$, $c = 7/8$ and $1 - \tau = 296 \cdot 10^{-11}$,
+where $\tau$ is the exponent of its bit interchange. Its complex transforms come from the T16
+node, whose branching exponent is below $999/1000$. The reduction carries the same saving to the
 transform.
 
 \begin{theoremA}
@@ -93,7 +93,7 @@ every $n$, every primitive $n$-th root of unity $\omega \in \F_p$ and every $a \
 the input written as $p$, $\omega$, $a_0, \dots, a_{n-1}$ in exactly $\size(p)$ binary digits
 each, in time
 \[
-  O\bigl(N (\log N)^{1-\kappa}\bigr), \qquad \kappa = 651 \cdot 2^{-39},
+  O\bigl(N (\log N)^{1-\kappa}\bigr), \qquad \kappa = 88279 \cdot 2^{-46},
 \]
 where $N = (n+2)(\size(p)+1)$ is the input length. The implicit constant depends neither on $p$
 nor on $n$. More generally, every multiplier of this kind with saving $\kappa \le 1$ gives a
@@ -401,14 +401,14 @@ consists of the following theorems, the first two with their proofs omitted:
 theorem HostMultiplier.dftInTime (M : HostMultiplier κ) (hκ : κ ≤ 1) :
     DFTInTime κ
 
-theorem finalHostMultiplier : Nonempty (HostMultiplier (651 / 2 ^ 39 : ℝ))
+theorem finalHostMultiplier : Nonempty (HostMultiplier (88279 / 2 ^ 46 : ℝ))
 
-theorem dftInTime : DFTInTime (651 / 2 ^ 39 : ℝ) := by
+theorem dftInTime : DFTInTime (88279 / 2 ^ 46 : ℝ) := by
   obtain ⟨M⟩ := finalHostMultiplier
   exact M.dftInTime (by norm_num)
 
 theorem dft_in_time : DFTStatement :=
-  ⟨651 / 2 ^ 39, by norm_num, dftInTime⟩
+  ⟨88279 / 2 ^ 46, by norm_num, dftInTime⟩
 \end{lstlisting}
 \end{minipage}
 

@@ -24,37 +24,37 @@ open IntegerMultBounds.Networks
 /-! ### Bit reversal -/
 
 /-- The number whose bits, least significant first, are the list. -/
-def bitsVal : List Bool → ℕ
+def revBitsVal : List Bool → ℕ
   | [] => 0
-  | b :: bs => b.toNat + 2 * bitsVal bs
+  | b :: bs => b.toNat + 2 * revBitsVal bs
 
-theorem testBit_bitsVal (bs : List Bool) (t : ℕ) : (bitsVal bs).testBit t = bs.getD t false := by
+theorem testBit_revBitsVal (bs : List Bool) (t : ℕ) : (revBitsVal bs).testBit t = bs.getD t false := by
   induction bs generalizing t with
-  | nil => simp [bitsVal]
+  | nil => simp [revBitsVal]
   | cons b bs ih =>
     cases t with
-    | zero => cases b <;> simp [bitsVal, Nat.testBit_zero, Nat.add_mul_mod_self_left]
+    | zero => cases b <;> simp [revBitsVal, Nat.testBit_zero, Nat.add_mul_mod_self_left]
     | succ t =>
-      rw [bitsVal, Nat.testBit_succ, show (b.toNat + 2 * bitsVal bs) / 2 = bitsVal bs by
+      rw [revBitsVal, Nat.testBit_succ, show (b.toNat + 2 * revBitsVal bs) / 2 = revBitsVal bs by
         cases b <;> simp <;> omega, ih]
       simp
 
-theorem bitsVal_lt (bs : List Bool) : bitsVal bs < 2 ^ bs.length := by
+theorem revBitsVal_lt (bs : List Bool) : revBitsVal bs < 2 ^ bs.length := by
   induction bs with
-  | nil => simp [bitsVal]
-  | cons b bs ih => cases b <;> simp [bitsVal, pow_succ] <;> omega
+  | nil => simp [revBitsVal]
+  | cons b bs ih => cases b <;> simp [revBitsVal, pow_succ] <;> omega
 
 /-- The `W` low bits of `a` in reverse order. -/
-def revNat (W a : ℕ) : ℕ := bitsVal (List.ofFn fun t : Fin W => a.testBit (W - 1 - t))
+def revNat (W a : ℕ) : ℕ := revBitsVal (List.ofFn fun t : Fin W => a.testBit (W - 1 - t))
 
 theorem revNat_lt (W a : ℕ) : revNat W a < 2 ^ W := by
-  have h := bitsVal_lt (List.ofFn fun t : Fin W => a.testBit (W - 1 - t))
+  have h := revBitsVal_lt (List.ofFn fun t : Fin W => a.testBit (W - 1 - t))
   rw [List.length_ofFn] at h
   exact h
 
 theorem testBit_revNat (W a : ℕ) (t : ℕ) :
     (revNat W a).testBit t = if t < W then a.testBit (W - 1 - t) else false := by
-  rw [revNat, testBit_bitsVal]
+  rw [revNat, testBit_revBitsVal]
   split_ifs with ht
   · simp [List.getD_eq_getElem?_getD, ht]
   · simp [List.getD_eq_getElem?_getD, ht]

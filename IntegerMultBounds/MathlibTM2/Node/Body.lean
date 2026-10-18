@@ -11,51 +11,45 @@ public import IntegerMultBounds.MathlibTM2.Node.Params
 /-!
 # The node body of the layer machine
 
-`nodeBody ds fp` runs the scaled node `nodeM` of `Layer/NodeZ.lean` at level `j + 1` on the
+`nodeBody ds fp mp` runs the scaled node `nodeM` of `Layer/NodeZ.lean` at level `j + 1` on the
 array register `io`, with the factor instructions of `program ds` supplied as programs
-`fp fw g`. With `R = rowsAt R₀ j` rows per wire and the active bits `e i = a₀ + ρ + K i`
-(`actMap`), its stages are:
+`fp fw g` and the exact instructions (translations, slot XORs, slot phases) as programs `mp ins`.
+With `R = rowsAt R₀ j` rows per wire and the active bits `e i = a₀ + ρ + K i` (`actMap`), its
+stages are:
 
 1. `splitProg`: `routeBlocks` sends row `NW g + i` of `io` (rows of `2^n r w` symbols, counted by
-   `rowctr`) onto the temporary of wire `wireOf i`, and `moveR` puts every temporary in forward
-   order on its wire; the wires hold the bank `bankZ (toBank R Z)` (`blocksTo_roles_syms`).
-2. `signStage` (`corrInM`): `maskPrep` puts `k = bits u j` on `sc 1` (`expProg 0 m` at level `j`,
-   inside `withPred`, which parks the top symbol of `lev`), `a₀ + ρ` on `sc 0` and the record
-   count `2^n R` of one wire on `ph .cnt`; for every terminal `b`, `signPass b` builds the strided
-   mask of `tvPred b` on `ph .msk` (`strideMask`) and runs `phaseProg` with `c = 2` on wire
-   `inl b`; `maskClear` empties the three registers. The strided mask is the sign mask of the
-   terminal vector (`addrBits_maskVal`), so the pass computes `signM` (`signM_eq_phaseZ`).
+   `rowctr`) onto the temporary of the data wire `inl (wireOf i)`, and `moveR` puts every
+   temporary in forward order on its wire; the data wires hold the bank `bankZ (toBank R Z)`
+   (`blocksTo_roles_syms`).
+2. `zeroCentres`: the eight private centres `inr c` receive the zero stream of the shape of wire
+   `inl 0`.
 3. `tcBuild ds`: `Tc := expZ u ds j` (`expProg` with the gate and factor counts of `program ds`,
    `expZ_eq_expSeq`).
-4. `(program ds).map (instrProg fp)`: `gateProg` on the bank for a gate, `fp fw g` for a factor
-   (`instrs_exec`, an induction over the instruction list).
+4. `(program ds).map (instrProg fp mp)`: `gateProg` on the bank for a gate, `fp fw g` for a
+   factor and `mp ins` for an exact instruction (`instrs_exec`, an induction over the instruction
+   list). A slot phase is `phaseInstr` (`slotPass`: a strided mask and `phaseProg`).
 5. `uclear Tc`.
-6. `exchStage`: for every terminal `b`, negate wire `inl b` onto the temporary of `inr (inl b)`,
-   compute `u mod 4` into the scan slot `cs` (`resid4`), multiply wire `inr (inl b)` by
-   `i ^ (3 (u mod 4))` onto the temporary of `inl b` (`disp4`, a four-way dispatch over
-   `unitAuto`), and move both temporaries onto the opposite wires. Since `m ≡ 1` modulo `4`,
-   `i ^ (27 k) = i ^ (3 (u mod 4))` (`bits_mod_four`, `pow_I_27`).
-7. `signStage` again; with stage 6 it computes `corrOutM` (`corrInM_exchZ`).
-8. `mergeProg`: `mergeBlocks` merges the wires by row role onto `racc` (the row count on
+6. `clearCentres`: the centres are emptied.
+7. `mergeProg`: `mergeBlocks` merges the data wires by row role onto `racc` (the row count on
    `rows`), and `moveR` puts the result in forward order on `io`.
 
 **Main theorem** (`nodeBody_exec`, `nodeBody_exec_layerZ`). From `ParState` at level `j + 1`
 (`rows = rowsAt R₀ (j + 1)`, `rw = r w`), `Rest` and `io` holding `encZ A w Z`, and with every
 factor instruction of `program ds` implemented by `fp` in the sense of `FactorSpec` (child
-semantics `layerZ u ds R₀ j` on the slots, child exponent `expZ u ds j`), the node body ends with
-`io` holding `encZ A w (layerZ u ds R₀ (j + 1) e Z)`, every other register and `user` as before,
-within `nodeCost ds u j K ρ a₀ R n r w cf` steps. Between two instructions the registers satisfy
+semantics `layerZ u ds R₀ j` on the slots, child exponent `expZ u ds j`) and every exact
+instruction by `mp` in the sense of `MonoSpec`, the node body ends with `io` holding
+`encZ A w (layerZ u ds R₀ (j + 1) e Z)`, every other register and `user` as before, within
+`nodeCost ds u j K ρ a₀ R n r w cf cm` steps. Between two instructions the registers satisfy
 `NodeRegs` (`Node/Regs.lean`).
 
 **Cost.** `nodeCost` is the sum of the stage bounds: split and merge `O(V + NW R)` with
-`V = NW R 2^n r w`; two sign stages (`signStageCost`, one `signCost` per terminal); the exponent
-program (`expCost`); `G` gates (`gateCost`) and `F` factors (`cf` each), `G`, `F` the gate and
-factor counts of `program ds`; clearing `Tc`; one `exchCost` per terminal.
+`V = NW R 2^n r w`; the centres `O(R 2^n r w)`; the exponent program (`expCost`); `G` gates
+(`gateCost`), `F` factors (`cf` each) and `Mo` exact instructions (`cm` each), `G`, `F`, `Mo` the
+gate, factor and exact-instruction counts of `program ds`; clearing `Tc`.
 
-**Register use.** `sc 0` holds `a₀ + ρ` (sign stages) or serves `resid4` (exchange); `sc 1` holds
-`k`; `sc 2`, `sc 3`, `sc 4` are spares; `sc 5` parks the top of `lev` and is a spare of
-`strideMask`. The scan slot `st` holds automaton states, `cs` the row counter of the routing and
-the residue of `u`.
+**Register use.** `sc 0` holds `a₀ + ρ` (slot phases); `sc 1` holds `k`; `sc 2`, `sc 3`, `sc 4`
+are spares; `sc 5` parks the top of `lev` and is a spare of `strideMask`. The scan slot `st` holds
+automaton states, `cs` the row counter of the routing.
 
 **Devices.** `withPred` (run a program with `lev` one shorter), `exec_upd` (an execution ending in
 one register update, with an opaque register file), `resid4` and `disp4` (a residue modulo `4` in
@@ -80,18 +74,36 @@ def gateCount : List Instr → ℕ
   | [] => 0
   | .gate _ :: l => gateCount l + 1
   | .factor _ _ :: l => gateCount l
+  | .trans _ _ :: l => gateCount l
+  | .xor _ _ _ :: l => gateCount l
+  | .phase _ _ _ :: l => gateCount l
 
 /-- The number of factors of an instruction list. -/
 def factorCount : List Instr → ℕ
   | [] => 0
   | .gate _ :: l => factorCount l
   | .factor _ _ :: l => factorCount l + 1
+  | .trans _ _ :: l => factorCount l
+  | .xor _ _ _ :: l => factorCount l
+  | .phase _ _ _ :: l => factorCount l
+
+/-- The number of translations, slot XORs and slot phases of an instruction list. -/
+def monoCount : List Instr → ℕ
+  | [] => 0
+  | .gate _ :: l => monoCount l
+  | .factor _ _ :: l => monoCount l
+  | .trans _ _ :: l => monoCount l + 1
+  | .xor _ _ _ :: l => monoCount l + 1
+  | .phase _ _ _ :: l => monoCount l + 1
 
 /-- The exponent of a scaled program: one per gate and `Tc` per factor. -/
 lemma progExp_eq (Tc : ℕ) : ∀ l : List Instr, progExp Tc l = gateCount l + factorCount l * Tc
   | [] => by simp [progExp, gateCount, factorCount]
   | .gate _ :: l => by rw [progExp, gateCount, factorCount, progExp_eq Tc l]; ring
   | .factor _ _ :: l => by rw [progExp, gateCount, factorCount, progExp_eq Tc l]; ring
+  | .trans _ _ :: l => by rw [progExp, gateCount, factorCount, progExp_eq Tc l]
+  | .xor _ _ _ :: l => by rw [progExp, gateCount, factorCount, progExp_eq Tc l]
+  | .phase _ _ _ :: l => by rw [progExp, gateCount, factorCount, progExp_eq Tc l]
 
 /-- The child exponent is the exponent sequence of the gate and factor counts. -/
 lemma expZ_eq_expSeq (u : ℕ) (ds : ComplexFramedExecution.Directions) (j : ℕ) :
@@ -346,19 +358,19 @@ lemma actMap_injective {a₀ ρ K N n : ℕ} (hK : 1 ≤ K) (hfit : ∀ i < N, a
   have h' : a₀ + ρ + K * (i : ℕ) = a₀ + ρ + K * i' := congrArg Fin.val h
   exact Fin.ext (Nat.eq_of_mul_eq_mul_left (by omega : 0 < K) (Nat.add_left_cancel h'))
 
-/-- The slots selected by the terminal vector of `b`. -/
-noncomputable def tvPred (b : Wires.Address 25) (s : ℕ) : Bool :=
-  if h : s < m then decide (ComplexEndpoints.terminalVector b ⟨s, h⟩ = 1) else false
+/-- The slots selected by a vector `u`. -/
+noncomputable def uPred (u : BinaryWalsh.Address m) (s : ℕ) : Bool :=
+  if h : s < m then decide (u ⟨s, h⟩ = 1) else false
 
-/-- The strided mask of `tvPred b` is the sign mask of the terminal vector on the active bits. -/
+/-- The strided mask of `uPred u` is the mask of `u` on the active bits. -/
 lemma addrBits_maskVal {a₀ ρ K k n : ℕ} (hK : 1 ≤ K) (hfit : ∀ i < m * k, a₀ + ρ + K * i < n)
-    (b : Wires.Address 25) :
-    addrBits n (maskVal (a₀ + ρ) K k m (tvPred b)) =
-      signMask (actMap a₀ ρ K (m * k) n hfit) (ComplexEndpoints.terminalVector b) := by
+    (u : BinaryWalsh.Address m) :
+    addrBits n (maskVal (a₀ + ρ) K k m (uPred u)) =
+      signMask (actMap a₀ ρ K (m * k) n hfit) u := by
   funext t
-  have key : (maskVal (a₀ + ρ) K k m (tvPred b)).testBit t = true ↔
+  have key : (maskVal (a₀ + ρ) K k m (uPred u)).testBit t = true ↔
       ∃ (j : Fin m) (c : Fin k), actMap a₀ ρ K (m * k) n hfit (bitIdx j c) = t ∧
-        ComplexEndpoints.terminalVector b j = 1 := by
+        u j = 1 := by
     rw [testBit_maskVal hK]
     constructor
     · rintro ⟨i, hi, hp, ht⟩
@@ -368,13 +380,13 @@ lemma addrBits_maskVal {a₀ ρ K k n : ℕ} (hK : 1 ≤ K) (hfit : ∀ i < m * 
       · apply Fin.ext
         simp only [actMap, bitIdx, finProdFinEquiv, Equiv.coe_fn_mk]
         rw [ht, Nat.mod_add_div]
-      · simpa [tvPred, hj] using hp
+      · simpa [uPred, hj] using hp
     · rintro ⟨j, c, he, hj⟩
       have hk : 0 < k := Nat.pos_of_ne_zero fun h => by subst h; exact Fin.elim0 c
       refine ⟨c + k * j, (bitIdx j c).2, ?_, ?_⟩
       · have hd : (c.val + k * j.val) / k = j.val := by
           rw [Nat.add_mul_div_left _ _ hk, Nat.div_eq_of_lt c.2, Nat.zero_add]
-        simp [tvPred, hd, j.2, hj]
+        simp [uPred, hd, j.2, hj]
       · rw [← he]
         rfl
   simp only [addrBits, signMask]
@@ -383,17 +395,6 @@ lemma addrBits_maskVal {a₀ ρ K k n : ℕ} (hK : 1 ≤ K) (hfit : ∀ i < m * 
   · exact absurd (key.1 h1) h2
   · exact absurd (key.2 h2) h1
   · rfl
-
-/-- The terminal addresses, once each. -/
-noncomputable def termList : List (Wires.Address 25) := Finset.univ.toList
-
-lemma nodup_termList : termList.Nodup := Finset.nodup_toList _
-
-lemma mem_termList (b : Wires.Address 25) : b ∈ termList := by
-  simp only [termList, Finset.mem_toList, Finset.mem_univ]
-
-lemma length_termList : termList.length = Fintype.card (Wires.Address 25) := by
-  rw [termList, Finset.length_toList, Finset.card_univ]
 
 /-! ### Row split and merge -/
 
@@ -405,14 +406,14 @@ variable {BReg : Type} [Fintype BReg] {Q A : ℕ} {U P : Type}
 /-- The row split: route the rows of `io` by role onto the wire temporaries (each reversed), then
 move every temporary onto its wire (forward order). -/
 noncomputable def splitProg : Pr P (nT BReg) Q A U :=
-  .seq (routeBlocks (reg .io) (fun i => reg (.wtmp (wireOf i))) (reg .rowctr) (reg .rowtmp)
+  .seq (routeBlocks (reg .io) (fun i => reg (.wtmp (.inl (wireOf i)))) (reg .rowctr) (reg .rowtmp)
       (reg .cs) NW (roleSel NW))
     (Prog.seqList ((List.finRange NW).map fun i =>
-      moveR (reg (.wtmp (wireOf i))) (reg (.wire (wireOf i))) id))
+      moveR (reg (.wtmp (.inl (wireOf i)))) (reg (.wire (.inl (wireOf i)))) id))
 
 /-- The row merge: merge the wires by role onto `racc` (reversed), then move it onto `io`. -/
 noncomputable def mergeProg : Pr P (nT BReg) Q A U :=
-  .seq (mergeBlocks (fun i => reg (.wire (wireOf i))) (reg .racc) (reg .rowctr) (reg .rowtmp)
+  .seq (mergeBlocks (fun i => reg (.wire (.inl (wireOf i)))) (reg .racc) (reg .rowctr) (reg .rowtmp)
       (reg .cs) (reg .rows) (reg .rctmp) NW (roleSel NW))
     (moveR (reg .racc) (reg .io) id)
 
@@ -420,13 +421,13 @@ lemma one_le_NW : 1 ≤ NW := Nat.one_le_iff_ne_zero.2 (NeZero.ne NW)
 
 /-- Wire `wireOf d` of the bank of `Z` is row role `d` of `Z`. -/
 lemma bankZ_toBank {R r n : ℕ} (Z : ZArr (Fin (NW * R) × Fin r) n) (d : Fin NW) :
-    bankZ (toBank R Z) (wireOf d) = roleArr NW R d Z := by
+    bankZ (toBank R Z) (.inl (wireOf d)) = roleArr NW R d Z := by
   funext p
   simp only [bankZ, toBank, Equiv.symm_apply_apply]
 
 /-- Row role `d` of the array of a bank is wire `wireOf d`. -/
 lemma roleArr_ofBank {R r n : ℕ} (B : NWire → ZArr (Fin R × Fin r) n) (d : Fin NW) :
-    roleArr NW R d (ofBank R (unbankZ B)) = B (wireOf d) := by
+    roleArr NW R d (ofBank R (unbankZ B)) = B (.inl (wireOf d)) := by
   rw [ofBank, roleArr_unroles]
   rfl
 
@@ -442,26 +443,26 @@ theorem splitProg_exec (hNW : NW ≤ A + 4) {R n r w : ℕ} (hr : 1 ≤ r) (hw :
       v'.user = v.user ∧
       c ≤ 6 * (NW * (R * 2 ^ n * (r * w))) + 6 * (NW * R) + 2 * NW + 3 ∧
       Exec body splitProg (mk v S) c (mk v' { S with R := R' }) ∧
-      R' (reg .io) = [] ∧ (∀ x, R' (reg (.wire x)) = encZ A w (bankZ (toBank R Z) x)) ∧
-      ∀ k, k ≠ reg .io → (∀ x, k ≠ reg (.wire x)) → R' k = S.R k := by
+      R' (reg .io) = [] ∧ (∀ x : DWire, R' (reg (.wire (.inl x))) = encZ A w (bankZ (toBank R Z) (.inl x))) ∧
+      ∀ k, k ≠ reg .io → (∀ x : DWire, k ≠ reg (.wire (.inl x))) → R' k = S.R k := by
   have hB : 1 ≤ 2 ^ n * r * w :=
     Nat.mul_le_mul (Nat.mul_le_mul (Nat.one_le_two_pow) hr) hw
   have hlen : (encZ A w Z).length = (NW * R) * (2 ^ n * r * w) := by
     rw [length_encZ]; ring
   obtain ⟨v₁, R₁, m₁, hu₁, hm₁, he₁, hsrc₁, hctr₁, htmp₁, hdst₁, hoth₁⟩ :=
-    routeBlocks_exec body (reg .io) (fun i => reg (.wtmp (wireOf i))) (reg .rowctr) (reg .rowtmp)
+    routeBlocks_exec body (reg .io) (fun i => reg (.wtmp (.inl (wireOf i)))) (reg .rowctr) (reg .rowtmp)
       (reg .cs) NW (roleSel NW) one_le_NW hNW
       (nodup_map_reg (l := [.io, .rowctr, .rowtmp]) (by simp)) (fun d => by simp)
       (fun a b h => wireOf.injective (by simpa using h)) hB hlen hrow v S hio rfl hrt
-  have hdst₁' : ∀ d, R₁ (reg (.wtmp (wireOf d))) = (encZ A w (roleArr NW R d Z)).reverse := by
+  have hdst₁' : ∀ d, R₁ (reg (.wtmp (.inl (wireOf d)))) = (encZ A w (roleArr NW R d Z)).reverse := by
     intro d
     rw [hdst₁ d, hwt, List.append_nil, blocksTo_roles_syms]
   obtain ⟨v₂, R₂, hu₂, he₂, hds₂, hoth₂⟩ := revList_exec body
-    (fun d => reg (.wtmp (wireOf d))) (fun d => reg (.wire (wireOf d)))
+    (fun d => reg (.wtmp (.inl (wireOf d)))) (fun d => reg (.wire (.inl (wireOf d))))
     (fun d d' => reg_ne (by simp)) (fun a b h => wireOf.injective (by simpa using h))
     (fun a b h => wireOf.injective (by simpa using h)) (List.finRange NW)
     (List.nodup_finRange NW) v₁ { S with R := R₁ }
-  have hsum : ((List.finRange NW).map fun d => 2 * (R₁ (reg (.wtmp (wireOf d)))).length + 2).sum =
+  have hsum : ((List.finRange NW).map fun d => 2 * (R₁ (reg (.wtmp (.inl (wireOf d))))).length + 2).sum =
       NW * (2 * (R * 2 ^ n * (r * w)) + 2) := by
     rw [List.map_congr_left (g := fun _ => 2 * (R * 2 ^ n * (r * w)) + 2) (fun d _ => by
       rw [hdst₁', List.length_reverse, length_encZ])]
@@ -481,7 +482,7 @@ theorem splitProg_exec (hNW : NW ≤ A + 4) {R n r w : ℕ} (hr : 1 ≤ r) (hw :
     rw [hdst₁', hoth₁ _ (by simp) (fun d' => reg_ne (by simp)), hwi, List.reverse_reverse,
       List.append_nil, bankZ_toBank]
   · intro k hk1 hk2
-    by_cases hk3 : ∃ x, k = reg (.wtmp x)
+    by_cases hk3 : ∃ x : DWire, k = reg (.wtmp (.inl x))
     · obtain ⟨x, rfl⟩ := hk3
       obtain ⟨d, rfl⟩ := wireOf.surjective x
       rw [(hds₂ d (List.mem_finRange d)).1, hwt]
@@ -499,7 +500,7 @@ holding the stream of `ofBank R (unbankZ B)`; the wires end empty and every othe
 it started. -/
 theorem mergeProg_exec (hNW : NW ≤ A + 4) {R n r w : ℕ} (B : NWire → ZArr (Fin R × Fin r) n)
     (v : HS (nT BReg) Q A U) (S : Stacks (nT BReg) A)
-    (hwi : ∀ x, S.R (reg (.wire x)) = encZ A w (B x))
+    (hwi : ∀ x : DWire, S.R (reg (.wire (.inl x))) = encZ A w (B (.inl x)))
     (hrow : (S.R (reg .rowctr)).length = 2 ^ n * r * w) (hrt : S.R (reg .rowtmp) = [])
     (hrows : (S.R (reg .rows)).length = NW * R) (hrct : S.R (reg .rctmp) = [])
     (hacc : S.R (reg .racc) = []) (hio : S.R (reg .io) = []) :
@@ -507,12 +508,12 @@ theorem mergeProg_exec (hNW : NW ≤ A + 4) {R n r w : ℕ} (B : NWire → ZArr 
       v'.user = v.user ∧
       c ≤ 6 * (NW * (R * 2 ^ n * (r * w))) + 8 * (NW * R) + 6 ∧
       Exec body mergeProg (mk v S) c (mk v' { S with R := R' }) ∧
-      R' (reg .io) = encZ A w (ofBank R (unbankZ B)) ∧ (∀ x, R' (reg (.wire x)) = []) ∧
-      ∀ k, k ≠ reg .io → (∀ x, k ≠ reg (.wire x)) → R' k = S.R k := by
+      R' (reg .io) = encZ A w (ofBank R (unbankZ B)) ∧ (∀ x : DWire, R' (reg (.wire (.inl x))) = []) ∧
+      ∀ k, k ≠ reg .io → (∀ x : DWire, k ≠ reg (.wire (.inl x))) → R' k = S.R k := by
   have hlen : (encZ A w (ofBank R (unbankZ B))).length = (NW * R) * (2 ^ n * r * w) := by
     rw [length_encZ]; ring
   obtain ⟨v₁, R₁, m₁, hu₁, hm₁, he₁, hdst₁, hsrc₁, hctr₁, htmp₁, hcnt₁, hct₁, hoth₁⟩ :=
-    mergeBlocks_exec body (fun i => reg (.wire (wireOf i))) (reg .racc) (reg .rowctr)
+    mergeBlocks_exec body (fun i => reg (.wire (.inl (wireOf i)))) (reg .racc) (reg .rowctr)
       (reg .rowtmp) (reg .cs) (reg .rows) (reg .rctmp) NW (roleSel NW) one_le_NW hNW
       (nodup_map_reg (l := [.racc, .rowctr, .rowtmp, .rows, .rctmp]) (by simp))
       (fun d => by simp) (fun a b h => wireOf.injective (by simpa using h)) hlen hrow hrows
@@ -549,6 +550,146 @@ theorem mergeProg_exec (hNW : NW ≤ A + 4) {R n r w : ℕ} (B : NWire → ZArr 
     exact hoth₁ k (by simp [hk3, hk4, hk5, hk6, hk7]) (fun d => (hk2 _).symm)
 
 end Route
+
+/-! ### The private centres -/
+
+section Centres
+
+variable {BReg : Type} [Fintype BReg] {Q A : ℕ} {U P : Type}
+  (body : P → Pr P (nT BReg) Q A U)
+
+/-- The stream of the zero array is the zero pair symbol, repeated. -/
+lemma encZ_zero {R r n w : ℕ} :
+    encZ A w (0 : ZArr (Fin R × Fin r) n) = List.replicate (R * 2 ^ n * r * w) (pairSym A false false) := by
+  apply List.eq_replicate_iff.mpr
+  refine ⟨by rw [length_encZ]; ring, fun x hx => ?_⟩
+  rw [encZ, coeffList_eq_map] at hx
+  simp only [List.mem_flatMap, List.mem_map] at hx
+  obtain ⟨z, ⟨p, -, rfl⟩, hz⟩ := hx
+  simp only [coeffSyms, List.mem_ofFn] at hz
+  obtain ⟨t, rfl⟩ := hz
+  simp [red]
+
+/-- The zero arrays on the centres, from the length of the stream of family `0`. -/
+noncomputable def zeroCentres : Pr P (nT BReg) Q A U :=
+  Prog.seqList ((List.finRange 8).map fun c =>
+    umulSym 1 (pairSym A false false) (reg (.wire (.inl 0))) (reg (.wire (.inr c))) (reg .tmp))
+
+/-- Clear the centres. -/
+noncomputable def clearCentres : Pr P (nT BReg) Q A U :=
+  Prog.seqList ((List.finRange 8).map fun c => uclear (reg (.wire (.inr c))))
+
+/-- **The zero centres.** With family `0` holding the stream of an array with `R` rows and the
+centres and `tmp` empty, every centre ends holding the stream of the zero array; every other
+register ends as it started. -/
+theorem zeroCentres_exec {R r n w : ℕ} (Z₀ : ZArr (Fin R × Fin r) n) (v : HS (nT BReg) Q A U)
+    (S : Stacks (nT BReg) A) (h0 : S.R (reg (.wire (.inl 0))) = encZ A w Z₀)
+    (htmp : S.R (reg .tmp) = []) (hc : ∀ c, S.R (reg (.wire (.inr c))) = []) :
+    ∃ (v' : HS (nT BReg) Q A U) (m : ℕ) (R' : Fin (nT BReg) → List (Fin (A + 4))), v'.user = v.user ∧
+      m ≤ 8 * (4 * (R * 2 ^ n * r * w) + 4) + 1 ∧
+      Exec body zeroCentres (mk v S) m (mk v' { S with R := R' }) ∧
+      (∀ c, R' (reg (.wire (.inr c))) = encZ A w (0 : ZArr (Fin R × Fin r) n)) ∧
+      ∀ k, (∀ c, k ≠ reg (.wire (.inr c))) → R' k = S.R k := by
+  obtain ⟨v', m', R', hu, hm, he, hout, hfr⟩ := seqList_passes body
+    (fun c => umulSym 1 (pairSym A false false) (reg (.wire (.inl 0))) (reg (.wire (.inr c))) (reg .tmp))
+    (fun c k => k = reg (.wire (.inr c)))
+    (fun Rg => Rg (reg (.wire (.inl 0))) = encZ A w Z₀ ∧ Rg (reg .tmp) = [])
+    (fun c Rg => Rg (reg (.wire (.inr c))) = [])
+    (fun _ _ => encZ A w (0 : ZArr (Fin R × Fin r) n)) (4 * (R * 2 ^ n * r * w) + 4)
+    (fun c v S hG hI => by
+      obtain ⟨v₁, hu₁, he₁⟩ := umulSym_exec body 1 (pairSym A false false)
+        (a := reg (.wire (.inl 0))) (b := reg (.wire (.inr c))) (t := reg .tmp)
+        (reg_ne (by simp)) (reg_ne (by simp)) (reg_ne (by simp)) v S hG.2
+      refine ⟨v₁, _, _, hu₁, ?_, he₁, fun k hk => ?_, fun k hk => Function.update_of_ne hk _ _⟩
+      · rw [hG.1, length_encZ]; nlinarith
+      · rw [hk, Function.update_self, hI, List.append_nil, one_mul, hG.1, length_encZ, encZ_zero]
+        congr 1; ring)
+    (fun c Rg Rg' hG hR => ⟨(hR _ (reg_ne (by simp))).trans hG.1, (hR _ (reg_ne (by simp))).trans hG.2⟩)
+    (fun c Rg Rg' hI hR => (hR _ rfl).trans hI)
+    (List.finRange 8) ((List.nodup_finRange 8).imp fun hne k hk hk' => hne (by
+      rw [hk] at hk'; simpa using hk'))
+    v S ⟨h0, htmp⟩ (fun c _ => hc c)
+  refine ⟨v', m', R', hu, by simpa using hm, he, fun c => hout c (List.mem_finRange c) _ rfl,
+    fun k hk => hfr k fun c _ h => hk c h⟩
+
+/-- **Clearing the centres.** Every centre ends empty; every other register ends as it started. -/
+theorem clearCentres_exec (N : ℕ) (v : HS (nT BReg) Q A U) (S : Stacks (nT BReg) A)
+    (hc : ∀ c, (S.R (reg (.wire (.inr c)))).length = N) :
+    ∃ (v' : HS (nT BReg) Q A U) (m : ℕ) (R' : Fin (nT BReg) → List (Fin (A + 4))), v'.user = v.user ∧
+      m ≤ 8 * (2 * N + 2) + 1 ∧
+      Exec body clearCentres (mk v S) m (mk v' { S with R := R' }) ∧
+      (∀ c, R' (reg (.wire (.inr c))) = []) ∧
+      ∀ k, (∀ c, k ≠ reg (.wire (.inr c))) → R' k = S.R k := by
+  obtain ⟨v', m', R', hu, hm, he, hout, hfr⟩ := seqList_passes body
+    (fun c => uclear (reg (.wire (.inr c)))) (fun c k => k = reg (.wire (.inr c)))
+    (fun _ => True) (fun c Rg => (Rg (reg (.wire (.inr c)))).length = N)
+    (fun _ _ => []) (2 * N + 2)
+    (fun c v S _ hI => by
+      obtain ⟨v₁, hu₁, he₁⟩ := uclear_exec body (reg (.wire (.inr c))) v S
+      exact ⟨v₁, _, _, hu₁, by rw [hI], he₁, fun k hk => by rw [hk, Function.update_self],
+        fun k hk => Function.update_of_ne hk _ _⟩)
+    (fun _ _ _ _ _ => trivial) (fun c Rg Rg' hI hR => by rw [hR _ rfl]; exact hI)
+    (List.finRange 8) ((List.nodup_finRange 8).imp fun hne k hk hk' => hne (by
+      rw [hk] at hk'; simpa using hk'))
+    v S trivial (fun c _ => hc c)
+  refine ⟨v', m', R', hu, by simpa using hm, he, fun c => hout c (List.mem_finRange c) _ rfl,
+    fun k hk => hfr k fun c _ h => hk c h⟩
+
+end Centres
+
+/-! ### Slot phases as phase passes -/
+
+lemma pow_I_val_add (a b : ZMod 4) :
+    (⟨0, 1⟩ : GaussianInt) ^ (a + b).val = (⟨0, 1⟩ : GaussianInt) ^ a.val * (⟨0, 1⟩ : GaussianInt) ^ b.val := by
+  revert a b; decide
+
+lemma prod_pow_I_val {ι : Type} (s : Finset ι) (f : ι → ZMod 4) :
+    ∏ x ∈ s, (⟨0, 1⟩ : GaussianInt) ^ (f x).val = (⟨0, 1⟩ : GaussianInt) ^ (∑ x ∈ s, f x).val := by
+  classical
+  induction s using Finset.induction_on with
+  | empty => simp
+  | insert a s ha ih => rw [Finset.prod_insert ha, Finset.sum_insert ha, ih, pow_I_val_add]
+
+/-- The `Z/4` popcount of the slot mask of `i` is the sum of the bits of slot `i` over the
+columns. -/
+lemma sum_slotMask {k n : ℕ} {e : Fin (m * k) → Fin n} (he : Function.Injective e) (i : Fin m)
+    (x : Fin n → ZMod 2) :
+    ∑ t, (((signMask e (Pi.single i 1) t * x t).val : ℕ) : ZMod 4) =
+      ∑ c : Fin k, BinaryPhase.bitLift (x (e (bitIdx i c))) := by
+  have h1 : ∑ t, (((signMask e (Pi.single i 1) t * x t).val : ℕ) : ZMod 4) =
+      ∑ t ∈ Finset.univ.image e, (((signMask e (Pi.single i 1) t * x t).val : ℕ) : ZMod 4) := by
+    symm
+    apply Finset.sum_subset (Finset.subset_univ _)
+    intro t _ ht
+    have : signMask e (Pi.single i 1) t = 0 := by
+      unfold signMask
+      split_ifs with hex
+      · obtain ⟨j, c, hjc, _⟩ := hex
+        exact absurd (Finset.mem_image.2 ⟨_, Finset.mem_univ _, hjc⟩) ht
+      · rfl
+    rw [this, zero_mul]; rfl
+  rw [h1, Finset.sum_image (fun a _ b _ hab => he hab), ← Equiv.sum_comp finProdFinEquiv,
+    Fintype.sum_prod_type, Finset.sum_comm]
+  refine Finset.sum_congr rfl fun c _ => ?_
+  rw [Finset.sum_eq_single i]
+  · rw [show finProdFinEquiv (i, c) = bitIdx i c from rfl, signMask_bitIdx he, Pi.single_eq_same,
+      one_mul]
+    rfl
+  · intro j _ hj
+    rw [show finProdFinEquiv (j, c) = bitIdx j c from rfl, signMask_bitIdx he,
+      Pi.single_eq_of_ne hj, zero_mul]
+    rfl
+  · intro h; exact absurd (Finset.mem_univ i) h
+
+/-- **Slot phases are phase passes.** -/
+lemma phaseM_eq_phaseZ {Y : Type} {k n : ℕ} {e : Fin (m * k) → Fin n} (he : Function.Injective e)
+    (i : Fin m) (c : ZMod 4) (Z : ZArr Y n) :
+    phaseM e i c Z = phaseZ (signMask e (Pi.single i 1)) c Z := by
+  funext p
+  simp only [phaseM, phaseZ, phaseExp]
+  refine congrArg (· * Z p) ?_
+  rw [prod_pow_I_val, ← Finset.mul_sum, sum_slotMask he]
+  rfl
 
 /-! ### Sign passes -/
 
@@ -746,50 +887,51 @@ lemma SignGood.congr {Rg Rg' : Fin (nT BReg) → List (Fin (A + 4))} {n o K k R 
   hph x h1 h2 := by rw [hR _ (fun y => by simp)]; exact h.hph x h1 h2
   hcnt := by rw [hR _ (fun y => by simp)]; exact h.hcnt
 
-/-- One sign pass on the wire `inl b`: build the strided mask of `tvPred b` on `ph .msk`, run the
-phase pass with `c = 2` on the wire, and clear the mask. -/
-noncomputable def signPass (b : Wires.Address 25) : Pr P (nT BReg) Q A U :=
+/-- One phase pass on the wire `x`: build the strided mask of `uPred u` on `ph .msk`, run the
+phase pass with `c` on the wire, and clear the mask. -/
+noncomputable def slotPass (x : NWire) (u : BinaryWalsh.Address m) (c : ZMod 4) :
+    Pr P (nT BReg) Q A U :=
   .seq (strideMask (reg .n) (reg (.sc 0)) (reg .K) (reg (.sc 1)) (reg (.ph .msk)) (reg (.sc 2))
-      (reg (.sc 3)) (reg (.sc 4)) (reg (.sc 5)) m (tvPred b))
-    (.seq (phaseProg (phMap (reg (.wire (.inl b)))) (reg .st) 2) (uclear (reg (.ph .msk))))
+      (reg (.sc 3)) (reg (.sc 4)) (reg (.sc 5)) m (uPred u))
+    (.seq (phaseProg (phMap (reg (.wire x))) (reg .st) c) (uclear (reg (.ph .msk))))
 
 /-- The step bound of one sign pass. -/
 def signCost (n o K k R r w : ℕ) : ℕ :=
   (10 * n + 4 * o + m * (k * (4 * K + 9) + 4) + 15) +
     (R * 2 ^ n * (25 * r * w + 20 * n + 36) + 33) + (2 * n + 2)
 
-/-- **One sign pass.** The wire `inl b` holding the stream of `Z` ends holding the stream of
-`phaseZ mask 2 Z`, `mask` being the strided mask of `tvPred b`; every other register ends as it
+/-- **One phase pass.** The wire `x` holding the stream of `Z` ends holding the stream of
+`phaseZ mask c Z`, `mask` being the strided mask of `uPred u`; every other register ends as it
 started. -/
-theorem signPass_exec (hA : 5 ≤ A) {n o K k R r w : ℕ} (hr : 1 ≤ r) (hw : 1 ≤ w) (hK : 1 ≤ K)
-    (b : Wires.Address 25) (mask : Fin n → ZMod 2)
-    (hmask : addrBits n (maskVal o K k m (tvPred b)) = mask) (Z : ZArr (Fin R × Fin r) n)
+theorem slotPass_exec (hA : 5 ≤ A) {n o K k R r w : ℕ} (hr : 1 ≤ r) (hw : 1 ≤ w) (hK : 1 ≤ K)
+    (xw : NWire) (u : BinaryWalsh.Address m) (cc : ZMod 4) (mask : Fin n → ZMod 2)
+    (hmask : addrBits n (maskVal o K k m (uPred u)) = mask) (Z : ZArr (Fin R × Fin r) n)
     (v : HS (nT BReg) Q A U) (S : Stacks (nT BReg) A) (hG : SignGood S.R n o K k R r w)
-    (hX : S.R (reg (.wire (.inl b))) = encZ A w Z) :
+    (hX : S.R (reg (.wire xw)) = encZ A w Z) :
     ∃ (v' : HS (nT BReg) Q A U) (c : ℕ), v'.user = v.user ∧ c ≤ signCost n o K k R r w ∧
-      Exec body (signPass b) (mk v S) c (mk v' { S with
-        R := Function.update S.R (reg (.wire (.inl b))) (encZ A w (phaseZ mask 2 Z)) }) := by
+      Exec body (slotPass xw u cc) (mk v S) c (mk v' { S with
+        R := Function.update S.R (reg (.wire xw)) (encZ A w (phaseZ mask cc Z)) }) := by
   have hmsk : S.R (reg (.ph .msk)) = [] := hG.hph .msk (by decide) (by decide)
   obtain ⟨v₁, m₁, hu₁, hm₁, he₁⟩ := strideMask_exec body
     (nodup_map_reg (l := [.n, .sc 0, .K, .sc 1, .ph .msk, .sc 2, .sc 3, .sc 4, .sc 5]) (by simp))
-    m (tvPred b) v S hG.hn hG.ho hG.hK hG.hk hK (hG.hsc 2 (by decide)) (hG.hsc 3 (by decide))
+    m (uPred u) v S hG.hn hG.ho hG.hK hG.hk hK (hG.hsc 2 (by decide)) (hG.hsc 3 (by decide))
     (hG.hsc 4 (by decide)) (hG.hsc 5 (by decide))
   obtain ⟨R₁, he₁, hR₁b, hR₁⟩ := exec_upd body (S := S) (R := S.R) he₁
-  have hph : ∀ x, x ≠ PhaseReg.arr → phMap (reg (BReg := BReg) (.wire (.inl b))) x =
+  have hph : ∀ x, x ≠ PhaseReg.arr → phMap (reg (BReg := BReg) (.wire xw)) x =
       reg (.ph x) := fun x hx => phMap_of_ne _ hx
   have hR₁ph : ∀ x, x ≠ .msk → R₁ (reg (.ph x)) = S.R (reg (.ph x)) :=
     fun x hx => hR₁ _ (reg_ne (by simpa using hx))
   have hP : ∀ x, x ≠ PhaseReg.arr → x ≠ .msk →
-      R₁ (phMap (reg (.wire (.inl b))) x) = S.R (reg (.ph x)) :=
+      R₁ (phMap (reg (.wire xw)) x) = S.R (reg (.ph x)) :=
     fun x h1 h2 => by rw [hph x h1, hR₁ph x h2]
   obtain ⟨v₂, m₂, hu₂, hm₂, he₂⟩ := phaseProg_exec body
-    (ρ := phMap (reg (.wire (.inl b)))) (st := reg .st)
+    (ρ := phMap (reg (.wire xw))) (st := reg .st)
     (phMap_injective (fun x => reg_ne (by simp)))
     (fun x hx => by
       simp only [List.mem_cons, List.not_mem_nil, or_false] at hx
       rcases hx with rfl | rfl | rfl | rfl | rfl <;>
         (rw [hph _ (by decide)]; exact reg_ne (by simp)))
-    hA hr hw 2 mask (maskVal o K k m (tvPred b)) hmask Z
+    hA hr hw cc mask (maskVal o K k m (uPred u)) hmask Z
     (cs := S.R (reg (.ph .rc))) (ws := S.R (reg (.ph .wc))) (kk := S.R (reg (.ph .cnt)))
     (hG.hph .rc (by decide) (by decide)) (hG.hph .wc (by decide) (by decide)) hG.hcnt v₁
     { S with R := R₁ }
@@ -809,11 +951,11 @@ theorem signPass_exec (hA : 5 ≤ A) {n o K k R r w : ℕ} (hr : 1 ≤ r) (hw : 
   rw [phMap_arr] at hR₂b hR₂
   obtain ⟨v₃, hu₃, he₃⟩ := uclear_exec body (reg (.ph .msk)) v₂ { S with R := R₂ }
   obtain ⟨R₃, he₃, hR₃b, hR₃⟩ := exec_upd body (S := S) (R := R₂) he₃
-  have hR₂m : R₂ (reg (.ph .msk)) = binSyms n (maskVal o K k m (tvPred b)) := by
+  have hR₂m : R₂ (reg (.ph .msk)) = binSyms n (maskVal o K k m (uPred u)) := by
     rw [hR₂ _ (reg_ne (by simp)), hR₁b, hmsk, List.append_nil]
-  have hfin : R₃ = Function.update S.R (reg (.wire (.inl b))) (encZ A w (phaseZ mask 2 Z)) := by
+  have hfin : R₃ = Function.update S.R (reg (.wire xw)) (encZ A w (phaseZ mask cc Z)) := by
     funext x
-    by_cases h1 : x = reg (.wire (.inl b))
+    by_cases h1 : x = reg (.wire xw)
     · rw [h1, Function.update_self, hR₃ _ (reg_ne (by simp)), hR₂b]
     rw [Function.update_of_ne h1]
     by_cases h2 : x = reg (.ph .msk)
@@ -826,33 +968,31 @@ theorem signPass_exec (hA : 5 ≤ A) {n o K k R r w : ℕ} (hr : 1 ≤ r) (hw : 
   unfold signCost
   omega
 
-/-- The sign stage: prepare the masks, run one sign pass per terminal, clear. -/
-noncomputable def signStage : Pr P (nT BReg) Q A U :=
-  .seq maskPrep (.seq (Prog.seqList (termList.map signPass)) maskClear)
+/-- The slot phase instruction: prepare the masks, one phase pass on slot `i` of wire `x`, clear. -/
+noncomputable def phaseInstr (x : NWire) (i : Fin m) (c : ZMod 4) : Pr P (nT BReg) Q A U :=
+  .seq maskPrep (.seq (slotPass x (Pi.single i 1) c) maskClear)
 
-/-- The step bound of the sign stage at level `j + 1` on wires of `R` rows. -/
-noncomputable def signStageCost (u j a₀ ρ K R n r w : ℕ) : ℕ :=
-  maskPrepCost u j a₀ ρ (NW * R) n +
-    (Fintype.card (Wires.Address 25) * signCost n (a₀ + ρ) K (bits u j) R r w + 1) +
+/-- The step bound of the slot phase instruction at level `j + 1` on wires of `R` rows. -/
+noncomputable def phaseInstrCost (u j a₀ ρ K R n r w : ℕ) : ℕ :=
+  maskPrepCost u j a₀ ρ (NW * R) n + signCost n (a₀ + ρ) K (bits u j) R r w +
     (2 * (a₀ + ρ) + 2 + (2 * bits u j + 2 + (2 * (2 ^ n * R) + 2)))
 
-/-- **The sign stage** (`corrInM`): with the parameters of level `j + 1`, every register other
-than the wires at rest and the wires holding the bank `B`, every wire `x` ends holding
-`corrInM e B x` for the active bits `e i = a₀ + ρ + K i`; every other register ends as it
-started. -/
-theorem signStage_exec (hA : 5 ≤ A) {bcRest : BReg → List (Fin (A + 4)) → Prop}
+/-- **The slot phase instruction.** With the parameters of level `j + 1`, every register other
+than the wires at rest and the wire `x` holding the stream of `Z`, the wire `x` ends holding the
+stream of `phaseM e i c Z` for the active bits `e i = a₀ + ρ + K i`; every other register ends as
+it started. -/
+theorem phaseInstr_exec (hA : 5 ≤ A) {bcRest : BReg → List (Fin (A + 4)) → Prop}
     {j u K ρ a₀ L R n r w : ℕ} (hr : 1 ≤ r) (hw : 1 ≤ w) (hK : 1 ≤ K)
-    (hfit : ∀ i < m * bits u j, a₀ + ρ + K * i < n) (B : NWire → ZArr (Fin R × Fin r) n)
+    (hfit : ∀ i < m * bits u j, a₀ + ρ + K * i < n) (x : NWire) (i : Fin m) (cc : ZMod 4)
+    (Z : ZArr (Fin R × Fin r) n)
     (v : HS (nT BReg) Q A U) (S : Stacks (nT BReg) A)
     (hpar : ParState S.R (j + 1) u K ρ a₀ L (NW * R) n w (r * w))
-    (hrest : RestBut bcRest n r w (fun x => ∃ y, x = .wire y) S.R)
-    (hB : ∀ x, S.R (reg (.wire x)) = encZ A w (B x)) :
-    ∃ (v' : HS (nT BReg) Q A U) (c : ℕ) (R' : Fin (nT BReg) → List (Fin (A + 4))),
-      v'.user = v.user ∧ c ≤ signStageCost u j a₀ ρ K R n r w ∧
-      Exec body signStage (mk v S) c (mk v' { S with R := R' }) ∧
-      (∀ x, R' (reg (.wire x)) =
-        encZ A w (corrInM (k := bits u j) (actMap a₀ ρ K (m * bits u j) n hfit) B x)) ∧
-      ∀ k, (∀ x, k ≠ reg (.wire x)) → R' k = S.R k := by
+    (hrest : RestBut bcRest n r w (fun x => (∃ y, x = .wire y) ∨ x = .Tc) S.R)
+    (hX : S.R (reg (.wire x)) = encZ A w Z) :
+    ∃ (v' : HS (nT BReg) Q A U) (c : ℕ), v'.user = v.user ∧ c ≤ phaseInstrCost u j a₀ ρ K R n r w ∧
+      Exec body (phaseInstr x i cc) (mk v S) c (mk v' { S with
+        R := Function.update S.R (reg (.wire x))
+          (encZ A w (phaseM (k := bits u j) (actMap a₀ ρ K (m * bits u j) n hfit) i cc Z)) }) := by
   have hsc : ∀ i, S.R (reg (.sc i)) = [] := fun i => hrest (.sc i) (by simp)
   have hcnt : S.R (reg (.ph .cnt)) = [] := hrest (.ph .cnt) (by simp)
   obtain ⟨v₁, m₁, R₁, hu₁, hm₁, he₁, hR₁o, hR₁k, hR₁c, hR₁⟩ :=
@@ -874,55 +1014,34 @@ theorem signStage_exec (hA : 5 ≤ A) {bcRest : BReg → List (Fin (A + 4)) → 
       exact hrest (.ph x) (by simp)
     hcnt := by rw [hR₁c, hdiv, Nat.mul_comm] }
   set e := actMap a₀ ρ K (m * bits u j) n hfit with he
-  obtain ⟨v₂, m₂, R₂, hu₂, hm₂, he₂, hout₂, hR₂⟩ := seqList_passes body signPass
-    (fun b k => k = reg (.wire (.inl b))) (fun Rg => SignGood Rg n (a₀ + ρ) K (bits u j) R r w)
-    (fun b Rg => Rg (reg (.wire (.inl b))) = encZ A w (B (.inl b)))
-    (fun b _ => encZ A w (phaseZ (signMask e (ComplexEndpoints.terminalVector b)) 2 (B (.inl b))))
-    (signCost n (a₀ + ρ) K (bits u j) R r w)
-    (fun b v S hG hIn => by
-      obtain ⟨v', c, hu, hc, he⟩ := signPass_exec body hA hr hw hK b _
-        (addrBits_maskVal hK hfit b) (B (.inl b)) v S hG hIn
-      exact ⟨v', c, _, hu, hc, he, fun k hk => by rw [hk, Function.update_self],
-        fun k hk => Function.update_of_ne hk _ _⟩)
-    (fun b Rg Rg' hG hR => hG.congr fun x hx => hR _ (fun h => hx _ (reg_injective h)))
-    (fun b Rg Rg' hI hR => (hR _ rfl).trans hI)
-    termList (nodup_termList.imp fun hne k hk hk' => hne (by rw [hk] at hk'; simpa using hk'))
-    v₁ { S with R := R₁ } hG
-    (fun b _ => by
-      dsimp only
-      rw [hR₁ _ (reg_ne (by simp)) (reg_ne (by simp)) (reg_ne (by simp))]
-      exact hB _)
+  obtain ⟨v₂, m₂, hu₂, hm₂, he₂⟩ := slotPass_exec body hA hr hw hK x (Pi.single i 1) cc _
+    (addrBits_maskVal hK hfit _) Z v₁ { S with R := R₁ } hG
+    (by dsimp only; rw [hR₁ _ (reg_ne (by simp)) (reg_ne (by simp)) (reg_ne (by simp))]; exact hX)
+  set R₂ := Function.update R₁ (reg (.wire x)) (encZ A w (phaseZ (signMask e (Pi.single i 1)) cc Z))
   obtain ⟨v₃, R₃, hu₃, he₃, hR₃o, hR₃k, hR₃c, hR₃⟩ := maskClear_exec body v₂ { S with R := R₂ }
-  have hR₂w : ∀ k, (∀ x, k ≠ reg (.wire x)) → R₂ k = R₁ k :=
-    fun k hk => hR₂ k (fun b _ h => hk _ h)
-  refine ⟨v₃, _, R₃, by rw [hu₃, hu₂, hu₁], ?_, Exec.seq he₁ (Exec.seq he₂ he₃), ?_, ?_⟩
-  · dsimp only
-    rw [hR₂w _ (fun x => reg_ne (by simp)), hR₂w _ (fun x => reg_ne (by simp)),
-      hR₂w _ (fun x => reg_ne (by simp)), hR₁o, hR₁k, hR₁c, hdiv]
-    rw [length_termList] at hm₂
-    unfold signStageCost
-    omega
-  · intro x
-    rw [hR₃ _ (reg_ne (by simp)) (reg_ne (by simp)) (reg_ne (by simp))]
-    dsimp only
-    rcases x with b | i
-    · rw [hout₂ b (mem_termList b) _ rfl]
-      show _ = encZ A w (signM e (ComplexEndpoints.terminalVector b) (B (.inl b)))
-      rw [signM_eq_phaseZ (actMap_injective hK hfit)]
-    · rw [hR₂ _ (fun b _ h => by simp at h)]
-      dsimp only
-      rw [hR₁ _ (reg_ne (by simp)) (reg_ne (by simp)) (reg_ne (by simp)), hB]
-      rfl
-  · intro k hk
+  have hR₂w : ∀ k, k ≠ reg (.wire x) → R₂ k = R₁ k := fun k hk => Function.update_of_ne hk _ _
+  have hfin : R₃ = Function.update S.R (reg (.wire x)) (encZ A w (phaseM e i cc Z)) := by
+    funext k
     by_cases h0 : k = reg (.sc 0)
-    · rw [h0, hR₃o, hsc 0]
+    · rw [h0, hR₃o, Function.update_of_ne (reg_ne (by simp)), hsc 0]
     by_cases h1 : k = reg (.sc 1)
-    · rw [h1, hR₃k, hsc 1]
+    · rw [h1, hR₃k, Function.update_of_ne (reg_ne (by simp)), hsc 1]
     by_cases h2 : k = reg (.ph .cnt)
-    · rw [h2, hR₃c, hcnt]
+    · rw [h2, hR₃c, Function.update_of_ne (reg_ne (by simp)), hcnt]
     rw [hR₃ k h0 h1 h2]
     dsimp only
-    rw [hR₂w k hk, hR₁ k h0 h1 h2]
+    by_cases hx : k = reg (.wire x)
+    · rw [hx]
+      simp only [R₂, Function.update_self]
+      rw [phaseM_eq_phaseZ (actMap_injective hK hfit)]
+    rw [hR₂w k hx, Function.update_of_ne hx, hR₁ k h0 h1 h2]
+  refine ⟨v₃, _, by rw [hu₃, hu₂, hu₁], ?_, Exec.cast (Exec.seq he₁ (Exec.seq he₂ he₃)) rfl
+    (by rw [hfin])⟩
+  dsimp only
+  rw [hR₂w _ (reg_ne (by simp)), hR₂w _ (reg_ne (by simp)), hR₂w _ (reg_ne (by simp)), hR₁o,
+    hR₁k, hR₁c, hdiv]
+  unfold phaseInstrCost
+  omega
 
 end Signs
 
@@ -993,11 +1112,14 @@ theorem tcBuild_exec (ds : ComplexFramedExecution.Directions) {j u K ρ a₀ L r
 
 /-- The program of one instruction: `gateProg` on the bank for a gate, the supplied program for
 a factor. -/
-noncomputable def instrProg (fp : NWire → ZMod 4 × BinaryWalsh.Address m → Pr P (nT BReg) Q A U) :
-    Instr → Pr P (nT BReg) Q A U
+noncomputable def instrProg (fp : NWire → ZMod 4 × BinaryWalsh.Address m → Pr P (nT BReg) Q A U)
+    (mp : Instr → Pr P (nT BReg) Q A U) : Instr → Pr P (nT BReg) Q A U
   | .gate g => gateProg (fun v => reg (.wire v)) (fun v => reg (.wtmp v)) (reg .st) (reg .ctr)
       (reg .tmp) (reg .cS) (reg .cR) (reg .tS) (reg .tR) g
   | .factor fw g => fp fw g
+  | .trans w v => mp (.trans w v)
+  | .xor w i j => mp (.xor w i j)
+  | .phase w i c => mp (.phase w i c)
 
 /-- The gate layout of the bank. -/
 lemma gateLayout : GateLayout (fun v => reg (BReg := BReg) (.wire v)) (fun v => reg (.wtmp v))
@@ -1019,20 +1141,24 @@ the programs of the instructions of `l ⊆ program ds` leave the wires holding
 `runM e child Tc l B`, every other register as it was. -/
 theorem instrs_exec (ds : ComplexFramedExecution.Directions)
     (fp : NWire → ZMod 4 × BinaryWalsh.Address m → Pr P (nT BReg) Q A U)
+    (mp : Instr → Pr P (nT BReg) Q A U)
     {bcRest : BReg → List (Fin (A + 4)) → Prop} (hA : 4 ≤ A)
     (hgate : ∀ g, Instr.gate g ∈ program ds →
       (2 * gateBound g + 1) ^ (2 * (gateWires g).length) ≤ A + 4)
-    {j u K ρ a₀ L rows n r w Tc cf R k : ℕ} (hw : 1 ≤ w) (e : Fin (m * k) → Fin n)
+    {j u K ρ a₀ L rows n r w Tc cf cm R k : ℕ} (hw : 1 ≤ w) (e : Fin (m * k) → Fin n)
     (child : Fin m → ZArr (Fin R × Fin r) n → ZArr (Fin R × Fin r) n)
     (hfac : ∀ fw g, Instr.factor fw g ∈ program ds →
-      FactorSpec body (fp fw g) bcRest j u K ρ a₀ L rows n r w e child Tc fw g cf) :
+      FactorSpec body (fp fw g) bcRest j u K ρ a₀ L rows n r w e child Tc fw g cf)
+    (hmono : ∀ i ∈ program ds, i.IsMono →
+      MonoSpec body (mp i) bcRest j u K ρ a₀ L rows n r w e child Tc i cm) :
     ∀ l : List Instr, (∀ i ∈ l, i ∈ program ds) →
       ∀ (B : NWire → ZArr (Fin R × Fin r) n) (v : HS (nT BReg) Q A U) (S : Stacks (nT BReg) A),
       NodeRegs bcRest S.R j u K ρ a₀ L rows n r w Tc →
       (∀ x, S.R (reg (.wire x)) = encZ A w (B x)) →
       ∃ (v' : HS (nT BReg) Q A U) (c : ℕ) (R' : Fin (nT BReg) → List (Fin (A + 4))),
-        v'.user = v.user ∧ c ≤ gateCount l * gateCost R n r w + factorCount l * cf + 1 ∧
-        Exec body (Prog.seqList (l.map (instrProg fp))) (mk v S) c (mk v' { S with R := R' }) ∧
+        v'.user = v.user ∧
+        c ≤ gateCount l * gateCost R n r w + factorCount l * cf + monoCount l * cm + 1 ∧
+        Exec body (Prog.seqList (l.map (instrProg fp mp))) (mk v S) c (mk v' { S with R := R' }) ∧
         (∀ x, R' (reg (.wire x)) = encZ A w (runM e child Tc l B x)) ∧
         ∀ q, (∀ x, q ≠ reg (.wire x)) → R' q = S.R q := by
   intro l
@@ -1040,7 +1166,7 @@ theorem instrs_exec (ds : ComplexFramedExecution.Directions)
   | nil =>
       intro _ B v S _ hB
       have he := Exec.act (body := body) .done (mk v S)
-      exact ⟨v, 1, S.R, rfl, by simp [gateCount, factorCount],
+      exact ⟨v, 1, S.R, rfl, by simp [gateCount, factorCount, monoCount],
         by simpa [Prog.seqList] using he, hB, fun _ _ => rfl⟩
   | cons ins l ih =>
       intro hl B v S hN hB
@@ -1059,7 +1185,7 @@ theorem instrs_exec (ds : ComplexFramedExecution.Directions)
           refine ⟨v₂, m₁ + m₂, R₂, hu₂.trans hu₁, ?_, Exec.seq he₁ he₂, hw₂,
             fun q hq => (hfr₂ q hq).trans (hfr q hq)⟩
           have hm₁' : m₁ ≤ gateCost R n r w := hm₁
-          simp only [gateCount, factorCount, Nat.add_mul, Nat.one_mul]
+          simp only [gateCount, factorCount, monoCount, Nat.add_mul, Nat.one_mul]
           omega
       | factor fw g =>
           obtain ⟨v₁, m₁, R₁, hu₁, hm₁, he₁, hw₁, hfr₁⟩ :=
@@ -1068,7 +1194,34 @@ theorem instrs_exec (ds : ComplexFramedExecution.Directions)
             (execM e child Tc (.factor fw g) B) v₁ { S with R := R₁ } (hN.congr hfr₁) hw₁
           refine ⟨v₂, m₁ + m₂, R₂, hu₂.trans hu₁, ?_, Exec.seq he₁ he₂, hw₂,
             fun q hq => (hfr₂ q hq).trans (hfr₁ q hq)⟩
-          simp only [gateCount, factorCount, Nat.add_mul, Nat.one_mul]
+          simp only [gateCount, factorCount, monoCount, Nat.add_mul, Nat.one_mul]
+          omega
+      | trans fw tv =>
+          obtain ⟨v₁, m₁, R₁, hu₁, hm₁, he₁, hw₁, hfr₁⟩ :=
+            hmono _ (hl _ List.mem_cons_self) trivial B v S hN hB
+          obtain ⟨v₂, m₂, R₂, hu₂, hm₂, he₂, hw₂, hfr₂⟩ := ih hl'
+            (execM e child Tc (.trans fw tv) B) v₁ { S with R := R₁ } (hN.congr hfr₁) hw₁
+          refine ⟨v₂, m₁ + m₂, R₂, hu₂.trans hu₁, ?_, Exec.seq he₁ he₂, hw₂,
+            fun q hq => (hfr₂ q hq).trans (hfr₁ q hq)⟩
+          simp only [gateCount, factorCount, monoCount, Nat.add_mul, Nat.one_mul]
+          omega
+      | xor fw i' j' =>
+          obtain ⟨v₁, m₁, R₁, hu₁, hm₁, he₁, hw₁, hfr₁⟩ :=
+            hmono _ (hl _ List.mem_cons_self) trivial B v S hN hB
+          obtain ⟨v₂, m₂, R₂, hu₂, hm₂, he₂, hw₂, hfr₂⟩ := ih hl'
+            (execM e child Tc (.xor fw i' j') B) v₁ { S with R := R₁ } (hN.congr hfr₁) hw₁
+          refine ⟨v₂, m₁ + m₂, R₂, hu₂.trans hu₁, ?_, Exec.seq he₁ he₂, hw₂,
+            fun q hq => (hfr₂ q hq).trans (hfr₁ q hq)⟩
+          simp only [gateCount, factorCount, monoCount, Nat.add_mul, Nat.one_mul]
+          omega
+      | phase fw i' c' =>
+          obtain ⟨v₁, m₁, R₁, hu₁, hm₁, he₁, hw₁, hfr₁⟩ :=
+            hmono _ (hl _ List.mem_cons_self) trivial B v S hN hB
+          obtain ⟨v₂, m₂, R₂, hu₂, hm₂, he₂, hw₂, hfr₂⟩ := ih hl'
+            (execM e child Tc (.phase fw i' c') B) v₁ { S with R := R₁ } (hN.congr hfr₁) hw₁
+          refine ⟨v₂, m₁ + m₂, R₂, hu₂.trans hu₁, ?_, Exec.seq he₁ he₂, hw₂,
+            fun q hq => (hfr₂ q hq).trans (hfr₁ q hq)⟩
+          simp only [gateCount, factorCount, monoCount, Nat.add_mul, Nat.one_mul]
           omega
 
 end Instrs
@@ -1079,25 +1232,6 @@ section Exchange
 
 variable {BReg : Type} [Fintype BReg] {Q A : ℕ} {U P : Type}
   (body : P → Pr P (nT BReg) Q A U)
-
-/-- The signed exchange of `corrOutM`, with the unit `c` in place of `i ^ (27 k)`: wire `inl b`
-gets `c` times wire `inr (inl b)`, which gets the negation of wire `inl b`. -/
-def exchZ {Y : Type} {n : ℕ} (c : GaussianInt) (B : NWire → ZArr Y n) : NWire → ZArr Y n
-  | .inl b => c • B (.inr (.inl b))
-  | .inr (.inl b) => -B (.inl b)
-  | .inr (.inr s) => B (.inr (.inr s))
-
-/-- The sink correction is the exchange followed by the column signs on the `X` terminals. -/
-lemma corrInM_exchZ {Y : Type} {n k : ℕ} (e : Fin (m * k) → Fin n) (B : NWire → ZArr Y n) :
-    corrInM (k := k) e (exchZ ((⟨0, 1⟩ : GaussianInt) ^ (27 * k)) B) = corrOutM (k := k) e B := by
-  funext x
-  rcases x with b | b | s
-  · funext p
-    show (∏ c : Fin k, _) * ((⟨0, 1⟩ : GaussianInt) ^ (27 * k) * B _ p) =
-      (⟨0, 1⟩ : GaussianInt) ^ (27 * k) * ((∏ c : Fin k, _) * B _ p)
-    ring
-  · rfl
-  · rfl
 
 /-- The stream of `i ^ q Z` is the stream of `Z` multiplied coefficientwise by `unitG q`. -/
 lemma encZ_unit {R r n w : ℕ} (q : Fin 4) (Z : ZArr (Fin R × Fin r) n) :
@@ -1130,183 +1264,6 @@ lemma autoLayout_one {x y : LReg BReg} (hxy : x ≠ y) (hxc : x ≠ .ctr) (hxt :
   ctr_tmp := reg_ne (by simp)
   ins_st _ := reg_ne hxs
 
-/-- One exchange pass on the terminal `b`: negate wire `inl b` onto the temporary of
-`inr (inl b)`; compute `u mod 4` and multiply wire `inr (inl b)` by `i ^ (3 (u mod 4))` onto the
-temporary of `inl b`; move both temporaries onto the opposite wires. -/
-noncomputable def exchPass (b : Wires.Address 25) : Pr P (nT BReg) Q A U :=
-  .seq (autoWords (fun _ : Fin 1 => reg (.wire (.inl b))) (fun _ => reg (.wtmp (.inr (.inl b))))
-      (reg .st) (reg .ctr) (reg .tmp) (gaussAuto A ![![(-1, 0)]] 1 false))
-    (.seq (resid4 (reg .u) (reg (.sc 0)) (reg .cs))
-      (.seq (disp4 (reg .cs) fun s => autoWords (fun _ : Fin 1 => reg (.wire (.inr (.inl b))))
-          (fun _ => reg (.wtmp (.inl b))) (reg .st) (reg .ctr) (reg .tmp) (unitAuto A (3 * s)))
-        (.seq (moveR (reg (.wtmp (.inl b))) (reg (.wire (.inl b))) id)
-          (moveR (reg (.wtmp (.inr (.inl b)))) (reg (.wire (.inr (.inl b)))) id))))
-
-/-- The step bound of one exchange pass on wires of `R` rows. -/
-def exchCost (u R n r w : ℕ) : ℕ :=
-  (R * 2 ^ n * r * (5 * w + 6) + 2) + (4 * u + 4) + (R * 2 ^ n * r * (5 * w + 6) + 2 + 3) +
-    (2 * (R * 2 ^ n * (r * w)) + 2) + (2 * (R * 2 ^ n * (r * w)) + 2)
-
-/-- **One exchange pass.** Wire `inl b` (stream of `ZX`) and wire `inr (inl b)` (stream of
-`ZY`) end holding the streams of `i ^ (3 (u mod 4)) ZY` and `-ZX`; every other register ends as
-it started. -/
-theorem exchPass_exec (hA : 5 ≤ A) {u n r w R : ℕ} (hw : 1 ≤ w) (b : Wires.Address 25)
-    (ZX ZY : ZArr (Fin R × Fin r) n) (v : HS (nT BReg) Q A U) (S : Stacks (nT BReg) A)
-    (hctr : (S.R (reg .ctr)).length = w) (htmp : S.R (reg .tmp) = [])
-    (hu : (S.R (reg .u)).length = u) (hsc : S.R (reg (.sc 0)) = [])
-    (htX : S.R (reg (.wtmp (.inl b))) = []) (htY : S.R (reg (.wtmp (.inr (.inl b)))) = [])
-    (hX : S.R (reg (.wire (.inl b))) = encZ A w ZX)
-    (hY : S.R (reg (.wire (.inr (.inl b)))) = encZ A w ZY) :
-    ∃ (v' : HS (nT BReg) Q A U) (c : ℕ) (R' : Fin (nT BReg) → List (Fin (A + 4))),
-      v'.user = v.user ∧ c ≤ exchCost u R n r w ∧
-      Exec body (exchPass b) (mk v S) c (mk v' { S with R := R' }) ∧
-      R' (reg (.wire (.inl b))) = encZ A w ((⟨0, 1⟩ : GaussianInt) ^ ((3 * (u % 4)) % 4) • ZY) ∧
-      R' (reg (.wire (.inr (.inl b)))) = encZ A w (-ZX) ∧
-      ∀ q, q ≠ reg (.wire (.inl b)) → q ≠ reg (.wire (.inr (.inl b))) → R' q = S.R q := by
-  -- negation of `X` onto `tY`
-  obtain ⟨v₁, m₁, S₁, hu₁, hm₁, he₁, hi₁, ho₁, hl₁, hX₁, htY₁, hoth₁⟩ :=
-    neg_exec body (autoLayout_one (x := .wire (.inl b)) (y := .wtmp (.inr (.inl b)))
-      (by simp) (by simp) (by simp) (by simp) (by simp) (by simp)) (by norm_num; omega) hw hctr
-      (coeffList w ZX) v S rfl htmp hX
-  have hS₁ : S₁ = { S with R := S₁.R } := Stacks.ext hi₁ ho₁ hl₁ rfl
-  have hf₁ : ∀ q, q ≠ reg (.wire (.inl b)) → q ≠ reg (.wtmp (.inr (.inl b))) → S₁.R q = S.R q :=
-    hoth₁
-  -- the residue of `u` and the unit multiplication of `Y` onto `tX`
-  obtain ⟨v₂, hu₂, hsc₂, he₂⟩ := resid4_exec body (i := reg .u) (t := reg (.sc 0))
-    (reg_ne (by simp)) (reg .cs) v₁ S₁ ((hf₁ _ (reg_ne (by simp)) (reg_ne (by simp))).trans hsc)
-  set q : Fin 4 := ⟨u % 4, Nat.mod_lt _ (by norm_num)⟩ with hq
-  have hlenu : (S₁.R (reg .u)).length = u := by
-    rw [hf₁ _ (reg_ne (by simp)) (reg_ne (by simp))]; exact hu
-  obtain ⟨v₃, m₃, S₃, hu₃, hm₃, he₃, hi₃, ho₃, hl₃, hY₃, htX₃, hoth₃⟩ :=
-    mulG_exec body (autoLayout_one (x := .wire (.inr (.inl b))) (y := .wtmp (.inl b))
-      (by simp) (by simp) (by simp) (by simp) (by simp) (by simp))
-      (unitG (3 * q)).1 (unitG (3 * q)).2 (by omega) (by rw [unitG_natAbs]; norm_num; omega) hw
-      ((congrArg List.length (hf₁ _ (reg_ne (by simp)) (reg_ne (by simp)))).trans hctr)
-      (coeffList w ZY) v₂ S₁ rfl
-      ((hf₁ _ (reg_ne (by simp)) (reg_ne (by simp))).trans htmp)
-      ((hf₁ _ (reg_ne (by simp)) (reg_ne (by simp))).trans hY)
-  obtain ⟨c₃, hc₃, he₃'⟩ := disp4_exec body (reg .cs)
-    (fun s => autoWords (fun _ : Fin 1 => reg (.wire (.inr (.inl b))))
-      (fun _ => reg (.wtmp (.inl b))) (reg .st) (reg .ctr) (reg .tmp) (unitAuto A (3 * s)))
-    q v₂ S₁ (by rw [hsc₂, hlenu]) he₃
-  have hf₃ : ∀ q, q ≠ reg (.wire (.inr (.inl b))) → q ≠ reg (.wtmp (.inl b)) → S₃.R q = S₁.R q :=
-    hoth₃
-  -- the moves back
-  obtain ⟨v₄, hu₄, he₄⟩ := moveR_exec body (reg (.wtmp (.inl b))) (reg (.wire (.inl b)))
-    (reg_ne (by simp)) id v₃ S₃
-  set R₄ := movedR S₃.R (reg (.wtmp (.inl b))) (reg (.wire (.inl b))) id
-    (S₃.R (reg (.wtmp (.inl b)))) with hR₄
-  obtain ⟨v₅, hu₅, he₅⟩ := moveR_exec body (reg (.wtmp (.inr (.inl b))))
-    (reg (.wire (.inr (.inl b)))) (reg_ne (by simp)) id v₄ { S₃ with R := R₄ }
-  set R₅ := movedR R₄ (reg (.wtmp (.inr (.inl b)))) (reg (.wire (.inr (.inl b)))) id
-    (R₄ (reg (.wtmp (.inr (.inl b))))) with hR₅
-  have htX₃' : S₃.R (reg (.wtmp (.inl b))) =
-      (encZ A w ((⟨0, 1⟩ : GaussianInt) ^ ((3 * (u % 4)) % 4) • ZY)).reverse := by
-    rw [htX₃, hf₁ _ (reg_ne (by simp)) (reg_ne (by simp)), htX, List.append_nil]
-    congr 1
-    have h3 : ((3 * q : Fin 4) : ℕ) = (3 * (u % 4)) % 4 := by
-      simp [Fin.val_mul, hq]
-    rw [← h3, encZ_unit]
-  have htY₄ : R₄ (reg (.wtmp (.inr (.inl b)))) = (encZ A w (-ZX)).reverse := by
-    rw [hR₄, movedR, Function.update_of_ne (reg_ne (by simp)), Function.update_of_ne
-      (reg_ne (by simp)), hf₃ _ (reg_ne (by simp)) (reg_ne (by simp)), htY₁, htY,
-      List.append_nil, encZ_neg]
-  have hlen : ∀ Z : ZArr (Fin R × Fin r) n, (encZ A w Z).length = R * 2 ^ n * (r * w) :=
-    fun Z => length_encZ Z
-  refine ⟨v₅, m₁ + ((4 * (S₁.R (reg .u)).length + 4) + (c₃ +
-      ((2 * (S₃.R (reg (.wtmp (.inl b)))).length + 2) +
-        (2 * (R₄ (reg (.wtmp (.inr (.inl b))))).length + 2)))), R₅,
-    by rw [hu₅, hu₄, hu₃, hu₂, hu₁], ?_, ?_, ?_, ?_, ?_⟩
-  · rw [hlenu, htX₃', htY₄, List.length_reverse, List.length_reverse, hlen, hlen]
-    rw [length_coeffList] at hm₁ hm₃
-    unfold exchCost
-    omega
-  · refine Exec.cast (Exec.seq he₁ (Exec.seq he₂ (Exec.seq he₃' (Exec.seq he₄ he₅)))) rfl ?_
-    congr 1
-    exact Stacks.ext (hi₃.trans hi₁) (ho₃.trans ho₁) (hl₃.trans hl₁) rfl
-  · have h1 : reg (BReg := BReg) (.wire (.inl b)) ≠ reg (.wire (.inr (.inl b))) :=
-      reg_ne (by simp)
-    have h2 : reg (BReg := BReg) (.wire (.inl b)) ≠ reg (.wtmp (.inr (.inl b))) := reg_ne (by simp)
-    rw [hR₅, movedR, Function.update_of_ne h1, Function.update_of_ne h2, hR₄, movedR,
-      Function.update_self, htX₃', hf₃ (reg (.wire (.inl b))) h1 (reg_ne (by simp)), hX₁]
-    simp only [List.map_id, List.reverse_reverse, List.append_nil]
-  · rw [hR₅, movedR, Function.update_self, htY₄, hR₄, movedR,
-      Function.update_of_ne (reg_ne (by simp)), Function.update_of_ne (reg_ne (by simp)), hY₃]
-    simp only [List.map_id, List.reverse_reverse, List.append_nil]
-  · intro k hk1 hk2
-    by_cases h3 : k = reg (.wtmp (.inr (.inl b)))
-    · rw [h3, hR₅, movedR, Function.update_of_ne (reg_ne (by simp)), Function.update_self, htY]
-    by_cases h4 : k = reg (.wtmp (.inl b))
-    · rw [h4, hR₅, movedR, Function.update_of_ne (reg_ne (by simp)),
-        Function.update_of_ne (reg_ne (by simp)), hR₄, movedR,
-        Function.update_of_ne (reg_ne (by simp)), Function.update_self, htX]
-    rw [hR₅, movedR, Function.update_of_ne hk2, Function.update_of_ne h3, hR₄, movedR,
-      Function.update_of_ne hk1, Function.update_of_ne h4, hf₃ k hk2 h4, hf₁ k hk1 h3]
-
-/-- The exchange stage: one exchange pass per terminal. -/
-noncomputable def exchStage : Pr P (nT BReg) Q A U := Prog.seqList (termList.map exchPass)
-
-/-- **The exchange stage.** With the wires holding the bank `B`, their temporaries empty, the
-word counter `ctr` at `w` symbols, `tmp` and `sc 0` empty and `u` symbols on `u`, the wires end
-holding `exchZ (i ^ (3 (u mod 4))) B`; every other register ends as it started. -/
-theorem exchStage_exec (hA : 5 ≤ A) {u n r w R : ℕ} (hw : 1 ≤ w)
-    (B : NWire → ZArr (Fin R × Fin r) n) (v : HS (nT BReg) Q A U) (S : Stacks (nT BReg) A)
-    (hctr : (S.R (reg .ctr)).length = w) (htmp : S.R (reg .tmp) = [])
-    (hu : (S.R (reg .u)).length = u) (hsc : S.R (reg (.sc 0)) = [])
-    (hwt : ∀ x, S.R (reg (.wtmp x)) = []) (hB : ∀ x, S.R (reg (.wire x)) = encZ A w (B x)) :
-    ∃ (v' : HS (nT BReg) Q A U) (c : ℕ) (R' : Fin (nT BReg) → List (Fin (A + 4))),
-      v'.user = v.user ∧ c ≤ Fintype.card (Wires.Address 25) * exchCost u R n r w + 1 ∧
-      Exec body exchStage (mk v S) c (mk v' { S with R := R' }) ∧
-      (∀ x, R' (reg (.wire x)) =
-        encZ A w (exchZ ((⟨0, 1⟩ : GaussianInt) ^ ((3 * (u % 4)) % 4)) B x)) ∧
-      ∀ q, (∀ x, q ≠ reg (.wire x)) → R' q = S.R q := by
-  set c : GaussianInt := (⟨0, 1⟩ : GaussianInt) ^ ((3 * (u % 4)) % 4) with hc
-  let X : Wires.Address 25 → Fin (nT BReg) := fun b => reg (.wire (.inl b))
-  let Y : Wires.Address 25 → Fin (nT BReg) := fun b => reg (.wire (.inr (.inl b)))
-  obtain ⟨v', m', R', hu', hm', he', hout', hfr'⟩ := seqList_passes body exchPass
-    (fun b q => q = X b ∨ q = Y b)
-    (fun Rg => (Rg (reg .ctr)).length = w ∧ Rg (reg .tmp) = [] ∧ (Rg (reg .u)).length = u ∧
-      Rg (reg (.sc 0)) = [] ∧ ∀ x, Rg (reg (.wtmp x)) = [])
-    (fun b Rg => Rg (X b) = encZ A w (B (.inl b)) ∧ Rg (Y b) = encZ A w (B (.inr (.inl b))))
-    (fun b => Function.update (fun _ => encZ A w (-B (.inl b))) (X b)
-      (encZ A w (c • B (.inr (.inl b)))))
-    (exchCost u R n r w)
-    (fun b v S hG hIn => by
-      obtain ⟨hG1, hG2, hG3, hG4, hG5⟩ := hG
-      obtain ⟨v', c', R', hu', hc', he', hX', hY', hfr'⟩ := exchPass_exec body hA hw b
-        (B (.inl b)) (B (.inr (.inl b))) v S hG1 hG2 hG3 hG4 (hG5 _) (hG5 _) hIn.1 hIn.2
-      refine ⟨v', c', R', hu', hc', he', ?_, fun q hq => hfr' q (fun h => hq (Or.inl h))
-        (fun h => hq (Or.inr h))⟩
-      rintro q (rfl | rfl)
-      · rw [hX', Function.update_self]
-      · rw [hY', Function.update_of_ne (reg_ne (by simp))])
-    (fun b Rg Rg' hG hR => by
-      obtain ⟨hG1, hG2, hG3, hG4, hG5⟩ := hG
-      have hR' : ∀ x : LReg BReg, (∀ y, x ≠ .wire y) → Rg' (reg x) = Rg (reg x) :=
-        fun x hx => hR _ (by
-          rintro (h | h) <;> exact hx _ (reg_injective h))
-      refine ⟨?_, ?_, ?_, ?_, fun x => ?_⟩
-      · rw [hR' _ (by simp)]; exact hG1
-      · rw [hR' _ (by simp)]; exact hG2
-      · rw [hR' _ (by simp)]; exact hG3
-      · rw [hR' _ (by simp)]; exact hG4
-      · rw [hR' _ (by simp)]; exact hG5 x)
-    (fun b Rg Rg' hI hR => ⟨(hR _ (Or.inl rfl)).trans hI.1, (hR _ (Or.inr rfl)).trans hI.2⟩)
-    termList (nodup_termList.imp fun hne q hq hq' => by
-      rcases hq with rfl | rfl <;> rcases hq' with h | h <;> simp [X, Y] at h <;> exact hne h)
-    v S ⟨hctr, htmp, hu, hsc, hwt⟩ (fun b _ => ⟨hB _, hB _⟩)
-  refine ⟨v', m', R', hu', by rw [length_termList] at hm'; exact hm', he', ?_, ?_⟩
-  · intro x
-    rcases x with b | b | s
-    · rw [hout' b (mem_termList b) _ (Or.inl rfl), Function.update_self]
-      rfl
-    · rw [hout' b (mem_termList b) _ (Or.inr rfl), Function.update_of_ne (reg_ne (by simp))]
-      rfl
-    · rw [hfr' _ (fun b _ h => by rcases h with h | h <;> simp [X, Y] at h), hB]
-      rfl
-  · intro q hq
-    exact hfr' q (fun b _ h => by rcases h with h | h <;> exact hq _ h)
-
 end Exchange
 
 /-! ### The node body -/
@@ -1316,44 +1273,46 @@ section Node
 variable {BReg : Type} [Fintype BReg] {Q A : ℕ} {U P : Type}
   (body : P → Pr P (nT BReg) Q A U)
 
-/-- **The node body** at level `j + 1`, with the factor instructions supplied as programs `fp`:
-the row split, the source signs (`corrInM`), `Tc := expZ u ds j`, the instructions of
-`program ds`, clearing `Tc`, the signed exchange and the sink signs (`corrOutM`), and the row
+/-- **The node body** at level `j + 1`, with the factor instructions supplied as programs `fp`
+and the exact instructions as programs `mp`: the row split onto the families, the zero centres,
+`Tc := expZ u ds j`, the instructions of `program ds`, clearing `Tc` and the centres, and the row
 merge. -/
 noncomputable def nodeBody (ds : ComplexFramedExecution.Directions)
-    (fp : NWire → ZMod 4 × BinaryWalsh.Address m → Pr P (nT BReg) Q A U) :
+    (fp : NWire → ZMod 4 × BinaryWalsh.Address m → Pr P (nT BReg) Q A U)
+    (mp : Instr → Pr P (nT BReg) Q A U) :
     Pr P (nT BReg) Q A U :=
   .seq splitProg
-    (.seq signStage
+    (.seq zeroCentres
       (.seq (tcBuild ds)
-        (.seq (Prog.seqList ((program ds).map (instrProg fp)))
+        (.seq (Prog.seqList ((program ds).map (instrProg fp mp)))
           (.seq (uclear (reg .Tc))
-            (.seq exchStage
-              (.seq signStage mergeProg))))))
+            (.seq clearCentres mergeProg)))))
 
 /-- The step bound of the node body at level `j + 1` with `R` rows per wire (`NW R` rows on
-`io`), factor programs within `cf` steps each. -/
+`io`), factor programs within `cf` steps and exact instruction programs within `cm` steps. -/
 noncomputable def nodeCost (ds : ComplexFramedExecution.Directions)
-    (u j K ρ a₀ R n r w cf : ℕ) : ℕ :=
+    (u j K ρ a₀ R n r w cf cm : ℕ) : ℕ :=
   (6 * (NW * (R * 2 ^ n * (r * w))) + 6 * (NW * R) + 2 * NW + 3) +
-    2 * signStageCost u j a₀ ρ K R n r w +
+    (8 * (4 * (R * 2 ^ n * r * w) + 4) + 1) +
     (expCost (gateCount (program ds)) (factorCount (program ds)) u j + 2) +
-    (gateCount (program ds) * gateCost R n r w + factorCount (program ds) * cf + 1) +
+    (gateCount (program ds) * gateCost R n r w + factorCount (program ds) * cf +
+      monoCount (program ds) * cm + 1) +
     (2 * expZ u ds j + 2) +
-    (Fintype.card (Wires.Address 25) * exchCost u R n r w + 1) +
+    (8 * (2 * (R * 2 ^ n * r * w) + 2) + 1) +
     (6 * (NW * (R * 2 ^ n * (r * w))) + 8 * (NW * R) + 6)
 
 /-- **The node body.** From the parameters of level `j + 1` (`rows = rowsAt R₀ (j + 1)`,
 `rw = r w`), every register at rest and `io` holding the stream of `Z`, and with every factor
-instruction of `program ds` implemented by `fp` in the sense of `FactorSpec` (child semantics
-the layer at level `j` on the slots, child exponent `expZ u ds j`), the node body ends with `io`
-holding the stream of the level-`j + 1` layer
-`ofBank (rowsAt R₀ j) (nodeM e child (expZ u ds j) ds (toBank (rowsAt R₀ j) Z))`,
+instruction of `program ds` implemented by `fp` in the sense of `FactorSpec` and every exact
+instruction by `mp` in the sense of `MonoSpec` (child semantics the layer at level `j` on the
+slots, child exponent `expZ u ds j`), the node body ends with `io` holding the stream of the
+level-`j + 1` layer `ofBank (rowsAt R₀ j) (nodeM e child (expZ u ds j) ds (toBank (rowsAt R₀ j) Z))`,
 `e i = a₀ + ρ + K i`, every other register and `user` as before, within
-`nodeCost ds u j K ρ a₀ (rowsAt R₀ j) n r w cf` steps. -/
+`nodeCost ds u j K ρ a₀ (rowsAt R₀ j) n r w cf cm` steps. -/
 theorem nodeBody_exec (ds : ComplexFramedExecution.Directions)
     (fp : NWire → ZMod 4 × BinaryWalsh.Address m → Pr P (nT BReg) Q A U)
-    {bcRest : BReg → List (Fin (A + 4)) → Prop} {R₀ j u K ρ a₀ L n r w cf : ℕ}
+    (mp : Instr → Pr P (nT BReg) Q A U)
+    {bcRest : BReg → List (Fin (A + 4)) → Prop} {R₀ j u K ρ a₀ L n r w cf cm : ℕ}
     (hA : 5 ≤ A) (hNW : NW ≤ A + 4)
     (hgate : ∀ g, Instr.gate g ∈ program ds →
       (2 * gateBound g + 1) ^ (2 * (gateWires g).length) ≤ A + 4)
@@ -1363,126 +1322,136 @@ theorem nodeBody_exec (ds : ComplexFramedExecution.Directions)
         (actMap a₀ ρ K (bits u (j + 1)) n hfit)
         (fun s => layerZ u ds R₀ j fun c => actMap a₀ ρ K (bits u (j + 1)) n hfit (bitIdx s c))
         (expZ u ds j) fw g cf)
+    (hmono : ∀ i ∈ program ds, i.IsMono →
+      MonoSpec body (mp i) bcRest j u K ρ a₀ L (rowsAt R₀ (j + 1)) n r w (k := bits u j)
+        (actMap a₀ ρ K (bits u (j + 1)) n hfit)
+        (fun s => layerZ u ds R₀ j fun c => actMap a₀ ρ K (bits u (j + 1)) n hfit (bitIdx s c))
+        (expZ u ds j) i cm)
     (Z : ZArr (Fin (rowsAt R₀ (j + 1)) × Fin r) n) (v : HS (nT BReg) Q A U)
     (S : Stacks (nT BReg) A)
     (hpar : ParState S.R (j + 1) u K ρ a₀ L (rowsAt R₀ (j + 1)) n w (r * w))
     (hrest : Rest bcRest n r w S.R) (hio : S.R (reg .io) = encZ A w Z) :
     ∃ (v' : HS (nT BReg) Q A U) (c : ℕ), v'.user = v.user ∧
-      c ≤ nodeCost ds u j K ρ a₀ (rowsAt R₀ j) n r w cf ∧
-      Exec body (nodeBody ds fp) (mk v S) c (mk v' { S with
+      c ≤ nodeCost ds u j K ρ a₀ (rowsAt R₀ j) n r w cf cm ∧
+      Exec body (nodeBody ds fp mp) (mk v S) c (mk v' { S with
         R := Function.update S.R (reg .io) (encZ A w (ofBank (rowsAt R₀ j)
           (nodeM (k := bits u j) (actMap a₀ ρ K (bits u (j + 1)) n hfit)
             (fun s => layerZ u ds R₀ j fun c => actMap a₀ ρ K (bits u (j + 1)) n hfit (bitIdx s c))
             (expZ u ds j) ds (toBank (rowsAt R₀ j) Z)))) }) := by
+  set B₀ := bankZ (toBank (rowsAt R₀ j) Z)
   -- the row split
   have hsplit := splitProg_exec body hNW hr hw (R := rowsAt R₀ j) Z v S hio (hrest .rowctr)
     (hrest .rowtmp) (fun x => hrest (.wtmp x)) (fun x => hrest (.wire x))
   obtain ⟨v₁, m₁, R₁, hu₁, hm₁, he₁, hio₁, hw₁, hfr₁⟩ := hsplit
-  have h₁ : ∀ x : LReg BReg, x ≠ .io → (∀ y, x ≠ .wire y) → R₁ (reg x) = S.R (reg x) :=
+  have h₁ : ∀ x : LReg BReg, x ≠ .io → (∀ y : DWire, x ≠ .wire (.inl y)) →
+      R₁ (reg x) = S.R (reg x) :=
     fun x h1 h2 => hfr₁ _ (reg_ne h1) (fun y => reg_ne (h2 y))
-  have hpar₁ : ParState R₁ (j + 1) u K ρ a₀ L (rowsAt R₀ (j + 1)) n w (r * w) :=
-    hpar.congr fun x hx => h₁ x (parRegs_ne hx).1 (parRegs_ne hx).2.1
-  -- the source signs
-  obtain ⟨v₂, m₂, R₂, hu₂, hm₂, he₂, hw₂, hfr₂⟩ := signStage_exec body hA hr hw hK hfit
-    (bankZ (toBank (rowsAt R₀ j) Z)) v₁ { S with R := R₁ } hpar₁
-    (hrest.restBut_of_frame _ fun x hx hx' => h₁ x hx fun y h => hx' ⟨y, h⟩) hw₁
-  have h₂ : ∀ x : LReg BReg, (∀ y, x ≠ .wire y) → R₂ (reg x) = R₁ (reg x) :=
-    fun x hx => hfr₂ _ fun y => reg_ne (hx y)
+  -- the zero centres
+  obtain ⟨v₂, m₂, R₂, hu₂, hm₂, he₂, hc₂, hfr₂⟩ := zeroCentres_exec body (B₀ (.inl 0)) v₁
+    { S with R := R₁ } (hw₁ 0) (by dsimp only; rw [h₁ _ (by simp) (by simp)]; exact hrest .tmp)
+    (fun c => by dsimp only; rw [h₁ _ (by simp) (by simp)]; exact hrest (.wire (.inr c)))
+  have hw₂ : ∀ x, R₂ (reg (.wire x)) = encZ A w (B₀ x) := by
+    intro x
+    rcases x with d | c
+    · rw [hfr₂ _ (fun c => reg_ne (by simp))]; exact hw₁ d
+    · exact hc₂ c
+  have h₂ : ∀ x : LReg BReg, x ≠ .io → (∀ y, x ≠ .wire y) → R₂ (reg x) = S.R (reg x) :=
+    fun x h1 h2 => (hfr₂ _ fun c => reg_ne (h2 _)).trans (h₁ x h1 fun y => h2 _)
+  have hpar₂ : ParState R₂ (j + 1) u K ρ a₀ L (rowsAt R₀ (j + 1)) n w (r * w) :=
+    hpar.congr fun x hx => h₂ x (parRegs_ne hx).1 (parRegs_ne hx).2.1
   -- the child exponent
   obtain ⟨v₃, m₃, R₃, hu₃, hm₃, he₃, hTc₃, hfr₃⟩ := tcBuild_exec body ds (j := j) v₂
-    { S with R := R₂ } (hpar₁.congr fun x hx => h₂ x (parRegs_ne hx).2.1)
-    (fun i => by
-      dsimp only; rw [h₂ _ (by simp), h₁ _ (by simp) (by simp)]; exact hrest (.sc i))
-    (by dsimp only; rw [h₂ _ (by simp), h₁ _ (by simp) (by simp)]; exact hrest .Tc)
-  have h₃ : ∀ x : LReg BReg, (∀ y, x ≠ .wire y) → x ≠ .Tc → R₃ (reg x) = R₁ (reg x) :=
-    fun x hx hT => (hfr₃ _ (reg_ne hT)).trans (h₂ x hx)
+    { S with R := R₂ } hpar₂
+    (fun i => by dsimp only; rw [h₂ _ (by simp) (by simp)]; exact hrest (.sc i))
+    (by dsimp only; rw [h₂ _ (by simp) (by simp)]; exact hrest .Tc)
+  have h₃ : ∀ x : LReg BReg, x ≠ .io → (∀ y, x ≠ .wire y) → x ≠ .Tc → R₃ (reg x) = S.R (reg x) :=
+    fun x h1 hx hT => (hfr₃ _ (reg_ne hT)).trans (h₂ x h1 hx)
   -- the instructions
   have hN₃ : NodeRegs bcRest R₃ j u K ρ a₀ L (rowsAt R₀ (j + 1)) n r w (expZ u ds j) :=
-    { par := hpar₁.congr fun x hx => h₃ x (parRegs_ne hx).2.1 (parRegs_ne hx).2.2
+    { par := hpar.congr fun x hx => h₃ x (parRegs_ne hx).1 (parRegs_ne hx).2.1 (parRegs_ne hx).2.2
       rest := hrest.restBut_of_frame _ fun x hx hx' => by
-        rw [h₃ x (fun y h => hx' (Or.inl ⟨y, h⟩)) (fun h => hx' (Or.inr h))]
-        exact h₁ x hx fun y h => hx' (Or.inl ⟨y, h⟩)
-      io := by rw [h₃ _ (by simp) (by simp)]; exact hio₁
+        rw [h₃ x hx (fun y h => hx' (Or.inl ⟨y, h⟩)) (fun h => hx' (Or.inr h))]
+      io := by
+        rw [hfr₃ _ (reg_ne (by simp))]; dsimp only; rw [hfr₂ _ (fun c => reg_ne (by simp))]
+        exact hio₁
       tc := hTc₃ }
-  obtain ⟨v₄, m₄, R₄, hu₄, hm₄, he₄, hw₄, hfr₄⟩ := instrs_exec body ds fp (by omega) hgate
+  obtain ⟨v₄, m₄, R₄, hu₄, hm₄, he₄, hw₄, hfr₄⟩ := instrs_exec body ds fp mp (by omega) hgate
     (k := bits u j) hw (actMap a₀ ρ K (bits u (j + 1)) n hfit)
     (fun s => layerZ u ds R₀ j fun c => actMap a₀ ρ K (bits u (j + 1)) n hfit (bitIdx s c)) hfac
-    (program ds) (fun i hi => hi)
-    (corrInM (k := bits u j) (actMap a₀ ρ K (bits u (j + 1)) n hfit)
-      (bankZ (toBank (rowsAt R₀ j) Z))) v₃ { S with R := R₃ } hN₃
+    hmono (program ds) (fun i hi => hi) B₀ v₃ { S with R := R₃ } hN₃
     (fun x => by dsimp only; rw [hfr₃ _ (reg_ne (by simp))]; exact hw₂ x)
+  set Bf := runM (actMap a₀ ρ K (bits u (j + 1)) n hfit)
+    (fun s => layerZ u ds R₀ j fun c => actMap a₀ ρ K (bits u (j + 1)) n hfit (bitIdx s c))
+    (expZ u ds j) (program ds) B₀
   -- clearing `Tc`
   obtain ⟨v₅, hu₅, he₅⟩ := uclear_exec body (reg .Tc) v₄ { S with R := R₄ }
   obtain ⟨R₅, he₅, hR₅b, hR₅⟩ := exec_upd body (S := S) (R := R₄) he₅
-  have h₅ : ∀ x : LReg BReg, (∀ y, x ≠ .wire y) → R₅ (reg x) = R₁ (reg x) := by
-    intro x hx
+  have h₅ : ∀ x : LReg BReg, x ≠ .io → (∀ y, x ≠ .wire y) → R₅ (reg x) = S.R (reg x) := by
+    intro x h1 hx
     by_cases hT : x = .Tc
     · subst hT
-      rw [hR₅b, h₁ _ (by simp) (by simp)]
+      rw [hR₅b]
       exact (hrest .Tc).symm
     · rw [hR₅ _ (reg_ne hT), hfr₄ _ (fun y => reg_ne (hx y))]
-      exact h₃ x hx hT
-  have h₅S : ∀ x : LReg BReg, x ≠ .io → (∀ y, x ≠ .wire y) → R₅ (reg x) = S.R (reg x) :=
-    fun x h1 h2 => (h₅ x h2).trans (h₁ x h1 h2)
-  -- the signed exchange
-  obtain ⟨v₆, m₆, R₆, hu₆, hm₆, he₆, hw₆, hfr₆⟩ := exchStage_exec body hA hw (u := u)
-    (runM (actMap a₀ ρ K (bits u (j + 1)) n hfit)
-      (fun s => layerZ u ds R₀ j fun c => actMap a₀ ρ K (bits u (j + 1)) n hfit (bitIdx s c))
-      (expZ u ds j) (program ds)
-      (corrInM (k := bits u j) (actMap a₀ ρ K (bits u (j + 1)) n hfit)
-        (bankZ (toBank (rowsAt R₀ j) Z)))) v₅ { S with R := R₅ }
-    (by dsimp only; rw [h₅S _ (by simp) (by simp)]; exact hrest .ctr)
-    (by dsimp only; rw [h₅S _ (by simp) (by simp)]; exact hrest .tmp)
-    (by dsimp only; rw [h₅S _ (by simp) (by simp)]; exact hpar .u)
-    (by dsimp only; rw [h₅S _ (by simp) (by simp)]; exact hrest (.sc 0))
-    (fun x => by dsimp only; rw [h₅S _ (by simp) (by simp)]; exact hrest (.wtmp x))
-    (fun x => by dsimp only; rw [hR₅ _ (reg_ne (by simp))]; exact hw₄ x)
-  have h₆ : ∀ x : LReg BReg, (∀ y, x ≠ .wire y) → R₆ (reg x) = R₁ (reg x) :=
-    fun x hx => (hfr₆ _ fun y => reg_ne (hx y)).trans (h₅ x hx)
-  -- the sink signs
-  obtain ⟨v₇, m₇, R₇, hu₇, hm₇, he₇, hw₇, hfr₇⟩ := signStage_exec body hA hr hw hK hfit _ v₆
-    { S with R := R₆ } (hpar₁.congr fun x hx => h₆ x (parRegs_ne hx).2.1)
-    (hrest.restBut_of_frame _ fun x hx hx' => (h₆ x fun y h => hx' ⟨y, h⟩).trans
-      (h₁ x hx fun y h => hx' ⟨y, h⟩)) hw₆
-  have h₇ : ∀ x : LReg BReg, (∀ y, x ≠ .wire y) → R₇ (reg x) = R₁ (reg x) :=
-    fun x hx => (hfr₇ _ fun y => reg_ne (hx y)).trans (h₆ x hx)
+      exact h₃ x h1 hx hT
+  have hw₅ : ∀ x, R₅ (reg (.wire x)) = encZ A w (Bf x) := fun x => by
+    rw [hR₅ _ (reg_ne (by simp))]; exact hw₄ x
+  have hio₅ : R₅ (reg .io) = [] := by
+    rw [hR₅ _ (reg_ne (by simp)), hfr₄ _ (fun y => reg_ne (by simp))]; exact hN₃.io
+  -- clearing the centres
+  obtain ⟨v₆, m₆, R₆, hu₆, hm₆, he₆, hc₆, hfr₆⟩ := clearCentres_exec body
+    (rowsAt R₀ j * 2 ^ n * r * w) v₅ { S with R := R₅ }
+    (fun c => by dsimp only; rw [hw₅, length_encZ]; ring)
+  dsimp only at hc₆ hfr₆
   -- the row merge
   obtain ⟨v₈, m₈, R₈, hu₈, hm₈, he₈, hio₈, hw₈, hfr₈⟩ := mergeProg_exec body hNW
-    (R := rowsAt R₀ j) _ v₇ { S with R := R₇ } hw₇
-    (by dsimp only; rw [h₇ _ (by simp), h₁ _ (by simp) (by simp)]; exact hrest .rowctr)
-    (by dsimp only; rw [h₇ _ (by simp), h₁ _ (by simp) (by simp)]; exact hrest .rowtmp)
-    (by dsimp only; rw [h₇ _ (by simp), h₁ _ (by simp) (by simp)]; exact hpar .rows)
-    (by dsimp only; rw [h₇ _ (by simp), h₁ _ (by simp) (by simp)]; exact hrest .rctmp)
-    (by dsimp only; rw [h₇ _ (by simp), h₁ _ (by simp) (by simp)]; exact hrest .racc)
-    (by dsimp only; rw [h₇ _ (by simp)]; exact hio₁)
+    (R := rowsAt R₀ j) Bf v₆ { S with R := R₆ }
+    (fun d => by dsimp only; rw [hfr₆ _ (fun c => reg_ne (by simp))]; exact hw₅ _)
+    (by dsimp only; rw [hfr₆ _ (fun c => reg_ne (by simp)), h₅ _ (by simp) (by simp)];
+        exact hrest .rowctr)
+    (by dsimp only; rw [hfr₆ _ (fun c => reg_ne (by simp)), h₅ _ (by simp) (by simp)];
+        exact hrest .rowtmp)
+    (by dsimp only; rw [hfr₆ _ (fun c => reg_ne (by simp)), h₅ _ (by simp) (by simp)];
+        exact hpar .rows)
+    (by dsimp only; rw [hfr₆ _ (fun c => reg_ne (by simp)), h₅ _ (by simp) (by simp)];
+        exact hrest .rctmp)
+    (by dsimp only; rw [hfr₆ _ (fun c => reg_ne (by simp)), h₅ _ (by simp) (by simp)];
+        exact hrest .racc)
+    (by dsimp only; rw [hfr₆ _ (fun c => reg_ne (by simp))]; exact hio₅)
+  dsimp only at hio₈ hw₈ hfr₈
   -- the final registers
-  have hc : (⟨0, 1⟩ : GaussianInt) ^ ((3 * (u % 4)) % 4) =
-      (⟨0, 1⟩ : GaussianInt) ^ (27 * bits u j) := by
-    rw [pow_I_27, bits_mod_four]
   have hfin : R₈ = Function.update S.R (reg .io) (encZ A w (ofBank (rowsAt R₀ j)
       (nodeM (k := bits u j) (actMap a₀ ρ K (bits u (j + 1)) n hfit)
         (fun s => layerZ u ds R₀ j fun c => actMap a₀ ρ K (bits u (j + 1)) n hfit (bitIdx s c))
         (expZ u ds j) ds (toBank (rowsAt R₀ j) Z)))) := by
     funext q
     by_cases hq : q = reg .io
-    · rw [hq, Function.update_self, hio₈, hc, corrInM_exchZ]
+    · rw [hq, Function.update_self, hio₈]
       rfl
     rw [Function.update_of_ne hq]
-    by_cases hqw : ∃ x, q = reg (.wire x)
-    · obtain ⟨x, rfl⟩ := hqw
-      rw [hw₈ x]
-      exact (hrest (.wire x)).symm
+    by_cases hqw : ∃ d : DWire, q = reg (.wire (.inl d))
+    · obtain ⟨d, rfl⟩ := hqw
+      rw [hw₈ d]
+      exact (hrest (.wire (.inl d))).symm
     push Not at hqw
     rw [hfr₈ q hq hqw]
+    by_cases hqc : ∃ c, q = reg (.wire (.inr c))
+    · obtain ⟨c, rfl⟩ := hqc
+      rw [hc₆ c]
+      exact (hrest (.wire (.inr c))).symm
+    push Not at hqc
+    rw [hfr₆ q hqc]
     obtain ⟨x, rfl⟩ := (regEquiv BReg).surjective q
-    exact (h₇ x fun y h => hqw y (by rw [h]; rfl)).trans
-      (h₁ x (fun h => hq (by rw [h]; rfl)) fun y h => hqw y (by rw [h]; rfl))
+    refine h₅ x (fun h => hq (by rw [h]; rfl)) fun y h => ?_
+    rcases y with d | c
+    · exact hqw d (by rw [h]; rfl)
+    · exact hqc c (by rw [h]; rfl)
   have hTc₄ : (R₄ (reg .Tc)).length = expZ u ds j := by
     rw [hfr₄ _ (fun y => reg_ne (by simp))]; exact hTc₃
-  refine ⟨v₈, m₁ + (m₂ + (m₃ + (m₄ + ((2 * (R₄ (reg .Tc)).length + 2) + (m₆ + (m₇ + m₈)))))),
-    by rw [hu₈, hu₇, hu₆, hu₅, hu₄, hu₃, hu₂, hu₁], ?_,
+  refine ⟨v₈, m₁ + (m₂ + (m₃ + (m₄ + ((2 * (R₄ (reg .Tc)).length + 2) + (m₆ + m₈))))),
+    by rw [hu₈, hu₆, hu₅, hu₄, hu₃, hu₂, hu₁], ?_,
     Exec.cast (Exec.seq he₁ (Exec.seq he₂ (Exec.seq he₃ (Exec.seq he₄ (Exec.seq he₅
-      (Exec.seq he₆ (Exec.seq he₇ he₈))))))) rfl (by rw [hfin])⟩
+      (Exec.seq he₆ he₈)))))) rfl (by rw [hfin])⟩
   rw [hTc₄]
   unfold nodeCost
   omega
@@ -1490,7 +1459,8 @@ theorem nodeBody_exec (ds : ComplexFramedExecution.Directions)
 /-- `nodeBody_exec` with the result written as the level-`j + 1` layer `layerZ`. -/
 theorem nodeBody_exec_layerZ (ds : ComplexFramedExecution.Directions)
     (fp : NWire → ZMod 4 × BinaryWalsh.Address m → Pr P (nT BReg) Q A U)
-    {bcRest : BReg → List (Fin (A + 4)) → Prop} {R₀ j u K ρ a₀ L n r w cf : ℕ}
+    (mp : Instr → Pr P (nT BReg) Q A U)
+    {bcRest : BReg → List (Fin (A + 4)) → Prop} {R₀ j u K ρ a₀ L n r w cf cm : ℕ}
     (hA : 5 ≤ A) (hNW : NW ≤ A + 4)
     (hgate : ∀ g, Instr.gate g ∈ program ds →
       (2 * gateBound g + 1) ^ (2 * (gateWires g).length) ≤ A + 4)
@@ -1500,16 +1470,21 @@ theorem nodeBody_exec_layerZ (ds : ComplexFramedExecution.Directions)
         (actMap a₀ ρ K (bits u (j + 1)) n hfit)
         (fun s => layerZ u ds R₀ j fun c => actMap a₀ ρ K (bits u (j + 1)) n hfit (bitIdx s c))
         (expZ u ds j) fw g cf)
+    (hmono : ∀ i ∈ program ds, i.IsMono →
+      MonoSpec body (mp i) bcRest j u K ρ a₀ L (rowsAt R₀ (j + 1)) n r w (k := bits u j)
+        (actMap a₀ ρ K (bits u (j + 1)) n hfit)
+        (fun s => layerZ u ds R₀ j fun c => actMap a₀ ρ K (bits u (j + 1)) n hfit (bitIdx s c))
+        (expZ u ds j) i cm)
     (Z : ZArr (Fin (rowsAt R₀ (j + 1)) × Fin r) n) (v : HS (nT BReg) Q A U)
     (S : Stacks (nT BReg) A)
     (hpar : ParState S.R (j + 1) u K ρ a₀ L (rowsAt R₀ (j + 1)) n w (r * w))
     (hrest : Rest bcRest n r w S.R) (hio : S.R (reg .io) = encZ A w Z) :
     ∃ (v' : HS (nT BReg) Q A U) (c : ℕ), v'.user = v.user ∧
-      c ≤ nodeCost ds u j K ρ a₀ (rowsAt R₀ j) n r w cf ∧
-      Exec body (nodeBody ds fp) (mk v S) c (mk v' { S with
+      c ≤ nodeCost ds u j K ρ a₀ (rowsAt R₀ j) n r w cf cm ∧
+      Exec body (nodeBody ds fp mp) (mk v S) c (mk v' { S with
         R := Function.update S.R (reg .io)
           (encZ A w (layerZ u ds R₀ (j + 1) (actMap a₀ ρ K (bits u (j + 1)) n hfit) Z)) }) :=
-  nodeBody_exec body ds fp hA hNW hgate hr hw hK hfit hfac Z v S hpar hrest hio
+  nodeBody_exec body ds fp mp hA hNW hgate hr hw hK hfit hfac hmono Z v S hpar hrest hio
 
 end Node
 

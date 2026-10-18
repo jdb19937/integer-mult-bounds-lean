@@ -64,11 +64,11 @@ lemma bd_NW : 19 ≤ NW := by rw [IntegerMultBounds.MathlibTM2.Cost.br_NW_eq]; n
 
 /-- The reserved layer register holding the converter's register `x`: the wire temporary of
 wire `bdIdx x`. -/
-def bdLayX (x : DsX) : LReg SXReg := .wtmp (wireOf (Fin.castLE bd_NW (bdIdx x)))
+def bdLayX (x : DsX) : LReg SXReg := .wtmp (.inl (wireOf (Fin.castLE bd_NW (bdIdx x))))
 
 lemma bdLayX_inj : Function.Injective bdLayX := by
   intro x y h
-  exact bdIdx_inj (Fin.castLE_injective bd_NW (wireOf.injective (LReg.wtmp.inj h)))
+  exact bdIdx_inj (Fin.castLE_injective bd_NW (wireOf.injective (Sum.inl_injective (LReg.wtmp.inj h))))
 
 lemma bdLayX_ne_wire (x : DsX) (v : NWire) : bdLayX x ≠ .wire v := by simp [bdLayX]
 

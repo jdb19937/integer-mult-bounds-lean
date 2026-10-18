@@ -133,6 +133,7 @@ theorem compactDescriptorBank_originals {s : Shape} {n a₀ k ρ left right : �
     simpa only [Nat.mul_comm, Nat.add_assoc] using hex.2.1
   have hr' : (a₀-(s.H+s.B))/s.chunk=right := by simpa using hr
   have hl : s.active-m*k-right=left := by rw [layout.active]; omega
+  have hm73 : m = 73 := rfl
   funext i
   fin_cases i <;>
     simp [compactDescriptorBankOriginals,compactDescriptorBankValues,compactDescriptorBankInputs,

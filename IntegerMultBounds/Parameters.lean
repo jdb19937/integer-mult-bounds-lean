@@ -19,18 +19,14 @@ namespace IntegerMultBounds.Parameters
 noncomputable section
 
 def tau : ℝ := 1 - 296 / 10 ^ 11
-/-- The complex branching exponent of the size-25 mixer network (`Networks.Mixer`). -/
-def sigma : ℝ := 1 - 25 / 10 ^ 10
-/-- The complex branching exponent of the size-25 network with one side wire per
-neighboring pair (`Networks.ComplexRank25`). -/
-def directSigma : ℝ := 1 - 418 / 10 ^ 12
+def sigma : ℝ := 1 - 418 / 10 ^ 12
 def epsilon : ℝ := 1999 / 10000
 def spacing : ℝ := 1 / 5
 def beta : ℝ := 1 / 1000
 def zeta : ℝ := 1 / 10000
 def delta : ℝ := 1 / 10 ^ 6
 def guardExponent : ℝ := 49961 / 10000
-def lam : ℝ := 1 - 249 / 10 ^ 11
+def lam : ℝ := 1 - 1671 / (4 * 10 ^ 12)
 def lam' : ℝ := 1 - 167 / (4 * 10 ^ 11)
 def kappa : ℝ := 83 / 10 ^ 12
 def internalExponent : ℝ := tau + (1 - beta) * max (sigma - tau) 0
@@ -116,9 +112,9 @@ theorem complex_log_bound : Real.log 15625 < 966 / 100 := by
     norm_num [Finset.sum_range_succ, Nat.factorial]
   exact hsum.trans_le h
 
-/-- The strict analytic branching-ratio inequality of the direct-pair network. -/
+/-- The strict analytic branching-ratio inequality used by the complex recurrence. -/
 theorem complex_branching_bound :
-    (916333630984500000 / 58645352620000 : ℝ) < (15625 : ℝ) ^ directSigma := by
+    (916333630984500000 / 58645352620000 : ℝ) < (15625 : ℝ) ^ sigma := by
   have hlog := complex_log_bound
   have hdef := complex_deficit
   have hpos : (0 : ℝ) < 418 / 10 ^ 12 := by norm_num
@@ -127,12 +123,12 @@ theorem complex_branching_bound :
   have hr : (1 : ℝ) - 14 / 3464399375 <
       Real.exp (-(418 / 10 ^ 12 : ℝ) * Real.log 15625) := by
     linarith [hdef.2]
-  have heq : (15625 : ℝ) ^ directSigma =
+  have heq : (15625 : ℝ) ^ sigma =
       15625 * Real.exp (-(418 / 10 ^ 12 : ℝ) * Real.log 15625) := by
     rw [Real.rpow_def_of_pos (by norm_num)]
-    have : Real.log 15625 * directSigma =
+    have : Real.log 15625 * sigma =
         Real.log 15625 + -(418 / 10 ^ 12 : ℝ) * Real.log 15625 := by
-      unfold directSigma
+      unfold sigma
       ring
     rw [this, Real.exp_add, Real.exp_log (by norm_num)]
   rw [heq]
