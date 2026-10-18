@@ -2,6 +2,7 @@ module
 
 public import IntegerMultBounds.MathlibTM2.Node.CompactBasisRegisters
 public import IntegerMultBounds.MathlibTM2.Layer.Reverse
+public import IntegerMultBounds.MathlibTM2.Node.Factor
 
 /-! **Translations without child calls.** Reversing a wire register in place (three moves through
 the wire's temporary and the spare) replaces its array `Z` by `zrev Z`: every address bit is
@@ -17,6 +18,10 @@ open IntegerMultBounds.MathlibTM2.Node hiding LReg
 open IntegerMultBounds.Networks.Shared50ModularControl (prime)
 open CompactGadgetReservationShape (Shape)
 noncomputable section
+
+theorem length_encZ' (A : ℕ) {R r n w : ℕ} (Z : ZArr (Fin R × Fin r) n) :
+    (encZ A w Z).length = R * 2 ^ n * r * w := by
+  rw [encZ, length_flatMap_const _ w (fun z => by simp [coeffSyms]), length_coeffList]
 
 /-! ### Reversing a wire -/
 
@@ -82,11 +87,60 @@ theorem revW_exec {R r n w : ℕ} (fw : NWire) (Z : ZArr (Fin R × Fin r) n)
   · change mk v₃ { S with R := R₃ } = _
     rw [h3]
 
-end Reverse
+/-! ### Unit scalars -/
 
-theorem length_encZ' (A : ℕ) {R r n w : ℕ} (Z : ZArr (Fin R × Fin r) n) :
-    (encZ A w Z).length = R * 2 ^ n * r * w := by
-  rw [encZ, length_flatMap_const _ w (fun z => by simp [coeffSyms]), length_coeffList]
+/-- Multiply wire `fw` by `i` through its temporary. -/
+noncomputable def mulIW (fw : NWire) : Pr P (nT BReg) Q A U :=
+  .seq (autoWords (fun _ : Fin 1 => reg (.wire fw)) (fun _ => reg (.wtmp fw)) (reg .st) (reg .ctr)
+      (reg .tmp) (gaussAuto A ![![(0, 1)]] 1 false))
+    (moveR (reg (.wtmp fw)) (reg (.wire fw)) id)
+
+/-- `i` times an array. -/
+def mulIZ {Y : Type} {n : ℕ} (Z : ZArr Y n) : ZArr Y n := fun p => ⟨0, 1⟩ * Z p
+
+theorem encZ_mulIZ {R r n w : ℕ} (Z : ZArr (Fin R × Fin r) n) :
+    encZ A w (mulIZ Z) = ((coeffList w Z).map GR.mulI).flatMap (coeffSyms A w) := by
+  rw [encZ, ← coeffList_map (fun z => ⟨0, 1⟩ * z) GR.mulI (fun z => by
+    simp [red, GR.mulI, Zsqrtd.re_mul, Zsqrtd.im_mul]) Z]
+  rfl
+
+/-- `mulIW`: wire `fw` goes from the stream of `Z` to the stream of `i Z`; every other register
+ends as it started. -/
+theorem mulIW_exec (hA : 5 ≤ A) {R r n w : ℕ} (hw : 1 ≤ w) (fw : NWire)
+    (Z : ZArr (Fin R × Fin r) n) (v : HS (nT BReg) Q A U) (S : Stacks (nT BReg) A)
+    (hctr : (S.R (reg .ctr)).length = w) (htmp : S.R (reg .tmp) = [])
+    (hwt : S.R (reg (.wtmp fw)) = []) (hx : S.R (reg (.wire fw)) = encZ A w Z) :
+    ∃ (v' : HS (nT BReg) Q A U) (c : ℕ), v'.user = v.user ∧ c ≤ conjCost R n r w ∧
+      Exec body (mulIW fw) (mk v S) c
+        (mk v' { S with R := Function.update S.R (reg (.wire fw)) (encZ A w (mulIZ Z)) }) := by
+  obtain ⟨v₁, m₁, S₁, hu₁, hm₁, he₁, hi₁, ho₁, hl₁, hX₁, hT₁, hoth₁⟩ :=
+    mulI_exec body (autoLayout_one (x := .wire fw) (y := .wtmp fw)
+      (by simp) (by simp) (by simp) (by simp) (by simp) (by simp)) (by norm_num; omega) hw hctr
+      (coeffList w Z) v S rfl htmp hx
+  have hS₁ : S₁ = { S with R := S₁.R } := Stacks.ext hi₁ ho₁ hl₁ rfl
+  obtain ⟨v₂, hu₂, he₂⟩ := moveR_exec body (reg (.wtmp fw)) (reg (.wire fw)) (reg_ne (by simp)) id
+    v₁ S₁
+  have hT₁' : S₁.R (reg (.wtmp fw)) = (encZ A w (mulIZ Z)).reverse := by
+    rw [hT₁, hwt, List.append_nil, encZ_mulIZ]
+  refine ⟨v₂, _, by rw [hu₂, hu₁], ?_, Exec.cast (Exec.seq he₁ he₂) rfl ?_⟩
+  · rw [hT₁', List.length_reverse, length_encZ']
+    rw [length_coeffList] at hm₁
+    unfold conjCost
+    nlinarith
+  · rw [hS₁]
+    congr 2
+    funext k
+    simp only [movedR, List.map_id]
+    by_cases ha : k = reg (.wire fw)
+    · subst ha
+      rw [Function.update_self, Function.update_self, hT₁', List.reverse_reverse, hX₁,
+        List.append_nil]
+    rw [Function.update_of_ne ha, Function.update_of_ne ha]
+    by_cases hb : k = reg (.wtmp fw)
+    · subst hb; rw [Function.update_self, hwt]
+    rw [Function.update_of_ne hb, hoth₁ k ha hb]
+
+end Reverse
 
 /-! ### Translations -/
 
