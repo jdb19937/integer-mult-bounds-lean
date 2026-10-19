@@ -6,6 +6,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import re
 import signal
 import subprocess
 import sys
@@ -17,6 +18,16 @@ LEAN_MIB = 24576
 GUARD_MIB = 28672
 # Stop runaway elaboration (loops) rather than letting it grow.
 TIMEOUT_S = 1200
+
+
+def source_imports(root, lean_args):
+    """The non-core modules imported by the Lean source file among the arguments."""
+    sources = [arg for arg in lean_args if arg.endswith('.lean')]
+    if not sources:
+        return []
+    text = (root / sources[0]).read_text()
+    names = re.findall(r'^(?:public\s+)?(?:meta\s+)?import\s+(?:all\s+)?(\S+)', text, re.M)
+    return [name for name in names if name.split('.')[0] not in ('Init', 'Std', 'Lean', 'Lake')]
 
 
 def main():
@@ -54,6 +65,17 @@ def main():
             return sum(int(fields[1]) for line in result.stdout.splitlines()
                        if len(fields := line.split()) == 2 and int(fields[0]) == group)
         usage(-1)
+        # Refuse to check against missing or stale dependency .olean files: a failed
+        # build leaves the previous .olean in place, which Lean would load silently.
+        imports = source_imports(root, args.lean_args)
+        if imports:
+            fresh = subprocess.run(['lake', 'build', '--no-build', *imports], cwd=root,
+                                   text=True, capture_output=True)
+            if fresh.returncode != 0:
+                print(fresh.stdout + fresh.stderr, file=sys.stderr, end='')
+                print('Dependencies are missing or out of date; build them first with '
+                      'scripts/build-lean-guarded.py. No check started.', file=sys.stderr)
+                return 1
         # Avoid retaining Lake's dependency/configuration heap alongside Lean.
         # All dependencies must already be built; this is a checker, not a builder.
         libdirs = sorted((root / '.lake' / 'packages').glob('*/.lake/build/lib/lean'))
