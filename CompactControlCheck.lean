@@ -37,9 +37,6 @@ import IntegerMultBounds.MathlibTM2.Fast.CompactSynUniformTransforms
 import IntegerMultBounds.MathlibTM2.Fast.CompactSynRetunedGeometry
 import IntegerMultBounds.MathlibTM2.Fast.CompactSynRetunedTransforms
 import IntegerMultBounds.MathlibTM2.Cost.CompactCallerCombinedBudget
-import IntegerMultBounds.MathlibTM2.Cost.CompactCallerOverheadRuntime
-import IntegerMultBounds.MathlibTM2.Cost.CompactCallerUniformBudget
-import IntegerMultBounds.MathlibTM2.Cost.CompactCallerUniformOverhead
 import IntegerMultBounds.MathlibTM2.Cost.CompactCallerUniformReadiness
 import IntegerMultBounds.MathlibTM2.Cost.CompactPieceUniformPacking
 import IntegerMultBounds.MathlibTM2.Fast.CompactTopUniformRuntimeExecution
@@ -211,7 +208,6 @@ import IntegerMultBounds.MathlibTM2.Fast.CompactSynRetunedMainEntry
 import IntegerMultBounds.MathlibTM2.Fast.CompactSynRetunedDistributionEntry
 import IntegerMultBounds.MathlibTM2.Fast.CompactMainCalls
 import IntegerMultBounds.MathlibTM2.Fast.CompactMainEntryTable
-import IntegerMultBounds.MathlibTM2.Cost.CompactRetunedLayerMatch
 import IntegerMultBounds.MathlibTM2.Cost.CompactRetunedDirectCost
 import IntegerMultBounds.MathlibTM2.Fast.CompactMainTransformCalls
 import IntegerMultBounds.MathlibTM2.Fast.CompactSynRetunedEntrySpecs
@@ -220,7 +216,7 @@ import IntegerMultBounds.MathlibTM2.Fast.CompactSrcRetunedStages
 import IntegerMultBounds.MathlibTM2.Fast.CompactMainTimeGlue
 import IntegerMultBounds.MathlibTM2.Fast.CompactMainTimeBound
 import IntegerMultBounds.MathlibTM2.Fast.CompactMainPrimitiveRuns
-import IntegerMultBounds.MathlibTM2.Cost.CompactRetunedRoundMatch
+import IntegerMultBounds.MathlibTM2.Fast.CompactSynDispatch
 import IntegerMultBounds.MathlibTM2.Cost.CompactRetunedLoopMatch
 import IntegerMultBounds.MathlibTM2.Fast.CompactSourceCost
 import IntegerMultBounds.MathlibTM2.Fast.CompactMainRunsCost
@@ -230,7 +226,8 @@ import IntegerMultBounds.MathlibTM2.Fast.CompactMainSourceLift
 import IntegerMultBounds.MathlibTM2.Fast.CompactMainSourceStages
 import IntegerMultBounds.MathlibTM2.Cost.CompactRetunedLayoutMatch
 import IntegerMultBounds.MathlibTM2.Cost.CompactRetunedStashMatch
-import IntegerMultBounds.MathlibTM2.Cost.CompactRetunedTransformMatch
+import IntegerMultBounds.MathlibTM2.Cost.MatchSynOver
+import IntegerMultBounds.MathlibTM2.Fast.CompactMainBootstrapPipeline
 import IntegerMultBounds.MathlibTM2.Fast.CompactMainPrimitiveEntry
 import IntegerMultBounds.MathlibTM2.Fast.CompactMainDispatch
 import IntegerMultBounds.MathlibTM2.Fast.CompactRetunedMainBound

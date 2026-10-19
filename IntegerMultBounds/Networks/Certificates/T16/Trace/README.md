@@ -21,8 +21,14 @@ Chunk boundary snapshots and successful runs are checked by Lean's kernel.
 `Properties.lean` spells out the touched-frame consequences and the decomposition
 of successful runs into successful individual transitions.
 
-The generated orientation modules expose their complete event list, scalar
-erasure, initial/final states, and a successful-run theorem. The source-specific
+The forward module exposes its complete event list, scalar erasure,
+initial/final states, and a successful-run theorem. `Backward.lean` derives the
+backward list from it rather than importing a second copy: each invertible gate
+becomes its inverse transpose in the same order (`add t r n d` to `add r t -n d`,
+`scale t n d` to `scale t d n`, center moves reversed), and each private center
+fan-out becomes its transposed fan-in. The importer checks that this derivation
+reproduces the supplier's backward events exactly; Lean checks the derived run
+from the shared initial snapshot to the backward final snapshot by `decide +kernel`. The source-specific
 `Valid` predicate means that every retained native event passes its transition
 checks. The importer also independently replays all labels and compares the
 local final profile with the canonical final profile before emitting files.

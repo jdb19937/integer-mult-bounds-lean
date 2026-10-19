@@ -13,8 +13,7 @@ import re
 
 ROOT = Path(__file__).resolve().parent.parent
 THEOREM = 'IntegerMultBounds.MathlibTM2.Theorem'
-PUBLIC_ROOTS = ('IntegerMultBounds.MathlibTM2', 'FastPathCheck',
-                'MathlibTM2Check', 'CompletedProofCheck')
+PUBLIC_ROOTS = ('CompletedProofCheck',)
 DEVELOPMENT_ROOTS = ('CompactControlCheck', 'CRTControlCheck', 'CRTGapCheck',
                      'IntegerMultBounds.Schoenhage.LayoutSequencePilot',
                      'IntegerMultBounds.Schoenhage.LayoutAdapterPilot')

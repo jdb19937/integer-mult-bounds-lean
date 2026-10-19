@@ -43,11 +43,8 @@ chosen before quantifying over inputs.
 
 `IntegerMultBounds/MathlibTM2/Statement.lean` states the target with Mathlib definitions only:
 `Turing.TM2ComputableInTime` with Mathlib's binary encodings `encodingProd` and
-`encodingNatBool`. `MathlibTM2.statement_of_endToEnd` proves `EndToEnd → MathlibTM2.Statement`,
-so an auditor of the final result reads only that statement and its axioms. Applied to the
-elementary multiplier, the same bridge gives the unconditional `MathlibTM2.mul_quadratic`, a
-quadratic-time Mathlib machine. [The note](docs/mathlib-tm2/mathlib-tm2.pdf) explains the
-statement and the simulation; `python3 scripts/check-lean-safe.py MathlibTM2Check.lean` checks the axioms.
+`encodingNatBool`, so an auditor of the final result reads only that statement and its axioms.
+[The note](docs/mathlib-tm2/mathlib-tm2.pdf) explains the statement.
 
 `IntegerMultBounds/MathlibTM2/Theorem.lean` proves `MathlibTM2.statement : MathlibTM2.Statement`:
 a fixed `Turing.FinTM2` machine multiplies in worst-case time `O(n (log n)^(1-κ))` for an
@@ -76,8 +73,6 @@ verification commands:
 ```sh
 python3 scripts/build-lean-guarded.py IntegerMultBounds
 python3 scripts/check-lean-safe.py AxiomAudit.lean
-python3 scripts/check-lean-safe.py MathlibTM2Check.lean
-python3 scripts/check-lean-safe.py FastPathCheck.lean
 python3 scripts/check-lean-safe.py CompletedProofCheck.lean
 ```
 

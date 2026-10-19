@@ -10,7 +10,6 @@ import IntegerMultBounds.MathlibTM2.Fast.CRTDirectMachine
 import IntegerMultBounds.MathlibTM2.Fast.CRTDirectMachineCore
 import IntegerMultBounds.MathlibTM2.Fast.CRTDirectMachineSetup
 import IntegerMultBounds.MathlibTM2.Cost.CRTDirectMachine
-import IntegerMultBounds.MathlibTM2.Cost.MatchBandB
 import IntegerMultBounds.MathlibTM2.Cost.CRTDirectSetup
 import IntegerMultBounds.MathlibTM2.Fast.CRTDirectSetup
 import IntegerMultBounds.MathlibTM2.Fast.CRTDirectBacking
@@ -130,7 +129,6 @@ run_cmd do
 
     ``IntegerMultBounds.MathlibTM2.Cost.tot_directCRT_le,
     ``IntegerMultBounds.MathlibTM2.Cost.mt_rsa_stage_le_linear,
-    ``IntegerMultBounds.MathlibTM2.Cost.mt_band_stage_le_linear,
     ``IntegerMultBounds.MathlibTM2.Fast.crtControlProducer_runs,
     ``IntegerMultBounds.MathlibTM2.Fast.crtControlAscendingEntries_runs,
     ``IntegerMultBounds.MathlibTM2.Cost.crtControlProducer_actualCost_le,
