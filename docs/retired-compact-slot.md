@@ -1,12 +1,14 @@
 # Retired native compact slot pipeline
 
-On 2026-10-19, 14 modules of the native compact slot pipeline were removed,
-totaling 1,796 source lines. The Mathlib TM2 compact slot XOR replaced them in
+On 2026-10-19, 20 modules of the native compact slot pipeline were removed,
+totaling 2,112 source lines. The Mathlib TM2 compact slot XOR replaced them in
 `Node/CompactBasisSlot.lean`.
 
 The removed modules built the thirteen native descriptor headers, ran the
 native compact runtime program on the encoded records, and cleared the headers
-again. They also proved the costs of these steps.
+again. They also proved the costs of these steps. Six `Machine/ActivePrefixStage*` modules (the
+all-width runtime stage run, endpoint, dispatch and singleton budgets) had no other importer
+and went with them.
 
 The [exact manifest](retired-compact-slot.json) records the files and recovery
 baseline `b96c2df9a3e182100eac167977b028282c1765b3`. Recover individual files

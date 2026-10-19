@@ -1,9 +1,15 @@
 {
   "baseline": "b96c2df9a3e182100eac167977b028282c1765b3",
   "reason": "Retired the native compact slot pipeline (prepared/computed slot XOR, native runtime program, native header and descriptor banks and their costs), replaced by the Mathlib TM2 compact slot XOR.",
-  "total_files": 14,
-  "total_lines": 1796,
+  "total_files": 20,
+  "total_lines": 2112,
   "files": [
+    "IntegerMultBounds/Machine/ActivePrefixStageDispatchBudget.lean",
+    "IntegerMultBounds/Machine/ActivePrefixStageRuntimeBudget.lean",
+    "IntegerMultBounds/Machine/ActivePrefixStageRuntimeEndpoint.lean",
+    "IntegerMultBounds/Machine/ActivePrefixStageRuntimeRun.lean",
+    "IntegerMultBounds/Machine/ActivePrefixStageSingletonBudget.lean",
+    "IntegerMultBounds/Machine/ActivePrefixStageSingletonDispatchBudget.lean",
     "IntegerMultBounds/MathlibTM2/Cost/CompactPrepared.lean",
     "IntegerMultBounds/MathlibTM2/Cost/CompactRuntime.lean",
     "IntegerMultBounds/MathlibTM2/Cost/CompactSlotXor.lean",

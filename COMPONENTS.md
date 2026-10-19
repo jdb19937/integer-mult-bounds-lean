@@ -2853,7 +2853,6 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 - `Machine/ActivePrefixStageSingletonRun.lean`: Both source orders execute actual original-header synthesis, highest action and full consumer erasure with all private storage blank, without invoking the positive-width packed routine.
 
-- `Machine/ActivePrefixStageSingletonBudget.lean`: Both entire singleton-stage machines have one uniform linear complete-volume runtime bound, including producer/action/cleanup and joins, without repair or density premises.
 
 - `Machine/ActivePrefixStageSingletonSelected.lean`: Actual singleton endpoints XOR exactly the sole selected original target bit by its original source bit, retain source and spectator fields and identify literal source/target slot bit positions.
 
@@ -2865,7 +2864,6 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 - `Machine/ActivePrefixStageDispatchRun.lean`: One fixed machine compares original source/target words, reads its real flag, executes the selected full stage and erases the flag, with exact selected-branch cost and clean caller output.
 
-- `Machine/ActivePrefixStageDispatchBudget.lean`: The complete runtime source-order dispatcher retains the certified compact-width exponent, paying original comparison, selected stage and flag erasure without charging both branches.
 
 - `Machine/ActivePrefixStageDispatchSelected.lean`: Runtime-derived selected destination matches every original array address; the whole actual dispatched array action squares to identity under original source disjointness.
 
@@ -2879,7 +2877,6 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 - `Machine/ActivePrefixStageSingletonDispatch.lean`: One fixed singleton machine compares original source and target slots, executes the selected one-axis stage and erases its direction flag with exact original-input endpoints.
 
-- `Machine/ActivePrefixStageSingletonDispatchBudget.lean`: The runtime singleton direction comparison, chosen stage and flag cleanup have a uniform linear full-volume bound.
 
 - `Machine/ActivePrefixStageRuntimePlaced.lean`: Packed and singleton dispatchers place on one shared original caller with both selector flags and complementary private banks preserved.
 
@@ -2887,11 +2884,8 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 - `Machine/ActivePrefixStageRuntimeProgram.lean`: One fixed original-input stage program combines physical width selection with the packed and singleton direction dispatchers.
 
-- `Machine/ActivePrefixStageRuntimeRun.lean`: The fixed stage program executes for every positive width and both source orders, retaining original headers and restoring both flags and all private storage.
 
-- `Machine/ActivePrefixStageRuntimeBudget.lean`: The complete all-width runtime stage retains the certified width exponent, including both physical selectors and the singleton branch.
 
-- `Machine/ActivePrefixStageRuntimeEndpoint.lean`: The actual all-width stage returns its raw array at origin, retains every original descriptor and blanks every private tape and both runtime flags.
 
 - `Machine/ActivePrefixStageRuntimeSelected.lean`: The runtime-selected array action gives literal original source-selected XOR on target fields, preserves the full source and every other field, for every positive width.
 
