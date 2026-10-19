@@ -4,6 +4,7 @@ import IntegerMultBounds.MathlibTM2.Cost.CompactCallerSelectedRows
 import IntegerMultBounds.MathlibTM2.Cost.CompactLayerReady
 import IntegerMultBounds.MathlibTM2.Fast.CompactPieceGeometry
 import IntegerMultBounds.MathlibTM2.Cost.CompactCallerRuntimeParameters
+import IntegerMultBounds.MathlibTM2.Cost.CompactSlotPacking
 public import IntegerMultBounds.Machine.CompactReservationGrowth
 public import IntegerMultBounds.MathlibTM2.Fast.CompactTopSelection
 public import IntegerMultBounds.MathlibTM2.Cost.CompactLayer
@@ -52,20 +53,20 @@ theorem compactPiece_eventually_packed : ∀ᶠ N : ℕ in atTop,
       rows≤compactTopRows (Mult.Sizes.d N) R
         (address-(o+Mult.Sizes.K N*(D-CompactGlobalRowPadding.rowAxes NW m (Mult.Sizes.d N)))) →
       rBits+address+1≤Mult.Sizes.p N → Mult.Sizes.r N≤r → Mult.Sizes.p N≤w →
-      ∀ x y (hxy : x≠y), ActivePrefixStageRuntimeData.Packed
-        (compactSlotComputedInputs layout x y hxy rows hG hGK hrows hrecord) 1 := by
-  filter_upwards [compactCaller_runtime_eventually_packed,
+      CompactLayoutPacked layout rows 1 := by
+  filter_upwards [compactCaller_slot_eventually_packed,
     compactCaller_runtime_eventually_guard] with N hp hguard
   intro D o address R rBits r w rows a k ρ left right hD hfit hG hGK hrecord hrows
-    layout hR hRbits haddress hstock hprecision hr hw x y hxy
+    layout hR hRbits haddress hstock hprecision hr hw
   have hK : 0<Mult.Sizes.K N := by omega
-  apply hp D o r w (rBits+(address-(o+Mult.Sizes.K N*D))+1) _ hD hfit
-  · dsimp only [compactSlotComputedInputs,compactRecursiveInputs]
-    rw [compactCaller_selected_native_rows hK hfit]
-    exact hstock.trans (by simpa using compactCaller_selected_rows_le hK hR hfit haddress hRbits 0)
+  show CompactSlotPacked _ k (2^(_-_)*rows) 1
+  rw [compactCaller_selected_native_rows hK hfit]
+  apply hp D o r w (rBits+(address-(o+Mult.Sizes.K N*D))+1) k rows hD hfit
+  · exact hstock.trans (by simpa using compactCaller_selected_rows_le hK hR hfit haddress hRbits 0)
   · exact compactCaller_selected_extra_le hprecision
   · exact hr
   · exact hw
+  · exact layout.widthFits
 
 /-- Every actual serialized piece is ready for the concrete recursive program
 at the canonical basis budget, from original address/row precision alone. -/
@@ -101,7 +102,7 @@ theorem compactPiece_eventually_ready : ∀ᶠ N : ℕ in atTop,
     have hh := compactLayerReady_canonical (Ka := Ka) (D := 1) hok.hu hok.hR₀ hG hGK hrecord rfl
       (j := j) (a := pc.a₀-o) (layout := layout)
     apply hh
-    intro i hi a left right layout x y hxy _
+    intro i hi a left right layout
     apply hp D o address R rBits r w (rowsAt pc.R₀ i) a (bits pc.u i) ρ left right
       hD hfit hG hGK hrecord (rowsAt_pos hok.hR₀ i) layout hR hRbits haddress
     · rw [←hroot]

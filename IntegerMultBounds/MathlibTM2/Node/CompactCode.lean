@@ -4,6 +4,7 @@ public import IntegerMultBounds.MathlibTM2.Host.IndexCode
 public import IntegerMultBounds.MathlibTM2.Host.BinArithZip
 public import IntegerMultBounds.MathlibTM2.Layer.CompactBad
 public import IntegerMultBounds.MathlibTM2.Layer.CompactGadgetIndex
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Code programs of the compact rotations
@@ -46,7 +47,7 @@ inductive CxReg where
   | g1 | s1 | s2 | gts | gtm | gdst
   /-- Spares of the code pass. -/
   | spare (r : Fin 4)
-  deriving DecidableEq
+  deriving DecidableEq, Fintype
 
 /-- The index registers: fields, masks, scratch and spares. -/
 def CxReg.isIdx : CxReg → Prop

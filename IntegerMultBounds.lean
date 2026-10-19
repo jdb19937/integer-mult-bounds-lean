@@ -1823,14 +1823,10 @@ public import IntegerMultBounds.MathlibTM2.Cost.CompactSwap
 public import IntegerMultBounds.MathlibTM2.Node.CompactRotParity
 public import IntegerMultBounds.MathlibTM2.Cost.CompactStageExec
 public import IntegerMultBounds.MathlibTM2.Node.CompactGeometry
-public import IntegerMultBounds.MathlibTM2.Cost.CompactRuntime
 public import IntegerMultBounds.MathlibTM2.Cost.CompactParameters
-public import IntegerMultBounds.MathlibTM2.Node.CompactRotRuntime
 public import IntegerMultBounds.MathlibTM2.Node.CompactGeometryRecursive
 public import IntegerMultBounds.MathlibTM2.Node.CompactEncoding
-public import IntegerMultBounds.MathlibTM2.Node.CompactSlotXor
 public import IntegerMultBounds.MathlibTM2.Fast.CompactSynRecArithmetic
-public import IntegerMultBounds.MathlibTM2.Cost.CompactSlotXor
 public import IntegerMultBounds.MathlibTM2.Fast.CompactSynRecPieces
 public import IntegerMultBounds.MathlibTM2.Fast.CompactSynRec
 public import IntegerMultBounds.MathlibTM2.Fast.CompactSynRecRows
@@ -1838,22 +1834,12 @@ public import IntegerMultBounds.MathlibTM2.Fast.CompactSynSel
 public import IntegerMultBounds.MathlibTM2.Node.CompactEncodingOffset
 public import IntegerMultBounds.MathlibTM2.Fast.CompactReservationGeometry
 public import IntegerMultBounds.MathlibTM2.Fast.CompactSynCoverage
-public import IntegerMultBounds.MathlibTM2.Node.CompactHeaderBuild
-public import IntegerMultBounds.MathlibTM2.Node.CompactHeaderBank
-public import IntegerMultBounds.MathlibTM2.Node.CompactHeaderClear
 public import IntegerMultBounds.MathlibTM2.Fast.CompactSynRows
-public import IntegerMultBounds.MathlibTM2.Node.CompactSlotPrepared
-public import IntegerMultBounds.MathlibTM2.Cost.CompactPrepared
 public import IntegerMultBounds.MathlibTM2.Fast.CompactSynRecRoot
 public import IntegerMultBounds.MathlibTM2.Fast.CompactTopRows
-public import IntegerMultBounds.MathlibTM2.Node.CompactDescriptorArithmetic
-public import IntegerMultBounds.MathlibTM2.Node.CompactDescriptorPadding
 public import IntegerMultBounds.MathlibTM2.Cost.CompactCallerParameters
 public import IntegerMultBounds.MathlibTM2.Fast.CompactTopSelection
-public import IntegerMultBounds.MathlibTM2.Node.CompactDescriptorBankOps
-public import IntegerMultBounds.MathlibTM2.Node.CompactDescriptorBank
 
-public import IntegerMultBounds.MathlibTM2.Node.CompactSlotComputed
 
 public import IntegerMultBounds.MathlibTM2.Fast.CompactTopConfig
 

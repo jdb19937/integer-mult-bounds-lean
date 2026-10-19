@@ -83,12 +83,11 @@ theorem compactLayerBasisBudget_covers {s : Shape} {n a kρ left right o R₀ u 
     (hG : 1≤s.guard) (hGK : s.guard+1≤s.chunk) (hR₀ : 1≤R₀)
     (hrecord : s.bits+1≤s.payload) (hpayload : s.payload=2^o*(3*(r*w)))
     (T Ka D : ℕ)
-    (hp : ∀ x y (hxy : x≠y),1<bits u j → ActivePrefixStageRuntimeData.Packed
-      (compactSlotComputedInputs layout x y hxy (rowsAt R₀ j) hG hGK (rowsAt_pos hR₀ j) hrecord) D)
+    (hp : CompactLayoutPacked layout (rowsAt R₀ j) D)
     (vv : BinaryWalsh.Address m) (x : Fin m) :
     compactFactorBasisCost layout hG hGK (rowsAt_pos hR₀ j) hrecord D hp T Ka o r w vv x ≤
       compactLayerBasisBudget T D s u R₀ n j a vv x := by
-  have h := compactBasisCost_le layout x hG hGK (rowsAt_pos hR₀ j) hrecord hpayload T Ka D (hp x) vv
+  have h := compactBasisCost_le layout x hG hGK (rowsAt_pos hR₀ j) hrecord hpayload T Ka D hp vv
   exact_mod_cast h.trans (Nat.le_ceil _)
 
 /-- Scalar recurrence retaining the actual leaf and full-address linear costs. -/

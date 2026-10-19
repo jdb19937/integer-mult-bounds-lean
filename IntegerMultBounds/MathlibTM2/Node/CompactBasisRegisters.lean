@@ -1,6 +1,7 @@
 module
 
 public import IntegerMultBounds.MathlibTM2.Node.CompactBasis
+public import IntegerMultBounds.MathlibTM2.Node.Regs
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 
 /-! Concrete layer-machine wiring for compact basis changes. Global reservation
@@ -15,19 +16,21 @@ open CompactGadgetReservationShape (Shape)
 noncomputable section
 
 inductive CompactBReg where
-  | native (i : Fin ActivePrefixStageRuntimeProgram.count)
+  | slot (x : CxSlotReg)
   | work (i : Fin 30)
   deriving DecidableEq, Fintype
 
-def compactBasisNative (i : Fin ActivePrefixStageRuntimeProgram.count) : Fin (nT CompactBReg) :=
-  reg (.bc (.native i))
+def compactBasisNative (x : CxSlotReg) : Fin (nT CompactBReg) :=
+  reg (.bc (.slot x))
 
 lemma compactBasisNative_injective : Function.Injective compactBasisNative := by
   intro i j h
   simpa [compactBasisNative] using h
 
-lemma compactBasisNative_count : ActivePrefixStageRuntimeProgram.count ≤ nT CompactBReg := by
-  simpa using Fintype.card_le_of_injective compactBasisNative compactBasisNative_injective
+lemma compactBasisNative_count : swapT 6 ≤ nT CompactBReg := by
+  have h : Function.Injective fun j : Fin (swapT 6) => compactBasisNative (.bank 0 j) :=
+    fun a b e => by simpa using compactBasisNative_injective e
+  simpa using Fintype.card_le_of_injective _ h
 
 /-- Dynamic node parameters are aliases, so child calls automatically expose the
 current offset, row count, total width and residue to the descriptor builder. -/
@@ -43,7 +46,7 @@ lemma compactBasisDescriptor_injective : Function.Injective compactBasisDescript
   unfold compactBasisRole at hh
   split_ifs at hh <;> simp_all
 
-lemma compactBasisDescriptor_native (i : Fin 30) (j : Fin ActivePrefixStageRuntimeProgram.count) :
+lemma compactBasisDescriptor_native (i : Fin 30) (j : CxSlotReg) :
     compactBasisDescriptor i≠compactBasisNative j := by
   simp only [compactBasisDescriptor,compactBasisNative,ne_eq,reg_inj]
   unfold compactBasisRole
@@ -68,7 +71,7 @@ lemma compactBasisDescriptor_tmp (i : Fin 30) : compactBasisDescriptor i≠reg .
 /-- The seven persistent global inputs; all other bc registers are empty at rest.
 The unused work copies of aliased layer parameters also remain empty. -/
 def compactBasisRest {A : ℕ} (s : Shape) (o r : ℕ) : CompactBReg → List (Fin (A+4)) → Prop
-  | .native _, l => l=[]
+  | .slot _, l => l=[]
   | .work i, l =>
     if i=3 then l.length=o else if i=4 then l.length=s.H+s.B
     else if i=5 then l.length=s.active else if i=7 then l.length=s.bits
@@ -80,7 +83,7 @@ variable {Q K : ℕ} {U P : Type}
 def compactBasisW (hQ : compactRuntimeStates ≤ Q) (fw : NWire)
     (vv : BinaryWalsh.Address m) (x : Fin m) : Pr P (nT CompactBReg) Q (prime+K) U :=
   compactBasisProg x hQ compactBasisNative compactBasisNative_injective compactBasisNative_count
-    compactBasisDescriptor (reg .L) (reg (.wire fw)) (reg .tmp) vv
+    compactBasisDescriptor (reg .L) (reg (.wire fw)) (fun i => by simp [compactBasisNative]) vv
 
 /-- A concrete basisW contract on the generic layer register file. Persistent
 reservation counters survive literally, as do the child slot length and all other wires. -/
@@ -90,8 +93,7 @@ theorem compactBasisW_exec {s : Shape} {n a₀ k ρ left right o rowCount r w j 
     (hG : 1 ≤ s.guard) (hGK : s.guard+1 ≤ s.chunk) (hr : 0<rowCount)
     (hrecord : s.bits+1 ≤ s.payload) (hA : 4 ≤ prime+K)
     (hpayload : s.payload=2^o*(3*(r*w))) (D : ℕ)
-    (hp : ∀ y (hxy : x≠y),1<k → ActivePrefixStageRuntimeData.Packed
-      (compactSlotComputedInputs layout x y hxy rowCount hG hGK hr hrecord) D)
+    (hp : CompactSlotPacked s k (2^(n-s.bits)*rowCount) D)
     (fw : NWire) (vv : BinaryWalsh.Address m) (hv : vv x=1)
     (Z : ZArr (Fin rowCount × Fin r) (o+n))
     (v : HS (nT CompactBReg) Q (prime+K) U) (S : Stacks (nT CompactBReg) (prime+K))
@@ -105,18 +107,6 @@ theorem compactBasisW_exec {s : Shape} {n a₀ k ρ left right o rowCount r w j 
       Exec body (compactBasisW hQ fw vv x) (mk v S) steps
         (mk v' {S with R:=Function.update S.R (reg (.wire fw)) (encZ (prime+K) w
           (pullM (compactOffsetEmbedding o (compactRecursiveBits layout)) (basisMap vv x) Z))}) := by
-  have hz : ∀ i : Fin 30,16 ≤ i.val → S.R (compactBasisDescriptor i)=[] := by
-    intro i hi
-    have hb := hbc (.work i)
-    have hne (a : Fin 30) (ha : a.val<16) : i≠a := by intro h; subst i; omega
-    simpa [compactBasisDescriptor,compactBasisRole,compactBasisRest,
-      hne 1 (by decide),hne 2 (by decide),hne 3 (by decide),hne 4 (by decide),hne 5 (by decide),
-      hne 6 (by decide),hne 7 (by decide),hne 8 (by decide),hne 9 (by decide),hne 10 (by decide),
-      hne 13 (by decide),hne 14 (by decide),hne 15 (by decide)] using hb
-  have hseed : ∀ i,S.R (compactBasisSeeds compactBasisDescriptor i)=[] := by
-    intro i
-    have hb := hbc (.work (![0,11,12] i))
-    fin_cases i <;> exact hb
   have hin : ∀ i : Fin 16,i≠0 → i≠11 → i≠12 →
       (S.R (compactBasisDescriptor (Fin.castAdd 14 i))).length=
         compactDescriptorBankInputs layout o rowCount r w x x i := by
@@ -139,11 +129,11 @@ theorem compactBasisW_exec {s : Shape} {n a₀ k ρ left right o rowCount r w j 
     · exact hbc (.work 14)
     · exact hpar .ρ
   exact compactBasis_exec layout x hG hGK hr hrecord D hp body hQ compactBasisNative
-    compactBasisNative_injective compactBasisNative_count compactBasisDescriptor compactBasisDescriptor_injective
-    (reg .L) (reg (.wire fw)) (reg .tmp) compactBasisDescriptor_L (reg_ne (by simp))
-    compactBasisDescriptor_native (fun i => compactBasisDescriptor_wire i fw) compactBasisDescriptor_tmp
-    (reg_ne (by simp)) (fun i => by simp [compactBasisNative]) (fun i => by simp [compactBasisNative])
-    hA hpayload vv hv Z v S hL (fun i => hbc (.native i)) hz hseed (hpar .L) hstream htmp hin
+    compactBasisNative_injective compactBasisNative_count compactBasisDescriptor
+    compactBasisDescriptor_injective (reg .L) (reg (.wire fw)) compactBasisDescriptor_L
+    (reg_ne (by simp)) compactBasisDescriptor_native (fun i => compactBasisDescriptor_wire i fw)
+    (fun j => by simp [compactBasisNative]) (fun j => by simp [compactBasisNative])
+    hA hpayload vv hv Z v S hL (fun i => hbc (.slot i)) (hpar .L) hstream hin
 
 end
 end IntegerMultBounds.MathlibTM2.LayerMachine

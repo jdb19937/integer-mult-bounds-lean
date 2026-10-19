@@ -82,6 +82,37 @@ lemma cxPassState {d : CxData} (hd : d.OK) {R₀ : Fin T → List (Fin (prime + 
     omega
   · exact cxFile_set hall (x := .hdr c k) (by simp only [cxStage]; omega) (hle _)
 
+/-- After the setup a bank holds its five headers. -/
+lemma cx_bankLen_le {d : CxData} (hd : d.OK) (o hB act cr cw : ℕ)
+    {R₀ : Fin T → List (Fin (prime + K + 4))}
+    (h0 : ∀ x : CxSet, x ≠ .reg .src → R₀ (cxSetReg ι bank x) = [])
+    (hbank0 : ∀ c j, R₀ (bank c j) = []) (c : Fin 2) :
+    ∑ j, (cxFile ι bank d 41 R₀ (bank c j)).length ≤ 5 * d.setupStep o hB act cr cw := by
+  classical
+  have hle : ∀ x, cxStage x ≤ 41 := by
+    rintro (x | ⟨c, k⟩)
+    · cases x <;> simp only [cxStage] <;> (try split_ifs) <;> omega
+    · simp only [cxStage]; omega
+  have hsub : ∑ j, (cxFile ι bank d 41 R₀ (bank c j)).length =
+      ∑ k : Fin 5, (cxFile ι bank d 41 R₀ (bank c (reg (cxHd k)))).length := by
+    have hinj : Function.Injective fun k : Fin 5 => (reg (cxHd k) : Fin (swapT 6)) :=
+      fun a b e => cxHd_inj (Fin.ext (by simpa [reg_val] using congrArg Fin.val e))
+    rw [← Finset.sum_image (f := fun j => (cxFile ι bank d 41 R₀ (bank c j)).length)
+      (fun a _ b _ e => hinj e)]
+    refine (Finset.sum_subset (Finset.subset_univ _) fun j _ hj => ?_).symm
+    have hj' : ∀ k, j ≠ reg (cxHd k) := fun k e => hj (Finset.mem_image.2 ⟨k, by simp, e.symm⟩)
+    have : cxFile ι bank d 41 R₀ (bank c j) = [] :=
+      (stFill_out _ _ _ (cx_bank_out hall hb hbank hj')).trans (hbank0 c j)
+    rw [this]
+    rfl
+  rw [hsub]
+  calc ∑ k : Fin 5, (cxFile ι bank d 41 R₀ (bank c (reg (cxHd k)))).length
+      ≤ ∑ _k : Fin 5, d.setupStep o hB act cr cw := Finset.sum_le_sum fun k _ => by
+        rw [show bank c (reg (cxHd k)) = cxSetReg ι bank (.hdr c k) from rfl,
+          cxFile_set hall (by simp only [cxStage]; omega) (hle _)]
+        exact cxBc_length_le hd o hB act cr cw _ (by simp only [cxStage]; omega)
+    _ = 5 * d.setupStep o hB act cr cw := by simp
+
 variable (body : P → Pr P T Q (prime + K) U) in
 /-- **The compact slot XOR from its unary inputs.** -/
 theorem cxSlotRun_exec {d : CxData} (hd : d.OK) {o hB act cr cw : ℕ}

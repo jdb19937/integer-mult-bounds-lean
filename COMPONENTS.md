@@ -4692,30 +4692,26 @@ Parameters and asymptotics.
   `896 k 2^(k/4) < 2^k`, which holds for all large `k`. Tape costs are not
   here.
 
-- `MathlibTM2/Node/CompactRotRuntime.lean`, `Node/CompactSlotXor.lean`: Actual unified compact execution including singleton slots, both symbol/bit codecs and transfers, charged normalization and full frame restoration. Supplied canonical headers and layout/size premises remain explicit.
+- `MathlibTM2/Node/CompactSetup.lean`, `Node/CompactSlotRun.lean`: The compact slot XOR on Mathlib TM2 from its unary inputs: 41 setup stages fill the index fields, masks, counters and interchange headers (`cxSetup_exec`), `cxCore` moves the records, and the cleanup restores every register except the stream (`cxSlotRun_exec`).
+- `MathlibTM2/Node/CompactSlotCost.lean`: The slot XOR costs `O(M (L + B) max(1, (k - 1) G)^τ)` on `M` records of index length `L` and record length `B`; bad repair records are paid by the late repair density.
 - `MathlibTM2/Node/CompactGeometryRecursive.lean`, `Node/CompactEncoding.lean`: Shared-shape child reservation invariant and exact native-to-live serialization preserving unrestricted outer rows and payload offsets.
-- `MathlibTM2/Cost/CompactRuntime.lean`, `Cost/CompactParameters.lean`: Uniform actual runtime cost and repair allowance one derived from dyadic guards and full row-address inequalities; callers must discharge the size premises.
+- `MathlibTM2/Cost/CompactParameters.lean`: Repair allowance one derived from dyadic guards and full row-address inequalities; callers must discharge the size premises.
+- `MathlibTM2/Cost/CompactSlotPacking.lean`: The parameter conditions of the compact slot operations (`CompactSlotPacked`) from dyadic guards, and eventually from the actual multiplier sizes.
 - `MathlibTM2/Fast/CompactSynRecArithmetic.lean`: Runtime ceiling division and front/back/active/offset reservation arithmetic with exact costs and scratch restoration. Row-axis count is an explicit input; recursive record production remains separate.
 
-- `MathlibTM2/Cost/CompactSlotXor.lean`: Complete encoded compact execution bounded by a fixed power-of-two coefficient times local volume and compact width to tau, including codecs and transfers.
 - `MathlibTM2/Fast/CompactSynRecRows.lean`, `Fast/CompactSynRecPieces.lean`, `Fast/CompactSynRec.lean`: Separate checked executions compute the exact native row-axis reservation and front/back counts, emit active digit pieces and the back leaf, and restore all temporary counters with exact runtime costs. Actual row padding, top configuration, fallback and coverage remain separate.
 - `MathlibTM2/Fast/CompactSynSel.lean`: Validity at a sufficient common row depth and exact exponent sum for the reserved piece records; no assumed execution and no claim of completed transform coverage.
 
 - `MathlibTM2/Node/CompactEncodingOffset.lean`: Literal encoding reshape absorbs arbitrary low address spectators into coefficient payloads, with shifted slot-action compatibility and exact volume preservation.
 
 - `MathlibTM2/Fast/CompactReservationGeometry.lean`, `Fast/CompactSynCoverage.lean`: Literal runtime reservations determine a common shape for digit pieces and child slots. Exact offsets, pre-padding volume and complete selected-coordinate coverage are proved under explicit capacity premises; execution of the new top configuration remains separate.
-- `MathlibTM2/Node/CompactHeaderBuild.lean`, `Node/CompactHeaderBank.lean`, `Node/CompactHeaderClear.lean`: Actual finite header conversion and cleanup with preserved sources/frame and explicit costs. Original thirteen headers match the native bank; their runtime arithmetic inputs and composition with the slot executor remain caller work.
 
 - `MathlibTM2/Fast/CompactSynRows.lean`: Rebase piece row metadata to exact quotients of the actual padded row count without changing serialized records. Native divisibility and original-axis depth discharge shared-row validity.
-- `MathlibTM2/Node/CompactSlotPrepared.lean`: Actual header build, encoded compact operation and header cleanup from runtime unary descriptor values. Complete setup/execution/cleanup cost and exact restoration of the empty bank, source registers and scratch; only the live stream changes.
 
 - `MathlibTM2/Fast/CompactSynRecRoot.lean`: Concrete original-input composition of exact row-axis calculation, reserved piece production and scratch cleanup; its generic internal composition is discharged by actual executions.
-- `MathlibTM2/Cost/CompactPrepared.lean`: Setup and cleanup are bounded by 274 and 105 times native volume; the complete prepared slot operation retains compact-width cost with fixed power-of-two coefficient.
 - `MathlibTM2/Fast/CompactTopRows.lean`: Actual top-level row padding includes outside rows and high spectators, is at most twice original row stock, and validates the rebased piece records using the single global divisor.
 
-- `MathlibTM2/Node/CompactDescriptorArithmetic.lean`, `Node/CompactDescriptorPadding.lean`: Actual runtime quotient and width/right/left descriptor calculation with preserved inputs, restored scratch and exact costs. Exact physical-layout equations identify the outputs with the intended slot and spectator counts; remaining descriptor values and header placement stay explicit.
 
-- `MathlibTM2/Node/CompactDescriptorBankOps.lean`, `Node/CompactDescriptorBank.lean`, `Node/CompactSlotComputed.lean`: Compute all thirteen headers, execute the low-offset compact slot operation, and clear outputs with explicit costs; preserve original sources and scratch, changing only the live stream.
 - `MathlibTM2/Fast/CompactTopSelection.lean`: Exact selected-coordinate permutation, nonduplication, padded-piece validity and exponent sum.
 - `MathlibTM2/Fast/CompactTopConfigFields.lean`, `Fast/CompactTopConfigWrite.lean`, `Fast/CompactTopConfigPadding.lean`, `Fast/CompactTopConfigDivisor.lean`, `Fast/CompactTopConfigRows.lean`, `Fast/CompactTopConfig.lean`: Runtime global divisor and exact padding, ten-field configuration serialization and working width, with source restoration. Derived original-input coordinates remain caller work.
 - `MathlibTM2/Cost/CompactCallerParameters.lean`: Eventual repair packing from manuscript sizes, explicit reservation/row/width premises; runtime size-generator identification remains separate.
@@ -4725,7 +4721,7 @@ Parameters and asymptotics.
 - `MathlibTM2/Fast/CompactTopReady.lean`: Exact selection mask/length, computed shift, piece-width validity and reserved top-transform semantics. This is mathematical correctness; actual compact layer replacement remains separate.
 - `MathlibTM2/Cost/CompactCallerRuntimeParameters.lean`: Repair packing directly for the running integer-root size generator, without equating its dimension/chunk with the manuscript regime.
 - `MathlibTM2/Cost/CompactCallerCapacity.lean`: Actual reservation cutoff, eventual fractional-dimension bounds and capacity for nonterminal synthetic rounds. Small selected sets retain a capacity/fallback obligation.
-- `MathlibTM2/Node/CompactBasisSlot.lean`, `Node/CompactBasis.lean`: Actual parent-length preparation after division, slot-index setup, computed compact execution and cleanup; list composition realizes the exact basis map with restored frame and summed costs. Concrete register wiring remains separate.
+- `MathlibTM2/Node/CompactBasisSlot.lean`, `Node/CompactBasis.lean`: Low-offset compact slot operations by the Mathlib slot XOR from the descriptor registers, within `compactBasisSlotCost`; list composition realizes the exact basis map with restored frame and summed costs. Concrete register wiring remains separate.
 
 - `MathlibTM2/Fast/CompactTopCoordinates.lean`, `Fast/CompactTopSetup.lean`: Actual original-input root record and top-coordinate computation, regenerating cleared reservation counts and restoring all intermediates. The configuration serializer role adapter remains separate.
 

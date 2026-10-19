@@ -110,8 +110,7 @@ theorem transW_exec {s : Shape} {n a₀ k ρ left right o rowCount r w j u : ℕ
     (hG : 1 ≤ s.guard) (hGK : s.guard+1 ≤ s.chunk) (hr : 0<rowCount)
     (hrecord : s.bits+1 ≤ s.payload) (hA : 4 ≤ prime+K)
     (hpayload : s.payload=2^o*(3*(r*w))) (D : ℕ)
-    (hp : ∀ y (hxy : x≠y),1<k → ActivePrefixStageRuntimeData.Packed
-      (compactSlotComputedInputs layout x y hxy rowCount hG hGK hr hrecord) D)
+    (hp : CompactLayoutPacked layout rowCount D)
     (fw : NWire) (tv : BinaryWalsh.Address m) (htv : tv x = 0)
     (Z : ZArr (Fin rowCount × Fin r) (o+n))
     (v : HS (nT CompactBReg) Q (prime+K) U) (S : Stacks (nT CompactBReg) (prime+K))

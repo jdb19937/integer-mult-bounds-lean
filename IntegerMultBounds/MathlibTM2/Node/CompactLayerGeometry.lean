@@ -19,8 +19,7 @@ theorem compactLayerReady_of_layout {shape : Shape} {n o u ρ R₀ r w Ka D : �
     (hrecord : shape.bits+1 ≤ shape.payload) (budget : CompactBasisBudget) :
     ∀ j,
     (∀ i ≤ j, ∀ a left right (layout : CompactRecursiveLayout shape n a (bits u i) ρ left right),
-      ∃ hp : ∀ x y (hxy : x≠y), 1<bits u i → ActivePrefixStageRuntimeData.Packed
-        (compactSlotComputedInputs layout x y hxy (rowsAt R₀ i) hG hGK (rowsAt_pos hR₀ i) hrecord) D,
+      ∃ hp : CompactLayoutPacked layout (rowsAt R₀ i) D,
       ∀ vv x, compactFactorBasisCost layout hG hGK (rowsAt_pos hR₀ i) hrecord D hp
         (nT CompactBReg) Ka o r w vv x ≤ budget i a vv x) →
     ∀ a left right, CompactRecursiveLayout shape n a (bits u j) ρ left right →

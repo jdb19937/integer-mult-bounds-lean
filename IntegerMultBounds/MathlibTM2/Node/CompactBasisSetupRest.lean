@@ -71,7 +71,7 @@ theorem compactBasisSetup_rest {shape : Shape} (R : Fin (nT CompactHostBReg) →
   | inr z => trivial
   | inl z =>
     cases z with
-    | native z => exact hoff (.native z) (fun _ => by simp)
+    | slot z => exact hoff (.slot z) (fun _ => by simp)
     | work i =>
       by_cases h3 : i=3
       · subst i

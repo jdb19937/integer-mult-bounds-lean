@@ -74,7 +74,7 @@ theorem compactPiece_uniform_eventually_readyR : ∀ᶠ N : ℕ in atTop,
     have hh := compactLayerReady_canonical (Ka := Ka) (D := 1) hok.hu hok.hR₀ hG hGK hrecord rfl
       (j := j) (a := pc.a₀-o) (layout := layout)
     apply hh
-    intro i hi a left right layout x y hxy _
+    intro i hi a left right layout
     apply hp K D o address R rBits r w (rowsAt pc.R₀ i) a (bits pc.u i) ρ left right
       hlo hhi hD hfit hG hGK hrecord (rowsAt_pos hok.hR₀ i) layout hR hRbits haddress
     · rw [←hroot]
