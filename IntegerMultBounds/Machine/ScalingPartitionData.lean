@@ -49,12 +49,4 @@ theorem blocks_ofFn {Q c : ℕ} (hc : 0 < c) (payload : ℕ → α) :
       simp
   rw [he,blocks_flatten hc]
 
-/-- After inverse scatter, concatenation returns exactly multiplication by c
-on input block indices, with each complete payload block unchanged. -/
-theorem inverse_blocks {Q c : ℕ} (hc : 0 < c) (input : ℕ → List α) :
-    (((List.range c).map (fun j =>
-      ScalingMergeData.blocks Q c j (fun y => input (ScalingPieces.output Q c y)))).flatten).flatten =
-      ((List.range Q).map (fun y => input (ScalingPieces.output Q c y))).flatten := by
-  rw [blocks_flatten hc]
-
 end IntegerMultBounds.Machine.ScalingPartitionData

@@ -69,16 +69,6 @@ theorem cost_linear (d : Data) (rs : List Partition.Record) (R D : ℕ)
     (volume_absorb rs.length R d.geom.addressBits (holes d rs) D hR hH)
   exact (cost_bound d rs R hN hw).trans (by simpa only [volumeConstant,Nat.mul_assoc] using hh)
 
-theorem runs_with_bound (d : Data) (h : Valid d) (rs : List Partition.Record) (R : ℕ)
-    (hN : 0<rs.length) (hw : ∀ r ∈ rs,r.payload.length≤R) :
-    HoareTime (ActiveRepairLateOriginalPipelineEndpoint.program d.side)
-      (fun v => v=ActiveRepairLateOriginalPipelineEndpoint.input d rs)
-      (fun v => v=ActiveRepairLateOriginalPipelineEndpoint.output d rs)
-      (constant*(rs.length*R+rs.length*(d.geom.addressBits+1)+
-        holes d rs*(d.geom.addressBits+1)*(R+d.geom.addressBits+1))) :=
-  (ActiveRepairLateOriginalPipelineEndpoint.runs d h rs).consequence
-    (fun _ h => h) (fun _ h => h) (cost_bound d rs R hN hw)
-
 theorem runs_linear (d : Data) (h : Valid d) (rs : List Partition.Record) (R D : ℕ)
     (hN : 0<rs.length) (hw : ∀ r ∈ rs,r.payload.length≤R)
     (hR : d.geom.addressBits+1≤R)

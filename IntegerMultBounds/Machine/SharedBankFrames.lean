@@ -66,10 +66,6 @@ theorem empty_append (t u a : ℕ) :
   unfold empty Tapes.append
   congr 1 <;> funext i <;> induction i using Fin.addCases <;> simp only [Fin.addCases_left,Fin.addCases_right]
 
-theorem strip_empty (slots : Fin k → Fin t) : strip (empty t a) slots = empty t a := by
-  unfold strip empty
-  congr 1 <;> funext i <;> simp
-
 /-- A stage with blank private input has literally no nonblank input outside
 its permanent common bank. -/
 theorem strip_common_blank (common : Tapes k a) (t u : ℕ) :
@@ -81,19 +77,6 @@ theorem strip_common_single_blank (common : Tapes k a) (t : ℕ) :
     strip (common.append (empty t a)) (fun i => Fin.castAdd t i) = empty (k+t) a := by
   change strip (common.append (empty t a)) (fun i => Fin.castAdd t (id i)) = _
   rw [strip_append_left,strip_identity,empty_append]
-
-/-- Once selected cells have been cleared, a second clearing changes nothing. -/
-theorem strip_idempotent (v : Tapes t a) (slots : Fin k → Fin t) :
-    strip (strip v slots) slots = strip v slots := by
-  unfold strip
-  congr 1 <;> funext i <;> by_cases h : ∃ j, slots j = i <;> simp [h]
-
-/-- Clearing never changes an unselected tape or its head. -/
-theorem strip_frame (v : Tapes t a) (slots : Fin k → Fin t) (i : Fin t)
-    (hi : ∀ j, slots j ≠ i) :
-    (strip v slots).head i = v.head i ∧ (strip v slots).tape i = v.tape i := by
-  have hn : ¬∃ j, slots j = i := by rintro ⟨j,hj⟩; exact hi j hj
-  simp [strip,hn]
 
 end
 end IntegerMultBounds.Machine.SharedBankFrames

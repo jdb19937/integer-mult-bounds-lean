@@ -61,9 +61,4 @@ theorem negative_field (s : Shape) (i : ℕ) (hi : i<2^s.W) :
   rw [negative_field s i hi,BinaryParityXorOffsetValue.negWord_value]
   simp [Gather.gather_length,PackedArith.parity]
 
- theorem negative_zero (s : Shape) (hn : s.n=0) : negative s=[] := by
-  apply List.length_eq_zero_iff.mp
-  rw [negative_length,hn]
-  simp
-
 end IntegerMultBounds.Machine.ActivePrefixParityNegativeData

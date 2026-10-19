@@ -38,9 +38,6 @@ theorem tape_blank_ge (T : WTape) (j : ℤ) (h : clen T.words ≤ j) : T.tape (a
 theorem pos_le (T : WTape) : T.pos ≤ clen T.words := by
   simp [pos, words, clen_append, clen_reverse]
 
-theorem clen_words (T : WTape) : clen T.words = clen T.left + clen T.right := by
-  simp [words, clen_append, clen_reverse]
-
 end WTape
 
 /-- One transition that writes back the scanned symbol. -/

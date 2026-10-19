@@ -82,9 +82,6 @@ def dmk (v : HS T Q A U) (S : Stacks T A) (gi go : List Γ') :
     Store (DΓ (HΓ (T := T) A)) (HS T Q A U) :=
   ⟨v, hostStk S.get gi go⟩
 
-theorem dmk_eq_hostExt (v : HS T Q A U) (S : Stacks T A) (gi go : List Γ') :
-    dmk v S gi go = hostExt (mk v S) gi go := rfl
-
 @[simp] lemma dmk_var (v : HS T Q A U) (S : Stacks T A) (gi go : List Γ') :
     (dmk v S gi go).var = v := rfl
 

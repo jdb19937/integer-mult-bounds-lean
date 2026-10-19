@@ -29,14 +29,6 @@ private theorem compactList_sum_mono {α : Type} (xs : List α) (f g : α→ℝ)
     simp only [List.map_cons,List.sum_cons]
     exact add_le_add (h x (by simp)) (ih (fun y hy => h y (by simp [hy])))
 
-private theorem compactList_scale_sum {α : Type} (xs : List α) (f g : α→ℝ)
-    (V B : ℝ) (hV : 0≤V) (hp : ∀ x∈xs,f x≤V*g x)
-    (hs : (xs.map g).sum≤B) : (xs.map f).sum≤V*B := by
-  calc
-    _ ≤ (xs.map (fun x => V*g x)).sum := compactList_sum_mono xs f _ hp
-    _ = V*(xs.map g).sum := List.sum_map_mul_left xs g V
-    _ ≤ V*B := mul_le_mul_of_nonneg_left hs hV
-
 /-- Numerical budget with an abstract host-size coefficient. -/
 def compactPieceCostWith (T : ℕ) (ds : ComplexFramedExecution.Directions) (D : ℕ)
     (s : CompactGadgetReservationShape.Shape) (n o r w ρ : ℕ) (pc : TopPc) : ℕ :=

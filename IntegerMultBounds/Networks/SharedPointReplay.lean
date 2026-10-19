@@ -38,9 +38,6 @@ def runFrom (state : State) : List (Fin 50) → State
 
 def circuit : State := runFrom initial (List.finRange 50)
 
-theorem step_ready (state : State) (c : Fin 50) (hs : Ready state) : Ready (step state c) :=
-  importStep_ready implementation state c hs
-
 theorem runFrom_eq_using (state : State) (common : List (Fin 50)) :
     runFrom state common = runUsing implementation state common := by
   induction common generalizing state with
@@ -159,17 +156,6 @@ theorem outputRefs_bounds : ∀ i ∈ outputRefs, i < circuit.nodes.length := by
   obtain ⟨out, ho, rfl⟩ := List.mem_map.mp hi
   exact output_bound out ho
 
-theorem additionSupports_subset : DAGReplayBudget.additionSupports circuit.nodes ⊆
-    SharedPointFamily.domain.image SharedPointFamily.support := by
-  intro s hs
-  exact contained s ((DAGReplayBudget.mem_additionSupports _ _).mp hs)
-
-/-- Support sharing bounds the actual addition nodes of the constructed DAG. -/
-theorem additions_le_supports : DAGAllocator.additionCount circuit.nodes ≤
-    (SharedPointFamily.domain.image SharedPointFamily.support).card := by
-  rw [circuit_eq_using]
-  exact additions_le_for implementation
-
 /-- Any support budget transfers to actual compiled storage without evaluating
 the circuit or fixing the numerical support bound. -/
 theorem allocated_roles_le_of (budget : ℕ)
@@ -186,15 +172,5 @@ theorem compiled_instructions_le_of (budget : ℕ)
   change (DAGAllocator.compile circuit.nodes (circuit.outputs.map Output.ref)).program.length ≤ _
   rw [circuit_eq_using]
   exact (compile_bounds_for implementation budget hcard).2
-
-theorem allocated_roles_le
-    (hcard : (SharedPointFamily.domain.image SharedPointFamily.support).card ≤ 450394) :
-    (DAGAllocator.compile circuit.nodes outputRefs).state.next ≤ 509194 :=
-  allocated_roles_le_of 450394 hcard
-
-theorem compiled_instructions_le
-    (hcard : (SharedPointFamily.domain.image SharedPointFamily.support).card ≤ 450394) :
-    (DAGAllocator.compile circuit.nodes outputRefs).program.length ≤ 959588 :=
-  compiled_instructions_le_of 450394 hcard
 
 end IntegerMultBounds.Networks.SharedPointReplay

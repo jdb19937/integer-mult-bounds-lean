@@ -614,9 +614,6 @@ def tblFoldStream (A w s t α P wd B NR : ℕ) [NeZero s] : List (Fin (A + 4)) :
   (List.range NR).flatMap fun i => (List.range (2 * B + 1)).flatMap fun j =>
     tblFoldSyms A w s t α P wd i (i - min i B + j)
 
-theorem tblFoldLst_ne48 : ∀ x ∈ tblFoldLst, x ≠ 48 → x ∈ ([18, 19, 21, 22, 34, 35, 38, 39, 43, 49,
-    51, 52, 55, 59] : List (Fin 60)) := by decide
-
 /-- **The folded row stream.** -/
 theorem tblFoldStream_do {A W w : ℕ} (st : TblSt 60 A) {s t α P wd B NR N : ℕ} [NeZero s]
     (h19 : st.val 19 = P) (h34 : st.val 34 = s) (h35 : st.val 35 = t) (h36 : st.val 36 = α)

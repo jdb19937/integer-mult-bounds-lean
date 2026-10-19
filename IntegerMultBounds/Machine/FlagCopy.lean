@@ -400,11 +400,6 @@ def extractedWord (flag : Bool) (bits payload : List Bool) : List (Fin 5) :=
 def cost (flag : Bool) (bits payload : List Bool) : ℕ :=
   payload.length + 2 + if flag then 2 * bits.length + 3 else 0
 
-theorem extractedWord_length (flag : Bool) (bits payload : List Bool) :
-    (extractedWord flag bits payload).length =
-      if flag then bits.length + (payload.length + 2) else 0 := by
-  cases flag <;> simp [extractedWord, KeySelect.recordWord]
-
 theorem record_hoare (flag b : Bool) (payload bits : List Bool) (f out ext : ℤ → Fin 5)
     (p q r : ℤ) :
     HoareTime program

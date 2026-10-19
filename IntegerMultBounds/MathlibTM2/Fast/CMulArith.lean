@@ -54,9 +54,6 @@ lemma bsgn_natAbs (x : ℤ) : bsgn (decide (x < 0)) * (x.natAbs : ℤ) = x := by
   · simp only [h, decide_true, bsgn_true]; omega
   · simp only [h, decide_false, bsgn_false]; omega
 
-lemma abs_bsgn_mul_le (s : Bool) (x : ℤ) : |bsgn s * x| = |x| := by
-  cases s <;> simp [bsgn]
-
 /-! ### Truncated division -/
 
 /-- Division of both parts by `2^p`, truncating toward zero. -/
@@ -154,12 +151,6 @@ theorem rhoC_mul_grid (p : ℕ) (N₁ N₂ : GaussianInt) :
   · rw [rhoC_im, toComplex_div_im, toComplex_div_im, tdivN_im, tdiv_rho0]
     congr 2
     field_simp
-
-/-- The numerator of the rounded product. -/
-theorem numer_rhoC_mul_grid (p : ℕ) (N₁ N₂ : GaussianInt) :
-    numer p (rhoC p (GaussianInt.toComplex N₁ / 2 ^ p * (GaussianInt.toComplex N₂ / 2 ^ p))) =
-      tdivN p (N₁ * N₂) := by
-  rw [rhoC_mul_grid, numer_grid]
 
 /-! ### Two's complement and sign-magnitude -/
 

@@ -60,12 +60,6 @@ theorem repeats (caller : Tapes t a) (focus : Fin 3 → Fin t) (hf : Function.In
     exact clean xs rs
   · simp only [result,CompactGadgetReservationPlacement.strip_set]
 
-theorem output_word (caller : Tapes t a) (focus : Fin 3 → Fin t) (xs : List Bool) (rows : ℕ) :
-    (result caller focus xs rows).tape (focus 2)=
-      putWord (fun _ => blank) 0 (((List.replicate rows xs).flatten).map bitSymbol) ∧
-    (result caller focus xs rows).head (focus 2)=0 := by
-  simp [result,setTape,word,ActivePrefixOffsetRepeatRun.copies_replicate]
-
 theorem frame (caller : Tapes t a) (focus : Fin 3 → Fin t) (xs : List Bool) (rows : ℕ)
     (i : Fin t) (hi : i≠focus 2) :
     (result caller focus xs rows).tape i=caller.tape i ∧

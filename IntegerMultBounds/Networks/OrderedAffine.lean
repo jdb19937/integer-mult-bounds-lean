@@ -103,12 +103,6 @@ theorem diagonal_unit {E : Matrix ι ι R} (hE : Swap.Shear.LowerTriangular E)
   rw [Matrix.det_of_isLowerTriangular E ht] at hd
   exact (IsUnit.prod_iff.mp hd) i (mem_univ i)
 
-/-- An explicit inverse is sufficient; modular specialization can use the
-already protected factor inverse without any new coefficient bound. -/
-theorem diagonal_unit_of_inverse {E F : Matrix ι ι R}
-    (hE : Swap.Shear.LowerTriangular E) (hinv : E * F = 1) (i : ι) : IsUnit (E i i) :=
-  diagonal_unit hE (isUnit_iff_exists_inv.mpr ⟨F,hinv⟩) i
-
 theorem row_legal {E : Matrix ι ι R} (hdiag : ∀ i, IsUnit (E i i)) (i : ι) :
     ∀ op ∈ row E i, Legal op := by
   intro op hop

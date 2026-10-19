@@ -30,12 +30,6 @@ theorem split_swap (x : Address s p rows) :
       (x.t,(splitBack s (p.n*p.b) p.compactFits x.back).2) := by
   simp [swapT,splitBack,pack]
 
-theorem target_and_sources (x : Address s p rows) :
-    (swapT s p x).target=x.target ∧ (swapT s p x).activeBefore=x.activeBefore ∧
-      (swapT s p x).activeAfter=x.activeAfter ∧
-      (splitBack s (p.n*p.b) p.compactFits (swapT s p x).back).1=x.t := by
-  exact ⟨rfl,rfl,rfl,congrArg Prod.fst (split_swap s p x)⟩
-
 theorem swapped_index (x : Address s p rows) :
     tIndex s (p.n*p.b) (p.n*p.q) p.before p.after rows p.compactFits (swapT s p x)=
       RadixRangePadding.index (pack (pack x.row x.u) x.uTail)
@@ -56,13 +50,6 @@ theorem transpose_entry {α : Type*}
       array (tIndex s (p.n*p.b) (p.n*p.q) p.before p.after rows p.compactFits (swapT s p x)) := by
   rw [swapped_index]
   exact RadixRangePadding.transpose_entry array _ _ _ _ _
-
-theorem unchanged_array_index (x : Address s p rows) :
-    Fin.cast (t_volume s (p.n*p.b) (p.n*p.q) p.before p.after rows p.compactFits p.activeSize)
-      (tIndex s (p.n*p.b) (p.n*p.q) p.before p.after rows p.compactFits (swapT s p x))=
-      CompactActiveTargetLayout.index s (p.n*p.b) (p.n*p.q) p.before p.after rows
-        p.compactFits p.activeSize (swapT s p x) :=
-  t_index _ _ _ _ _ _ _ _ _
 
 /-- The post-exchange back-fiber target is literally the original compact T;
 its prefix is the exact rank used by the repeated parity offset table. -/

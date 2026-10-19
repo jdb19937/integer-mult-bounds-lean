@@ -58,12 +58,6 @@ theorem cleans (caller : Tapes t a) (focus : Fin 5 → Fin t) (hf : Function.Inj
   exact ((((h0.seq h1).seq h2).seq h3).seq h4).consequence
     (fun _ h => h) (fun _ h => h) (by unfold cost; omega)
 
-theorem cleared_outputs (caller : Tapes t a) (focus : Fin 5 → Fin t) (hf : Function.Injective focus) :
-    ∀ i, (cleared caller focus).tape (focus i)=(fun _ => blank) ∧
-      (cleared caller focus).head (focus i)=0 := by
-  intro i
-  fin_cases i <;> simp [cleared,setTape,hf.eq_iff]
-
 theorem frame (caller : Tapes t a) (focus : Fin 5 → Fin t) (i : Fin t)
     (hi : ∀ j, i≠focus j) :
     (cleared caller focus).tape i=caller.tape i ∧ (cleared caller focus).head i=caller.head i := by
@@ -89,15 +83,6 @@ theorem derived_cost (W q b n f : ℕ) (hq : 1≤q) (hnf : n+1=f)
     cost (words W q b n f)≤44*ActivePrefixOffsetHeadersBudget.volume W :=
   cost_bound _ _ (ActivePrefixOffsetHeadersBudget.volume_pos W) (words_canonical W q b n f)
     (by intro i; rw [words_values]; exact ActivePrefixOffsetHeadersBudget.values_le W q b n f hq hnf hsource htemp i)
-
-theorem cleans_result (caller : Tapes t a) (focus : Fin 10 → Fin t) (hf : Function.Injective focus)
-    (W q b n f : ℕ) :
-    HoareTime (program (a := a) (outputFocus focus))
-      (fun v => v=result caller focus W q b n f)
-      (fun v => v=cleared (result caller focus W q b n f) (outputFocus focus))
-      (cost (words W q b n f)) :=
-  cleans _ _ (output_injective focus hf) _ (result_headers caller focus hf W q b n f).1
-    (result_headers caller focus hf W q b n f).2
 
 end
 end IntegerMultBounds.Machine.ActivePrefixOffsetHeadersCleanup

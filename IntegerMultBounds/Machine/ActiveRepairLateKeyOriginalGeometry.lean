@@ -67,8 +67,5 @@ theorem retained (d : Data) (i : Fin 43) (hi : i≠31) :
     d.output.head i=d.input.head i ∧ d.output.tape i=d.input.tape i := by
   simp [Data.output,SharedPlacementAlphabet.setTape,hi]
 
-theorem key_tape (d : Data) : d.output.tape 31=
-    FlagCopy.keyTape (FlagCopy.keyWord d.key.flag d.key.destination) := rfl
-
 end
 end IntegerMultBounds.Machine.ActiveRepairLateKeyOriginalGeometry

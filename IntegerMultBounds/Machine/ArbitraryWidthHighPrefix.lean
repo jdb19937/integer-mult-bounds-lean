@@ -23,12 +23,6 @@ theorem bits_value (A R C : ℕ) : Counter.value (bits A R C) = A*R*C :=
 theorem bits_canonical (A R C : ℕ) : GrowingCounterData.Canonical (bits A R C) :=
   BoundedProductDescriptor.bits_canonical _ _
 
-theorem bits_eq (A R C : ℕ) :
-    bits A R C = RecursiveChildQuotientsConstant.bits (A*R*C) :=
-  BinaryCanonicalData.value_injective _ _ (bits_canonical A R C)
-    (RecursiveChildQuotientsConstant.bits_canonical _) (by
-      rw [bits_value,RecursiveChildQuotientsConstant.bits_value])
-
 def bank (hs : Fin 3 → List Bool) (mid out : Option (List Bool)) : Tapes 8 a :=
   ⟨fun i => if i.val < 3 then 1 else if i = 3 then mid.elim 0 (fun _ => 1)
     else if i = 4 then out.elim 0 (fun _ => 1) else 0,

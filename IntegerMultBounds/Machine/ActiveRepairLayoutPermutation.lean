@@ -122,29 +122,5 @@ theorem late_agrees (x : A s q b n before after rows) (hx : ¬ LB x) : LA x=LI x
       VaryingControlRepairFiber.perm_apply]
     rw [late_program_agrees_on_good (Bi b) (Li q) (Bi_one b) (Li_pos q) _ (controls_bits _) d hgood]
 
-theorem early_actual_preserves (x : A s q b n before after rows) : EB (EA x) ↔ EB x :=
-  Compact.actual_preserves_bad EA EI EB
-    (early_preserves s q b n before after rows rho offset width side hq)
-    (early_agrees s q b n before after rows rho offset width side hq) x
-
-theorem late_actual_preserves (x : A s q b n before after rows) : LB (LA x) ↔ LB x :=
-  Compact.actual_preserves_bad LA LI LB
-    (late_preserves s q b n before after rows rho offset width side hq)
-    (late_agrees s q b n before after rows rho offset width side hq) x
-
-theorem early_repair_exact (x : A s q b n before after rows) :
-    (if EB (EA x) then EI ((EA).symm (EA x)) else EA x)=EI x := by
-  classical
-  exact Compact.repair_exact EA EI EB
-    (early_preserves s q b n before after rows rho offset width side hq)
-    (early_agrees s q b n before after rows rho offset width side hq) x
-
-theorem late_repair_exact (x : A s q b n before after rows) :
-    (if LB (LA x) then LI ((LA).symm (LA x)) else LA x)=LI x := by
-  classical
-  exact Compact.repair_exact LA LI LB
-    (late_preserves s q b n before after rows rho offset width side hq)
-    (late_agrees s q b n before after rows rho offset width side hq) x
-
 end
 end IntegerMultBounds.Machine.ActiveRepairLayoutPermutation

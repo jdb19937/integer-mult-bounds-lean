@@ -18,13 +18,6 @@ open IntegerMultBounds IntegerMultBounds.Machine IntegerMultBounds.MathlibTM2
 open IntegerMultBounds.MathlibTM2.Fast IntegerMultBounds.MathlibTM2.Layer Filter
 noncomputable section
 
-/-- Fixed polynomial exponent determined only by the finite wire system. -/
-def compactCallerDivisorExponent : ℕ := Nat.clog m NW
-
-/-- Fixed dyadic coefficient exponent. -/
-def compactCallerDivisorCoeffExponent : ℕ :=
-  Nat.clog 2 (m+1)*compactCallerDivisorExponent
-
 private lemma divisorPolynomial {W base J p e c cb : ℕ}
     (hW : W≤base^e) (hc : base+1≤2^cb) (he : cb*e=c)
     (hdepth : base^J≤(base+1)*(p+1)) :

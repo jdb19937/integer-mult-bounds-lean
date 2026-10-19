@@ -56,14 +56,6 @@ end Rules
 
 /-! ### Binary to unary -/
 
-theorem binaryValue_append_one (bs : List Bool) (b : Bool) :
-    binaryValue (bs ++ [b]) = 2 * binaryValue bs + (if b then 1 else 0) := by
-  induction bs with
-  | nil => cases b <;> simp [binaryValue]
-  | cons c bs ih =>
-    simp only [List.cons_append, binaryValue, List.length_append, List.length_singleton, ih, pow_succ]
-    ring
-
 /-- Take the first bit into `tE`, drop it from `tO2`, double `tL` into `tH` (head left at the end). -/
 noncomputable def binA : Cmd 0 𝕌 :=
   .seq (op1 Rules.take false (ι c1) (ι tO2) (ι tE) (by decide) (by decide) (by decide)) <|
@@ -417,8 +409,6 @@ def headerCost (p r w H : ℕ) : ℕ :=
   5 * (50 * H + 600) + 42 * (Nat.size p * (Nat.size p + p + 10) +
     Nat.size r * (Nat.size r + r + 10) + Nat.size w * (Nat.size w + w + 10)) +
     200 * r + 10 * (p + w + H) + 2000
-
-theorem decode_pre (τ : Fin 𝕌 → WTape) (hz : ∀ i : Fin 𝕋, τ (ι i) = emp) (i : Fin 𝕋) : τ (ι i) = emp := hz i
 
 set_option maxHeartbeats 16000000 in
 theorem runs_decodeHeader {p d l K w : ℕ} {ts : List ℕ} (hp : 1 ≤ p) (hd : 1 ≤ d) (hK : 1 ≤ K) (hw : 1 ≤ w)

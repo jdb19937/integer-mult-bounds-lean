@@ -78,26 +78,10 @@ def cost (d : Data) (chunks : List (List Bool)) (bs ns : List Bool) (R : ℕ) :=
     _ _ _ _ rfl rfl (cleanup chunks)
   exact ((hf.seq hr).seq hc).consequence (fun _ h => h) (fun _ h => h) (by unfold cost; omega)
 
- theorem record_buffer_blank (headers : Tapes 43 1) (d : Data) (chunks : List (List Bool)) :
-    (output headers d chunks).tape 54=fun _ => blank := by simp [output,setTape]
  theorem raw_output (headers : Tapes 43 1) (d : Data) (chunks : List (List Bool)) :
     (output headers d chunks).tape 232=putWord (fun _ => blank) 0
       ((ActiveRepairLayoutRecordsData.serialize (ActiveRepairLateOriginalPipelineCleanup.repaired d
         (ActiveRepairRecordFormatWords.records chunks))).map bitSymbol) := by
   rfl
- theorem raw_source_retained (headers : Tapes 43 1) (d : Data) (chunks : List (List Bool)) :
-    (output headers d chunks).tape 237=putWord (fun _ => blank) 0 (chunks.flatten.map bitSymbol) := by
-  rfl
-
- theorem raw_head_origin (headers : Tapes 43 1) (d : Data) (chunks : List (List Bool)) :
-    (output headers d chunks).head 232=0 := rfl
- theorem formatter_private_blank (headers : Tapes 43 1) (d : Data) (chunks : List (List Bool)) :
-    SharedBank.payload (output headers d chunks) (Fin.natAdd 238)=SharedBank.empty 6 1 := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
- theorem headers_retained (headers : Tapes 43 1) (d : Data) (chunks : List (List Bool)) :
-    SharedBank.payload (output headers d chunks)
-      (fun i : Fin 43 => Fin.castAdd 6 (Fin.castAdd 1 (Fin.castAdd 194 i)))=headers := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i <;> rfl
-
 end
 end IntegerMultBounds.Machine.ActiveRepairLayoutRecordsAssemblyLate

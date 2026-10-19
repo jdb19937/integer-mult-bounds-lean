@@ -31,14 +31,6 @@ def join (q : ℕ) : (r P S E : ℕ) →
       (join q r (P*q) S E (reindex (middle_succ P S q r E)
         (RadixDigitMoveBlockRows.unmove (reindex (input_succ P S q r E) x))))
 
-private theorem cast_pack {A B C D : ℕ} (h : A*B=C*D)
-    (p : Fin A) (s : Fin B) (u : Fin C) (v : Fin D)
-    (he : p.val*B+s.val = u.val*D+v.val) :
-    Fin.cast h (pack p s) = pack u v := by
-  apply Fin.ext
-  simp only [Fin.val_cast,pack_val]
-  exact he
-
 /-- A literal joined cell is sourced from the original spectator/high order. -/
 theorem join_entry (q r P S E : ℕ) (x : Fin (P*S*q^r*E) → Fin (a+4))
     (p : Fin P) (h : Fin (q^r)) (s : Fin S) (e : Fin E) :

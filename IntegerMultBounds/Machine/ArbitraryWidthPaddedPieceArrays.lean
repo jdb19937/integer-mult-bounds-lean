@@ -54,10 +54,6 @@ theorem encode_pad {P R R' L : ℕ} (x : Fin (P*R*L) → ZMod 2) :
   · rfl
   · simp [SparseRoleCircuit.encode]
 
-theorem encode_crop {P R R' L : ℕ} (hR : R ≤ R') (x : Fin (P*R'*L) → ZMod 2) :
-    crop hR (fun z => SparseRoleCircuit.encode (a := prime) (x z)) =
-      fun z => SparseRoleCircuit.encode (crop hR x z) := rfl
-
 theorem erased_word {n : ℕ} (x : Fin n → ZMod 2) :
     RowPaddingConstructedAlphabet.erased (word x) 0 n = fun _ => blank := by
   have h := RowPaddingConstructedAlphabet.erased_array_word (a := prime)

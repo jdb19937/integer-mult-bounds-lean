@@ -66,12 +66,6 @@ theorem mt_poly_r_le_T (A k : ℕ) : ∀ᶠ n in atTop, A * b n ^ k * r n ≤ T 
   rw [hT]
   exact Nat.mul_le_mul_right _ h1
 
-/-- The real form of `mt_poly_r_le_T`. -/
-theorem mt_poly_r_le_T_real (A k : ℕ) :
-    ∀ᶠ n in atTop, (A : ℝ) * (b n : ℝ) ^ k * r n ≤ T n := by
-  filter_upwards [mt_poly_r_le_T A k] with n h
-  exact_mod_cast h
-
 /-! ### Basic sizes in the large regime -/
 
 section Basic
@@ -167,28 +161,11 @@ theorem mt_crt_eq (n : ℕ) :
       (ℓ n : ℝ) ^ Parameters.tau := by
   unfold totCRT; ring
 
-theorem mt_crt_nonneg (n : ℕ) : 0 ≤ totCRT n := by
-  rw [mt_crt_eq]
-  have := Real.rpow_nonneg (Nat.cast_nonneg (ℓ n)) Parameters.tau
-  positivity
-
 theorem mt_resamp_nonneg (n : ℕ) : 0 ≤ totResamp n := by
   unfold totResamp
   have := tot_mp_nonneg n
   have := Real.rpow_nonneg (Nat.cast_nonneg (p n)) (1 / 2 : ℝ)
   positivity
-
-/-- `T p ≤ totCRT`. -/
-theorem mt_Tp_le_crt (h : Big n) : (T n : ℝ) * p n ≤ totCRT n := by
-  rw [mt_crt_eq]
-  have hd : (1 : ℝ) ≤ (d n : ℝ) ^ 2 := by
-    have : (1 : ℝ) ≤ d n := by exact_mod_cast h.one_le_d
-    nlinarith
-  have h0 := mt_Tp_nonneg n
-  have h1 : 0 ≤ (T n : ℝ) * p n * (d n : ℝ) ^ 2 * (ℓ n : ℝ) ^ Parameters.tau := by
-    have := Real.rpow_nonneg (Nat.cast_nonneg (ℓ n)) Parameters.tau
-    positivity
-  nlinarith
 
 /-- `d T M(p) ≤ totResamp`. -/
 theorem mt_dTmp_le_resamp (h : Big n) : (d n : ℝ) * T n * totMp n ≤ totResamp n := by

@@ -151,37 +151,10 @@ theorem complex_neighbor_card {h : ℕ} (S : Triple h) :
 abbrev BitPairs (h : ℕ) := {p : Triple h × Triple h // BitNeighbor p.1 p.2}
 abbrev ComplexPairs (h : ℕ) := {p : Triple h × Triple h // ComplexNeighbor p.1 p.2}
 
-theorem bit_pairs_card (h : ℕ) :
-    Fintype.card (BitPairs h) = h.choose 3 * (3 * (h - 3).choose 2) := by
-  rw [Fintype.card_congr (Equiv.subtypeProdEquivSigmaSubtype (@BitNeighbor h)), Fintype.card_sigma]
-  simp [bit_neighbor_card]
-
 theorem complex_pairs_card (h : ℕ) :
     Fintype.card (ComplexPairs h) = h.choose 3 * ((h - 3).choose 3 + 3 * (h - 3)) := by
   rw [Fintype.card_congr (Equiv.subtypeProdEquivSigmaSubtype (@ComplexNeighbor h)), Fintype.card_sigma]
   simp [complex_neighbor_card]
-
-theorem triple_card_100 : Fintype.card (Triple 100) = 161700 := by
-  rw [triple_card]
-  norm_num [Nat.choose_eq_descFactorial_div_factorial, Nat.descFactorial, Nat.factorial]
-
-theorem bit_neighbor_card_100 (S : Triple 100) :
-    Fintype.card {T : Triple 100 // BitNeighbor S T} = 13968 := by
-  rw [bit_neighbor_card]
-  norm_num [Nat.choose_two_right]
-
-theorem complex_neighbor_card_100 (S : Triple 100) :
-    Fintype.card {T : Triple 100 // ComplexNeighbor S T} = 147731 := by
-  rw [complex_neighbor_card]
-  norm_num [Nat.choose_eq_descFactorial_div_factorial, Nat.descFactorial, Nat.factorial]
-
-theorem bit_pairs_card_100 : Fintype.card (BitPairs 100) = 161700 * 13968 := by
-  rw [bit_pairs_card]
-  norm_num [Nat.choose_eq_descFactorial_div_factorial, Nat.descFactorial, Nat.factorial]
-
-theorem complex_pairs_card_100 : Fintype.card (ComplexPairs 100) = 161700 * 147731 := by
-  rw [complex_pairs_card]
-  norm_num [Nat.choose_eq_descFactorial_div_factorial, Nat.descFactorial, Nat.factorial]
 
 /-- Relabeling a bank transports the actual ordered-pair subtype, so its count
 applies to finite-index circuit wires as well as subset-indexed wires. -/
@@ -191,24 +164,6 @@ def pairsEquiv {β γ : Type*} (e : β ≃ γ) (P : γ → γ → Prop) :
   invFun p := ⟨(e.symm p.val.1, e.symm p.val.2), by simpa using p.property⟩
   left_inv p := by apply Subtype.ext; simp
   right_inv p := by apply Subtype.ext; simp
-
-/-- This predicate is definitionally the circuit's intersection-one `BitPair`. -/
-theorem indexed_bit_pairs_card {h n : ℕ} (e : Fin n ≃ Triple h) :
-    Fintype.card {p : Fin n × Fin n // ((e p.1).val ∩ (e p.2).val).card = 1} =
-      h.choose 3 * (3 * (h - 3).choose 2) := by
-  calc
-    _ = Fintype.card (BitPairs h) := Fintype.card_congr (pairsEquiv e (@BitNeighbor h))
-    _ = _ := bit_pairs_card h
-
-/-- This predicate is definitionally `Circuit.ComplexPair` for the enumerated
-labels; disequality and even intersection are both retained in the count. -/
-theorem indexed_complex_pairs_card {h n : ℕ} (e : Fin n ≃ Triple h) :
-    Fintype.card {p : Fin n × Fin n // (e p.1).val ≠ (e p.2).val ∧
-      Even ((e p.1).val ∩ (e p.2).val).card} =
-      h.choose 3 * ((h - 3).choose 3 + 3 * (h - 3)) := by
-  calc
-    _ = Fintype.card (ComplexPairs h) := Fintype.card_congr (pairsEquiv e (@ComplexNeighbor h))
-    _ = _ := complex_pairs_card h
 
 end NeighborCounts
 

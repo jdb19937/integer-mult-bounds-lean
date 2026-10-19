@@ -142,19 +142,6 @@ noncomputable def synLayRg : LayReg 6 → Fin (nT SXReg)
   | .cX => sreg (.ly 21)
   | .tX => sreg (.ly 22)
 
-theorem synLayRg_injective : Function.Injective synLayRg := by
-  intro x y h
-  cases x <;> cases y <;> simp only [synLayRg, sreg_eq, reg_inj, LReg.wire.injEq,
-    synWire_eq_iff, SynW.ly.injEq, LReg.bc.injEq, SXReg.swp.injEq, reduceCtorEq, true_and,
-    LayReg.us.injEq, LayReg.sw.injEq] at h ⊢ <;>
-    first
-    | rfl
-    | exact h
-    | (simp only [Fin.ext_iff] at h; omega)
-
-theorem synLayRg_sw_injective : Function.Injective fun j => synLayRg (.sw j) :=
-  fun _ _ h => by simpa using synLayRg_injective h
-
 /-- Evaluate register updates at register names. -/
 macro "synupd" : tactic => `(tactic| (simp only [Function.update_apply, reg_inj,
   reduceCtorEq, ↓reduceIte, eq_self_iff_true, LReg.sc.injEq, LReg.ph.injEq, LReg.lf.injEq,

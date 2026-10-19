@@ -25,18 +25,6 @@ theorem update_predicate (P : L → Prop) (current : ι → L) (i : ι) (next : 
   · subst j; simpa using hn
   · simpa [Function.update_of_ne hj] using hc j
 
-/-- The final actual label of every register satisfies the invariant. -/
-theorem finish_predicate (P : L → Prop) (current : ι → L) (updates : List (ι × L))
-    (hc : ∀ i, P (current i)) (hu : ∀ u ∈ updates, P u.2) :
-    ∀ i, P (RankTrace.finish current updates i) := by
-  induction updates generalizing current with
-  | nil => exact hc
-  | cons u rest ih =>
-    rcases u with ⟨i, next⟩
-    exact ih (Function.update current i next)
-      (update_predicate P current i next hc (hu (i, next) (by simp)))
-      (fun u hu' => hu u (by simp [hu']))
-
 /-- Both endpoints of every actual sequential trace edge satisfy the invariant,
 including repeated occurrences of one physical wire in the same group. -/
 theorem edges_predicate (P : L → Prop) (current : ι → L) (updates : List (ι × L))

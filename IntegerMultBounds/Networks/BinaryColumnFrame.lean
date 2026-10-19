@@ -68,17 +68,6 @@ noncomputable def labelFrame (hs : (Labels.binary h).IsSymm) (k : ℕ)
     (U : Submodule (ZMod 2) (BinaryWalsh.Address h)) : Arrays h k ≃ₗ[ℂ] Arrays h k :=
   frameEquiv k (fun x => BinaryPhase.weightPhase (ProjectionTrace.projector (Labels.binary h) hs U x))
 
-/-- The invertible frame edge is exactly the operator whose rank factorization
-was proved, with the same endpoints and inverse orientation. -/
-theorem labelFrame_edge (hs : (Labels.binary h).IsSymm) (k : ℕ)
-    (U V : Submodule (ZMod 2) (BinaryWalsh.Address h)) :
-    (labelFrame hs k V).toLinearMap * (labelFrame hs k U).symm.toLinearMap =
-      BinaryRankFactors.edgeOperator hs k U V := rfl
-
-theorem labelFrame_edge_apply (hs : (Labels.binary h).IsSymm) (k : ℕ)
-    (U V : Submodule (ZMod 2) (BinaryWalsh.Address h)) (f : Arrays h k) :
-    labelFrame hs k V ((labelFrame hs k U).symm f) = BinaryRankFactors.edgeOperator hs k U V f := rfl
-
 /-- Rational-linear access to the same complex-array frame for module compilers. -/
 noncomputable def rationalLabelFrame (hs : (Labels.binary h).IsSymm) (k : ℕ)
     (U : Submodule (ZMod 2) (BinaryWalsh.Address h)) : Arrays h k ≃ₗ[ℚ] Arrays h k :=
@@ -91,11 +80,5 @@ noncomputable def rationalLabelFrame (hs : (Labels.binary h).IsSymm) (k : ℕ)
 @[simp] theorem rationalLabelFrame_symm_apply (hs : (Labels.binary h).IsSymm) (k : ℕ)
     (U : Submodule (ZMod 2) (BinaryWalsh.Address h)) (f : Arrays h k) :
     (rationalLabelFrame hs k U).symm f = (labelFrame hs k U).symm f := rfl
-
-/-- Scalar restriction preserves the precise edge operator, not only its rank. -/
-theorem rationalLabelFrame_edge (hs : (Labels.binary h).IsSymm) (k : ℕ)
-    (U V : Submodule (ZMod 2) (BinaryWalsh.Address h)) :
-    (rationalLabelFrame hs k V).toLinearMap * (rationalLabelFrame hs k U).symm.toLinearMap =
-      (BinaryRankFactors.edgeOperator hs k U V).restrictScalars ℚ := rfl
 
 end IntegerMultBounds.Networks.BinaryColumnFrame

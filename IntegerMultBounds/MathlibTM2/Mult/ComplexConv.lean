@@ -114,14 +114,6 @@ theorem norm_rhoC_mul_sub_lt' {p : ℕ} {e e' x : ℂ} (he : ‖e' - e‖ < 2 / 
 theorem norm_rhoC_mul_le {p : ℕ} {e' x : ℂ} (he' : ‖e'‖ ≤ 1) : ‖rhoC p (e' * x)‖ ≤ ‖x‖ :=
   (norm_rhoC_le p _).trans (by rw [norm_mul]; exact mul_le_of_le_one_left (norm_nonneg _) he')
 
-/-- The paper's `< 4·2^{-p}` for a disk operand. -/
-theorem norm_rhoC_mul_sub_lt_four {p : ℕ} {e e' x : ℂ} (he : 2 ^ p * ‖e' - e‖ < 2)
-    (hx : ‖x‖ ≤ 1) : 2 ^ p * ‖rhoC p (e' * x) - e * x‖ < 4 := by
-  have h := norm_rhoC_mul_sub_lt (x := x) he
-  have hs : Real.sqrt 2 < 2 := by
-    rw [Real.sqrt_lt' (by norm_num)]; norm_num
-  linarith
-
 /-- The phase-product bounds for arrays of phases over any finite index set (sup norm). -/
 theorem norm_rhoC_mul_arr_sub_le {ι : Type*} [Fintype ι] {p : ℕ} {θ e u : ι → ℂ}
     (h : ∀ i, 2 ^ p * ‖θ i - e i‖ < 2) :
@@ -157,12 +149,6 @@ def phaseMul (θ : Fin r → ℂ) (u : G × Fin r → ℂ) : G × Fin r → ℂ 
 /-- `Q_p(θ · u)`: the computed phase product on every last-coordinate line. -/
 noncomputable def phaseQ (p : ℕ) (θ : Fin r → ℂ) (u : G × Fin r → ℂ) : G × Fin r → ℂ :=
   fun x => rhoC p (θ x.2 * u x)
-
-theorem toSynth_eq (u : G × Fin r → ℂ) :
-    toSynth u = iota (phaseMul (fun k => twistRoot r k.val) u) := rfl
-
-theorem ofSynth_eq (w : G → Fin r → ℂ) :
-    ofSynth w = phaseMul (fun k => (starRingEnd ℂ) (twistRoot r k.val)) (iotaInv w) := rfl
 
 end Exact
 

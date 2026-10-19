@@ -63,20 +63,4 @@ theorem compute_hoare (r : ℚ) (old : List Bool) (xs : List (Fin q)) :
   exact ((reset_hoare old xs).seq (RadixRationalBinary.compute_hoare r xs)).consequence
     (fun _ h => h) (fun _ h => h) (by omega)
 
-/-- A bounded prior offset makes the actual output-erasure charge volume-linear. -/
-theorem compute_hoare_fiber (r : ℚ) (old : List Bool) (xs : List (Fin q)) (B : ℕ) (hB : 0 < B)
-    (cold : GrowingCounterData.Canonical old) (hold : Counter.value old < q^xs.length) :
-    HoareTime (program r) (fun v => v = input old xs) (fun v => v = RadixRationalBinary.output r xs)
-      (54*(q^xs.length*B)) := by
-  apply (compute_hoare r old xs).consequence (fun _ h => h) (fun _ h => h) _
-  have hv := value_lt (Fact.out : q.Prime).two_le (RadixRationalBinary.result r xs)
-  have hw := RadixToBinaryData.width_le_power (Fact.out : q.Prime).two_le xs.length
-  have hlen : (RadixRationalBinary.result r xs).length = xs.length := RadixRationalData.digits_length _ _
-  rw [hlen] at hv
-  have hc := GrowingCounterData.canonical_width old cold
-  have hl := Nat.log2_le_self (Counter.value old)
-  have hp : 1 ≤ q^xs.length := Nat.one_le_pow _ _ (by have := (Fact.out : q.Prime).two_le; omega)
-  have hm : q^xs.length ≤ q^xs.length*B := by nlinarith
-  omega
-
 end IntegerMultBounds.Machine.RadixRationalBinaryReuse

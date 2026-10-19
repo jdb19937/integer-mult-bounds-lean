@@ -83,21 +83,6 @@ theorem Runs.loop_step {i : Fin t} {b : Cmd a t} {σ} {Q : (Fin t → WTape) →
   obtain ⟨σ₁, k₁, h₁, ⟨σ₂, k₂, h₂, hq, hk₂⟩, hk₁⟩ := h
   exact ⟨σ₂, k₁ + 2 + k₂, .loop_step hi h₁ h₂, hq, by omega⟩
 
-/-- A loop whose body consumes one word of the loop tape: an invariant indexed
-by the number of remaining words, with a per-iteration bound. -/
-theorem Runs.loop_count {i : Fin t} {b : Cmd a t} (I : ℕ → (Fin t → WTape) → Prop) (C : ℕ)
-    (hdone : ∀ σ, I 0 σ → (σ i).right = [])
-    (hstep : ∀ n σ, I (n + 1) σ → (σ i).right ≠ [] ∧ Runs b σ (I n) C) :
-    ∀ n σ, I n σ → Runs (.loop i b) σ (I 0) (n * (C + 2)) := by
-  intro n
-  induction n with
-  | zero => intro σ h; exact (Runs.loop_done (b := b) (hdone σ h) h).mono (fun _ h => h) (by simp)
-  | succ n ih =>
-    intro σ h
-    obtain ⟨hne, hb⟩ := hstep n σ h
-    have := Runs.loop_step (B₂ := n * (C + 2)) hne (hb.mono (fun σ₁ h₁ => ih σ₁ h₁) le_rfl)
-    exact this.mono (fun _ h => h) (by rw [Nat.succ_mul]; omega)
-
 /-! ### Slots -/
 
 /-- Slots for a stream with one extra input. -/
@@ -126,14 +111,6 @@ theorem slot0_inj {d o : Fin t} (h : d ≠ o) : Function.Injective (slot0 d o) :
 def slot2 (d e f o : Fin t) : Fin (2 + 2) → Fin t := fun i =>
   if i.val = 0 then d else if i.val = 1 then e else if i.val = 2 then f else o
 
-theorem slot2_inj {d e f o : Fin t} (h1 : d ≠ e) (h2 : d ≠ f) (h3 : d ≠ o) (h4 : e ≠ f)
-    (h5 : e ≠ o) (h6 : f ≠ o) : Function.Injective (slot2 d e f o) := by
-  intro i j hij
-  simp only [slot2] at hij
-  apply Fin.ext
-  have hi := i.isLt; have hj := j.isLt
-  split_ifs at hij <;> omega
-
 /-- A one-tape slot. -/
 def slotOne (i : Fin t) : Fin 1 → Fin t := fun _ => i
 
@@ -150,11 +127,6 @@ noncomputable def op0 (R : Rule 0) (ext : Bool) (d o : Fin t) (h : d ≠ o) : Cm
 noncomputable def op1 (R : Rule 1) (ext : Bool) (d e o : Fin t) (h1 : d ≠ e) (h2 : d ≠ o)
     (h3 : e ≠ o) : Cmd a t :=
   .prim (streamPrim R ext) (slot1 d e o) (slot1_inj h1 h2 h3)
-
-/-- Stream with two extra inputs. -/
-noncomputable def op2 (R : Rule 2) (ext : Bool) (d e f o : Fin t) (h1 : d ≠ e) (h2 : d ≠ f)
-    (h3 : d ≠ o) (h4 : e ≠ f) (h5 : e ≠ o) (h6 : f ≠ o) : Cmd a t :=
-  .prim (streamPrim R ext) (slot2 d e f o) (slot2_inj h1 h2 h3 h4 h5 h6)
 
 noncomputable def rewind (i : Fin t) : Cmd a t := .prim Rewind.prim (slotOne i) (slotOne_inj i)
 noncomputable def back (i : Fin t) : Cmd a t := .prim Back.prim (slotOne i) (slotOne_inj i)
@@ -175,13 +147,6 @@ theorem runs_rewind (i : Fin t) (σ : Fin t → WTape) :
     Runs (a := a) (rewind i) σ (· = Function.update σ i ⟨[], (σ i).left.reverse ++ (σ i).right⟩)
       (clen (σ i).left + 2) := by
   refine ⟨_, _, Exec.prim (P := Rewind.prim) trivial, ?_, le_rfl⟩
-  rw [upd_one]; rfl
-
-theorem runs_back (i : Fin t) (σ : Fin t → WTape) (h : (σ i).left ≠ []) :
-    Runs (a := a) (back i) σ
-      (· = Function.update σ i ⟨(σ i).left.tail, (σ i).left.headD [] :: (σ i).right⟩)
-      (((σ i).left.headD []).length + 3) := by
-  refine ⟨_, _, Exec.prim (P := Back.prim) h, ?_, le_rfl⟩
   rw [upd_one]; rfl
 
 theorem runs_clear (i : Fin t) (σ : Fin t → WTape) :
@@ -269,37 +234,5 @@ theorem runs_op0 (R : Rule 0) (ext : Bool) {d o : Fin t} (h : d ≠ o) (σ : Fin
   · show time R (σ (slot0 d o drv)).cur _ ≤ _
     simp only [slot0, drv, ↓reduceIte]
     exact le_of_eq (by congr 1; funext j; exact j.elim0)
-
-/-- The effect of a two-input stream. -/
-theorem runs_op1 (R : Rule 1) (ext : Bool) {d e o : Fin t} (h1 : d ≠ e) (h2 : d ≠ o) (h3 : e ≠ o)
-    (σ : Fin t → WTape) (hd : (σ d).right ≠ []) (he : (σ e).right ≠ []) (ho : (σ o).right = [])
-    (vs : List (List Bool)) (hvs : output R (σ d).cur (fun _ => (σ e).cur) = syms vs)
-    (hext : ext = true → (σ o).left ≠ [] ∧ vs ≠ []) :
-    Runs (a := a) (op1 R ext d e o h1 h2 h3) σ
-      (· = Function.update (Function.update (Function.update σ d (σ d).next) e (σ e).next) o
-        ((σ o).put ext vs))
-      (time R (σ d).cur (fun _ => (σ e).cur)) := by
-  have sd : slot1 d e o drv = d := by simp [slot1, drv]
-  have se : ∀ j, slot1 d e o (oth j) = e := fun j => by
-    have := j.isLt; simp [slot1, oth]
-  have so : slot1 d e o out = o := by simp [slot1, out]
-  have hpre : StreamPre R ext (σ ∘ slot1 d e o) := by
-    refine ⟨by simpa [sd] using hd, fun j => by simpa [se] using he, by simpa [so] using ho,
-      vs, ?_, by simpa [so] using hext⟩
-    simp only [Function.comp_apply, sd, se]; exact hvs
-  refine ⟨_, _, Exec.prim (P := streamPrim R ext) hpre, ?_, ?_⟩
-  · rw [upd_slot1 σ h1 h2 h3]
-    have e1 : (streamPrim (a := a) R ext).sem (σ ∘ slot1 d e o) drv = (σ d).next := by
-      show streamSem R ext _ drv = _
-      rw [streamSem]; simp only [drv_ne_out, ↓reduceIte]; simp [sd]
-    have e2 : (streamPrim (a := a) R ext).sem (σ ∘ slot1 d e o) (oth 0) = (σ e).next := by
-      show streamSem R ext _ (oth 0) = _
-      rw [streamSem]; simp only [oth_ne_out, ↓reduceIte]; simp [se]
-    have e3 : (streamPrim (a := a) R ext).sem (σ ∘ slot1 d e o) out = (σ o).put ext vs := by
-      show streamSem R ext _ out = _
-      simp only [streamSem, ↓reduceIte, Function.comp_apply, so, sd, se, hvs, parse_syms]
-    rw [e1, e2, e3]
-  · show time R (σ (slot1 d e o drv)).cur (fun j => (σ (slot1 d e o (oth j))).cur) ≤ _
-    simp only [sd, se, le_refl]
 
 end IntegerMultBounds.Schoenhage

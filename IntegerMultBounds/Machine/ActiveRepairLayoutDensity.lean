@@ -74,21 +74,5 @@ theorem holes_sparse {X : Type*} [Fintype X] {M : ℕ} (e : X ≃ Fin M)
   have h : (Nat.card {x : X // bad x} : ℝ)*(A+1)≤(D:ℝ)*M := by nlinarith
   exact_mod_cast h
 
- theorem early_holes_sparse {M : ℕ} (e : A s q b n before after rows ≃ Fin M)
-    (data : A s q b n before after rows → List Bool) (A D : ℕ)
-    (hbq : b+3≤q) (hd : VaryingControlRepairDensity.earlyDensity q b n*(A+1)≤D) :
-    Reinsert.holes (Compact.stream e EB data)*(A+1)≤D*M := by
-  classical
-  exact holes_sparse e EB data _ A D
-    (early_bad_count s q b n before after rows rho offset width side hq hbq) hd
-
- theorem late_holes_sparse {M : ℕ} (e : A s q b n before after rows ≃ Fin M)
-    (data : A s q b n before after rows → List Bool) (A D : ℕ)
-    (hbq : b+3≤q) (hd : VaryingControlRepairDensity.lateDensity q b n*(A+1)≤D) :
-    Reinsert.holes (Compact.stream e LB data)*(A+1)≤D*M := by
-  classical
-  exact holes_sparse e LB data _ A D
-    (late_bad_count s q b n before after rows rho offset width side hq hbq) hd
-
 end
 end IntegerMultBounds.Machine.ActiveRepairLayoutDensity

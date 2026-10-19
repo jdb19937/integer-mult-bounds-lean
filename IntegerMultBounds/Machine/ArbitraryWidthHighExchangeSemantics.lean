@@ -91,10 +91,6 @@ def array {α : Type*} (v : Descriptor) (r : ℕ) (hr : r ≤ v.width)
     (x : Fin (volume prime v) → α) :=
   ArbitraryWidthSchedule.run (List.replicate r 1) 0 (by simpa [List.sum_replicate] using hr) x
 
-theorem repeat_eq (v : Descriptor) (r : ℕ) (hr : r ≤ v.width)
-    (x : Fin (volume prime v) → ZMod 2) :
-    ArbitrarySliceRepeat.images v 0 1 r (by simpa using hr) x = array v r hr x := rfl
-
 /-- The actual repeated slices have exact highSwap semantics at numeric
 addresses, including unchanged low fields and every spectator coordinate. -/
 theorem array_highSwap {α : Type*} (P e r G B : ℕ) (hr : r ≤ e)

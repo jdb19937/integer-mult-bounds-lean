@@ -48,8 +48,6 @@ theorem ext_own {x : Fin 𝕌} (o : Own x) (τ : Fin 𝕌 → WTape) (σ : Fin �
   unfold ext Own at *
   rw [dite_eq_right (by omega)]
 
-theorem clean_ext (τ : Fin 𝕌 → WTape) : Clean (ext τ (fun _ => emp)) := ext_comp τ _
-
 /-! ### Interleaving the output words -/
 
 /-- Real word, imaginary word, for every coefficient. -/

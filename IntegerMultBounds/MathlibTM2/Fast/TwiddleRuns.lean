@@ -123,15 +123,6 @@ theorem twRunsS_of {p : Pr P T Q A U} {x : Fin (A + 4)} {ρ ρ' : R → List (Fi
   fun v S _ hS => h v S hS
 
 omit [DecidableEq R] in
-theorem twRunsS_seq {p q : Pr P T Q A U} {x : Fin (A + 4)} {ρ₁ ρ₂ ρ₃ : R → List (Fin (A + 4))}
-    {b₁ b₂ : ℕ} (h₁ : TwRunsS body tg p x ρ₁ ρ₂ b₁) (h₂ : TwRuns body tg q ρ₂ ρ₃ b₂) :
-    TwRunsS body tg (.seq p q) x ρ₁ ρ₃ (b₁ + b₂) := by
-  intro v S hx hS
-  obtain ⟨v₁, S₁, n₁, hu₁, hn₁, he₁, hS₁, hf₁⟩ := h₁ v S hx hS
-  obtain ⟨v₂, S₂, n₂, hu₂, hn₂, he₂, hS₂, hf₂⟩ := h₂ v₁ S₁ hS₁
-  exact ⟨v₂, S₂, n₁ + n₂, hu₂.trans hu₁, by omega, Exec.seq he₁ he₂, hS₂, twFr_trans hf₁ hf₂⟩
-
-omit [DecidableEq R] in
 theorem twRunsS_mono {p : Pr P T Q A U} {x : Fin (A + 4)} {ρ ρ' : R → List (Fin (A + 4))}
     {b b' : ℕ} (h : TwRunsS body tg p x ρ ρ' b) (hb : b ≤ b') : TwRunsS body tg p x ρ ρ' b' := by
   intro v S hx hS
@@ -184,21 +175,6 @@ omit [DecidableEq R] in
 lemma twFr_upd (S : Stacks T A) (a : R) (x : List (Fin (A + 4))) :
     TwFr tg S { S with R := Function.update S.R (tg a) x } :=
   ⟨rfl, rfl, rfl, fun _ hk => Function.update_of_ne (hk a).symm _ _⟩
-
-omit [DecidableEq R] in
-/-- Stacks with an updated register file. -/
-lemma twRuns_of_exec {p : Pr P T Q A U} {ρ : R → List (Fin (A + 4))} (Φ : Regs T A → Regs T A)
-    (ρ' : R → List (Fin (A + 4))) (b : ℕ)
-    (h : ∀ (v : HS T Q A U) (S : Stacks T A), TwHolds tg S ρ →
-      ∃ (v' : HS T Q A U) (n : ℕ), v'.user = v.user ∧ n ≤ b ∧
-        Exec body p (mk v S) n (mk v' { S with R := Φ S.R }))
-    (hΦ : ∀ S : Stacks T A, TwHolds tg S ρ → TwHolds tg { S with R := Φ S.R } ρ' ∧
-      ∀ k, (∀ r, tg r ≠ k) → Φ S.R k = S.R k) :
-    TwRuns body tg p ρ ρ' b := by
-  intro v S hS
-  obtain ⟨v', n, hu, hn, he⟩ := h v S hS
-  obtain ⟨h1, h2⟩ := hΦ S hS
-  exact ⟨v', _, n, hu, hn, he, h1, ⟨rfl, rfl, rfl, h2⟩⟩
 
 omit [DecidableEq R] in
 lemma tw_upd_off {β : Type} (g : Fin T → β) (a : R) (x : β) {k : Fin T} (hk : ∀ r, tg r ≠ k) :

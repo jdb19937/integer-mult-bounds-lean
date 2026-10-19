@@ -157,18 +157,5 @@ theorem cleanup_exists_hoare (keep : Fin t → Bool) (ht : 0 < t) (v : Tapes t a
   rintro w ⟨lo,hi,hs,rfl⟩
   exact cleanup_hoare keep ht v lo hi B hs _ rfl
 
-theorem retained_common (keep : Fin t → Bool) (v : Tapes t a) (i : Fin t) (hi : keep i = true) :
-    (retained keep v).head i = v.head i ∧ (retained keep v).tape i = v.tape i := by
-  simp [retained,hi]
-
-theorem retained_private (keep : Fin t → Bool) (v : Tapes t a) (i : Fin t) (hi : keep i = false) :
-    (retained keep v).head i = 0 ∧ (retained keep v).tape i = fun _ => blank := by
-  simp [retained,hi]
-
-theorem states_eq (n : ℕ) : states n = 1+4*n := by
-  induction n with
-  | zero => rfl
-  | succ n ih => simp only [states,ih]; omega
-
 end
 end IntegerMultBounds.Machine.TrackedCleanupList

@@ -30,16 +30,6 @@ theorem call_hoare (stack : Fin t) (ops : List (Slot stack)) (pcStack : Fin t) (
   (BinaryDescriptorFrames.push_hoare stack ops xs v hs).seq
     (FiniteReturnStackAt.push_hoare pcStack code (saved stack ops xs v))
 
-/-- The separate PC push leaves the entire saved descriptor stack intact. -/
-theorem call_saved_stack (stack : Fin t) (ops : List (Slot stack)) (pcStack : Fin t)
-    (hsep : stack ≠ pcStack) (code : Code k) (xs : Fin t → List Bool) (v : Tapes t a) :
-    (FiniteReturnStackAt.pushed pcStack code (saved stack ops xs v)).head stack =
-      v.head stack+span ops xs ∧
-    (FiniteReturnStackAt.pushed pcStack code (saved stack ops xs v)).tape stack =
-      (saved stack ops xs v).tape stack := by
-  have h := FiniteReturnStackAt.pushed_frame pcStack stack hsep code (saved stack ops xs v)
-  exact ⟨h.1.trans (saved_head stack ops xs v),h.2⟩
-
 /-- Neither stack operation touches any other tape or head. -/
 theorem call_frame (stack : Fin t) (ops : List (Slot stack)) (pcStack i : Fin t)
     (hs : i ≠ stack) (hp : i ≠ pcStack) (code : Code k) (xs : Fin t → List Bool) (v : Tapes t a) :
@@ -99,33 +89,6 @@ theorem return_exact (hN : N ≤ 2^k) (stack : Fin t) (ops : List (Slot stack)) 
     rw [← hout]; rfl
   rw [hm] at hrun
   exact seq_run _ _ hfirst hhalt hrun
-
-/-- A literal call/body/return assembly. The supplied body's contract must
-prove the recursive work and the exact saved-stack/blank-destination invariant. -/
-def withBodyProgram (hN : N ≤ 2^k) (stack : Fin t) (src dst : List (Slot stack))
-    (pcStack : Fin t) (pc : Fin N) (body : Program t b a)
-    (states : Fin N → ℕ) (family : ∀ pc, Program t (states pc) a) :=
-  seq (seq (callProgram stack src pcStack (address hN pc)) body)
-    (returnProgram hN stack dst pcStack states family)
-
-theorem withBody_hoare (hN : N ≤ 2^k) (stack : Fin t) (src dst : List (Slot stack)) (hu : dst.Nodup)
-    (pcStack : Fin t) (hslots : ∀ i ∈ dst, pcStack ≠ i.val) (pc : Fin N)
-    (body : Program t b a) (states : Fin N → ℕ) (family : ∀ pc, Program t (states pc) a)
-    (xs : Fin t → List Bool) (v u : Tapes t a) (f : ℤ → Fin (a+4)) (p : ℤ)
-    (hs : ∀ i ∈ src, v.head i = 1 ∧ v.tape i = BinaryDescriptorStack.descriptor (xs i))
-    (hd : ∀ i ∈ dst, u.head i = 0 ∧ u.tape i = fun _ => blank) (hfree : Free stack dst xs u)
-    (hpct : u.tape pcStack = FiniteReturnStack.wordPart f p (address hN pc) k le_rfl)
-    (hpch : u.head pcStack = p+k) (hpcfree : ∀ j < k, f (p+j) = blank)
-    (bodyCost continuationCost : ℕ) (post : TapePred t a)
-    (hbody : HoareTime body
-      (fun w => w = FiniteReturnStackAt.pushed pcStack (address hN pc) (saved stack src xs v))
-      (fun w => w = saved stack dst xs u) bodyCost)
-    (hc : HoareTime (family pc) (fun w => w = setTape (restored dst xs u) pcStack f p) post continuationCost) :
-    HoareTime (withBodyProgram hN stack src dst pcStack pc body states family) (fun w => w = v) post
-      (cost src xs+cost dst xs+2*k+bodyCost+continuationCost+6) := by
-  have h := ((call_hoare stack src pcStack (address hN pc) xs v hs).seq hbody).seq
-    (return_hoare hN stack dst hu pcStack hslots states family pc xs u f p hd hfree hpct hpch hpcfree continuationCost post hc)
-  exact h.consequence (fun _ h => h) (fun _ h => h) (by omega)
 
 end
 end IntegerMultBounds.Machine.RecursiveFrameControl

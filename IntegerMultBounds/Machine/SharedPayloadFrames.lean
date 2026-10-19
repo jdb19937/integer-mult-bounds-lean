@@ -38,19 +38,4 @@ theorem input_private (v : Tapes t a) (x : Tapes u a)
   · simpa only [SharedPayloadPair.input,SharedPayloadPair.output,SharedPayload.bank,SharedPayload.payload,
       Tapes.append,Fin.addCases_left,Fin.addCases_right] using strip_payload x source' dest'
 
-/-- Execution also leaves these unused private payload slots blank. -/
-theorem output_private (v : Tapes t a) (x : Tapes u a)
-    (source dest : Fin t) (source' dest' : Fin u) :
-    SharedPayload.payload (SharedPayloadPair.output v x source dest source' dest')
-      (Fin.castAdd u (Fin.natAdd 2 source)) (Fin.castAdd u (Fin.natAdd 2 dest)) =
-        (⟨fun _ => 0,fun _ _ => blank⟩ : Tapes 2 a) ∧
-    SharedPayload.payload (SharedPayloadPair.output v x source dest source' dest')
-      (Fin.natAdd (2+t) source') (Fin.natAdd (2+t) dest') =
-        (⟨fun _ => 0,fun _ _ => blank⟩ : Tapes 2 a) := by
-  constructor
-  · simpa only [SharedPayloadPair.input,SharedPayloadPair.output,SharedPayload.bank,SharedPayload.payload,
-      Tapes.append,Fin.addCases_left,Fin.addCases_right] using strip_payload v source dest
-  · simpa only [SharedPayloadPair.input,SharedPayloadPair.output,SharedPayload.bank,SharedPayload.payload,
-      Tapes.append,Fin.addCases_left,Fin.addCases_right] using strip_payload x source' dest'
-
 end IntegerMultBounds.Machine.SharedPayloadFrames

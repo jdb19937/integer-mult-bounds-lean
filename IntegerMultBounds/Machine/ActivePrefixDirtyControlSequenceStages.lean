@@ -143,10 +143,6 @@ theorem negative_runs (d : Inputs s g) (x : FullArray s g.rows) :
     HoareTime negativeProgram (fun v => v=bank (caller d x))
       (fun v => v=bank (caller d (negative g x))) (negativeCost s g) := t_runs .tNegative d x
 
-theorem load_runs (d : Inputs s g) (x : FullArray s g.rows) :
-    HoareTime loadProgram (fun v => v=bank (caller d x))
-      (fun v => v=bank (caller d (load g x))) (loadCost s g) := u_runs .uPure d x
-
 theorem unload_runs (d : Inputs s g) (x : FullArray s g.rows) :
     HoareTime unloadProgram (fun v => v=bank (caller d x))
       (fun v => v=bank (caller d (unload g x))) (unloadCost s g) := u_runs .uNegative d x

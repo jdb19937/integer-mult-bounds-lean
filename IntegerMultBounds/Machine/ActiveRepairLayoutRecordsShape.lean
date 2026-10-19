@@ -27,19 +27,6 @@ def cell (x : RecordAddress s w m before after rows) (r : Fin s.payload) :
 def record (x : Address s w m before after rows) : RecordAddress s w m before after rows :=
   ⟨x.row,x.u,x.uTail,x.t,x.tTail,x.frontSlack,x.activeBefore,x.target,x.activeAfter,x.back,0⟩
 
-def cellEquiv : Address s w m before after rows ≃
-    RecordAddress s w m before after rows × Fin s.payload where
-  toFun x := (record s w m before after rows x,x.payload)
-  invFun x := cell s w m before after rows x.1 x.2
-  left_inv _ := rfl
-  right_inv x := by
-    obtain ⟨x,r⟩ := x
-    have hp : x.payload=0 := Subsingleton.elim _ _
-    cases x
-    simp only [cell,record] at hp ⊢
-    cases hp
-    rfl
-
 variable (hw : w≤s.H) (ha : before+m+after=s.active*s.chunk)
 
 theorem cell_index (x : RecordAddress s w m before after rows) (r : Fin s.payload) :

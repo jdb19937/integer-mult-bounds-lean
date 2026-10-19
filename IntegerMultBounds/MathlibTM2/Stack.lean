@@ -408,41 +408,6 @@ theorem Exec.run_main {main : P} {s t : Store Γ σ} {n : ℕ} (h : Exec body (b
 theorem Exec.cast {body : P' → Prog P' Γ σ} {p : Prog P' Γ σ} {s t t' : Store Γ σ} {n n' : ℕ}
     (h : Exec body p s n t) (hn : n = n') (ht : t = t') : Exec body p s n' t' := hn ▸ ht ▸ h
 
-/-- A `while` loop around one action, run for exactly `n` iterations as measured by an
-invariant `P n` that stops the loop at `0`. -/
-theorem Exec.loop_act_of {test : σ → Bool} {b : Action Γ σ} (P : ℕ → Store Γ σ → Prop)
-    (h0 : ∀ s, P 0 s → test s.var = false)
-    (hs : ∀ n s, P (n + 1) s → test s.var = true ∧ P n (b.run s)) :
-    ∀ n s, P n s →
-      Exec body (.loop test (.act b)) s (2 * n + 1) (b.run^[n] s) ∧ P 0 (b.run^[n] s) := by
-  intro n
-  induction n with
-  | zero => intro s hs0; exact ⟨.loop_false (h0 s hs0), hs0⟩
-  | succ n ih =>
-      intro s hsn
-      obtain ⟨ht, hn⟩ := hs n s hsn
-      obtain ⟨he, hp⟩ := ih (b.run s) hn
-      refine ⟨?_, by simpa [Function.iterate_succ_apply] using hp⟩
-      have := Exec.loop_true (body := body) ht (.act b s) he
-      rw [Function.iterate_succ_apply, show 2 * (n + 1) + 1 = 1 + (2 * n + 1) + 1 by ring]
-      exact this
-
-/-- A loop whose body is a general program, with the iteration count tracked by `P`. -/
-theorem Exec.loop_of {test : σ → Bool} {p : Prog P' Γ σ} {body : P' → Prog P' Γ σ}
-    (Q : ℕ → Store Γ σ → Prop) (cost : Store Γ σ → ℕ)
-    (h0 : ∀ s, Q 0 s → test s.var = false)
-    (hs : ∀ n s, Q (n + 1) s → test s.var = true ∧
-      ∃ t, Exec body p s (cost s) t ∧ Q n t) :
-    ∀ n s, Q n s → ∃ t m, Exec body (.loop test p) s m t ∧ Q 0 t := by
-  intro n
-  induction n with
-  | zero => intro s hs0; exact ⟨s, 1, .loop_false (h0 s hs0), hs0⟩
-  | succ n ih =>
-      intro s hsn
-      obtain ⟨ht, u, hu, hn⟩ := hs n s hsn
-      obtain ⟨v, m, hv, hq⟩ := ih u hn
-      exact ⟨v, _, .loop_true ht hu hv, hq⟩
-
 /-- The sequence of a list of programs, ending with a no-op. -/
 def Prog.seqList : List (Prog P' Γ σ) → Prog P' Γ σ
   | [] => .act .done

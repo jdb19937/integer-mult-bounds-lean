@@ -434,14 +434,5 @@ theorem volume_le_padded (P G B M : ℕ) (hM : 0 < M) : volume P G B M ≤ P*M*G
   unfold volume
   ring
 
-def generatedSlot (i : Fin 4) : Fin 17 := ⟨7+i.val,by omega⟩
-
-theorem descriptor_ready (source destination : ℤ → Fin (q+4)) (hs : Fin 5 → List Bool)
-    (P N G B M : ℕ) (i : Fin 4) :
-    (ready source destination hs P N G B M).head (generatedSlot i) = 1 ∧
-    (ready source destination hs P N G B M).tape (generatedSlot i) =
-      RadixZeroFill.encodedBinary (words P N G B M i) := by
-  fin_cases i <;> exact ⟨rfl,rfl⟩
-
 end
 end IntegerMultBounds.Machine.RangePaddingDimensions

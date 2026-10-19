@@ -139,47 +139,4 @@ theorem complex_role_card_25 : Fintype.card (Wires.ComplexRole 25) = 58645352620
     show Nat.choose (25 - 3) 3 = 1540 by decide]
   norm_num
 
-/-- Source counting specialized to the actual improved complex motif's labels. -/
-theorem complex_source_total_25 :
-    RankTrace.total (fun U : Submodule (ZMod 2) (Labels.Cube (ZMod 2) 25) => finrank (ZMod 2) U)
-      (source (A := NeighborCounts.ComplexPairs 25) (C := Fin 26)
-        (fun T : NeighborCounts.Triple 25 => Labels.indicator (R := ZMod 2) T.val)) = 12167000000 := by
-  rw [source_total (Labels.binary 25) _ (by
-    intro T
-    rw [Labels.binary_self T.val T.property]
-    exact one_ne_zero)]
-  rw [NeighborCounts.triple_card, show Nat.choose 25 3 = 2300 by decide]
-  norm_num
-
-/-- The exact sum of actual sink-label dimensions, not an assigned wire weight. -/
-theorem complex_sink_total_25 :
-    RankTrace.total (fun U : Submodule (ZMod 2) (Labels.Cube (ZMod 2) 25) => finrank (ZMod 2) U)
-      (sink (A := NeighborCounts.ComplexPairs 25) (C := Fin 26) (Labels.binary 25)
-        (fun T : NeighborCounts.Triple 25 => Labels.indicator (R := ZMod 2) T.val)) + 12167000000 =
-      58645352620000 * 15625 := by
-  have hh := sink_total (A := NeighborCounts.ComplexPairs 25) (C := Fin 26)
-    (Labels.binary 25) Labels.binary_nondegenerate
-    (fun T : NeighborCounts.Triple 25 => Labels.indicator (R := ZMod 2) T.val) (by
-      intro T
-      rw [Labels.binary_self T.val T.property]
-      exact one_ne_zero)
-  have hw : Fintype.card (GlobalCircuit.World (NeighborCounts.Triple 25)
-      (NeighborCounts.ComplexPairs 25) (Fin 26)) = 58645352620000 := by
-    simp only [GlobalCircuit.World, GlobalCircuit.Address, GlobalCircuit.Invocation,
-      Fintype.card_sum, Fintype.card_prod, Fintype.card_fin, NeighborCounts.triple_card,
-      NeighborCounts.complex_pairs_card]
-    rw [show Nat.choose 25 3 = 2300 by decide, show Nat.choose (25 - 3) 3 = 1540 by decide]
-  rw [hw, NeighborCounts.triple_card, show Nat.choose 25 3 = 2300 by decide] at hh
-  norm_num at hh ⊢
-  exact hh
-
-/-- Once the global trace budget is established, its branching ratio meets
-the selected complex exponent without any further numerical hypothesis. -/
-theorem complex_branching_of_balance {s ℓ : ℕ}
-    (hbalance : s + 12167000000 + 12167000000 = 58645352620000 * 15625 + 2 * ℓ)
-    (hloss : ℓ ≤ 3 * 2300 ^ 2 * 26 * 25) :
-    (s : ℝ) / 58645352620000 < (15625 : ℝ) ^ Parameters.sigma := by
-  have hs : (s : ℝ) ≤ 916333630984500000 := by exact_mod_cast complex_budget_25 hbalance hloss
-  exact lt_of_le_of_lt (div_le_div_of_nonneg_right hs (by norm_num)) Parameters.complex_branching_bound
-
 end IntegerMultBounds.Networks.NetworkBudget

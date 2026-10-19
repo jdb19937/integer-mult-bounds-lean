@@ -88,29 +88,6 @@ def bank {c : ℕ} (source : ℤ → Fin 4) (outputs : Fin c → ℤ → Fin 4)
 def stage {c : ℕ} (j : Fin c) : Program (TapeCount c) 16 0 :=
   Placement.placed (u := c+c) CountedCopyReuse.program (slots j)
 
-private theorem low_ne_output {c : ℕ} (i : Fin 4) (j : Fin c) :
-    Fin.castAdd (c+c) i ≠ outputSlot j := by
-  intro h
-  have hh := congrArg Fin.val h
-  simp only [outputSlot,Fin.val_castAdd,Fin.val_natAdd] at hh
-  have hi := i.isLt
-  omega
-
-private theorem low_ne_descriptor {c : ℕ} (i : Fin 4) (j : Fin c) :
-    Fin.castAdd (c+c) i ≠ descriptorSlot j := by
-  intro h
-  have hh := congrArg Fin.val h
-  simp only [descriptorSlot,Fin.val_castAdd,Fin.val_natAdd] at hh
-  have hi := i.isLt
-  omega
-
-private theorem output_ne_descriptor {c : ℕ} (i j : Fin c) : outputSlot i ≠ descriptorSlot j := by
-  intro h
-  have hh := congrArg Fin.val h
-  simp only [outputSlot,descriptorSlot,Fin.val_castAdd,Fin.val_natAdd] at hh
-  have hi := i.isLt
-  omega
-
 private theorem slots_low {c : ℕ} (j : Fin c) (i : Fin 4) :
     slots j (Fin.castAdd (c+c) i) =
       ![Fin.castAdd (c+c) 0, outputSlot j, Fin.castAdd (c+c) 2, descriptorSlot j] i := by
@@ -364,31 +341,5 @@ theorem widthSum_le {c Q B : ℕ} (hc : 0 < c)
     change offset Q c B n ≤ offset Q c B (n+1) at hm
     simp only [widthSum,Finset.sum_range_succ,hnc,dite_true] at *
     omega
-
-/-- A concrete volume-linear split including every subroutine and stage join.
-The fixed control depends only on c; Q, B, contents and descriptors are data. -/
-theorem split_hoare_linear {c Q B : ℕ} (hc : 0 < c)
-    (source : ℤ → Fin 4) (outputs : Fin c → ℤ → Fin 4)
-    (descriptors : Fin c → List Bool) (p : ℤ) (origins : Fin c → ℤ)
-    (input : List (Fin 4)) (hlen : input.length = Q*B)
-    (hcount : ∀ j, Counter.value (descriptors j) = (piece Q c B input j).length)
-    (hcanonical : ∀ j, GrowingCounterData.Canonical (descriptors j)) :
-    HoareTime (program c)
-      (fun v => v = bank (putWord source p input) outputs descriptors p origins)
-      (fun v => v = bank (putWord source p input)
-        (fun j => putWord (outputs j) (origins j) (piece Q c B input j)) descriptors
-        (p+Q*B) (fun j => origins j+(piece Q c B input j).length))
-      (12*(Q*B)+24*c) := by
-  apply (split_hoare hc source outputs descriptors p origins input hlen hcount).consequence
-    (fun _ hv => hv) (fun _ hv => hv)
-  have hw := widthSum_le hc descriptors input hlen hcount hcanonical c le_rfl
-  rw [offset_last hc] at hw
-  omega
-
-/-- Fixed finite-control size, independent of the input dimensions. -/
-theorem states_eq (c : ℕ) : states c = 1+16*c := by
-  induction c with
-  | zero => rfl
-  | succ c ih => simp only [states,ih]; omega
 
 end IntegerMultBounds.Machine.ScalingSplit

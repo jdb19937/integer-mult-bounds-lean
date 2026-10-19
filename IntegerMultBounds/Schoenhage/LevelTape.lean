@@ -63,19 +63,6 @@ def winFin (M : ℕ) : ℕ → List ℕ → ℕ
   | a, [] => a
   | a, c :: cs => winFin M ((a + c) / 2 ^ M) cs
 
-theorem winFin_lt {M W : ℕ} (hM : 1 ≤ M) : ∀ (a : ℕ) (cs : List ℕ), a < 2 ^ W →
-    (∀ c ∈ cs, c < 2 ^ (W - 1)) → winFin M a cs < 2 ^ W
-  | a, [], ha, _ => ha
-  | a, c :: cs, ha, hc => by
-    apply winFin_lt hM _ cs _ (fun x hx => hc x (by simp [hx]))
-    have h1 := hc c (by simp)
-    have h2 : 2 ^ (W - 1) ≤ 2 ^ W := Nat.pow_le_pow_right (by norm_num) (by omega)
-    have h3 : 2 ≤ 2 ^ M := by
-      calc 2 = 2 ^ 1 := by norm_num
-        _ ≤ 2 ^ M := Nat.pow_le_pow_right (by norm_num) hM
-    rw [Nat.div_lt_iff_lt_mul (Nat.two_pow_pos M)]
-    nlinarith
-
 theorem bval_window {M W : ℕ} (hM : 1 ≤ M) : ∀ (a : ℕ) (cs : List ℕ), a < 2 ^ W →
     (∀ c ∈ cs, c < 2 ^ (W - 1)) →
     bval (chunks M a cs ++ bits W (winFin M a cs)) = a + wsum M cs

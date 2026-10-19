@@ -154,21 +154,5 @@ theorem fields (d : Inputs s) (i : Address d) :
     · simp only [singletonDestination,dite_eq_right ho]
       rfl
 
-/-- The entire original source slot survives the selected XOR. -/
-theorem source_preserved (d : Inputs s) (i : Address d) : source d (destination d i)=source d i := by
-  by_cases hw : 1<d.stage.f
-  · simp only [destination,dite_eq_left hw]
-    by_cases ho : d.stage.source.val<d.stage.target.val
-    · simp only [ActivePrefixStageDispatchSelected.destination,dite_eq_left ho,source,ite_eq_left ho,sourceWord]
-      exact ActivePrefixStageFullSelected.early_source d ho i
-    · simp only [ActivePrefixStageDispatchSelected.destination,dite_eq_right ho,source,ite_eq_right ho,sourceWord]
-      rw [ActivePrefixStageFullSelected.late_source]
-  · simp only [destination,dite_eq_right hw]
-    by_cases ho : d.stage.source.val<d.stage.target.val
-    · simp only [singletonDestination,dite_eq_left ho,source,ite_eq_left ho,sourceWord]
-      exact ActivePrefixStageSingletonSelected.early_source (singleton d hw) ho i
-    · simp only [singletonDestination,dite_eq_right ho,source,ite_eq_right ho,sourceWord]
-      rfl
-
 end
 end IntegerMultBounds.Machine.ActivePrefixStageRuntimeSelected

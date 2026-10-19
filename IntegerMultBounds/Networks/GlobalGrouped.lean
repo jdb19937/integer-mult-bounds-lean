@@ -192,16 +192,6 @@ theorem program_refines (eB : Fin n ≃ B) (eA : Fin a ≃ A) (eC : Fin c ≃ C)
   simp only [program, runGroups_append, stage, partialStage_refines,
     GlobalCircuit.program, Circuit.run_append, GlobalCircuit.stage]
 
-/-- Flattening the sparse groups gives an actual elementary program with the
-same global behavior; grouping need not be assumed as an oracle. -/
-theorem compiled_program_refines (eB : Fin n ≃ B) (eA : Fin a ≃ A) (eC : Fin c ≃ C)
-    (owner : Fin a → Fin n) (G : Fin c → Fin n → R)
-    (J : Fin n → Fin a → R) (H : Fin n → Fin c → R)
-    (r : GlobalCircuit.World B A C → R) :
-    Circuit.run (compileGroups (program eB eA eC owner G J H)) r =
-      Circuit.run (GlobalCircuit.program eB eA eC (copyMatrix owner 1) G J H) r := by
-  rw [compileGroups_run, program_refines]
-
 @[simp] theorem localGroups_length (owner : Fin a → Fin n) (G : Fin c → Fin n → R)
     (J : Fin n → Fin a → R) (H : Fin n → Fin c → R) (j : Fin 3) :
     (localGroups owner G J H j).length = 4 * n + 4 := by
@@ -290,28 +280,6 @@ theorem program_incidenceCount (eB : Fin n ≃ B) (eA : Fin a ≃ A) (eC : Fin c
     GlobalCircuit.keys_length]
   ring
 
-/-- Every global group's sparse support comes from one concrete coordinate-line
-invocation, with no added scratch sharing or dense zero-source incidences. -/
-theorem program_support_origin (eB : Fin n ≃ B) (eA : Fin a ≃ A) (eC : Fin c ≃ C)
-    (owner : Fin a → Fin n) (G : Fin c → Fin n → R)
-    (J : Fin n → Fin a → R) (H : Fin n → Fin c → R)
-    (g : Group (GlobalCircuit.World B A C) R)
-    (hg : g ∈ program eB eA eC owner G J H) :
-    ∃ (j : Fin 3) (q : B × B) (old : Group (Circuit.Role n a c 0) R),
-      old ∈ localGroups owner G J H j ∧
-      support g = (support old).image (GlobalCircuit.localEmbedding eB eA eC j q) := by
-  have hstage (j : Fin 3) (hj : g ∈ stage eB eA eC owner G J H j) :
-      ∃ (q : B × B) (old : Group (Circuit.Role n a c 0) R),
-        old ∈ localGroups owner G J H j ∧
-        support g = (support old).image (GlobalCircuit.localEmbedding eB eA eC j q) := by
-    obtain ⟨q, _, hq⟩ := List.mem_flatMap.mp hj
-    obtain ⟨old, hold, hs⟩ := invocationGroups_support eB eA eC owner G J H j q g hq
-    exact ⟨q, old, hold, hs⟩
-  simp only [program, List.mem_append] at hg
-  rcases hg with (h0 | h1) | h2
-  · exact ⟨0, hstage 0 h0⟩
-  · exact ⟨1, hstage 1 h1⟩
-  · exact ⟨2, hstage 2 h2⟩
 end Schedule
 
 section Motifs
@@ -334,30 +302,6 @@ theorem complexProgram_run {h n a : ℕ} (eB : Fin n ≃ Triple h) (eA : Fin a �
   rw [complexProgram, program_refines]
   exact GlobalCircuit.complexProgram_run eB eA X Y S
 
-/-- Concrete bit groups use the same physical layout as the existing bit network. -/
-def bitProgram {h n a : ℕ} (eB : Fin n ≃ Triple h) (eA : Fin a ≃ BitPairs h) :
-    List (Group (Wires.BitRole h) (ZMod 2)) :=
-  program eB eA (Equiv.refl (Fin h))
-    (fun p => (GlobalCircuit.bitLocalPairs eB eA p).val.2)
-    (Circuit.bitGather (fun i => (eB i).val))
-    (Circuit.bitInject (GlobalCircuit.bitLocalPairs eB eA))
-    (Circuit.bitScatter (fun i => (eB i).val))
-
-theorem bitProgram_run {h n a : ℕ} (eB : Fin n ≃ Triple h) (eA : Fin a ≃ BitPairs h)
-    (X Y : Wires.Address h → ZMod 2)
-    (S : Wires.Invocation h × (BitPairs h ⊕ Fin h) → ZMod 2) :
-    runGroups (bitProgram eB eA) (GlobalCircuit.contents X Y S) =
-      GlobalCircuit.contents Y X S := by
-  rw [bitProgram, program_refines]
-  exact GlobalCircuit.bitProgram_run eB eA X Y S
-
-theorem complexProgram_length {h n a : ℕ} (eB : Fin n ≃ Triple h)
-    (eA : Fin a ≃ ComplexPairs h) :
-    (complexProgram eB eA).length = 3 * n ^ 2 * (4 * n + 4) := program_length _ _ _ _ _ _ _
-
-theorem bitProgram_length {h n a : ℕ} (eB : Fin n ≃ Triple h)
-    (eA : Fin a ≃ BitPairs h) :
-    (bitProgram eB eA).length = 3 * n ^ 2 * (4 * n + 4) := program_length _ _ _ _ _ _ _
 end Motifs
 
 end IntegerMultBounds.Networks.GlobalGrouped

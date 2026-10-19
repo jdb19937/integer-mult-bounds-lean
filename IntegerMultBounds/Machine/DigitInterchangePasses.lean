@@ -62,21 +62,6 @@ theorem merge_inner (x : Array O q C E a) (h : Fin q) (es cs : List Bool)
     CyclicRowNormalized.merge_hoare (fun _ => blank) (fun _ _ => blank) 0 (fun _ => 0)
       (innerRows (transpose x) h) E (inner_length (transpose x) h) es cs he hc
 
-/-- Last physical merge serializes the transposed array. -/
-theorem merge_outer (x : Array O q C E a) (bs gs : List Bool)
-    (hb : Counter.value bs = C*(q*E)) (hg : Counter.value gs = O) :
-    HoareTime (CyclicRowNormalized.mergeProgram q a)
-      (fun v => v = bank (CyclicRowCopy.bank (fun _ => blank)
-        (fun h => putWord (fun _ => blank) 0 (roleWord (outerRows (transpose x)) h))
-        0 (fun _ => 0) bs) gs)
-      (fun v => v = bank (CyclicRowCopy.bank
-        (putWord (fun _ => blank) 0 (sourceWord (outerRows (transpose x))))
-        (fun h => putWord (fun _ => blank) 0 (roleWord (outerRows (transpose x)) h))
-        0 (fun _ => 0) bs) gs)
-      (CyclicRowNormalized.cost q O (C*(q*E)) bs gs) :=
-  CyclicRowNormalized.merge_hoare (fun _ => blank) (fun _ _ => blank) 0 (fun _ => 0)
-    (outerRows (transpose x)) (C*(q*E)) (outer_length (transpose x)) bs gs hb hg
-
 /-- Sum of the actual pass costs, including one join between successive passes.
 This is a cost estimate, not yet a whole-bank compilation theorem. -/
 theorem passes_cost_linear (bs gs es cs : List Bool)

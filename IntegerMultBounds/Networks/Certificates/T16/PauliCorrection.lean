@@ -17,14 +17,6 @@ theorem Label.ext' {p q : Label} (hx : p.x = q.x) (hz : p.z = q.z) (hp : p.phase
   subst hx hz hp
   rfl
 
-theorem address_add_eq_zero {y x : Geometry.Address} : y + x = 0 ↔ y = x := by
-  constructor
-  · intro h
-    calc y = y + x + x := by rw [add_assoc, Tableau.address_add_self, add_zero]
-      _ = x := by rw [h, zero_add]
-  · intro h
-    rw [h, Tableau.address_add_self]
-
 theorem phase_ne_zero (q : ZMod 4) : BinaryPhase.phase q ≠ 0 := by
   intro h
   have := phase_neg_mul q
@@ -189,8 +181,6 @@ noncomputable def pauliEquiv (c : Label) : State ≃ₗ[ℂ] State :=
     right_inv := fun f => by
       change operator c (operator c.inv f) = f
       rw [operator_multiply, multiply_self_inv, operator_one] }
-
-theorem pauliEquiv_apply (c : Label) (f : State) : pauliEquiv c f = operator c f := rfl
 
 theorem multiply_conjugate (c p : Label) :
     multiply (multiply c p) c.inv = pauliLabel c p := by

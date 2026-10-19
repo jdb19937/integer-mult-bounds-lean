@@ -54,8 +54,6 @@ theorem value_dropLast_lt (bs : List Bool) (_h : bs ≠ []) : value bs.dropLast 
 def signed (bs : List Bool) : ℤ :=
   (value bs : ℤ) - if bs.getLastD false then 2 ^ bs.length else 0
 
-theorem signed_nil : signed [] = 0 := by simp [signed, value]
-
 theorem getLastD_eq (bs : List Bool) (h : bs ≠ []) (d : Bool) : bs.getLastD d = bs.getLast h := by
   induction bs generalizing d with
   | nil => exact absurd rfl h
@@ -89,32 +87,6 @@ theorem signed_emod (bs : List Bool) : signed bs % 2 ^ bs.length = value bs := b
   · rw [Int.sub_emod, Int.emod_self, sub_zero, Int.emod_emod_of_dvd _ dvd_rfl,
       Int.emod_eq_of_lt (by positivity) (by exact_mod_cast Counter.value_lt bs)]
   · rw [sub_zero, Int.emod_eq_of_lt (by positivity) (by exact_mod_cast Counter.value_lt bs)]
-
-/-- Two signed values of width `n` that agree modulo `2^n` are equal. -/
-theorem signed_eq_of_emod {bs cs : List Bool} (hb : bs ≠ []) (hc : cs ≠ [])
-    (hlen : bs.length = cs.length) (h : signed bs % 2 ^ bs.length = signed cs % 2 ^ bs.length) :
-    signed bs = signed cs := by
-  obtain ⟨hb1, hb2⟩ := signed_bounds bs hb
-  obtain ⟨hc1, hc2⟩ := signed_bounds cs hc
-  rw [← hlen] at hc1 hc2
-  have hl : 1 ≤ bs.length := List.length_pos_of_ne_nil hb
-  have hpow : (2 : ℤ) ^ bs.length = 2 * 2 ^ (bs.length - 1) := by
-    rw [← pow_succ']; congr 1; omega
-  have hdvd : (2 : ℤ) ^ bs.length ∣ signed bs - signed cs := Int.ModEq.dvd h.symm
-  have habs : |signed bs - signed cs| < 2 ^ bs.length := by
-    rw [abs_lt]; constructor <;> linarith
-  have := Int.eq_zero_of_abs_lt_dvd hdvd habs
-  linarith
-
-/-- A word whose signed value is given: equality of words follows from equal
-signed values and lengths. -/
-theorem eq_of_signed {bs cs : List Bool} (hlen : bs.length = cs.length) (h : signed bs = signed cs) :
-    value bs = value cs := by
-  have h1 := signed_emod bs
-  have h2 := signed_emod cs
-  rw [← hlen] at h2
-  rw [h] at h1
-  exact_mod_cast h1.symm.trans h2
 
 /-! ### Sign extension -/
 

@@ -61,28 +61,4 @@ theorem cost_le_child_volume {q roles m n k : ℕ} {root v : Descriptor}
     (RecursiveDescriptorSize.descriptor_length_le_child_log path hq hr hm hw hv ys hy hyv)
     (RecursiveDescriptorSize.descriptor_length_le_child_log path hq hr hm hw hv ds hd hdv))
 
-/-- The physical five-tape division routine with its original exact bank
-contract and a child-volume transition bound. Header normalization is not hidden. -/
-theorem divide_hoare_linear {q roles m n k a : ℕ} {root v : Descriptor}
-    (path : Path q roles m root n v) (hq : 2 ≤ q) (hr : 0 < roles)
-    (hm : 2 ≤ m) (hw : root.width = m^k) (hv : root.Positive)
-    (ys ds : List Bool) (hy : GrowingCounterData.Canonical ys)
-    (hd : GrowingCounterData.Canonical ds)
-    (hyv : Counter.value ys ≤ volume q root) (hdv : Counter.value ds ≤ volume q root)
-    (f g : ℤ → Fin (a+4)) (pn pd pr pf pq : ℤ)
-    (hfl : f (pn-1) = blank) (hgr : g (pd+ds.length) = blank) (hgl : g (pd-1) = blank) :
-    HoareTime (BinaryDivide.program a)
-      (fun w => w = BinaryDivide.bank (putWord f pn (ys.map bitSymbol))
-        (putWord g pd (ds.map bitSymbol)) (fun _ => blank) (fun _ => blank) (fun _ => blank)
-        (pn+ys.length-1) pd pr pf pq)
-      (fun w => w = BinaryDivide.bank (putWord f pn (ys.map bitSymbol))
-        (putWord g pd (ds.map bitSymbol))
-        (BinaryDivide.blankWord (pr-ys.length) (BinaryDivide.remainder ds ys)) (fun _ => blank)
-        (BinaryDivide.blankWord (pq-ys.length) (BinaryDivide.quotient ds ys))
-        (pn-1) pd (pr-ys.length) pf (pq-ys.length))
-      ((40*(Nat.log2 roles+2)^2+54*(Nat.log2 roles+2))*volume q v) :=
-  (BinaryDivide.divide_hoare ys ds f g pn pd pr pf pq hfl hgr hgl).consequence
-    (fun _ h => h) (fun _ h => h)
-    (cost_le_child_volume path hq hr hm hw hv ys ds hy hd hyv hdv)
-
 end IntegerMultBounds.Machine.RecursiveDescriptorDivision

@@ -47,9 +47,6 @@ def encoding : Alphabet.Encoding 1 prime where
     Alphabet.mapTapes encoding (SharedBank.payload v slots)=
       SharedBank.payload (Alphabet.mapTapes encoding v) slots := rfl
 
- theorem mapTapes_fixed_empty (t : ℕ) :
-    Alphabet.mapTapes encoding (FixedHeaderBankCopy.empty (a:=1) t)=FixedHeaderBankCopy.empty (a:=prime) t := rfl
-
  theorem map_word (f : ℤ → Fin 5) (p : ℤ) (xs : List (Fin 5)) :
     (fun z => encoding.encode (putWord f p xs z))=
       putWord (fun z => encoding.encode (f z)) p (xs.map encoding.encode) :=
@@ -67,26 +64,11 @@ def encoding : Alphabet.Encoding 1 prime where
   rw [map_raw,List.map_ofFn]
   rfl
 
- theorem map_rotation_word {m : ℕ} (x : Fin m → Bool) :
-    (fun z => encoding.encode (ActiveTargetRotation.word (a:=1) x z))=
-      ActiveTargetRotation.word (a:=prime) x := by
-  rw [ActiveTargetRotation.word,map_word,List.map_ofFn]
-  simp only [encode_blank]
-  rfl
-
  theorem map_binary (bs : List Bool) :
     (fun z => encoding.encode (RadixZeroFill.encodedBinary (q:=1) bs z))=
       RadixZeroFill.encodedBinary (q:=prime) bs := by
   funext z
   rfl
-
- theorem map_headerBank (bs : Fin t → List Bool) :
-    Alphabet.mapTapes encoding (FixedHeaderBankCopy.headerBank (a:=1) bs)=
-      FixedHeaderBankCopy.headerBank (a:=prime) bs := by
-  apply congrArg₂ Tapes.mk
-  · rfl
-  · funext i
-    exact map_binary (bs i)
 
  theorem map_hoare_eq {M : Program t q 1} {v w : Tapes t 1} {cost : ℕ}
     (h : HoareTime M (fun x => x=v) (fun x => x=w) cost) :

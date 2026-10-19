@@ -254,12 +254,6 @@ variable {T Q A : ℕ} {U P R : Type} [DecidableEq R] {body : P → Pr P T Q A U
 /-- The Gaussian automaton of the sum of two coefficients. -/
 def rsaAddAuto (A : ℕ) : Auto A 2 1 := gaussAuto A ![![(1, 0), (1, 0)]] 2 false
 
-lemma rsa_glin_add {W : ℕ} (z₁ z₂ : GR W) :
-    glin ![![((1 : ℤ), (0 : ℤ)), (1, 0)]] (fun i => (![[z₁], [z₂]] i)[0]'(by
-      fin_cases i <;> simp)) 0 = z₁ + z₂ := by
-  rw [glin_eq_sum_mulG]
-  simp [Fin.sum_univ_two, GR.mulG]
-
 variable (hrg : Function.Injective rg)
 include hrg
 

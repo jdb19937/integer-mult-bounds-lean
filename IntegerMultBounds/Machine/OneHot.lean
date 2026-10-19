@@ -23,9 +23,6 @@ def bank (v : Tapes c a) (j : Fin c) : Tapes c a :=
 @[simp] theorem bank_at (v : Tapes c a) (j i : Fin c) : (bank v j).tape i (v.head i) = symbol j i := by
   simp [bank]
 
-theorem bank_outside (v : Tapes c a) (j i : Fin c) (p : ℤ) (hp : p ≠ v.head i) :
-    (bank v j).tape i p = v.tape i p := by simp [bank,hp]
-
 @[simp] theorem bank_reads (v : Tapes c a) (j : Fin c) : (bank v j).reads = symbol j := by
   funext i
   simp [Tapes.reads]

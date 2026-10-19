@@ -48,10 +48,6 @@ theorem stateLiftDown_up (h : Q≤Q') (hQ : 0<Q) :
     | none => simp [stateLiftUp,stateLiftDown]
     | some p => simp [stateLiftUp,stateLiftDown]
 
-/-- Capacity transport for a host action. -/
-def stateLiftAct (h : Q≤Q') (hQ : 0<Q) : Act T Q A U → Act T Q' A U :=
-  stateMapAct (stateLiftUp h) (stateLiftDown hQ)
-
 /-- Capacity transport for a host program, with optional procedure-name embedding. -/
 def stateLiftPr (h : Q≤Q') (hQ : 0<Q) (ι : P → P') : Pr P T Q A U → Pr P' T Q' A U :=
   stateMapProg (stateLiftUp h) (stateLiftDown hQ) ι

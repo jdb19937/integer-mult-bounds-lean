@@ -149,29 +149,6 @@ theorem cost_le_linear {roles m n d depth : ℕ}
     rw [RecursiveChildCallSetup.words_header,headerField_header]
 
 
-theorem return_hoare_linear {roles m n d depth : ℕ}
-    {root active ancestor : RecursiveInterchangeLayout.Descriptor}
-    (current : RecursiveInterchangeVolume.Path prime roles m root n active)
-    (older : RecursiveInterchangeVolume.Path prime roles m root d ancestor)
-    (hr : 0 < roles) (hm : 2 ≤ m) (hw : root.width = m^depth) (hv : root.Positive)
-    (hN : N ≤ 2^k) (states : Fin N → ℕ)
-    (family : ∀ pc, Program (TapeCount t u) (states pc) prime) (pc : Fin N)
-    (roleBank : Tapes t prime) (old hs : Fin 6 → List Bool) (aux : Tapes u prime) (st : Tapes 2 prime)
-    (ho : RecursiveDimensionBank.Headers ancestor old) (hchild : RecursiveDimensionBank.Headers active hs)
-    (hd : RecursiveStackAllocation.Available 0 st)
-    (hf : ∀ j < k, st.tape 1 (st.head 1+j) = blank) (B : ℕ) (post : TapePred (TapeCount t u) prime)
-    (hc : HoareTime (family pc) (fun w => w = bank roleBank old aux st) post B) :
-    HoareTime (program hN states family)
-      (fun w => w = bank roleBank hs aux (savedStacks old st (address hN pc))) post
-      ((48*(Nat.log2 roles+2)+k+82)*RecursiveInterchangeLayout.volume prime active+B) := by
-  apply (return_hoare hN states family pc roleBank old hs aux st hd hf B post hc).consequence
-    (fun _ h => h) (fun _ h => h)
-  have hcost := cost_le_linear current older hr hm hw hv old hs ho hchild
-  have hV : 0 < RecursiveInterchangeLayout.volume prime active :=
-    lt_of_lt_of_le (pow_pos Shared50ModularControl.prime_prime.pos _)
-      (current.original_chunks Shared50ModularControl.prime_prime.pos hr hv)
-  nlinarith
-
 
 end
 end IntegerMultBounds.Machine.RecursiveChildReturnRoleBank

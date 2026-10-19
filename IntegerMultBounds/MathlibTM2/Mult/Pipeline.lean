@@ -370,9 +370,6 @@ noncomputable def pipelineCoeffsG (n : ℕ) (cb : BoxConvOf n) (x y : ℕ) : Lis
       ExactRecovery.computedConv (p := p n) (k := b n) (srcMapG n cb) (oppMapG n cb) (bitsMSB n x)
         (bitsMSB n y) (i.val : ZMod (∏ i, s n i))).re).toNat
 
-theorem pipelineCoeffs_eq_G (n x y : ℕ) : pipelineCoeffs n x y = pipelineCoeffsG n (convBox n) x y :=
-  rfl
-
 /-- The guarantee of a box convolution used by the source transforms: within `6 T log₂ T` of
 the normalized convolution at scale `2^p`, and in the `0.701`-ball. -/
 def BoxConvSpec (n : ℕ) (cb : BoxConvOf n) : Prop :=

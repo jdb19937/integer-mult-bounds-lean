@@ -89,21 +89,5 @@ theorem exists_prime_actual :
   obtain ⟨ps,hps,hcount⟩ := h b
   exact ⟨ps,hps,hcount.trans matrices50_rankSum⟩
 
-/-- Equivalent statement indexed by the actual rational operators themselves. -/
-theorem exists_prime_actual_operators :
-    ∃ q : ℕ, q.Prime ∧ 2 < q ∧ ∀ b : ℕ,
-      ∃ ps : List (List (Swap.Shear.Op (Fin 125000) (ZMod (q ^ b)))),
-        List.Forall₂ (fun op p => Swap.Shear.interchanges p = rangeRank op ∧
-          ∀ state, Swap.Shear.run p state =
-            ShearFrame.address (Matrix.toLin' (Swap.Modular.reduce (q ^ b) (matrix op))) state)
-          (Shared50GlobalShear.operators Shared50GlobalCircuit.enumeration) ps ∧
-        (ps.map Swap.Shear.interchanges).sum = Shared50Parameters.s := by
-  obtain ⟨q,hq,hodd,h⟩ := exists_prime_actual
-  refine ⟨q,hq,hodd,?_⟩
-  intro b
-  obtain ⟨ps,hps,hcount⟩ := h b
-  refine ⟨ps,?_,hcount⟩
-  simpa only [matrices,List.forall₂_map_left_iff,matrix_rank] using hps
-
 end
 end IntegerMultBounds.Networks.Shared50ModularOperators

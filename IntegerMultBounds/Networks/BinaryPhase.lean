@@ -26,26 +26,6 @@ omit [FiniteDimensional K E] in
 @[simp] theorem rankOne_apply (v x : E) : rankOne B v x = B v x • v := rfl
 
 omit [FiniteDimensional K E] in
-/-- Each normalized direction has an actual one-dimensional range. -/
-theorem rankOne_range (v : E) (hv : B v v = 1) :
-    LinearMap.range (rankOne B v) = K ∙ v := by
-  apply le_antisymm
-  · rintro x ⟨y, rfl⟩
-    exact Submodule.smul_mem _ _ (Submodule.mem_span_singleton_self v)
-  · intro x hx
-    obtain ⟨t, rfl⟩ := Submodule.mem_span_singleton.mp hx
-    refine ⟨t • v, ?_⟩
-    simp [rankOne, map_smul, hv]
-
-omit [FiniteDimensional K E] in
-theorem rankOne_rank (v : E) (hv : B v v = 1) :
-    finrank K (LinearMap.range (rankOne B v)) = 1 := by
-  rw [rankOne_range B v hv]
-  apply finrank_span_singleton
-  intro hz
-  simp [hz] at hv
-
-omit [FiniteDimensional K E] in
 /-- Coefficients in an orthonormal basis are the actual bilinear pairings. -/
 theorem basis_repr (W : Submodule K E) {d : ℕ} (b : Basis (Fin d) K W)
     (hgram : ∀ i j, B (b i) (b j) = if i = j then 1 else 0) (y : W) (i : Fin d) :
@@ -235,27 +215,6 @@ theorem weightPhase_difference {h : ℕ} (hs : (Labels.binary h).IsSymm)
     (project_mem (Labels.binary h) hs _ hw x).2 _ (project_mem (Labels.binary h) hs U hu x)
   rw [hadd, weightPhase_add_of_orthogonal _ _ horth, add_sub_cancel_left]
 
-/-- The complete rank-dependent phase formula. The number of actual basis terms
-is the dimension difference; the residual norm-one hypothesis is explicit. -/
-theorem exists_phase_decomposition {h : ℕ} (hs : (Labels.binary h).IsSymm)
-    (U V : Submodule (ZMod 2) (Fin h → ZMod 2))
-    (hu : ((Labels.binary h).restrict U).Nondegenerate)
-    (hv : ((Labels.binary h).restrict V).Nondegenerate) (hUV : U ≤ V)
-    (hunit : residual (Labels.binary h) U V = ⊥ ∨
-      ∃ v : residual (Labels.binary h) U V, Labels.binary h v v = 1) :
-    ∃ b : Basis (Fin (finrank (ZMod 2) (residual (Labels.binary h) U V)))
-        (ZMod 2) (residual (Labels.binary h) U V),
-      (∀ i j, Labels.binary h (b i) (b j) = if i = j then 1 else 0) ∧
-      (∀ x, weightPhase (project (Labels.binary h) hs V hv x) -
-          weightPhase (project (Labels.binary h) hs U hu x) =
-        ∑ i, weightPhase (b i : Fin h → ZMod 2) * bitLift (Labels.binary h (b i) x)) ∧
-      finrank (ZMod 2) (residual (Labels.binary h) U V) = finrank (ZMod 2) V - finrank (ZMod 2) U := by
-  obtain ⟨b, hgram, _, hd⟩ := exists_difference_decomposition (Labels.binary h) hs U V hu hv hUV hunit
-  refine ⟨b, hgram, ?_, hd⟩
-  intro x
-  rw [weightPhase_difference hs U V hu hv hUV]
-  exact weightPhase_project hs _ _ b hgram x
-
 /-- Dot-product norm is the parity of the actual integer Hamming weight. -/
 theorem weight_cast_two {h : ℕ} (v : Fin h → ZMod 2) :
     (weight v : ZMod 2) = Labels.binary h v v := by
@@ -293,18 +252,6 @@ theorem phase_add (q r : ZMod 4) : phase (q + r) = phase q * phase r := by
   unfold phase
   rw [ZMod.val_add]
   fin_cases q <;> fin_cases r <;> norm_num [ZMod.val, pow_succ, Complex.I_mul_I]
-
-noncomputable def phaseCharacter : AddChar (ZMod 4) ℂ where
-  toFun := phase
-  map_zero_eq_one' := phase_zero
-  map_add_eq_mul' := phase_add
-
-theorem phase_sum {ι : Type*} (s : Finset ι) (q : ι → ZMod 4) :
-    phase (∑ i ∈ s, q i) = ∏ i ∈ s, phase (q i) := by
-  classical
-  induction s using Finset.induction_on with
-  | empty => simp
-  | @insert i s hi ih => simp [Finset.sum_insert hi, Finset.prod_insert hi, phase_add, ih]
 
 theorem phase_neg_mul (q : ZMod 4) : phase (-q) * phase q = 1 := by
   rw [← phase_add, neg_add_cancel, phase_zero]
@@ -348,24 +295,6 @@ theorem phaseDiagonal_trans {α : Type*} (q r : α → ZMod 4) :
   simp only [phaseDiagonal, LinearEquiv.trans_apply, LinearEquiv.coe_mk,
     LinearMap.coe_mk, AddHom.coe_mk, Pi.add_apply, phase_add]
   ring
-
-/-- Exact diagonal edge factorization into one scalar phase factor for each
-orthonormal residual direction. Walsh conjugation into translation operators
-is a separate obligation. -/
-theorem diagonal_edge_apply {h d : ℕ} (hs : (Labels.binary h).IsSymm)
-    (U V : Submodule (ZMod 2) (Fin h → ZMod 2))
-    (hu : ((Labels.binary h).restrict U).Nondegenerate)
-    (hv : ((Labels.binary h).restrict V).Nondegenerate) (hUV : U ≤ V)
-    (b : Basis (Fin d) (ZMod 2) (residual (Labels.binary h) U V))
-    (hgram : ∀ i j, Labels.binary h (b i) (b j) = if i = j then 1 else 0)
-    (f : (Fin h → ZMod 2) → ℂ) (x : Fin h → ZMod 2) :
-    ((phaseDiagonal (fun x => weightPhase (project (Labels.binary h) hs U hu x))).symm.trans
-      (phaseDiagonal (fun x => weightPhase (project (Labels.binary h) hs V hv x)))) f x =
-      (∏ i, phase (weightPhase (b i : Fin h → ZMod 2) * bitLift (Labels.binary h (b i) x))) * f x := by
-  change phase (weightPhase (project (Labels.binary h) hs V hv x)) *
-    (phase (-weightPhase (project (Labels.binary h) hs U hu x)) * f x) = _
-  rw [← mul_assoc, ← phase_add, ← sub_eq_add_neg, weightPhase_difference hs U V hu hv hUV,
-    weightPhase_project hs _ _ b hgram x, phase_sum]
 
 end ComplexPhase
 end IntegerMultBounds.Networks.BinaryPhase

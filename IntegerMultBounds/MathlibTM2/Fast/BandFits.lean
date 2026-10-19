@@ -394,16 +394,6 @@ theorem bandOutB_rev_getD (P : ℕ) (cs : List (List ℤ)) (rs : List ℤ) (pend
         List.length_reverse, length_bandOutB, Nat.sub_self]
       rfl
 
-theorem re_getD (l : List GaussianInt) (i : ℕ) : (l.getD i 0).re = (l.map (·.re)).getD i 0 := by
-  by_cases h : i < l.length
-  · rw [List.getD_eq_getElem _ _ h, List.getD_eq_getElem _ _ (by simpa using h), List.getElem_map]
-  · rw [List.getD_eq_default _ _ (by omega), List.getD_eq_default _ _ (by simpa using h)]; rfl
-
-theorem im_getD (l : List GaussianInt) (i : ℕ) : (l.getD i 0).im = (l.map (·.im)).getD i 0 := by
-  by_cases h : i < l.length
-  · rw [List.getD_eq_getElem _ _ h, List.getD_eq_getElem _ _ (by simpa using h), List.getElem_map]
-  · rw [List.getD_eq_default _ _ (by omega), List.getD_eq_default _ _ (by simpa using h)]; rfl
-
 theorem abs_gv_tdiv (P : ℕ) (x : ℤ) (Q : ℕ) :
     |gv P (x.tdiv (2 ^ Q))| ≤ |gv P x| / 2 ^ Q := by
   have hP : (0 : ℝ) < 2 ^ P := by positivity

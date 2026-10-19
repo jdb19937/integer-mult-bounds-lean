@@ -60,27 +60,6 @@ theorem diagonalGate_inverse_conjugates (Q : BinaryMatrix) (alpha : Fin 9 → ZM
 theorem diagonalLabel_binary (Q : BinaryMatrix) (alpha : Fin 9 → ZMod 4) (p : Label) :
     (diagonalLabel Q alpha p).binary = Tableau.diagonal Q.mulVecLin p.binary := rfl
 
-theorem qValue_zero (Q : BinaryMatrix) (alpha : Fin 9 → ZMod 4) : qValue Q alpha 0 = 0 := by
-  simp [qValue, quadraticPart]
-
-theorem qValue_single (Q : BinaryMatrix) (alpha : Fin 9 → ZMod 4) (i : Fin 9) :
-    qValue Q alpha (Pi.single i 1) = alpha i := by
-  have hb (j : Fin 9) : bitLift (if j = i then 1 else 0) =
-      (if j = i then 1 else 0 : ZMod 4) := by split <;> rfl
-  simp [qValue, quadraticPart, upper, Pi.single_apply, hb]
-
-theorem diagonalLabel_zGenerator (Q : BinaryMatrix) (alpha : Fin 9 → ZMod 4) (i : Fin 9) :
-    diagonalLabel Q alpha (zGenerator i) = zGenerator i := by
-  simp [diagonalLabel, zGenerator, qValue_zero]
-
-theorem diagonalLabel_xGenerator (Q : BinaryMatrix) (alpha : Fin 9 → ZMod 4)
-    (hQ : ∀ i j, Q i j = Q j i) (i : Fin 9) :
-    diagonalLabel Q alpha (xGenerator i) = ⟨Pi.single i 1, (fun j => Q i j), alpha i⟩ := by
-  have hc : Q.mulVecLin (Pi.single i 1) = fun j => Q i j := by
-    ext j
-    simp [hQ]
-  simp [diagonalLabel, xGenerator, qValue_single, hc]
-
 /-- The source's default alpha is the zero-or-one lift of the diagonal bit. -/
 def defaultAlpha (Q : BinaryMatrix) (i : Fin 9) : ZMod 4 := bitLift (Q i i)
 

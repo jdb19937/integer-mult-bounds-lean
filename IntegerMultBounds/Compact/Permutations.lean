@@ -40,12 +40,6 @@ def rotateRight {M : ℤ} (hM : 0 < M) {C : Type*} (offset : C → ℤ) :
   (Equiv.prodComm C (Field M)).trans
     ((rotateLeft hM offset).trans (Equiv.prodComm (Field M) C))
 
-/-- An arbitrary dirty back field is restored by swap, rotate, swap. -/
-theorem swap_load_swap {M : ℤ} (hM : 0 < M) (front back : Field M) (offset : ℤ) :
-    ((Equiv.prodComm (Field M) (Field M)).trans
-      ((rotateRight hM (fun _ => offset)).trans (Equiv.prodComm (Field M) (Field M))))
-        (front, back) = (fieldAdd hM front offset, back) := rfl
-
 /-- The actual early-source four rotations as a permutation. This construction
 does not require good-address bounds or even bit-valued controls. -/
 def packedEarlyPermN (Q B : ℤ) (hQ : 0 < Q) (hB : 0 < B) (n : ℕ) (controls : List ℤ) :
@@ -70,12 +64,6 @@ theorem packedEarlyPerm_agrees (Q B : ℤ) (hQ : 0 < Q) (hB : 0 < B)
     (y.1.val, y.2.val) = packedEarly Q B controls x.1.val x.2.val := by
   simp only [packedEarlyPerm, packedEarlyPermN, rotateLeft, rotateRight, Equiv.trans_apply,
     Equiv.coe_fn_mk, Equiv.prodComm_apply, Prod.swap, fieldAdd, packedEarly, sub_eq_add_neg]
-
-/-- In particular, inverse execution is exact even when guard checks fail. -/
-theorem packedEarlyPerm_inverse (Q B : ℤ) (hQ : 0 < Q) (hB : 0 < B)
-    (controls : List ℤ) (x : Field (Q ^ controls.length) × Field (B ^ controls.length)) :
-    (packedEarlyPerm Q B hQ hB controls).symm (packedEarlyPerm Q B hQ hB controls x) = x :=
-  (packedEarlyPerm Q B hQ hB controls).symm_apply_apply x
 
 /-- Execute a family of reversible programs, chosen by an unchanged control. -/
 def fiberPerm {C D : Type*} (program : C → Equiv.Perm D) : Equiv.Perm (C × D) where
@@ -105,11 +93,5 @@ theorem packedLatePerm_agrees (Q B : ℤ) (hQ : 0 < Q) (hB : 0 < B)
     Equiv.trans_apply, Equiv.coe_fn_mk, Equiv.prodComm_apply, Prod.swap,
     Equiv.symm_mk, fieldAdd, packedLate, packedEarly, List.length_map, digits_length,
     sub_eq_add_neg]
-
-theorem packedLatePerm_inverse (Q B : ℤ) (hQ : 0 < Q) (hB : 0 < B)
-    (source : List ℤ) (x : Field (B ^ source.length) ×
-      (Field (Q ^ source.length) × Field (B ^ source.length))) :
-    (packedLatePerm Q B hQ hB source).symm (packedLatePerm Q B hQ hB source x) = x :=
-  (packedLatePerm Q B hQ hB source).symm_apply_apply x
 
 end IntegerMultBounds.Compact

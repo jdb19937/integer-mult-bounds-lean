@@ -18,8 +18,6 @@ def atState (v : Tapes t a) (st : Fin r) : Config t r a := ⟨st,v.head,v.tape�
 def padConfig (h : t ≤ n) (c : Config t r a) : Config n r a :=
   (c.extend (SharedBank.empty (n-t) a)).reindex (finCongr (Nat.add_sub_of_le h))
 
-theorem pad_state (h : t ≤ n) (c : Config t r a) : (padConfig h c).state = c.state := rfl
-
 theorem pad_raw (h : t ≤ n) (hkt : k ≤ t) (v : Tapes k a) (st : Fin r) :
     padConfig h (atState (raw v t) st) = atState (raw v n) st := by
   have he : ((raw v t).append (SharedBank.empty (n-t) a)).reindex
@@ -58,19 +56,6 @@ theorem pad_exact (M : Program t r a) (h : t ≤ n) (hkt : k ≤ t)
   ⟨pad_run M h hkt before after M.start finish steps hr,pad_halt M h hkt after finish hh⟩
 
 variable {Label : Type*} [Fintype Label]
-
-/-- Every fixed family member preserves its own actual exit state in the
-single shared workspace, ready for a real finite-flow jump. -/
-theorem family_exact (blocks : Label → SharedBankSkeleton.Skeleton k a) (i : Label)
-    (before after : Tapes k a) (steps : ℕ) (finish : Fin (blocks i).states)
-    (hr : run (blocks i).program steps ((raw before (blocks i).tapes).start (blocks i).program) =
-      some (atState (raw after (blocks i).tapes) finish))
-    (hh : step (blocks i).program (atState (raw after (blocks i).tapes) finish) = none) :
-    run (SharedBankFamily.program blocks i) steps
-      ((raw before (tapeCount blocks)).start (SharedBankFamily.program blocks i)) =
-        some (atState (raw after (tapeCount blocks)) finish) ∧
-    step (SharedBankFamily.program blocks i) (atState (raw after (tapeCount blocks)) finish) = none :=
-  pad_exact (blocks i).program (block_le blocks i) (common_le (blocks i)) before after steps finish hr hh
 
 end
 end IntegerMultBounds.Machine.SharedBankFamilyExact

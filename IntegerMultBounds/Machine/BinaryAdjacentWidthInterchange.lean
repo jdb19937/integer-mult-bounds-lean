@@ -192,49 +192,4 @@ theorem equal_afterUnmove_word (y : Fin (volume P N G (2*N) B) → Fin (a+4)) :
   rw [← longD_eq_transpose]
   exact List.ofFn_congr (equal_volume P N G B) _
 
-/-- The extra movement has linear cost in the original rectangular volume.
-Its P, N*G, N*B headers must be supplied physically; producing those headers
-from the original binary widths is separate caller work. -/
-theorem longH_move_hoare (source : ℤ → Fin (a+4))
-    (x : Fin (volume P (2*N) G N B) → Fin (a+4)) (ps ss es : List Bool)
-    (hP : 0 < P) (hN : 0 < N) (hG : 0 < G) (hB : 0 < B)
-    (hp : Counter.value ps = P) (hs : Counter.value ss = N*G) (he : Counter.value es = N*B)
-    (cp : GrowingCounterData.Canonical ps) (cs : GrowingCounterData.Canonical ss)
-    (ce : GrowingCounterData.Canonical es) :
-    HoareTime (RadixDigitMoveBlockExecution.forwardProgram 2 a)
-      (fun v => v = RadixDigitMoveBlockExecution.bank (Q := 2)
-        (putWord source 0 (List.ofFn (RadixRangePadding.transpose (equalInput x)))) ps ss es)
-      (fun v => v = RadixDigitMoveBlockExecution.bank (Q := 2)
-        (putWord source 0 (List.ofFn (transpose x))) ps ss es)
-      (RadixDigitMoveBlockExecution.bound 2 * volume P (2*N) G N B) := by
-  have h := RadixDigitMoveBlockExecution.forward_hoare source (afterEqual x) ps ss es
-    hP (by omega) (Nat.mul_pos hN hG) (Nat.mul_pos hN hB) hp hs he cp cs ce
-  have hv : P*2*((N*G)*(N*B)) = volume P (2*N) G N B := by unfold volume; ring
-  rw [afterEqual_word,move_afterEqual_word,hv] at h
-  exact h
-
-/-- Paid inverse move from every shorter-H input, without a forward preimage.
-The following equal-width call consumes exactly the displayed output word. -/
-theorem longD_unmove_hoare (source : ℤ → Fin (a+4))
-    (y : Fin (volume P N G (2*N) B) → Fin (a+4)) (ps ss es : List Bool)
-    (hP : 0 < P) (hN : 0 < N) (hG : 0 < G) (hB : 0 < B)
-    (hp : Counter.value ps = P) (hs : Counter.value ss = N*G) (he : Counter.value es = N*B)
-    (cp : GrowingCounterData.Canonical ps) (cs : GrowingCounterData.Canonical ss)
-    (ce : GrowingCounterData.Canonical es) :
-    HoareTime (RadixDigitMoveBlockExecution.backwardProgram 2 a)
-      (fun v => v = RadixDigitMoveBlockExecution.bank (Q := 2)
-        (putWord source 0 (List.ofFn y)) ps ss es)
-      (fun v => v = RadixDigitMoveBlockExecution.bank (Q := 2)
-        (putWord source 0 (List.ofFn (afterUnmove y))) ps ss es)
-      (RadixDigitMoveBlockExecution.bound 2 * volume P N G (2*N) B) := by
-  have h := RadixDigitMoveBlockExecution.backward_unmove_hoare source (moveInput y) ps ss es
-    hP (by omega) (Nat.mul_pos hN hG) (Nat.mul_pos hN hB) hp hs he cp cs ce
-  have hv : P*2*((N*G)*(N*B)) = volume P N G (2*N) B := by unfold volume; ring
-  rw [moveInput_word,unmove_word,hv] at h
-  exact h
-
-/-- The decomposition includes the boundary case of a zero-bit shorter field. -/
-theorem adjacent_binary_width (u : ℕ) : 2*2^u = 2^(u+1) := by
-  rw [pow_succ,Nat.mul_comm]
-
 end IntegerMultBounds.Machine.BinaryAdjacentWidthInterchange

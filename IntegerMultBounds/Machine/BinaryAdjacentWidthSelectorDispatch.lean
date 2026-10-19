@@ -126,32 +126,5 @@ theorem runs (left right flag : Fin t)
       · simp only [chosen,ite_eq_right hd,ite_eq_right hl]
         omega
 
-/-- Common-output specialization with canonical descriptor costs absorbed by
-one positive volume. Supplied branch contracts remain explicit. -/
-theorem runs_same_volume (left right flag : Fin t)
-    (hlr : left ≠ right) (hlf : left ≠ flag) (hrf : right ≠ flag)
-    (equal : Program t e a) (longH : Program t h a) (longD : Program t d a)
-    (v out : Tapes t a) (equalCost longHCost longDCost V : ℕ) (hV : 0 < V)
-    (hs ds : List Bool) (hc : GrowingCounterData.Canonical hs) (dc : GrowingCounterData.Canonical ds)
-    (hb : Counter.value hs ≤ V) (db : Counter.value ds ≤ V)
-    (hht : v.tape left = BinaryDescriptorStack.descriptor hs) (hhh : v.head left = 1)
-    (hdt : v.tape right = BinaryDescriptorStack.descriptor ds) (hdh : v.head right = 1)
-    (hft : v.tape flag = fun _ => blank) (hfh : v.head flag = 0)
-    (equalRuns : Counter.value hs = Counter.value ds →
-      HoareTime equal (fun w => w = v) (fun w => w = out) equalCost)
-    (longHRuns : Counter.value ds < Counter.value hs →
-      HoareTime longH (fun w => w = v) (fun w => w = out) longHCost)
-    (longDRuns : Counter.value hs < Counter.value ds →
-      HoareTime longD (fun w => w = v) (fun w => w = out) longDCost) :
-    HoareTime (program left right flag hlr hlf hrf equal longH longD)
-      (fun w => w = v) (fun w => w = out)
-      (43*V+1+chosen (Counter.value hs) (Counter.value ds) equalCost longHCost longDCost) := by
-  have hh := runs left right flag hlr hlf hrf equal longH longD v out out out
-    equalCost longHCost longDCost hs ds hht hhh hdt hdh hft hfh equalRuns longHRuns longDRuns
-  have hb' := BinaryAdjacentWidthSelector.cost_volume hs ds hc dc V hV hb db
-  apply hh.consequence (fun _ h => h) _ (by omega)
-  intro w hw
-  simpa only [chosen,ite_self] using hw
-
 end
 end IntegerMultBounds.Machine.BinaryAdjacentWidthSelectorDispatch

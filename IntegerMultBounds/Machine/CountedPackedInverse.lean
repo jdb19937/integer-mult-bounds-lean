@@ -120,23 +120,5 @@ theorem inverse_hoare (hV : V2.length = Z.length * q) (hW : W2.length = Z.length
   omega
 
 
-/-- The recovered words are a genuine preimage of the compact arithmetic map. -/
-theorem inverse_hoare_value (hV : V2.length = Z.length*q) (hW : W2.length = Z.length*b)
-    (hf : f (p0-1) = blank) (hf' : f (p0+V2.length) = blank)
-    (hg : g (p1-1) = blank) (hg' : g (p1+W2.length) = blank) (hz : z (p2-1) = blank)
-    (hv : ∀ i, Counter.value (hs i) = CountedPackedShapeHeaders.originalValues q b Z.length i)
-    (hc : ∀ i, GrowingCounterData.Canonical (hs i)) :
-    HoareTime (program a)
-      (fun x => x = bank (PackedInverse.input V2 W2 Z f g z p0 p1 p2 p3 p4 p5 p6 p7 p8) hs)
-      (fun x => x = bank (PackedInverse.output q b hb hbq V2 W2 Z f g z p0 p1 p2 p3 p4 p5 p6 p7 p8) hs ∧
-        Compact.packedEarly ((2 : ℤ)^q) ((2 : ℤ)^b) (Z.map Compact.PowerTwo.ctrl)
-          (Counter.value (v q b hb hbq V2 W2 Z)) (Counter.value (w q b hb hbq V2 W2 Z)) =
-            ((Counter.value V2 : ℤ), (Counter.value W2 : ℤ)))
-      (2669*((Z.length+1)*(q+b+1))) := by
-  refine (inverse_hoare q b hb hbq V2 W2 Z f g z p0 p1 p2 p3 p4 p5 p6 p7 p8 hs
-    hV hW hf hf' hg hg' hz hv hc).consequence (fun _ h => h) ?_ (le_refl _)
-  intro x h
-  exact ⟨h, Compact.PowerTwo.inverse_value q b hb hbq V2 W2 Z hV hW⟩
-
 end
 end IntegerMultBounds.Machine.CountedPackedInverse

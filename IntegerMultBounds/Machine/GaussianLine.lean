@@ -486,9 +486,6 @@ def bodyBound (p w W : ℕ) : ℕ := 2 * FixedMul.cost p w + 4 * W + 8 * w + 40
 /-- After a window: write both accumulators, reset them to zero words. -/
 def partABound (m W : ℕ) : ℕ := 2 * m + 11 * W + 50
 def rewindBodyBound (w : ℕ) : ℕ := 2 * w + 12
-/-- The counter step and the conditional advance. -/
-def partCBound (w L : ℕ) : ℕ := 12 * L + 4 * w + 60
-
 end Bounds
 
 theorem body_hoare (wtWords uWords : List (List Bool)) (s t m p w W : ℕ) (sW tW : List Bool)

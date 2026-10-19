@@ -262,36 +262,12 @@ theorem extracted_length (data : α → List Bool) :
     (extracted e S T bad data).length = Nat.card {x // bad x} := by
   rw [extracted, List.length_map, badRanks_length]
 
-/-- The `k` radix passes traverse at most `k · |ℬ| · w` for records of weight at most
-`w`. -/
-theorem sort_traversed_le (data : α → List Bool) (k : ℕ) (weight : Fin M × Record → ℕ)
-    (w : ℕ) (hw : ∀ x ∈ extracted e S T bad data, weight x ≤ w) :
-    traversedVolume keyBit weight k (extracted e S T bad data) ≤
-      k * (Nat.card {x // bad x} * w) := by
-  rw [← extracted_length e S T bad data]
-  exact traversedVolume_le _ _ _ _ _ hw
-
 omit [Fintype α] in
 /-- The number of extracted records is the exceptional fraction times the volume. -/
 theorem card_bad_eq_fraction (good : α → Prop) (hpos : 0 < (Nat.card α : ℝ)) :
     (Nat.card {x // ¬good x} : ℝ) = badFraction good * Nat.card α := by
   unfold badFraction
   field_simp
-
-/-- The written repair cost expression, with the extracted count in place of the
-density term, is at most three volumes once the density is small enough. -/
-theorem pipeline_cost_le (good : α → Prop) [DecidablePred good] (data : α → List Bool)
-    (R A δ : ℝ) (hpos : 0 < (Nat.card α : ℝ)) (hR : 0 ≤ R) (hA : 0 ≤ A) (hAR : A ≤ R)
-    (hsetup : A ^ 3 ≤ R) (hδ : 0 ≤ δ) (hfrac : badFraction good ≤ δ)
-    (hdensity : δ * A ≤ 1 / 2) :
-    (Nat.card α : ℝ) * R + Nat.card α * A ^ 3 +
-        ((extracted e S T (fun x => ¬good x) data).length : ℝ) * A * (R + A) ≤
-      3 * (Nat.card α * R) := by
-  rw [extracted_length, card_bad_eq_fraction good hpos]
-  have h := repair_cost_linear (Nat.card α) R A δ hpos.le hR hA hδ hAR hsetup hdensity
-  have hB : badFraction good * Nat.card α * A * (R + A) ≤ δ * Nat.card α * A * (R + A) := by
-    gcongr
-  linarith
 
 end Cost
 
@@ -300,44 +276,6 @@ end Cost
 section Concrete
 
 variable (B L : ℤ) (hB : 1 ≤ B) (hL : 0 < L) (zs : List ℤ) (hz : Bits zs)
-
-/-- The early packed program's exceptional repair implements the ideal selected-bit
-toggle on the whole stream. -/
-theorem early_pipeline_exact {M : ℕ} (e : EarlyAddress B L zs.length ≃ Fin M) (k : ℕ)
-    (hk : M ≤ 2 ^ k) (data : EarlyAddress B L zs.length → List Bool) :
-    pipeline e (packedEarlyPerm (2 * L) B (by omega) (by omega) zs) (earlyIdeal B L hL zs hz)
-        (fun y => ¬earlyGood B L zs.length y) k data =
-      stream e (fun y => ¬earlyGood B L zs.length y) (data ∘ (earlyIdeal B L hL zs hz).symm) :=
-  pipeline_exact e _ _ _ (fun y => not_congr (earlyIdeal_preserves_good B L hL zs hz y))
-    (fun y hy => early_program_agrees_on_good B L hB hL zs hz y (not_not.mp hy)) k hk data
-
-/-- The late packed program's exceptional repair implements the ideal selected-bit
-toggle on the whole stream. -/
-theorem late_pipeline_exact {M : ℕ} (e : LateAddress B L zs.length ≃ Fin M) (k : ℕ)
-    (hk : M ≤ 2 ^ k) (data : LateAddress B L zs.length → List Bool) :
-    pipeline e (packedLatePerm (2 * L) B (by omega) (by omega) zs) (lateIdeal B L hL zs hz)
-        (fun y => ¬lateGood B L zs.length y) k data =
-      stream e (fun y => ¬lateGood B L zs.length y) (data ∘ (lateIdeal B L hL zs hz).symm) :=
-  pipeline_exact e _ _ _ (fun y => not_congr (lateIdeal_preserves_good B L hL zs hz y))
-    (fun y hy => late_program_agrees_on_good B L hB hL zs hz y (not_not.mp hy)) k hk data
-
-/-- Under the dyadic cutoff, the late program's extracted records are at most the
-uniform density `5 / (128 p³)` times the volume. -/
-theorem late_extracted_le (p : ℝ) (n ell K : ℕ) (hp : 1 ≤ p) (hn : (n : ℝ) ≤ p)
-    (hell : p ≤ (2 : ℝ) ^ ell) (hK : 8 * ell + 16 ≤ K) {M : ℕ}
-    (e : LateAddress ((2 : ℤ) ^ (4 * ell + 6)) ((2 : ℤ) ^ (K - 1)) n ≃ Fin M)
-    (S T : Equiv.Perm (LateAddress ((2 : ℤ) ^ (4 * ell + 6)) ((2 : ℤ) ^ (K - 1)) n))
-    (data : LateAddress ((2 : ℤ) ^ (4 * ell + 6)) ((2 : ℤ) ^ (K - 1)) n → List Bool) :
-    ((extracted e S T (fun y => ¬lateGood ((2 : ℤ) ^ (4 * ell + 6)) ((2 : ℤ) ^ (K - 1)) n y)
-        data).length : ℝ) ≤
-      min 1 (5 / (128 * p ^ 3)) *
-        Nat.card (LateAddress ((2 : ℤ) ^ (4 * ell + 6)) ((2 : ℤ) ^ (K - 1)) n) := by
-  have hfrac := (dyadic_actual_repair_density p n ell K hp hn hell hK).2
-  have hpos : 0 < (Nat.card (LateAddress ((2 : ℤ) ^ (4 * ell + 6)) ((2 : ℤ) ^ (K - 1)) n) : ℝ) := by
-    rw [late_total_real _ _ (by positivity) (by positivity)]
-    positivity
-  rw [extracted_length, card_bad_eq_fraction _ hpos]
-  gcongr
 
 end Concrete
 

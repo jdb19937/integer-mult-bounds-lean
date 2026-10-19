@@ -126,19 +126,5 @@ theorem cost_linear (ys ds : List Bool) (hc : GrowingCounterData.Canonical ys) :
   unfold linearConstant
   nlinarith
 
-/-- At a fixed divisor the complete arithmetic/control boundary has linear
-overhead in the runtime dividend, with both results canonical and all scratch
-physically erased. The constant depends only on the fixed divisor word. -/
-theorem divmod_linear (ys ds : List Bool) (hd : 0 < Counter.value ds)
-    (hc : GrowingCounterData.Canonical ys) :
-    ∃ zs rs : List Bool, GrowingCounterData.Canonical zs ∧ GrowingCounterData.Canonical rs ∧
-      Counter.value zs = Counter.value ys/Counter.value ds ∧
-      Counter.value rs = Counter.value ys%Counter.value ds ∧ zs.length ≤ ys.length ∧
-      rs.length ≤ ys.length+ds.length ∧
-      HoareTime (program a) (fun v => v = input ys ds) (fun v => v = output ys ds zs rs)
-        (linearConstant ds*(Counter.value ys+1)) := by
-  obtain ⟨zs,rs,hzc,hrc,hzv,hrv,hzl,hrl,h⟩ := divmod_hoare (a := a) ys ds hd
-  exact ⟨zs,rs,hzc,hrc,hzv,hrv,hzl,hrl,h.consequence (fun _ h => h) (fun _ h => h) (cost_linear ys ds hc)⟩
-
 end
 end IntegerMultBounds.Machine.BinaryDescriptorDivMod

@@ -93,9 +93,6 @@ theorem synUF_grid (A : ℕ) {z : Recs r} (hz : GridR p z) : ∀ j, GridR p (syn
   | 0 => hz
   | _ + 1 => gridR_rdR p _
 
-theorem oppRoundsC_supLe' (k : ℕ) {z : Recs r} (hz : SupLe es.sum z 1) :
-    SupLe es.sum (oppRoundsC p es k z) 1 := oppRoundsC_supLe p es k hz
-
 end Seqs
 
 /-! ### The round wires during the loop -/
@@ -543,11 +540,6 @@ synTwCost` plus `O(h)` loop bookkeeping. Against the transform part
   rounds.
 The factor `grLogLog (r p)` of `totConv` is the ring product of the convolution stage; the
 transforms have no part in it. -/
-
-/-- The layout addresses stay below `cvM a` (the hypothesis `hπ` of `cvSynth_runs`). -/
-theorem synPi_cvM {d : ℕ} (a : Fin d → ℕ) (ℓ K : ℕ) :
-    ∀ n < cvM a, synPi (layPerm (List.ofFn a) ℓ K) n < cvM a :=
-  fun n _ => synPi_lt _ n
 
 section Fixed
 

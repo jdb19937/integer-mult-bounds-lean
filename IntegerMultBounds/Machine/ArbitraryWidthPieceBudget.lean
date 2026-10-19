@@ -59,11 +59,5 @@ theorem sum_bound (V e k : ℕ) (hk : 125000^k ≤ e) :
       unfold constant C
       ring
 
-/-- Canonical integer-logarithm partition, with no chosen depth parameter. -/
-theorem canonical_bound (V e : ℕ) (he : e ≠ 0) :
-    ((depths 125000 e (Nat.log 125000 e)).map (fun j => (rootBudget j V : ℝ))).sum ≤
-      constant*(V : ℝ)*(e : ℝ)^Shared50Parameters.tau :=
-  sum_bound V e _ (Nat.pow_log_le_self _ he)
-
 end
 end IntegerMultBounds.Machine.ArbitraryWidthPieceBudget

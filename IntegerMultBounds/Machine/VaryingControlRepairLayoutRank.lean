@@ -115,18 +115,4 @@ theorem before_source_value (offset width : ℕ) (cs : List Bool)
 def afterSource (j offset width : ℕ) :=
   Gather.field (BinaryAddressTableData.row after ((j%targetSuffix s after)/(2^(s.H+s.B)*s.payload))) offset width
 
-theorem after_source_word (offset width : ℕ) (cs : List Bool)
-    (hc : Counter.value cs=(index s w m before after rows hw hactive x).val) :
-    afterSource s after (Counter.value cs) offset width=
-      Gather.field (BinaryAddressTableData.row after x.activeAfter.val) offset width := by
-  unfold afterSource
-  rw [hc,after_from_rank]
-
-theorem after_source_value (offset width : ℕ) (cs : List Bool)
-    (hc : Counter.value cs=(index s w m before after rows hw hactive x).val) :
-    Counter.value (afterSource s after (Counter.value cs) offset width)=
-      x.activeAfter.val/2^offset%2^width := by
-  rw [after_source_word s w m before after rows hw hactive x offset width cs hc]
-  rw [CountedRankSplitData.value_middle,BinaryAddressTableData.row_rank after x.activeAfter.val x.activeAfter.isLt]
-
 end IntegerMultBounds.Machine.VaryingControlRepairLayoutRank

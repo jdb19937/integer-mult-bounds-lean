@@ -195,29 +195,4 @@ theorem sub_hoare (xs ys : List Bool) (hlen : xs.length = ys.length)
   · simpa [bitValue, BinaryAdd.bitValue] using digits_value false xs ys hlen
   · simp [hlen]
 
-/-- Globally blank-tail output and both complete source words preserved.
-Underflow is certified by the final control-state borrow. -/
-theorem sub_to_blank (xs ys : List Bool) (hlen : xs.length = ys.length) :
-    let diff := digits false (xs.zip ys)
-    let borrow := overflow false (xs.zip ys)
-    Counter.value xs + 2 ^ xs.length * bitValue borrow = Counter.value ys + Counter.value diff ∧
-    diff.length = xs.length ∧
-    run (program a) xs.length (cfg (wordTape (xs.map bitSymbol)) (wordTape (ys.map bitSymbol))
-      (fun _ => blank) 0 0 0 0) =
-      some (cfg (wordTape (xs.map bitSymbol)) (wordTape (ys.map bitSymbol)) (wordTape (diff.map bitSymbol))
-        xs.length ys.length xs.length (borrowState borrow)) ∧
-    step (program a) (cfg (wordTape (xs.map bitSymbol)) (wordTape (ys.map bitSymbol)) (wordTape (diff.map bitSymbol))
-      xs.length ys.length xs.length (borrowState borrow)) = none := by
-  have hw (bits : List Bool) : putWord (fun _ => (blank : Fin (a + 4))) 0 (bits.map bitSymbol) =
-      wordTape (bits.map bitSymbol) := by
-    funext j
-    simpa using putWord_blank 0 j (bits.map bitSymbol)
-  obtain ⟨hr, hh⟩ := sub_exact false xs ys hlen (fun _ => (blank : Fin (a + 4)))
-    (fun _ => blank) (fun _ => blank) 0 0 0 rfl rfl
-  refine ⟨?_, ?_, ?_, ?_⟩
-  · simpa [bitValue, BinaryAdd.bitValue] using digits_value false xs ys hlen
-  · simp [hlen]
-  · simpa only [hw, zero_add, borrowState, Bool.false_eq_true, ↓reduceIte] using hr
-  · simpa only [hw, zero_add] using hh
-
 end IntegerMultBounds.Machine.BinarySub

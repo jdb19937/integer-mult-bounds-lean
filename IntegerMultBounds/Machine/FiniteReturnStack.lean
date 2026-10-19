@@ -218,16 +218,6 @@ theorem halt_code_injective : Function.Injective (fun code : Code k => encode k 
   have hh := (encode k).injective h
   exact congrArg Prod.snd (Sum.inr.inj hh)
 
-/-- Older frames and every cell beyond the newly written frame are unchanged. -/
-theorem push_frame (code : Code k) (f : ℤ → Fin (a+4)) (p z : ℤ)
-    (hz : z < p ∨ p+k ≤ z) : wordPart f p code k le_rfl z = f z := by
-  have hn : ¬ (p ≤ z ∧ z < p+k) := by omega
-  simp [wordPart,hn]
-
-/-- Explicit finite control size, independent of the stack's depth or top. -/
-theorem control_card (k : ℕ) : Fintype.card (Control k) = 1+(k+1)*2^k := by
-  simp [Control,Code]
-
 def codeEquiv (k : ℕ) : Code k ≃ Fin (2^k) :=
   (Fintype.equivFin (Code k)).trans (finCongr (by simp [Code]))
 
@@ -244,15 +234,6 @@ theorem address_injective {N : ℕ} (hN : N ≤ 2^k) : Function.Injective (addre
 theorem return_state_injective {N : ℕ} (hN : N ≤ 2^k) :
     Function.Injective (fun pc : Fin N => encode k (.inr (0,address hN pc))) :=
   halt_code_injective.comp (address_injective hN)
-
-/-- Physical push then pop restores the exact complete stack, including all
-older frames and the next-free top, with depth-independent charged joins. -/
-theorem roundtrip_hoare (code : Code k) (f : ℤ → Fin (a+4)) (p : ℤ)
-    (hf : ∀ j < k, f (p+j) = blank) :
-    HoareTime (seq (push a code) (pop a k)) (fun v => v = bank f p)
-      (fun v => v = bank f p) (2*k+2) := by
-  exact ((push_hoare code f p).seq (pop_hoare code f p hf)).consequence
-    (fun _ h => h) (fun _ h => h) (by omega)
 
 end
 end IntegerMultBounds.Machine.FiniteReturnStack

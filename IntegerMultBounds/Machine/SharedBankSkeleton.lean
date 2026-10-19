@@ -71,22 +71,5 @@ theorem fixed_program (s : SharedBankStage.Stage X k a common) (sk : Skeleton k 
   rintro v rfl
   exact ⟨rfl,s.output_payload x⟩
 
-/-- A stronger transport for initialized stages: every private input tape is
-blank at head zero; only the permanent common bank is supplied. -/
-theorem fixed_program_blank (s : SharedBankStage.Stage X k a common) (sk : Skeleton k a)
-    (h : ofStage s = sk) (hb : s.metadata = SharedBank.empty s.tapes a) :
-    ∃ (input output : X → Tapes sk.tapes a),
-      (∀ x, SharedBank.payload (input x) sk.slots = common x) ∧
-      (∀ x, SharedBank.strip (input x) sk.slots = SharedBank.empty sk.tapes a) ∧
-      (∀ x, HoareTime sk.program (fun v => v = input x)
-        (fun v => v = output x ∧ SharedBank.payload v sk.slots = common (s.transform x)) s.cost) := by
-  subst sk
-  refine ⟨s.input,s.output,s.input_payload,?_,?_⟩
-  · intro x; exact (s.strip_input x).trans hb
-  · intro x
-    apply (s.realizes x).consequence (fun _ h => h) ?_ le_rfl
-    rintro v rfl
-    exact ⟨rfl,s.output_payload x⟩
-
 end
 end IntegerMultBounds.Machine.SharedBankSkeleton

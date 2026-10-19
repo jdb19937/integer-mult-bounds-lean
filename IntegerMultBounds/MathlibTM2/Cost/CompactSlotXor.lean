@@ -33,10 +33,6 @@ def compactSlotXorExponent (T D : ℕ) : ℕ := Classical.choose (compactSlotXor
 /-- Public power-of-two coefficient for the complete encoded compact stage. -/
 def compactSlotXorConst (T D : ℕ) : ℝ := 2 ^ compactSlotXorExponent T D
 
-theorem compactSlotXorConst_pos (T D : ℕ) : 0 < compactSlotXorConst T D := by
-  unfold compactSlotXorConst
-  positivity
-
 /-- The exact node budget, including codecs, is uniform at the local compact width.
 The stream length is at most the literal native bit-array volume. -/
 theorem compactSlotXorCost_le {s : Shape} (T K D : ℕ) (d : Inputs s)

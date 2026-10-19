@@ -49,8 +49,6 @@ def program := seq (oneProgram (a := a)) productProgram
 def cleanupProgram : Program 7 8 a := seq (BinaryDescriptorCleanupList.oneProgram 2)
   (BinaryDescriptorCleanupList.oneProgram 3)
 
-theorem one_value : Counter.value oneBits = 1 := RecursiveChildQuotientsConstant.bits_value _
-theorem one_canonical : GrowingCounterData.Canonical oneBits := RecursiveChildQuotientsConstant.bits_canonical _
 theorem one_length : oneBits.length = 1 := rfl
 theorem product_value (P S : ℕ) : Counter.value (productBits P S) = P*S :=
   BoundedProductDescriptor.bits_value _ _

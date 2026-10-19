@@ -52,13 +52,6 @@ theorem crtDirectTarget_zero {r : CrtDirectReg → Fin T} (p : Pr F T Q A U)
     subst R
     exact ⟨v, 1, rfl, le_rfl, Exec.act .done (mk v S)⟩
 
-theorem crtDirectTarget_nonzero {r : CrtDirectReg → Fin T} {p : Pr F T Q A U}
-    {R R' : Regs T A} {b : ℕ} (hi : R (r .index) ≠ []) (hp : crtRuns body p R R' b) :
-    crtRuns body (crtDirectTarget r p) R R' (b + 2) := by
-  apply crtIfR_runs
-  · intro _; exact hp
-  · intro h; exact False.elim (hi h)
-
 /-- Pop the target triple and remove its width from the remaining side. -/
 def crtDirectLoad (r : CrtDirectReg → Fin T) : Pr F T Q A U :=
   .seq (crtPopEnt (r .wT) (r .aI))
@@ -230,39 +223,6 @@ theorem crtDirectForwardStep_runs {d : ℕ} (a s m : Fin d → ℕ)
   rw [hresult] at h
   exact crtRuns_mono h (by omega)
 
-
-/-- Concrete descending traversal; only the data operation at nonzero targets
-is abstract. The runtime width stream controls termination. -/
-theorem crtDirectForwardLoop_runs {d : ℕ} (a s m : Fin d → ℕ)
-    {r : CrtDirectReg → Fin T} (hr : Function.Injective r) (p : Pr F T Q A U)
-    (R : Regs T A) (hz : ∀ q ∈ [CrtDirectReg.aI, .sI, .muI, .tmp], R (r q) = [])
-    (data : ℕ → List (Fin (A + 4))) (b am sm mm : ℕ) (hb : 1 ≤ b)
-    (ha : ∀ j, a j ≤ am) (hs : ∀ j, s j ≤ sm) (hm : ∀ j, m j ≤ mm)
-    (hzero : data 0 = data 1)
-    (hbody : ∀ i (hi : i < d), i ≠ 0 →
-      crtRuns body p (crtDirectCallState a s m r R (data (i + 1)) i hi)
-        (Function.update (crtDirectCallState a s m r R (data (i + 1)) i hi) (r .str) (data i)) b) :
-    crtRuns body (crtWhile (r .wT) (crtDirectStep true r p))
-      (crtDirectState a s m r R (data d) d) (crtDirectState a s m r R (data 0) 0)
-      (d * (b + 12 * am + 4 * sm + 4 * mm + 37) + 2) := by
-  let Ψ := fun n => crtDirectState a s m r R (data (d - n)) (d - n)
-  have hstep : ∀ n < d, Ψ n (r .wT) ≠ [] ∧
-      crtRuns body (crtDirectStep true r p) (Ψ n) (Ψ (n + 1))
-        (b + 12 * am + 4 * sm + 4 * mm + 35) := by
-    intro n hn
-    let i := d - (n + 1)
-    have hi : i < d := by dsimp [i]; omega
-    have he : d - n = i + 1 := by dsimp [i]; omega
-    refine ⟨?_, ?_⟩
-    · simp [Ψ, crtDirectState, hr.eq_iff, he, crtRevAx_succ hi, crtEnts_cons, crtEnt]
-    · have h := crtDirectForwardStep_runs a s m hr p R hz (data (i + 1)) (data i) i hi b hb
-        (by intro h; simpa [h] using hzero) (hbody i hi)
-      apply crtRuns_mono (by simpa only [Ψ, he] using h)
-      have := ha ⟨i, hi⟩; have := hs ⟨i, hi⟩; have := hm ⟨i, hi⟩
-      omega
-  have h := crtWhile_runs (body := body) hstep
-    (by simp [Ψ, crtDirectState, hr.eq_iff, crtRevAx, crtEnts])
-  simpa [Ψ, Nat.add_assoc] using h
 
 /-- Restore saved ascending entries to the external descending streams. -/
 def crtDirectRestore (r : CrtDirectReg → Fin T) : Pr F T Q A U :=

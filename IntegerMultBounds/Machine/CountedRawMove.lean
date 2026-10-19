@@ -68,14 +68,4 @@ theorem move_hoare (source dest : ℤ → Fin 4) (p q : ℤ)
     Nat.cast_zero,add_zero,List.take_length,Finset.sum_const,Finset.card_range,smul_eq_mul,mul_one,
     show xs.length+6*xs.length=7*xs.length by omega] using hh
 
-theorem move_linear (source dest : ℤ → Fin 4) (p q : ℤ)
-    (xs : List (Fin 4)) (bs : List Bool) (hc : Counter.value bs = xs.length)
-    (hcanon : GrowingCounterData.Canonical bs) :
-    HoareTime program (fun v => v = bank (putWord source p xs) dest p q bs)
-      (fun v => v = bank (filled (putWord source p xs) p xs.length blank) (putWord dest q xs)
-        (p+xs.length) (q+xs.length) bs) (14*xs.length+23) := by
-  have hw := GrowingCounterData.canonical_width bs hcanon
-  have hl := Nat.log2_le_self (Counter.value bs)
-  exact (move_hoare source dest p q xs bs hc).consequence (fun _ h => h) (fun _ h => h) (by omega)
-
 end IntegerMultBounds.Machine.CountedRawMove

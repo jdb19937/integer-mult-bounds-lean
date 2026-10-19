@@ -47,19 +47,5 @@ theorem uniform_bound (D : ℕ) : ∃ C : ℝ, 0<C ∧ ∀ (s : Shape) (p : Para
   push_cast at hh ⊢
   exact hh
 
-theorem certified_runs (D : ℕ) : ∃ C : ℝ, 0<C ∧ ∀ (s : Shape) (p : Parameters s) (offset rows : ℕ)
-    (_hfit : offset+p.f*p.q≤p.after) (_hn : 0<p.n) (_hb : 2≤p.b) (d : Inputs s p offset rows)
-    (x : FullArray s rows) (_hq3 : p.b+3≤p.q)
-    (_hR : (ActiveRepairLayoutRecordsAssemblyOriginalLateAfter.repair d).geom.addressBits+1≤s.payload)
-    (_hdensity : VaryingControlRepairDensity.lateDensity p.q p.b p.n*
-      ((ActiveRepairLayoutRecordsAssemblyOriginalLateAfter.repair d).geom.addressBits+1)≤D),
-    ∃ B : ℕ, HoareTime ActiveRepairLayoutRecordsPayloadLateRun.program (fun v => v=ActiveRepairLayoutRecordsPayloadLateRun.input d x) (fun v => v=ActiveRepairLayoutRecordsPayloadLateRun.output d x) B ∧
-      (B:ℝ)≤C*(rows*s.recordWidth : ℕ)*
-        ((max 1 (p.n*p.b) : ℕ) : ℝ)^IntegerMultBounds.Parameters.tau := by
-  obtain ⟨C,hC,hbound⟩ := uniform_bound D
-  refine ⟨C,hC,?_⟩
-  intro s p offset rows _hfit _hn _hb d x _hq3 _hR _hdensity
-  exact ⟨cost _hfit _hn _hb d D,runs _hfit _hn _hb d x _hq3 _hR D _hdensity,hbound s p offset rows _hfit _hn _hb d⟩
-
 end
 end IntegerMultBounds.Machine.ActiveRepairLayoutRecordsPayloadLateBudget

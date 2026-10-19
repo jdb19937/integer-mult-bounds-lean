@@ -85,16 +85,5 @@ theorem compactSynOppCore_runs (park : List (Fin (prime+Ka+4))) (hPk : Pk park)
   have he := hs.seq hl
   simpa only [compactSynOppCore,R₁,Function.update_idem,hout,Bool.false_eq_true,ite_false] using he
 
-theorem compactSynOppCore_spec :
-    SynOppSpec (compactMainBody legacy ds) (compactSynOppCore ds layQ) (compactMnRg (.src (.v .io)))
-      (compactSynPreReady M Pk v₀) W p l a (synPi (layPerm (List.ofFn a) ℓ (Mult.Sizes.K M)))
-      (compactSynLoopOCost (Ka := Ka) ds M (List.ofFn a) ℓ W l (nRounds a)
-        (synStashCostW v₀ synXS+6*nRounds a+6)+(1+cL)) := by
-  intro V vv S hPre hdisk hio
-  obtain ⟨hleft,hr,park,hPk,hR⟩ := hPre
-  rw [hio] at hR
-  exact compactSynOppCore_runs legacy ds hbody a H hAl hLoop v₀ hv₀ hvh hvt hvc hcb Pk layQ cL hLay
-    park hPk V hdisk S.R hR hr vv S hleft rfl
-
 end
 end IntegerMultBounds.MathlibTM2.Fast.Main

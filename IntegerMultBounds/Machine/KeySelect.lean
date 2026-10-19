@@ -326,20 +326,4 @@ theorem stream_hoare (k : ℕ) (records : List (List Bool))
   obtain ⟨hr, hh⟩ := stream_exact k records hvalid f out p q hend
   exact ⟨_, _, le_rfl, hr, hh, rfl⟩
 
-/-- With a blank output background, the result meets the global blank-tail
-word convention, and the unary selector is restored for reuse. -/
-theorem stream_to_blank (k : ℕ) (records : List (List Bool))
-    (hvalid : ∀ bits ∈ records, k < bits.length) :
-    run program ((encode records).length + records.length * (2 * k + 2))
-      (cfg (wordTape (encode records)) (selector k) (fun _ => blank) 0 0 0 0) =
-      some (cfg (wordTape (encode records)) (selector k) (wordTape (flagged k records))
-        (encode records).length 0 (flagged k records).length 0) ∧
-    step program (cfg (wordTape (encode records)) (selector k) (wordTape (flagged k records))
-      (encode records).length 0 (flagged k records).length 0) = none := by
-  have hw (xs : List (Fin 5)) : putWord (fun _ => blank) 0 xs = wordTape xs := by
-    funext j
-    simpa using putWord_blank 0 j xs
-  simpa only [hw, zero_add] using
-    stream_exact k records hvalid (fun _ => blank) (fun _ => blank) 0 0 rfl
-
 end IntegerMultBounds.Machine.KeySelect

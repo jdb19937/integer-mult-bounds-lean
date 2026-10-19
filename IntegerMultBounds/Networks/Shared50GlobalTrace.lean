@@ -66,11 +66,6 @@ def input (j : Fin 3) : Profile :=
 def output (j : Fin 3) : Profile :=
   Sum.elim (xOutput j) (Sum.elim (yOutput j) (fun s => scratchOutput j s.1))
 
-/-- The join uses precisely the physical key used by the actual scalar list. -/
-theorem thirdKey_reuses (q : Triple × Triple) :
-    Shared50GlobalCircuit.scratchKey 2 (thirdKey q) = Shared50GlobalCircuit.scratchKey 0 q :=
-  Shared50GlobalCircuit.scratchKey_reuse q.1 q.2
-
 theorem reused_boundary (q : Triple × Triple) : full 0 q ≤ common 2 (thirdKey q) := by
   change GlobalLabels.firstLabel vector q firstGeometry.full ≤
     GlobalLabels.thirdLabel (thirdKey q) (thirdGeometry (thirdKey q)).common

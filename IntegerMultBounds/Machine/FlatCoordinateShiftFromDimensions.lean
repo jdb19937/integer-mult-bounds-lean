@@ -84,10 +84,6 @@ theorem stage_extra {n : ℕ} (dim : Tapes 9 prime) (pre : Tapes n prime) (suf :
   unfold Placement.extra stagePlacement Tapes.append
   congr 1 <;> funext i <;> simp
 
-theorem stage_combine {n : ℕ} (dim : Tapes 9 prime) (pre : Tapes n prime) (suf : Tapes 17 prime) :
-    Placement.combine (stagePlacement n) (pre.append suf) dim = (dim.append pre).append suf := by
-  simpa only [stage_active,stage_extra] using Placement.view (stagePlacement n) ((dim.append pre).append suf)
-
 def primitive (r : ℚ) (hr : Shared50AffineCoefficients.Occurs r) (t k : Fin d) (hk : k < t)
     (b W : ℕ) (hW : 0 < W) := FlatCoordinateSchedule.instantiate (.shift t k hk r hr) b W hW
 

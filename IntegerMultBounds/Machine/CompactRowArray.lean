@@ -38,14 +38,6 @@ def roleArray (x : Fin ((rows*c)*l) → Fin (a+4)) (j : Fin c) :
   let ik := finProdFinEquiv.symm z
   x (pack (pack ik.1 j) ik.2)
 
-/-- Literal suffix coordinates stay with their complete row. -/
-theorem role_entry (x : Fin ((rows*c)*l) → Fin (a+4))
-    (j : Fin c) (i : Fin rows) (k : Fin l) :
-    roleArray x j (pack i k) =
-      x (pack ((IntegerMultBounds.Compact.Layout.splitRows rows c (Fin l)).symm
-        (j,(i,k))).1 k) := by
-  simp [roleArray,pack,IntegerMultBounds.Compact.Layout.splitRows]
-
 theorem native_roleArray (hc : 0 < c) (x : Fin ((rows*c)*l) → Fin (a+4)) (j : Fin c)
     (z : Fin (volume a (role (descriptor (rows*c) l) c))) :
     RecursiveInterchangeRows.roleArray a c (descriptor (rows*c) l)
@@ -147,20 +139,6 @@ theorem budget_linear (hc : 0 < c) (hr : 0 < rows) (hl : 0 < l) :
   have hb := RecursiveRowsClean.bound_linear c ((rows*c)*l) hV
   unfold constant
   nlinarith
-
-/-- Including descriptor construction and erasure, the complete split costs
-at most a role-count-dependent constant times the literal record volume. -/
-theorem splits_linear (ha : 2 ≤ a) (hc : 0 < c) (hr : 0 < rows) (hl : 0 < l)
-    (hs : Fin 3 → List Bool)
-    (hv : ∀ i, Counter.value (hs i) = CompactRowHeaders.originalValues (rows*c) c l i)
-    (hcan : ∀ i, GrowingCounterData.Canonical (hs i))
-    (x : Fin ((rows*c)*l) → Fin (a+4)) :
-    HoareTime (CompactRowSplit.program (c := c) ha)
-      (fun w => w = CompactRowSplit.bank (inputPayload x) hs)
-      (fun w => w = CompactRowSplit.bank (outputPayload x) hs)
-      (constant c*((rows*c)*l)) :=
-  (splits ha hc hr hl hs hv hcan x).consequence (fun _ h => h) (fun _ h => h)
-    (budget_linear hc hr hl)
 
 
 end

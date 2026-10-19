@@ -91,9 +91,4 @@ theorem permutation50_neighbor (T : Triple 50) : BitNeighbor T (permutation50 T)
 theorem permutation50_intersection (T : Triple 50) : (T.val ∩ (permutation50 T).val).card = 1 :=
   permutation50_neighbor T
 
-/-- The inverse also pairs each triple with an intersection-one neighbor. -/
-theorem inverse50_neighbor (T : Triple 50) : BitNeighbor T (permutation50.symm T) := by
-  have hh := permutation50_neighbor (permutation50.symm T)
-  simpa only [Equiv.apply_symm_apply, BitNeighbor, Finset.inter_comm] using hh
-
 end IntegerMultBounds.Networks.TripleNeighborPermutation

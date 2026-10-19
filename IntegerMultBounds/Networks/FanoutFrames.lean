@@ -75,27 +75,6 @@ theorem framed_run (layout : Layout ι) (current : ι → Frame (ZMod 2) E)
   apply moduleRun_common _ _ common
   intro gate hg i hi
   simp [afterEdges_apply, touched_subset layout gate hg i hi]
-/-- The profile left by the physical alignment is exactly the image of the
-explicit label trace, so its rank-accounting labels describe executed edges. -/
-theorem afterEdges_profile {L : Type*} (frameOf : L → Frame (ZMod 2) E)
-    (current : ι → L) (common : L) (wires : List ι) :
-    afterEdges (fun i => frameOf (current i)) (fun _ => frameOf common) wires =
-      fun i => frameOf (RankTrace.finish current (wires.map fun i => (i,common)) i) := by
-  funext i
-  rw [afterEdges_apply, RankTrace.finish_align]
-  split_ifs <;> rfl
-
-/-- The exact framed layout execution with the final profile expressed using
-its concrete, declared-incidence label update trace. -/
-theorem framed_run_labels {L : Type*} (layout : Layout ι) (frameOf : L → Frame (ZMod 2) E)
-    (current : ι → L) (common : L) (x : ι → E) :
-    FramedCircuit.run (framed layout (fun i => frameOf (current i)) (frameOf common))
-      (encode (fun i => frameOf (current i)) x) =
-      encode (fun i => frameOf (RankTrace.finish current
-        ((layout.inputs ++ layout.outputs).map fun i => (i,common)) i))
-        (moduleRun layout.program x) := by
-  rw [framed_run, afterEdges_profile]
-
 end FanoutExecution
 
 section Trace
@@ -132,23 +111,6 @@ of the concrete framed layout above, including duplicate pivot incidences. -/
 def updates (layout : Layout ι) (triples : α → Finset (Fin h)) (support : Finset α) :
     List (ι × Submodule ℚ (Fin h → ℚ)) :=
   (layout.inputs ++ layout.outputs).map fun i => (i, label triples support)
-
-/-- Every declared input/output role ends at the node label, including the
-pivot of an identity node with no scalar instructions. -/
-theorem finish_incidence (layout : Layout ι) (triples : α → Finset (Fin h))
-    (current : ι → Submodule ℚ (Fin h → ℚ)) (support : Finset α) (i : ι)
-    (hi : i ∈ layout.inputs ++ layout.outputs) :
-    RankTrace.finish current (updates layout triples support) i = label triples support := by
-  rw [updates, RankTrace.finish_align]
-  simp [hi]
-
-/-- Labels on all nonincident physical roles are preserved exactly. -/
-theorem finish_outside (layout : Layout ι) (triples : α → Finset (Fin h))
-    (current : ι → Submodule ℚ (Fin h → ℚ)) (support : Finset α) (i : ι)
-    (hi : i ∉ layout.inputs ++ layout.outputs) :
-    RankTrace.finish current (updates layout triples support) i = current i := by
-  rw [updates, RankTrace.finish_align]
-  simp [hi]
 
 theorem label_mono (triples : α → Finset (Fin h)) {support larger : Finset α} (hs : support ⊆ larger) :
     label triples support ≤ label triples larger :=

@@ -33,7 +33,6 @@ def earlyProgramFor (a b : ActivePrefixDirtyControlConjugationData.Kind) :=
   four selectedProgram (tProgram a) correctionProgram (tProgram b)
 def programFor (a b c d : ActivePrefixDirtyControlConjugationData.Kind) :=
   four (earlyProgramFor a b) (uProgram c) (earlyProgramFor a b) (uProgram d)
-def earlyProgram := earlyProgramFor .tPure .tNegative
 def program := programFor .tPure .tNegative .uPure .uNegative
 
 def earlyCost (s : Shape) (g : Geometry s) := 2*targetCost s g.rows+pureCost s g+negativeCost s g+3
@@ -63,10 +62,6 @@ theorem runs_for (a b c e : ActivePrefixDirtyControlConjugationData.Kind) (d : I
     (early_runs_for a b d (uResult c g (earlyFor a b g x)))
     (u_runs e d (earlyFor a b g (uResult c g (earlyFor a b g x))))
   exact h.consequence (fun _ h => h) (fun _ h => h) (by unfold costFor; omega)
-
-theorem early_runs (d : Inputs s g) (x : FullArray s g.rows) :
-    HoareTime earlyProgram (fun v => v=bank (caller d x))
-      (fun v => v=bank (caller d (early g x))) (earlyCost s g) := early_runs_for .tPure .tNegative d x
 
 theorem runs (d : Inputs s g) (x : FullArray s g.rows) :
     HoareTime program (fun v => v=bank (caller d x))

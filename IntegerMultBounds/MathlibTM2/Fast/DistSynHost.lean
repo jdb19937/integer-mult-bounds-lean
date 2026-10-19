@@ -74,17 +74,6 @@ theorem dsyRuns.of_exec {p : Pr P T Q A U} (R : Regs T A) (F : Regs T A → Regs
   subst hS
   exact ⟨v', _, _, hu, le_rfl, he, rfl, rfl, rfl, rfl⟩
 
-/-- A contract from a bounded execution lemma. -/
-theorem dsyRuns.of_exec_le {p : Pr P T Q A U} (R : Regs T A) (F : Regs T A → Regs T A)
-    (c : Regs T A → ℕ)
-    (h : ∀ (v : HS T Q A U) (S : Stacks T A), S.R = R → ∃ (v' : HS T Q A U) (m : ℕ),
-      v'.user = v.user ∧ m ≤ c S.R ∧ Exec body p (mk v S) m (mk v' { S with R := F S.R })) :
-    dsyRuns body p R (F R) (c R) := by
-  intro v S hS
-  obtain ⟨v', m, hu, hm, he⟩ := h v S hS
-  subst hS
-  exact ⟨v', _, m, hu, hm, he, rfl, rfl, rfl, rfl⟩
-
 /-! ### Unary primitives -/
 
 theorem dsyRuns_ucopy {a b t : Fin T} (hab : a ≠ b) (hat : a ≠ t) (hbt : b ≠ t) (R : Regs T A)

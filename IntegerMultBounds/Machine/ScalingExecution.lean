@@ -286,23 +286,9 @@ theorem output_tape {c : ℕ} (hc : 0 < c) (Q B : ℕ) (source : ℤ → Fin 4) 
       (destinationSlot c) = putWord dest q (ScalingMerge.outputPrefix hc Q Q payload) := by
   simp [state,join,destinationSlot,Tapes.append,mergeControl,CountedCopyReuse.bank]
 
-/-- In forward coordinates, the block written at c*y modulo Q is the exact
-original source block y. Internal symbol order is never changed. -/
-theorem block_at_destination {Q c y : ℕ} (hQ : 0 < Q) (hc : 0 < c)
-    (hcop : c.Coprime Q) (hy : y < Q) (payload : ℕ → List (Fin 4)) :
-    ((List.range Q).map
-      (fun z => payload (ScalingPieces.restore Q c z (ScalingControl.select hc Q z).val)))[ScalingPieces.output Q c y]? = some (payload y) := by
-  rw [List.getElem?_map,List.getElem?_range (ScalingPieces.output_lt hQ),Option.map_some,
-    ScalingMergeData.restored_output hQ hc hcop hy]
-
 /-- Neither tape count nor state count depends on Q, B or payload data. -/
 theorem tapeCount_eq (c : ℕ) : TapeCount c = 10+4*c := by
   dsimp [TapeCount,SplitTapes,AuxTapes]
-  omega
-
-theorem stateCount_eq (c : ℕ) :
-    (ScalingSplit.states c+ScalingSplit.states c)+(7+(c*16+1+2+5)+4) = 48*c+21 := by
-  rw [ScalingSplit.states_eq]
   omega
 
 end IntegerMultBounds.Machine.ScalingExecution

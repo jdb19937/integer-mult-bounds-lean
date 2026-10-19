@@ -59,11 +59,6 @@ theorem twShiftZ_toComplex (p e : ℕ) (Z : Fin r → GaussianInt) (i : Fin r) :
   simp only [map_mul, map_pow, map_neg, map_one]
   ring
 
-theorem twShiftZ_toComplex_fun (p e : ℕ) (Z : Fin r → GaussianInt) :
-    (fun i => GaussianInt.toComplex (twShiftZ e Z i) / 2 ^ p) =
-      shiftNegZ e (fun c => GaussianInt.toComplex (Z c) / 2 ^ p) :=
-  funext (twShiftZ_toComplex p e Z)
-
 lemma tw_neg_one_pow (k : ℕ) : ((-1 : GaussianInt) ^ k) = if k % 2 = 1 then -1 else 1 := by
   rcases Nat.mod_two_eq_zero_or_one k with h | h
   · rw [ite_eq_right (by omega)]
@@ -108,20 +103,6 @@ lemma twShiftZ_ge (e : ℕ) (Z : Fin r → GaussianInt) (i : Fin r) (hi : e % r 
       Nat.add_mul_div_left _ _ hr, Nat.div_eq_of_lt i.isLt, Nat.zero_add]
   rw [twShiftZ, hq, tw_neg_one_pow]
   exact congrArg _ (congrArg Z (Fin.ext hsrc))
-
-/-- `twShiftZ` has period `2r` in the exponent. -/
-lemma twShiftZ_mod (e : ℕ) (Z : Fin r → GaussianInt) :
-    twShiftZ (e % (2 * r)) Z = twShiftZ e Z := by
-  have hr := NeZero.pos r
-  funext i
-  have h1 : e % (2 * r) % r = e % r := Nat.mod_mod_of_dvd e (dvd_mul_left r 2)
-  have h2 : e % (2 * r) / r % 2 = e / r % 2 := by
-    rw [Nat.mul_comm 2 r, Nat.mod_mul_right_div_self, Nat.mod_mod]
-  by_cases hi : i.val < e % r
-  · rw [twShiftZ_lt _ _ _ (by rw [h1]; exact hi), twShiftZ_lt _ _ _ hi, h2]
-    simp only [h1]
-  · rw [twShiftZ_ge _ _ _ (by rw [h1]; omega), twShiftZ_ge _ _ _ (by omega), h2]
-    simp only [h1]
 
 end Shift
 

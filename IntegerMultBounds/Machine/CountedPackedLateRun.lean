@@ -210,49 +210,5 @@ theorem runs
   simp only [Z0,Z1,CountedPackedParityRun.parities_length]
   omega
 
-/-- The actual tape assembly realizes the unrestricted packedLate value map. -/
-theorem runs_value
-    (hv : ∀ i, Counter.value (hs i) = CountedPackedShapeHeaders.originalValues q b X.length i)
-    (hc : ∀ i, GrowingCounterData.Canonical (hs i))
-    (hV : V.length=X.length*q) (hW : W.length=X.length*b) (hU : U.length=X.length*b)
-    (hf : f (pv-1) = blank) (hf' : f (pv+V.length) = blank)
-    (hg : g (pw-1) = blank) (hg' : g (pw+W.length) = blank)
-    (hh : h (pu-1) = blank) (hh' : h (pu+U.length) = blank)
-    (hk : k (px-1) = blank) (hk' : k (px+X.length) = blank) :
-    HoareTime (program a) (fun v => v = bank V W U X [] f g h k pv pw pu px hs)
-      (fun v => v = bank (target q b hb hbq V W U X) (temp q b hb hbq V W U X)
-        (restored b hb U X) X [] f g h k pv pw pu px hs ∧
-        ((Counter.value (target q b hb hbq V W U X) : ℤ),
-          (Counter.value (temp q b hb hbq V W U X) : ℤ), (Counter.value (restored b hb U X) : ℤ)) =
-            Compact.packedLate ((2 : ℤ)^q) ((2 : ℤ)^b) (X.map Compact.PowerTwo.ctrl)
-              (Counter.value V) (Counter.value W) (Counter.value U))
-      (7000*((X.length+1)*(q+b+1))) := by
-  refine (runs q b hb hbq V W U X f g h k pv pw pu px hs hv hc hV hW hU
-    hf hf' hg hg' hh hh' hk hk').consequence (fun _ h => h) ?_ (le_refl _)
-  intro v hv
-  exact ⟨hv,CountedPackedLateData.value_spec q b hb hbq V W U X hV hW hU⟩
-
-include hb hbq in
-/-- On the guarded set only the selected target low bits change; both dirty
-words, the control word, the original headers, and every private tape are restored. -/
-theorem runs_guarded
-    (hv : ∀ i, Counter.value (hs i) = CountedPackedShapeHeaders.originalValues q b X.length i)
-    (hc : ∀ i, GrowingCounterData.Canonical (hs i))
-    (hV : V.length=X.length*q) (hW : W.length=X.length*b) (hU : U.length=X.length*b)
-    (hf : f (pv-1) = blank) (hf' : f (pv+V.length) = blank)
-    (hg : g (pw-1) = blank) (hg' : g (pw+W.length) = blank)
-    (hh : h (pu-1) = blank) (hh' : h (pu+U.length) = blank)
-    (hk : k (px-1) = blank) (hk' : k (px+X.length) = blank)
-    (hgood : ∀ d ∈ CountedPackedLateData.states q b V W U X,
-      d.Good ((2 : ℤ)^b) ((2 : ℤ)^(q-1))) :
-    HoareTime (program a) (fun v => v = bank V W U X [] f g h k pv pw pu px hs)
-      (fun v => v = bank (List.zipWith xor V (Compact.PowerTwo.toggleMask q X))
-        W U X [] f g h k pv pw pu px hs) (7000*((X.length+1)*(q+b+1))) := by
-  have hr := runs q b hb hbq V W U X f g h k pv pw pu px hs hv hc hV hW hU
-    hf hf' hg hg' hh hh' hk hk'
-  obtain ⟨ht,hw,hu⟩ := CountedPackedLateData.guarded_words q b hb hbq V W U X hV hW hU hgood
-  rw [ht,hw,hu] at hr
-  exact hr
-
 end
 end IntegerMultBounds.Machine.CountedPackedLateRun

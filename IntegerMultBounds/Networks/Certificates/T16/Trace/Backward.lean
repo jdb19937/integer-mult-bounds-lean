@@ -77,8 +77,6 @@ theorem backward_checked : run backwardInitial backwardEvents = some backwardFin
     run_split _ _ 6144, eq_of_beq backward_part1, Option.bind_some,
     run_split _ _ 6144, eq_of_beq backward_part2, Option.bind_some, eq_of_beq backward_part3]
 
-theorem backward_valid : Valid backwardInitial backwardEvents := ⟨backwardFinal, backward_checked⟩
-
 theorem mem_centerDual {x : Event} {es : List Event} (h : x ∈ centerDual es) :
     (∃ e ∈ es, x = e.dual ∨ x = e.transpose) ∨ ∃ g, x = .scalar g := by
   unfold centerDual at h

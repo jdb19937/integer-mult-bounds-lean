@@ -89,12 +89,6 @@ theorem sources (q b n : ℕ) (V W C1 C2 C3 : List Bool) (bs ns qs : List Bool) 
     (output (a := a) q b n V W C1 C2 C3 bs ns qs).tape 0=word V ∧
     (output (a := a) q b n V W C1 C2 C3 bs ns qs).tape 1=word W := ⟨rfl,rfl,rfl,rfl⟩
 
-theorem private_clean (q b n : ℕ) (V W C1 C2 C3 : List Bool) (bs ns qs : List Bool)
-    (i : Fin 15) (hi : i=5 ∨ i=6 ∨ i=7 ∨ i=8 ∨ i=10 ∨ i=11) :
-    (output (a := a) q b n V W C1 C2 C3 bs ns qs).head i=0 ∧
-    (output (a := a) q b n V W C1 C2 C3 bs ns qs).tape i=fun _ => blank := by
-  rcases hi with rfl | rfl | rfl | rfl | rfl | rfl <;> exact ⟨rfl,rfl⟩
-
 theorem headers (q b n : ℕ) (V W C1 C2 C3 : List Bool) (bs ns qs : List Bool) :
     (output (a := a) q b n V W C1 C2 C3 bs ns qs).head 9=1 ∧
     (output (a := a) q b n V W C1 C2 C3 bs ns qs).tape 9=CountedLoopReuseAlphabet.binary bs ∧

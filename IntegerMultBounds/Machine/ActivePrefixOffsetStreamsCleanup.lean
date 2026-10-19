@@ -84,14 +84,6 @@ theorem runs (v : Tapes t a) (focus : Fin 4 → Fin t) (hf : Function.Injective 
   exact (((h0.seq h2).seq h1).seq h3).consequence (fun _ h => h) (fun _ h => h)
     (by simp only [List.length_map]; omega)
 
-theorem result_streams (v : Tapes t a) (focus : Fin 4 → Fin t) (hf : Function.Injective focus)
-    (out : List Bool) (hX : v.head (focus 1)=0) :
-    SharedBank.payload (result v focus out) focus=
-      (⟨![0,0,0,0],![fun _ => blank,fun _ => blank,fun _ => blank,word out]⟩ : Tapes 4 a) := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> fin_cases i
-  all_goals simp [result,erasedX,erasedZ,erasedT,WordBankCleanup.write,
-    setTape,hf.eq_iff,hX]
-
 theorem result_frame (v : Tapes t a) (focus : Fin 4 → Fin t) (out : List Bool)
     (i : Fin t) (hi : ∀ j, i≠focus j) :
     (result v focus out).head i=v.head i ∧ (result v focus out).tape i=v.tape i := by

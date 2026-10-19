@@ -54,31 +54,8 @@ theorem run_eq_mulVec (word : List (Op ι)) (x : ι → ZMod 2) :
     simp [matrix, Matrix.mulVec_mulVec]
 
 omit [Fintype ι] in
-theorem execute_involutive (op : Op ι) : Function.Involutive op.execute := by
-  intro x
-  funext i
-  by_cases hi : i = op.target
-  · subst i
-    simp [Op.execute, op.distinct.symm, add_assoc,
-      CharTwo.add_self_eq_zero]
-  · simp [Op.execute, Function.update_of_ne hi]
-
-omit [Fintype ι] in
 theorem run_append (u v : List (Op ι)) (x : ι → ZMod 2) :
     run (u ++ v) x = run v (run u x) := List.foldl_append
-
-omit [Fintype ι] in
-/-- Reversing the literal pair list computes the inverse without synthesizing
-a second basis decomposition. -/
-theorem reverse_restores (word : List (Op ι)) (x : ι → ZMod 2) :
-    run word.reverse (run word x) = x := by
-  induction word generalizing x with
-  | nil => rfl
-  | cons op word ih =>
-    rw [List.reverse_cons, run_append]
-    change op.execute (run word.reverse (run word (op.execute x))) = x
-    rw [ih]
-    exact execute_involutive op x
 
 private theorem binary_cases (c : ZMod 2) : c = 0 ∨ c = 1 := by
   fin_cases c

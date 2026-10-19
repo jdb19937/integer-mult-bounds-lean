@@ -58,18 +58,12 @@ def cost (d : Data) (rs : List Partition.Record) :=
     focus focus_injective (ActiveRepairLateOriginalPipelineCleanup.repaired d rs) R hw (decoder_ready d rs)
   exact (hb.seq hd).consequence (fun _ h => h) (fun _ h => h) (by omega)
 
- theorem record_buffer_blank (d : Data) (rs : List Partition.Record) :
-    (output d rs).tape 10=fun _ => blank := rfl
- theorem source_retained (d : Data) (rs : List Partition.Record) :
-    (output d rs).tape 11=RepairScan.srcTape rs := rfl
  theorem private_blank (d : Data) (rs : List Partition.Record) :
     SharedBank.payload (output d rs) (Fin.natAdd 192)=SharedBank.empty 2 1 := by
   apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
  theorem raw_output (d : Data) (rs : List Partition.Record) :
     (output d rs).tape 189=putWord (fun _ => blank) 0
       ((ActiveRepairLayoutRecordsData.serialize (ActiveRepairLateOriginalPipelineCleanup.repaired d rs)).map bitSymbol) := rfl
- theorem raw_head_origin (d : Data) (rs : List Partition.Record) : (output d rs).head 189=0 := rfl
-
 open CompactGadgetReservationShape CompactActiveTargetLayout
 open ActiveRepairRankHeadersEndpoint ActiveRepairRankHeadersData
 open ActiveRepairLayoutRecordsShape ActiveRepairLayoutRecordsData
@@ -94,17 +88,6 @@ include h he hw ha hf hr in
 theorem ideal_raw_output : (output d inputRecords).tape 189=putWord (fun _ => blank) 0
     ((List.ofFn (ActiveRepairLayoutRecordsMove.move s (d.n*d.b) (d.n*d.q) before after rows hw ha TP array)).map bitSymbol) := by
   rw [raw_output,ActiveRepairLayoutRecordsPipelineLate.repaired_serialize d h s before after rows offset width rowBits he hw ha hf hr array]
-
-include h he hw ha hf hr in
-theorem runs_ideal : HoareTime (program d.side) (fun v => v=input d inputRecords)
-    (fun v => v=output d inputRecords ∧ v.tape 189=putWord (fun _ => blank) 0
-      ((List.ofFn (ActiveRepairLayoutRecordsMove.move s (d.n*d.b) (d.n*d.q) before after rows hw ha TP array)).map bitSymbol))
-    (cost d inputRecords) := by
-  apply (runs d h inputRecords).consequence (fun _ h => h) _ le_rfl
-  intro v hv
-  refine ⟨hv,?_⟩
-  rw [hv]
-  exact ideal_raw_output d h s before after rows offset width rowBits he hw ha hf hr array
 
 include h he hw ha hf hr in
 theorem repaired_length :

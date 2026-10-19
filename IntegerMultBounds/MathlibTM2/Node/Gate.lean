@@ -63,10 +63,6 @@ def gateWire (i : Fin (gateWires g).length) : NWire := (gateWires g)[i]
 lemma gateWire_injective : Function.Injective (gateWire g) := fun _ _ h =>
   Fin.ext ((nodup_gateWires g).getElem_inj_iff.1 h)
 
-lemma length_gateWires_le : (gateWires g).length ≤ g.terms.length + 1 := by
-  have h := (List.dedup_sublist (g.target :: g.terms.map Prod.fst)).length_le
-  simpa [gateWires] using h
-
 lemma gateWire_mem (i : Fin (gateWires g).length) : gateWire g i ∈ gateWires g :=
   List.getElem_mem _
 

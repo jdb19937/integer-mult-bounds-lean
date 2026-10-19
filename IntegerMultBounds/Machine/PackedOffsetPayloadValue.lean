@@ -44,18 +44,4 @@ theorem result_entry (V : List Bool) (w n B : ℕ) (hV : V.length=n*w)
   rw [he] at hh
   simpa only [i',Fin.val_cast,offset_eq V w n i.val hV i.isLt,result] using hh
 
-/-- Actual returned tape cell, after stream erasure and restoration of both
-caller heads. The offset source and every private tape are already covered
-by PackedOffsetPayload.runs' exact whole-bank postcondition. -/
-theorem returned_cell (V : List Bool) (w n B : ℕ) (hV : V.length=n*w)
-    (f g : ℤ → Fin 4) (p s : ℤ) (bs qs ns ws : List Bool)
-    (a : Fin (n*(2^w*B)) → Bool) (i : Fin n) (y : Fin (2^w)) (j : Fin B) :
-    (bank (putWord f p (result V w n B a)) (fun _ => blank) (putWord g s (V.map bitSymbol))
-      p 0 s bs qs ns ws).tape 10
-      (p+((i.val*(2^w*B)+((y.val+offset V w i.val)%2^w)*B+j.val : ℕ) : ℤ)) =
-      bitSymbol (a (FiberLayoutData.index i y j)) := by
-  change putWord f p (result V w n B a) _ = _
-  obtain ⟨hi,hv⟩ := List.getElem?_eq_some_iff.mp (result_entry V w n B hV a i y j)
-  rw [WordSegments.get _ _ _ _ hi,hv]
-
 end IntegerMultBounds.Machine.PackedOffsetPayloadValue

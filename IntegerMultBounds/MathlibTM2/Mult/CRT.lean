@@ -97,11 +97,6 @@ noncomputable def crtPhi (hs : Pairwise (Nat.Coprime on s)) :
     funext i
     simp only [map_add, Pi.add_apply, mul_add]
 
-theorem crtPhi_eq_prodEquivPi (hs : Pairwise (Nat.Coprime on s)) (k : ZMod (∏ i, s i))
-    (i : Fin d) :
-    crtPhi s hs k i = (crtMu s hs i : ZMod (s i)) * ZMod.prodEquivPi s hs k i :=
-  rfl
-
 theorem crtPhi_apply (hs : Pairwise (Nat.Coprime on s)) (k : ZMod (∏ i, s i)) (i : Fin d) :
     crtPhi s hs k i = (crtMu s hs i : ZMod (s i)) * ZMod.cast k := by
   simp [crtPhi, ZMod.prodEquivPi_apply, ZMod.castHom_apply]
@@ -114,12 +109,6 @@ theorem crtPhi_natCast (hs : Pairwise (Nat.Coprime on s)) (n : ℕ) (i : Fin d) 
 theorem crtPhi_one (hs : Pairwise (Nat.Coprime on s)) (i : Fin d) :
     crtPhi s hs 1 i = (crtMu s hs i : ZMod (s i)) := by
   simpa using crtPhi_natCast hs 1 i
-
-theorem crtPhi_symm_apply (hs : Pairwise (Nat.Coprime on s)) (x : (i : Fin d) → ZMod (s i)) :
-    (crtPhi s hs).symm x =
-      (ZMod.prodEquivPi s hs).symm fun i => (prefixProd s i : ZMod (s i)) * x i := by
-  show (ZMod.prodEquivPi s hs).symm _ = _
-  congr 1
 
 /-- The triangular formula (eq. `triangular-crt`): for `k = ∑ j, a j P j`,
 `Φ k i = a i + μ i ∑_{j < i} a j P j (mod s i)`. -/

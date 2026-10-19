@@ -61,49 +61,5 @@ theorem tape (f : ℤ → Fin (a+4)) (p : ℤ) (xs : List Bool) (start : ℕ) (y
   · rw [ite_eq_right hin,putWord_outside _ _ _ _ (by simp only [List.length_map]; omega),
         Gather.putWord_getD f p xs j hj]
 
-/-- The entire replacement interval is the literal supplied word. -/
-theorem field_inside (xs : List Bool) (start : ℕ) (ys : List Bool)
-    (hfit : start+ys.length≤xs.length) :
-    Gather.field (patch xs start ys) start ys.length=ys := by
-  have he : Gather.field ys 0 ys.length=ys := by
-    rw [IntegerMultBounds.Compact.PowerTwo.field_take ys ys.length (le_refl _),List.take_length]
-  conv_rhs => rw [←he]
-  unfold Gather.field
-  apply List.map_congr_left
-  intro j hj
-  simp only [List.mem_range] at hj
-  simp only [zero_add]
-  exact inside xs start ys hfit j hj
-
-/-- A disjoint original field is unchanged, including when other fields have
-already been patched. -/
-theorem field_outside (xs : List Bool) (start : ℕ) (ys : List Bool) (offset width : ℕ)
-    (hfit : offset+width≤xs.length)
-    (hdis : offset+width≤start ∨ start+ys.length≤offset) :
-    Gather.field (patch xs start ys) offset width=Gather.field xs offset width := by
-  unfold Gather.field
-  apply List.map_congr_left
-  intro j hj
-  simp only [List.mem_range] at hj
-  exact outside xs start ys (offset+j) (by omega) (by omega)
-
-theorem disjoint_commute (xs : List Bool) (s t : ℕ) (ys zs : List Bool)
-    (hdis : s+ys.length≤t ∨ t+zs.length≤s) :
-    patch (patch xs s ys) t zs=patch (patch xs t zs) s ys := by
-  apply List.ext_getElem
-  · simp
-  · intro j hj hj'
-    have hx : j<xs.length := by simpa using hj
-    have hd : (patch (patch xs s ys) t zs).getD j false=
-        (patch (patch xs t zs) s ys).getD j false := by
-      rw [patch_bit (patch xs s ys) t zs j (by simpa using hx),patch_bit xs s ys j hx,
-        patch_bit (patch xs t zs) s ys j (by simpa using hx),patch_bit xs t zs j hx]
-      by_cases hy : s≤j ∧ j<s+ys.length
-      · have hz : ¬(t≤j ∧ j<t+zs.length) := by omega
-        simp [hy,hz]
-      · by_cases hz : t≤j ∧ j<t+zs.length <;> simp [hy,hz]
-    simpa only [List.getD_eq_getElem?_getD,List.getElem?_eq_getElem hj,
-      List.getElem?_eq_getElem hj',Option.getD_some] using hd
-
 end
 end IntegerMultBounds.Machine.ActiveRepairDestinationPatchData

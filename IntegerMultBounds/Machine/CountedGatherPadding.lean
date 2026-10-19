@@ -21,8 +21,6 @@ def bank (f g h : ℤ → Fin (a+4)) (px pz pt : ℤ) (bs : List Bool) : Tapes 5
 def seekRightProgram (a : ℕ) : Program 5 18 a :=
   CountedLoopReuseAlphabet.program (Gather.skipX a)
 def leftStep (a : ℕ) : Program 3 2 a := extend (StepLeft.program (a := a)) 2
-def seekLeftProgram (a : ℕ) : Program 5 18 a :=
-  CountedLoopReuseAlphabet.program (leftStep a)
 def zerosProgram (a : ℕ) : Program 5 18 a :=
   CountedLoopReuseAlphabet.program (Gather.zeroT a)
 
@@ -50,20 +48,6 @@ theorem seekRight_hoare (f g h : ℤ → Fin (a+4)) (px pz pt : ℤ)
       intro i _
       simpa only [Nat.cast_add,Nat.cast_one,add_assoc] using Gather.skipX_hoare f g h (px+i) pz pt)
   simpa [seekRightProgram,bank,cost,Finset.sum_const,Finset.card_range,Nat.mul_one,
-    show n+6*n=7*n by omega] using hv
-
-/-- Seeking left also accepts zero, and makes no assumptions about the cells
-crossed or about the initial source-head coordinate. -/
-theorem seekLeft_hoare (f g h : ℤ → Fin (a+4)) (px pz pt : ℤ)
-    (bs : List Bool) (n : ℕ) (hn : Counter.value bs = n) :
-    HoareTime (seekLeftProgram a) (fun v => v = bank f g h px pz pt bs)
-      (fun v => v = bank f g h (px-n) pz pt bs) (cost n bs) := by
-  have hv := CountedLoopReuseAlphabet.loop_hoare (leftStep a) bs n
-    (fun i => Gather.bank f g h (px-i) pz pt) (fun _ => 1) hn (by
-      intro i _
-      have hh := left_step f g h (px-i) pz pt
-      simpa only [Nat.cast_add,Nat.cast_one,sub_sub] using hh)
-  simpa [seekLeftProgram,bank,cost,Finset.sum_const,Finset.card_range,Nat.mul_one,
     show n+6*n=7*n by omega] using hv
 
 private theorem zeros_succ (h : ℤ → Fin (a+4)) (pt : ℤ) (i : ℕ) :
@@ -107,27 +91,5 @@ theorem cost_linear (n : ℕ) (bs : List Bool) (hn : Counter.value bs = n)
   have h2 := le_max_right 1 n
   unfold cost
   omega
-
-theorem seekRight_linear (f g h : ℤ → Fin (a+4)) (px pz pt : ℤ)
-    (bs : List Bool) (n : ℕ) (hn : Counter.value bs = n) (hc : GrowingCounterData.Canonical bs) :
-    HoareTime (seekRightProgram a) (fun v => v = bank f g h px pz pt bs)
-      (fun v => v = bank f g h (px+n) pz pt bs) (37*max 1 n) :=
-  (seekRight_hoare f g h px pz pt bs n hn).consequence (fun _ h => h) (fun _ h => h)
-    (cost_linear n bs hn hc)
-
-theorem seekLeft_linear (f g h : ℤ → Fin (a+4)) (px pz pt : ℤ)
-    (bs : List Bool) (n : ℕ) (hn : Counter.value bs = n) (hc : GrowingCounterData.Canonical bs) :
-    HoareTime (seekLeftProgram a) (fun v => v = bank f g h px pz pt bs)
-      (fun v => v = bank f g h (px-n) pz pt bs) (37*max 1 n) :=
-  (seekLeft_hoare f g h px pz pt bs n hn).consequence (fun _ h => h) (fun _ h => h)
-    (cost_linear n bs hn hc)
-
-theorem zeros_linear (f g h : ℤ → Fin (a+4)) (px pz pt : ℤ)
-    (bs : List Bool) (n : ℕ) (hn : Counter.value bs = n) (hc : GrowingCounterData.Canonical bs) :
-    HoareTime (zerosProgram a) (fun v => v = bank f g h px pz pt bs)
-      (fun v => v = bank f g (putWord h pt ((List.replicate n false).map bitSymbol)) px pz (pt+n) bs)
-      (37*max 1 n) :=
-  (zeros_hoare f g h px pz pt bs n hn).consequence (fun _ h => h) (fun _ h => h)
-    (cost_linear n bs hn hc)
 
 end IntegerMultBounds.Machine.CountedGatherPadding

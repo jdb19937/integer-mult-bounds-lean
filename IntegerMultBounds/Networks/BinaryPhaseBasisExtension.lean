@@ -43,8 +43,6 @@ def ambientBasis : Basis (Fin h) (ZMod 2) (Address h) :=
 
 def slot (i : Fin d) : Fin h := indexEquiv B hs W hw b (Sum.inl i)
 
-theorem slot_val (i : Fin d) : (slot B hs W hw b i).val = i.val := rfl
-
 theorem retains (i : Fin d) : ambientBasis B hs W hw b (slot B hs W hw b i) = (b i : Address h) := by
   simp only [ambientBasis, slot, Basis.reindex_apply, Equiv.symm_apply_apply,
     sumBasis, Basis.map_apply, Basis.prod_apply, Sum.elim_inl, Function.comp_apply,

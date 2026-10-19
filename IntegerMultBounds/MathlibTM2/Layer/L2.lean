@@ -34,32 +34,14 @@ lemma l2_nonneg (f : X → ℂ) : 0 ≤ l2 f := Real.sqrt_nonneg _
 lemma l2_add_le (f g : X → ℂ) : l2 (f + g) ≤ l2 f + l2 g := by
   simp only [l2_eq_norm, WithLp.toLp_add]; exact norm_add_le _ _
 
-lemma l2_sub_le (f g : X → ℂ) : l2 (f - g) ≤ l2 f + l2 g := by
-  simp only [l2_eq_norm, WithLp.toLp_sub]; exact norm_sub_le _ _
-
 lemma l2_smul (c : ℂ) (f : X → ℂ) : l2 (c • f) = ‖c‖ * l2 f := by
   simp only [l2_eq_norm, WithLp.toLp_smul]; exact norm_smul _ _
-
-lemma l2_neg (f : X → ℂ) : l2 (-f) = l2 f := by
-  simp only [l2_eq_norm, WithLp.toLp_neg, norm_neg]
-
-lemma l2_sub_comm (f g : X → ℂ) : l2 (f - g) = l2 (g - f) := by
-  rw [← neg_sub, l2_neg]
-
-/-- The triangle inequality for three arrays. -/
-lemma l2_sub_le_sub_add (f g h : X → ℂ) : l2 (f - h) ≤ l2 (f - g) + l2 (g - h) := by
-  have : f - h = (f - g) + (g - h) := by abel
-  rw [this]; exact l2_add_le _ _
 
 lemma l2_comp_equiv (σ : X ≃ X) (f : X → ℂ) : l2 (f ∘ σ) = l2 f := by
   unfold l2; congr 1; exact Equiv.sum_comp σ (fun x => ‖f x‖ ^ 2)
 
 lemma l2_star (f : X → ℂ) : l2 (fun x => star (f x)) = l2 f := by
   unfold l2; simp
-
-lemma l2_mul_of_norm_one (u : X → ℂ) (hu : ∀ x, ‖u x‖ = 1) (f : X → ℂ) :
-    l2 (fun x => u x * f x) = l2 f := by
-  unfold l2; simp [hu]
 
 lemma norm_le_l2 (f : X → ℂ) (x : X) : ‖f x‖ ≤ l2 f := by
   unfold l2

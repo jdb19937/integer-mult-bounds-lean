@@ -105,13 +105,6 @@ theorem markedTape_putWord (origin : ℤ) (xs : List (Fin 4)) :
   funext j
   simp [markedTape, Function.update_apply]
 
-theorem markedTape_end (origin : ℤ) (xs : List (Fin 4)) :
-    markedTape origin xs (origin + xs.length) = blank := by
-  have hm : origin + (xs.length : ℤ) ≠ origin - 1 := by omega
-  simp only [markedTape, hm, ↓reduceIte]
-  rw [putWord_outside _ _ _ _ (Or.inr le_rfl)]
-  rfl
-
 /-- Source, zero bucket, and one bucket in their physical tape order. -/
 def cfg (p q r : ℤ) (xs ys zs : List (Fin 4)) (u v w : ℤ) : Config 3 3 1 where
   state := 0

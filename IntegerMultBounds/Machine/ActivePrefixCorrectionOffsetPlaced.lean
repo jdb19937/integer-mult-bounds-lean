@@ -62,12 +62,6 @@ theorem produces (caller : Tapes t a) (focus : Fin 9 → Fin t) (hf : Function.I
     exact native_clean hs
   · simp only [result,CompactGadgetReservationPlacement.strip_set]
 
-theorem output_word (caller : Tapes t a) (focus : Fin 9 → Fin t) (s : Shape) :
-    (result caller focus s).tape (focus 8)=
-      putWord (fun _ => blank) 0 ((ActivePrefixCorrectionOffsetData.word s).map bitSymbol) ∧
-    (result caller focus s).head (focus 8)=0 := by
-  simp [result,setTape,ActivePrefixCorrectionOffsetSubtract.word]
-
 theorem frame (caller : Tapes t a) (focus : Fin 9 → Fin t) (s : Shape)
     (i : Fin t) (hi : i≠focus 8) :
     (result caller focus s).tape i=caller.tape i ∧

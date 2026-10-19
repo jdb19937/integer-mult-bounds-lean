@@ -40,27 +40,6 @@ theorem offset_row (W startT startX q b rho n f i : ℕ)
     _ _ (by intro k hk; exact Gather.field_length _ _ _)
     (by intro k hk; exact SelectedSourceBitsData.selected_length _ _ _ _) hi
 
-/-- Pure parity emits exactly the low bit of each current target digit,
-followed by its compact padding; no source-control bit enters this value. -/
-theorem offset_row_bits (W startT startX q b rho n f i : ℕ)
-    (hT : startT+n*q≤W) (hX : startX+f*q≤W) (hb : 1≤b) (hbq : b+1≤q)
-    (hnf : n+1=f) (hr : rho<q) (hi : i<2^W) :
-    Gather.field (offsets W startT startX q b rho n f hT hX hb hbq) (i*(n*b)) (n*b)=
-      ((List.range n).map (fun j => Nat.testBit i (startT+j*q)::List.replicate (b-1) false)).flatten := by
-  rw [offset_row W startT startX q b rho n f i hT hX hb hbq hnf hr hi,
-    Compact.PowerTwo.gather_flatten]
-  apply congrArg List.flatten
-  apply List.map_congr_left
-  intro j hj
-  have hjn : j<n := List.mem_range.mp hj
-  have hjq : j*q<n*q := Nat.mul_lt_mul_of_pos_right hjn (by omega)
-  have hd (X Z : List Bool) :
-      Gather.digitWord (fun x _ => x) (PackedArith.parity q b hb hbq) X Z j=
-        X.getD (j*q) false::List.replicate (b-1) false := by
-    simp [Gather.digitWord,PackedArith.parity,Gather.field]
-  rw [hd,ActivePrefixSelectedOffsetData.field_bit _ _ _ _ hjq,
-    ← Compact.PowerTwo.testBit_value,BinaryAddressTableData.row_rank W i hi]
-
 def rows (W startT startX q b rho n f : ℕ) (hb : 1≤b) (hbq : b+1≤q) :=
   (List.range (2^W)).map (fun i => Gather.gather (fun x _ => x) (PackedArith.parity q b hb hbq)
     (Gather.field (BinaryAddressTableData.row W i) startT (n*q))

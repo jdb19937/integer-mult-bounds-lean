@@ -157,40 +157,4 @@ theorem rotate_hoare (source dest : ℤ → Fin 4) (p q : ℤ) (xs ys : List (Fi
   apply h.consequence (fun _ hv => hv) (fun _ hv => hv)
   omega
 
-/-- A complete single-fiber controlled shift. The caller supplies binary
-piece-length descriptors; the literal machine performs the payload movement
-and restores every control tape within linear payload time plus descriptor size. -/
-theorem block_shift_hoare (source dest : ℤ → Fin 4) (p q : ℤ)
-    (blocks : List (List (Fin 4))) (B a : ℕ) (hu : BlockRotationData.Uniform B blocks)
-    (ha : a < blocks.length) (b c d : List Bool)
-    (hb : Counter.value b = (blocks.length-a)*B) (hc : Counter.value c = a*B)
-    (hd : Counter.value d = blocks.length*B) :
-    HoareTime program
-      (fun v => v = bank (putWord source p blocks.flatten) dest b c d p q)
-      (fun v => v = bank (putWord source p blocks.flatten)
-        (putWord dest q (BlockRotationData.rotate a blocks).flatten) b c d
-        (p+(((blocks.length-a)*B : ℕ) : ℤ)) (q+((blocks.length*B : ℕ) : ℤ)))
-      (15*(blocks.length*B)+14*b.length+7*c.length+7*d.length+67) := by
-  have hvol := BlockRotationData.uniform_volume B blocks hu
-  have hsum : (blocks.length-a)*B+a*B = blocks.length*B := by
-    rw [← Nat.add_mul,Nat.sub_add_cancel ha.le]
-  have htake : (blocks.flatten.take ((blocks.length-a)*B)).length = (blocks.length-a)*B := by
-    rw [List.length_take,hvol,Nat.min_eq_left (by omega)]
-  have hdrop : (blocks.flatten.drop ((blocks.length-a)*B)).length = a*B := by
-    rw [List.length_drop,hvol]
-    omega
-  have h := rotate_hoare source dest p q (blocks.flatten.take ((blocks.length-a)*B))
-    (blocks.flatten.drop ((blocks.length-a)*B)) b c d
-    (by simpa only [htake] using hb) (by simpa only [hdrop] using hc)
-    (by simpa only [htake,hdrop,hsum] using hd)
-  have hout : blocks.flatten.drop ((blocks.length-a)*B) ++
-      blocks.flatten.take ((blocks.length-a)*B) = (BlockRotationData.rotate a blocks).flatten := by
-    simpa only [Nat.mod_eq_of_lt ha] using (BlockRotationData.rotated_payload_split a B blocks hu).symm
-  rw [List.take_append_drop,hout,htake,hdrop] at h
-  have hhead : q+((a*B : ℕ) : ℤ)+(((blocks.length-a)*B : ℕ) : ℤ) = q+((blocks.length*B : ℕ) : ℤ) := by
-    omega
-  rw [hhead] at h
-  apply h.consequence (fun _ hv => hv) (fun _ hv => hv)
-  omega
-
 end IntegerMultBounds.Machine.CountedRotate

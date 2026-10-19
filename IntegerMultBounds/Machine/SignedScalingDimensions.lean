@@ -266,40 +266,14 @@ theorem output_tape {Q a d B : ℕ} (hQ : 0 < Q) (ha : 0 < a) (hd : 0 < d)
   exact SignedScalingPrepared.output_tape hQ ha hd hcop negative A D (generated S Q B)
     source p middle r signMiddle t dest q payload
 
-theorem output_metadata {a d : ℕ} (ha : 0 < a) (hd : 0 < d) (negative : Bool)
-    (A : Setup a) (D : Setup d) (S : Scratch) (Q B : ℕ)
-    (source : ℤ → Fin 4) (p : ℤ) (middle : ℤ → Fin 4) (r : ℤ) (signMiddle : ℤ → Fin 4) (t : ℤ)
-    (dest : ℤ → Fin 4) (q : ℤ) (payload : ℕ → List (Fin 4)) :
-    Placement.extra (executionPlacement a d)
-      (output ha hd negative A D S Q B source p middle r signMiddle t dest q payload) =
-      metadata Q B A.blockBits A.countBits := Placement.extra_combine _ _ _
-
 /-- The extra negation scratch tape is restored, including its head. -/
 def scratchSlot (a d : ℕ) : Fin (TapeCount a d) :=
   executionPlacement a d (Fin.castAdd 9 (SignedScalingPrepared.executionPlacement a d
     (Fin.castAdd 2 (Fin.castAdd 5 (Fin.natAdd (SignedScalingExecution.TapeCount a d) (2 : Fin 8))))))
 
-theorem output_scratch {a d : ℕ} (ha : 0 < a) (hd : 0 < d) (negative : Bool)
-    (A : Setup a) (D : Setup d) (S : Scratch) (Q B : ℕ)
-    (source : ℤ → Fin 4) (p : ℤ) (middle : ℤ → Fin 4) (r : ℤ) (signMiddle : ℤ → Fin 4) (t : ℤ)
-    (dest : ℤ → Fin 4) (q : ℤ) (payload : ℕ → List (Fin 4)) :
-    let v := output ha hd negative A D S Q B source p middle r signMiddle t dest q payload
-    v.tape (scratchSlot a d) = S.tape ∧ v.head (scratchSlot a d) = S.origin := by
-  dsimp only
-  simp only [output,scratchSlot,Placement.combine_tape_active,Placement.combine_head_active,
-    SignedScalingPrepared.output]
-  cases negative <;> simp [SignedScalingSign.output,SignedScalingSign.negativeOutput,
-    SignedScalingSign.positiveOutput,Tapes.append,SignedScalingSign.signBank,BlockNegationReuse.bank,generated]
-
 theorem tapeCount_eq (a d : ℕ) : TapeCount a d = 49+4*(a+d) := by
   dsimp only [TapeCount,FrontTapes]
   rw [ScalingPreparedExecution.tapeCount_eq,ScalingPreparedExecution.tapeCount_eq]
   omega
-
-theorem stateCount_eq (a d : ℕ) (negative : Bool) :
-    160+(SynthesisStates a+SynthesisStates d+SignedScalingSign.states a d negative) =
-      117*(a+d)+(if negative then 787 else 455) := by
-  rw [SignedScalingPrepared.stateCount_eq]
-  cases negative <;> simp <;> omega
 
 end IntegerMultBounds.Machine.SignedScalingDimensions

@@ -112,14 +112,6 @@ theorem final_label (c : Fin 50) (j : Fin 1176) :
   rw [expected,hc,hp]
   exact SharedPointOutputLabels.exclusion_label 49 c j
 
-/-- The actual physical output labels are nondegenerate, including outputs
-whose scalar identity node has no elementary instructions. -/
-theorem final_nondegenerate (c : Fin 50) (j : Fin 1176) :
-    ((Labels.rational 50).restrict
-      (finalLabels (SharedPointExecution.code.outputSlot (SharedPointOutputIndex.index c j)))).Nondegenerate := by
-  rw [final_label]
-  exact SharedPointMap.outputSpan_nondegenerate c (embedding c j)
-
 /-- The proved output label is contained in the target line's orthogonal
 complement, supplying the exact forward endpoint inclusion for attachment. -/
 theorem final_orthogonal (c : Fin 50) (j : Fin 1176) :

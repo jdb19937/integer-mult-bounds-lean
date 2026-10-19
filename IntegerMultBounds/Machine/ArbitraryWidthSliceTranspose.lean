@@ -267,13 +267,6 @@ theorem window_coordinates (offset width : ℕ) (a : RecursiveInterchangeScaling
         (fun z => (FlatCoordinateLayout.coordinates a.h z,FlatCoordinateLayout.coordinates a.d z)) := by
   simp only [windowAddress,FlatCoordinateLayout.coordinates_rank]
 
-theorem window_spectators (offset width : ℕ) (a : RecursiveInterchangeScaling.Address v) :
-    (windowAddress offset width a).beforeRows = a.beforeRows ∧
-    (windowAddress offset width a).row = a.row ∧
-    (windowAddress offset width a).before = a.before ∧
-    (windowAddress offset width a).middle = a.middle ∧
-    (windowAddress offset width a).after = a.after := ⟨rfl,rfl,rfl,rfl,rfl⟩
-
 end Physical
 
 end

@@ -70,13 +70,6 @@ def partialRole (T : Triple 50) (c : {c : Fin 50 // c ∈ T.val}) : Fin 509194 :
 
 attribute [local irreducible] pairIndex Shared50Finite.output
 
-theorem partialRole_injective (T : Triple 50) : Function.Injective (partialRole T) := by
-  intro c d he
-  dsimp only [partialRole] at he
-  have hh := @Shared50Finite.output_injective
-    (c.val, pairIndex c.val T c.property) (d.val, pairIndex d.val T d.property) he
-  exact Subtype.ext (congrArg Prod.fst hh)
-
 section Matrices
 variable {n : ℕ}
 

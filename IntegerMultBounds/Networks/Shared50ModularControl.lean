@@ -147,43 +147,5 @@ theorem operation_count (m : ℕ) :
   rw [interchanges_exact] at hh
   exact hh
 
-/-- Only whole-group transformations need a triangularity certificate. -/
-def TriangularOp {ι R : Type*} [LinearOrder ι] [CommRing R] : Op ι R → Prop
-  | .transformH E => LowerTriangular E
-  | .transformD E => LowerTriangular E
-  | _ => True
-
-private theorem pivots_triangular {ι R : Type*} [LinearOrder ι] [CommRing R]
-    (L : List (ι × ι)) : ∀ op ∈ pivotsProgram (R := R) L, TriangularOp op := by
-  induction L with
-  | nil => simp [pivotsProgram]
-  | cons p rest ih =>
-    simpa [pivotsProgram,pivotProgram,TriangularOp] using ih
-
-/-- Every transformation in the concrete generated program is lower triangular. -/
-theorem program_triangular (m : ℕ) (e : Edge Index) :
-    ∀ op ∈ ModularFrameSchedule.program m e, TriangularOp op := by
-  have h₁ := Modular.reduce_lowerTriangular m (factors e).lower₁
-  have h₁' := Modular.reduce_lowerTriangular m (factors e).lower₁'
-  have h₂ := Modular.reduce_lowerTriangular m (factors e).lower₂
-  have h₂' := Modular.reduce_lowerTriangular m (factors e).lower₂'
-  intro op hop
-  simp only [ModularFrameSchedule.program,shearProgram,List.mem_append,List.mem_cons,List.not_mem_nil,
-    or_false] at hop
-  rcases hop with (h | h) | h
-  · rcases h with rfl | rfl
-    · exact h₂
-    · exact h₁'
-  · exact pivots_triangular _ op h
-  · rcases h with rfl | rfl
-    · exact h₁
-    · exact h₂'
-
-theorem programs_triangular (m : ℕ) :
-    ∀ p ∈ programs m, ∀ op ∈ p, TriangularOp op := by
-  intro p hp
-  obtain ⟨e,_,rfl⟩ := List.mem_map.mp hp
-  exact program_triangular m e
-
 end
 end IntegerMultBounds.Networks.Shared50ModularControl

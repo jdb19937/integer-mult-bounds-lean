@@ -49,8 +49,6 @@ multiply, round again. -/
 noncomputable def termW (p : ℕ) {s t : ℕ} (wf : ZMod t → ℤ → ℝ) (u : ZMod s → ℂ) (k : ZMod t) (j : ℤ) : ℂ :=
   rhoC p (rhoC p (wf k j : ℂ) * u j)
 
-theorem resampTermNum_eq (p s t : ℕ) (α : ℝ) : resampTermNum p s t α = termW p (resampWeight s t α) := rfl
-
 section Terms
 
 variable {s t : ℕ} [NeZero s] [NeZero t] (p : ℕ) (wf : ZMod t → ℤ → ℝ) (u : ZMod s → ℂ) (ar ai : ℤ → ℤ)

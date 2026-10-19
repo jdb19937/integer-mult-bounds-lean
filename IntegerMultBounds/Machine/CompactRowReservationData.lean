@@ -37,19 +37,5 @@ def outputPayload (hc : 0 < c) (x : Fin (1*r*l) → Bool) : Tapes (1+c) a :=
   RecursiveRowsMove.rolePayload (CompactRowPaddingRound.padded_bounds r c hc).2.2
     (padded (c := c) x)
 
-/-- Every complete role record is the exact selected padded record, including
-all dirty suffix fields. Padded rows have literal zero symbols. -/
-theorem role_entry (hc : 0 < c) (x : Fin (1*r*l) → Bool)
-    (i : Fin (RecursiveInterchangeRows.groups c (descriptor (paddedRows r c) l)))
-    (j : Fin c) (k : Fin (RecursiveInterchangeRows.rowLength a (descriptor (paddedRows r c) l))) :
-    RecursiveInterchangeRows.roleArray a c (descriptor (paddedRows r c) l)
-      (CompactRowPaddingRound.padded_bounds r c hc).2.2 (padded (c := c) x) j
-      (RecursiveInterchangeRows.roleIndex a c (descriptor (paddedRows r c) l) i k) =
-    padded (c := c) x (Fin.cast
-      (RecursiveInterchangeRows.volume_split a c (descriptor (paddedRows r c) l)
-        (CompactRowPaddingRound.padded_bounds r c hc).2.2).symm
-      (RecursiveInterchangeRows.pack i (RecursiveInterchangeRows.pack j k))) :=
-  RecursiveInterchangeRows.role_entry _ _ _ _ _ _ _ _
-
 end
 end IntegerMultBounds.Machine.CompactRowReservationData

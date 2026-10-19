@@ -92,12 +92,6 @@ theorem loop_hoare (B N : ℕ) (hB : 2 ≤ B) (consume : Program (14+t) s a)
   · rw [test_state,exit B N hB]
     rfl
 
-/-- The emitted digit is exactly the digit occurring in the manuscript's
-power-width partition, and the selected power is B^i. -/
-theorem digit_partition (B N k : ℕ) :
-    (List.range (k+1)).flatMap (fun i => List.replicate (digit B N i) i) =
-      ArbitraryWidthPieces.depths B N k := rfl
-
 theorem count_le (B N : ℕ) : count B N ≤ N := by
   by_cases hn : N = 0
   · simp [count,hn]
@@ -163,31 +157,6 @@ theorem loop_linear (B N : ℕ) (hB : 2 ≤ B) (consume : Program (14+t) s a)
 
 def program (B : ℕ) (consume : Program (14+t) s a) := seq (loop B consume)
   (extend (BinaryDescriptorCleanupList.oneProgram (a := a) (0 : Fin 14)) t)
-
-/-- The digit driver itself ends with all fourteen arithmetic/control tapes
-blank at head zero. Only the continuation's explicitly specified payload is
-retained. Concrete depth/power/offset updates belong to that continuation. -/
-theorem runs_clean (B N : ℕ) (hB : 2 ≤ B) (consume : Program (14+t) s a)
-    (payload : ℕ → Tapes t a) (consumeCost : ℕ → ℕ)
-    (hconsume : ∀ i < count B N,
-      HoareTime consume (fun v => v = emitted B N i (payload i))
-        (fun v => v = state B N (i+1) (payload (i+1))) (consumeCost i)) :
-    HoareTime (program B consume) (fun v => v = state B N 0 (payload 0))
-      (fun v => v = (SharedBank.empty 14 a).append (payload (count B N)))
-      ((overheadConstant B+5)*(N+1)+(∑ i ∈ Finset.range (count B N), consumeCost i)) := by
-  have hc := BinaryDescriptorCleanupList.one_hoare (0 : Fin 14)
-    (ArbitraryWidthPieceCounter.input (a := a) (bits 0)) [] rfl rfl
-  have he : SharedPlacementAlphabet.setTape (ArbitraryWidthPieceCounter.input (a := a) (bits 0))
-      (0 : Fin 14) (fun _ => blank) 0 = SharedBank.empty 14 a := by
-    apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
-  rw [he] at hc
-  have hc' := hoare_extend_eq hc (payload (count B N))
-  have hx := loop_linear B N hB consume payload consumeCost hconsume
-  have hstate : state B N (count B N) (payload (count B N)) =
-      (ArbitraryWidthPieceCounter.input (bits 0)).append (payload (count B N)) := by
-    rw [state,exit B N hB]
-  rw [hstate] at hx
-  exact (hx.seq hc').consequence (fun _ h => h) (fun _ h => h) (by simp only [List.length_nil]; nlinarith)
 
 end
 end IntegerMultBounds.Machine.ArbitraryWidthPieceLoop

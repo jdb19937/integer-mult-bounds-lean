@@ -96,48 +96,4 @@ theorem while_run_iteration (M : Program t q a) (test) (v : Tapes t a)
     (fun _ _ h => while_step_body M test h) hrun]
   simp only [Option.bind_some, while_step_return M test hhalt]
 
-/-- Every iteration pays for its actual runtime from a natural-valued budget.
-The remaining budget is retained in the conclusion, giving a telescoping bound.
-The premise is a proof of the concrete body's execution, not an oracle cost. -/
-theorem while_run_potential (M : Program t q a) (test)
-    (inv : TapePred t a) (potential : Tapes t a → ℕ)
-    (hbody : ∀ v, inv v → test v.reads = true →
-      ∃ k c, run M k (v.start M) = some c ∧ step M c = none ∧
-        inv c.tapes ∧ k + 2 + potential c.tapes ≤ potential v)
-    (v : Tapes t a) (hv : inv v) :
-    ∃ k c, run (whileLoop M test) k (v.start (whileLoop M test)) = some c ∧
-      step (whileLoop M test) c = none ∧ inv c.tapes ∧
-      test c.tapes.reads = false ∧ k + potential c.tapes ≤ potential v := by
-  suffices ∀ fuel, ∀ v : Tapes t a, potential v ≤ fuel → inv v →
-      ∃ k c, run (whileLoop M test) k (v.start (whileLoop M test)) = some c ∧
-        step (whileLoop M test) c = none ∧ inv c.tapes ∧
-        test c.tapes.reads = false ∧ k + potential c.tapes ≤ potential v from
-    this (potential v) v le_rfl hv
-  intro fuel
-  induction fuel using Nat.strong_induction_on with
-  | h fuel ih =>
-    intro v hfuel hv
-    cases ht : test v.reads with
-    | false =>
-      exact ⟨0, v.start (whileLoop M test), rfl,
-        while_step_exit M test v ht, hv, ht, by simp [Config.tapes, Tapes.start]⟩
-    | true =>
-      obtain ⟨k, c, hr, hh, hc, hp⟩ := hbody v hv ht
-      obtain ⟨l, d, hs, hd, hi, hx, hl⟩ :=
-        ih (potential c.tapes) (by omega) c.tapes le_rfl hc
-      refine ⟨k + 2 + l, d, ?_, hd, hi, hx, by omega⟩
-      rw [run_add, while_run_iteration M test v ht hr hh]
-      exact hs
-
-theorem while_hoare_potential (M : Program t q a) (test)
-    (inv : TapePred t a) (potential : Tapes t a → ℕ) (bound : ℕ)
-    (hbody : ∀ v, inv v → test v.reads = true →
-      ∃ k c, run M k (v.start M) = some c ∧ step M c = none ∧
-        inv c.tapes ∧ k + 2 + potential c.tapes ≤ potential v) :
-    HoareTime (whileLoop M test) (fun v => inv v ∧ potential v ≤ bound)
-      (fun v => inv v ∧ test v.reads = false) bound := by
-  intro v ⟨hv, hb⟩
-  obtain ⟨k, c, hr, hh, hi, ht, hp⟩ := while_run_potential M test inv potential hbody v hv
-  exact ⟨k, c, by omega, hr, hh, hi, ht⟩
-
 end IntegerMultBounds.Machine

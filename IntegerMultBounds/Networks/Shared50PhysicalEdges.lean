@@ -112,18 +112,4 @@ theorem inverse (frameOf : Submodule ℚ (Fin 50 → ℚ) → Frame (ZMod 2) E) 
     (congrFun (run_labels (events circuit.nodes outputRefs) (fun T : Triple 50 => T.val)
       (initialSupports circuit.nodes outputRefs)) i)
 
-/-- The same exact forward edge list expressed entirely on the finite bank. -/
-theorem forward_finite (frameOf : Submodule ℚ (Fin 50 → ℚ) → Frame (ZMod 2) E) :
-    pairs (Shared50FiniteFramed.forward frameOf) =
-      RankTrace.edges (fun i : Fin 509194 => frameOf (Shared50Frames.initialLabels i.val))
-        (Shared50FiniteTrace.forward frameOf) := by
-  rw [forward,Shared50FiniteTrace.forward_edges]
-
-/-- The same exact reverse edge list expressed entirely on the finite bank. -/
-theorem inverse_finite (frameOf : Submodule ℚ (Fin 50 → ℚ) → Frame (ZMod 2) E) :
-    pairs (Shared50FiniteFramed.inverse frameOf) =
-      RankTrace.edges (fun i : Fin 509194 => frameOf (Shared50ComplementFrames.input i.val))
-        (Shared50FiniteReverseTrace.reverse frameOf) := by
-  rw [inverse,Shared50FiniteReverseTrace.reverse_edges]
-
 end IntegerMultBounds.Networks.Shared50PhysicalEdges

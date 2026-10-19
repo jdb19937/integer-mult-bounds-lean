@@ -440,23 +440,6 @@ theorem beq_exec {a b tx ty tz cy : Fin T} (hreg : [a, b, tx, ty, tz].Nodup)
   rw [hc, zipFin_eqF, Nat.mod_eq_of_lt hx, Nat.mod_eq_of_lt hy]
   simp
 
-/-- `bcmp` on `L`-bit operands: slot `clt` holds `x < y` and slot `ceq` holds `x = y`;
-`16 L + 16` steps, registers unchanged. -/
-theorem bcmp_exec {a b tx ty tz clt ceq : Fin T} (hreg : [a, b, tx, ty, tz].Nodup)
-    (hla : clt ≠ a) (hlb : clt ≠ b) (hea : ceq ≠ a) (heb : ceq ≠ b) (hle : clt ≠ ceq)
-    {L x y : ℕ} (hx : x < 2 ^ L) (hy : y < 2 ^ L) (v : HS T Q A U) (S : Stacks T A)
-    (ha : S.R a = binSyms L x) (hb : S.R b = binSyms L y) (htx : S.R tx = [])
-    (hty : S.R ty = []) (htz : S.R tz = []) :
-    ∃ v' : HS T Q A U, v'.user = v.user ∧ v'.scan clt = bitSymbol (decide (x < y)) ∧
-      v'.scan ceq = bitSymbol (decide (x = y)) ∧
-      (∀ k, k ≠ a → k ≠ b → k ≠ clt → k ≠ ceq → v'.scan k = v.scan k) ∧
-      Exec body (bcmp a b tx ty tz clt ceq) (mk v S) (16 * L + 16) (mk v' S) := by
-  obtain ⟨v₁, hu₁, hc₁, hsc₁, he₁⟩ := blt_exec body hreg hla hlb hx hy v S ha hb htx hty htz
-  obtain ⟨v₂, hu₂, hc₂, hsc₂, he₂⟩ := beq_exec body hreg hea heb hx hy v₁ S ha hb htx hty htz
-  refine ⟨v₂, by rw [hu₂, hu₁], by rw [hsc₂ clt hla hlb hle, hc₁], hc₂,
-    fun k h1 h2 h3 h4 => by rw [hsc₂ k h1 h2 h4, hsc₁ k h1 h2 h3],
-    Exec.cast (Exec.seq he₁ he₂) (by ring) rfl⟩
-
 /-! ### Copying, zeros, padding, shifting -/
 
 /-- Copy: `c` gains the contents of `a` on top. `a` is scanned through `t₁` and the copy built on

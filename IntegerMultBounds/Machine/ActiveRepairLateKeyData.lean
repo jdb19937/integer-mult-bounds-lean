@@ -69,10 +69,6 @@ def sourceOutput (d : Data) :=
     21 (CountedLateRepairFlag.key d.flag) 1)
     22 (CountedGuardGadgetRecord.word d.target) 0
 
-theorem sourceOutput_real (d : Data) : d.sourceOutput=ActiveRepairLateFieldsPlaced.result
-  (ActiveRepairLateSourceRun.parsed d.cs d.starts d.widths d.q d.rho d.n d.hs d.ss d.bs)
-  ActiveRepairLateSourceRun.repairFocus d.q d.b d.hb d.hbq d.V d.T d.U d.Z := rfl
-
 def input (d : Data) := d.sourceInput.append (extra d.ph (fun _ => blank) (FlagCopy.keyTape []))
 def computed (d : Data) := d.sourceOutput.append (extra d.ph (fun _ => blank) (FlagCopy.keyTape []))
 def patched (d : Data) := setTape d.computed 30

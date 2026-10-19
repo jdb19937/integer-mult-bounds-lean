@@ -138,11 +138,6 @@ theorem selects_at {t u : ℕ} (placement : Fin (3+u) ≃ Fin t) (v : Tapes t a)
   change Placement.replace placement v (input rs es) = v
   rw [← ha,Placement.replace_active]
 
-/-- Exposed state test for integrating the selector into finite-flow control. -/
-theorem selected_high_iff (r e : ℕ) : selected r e = high ↔ r < e := by
-  unfold selected
-  split_ifs <;> simp_all [high,fallback]
-
 theorem selected_fallback_iff (r e : ℕ) : selected r e = fallback ↔ ¬(r < e) := by
   unfold selected
   split_ifs <;> simp_all [high,fallback]
@@ -210,10 +205,6 @@ private theorem equal_ne_longH : equalState ≠ longHState := by
   have hh := (FiniteFlow.encoding states).injective he
   have hv := congrArg (fun c : FiniteFlow.Control states => c.2.val) hh
   exact less_states_ne (Fin.ext hv)
-
-theorem selected_longD_iff (h d : ℕ) : selected h d = longDState ↔ h < d := by
-  unfold selected
-  split_ifs <;> simp_all [Ne.symm longD_ne_longH,Ne.symm longD_ne_equal]
 
 theorem selected_longH_iff (h d : ℕ) : selected h d = longHState ↔ d < h := by
   unfold selected
@@ -291,16 +282,6 @@ theorem cost_volume (hs ds : List Bool)
   have h1 := Less.cost_volume hs ds hc dc V hV hb db
   have h2 := Less.cost_volume ds hs dc hc V hV db hb
   unfold cost
-  omega
-
-/-- Under the adjacent-width input condition the selected unequal branch has
-exactly one extra bit, and the other descriptor is the shorter width. -/
-theorem longH_adjacent (h d : ℕ) (hd : h ≤ d+1) (hs : selected h d = longHState) : h = d+1 := by
-  have hh := (selected_longH_iff h d).mp hs
-  omega
-
-theorem longD_adjacent (h d : ℕ) (hd : d ≤ h+1) (hs : selected h d = longDState) : d = h+1 := by
-  have hh := (selected_longD_iff h d).mp hs
   omega
 
 end

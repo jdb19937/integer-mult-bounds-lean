@@ -92,23 +92,6 @@ theorem early_program_agrees_on_good (B L : ℤ) (hB : 1 ≤ B) (hL : 0 < L)
   · apply Subtype.ext
     exact congrArg Prod.snd hvals
 
-/-- Repair only exceptional *destinations*, computing the original address by
-the true modular inverse. -/
-def repairedEarly (B L : ℤ) (hB : 1 ≤ B) (hL : 0 < L) (zs : List ℤ) (hz : Bits zs)
-    (x : EarlyAddress B L zs.length) : EarlyAddress B L zs.length :=
-  let S := packedEarlyPerm (2 * L) B (by omega) (by omega) zs
-  let T := earlyIdeal B L hL zs hz
-  let y := S x
-  if ¬earlyGood B L zs.length y then T (S.symm y) else y
-
-theorem repairedEarly_correct (B L : ℤ) (hB : 1 ≤ B) (hL : 0 < L)
-    (zs : List ℤ) (hz : Bits zs) (x : EarlyAddress B L zs.length) :
-    repairedEarly B L hB hL zs hz x = earlyIdeal B L hL zs hz x := by
-  exact repair_exact (packedEarlyPerm (2 * L) B (by omega) (by omega) zs)
-    (earlyIdeal B L hL zs hz) (fun y => ¬earlyGood B L zs.length y)
-    (fun y => not_congr (earlyIdeal_preserves_good B L hL zs hz y))
-    (fun y hy => early_program_agrees_on_good B L hB hL zs hz y (not_not.mp hy)) x
-
 abbrev LateAddress (B L : ℤ) (n : ℕ) := Field (B ^ n) × EarlyAddress B L n
 
 def lateIdeal (B L : ℤ) (hL : 0 < L) (zs : List ℤ) (hz : Bits zs) :
@@ -199,22 +182,5 @@ theorem late_program_agrees_on_good (B L : ℤ) (hB : 1 ≤ B) (hL : 0 < L)
       exact congrArg Prod.fst hvals
     · apply Subtype.ext
       exact congrArg (fun z : ℤ × ℤ × ℤ => z.2.1) hvals
-
-def repairedLate (B L : ℤ) (hB : 1 ≤ B) (hL : 0 < L) (zs : List ℤ) (hz : Bits zs)
-    (x : LateAddress B L zs.length) : LateAddress B L zs.length :=
-  let S := packedLatePerm (2 * L) B (by omega) (by omega) zs
-  let T := lateIdeal B L hL zs hz
-  let y := S x
-  if ¬lateGood B L zs.length y then T (S.symm y) else y
-
-/-- All source bit patterns and all addresses, including arbitrary overflowing
-temporary digits: repair recovers the ideal selected-parity operation. -/
-theorem repairedLate_correct (B L : ℤ) (hB : 1 ≤ B) (hL : 0 < L)
-    (zs : List ℤ) (hz : Bits zs) (x : LateAddress B L zs.length) :
-    repairedLate B L hB hL zs hz x = lateIdeal B L hL zs hz x := by
-  exact repair_exact (packedLatePerm (2 * L) B (by omega) (by omega) zs)
-    (lateIdeal B L hL zs hz) (fun y => ¬lateGood B L zs.length y)
-    (fun y => not_congr (lateIdeal_preserves_good B L hL zs hz y))
-    (fun y hy => late_program_agrees_on_good B L hB hL zs hz y (not_not.mp hy)) x
 
 end IntegerMultBounds.Compact

@@ -23,24 +23,10 @@ structure Shape (depth : ℕ) (v : Descriptor) : Prop where
   width : v.width = 125000^depth
   rows : roleCount^depth ∣ v.rows
 
-theorem rows_iff_W (depth : ℕ) (v : Descriptor) :
-    roleCount^depth ∣ v.rows ↔ Shared50Parameters.W^depth ∣ v.rows := by
-  rw [Shared50RecursiveNodeLayout.roleCount_eq_W]
-
 theorem roleCount_positive : 0 < roleCount := by decide
-
-theorem of_W {depth : ℕ} {v : Descriptor} (hp : v.Positive)
-    (hw : v.width = 125000^depth) (hd : Shared50Parameters.W^depth ∣ v.rows) :
-    Shape depth v := ⟨hp,hw,(rows_iff_W depth v).mpr hd⟩
 
 theorem base_width {v : Descriptor} (h : Shape 0 v) : v.width = 1 := by
   simpa only [pow_zero] using h.width
-
-theorem recurse_width {depth : ℕ} {v : Descriptor} (h : Shape (depth+1) v) :
-    1 < v.width := by
-  rw [h.width,pow_succ]
-  have hp : 0 < (125000 : ℕ)^depth := pow_pos (by decide) _
-  omega
 
 theorem split_divides {depth : ℕ} {v : Descriptor} (h : Shape (depth+1) v) :
     roleCount ∣ v.rows :=
@@ -70,17 +56,6 @@ theorem selected_shape {depth : ℕ} {v : Descriptor} (h : Shape (depth+1) v)
       Shared50ModularControl.prime_prime.pos roleCount_positive (split_divides h) h.positive,
     rfl,RecursiveInterchangeLayout.child_rows_divisible _ _ _ _ _ _ _ roleCount_positive h.rows⟩
 
-/-- No second row quotient is taken at child entry. -/
-theorem selected_rows (depth : ℕ) (v : Descriptor) (i j : Fin 125000) :
-    (selected depth v i j).rows = (role v roleCount).rows := by
-  simp [selected,child]
-
-theorem split_rows {depth : ℕ} {v : Descriptor} (h : Shape (depth+1) v) :
-    roleCount^depth ∣ (role v roleCount).rows := by
-  have hd := (selected_shape h (0 : Fin 125000) (0 : Fin 125000)).rows
-  rw [selected_rows] at hd
-  exact hd
-
 /-- The runtime volume is exactly one role stream, rather than the parked
 ancestor bank or the full unsplit parent. -/
 theorem selected_volume_role {depth : ℕ} {v : Descriptor} (h : Shape (depth+1) v)
@@ -94,34 +69,6 @@ theorem selected_volume {depth : ℕ} {v : Descriptor} (h : Shape (depth+1) v)
   rw [selected_eq]
   apply RecursiveInterchangeLayout.child_volume_div _ _ _ _ _ _ _ roleCount_positive (split_divides h)
   rw [h.width,pow_succ,Nat.mul_comm]
-
-theorem selected_volume_W {depth : ℕ} {v : Descriptor} (h : Shape (depth+1) v)
-    (i j : Fin 125000) :
-    volume prime (selected depth v i j) = volume prime v/Shared50Parameters.W := by
-  rw [selected_volume h,Shared50RecursiveNodeLayout.roleCount_eq_W]
-
-/-- Both occupied descriptor sets in the matching return are bounded by the
-same child volume. This requires no extra assumptions on spectator sizes. -/
-theorem return_header_lengths {depth : ℕ} {v : Descriptor} (h : Shape (depth+1) v)
-    (i j : Fin 125000) (old current : Fin 6 → List Bool)
-    (ho : RecursiveDimensionBank.Headers (role v roleCount) old)
-    (hc : RecursiveDimensionBank.Headers (selected depth v i j) current) :
-    (∀ z, (old z).length ≤ 2*volume prime (selected depth v i j)) ∧
-      (∀ z, (current z).length ≤ 2*volume prime (selected depth v i j)) := by
-  have hp := (selected_shape h i j).positive
-  have hV := RecursiveAffinePrepare.volume_positive Shared50ModularControl.prime_prime.two_le _ hp
-  constructor
-  · intro z
-    have hl := RecursiveAffinePrepare.header_log Shared50ModularControl.prime_prime.two_le
-      _ (split_positive h) old ho z
-    rw [← selected_volume_role h i j] at hl
-    have hn := Nat.log2_le_self (volume prime (selected depth v i j))
-    omega
-  · intro z
-    have hl := RecursiveAffinePrepare.header_log Shared50ModularControl.prime_prime.two_le
-      _ hp current hc z
-    have hn := Nat.log2_le_self (volume prime (selected depth v i j))
-    omega
 
 end
 end IntegerMultBounds.Machine.Shared50RecursiveDepth

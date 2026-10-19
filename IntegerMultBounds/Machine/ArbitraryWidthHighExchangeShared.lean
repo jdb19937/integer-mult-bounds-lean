@@ -33,14 +33,6 @@ theorem data_eq {v : Descriptor} (x : Fin (volume prime v) → ZMod 2) :
     data x = Shared50RecursiveCallSemantics.childRoles (sourceWord x) :=
   Shared50RecursiveCallReady.source_roles _
 
-theorem data_head_source {v : Descriptor} (x : Fin (volume prime v) → ZMod 2) :
-    (data x).head Shared50NodeSegments.io = 0 := by
-  simp only [data_eq,Shared50RecursiveCallSemantics.childRoles,setTape,Function.update_self]
-
-theorem data_tape_source {v : Descriptor} (x : Fin (volume prime v) → ZMod 2) :
-    (data x).tape Shared50NodeSegments.io = sourceWord x := by
-  simp only [data_eq,Shared50RecursiveCallSemantics.childRoles,setTape,Function.update_self]
-
 private theorem raw_setTape {k n a : ℕ} (hk : k ≤ n) (w : Tapes k a) (i : Fin k)
     (out : ℤ → Fin (a+4)) (p : ℤ) :
     SharedBankStageInput.raw (setTape w i out p) n =

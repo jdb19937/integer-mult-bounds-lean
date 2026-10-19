@@ -31,10 +31,6 @@ theorem asFiber_fromFiber {P w G B : ℕ} (x : Fin (rows P w G*(2^w*B)) → Bool
     asFiber (fromFiber x) = x := by
   funext i; rfl
 
-theorem fromFiber_asFiber {P w G B : ℕ} (x : Fin (volume P (2^w) G B) → Bool) :
-    fromFiber (asFiber x) = x := by
-  funext i; rfl
-
 theorem fiber_index {P w G B : ℕ} (p : Fin P) (h d : Fin (2^w)) (g : Fin G) (j : Fin B) :
     Fin.cast (size P w G B) (index p h g d j) = FiberLayoutData.index (rowIndex p h g) d j := by
   apply Fin.ext

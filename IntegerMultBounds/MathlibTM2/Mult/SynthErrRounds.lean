@@ -223,10 +223,6 @@ theorem gridR_mulYInv {p : ℕ} (e : ℕ → ℕ) {u : Recs r} (h : GridR p u) :
     GridR p (mulYInv e u) :=
   fun n c => isFixed_shiftInv (h n) c
 
-theorem mulY_rdR (p : ℕ) (e : ℕ → ℕ) (u : Recs r) : mulY e (rdR p u) = rdR p (mulY e u) := by
-  funext n
-  exact shiftNegZ_rhoC p (e n) (u n)
-
 theorem mulYInv_rdR (p : ℕ) (e : ℕ → ℕ) (u : Recs r) :
     mulYInv e (rdR p u) = rdR p (mulYInv e u) := by
   funext n
@@ -256,31 +252,10 @@ theorem oppRound_supLe (h : ℕ) {u : Recs r} {a : ℝ} (hu : SupLe es.sum u a) 
     SupLe es.sum (oppRound es h u) a :=
   bflyL_supLe (fun _ hq => selBits_lt es hq) (mulY_supLe _ hu)
 
-theorem fwdRounds_sub : ∀ (k : ℕ) (u v : Recs r),
-    fwdRounds es k (u - v) = fwdRounds es k u - fwdRounds es k v
-  | 0, _, _ => rfl
-  | k + 1, u, v => by
-    show fwdRounds es k (fwdRound es k (u - v)) = fwdRounds es k (fwdRound es k u) -
-      fwdRounds es k (fwdRound es k v)
-    rw [fwdRound_sub, fwdRounds_sub k]
-
-theorem oppRounds_sub : ∀ (k : ℕ) (u v : Recs r),
-    oppRounds es k (u - v) = oppRounds es k u - oppRounds es k v
-  | 0, _, _ => rfl
-  | k + 1, u, v => by
-    show oppRound es k (oppRounds es k (u - v)) = oppRound es k (oppRounds es k u) -
-      oppRound es k (oppRounds es k v)
-    rw [oppRounds_sub k, oppRound_sub]
-
 theorem fwdRounds_supLe : ∀ (k : ℕ) {u : Recs r} {a : ℝ}, SupLe es.sum u a →
     SupLe es.sum (fwdRounds es k u) a
   | 0, _, _, hu => hu
   | k + 1, _, _, hu => fwdRounds_supLe k (fwdRound_supLe es k hu)
-
-theorem oppRounds_supLe : ∀ (k : ℕ) {u : Recs r} {a : ℝ}, SupLe es.sum u a →
-    SupLe es.sum (oppRounds es k u) a
-  | 0, _, _, hu => hu
-  | k + 1, _, _, hu => oppRound_supLe es k (oppRounds_supLe k hu)
 
 /-- The machine's forward round: the layer returns `Q_p(ℋ z)` and the twiddle `J_E` follows.
 Since `J_E` is a signed coefficient permutation, `J_E Q_p(ℋ z) = Q_p(J_E ℋ z)`: the forward
@@ -479,15 +454,6 @@ theorem twFwdFlat_rdA_Hl (h : ℕ) (f : Arr (Fin r) es.sum) :
   funext q
   exact congrFun (shiftInv_rhoC p _ fun c => Hl (Fin r) (selFin es h) f (c, q.2)) q.1
 
-/-- Each flat forward round is a sup-norm contraction. -/
-theorem norm_fwdRoundFlat_le (h : ℕ) (f : Arr (Fin r) es.sum) : ‖fwdRoundFlat es h f‖ ≤ ‖f‖ := by
-  have := norm_flat_le (norm_nonneg f) (fwdRound_supLe es h (supLe_unflat f))
-  rwa [flat_fwdRound, flat_unflat] at this
-
-theorem norm_oppRoundFlat_le (h : ℕ) (f : Arr (Fin r) es.sum) : ‖oppRoundFlat es h f‖ ≤ ‖f‖ := by
-  have := norm_flat_le (norm_nonneg f) (oppRound_supLe es h (supLe_unflat f))
-  rwa [flat_oppRound, flat_unflat] at this
-
 /-- `k` computed forward rounds on flat arrays: error at most `‖f - g‖ + k √2 2^{-p}`. -/
 theorem fwdRoundsFlatC_err (k : ℕ) (f g : Arr (Fin r) es.sum) :
     ‖fwdRoundsFlatC p es k f - fwdRoundsFlat es k g‖ ≤ ‖f - g‖ + k * (Real.sqrt 2 / 2 ^ p) := by
@@ -586,16 +552,6 @@ noncomputable def oppRoundsFlatL : ℕ → Arr (Fin r) es.sum → Arr (Fin r) es
 noncomputable def oppRoundsFlatLC : ℕ → Arr (Fin r) es.sum → Arr (Fin r) es.sum
   | 0, f => f
   | k + 1, f => rdA p (oppRoundFlatL es L k (oppRoundsFlatLC k f))
-
-theorem norm_fwdRoundFlatL_le (h : ℕ) (f : Arr (Fin r) es.sum) :
-    ‖fwdRoundFlatL es L h f‖ ≤ ‖f‖ := by
-  rw [fwdRoundFlatL, norm_relabel]
-  exact (norm_fwdRoundFlat_le es h _).trans (norm_relabel_le _ _)
-
-theorem norm_oppRoundFlatL_le (h : ℕ) (f : Arr (Fin r) es.sum) :
-    ‖oppRoundFlatL es L h f‖ ≤ ‖f‖ := by
-  rw [oppRoundFlatL, norm_relabel]
-  exact (norm_oppRoundFlat_le es h _).trans (norm_relabel_le _ _)
 
 theorem fwdRoundsFlatL_relabel : ∀ (k : ℕ) (f : Arr (Fin r) es.sum),
     fwdRoundsFlatL es L k (relabel L f) = relabel L (fwdRoundsFlat es k f)
@@ -740,17 +696,6 @@ theorem oppRoundsC_close (hr : ∀ i, 2 ^ a i ∣ 2 * r) (p : ℕ) {ℓ : ℕ} (
   rw [← opp_rounds_exact a hr w hn]
   exact oppRoundsC_lt_ell p _ hA hℓ w n (lt_two_pow_of_lt_prod a hn) c
 
-/-- The computed transforms return disk grid arrays on disk grid inputs. -/
-theorem fwdRoundsC_diskGrid (p : ℕ) (es : List ℕ) (k : ℕ) {z : Recs r} (hg : GridR p z)
-    (hd : SupLe es.sum z 1) :
-    GridR p (fwdRoundsC p es k z) ∧ SupLe es.sum (fwdRoundsC p es k z) 1 :=
-  ⟨fwdRoundsC_grid p es k hg, fwdRoundsC_supLe p es k hd⟩
-
-theorem oppRoundsC_diskGrid (p : ℕ) (es : List ℕ) (k : ℕ) {w : Recs r} (hg : GridR p w)
-    (hd : SupLe es.sum w 1) :
-    GridR p (oppRoundsC p es k w) ∧ SupLe es.sum (oppRoundsC p es k w) 1 :=
-  ⟨oppRoundsC_grid p es k hg, oppRoundsC_supLe p es k hd⟩
-
 end Transforms
 
 /-! ### Layouts of the multi-axis transforms -/
@@ -767,12 +712,6 @@ theorem fwd_rounds_flatL (hr : ∀ i, 2 ^ a i ∣ 2 * r) (z : Recs r) :
       relabel L (flat _ fun n => fwdT (tsA a) z (bitrevAddr (tsA a) n)) := by
   rw [fwdRoundsFlatL_relabel, fwd_rounds_flat a hr z]
 
-/-- In the layout `L` the exact opposite rounds compute `F⁺ B⁻¹` on the array stored in `L`. -/
-theorem opp_rounds_flatL (hr : ∀ i, 2 ^ a i ∣ 2 * r) (w : Recs r) :
-    oppRoundsFlatL (List.ofFn a) L (nRounds a) (relabel L (flat _ w)) =
-      relabel L (flat _ fun n => oppT (tsA a) (fun j => w (bitrevAddr (tsA a) j)) n) := by
-  rw [oppRoundsFlatL_relabel, opp_rounds_flat a hr w]
-
 /-- In every layout `L` the computed forward rounds are within `√2 A 2^{-p}` of `L B F⁻`. -/
 theorem fwdRoundsFlatLC_err_LBF (hr : ∀ i, 2 ^ a i ∣ 2 * r) (p : ℕ) (z : Recs r) :
     ‖fwdRoundsFlatLC p (List.ofFn a) L (nRounds a) (relabel L (flat _ z)) -
@@ -781,15 +720,6 @@ theorem fwdRoundsFlatLC_err_LBF (hr : ∀ i, 2 ^ a i ∣ 2 * r) (p : ℕ) (z : R
   rw [← fwd_rounds_flatL a L hr z]
   simpa using fwdRoundsFlatLC_err p (List.ofFn a) L (nRounds a) (relabel L (flat _ z))
     (relabel L (flat _ z))
-
-/-- In every layout `L` the computed opposite rounds are within `√2 A 2^{-p}` of `F⁺ B⁻¹`. -/
-theorem oppRoundsFlatLC_err_FB (hr : ∀ i, 2 ^ a i ∣ 2 * r) (p : ℕ) (w : Recs r) :
-    ‖oppRoundsFlatLC p (List.ofFn a) L (nRounds a) (relabel L (flat _ w)) -
-        relabel L (flat _ fun n => oppT (tsA a) (fun j => w (bitrevAddr (tsA a) j)) n)‖ ≤
-      nRounds a * (Real.sqrt 2 / 2 ^ p) := by
-  rw [← opp_rounds_flatL a L hr w]
-  simpa using oppRoundsFlatLC_err p (List.ofFn a) L (nRounds a) (relabel L (flat _ w))
-    (relabel L (flat _ w))
 
 end LayoutAxes
 

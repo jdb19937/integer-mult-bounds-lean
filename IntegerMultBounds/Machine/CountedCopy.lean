@@ -276,16 +276,4 @@ theorem copy_hoare (source dest clock : ℤ → Fin 4) (p q : ℤ)
   obtain ⟨hb,hr,hh⟩ := copy_exact source dest clock p q xs bs hcount hzero hend
   exact ⟨runtime xs.length bs,_,hb,hr,hh,rfl⟩
 
-/-- Canonical-sized clocks give the requested symbol count plus logarithmic
-setup-size bound. The width hypothesis is about the supplied binary descriptor;
-preparing that descriptor is not an uncharged action of this machine. -/
-theorem runtime_le_log (xs : List (Fin 4)) (bs : List Bool)
-    (hcount : Counter.value bs = xs.length)
-    (hwidth : bs.length ≤ Nat.log2 (xs.length+1)+1) :
-    runtime xs.length bs ≤ 5*xs.length+2*Nat.log2 (xs.length+1)+4 := by
-  have hh := countdown_cost bs
-  change runtime (Counter.value bs) bs ≤ 5*Counter.value bs+2*bs.length+2 at hh
-  rw [hcount] at hh
-  omega
-
 end IntegerMultBounds.Machine.CountedCopy

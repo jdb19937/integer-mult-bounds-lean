@@ -66,13 +66,5 @@ theorem data_after {P : Equiv.Perm (Address s w m before after rows)}
   rw [hcell,Q.apply_symm_apply] at hh
   exact hh
 
-theorem records_after {P : Equiv.Perm (Address s w m before after rows)}
-    {Q : Equiv.Perm (RecordAddress s w m before after rows)} (array result : Array s rows)
-    (hcell : ∀ x r, P (cell s w m before after rows x r)=cell s w m before after rows (Q x) r)
-    (hentry : ∀ x, result (index s w m before after rows hw ha (P x))=array (index s w m before after rows hw ha x)) :
-    records s w m before after rows hw ha result=repairRecords E Q (data s w m before after rows hw ha array) := by
-  unfold records repairRecords
-  rw [data_after s w m before after rows hw ha array result hcell hentry]
-
 end
 end IntegerMultBounds.Machine.ActiveRepairLayoutRecordsData

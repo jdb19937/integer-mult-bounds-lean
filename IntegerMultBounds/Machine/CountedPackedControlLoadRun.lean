@@ -33,12 +33,6 @@ def copied (U X : List Bool) (f g : ℤ → Fin (a+4)) (pu px : ℤ) : Tapes 5 a
   PackedLine.bank (putWord (fun _ => blank) 0 (X.map bitSymbol)) (putWord f px (X.map bitSymbol))
     (fun _ => blank) (putWord g pu (U.map bitSymbol)) (fun _ => blank) 0 px 0 pu 0
 
-def lineOutput {s : ℕ} (R : Rule s) (b : ℕ) (hb : 1 ≤ b) (U X : List Bool)
-    (f g : ℤ → Fin (a+4)) (pu px : ℤ) : Tapes 5 a :=
-  PackedLine.bank (putWord (fun _ => blank) 0 (X.map bitSymbol)) (putWord f px (X.map bitSymbol))
-    (fun _ => blank) (putWord g pu (U.map bitSymbol))
-    (putWord (fun _ => blank) 0 ((word R b hb U X).map bitSymbol)) 0 px 0 pu 0
-
 def tail (hs : Fin 2 → List Bool) : Tapes 16 a :=
   (FixedHeaderBankCopy.headerBank hs).append (FixedHeaderBankCopy.empty 14)
 theorem input_eq (v : Tapes 5 a) (hs : Fin 2 → List Bool) : input v hs = v.append (tail hs) := by

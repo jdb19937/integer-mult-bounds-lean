@@ -131,22 +131,5 @@ theorem realizes {c : ℕ} (j : Fin c) (common : Tapes (CommonTapes c) prime)
   · exact (strip_set common _ 5 _ 0).symm
   · exact hr
 
-/-- The actual native payload is the selected physical reservation role. -/
-theorem projected_role {c r : ℕ} (hc : 0 < c) (s : Shape)
-    (x : Fin (1*r*s.recordWidth) → Bool) (rs ls : List Bool) (extra : Tapes 5 prime) (j : Fin c) :
-    (SharedBank.payload ((CompactRowReservationEndpoint.final (a := prime) hc x rs ls).append extra)
-      (commonSlots c j)).head 5 = 0 ∧
-    (SharedBank.payload ((CompactRowReservationEndpoint.final (a := prime) hc x rs ls).append extra)
-      (commonSlots c j)).tape 5 =
-      (CompactRowReservationEndpoint.final (a := prime) hc x rs ls).tape (roleSlot c j) := by
-  have h5 : (5 : Fin 6) = Fin.natAdd 5 (0 : Fin 1) := Fin.ext rfl
-  rw [h5]
-  constructor
-  · simpa only [SharedBank.payload,commonSlots,Fin.addCases_right,Tapes.append,
-      Fin.addCases_left,CompactGadgetReservationData.roleSlot] using
-      (CompactRowReservationEndpoint.role_word (a := prime) hc x rs ls j).1
-  · simp only [SharedBank.payload,commonSlots,Fin.addCases_right,Tapes.append,
-      Fin.addCases_left]
-
 end
 end IntegerMultBounds.Machine.CompactGadgetReservationPlacement

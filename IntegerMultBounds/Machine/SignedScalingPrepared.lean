@@ -320,26 +320,9 @@ theorem output_tape {Q a d B : ℕ} (hQ : 0 < Q) (ha : 0 < a) (hd : 0 < d)
   exact SignedScalingSign.output_tape hQ ha hd hcop negative (prepared ha A Q B) (prepared hd D Q B) S
     source p middle r signMiddle t dest q payload
 
-/-- Synthesis spare tapes survive literally; generated descriptor banks remain
-part of the active consumer state for subsequent fibers. -/
-theorem output_spares {a d : ℕ} (ha : 0 < a) (hd : 0 < d) (negative : Bool) (A : Setup a) (D : Setup d)
-    (S : SignControls) (Q B : ℕ) (source : ℤ → Fin 4) (p : ℤ) (middle : ℤ → Fin 4) (r : ℤ)
-    (signMiddle : ℤ → Fin 4) (t : ℤ) (dest : ℤ → Fin 4) (q : ℤ) (payload : ℕ → List (Fin 4)) :
-    Placement.extra (executionPlacement a d)
-      (output ha hd negative A D S Q B source p middle r signMiddle t dest q payload) =
-      ScalingPreparedExecution.spare.append ScalingPreparedExecution.spare :=
-  Placement.extra_combine _ _ _
-
 theorem tapeCount_eq (a d : ℕ) : TapeCount a d = 40+4*(a+d) := by
   dsimp only [TapeCount]
   rw [ScalingPreparedExecution.tapeCount_eq,ScalingPreparedExecution.tapeCount_eq]
   omega
-
-theorem stateCount_eq (a d : ℕ) (negative : Bool) :
-    SynthesisStates a+SynthesisStates d+SignedScalingSign.states a d negative =
-      117*(a+d)+(if negative then 627 else 295) := by
-  rw [SignedScalingSign.stateCount_eq]
-  dsimp only [SynthesisStates]
-  cases negative <;> simp <;> omega
 
 end IntegerMultBounds.Machine.SignedScalingPrepared

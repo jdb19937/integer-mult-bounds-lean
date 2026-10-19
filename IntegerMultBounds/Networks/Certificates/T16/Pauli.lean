@@ -54,10 +54,6 @@ theorem cGate_apply (q : Geometry.Address) (f : State) (x : Geometry.Address) :
     cGate q f x = ((1 + Complex.I) / 2) * f x +
       ((1 - Complex.I) / 2) * f (x + q) := kernel_forward q f x
 
-theorem cGate_inverse_apply (q : Geometry.Address) (f : State) (x : Geometry.Address) :
-    (cGate q).symm f x = ((1 - Complex.I) / 2) * f x +
-      ((1 + Complex.I) / 2) * f (x + q) := kernel_backward q f x
-
 /-- Actual permutation on state amplitudes: a basis ket at x moves to Gx. -/
 noncomputable def permutation (G : Geometry.Address ≃ₗ[F] Geometry.Address) :
     State ≃ₗ[ℂ] State where

@@ -302,18 +302,6 @@ theorem cycle_exact (is : List (Fin c)) (hne : is ≠ []) (hn : is.Nodup) (n : �
     simp only [PrefixCounterData.cycleTime,iterateFields,run_add,hi,Option.bind_some]
     exact ih (advanceFields hq is ds) (fun i => by simpa only [widths_preserved] using hend i)
 
-/-- All other tapes and their heads are exact frames. The aggregate carry
-bound has no per-iteration spectator-width factor. -/
-theorem framed_cycle {t : ℕ} (frame : Tapes t q) (is : List (Fin c)) (hne : is ≠ []) (hn : is.Nodup)
-    (n : ℕ) (f : Fin c → ℤ → Fin (q+4)) (ds : Fin c → List (Fin q))
-    (hzero : ∀ i, f i 0 = separator) (hend : ∀ i, f i (1+(ds i).length) = blank) :
-    ∃ k, k ≤ (4*is.length+2)*n+2*∑ i, (ds i).length ∧
-      run (extend (cycleProgram hq is hne) t) k
-        (((tapes f ds).append frame).start (extend (cycleProgram hq is hne) t)) =
-        some (((tapes f (iterateFields hq is n ds)).append frame).start (extend (cycleProgram hq is hne) t)) := by
-  refine ⟨PrefixCounterData.cycleTime hq is n ds,PrefixCounterData.cycle_amortized hq is n ds,?_⟩
-  exact extend_run (cycleProgram hq is hne) frame (cycle_exact hq is hne hn n f ds hzero hend)
-
 /-- The usual fixed order visits every physical prefix field exactly once,
 with field zero fastest. Reversing field placement gives conventional lex order. -/
 def lexProgram (hc : 0 < c) : Program c (c*3+1) q :=

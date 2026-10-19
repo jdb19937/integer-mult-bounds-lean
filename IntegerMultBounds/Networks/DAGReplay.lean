@@ -183,36 +183,9 @@ theorem replay_support (rename : α ↪ β) (target : List (Node β)) (source : 
     some (((source.map Node.support)[index]'(by simpa using hi)).map rename) at hh
   simpa only [List.getElem_map] using hh
 
-/-- Evaluating the imported reference gives exactly the original support sum
-under the renamed input valuation. -/
-theorem replay_value {A : Type*} [AddCommMonoid A] (rename : α ↪ β)
-    (target : List (Node β)) (source : List (Node α)) (input : β → A)
-    (ht : Valid target) (hs : Valid source) (index : ℕ) (hi : index < source.length) :
-    (eval input (replay rename target source).1)[(replay rename target source).2[index]?.getD 0]? =
-      some (supportSum (fun a => input (rename a)) source[index].support) := by
-  rw [eval_eq input _ (replay_correct rename target source ht hs).1]
-  have hh := congrArg (Option.map (supportSum input))
-    (replay_support rename target source ht hs index hi)
-  simpa only [← List.getElem?_map, List.map_map, Function.comp_def, Option.map_some,
-    supportSum, Finset.sum_map] using hh
-
 /-- Membership in the supports of actual addition records, excluding inputs. -/
 def AdditionSupport (nodes : List (Node α)) (support : Finset α) : Prop :=
   ∃ node ∈ nodes, (∃ left right, node.kind = .add left right) ∧ node.support = support
-
-omit [DecidableEq α] [DecidableEq β] in
-theorem additionSupport_cons (node : Node α) (nodes : List (Node α)) (support : Finset α) :
-    AdditionSupport (node::nodes) support ↔
-      ((∃ left right, node.kind = .add left right) ∧ node.support = support) ∨
-        AdditionSupport nodes support := by
-  constructor
-  · rintro ⟨n, hm, hk, hs⟩
-    rcases List.mem_cons.mp hm with rfl | hm
-    · exact Or.inl ⟨hk, hs⟩
-    · exact Or.inr ⟨n, hm, hk, hs⟩
-  · rintro (⟨hk, hs⟩ | ⟨n, hm, hk, hs⟩)
-    · exact ⟨node, by simp, hk, hs⟩
-    · exact ⟨n, by simp [hm], hk, hs⟩
 
 omit [DecidableEq α] in
 theorem intern_additionSupport (target : List (Node β)) (node : Node β) (support : Finset β)
@@ -262,39 +235,5 @@ theorem replay_additionSupport (rename : α ↪ β) (target : List (Node β))
     AdditionSupport target support ∨
       ∃ localSupport, AdditionSupport source localSupport ∧ localSupport.map rename = support :=
   replayFrom_additionSupport rename target [] source support h
-
-omit [DecidableEq α] in
-/-- Replay appends one returned target reference per source node, including
-nodes whose support is reused rather than allocated. -/
-theorem replayFrom_refs_length (rename : α ↪ β) (target : List (Node β))
-    (refs : List ℕ) (source : List (Node α)) :
-    (replayFrom rename target refs source).2.length = refs.length + source.length := by
-  induction source generalizing target refs with
-  | nil => simp [replayFrom]
-  | cons node source ih =>
-      simpa [replayFrom, Nat.add_assoc, Nat.add_comm, Nat.add_left_comm] using
-        ih (intern target (translated rename refs node)).1
-          (refs ++ [(intern target (translated rename refs node)).2])
-
-omit [DecidableEq α] in
-theorem replay_refs_length (rename : α ↪ β) (target : List (Node β)) (source : List (Node α)) :
-    (replay rename target source).2.length = source.length := by
-  simpa [replay] using replayFrom_refs_length rename target [] source
-
-/-- Every concrete returned node identifier is an actual target index. -/
-theorem replay_ref_bound (rename : α ↪ β) (target : List (Node β)) (source : List (Node α))
-    (ht : Valid target) (hs : Valid source) (index : ℕ) (hi : index < source.length) :
-    (replay rename target source).2[index]?.getD 0 < (replay rename target source).1.length :=
-  lookup_bound (replay_support rename target source ht hs index hi)
-
-/-- Source evaluation and actual imported-reference evaluation agree, with
-input labels renamed injectively into the target alphabet. -/
-theorem replay_eval {A : Type*} [AddCommMonoid A] (rename : α ↪ β)
-    (target : List (Node β)) (source : List (Node α)) (input : β → A)
-    (ht : Valid target) (hs : Valid source) (index : ℕ) (hi : index < source.length) :
-    (eval input (replay rename target source).1)[(replay rename target source).2[index]?.getD 0]? =
-      (eval (fun a => input (rename a)) source)[index]? := by
-  rw [replay_value rename target source input ht hs index hi, eval_eq _ source hs]
-  simp [List.getElem?_map, List.getElem?_eq_getElem hi]
 
 end IntegerMultBounds.Networks.DAGReplay

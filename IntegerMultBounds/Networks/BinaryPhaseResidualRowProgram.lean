@@ -44,8 +44,6 @@ def slot (i : Fin (dimension U V)) : Fin h :=
     (residual_nondegenerate (Labels.binary h) hs U V hu hv hUV)
     (basis hs U V hu hv hUV hunit) i
 
-theorem slot_val (i : Fin (dimension U V)) : (slot hs U V hu hv hUV hunit i).val = i.val := rfl
-
 theorem selected (x : Address h) (i : Fin (dimension U V)) :
     BinaryRowProgram.run (word hs U V hu hv hUV hunit) x (slot hs U V hu hv hUV hunit i) =
       Labels.binary h (basis hs U V hu hv hUV hunit i) x :=

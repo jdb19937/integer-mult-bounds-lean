@@ -99,33 +99,4 @@ theorem call_hoare (L : Layout t) (ops : List (Role L)) (hu : ops.Nodup)
   have hall' := hall.seq (pop_hoare_linear L ops hu u bs n hn hcanon hp hcu hru hf)
   exact hall'.consequence (fun _ h => h) (fun _ h => h) (by nlinarith)
 
-/-- Specialization with the sole visible result being the transformed active
-array; every other tape and head is exactly restored. -/
-theorem active_result_hoare (L : Layout t) (ops : List (Role L)) (hu : ops.Nodup)
-    (src dst : Role L) (hne : src ≠ dst) (hsrc : src ∉ ops) (hdst : dst ∉ ops)
-    (v : Tapes t a) (out : ℤ → Fin (a+4)) (bs : List Bool) (n : ℕ)
-    (hn : Counter.value bs = n) (hcanon : GrowingCounterData.Canonical bs) (hp : 0 < n)
-    (hc : Controls L bs v)
-    (hr : ∀ i ∈ ops, v.head i = 0 ∧ RoleArrayStack.Supported (v.tape i) n)
-    (hf : Free L ops n v)
-    (hs : v.head src.val = 0 ∧ RoleArrayStack.Supported (v.tape src.val) n)
-    (hout : RoleArrayStack.Supported out n)
-    (hd : v.head dst.val = 0 ∧ v.tape dst.val = fun _ => blank)
-    {q B : ℕ} (body : Program t q a)
-    (hb : HoareTime body (fun w => w = entered L ops src dst n v)
-      (fun w => w = entered L ops src dst n (setTape v src.val out 0)) B) :
-    HoareTime (program L ops src dst hne body) (fun w => w = v)
-      (fun w => w = setTape v src.val out 0) ((180*ops.length+178)*n+B) := by
-  apply call_hoare L ops hu src dst hne hsrc hdst v _ bs n hn hcanon hp hc _ hr _ _ hs _ hd _ body hb
-  · simpa [Controls,setTape,src.property.2.1.symm,src.property.2.2.symm] using hc
-  · intro i hi
-    have hne' : i.val ≠ src.val := by
-      intro he
-      exact hsrc ((Subtype.ext he) ▸ hi)
-    simpa [setTape,hne'] using hr i hi
-  · simpa [Free,setTape,src.property.1.symm] using hf
-  · simpa [setTape] using hout
-  · have hne' : dst.val ≠ src.val := fun h => hne (Subtype.ext h.symm)
-    simpa [setTape,hne'] using hd
-
 end IntegerMultBounds.Machine.RoleArrayCall

@@ -62,12 +62,6 @@ theorem carryRun_val (c : ℤ) (ss : List ℤ) :
         rw [pow_succ]
         nlinarith [h, hdiv]
 
-/-- Column values of a word's bits. -/
-lemma colVal_bits (bs : List Bool) : colVal (bs.map fun b => (b.toNat : ℤ)) = valBits bs := by
-  induction bs with
-  | nil => rfl
-  | cons b bs ih => simp [colVal, valBits, ih]
-
 lemma colVal_ofFn {n : ℕ} (f : Fin n → ℤ) : colVal (List.ofFn f) = ∑ t, f t * 2 ^ (t : ℕ) := by
   induction n with
   | zero => simp [colVal]

@@ -71,9 +71,6 @@ variable {s : Shape} {p : Parameters s} {offset rows : ℕ} {hfit : offset+p.f*p
 def caller (d : Inputs s p offset rows hfit) (x : Array s rows) :=
   base d.gs d.bw d.ht d.hc d.rs d.bt d.bc x
 
-def selectedCost := ActivePrefixSelectedLoad.constant*(rows*s.recordWidth)
-def correctionCost := ActivePrefixCorrectionLoad.constant*(rows*s.recordWidth)
-def compactCost (kind : Kind) := ActivePrefixCompactConjugationRun.cost kind s rows (p.n*p.b)
 def cost (s : Shape) (p : Parameters s) (rows : ℕ) :=
   ActivePrefixSelectedLoad.constant*(rows*s.recordWidth)+
     ActivePrefixCompactConjugationRun.cost .parity s rows (p.n*p.b)+

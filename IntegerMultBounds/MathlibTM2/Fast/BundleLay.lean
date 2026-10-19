@@ -46,8 +46,6 @@ noncomputable section
 and unifying a folded constant against it makes the elaborator evaluate the numerals). -/
 notation "bdA" => IntegerMultBounds.Networks.Shared50ModularControl.prime + IntegerMultBounds.MathlibTM2.Fast.Main.mnKa
 
-lemma bdA_ge : 4 ≤ bdA := by have := mnKa_alpha; omega
-
 /-! ### Parking of the converter's registers -/
 
 /-- An enumeration of the converter's own registers. -/
@@ -73,8 +71,6 @@ lemma bdLayX_inj : Function.Injective bdLayX := by
 lemma bdLayX_ne_wire (x : DsX) (v : NWire) : bdLayX x ≠ .wire v := by simp [bdLayX]
 
 lemma bdLayX_ne_park (x : DsX) : bdLayX x ≠ .park := by simp [bdLayX]
-
-lemma bdLayX_ne_io (x : DsX) : bdLayX x ≠ .io := by simp [bdLayX]
 
 /-- The host register of the converter's register `x`. -/
 def bdIo (x : DsX) : Fin mnT := mnLay (bdLayX x)
@@ -188,17 +184,6 @@ lemma bdR₁_io (n : ℕ) (R : Regs mnT bdA) (x : DsX) : bdR₁ n R (bdIo x) = b
 lemma bdR₁_off (n : ℕ) (R : Regs mnT bdA) {k : Fin mnT} (hk : ∀ r, mnPm r ≠ k)
     (hg : ∀ y, bdG y ≠ k) : bdR₁ n R k = R k :=
   dsF_off R _ _ _ _ hk hg
-
-lemma bdR₁_rg (n : ℕ) (R : Regs mnT bdA) {r : MnR} (hp : ∀ q, r ≠ .pm q)
-    (hs : ∀ q, r ≠ .src q) : bdR₁ n R (mnRg r) = R (mnRg r) :=
-  bdR₁_off n R (fun q h => hp q (mnRg_inj h).symm) (bdG_ne_rg hs)
-
-lemma bdR₁_ι (n : ℕ) (R : Regs mnT bdA) (j : Fin 64) : bdR₁ n R (mnι j) = R (mnι j) :=
-  bdR₁_off n R (fun _ => mnRg_ne_ι _ j) (fun y => bdG_ne_ι y j)
-
-lemma bdR₁_lay (n : ℕ) (R : Regs mnT bdA) {x : LReg SXReg} (hx : ∀ y, bdLayX y ≠ x) :
-    bdR₁ n R (mnLay x) = R (mnLay x) :=
-  bdR₁_off n R (fun _ => mnRg_ne_lay _ x) (bdG_ne_lay hx)
 
 /-! ### The distribution machine -/
 

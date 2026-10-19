@@ -94,17 +94,5 @@ theorem return_hoare (L : Layout t) (ops : List (Role L)) (hu : ops.Nodup)
   exact (hm.seq (pop_hoare_linear L ops hu v bs n hn hcanon hp hc hr hf)).consequence
     (fun _ h => h) (fun _ h => h) (by nlinarith)
 
-/-- The common child source contains exactly the selected input array, and the
-old selected slot is physically vacated. -/
-theorem entered_payload (L : Layout t) (ops : List (Role L)) (src dst : Role L)
-    (hne : src ≠ dst) (hsrc : src ∉ ops) (n : ℕ) (v : Tapes t a) :
-    (entered L ops src dst n v).head src.val = 0 ∧
-    (entered L ops src dst n v).tape src.val = (fun _ => blank) ∧
-    (entered L ops src dst n v).head dst.val = 0 ∧
-    (entered L ops src dst n v).tape dst.val = v.tape src.val := by
-  have hv : src.val ≠ dst.val := fun h => hne (Subtype.ext h)
-  have hf := role_frame L ops n v src hsrc
-  simp [entered,RoleArrayMove.moved,RoleArrayCall.slots,setTape,hv,hf.2]
-
 end
 end IntegerMultBounds.Machine.RoleArrayCallBoundary

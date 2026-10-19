@@ -204,11 +204,6 @@ def cvTw (p : ℕ) (θ : Fin r → ℂ) (F : ((i : Fin (D + 1)) → ZMod (t i)) 
   ιR (cvN t) (iota (phaseQ p θ (F ∘ (boxSplit t h).symm)))
 
 omit [∀ (i : Fin (D + 1)), NeZero (t i)] in
-theorem cvTw_apply (p : ℕ) (θ : Fin r → ℂ) (F : ((i : Fin (D + 1)) → ZMod (t i)) → ℂ) (n : ℕ)
-    (k : Fin r) :
-    cvTw t h p θ F n k = rhoC p (θ k * F ((boxSplit t h).symm (dec (cvN t) n, k))) := rfl
-
-omit [∀ (i : Fin (D + 1)), NeZero (t i)] in
 theorem cv_gridR_tw (p : ℕ) (θ : Fin r → ℂ) (F : ((i : Fin (D + 1)) → ZMod (t i)) → ℂ) :
     GridR p (cvTw t h p θ F) := fun _ _ => isFixed_rhoC _ _
 

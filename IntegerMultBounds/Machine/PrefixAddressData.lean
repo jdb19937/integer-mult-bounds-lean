@@ -43,29 +43,6 @@ theorem flatten_length (order : List (Fin c)) (ds : Fin c → List (Fin q)) :
     (flatten order ds).length = widthSum order (fun i => (ds i).length) := by
   simp [flatten,widthSum,List.length_flatMap]
 
-/-- Array order with the first field most significant. -/
-def lexAddress (order : List (Fin c)) (ds : Fin c → List (Fin q)) : ℕ :=
-  match order with
-  | [] => 0
-  | i::is => value (ds i)*q^widthSum is (fun j => (ds j).length)+lexAddress is ds
-
-/-- The counter's fastest-first order is exactly reverse physical lexicographic order. -/
-theorem address_reverse (order : List (Fin c)) (ds : Fin c → List (Fin q)) :
-    address order.reverse ds = lexAddress order ds := by
-  induction order with
-  | nil => rfl
-  | cons i order ih =>
-    have hl : (flatten order.reverse ds).length = widthSum order (fun j => (ds j).length) := by
-      simp [flatten,widthSum,List.length_flatMap]
-    rw [List.reverse_cons]
-    change value (flatten (order.reverse++[i]) ds) = _
-    simp only [flatten,List.flatMap_append,List.flatMap_singleton,value_append]
-    change address order.reverse ds+q^(flatten order.reverse ds).length*value (ds i) = _
-    rw [ih,hl]
-    change lexAddress order ds+q^widthSum order (fun j => (ds j).length)*value (ds i) =
-      value (ds i)*q^widthSum order (fun j => (ds j).length)+lexAddress order ds
-    ring
-
 theorem selected_field (hq : 2 ≤ q) (low high : List (Fin c)) (j : Fin c)
     (ds : Fin c → List (Fin q)) :
     (address (low++j::high) ds / q^widthSum low (fun i => (ds i).length)) %

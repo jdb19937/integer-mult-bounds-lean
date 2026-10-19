@@ -26,12 +26,6 @@ theorem bits_value (q e r G B : ℕ) : Counter.value (bits q e r G B) = rowLengt
 theorem bits_canonical (q e r G B : ℕ) : GrowingCounterData.Canonical (bits q e r G B) :=
   BoundedProductDescriptor.bits_canonical _ _
 
-theorem bits_eq (q e r G B : ℕ) :
-    bits q e r G B = RecursiveChildQuotientsConstant.bits (rowLength q e r G B) :=
-  BinaryCanonicalData.value_injective _ _ (bits_canonical q e r G B)
-    (RecursiveChildQuotientsConstant.bits_canonical _) (by
-      rw [bits_value,RecursiveChildQuotientsConstant.bits_value])
-
 theorem rowLength_positive (q e r G B : ℕ) (hq : 2 ≤ q) (hG : 0 < G) (hB : 0 < B) :
     0 < rowLength q e r G B := Nat.mul_pos (Nat.mul_pos hG hB) (pow_pos (by omega) _)
 
@@ -65,18 +59,6 @@ theorem local_constructs (q e r G B : ℕ) (hq : 2 ≤ q) (hG : 0 < G) (_hB : 0 
     ring
   rw [he] at h
   exact h
-
-theorem local_linear (q e r G B : ℕ) (hq : 2 ≤ q) (hG : 0 < G) (hB : 0 < B)
-    (gs bs : List Bool) (hg : Counter.value gs = G*q^(e-r)) (hb : Counter.value bs = B*q^(e-r))
-    (cg : GrowingCounterData.Canonical gs) (cb : GrowingCounterData.Canonical bs) :
-    HoareTime (localProgram (a := a)) (fun z => z = BoundedProductDescriptor.input gs bs)
-      (fun z => z = BoundedProductDescriptor.output gs bs (B*q^(e-r)) (G*q^(e-r)))
-      (81*rowLength q e r G B) := by
-  exact (local_constructs q e r G B hq hG hB gs bs hg hb cg cb).consequence
-    (fun _ h => h) (fun _ h => h) (by
-      have h := rowLength_positive q e r G B hq hG hB
-      unfold localCost
-      omega)
 
 def placement : Fin (6+11) ≃ Fin 17 where
   toFun := ![11,12,13,9,14,10,0,1,2,3,4,5,6,7,8,15,16]
@@ -194,19 +176,6 @@ theorem suffix_le_parent (q P e r G B : ℕ) (hq : 2 ≤ q) (hr : r ≤ e)
     convert Nat.le_mul_of_pos_left (G*B) hP using 1; ring
   rw [original_volume]
   exact Nat.mul_le_mul hout hpow
-
-theorem padded_volume (q P e r G B R : ℕ) :
-    volume q (RecursiveRowPadding.withRows (ArbitraryWidthHighLayout.joinedDescriptor q P e r G B) R) =
-      P*R*rowLength q e r G B := by
-  unfold volume RecursiveRowPadding.withRows ArbitraryWidthHighLayout.joinedDescriptor rowLength
-  rw [show q^(2*(e-r)) = q^(e-r)*q^(e-r) by rw [← pow_add]; congr 1; omega]
-  ring
-
-theorem suffix_le_padded (q P e r G B R : ℕ) (hP : 0 < P) (hR : 0 < R) :
-    rowLength q e r G B ≤
-      volume q (RecursiveRowPadding.withRows (ArbitraryWidthHighLayout.joinedDescriptor q P e r G B) R) := by
-  rw [padded_volume]
-  exact Nat.le_mul_of_pos_left _ (Nat.mul_pos hP hR)
 
 
 end

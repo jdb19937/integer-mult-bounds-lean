@@ -17,14 +17,6 @@ def raw (template target : Tapes t 0) : Tapes t 0 :=
 
 @[simp] theorem raw_head (template target : Tapes t 0) (i : Fin t) : (raw template target).head i = 0 := rfl
 
-theorem raw_marker (template target : Tapes t 0) (i : Fin t) (hi : template.tape i 0 = separator) :
-    (raw template target).tape i 0 = blank := by simp [raw,hi]
-
-theorem raw_preserves_off_origin (template target : Tapes t 0) (i : Fin t) (z : ℤ) (hz : z ≠ 0) :
-    (raw template target).tape i z = target.tape i z := by
-  simp only [raw]
-  split_ifs <;> simp [Function.update_of_ne hz]
-
 def program (template : Tapes t 0) (ht : 0 < t) : Program t 2 0 where
   tapes_pos := ht
   start := 0

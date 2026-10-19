@@ -1049,7 +1049,6 @@ abbrev pmIchRound : Fin pmNV := 28
 abbrev pmIchPrec : Fin pmNV := 29
 abbrev pmIchAngle : Fin pmNV := 30
 
-theorem pm_n_eq (n : ℕ) : pmVals n pmIn = n := rfl
 theorem pm_b_eq (n : ℕ) : pmVals n pmIb = b n := rfl
 theorem pm_p_eq (n : ℕ) : pmVals n pmIp = p n := rfl
 theorem pm_d_eq (n : ℕ) : pmVals n pmId = d n := rfl
@@ -1065,26 +1064,8 @@ theorem pm_alpha_eq (n : ℕ) : pmVals n pmIalpha = alpha n := rfl
 theorem pm_alphaSq_eq (n : ℕ) : pmVals n pmIalphaSq = alpha n ^ 2 := rfl
 theorem pm_gamma_eq (n : ℕ) : pmVals n pmIgamma = gamma n := rfl
 theorem pm_q_eq (n : ℕ) : pmVals n pmIq = q n := rfl
-theorem pm_winLo_eq (n : ℕ) : pmVals n pmIwinLo = Primes.winLo (d n) (2 ^ (ℓ n - 1)) := rfl
-theorem pm_pack_val_eq (n : ℕ) :
-    pmVals n pmIpack = Primes.packVal (srcLen n) (pmTv (numHalf n) (2 ^ (ℓ n - 1)) (r n)) (d n) :=
-  rfl
 theorem pm_S_eq (n : ℕ) : pmVals n pmIS = S n := rfl
-theorem pm_windowA_eq (n : ℕ) : pmVals n pmIwinA = windowA (p n) (alpha n) := rfl
-theorem pm_fastWindow_eq (n : ℕ) : pmVals n pmIwinB = fastWindow (p n) (alpha n) := rfl
-theorem pm_chirpGuard_eq (n : ℕ) : pmVals n pmIg = chirpGuard (d n) := rfl
-theorem pm_twTerms_eq (n : ℕ) : pmVals n pmItwTerms = taylorTerms (p n) 0 := rfl
-theorem pm_twGuard_eq (n : ℕ) : pmVals n pmItwGuard = taylorGuard (p n) 0 := rfl
-theorem pm_twPrec_eq (n : ℕ) : pmVals n pmItwPrec = p n + 2 + taylorGuard (p n) 0 := rfl
-theorem pm_twAngle_eq (n : ℕ) : pmVals n pmItwAngle = 5 * (p n + 4) := rfl
-theorem pm_chTerms_eq (n : ℕ) : pmVals n pmIchTerms = taylorTerms (p n) (chirpGuard (d n)) := rfl
-theorem pm_chGuard_eq (n : ℕ) : pmVals n pmIchGuard = taylorGuard (p n) (chirpGuard (d n)) := rfl
-theorem pm_chRound_eq (n : ℕ) : pmVals n pmIchRound = p n + chirpGuard (d n) := rfl
-theorem pm_chPrec_eq (n : ℕ) :
-    pmVals n pmIchPrec = p n + chirpGuard (d n) + 2 + taylorGuard (p n) (chirpGuard (d n)) := rfl
 theorem pm_chAngle_eq (n : ℕ) : pmVals n pmIchAngle = 5 * anglePrec (p n) (chirpGuard (d n)) := rfl
-theorem pm_scratch_eq (n : ℕ) (i : Fin pmNV) (hi : 31 ≤ i.val) : pmVals n i = 0 := pmVal_ge n i hi
-
 /-- `R = r / 2` for `n ≥ 2`. -/
 theorem pm_R_half (hn : 2 ≤ n) : 2 ^ (ℓ n - 1) = r n / 2 := by
   have := pm_one_le_ℓ hn

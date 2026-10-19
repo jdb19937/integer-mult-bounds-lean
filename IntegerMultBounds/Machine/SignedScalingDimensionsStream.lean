@@ -155,35 +155,9 @@ theorem state_destination {a d : ℕ} (ha : 0 < a) (hd : 0 < d) (negative : Bool
   exact SignedScalingStream.state_destination ha hd negative (prepared ha A Q B) (prepared hd D Q B) (generated S Q B)
     Q B n source p middle r signMiddle t dest q payload i
 
-/-- Generated helper lengths and the bootstrap's fixed one remain explicit. -/
-theorem state_metadata {a d : ℕ} (ha : 0 < a) (hd : 0 < d) (negative : Bool)
-    (A : Setup a) (D : Setup d) (S : Scratch) (Q B n : ℕ) (ns : List Bool)
-    (source : ℤ → Fin 4) (p : ℤ) (middle : ℤ → Fin 4) (r : ℤ) (signMiddle : ℤ → Fin 4) (t : ℤ)
-    (dest : ℤ → Fin 4) (q : ℤ) (payload : ℕ → ℕ → List (Fin 4)) (i : ℕ) :
-    Placement.extra (outerPlacement a d)
-      (state ha hd negative A D S Q B n ns source p middle r signMiddle t dest q payload i) =
-      metadata Q B A.blockBits A.countBits := Placement.extra_combine _ _ _
-
-/-- Both coefficient-synthesis spare tapes are physically retained. -/
-theorem state_spares {a d : ℕ} (ha : 0 < a) (hd : 0 < d) (negative : Bool)
-    (A : Setup a) (D : Setup d) (S : Scratch) (Q B n : ℕ) (ns : List Bool)
-    (source : ℤ → Fin 4) (p : ℤ) (middle : ℤ → Fin 4) (r : ℤ) (signMiddle : ℤ → Fin 4) (t : ℤ)
-    (dest : ℤ → Fin 4) (q : ℤ) (payload : ℕ → ℕ → List (Fin 4)) (i : ℕ) :
-    Placement.extra (innerPlacement a d) (Placement.active (outerPlacement a d)
-      (state ha hd negative A D S Q B n ns source p middle r signMiddle t dest q payload i)) =
-      ScalingPreparedExecution.spare.append ScalingPreparedExecution.spare := by
-  simp only [state,Placement.active_combine,Placement.extra_combine,spares]
-
 theorem tapeCount_eq (a d : ℕ) : TapeCount a d = 51+4*(a+d) := by
   dsimp only [TapeCount]
   rw [SignedScalingDimensions.tapeCount_eq]
   omega
-
-theorem stateCount_eq (a d : ℕ) (negative : Bool) :
-    States a d negative = 117*(a+d)+(if negative then 803 else 471) := by
-  dsimp only [States,PreparationStates]
-  rw [SignedScalingStream.stateCount_eq]
-  dsimp only [SynthesisStates]
-  cases negative <;> simp <;> omega
 
 end IntegerMultBounds.Machine.SignedScalingDimensionsStream

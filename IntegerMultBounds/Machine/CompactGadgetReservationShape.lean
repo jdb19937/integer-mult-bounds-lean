@@ -71,16 +71,6 @@ theorem slot_fits (s : Shape) (n : ℕ) (hn : n ≤ s.axes) (t : Slot) :
   have hw := s.carved_le n hn
   cases t <;> simp only [slotStart,bits] <;> omega
 
-/-- The carved temp, control and back intervals are distinct existing bits. -/
-theorem slots_disjoint (s : Shape) (n : ℕ) (hn : n ≤ s.axes)
-    (u v : Slot) (huv : u ≠ v) (i j : Fin (s.width n)) :
-    s.slotStart u+i.val ≠ s.slotStart v+j.val := by
-  have hw := s.carved_le n hn
-  have hi := i.isLt
-  have hj := j.isLt
-  cases u <;> cases v
-  all_goals first | exact (huv rfl).elim | (simp only [slotStart]; omega)
-
 /-- This decomposition only reinterprets consecutive existing bits. -/
 theorem bits_decomposition (s : Shape) (n : ℕ) (hn : n ≤ s.axes) (f : Front) :
     s.prefixBits f+s.width n+s.gapBits n f+s.width n+s.afterBits n = s.bits := by

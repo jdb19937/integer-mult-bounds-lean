@@ -209,20 +209,6 @@ lemma rsaTabL_getD (t n : ℕ) (wt : ℕ → ℕ → GaussianInt) {k i : ℕ} (h
         rw [List.getD_eq_getElem?_getD, List.getElem?_append_right (by rw [hl]; omega), hl]
         simp [hi]
 
-lemma rsaTabL_drop_take (t n : ℕ) (wt : ℕ → ℕ → GaussianInt) {k i : ℕ} (hk : k < t)
-    (hi : i < n) :
-    (rsaTabL t n wt).drop (k * n + i) = wt k i :: (rsaTabL t n wt).drop (k * n + i + 1) := by
-  have hlen : k * n + i < (rsaTabL t n wt).length := by
-    rw [length_rsaTabL]
-    calc k * n + i < k * n + n := by omega
-      _ = (k + 1) * n := by ring
-      _ ≤ t * n := Nat.mul_le_mul_right _ hk
-  rw [List.drop_eq_getElem_cons hlen]
-  congr 1
-  have := rsaTabL_getD t n wt hk hi
-  rw [List.getD_eq_getElem?_getD, List.getElem?_eq_getElem hlen] at this
-  exact this
-
 lemma rsaPart_tab (q : ℕ) (E : List GaussianInt) (e t n : ℕ) (wt : ℕ → ℕ → GaussianInt) {k : ℕ}
     (hk : k < t) :
     rsaPart q E e (fun i => (rsaTabL t n wt).getD (k * n + i) 0) n = rsaPart q E e (wt k) n := by

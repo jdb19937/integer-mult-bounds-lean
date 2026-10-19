@@ -47,11 +47,6 @@ theorem flagged_compare (d : Inputs s) (x : Array s d.rows) :
   rw [show flag=compareSlots 2 from rfl,CompactGadgetReservationPlacement.payload_set _ _ compareSlots_injective,
     caller_compare,compare_set]
 
-theorem caller_payload (d : Inputs s) (x : Array s d.rows) :
-    SharedBank.payload (caller d x) (Fin.castAdd 1)=original d x := by
-  apply congrArg₂ Tapes.mk <;> funext i <;> simp only [caller,Tapes.append,Fin.addCases_left]
-  all_goals rfl
-
 theorem flagged_payload (d : Inputs s) (x : Array s d.rows) :
     SharedBank.payload (flagged d x) (Fin.castAdd 1)=original d x := by
   apply congrArg₂ Tapes.mk <;> funext i
@@ -65,15 +60,6 @@ theorem flagged_payload (d : Inputs s) (x : Array s d.rows) :
 theorem flagged_set (d : Inputs s) (x y : Array s d.rows) :
     setTape (flagged d x) (Fin.castAdd 1 (65:Fin 66)) (ActiveTargetRotation.word y) 0=flagged d y := by
   apply congrArg₂ Tapes.mk <;> apply List.ofFn_injective <;> rfl
-
-theorem caller_flag_blank (d : Inputs s) (x : Array s d.rows) :
-    (caller d x).head flag=0 ∧ (caller d x).tape flag=(fun _ => blank) := ⟨rfl,rfl⟩
-
-theorem erase_flag (d : Inputs s) (x : Array s d.rows) :
-    setTape (flagged d x) flag (fun _ => blank) 0=caller d x := by
-  simp only [flagged,SharedPlacementAlphabet.setTape_setTape]
-  have h := caller_flag_blank d x
-  rw [←h.1,←h.2,SharedPlacementAlphabet.setTape_self]
 
 def result (d : Inputs s) (x : Array s d.rows) :=
   if h : d.stage.source.val<d.stage.target.val then earlyResult d h x

@@ -105,34 +105,6 @@ theorem inverse_value :
   simp only [packedEarly, hn]
   rw [f1, f2, f3, f4]
 
-include hV hW in
-/-- The recovered address is the packed permutation's preimage. -/
-theorem inverse_perm (hQ : 0 < (2 : ℤ) ^ q) (hB : 0 < (2 : ℤ) ^ b) :
-    (packedEarlyPerm ((2 : ℤ) ^ q) ((2 : ℤ) ^ b) hQ hB (Z.map ctrl)).symm
-      (⟨(value V2 : ℤ), by positivity, by
-          rw [List.length_map]; exact value_lt_blocks V2 Z.length q hV⟩,
-       ⟨(value W2 : ℤ), by positivity, by
-          rw [List.length_map]; exact value_lt_blocks W2 Z.length b hW⟩) =
-      (⟨(value (v q b hb hbq V2 W2 Z) : ℤ), by positivity, by
-          rw [List.length_map]
-          exact value_lt_blocks _ Z.length q (lengths q b hb hbq V2 W2 Z hV hW).2.2.2.2.2.2.2.2.2⟩,
-       ⟨(value (w q b hb hbq V2 W2 Z) : ℤ), by positivity, by
-          rw [List.length_map]
-          exact value_lt_blocks _ Z.length b (lengths q b hb hbq V2 W2 Z hV hW).2.2.2.2.2.2.2.1⟩) := by
-  rw [Equiv.symm_apply_eq]
-  have h := packedEarlyPerm_agrees ((2 : ℤ) ^ q) ((2 : ℤ) ^ b) hQ hB (Z.map ctrl)
-    (⟨(value (v q b hb hbq V2 W2 Z) : ℤ), by positivity, by
-        rw [List.length_map]
-        exact value_lt_blocks _ Z.length q (lengths q b hb hbq V2 W2 Z hV hW).2.2.2.2.2.2.2.2.2⟩,
-     ⟨(value (w q b hb hbq V2 W2 Z) : ℤ), by positivity, by
-        rw [List.length_map]
-        exact value_lt_blocks _ Z.length b (lengths q b hb hbq V2 W2 Z hV hW).2.2.2.2.2.2.2.1⟩)
-  simp only at h
-  rw [inverse_value q b hb hbq V2 W2 Z hV hW] at h
-  apply Prod.ext
-  · exact Subtype.ext (congrArg Prod.fst h).symm
-  · exact Subtype.ext (congrArg Prod.snd h).symm
-
 end Lines
 
 end IntegerMultBounds.Compact.PowerTwo

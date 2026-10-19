@@ -167,31 +167,10 @@ theorem realizes_hoare {r : ℚ} (hr : Shared50AffineCoefficients.ScaleOccurs r)
   exact ⟨rfl,output_symbol hr b B A D S source p middle s signMiddle t dest q payload hwidth⟩
 
 
-/-- Specialize opaque blocks to the complete address fiber. The physical
-output position is exactly the target coordinate of OrderedAffine.execute. -/
-theorem ordered_affine_symbol {ι : Type*} [LinearOrder ι] {r : ℚ}
-    (hr : Shared50AffineCoefficients.ScaleOccurs r) (b B : ℕ)
-    (A : Controls r.num.natAbs) (D : Controls r.den) (S : SignControls)
-    (source : ℤ → Fin 4) (p : ℤ) (middle : ℤ → Fin 4) (s : ℤ) (signMiddle : ℤ → Fin 4) (t : ℤ)
-    (dest : ℤ → Fin 4) (q : ℤ) (payload : (ι → ZMod (modulus b)) → List (Fin 4))
-    (hwidth : ∀ x, (payload x).length = B) (address : ι → ZMod (modulus b)) (target : ι)
-    (k : ℕ) (hk : k < B) :
-    (output hr b B A D S source p middle s signMiddle t dest q
-      (fun z => payload (ScalingAffineBridge.fiber address target z))).tape (destinationSlot r)
-      (q+((((OrderedAffine.execute (.scale target (Swap.Modular.ratMod (modulus b) r)) address) target).val*B+k : ℕ) : ℤ)) =
-      (payload address)[k]'(by rw [hwidth]; exact hk) := by
-  have hh := output_symbol hr b B A D S source p middle s signMiddle t dest q
-    (fun z => payload (ScalingAffineBridge.fiber address target z)) (fun z => hwidth _) (address target) k hk
-  simpa only [OrderedAffine.execute,ScalingAffineBridge.fiber,Function.update_self,Function.update_eq_self] using hh
-
 /-- Fixed tape and control-state counts, independent of radix exponent b and
 payload block width B. Actual schedules choose r once, before execution. -/
 theorem tapeCount_eq (r : ℚ) : TapeCount r = 38+4*(r.num.natAbs+r.den) :=
   SignedScalingSign.tapeCount_eq _ _
-
-theorem stateCount_eq (r : ℚ) :
-    States r = 98*(r.num.natAbs+r.den)+(if negative r then 545 else 213) :=
-  SignedScalingSign.stateCount_eq _ _ _
 
 end
 end IntegerMultBounds.Machine.ActualAffineScaling

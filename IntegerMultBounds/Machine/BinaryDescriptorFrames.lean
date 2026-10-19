@@ -52,12 +52,6 @@ def span {stack : Fin t} (ops : List (Slot stack)) (xs : Fin t → List Bool) : 
 def Free (stack : Fin t) (ops : List (Slot stack)) (xs : Fin t → List Bool) (v : Tapes t a) : Prop :=
   ∀ z, v.head stack ≤ z → z < v.head stack+span ops xs → v.tape stack z = blank
 
-theorem states_eq (stack : Fin t) (ops : List (Slot stack)) :
-    pushStates ops = 8*ops.length+1 ∧ popStates ops = 8*ops.length+1 := by
-  induction ops with
-  | nil => exact ⟨rfl,rfl⟩
-  | cons i ops ih => simp only [pushStates,popStates,List.length_cons]; omega
-
 theorem saved_frame (stack : Fin t) (ops : List (Slot stack)) (xs : Fin t → List Bool)
     (v : Tapes t a) (i : Fin t) (hi : i ≠ stack) :
     (saved stack ops xs v).head i = v.head i ∧ (saved stack ops xs v).tape i = v.tape i := by
@@ -213,48 +207,5 @@ theorem six_field_cost {stack : Fin t} (ops : List (Slot stack)) (hlen : ops.len
   have h := cost_le ops xs L hL
   rw [hlen] at h
   omega
-
-/-- Different fixed slot lists carrying equal words create literally equal
-stack frames on an otherwise identical whole bank. -/
-theorem saved_same_words {stack : Fin t} (src dst : List (Slot stack)) (xs : Fin t → List Bool)
-    (h : List.Forall₂ (fun i j : Slot stack => xs i = xs j) src dst) (v : Tapes t a) :
-    saved stack src xs v = saved stack dst xs v := by
-  induction h generalizing v with
-  | nil => rfl
-  | @cons i j src dst he ht ih =>
-    simp only [saved]
-    have hw : write stack i xs v = write stack j xs v := by simp only [write,he]
-    rw [hw]
-    exact ih _
-
-theorem cost_same_words {stack : Fin t} (src dst : List (Slot stack)) (xs : Fin t → List Bool)
-    (h : List.Forall₂ (fun i j : Slot stack => xs i = xs j) src dst) : cost src xs = cost dst xs := by
-  induction h with
-  | nil => rfl
-  | cons he ht ih => simpa only [cost,List.map_cons,List.sum_cons,he] using congrArg (fun n => 2*(_ : List Bool).length+8+n) ih
-
-theorem roundtrip_cost_eq {stack : Fin t} (src dst : List (Slot stack)) (xs : Fin t → List Bool)
-    (h : List.Forall₂ (fun i j : Slot stack => xs i = xs j) src dst) :
-    cost src xs+1+cost dst xs = 4*(src.map (fun i : Slot stack => (xs i).length)).sum+16*src.length+1 := by
-  rw [← cost_same_words src dst xs h,cost_eq]
-  omega
-
-/-- The actual whole-bank program, preserving its source slots and restoring
-its descriptors into distinct initially blank destination slots. -/
-noncomputable def roundtripProgram (stack : Fin t) (src dst : List (Slot stack)) :
-    Program t (pushStates src+popStates dst) a :=
-  seq (pushProgram stack src) (popProgram stack dst)
-
-theorem roundtrip_hoare (stack : Fin t) (src dst : List (Slot stack)) (hu : dst.Nodup)
-    (xs : Fin t → List Bool) (v : Tapes t a)
-    (he : List.Forall₂ (fun i j : Slot stack => xs i = xs j) src dst)
-    (hs : ∀ i ∈ src, v.head i = 1 ∧ v.tape i = descriptor (xs i))
-    (hd : ∀ i ∈ dst, v.head i = 0 ∧ v.tape i = fun _ => blank)
-    (hf : Free stack dst xs v) :
-    HoareTime (roundtripProgram stack src dst) (fun w => w = v)
-      (fun w => w = restored dst xs v) (cost src xs+1+cost dst xs) := by
-  have hp := push_hoare stack src xs v hs
-  rw [saved_same_words src dst xs he v] at hp
-  exact hp.seq (pop_hoare stack dst hu xs v hd hf)
 
 end IntegerMultBounds.Machine.BinaryDescriptorFrames

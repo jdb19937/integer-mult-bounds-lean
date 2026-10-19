@@ -21,14 +21,6 @@ variable {ι κ L M : Type*} [DecidableEq ι] [DecidableEq κ]
 def Uniform (labels : ι → L) (p : Program ι (ZMod 2)) : Prop :=
   ∀ gate ∈ p, ∃ common, ∀ i ∈ touched gate, labels i = common
 
-omit [DecidableEq ι] in
-theorem uniform_append (labels : ι → L) (p q : Program ι (ZMod 2))
-    (hp : Uniform labels p) (hq : Uniform labels q) : Uniform labels (p++q) := by
-  intro gate hg
-  rcases List.mem_append.mp hg with hg | hg
-  · exact hp gate hg
-  · exact hq gate hg
-
 /-- A fixed label profile commutes with the actual complete scalar block. -/
 theorem module_invariant (frameOf : L → Frame (ZMod 2) M) (labels : ι → L)
     (p : Program ι (ZMod 2)) (hp : Uniform labels p) (state : ι → M) :

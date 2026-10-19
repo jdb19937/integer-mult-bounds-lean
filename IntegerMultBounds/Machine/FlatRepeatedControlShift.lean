@@ -169,17 +169,4 @@ theorem offset_value (r : ℚ) (hden : r.den < radix) (b i : ℕ) :
   simpa only [RationalTranslationStream.offset,RadixCounterData.zeros_length,ZMod.val_natCast,
     Nat.mod_eq_of_lt hb] using hh
 
-/-- At L complete H cycles the physical control tape is restored to zero. -/
-theorem control_restored (r : ℚ) (b L : ℕ)
-    (a : Fin ((L*radix^b)*(C*(radix^(RadixCounterData.zeros (Fact.out : radix.Prime).two_le b).length*B))) → Fin 4)
-    (bs qs cs ns old : List Bool) :
-    (state r (RadixCounterData.zeros (Fact.out : radix.Prime).two_le b) a bs qs cs ns old (L*radix^b)).head 15 = 1 ∧
-    (state r (RadixCounterData.zeros (Fact.out : radix.Prime).two_le b) a bs qs cs ns old (L*radix^b)).tape 15 =
-      RadixRationalBinary.source (RadixCounterData.zeros (Fact.out : radix.Prime).two_le b) := by
-  constructor
-  · rfl
-  · change RadixRationalBinary.source (RationalTranslationStream.control
-      (RadixCounterData.zeros (Fact.out : radix.Prime).two_le b) (L*radix^b)) = _
-    rw [RepeatedControlTranslationStream.control_prefix_cycles]
-
 end IntegerMultBounds.Machine.FlatRepeatedControlShift

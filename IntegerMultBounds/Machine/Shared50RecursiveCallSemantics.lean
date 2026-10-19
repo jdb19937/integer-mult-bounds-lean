@@ -230,19 +230,6 @@ theorem entered_rolePart (w : World) (n : ℕ) (v : Tapes (TapeCount payloadCoun
       childRoles (v.tape (role (worldSlot w)).val) :=
   childRoles_unique _ _ (fun k => entered_world_blank w k n v) (entered_io w n v)
 
-/-- Header setup changes only descriptors/stacks; the actual child bank starts
-with canonical blank work roles and the unchanged active parent word. -/
-theorem childBank_exact (w : World) (n : ℕ) (v : Tapes (TapeCount payloadCount u) prime)
-    (ch : Fin 6 → List Bool) (aux : Tapes u prime) (st : Tapes 2 prime) :
-    let mid := RecursiveCallProtocol.entered (parked w) (worldSlot w) io n v
-    RecursiveCallProtocol.childBank mid ch aux st =
-      bank (childRoles (v.tape (role (worldSlot w)).val)) ch
-        (mid.tape (controlSlot 2)) (mid.head (controlSlot 2)) aux st := by
-  exact congrArg (fun rr => bank rr ch
-    ((RecursiveCallProtocol.entered (parked w) (worldSlot w) io n v).tape (controlSlot 2))
-    ((RecursiveCallProtocol.entered (parked w) (worldSlot w) io n v).head (controlSlot 2)) aux st)
-      (entered_rolePart w n v)
-
 /-- The actual payload stack retains a blank unbounded suffix for every
 nested call, starting at its new physically advanced stack head. -/
 theorem entered_bank_blank_suffix (w : World) (n : ℕ) (roles : Tapes payloadCount prime)
@@ -252,16 +239,6 @@ theorem entered_bank_blank_suffix (w : World) (n : ℕ) (roles : Tapes payloadCo
     ∀ z, mid.head (controlSlot 2) ≤ z → mid.tape (controlSlot 2) z = blank := by
   apply entered_blank_suffix layout ((parked w).map role) (role (worldSlot w)) (role io) n _
   simpa only [layout,(payload_stack roles hs f p aux st).1,(payload_stack roles hs f p aux st).2] using hf
-
-/-- A blank suffix supplies exactly the finite free region required for the
-actual reverse parking proof, without a separately provisioned bound. -/
-theorem free_of_suffix (w : World) (n : ℕ) (roles : Tapes payloadCount prime)
-    (hs : Fin 6 → List Bool) (f : ℤ → Fin (prime+4)) (p : ℤ)
-    (aux : Tapes u prime) (st : Tapes 2 prime) (hf : ∀ z, p ≤ z → f z = blank) :
-    RoleArrayFrames.Free layout ((parked w).map role) n (bank roles hs f p aux st) := by
-  intro z hz _
-  simpa only [layout,(payload_stack roles hs f p aux st).2] using
-    hf z (by simpa only [layout,(payload_stack roles hs f p aux st).1] using hz)
 
 end
 end IntegerMultBounds.Machine.Shared50RecursiveCallSemantics

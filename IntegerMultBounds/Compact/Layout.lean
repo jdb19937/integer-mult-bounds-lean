@@ -24,21 +24,6 @@ def splitRows (rows roles : ℕ) (Suffix : Type*) :
     left_inv := fun _ => rfl
     right_inv := fun _ => rfl }
 
-theorem split_preserves_suffix (rows roles : ℕ) {Suffix : Type*}
-    (x : Fin (rows * roles) × Suffix) :
-    (splitRows rows roles Suffix x).2.2 = x.2 := rfl
-
-theorem merge_preserves_suffix (rows roles : ℕ) {Suffix : Type*}
-    (x : Fin roles × (Fin rows × Suffix)) :
-    ((splitRows rows roles Suffix).symm x).2 = x.2.2 := rfl
-
-/-- Every role has every suffix value for every one of its row indices. -/
-theorem complete_role (rows roles : ℕ) {Suffix : Type*}
-    (w : Fin roles) (g : Fin rows) (a : Suffix) :
-    ∃ x, splitRows rows roles Suffix x = (w, (g, a)) :=
-  ⟨(splitRows rows roles Suffix).symm (w, (g, a)),
-    (splitRows rows roles Suffix).apply_symm_apply _⟩
-
 theorem role_volume (rows roles : ℕ) (Suffix : Type*) [Fintype Suffix] :
     Fintype.card (Fin (rows * roles) × Suffix) =
       roles * Fintype.card (Fin rows × Suffix) := by

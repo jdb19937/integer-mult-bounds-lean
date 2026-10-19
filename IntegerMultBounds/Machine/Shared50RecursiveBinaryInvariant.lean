@@ -26,11 +26,6 @@ def Ready (data : Data payloadCount v) : Prop :=
 theorem of_encoded (bits : World → Fin (volume prime v) → ZMod 2) :
     Ready (Shared50NodeGates.encoded bits (fun _ => blank)) := ⟨bits,rfl⟩
 
-theorem io_blank {data : Data payloadCount v} (hr : Ready data) :
-    data io = fun _ => blank := by
-  obtain ⟨bits,rfl⟩ := hr
-  rfl
-
 theorem cells {data : Data payloadCount v} (hr : Ready data) (w : World)
     (z : Fin (volume prime v)) :
     ∃ bit : ZMod 2, data (worldSlot w) z = SparseRoleCircuit.encode (a := 0) bit := by

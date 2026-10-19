@@ -112,12 +112,6 @@ def xMiddle (t : F) : Submodule K (E ⊗[K] F) := g.common ⊔ space g.past (K �
 def yOut (t : F) : Submodule K (E ⊗[K] F) :=
   g.common ⊔ space g.past (g.current.orthogonal (K ∙ t))
 
-/-- Times zero through seven of the manuscript table, suppressing future Q. -/
-def gateLabel (r : Fin 8) (t : F) : Submodule K (E ⊗[K] F) :=
-  if r = 0 then g.yIn t else if r = 1 then g.common else if r = 2 then g.xMiddle t
-  else if r = 3 then g.full else if r = 4 then g.common else if r = 5 then g.yOut t
-  else g.full
-
 omit [FiniteDimensional K E] [FiniteDimensional K F] in
 theorem pairing_symm : g.pairing.IsSymm := by
   exact LinearMap.BilinForm.isSymm_iff.mpr
@@ -188,13 +182,6 @@ theorem yOut_nondegenerate (t : F) (ht : g.current t t ≠ 0) :
     (TensorSubspace.nondegenerate _ _ _ _ g.past_nondegenerate
       (ProjectionRank.orthogonal_nondegenerate _ g.current_symm g.current_nd _
         (Labels.line_nondegenerate _ _ ht))) (g.common_orthogonal_past _)
-
-/-- Nondegeneracy is proved for each of the eight actual labels. -/
-theorem gateLabel_nondegenerate (r : Fin 8) (t : F) (ht : g.current t t ≠ 0) :
-    (g.pairing.restrict (g.gateLabel r t)).Nondegenerate := by
-  fin_cases r <;> simp only [gateLabel, Fin.isValue]
-  all_goals first | exact g.yIn_nondegenerate t ht | exact g.common_nondegenerate |
-    exact g.xMiddle_nondegenerate t ht | exact g.full_nondegenerate | exact g.yOut_nondegenerate t ht
 
 omit [FiniteDimensional K E] [FiniteDimensional K F] in
 /-- The earlier decomposition yields the prescribed incoming X label. -/
@@ -268,13 +255,6 @@ theorem y_chain (t : F) :
     List.IsChain (· ≤ ·) [g.yIn t, g.yIn t, g.common, g.common, g.yOut t] := by
   simp [List.isChain_cons_cons, g.yIn_le_common, g.common_le_yOut]
 
-omit [FiniteDimensional K E] [FiniteDimensional K F] in
-/-- Side scratch grows from zero along its actual neighboring-pair path. -/
-theorem side_chain (tX tY : F) (hneigh : g.current tX tY = 0) :
-    List.IsChain (· ≤ ·) [⊥, g.yIn tY, g.xMiddle tX, g.yOut tY, g.full] := by
-  have h02 : g.yIn tY ≤ g.xMiddle tX := (g.yIn_le_common tY).trans le_sup_left
-  simp [List.isChain_cons_cons, h02, g.side_middle_le_out tX tY hneigh, g.yOut_le_full]
-
 /-- The unique returning central edge removes the entire remaining tensor factor. -/
 theorem central_dimension_loss : finrank K g.full - finrank K g.common = finrank K F := by
   have hb := g.base_finrank_add
@@ -294,14 +274,6 @@ theorem central_residual_dimension :
   rw [ProjectionRank.residual_finrank _ g.pairing_symm _ _ g.common_nondegenerate
     g.common_le_full, g.central_dimension_loss]
 
-omit [FiniteDimensional K E] [FiniteDimensional K F] in
-/-- Central scratch visits 0, common, full, common, full. All edges except the
-middle return increase; the comparison at that return is reversed. -/
-theorem central_edges :
-    (⊥ : Submodule K (E ⊗[K] F)) ≤ g.common ∧
-      g.common ≤ g.full ∧ g.common ≤ g.full ∧ g.common ≤ g.full :=
-  ⟨bot_le, g.common_le_full, g.common_le_full, g.common_le_full⟩
-
 /-- The removed central subspace is concretely P tensor F. -/
 theorem central_residual_eq :
     ProjectionRank.residual g.pairing g.common g.full =
@@ -315,29 +287,6 @@ theorem central_residual_eq :
       exact (g.pairing_symm.eq y x).trans (g.common_orthogonal_past ⊤ hy x hx)
   · rw [g.central_residual_dimension, finrank_space, g.past_finrank, one_mul]
     simp
-
-/-- Central vertices in chronological order: source, time1, time3, time4, time6. -/
-def centralLabel (i : Fin 5) : Submodule K (E ⊗[K] F) :=
-  if i = 0 then ⊥ else if i = 1 then g.common else if i = 2 then g.full
-  else if i = 3 then g.common else g.full
-
-omit [FiniteDimensional K E] [FiniteDimensional K F] in
-/-- Only the time3-to-time4 edge has reversed inclusion. -/
-theorem central_comparable (i : Fin 4) :
-    if i = 2 then g.centralLabel i.succ ≤ g.centralLabel i.castSucc
-    else g.centralLabel i.castSucc ≤ g.centralLabel i.succ := by
-  fin_cases i <;> simp [centralLabel, g.common_le_full]
-
-/-- If F has positive dimension, the central return is the unique strict
-decrease in the listed central trajectory. The other wire paths are chains. -/
-theorem central_strict_decrease_iff (hF : 0 < finrank K F) (i : Fin 4) :
-    g.centralLabel i.succ < g.centralLabel i.castSucc ↔ i = 2 := by
-  have hstrict : g.common < g.full := lt_of_le_of_ne g.common_le_full (by
-    intro he
-    have hd := g.central_dimension_loss
-    rw [he, Nat.sub_self] at hd
-    omega)
-  fin_cases i <;> simp [centralLabel, hstrict, not_lt_of_ge g.common_le_full]
 
 section Future
 variable {H : Type*} [AddCommGroup H] [Module K H] [FiniteDimensional K H]
@@ -363,119 +312,11 @@ theorem liftLabel_nondegenerate (D : LinearMap.BilinForm K H) (q : H) (hq : D q 
     ((g.liftedPairing D).restrict (liftLabel q U)).Nondegenerate :=
   TensorSubspace.nondegenerate _ _ _ _ hU (Labels.line_nondegenerate _ _ hq)
 
-/-- All table entries stay nondegenerate after restoring Q, with no increase
-in their dimensions because Q is an actual nondegenerate line. -/
-theorem lifted_gateLabel (D : LinearMap.BilinForm K H) (q : H) (hq : D q q ≠ 0)
-    (r : Fin 8) (t : F) (ht : g.current t t ≠ 0) :
-    ((g.liftedPairing D).restrict (liftLabel q (g.gateLabel r t))).Nondegenerate ∧
-      finrank K (liftLabel q (g.gateLabel r t)) = finrank K (g.gateLabel r t) :=
-  ⟨g.liftLabel_nondegenerate D q hq _ (g.gateLabel_nondegenerate r t ht),
-    liftLabel_finrank D q hq _⟩
-
-omit [FiniteDimensional K E] [FiniteDimensional K F] [FiniteDimensional K H] in
-theorem lifted_x_chain (q : H) (t : F) :
-    List.IsChain (· ≤ ·)
-      ([g.xIn t, g.xMiddle t, g.full, g.full, g.full].map (liftLabel q)) := by
-  rw [List.isChain_map]
-  exact (g.x_chain t).imp (fun {_ _} h => liftLabel_mono q h)
-
-omit [FiniteDimensional K E] [FiniteDimensional K F] [FiniteDimensional K H] in
-theorem lifted_y_chain (q : H) (t : F) :
-    List.IsChain (· ≤ ·)
-      ([g.yIn t, g.yIn t, g.common, g.common, g.yOut t].map (liftLabel q)) := by
-  rw [List.isChain_map]
-  exact (g.y_chain t).imp (fun {_ _} h => liftLabel_mono q h)
-
-omit [FiniteDimensional K E] [FiniteDimensional K F] [FiniteDimensional K H] in
-/-- Including its zero source and full ambient sink, the side wire never decreases. -/
-theorem lifted_side_chain (q : H) (tX tY : F) (hneigh : g.current tX tY = 0) :
-    List.IsChain (· ≤ ·) [⊥, liftLabel q (g.yIn tY), liftLabel q (g.xMiddle tX),
-      liftLabel q (g.yOut tY), liftLabel q g.full, ⊤] := by
-  have h02 := liftLabel_mono q ((g.yIn_le_common tY).trans
-    (show g.common ≤ g.xMiddle tX from le_sup_left))
-  have h25 := liftLabel_mono q (g.side_middle_le_out tX tY hneigh)
-  have h57 := liftLabel_mono q (g.yOut_le_full tY)
-  simp [List.isChain_cons_cons, h02, h25, h57]
-
 theorem lifted_central_dimension_loss (D : LinearMap.BilinForm K H) (q : H)
     (hq : D q q ≠ 0) :
     finrank K (liftLabel q g.full) - finrank K (liftLabel q g.common) = finrank K F := by
   rw [liftLabel_finrank D q hq, liftLabel_finrank D q hq, g.central_dimension_loss]
 
-theorem lifted_central_residual_dimension (D : LinearMap.BilinForm K H) (hs : D.IsSymm)
-    (q : H) (hq : D q q ≠ 0) :
-    finrank K (ProjectionRank.residual (g.liftedPairing D)
-      (liftLabel q g.common) (liftLabel q g.full)) = finrank K F := by
-  have hsym : (g.liftedPairing D).IsSymm := LinearMap.BilinForm.isSymm_iff.mpr
-    ((LinearMap.BilinForm.isSymm_iff.mp g.pairing_symm).tmul
-      (LinearMap.BilinForm.isSymm_iff.mp hs))
-  rw [ProjectionRank.residual_finrank _ hsym _ _
-    (g.liftLabel_nondegenerate D q hq _ g.common_nondegenerate)
-    (liftLabel_mono q g.common_le_full), g.lifted_central_dimension_loss D q hq]
-
-/-- The exact decrease after tensoring by Q remains P tensor F tensor Q. -/
-theorem lifted_central_residual_eq (D : LinearMap.BilinForm K H) (hs : D.IsSymm)
-    (q : H) (hq : D q q ≠ 0) :
-    ProjectionRank.residual (g.liftedPairing D) (liftLabel q g.common) (liftLabel q g.full) =
-      liftLabel q (space g.past (⊤ : Submodule K F)) := by
-  symm
-  apply Submodule.eq_of_le_of_finrank_le
-  · apply le_inf
-    · apply liftLabel_mono
-      rw [g.full_eq_top]
-      exact le_top
-    · apply orthogonal_left g.pairing D (K ∙ q) (K ∙ q)
-      intro x hx y hy
-      exact (g.pairing_symm.eq y x).trans (g.common_orthogonal_past ⊤ hy x hx)
-  · rw [g.lifted_central_residual_dimension D hs q hq,
-      liftLabel_finrank D q hq, finrank_space, g.past_finrank, one_mul]
-    simp
-
-/-- The complete physical central-wire path includes its zero source and
-whole-ambient sink, in addition to times 1,3,4,6. -/
-def futureCentralLabel (q : H) (i : Fin 6) : Submodule K ((E ⊗[K] F) ⊗[K] H) :=
-  if i = 0 then ⊥ else if i = 1 then liftLabel q g.common
-  else if i = 2 then liftLabel q g.full else if i = 3 then liftLabel q g.common
-  else if i = 4 then liftLabel q g.full else ⊤
-
-omit [FiniteDimensional K E] [FiniteDimensional K F] [FiniteDimensional K H] in
-theorem futureCentral_comparable (q : H) (i : Fin 5) :
-    if i = 2 then g.futureCentralLabel q i.succ ≤ g.futureCentralLabel q i.castSucc
-    else g.futureCentralLabel q i.castSucc ≤ g.futureCentralLabel q i.succ := by
-  have hm := liftLabel_mono q g.common_le_full
-  fin_cases i <;> simp [futureCentralLabel, hm]
-
-/-- Restoring Q and both scratch endpoints introduces no additional decrease. -/
-theorem futureCentral_strict_decrease_iff (D : LinearMap.BilinForm K H)
-    (q : H) (hq : D q q ≠ 0) (hF : 0 < finrank K F) (i : Fin 5) :
-    g.futureCentralLabel q i.succ < g.futureCentralLabel q i.castSucc ↔ i = 2 := by
-  have hm := liftLabel_mono q g.common_le_full
-  have hstrict : liftLabel q g.common < liftLabel q g.full := lt_of_le_of_ne hm (by
-    intro he
-    have hd := g.lifted_central_dimension_loss D q hq
-    rw [he, Nat.sub_self] at hd
-    omega)
-  fin_cases i <;> simp [futureCentralLabel, hstrict, not_lt_of_ge hm]
-
-theorem futureCentral_nondegenerate (D : LinearMap.BilinForm K H)
-    (hn : D.Nondegenerate) (q : H) (hq : D q q ≠ 0) (i : Fin 6) :
-    ((g.liftedPairing D).restrict (g.futureCentralLabel q i)).Nondegenerate := by
-  fin_cases i <;> simp only [futureCentralLabel, Fin.isValue]
-  all_goals first
-    | exact bot_nondegenerate _
-    | exact g.liftLabel_nondegenerate D q hq _ g.common_nondegenerate
-    | exact g.liftLabel_nondegenerate D q hq _ g.full_nondegenerate
-    | exact top_nondegenerate _ (Labels.tmul_nondegenerate _ _ g.pairing_nondegenerate hn)
-
-/-- Scratch's final enlargement to the whole ambient tensor space is comparable
-and nondegenerate whenever the three ambient factor forms are nondegenerate. -/
-theorem scratch_sink (D : LinearMap.BilinForm K H) (hn : D.Nondegenerate)
-    (q : H) (hq : D q q ≠ 0) :
-    liftLabel q g.full ≤ ⊤ ∧
-      ((g.liftedPairing D).restrict (liftLabel q g.full)).Nondegenerate ∧
-      ((g.liftedPairing D).restrict ⊤).Nondegenerate :=
-  ⟨le_top, g.liftLabel_nondegenerate D q hq _ g.full_nondegenerate,
-    top_nondegenerate _ (Labels.tmul_nondegenerate _ _ g.pairing_nondegenerate hn)⟩
 end Future
 
 end Geometry

@@ -155,25 +155,6 @@ theorem compactLayerCost_closed (ds : ComplexFramedExecution.Directions)
   have hh := (div_le_iff₀ hV).mp hclosed
   exact (Nat.cast_le.mpr hM).trans (by simpa only [mul_comm] using hh)
 
-/-- Closed bound from an occurrence-moment hypothesis on the layer node in place of
-`log_m (F/NW) < λ`. -/
-theorem compactLayerCost_closed_moment (ds : ComplexFramedExecution.Directions)
-    (D : ℕ) (s : Shape) (u R₀ n o r w : ℕ) {ρ : ℕ} {lam : ℝ}
-    (hu : 1≤u) (hR₀ : 1≤R₀) (hr : 1≤r) (hw : 1≤w) (hρ : ρ<s.chunk)
-    (hG : 1≤s.guard) (hbits : s.bits≤n)
-    (hpayload : s.payload=2^o*(3*(r*w))) (hN : o+n≤r*w)
-    (hτl : Parameters.tau≤lam) (hmom : layerMoment ds lam<1)
-    (j : ℕ) (hTw : ∀ i<j,expZ u ds i≤w) (a : ℕ)
-    (hfit : (o+a)+s.chunk*bits u j≤o+n) :
-    (compactLayerCost ds u s.chunk ρ R₀ n o r w
-      (compactLayerBasisBudget (nT CompactBReg) D s u R₀ n) j a:ℝ) ≤
-      ((rowsAt R₀ j*2^(o+n)*(r*w):ℕ):ℝ)*
-      (compactLayerClosedConst (nT CompactBReg) D ds lam*((m:ℝ)^j*u)^lam*(s.guard:ℝ)^Parameters.tau+
-       compactLayerClosedConst (nT CompactBReg) D ds lam*((factorCount (program ds):ℝ)/NW)^j*u) :=
-  compactLayerCost_closed ds D s u R₀ n o r w hu hR₀ hr hw hρ hG hbits hpayload hN hτl
-    (logb_lt_of_layerMoment ds
-      (lt_of_lt_of_le (by norm_num [Parameters.tau]) hτl) hmom) j hTw a hfit
-
 /-- The checked branching network permits the manuscript's sigma/tau gap, through the h=25
 instance of the layer occurrence moment. -/
 theorem compactLayer_br_logb :

@@ -75,11 +75,5 @@ local notation "EA" => earlyActual s p.q p.b p.n p.before p.after rows p.rho off
   rw [←destination_actual s p offset x]
   exact ActivePrefixEarlySequenceSemantics.entry s p offset hfit array x
 
- theorem entry_inverse (hfit : offset+p.f*p.q≤p.before)
-    (array : ActivePrefixEarlySequenceData.Array s rows) (x : Address s p rows) :
-    ActivePrefixEarlySequenceData.result s p offset hfit rows array (index s p x)=
-      array (index s p ((EA).symm x)) := by
-  simpa only [Equiv.apply_symm_apply] using entry s p offset hfit array ((EA).symm x)
-
 end
 end IntegerMultBounds.Machine.ActivePrefixEarlySequenceGlobal

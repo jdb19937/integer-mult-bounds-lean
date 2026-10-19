@@ -101,12 +101,6 @@ theorem Path.volume_mul {q roles m n : ℕ} {root v : Descriptor}
     _ = (v.rows*roles^n)*nonrowVolume q root := by ring
     _ = _ := by rw [path.rows_mul]
 
-theorem Path.volume_div {q roles m n : ℕ} {root v : Descriptor}
-    (path : Path q roles m root n v) (hr : 0 < roles) :
-    volume q v = volume q root/roles^n := by
-  rw [← path.volume_mul]
-  exact (Nat.mul_div_cancel _ (pow_pos hr _)).symm
-
 /-- Even the deepest child retains both entire original chunks in its logical
 volume. This is the lower bound used to absorb descriptor processing costs. -/
 theorem Path.original_chunks {q roles m n : ℕ} {root v : Descriptor}

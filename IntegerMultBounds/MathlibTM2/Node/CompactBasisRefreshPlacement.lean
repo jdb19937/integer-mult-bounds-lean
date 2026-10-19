@@ -40,21 +40,6 @@ lemma compactBasisRefreshReg_output (i : Fin 7) :
   fin_cases i <;> simp [sreg_eq,compactMapRegName,compactBasisRefreshPerm,
     compactBasisOutputWire,compactBasisRefreshWork,Equiv.swap_apply_def]
 
-lemma compactBasisRefreshReg_source (x : SynW)
-    (hx : ∀ i, x≠compactBasisOutputWire i) :
-    compactBasisRefreshReg (sreg x)=reg (.wire (synWire x)) := by
-  have h15 := hx 0; have h6 := hx 1; have h26 := hx 2; have h11 := hx 3
-  have h16 := hx 4; have h18 := hx 5; have h19 := hx 6
-  change x≠.s 15 at h15
-  change x≠.s 6 at h6
-  change x≠.s 26 at h26
-  change x≠.s 11 at h11
-  change x≠.s 16 at h16
-  change x≠.s 18 at h18
-  change x≠.s 19 at h19
-  simp [sreg_eq,compactMapRegName,compactBasisRefreshPerm,Equiv.swap_apply_def,
-    h15,h6,h26,h11,h16,h18,h19]
-
 /-- Five persistent outputs and two temporary copies, which are cleared immediately. -/
 def compactBasisRefreshDst (i : Fin 7) : Fin (nT CompactHostBReg) :=
   reg (.bc (.inl (.work (compactBasisRefreshWork i))))

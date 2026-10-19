@@ -96,16 +96,4 @@ theorem offsets_uniform (q b n : ℕ) (hb : 1≤b) (hbq : b+1≤q) :
     BlockRotationData.Uniform (n*b) (offsets q b n hb hbq) := by
   intro xs hx; obtain ⟨i,_,rfl⟩ := List.mem_map.mp hx; exact BinaryAddressOffsetValue.rowWord_length _ _ _ _ _ _
 
-theorem destination_field_value (q b n L K k i l : ℕ) (hb : 1≤b) (hbq : b+1≤q)
-    (hk : k<K) (hi : i<2^(n*q)) (hl : l<L) :
-    (Counter.value (Gather.field (destination q b n L K hb hbq)
-      (((k*2^(n*q)+i)*L+l)*(n*b)) (n*b)) : ℤ)=
-      Compact.Radix.pack ((2 : ℤ)^b) ((Compact.Radix.digits ((2 : ℤ)^q) n i).map (·%2)) := by
-  have he := repeated_field (offsets q b n hb hbq) (n*b) L K k i l
-    (offsets_uniform q b n hb hbq) hk (by simpa [offsets] using hi) hl
-  simp only [offsets,List.length_map,List.length_range,List.getElem_map,List.getElem_range] at he
-  rw [destination,offsets,he]
-  rw [←BinaryAddressOffsetValue.field_eq q b n i hb hbq hi]
-  exact BinaryAddressOffsetValue.field_value q b n i hb hbq hi
-
 end IntegerMultBounds.Machine.BinaryAddressOffsetRepeatValue

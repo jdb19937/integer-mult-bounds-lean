@@ -144,18 +144,4 @@ theorem exists_orthonormal_basis [FiniteDimensional F V]
     · simpa [hsym.eq (b i) u] using (mem_unitComplement B u (b i)).mp (b i).property
     · simpa using hb i j
 
-/-- Equivalent formulation in terms of nonalternation, as used for binary
-orthogonal residuals in the manuscript. -/
-theorem exists_orthonormal_basis_of_not_alternating [FiniteDimensional F V]
-    (B : LinearMap.BilinForm F V) (hsym : B.IsSymm) (hnd : B.Nondegenerate)
-    (hnonalt : ¬ B.IsAlt) :
-    ∃ b : Basis (Fin (finrank F V)) F V,
-      ∀ i j, B (b i) (b j) = if i = j then 1 else 0 := by
-  apply exists_orthonormal_basis B hsym hnd
-  by_contra! h
-  apply hnonalt
-  intro w
-  by_contra hw
-  exact h w (eq_one_of_ne_zero _ hw)
-
 end IntegerMultBounds.Networks.BinaryOrthonormal

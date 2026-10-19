@@ -124,12 +124,4 @@ theorem crtControlRotate_runs {rg : TblR 10 → Fin T} (hrg : Function.Injective
   rw [overlay_update hrg _ _ acc _ hacc, overlay_update hrg _ _ str _ hstr,
     overlay_overlay hrg]
 
-/-- A power-of-two envelope for offsets, physical movement, and cleanup.
-The unary conversion is linear in the target modulus times word width. -/
-theorem crtControlRotate_cost_le (W w S n k : ℕ) (hw : w ≤ W) :
-    3 * tblC W w + W * (4 * S + 22) + 4 * S + n * (8 * k + 9) + 34 ≤
-      2 ^ 9 * ((W + 4) ^ 2 + (W + 1) * S + n * (k + 1) + 1) := by
-  unfold tblC
-  nlinarith
-
 end IntegerMultBounds.MathlibTM2.Fast

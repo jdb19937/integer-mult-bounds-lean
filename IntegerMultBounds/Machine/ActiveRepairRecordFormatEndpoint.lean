@@ -86,22 +86,9 @@ def cost (chunks : List (List Bool)) (bs ns : List Bool) (R : ℕ) :=
   exact (((((hp.seq hb).seq hc2).seq hc4).seq hr0).seq hr1).consequence
     (fun _ h => h) (fun _ h => h) (by unfold cost; simp only [List.length_nil]; omega)
 
- theorem source_retained (chunks : List (List Bool)) (bs ns : List Bool) :
-    (output chunks bs ns).tape 0=(input chunks bs ns).tape 0 := by
-  simp [output,cleared,input,setTape]
-
  theorem output_encoded (chunks : List (List Bool)) (bs ns : List Bool) :
     (output chunks bs ns).tape 1=putWord (fun _ => blank) 0 (Partition.encode (records chunks)) := by
   simp [output,encoded,setTape]
-
- theorem clock_blank (chunks : List (List Bool)) (bs ns : List Bool) :
-    (output chunks bs ns).tape 2=(fun _ => blank) ∧ (output chunks bs ns).tape 4=(fun _ => blank) := by
-  simp [output,cleared,setTape]
-
- theorem data_heads_origin (chunks : List (List Bool)) (bs ns : List Bool) :
-    (output chunks bs ns).head 0=0 ∧ (output chunks bs ns).head 1=0 ∧
-    (output chunks bs ns).head 2=0 ∧ (output chunks bs ns).head 4=0 := by
-  simp [output,cleared,setTape]
 
  theorem lengths (chunks : List (List Bool)) (R : ℕ) (hw : ∀ xs ∈ chunks,xs.length=R) :
     (raw chunks).length=chunks.length*R ∧ (encoded chunks).length=chunks.length*(R+2) := by

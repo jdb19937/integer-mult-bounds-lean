@@ -146,13 +146,6 @@ theorem full_cycle (hq : 2 ≤ q) (b : ℕ) : advance hq (q^b) (zeros hq b) = ze
   have h := value_zero hq _ hv
   simpa only [advance_length,zeros_length] using h
 
-theorem enumerate_injective (hq : 2 ≤ q) (b : ℕ) :
-    Function.Injective (fun i : Fin (q^b) => advance hq i.val (zeros hq b)) := by
-  intro i j hij
-  apply Fin.ext
-  have h := congrArg value hij
-  simpa only [enumerate_value hq b i.val i.isLt,enumerate_value hq b j.val j.isLt] using h
-
 /-- A full field traversal absorbs the counter's one-time width term. -/
 theorem full_cycle_cost (hq : 2 ≤ q) (b : ℕ) :
     cycleTime hq (q^b) (zeros hq b) ≤ 8*q^b := by

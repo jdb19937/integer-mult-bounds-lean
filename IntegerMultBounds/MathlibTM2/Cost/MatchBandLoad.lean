@@ -213,20 +213,6 @@ theorem band_load_tb (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (h
     bandFB2a, bandFB1, bandFF2, bandFF2a, bandFF2b, bandFF2c, bandFF2d, bandFF1, bandFA, bandF0,
     preBankB, bandClrB, preHB]
 
-theorem band_load_ac2 (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (hd : Fin 5 → Fin t₀)
-    (w : ℕ) (D : PreAxB) [NeZero D.s] (rest : List (Fin (prime + K + 4))) :
-    (bandLoad σ hd w D rest (.inl .ac2)).length = 0 := by
-  simp [bandLoad, bandFE, bandMvF, bandFE0, bandClrE, bandFP, bandFB2b, bandScrL,
-    bandFB2a, bandFB1, bandFF2, bandFF2a, bandFF2b, bandFF2c, bandFF2d, bandFF1, bandFA, bandF0,
-    preBankB, bandClrB, preHB]
-
-theorem band_load_wn (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (hd : Fin 5 → Fin t₀)
-    (w : ℕ) (D : PreAxB) [NeZero D.s] (rest : List (Fin (prime + K + 4))) :
-    (bandLoad σ hd w D rest (.inl (.cm .wn))).length = (σ (.inl (.cm .wn))).length := by
-  simp [bandLoad, bandFE, bandMvF, bandFE0, bandClrE, bandFP, bandFB2b, bandScrL,
-    bandFB2a, bandFB1, bandFF2, bandFF2a, bandFF2b, bandFF2c, bandFF2d, bandFF1, bandFA, bandF0,
-    preBankB, bandClrB, preHB]
-
 theorem band_load_hb (σ : RsbR ⊕ RsbX t₀ → List (Fin (prime + K + 4))) (hd : Fin 5 → Fin t₀)
     (w : ℕ) (D : PreAxB) [NeZero D.s] (rest : List (Fin (prime + K + 4))) (k : Fin 5) :
     (bandLoad σ hd w D rest (preHB hd k)).length = (rsbBank (A := prime + K) hd (D.hs w)

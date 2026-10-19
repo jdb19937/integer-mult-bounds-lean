@@ -118,55 +118,5 @@ theorem coefficient_bound (A : Matrix Index Index ℚ) (hA : Occurs A) (i j : In
 
 local instance : Fact prime.Prime := ⟨Shared50ModularControl.prime_prime⟩
 
-/-- A single coefficient chooses a fixed finite two-tape program, independent of width. -/
-def coefficientProgram (r : ℚ) : Machine.Program 2 (2 * r.num.natAbs + r.den + 1) prime :=
-  Machine.RadixRational.program prime r.num r.den
-
-/-- The kernel output matches the entry of the actual reduced matrix. -/
-theorem output_reducedEntry (A : Matrix Index Index ℚ) (hA : Occurs A) (i j : Index)
-    (xs : List (Fin prime)) :
-    (value (Machine.RadixRationalData.digits (Machine.RadixRationalData.initial (A i j).num (A i j).den) xs) :
-        ZMod (prime ^ xs.length)) =
-      Swap.Modular.reduce (prime ^ xs.length) A i j * (value xs : ZMod (prime ^ xs.length)) :=
-  Machine.RadixRational.output_ratMod (A i j) (coefficient_bound A hA i j) xs
-
-/-- The same actual coefficient contract holds on arbitrary tape backgrounds
-and head offsets, with only the specified output interval overwritten. -/
-theorem coefficient_hoare (A : Matrix Index Index ℚ) (hA : Occurs A) (i j : Index)
-    (xs : List (Fin prime)) (source out : ℤ → Fin (prime + 4)) (p t : ℤ)
-    (hf : source (p + xs.length) = Machine.blank) :
-    Machine.HoareTime (coefficientProgram (A i j))
-      (fun v => v = (Machine.RadixRational.cfg (Machine.putWord source p (xs.map digitSymbol)) out p t
-        (Machine.RadixRationalData.initial (A i j).num (A i j).den)).tapes)
-      (fun v => ∃ result : List (Fin prime),
-        (value result : ZMod (prime ^ xs.length)) =
-          Swap.Modular.reduce (prime ^ xs.length) A i j * (value xs : ZMod (prime ^ xs.length)) ∧
-        result.length = xs.length ∧ v =
-          (Machine.RadixRational.cfg (Machine.putWord source p (xs.map digitSymbol))
-            (Machine.putWord out t (result.map digitSymbol)) (p + xs.length) (t + xs.length)
-            (Machine.RadixRationalData.initial (A i j).num (A i j).den)).tapes)
-      xs.length :=
-  Machine.RadixRational.rational_hoare (A i j) (coefficient_bound A hA i j) xs source out p t hf
-
-/-- Exact width, genuine halt, whole-source preservation, and the actual matrix
-coefficient semantics for every transform in the fixed complete interchange. -/
-theorem coefficient_to_blank (A : Matrix Index Index ℚ) (hA : Occurs A) (i j : Index)
-    (xs : List (Fin prime)) :
-    let r := A i j
-    let result := Machine.RadixRationalData.digits (Machine.RadixRationalData.initial r.num r.den) xs
-    let finalCarry := Machine.RadixRationalData.overflow (Machine.RadixRationalData.initial r.num r.den) xs
-    (value result : ZMod (prime ^ xs.length)) =
-      Swap.Modular.reduce (prime ^ xs.length) A i j * (value xs : ZMod (prime ^ xs.length)) ∧
-    result.length = xs.length ∧
-    Machine.run (coefficientProgram r) xs.length
-      (Machine.RadixRational.cfg (Machine.wordTape (xs.map digitSymbol)) (fun _ => Machine.blank)
-        0 0 (Machine.RadixRationalData.initial r.num r.den)) =
-      some (Machine.RadixRational.cfg (Machine.wordTape (xs.map digitSymbol))
-        (Machine.wordTape (result.map digitSymbol)) xs.length xs.length finalCarry) ∧
-    Machine.step (coefficientProgram r)
-      (Machine.RadixRational.cfg (Machine.wordTape (xs.map digitSymbol))
-        (Machine.wordTape (result.map digitSymbol)) xs.length xs.length finalCarry) = none :=
-  Machine.RadixRational.rational_to_blank (A i j) (coefficient_bound A hA i j) xs
-
 end
 end IntegerMultBounds.Networks.Shared50CoefficientMachines

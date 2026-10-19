@@ -271,16 +271,6 @@ variable {r : ℕ} [NeZero r] {D : ℕ} (a : Fin D → ℕ)
 theorem tsOf_ofFn : tsOf (List.ofFn a) = List.ofFn fun i => 2 ^ a i := by
   simp only [tsOf, List.map_ofFn]; rfl
 
-theorem ax_ofFn (i : Fin D) : ax (List.ofFn a) i = a i := by
-  simp [ax]
-
-theorem mem_parts_ofFn {h i : ℕ} :
-    i ∈ parts (List.ofFn a) h ↔ ∃ hi : i < D, h < a ⟨i, hi⟩ := by
-  rw [mem_parts, List.length_ofFn]
-  constructor
-  · rintro ⟨hi, hh⟩; exact ⟨hi, by rwa [← ax_ofFn a ⟨i, hi⟩]⟩
-  · rintro ⟨hi, hh⟩; exact ⟨hi, by rwa [show i = ((⟨i, hi⟩ : Fin D) : ℕ) from rfl, ax_ofFn]⟩
-
 omit [NeZero r] in
 theorem hr_ofFn (hr : ∀ i, 2 ^ a i ∣ 2 * r) : ∀ e ∈ List.ofFn a, 2 ^ e ∣ 2 * r := by
   intro e he

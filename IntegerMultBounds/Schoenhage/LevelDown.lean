@@ -263,16 +263,6 @@ theorem LevelRegs.update {N Np k M : ℕ} {σ : Fin 𝕋 → WTape} (h : LevelRe
   refine ⟨hr', hq.update j T hj2, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;>
     simp [Function.update_apply, *] <;> tauto
 
-theorem LevelRegs.update_emp {N Np k M : ℕ} {σ : Fin 𝕋 → WTape} (h : LevelRegs N Np k M σ) (j : Fin 𝕋)
-    (hj : j ∈ quiet) : LevelRegs N Np k M (Function.update σ j emp) := by
-  obtain ⟨hr, hq, h3, h4, h5, h6, h7, h8, h9, h10⟩ := h
-  have hne : ∀ i ∈ [cW, cF, cN, c1, aX, aY, aO, aS1, aS2, aS3, bX, bY, cHN, pK, pNK, cH1, cM, cWA, pN, pNp],
-      i ≠ j := by
-    intro i hi e; subst e; revert hi hj; generalize i = i'; revert i'; decide
-  have hr' := hr.update j emp (by intro hm; exact hne j (by simp at hm ⊢; tauto) rfl)
-  refine ⟨hr', hq.update_emp j, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;>
-    rw [Function.update_of_ne (hne _ (by simp))] <;> assumption
-
 theorem pair_arith (A N Np K : ℕ) :
     A + 10 * N + 100 + 1 + (K * (4 * Np + 20) + 10 + 1 + (A + 10 * N + 100 + 1 + (K * (4 * Np + 20) + 10 + 1 +
       (K * (2 * Np + 20) + 1 + (2 * (K * (Np + 2)) + 2 + 1 + (2 * (K * (Np + 2)) + 2)))))) ≤

@@ -257,9 +257,6 @@ def Rest (bcRest : BReg → List (Fin (A + 4)) → Prop) (n r w : ℕ)
 variable {bcRest : BReg → List (Fin (A + 4)) → Prop} {n r w : ℕ}
   {Rg Rg' : Fin (nT BReg) → List (Fin (A + 4))}
 
-lemma Rest.restBut (h : Rest bcRest n r w Rg) (ex : LReg BReg → Prop) :
-    RestBut bcRest n r w ex Rg := fun x _ => h x
-
 lemma RestBut.mono {ex ex' : LReg BReg → Prop} (h : RestBut bcRest n r w ex Rg)
     (hex : ∀ x, ex x → ex' x) : RestBut bcRest n r w ex' Rg :=
   fun x hx => h x (fun h' => hx (hex x h'))

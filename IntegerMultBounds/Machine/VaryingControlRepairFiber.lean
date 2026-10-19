@@ -33,14 +33,6 @@ def rankEquiv {C S : Type*} {D : C → Type*} {N M K : ℕ}
       ((Equiv.prodAssoc _ _ _).symm.trans
         ((Equiv.prodCongr finProdFinEquiv (Equiv.refl _)).trans finProdFinEquiv)))
 
-theorem rank_value {C S : Type*} {D : C → Type*} {N M K : ℕ}
-    (source : C ≃ Fin N) (localRank : ∀ x, D x ≃ Fin M) (spectator : S ≃ Fin K)
-    (x : C) (d : D x) (s : S) :
-    (rankEquiv source localRank spectator ⟨x,(d,s)⟩).val=
-      ((source x).val*M+(localRank x d).val)*K+(spectator s).val := by
-  change (pack (pack (source x) (localRank x d)) (spectator s)).val=_
-  simp only [pack_val]
-
 def destination {C S : Type*} {D : C → Type*}
     (actual ideal : ∀ x, Equiv.Perm (D x)) : Equiv.Perm (Address C D S) :=
   (perm actual).symm.trans (perm ideal)
@@ -48,22 +40,6 @@ def destination {C S : Type*} {D : C → Type*}
 @[simp] theorem destination_apply {C S : Type*} {D : C → Type*}
     (actual ideal : ∀ x, Equiv.Perm (D x)) (x : C) (d : D x) (s : S) :
     destination actual ideal ⟨x,(d,s)⟩=⟨x,(ideal x ((actual x).symm d),s)⟩ := rfl
-
-theorem destination_rank {C S : Type*} {D : C → Type*} {N M K : ℕ}
-    (source : C ≃ Fin N) (localRank : ∀ x, D x ≃ Fin M) (spectator : S ≃ Fin K)
-    (actual ideal : ∀ x, Equiv.Perm (D x)) (x : C) (d : D x) (s : S) :
-    (rankEquiv source localRank spectator (destination actual ideal ⟨x,(d,s)⟩)).val=
-      ((source x).val*M+(localRank x (ideal x ((actual x).symm d))).val)*K+(spectator s).val := by
-  rw [destination_apply,rank_value]
-
-/-- Decoding the complete rank obtains the very source that chooses the
-inverse and ideal map; no globally fixed control word is assumed. -/
-theorem inverse_rank {C S : Type*} {D : C → Type*} {N M K : ℕ}
-    (source : C ≃ Fin N) (localRank : ∀ x, D x ≃ Fin M) (spectator : S ≃ Fin K)
-    (x : C) (d : D x) (s : S) :
-    (rankEquiv source localRank spectator).symm
-      (pack (pack (source x) (localRank x d)) (spectator s))=⟨x,(d,s)⟩ :=
-  (rankEquiv source localRank spectator).symm_apply_apply ⟨x,(d,s)⟩
 
 /-- Exceptional repair is exact on the full address, retaining the varying
 source and arbitrary spectators before and after every inverse. -/

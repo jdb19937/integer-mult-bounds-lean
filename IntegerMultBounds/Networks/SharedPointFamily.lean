@@ -62,9 +62,4 @@ theorem support_unique (a : CopyNode 50) (ha : a ∈ domain) (b : CopyNode 50) (
 /-- The main sharing argument consumes the implementation-independent family. -/
 def family : Family 50 := SharedPointLocalFamily.family localCircuit
 
-/-- The unmerged fifty-copy family has at most fifty times 9,813 additions. -/
-theorem domain_card : domain.card ≤ 50 * 9813 := by
-  rw [domain, SharedPointLocalFamily.domain_card]
-  exact Nat.mul_le_mul_left 50 PairedIndexedPruning.additions_le
-
 end IntegerMultBounds.Networks.SharedPointFamily

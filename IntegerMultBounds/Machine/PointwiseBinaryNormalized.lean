@@ -112,18 +112,6 @@ theorem array_hoare (op : Fin (a+4) → Fin (a+4) → Fin (a+4))
       (14*n+14*bs.length+33) := by
   simpa only [output_array] using apply_hoare op (pair source dest p q x y) bs n hn
 
-/-- Encoded-bit XOR with exact arrays, arbitrary tape backgrounds, original
-payload heads, and restored controls. -/
-theorem xor_hoare (source dest : ℤ → Fin (a+4)) (p q : ℤ) (x y : Fin n → Bool)
-    (bs : List Bool) (hn : Counter.value bs = n) :
-    HoareTime (program PointwiseBinary.xorSymbol)
-      (fun w => w = bank (pair source dest p q (fun i => bitSymbol (x i)) (fun i => bitSymbol (y i))) bs)
-      (fun w => w = bank (pair source dest p q (fun i => bitSymbol (x i))
-        (fun i => bitSymbol (Bool.xor (x i) (y i)))) bs)
-      (14*n+14*bs.length+33) := by
-  simpa only [PointwiseBinary.xorSymbol_bits] using array_hoare PointwiseBinary.xorSymbol source dest p q
-    (fun i => bitSymbol (x i)) (fun i => bitSymbol (y i)) bs hn
-
 theorem cost_linear (bs : List Bool) (hn : GrowingCounterData.Canonical bs) :
     14*Counter.value bs+14*bs.length+33 ≤ 28*Counter.value bs+47 := by
   have hw := GrowingCounterData.canonical_width bs hn

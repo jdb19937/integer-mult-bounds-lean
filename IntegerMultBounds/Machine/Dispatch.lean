@@ -83,15 +83,6 @@ theorem halt_selected (hc : 0 < c) (family : Fin c → Program t q a)
   rw [step_selected,h]
   rfl
 
-theorem exact_selected (hc : 0 < c) (family : Fin c → Program t q a)
-    (selector : (Fin t → Fin (a+4)) → Fin c) (v : Tapes t a)
-    (j : Fin c) (hj : selector v.reads = j) {n : ℕ} {w : Config t q a}
-    (hr : run (family j) n (v.start (family j)) = some w) (hh : step (family j) w = none) :
-    run (program hc family selector) (1+n) (v.start (program hc family selector)) =
-      some (w.mapState (tag j)) ∧
-    step (program hc family selector) (w.mapState (tag j)) = none :=
-  ⟨run_selected hc family selector v j hj hr,halt_selected hc family selector j hh⟩
-
 /-- A selected family's actual Hoare contract lifts with exactly one extra step. -/
 theorem hoare_selected (hc : 0 < c) (family : Fin c → Program t q a)
     (selector : (Fin t → Fin (a+4)) → Fin c) (j : Fin c)

@@ -153,21 +153,5 @@ theorem cost_linear (S : Gather.Shape) (hs : Fin 5 → List Bool)
   unfold cost
   omega
 
-/-- The fixed digit machine's exact contract with its canonical stride bound. -/
-theorem digit_hoare_linear (op : Bool → Bool → Bool) (S : Gather.Shape)
-    (xs zs : List Bool) (f g h : ℤ → Fin (a+4)) (px pz pt : ℤ) (i : ℕ)
-    (hs : Fin 5 → List Bool) (hxs : (i+1)*S.sx ≤ xs.length)
-    (hz : g pz = bitSymbol (zs.getD i false))
-    (hv : ∀ j, Counter.value (hs j) = counts S j)
-    (hc : ∀ j, GrowingCounterData.Canonical (hs j)) :
-    HoareTime (program op a)
-      (fun z => z = bank (Gather.bank (putWord f px (xs.map bitSymbol)) g h
-        (px+i*S.sx) pz pt) hs)
-      (fun z => z = bank (Gather.bank (putWord f px (xs.map bitSymbol)) g
-        (putWord h pt ((Gather.digitWord op S xs zs i).map bitSymbol))
-        (px+(i+1)*S.sx) (pz+1) (pt+S.st)) hs) (14*(S.sx+S.st)+121) :=
-  (digit_hoare op S xs zs f g h px pz pt i hs hxs hz hv).consequence
-    (fun _ h => h) (fun _ h => h) (cost_linear S hs hv hc)
-
 end
 end IntegerMultBounds.Machine.CountedGatherDigit

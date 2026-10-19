@@ -420,12 +420,4 @@ theorem buffers_final_tape {Q c : ℕ} (hQ : 0 < Q) (hc : 0 < c) (hcop : c.Copri
     simp [targetBlocks,ScalingMergeData.blocks]
   rw [← hl,List.take_length]
 
-/-- Every final buffer head is positioned immediately after its complete piece. -/
-theorem buffers_final_head {Q c : ℕ} (hQ : 0 < Q) (hc : 0 < c) (hcop : c.Coprime Q)
-    (B : ℕ) (background : Fin c → ℤ → Fin 4) (p : Fin c → ℤ)
-    (payload : ℕ → List (Fin 4)) (j : Fin c) :
-    (buffers hc Q B background p payload Q).head j = p j+
-      (((ScalingControl.boundary Q c (j.val+1)-ScalingControl.boundary Q c j.val)*B : ℕ) : ℤ) := by
-  simp only [buffers,ScalingMergeData.complete_count hQ hc hcop]
-
 end IntegerMultBounds.Machine.ScalingScatter

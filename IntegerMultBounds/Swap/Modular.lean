@@ -137,8 +137,6 @@ def denCoprime : Subring ℚ where
     rw [Rat.neg_den]
     exact ha
 
-theorem mem_denCoprime {x : ℚ} : x ∈ denCoprime m ↔ x.den.Coprime m := Iff.rfl
-
 /-- The reduction homomorphism. -/
 def toZMod : denCoprime m →+* ZMod m where
   toFun x := ratMod m x

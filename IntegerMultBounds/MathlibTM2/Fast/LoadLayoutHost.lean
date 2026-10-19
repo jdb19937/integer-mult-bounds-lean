@@ -105,19 +105,6 @@ theorem ldgSetV_setV (hrv : Function.Injective rv) (R : Fin T → List (Fin (A +
   · rw [ldgSetV_of _ _ (fun r hr => hk ⟨r, hr⟩), ldgSetV_of _ _ (fun r hr => hk ⟨r, hr⟩),
       ldgSetV_of _ _ (fun r hr => hk ⟨r, hr⟩)]
 
-theorem ldgSetV_update (hrv : Function.Injective rv) (R : Fin T → List (Fin (A + 4)))
-    (ρ : TblR 40 → List (Fin (A + 4))) (a : TblR 40) (x : List (Fin (A + 4))) :
-    Function.update (ldgSetV rv R ρ) (rv a) x = ldgSetV rv R (Function.update ρ a x) := by
-  funext k
-  by_cases hk : ∃ r, rv r = k
-  · obtain ⟨r, rfl⟩ := hk
-    rw [ldgSetV_rv hrv]
-    by_cases hr : r = a
-    · subst hr; simp
-    · rw [Function.update_of_ne (hrv.ne hr), Function.update_of_ne hr, ldgSetV_rv hrv]
-  · rw [Function.update_of_ne (fun e => hk ⟨a, e.symm⟩), ldgSetV_of _ _ (fun r hr => hk ⟨r, hr⟩),
-      ldgSetV_of _ _ (fun r hr => hk ⟨r, hr⟩)]
-
 theorem ldgSetV_update_off (R : Fin T → List (Fin (A + 4))) (ρ : TblR 40 → List (Fin (A + 4)))
     {k : Fin T} (hk : ∀ r, rv r ≠ k) (x : List (Fin (A + 4))) :
     Function.update (ldgSetV rv R ρ) k x = ldgSetV rv (Function.update R k x) ρ := by
@@ -133,26 +120,6 @@ where
   ldgSetV_rv' (R : Fin T → List (Fin (A + 4))) (ρ : TblR 40 → List (Fin (A + 4))) (r : TblR 40) :
       ldgSetV rv R ρ (rv r) = ρ (Classical.choose (⟨r, rfl⟩ : ∃ r', rv r' = rv r)) := by
     rw [ldgSetV, dite_eq_left ⟨r, rfl⟩]
-
-/-- A contract of the table layout lifts to whole register files. -/
-theorem ldg_lift (hrv : Function.Injective rv) {p : Pr P T Q A U}
-    {ρ ρ' : TblR 40 → List (Fin (A + 4))} {b : ℕ} (h : tblRuns body rv p ρ ρ' b)
-    (R : Fin T → List (Fin (A + 4))) (hR : ∀ r, R (rv r) = ρ r) :
-    LayRuns body p R (ldgSetV rv R ρ') b := by
-  intro v S hL hS
-  obtain ⟨v', S', m, hu, hm, he, hS', hf⟩ := h v S (fun r => by rw [hS, hR])
-  refine ⟨v', m, hu, hm, ?_⟩
-  have e : S' = { S with R := ldgSetV rv R ρ' } := by
-    refine Stacks.ext hf.1 hf.2.1 hf.2.2.1 ?_
-    funext k
-    by_cases hk : ∃ r, rv r = k
-    · obtain ⟨r, rfl⟩ := hk
-      simp only
-      rw [ldgSetV_rv hrv, hS' r]
-    · simp only
-      rw [ldgSetV_of _ _ (fun r hr => hk ⟨r, hr⟩), hf.2.2.2 k (fun r hr => hk ⟨r, hr⟩), hS]
-  rw [← e]
-  exact he
 
 theorem ldg_done_runs (R : Fin T → List (Fin (A + 4))) :
     LayRuns body (.act .done) R R 1 := by
@@ -380,12 +347,6 @@ variable {T Q A : ℕ} {U P : Type} {body : P → Pr P T Q A U} {rv : TblR 40 �
 def ldgLoad4 (rv : TblR 40 → Fin T) (u0 u1 u2 u3 : Fin T) : Pr P T Q A U :=
   .seq (ldgVars (ldgZero rv) (List.finRange 40)) <|
   .seq (tblLoad1 rv u0 0) <| .seq (tblLoad1 rv u1 1) <| .seq (tblLoad1 rv u2 2) (tblLoad1 rv u3 3)
-
-/-- The table state with the values `x0 … x4` in the variables `0 … 4`, every other variable
-`0`, nothing emitted. -/
-def ldgSt (A x0 x1 x2 x3 x4 : ℕ) : TblSt 40 A :=
-  ⟨Function.update (Function.update (Function.update (Function.update (Function.update
-    (fun _ => 0) 0 x0) 1 x1) 2 x2) 3 x3) 4 x4, []⟩
 
 /-- The step bound of `ldgLoad4`. -/
 def ldgLoad4Cost (W x0 x1 x2 x3 : ℕ) : ℕ :=

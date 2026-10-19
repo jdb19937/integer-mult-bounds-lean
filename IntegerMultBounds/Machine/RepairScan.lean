@@ -279,13 +279,6 @@ def scanBank (j : ℕ) (key : List (Fin 5)) (n : ℕ) : Tapes 14 1 :=
     (srcTape records) (DropFlag.encode (records.take j)).length
     (FlagCopy.keyTape key) (ctrTape (counter c n))
 
-theorem scanBank_zero :
-    scanBank k records flag bits c 0 [] 0 =
-      bank k [] 0 (fun _ => blank) 0 (srcTape records) 0 (FlagCopy.keyTape [])
-        (ctrTape (List.replicate c false)) := by
-  simp [scanBank, items, flagged, raw, outTape, DropFlag.encode, KeySelect.encode, counter,
-    Counter.advance, putWord]
-
 /-- The flag copier carries the bank over record `j`. -/
 theorem flag_step (j : ℕ) (hj : j < records.length) :
     HoareTime flagPart

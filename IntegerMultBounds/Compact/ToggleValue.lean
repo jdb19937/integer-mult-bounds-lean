@@ -22,8 +22,6 @@ open Radix
 def toggleMask (q : ℕ) (zs : List Bool) : List Bool :=
   (zs.map fun z => z :: List.replicate (q - 1) false).flatten
 
-theorem toggleMask_nil (q : ℕ) : toggleMask q [] = [] := rfl
-
 theorem toggleMask_cons (q : ℕ) (z : Bool) (zs : List Bool) :
     toggleMask q (z :: zs) = (z :: List.replicate (q - 1) false) ++ toggleMask q zs := by
   simp [toggleMask]

@@ -228,9 +228,6 @@ theorem dsAll_exec (M : SrcMach t₀ T Q) (hA : 4 ≤ prime + K) {rg : TblR pmNV
 /-- The step bound of `dsAll` without unary copies. -/
 noncomputable def dsAllCost (n : ℕ) : ℕ := pmCost n ([] : List (Fin pmNV × Unit)) + dsMainCost n
 
-theorem pmCost_nil {α : Type} (n : ℕ) :
-    pmCost n ([] : List (Fin pmNV × α)) = pmCost n ([] : List (Fin pmNV × Unit)) := rfl
-
 /-- **The cost of `dsAll`**: eventually `dsAllCost n ≤ 2·10^10 n + 2·10^10 (b n + 1)^5`. -/
 theorem dsAll_cost_le :
     ∀ᶠ n in Filter.atTop, dsAllCost n ≤ 2^35 * n + 2^35 * (b n + 1) ^ 5 := by

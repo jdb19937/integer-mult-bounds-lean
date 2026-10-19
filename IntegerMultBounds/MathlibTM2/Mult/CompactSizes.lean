@@ -41,7 +41,6 @@ theorem cParam_eq : cParam=7/(2^3 : ℝ) := by norm_num [cParam,cExp]
 theorem cParam_pos : 0<cParam := by norm_num [cParam,cExp]
 
 theorem Kroot_pow_le (n : ℕ) : Kroot n^cExp≤d n^7 := Sizes.iroot_pow_le cExp_ne _
-theorem d_lt_Kroot_succ_pow (n : ℕ) : d n^7<(Kroot n+1)^cExp := Sizes.lt_succ_iroot_pow cExp_ne _
 theorem le_Kroot_iff {n k : ℕ} : k≤Kroot n ↔ k^cExp≤d n^7 := Sizes.le_iroot_iff cExp_ne
 theorem Kroot_le_d (n : ℕ) : Kroot n≤d n := by
   by_contra h
@@ -148,11 +147,6 @@ theorem eventually_affine_clog_p_le_K (C B : ℕ) :
 
 /-- The persistent original-input guard used by the compact bootstrap. -/
 def guard (n : ℕ) : ℕ := 4*Nat.clog 2 (p n)+6
-
-theorem eventually_guard_le_K (C B : ℕ) : ∀ᶠ n in atTop, C*guard n+B≤K n := by
-  filter_upwards [eventually_affine_clog_p_le_K (4*C) (6*C+B)] with n h
-  unfold guard
-  nlinarith
 
 /-- In particular the full two-sided guard allowance fits a chunk. -/
 theorem eventually_guard_room : ∀ᶠ n in atTop, 8*Nat.clog 2 (p n)+16≤K n :=

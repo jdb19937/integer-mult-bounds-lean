@@ -239,29 +239,6 @@ structure LeaveOneBuilt (nodes : List (Node ι)) (refs : List Ref) (result : Res
   one_supports : result.one.map (refSupport result.nodes) = omitSupports nodes ∅ refs
   length_le : result.nodes.length ≤ nodes.length + 3 * refs.length
 
-/-- The full executable builder constructs the total and every exact omission,
-with at most three new DAG nodes per input. Interning can only improve this bound. -/
-theorem leaveOne_built (nodes : List (Node ι)) (refs : List Ref)
-    (hv : Valid nodes) (hr : RefsValid nodes refs) (hd : DisjointRefs nodes refs) :
-    LeaveOneBuilt nodes refs (leaveOne nodes refs) := by
-  have hs := suffixes_built nodes refs hv hr hd
-  have hw := walk_built (suffixes nodes refs).nodes none refs (suffixes nodes refs).after
-    hs.built.valid trivial (refsValid_extends hs.built.extension hr) hs.after_valid
-    (List.pairwise_cons.mpr ⟨by simp [refSupport], disjointRefs_extends hs.built.extension refs hr hd⟩)
-    (by rw [hs.after_supports, afterSupports_extends hs.built.extension refs hr])
-  refine ⟨hw.valid, extends_trans hs.built.extension hw.extension,
-    refValid_extends hw.extension hs.built.refValid, ?_, hw.refs_valid, ?_, ?_⟩
-  · change refSupport (walk _ none refs _).1 (suffixes nodes refs).total = _
-    rw [refSupport_extends hw.extension hs.built.refValid, hs.built.support_eq]
-  · change (walk _ none refs _).2.map (refSupport (walk _ none refs _).1) = _
-    rw [hw.supports_eq, omitSupports_extends hs.built.extension refs hr]
-    rfl
-  · have h1 := hs.built.length_le
-    have h2 := hw.length_le
-    dsimp only at h1 h2
-    change (walk _ none refs _).1.length ≤ _
-    omega
-
 @[simp] theorem omitSupports_length (nodes : List (Node ι)) (acc : Finset ι) (refs : List Ref) :
     (omitSupports nodes acc refs).length = refs.length := by
   induction refs generalizing acc with
@@ -283,27 +260,6 @@ theorem omitSupports_getElem? (nodes : List (Node ι)) (acc : Finset ι)
       simpa only [omitSupports, List.getElem?_cons_succ, List.eraseIdx_cons_succ,
         supports, Finset.union_assoc] using ih (acc ∪ refSupport nodes r) i hi'
 
-theorem leaveOne_length (nodes : List (Node ι)) (refs : List Ref)
-    (hv : Valid nodes) (hr : RefsValid nodes refs) (hd : DisjointRefs nodes refs) :
-    (leaveOne nodes refs).one.length = refs.length := by
-  have h := congrArg List.length (leaveOne_built nodes refs hv hr hd).one_supports
-  simpa only [List.length_map, omitSupports_length] using h
-
-/-- Every returned output reference has the exact support excluding its
-corresponding input position. None references count as genuine empty operands. -/
-theorem leaveOne_support (nodes : List (Node ι)) (refs : List Ref)
-    (hv : Valid nodes) (hr : RefsValid nodes refs) (hd : DisjointRefs nodes refs)
-    (i : ℕ) (hi : i < refs.length) :
-    refSupport (leaveOne nodes refs).nodes ((leaveOne nodes refs).one[i]?.getD none) =
-      supports nodes (refs.eraseIdx i) := by
-  have hb := leaveOne_built nodes refs hv hr hd
-  have hout : i < (leaveOne nodes refs).one.length := by rw [leaveOne_length nodes refs hv hr hd]; exact hi
-  have he := congrArg (fun xs : List (Finset ι) => xs[i]?) hb.one_supports
-  rw [List.getElem?_map, List.getElem?_eq_getElem hout, Option.map_some,
-    omitSupports_getElem? nodes ∅ refs i hi, Finset.empty_union] at he
-  simp only [List.getElem?_eq_getElem hout, Option.getD_some]
-  exact Option.some.inj he
-
 section Values
 variable {A : Type*} [AddCommMonoid A]
 
@@ -315,39 +271,6 @@ private theorem supportSum_eq_values (input : ι → A) (nodes : List (Node ι))
   rw [refValue_eq input _ _ ht.valid ht.refValid, ht.support_eq] at he
   exact he
 
-/-- The returned total evaluates to the sum of the original operand values. -/
-theorem leaveOne_total_value (input : ι → A) (nodes : List (Node ι)) (refs : List Ref)
-    (hv : Valid nodes) (hr : RefsValid nodes refs) (hd : DisjointRefs nodes refs) :
-    refValue input (leaveOne nodes refs).nodes (leaveOne nodes refs).total =
-      (refs.map (refValue input nodes)).sum := by
-  have hb := leaveOne_built nodes refs hv hr hd
-  rw [refValue_eq input _ _ hb.valid hb.total_valid, hb.total_support]
-  exact supportSum_eq_values input nodes refs hv hr hd
-
-/-- Every omission evaluates to the exact sum of all other original operands,
-in an arbitrary additive commutative monoid, without cancellation. -/
-theorem leaveOne_value (input : ι → A) (nodes : List (Node ι)) (refs : List Ref)
-    (hv : Valid nodes) (hr : RefsValid nodes refs) (hd : DisjointRefs nodes refs)
-    (i : ℕ) (hi : i < refs.length) :
-    refValue input (leaveOne nodes refs).nodes ((leaveOne nodes refs).one[i]?.getD none) =
-      ((refs.eraseIdx i).map (refValue input nodes)).sum := by
-  have hb := leaveOne_built nodes refs hv hr hd
-  have hout : i < (leaveOne nodes refs).one.length := by rw [leaveOne_length nodes refs hv hr hd]; exact hi
-  have hvalid : RefValid (leaveOne nodes refs).nodes ((leaveOne nodes refs).one[i]?.getD none) := by
-    simp only [List.getElem?_eq_getElem hout, Option.getD_some]
-    exact hb.one_valid _ (List.getElem_mem hout)
-  rw [refValue_eq input _ _ hb.valid hvalid, leaveOne_support nodes refs hv hr hd i hi]
-  exact supportSum_eq_values input nodes _ hv
-    (fun r hh => hr r ((List.eraseIdx_sublist refs i).subset hh))
-    (List.Pairwise.sublist (List.eraseIdx_sublist refs i) hd)
-
-/-- Construction preserves every valid pre-existing reference's value. -/
-theorem leaveOne_preserves (input : ι → A) (nodes : List (Node ι)) (refs : List Ref)
-    (hv : Valid nodes) (hr : RefsValid nodes refs) (hd : DisjointRefs nodes refs)
-    (old : Ref) (ho : RefValid nodes old) :
-    refValue input (leaveOne nodes refs).nodes old = refValue input nodes old := by
-  have hb := leaveOne_built nodes refs hv hr hd
-  exact refValue_extends input hb.extension hv hb.valid ho
 end Values
 
 end IntegerMultBounds.Networks.DisjointExclusion

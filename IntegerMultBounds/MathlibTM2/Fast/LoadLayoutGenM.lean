@@ -442,10 +442,6 @@ theorem ldw_lrank_lt {i : ℕ} (hi : i < es.length) (hl : ax es i = ℓ) :
   rw [List.getElem?_eq_none (by omega)] at h1
   exact absurd h1 (by simp)
 
-theorem ldw_lrank_le {i : ℕ} (hi : i ≤ es.length) : layLrank es ℓ i ≤ (layLongs es ℓ).length := by
-  simp only [layLrank, layLongs]
-  exact ((List.range_sublist.2 hi).filter _).length_le
-
 theorem ldw_length_le_sum (H : LayHyp es ℓ K) : es.length ≤ es.sum := by
   have := lay_sum H
   have := H.ℓ_ge

@@ -86,12 +86,6 @@ theorem dsRuns.congr {p : Pr P T Q A U} {R₀ R₁ R₁' : Regs T A} {c : ℕ}
 theorem dsRuns.congr_left {p : Pr P T Q A U} {R₀ R₀' R₁ : Regs T A} {c : ℕ}
     (h : dsRuns body p R₀ R₁ c) (e : R₀' = R₀) : dsRuns body p R₀' R₁ c := e ▸ h
 
-/-- Turn an execution with an explicit final register file into a contract. -/
-theorem dsRuns_of_exec {p : Pr P T Q A U} {R₀ R₁ : Regs T A} {c : ℕ}
-    (h : ∀ (v : HS T Q A U) (S : Stacks T A), S.R = R₀ →
-      ∃ (v' : HS T Q A U) (m : ℕ), v'.user = v.user ∧ m ≤ c ∧
-        Exec body p (mk v S) m (mk v' { S with R := R₁ })) : dsRuns body p R₀ R₁ c := h
-
 /-- A single action. -/
 theorem ds_act (a : Act T Q A U) (R₀ R₁ : Regs T A)
     (h : ∀ (v : HS T Q A U) (S : Stacks T A), S.R = R₀ →
@@ -184,10 +178,6 @@ theorem dsOv_eq_of (hrg : Function.Injective rg) {R : Regs T A} {ρ : ι → Lis
     rw [h1, dsOv_rg hrg]
   · push Not at h
     rw [h2 k h, dsOv_off R ρ h]
-
-theorem dsOv_self (hrg : Function.Injective rg) (R : Regs T A) :
-    dsOv rg R (fun r => R (rg r)) = R :=
-  (dsOv_eq_of hrg (fun _ => rfl) (fun _ _ => rfl)).symm
 
 end Overlay
 

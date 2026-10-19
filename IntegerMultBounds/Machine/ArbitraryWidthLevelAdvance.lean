@@ -71,14 +71,6 @@ theorem advance_linear (B j : ℕ) (hB : 2 ≤ B) :
   unfold advanceCost
   omega
 
-/-- Offset, remaining width, digit counter, serialized data and caller headers
-may all occupy this arbitrary fixed frame, with no hidden changes or resets. -/
-theorem advance_framed (B j : ℕ) (hB : 2 ≤ B) (frame : Tapes t a) :
-    HoareTime (extend (advance (a := a)) t)
-      (fun v => v = (working B j).append frame)
-      (fun v => v = (working B (j+1)).append frame) (120*B^(j+1)) :=
-  hoare_extend_eq (advance_linear B j hB) frame
-
 def initializer (n : ℕ) (slot : Fin 7) := Placement.placed
   (RecursiveChildQuotientsConstant.program (a := a) n) (FiniteReturnStackAt.placement slot)
 
@@ -142,17 +134,6 @@ theorem controls (B j : ℕ) :
     (working (a := a) B j).head 6 = 1 ∧
     (working (a := a) B j).tape 6 = BinaryDescriptorStack.descriptor (bits j) := ⟨rfl,rfl,rfl,rfl⟩
 
-theorem width_bits_eq (B j : ℕ) : FixedBasePowerStep.bits B j = bits (B^j) :=
-  BinaryCanonicalData.value_injective _ _ (FixedBasePowerStep.bits_canonical B j)
-    (RecursiveChildQuotientsConstant.bits_canonical _) (by
-      rw [FixedBasePowerStep.bits_value,RecursiveChildQuotientsConstant.bits_value])
-
-theorem setup_framed (B : ℕ) (frame : Tapes t a) :
-    HoareTime (extend (setup (a := a) B) t)
-      (fun v => v = (SharedBank.empty 7 a).append frame)
-      (fun v => v = (working B 0).append frame) (cost B+cost 1+cost 0+2) :=
-  hoare_extend_eq (setup_hoare B) frame
-
 theorem finish_linear (B j : ℕ) (hB : 2 ≤ B) :
     HoareTime (finish (a := a)) (fun v => v = working B j)
       (fun v => v = SharedBank.empty 7 a) ((2*(bits B).length+20)*B^j) := by
@@ -167,12 +148,6 @@ theorem finish_linear (B j : ℕ) (hB : 2 ≤ B) :
   have hp := FixedBasePowerDescriptor.depth_le_power B j hB
   have hc := Nat.mul_le_mul_left (2*(bits B).length+16) (show 1 ≤ B^j by omega)
   nlinarith
-
-theorem finish_framed (B j : ℕ) (hB : 2 ≤ B) (frame : Tapes t a) :
-    HoareTime (extend (finish (a := a)) t)
-      (fun v => v = (working B j).append frame)
-      (fun v => v = (SharedBank.empty 7 a).append frame) ((2*(bits B).length+20)*B^j) :=
-  hoare_extend_eq (finish_linear B j hB) frame
 
 end
 end IntegerMultBounds.Machine.ArbitraryWidthLevelAdvance

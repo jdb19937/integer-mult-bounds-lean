@@ -79,10 +79,6 @@ lemma cstream_drop_eq_cons (l : List GaussianInt) (j : ℕ) (hj : j < l.length) 
     cstream A w (l.drop j) = csyms A w l[j] ++ cstream A w (l.drop (j + 1)) := by
   rw [List.drop_eq_getElem_cons hj, cstream_cons]
 
-lemma reverse_cstream_snoc (l : List GaussianInt) (x : GaussianInt) :
-    (cstream A w (l ++ [x])).reverse = (csyms A w x).reverse ++ (cstream A w l).reverse := by
-  rw [cstream_append, List.reverse_append]; simp [cstream]
-
 end Streams
 
 /-! ### Row selection -/

@@ -156,17 +156,5 @@ theorem caller_cells (caller : Tapes t a) (hs : Fin 3 → List Bool) (i : Fin t)
   simp only [output,baseSlot,Tapes.append,Fin.addCases_left]
   exact ⟨trivial,trivial⟩
 
-theorem zero_blank (caller : Tapes t a) (hs : Fin 3 → List Bool) :
-    (output caller hs).head (Fin.castAdd 6 zeroSlot) = 0 ∧
-    (output caller hs).tape (Fin.castAdd 6 zeroSlot) = fun _ => blank := by
-  simp only [output,zeroSlot,Tapes.append,Fin.addCases_left,Fin.addCases_right,FixedHeaderBankCopy.empty]
-  exact ⟨trivial,trivial⟩
-
-theorem one_blank (caller : Tapes t a) (hs : Fin 3 → List Bool) :
-    (output caller hs).head (Fin.castAdd 6 oneSlot) = 0 ∧
-    (output caller hs).tape (Fin.castAdd 6 oneSlot) = fun _ => blank := by
-  simp only [output,oneSlot,Tapes.append,Fin.addCases_left,Fin.addCases_right,FixedHeaderBankCopy.empty]
-  exact ⟨trivial,trivial⟩
-
 end
 end IntegerMultBounds.Machine.CompactRowHeaders

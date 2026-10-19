@@ -166,27 +166,10 @@ theorem constructs (S : Gather.Shape) (n : ℕ) (hs : Fin 6 → List Bool)
   norm_num [width,constructCost]
   omega
 
-theorem original_cells (S : Gather.Shape) (hs : Fin 6 → List Bool) (i : Fin 6) :
-    (output (a := a) S hs).head (Fin.castAdd 4 i) = 1 ∧
-    (output (a := a) S hs).tape (Fin.castAdd 4 i) = RadixZeroFill.encodedBinary (hs i) := by
-  fin_cases i <;> exact ⟨rfl,rfl⟩
-
-theorem generated_cells (S : Gather.Shape) (hs : Fin 6 → List Bool) (i : Fin 4) :
-    (output (a := a) S hs).head (Fin.natAdd 6 i) = 1 ∧
-    (output (a := a) S hs).tape (Fin.natAdd 6 i) = RadixZeroFill.encodedBinary (words S i) := by
-  fin_cases i <;> exact ⟨rfl,rfl⟩
-
-/-- The retained input n remains available separately to the outer loop. -/
-def digitSources : Fin 5 → Fin 10 := ![1,4,2,7,9]
 def digitWords (S : Gather.Shape) (hs : Fin 6 → List Bool) : Fin 5 → List Bool :=
   ![hs 1,hs 4,hs 2,words S 1,words S 3]
 def digitValues (S : Gather.Shape) : Fin 5 → ℕ :=
   ![S.ox,S.ot,S.d,S.sx-S.ox-S.d,S.st-S.ot-S.d]
-
-theorem digit_cells (S : Gather.Shape) (hs : Fin 6 → List Bool) (i : Fin 5) :
-    (output (a := a) S hs).head (digitSources i) = 1 ∧
-    (output (a := a) S hs).tape (digitSources i) = RadixZeroFill.encodedBinary (digitWords S hs i) := by
-  fin_cases i <;> exact ⟨rfl,rfl⟩
 
 theorem digit_values (S : Gather.Shape) (n : ℕ) (hs : Fin 6 → List Bool)
     (hv : ∀ i, Counter.value (hs i) = originalValues S n i) :
@@ -268,14 +251,6 @@ theorem cleans_linear (S : Gather.Shape) (hs : Fin 6 → List Bool) :
     HoareTime (cleanup (a := a)) (fun v => v = output S hs)
       (fun v => v = input hs) (4*(S.sx+S.st)+28) :=
   (cleans S hs).consequence (fun _ h => h) (fun _ h => h) (cleanup_cost_bound S)
-
-/-- All-zero dimensions are permitted by the same program and contracts;
-only the six original marked descriptors remain initialized at either end. -/
-theorem construct_cost_volume (S : Gather.Shape) (V : ℕ) (hV : 0 < V) (hS : S.sx+S.st ≤ V) :
-    constructCost S ≤ 123*V := by unfold constructCost; omega
-
-theorem cleanup_cost_volume (S : Gather.Shape) (V : ℕ) (hV : 0 < V) (hS : S.sx+S.st ≤ V) :
-    cleanupCost S ≤ 32*V := by have h := cleanup_cost_bound S; omega
 
 end
 end IntegerMultBounds.Machine.CountedGatherMetadata

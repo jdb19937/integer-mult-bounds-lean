@@ -138,9 +138,5 @@ theorem program_pairs (e : Fin n ≃ Triple) (frameOf : Label → Frame (ZMod 2)
         (RankTrace.edges (input 0) (tailUpdates e)).map (fun p => (frameOf p.1,frameOf p.2)) := by
   rw [program,FramedEdgeTrace.pairs_append,first_pairs,tail_pairs]
 
-/-- The already proved rational signed physical network is this exact specialization. -/
-theorem rational_specialization (e : Fin n ≃ Triple) :
-    program e Shared50GlobalShear.frames Shared50GlobalShear.sourceFrames = Shared50GlobalShear.program e := rfl
-
 end
 end IntegerMultBounds.Networks.Shared50SignedFramed

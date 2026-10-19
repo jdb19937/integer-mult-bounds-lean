@@ -108,19 +108,7 @@ theorem streamUnit_decomp (j : Fin 14336) :
   congr
   exact Nat.mod_eq_of_lt j.isLt
 
-theorem famUnit_eq (f : ℕ) (hf : f < 14336) :
-    famUnit f = streamUnit (famReplica f) (famPort f) (famStream f) := by
-  rw [famReplica, famPort, famStream, streamUnit_decomp ⟨f, hf⟩, famUnit]
-  congr 1
-  exact Fin.ext (Nat.mod_eq_of_lt hf)
-
 /-! ### The stream side -/
-
-omit [Module ℚ S] [IsScalarTower ℚ ℂ S] in
-theorem hostAcc_zero_apply {a : ℕ} {G : GroupData} {slot : ℕ} {i : Fin 8}
-    (h : hostAcc G slot i = Vec.zero) (z : S) :
-    portRep ρ a (ofAdd (hostAcc G slot i).toFun) z = z := by
-  rw [h, Vec.toFun_zero, op_zero]
 
 omit [Module ℚ S] [IsScalarTower ℚ ℂ S] in
 /-- The stream side of a local event at one group. -/

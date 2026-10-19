@@ -33,11 +33,6 @@ def finished {s : Shape} (order : Order) (v : Stage s) (rows : ℕ) : State := f
   if h : i.val<13 then some (originalValues v rows ⟨i.val,h⟩)
   else if h : i.val<22 then some (outputs order v ⟨i.val-13,by omega⟩) else none
 
-def layoutFocus : Fin 14 → Fin 28 := ![13,14,15,16,17,18,19,0,2,20,10,21,4,5]
-def reservationFocus : Fin 7 → Fin 28 := ![0,1,2,20,3,4,5]
-theorem layoutFocus_injective : Function.Injective layoutFocus := by decide
-theorem reservationFocus_injective : Function.Injective reservationFocus := by decide
-
 def seed : List Op := [.one 22,.command (.difference 7 22 20 (by decide)),.product ![2,1,13] (by decide)]
 def back : List Op := [.round ![13,0,24] (by decide),
   .command (.difference 24 13 14 (by decide)),.command (.erase 24)]
@@ -67,16 +62,6 @@ def source : Order → List Op
       .product ![0,24,25] (by decide),.command (.erase 24),
       .command (.copy 25 21 (by decide)),.command (.erase 25)]
 def schedule (order : Order) := seed++back++front++widths++highTarget++lowTarget++source order++[.command (.erase 22)]
-
-theorem original_retained {s : Shape} (order : Order) (v : Stage s) (rows : ℕ) (i : Fin 13) :
-    finished order v rows (Fin.castAdd 15 i)=some (originalValues v rows i) := by
-  simp [finished,i.isLt]
-
-theorem layout_values {s : Shape} (order : Order) (v : Stage s) (rows : ℕ)
-    (hG : 1≤s.guard) (hGK : s.guard+1≤s.chunk) (i : Fin 14) :
-    finished order v rows (layoutFocus i)=some (ActivePrefixLayoutHeadersData.originalValues
-      (ActivePrefixLayoutHeadersGeometry.inputs s (parameters v hG hGK) (offset order v) rows) i) := by
-  fin_cases i <;> rfl
 
 end
 end IntegerMultBounds.Machine.ActivePrefixStageHeadersData

@@ -88,12 +88,4 @@ theorem total_potential (n : ℕ) (bs : List Bool) :
     simp only [totalFlips, advance]
     omega
 
-/-- Any run of `n` increments, from any initial counter value, flips at most
-`2*n + width` bits. No zero-initialization assumption is needed. -/
-theorem amortized_flips (n : ℕ) (bs : List Bool) :
-    totalFlips n bs ≤ 2 * n + bs.length := by
-  have h₁ := total_potential n bs
-  have h₂ := weight_le_length bs
-  omega
-
 end IntegerMultBounds.Counter

@@ -16,8 +16,6 @@ def header : Tapes 1 a := FiniteReturnStack.bank (BinaryDescriptorStack.descript
 
 theorem bits_zero : RecursiveChildQuotientsConstant.bits 0 = [] := rfl
 
-theorem zero_value : Counter.value ([] : List Bool) = 0 := rfl
-
 theorem zero_canonical : GrowingCounterData.Canonical [] := Or.inl rfl
 
 theorem header_cells : (header (a := a)).head 0 = 1 ∧

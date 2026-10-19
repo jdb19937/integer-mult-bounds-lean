@@ -130,32 +130,6 @@ theorem result_payload (k : Kind) (caller : Tapes t a) (focus : Fin 6 → Fin t)
       after k (SharedBank.payload caller focus) q b hb hbq xs zs px pz pt :=
   installed_payload caller focus hf _
 
-theorem headers_retained (k : Kind) (caller : Tapes t a) (focus : Fin 6 → Fin t) (hf : Function.Injective focus)
-    (q b : ℕ) (hb : 1≤b) (hbq : b+1≤q) (xs zs : List Bool) (px pz pt : ℤ) (i : Fin 3) :
-    (result k caller focus q b hb hbq xs zs px pz pt).head (focus ⟨i.val,by omega⟩)=
-      caller.head (focus ⟨i.val,by omega⟩) ∧
-    (result k caller focus q b hb hbq xs zs px pz pt).tape (focus ⟨i.val,by omega⟩)=
-      caller.tape (focus ⟨i.val,by omega⟩) := by
-  have h := result_payload k caller focus hf q b hb hbq xs zs px pz pt
-  have hh := congrFun (congrArg Tapes.head h) (⟨i.val,by omega⟩ : Fin 6)
-  have ht := congrFun (congrArg Tapes.tape h) (⟨i.val,by omega⟩ : Fin 6)
-  change (result k caller focus q b hb hbq xs zs px pz pt).head (focus ⟨i.val,by omega⟩)=_ at hh
-  change (result k caller focus q b hb hbq xs zs px pz pt).tape (focus ⟨i.val,by omega⟩)=_ at ht
-  rw [hh,ht]
-  cases k <;> fin_cases i <;> exact ⟨rfl,rfl⟩
-
-theorem streams_retained (k : Kind) (caller : Tapes t a) (focus : Fin 6 → Fin t) (hf : Function.Injective focus)
-    (q b : ℕ) (hb : 1≤b) (hbq : b+1≤q) (xs zs : List Bool) (px pz pt : ℤ) :
-    (result k caller focus q b hb hbq xs zs px pz pt).tape (focus 3)=caller.tape (focus 3) ∧
-    (result k caller focus q b hb hbq xs zs px pz pt).tape (focus 4)=caller.tape (focus 4) := by
-  have h := result_payload k caller focus hf q b hb hbq xs zs px pz pt
-  have h3 := congrFun (congrArg Tapes.tape h) (3 : Fin 6)
-  have h4 := congrFun (congrArg Tapes.tape h) (4 : Fin 6)
-  change (result k caller focus q b hb hbq xs zs px pz pt).tape (focus 3)=_ at h3
-  change (result k caller focus q b hb hbq xs zs px pz pt).tape (focus 4)=_ at h4
-  rw [h3,h4]
-  cases k <;> exact ⟨rfl,rfl⟩
-
 theorem result_frame (k : Kind) (caller : Tapes t a) (focus : Fin 6 → Fin t)
     (q b : ℕ) (hb : 1≤b) (hbq : b+1≤q) (xs zs : List Bool) (px pz pt : ℤ)
     (i : Fin t) (hi : ¬∃ j, focus j=i) :
@@ -166,26 +140,6 @@ theorem result_frame (k : Kind) (caller : Tapes t a) (focus : Fin 6 → Fin t)
 
 def outputWidth (k : Kind) (q b : ℕ) : ℕ := match k with
   | .selected => q | .control => q | .parity => b
-
-theorem result_heads (k : Kind) (caller : Tapes t a) (focus : Fin 6 → Fin t) (hf : Function.Injective focus)
-    (q b : ℕ) (hb : 1≤b) (hbq : b+1≤q) (xs zs : List Bool) (px pz pt : ℤ) :
-    (result k caller focus q b hb hbq xs zs px pz pt).head (focus 3)=px+zs.length*sourceWidth k q b ∧
-    (result k caller focus q b hb hbq xs zs px pz pt).head (focus 4)=pz+zs.length ∧
-    (result k caller focus q b hb hbq xs zs px pz pt).head (focus 5)=pt+zs.length*outputWidth k q b := by
-  have h := result_payload k caller focus hf q b hb hbq xs zs px pz pt
-  have h3 := congrFun (congrArg Tapes.head h) (3 : Fin 6)
-  have h4 := congrFun (congrArg Tapes.head h) (4 : Fin 6)
-  have h5 := congrFun (congrArg Tapes.head h) (5 : Fin 6)
-  change (result k caller focus q b hb hbq xs zs px pz pt).head (focus 3)=_ at h3
-  change (result k caller focus q b hb hbq xs zs px pz pt).head (focus 4)=_ at h4
-  change (result k caller focus q b hb hbq xs zs px pz pt).head (focus 5)=_ at h5
-  rw [h3,h4,h5]
-  cases k
-  · exact ⟨rfl,rfl,rfl⟩
-  · change px+zs.length=px+(zs.length : ℤ)*1 ∧ _ ∧ _
-    simp only [mul_one]
-    exact ⟨trivial,rfl,rfl⟩
-  · exact ⟨rfl,rfl,rfl⟩
 
 end
 end IntegerMultBounds.Machine.BinaryVaryingOffsetGatherPlaced

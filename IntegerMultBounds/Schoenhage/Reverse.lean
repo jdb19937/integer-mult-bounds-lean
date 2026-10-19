@@ -70,12 +70,6 @@ abbrev machine : FMachine 2 a where
         else some (.fwd, act2 (syms 0) .right (syms 1) .stay)
     | .done => none
 
-theorem rd0 (h0 h1 : ℤ) (f0 f1 : ℤ → Fin (a + 4)) :
-    (fun i : Fin 2 => if i.val = 0 then f0 h0 else f1 h1) 0 = f0 h0 := rfl
-
-theorem rd1 (h0 h1 : ℤ) (f0 f1 : ℤ → Fin (a + 4)) :
-    (fun i : Fin 2 => if i.val = 0 then f0 h0 else f1 h1) 1 = f1 h1 := rfl
-
 theorem bit_ne_sep (b : Bool) : bitSymbol (a := a) b ≠ separator := by
   cases b <;> simp [bitSymbol, separator, Fin.ext_iff]
 

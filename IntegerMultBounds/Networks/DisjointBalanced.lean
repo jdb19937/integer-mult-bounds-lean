@@ -144,12 +144,5 @@ theorem total_value (input : ι → A) (nodes : List (Node ι)) (refs : List Ref
   rw [refValue_eq input _ _ hb.valid hb.refValid, hb.support_eq]
   exact ho
 
-/-- The actual balanced construction preserves all existing source values. -/
-theorem total_preserves (input : ι → A) (nodes : List (Node ι)) (refs : List Ref) (old : Ref)
-    (hv : Valid nodes) (hr : RefsValid nodes refs) (hd : DisjointRefs nodes refs)
-    (ho : RefValid nodes old) :
-    refValue input (total nodes refs).1 old = refValue input nodes old := by
-  have hb := total_built nodes refs hv hr hd
-  exact refValue_extends input hb.extension hv hb.valid ho
 end Values
 end IntegerMultBounds.Networks.DisjointBalanced

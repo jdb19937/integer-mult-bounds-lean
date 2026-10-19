@@ -98,24 +98,9 @@ theorem common_unique (S T : Triple h) (c d : Fin h)
 section Sums
 variable {R : Type*} [AddCommMonoid R]
 
-/-- The precise pair-exclusion partial output after remapping pair inputs. -/
-def partialOutput (c : Fin h) (T : Triple h) (X : Triple h → R) : R :=
-  ∑ P : ExcludedPair c T, X (insertTriple c P.val)
-
 /-- The same output described directly by its global triple support. -/
 def sharedOutput (c : Fin h) (T : Triple h) (X : Triple h → R) : R :=
   ∑ S : Triple h, if S.val ∩ T.val = {c} then X S else 0
-
-/-- Insertion/erasure preserves both source identity and multiplicity. -/
-theorem partialOutput_eq_shared (c : Fin h) (T : Triple h) (hc : c ∈ T.val)
-    (X : Triple h → R) : partialOutput c T X = sharedOutput c T X := by
-  calc
-    _ = ∑ S : SharedSource c T, X S.val :=
-      Fintype.sum_equiv (exclusionEquiv c T hc) _ _ (fun _ => rfl)
-    _ = ∑ S : Triple h, if S.val ∩ T.val = {c} then X S else 0 := by
-      rw [← Finset.sum_filter]
-      symm
-      exact Finset.sum_subtype _ (by simp) X
 
 /-- Exactly one partial output contributes each neighboring source. This is
 valid in every additive commutative monoid, without cancellation or parity. -/
@@ -145,43 +130,12 @@ theorem sum_shared_eq_neighbors (T : Triple h) (X : Triple h → R) :
       rw [hd, Finset.card_singleton]
     simp [he, BitNeighbor, hST]
 
-/-- Summing the three target-associated pair-exclusion outputs is exactly the
-existing intersection-one neighbor map, with no duplicate source contribution. -/
-theorem sum_partialOutput_eq_neighbors (T : Triple h) (X : Triple h → R) :
-    (∑ c : {c : Fin h // c ∈ T.val}, partialOutput c.val T X) =
-      ∑ S : Triple h, if BitNeighbor S T then X S else 0 := by
-  simp_rw [partialOutput_eq_shared _ T (Subtype.property _)]
-  exact sum_shared_eq_neighbors T X
 end Sums
-
-/-- The optimized shared-point outputs agree with the existing bit circuit's
-copy-then-inject side map under any explicit enumeration of triples and pairs. -/
-theorem sum_partialOutput_eq_bit_side {n a : ℕ} (e : Fin n ≃ Triple h)
-    (pairs : Fin a ≃ Circuit.BitPair (fun i => (e i).val))
-    (X : Triple h → ZMod 2) (i : Fin n) :
-    (∑ c : {c : Fin h // c ∈ (e i).val}, partialOutput c.val (e i) X) =
-      Circuit.mv (Circuit.bitInject pairs) (Circuit.mv (Circuit.bitCopy pairs) (X ∘ e)) i := by
-  rw [sum_partialOutput_eq_neighbors]
-  symm
-  simp only [Circuit.mv, Function.comp_apply]
-  simp_rw [Finset.mul_sum, ← mul_assoc]
-  rw [Finset.sum_comm]
-  simp_rw [← Finset.sum_mul, Circuit.bit_side_coeff]
-  apply Fintype.sum_equiv e
-  intro S
-  simp only [BitNeighbor, Finset.inter_comm]
-  split_ifs <;> simp
 
 /-- The actual pair-indexed source support of a partial output. -/
 def outputSpan (c : Fin h) (T : Triple h) : Submodule ℚ (Fin h → ℚ) :=
   indexedSpan (fun P : PairAway c => (insertTriple c P).val)
     {P | Disjoint P.val (T.val.erase c)}
-
-/-- Shared-point source-span nondegeneracy applies to these exact pair supports. -/
-theorem outputSpan_nondegenerate (c : Fin h) (T : Triple h) :
-    ((rational h).restrict (outputSpan c T)).Nondegenerate :=
-  indexedSpan_nondegenerate c _ _
-    (fun P _ => (insertTriple c P).property) (fun P _ => insertTriple_common c P)
 
 /-- Its generators are precisely the shared-point neighboring triples. -/
 theorem outputSpan_eq_sourceSpan (c : Fin h) (T : Triple h) (hc : c ∈ T.val) :

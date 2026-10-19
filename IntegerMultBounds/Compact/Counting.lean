@@ -135,36 +135,8 @@ def lateGoodEquiv (B L : ℤ) (n : ℕ) :
   (Equiv.subtypeEquiv (Equiv.refl (LateAddress B L n))
     (fun _ => and_comm)).trans Equiv.subtypeProdEquivProd
 
-theorem card_lateGood (B L : ℤ) (hB : 0 < B) (hL : 0 < L) (n : ℕ) :
-    Nat.card {x : LateAddress B L n // lateGood B L n x} =
-      (B - 1).toNat ^ n * ((2 * L - 8 * B).toNat ^ n * (B - 1).toNat ^ n) := by
-  rw [Nat.card_congr (lateGoodEquiv B L n), Nat.card_prod,
-    card_restricted_field B hB, card_unsaturated_digit, card_earlyGood B L hB hL]
-
 theorem card_earlyAddress (B L : ℤ) (n : ℕ) :
     Nat.card (EarlyAddress B L n) = ((2 * L) ^ n).toNat * (B ^ n).toNat := by
   rw [Nat.card_prod, card_field, card_field]
-
-theorem card_lateAddress (B L : ℤ) (n : ℕ) :
-    Nat.card (LateAddress B L n) =
-      (B ^ n).toNat * (((2 * L) ^ n).toNat * (B ^ n).toNat) := by
-  rw [Nat.card_prod, card_field, card_earlyAddress]
-
-/-- These are counts of the predicates actually inspected by destination repair. -/
-theorem card_earlyBad (B L : ℤ) (hB : 0 < B) (hL : 0 < L) (n : ℕ) :
-    Nat.card {x : EarlyAddress B L n // ¬earlyGood B L n x} =
-      ((2 * L) ^ n).toNat * (B ^ n).toNat -
-        (2 * L - 8 * B).toNat ^ n * (B - 1).toNat ^ n := by
-  rw [Nat.card_eq_fintype_card, Fintype.card_subtype_compl,
-    ← Nat.card_eq_fintype_card, ← Nat.card_eq_fintype_card,
-    card_earlyAddress, card_earlyGood B L hB hL]
-
-theorem card_lateBad (B L : ℤ) (hB : 0 < B) (hL : 0 < L) (n : ℕ) :
-    Nat.card {x : LateAddress B L n // ¬lateGood B L n x} =
-      (B ^ n).toNat * (((2 * L) ^ n).toNat * (B ^ n).toNat) -
-        (B - 1).toNat ^ n * ((2 * L - 8 * B).toNat ^ n * (B - 1).toNat ^ n) := by
-  rw [Nat.card_eq_fintype_card, Fintype.card_subtype_compl,
-    ← Nat.card_eq_fintype_card, ← Nat.card_eq_fintype_card,
-    card_lateAddress, card_lateGood B L hB hL]
 
 end IntegerMultBounds.Compact

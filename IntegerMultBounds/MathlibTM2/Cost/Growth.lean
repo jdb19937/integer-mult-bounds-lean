@@ -101,8 +101,6 @@ theorem gr_b_le_two_log {n : ℕ} (hn : 8 ≤ n) : (b n : ℝ) ≤ 2 * Real.log 
 
 /-! ### `d` and `K` -/
 
-theorem gr_epsilon_pos : 0 < epsilon := by rw [epsilon_eq]; norm_num
-
 theorem gr_epsilon_le_one : epsilon ≤ 1 := by rw [epsilon_eq]; norm_num
 
 theorem gr_cParam_pos : 0 < cParam := by rw [cParam_eq]; norm_num
@@ -253,13 +251,6 @@ theorem gr_logb_rp {n : ℕ} (hp : 1 ≤ p n) :
   have hp0 : (p n : ℝ) ≠ 0 := by exact_mod_cast (show p n ≠ 0 by omega)
   rw [Real.logb_mul (by rw [gr_r_eq]; positivity) hp0, gr_r_eq, Real.logb_pow,
     Real.logb_self_eq_one one_lt_two, mul_one]
-
-/-- `0 ≤ log₂ (r p)` for `p ≥ 1`. -/
-theorem gr_logb_rp_nonneg {n : ℕ} (hp : 1 ≤ p n) : 0 ≤ Real.logb 2 ((r n : ℝ) * p n) := by
-  rw [gr_logb_rp hp]
-  have : 0 ≤ Real.logb 2 (p n) :=
-    Real.logb_nonneg one_lt_two (by exact_mod_cast hp)
-  positivity
 
 /-- `log₂ (r p) ≤ 2ℓ` for all large `n` (`log₂ p ≤ K < ℓ`). -/
 theorem gr_logb_rp_le : ∀ᶠ n in atTop, Real.logb 2 ((r n : ℝ) * p n) ≤ 2 * ℓ n := by

@@ -208,25 +208,5 @@ theorem runs_linear (ws : List (List Bool)) (Q B : ℕ) (hQ : 0 < Q) (hB : 0 < B
   (runs ws Q B hQ hB source dest control p q r bs qs ns hb hq hn cb cq cn hc hv a).consequence
     (fun _ h => h) (fun _ h => h) (cost_linear ws Q B hQ hB hc hv)
 
-/-- Every private tape is wholly blank, with its head at zero. -/
-theorem bare_private (source dest control : ℤ → Fin 4) (p q r : ℤ)
-    (bs qs ns : List Bool) (i : Fin 15)
-    (hi : i ∈ ([0,1,2,3,4,6,8,9,13] : List (Fin 15))) :
-    (bare source dest control p q r bs qs ns).head i=0 ∧
-      (bare source dest control p q r bs qs ns).tape i=fun _ => blank := by
-  simp only [List.mem_cons,List.not_mem_nil,or_false] at hi
-  rcases hi with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;> exact ⟨rfl,rfl⟩
-
-/-- The supplied immutable B,Q,n words remain in their original slots. -/
-theorem bare_headers (source dest control : ℤ → Fin 4) (p q r : ℤ)
-    (bs qs ns : List Bool) :
-    (bare source dest control p q r bs qs ns).head 5=1 ∧
-    (bare source dest control p q r bs qs ns).tape 5=binary bs ∧
-    (bare source dest control p q r bs qs ns).head 7=1 ∧
-    (bare source dest control p q r bs qs ns).tape 7=binary qs ∧
-    (bare source dest control p q r bs qs ns).head 14=1 ∧
-    (bare source dest control p q r bs qs ns).tape 14=binary ns := by
-  exact ⟨rfl,rfl,rfl,rfl,rfl,rfl⟩
-
 end
 end IntegerMultBounds.Machine.StreamedFiberTranslationInitialized

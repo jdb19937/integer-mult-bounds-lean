@@ -117,8 +117,6 @@ lemma Sl_sBit (l : List (Fin n)) (i : Fin n) (f : Arr X n) :
       simp only [Sl, List.map_cons, List.prod_cons, Module.End.mul_apply] at ih ⊢
       rw [ih, sBit_commute]
 
-lemma smul_lin (T : Arr X n →ₗ[ℂ] Arr X n) (c : ℂ) (f : Arr X n) : T (c • f) = c • T f := map_smul T c f
-
 /-- Normalized butterflies on distinct bits are `b^|l| • S C S`. -/
 lemma Hl_eq (l : List (Fin n)) (hl : l.Nodup) (f : Arr X n) :
     Hl X l f = ((1 - Complex.I) / 2) ^ l.length • Sl X l (Cl X l (Sl X l f)) := by
@@ -159,95 +157,5 @@ def agree (l : List (Fin n)) (a b : Fin n → ZMod 2) : Prop := ∀ i, i ∉ l �
 
 instance (l : List (Fin n)) (a : Fin n → ZMod 2) : DecidablePred (agree l a) :=
   fun b => by unfold agree; infer_instance
-
-/-- Normalized butterflies on distinct bits `l` in explicit form. -/
-lemma sgn_flip (l : List (Fin n)) (i : Fin n) (hi : i ∉ l) (a b : Fin n → ZMod 2) :
-    sgn l (flip i a) b = sgn l a b := by
-  unfold sgn
-  congr 1
-  apply List.map_congr_left
-  intro j hj
-  have : j ≠ i := fun h => hi (h ▸ hj)
-  rw [flip_other this]
-
-lemma agree_nil (a b : Fin n → ZMod 2) : agree [] a b ↔ b = a := by
-  simp [agree, funext_iff]
-
-lemma agree_cons (i : Fin n) (l : List (Fin n)) (a b : Fin n → ZMod 2) :
-    agree (i :: l) a b ↔ agree l a b ∨ agree l (flip i a) b := by
-  constructor
-  · intro h
-    rcases zmod2_cases (b i + a i) with hb | hb
-    · left; intro j hj
-      by_cases hji : j = i
-      · subst hji
-        have h2 : (1 : ZMod 2) + 1 = 0 := by decide
-        have := congrArg (· + a j) hb
-        simpa [add_assoc, CharTwo.add_self_eq_zero] using this
-      · exact h j (by simp [hji, hj])
-    · right; intro j hj
-      by_cases hji : j = i
-      · subst hji
-        rw [flip_self]
-        have := congrArg (· + a j) hb
-        simp only [add_assoc, CharTwo.add_self_eq_zero, add_zero] at this
-        rw [this]; ring
-      · rw [flip_other hji]; exact h j (by simp [hji, hj])
-  · rintro (h | h) j hj
-    · exact h j (fun h' => hj (List.mem_cons_of_mem _ h'))
-    · have hji : j ≠ i := fun h' => hj (h' ▸ List.mem_cons_self ..)
-      rw [h j (fun h' => hj (List.mem_cons_of_mem _ h')), flip_other hji]
-
-lemma agree_disjoint (i : Fin n) (l : List (Fin n)) (hi : i ∉ l) (a b : Fin n → ZMod 2)
-    (h1 : agree l a b) (h2 : agree l (flip i a) b) : False := by
-  have e1 := h1 i hi
-  have e2 := h2 i hi
-  rw [flip_self] at e2
-  rw [e1] at e2
-  have h2' : (1 : ZMod 2) ≠ 0 := by decide
-  exact h2' (by simp at e2)
-
-/-- Normalized butterflies on distinct bits `l` in explicit form. -/
-theorem Hl_apply (l : List (Fin n)) (hl : l.Nodup) (f : Arr X n) (x : X) (a : Fin n → ZMod 2) :
-    Hl X l f (x, a) = (1 / 2 ^ l.length : ℂ) *
-      ∑ b ∈ Finset.univ.filter (agree l a), sgn l a b * f (x, b) := by
-  induction l generalizing a with
-  | nil =>
-      have : Finset.univ.filter (agree [] a) = {a} := by
-        ext b; simp [agree_nil]
-      simp [Hl, this, sgn]
-  | cons i l ih =>
-      rw [List.nodup_cons] at hl
-      change hBit i (Hl X l f) (x, a) = _
-      simp only [hBit, LinearMap.coe_mk, AddHom.coe_mk]
-      rw [ih hl.2 a, ih hl.2 (flip i a)]
-      have hsplit : Finset.univ.filter (agree (i :: l) a) =
-          Finset.univ.filter (agree l a) ∪ Finset.univ.filter (agree l (flip i a)) := by
-        ext b; simp [agree_cons]
-      have hdisj : Disjoint (Finset.univ.filter (agree l a)) (Finset.univ.filter (agree l (flip i a))) := by
-        rw [Finset.disjoint_filter]
-        intro b _ h1 h2
-        exact agree_disjoint i l hl.1 a b h1 h2
-      rw [hsplit, Finset.sum_union hdisj]
-      have hA : ∀ b ∈ Finset.univ.filter (agree l a), sgn (i :: l) a b * f (x, b) =
-          (if a i = 0 then 1 else -1) * (sgn l a b * f (x, b)) := by
-        intro b hb
-        simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hb
-        simp only [sgn, List.map_cons, List.prod_cons]
-        rw [hb i hl.1]
-        rcases zmod2_cases (a i) with h | h <;> simp [h]
-      have hB : ∀ b ∈ Finset.univ.filter (agree l (flip i a)), sgn (i :: l) a b * f (x, b) =
-          sgn l (flip i a) b * f (x, b) := by
-        intro b hb
-        simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hb
-        rw [sgn_flip l i hl.1]
-        have hbi := hb i hl.1
-        rw [flip_self] at hbi
-        simp only [sgn, List.map_cons, List.prod_cons, hbi]
-        have h2 : (1 : ZMod 2) + 1 = 0 := by decide
-        rcases zmod2_cases (a i) with h | h <;> simp [h, h2]
-      rw [Finset.sum_congr rfl hA, Finset.sum_congr rfl hB, ← Finset.mul_sum]
-      simp only [List.length_cons, pow_succ]
-      field_simp
 
 end IntegerMultBounds.MathlibTM2.Layer

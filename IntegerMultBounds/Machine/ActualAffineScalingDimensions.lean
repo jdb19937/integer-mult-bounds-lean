@@ -133,70 +133,10 @@ theorem realizes_hoare {r : ℚ} (hr : Shared50AffineCoefficients.ScaleOccurs r)
   exact ⟨rfl,output_symbol hr b B A D S source p middle s signMiddle t dest q payload hwidth⟩
 
 
-/-- Specialize opaque blocks to the complete address fiber. The physical
-output position is exactly the target coordinate of OrderedAffine.execute. -/
-theorem ordered_affine_symbol {ι : Type*} [LinearOrder ι] {r : ℚ}
-    (hr : Shared50AffineCoefficients.ScaleOccurs r) (b B : ℕ)
-    (A : Setup r.num.natAbs) (D : Setup r.den) (S : Scratch)
-    (source : ℤ → Fin 4) (p : ℤ) (middle : ℤ → Fin 4) (s : ℤ) (signMiddle : ℤ → Fin 4) (t : ℤ)
-    (dest : ℤ → Fin 4) (q : ℤ) (payload : (ι → ZMod (modulus b)) → List (Fin 4))
-    (hwidth : ∀ x, (payload x).length = B) (address : ι → ZMod (modulus b)) (target : ι)
-    (k : ℕ) (hk : k < B) :
-    (output hr b B A D S source p middle s signMiddle t dest q
-      (fun z => payload (ScalingAffineBridge.fiber address target z))).tape (destinationSlot r)
-      (q+((((OrderedAffine.execute (.scale target (Swap.Modular.ratMod (modulus b) r)) address) target).val*B+k : ℕ) : ℤ)) =
-      (payload address)[k]'(by rw [hwidth]; exact hk) := by
-  have hh := output_symbol hr b B A D S source p middle s signMiddle t dest q
-    (fun z => payload (ScalingAffineBridge.fiber address target z)) (fun z => hwidth _) (address target) k hk
-  simpa only [OrderedAffine.execute,ScalingAffineBridge.fiber,Function.update_self,Function.update_eq_self] using hh
-
-/-- Exact full-bank execution and ordered-affine coordinates for every source
-block in one target fiber. This does not assume or implement whole-grid scheduling. -/
-theorem ordered_affine_hoare {ι : Type*} [LinearOrder ι] {r : ℚ}
-    (hr : Shared50AffineCoefficients.ScaleOccurs r) (b B : ℕ) (hB : 0 < B)
-    (A : Setup r.num.natAbs) (D : Setup r.den) (S : Scratch)
-    (hA : A.Valid (modulus b) B) (hD : D.Valid (modulus b) B)
-    (hS : negative r = true → ∀ z, S.origin ≤ z →
-      z < S.origin+(((modulus b-1)*B : ℕ) : ℤ) → S.tape z = blank)
-    (source : ℤ → Fin 4) (p : ℤ) (middle : ℤ → Fin 4) (s : ℤ) (signMiddle : ℤ → Fin 4) (t : ℤ)
-    (dest : ℤ → Fin 4) (q : ℤ) (payload : (ι → ZMod (modulus b)) → List (Fin 4))
-    (hwidth : ∀ x, (payload x).length = B) (address : ι → ZMod (modulus b)) (target : ι)
-    (hblank : ∀ z, s ≤ z → z < s+((modulus b*B : ℕ) : ℤ) → middle z = blank)
-    (hsblank : negative r = true → ∀ z, t ≤ z → z < t+((modulus b*B : ℕ) : ℤ) → signMiddle z = blank) :
-    HoareTime (program hr)
-      (fun v => v = input hr b A D S source p middle s signMiddle t dest q
-        (fun z => payload (ScalingAffineBridge.fiber address target z)))
-      (fun v => v = output hr b B A D S source p middle s signMiddle t dest q
-          (fun z => payload (ScalingAffineBridge.fiber address target z)) ∧
-        ∀ (x : ZMod (modulus b)) (k : ℕ) (hk : k < B),
-          v.tape (destinationSlot r)
-            (q+((((OrderedAffine.execute (.scale target (Swap.Modular.ratMod (modulus b) r))
-              (ScalingAffineBridge.fiber address target x)) target).val*B+k : ℕ) : ℤ)) =
-            (payload (ScalingAffineBridge.fiber address target x))[k]'(by rw [hwidth]; exact hk))
-      (linearConstant r*(modulus b*B)) := by
-  have hh := realizes_hoare hr b B hB A D S hA hD hS source p middle s signMiddle t dest q
-    (fun z => payload (ScalingAffineBridge.fiber address target z)) (fun z => hwidth _) hblank hsblank
-  simpa only [OrderedAffine.execute,ScalingAffineBridge.fiber,Function.update_self] using hh
-
-/-- The physical negation scratch and its head return to their original state. -/
-theorem output_scratch {r : ℚ} (hr : Shared50AffineCoefficients.ScaleOccurs r) (b B : ℕ)
-    (A : Setup r.num.natAbs) (D : Setup r.den) (S : Scratch)
-    (source : ℤ → Fin 4) (p : ℤ) (middle : ℤ → Fin 4) (s : ℤ) (signMiddle : ℤ → Fin 4) (t : ℤ)
-    (dest : ℤ → Fin 4) (q : ℤ) (payload : ZMod (modulus b) → List (Fin 4)) :
-    let v := output hr b B A D S source p middle s signMiddle t dest q payload
-    let slot := SignedScalingDimensions.scratchSlot r.num.natAbs r.den
-    v.tape slot = S.tape ∧ v.head slot = S.origin :=
-  SignedScalingDimensions.output_scratch (numerator_pos hr) r.den_pos (negative r) A D S (modulus b) B
-    source p middle s signMiddle t dest q (fun y => payload (y : ZMod (modulus b)))
-
 /-- Fixed tape and control-state counts, independent of radix exponent b and
 payload block width B. Actual schedules choose r once, before execution. -/
 theorem tapeCount_eq (r : ℚ) : TapeCount r = 49+4*(r.num.natAbs+r.den) :=
   SignedScalingDimensions.tapeCount_eq _ _
-
-theorem stateCount_eq (r : ℚ) :
-    States r = 117*(r.num.natAbs+r.den)+(if negative r then 787 else 455) :=
-  SignedScalingDimensions.stateCount_eq _ _ _
 
 end
 end IntegerMultBounds.Machine.ActualAffineScalingDimensions

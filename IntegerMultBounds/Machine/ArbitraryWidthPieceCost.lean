@@ -195,34 +195,6 @@ theorem cost_tau (v : Descriptor) (hs : Fin 6 → List Bool) (hp : v.Positive)
   unfold coefficient
   nlinarith only [hcost,hslices',hctrl,hscale]
 
-theorem cost_uniform_tau (v : Descriptor) (hs : Fin 6 → List Bool) (hp : v.Positive)
-    (hv : RecursiveDimensionBank.Headers v hs) :
-    (ArbitraryWidthPieceRun.cost v hs : ℝ) ≤
-      coefficient*(volume prime v : ℝ)*((v.width+1 : ℕ) : ℝ)^Shared50Parameters.tau := by
-  by_cases hn : v.width = 0
-  · have h := cost_bound v hs hp hv
-    simp only [hn,count,ite_true,Finset.range_zero,Finset.sum_empty,zero_add,
-      zero_add,mul_one] at h
-    have hreal : (ArbitraryWidthPieceRun.cost v hs : ℝ) ≤ (constant : ℝ) :=
-      (Nat.cast_le (α := ℝ)).mpr h
-    have hV := RecursiveAffinePrepare.volume_positive Shared50ModularControl.prime_prime.two_le v hp
-    have hVreal : (1 : ℝ) ≤ volume prime v := by exact_mod_cast hV
-    have hc : (0 : ℝ) ≤ constant := Nat.cast_nonneg _
-    have hstep := ArbitrarySliceStepBudget.constant_positive
-    have hcoeff : (constant : ℝ) ≤ coefficient := by
-      unfold coefficient
-      linarith only [hc,hstep]
-    have hscale := mul_le_mul_of_nonneg_left hVreal coefficient_positive.le
-    simp only [hn,zero_add,Nat.cast_one,Real.one_rpow,mul_one]
-    linarith only [hreal,hcoeff,hscale]
-  · have h := cost_tau v hs hp hv (by omega)
-    have hpow : (v.width : ℝ)^Shared50Parameters.tau ≤ ((v.width+1 : ℕ) : ℝ)^Shared50Parameters.tau :=
-      Real.rpow_le_rpow (Nat.cast_nonneg _) (by exact_mod_cast (Nat.le_add_right v.width 1))
-        Shared50RecursiveBudgetBound.tau_range.1.le
-    have hcoef : (0 : ℝ) ≤ coefficient*(volume prime v : ℝ) :=
-      mul_nonneg coefficient_positive.le (Nat.cast_nonneg _)
-    exact h.trans (mul_le_mul_of_nonneg_left hpow hcoef)
-
 
 end
 end IntegerMultBounds.Machine.ArbitraryWidthPieceCost

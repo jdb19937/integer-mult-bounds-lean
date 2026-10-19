@@ -86,10 +86,5 @@ theorem bounded_hoare (cutoff : ℕ) (caller : Tapes t prime) (focus : Fin t)
     (fun _ h => h) (fun _ h => h)
     (Nat.mul_le_mul_right _ (Nat.mul_le_mul_left _ (Nat.add_le_add_right hw 1)))
 
-theorem bounded_budget (cutoff e V : ℕ) (τ : ℝ) (he : 0 < e) (hτ : 0 < τ) :
-    ((ArbitraryWidthElementary.coefficient*(cutoff+1)*V : ℕ) : ℝ) ≤
-      ((ArbitraryWidthElementary.coefficient*(cutoff+1) : ℕ) : ℝ)*(V : ℝ)*(e : ℝ)^τ :=
-  ArbitraryWidthElementary.bounded_budget cutoff e V τ he hτ
-
 end
 end IntegerMultBounds.Machine.ArbitraryWidthElementaryShared

@@ -36,41 +36,6 @@ theorem crtControl_fibers_mul_radix_le {L a ℓ : ℕ}
     _ ≤ 2 ^ (L + 1) := Nat.pow_le_pow_right (by decide) (by omega)
     _ = 2 * 2 ^ L := by rw [pow_succ]; omega
 
-/-- A per-fiber budget bounded by a constant times the radix costs at most
-that constant times twice the volume. -/
-theorem crtControl_fiber_cost_le {L a ℓ C cost : ℕ}
-    (ha : a ≤ L) (hwidth : a = ℓ ∨ a = ℓ - 1)
-    (hcost : cost ≤ C * 2 ^ ℓ) :
-    2 ^ (L - a) * cost ≤ 2 * C * 2 ^ L := by
-  calc
-    2 ^ (L - a) * cost ≤ 2 ^ (L - a) * (C * 2 ^ ℓ) :=
-      Nat.mul_le_mul_left _ hcost
-    _ = C * (2 ^ (L - a) * 2 ^ ℓ) := by ring
-    _ ≤ C * (2 * 2 ^ L) := Nat.mul_le_mul_left _ (crtControl_fibers_mul_radix_le ha hwidth)
-    _ = 2 * C * 2 ^ L := by ring
-
-/-- Any fixed polynomial budget in the address width is absorbed by the
-radix eventually, uniformly over all address widths at most `b n`. -/
-theorem crtControl_polynomial_le_radix (A k : ℕ) :
-    ∀ᶠ n in atTop, ∀ L : ℕ, L ≤ b n →
-      A * (L + 1) ^ k ≤ (A * 2 ^ k) * r n := by
-  filter_upwards [mr_b_pow_le_r k, eventually_big] with n hr hb L hL
-  have hwidth : L + 1 ≤ 2 * b n := by have := hb.sixteen_le_b; omega
-  calc
-    A * (L + 1) ^ k ≤ A * (2 * b n) ^ k :=
-      Nat.mul_le_mul_left _ (Nat.pow_le_pow_left hwidth k)
-    _ = (A * 2 ^ k) * b n ^ k := by rw [mul_pow]; ring
-    _ ≤ (A * 2 ^ k) * r n := Nat.mul_le_mul_left _ hr
-
-/-- Polynomial arithmetic once per fiber is eventually linear in volume,
-uniformly over the two allowed axis widths and the polynomial's budget. -/
-theorem crtControl_polynomial_fiber_le (A k : ℕ) :
-    ∀ᶠ n in atTop, ∀ L a cost : ℕ, L ≤ b n → a ≤ L →
-      (a = ℓ n ∨ a = ℓ n - 1) → cost ≤ A * (L + 1) ^ k →
-      2 ^ (L - a) * cost ≤ 2 * (A * 2 ^ k) * 2 ^ L := by
-  filter_upwards [crtControl_polynomial_le_radix A k] with n h L a cost hL ha hw hc
-  exact crtControl_fiber_cost_le ha hw (hc.trans (h L hL))
-
 /-- A polynomial budget summed over at most `b` axes is still absorbed by
 the radix; the additional factor uses one additional power in the growth lemma. -/
 theorem crtControl_axes_polynomial_le_radix (A k : ℕ) :

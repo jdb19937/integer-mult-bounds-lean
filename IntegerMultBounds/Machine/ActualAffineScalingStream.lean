@@ -172,58 +172,8 @@ theorem realizes_hoare {r : ℚ} (hr : Shared50AffineCoefficients.ScaleOccurs r)
   rintro v rfl
   exact ⟨rfl,output_symbol hr b B n ns A D S source p middle s signMiddle t dest q payload hwidth⟩
 
-/-- Ordered-affine semantics for an explicitly represented family of fibers.
-The outer offset remains i*Q*B; only the declared inner target coordinate moves. -/
-theorem ordered_affine_symbol {ι : Type*} [LinearOrder ι] {r : ℚ}
-    (hr : Shared50AffineCoefficients.ScaleOccurs r) (b B n : ℕ) (ns : List Bool)
-    (A : Setup r.num.natAbs) (D : Setup r.den) (S : Scratch)
-    (source : ℤ → Fin 4) (p : ℤ) (middle : ℤ → Fin 4) (s : ℤ) (signMiddle : ℤ → Fin 4) (t : ℤ)
-    (dest : ℤ → Fin 4) (q : ℤ) (payload : ℕ → (ι → ZMod (modulus b)) → List (Fin 4))
-    (hwidth : ∀ i address, (payload i address).length = B) (addresses : ℕ → ι → ZMod (modulus b)) (target : ι)
-    (i : ℕ) (hi : i < n) (x : ZMod (modulus b)) (k : ℕ) (hk : k < B) :
-    (output hr b B n ns A D S source p middle s signMiddle t dest q
-      (fun j z => payload j (ScalingAffineBridge.fiber (addresses j) target z))).tape (destinationSlot r)
-      (q+((i*(modulus b*B)+((OrderedAffine.execute (.scale target (Swap.Modular.ratMod (modulus b) r))
-        (ScalingAffineBridge.fiber (addresses i) target x)) target).val*B+k : ℕ) : ℤ)) =
-      (payload i (ScalingAffineBridge.fiber (addresses i) target x))[k]'(by rw [hwidth]; exact hk) := by
-  have hh := output_symbol hr b B n ns A D S source p middle s signMiddle t dest q
-    (fun j z => payload j (ScalingAffineBridge.fiber (addresses j) target z)) (fun j z => hwidth j _) i hi x k hk
-  simpa only [OrderedAffine.execute,ScalingAffineBridge.fiber,Function.update_self] using hh
-
-/-- Complete physical execution of the represented fiber family with exact
-bank and ordered-affine action. No external field-layout identification is used. -/
-theorem ordered_affine_hoare {ι : Type*} [LinearOrder ι] {r : ℚ}
-    (hr : Shared50AffineCoefficients.ScaleOccurs r) (b B n : ℕ) (hB : 0 < B)
-    (ns : List Bool) (hn : Counter.value ns = n) (cn : GrowingCounterData.Canonical ns)
-    (A : Setup r.num.natAbs) (D : Setup r.den) (S : Scratch)
-    (hA : A.Valid (modulus b) B) (hD : D.Valid (modulus b) B)
-    (hS : negative r = true → ∀ z, S.origin ≤ z → z < S.origin+(((modulus b-1)*B : ℕ) : ℤ) → S.tape z = blank)
-    (source : ℤ → Fin 4) (p : ℤ) (middle : ℤ → Fin 4) (s : ℤ) (signMiddle : ℤ → Fin 4) (t : ℤ)
-    (dest : ℤ → Fin 4) (q : ℤ) (payload : ℕ → (ι → ZMod (modulus b)) → List (Fin 4))
-    (hwidth : ∀ i address, (payload i address).length = B) (addresses : ℕ → ι → ZMod (modulus b)) (target : ι)
-    (hblank : ∀ z, s ≤ z → z < s+((modulus b*B : ℕ) : ℤ) → middle z = blank)
-    (hsblank : negative r = true → ∀ z, t ≤ z → z < t+((modulus b*B : ℕ) : ℤ) → signMiddle z = blank) :
-    HoareTime (program hr)
-      (fun v => v = input hr b n ns A D S source p middle s signMiddle t dest q
-        (fun j z => payload j (ScalingAffineBridge.fiber (addresses j) target z)))
-      (fun v => v = output hr b B n ns A D S source p middle s signMiddle t dest q
-          (fun j z => payload j (ScalingAffineBridge.fiber (addresses j) target z)) ∧
-        ∀ (i : ℕ), i < n → ∀ (x : ZMod (modulus b)) (k : ℕ) (hk : k < B),
-          v.tape (destinationSlot r)
-            (q+((i*(modulus b*B)+((OrderedAffine.execute (.scale target (Swap.Modular.ratMod (modulus b) r))
-              (ScalingAffineBridge.fiber (addresses i) target x)) target).val*B+k : ℕ) : ℤ)) =
-            (payload i (ScalingAffineBridge.fiber (addresses i) target x))[k]'(by rw [hwidth]; exact hk))
-      (linearConstant r*(n*(modulus b*B))+356*(modulus b*B)+249) := by
-  have hh := realizes_hoare hr b B n hB ns hn cn A D S hA hD hS source p middle s signMiddle t dest q
-    (fun j z => payload j (ScalingAffineBridge.fiber (addresses j) target z)) (fun j z => hwidth j _) hblank hsblank
-  simpa only [OrderedAffine.execute,ScalingAffineBridge.fiber,Function.update_self] using hh
-
 theorem tapeCount_eq (r : ℚ) : TapeCount r = 51+4*(r.num.natAbs+r.den) :=
   SignedScalingDimensionsStream.tapeCount_eq _ _
-
-theorem stateCount_eq (r : ℚ) :
-    States r = 117*(r.num.natAbs+r.den)+(if negative r then 803 else 471) :=
-  SignedScalingDimensionsStream.stateCount_eq _ _ _
 
 end
 end IntegerMultBounds.Machine.ActualAffineScalingStream

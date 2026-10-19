@@ -107,28 +107,6 @@ theorem physical_realizes {n : ℕ} (m : ℕ) (e : Fin n ≃ Triple)
   rw [physical_pairs,List.forall₂_map_left_iff]
   exact h.imp (fun e p hp => edge_realizes m e p hp)
 
-/-- One odd prime works at every radix exponent, for the complete finite
-address execution and all its physical field programs with the certified cost. -/
-theorem exists_prime_execution :
-    ∃ q : ℕ, q.Prime ∧ 2 < q ∧ ∀ b : ℕ,
-      (∀ stored : World → Arrays (q^b),
-        FramedCircuit.run (program (q^b) Shared50GlobalCircuit.enumeration) stored =
-          fun i a => stored (route i) (a.1-a.2,a.2)) ∧
-      ∃ ps : List (List (Swap.Shear.Op Index (ZMod (q^b)))),
-        List.Forall₂ (ModularFrameSchedule.EdgeSpec (q^b))
-          (Shared50ModularSchedule.pairs Shared50GlobalCircuit.enumeration) ps ∧
-        List.Forall₂ (EdgeRealizes (q^b))
-          (FramedEdgeTrace.pairs (program (q^b) Shared50GlobalCircuit.enumeration)) ps ∧
-        (ps.map Swap.Shear.interchanges).sum = Shared50Parameters.s := by
-  obtain ⟨q,hq,hodd,_hd,h⟩ := Shared50ModularSchedule.exists_prime_actual
-  refine ⟨q,hq,hodd,?_⟩
-  intro b
-  obtain ⟨_hsource,_hsink,hendpoint,ps,hps,hcount⟩ := h b
-  refine ⟨?_,ps,hps,physical_realizes (q^b) Shared50GlobalCircuit.enumeration ps hps,hcount⟩
-  intro stored
-  funext i a
-  exact program_apply (q^b) Shared50GlobalCircuit.enumeration hendpoint stored i a
-
 /-- One fixed prime and one fixed rational control schedule supply the complete
 finite modular network at every width, with no new per-width program choice.
 Matrix transformations are single field-operation entries here, not tape steps. -/

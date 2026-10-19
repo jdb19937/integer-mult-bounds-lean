@@ -47,17 +47,5 @@ theorem quotient_hoare (B : ℕ) (hB : 2 ≤ B) (ys : List Bool)
   unfold constant
   nlinarith
 
-/-- Exact divisible suffix shrink; payload and retained shape headers can be
-framed around this fixed fourteen-tape program. -/
-theorem divisible_hoare (B E : ℕ) (hB : 2 ≤ B) :
-    HoareTime (program (a := a) B)
-      (fun v => v = ArbitraryWidthPieceCounter.input (bits (B*E)))
-      (fun v => v = ArbitraryWidthPieceCounter.input (bits E))
-      (constant B*(B*E+1)) := by
-  simpa only [RecursiveChildQuotientsConstant.bits_value,
-    Nat.mul_div_right E (by omega : 0 < B)] using
-    quotient_hoare (a := a) B hB (bits (B*E))
-      (RecursiveChildQuotientsConstant.bits_canonical _)
-
 end
 end IntegerMultBounds.Machine.FixedBaseDescriptorQuotient

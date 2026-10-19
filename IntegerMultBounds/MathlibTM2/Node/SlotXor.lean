@@ -1463,14 +1463,6 @@ theorem sxDupR_exec {a b t t₂ : Fin T} (hreg : [a, b, t, t₂].Nodup) (v : HS 
     simp only [movedR, Function.update_apply, ht₂, List.append_nil, List.map_id, id]
     split_ifs with h1 h2 <;> subst_vars <;> simp_all
 
-lemma sx_then_dupR (he : Exec body p s m (mk v₁ S₁)) {a b t t₂ : Fin T}
-    (hreg : [a, b, t, t₂].Nodup) (ht : S₁.R t = []) (ht₂ : S₁.R t₂ = []) :
-    ∃ v₂ : HS T Q A U, v₂.user = v₁.user ∧
-      Exec body (.seq p (sxDupR a b t t₂)) s (m + (6 * (S₁.R a).length + 6))
-        (mk v₂ { S₁ with R := Function.update S₁.R b (S₁.R a ++ S₁.R b) }) := by
-  obtain ⟨v₂, hu, he₂⟩ := sxDupR_exec body hreg v₁ S₁ ht ht₂
-  exact ⟨v₂, hu, Exec.seq he he₂⟩
-
 lemma sx_push_exec (v : HS T Q A U) (S : Stacks T A) (h : Fin T) (y : Fin (A + 4)) :
     Exec body (.act (.push (.rt h) (fun _ => y) .done)) (mk v S) 1
       (mk v { S with R := Function.update S.R h (y :: S.R h) }) := by

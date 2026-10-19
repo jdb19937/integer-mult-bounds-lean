@@ -138,13 +138,6 @@ theorem length_eq_rank {S : Finset ι} {T : Finset κ} {A : Matrix ι κ F}
     congrArg Matrix.rank f.eq
   rw [h3, h2, h1]
 
-/-- Lemma 4.1 with its count: every matrix over a field factors with exactly
-`rank A` pivots. -/
-theorem exists_factorization_rank (A : Matrix ι κ F) :
-    ∃ f : Factorization univ univ A, f.L.length = A.rank :=
-  let ⟨f⟩ := factorization A
-  ⟨f, length_eq_rank f⟩
-
 end Factorizations
 
 end IntegerMultBounds.Swap.PivotRank

@@ -62,9 +62,6 @@ def splitBits (hd : roleCount ∣ v.rows) (x : Fin (volume prime v) → ZMod 2)
 def encoded (x : Fin (volume prime v) → ZMod 2) : Fin (volume prime v) → Fin 4 :=
   fun i => SparseRoleCircuit.encode (x i)
 
-theorem encoded_transpose (hd : roleCount ∣ v.rows) (x : Fin (volume prime v) → ZMod 2) :
-    encoded (transpose hd x) = transpose hd (encoded x) := rfl
-
 
 theorem encode_split (hd : roleCount ∣ v.rows) (x : Fin (volume prime v) → ZMod 2)
     (j : Fin roleCount) (z : Fin (volume prime (role v roleCount))) :
@@ -115,25 +112,6 @@ theorem networkData_merge_input (hw : v.width=125000*b) (hd : roleCount ∣ v.ro
   | right i =>
     simp only [Fin.addCases_right,RecursiveRowsSerialization.roleLocal]
     rw [networkBits_exact,encode_split,split_transpose]
-
-/-- The actual physical node exit consumes the proven fixed-control result. -/
-theorem exit_network {u : ℕ} (hw : v.width=125000*b) (hd : roleCount ∣ v.rows)
-    (x : Fin (volume prime v) → ZMod 2) (old hs : Fin 6 → List Bool)
-    (st : Tapes 1 prime) (aux : Tapes u prime)
-    (hav : RecursiveStackAllocation.Available 0 st)
-    (hv : RecursiveDimensionBank.Headers v old) (hp : v.Positive) :
-    HoareTime (Shared50RecursiveNodeLayout.exit (u := u)).program
-      (fun w => w = SharedBankStageInput.raw
-        (RecursiveViewFrameRoleBank.bank (RecursiveRoleSerialization.roles (networkData hw hd x))
-          hs (RecursiveViewFrame.savedStack old st) aux) (Shared50RecursiveNodeLayout.exit (u := u)).tapes)
-      (fun w => w = SharedBankStageInput.raw
-        (RecursiveViewFrameRoleBank.bank (RecursiveRoleSerialization.roles
-          (RecursiveRowsSerialization.sourceData wires (transpose hd (encoded x)))) old st aux)
-        (Shared50RecursiveNodeLayout.exit (u := u)).tapes)
-      (RecursiveViewFrame.restoreCost old hs+RecursiveRowsClean.bound roleCount (volume prime v)+1) := by
-  rw [networkData_merge_input]
-  exact RecursiveRowsNode.exit_hoare mergeRoute wires Shared50RecursiveNodeLayout.wires_injective old hs st aux
-    (RecursiveRowsNode.free_of_available old st hav) v (by decide) hv hp hd (transpose hd (encoded x))
 
 end
 end IntegerMultBounds.Machine.Shared50RecursiveNodeSemantics

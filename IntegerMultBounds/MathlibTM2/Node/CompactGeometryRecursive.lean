@@ -82,24 +82,6 @@ lemma compactRecursiveStage_slotLow {s : Shape} {n a₀ k ρ left right : ℕ}
   simp [slotLow, lowAxes, compactRecursiveStage, Fin.rev]
   omega
 
-lemma compactRecursiveStage_early {s : Shape} {n a₀ k ρ left right : ℕ}
-    (layout : CompactRecursiveLayout s n a₀ k ρ left right) (x y : Fin m) (hxy : x ≠ y) :
-    (compactRecursiveStage layout x y hxy).source.val < (compactRecursiveStage layout x y hxy).target.val ↔
-      y.val < x.val := by
-  have hx := x.isLt
-  have hy := y.isLt
-  simp only [compactRecursiveStage, Fin.rev]
-  omega
-
-lemma compactRecursiveStage_late {s : Shape} {n a₀ k ρ left right : ℕ}
-    (layout : CompactRecursiveLayout s n a₀ k ρ left right) (x y : Fin m) (hxy : x ≠ y) :
-    (compactRecursiveStage layout x y hxy).target.val < (compactRecursiveStage layout x y hxy).source.val ↔
-      x.val < y.val := by
-  have hx := x.isLt
-  have hy := y.isLt
-  simp only [compactRecursiveStage, Fin.rev]
-  omega
-
 /-- The strengthened reservation invariant implies the original live layout's fit premise. -/
 lemma CompactRecursiveLayout.live_fit {s : Shape} {n a₀ k ρ left right : ℕ}
     (layout : CompactRecursiveLayout s n a₀ k ρ left right) : a₀ + m * (s.chunk * k) ≤ n := by
@@ -136,61 +118,6 @@ lemma compactRecursiveStage_selected {s : Shape} {n a₀ k ρ left right : ℕ}
   rw [compactRecursiveStage_slotLow]
   simp [compactRecursiveBits, bitIdx, finProdFinEquiv,layout.lowReserve]
   ring
-
-/-- The native selected-position formula viewed as an actual live address index. -/
-def compactRecursiveStageBit {s : Shape} {n a₀ k ρ left right : ℕ}
-    (layout : CompactRecursiveLayout s n a₀ k ρ left right) (x y : Fin m) (hxy : x ≠ y)
-    (j : Fin m) (c : Fin k) : Fin n :=
-  ⟨s.H + s.B + slotLow (compactRecursiveStage layout x y hxy) j.rev + (ρ + c.val * s.chunk), by
-    rw [compactRecursiveStage_selected]
-    exact (compactRecursiveBits layout (bitIdx j c)).isLt⟩
-
-lemma compactRecursiveStageBit_eq {s : Shape} {n a₀ k ρ left right : ℕ}
-    (layout : CompactRecursiveLayout s n a₀ k ρ left right) (x y : Fin m) (hxy : x ≠ y)
-    (j : Fin m) (c : Fin k) :
-    compactRecursiveStageBit layout x y hxy j c = compactRecursiveBits layout (bitIdx j c) := by
-  apply Fin.ext
-  exact compactRecursiveStage_selected layout x y hxy j c
-
-/-- Full selected XOR described using the native stage's physical bit positions.
-Identifying a native machine's result with this map remains a separate endpoint lemma. -/
-def compactRecursiveXor {s : Shape} {n a₀ k ρ left right : ℕ}
-    (layout : CompactRecursiveLayout s n a₀ k ρ left right) (x y : Fin m) (hxy : x ≠ y)
-    (bits : Fin n → ZMod 2) (t : Fin n) : ZMod 2 :=
-  if ht : ∃ c : Fin k, t = compactRecursiveStageBit layout x y hxy y c then
-    bits t + bits (compactRecursiveStageBit layout x y hxy x ht.choose)
-  else bits t
-
-/-- Native-indexed selected XOR is exactly the live slot-XOR address map. -/
-theorem compactRecursiveXor_eq_sxMap {s : Shape} {n a₀ k ρ left right : ℕ}
-    (layout : CompactRecursiveLayout s n a₀ k ρ left right) (x y : Fin m) (hxy : x ≠ y) :
-    compactRecursiveXor layout x y hxy = sxMap (compactRecursiveBits layout) x y := by
-  funext bits t
-  unfold compactRecursiveXor
-  split_ifs with ht
-  · let c := ht.choose
-    have htc : t = compactRecursiveStageBit layout x y hxy y c := ht.choose_spec
-    change bits t + bits (compactRecursiveStageBit layout x y hxy x c) = _
-    clear_value c
-    clear ht
-    rw [htc]
-    simp only [compactRecursiveStageBit_eq]
-    exact (sxMap_apply_y (compactRecursiveBits_injective layout) x y bits c).symm
-  · symm
-    apply sxMap_apply_ne (compactRecursiveBits_injective layout)
-    intro c heq
-    apply ht
-    exact ⟨c, by simpa only [compactRecursiveStageBit_eq] using heq.symm⟩
-
-/-- The preserved live `pullM` endpoint follows once the native program is identified with
-its full selected-index XOR; this equality does not assume a host execution. -/
-theorem compactRecursive_pullM {s : Shape} {n a₀ k ρ R r left right : ℕ}
-    (layout : CompactRecursiveLayout s n a₀ k ρ left right) (x y : Fin m) (hxy : x ≠ y)
-    (Z : ZArr (Fin R × Fin r) n) :
-    pullAddr (compactRecursiveXor layout x y hxy) Z =
-      pullM (compactRecursiveBits layout) (sxXorCol x y) Z := by
-  rw [compactRecursiveXor_eq_sxMap]
-  rfl
 
 
 private theorem recursiveToggleMask_support (q : ℕ) (hq : 0 < q) (zs : List Bool) (j : ℕ)
@@ -339,26 +266,6 @@ theorem compactRecursiveNativeBits_destination (i : ActivePrefixStageFullSelecte
         rw [ActivePrefixStageRuntimeSelected.fields]
         rfl
 
-/-- Exact serialized address rank of the real native destination. The volume premise
-makes the native outer rows precisely part of the live address rather than extra bits. -/
-theorem compactRecursiveNative_destination_rank (hvolume : rows * 2^s.bits ≤ 2^n)
-    (i : ActivePrefixStageFullSelected.Address d) :
-    (ActivePrefixDirtyControlGlobalSwap.index s (ActivePrefixStageFullSelected.geometry d)
-      (ActivePrefixStageRuntimeSelected.destination d i)).val / s.payload =
-      addrNum (sxMap (compactRecursiveBits layout) x y)
-        ((ActivePrefixDirtyControlGlobalSwap.index s (ActivePrefixStageFullSelected.geometry d) i).val / s.payload) := by
-  have hp : 0 < s.payload := by omega
-  have hlt (j : ActivePrefixStageFullSelected.Address d) :
-      (ActivePrefixDirtyControlGlobalSwap.index s (ActivePrefixStageFullSelected.geometry d) j).val / s.payload < 2^n := by
-    have hj := (ActivePrefixDirtyControlGlobalSwap.index s (ActivePrefixStageFullSelected.geometry d) j).isLt
-    change _ < rows * (2^s.bits*s.payload) at hj
-    have hv : (ActivePrefixDirtyControlGlobalSwap.index s (ActivePrefixStageFullSelected.geometry d) j).val <
-        (rows*2^s.bits)*s.payload := by simpa only [Nat.mul_assoc] using hj
-    exact lt_of_lt_of_le ((Nat.div_lt_iff_lt_mul hp).mpr hv) hvolume
-  apply addrBits_bijOn.injOn (hlt _) (addrNum_lt _ _)
-  rw [addrBits_addrNum,←compactNativeBits_eq_addrBits,←compactNativeBits_eq_addrBits]
-  exact compactRecursiveNativeBits_destination layout x y hxy rows hG hGK hr hrecord i
-
 /-- The full serialized ordinal keeps its original outer live row and changes only
 its n-bit address. No upper bound on the number of native rows is required. -/
 theorem compactRecursiveNative_row_rank (i : ActivePrefixStageFullSelected.Address d) :
@@ -426,81 +333,6 @@ theorem compactRecursiveNative_serialized_rank
   rw [hrank,hout] at h
   simpa only [Nat.mul_comm] using h.symm
 
-/-- Exact native entry transport paired with the established live address rank.
-Both statements concern the same real runtime destination. -/
-theorem compactRecursiveNative_result_entry (hvolume : rows * 2^s.bits ≤ 2^n)
-    (array : ActiveRepairLayoutRecordsData.Array s rows)
-    (i : ActivePrefixStageFullSelected.Address d) :
-    let j := ActivePrefixStageRuntimeSelected.destination d i
-    ActivePrefixStageRuntimeData.result d array
-        (ActivePrefixDirtyControlGlobalSwap.index s (ActivePrefixStageFullSelected.geometry d) j) =
-      array (ActivePrefixDirtyControlGlobalSwap.index s (ActivePrefixStageFullSelected.geometry d) i) ∧
-    (ActivePrefixDirtyControlGlobalSwap.index s (ActivePrefixStageFullSelected.geometry d) j).val / s.payload =
-      addrNum (sxMap (compactRecursiveBits layout) x y)
-        ((ActivePrefixDirtyControlGlobalSwap.index s (ActivePrefixStageFullSelected.geometry d) i).val / s.payload) :=
-  ⟨ActivePrefixStageRuntimeSelected.entry d array i,
-    compactRecursiveNative_destination_rank layout x y hxy rows hG hGK hr hrecord hvolume i⟩
-
-
-/-- Direct full-stage early branch, with the native order reversed from live slot order. -/
-theorem compactRecursiveNative_early_rank (hk : 1 < k) (horder : y.val < x.val)
-    (hvolume : rows * 2^s.bits ≤ 2^n) (i : ActivePrefixStageFullSelected.Address d) :
-    (ActivePrefixDirtyControlGlobalSwap.index s (ActivePrefixStageFullSelected.geometry d)
-      (ActivePrefixStageFullSelected.earlyDestination d
-        ((compactRecursiveStage_early layout x y hxy).mpr horder) i)).val / s.payload =
-      addrNum (sxMap (compactRecursiveBits layout) x y)
-        ((ActivePrefixDirtyControlGlobalSwap.index s (ActivePrefixStageFullSelected.geometry d) i).val / s.payload) := by
-  have ho := (compactRecursiveStage_early layout x y hxy).mpr horder
-  have hh := compactRecursiveNative_destination_rank layout x y hxy rows hG hGK hr hrecord hvolume i
-  simpa only [ActivePrefixStageRuntimeSelected.destination,show 1 < (d).stage.f from hk,dite_eq_left,
-    ActivePrefixStageDispatchSelected.destination,show (d).stage.source.val < (d).stage.target.val from ho] using hh
-
-/-- Direct full-stage late branch, with the native order reversed from live slot order. -/
-theorem compactRecursiveNative_late_rank (hk : 1 < k) (horder : x.val < y.val)
-    (hvolume : rows * 2^s.bits ≤ 2^n) (i : ActivePrefixStageFullSelected.Address d) :
-    (ActivePrefixDirtyControlGlobalSwap.index s (ActivePrefixStageFullSelected.geometry d)
-      (ActivePrefixStageFullSelected.lateDestination d
-        ((compactRecursiveStage_late layout x y hxy).mpr horder) i)).val / s.payload =
-      addrNum (sxMap (compactRecursiveBits layout) x y)
-        ((ActivePrefixDirtyControlGlobalSwap.index s (ActivePrefixStageFullSelected.geometry d) i).val / s.payload) := by
-  have ho := (compactRecursiveStage_late layout x y hxy).mpr horder
-  have hn : ¬(d).stage.source.val < (d).stage.target.val := by
-    change (d).stage.target.val < (d).stage.source.val at ho
-    omega
-  have hh := compactRecursiveNative_destination_rank layout x y hxy rows hG hGK hr hrecord hvolume i
-  simpa only [ActivePrefixStageRuntimeSelected.destination,show 1 < (d).stage.f from hk,dite_eq_left,
-    ActivePrefixStageDispatchSelected.destination,dite_eq_right hn] using hh
-
-/-- Early native branch with original row and payload coordinates explicit. -/
-theorem compactRecursiveNative_early_serialized_rank (hk : 1 < k) (horder : y.val < x.val)
-    (i : ActivePrefixStageFullSelected.Address d) (u a p : ℕ) (ha : a < 2^n) (hp : p < s.payload)
-    (hi : (ActivePrefixDirtyControlGlobalSwap.index s (ActivePrefixStageFullSelected.geometry d) i).val =
-      (u*2^n+a)*s.payload+p) :
-    (ActivePrefixDirtyControlGlobalSwap.index s (ActivePrefixStageFullSelected.geometry d)
-      (ActivePrefixStageFullSelected.earlyDestination d
-        ((compactRecursiveStage_early layout x y hxy).mpr horder) i)).val =
-      (u*2^n+addrNum (sxMap (compactRecursiveBits layout) x y) a)*s.payload+p := by
-  have ho := (compactRecursiveStage_early layout x y hxy).mpr horder
-  have hh := compactRecursiveNative_serialized_rank layout x y hxy rows hG hGK hr hrecord i u a p ha hp hi
-  simpa only [ActivePrefixStageRuntimeSelected.destination,show 1 < (d).stage.f from hk,dite_eq_left,
-    ActivePrefixStageDispatchSelected.destination,show (d).stage.source.val < (d).stage.target.val from ho] using hh
-
-/-- Late native branch with original row and payload coordinates explicit. -/
-theorem compactRecursiveNative_late_serialized_rank (hk : 1 < k) (horder : x.val < y.val)
-    (i : ActivePrefixStageFullSelected.Address d) (u a p : ℕ) (ha : a < 2^n) (hp : p < s.payload)
-    (hi : (ActivePrefixDirtyControlGlobalSwap.index s (ActivePrefixStageFullSelected.geometry d) i).val =
-      (u*2^n+a)*s.payload+p) :
-    (ActivePrefixDirtyControlGlobalSwap.index s (ActivePrefixStageFullSelected.geometry d)
-      (ActivePrefixStageFullSelected.lateDestination d
-        ((compactRecursiveStage_late layout x y hxy).mpr horder) i)).val =
-      (u*2^n+addrNum (sxMap (compactRecursiveBits layout) x y) a)*s.payload+p := by
-  have ho := (compactRecursiveStage_late layout x y hxy).mpr horder
-  have hn : ¬(d).stage.source.val < (d).stage.target.val := by
-    change (d).stage.target.val < (d).stage.source.val at ho
-    omega
-  have hh := compactRecursiveNative_serialized_rank layout x y hxy rows hG hGK hr hrecord i u a p ha hp hi
-  simpa only [ActivePrefixStageRuntimeSelected.destination,show 1 < (d).stage.f from hk,dite_eq_left,
-    ActivePrefixStageDispatchSelected.destination,dite_eq_right hn] using hh
 
 end NativeDestination
 

@@ -93,16 +93,6 @@ def tblMagCode : TblCode 18 :=
 
 /-! ### Arithmetic of the indicators -/
 
-theorem tbl_ind (a r : ℕ) (ha : a < 4) (hr : r < 4) :
-    1 - ((a + (4 - r)) % 4 + 3) / 4 = if a = r then 1 else 0 := by
-  interval_cases a <;> interval_cases r <;> simp
-
-theorem tbl_sum_succ (Y q Q r j : ℕ) (hr : r < 4) :
-    tblSum Y q Q r (j + 1) = tblSum Y q Q r j + (1 - ((j % 4 + (4 - r)) % 4 + 3) / 4) * tblMag Y q Q j := by
-  rw [tbl_ind _ _ (Nat.mod_lt _ (by norm_num)) hr]
-  simp only [tblSum]
-  split_ifs <;> simp
-
 theorem tblMag_do {A W w : ℕ} (st : TblSt 18 A) {Y q Q N : ℕ} (hY : st.val tblMagY = Y)
     (hpq : st.val tblMagPq = 2 ^ q) (hpQ : st.val tblMagPQ = 2 ^ Q) (hN : st.val tblMagN = N)
     (hW : 3 ≤ W) (hNW : N < 2 ^ W) (hMl : ∀ m < N, tblMag Y q Q m < 2 ^ W)

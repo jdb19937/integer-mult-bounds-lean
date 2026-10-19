@@ -30,13 +30,6 @@ def bound (r : ℚ) (V : ℕ) : ℕ :=
   (2+5*TapeCount r)*((2428+120*(r.num.natAbs+r.den)+22*RecursiveScalingInstall.LocalTapes r.num.natAbs r.den)*V+401)+
     11*TapeCount r+4
 
-/-- The reusable physical bank is independent of which coordinate is scaled. -/
-theorem bank_target {v : Descriptor} {r : ℚ} (hs : Fin 6 → List Bool)
-    (a : Fin (volume prime v) → Fin 4) (t u : Target) :
-    bank (r := r) hs a t = bank (r := r) hs a u := by
-  unfold bank
-  rw [RecursiveInterchangeScalingConstruct.input_target hs a t u]
-
 theorem bound_linear (r : ℚ) (V : ℕ) (hV : 0 < V) :
     bound r V ≤ ((2+5*TapeCount r)*
       (2829+120*(r.num.natAbs+r.den)+22*RecursiveScalingInstall.LocalTapes r.num.natAbs r.den)+

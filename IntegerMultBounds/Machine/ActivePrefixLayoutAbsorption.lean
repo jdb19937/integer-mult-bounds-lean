@@ -25,14 +25,6 @@ theorem back_width_le : backWidth s (p.n*p.q) p.before p.after ≤ s.bits := by
   unfold Shape.bits
   omega
 
-/-- A sufficient original-record condition for every compact load, for either
-source order. This is independent of row count and selected target width. -/
-theorem whole_back (hrecord : s.bits+1 ≤ s.payload) :
-    backWidth s (p.n*p.q) p.before p.after+1 ≤ 2^(s.H+s.B)*s.payload := by
-  have hw := back_width_le s p
-  exact (by omega : backWidth s (p.n*p.q) p.before p.after+1 ≤ s.payload).trans
-    (Nat.le_mul_of_pos_left _ (by positivity))
-
 theorem target (offset : ℕ) (hfit : offset+p.f*p.q ≤ p.before)
     (hrecord : s.bits+1 ≤ s.payload) :
     (targetShape s p offset hfit).W+1 ≤ 2^(p.n*p.q)*targetSuffix s p.after := by

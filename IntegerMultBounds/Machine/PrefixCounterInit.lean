@@ -25,9 +25,6 @@ def stateCount : ℕ → ℕ
 theorem tapeCount_eq (c : ℕ) : tapeCount c = 3*c+1 := by
   induction c <;> simp_all [tapeCount]; omega
 
-theorem stateCount_eq (c : ℕ) : stateCount c = 23*c+1 := by
-  induction c <;> simp_all [stateCount]; omega
-
 def haltProgram : Program 1 1 q where
   tapes_pos := by decide
   start := 0
@@ -76,24 +73,6 @@ def fieldSlot : (c : ℕ) → Fin c → Fin (tapeCount c)
 
 @[simp] theorem fieldSlot_succ (c : ℕ) (i : Fin c) :
     fieldSlot (c+1) i.succ = Fin.natAdd 3 (fieldSlot c i) := rfl
-
-theorem fieldSlot_injective (c : ℕ) : Function.Injective (fieldSlot c) := by
-  induction c with
-  | zero => intro i; exact Fin.elim0 i
-  | succ c ih =>
-    intro i j hij
-    induction i using Fin.cases with
-    | zero =>
-      induction j using Fin.cases with
-      | zero => rfl
-      | succ j => have hh := congrArg Fin.val hij; simp only [fieldSlot_zero,fieldSlot_succ,Fin.val_castAdd,Fin.val_zero,Fin.val_natAdd] at hh; omega
-    | succ i =>
-      induction j using Fin.cases with
-      | zero => have hh := congrArg Fin.val hij; simp only [fieldSlot_zero,fieldSlot_succ,Fin.val_castAdd,Fin.val_zero,Fin.val_natAdd] at hh; omega
-      | succ j =>
-        apply congrArg Fin.succ
-        apply ih
-        exact Fin.ext (by have hh := congrArg Fin.val hij; simpa only [fieldSlot_succ,Fin.val_natAdd,Nat.add_left_cancel_iff] using hh)
 
 /-- The exact scheduler bank selected from the concrete machine tapes. -/
 def fields (c : ℕ) (v : Tapes (tapeCount c) q) : Tapes c q :=

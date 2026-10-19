@@ -118,11 +118,6 @@ theorem output_frame (caller : Tapes 17 a) (w : ℕ) (i : Fin 17) (hi : i≠7) :
     (output caller w).head i=caller.head i ∧ (output caller w).tape i=caller.tape i := by
   simp [output,setTape,hi]
 
-theorem output_header (caller : Tapes 17 a) (w : ℕ) :
-    (output caller w).head 7=1 ∧ (output caller w).tape 7=
-      RadixZeroFill.encodedBinary (RecursiveChildQuotientsConstant.bits (2^w)) := by
-  exact ⟨rfl,rfl⟩
-
 /-- Cleanup cost is charged to the actual generated power, independently of n. -/
 theorem cleanup_bound (w : ℕ) :
     2*(RecursiveChildQuotientsConstant.bits (2^w)).length+4 ≤ 8*2^w := by

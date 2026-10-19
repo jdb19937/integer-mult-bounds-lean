@@ -304,20 +304,5 @@ theorem crop_hoare (hs : Fin 5 → List Bool) (P N G B M : ℕ)
       (413*(P*N*G)*(M*B)+1+413*P*(M*(G*M*B))+1+40*RangePaddingDimensions.volume P G B M) := by omega
   exact h.consequence (fun _ hh => hh) (fun _ hh => hh) (he.le.trans hb)
 
-/-- The paid crop after a padded numerical transpose returns the original
-numerical transpose, using the complete manuscript range-padding semantics. -/
-theorem crop_transpose_pad_hoare (hs : Fin 5 → List Bool) (P N G B M : ℕ)
-    (hv : ∀ i, Counter.value (hs i) = values P N G B M i)
-    (hc : ∀ i, GrowingCounterData.Canonical (hs i))
-    (hP : 0 < P) (hN : 0 < N) (hG : 0 < G) (hB : 0 < B) (hNM : N ≤ M)
-    (x : Fin (RadixRangePadding.volume P N G B) → Fin 4) :
-    HoareTime cropProgram
-      (fun v => v = RangePaddingDimensions.input (word (RadixRangePadding.transpose (RadixRangePadding.pad M (bitSymbol false) x))) empty hs)
-      (fun v => v = RangePaddingDimensions.input (word (RadixRangePadding.transpose x)) empty hs)
-      (1200*RadixRangePadding.volume P M G B) := by
-  have h := crop_hoare hs P N G B M hv hc hP hN hG hB hNM
-    (RadixRangePadding.transpose (RadixRangePadding.pad M (bitSymbol false) x))
-  simpa only [RadixRangePadding.cropStages_transpose_pad] using h
-
 end
 end IntegerMultBounds.Machine.RadixRangePaddingExecution

@@ -221,11 +221,6 @@ theorem fitProgram_spec (prog : List (MInstr ι)) :
         simp [fitInstr, mprogramChildren, List.filter_map, MInstr.isChild, Function.comp_def]
       | prim w p => rfl
 
-/-- Every gate of a machine program. -/
-def MInstr.gateOf : MInstr ι → Option (Circuit.Gate ι ℚ)
-  | .gate g => some g
-  | _ => none
-
 theorem fitProgram_half (prog : List (MInstr ι))
     (h : ∀ g, MInstr.gate g ∈ prog → DyadicGate g) :
     ∀ g, MInstr.gate g ∈ fitProgram prog → HalfGate g := by

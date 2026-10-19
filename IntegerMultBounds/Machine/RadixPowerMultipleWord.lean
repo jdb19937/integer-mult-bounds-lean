@@ -69,11 +69,6 @@ def loopStates : ℕ → ℕ
   | 0 => 1
   | k+1 => loopStates k+18
 
-theorem loopStates_eq (k : ℕ) : loopStates k = 1+18*k := by
-  induction k with
-  | zero => rfl
-  | succ k ih => simp only [loopStates,ih,Nat.mul_add,Nat.mul_one]; omega
-
 /-- k is a compile-time constant; each pass reads the actual same b tape. -/
 def loops : (k : ℕ) → Program 3 (loopStates k) q
   | 0 => haltProgram

@@ -86,31 +86,6 @@ theorem rotated_volume (a B : ℕ) (blocks : List (List α)) (h : Uniform B bloc
     (rotate a blocks).flatten.length = blocks.length*B := by
   rw [payload_length,uniform_volume B blocks h]
 
-theorem zero_width (blocks : List (List α)) (h : Uniform 0 blocks) : blocks.flatten = [] := by
-  apply List.eq_nil_iff_length_eq_zero.mpr
-  rw [uniform_volume 0 blocks h,Nat.mul_zero]
-
-/-- The block split is exactly a contiguous payload split at B times its block index. -/
-theorem payload_split (B cut : ℕ) (blocks : List (List α)) (h : Uniform B blocks)
-    (hcut : cut ≤ blocks.length) :
-    (blocks.drop cut).flatten ++ (blocks.take cut).flatten =
-      blocks.flatten.drop (cut*B) ++ blocks.flatten.take (cut*B) := by
-  have ht : Uniform B (blocks.take cut) := fun block hb => h block (List.mem_of_mem_take hb)
-  have hl : (blocks.take cut).flatten.length = cut*B := by
-    rw [uniform_volume B (blocks.take cut) ht,List.length_take,Nat.min_eq_left hcut]
-  have he : (blocks.take cut).flatten ++ (blocks.drop cut).flatten = blocks.flatten := by
-    rw [← List.flatten_append,List.take_append_drop]
-  rw [← he,← hl]
-  simp
-
-/-- Exact flat-tape cut and concatenation performed by a controlled block shift. -/
-theorem rotated_payload_split (a B : ℕ) (blocks : List (List α)) (h : Uniform B blocks) :
-    (rotate a blocks).flatten =
-      blocks.flatten.drop ((blocks.length-a%blocks.length)*B) ++
-        blocks.flatten.take ((blocks.length-a%blocks.length)*B) := by
-  rw [rotate,List.flatten_append]
-  exact payload_split B _ blocks h (Nat.sub_le _ _)
-
 /-- Indexing a fixed-width flattening splits an address into block and payload. -/
 theorem flatten_index (B : ℕ) (blocks : List (List α)) (h : Uniform B blocks)
     (y j : ℕ) (hy : y < blocks.length) (hj : j < B) :
@@ -146,27 +121,5 @@ theorem payload_destination_entry (a B : ℕ) (blocks : List (List α)) (h : Uni
       some ((blocks[y]'hy)[j]'(by rw [h _ (List.getElem_mem hy)]; exact hj)) := by
   rw [payload_destination a B blocks h y j hy hj,flatten_index B blocks h y j hy hj]
   exact List.getElem?_eq_getElem _
-
-/-- A stream of fibers can select a different fixed offset for every fiber. -/
-def rotateFibers (fibers : List (ℕ × List (List α))) : List (List (List α)) :=
-  fibers.map (fun f => rotate f.1 f.2)
-
-theorem fiber_destination (fibers : List (ℕ × List (List α))) (i : ℕ) (hi : i < fibers.length) :
-    (rotateFibers fibers)[i]'(by simpa [rotateFibers] using hi) =
-      rotate (fibers[i]).1 (fibers[i]).2 := by
-  simp [rotateFibers]
-
-/-- Rotating each fiber preserves all payloads and the total stream volume. -/
-theorem fibers_payload_perm (fibers : List (ℕ × List (List α))) :
-    (rotateFibers fibers).flatten.flatten.Perm (fibers.map Prod.snd).flatten.flatten := by
-  induction fibers with
-  | nil => simp [rotateFibers]
-  | cons f fibers ih =>
-    simp only [rotateFibers,List.map_cons,List.flatten_cons,List.flatten_append] at ih ⊢
-    exact (payload_perm f.1 f.2).append ih
-
-theorem fibers_payload_length (fibers : List (ℕ × List (List α))) :
-    (rotateFibers fibers).flatten.flatten.length = (fibers.map Prod.snd).flatten.flatten.length :=
-  (fibers_payload_perm fibers).length_eq
 
 end IntegerMultBounds.Machine.BlockRotationData

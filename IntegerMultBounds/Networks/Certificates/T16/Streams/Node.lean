@@ -149,13 +149,6 @@ theorem runUnits_append (M : ℕ → Op S) (p q : List UnitOp) (y : NodeUnit →
   | nil => rfl
   | cons o p ih => exact ih _
 
-theorem runUnits_flatMap {α : Type*} (M : ℕ → Op S) (l : List α) (f : α → List UnitOp)
-    (y : NodeUnit → S) :
-    runUnits M (l.flatMap f) y = l.foldl (fun y x => runUnits M (f x) y) y := by
-  induction l generalizing y with
-  | nil => rfl
-  | cons x l ih => rw [List.flatMap_cons, runUnits_append, ih]; rfl
-
 /-- One template event, viewed from one group: only that group's expansion acts. -/
 theorem view_eventOps (M : ℕ → Op S) {r a : ℕ} (hr : r < 16) (ha : a < 112) (te : TEvent)
     (y : NodeUnit → S) :
@@ -277,11 +270,6 @@ theorem node_accepts {r a : ℕ} (hr : r < 16) (ha : a < 112) :
   rw [hpd, hgd]
   exact all_accepts r hr a ha
 
-theorem node_run {r a : ℕ} (hr : r < 16) (ha : a < 112) (x : Fin 8 → BinaryWalsh.Arrays 73) :
-    @run _ _ _ (portOp a) (groupEvents template localPair localReverse (portData a) (groupData r a) r) x =
-      fun i => portOp a (ofAdd (fullFrame (portData a)).toFun) (x i) :=
-  run_of_accepts (portOp a) (node_accepts hr ha) x
-
 theorem portData_mem {a : ℕ} (ha : a < 112) : portData a ∈ ports := by
   have hp : ports.length = 112 := by decide
   simp only [portData, List.getD_eq_getElem?_getD, List.getElem?_eq_getElem (hp ▸ ha),
@@ -291,12 +279,5 @@ theorem portData_mem {a : ℕ} (ha : a < 112) : portData a ∈ ports := by
 theorem portOp_full {a : ℕ} (ha : a < 112) :
     portOp a (ofAdd (fullFrame (portData a)).toFun) = cAll :=
   port_fullFrame _ (portData_mem ha)
-
-/-- **The T16 node.** Every data family ends with `C_all` applied to its input. -/
-theorem node_cAll {r a : ℕ} (hr : r < 16) (ha : a < 112) (y : NodeUnit → BinaryWalsh.Arrays 73)
-    (i : Fin 8) : @runUnits _ _ _ portOp nodeOps y (streamUnit r a i) = cAll (y (streamUnit r a i)) :=
-  (congrFun (view_nodeOps portOp hr ha y) i).trans
-    ((congrFun (node_run hr ha (fun i => y (streamUnit r a i))) i).trans
-      (congrArg (fun T => T (y (streamUnit r a i))) (portOp_full ha)))
 
 end IntegerMultBounds.Networks.Certificates.T16.Streams

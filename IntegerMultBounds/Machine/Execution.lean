@@ -21,34 +21,6 @@ theorem run_add (M : Program t q a) (n m : ℕ) (c : Config t q a) :
 theorem run_one (M : Program t q a) (c : Config t q a) : run M 1 c = step M c := by
   simp [run]
 
-theorem halted_no_steps (M : Program t q a) (c : Config t q a)
-    (h : step M c = none) (k : ℕ) : run M (k + 1) c = none := by
-  simp [run, h]
-
-/-- No execution changes a tape cell other than the one under its current head. -/
-theorem step_local (M : Program t q a) (c d : Config t q a)
-    (h : step M c = some d) (i : Fin t) (j : ℤ) (hj : j ≠ c.head i) :
-    d.tape i j = c.tape i j := by
-  unfold step at h
-  split at h
-  · contradiction
-  · simp only [Option.some.injEq] at h
-    subst d
-    simp [hj]
-
-theorem step_head_bound (M : Program t q a) (c d : Config t q a)
-    (h : step M c = some d) (i : Fin t) :
-    c.head i - 1 ≤ d.head i ∧ d.head i ≤ c.head i + 1 := by
-  unfold step at h
-  split at h
-  · contradiction
-  · rename_i result heq
-    simp only [Option.some.injEq] at h
-    subst d
-    have hm := (result i).2.unit
-    dsimp
-    omega
-
 /-- A real finite transition table: preserve the scanned symbol and move right,
 halting at the first blank. -/
 def scanRight : Program 1 1 0 where

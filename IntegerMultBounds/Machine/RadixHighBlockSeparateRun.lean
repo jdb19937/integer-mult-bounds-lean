@@ -94,13 +94,5 @@ theorem separates (r P S E : ℕ) (source : ℤ → Fin (a+4)) (ss op oe rs : Li
   simp only [Nat.add_mul]
   omega
 
-/-- The selector-derived repetition count costs no positive width exponent,
-including all inverse setup, loop control, and cleanup transitions. -/
-theorem selected_cost (e V : ℕ) (τ : ℝ) (hq : 2 ≤ q) (he : 0 < e) (hτ : 0 < τ) :
-    ((coefficient q*(ArbitraryWidthHighPrepare.highDepth q e+1)*V : ℕ) : ℝ) ≤
-      ((coefficient q : ℝ)*ArbitraryWidthHighBudget.constant q τ)*(V : ℝ)*(e : ℝ)^τ := by
-  simpa only [Nat.cast_mul,Nat.cast_add,Nat.cast_one] using
-    ArbitraryWidthHighBudget.movement_bound q e V (coefficient q) τ hq he hτ
-
 end
 end IntegerMultBounds.Machine.RadixHighBlockSeparateRun

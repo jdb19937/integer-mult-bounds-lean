@@ -21,10 +21,6 @@ open ArbitraryWidthExecutionPrivateHeadersRoot (exchangeWords)
 open ArbitraryWidthExecutionPrivateHeadersMovement (movementWords)
 open ArbitraryWidthExecutionPrivateHeadersPadding (paddedWords)
 
-theorem bounded_mono {n : ℕ} {bs : Fin n → List Bool} {V W : ℕ}
-    (h : Bounded bs V) (hw : V ≤ W) : Bounded bs W :=
-  ⟨h.canonical,fun i => (h.value i).trans hw⟩
-
 theorem root_bounded (v : Descriptor) (hp : v.Positive) (hs : Fin 6 → List Bool)
     (hh : RecursiveDimensionBank.Headers v hs) : Bounded hs (volume prime v) :=
   ⟨hh.2,fun i => (hh.1 i).trans_le

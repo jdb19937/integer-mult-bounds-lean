@@ -343,25 +343,9 @@ theorem state_destination {a d : ℕ} (ha : 0 < a) (hd : 0 < d) (negative : Bool
     SignedScalingExecution.destinationSlot,inverseBank,ScalingInverseExecution.destinationSlot,
     ScalingSplit.bank,Tapes.append,CountedCopyReuse.bank,SignedScalingSign.signBank,BlockNegationReuse.bank]
 
-/-- Negation scratch remains literally unchanged through every iteration. -/
-theorem state_scratch {a d : ℕ} (ha : 0 < a) (hd : 0 < d) (negative : Bool)
-    (A : Controls a) (D : Controls d) (S : SignControls) (Q B n : ℕ)
-    (source : ℤ → Fin 4) (p : ℤ) (middle : ℤ → Fin 4) (r : ℤ) (signMiddle : ℤ → Fin 4) (t : ℤ)
-    (dest : ℤ → Fin 4) (q : ℤ) (payload : ℕ → ℕ → List (Fin 4)) (i : ℕ) :
-    let v := state ha hd negative A D S Q B n source p middle r signMiddle t dest q payload i
-    let slot := Fin.castAdd 5 (Fin.natAdd (SignedScalingExecution.TapeCount a d) (2 : Fin 8))
-    v.tape slot = S.scratch ∧ v.head slot = S.origin := by
-  simp [state,bank,Tapes.append,SignedScalingSign.signBank,BlockNegationReuse.bank]
-
 theorem tapeCount_eq (a d : ℕ) : TapeCount a d = 40+4*(a+d) := by
   dsimp only [TapeCount]
   rw [SignedScalingSign.tapeCount_eq]
   omega
-
-theorem stateCount_eq (a d : ℕ) (negative : Bool) :
-    States a d negative = 98*(a+d)+(if negative then 561 else 229) := by
-  dsimp only [States]
-  rw [SignedScalingSign.stateCount_eq]
-  cases negative <;> simp <;> omega
 
 end IntegerMultBounds.Machine.SignedScalingStream

@@ -57,12 +57,6 @@ theorem undo_append (dual : L → M) (current : ι → L) (xs ys : List (ι × L
     obtain ⟨i,next⟩ := p
     simp only [List.cons_append,undo,RankTrace.finish,ih,List.append_assoc]
 
-/-- Erasing the trace transformation preserves the exact number of incidences. -/
-theorem undo_length (dual : L → M) (current : ι → L) (xs : List (ι × L)) :
-    (undo dual current xs).length = xs.length := by
-  induction xs generalizing current with
-  | nil => rfl
-  | cons p rest ih => simp [undo,ih]
 end ReverseUpdates
 
 section Complement

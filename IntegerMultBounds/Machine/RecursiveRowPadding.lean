@@ -64,21 +64,6 @@ theorem pad_suffixMap (R' : ℕ) (zero : α) (p : Fin L → Fin L) (x : Fin (A*R
   rw [pad_entry,suffixMap_entry,pad_entry]
   split <;> simp only [suffixMap_entry]
 
-/-- Cropping also commutes with the same within-row permutation. -/
-theorem crop_suffixMap {R' : ℕ} (h : R ≤ R') (p : Fin L → Fin L) (x : Fin (A*R'*L) → α) :
-    crop h (suffixMap p x) = suffixMap p (crop h x) := by
-  funext z
-  obtain ⟨⟨ar,k⟩,rfl⟩ := finProdFinEquiv.surjective z
-  obtain ⟨⟨a,r⟩,rfl⟩ := finProdFinEquiv.surjective ar
-  change crop h (suffixMap p x) (pack (pack a r) k) = suffixMap p (crop h x) (pack (pack a r) k)
-  rw [crop_entry,suffixMap_entry,suffixMap_entry,crop_entry]
-
-/-- No original data is lost by a padded suffix permutation followed by crop. -/
-theorem crop_permute_pad {R' : ℕ} (h : R ≤ R') (zero : α)
-    (p : Fin L → Fin L) (x : Fin (A*R*L) → α) :
-    crop h (suffixMap p (pad R' zero x)) = suffixMap p x := by
-  rw [crop_suffixMap,crop_pad]
-
 /-- The original seven-factor word, grouped by its literal prefix and row. -/
 theorem volume_rows (v : Descriptor) :
     volume prime v = v.beforeRows*v.rows*rowLength prime v := by
@@ -150,17 +135,6 @@ theorem rowView_transpose {v : Descriptor} (x : Fin (volume prime v) → α) :
 
 /-- Only the row field is enlarged; all suffix fields retain their addresses. -/
 def withRows (v : Descriptor) (R' : ℕ) : Descriptor := {v with rows := R'}
-
-/-- The physical padding wrapper's volume charge scales only with its row count. -/
-theorem padded_volume_bound (v : Descriptor) (R' B : ℕ) (h : R' ≤ B*v.rows) :
-    volume prime (withRows v R') ≤ B*volume prime v := by
-  calc
-    volume prime (withRows v R') = (v.beforeRows*rowLength prime v)*R' := by
-      rw [volume_rows]
-      change v.beforeRows*R'*rowLength prime v = _
-      ring
-    _ ≤ (v.beforeRows*rowLength prime v)*(B*v.rows) := Nat.mul_le_mul_left _ h
-    _ = B*volume prime v := by rw [volume_rows]; ring
 
 
 def padArray {v : Descriptor} (R' : ℕ) (zero : α) (x : Fin (volume prime v) → α) :

@@ -117,14 +117,6 @@ theorem tailVolume_value (Q B : ℕ) : Counter.value (tailVolume Q B) = (Q-1)*B 
 theorem tailVolume_canonical (Q B : ℕ) : GrowingCounterData.Canonical (tailVolume Q B) :=
   TranslationDescriptors.descriptors_canonical Q 1 B 0
 
-theorem bank_volume (ds : Fin 3 → List Bool) (bs qs diff tail : List Bool) :
-    (bank ds bs qs diff tail).head 1 = 1 ∧
-      (bank ds bs qs diff tail).tape 1 = binary (ds 0) := ⟨rfl,rfl⟩
-
-theorem bank_count (ds : Fin 3 → List Bool) (bs qs diff tail : List Bool) :
-    (bank ds bs qs diff tail).head 10 = 1 ∧
-      (bank ds bs qs diff tail).tape 10 = binary tail := ⟨rfl,rfl⟩
-
 /-- Canonical Q minus one, independent of any padding in the subtraction output. -/
 def tailCount (Q : ℕ) : List Bool := GrowingCounterData.advance (Q-1) []
 

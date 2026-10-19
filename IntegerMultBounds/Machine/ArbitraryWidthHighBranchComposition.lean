@@ -33,10 +33,6 @@ def program (rho width flag : Fin t)
     (high : Program t h a) (fallback : Program t s a) :=
   FiniteFlow.program (family rho width flag hrw hrf hwf high fallback) next 0
 
-theorem selected_high_iff (r e : ℕ) :
-    ArbitraryWidthHighBranch.selected r e = ArbitraryWidthHighBranch.high ↔ 1 ≤ r ∧ r < e :=
-  ArbitraryWidthHighBranch.selected_high_iff r e
-
 theorem selected_fallback_iff (r e : ℕ) :
     ArbitraryWidthHighBranch.selected r e = ArbitraryWidthHighBranch.fallback ↔ ¬(1 ≤ r ∧ r < e) :=
   ArbitraryWidthHighBranch.selected_fallback_iff r e
@@ -130,34 +126,6 @@ theorem runs (rho width flag : Fin t)
     · rw [ite_eq_right hg]
       omega
 
-/-- Common-output form for two implementations of the same operation. Both
-canonical descriptor lengths are absorbed in the caller's positive volume;
-all branch runtime charges remain explicit. -/
-theorem runs_same_volume (rho width flag : Fin t)
-    (hrw : rho ≠ width) (hrf : rho ≠ flag) (hwf : width ≠ flag)
-    (high : Program t h a) (fallback : Program t s a)
-    (v out : Tapes t a) (highCost fallbackCost V : ℕ) (hV : 0 < V)
-    (rs es : List Bool) (cr : GrowingCounterData.Canonical rs) (ce : GrowingCounterData.Canonical es)
-    (hrV : Counter.value rs ≤ V) (heV : Counter.value es ≤ V)
-    (hrr : v.tape rho = BinaryDescriptorStack.descriptor rs) (hrh : v.head rho = 1)
-    (her : v.tape width = BinaryDescriptorStack.descriptor es) (heh : v.head width = 1)
-    (hfr : v.tape flag = fun _ => blank) (hfh : v.head flag = 0)
-    (highRuns : (1 ≤ Counter.value rs ∧ Counter.value rs < Counter.value es) →
-      HoareTime high (fun w => w = v) (fun w => w = out) highCost)
-    (fallbackRuns : ¬(1 ≤ Counter.value rs ∧ Counter.value rs < Counter.value es) →
-      HoareTime fallback (fun w => w = v) (fun w => w = out) fallbackCost) :
-    HoareTime (program rho width flag hrw hrf hwf high fallback)
-      (fun w => w = v) (fun w => w = out)
-      (21*V+1+if 1 ≤ Counter.value rs ∧ Counter.value rs < Counter.value es
-        then highCost else fallbackCost) := by
-  have hh := runs rho width flag hrw hrf hwf high fallback v out out highCost fallbackCost
-    rs es cr hrr hrh her heh hfr hfh highRuns fallbackRuns
-  have hb := ArbitraryWidthHighBranch.cost_volume rs es cr ce V hV hrV heV
-  apply hh.consequence (fun _ h => h) _ _
-  · intro w hw
-    simpa only [ite_self] using hw
-  · omega
-
 /-- When rho is the actual high-depth selector, the physical fallback state
 can occur only in a fixed finite set of widths. No algorithm for choosing the
 mathematical cutoff is assumed here. -/
@@ -171,22 +139,6 @@ theorem bounded_fallback (q : ℕ) (hq : 2 ≤ q) :
   have hnot := (selected_fallback_iff _ _).mp he
   by_contra hlt
   exact hnot (hcut e (by omega))
-
-/-- Equivalent finite-width bound stated directly in terms of the enclosing
-finite-control edge, after the actual selector's terminal state is observed. -/
-theorem bounded_fallback_edge (q : ℕ) (hq : 2 ≤ q) :
-    ∃ cutoff : ℕ, ∀ e : ℕ,
-      next (h := h) (s := s) 0 (FiniteFlow.embed ArbitraryWidthHighBranch.states 1
-        (ArbitraryWidthHighBranch.selected (ArbitraryWidthHighPrepare.highDepth q e) e)) = some 2 →
-      e < cutoff := by
-  obtain ⟨cutoff,hcut⟩ := bounded_fallback q hq
-  refine ⟨cutoff,?_⟩
-  intro e he
-  apply hcut e
-  apply (selected_fallback_iff _ _).mpr
-  intro hg
-  rw [next_selected] at he
-  simp [hg] at he
 
 end
 end IntegerMultBounds.Machine.ArbitraryWidthHighBranchComposition

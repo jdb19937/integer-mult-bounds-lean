@@ -186,10 +186,6 @@ noncomputable def T (n : ℕ) : ℝ := 2 ^ logT n
 
 theorem T_pos (n : ℕ) : 0 < T n := by unfold T; positivity
 
-theorem logb_T (n : ℕ) : Real.logb 2 (T n) = logT n := by
-  unfold T
-  rw [← Real.rpow_natCast, Real.logb_rpow (by norm_num) (by norm_num)]
-
 theorem ratio_pos {n : ℕ} (hn : 1 ≤ n) : 0 < 4 * (n : ℝ) / b n := by
   have : (0 : ℝ) < n := by exact_mod_cast hn
   have : (0 : ℝ) < b n := by exact_mod_cast one_le_b n

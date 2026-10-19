@@ -157,25 +157,6 @@ theorem root_hoare (capacity : Fintype.card PC ≤ 2^k) (width stack descriptorS
     (BinaryDescriptorFrames.cost fields xs+1+k) (by simpa only [raw_self] using hp)
   exact padded.seq body
 
-/-- The real decoder routes each call's address to its own recovery block. -/
-theorem returns_to_site (capacity : Fintype.card PC ≤ 2^k) (width stack : Fin t)
-    (impl : Implementation t a k) (i : Site) :
-    edge capacity width stack impl .pop
-      (FiniteReturnStack.encode k (.inr (0,returnCode capacity i))) = some (.recover i) := by
-  change (FiniteReturnDispatch.select capacity (FiniteReturnStack.encode k (.inr (0,FiniteReturnStack.address capacity (encoding (.recover i)))))).map encoding.symm = _
-  rw [FiniteReturnDispatch.select_return]
-  simp only [Option.map_some,Equiv.symm_apply_apply]
-
-/-- Root initialization can push this actual code; the same decoder then
-reaches the unique halt node after the root frame has been restored. -/
-theorem returns_to_halt (capacity : Fintype.card PC ≤ 2^k) (width stack : Fin t)
-    (impl : Implementation t a k) :
-    edge capacity width stack impl .pop
-      (FiniteReturnStack.encode k (.inr (0,rootCode capacity))) = some .halt := by
-  change (FiniteReturnDispatch.select capacity (FiniteReturnStack.encode k (.inr (0,FiniteReturnStack.address capacity (encoding .halt))))).map encoding.symm = _
-  rw [FiniteReturnDispatch.select_return]
-  simp only [Option.map_some,Equiv.symm_apply_apply]
-
 /-- Only literal recursive calls use the back-edge into the shared guard. -/
 theorem call_edge (capacity : Fintype.card PC ≤ 2^k) (width stack : Fin t)
     (impl : Implementation t a k) (i : Site) (wire : World) (h d : Index)
@@ -186,10 +167,6 @@ theorem call_edge (capacity : Fintype.card PC ≤ 2^k) (width stack : Fin t)
 theorem recover_edge (capacity : Fintype.card PC ≤ 2^k) (width stack : Fin t)
     (impl : Implementation t a k) (i : Site) (st : Fin (block capacity width stack impl (.recover i)).states) :
     edge capacity width stack impl (.recover i) st = some (successor i) := rfl
-
-/-- The controller uses the exact list already proved to preserve all source
-operations and to contain precisely s recursive calls. -/
-theorem recursive_call_count : (pieces.map calls).sum = Shared50Parameters.s := calls_exact
 
 end
 end IntegerMultBounds.Machine.Shared50RecursiveControl

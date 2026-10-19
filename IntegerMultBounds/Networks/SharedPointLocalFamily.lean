@@ -69,9 +69,4 @@ theorem witness_of_endpoints (source : PairedLocalCircuit) (a b : CopyNode 50)
     (source.endpointCore b.2) (source.endpointUnion b.2) rfl rfl rfl rfl hcore hunion
     (SharedPointLift.lifted_core_card a.1 _ hn)
 
-theorem domain_card (source : PairedLocalCircuit) :
-    (domain source).card = 50 * DAGAllocator.additionCount source.nodes := by
-  rw [domain, Finset.card_product, additionIds_card]
-  simp
-
 end IntegerMultBounds.Networks.SharedPointLocalFamily

@@ -86,14 +86,6 @@ theorem digits_blocks (V : List Bool) (q n : ℕ) (hV : V.length = n * q) :
       rw [Int.add_mul_ediv_left _ _ hne,
         Int.ediv_eq_zero_of_lt (by positivity) (by exact_mod_cast hlt), zero_add]
 
-theorem blockValues_bounded (V : List Bool) (q n : ℕ) :
-    Bounded ((2 : ℤ) ^ q) (blockValues V q n) := by
-  intro d hd
-  obtain ⟨i, _, rfl⟩ := List.mem_map.mp hd
-  have h := Counter.value_lt (field V (i * q) q)
-  rw [Machine.Gather.field_length] at h
-  exact ⟨by positivity, by exact_mod_cast h⟩
-
 end Fields
 
 section Packing

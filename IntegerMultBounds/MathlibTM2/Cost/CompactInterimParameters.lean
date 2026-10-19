@@ -43,14 +43,6 @@ def margin : Fin 5 → ℝ := ![
 theorem margin_covers (i : Fin 5) : kappa ≤ margin i := by
   fin_cases i <;> norm_num [margin,kappa,epsilon,spacing,lam',delta,Parameters.tau]
 
-/-- The layout margin is the binding one. -/
-theorem layout_margin_lt : margin 0 - kappa < (2^46:ℝ)⁻¹ := by
-  norm_num [margin,kappa,epsilon,spacing,Parameters.tau]
-
-/-- The saving strictly exceeds `2^-33`. -/
-theorem kappa_gt : (2^33:ℝ)⁻¹ < kappa := by
-  norm_num [kappa]
-
 /-- The obsolete full-width internal inequality fails for these chunks. All
 uses of that estimate on the compact branch must be replaced. -/
 theorem old_internal_exceeds_one : 1 < Parameters.tau*(1+2*spacing) := by

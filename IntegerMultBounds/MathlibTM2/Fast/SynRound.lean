@@ -76,10 +76,6 @@ theorem synG_reg_nonwire {Ro : Fin (nT SXReg) → List (Fin (A + 4))} {v : SynW 
     synG Ro v (reg (BReg := SXReg) x) = Ro (reg (BReg := SXReg) x) :=
   synG_of_ne fun _ => sreg_ne_reg hx
 
-theorem synIdle_wire (io P₀ : List (Fin (A + 4))) (w : NWire) :
-    synIdle io P₀ (reg (BReg := SXReg) (.wire w)) = [] := by
-  simp [synIdle]
-
 /-- The rest state is at rest: `TopRegs` for every empty wire file. -/
 theorem synRest_topRegs (io P₀ pr : List (Fin (A + 4))) (N r w' K ρ : ℕ)
     (v : SynW → List (Fin (A + 4))) (hv : ∀ x, v x = []) :
@@ -585,9 +581,6 @@ theorem topRec_length_A (es : List ℕ) {A A' : ℕ} :
     (topRec es : List (Fin (A + 4))).length = (topRec es : List (Fin (A' + 4))).length := by
   simp [length_topRec]
 
-theorem twRoles_length' (A : ℕ) (es : List ℕ) (h : ℕ) : (twRoles A es h).length = es.sum :=
-  twRoles_length es h
-
 theorem cstream_rpStream_length (A w : ℕ) {r : ℕ} (M : ℕ) (Y : ℕ → Fin r → GaussianInt) :
     (cstream A w (IntegerMultBounds.MathlibTM2.Fast.rpStream M Y)).length = M * (r * w) := by
   rw [length_cstream]
@@ -803,10 +796,6 @@ end LayerProg
 section LayerStepRuns
 
 variable {Q Ka : ℕ} {U : Type}
-
-theorem length_topRec_any (l : List ℕ) {A A' : ℕ} :
-    (topRec l : List (Fin (A + 4))).length = (topRec l : List (Fin (A' + 4))).length := by
-  simp [length_topRec]
 
 /-- **The layer step of round `h`.** -/
 theorem sg_synLayerStep (hQ : swapStates sxHd sxPay sxHd_inj ≤ Q)

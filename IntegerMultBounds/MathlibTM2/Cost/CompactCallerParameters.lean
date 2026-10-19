@@ -45,14 +45,6 @@ theorem compactCaller_address_le {axes guard K D payload rows extra : ℕ}
   rw [compactReservation_bits hK hfit]
   omega
 
-/-- The same address bound holds at every actual padded recursive row depth. -/
-theorem compactCaller_recursive_address_le {axes guard K D payload extra j : ℕ}
-    (hK : 0<K) (hfit : CompactReservationFits axes guard K D) :
-    (compactReservationShape axes guard K D payload).bits +
-      (2^extra*CompactGlobalRowPadding.rowsAt NW m axes K j).log2+2 ≤ extra+K*D+3 :=
-  compactCaller_address_le hK hfit (Nat.mul_le_mul_left _
-    (CompactGlobalRowPadding.rowsAt_le_initial NW m axes K j))
-
 /-- Actual precision, coefficient capacity and padded rows discharge every repair
 premise uniformly over all pieces and recursive children. No per-node density,
 address-width or cubic-size hypothesis is supplied. -/

@@ -36,12 +36,6 @@ theorem finite : IsXor Shared50Finite.program := by
   unfold Shared50Finite.program
   exact finite_xor _ _ _ _ _ _
 
-theorem io_load {n : ℕ} (e : Fin n ≃ Triple 50) : IsXor (Shared50SparseIO.load e) :=
-  copies _ _ _ (by intros; simp [DirtyLinearCircuit.scratch,DirtyLinearCircuit.x])
-
-theorem io_read {n : ℕ} (e : Fin n ≃ Triple 50) : IsXor (Shared50SparseIO.read e) :=
-  copies _ _ _ (by intros; simp [DirtyLinearCircuit.y,DirtyLinearCircuit.scratch])
-
 theorem load {n s : ℕ} (e : Fin n ≃ Triple 50) : IsXor (Shared50SparseInvocation.load (s := s) e) :=
   copies _ _ _ (by intros; simp [side,x])
 

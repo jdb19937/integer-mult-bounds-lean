@@ -26,16 +26,8 @@ def world (i : World) : Fin (roleCount+1) := Fin.castAdd 1 (roleEquiv.symm i)
 def wires : Fin (1+roleCount) → Fin (roleCount+1) :=
   Fin.addCases (fun _ => common) (Fin.castAdd 1)
 
-theorem wires_common : wires (Fin.castAdd roleCount (0 : Fin 1)) = common := rfl
 @[simp] theorem wires_role (i : Fin roleCount) : wires (Fin.natAdd 1 i) = Fin.castAdd 1 i := by
   simp only [wires,Fin.addCases_right]
-
-theorem world_ne_common (i : World) : world i ≠ common := by
-  intro he
-  have hh := congrArg Fin.val he
-  have hi := (roleEquiv.symm i).isLt
-  change (roleEquiv.symm i).val = roleCount at hh
-  omega
 
 theorem wires_injective : Function.Injective wires := by
   intro i j he
@@ -59,10 +51,6 @@ theorem wires_injective : Function.Injective wires := by
       simp only [wires,Fin.addCases_right] at he
       exact congrArg (Fin.natAdd 1) (Fin.castAdd_injective _ _ he)
 
-/-- Same role number used by every original nonrecursive segment. -/
-theorem segment_wire (seg : Shared50OrderedPieces.Segment) :
-    world seg.wire = Fin.castAdd 1 (Shared50RecursiveSegments.wire seg) := rfl
-
 def routeEquiv : Equiv.Perm World :=
   ⟨Shared50ShearEndpoints.route,Shared50ShearEndpoints.route,
     Shared50ShearEndpoints.route_involutive,Shared50ShearEndpoints.route_involutive⟩
@@ -75,11 +63,6 @@ def mergeRoute : Equiv.Perm (Fin roleCount) :=
     mergeRoute i = roleEquiv.symm (Shared50ShearEndpoints.route (roleEquiv i)) := rfl
 @[simp] theorem mergeRoute_symm (i : Fin roleCount) :
     mergeRoute.symm i = roleEquiv.symm (Shared50ShearEndpoints.route (roleEquiv i)) := rfl
-
-theorem mergeRoute_involutive : Function.Involutive mergeRoute := by
-  intro i
-  simp only [mergeRoute_apply,Equiv.apply_symm_apply]
-  rw [Shared50ShearEndpoints.route_involutive,Equiv.symm_apply_apply]
 
 def entry {u : ℕ} := RecursiveRowsNode.entry (u := u) wires wires_injective
 def exit {u : ℕ} := RecursiveRowsNode.exit (u := u) mergeRoute wires wires_injective

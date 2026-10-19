@@ -147,16 +147,6 @@ section Flat
 
 open IntegerMultBounds.MathlibTM2.Layer
 
-theorem ofBits_toBits {N n : ℕ} (hn : n < 2 ^ N) : ofBits (toBits N n) = n := by
-  apply Nat.eq_of_testBit_eq
-  intro j
-  rw [testBit_ofBits]
-  split_ifs with hj
-  · simp only [toBits]
-    by_cases h : n.testBit j <;> simp [h]
-  · exact (Nat.testBit_lt_two_pow (lt_of_lt_of_le hn
-      (pow_le_pow_right₀ (by norm_num) (not_lt.1 hj)))).symm
-
 variable {N p : ℕ} {η : ℝ}
 
 /-- A computed round on flat arrays stored in the layout `L`, against the exact flat round `Rf`
@@ -167,30 +157,6 @@ structure FlatRoundOp (N p : ℕ) (L : Equiv.Perm (Fin N)) (Rf : ℕ → Arr (Fi
   err : ∀ h f q, ‖Q h f q - relabel L (Rf h (relabel L.symm f)) q‖ ≤ η
   dom : ∀ h f q, ‖Q h f q‖ ≤ ‖relabel L (Rf h (relabel L.symm f)) q‖
   grid : ∀ h f q, IsFixed p (Q h f q)
-
-/-- The record form of a flat computed round. -/
-noncomputable def FlatRoundOp.toRoundOp {L : Equiv.Perm (Fin N)}
-    {R : ℕ → Recs r → Recs r} {Rf : ℕ → Arr (Fin r) N → Arr (Fin r) N}
-    (hR : ∀ h u, flat N (R h u) = Rf h (flat N u)) (F : FlatRoundOp N p L Rf η) :
-    RoundOp N p R η where
-  Q h u := unflat (relabel L.symm (F.Q h (relabel L (flat N u))))
-  err h u _ _ n hn c := by
-    have := F.err h (relabel L (flat N u)) (c, toBits N n ∘ L.symm)
-    rw [relabel_symm_relabel, ← hR] at this
-    have e : relabel L (flat N (R h u)) (c, toBits N n ∘ L.symm) = R h u n c := by
-      simp only [relabel, flat, Function.comp_assoc, Equiv.symm_comp_self, Function.comp_id,
-        ofBits_toBits hn]
-    rw [e] at this
-    exact this
-  dom h u _ _ n hn c := by
-    have := F.dom h (relabel L (flat N u)) (c, toBits N n ∘ L.symm)
-    rw [relabel_symm_relabel, ← hR] at this
-    have e : relabel L (flat N (R h u)) (c, toBits N n ∘ L.symm) = R h u n c := by
-      simp only [relabel, flat, Function.comp_assoc, Equiv.symm_comp_self, Function.comp_id,
-        ofBits_toBits hn]
-    rw [e] at this
-    exact this
-  grid h u _ _ n c := F.grid h _ _
 
 end Flat
 

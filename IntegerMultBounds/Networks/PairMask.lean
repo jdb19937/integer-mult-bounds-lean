@@ -96,30 +96,6 @@ theorem mem_exclusion (n a b : ℕ) (i : Fin (n.choose 2)) :
   cases hba : (incident n a).getLsbD i.val <;> cases hbb : (incident n b).getLsbD i.val <;>
     simp_all <;> tauto
 
-/-- Exclusion masks interpreted as actual pair keys give the same query support
-as the unweighted paired algorithm. -/
-theorem exclusion_image (n a b : ℕ) :
-    (decode (exclusion n a b)).image (pairAt n) =
-      (pairs (List.range n)).toFinset.filter (fun p => p.1 ∉ [a,b] ∧ p.2 ∉ [a,b]) := by
-  ext p
-  simp only [Finset.mem_image, Finset.mem_filter, List.mem_toFinset]
-  constructor
-  · rintro ⟨i, hi, rfl⟩
-    exact ⟨pairAt_mem n i, (mem_exclusion n a b i).mp hi⟩
-  · rintro ⟨hp, ha⟩
-    obtain ⟨i, hi⟩ := (pairEquiv n).surjective ⟨p, hp⟩
-    have he : pairAt n i = p := congrArg Subtype.val hi
-    exact ⟨i, (mem_exclusion n a b i).mpr (by simpa [he] using ha), he⟩
-
-/-- Bit-indexed evaluation transports to the literal pair-input sum. -/
-theorem exclusion_sum {A : Type*} [AddCommMonoid A] (input : ℕ × ℕ → A) (n a b : ℕ) :
-    DisjointCircuit.supportSum (fun i => input (pairAt n i)) (decode (exclusion n a b)) =
-      DisjointCircuit.supportSum input
-        ((pairs (List.range n)).toFinset.filter (fun p => p.1 ∉ [a,b] ∧ p.2 ∉ [a,b])) := by
-  rw [← exclusion_image]
-  unfold DisjointCircuit.supportSum
-  exact (Finset.sum_image (fun i _ j _ he => pairAt_injective n he)).symm
-
 /-- The h=50 local certificate has exactly 1176 source bits. -/
 abbrev incident49 (a : ℕ) : BitVec 1176 := incident 49 a
 abbrev exclusion49 (a b : ℕ) : BitVec 1176 := exclusion 49 a b

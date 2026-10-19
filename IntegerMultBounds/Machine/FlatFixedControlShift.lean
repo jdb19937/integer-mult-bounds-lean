@@ -42,12 +42,6 @@ theorem destination_tape (r : ℚ) {B C : ℕ} (xs : List (Fin radix))
   rw [FlatControlledShift.output_eq]
   rfl
 
-/-- The control is literally unchanged, even when the spectator count is not a radix power. -/
-theorem control_tape (r : ℚ) {B C : ℕ} (xs : List (Fin radix))
-    (a : Fin (C*(radix^xs.length*B)) → Fin 4) (bs qs cs old : List Bool) (i : ℕ) :
-    (state r xs a bs qs cs old i).head 15 = 1 ∧
-    (state r xs a bs qs cs old i).tape 15 = RadixRationalBinary.source xs := ⟨rfl,rfl⟩
-
 theorem realizes_hoare (r : ℚ) {B C : ℕ} (hB : 0 < B) (xs : List (Fin radix))
     (a : Fin (C*(radix^xs.length*B)) → Fin 4) (bs qs cs old : List Bool)
     (hb : Counter.value bs = B) (hq : Counter.value qs = radix^xs.length) (hc : Counter.value cs = C)

@@ -45,12 +45,6 @@ def swapSuffix (z : Fin (rowLength prime v)) : Fin (rowLength prime v) :=
     swapSuffix (suffixPack (a,h,m,d,e)) = suffixPack (a,d,m,h,e) := by
   simp [swapSuffix]
 
-theorem swapSuffix_involutive : Function.Involutive (swapSuffix (v := v)) := by
-  intro z
-  rw [← suffixPack_unpack z]
-  rcases suffixUnpack z with ⟨a,h,m,d,e⟩
-  simp
-
 /-- Pullback by the parent H/D swap, retaining its original cyclic row. -/
 def transpose {α : Type*} (hd : c ∣ v.rows) (x : Fin (volume prime v) → α) :
     Fin (volume prime v) → α := fun z =>

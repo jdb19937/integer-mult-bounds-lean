@@ -64,25 +64,6 @@ lemma red_star (W : ℕ) (z : GaussianInt) : red W (star z) = GR.conj (red W z) 
 
 /-! ### Bits -/
 
-/-- The `W` low bits of a residue, least significant first. -/
-def bitsOf (W : ℕ) (x : ZMod (2 ^ W)) : List Bool := List.ofFn fun i : Fin W => x.val.testBit i
-
-/-- A coefficient as interleaved bit pairs. -/
-def coeffBits (W : ℕ) (z : GR W) : List Bool :=
-  ((bitsOf W z.1).zip (bitsOf W z.2)).flatMap fun p => [p.1, p.2]
-
-/-- A record of coefficients. -/
-def recBits (W : ℕ) (rec : List (GR W)) : List Bool := rec.flatMap (coeffBits W)
-
-/-- An array of records. -/
-def arrBits (W : ℕ) (arr : List (List (GR W))) : List Bool := arr.flatMap (recBits W)
-
-lemma length_bitsOf (W : ℕ) (x : ZMod (2 ^ W)) : (bitsOf W x).length = W := by simp [bitsOf]
-
-lemma length_coeffBits (W : ℕ) (z : GR W) : (coeffBits W z).length = 2 * W := by
-  simp [coeffBits, List.length_flatMap, length_bitsOf]
-  ring
-
 /-! ### Pair symbols -/
 
 /-- The stack symbol of a bit pair (real bit, imaginary bit). -/

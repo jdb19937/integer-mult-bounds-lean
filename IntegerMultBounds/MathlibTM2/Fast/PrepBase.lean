@@ -68,18 +68,6 @@ def preRec (l : List ℕ) : List (Fin (A + 4)) := l.flatMap preFld
 @[simp] lemma preRec_cons (v : ℕ) (l : List ℕ) :
     (preRec (v :: l) : List (Fin (A + 4))) = preFld v ++ preRec l := rfl
 
-lemma length_preFld (v : ℕ) : (preFld v : List (Fin (A + 4))).length = v + 1 := by
-  simp [preFld]
-
-lemma length_preRec (l : List ℕ) :
-    (preRec l : List (Fin (A + 4))).length = l.sum + l.length := by
-  induction l with
-  | nil => rfl
-  | cons v l ih => rw [preRec_cons, List.length_append, length_preFld, ih]; simp; ring
-
-lemma tick_ne_false : (tick : Fin (A + 4)) ≠ bitSymbol false := by
-  simp [tick, bitSymbol, Fin.ext_iff]
-
 end Fields
 
 /-! ### The loop on the top symbol -/

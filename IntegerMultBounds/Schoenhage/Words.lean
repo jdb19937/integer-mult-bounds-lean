@@ -26,11 +26,6 @@ theorem sym_ne_blank (o : Option Bool) : sym (a := a) o ≠ blank := by
   | none => simp [sym, separator, blank]
   | some b => cases b <;> simp [sym, bitSymbol, blank]
 
-theorem sym_injective : Function.Injective (sym (a := a)) := by
-  intro x y h
-  rcases x with _ | ⟨_ | _⟩ <;> rcases y with _ | ⟨_ | _⟩ <;>
-    simp_all [sym, separator, bitSymbol, Fin.ext_iff]
-
 /-- The symbols of a word list. -/
 def syms (ws : List (List Bool)) : List (Option Bool) := ws.flatMap fun w => w.map some ++ [none]
 
@@ -156,10 +151,6 @@ theorem tape_sep (T : WTape) {w : List Bool} {R : List (List Bool)} (h : T.right
     T.tape (a := a) (T.pos + w.length) = separator := by
   rw [tape_at_pos, h, syms_cons, List.append_assoc, List.getElem?_append_right (by simp)]
   simp [sym]
-
-theorem tape_end (T : WTape) (h : T.right = []) (c : ℕ) :
-    T.tape (a := a) (T.pos + c) = blank := by
-  rw [tape_at_pos, h]; simp
 
 theorem tape_neg (T : WTape) (j : ℤ) (h : j < 0) : T.tape (a := a) j = blank := by
   rw [tape_eq, ite_eq_right (by omega)]

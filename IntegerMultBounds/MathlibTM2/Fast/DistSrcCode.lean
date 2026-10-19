@@ -118,14 +118,6 @@ section Post
 
 variable {x K : ℕ}
 
-/-- A single-instruction step writing `31`. -/
-theorem ds_post1 {i : TblIns pmNV} (σ : Fin pmNV → ℕ) (hf : i.fits A (pmW n) ⟨σ, []⟩)
-    (hx : (i.exact A w' ⟨σ, []⟩).val 31 = x)
-    (hfr : ∀ j : Fin pmNV, (j.val < 31 ∨ 38 ≤ j.val) → (i.exact A w' ⟨σ, []⟩).val j = σ j)
-    (hacc : (i.exact A w' ⟨σ, []⟩).acc = []) :
-    TblDo A (pmW n) w' (.ins i) ⟨σ, []⟩ (DsPost σ x) 1 :=
-  TblDo.insX _ hf ⟨hacc, hx, hfr⟩
-
 end Post
 
 theorem dsCwg_do (hw : gamma n ≤ w) (hw2 : w < 2 ^ pmW n) :

@@ -268,9 +268,6 @@ theorem synJ_succ (D t : ℕ) :
 
 theorem synJ_le (D t : ℕ) : synJ D t ≤ t := synJk_le m D t
 
-theorem div_pow_pos_of_le {D j t : ℕ} (hjt : j ≤ t) (h : 0 < D / m ^ t) : 0 < D / m ^ j :=
-  div_pow_pos_of_le' m_pos hjt h
-
 theorem synJ_eq_of_pos {D t : ℕ} (h : 0 < D / m ^ t) : synJ D t = t := synJk_eq_of_pos m_pos h
 
 theorem synJ_eq_of_zero {D t : ℕ} (h : D / m ^ t = 0) : synJ D (t + 1) = synJ D t :=
@@ -348,10 +345,6 @@ theorem topRec_reverse_snoc (l : List ℕ) (x : ℕ) :
     (topRec (l ++ [x]) : List (Fin (A + 4))).reverse =
       topSep :: (List.replicate x tick ++ (topRec l).reverse) := by
   simp [topRec_append, topRec_cons, List.reverse_append, List.reverse_replicate]
-
-theorem topRec_cons_eq (x : ℕ) (l : List ℕ) :
-    (topRec (x :: l) : List (Fin (A + 4))) = List.replicate x tick ++ topSep :: topRec l :=
-  topRec_cons x l
 
 end RecLists
 
@@ -610,14 +603,6 @@ theorem sg_synCF1 (v : SynW → List (Fin (A + 4))) (l : List ℕ)
   lr_weaken body ((sgR_push body (a := .p .cf) tick hcf).seq (sgR_push body (a := .p .cf) topSep
     (l := tick :: (topRec l).reverse) (by simp)))
     (by rw [topRec_reverse_snoc]; simp) le_rfl
-
-/-- A reversed constant field `0`. -/
-theorem sg_synCF0 (v : SynW → List (Fin (A + 4))) (l : List ℕ)
-    (hcf : v (.p .cf) = (topRec l).reverse) :
-    LayRuns body (synPush (sreg (.p .cf)) topSep) (synG R v)
-      (synG R (Function.update v (.p .cf) (topRec (l ++ [0])).reverse)) 1 :=
-  lr_weaken body (sgR_push body (a := .p .cf) topSep hcf) (by rw [topRec_reverse_snoc]; simp)
-    le_rfl
 
 theorem sg_synW2P {x : SynW} (hx : x ≠ .p .w2) (hx2 : x ≠ .s 2) (v : SynW → List (Fin (A + 4))) (W X Dv : ℕ) (h2 : v (.s 2) = [])
     (hw2 : v (.p .w2) = []) (hW : (v (.p .w)).length = W) (hX : (v x).length = X)

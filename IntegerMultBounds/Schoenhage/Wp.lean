@@ -40,16 +40,6 @@ theorem wp_sound : ∀ (c : Cmd a t) (σ : Fin t → WTape) (Q : (Fin t → WTap
       exact ⟨σ', _, .cond_false hs he, hq⟩
   | .loop i b, σ, Q, h => h
 
-theorem wp_mono : ∀ (c : Cmd a t) (σ : Fin t → WTape) (Q Q' : (Fin t → WTape) → ℕ → Prop),
-    (∀ σ' k, Q σ' k → Q' σ' k) → WP c σ Q → WP c σ Q'
-  | .prim _P _slot _hinj, _σ, _Q, _Q', hQ, ⟨hp, hq⟩ => ⟨hp, hQ _ _ hq⟩
-  | .seq c d, σ, _Q, _Q', hQ, h =>
-    wp_mono c σ _ _ (fun σ₁ _k₁ h₁ => wp_mono d σ₁ _ _ (fun _σ₂ _k₂ h₂ => hQ _ _ h₂) h₁) h
-  | .cond _i c d, σ, _Q, _Q', hQ, ⟨ht, hf⟩ =>
-    ⟨fun hs => wp_mono c σ _ _ (fun _ _ h => hQ _ _ h) (ht hs),
-     fun hs => wp_mono d σ _ _ (fun _ _ h => hQ _ _ h) (hf hs)⟩
-  | .loop _i _b, _σ, _Q, _Q', hQ, ⟨σ', k, he, hq⟩ => ⟨σ', k, he, hQ _ _ hq⟩
-
 /-- A weakest precondition with a bounded cost gives `Runs`. -/
 theorem Runs.of_wp {c : Cmd a t} {σ} {Q : (Fin t → WTape) → Prop} {B : ℕ}
     (h : WP c σ (fun σ' k => Q σ' ∧ k ≤ B)) : Runs c σ Q B := by

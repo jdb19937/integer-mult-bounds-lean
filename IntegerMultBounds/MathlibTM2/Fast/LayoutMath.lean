@@ -223,13 +223,6 @@ theorem layMovesPerm_inv {K N : ℕ} :
       ext x
       rfl
 
-theorem layMovesInv_valid {K N : ℕ} {ms : List LayMove} (h : ∀ m ∈ ms, m.Valid K N) :
-    ∀ m ∈ layMovesInv ms, m.Valid K N := by
-  intro m hm
-  simp only [layMovesInv, List.mem_reverse, List.mem_map] at hm
-  obtain ⟨m', hm', rfl⟩ := hm
-  exact (h m' hm').inv
-
 /-! ### Record addresses under a bit permutation -/
 
 section Rec

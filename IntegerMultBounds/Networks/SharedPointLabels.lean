@@ -25,10 +25,6 @@ theorem sourceSpan_mono {support larger : Set (Finset (Fin h))} (hs : support �
     sourceSpan support ≤ sourceSpan larger :=
   Submodule.span_mono (Set.image_mono hs)
 
-theorem indicator_mem_sourceSpan {support : Set (Finset (Fin h))} {S : Finset (Fin h)}
-    (hS : S ∈ support) : (indicator S : Fin h → ℚ) ∈ sourceSpan support :=
-  Submodule.subset_span ⟨S, hS, rfl⟩
-
 /-- Every shared-point triple has coordinate sum three times its common entry. -/
 def sharedPlane (common : Fin h) : Submodule ℚ (Fin h → ℚ) where
   carrier := {x | (∑ i, x i) = 3 * x common}
@@ -64,11 +60,6 @@ theorem quadratic_eq (common : Fin h) (x : Fin h → ℚ) (hx : x ∈ sharedPlan
   simp only [rational, form_apply, hs, ← pow_two]
   nlinarith
 
-theorem quadratic_nonneg (common : Fin h) (x : Fin h → ℚ) (hx : x ∈ sharedPlane common) :
-    0 ≤ rational h x x := by
-  rw [quadratic_eq common x hx]
-  exact Finset.sum_nonneg (fun i _ => sq_nonneg (x i))
-
 /-- Vanishing of the outside squares forces the whole vector to vanish:
 the shared-point linear relation also kills its common coordinate. -/
 theorem quadratic_eq_zero (common : Fin h) (x : Fin h → ℚ) (hx : x ∈ sharedPlane common)
@@ -91,13 +82,6 @@ theorem quadratic_eq_zero (common : Fin h) (x : Fin h → ℚ) (hx : x ∈ share
   · subst i; exact hc
   · exact hout i hi
 
-/-- The restricted form is positive definite on the entire shared-point plane. -/
-theorem quadratic_pos (common : Fin h) (x : Fin h → ℚ) (hx : x ∈ sharedPlane common)
-    (hne : x ≠ 0) : 0 < rational h x x := by
-  have hn := quadratic_nonneg common x hx
-  have hz : rational h x x ≠ 0 := fun hh => hne (quadratic_eq_zero common x hx hh)
-  exact lt_of_le_of_ne hn (Ne.symm hz)
-
 /-- Any actual subspace of this plane inherits nondegeneracy. -/
 theorem subspace_nondegenerate (common : Fin h) (W : Submodule ℚ (Fin h → ℚ))
     (hW : W ≤ sharedPlane common) : ((rational h).restrict W).Nondegenerate := by
@@ -109,15 +93,6 @@ theorem subspace_nondegenerate (common : Fin h) (W : Submodule ℚ (Fin h → �
     apply Subtype.ext
     exact quadratic_eq_zero common x (hW x.property) (hx x)
 
-/-- The concrete shared-point triple source span is nondegenerate, with only
-combinatorial hypotheses on its generators. No ambient dimension exclusion
-or externally supplied positivity or nondegeneracy premise is needed. -/
-theorem sourceSpan_nondegenerate (common : Fin h) (support : Set (Finset (Fin h)))
-    (htriples : ∀ S ∈ support, S.card = 3)
-    (hcommon : ∀ S ∈ support, common ∈ S) :
-    ((rational h).restrict (sourceSpan support)).Nondegenerate :=
-  subspace_nondegenerate common _ (sourceSpan_le_sharedPlane common support htriples hcommon)
-
 /-- A finite indexed source family induces exactly its supported source span. -/
 def indexedSpan {ι : Type*} (triples : ι → Finset (Fin h)) (support : Set ι) :
     Submodule ℚ (Fin h → ℚ) := sourceSpan (triples '' support)
@@ -126,16 +101,5 @@ theorem indexedSpan_mono {ι : Type*} (triples : ι → Finset (Fin h))
     {support larger : Set ι} (hs : support ⊆ larger) :
     indexedSpan triples support ≤ indexedSpan triples larger :=
   sourceSpan_mono (Set.image_mono hs)
-
-theorem indexedSpan_nondegenerate {ι : Type*} (common : Fin h)
-    (triples : ι → Finset (Fin h)) (support : Set ι)
-    (htriples : ∀ i ∈ support, (triples i).card = 3)
-    (hcommon : ∀ i ∈ support, common ∈ triples i) :
-    ((rational h).restrict (indexedSpan triples support)).Nondegenerate := by
-  apply sourceSpan_nondegenerate common
-  · rintro S ⟨i, hi, rfl⟩
-    exact htriples i hi
-  · rintro S ⟨i, hi, rfl⟩
-    exact hcommon i hi
 
 end IntegerMultBounds.Networks.SharedPointLabels

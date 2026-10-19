@@ -31,11 +31,6 @@ theorem early_ideal :
       (earlyIdeal (addressShape s) q b n before after rows rho offset width side hq x) r := by
   rfl
 
-theorem early_bad :
-    earlyBad s q b n before after rows rho offset width side hq
-      (cell s (n*b) (n*q) before after rows x r) ↔
-    earlyBad (addressShape s) q b n before after rows rho offset width side hq x := Iff.rfl
-
 theorem late_actual :
     lateActual s q b n before after rows rho offset width side hq
       (cell s (n*b) (n*q) before after rows x r)=
@@ -49,11 +44,6 @@ theorem late_ideal :
     cell s (n*b) (n*q) before after rows
       (lateIdeal (addressShape s) q b n before after rows rho offset width side hq x) r := by
   rfl
-
-theorem late_bad :
-    lateBad s q b n before after rows rho offset width side hq
-      (cell s (n*b) (n*q) before after rows x r) ↔
-    lateBad (addressShape s) q b n before after rows rho offset width side hq x := Iff.rfl
 
 end
 end IntegerMultBounds.Machine.ActiveRepairLayoutRecordsPermutation

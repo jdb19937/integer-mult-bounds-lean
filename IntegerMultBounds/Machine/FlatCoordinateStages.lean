@@ -72,16 +72,6 @@ def scale {r : ℚ} (hr : Shared50AffineCoefficients.ScaleOccurs r) (t : Fin d) 
     apply hs.consequence (fun _ h => h) (fun _ h => h) ?_
     rw [split_volume t]
 
-/-- Canonical payload transport of the actual scaling stage. -/
-theorem scale_transform {r : ℚ} (hr : Shared50AffineCoefficients.ScaleOccurs r) (t : Fin d) (hW : 0 < W)
-    (bs qs ns : List Bool) (hb : Counter.value bs = suffixSize (Q := modulus b) (W := W) t)
-    (hq : Counter.value qs = modulus b) (hn : Counter.value ns = prefixSize (Q := modulus b) t)
-    (cb : GrowingCounterData.Canonical bs) (cq : GrowingCounterData.Canonical qs)
-    (cn : GrowingCounterData.Canonical ns) (a : Array d b W) (x : Fin d → ZMod (modulus b)) (j : Fin W) :
-    (scale hr t hW bs qs ns hb hq hn cb cq cn).transform a
-      (index (OrderedAffine.execute (.scale t (Swap.Modular.ratMod (modulus b) r)) x) j) = a (index x j) :=
-  FlatCoordinateScaling.array_entry hr a t x j
-
 /-- A legal earlier-control rational shift, using exactly the earlier coordinates
 as initialized prefix fields and discharging the physical control-slice equation. -/
 def shift (r : ℚ) (hden : r.den < prime) (t k : Fin d) (hk : k < t) (hW : 0 < W)
@@ -135,18 +125,6 @@ def shift (r : ℚ) (hden : r.den < prime) (t k : Fin d) (hk : k < t) (hW : 0 < 
     have hs := FlatCoordinateShift.realizes_hoare r hden a t k hk hW ws hw cw
       (fun _ => blank) (fun _ => blank) 0 0 bs qs ns hb hq hn cb cq cn (by intros; rfl)
     exact hs.consequence (fun _ h => h) (fun _ h => h.1) le_rfl
-
-/-- Canonical payload transport of the actual controlled-shift stage. -/
-theorem shift_transform (r : ℚ) (hden : r.den < prime) (t k : Fin d) (hk : k < t) (hW : 0 < W)
-    (ws : Fin ((t.val-1)+1) → List Bool)
-    (hw : ∀ i, Counter.value (ws i) = b) (cw : ∀ i, GrowingCounterData.Canonical (ws i))
-    (bs qs ns : List Bool) (hb : Counter.value bs = suffixSize (Q := modulus b) (W := W) t)
-    (hq : Counter.value qs = modulus b) (hn : Counter.value ns = (modulus b)^t.val)
-    (cb : GrowingCounterData.Canonical bs) (cq : GrowingCounterData.Canonical qs)
-    (cn : GrowingCounterData.Canonical ns) (a : Array d b W) (x : Fin d → ZMod (modulus b)) (j : Fin W) :
-    (shift r hden t k hk hW ws hw cw bs qs ns hb hq hn cb cq cn).transform a
-      (index (OrderedAffine.execute (.shift t k (Swap.Modular.ratMod (modulus b) r)) x) j) = a (index x j) :=
-  FlatCoordinateShift.array_entry r a t k hk x j
 
 end
 end IntegerMultBounds.Machine.FlatCoordinateStages

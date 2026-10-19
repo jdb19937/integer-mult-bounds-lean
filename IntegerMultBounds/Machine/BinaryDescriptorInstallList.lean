@@ -32,20 +32,9 @@ def result : List (Instruction t) → (Fin t → List Bool) → Tapes t q → Ta
   | [],_,v => v
   | op::ops,xs,v => result ops xs (write op xs v)
 
-theorem result_foldl (ops : List (Instruction t)) (xs : Fin t → List Bool) (v : Tapes t q) :
-    result ops xs v = ops.foldl (fun v op => write op xs v) v := by
-  induction ops generalizing v with
-  | nil => rfl
-  | cons op ops ih => exact ih _
-
 def states : List (Instruction t) → ℕ
   | [] => 1
   | _::ops => 8+states ops
-
-theorem states_eq (ops : List (Instruction t)) : states ops = 8*ops.length+1 := by
-  induction ops with
-  | nil => rfl
-  | cons op ops ih => simp only [states,List.length_cons,ih]; omega
 
 noncomputable def program (q : ℕ) (ht : 0 < t) : (ops : List (Instruction t)) → Program t (states ops) q
   | [] => skip t q ht

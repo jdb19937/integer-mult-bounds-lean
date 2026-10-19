@@ -97,20 +97,4 @@ theorem nontrivial (v : Stage s) (hG : 1≤s.guard) (hGK : s.guard+1≤s.chunk) 
   change 0<v.f-1
   omega
 
-theorem dyadic_guard (ell : ℕ) (hG : s.guard=4*ell+6) (hK : 8*ell+16≤s.chunk) :
-    2≤s.guard ∧ s.guard+3≤s.chunk := by omega
-
-/-- The manuscript's compact radix fixes every guard-side condition. -/
-def dyadicParameters (v : Stage s) (ell : ℕ) (hG : s.guard=4*ell+6)
-    (hK : 8*ell+16≤s.chunk) : Parameters s := parameters v (by omega) (by omega)
-
-theorem dyadic_ready (v : Stage s) (ell : ℕ) (hG : s.guard=4*ell+6)
-    (hK : 8*ell+16≤s.chunk) (hf : 2≤v.f) :
-    0<(dyadicParameters v ell hG hK).n ∧
-    2≤(dyadicParameters v ell hG hK).b ∧
-    (dyadicParameters v ell hG hK).b+3≤(dyadicParameters v ell hG hK).q ∧
-    1≤s.H ∧ 1≤(dyadicParameters v ell hG hK).before := by
-  obtain ⟨hb,hbq⟩ := dyadic_guard ell hG hK
-  exact ⟨nontrivial v (by omega) (by omega) hf,hb,hbq,positive_H v (by omega),positive_before v⟩
-
 end IntegerMultBounds.Machine.ActivePrefixStageParameters

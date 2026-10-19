@@ -91,7 +91,6 @@ theorem output_literal (d : Inputs s p offset rows) (x : Array s rows)
 
 abbrev count := ActiveRepairLayoutRecordsPayloadEarlyRun.count
 def rawSlot : Fin count := Fin.castAdd lowCount (Fin.castAdd 8 (228 : Fin 235))
-theorem rawSlot_value : rawSlot.val=228 := rfl
 theorem slots_ne : outputSlot≠rawSlot := by
   intro h
   have hh := congrArg Fin.val h
@@ -189,13 +188,6 @@ theorem bank_heads (d : Inputs s p offset rows) (x y : Array s rows) :
   rw [←bank_set d x y]
   change (bank d x).head=Function.update (bank d x).head rawSlot 0
   rw [←bank_raw_head d x,Function.update_eq_self]
-
-theorem full_source_head (d : Inputs s p offset rows) (x : Array s rows) :
-    (bank d (ideal d x)).head rawSlot=0 := bank_raw_head d _
-theorem full_output_head (d : Inputs s p offset rows) (x : Array s rows) :
-    (bank d (ideal d x)).head outputSlot=0 := bank_output_head d _
-theorem full_output_blank (d : Inputs s p offset rows) (x : Array s rows) :
-    (bank d (ideal d x)).tape outputSlot=fun _ => blank := bank_output_blank d _
 
 theorem uniform_bound (D : ℕ) : ∃ C : ℝ, 0<C ∧ ∀ (s : Shape) (p : Parameters s) (rows : ℕ),
     0<rows → 0<s.payload → (totalCost D s p rows : ℝ)≤

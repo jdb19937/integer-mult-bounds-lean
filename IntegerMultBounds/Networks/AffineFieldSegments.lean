@@ -128,10 +128,4 @@ theorem split_recursiveCalls (p : List (Op (Fin d) R)) :
       AffineFieldProgram.interchanges,AffineFieldProgram.isInterchange]
     rfl
 
-/-- Include empty boundary runs, so every join is visible to later assembly. -/
-theorem runs_length (s : Segments d R) : (runs s).length = recursiveCalls s + 1 := by
-  induction s with
-  | done ops => rfl
-  | boundary ops i j tail ih => simp only [runs,List.length_cons,ih,recursiveCalls]
-
 end IntegerMultBounds.Networks.AffineFieldSegments

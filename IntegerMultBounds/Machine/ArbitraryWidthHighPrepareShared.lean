@@ -83,11 +83,5 @@ theorem private_output_headers (q e : ℕ) (i : Fin 5) :
       RadixZeroFill.encodedBinary (ArbitraryWidthHighPrepare.words q e i) := by
   fin_cases i <;> exact ⟨rfl,rfl⟩
 
-theorem private_output_blank (q e : ℕ) (i : Fin 19)
-    (hi : i.val = 0 ∨ i.val = 2 ∨ 7 ≤ i.val) :
-    (privateOutput (a := a) q e).head i = 0 ∧
-    (privateOutput (a := a) q e).tape i = fun _ => blank := by
-  fin_cases i <;> first | exact ⟨rfl,rfl⟩ | norm_num at hi
-
 end
 end IntegerMultBounds.Machine.ArbitraryWidthHighPrepareShared

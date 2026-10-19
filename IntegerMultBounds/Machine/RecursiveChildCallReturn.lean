@@ -72,12 +72,6 @@ private theorem bank_left_head (hs : Fin 6 → List Bool) (st : Tapes 2 q) (i : 
 private theorem bank_left_tape (hs : Fin 6 → List Bool) (st : Tapes 2 q) (i : Fin 38) :
     (bank hs st).tape (Fin.castAdd 2 i) = (RecursiveChildHeaderHandoff.canonical hs).tape i := by
   simp only [bank,Tapes.append,Fin.addCases_left]
-private theorem bank_right_head (hs : Fin 6 → List Bool) (st : Tapes 2 q) (i : Fin 2) :
-    (bank hs st).head (Fin.natAdd 38 i) = st.head i := by
-  simp only [bank,Tapes.append,Fin.addCases_right]
-private theorem bank_right_tape (hs : Fin 6 → List Bool) (st : Tapes 2 q) (i : Fin 2) :
-    (bank hs st).tape (Fin.natAdd 38 i) = st.tape i := by
-  simp only [bank,Tapes.append,Fin.addCases_right]
 private theorem saved_head_projection (hs : Fin 6 → List Bool) (st : Tapes 2 q)
     (code : FiniteReturnStack.Code k) (i : Fin 2) :
     (savedStacks hs st code).head i = (pushed hs st code).head (Fin.natAdd 38 i) := rfl

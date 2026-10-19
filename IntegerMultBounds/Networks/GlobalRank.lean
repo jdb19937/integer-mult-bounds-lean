@@ -100,24 +100,6 @@ theorem loss_place_le [Fintype ι] [Fintype κ]
     rw [history_place_outside f labelMap vs k hk]
     rfl
 
-/-- Actual placed traces preserve any reflexive relation transported by the
-label map; outsiders have no edges at all. -/
-theorem comparable_place (f : ι ↪ κ) (labelMap : L → M)
-    (rel : L → L → Prop) (rel' : M → M → Prop) (hrefl : ∀ l, rel' l l)
-    (hr : ∀ x y, rel x y → rel' (labelMap x) (labelMap y))
-    (localInput : ι → L) (current : κ → M)
-    (hi : ∀ i, current (f i) = labelMap (localInput i)) (vs : List (Vertex ι L R))
-    (hh : ∀ i, pathRel rel (localInput i) (history vs i)) :
-    ∀ p ∈ RankTrace.edges current (updates (placeList f labelMap vs)), rel' p.1 p.2 := by
-  apply edges_history_rel rel' hrefl
-  intro k
-  by_cases hk : ∃ i, f i = k
-  · obtain ⟨i, rfl⟩ := hk
-    rw [history_place, hi]
-    exact pathRel_map rel rel' labelMap hr _ _ (hh i)
-  · rw [history_place_outside f labelMap vs k (by simpa using hk)]
-    trivial
-
 section Ordered
 variable [Preorder L] [Preorder M]
 

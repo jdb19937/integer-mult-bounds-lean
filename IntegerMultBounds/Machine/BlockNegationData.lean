@@ -94,28 +94,4 @@ theorem corrected_rawBlocks (tail : List (List α)) :
     (rawBlocks tail).map List.reverse = tail.reverse := by
   simp [rawBlocks,List.map_map]
 
-/-- Repeatedly pop exactly B entries and reverse that popped block. The count
-controls termination even at width zero, so empty blocks are handled literally. -/
-def reversePops (B : ℕ) : ℕ → List α → List α
-  | 0, _ => []
-  | n+1, stream => (stream.take B).reverse ++ reversePops B n (stream.drop B)
-
-theorem reversePops_flatten (B : ℕ) (blocks : List (List α)) (h : Uniform B blocks) :
-    reversePops B blocks.length blocks.flatten = (blocks.map List.reverse).flatten := by
-  induction blocks with
-  | nil => rfl
-  | cons first tail ih =>
-    have hf := h first (by simp)
-    have ht : Uniform B tail := fun b hb => h b (by simp [hb])
-    simp only [List.length_cons,List.flatten_cons,reversePops,List.map_cons]
-    rw [← hf,List.take_left,List.drop_left,hf,ih ht]
-
-/-- The exact block-pop recipe implements coordinate negation while retaining
-the first block and every block's original internal payload order. -/
-theorem negation_recipe (B : ℕ) (first : List α) (tail : List (List α)) (h : Uniform B tail) :
-    (negate (first::tail)).flatten = first ++ reversePops B tail.length tail.flatten.reverse := by
-  rw [← rawBlocks_flatten,← rawBlocks_length tail,
-    reversePops_flatten B (rawBlocks tail) (rawBlocks_uniform B tail h),corrected_rawBlocks]
-  rfl
-
 end IntegerMultBounds.Machine.BlockNegationData

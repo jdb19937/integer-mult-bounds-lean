@@ -32,27 +32,6 @@ def select {c : ℕ} (hc : 0 < c) (Q z : ℕ) : Fin c := table hc (residue hc Q)
 /-- One fixed finite-state increment, with no scan of the representation of Q. -/
 def advance {c : ℕ} (hc : 0 < c) (current : Fin c) : Fin c := residue hc (current.val + 1)
 
-theorem advance_residue {c : ℕ} (hc : 0 < c) (z : ℕ) :
-    advance hc (residue hc z) = residue hc (z + 1) := by
-  apply Fin.ext
-  change (z % c + 1) % c = (z + 1) % c
-  simp [Nat.add_mod]
-
-/-- Iterating the finite-state transition tracks the increasing output cursor. -/
-theorem iterate_advance {c : ℕ} (hc : 0 < c) (start n : ℕ) :
-    (advance hc)^[n] (residue hc start) = residue hc (start + n) := by
-  induction n with
-  | zero => simp
-  | succ n ih =>
-    rw [Function.iterate_succ_apply',ih,advance_residue]
-    congr 1
-
-theorem select_residues {c : ℕ} (hc : 0 < c) {Q Q' z z' : ℕ}
-    (hQ : Q % c = Q' % c) (hz : z % c = z' % c) : select hc Q z = select hc Q' z' := by
-  have hmod : residue hc Q = residue hc Q' := Fin.ext hQ
-  have hcur : residue hc z = residue hc z' := Fin.ext hz
-  rw [select,select,hmod,hcur]
-
 private theorem select_cast {c : ℕ} (hc : 0 < c) (Q z : ℕ) :
     ((select hc Q z).val : ZMod c) = -(z : ZMod c) * (Q : ZMod c)⁻¹ := by
   let : NeZero c := ⟨by omega⟩
@@ -75,22 +54,6 @@ theorem select_unique {Q c z j : ℕ} (hQ : 0 < Q) (hc : 0 < c)
     j = (select hc Q z).val := by
   obtain ⟨k,_,hunique⟩ := existsUnique_piece hQ hc hcop hz
   exact (hunique j hj).trans (hunique _ (select_admissible hc hcop z)).symm
-
-/-- Every table-selected source is in range and maps back to the requested output. -/
-theorem selected_source {Q c z : ℕ} (hQ : 0 < Q) (hc : 0 < c)
-    (hcop : c.Coprime Q) (hz : z < Q) :
-    let j := (select hc Q z).val
-    restore Q c z j < Q ∧ output Q c (restore Q c z j) = z ∧
-      piece Q c (restore Q c z j) = j := by
-  have hj := select_admissible hc hcop z
-  exact ⟨restore_lt hc hz hj,output_restore hz hj,piece_restore hQ hz hj⟩
-
-/-- During an increasing output sweep the selected source stream is read from
-one finite state; the state set and transition never depend on Q. -/
-theorem sweep_select {Q c : ℕ} (hc : 0 < c) (z : ℕ) :
-    table hc (residue hc Q) ((advance hc)^[z] (residue hc 0)) = select hc Q z := by
-  rw [iterate_advance,zero_add]
-  rfl
 
 /-- Natural ceiling division for a positive fixed divisor. -/
 def ceiling (x c : ℕ) : ℕ := (x + c - 1) / c
@@ -127,11 +90,6 @@ theorem boundary_last {Q c : ℕ} (hc : 0 < c) : boundary Q c c = Q := by
   have hu := (ceiling_le_iff (x := c * Q) (y := ceiling (c * Q) c) hc).mp le_rfl
   have hh : ceiling (c * Q) c = Q := by nlinarith
   simp only [boundary,hh,Nat.min_self]
-
-/-- Each canonical input belongs to the interval of its actual quotient piece. -/
-theorem source_interval {Q c y : ℕ} (hQ : 0 < Q) (hc : 0 < c) (hy : y < Q) :
-    boundary Q c (piece Q c y) ≤ y ∧ y < boundary Q c (piece Q c y + 1) :=
-  (piece_interval hQ hc hy).mp rfl
 
 /-- Contiguous interval form of the exact source-address set for one piece. -/
 theorem source_set {Q c j : ℕ} (hQ : 0 < Q) (hc : 0 < c) :

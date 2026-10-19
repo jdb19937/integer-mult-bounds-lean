@@ -30,11 +30,6 @@ theorem fourUpdate_eq (v w z : ℤ) (hz : z = 0 ∨ z = 1) :
     simp only [fourUpdate, toggle, mul_zero, zero_mul, add_zero, mul_one, one_mul] <;>
     congr 1 <;> omega
 
-theorem toggle_parity (v z : ℤ) (hz : z = 0 ∨ z = 1) :
-    toggle v z % 2 = (v % 2 + z) % 2 := by
-  rcases hz with rfl | rfl <;>
-    simp only [toggle, zero_mul, add_zero, one_mul] <;> omega
-
 theorem toggle_guard (v z : ℤ) (hz : z = 0 ∨ z = 1) :
     toggle v z / 2 = v / 2 := by
   rcases hz with rfl | rfl <;>

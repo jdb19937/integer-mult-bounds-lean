@@ -26,11 +26,6 @@ def cLabel (q : Geometry.Address) (p : Label) : Label :=
   ⟨p.x + Tableau.dot q p.z • q, p.z,
     p.phase - bitLift (Tableau.dot q p.z)⟩
 
-/-- Source inverse C action: the same binary map, with opposite phase correction. -/
-def cInverseLabel (q : Geometry.Address) (p : Label) : Label :=
-  ⟨p.x + Tableau.dot q p.z • q, p.z,
-    p.phase + bitLift (Tableau.dot q p.z)⟩
-
 theorem cGate_intertwines (q : Geometry.Address) (p : Label) (f : State) :
     cGate q (operator p f) = operator (cLabel q p) (cGate q f) := by
   ext x
@@ -59,15 +54,5 @@ theorem cGate_intertwines (q : Geometry.Address) (p : Label) (f : State) :
 theorem cGate_conjugates (q : Geometry.Address) (p : Label) (f : State) :
     cGate q (operator p ((cGate q).symm f)) = operator (cLabel q p) f := by
   rw [cGate_intertwines, LinearEquiv.apply_symm_apply]
-
-theorem cLabel_inverse (q : Geometry.Address) (p : Label) :
-    cLabel q (cInverseLabel q p) = p := by
-  cases p
-  simp [cLabel, cInverseLabel, add_assoc, ← add_smul, CharTwo.add_self_eq_zero]
-
-theorem cGate_inverse_conjugates (q : Geometry.Address) (p : Label) (f : State) :
-    (cGate q).symm (operator p (cGate q f)) = operator (cInverseLabel q p) f := by
-  apply (cGate q).injective
-  rw [LinearEquiv.apply_symm_apply, cGate_intertwines, cLabel_inverse]
 
 end IntegerMultBounds.Networks.Certificates.T16.Pauli

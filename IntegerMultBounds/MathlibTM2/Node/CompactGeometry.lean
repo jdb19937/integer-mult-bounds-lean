@@ -53,24 +53,6 @@ lemma compactReservedStage_slotLow {s : Shape} {n a₀ k ρ : ℕ}
   simp [slotLow, lowAxes, compactReservedStage, Fin.rev]
   omega
 
-lemma compactReservedStage_early {s : Shape} {n a₀ k ρ : ℕ}
-    (layout : CompactReservedLayout s n a₀ k ρ) (x y : Fin m) (hxy : x ≠ y) :
-    (compactReservedStage layout x y hxy).source.val < (compactReservedStage layout x y hxy).target.val ↔
-      y.val < x.val := by
-  have hx := x.isLt
-  have hy := y.isLt
-  simp only [compactReservedStage, Fin.rev]
-  omega
-
-lemma compactReservedStage_late {s : Shape} {n a₀ k ρ : ℕ}
-    (layout : CompactReservedLayout s n a₀ k ρ) (x y : Fin m) (hxy : x ≠ y) :
-    (compactReservedStage layout x y hxy).target.val < (compactReservedStage layout x y hxy).source.val ↔
-      x.val < y.val := by
-  have hx := x.isLt
-  have hy := y.isLt
-  simp only [compactReservedStage, Fin.rev]
-  omega
-
 /-- The strengthened reservation invariant implies the original live layout's fit premise. -/
 lemma CompactReservedLayout.live_fit {s : Shape} {n a₀ k ρ : ℕ}
     (layout : CompactReservedLayout s n a₀ k ρ) : a₀ + m * (s.chunk * k) ≤ n := by
@@ -107,61 +89,6 @@ lemma compactReservedStage_selected {s : Shape} {n a₀ k ρ : ℕ}
   rw [compactReservedStage_slotLow]
   simp [compactReservedBits, bitIdx, finProdFinEquiv]
   ring
-
-/-- The native selected-position formula viewed as an actual live address index. -/
-def compactReservedStageBit {s : Shape} {n a₀ k ρ : ℕ}
-    (layout : CompactReservedLayout s n a₀ k ρ) (x y : Fin m) (hxy : x ≠ y)
-    (j : Fin m) (c : Fin k) : Fin n :=
-  ⟨a₀ + slotLow (compactReservedStage layout x y hxy) j.rev + (ρ + c.val * s.chunk), by
-    rw [compactReservedStage_selected]
-    exact (compactReservedBits layout (bitIdx j c)).isLt⟩
-
-lemma compactReservedStageBit_eq {s : Shape} {n a₀ k ρ : ℕ}
-    (layout : CompactReservedLayout s n a₀ k ρ) (x y : Fin m) (hxy : x ≠ y)
-    (j : Fin m) (c : Fin k) :
-    compactReservedStageBit layout x y hxy j c = compactReservedBits layout (bitIdx j c) := by
-  apply Fin.ext
-  exact compactReservedStage_selected layout x y hxy j c
-
-/-- Full selected XOR described using the native stage's physical bit positions.
-Identifying a native machine's result with this map remains a separate endpoint lemma. -/
-def compactReservedXor {s : Shape} {n a₀ k ρ : ℕ}
-    (layout : CompactReservedLayout s n a₀ k ρ) (x y : Fin m) (hxy : x ≠ y)
-    (bits : Fin n → ZMod 2) (t : Fin n) : ZMod 2 :=
-  if ht : ∃ c : Fin k, t = compactReservedStageBit layout x y hxy y c then
-    bits t + bits (compactReservedStageBit layout x y hxy x ht.choose)
-  else bits t
-
-/-- Native-indexed selected XOR is exactly the live slot-XOR address map. -/
-theorem compactReservedXor_eq_sxMap {s : Shape} {n a₀ k ρ : ℕ}
-    (layout : CompactReservedLayout s n a₀ k ρ) (x y : Fin m) (hxy : x ≠ y) :
-    compactReservedXor layout x y hxy = sxMap (compactReservedBits layout) x y := by
-  funext bits t
-  unfold compactReservedXor
-  split_ifs with ht
-  · let c := ht.choose
-    have htc : t = compactReservedStageBit layout x y hxy y c := ht.choose_spec
-    change bits t + bits (compactReservedStageBit layout x y hxy x c) = _
-    clear_value c
-    clear ht
-    rw [htc]
-    simp only [compactReservedStageBit_eq]
-    exact (sxMap_apply_y (compactReservedBits_injective layout) x y bits c).symm
-  · symm
-    apply sxMap_apply_ne (compactReservedBits_injective layout)
-    intro c heq
-    apply ht
-    exact ⟨c, by simpa only [compactReservedStageBit_eq] using heq.symm⟩
-
-/-- The preserved live `pullM` endpoint follows once the native program is identified with
-its full selected-index XOR; this equality does not assume a host execution. -/
-theorem compactReserved_pullM {s : Shape} {n a₀ k ρ R r : ℕ}
-    (layout : CompactReservedLayout s n a₀ k ρ) (x y : Fin m) (hxy : x ≠ y)
-    (Z : ZArr (Fin R × Fin r) n) :
-    pullAddr (compactReservedXor layout x y hxy) Z =
-      pullM (compactReservedBits layout) (sxXorCol x y) Z := by
-  rw [compactReservedXor_eq_sxMap]
-  rfl
 
 
 private theorem toggleMask_support (q : ℕ) (hq : 0 < q) (zs : List Bool) (j : ℕ)
@@ -368,35 +295,6 @@ theorem compactNative_result_entry (hvolume : rows * 2^s.bits ≤ 2^n)
   ⟨ActivePrefixStageRuntimeSelected.entry d array i,
     compactNative_destination_rank layout x y hxy rows hG hGK hr hrecord hvolume i⟩
 
-
-/-- Direct full-stage early branch, with the native order reversed from live slot order. -/
-theorem compactNative_early_rank (hk : 1 < k) (horder : y.val < x.val)
-    (hvolume : rows * 2^s.bits ≤ 2^n) (i : ActivePrefixStageFullSelected.Address d) :
-    (ActivePrefixDirtyControlGlobalSwap.index s (ActivePrefixStageFullSelected.geometry d)
-      (ActivePrefixStageFullSelected.earlyDestination d
-        ((compactReservedStage_early layout x y hxy).mpr horder) i)).val / s.payload =
-      addrNum (sxMap (compactReservedBits layout) x y)
-        ((ActivePrefixDirtyControlGlobalSwap.index s (ActivePrefixStageFullSelected.geometry d) i).val / s.payload) := by
-  have ho := (compactReservedStage_early layout x y hxy).mpr horder
-  have hh := compactNative_destination_rank layout x y hxy rows hG hGK hr hrecord hvolume i
-  simpa only [ActivePrefixStageRuntimeSelected.destination,show 1 < (d).stage.f from hk,dite_eq_left,
-    ActivePrefixStageDispatchSelected.destination,show (d).stage.source.val < (d).stage.target.val from ho] using hh
-
-/-- Direct full-stage late branch, with the native order reversed from live slot order. -/
-theorem compactNative_late_rank (hk : 1 < k) (horder : x.val < y.val)
-    (hvolume : rows * 2^s.bits ≤ 2^n) (i : ActivePrefixStageFullSelected.Address d) :
-    (ActivePrefixDirtyControlGlobalSwap.index s (ActivePrefixStageFullSelected.geometry d)
-      (ActivePrefixStageFullSelected.lateDestination d
-        ((compactReservedStage_late layout x y hxy).mpr horder) i)).val / s.payload =
-      addrNum (sxMap (compactReservedBits layout) x y)
-        ((ActivePrefixDirtyControlGlobalSwap.index s (ActivePrefixStageFullSelected.geometry d) i).val / s.payload) := by
-  have ho := (compactReservedStage_late layout x y hxy).mpr horder
-  have hn : ¬(d).stage.source.val < (d).stage.target.val := by
-    change (d).stage.target.val < (d).stage.source.val at ho
-    omega
-  have hh := compactNative_destination_rank layout x y hxy rows hG hGK hr hrecord hvolume i
-  simpa only [ActivePrefixStageRuntimeSelected.destination,show 1 < (d).stage.f from hk,dite_eq_left,
-    ActivePrefixStageDispatchSelected.destination,dite_eq_right hn] using hh
 
 end NativeDestination
 

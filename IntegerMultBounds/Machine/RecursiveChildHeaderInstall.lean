@@ -67,10 +67,6 @@ theorem installed (child : Fin 6 → List Bool) (v : Tapes 38 q) (i : Fin 5) :
     (instruction i) (List.mem_ofFn.mpr ⟨i,rfl⟩)
   fin_cases i <;> simpa [output,instruction,sourceSlots,destSlots,generated] using h
 
-theorem unchanged_A (child : Fin 6 → List Bool) (v : Tapes 38 q) :
-    (output child v).head 3 = v.head 3 ∧ (output child v).tape 3 = v.tape 3 :=
-  BinaryDescriptorReplaceList.output_frame instructions (generated child) v 3 (by decide)
-
 /-- Apply the replacement machine to the actual clean child-dimension output.
 All source and occupied-destination conditions are discharged here. -/
 theorem generated_hoare (hq : 2 ≤ q) (v : RecursiveInterchangeLayout.Descriptor)
@@ -103,31 +99,6 @@ theorem cost_le (old child : Fin 6 → List Bool) (L : ℕ)
       fin_cases i <;> simpa [generated,instruction,sourceSlots] using hh)
   simp only [instructions,List.length_ofFn] at h ⊢
   omega
-
-/-- Installing actual canonical child headers has linear child-volume cost,
-including the destruction of the old parent headers. -/
-theorem installs_linear {roles m n d k : ℕ}
-    {root parent child : RecursiveInterchangeLayout.Descriptor}
-    (current : RecursiveInterchangeVolume.Path q roles m root n child)
-    (older : RecursiveInterchangeVolume.Path q roles m root d parent)
-    (hq : 2 ≤ q) (hr : 0 < roles) (hm : 2 ≤ m)
-    (hw : root.width = m^k) (hv : root.Positive)
-    (old new : Fin 6 → List Bool) (ho : RecursiveDimensionBank.Headers parent old)
-    (hn : RecursiveDimensionBank.Headers child new) (v : Tapes 38 q)
-    (hs : ∀ i : Fin 5, v.head (sourceSlots i) = 1 ∧
-      v.tape (sourceSlots i) = RadixZeroFill.encodedBinary (new i.succ))
-    (hd : ∀ i : Fin 5, v.head (destSlots i) = 1 ∧
-      v.tape (destSlots i) = RadixZeroFill.encodedBinary (old i.succ)) :
-    HoareTime (program q) (fun w => w = v) (fun w => w = output new v)
-      ((40*(Nat.log2 roles+2)+56)*RecursiveInterchangeLayout.volume q child) := by
-  have hcost := cost_le old new (2*(Nat.log2 roles+2)*RecursiveInterchangeLayout.volume q child)
-    (RecursiveHeaderBounds.saved_header_length_le current older hq hr hm hw hv old ho)
-    (RecursiveHeaderBounds.header_length_le current hq hr hm hw hv new hn)
-  have hp := current.original_chunks (by omega) hr hv
-  have hV : 0 < RecursiveInterchangeLayout.volume q child :=
-    lt_of_lt_of_le (pow_pos (by omega : 0 < q) _) hp
-  apply (installs old new v hs hd).consequence (fun _ h => h) (fun _ h => h)
-  nlinarith
 
 end
 end IntegerMultBounds.Machine.RecursiveChildHeaderInstall

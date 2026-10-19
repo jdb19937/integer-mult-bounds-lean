@@ -121,17 +121,6 @@ theorem child_rows_divisible (q roles b k : ℕ) (v : Descriptor) {m : ℕ} (i j
 private theorem pack_lt {a A b B : ℕ} (ha : a < A) (hb : b < B) : a*B+b < A*B := by
   nlinarith
 
-/-- The regrouped spectator addresses lie in exactly their declared ranges. -/
-theorem child_spectators_bounded (q roles b : ℕ) (v : Descriptor) {m : ℕ} (i j : Fin m)
-    (before hp hs middle dp ds after : ℕ)
-    (hb : before < v.beforeH) (hp' : hp < q^(i.val*b))
-    (hs' : hs < q^((m-1-i.val)*b)) (hc : middle < v.between)
-    (dp' : dp < q^(j.val*b)) (ds' : ds < q^((m-1-j.val)*b)) (he : after < v.afterD) :
-    before*q^(i.val*b)+hp < (child q roles b v i j).beforeH ∧
-    (hs*v.between+middle)*q^(j.val*b)+dp < (child q roles b v i j).between ∧
-    ds*v.afterD+after < (child q roles b v i j).afterD :=
-  ⟨pack_lt hb hp',pack_lt (pack_lt hs' hc) dp',pack_lt ds' he⟩
-
 /-- Original row coordinates are the cyclic-role index roles*g+w. This theorem
 only checks its range; splitting and merging these rows remain physical tasks. -/
 theorem cyclic_row_lt (roles : ℕ) (v : Descriptor) (g w : ℕ)

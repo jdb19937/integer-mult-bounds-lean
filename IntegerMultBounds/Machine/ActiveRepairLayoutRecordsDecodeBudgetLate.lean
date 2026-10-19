@@ -74,20 +74,5 @@ theorem runs_linear (D : ℕ) (hrows : 0<rows)
     nlinarith [Nat.mul_le_mul_left (rows*2^s.bits) hp]
   nlinarith
 
-include h he hw ha hf hr in
-theorem runs_dyadic (hrows : 0<rows) (hR : d.geom.addressBits+1≤s.payload)
-    (p : ℝ) (ell K : ℕ) (hq : d.q=K) (hb : d.b=4*ell+6) (hpos : 0<p)
-    (hn : (d.n:ℝ)≤p) (hell : p≤(2:ℝ)^ell) (hK : 8*ell+16≤K)
-    (hA : (d.geom.addressBits:ℝ)+1≤p^3) :
-    HoareTime (ActiveRepairLayoutRecordsDecodeLate.program d.side)
-      (fun v => v=ActiveRepairLayoutRecordsDecodeLate.input d inputRecords)
-      (fun v => v=ActiveRepairLayoutRecordsDecodeLate.output d inputRecords ∧
-        v.tape 189=putWord (fun _ => blank) 0
-          ((List.ofFn (ActiveRepairLayoutRecordsMove.move s (d.n*d.b) (d.n*d.q) before after rows hw ha TP array)).map bitSymbol))
-      ((ActiveRepairLateOriginalPipelineBudget.volumeConstant 1+10)*(rows*2^s.bits*s.payload)+13) := by
-  apply runs_linear d h s before after rows offset width rowBits he hw ha hf hr array 1 hrows hR
-  rw [hq,hb]
-  simpa only [Nat.cast_one] using ActiveRepairLayoutDensityArithmetic.dyadic_late_paid p d.n ell K d.geom.addressBits hpos hn hell hK hA
-
 end
 end IntegerMultBounds.Machine.ActiveRepairLayoutRecordsDecodeBudgetLate

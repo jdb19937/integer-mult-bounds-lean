@@ -45,13 +45,6 @@ theorem Quiet.update {σ : Fin 𝕋 → WTape} (h : Quiet σ) (j : Fin 𝕋) (T 
   have : i ≠ j := by rintro rfl; exact hj hi
   rw [Function.update_of_ne this]; exact h i hi
 
-theorem Quiet.update_emp {σ : Fin 𝕋 → WTape} (h : Quiet σ) (j : Fin 𝕋) :
-    Quiet (Function.update σ j emp) := by
-  intro i hi
-  by_cases e : i = j
-  · subst e; simp
-  · rw [Function.update_of_ne e]; exact h i hi
-
 /-! ### The inverse transform and the coefficient split -/
 
 /-- Depth registers for the inverse transform: `cS = ones k`, `k` ticks on `tL`, `cH = ones 1`, one tick on `tH`. -/

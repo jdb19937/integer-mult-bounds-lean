@@ -595,15 +595,6 @@ theorem mt_rsa_Xb {X sw T w cw p τl : ℝ} (hX : X = sw * (T * (3 * w)) * τl) 
   calc sw * (T * (3 * w)) * τl ≤ sw * (3 * cw * (T * p)) * τl := h2
     _ = 3 * sw * cw * (T * p * τl) := by ring
 
-theorem mt_rsa_dCRT {D T p τl Crt : ℝ} (hD : 1 ≤ D) (hcrt : Crt = T * p * D ^ 2 + T * p * D ^ 2 * τl)
-    (hTp : 0 ≤ T * p) (hτ : 0 ≤ τl) : D * (T * p * τl) ≤ Crt := by
-  have h1 : D ≤ D ^ 2 := by nlinarith
-  have h2 : 0 ≤ T * p * τl := mul_nonneg hTp hτ
-  have h3 : D * (T * p * τl) ≤ D ^ 2 * (T * p * τl) := mul_le_mul_of_nonneg_right h1 h2
-  have h4 : 0 ≤ T * p * D ^ 2 := mul_nonneg hTp (sq_nonneg D)
-  rw [hcrt]
-  nlinarith
-
 theorem mt_rsa_P4 {D Q Xc X sw cw Z Crt Res : ℝ} (hD : 0 ≤ D) (hQ : 0 ≤ Q) (hXc : Xc ≤ X + 1)
     (hX : X ≤ 3 * sw * cw * Z) (hc : 0 ≤ 6 * Q * sw * cw) (hZ : D * Z ≤ Crt) (hres : D ≤ Res) :
     D * (2 * (Q * (Xc + 1))) ≤ 6 * Q * sw * cw * Crt + 4 * Q * Res := by

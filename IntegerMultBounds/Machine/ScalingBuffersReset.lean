@@ -207,9 +207,4 @@ theorem reset_pieces_hoare_linear {c Q B : ℕ} (hc : 0 < c)
   rw [offset_last hc] at hw
   omega
 
-theorem states_eq (c : ℕ) : states c = 1+50*c := by
-  induction c with
-  | zero => rfl
-  | succ c ih => simp only [states,ih]; omega
-
 end IntegerMultBounds.Machine.ScalingBuffersReset

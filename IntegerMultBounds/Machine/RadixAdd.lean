@@ -71,15 +71,6 @@ theorem digits_value_mod (hq : 2 ≤ q) (c : Fin 2) (xs ys : List (Fin q))
   have hv := value_lt hq (digits hq c (xs.zip ys))
   simpa [hlen] using hv
 
-/-- The carry is the quotient of the exact sum by the fixed-width modulus. -/
-theorem overflow_value (hq : 2 ≤ q) (c : Fin 2) (xs ys : List (Fin q))
-    (hlen : xs.length = ys.length) :
-    (overflow hq c (xs.zip ys)).val = (value xs + value ys + c.val) / q ^ xs.length := by
-  have hv : value (digits hq c (xs.zip ys)) < q ^ xs.length := by
-    simpa [hlen] using value_lt hq (digits hq c (xs.zip ys))
-  rw [← digits_value hq c xs ys hlen,Nat.add_mul_div_left _ _ (by positivity),Nat.div_eq_of_lt hv]
-  simp
-
 /-- A finite transition table with digit arithmetic only on scanned symbols. -/
 def program (q : ℕ) (hq : 2 ≤ q) : Program 3 2 q where
   tapes_pos := by decide
@@ -180,34 +171,5 @@ theorem add_hoare (hq : 2 ≤ q) (xs ys : List (Fin q)) (hlen : xs.length = ys.l
   refine ⟨_,_,le_rfl,hr,hh,digits hq 0 (xs.zip ys),?_,?_,rfl⟩
   · simpa using digits_value_mod hq 0 xs ys hlen
   · simp [hlen]
-
-/-- Blank-output specialization bundles the numerical result, final carry,
-exact runtime, actual halt, and complete preservation of both source tapes. -/
-theorem add_to_blank (hq : 2 ≤ q) (xs ys : List (Fin q)) (hlen : xs.length = ys.length) :
-    let sum := digits hq 0 (xs.zip ys)
-    let carry := overflow hq 0 (xs.zip ys)
-    value sum = (value xs + value ys) % q ^ xs.length ∧
-    carry.val = (value xs + value ys) / q ^ xs.length ∧
-    sum.length = xs.length ∧
-    run (program q hq) xs.length
-      (cfg (wordTape (xs.map digitSymbol)) (wordTape (ys.map digitSymbol))
-        (fun _ => blank) 0 0 0 0) =
-      some (cfg (wordTape (xs.map digitSymbol)) (wordTape (ys.map digitSymbol))
-        (wordTape (sum.map digitSymbol)) xs.length ys.length xs.length carry) ∧
-    step (program q hq)
-      (cfg (wordTape (xs.map digitSymbol)) (wordTape (ys.map digitSymbol))
-        (wordTape (sum.map digitSymbol)) xs.length ys.length xs.length carry) = none := by
-  have hw (ds : List (Fin q)) : putWord (fun _ => (blank : Fin (q + 4))) 0 (ds.map digitSymbol) =
-      wordTape (ds.map digitSymbol) := by
-    funext j
-    simpa using putWord_blank 0 j (ds.map digitSymbol)
-  obtain ⟨hr,hh⟩ := add_exact hq 0 xs ys hlen (fun _ => (blank : Fin (q + 4)))
-    (fun _ => blank) (fun _ => blank) 0 0 0 rfl rfl
-  refine ⟨?_,?_,?_,?_,?_⟩
-  · simpa using digits_value_mod hq 0 xs ys hlen
-  · simpa using overflow_value hq 0 xs ys hlen
-  · simp [hlen]
-  · simpa only [hw,zero_add] using hr
-  · simpa only [hw,zero_add] using hh
 
 end IntegerMultBounds.Machine.RadixAdd

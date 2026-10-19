@@ -15,9 +15,6 @@ noncomputable section
 variable {N t a : ℕ} {states : Fin N → ℕ}
 
 abbrev Control (states : Fin N → ℕ) := Σ pc : Fin N, Fin (states pc)
-theorem control_card (states : Fin N → ℕ) : Fintype.card (Control states) = ∑ pc, states pc := by
-  simp [Control,Fintype.card_sigma]
-
 def encoding (states : Fin N → ℕ) := Fintype.equivFin (Control states)
 def embed (states : Fin N → ℕ) (pc : Fin N) (st : Fin (states pc)) := encoding states ⟨pc,st⟩
 
@@ -32,11 +29,6 @@ def program (family : ∀ pc, Program t (states pc) a) (next : Next states) (ent
     | ⟨pc,st⟩ => match (family pc).transition st sy with
       | some (st',act) => some (embed states pc st',act)
       | none => (next pc st).map (fun pc' => (embed states pc' (family pc').start,fun i => (sy i,Move.stay)))
-
-/-- Entry changes only the start state; all cyclic transitions are fixed. -/
-theorem transition_independent (family : ∀ pc, Program t (states pc) a) (next : Next states)
-    (entry entry' : Fin N) :
-    (program family next entry).transition = (program family next entry').transition := rfl
 
 private theorem transition_embed (family : ∀ pc, Program t (states pc) a) (next : Next states)
     (entry pc : Fin N) (st : Fin (states pc)) (sy : Fin t → Fin (a+4)) :

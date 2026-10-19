@@ -299,12 +299,6 @@ theorem rp_decBody_runs (h : RpLayout rg ι) {w : ℕ} {ρ : RpReg → List (Fin
 
 /-! ### Whole streams -/
 
-lemma rp_length_chunks (w : ℕ) (zs : List GaussianInt) :
-    (zs.flatMap (rpChunk w)).length = zs.length * (2 * w) := by
-  induction zs with
-  | nil => simp
-  | cons z zs ih => simp [List.flatMap_cons, ih]; ring
-
 /-- Encoding a whole operand stream from `src` onto `dst`: `|zs| (15 w + 12) + 6` steps. -/
 theorem rp_enc_runs (h : RpLayout rg ι) (hA : 4 ≤ A) {src dst : RpReg}
     (hs : src = .xs ∧ dst = .d1 ∨ src = .ys ∧ dst = .d2) {w : ℕ} (hw : 1 ≤ w)

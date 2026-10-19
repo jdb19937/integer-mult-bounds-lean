@@ -46,21 +46,6 @@ theorem cleans (d : Inputs s) (x : Array s d.rows) : HoareTime cleanup
     (fun v => v=markedBank d x) (fun v => v=bank d x) 1 :=
   ActivePrefixStageWidthPlaced.cleans (caller d x) focus focus_injective _ (sources d x)
 
-theorem packed_test (d : Inputs s) (x : Array s d.rows) :
-    ActivePrefixStageWidthPlaced.test focus (markedBank d x).reads=true ↔ 2≤d.stage.f := by
-  unfold markedBank marked
-  rw [ActivePrefixStageWidthPlaced.test_eq,RecursiveChildQuotientsConstant.bits_value]
-  simp
-  omega
-
-theorem singleton_test (d : Inputs s) (x : Array s d.rows) :
-    ActivePrefixStageWidthPlaced.test focus (markedBank d x).reads=false ↔ d.stage.f=1 := by
-  unfold markedBank marked
-  rw [ActivePrefixStageWidthPlaced.test_eq,RecursiveChildQuotientsConstant.bits_value]
-  have hp := d.stage.positiveWidth
-  simp
-  omega
-
 theorem overhead_bound (d : Inputs s) :
     ActivePrefixStageWidthSelector.cost (bits d.stage.f)+4≤43*(d.rows*s.recordWidth) :=
   ActivePrefixStageWidthSelector.stage_cost_bound d.stage d.rows d.hG d.hGK d.hr d.hrecord

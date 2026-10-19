@@ -376,9 +376,6 @@ def toStd (σ : Equiv.Perm (Fin 3)) : List (Fin 3 × Fin 3) :=
 theorem toStd_spec : ∀ σ : Equiv.Perm (Fin 3), σ * swapsPerm (toStd σ) = Equiv.swap 1 2 := by
   decide
 
-/-- At most two swaps. -/
-theorem toStd_length : ∀ σ : Equiv.Perm (Fin 3), (toStd σ).length ≤ 2 := by decide
-
 /-- The complete reversible program for physical order `σ`: reorder to `(x, z, y)`, run the core,
 and restore the order. -/
 def prog (σ : Equiv.Perm (Fin 3)) : List Instr :=
@@ -654,21 +651,6 @@ theorem seg_assemble (lo hi : ℤ) (d : ℕ → ℤ) (h : Fits K ρ n lo hi d) (
   rw [Int.ediv_ediv_of_nonneg (by positivity), ← pow_mul, ← pow_add] at h1
   unfold seg
   rw [← h1, Nat.mul_comm K i]
-
-/-- An assembled value with fitting parts is an `L`-bit value. -/
-theorem assemble_bounds (hρ : ρ ≤ K) (lo hi : ℤ) (d : ℕ → ℤ) (h : Fits K ρ n lo hi d) :
-    0 ≤ assemble K ρ n lo hi d ∧ assemble K ρ n lo hi d < 2 ^ ((n + 1) * K) := by
-  obtain ⟨hlo, hhi, hd⟩ := h
-  have hb := pack_bounds (2 ^ K) (by positivity) _ (bounded_range _ n d hd)
-  rw [List.length_map, List.length_range] at hb
-  have hρ' : (0 : ℤ) < 2 ^ ρ := by positivity
-  have hQ : (0 : ℤ) < (2 ^ K) ^ n := by positivity
-  have hm : 0 ≤ pack (2 ^ K) ((List.range n).map d) + (2 ^ K) ^ n * hi := by nlinarith
-  have hm' : pack (2 ^ K) ((List.range n).map d) + (2 ^ K) ^ n * hi <
-      (2 ^ K) ^ n * 2 ^ (K - ρ) := by nlinarith
-  rw [pow_split K ρ n hρ]
-  unfold assemble
-  constructor <;> nlinarith
 
 /-- Every nonnegative value is assembled from its own low part, segments and high part. -/
 theorem decompose (v : ℤ) :

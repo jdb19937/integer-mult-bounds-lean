@@ -47,11 +47,6 @@ def cleared : List (Fin t) → Tapes t a → Tapes t a
 def cost (ops : List (Fin t)) (xs : Fin t → List Bool) : ℕ :=
   (ops.map (fun i => 2*(xs i).length+5)).sum
 
-theorem states_eq (ops : List (Fin t)) : states ops = 4*ops.length+1 := by
-  induction ops with
-  | nil => rfl
-  | cons i ops ih => simp only [states,List.length_cons,ih]; omega
-
 theorem cleared_frame (ops : List (Fin t)) (v : Tapes t a) (i : Fin t) (hi : i ∉ ops) :
     (cleared ops v).head i = v.head i ∧ (cleared ops v).tape i = v.tape i := by
   induction ops generalizing v with

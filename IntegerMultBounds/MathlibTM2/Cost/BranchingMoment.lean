@@ -48,11 +48,6 @@ theorem layerMoment_lt_iff_logb (ds : ComplexFramedExecution.Directions) {lam : 
     exact ⟨fun _ => hlam, fun _ => hpow⟩
   · exact (Real.logb_lt_iff_lt_rpow hm h).symm
 
-theorem logb_lt_of_layerMoment (ds : ComplexFramedExecution.Directions) {lam : ℝ}
-    (hlam : 0 < lam) (hmom : layerMoment ds lam < 1) :
-    Real.logb (m : ℝ) ((factorCount (program ds) : ℝ) / NW) < lam :=
-  (layerMoment_lt_iff_logb ds hlam).1 hmom
-
 /-- The h=25 supplier: its layer moment at `λ` is below one, from `F/NW < m^σ` and `σ < λ`. -/
 theorem br_layerMoment_lt : layerMoment brDirs Parameters.lam < 1 := by
   have hlam : 0 < Parameters.lam := by norm_num [Parameters.lam]

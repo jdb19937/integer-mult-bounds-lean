@@ -88,18 +88,6 @@ theorem compactReservationChildLayout {d g K D payload ρ t k k' : ℕ}
   have hi : t+p.val*k+m*k'≤compactReservationActive d g K D := by nlinarith
   exact compactReservationLayout hK h hρ hk' hkd' hi
 
-/-- The selected physical bits include the original low offset with no reshuffle. -/
-theorem compactReservation_selected {d g K D payload ρ t k : ℕ}
-    (hK : 0<K) (h : CompactReservationFits d g K D)
-    (hρ : ρ<K) (hk : 0<k) (hkd : k≤d)
-    (hi : t+m*k ≤ compactReservationActive d g K D) (oS : ℕ) (i : Fin (m*k)) :
-    (compactOffsetEmbedding oS (compactRecursiveBits
-      (compactReservationLayout (payload:=payload) hK h hρ hk hkd hi)) i).val =
-      oS+K*backChunks d g K+K*t+ρ+K*i.val := by
-  rw [compactOffsetEmbedding_reserved_val]
-  change oS+(K*backChunks d g K+K*t)+ρ+K*i.val = _
-  omega
-
 private theorem compactReservation_digit_fit (a j : ℕ) :
     a % m^(j+1) + m*bits (synDg a (j+1)) j ≤ a := by
   have hh := Nat.mod_le a (m^(j+2))
@@ -130,31 +118,6 @@ theorem compactReservationDigitLayout {d g K D payload ρ j : ℕ}
   have hkd : bits (synDg (compactReservationActive d g K D) (j+1)) j ≤ d :=
     hmul.trans (hfit.trans (hactive.trans hD))
   exact compactReservationLayout hK h hρ hk hkd hi
-
-/-- The runtime piece offset agrees with the native interval after folding the original low bits. -/
-theorem compactReservation_piece_offset (d g K D a oS J j : ℕ) :
-    (synPc K a (compactReservationActive d g K D) (oS+K*backChunks d g K) J (j+1)).a₀ =
-      oS+(K*backChunks d g K+K*(compactReservationActive d g K D % m^(j+1))) := by
-  simp only [synPc]
-  omega
-
-/-- Existing record validity applies at the true reserved offsets and shared depth. -/
-theorem compactReservation_pcs_ok (ds : ComplexFramedExecution.Directions)
-    {d g K D a oS J n w : ℕ} (h : CompactReservationFits d g K D)
-    (hfit : oS+K*D≤n)
-    (hlevels : synJ (compactReservationActive d g K D) (compactReservationActive d g K D)-1≤J)
-    (hw : synE (gateCount (program ds)) (factorCount (program ds))
-      (compactReservationActive d g K D) (compactReservationActive d g K D)+compactReservationActive d g K D≤w) :
-    ∀ pc ∈ compactReservedPcs K a oS (backChunks d g K) (oS+K*backChunks d g K) J
-      (compactReservationActive d g K D), pc.Ok ds K n w (rowsAt (2^a) J) := by
-  have ha := compactReservation_axes h
-  apply compactReservedPcs_ok ds hlevels ?_ ?_ hw
-  · have hb : backChunks d g K≤D := by omega
-    have := Nat.mul_le_mul_left K hb
-    omega
-  · have hb : backChunks d g K+compactReservationActive d g K D≤D := by omega
-    have := Nat.mul_le_mul_left K hb
-    nlinarith
 
 /-- Before row padding, the shape and folded payload retain the exact original bit volume.
 This does not identify padded rows with the power-of-two metadata of `synPc`. -/

@@ -246,23 +246,6 @@ theorem stream_exact (records : List Record) (f g h : ℤ → Fin 4) (p q r : �
   refine ⟨stream_run records f g h p q r, halt _ _ _ _ _ _ ?_⟩
   rw [putWord_outside _ _ _ _ (Or.inr le_rfl), hend]
 
-/-- On initially blank outputs, the two complete output tapes are exactly the
-stable filtered streams, blank everywhere outside their encoded words. -/
-theorem stream_blank (records : List Record) :
-    run program (encode records).length
-      (cfg false (wordTape (encode records)) (fun _ => blank) (fun _ => blank) 0 0 0 0) =
-      some (cfg false (wordTape (encode records)) (wordTape (bucket false records))
-        (wordTape (bucket true records)) (encode records).length
-        (bucket false records).length (bucket true records).length 0) ∧
-    step program (cfg false (wordTape (encode records)) (wordTape (bucket false records))
-        (wordTape (bucket true records)) (encode records).length
-        (bucket false records).length (bucket true records).length 0) = none := by
-  have hw (xs : List (Fin 4)) : putWord (fun _ => blank) 0 xs = wordTape xs := by
-    funext j
-    simpa using putWord_blank 0 j xs
-  simpa only [hw, zero_add] using
-    stream_exact records (fun _ => blank) (fun _ => blank) (fun _ => blank) 0 0 0 rfl
-
 /-- A compositional contract retaining the complete input and both output tapes. -/
 theorem stream_hoare (records : List Record) (f g h : ℤ → Fin 4) (p q r : ℤ)
     (hend : f (p + (encode records).length) = blank) :

@@ -110,20 +110,5 @@ theorem early_bad_fraction {C S : Type*} [Fintype C] [Fintype S]
     unfold earlyDensity
     positivity
 
-theorem late_bad_fraction {C S : Type*} [Fintype C] [Fintype S]
-    (q b n : ℕ) (hbq : b+3≤q) (Z : C → List Bool) (hZ : ∀ x, (Z x).length=n) :
-    badFraction (fun a : Late q b Z S => ¬lateBad q b Z a)≤lateDensity q b n := by
-  classical
-  unfold badFraction
-  simp only [not_not]
-  rw [late_card q b n (by omega) Z hZ]
-  by_cases hpos : 0<(Nat.card C*lateSize q b n*Nat.card S : ℕ)
-  · apply (div_le_iff₀ (by exact_mod_cast hpos)).mpr
-    simpa only [Nat.cast_mul] using late_bad_count (S:=S) q b n hbq Z hZ
-  · have hz : Nat.card C*lateSize q b n*Nat.card S=0 := by omega
-    rw [hz,Nat.cast_zero,div_zero]
-    unfold lateDensity
-    positivity
-
 end
 end IntegerMultBounds.Machine.VaryingControlRepairDensity

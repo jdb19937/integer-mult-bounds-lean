@@ -127,19 +127,5 @@ theorem loop_hoare (r P S E : ℕ) (source : ℤ → Fin (a+4)) (ss op oe rs : L
   unfold loopCoefficient
   nlinarith
 
-/-- The terminal payload is precisely the complete block inverse. -/
-theorem loop_move_hoare (r P S E : ℕ) (source : ℤ → Fin (a+4)) (ss op oe rs : List Bool)
-    (x : Fin (P*q^r*(S*E)) → Fin (a+4)) (hq : 2 ≤ q) (hP : 0 < P) (hS : 0 < S) (hE : 0 < E)
-    (hs : Counter.value ss = S) (cs : GrowingCounterData.Canonical ss)
-    (hr : Counter.value rs = r) (cr : GrowingCounterData.Canonical rs) :
-    HoareTime (program (q := q) (a := a))
-      (fun v => v = CountedLoopReuseAlphabet.bank (firstBank P S E r source ss op oe x)
-        CountedLoopReuseAlphabet.empty (CountedLoopReuseAlphabet.binary rs) 1 1)
-      (fun v => v = CountedLoopReuseAlphabet.bank (finalBank P S E r source ss op oe (RadixDigitMoveBlockRows.move x))
-        CountedLoopReuseAlphabet.empty (CountedLoopReuseAlphabet.binary rs) 1 1)
-      (loopCoefficient q*(r+1)*(P*S*q^r*E)) := by
-  simpa only [RadixHighBlockSeparateSemantics.separate_eq_move] using
-    loop_hoare r P S E source ss op oe rs x hq hP hS hE hs cs hr cr
-
 end
 end IntegerMultBounds.Machine.RadixHighBlockSeparateLoop
