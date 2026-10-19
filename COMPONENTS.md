@@ -2166,7 +2166,6 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 
 
-- `Machine/CompactFramedScalarGrid.lean`: Actual framed grouped-prefix states and every partial listed alignment have exact retained labels, stored/decoded grid bounds and literal-prefix relationships to the full finite network. Recursive child-return dependency budgets and the original-root normalized decoding connection remain open.
 
 - `Machine/CompactComplexActualCallFrameEdge.lean`: The actual schema-chosen residual coordinates, in their original call order, factor the named original complex frame edge. Each coordinate retains its own positive or negative fourth-root weight and the edge orientation; the actual child inverse flag realizes that signed weight. The original all-column frame instruction equals the product over these same call kernels. Physical coordinate-tensor correspondence, basis alignment and complete recursive execution remain open.
 
@@ -2502,13 +2501,11 @@ Bit and complex networks.
   nested projection edge have precision bounded by the actual residual
   dimension times the column count, with the zero-or-unit premise explicit.
 
-- `Networks/GaussianCircuit.lean`: every actual rational motif coefficient
   is Gaussian-dyadic with at most one binary denominator place. Simultaneous
   grouped scalar updates preserve this arithmetic domain, increasing precision
   once per group by the maximum coefficient precision. These are exact
   arithmetic bounds; tape implementations and numerator-size bounds remain.
 
-- `Networks/GaussianPrecision.lean`: explicit integer numerator bounds for
   the actual binary kernels, all-column factors, and forward/reverse projection
   edges. One kernel increases the binary scale by one and multiplies the
   numerator bound by at most four; a list across columns gives the corresponding
@@ -3106,17 +3103,11 @@ Bit and complex networks.
 
 - `Networks/ComplexRecursiveCallSchema.lean`: The actual complex update trace determines occurrence-indexed child calls with original wire roles, ordered residual slots and coordinate-weighted inverse flags, preserving repeated equal edge sites. Each actual chosen residual basis weight combines with the original edge orientation to select the proved signed child transform. Its exact child count equals the proved rank sum and its integer stop predicate matches the manuscript; physical child-header updates, role/return stack and stop-test execution remain separate.
 
-- `Networks/GaussianBoundedArithmetic.lean`: Derives exact bounded Gaussian addition, multiplication, precision raising and finite-list sums, including inherited numerator growth.
 
-- `Networks/GaussianBoundedMotif.lean`: Derives bounded Gaussian coefficients for literal scalar motifs and every prefix, with exact numerator recurrence.
 
-- `Networks/CircuitCoefficients.lean`: Propagates concrete coefficient certificates through dirty cancellation, inverse and global embeddings without supplied arithmetic coefficients.
 
-- `Networks/GaussianFrameGrid.lean`: Actual complex25 label Walsh frames have bounded denominator and numerator growth from finite sums; Stage geometry pays retained frame places from active axes.
 
-- `Networks/GroupedCoefficients.lean`: Derives exact sparse grouped scalar coefficient certificates while retaining actual network roles and ordering.
 
-- `Networks/RationalScalarGrid.lean`: Transports actual rational scalar module rows pointwise into the Gaussian grid representation without changing retained wire roles.
 
 - `Networks/FramedControlSchedule.lean`: Role-preserving zipper attaches field programs to framed edges while retaining every scalar gate and original instruction order, with exact execution under edge realization.
 

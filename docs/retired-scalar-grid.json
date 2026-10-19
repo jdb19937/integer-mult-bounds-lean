@@ -1,0 +1,17 @@
+{
+  "baseline": "bd4e13cdff66ee9037a0c22076b703ec35fdb4f5",
+  "reason": "Retired the native compact framed scalar grid and the Gaussian/rational coefficient-grid network modules reachable only through it, after the unused import from MathlibTM2/Layer/NodeZ was removed.",
+  "total_files": 9,
+  "total_lines": 781,
+  "files": [
+    "IntegerMultBounds/Machine/CompactFramedScalarGrid.lean",
+    "IntegerMultBounds/Networks/CircuitCoefficients.lean",
+    "IntegerMultBounds/Networks/GaussianBoundedArithmetic.lean",
+    "IntegerMultBounds/Networks/GaussianBoundedMotif.lean",
+    "IntegerMultBounds/Networks/GaussianCircuit.lean",
+    "IntegerMultBounds/Networks/GaussianFrameGrid.lean",
+    "IntegerMultBounds/Networks/GaussianPrecision.lean",
+    "IntegerMultBounds/Networks/GroupedCoefficients.lean",
+    "IntegerMultBounds/Networks/RationalScalarGrid.lean"
+  ]
+}

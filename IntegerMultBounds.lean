@@ -203,8 +203,6 @@ public import IntegerMultBounds.Networks.MotifSupport
 public import IntegerMultBounds.Networks.MotifResiduals
 public import IntegerMultBounds.Networks.BinaryMotifResiduals
 public import IntegerMultBounds.Networks.GaussianDyadic
-public import IntegerMultBounds.Networks.GaussianCircuit
-public import IntegerMultBounds.Networks.GaussianPrecision
 public import IntegerMultBounds.Networks.LabeledMotif
 public import IntegerMultBounds.Networks.SignedProjection
 public import IntegerMultBounds.Networks.GlobalLabels
@@ -994,16 +992,9 @@ public import IntegerMultBounds.Schoenhage.IterCorrect
 public import IntegerMultBounds.Schoenhage.Layers
 public import IntegerMultBounds.Schoenhage.Recursive
 public import IntegerMultBounds.Schoenhage.InvLayers
-public import IntegerMultBounds.Networks.GaussianBoundedArithmetic
-public import IntegerMultBounds.Networks.GaussianBoundedMotif
-public import IntegerMultBounds.Networks.CircuitCoefficients
 public import IntegerMultBounds.Schoenhage.Split
 public import IntegerMultBounds.Schoenhage.Recomb
 public import IntegerMultBounds.Schoenhage.LevelTape
-public import IntegerMultBounds.Networks.GaussianFrameGrid
-public import IntegerMultBounds.Networks.GroupedCoefficients
-public import IntegerMultBounds.Networks.RationalScalarGrid
-public import IntegerMultBounds.Machine.CompactFramedScalarGrid
 public import IntegerMultBounds.Schoenhage.LevelUp
 public import IntegerMultBounds.Schoenhage.LevelDown
 public import IntegerMultBounds.Schoenhage.Batch
