@@ -3,7 +3,7 @@ module
 public import IntegerMultBounds.MathlibTM2.Node.KeyPass
 public import IntegerMultBounds.MathlibTM2.Host.Radix
 public import IntegerMultBounds.MathlibTM2.Node.Rect
-public import IntegerMultBounds.MathlibTM2.Host.IndexRoute
+public import IntegerMultBounds.MathlibTM2.Host.IndexCode
 import Mathlib.Tactic.Positivity.Finset
 import IntegerMultBounds.Compact.Repair
 
@@ -711,19 +711,321 @@ section RepairMachine
 
 variable {T Q A : ℕ} {U : Type} {P : Type} (body : P → Pr P T Q A U) {nf : ℕ}
 
+/-- The repair pass with the code program `cp` and the selector `sel`. -/
+def repairAtC (cp : Pr P T Q A U) (sel : ℕ → Fin 2)
+    (src gR bR g b ctrKB ctrB ctrK cnt tmp st : Fin T) (cf : Fin nf → Fin T)
+    (us : Fin 4 → Fin T) : Pr P T Q A U :=
+  .seq (routeIdxC cp sel src ![gR, bR] ctrKB tmp cf st)
+    (.seq (moveR gR g id)
+      (.seq (moveR bR b id)
+        (.seq (resetFields cf tmp)
+          (.seq (radixSort b ctrKB (us 0) (us 1) (us 2) (us 3) gR bR st ctrK)
+            (.seq (mergeIdxC cp sel ![g, b] gR ctrKB tmp cnt bR cf st)
+              (.seq (resetFields cf tmp) (stripPass gR src ctrB ctrK tmp st)))))))
+
+/-- The records of code `0` and of code `1` are all the records. -/
+lemma length_codeRecs_add {α : Type} (X : List (List α)) (code : ℕ → Fin 2) :
+    (codeRecs X code 0).length + (codeRecs X code 1).length = X.length := by
+  unfold codeRecs
+  simp only [List.length_map]
+  have h := List.length_eq_length_filter_add (l := List.range X.length)
+    (fun n => decide (code n = 0))
+  have e : ∀ x : Fin 2, (!decide (x = 0)) = decide (x = 1) := by decide
+  rw [List.length_range] at h
+  have h2 : (List.range X.length).filter (fun n => !decide (code n = 0)) =
+      (List.range X.length).filter (fun n => decide (code n = 1)) :=
+    List.filter_congr fun n _ => e (code n)
+  rw [h2] at h
+  omega
+
+section CodeProgram
+
+variable {body} {cp : Pr P T Q A U} {cf : Fin nf → Fin T} {len : Fin nf → ℕ} {st : Fin T}
+  {Y : Fin T → Prop} {Inv : (Fin T → List (Fin (A + 4))) → ℕ → Prop} {sel : ℕ → Fin 2}
+  {code : ℕ → Fin 2} {c : ℕ}
+
+/-- **The repair machine with a code program.** The register `src` holds the records `X`
+(each of `k + B` symbols, `B ≥ 1`), the index registers hold index `0`. If the records of code
+`0` of `X` and of `Y'` agree, and the records of code `1` of `X`, radix sorted on their first `k`
+symbols, are those of `Y'`, then `src` ends holding the records of `Y'` without their first `k`
+symbols; every other register ends as it started. -/
+theorem repairAtC_exec (cs : CodeSpec body cp cf len st Y Inv sel code c)
+    {src gR bR g b ctrKB ctrB ctrK cnt tmp : Fin T} {us : Fin 4 → Fin T}
+    (hY : ∀ x ∈ [src, gR, bR, g, b, ctrKB, cnt, tmp], ¬ Y x)
+    (hcfB : ∀ f, cf f ≠ ctrB) (hcfK : ∀ f, cf f ≠ ctrK)
+    (hregs : [src, gR, bR, g, b, ctrKB, ctrB, ctrK, cnt, tmp].Nodup)
+    (hus : ∀ r, us r ∉ [src, gR, bR, g, b, ctrKB, ctrB, ctrK, cnt, tmp])
+    (husi : Function.Injective us) (husf : ∀ r f, us r ≠ cf f)
+    {k B : ℕ} (hB : 1 ≤ B) (X Y' : List (List (Fin (A + 4))))
+    (hXY : X.length = Y'.length) (hX : ∀ r ∈ X, r.length = k + B)
+    (hY' : ∀ r ∈ Y', r.length = k + B)
+    (hgood : codeRecs X code 0 = codeRecs Y' code 0)
+    (hbad : RadixSort.sort (fun rec j => symBit (rec.getD j 0)) k (codeRecs X code 1) =
+      codeRecs Y' code 1)
+    (v : HS T Q A U) (S : Stacks T A) (hsrc : S.R src = X.flatten)
+    (hgR : S.R gR = []) (hbR : S.R bR = []) (hg : S.R g = []) (hb : S.R b = [])
+    (hctr : (S.R ctrKB).length = k + B) (hctrB : (S.R ctrB).length = B)
+    (hctrK : (S.R ctrK).length = k) (hcnt : (S.R cnt).length = X.length) (htmp : S.R tmp = [])
+    (hus0 : ∀ r, S.R (us r) = []) (hI : Inv S.R 0) :
+    ∃ (v' : HS T Q A U) (m : ℕ), v'.user = v.user ∧
+      m ≤ X.length * (2 * idxStepCost c (k + B) len + 6 * (k + B) + 15) +
+        k * ((codeRecs X code 1).length * (12 * k + 6 * B + 13)) +
+        10 * k + 8 * (∑ f, len f) + 8 * nf + 18 ∧
+      Exec body (repairAtC cp sel src gR bR g b ctrKB ctrB ctrK cnt tmp st cf us) (mk v S) m
+        (mk v' { S with R := (Function.update S.R src (Y'.map (·.drop k)).flatten) }) := by
+  have hregs' := hregs
+  simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
+    List.nodup_nil, and_true, not_false_eq_true] at hregs'
+  obtain ⟨⟨a1, a2, a3, a4, a5, a6, a7, a8, a9⟩, ⟨b1, b2, b3, b4, b5, b6, b7, b8⟩,
+    ⟨c1, c2, c3, c4, c5, c6, c7⟩, ⟨d1, d2, d3, d4, d5, d6⟩, ⟨e1, e2, e3, e4, e5⟩,
+    ⟨f1, f2, f3, f4⟩, ⟨g1, g2, g3⟩, ⟨h1, h2⟩, i1⟩ := hregs'
+  simp only [List.mem_cons, List.not_mem_nil, or_false, forall_eq_or_imp, forall_eq] at hY
+  obtain ⟨y1, y2, y3, y4, y5, y6, y9, y10⟩ := hY
+  have hus' : ∀ r, us r ≠ src ∧ us r ≠ gR ∧ us r ≠ bR ∧ us r ≠ g ∧ us r ≠ b ∧ us r ≠ ctrKB ∧
+      us r ≠ ctrB ∧ us r ≠ ctrK ∧ us r ≠ cnt ∧ us r ≠ tmp := fun r => by
+    have := hus r
+    simp only [List.mem_cons, List.not_mem_nil, or_false, not_or] at this
+    exact this
+  have hcfY : ∀ f x, ¬ Y x → cf f ≠ x := fun f x hx e => hx (e ▸ cs.cf_Y f)
+  have hcftmp : ∀ f, cf f ≠ tmp := fun f => hcfY f _ y10
+  set Xg := codeRecs X code 0 with hXg
+  set Xb := codeRecs X code 1 with hXb
+  have hXl : X.flatten.length = X.length * (k + B) := length_flatten_of_length X hX
+  have hYl : Y'.flatten.length = X.length * (k + B) := by
+    rw [hXY]; exact length_flatten_of_length Y' hY'
+  have hblkX : ∀ d, blocksIdx X.flatten (k + B) X.length code 0 d = (codeRecs X code d).flatten :=
+    fun d => blocksIdx_flatten X (k + B) hX code d
+  have hblkY : ∀ d, blocksIdx Y'.flatten (k + B) X.length code 0 d =
+      (codeRecs Y' code d).flatten := by
+    intro d; rw [hXY]; exact blocksIdx_flatten Y' (k + B) hY' code d
+  -- the registers that are never written
+  let Oth : Fin T → Prop := fun x =>
+    x ≠ src ∧ x ≠ gR ∧ x ≠ bR ∧ x ≠ g ∧ x ≠ b ∧ ∀ f, cf f ≠ x
+  -- stage 1: route
+  obtain ⟨v₁, R₁, m₁, hu₁, hm₁, he₁, hsrc₁, hdst₁, hI₁, hoth₁⟩ := routeIdxC_exec body cs src
+    ![gR, bR] ctrKB tmp y1 y6 y10 (fun d => by fin_cases d <;> simpa)
+    (by
+      simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
+        List.nodup_nil, and_true, not_false_eq_true]; exact ⟨⟨a5, a9⟩, f4⟩)
+    (by intro d; fin_cases d <;> simp [Ne.symm a1, b4, b8, Ne.symm a2, c3, c7])
+    (by intro i j hij; fin_cases i <;> fin_cases j <;> simp_all [Ne.symm b1])
+    (l := X.flatten) (nb := X.length) (B := k + B) (i₀ := 0) (by omega) hXl hctr v S hsrc rfl
+    htmp hI
+  have hR₁ : ∀ x, Oth x → R₁ x = S.R x := fun x hx =>
+    hoth₁ x hx.1 (fun d => by fin_cases d <;> simp [Ne.symm hx.2.1, Ne.symm hx.2.2.1]) hx.2.2.2.2.2
+  have hR₁gR : R₁ gR = Xg.flatten.reverse := by
+    have := hdst₁ 0; simp only [Matrix.cons_val_zero] at this; rw [this, hgR, hblkX]; simp [Xg]
+  have hR₁bR : R₁ bR = Xb.flatten.reverse := by
+    have := hdst₁ 1; simp only [Matrix.cons_val_one, Matrix.cons_val_zero] at this
+    rw [this, hbR, hblkX]; simp [Xb]
+  have hR₁g : R₁ g = [] := by
+    rw [hoth₁ g (Ne.symm a3) (fun d => by fin_cases d <;> simp [b2, c1]) (fun f => hcfY f _ y4),
+      hg]
+  have hR₁b : R₁ b = [] := by
+    rw [hoth₁ b (Ne.symm a4) (fun d => by fin_cases d <;> simp [b3, c2]) (fun f => hcfY f _ y5),
+      hb]
+  -- stages 2, 3: restore forward order
+  obtain ⟨v₂, hu₂, he₂⟩ := moveR_exec body gR g b2 id v₁ { S with R := R₁ }
+  set R₂ := movedR R₁ gR g id (R₁ gR) with hR₂
+  have hR₂f : ∀ x, x ≠ gR → x ≠ g → R₂ x = R₁ x := fun x h1 h2 => by
+    simp [hR₂, movedR, h1, h2]
+  have hR₂g : R₂ g = Xg.flatten := by simp [hR₂, movedR, hR₁gR, hR₁g]
+  have hR₂gR : R₂ gR = [] := by simp [hR₂, movedR, b2]
+  obtain ⟨v₃, hu₃, he₃⟩ := moveR_exec body bR b c2 id v₂ { S with R := R₂ }
+  set R₃ := movedR R₂ bR b id (R₂ bR) with hR₃
+  have hR₃f : ∀ x, x ≠ bR → x ≠ b → R₃ x = R₂ x := fun x h1 h2 => by
+    simp [hR₃, movedR, h1, h2]
+  have hR₂bR : R₂ bR = Xb.flatten.reverse := by rw [hR₂f _ (Ne.symm b1) c1, hR₁bR]
+  have hR₂b : R₂ b = [] := by rw [hR₂f _ (Ne.symm b3) (Ne.symm d1), hR₁b]
+  have hR₃b : R₃ b = Xb.flatten := by simp [hR₃, movedR, hR₂bR, hR₂b]
+  have hR₃bR : R₃ bR = [] := by simp [hR₃, movedR, c2]
+  have hY₃ : ∀ x, Y x → R₃ x = R₁ x := fun x hx => by
+    rw [hR₃f x (fun e => y3 (e ▸ hx)) (fun e => y5 (e ▸ hx)),
+      hR₂f x (fun e => y2 (e ▸ hx)) (fun e => y4 (e ▸ hx))]
+  have hI₃ : Inv R₃ (0 + X.length) := cs.frame R₁ R₃ _ hI₁ hY₃
+  -- stage 4: reset
+  obtain ⟨v₄, R₄, hu₄, he₄, hcf₄, hoth₄⟩ := resetFields_exec body cf cs.cf_inj tmp hcftmp len v₃
+    { S with R := R₃ }
+    (by
+      show R₃ tmp = []
+      rw [hR₃f _ (Ne.symm c7) (Ne.symm e5), hR₂f _ (Ne.symm b8) (Ne.symm d6),
+        hR₁ _ ⟨Ne.symm a9, Ne.symm b8, Ne.symm c7, Ne.symm d6, Ne.symm e5, hcftmp⟩, htmp])
+    (fun f => by
+      show (R₃ (cf f)).length = _
+      rw [cs.digits R₃ _ hI₃ f]; simp)
+  have hR₄f : ∀ x, (∀ f, x ≠ cf f) → R₄ x = R₃ x := hoth₄
+  have hdig0 : ∀ f, digit len f 0 = 0 := fun f => by simp [digit]
+  have hI₄ : Inv R₄ 0 := cs.reidx R₃ R₄ _ 0 hI₃ (fun f => by rw [hcf₄ f, hdig0]) hR₄f
+  -- the registers outside the stream registers
+  have hO₄ : ∀ x, Oth x → R₄ x = S.R x := fun x hx => by
+    rw [hR₄f x (fun f e => hx.2.2.2.2.2 f e.symm), hR₃f x hx.2.2.1 hx.2.2.2.2.1,
+      hR₂f x hx.2.1 hx.2.2.2.1, hR₁ x hx]
+  have hOus : ∀ r, Oth (us r) := fun r =>
+    ⟨(hus' r).1, (hus' r).2.1, (hus' r).2.2.1, (hus' r).2.2.2.1, (hus' r).2.2.2.2.1,
+      fun f e => husf r f e.symm⟩
+  have hOctr : Oth ctrKB := ⟨Ne.symm a5, Ne.symm b4, Ne.symm c3, Ne.symm d2, Ne.symm e1,
+    fun f => hcfY f _ y6⟩
+  have hOctrB : Oth ctrB := ⟨Ne.symm a6, Ne.symm b5, Ne.symm c4, Ne.symm d3, Ne.symm e2,
+    hcfB⟩
+  have hOctrK : Oth ctrK := ⟨Ne.symm a7, Ne.symm b6, Ne.symm c5, Ne.symm d4, Ne.symm e3,
+    hcfK⟩
+  have hOcnt : Oth cnt := ⟨Ne.symm a8, Ne.symm b7, Ne.symm c6, Ne.symm d5, Ne.symm e4,
+    fun f => hcfY f _ y9⟩
+  have hOtmp : Oth tmp := ⟨Ne.symm a9, Ne.symm b8, Ne.symm c7, Ne.symm d6, Ne.symm e5, hcftmp⟩
+  have hR₄gR : R₄ gR = [] := by
+    rw [hR₄f _ (fun f e => hcfY f _ y2 e.symm), hR₃f _ b1 b3, hR₂gR]
+  have hR₄g : R₄ g = Xg.flatten := by
+    rw [hR₄f _ (fun f e => hcfY f _ y4 e.symm), hR₃f _ (Ne.symm c1) d1, hR₂g]
+  have hR₄b : R₄ b = Xb.flatten := by rw [hR₄f _ (fun f e => hcfY f _ y5 e.symm), hR₃b]
+  have hR₄bR : R₄ bR = [] := by rw [hR₄f _ (fun f e => hcfY f _ y3 e.symm), hR₃bR]
+  -- stage 5: radix sort
+  have hu01 : us 0 ≠ us 1 := husi.ne (by decide)
+  have hu02 : us 0 ≠ us 2 := husi.ne (by decide)
+  have hu03 : us 0 ≠ us 3 := husi.ne (by decide)
+  have hu12 : us 1 ≠ us 2 := husi.ne (by decide)
+  have hu13 : us 1 ≠ us 3 := husi.ne (by decide)
+  have hu23 : us 2 ≠ us 3 := husi.ne (by decide)
+  obtain ⟨v₅, m₅, hu₅, hm₅, he₅⟩ := radixSort_exec body b ctrKB (us 0) (us 1) (us 2) (us 3) gR bR
+    st ctrK
+    (by
+      simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
+        List.nodup_nil, and_true, not_false_eq_true]
+      exact ⟨⟨e1, fun e => (hus' 0).2.2.2.2.1 e.symm, fun e => (hus' 1).2.2.2.2.1 e.symm,
+        fun e => (hus' 2).2.2.2.2.1 e.symm, fun e => (hus' 3).2.2.2.2.1 e.symm, Ne.symm b3,
+        Ne.symm c2, e3⟩, ⟨fun e => (hus' 0).2.2.2.2.2.1 e.symm,
+        fun e => (hus' 1).2.2.2.2.2.1 e.symm, fun e => (hus' 2).2.2.2.2.2.1 e.symm,
+        fun e => (hus' 3).2.2.2.2.2.1 e.symm, Ne.symm b4, Ne.symm c3, f2⟩,
+        ⟨hu01, hu02, hu03, (hus' 0).2.1, (hus' 0).2.2.1, (hus' 0).2.2.2.2.2.2.2.1⟩,
+        ⟨hu12, hu13, (hus' 1).2.1, (hus' 1).2.2.1, (hus' 1).2.2.2.2.2.2.2.1⟩,
+        ⟨hu23, (hus' 2).2.1, (hus' 2).2.2.1, (hus' 2).2.2.2.2.2.2.2.1⟩,
+        ⟨(hus' 3).2.1, (hus' 3).2.2.1, (hus' 3).2.2.2.2.2.2.2.1⟩, ⟨b1, b6⟩, c5⟩)
+    (recs := Xb) (B := k + B) (K := k) (K' := k) (by omega) le_rfl
+    (fun r hr => hX r (mem_codeRecs hr)) v₄ { S with R := R₄ } hR₄b
+    (by show (R₄ ctrK).length = k; rw [hO₄ _ hOctrK, hctrK])
+    (by show (R₄ ctrKB).length = k + B; rw [hO₄ _ hOctr, hctr])
+    (by show R₄ (us 0) = []; rw [hO₄ _ (hOus 0), hus0 0])
+    (by show R₄ (us 1) = []; rw [hO₄ _ (hOus 1), hus0 1])
+    (by show R₄ (us 2) = []; rw [hO₄ _ (hOus 2), hus0 2])
+    (by show R₄ (us 3) = []; rw [hO₄ _ (hOus 3), hus0 3])
+    hR₄gR hR₄bR
+  rw [hbad] at he₅
+  set R₅ := Function.update R₄ b (codeRecs Y' code 1).flatten with hR₅
+  have hR₅f : ∀ x, x ≠ b → R₅ x = R₄ x := fun x hx => Function.update_of_ne hx _ _
+  have hI₅ : Inv R₅ 0 := cs.frame R₄ R₅ 0 hI₄ (fun x hx => hR₅f x (fun e => y5 (e ▸ hx)))
+  -- stage 6: merge
+  have hrt := mergeIdxList_blocksIdx (k + B) code X.length 0 Y'.flatten (fun _ => []) hYl
+  obtain ⟨v₆, R₆, m₆, hu₆, hm₆, he₆, hgR₆, hsrcs₆, hI₆, hoth₆⟩ := mergeIdxC_exec body cs ![g, b]
+    gR ctrKB tmp cnt bR (fun d => by fin_cases d <;> simpa) y2 y6 y10 y9 y3
+    (by
+      simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
+        List.nodup_nil, and_true, not_false_eq_true]
+      exact ⟨⟨b4, b8, b7, b1⟩, ⟨f4, f3, Ne.symm c3⟩, ⟨Ne.symm i1, Ne.symm c7⟩, Ne.symm c6⟩)
+    (by
+      intro d
+      fin_cases d
+      · simp [Ne.symm b2, d2, d6, d5, Ne.symm c1]
+      · simp [Ne.symm b3, e1, e5, e4, Ne.symm c2])
+    (by intro i j hij; fin_cases i <;> fin_cases j <;> simp_all [Ne.symm d1])
+    (cc := S.R ctrKB) (kk := S.R cnt) (nb := X.length) (B := k + B) (i₀ := 0) hctr hcnt
+    (fun d => blocksIdx Y'.flatten (k + B) X.length code 0 d ++ [])
+    (fun d => by rw [List.length_append, length_blocksIdx _ _ _ _ _ _ hYl]; omega)
+    v₅ { S with R := R₅ }
+    (by
+      intro d
+      fin_cases d
+      · show R₅ g = blocksIdx Y'.flatten (k + B) X.length code 0 0 ++ []
+        rw [hR₅f _ d1, hR₄g, hblkY 0, List.append_nil, ← hgood]
+      · show R₅ b = blocksIdx Y'.flatten (k + B) X.length code 0 1 ++ []
+        rw [hR₅, Function.update_self, hblkY 1, List.append_nil])
+    (by show R₅ ctrKB = _; rw [hR₅f _ (Ne.symm e1), hO₄ _ hOctr])
+    (by show R₅ tmp = _; rw [hR₅f _ (Ne.symm e5), hO₄ _ hOtmp, htmp])
+    (by show R₅ cnt = _; rw [hR₅f _ (Ne.symm e4), hO₄ _ hOcnt])
+    (by show R₅ bR = _; rw [hR₅f _ c2, hR₄bR])
+    hI₅
+  rw [hrt] at hgR₆ hsrcs₆
+  have hR₆f : ∀ x, x ≠ gR → x ≠ g → x ≠ b → (∀ f, cf f ≠ x) → R₆ x = R₅ x :=
+    fun x h1 h2 h3 h4 => hoth₆ x h1 (fun d => by fin_cases d <;> simp [Ne.symm h2, Ne.symm h3]) h4
+  have hR₆gR : R₆ gR = Y'.flatten.reverse := by
+    rw [hgR₆]
+    show Y'.flatten.reverse ++ R₅ gR = _
+    rw [hR₅f _ b3, hR₄gR, List.append_nil]
+  -- stage 7: reset
+  obtain ⟨v₇, R₇, hu₇, he₇, hcf₇, hoth₇⟩ := resetFields_exec body cf cs.cf_inj tmp hcftmp len v₆
+    { S with R := R₆ }
+    (by
+      show R₆ tmp = []
+      rw [hR₆f _ (Ne.symm b8) (Ne.symm d6) (Ne.symm e5) (fun f => hcftmp f), hR₅f _ (Ne.symm e5),
+        hO₄ _ hOtmp, htmp])
+    (fun f => by show (R₆ (cf f)).length = _; rw [cs.digits R₆ _ hI₆ f]; simp)
+  have hR₇f : ∀ x, (∀ f, x ≠ cf f) → R₇ x = R₆ x := hoth₇
+  have hO₇ : ∀ x, Oth x → R₇ x = S.R x := fun x hx => by
+    rw [hR₇f x (fun f e => hx.2.2.2.2.2 f e.symm),
+      hR₆f x hx.2.1 hx.2.2.2.1 hx.2.2.2.2.1 hx.2.2.2.2.2, hR₅f x hx.2.2.2.2.1, hO₄ x hx]
+  have hR₇gR : R₇ gR = Y'.flatten.reverse := by
+    rw [hR₇f _ (fun f e => hcfY f _ y2 e.symm), hR₆gR]
+  have hR₇src : R₇ src = [] := by
+    rw [hR₇f _ (fun f e => hcfY f _ y1 e.symm), hR₆f _ a1 a3 a4 (fun f => hcfY f _ y1),
+      hR₅f _ a4, hR₄f _ (fun f e => hcfY f _ y1 e.symm), hR₃f _ a2 a4, hR₂f _ a1 a3, hsrc₁]
+  -- stage 8: strip
+  obtain ⟨v₈, hu₈, he₈⟩ := stripPass_exec body gR src ctrB ctrK tmp st
+    (by
+      simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
+        List.nodup_nil, and_true, not_false_eq_true]
+      exact ⟨⟨Ne.symm a1, b5, b6, b8⟩, ⟨a6, a7, a9⟩, ⟨g1, g3⟩, h2⟩)
+    hB Y' hY' v₇ { S with R := R₇ } hR₇gR
+    (by show (R₇ ctrB).length = B; rw [hO₇ _ hOctrB, hctrB])
+    (by show (R₇ ctrK).length = k; rw [hO₇ _ hOctrK, hctrK])
+    (by show R₇ tmp = []; rw [hO₇ _ hOtmp, htmp])
+  refine ⟨v₈, _, by rw [hu₈, hu₇, hu₆, hu₅, hu₄, hu₃, hu₂, hu₁], ?_,
+    Exec.cast (Exec.seq he₁ (Exec.seq he₂ (Exec.seq he₃ (Exec.seq he₄ (Exec.seq he₅ (Exec.seq he₆
+      (Exec.seq he₇ he₈))))))) rfl ?_⟩
+  · simp only [hR₁gR, hR₂bR, List.length_reverse]
+    rw [length_codeRecs_flatten X _ hX, length_codeRecs_flatten X _ hX, ← hXY]
+    have hg' := Nat.mul_le_mul_right (k + B) (length_codeRecs X code 0)
+    have hb' := Nat.mul_le_mul_right (k + B) (length_codeRecs X code 1)
+    have hsum := congrArg (· * (k + B)) (length_codeRecs_add X code)
+    simp only [Nat.add_mul] at hsum
+    nlinarith [hm₅, hm₁, hm₆]
+  · congr 2
+    funext x
+    show Function.update (Function.update R₇ gR []) src
+      ((Y'.map (·.drop k)).flatten ++ R₇ src) x = _
+    rw [hR₇src, List.append_nil]
+    by_cases hx : x = src
+    · subst hx; simp
+    rw [Function.update_of_ne hx, Function.update_of_ne hx]
+    by_cases hxg : x = gR
+    · subst hxg; rw [Function.update_self, hgR]
+    rw [Function.update_of_ne hxg]
+    by_cases hxf : ∃ f, x = cf f
+    · obtain ⟨f, rfl⟩ := hxf
+      rw [hcf₇ f, cs.digits S.R 0 hI f, hdig0]
+    simp only [not_exists] at hxf
+    rw [hR₇f x hxf]
+    by_cases hxg' : x = g
+    · subst hxg'
+      have := hsrcs₆ 0
+      simp only [Matrix.cons_val_zero] at this
+      rw [this, hg]
+    by_cases hxb : x = b
+    · subst hxb
+      have := hsrcs₆ 1
+      simp only [Matrix.cons_val_one, Matrix.cons_val_zero] at this
+      rw [this, hb]
+    rw [hR₆f x hxg hxg' hxb (fun f e => hxf f e.symm), hR₅f x hxb]
+    by_cases hxbR : x = bR
+    · subst hxbR; rw [hR₄bR, hbR]
+    exact hO₄ x ⟨hx, hxg, hxbR, hxg', hxb, fun f e => hxf f e.symm⟩
+
+end CodeProgram
+
 /-- The repair pass on generic code registers: route by the code `C` into `gR` (code `0`) and
 `bR` (code `1`); restore forward order into `g` and `b`; reset the counter; radix sort `b` on
 `|ctrK|` key bits (temporaries `us`, buckets `gR`, `bR`); merge `g` and `b` by the same code into
 `gR`; reset the counter; strip `|ctrK|` key symbols from every record, back into `src`. -/
 def repairAt (src gR bR g b ctrKB ctrB ctrK cnt tmp st : Fin T) (cf : Fin nf → Fin T)
     (rs us : Fin 4 → Fin T) (C : CAuto A 4 2) : Pr P T Q A U :=
-  .seq (routeIdx src ![gR, bR] ctrKB tmp cf rs us st C)
-    (.seq (moveR gR g id)
-      (.seq (moveR bR b id)
-        (.seq (resetFields cf tmp)
-          (.seq (radixSort b ctrKB (us 0) (us 1) (us 2) (us 3) gR bR st ctrK)
-            (.seq (mergeIdx ![g, b] gR ctrKB tmp cnt bR cf rs us st C)
-              (.seq (resetFields cf tmp) (stripPass gR src ctrB ctrK tmp st)))))))
+  repairAtC (codePass rs us st C) (codeSel C) src gR bR g b ctrKB ctrB ctrK cnt tmp st cf us
 
 /-- Register facts of the repair machine. -/
 structure RepairLayout (src gR bR g b ctrKB ctrB ctrK cnt tmp st : Fin T) (cf : Fin nf → Fin T)
@@ -759,256 +1061,31 @@ theorem repairAt_exec {src gR bR g b ctrKB ctrB ctrK cnt tmp st : Fin T} {cf : F
         10 * k + 8 * (∑ f, len f) + 8 * nf + 18 ∧
       Exec body (repairAt src gR bR g b ctrKB ctrB ctrK cnt tmp st cf rs us C) (mk v S) m
         (mk v' { S with R := (Function.update S.R src (Y.map (·.drop k)).flatten) }) := by
-  -- register facts
-  have hregs := h.regs
-  simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
-    List.nodup_nil, and_true, not_false_eq_true] at hregs
-  obtain ⟨⟨a1, a2, a3, a4, a5, a6, a7, a8, a9⟩, ⟨b1, b2, b3, b4, b5, b6, b7, b8⟩,
-    ⟨c1, c2, c3, c4, c5, c6, c7⟩, ⟨d1, d2, d3, d4, d5, d6⟩, ⟨e1, e2, e3, e4, e5⟩,
-    ⟨f1, f2, f3, f4⟩, ⟨g1, g2, g3⟩, ⟨h1, h2⟩, i1⟩ := hregs
-  have hcf : ∀ f, cf f ≠ src ∧ cf f ≠ gR ∧ cf f ≠ bR ∧ cf f ≠ g ∧ cf f ≠ b ∧ cf f ≠ ctrKB ∧
-      cf f ≠ ctrB ∧ cf f ≠ ctrK ∧ cf f ≠ cnt ∧ cf f ≠ tmp := fun f => by
-    have := h.cf_regs f
-    simp only [List.mem_cons, List.not_mem_nil, or_false, not_or] at this
-    exact this
-  have hus : ∀ r, us r ≠ src ∧ us r ≠ gR ∧ us r ≠ bR ∧ us r ≠ g ∧ us r ≠ b ∧ us r ≠ ctrKB ∧
-      us r ≠ ctrB ∧ us r ≠ ctrK ∧ us r ≠ cnt ∧ us r ≠ tmp := fun r => by
-    have := h.us_regs r
-    simp only [List.mem_cons, List.not_mem_nil, or_false, not_or] at this
-    exact this
-  have hcfinj : Function.Injective cf := h.route.cf_inj
-  have hcftmp : ∀ f, cf f ≠ tmp := fun f => (hcf f).2.2.2.2.2.2.2.2.2
-  set code := idxCode C L len rsrc with hcode
-  set Xg := codeRecs X code 0 with hXg
-  set Xb := codeRecs X code 1 with hXb
-  have hXl : X.flatten.length = X.length * (k + B) := length_flatten_of_length X hX
-  have hYl : Y.flatten.length = X.length * (k + B) := by
-    rw [hXY]; exact length_flatten_of_length Y hY
-  have hblkX : ∀ d, blocksIdx X.flatten (k + B) X.length code 0 d =
-      (codeRecs X code d).flatten := fun d => blocksIdx_flatten X (k + B) hX code d
-  have hblkY : ∀ d, blocksIdx Y.flatten (k + B) X.length code 0 d =
-      (codeRecs Y code d).flatten := by
-    intro d; rw [hXY]; exact blocksIdx_flatten Y (k + B) hY code d
-  -- the registers that are never written
-  let Oth : Fin T → Prop := fun x =>
-    x ≠ src ∧ x ≠ gR ∧ x ≠ bR ∧ x ≠ g ∧ x ≠ b ∧ ∀ f, cf f ≠ x
-  -- stage 1: route
-  obtain ⟨v₁, R₁, hu₁, he₁, hsrc₁, hdst₁, hcf₁, hoth₁⟩ := routeIdx_exec body src ![gR, bR] ctrKB
-    tmp cf len L rs us rsrc st C h.route
-    (by simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
-      List.nodup_nil, and_true, not_false_eq_true]; exact ⟨⟨a5, a9⟩, f4⟩)
-    (by intro d; fin_cases d <;> simp [Ne.symm a1, b4, b8, Ne.symm a2, c3, c7])
-    (by intro i j hij; fin_cases i <;> fin_cases j <;> simp_all [Ne.symm b1])
-    (l := X.flatten) (c := S.R ctrKB) (nb := X.length) (B := k + B) (i₀ := 0) (by omega) hXl
-    hctr v S
-    hsrc rfl htmp hI
-  have hR₁ : ∀ x, Oth x → R₁ x = S.R x := fun x hx =>
-    hoth₁ x hx.1 (fun d => by fin_cases d <;> simp [Ne.symm hx.2.1, Ne.symm hx.2.2.1]) hx.2.2.2.2.2
-  have hR₁gR : R₁ gR = Xg.flatten.reverse := by
-    have := hdst₁ 0; simp only [Matrix.cons_val_zero] at this; rw [this, hgR, hblkX]; simp [Xg]
-  have hR₁bR : R₁ bR = Xb.flatten.reverse := by
-    have := hdst₁ 1; simp only [Matrix.cons_val_one, Matrix.cons_val_zero] at this
-    rw [this, hbR, hblkX]; simp [Xb]
-  have hR₁g : R₁ g = [] := by
-    rw [hoth₁ g (Ne.symm a3) (fun d => by fin_cases d <;> simp [b2, c1]) (fun f => (hcf f).2.2.2.1),
-      hg]
-  have hR₁b : R₁ b = [] := by
-    rw [hoth₁ b (Ne.symm a4) (fun d => by fin_cases d <;> simp [b3,
-        c2]) (fun f => (hcf f).2.2.2.2.1),
-      hb]
-  -- stage 2, 3: restore forward order
-  obtain ⟨v₂, hu₂, he₂⟩ := moveR_exec body gR g b2 id v₁ { S with R := R₁ }
-  set R₂ := movedR R₁ gR g id (R₁ gR) with hR₂
-  have hR₂f : ∀ x, x ≠ gR → x ≠ g → R₂ x = R₁ x := fun x h1 h2 => by
-    simp [hR₂, movedR, h1, h2]
-  have hR₂g : R₂ g = Xg.flatten := by simp [hR₂, movedR, hR₁gR, hR₁g]
-  have hR₂gR : R₂ gR = [] := by simp [hR₂, movedR, b2]
-  obtain ⟨v₃, hu₃, he₃⟩ := moveR_exec body bR b c2 id v₂ { S with R := R₂ }
-  set R₃ := movedR R₂ bR b id (R₂ bR) with hR₃
-  have hR₃f : ∀ x, x ≠ bR → x ≠ b → R₃ x = R₂ x := fun x h1 h2 => by
-    simp [hR₃, movedR, h1, h2]
-  have hR₂bR : R₂ bR = Xb.flatten.reverse := by rw [hR₂f _ (Ne.symm b1) c1, hR₁bR]
-  have hR₂b : R₂ b = [] := by rw [hR₂f _ (Ne.symm b3) (Ne.symm d1), hR₁b]
-  have hR₃b : R₃ b = Xb.flatten := by simp [hR₃, movedR, hR₂bR, hR₂b]
-  have hR₃bR : R₃ bR = [] := by simp [hR₃, movedR, c2]
-  -- stage 4: reset
-  obtain ⟨v₄, R₄, hu₄, he₄, hcf₄, hoth₄⟩ := resetFields_exec body cf hcfinj tmp hcftmp len v₃
-    { S with R := R₃ }
-    (by
-      show R₃ tmp = []
-      rw [hR₃f _ (Ne.symm c7) (Ne.symm e5), hR₂f _ (Ne.symm b8) (Ne.symm d6),
-        hR₁ _ ⟨Ne.symm a9, Ne.symm b8, Ne.symm c7, Ne.symm d6, Ne.symm e5, hcftmp⟩, htmp])
-    (fun f => by
-      show (R₃ (cf f)).length = _
-      rw [hR₃f _ (hcf f).2.2.1 (hcf f).2.2.2.2.1, hR₂f _ (hcf f).2.1 (hcf f).2.2.2.1, hcf₁ f]
-      simp)
-  have hR₄f : ∀ x, (∀ f, x ≠ cf f) → R₄ x = R₃ x := hoth₄
-  -- the registers outside the stream registers
-  have hO₄ : ∀ x, Oth x → R₄ x = S.R x := fun x hx => by
-    rw [hR₄f x (fun f e => hx.2.2.2.2.2 f e.symm), hR₃f x hx.2.2.1 hx.2.2.2.2.1,
-      hR₂f x hx.2.1 hx.2.2.2.1, hR₁ x hx]
-  have hOus : ∀ r, Oth (us r) := fun r =>
-    ⟨(hus r).1, (hus r).2.1, (hus r).2.2.1, (hus r).2.2.2.1, (hus r).2.2.2.2.1,
-      fun f e => h.route.tmps_cf r f e.symm⟩
-  have hOctr : Oth ctrKB := ⟨Ne.symm a5, Ne.symm b4, Ne.symm c3, Ne.symm d2, Ne.symm e1,
-    fun f => (hcf f).2.2.2.2.2.1⟩
-  have hOctrB : Oth ctrB := ⟨Ne.symm a6, Ne.symm b5, Ne.symm c4, Ne.symm d3, Ne.symm e2,
-    fun f => (hcf f).2.2.2.2.2.2.1⟩
-  have hOctrK : Oth ctrK := ⟨Ne.symm a7, Ne.symm b6, Ne.symm c5, Ne.symm d4, Ne.symm e3,
-    fun f => (hcf f).2.2.2.2.2.2.2.1⟩
-  have hOcnt : Oth cnt := ⟨Ne.symm a8, Ne.symm b7, Ne.symm c6, Ne.symm d5, Ne.symm e4,
-    fun f => (hcf f).2.2.2.2.2.2.2.2.1⟩
-  have hOtmp : Oth tmp := ⟨Ne.symm a9, Ne.symm b8, Ne.symm c7, Ne.symm d6, Ne.symm e5, hcftmp⟩
-  have hR₄gR : R₄ gR = [] := by
-    rw [hR₄f _ (fun f e => (hcf f).2.1 e.symm), hR₃f _ b1 b3, hR₂gR]
-  have hR₄g : R₄ g = Xg.flatten := by
-    rw [hR₄f _ (fun f e => (hcf f).2.2.2.1 e.symm), hR₃f _ (Ne.symm c1) d1, hR₂g]
-  have hR₄b : R₄ b = Xb.flatten := by rw [hR₄f _ (fun f e => (hcf f).2.2.2.2.1 e.symm), hR₃b]
-  have hR₄bR : R₄ bR = [] := by rw [hR₄f _ (fun f e => (hcf f).2.2.1 e.symm), hR₃bR]
-  -- stage 5: radix sort
-  have hus' := h.route.tmps_inj
-  obtain ⟨v₅, m₅, hu₅, hm₅, he₅⟩ := radixSort_exec body b ctrKB (us 0) (us 1) (us 2) (us 3) gR bR
-    st ctrK
-    (by
-      simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
-        List.nodup_nil, and_true, not_false_eq_true]
-      refine ⟨⟨e1, fun e => (hus 0).2.2.2.2.1 e.symm, fun e => (hus 1).2.2.2.2.1 e.symm,
-        fun e => (hus 2).2.2.2.2.1 e.symm, fun e => (hus 3).2.2.2.2.1 e.symm, Ne.symm b3,
-        Ne.symm c2, e3⟩, ⟨fun e => (hus 0).2.2.2.2.2.1 e.symm, fun e => (hus 1).2.2.2.2.2.1 e.symm,
-        fun e => (hus 2).2.2.2.2.2.1 e.symm, fun e => (hus 3).2.2.2.2.2.1 e.symm, Ne.symm b4,
-        Ne.symm c3, f2⟩, ⟨fun e => by have := hus' e; simp at this,
-        fun e => by have := hus' e; simp at this, fun e => by have := hus' e; simp at this,
-        (hus 0).2.1, (hus 0).2.2.1, (hus 0).2.2.2.2.2.2.2.1⟩,
-        ⟨fun e => by have := hus' e; simp at this, fun e => by have := hus' e; simp at this,
-        (hus 1).2.1, (hus 1).2.2.1, (hus 1).2.2.2.2.2.2.2.1⟩,
-        ⟨fun e => by have := hus' e; simp at this, (hus 2).2.1, (hus 2).2.2.1,
-        (hus 2).2.2.2.2.2.2.2.1⟩, ⟨(hus 3).2.1, (hus 3).2.2.1, (hus 3).2.2.2.2.2.2.2.1⟩,
-        ⟨b1, b6⟩, c5⟩)
-    (recs := Xb) (B := k + B) (K := k) (K' := k) (by omega) le_rfl
-    (fun r hr => hX r (mem_codeRecs hr)) v₄ { S with R := R₄ } hR₄b
-    (by show (R₄ ctrK).length = k; rw [hO₄ _ hOctrK, hctrK])
-    (by show (R₄ ctrKB).length = k + B; rw [hO₄ _ hOctr, hctr])
-    (by show R₄ (us 0) = []; rw [hO₄ _ (hOus 0), hI.2.2 0])
-    (by show R₄ (us 1) = []; rw [hO₄ _ (hOus 1), hI.2.2 1])
-    (by show R₄ (us 2) = []; rw [hO₄ _ (hOus 2), hI.2.2 2])
-    (by show R₄ (us 3) = []; rw [hO₄ _ (hOus 3), hI.2.2 3])
-    hR₄gR hR₄bR
-  rw [hbad] at he₅
-  set R₅ := Function.update R₄ b (codeRecs Y code 1).flatten with hR₅
-  have hR₅f : ∀ x, x ≠ b → R₅ x = R₄ x := fun x hx => Function.update_of_ne hx _ _
-  have hOrs : ∀ r p, rsrc r = .inr p → Oth (rs r) := fun r p hr =>
-    ⟨fun e => h.route.rs_X r (Or.inl e),
-      fun e => h.merge.rs_X r (Or.inl e),
-      fun e => h.merge.rs_X r (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl e))))),
-      fun e => h.merge.rs_X r (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr ⟨0, e.symm⟩))))),
-      fun e => h.merge.rs_X r (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr ⟨1, e.symm⟩))))),
-      fun f e => h.route.param r p f hr e.symm⟩
-  have hdig0 : ∀ f, digit len f 0 = 0 := fun f => by simp [digit]
-  have hI₅ : IdxState cf len L rs us rsrc R₅ 0 :=
-    ⟨fun f => by
-        rw [hR₅f _ (hcf f).2.2.2.2.1, hcf₄ f, hdig0],
-      fun r p hr => by
-        rw [hR₅f _ (hOrs r p hr).2.2.2.2.1, hO₄ _ (hOrs r p hr), hI.2.1 r p hr],
-      fun r => by
-        rw [hR₅f _ (hOus r).2.2.2.2.1, hO₄ _ (hOus r), hI.2.2 r]⟩
-  -- stage 6: merge
-  obtain ⟨v₆, R₆, hu₆, he₆, hgR₆, hsrcs₆, hcf₆, hoth₆⟩ := mergeIdx_exec_blocks body ![g, b] gR
-    ctrKB tmp cnt bR cf len L rs us rsrc st C h.merge
-    (by
-      simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
-        List.nodup_nil, and_true, not_false_eq_true]
-      exact ⟨⟨b4, b8, b7, b1⟩, ⟨f4, f3, Ne.symm c3⟩, ⟨Ne.symm i1, Ne.symm c7⟩, Ne.symm c6⟩)
-    (by
-      intro d
-      fin_cases d
-      · simp [Ne.symm b2, d2, d6, d5, Ne.symm c1]
-      · simp [Ne.symm b3, e1, e5, e4, Ne.symm c2])
-    (by intro i j hij; fin_cases i <;> fin_cases j <;> simp_all [Ne.symm d1])
-    (l := Y.flatten) (c := S.R ctrKB) (kk := S.R cnt) (nb := X.length) (B := k + B) (i₀ := 0)
-    hYl hctr hcnt (fun _ => []) v₅ { S with R := R₅ }
-    (by
-      intro d
-      fin_cases d
-      · show R₅ g = blocksIdx Y.flatten (k + B) X.length code 0 0 ++ []
-        rw [hR₅f _ d1, hR₄g, hblkY 0, List.append_nil, ← hgood]
-      · show R₅ b = blocksIdx Y.flatten (k + B) X.length code 0 1 ++ []
-        rw [hR₅, Function.update_self, hblkY 1, List.append_nil])
-    (by show R₅ ctrKB = _; rw [hR₅f _ (Ne.symm e1), hO₄ _ hOctr])
-    (by show R₅ tmp = _; rw [hR₅f _ (Ne.symm e5), hO₄ _ hOtmp, htmp])
-    (by show R₅ cnt = _; rw [hR₅f _ (Ne.symm e4), hO₄ _ hOcnt])
-    (by show R₅ bR = _; rw [hR₅f _ c2, hR₄bR])
-    hI₅
-  have hR₆f : ∀ x, x ≠ gR → x ≠ g → x ≠ b → (∀ f, cf f ≠ x) → R₆ x = R₅ x :=
-    fun x h1 h2 h3 h4 => hoth₆ x h1 (fun d => by fin_cases d <;> simp [Ne.symm h2, Ne.symm h3]) h4
-  have hR₆gR : R₆ gR = Y.flatten.reverse := by
-    rw [hgR₆]
-    show Y.flatten.reverse ++ R₅ gR = _
-    rw [hR₅f _ b3, hR₄gR, List.append_nil]
-  -- stage 7: reset
-  obtain ⟨v₇, R₇, hu₇, he₇, hcf₇, hoth₇⟩ := resetFields_exec body cf hcfinj tmp hcftmp len v₆
-    { S with R := R₆ }
-    (by
-      show R₆ tmp = []
-      rw [hR₆f _ (Ne.symm b8) (Ne.symm d6) (Ne.symm e5) (fun f => hcftmp f), hR₅f _ (Ne.symm e5),
-        hO₄ _ hOtmp, htmp])
-    (fun f => by show (R₆ (cf f)).length = _; rw [hcf₆ f]; simp)
-  have hR₇f : ∀ x, (∀ f, x ≠ cf f) → R₇ x = R₆ x := hoth₇
-  have hO₇ : ∀ x, Oth x → R₇ x = S.R x := fun x hx => by
-    rw [hR₇f x (fun f e => hx.2.2.2.2.2 f e.symm),
-      hR₆f x hx.2.1 hx.2.2.2.1 hx.2.2.2.2.1 hx.2.2.2.2.2, hR₅f x hx.2.2.2.2.1, hO₄ x hx]
-  have hR₇gR : R₇ gR = Y.flatten.reverse := by
-    rw [hR₇f _ (fun f e => (hcf f).2.1 e.symm), hR₆gR]
-  have hR₇src : R₇ src = [] := by
-    rw [hR₇f _ (fun f e => (hcf f).1 e.symm), hR₆f _ a1 a3 a4 (fun f => (hcf f).1),
-      hR₅f _ a4, hR₄f _ (fun f e => (hcf f).1 e.symm), hR₃f _ a2 a4, hR₂f _ a1 a3, hsrc₁]
-  -- stage 8: strip
-  obtain ⟨v₈, hu₈, he₈⟩ := stripPass_exec body gR src ctrB ctrK tmp st
-    (by
-      simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
-        List.nodup_nil, and_true, not_false_eq_true]
-      exact ⟨⟨Ne.symm a1, b5, b6, b8⟩, ⟨a6, a7, a9⟩, ⟨g1, g3⟩, h2⟩)
-    hB Y hY v₇ { S with R := R₇ } hR₇gR
-    (by show (R₇ ctrB).length = B; rw [hO₇ _ hOctrB, hctrB])
-    (by show (R₇ ctrK).length = k; rw [hO₇ _ hOctrK, hctrK])
-    (by show R₇ tmp = []; rw [hO₇ _ hOtmp, htmp])
-  refine ⟨v₈, _, by rw [hu₈, hu₇, hu₆, hu₅, hu₄, hu₃, hu₂, hu₁], ?_,
-    Exec.cast (Exec.seq he₁ (Exec.seq he₂ (Exec.seq he₃ (Exec.seq he₄ (Exec.seq he₅ (Exec.seq he₆
-      (Exec.seq he₇ he₈))))))) rfl ?_⟩
-  · simp only [hR₁gR, hR₂bR, List.length_reverse]
-    rw [length_codeRecs_flatten X _ hX, length_codeRecs_flatten X _ hX, ← hXY]
-    have hg' := Nat.mul_le_mul_right (k + B) (length_codeRecs X code 0)
-    have hb' := Nat.mul_le_mul_right (k + B) (length_codeRecs X code 1)
-    nlinarith [hg', hb', hm₅]
-  · congr 2
-    funext x
-    show Function.update (Function.update R₇ gR []) src
-      ((Y.map (·.drop k)).flatten ++ R₇ src) x = _
-    rw [hR₇src, List.append_nil]
-    by_cases hx : x = src
-    · subst hx; simp
-    rw [Function.update_of_ne hx, Function.update_of_ne hx]
-    by_cases hxg : x = gR
-    · subst hxg; rw [Function.update_self, hgR]
-    rw [Function.update_of_ne hxg]
-    by_cases hxf : ∃ f, x = cf f
-    · obtain ⟨f, rfl⟩ := hxf
-      rw [hcf₇ f, hI.1 f, hdig0]
-    simp only [not_exists] at hxf
-    rw [hR₇f x hxf]
-    by_cases hxg' : x = g
-    · subst hxg'
-      have := hsrcs₆ 0
-      simp only [Matrix.cons_val_zero] at this
-      rw [this, hg]
-    by_cases hxb : x = b
-    · subst hxb
-      have := hsrcs₆ 1
-      simp only [Matrix.cons_val_one, Matrix.cons_val_zero] at this
-      rw [this, hb]
-    rw [hR₆f x hxg hxg' hxb (fun f e => hxf f e.symm), hR₅f x hxb]
-    by_cases hxbR : x = bR
-    · subst hxbR; rw [hR₄bR, hbR]
-    exact hO₄ x ⟨hx, hxg, hxbR, hxg', hxb, fun f e => hxf f e.symm⟩
+  have hcf : ∀ f x, x ∈ [src, gR, bR, g, b, ctrKB, ctrB, ctrK, cnt, tmp] → cf f ≠ x :=
+    fun f x hx e => h.cf_regs f (e ▸ hx)
+  have hYi : ∀ x ∈ [src, gR, bR, g, b, ctrKB, cnt, tmp], ¬ idxY cf rs us rsrc x := by
+    rintro x hx (⟨f, rfl⟩ | ⟨r, p, hr, rfl⟩ | ⟨r, rfl⟩)
+    · exact hcf f (cf f) (by simp at hx ⊢; tauto) rfl
+    · simp only [List.mem_cons, List.not_mem_nil, or_false] at hx
+      rcases hx with e | e | e | e | e | e | e | e
+      · exact h.route.rs_X r (Or.inl e)
+      · exact h.route.rs_X r (Or.inr (Or.inr (Or.inr ⟨0, e.symm⟩)))
+      · exact h.route.rs_X r (Or.inr (Or.inr (Or.inr ⟨1, e.symm⟩)))
+      · exact h.merge.rs_X r (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr ⟨0, e.symm⟩)))))
+      · exact h.merge.rs_X r (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr ⟨1, e.symm⟩)))))
+      · exact h.route.rs_X r (Or.inr (Or.inl e))
+      · exact h.merge.rs_X r (Or.inr (Or.inr (Or.inr (Or.inl e))))
+      · exact h.route.rs_X r (Or.inr (Or.inr (Or.inl e)))
+    · exact h.us_regs r (by simp at hx ⊢; tauto)
+  obtain ⟨v', m, hu, hm, he⟩ := repairAtC_exec (IdxLayout.codeSpec body h.route C) hYi
+    (fun f => hcf f ctrB (by simp)) (fun f => hcf f ctrK (by simp)) h.regs h.us_regs
+    h.route.tmps_inj (fun r f => h.route.tmps_cf r f) hB X Y hXY hX hY hgood hbad v S
+    hsrc hgR hbR hg hb hctr hctrB hctrK hcnt htmp hI.2.2 hI
+  refine ⟨v', m, hu, hm.trans ?_, he⟩
+  have := Nat.mul_le_mul_left X.length (show 2 * idxStepCost (6 * L + 4) (k + B) len +
+    6 * (k + B) + 15 ≤ 16 * (k + B) + 12 * L + 8 * (∑ f, len f) + 8 * nf + 39 by
+      unfold idxStepCost; omega)
+  omega
 
 end RepairMachine
 
@@ -1072,6 +1149,93 @@ lemma sort_map {α β : Type} (bit : α → ℕ → Bool) (bit' : β → ℕ →
       simp only [RadixSort.pass, List.filter_map, List.map_append]
       congr 2 <;> apply List.filter_congr <;> intro x _ <;> simp [h x k (by omega)]
 
+/-! #### The repair on any ranked address set -/
+
+section Generic
+
+variable {α : Type} {M : ℕ} (e : α ≃ Fin M) (Sp Tp : Equiv.Perm α) (bad : α → Prop)
+  [DecidablePred bad] (code : ℕ → Fin 2) (πS πT : Equiv.Perm (Fin M))
+
+/-- The code-`1` records of a stream of `M` records are its records at the exceptional ranks. -/
+lemma codeRecs_badRanks (hcode : ∀ a, code (e a) = if bad a then 1 else 0) {β : Type}
+    (Z : List (List β)) (hZ : Z.length = M) :
+    codeRecs Z code 1 = (badRanks e bad).map fun (i : Fin M) => Z.getD (i : ℕ) [] := by
+  unfold codeRecs badRanks
+  rw [hZ, ← List.map_coe_finRange_eq_range, List.filter_map, List.map_map]
+  refine congrArg (List.map _) (List.filter_congr fun i _ => ?_)
+  obtain ⟨a, rfl⟩ := e.surjective i
+  simp only [Function.comp_apply, Equiv.symm_apply_apply]
+  rw [hcode a]
+  by_cases hb : bad a <;> simp [hb]
+
+variable {Sp Tp bad code πS πT}
+
+/-- **Good records**, for any actual map `Sp` that agrees with the ideal map `Tp` off the
+exceptional set preserved by `Tp`: off the exceptional ranks the stream after `Sp` already holds
+the records of `Tp`. -/
+theorem repair_good_of (hT : ∀ x, bad (Tp x) ↔ bad x) (agree : ∀ x, ¬ bad x → Sp x = Tp x)
+    (hcode : ∀ a, code (e a) = if bad a then 1 else 0) (hS : ∀ a, πS (e a) = e (Sp a))
+    (hTe : ∀ a, πT (e a) = e (Tp a)) {A : ℕ} (k : ℕ) (l : List (List (Fin (A + 4)))) :
+    codeRecs (moveRecs πS (keyRecs k πT l)) code 0 =
+      codeRecs (moveRecs πT (keyRecs k πT l)) code 0 := by
+  have hSs : ∀ b, πS.symm (e b) = e (Sp.symm b) := fun b => by
+    rw [Equiv.symm_apply_eq, hS, Equiv.apply_symm_apply]
+  have hTs : ∀ b, πT.symm (e b) = e (Tp.symm b) := fun b => by
+    rw [Equiv.symm_apply_eq, hTe, Equiv.apply_symm_apply]
+  unfold codeRecs
+  rw [length_moveRecs, length_moveRecs]
+  refine List.map_congr_left fun n hn => ?_
+  have hnM : n < M := List.mem_range.1 (List.mem_filter.1 hn).1
+  have hc := (List.mem_filter.1 hn).2
+  obtain ⟨b, hb⟩ := e.surjective ⟨n, hnM⟩
+  have hn : n = (e b : ℕ) := by rw [hb]
+  rw [hn, hcode b] at hc
+  have hnb : ¬ bad b := by
+    intro h; simp [h] at hc
+  rw [hn, getD_moveRecs, getD_moveRecs, hSs, hTs, inverse_agrees_off_bad _ _ _ hT agree b hnb]
+
+/-- **Exceptional records**: at the exceptional ranks, the records of the stream after `Sp`,
+radix sorted on their `k` key bits, are the records of `Tp`, in rank order. -/
+theorem repair_bad_of (hT : ∀ x, bad (Tp x) ↔ bad x) (agree : ∀ x, ¬ bad x → Sp x = Tp x)
+    (hcode : ∀ a, code (e a) = if bad a then 1 else 0) (hS : ∀ a, πS (e a) = e (Sp a))
+    (hTe : ∀ a, πT (e a) = e (Tp a)) {A : ℕ} (k : ℕ) (hk : M ≤ 2 ^ k)
+    (l : List (List (Fin (A + 4)))) :
+    RadixSort.sort (fun rec j => symBit (rec.getD j 0)) k
+        (codeRecs (moveRecs πS (keyRecs k πT l)) code 1) =
+      codeRecs (moveRecs πT (keyRecs k πT l)) code 1 := by
+  have hSs : ∀ b, πS.symm (e b) = e (Sp.symm b) := fun b => by
+    rw [Equiv.symm_apply_eq, hS, Equiv.apply_symm_apply]
+  have hTs : ∀ b, πT.symm (e b) = e (Tp.symm b) := fun b => by
+    rw [Equiv.symm_apply_eq, hTe, Equiv.apply_symm_apply]
+  let data : α → List Bool := fun a => List.replicate (e a) true
+  let G : Fin M × Record → List (Fin (A + 4)) :=
+    fun x => binSyms k x.1 ++ l.getD x.2.payload.length []
+  have hG : ∀ x j, j < k → symBit ((G x).getD j 0) = keyBit x j := by
+    intro x j hj
+    simp only [G, keyBit]
+    rw [List.getD_eq_getElem _ _ (by simp; omega), List.getElem_append_left (by simp; omega)]
+    simp [binSyms]
+  have hsort := sortedExtracted_eq e Sp Tp bad hT agree k hk data
+  have hXe : codeRecs (moveRecs πS (keyRecs k πT l)) code 1 =
+      (extracted e Sp Tp bad data).map G := by
+    rw [codeRecs_badRanks e bad code hcode _ (length_moveRecs _ _), extracted, List.map_map]
+    refine List.map_congr_left fun i _ => ?_
+    obtain ⟨a, rfl⟩ := e.surjective i
+    simp only [Function.comp_apply, G, data, List.length_replicate]
+    rw [getD_moveRecs, hSs, getD_keyRecs, hTe]
+    simp [destRank]
+  have hYe : codeRecs (moveRecs πT (keyRecs k πT l)) code 1 = (target e Tp bad data).map G := by
+    rw [codeRecs_badRanks e bad code hcode _ (length_moveRecs _ _), target, List.map_map]
+    refine List.map_congr_left fun i _ => ?_
+    obtain ⟨a, rfl⟩ := e.surjective i
+    simp only [Function.comp_apply, G, data, List.length_replicate]
+    rw [getD_moveRecs, hTs, getD_keyRecs, hTe]
+    simp
+  rw [hXe, hYe, sort_map _ keyBit G k hG, ← hsort]
+  rfl
+
+end Generic
+
 variable {A : ℕ} {N₀ N₁ N₂ N₃ L n₀ n₁ n₂ n₃ rb R : ℕ}
 
 /-- The code-pass sources of the exceptional-set code: the field of `y`, the field of `z`, the
@@ -1105,17 +1269,6 @@ lemma idxCode_bad (hN₀ : N₀ = R * 2 ^ n₀) (hR : R ≤ 2 ^ rb) (hN₁ : N�
   · simp only [hb, hiff.2 hb, ↓reduceIte]
   · simp only [hb, mt hiff.1 hb, ↓reduceIte]
 
-lemma rankPerm_symm_enc (K ρ f : ℕ) (σ : Equiv.Perm (Fin 3)) (b : Addr N₀ N₁ N₂ N₃ L) :
-    (rankPerm N₀ N₁ N₂ N₃ L K ρ (f - 1) (prog σ)).symm (enc N₀ N₁ N₂ N₃ L σ b) =
-      enc N₀ N₁ N₂ N₃ L σ ((liftA N₀ N₁ N₂ N₃ L (packedS L K ρ f)).symm b) := by
-  rw [Equiv.symm_apply_eq, rankPerm_prog, Equiv.apply_symm_apply]
-
-lemma addrPerm_symm_enc (σ : Equiv.Perm (Fin 3)) (Pm : Equiv.Perm (Tri L))
-    (b : Addr N₀ N₁ N₂ N₃ L) :
-    (addrPerm N₀ N₁ N₂ N₃ L σ Pm).symm (enc N₀ N₁ N₂ N₃ L σ b) =
-      enc N₀ N₁ N₂ N₃ L σ ((liftA N₀ N₁ N₂ N₃ L Pm).symm b) := by
-  rw [Equiv.symm_apply_eq, addrPerm_enc, Equiv.apply_symm_apply]
-
 /-- The code-`1` records of a stream of `M` records are its records at the exceptional ranks. -/
 lemma codeRecs_bad (hN₀ : N₀ = R * 2 ^ n₀) (hR : R ≤ 2 ^ rb) (hN₁ : N₁ = 2 ^ n₁)
     (hN₂ : N₂ = 2 ^ n₂) (hN₃ : N₃ = 2 ^ n₃) (hA : 14 ≤ A) {K ρ f : ℕ} (hρ : ρ < K)
@@ -1123,14 +1276,8 @@ lemma codeRecs_bad (hN₀ : N₀ = R * 2 ^ n₀) (hR : R ≤ 2 ^ rb) (hN₁ : N�
     (hZ : Z.length = rectSize N₀ N₁ N₂ N₃ L) :
     codeRecs Z (idxCode (badAuto A) L (idxLen n₀ n₁ n₂ n₃ L rb) (badSrc σ K ρ f L)) 1 =
       (badRanks (enc N₀ N₁ N₂ N₃ L σ) (Bad N₀ N₁ N₂ N₃ L K ρ f 1)).map
-        fun (i : Fin (rectSize N₀ N₁ N₂ N₃ L)) => Z.getD (i : ℕ) [] := by
-  unfold codeRecs badRanks
-  rw [hZ, ← List.map_coe_finRange_eq_range, List.filter_map, List.map_map]
-  refine congrArg (List.map _) (List.filter_congr fun i _ => ?_)
-  obtain ⟨a, rfl⟩ := (enc N₀ N₁ N₂ N₃ L σ).surjective i
-  simp only [Function.comp_apply, Equiv.symm_apply_apply]
-  rw [idxCode_bad hN₀ hR hN₁ hN₂ hN₃ hA hρ hL hf σ a]
-  by_cases hb : Bad N₀ N₁ N₂ N₃ L K ρ f 1 a <;> simp [hb]
+        fun (i : Fin (rectSize N₀ N₁ N₂ N₃ L)) => Z.getD (i : ℕ) [] :=
+  codeRecs_badRanks _ _ _ (idxCode_bad hN₀ hR hN₁ hN₂ hN₃ hA hρ hL hf σ) Z hZ
 
 /-- **Good records.** Off the exceptional ranks, the stream after the packed program already
 holds the records of the ideal map. -/
@@ -1144,19 +1291,10 @@ theorem repair_good (hN₀ : N₀ = R * 2 ^ n₀) (hR : R ≤ 2 ^ rb) (hN₁ : N
       codeRecs (moveRecs (addrPerm N₀ N₁ N₂ N₃ L σ (idealT L K ρ f))
         (keyRecs k (addrPerm N₀ N₁ N₂ N₃ L σ (idealT L K ρ f)) l))
         (idxCode (badAuto A) L (idxLen n₀ n₁ n₂ n₃ L rb) (badSrc σ K ρ f L)) 0 := by
-  unfold codeRecs
-  rw [length_moveRecs, length_moveRecs]
-  refine List.map_congr_left fun n hn => ?_
-  have hnM : n < rectSize N₀ N₁ N₂ N₃ L := List.mem_range.1 (List.mem_filter.1 hn).1
-  have hc := (List.mem_filter.1 hn).2
-  obtain ⟨b, hb⟩ := (enc N₀ N₁ N₂ N₃ L σ).surjective ⟨n, hnM⟩
-  have hn : n = (enc N₀ N₁ N₂ N₃ L σ b : ℕ) := by rw [hb]
-  rw [hn, idxCode_bad hN₀ hR hN₁ hN₂ hN₃ hA hρ hL hf σ b] at hc
-  have hnb : ¬ Bad N₀ N₁ N₂ N₃ L K ρ f 1 b := by
-    intro h; simp [h] at hc
-  rw [hn, getD_moveRecs, getD_moveRecs, rankPerm_symm_enc, addrPerm_symm_enc,
-    inverse_agrees_off_bad _ _ _ (idealT_preserves_bad N₀ N₁ N₂ N₃ L K ρ f 1 (by omega))
-      (packed_agrees N₀ N₁ N₂ N₃ L K ρ f 1 hρ hL hf le_rfl) b hnb]
+  exact repair_good_of (enc N₀ N₁ N₂ N₃ L σ)
+    (idealT_preserves_bad N₀ N₁ N₂ N₃ L K ρ f 1 (by omega))
+    (packed_agrees N₀ N₁ N₂ N₃ L K ρ f 1 hρ hL hf le_rfl)
+    (idxCode_bad hN₀ hR hN₁ hN₂ hN₃ hA hρ hL hf σ) (fun a => by rw [rankPerm_prog]) (fun a => by rw [addrPerm_enc]) k l
 
 /-- **Exceptional records.** At the exceptional ranks, the records of the stream after the packed
 program, radix sorted on their `k` key bits, are the records of the ideal map, in rank order
@@ -1172,45 +1310,10 @@ theorem repair_bad (hN₀ : N₀ = R * 2 ^ n₀) (hR : R ≤ 2 ^ rb) (hN₁ : N�
       codeRecs (moveRecs (addrPerm N₀ N₁ N₂ N₃ L σ (idealT L K ρ f))
         (keyRecs k (addrPerm N₀ N₁ N₂ N₃ L σ (idealT L K ρ f)) l))
         (idxCode (badAuto A) L (idxLen n₀ n₁ n₂ n₃ L rb) (badSrc σ K ρ f L)) 1 := by
-  set e := enc N₀ N₁ N₂ N₃ L σ with he
-  set Sp := liftA N₀ N₁ N₂ N₃ L (packedS L K ρ f) with hSp
-  set Tp := liftA N₀ N₁ N₂ N₃ L (idealT L K ρ f) with hTp
-  set bad := Bad N₀ N₁ N₂ N₃ L K ρ f 1 with hbad
-  have hT : ∀ x, bad (Tp x) ↔ bad x := idealT_preserves_bad N₀ N₁ N₂ N₃ L K ρ f 1 (by omega)
-  have agree : ∀ x, ¬ bad x → Sp x = Tp x := packed_agrees N₀ N₁ N₂ N₃ L K ρ f 1 hρ hL hf le_rfl
-  let data : Addr N₀ N₁ N₂ N₃ L → List Bool := fun a => List.replicate (e a) true
-  let G : Fin (rectSize N₀ N₁ N₂ N₃ L) × Record → List (Fin (A + 4)) :=
-    fun x => binSyms k x.1 ++ l.getD x.2.payload.length []
-  have hG : ∀ x j, j < k → symBit ((G x).getD j 0) = keyBit x j := by
-    intro x j hj
-    simp only [G, keyBit]
-    rw [List.getD_eq_getElem _ _ (by simp; omega), List.getElem_append_left (by simp; omega)]
-    simp [binSyms]
-  have hsort := sortedExtracted_eq e Sp Tp bad hT agree k hk data
-  have hXe : codeRecs (moveRecs (rankPerm N₀ N₁ N₂ N₃ L K ρ (f - 1) (prog σ))
-      (keyRecs k (addrPerm N₀ N₁ N₂ N₃ L σ (idealT L K ρ f)) l))
-      (idxCode (badAuto A) L (idxLen n₀ n₁ n₂ n₃ L rb) (badSrc σ K ρ f L)) 1 =
-      (extracted e Sp Tp bad data).map G := by
-    rw [codeRecs_bad hN₀ hR hN₁ hN₂ hN₃ hA hρ hL hf σ _ (length_moveRecs _ _), extracted,
-      List.map_map]
-    refine List.map_congr_left fun i _ => ?_
-    obtain ⟨a, rfl⟩ := e.surjective i
-    simp only [Function.comp_apply, G, data, List.length_replicate]
-    rw [getD_moveRecs, rankPerm_symm_enc, getD_keyRecs, addrPerm_enc]
-    simp [destRank, he, hSp, hTp]
-  have hYe : codeRecs (moveRecs (addrPerm N₀ N₁ N₂ N₃ L σ (idealT L K ρ f))
-      (keyRecs k (addrPerm N₀ N₁ N₂ N₃ L σ (idealT L K ρ f)) l))
-      (idxCode (badAuto A) L (idxLen n₀ n₁ n₂ n₃ L rb) (badSrc σ K ρ f L)) 1 =
-      (target e Tp bad data).map G := by
-    rw [codeRecs_bad hN₀ hR hN₁ hN₂ hN₃ hA hρ hL hf σ _ (length_moveRecs _ _), target,
-      List.map_map]
-    refine List.map_congr_left fun i _ => ?_
-    obtain ⟨a, rfl⟩ := e.surjective i
-    simp only [Function.comp_apply, G, data, List.length_replicate]
-    rw [getD_moveRecs, addrPerm_symm_enc, getD_keyRecs, addrPerm_enc]
-    simp [he, hTp]
-  rw [hXe, hYe, sort_map _ keyBit G k hG, ← hsort]
-  rfl
+  exact repair_bad_of (enc N₀ N₁ N₂ N₃ L σ)
+    (idealT_preserves_bad N₀ N₁ N₂ N₃ L K ρ f 1 (by omega))
+    (packed_agrees N₀ N₁ N₂ N₃ L K ρ f 1 hρ hL hf le_rfl)
+    (idxCode_bad hN₀ hR hN₁ hN₂ hN₃ hA hρ hL hf σ) (fun a => by rw [rankPerm_prog]) (fun a => by rw [addrPerm_enc]) k hk l
 
 end RepairLists
 

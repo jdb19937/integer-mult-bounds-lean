@@ -3,7 +3,7 @@ module
 import IntegerMultBounds.MathlibTM2.Node.RepairPass
 public import IntegerMultBounds.MathlibTM2.Node.KeyPass
 public import IntegerMultBounds.MathlibTM2.Node.Rect
-public import IntegerMultBounds.MathlibTM2.Host.IndexRoute
+public import IntegerMultBounds.MathlibTM2.Host.IndexCode
 import Mathlib.Tactic.Positivity.Finset
 
 /-!
@@ -324,50 +324,51 @@ section FixMachine
 
 variable {T Q A : ℕ} {U : Type} {P : Type} (body : P → Pr P T Q A U) {nf : ℕ}
 
-/-- The fix pass on generic code registers: route by the input code `Cin` into `r0, …, r3`,
-restore forward order into `q0, …, q3`, reset the counter, merge by the output code `Cout` into
-`r0` (counted by `cnt`, temporary `r1`), move the result back into `src`, reset the counter. -/
-def fixAt (src r0 r1 r2 r3 q0 q1 q2 q3 ctrB cnt tmp st : Fin T) (cf : Fin nf → Fin T)
-    (rs us : Fin 3 → Fin T) (Cin Cout : CAuto A 3 4) : Pr P T Q A U :=
-  .seq (routeIdx src ![r0, r1, r2, r3] ctrB tmp cf rs us st Cin)
+/-- The fix pass with the input code program `cpIn` and the output code program `cpOut`: route
+by the input code into `r0, …, r3`, restore forward order into `q0, …, q3`, reset the counter,
+merge by the output code into `r0` (counted by `cnt`, temporary `r1`), move the result back into
+`src`, reset the counter. -/
+def fixAtC (cpIn : Pr P T Q A U) (selIn : ℕ → Fin 4) (cpOut : Pr P T Q A U) (selOut : ℕ → Fin 4)
+    (src r0 r1 r2 r3 q0 q1 q2 q3 ctrB cnt tmp st : Fin T) (cf : Fin nf → Fin T) :
+    Pr P T Q A U :=
+  .seq (routeIdxC cpIn selIn src ![r0, r1, r2, r3] ctrB tmp cf st)
     (.seq (moveR r0 q0 id) (.seq (moveR r1 q1 id) (.seq (moveR r2 q2 id) (.seq (moveR r3 q3 id)
       (.seq (resetFields cf tmp)
-        (.seq (mergeIdx ![q0, q1, q2, q3] r0 ctrB tmp cnt r1 cf rs us st Cout)
+        (.seq (mergeIdxC cpOut selOut ![q0, q1, q2, q3] r0 ctrB tmp cnt r1 cf st)
           (.seq (moveR r0 src id) (resetFields cf tmp))))))))
 
-/-- Register facts of the fix machine. -/
-structure FixLayout (src r0 r1 r2 r3 q0 q1 q2 q3 ctrB cnt tmp st : Fin T) (cf : Fin nf → Fin T)
-    (len : Fin nf → ℕ) (L : ℕ) (rs us : Fin 3 → Fin T) (rsrc : Fin 3 → Fin nf ⊕ ℕ) : Prop where
-  route : IdxLayout cf len L rs us rsrc st (routeRegs src ![r0, r1, r2, r3] ctrB tmp)
-  merge : IdxLayout cf len L rs us rsrc st (mergeRegs ![q0, q1, q2, q3] r0 ctrB tmp cnt r1)
-  regs : [src, r0, r1, r2, r3, q0, q1, q2, q3, ctrB, cnt, tmp].Nodup
-  cf_regs : ∀ f, cf f ∉ [src, r0, r1, r2, r3, q0, q1, q2, q3, ctrB, cnt, tmp]
-  us_regs : ∀ r, us r ∉ [src, r0, r1, r2, r3, q0, q1, q2, q3, ctrB, cnt, tmp]
+section CodeProgram
 
-/-- **The fix machine.** The register `src` holds the `M` records `l` of `B ≥ 1` symbols and the
-counter is at index `0`. If the input code `cin` and output code `cout` have equal counts and the
-list merge of the routed records is `(out, [])`, then `src` ends holding `out`; every other register
-ends as it started. -/
-theorem fixAt_exec {src r0 r1 r2 r3 q0 q1 q2 q3 ctrB cnt tmp st : Fin T} {cf : Fin nf → Fin T}
-    {len : Fin nf → ℕ} {L : ℕ} {rs us : Fin 3 → Fin T} {rsrc : Fin 3 → Fin nf ⊕ ℕ}
-    (h : FixLayout src r0 r1 r2 r3 q0 q1 q2 q3 ctrB cnt tmp st cf len L rs us rsrc)
-    (Cin Cout : CAuto A 3 4) {B M : ℕ} (hB : 1 ≤ B) (l : List (List (Fin (A + 4))))
+variable {body} {cpIn cpOut : Pr P T Q A U} {cf : Fin nf → Fin T} {len : Fin nf → ℕ}
+  {st : Fin T} {Y : Fin T → Prop} {Inv : (Fin T → List (Fin (A + 4))) → ℕ → Prop}
+  {selIn selOut codeIn codeOut : ℕ → Fin 4} {cIn cOut : ℕ}
+
+/-- **The fix machine with code programs.** The register `src` holds the `M` records `l` of
+`B ≥ 1` symbols and the index registers hold index `0`. If the input and output codes have equal
+counts and the list merge of the routed records is `(out, [])`, then `src` ends holding `out`;
+every other register ends as it started. -/
+theorem fixAtC_exec (csIn : CodeSpec body cpIn cf len st Y Inv selIn codeIn cIn)
+    (csOut : CodeSpec body cpOut cf len st Y Inv selOut codeOut cOut)
+    {src r0 r1 r2 r3 q0 q1 q2 q3 ctrB cnt tmp : Fin T}
+    (hY : ∀ x ∈ [src, r0, r1, r2, r3, q0, q1, q2, q3, ctrB, cnt, tmp], ¬ Y x)
+    (hregs' : [src, r0, r1, r2, r3, q0, q1, q2, q3, ctrB, cnt, tmp].Nodup)
+    {B M : ℕ} (hB : 1 ≤ B) (l : List (List (Fin (A + 4))))
     (hl : l.length = M) (hlB : ∀ r ∈ l, r.length = B)
-    (hcount : ∀ d, idxCount (idxCode Cout L len rsrc) 0 M d =
-      idxCount (idxCode Cin L len rsrc) 0 M d)
+    (hcount : ∀ d, idxCount codeOut 0 M d = idxCount codeIn 0 M d)
     (out : List (Fin (A + 4))) (hout : out.length = M * B)
-    (hmerge : mergeIdxList B (idxCode Cout L len rsrc) M 0
-      (fun d => blocksIdx l.flatten B M (idxCode Cin L len rsrc) 0 d ++ []) = (out, fun _ => []))
+    (hmerge : mergeIdxList B codeOut M 0
+      (fun d => blocksIdx l.flatten B M codeIn 0 d ++ []) = (out, fun _ => []))
     (v : HS T Q A U) (S : Stacks T A) (hsrc : S.R src = l.flatten)
     (hr0 : S.R r0 = []) (hr1 : S.R r1 = []) (hr2 : S.R r2 = []) (hr3 : S.R r3 = [])
     (hq0 : S.R q0 = []) (hq1 : S.R q1 = []) (hq2 : S.R q2 = []) (hq3 : S.R q3 = [])
     (hctr : (S.R ctrB).length = B) (hcnt : (S.R cnt).length = M) (htmp : S.R tmp = [])
-    (hI : IdxState cf len L rs us rsrc S.R 0) :
+    (hI : Inv S.R 0) :
     ∃ (v' : HS T Q A U) (m : ℕ), v'.user = v.user ∧
-      m ≤ M * (18 * B + 12 * L + 8 * (∑ f, len f) + 8 * nf + 28) + 8 * (∑ f, len f) + 8 * nf + 18 ∧
-      Exec body (fixAt src r0 r1 r2 r3 q0 q1 q2 q3 ctrB cnt tmp st cf rs us Cin Cout) (mk v S) m
-        (mk v' { S with R := (Function.update S.R src out) }) := by
-  have hregs := h.regs
+      m ≤ M * (idxStepCost cIn B len + idxStepCost cOut B len + 10 * B + 4) +
+        8 * (∑ f, len f) + 8 * nf + 18 ∧
+      Exec body (fixAtC cpIn selIn cpOut selOut src r0 r1 r2 r3 q0 q1 q2 q3 ctrB cnt tmp st cf)
+        (mk v S) m (mk v' { S with R := (Function.update S.R src out) }) := by
+  have hregs := hregs'
   simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
     List.nodup_nil, and_true, not_false_eq_true] at hregs
   obtain ⟨⟨n_src_r0, n_src_r1, n_src_r2, n_src_r3, n_src_q0, n_src_q1, n_src_q2, n_src_q3,
@@ -379,13 +380,12 @@ theorem fixAt_exec {src r0 r1 r2 r3 q0 q1 q2 q3 ctrB cnt tmp st : Fin T} {cf : F
       n_q1_ctrB, n_q1_cnt, n_q1_tmp⟩, ⟨n_q2_q3, n_q2_ctrB, n_q2_cnt, n_q2_tmp⟩, ⟨n_q3_ctrB,
       n_q3_cnt, n_q3_tmp⟩, ⟨n_ctrB_cnt, n_ctrB_tmp⟩, n_cnt_tmp⟩ := hregs
   have hcf : ∀ f x, x ∈ [src, r0, r1, r2, r3, q0, q1, q2, q3, ctrB, cnt, tmp] → cf f ≠ x :=
-    fun f x hx e => h.cf_regs f (e ▸ hx)
-  have hus : ∀ r x, x ∈ [src, r0, r1, r2, r3, q0, q1, q2, q3, ctrB, cnt, tmp] → us r ≠ x :=
-    fun r x hx e => h.us_regs r (e ▸ hx)
-  have hcfinj : Function.Injective cf := h.route.cf_inj
+    fun f x hx e => hY x hx (e ▸ csIn.cf_Y f)
+  have hYx : ∀ x, x ∈ [src, r0, r1, r2, r3, q0, q1, q2, q3, ctrB, cnt, tmp] → ¬ Y x := hY
+  have hcfinj : Function.Injective cf := csIn.cf_inj
   have hcftmp : ∀ f, cf f ≠ tmp := fun f => hcf f tmp (by simp)
-  set cin := idxCode Cin L len rsrc with hcin
-  set cout := idxCode Cout L len rsrc with hcout
+  set cin := codeIn with hcin
+  set cout := codeOut with hcout
   set blks : Fin 4 → List (Fin (A + 4)) := fun d => blocksIdx l.flatten B M cin 0 d with hblks
   have hlf : l.flatten.length = M * B := by rw [← hl]; exact length_flatten_of_length l hlB
   have hblen : ∀ d, (blks d).length ≤ M * B := fun d => by
@@ -395,8 +395,9 @@ theorem fixAt_exec {src r0 r1 r2 r3 q0 q1 q2 q3 ctrB cnt tmp st : Fin T} {cf : F
   let Oth : Fin T → Prop := fun x => x ≠ src ∧ x ≠ r0 ∧ x ≠ r1 ∧ x ≠ r2 ∧ x ≠ r3 ∧ x ≠ q0 ∧
     x ≠ q1 ∧ x ≠ q2 ∧ x ≠ q3 ∧ ∀ f, cf f ≠ x
   -- stage 1: route
-  obtain ⟨v₁, R₁, hu₁, he₁, hsrc₁, hdst₁, hcf₁, hoth₁⟩ := routeIdx_exec body src ![r0, r1, r2, r3]
-    ctrB tmp cf len L rs us rsrc st Cin h.route
+  obtain ⟨v₁, R₁, m₁, hu₁, hm₁, he₁, hsrc₁, hdst₁, hI₁, hoth₁⟩ := routeIdxC_exec body csIn src
+    ![r0, r1, r2, r3] ctrB tmp (hYx _ (by simp)) (hYx _ (by simp)) (hYx _ (by simp))
+    (fun d => by fin_cases d <;> exact hYx _ (by simp))
     (by simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
       List.nodup_nil, and_true, not_false_eq_true]; exact ⟨⟨n_src_ctrB, n_src_tmp⟩, n_ctrB_tmp⟩)
     (by intro d; fin_cases d <;> simp [(Ne.symm n_src_r0), n_r0_ctrB, n_r0_tmp, (Ne.symm n_src_r1),
@@ -411,7 +412,7 @@ theorem fixAt_exec {src r0 r1 r2 r3 q0 q1 q2 q3 ctrB cnt tmp st : Fin T} {cf : F
            simp [n_r0_r1, n_r0_r2, n_r0_r3, (Ne.symm n_r0_r1), n_r1_r2, n_r1_r3,
              (Ne.symm n_r0_r2), (Ne.symm n_r1_r2), n_r2_r3, (Ne.symm n_r0_r3),
              (Ne.symm n_r1_r3), (Ne.symm n_r2_r3)]))
-    (l := l.flatten) (c := S.R ctrB) (nb := M) (B := B) (i₀ := 0) hB hlf hctr v S hsrc rfl htmp hI
+    (l := l.flatten) (nb := M) (B := B) (i₀ := 0) hB hlf hctr v S hsrc rfl htmp hI
   have hR₁ : ∀ x, Oth x → R₁ x = S.R x := fun x hx =>
     hoth₁ x hx.1 (fun d => by fin_cases d <;> simp [Ne.symm hx.2.1, Ne.symm hx.2.2.1,
       Ne.symm hx.2.2.2.1, Ne.symm hx.2.2.2.2.1]) hx.2.2.2.2.2.2.2.2.2
@@ -503,10 +504,6 @@ theorem fixAt_exec {src r0 r1 r2 r3 q0 q1 q2 q3 ctrB cnt tmp st : Fin T} {cf : F
   have hOcnt : Oth cnt := ⟨(Ne.symm n_src_cnt), (Ne.symm n_r0_cnt), (Ne.symm n_r1_cnt),
       (Ne.symm n_r2_cnt), (Ne.symm n_r3_cnt), (Ne.symm n_q0_cnt), (Ne.symm n_q1_cnt),
       (Ne.symm n_q2_cnt), (Ne.symm n_q3_cnt), fun f => hcf f cnt (by simp)⟩
-  have hOus : ∀ r, Oth (us r) := fun r =>
-    ⟨hus r src (by simp), hus r r0 (by simp), hus r r1 (by simp), hus r r2 (by simp),
-      hus r r3 (by simp), hus r q0 (by simp), hus r q1 (by simp), hus r q2 (by simp),
-      hus r q3 (by simp), fun f e => h.route.tmps_cf r f e.symm⟩
   -- stage 6: reset
   obtain ⟨v₆, R₆, hu₆, he₆, hcf₆, hoth₆⟩ := resetFields_exec body cf hcfinj tmp hcftmp len v₅
     { S with R := R₅ } (by show R₅ tmp = []; rw [hO₅ _ hOtmp, htmp])
@@ -514,31 +511,20 @@ theorem fixAt_exec {src r0 r1 r2 r3 q0 q1 q2 q3 ctrB cnt tmp st : Fin T} {cf : F
       show (R₅ (cf f)).length = _
       rw [hR₅f _ (hcf f r0 (by simp)) (hcf f r1 (by simp)) (hcf f r2 (by simp))
         (hcf f r3 (by simp)) (hcf f q0 (by simp)) (hcf f q1 (by simp)) (hcf f q2 (by simp))
-        (hcf f q3 (by simp)), hcf₁ f]
+        (hcf f q3 (by simp)), csIn.digits R₁ _ hI₁ f]
       simp)
   have hR₆f : ∀ x, (∀ f, x ≠ cf f) → R₆ x = R₅ x := hoth₆
   have hdig0 : ∀ f, digit len f 0 = 0 := fun f => by simp [digit]
-  have hOrs : ∀ r p, rsrc r = .inr p → Oth (rs r) := fun r p hr =>
-    ⟨fun e => h.route.rs_X r (Or.inl e),
-      fun e => h.merge.rs_X r (Or.inl e),
-      fun e => h.merge.rs_X r (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl e))))),
-      fun e => h.route.rs_X r (Or.inr (Or.inr (Or.inr ⟨2, e.symm⟩))),
-      fun e => h.route.rs_X r (Or.inr (Or.inr (Or.inr ⟨3, e.symm⟩))),
-      fun e => h.merge.rs_X r (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr ⟨0, e.symm⟩))))),
-      fun e => h.merge.rs_X r (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr ⟨1, e.symm⟩))))),
-      fun e => h.merge.rs_X r (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr ⟨2, e.symm⟩))))),
-      fun e => h.merge.rs_X r (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr ⟨3, e.symm⟩))))),
-      fun f e => h.route.param r p f hr e.symm⟩
-  have hI₆ : IdxState cf len L rs us rsrc R₆ 0 :=
-    ⟨fun f => by rw [hcf₆ f, hdig0],
-      fun r p hr => by
-        rw [hR₆f _ (fun f e => (hOrs r p hr).2.2.2.2.2.2.2.2.2 f e.symm), hO₅ _ (hOrs r p hr),
-          hI.2.1 r p hr],
-      fun r => by
-        rw [hR₆f _ (fun f e => (hOus r).2.2.2.2.2.2.2.2.2 f e.symm), hO₅ _ (hOus r), hI.2.2 r]⟩
+  have hI₅ : Inv R₅ (0 + M) := csIn.frame R₁ R₅ _ hI₁ fun x hx => by
+    have hn : ∀ y ∈ [src, r0, r1, r2, r3, q0, q1, q2, q3, ctrB, cnt, tmp], x ≠ y :=
+      fun y hy e => hYx y hy (e ▸ hx)
+    exact hR₅f x (hn r0 (by simp)) (hn r1 (by simp)) (hn r2 (by simp)) (hn r3 (by simp))
+      (hn q0 (by simp)) (hn q1 (by simp)) (hn q2 (by simp)) (hn q3 (by simp))
+  have hI₆ : Inv R₆ 0 := csIn.reidx R₅ R₆ _ 0 hI₅ (fun f => by rw [hcf₆ f, hdig0]) hR₆f
   -- stage 7: merge
-  obtain ⟨v₇, R₇, hu₇, he₇, hdst₇, hsrcs₇, hcf₇, hoth₇⟩ := mergeIdx_exec body ![q0, q1, q2, q3] r0
-    ctrB tmp cnt r1 cf len L rs us rsrc st Cout h.merge
+  obtain ⟨v₇, R₇, m₇, hu₇, hm₇, he₇, hdst₇, hsrcs₇, hI₇, hoth₇⟩ := mergeIdxC_exec body csOut
+    ![q0, q1, q2, q3] r0 ctrB tmp cnt r1 (fun d => by fin_cases d <;> exact hYx _ (by simp))
+    (hYx _ (by simp)) (hYx _ (by simp)) (hYx _ (by simp)) (hYx _ (by simp)) (hYx _ (by simp))
     (by
       simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
         List.nodup_nil, and_true, not_false_eq_true]
@@ -552,7 +538,7 @@ theorem fixAt_exec {src r0 r1 r2 r3 q0 q1 q2 q3 ctrB cnt tmp st : Fin T} {cf : F
       (exfalso; revert hij; simp [n_q0_q1, n_q0_q2, n_q0_q3, (Ne.symm n_q0_q1), n_q1_q2, n_q1_q3,
           (Ne.symm n_q0_q2), (Ne.symm n_q1_q2), n_q2_q3, (Ne.symm n_q0_q3), (Ne.symm n_q1_q3),
           (Ne.symm n_q2_q3)]))
-    (c := S.R ctrB) (kk := S.R cnt) (nb := M) (B := B) (i₀ := 0) hctr hcnt
+    (cc := S.R ctrB) (kk := S.R cnt) (nb := M) (B := B) (i₀ := 0) hctr hcnt
     (fun d => blks d ++ [])
     (fun d => by
       rw [List.append_nil, hcount d]
@@ -604,7 +590,7 @@ theorem fixAt_exec {src r0 r1 r2 r3 q0 q1 q2 q3 ctrB cnt tmp st : Fin T} {cf : F
         hR₆f _ (fun f e => hcftmp f e.symm), hO₅ _ hOtmp, htmp])
     (fun f => by
       show (R₈ (cf f)).length = _
-      rw [hR₈, hmv _ _ _ _ (hcf f r0 (by simp)) (hcf f src (by simp)), hcf₇ f]
+      rw [hR₈, hmv _ _ _ _ (hcf f r0 (by simp)) (hcf f src (by simp)), csOut.digits R₇ _ hI₇ f]
       simp)
   refine ⟨v₉, _, by rw [hu₉, hu₈, hu₇, hu₆, hu₅, hu₄, hu₃, hu₂, hu₁], ?_,
     Exec.cast (Exec.seq he₁ (Exec.seq he₂ (Exec.seq he₃ (Exec.seq he₄ (Exec.seq he₅
@@ -614,13 +600,13 @@ theorem fixAt_exec {src r0 r1 r2 r3 q0 q1 q2 q3 ctrB cnt tmp st : Fin T} {cf : F
     have h1 := hblen 1
     have h2 := hblen 2
     have h3 := hblen 3
-    nlinarith [h0, h1, h2, h3]
+    nlinarith [h0, h1, h2, h3, hm₁, hm₇]
   · congr 2
     funext x
     show R₉ x = _
     by_cases hxf : ∃ f, x = cf f
     · obtain ⟨f, rfl⟩ := hxf
-      rw [hcf₉ f, Function.update_of_ne (hcf f src (by simp)), hI.1 f, hdig0]
+      rw [hcf₉ f, Function.update_of_ne (hcf f src (by simp)), csIn.digits S.R 0 hI f, hdig0]
     simp only [not_exists] at hxf
     rw [hoth₉ x hxf]
     show R₈ x = _
@@ -653,6 +639,75 @@ theorem fixAt_exec {src r0 r1 r2 r3 q0 q1 q2 q3 ctrB cnt tmp st : Fin T} {cf : F
     by_cases hx3 : x = r3
     · subst hx3; rw [hR₅r3, hr3]
     exact hO₅ x ⟨hxs, hx0, hx1, hx2, hx3, hq0', hq1', hq2', hq3', fun f e => hxf f e.symm⟩
+
+end CodeProgram
+
+/-- The fix pass on generic code registers: route by the input code `Cin` into `r0, …, r3`,
+restore forward order into `q0, …, q3`, reset the counter, merge by the output code `Cout` into
+`r0` (counted by `cnt`, temporary `r1`), move the result back into `src`, reset the counter. -/
+def fixAt (src r0 r1 r2 r3 q0 q1 q2 q3 ctrB cnt tmp st : Fin T) (cf : Fin nf → Fin T)
+    (rs us : Fin 3 → Fin T) (Cin Cout : CAuto A 3 4) : Pr P T Q A U :=
+  fixAtC (codePass rs us st Cin) (codeSel Cin) (codePass rs us st Cout) (codeSel Cout)
+    src r0 r1 r2 r3 q0 q1 q2 q3 ctrB cnt tmp st cf
+
+/-- Register facts of the fix machine. -/
+structure FixLayout (src r0 r1 r2 r3 q0 q1 q2 q3 ctrB cnt tmp st : Fin T) (cf : Fin nf → Fin T)
+    (len : Fin nf → ℕ) (L : ℕ) (rs us : Fin 3 → Fin T) (rsrc : Fin 3 → Fin nf ⊕ ℕ) : Prop where
+  route : IdxLayout cf len L rs us rsrc st (routeRegs src ![r0, r1, r2, r3] ctrB tmp)
+  merge : IdxLayout cf len L rs us rsrc st (mergeRegs ![q0, q1, q2, q3] r0 ctrB tmp cnt r1)
+  regs : [src, r0, r1, r2, r3, q0, q1, q2, q3, ctrB, cnt, tmp].Nodup
+  cf_regs : ∀ f, cf f ∉ [src, r0, r1, r2, r3, q0, q1, q2, q3, ctrB, cnt, tmp]
+  us_regs : ∀ r, us r ∉ [src, r0, r1, r2, r3, q0, q1, q2, q3, ctrB, cnt, tmp]
+
+/-- **The fix machine.** The register `src` holds the `M` records `l` of `B ≥ 1` symbols and the
+counter is at index `0`. If the input code `cin` and output code `cout` have equal counts and the
+list merge of the routed records is `(out, [])`, then `src` ends holding `out`; every other register
+ends as it started. -/
+theorem fixAt_exec {src r0 r1 r2 r3 q0 q1 q2 q3 ctrB cnt tmp st : Fin T} {cf : Fin nf → Fin T}
+    {len : Fin nf → ℕ} {L : ℕ} {rs us : Fin 3 → Fin T} {rsrc : Fin 3 → Fin nf ⊕ ℕ}
+    (h : FixLayout src r0 r1 r2 r3 q0 q1 q2 q3 ctrB cnt tmp st cf len L rs us rsrc)
+    (Cin Cout : CAuto A 3 4) {B M : ℕ} (hB : 1 ≤ B) (l : List (List (Fin (A + 4))))
+    (hl : l.length = M) (hlB : ∀ r ∈ l, r.length = B)
+    (hcount : ∀ d, idxCount (idxCode Cout L len rsrc) 0 M d =
+      idxCount (idxCode Cin L len rsrc) 0 M d)
+    (out : List (Fin (A + 4))) (hout : out.length = M * B)
+    (hmerge : mergeIdxList B (idxCode Cout L len rsrc) M 0
+      (fun d => blocksIdx l.flatten B M (idxCode Cin L len rsrc) 0 d ++ []) = (out, fun _ => []))
+    (v : HS T Q A U) (S : Stacks T A) (hsrc : S.R src = l.flatten)
+    (hr0 : S.R r0 = []) (hr1 : S.R r1 = []) (hr2 : S.R r2 = []) (hr3 : S.R r3 = [])
+    (hq0 : S.R q0 = []) (hq1 : S.R q1 = []) (hq2 : S.R q2 = []) (hq3 : S.R q3 = [])
+    (hctr : (S.R ctrB).length = B) (hcnt : (S.R cnt).length = M) (htmp : S.R tmp = [])
+    (hI : IdxState cf len L rs us rsrc S.R 0) :
+    ∃ (v' : HS T Q A U) (m : ℕ), v'.user = v.user ∧
+      m ≤ M * (18 * B + 12 * L + 8 * (∑ f, len f) + 8 * nf + 28) + 8 * (∑ f, len f) + 8 * nf + 18 ∧
+      Exec body (fixAt src r0 r1 r2 r3 q0 q1 q2 q3 ctrB cnt tmp st cf rs us Cin Cout) (mk v S) m
+        (mk v' { S with R := (Function.update S.R src out) }) := by
+  have hcf : ∀ f x, x ∈ [src, r0, r1, r2, r3, q0, q1, q2, q3, ctrB, cnt, tmp] → cf f ≠ x :=
+    fun f x hx e => h.cf_regs f (e ▸ hx)
+  have hYi : ∀ x ∈ [src, r0, r1, r2, r3, q0, q1, q2, q3, ctrB, cnt, tmp], ¬ idxY cf rs us rsrc x := by
+    rintro x hx (⟨f, rfl⟩ | ⟨r, p, hr, rfl⟩ | ⟨r, rfl⟩)
+    · exact hcf f (cf f) hx rfl
+    · simp only [List.mem_cons, List.not_mem_nil, or_false] at hx
+      rcases hx with e | e | e | e | e | e | e | e | e | e | e | e
+      · exact h.route.rs_X r (Or.inl e)
+      · exact h.merge.rs_X r (Or.inl e)
+      · exact h.merge.rs_X r (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl e)))))
+      · exact h.route.rs_X r (Or.inr (Or.inr (Or.inr ⟨2, e.symm⟩)))
+      · exact h.route.rs_X r (Or.inr (Or.inr (Or.inr ⟨3, e.symm⟩)))
+      · exact h.merge.rs_X r (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr ⟨0, e.symm⟩)))))
+      · exact h.merge.rs_X r (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr ⟨1, e.symm⟩)))))
+      · exact h.merge.rs_X r (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr ⟨2, e.symm⟩)))))
+      · exact h.merge.rs_X r (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr ⟨3, e.symm⟩)))))
+      · exact h.route.rs_X r (Or.inr (Or.inl e))
+      · exact h.merge.rs_X r (Or.inr (Or.inr (Or.inr (Or.inl e))))
+      · exact h.route.rs_X r (Or.inr (Or.inr (Or.inl e)))
+    · exact h.us_regs r hx
+  obtain ⟨v', m, hu, hm, he⟩ := fixAtC_exec (IdxLayout.codeSpec body h.route Cin)
+    (IdxLayout.codeSpec body h.route Cout) hYi h.regs hB l hl hlB hcount out hout hmerge v S
+    hsrc hr0 hr1 hr2 hr3 hq0 hq1 hq2 hq3 hctr hcnt htmp hI
+  refine ⟨v', m, hu, hm.trans (le_of_eq ?_), he⟩
+  unfold idxStepCost
+  ring
 
 end FixMachine
 
