@@ -160,6 +160,11 @@ theorem selects_at {t u : ℕ} (placement : Fin (3+u) ≃ Fin t) (v : Tapes t a)
   change Placement.replace placement v (input rs es) = v
   rw [← ha,Placement.replace_active]
 
+/-- Exposed state test for integrating the selector into finite-flow control. -/
+theorem selected_high_iff (r e : ℕ) : selected r e = high ↔ 1 ≤ r ∧ r < e := by
+  unfold selected
+  split_ifs <;> simp_all [high,fallback]
+
 theorem selected_fallback_iff (r e : ℕ) : selected r e = fallback ↔ ¬(1 ≤ r ∧ r < e) := by
   unfold selected
   split_ifs <;> simp_all [high,fallback]

@@ -22,9 +22,18 @@ open ShearFrame (address)
 section Reduction
 variable {ι κ : Type*} (m : ℕ)
 
+theorem admissible_add {A B : Matrix ι κ ℚ} (hA : Admissible m A) (hB : Admissible m B) :
+    Admissible m (A + B) :=
+  fun i j => (denCoprime m).add_mem (hA i j) (hB i j)
+
 theorem admissible_sub {A B : Matrix ι κ ℚ} (hA : Admissible m A) (hB : Admissible m B) :
     Admissible m (A - B) :=
   fun i j => (denCoprime m).sub_mem (hA i j) (hB i j)
+
+theorem reduce_add {A B : Matrix ι κ ℚ} (hA : Admissible m A) (hB : Admissible m B) :
+    reduce m (A + B) = reduce m A + reduce m B := by
+  ext i j
+  exact Modular.ratMod_add m (hA i j) (hB i j)
 
 theorem reduce_neg {A : Matrix ι κ ℚ} (hA : Admissible m A) : reduce m (-A) = -reduce m A := by
   ext i j

@@ -71,6 +71,50 @@ theorem placed_prepares (b : ℕ) (v : Descriptor) {m : ℕ} (i j : Fin m)
   obtain ⟨ch,hch,h⟩ := prepares Shared50ModularControl.prime_prime.two_le b v i j hw hp hs hv st code
   exact ⟨ch,hch,RecursiveChildSetupRoleBank.placed_hoare _ roles hs ch aux st _ h⟩
 
+/-- The matching role-parent return is also linear without requiring either
+layout to be an original unsplit root-path node. -/
+theorem restore_cost_le (hq : 2 ≤ q) (b : ℕ) (v : Descriptor) {m : ℕ} (i j : Fin m)
+    (hw : v.width = m*b) (hp : v.Positive) (hs ch : Fin 6 → List Bool)
+    (hv : RecursiveDimensionBank.Headers v hs)
+    (hc : RecursiveDimensionBank.Headers (child q 1 b v i j) ch) :
+    RecursiveChildCallReturn.cost hs ch ≤ 127*volume q v := by
+  have hq' : 0 < q := by omega
+  have hchild : (child q 1 b v i j).Positive := by
+    rcases hp with ⟨hA,hR,hB,hC,hE⟩
+    dsimp [Descriptor.Positive,child]
+    rw [Nat.div_one]
+    exact ⟨hA,hR,Nat.mul_pos hB (pow_pos hq' _),
+      Nat.mul_pos (Nat.mul_pos (pow_pos hq' _) hC) (pow_pos hq' _),Nat.mul_pos (pow_pos hq' _) hE⟩
+  have hvol : volume q (child q 1 b v i j) = volume q v := RecursiveAffineViews.cross_volume q b v i j hw
+  have hV := RecursiveAffinePrepare.volume_positive hq v hp
+  have hold (z : Fin 6) : (hs z).length ≤ 2*volume q v := by
+    have h := RecursiveAffinePrepare.header_log hq v hp hs hv z
+    have hl := Nat.log2_le_self (volume q v)
+    omega
+  have hnew (z : Fin 6) : (ch z).length ≤ 2*volume q v := by
+    have h := RecursiveAffinePrepare.header_log hq _ hchild ch hc z
+    rw [hvol] at h
+    have hl := Nat.log2_le_self (volume q v)
+    omega
+  have hpop := BinaryDescriptorFrames.six_field_cost fields (by simp [fields]) (words hs)
+    (2*volume q v) (by
+      intro op hop
+      obtain ⟨z,rfl⟩ := List.mem_ofFn.mp hop
+      rw [RecursiveChildCallSetup.words_header]
+      exact hold z)
+  have hclear := BinaryDescriptorCleanupList.cost_le (BinaryDescriptorFrameRestore.slots fields) (words ch)
+    (2*volume q v) (by
+      intro z hz
+      obtain ⟨op,hop,rfl⟩ := List.mem_map.mp hz
+      obtain ⟨i,rfl⟩ := List.mem_ofFn.mp hop
+      rw [RecursiveChildCallSetup.words_header]
+      exact hnew i)
+  have hlen : (BinaryDescriptorFrameRestore.slots fields).length = 6 := by
+    simp [BinaryDescriptorFrameRestore.slots,fields]
+  rw [hlen] at hclear
+  unfold RecursiveChildCallReturn.cost
+  omega
+
 
 end
 end IntegerMultBounds.Machine.RecursiveRoleChildCallSetup

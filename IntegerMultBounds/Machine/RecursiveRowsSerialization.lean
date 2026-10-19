@@ -164,6 +164,10 @@ theorem putData_selected {v : Descriptor} (wires : Fin (1+c) → Fin t) (hw : Fu
   · rw [hw h.choose_spec]
   · exact (h ⟨j,rfl⟩).elim
 
+theorem putData_unselected {v : Descriptor} (wires : Fin (1+c) → Fin t) (data : Data (1+c) v)
+    (i : Fin t) (hi : ¬∃ j, wires j = i) : putData wires data i = fun _ => blank := by
+  simp [putData,hi]
+
 theorem roleData_entry {v : Descriptor} (wires : Fin (1+c) → Fin t) (hw : Function.Injective wires)
     (rho : Equiv.Perm (Fin c)) (hd : c ∣ v.rows) (x : Fin (volume prime v) → Fin 4)
     (j : Fin c) (z : Fin (volume prime (role v c))) :
