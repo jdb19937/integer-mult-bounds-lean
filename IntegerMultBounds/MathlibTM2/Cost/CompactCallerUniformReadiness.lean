@@ -1,6 +1,5 @@
 module
 
-import IntegerMultBounds.MathlibTM2.Cost.CompactCallerUniformRuntime
 import IntegerMultBounds.MathlibTM2.Cost.CompactCallerSelectedRows
 public import IntegerMultBounds.MathlibTM2.Mult.CompactSizes
 import IntegerMultBounds.MathlibTM2.Cost.CompactCallerRuntimeParameters
@@ -58,30 +57,6 @@ theorem compactCaller_uniform_eventually_shape : ∀ᶠ N : ℕ in atTop,
       (Nat.sub_le D (CompactGlobalRowPadding.rowAxes NW m (Mult.Sizes.d N)))
     nlinarith
 
-theorem compactCaller_uniform_selected_eventually_packed : ∀ᶠ N : ℕ in Filter.atTop,
-    ∀ (K D o address R rBits j r w : ℕ)
-      (d : ActivePrefixStageFullData.Inputs
-        (compactReservationShape (Mult.Sizes.d N) (CompactReservationGrowth.guard N)
-          K D (2^o*(3*(r*w))))),
-      Mult.Sizes.K N≤K → K≤Mult.Sizes.d N → D≤Mult.Sizes.d N →
-      CompactReservationFits (Mult.Sizes.d N) (CompactReservationGrowth.guard N)
-        K D →
-      0<R → R≤2^rBits → o+K*D≤address →
-      d.rows=compactTopRows (Mult.Sizes.d N) R
-        (address-(o+K*(D-CompactGlobalRowPadding.rowAxes NW m (Mult.Sizes.d N))))/NW^j →
-      rBits+address+1≤Mult.Sizes.p N → Mult.Sizes.r N≤r → Mult.Sizes.p N≤w →
-      ActivePrefixStageRuntimeData.Packed d 1 := by
-  filter_upwards [compactCaller_uniform_eventually_packed,
-    compactCaller_runtime_eventually_guard] with N hp hguard
-  intro K D o address R rBits j r w d hlo hhi hD hfit hR hRbits haddress hrows hprecision hr hw
-  have hK : 0<K := by omega
-  apply hp K D o r w (rBits+(address-(o+K*D))+1) d hlo hhi hD hfit
-  · rw [hrows]
-    exact compactCaller_selected_rows_le hK hR hfit haddress hRbits j
-  · exact compactCaller_selected_extra_le hprecision
-  · exact hr
-  · exact hw
-
 theorem compactCaller_retuned_eventually_shape : ∀ᶠ N : ℕ in atTop,
     ∀ D o r w : ℕ, D ≤ Mult.Sizes.d N →
       CompactReservationFits (Mult.Sizes.d N) (CompactReservationGrowth.guard N)
@@ -93,24 +68,6 @@ theorem compactCaller_retuned_eventually_shape : ∀ᶠ N : ℕ in atTop,
   filter_upwards [compactCaller_uniform_eventually_shape] with N hshape
   intro D o r w
   exact hshape (Mult.CompactSizes.K N) D o r w
-    (Mult.CompactSizes.old_K_le_K N) (Mult.CompactSizes.K_le_d N)
-
-theorem compactCaller_retuned_selected_eventually_packed : ∀ᶠ N : ℕ in Filter.atTop,
-    ∀ (D o address R rBits j r w : ℕ)
-      (d : ActivePrefixStageFullData.Inputs
-        (compactReservationShape (Mult.Sizes.d N) (CompactReservationGrowth.guard N)
-          (Mult.CompactSizes.K N) D (2^o*(3*(r*w))))),
-      D≤Mult.Sizes.d N →
-      CompactReservationFits (Mult.Sizes.d N) (CompactReservationGrowth.guard N)
-        (Mult.CompactSizes.K N) D →
-      0<R → R≤2^rBits → o+Mult.CompactSizes.K N*D≤address →
-      d.rows=compactTopRows (Mult.Sizes.d N) R
-        (address-(o+Mult.CompactSizes.K N*(D-CompactGlobalRowPadding.rowAxes NW m (Mult.Sizes.d N))))/NW^j →
-      rBits+address+1≤Mult.Sizes.p N → Mult.Sizes.r N≤r → Mult.Sizes.p N≤w →
-      ActivePrefixStageRuntimeData.Packed d 1 := by
-  filter_upwards [compactCaller_uniform_selected_eventually_packed] with N hpacked
-  intro D o address R rBits j r w d
-  exact hpacked (Mult.CompactSizes.K N) D o address R rBits j r w d
     (Mult.CompactSizes.old_K_le_K N) (Mult.CompactSizes.K_le_d N)
 
 end

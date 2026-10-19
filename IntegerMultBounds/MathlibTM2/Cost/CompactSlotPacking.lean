@@ -3,7 +3,7 @@ module
 public import IntegerMultBounds.MathlibTM2.Cost.CompactCallerRuntimeParameters
 public import IntegerMultBounds.MathlibTM2.Node.CompactBasisSlot
 import IntegerMultBounds.MathlibTM2.Cost.CompactCallerParameters
-import IntegerMultBounds.Machine.ActiveRepairLayoutDensityArithmetic
+import IntegerMultBounds.Compact.RepairBounds
 import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 import Mathlib.Data.Nat.Factorial.DoubleFactorial
 import Mathlib.Analysis.SpecialFunctions.Bernstein
@@ -27,6 +27,26 @@ open Filter
 
 noncomputable section
 
+/-- The dyadic guard pays the density of bad records on full-address repair width. -/
+theorem cxDensity_dyadic_paid (p : ℝ) (n ell K A : ℕ) (hp : 0 < p) (hn : (n:ℝ) ≤ p)
+    (hell : p ≤ (2:ℝ)^ell) (hK : 8*ell + 16 ≤ K) (hA : (A:ℝ) + 1 ≤ p^3) :
+    cxDensity K (4*ell + 6) n * (A + 1) ≤ 1 := by
+  have hr : cxDensity K (4*ell + 6) n = 2*n/(2:ℝ)^(4*ell + 6) + 8*n/(2:ℝ)^(K - (4*ell + 6)) := by
+    unfold cxDensity
+    obtain ⟨c, rfl⟩ : ∃ c, K = 4*ell + 6 + c := ⟨K - (4*ell + 6), by omega⟩
+    rw [Nat.add_sub_cancel_left]
+    field_simp
+    ring
+  rw [hr]
+  have hd := Compact.uniform_repair_density p n ell K hp hn hell hK
+  have hh := mul_le_mul_of_nonneg_right hd (by positivity : (0:ℝ) ≤ A + 1)
+  have hc : (5/(128*p^3))*(A+1) ≤ 5/128 := by
+    have hpos : 0 < p^3 := by positivity
+    rw [div_mul_eq_mul_div]
+    apply (div_le_iff₀ (by positivity : (0:ℝ) < 128*p^3)).mpr
+    nlinarith
+  linarith
+
 /-- A logarithmic guard pays every record address of the compact slot XOR. -/
 theorem compactSlotPacked_of_dyadic {s : Shape} {k rows : ℕ} (p : ℝ) (ell : ℕ)
     (hp : 0 < p) (hf : ((k - 1 : ℕ) : ℝ) ≤ p) (hell : p ≤ (2 : ℝ) ^ ell)
@@ -35,11 +55,9 @@ theorem compactSlotPacked_of_dyadic {s : Shape} {k rows : ℕ} (p : ℝ) (ell : 
     (hcube : ((s.bits + rows.log2 + 2 : ℕ) : ℝ) ≤ p^3) :
     CompactSlotPacked s k rows 1 := by
   refine ⟨by omega, by omega, hrecord, ?_⟩
-  have h := ActiveRepairLayoutDensityArithmetic.dyadic_late_paid p (k - 1) ell s.chunk
+  have h := cxDensity_dyadic_paid p (k - 1) ell s.chunk
     (s.bits + rows.log2 + 1) hp hf hell hchunk (by push_cast at hcube ⊢; linarith)
   rw [hguard]
-  unfold cxDensity
-  unfold VaryingControlRepairDensity.lateDensity at h
   push_cast at h ⊢
   linarith
 

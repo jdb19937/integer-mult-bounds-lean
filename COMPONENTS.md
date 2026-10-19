@@ -409,8 +409,6 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 - `Machine/GrowingCounterData.lean`: Growing-width binary increment from the empty zero word, exact value increment, canonical highest-one invariant and logarithmic width. A bit-weight potential bounds all increment-and-return costs by four times the increment count plus twice initial width.
 - `Machine/GrowingCounter.lean`: Literal growing binary increment writes a new high bit at the end blank and returns to its sentinel. Exact execution and halting, canonical growth from an empty marked tape and amortized costs including cycle joins are proved; no counter width is prepared in advance.
-- `Machine/BinaryLength.lean`: Literal two-tape, six-state scanner constructs a canonical binary source-length descriptor from an empty marked counter. The source is preserved, its first blank causes true halt, and all growth, movement and joins cost at most eight transitions per source symbol. Internal blank payloads are excluded by the source contract.
-- `Machine/BinaryLengthInit.lean`: Initializes the counter sentinel from a genuinely blank second tape, then measures the source. Exact execution costs at most eight times source length plus two; canonical output and logarithmic width are proved. The literal standard multiplication input is covered, including its separator symbol.
 
 - `Machine/CountedRotateAdvance.lean`: Literal cyclic block rotation followed by a charged suffix seek, so both payload heads reach the next block. Source and descriptors survive, the reusable clock is empty, and all routines and joins cost at most fifteen times block length plus descriptor-width terms.
 - `Machine/WordSegments.lean`: Exact local tape-word indexing and matching-segment replacement. A middle word of a placed concatenation is already present at its length-offset origin; these representation identities justify local stream views without asserting free tape operations.
@@ -1528,9 +1526,7 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 - `Machine/PackedOffsetStreamRaw.lean`: Connects the actual stream builder to a raw n*w-bit input word: emitted canonical values are precisely its radix-two-power digits, each below2^w, in their literal order. Source and descriptors are retained, output length is at most n*(w+1), all private tapes blank and physical advanced heads explicit. No canonical offset stream is assumed as input.
 
-- `Machine/CountedPackedLateData.lean`: Exact word specification for the two early gadgets and physical dirty load/unload: all six intermediate/final widths match their originals, and the unrestricted integer triple is precisely packedLate. On actual guarded input blocks, only selected low target bits toggle and both dirty temporary words are restored literally. Sequential machine execution is proved separately.
 
-- `Machine/CountedPackedLateRun.lean`: Complete fixed twenty-eight-tape later-source arithmetic physically extracts parity, runs an early gadget, erases parity, loads dirty control, extracts new parity, runs the second early gadget, erases parity and unloads. Only original V/W/U/X and q/b/n are supplied; all twenty-one private tapes return blank/head zero. Exact packedLate values and guarded literal target toggling with both dirty words restored have bound7000 times full stride, including b=1 and n=0. Physical implicit-address payload permutation and row placement remain separate.
 
 - `Machine/StreamedFiberTranslationReusable.lean`: Complete fixed streamed binary payload rotation physically initializes private metadata, rotates every fiber, rewinds source/output, copies equal-width rotated output back over the original source and erases the temporary output. Source exterior/head, original B/Q/n and all private tapes are restored; control symbols retained with its head explicitly at stream end. Uniform500-volume-plus70 cost includes empty arrays. Control-head normalization and full packed-offset/interchange assembly remain separate.
 
@@ -1544,7 +1540,6 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 - `Machine/PackedOffsetPayloadOriginal.lean`: One fixed seventeen-tape machine generates Q=2^w from the original width, synthesizes offsets from the packed source, rotates full payload records and erases both the control stream and Q. Only original B/n/w and bit words are inputs; every private tape and both source heads are restored. Cost explicitly includes Q for zero fibers and is linear in payload volume when n is positive.
 
-- `Machine/CountedGuardTest.lean`: A fixed six-tape comparison-and-flag machine reads its runtime width from an original canonical descriptor, compares exactly those physical bits, appends the exact ordering flag, erases order/countdown scratch and retains the descriptor. Cost14 times width plus32 includes zero; outer record traversal and the complete uniform repair-key routine remain open.
 
 - `Machine/PackedOffsetPayloadArray.lean`: Returns the physically rotated payload as a canonical Bool array and proves exact per-address packed-offset destination semantics. This supplies a literal array handoff for subsequent binary interchanges without a free copy or permutation.
 
@@ -1565,9 +1560,7 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 - `Machine/CompactRowArray.lean`: Connects actual row splitting to Compact.Layout.splitRows on literal finite arrays. Every suffix cell, including dirty temporary fields, is preserved. Positive rows/width and static positive role count are explicit; runtime and full cleanup are linear in total payload volume.
 
-- `Machine/CountedGuardGadgetPosition.lean`: Fixed placed runtime-counted left/right head movements retain the full caller frame and clean countdown workspace. These replace within-record width-unrolled guard replays; no free head normalization is assumed.
 
-- `Machine/CountedGuardGadgetHeaders.lean`: Physically constructs the q−1 comparison descriptor from original q/b/n and blank work, erases the temporary one and retains originals. Exact width value, canonical form and cleanup include q=1; full multi-record guard execution remains separate.
 
 - `Machine/CompactRowPaddingRound.lean`: Physically writes the static role count, derives the least enclosing row multiple from original runtime row count/width, erases role-count arithmetic scratch and returns the exact Compact.Layout.paddedRows descriptor. Every positive row/role case is included.
 
@@ -1581,7 +1574,6 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 - `Machine/BinaryAddressTable.lean`: A fixed nine-tape machine generates the entire regular address table from the sole original canonical width, physically synthesizes its2^w loop bound, executes every copy/rewind/increment, returns output head zero and erases all seven private tapes. Cost is proportional to(w+1)*2^w; payload-volume absorption requires record width at least w+1. Selected/parity gather composition remains open.
 
-- `Machine/CountedGuardGadgetRecord.lean`: Fixed eleven-tape per-record guard bodies execute all physical comparisons, descriptor-driven target replay and constant rewinds. Exact legacy V/W flags, clean private comparison/replay storage and44q+104/15b+35 costs are proved; runtime n-loop assembly remains separate.
 
 - `Machine/BinaryPackedRowCount.lean`: A fixed thirteen-tape machine physically derives the fiber count P*2^w*G from original P/G/B/w headers through one power and two products. Original headers are retained, intermediate Q/PQ and all scratch are erased, and only the canonical derived count survives, including width zero.
 
@@ -1589,15 +1581,10 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 - `Machine/BinaryPackedRowCountBudget.lean`: The actual original-header count preparation has bound(constant2+110)*fiberCount+75 for positive P/G. Retained count erasure costs at most2*fiberCount+6; every power/product/setup/join/cleanup is paid. Wiring this producer into the full payload permutation remains separate.
 
-- `Machine/CountedGuardGadgetArray.lean`: Two actual fixed counted n loops generate exactly the legacy V/W guard flag word, physically initialize and erase the outer clock, retain q−1/b/n descriptors, and include zero records. Canonical n gives cost n*(44q+15b+165)+54; original-q setup and finalization are separate.
 
-- `Machine/CountedGuardGadgetFinish.lean`: Physically rewinds both guarded sources and flag word, scans the actual AnyFlag result into blank output, erases the complete flags and retains all spectators. The exact cleanup/finalization budget is source lengths plus three flag lengths plus13.
 
-- `Machine/CountedGuardGadgetOriginal.lean`: Actual original-q/b/n preparation, fixed runtime n loops and physical q−1 cleanup produce the exact legacy guard flag word. Original headers, sources and constant words survive; no derived comparison descriptor or flags are supplied.
 
-- `Machine/CountedGuardGadget.lean`: Complete fixed fifteen-tape guard gadget physically constructs q−1, traverses both runtime n loops, rewinds inputs, scans AnyFlag and erases flags/private workspace. Exact legacy result, all original q/b/n and constant words/heads retained, and350-times-full-stride cost include n=0 and q=1. Certified mathematical membership and complete repair-key assembly are separate.
 
-- `Machine/CountedGuardGadgetValue.lean`: Connects the actual fixed-control guard result cell to exceptional-address membership under the certified power-of-two comparison constants. Full paid execution decides not earlyGood within350 times full stride, deriving field-range bounds from literal word lengths. Constant synthesis and complete rank/key assembly remain separate.
 
 - `Machine/CompactRowReservationPlacement.lean`: Places complete-row splitting onto the actual padded destination and role outputs with retained physical rounded/role/width headers. Original row count and the complete padding workspace are framed.
 
@@ -1613,21 +1600,13 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 - `Machine/BinaryPackedOffsetOriginalBudget.lean`: The complete original-header count/action/erasure path preserves the certified interchange exponent. Actual count preparation and cleanup are absorbed into nonempty payload volume; no derived count word or free preparation is assumed.
 
-- `Machine/CountedGuardConstantsData.lean`: Exact padded little-endian comparison patterns with certified widths and power-of-two values for b≥1 and b+3≤q.
 
-- `Machine/CountedGuardConstantsFill.lean`: Actual runtime-counted zero/one fills and paid rewinds from binary width descriptors, with exact words and framed caller storage.
 
-- `Machine/CountedGuardConstantsEdit.lean`: Physical runtime b-positioned bit overwrite and return, with exact padded-pattern semantics and charged linear-width execution.
 
-- `Machine/CountedGuardConstantsPlacement.lean`: Eight-tape shared placements for constant filling, rewinding and editing preserve the original q/b and all complementary tapes.
 
-- `Machine/CountedGuardConstants.lean`: One fixed eight-tape machine constructs all three literal guard constants from sole original canonical q/b headers, with exact widths/values, retained headers and blank private descriptor/one/clock. Cost40q+80b+300 charges fills, edits, returns and cleanup. Composition into the fifteen-tape guard remains separate.
 
-- `Machine/CountedGuardOriginalSetup.lean`: Places the physical q/b constant constructor into the existing fifteen-tape guard bank, preserving literal V/W and original q/b/n while synthesizing exact constants from blank private storage.
 
-- `Machine/CountedGuardOriginalCleanup.lean`: Physically scans and erases all three generated guard constants, retaining source words, original descriptors and the actual result bit with charged linear cleanup.
 
-- `Machine/CountedGuardOriginal.lean`: Complete fixed fifteen-tape exceptional-address guard from only original V/W and canonical q/b/n. Physically constructs constants, executes the actual guard, decides not earlyGood and erases every private tape except the result bit. Original heads are restored; bound1000*(n+1)*(q+b+1) includes zero records. Repair-key assembly remains separate.
 
 - `Machine/CountedIdealToggle.lean`: Fixed twenty-two-tape ideal selected-parity toggle from original q/b/n descriptors: actual controls-at gather plus XOR returns exactly the target word exclusive-or the padded control mask, retains all original inputs/heads and erases every generated descriptor, clock and mask. Integer toggle semantics and bound533*(n+1)*(q+b+1) are proved; repair-key placement remains separate.
 
@@ -1677,23 +1656,14 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 - `Machine/BinarySelectedOffsetPlaced.lean`: Places the complete selected mask-shift producer on any larger alphabet and five distinct caller ports for b/q/n, original controls and output. Preserves all complementary caller tapes/heads, retains original controls/headers, returns literal packed offsets and restores26 appended private tapes with unchanged certified cost.
 
-- `Machine/CountedRepairKeyBank.lean`: Thirty-tape fixed repair-key bank and exact shared placements for rank splitting, inverse arithmetic, original-input guard and ideal toggle. The original short scan counter/control/q/b/n are retained.
 
-- `Machine/CountedRepairKeyPrefix.lean`: Actual fixed-control rank split, exceptional guard, inverse packed arithmetic and ideal toggle composition. Exact flags/recovered words and all sequencing costs are proved from original runtime descriptors.
 
-- `Machine/CountedRepairKeyAppendMoves.lean`: Physical flag write, source-head positioning, destination copies and marked-key returns for the conditional repair key, preserving all framed tapes.
 
-- `Machine/CountedRepairKeyAppend.lean`: Actual conditional destination append: true flags receive the exact toggled-inverse destination words, false flags receive only the flag. Source/key rewinds are paid.
 
-- `Machine/CountedRepairKeyWrite.lean`: Thirty-tape actual guard-controlled key write preserves original words/headers/counter, returns every source/key head and charges the conditional branch and all copied destination cells.
 
-- `Machine/CountedRepairKeyCleanup.lean`: Physically erases every generated rank/inverse/toggle word and the guard result, restoring complete private storage while retaining the written key and original inputs.
 
-- `Machine/CountedRepairKeyRun.lean`: One fixed thirty-tape complete repair-key machine from original canonical q/b/n, control and actual short scan counter. Exact conditional key, original-input preservation and full workspace restoration hold within5100*(n+1)*(q+b+1).
 
-- `Machine/CountedRepairKeyValue.lean`: Actual short-counter membership flag and destination-word semantics equal the compact instance rankFlag/rankKey. Zero extension is justified by physical blank-tail copies; no padded counter is supplied.
 
-- `Machine/CountedRepairKeyScan.lean`: Places the fixed key machine into the actual forty-two-tape repair scan bank and proves RepairScan.KeyContract with exact rank flags/destination keys, retained non-key scan tapes and reusable28-tape scratch. Full outer scan/sort/reinsert initialization and assembly remain separate.
 
 - `Machine/BinaryAddressOffsetRepeatBlock.lean`: Fixed runtime-width source-block copying, scratch rewinding and repeated block output with exact complete-block preservation and charged controls.
 
@@ -1741,15 +1711,10 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 - `Machine/BinarySelectedOffsetRepeatCoordinates.lean`: Exact fiber lookup over prefix/dirty-back/source/trailing spectators returns the packed2*z*w offset from the original control and actual temporary source coordinate, independent of dirty back/slack.
 
-- `Machine/CountedRepairScanMetadata.lean`: Fixed twelve-tape runtime metadata constructor reads original q/b/n, derives nq/nb, and physically fills the actual unary sort selector and zero rank counter. Original descriptors are retained; generated widths and private work are erased.
 
-- `Machine/CountedRepairScanMetadataRun.lean`: Proves the complete selector/counter construction and cleanup with cost1000*(n+1)*(q+b+1), including zero digit counts and no supplied derived width words.
 
-- `Machine/CountedRepairScanSeed.lean`: Physically writes actual repair-stage marked sentinels and the initial counter separator into blank storage, with exact tape endpoints and a fixed paid cost.
 
-- `Machine/CountedRepairScanPrepare.lean`: Places physical seed and runtime metadata construction into the actual forty-two-tape repair bank. Produces exactly the scan bank from original source/control/q/b/n within1004*(n+1)*(q+b+1).
 
-- `Machine/CountedTapeRepairBank.lean`: Literal original-input and full repair-stage output banks, including the exact ideal stream on output10 and retained key scratch. Defines paid preparation plus scan/sort/strip/reinsert costs. Stage streams, selectors and sentinels remain explicit at the endpoint.
 
 - `Machine/BinaryCorrectionOffsetRow.lean`: Copies exactly one runtime-width row from both operands, invokes the actual subtraction rule with fresh zero borrow, and erases both row scratch words. Exact modular difference and cost15W+14*headerLength+46 are proved; borrows never cross row boundaries.
 
@@ -1831,17 +1796,11 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 - `Machine/BinaryParityXorOffsetRepeatCoordinates.lean`: Exact negative packed parity-XOR at every selected source address, repeated independently of spectators and dirty-back coordinates. The physical row ordering and literal full word length are proved.
 
-- `Machine/CountedTapeRepairCleanupWord.lean`: Actual marked/unmarked word erasure and physical return primitives remove sentinels as well as data, with literal endpoints and paid transition counts.
 
-- `Machine/CountedTapeRepairCleanupAt.lean`: Places physical erase/return operations on selected repair-stage tapes, preserving complementary tapes and restoring erased heads.
 
-- `Machine/CountedTapeRepairCleanup.lean`: Fixed fourteen-slot final cleanup schedule erases stage/key/counter words and sentinels while returning preserved source/output heads to origin.
 
-- `Machine/CountedTapeRepairCleanupRun.lean`: Concrete cleanup of actual early scan/sort/reinsert endpoint leaves ideal output10 and source11 at origin, every other first-fourteen tape blank, and retained twenty-eight key scratch tapes.
 
-- `Machine/CountedTapeRepairBudget.lean`: Uniform record-width and exceptional-count bound for the complete early repair execution including all final cleanup; exact full cost is at most base+badCount*coefficient.
 
-- `Machine/CountedTapeRepairDensity.lean`: Actual early exceptional count is bounded by rho*M with rho=n/2^b+8*n*2^b/2^q; the paid full repair cost obeys the corresponding density bound.
 
 - `Machine/CompactGadgetReservationHeadersRouting.lean`: Fixed routing shares the actual fifteen-tape header workspace across original-R row synthesis and header construction, while retaining arbitrary caller spectators.
 
@@ -1855,7 +1814,6 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 - `Machine/CompactGadgetReservationHeadersBudget.lean`: Entire original-R row synthesis, reservation shape preparation and actual load preserve the certified width exponent with constant depending only static role count; no extra chunk-size factor. Width is n*globalGuard; distinct narrower packed widths and generated-offset reservation routing remain separate.
 
-- `Machine/CountedLateRepairInverse.lean`: Fixed twenty-eight-tape reverse eight-stage later packed arithmetic machine reads original runtime headers/control, restores an unconditional true packedLate preimage and erases parity/arithmetic/header scratch. Unrestricted word/value semantics and cost7000*(n+1)*(q+b+1) are proved; later guard, destination key and full repair pipeline remain separate.
 
 - `Machine/CompactGadgetReservationHeadersCarvedData.lean`: General carved-width geometry keeps one fixed globalShape/H/layout while selecting n*packingFactor front/back bits; unused interval bits remain literal spectators. Simultaneous n*b/n*q capacities and disjoint slots are proved.
 
@@ -1869,51 +1827,28 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 - `Machine/BinaryPackedEarlyData.lean`: Actual selected/parity/signed-correction/negative row-word translations compose in current-source order to packedEarly. On good addresses, the target is the ideal toggle and temporary value restores, with arbitrary spectators unchanged. Physical common-bank execution remains separate.
 
-- `Machine/CountedLateRankBank.lean`: Native thirteen-tape short-rank splitter bank keeps the actual counter, original q/b/n and arbitrary destination exteriors, using blank-backed zero extension rather than a supplied padded counter.
 
-- `Machine/CountedLateRankRun.lean`: Actual fixed-control split extracts target V of width n*q and both W/U source fields of width n*b, restores heads and erases split scratch with a fully charged runtime.
 
-- `Machine/CountedLateRankEndpoint.lean`: Clean original-header later rank splitter has exact V/W/U words and a uniform600-times-full-stride bound, preserving original counter and destination spectators.
 
-- `Machine/CountedLateRepairFlag.lean`: Physical later exceptional comparisons on original V/W and V/U words produce exact individual flags and erase all comparison scratch.
 
-- `Machine/CountedLateRepairGuard.lean`: Fixed thirty-tape later exceptional guard physically ORs both flags, erases the second flag and decides exactly the lateGood complement within2004 times full stride.
 
-- `Machine/CountedLateRepairPrefix.lean`: Actual original-input later guard and unrestricted packed inverse compose with exact retained flag/recovered V/W/U words and paid9005-times-full-stride cost.
 
-- `Machine/CountedLateRepairToggle.lean`: Fixed thirty-one-tape ideal toggle uses the actual recovered target/control and preserves the original exceptional flag and dirty source words with paid533-times-full-stride cost.
 
-- `Machine/CountedLateRepairConcat.lean`: Actual W/U destination concatenation returns the exact combined source word and restores all heads within3 times the combined lengths plus10.
 
-- `Machine/CountedLateRepairKeyBank.lean`: Fixed thirty-four-tape later key bank and physical placements for actual rank splitting, guard/inverse/toggle and W/U concatenation.
 
-- `Machine/CountedLateRepairKeyPrefix.lean`: Original-input later guard, inverse, toggle and source concatenation compose with exact full-bank endpoints and all joins paid.
 
-- `Machine/CountedLateRepairKeyWrite.lean`: Actual conditional later key writer emits the exceptional flag and, only when flagged, the exact recovered/toggled destination words, with all source/key rewinds charged.
 
-- `Machine/CountedLateRepairKeyCleanup.lean`: Physically erases all six generated later key words and restores complete scratch while retaining original counter/control/headers and the written key.
 
-- `Machine/CountedLateRepairKeyRun.lean`: One fixed thirty-four-tape later key machine executes genuine short-rank splitting through conditional key writing and full cleanup from original runtime descriptors within10300 times full stride.
 
-- `Machine/CountedLateRepairKeyValue.lean`: Actual later key flag and literal destination bits equal the later compact instance rankFlag/rankKey for every short scan counter.
 
-- `Machine/CountedLateRepairScanBank.lean`: Physical placement of the actual thirty-four-tape later key inside the forty-six-tape repair scan bank, preserving every non-key scan tape.
 
-- `Machine/CountedLateRepairMetadata.lean`: Actual original n*q/n*b products and counted replay construct the later selector/counter width n*q+2*n*b, erasing every generated product and clock.
 
-- `Machine/CountedLateRepairPrepare.lean`: Fixed forty-six-tape later preparation physically creates all scan sentinels/selectors/counters from original q/b/n/control and blank workspace within2004 times full stride.
 
-- `Machine/CountedLateTapeRepairBank.lean`: Literal original-input later repair bank and exact actual/ideal stream definitions, with distinct source/output and retained original key scratch.
 
-- `Machine/CountedLateTapeRepairCleanupAt.lean`: Physical later repair head positioning and framed erasures preserve the source/output tapes and original key scratch.
 
-- `Machine/CountedLateTapeRepairCleanup.lean`: Actual fourteen-stage later final cleanup erases every stage marker/work word and restores all stage heads.
 
-- `Machine/CountedLateTapeRepairCleanupRun.lean`: Complete later physical cleanup returns only the ideal output and retained source at origin; all other stage tapes blank and original scratch retained.
 
-- `Machine/CountedLateTapeRepairBudget.lean`: Every later setup/key/sort/strip/reinsert/final-cleanup transition enters a complete runtime bound linear in volume plus exceptional count times the paid repair coefficient.
 
-- `Machine/CountedLateTapeRepairDensity.lean`: Actual later exceptional-address count is bounded by the proved density and absorbed into the complete paid tape runtime expression.
 
 - `Machine/CompactGadgetReservationHeadersCarvedPlaced.lean`: The actual carved-header schedule shares eleven arbitrary caller ports without copying original descriptors, preserves every spectator and restores forty private tapes. Exact P/G/B synthesis and full-volume setup cost hold for any compact carved width within the fixed reservation.
 
@@ -1923,7 +1858,6 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 - `Machine/CompactGadgetReservationHeadersCarvedPlacedCleanup.lean`: Four actual shape descriptors are physically erased after use, preserving every other caller tape/head. Exact cost2 times all descriptor lengths plus19 is bounded by35*roleVolume from the carved geometry.
 
-- `Machine/BinaryDescriptorCopyPlaced.lean`: Actual marked descriptor duplication reads caller source at head one and blank destination at head zero, returns both words at head one and frames every other caller tape/head. No supplied duplicate word or workspace copy is assumed; cost2*length+5.
 
 - `Machine/ActiveTargetRotation.lean`: A direct actual caller-owned active-target rotation retains original prefix/suffix/width descriptors, packed offsets and all spectators with twelve private tapes blank. Full destination semantics and a uniform linear-volume bound hold for every target width, without target interchanges or front-capacity premises. Offset production remains an explicit physical stage input.
 
@@ -1995,17 +1929,13 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 - `Machine/ActivePrefixOffsetHeadersBudget.lean`: Every actual header-setup transition is bounded by(powerConstant+328)*2^W*(W+1) under source/temp fit and n+1=f. Applies to the actual caller machine, not a semantic arithmetic cost.
 
-- `Machine/ActivePrefixOffsetHeadersCleanup.lean`: Five generated prefix-offset descriptors are physically erased on arbitrary caller ports, preserving all original tapes and restoring output heads. Complete cleanup is paid by44*2^W*(W+1).
 
 - `Machine/ActiveTargetHighestRun.lean`: A fixed tracked physical coefficient-one shift executes the highest selected one-bit toggle from an earlier source-address bit, retaining six supplied canonical descriptors and returning the exact array at origin. All private and tracking tapes are blank; complete cost137575*volume, with no offset table or target front-capacity premise.
 
 - `Machine/ActiveTargetHighestValue.lean`: Exact full-array transport of the actual highest-bit machine is target XOR with the real earlier prefix bit, preserving all preceding/intervening/suffix coordinates. The combined realizes theorem includes actual execution, cleanup and linear bound; source-layout/header synthesis and later-source placement remain separate.
 
-- `Machine/VaryingControlRepairFiber.lean`: Dependent source-address families of actual/ideal permutations retain their current source and every spectator through inverse and repair destinations. Full rank arithmetic is explicit; a separate original-layout bridge identifies physical ranks.
 
-- `Machine/VaryingControlRepairPacked.lean`: Existing exact early/later packed permutations and repaired endpoints lift uniformly to controls Z(x) computed for each retained source address, with no one-fixed-control-word assumption across the stream.
 
-- `Machine/VaryingControlRepairDensity.lean`: Explicit finite fiber sums bound total bad addresses and normalized exceptional density uniformly across varying source controls, including empty source and spectator ranges.
 
 - `Machine/VaryingControlRepairLayoutRank.lean`: Actual unchanged active-layout ranks recover V/T/U and active-before/after coordinates exactly, including arbitrary payload suffix. Explicit source-slot offsets yield exact source-word/value recovery from genuine short counter values; no padded-counter input or physical rank parser is assumed.
 
@@ -2013,11 +1943,8 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 - `Machine/ActivePrefixSelectedOffsetBank.lean`: Defines the original eight-descriptor bank and shared prefix-field, source-extraction and selected-gather placements. Exact physical gathered output equals the canonical varying first-offset stream; original descriptors and complementary bank are retained.
 
-- `Machine/ActivePrefixSelectedOffsetRun.lean`: One fixed forty-one-tape producer physically synthesizes all five derived headers, projects temporary and full-source fields from every prefix address, extracts current source controls and emits selected offsets. Every stage has actual tape semantics and charged runtime; cleanup is provided separately.
 
-- `Machine/ActivePrefixSelectedOffsetCleanup.lean`: Physically erases all generated source/control streams and five derived descriptors after the selected gather. Exact final bank retains only the original eight descriptors and offset output at origin, with all twenty-four private tapes blank and every head restored.
 
-- `Machine/ActivePrefixSelectedOffset.lean`: Complete fixed first-offset producer reads only eight original canonical descriptors, generates the exact varying-source offsets and clears all derived tables, headers and workspace. A uniform constant times two-to-W times W-plus-one bound includes every stage and cleanup. Arbitrary caller placement, repetition over original rows and active rotation composition remain separate.
 
 - `Machine/ActiveRepairRankFieldsPosition.lean`: Fixed caller-placed runtime seek and restore operations traverse address fields from original canonical offsets, retaining all tape contents and erasing countdown scratch with exact charged costs.
 
@@ -2031,9 +1958,7 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 - `Machine/ActiveRepairRankFieldsGeometry.lean`: Recovers exact active-layout V/T/U and before/after source words from the original record ordinal, with payload width one for address ranks. Field geometry includes source/back/spectator bits without introducing a free physical reorder.
 
-- `Machine/ActiveRepairRankFieldsEndpoint.lean`: Actual before/after-source repair parsing returns exact layout V/T/U, full source and selected controls from a genuine short original-rank counter. Supplied original canonical field offsets/widths are retained, private storage erased and the linear address-width bound is paid. Descriptor synthesis, inverse/guard calculation and full destination-key writing remain open.
 
-- `Machine/ActivePrefixSelectedOffsetPlaced.lean`: Actual clean first-offset producer on arbitrary nine caller ports reads only the eight original canonical descriptors and blank output. Exact varying offsets at origin, all retained original/spectator tapes and forty-one blank private tapes are proved with unchanged linear prefix-table cost. Original-row repetition and direct active rotation composition remain separate.
 
 - `Machine/ActivePrefixOffsetRepeatRun.lean`: One fixed four-tape machine physically repeats a generated base offset word using the original canonical row descriptor. An actual empty-source branch avoids per-row overhead for empty words. Exact repeated output, retained source/descriptor, erased clock and cost54 times repeated volume plus one include arbitrary rows, zero rows and empty input.
 
@@ -2041,29 +1966,19 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 - `Machine/ActivePrefixOffsetRepeatPlaced.lean`: Clean repetition on arbitrary rows/base/output caller ports returns exactly the flattened original-row copies, retaining all original descriptors, source and spectators and erasing four private tapes. No power-of-two row assumption or supplied repetition table is needed.
 
-- `Machine/ActiveRepairDestinationPatchOverwrite.lean`: Fixed five-tape runtime seek/copy/rewind physically overwrites one selected address field while retaining the replacement word, original offset/width descriptors, heads and every exterior bit. Exact charged time and a linear address-width bound are proved.
 
-- `Machine/ActiveRepairDestinationPatchData.lean`: Literal same-width field replacement preserves every outside bit, installs the exact selected interval and commutes for disjoint intervals. Connects the actual overwrite tape to the resulting finite address word.
 
-- `Machine/ActiveRepairDestinationPatchPlaced.lean`: Actual field overwrite on arbitrary caller replacement/destination/offset/width ports preserves the complementary bank and erases all nine shared private tapes, with exact physical runtime.
 
-- `Machine/ActiveRepairDestinationPatchRun.lean`: One fixed twenty-one-tape machine zero-extends a genuine short rank counter to the runtime full address width, then physically replaces V/T/U at three runtime offsets. Original rank, replacement words, seven descriptors and all heads survive; nine private tapes are erased. Exact output and cost800 times address width plus one, plus three are proved.
 
-- `Machine/ActiveRepairDestinationPatchGeometry.lean`: Encodes the unchanged active-layout rank including arbitrary rows, source/spectator bits, front slack, U/T tails and dirty back. With payload one and rows below the explicit row-bit capacity, the generated three-patch word is exactly the original physical index with V/T/U replaced.
 
-- `Machine/ActiveRepairDestinationPatchEndpoint.lean`: Instantiates the actual fixed twenty-one-tape rank reconstruction at active target/T/U offsets and proves output equals the full fixed-width destination rank, retaining every spectator. Canonical runtime offsets/widths are supplied; physical synthesis of these headers, guard/inverse/toggle computation and conditional full-key composition remain open.
 
 - `Machine/ActivePrefixControlOffsetData.lean`: The complete generated control-mask stream uses selected source bits of each actual prefix rank. Exact length and per-prefix toggleMask identity are proved; the auxiliary width-n projected source is only a paid physical clock.
 
 - `Machine/ActivePrefixControlOffsetBank.lean`: Original eight-descriptor caller bank generates a width-n clock projection, full source projection and current source controls. Exact gathered bank equals the canonical control-mask offsets, retaining all original descriptors.
 
-- `Machine/ActivePrefixControlOffsetRun.lean`: One fixed forty-one-tape machine physically constructs derived headers, both prefix projections, all varying controls and control-mask offsets from sole original descriptors. Every setup/extraction/gather stage has an actual charged contract.
 
-- `Machine/ActivePrefixControlOffsetCleanup.lean`: Physically erases clock/source/control streams and all five generated descriptors after the control-mask gather, leaving only original descriptors and exact offsets at origin with all private tapes blank.
 
-- `Machine/ActivePrefixControlOffset.lean`: Complete fixed varying control-mask producer, including actual source-address extraction and full metadata/stream cleanup, has a uniform constant times2^W*(W+1) bound. This supplies B for the B-minus-A correction; subtraction and payload rotation are separate.
 
-- `Machine/ActivePrefixControlOffsetPlaced.lean`: Actual control-mask production on arbitrary original-eight-plus-output caller ports retains every descriptor and spectator and restores forty-one private tapes, with unchanged certified linear prefix-table runtime.
 
 - `Machine/GatherStreamData.lean`: Generic Boolean gathers preserve uniform source/control row boundaries for independently varying rows. Exact per-row semantics and reconstruction from fixed-width fields include zero-width rows; no repeated-control premise is needed.
 
@@ -2071,61 +1986,39 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 - `Machine/ActivePrefixParityOffsetBank.lean`: Original eight-descriptor bank physically projects the current n*q-bit target and full source fields, extracts varying controls and gathers positive parity-XOR offsets. Exact bank identity retains every original descriptor.
 
-- `Machine/ActivePrefixParityOffsetRun.lean`: One fixed forty-one-tape producer shares actual original-header synthesis, target/source projections, source-bit extraction and parity-XOR gather, with complete charged stage contracts.
 
-- `Machine/ActivePrefixParityOffsetCleanup.lean`: Physically erases projected target/source/control words and every derived descriptor after parity-XOR emission. Only original descriptors and output survive at origin, with all private storage blank and heads restored.
 
-- `Machine/ActivePrefixParityOffset.lean`: Complete fixed positive parity-XOR producer runs from eight original canonical descriptors and erases all generated metadata and streams within a uniform constant times2^W*(W+1) bound. The actual negative compact load additionally requires rowwise modular negation and rotation.
 
-- `Machine/ActivePrefixParityOffsetPlaced.lean`: Clean positive parity-XOR production on arbitrary nine caller ports preserves all original descriptors and spectators, restores forty-one private tapes and retains the complete linear prefix-table runtime.
 
 - `Machine/ActivePrefixCorrectionOffsetData.lean`: Exact current-prefix correction rows subtract the physically selected temporary/source offset A from that address’s source-control mask B modulo2^(n*q). Uniform row length, output length and independent row semantics include n=0.
 
 - `Machine/ActivePrefixCorrectionOffsetSubtract.lean`: Actual modular row-subtraction machine lifted to arbitrary alphabets and caller operand/output/width/count ports. It consumes and erases both complete operand tables, retains original descriptors and restores nine private tapes with a linear row-volume bound.
 
-- `Machine/ActivePrefixCorrectionOffsetBank.lean`: Shared original-eight-descriptor correction caller stores only generated selected/control operands, five derived headers and final output. Exact stage-bank identities connect the two real producers, header construction, subtraction and cleanup.
 
-- `Machine/ActivePrefixCorrectionOffsetRun.lean`: One fixed original-input sequence physically generates both varying operand tables, synthesizes count2^W and width n*q, subtracts each row and erases operands plus every derived header. Originals survive and forty-one shared private tapes return blank.
 
-- `Machine/ActivePrefixCorrectionOffset.lean`: Complete fixed original-descriptor B-minus-A correction producer has exact current-prefix output and a uniform constant times2^W*(W+1) bound including both operand producers, rowwise subtraction and cleanup. Actual active-target rotation composition remains separate.
 
-- `Machine/ActivePrefixCorrectionOffsetPlaced.lean`: Clean correction producer on arbitrary original-eight-plus-output caller ports returns exact correction offsets at origin, retains every original/spectator and erases all fifty-seven private tapes. Zero-width rows are included.
 
 - `Machine/ActiveTargetHighestLaterValue.lean`: Exact rectangular later-source target XOR is swap–earlier-XOR–swap, preserving arbitrary prefix, gap and suffix coordinates. Native-array geometry and full-volume casts identify the conjugated mathematical action.
 
-- `Machine/ActiveTargetHighestLaterClean.lean`: Earlier highest-bit physical output is exactly its original native input bank with only the array transformed. Every supplied descriptor and private/tracking tape is retained or erased literally, allowing actual repeated machine composition.
 
-- `Machine/ActiveTargetHighestLaterAlphabet.lean`: Executes the actual earlier-source highest machine in the prime interchange alphabet with exact literal array input/output, retained original headers, blank workspace and unchanged137575-times-full-volume runtime.
 
-- `Machine/ActiveTargetHighestLaterBank.lean`: Full native highest-bit bank plus four supplied swap descriptors has an exact payload-only update bridge to binary interchange, including the non-definitional full-volume cast and unchanged complementary bank.
 
 - `Machine/BinaryVaryingParityOnlyGather.lean`: Actual fixed runtime-header gather uses the pure source-parity operation and ignores control values logically. Source/control words and original q/b/count survive; every derived descriptor/clock is generated and erased with a uniform stride bound.
 
 - `Machine/BinaryVaryingParityOnlyPlaced.lean`: Own clean six-port placement of the physical pure-parity gather preserves every complementary caller tape and restores its twenty native private tapes. Exact output, retained originals and charged runtime are proved.
 
-- `Machine/ActivePrefixParityOnlyData.lean`: Per-prefix pure-parity rows are exactly each current target digit’s low bit followed by compact padding. Full row/stream identity, original prefix testBit semantics and output length2^W*(n*b) include zero digits.
 
-- `Machine/ActivePrefixParityOnlyBank.lean`: Original eight-descriptor pure-parity bank physically projects current target/full-source fields, extracts controls and runs an actual source-only parity gather. Every control row may vary, but none enters the offset value.
 
-- `Machine/ActivePrefixParityOnlyRun.lean`: One fixed forty-one-tape original-input sequence generates all headers, prefix fields and source controls before actual pure-parity gathering, charging every stage.
 
-- `Machine/ActivePrefixParityOnlyCleanup.lean`: Physically erases projected target/source/control tables and every derived header after pure-parity emission. Originals and exact output remain at origin; all private storage and heads are restored.
 
-- `Machine/ActivePrefixParityOnly.lean`: Complete fixed pure-parity offset producer has exact current-prefix semantics and full cleanup with a uniform constant times2^W*(W+1) bound, including zero digits. Compact swap/rotation composition remains separate.
 
-- `Machine/ActivePrefixParityOnlyPlaced.lean`: Clean original-eight-plus-output caller placement produces exact pure-parity offsets, retains all original descriptors and spectators and restores forty-one private tapes with unchanged runtime.
 
-- `Machine/ActivePrefixParityNegativeData.lean`: Exact rowwise modular-negative parity-XOR offsets use each actual prefix target and current source controls. Uniform compact width, exact negative row/value semantics and empty output at zero digits are proved.
 
 - `Machine/ActivePrefixParityNegativeNegate.lean`: Actual modular-negation machine lifted to arbitrary alphabets consumes and erases the complete positive table, retains width/count descriptors and returns the exact negative stream at origin with shared forty-one private tapes blank.
 
-- `Machine/ActivePrefixParityNegativeBank.lean`: Original eight-descriptor caller stores generated positive/negative tables and five derived width/count headers. Exact shared-bank interfaces connect physical positive production, header synthesis, negation and cleanup.
 
-- `Machine/ActivePrefixParityNegativeRun.lean`: One fixed original-input sequence physically generates positive parity-XOR offsets, synthesizes row count2^W and compact width n*b, negates every row and erases the positive operand plus all five derived headers. Exact endpoint and linear prefix-table bound include zero digits.
 
-- `Machine/ActivePrefixParityNegative.lean`: Complete fixed fifty-six-tape negative parity-XOR producer starts solely from eight original canonical descriptors and blank work. Only exact negative offsets survive; every original and private tape/head is restored with a linear2^W*(W+1) bound.
 
-- `Machine/ActivePrefixParityNegativePlaced.lean`: Actual negative parity-XOR production on arbitrary original-eight-plus-output caller ports retains all descriptors and spectators, erases fifty-six private tapes and returns output at origin. Compact payload rotation and full schedule composition remain separate.
 
 - `Machine/ActivePrefixLayoutFields.lean`: Fixed-width generated prefix words at rank modulo2^W recover every fitting original field. Literal repeated-table lookup handles arbitrary original rows, without a power-of-two row assumption or phantom ranks.
 
@@ -2133,287 +2026,146 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 - `Machine/ActivePrefixLayoutShapes.lean`: Actual active reservation dimensions instantiate the selected and parity producer Shapes with proved prefix fits. Compact n*b fits H; wide n*q remains active. Before/after source slots and original-rank bounds are explicit.
 
-- `Machine/ActivePrefixLayoutTarget.lean`: Repeated selected/correction offset rows at the actual targetPrefix rank read exactly current T and the earlier source slot. Full target-fiber index matches the unchanged serialized original-array index.
 
-- `Machine/ActivePrefixLayoutBack.lean`: Repeated pure/negative parity rows at actual backPrefix ranks read the current active target and full before/after source slots, including all original row/source/spectator coordinates.
 
-- `Machine/ActivePrefixLayoutSwap.lean`: Literal compact T/back exchange equals the existing physical rectangular transpose and retains active target/source coordinates. Its back fiber contains original T; exact repeated pure/negative rows after that swap read the actual active target and source. Physical header synthesis and complete four-load sequencing remain separate.
 
-- `Machine/ActivePrefixSelectedLoadData.lean`: Original-ten-descriptor plus array bank exposes static producer, header arithmetic, original-row repeat and rotation placements. Exact generated/repeated offsets have length original rows times2^W times n*q; no offset or rotation metadata is supplied.
 
-- `Machine/ActivePrefixSelectedLoadHeaders.lean`: Actual runtime header synthesis generates2^W and n*q, then a paid original-row product constructs P=rows*2^W. Original descriptors and payload survive; every arithmetic scratch tape is erased.
 
-- `Machine/ActivePrefixSelectedLoadRun.lean`: One fixed sixty-tape program generates selected offsets from current prefix/source fields, synthesizes rotation dimensions, repeats for arbitrary original rows and physically rotates the full active target array. Every stage and join is charged.
 
-- `Machine/ActivePrefixSelectedLoadCleanup.lean`: Physically erases both generated offset tables and all six derived dimension headers after the selected rotation. All ten originals and the transformed array remain; every other tape/head returns blank at origin.
 
-- `Machine/ActivePrefixSelectedLoad.lean`: Complete original-input selected load has exact full-array rotation semantics and full workspace cleanup, with linear full-volume cost under explicit prefix-table absorption W+1≤2^(n*q)*B. Rows/B are positive; n=0 is supported. This is one actual load, not the complete compact gadget or multiplier.
 
-- `Machine/ActiveRepairEarlyFieldsBank.lean`: Extracted-field early repair bank retains actual V/T/current source controls, q/b/n and the original full scan counter. Inverse, guard and ideal toggle use blank scratch; no precomputed local rank or key sentinel is supplied.
 
-- `Machine/ActiveRepairEarlyFieldsRun.lean`: Actual fixed inverse, original-address guard and ideal toggle compose on supplied extracted fields with exact recovered T/target and physical flag. Controls may differ for every full source address; runtime is4300 times packed stride.
 
-- `Machine/ActiveRepairEarlyFieldsCleanup.lean`: Physically erases the four inverse intermediates while retaining original extracted words, recovered T, ideal recovered target and the actual guard flag. Exact endpoint and linear packed-stride cleanup cost are proved.
 
-- `Machine/ActiveRepairEarlyFields.lean`: Reusable fixed early repair computation retains extracted originals and produces only exact repaired local fields and flag, erasing every private intermediate within4400 times packed stride. Full destination-rank patching remains separate.
 
-- `Machine/ActiveRepairEarlyFieldsPlaced.lean`: Actual early inverse/guard/toggle calculation on arbitrary V/T/current controls/q/b/n/full-rank/output caller ports retains the complementary frame and restores thirty private tapes. Recovered T and ideal target are at origin; the actual guard flag is at its writer-ready head.
 
-- `Machine/ActiveRepairEarlyFieldsValue.lean`: The extracted-field physical outputs have exact existing local exceptional-membership and repair-destination rank semantics. Mathematical V-plus-T concatenation identifies the rank but is never supplied to the machine; in-range bounds follow from genuine field widths.
 
-- `Machine/ActiveRepairRankParserPlaced.lean`: Complete genuine short-rank field/source parser on arbitrary eighteen caller ports retains every descriptor and spectator and restores twenty-seven native private tapes. Physical current controls and V/T/U/full source are produced with a linear address-width bound.
 
-- `Machine/ActiveRepairEarlySourceRun.lean`: One fixed fifty-two-tape sequence physically parses the original full rank, extracts that address’s source controls and directly executes actual early inverse/guard/ideal-toggle calculation. Private scratch is erased and recovered fields/flag are exact; total cost27600 times address width plus one, plus five. Runtime field descriptors remain supplied; their synthesis, full-rank patching and conditional key composition are separate.
 
-- `Machine/ActivePrefixCompactParityLoadData.lean`: Exact compact n*b payload dimensions and actual repeated pure-parity offset words; no wide target is placed in the reserved front.
 
-- `Machine/ActivePrefixCompactParityLoadHeaders.lean`: Actual power, width and prefix-count synthesis from original eight shape descriptors and row count, with retained originals and paid arithmetic.
 
-- `Machine/ActivePrefixCompactParityLoadRun.lean`: Fixed sixty-tape pure-parity payload load executes original-input generation, physical row repetition and compact-width rotation on one shared bank.
 
-- `Machine/ActivePrefixCompactParityLoadCleanup.lean`: Physically erases base/repeated offsets and every derived descriptor after the compact pure-parity rotation, restoring all auxiliary slots.
 
-- `Machine/ActivePrefixCompactParityLoad.lean`: Complete pure-parity compact load retains original descriptors and rotates exact payload records with clean private storage and linear volume cost under explicit prefix-table absorption, including n=0.
 
-- `Machine/ActivePrefixCompactParityLoadPlaced.lean`: Places the complete compact pure-parity load on arbitrary eleven caller ports, preserves the complementary frame and restores sixty appended private tapes.
 
-- `Machine/ActivePrefixCompactParityLoadLayout.lean`: Exact unchanged-layout compact pure-parity destinations and full-record cost, with explicit whole-back absorption; surrounding swaps remain separate.
 
-- `Machine/ActivePrefixCompactParityLoadLayoutAfter.lean`: Exact after-source layout destinations identify the compact pure-parity action on original T after semantic T/back exchange; physical surrounding swaps are separate.
 
-- `Machine/ActivePrefixCorrectionLoadData.lean`: Literal repeated control-minus-selected offset rows and wide active-target payload dimensions from original shape and row count.
 
-- `Machine/ActivePrefixCorrectionLoadHeaders.lean`: Physically synthesizes rotation count and dimensions from original descriptors for the correction load, retaining all original inputs.
 
-- `Machine/ActivePrefixCorrectionLoadRun.lean`: Actual seventy-six-tape original-input correction production, row repetition and wide active-target rotation share one blank private bank.
 
-- `Machine/ActivePrefixCorrectionLoadCleanup.lean`: Erases both correction offset streams and all six generated rotation descriptors after the actual payload action, restoring auxiliary storage.
 
-- `Machine/ActivePrefixCorrectionLoadValue.lean`: Every actual current-prefix correction row is exactly varying-control minus selected-mask shift modulo the full target radix, with source field reconstruction and destination identity.
 
-- `Machine/ActivePrefixCorrectionLoad.lean`: Complete original-input correction load has exact physical destination, retained originals, full cleanup and linear-volume cost under explicit prefix-table absorption; zero target width is supported.
 
-- `Machine/ActivePrefixCompactNegativeLoadData.lean`: Exact compact dimensions and repeated signed negative parity-XOR rows generated from original prefix fields.
 
-- `Machine/ActivePrefixCompactNegativeLoadHeaders.lean`: Actual count and compact-width synthesis for the negative parity-XOR load from original shape descriptors and rows.
 
-- `Machine/ActivePrefixCompactNegativeLoadRun.lean`: Fixed seventy-five-tape negative parity-XOR producer, actual row repetition and compact payload rotation compose on a shared fifty-six-tape private bank.
 
-- `Machine/ActivePrefixCompactNegativeLoadCleanup.lean`: Physically erases both negative offset streams and every derived descriptor, retaining originals and payload while restoring private storage.
 
-- `Machine/ActivePrefixCompactNegativeLoad.lean`: Complete negative parity-XOR compact action has exact physical execution and full cleanup with a linear-volume bound under explicit prefix-table absorption, including zero target width.
 
-- `Machine/ActivePrefixCompactNegativeLoadPlaced.lean`: Arbitrary eleven-port caller placement preserves all spectator tapes and heads and restores seventy-five appended private tapes with unchanged runtime.
 
-- `Machine/ActivePrefixCompactNegativeLoadLayout.lean`: Exact before-source compact layout action and signed negative parity-XOR offset value with full-record cost under whole-back absorption; physical swaps remain separate.
 
-- `Machine/ActivePrefixCompactNegativeLoadLayoutAfter.lean`: Exact after-source destinations translate original T by the generated negative parity-XOR following semantic T/back exchange; surrounding physical swap composition remains open.
 
-- `Machine/ActiveRepairRankHeadersArithmetic.lean`: Real copy/add/subtract/zero/erase command semantics and linear bounds for original-layout repair descriptor generation.
 
-- `Machine/ActiveRepairRankHeadersCommands.lean`: Fixed twenty-nine-command schedule derives parser and patch starts/widths from ten original geometric width descriptors, supporting both source orders.
 
-- `Machine/ActiveRepairRankHeadersData.lean`: Exact native forty-three-tape input/output banks for original geometric descriptors and generated parser/patch headers, with separate temporary and workspace slots.
 
-- `Machine/ActiveRepairRankHeadersRun.lean`: Actual original-input parser/patch header synthesis retains originals, erases arithmetic workspace and has a uniform linear address-width bound; post-use cleanup erases all fifteen generated headers.
 
-- `Machine/ActiveRepairRankHeadersEndpoint.lean`: Generated physical parser and patch descriptors equal the actual before/after-source full-layout headers. Geometry derives original width bounds; arbitrary caller placement and complete key assembly remain separate.
 
-- `Machine/ActivePrefixSelectedLoadPlaced.lean`: Complete original-input selected load on arbitrary eleven caller ports, with exact source specification and payload update, retained spectators, restored sixty private tapes and unchanged exact/linear runtime bounds.
 
-- `Machine/ActivePrefixCorrectionLoadPlaced.lean`: Complete original-input correction load on arbitrary eleven caller ports, framing complementary tapes and heads and restoring seventy-six private tapes with exact and absorption-linear bounds.
 
-- `Machine/ActiveRepairRankHeadersPlaced.lean`: Actual original-width repair-header producer and post-use eraser on twenty-five arbitrary caller ports. Ten originals are retained, fifteen real generated descriptors feed callers, forty-three private tapes are restored and spectators retain tape and head.
 
-- `Machine/ActivePrefixCompactSwapData.lean`: Actual compact T/back swap geometry and native bank from original reservation descriptors and packing factor; no wide-target compact capacity premise.
 
-- `Machine/ActivePrefixCompactSwapRun.lean`: Physically constructs all four interchange headers, executes the real compact T/back swap and erases generated descriptors, retaining originals and restoring both private banks.
 
-- `Machine/ActivePrefixCompactSwapBudget.lean`: Uniform certified full-record width-exponent bound includes all physical compact-swap descriptor setup, interchange, joins and cleanup.
 
-- `Machine/ActivePrefixCompactSwapGeometry.lean`: Literal transpose destination equals unchanged-layout swapT on every original address, including dirty tails, spectators and payload bits.
 
-- `Machine/ActivePrefixCompactSwapPlaced.lean`: Actual original-descriptor compact swap on nine arbitrary caller ports preserves all caller spectators and restores the complete private bank.
 
-- `Machine/ActivePrefixLayoutAbsorption.lean`: Derives all actual target and before/after compact prefix-table absorption inequalities from one original-record condition: payload length exceeds the complete address width. Handles zero target width; connecting that condition to the final algorithm parameter choice remains separate.
 
-- `Machine/ActiveRepairEarlyKeyPlacement.lean`: Exact generic placement of actual clean early-key stages into a shared caller bank, with selected installation and complementary frame preservation.
 
-- `Machine/ActiveRepairEarlyKeyPatch.lean`: Real full-original-rank destination writer shares current early repair outputs and supplied patch descriptors with the common fifty-two-tape private bank.
 
-- `Machine/ActiveRepairEarlyKeyAppend.lean`: Actual conditional complete-destination key output composes flag inspection and full-rank append, preserving the genuine counter and charging all written bits.
 
-- `Machine/ActiveRepairEarlyKeyCleanup.lean`: Physically erases all nine current-address parsed, repaired and destination words while retaining original descriptors/counter and the written key.
 
-- `Machine/ActiveRepairEarlyKeyData.lean`: Exact thirty-two-caller-tape states for genuine-rank parsing, varying-control inverse/guard, full-rank patch, conditional key and cleanup.
 
-- `Machine/ActiveRepairEarlyKeyRun.lean`: One fixed eighty-four-tape early-key machine computes from genuine short rank and physically extracted varying controls, writes the full conditional destination and erases all scratch within29000 times address width plus one. Parser/patch descriptors remain supplied.
 
-- `Machine/ActiveRepairEarlyKeyValue.lean`: Actual early flag and repaired local fields equal rankFlag/rankKey; the physically reconstructed destination is the exact original-layout ordinal with untouched U/source/back/spectator bits.
 
-- `Machine/ActiveRepairEarlyKeyPlaced.lean`: Complete early full-rank key computation on thirty-two arbitrary caller ports retains every spectator and restores eighty-four appended private tapes with unchanged linear bound.
 
-- `Machine/ActiveRepairLateFieldsCopy.lean`: Paid physical copies of genuine extracted V/T/U into blank late-inverse work preserve every original and the full counter.
 
-- `Machine/ActiveRepairLateFieldsBank.lean`: Thirty-five-tape extracted-field late repair bank retains V/T/U/current controls, q/b/n and full rank, separating recovered outputs and blank private work.
 
-- `Machine/ActiveRepairLateFieldsRun.lean`: Actual retained-input copies, late guard, inverse and ideal toggle compose with exact current-address repaired fields and flag within9600 times packed stride.
 
-- `Machine/ActiveRepairLateFieldsCleanup.lean`: Physically erases the recovered pre-toggle target intermediate while retaining the exact final ideal target, recovered T/U and flag.
 
-- `Machine/ActiveRepairLateFields.lean`: Complete extracted-field late repair preserves all originals and returns exact recovered T/U, ideal target and guard with clean scratch within9700 times packed stride. Genuine-rank parser and complete full-rank key composition remain separate.
 
-- `Machine/ActiveRepairLateFieldsPlaced.lean`: Twelve-port arbitrary caller placement retains originals and spectators, returns repaired fields/flag and restores thirty-five appended private tapes with unchanged runtime.
 
-- `Machine/ActiveRepairLateFieldsValue.lean`: Actual late extracted-field guard and repaired target/T/U equal the existing late exceptional rank flag and repaired rank key. Local word concatenation is only a mathematical identification, never a supplied machine rank.
 
-- `Machine/ActivePrefixCompactConjugationData.lean`: Exact common nineteen-caller-tape bank and shape/cast alignment for actual compact T/back exchange around pure or negative parity-XOR loads. Numeric load shape/row/suffix words remain prepared inputs.
 
-- `Machine/ActivePrefixCompactConjugationMiddle.lean`: The middle action is the actual original-input pure-parity or negative-parity-XOR producer, repetition, compact rotation and cleanup on a shared clean bank.
 
-- `Machine/ActivePrefixCompactConjugationRun.lean`: One fixed branch-selected swap/load/swap executes both complete physical swaps and the real compact middle action, with every private bank restored and all joins paid.
 
-- `Machine/ActivePrefixCompactConjugationLayout.lean`: Physical pure and negative compact conjugations in both literal source orders discharge prefix absorption from original payload exceeding address width, retaining all prepared headers.
 
-- `Machine/ActivePrefixCompactConjugationSemantics.lean`: Every original coordinate and payload bit reaches exact compact T-plus-current-offset destination after the two physical swaps; arbitrary dirty back/spectators are preserved.
 
-- `Machine/ActivePrefixCompactConjugationBudget.lean`: One uniform full-record certified width-exponent bound covers both kinds and source orders, including actual swaps, offset generation/repetition, rotation, cleanup and joins.
 
-- `Machine/ActivePrefixCompactConjugationPlaced.lean`: Both complete compact conjugations on nineteen arbitrary caller ports retain original/prepared header words and all caller spectators, changing only payload and restoring all appended private storage.
 
-- `Machine/ActiveRepairEarlyKeyOriginalData.lean`: Original geometric/source/b words and genuine current rank form the input bank; parser/patch and all address-dependent slots start blank. Header/key/cleanup endpoints share exact caller states.
 
-- `Machine/ActiveRepairEarlyKeyOriginalValid.lean`: Original widths and packing identities imply every runtime parser, source, inverse and destination patch premise for the actual early key; no computed starts are supplied.
 
-- `Machine/ActiveRepairEarlyKeyOriginalRun.lean`: Fixed126-tape original-input early key physically generates parser8/patch7, executes the full varying-current-address key and erases all fifteen headers. Exact final bank changes only key and runtime is linear in address width.
 
-- `Machine/ActiveRepairEarlyKeyOriginalGeometry.lean`: Both literal before/after source placements derive every original width bound and field fit from compact capacity, active geometry and source containment.
 
-- `Machine/ActiveRepairEarlyKeyOriginalPlaced.lean`: Arbitrary forty-two-port original-input caller placement retains all originals/spectators and restores126 appended private tapes, with the actual original-header generation and erasure costs.
 
-- `Machine/ActiveRepairEarlyOriginalScan.lean`: Actual original-input early key satisfies the growing-counter RepairScan contract: each record physically derives all field headers, computes its varying-control full key and restores every header/work tape.
 
-- `Machine/ActiveRepairEarlyOriginalPipelineRun.lean`: Fixed180-tape original-descriptor scan/sort/strip/reinsert program returns exact filled stream with paid per-record synthesis, extraction and sorting costs. Scan initialization, final working-tape cleanup, global ideal-permutation and density bridges remain separate.
 
-- `Machine/ActiveRepairLateSourceRun.lean`: Genuine full-rank parser physically extracts V/T/U and current source controls, then executes the retained-input late guard/inverse/toggle, with clean35-tape shared work and linear address-width bound.
 
-- `Machine/ActiveRepairLateKeyPatch.lean`: Real destination writer reconstructs the full original rank and replaces repaired V/T/U on the shared late-key bank, preserving all spectators.
 
-- `Machine/ActiveRepairLateKeyAppend.lean`: Actual conditional late key append writes complete full-layout destination bits from the computed guard and destination, with every copied bit charged.
 
-- `Machine/ActiveRepairLateKeyCleanup.lean`: Physically erases all ten parsed, recovered and destination words while retaining the original counter/descriptors and written key.
 
-- `Machine/ActiveRepairLateKeyData.lean`: Exact thirty-three-caller states for genuine-rank varying late repair through three-field patching, conditional full key and cleanup.
 
-- `Machine/ActiveRepairLateKeyRun.lean`: One fixed91-tape late-key program parses actual current rank/controls, computes exact late repair, reconstructs full destination, writes conditional key and erases workspace within61000 times address width plus one. Field descriptors remain supplied.
 
-- `Machine/ActiveRepairLateKeyPlaced.lean`: Complete late full-key machine on thirty-three arbitrary caller ports preserves original/spectator tapes and heads and restores91 appended private tapes with unchanged cost.
 
-- `Machine/ActiveRepairLateKeyOriginalData.lean`: Original geometric/source/b descriptors, genuine rank and marked empty key form the late input, with all derived headers and parsed/repaired fields blank.
 
-- `Machine/ActiveRepairLateKeyOriginalValid.lean`: Original width descriptors and packing identities imply every late parsing/inverse/patch premise, including recovered-U geometry without supplied computed starts.
 
-- `Machine/ActiveRepairLateKeyOriginalRun.lean`: Fixed134-tape actual header generation, full late key and generated-header erasure return the exact original bank except written key, with all work blank and linear address-width runtime.
 
-- `Machine/ActiveRepairLateKeyOriginalGeometry.lean`: Both original-layout source orders derive all width bounds and V/T/U/source fits from active geometry, compact capacity and source containment.
 
-- `Machine/ActiveRepairLateKeyOriginalPlaced.lean`: Forty-three-port original-input late key caller placement preserves every original/spectator and restores134 appended private tapes, paying all synthesis and erasure.
 
-- `Machine/ActivePrefixEarlySequenceData.lean`: One unchanged original-array bank aligns target and compact views for all four early actions and retains prepared stage headers. Literal result composes selected, pure parity, correction and negative parity-XOR in source order.
 
-- `Machine/ActivePrefixEarlySequenceRun.lean`: One fixed physical shared-bank program runs the real selected load, compact parity swap/load/swap, correction load and compact negative swap/load/swap in order. Every offset/private tape is blank between calls and at output; prepared numeric headers remain retained inputs.
 
-- `Machine/ActivePrefixEarlySequenceBudget.lean`: Uniform certified full-record width-exponent bound charges all four actual producers, repetitions, swaps, rotations, erasures and three joins. Original numeric-header preparation and local packed-permutation identification remain separate.
 
-- `Machine/ActivePrefixLayoutHeadersData.lean`: Fourteen original geometric/stage words and ten blank output slots define actual target-before or compact-before/after header arithmetic schedules, with no supplied starts/f/suffix.
 
-- `Machine/ActivePrefixLayoutHeadersRun.lean`: Fixed copy/add/subtract/constant/power/product programs derive all ten consumer headers, preserve originals, erase arithmetic workspace and provide matching post-use output cleanup.
 
-- `Machine/ActivePrefixLayoutHeadersBudget.lean`: Uniform linear address-width construction/cleanup bounds include real power and product synthesis of payload suffix, all copies and joins.
 
-- `Machine/ActivePrefixLayoutHeadersEndpoint.lean`: Actual generated canonical words and head positions match the ten intended W/start/source/q/b/n/rho/n-plus-one/rows/suffix fields, retaining originals and blank private workspace.
 
-- `Machine/ActivePrefixLayoutHeadersGeometry.lean`: Literal target and both compact source-order consumer shapes and suffix counts equal the real outputs from original layout widths and stage controls.
 
-- `Machine/ActivePrefixLayoutHeadersPlaced.lean`: Arbitrary twenty-four-port header generation and post-use erasure preserve every caller spectator and restore43 appended private tapes; ten generated headers are physically exposed to consumers.
 
-- `Machine/ActivePrefixLayoutHeadersLayout.lean`: All physical target/compact header generation and cleanup costs fit linear original-record volume from source fit, positive rows and record payload exceeding address width. Reservation-width synthesis and consumer wiring remain separate.
 
-- `Machine/ActiveRepairLateOriginalScan.lean`: Real original-width late key reads the genuine growing counter, generates all parser/patch headers, extracts current controls, writes the full conditional V/T/U destination and restores175 scratch tapes in the exact scan contract.
 
-- `Machine/ActiveRepairLateOriginalPipelineRun.lean`: Actual189-tape later scan/sort/strip/reinsert uses original-input per-record keys, returns the exact filled stream and retains all original key metadata/private storage, with the full closed cost formula. Shared scan initialization/final cleanup and global ideal-permutation/density identification remain separate.
 
-- `Machine/ActivePrefixEarlySequenceOriginalData.lean`: Original swap and fourteen layout/stage descriptors plus payload form one caller bank; twenty derived consumer slots begin blank. Exact two-header and cleanup states retain all originals.
 
-- `Machine/ActivePrefixEarlySequenceOriginalInputs.lean`: Original canonical geometry/stage words imply all prepared target/compact consumer contracts, with physical copied row words and no supplied starts/f/suffix.
 
-- `Machine/ActivePrefixEarlySequenceOriginalHeaders.lean`: Real target and compact-before header producers share original descriptors and clean scratch; both post-use erasers restore every generated slot while framing payload.
 
-- `Machine/ActivePrefixEarlySequenceOriginalPayload.lean`: Actual fixed four-load schedule consumes physically generated header banks and updates the same full array, retaining every original word and restoring complete sequence workspace.
 
-- `Machine/ActivePrefixEarlySequenceOriginalRun.lean`: One fixed original-input program constructs both header banks, runs all four real early loads and surrounding compact swaps, then physically erases both generated banks. Only the array changes; all private and twenty generated tapes are blank.
 
-- `Machine/ActivePrefixEarlySequenceOriginalBudget.lean`: Uniform certified full-record width-exponent bound includes both actual header producers/erasers, every four-load cost and all assembly joins.
 
-- `Machine/ActivePrefixEarlySequenceOriginalPlaced.lean`: Only twenty-three original caller ports are required: seven swap geometry words, packing factor, fourteen original layout/stage controls and array. No offset table/computed starts/f/suffix is supplied, spectators/private tapes are restored. Upstream reservation-width synthesis and packed-permutation identification remain separate.
 
-- `Machine/ActiveRepairEarlyOriginalPipelinePrepareCount.lean`: Generic physical descriptor-counted zero-word fill and rewind prepares scan selector and counter from a genuine runtime width, preserving source descriptors and clearing its three private work slots.
 
-- `Machine/ActiveRepairEarlyOriginalPipelinePrepare.lean`: Actual blank scan workspace receives every sentinel, unary selector and A-bit zero counter by reading the original address-width header; no prepared counter/marker words are supplied and cost is at most200 times A plus one.
 
-- `Machine/ActiveRepairEarlyOriginalPipelineCleanup.lean`: Actual erasure of sorted/extracted/replacement/flagged/unary/sentinel/counter work and head returns retain original source and repaired output, with explicit charges for every written word.
 
-- `Machine/ActiveRepairEarlyOriginalPipelineEndpoint.lean`: Fixed183-tape original-input early repair starts with literal record stream, original geometric/source descriptors and otherwise blank scan work. Actual preparation, varying-key scan/sort/reinsert and cleanup finish with only output10 added at origin, source11 retained and all scan/key/private workspace restored. Global ideal-permutation and density/full-volume identification remain separate.
 
-- `Machine/ActiveRepairLateOriginalPipelinePrepare.lean`: Actual later scan markers, unary selector and A-bit zero counter are synthesized from the original address-width header with three restored private tapes and at most200 times A plus one cost.
 
-- `Machine/ActiveRepairLateOriginalPipelineCleanup.lean`: Physical erasure of all later sorted/extracted/replacement/flagged/unary/sentinel/counter work and source/output rewinds returns clean scan storage with every written cell charged.
 
-- `Machine/ActiveRepairLateOriginalPipelineEndpoint.lean`: Fixed192-tape original-input later repair starts with literal source stream and retained original metadata, initializes its own scan, runs varying-control full-rank repair and erases final work. Exact output adds only repaired output10 at origin, retains source11 and restores all scan/key/private storage. Global ideal-permutation and sparse-density/full-volume identification remain separate.
 
-- `Machine/ActiveRepairEarlyOriginalPipelineBudgetWords.lean`: Bounds every actual extracted, sorted, replacement and repaired stream by record count, payload length and selected-hole count; prep and cleanup words are included.
 
-- `Machine/ActiveRepairEarlyOriginalPipelineBudgetArithmetic.lean`: Generic arithmetic absorbs the complete physical scan/sort/reinsert cost into record and sparse-hole volume, then into linear payload volume under explicit width and density hypotheses.
 
-- `Machine/ActiveRepairEarlyOriginalPipelineBudget.lean`: Actual clean original-input early endpoint has paid word-volume and linear Hoare runtime contracts including preparation and cleanup. The sparse-hole inequality remains an explicit mathematical premise.
 
-- `Machine/ActiveRepairLateOriginalPipelineBudget.lean`: Actual clean original-input later endpoint has paid word-volume and linear Hoare runtime contracts including preparation and cleanup. The sparse-hole inequality remains an explicit mathematical premise.
 
-- `Machine/ActivePrefixEarlySequenceSemantics.lean`: Every bit in the actual four-load shared-array schedule follows the composed original-layout destination on all addresses. Selected and correction offsets equal current compact-T arithmetic; compact loads retain every spectator.
 
-- `Machine/ActivePrefixEarlySequencePacked.lean`: Actual four-load destination equals the packedEarly arithmetic with the address-dependent selected source controls, on every address including the bad set. Only target and compact T change; all source, dirty-back and payload spectators remain unchanged.
 
-- `Machine/ActiveRepairLayoutPermutationFields.lean`: Binary target/T/U field equivalences identify raw original power-of-two coordinates with existing local packed permutation fields.
 
-- `Machine/ActiveRepairLayoutPermutationFiber.lean`: Complete original addresses split into retained source coordinates, local packed fields and every row/tail/slack/back/payload spectator; inverse equivalences and finiteness are proved.
 
-- `Machine/ActiveRepairLayoutPermutation.lean`: Global early/later actual and ideal permutations are lifted from local varying-control maps; bad-set preservation, agreement outside the bad set and exact repair are proved.
 
-- `Machine/ActiveRepairLayoutPermutationWords.lean`: Real computed inverse/ideal words and guard values identify local repaired destinations and bad membership.
 
-- `Machine/ActiveRepairLayoutPermutationDestination.lean`: Global inverse-then-ideal destinations replace exactly recovered target/T fields, plus U for later repair, retaining all other original coordinates.
 
-- `Machine/ActiveRepairLayoutKeysFields.lean`: Original physically generated parser headers decode literal rank fields and source words; canonical rank bits equal complete binary address rows.
 
-- `Machine/ActiveRepairLayoutKeysEarly.lean`: Actual original-width early key flag and full destination equal the global bad-set rank flag and inverse-then-ideal rank key.
 
-- `Machine/ActiveRepairLayoutKeysLate.lean`: Actual original-width later key flag and full V/T/U destination equal the global bad-set rank flag and inverse-then-ideal rank key.
 
-- `Machine/ActiveRepairLayoutKeysScan.lean`: Both genuine growing scans use exact global rank flags and keys at every visited original rank under the explicit counter-capacity bound.
 
-- `Machine/ActiveRepairLayoutKeysPipelineCommon.lean`: Bounded physical key identification suffices for flagged/extracted stream identities; address-only payload-one layout and original row bound imply counter capacity.
 
-- `Machine/ActiveRepairLayoutKeysPipelineEarly.lean`: Actual initialized and cleaned early endpoint returns the ideal permutation stream on output10 with exact full-bank retention and complete runtime. Address layout has payload one and each address carries an arbitrary data record; connection to the wide physical payload array remains separate.
 
-- `Machine/ActiveRepairLayoutKeysPipelineLate.lean`: Actual initialized and cleaned later endpoint returns the ideal permutation stream on output10 with exact full-bank retention and complete runtime. Address layout has payload one and each address carries an arbitrary data record; connection to the wide physical payload array remains separate.
 
-- `Machine/ActiveRepairLayoutDensity.lean`: Actual global early/later bad-set cardinality bounds transport across complete address fibers and imply sparse-hole bounds for full rank enumeration.
 
-- `Machine/ActiveRepairLayoutDensityScan.lean`: Literal flagged repair records have the global bad-set hole count; bounded actual rankFlag agreement transports density to physical scan holes.
 
-- `Machine/ActiveRepairLayoutDensityArithmetic.lean`: Manuscript dyadic choices pay early and later density times address width with unit sparse-hole constant under explicit scalar parameter inequalities; original parameter synthesis remains separate.
 
-- `Machine/ActivePrefixEarlySequenceGlobal.lean`: The actual early four-load destination equals the complete global varying-source permutation on every original address, including exceptional ones; literal array bits follow that exact permutation.
 
 - `Machine/ActivePrefixDirtyControlParityPlaced.lean`: Clean caller wrapper for actual compact-U block-parity extraction with real clock and complete retained frame.
 
@@ -2463,11 +2215,8 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 - `Machine/ActivePrefixDirtyControlPureSemantics.lean`: Each physically generated pure-parity row reads current target low bits with compact padding and is independent of dirty U.
 
-- `Machine/ActiveRepairLayoutKeysPipelineBudgetCommon.lean`: Complete address-indexed record streams have positive count for positive rows and inherit payload bounds from their source data; actual scan rank flags and global density imply the sparse-hole premise.
 
-- `Machine/ActiveRepairLayoutKeysPipelineBudgetEarly.lean`: Actual clean early endpoint returns the ideal record stream within linear payload-volume time. Manuscript scalar dyadic inequalities discharge the sparse-hole bound with unit constant; wide array formatting and original parameter synthesis remain separate.
 
-- `Machine/ActiveRepairLayoutKeysPipelineBudgetLate.lean`: Actual clean later endpoint returns the ideal record stream within linear payload-volume time. Manuscript scalar dyadic inequalities discharge the sparse-hole bound with unit constant; wide array formatting and original parameter synthesis remain separate.
 
 - `Machine/ActivePrefixDirtyControlLoadProducer.lean`: Four physical selected/correction/pure/negative producers share51 private tapes; every mode reads actual compact-U parities, with no supplied offset stream.
 
@@ -2483,191 +2232,98 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 - `Machine/ActivePrefixDirtyControlLoadPlaced.lean`: Arbitrary nine-port caller placement retains original descriptors and spectators and restores65 private tapes; no generated offsets/dimensions are supplied.
 
-- `Machine/ActivePrefixDirtyControlLayoutAbsorption.lean`: Actual target and compact-back geometries absorb explicit wide producer work using the existing address-sized payload allowance, positive digit count and compact digit width at least two; no wide target fits H premise.
 
-- `Machine/ActivePrefixDirtyControlLayoutFields.lean`: Exact original compact-U fields in both target/back prefixes generate valid dirty-control producer shapes; actual geometry discharges their paid-work absorption without wide source padding.
 
-- `Machine/ActiveRepairLayoutRecordsShape.lean`: Separates actual wide payload cells from address-only record ranks by a complete equivalence; literal cell index is record rank times original payload width plus bit offset.
 
-- `Machine/ActiveRepairLayoutRecordsPermutation.lean`: Both early/later actual and ideal permutations commute with whole-record cell lifting, and bad membership is independent of the payload bit.
 
-- `Machine/ActiveRepairLayoutRecordsData.lean`: Complete original-width records serialize exactly to the original physical array; address-only repair geometry descriptors equal the original wide geometry.
 
-- `Machine/ActiveRepairLayoutRecordsMove.lean`: Whole-record permutation of the actual array equals serialization of moved records, and serialized ideal flagged streams equal the ideal physical bit array.
 
-- `Machine/ActiveRepairLayoutRecordsEarly.lean`: Actual four-load output records equal the true global early repairRecords input, and the full unchanged physical array equals the actual global permutation image.
 
-- `Machine/ActiveRepairLayoutRecordsPipelineEarly.lean`: Actual original-input early repair on full-width records returns the ideal record stream and correct full-bit serialization with exact retained bank/runtime; wide payload is unrestricted. Physical formatting and final flattening remain separate.
 
-- `Machine/ActiveRepairLayoutRecordsPipelineLate.lean`: Actual original-input later repair on full-width records returns the ideal record stream and correct full-bit serialization with exact retained bank/runtime; wide payload is unrestricted. Physical later schedule, formatting and final flattening remain separate.
 
-- `Machine/ActiveRepairRecordFlatten.lean`: Literal two-state tape scan removes flags and delimiters and copies all payload bits contiguously, with actual halting and one transition per input symbol.
 
-- `Machine/ActiveRepairRecordFlattenEndpoint.lean`: Complete two-tape decoder erases the entire marked source and returns raw output to origin, with linear record-volume cost and no private tapes or clocks.
 
-- `Machine/ActiveRepairRecordFlattenPrepare.lean`: Fixed two-transition initializer physically installs the left source marker while preserving the entire raw record word.
 
-- `Machine/ActiveRepairRecordFlattenOriginal.lean`: Complete decoder starts from literal unmarked records, installs its own marker, flattens payloads and erases the source/marker with both heads at origin and paid linear runtime.
 
-- `Machine/ActiveRepairRecordFlattenAlphabet.lean`: Actual unmarked-record decoder lifts to larger alphabets with unchanged runtime and literal payload bit codes; complete source erasure and raw output at origin are retained.
 
-- `Machine/ActiveRepairRecordFormatRecord.lean`: One fixed binary-counted record producer installs its false flag, copies the runtime payload width and emits its delimiter, retaining source/width and restoring its clock.
 
-- `Machine/ActiveRepairRecordFormatWords.lean`: Exact raw and delimited record words, stream segment views and prefix identities support repeated physical formatting.
 
-- `Machine/ActiveRepairRecordFormatStream.lean`: Actual nested binary-counted stream program formats every fixed-width original record; finite control is independent of count and width, with exact original source retention.
 
-- `Machine/ActiveRepairRecordFormatEndpointAt.lean`: Physical clock initialization and one-tape caller operations support the complete formatter endpoint.
 
-- `Machine/ActiveRepairRecordFormatEndpoint.lean`: Six-tape raw-to-record formatter synthesizes and erases both clocks, retains binary width/count descriptors and original raw source, and returns data heads to origin with paid linear record-volume cost.
 
-- `Machine/ActiveRepairRecordFormatAlphabet.lean`: Complete raw formatter runs on larger alphabets with unchanged time; literal bit/flag/delimiter codes, original source and blank clock storage are retained.
 
-- `Machine/ActiveRepairRecordFormatPlaced.lean`: Four-port formatter consumes original raw source, blank record output and binary width/count headers on arbitrary caller banks; six private tapes and every spectator are restored.
 
-- `Machine/ActiveRepairRecordFlattenPlaced.lean`: Actual unmarked-record decoder runs on arbitrary two-port caller banks with exact source erasure, raw output at origin, restored private storage and complementary frame.
 
-- `Machine/ActiveRepairLayoutRecordsDecodeCommon.lean`: Exact literal alphabet and tape bridge prepares the real unmarked record decoder from the actual repair output.
 
-- `Machine/ActiveRepairLayoutRecordsDecodeEarly.lean`: Actual early repair followed by physical decoding returns the ideal whole-width raw array, erases its repaired record buffer and restores decoder scratch while retaining original source and metadata.
 
-- `Machine/ActiveRepairLayoutRecordsDecodeLate.lean`: Actual later repair followed by physical decoding returns the ideal whole-width raw array, erases its repaired record buffer and restores decoder scratch while retaining original source and metadata; actual later payload schedule remains separate.
 
-- `Machine/ActiveRepairLayoutRecordsDecodeBudgetEarly.lean`: Complete early repair plus physical decoding has linear original payload-volume runtime; full-layout density and dyadic manuscript inequalities pay sparse holes without payload-one restriction.
 
-- `Machine/ActiveRepairLayoutRecordsDecodeBudgetLate.lean`: Complete later repair plus physical decoding has linear original payload-volume runtime; full-layout density and dyadic manuscript inequalities pay sparse holes without payload-one restriction.
 
-- `Machine/ActivePrefixDirtyControlUSwapData.lean`: Literal compact-U/back interchange preserves all original physical coordinates; full-array reshape and original geometry descriptors supply its exact input bank.
 
-- `Machine/ActivePrefixDirtyControlUSwapRun.lean`: Actual compact-U/back swap synthesizes consumer headers from original geometry, executes binary interchange and erases the generated headers with exact full-array output.
 
-- `Machine/ActivePrefixDirtyControlUSwapBudget.lean`: Both physical compact-U/back interchange and its header lifecycle retain the certified full-volume width-exponent runtime.
 
-- `Machine/ActivePrefixDirtyControlUSwapPlaced.lean`: Nine original caller ports suffice for compact-U/back interchange; all private storage and complementary caller tapes are restored.
 
-- `Machine/ActivePrefixDirtyControlNegativePureData.lean`: Independent modular negation of pure parity rows gives the actual dirty-U unloading offsets, including zero-width rows.
 
-- `Machine/ActivePrefixDirtyControlNegativePureLoadData.lean`: Exact source/header/full-array data for dirty-U negative-pure loading connects literal negated offsets to physical row rotations.
 
-- `Machine/ActivePrefixDirtyControlNegativePureLoadRun.lean`: Physical negative-pure load runs actual offset generation, modular negation, row repetition and full-array rotation on one shared bank.
 
-- `Machine/ActivePrefixDirtyControlNegativePureLoadCleanup.lean`: Actual negative-pure load erases generated offsets and restores the complete private header and producer workspace.
 
-- `Machine/ActivePrefixDirtyControlNegativePureLoad.lean`: Complete negative-pure load has exact original-input array semantics, retained headers and linear full-volume cost under explicit absorption.
 
-- `Machine/ActivePrefixDirtyControlNegativePureLoadPlaced.lean`: Nine-port negative-pure load placement preserves arbitrary caller spectators and restores its sixty-five-tape private bank.
 
-- `Machine/ActivePrefixDirtyControlConjugationData.lean`: Four compact T/U conjugation kinds have exact swap/load/swap data and a seventeen-port original/prepared descriptor bank.
 
-- `Machine/ActivePrefixDirtyControlConjugationSwap.lean`: Actual T/back and U/back interchanges preserve every prepared load header and load-workspace tape.
 
-- `Machine/ActivePrefixDirtyControlConjugationMiddle.lean`: Real pure, negative-XOR and negative-pure middle load branches preserve compact swap storage and caller descriptors.
 
-- `Machine/ActivePrefixDirtyControlConjugationRun.lean`: Four actual compact swap/load/swap programs have exact full-array endpoints and complete scratch restoration, including dirty-U source loading and unloading.
 
-- `Machine/ActivePrefixDirtyControlConjugationBudget.lean`: Every actual compact conjugation has a uniform full-volume runtime with the original certified sublinear width exponent, charging both swaps and its entire load.
 
-- `Machine/ActivePrefixDirtyControlConjugationPlaced.lean`: All four compact conjugations run on arbitrary seventeen-port caller banks, changing only the array and restoring all native scratch; geometry/header synthesis remains separate.
 
-- `Machine/ActivePrefixDirtyControlSourceGeometry.lean`: The literal shifted active-after source and compact-T controls give the later source-loading producer shape; original full-array volume and unchanged payload allowance pay its load cost.
 
-- `Machine/ActivePrefixDirtyControlSequenceData.lean`: Literal later schedule data on one unchanged array has three actual producer shapes and thirty caller ports; supplied prepared headers contain only canonical numeric geometry.
 
-- `Machine/ActivePrefixDirtyControlSequenceStages.lean`: All six actual later stages execute on one common bank with exact caller framing and private cleanup: early four loads, source loading, repeated early loads and source unloading.
 
-- `Machine/ActivePrefixDirtyControlSequenceRun.lean`: The complete prepared-header later-source schedule physically performs twelve swaps and ten rotations with exact full-array endpoint, retained numeric descriptors and blank scratch; original header synthesis and global permutation semantics remain separate.
 
-- `Machine/ActivePrefixDirtyControlSequenceBudget.lean`: The entire prepared-header later schedule retains the certified full-volume sublinear width-exponent bound, including all stage joins and load costs.
 
-- `Machine/ActivePrefixDirtyControlSequencePlaced.lean`: The complete prepared later schedule runs on arbitrary thirty-port caller banks, retaining all descriptors and spectators and restoring native scratch; original-input header preparation remains open.
 
-- `Machine/ActivePrefixDirtyControlSequenceGeometry.lean`: All prepared later-sequence geometry is derived from the unchanged original array and compact parameters: three concrete shapes, exact physical volumes, absorption and positivity; no independent geometry witness is required.
 
-- `Machine/ActivePrefixDirtyControlSourceSemantics.lean`: Actual source-load and unload offset rows equal the selected original active-after bits padded to compact digits and their modular negations at every serialized address, including exceptional addresses.
 
-- `Machine/ActiveRepairLayoutRecordsHeadersData.lean`: Original fourteen early descriptors determine valid full-layout repair metadata, row-word length and the exact row-count/address-width bounds.
 
-- `Machine/ActiveRepairLayoutRecordsHeadersLength.lean`: Actual binary descriptor length measurement retains its source and restores both heads with nine-times-word-length-plus-six cost; no row logarithm is supplied.
 
-- `Machine/ActiveRepairLayoutRecordsHeadersSchedule.lean`: A fixed actual arithmetic schedule generates n plus one, source width and full record-address width, then erases its initialized constant.
 
-- `Machine/ActiveRepairLayoutRecordsHeadersRun.lean`: Physical preparation starts from the literal fourteen original descriptor words and blank auxiliary tapes, measures row width and executes generated repair metadata arithmetic.
 
-- `Machine/ActiveRepairLayoutRecordsHeadersCount.lean`: Actual subtraction, power construction and multiplication generate the formatter record count from original rows and address width; exponent/power temporaries are erased.
 
-- `Machine/ActiveRepairLayoutRecordsBankHeaders.lean`: Actual fixed-many copies install all fifteen generated repair metadata words on blank output tapes while retaining the complete original producer bank.
 
-- `Machine/ActiveRepairLayoutRecordsHeadersBudget.lean`: Complete physical original-header preparation, record-count construction and fifteen metadata copies have proved linear original payload-volume costs; literal original-input Hoare execution is included.
 
-- `Machine/ActiveRepairLayoutRecordsBankInput.lean`: The fifteen actual producer metadata words equal the repair consumer ports, and every other consumer tape is exactly blank except the retained record source.
 
-- `Machine/ActiveRepairLayoutRecordsBankPlaced.lean`: Original fourteen descriptor words and blank producer scratch physically generate and copy metadata directly into the actual repair pipeline input bank, retaining source and the full caller frame.
 
-- `Machine/ActiveRepairLayoutRecordsHeadersErase.lean`: Five actual erase commands remove every generated row-width, source/address-width, successor and record-count header, restoring the literal original fourteen descriptors and blank auxiliary bank.
 
-- `Machine/ActiveRepairLayoutRecordsBankBudget.lean`: Actual consumer metadata installation and final generated-header erasure have linear original payload-volume execution bounds; every setup and cleanup transition is paid.
 
-- `Machine/ActivePrefixDirtyControlLayoutRows.lean`: Every actual selected/correction/pure/negative-XOR offset row equals the literal packed arithmetic on the current compact-U and target fields.
 
-- `Machine/ActivePrefixDirtyControlUSwapGeometry.lean`: Compact-U/back interchange is the literal original-address field swap with exact physical transpose semantics and retained spectators.
 
-- `Machine/ActivePrefixDirtyControlGlobalSwap.lean`: Both actual compact T/back and U/back programs have original full-array coordinate semantics and involutive coordinate maps.
 
-- `Machine/ActivePrefixDirtyControlGlobalTarget.lean`: Actual dirty-control target loads move exactly the selected and correction modular target offsets at every original address.
 
-- `Machine/ActivePrefixDirtyControlGlobalBack.lean`: The real back rotation has exact original-index semantics for literal offset streams, retaining every original spectator field.
 
-- `Machine/ActivePrefixDirtyControlGlobalConjugation.lean`: Both physical compact swap/rotation/swap schedules act at the current swapped address and return exact original-index T/U conjugation destinations.
 
-- `Machine/ActivePrefixDirtyControlGlobalSequence.lean`: The complete physical prepared later sequence returns the exact composed forward coordinate action on every full-array address, including exceptional addresses; identification with lateActual remains separate.
 
-- `Machine/BinaryPackedLatePermutation.lean`: The actual fixed-width late word algorithm equals the exact packed permutation used by global repair, including all dirty carries and borrows on exceptional addresses.
 
-- `Machine/ActivePrefixDirtyControlGlobalCoordinates.lean`: Literal T/U field-update equations remove every physical compact conjugation wrapper and identify all four parity and source offset values at current original addresses.
 
-- `Machine/ActivePrefixDirtyControlSourcePacked.lean`: Actual source load/unload equals the fixed-width packed late control arithmetic; current compact-U controls are exactly digit parities, including carries and borrows.
 
-- `Machine/ActivePrefixDirtyControlPackedEarly.lean`: Each actual dirty-U early block equals the packed late algorithm early step and retains every original source and spectator coordinate.
 
-- `Machine/ActivePrefixDirtyControlPackedLate.lean`: The complete actual prepared later coordinate schedule is the packed late algorithm on every address, with exact state and integer value identities.
 
-- `Machine/ActivePrefixDirtyControlLateGlobal.lean`: The physical prepared later schedule equals the exact global lateActual permutation used by repair on all original addresses, including exceptional addresses; both forward and inverse full-array entry semantics are proved.
 
-- `Machine/ActivePrefixDirtyControlHeadersData.lean`: Three original-input dirty-control header kinds compute genuine target/U/source starts using fixed retained arithmetic patches, with exact post-use erasure.
 
-- `Machine/ActivePrefixDirtyControlHeadersRun.lean`: Actual forty-three-tape original header producers execute target/compact/source construction and all arithmetic patches, retaining originals and erasing scratch.
 
-- `Machine/ActivePrefixDirtyControlHeadersEndpoint.lean`: Literal canonical original fourteen descriptor words generate the exact retained dirty-control consumer words and have a complete physical cleanup contract.
 
-- `Machine/ActivePrefixDirtyControlHeadersPlaced.lean`: Original-input dirty-control metadata producers and erasers run on arbitrary caller banks with exact complementary frames and restored private storage.
 
-- `Machine/ActivePrefixDirtyControlHeadersGeometry.lean`: All physically generated six-word groups equal the actual target, compact-back and shifted-source geometries of the original unchanged array.
 
-- `Machine/ActivePrefixDirtyControlHeadersBudget.lean`: Every actual original-input dirty-control header producer, arithmetic patch and generated-word cleanup has a linear containing-volume cost.
 
-- `Machine/ActivePrefixDirtyControlSequenceOriginalData.lean`: Literal original twenty-two descriptor words and the original array form a fifty-three-port later caller; three generated ten-word consumer banks start blank.
 
-- `Machine/ActivePrefixDirtyControlSequenceOriginalInputs.lean`: Three actual producer outputs give the complete prepared later-sequence inputs from original descriptors and unchanged geometry.
 
-- `Machine/ActivePrefixDirtyControlSequenceOriginalHeaders.lean`: All three physical metadata producers and reverse cleanups operate on one original-array caller with exact retention of complementary banks.
 
-- `Machine/ActivePrefixDirtyControlSequenceOriginalPayload.lean`: The actual complete later payload schedule runs on the physically generated metadata bank, with exact output and clean native scratch.
 
-- `Machine/ActivePrefixDirtyControlSequenceOriginalRun.lean`: One fixed later machine generates all consumer metadata, performs twelve swaps and ten rotations and erases every generated header, retaining only original descriptors and exact output array.
 
-- `Machine/ActivePrefixDirtyControlSequenceOriginalBudget.lean`: The complete original-input later machine retains the certified full-volume sublinear width-exponent runtime, paying all three metadata producers, cleanups and joins.
 
-- `Machine/ActiveRepairLayoutRecordsLate.lean`: The actual later machine output is the full global lateActual array and exactly its wide repairRecords input; both prepared and original-input machines return that array with paid execution contracts.
 
-- `Machine/ActiveRepairLayoutRecordsAssemblyCommon.lean`: Literal raw/record alphabet and bank identities support actual formatting, repair placement and physical retained-record cleanup without a format oracle.
 
-- `Machine/ActiveRepairLayoutRecordsAssemblyEarly.lean`: One real early program formats the original raw bit stream into the empty repair source, executes repair and decoding, erases the retained formatted source and restores private storage.
 
-- `Machine/ActiveRepairLayoutRecordsAssemblyLate.lean`: One real later program formats the original raw bit stream into the empty repair source, executes repair and decoding, erases the retained formatted source and restores private storage.
 
-- `Machine/ActiveRepairLayoutRecordsAssemblyLayoutEarly.lean`: The complete early raw-array/format/repair/decode/cleanup machine returns literal ideal whole-width array bits, with all metadata/raw inputs retained and a combined linear volume and count-header bound.
 
-- `Machine/ActiveRepairLayoutRecordsAssemblyLayoutLate.lean`: The complete later raw-array/format/repair/decode/cleanup machine returns literal ideal whole-width array bits, with all metadata/raw inputs retained and a combined linear volume and count-header bound.
 
 - `Machine/ActiveTargetHighestPairData.lean`: Two actual one-bit fields have full-array geometry with arbitrary positive outer row counts, genuine numeric load/swap descriptors and exact earlier/later actions.
 
@@ -2677,229 +2333,127 @@ Summaries of the checked components in `IntegerMultBounds/`, grouped by director
 
 - `Machine/ActiveTargetHighestPairSemantics.lean`: Actual arbitrary-row highest-bit actions equal the exact earlier-source and later-source XOR at every full-array address.
 
-- `Machine/ActiveTargetHighestPairPlaced.lean`: Prepared highest-bit actions execute on arbitrary eleven-port caller banks, preserving every complementary tape and head and restoring private storage.
 
-- `Machine/ActiveTargetHighestPairHeadersData.lean`: Five original L/G/K/rows/payload descriptors determine the fixed arithmetic, three-power and two-product highest-bit header schedule and physical generated-word cleanup.
 
-- `Machine/ActiveTargetHighestPairHeadersAtomic.lean`: Actual placed constant, power and multiplication machines execute on the shared highest-bit producer bank with exact header endpoints and clean private workspace.
 
-- `Machine/ActiveTargetHighestPairHeadersRun.lean`: Physical highest-bit metadata synthesis generates every ten-word consumer descriptor from original five inputs and erases all temporary powers/products; post-use cleanup restores the originals.
 
-- `Machine/ActiveTargetHighestPairHeadersEndpoint.lean`: Literal canonical original-five words produce the exact canonical ten-word highest-bit consumer bank and are retained literally through generated-header cleanup.
 
-- `Machine/ActiveTargetHighestPairHeadersBudget.lean`: Complete highest-bit header production and erasure costs are bounded linearly by the actual full array volume without an additional record-width allowance.
 
-- `Machine/ActiveTargetHighestPairOriginalData.lean`: Original five numeric descriptors and the actual array form the literal highest-bit input bank, with all derived descriptors and private storage initially blank.
 
-- `Machine/ActiveTargetHighestPairOriginalRun.lean`: One fixed original-input highest-bit machine produces every load/swap header, executes the actual earlier or later action and erases every generated header, retaining original words and exact transformed array.
 
-- `Machine/ActiveTargetHighestPairOriginalBudget.lean`: The complete original-input highest-bit machines have uniform linear full-volume runtime including every metadata producer, action, erasure and sequencing transition.
 
-- `Machine/ActiveRepairLayoutRecordsAssemblyOriginalEarly.lean`: Actual original-fourteen-input early repair constructs all metadata and record count, formats the literal early-permuted full array, repairs and decodes it, cleans record buffers and restores the producer; exact ideal raw output and full linear volume bound are proved. Fifteen copied consumer metadata words remain retained.
 
-- `Machine/ActiveRepairLayoutRecordsHeadersAfterBudget.lean`: Actual unchanged original-header producer/copy costs have linear full-volume bounds under source fit in the active-after field, without an active-before source-fit premise.
 
-- `Machine/ActiveRepairLayoutRecordsBankAfterBudget.lean`: Physical repair metadata installation and producer erasure have paid linear full-volume bounds for the active-after source layout.
 
-- `Machine/ActiveRepairLayoutRecordsAssemblyOriginalLateAfter.lean`: Actual original-fourteen-input later repair now uses the after-source layout of the real payload schedule, with literal full-array input and ideal output, physical metadata/count production and producer cleanup, and linear full-volume runtime. Copied consumer metadata remains retained.
 
-- `Machine/ActiveRepairLayoutRecordsAlphabet.lean`: Exact five-symbol repair embedding into the fixed prime alphabet preserves all symbols and runtimes; literal descriptors/header banks, raw arrays, payload frames and equality Hoare contracts have proved bridges.
 
-- `Machine/ActiveRepairLayoutRecordsOriginalEarlyAlphabet.lean`: The complete original-input early raw-array repair executes in the actual payload prime alphabet with literal original headers, raw source and ideal output, producer restoration and unchanged linear-volume runtime.
 
-- `Machine/ActiveRepairLayoutRecordsOriginalLateAlphabet.lean`: The complete original-input after-source later raw-array repair executes in the actual payload prime alphabet with literal original headers, raw source and ideal output, producer restoration and unchanged linear-volume runtime.
 
-- `Machine/ActiveRepairLayoutRecordsAssemblyCleanCommon.lean`: An actual fixed-many erasure program clears every copied consumer metadata word, preserves all complementary tapes and heads and has linear full-volume cleanup cost.
 
-- `Machine/ActiveRepairLayoutRecordsAssemblyCleanEarly.lean`: Original-input early raw repair now physically erases all copied consumer descriptors; its exact entire output bank is the literal original input plus ideal raw output, with every generated header/private tape blank and full linear runtime.
 
-- `Machine/ActiveRepairLayoutRecordsAssemblyCleanLateAfter.lean`: Original-input after-source later raw repair physically erases all copied consumer descriptors; its exact entire output bank retains only originals, raw input and ideal raw output, with all private metadata blank and full linear runtime.
 
-- `Machine/ActiveRepairLayoutRecordsCleanAlphabet.lean`: Both completely clean original-input repairs execute in the actual payload prime alphabet with exact literal whole-bank output contracts and unchanged linear full-volume bounds.
 
-- `Machine/ActiveRepairArrayRecycle.lean`: Actual fixed caller-tape copy-back replaces the original array with an equal-length repaired output, erases the separate raw output and preserves every head/spectator tape, charging five times array volume plus ten including empty arrays.
 
-- `Machine/ActiveTargetHighestPairOriginalPlaced.lean`: Complete original-five-input highest-bit actions run on six arbitrary caller ports, retaining original descriptors and all spectator tapes and clearing every private tape.
 
 - `Machine/ActiveTargetHighestPairLayoutGeometry.lean`: The highest-bit split has exact early/later source and target bit positions in the unchanged active layout, with arbitrary outer rows and full volume equality; source/target positivity conditions remain explicit.
 
-- `Machine/ActiveTargetHighestLayoutHeadersData.lean`: Fixed arithmetic derives the highest-bit L/G/K/rows/payload words from the same fourteen original layout descriptors used by the compact low-bit schedule, with exact early/later geometry and generated-header cleanup.
 
-- `Machine/ActiveTargetHighestLayoutHeadersRun.lean`: Actual original-fourteen-input header synthesis computes and erases all five highest-bit geometry words on physical tapes, preserving original words and restoring arithmetic scratch with paid costs.
 
-- `Machine/ActiveTargetHighestLayoutHeadersGeometry.lean`: Physically synthesized highest-bit words equal the literal original-layout early/later pair geometry under the actual source-fit inequalities.
 
-- `Machine/ActiveTargetHighestLayoutHeadersBudget.lean`: All highest-bit geometry synthesis and erasure costs are bounded linearly by any positive numeric volume containing the original layout descriptors.
 
-- `Machine/ActiveTargetHighestLayoutOriginalData.lean`: Literal original fourteen layout words and array form the highest-bit input; the derived geometry words and both layers of private workspace start blank.
 
-- `Machine/ActiveTargetHighestLayoutOriginalRun.lean`: One fixed highest-bit machine synthesizes geometry from original fourteen descriptors, generates all load/swap metadata, performs the actual early/later action and erases every generated word with exact array semantics.
 
-- `Machine/ActiveTargetHighestLayoutOriginalPlaced.lean`: The complete original-fourteen-input highest-bit machine executes on fifteen arbitrary caller ports, changing only the array while restoring both metadata banks and preserving all spectators.
 
-- `Machine/ActiveTargetHighestLayoutOriginalBudget.lean`: Both complete original-layout highest-bit machines have uniform linear actual full-array runtime including geometry synthesis, load/swap headers, payload actions, both cleanup layers and joins; original numeric-volume premises follow from the source-fit bounds.
 
-- `Machine/ActiveRepairLayoutRecordsPayloadEarlyData.lean`: One shared caller holds only original twenty-two geometry/control words and the original full array; actual low payload output is proved to be the exact raw repair input on the same physical tape.
 
-- `Machine/ActiveRepairLayoutRecordsPayloadEarlyRun.lean`: Actual original-input early low payload execution composes directly with physical formatting, repair and decoding, with literal ideal output and exact summed runtime; the initial composition retains consumer metadata explicitly.
 
-- `Machine/ActiveRepairLayoutRecordsPayloadEarlyClean.lean`: The full original-input early low-selected stage executes payload, complete clean repair, physical copy-back and output erasure on one caller bank. Exact global earlyIdeal array replaces the original raw array; every other original tape/head is retained and all private metadata blank. Its complete uniform runtime retains the certified compact-width exponent.
 
-- `Machine/ActiveRepairLayoutIdealCoordinates.lean`: Both global repaired low-bit ideals change only the original target coordinate by the literal CountedIdealToggle selected XOR word; all source, dirty, row and spectator fields are retained exactly.
 
-- `Machine/ActiveTargetHighestBits.lean`: Exact finite-rank decompositions describe the actual early/later one-bit highest-toggle destinations, including all surrounding original address bits.
 
-- `Machine/ActiveTargetHighestBitsWords.lean`: Fixed-width binary rows of the highest-toggle destinations are literal one-bit XOR updates with exact unchanged prefixes and suffixes.
 
-- `Machine/ActiveTargetHighestLayoutLateCoordinates.lean`: Actual later highest-bit geometry is the unchanged full-array ordinal and its destination changes only activeBefore bit zero using the selected original activeAfter high bit.
 
-- `Machine/ActiveTargetHighestLayoutEarlyCoordinates.lean`: Actual early highest-bit geometry is the unchanged full-array ordinal and its destination changes only activeBefore bit zero using the selected original activeBefore high bit.
 
-- `Machine/ActiveTargetHighestLayoutGlobal.lean`: Both genuine highest-bit array actions have exact original Address entry semantics at every physical full-array address.
 
-- `Machine/ActiveTargetHighestLayoutOriginalGlobal.lean`: The actual original-fourteen-header highest-bit programs realize exact full-array high-bit coordinate destinations on arbitrary caller banks, with all derived metadata and private storage restored.
 
-- `Machine/ActiveTargetHighestLayoutWords.lean`: The physical high-bit XOR joins the low selected toggle into the exact full selected target mask; its control is the final bit of the original stride-q source selection.
 
-- `Machine/ActiveTargetHighestLayoutCompose.lean`: Composing the highest-bit action with any retained-source low selected toggle gives the literal full selected XOR mask in both original source orders.
 
-- `Machine/ActiveTargetHighestLayoutSourceFrames.lean`: The highest-bit action retains the entire later source interval; the early source interval is retained under the explicit nonoverlap source-offset positivity premise.
 
-- `Machine/ActiveTargetHighestLayoutFullSelected.lean`: The actual high destination composed with the global repaired low ideal equals the exact full selected target XOR word in both source orders, retaining every other Address field and original disjoint source interval.
 
-- `Machine/ActiveRepairLayoutRecordsFullEarlyData.lean`: The actual early repaired low stage and original-header highest-bit action share one original caller; their full-array entry equation is exactly the composed low/high destination on every original address.
 
-- `Machine/ActiveRepairLayoutRecordsFullEarlyRun.lean`: One fixed complete early machine executes repaired low action then the physically original-header-derived highest toggle, returns the exact full low/high array on the original tape and restores all private metadata and storage.
 
-- `Machine/ActiveRepairLayoutRecordsFullEarlyBudget.lean`: The complete original-input early low/high machine retains the certified full-volume compact-width exponent, paying repair, copy-back, both highest metadata layers and all transitions.
 
-- `Machine/ActiveRepairLayoutRecordsFullEarlySelected.lean`: The actual complete early physical machine has the canonical full-selected XOR destination at every original array address; source retention carries the explicit original source-interval nonoverlap premise.
 
-- `Machine/ActiveRepairLayoutRecordsPayloadLatePlaced.lean`: The complete original-input later payload machine executes on twenty-three arbitrary numeric/array caller ports, restoring its native workspace and preserving every complementary tape/head.
 
-- `Machine/ActiveRepairLayoutRecordsPayloadLateData.lean`: One original twenty-two-word later caller shares its actual raw array with the complete after-source repair; actual payload output is exactly repair input and physical copy-back restores the original caller.
 
-- `Machine/ActiveRepairLayoutRecordsPayloadLateRun.lean`: The full original-input later low-selected stage executes all actual payload operations, clean raw repair and physical copy-back/erasure on one caller, returning exact lateIdeal array with all generated/private tapes blank.
 
-- `Machine/ActiveRepairLayoutRecordsPayloadLateBudget.lean`: The entire original-input later payload/clean repair/copy-back stage retains the certified full-volume compact-width exponent, paying all metadata, actions, sorting, erasures and joins; a certified execution theorem combines its correctness and runtime.
 
 - `Machine/ActivePrefixStageParameters.lean`: Actual ordered source/target slots and node decomposition determine all active-target Parameters; compact capacity, active partition, highest geometry and dyadic side conditions are derived rather than supplied.
 
-- `Machine/ActivePrefixStageGeometry.lean`: Original distinct slot order derives early/late source offsets, full source fits, early disjointness and exact selected source bit positions in both directions.
 
 - `Machine/CompactGlobalRowPadding.lean`: Original row axes dominate the full runtime recursive divisor; one global pad costs at most twice the original volume and supplies inherited depth divisibility, no per-node re-padding and exact role volumes.
 
 - `Machine/CompactGlobalReservation.lean`: Original global axis counts determine the complete compact shape; row and within-row bits sum to D*K, original volume is retained, padded volume doubles at most and every node compact field fits.
 
-- `Machine/ActiveRepairLayoutRecordsFullLateData.lean`: Original later repaired low action and original-header highest action share one unchanged caller; complete array semantics equal their full-selected low/high destination with explicit original-port and blank-private bank helpers.
 
-- `Machine/ActiveRepairLayoutRecordsFullLateRun.lean`: One fixed full later machine physically executes payload, clean repair, recycle and highest action on the original raw tape, returning exact full-selected array with all original descriptors preserved and all private tapes blank.
 
-- `Machine/ActiveRepairLayoutRecordsFullLateBudget.lean`: The full original-input later low/high execution pays every metadata/action/cleanup/join and retains the certified compact-width tau exponent with one uniform coefficient.
 
-- `Machine/ActiveRepairLayoutRecordsFullLateSelected.lean`: The actual full later physical stage acts by the literal complete selected XOR mask on every original address and retains the entire original after-source interval.
 
-- `Machine/ActivePrefixStageHeadersOps.lean`: Actual paid product, ceiling-round and constant descriptor primitives extend the fixed header command machine without supplying derived dimensions.
 
-- `Machine/ActivePrefixStageHeadersData.lean`: The original thirteen stage/node/slot words determine every low/high consumer dimension in either source order, with literal original input and derived-output banks.
 
-- `Machine/ActivePrefixStageHeadersSchedule.lean`: Fixed arithmetic schedules from original slot words compute complete reservation/layout widths and source offsets with proved validity and cleaned intermediate storage.
 
-- `Machine/ActivePrefixStageHeadersRun.lean`: The real fixed forty-three-tape arithmetic producer executes both source-order schedules and returns exact computed descriptors with original words retained.
 
-- `Machine/ActivePrefixStageHeadersRouting.lean`: Paid physical descriptor copies and erasures route header words on one bank; no aliasing or free duplicate consumers are used.
 
-- `Machine/ActivePrefixStageHeadersPlaced.lean`: Original thirteen words physically generate twenty-two distinct consumer words on a sixty-five-tape bank, retaining originals and erasing derived arithmetic/private storage.
 
-- `Machine/ActivePrefixStageHeadersEndpoint.lean`: Actual copied consumer words equal the exact typed early/later stage Inputs; original canonical words and source-order geometry determine every descriptor.
 
-- `Machine/ActivePrefixStageHeadersBudget.lean`: The complete arithmetic, duplicate copies, descriptor erasures and joins cost at most one million times original full volume, with no external numeric allowance premise.
 
 - `Machine/CompactScalarAllowances.lean`: The actual multiplier choices d,K,p derive complete D*K+3 cubic repair sizing and selected-count bounds; the actual dyadic precision log fits K eventually, and literal polynomial-record bits eventually pay padded address width. No independent cubic-width or sufficiently-large-guard premise is assumed.
 
-- `Machine/ActiveRepairLayoutRecordsFullPlacedCommon.lean`: Symbolic original-port and blank-private adapters transport the complete low/high banks through padding without giant closed state normalization.
 
-- `Machine/ActiveRepairLayoutRecordsFullEarlyPlaced.lean`: The complete early low/high machine executes on arbitrary twenty-three original caller ports, changing only raw array, preserving descriptors and caller frame, restoring every private tape and retaining actual native cost.
 
-- `Machine/ActiveRepairLayoutRecordsFullLatePlaced.lean`: The complete later low/high machine executes on arbitrary twenty-three original caller ports, changing only raw array, preserving descriptors and caller frame, restoring every private tape and retaining actual native cost.
 
 - `Machine/CompactGuardGrowth.lean`: The actual precision logarithm is little-o of the actual chunk width, with arbitrary positive eventual coefficients.
 
 - `Machine/CompactReservationGrowth.lean`: Actual original row-axis ceilings and front/back reservation rounding yield total reserved axes little-o of actual dimension; all choices are the multiplier scalar parameters.
 
-- `Machine/ActiveRepairLayoutRecordsFullInvolution.lean`: Exact full selected destinations are involutions: source retention fixes the selected mask, two target XORs cancel and every original address field is recovered. Early action explicitly requires source/target disjointness.
-
-- `Machine/ActiveRepairLayoutRecordsFullInverseData.lean`: Actual complete early/later full-array transformations square to identity, via original-index surjectivity and the proved literal coordinate involutions.
-
-- `Machine/ActivePrefixStageOrderCompare.lean`: A real reusable comparison of original binary source/target slot words yields the early/late bit, preserves operand tapes and heads and erases its flag at paid cost. Actual stage geometry pays comparison and cleanup in linear full volume; source-order dispatch composition remains separate.
-
-- `Machine/ActivePrefixStageFullData.lean`: The sole caller inputs are original thirteen shape/node/slot words and raw array; every full-stage consumer descriptor is identified with its actual physical producer output.
-
-- `Machine/ActivePrefixStageFullCompose.lean`: Symbolic three-program composition retains default Lean limits while proving paid producer/action/cleanup execution on one fixed bank.
-
-- `Machine/ActivePrefixStageFullErase.lean`: Physical erasure of all twenty-two copied consumer words returns exactly the original caller, with linear original-volume cleanup cost.
-
-- `Machine/ActivePrefixStageFullEarlyRun.lean`: The complete fixed early original-input stage physically synthesizes descriptors, executes full selected low/high action and erases every consumer/private word on one original raw array.
-
-- `Machine/ActivePrefixStageFullLateRun.lean`: The complete fixed later original-input stage physically synthesizes descriptors, executes full selected low/high action and erases every consumer/private word on one original raw array.
-
-- `Machine/ActivePrefixStageFullBudget.lean`: Both original-only full-stage wrappers retain the certified compact-width exponent after paying all descriptor synthesis, duplicate copies, erasures and joins.
-
-- `Machine/ActivePrefixStageFullEndpoint.lean`: Original thirteen literal canonical words and heads survive; only the raw array changes and every generated/private tape is blank at the actual full-stage boundary.
-
-- `Machine/ActivePrefixStageFullSelected.lean`: Actual original-input stage endpoints have the exact complete selected XOR destination on every original address and preserve the whole original source slot.
-
-- `Machine/ActivePrefixStageSingletonData.lean`: Original thirteen node/slot words define the f=1 branch with zero packed low width and one actual highest-bit consumer on the shared raw caller.
-
-- `Machine/ActivePrefixStageSingletonRun.lean`: Both source orders execute actual original-header synthesis, highest action and full consumer erasure with all private storage blank, without invoking the positive-width packed routine.
-
-
-- `Machine/ActivePrefixStageSingletonSelected.lean`: Actual singleton endpoints XOR exactly the sole selected original target bit by its original source bit, retain source and spectator fields and identify literal source/target slot bit positions.
-
-- `Machine/ActivePrefixStageDispatchCommon.lean`: Generic bank padding, clean branch placement and runtime-bit branch composition preserve exact endpoints and charge only the selected actual branch.
-
-- `Machine/ActivePrefixStageDispatchData.lean`: Original thirteen stage words, raw array and blank flag determine both source-order inputs and the runtime-selected full selected result.
-
-- `Machine/ActivePrefixStageDispatchPlaced.lean`: Complete original-only early/later stage machines place in one shared caller while preserving the runtime direction flag and all complementary storage.
-
-- `Machine/ActivePrefixStageDispatchRun.lean`: One fixed machine compares original source/target words, reads its real flag, executes the selected full stage and erases the flag, with exact selected-branch cost and clean caller output.
-
-
-- `Machine/ActivePrefixStageDispatchSelected.lean`: Runtime-derived selected destination matches every original array address; the whole actual dispatched array action squares to identity under original source disjointness.
-
-- `Machine/ActivePrefixStageWidthSelector.lean`: The real reusable width selector physically writes fixed one, compares the original f word, erases the generated constant and yields the packed-versus-singleton flag with paid cleanup.
-
-- `Machine/ActivePrefixStageWidthPlaced.lean`: The actual width selector and flag cleanup place on arbitrary original-width/flag ports while retaining all caller tapes and blank native private storage.
-
-- `Machine/ActivePrefixStageWidthBranch.lean`: Actual runtime width flag chooses a supplied packed or singleton program, clears the flag before the stage and charges only the chosen execution plus paid selection overhead; concrete whole-stage branch assembly remains separate.
-
-- `Machine/ActivePrefixStageWidthOriginal.lean`: The original stage f word at port seven physically determines packed versus singleton selection on the shared original caller; exact predicates and linear full-volume overhead are proved.
-
-- `Machine/ActivePrefixStageSingletonDispatch.lean`: One fixed singleton machine compares original source and target slots, executes the selected one-axis stage and erases its direction flag with exact original-input endpoints.
-
-
-- `Machine/ActivePrefixStageRuntimePlaced.lean`: Packed and singleton dispatchers place on one shared original caller with both selector flags and complementary private banks preserved.
-
-- `Machine/ActivePrefixStageRuntimeData.lean`: Runtime width determines the literal array action and actual selected-branch cost; packed repair prerequisites are required only when the original width exceeds one.
-
-- `Machine/ActivePrefixStageRuntimeProgram.lean`: One fixed original-input stage program combines physical width selection with the packed and singleton direction dispatchers.
 
 
 
 
-- `Machine/ActivePrefixStageRuntimeSelected.lean`: The runtime-selected array action gives literal original source-selected XOR on target fields, preserves the full source and every other field, for every positive width.
 
-- `Machine/ActivePrefixStageInverseMachine.lean`: A single proved involutive array machine implements its own reverse with unchanged runtime, and its actual two-run composition restores the complete caller at twice the cost plus one join.
 
-- `Machine/ActivePrefixStageSingletonInverseData.lean`: Both actual singleton coordinate and array actions, including runtime source-order selection, square to identity with original source preserved.
 
-- `Machine/ActivePrefixStageRuntimeInverseRun.lean`: The fixed all-positive-width stage is involutive and implements its own reverse and two-run full-bank restoration, including singleton width and both runtime selectors.
 
-- `Machine/ActivePrefixStageRuntimeWord.lean`: The actual runtime stage destination has an exact whole-active-word XOR mask; original source bits are extracted at their literal selected positions and the mask support is fully characterized.
 
-- `Machine/ActivePrefixStageRuntimeCoordinates.lean`: Every actual selected target coordinate receives its original source XOR, the destination equals Boolean row-addition execution on all columns, and every other complete original slot is preserved.
 
-- `Machine/ActivePrefixStageRuntimeOrdinal.lean`: A canonical active ordinal is extracted from the original serialized raw index independently of the stage target split; exact original high-to-low axis positions are related to physical little-endian selected columns.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 - `Machine/CompactFramedScalarGrid.lean`: Actual framed grouped-prefix states and every partial listed alignment have exact retained labels, stored/decoded grid bounds and literal-prefix relationships to the full finite network. Recursive child-return dependency budgets and the original-root normalized decoding connection remain open.
 
@@ -2994,7 +2548,6 @@ Compact packed controls, repair, and density bounds.
   rank's address, the inverse program's words are the packed permutation's
   preimage, the exclusive or with the control mask is the ideal map, and the
   appended words are the binary expansion of the destination rank.
-- `Compact/KeyInstance.lean`: the key routine placed into the repair scan's
   bank (key at slot twelve, counter at thirteen, scratch from fourteen) meets
   the scan's key contract for the concrete early instance: the scan's counter
   tape is the counter word over the separator, the active bank is the
@@ -3025,11 +2578,8 @@ Compact packed controls, repair, and density bounds.
   with both verified packed programs. Implementing repair within the tape cost
   remains necessary.
 
-- `Compact/LatePowerTwoRank.lean`: Exact short-counter modular splitting matches the later address order U followed by V/W, without a counter-length assumption.
 
-- `Compact/LatePowerTwoWords.lean`: Literal split words encode every later address, including unrestricted dirty source/temporary digits and physical blank-tail padding.
 
-- `Compact/LatePowerTwoBridges.lean`: Actual late inverse words, ideal toggle and destination key bits agree with the later permutation inverse and exact destination rank encoding.
 
 - `Compact/ActiveTargetSubsegmentValue.lean`: Lifts actual early/later packed kernels on good addresses to the full containing target slot, with exact low/high spectator reconstruction and restoration of all dirty companions. No target front-capacity premise or unguarded full-slot equality is assumed.
 
@@ -3845,7 +3395,6 @@ Bit and complex networks.
 
 - `Networks/BinaryRowProgram.lean`: Every invertible binary matrix and genuine binary coordinate equivalence yields a literal finite chronological word of distinct source/target row additions, with exact matrix and basis-change execution; reversing the same word restores coordinates.
 
-- `Networks/BinaryRowColumns.lean`: Literal Boolean XOR execution of a fixed row-addition word on arbitrary columns equals its F2 coordinate action; a chosen basis word converts all columns exactly and its reversal restores their bits.
 
 - `Networks/BinaryPhaseBasisExtension.lean`: An actual nondegenerate phase-subspace basis extends to a full binary address basis with its original vectors in literal first slots. The generated row-addition word computes the exact bilinear controls, and the original projector phase equals the diagonal phase on those computed coordinates.
 
@@ -4567,9 +4116,6 @@ Schönhage–Strassen multiplication, the fast multiplier used for the packed pr
 
 ## MathlibTM2 integration
 
-- `MathlibTM2/Node/CompactRotHost.lean`, `Node/CompactRotStage.lean`: Normalized host execution of the complete retained early/late compact toggle routines, including descriptor synthesis and repair. Concrete theorems discharge the native execution premise and preserve the unplaced host frame. Original shape descriptors, reserved-array encoding, width and density premises remain explicit.
-- `MathlibTM2/Cost/CompactStage.lean`, `Cost/CompactStageExec.lean`: The thirteen original headers plus raw array occupy at most forty times local volume. Complete host execution, including simulation and normalization, retains the compact-width exponent with a coefficient depending only on fixed host size and the repair-density bound.
-- `MathlibTM2/Node/CompactGeometry.lean`: Reverses native slot numbering to the live convention and identifies the actual native destination with live slot XOR at the bit and serialized-rank levels under explicit reservations. This baseline folds native rows into address bits; CompactGeometryRecursive and CompactEncoding below supply the separate-row and coefficient encoding extension.
 - `MathlibTM2/Node/CompactSwap.lean`, `Cost/CompactSwap.lean`: Prepared two-field interchange on actual host bit streams, with arbitrary dirty compact fields, preserved spectators and exact register restoration. Runtime is bounded in compact width and total bit volume, with bank-size assumptions explicit. Header production and conversion from the live layer encoding remain separate.
 - `MathlibTM2/Node/CompactRotParity.lean`: Seven-register host scanner packs the low bit of each runtime-width block into padded output blocks, preserves the source and parameter registers, and restores scratch with an exact linear step count. This builds an offset word; it does not execute a full compact toggle. `CompactControlCheck.lean` audits the new primitive contracts.
 - `MathlibTM2/Theorem.lean`: Unconditional `MathlibTM2.statement` proves that one fixed finite Mathlib machine multiplies every input pair in worst-case time below n log n. The complete host program and actual cost bound are supplied internally, with positive saving `2^-66`. This is the completed route in plan C; the original compact-control target uses the larger saving `83/10^12`.
@@ -4688,8 +4234,7 @@ Parameters and asymptotics.
 
 - `MathlibTM2/Node/CompactSetup.lean`, `Node/CompactSlotRun.lean`: The compact slot XOR on Mathlib TM2 from its unary inputs: 41 setup stages fill the index fields, masks, counters and interchange headers (`cxSetup_exec`), `cxCore` moves the records, and the cleanup restores every register except the stream (`cxSlotRun_exec`).
 - `MathlibTM2/Node/CompactSlotCost.lean`: The slot XOR costs `O(M (L + B) max(1, (k - 1) G)^τ)` on `M` records of index length `L` and record length `B`; bad repair records are paid by the late repair density.
-- `MathlibTM2/Node/CompactGeometryRecursive.lean`, `Node/CompactEncoding.lean`: Shared-shape child reservation invariant and exact native-to-live serialization preserving unrestricted outer rows and payload offsets.
-- `MathlibTM2/Cost/CompactParameters.lean`: Repair allowance one derived from dyadic guards and full row-address inequalities; callers must discharge the size premises.
+- `MathlibTM2/Node/CompactGeometryRecursive.lean`: Shared-shape child reservation invariant and the live selected-bit embedding.
 - `MathlibTM2/Cost/CompactSlotPacking.lean`: The parameter conditions of the compact slot operations (`CompactSlotPacked`) from dyadic guards, and eventually from the actual multiplier sizes.
 - `MathlibTM2/Fast/CompactSynRecArithmetic.lean`: Runtime ceiling division and front/back/active/offset reservation arithmetic with exact costs and scratch restoration. Row-axis count is an explicit input; recursive record production remains separate.
 
@@ -4803,7 +4348,7 @@ Parameters and asymptotics.
 - `MathlibTM2/Fast/CompactSynInitialGeometry.lean`, `CompactSynInitialContract.lean`, `CompactSynInitialLoops.lean`, `CompactSynLayoutTransport.lean`: Actual distributed-transform geometry and canonical main-table loop contracts, plus exact transported layout execution.
 - `MathlibTM2/Fast/CompactMainBootstrapView.lean`, `CompactMainBootstrapTransformFrame.lean`, `CompactMainTransformPipeline.lean`: Derive bootstrap execution from real precision/depth sources and blank scratch; preserve the synthetic view, establish runtime readiness, and compose a core with charged setup/exit to restore the whole original file except output.
 - `MathlibTM2/Cost/CompactCallerScalarBudget.lean`, `CompactCallerDivisorPolynomial.lean`: Common quadratic precision bounds for actual caller fields and a dyadic polynomial bound for the original row divisor; final combined overhead specialization remains separate.
-- `MathlibTM2/Mult/CompactSizes.lean`, `Cost/CompactCallerRetunedCapacity.lean`, `CompactCallerUniformRuntime.lean`: Parallel eighth-root chunk sizes, monotone reservation capacity and uniform actual packing between the original and larger chunk sizes. Executable retuning and the stronger total-cost theorem remain separate.
+- `MathlibTM2/Mult/CompactSizes.lean`, `Cost/CompactCallerRetunedCapacity.lean`: Parallel eighth-root chunk sizes and monotone reservation capacity between the original and larger chunk sizes. Executable retuning and the stronger total-cost theorem remain separate.
 
 - `MathlibTM2/Fast/CompactSynFwd.lean`, `CompactSynOpp.lean`, `CompactSynTransformPre.lean`, `CompactSynFwdSpec.lean`, `CompactSynOppSpec.lean`, `CompactSynInitialTransforms.lean`, `CompactSynConcreteTransforms.lean`: Complete concrete forward/opposite transform specifications on the expanded main host, with original numerical/error semantics, actual initial parameters and existing layouts. Charged bootstrap/core/exit restore all non-output registers; final eventual contracts require no execution, layout or readiness oracle.
 - `MathlibTM2/Cost/CompactCallerCombinedBudget.lean`: Combined dyadic scalar/divisor polynomial budget, derived actual piece validity and complete overhead bounded by `2^15*V+2*stash`, uniformly for larger chunk sizes and explicitly for eighth-root chunks.

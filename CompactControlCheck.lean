@@ -53,7 +53,6 @@ import IntegerMultBounds.MathlibTM2.Fast.CompactSynConcreteTransforms
 import IntegerMultBounds.MathlibTM2.Cost.CompactCallerDivisorPolynomial
 import IntegerMultBounds.MathlibTM2.Cost.CompactCallerRetunedCapacity
 import IntegerMultBounds.MathlibTM2.Cost.CompactCallerScalarBudget
-import IntegerMultBounds.MathlibTM2.Cost.CompactCallerUniformRuntime
 import IntegerMultBounds.MathlibTM2.Mult.CompactSizes
 import IntegerMultBounds.MathlibTM2.Fast.CompactSynRoundFrame
 import IntegerMultBounds.MathlibTM2.Fast.CompactSynLayerContract
@@ -162,11 +161,7 @@ import IntegerMultBounds.MathlibTM2.Cost.CompactCallerRows
 import IntegerMultBounds.MathlibTM2.Fast.CompactTopConfig
 import IntegerMultBounds.MathlibTM2.Cost.CompactSwap
 import IntegerMultBounds.MathlibTM2.Node.CompactRotParity
-import IntegerMultBounds.MathlibTM2.Cost.CompactStageExec
-import IntegerMultBounds.MathlibTM2.Node.CompactGeometry
-import IntegerMultBounds.MathlibTM2.Cost.CompactParameters
 import IntegerMultBounds.MathlibTM2.Node.CompactGeometryRecursive
-import IntegerMultBounds.MathlibTM2.Node.CompactEncoding
 import IntegerMultBounds.MathlibTM2.Fast.CompactSynRecArithmetic
 import IntegerMultBounds.MathlibTM2.Fast.CompactSynRecPieces
 import IntegerMultBounds.MathlibTM2.Fast.CompactSynRec
@@ -262,15 +257,6 @@ run_cmd do
     ``IntegerMultBounds.MathlibTM2.Node.compactParityPack_exec,
     ``IntegerMultBounds.MathlibTM2.Node.compactParityWord_binSyms,
     ``IntegerMultBounds.MathlibTM2.Cost.compactSwapCost_le_volume,
-    ``IntegerMultBounds.MathlibTM2.Node.compactNativeProg_exec,
-    ``IntegerMultBounds.MathlibTM2.Node.compactEarlyProg_exec,
-    ``IntegerMultBounds.MathlibTM2.Node.compactLateProg_exec,
-    ``IntegerMultBounds.MathlibTM2.Cost.compactStageWords_length_sum,
-    ``IntegerMultBounds.MathlibTM2.Cost.compactStageBankSize_le,
-    ``IntegerMultBounds.MathlibTM2.Cost.compactEarlyProg_exec_le,
-    ``IntegerMultBounds.MathlibTM2.Cost.compactLateProg_exec_le,
-    ``IntegerMultBounds.MathlibTM2.Node.compactNative_destination_rank,
-    ``IntegerMultBounds.MathlibTM2.Node.compactNative_result_entry,
     ``IntegerMultBounds.MathlibTM2.Node.CompactRecursiveLayout.child,
     ``IntegerMultBounds.MathlibTM2.Node.cxSlotRun_exec,
     ``IntegerMultBounds.MathlibTM2.Node.CxData.OK.slotRun_cost_le,
@@ -278,10 +264,6 @@ run_cmd do
     ``IntegerMultBounds.MathlibTM2.Cost.compactBasisSlotCost_le,
     ``IntegerMultBounds.MathlibTM2.Cost.compactSlotPacked_of_dyadic,
     ``IntegerMultBounds.MathlibTM2.Cost.compactCaller_slot_eventually_packed,
-    ``IntegerMultBounds.MathlibTM2.Node.compactRecursiveNative_serialized_rank,
-    ``IntegerMultBounds.MathlibTM2.Node.compactEncoding_exists,
-    ``IntegerMultBounds.MathlibTM2.Node.compactEncoding_runtime_result,
-    ``IntegerMultBounds.MathlibTM2.Cost.compactRuntimePacked_of_dyadic,
     ``IntegerMultBounds.MathlibTM2.Fast.sg_compactCeil,
     ``IntegerMultBounds.MathlibTM2.Fast.sg_compactReserveCounts,
     ``IntegerMultBounds.MathlibTM2.Fast.sg_compactReservedPieces,
@@ -308,7 +290,6 @@ run_cmd do
     ``IntegerMultBounds.MathlibTM2.Fast.compactSelection_nodup,
     ``IntegerMultBounds.MathlibTM2.Fast.compactTopPcs_ok,
     ``IntegerMultBounds.MathlibTM2.Fast.compactTopPcs_exp,
-    ``IntegerMultBounds.MathlibTM2.Cost.compactCaller_eventually_packed,
     ``IntegerMultBounds.MathlibTM2.Fast.sg_compactTopConfig,
     ``IntegerMultBounds.MathlibTM2.Cost.compactCaller_topRows_le,
     ``IntegerMultBounds.MathlibTM2.Cost.compactCaller_topRows_quotient_le,
@@ -320,7 +301,6 @@ run_cmd do
     ``IntegerMultBounds.MathlibTM2.Fast.compactTopZ_correct,
     ``IntegerMultBounds.MathlibTM2.Cost.compactCaller_runtime_guardLog,
     ``IntegerMultBounds.MathlibTM2.Cost.compactCaller_runtime_eventually_guard,
-    ``IntegerMultBounds.MathlibTM2.Cost.compactCaller_runtime_eventually_packed,
     ``IntegerMultBounds.MathlibTM2.Cost.compactCaller_runtime_fits_iff,
     ``IntegerMultBounds.MathlibTM2.Cost.compactCaller_runtime_eventually_reservation,
     ``IntegerMultBounds.MathlibTM2.Cost.compactCaller_runtime_eventually_capacity,
@@ -337,7 +317,6 @@ run_cmd do
     ``IntegerMultBounds.MathlibTM2.Cost.compactCaller_selected_native_rows,
     ``IntegerMultBounds.MathlibTM2.Cost.compactCaller_selected_rows_le,
     ``IntegerMultBounds.MathlibTM2.Cost.compactCaller_selected_extra_le,
-    ``IntegerMultBounds.MathlibTM2.Cost.compactCaller_selected_eventually_packed,
     ``IntegerMultBounds.MathlibTM2.Cost.compactBasisSlotCost_le,
     ``IntegerMultBounds.MathlibTM2.Cost.compactBasisCost_le,
     ``IntegerMultBounds.MathlibTM2.LayerMachine.compactBasisW_factor_exec,
@@ -575,7 +554,6 @@ run_cmd do
     ``IntegerMultBounds.MathlibTM2.Cost.compactCaller_runtime_divisor_polynomial,
     ``IntegerMultBounds.MathlibTM2.Cost.compactReservationFits_mono_chunk,
     ``IntegerMultBounds.MathlibTM2.Cost.compactCaller_retuned_eventually_full_dimension,
-    ``IntegerMultBounds.MathlibTM2.Cost.compactCaller_uniform_eventually_packed,
     ``IntegerMultBounds.MathlibTM2.Mult.CompactSizes.d_le_two_Kroot,
     ``IntegerMultBounds.MathlibTM2.Mult.CompactSizes.K_le_two_Kroot,
     ``IntegerMultBounds.MathlibTM2.Mult.CompactSizes.mod_K_succ_le,
@@ -597,9 +575,7 @@ run_cmd do
     ``IntegerMultBounds.MathlibTM2.Fast.Main.compactMnGlobalsExit_after_transform,
     ``IntegerMultBounds.MathlibTM2.Fast.Main.compactMnTransformPipeline_from_sources,
     ``IntegerMultBounds.MathlibTM2.Cost.compactCaller_uniform_eventually_shape,
-    ``IntegerMultBounds.MathlibTM2.Cost.compactCaller_uniform_selected_eventually_packed,
     ``IntegerMultBounds.MathlibTM2.Cost.compactCaller_retuned_eventually_shape,
-    ``IntegerMultBounds.MathlibTM2.Cost.compactCaller_retuned_selected_eventually_packed,
     ``IntegerMultBounds.MathlibTM2.Cost.compactPiece_uniform_eventually_packed,
     ``IntegerMultBounds.MathlibTM2.Cost.compactPiece_uniform_eventually_ready,
     ``IntegerMultBounds.MathlibTM2.Fast.compactTopRuntime_uniform_eventually_exec_Hl,

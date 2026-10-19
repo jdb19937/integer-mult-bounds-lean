@@ -4,7 +4,6 @@ import IntegerMultBounds.MathlibTM2.Cost.CompactPiecePacking
 import IntegerMultBounds.MathlibTM2.Cost.CompactSlotPacking
 import IntegerMultBounds.MathlibTM2.Cost.CompactLayerReady
 import IntegerMultBounds.MathlibTM2.Fast.CompactPieceGeometry
-import IntegerMultBounds.MathlibTM2.Cost.CompactCallerUniformRuntime
 import IntegerMultBounds.MathlibTM2.Cost.CompactCallerSelectedRows
 import IntegerMultBounds.MathlibTM2.Cost.CompactCallerRuntimeParameters
 public import IntegerMultBounds.Machine.CompactReservationGrowth
